@@ -1,0 +1,122 @@
+---
+sidebar_position: 6
+hide_table_of_contents: true
+---
+
+# 7.6 O(n²) — kwadratische tijd
+
+**Leerdoel:** je herkent algoritmes met een **lus in een lus**, en je
+ziet visueel hoe snel die ontsporen bij grote `n`.
+
+## Hoe gedraagt het zich?
+
+`O(n²)` betekent: **het werk groeit met het kwadraat van `n`**. Verdubbel
+`n` → vier keer zoveel werk. Vertienvoudig `n` → honderd keer zoveel.
+
+| `n` | n² |
+|---|---|
+| 10 | 100 |
+| 100 | 10.000 |
+| 1.000 | 1.000.000 |
+| 10.000 | 100.000.000 |
+
+Bij 10.000 elementen heb je 100 miljoen stappen. Dat is **al voelbaar
+traag** op een normale computer.
+
+## Hoe ontstaat het?
+
+`O(n²)` ontstaat bijna altijd door **een lus in een lus**, waarbij
+beide lussen tot `n` (of ongeveer `n`) lopen:
+
+```python
+for i in range(n):
+    for j in range(n):
+        # iets doen
+```
+
+Buitenste lus: `n` keer. Per ronde de binnenste lus: `n` keer. Totaal:
+`n × n = n²` rondes.
+
+Bij selection sort en bubble sort is de binnenste lus iets korter
+(`n - 1 - i`), maar dat verandert de **groeiklasse** niet — het blijft
+`O(n²)`.
+
+Analogie: handen schudden in een groep. Bij 10 mensen 45 handdrukken, bij
+100 mensen 4950. Twee keer zoveel mensen → vier keer zoveel handdrukken.
+
+## Voorspel
+
+Op een lijst van 1.000 elementen: hoeveel vergelijkingen doet selection
+sort?
+
+<details>
+<summary>Antwoord</summary>
+
+**Ongeveer een half miljoen** (`1000 × 999 / 2 = 499.500`).
+
+Selection sort doet in de buitenste lus `n` rondes, in elke ronde
+gemiddeld `n / 2` vergelijkingen voor de binnenste lus. Totaal: ~`n² / 2`.
+In Big O-taal: `O(n²)` — de `/ 2` valt weg.
+
+</details>
+
+## Run — kijk hoe het groeit
+
+<PyRunner initialCode={`import matplotlib.pyplot as plt
+
+def selection_sort_tellen(lijst):
+    n = len(lijst)
+    vergelijkingen = 0
+    for i in range(n):
+        min_index = i
+        for j in range(i, n):
+            vergelijkingen += 1
+            if lijst[j] < lijst[min_index]:
+                min_index = j
+        lijst[i], lijst[min_index] = lijst[min_index], lijst[i]
+    return vergelijkingen
+
+groottes = [10, 50, 100, 500, 1000, 2000]
+stappen_per_grootte = []
+for n in groottes:
+    lijst = list(range(n, 0, -1))   # omgekeerd — slechtste geval
+    stappen_per_grootte.append(selection_sort_tellen(lijst))
+
+print("n        stappen")
+for n, s in zip(groottes, stappen_per_grootte):
+    print(f"{n:<8} {s}")
+
+plt.plot(groottes, stappen_per_grootte, marker='o')
+plt.xlabel('lijstgrootte n')
+plt.ylabel('aantal vergelijkingen')
+plt.title('O(n²) — kwadratische tijd')
+plt.grid(True, linestyle=':')
+plt.show()`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+Een **steile parabool**. Bij `n = 2000` zit je al op ~2 miljoen
+vergelijkingen. Verdubbel `n` van 1000 naar 2000 → het werk
+**verviervoudigt**, niet verdubbelt.
+
+Dat is `O(n²)` in beeld: een **omhooglopende kromme**, geen rechte lijn.
+
+</details>
+
+## Welke algoritmes zijn `O(n²)`?
+
+In dit curriculum:
+
+- **Selection sort** — altijd `O(n²)`, ook op een al gesorteerde lijst.
+  Zie [selection-sort/07-compleet](../selection-sort/07-compleet).
+- **Bubble sort** — `O(n²)` in het gemiddelde en slechtste geval. Met de
+  early-exit-truc is het beste geval `O(n)` (al-gesorteerde input). Zie
+  [bubble-sort/07-bouwen-early-exit](../bubble-sort/07-bouwen-early-exit) en
+  [bubble-sort/08-compleet](../bubble-sort/08-compleet).
+
+In de echte wereld gebruik je voor groot `n` slimmere sorteer-algoritmes
+zoals quicksort of mergesort (`O(n log n)`). Maar selection en bubble
+zijn perfect voor het **leren** — hun structuur is makkelijk te zien.
+
+Door naar [stap 7: vergelijk alle klassen →](./07-vergelijken).

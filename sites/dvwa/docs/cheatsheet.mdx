@@ -1,0 +1,170 @@
+---
+sidebar_position: 4
+displayed_sidebar: null
+hide_pagination: true
+---
+
+# Cheatsheet
+
+Op deze pagina vind je alle handige commando's, opstartstappen en begrippen die je tijdens de DVWA-labs nodig hebt. Klik op een vraag om het antwoord te zien.
+
+## WSL
+
+<details>
+
+<summary>Hoe start ik WSL op?</summary>
+
+Open `Windows PowerShell` en voer dit commando uit:
+
+```powershell
+wsl -d kali-linux
+```
+
+</details>
+
+## DVWA
+
+<details>
+
+<summary>Hoe start ik DVWA?</summary>
+
+Open Kali Linux in WSL en draai het volgende commando:
+
+```bash
+sudo systemctl start apache2.service
+```
+
+Ga daarna naar je browser (bijvoorbeeld Google Chrome) en open dit adres:
+
+```
+http://localhost/DVWA
+```
+
+</details>
+
+<details>
+
+<summary>Hoe log ik in op DVWA?</summary>
+
+Gebruikersnaam: `admin`. Wachtwoord: `password`.
+
+</details>
+
+<details>
+
+<summary>Wat stel ik nog in na de installatie?</summary>
+
+Twee dingen:
+
+1. Ga naar `Setup / Reset DB` en klik onderaan op de knop `Create / Reset Database`.
+2. Ga naar `DVWA Security`, kies `low` en klik op `Submit`.
+
+</details>
+
+## Linux-commando's
+
+<details>
+
+<summary><code>whoami</code></summary>
+
+Toont de naam van de gebruiker die op dit moment is ingelogd.
+
+</details>
+
+<details>
+
+<summary><code>;</code> (puntkomma)</summary>
+
+Hiermee voer je meerdere commando's na elkaar uit. `commando1 ; commando2` draait eerst het ene en daarna het andere, ook als het eerste mislukt.
+
+</details>
+
+<details>
+
+<summary><code>&&</code> (AND)</summary>
+
+Voert het tweede commando alleen uit als het eerste **succesvol** is afgerond.
+
+</details>
+
+<details>
+
+<summary><code>|</code> (pipe)</summary>
+
+Neemt de output van het eerste commando en geeft die als input door aan het tweede commando.
+
+</details>
+
+<details>
+
+<summary><code>||</code> (OR)</summary>
+
+Voert het tweede commando alleen uit als het eerste een **fout** oplevert.
+
+</details>
+
+<details>
+
+<summary><code>cat /etc/passwd</code></summary>
+
+Een veelgebruikt commando bij beveiligingstests. Het toont de inhoud van het bestand `/etc/passwd`, een lijst met alle geregistreerde gebruikers op een Linux-systeem.
+
+</details>
+
+## Terminologie
+
+<details>
+
+<summary>Command Injection</summary>
+
+Een kwetsbaarheid waarbij een aanvaller onbedoeld besturingssysteem-commando's kan laten uitvoeren door de server waarop de webapplicatie draait.
+
+</details>
+
+<details>
+
+<summary>Brute Force</summary>
+
+Een aanvalsmethode waarbij systematisch alle mogelijke combinaties van wachtwoorden (of andere geheime data) worden geprobeerd totdat de juiste is gevonden.
+
+</details>
+
+<details>
+
+<summary>SQL Injection (SQLi)</summary>
+
+Een techniek waarbij een aanvaller kwaadaardige SQL-code in een invoerveld plaatst om de database van de webapplicatie te manipuleren of uit te lezen.
+
+</details>
+
+<details>
+
+<summary>Cross-Site Scripting (XSS)</summary>
+
+Een kwetsbaarheid waarbij een aanvaller kwaadaardige scripts (meestal JavaScript) kan injecteren in webpagina's die door andere bezoekers worden bekeken.
+
+</details>
+
+<details>
+
+<summary>Cross-Site Request Forgery (CSRF)</summary>
+
+Een aanval waarbij een slachtoffer onbewust een actie uitvoert op een website waar hij is ingelogd, doordat een aanvaller hem op een kwaadaardige link laat klikken.
+
+</details>
+
+<details>
+
+<summary>File Inclusion (LFI/RFI)</summary>
+
+Een kwetsbaarheid waarbij een applicatie bestanden insluit op basis van gebruikersinvoer. Dit kan leiden tot het uitlezen van gevoelige systeembestanden (Local File Inclusion) of het uitvoeren van externe scripts (Remote File Inclusion).
+
+</details>
+
+<details>
+
+<summary>IDOR (Insecure Direct Object Reference)</summary>
+
+Ook wel *Authorization Bypass* genoemd. Een kwetsbaarheid waarbij een gebruiker toegang krijgt tot data van anderen door simpelweg een ID in de URL of het verzoek aan te passen (bijvoorbeeld `user_id=123` veranderen in `user_id=124`).
+
+</details>

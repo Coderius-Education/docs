@@ -1,0 +1,11 @@
+{
+  "label": "Torens van Hanoi",
+  "position": 12,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "title": "Torens van Hanoi — recursie die je kunt zien",
+    "description": "Verplaats een toren van schijven van de ene paal naar de andere. Een klein probleem met een verrassend elegante recursieve oplossing — en precies 2ⁿ−1 zetten."
+  }
+}

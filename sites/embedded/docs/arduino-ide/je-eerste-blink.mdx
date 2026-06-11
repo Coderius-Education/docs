@@ -1,0 +1,60 @@
+---
+sidebar_position: 2
+hide_table_of_contents: true
+---
+
+import WokwiSimulator from '@site/src/components/WokwiSimulator';
+
+# 2.2 Je eerste blink
+
+Het is tijd voor je eerste programma. De klassieker in embedded land is **blink**: een LED die aan en uit knippert. Het is het "Hallo wereld" van de microcontroller.
+
+## Voorspel eerst
+
+Hieronder staat het programma. Lees het rustig door.
+
+```cpp
+void setup() {
+  pinMode(13, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(13, HIGH);
+  delay(1000);
+  digitalWrite(13, LOW);
+  delay(1000);
+}
+```
+
+<details>
+<summary>Wat denk je dat dit doet?</summary>
+
+De LED op pin 13 gaat aan, blijft 1 seconde aan, gaat uit, blijft 1 seconde uit, en dan begint het opnieuw. Dus: knipperen met één seconde aan en één seconde uit.
+
+</details>
+
+## Probeer het uit
+
+Start de simulator en kijk of je voorspelling klopt. De LED op het bord (naast pin 13) gaat knipperen.
+
+<WokwiSimulator
+  projectUrl="https://wokwi.com/projects/new/arduino-uno"
+  title="Simuleer: je eerste blink"
+/>
+
+:::tip
+Plak de code hierboven in de simulator (in het tabblad **sketch.ino**) en klik op de groene **play**-knop. Op een echt bord plak je de code in de Arduino IDE en klik je op **Upload** (de pijl naar rechts).
+:::
+
+## Wat gebeurt hier?
+
+Twee regels doen het echte werk:
+
+```cpp
+digitalWrite(13, HIGH);
+delay(1000);
+```
+
+`digitalWrite(13, HIGH)` zet pin 13 "aan" (5 volt), waardoor de LED gaat branden. `delay(1000)` laat de microcontroller 1000 milliseconden — één seconde — niets doen, zodat je het lampje ook echt ziet branden. Daarna zet `digitalWrite(13, LOW)` de pin weer uit.
+
+In de volgende les kijken we naar de twee blokken `setup()` en `loop()`: waarom staat het ene deel daar, en het andere daar?

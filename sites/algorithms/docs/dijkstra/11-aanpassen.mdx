@@ -1,0 +1,278 @@
+---
+sidebar_position: 11
+hide_table_of_contents: true
+---
+
+# 8.11 Pas aan — reconstrueer het pad
+
+**Leerdoel:** je breidt Dijkstra uit zodat hij niet alleen de
+**afstand** teruggeeft, maar ook **welk pad** dat is — bijv.
+`A → B → D`.
+
+## Wat we willen
+
+Tot nu toe weten we: *"D is 5 minuten van A."* Maar **welke route**?
+Via `B` of via `C`?
+
+Antwoord moet zijn: `['A', 'B', 'D']` — de stappen op de kortste route.
+
+## Het idee — voorgangers bijhouden
+
+Op het moment dat we tijdens de relax-stap de afstand voor een buur
+*verbeteren*, onthouden we **vanaf welke node** die verbetering kwam.
+Die node noemen we de **voorganger**.
+
+```python
+voorgangers = {}
+...
+if nieuwe < afstanden[buur]:
+    afstanden[buur] = nieuwe
+    voorgangers[buur] = huidige     # ← nieuwe regel
+```
+
+Voor onze mini-graph, met start `A`, krijg je aan het eind:
+
+```python
+voorgangers = {'B': 'A', 'C': 'A', 'D': 'B'}
+```
+
+Lees: *"voorganger van B is A, voorganger van C is A, voorganger van D
+is B."*
+
+## Het pad terugvinden
+
+Om het pad van `A` naar `D` te krijgen, beginnen we bij **`D`** en lopen
+de voorgangers **terug**:
+
+- `D` → `voorgangers['D'] = 'B'`
+- `B` → `voorgangers['B'] = 'A'`
+- `A` is de start → klaar.
+
+Verzameld: `[D, B, A]`. Draai om: `[A, B, D]`. Dat is het pad.
+
+## Opdracht
+
+Pas `dijkstra` aan om `voorgangers` mee te houden. Schrijf een
+hulpfunctie `reconstrueer_pad` die het pad teruggeeft.
+
+<PyRunner initialCode={`def kies_volgende(afstanden, bezocht):
+    beste_node = None
+    kleinste = float('inf')
+    for node, d in afstanden.items():
+        if node in bezocht:
+            continue
+        if d < kleinste:
+            kleinste = d
+            beste_node = node
+    return beste_node
+
+
+def dijkstra(graph, start):
+    afstanden = {node: float('inf') for node in graph}
+    afstanden[start] = 0
+    bezocht = set()
+    voorgangers = {}     # nieuw
+
+    while True:
+        huidige = kies_volgende(afstanden, bezocht)
+        if huidige is None:
+            break
+        bezocht.add(huidige)
+        for buur, gewicht in graph[huidige]:
+            nieuwe = afstanden[huidige] + gewicht
+            if nieuwe < afstanden[buur]:
+                afstanden[buur] = nieuwe
+                # vul aan: noteer dat huidige de voorganger is van buur
+
+    return afstanden, voorgangers
+
+
+def reconstrueer_pad(voorgangers, start, doel):
+    # vul aan:
+    # loop vanaf 'doel' terug via voorgangers,
+    # voeg elke node toe aan 'pad',
+    # stop als je bij 'start' bent.
+    # Draai pad om en return.
+    pad = []
+    return pad
+
+
+graph = {
+    'A': [('B', 4), ('C', 2)],
+    'B': [('A', 4), ('D', 1)],
+    'C': [('A', 2), ('D', 8)],
+    'D': [('B', 1), ('C', 8)],
+}
+
+afstanden, voorgangers = dijkstra(graph, 'A')
+print("Afstanden:  ", afstanden)
+print("Voorgangers:", voorgangers)
+print("Pad A→D:    ", reconstrueer_pad(voorgangers, 'A', 'D'))`} />
+
+<details>
+<summary>Tip</summary>
+
+Voor `dijkstra`: één regel onder de afstand-update.
+
+```python
+voorgangers[buur] = huidige
+```
+
+Voor `reconstrueer_pad`: een `while`-lus die zolang `huidige` niet
+`None` is, hem toevoegt en dan naar `voorgangers.get(huidige)` springt.
+Aan het eind: `pad.reverse()` of `pad[::-1]`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def dijkstra(graph, start):
+    afstanden = {node: float('inf') for node in graph}
+    afstanden[start] = 0
+    bezocht = set()
+    voorgangers = {}
+
+    while True:
+        huidige = kies_volgende(afstanden, bezocht)
+        if huidige is None:
+            break
+        bezocht.add(huidige)
+        for buur, gewicht in graph[huidige]:
+            nieuwe = afstanden[huidige] + gewicht
+            if nieuwe < afstanden[buur]:
+                afstanden[buur] = nieuwe
+                voorgangers[buur] = huidige
+
+    return afstanden, voorgangers
+
+
+def reconstrueer_pad(voorgangers, start, doel):
+    pad = []
+    huidige = doel
+    while huidige is not None:
+        pad.append(huidige)
+        if huidige == start:
+            break
+        huidige = voorgangers.get(huidige)
+    pad.reverse()
+    return pad if pad and pad[0] == start else []
+```
+
+Verwacht:
+
+```
+Afstanden:   {'A': 0, 'B': 4, 'C': 2, 'D': 5}
+Voorgangers: {'B': 'A', 'C': 'A', 'D': 'B'}
+Pad A→D:     ['A', 'B', 'D']
+```
+
+`voorgangers.get(huidige)` returnt `None` als de node niet in de dict
+zit — dat is hoe we ontdekken dat we klaar zijn met terug-lopen.
+
+De extra check `pad[0] == start` vangt het geval af dat `doel`
+onbereikbaar is.
+
+</details>
+
+## Visualiseer het pad
+
+<PyRunner initialCode={`import matplotlib.pyplot as plt
+
+def kies_volgende(afstanden, bezocht):
+    beste_node = None
+    kleinste = float('inf')
+    for node, d in afstanden.items():
+        if node in bezocht:
+            continue
+        if d < kleinste:
+            kleinste = d
+            beste_node = node
+    return beste_node
+
+
+def dijkstra(graph, start):
+    afstanden = {node: float('inf') for node in graph}
+    afstanden[start] = 0
+    bezocht = set()
+    voorgangers = {}
+    while True:
+        huidige = kies_volgende(afstanden, bezocht)
+        if huidige is None:
+            break
+        bezocht.add(huidige)
+        for buur, gewicht in graph[huidige]:
+            nieuwe = afstanden[huidige] + gewicht
+            if nieuwe < afstanden[buur]:
+                afstanden[buur] = nieuwe
+                voorgangers[buur] = huidige
+    return afstanden, voorgangers
+
+
+def reconstrueer_pad(voorgangers, start, doel):
+    pad = []
+    huidige = doel
+    while huidige is not None:
+        pad.append(huidige)
+        if huidige == start:
+            break
+        huidige = voorgangers.get(huidige)
+    pad.reverse()
+    return pad if pad and pad[0] == start else []
+
+
+graph = {
+    'A': [('B', 4), ('C', 2)],
+    'B': [('A', 4), ('D', 1)],
+    'C': [('A', 2), ('D', 8)],
+    'D': [('B', 1), ('C', 8)],
+}
+
+start, doel = 'A', 'D'
+_, voorgangers = dijkstra(graph, start)
+pad = reconstrueer_pad(voorgangers, start, doel)
+print("Kortste pad:", " → ".join(pad))
+
+pad_edges = {tuple(sorted([pad[i], pad[i+1]])) for i in range(len(pad)-1)}
+posities = {'A': (0, 1), 'B': (1, 1), 'C': (0, 0), 'D': (1, 0)}
+fig, ax = plt.subplots(figsize=(5, 4))
+getekend = set()
+for node, buren in graph.items():
+    x1, y1 = posities[node]
+    for buur, gewicht in buren:
+        edge = tuple(sorted([node, buur]))
+        if edge in getekend:
+            continue
+        getekend.add(edge)
+        x2, y2 = posities[buur]
+        is_pad = edge in pad_edges
+        ax.plot([x1, x2], [y1, y2],
+                color='red' if is_pad else 'lightgray',
+                linewidth=3 if is_pad else 1, zorder=1)
+        ax.text((x1+x2)/2, (y1+y2)/2 + 0.06, str(gewicht),
+                ha='center', color='blue', fontsize=11)
+for node, (x, y) in posities.items():
+    is_op_pad = node in pad
+    kleur = 'lightcoral' if is_op_pad else 'lightyellow'
+    ax.scatter(x, y, s=700, color=kleur, edgecolors='black', zorder=2)
+    ax.text(x, y, node, ha='center', va='center', fontsize=13, zorder=3)
+ax.set_xlim(-0.5, 1.5); ax.set_ylim(-0.5, 1.5)
+ax.axis('off')
+ax.set_title(f"Kortste pad {start} → {doel}")
+plt.show()`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+Het pad `A → B → D` is **rood** met dikkere lijnen. De edge
+`A → C → D` blijft grijs — die route bestaat wel, maar is langer
+(10 > 5).
+
+Niet altijd intuïtief: `B` ligt "verder weg" qua nummer (4 vs 2), maar
+heeft een zeer korte stap naar `D` (gewicht 1). Daardoor wint de
+B-route.
+
+</details>
+
+Door naar [stap 12: bouw zelf →](./12-zelf-bouwen).

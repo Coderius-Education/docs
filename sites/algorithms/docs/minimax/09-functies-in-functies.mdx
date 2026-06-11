@@ -1,0 +1,113 @@
+---
+sidebar_position: 9
+hide_table_of_contents: true
+---
+
+# 9.9 Functies in functies
+
+**Leerdoel:** je leert hoe je binnen een eigen functie een **andere
+eigen functie aanroept**. Dat is de sleutel waarmee de volgende
+bouwstenen op elkaar voortbouwen.
+
+## Tot nu toe
+
+Op pagina 5 zag je dat functies **stapelen bij de aanroep**:
+
+```python
+print(plus_drie(verdubbel(5)))
+```
+
+Dat is mooi voor losse aanroepen. Maar wat als je **steeds** "eerst
+verdubbelen, dan plus drie" wilt? Dan herhaal je dat patroon. Beter:
+maak er één eigen functie van.
+
+## Een functie die een andere functie aanroept
+
+```python
+def verdubbel(x):
+    return x * 2
+
+def plus_drie(x):
+    return x + 3
+
+def doe_alletwee(x):
+    return plus_drie(verdubbel(x))
+```
+
+`doe_alletwee` is een nieuwe functie. In zijn body roept hij twee
+**eerder gedefinieerde** functies aan. Vanaf nu kun je
+`doe_alletwee(5)` schrijven in plaats van het patroon te herhalen.
+
+## Voorspel
+
+Wat denk je dat dit print?
+
+```python
+def begroet(naam):
+    return f"Hallo {naam}!"
+
+def begroet_drie_keer(naam):
+    return begroet(naam) + " " + begroet(naam) + " " + begroet(naam)
+
+print(begroet_drie_keer("Lotte"))
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+Hallo Lotte! Hallo Lotte! Hallo Lotte!
+```
+
+`begroet_drie_keer` roept `begroet` drie keer aan en plakt de resultaten
+aan elkaar met spaties ertussen.
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`def begroet(naam):
+    return f"Hallo {naam}!"
+
+def begroet_drie_keer(naam):
+    return begroet(naam) + " " + begroet(naam) + " " + begroet(naam)
+
+print(begroet_drie_keer("Lotte"))
+print(begroet_drie_keer("Yusuf"))`} />
+
+## Waarom is dit handig?
+
+Drie redenen:
+
+1. **DRY** — *Don't Repeat Yourself*. Schrijf de logica één keer in
+   `begroet`. Verandert "Hallo" in "Hoi"? Pas je `begroet` aan, en alle
+   functies die hem aanroepen krijgen automatisch de nieuwe versie.
+
+2. **Lezen wordt makkelijker.** `begroet_drie_keer(naam)` zegt direct
+   wat hij doet. De details zitten in `begroet`. Je gedachten
+   organiseren zich in **lagen**.
+
+3. **Bouwen-op-bouwen.** Grote programma's bestaan uit lagen van
+   functies die elkaar gebruiken. Tic-tac-toe AI is precies zo'n
+   gelaagde constructie.
+
+## Wat we hierna gaan doen
+
+In de volgende bouwsteen — `result(bord, zet)` — moet je weten *wie* de
+zet doet (X of O). Maar wacht: je hebt `player(bord)` al geschreven op
+pagina 7! Die zegt precies wie aan de beurt is.
+
+Dus schrijf je:
+
+```python
+def result(bord, zet):
+    ...
+    speler = player(bord)        # ← je eigen functie aanroepen
+    ...
+```
+
+Geen nieuwe telling, geen kopie van de logica. Gewoon `player(bord)`
+aanroepen en het antwoord gebruiken. Dat is het patroon voor de rest
+van deze track.
+
+Door naar [stap 10: bouwsteen 4 — result →](./10-bouwen-result).

@@ -1,0 +1,59 @@
+---
+sidebar_position: 7
+hide_table_of_contents: true
+---
+
+# 2.7 Aanpassen — vind het minimum
+
+**Leerdoel:** je past `vind_maximum` aan tot `vind_minimum`. Doel: zien hoe
+**symmetrisch** het accumulator-patroon is.
+
+## Opdracht
+
+Schrijf `vind_minimum(lijst)` die de **kleinste** waarde uit de lijst
+returnt. Begin van een kopie van `vind_maximum` — verander zo min mogelijk.
+
+- `vind_minimum([3, 7, 2, 9, 4])` → `2`
+- `vind_minimum([-3, -1, -7])` → `-7`
+- `vind_minimum([42])` → `42`
+
+<PyRunner initialCode={`def vind_minimum(lijst):
+    minimum = lijst[0]
+    for waarde in lijst:
+        if waarde > minimum:   # pas deze regel aan
+            minimum = waarde
+    return minimum
+
+# Tests
+print(vind_minimum([3, 7, 2, 9, 4]))     # verwacht: 2
+print(vind_minimum([-3, -1, -7]))         # verwacht: -7
+print(vind_minimum([42]))                 # verwacht: 42
+print(vind_minimum([5, 5, 5, 5]))         # verwacht: 5`} />
+
+<details>
+<summary>Tip</summary>
+
+Slechts **één teken** moet veranderen. Welke vergelijking heb je nodig: *is
+de nieuwe waarde **groter** of **kleiner** dan wat we tot nu toe hadden?*
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def vind_minimum(lijst):
+    minimum = lijst[0]
+    for waarde in lijst:
+        if waarde < minimum:   # > werd <
+            minimum = waarde
+    return minimum
+```
+
+Eén teken (`>` → `<`) en de variabelenamen (`max`/`min`) — verder niets.
+Dit is de **kracht van patronen**: zodra je het patroon herkent, hoef je
+niet meer "from scratch" te denken.
+
+</details>
+
+Door naar [stap 8: bouw zelf](./08-zelf-bouwen).

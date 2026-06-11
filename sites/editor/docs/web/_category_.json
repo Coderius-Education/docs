@@ -1,0 +1,5 @@
+{
+  "label": "Website in VS Code",
+  "position": 2,
+  "link": { "type": "doc", "id": "web/index" }
+}

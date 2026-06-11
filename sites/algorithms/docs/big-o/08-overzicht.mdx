@@ -1,0 +1,98 @@
+---
+sidebar_position: 8
+hide_table_of_contents: true
+---
+
+# 7.8 Overzicht per algoritme
+
+**Leerdoel:** je kunt voor elk algoritme uit deze cursus de Big O van het
+beste, gemiddelde en slechtste geval opzoeken — en je weet waar je het
+in actie hebt gezien.
+
+## De tabel
+
+| Algoritme | Beste geval | Gemiddeld | Slechtste geval | Klasse | Lesmateriaal |
+|---|---|---|---|---|---|
+| Lineair zoeken | O(1) | O(n) | O(n) | lineair | [→](../lineair-zoeken/01-concept) |
+| Vind maximum | O(n) | O(n) | O(n) | lineair | [→](../vind-maximum/01-concept) |
+| Max én min in één pass | O(n) | O(n) | O(n) | lineair | [→](../max-en-min/01-concept) |
+| Binair zoeken | O(1) | O(log n) | O(log n) | logaritmisch | [→](../binair-zoeken/01-concept) |
+| Selection sort | O(n²) | O(n²) | O(n²) | kwadratisch | [→](../selection-sort/01-concept) |
+| Bubble sort (early-exit) | O(n) | O(n²) | O(n²) | kwadratisch | [→](../bubble-sort/01-concept) |
+
+## Lees-aanwijzingen
+
+**Beste geval** — alles zit mee:
+- Lineair zoeken: het doel staat op index 0.
+- Binair zoeken: het midden is meteen raak.
+- Bubble sort (met early-exit): de lijst is al gesorteerd; één pass
+  zonder swaps, dus stoppen.
+
+**Slechtste geval** — alles zit tegen:
+- Zoek-algoritmes: het doel staat niet in de lijst.
+- Sorteer-algoritmes: input is omgekeerd gesorteerd.
+
+**Gemiddelde** — wat je in de praktijk meestal ziet bij random input.
+
+## Voorbeelden uitgelegd
+
+### Waarom heeft lineair zoeken een `O(1)`-beste-geval?
+
+Als de gezochte waarde toevallig **het eerste element** is, stop je
+direct. Eén vergelijking, klaar. Maar je kunt daar niet op rekenen — dus
+de **klasse** van lineair zoeken noemen we **O(n)** (slechtste geval).
+
+### Waarom is selection sort altijd `O(n²)`?
+
+Selection sort doet **geen early-exit**: zelfs op een al gesorteerde
+lijst loopt hij de hele buitenste én binnenste lus. Dat is "voorspelbaar
+veel werk" — een eigenschap die in sommige situaties juist handig is.
+
+### Waarom heeft bubble sort `O(n)` als beste geval — alleen met
+early-exit?
+
+Zonder early-exit doet bubble sort altijd `n` passes, ook als de lijst
+al gesorteerd is → `O(n²)`. **Mét** early-exit checkt hij na elke pass
+of er nog geswapt is. Op een gesorteerde lijst is dat: eerste pass = 0
+swaps, stop → `O(n)`. Zie
+[bubble-sort/07-bouwen-early-exit](../bubble-sort/07-bouwen-early-exit).
+
+## Decision tree
+
+Welke klasse moet je verwachten van *een nieuw* algoritme dat je tegenkomt?
+
+```
+Wel of geen lus door de invoer?
+├── Nee → O(1)
+└── Ja, één lus door alles
+    ├── Halveert het de zoekruimte per stap?
+    │   └── Ja → O(log n)
+    └── Bekijkt het elk element één keer?
+        └── Ja → O(n)
+        Geneste lus over de invoer?
+        └── Ja → O(n²)
+```
+
+## Voorspel — pas de tabel toe
+
+Stel je hebt 1.000.000 elementen. Hoeveel **stappen** verwacht je in het
+slechtste geval voor:
+
+- **Binair zoeken:** ?
+- **Lineair zoeken:** ?
+- **Selection sort:** ?
+
+<details>
+<summary>Antwoord</summary>
+
+- **Binair zoeken:** `log₂(1.000.000) ≈ 20` stappen.
+- **Lineair zoeken:** 1.000.000 stappen.
+- **Selection sort:** `~500.000.000.000` (een half **biljoen**) stappen.
+
+Conclusie: voor sorteren op grote datasets gebruik je in de praktijk
+**nooit** selection of bubble sort. Daar bestaan slimmere algoritmes
+voor (`O(n log n)`, zoals merge sort of quick sort).
+
+</details>
+
+Door naar [stap 9: veelgemaakte fouten →](./09-fouten).

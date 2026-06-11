@@ -1,0 +1,165 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeEditor from '@site/src/components/CodeEditor';
+
+# Koppen en lijsten
+
+## Wat ga je leren?
+
+Je leert hoe je koppen van verschillende grootte maakt en hoe je informatie in een lijst zet.
+
+## Theorie
+
+### Koppen
+
+HTML heeft zes niveaus van koppen, van `<h1>` (de grootste) tot `<h6>` (de kleinste):
+
+```html
+<h1>Hoofdtitel</h1>
+<h2>Ondertitel</h2>
+<h3>Nog kleiner</h3>
+```
+
+Gebruik `<h1>` maar één keer per pagina — voor de hoofdtitel. Gebruik `<h2>` voor secties.
+
+### Lijsten
+
+Er zijn twee soorten lijsten:
+
+- **Ongeordende lijst** (`<ul>`) — met bolletjes
+- **Geordende lijst** (`<ol>`) — met nummers
+
+Elk item staat in een `<li>` tag:
+
+```html
+<ul>
+  <li>Appel</li>
+  <li>Banaan</li>
+</ul>
+
+<ol>
+  <li>Eerst dit</li>
+  <li>Dan dit</li>
+</ol>
+```
+
+## Predict
+
+Wat is het verschil in de browser tussen `<ul>` en `<ol>`?
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+- `<ul>` toont de items met **bolletjes** (bullets)
+- `<ol>` toont de items met **nummers** (1, 2, 3…)
+
+De volgorde van items in een `<ul>` maakt niet uit. In een `<ol>` wel.
+
+</details>
+
+## Probeer het zelf!
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Koppen en lijsten</title>
+</head>
+<body>
+  <h1>Mijn favoriete dingen</h1>
+
+  <h2>Eten</h2>
+  <ul>
+    <li>Pizza</li>
+    <li>Pasta</li>
+    <li>Sushi</li>
+  </ul>
+
+  <h2>Top 3 films</h2>
+  <ol>
+    <li>The Lion King</li>
+    <li>Interstellar</li>
+    <li>Spider-Man</li>
+  </ol>
+</body>
+</html>`}
+  height="480px"
+/>
+
+## Investigate
+
+Experimenteer met de code:
+
+- Wat gebeurt er als je `<ul>` verandert in `<ol>`?
+- Wat zie je als je een `<h4>` toevoegt? Is die groter of kleiner dan `<h2>`?
+- Kun je een lijst maken binnen een lijst? Probeer het.
+
+## Modify
+
+**Opdracht:** Voeg een derde sectie toe aan de pagina met de kop "Hobby's" en een ongeordende lijst met minstens drie van jouw hobby's.
+
+<details>
+<summary>Tip</summary>
+
+Maak een `<h2>` voor de kop en een `<ul>` met `<li>` items eronder. Zet dit geheel vóór `</body>`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<h2>Hobby's</h2>
+<ul>
+  <li>Voetbal</li>
+  <li>Tekenen</li>
+  <li>Gamen</li>
+</ul>
+```
+
+</details>
+
+## Make
+
+**Opdracht:** Maak een gestructureerde paklijst in HTML voor je volgende vakantie. Begin met een overkoepelende kop (`<h2>`), en gebruik daaronder een ongeordende lijst (`<ul>`) voor kleding en een geordende lijst (`<ol>`) voor je top 3 kleding met de hoogste prioriteit.
+
+<details>
+<summary>Tip</summary>
+
+Zorg ervoor dat elk item (zowel in de `<ol>` als de `<ul>`) in een `<li>` tag staat.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<h2>Paklijst Vakantie</h2>
+<ul>
+  <li>Zwembroek</li>
+  <li>Zonnebril</li>
+  <li>Zonnebrand</li>
+</ul>
+
+<h3>Top 3 prioriteit</h3>
+<ol>
+  <li>Paspoort</li>
+  <li>Telefoonoplader</li>
+  <li>Portemonnee</li>
+</ol>
+```
+
+</details>
+
+## Er gaat iets mis
+
+**`<li>` buiten een lijst gebruiken**
+
+```html
+<li>Dit item staat nergens in</li>
+```
+
+Een `<li>` item moet altijd binnen een `<ul>` of `<ol>` staan. Zonder die "container" weet de browser niet wat hij ermee moet en ziet het er vreemd uit.

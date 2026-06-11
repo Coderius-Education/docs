@@ -1,0 +1,60 @@
+---
+title: JavaScript Basics
+hide_table_of_contents: true
+---
+
+import CodeEditor from '@site/src/components/CodeEditor';
+
+# JavaScript Basics
+
+JavaScript is de taal die websites interactief maakt. Waar HTML de structuur bepaalt en CSS de opmaak, zorgt JavaScript voor het gedrag — knoppen die reageren, tekst die verandert, en animaties die bewegen.
+
+## Hoe te beginnen?
+
+Volg de lessen hieronder in volgorde. Elke les bouwt voort op de vorige en heeft een interactieve editor om direct mee te oefenen.
+
+## Lessen
+
+| Onderwerp | Oefenen |
+|-----------|---------|
+| Inline onclick — tekst | [Inline onclick](/docs/js-basics/inline-onclick) |
+| Inline onclick — stijl | [Inline stijl](/docs/js-basics/inline-stijl) |
+| De script-tag | [De script-tag](/docs/js-basics/script-tag) |
+| script.js en defer | [script.js](/docs/js-basics/scriptjs) |
+| Variabelen | [Variabelen](/docs/js-basics/variabelen) |
+| Events | [Events](/docs/js-basics/events) |
+
+---
+
+## Probeer het zelf!
+
+Gebruik de editor hieronder om JavaScript te oefenen.
+Schrijf je code in het JavaScript-tabblad en zie het resultaat direct rechts.
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Mijn pagina</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1 id="titel">Hallo JavaScript!</h1>
+  <button onclick="verander()">Klik mij</button>
+</body>
+</html>`}
+  initialCss={`h1 {
+  color: #2e8555;
+}
+
+button {
+  padding: 8px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+}`}
+  initialJs={`function verander() {
+  document.getElementById('titel').textContent = 'Je hebt geklikt!';
+}`}
+  height="480px"
+/>

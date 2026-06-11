@@ -1,0 +1,69 @@
+﻿---
+sidebar_position: 7
+---
+
+# 1.7 Informatie opvragen over een vorm
+
+:::info Wat moet je al weten
+- [1.6 Een vorm aanpassen](/docs/vormen/vorm_aanpassen) - eigenschappen kunnen wijzigen
+:::
+
+Wanneer je een spel programmeert, gaan dingen vaak niet zoals je verwacht. Om problemen op te lossen (dit noemen we **debuggen**), moet je informatie over je vormen kunnen opvragen, zoals hun positie of kleur. Dit doe je meestal via de `VARIABELE.ATTRIBUUT` notatie.
+
+In het onderstaande voorbeeld is `mijn_cirkel` de variabele en `color` het attribuut.
+
+<PygbagRunner code={`import play 
+
+mijn_cirkel = play.new_circle()
+
+print(mijn_cirkel.color)`} height={300} />
+Als het goed is, zie je in je **shell** of **console** nu het volgende staan: 
+
+```
+pygame-ce 2.5.3 (SDL 2.30.12, Python 3.10.11)
+black
+```
+We hebben dus opgevraagd dat **mijn_cirkel.color** de waarde **black** heeft.
+Naast **color** kun je alle attributen opvragen van een vorm, bijvoorbeeld **x**, **y**, etc.
+
+## 1.7.1 Alle informatie in één keer opvragen
+
+Soms wil je snel alles weten over een vorm. Met **.info()** print je in één keer alle informatie:
+
+<PygbagRunner code={`import play
+
+mijn_cirkel = play.new_circle(color='red', x=50, radius=30)
+
+mijn_cirkel.info()`} height={300} />
+
+Dit is erg handig bij het debuggen: je ziet direct de kleur, positie, grootte en alle andere attributen van je vorm.
+
+## Opdracht 1.7.a
+
+Bekijk het voorbeeld hieronder.
+- maak een cirkel en zet die op x-positie 50 en y-positie -100
+- vraag dan de x- en y-posities op door **print** te gebruiken
+
+<PygbagRunner code={`import play
+
+mijn_cirkel = play.new_circle()
+
+mijn_cirkel.color = 'blue'
+
+print('print hieronder de x- en y-positie')`} height={300} />
+
+<details>
+    <summary>Klik hier voor de oplossing!</summary>
+
+<PygbagRunner code={`import play
+
+mijn_cirkel = play.new_circle()
+
+mijn_cirkel.color = 'blue'
+mijn_cirkel.x = 50
+mijn_cirkel.y = -100
+
+print(mijn_cirkel.x)
+print(mijn_cirkel.y)`} height={300} />
+
+</details>

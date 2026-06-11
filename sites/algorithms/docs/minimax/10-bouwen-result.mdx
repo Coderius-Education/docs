@@ -1,0 +1,165 @@
+---
+sidebar_position: 10
+hide_table_of_contents: true
+---
+
+# 9.10 Bouwsteen 4 — `result(bord, zet)`
+
+**Leerdoel:** je past een zet toe op een bord — zonder het oorspronkelijke
+bord te veranderen. Eerste functie die een eerder geschreven functie
+(`player`) hergebruikt.
+
+## Wat doet deze functie?
+
+`result(bord, zet)` geeft een **nieuw** bord terug waarop de zet is
+toegepast. Welke speler de zet doet, bepaal je met `player(bord)` (uit
+pagina 7).
+
+> **Belangrijk**: het originele `bord` mag je **niet** veranderen.
+> Minimax moet straks honderden zetten "proberen" zonder het echte spel
+> te beïnvloeden. Dat lukt alleen als elke `result`-aanroep een vers
+> bord teruggeeft.
+
+## Waarom is dit subtiel?
+
+In Python werken lijsten met **referenties**. Als je schrijft
+
+```python
+nieuw_bord = bord
+nieuw_bord[0][0] = "X"
+```
+
+dan verander je **ook** het originele `bord`. `nieuw_bord` is geen kopie
+— het is een tweede naam voor hetzelfde object.
+
+Oplossing: **diepe kopie** maken met de standaardbibliotheek `copy`:
+
+```python
+import copy
+nieuw_bord = copy.deepcopy(bord)
+```
+
+`deepcopy` maakt een volledig onafhankelijke kopie, ook van de rijen
+binnenin. Dan kun je `nieuw_bord[0][0] = "X"` doen zonder dat `bord`
+verandert.
+
+## Specificatie
+
+- **Input**: een `bord` en een `zet` (tuple `(i, j)`).
+- **Output**: een **nieuw** bord met de zet van de huidige speler
+  ingevuld op `(i, j)`.
+- **Voorbeeld**:
+  ```
+  bord = leeg
+  result(bord, (1, 1)) → bord met "X" in het midden
+  bord is daarna NOG STEEDS leeg
+  ```
+
+## Voorspel
+
+Wat denk je dat dit print?
+
+```python
+import copy
+
+origineel = [[None, None, None],
+             [None, None, None],
+             [None, None, None]]
+
+kopie = copy.deepcopy(origineel)
+kopie[0][0] = "X"
+
+print("origineel:", origineel)
+print("kopie:    ", kopie)
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+origineel: [[None, None, None], [None, None, None], [None, None, None]]
+kopie:     [['X', None, None], [None, None, None], [None, None, None]]
+```
+
+`deepcopy` heeft een onafhankelijke kopie gemaakt. Het origineel blijft
+onaangeraakt.
+
+</details>
+
+## Bouw zelf en test
+
+Boven de starter staan je twee al-werkende functies van vorige pagina's
+(`initial_state` en `player`). Vul `result` aan.
+
+<PyRunner initialCode={`import copy
+
+
+def initial_state():
+    return [[None]*3 for _ in range(3)]
+
+
+def player(bord):
+    x_count = sum(rij.count("X") for rij in bord)
+    o_count = sum(rij.count("O") for rij in bord)
+    return "X" if x_count == o_count else "O"
+
+
+def result(bord, zet):
+    # Vul aan:
+    # 1. maak een deepcopy van bord
+    # 2. bepaal wie aan zet is met player(bord)
+    # 3. pak (i, j) uit zet
+    # 4. zet de speler op de juiste plek in de kopie
+    # 5. return de kopie
+    return bord   # ← nu nog het origineel, fout!
+
+
+# === Tests ===
+leeg = initial_state()
+na_zet = result(leeg, (1, 1))
+assert na_zet[1][1] == "X", "X (eerste zet) moet in het midden komen"
+
+# Cruciaal: origineel mag niet veranderen
+assert leeg[1][1] is None, "Origineel bord moet onveranderd zijn — gebruik je deepcopy?"
+
+# Na X is O aan zet
+na_x = result(leeg, (0, 0))
+na_xo = result(na_x, (1, 1))
+assert na_xo[0][0] == "X"
+assert na_xo[1][1] == "O"
+
+# na_x mag ook niet veranderd zijn
+assert na_x[1][1] is None, "Tweede zet mag het tussen-bord niet wijzigen"
+
+# Een hele reeks zetten
+bord = initial_state()
+bord = result(bord, (0, 0))   # X
+bord = result(bord, (1, 1))   # O
+bord = result(bord, (0, 1))   # X
+assert bord[0][0] == "X"
+assert bord[1][1] == "O"
+assert bord[0][1] == "X"
+
+print("Alle tests gehaald ✓")`} />
+
+<details>
+<summary>Tip</summary>
+
+Drie regels werk:
+
+```python
+nieuw = copy.deepcopy(bord)
+i, j = zet
+nieuw[i][j] = player(bord)
+return nieuw
+```
+
+`i, j = zet` is tuple-unpacking: pak rij en kolom los uit de tuple.
+
+Belangrijk: roep `player(bord)` aan **vóór** je de cel invult — want
+**ná** de wijziging telt het bord er één extra zet, en zou `player`
+het verkeerde antwoord geven.
+
+</details>
+
+Door naar [stap 11: bouwsteen 5 — winner →](./11-bouwen-winner).

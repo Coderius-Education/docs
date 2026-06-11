@@ -1,0 +1,48 @@
+.controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.connectButton {
+  font: inherit;
+  font-size: 0.8rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 0.3rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  cursor: pointer;
+}
+
+.connectButton:hover:not(:disabled) {
+  background: var(--ifm-color-emphasis-100);
+}
+
+.connectButton:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.connState {
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.replForm {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.4rem;
+  border-top: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.replInput {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.8rem;
+  flex: 1;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.3rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  background: var(--ifm-background-color);
+  color: var(--ifm-font-color-base);
+}

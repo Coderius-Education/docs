@@ -1,0 +1,101 @@
+---
+sidebar_position: 3
+hide_table_of_contents: true
+---
+
+# 5.3 Bouwsteen 1 — vind de index van het kleinste
+
+**Leerdoel:** je past het accumulator-patroon uit *vind het maximum* aan
+om de **index** van het **kleinste** element te vinden.
+
+## Wat we willen
+
+Een functie die de **positie** terug geeft waar de kleinste waarde staat.
+Niet de waarde zelf — voor swappen straks hebben we de **index** nodig.
+
+## Voorspel
+
+Wat denk je dat dit print?
+
+```python
+def index_van_kleinste(lijst):
+    min_index = 0
+    for i, waarde in enumerate(lijst):
+        if waarde < lijst[min_index]:
+            min_index = i
+    return min_index
+
+print(index_van_kleinste([5, 2, 8, 1, 4]))
+print(index_van_kleinste([10, 20, 30]))
+print(index_van_kleinste([3, 3, 3]))
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+3
+0
+0
+```
+
+- `[5, 2, 8, 1, 4]` → de 1 staat op index 3 → `3`.
+- `[10, 20, 30]` → de 10 staat op index 0 → `0`.
+- `[3, 3, 3]` → bij gelijke waardes wint de **eerste** (omdat we strict
+  `<` gebruiken, niet `<=`).
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`def index_van_kleinste(lijst):
+    min_index = 0
+    for i, waarde in enumerate(lijst):
+        if waarde < lijst[min_index]:
+            min_index = i
+    return min_index
+
+print(index_van_kleinste([5, 2, 8, 1, 4]))
+print(index_van_kleinste([10, 20, 30]))
+print(index_van_kleinste([3, 3, 3]))`} />
+
+## Vergelijking met *vind het maximum*
+
+Bijna hetzelfde:
+
+| | vind max | vind min-index |
+|---|---|---|
+| Variabele houdt bij | waarde | **index** |
+| Vergelijking | `>` | `<` |
+| Update | `maximum = waarde` | `min_index = i` |
+| Return | `maximum` | `min_index` |
+
+Twee verschillen: we houden een **index** bij in plaats van een waarde, en
+we gebruiken `<` in plaats van `>`. Het achterliggende patroon is identiek.
+
+## Experimenteer
+
+Probeer ook negatieve lijsten en lege lijsten:
+
+<PyRunner initialCode={`def index_van_kleinste(lijst):
+    min_index = 0
+    for i, waarde in enumerate(lijst):
+        if waarde < lijst[min_index]:
+            min_index = i
+    return min_index
+
+print(index_van_kleinste([-3, -1, -7]))    # verwacht: 2
+print(index_van_kleinste([42]))             # verwacht: 0
+# print(index_van_kleinste([]))             # zou crashen op lijst[0]`} />
+
+<SteppingStoneModel stone="selection-min-index" />
+
+## Wat nu nog mist
+
+We kunnen het kleinste vinden in de **hele** lijst. Maar voor selection
+sort moeten we ook kunnen zoeken in een **deel** — vanaf een bepaalde
+positie. Dat doen we in bouwsteen 3.
+
+Eerst leren we de andere helft van het algoritme kennen: **swappen**.
+
+Door naar [bouwsteen 2: swappen](./04-bouwen-swap).

@@ -1,0 +1,11 @@
+{
+  "label": "Big O notatie",
+  "position": 7,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "title": "Big O notatie",
+    "description": "Hoe schaalt een algoritme als de invoer groeit? Leer de taal van complexiteit."
+  }
+}

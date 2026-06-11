@@ -1,0 +1,149 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeEditor from '@site/src/components/CodeEditor';
+
+# Pagina's koppelen
+
+## Wat ga je leren?
+
+Je leert hoe je een klikbare link maakt met de `<a>` tag en hoe je een link in een nieuw tabblad opent.
+
+## Theorie
+
+Een link maak je met de `<a>` tag. Het `href` attribuut bevat het webadres:
+
+```html
+<a href="https://www.wikipedia.org">Ga naar Wikipedia</a>
+```
+
+De tekst tussen de tags is wat de gebruiker ziet en kan aanklikken.
+
+### Link in een nieuw tabblad
+
+Voeg `target="_blank"` toe om de link in een nieuw tabblad te openen:
+
+```html
+<a href="https://www.wikipedia.org" target="_blank">Wikipedia (nieuw tabblad)</a>
+```
+
+:::info
+In de preview hieronder werken links — je kunt ze aanklikken. Let op: de editor is beveiligd, dus sommige sites blokkeren het laden in een klein venster.
+:::
+
+### En knoppen?
+
+Naast links zie je op websites vaak **knoppen** — die maak je met de `<button>` tag. Een knop alleen doet niets, je hebt JavaScript nodig om iets te laten gebeuren bij een klik:
+
+```html
+<button>Klik mij</button>
+```
+
+In de **JavaScript-cursus** leer je hoe je een knop interactief maakt. Voor nu: weet dat `<button>` bestaat en op een gewone knop lijkt.
+
+## Predict
+
+Wat is het verschil tussen een link met en zonder `target="_blank"`?
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+- **Zonder** `target="_blank"`: de pagina opent in **hetzelfde** venster/tabblad. De huidige pagina verdwijnt.
+- **Met** `target="_blank"`: de pagina opent in een **nieuw** tabblad. De huidige pagina blijft open.
+
+</details>
+
+## Probeer het zelf!
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Links</title>
+</head>
+<body>
+  <h1>Handige links</h1>
+
+  <p>
+    Bezoek <a href="https://www.wikipedia.org">Wikipedia</a>
+    voor meer informatie.
+  </p>
+
+  <p>
+    <a href="https://www.google.com" target="_blank">
+      Open Google in een nieuw tabblad
+    </a>
+  </p>
+</body>
+</html>`}
+  height="440px"
+/>
+
+## Investigate
+
+Experimenteer met de code:
+
+- Wat gebeurt er als je `href` leeg laat (`href=""`)?
+- Wat zie je als je de tekst tussen de `<a>` tags vervangt door een `<img>` tag? (Afbeelding als link!)
+- Verwijder `target="_blank"` — wat verandert er?
+
+## Modify
+
+**Opdracht:** Voeg een link toe naar de Wikipedia-pagina over jouw favoriete onderwerp. Zorg dat de link in een nieuw tabblad opent.
+
+<details>
+<summary>Tip</summary>
+
+Zoek op Wikipedia naar jouw onderwerp en kopieer de URL uit de adresbalk. Gebruik `target="_blank"` om in een nieuw tabblad te openen.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<p>
+  <a href="https://nl.wikipedia.org/wiki/Hond" target="_blank">
+    Meer over honden op Wikipedia
+  </a>
+</p>
+```
+
+</details>
+
+## Make
+
+**Opdracht:** Maak een navigatiemenu met links naar je 3 favoriete websites. Zet de links in een ongeordende lijst (`<ul>`) en laat ze openen in een nieuw tabblad.
+
+<details>
+<summary>Tip</summary>
+
+Zet in elke `<li>` een `<a>` tag met een correcte `href` en `target="_blank"`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<h2>Mijn Favoriete Websites</h2>
+<ul>
+  <li><a href="https://www.youtube.com" target="_blank">YouTube</a></li>
+  <li><a href="https://www.netflix.com" target="_blank">Netflix</a></li>
+  <li><a href="https://www.twitch.tv" target="_blank">Twitch</a></li>
+</ul>
+```
+
+</details>
+
+## Er gaat iets mis
+
+**`href` vergeten**
+
+```html
+<a>Klik hier</a>
+```
+
+Zonder `href` is de tekst niet klikbaar — de browser weet niet waar naartoe te navigeren. Je ziet misschien nog wel de blauwe kleur, maar klikken doet niets. Vergeet `href` nooit.

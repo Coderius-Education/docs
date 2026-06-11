@@ -1,0 +1,31 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 6px;
+  margin-bottom: 1.5rem;
+  align-items: start;
+}
+
+/* Open item spans all columns so content has room */
+.grid :global(details[open]) {
+  grid-column: 1 / -1;
+}
+
+/* Compact styling: override Docusaurus alert padding/margin */
+.grid :global(details) {
+  margin: 0 !important;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.grid :global(details > summary) {
+  font-size: 0.875rem;
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+
+/* Tighter inner content */
+.grid :global([class*='collapsibleContent']) {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+}

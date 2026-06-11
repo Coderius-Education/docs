@@ -1,0 +1,25 @@
+---
+sidebar_position: 6
+sidebar_label: "Stap 6: git log"
+title: "Stap 6: de geschiedenis bekijken met git log"
+hide_table_of_contents: true
+---
+
+import GitSimulator from '@site/src/components/GitSimulator';
+
+# Stap 6: de geschiedenis bekijken met `git log`
+
+Met `git log` zie je alle commits, nieuwste eerst. Elke commit heeft een uniek **id** en je commitboodschap.
+
+```bash
+git log
+```
+
+<GitSimulator
+  scenarioId="stap-6-log"
+  initialFiles={{'hello.txt': 'Hallo wereld!\n'}}
+  objective={{
+    description: 'Maak een commit en bekijk daarna de geschiedenis met git log.',
+    check: (s) => s.commits.length >= 1 && s.commands.some((c) => c.trim() === 'git log'),
+  }}
+/>

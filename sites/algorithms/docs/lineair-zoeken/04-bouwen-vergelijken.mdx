@@ -1,0 +1,79 @@
+---
+sidebar_position: 4
+hide_table_of_contents: true
+---
+
+# 1.4 Bouwsteen 2 — vergelijken met het doel
+
+**Leerdoel:** je voegt een `if`-vergelijking toe binnen je lus, zodat je
+*alleen iets doet* als het element gelijk is aan wat je zoekt.
+
+## Wat we willen
+
+We willen tijdens het doorlopen **controleren** of het huidige element gelijk
+is aan ons doel. Zo ja → iets melden. Zo nee → doorlopen.
+
+## Voorspel
+
+Wat denk je dat dit print? Let goed op de inspringing.
+
+```python
+lijst = [3, 1, 4, 1, 5]
+doel = 4
+for waarde in lijst:
+    if waarde == doel:
+        print("gevonden!")
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+gevonden!
+```
+
+Eén keer "gevonden!" — namelijk wanneer `waarde` gelijk is aan 4. Voor de
+andere elementen (3, 1, 1, 5) is de `if` onwaar en wordt er niets geprint.
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`lijst = [3, 1, 4, 1, 5]
+doel = 4
+for waarde in lijst:
+    if waarde == doel:
+        print("gevonden!")`} />
+
+## Experimenteer
+
+- Verander `doel` in `1`. Wat print het nu?
+- Verander `doel` in `9`. Wat print het?
+
+<details>
+<summary>Wat zie je?</summary>
+
+- `doel = 1` → **twee keer** "gevonden!" (1 staat twee keer in de lijst).
+- `doel = 9` → **niets** (9 staat niet in de lijst). Het programma loopt
+  netjes af zonder fout, maar zonder output.
+
+</details>
+
+<SteppingStoneModel stone="linear-compare" />
+
+## `==` versus `=`
+
+**Let op** een veelgemaakte fout:
+
+- `=` is **toekenning**: `x = 5` betekent *"zet 5 in x"*.
+- `==` is **vergelijking**: `if x == 5` betekent *"klopt het dat x gelijk
+  is aan 5?"*.
+
+In een `if` moet je `==` gebruiken — anders krijg je een `SyntaxError`.
+
+## Wat nu nog mist
+
+We *melden* dat we iets vinden, maar we geven nog niets terug en we zeggen
+ook niet **waar** in de lijst we het gevonden hebben (de index).
+
+Door naar [bouwsteen 3: index teruggeven](./05-bouwen-teruggeven).

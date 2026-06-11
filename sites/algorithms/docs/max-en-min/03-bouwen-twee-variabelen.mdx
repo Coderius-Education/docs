@@ -1,0 +1,94 @@
+---
+sidebar_position: 3
+hide_table_of_contents: true
+---
+
+# 3.3 Bouwsteen 1 — twee variabelen tegelijk bijhouden
+
+**Leerdoel:** je kunt twee accumulators in één keer initialiseren, beide
+op `lijst[0]`.
+
+## Wat we willen
+
+Twee variabelen — `klein` en `groot` — die allebei starten op een veilige
+waarde (een waarde die zeker in de lijst staat).
+
+## Voorspel
+
+Wat denk je dat dit print?
+
+```python
+lijst = [5, 2, 8, 1, 7, 4]
+klein = lijst[0]
+groot = lijst[0]
+print(klein, groot)
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+5 5
+```
+
+Beide variabelen krijgen dezelfde waarde — het eerste element van de
+lijst. Dat is op dit moment nog niet *het echte* min en max — we hebben
+namelijk de rest van de lijst nog niet bekeken. Het is een **veilige
+beginschatting**: een waarde die zeker in de lijst staat.
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`lijst = [5, 2, 8, 1, 7, 4]
+klein = lijst[0]
+groot = lijst[0]
+print(klein, groot)`} />
+
+## Pythonische korte notatie
+
+Python staat **meervoudige toekenning** toe. Op één regel:
+
+```python
+klein = groot = lijst[0]
+```
+
+Beide variabelen krijgen dezelfde waarde. Korter — maar betekent precies
+hetzelfde.
+
+<PyRunner initialCode={`lijst = [5, 2, 8, 1, 7, 4]
+klein = groot = lijst[0]
+print(klein, groot)`} />
+
+## Waarom niet `klein = 999, groot = -999`?
+
+Soms zie je code als:
+
+```python
+klein = 999     # hoog beginnen — wordt vanzelf vervangen door kleinere
+groot = -999    # laag beginnen — wordt vanzelf vervangen door grotere
+```
+
+Werkt **alleen** als je weet dat alle waardes tussen `-999` en `999`
+liggen. Bij `[1000, 2000, 3000]` krijg je dan `groot = -999` als
+antwoord — fout.
+
+**Conclusie**: `lijst[0]` is veiliger.
+
+## Experimenteer
+
+Test wat er gebeurt met `lijst[0]` op verschillende lijsten:
+
+<PyRunner initialCode={`for lijst in [[5, 2, 8, 1, 7, 4], [-3, -1, -7], [42], [100, 100, 100]]:
+    klein = groot = lijst[0]
+    print(f"lijst={lijst} → start: klein={klein}, groot={groot}")`} />
+
+<SteppingStoneModel stone="minmax-initialize" />
+
+## Wat nu nog mist
+
+We hebben startwaardes. Maar de variabelen veranderen nog niet — we doen
+nog niets met de rest van de lijst. In de volgende stap voegen we de
+**updates** toe.
+
+Door naar [bouwsteen 2: twee updates per element](./04-bouwen-twee-updates).

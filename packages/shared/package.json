@@ -1,0 +1,25 @@
+{
+  "name": "@coderius/shared",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Gedeelde Docusaurus-resources voor alle Coderius -docs sites: config-factory, merkthema, brand-assets en herbruikbare componenten.",
+  "type": "commonjs",
+  "exports": {
+    "./config": "./config/index.js",
+    "./plugins/transpile-shared": "./plugins/transpile-shared.js",
+    "./css/custom.css": "./css/custom.css",
+    "./components/HomepageFeatures": "./components/HomepageFeatures/index.tsx",
+    "./components/HomepageFeatures/styles.module.css": "./components/HomepageFeatures/styles.module.css",
+    "./package.json": "./package.json"
+  },
+  "dependencies": {
+    "prism-react-renderer": "catalog:"
+  },
+  "peerDependencies": {
+    "@docusaurus/core": "*",
+    "@docusaurus/preset-classic": "*",
+    "clsx": "*",
+    "react": "*",
+    "react-dom": "*"
+  }
+}

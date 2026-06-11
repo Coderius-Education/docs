@@ -1,0 +1,87 @@
+---
+sidebar_position: 1
+sidebar_label: 'Low'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# XSS (Reflected) — Low
+
+Welkom bij Cross-Site Scripting (XSS). In dit lab leer je hoe hackers kwaadaardige JavaScript-code kunnen verstoppen in links en invoervelden.
+
+## 1. Predict (Voorspel)
+
+De code op het *Low* niveau is heel simpel. Je vult je naam in en de website begroet je:
+
+```php
+$name = $_GET[ 'name' ];
+echo "Hello " . $name;
+```
+
+**Vraag:** Wat gebeurt er als een gebruiker de volgende vreemde tekst als naam invult: `<script>alert("Hacked!");</script>` ?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Omdat de tekst direct en ongefilterd door `echo` op de webpagina wordt uitgeprint, denkt jouw webbrowser dat de `<script>`-tag daadwerkelijk een stukje bijbehorende broncode van de website is! De browser voert het script direct uit en toont een pop-up (alert) met de tekst "Hacked!".
+
+</details>
+
+## 2. Run (Uitvoeren)
+
+Start het lab en bekijk hoe de applicatie normaal werkt.
+
+<DvwaLab module="xss_reflected" level="low" />
+
+Vul een gewone naam in (zoals `Jan` of `Lisa`) en klik op Submit. Observeer hoe jouw naam op het scherm terugkomt (*reflected*).
+
+## 3. Investigate (Onderzoeken)
+
+Vul nu `<b>test</b>` in het naamveld in en klik op Submit.
+
+**Vraag:** Wat zie je op het scherm? Wordt het woord "test" vetgedrukt weergegeven, of verschijnt letterlijk de tekst `<b>test</b>`? Wat onthult dit?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Het woord "test" verschijnt **vetgedrukt** — de HTML-tag `<b>` wordt door de browser uitgevoerd in plaats van als tekst weergegeven. Dit onthult dat de applicatie jouw invoer ongefilterd in de HTML-pagina plakt. Alles wat jij typt, kan de browser als code interpreteren — inclusief `<script>`-tags.
+
+</details>
+
+## 4. Modify & Make (Aanpassen & Maken)
+
+Tijd om je eerste XSS-aanval te lanceren. Het doel is om een JavaScript pop-up box op je scherm te laten verschijnen.
+
+<details>
+
+<summary>Tip</summary>
+
+Gebruik de code uit de Predict-fase. Plak het letterlijk in het tekstvak en klik op Submit.
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+Vul in: `<script>alert(1);</script>`. Zodra je op Submit klikt, voert jouw browser de code uit en verschijnt er een pop-up. In een echte aanval zou de hacker jou een linkje sturen waarin dit script al zit verstopt (bijv: `http://website.nl/?name=<script>...`). Zodra jij klikt, ben je gehackt!
+
+</details>
+
+## 5. ✓ Wat moest je zien?
+
+:::tip Controle
+- Na het invullen van `<script>alert(1);</script>` verschijnt er een **pop-up venster** in de browser met het getal 1.
+- Er is geen foutmelding — de code wordt gewoon uitgevoerd.
+- De URL in de adresbalk bevat jouw script als parameter.
+
+Zie je de letterlijke tekst `<script>alert(1);</script>` op het scherm in plaats van een pop-up? Dan escapet de applicatie al de HTML. Controleer of het security level op **low** staat.
+:::
+
+## 6. Er gaat iets mis...
+
+Wat als je probeert een geavanceerd script te injecteren, maar de webpagina toont simpelweg letterlijk de tekst `<script>...` op het scherm in plaats van het uit te voeren?
+Dit is eigenlijk precies wat we *willen* (als beveiliger)! Dit gebeurt wanneer de input wordt weergegeven in een veld dat al sterk beveiligd is, of wanneer een moderne browser *Content Security Policy (CSP)* heeft ingeschakeld. Zorg ervoor dat je DVWA gebruikt zoals bedoeld om te leren hoe de basisaanval werkt.

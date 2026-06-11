@@ -1,0 +1,102 @@
+---
+sidebar_position: 3
+sidebar_label: 'High'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# XSS (DOM) — High
+
+Dit level bevat een fascinerende eigenschap van internetbrowsers waar de backend geen enkel verweer tegen heeft.
+
+## 1. Predict (Voorspel)
+
+De backend-PHP-server probeert nu met een harde whitelist te werken. De URL-parameter *mag* simpelweg geen vreemde karakters bevatten, anders wordt de boel afgebroken.
+
+```php
+switch ($_GET['default']) {
+    case "French":
+    case "English":
+    case "German":
+    case "Spanish":
+        break;
+    default:
+        exit("Taal niet toegestaan!");
+}
+```
+
+**Vraag:** De server staat letterlijk alleen de woorden "French, English, German, Spanish" toe in de adresbalk. Toch is deze applicatie nog kwetsbaar voor DOM XSS. Dit heeft te maken met het `#` (hekje/hash) symbool in een URL. Weet je (of kun je raden) wat dit symbool doet?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Het `#`-symbool in een URL (bijv. `website.nl/#contact`) is bedoeld voor ankerlinks op een pagina (scrollen naar een kopje). **Een heel belangrijke regel van het internet:** Alles wat ná het `#`-symbool komt, wordt door de webbrowser lokaal bewaard en wordt **nooit** meegestuurd in het HTTP-request naar de webserver!
+De server kan dit dus ook nooit controleren of blokkeren!
+
+</details>
+
+## 2. Run (Uitvoeren)
+
+Start het lab en bekijk het gedrag van de dropdown.
+
+<DvwaLab module="xss_dom" level="high" />
+
+> ⚠️ **Labbeperking:** De `#`-hash-truc vereist directe toegang tot de **URL-balk** van je browser, wat niet mogelijk is in het embedded lab. Het lab toont de server-side logica (de whitelist), maar om de aanval daadwerkelijk uit te voeren heb je een [lokale DVWA-installatie](/docs/dvwa_installatie) nodig.
+
+Selecteer de beschikbare talen en observeer hoe de whitelist werkt.
+
+## 3. Investigate (Onderzoeken)
+
+Probeer de URL te veranderen naar `?default=Klingon`. Kijk wat de server teruggeeft.
+
+**Vraag:** Wat zie je? Wordt de pagina volledig geblokkeerd? Wat onthult dit over de reikwijdte van de server-side controle?
+
+<details>
+
+<summary>Antwoord</summary>
+
+De server blokkeert de aanvraag met "Taal niet toegestaan!" — de whitelist werkt correct voor de querystring. Maar de server ziet nooit wat er ná het `#`-symbool staat. Als jij `?default=English#<script>alert(1)</script>` invoert, stuurt de browser naar de server alleen `?default=English`. De server keurt dit goed. Maar de JavaScript in de browser leest wél de volledige URL inclusief de hash!
+
+</details>
+
+## 4. Modify & Make (Aanpassen & Maken)
+
+Omdat de backend `English` in de parameter verwacht, geef je hem dat. Maar je plakt stiekem via de *hash* je payload erachter!
+
+<details>
+
+<summary>Tip</summary>
+
+Bouw de URL op, waarbij je éérst aan de whitelist voldoet (`default=English`), en sluit direct daarna de payload aan die niet naar de server gaat.
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+Gebruik de waarde:
+`English#<script>alert(1)</script>`
+
+Wat er gebeurt:
+1. Je vraagt aan de backend-server de pagina op: `?default=English`.
+2. De backend checkt de whitelist. "English" klopt! De pagina wordt veilig doorgestuurd.
+3. De JavaScript *in je lokale browser* leest wél de volledige adresbalk inclusief de hash! De JS schrijft de ongefilterde string direct in de pagina en triggert het script!
+
+</details>
+
+## 5. ✓ Wat moest je zien?
+
+:::tip Controle
+- `?default=English#<script>alert(1)</script>` triggert een pop-up ondanks de whitelist.
+- De server krijgt alleen `?default=English` te zien en keurt dit goed.
+- De hash-payload is volledig client-side — de browser voert het uit zonder de server te bereiken.
+
+Geen pop-up? De hash-truc werkt alleen met directe toegang tot de URL-balk in een niet-embedded omgeving. Probeer het in een lokale DVWA-installatie.
+:::
+
+## 6. Er gaat iets mis...
+
+Je probeert dit op een andere website en het werkt opeens niet. De truc met `#` is het perfecte voorbeeld van échte DOM XSS (gebaseerd op *Location Fragments*). Echter, de frontend-JavaScript moet maar nét onhandig genoeg geschreven zijn zodat het de volledige adresbalk uitleest (inclusief hashes) en deze blind print.

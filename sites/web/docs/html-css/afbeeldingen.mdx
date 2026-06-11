@@ -1,0 +1,140 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeEditor from '@site/src/components/CodeEditor';
+
+# Afbeeldingen
+
+## Wat ga je leren?
+
+Je leert hoe je een afbeelding op een webpagina zet met de `<img>` tag en waarom de `alt` tekst zo belangrijk is.
+
+## Theorie
+
+Met de `<img>` tag voeg je een afbeelding toe. Dit is een **zelfsluitende tag** — hij heeft geen sluitingstag:
+
+```html
+<img src="https://..." alt="Beschrijving" width="300">
+```
+
+De belangrijkste attributen:
+
+| Attribuut | Wat het doet |
+|---|---|
+| `src` | Het adres (URL) van de afbeelding |
+| `alt` | Alternatieve tekst als de afbeelding niet laadt, en voor slechtzienden |
+| `width` | Breedte in pixels |
+| `height` | Hoogte in pixels |
+
+:::tip
+Als je alleen `width` instelt, past de hoogte automatisch mee zodat de afbeelding niet scheef staat.
+:::
+
+## Predict
+
+Wat denk je dat er te zien is als je een verkeerde `src` invult?
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+De browser kan de afbeelding niet laden en toont in plaats daarvan de **`alt` tekst** en een gebroken-afbeelding-icoontje. Dat is precies waarvoor `alt` bedoeld is.
+
+</details>
+
+## Probeer het zelf!
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Afbeeldingen</title>
+</head>
+<body>
+  <h1>Mijn favoriete dier</h1>
+  <img
+    src="https://picsum.photos/id/237/300/200"
+    alt="Een hond"
+    width="300"
+  >
+  <p>Dit is een hond.</p>
+</body>
+</html>`}
+  height="460px"
+/>
+
+## Investigate
+
+Experimenteer met de code:
+
+- Wat gebeurt er als je `width="300"` verandert in `width="100"`?
+- Wat zie je als je de `src` leeg maakt (`src=""`)?
+- Probeer een `height` attribuut toe te voegen zonder `width` — wat valt je op?
+
+## Modify
+
+**Opdracht:** Verander de afbeelding naar een kat. Gebruik de URL hieronder en pas de `alt` tekst aan.
+
+```
+https://picsum.photos/id/40/300/200
+```
+
+<details>
+<summary>Tip</summary>
+
+Vervang de waarde van het `src` attribuut door de nieuwe URL. Vergeet de `alt` tekst ook aan te passen.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<img
+  src="https://picsum.photos/id/40/300/200"
+  alt="Een kat"
+  width="300"
+>
+```
+
+</details>
+
+## Make
+
+**Opdracht:** Bouw een kleine galerij met minstens 3 verschillende afbeeldingen. Geef ze allemaal een logische `alt` tekst en dezelfde `width` zodat ze mooi op een rij staan.
+
+<details>
+<summary>Tip</summary>
+
+Je mag plaatjes zoeken op internet of sites zoals *picsum.photos* gebruiken. Zorg dat je 3 verschillende `<img>` tags onder elkaar plaatst in je HTML.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<h1>Mijn Galerij</h1>
+<img src="https://picsum.photos/id/10/200/200" alt="Bos" width="200">
+<img src="https://picsum.photos/id/20/200/200" alt="Bureau" width="200">
+<img src="https://picsum.photos/id/30/200/200" alt="Mok" width="200">
+```
+
+</details>
+
+## Er gaat iets mis
+
+**`alt` weglaten**
+
+```html
+<img src="kat.jpg">
+```
+
+De `alt` tekst is niet verplicht in HTML, maar wel belangrijk:
+
+- Slechtzienden die een schermlezer gebruiken horen de `alt` tekst voorgelezen
+- Als de afbeelding niet laadt, zie je de `alt` tekst in plaats van een leeg vak
+- Zoekmachines gebruiken `alt` om te begrijpen wat er op de afbeelding staat
+
+Schrijf altijd een zinvolle `alt` tekst.

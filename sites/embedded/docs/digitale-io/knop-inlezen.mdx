@@ -1,0 +1,62 @@
+---
+sidebar_position: 2
+hide_table_of_contents: true
+---
+
+import WokwiSimulator from '@site/src/components/WokwiSimulator';
+
+# 3.2 Een knop inlezen
+
+Tot nu toe stuurde je pinnen aan. Nu ga je een pin **uitlezen**: je laat de Arduino merken of een knop is ingedrukt.
+
+## Het probleem van een "zwevende" ingang
+
+Een ingang die nergens aan vast zit, "zweeft": hij vangt ruis op en geeft willekeurig `HIGH` of `LOW`. Daarom heb je een vaste rusttoestand nodig. De makkelijkste manier is de **interne pull-up** van de Arduino: een ingebouwde weerstand die de pin in rust naar `HIGH` trekt.
+
+Je zet die aan met `INPUT_PULLUP`. De knop sluit je dan aan tussen de pin en `GND`. Het gevolg:
+
+- Knop **los** → pin is `HIGH`.
+- Knop **ingedrukt** → pin is `LOW`.
+
+Het is dus omgekeerd aan wat je misschien verwacht. Dat went snel.
+
+## De code
+
+```cpp
+void setup() {
+  pinMode(2, INPUT_PULLUP);
+  pinMode(13, OUTPUT);
+}
+
+void loop() {
+  if (digitalRead(2) == LOW) {
+    digitalWrite(13, HIGH);
+  } else {
+    digitalWrite(13, LOW);
+  }
+}
+```
+
+<WokwiSimulator
+  projectUrl="https://wokwi.com/projects/new/arduino-uno"
+  title="Simuleer: knop bestuurt de LED"
+/>
+
+In de simulator sluit je een **pushbutton** aan tussen pin 2 en `GND`. Houd de knop ingedrukt: de ingebouwde LED gaat aan. Laat los: hij gaat uit.
+
+## Wat gebeurt hier?
+
+```cpp
+if (digitalRead(2) == LOW) {
+```
+
+`digitalRead(2)` leest de stand van pin 2: `HIGH` of `LOW`. Met `INPUT_PULLUP` betekent `LOW` "ingedrukt". De `if` kijkt daarnaar en zet de LED aan of uit.
+
+## Controlevraag
+
+<details>
+<summary>Waarom gebruiken we <code>== LOW</code> en niet <code>== HIGH</code> om "ingedrukt" te herkennen?</summary>
+
+Omdat we `INPUT_PULLUP` gebruiken. De interne pull-up houdt de pin in rust op `HIGH`; de knop verbindt de pin met `GND`, dus indrukken maakt hem `LOW`.
+
+</details>

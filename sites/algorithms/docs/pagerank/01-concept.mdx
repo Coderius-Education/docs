@@ -1,0 +1,97 @@
+---
+sidebar_position: 1
+hide_table_of_contents: true
+---
+
+import slides from './slides/pagerank.pdf';
+
+# 13.1 PageRank — het idee
+
+**Leerdoel:** je begrijpt het kernidee van PageRank: links zijn stemmen,
+belangrijke pagina's geven zwaardere stemmen, en daarom moet je het
+*iteratief* uitrekenen. Nog geen code — eerst snappen.
+
+## Het college
+
+Bekijk eerst de slides van je docent. Daarna vatten we het idee hieronder
+samen.
+
+<iframe
+  src={slides}
+  title="PageRank — slides van je docent"
+  style={{width: '100%', height: '75vh', border: '1px solid var(--ifm-color-emphasis-300)', borderRadius: '8px'}}
+/>
+
+<p><a href={slides} target="_blank" rel="noopener">Slides openen in een nieuw tabblad (PDF) ↗</a></p>
+
+## Het probleem
+
+Typ iets in Google en je krijgt miljoenen pagina's terug — maar in een
+handige **volgorde**. Hoe bepaalt een computer welke pagina het
+belangrijkst is?
+
+Een eerste idee: **tel de links**. Een pagina waar veel andere pagina's
+naar linken, zal wel belangrijk zijn. Maar dat is te makkelijk te
+misbruiken (maak duizend nep-pagina's die naar je eigen site linken) en
+het mist iets: een link van een **belangrijke** pagina zou zwaarder
+moeten tellen dan een link van een onbekende.
+
+## Links zijn stemmen
+
+PageRank (1998, van **Larry Page** en **Sergey Brin** — de oprichters van
+Google) ziet elke link als een **stem**:
+
+- Een pagina verdeelt zijn "belang" over de pagina's waar hij naar linkt.
+- Een stem van een belangrijke pagina is meer waard.
+- Dus: een pagina is belangrijk als er belangrijke pagina's naar linken.
+
+Zie je de cirkel? Om te weten hoe belangrijk A is, moet je weten hoe
+belangrijk de pagina's zijn die naar A linken — en om díe te weten... Dit
+**kip-ei-probleem** lossen we op door te **herhalen** tot de waarden niet
+meer veranderen.
+
+## De random surfer
+
+Een handige manier om erover te denken: stel je een **willekeurige
+surfer** voor die eindeloos doorklikt. Op elke pagina klikt hij op een
+willekeurige link naar de volgende. De **PageRank** van een pagina is dan
+de fractie van de tijd dat de surfer daar is. Belangrijke pagina's
+(waar veel naartoe leidt) bezoekt hij vaker.
+
+Eén probleem: wat als de surfer vastloopt in een groepje pagina's dat
+alleen naar elkaar linkt? Daarom voegen we **damping** toe: met kans
+`d` (meestal **0,85**) volgt de surfer een link, en met kans `1 − d`
+springt hij naar een **willekeurige** pagina ergens op het web. Zo komt
+hij overal en loopt hij nooit definitief vast.
+
+## Een klein web
+
+We gebruiken in deze track dit mini-web van vier pagina's (een pijl
+`A → B` betekent "A linkt naar B"):
+
+```
+A → B,  A → C
+B → C
+C → A
+D → C
+```
+
+- `C` krijgt links van A, B én D — waarschijnlijk de populairste.
+- `D` krijgt van niemand een link — die zal laag eindigen.
+
+## Wat we gaan bouwen
+
+In deze track schrijf je stap voor stap een functie die voor zo'n web de
+PageRank van elke pagina uitrekent met de **iteratieve formule**:
+
+```
+rank(p) = (1 − d)/N  +  d · Σ  rank(i) / aantal_links(i)
+                              i → p
+```
+
+Lees: het belang van pagina `p` is een klein basisdeel `(1−d)/N` plus de
+opgetelde stemmen van alle pagina's `i` die naar `p` linken — elk gedeeld
+door hoeveel links die pagina uitdeelt. Je herhaalt dit tot de waarden
+nauwelijks meer veranderen.
+
+Door naar [stap 2: stellingen →](./02-stellingen).

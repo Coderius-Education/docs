@@ -1,0 +1,217 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeEditor from '@site/src/components/CodeEditor';
+
+# Eenheden in CSS
+
+## Wat ga je leren?
+
+Je leert het verschil tussen de vier meest-gebruikte CSS-eenheden — **`px`**, **`rem`**, **`em`** en **`%`** — en wanneer je welke kiest.
+
+## Theorie
+
+In eerdere lessen heb je waarden gebruikt als `16px`, `1.2rem` en `50%`. Tijd om te begrijpen wat die eindjes betekenen.
+
+### De vier eenheden
+
+| Eenheid | Wat het is | Wanneer gebruiken |
+|---|---|---|
+| `px` | **Pixels** — een vaste, absolute grootte | Voor `border`, kleine vaste spacing |
+| `rem` | **Root em** — relatief aan de basisgrootte van de pagina (meestal 16px) | Voor lettergrootte, padding, margin |
+| `em` | **Em** — relatief aan de lettergrootte van het *huidige* element | Soms voor padding binnen een knop |
+| `%` | **Procent** — relatief aan de ouder van het element | Voor breedte van layout-blokken |
+
+### `px` — vaste pixels
+
+Een pixel is altijd dezelfde grootte. Handig voor zaken die niet mogen meeschalen:
+
+```css
+border: 2px solid black;
+```
+
+Nadeel: als een gebruiker de tekst groter zet in zijn browser, blijft `16px` altijd 16 pixels. Dat is niet toegankelijk.
+
+### `rem` — meeschalen met de pagina
+
+`1rem` is de basisgrootte van de pagina (meestal 16px). Gebruik je `2rem`, dan is dat dubbel zo groot.
+
+```css
+h1 {
+  font-size: 2rem;       /* 32px bij standaard */
+  margin-bottom: 1.5rem; /* 24px bij standaard */
+}
+```
+
+Voordeel: zet de gebruiker de tekst groter in z'n browser, dan groeit alles netjes mee.
+
+### `em` — relatief aan het element zelf
+
+`1em` is de lettergrootte van het element zelf. Als een knop `font-size: 18px` heeft, dan is `1em` = 18px op die knop.
+
+```css
+button {
+  font-size: 1.2rem;
+  padding: 0.5em 1em;  /* padding schaalt mee met font-size */
+}
+```
+
+### `%` — procent van de ouder
+
+Procenten verwijzen naar de ouder. `width: 50%` betekent: half zo breed als het omhullende element.
+
+```css
+.kaart {
+  width: 50%;  /* halve breedte van de ouder */
+}
+```
+
+## Predict
+
+Wat denk je dat er gebeurt als je `font-size: 1.5rem` op het paragraaf-element zet en `padding: 1em` op de knop?
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+De paragraaftekst wordt 1,5 keer de basisgrootte (meestal 24px). De padding op de knop is `1em`, dus net zo groot als de lettergrootte van de knop zelf — niet die van de paragraaf.
+
+</details>
+
+## Probeer het zelf!
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Eenheden</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Eenheden vergelijken</h1>
+  <p>Een paragraaf met tekst.</p>
+  <button>Een knop</button>
+  <div class="balk"></div>
+</body>
+</html>`}
+  initialCss={`h1 {
+  font-size: 2rem;
+}
+
+p {
+  font-size: 1rem;
+}
+
+button {
+  font-size: 1.2rem;
+  padding: 0.5em 1em;
+  border: 2px solid black;
+}
+
+.balk {
+  background-color: dodgerblue;
+  width: 50%;
+  height: 40px;
+  margin-top: 1rem;
+}`}
+  height="540px"
+/>
+
+## Investigate
+
+Experimenteer:
+
+- Verander `font-size` van `h1` naar `2em` — wat verandert er ten opzichte van `2rem`?
+- Verander `padding` op de knop naar `8px 16px` — wat zie je?
+- Verander `width` van `.balk` naar `200px` — wat is het verschil tussen `50%` en `200px`?
+- Vergroot de tekst-grootte in je browser (Ctrl + scroll). Wat schaalt mee, wat niet?
+
+## Modify
+
+**Opdracht:** Maak de paragraaf groter (`1.25rem`) en geef de knop een padding van `0.75em` boven/onder en `1.5em` links/rechts.
+
+<details>
+<summary>Tip</summary>
+
+`padding` met twee waarden: eerste = boven/onder, tweede = links/rechts.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```css
+p {
+  font-size: 1.25rem;
+}
+
+button {
+  font-size: 1.2rem;
+  padding: 0.75em 1.5em;
+  border: 2px solid black;
+}
+```
+
+</details>
+
+## Make
+
+**Opdracht:** Ontwerp een visitekaartje van **80% breed** met een titel (`<h2>`, lettergrootte `1.5rem`), een paragraaf (`1rem`) en een knop met padding `0.5em 1em`. Geef de hele kaart een `border: 2px solid` en een `padding: 1.5rem`.
+
+<details>
+<summary>Tip</summary>
+
+Gebruik een `<div class="kaart">` als omhulsel. Mix bewust: `px` voor de border, `rem` voor lettergroottes, `em` voor de knop-padding, `%` voor de breedte.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<div class="kaart">
+  <h2>Mijn kaart</h2>
+  <p>Een korte beschrijving.</p>
+  <button>Meer info</button>
+</div>
+```
+
+```css
+.kaart {
+  width: 80%;
+  border: 2px solid black;
+  padding: 1.5rem;
+}
+
+.kaart h2 {
+  font-size: 1.5rem;
+}
+
+.kaart p {
+  font-size: 1rem;
+}
+
+.kaart button {
+  font-size: 1rem;
+  padding: 0.5em 1em;
+}
+```
+
+</details>
+
+## Er gaat iets mis
+
+**`rem` en `em` door elkaar halen**
+
+```css
+html { font-size: 16px; }      /* basis */
+.kaart { font-size: 2em; }     /* nu 32px */
+.kaart .knop { padding: 1em; } /* 32px padding, niet 16px! */
+```
+
+`em` is relatief aan het **eigen** element. Als je `em` binnen een element met groter `font-size` gebruikt, schaalt alles mee — soms onverwacht groot. Gebruik `rem` als je een vaste verhouding tot de pagina wilt, en `em` alleen als bewuste keuze.
+
+---
+
+[← Formulieren](/docs/html-css/formulieren) | [Display & `<span>` →](/docs/html-css/display-en-span)

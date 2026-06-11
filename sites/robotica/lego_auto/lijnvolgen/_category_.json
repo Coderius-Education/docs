@@ -1,0 +1,8 @@
+{
+  "label": "Lijnvolgen",
+  "position": 9,
+  "link": {
+    "type": "generated-index",
+    "description": "Leer in de volgende stappen hoe je de robot kan laten lijnvolgen."
+  }
+}

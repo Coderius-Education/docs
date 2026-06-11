@@ -1,0 +1,201 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeEditor from '@site/src/components/CodeEditor';
+
+# Arrays
+
+## Wat ga je leren?
+
+Je leert hoe je meerdere waarden tegelijk opslaat in een **array** (lijst), hoe je items eruit haalt, en hoe je een array combineert met een loop.
+
+## Theorie
+
+Tot nu toe gebruikte je losse variabelen: `let naam1 = 'Anna';`, `let naam2 = 'Bram';`. Voor lijsten van meer dan een paar items wordt dat onhandig. Gebruik dan een **array**:
+
+```js
+const namen = ['Anna', 'Bram', 'Chris'];
+```
+
+Een array is een geordende lijst tussen vierkante haken `[ ]`. De items worden gescheiden door komma's. Ze kunnen alles bevatten: strings, getallen, booleans of een mix.
+
+### Een item ophalen — met de index
+
+Items in een array hebben een **index** — een nummer dat begint bij **0**:
+
+```js
+const namen = ['Anna', 'Bram', 'Chris'];
+console.log(namen[0]);  // 'Anna'
+console.log(namen[1]);  // 'Bram'
+console.log(namen[2]);  // 'Chris'
+```
+
+:::tip Start op 0, niet op 1
+Bijna alle programmeertalen tellen vanaf 0. `namen[3]` zou hier `undefined` geven — die positie bestaat niet.
+:::
+
+### Een item toevoegen of veranderen
+
+```js
+namen.push('Daan');     // voegt 'Daan' toe aan het einde
+namen[0] = 'Anouk';     // vervangt de eerste naam
+```
+
+### `.length` — hoeveel items?
+
+```js
+const namen = ['Anna', 'Bram', 'Chris'];
+console.log(namen.length);  // 3
+```
+
+### Combineren met een loop
+
+Met een loop kun je álle items één voor één bewerken:
+
+```js
+const namen = ['Anna', 'Bram', 'Chris'];
+for (let i = 0; i < namen.length; i++) {
+  console.log('Hallo ' + namen[i]);
+}
+```
+
+## Predict
+
+Wat denk je dat dit log't?
+
+```js
+const cijfers = [5, 7, 3, 9];
+console.log(cijfers[1]);
+console.log(cijfers.length);
+```
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+```
+7
+4
+```
+
+`cijfers[1]` is het tweede item (index 0 is 5, index 1 is 7). `cijfers.length` is 4 want er zijn vier getallen in de array.
+
+</details>
+
+## Probeer het zelf!
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Arrays</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <button onclick="toonNamen()">Toon namen</button>
+  <ul id="lijst"></ul>
+</body>
+</html>`}
+  initialCss={`button { padding: 10px 20px; font-size: 1rem; cursor: pointer; }
+ul { font-size: 1.2rem; }`}
+  initialJs={`function toonNamen() {
+  const namen = ['Anna', 'Bram', 'Chris', 'Daan'];
+  const lijst = document.getElementById('lijst');
+  lijst.innerHTML = '';
+
+  for (let i = 0; i < namen.length; i++) {
+    lijst.innerHTML = lijst.innerHTML + '<li>' + namen[i] + '</li>';
+  }
+
+  console.log('Totaal: ' + namen.length + ' namen');
+}`}
+  height="460px"
+  livePreview={false}
+/>
+
+## Investigate
+
+Experimenteer:
+
+- Voeg een naam toe aan de array — wat verschijnt er extra op de pagina?
+- Verander `namen.length` in `3` in de loop — wat zie je nu?
+- Probeer `namen.push('Emma')` aan het begin van de functie — werkt dat?
+- Wat gebeurt er als je `namen[10]` log't (een niet-bestaande index)?
+
+## Modify
+
+**Opdracht:** Voeg na de lijst-loop een tweede loop toe die alleen de namen toont die met een **B** beginnen.
+
+<details>
+<summary>Tip</summary>
+
+Gebruik `namen[i].startsWith('B')` of `namen[i][0] === 'B'` om te checken of de naam met B begint.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```js
+const bnamen = document.createElement('p');
+for (let i = 0; i < namen.length; i++) {
+  if (namen[i].startsWith('B')) {
+    bnamen.textContent += namen[i] + ' ';
+  }
+}
+document.body.appendChild(bnamen);
+```
+
+</details>
+
+## Make
+
+**Opdracht:** Bouw een mini-stemtool. Maak een array van drie opties (bijv. `['Pizza', 'Pasta', 'Salade']`) en toon ze als knoppen. Als de gebruiker op een knop klikt, toon dan een `alert` met "Je koos: [optie]".
+
+<details>
+<summary>Tip</summary>
+
+Loop door de array en maak voor elke optie een knop met `document.createElement('button')`. Stel `textContent` in en koppel een `onclick` met de juiste optie.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```js
+function startStem() {
+  const opties = ['Pizza', 'Pasta', 'Salade'];
+  const container = document.getElementById('opties');
+
+  for (let i = 0; i < opties.length; i++) {
+    const knop = document.createElement('button');
+    knop.textContent = opties[i];
+    knop.onclick = function() {
+      alert('Je koos: ' + opties[i]);
+    };
+    container.appendChild(knop);
+  }
+}
+```
+
+HTML: `<div id="opties"></div>` + een startknop.
+
+</details>
+
+## Er gaat iets mis
+
+**Index buiten bereik**
+
+```js
+const namen = ['Anna', 'Bram'];
+console.log(namen[2]);  // undefined
+console.log(namen[5]);  // undefined
+```
+
+JavaScript geeft geen foutmelding bij een te hoge index — je krijgt gewoon `undefined` terug. Dat kan later in je code voor verwarring zorgen. Check altijd `i < namen.length` in een loop, en gebruik nooit een vast nummer dat je later vergeet bij te werken.
+
+---
+
+[← Loops](/docs/js-basics/loops) | [Modern DOM →](/docs/js-basics/modern-dom)

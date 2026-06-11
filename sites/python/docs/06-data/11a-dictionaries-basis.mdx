@@ -1,0 +1,177 @@
+---
+sidebar_position: 3
+hide_table_of_contents: true
+description: Sla waardes op met een sleutel in plaats van een index. De basis van een dictionary in Python.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 11a Dictionaries
+
+Een lijst slaat waardes op een **positie** op (0, 1, 2, ...). Maar wat als je waardes wilt opzoeken via een **naam**? Bijvoorbeeld een telefoonboek waar je een naam intypt en een nummer terugkrijgt. Daarvoor is een **dictionary**.
+
+## Een dictionary maken
+
+Tussen accolades, met sleutel-waarde-paren gescheiden door komma's:
+
+```python
+leerling = {
+    "naam": "Sara",
+    "leeftijd": 15,
+    "klas": "3B"
+}
+
+print(leerling["naam"])      # Sara
+print(leerling["leeftijd"])  # 15
+```
+
+- De **sleutel** staat links van de dubbele punt (`"naam"`).
+- De **waarde** staat rechts (`"Sara"`).
+- Met `dictionary[sleutel]` haal je de waarde op.
+
+Lookup via een naam is veel leesbaarder dan via een nummer: `leerling["naam"]` is meteen duidelijk, `leerling[0]` (bij een lijst) is dat niet.
+
+## Toevoegen en wijzigen
+
+Een waarde aanpassen of een nieuwe sleutel toevoegen werkt hetzelfde:
+
+```python
+leerling["leeftijd"] = 16        # wijzigt bestaande sleutel
+leerling["hobby"] = "muziek"     # voegt nieuwe sleutel toe
+```
+
+Bestaat de sleutel al, dan wordt de waarde overschreven. Bestaat hij nog niet, dan wordt hij toegevoegd.
+
+Vraag je een sleutel op die niet bestaat? Dan krijg je een `KeyError` met de naam van de gezochte sleutel — handig om te debuggen. Hoe je dat vooraf checkt, leer je in de volgende les.
+
+---
+
+## Opdracht 11a.1: Profiel maken
+
+Maak een dictionary `profiel` met drie sleutels: `"naam"`, `"leeftijd"` en `"stad"`. Print alleen de naam.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+`profiel["naam"]` geeft de waarde van de sleutel `"naam"`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+profiel = {
+    "naam": "Alex",
+    "leeftijd": 15,
+    "stad": "Amsterdam"
+}
+
+print(profiel["naam"])
+```
+
+<CodeExercise>{`profiel = {
+    "naam": "Alex",
+    "leeftijd": 15,
+    "stad": "Amsterdam"
+}
+
+print(profiel["naam"])`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 11a.2: Favoriete film
+
+Maak een dictionary voor je favoriete film met de sleutels `"titel"`, `"jaar"` en `"score"`. Print elke waarde apart met een f-string.
+
+Verwachte uitvoer (voorbeeld):
+
+```
+Titel: The Matrix
+Jaar: 1999
+Score: 9.0
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+In een f-string gebruik je `{film['titel']}`. Let op het verschil tussen de **enkele** aanhalingstekens binnen de f-string en de dubbele aanhalingstekens van de sleutel in de dictionary zelf.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+film = {
+    "titel": "The Matrix",
+    "jaar": 1999,
+    "score": 9.0
+}
+
+print(f"Titel: {film['titel']}")
+print(f"Jaar: {film['jaar']}")
+print(f"Score: {film['score']}")
+```
+
+<CodeExercise>{`film = {
+    "titel": "The Matrix",
+    "jaar": 1999,
+    "score": 9.0
+}
+
+print(f"Titel: {film['titel']}")
+print(f"Jaar: {film['jaar']}")
+print(f"Score: {film['score']}")`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 11a.3: Klasprofiel
+
+Maak drie dictionaries voor drie leerlingen (elk met `"naam"` en `"klas"`). Stop ze in een lijst en print voor elk een nette regel.
+
+Verwachte uitvoer:
+
+```
+Sara zit in klas 3B
+Alex zit in klas 3A
+Maria zit in klas 4C
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+In de loop is `leerling` elke ronde een dictionary. Gebruik `leerling['naam']` en `leerling['klas']` in een f-string.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+leerling1 = {"naam": "Sara", "klas": "3B"}
+leerling2 = {"naam": "Alex", "klas": "3A"}
+leerling3 = {"naam": "Maria", "klas": "4C"}
+
+klas = [leerling1, leerling2, leerling3]
+
+for leerling in klas:
+    print(f"{leerling['naam']} zit in klas {leerling['klas']}")
+```
+
+In de volgende les leer je hoe je **door een dictionary loopt** en hoe je veilig controleert of een sleutel bestaat.
+
+<CodeExercise>{`leerling1 = {"naam": "Sara", "klas": "3B"}
+leerling2 = {"naam": "Alex", "klas": "3A"}
+leerling3 = {"naam": "Maria", "klas": "4C"}
+
+klas = [leerling1, leerling2, leerling3]
+
+for leerling in klas:
+    print(f"{leerling['naam']} zit in klas {leerling['klas']}")`}</CodeExercise>
+
+</details>

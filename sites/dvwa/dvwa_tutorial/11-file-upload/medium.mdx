@@ -1,0 +1,92 @@
+---
+sidebar_position: 2
+sidebar_label: 'Medium'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# File Upload — Medium
+
+De ontwikkelaar heeft gemerkt dat PHP-bestanden worden geüpload en voegt een bestandstype-controle toe.
+
+## 1. Predict (Voorspel)
+
+De server controleert nu het MIME-type van het geüploade bestand:
+
+```php
+$uploaded_type = $_FILES[ 'uploaded' ][ 'type' ];
+
+if( ( $uploaded_type == "image/jpeg" || $uploaded_type == "image/png" ) ) {
+    // Bestand opslaan
+} else {
+    echo "Je bestand was geen afbeelding.";
+}
+```
+
+**Vraag:** Waar komt de waarde van `$_FILES['uploaded']['type']` vandaan — van de server of van de browser van de gebruiker? Wat betekent dit voor de betrouwbaarheid van deze controle?
+
+<details>
+
+<summary>Antwoord</summary>
+
+De `Content-Type`-header wordt door de **browser (client)** meegestuurd in het HTTP-verzoek. De server vertrouwt blind op wat de browser zegt. Een hacker kan met de Developer Tools of een HTTP-proxy de Content-Type header aanpassen van `application/x-php` naar `image/jpeg` — voordat het verzoek de server bereikt. De server ziet dan braaf `image/jpeg` en accepteert het bestand, ook al is het een PHP-script.
+
+</details>
+
+## 2. Run (Uitvoeren)
+
+Start het lab en bekijk het uploadformulier.
+
+<DvwaLab module="file_upload" level="medium" />
+
+Probeer een normaal afbeeldingsbestand te uploaden. Observeer dat dit werkt. Probeer daarna `shell.php` direct te uploaden (zonder aanpassingen).
+
+## 3. Investigate (Onderzoeken)
+
+Open de Developer Tools (F12) en ga naar het tabblad **Network**. Upload een afbeelding en bekijk het verzoek dat naar de server wordt gestuurd. Zoek naar de `Content-Type`-header in de formulierdata.
+
+**Vraag:** Welke waarde heeft `Content-Type` bij het uploaden van een .jpg-bestand? Wie heeft deze waarde bepaald — de server of jouw browser?
+
+<details>
+
+<summary>Antwoord</summary>
+
+De browser voegt automatisch de header `Content-Type: image/jpeg` toe voor .jpg-bestanden. Dit is een door de client gestuurd veld — de server controleert niet of de inhoud echt een JPEG-afbeelding is. Als jij dezelfde header meestuurt bij een PHP-bestand, ziet de server `image/jpeg` en denkt hij dat het een foto is.
+
+</details>
+
+## 4. Modify & Make (Aanpassen & Maken)
+
+Pas de Content-Type header aan zodat de server `shell.php` accepteert als afbeelding.
+
+<details>
+
+<summary>Tip</summary>
+
+In de Browser Developer Tools (F12) kun je via het tabblad **Network** een verzoek onderscheppen. In een lokale DVWA-omgeving gebruik je hiervoor Burp Suite om de header te wijzigen. Verander `Content-Type: application/x-php` naar `Content-Type: image/jpeg`.
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+1. Stel het security level in op Medium in DVWA.
+2. Selecteer `shell.php` als te uploaden bestand.
+3. Onderschep het HTTP-verzoek (met Burp Suite of de DevTools in Firefox).
+4. Verander de `Content-Type`-header van `application/x-php` naar `image/jpeg`.
+5. Verstuur het verzoek. De server accepteert het bestand!
+6. Navigeer naar `http://localhost/DVWA/hackable/uploads/shell.php` om de code uit te voeren.
+
+</details>
+
+## 5. ✓ Wat moest je zien?
+
+:::tip Controle
+- De server accepteert `shell.php` nadat je de Content-Type header hebt aangepast naar `image/jpeg`.
+- Na navigeren naar de upload-URL voert de server jouw PHP-code uit.
+- Zonder de header-aanpassing weigert de server het bestand.
+
+Lukt het niet? In het embedded lab is header-aanpassing beperkt. Voor de volledige test heb je een lokale DVWA-installatie en Burp Suite nodig.
+:::

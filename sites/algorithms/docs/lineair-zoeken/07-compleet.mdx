@@ -1,0 +1,95 @@
+---
+sidebar_position: 7
+hide_table_of_contents: true
+---
+
+# 1.7 Het complete algoritme
+
+**Leerdoel:** je herkent alle bouwstenen die je hebt geleerd en ziet ze
+samen werken. Daarna onderzoek je het algoritme als geheel.
+
+## Alles samen
+
+Hier is het hele algoritme, in 5 regels:
+
+```python
+def zoek(lijst, doel):
+    for i, waarde in enumerate(lijst):
+        if waarde == doel:
+            return i
+    return -1
+```
+
+Zie je de bouwstenen terug?
+
+- Regel 2 → **bouwsteen 1**: door de lijst lopen (met `enumerate` voor de
+  index).
+- Regel 3 → **bouwsteen 2**: vergelijken met het doel.
+- Regel 4 → **bouwsteen 3**: index teruggeven bij match.
+- Regel 5 → **bouwsteen 4**: `-1` teruggeven als niets is gevonden.
+
+## Run
+
+<PyRunner editable={false} initialCode={`def zoek(lijst, doel):
+    for i, waarde in enumerate(lijst):
+        if waarde == doel:
+            return i
+    return -1
+
+getallen = [3, 1, 4, 1, 5, 9, 2, 6]
+print(zoek(getallen, 5))    # verwacht: 4
+print(zoek(getallen, 7))    # verwacht: -1
+print(zoek([], 5))           # verwacht: -1`} />
+
+<AlgorithmModel algorithm="linear-search" />
+
+## Onderzoek
+
+Speel met de code. Probeer in elk geval:
+
+1. Zoek een waarde die **meerdere keren** voorkomt. Welke index krijg je?
+2. Vervang de lijst door strings: `["appel", "peer", "kers"]`, doel
+   `"peer"`. Werkt het?
+3. Wat gebeurt er als de lijst **leeg** is?
+
+<PyRunner initialCode={`def zoek(lijst, doel):
+    for i, waarde in enumerate(lijst):
+        if waarde == doel:
+            return i
+    return -1
+
+# Experimenteer hier:
+print(zoek([7, 7, 7, 7], 7))
+print(zoek(["appel", "peer", "kers"], "peer"))
+print(zoek([], "iets"))`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+```
+0
+1
+-1
+```
+
+- Bij meerdere voorkomende waarden krijg je de **eerste** (index 0).
+- Strings werken precies hetzelfde — `==` vergelijkt ook strings.
+- Lege lijst → de `for`-lus draait 0 keer → meteen `return -1`.
+
+Lineair zoeken is *type-onafhankelijk*: het werkt op alles waar `==`
+betekenis heeft.
+
+</details>
+
+## Een korte reflectie
+
+We hebben in 4 kleine stappen iets gebouwd dat:
+
+- Werkt op **elke** lijst, gesorteerd of niet.
+- Werkt op getallen, strings, en alles met `==`.
+- Een heldere "niet gevonden"-conventie heeft (`-1`).
+- In het ergste geval **alle** elementen bekijkt — O(n).
+
+Tijd om er iets *anders* van te maken.
+
+Door naar [stap 8: aanpassen](./08-aanpassen).

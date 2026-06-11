@@ -1,0 +1,80 @@
+---
+sidebar_position: 8
+hide_table_of_contents: true
+---
+
+# 1.8 Aanpassen — pas het algoritme aan
+
+**Leerdoel:** je past het algoritme aan voor een nieuwe vraag. Een klein
+verschil in de eis leidt vaak tot een klein, gericht verschil in de code.
+
+## Opdracht
+
+Pas `zoek` aan zodat de functie **telt** hoe vaak `doel` in de lijst
+voorkomt, in plaats van de index van de eerste te returnen.
+
+- De nieuwe functie heet `tel`.
+- Hij returnt een **geheel getal** (0 of meer).
+- Als het doel niet voorkomt → `0`.
+
+Voorbeeld: `tel([3, 1, 4, 1, 5], 1)` moet `2` returnen.
+
+<PyRunner initialCode={`def tel(lijst, doel):
+    # vul aan
+    return 0
+
+# Tests
+print(tel([3, 1, 4, 1, 5], 1))   # verwacht: 2
+print(tel([3, 1, 4, 1, 5], 9))   # verwacht: 0
+print(tel([], 1))                # verwacht: 0
+print(tel([7, 7, 7, 7], 7))      # verwacht: 4`} />
+
+<details>
+<summary>Tip</summary>
+
+Je hoeft **niet** te returnen zodra je een match vindt — anders kun je niet
+verder tellen. Houd in plaats daarvan een **teller-variabele** bij die je
+ophoogt bij elke match. Pas **na** de lus return je die teller.
+
+Welke bouwsteen verandert er? Welke blijft hetzelfde?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def tel(lijst, doel):
+    teller = 0
+    for waarde in lijst:
+        if waarde == doel:
+            teller = teller + 1
+    return teller
+```
+
+Wat is hetzelfde gebleven?
+
+- **Bouwsteen 1**: door de lijst lopen.
+- **Bouwsteen 2**: vergelijken met het doel.
+
+Wat is veranderd?
+
+- **Bouwsteen 3**: in plaats van *bij match meteen return*, doen we
+  *teller += 1 en doorgaan*.
+- **Bouwsteen 4**: in plaats van `-1`, returnen we de teller (die is `0`
+  als er niets is gevonden — dat past al bij de eis).
+
+Kortere variant met `+=`:
+
+```python
+def tel(lijst, doel):
+    teller = 0
+    for waarde in lijst:
+        if waarde == doel:
+            teller += 1
+    return teller
+```
+
+</details>
+
+Door naar [stap 9: bouw zelf](./09-zelf-bouwen).

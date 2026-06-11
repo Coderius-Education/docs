@@ -1,0 +1,91 @@
+---
+sidebar_position: 2
+sidebar_label: 'Medium'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# File Inclusion — Medium
+
+De ontwikkelaar is geschrokken van de LFI-kwetsbaarheid en schrijft razendsnel een filter.
+
+## 1. Predict (Voorspel)
+
+Dit is de gepatchte code. De ontwikkelaar gebruikt `str_replace` om de map-navigatietekens en `http://` weg te knippen:
+
+```php
+$file = $_GET['page'];
+$file = str_replace( array( "http://", "https://" ), "", $file );
+$file = str_replace( array( "../", "..\\" ), "", $file );
+include($file);
+```
+
+**Vraag:** Kijk naar het tweede filter dat `../` vervangt door niets. Wat gebeurt er als je de string `..././` instuurt?
+
+<details>
+
+<summary>Antwoord</summary>
+
+De `str_replace`-functie controleert de tekst maar **één keer**. Als je `..././` invoert, ziet het filter in het midden de volgorde `../` staan en knipt dat weg. Wat blijft er over van de letters eromheen? Die plakken aan elkaar en vormen opnieuw `../`! Het filter omzeilt zichzelf.
+
+</details>
+
+## 2. Run (Uitvoeren)
+
+Start het lab en probeer het bestand `file1.php` op te vragen.
+
+<DvwaLab module="file_inclusion" level="medium" />
+
+Bevestig dat de normale paginaweergave werkt. Probeer daarna je Low-level aanval (`../../etc/passwd`) opnieuw.
+
+## 3. Investigate (Onderzoeken)
+
+Verander de URL-parameter naar `?page=../` en kijk wat er verschijnt.
+
+**Vraag:** Verdwijnt de `../` volledig of blijft er iets over? Wat zegt dit over de manier waarop het filter werkt?
+
+<details>
+
+<summary>Antwoord</summary>
+
+De server geeft een foutmelding voor het pad zonder `../` — het filter heeft de tekens weggehaald. Maar als je `....//` invoert, verdwijnt alleen het binnenste `../` en blijft er toch `../` over. Dit onthult dat het filter enkelvoudig is: het verwijdert één keer het patroon, maar controleert niet of er na verwijdering opnieuw een verboden patroon ontstaat.
+
+</details>
+
+## 4. Modify & Make (Aanpassen & Maken)
+
+Gebruik de geneste-truc om het filter te omzeilen en alsnog `/etc/passwd` uit te lezen.
+
+<details>
+
+<summary>Tip</summary>
+
+Maak je directory-traversal dubbelop: schrijf elk `../` als `....//`. Het filter knipt de binnenste weg, waarna de buitenste letters aan elkaar plakken tot het gewenste patroon.
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+Vul in als waarde voor `page`:
+`....//....//....//....//etc/passwd`
+
+Wanneer de server het filter toepast, knipt hij telkens de `../` in het midden weg, waardoor exact `../../../../etc/passwd` overblijft voor de `include()`-functie.
+
+</details>
+
+## 5. ✓ Wat moest je zien?
+
+:::tip Controle
+- De pagina toont de inhoud van `/etc/passwd` ondanks het filter.
+- De directe aanval (`../../etc/passwd`) werkt niet meer — het filter verwijdert de paden.
+- De geneste variant (`....//....//`) slaagt wél — het filter herkent het verscholen patroon niet.
+
+Werkt de geneste aanval ook niet? Controleer of je voldoende niveaus hebt — voeg meer `....//` toe tot je de root bereikt.
+:::
+
+## 6. Er gaat iets mis...
+
+Wat als de server op Windows draait in plaats van Linux? In Windows zoek je niet naar `/etc/passwd`, maar naar paden zoals `C:\Windows\System32\drivers\etc\hosts`. Je moet ook de slashes aanpassen: Windows gebruikt `\`, hoewel `/` ook vaak werkt. Stem je directory-traversal altijd af op het besturingssysteem van de server.

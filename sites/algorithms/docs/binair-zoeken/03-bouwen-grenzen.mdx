@@ -1,0 +1,92 @@
+---
+sidebar_position: 3
+hide_table_of_contents: true
+---
+
+# 4.3 Bouwsteen 1 — laag en hoog
+
+**Leerdoel:** je weet welke twee variabelen je nodig hebt om het zoekgebied
+bij te houden, en hoe je ze initialiseert.
+
+## Wat we willen
+
+Bij binair zoeken praten we over een **zoekgebied** — het stuk lijst dat
+nog overblijft. We hebben twee getallen nodig om dat gebied te beschrijven:
+
+- `laag`: de **eerste** index die we nog moeten bekijken.
+- `hoog`: de **laatste** index die we nog moeten bekijken.
+
+In het begin is dat gebied de hele lijst.
+
+## Voorspel
+
+Wat denk je dat dit print?
+
+```python
+lijst = [1, 3, 5, 7, 9, 11, 13, 15]
+laag = 0
+hoog = len(lijst) - 1
+print(laag, hoog)
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+0 7
+```
+
+- `laag = 0` — de eerste index in een Python-lijst.
+- `hoog = len(lijst) - 1` — de **laatste** index. `len(lijst)` is 8, dus
+  `hoog` is 7. Niet 8: een lijst van lengte 8 heeft indexen 0 t/m 7.
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`lijst = [1, 3, 5, 7, 9, 11, 13, 15]
+laag = 0
+hoog = len(lijst) - 1
+print(laag, hoog)`} />
+
+## Waarom `-1`?
+
+```python
+hoog = len(lijst) - 1
+```
+
+Python-lijsten zijn **0-geïndexeerd**: een lijst met 8 elementen heeft
+indexen 0, 1, 2, 3, 4, 5, 6, **7** — niet 8. Als je `lijst[8]` opvraagt,
+krijg je een `IndexError`.
+
+## Experimenteer
+
+<PyRunner initialCode={`# Test met verschillende lijstlengtes
+voor_test = [
+    [1, 3],
+    [1, 3, 5, 7, 9],
+    [1],
+    [],
+]
+for l in voor_test:
+    laag = 0
+    hoog = len(l) - 1
+    print(f"lijst={l}, laag={laag}, hoog={hoog}")`} />
+
+<details>
+<summary>Wat valt op bij de lege lijst?</summary>
+
+`hoog` wordt `-1` (want `len([]) - 1 = -1`). Dat is meteen een **signaal**:
+`laag > hoog` betekent "het zoekgebied is leeg". Hier hoeft het algoritme
+dus nooit een ronde te doen — meteen "niet gevonden" returnen.
+
+</details>
+
+<SteppingStoneModel stone="binary-bounds" />
+
+## Wat nu nog mist
+
+We hebben grenzen, maar doen er nog niets mee. In de volgende stap berekenen
+we het **midden** van het zoekgebied.
+
+Door naar [bouwsteen 2: het midden](./04-bouwen-midden).

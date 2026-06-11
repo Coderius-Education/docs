@@ -1,0 +1,212 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-global-radius);
+  overflow: hidden;
+  margin: 1.5rem 0;
+  font-size: 0.9rem;
+}
+
+.editorSide {
+  flex: 1 1 50%;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.previewColumn {
+  flex: 1 1 50%;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border-left: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.previewSide {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: #ffffff;
+}
+
+.consolePanel {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  height: 130px;
+  border-top: 1px solid var(--ifm-color-emphasis-300);
+  background: #1e1e1e;
+  font-family: 'Menlo', 'Consolas', monospace;
+  font-size: 0.78rem;
+}
+
+.consolePanelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.25rem 0.6rem;
+  background: #2d2d2d;
+  border-bottom: 1px solid #444;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #aaa;
+  flex-shrink: 0;
+}
+
+.consoleClear {
+  background: none;
+  border: 1px solid #555;
+  border-radius: 3px;
+  color: #aaa;
+  cursor: pointer;
+  font-size: 0.7rem;
+  padding: 1px 6px;
+}
+
+.consoleClear:hover {
+  background: #444;
+  color: #fff;
+}
+
+.consolePanelBody {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.3rem 0.6rem;
+}
+
+.consolePlaceholder {
+  color: #555;
+  font-style: italic;
+}
+
+.consoleLine {
+  padding: 0.1rem 0;
+  white-space: pre-wrap;
+  word-break: break-all;
+  color: #d4d4d4;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.consoleLevel_log   { color: #d4d4d4; }
+.consoleLevel_info  { color: #9cdcfe; }
+.consoleLevel_warn  { color: #dcdcaa; background: #2a2600; }
+.consoleLevel_error { color: #f44747; background: #2a0000; }
+
+.tabBar {
+  display: flex;
+  flex-direction: row;
+  background: var(--ifm-color-emphasis-200);
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.tab {
+  padding: 0.4rem 1rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--ifm-color-emphasis-600);
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.tabActive {
+  color: var(--ifm-color-primary);
+  border-bottom-color: var(--ifm-color-primary);
+}
+
+.tab:hover:not(.tabActive) {
+  color: var(--ifm-color-emphasis-900);
+}
+
+.runButton {
+  margin-left: auto;
+  padding: 0.35rem 0.9rem;
+  background: var(--ifm-color-primary);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.runButton:hover {
+  background: var(--ifm-color-primary-dark);
+}
+
+.resetButton {
+  margin-left: auto;
+  padding: 0.35rem 0.7rem;
+  background: transparent;
+  color: var(--ifm-color-emphasis-700);
+  border: 1px solid var(--ifm-color-emphasis-400);
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.runButton + .resetButton {
+  margin-left: 0.4rem;
+}
+
+.resetButton:hover {
+  background: var(--ifm-color-emphasis-200);
+  color: var(--ifm-color-emphasis-900);
+}
+
+.paneWrapper {
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* Let CodeMirror fill the pane */
+.codeMirrorWrapper {
+  height: 100%;
+}
+
+.codeMirrorWrapper :global(.cm-editor) {
+  height: 100%;
+}
+
+.previewLabel {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--ifm-color-emphasis-600);
+  background: var(--ifm-color-emphasis-200);
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.preview {
+  width: 100%;
+  flex: 1;
+  border: none;
+  background: white;
+  display: block;
+}
+
+.loading {
+  padding: 2rem;
+  color: var(--ifm-color-emphasis-600);
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+  .editorSide {
+    border-right: none;
+    border-bottom: 1px solid var(--ifm-color-emphasis-300);
+  }
+}

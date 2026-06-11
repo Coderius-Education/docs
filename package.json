@@ -1,0 +1,20 @@
+{
+  "name": "coderius-docs",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Coderius College documentatie — monorepo van alle leersites (Docusaurus) met gedeelde resources.",
+  "packageManager": "pnpm@10.15.0",
+  "engines": {
+    "node": ">=20.0"
+  },
+  "scripts": {
+    "build": "pnpm --filter \"./sites/*\" -r build",
+    "typecheck": "pnpm --filter \"./sites/*\" --filter \"./packages/*\" -r typecheck",
+    "clear": "pnpm --filter \"./sites/*\" -r clear",
+    "format": "biome format --write .",
+    "lint": "biome check ."
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4"
+  }
+}

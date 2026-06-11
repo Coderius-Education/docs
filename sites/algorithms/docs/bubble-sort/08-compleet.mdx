@@ -1,0 +1,150 @@
+---
+sidebar_position: 8
+hide_table_of_contents: true
+---
+
+# 6.8 Het complete algoritme
+
+**Leerdoel:** je ziet alle bouwstenen samen en onderzoekt het algoritme.
+
+## Alles samen
+
+```python
+def bubble_sort(lijst):
+    n = len(lijst)
+    for ronde in range(n - 1):
+        geswapt = False
+        for i in range(n - 1 - ronde):
+            if lijst[i] > lijst[i + 1]:
+                lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+                geswapt = True
+        if not geswapt:
+            break
+    return lijst
+```
+
+Zie je de bouwstenen?
+
+- Regel 5 → **bouwsteen 1**: vergelijk buren (`lijst[i] > lijst[i + 1]`).
+- Regel 6 → **bouwsteen 2**: swap.
+- Regels 4-6 → **bouwsteen 3**: één pass (`range(n - 1 - ronde)`).
+- Regels 3-7 → **bouwsteen 4**: meerdere passes.
+- Regels 4 + 7 + 8-9 → **bouwsteen 5**: early-exit met `geswapt`.
+
+## Run
+
+<PyRunner editable={false} initialCode={`def bubble_sort(lijst):
+    n = len(lijst)
+    for ronde in range(n - 1):
+        geswapt = False
+        for i in range(n - 1 - ronde):
+            if lijst[i] > lijst[i + 1]:
+                lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+                geswapt = True
+        if not geswapt:
+            break
+    return lijst
+
+print(bubble_sort([3, 1, 4, 1, 5, 9, 2, 6]))
+print(bubble_sort([1, 2, 3, 4, 5]))     # al gesorteerd
+print(bubble_sort([5, 4, 3, 2, 1]))     # omgekeerd
+print(bubble_sort([42]))
+print(bubble_sort([]))`} />
+
+<AlgorithmModel algorithm="bubble-sort" />
+
+## Onderzoek — strings en stabiliteit
+
+<PyRunner initialCode={`def bubble_sort(lijst):
+    n = len(lijst)
+    for ronde in range(n - 1):
+        geswapt = False
+        for i in range(n - 1 - ronde):
+            if lijst[i] > lijst[i + 1]:
+                lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+                geswapt = True
+        if not geswapt:
+            break
+    return lijst
+
+# Strings
+print(bubble_sort(["banaan", "appel", "kers"]))
+
+# Stabiliteit-test
+paren = [(2, 'a'), (1, 'b'), (2, 'c'), (1, 'd')]
+print(bubble_sort(paren))`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+- Strings → alfabetisch gesorteerd. Werkt.
+- Stabiliteit: `(1,b)` blijft vóór `(1,d)`; `(2,a)` blijft vóór `(2,c)`.
+  **Bubble sort is stabiel**: gelijke elementen behouden hun
+  oorspronkelijke volgorde (omdat we strict `>` gebruiken — geen swap bij
+  gelijk).
+
+Dat is een **verschil met selection sort**, die niet stabiel is.
+
+</details>
+
+## Onderzoek — werk vergelijken
+
+Wat doet bubble sort op verschillende soorten input?
+
+<PyRunner initialCode={`import random
+
+def bubble_sort_telt(lijst):
+    n = len(lijst)
+    swaps = 0
+    vergelijkingen = 0
+    passes = 0
+    for ronde in range(n - 1):
+        passes += 1
+        geswapt = False
+        for i in range(n - 1 - ronde):
+            vergelijkingen += 1
+            if lijst[i] > lijst[i + 1]:
+                lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+                swaps += 1
+                geswapt = True
+        if not geswapt:
+            break
+    return swaps, vergelijkingen, passes
+
+n = 50
+bijna = list(range(n))
+bijna[20], bijna[21] = bijna[21], bijna[20]   # twee buren omgewisseld
+
+soorten = {
+    'al gesorteerd':  list(range(n)),
+    'omgekeerd':      list(range(n, 0, -1)),
+    'willekeurig':    random.sample(range(n * 10), n),
+    'bijna gesorteerd': bijna,
+}
+
+for naam, lijst in soorten.items():
+    s, v, p = bubble_sort_telt(lijst.copy())
+    print(f"{naam:<20} passes={p:>2}  vergelijkingen={v:>5}  swaps={s}")`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+Ongeveer:
+
+```
+al gesorteerd        passes= 1  vergelijkingen=   49  swaps=0
+omgekeerd            passes=49  vergelijkingen= 1225  swaps=1225
+willekeurig          passes=~40 vergelijkingen=~1100  swaps=~600
+bijna gesorteerd     passes= 2  vergelijkingen=   97  swaps=1
+```
+
+- **Al gesorteerd**: één pass dankzij early-exit — O(n).
+- **Omgekeerd**: max werk — O(n²).
+- **Willekeurig**: ergens daartussen, dichter bij omgekeerd.
+- **Bijna gesorteerd** (één swap nodig): één pass om de wisseling op te
+  lossen, één pass zonder swap om te bevestigen → klaar. Heel snel —
+  een van de redenen waarom bubble sort soms toch nog gebruikt wordt.
+
+</details>
+
+Door naar [stap 9: aanpassen](./09-aanpassen).

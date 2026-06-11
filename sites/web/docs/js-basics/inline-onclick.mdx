@@ -1,0 +1,142 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeEditor from '@site/src/components/CodeEditor';
+
+# Inline onclick
+
+## Wat ga je leren?
+
+Je leert hoe je met JavaScript tekst op de pagina kunt veranderen via het `onclick`-attribuut en `document.getElementById()`.
+
+:::info Wat is JavaScript?
+**HTML** bepaalt wat er op de pagina staat. **CSS** bepaalt hoe het eruitziet. **JavaScript** bepaalt wat er *gebeurt*: hoe de pagina reageert op klikken, typen, scrollen of de tijd.
+
+Met JavaScript maak je een statische pagina interactief — knoppen die iets doen, formulieren die reageren, animaties, spelletjes. Een uitgebreide introductie vind je in [Wat is JavaScript](/docs/js-basics/intro-javascript).
+:::
+
+## Theorie
+
+JavaScript kun je direct in een HTML-attribuut schrijven. Het `onclick`-attribuut voert de code erin uit zodra je op het element klikt:
+
+```html
+<button onclick="document.getElementById('bericht').textContent = 'Geklikt!'">
+  Klik mij
+</button>
+```
+
+Twee nieuwe dingen:
+
+- `document.getElementById('bericht')` — zoek het element met `id="bericht"` op de pagina
+- `.textContent = '...'` — verander de zichtbare tekst van dat element naar een nieuwe waarde
+
+## Predict
+
+Bekijk de startcode in de editor. Beantwoord de vraag hieronder **voordat** je op **Run** klikt en de knop in de preview uitprobeert.
+
+<details>
+<summary>Wat verandert er als je op de knop klikt — en wat verandert er niet?</summary>
+
+De tekst in de `<p>` verandert van "Nog niet geklikt." naar "Je hebt geklikt!". De knop zelf verandert niet — die voert alleen de code in `onclick` uit en blijft verder ongewijzigd.
+
+</details>
+
+## Probeer het zelf!
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Inline onclick</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <p id="bericht">Nog niet geklikt.</p>
+  <button onclick="document.getElementById('bericht').textContent = 'Je hebt geklikt!'">
+    Klik mij
+  </button>
+</body>
+</html>`}
+  initialCss={`button {
+  padding: 8px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+p {
+  font-size: 1.2rem;
+}`}
+  height="420px"
+  livePreview={false}
+/>
+
+## Investigate
+
+Experimenteer:
+
+- Verander de tekst `'Je hebt geklikt!'` naar iets anders — wat zie je na een klik?
+- Voeg een tweede knop toe met een andere tekst
+- Wat gebeurt er als je `id="bericht"` in de `<p>` verandert naar `id="tekst"` maar de onclick niet aanpast?
+
+## Modify
+
+**Opdracht:** Voeg een tweede `<p id="naam">` toe en laat een tweede knop die tekst veranderen naar jouw naam.
+
+<details>
+<summary>Tip</summary>
+
+Maak een nieuwe `<p>` met een uniek `id`. Maak een nieuwe `<button>` met `onclick="document.getElementById('naam').textContent = '...'"`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<p id="naam">Wat is jouw naam?</p>
+<button onclick="document.getElementById('naam').textContent = 'Emma'">
+  Toon naam
+</button>
+```
+
+</details>
+
+## Make
+
+**Opdracht:** Bouw een pagina met drie knoppen. Elke knop toont een andere zin in dezelfde `<p>`. Bedenk zelf welke zinnen je toont — een grap, een quote, of iets anders.
+
+<details>
+<summary>Tip</summary>
+
+Je hebt maar één `<p>` nodig met één `id`. Alle drie de knoppen verwijzen naar hetzelfde `id`, maar geven elk een andere waarde aan `.textContent`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<p id="zin">Klik een knop.</p>
+<button onclick="document.getElementById('zin').textContent = 'Hallo wereld!'">Zin 1</button>
+<button onclick="document.getElementById('zin').textContent = 'JavaScript is cool.'">Zin 2</button>
+<button onclick="document.getElementById('zin').textContent = 'Dit werkt!'">Zin 3</button>
+```
+
+</details>
+
+## Er gaat iets mis
+
+**ID verkeerd gespeld**
+
+```html
+<p id="Bericht">Tekst</p>
+<button onclick="document.getElementById('bericht').textContent = 'Hoi'">Klik</button>
+```
+
+`getElementById` is hoofdlettergevoelig. `'Bericht'` en `'bericht'` zijn twee verschillende ID's. Als het element niet gevonden wordt, gebeurt er niets — of je krijgt een foutmelding in de browser-console (F12). Zorg dat het `id` in HTML en in `onclick` precies hetzelfde gespeld is.
+
+---
+
+[← Wat is JavaScript](/docs/js-basics/intro-javascript) | [Inline stijl →](/docs/js-basics/inline-stijl)

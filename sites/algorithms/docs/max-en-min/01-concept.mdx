@@ -1,0 +1,99 @@
+---
+sidebar_position: 1
+hide_table_of_contents: true
+---
+
+# 3.1 Max én min in één pass — het idee
+
+**Leerdoel:** je begrijpt waarom je beide tegelijk wilt bijhouden, en
+waarom dat **niet** dubbel zoveel werk is als alleen het maximum.
+
+## Het verhaal
+
+Stel: je hebt een lijst met dagtemperaturen van een hele maand. Je wilt
+weten:
+
+- Wat was de **warmste** dag?
+- Wat was de **koudste** dag?
+
+Je hebt al geleerd hoe je [het maximum vindt](/docs/vind-maximum/01-concept).
+Voor het minimum hetzelfde recept (één teken anders).
+
+Twee mogelijke aanpakken:
+
+### Aanpak A — twee aparte passes
+
+```
+pass 1: doorloop alle dagen → vind het maximum
+pass 2: doorloop alle dagen → vind het minimum
+```
+
+Werkt prima. Maar je leest **elke temperatuur twee keer**. Bij 1.000.000
+metingen zijn dat 2.000.000 leesacties.
+
+### Aanpak B — één pass, twee accumulators
+
+```
+één pass:
+  doorloop alle dagen
+  voor elke dag:
+    update zo nodig het maximum
+    update zo nodig het minimum
+```
+
+Je leest **elke temperatuur één keer**. Bij 1.000.000 metingen zijn dat
+1.000.000 leesacties. **De helft van het werk.**
+
+## Visualisatie
+
+We zoeken `klein` en `groot` in deze lijst:
+
+```
+lijst:  [ 5 , 2 , 8 , 1 , 7 , 4 ]
+index:    0   1   2   3   4   5
+
+stap 0:  klein = 5, groot = 5         (start: beide op het eerste element)
+stap 1:  vergelijk 2:   2 < 5 → klein = 2;   2 > 5 → nee → groot = 5
+stap 2:  vergelijk 8:   8 < 2 → nee → klein = 2;   8 > 5 → groot = 8
+stap 3:  vergelijk 1:   1 < 2 → klein = 1;   1 > 8 → nee → groot = 8
+stap 4:  vergelijk 7:   7 < 1 → nee → klein = 1;   7 > 8 → nee → groot = 8
+stap 5:  vergelijk 4:   4 < 1 → nee → klein = 1;   4 > 8 → nee → groot = 8
+
+→ klein = 1, groot = 8
+```
+
+Per stap: maximaal **twee** vergelijkingen. Bij elke nieuwe waarde houd je
+beide accumulators *up-to-date*.
+
+## Twee accumulators tegelijk
+
+Het accumulator-patroon werkt voor **meerdere** dingen tegelijk. Je hebt
+gewoon meer variabelen:
+
+```
+accumulator_1 = startwaarde_1
+accumulator_2 = startwaarde_2
+voor elk element:
+    update_1?
+    update_2?
+return beide
+```
+
+Hetzelfde idee als bij vind-maximum, alleen verdubbeld.
+
+<details>
+<summary>Kun je dit ook met drie of meer accumulators?</summary>
+
+**Ja.** Met dezelfde aanpak kun je bijvoorbeeld tegelijk vinden:
+
+- het maximum
+- het minimum
+- de som
+- het aantal elementen
+
+…allemaal in één pass. Voor `n` elementen blijft het **O(n)** — het aantal
+extra variabelen voegt geen rondes toe aan de lus.
+
+</details>
+
+Door naar [stap 2: stellingen](./02-stellingen).

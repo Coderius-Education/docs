@@ -1,0 +1,211 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeEditor from '@site/src/components/CodeEditor';
+
+# Display & `<span>`
+
+## Wat ga je leren?
+
+Je leert hoe HTML-elementen standaard ofwel onder elkaar staan (**block**) ofwel naast elkaar (**inline**), hoe je dat met `display` aanpast, en hoe je `<span>` gebruikt om kleine stukjes tekst te stijlen.
+
+## Theorie
+
+Elk HTML-element heeft een standaard **display-type**. Dat bepaalt hoe het element zich gedraagt op de pagina.
+
+### Block vs inline
+
+| Type | Gedrag | Voorbeelden |
+|---|---|---|
+| **block** | Begint op nieuwe regel, vult volledige breedte | `<p>`, `<h1>`, `<div>`, `<section>` |
+| **inline** | Blijft in de tekst-stroom, breedte = inhoud | `<a>`, `<b>`, `<i>`, `<span>` |
+| **inline-block** | In de tekst-stroom, maar `width` en `height` werken wel | (zelf instellen) |
+
+Je verandert dit met de CSS-eigenschap `display`:
+
+```css
+.menu a {
+  display: inline-block;  /* a normaal inline, maar nu mét padding/breedte */
+  padding: 8px 16px;
+}
+```
+
+### Wanneer gebruik je `<span>`?
+
+`<span>` is het **inline-tegendeel** van `<div>`. Gebruik hem als je een **klein stukje tekst** binnen een paragraaf wilt stijlen zonder een nieuwe regel te beginnen:
+
+```html
+<p>Dit is <span class="highlight">een gemarkeerd</span> woord.</p>
+```
+
+```css
+.highlight {
+  background-color: yellow;
+  color: red;
+}
+```
+
+Vuistregel:
+- `<div>` voor blokken (rondom meerdere elementen)
+- `<span>` voor tekst-stukjes binnen een regel
+
+## Predict
+
+Wat denk je dat er gebeurt als je `display: block` op een `<span>` zet?
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+De `<span>` gaat zich gedragen als een blok — hij begint op een nieuwe regel en vult de hele breedte. Het uiterlijk verandert dus, maar de tag (`<span>`) blijft hetzelfde. `display` overschrijft het standaardgedrag.
+
+</details>
+
+## Probeer het zelf!
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Display & span</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Block en inline</h1>
+
+  <p>
+    Een <span class="highlight">gemarkeerd woord</span> staat
+    in de tekstregel. Een <b>vetgedrukt</b> woord ook.
+  </p>
+
+  <p>Deze paragraaf is een block — vult de hele breedte.</p>
+
+  <div class="kader">Dit is een div (block).</div>
+
+  <a href="#" class="knop">Knop-link</a>
+  <a href="#" class="knop">Tweede knop</a>
+</body>
+</html>`}
+  initialCss={`.highlight {
+  background-color: yellow;
+  color: darkred;
+  padding: 2px 6px;
+}
+
+.kader {
+  background-color: #eef;
+  padding: 10px;
+  margin: 10px 0;
+}
+
+.knop {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: dodgerblue;
+  color: white;
+  text-decoration: none;
+  margin-right: 8px;
+}`}
+  height="540px"
+/>
+
+## Investigate
+
+Experimenteer:
+
+- Verander `display: inline-block` op `.knop` naar `display: block` — wat verandert er aan de knoppen?
+- Verwijder `display: inline-block` helemaal (laat de rest staan) — werkt `padding` nog goed?
+- Voeg `display: block` toe aan `.highlight` — wat gebeurt er met de gemarkeerde tekst?
+- Vergelijk `<div>` met `<span>` rondom hetzelfde stukje tekst — welke verschilt?
+
+## Modify
+
+**Opdracht:** Maak in een paragraaf drie verschillende stukjes tekst gekleurd door ze in `<span>` te zetten met een eigen klasse: één rood, één blauw, één met gele achtergrond.
+
+<details>
+<summary>Tip</summary>
+
+Drie `<span>`'s met drie verschillende klasses. In CSS drie aparte regels (`.rood`, `.blauw`, `.geel`).
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<p>
+  Een <span class="rood">rood woord</span>,
+  een <span class="blauw">blauw woord</span>,
+  en een <span class="geel">gele markering</span>.
+</p>
+```
+
+```css
+.rood { color: red; }
+.blauw { color: blue; }
+.geel { background-color: yellow; }
+```
+
+</details>
+
+## Make
+
+**Opdracht:** Bouw een navigatiebalk waarin de links **náást elkaar** staan met padding eromheen (alsof het knoppen zijn). Gebruik geen Flexbox — alleen `display: inline-block`.
+
+<details>
+<summary>Tip</summary>
+
+`<a>` is standaard inline, maar dan werkt `padding`/`width` niet goed. Zet `display: inline-block` op de links zodat ze beide eigenschappen krijgen.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<div class="nav">
+  <a href="#">Home</a>
+  <a href="#">Over</a>
+  <a href="#">Contact</a>
+</div>
+```
+
+```css
+.nav a {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #4a90e2;
+  color: white;
+  text-decoration: none;
+  margin-right: 4px;
+}
+
+.nav a:hover {
+  background-color: #357ab8;
+}
+```
+
+</details>
+
+## Er gaat iets mis
+
+**Padding op een inline-element werkt half**
+
+```html
+<a href="#" style="padding: 20px; background: yellow;">Klik</a>
+<a href="#" style="padding: 20px; background: yellow;">Klik</a>
+```
+
+Een gewone `<a>` is `inline`. `padding` lijkt te werken (er komt ruimte rond de tekst), maar de elementen overlappen elkaar verticaal — `padding-top` duwt andere regels niet weg. Ook werkt `width`/`height` niet. Oplossing: zet `display: inline-block` op de links.
+
+```css
+a {
+  display: inline-block;
+  padding: 20px;
+}
+```
+
+---
+
+[← Eenheden in CSS](/docs/html-css/eenheden) | [Position →](/docs/html-css/position)

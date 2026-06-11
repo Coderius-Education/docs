@@ -1,0 +1,74 @@
+---
+sidebar_position: 3
+hide_table_of_contents: true
+---
+
+# 13.3 Bouwsteen 1 — het web als graph
+
+**Leerdoel:** je slaat het web op als een graph en schrijft de helper die
+straks de kern van de formule is: *wie linkt naar deze pagina?*
+
+## Het web in Python
+
+Een **dict** waarbij elke pagina wijst naar de **set** pagina's waar hij
+naar linkt:
+
+```python
+WEB = {
+    "A": {"B", "C"},
+    "B": {"C"},
+    "C": {"A"},
+    "D": {"C"},
+}
+```
+
+`WEB["A"]` is `{"B", "C"}` — de uitgaande links van A.
+
+## Wat we nodig hebben
+
+Voor de formule moet je straks weten **welke pagina's naar `p` linken**
+(en hoeveel links die elk uitdelen). Schrijf de helper `wie_linkt_naar`.
+
+## Bouw en test
+
+<PyRunner initialCode={`WEB = {
+    "A": {"B", "C"},
+    "B": {"C"},
+    "C": {"A"},
+    "D": {"C"},
+}
+
+def paginas(web):
+    return sorted(web)
+
+def uitgaande(web, p):
+    return web[p]
+
+def wie_linkt_naar(web, p):
+    # Vul aan: geef de set van alle pagina's i die naar p linken.
+    # (i linkt naar p als p in web[i] zit.)
+    ...
+
+
+# === Tests ===
+assert set(paginas(WEB)) == {"A", "B", "C", "D"}
+assert uitgaande(WEB, "A") == {"B", "C"}
+assert wie_linkt_naar(WEB, "C") == {"A", "B", "D"}
+assert wie_linkt_naar(WEB, "D") == set()
+
+print("Graph-helpers werken ✓")`} />
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def wie_linkt_naar(web, p):
+    return {i for i in web if p in web[i]}
+```
+
+Voor elke pagina `i` kijk je of `p` in zijn linkset zit. `D` zit bij
+niemand, dus `wie_linkt_naar(WEB, "D")` is leeg.
+
+</details>
+
+Door naar [stap 4: de startverdeling →](./04-bouwen-startverdeling).

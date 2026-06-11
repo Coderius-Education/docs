@@ -1,0 +1,8 @@
+{
+  "label": "CTF Challenges",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "description": "Alle challenges van de Cybersecurity CTF. Registreer op https://ctf.hackchallenges.nl/register met code: AlgemeenKlassement"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "label": "9. STM32 IO configureren",
+  "position": 9,
+  "link": {
+    "type": "generated-index",
+    "description": "Digitale en analoge in- en uitgangen op de STM32, met ST's HAL."
+  }
+}

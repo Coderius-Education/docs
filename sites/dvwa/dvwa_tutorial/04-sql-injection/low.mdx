@@ -1,0 +1,108 @@
+---
+sidebar_position: 1
+sidebar_label: 'Low'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# SQL Injection — Low
+
+Welkom bij SQL Injection. We gaan leren hoe we de database van een applicatie kunnen manipuleren.
+
+## 1. Predict (Voorspel)
+
+Kijk naar deze (vereenvoudigde) code die zoekt naar een gebruiker op basis van een ID:
+
+```php
+$id = $_REQUEST[ 'id' ];
+$query  = "SELECT first_name, last_name FROM users WHERE user_id = '$id';";
+```
+
+**Vraag:** Wat wordt de volledige SQL query als een gebruiker niet `1` invult, maar de tekst `hallo`? En wat als iemand `1'` invult (met een enkel aanhalingsteken erachter)?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Met `hallo` wordt de query:
+`SELECT ... WHERE user_id = 'hallo';` — geen resultaat, maar geen fout.
+
+Met `1'` wordt de query:
+`SELECT ... WHERE user_id = '1'';` — het aanhalingsteken sluit de string te vroeg, waarna er een onverwacht tweede `'` overblijft. Dit is een **syntax error** in SQL.
+
+</details>
+
+## 2. Run (Uitvoeren)
+
+Start het lab en bekijk hoe de applicatie normaal werkt.
+
+<DvwaLab module="sql_injection" level="low" />
+
+Vul achtereenvolgens `1`, `2` en `3` in en klik telkens op Submit. Observeer wat je terugkrijgt.
+
+## 3. Investigate (Onderzoeken)
+
+Typ nu `1'` (een getal gevolgd door één enkel aanhalingsteken) in het veld en klik op Submit.
+
+**Vraag:** Wat zie je op het scherm? Wat onthult die reactie over hoe de applicatie werkt?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Je ziet waarschijnlijk een rode foutmelding zoals:
+`You have an error in your SQL syntax near ''1''' at line 1`
+
+Dit vertelt je drie dingen:
+1. De applicatie plakt jouw invoer **ongefilterd** rechtstreeks in de SQL query.
+2. De foutmelding lekt terug naar de browser — de applicatie is slecht geconfigureerd.
+3. De database is MySQL (de foutmeldingsopmaak verraadt het systeem).
+
+De applicatie is kwetsbaar. Nu weet je *waar* je in kunt breken. Wat je nodig hebt: een payload die de SQL-syntax weer geldig maakt én de query naar jouw hand zet.
+
+</details>
+
+## 4. Modify & Make (Aanpassen & Maken)
+
+Je weet nu dat de applicatie kwetsbaar is en hoe de SQL eruitziet. Jouw doel: één payload invoeren die **alle** gebruikers in de database ophaalt in plaats van slechts één.
+
+Bedenk: welke toevoeging achter `1'` maakt de WHERE-clausule altijd waar — zonder de SQL syntax te breken?
+
+<details>
+
+<summary>Tip</summary>
+
+Je hebt een `OR`-conditie nodig die altijd `WAAR` is. De truc is dat je het openstaande aanhalingsteken in de query correct moet 'sluiten'. Denk aan iets als `'A' = 'A'`.
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+Vul exact dit in: `1' OR '1'='1` en klik op Submit.
+
+De server voert dan uit:
+`SELECT ... WHERE user_id = '1' OR '1'='1';`
+
+Omdat `'1'='1'` altijd waar is, geeft de database alle rijen terug.
+
+Als je een lege pagina krijgt, probeer dan: `1' OR '1'='1' #` — het hekje commentarieert de rest van de query weg.
+
+</details>
+
+## 5. ✓ Wat moest je zien?
+
+:::tip Controle
+- Er verschijnt een lijst met **alle 5 gebruikers** (Voornaam + Achternaam), niet slechts één.
+- Geen SQL-foutmelding (rode balk).
+- In het ID-veld staat jouw payload.
+
+Zie je maar één gebruiker? Controleer of je exact `1' OR '1'='1` hebt ingevuld met **enkele** aanhalingstekens en klik op **Submit**.
+:::
+
+## 6. Er gaat iets mis...
+
+Als je per ongeluk `1" OR "1"="1` typt (met dubbele in plaats van enkele aanhalingstekens), krijg je misschien opnieuw een SQL Syntax Error.
+Dit komt omdat de database string-waardes verwacht in enkele aanhalingstekens. Hackers zijn stiekem héél blij met dit soort foutmeldingen — een error bevestigt de kwetsbaarheid én verklapt welke database op de achtergrond draait.

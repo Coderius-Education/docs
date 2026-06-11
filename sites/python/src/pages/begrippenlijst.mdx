@@ -1,0 +1,97 @@
+# Begrippenlijst (Glossary)
+
+In de programmeerwereld vliegen de Engelse vaktermen je soms om de oren. Wat was een *Boolean* ook alweer? En wat is het verschil tussen een *Functie* en een *Methode*? 
+
+Hier vind je een alfabetisch overzicht van de belangrijkste begrippen uit de Python cursus.
+
+---
+
+### Argument
+Een waarde die je meegeeft aan een functie wanneer je deze aanroept. Bijvoorbeeld in `print("Hallo")` is de tekst `"Hallo"` het argument dat je aan de print-functie doorgeeft.
+
+### Boolean (`bool`)
+Een datatype dat maar twee mogelijke waarden kan hebben: `True` (Waar) of `False` (Niet Waar). Dit wordt vaak gebruikt in if-statements om voorwaarden te controleren.
+
+### Dictionary (`dict`)
+Een verzameling gegevens waarbij elke waarde gekoppeld is aan een unieke sleutel (key). Je zoekt gegevens niet op via een volgnummer, maar via deze sleutel.
+
+```python
+# 'leeftijd' is de sleutel, 15 is de waarde
+leerling = {"naam": "Sara", "leeftijd": 15}
+```
+
+### Float (`float`)
+Een 'floating point number', oftewel: een kommagetal. Let op dat je in Python altijd een **punt** gebruikt in plaats van een komma, bijvoorbeeld `3.14` in plaats van `3,14`.
+
+### f-string
+De modernste manier in Python om tekst (`String`) en variabelen met elkaar te mixen. Je zet een `f` voor het aanhalingsteken, en variabelen zet je direct in de tekst tussen `{ }` accolades.
+
+```python
+print(f"Hallo {naam}, jij bent {leeftijd} jaar oud.")
+```
+
+### Functie (`def`)
+Een benoemd stukje code dat een specifieke taak uitvoert. Je schrijft het één keer en kunt het (door de naan van de functie te typen, inclusief haakjes) zo vaak hergebruiken als je wilt.
+
+```python
+def zeg_hallo():
+    print("Hallo Wereld!")
+```
+
+### Indentation (Inspringing)
+De spaties aan het begin van een regel code. In Python is inspringen verplicht om aan te geven dat een stuk code *binnen* een `if`, `for`, `while` of `def` blok hoort. De standaard in Python is 4 spaties per inspringing.
+
+### Index
+De numerieke positie van een element in een lijst of string. In Python (en in vrijwel alle andere programmeertalen) beginnen we altijd met tellen bij **0**. Het eerste element staat dus op index 0.
+
+### Integer (`int`)
+Een geheel getal (positief of negatief) zonder cijfers achter de komma, zoals `42`, `0` of `-5`.
+
+### List (Lijst / `list`)
+De lijst is een variabele waarin je meerdere waardes tegelijk op volgorde kunt opslaan. Deze waarden staan altijd binnen blokhaken `[ ]`.
+
+```python
+cijfers = [7.5, 8.0, 6.2]
+```
+
+### Loop (for / while)
+Een blok code dat zichzelf herhaalt totdat aan een bepaalde voorwaarde is voldaan (de `while`-loop) óf waarbij vooraf vaststaat hoe vaak het wordt uitgevoerd (de `for`-loop).
+
+### Methode
+In de basis is dit hetzelfde als een functie, maar een methode zit "vastgeplakt" aan een specifiek datatype of object. In plaats van `methode(variabele)` schrijf je met een puntje `variabele.methode()`.
+
+```python
+tekst = "hallo"
+# upper() is een methode speciaal voor Strings
+tekst_groot = tekst.upper() 
+```
+
+### Parameter
+Een variabele die je definieert in de haakjes van een functie. Het fungeert als een "lege bak" die later gevuld wordt met een Argument als de functie wordt aangeroepen.
+
+```python
+def begroet(naam):    # 'naam' is hier de parameter
+    print(f"Hallo {naam}!")
+```
+
+### Return
+Het sleutelwoord dat je gebruikt aan heteinde van een functie, waarmee je het resultaat "teruggeeft" aan de plek in je code waar de functie werd aangeroepen. Op deze manier kun je met het antwoord verder rekenen, in plaats van dat het alleen maar op je scherm wordt geprint.
+
+### Scope
+De "geldigheid" van een variabele. Variabelen die binnenin een functie worden aangemaakt hebben een *lokale scope*, wat betekent dat ze niet bestaan buiten het ingesprongen blok van die functie.
+
+### String (`str`)
+Het datatype voor tekst. Strings staan altijd tussen enkele of dubbele aanhalingstekens (quotes) om ze te onderscheiden van code of wiskunde.
+
+```python
+tekst1 = "Dit is tekst."
+tekst2 = 'Dit mag ook.'
+```
+
+### Variabele
+Een "doosje" of "label" met een zelfgekozen naam waarin je informatie in het computergeheugen opslaat. Je kunt de waarde op elk gewenst moment lezen óf overschrijven.
+
+```python
+score = 0     # Variabele wordt aangemaakt
+score += 10   # Variabele wordt bijgewerkt
+```

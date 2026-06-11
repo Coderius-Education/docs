@@ -1,0 +1,8 @@
+{
+  "label": "Tutorial - Meten is weten",
+  "position": 4,
+  "link": {
+    "type": "generated-index",
+    "description": "Leer in de volgende stappen hoe je met een multimeter voltages kan meten van een pin."
+  }
+}

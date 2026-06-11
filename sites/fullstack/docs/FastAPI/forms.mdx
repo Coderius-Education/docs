@@ -1,0 +1,246 @@
+---
+sidebar_position: 9
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Eigen POST request
+
+In deze les maak je een formulier dat data verstuurt naar je server via POST.
+
+## Het formulier
+
+Maak `static/pages/naam_form.html`:
+
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Wat is je naam?</h1>
+        <form method="post" action="/verstuur">
+            <input type="text" name="naam" required>
+            <button type="submit">Verstuur</button>
+        </form>
+    </body>
+</html>
+```
+
+### Belangrijke onderdelen
+
+- `method="post"` — Stuurt data via POST
+- `action="/verstuur"` — Naar welk endpoint
+- `name="naam"` — Deze naam gebruiken we in Python
+
+## De endpoints
+
+In `main.py`:
+
+```python
+from fastapi import FastAPI, Form
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.get("/naam")
+async def toon_formulier():
+    return FileResponse("static/pages/naam_form.html")
+
+@app.post("/verstuur")
+async def ontvang_naam(naam: str = Form(...)):
+    print(f"Naam ontvangen: {naam}")
+    return {"bericht": f"Hallo {naam}!"}
+```
+
+### Wat is nieuw?
+
+- `Form(...)` — Haalt het veld `naam` uit het formulier
+- De `name` in HTML moet **matchen** met de parameter in Python
+
+<details>
+<summary>Waarom moet de naam matchen?</summary>
+
+Als je in HTML `name="naam"` schrijft, stuurt de browser de data als `naam=Jan`. FastAPI zoekt dan naar een Python parameter die ook `naam` heet. Als die namen niet overeenkomen, kan FastAPI de data niet vinden en krijg je een **422 error**.
+
+</details>
+
+## Testen
+
+1. Ga naar `http://127.0.0.1:8000/naam`
+2. Vul je naam in en klik Verstuur
+3. Je ziet: `{"bericht": "Hallo Jan!"}`
+4. In de terminal: `Naam ontvangen: Jan`
+
+:::danger Gaat er iets mis?
+Krijg je een **422 Unprocessable Entity**? Check of de `name` in je HTML matcht met de parameter in Python. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
+:::
+
+## Opdrachten
+
+### Opdracht 1: Predict - Wat zie je?
+
+```html
+<form method="post" action="/groet">
+    <input type="text" name="naam">
+    <button type="submit">Verstuur</button>
+</form>
+```
+
+```python
+@app.post("/groet")
+async def groet(naam: str = Form(...)):
+    return {"groet": f"Hallo {naam}!"}
+```
+
+**Vraag:** Je vult "Sarah" in. Wat zie je?
+
+<details>
+<summary>Tip</summary>
+
+Kijk wat de Python functie returnt. De waarde van `naam` wordt `"Sarah"` — wat wordt de f-string dan?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`{"groet": "Hallo Sarah!"}`
+
+</details>
+
+### Opdracht 2: Run
+
+Maak het formulier en de endpoints uit het voorbeeld. Test of je een naam kunt invullen en het bericht terugkrijgt.
+
+### Opdracht 3: Investigate - Naam mismatch
+
+Wat gebeurt er als je in HTML `name="voornaam"` schrijft, maar in Python `naam: str = Form(...)` houdt? Probeer het uit!
+
+<details>
+<summary>Antwoord</summary>
+
+Je krijgt een **422 Unprocessable Entity** error. FastAPI zoekt naar een veld genaamd `naam`, maar de browser stuurt `voornaam`. De namen moeten exact matchen.
+
+</details>
+
+### Opdracht 4: Make - Eigen formulier
+
+Maak een formulier voor je favoriete kleur met een GET endpoint (formulier tonen) en POST endpoint (data ontvangen). Print de kleur in de terminal.
+
+<details>
+<summary>Tip</summary>
+
+Maak een HTML bestand met een `<form method="post" action="/kleur">` en een `<input name="kleur">`. Maak twee endpoints: `@app.get("/kleur")` voor het formulier en `@app.post("/kleur")` voor het ontvangen.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`static/pages/kleur_form.html`:
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Favoriete kleur</h1>
+        <form method="post" action="/kleur">
+            <input type="text" name="kleur" required>
+            <button type="submit">Verstuur</button>
+        </form>
+    </body>
+</html>
+```
+
+```python
+@app.get("/kleur")
+async def kleur_form():
+    return FileResponse("static/pages/kleur_form.html")
+
+@app.post("/kleur")
+async def kleur_ontvang(kleur: str = Form(...)):
+    print(f"Kleur ontvangen: {kleur}")
+    return {"kleur": kleur}
+```
+
+</details>
+
+### Opdracht 5: Make - Twee velden
+
+Maak een formulier met naam en leeftijd:
+
+```html
+<input type="text" name="naam" required>
+<input type="number" name="leeftijd" required>
+```
+
+```python
+@app.post("/profiel")
+async def profiel(naam: str = Form(...), leeftijd: int = Form(...)):
+    return {"naam": naam, "leeftijd": leeftijd}
+```
+
+<details>
+<summary>Tip</summary>
+
+Je hebt twee `<input>` velden nodig in je HTML en twee `Form(...)` parameters in Python. Let op: `leeftijd` is een `int`, niet een `str`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`static/pages/profiel_form.html`:
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Profiel</h1>
+        <form method="post" action="/profiel">
+            <input type="text" name="naam" required>
+            <input type="number" name="leeftijd" required>
+            <button type="submit">Verstuur</button>
+        </form>
+    </body>
+</html>
+```
+
+```python
+@app.get("/profiel")
+async def profiel_form():
+    return FileResponse("static/pages/profiel_form.html")
+
+@app.post("/profiel")
+async def profiel(naam: str = Form(...), leeftijd: int = Form(...)):
+    return {"naam": naam, "leeftijd": leeftijd}
+```
+
+</details>
+
+## Oefen met Python
+
+:::info Python oefenblok
+Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
+:::
+
+<CodeExercise>
+{`# Formulierdata simuleren met dictionaries
+formulier_data = {
+    "naam": "Sarah",
+    "leeftijd": "16",
+    "kleur": "blauw"
+}
+
+# Data uitlezen (zoals FastAPI doet met Form(...))
+print("Ontvangen formulierdata:")
+for veld, waarde in formulier_data.items():
+    print(f"  {veld} = {waarde}")
+
+# f-string voor antwoord
+naam = formulier_data["naam"]
+print(f"\nHallo {naam}!")
+
+# Meerdere velden combineren
+profiel = f"{formulier_data['naam']}, {formulier_data['leeftijd']} jaar, houdt van {formulier_data['kleur']}"
+print(f"Profiel: {profiel}")`}
+</CodeExercise>

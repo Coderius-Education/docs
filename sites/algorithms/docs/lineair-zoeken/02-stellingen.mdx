@@ -1,0 +1,95 @@
+---
+sidebar_position: 2
+hide_table_of_contents: true
+---
+
+# 1.2 Stellingen — toets je begrip
+
+**Leerdoel:** je toetst of je het *idee* van lineair zoeken snapt, **voordat**
+je gaat programmeren. Beantwoord elke stelling eerst zelf, klap dan open.
+
+## Stelling 1
+
+*"Lineair zoeken werkt alleen op gesorteerde lijsten."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Onjuist.** Lineair zoeken bekijkt elk element apart — de volgorde maakt
+niet uit. Dat is juist het voordeel: het werkt **altijd**, ook op rommelige
+lijsten.
+
+</details>
+
+## Stelling 2
+
+*"Als de waarde meerdere keren in de lijst staat, geeft lineair zoeken
+**alle** posities terug."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Onjuist.** Standaard stopt het algoritme bij de **eerste** match — die
+index geef je terug. Wil je alle posities? Dan moet je het algoritme
+aanpassen (komt later — bij *Maken*).
+
+</details>
+
+## Stelling 3
+
+*"In het ergste geval moet je elk element bekijken."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Juist.** Het ergste geval is wanneer het doel **achteraan** staat — of
+helemaal niet in de lijst voorkomt. Dan moet je elke positie bezoeken voor
+je zekerheid hebt.
+
+We zeggen: het algoritme is **O(n)** — het werk groeit lineair met de
+lengte van de lijst. Vandaar de naam *lineair* zoeken.
+
+</details>
+
+## Stelling 4
+
+*"Bij een lege lijst crasht het algoritme."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Onjuist.** Een lege lijst betekent: niets om te bekijken → meteen
+"niet gevonden" → `-1`. Geen crash.
+
+</details>
+
+## Stelling 5
+
+*"De gemiddelde positie waarop je een willekeurig getal vindt, ligt in het
+midden van de lijst."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Juist.** Als het doel willekeurig ergens in de lijst staat, is het
+gemiddeld ongeveer halverwege. Dus voor `n` elementen kijk je gemiddeld
+naar `n/2` elementen voor je het vindt. Nog steeds O(n) — een factor 2
+verandert het grote plaatje niet.
+
+</details>
+
+## Stelling 6
+
+*"Lineair zoeken is sneller dan binair zoeken op een lijst van 10 elementen."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Onjuist** in theorie, maar **in de praktijk** vaak waar. Op 10 elementen
+is het verschil tussen `n` en `log₂(n)` zo klein, en de constante factor
+van binair zoeken (meer logica per stap) zo groot, dat lineair zoeken
+soms wint. Bij grote lijsten verliest lineair altijd.
+
+</details>
+
+Door naar [stap 3: bouwen we het op](./03-bouwen-doorlopen).

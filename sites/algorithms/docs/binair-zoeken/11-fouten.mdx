@@ -1,0 +1,82 @@
+---
+sidebar_position: 11
+hide_table_of_contents: true
+---
+
+# 4.11 Er gaat iets mis — top-3 fouten
+
+**Leerdoel:** je herkent de klassieke valkuilen van binair zoeken.
+
+## Oneindige lus (`laag = midden`)
+
+Geen foutmelding — de Python loopt gewoon **oneindig** door. Browser-tab
+hangt. Druk op **Reset** als dit gebeurt.
+
+**Oorzaak:** je hebt `laag = midden` geschreven in plaats van
+`laag = midden + 1`. Bij `laag = 1, hoog = 2` blijft `midden = 1` keer op
+keer — het zoekgebied krimpt nooit.
+
+**Oplossing:** schrijf `laag = midden + 1`. Door het al-onderzochte midden
+weg te gooien, **moet** het zoekgebied krimpen met minstens 1 element per
+stap → de lus stopt altijd.
+
+```python
+# FOUT
+elif lijst[midden] < doel:
+    laag = midden     # zoekgebied krimpt niet → oneindige lus
+
+# GOED
+elif lijst[midden] < doel:
+    laag = midden + 1
+```
+
+Meer uitleg: [Bouwsteen 3 — vergelijken](./05-bouwen-vergelijken).
+
+## `laag <= hoog` vs `laag < hoog`
+
+Geen Python-foutmelding — wél een **logische fout** bij sommige inputs.
+
+**Oorzaak:** met `while laag < hoog` slaat de lus de laatste ronde over
+zodra `laag == hoog`. Dan blijft één element ongecontroleerd.
+
+**Oplossing:** gebruik `while laag <= hoog`. Bij `laag == hoog` is er nog
+één element over om te bekijken.
+
+```python
+# FOUT
+while laag < hoog:
+    ...
+
+binair_zoek([5], 5)   # returnt -1, terwijl 5 wél in de lijst staat
+
+# GOED
+while laag <= hoog:
+    ...
+```
+
+## Ongesorteerde lijst meegeven
+
+Geen foutmelding — gewoon **fout antwoord**. Dit is de gevaarlijkste soort
+bug, omdat hij stilletjes verkeerde dingen doet.
+
+**Oorzaak:** het algoritme veronderstelt *als `lijst[midden] < doel`, dan
+moet het doel in de rechter helft zitten*. Die aanname klopt alleen op een
+gesorteerde lijst.
+
+**Oplossing:** zorg dat je input gesorteerd is — sorteer hem eerst of
+bewaar een gesorteerde versie.
+
+```python
+# FOUT
+binair_zoek([3, 1, 4, 1, 5], 4)   # output kan -1 zijn, of toevallig 2
+
+# GOED
+lijst = sorted(jouw_lijst)
+binair_zoek(lijst, doel)
+```
+
+Als je vaak zoekt, sorteer dan **één keer** en bewaar de gesorteerde
+versie. Het sorteren kost O(n log n), maar daarna is elk zoeken O(log n) —
+bij veel zoekopdrachten loont dat.
+
+Door naar [stap 12: cheatsheet](./12-cheatsheet).

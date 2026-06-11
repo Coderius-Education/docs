@@ -1,0 +1,57 @@
+---
+sidebar_position: 8
+hide_table_of_contents: true
+---
+
+# 12.8 Aanpassen — alleen tellen
+
+**Leerdoel:** je past het recursieve patroon aan om alléén het **aantal**
+zetten te berekenen, zonder de lijst op te bouwen.
+
+## Het idee
+
+Soms wil je niet de hele lijst zetten, maar alleen *hoeveel* het er zijn.
+Je hoeft dan niets te verplaatsen — je telt gewoon. Dezelfde recursieve
+structuur, maar met getallen in plaats van een lijst:
+
+- **0 schijven** → 0 zetten (het basisgeval).
+- **`n` schijven** → het aantal zetten voor `n − 1` schijven, **plus 1**
+  voor de grootste schijf, **plus** nog eens dat aantal voor `n − 1`.
+
+Dat is precies de recurrence `T(n) = 2 · T(n − 1) + 1`.
+
+## Bouw en test
+
+<PyRunner initialCode={`def tel_zetten(n):
+    # Geef het AANTAL zetten terug (een getal), zonder een lijst te maken.
+    if n == 0:
+        return 0
+    # Vul aan: twee keer een kleiner probleem, plus 1 voor de grootste schijf.
+    return ...
+
+
+# === Tests ===
+assert tel_zetten(0) == 0
+assert tel_zetten(1) == 1
+assert tel_zetten(3) == 7
+assert tel_zetten(10) == 1023      # 2**10 - 1
+
+print("Tellen werkt ✓")
+for n in range(1, 6):
+    print(f"{n} schijven: {tel_zetten(n)} zetten")`} />
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def tel_zetten(n):
+    if n == 0:
+        return 0
+    return tel_zetten(n - 1) + 1 + tel_zetten(n - 1)
+```
+
+Of korter: `return 2 * tel_zetten(n - 1) + 1`. Beide geven `2ⁿ − 1`.
+
+</details>
+
+Door naar [stap 9: zelf bouwen →](./09-zelf-bouwen).

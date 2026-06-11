@@ -1,0 +1,183 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeEditor from '@site/src/components/CodeEditor';
+
+# Flexbox
+
+## Wat ga je leren?
+
+Je leert hoe je elementen naast elkaar zet en uitlijnt met **Flexbox** — het meest gebruikte hulpmiddel voor lay-out in CSS.
+
+## Theorie
+
+Standaard staan HTML-elementen als blokken **onder elkaar**. Met `display: flex` op een container zet je de elementen **naast elkaar**:
+
+```css
+.container {
+  display: flex;
+}
+```
+
+Alle directe kinderen van de container worden dan **flex-items**.
+
+### Handige flex-eigenschappen
+
+| Eigenschap | Op de **container** | Voorbeeld |
+|---|---|---|
+| `flex-direction` | Richting van de items | `row` (standaard) of `column` |
+| `justify-content` | Uitlijning langs de hoofdas | `flex-start`, `center`, `space-between` |
+| `align-items` | Uitlijning op de dwarsas | `flex-start`, `center`, `stretch` |
+| `gap` | Ruimte tussen de items | `gap: 16px;` |
+
+## Predict
+
+Wat denk je dat er gebeurt als je `flex-direction: column` toevoegt aan de container?
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+De items komen **onder elkaar** te staan, in plaats van naast elkaar. `column` verandert de richting van horizontaal naar verticaal.
+
+</details>
+
+## Probeer het zelf!
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Flexbox</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="item">1</div>
+    <div class="item">2</div>
+    <div class="item">3</div>
+  </div>
+</body>
+</html>`}
+  initialCss={`.container {
+  display: flex;
+  gap: 10px;
+  background-color: #eee;
+  padding: 10px;
+}
+
+.item {
+  background-color: #4a90e2;
+  color: white;
+  padding: 30px;
+  font-size: 1.5rem;
+  text-align: center;
+}`}
+  height="480px"
+/>
+
+## Investigate
+
+Experimenteer met de CSS:
+
+- Voeg `justify-content: center` toe aan `.container` — wat verandert er?
+- Probeer `justify-content: space-between` — wat doet dat?
+- Voeg `flex-direction: column` toe — hoe staan de items nu?
+- Wat doet `align-items: center` als je de container een vaste hoogte geeft (`height: 200px`)?
+
+## Modify
+
+**Opdracht:** Centreer de items horizontaal én voeg een vierde item toe.
+
+<details>
+<summary>Tip</summary>
+
+Gebruik `justify-content: center` op de container. Voeg een nieuw `<div class="item">4</div>` toe in de HTML.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+CSS toevoeging:
+```css
+.container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  background-color: #eee;
+  padding: 10px;
+}
+```
+
+HTML toevoeging:
+```html
+<div class="item">4</div>
+```
+
+</details>
+
+## Make
+
+**Opdracht:** Bouw een standaard header-balk voor een website. Maak een flex-container (een `<div>` met de klasse `topbar`) met daarin twee onderdelen: een logo (een `<h1>`) en een menu (een `<div>` met wat links erin). Gebruik Flexbox om het logo links te zetten en het menu rechts, en centreer ze verticaal.
+
+<details>
+<summary>Tip</summary>
+
+Geef `.topbar` de eigenschappen `display: flex;`, `justify-content: space-between;` en `align-items: center;`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<!-- HTML -->
+<div class="topbar">
+  <h1>MijnSite</h1>
+  <div class="menu">
+    <a href="#">Home</a>
+    <a href="#">Over Ons</a>
+    <a href="#">Contact</a>
+  </div>
+</div>
+```
+
+```css
+/* CSS */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #eee;
+  padding: 10px 20px;
+}
+
+.menu a {
+  margin-left: 15px;
+  text-decoration: none;
+  color: black;
+}
+```
+
+In [Semantische HTML](/docs/html-css/semantische-html) leer je hoe je dit nog beter kunt schrijven met `<header>` en `<nav>` in plaats van `<div>`.
+
+</details>
+
+:::tip Semantische HTML
+We gebruikten hierboven `<div class="topbar">` en `<div class="menu">`. In [Semantische HTML](/docs/html-css/semantische-html) leer je dat HTML speciale tags heeft voor deze rollen: `<header>` en `<nav>`. Die werken hetzelfde als `<div>`, maar vertellen ook *wat* een stuk pagina is — goed voor screenreaders en zoekmachines.
+:::
+
+## Er gaat iets mis
+
+**`display: flex` op het verkeerde element**
+
+```css
+/* Fout: flex op het item zelf, niet de container */
+.item {
+  display: flex;
+}
+```
+
+Flexbox werkt op de **container** — het element dat de items bevat. Als je `display: flex` op de items zelf zet, heeft dat geen effect op hoe ze naast elkaar staan. Zet `display: flex` altijd op het **omhullende** element.

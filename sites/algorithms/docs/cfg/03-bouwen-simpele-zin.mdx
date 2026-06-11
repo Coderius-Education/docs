@@ -1,0 +1,124 @@
+---
+sidebar_position: 3
+hide_table_of_contents: true
+---
+
+# 11.3 Zin 1 — de simpelste zin
+
+**Leerdoel:** je schrijft je eerste grammaticaregels en laat *Holmes sat*
+parsen.
+
+## De zin
+
+> **Holmes (N) sat (V).**
+
+Twee woorden: een zelfstandig naamwoord (`N`) en een werkwoord (`V`). Dit
+is het kleinste skelet van een Engelse zin: een **onderwerp** dat
+**iets doet**.
+
+## Denk na
+
+Je begint met een lege grammatica. Het **startsymbool** is `S` — daar
+moet elke geldige zin uit voortkomen. Bedenk zelf:
+
+- Uit welke twee delen valt deze zin uiteen (een onderwerp-deel en een
+  werkwoord-deel)?
+- Welke woordsoort vormt elk deel hier?
+
+Verzin namen voor je woordgroepen en schrijf de regels. Draai daarna de
+cel: zolang de zin niet groen is, klopt er nog iets niet.
+
+## Bouw en test
+
+<PyRunner rows={16} initialCode={`# ===== JOUW WERK: schrijf hier je grammaticaregels =====
+# Begin bij het startsymbool S. Een regel schrijf je als:  Kop -> onderdeel(en)
+# Zie stap 1 voor de notatie. (N en V staan al in het lexicon hieronder.)
+GRAMMATICA = """
+
+"""
+
+# Zinnen die allemaal moeten werken:
+ZINNEN = [
+    "Holmes sat",
+]
+
+
+# ====== De parser-motor + lexicon — hieronder NIET aanpassen ======
+LEXICON = """
+Adj -> "country" | "dreadful" | "enigmatical" | "little" | "moist" | "red"
+Adv -> "down" | "here" | "never"
+Conj -> "and" | "until"
+Det -> "a" | "an" | "his" | "my" | "the"
+N -> "armchair" | "companion" | "day" | "door" | "hand" | "he" | "himself"
+N -> "holmes" | "home" | "i" | "mess" | "paint" | "palm" | "pipe" | "she"
+N -> "smile" | "thursday" | "walk" | "we" | "word"
+P -> "at" | "before" | "in" | "of" | "on" | "to"
+V -> "arrived" | "came" | "chuckled" | "had" | "lit" | "said" | "sat"
+V -> "smiled" | "tell" | "were"
+"""
+
+def lees_grammatica(tekst):
+    regels = []
+    for regel in tekst.splitlines():
+        regel = regel.split("#")[0].strip()
+        if not regel:
+            continue
+        kop, rest = regel.split("->")
+        kop = kop.strip()
+        for optie in rest.split("|"):
+            regels.append((kop, optie.split()))
+    return regels
+
+def parse(grammatica, woorden):
+    woorden = list(woorden)
+    memo = {}
+    def combineer(rhs, i, j):
+        if len(rhs) == 1:
+            return [[boom] for boom in deel(rhs[0], i, j)]
+        eerste, rest = rhs[0], rhs[1:]
+        resultaat = []
+        for k in range(i + 1, j):
+            for boom1 in deel(eerste, i, k):
+                for staart in combineer(rest, k, j):
+                    resultaat.append([boom1] + staart)
+        return resultaat
+    def deel(sym, i, j):
+        sleutel = (sym, i, j)
+        if sleutel in memo:
+            return memo[sleutel]
+        memo[sleutel] = []
+        bomen = []
+        for kop, rhs in grammatica:
+            if kop != sym:
+                continue
+            if len(rhs) == 1 and rhs[0].startswith('"'):
+                woord = rhs[0].strip('"')
+                if j - i == 1 and woorden[i] == woord:
+                    bomen.append((sym, woorden[i]))
+                continue
+            for kinderen in combineer(rhs, i, j):
+                bomen.append((sym,) + tuple(kinderen))
+        memo[sleutel] = bomen
+        return bomen
+    return deel("S", 0, len(woorden))
+
+def controleer(grammatica_tekst, zinnen):
+    grammatica = lees_grammatica(grammatica_tekst + LEXICON)
+    alles_goed = True
+    for zin in zinnen:
+        bomen = parse(grammatica, zin.lower().split())
+        if bomen:
+            print(f"  OK  ({len(bomen)}x)  {zin}")
+        else:
+            print(f"  FOUT (0x)  {zin}   <-- parseert nog niet!")
+            alles_goed = False
+    print()
+    print("Gelukt: alle zinnen werken!" if alles_goed else "Nog niet alle zinnen werken.")
+
+controleer(GRAMMATICA, ZINNEN)`} />
+
+> **Bewaar je werk** — je hebt je grammatica van deze stap straks weer
+> nodig. Kopieer je regels voordat je naar de volgende pagina gaat; daar
+> bouw je erop verder.
+
+Door naar [stap 4: een lijdend voorwerp →](./04-bouwen-lijdend-voorwerp).

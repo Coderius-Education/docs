@@ -1,0 +1,149 @@
+---
+sidebar_position: 10
+hide_table_of_contents: true
+---
+
+# 7.10 Cheatsheet — Big O
+
+Snelle referentie. Klap open wat je nodig hebt.
+
+## De vier klassen — groei in tabel
+
+<details>
+<summary>Stappen per klasse bij groeiende n</summary>
+
+| `n` | O(1) | O(log n) | O(n) | O(n²) |
+|---|---|---|---|---|
+| 10 | 1 | 3 | 10 | 100 |
+| 100 | 1 | 7 | 100 | 10.000 |
+| 1.000 | 1 | 10 | 1.000 | 1.000.000 |
+| 10.000 | 1 | 14 | 10.000 | 100.000.000 |
+| 100.000 | 1 | 17 | 100.000 | 10.000.000.000 |
+| 1.000.000 | 1 | 20 | 1.000.000 | 1.000.000.000.000 |
+
+Patronen om te onthouden:
+
+- **O(1)**: blijft altijd 1.
+- **O(log n)**: verdubbel `n` → +1 stap.
+- **O(n)**: verdubbel `n` → verdubbel stappen.
+- **O(n²)**: verdubbel `n` → vier keer zoveel stappen.
+
+</details>
+
+<details>
+<summary>Hoe ontstaat elke klasse?</summary>
+
+| Klasse | Patroon in code |
+|---|---|
+| O(1) | `lijst[i]`, `len(lijst)`, één regel-rekenwerk |
+| O(log n) | **halveren** per stap (binair zoeken) |
+| O(n) | één lus door de hele lijst |
+| O(n²) | geneste lus, beide over `n` |
+| O(n³) | drie geneste lussen |
+
+</details>
+
+## Decision tree — welke klasse?
+
+<details>
+<summary>Vragen om de klasse te bepalen</summary>
+
+```
+Heeft het algoritme een lus door de invoer?
+├── Nee → O(1)
+└── Ja:
+    ├── Halveert het de zoekruimte per stap?
+    │   └── Ja → O(log n)
+    ├── Bekijkt het elk element één keer?
+    │   └── Ja → O(n)
+    └── Zit er een lus IN de lus (beide over n)?
+        └── Ja → O(n²)
+```
+
+</details>
+
+## Per algoritme
+
+<details>
+<summary>Zoeken</summary>
+
+| Algoritme | Best | Gemiddeld | Slechtst |
+|---|---|---|---|
+| Lineair zoeken | O(1) | O(n) | O(n) |
+| Binair zoeken | O(1) | O(log n) | O(log n) |
+
+Voorwaarde voor binair zoeken: lijst is **gesorteerd**.
+
+</details>
+
+<details>
+<summary>Vinden van extremen</summary>
+
+| Algoritme | Best | Gemiddeld | Slechtst |
+|---|---|---|---|
+| Vind maximum | O(n) | O(n) | O(n) |
+| Max én min in één pass | O(n) | O(n) | O(n) |
+
+Geen beste-geval-truc mogelijk — je moet elk element zien om zeker te
+zijn van het extreem.
+
+</details>
+
+<details>
+<summary>Sorteren</summary>
+
+| Algoritme | Best | Gemiddeld | Slechtst |
+|---|---|---|---|
+| Selection sort | O(n²) | O(n²) | O(n²) |
+| Bubble sort (early-exit) | O(n) | O(n²) | O(n²) |
+
+In de praktijk gebruik je `list.sort()` of `sorted()` — Python's
+ingebouwde sorteer-algoritme is `O(n log n)` (Timsort).
+
+</details>
+
+## Wat tellen we wel en niet
+
+<details>
+<summary>Wat verdwijnt in Big O</summary>
+
+- Constante factoren: `5n` → `O(n)`.
+- Lagere-orde termen: `n² + n` → `O(n²)`.
+- Vaste opstartkosten: 10 regels initialisatie → `O(1)` overhead, valt
+  weg bij grote `n`.
+
+</details>
+
+<details>
+<summary>Wat blijft staan in Big O</summary>
+
+- De **hoogste-orde term** zonder coëfficiënt.
+- Het **groeigedrag** als `n` heel groot wordt.
+- De **slechtste situatie** (worst case), tenzij expliciet anders
+  vermeld.
+
+</details>
+
+## Top-3 valkuilen
+
+<details>
+<summary>Veelgemaakte denkfouten</summary>
+
+1. **Constanten meetellen.** `O(3n + 5)` bestaat niet — schrijf `O(n)`.
+2. **Best/worst case verwarren.** "Binair zoeken is `O(1)`" zonder
+   context is misleidend.
+3. **Klein `n` als bewijs.** Op 100 elementen is `O(n²)` even snel als
+   `O(n)`. Test met grote `n` om de **klasse** te zien.
+
+Volledig overzicht: [stap 9: er gaat iets mis](./09-fouten).
+
+</details>
+
+## Verder lezen
+
+- [stap 1: Big O — het idee](./01-concept) — start hier als je het
+  concept opnieuw wilt doornemen.
+- [stap 7: vergelijk de klassen](./07-vergelijken) — de showcase-plot
+  met alle vier klassen tegelijk.
+- [stap 8: overzicht per algoritme](./08-overzicht) — catalogus met
+  klikbare links naar alle algoritme-tracks.

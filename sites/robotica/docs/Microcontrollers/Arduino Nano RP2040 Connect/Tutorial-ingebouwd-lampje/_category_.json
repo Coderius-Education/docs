@@ -1,0 +1,8 @@
+{
+  "label": "Tutorial - ingebouwd lampje",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "description": "Leer in de volgende stappen de Arduino Nano RP2040 Connect kennen."
+  }
+}

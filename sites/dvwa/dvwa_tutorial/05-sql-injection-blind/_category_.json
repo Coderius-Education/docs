@@ -1,0 +1,8 @@
+{
+  "label": "SQL Injection (Blind)",
+  "position": 5,
+  "link": {
+    "type": "generated-index",
+    "description": "SQL Injection (Blind)"
+  }
+}

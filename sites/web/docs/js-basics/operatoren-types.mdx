@@ -1,0 +1,237 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeEditor from '@site/src/components/CodeEditor';
+
+# Waarden en operatoren
+
+## Wat ga je leren?
+
+Je leert de drie basis-**datatypes** van JavaScript (string, number, boolean) en de **operatoren** waarmee je waarden combineert en vergelijkt.
+
+## Theorie
+
+Tot nu toe heb je vooral getallen (`0`, `1`) en tekst gebruikt zonder na te denken over wat dat *zijn*. Tijd om dat te benoemen.
+
+### De drie basis-datatypes
+
+| Type | Wat het is | Voorbeeld |
+|---|---|---|
+| `number` | Een getal | `42`, `3.14`, `0`, `-7` |
+| `string` | Tekst tussen quotes | `'hallo'`, `"wereld"` |
+| `boolean` | Waar of onwaar | `true`, `false` |
+
+```js
+let leeftijd = 16;          // number
+let naam = 'Lisa';          // string
+let isIngelogd = true;      // boolean
+```
+
+### Rekenen met `number`
+
+```js
+let a = 10 + 5;   // 15  (optellen)
+let b = 10 - 5;   // 5   (aftrekken)
+let c = 10 * 5;   // 50  (vermenigvuldigen)
+let d = 10 / 5;   // 2   (delen)
+```
+
+### Plakken van `string`
+
+De `+` doet bij strings iets anders: hij **plakt** ze aan elkaar.
+
+```js
+let begroeting = 'Hallo, ' + 'wereld!';   // 'Hallo, wereld!'
+let leeftijd = 16;
+let zin = 'Ik ben ' + leeftijd + ' jaar.';  // 'Ik ben 16 jaar.'
+```
+
+### Modernere variant: template literals
+
+Het bovenstaande met veel `+` kan onoverzichtelijk worden. Met **template literals** (tussen **backticks** `` ` ``) kun je variabelen direct in de tekst stoppen via `${...}`:
+
+```js
+const leeftijd = 16;
+const zin = `Ik ben ${leeftijd} jaar.`;   // 'Ik ben 16 jaar.'
+```
+
+Voordelen:
+- Geen geknoei met `+` en quotes
+- Werkt ook met meerdere regels (een backtick-string mag over meerdere regels lopen)
+- Berekeningen mogen in `${...}`: `` `Volgend jaar: ${leeftijd + 1}` ``
+
+Let op: het is geen gewoon enkel aanhalingsteken (`'`), maar de **backtick** — vaak linksboven op je toetsenbord onder Esc.
+
+### Vergelijken (resulteert in `boolean`)
+
+Vergelijkings-operatoren geven altijd `true` of `false` terug:
+
+| Operator | Wat het doet |
+|---|---|
+| `===` | Gelijk aan |
+| `!==` | Niet gelijk aan |
+| `>` | Groter dan |
+| `<` | Kleiner dan |
+| `>=` | Groter of gelijk |
+| `<=` | Kleiner of gelijk |
+
+```js
+5 > 3      // true
+5 === 5    // true
+5 === '5'  // false (number en string zijn niet gelijk)
+'a' !== 'b' // true
+```
+
+:::tip Waarom `===` en niet `==`?
+In JavaScript bestaan `==` en `===`. `===` vergelijkt **strikt** (waarde én type). `==` doet automatische conversie, wat tot rare resultaten leidt (`'5' == 5` is `true`!). Gebruik altijd `===` voor zekerheid.
+:::
+
+## Predict
+
+Wat denk je dat dit toont op de pagina?
+
+```js
+let prijs = 5;
+let aantal = 3;
+let totaal = prijs * aantal;
+document.getElementById('uitvoer').textContent = 'Totaal: €' + totaal;
+```
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+`Totaal: €15`. Eerst wordt `prijs * aantal` uitgerekend (15, een number). Daarna wordt die uitkomst aan de string `'Totaal: €'` geplakt met `+`. Het resultaat is één string die in de `<p>` getoond wordt.
+
+</details>
+
+## Probeer het zelf!
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Operatoren</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <p id="uitvoer">Klik op de knop om te rekenen.</p>
+  <button onclick="bereken()">Bereken</button>
+</body>
+</html>`}
+  initialCss={`p {
+  font-size: 1.4rem;
+  padding: 12px;
+}
+
+button {
+  padding: 8px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+}`}
+  initialJs={`function bereken() {
+  const prijs = 5;
+  const aantal = 3;
+  const totaal = prijs * aantal;
+  document.getElementById('uitvoer').textContent = 'Totaal: €' + totaal;
+  console.log('Prijs is een', typeof prijs);
+  console.log('Totaal is een', typeof totaal);
+}`}
+  height="480px"
+  livePreview={false}
+/>
+
+## Investigate
+
+Experimenteer:
+
+- Verander `prijs * aantal` naar `prijs + aantal` — wat zie je dan?
+- Zet aanhalingstekens om de 5: `const prijs = '5';` — wat verandert er aan de uitkomst en in de console?
+- Voeg `console.log(prijs > aantal);` toe — wat krijg je terug?
+- Probeer `console.log(5 === '5');` — wat zegt de console?
+
+## Modify
+
+**Opdracht:** Bouw een mini-rekenmachine: laat de pagina het verschil, de som én het product van twee getallen tonen.
+
+<details>
+<summary>Tip</summary>
+
+Sla de twee getallen op in `const`. Gebruik string-plakken (`+`) om elke regel op te bouwen. Met een `\n` (newline) krijg je een nieuwe regel in een textarea, maar in een `<p>` werkt dat niet — gebruik meerdere `<p>`'s of `innerHTML` met `<br>` ertussen.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+HTML:
+```html
+<p id="som"></p>
+<p id="verschil"></p>
+<p id="product"></p>
+<button onclick="reken()">Reken!</button>
+```
+
+script.js:
+```js
+function reken() {
+  const a = 10;
+  const b = 4;
+  document.getElementById('som').textContent = a + ' + ' + b + ' = ' + (a + b);
+  document.getElementById('verschil').textContent = a + ' - ' + b + ' = ' + (a - b);
+  document.getElementById('product').textContent = a + ' × ' + b + ' = ' + (a * b);
+}
+```
+
+</details>
+
+## Make
+
+**Opdracht:** Bouw een "leeftijd-checker". Sla een leeftijd op in een variabele en toon op de pagina:
+- de leeftijd zelf
+- of de persoon meerderjarig is (`true` / `false`)
+
+<details>
+<summary>Tip</summary>
+
+Sla het resultaat van de vergelijking op in een boolean: `const meerderjarig = leeftijd >= 18;`. Toon die waarde rechtstreeks — JavaScript zet `true`/`false` automatisch om naar tekst zodra je hem in `.textContent` zet.
+
+In [Beslissingen](/docs/js-basics/if-else) leer je hoe je op basis van die boolean een passende zin laat zien ("Je bent meerderjarig" of "Je bent minderjarig").
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```js
+function check() {
+  const leeftijd = 17;
+  const meerderjarig = leeftijd >= 18;
+
+  document.getElementById('leeftijd').textContent = 'Leeftijd: ' + leeftijd;
+  document.getElementById('boolean').textContent = 'Meerderjarig: ' + meerderjarig;
+}
+```
+
+</details>
+
+## Er gaat iets mis
+
+**Number plus string geeft een rare string**
+
+```js
+const aantal = '5';        // per ongeluk een string
+const totaal = aantal + 1; // verwacht 6, maar krijgt '51'
+```
+
+Als één van de twee een string is, gaat de `+` plakken in plaats van rekenen. `'5' + 1` wordt `'51'`. Controleer altijd of een waarde een number is met `console.log(typeof waarde)`. Als je toch tekst hebt die je wilt optellen, converteer met `Number(aantal)`:
+
+```js
+const totaal = Number(aantal) + 1;  // nu wel 6
+```
+
+---
+
+[← Events](/docs/js-basics/events) | [Beslissingen →](/docs/js-basics/if-else)

@@ -1,0 +1,222 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeEditor from '@site/src/components/CodeEditor';
+
+# Media queries
+
+## Wat ga je leren?
+
+Je leert hoe je je CSS laat reageren op de **schermbreedte** met een **media query** — zo ziet je pagina er goed uit op zowel een mobiel als een laptop.
+
+## Theorie
+
+Een **media query** is een CSS-blok dat alleen wordt toegepast onder bepaalde voorwaarden — meestal: als het scherm smaller of breder is dan een bepaalde breedte.
+
+```css
+.kaart {
+  width: 600px;
+}
+
+@media (max-width: 700px) {
+  .kaart {
+    width: 100%;
+  }
+}
+```
+
+Lees dit als: "als de schermbreedte 700px of minder is, gebruik dan deze regels". Op een laptop is de kaart 600px breed; op een telefoon vult hij de hele breedte.
+
+### De twee meest-gebruikte voorwaarden
+
+| Voorwaarde | Wanneer geldig |
+|---|---|
+| `(max-width: 700px)` | Schermen **smaller** dan 700px (mobiel) |
+| `(min-width: 800px)` | Schermen **breder** dan 800px (desktop) |
+
+Je kunt ze ook combineren: `@media (min-width: 600px) and (max-width: 900px)` → alleen tablets.
+
+### Aanpak: "mobile-first"
+
+Veel ontwikkelaars schrijven hun CSS eerst voor **kleine schermen** (geen media query nodig) en voegen daarna regels toe voor grotere schermen via `min-width`. Je opent dan voor de smalle weergave geen apart blok — die is de basis.
+
+```css
+/* Basis: mobiel */
+.menu { flex-direction: column; }
+
+/* Aanvulling: desktop */
+@media (min-width: 700px) {
+  .menu { flex-direction: row; }
+}
+```
+
+## Predict
+
+Wat denk je dat er gebeurt met dit blok als je het browservenster smaller maakt dan 600px?
+
+```css
+.titel { font-size: 3rem; }
+@media (max-width: 600px) {
+  .titel { font-size: 1.5rem; }
+}
+```
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+Op brede schermen is `.titel` 3rem groot (zo'n 48px). Zodra je het venster onder 600px duwt, schakelt de browser over naar de media-query-regel en wordt `.titel` 1,5rem (24px) — half zo groot. Sleep je het venster weer breder, dan keert het terug.
+
+</details>
+
+## Probeer het zelf!
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Media queries</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="kaart">
+    <h2>Sleep de preview-rand om het effect te zien</h2>
+    <p>Maak het preview-venster smaller of breder en kijk wat er verandert.</p>
+  </div>
+</body>
+</html>`}
+  initialCss={`.kaart {
+  background-color: lightblue;
+  padding: 40px;
+  width: 80%;
+  margin: 20px auto;
+}
+
+.kaart h2 {
+  font-size: 2rem;
+}
+
+@media (max-width: 500px) {
+  .kaart {
+    background-color: lightcoral;
+    padding: 10px;
+    width: 100%;
+  }
+
+  .kaart h2 {
+    font-size: 1.2rem;
+  }
+}`}
+  height="540px"
+/>
+
+:::tip Test je media query
+Sleep de preview-paneel-grens (of het hele browservenster) versmaller om de breekpunten te triggeren.
+:::
+
+## Investigate
+
+Experimenteer:
+
+- Verander `max-width: 500px` naar `max-width: 800px` — bij welke breedte switcht het nu?
+- Voeg een tweede media query toe voor `max-width: 300px` met `background-color: lightgreen` — wat gebeurt er bij een heel smal scherm?
+- Wat doet `min-width: 800px` als alternatief?
+
+## Modify
+
+**Opdracht:** Voeg een tweede breekpunt toe op `max-width: 320px` (heel smal mobiel) waarbij de tekst over één regel verdeeld wordt en de padding nóg kleiner is.
+
+<details>
+<summary>Tip</summary>
+
+Stapel meerdere `@media`-regels onder elkaar. Ze kunnen elkaar overschrijven — de browser past ze toe in volgorde.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```css
+@media (max-width: 320px) {
+  .kaart {
+    padding: 4px;
+  }
+  .kaart h2 {
+    font-size: 1rem;
+  }
+}
+```
+
+</details>
+
+## Make
+
+**Opdracht:** Bouw een navigatie van drie links. Op brede schermen staan ze **naast** elkaar (Flexbox `row`). Op smalle schermen (< 600px) staan ze **onder** elkaar (`column`).
+
+<details>
+<summary>Tip</summary>
+
+Begin met de mobiele versie als basis (`flex-direction: column`). Voeg een `@media (min-width: 600px)`-regel toe die `flex-direction: row` toepast.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<div class="menu">
+  <a href="#">Home</a>
+  <a href="#">Over</a>
+  <a href="#">Contact</a>
+</div>
+```
+
+```css
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background-color: #eef;
+  padding: 16px;
+}
+
+.menu a {
+  text-decoration: none;
+  color: #333;
+}
+
+@media (min-width: 600px) {
+  .menu {
+    flex-direction: row;
+    justify-content: space-around;
+  }
+}
+```
+
+</details>
+
+## Er gaat iets mis
+
+**Media query in HTML zetten in plaats van CSS**
+
+```html
+<!-- Werkt niet -->
+<style>
+  @media (max-width: 600px) {
+    ...
+  }
+</style>
+```
+
+Werkt op zich, maar wel in **CSS** — niet in HTML zoals een `<meta>`. Wat je vaak vergeet voor mobiel:
+
+```html
+<meta name="viewport" content="width=device-width, initial-scale=1">
+```
+
+Zonder dit meta-tag rendert de browser de pagina alsof het scherm 980px breed is — dan worden je media queries nooit getriggerd op een telefoon. Zet hem altijd in `<head>`.
+
+---
+
+[← Position](/docs/html-css/position) | [CSS Grid →](/docs/html-css/css-grid)

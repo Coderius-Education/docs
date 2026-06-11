@@ -1,0 +1,59 @@
+---
+sidebar_position: 4
+sidebar_label: 'Impossible'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# JavaScript Attacks — Impossible
+
+Hoe beveilig je een systeem definitief tegen mensen die klungelen in de Developer Tools?
+
+## 1. Predict (Voorspel)
+
+Heel simpel: verplaats alle beslissingen van de voorkant (JavaScript) naar de achterkant (PHP/backend).
+
+```php
+$word = $_POST['phrase'];
+
+if ($word === 'success') {
+    // Top, gelukt!
+} else {
+    // Fout!
+}
+```
+
+**Vraag:** Waar zijn de ingewikkelde tokens, vercijferingen en geheime JavaScript-functies gebleven? Waarom is deze belachelijk simpele code veel veiliger dan de High-versie?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Ze zijn compleet verwijderd — omdat ze zinloos waren. Er is geen logische reden om een browser een moeilijke wiskundige berekening te laten doen om een wachtwoord of woordje te "verstoppen" als de gebruiker toch zelf controle heeft over zijn browser. In de Impossible-versie vraagt de backend gewoon: "Klopt het woordje in de POST request?" Geen poespas, en daardoor ook niets om te manipuleren.
+
+</details>
+
+## 2. Run & Investigate
+
+Start het lab en bekijk de broncode.
+
+<DvwaLab module="javascript_attacks" level="impossible" />
+
+Open F12 → **Sources** en zoek het JavaScript-bestand van deze module. Kijk hoeveel (beveiligings)logica er in zit.
+
+## 3. ✓ Wat moest je zien?
+
+:::tip Controle
+- Het `impossible.js`-bestand bevat nauwelijks of geen beveiligingslogica — er valt niets te manipuleren.
+- Het invullen van `success` en direct klikken op Submit werkt gewoon correct.
+- Er zijn geen verborgen tokenvelden of cryptografische functies om te omzeilen.
+
+Zie je toch een token-fout? Controleer of het security level correct op **impossible** staat.
+:::
+
+**Never Trust The Client:** Alles wat in HTML, CSS of JavaScript staat, draait op de computer van de bezoeker. Als programmeur heb je er nul controle over.
+
+**Security by Obscurity is een leugen:** Ge-obfusceerde JavaScript houdt een goede hacker hooguit tien minuten bezig. Het is geen echte beveiliging.
+
+**Houd logica op de server:** Zaken zoals autorisatie, prijzen of wachtwoordvalidatie moeten in veilige backend-code (PHP, Python, Node.js) worden uitgevoerd — nooit lokaal in de browser.

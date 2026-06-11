@@ -1,0 +1,139 @@
+---
+sidebar_position: 5
+hide_table_of_contents: true
+---
+
+# 8.5 Bouwsteen 2 — de tabel
+
+**Leerdoel:** je vertaalt de twee kolommen uit je pen-en-papier-tabel
+naar Python: een `afstanden`-dict en een `bezocht`-set.
+
+## Wat we willen
+
+Op papier zag je tabel er zo uit:
+
+| node | bekend? | afstand |
+|---|---|---|
+| A | ja | 0 |
+| B | nee | 4 |
+| C | nee | 2 |
+| D | nee | ? |
+
+In Python splitsen we dit in twee structuren:
+
+1. **`afstanden`** — een dict van node naar zijn huidige beste afstand.
+2. **`bezocht`** — een set van nodes die al "bekend" zijn.
+
+Splitsen omdat het twee verschillende vragen zijn: *"wat is je beste
+afstand?"* en *"ben je al klaar?"*.
+
+## Hoe schrijf je "onbekend" als getal?
+
+In het pen-en-papier-werk schreef je `?` voor onbekend. In Python heeft
+dat geen standaard-symbool — maar we kunnen `float('inf')` gebruiken:
+
+```python
+oneindig = float('inf')
+print(oneindig)
+print(oneindig > 999999)
+```
+
+`float('inf')` is letterlijk "oneindig groot". Je kunt er **mee rekenen**
+en **mee vergelijken**. Perfect voor "afstand nog onbekend, dus elke
+gevonden route is in elk geval beter".
+
+## Initialiseren
+
+Vóór de eerste ronde:
+
+```python
+afstanden = {'A': 0, 'B': float('inf'), 'C': float('inf'), 'D': float('inf')}
+bezocht = set()
+```
+
+- De **startnode** krijgt afstand `0` (daar staan we al).
+- Alle andere nodes krijgen `inf` (nog niets ontdekt).
+- `bezocht` is **leeg** — niemand is "klaar" aan het begin.
+
+## Dit korter schrijven
+
+We willen dat dit ook werkt als de graph er anders uitziet — niet alleen
+voor A/B/C/D. Een **dict comprehension** doet dat in één regel:
+
+```python
+afstanden = {node: float('inf') for node in graph}
+afstanden[start] = 0
+```
+
+Lees: *"voor elke `node` in `graph`, maak een sleutel met waarde `inf`.
+Daarna: zet de start op 0."*
+
+## Voorspel
+
+Wat denk je dat dit print?
+
+```python
+graph = {
+    'A': [('B', 4), ('C', 2)],
+    'B': [('A', 4), ('D', 1)],
+    'C': [('A', 2), ('D', 8)],
+    'D': [('B', 1), ('C', 8)],
+}
+start = 'A'
+
+afstanden = {node: float('inf') for node in graph}
+afstanden[start] = 0
+bezocht = set()
+
+print(afstanden)
+print(bezocht)
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+{'A': 0, 'B': inf, 'C': inf, 'D': inf}
+set()
+```
+
+`set()` is hoe Python een lege set print. `inf` is hoe het oneindig
+weergeeft.
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`graph = {
+    'A': [('B', 4), ('C', 2)],
+    'B': [('A', 4), ('D', 1)],
+    'C': [('A', 2), ('D', 8)],
+    'D': [('B', 1), ('C', 8)],
+}
+start = 'A'
+
+afstanden = {node: float('inf') for node in graph}
+afstanden[start] = 0
+bezocht = set()
+
+print("afstanden:", afstanden)
+print("bezocht:  ", bezocht)`} />
+
+## Iets aan bezocht toevoegen
+
+Een set heeft maar twee handelingen die we nodig hebben:
+
+```python
+bezocht.add('A')       # 'A' is nu in de set
+'A' in bezocht          # True
+'B' in bezocht          # False
+```
+
+Klaar — we hebben de boekhouding op orde.
+
+## Wat nu nog mist
+
+We hebben **lege** afstanden (op de start na). Nu moeten we ze leren
+*updaten* op basis van de buren. Dat is de relax-stap.
+
+Door naar [bouwsteen 3: relax een buur →](./06-bouwen-relax).

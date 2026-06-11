@@ -1,0 +1,139 @@
+---
+sidebar_position: 10
+hide_table_of_contents: true
+---
+
+# 6.10 Bouw zelf — vergelijk early-exit aan en uit
+
+**Leerdoel:** je meet zelf hoeveel de early-exit-optimalisatie scheelt op
+al-gesorteerde input, en visualiseert het verschil.
+
+## Opdracht
+
+Schrijf twee versies van bubble sort:
+
+1. `bubble_sort_zonder_exit` — zonder early-exit. Doet altijd `n − 1`
+   passes.
+2. `bubble_sort_met_exit` — met early-exit (zoals het complete algoritme).
+
+Vergelijk ze op meerdere lijst-typen en plot het verschil in
+vergelijkingen.
+
+<PyRunner initialCode={`import random
+
+def bubble_sort_zonder_exit(lijst):
+    n = len(lijst)
+    vergelijkingen = 0
+    # vul aan: standaard bubble sort, GEEN geswapt-vlag, GEEN break
+    for ronde in range(n - 1):
+        for i in range(n - 1 - ronde):
+            vergelijkingen += 1
+            if lijst[i] > lijst[i + 1]:
+                lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+    return vergelijkingen
+
+def bubble_sort_met_exit(lijst):
+    n = len(lijst)
+    vergelijkingen = 0
+    # vul aan: zelfde maar mét early-exit
+    for ronde in range(n - 1):
+        geswapt = False
+        for i in range(n - 1 - ronde):
+            vergelijkingen += 1
+            if lijst[i] > lijst[i + 1]:
+                lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+                geswapt = True
+        if not geswapt:
+            break
+    return vergelijkingen
+
+# Test op verschillende lijst-typen
+n = 100
+bijna = list(range(n))
+bijna[40], bijna[41] = bijna[41], bijna[40]   # twee buren omgewisseld
+
+soorten = {
+    'al gesorteerd':  list(range(n)),
+    'bijna sorted':   bijna,
+    'omgekeerd':      list(range(n, 0, -1)),
+    'willekeurig':    random.sample(range(n * 10), n),
+}
+
+zonder = {}
+met = {}
+for naam, lijst in soorten.items():
+    zonder[naam] = bubble_sort_zonder_exit(lijst.copy())
+    met[naam] = bubble_sort_met_exit(lijst.copy())
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+namen = list(soorten.keys())
+zonder_vals = [zonder[n] for n in namen]
+met_vals = [met[n] for n in namen]
+
+x = np.arange(len(namen))
+breedte = 0.35
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.bar(x - breedte/2, zonder_vals, breedte, label='zonder early-exit')
+ax.bar(x + breedte/2, met_vals, breedte, label='met early-exit')
+ax.set_xticks(x)
+ax.set_xticklabels(namen, rotation=15)
+ax.set_ylabel('vergelijkingen')
+ax.set_title(f'Bubble sort op n={n} elementen')
+ax.legend()
+plt.tight_layout()
+plt.show()
+
+for naam in namen:
+    print(f"{naam:<20} zonder={zonder[naam]:>5}  met={met[naam]:>5}  besparing={zonder[naam]-met[naam]}")`} />
+
+<details>
+<summary>Tip</summary>
+
+Beide versies hebben dezelfde **basis-structuur**. Het verschil zit in:
+
+- Bij `bubble_sort_zonder_exit`: **geen** `geswapt`-vlag, **geen** `break`.
+- Bij `bubble_sort_met_exit`: alles wat je in [bouwsteen 5](./07-bouwen-early-exit)
+  hebt geleerd.
+
+Beide moeten het aantal vergelijkingen terug geven, niet de lijst.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+De code zoals hierboven al gegeven werkt — de aangegeven uitwerking is
+dezelfde. Het echte werk zit in de **interpretatie** van het resultaat.
+
+</details>
+
+## Wat zie je in de grafiek?
+
+<details>
+<summary>Interpretatie</summary>
+
+- **Al gesorteerd**: zonder exit doet hij alle passes (~`n²/2` vergelijkingen).
+  Met exit slechts één pass (`n − 1` vergelijkingen). Enorme besparing.
+- **Bijna sorted**: één element fout staat → met early-exit nog steeds maar
+  paar passes. Zonder exit weer alle passes.
+- **Omgekeerd**: geen verschil. Geen enkele pass is zonder swaps → exit
+  helpt niet.
+- **Willekeurig**: matige besparing — typisch eindigt early-exit een paar
+  rondes voor het einde.
+
+Conclusie: early-exit is **gratis veel sneller** op bijna-gesorteerde
+data. Op willekeurige of omgekeerde data is hij ongeveer gratis (geen
+verlies), dus altijd inschakelen.
+
+</details>
+
+## Uitdaging (optioneel)
+
+Implementeer **cocktail sort**: een bubble sort die afwisselend van links
+naar rechts en van rechts naar links door de lijst loopt. In één rondtrip
+bubbelt de grootste naar rechts en de kleinste naar links — minder
+overall passes voor sommige inputs.
+
+Door naar [stap 11: veelgemaakte fouten](./11-fouten).

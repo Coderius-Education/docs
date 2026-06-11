@@ -1,0 +1,11 @@
+{
+  "label": "Lineair zoeken",
+  "position": 1,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "title": "Lineair zoeken",
+    "description": "Volg de stappen en leer lineair zoeken stap voor stap."
+  }
+}

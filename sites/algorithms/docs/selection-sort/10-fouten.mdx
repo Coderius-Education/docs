@@ -1,0 +1,100 @@
+---
+sidebar_position: 10
+hide_table_of_contents: true
+---
+
+# 5.10 Er gaat iets mis — top-3 fouten
+
+**Leerdoel:** je herkent de klassieke valkuilen bij selection sort.
+
+## Zoeken vanaf index 0 in plaats van vanaf `i`
+
+Geen Python-foutmelding — wél een **stille fout**: de al-gesorteerde
+elementen vooraan worden door nieuwe swaps overschreven.
+
+**Oorzaak:** elke ronde zoek je nog steeds in de **hele** lijst — ook in
+het al gesorteerde stuk vooraan. En je swapt met `lijst[i]`, wat een
+al-gesorteerde plek kan zijn. Het sorted-stuk wordt vernield.
+
+**Oplossing:** zoek vanaf `i` en begin de zoektocht met `min_index = i`.
+Zo laat je het al-gesorteerde deel met rust.
+
+```python
+# FOUT
+def selection_sort_fout(lijst):
+    n = len(lijst)
+    for i in range(n):
+        min_index = 0
+        for j in range(0, n):
+            if lijst[j] < lijst[min_index]:
+                min_index = j
+        lijst[i], lijst[min_index] = lijst[min_index], lijst[i]
+    return lijst
+
+# GOED
+for i in range(n):
+    min_index = i
+    for j in range(i, n):
+        ...
+```
+
+## Verkeerde swap — informatie verliezen
+
+**Oorzaak:** je overschrijft `lijst[a]` met `lijst[b]` voordat je de
+oude waarde van `lijst[a]` ergens hebt bewaard. Daarna is de oude waarde
+weg.
+
+**Oplossing:** gebruik een tijdelijke variabele, of de Pythonische
+tuple-swap.
+
+```python
+# FOUT
+lijst = [5, 2, 8, 1, 4]
+a, b = 0, 3
+lijst[a] = lijst[b]   # lijst[0] wordt 1; de 5 is weg
+lijst[b] = lijst[a]   # lijst[3] wordt 1 (alweer)
+
+# GOED (klassiek)
+tijdelijk = lijst[a]
+lijst[a] = lijst[b]
+lijst[b] = tijdelijk
+
+# GOED (Pythonisch)
+lijst[a], lijst[b] = lijst[b], lijst[a]
+```
+
+Meer uitleg: [Bouwsteen 2 — swappen](./04-bouwen-swap).
+
+## `range(0, n)` in plaats van `range(i, n)` in de binnenste lus
+
+Geen Python-foutmelding — werkt **toevallig** soms, maar de logica klopt
+niet.
+
+**Oorzaak:** in ronde `i = 2` kijken we óók nog naar `lijst[0]` en
+`lijst[1]`. Maar die zijn al gesorteerd — daar zou het kleinste element
+van het hele ongesorteerde stuk niet meer kunnen liggen. Risico: `lijst[0]`
+(de allerkleinste) wordt opnieuw als `min_index` gekozen → swap met
+`lijst[i]` → sorted-stuk vernield.
+
+**Oplossing:** `for j in range(i, n)`. Alleen het ongesorteerde stuk
+doorzoeken.
+
+```python
+# FOUT
+for i in range(n):
+    min_index = i
+    for j in range(0, n):       # begint bij 0
+        if lijst[j] < lijst[min_index]:
+            min_index = j
+    lijst[i], lijst[min_index] = lijst[min_index], lijst[i]
+
+# GOED
+for i in range(n):
+    min_index = i
+    for j in range(i, n):       # begint bij i
+        if lijst[j] < lijst[min_index]:
+            min_index = j
+    lijst[i], lijst[min_index] = lijst[min_index], lijst[i]
+```
+
+Door naar [stap 11: cheatsheet](./11-cheatsheet).

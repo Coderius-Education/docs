@@ -1,0 +1,90 @@
+---
+sidebar_position: 10
+hide_table_of_contents: true
+---
+
+# 1.10 Er gaat iets mis — top-3 fouten
+
+**Leerdoel:** je herkent veelvoorkomende foutmeldingen en begrijpt **waarom**
+ze optreden. Een fout is geen tegenslag — het is informatie.
+
+## `return -1` op de verkeerde inspringing
+
+Geen Python-foutmelding — wél een **logische fout**. De functie returnt te
+vroeg en geeft daardoor verkeerde antwoorden.
+
+**Oorzaak:** `return -1` staat binnen de `for`-lus en wordt al bij de
+eerste iteratie uitgevoerd.
+
+**Oplossing:** zorg dat `return -1` even ver ingesprongen staat als `for`,
+niet als `if`. In Python is inspringing geen versiering — het bepaalt de
+**structuur**.
+
+```python
+# FOUT
+def zoek(lijst, doel):
+    for i, waarde in enumerate(lijst):
+        if waarde == doel:
+            return i
+        return -1   # inspringing fout: dit zit IN de for
+
+# GOED
+def zoek(lijst, doel):
+    for i, waarde in enumerate(lijst):
+        if waarde == doel:
+            return i
+    return -1   # op functie-niveau, na de for
+```
+
+Meer uitleg: [Bouwsteen 4 — niet gevonden](./06-bouwen-niet-gevonden).
+
+## SyntaxError: `==` vs `=`
+
+```
+SyntaxError: invalid syntax
+```
+
+**Oorzaak:** `=` is **toekenning** (`x = 5` zet de waarde 5 in x);
+`==` is **vergelijking** (`if x == 5` vraagt of x gelijk is aan 5). In een
+`if` heb je een vergelijking nodig.
+
+**Oplossing:** gebruik `==` in vergelijkingen.
+
+```python
+# FOUT
+if waarde = doel:
+    return i
+
+# GOED
+if waarde == doel:
+    return i
+```
+
+Onthouden: **één** `=` is toekennen, **twee** `==` is vergelijken.
+
+## IndexError: list index out of range
+
+```
+IndexError: list index out of range
+```
+
+**Oorzaak:** je vraagt om `lijst[i]` voor een `i` die niet bestaat. Vaak
+omdat een `range`-grens te ver doortelt.
+
+**Oplossing:** laat de `+ 1` weg, of gebruik `for waarde in lijst:` of
+`for i, waarde in enumerate(lijst):`. Dan loop je gegarandeerd niet te
+ver — Python regelt het zelf.
+
+```python
+# FOUT
+lijst = [10, 20, 30]
+for i in range(len(lijst) + 1):   # 0, 1, 2, 3 — te ver!
+    print(lijst[i])
+
+# GOED
+lijst = [10, 20, 30]
+for waarde in lijst:
+    print(waarde)
+```
+
+Door naar [stap 11: cheatsheet](./11-cheatsheet).

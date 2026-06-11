@@ -1,0 +1,163 @@
+---
+sidebar_position: 4
+hide_table_of_contents: true
+---
+
+# 9.4 Het bord in Python
+
+**Leerdoel:** je kunt een tic-tac-toe-bord opslaan in Python, en de
+afspraken lezen die we straks in elke functie gebruiken.
+
+## Het bord = drie rijen
+
+Een tic-tac-toe-bord is 3 bij 3. In Python: een **lijst van drie
+lijsten**. Elke binnenste lijst is één rij.
+
+```python
+bord = [
+    ["X", "O", "X"],
+    ["O", "X", "O"],
+    [None, None, None],
+]
+```
+
+Lees: bovenste rij is `X O X`, middelste rij is `O X O`, onderste rij is
+leeg.
+
+## Een cel ophalen
+
+`bord[i][j]` geeft de cel op rij `i`, kolom `j`. Beide tellen vanaf 0.
+
+```
+       kolom 0   kolom 1   kolom 2
+rij 0:    X         O         X
+rij 1:    O         X         O
+rij 2:   None      None      None
+```
+
+Dus `bord[0][2]` is `"X"` (rechtsboven), `bord[2][1]` is `None`
+(midden-onder).
+
+## Drie waarden per cel
+
+We gebruiken drie waarden:
+
+| Waarde | Betekent |
+|---|---|
+| `"X"` | X heeft hier gespeeld |
+| `"O"` | O heeft hier gespeeld |
+| `None` | leeg (`None` is Python's "niets") |
+
+CS50 noemt deze `X`, `O` en `EMPTY` (constanten). Wij gebruiken de
+strings `"X"`, `"O"` en de waarde `None` direct — dat is precies
+hetzelfde, alleen zonder de constanten.
+
+## Een zet = een tuple
+
+Een **zet** is een coordinaat: *"speel op rij i, kolom j"*. We schrijven
+dat als een tuple:
+
+```python
+zet = (2, 1)        # rij 2, kolom 1 (midden-onder)
+```
+
+Een tuple is een **vast** rijtje. `zet[0]` is `2`, `zet[1]` is `1`.
+
+## Voorspel
+
+Wat denk je dat dit print?
+
+```python
+bord = [
+    ["X", "O", "X"],
+    ["O", "X", "O"],
+    [None, None, None],
+]
+
+print(bord[0][0])
+print(bord[1][2])
+print(bord[2][1])
+print(bord[2][1] is None)
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+X
+O
+None
+True
+```
+
+`bord[0][0]` is linksboven, `bord[1][2]` is rechts-midden, `bord[2][1]`
+is midden-onder (leeg). `is None` is Python's manier om te checken of
+een cel leeg is.
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`bord = [
+    ["X", "O", "X"],
+    ["O", "X", "O"],
+    [None, None, None],
+]
+
+print(bord[0][0])
+print(bord[1][2])
+print(bord[2][1])
+print(bord[2][1] is None)`} />
+
+## Door alle cellen lopen
+
+We doen dit in elke functie. Twee genestelde lussen, één voor rijen en
+één voor kolommen:
+
+<PyRunner initialCode={`bord = [
+    ["X", "O", "X"],
+    ["O", "X", "O"],
+    [None, None, None],
+]
+
+for i in range(3):
+    for j in range(3):
+        print(f"bord[{i}][{j}] = {bord[i][j]}")`} />
+
+<details>
+<summary>Verwachte uitvoer</summary>
+
+```
+bord[0][0] = X
+bord[0][1] = O
+bord[0][2] = X
+bord[1][0] = O
+bord[1][1] = X
+bord[1][2] = O
+bord[2][0] = None
+bord[2][1] = None
+bord[2][2] = None
+```
+
+Negen cellen, in rij-volgorde.
+
+</details>
+
+## Wat we hierna gaan doen
+
+In de volgende 8 pagina's bouwen we één voor één deze functies:
+
+| Functie | Wat doet hij |
+|---|---|
+| `initial_state()` | maakt een leeg bord |
+| `player(bord)` | bepaalt wie aan zet is (X of O) |
+| `actions(bord)` | geeft alle lege cellen |
+| `result(bord, zet)` | past een zet toe, geeft nieuw bord |
+| `winner(bord)` | wie heeft drie op een rij? |
+| `terminal(bord)` | is het spel afgelopen? |
+| `utility(bord)` | +1, -1 of 0 — wat is de uitkomst? |
+| `minimax(bord)` | de AI: welke zet is optimaal? |
+
+Eerst nog één pagina over hoe deze functies **samenwerken**.
+
+Door naar [stap 5: functies werken samen →](./05-functies-samenwerken).

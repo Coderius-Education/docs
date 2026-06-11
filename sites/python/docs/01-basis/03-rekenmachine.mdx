@@ -1,0 +1,180 @@
+---
+sidebar_position: 4
+hide_table_of_contents: true
+description: Reken in Python met +, -, * en /. Combineer variabelen in een berekening en houd rekening met de rekenvolgorde.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 3 De rekenmachine
+
+Je kunt nu variabelen maken en printen. In deze les laat je Python voor je rekenen — net als een calculator, maar met de waardes uit je variabelen.
+
+## Rekenoperatoren
+
+Python kent vier basisoperatoren:
+
+| Operator | Betekenis | Voorbeeld | Resultaat |
+|:--------:|-----------|-----------|-----------|
+| `+` | optellen | `5 + 3` | `8` |
+| `-` | aftrekken | `10 - 4` | `6` |
+| `*` | vermenigvuldigen | `3 * 7` | `21` |
+| `/` | delen | `10 / 4` | `2.5` |
+
+```python
+print(5 + 3)    # 8
+print(10 / 4)   # 2.5
+```
+
+`/` geeft altijd een **decimaal getal** terug, ook als de uitkomst rond is: `10 / 2` is `5.0`, niet `5`.
+
+## Rekenen met variabelen
+
+Je kunt variabelen direct in een berekening gebruiken:
+
+```python
+prijs = 12.50
+aantal = 4
+
+totaal = prijs * aantal
+print("Totaal:", totaal)
+```
+
+Uitvoer: `Totaal: 50.0`.
+
+## Rekenvolgorde
+
+Net als bij wiskunde: `*` en `/` gaan vóór `+` en `-`. Met haakjes stuur je de volgorde:
+
+```python
+print(2 + 3 * 4)    # 14  (eerst 3 * 4)
+print((2 + 3) * 4)  # 20  (haakjes eerst)
+```
+
+Bij twijfel: zet haakjes om duidelijk te maken wat eerst moet.
+
+---
+
+## Opdracht 3.1: Optellen
+
+Print de uitkomst van `12 + 8`.
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+print(12 + 8)
+```
+
+<CodeExercise>{`print(12 + 8)`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 3.2: Kassa-totaal
+
+Een artikel kost `1.50` euro. De klant koopt er `4`. Bereken het totaal en print het.
+
+Verwachte uitvoer:
+
+```
+Totaal: 6.0 euro
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Totaal is `prijs * aantal`. Print met `print("Totaal:", totaal, "euro")`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+prijs = 1.50
+aantal = 4
+
+totaal = prijs * aantal
+
+print("Totaal:", totaal, "euro")
+```
+
+<CodeExercise>{`prijs = 1.50
+aantal = 4
+
+totaal = prijs * aantal
+
+print("Totaal:", totaal, "euro")`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 3.3: Volledige rekenmachine
+
+Bouw een rekenmachine met twee variabelen `a` en `b`. Print alle vier basis-berekeningen netjes onder elkaar.
+
+Verwachte uitvoer (bij `a = 10`, `b = 4`):
+
+```
+=== Rekenmachine ===
+Getal 1: 10
+Getal 2: 4
+
+Som:      14
+Verschil: 6
+Product:  40
+Quotiënt: 2.5
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Maak vier extra variabelen (`som`, `verschil`, `product`, `quotient`) en print ze één voor één. Een lege `print()` zonder argumenten geeft een witregel.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+a = 10
+b = 4
+
+som = a + b
+verschil = a - b
+product = a * b
+quotient = a / b
+
+print("=== Rekenmachine ===")
+print("Getal 1:", a)
+print("Getal 2:", b)
+print()
+print("Som:     ", som)
+print("Verschil:", verschil)
+print("Product: ", product)
+print("Quotiënt:", quotient)
+```
+
+Functioneel werkt het, maar `print("Som:", som)` is nog niet super netjes. In de volgende les leer je **f-strings** waarmee je tekst en variabelen tot één gladde zin vlecht.
+
+<CodeExercise>{`a = 10
+b = 4
+
+som = a + b
+verschil = a - b
+product = a * b
+quotient = a / b
+
+print("=== Rekenmachine ===")
+print("Getal 1:", a)
+print("Getal 2:", b)
+print()
+print("Som:     ", som)
+print("Verschil:", verschil)
+print("Product: ", product)
+print("Quotiënt:", quotient)`}</CodeExercise>
+
+</details>

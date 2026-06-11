@@ -1,0 +1,114 @@
+---
+sidebar_position: 3
+hide_table_of_contents: true
+---
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+import LinuxTerminal from '@site/src/components/LinuxTerminal';
+
+# Linux leren
+
+Voordat je met cybersecurity aan de slag gaat, leer je eerst werken met **Linux**. Waarschijnlijk ben je gewend aan Windows, maar bijna alle webservers en cybersecurity-tools draaien op Linux.
+
+<details>
+
+<summary>Waarom Linux?</summary>
+
+Bijna alle webservers en cybersecurity-tools wereldwijd draaien op Linux. Omdat je met DVWA (Damn Vulnerable Web Application) kwetsbaarheden op een server gaat onderzoeken, moet je begrijpen hoe je via de command line (de terminal) met zo'n server praat.
+
+</details>
+
+## Een tutorial volgen
+
+Je kunt op twee manieren met Linux kennismaken — kies wat het beste bij jou past:
+
+- Via een [video op YouTube](https://youtu.be/gd7BXuUQ91w).
+- Via lezen en meedoen op [de interactieve website LabEx](https://labex.io/lesson/the-shell).
+
+:::tip
+Wil je ook eens experimenteren met een complete Linux-omgeving in je browser? Probeer dan [JSLinux](https://bellard.org/jslinux/vm.html?url=alpine-x86.cfg&mem=192).
+:::
+
+## Zelf oefenen in de browser
+
+Hieronder staat een gesimuleerde Linux-terminal in je browser. Typ `help` om te zien welke commando's beschikbaar zijn en probeer dan de opdrachten verderop.
+
+<BrowserOnly>
+{() => <LinuxTerminal />}
+</BrowserOnly>
+
+## Opdracht: de basiscommando's
+
+Het doel is dat je vertrouwd raakt met de commando's die in de labs steeds terugkomen. Probeer onderstaande vragen in de terminal hierboven (of in je eigen WSL Kali-installatie).
+
+### Vraag 1: hoe laat je de bestanden in een map zien?
+
+<details>
+
+<summary>Klik hier voor een tip!</summary>
+
+Het Engelse woord hiervoor is *list*.
+
+</details>
+
+<details>
+
+<summary>Klik hier voor het antwoord!</summary>
+
+Gebruik het commando `ls` en druk op Enter.
+
+</details>
+
+### Vraag 2: hoe zie je in welke map je je nu bevindt?
+
+<details>
+
+<summary>Klik hier voor een tip!</summary>
+
+Het commando is een afkorting van *Print Working Directory*.
+
+</details>
+
+<details>
+
+<summary>Klik hier voor het antwoord!</summary>
+
+Gebruik het commando `pwd`.
+
+</details>
+
+### Vraag 3: hoe ga je naar een andere map (bijvoorbeeld een map "docs")?
+
+<details>
+
+<summary>Klik hier voor een tip!</summary>
+
+Het commando is een afkorting van *Change Directory*.
+
+</details>
+
+<details>
+
+<summary>Klik hier voor het antwoord!</summary>
+
+Typ `cd docs` en druk op Enter. Wil je weer een map omhoog? Typ dan `cd ..`.
+
+</details>
+
+### Vraag 4: hoe zie je wie er op dit moment is ingelogd?
+
+<details>
+
+<summary>Klik hier voor een tip!</summary>
+
+Stel de vraag "Wie ben ik?" in het Engels aan de computer.
+
+</details>
+
+<details>
+
+<summary>Klik hier voor het antwoord!</summary>
+
+Typ `whoami`. Dit commando komt later in de beveiligings-labs nog vaak terug. Vergeet niet je nieuwe commando's af en toe te controleren op de [Cheatsheet](cheatsheet).
+
+</details>

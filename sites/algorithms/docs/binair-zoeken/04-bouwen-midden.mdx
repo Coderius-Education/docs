@@ -1,0 +1,93 @@
+---
+sidebar_position: 4
+hide_table_of_contents: true
+---
+
+# 4.4 Bouwsteen 2 — het midden berekenen
+
+**Leerdoel:** je berekent de index van het middelste element tussen `laag`
+en `hoog`.
+
+## Wat we willen
+
+De kern van binair zoeken: kies steeds **het midden** van het zoekgebied,
+en kijk wat daar staat. Daarom: een formule voor de middel-index.
+
+## Twee soorten deling in Python
+
+Eén nieuw stukje syntax:
+
+- `/` → gewone deling (`7 / 2 == 3.5`)
+- `//` → integer-deling (`7 // 2 == 3`)
+
+Voor een **index** willen we een geheel getal, dus we gebruiken `//`.
+
+## Voorspel
+
+Wat denk je dat dit print?
+
+```python
+laag = 0
+hoog = 7
+midden = (laag + hoog) // 2
+print(midden)
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+3
+```
+
+`(0 + 7) // 2` = `7 // 2` = `3` (de helft van 7, naar beneden afgerond).
+
+Op een lijst van 8 elementen (indexen 0..7) is `3` het **vierde** element —
+ongeveer het midden. Met een even-aantal-elementen kies je dus altijd de
+linker van de twee middelste.
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`lijst = [1, 3, 5, 7, 9, 11, 13, 15]
+laag = 0
+hoog = len(lijst) - 1
+midden = (laag + hoog) // 2
+print(f"midden index: {midden}")
+print(f"waarde op midden: {lijst[midden]}")`} />
+
+## Experimenteer
+
+Verander `laag` en `hoog` met de hand. Wat is het midden tussen 2 en 5?
+Tussen 4 en 4?
+
+<PyRunner initialCode={`# Vul zelf verschillende grenzen in:
+gevallen = [(0, 7), (0, 0), (2, 5), (4, 4), (3, 6)]
+for laag, hoog in gevallen:
+    midden = (laag + hoog) // 2
+    print(f"laag={laag}, hoog={hoog} → midden={midden}")`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+- `(0, 7) → 3`
+- `(0, 0) → 0` — laag en hoog gelijk, midden valt erbovenop.
+- `(2, 5) → 3` — `(2+5)//2 = 3`.
+- `(4, 4) → 4` — weer: één element over, midden = die index.
+- `(3, 6) → 4` — `(3+6)//2 = 9//2 = 4`.
+
+Belangrijk: `midden` ligt **altijd** tussen `laag` en `hoog` (grenzen
+inclusief).
+
+</details>
+
+<SteppingStoneModel stone="binary-middle" />
+
+## Wat nu nog mist
+
+We weten waar te kijken — maar nog niet wat te doen met het resultaat. In
+de volgende stap **vergelijken** we `lijst[midden]` met het doel en kiezen
+we welke helft we behouden.
+
+Door naar [bouwsteen 3: vergelijken](./05-bouwen-vergelijken).

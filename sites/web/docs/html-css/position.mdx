@@ -1,0 +1,218 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeEditor from '@site/src/components/CodeEditor';
+
+# Position
+
+## Wat ga je leren?
+
+Je leert hoe `position` werkt: hoe je een element op een vaste plek op het scherm vasthoudt, of het laat verschuiven ten opzichte van zijn eigen plek of zijn ouder.
+
+## Theorie
+
+Elk HTML-element heeft standaard **`position: static`** — het staat op zijn natuurlijke plek in de tekstvolgorde. Met de CSS-eigenschap `position` kun je dat veranderen, en met `top`, `right`, `bottom`, `left` schuif je het element.
+
+### De vier waarden
+
+| Waarde | Wat het doet |
+|---|---|
+| `static` | Standaard — staat op zijn natuurlijke plek |
+| `relative` | Schuift t.o.v. zijn **eigen oorspronkelijke** plek |
+| `absolute` | Schuift t.o.v. zijn dichtstbijzijnde ouder met `position: relative` |
+| `fixed` | Blijft op een vaste plek in het **browservenster**, ook bij scrollen |
+
+### `relative` — schuif vanaf eigen plek
+
+```css
+.kaart {
+  position: relative;
+  top: 20px;      /* 20px omlaag */
+  left: 10px;     /* 10px naar rechts */
+}
+```
+
+Het element blijft ruimte innemen op zijn oude plek, maar wordt visueel verschoven.
+
+### `absolute` — schuif vanaf de ouder
+
+`absolute` haalt het element **uit de tekstvolgorde**. Het wordt geplaatst ten opzichte van de dichtstbijzijnde ouder met `position: relative` (of het document zelf):
+
+```css
+.container {
+  position: relative;     /* container = referentie */
+}
+
+.badge {
+  position: absolute;
+  top: 0;
+  right: 0;               /* hoekje rechtsboven van de container */
+}
+```
+
+### `fixed` — blijf op het scherm staan
+
+`fixed` is als `absolute`, maar dan ten opzichte van het **browservenster**. Handig voor cookie-banners en sticky headers:
+
+```css
+.scroll-knop {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}
+```
+
+## Predict
+
+Wat denk je dat er gebeurt als je een element `position: relative` geeft met `top: 30px` — wordt de plek waar hij stond opgevuld door het volgende element, of blijft die leeg?
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+De oude plek **blijft leeg**. `relative` schuift het element visueel, maar laat de ruimte in de tekstvolgorde gereserveerd — het volgende element schuift dus niet op. Bij `absolute` is dat anders: dan wordt de oude plek wél opgevuld.
+
+</details>
+
+## Probeer het zelf!
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Position</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="kaart">
+      <span class="badge">NEW</span>
+      <h2>Product</h2>
+      <p>Beschrijving</p>
+    </div>
+  </div>
+</body>
+</html>`}
+  initialCss={`.container {
+  margin: 40px;
+}
+
+.kaart {
+  position: relative;
+  border: 2px solid #4a90e2;
+  padding: 20px;
+  width: 250px;
+}
+
+.badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: red;
+  color: white;
+  padding: 4px 10px;
+}`}
+  height="460px"
+/>
+
+## Investigate
+
+Experimenteer:
+
+- Verwijder `position: relative` van `.kaart` — waar gaat de badge nu staan?
+- Voeg `top: 50px` toe aan `.kaart` — wat gebeurt er en blijft de plek erboven leeg?
+- Verander `position: absolute` van `.badge` naar `fixed` — wat zie je als je scrollt (typ extra `<p>`'s om scroll mogelijk te maken)?
+- Probeer `bottom: 0; left: 0;` op de badge — waar komt hij dan?
+
+## Modify
+
+**Opdracht:** Maak van de badge een rondje (gebruik `border-radius`) in de **linkerbovenhoek** van de kaart.
+
+<details>
+<summary>Tip</summary>
+
+Verander de `top`/`right` naar `top`/`left`, en voeg `border-radius: 50%` toe met een vaste `width` en `height`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```css
+.badge {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  background-color: red;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+```
+
+</details>
+
+## Make
+
+**Opdracht:** Maak een "Terug naar boven"-knop die rechtsonder in het venster blijft staan terwijl je scrollt. Klikken hoeft (nog) niets te doen.
+
+<details>
+<summary>Tip</summary>
+
+`position: fixed` zorgt dat de knop in het venster blijft kleven. Gebruik `bottom` en `right` om hem in de hoek te zetten.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<button class="terug-boven">↑ Boven</button>
+
+<!-- Vul de pagina met extra content om scroll mogelijk te maken -->
+<p>Lange tekst...</p>
+```
+
+```css
+.terug-boven {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 16px;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+```
+
+</details>
+
+## Er gaat iets mis
+
+**`position: absolute` zonder ouder met `relative`**
+
+```css
+/* .kaart heeft GEEN position: relative */
+.kaart {
+  border: 1px solid black;
+}
+
+.badge {
+  position: absolute;
+  top: 0;
+  right: 0;  /* eindigt rechtsboven in het scherm, niet in de kaart! */
+}
+```
+
+`absolute` zoekt naar de dichtstbijzijnde ouder met een `position` (anders dan `static`). Zonder die ouder valt hij terug op het **document zelf** — en dan ga je je element waarschijnlijk niet zien op de plek waar je het wil. Vergeet niet `position: relative` op de container te zetten.
+
+---
+
+[← Display & `<span>`](/docs/html-css/display-en-span) | [Media queries →](/docs/html-css/media-queries)

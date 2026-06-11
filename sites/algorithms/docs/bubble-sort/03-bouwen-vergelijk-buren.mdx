@@ -1,0 +1,101 @@
+---
+sidebar_position: 3
+hide_table_of_contents: true
+---
+
+# 6.3 Bouwsteen 1 — vergelijk twee buren
+
+**Leerdoel:** je kunt twee opeenvolgende elementen vergelijken en
+detecteren of ze fout staan.
+
+## Wat we willen
+
+Twee buren in een lijst: `lijst[i]` en `lijst[i+1]`. We willen weten of
+ze in de **goede volgorde** staan (klein → groot).
+
+## Voorspel
+
+Wat denk je dat dit print?
+
+```python
+lijst = [3, 1, 4, 1, 5]
+i = 0
+
+if lijst[i] > lijst[i + 1]:
+    print(f"{lijst[i]} en {lijst[i+1]} staan fout")
+else:
+    print(f"{lijst[i]} en {lijst[i+1]} staan goed")
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+3 en 1 staan fout
+```
+
+`lijst[0]` is 3, `lijst[1]` is 1. 3 > 1 → "fout" tak.
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`lijst = [3, 1, 4, 1, 5]
+i = 0
+
+if lijst[i] > lijst[i + 1]:
+    print(f"{lijst[i]} en {lijst[i+1]} staan fout")
+else:
+    print(f"{lijst[i]} en {lijst[i+1]} staan goed")`} />
+
+## Let op `lijst[i + 1]`
+
+Bij elke vergelijking pakken we **twee** opeenvolgende indexen: `i` en
+`i + 1`. Daarmee komt deze regel:
+
+```python
+if lijst[i] > lijst[i + 1]:
+```
+
+**Belangrijk**: `i + 1` moet een geldige index zijn. Dus `i` mag hoogstens
+`len(lijst) - 2` zijn. Anders krijg je `IndexError` op `lijst[i + 1]`.
+
+We komen daar in bouwsteen 3 op terug — daar wordt de lus-grens precies
+goed gezet.
+
+## Experimenteer
+
+Probeer verschillende waardes van `i`:
+
+<PyRunner initialCode={`lijst = [3, 1, 4, 1, 5]
+
+for i in [0, 1, 2, 3]:
+    if lijst[i] > lijst[i + 1]:
+        print(f"i={i}: {lijst[i]}>{lijst[i+1]} → fout")
+    else:
+        print(f"i={i}: {lijst[i]}<={lijst[i+1]} → goed")`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+```
+i=0: 3>1 → fout
+i=1: 1<=4 → goed
+i=2: 4>1 → fout
+i=3: 1<=5 → goed
+```
+
+Bij `i=4` zou het mislopen: `lijst[5]` bestaat niet. Daarom stoppen we
+de lus bij `i = 3`.
+
+</details>
+
+<SteppingStoneModel stone="bubble-compare-neighbors" />
+
+## Wat nu nog mist
+
+We **detecteren** een fout, maar **doen** er niets aan. In de volgende
+stap leren we hoe je de twee buren ruilt (swap) — net als bij selection
+sort.
+
+Door naar [bouwsteen 2: swap](./04-bouwen-swap).

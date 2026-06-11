@@ -1,0 +1,106 @@
+---
+sidebar_position: 2
+hide_table_of_contents: true
+---
+
+# 5.2 Stellingen — toets je begrip
+
+**Leerdoel:** je toetst of je het idee van *steeds-de-kleinste-vooraan*
+snapt, voordat je gaat programmeren.
+
+## Stelling 1
+
+*"Selection sort sorteert de lijst van laag naar hoog door elke ronde de
+**grootste** vooraan te zetten."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Onjuist.** Bij oplopend sorteren (laag → hoog) zet je het **kleinste**
+vooraan. De grootste komt vanzelf achteraan terecht.
+
+Je kunt het algoritme ook *afzakkend* maken — dan zet je de **grootste**
+vooraan. Daar oefen je later mee (Aanpassen).
+
+</details>
+
+## Stelling 2
+
+*"Na ronde `k` staan de eerste `k` elementen op hun juiste plek."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Juist.** Dat is de **invariant** van selection sort. Na elke ronde groeit
+het sorted-stuk vooraan met één element. Een handige garantie om over na
+te denken: bij ronde `k` hoef je alleen nog naar het *ongesorteerde stuk*
+(vanaf index `k`) te kijken.
+
+</details>
+
+## Stelling 3
+
+*"Selection sort doet altijd evenveel vergelijkingen, ook als de lijst al
+gesorteerd is."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Juist.** Het algoritme zoekt in elke ronde gewoon door het hele
+ongesorteerde stuk, ongeacht wat het al gevonden heeft. Op een
+al-gesorteerde lijst → nog steeds `n(n − 1)/2` vergelijkingen.
+
+(Bubble sort kan slimmer zijn: als één pass geen swap doet, is de lijst
+af. Daar leer je later over.)
+
+</details>
+
+## Stelling 4
+
+*"Bij selection sort gebeurt er **één** swap per ronde."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Juist.** In elke ronde wordt het kleinste element gevonden en op zijn
+plek geruild — precies één swap. Bij `n` elementen totaal dus `n − 1`
+swaps. Veel **vergelijkingen**, weinig **swaps**.
+
+(**Tip:** dat is een voordeel als swappen duur is — bijvoorbeeld op een
+hard drive of als de elementen grote objecten zijn.)
+
+</details>
+
+## Stelling 5
+
+*"Als je in de eerste ronde het kleinste vindt op positie 3, dan moeten
+ook posities 0, 1 en 2 worden verschoven."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Onjuist.** Selection sort **swapt** alleen — het schuift niet. Het
+element op positie 3 wisselt plek met het element op positie 0. De
+elementen op positie 1 en 2 blijven onaangetast (al staan ze nu in een
+andere volgorde).
+
+(Insertion sort doet wél schuiven — maar dat is een ander algoritme.)
+
+</details>
+
+## Stelling 6
+
+*"Selection sort sorteert in plaats — je hebt geen tweede lijst nodig."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Juist.** Het algoritme verandert de oorspronkelijke lijst zelf
+(*in-place*). Geen kopie nodig. Voor grote data scheelt dat geheugen.
+
+(Als je de originele lijst wél wil bewaren, maak je eerst een kopie:
+`gesorteerd = selection_sort(lijst.copy())`.)
+
+</details>
+
+Door naar [stap 3: we bouwen het op](./03-bouwen-vind-kleinste-index).

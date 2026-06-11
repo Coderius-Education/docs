@@ -1,0 +1,231 @@
+---
+sidebar_position: 2
+hide_table_of_contents: true
+description: Voeg elementen toe met .append(), verwijder met .remove() en .pop(), en gebruik handige functies als sum() en sorted().
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 10b Lijst-methoden
+
+Je kunt nu een lijst maken, opvragen en doorlopen. In deze les leer je hoe je een lijst **verandert**: elementen toevoegen, verwijderen of invoegen.
+
+## De belangrijkste methoden
+
+Net als bij strings hebben lijsten methoden die je met een punt aanroept:
+
+| Methode | Wat doet hij? |
+|---------|---------------|
+| `lijst.append(x)` | Voeg `x` toe aan het einde |
+| `lijst.insert(i, x)` | Voeg `x` toe op positie `i` |
+| `lijst.remove(x)` | Verwijder de eerste `x` uit de lijst |
+| `lijst.pop()` | Verwijder het laatste element en geef het terug |
+
+```python
+dieren = ["kat", "hond", "vis"]
+
+dieren.append("vogel")
+print(dieren)            # ['kat', 'hond', 'vis', 'vogel']
+
+dieren.remove("hond")
+print(dieren)            # ['kat', 'vis', 'vogel']
+
+laatste = dieren.pop()
+print(laatste)           # vogel
+print(dieren)            # ['kat', 'vis']
+```
+
+`.remove("hond")` geeft niets terug; `.pop()` geeft het verwijderde element wél terug, zodat je het kunt opvangen.
+
+Probeer je iets te verwijderen dat niet bestaat (`dieren.remove("hond")` als er geen hond meer in zit)? Dan krijg je een `ValueError`. Wil je veilig zijn: check eerst met `if "hond" in dieren:`.
+
+## Handige ingebouwde functies
+
+Voor lijsten van getallen heb je vaak geen loop nodig:
+
+```python
+getallen = [3, 1, 4, 1, 5]
+
+print(len(getallen))      # 5
+print(sum(getallen))      # 14
+print(min(getallen))      # 1
+print(max(getallen))      # 5
+print(sorted(getallen))   # [1, 1, 3, 4, 5]
+```
+
+`sorted()` geeft een gesorteerde **kopie** terug — de originele lijst blijft hetzelfde.
+
+---
+
+## Opdracht 10b.1: Boodschappenlijstje
+
+Maak een lijst `boodschappen` met `"brood"` en `"melk"`. Voeg daarna `"appels"` toe en print de lijst.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+`boodschappen.append("appels")` voegt het achteraan toe.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+boodschappen = ["brood", "melk"]
+
+boodschappen.append("appels")
+
+print(boodschappen)
+```
+
+Uitvoer: `['brood', 'melk', 'appels']`.
+
+<CodeExercise>{`boodschappen = ["brood", "melk"]
+
+boodschappen.append("appels")
+
+print(boodschappen)`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 10b.2: Cijfergemiddelde
+
+Gegeven een lijst cijfers, bereken het gemiddelde en tel hoeveel cijfers een voldoende (`>= 5.5`) zijn.
+
+Verwachte uitvoer:
+
+```
+Gemiddelde: 6.2
+Aantal voldoendes: 6
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+`sum(cijfers) / len(cijfers)` voor het gemiddelde. In een loop: `if cijfer >= 5.5:` → `aantal_voldoende += 1`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+cijfers = [7, 4, 8, 5, 9, 3, 6, 8, 5, 7]
+
+gemiddelde = sum(cijfers) / len(cijfers)
+
+aantal_voldoende = 0
+for cijfer in cijfers:
+    if cijfer >= 5.5:
+        aantal_voldoende += 1
+
+print(f"Gemiddelde: {gemiddelde}")
+print(f"Aantal voldoendes: {aantal_voldoende}")
+```
+
+<CodeExercise>{`cijfers = [7, 4, 8, 5, 9, 3, 6, 8, 5, 7]
+
+gemiddelde = sum(cijfers) / len(cijfers)
+
+aantal_voldoende = 0
+for cijfer in cijfers:
+    if cijfer >= 5.5:
+        aantal_voldoende += 1
+
+print(f"Gemiddelde: {gemiddelde}")
+print(f"Aantal voldoendes: {aantal_voldoende}")`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 10b.3: To-do lijst manager
+
+Bouw een to-do lijst met drie functies:
+
+- `toon_taken(taken)` — print alle taken genummerd
+- `voeg_toe(taken, taak)` — voegt een taak toe
+- `verwijder(taken, nummer)` — verwijdert de taak op die plek (de gebruiker telt vanaf 1)
+
+Verwachte uitvoer:
+
+```
+Toegevoegd: Python oefenen
+Toegevoegd: Boodschappen doen
+Toegevoegd: Kamer opruimen
+=== Mijn To-Do Lijst ===
+  1. Python oefenen
+  2. Boodschappen doen
+  3. Kamer opruimen
+
+=== Mijn To-Do Lijst ===
+  1. Python oefenen
+  2. Kamer opruimen
+
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+- `voeg_toe`: één regel — `taken.append(taak)`.
+- `verwijder`: `taken.pop(nummer - 1)`. De `-1` is nodig omdat de gebruiker bij `1` begint te tellen, maar Python bij `0`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+def toon_taken(taken):
+    print("=== Mijn To-Do Lijst ===")
+    for i in range(len(taken)):
+        print(f"  {i + 1}. {taken[i]}")
+    print()
+
+def voeg_toe(taken, taak):
+    taken.append(taak)
+    print(f"Toegevoegd: {taak}")
+
+def verwijder(taken, nummer):
+    taken.pop(nummer - 1)
+
+mijn_taken = []
+
+voeg_toe(mijn_taken, "Python oefenen")
+voeg_toe(mijn_taken, "Boodschappen doen")
+voeg_toe(mijn_taken, "Kamer opruimen")
+toon_taken(mijn_taken)
+
+verwijder(mijn_taken, 2)
+toon_taken(mijn_taken)
+```
+
+Een lijst werkt met posities (`[0]`, `[1]`, ...). In de volgende les leer je **dictionaries**: waardes opzoeken via een **naam** in plaats van een nummer.
+
+<CodeExercise>{`def toon_taken(taken):
+    print("=== Mijn To-Do Lijst ===")
+    for i in range(len(taken)):
+        print(f"  {i + 1}. {taken[i]}")
+    print()
+
+def voeg_toe(taken, taak):
+    taken.append(taak)
+    print(f"Toegevoegd: {taak}")
+
+def verwijder(taken, nummer):
+    taken.pop(nummer - 1)
+
+mijn_taken = []
+
+voeg_toe(mijn_taken, "Python oefenen")
+voeg_toe(mijn_taken, "Boodschappen doen")
+voeg_toe(mijn_taken, "Kamer opruimen")
+toon_taken(mijn_taken)
+
+verwijder(mijn_taken, 2)
+toon_taken(mijn_taken)`}</CodeExercise>
+
+</details>

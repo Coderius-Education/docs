@@ -1,0 +1,8 @@
+{
+  "label": "8. Overstap naar STM32",
+  "position": 8,
+  "link": {
+    "type": "generated-index",
+    "description": "Maak kennis met de STM32 Blue Pill en zet er je eerste programma op."
+  }
+}

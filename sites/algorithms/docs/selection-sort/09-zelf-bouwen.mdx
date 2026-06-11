@@ -1,0 +1,137 @@
+---
+sidebar_position: 9
+hide_table_of_contents: true
+---
+
+# 5.9 Bouw zelf — tel het aantal swaps
+
+**Leerdoel:** je past selection sort aan om het werk te **meten**, en je
+ziet visueel hoeveel sneller of langzamer hij is bij verschillende soorten
+input.
+
+## Opdracht
+
+Schrijf `selection_sort_telt(lijst)` die het **aantal swaps** returnt
+tijdens het sorteren.
+
+Tel alleen **echte** swaps (`i ≠ min_index`). Verwacht:
+
+- Op `[3, 1, 2]` → **2** echte swaps.
+- Op `[1, 2, 3]` (al gesorteerd) → **0** echte swaps (elke ronde is
+  `i == min_index`, dus geen ruil nodig).
+- Op `[3, 2, 1]` (omgekeerd) → **1** echte swap (alleen ronde 0 ruilt
+  de 3 en de 1; daarna staat alles al goed).
+
+Test op drie typen lijst: al-gesorteerd, omgekeerd, en willekeurig. Plot
+het aantal swaps en vergelijkingen.
+
+<PyRunner initialCode={`import random
+
+def selection_sort_telt(lijst):
+    n = len(lijst)
+    swaps = 0
+    vergelijkingen = 0
+    for i in range(n):
+        min_index = i
+        for j in range(i, n):
+            vergelijkingen += 1
+            if lijst[j] < lijst[min_index]:
+                min_index = j
+        # Tel alleen 'echte' swaps
+        # vul aan: alleen swappen als nodig, en swaps ophogen
+        lijst[i], lijst[min_index] = lijst[min_index], lijst[i]
+    return swaps, vergelijkingen
+
+# Tests op verschillende soorten lijsten
+n = 50
+soorten = {
+    'al gesorteerd':  list(range(n)),
+    'omgekeerd':      list(range(n, 0, -1)),
+    'willekeurig':    random.sample(range(n * 10), n),
+}
+
+swaps_per_type = {}
+verglk_per_type = {}
+for naam, lijst in soorten.items():
+    s, v = selection_sort_telt(lijst.copy())
+    swaps_per_type[naam] = s
+    verglk_per_type[naam] = v
+    print(f"{naam:<20} swaps={s:>3}  vergelijkingen={v}")
+
+# Visualiseer
+import matplotlib.pyplot as plt
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4))
+
+namen = list(soorten.keys())
+ax1.bar(namen, [swaps_per_type[n] for n in namen], color='steelblue')
+ax1.set_title('Aantal echte swaps')
+ax1.set_ylabel('swaps')
+
+ax2.bar(namen, [verglk_per_type[n] for n in namen], color='salmon')
+ax2.set_title('Aantal vergelijkingen')
+ax2.set_ylabel('vergelijkingen')
+
+plt.xticks(rotation=15)
+plt.tight_layout()
+plt.show()`} />
+
+<details>
+<summary>Tip</summary>
+
+Twee dingen:
+
+1. Voeg een `if i != min_index:` toe **vóór** de swap. Alleen dán daadwerkelijk
+   swappen én `swaps += 1` doen.
+2. Initialiseer `swaps = 0` vóór de buitenste lus.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def selection_sort_telt(lijst):
+    n = len(lijst)
+    swaps = 0
+    vergelijkingen = 0
+    for i in range(n):
+        min_index = i
+        for j in range(i, n):
+            vergelijkingen += 1
+            if lijst[j] < lijst[min_index]:
+                min_index = j
+        if i != min_index:
+            lijst[i], lijst[min_index] = lijst[min_index], lijst[i]
+            swaps += 1
+    return swaps, vergelijkingen
+```
+
+</details>
+
+## Wat zie je in de grafiek?
+
+<details>
+<summary>Interpretatie</summary>
+
+- **Vergelijkingen** zijn voor **alle drie** de soorten lijsten ongeveer
+  gelijk — selection sort kijkt altijd door het hele ongesorteerde stuk.
+  Bij `n = 50`: ongeveer 50·49/2 = 1225 vergelijkingen.
+- **Swaps** verschillen wel:
+  - Al gesorteerd → 0 echte swaps (`i == min_index` elke ronde).
+  - Omgekeerd → ongeveer `n/2` swaps.
+  - Willekeurig → ergens daartussen.
+
+Dat is het **karakter** van selection sort: voorspelbaar veel
+vergelijkingen, maar weinig swaps. Bij dure swaps (objecten ruilen op een
+trage opslag) is dat een voordeel.
+
+</details>
+
+## Uitdaging (optioneel)
+
+Pas selection sort aan zodat hij in elke ronde **tegelijk** de kleinste én
+grootste vindt. Zet de kleinste vooraan en de grootste achteraan — zo
+sorteer je in `n / 2` rondes in plaats van `n`. (Variant: *double-ended
+selection sort*.)
+
+Door naar [stap 10: veelgemaakte fouten](./10-fouten).

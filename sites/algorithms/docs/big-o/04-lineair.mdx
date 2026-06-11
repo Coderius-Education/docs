@@ -1,0 +1,102 @@
+---
+sidebar_position: 4
+hide_table_of_contents: true
+---
+
+# 7.4 O(n) — lineaire tijd
+
+**Leerdoel:** je herkent algoritmes waarvan het werk **recht-evenredig**
+groeit met `n`, en je ziet visueel een **rechte schuine lijn**.
+
+## Hoe gedraagt het zich?
+
+`O(n)` betekent: **het werk schaalt mee met de invoer**. Twee keer zoveel
+elementen → twee keer zoveel werk. Tien keer zoveel → tien keer zoveel.
+
+Analogie: vakkenvullen in een supermarkt. Hoe meer pakken melk in de
+voorraad, hoe langer je bezig bent ze in het schap te zetten. Recht-
+evenredig.
+
+## Voorbeelden in Python
+
+```python
+sum(lijst)              # alles optellen — bekijkt elk element
+max(lijst)              # grootste vinden — bekijkt elk element
+doel in lijst           # zoeken — bekijkt elk element tot match
+for x in lijst: ...     # door de hele lijst lopen
+```
+
+Bij **elk** van deze operaties moet Python in het slechtste geval **alle**
+elementen aanraken. Verdubbel de lijst → verdubbel het werk.
+
+## Voorspel
+
+We tellen het aantal vergelijkingen bij **lineair zoeken** naar een doel
+dat **niet** in de lijst staat (slechtste geval). Hoeveel stappen op een
+lijst van 100.000 elementen?
+
+<details>
+<summary>Antwoord</summary>
+
+**100.000 stappen.** Het algoritme moet de hele lijst doorlopen om zeker
+te weten dat het doel er niet in staat. Slechtste geval = lengte van de
+lijst.
+
+</details>
+
+## Run — kijk hoe het groeit
+
+<PyRunner initialCode={`import matplotlib.pyplot as plt
+
+def lineair_zoek_tellen(lijst, doel):
+    stappen = 0
+    for waarde in lijst:
+        stappen += 1
+        if waarde == doel:
+            return stappen
+    return stappen
+
+groottes = [10, 100, 1000, 10000, 100000]
+stappen_per_grootte = []
+for n in groottes:
+    lijst = list(range(n))
+    # Slechtste geval: doel bestaat niet
+    stappen_per_grootte.append(lineair_zoek_tellen(lijst, -1))
+
+print("n         stappen")
+for n, s in zip(groottes, stappen_per_grootte):
+    print(f"{n:<10} {s}")
+
+plt.plot(groottes, stappen_per_grootte, marker='o')
+plt.xlabel('lijstgrootte n')
+plt.ylabel('aantal stappen (slechtste geval)')
+plt.title('O(n) — lineaire tijd')
+plt.grid(True, linestyle=':')
+plt.show()`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+Een **rechte schuine lijn**: stappen = n. Verdubbel `n`, verdubbel
+stappen.
+
+Op log-log assen zou je een rechte lijn met **helling 1** zien.
+
+</details>
+
+## Welke algoritmes zijn `O(n)`?
+
+In dit curriculum:
+
+- **Lineair zoeken** — in het slechtste geval `n` vergelijkingen. Zie
+  [lineair-zoeken/07-compleet](../lineair-zoeken/07-compleet).
+- **Vind maximum** — altijd `n` vergelijkingen. Zie
+  [vind-maximum/06-compleet](../vind-maximum/06-compleet).
+- **Max én min in één pass** — `n` vergelijkingen (met `elif` zelfs
+  minder werk per element, maar **groeigedrag** is `O(n)`). Zie
+  [max-en-min/06-compleet](../max-en-min/06-compleet).
+
+Belangrijk: 2 vergelijkingen per element (zoals bij max-en-min) is nog
+steeds `O(n)`, niet `O(2n)`. **Constanten tellen niet mee** in Big O.
+
+Door naar [stap 5: O(log n) — logaritmisch →](./05-logaritmisch).

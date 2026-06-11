@@ -1,0 +1,163 @@
+---
+sidebar_position: 7
+hide_table_of_contents: true
+---
+
+# 10.7 Bouwsteen 4 — vul de hele tabel
+
+**Leerdoel:** je voegt een buitenste lus toe die alle rijen invult.
+Met de bouwstenen van pagina 5 en 6 wordt dit één regel werk extra.
+
+## Wat we willen
+
+De tabel volledig invullen. Rij 0 is al `0`-vector (vanaf pagina 5),
+rij 1 t/m `n` vullen we via `vul_rij` uit pagina 6.
+
+```python
+for i in range(1, n + 1):
+    vul_rij(tabel, items, i, capaciteit)
+```
+
+Vier woorden meer dan vorige stap.
+
+## Waarom `range(1, n + 1)`?
+
+- Start bij 1: rij 0 is al klaar (basisgeval).
+- Eind bij `n + 1`: we willen ook rij `n` (de laatste rij) invullen,
+  en `range` is exclusief aan de bovenkant.
+
+## Specificatie
+
+- **Input**: `tabel`, `items`, `capaciteit`.
+- **Output**: niets. We muteren `tabel` ter plekke.
+
+## Voorspel
+
+We runnen `vul_volledige_tabel` op het image-voorbeeld. Wat staat er
+straks in `tabel[5][11]`?
+
+<details>
+<summary>Antwoord</summary>
+
+**40** — de beste totaalwaarde voor 5 items binnen W=11.
+
+Dat is de eindcel die je op pagina 02 met de hand uitrekende.
+
+</details>
+
+## Bouw zelf en test
+
+<PyRunner initialCode={`def lege_tabel(n, capaciteit):
+    return [[0] * (capaciteit + 1) for _ in range(n + 1)]
+
+
+def vul_rij(tabel, items, i, capaciteit):
+    waarde, gewicht = items[i - 1]
+    for w in range(capaciteit + 1):
+        if gewicht > w:
+            tabel[i][w] = tabel[i - 1][w]
+        else:
+            skip = tabel[i - 1][w]
+            meenemen = waarde + tabel[i - 1][w - gewicht]
+            tabel[i][w] = max(skip, meenemen)
+
+
+def vul_volledige_tabel(tabel, items, capaciteit):
+    # Vul aan:
+    # Voor elke rij i = 1, 2, ..., n:
+    #     vul_rij(tabel, items, i, capaciteit)
+    pass
+
+
+# === Tests ===
+items = [(1, 1), (6, 2), (18, 5), (22, 6), (28, 7)]
+capaciteit = 11
+
+tabel = lege_tabel(len(items), capaciteit)
+vul_volledige_tabel(tabel, items, capaciteit)
+
+# Verwachte tabel uit pagina 02
+verwacht = [
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],          # i=0
+    [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],          # i=1
+    [0, 1, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7],          # i=2
+    [0, 1, 6, 7, 7, 18, 19, 24, 25, 25, 25, 25],   # i=3
+    [0, 1, 6, 7, 7, 18, 22, 24, 28, 29, 29, 40],   # i=4
+    [0, 1, 6, 7, 7, 18, 22, 28, 29, 34, 35, 40],   # i=5
+]
+assert tabel == verwacht, "Tabel klopt niet met de hand-berekende versie"
+
+# Eindcel = de beste totaalwaarde
+assert tabel[5][11] == 40
+
+print("Alle tests gehaald ✓")
+print("Beste totaalwaarde:", tabel[5][11])`} />
+
+<details>
+<summary>Tip</summary>
+
+```python
+def vul_volledige_tabel(tabel, items, capaciteit):
+    n = len(items)
+    for i in range(1, n + 1):
+        vul_rij(tabel, items, i, capaciteit)
+```
+
+Drie regels. Geen subtiliteiten — gewoon `vul_rij` aanroepen voor elke
+rij in stijgende volgorde.
+
+</details>
+
+## Onderzoek
+
+Print de tabel rij voor rij om hem visueel te controleren met pagina
+02:
+
+<PyRunner initialCode={`def lege_tabel(n, capaciteit):
+    return [[0] * (capaciteit + 1) for _ in range(n + 1)]
+
+
+def vul_rij(tabel, items, i, capaciteit):
+    waarde, gewicht = items[i - 1]
+    for w in range(capaciteit + 1):
+        if gewicht > w:
+            tabel[i][w] = tabel[i - 1][w]
+        else:
+            skip = tabel[i - 1][w]
+            meenemen = waarde + tabel[i - 1][w - gewicht]
+            tabel[i][w] = max(skip, meenemen)
+
+
+def vul_volledige_tabel(tabel, items, capaciteit):
+    n = len(items)
+    for i in range(1, n + 1):
+        vul_rij(tabel, items, i, capaciteit)
+
+
+items = [(1, 1), (6, 2), (18, 5), (22, 6), (28, 7)]
+capaciteit = 11
+tabel = lege_tabel(len(items), capaciteit)
+vul_volledige_tabel(tabel, items, capaciteit)
+
+print("       " + "  ".join(f"{w:2}" for w in range(capaciteit + 1)))
+for i, rij in enumerate(tabel):
+    print(f"i={i}:  " + "  ".join(f"{c:2}" for c in rij))`} />
+
+<details>
+<summary>Verwachte uitvoer</summary>
+
+```
+        0   1   2   3   4   5   6   7   8   9  10  11
+i=0:    0   0   0   0   0   0   0   0   0   0   0   0
+i=1:    0   1   1   1   1   1   1   1   1   1   1   1
+i=2:    0   1   6   7   7   7   7   7   7   7   7   7
+i=3:    0   1   6   7   7  18  19  24  25  25  25  25
+i=4:    0   1   6   7   7  18  22  24  28  29  29  40
+i=5:    0   1   6   7   7  18  22  28  29  34  35  40
+```
+
+Identiek aan de hand-uitgevulde tabel uit pagina 02. ✓
+
+</details>
+
+Door naar [stap 8: het complete algoritme →](./08-compleet).

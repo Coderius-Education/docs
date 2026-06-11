@@ -1,0 +1,306 @@
+---
+sidebar_position: 16
+hide_table_of_contents: true
+---
+
+# 9.16 Bouwsteen 9 — `minimax(bord)`
+
+**Leerdoel:** je schrijft de top-level AI-functie die alle vorige
+bouwstenen gebruikt om de **beste zet** terug te geven — direct in je
+lokale `tictactoe.py`.
+
+Je hebt op pagina 15 je 8 functies in één lokaal bestand gezet (of in
+de fallback-PyRunner). Tijd voor de 9e.
+
+## Wat doet deze functie?
+
+`minimax(bord)` geeft de **beste zet** terug voor de speler die nu aan
+zet is. Niet het *getal* — dat is wat `max_value`/`min_value` doen.
+`minimax` geeft de tuple `(i, j)`.
+
+- **X-beurt**: kies de zet met de **hoogste** `min_value(result(bord, zet))`.
+- **O-beurt**: kies de zet met de **laagste** `max_value(result(bord, zet))`.
+
+Waarom kruislings? Omdat na X's zet, **O** aan zet is, dus we
+evalueren met `min_value`. Spiegelbeeld voor O.
+
+## Het patroon
+
+```
+beste_zet = None
+beste_score = -math.inf      # of +math.inf voor O
+
+voor elke zet in actions(bord):
+    score = min_value(result(bord, zet))    # of max_value voor O
+    als score beter is dan beste_score:
+        beste_score = score
+        beste_zet = zet
+
+return beste_zet
+```
+
+Dezelfde lus-en-vergelijk-structuur als in `max_value`, alleen
+**onthoud je ook welke zet** het optimum opleverde.
+
+## Speciaal geval
+
+Als `terminal(bord)`, is er geen zet meer mogelijk. Return `None`.
+
+## Specificatie
+
+- **Input**: een `bord` (mag terminal zijn).
+- **Output**: een tuple `(i, j)` met de beste zet, óf `None` als het
+  bord terminal is.
+
+## Voorspel
+
+Wat moet `minimax` teruggeven op deze positie? X is aan zet en kan
+direct winnen via `(2, 0)` of `(2, 2)`.
+
+```python
+bord = [["X","O","X"], ["O","X","O"], [None, None, None]]
+```
+
+<details>
+<summary>Antwoord</summary>
+
+`(2, 0)` of `(2, 2)` — beide leveren een directe winst op (diagonaal).
+
+Welke van de twee terugkomt hangt af van de **volgorde** waarin
+`actions(bord)` ze opsomt. Beide zijn correct.
+
+</details>
+
+## Bouw zelf in `tictactoe.py`
+
+Open je lokale `tictactoe.py` (gemaakt op pagina 15). Plak deze
+**starter** onderaan, ná je 8 functies:
+
+```python
+def minimax(bord):
+    if terminal(bord):
+        return None
+
+    # Vul aan:
+    # 1. bepaal wie aan zet is met player(bord)
+    # 2. loop over actions(bord); voor elke zet, bereken de score
+    #    (min_value als X aan zet, max_value als O aan zet)
+    # 3. onthoud de zet met de beste score
+    # 4. return die zet
+    return None
+```
+
+<details>
+<summary>Tip</summary>
+
+Het patroon is bijna identiek aan `max_value` / `min_value`, met één
+extra ding: **onthoud welke zet** het optimum opleverde, niet alleen
+de score.
+
+```python
+if player(bord) == "X":
+    beste_score = -math.inf
+    for zet in actions(bord):
+        score = min_value(result(bord, zet))
+        if score > beste_score:
+            beste_score = score
+            beste_zet = zet
+else:
+    # spiegelbeeld voor O: math.inf, max_value, <
+    ...
+```
+
+Let op de twee toewijzingen onder de if: zowel `beste_score` als
+`beste_zet`. Vergeet je `beste_zet`? Dan returnt minimax `None`.
+
+</details>
+
+## Test je minimax in `tictactoe.py`
+
+Plak deze tests **onderaan** je lokale bestand (na minimax):
+
+```python
+# === Tests ===
+
+# Terminal -> None
+vol = [["X","O","X"],["X","O","O"],["O","X","X"]]
+assert minimax(vol) is None, "Terminal bord -> None"
+
+# X kan direct winnen via (2,0) of (2,2) — beide is correct
+bord = [["X","O","X"], ["O","X","O"], [None, None, None]]
+zet = minimax(bord)
+assert zet in {(2, 0), (2, 2)}, f"Verwacht (2,0) of (2,2), kreeg {zet}"
+
+# O moet X-winst blokkeren
+# X heeft (0,0) en (1,1) -> dreigt op (2,2). O is aan zet.
+bord = [["X", None, "O"], [None, "X", None], [None, None, None]]
+zet = minimax(bord)
+assert zet == (2, 2), f"O moet blokkeren op (2,2), kreeg {zet}"
+
+print("Alle tests gehaald ✓")
+```
+
+In de terminal:
+
+```
+python tictactoe.py
+```
+
+Verwachte output: `Alle tests gehaald ✓`.
+
+## De AI-vs-AI demo
+
+Werkt het? Plak dan dit blok onderaan, **na** de tests:
+
+```python
+def print_bord(bord):
+    for rij in bord:
+        print(" | ".join(c if c else "." for c in rij))
+    print()
+
+
+# AI vs AI
+bord = initial_state()
+print("\nStart:")
+print_bord(bord)
+
+while not terminal(bord):
+    zet = minimax(bord)
+    print(f"{player(bord)} speelt {zet}")
+    bord = result(bord, zet)
+    print_bord(bord)
+
+w = winner(bord)
+if w:
+    print(f"Winnaar: {w}")
+else:
+    print("Remise — exact zoals voorspeld!")
+```
+
+Run opnieuw:
+
+```
+python tictactoe.py
+```
+
+Je AI speelt nu tegen zichzelf. **Eindigt altijd in remise** — dat is
+een wiskundige eigenschap van tic-tac-toe bij optimaal spel. 🎉
+
+Op je laptop is dit een **paar seconden**, niet 30. Da's het verschil
+tussen browser-Python en native Python.
+
+## Bonus — CS50's `runner.py` met clickable GUI
+
+CS50 levert bij dit project een tweede bestand, **`runner.py`**, dat
+een grafische tic-tac-toe-window opent waarin jij tegen je eigen AI
+kunt spelen. Hetzelfde `tictactoe.py` dat jij hebt gebouwd is wat
+`runner.py` gebruikt.
+
+Zo werkt het:
+
+1. Download het project-zip via
+   [cs50.harvard.edu/ai/projects/0/tictactoe/](https://cs50.harvard.edu/ai/projects/0/tictactoe/) —
+   daar staat `runner.py` in (Engelse versie van wat jij in het
+   Nederlands hebt gebouwd).
+2. Vervang het bijgeleverde lege `tictactoe.py` door **jouw** versie.
+3. Installeer eenmalig `pygame`:
+   ```
+   pip install pygame
+   ```
+4. Draai:
+   ```
+   python runner.py
+   ```
+
+Een venster opent. Je klikt op een vakje, je AI antwoordt. Boterkaas-
+en-eieren tegen een ondoorzichtbare tegenstander.
+
+## Geen lokale Python? Noodoplossing met PyRunner
+
+<details>
+<summary>Open dit alleen als je echt niet lokaal kan draaien</summary>
+
+Plak je eigen `minimax` op de aangegeven plek. De andere 8 functies
+staan al klaar. **Let op**: de AI-vs-AI demo kan in de browser zo'n
+**30 seconden** duren — minimax rekent honderdduizenden posities door.
+
+<PyRunner initialCode={`import copy, math
+
+
+def initial_state(): return [[None]*3 for _ in range(3)]
+def player(bord):
+    x = sum(rij.count("X") for rij in bord); o = sum(rij.count("O") for rij in bord)
+    return "X" if x == o else "O"
+def actions(bord):
+    return {(i, j) for i in range(3) for j in range(3) if bord[i][j] is None}
+def result(bord, zet):
+    n = copy.deepcopy(bord); i, j = zet; n[i][j] = player(bord); return n
+def winner(bord):
+    for rij in bord:
+        if rij[0] == rij[1] == rij[2] and rij[0] is not None: return rij[0]
+    for j in range(3):
+        if bord[0][j] == bord[1][j] == bord[2][j] and bord[0][j] is not None: return bord[0][j]
+    if bord[0][0] == bord[1][1] == bord[2][2] and bord[0][0] is not None: return bord[0][0]
+    if bord[0][2] == bord[1][1] == bord[2][0] and bord[0][2] is not None: return bord[0][2]
+    return None
+def terminal(bord):
+    return winner(bord) is not None or all(c is not None for r in bord for c in r)
+def utility(bord):
+    w = winner(bord); return 1 if w == "X" else (-1 if w == "O" else 0)
+def max_value(bord):
+    if terminal(bord): return utility(bord)
+    v = -math.inf
+    for z in actions(bord): v = max(v, min_value(result(bord, z)))
+    return v
+def min_value(bord):
+    if terminal(bord): return utility(bord)
+    v = math.inf
+    for z in actions(bord): v = min(v, max_value(result(bord, z)))
+    return v
+
+
+def minimax(bord):
+    # === Plak HIER je eigen minimax ===
+    raise NotImplementedError(
+        "Plak je eigen minimax-functie hierboven, in plaats van deze regel."
+    )
+
+
+def print_bord(bord):
+    for rij in bord:
+        print(" | ".join(c if c else "." for c in rij))
+    print()
+
+
+# AI vs AI — let op: kan ~30 sec duren
+bord = initial_state()
+print("Start:")
+print_bord(bord)
+
+while not terminal(bord):
+    zet = minimax(bord)
+    print(f"{player(bord)} speelt {zet}")
+    bord = result(bord, zet)
+    print_bord(bord)
+
+w = winner(bord)
+if w:
+    print(f"Winnaar: {w}")
+else:
+    print("Remise — exact zoals voorspeld!")`} />
+
+</details>
+
+## Wat heb je nu?
+
+Een **werkende AI op je eigen laptop**. Niet in een tutorial — gewoon
+een Python-bestand dat je kunt kopiëren, mailen, of doorontwikkelen.
+
+Je hebt 9 functies geschreven, ze door elkaar laten roepen met de
+patronen uit [stap 9: functies in functies](./09-functies-in-functies),
+en bovenop alles recursie ingezet
+([stap 14: helpers](./14-bouwen-helpers)). Dit is precies hoe
+AI-projecten in het echt worden gemaakt: kleine functies die elkaar
+oproepen, getest, geassembleerd in een lokaal project.
+
+Door naar [stap 17: veelgemaakte fouten →](./17-fouten).

@@ -1,0 +1,94 @@
+---
+sidebar_position: 1
+hide_table_of_contents: true
+---
+
+# 6.1 Bubble sort — het idee
+
+**Leerdoel:** je begrijpt hoe bubble sort werkt: buren vergelijken en
+swappen, herhaald tot alles klopt. Nog geen Python.
+
+## Het verhaal
+
+Je staat met een groepje vrienden op een rij en jullie willen op **lengte**
+gaan staan, van klein naar groot. Hoe doe je dat zonder dat iedereen
+tegelijk gaat schuiven?
+
+Een hele simpele aanpak:
+
+1. Kijk naar het eerste **paar** (linker twee personen). Staat de
+   linker-persoon kleiner dan de rechter? Top, niets doen. Zo niet → wissel
+   ze om.
+2. Schuif één plek op. Kijk naar het **volgende** paar. Idem: wissel als
+   ze fout staan.
+3. Ga zo door tot je het laatste paar bent gepasseerd.
+4. Begin opnieuw — wellicht moet er nog meer geruild worden.
+5. Stop als er een hele ronde voorbij komt zonder een ruil. Dan ben je
+   klaar.
+
+Dat is **bubble sort** in één zin: *vergelijk buren en swap, blijf
+herhalen tot er geen swap meer nodig is.*
+
+## Waarom heet het zo?
+
+De **grote** getallen "borrelen" als bubbels naar achteren. In één pass
+schuift het grootste element gegarandeerd naar zijn juiste plek (achteraan
+het ongesorteerde stuk). Net als een luchtbel die naar de oppervlakte
+stijgt.
+
+## Visualisatie
+
+Eén pass over `[3, 1, 4, 1, 5]`:
+
+```
+start:  [ 3 , 1 , 4 , 1 , 5 ]
+
+paar (3,1):  3 > 1?  ja → swap        [ 1 , 3 , 4 , 1 , 5 ]
+paar (3,4):  3 > 4?  nee → laat       [ 1 , 3 , 4 , 1 , 5 ]
+paar (4,1):  4 > 1?  ja → swap        [ 1 , 3 , 1 , 4 , 5 ]
+paar (4,5):  4 > 5?  nee → laat       [ 1 , 3 , 1 , 4 , 5 ]
+
+einde pass 1: [ 1 , 3 , 1 , 4 ,(5)]   5 is nu op zijn juiste plek
+```
+
+Nog niet gesorteerd — we moeten nog een pass doen:
+
+```
+start pass 2: [ 1 , 3 , 1 , 4 , 5 ]
+paar (1,3):  laat                     [ 1 , 3 , 1 , 4 , 5 ]
+paar (3,1):  swap                     [ 1 , 1 , 3 , 4 , 5 ]
+paar (3,4):  laat                     [ 1 , 1 , 3 , 4 , 5 ]
+paar (4,5):  laat                     [ 1 , 1 , 3 , 4 , 5 ]
+
+einde pass 2: gesorteerd!
+```
+
+Pass 3 zou doen: vier vergelijkingen, geen swaps. Dan weten we zeker dat
+we klaar zijn — *vroege uitstap*.
+
+## Verschil met selection sort
+
+| | Selection sort | Bubble sort |
+|---|---|---|
+| Hoofdtechniek | vind minimum, swap met begin | vergelijk buren, swap |
+| Swaps per ronde | 1 | 0 tot `n − 1` |
+| Vergelijkingen | altijd `n²/2` | minder als al gesorteerd |
+| Vroeg klaar? | nee | ja (met early-exit) |
+
+Bubble sort is **adaptief**: op een al-gesorteerde of bijna-gesorteerde
+lijst is hij veel sneller dan op een willekeurige.
+
+<details>
+<summary>Hoe snel?</summary>
+
+- **Beste geval** (al gesorteerd, met early-exit): één pass, `n − 1`
+  vergelijkingen, 0 swaps → O(n).
+- **Slechtste geval** (omgekeerd gesorteerd): `n − 1` passes, ongeveer
+  `n²/2` vergelijkingen en swaps → O(n²).
+- **Gemiddeld**: O(n²).
+
+Voor grote lijsten dus traag — maar simpel.
+
+</details>
+
+Door naar [stap 2: stellingen](./02-stellingen).

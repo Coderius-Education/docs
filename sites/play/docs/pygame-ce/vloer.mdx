@@ -1,0 +1,142 @@
+﻿---
+sidebar_position: 9
+hide_table_of_contents: true
+---
+
+
+# 7.9 Pymunk: een vloer toevoegen
+
+In de vorige les viel de bal naar beneden en verdween van het scherm. Laten we een vloer toevoegen zodat de bal kan stuiteren!
+
+## Een static body
+
+Een vloer is een vorm die **niet beweegt**. In pymunk maak je die met een **static body**:
+
+```python
+vloer_body = pymunk.Body(body_type=pymunk.Body.STATIC)
+```
+
+Een `STATIC` body beweegt nooit, ongeacht hoeveel kracht erop wordt uitgeoefend. Net zoals `can_move=False` in coderius-play.
+
+## Een vloer als Segment
+
+```python
+vloer_shape = pymunk.Segment(vloer_body, (0, 550), (800, 550), 5)
+```
+
+Een `Segment` is een lijn van punt `(0, 550)` naar punt `(800, 550)` met dikte `5`. Perfect voor een vloer!
+
+## Elasticity: stuiteren
+
+```python
+bal_shape.elasticity = 0.8
+vloer_shape.elasticity = 0.8
+```
+
+`elasticity` bepaalt hoe hard iets terugkaatst:
+- `1.0` = volledig terugkaatsen (geen energie verloren)
+- `0.5` = half terugkaatsen
+- `0.0` = niet terugkaatsen (plof)
+
+## Het volledige programma
+
+```python
+import pygame
+import pymunk
+
+pygame.init()
+
+scherm = pygame.display.set_mode((800, 600))
+clock = pygame.time.Clock()
+
+space = pymunk.Space()
+space.gravity = (0, 500)
+
+# Bal
+bal_body = pymunk.Body(1, pymunk.moment_for_circle(1, 0, 20))
+bal_body.position = (400, 50)
+bal_shape = pymunk.Circle(bal_body, 20)
+bal_shape.elasticity = 0.8
+space.add(bal_body, bal_shape)
+
+# Vloer (static)
+vloer_body = pymunk.Body(body_type=pymunk.Body.STATIC)
+vloer_shape = pymunk.Segment(vloer_body, (0, 550), (800, 550), 5)
+vloer_shape.elasticity = 0.8
+space.add(vloer_body, vloer_shape)
+
+actief = True
+
+while actief:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            actief = False
+
+    space.step(1 / 60)
+
+    scherm.fill((30, 30, 30))
+
+    bal_x = int(bal_body.position.x)
+    bal_y = int(bal_body.position.y)
+    pygame.draw.circle(scherm, (0, 200, 255), (bal_x, bal_y), 20)
+
+    pygame.draw.line(scherm, (255, 255, 255), (0, 550), (800, 550), 5)
+
+    pygame.display.flip()
+    clock.tick(60)
+
+pygame.quit()
+```
+
+
+
+De bal stuitert nu op de vloer!
+
+## Opdracht 7.9.a: Elasticity uitproberen
+
+Verander de `elasticity` van de bal en de vloer. Probeer:
+1. `elasticity = 1.0` op beide. Wat gebeurt er?
+2. `elasticity = 0.0` op beide. Wat gebeurt er?
+3. `elasticity = 1.0` op de bal en `0.0` op de vloer. Wat gebeurt er?
+
+<details>
+<summary>Klik hier voor het antwoord!</summary>
+
+1. De bal stuitert eindeloos op dezelfde hoogte (geen energieverlies)
+2. De bal valt en blijft liggen (geen stuitering)
+3. De bal stuitert nog steeds, maar minder hoog. De elasticity van een botsing wordt berekend uit beide vormen.
+
+</details>
+
+## Opdracht 7.9.b: Muren toevoegen
+
+Voeg naast de vloer ook een linker- en rechtermuur toe, zodat de bal niet van het scherm kan vallen.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Maak nog twee Segments: eentje van `(0, 0)` naar `(0, 600)` (linkermuur) en eentje van `(800, 0)` naar `(800, 600)` (rechtermuur). Gebruik dezelfde `vloer_body` (een static body kan meerdere shapes hebben).
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+Voeg dit toe na de vloer:
+
+```python
+# Muren
+linker_muur = pymunk.Segment(vloer_body, (0, 0), (0, 600), 5)
+linker_muur.elasticity = 0.8
+rechter_muur = pymunk.Segment(vloer_body, (800, 0), (800, 600), 5)
+rechter_muur.elasticity = 0.8
+space.add(linker_muur, rechter_muur)
+```
+
+En teken ze in de game loop:
+```
+    pygame.draw.line(scherm, (255, 255, 255), (0, 0), (0, 600), 5)
+    pygame.draw.line(scherm, (255, 255, 255), (800, 0), (800, 600), 5)
+```
+
+</details>

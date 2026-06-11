@@ -1,0 +1,106 @@
+﻿---
+sidebar_position: 2
+hide_table_of_contents: true
+---
+
+
+# 7.2 Achtergrondkleur
+
+Je venster is nu zwart. Laten we er een kleur aan geven!
+
+## Kleuren met RGB
+
+In pygame-ce geef je kleuren als **RGB-waarden**: drie getallen voor **(rood, groen, blauw)**, elk van 0 tot 255.
+
+Enkele voorbeelden:
+- `(255, 0, 0)` = rood
+- `(0, 255, 0)` = groen
+- `(0, 0, 255)` = blauw
+- `(255, 255, 255)` = wit
+- `(0, 0, 0)` = zwart
+- `(30, 30, 30)` = donkergrijs
+
+## De achtergrond vullen
+
+```python
+import pygame
+
+pygame.init()
+
+scherm = pygame.display.set_mode((800, 600))
+pygame.display.set_caption("Achtergrondkleur")
+
+actief = True
+
+while actief:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            actief = False
+
+    scherm.fill((30, 30, 30))
+    pygame.display.flip()
+
+pygame.quit()
+```
+
+
+
+Twee nieuwe regels:
+
+```python
+scherm.fill((30, 30, 30))
+```
+Vult het scherm met een donkergrijze kleur.
+
+```python
+pygame.display.flip()
+```
+Hiermee wordt het scherm bijgewerkt. Zonder deze regel zie je niets!
+
+## Opdracht 7.2.a: Kleuren uitproberen
+
+Verander de achtergrondkleur naar:
+1. Rood
+2. Blauw
+3. Een kleur naar keuze
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+scherm.fill((255, 0, 0))    # rood
+scherm.fill((0, 0, 255))    # blauw
+scherm.fill((255, 165, 0))  # oranje (voorbeeld)
+```
+
+</details>
+
+## Opdracht 7.2.b: Jouw favoriete kleur
+
+Maak een venster met een groene achtergrond en de titel "Groene weide".
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+import pygame
+
+pygame.init()
+
+scherm = pygame.display.set_mode((800, 600))
+pygame.display.set_caption("Groene weide")
+
+actief = True
+
+while actief:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            actief = False
+
+    scherm.fill((0, 200, 0))
+    pygame.display.flip()
+
+pygame.quit()
+```
+
+</details>

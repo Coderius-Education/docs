@@ -1,0 +1,11 @@
+{
+  "label": "Max én min in één pass",
+  "position": 3,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "title": "Max én min in één pass",
+    "description": "Twee accumulators tegelijk bijhouden — minder werk dan twee losse passes."
+  }
+}

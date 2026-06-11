@@ -1,0 +1,101 @@
+---
+sidebar_position: 3
+sidebar_label: 'High'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# CSP Bypass — High
+
+Geen externe domeinen en geen statische nonces. Toch is er nog een weg.
+
+## 1. Predict (Voorspel)
+
+De CSP is nu extreem strikt:
+
+```
+Content-Security-Policy: script-src 'self'
+```
+
+Alleen scripts afkomstig van de server zelf mogen draaien. Maar de webapplicatie maakt gebruik van een JSONP-endpoint:
+
+```
+http://localhost/DVWA/vulnerabilities/csp/source/jsonp.php?callback=solveNum
+```
+
+De PHP-code van dit endpoint:
+
+```php
+$callback = $_GET['callback'];
+echo $callback . '({"answer":"15"});';
+```
+
+**Vraag:** Waarom is dit JSONP-endpoint levensgevaarlijk, zelfs met een ijzersterke CSP die alleen `self` toestaat?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Het JSONP-endpoint staat op de **eigen** server (`self`). De CSP keurt het laden van dit script automatisch goed. Maar omdat PHP de `?callback=`-parameter letterlijk en ongefilterd in het scriptbestand plakt, kun jij die parameter aanpassen. Als jij `?callback=alert(1);//` instelt, genereert de eigen backend letterlijk het script `alert(1);//({"answer":"15"});` — dat de browser vervolgens uitvoert.
+
+</details>
+
+## 2. Run (Uitvoeren)
+
+Start het lab.
+
+<DvwaLab module="csp_bypass" level="high" />
+
+> ⚠️ **Labbeperking:** Het manipuleren van de JSONP callback-parameter vereist directe URL-toegang. Het lab simuleert de CSP-logica, maar voor de volledige JSONP-bypass heb je een [lokale DVWA-installatie](/docs/dvwa_installatie) nodig.
+
+Klik op de knop op de pagina. Bekijk in F12 → **Network** welke URL het uitvoert.
+
+## 3. Investigate (Onderzoeken)
+
+Bekijk in F12 → **Network** de JSONP-aanroep die de pagina doet. Kijk naar de URL en de response die terugkomt.
+
+**Vraag:** Wat staat er letterlijk in de response van `jsonp.php`? Wordt de callback-naam ongefilterd in de output gezet?
+
+<details>
+
+<summary>Antwoord</summary>
+
+De response bevat de callback-naam gevolgd door de JSON-data: `solveNum({"answer":"15"});`. De naam `solveNum` staat letterlijk in de output — ongefilterd. Als je de URL aanpast naar `?callback=alert(1);//`, bevat de response `alert(1);//({"answer":"15"});` en voert de browser de `alert` uit.
+
+</details>
+
+## 4. Modify & Make (Aanpassen & Maken)
+
+Pas de JSONP-callback aan zodat de browser je JavaScript uitvoert via de eigen server.
+
+<details>
+
+<summary>Tip</summary>
+
+Verander de `callback`-parameter in de JSONP-URL naar jouw JavaScript-code. Zorg dat je de rest van de originele callback-aanroep neutraliseert (bijv. met `//` voor een comment).
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+Gebruik de URL:
+`/DVWA/vulnerabilities/csp/source/jsonp.php?callback=alert("Hacked");//`
+
+De server genereert dan: `alert("Hacked");//({"answer":"15"});`
+
+De browser laadt dit script van `self` (toegestaan door CSP), voert `alert("Hacked")` uit en slaat de rest over dankzij het commentaarsymbool `//`.
+
+</details>
+
+## 5. ✓ Wat moest je zien?
+
+:::tip Controle
+- De JSONP-aanroep met aangepaste callback triggert een pop-up ondanks de strikte CSP.
+- De server zelf genereert het kwaadaardige script — de CSP ziet alleen `script-src 'self'` en laat het door.
+- Een normale inline `<script>` wordt nog steeds geblokkeerd.
+
+Geen pop-up? Controleer of je direct de JSONP-URL kunt aanpassen in een lokale DVWA-installatie.
+:::

@@ -1,0 +1,80 @@
+﻿---
+sidebar_position: 7
+hide_table_of_contents: true
+---
+
+# 7.7 Pymunk: de bouwstenen
+
+Tot nu toe hebben we beweging zelf geprogrammeerd door x en y te veranderen. Maar wat als je echte fysica wilt, zoals zwaartekracht en botsingen? Dan gebruik je **pymunk**.
+
+Pymunk is een physics-bibliotheek. Het is ook de bibliotheek die coderius-play onder de motorkap gebruikt!
+
+## Pymunk installeren
+
+```bash
+pip install pymunk
+```
+
+## De drie bouwstenen van pymunk
+
+In pymunk werk je met drie onderdelen:
+
+| Onderdeel | Wat doet het? |
+| --- | --- |
+| **Space** | De wereld waarin alles gebeurt. Hier stel je de zwaartekracht in. |
+| **Body** | Een onzichtbaar punt dat een positie en snelheid heeft. |
+| **Shape** | De vorm (cirkel, rechthoek) die aan een Body vast zit. Hiermee worden botsingen berekend. |
+
+Je hebt altijd alle drie nodig:
+1. Een **Space** als de wereld
+2. Een **Body** voor de positie en massa
+3. Een **Shape** voor de vorm (en dus botsingen)
+
+### Space
+
+```python
+import pymunk
+
+space = pymunk.Space()
+space.gravity = (0, 500)
+```
+De Space is de wereld. Met `gravity` stel je de zwaartekracht in. `(0, 500)` trekt naar beneden (in pygame gaat de y-as naar beneden).
+
+### Body
+
+```python
+bal_body = pymunk.Body(1, pymunk.moment_for_circle(1, 0, 20))
+bal_body.position = (400, 50)
+```
+Een Body heeft een **massa** (het eerste getal, hier `1`) en een **moment** (hoe makkelijk het object draait). Met `moment_for_circle` laat je pymunk het moment berekenen.
+
+### Shape
+
+```python
+bal_shape = pymunk.Circle(bal_body, 20)
+space.add(bal_body, bal_shape)
+```
+Een Shape is de vorm die aan een Body vastzit. Hier maken we een cirkel met straal `20`. Daarna voeg je alles toe aan de Space.
+
+### De fysica laten draaien
+
+```python
+space.step(1 / 60)
+```
+Met `step()` laat je de fysica een stapje vooruit gaan. Dit doe je elke frame in de game loop.
+
+## Opdracht 7.7.a: Begrijp de bouwstenen
+
+Beantwoord de volgende vragen:
+1. Welk onderdeel gebruik je om zwaartekracht in te stellen?
+2. Welk onderdeel heeft een positie en massa?
+3. Welk onderdeel bepaalt de vorm voor botsingen?
+
+<details>
+<summary>Klik hier voor het antwoord!</summary>
+
+1. **Space** - hier stel je `gravity` in
+2. **Body** - heeft `position` en massa
+3. **Shape** - de vorm (Circle, Segment, etc.)
+
+</details>

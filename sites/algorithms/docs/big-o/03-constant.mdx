@@ -1,0 +1,98 @@
+---
+sidebar_position: 3
+hide_table_of_contents: true
+---
+
+# 7.3 O(1) — constante tijd
+
+**Leerdoel:** je herkent operaties die **niet** langer worden bij een
+grotere lijst. Je ziet visueel dat de stappen-lijn vlak blijft.
+
+## Hoe gedraagt het zich?
+
+`O(1)` betekent: **het maakt niet uit hoe groot `n` is — het werk blijft
+hetzelfde**. Eén stap. Of vijf. Of duizend. Zolang dat aantal **niet
+groeit** met `n`, is het `O(1)`.
+
+Analogie: een lichtschakelaar. Hij gaat aan of uit — of er nu één lamp
+hangt of duizend lampen, je beweging is hetzelfde.
+
+## Voorbeelden in Python
+
+```python
+lijst = [10, 20, 30, 40, 50]
+
+lijst[0]            # O(1) — direct toegang via index
+len(lijst)          # O(1) — Python houdt de lengte bij
+lijst.append(99)    # O(1) — element achteraan toevoegen
+```
+
+Bij **geen** van deze operaties hangt het werk af van `len(lijst)`. Python
+weet meteen waar `lijst[0]` zit. Bij een lijst van 10 of 10 miljoen
+elementen kost het evenveel werk.
+
+## Voorspel
+
+We meten het aantal stappen voor `lijst[0]` op lijsten van groeiende
+grootte. Wat denk je dat de grafiek laat zien?
+
+<details>
+<summary>Antwoord</summary>
+
+Een **vlakke lijn**: altijd 1 stap, ongeacht `n`. Dat is precies de
+betekenis van `O(1)`.
+
+</details>
+
+## Run — kijk hoe het groeit
+
+<PyRunner initialCode={`import matplotlib.pyplot as plt
+
+def toegang_via_index(lijst, index):
+    stappen = 0
+    stappen += 1   # één lookup
+    _ = lijst[index]
+    return stappen
+
+groottes = [10, 100, 1000, 10000, 100000]
+stappen_per_grootte = []
+for n in groottes:
+    lijst = list(range(n))
+    stappen_per_grootte.append(toegang_via_index(lijst, 0))
+
+print("n         stappen")
+for n, s in zip(groottes, stappen_per_grootte):
+    print(f"{n:<10} {s}")
+
+plt.plot(groottes, stappen_per_grootte, marker='o')
+plt.xscale('log')
+plt.ylim(0, 5)
+plt.xlabel('lijstgrootte n')
+plt.ylabel('aantal stappen')
+plt.title('O(1) — constante tijd')
+plt.grid(True, linestyle=':')
+plt.show()`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+De lijn ligt **vlak op 1**, voor alle lijstgroottes. Of `n` nu 10 is of
+100.000 — het werk is hetzelfde.
+
+Dat is `O(1)` in beeld: een **horizontale lijn**.
+
+</details>
+
+## Welke algoritmes zijn `O(1)`?
+
+In dit curriculum:
+
+- **Lineair zoeken** is `O(1)` in het **beste geval** — als het doel
+  toevallig het eerste element is. Zie [lineair-zoeken/07-compleet](../lineair-zoeken/07-compleet).
+- **Binair zoeken** is `O(1)` in het beste geval — als het midden direct
+  raak is. Zie [binair-zoeken/08-compleet](../binair-zoeken/08-compleet).
+
+Maar in het **slechtste geval** zijn deze algoritmes `O(n)` en `O(log n)`.
+Daarom is `O(1)` voor zoeken alleen geluk hebben — niet de hele waarheid.
+
+Door naar [stap 4: O(n) — lineair →](./04-lineair).

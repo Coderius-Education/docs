@@ -1,0 +1,89 @@
+---
+sidebar_position: 2
+sidebar_label: 'Medium'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# CSP Bypass — Medium
+
+De ontwikkelaar begrijpt dat het whitelisten van externe domeinen gevaarlijk is en stapt over op een Nonce-systeem.
+
+## 1. Predict (Voorspel)
+
+De CSP-header is aangepast:
+
+```
+Content-Security-Policy: script-src 'nonce-TmV2ZXIgZ29pbmcgdG8gZ2l2ZSB5b3UgdXA='
+```
+
+Alleen scripts met het exacte wachtwoordje (de nonce) als attribuut mogen draaien:
+`<script nonce="TmV2ZXIgZ29pbmcgdG8gZ2l2ZSB5b3UgdXA="> console.log("Dit mag!"); </script>`
+
+**Vraag:** Waar heeft de ontwikkelaar bij de implementatie van dit systeem een kritieke fout gemaakt?
+
+<details>
+
+<summary>Antwoord</summary>
+
+"Nonce" staat voor "Number Used **ONCE**" — het idee is dat de server bij elke paginaweergave een nieuw, willekeurig wachtwoordje genereert. Deze ontwikkelaar heeft de nonce echter **hardcoded** in de broncode gezet. De nonce verandert nooit. Een hacker leest de broncode, kopieert de vaste nonce en voegt die toe aan zijn XSS-payload.
+
+</details>
+
+## 2. Run (Uitvoeren)
+
+Start het lab en bekijk het formulier.
+
+<DvwaLab module="csp_bypass" level="medium" />
+
+> ⚠️ **Labbeperking:** Het inspecteren van HTTP-response headers in een iframe is beperkt. Het lab simuleert de nonce-logica, maar voor het volledig inspecteren van headers heb je een [lokale DVWA-installatie](/docs/dvwa_installatie) nodig.
+
+Probeer `<script>alert(1)</script>` in te vullen. Observeer dat het geblokkeerd wordt.
+
+## 3. Investigate (Onderzoeken)
+
+Open F12 → **Elements** en zoek in de HTML naar `<script nonce=`. Noteer de waarde van het nonce-attribuut op de bestaande script-tags van de pagina.
+
+**Vraag:** Verandert de nonce-waarde als je de pagina ververst (F5)? Wat onthult dit over de beveiliging?
+
+<details>
+
+<summary>Antwoord</summary>
+
+De nonce-waarde blijft gelijk na elke paginaverversing — hij is statisch. Dit betekent dat elke aanvaller die de broncode kan lezen (wat bij een webpagina altijd mogelijk is), de nonce-waarde kent en kan hergebruiken in zijn eigen payload. Een statische nonce biedt geen betere bescherming dan geen nonce.
+
+</details>
+
+## 4. Modify & Make (Aanpassen & Maken)
+
+Gebruik de gevonden nonce-waarde om een inline script langs de CSP te smokkelen.
+
+<details>
+
+<summary>Tip</summary>
+
+Voeg het `nonce`-attribuut toe aan je eigen `<script>`-tag met de nonce-waarde die je in de HTML hebt gevonden.
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+Vul in:
+`<script nonce="TmV2ZXIgZ29pbmcgdG8gZ2l2ZSB5b3UgdXA=">alert(1);</script>`
+
+De browser controleert de nonce, ziet dat die exact overeenkomt met de waarde in de CSP-header, en staat de uitvoering toe.
+
+</details>
+
+## 5. ✓ Wat moest je zien?
+
+:::tip Controle
+- Een script zonder de nonce wordt door de browser geblokkeerd.
+- Een script **met** de juiste nonce wordt wél uitgevoerd — er verschijnt een pop-up.
+- De nonce-waarde in de broncode is gelijk aan de waarde in de CSP-header — ze zijn hardcoded en identiek.
+
+Werkt het niet? Controleer of je de nonce-waarde precies hebt overgetypt, inclusief de `=` aan het einde.
+:::

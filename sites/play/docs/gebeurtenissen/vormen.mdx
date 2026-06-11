@@ -1,0 +1,165 @@
+﻿---
+sidebar_position: 2
+hide_table_of_contents: true
+---
+
+# 4.2 Gebeurtenissen bij een vorm
+
+:::info Wat moet je al weten
+- [4.1 Gebeurtenissen](/docs/gebeurtenissen/toetsenbord) - het `@`-decorator-patroon
+- [Hoofdstuk 2 Fysica](/docs/fysica/links_en_rechts) - `start_physics()` is nodig voor botsingen
+:::
+
+Je hebt al geleerd hoe je programma kan reageren op de gebruiker, bijvoorbeeld als die een toets indrukt. Maar wat als je wilt reageren op gebeurtenissen *tussen vormen*? Bijvoorbeeld, wat moet er gebeuren als twee objecten elkaar raken? Dat leer je hier!
+
+:::tip
+Voor botsingen heb je fysica nodig. In [2.2 Physics Info](/docs/fysica/physics_info) heb je geleerd over de drie types fysica (dynamic, static, kinematic). Dat komt hier van pas!
+:::
+
+Voor meer voorbeelden kun je altijd de [cheatsheet](/docs/cheatsheet) raadplegen.
+
+## Opdracht 4.2.a: Reageren op een botsing
+
+a) de basis
+- Maak eerst zelf een blauwe bal, met als naam van de variabele `bal`.
+- Maak daarna een batje met de naam `batje` en plaatst deze aan de rechterkant van het scherm.
+
+<details>
+<summary> Kijk hier voor het antwoord</summary>
+
+<PygbagRunner code={`import play
+
+bal = play.new_circle(color="blue", radius=50)
+batje = play.new_box(x=300)`} height={300} />
+
+</details>
+
+b) Probeer nu het volgende:
+- Laat de bal automatisch naar rechts bewegen
+- Zorg dat de bal niet naar beneden valt
+- Pas het batje aan zodat die ook niet valt en niet kan bewegen.
+- Lukt het om de bal en het batje te laten botsen?
+
+<details>
+    <summary>Klik hier voor een tip</summary>
+
+Gebruik **start_physics()** voor laten bewegen. De eigenschappen **x_speed** en **obeys_gravity** kunnen erg nuttig zijn.
+</details>
+
+<details>
+<summary>Kijk hier voor het antwoord</summary>
+
+```python
+import play
+
+bal = play.new_circle(color="blue", radius=50)
+bal.start_physics(can_move=True, obeys_gravity=False, stable=False, x_speed=40)
+
+batje = play.new_box(x=300)
+```
+</details>
+
+c) reageren op de botsing
+Voeg nu het volgende codefragment aan je code toe:
+
+```python
+text = play.new_text('batje is niet aangeraakt', y=200, font_size=50)
+
+@bal.when_stopped_touching(batje)
+def weggekaatst():
+    text.words = 'bal is weggekaatst van batje'
+```
+
+### De event-decorator
+
+Wat is die regel met de `@` ervoor?
+
+De `@...` regel heet een **event-decorator**. Deze laat de functie die er direct onder staat één keer afgaan als de specifieke gebeurtenis plaatsvindt.
+
+De algemene vorm is:
+```
+@vorm1.when_..._touching(vorm2)
+def doe_iets():
+    # reactie op gebeurtenis
+```
+
+In ons voorbeeld:
+```python
+@bal.when_stopped_touching(batje)
+def weggekaatst():
+    text.words = 'bal is weggekaatst van batje'
+```
+
+Hier laat `@bal.when_stopped_touching(batje)` de functie `weggekaatst` één keer afgaan op het moment dat `bal` ophoudt `batje` te raken (dus precies bij de overgang van wel aanraken naar niet meer aanraken). De code binnen `weggekaatst` wordt dan uitgevoerd.
+
+Let op:
+- **bal** wijst hier naar de **variabele** `bal`. Deze variabele wijst naar de gemaakte cirkel.
+- **batje** wijst hier naar de **variabele** `batje`. Deze variabele wijst naar het gemaakte batje.
+
+Als onze bal dus botst tegen ons batje en weer terugkaatst, vindt deze gebeurtenis plaats.
+
+## 4.2.1 Een vorm raakt een muur
+
+Niet alleen botsingen tussen vormen kun je detecteren — ook het raken van de **rand van het scherm**. Daarvoor gebruik je `@vorm.when_touching_wall`.
+
+<PygbagRunner code={`import play
+
+bal = play.new_circle(color='blue', radius=30)
+bal.start_physics(obeys_gravity=False, x_speed=15, y_speed=8)
+
+@bal.when_touching_wall
+def raakt_muur():
+    bal.color = 'red'`} height={300} />
+
+Zodra de bal een muur raakt, wordt hij rood. Net zoals `@bal.when_touching(batje)` werkt dit als een event-decorator — de functie wordt één keer uitgevoerd bij het raken.
+
+### Een specifieke muur kiezen
+
+Vaak wil je weten **welke** muur de vorm raakt. Bijvoorbeeld bij Pong scoort de rechterspeler een punt als de bal de linkermuur raakt, en andersom. Daarvoor geef je `wall=play.WallSide.LEFT` (of `RIGHT`, `TOP`, `BOTTOM`) mee:
+
+<PygbagRunner code={`import play
+
+bal = play.new_circle(color='blue', radius=30)
+bal.start_physics(obeys_gravity=False, x_speed=15, y_speed=8)
+
+@bal.when_touching_wall(wall=play.WallSide.LEFT)
+def raakt_linker_muur():
+    bal.color = 'red'
+
+@bal.when_touching_wall(wall=play.WallSide.RIGHT)
+def raakt_rechter_muur():
+    bal.color = 'green'`} height={300} />
+
+De bal wordt rood bij de linkermuur en groen bij de rechtermuur. Boven- en ondermuur veranderen niets.
+
+### Opdracht 4.2.b: Tel hoe vaak de bal stuitert
+
+Pas de code hierboven aan zodat:
+1. Een tekst op het scherm bijhoudt hoe vaak de bal de **bovenmuur** raakt.
+2. Andere muren niet meetellen.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Gebruik `play.WallSide.TOP`, een `global`-variabele voor de teller (zie [4.5 Een score bijhouden](/docs/gebeurtenissen/score_bijhouden)), en `play.new_text` om de teller te tonen.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+<PygbagRunner code={`import play
+
+bal = play.new_circle(color='blue', radius=30)
+bal.start_physics(obeys_gravity=False, x_speed=15, y_speed=8)
+
+teller = 0
+tekst = play.new_text(words='Boven: 0', y=200, font_size=40)
+
+@bal.when_touching_wall(wall=play.WallSide.TOP)
+def tel_boven():
+    global teller
+    teller = teller + 1
+    tekst.words = 'Boven: ' + str(teller)`} height={300} />
+
+</details>

@@ -1,0 +1,99 @@
+---
+sidebar_position: 3
+sidebar_label: 'High'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# SQL Injection — High
+
+Op het hoge niveau probeert de applicatie je aanval af te weren door het invulveld op een *compleet andere pagina* te zetten.
+
+## 1. Predict (Voorspel)
+
+Wanneer je op "Click here to change your ID" klikt, opent een pop-up. Je vult daar je ID in. De server slaat dit op in een sessie-variabele: `$_SESSION['id'] = $id;`.
+Vervolgens keer je terug naar de originele pagina en voert de applicatie de volgende query uit:
+
+```php
+$id = $_SESSION[ 'id' ];
+$query  = "SELECT first_name, last_name FROM users WHERE user_id = '$id' LIMIT 1;";
+```
+
+**Vraag:** Waarom dacht de ontwikkelaar dat dit veiliger was? Heeft hij gelijk?
+
+<details>
+
+<summary>Antwoord</summary>
+
+De ontwikkelaar dacht: "Als het invulveld niet op dezelfde pagina staat als de database-query, kunnen geautomatiseerde aanvalstools de pagina moeilijker raken."
+
+Hij heeft ongelijk. De invoer uit de pop-up wordt nog steeds ongefilterd in `$id` gezet en rechtstreeks in de query geplakt. De kwetsbaarheid bestaat nog — ze is alleen één klik dieper verstopt. Dit heet **Security by Obscurity**: verstoppen in plaats van echt beveiligen.
+
+</details>
+
+## 2. Run (Uitvoeren)
+
+Start het lab en verken de interface.
+
+<DvwaLab module="sql_injection" level="high" />
+
+Klik op de link "Click here to change your ID". Vul `1`, `2` en `3` in en observeer telkens het resultaat op de hoofdpagina.
+
+## 3. Investigate (Onderzoeken)
+
+Probeer nu je payload van het Low level (`1' OR '1'='1`) in te vullen in de pop-up en klik op Submit.
+
+**Vraag:** Hoeveel gebruikers zie je? Vergelijk dit met het Low level — wat is er anders? Wat in de SQL query uit §1 veroorzaakt dit verschil?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Je ziet maar **1 gebruiker** in plaats van alle 5. De `LIMIT 1` aan het eind van de query beperkt het aantal resultaten, ook al is de `OR`-conditie geldig.
+
+De query wordt:
+`SELECT ... WHERE user_id = '1' OR '1'='1' LIMIT 1;`
+
+De database geeft braaf alle rijen terug — maar kapt dan af bij 1.
+
+De vraag is nu: hoe zorg je ervoor dat `LIMIT 1` genegeerd wordt? In SQL bestaat een manier om de rest van een regel onzichtbaar te maken voor de database-parser.
+
+</details>
+
+## 4. Modify & Make (Aanpassen & Maken)
+
+Je weet dat `LIMIT 1` de output beperkt. Jouw doel: neutraliseer `LIMIT 1` zodat alle gebruikers zichtbaar worden.
+
+In SQL bestaat een mechanisme om alles na een bepaald teken te negeren — net zoals `//` een commentaar start in JavaScript.
+
+<details>
+
+<summary>Tip</summary>
+
+In MySQL start een commentaar met `#` of met `-- ` (twee streepjes + spatie). Alles wat daarna komt op dezelfde regel, wordt door de database genegeerd. Voeg dit toe aan het einde van je payload zodat `LIMIT 1` buiten de 'actieve' query valt.
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+Vul in de pop-up in: `1' OR '1'='1' #`
+
+De database ziet dan:
+`SELECT ... WHERE user_id = '1' OR '1'='1' #' LIMIT 1;`
+
+Alles na `#` (inclusief `LIMIT 1`) wordt genegeerd. Alle 5 gebruikers verschijnen.
+
+</details>
+
+## 5. ✓ Wat moest je zien?
+
+:::tip Controle
+- Er verschijnt een lijst met **alle 5 gebruikers** ondanks de `LIMIT 1` beperking.
+- Alles na het `#` in jouw payload wordt door de database genegeerd — inclusief `LIMIT 1`.
+- Het invulveld zat in een pop-up, maar de kwetsbaarheid was er gewoon nog.
+
+Zie je maar één resultaat? Controleer of je `#` aan het einde van je payload hebt en er geen extra spatie vóór het `#` staat.
+:::

@@ -1,0 +1,119 @@
+---
+sidebar_position: 5
+hide_table_of_contents: true
+---
+
+# 6.5 Bouwsteen 3 — één pass door de lijst
+
+**Leerdoel:** je weet precies tot welke index de binnenste lus loopt, en
+waarom er `- 1` bij hoort.
+
+## Wat we willen
+
+Eén pass = één keer door de lijst lopen, elk paar buren bekijken en
+zo nodig swappen.
+
+## De `- 1` is cruciaal
+
+Bij elke vergelijking pakken we `lijst[i]` en `lijst[i + 1]`. De **laatste**
+geldige `i` is dus `len(lijst) - 2` (zodat `i + 1` precies de laatste
+index is).
+
+```python
+for i in range(len(lijst) - 1):     # 0, 1, ..., len-2
+    ...
+```
+
+Vergeten we de `- 1`?
+
+```python
+for i in range(len(lijst)):         # 0, 1, ..., len-1
+    if lijst[i] > lijst[i + 1]:     # crash bij i = len-1
+        ...
+```
+
+→ `IndexError: list index out of range` op de laatste iteratie. Klassieke
+beginnersfout.
+
+## Voorspel
+
+Wat denk je dat dit print?
+
+```python
+def een_pass(lijst):
+    for i in range(len(lijst) - 1):
+        if lijst[i] > lijst[i + 1]:
+            lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+    return lijst
+
+print(een_pass([3, 1, 4, 1, 5]))
+print(een_pass([5, 4, 3, 2, 1]))
+print(een_pass([1, 2, 3, 4, 5]))
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+[1, 3, 1, 4, 5]
+[4, 3, 2, 1, 5]
+[1, 2, 3, 4, 5]
+```
+
+- `[3, 1, 4, 1, 5]` → de 5 borrelt naar achteren (was al achteraan); de
+  binnenste-paar-swaps gebeuren.
+- `[5, 4, 3, 2, 1]` (omgekeerd) → de 5 borrelt netjes helemaal naar
+  achteren in één pass. De rest is nog wel rommelig.
+- `[1, 2, 3, 4, 5]` (al gesorteerd) → niets verandert.
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`def een_pass(lijst):
+    for i in range(len(lijst) - 1):
+        if lijst[i] > lijst[i + 1]:
+            lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+    return lijst
+
+print(een_pass([3, 1, 4, 1, 5]))
+print(een_pass([5, 4, 3, 2, 1]))
+print(een_pass([1, 2, 3, 4, 5]))`} />
+
+## Visualiseer — het grootste borrelt naar achteren
+
+<PyRunner initialCode={`def een_pass_uitleg(lijst):
+    print("start:", lijst)
+    for i in range(len(lijst) - 1):
+        if lijst[i] > lijst[i + 1]:
+            lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+            print(f"  i={i}: swap → {lijst}")
+    print("eind:", lijst)
+    return lijst
+
+een_pass_uitleg([4, 2, 7, 1, 3])`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+```
+start: [4, 2, 7, 1, 3]
+  i=0: swap → [2, 4, 7, 1, 3]
+  i=2: swap → [2, 4, 1, 7, 3]
+  i=3: swap → [2, 4, 1, 3, 7]
+eind:  [2, 4, 1, 3, 7]
+```
+
+Drie swaps. De 7 (grootste) is helemaal naar achteren gegaan. Maar de 1
+moet nog twee plekken naar voren — daarvoor zijn meer passes nodig.
+
+</details>
+
+<SteppingStoneModel stone="bubble-one-pass" />
+
+## Wat nu nog mist
+
+We hebben **één** pass. We willen het **herhalen** tot de lijst gesorteerd
+is.
+
+Door naar [bouwsteen 4: meerdere passes](./06-bouwen-meerdere-passes).

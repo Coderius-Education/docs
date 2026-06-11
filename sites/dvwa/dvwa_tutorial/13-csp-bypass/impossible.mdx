@@ -1,0 +1,56 @@
+---
+sidebar_position: 4
+sidebar_label: 'Impossible'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# CSP Bypass — Impossible
+
+Hoe stel je een CSP-header in die echt niet te omzeilen is?
+
+## 1. Predict (Voorspel)
+
+De JSONP-endpoints zijn vervangen door moderne REST/JSON-API's. De CSP is als volgt:
+
+```
+Content-Security-Policy: default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self'; frame-ancestors 'none';
+```
+
+**Vraag:** Wat betekent `default-src 'none'` en waarom is dit de gouden standaard?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Met `default-src 'none'` geef je de browser een absoluut bevel: "Blokkeer alles — afbeeldingen, scripts, iframes, lettertypen, audio — tenzij ik verderop een expliciete uitzondering maak." Vervolgens opent de beheerder alleen mondjesmaat kleine deurtjes (`script-src 'self'`). Deze "Zero Trust"-benadering voorkomt dat een vergeten bestandstype als achterdeur fungeert.
+
+</details>
+
+## 2. Run & Investigate
+
+Start het lab en probeer alle eerder geleerde aanvallen.
+
+<DvwaLab module="csp_bypass" level="impossible" />
+
+Probeer inline scripts, externe scripts via Pastebin, de nonce-truc en een JSONP-aanroep. Observeer dat alle aanvallen worden geblokkeerd.
+
+## 3. ✓ Wat moest je zien?
+
+:::tip Controle
+- Elk inline script wordt geblokkeerd door de browser.
+- Er zijn geen externe domeinen op de whitelist waarop een hacker code kan hosten.
+- De JSONP-endpoints bestaan niet meer — er is geen server-side code die gebruikersinput als JavaScript teruggeeft.
+- Alle pogingen tot script-injectie mislukken.
+
+Lukt het je toch? Controleer of het security level correct op **impossible** staat.
+:::
+
+**CSP is een tweede verdedigingslinie:** CSP lost XSS niet op de server op, maar functioneert als veiligheidsgordel in de browser voor het geval de server toch een foutje maakt.
+
+**Whitelist-gevaren:** Vertrouw nooit algemene CDN's, cloud-storage of publieke platforms in je CSP.
+
+**Nonces moeten uniek zijn:** Een Number Used Once mag nooit vastgeprogrammeerd staan — genereer een willekeurige string bij elke paginaweergave.
+
+**JSONP is dood:** JSONP is ouderwets en inherent kwetsbaar. Gebruik de Fetch API met normale JSON.

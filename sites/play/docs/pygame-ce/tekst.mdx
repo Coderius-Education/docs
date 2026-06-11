@@ -1,0 +1,134 @@
+﻿---
+sidebar_position: 5
+hide_table_of_contents: true
+---
+
+
+# 7.5 Tekst op het scherm
+
+In coderius-play maakte je tekst met `play.new_text()`. In pygame-ce gebruik je `pygame.font`.
+
+## Tekst tonen
+
+```python
+import pygame
+
+pygame.init()
+
+scherm = pygame.display.set_mode((800, 600))
+font = pygame.font.SysFont("arial", 40)
+
+actief = True
+
+while actief:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            actief = False
+
+    scherm.fill((30, 30, 30))
+
+    tekst = font.render("Hallo!", True, (255, 255, 255))
+    scherm.blit(tekst, (350, 280))
+
+    pygame.display.flip()
+
+pygame.quit()
+```
+
+
+
+Wat gebeurt hier?
+
+```python
+font = pygame.font.SysFont("arial", 40)
+```
+Maakt een font aan. `"arial"` is het lettertype, `40` is de grootte.
+
+```python
+tekst = font.render("Hallo!", True, (255, 255, 255))
+```
+Maakt een afbeelding van de tekst. `True` zorgt voor vloeiende randen, `(255, 255, 255)` is de kleur (wit).
+
+```python
+scherm.blit(tekst, (350, 280))
+```
+Plaatst de tekst op positie (350, 280) op het scherm.
+
+## Opdracht 7.5.a: Je eigen tekst
+
+Toon je eigen naam op het scherm in een kleur naar keuze.
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+import pygame
+
+pygame.init()
+
+scherm = pygame.display.set_mode((800, 600))
+font = pygame.font.SysFont("arial", 50)
+
+actief = True
+
+while actief:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            actief = False
+
+    scherm.fill((30, 30, 30))
+
+    tekst = font.render("Jouw Naam", True, (0, 255, 100))
+    scherm.blit(tekst, (300, 280))
+
+    pygame.display.flip()
+
+pygame.quit()
+```
+
+</details>
+
+## Opdracht 7.5.b: Meerdere teksten
+
+Toon twee regels tekst op het scherm: een titel bovenaan en een ondertitel daaronder. Gebruik verschillende groottes.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Maak twee fonts aan met verschillende groottes, bijvoorbeeld `60` voor de titel en `30` voor de ondertitel. Gebruik `blit` op verschillende y-posities.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+import pygame
+
+pygame.init()
+
+scherm = pygame.display.set_mode((800, 600))
+groot_font = pygame.font.SysFont("arial", 60)
+klein_font = pygame.font.SysFont("arial", 30)
+
+actief = True
+
+while actief:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            actief = False
+
+    scherm.fill((30, 30, 30))
+
+    titel = groot_font.render("Mijn Spel", True, (255, 255, 0))
+    scherm.blit(titel, (280, 200))
+
+    ondertitel = klein_font.render("Druk op een toets om te starten", True, (200, 200, 200))
+    scherm.blit(ondertitel, (220, 300))
+
+    pygame.display.flip()
+
+pygame.quit()
+```
+
+</details>

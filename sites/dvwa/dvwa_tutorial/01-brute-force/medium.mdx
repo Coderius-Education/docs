@@ -1,0 +1,97 @@
+---
+sidebar_position: 2
+sidebar_label: 'Medium'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# Brute Force — Medium
+
+De ontwikkelaar heeft gemerkt dat automatische tools het formulier aanvallen en voegt een vertraging toe.
+
+## 1. Predict (Voorspel)
+
+De server voegt bij elke mislukte inlogpoging een kunstmatige pauze in:
+
+```php
+sleep(2); // Wacht 2 seconden na een fout wachtwoord
+```
+
+**Vraag:** Wat voor effect heeft een vertraging van 2 seconden per poging op een Hydra-aanval die normaal 100 pogingen per seconde doet?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Hydra is nu beperkt tot maximaal **0,5 poging per seconde** per taak. Als het wachtwoord ergens in de miljoenen regels van `rockyou.txt` staat, duurt de aanval ineens dagen of maanden in plaats van seconden. De vertraging maakt brute-force aanvallen dus veel kostbaarder in tijd.
+
+</details>
+
+## 2. Run (Uitvoeren)
+
+Start het lab en observeer het inloggedrag.
+
+<DvwaLab module="brute_force" level="medium" />
+
+Probeer in te loggen met een fout wachtwoord. Merk op dat het even duurt voordat de foutmelding verschijnt — dat is de `sleep(2)` in actie.
+
+## 3. Investigate (Onderzoeken)
+
+Voer het Hydra-commando van het Low level opnieuw uit, maar pas `security=low` aan naar `security=medium`. Meet de snelheid met het `time`-commando:
+
+```bash
+time hydra -l admin -P /usr/share/wordlists/rockyou.txt -m '/DVWA/vulnerabilities/brute/:username=^USER^&password=^PASS^&Login=Login:H=Cookie:PHPSESSID=JOUW_SESSIE;security=medium:F=incorrect' localhost http-get-form
+```
+
+**Vraag:** Hoeveel wachtwoorden per seconde probeert Hydra nu? Vergelijk dit met het Low level — wat is het effect?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Met één taak probeert Hydra nu nog maar maximaal 0,5 poging per seconde. De totale tijd explodeert: bij een lijst van 14 miljoen wachtwoorden duurt dit maanden. De `sleep(2)` heeft de aanval effectief vertraagd — maar niet gestopt, want we kunnen het aantal parallelle taken verhogen.
+
+</details>
+
+## 4. Modify & Make (Aanpassen & Maken)
+
+Omdat de server per verbinding 2 seconden wacht, kun je de vertraging compenseren door meerdere verbindingen tegelijk te openen. Zoek in de Hydra-hulptekst (`hydra -h`) naar de optie voor parallelle taken.
+
+<details>
+
+<summary>Tip</summary>
+
+Zoek in de helpuitvoer naar het woord "tasks". De optie is `-t` gevolgd door een getal.
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+Voeg `-t 16` toe aan je Hydra-commando om 16 parallelle taken te draaien:
+
+```bash
+time hydra -t 16 -l admin -P /usr/share/wordlists/rockyou.txt -m '/DVWA/vulnerabilities/brute/:username=^USER^&password=^PASS^&Login=Login:H=Cookie:PHPSESSID=JOUW_SESSIE;security=medium:F=incorrect' localhost http-get-form
+```
+
+Met 16 parallelle verbindingen worden 16 wachtwoorden tegelijk geprobeerd, waardoor de effectieve doorvoer weer stijgt ondanks de `sleep(2)`.
+
+</details>
+
+## 5. ✓ Wat moest je zien?
+
+:::tip Controle
+- Met `-t 1` duurt de aanval zichtbaar lang — elke poging neemt ~2 seconden.
+- Met `-t 16` is de aanval significant sneller: de vertragingen overlappen elkaar.
+- Hydra vindt nog steeds het wachtwoord `password` — de `sleep` heeft het enkel vertraagd, niet gestopt.
+
+Geen verschil in snelheid? Controleer of `security=medium` correct in je cookie-string staat.
+:::
+
+## 6. Er gaat iets mis...
+
+Je besluit `-t 1000` te proberen voor maximale snelheid. Ineens is DVWA niet meer bereikbaar. Wat is er aan de hand?
+
+Je hebt per ongeluk een **Denial of Service (DoS)**-aanval op jezelf uitgevoerd: 1000 gelijktijdige verbindingen overbelasten de Apache-webserver en de MySQL-database volledig. De server crasht of blokkeert alle verbindingen. Hier ligt de kunst van het brute-forcen: snel genoeg voor een haalbare aanval, maar langzaam genoeg om de server niet neer te halen. In de praktijk is `-t 16` een goede balans.

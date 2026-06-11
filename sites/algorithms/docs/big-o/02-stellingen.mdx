@@ -1,0 +1,126 @@
+---
+sidebar_position: 2
+hide_table_of_contents: true
+---
+
+# 7.2 Voorspel — waar of niet waar?
+
+**Leerdoel:** je toetst je intuïtie over Big O met een paar stellingen,
+voordat je de complexiteits-klassen één voor één bekijkt.
+
+Lees elke stelling. Bedenk eerst of hij **waar** of **niet waar** is.
+Klap dan pas het antwoord open.
+
+## Stelling 1
+
+> *"Een `O(n)`-algoritme is altijd sneller dan een `O(n²)`-algoritme."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Niet waar — niet voor kleine `n`.**
+
+Big O zegt iets over **groei bij grote `n`**. Voor kleine lijsten kan een
+"trager" algoritme zelfs sneller zijn door simpelere code of minder
+overhead. Maar zodra `n` groeit, wint `O(n)` met afstand.
+
+Vuistregel: vanaf `n` ≈ honderden begint het verschil te merken; bij
+duizenden is het dramatisch.
+
+</details>
+
+## Stelling 2
+
+> *"Big O zegt precies hoeveel stappen een algoritme doet."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Niet waar.**
+
+Big O zegt alleen **hoe het groeit**, niet de exacte waarde. Een
+algoritme dat `3n + 7` stappen doet, valt onder `O(n)` — net als één dat
+`n` of `100n` stappen doet. We laten de constanten **bewust** weg.
+
+Wil je het *exact* weten? Dan moet je de stappen tellen op de specifieke
+input — geen Big O.
+
+</details>
+
+## Stelling 3
+
+> *"Constante factoren tellen niet mee in Big O."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Waar.**
+
+`5n`, `n` en `100n` zijn allemaal `O(n)`. Constanten verdwijnen, omdat
+ze niet bepalen hoe het algoritme **schaalt** als de invoer groeit.
+
+In de praktijk doen constanten er soms wél toe (bv. cache-friendliness),
+maar daar is Big O niet de juiste taal voor.
+
+</details>
+
+## Stelling 4
+
+> *"`O(log n)` is sneller dan `O(n)`."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Waar — voor grote `n`.**
+
+Bij `n = 1.000.000`:
+- `O(n)` → 1.000.000 stappen
+- `O(log₂ n)` → 20 stappen
+
+Het verschil is enorm. `O(log n)` betekent: bij elke verdubbeling van
+`n` komt er **slechts één stap bij**. Dat is precies wat binair zoeken
+doet.
+
+</details>
+
+## Stelling 5
+
+> *"Een algoritme met `O(n²)` is altijd onbruikbaar."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Niet waar.**
+
+Voor kleine lijsten (`n < 100`) is `O(n²)` prima. Bubble sort en
+selection sort zijn `O(n²)` en worden nog steeds in de praktijk gebruikt
+op kleine datasets, vooral als de code simpel mag zijn.
+
+Pas bij grote `n` wordt `O(n²)` een probleem. Sorteren van een miljoen
+elementen met selection sort? Dat zijn een biljoen vergelijkingen — uren
+werk.
+
+</details>
+
+## Stelling 6
+
+> *"`O(1)` betekent dat het algoritme in één microseconde klaar is."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Niet waar.**
+
+`O(1)` betekent **constante tijd** — onafhankelijk van `n`. Hoe lang
+die constante is, zegt Big O niet. Het kan 1 microseconde zijn, maar
+ook 1 minuut. Het punt is: het wordt **niet langer** als de invoer
+groeit.
+
+Voorbeeld: `lijst[5]` is `O(1)` op een lijst van 10 elementen *én* op
+een lijst van een miljard elementen.
+
+</details>
+
+Klaar met voorspellen? Door naar de eerste klasse.
+
+Door naar [stap 3: O(1) — constante tijd →](./03-constant).

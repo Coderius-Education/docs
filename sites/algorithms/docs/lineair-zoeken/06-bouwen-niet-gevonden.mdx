@@ -1,0 +1,125 @@
+---
+sidebar_position: 6
+hide_table_of_contents: true
+---
+
+# 1.6 Bouwsteen 4 — het "niet gevonden"-geval
+
+**Leerdoel:** je voegt het laatste stukje toe: `-1` teruggeven als het
+doel **niet** in de lijst zit.
+
+## Wat we willen
+
+Het probleem uit de vorige stap: bij een doel dat niet bestaat krijgen we
+`None`. We willen liever **`-1`** — een duidelijk signaal "niet gevonden".
+
+## Waar moet `return -1` staan?
+
+Dit is een **valstrik** waar veel mensen instinken. Probeer dit eerst:
+
+```python
+def zoek(lijst, doel):
+    for i, waarde in enumerate(lijst):
+        if waarde == doel:
+            return i
+        return -1   # klopt deze plek?
+```
+
+## Voorspel
+
+Wat denk je dat dit print?
+
+```python
+def zoek(lijst, doel):
+    for i, waarde in enumerate(lijst):
+        if waarde == doel:
+            return i
+        return -1
+
+print(zoek([3, 1, 4, 1, 5], 4))   # zou 2 moeten zijn
+print(zoek([3, 1, 4, 1, 5], 9))   # zou -1 moeten zijn
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+-1
+-1
+```
+
+**Allebei `-1`.** Dat klopt niet — bij 4 verwachten we `2`.
+
+Waarom? `return -1` zit **binnen** de `for`-lus. Bij de eerste iteratie
+controleert hij `3 == 4` → niet waar → `return -1` → de functie stopt
+**direct**, na maar één iteratie. De rest van de lijst zie je nooit.
+
+</details>
+
+## Run de buggy versie zelf
+
+<PyRunner initialCode={`def zoek(lijst, doel):
+    for i, waarde in enumerate(lijst):
+        if waarde == doel:
+            return i
+        return -1   # op de verkeerde plek!
+
+print(zoek([3, 1, 4, 1, 5], 4))
+print(zoek([3, 1, 4, 1, 5], 9))`} />
+
+## De fix
+
+`return -1` moet **buiten** de `for`-lus staan — op functie-niveau.
+Daardoor wordt het pas bereikt als de **hele** lus is afgelopen zonder
+match.
+
+<details>
+<summary>Tip</summary>
+
+In Python bepaalt de **inspringing** de structuur:
+- Dezelfde inspringing als `for` → op functie-niveau (na de lus).
+- Dezelfde inspringing als `if` → in de lus.
+
+Visueel:
+
+```python
+def zoek(lijst, doel):
+    for i, waarde in enumerate(lijst):     # 4 spaties
+        if waarde == doel:                 # 8 spaties
+            return i                       # 12 spaties (in de if)
+    return -1                              # 4 spaties (na de for-lus)
+```
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def zoek(lijst, doel):
+    for i, waarde in enumerate(lijst):
+        if waarde == doel:
+            return i
+    return -1   # buiten de for, dezelfde inspringing als 'for'
+```
+
+</details>
+
+## Probeer het zelf
+
+Pas de code aan zodat allebei de testen kloppen.
+
+<PyRunner initialCode={`def zoek(lijst, doel):
+    for i, waarde in enumerate(lijst):
+        if waarde == doel:
+            return i
+        return -1   # pas deze regel aan (verplaats hem!)
+
+print(zoek([3, 1, 4, 1, 5], 4))   # verwacht: 2
+print(zoek([3, 1, 4, 1, 5], 9))   # verwacht: -1`} />
+
+<SteppingStoneModel stone="linear-not-found" />
+
+Klaar? Tijd om alle bouwstenen samen te zien.
+
+Door naar [stap 7: het complete algoritme](./07-compleet).

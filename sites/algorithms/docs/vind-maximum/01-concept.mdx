@@ -1,0 +1,79 @@
+---
+sidebar_position: 1
+hide_table_of_contents: true
+---
+
+# 2.1 Vind het maximum — het idee
+
+**Leerdoel:** je begrijpt hoe je de grootste waarde uit een lijst haalt
+door er één keer doorheen te lopen. Nog geen Python — eerst snappen.
+
+## Het verhaal
+
+Je staat met je klas op het schoolplein. De leraar vraagt: *"wie is de
+langste?"* Niemand heeft een meetlat. Wat doe je?
+
+Een logische aanpak:
+
+1. Loop op de **eerste** persoon af. Onthoud zijn/haar lengte als
+   *"langste tot nu toe"*.
+2. Loop naar de tweede. Vergelijk: is hij/zij langer? Zo ja → onthoud
+   die in plaats. Zo nee → niets doen.
+3. Herhaal voor de derde, vierde, vijfde, …
+4. Aan het eind ben je langs iedereen geweest en weet je wie de langste is.
+
+Dit is **vind het maximum** in één zin: *onthoud de grootste tot nu toe en
+update onderweg.*
+
+## Visualisatie
+
+We zoeken het maximum in deze lijst:
+
+```
+lijst:  [ 3 , 7 , 2 , 9 , 4 ]
+index:    0   1   2   3   4
+
+stap 0:  max = 3                       (we beginnen met het eerste element)
+stap 1:  vergelijk 7 met max=3 → 7 > 3 → max = 7
+stap 2:  vergelijk 2 met max=7 → 2 < 7 → max blijft 7
+stap 3:  vergelijk 9 met max=7 → 9 > 7 → max = 9
+stap 4:  vergelijk 4 met max=9 → 4 < 9 → max blijft 9
+
+→ maximum = 9
+```
+
+In 4 vergelijkingen weet je het antwoord — en je hebt elk element precies
+één keer bekeken.
+
+## Het accumulator-patroon
+
+Dit is een **patroon** dat je in heel veel algoritmes terugziet:
+
+1. Begin met een **startwaarde** (hier: het eerste element).
+2. **Loop** door de rest van de lijst.
+3. **Update** je waarde als de nieuwe iets bijzonders is (hier: groter).
+4. Aan het eind heb je het antwoord.
+
+Je *accumuleert* (verzamelt) informatie tijdens de doorloop. Vandaar de
+naam.
+
+<details>
+<summary>Wat als de lijst leeg is?</summary>
+
+Dan is er **geen maximum** — geen elementen om te vergelijken. Veel
+algoritmes geven dan een speciale waarde terug (`None`), of crashen met een
+foutmelding. We bespreken dit later expliciet.
+
+</details>
+
+<details>
+<summary>Hoe snel is dit?</summary>
+
+Voor `n` elementen doe je `n - 1` vergelijkingen (één voor elk element
+behalve het eerste). Dat heet **O(n)** — lineair in de lengte. Sneller
+kan niet: je *moet* elk element minstens één keer hebben gezien om zeker
+te weten dat het niet het maximum is.
+
+</details>
+
+Door naar [stap 2: stellingen](./02-stellingen).

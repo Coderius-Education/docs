@@ -1,0 +1,29 @@
+---
+sidebar_position: 1
+sidebar_label: "Stap 1: git init"
+title: "Stap 1: een repository starten met git init"
+hide_table_of_contents: true
+---
+
+import GitSimulator from '@site/src/components/GitSimulator';
+
+# Stap 1: een repository starten met `git init`
+
+Voordat git iets voor je bijhoudt, moet je een map "tot repository maken". Dat doe je één keer per project met `git init`.
+
+Probeer het hieronder. Typ in de terminal:
+
+```bash
+git init
+```
+
+<GitSimulator
+  scenarioId="stap-1-init"
+  initialFiles={{'hello.txt': 'Hallo wereld!\n'}}
+  objective={{
+    description: 'Voer git init uit op deze map.',
+    check: (s) => s.initialized,
+  }}
+/>
+
+**Let op:** in de werkmap staat al een bestand `hello.txt`. Git ziet dat bestand pas wanneer je `git init` hebt uitgevoerd.

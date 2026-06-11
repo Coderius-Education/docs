@@ -1,0 +1,8 @@
+{
+  "label": "5. Seriële communicatie",
+  "position": 5,
+  "link": {
+    "type": "generated-index",
+    "description": "Praat met je computer via de seriële monitor en gebruik die om te debuggen."
+  }
+}

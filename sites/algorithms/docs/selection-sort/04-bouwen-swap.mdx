@@ -1,0 +1,123 @@
+---
+sidebar_position: 4
+hide_table_of_contents: true
+---
+
+# 5.4 Bouwsteen 2 — twee elementen ruilen
+
+**Leerdoel:** je kunt twee elementen in een lijst van plek wisselen
+zonder een waarde te verliezen.
+
+## Wat we willen
+
+Twee elementen in een lijst van plaats laten ruilen. Bijvoorbeeld:
+
+```
+[5, 2, 8, 1, 4]  →  swap index 0 en 3  →  [1, 2, 8, 5, 4]
+```
+
+## Een veelgemaakte beginnersfout
+
+Probeer dit te volgen. Wat denk je dat eruit komt?
+
+```python
+lijst = [5, 2, 8, 1, 4]
+lijst[0] = lijst[3]
+lijst[3] = lijst[0]
+print(lijst)
+```
+
+<details>
+<summary>Antwoord — verwacht je dit?</summary>
+
+```
+[1, 2, 8, 1, 4]
+```
+
+**De 5 is weg.** En de 1 staat twee keer.
+
+Wat ging er mis? Regel-voor-regel:
+- `lijst[0] = lijst[3]` → `lijst[0]` (5) wordt overschreven met `lijst[3]`
+  (1). Lijst is nu `[1, 2, 8, 1, 4]`. De 5 bestaat niet meer.
+- `lijst[3] = lijst[0]` → `lijst[3]` wordt `lijst[0]` (nu 1). Geen verandering.
+
+De **eerste toekenning** maakte de 5 onbereikbaar.
+
+</details>
+
+## Oplossing 1 — een tijdelijke variabele
+
+Bewaar de waarde die je gaat overschrijven in een **tijdelijke** variabele:
+
+```python
+tijdelijk = lijst[0]
+lijst[0] = lijst[3]
+lijst[3] = tijdelijk
+```
+
+Drie regels. Werkt op alle programmeertalen.
+
+## Oplossing 2 — Pythonisch: tuple-swap
+
+Python heeft een veel kortere notatie:
+
+```python
+lijst[0], lijst[3] = lijst[3], lijst[0]
+```
+
+**Eén regel.** Python evalueert eerst de rechterkant tot een tuple
+`(lijst[3], lijst[0])` en kent die dan toe aan de linkerkant. Geen
+informatieverlies, want de waardes zijn al in het tuple opgeslagen voor
+de overschrijving begint.
+
+## Voorspel
+
+Wat denk je dat dit print?
+
+```python
+lijst = [5, 2, 8, 1, 4]
+lijst[0], lijst[3] = lijst[3], lijst[0]
+print(lijst)
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+[1, 2, 8, 5, 4]
+```
+
+`lijst[0]` en `lijst[3]` zijn netjes geruild. Geen waarde verloren.
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`lijst = [5, 2, 8, 1, 4]
+print("voor swap: ", lijst)
+lijst[0], lijst[3] = lijst[3], lijst[0]
+print("na swap:  ", lijst)`} />
+
+## Experimenteer
+
+Probeer ook met de tijdelijke-variabele versie. Zelfde resultaat?
+
+<PyRunner initialCode={`lijst = [5, 2, 8, 1, 4]
+print("voor:", lijst)
+
+# Tijdelijke-variabele versie
+tijdelijk = lijst[0]
+lijst[0] = lijst[3]
+lijst[3] = tijdelijk
+
+print("na:  ", lijst)`} />
+
+<SteppingStoneModel stone="selection-swap" />
+
+## Wat nu nog mist
+
+We hebben **twee bouwstenen**: kleinste-index vinden, en swappen. In de
+volgende stap maken we de eerste **flexibeler** — we willen kunnen zoeken
+*vanaf een bepaalde positie* in plaats van vanaf het begin.
+
+Door naar [bouwsteen 3: in een deel-lijst](./05-bouwen-vind-in-subreeks).

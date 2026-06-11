@@ -1,0 +1,160 @@
+---
+sidebar_position: 8
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# GET vs POST
+
+Tot nu toe gebruiken we alleen GET requests. In deze les leer je het verschil tussen GET en POST.
+
+## GET = Data ophalen
+
+Alles wat je tot nu toe hebt gedaan is GET. De browser vraagt data op van de server.
+
+```python
+@app.get("/pagina")
+async def pagina():
+    return FileResponse("static/pages/home.html")
+```
+
+Data kan meegestuurd worden in de URL:
+```
+http://127.0.0.1:8000/zoek?term=python
+```
+
+```python
+@app.get("/zoek")
+async def zoek(term: str):
+    return {"je_zocht": term}
+```
+
+## POST = Data versturen
+
+POST gebruik je als een gebruiker data naar de server stuurt, bijvoorbeeld via een formulier.
+
+```python
+from fastapi import Form
+
+@app.post("/verstuur")
+async def verstuur(naam: str = Form(...)):
+    return {"ontvangen": naam}
+```
+
+De data zit in de request body — niet zichtbaar in de URL.
+
+## Wanneer gebruik je wat?
+
+| | GET | POST |
+|---|---|---|
+| **Doel** | Data ophalen | Data versturen |
+| **Data in** | URL | Request body |
+| **Voorbeeld** | Pagina laden, zoeken | Formulier versturen, inloggen |
+
+**Vuistregel:** GET = "Geef me iets" / POST = "Hier is iets"
+
+:::danger Gaat er iets mis?
+Krijg je een **405 Method Not Allowed**? Dan stuur je waarschijnlijk een POST naar een GET endpoint of andersom. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
+:::
+
+## Opdrachten
+
+### Opdracht 1: Predict - GET of POST?
+
+Wat gebruik je voor:
+1. Een pagina met zoekresultaten
+2. Een inlogformulier versturen
+3. Een foto tonen
+
+<details>
+<summary>Tip</summary>
+
+Denk aan de vuistregel: GET = "Geef me iets" (data ophalen), POST = "Hier is iets" (data versturen).
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+1. **GET** — je haalt data op
+2. **POST** — je stuurt gevoelige data (wachtwoord)
+3. **GET** — je haalt een pagina op
+
+</details>
+
+### Opdracht 2: Run - GET met parameter
+
+Maak dit endpoint en test het met verschillende namen in de URL:
+
+```python
+@app.get("/groet")
+async def groet(naam: str = "Bezoeker"):
+    return {"bericht": f"Hallo {naam}!"}
+```
+
+Test: `http://127.0.0.1:8000/groet?naam=Jan`
+
+### Opdracht 3: Investigate - POST via browser
+
+Wat gebeurt er als je `http://127.0.0.1:8000/verstuur` rechtstreeks in je browser typt?
+
+<details>
+<summary>Tip</summary>
+
+Als je een URL in je browser typt, stuurt de browser altijd een GET request. Wat is het endpoint type van `/verstuur`?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Je krijgt een **405 Method Not Allowed** error. De browser stuurt een GET request, maar `/verstuur` is een POST endpoint (`@app.post`). POST endpoints kun je alleen bereiken via formulieren of tools, niet door de URL in te typen.
+
+</details>
+
+### Opdracht 4: Make - Zoekfunctie
+
+Maak een GET endpoint `/zoek` dat een `term` parameter accepteert en een bericht teruggeeft: "Je zocht naar: [term]".
+
+<details>
+<summary>Tip</summary>
+
+Gebruik `@app.get("/zoek")` met een parameter `term: str`. De parameter wordt automatisch uit de URL gehaald (`/zoek?term=...`).
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+@app.get("/zoek")
+async def zoek(term: str):
+    return {"bericht": f"Je zocht naar: {term}"}
+```
+
+Test met: `http://127.0.0.1:8000/zoek?term=python`
+
+</details>
+
+## Oefen met Python
+
+:::info Python oefenblok
+Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
+:::
+
+<CodeExercise>
+{`# Oefen met f-strings (FastAPI gebruikt dit veel!)
+naam = "Jan"
+leeftijd = 16
+
+# f-string met variabelen
+print(f"Hallo {naam}!")
+print(f"{naam} is {leeftijd} jaar oud.")
+
+# Berekeningen in f-strings
+print(f"Volgend jaar is {naam} {leeftijd + 1} jaar.")
+
+# f-strings met dictionaries
+leerling = {"naam": "Piet", "klas": "4V"}
+print(f"Leerling: {leerling['naam']} uit {leerling['klas']}")`}
+</CodeExercise>

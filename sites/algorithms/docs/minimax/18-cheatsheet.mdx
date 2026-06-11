@@ -1,0 +1,263 @@
+---
+sidebar_position: 18
+hide_table_of_contents: true
+---
+
+# 9.18 Cheatsheet — Minimax
+
+Snelle referentie. Klap open wat je nodig hebt.
+
+## Het complete tic-tac-toe project
+
+<details>
+<summary>Alle 9 functies bij elkaar</summary>
+
+```python
+import copy
+import math
+
+
+def initial_state():
+    return [[None]*3 for _ in range(3)]
+
+
+def player(bord):
+    x_count = sum(rij.count("X") for rij in bord)
+    o_count = sum(rij.count("O") for rij in bord)
+    return "X" if x_count == o_count else "O"
+
+
+def actions(bord):
+    return {(i, j) for i in range(3) for j in range(3) if bord[i][j] is None}
+
+
+def result(bord, zet):
+    nieuw = copy.deepcopy(bord)
+    i, j = zet
+    nieuw[i][j] = player(bord)
+    return nieuw
+
+
+def winner(bord):
+    for rij in bord:
+        if rij[0] == rij[1] == rij[2] and rij[0] is not None:
+            return rij[0]
+    for j in range(3):
+        if bord[0][j] == bord[1][j] == bord[2][j] and bord[0][j] is not None:
+            return bord[0][j]
+    if bord[0][0] == bord[1][1] == bord[2][2] and bord[0][0] is not None:
+        return bord[0][0]
+    if bord[0][2] == bord[1][1] == bord[2][0] and bord[0][2] is not None:
+        return bord[0][2]
+    return None
+
+
+def terminal(bord):
+    if winner(bord) is not None:
+        return True
+    return all(cel is not None for rij in bord for cel in rij)
+
+
+def utility(bord):
+    w = winner(bord)
+    if w == "X":
+        return 1
+    if w == "O":
+        return -1
+    return 0
+
+
+def max_value(bord):
+    if terminal(bord):
+        return utility(bord)
+    v = -math.inf
+    for zet in actions(bord):
+        v = max(v, min_value(result(bord, zet)))
+    return v
+
+
+def min_value(bord):
+    if terminal(bord):
+        return utility(bord)
+    v = math.inf
+    for zet in actions(bord):
+        v = min(v, max_value(result(bord, zet)))
+    return v
+
+
+def minimax(bord):
+    if terminal(bord):
+        return None
+    beste_zet = None
+    if player(bord) == "X":
+        beste_score = -math.inf
+        for zet in actions(bord):
+            score = min_value(result(bord, zet))
+            if score > beste_score:
+                beste_score, beste_zet = score, zet
+    else:
+        beste_score = math.inf
+        for zet in actions(bord):
+            score = max_value(result(bord, zet))
+            if score < beste_score:
+                beste_score, beste_zet = score, zet
+    return beste_zet
+```
+
+</details>
+
+## Per functie — wat doet hij?
+
+<details>
+<summary>initial_state, player, actions</summary>
+
+| Functie | Input | Output |
+|---|---|---|
+| `initial_state()` | — | 3×3 lijst van `None` |
+| `player(bord)` | bord | `"X"` als X-beurt, anders `"O"` |
+| `actions(bord)` | bord | set van `(i, j)` lege cellen |
+
+</details>
+
+<details>
+<summary>result, winner, terminal</summary>
+
+| Functie | Input | Output |
+|---|---|---|
+| `result(bord, zet)` | bord + tuple `(i, j)` | **nieuw** bord met zet toegepast |
+| `winner(bord)` | bord | `"X"`, `"O"` of `None` |
+| `terminal(bord)` | bord | `True` als spel af is, anders `False` |
+
+</details>
+
+<details>
+<summary>utility, max_value, min_value, minimax</summary>
+
+| Functie | Input | Output |
+|---|---|---|
+| `utility(bord)` | terminale bord | `1`, `-1` of `0` |
+| `max_value(bord)` | bord | hoogst-mogelijke utility (X-perspectief) |
+| `min_value(bord)` | bord | laagst-mogelijke utility (O-perspectief) |
+| `minimax(bord)` | niet-terminale bord | optimale zet `(i, j)` |
+
+</details>
+
+## Recursie-template
+
+<details>
+<summary>Patroon voor max_value en min_value</summary>
+
+```python
+def max_value(bord):
+    if terminal(bord):
+        return utility(bord)           # base case
+    v = -math.inf                       # zoek hoogste
+    for zet in actions(bord):
+        v = max(v, min_value(result(bord, zet)))   # recursie alterneert
+    return v
+```
+
+Drie cruciale elementen:
+
+1. **Base case** = `if terminal(bord): return utility(bord)`.
+2. **Initialiseer** `v` op `-inf` (max) of `+inf` (min).
+3. **Alternerend** `max_value` ↔ `min_value` aanroepen.
+
+</details>
+
+## Game-tree denkraam
+
+<details>
+<summary>Hoe vertaal je een game-tree naar Python?</summary>
+
+| Game tree concept | Python |
+|---|---|
+| Knoop | een bord (3×3 lijst) |
+| Aftakkingen vanuit een knoop | `actions(bord)` |
+| Kind-knoop | `result(bord, zet)` |
+| Blad (terminal) | `terminal(bord)` returns `True` |
+| Score van een blad | `utility(bord)` |
+| MAX kiest | `max(...)` over kinderen |
+| MIN kiest | `min(...)` over kinderen |
+
+</details>
+
+## Top-3 valkuilen
+
+<details>
+<summary>Veelgemaakte fouten</summary>
+
+1. **Bord muteren in `result`** → gebruik `copy.deepcopy`.
+2. **Base case vergeten** → `RecursionError`. Check **eerst** of bord
+   terminal is.
+3. **`max_value` roept zichzelf aan** in plaats van `min_value` → AI
+   verliest. Wisselbeurten zijn cruciaal.
+
+Volledig overzicht: [stap 17: er gaat iets mis](./17-fouten).
+
+</details>
+
+## Bonus — alpha-beta pruning
+
+<details>
+<summary>Sneller minimax voor grotere spellen</summary>
+
+Voor tic-tac-toe is de basis-versie snel genoeg. Voor schaken is `O(b^d)`
+(b = aantal opties per beurt, d = aantal beurten) onbruikbaar.
+
+**Alpha-beta pruning** snijdt takken weg die de uitkomst toch niet
+kunnen beïnvloeden. Het idee: tijdens recursie houd je een `alpha`
+(beste-score-voor-MAX-tot-nu) en `beta` (beste-score-voor-MIN-tot-nu)
+bij. Zodra `beta <= alpha`, weet je dat de tegenstander deze tak nooit
+kiest — sla hem over.
+
+Resultaat: bij optimale ordening `O(b^(d/2))` — kwadratisch sneller.
+
+Niet vereist voor onze tic-tac-toe AI, maar wel het noemen waard.
+
+</details>
+
+## Verder lezen
+
+- [stap 1: het idee](./01-concept) — opnieuw door het concept.
+- [stap 2: met pen en papier](./02-pen-en-papier) — hand-trace voor wie
+  het algoritme nog niet "ziet".
+- [stap 14: helpers](./14-bouwen-helpers) — `max_value` en `min_value`
+  als recursie-helpers.
+- [stap 15: draai het zelf](./15-zelf-draaien) — verzamel je 8
+  functies in één lokaal `tictactoe.py` (of in een verzamel-PyRunner
+  als noodoplossing).
+- [stap 16: minimax](./16-bouwen-minimax) — de AI zelf, geschreven in
+  je lokale file, met AI-vs-AI demo als climax.
+- [Big O notatie](../big-o/06-kwadratisch) — waarom minimax bij grotere
+  spellen onhoudbaar wordt zonder optimalisaties.
+
+## Licentie en bronvermelding
+
+Deze track is een afgeleide bewerking van
+[CS50 AI Project 0: Tic-Tac-Toe](https://cs50.harvard.edu/ai/projects/0/tictactoe/)
+van Harvard University. Het origineel is gelicenseerd onder
+[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+
+**Wijzigingen ten opzichte van het origineel:**
+
+- Volledig vertaald naar het Nederlands.
+- Opgeknipt in 18 PRIMM-stappen (concept → pen-en-papier → bouwstenen →
+  tests → fouten → cheatsheet).
+- Conceptuele uitleg over game trees, MIN/MAX-spelers en recursie
+  toegevoegd.
+- Per functie inline assertion-tests toegevoegd, ingebed in dezelfde
+  PyRunner als de starter-code.
+- Aparte tutorialpagina over functies-in-functies (de Python-vaardigheid
+  die nodig is om bouwstenen op elkaar te laten voortbouwen).
+- Geen wijzigingen aan de **specificaties** van de 8 functies — die
+  zijn één-op-één overgenomen uit het CS50-project.
+
+Conform de share-alike-eis wordt deze track onder dezelfde licentie
+verspreid:
+[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+
+De rest van de Coderius Algoritmes-site staat onder
+[CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) —
+zie [LICENSE.md](https://github.com/Coderius-Education/algorithms-docs/blob/main/LICENSE.md)
+in de repository voor details.

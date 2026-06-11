@@ -1,0 +1,131 @@
+---
+sidebar_position: 12
+hide_table_of_contents: true
+---
+
+# 11.12 Zin 10 — recursie: meerdere bijvoeglijke naamwoorden
+
+**Leerdoel:** je laat onbeperkt veel bijvoeglijke naamwoorden achter
+elkaar toe, en je ziet je eerste **ambigue** zin.
+
+## De zin
+
+> **I (N) had (V) a (Det) little (Adj) moist (Adj) red (Adj) paint (N) in (P) the (Det) palm (N) of (P) my (Det) hand (N).**
+
+Het probleem: "a **little moist red** paint" heeft **drie** bijvoeglijke
+naamwoorden op een rij. Tot nu toe liet je grammatica er waarschijnlijk
+maar één toe.
+
+## Denk na
+
+- Hoe laat je een *willekeurig aantal* bijvoeglijke naamwoorden achter
+  elkaar toe — één, twee, drie of meer — zonder voor elk aantal een
+  aparte regel te schrijven?
+- Tip uit de natuur van grammatica's: een groep mag in zijn eigen regel
+  naar **zichzelf** verwijzen. Wat zou dat hier betekenen?
+
+## Bouw en test
+
+<PyRunner rows={16} initialCode={`# ===== JOUW WERK: plak je grammatica van de vorige stap en breid hem uit =====
+GRAMMATICA = """
+
+"""
+
+# Zinnen die allemaal moeten werken:
+ZINNEN = [
+    "Holmes sat",
+    "Holmes lit a pipe",
+    "My companion smiled an enigmatical smile",
+    "Holmes sat down and lit his pipe",
+    "We arrived the day before Thursday",
+    "Holmes sat in the red armchair and he chuckled",
+    "Holmes chuckled to himself",
+    "She never said a word until we were at the door here",
+    "I had a country walk on Thursday and came home in a dreadful mess",
+    "I had a little moist red paint in the palm of my hand",
+]
+
+
+# ====== De parser-motor + lexicon — hieronder NIET aanpassen ======
+LEXICON = """
+Adj -> "country" | "dreadful" | "enigmatical" | "little" | "moist" | "red"
+Adv -> "down" | "here" | "never"
+Conj -> "and" | "until"
+Det -> "a" | "an" | "his" | "my" | "the"
+N -> "armchair" | "companion" | "day" | "door" | "hand" | "he" | "himself"
+N -> "holmes" | "home" | "i" | "mess" | "paint" | "palm" | "pipe" | "she"
+N -> "smile" | "thursday" | "walk" | "we" | "word"
+P -> "at" | "before" | "in" | "of" | "on" | "to"
+V -> "arrived" | "came" | "chuckled" | "had" | "lit" | "said" | "sat"
+V -> "smiled" | "tell" | "were"
+"""
+
+def lees_grammatica(tekst):
+    regels = []
+    for regel in tekst.splitlines():
+        regel = regel.split("#")[0].strip()
+        if not regel:
+            continue
+        kop, rest = regel.split("->")
+        kop = kop.strip()
+        for optie in rest.split("|"):
+            regels.append((kop, optie.split()))
+    return regels
+
+def parse(grammatica, woorden):
+    woorden = list(woorden)
+    memo = {}
+    def combineer(rhs, i, j):
+        if len(rhs) == 1:
+            return [[boom] for boom in deel(rhs[0], i, j)]
+        eerste, rest = rhs[0], rhs[1:]
+        resultaat = []
+        for k in range(i + 1, j):
+            for boom1 in deel(eerste, i, k):
+                for staart in combineer(rest, k, j):
+                    resultaat.append([boom1] + staart)
+        return resultaat
+    def deel(sym, i, j):
+        sleutel = (sym, i, j)
+        if sleutel in memo:
+            return memo[sleutel]
+        memo[sleutel] = []
+        bomen = []
+        for kop, rhs in grammatica:
+            if kop != sym:
+                continue
+            if len(rhs) == 1 and rhs[0].startswith('"'):
+                woord = rhs[0].strip('"')
+                if j - i == 1 and woorden[i] == woord:
+                    bomen.append((sym, woorden[i]))
+                continue
+            for kinderen in combineer(rhs, i, j):
+                bomen.append((sym,) + tuple(kinderen))
+        memo[sleutel] = bomen
+        return bomen
+    return deel("S", 0, len(woorden))
+
+def controleer(grammatica_tekst, zinnen):
+    grammatica = lees_grammatica(grammatica_tekst + LEXICON)
+    alles_goed = True
+    for zin in zinnen:
+        bomen = parse(grammatica, zin.lower().split())
+        if bomen:
+            print(f"  OK  ({len(bomen)}x)  {zin}")
+        else:
+            print(f"  FOUT (0x)  {zin}   <-- parseert nog niet!")
+            alles_goed = False
+    print()
+    print("Gelukt: alle zinnen werken!" if alles_goed else "Nog niet alle zinnen werken.")
+
+controleer(GRAMMATICA, ZINNEN)`} />
+
+## Twee interpretaties!
+
+Viel het je op? De laatste zin staat waarschijnlijk op **(2x)** — de
+parser vindt er **twee** geldige bomen voor. Dat komt door "in the palm
+of my hand": hoort "of my hand" bij "the palm", of bij de hele groep?
+Grammaticaal kan het allebei. Zo'n zin heet **ambigu**. Op de volgende
+pagina kun je die twee bomen zelf bekijken.
+
+Door naar [stap 13: alles samen →](./13-compleet).

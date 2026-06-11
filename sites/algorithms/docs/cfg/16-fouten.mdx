@@ -1,0 +1,92 @@
+---
+sidebar_position: 16
+hide_table_of_contents: true
+---
+
+# 11.16 Er gaat iets mis — top-3 fouten
+
+**Leerdoel:** je herkent de drie klassieke valkuilen bij het schrijven
+van een context-vrije grammatica.
+
+We gebruiken weer het mini-voorbeeld, zodat de voorbeelden niets van de
+opdracht weggeven:
+
+```
+Zin   -> Groet Naam
+Groet -> "hallo" | "hoi"
+Naam  -> "sam" | "kim"
+```
+
+## Aanhalingstekens vergeten bij een terminal
+
+Symptoom: een zin die zou moeten werken, geeft toch `Kon de zin niet
+ontleden` of `FOUT (0x)`.
+
+**Oorzaak:** een echt woord (terminal) hoort **tussen aanhalingstekens**.
+Laat je ze weg, dan denkt de motor dat `sam` een *groep* (non-terminal)
+is — en die groep heeft geen regels, dus matcht hij nooit een woord.
+
+```
+# FOUT
+Naam -> sam
+
+# De motor zoekt nu naar een non-terminal 'sam' die nergens
+# gedefinieerd is. 'hallo sam' parseert niet.
+```
+
+**Oplossing:**
+
+```
+# GOED
+Naam -> "sam"
+```
+
+Vuistregel: **echte woorden** krijgen aanhalingstekens, **groepen** (de
+namen die jij verzint, en woordsoorten als `N`, `V`, `Det`, ...) niet.
+
+## Een regel vergeten
+
+Symptoom: één bepaalde zin blijft `FOUT (0x)`, terwijl de rest groen is.
+
+**Oorzaak:** er is geen regel voor de constructie die in die zin
+voorkomt. Een grammatica accepteert *alleen* wat de regels toelaten — is
+er geen pad van het startsymbool naar de woorden, dan is de zin ongeldig.
+
+```
+# FOUT — wel een Groet, maar geen regel die 'Zin' definieert
+Groet -> "hallo" | "hoi"
+Naam  -> "sam" | "kim"
+# 'hallo sam' lukt niet: er is geen Zin -> Groet Naam
+```
+
+**Oplossing:** voeg de ontbrekende regel toe.
+
+```
+# GOED
+Zin -> Groet Naam
+```
+
+Aanpak: kijk wélke zin faalt, ontleed hem met de hand in groepen, en
+zoek de groep waarvoor je nog geen regel hebt.
+
+## Woord staat niet in het lexicon (of hoofdletters/leestekens)
+
+Symptoom: `Kon de zin niet ontleden`, ook al lijkt je grammatica
+compleet.
+
+**Oorzaak:** het woord staat niet in het lexicon. De motor zet alles
+eerst om naar **kleine letters** en splitst op spaties. Een woord dat niet
+exact (in kleine letters) in het lexicon staat, wordt nooit herkend.
+
+```
+# Lexicon kent 'sam', maar niet 'alex'
+# 'hallo alex' -> Kon de zin niet ontleden
+```
+
+**Oplossing:** voeg het woord toe bij de juiste woordsoort, bv.
+`Naam -> "alex"`.
+
+Leestekens horen er niet bij: typ `hallo sam`, niet `hallo sam.` — het
+woord `sam.` (mét punt) staat niet in het lexicon.
+
+Door naar [stap 17: cheatsheet →](./17-cheatsheet).

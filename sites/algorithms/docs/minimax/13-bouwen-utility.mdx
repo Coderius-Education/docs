@@ -1,0 +1,116 @@
+---
+sidebar_position: 13
+hide_table_of_contents: true
+---
+
+# 9.13 Bouwsteen 7 — `utility(bord)`
+
+**Leerdoel:** je vertaalt een terminale positie naar een getal: `+1` /
+`-1` / `0`. Dat getal is waar minimax straks op rekent.
+
+## Wat doet deze functie?
+
+Minimax wil de uitkomst in een **getal** uitdrukken:
+
+| Wat gebeurt er | `utility` |
+|---|---|
+| X wint | **+1** |
+| O wint | **−1** |
+| Remise (vol bord, geen winnaar) | **0** |
+
+Waarom deze keuze? Omdat X = MAX wil maximaliseren → een hoger getal is
+beter voor X. O = MIN wil minimaliseren → een lager getal is beter voor O.
+Met `+1` / `−1` / `0` werken `max(...)` en `min(...)` van Python
+direct correct.
+
+## Hergebruik `winner`
+
+Net als `terminal` leunt deze functie op `winner` — drie cases, één
+enkele oproep. Heel kort.
+
+## Specificatie
+
+- **Input**: een **terminale** bord (de aanroeper garandeert dat
+  `terminal(bord) == True`).
+- **Output**: `1`, `-1` of `0`.
+
+## Voorspel
+
+Voor elk van deze terminale borden — welke utility?
+
+```python
+a = [["X","X","X"], ["O","O",None], [None]*3]              # X heeft een rij
+b = [["O","X","X"], ["O","X",None], ["O",None,None]]       # O heeft kolom 0
+c = [["X","O","X"], ["X","O","O"], ["O","X","X"]]          # remise
+```
+
+<details>
+<summary>Antwoord</summary>
+
+- `a`: X wint → `+1`.
+- `b`: O wint → `-1`.
+- `c`: remise → `0`.
+
+</details>
+
+## Bouw zelf en test
+
+<PyRunner initialCode={`def winner(bord):
+    for rij in bord:
+        if rij[0] == rij[1] == rij[2] and rij[0] is not None:
+            return rij[0]
+    for j in range(3):
+        if bord[0][j] == bord[1][j] == bord[2][j] and bord[0][j] is not None:
+            return bord[0][j]
+    if bord[0][0] == bord[1][1] == bord[2][2] and bord[0][0] is not None:
+        return bord[0][0]
+    if bord[0][2] == bord[1][1] == bord[2][0] and bord[0][2] is not None:
+        return bord[0][2]
+    return None
+
+
+def utility(bord):
+    # Vul aan:
+    # 1. roep winner(bord) aan, sla op in een variabele (bv. w)
+    # 2. als w == "X": return 1
+    # 3. als w == "O": return -1
+    # 4. anders: return 0
+    return 0
+
+
+# === Tests ===
+b1 = [["X","X","X"], ["O","O",None], [None]*3]
+assert utility(b1) == 1, "X wint -> +1"
+
+b2 = [["O","X","X"], ["O","X",None], ["O",None,None]]
+assert utility(b2) == -1, "O wint -> -1"
+
+b3 = [["X","O","X"], ["X","O","O"], ["O","X","X"]]
+assert utility(b3) == 0, "Remise -> 0"
+
+b4 = [["O","X","X"], ["X","O",None], [None,None,"O"]]
+assert utility(b4) == -1, "O wint op diagonaal -> -1"
+
+print("Alle tests gehaald ✓")`} />
+
+<details>
+<summary>Tip</summary>
+
+Drie `if`'s achter elkaar, of een `if`/`elif`/`else`. Het patroon dat
+veel mensen gebruiken:
+
+```python
+w = winner(bord)
+if w == "X":
+    return 1
+if w == "O":
+    return -1
+return 0
+```
+
+Of compact in één regel met een ternary expression, maar drie regels
+zijn duidelijker.
+
+</details>
+
+Door naar [stap 14: bouwsteen 8 — helpers →](./14-bouwen-helpers).

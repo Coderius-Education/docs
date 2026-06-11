@@ -1,0 +1,79 @@
+---
+sidebar_position: 9
+hide_table_of_contents: true
+---
+
+# 7.9 Er gaat iets mis — top-3 denkfouten
+
+**Leerdoel:** je herkent de klassieke misverstanden over Big O en weet
+hoe ze te ontwijken.
+
+## Constanten meetellen
+
+Een veelgehoorde "redenering": "Mijn algoritme doet `3n + 5` stappen,
+dat is dus `O(3n + 5)`."
+
+**Oorzaak:** verwarring tussen *exact stappen tellen* en *Big O*. Big O
+is een **klasse**, geen formule. Constanten en lagere-orde termen vallen
+weg.
+
+**Oplossing:** alleen de **hoogste-orde term** zonder coëfficiënt
+behouden.
+
+```
+3n + 5        → O(n)
+n² + 100n     → O(n²)
+log(n) + 10   → O(log n)
+n³ - n + 1    → O(n³)
+```
+
+Vuistregel: kijk welke term **het snelst groeit** als `n` heel groot
+wordt. Alle andere termen worden onbelangrijk.
+
+## Beste geval en slechtste geval verwarren
+
+"Binair zoeken is `O(1)`, want je kunt meteen het midden raken."
+
+**Oorzaak:** Big O van een algoritme verwijst meestal naar het
+**slechtste** geval, tenzij anders aangegeven. Het beste geval is leuk,
+maar onbruikbaar als garantie.
+
+**Oplossing:** wees expliciet over welke situatie je beschrijft.
+
+- "Binair zoeken is **O(1) in het beste geval**" — klopt.
+- "Binair zoeken is **O(log n)**" — bedoelt slechtste/gemiddelde geval —
+  klopt.
+- "Binair zoeken is **O(1)**" zonder context — misleidend.
+
+Zie [stap 8: overzicht per algoritme](./08-overzicht) voor de beste én
+slechtste gevallen van alle algoritmes.
+
+## "Op mijn computer is `O(n²)` even snel als `O(n)`"
+
+Een test met `n = 100` waarbij beide algoritmes in 0,001 seconde klaar
+zijn, en dan concluderen: "Big O maakt niet uit."
+
+**Oorzaak:** voor **kleine** `n` is het verschil onmerkbaar — de
+constante factoren overheersen. Big O zegt iets over **schaling**, niet
+over absolute tijd op kleine inputs.
+
+**Oplossing:** test met **grote** `n`. Pas dan zie je de klasse-
+verschillen.
+
+```python
+# n = 100 → onmerkbaar
+# n = 10.000 → O(n²) is voelbaar trager
+# n = 100.000 → O(n²) is minuten, O(n) is milliseconden
+```
+
+Vuistregel:
+
+| `n` | O(n²) is… |
+|---|---|
+| 100 | onmerkbaar |
+| 1.000 | bijna onmerkbaar |
+| 10.000 | seconde-niveau |
+| 100.000 | minuten |
+| 1.000.000 | uren |
+
+Door naar [stap 10: cheatsheet →](./10-cheatsheet).

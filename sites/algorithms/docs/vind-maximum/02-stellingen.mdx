@@ -1,0 +1,108 @@
+---
+sidebar_position: 2
+hide_table_of_contents: true
+---
+
+# 2.2 Stellingen — toets je begrip
+
+**Leerdoel:** je toetst of je het idee van "onthouden en updaten" snapt
+**voordat** je gaat programmeren.
+
+## Stelling 1
+
+*"Je moet eerst de hele lijst sorteren om het maximum te vinden."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Onjuist.** Sorteren kost veel werk (O(n log n)) en is niet nodig — je
+hoeft alleen één keer door de lijst te lopen om het maximum te vinden
+(O(n)). Sorteren is overdreven.
+
+</details>
+
+## Stelling 2
+
+*"Je hebt minstens `n` vergelijkingen nodig om het maximum te vinden in
+een lijst van `n` elementen."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Onjuist** — je hebt er één minder nodig. Met **`n − 1`** vergelijkingen
+kan het al: het eerste element is je startwaarde (geen vergelijking nodig),
+en daarna vergelijk je elk van de overige `n − 1` elementen ermee.
+
+Minder kan niet — anders weet je niet zeker of het overgeslagen element
+niet groter was.
+
+</details>
+
+## Stelling 3
+
+*"Als je `max_tot_nu_toe = 0` als startwaarde kiest, werkt het algoritme
+op elke lijst."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Onjuist.** Op een lijst met **enkel negatieve getallen** krijg je dan
+`0` als antwoord — terwijl 0 niet eens in de lijst staat. Bijvoorbeeld
+`[-3, -1, -7]`: het echte maximum is `-1`, maar je algoritme zou `0`
+returnen.
+
+**Veilige startwaarde**: `lijst[0]` (het eerste element). Dat is gegarandeerd
+ook echt een waarde uit de lijst.
+
+</details>
+
+## Stelling 4
+
+*"Als de waarde meerdere keren voorkomt (bijv. `[5, 3, 5, 2]`), is het
+maximum nog steeds gewoon `5`."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Juist.** Het maximum is gewoon de grootste waarde — duplicaten doen er
+niet toe. Welke index je krijgt als je *vraagt om de index van het maximum*
+hangt wel af van je code (meestal: de eerste, soms de laatste). Maar de
+**waarde** is altijd hetzelfde.
+
+</details>
+
+## Stelling 5
+
+*"Op een **gesorteerde** lijst kun je het maximum direct vinden zonder
+door de hele lijst te lopen."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Juist.** Op een oplopend gesorteerde lijst is het maximum gewoon
+`lijst[-1]` (het laatste element). Eén vergelijking? Zelfs geen
+vergelijking — alleen een index-lookup. Voor zo'n lijst is dit algoritme
+overdreven.
+
+Pas als je *niet weet of de lijst gesorteerd is*, moet je hem helemaal
+doorlopen.
+
+</details>
+
+## Stelling 6
+
+*"Je kunt dit algoritme ook gebruiken om de **kleinste** waarde te vinden,
+door alleen een symbool aan te passen."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Juist.** Vervang `>` door `<` (en hernoem `max_tot_nu_toe` naar
+`min_tot_nu_toe`) en je hebt vind-minimum. Het accumulator-patroon is
+symmetrisch.
+
+Daar gaan we bij *Aanpassen* concreet mee oefenen.
+
+</details>
+
+Door naar [stap 3: we bouwen het op](./03-bouwen-vergelijken).

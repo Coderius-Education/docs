@@ -1,0 +1,116 @@
+---
+sidebar_position: 2
+hide_table_of_contents: true
+---
+
+# 12.2 Op zoek naar patronen
+
+**Leerdoel:** je ontdekt — door te spelen en te tellen — twee patronen:
+*hoeveel* zetten je minimaal nodig hebt, en *hoe* je elke toren aanpakt.
+Dat tweede patroon is precies wat we straks in code gieten.
+
+## Patroon 1 — hoeveel zetten?
+
+Speel het spel voor 1, 2, 3, 4 en 5 schijven en zoek telkens het
+**kleinste** aantal zetten. Vul de tabel in je hoofd (of op papier) in:
+
+| Schijven | Minimaal aantal zetten |
+|:---:|:---:|
+| 1 | ? |
+| 2 | ? |
+| 3 | ? |
+| 4 | ? |
+| 5 | ? |
+
+<HanoiGame initialDisks={1} maxDisks={6} />
+
+<details>
+<summary>Wat heb jij gevonden?</summary>
+
+| Schijven | Minimaal aantal zetten |
+|:---:|:---:|
+| 1 | 1 |
+| 2 | 3 |
+| 3 | 7 |
+| 4 | 15 |
+| 5 | 31 |
+
+</details>
+
+### Zie je het patroon?
+
+Kijk naar de rij **1, 3, 7, 15, 31, ...** Hoe kom je van het ene getal
+bij het volgende?
+
+<details>
+<summary>Hint</summary>
+
+Elk getal is het **dubbele van het vorige, plus 1**:
+`3 = 2·1 + 1`, `7 = 2·3 + 1`, `15 = 2·7 + 1`, ...
+
+</details>
+
+<details>
+<summary>De formule</summary>
+
+Elke schijf erbij **verdubbelt** (ongeveer) het werk. De rij
+`1, 3, 7, 15, 31` is precies **2ⁿ − 1**.
+
+Dus 6 schijven → `2⁶ − 1 = 63`, en de 64 schijven van de monniken →
+`2⁶⁴ − 1`, meer dan 18 triljoen zetten. Geen wonder dat het even duurt.
+
+</details>
+
+## Patroon 2 — hoe pak je het aan?
+
+Het aantal zetten is leuk, maar dít patroon hebben we nodig om te
+**programmeren**. Speel nog eens met 3 of 4 schijven en let op de
+**grootste** schijf (die onderaan):
+
+- De grootste schijf moet uiteindelijk naar paal C.
+- Maar dat kan pas als **alle schijven erbovenop weg zijn**. Waar moeten
+  die naartoe, voordat je de grootste kunt verplaatsen?
+- En nadat de grootste op C ligt — wat doe je dan met die schijven?
+
+<details>
+<summary>Wat moet er telkens gebeuren?</summary>
+
+Om de grootste schijf van A naar C te krijgen:
+
+1. verplaats eerst **alle schijven erbovenop** (de bovenste `n − 1`) naar
+   de **hulp**-paal B;
+2. verplaats de **grootste** schijf van A naar C;
+3. verplaats die `n − 1` schijven van B bovenop de grootste, naar C.
+
+En het mooie: stap 1 en stap 3 zijn... *weer Torens van Hanoi*, maar met
+één schijf minder. Je lost het probleem op met een kleinere versie van
+zichzelf.
+
+</details>
+
+## Het recept
+
+Wat je net ontdekte, is een **recursief** recept. Om `n` schijven van
+**bron** naar **doel** te verplaatsen (met **hulp** als derde paal):
+
+> 1. verplaats `n − 1` schijven van **bron** naar **hulp**;
+> 2. verplaats de grootste schijf van **bron** naar **doel**;
+> 3. verplaats `n − 1` schijven van **hulp** naar **doel**.
+
+En wanneer stopt dat? Bij **0 schijven** hoef je niets te doen. Dat heet
+het **basisgeval** — zonder dat zou het recept eindeloos naar zichzelf
+blijven verwijzen.
+
+### De twee patronen kloppen met elkaar
+
+Het recept verklaart ook het aantal zetten: je doet twee keer een
+probleem met `n − 1` schijven, plus die ene zet voor de grootste:
+
+```
+T(n) = 2 · T(n−1) + 1     →     T(n) = 2ⁿ − 1
+```
+
+In de volgende stappen voorspel je nog wat, en daarna giet je dit recept
+in Python-code.
+
+Door naar [stap 3: stellingen →](./03-stellingen).

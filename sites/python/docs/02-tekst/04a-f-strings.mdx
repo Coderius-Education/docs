@@ -1,0 +1,147 @@
+---
+sidebar_position: 1
+hide_table_of_contents: true
+description: Vlecht variabelen direct in tekst met f-strings. Zet ze tussen accolades en doe zelfs berekeningen binnen de string.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 4a Slimme berichten met f-strings
+
+Je rekenmachine uit de vorige les werkte, maar `print("Som:", som)` was nog niet zo netjes. Met een **f-string** weef je tekst en variabelen tot één gladde zin.
+
+## Een f-string maken
+
+Een f-string is een gewone string met een `f` ervoor. Variabelen zet je tussen `{}`:
+
+```python
+naam = "Alex"
+leeftijd = 15
+
+print(f"Hallo, ik ben {naam} en ik ben {leeftijd} jaar oud.")
+```
+
+Uitvoer:
+
+```
+Hallo, ik ben Alex en ik ben 15 jaar oud.
+```
+
+Je kunt ook **berekeningen** doen binnen de accolades:
+
+```python
+leeftijd = 15
+
+print(f"Volgend jaar ben ik {leeftijd + 1} jaar.")
+```
+
+Tussen de accolades mag elke geldige Python-uitdrukking staan: een variabele, een berekening, of zelfs een functie-aanroep (dat komt later).
+
+---
+
+## Opdracht 4a.1: Begroeting
+
+Maak een variabele `naam` met je eigen naam, en print `Hallo, [naam]!` met een f-string.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Gebruik `f"..."` en zet `{naam}` op de plek waar je naam moet komen.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+naam = "Alex"
+
+print(f"Hallo, {naam}!")
+```
+
+<CodeExercise>{`naam = "Alex"
+
+print(f"Hallo, {naam}!")`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 4a.2: Volgend jaar
+
+Maak twee variabelen (`naam` en `leeftijd`). Print één zin die zegt hoe oud je volgend jaar wordt.
+
+Verwachte uitvoer (bij `naam = "Alex"` en `leeftijd = 15`):
+
+```
+Hoi Alex! Volgend jaar word je 16.
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Eén `print()` met een f-string die zowel `{naam}` als `{leeftijd + 1}` bevat.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+naam = "Alex"
+leeftijd = 15
+
+print(f"Hoi {naam}! Volgend jaar word je {leeftijd + 1}.")
+```
+
+<CodeExercise>{`naam = "Alex"
+leeftijd = 15
+
+print(f"Hoi {naam}! Volgend jaar word je {leeftijd + 1}.")`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 4a.3: Rekenmachine met f-strings
+
+Herschrijf de rekenmachine uit les 3 met f-strings, zodat elke berekening op één regel staat.
+
+Verwachte uitvoer (bij `a = 10`, `b = 4`):
+
+```
+10 + 4 = 14
+10 - 4 = 6
+10 x 4 = 40
+10 / 4 = 2.5
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Eén f-string per berekening: `f"{a} + {b} = {a + b}"`. Voor de andere drie operatoren werkt het hetzelfde.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+a = 10
+b = 4
+
+print(f"{a} + {b} = {a + b}")
+print(f"{a} - {b} = {a - b}")
+print(f"{a} x {b} = {a * b}")
+print(f"{a} / {b} = {a / b}")
+```
+
+<CodeExercise>{`a = 10
+b = 4
+
+print(f"{a} + {b} = {a + b}")
+print(f"{a} - {b} = {a - b}")
+print(f"{a} x {b} = {a * b}")
+print(f"{a} / {b} = {a / b}")`}</CodeExercise>
+
+</details>

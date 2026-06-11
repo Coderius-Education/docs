@@ -1,0 +1,88 @@
+---
+sidebar_position: 3
+sidebar_label: 'High'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# Weak Session IDs — High
+
+We gaan het nog complexer maken door cryptografie toe te passen op een zwakke variabele.
+
+## 1. Predict (Voorspel)
+
+De server hasht het sessie-ID met het MD5-algoritme:
+
+```php
+if (!isset ($_SESSION['last_session_id_high'])) {
+    $_SESSION['last_session_id_high'] = 0;
+}
+$_SESSION['last_session_id_high']++;
+$cookie_value = md5( $_SESSION['last_session_id_high'] );
+```
+
+**Vraag:** Je krijgt nu een cookie zoals `c4ca4238a0b923820dcc509a6f75849b`. Ziet er veilig uit — maar is het dat ook?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Nee. Een hashfunctie is **deterministisch**: dezelfde input geeft altijd dezelfde output. De input is nog steeds een oplopend getal (1, 2, 3...). Een hacker kan de hash in een online "rainbow table" opzoeken (bijv. Crackstation) en directe ontcijfering vinden: `c4ca4238...` is simpelweg de MD5-hash van het getal `1`. Door de MD5-hashes van opeenvolgende getallen te berekenen kan de aanvaller elke sessie nabootsen.
+
+</details>
+
+## 2. Run (Uitvoeren)
+
+Start het lab en genereer twee sessie-IDs.
+
+<DvwaLab module="weak_session_ids" level="high" />
+
+Klik tweemaal op de knop en bewaar beide lange strings die als cookie worden ingesteld.
+
+## 3. Investigate (Onderzoeken)
+
+Ga naar [CrackStation](https://crackstation.net) en plak één van de cookie-waarden in het zoekveld.
+
+**Vraag:** Wat toont CrackStation als resultaat? Wat onthult dit over de waarde die in de hash verstopt zit?
+
+<details>
+
+<summary>Antwoord</summary>
+
+CrackStation toont dat de hash overeenkomt met een eenvoudig getal (bijv. `1`, `2`, of `3`). Dit bevestigt dat de onderliggende waarde nog steeds een oplopend getal is — de MD5-laag is puur optisch. Een hacker berekent simpelweg `md5(1)`, `md5(2)`, etc. en stelt de bijbehorende hash in als cookie.
+
+</details>
+
+## 4. Modify & Make (Aanpassen & Maken)
+
+Bereken de MD5-hash van het volgende getal in de reeks en pas je cookie aan.
+
+<details>
+
+<summary>Tip</summary>
+
+In Linux/Kali kun je de MD5-hash van een getal berekenen met: `echo -n "3" | md5sum`
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+1. Bepaal welk getal de huidige sessie heeft (bijv. 2 als de vorige hash overeenkomt met 2).
+2. Bereken `md5(3)` → `eccbc87e4b5ce2fe28308fd9f2a7baf3`.
+3. Pas de `dvwaSession`-cookie aan naar deze hash.
+4. Vernieuw de pagina — de server ziet je nu als gebruiker met sessie 3.
+
+</details>
+
+## 5. ✓ Wat moest je zien?
+
+:::tip Controle
+- CrackStation ontcijfert de hash direct naar een oplopend getal — de MD5-laag biedt geen bescherming.
+- De aanvalsmethode is identiek aan Low level: raden van opeenvolgende waarden, maar nu in hash-vorm.
+- Een hacker met een lokale MD5-calculator hoeft geen database te raadplegen.
+
+Lukt de ontcijfering niet in CrackStation? Probeer een andere online MD5-decryptor of bereken `md5(1)` zelf en vergelijk.
+:::

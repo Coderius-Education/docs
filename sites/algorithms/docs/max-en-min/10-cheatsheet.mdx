@@ -1,0 +1,143 @@
+---
+sidebar_position: 10
+hide_table_of_contents: true
+---
+
+# 3.10 Cheatsheet — max én min in één pass
+
+Snelle referentie. Klap open wat je nodig hebt.
+
+## Het algoritme zelf
+
+<details>
+<summary>Canonieke implementatie (max_en_min)</summary>
+
+```python
+def max_en_min(lijst):
+    klein = groot = lijst[0]
+    for waarde in lijst:
+        if waarde < klein:
+            klein = waarde
+        elif waarde > groot:
+            groot = waarde
+    return klein, groot
+```
+
+</details>
+
+<details>
+<summary>Variant: ook de indexen (max_en_min_met_index)</summary>
+
+```python
+def max_en_min_met_index(lijst):
+    klein = groot = lijst[0]
+    idx_klein = idx_groot = 0
+    for i, waarde in enumerate(lijst):
+        if waarde < klein:
+            klein = waarde
+            idx_klein = i
+        elif waarde > groot:
+            groot = waarde
+            idx_groot = i
+    return klein, idx_klein, groot, idx_groot
+```
+
+</details>
+
+## Python-syntax
+
+<details>
+<summary>Meerdere variabelen tegelijk initialiseren</summary>
+
+```python
+klein = groot = lijst[0]      # beide krijgen dezelfde waarde
+a, b = 0, 0                   # twee verschillende waardes via tuple
+```
+
+</details>
+
+<details>
+<summary>Tuple returnen en uitpakken (return, =)</summary>
+
+```python
+return klein, groot           # of: return (klein, groot)
+
+k, g = max_en_min(lijst)      # uitpakken aan de andere kant
+r = max_en_min(lijst)         # zonder uitpakken — r is een tuple
+print(r[0], r[1])             # klein, groot via index
+```
+
+</details>
+
+<details>
+<summary>if vs. elif vs. apart if</summary>
+
+```python
+if A:
+    ...
+elif B:    # alleen gecontroleerd als A onwaar is
+    ...
+```
+
+- `if … elif …` → tweede check overgeslagen als eerste true.
+- `if … if …` → beide checks altijd gedaan.
+
+Bij wederzijds uitsluitende condities: `elif` (efficiënter en duidelijker).
+
+</details>
+
+## Eigenschappen
+
+<details>
+<summary>Hoeveel vergelijkingen?</summary>
+
+- **Eén pass + `elif`**: tussen `n` en `2n` vergelijkingen (afhankelijk van
+  data).
+- **Eén pass + apart `if`**: precies `2n` vergelijkingen.
+- **Twee aparte passes**: precies `2n` vergelijkingen + `2n` leesacties.
+
+In alle gevallen: **O(n)** — verschil zit in de constanten.
+
+</details>
+
+<details>
+<summary>Wanneer is dit slim?</summary>
+
+- Bij **grote** lijsten waar elke leesactie kostbaar is.
+- Als je **toch al** door de lijst loopt voor iets anders — voeg `min` en
+  `max` gewoon mee.
+- Bij **streaming data** (lijst is te groot voor het geheugen) — je kunt
+  hem maar één keer lezen.
+
+</details>
+
+<details>
+<summary>Lege-lijst-keuze</summary>
+
+`lijst[0]` op `[]` geeft `IndexError`. Voor productie-code:
+
+```python
+def max_en_min(lijst):
+    if not lijst:
+        return None, None
+    ...
+```
+
+</details>
+
+## Veelgemaakte fouten (snel)
+
+<details>
+<summary>Top-3 fouten</summary>
+
+1. Twee aparte for-lussen → dubbel werk, mist het didactische punt.
+2. `klein = 0` en `groot = 0` als startwaardes → fout bij enkel-negatief
+   of enkel-positief.
+3. `if … if …` in plaats van `if … elif …` → één extra vergelijking per
+   element.
+
+</details>
+
+---
+
+Klaar? Volgende stap: [binair zoeken](/docs/binair-zoeken/01-concept).

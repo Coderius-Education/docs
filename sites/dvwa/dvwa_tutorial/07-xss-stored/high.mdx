@@ -1,0 +1,88 @@
+---
+sidebar_position: 3
+sidebar_label: 'High'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# XSS (Stored) — High
+
+Op het High niveau gebruikt de ontwikkelaar dezelfde krachtige regex-filter als bij Reflected XSS voor het Name-veld.
+
+## 1. Predict (Voorspel)
+
+De code doet nu het volgende voor het `Name`-veld:
+
+```php
+$name = preg_replace( '/<(.*)s(.*)c(.*)r(.*)i(.*)p(.*)t/i', '', $_POST['txtName'] );
+```
+
+**Vraag:** We weten al dat deze `preg_replace` alles filtert wat op de `<script>`-tag lijkt (ongeacht hoofdletters of spaties). Wat is de beste manier om dit te omzeilen?
+
+<details>
+
+<summary>Antwoord</summary>
+
+We moeten de `script`-tag volledig links laten liggen. We gebruiken een andere HTML-tag die óók JavaScript kan uitvoeren, zoals het `onerror`-event van een `<img>` of `<svg>`.
+
+</details>
+
+## 2. Run (Uitvoeren)
+
+Start het lab en bekijk het gastenboek.
+
+<DvwaLab module="xss_stored" level="high" />
+
+Vergroot (zoals geleerd bij Medium) de `maxlength` van het Name-veld via F12, zodat je lange teksten kunt typen. Vul daarna een normale naam en een normaal bericht in om te bevestigen dat het gastenboek werkt.
+
+## 3. Investigate (Onderzoeken)
+
+Probeer `<SCRIPT>alert(1);</SCRIPT>` in het Name-veld (nadat je `maxlength` hebt verhoogd). Kijk ook eens of `<img src=x>` zonder JavaScript in het veld werkt.
+
+**Vraag:** Wat zet het filter door en wat blokkeert het? Wat onthult dit over de aanvalsmogelijkheden?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Alles met het woord "script" erin wordt verwijderd. Maar een `<img src=x>`-tag zonder event handler wordt wél opgeslagen en weergegeven. Dit onthult dat het filter alleen kijkt naar het woord "script" — andere HTML-tags met event handlers worden ongemoeid gelaten.
+
+</details>
+
+## 4. Modify & Make (Aanpassen & Maken)
+
+Bouw een payload die géén `script` bevat, en gebruik deze in het Name-veld om een blijvende Stored XSS-infectie te creëren.
+
+<details>
+
+<summary>Tip</summary>
+
+Maak gebruik van de nep-afbeeldingsmethode.
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+1. Zet de `maxlength` via F12 op `100`.
+2. Vul in bij Name: `<img src="x" onerror="alert('High')">`
+3. Het filter ziet nergens de tekst "script" staan, dus de database slaat het bericht keurig op.
+4. Omdat de afbeelding 'x' niet bestaat, triggert de foutafhandeling direct een pop-up!
+
+</details>
+
+## 5. ✓ Wat moest je zien?
+
+:::tip Controle
+- `<img src="x" onerror="alert('High')">` triggert een **pop-up** ondanks het script-filter.
+- Na een paginaverversing verschijnt de pop-up opnieuw — de payload is permanent opgeslagen.
+- `<SCRIPT>` en alle varianten worden wél gefilterd.
+
+Geen pop-up? Controleer of je de `maxlength` hebt verhoogd en of je de payload exact hebt overgetypt inclusief aanhalingstekens.
+:::
+
+## 6. Er gaat iets mis...
+
+Wat als de lijst in het gastenboek te vol wordt met allemaal lelijke (mislukte) `<img src="x">`-tekens? Je kunt altijd via het hoofdmenu van DVWA onder `Setup / Reset DB` de knop indrukken om de database schoon te vegen. Hacker-hygiëne is óók belangrijk!

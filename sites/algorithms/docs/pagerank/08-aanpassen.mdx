@@ -1,0 +1,69 @@
+---
+sidebar_position: 8
+hide_table_of_contents: true
+---
+
+# 13.8 Aanpassen — speel met de damping
+
+**Leerdoel:** je onderzoekt wat de damping factor `d` doet en hoe een
+extra link de ranks verschuift.
+
+## Opdracht 1 — draai aan `d`
+
+Verander `D` en kijk wat er gebeurt. Probeer `0.85` (normaal), `0.5`,
+`1.0` en `0.0`.
+
+<PyRunner rows={16} initialCode={`WEB = {
+    "A": {"B", "C"},
+    "B": {"C"},
+    "C": {"A"},
+    "D": {"C"},
+}
+
+D = 0.85   # <-- verander dit
+
+
+def pagerank(web, d=0.85, epsilon=1e-9):
+    n = len(web)
+    rank = {p: 1 / n for p in web}
+    while True:
+        nieuw = {}
+        for p in web:
+            som = sum(rank[i] / len(web[i]) for i in web if p in web[i])
+            nieuw[p] = (1 - d) / n + d * som
+        if max(abs(nieuw[p] - rank[p]) for p in web) < epsilon:
+            return nieuw
+        rank = nieuw
+
+
+ranks = pagerank(WEB, D)
+for p in sorted(ranks, key=lambda x: -ranks[x]):
+    print(f"  {p}: {ranks[p]:.4f}")
+print(f"  som: {sum(ranks.values()):.4f}")`} />
+
+<details>
+<summary>Wat zie je bij de uitersten?</summary>
+
+- **`d = 0`**: er is geen "links volgen" meer, alleen willekeurig
+  springen. Elke pagina krijgt `1/N` — allemaal gelijk (`0.25`).
+- **`d = 1`**: geen willekeurige sprong meer. Pagina `D` (geen inkomende
+  links) loopt leeg naar `0`, en alle "belang" verzamelt zich in de
+  A–B–C-kring. Daarom kiest men in de praktijk iets ertussenin: `0.85`.
+
+</details>
+
+## Opdracht 2 — voeg een link toe
+
+Laat `D` ook naar `A` linken (`"D": {"C", "A"}`). Voorspel eerst: wiens
+rank stijgt? Draai daarna en controleer.
+
+<details>
+<summary>Verwachting</summary>
+
+`A` krijgt er een stem bij (van `D`), dus de rank van `A` stijgt. Omdat
+`D` nu zijn belang over twee pagina's verdeelt, daalt de stem die naar
+`C` ging iets. De som blijft 1 — belang wordt alleen anders verdeeld.
+
+</details>
+
+Door naar [stap 9: zelf bouwen →](./09-zelf-bouwen).

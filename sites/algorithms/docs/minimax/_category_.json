@@ -1,0 +1,11 @@
+{
+  "label": "Minimax",
+  "position": 9,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "title": "Minimax — speel optimaal in tic-tac-toe",
+    "description": "Bouw een AI die nooit verliest in boter-kaas-en-eieren. Gebaseerd op CS50 AI Project 0."
+  }
+}

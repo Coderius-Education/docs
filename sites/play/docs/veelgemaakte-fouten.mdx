@@ -1,0 +1,208 @@
+---
+sidebar_position: 98
+hide_table_of_contents: true
+---
+
+# Veelgemaakte fouten
+
+Python geeft je altijd een foutmelding als er iets misgaat. Op deze pagina vind je de meest voorkomende fouten en hoe je ze oplost.
+
+:::tip
+Lees de foutmelding altijd goed! Python vertelt je meestal precies wat er mis is en op welke regel.
+:::
+
+## AttributeError — typefout in een attribuutnaam
+
+**Foutmelding:**
+```
+AttributeError: 'Circle' object has no attribute 'colour'. Did you mean: 'color'?
+```
+
+`colour` bestaat niet — de `play`-bibliotheek gebruikt de Amerikaanse spelling `color` (zonder u).
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle()
+cirkel.colour = 'red'  # FOUT: 'colour' bestaat niet`} height={250} />
+
+**Oplossing:** gebruik `color` in plaats van `colour`.
+
+---
+
+## TypeError — getal optellen bij tekst
+
+**Foutmelding:**
+```
+TypeError: can only concatenate str (not "int") to str
+```
+
+Je probeert een getal (`int`) direct samen te voegen met tekst (`str`). Dat mag niet in Python.
+
+<PygbagRunner code={`import play
+
+score = 5
+play.new_text(words="Score: " + score)  # FOUT: score is een getal, geen tekst`} height={250} />
+
+**Oplossing:** zet het getal eerst om naar tekst met `str()`:
+
+<PygbagRunner code={`import play
+
+score = 5
+play.new_text(words="Score: " + str(score))`} height={250} />
+
+---
+
+## NameError — variabele niet gevonden
+
+**Foutmelding:**
+```
+NameError: name 'cirkel' is not defined
+```
+
+Je gebruikt een variabele die nog niet bestaat, of je hebt de naam verkeerd gespeld.
+
+<PygbagRunner code={`import play
+
+@play.when_key_pressed("space")
+def beweeg():
+    cirkle.x = cirkle.x + 10  # FOUT: 'cirkle' bestaat niet (typefout)
+
+cirkel = play.new_circle()`} height={250} />
+
+**Oplossing:** controleer de spelling en zorg dat de variabele vóór gebruik aangemaakt is.
+
+---
+
+## IndentationError — verkeerde inspringing
+
+**Foutmelding:**
+```
+IndentationError: expected an indented block
+```
+
+De code onder een `def`, `if`, of `for` moet ingesprongen zijn (4 spaties of 1 tab).
+
+<PygbagRunner code={`import play
+
+@play.when_key_pressed("space")
+def beweeg():
+play.new_circle()  # FOUT: niet ingesprongen`} height={250} />
+
+**Oplossing:** spring de code in met 4 spaties:
+
+<PygbagRunner code={`import play
+
+@play.when_key_pressed("space")
+def beweeg():
+    play.new_circle()`} height={250} />
+
+---
+
+## SyntaxError — await buiten async
+
+**Foutmelding:**
+```
+SyntaxError: 'await' outside function
+```
+
+`await` mag alleen gebruikt worden in een `async def` functie.
+
+```python
+# FOUT
+@play.when_key_pressed("space")
+def wacht():
+    await play.timer(seconds=1)
+```
+
+**Oplossing:** voeg `async` toe voor `def`:
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle(color='red')
+
+@play.when_key_pressed("space")
+async def wacht():
+    cirkel.color = 'blue'
+    await play.timer(seconds=1)
+    cirkel.color = 'red'`} height={250} />
+
+---
+
+## when_key_pressed reageert niet
+
+Je hebt `@play.when_key_pressed` gebruikt maar er gebeurt niets als je op de toets drukt.
+
+Controleer het volgende:
+
+1. **Staat `@play.when_key_pressed` boven de functie?** De decorator moet direct op de regel vóór `def` staan.
+2. **Klopt de toetsnaam?** Gebruik `"space"` voor spatie, `"up"` / `"down"` / `"left"` / `"right"` voor pijltjes, en kleine letters voor letters (`"a"`, `"b"`, ...).
+
+<PygbagRunner code={`import play
+
+blok = play.new_box()
+
+@play.when_key_pressed("space")  # let op: decorator direct boven def
+def beweeg():
+    blok.x = blok.x + 20`} height={250} />
+
+---
+
+## ValueError — ongeldige kleur of hex-code
+
+**Foutmelding:**
+```
+ValueError: You gave a color name we didn't understand: 'FF0000'
+Try using a hex code like '#FF0000' or '#F00',
+or the RGB number form e.g. '(0, 255, 255)'.
+```
+
+`play` begrijpt de kleur die je opgegeven hebt niet. Dit komt vaak voor bij hex-codes (sinds versie 3.3.3 beschikbaar). Een paar veelgemaakte fouten:
+
+1. **`#` vergeten**: een hex-code begint altijd met `#`. Gebruik `'#FF0000'`, niet `'FF0000'`.
+2. **Verkeerde lengte**: een hex-code heeft `#` plus 6 tekens (of de korte vorm: `#` plus 3 tekens). `'#FF00'` werkt niet.
+3. **Ongeldige tekens**: alleen cijfers `0`-`9` en letters `A`-`F` mogen. `'#GGGGGG'` werkt niet.
+4. **Typefout in kleurnaam**: `'reed'` in plaats van `'red'`.
+
+<PygbagRunner code={`import play
+
+play.new_circle(color='FF0000')  # FOUT: '#' vergeten`} height={250} />
+
+**Oplossing:** gebruik een geldige hex-code, kleurnaam of RGB-tuple. Alle drie de cirkels hieronder zijn rood:
+
+<PygbagRunner code={`import play
+
+play.new_circle(color='#FF0000', x=-150)
+play.new_circle(color='red', x=0)
+play.new_circle(color=(255, 0, 0), x=150)`} height={250} />
+
+---
+
+## global vergeten
+
+**Foutmelding:**
+```
+UnboundLocalError: local variable 'score' referenced before assignment
+```
+
+Je probeert een variabele buiten een functie aan te passen, maar vergeet `global` te schrijven.
+
+<PygbagRunner code={`import play
+
+score = 0
+
+@play.when_key_pressed("space")
+def verhoog():
+    score = score + 1  # FOUT: Python denkt dat 'score' een lokale variabele is`} height={250} />
+
+**Oplossing:** voeg `global score` toe bovenaan de functie:
+
+<PygbagRunner code={`import play
+
+score = 0
+tekst = play.new_text(words="Score: 0", font_size=40)
+
+@play.when_key_pressed("space")
+def verhoog():
+    global score
+    score = score + 1
+    tekst.words = "Score: " + str(score)`} height={250} />

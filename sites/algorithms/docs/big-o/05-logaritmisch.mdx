@@ -1,0 +1,122 @@
+---
+sidebar_position: 5
+hide_table_of_contents: true
+---
+
+# 7.5 O(log n) — logaritmische tijd
+
+**Leerdoel:** je herkent algoritmes die bij elke verdubbeling van `n`
+maar **één** stap extra doen, en je ziet visueel een **bijna platte
+curve**.
+
+## Hoe gedraagt het zich?
+
+`O(log n)` betekent: **bij elke verdubbeling van `n` komt er één stap
+bij**. Dat is bizar weinig groei.
+
+| `n` | log₂ n |
+|---|---|
+| 10 | ~3 |
+| 100 | ~7 |
+| 1.000 | ~10 |
+| 1.000.000 | 20 |
+| 1.000.000.000 | 30 |
+
+Een miljard elementen → **30 stappen**. Dat is `O(log n)` in actie.
+
+Analogie: een woord opzoeken in het woordenboek. Sla open in het midden,
+beslis "linker- of rechterhelft", herhaal. Bij elke verdubbeling van het
+woordenboek heb je maar **één extra slag** nodig.
+
+## Hoe ontstaat het?
+
+`O(log n)` ontstaat bijna altijd door **halveren**: bij elke stap snij je
+het werk doormidden. Dat is precies wat **binair zoeken** doet.
+
+Vergelijk:
+- Bij `O(n)` doe je `n` stappen door **alles** te bekijken.
+- Bij `O(log n)` doe je `log₂(n)` stappen door **steeds de helft weg te
+  gooien**.
+
+## Voorspel
+
+Op een lijst van 1.000.000 elementen: hoeveel vergelijkingen doet binair
+zoeken in het slechtste geval?
+
+<details>
+<summary>Antwoord</summary>
+
+**Ongeveer 20 vergelijkingen.** `log₂(1.000.000) ≈ 19.9`.
+
+Vergelijk met lineair zoeken op dezelfde lijst: **1.000.000**
+vergelijkingen. Het verschil is een factor 50.000.
+
+</details>
+
+## Run — kijk hoe het groeit
+
+<PyRunner initialCode={`import matplotlib.pyplot as plt
+
+def binair_zoek_tellen(lijst, doel):
+    laag = 0
+    hoog = len(lijst) - 1
+    stappen = 0
+    while laag <= hoog:
+        stappen += 1
+        midden = (laag + hoog) // 2
+        if lijst[midden] == doel:
+            return stappen
+        elif lijst[midden] < doel:
+            laag = midden + 1
+        else:
+            hoog = midden - 1
+    return stappen
+
+groottes = [10, 100, 1000, 10000, 100000, 1000000]
+stappen_per_grootte = []
+for n in groottes:
+    lijst = list(range(n))
+    # Slechtste geval: doel bestaat niet
+    stappen_per_grootte.append(binair_zoek_tellen(lijst, -1))
+
+print("n           stappen")
+for n, s in zip(groottes, stappen_per_grootte):
+    print(f"{n:<12} {s}")
+
+plt.plot(groottes, stappen_per_grootte, marker='o')
+plt.xscale('log')
+plt.xlabel('lijstgrootte n (log-schaal)')
+plt.ylabel('aantal stappen (slechtste geval)')
+plt.title('O(log n) — logaritmische tijd')
+plt.grid(True, which='both', linestyle=':')
+plt.show()`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+Op een **log-schaal voor `n`** zie je een **rechte lijn** die maar
+langzaam stijgt. Elke verdubbeling van `n` voegt slechts één stap toe.
+
+- 10 → 4 stappen
+- 100 → 7 stappen
+- 1.000 → 10 stappen
+- 1.000.000 → 20 stappen
+
+Op een normale (lineaire) x-as zou dezelfde lijn er bijna **vlak**
+uitzien — de groei is zó traag dat je hem nauwelijks ziet.
+
+</details>
+
+## Welke algoritmes zijn `O(log n)`?
+
+In dit curriculum:
+
+- **Binair zoeken** — het schoolvoorbeeld van halveren. Zie
+  [binair-zoeken/08-compleet](../binair-zoeken/08-compleet).
+
+Belangrijk: binair zoeken werkt **alleen op een gesorteerde lijst**. Geen
+sortering, geen `O(log n)`. Sorteren is zelf duurder (`O(n log n)` of
+slechter), dus binair zoeken loont alleen als je vaak in dezelfde
+gesorteerde lijst zoekt.
+
+Door naar [stap 6: O(n²) — kwadratisch →](./06-kwadratisch).

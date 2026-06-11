@@ -1,0 +1,30 @@
+#1 Holmes (N) sat (V).
+
+
+#2 Holmes (N) lit (V) a (Det) pipe (N).
+
+
+#5 My (Det) companion (N) smiled (V) an (Det) enigmatical (Adj) smile (N).
+
+
+#8 Holmes (N) sat (V) down (Adv) and (Conj) lit (V) his (Det) pipe (N).
+
+
+#3 We (N) arrived (V) the (Det) day (N) before (P) Thursday (N).
+
+
+#4 Holmes (N) sat (V) in (P) the (Det) red (Adj) armchair (N) and (Conj) he (N) chuckled (V).
+ 
+
+#6 Holmes (N) chuckled (V) to (P) himself (N).
+
+
+#7 She (N) never (Adv) said (V) a (Det) word (N) until (Conj) we (N) were (V) at (P) the (Det) door (N) here (Adv).
+
+
+
+#9 I (N) had (V) a (Det) country (Adj) walk (N) on (P) Thursday (N) and (Conj) came (V) home (N) in (P) a (Det) dreadful (Adj) mess (N).
+
+
+
+#10 I (N) had (V) a (Det) little (Adj) moist (Adj) red (Adj) paint (N) in (P) the (Det) palm (N) of (P) my (Det) hand (N).

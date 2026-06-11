@@ -1,0 +1,234 @@
+---
+sidebar_position: 3
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# HTML tonen
+
+In de vorige les gaf je endpoint JSON terug. In deze les leer je hoe je een HTML pagina teruggeeft.
+
+## HTMLResponse importeren
+
+Pas je `main.py` aan:
+
+```python
+from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
+
+app = FastAPI()
+```
+
+## Een HTML pagina tonen
+
+```python
+@app.get("/pagina", response_class=HTMLResponse)
+async def pagina():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Mijn Pagina</title>
+        </head>
+        <body>
+            <h1>Hallo!</h1>
+            <p>Dit is mijn eerste HTML pagina.</p>
+        </body>
+    </html>
+    """
+```
+
+### Wat is nieuw?
+
+- `response_class=HTMLResponse` - Vertelt FastAPI dat je HTML terugstuurt (niet JSON)
+- De functie returnt een string met HTML code
+- `"""..."""` is een multi-line string
+
+## Testen
+
+Ga naar [http://127.0.0.1:8000/pagina](http://127.0.0.1:8000/pagina). Je ziet nu een echte webpagina!
+
+## CSS toevoegen
+
+Je kunt CSS in een `<style>` tag zetten:
+
+```python
+@app.get("/styled", response_class=HTMLResponse)
+async def styled():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Met CSS</title>
+            <style>
+                h1 { color: blue; }
+                p { color: gray; }
+            </style>
+        </head>
+        <body>
+            <h1>Gestylede pagina</h1>
+            <p>Deze tekst is grijs.</p>
+        </body>
+    </html>
+    """
+```
+
+:::danger Gaat er iets mis?
+Zie je de HTML als tekst (je ziet de tags `<h1>` etc.)? Dan mis je waarschijnlijk `response_class=HTMLResponse`. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
+:::
+
+## Opdrachten
+
+### Opdracht 1: Predict - JSON of HTML?
+
+```python
+@app.get("/test")
+async def test():
+    return {"titel": "<h1>Hallo</h1>"}
+```
+
+**Vraag:** Zie je een heading of JSON?
+
+<details>
+<summary>Tip</summary>
+
+Kijk of er `response_class=HTMLResponse` staat. Wat doet FastAPI als dat er niet staat?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Je ziet JSON: `{"titel": "<h1>Hallo</h1>"}`. Zonder `response_class=HTMLResponse` stuurt FastAPI altijd JSON terug.
+
+</details>
+
+### Opdracht 2: Run
+
+Maak beide endpoints in je `main.py`: het `/pagina` endpoint en het `/styled` endpoint. Start de server en bezoek ze allebei. Werken ze zoals verwacht?
+
+### Opdracht 3: Investigate - Zonder HTMLResponse
+
+Wat gebeurt er als je `response_class=HTMLResponse` weghaalt bij het `/styled` endpoint? Probeer het uit!
+
+<details>
+<summary>Antwoord</summary>
+
+Zonder `response_class=HTMLResponse` stuurt FastAPI de string als **plain text** terug. Je ziet de HTML tags als tekst op je scherm in plaats van een opgemaakte pagina.
+
+</details>
+
+### Opdracht 4: Make - Eigen pagina
+
+Maak een endpoint `/profiel` dat een HTML pagina toont met:
+- Jouw naam als heading
+- Een paragraaf over jezelf
+- Een gekleurde heading via CSS
+
+<details>
+<summary>Tip</summary>
+
+Gebruik `response_class=HTMLResponse` en een multi-line string met `"""`. Zet je CSS in een `<style>` tag in de `<head>`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+@app.get("/profiel", response_class=HTMLResponse)
+async def profiel():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Profiel</title>
+            <style>
+                h1 { color: purple; }
+            </style>
+        </head>
+        <body>
+            <h1>Jan</h1>
+            <p>Ik ben 16 en hou van programmeren.</p>
+        </body>
+    </html>
+    """
+```
+
+</details>
+
+### Opdracht 5: Make - Twee pagina's
+
+Maak twee endpoints (`/pagina1` en `/pagina2`) die elk een andere HTML pagina tonen. Voeg op elke pagina een link toe naar de andere:
+
+```html
+<a href="/pagina2">Ga naar pagina 2</a>
+```
+
+<details>
+<summary>Tip</summary>
+
+Maak twee aparte functies met `@app.get`. Gebruik `<a href="/pagina1">` en `<a href="/pagina2">` om de pagina's aan elkaar te linken.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+@app.get("/pagina1", response_class=HTMLResponse)
+async def pagina1():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <body>
+            <h1>Pagina 1</h1>
+            <a href="/pagina2">Ga naar pagina 2</a>
+        </body>
+    </html>
+    """
+
+@app.get("/pagina2", response_class=HTMLResponse)
+async def pagina2():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <body>
+            <h1>Pagina 2</h1>
+            <a href="/pagina1">Ga naar pagina 1</a>
+        </body>
+    </html>
+    """
+```
+
+</details>
+
+## Oefen met Python
+
+:::info Python oefenblok
+Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
+:::
+
+<CodeExercise>
+{`# Multi-line strings — zo bouw je HTML in Python
+naam = "Jan"
+kleur = "blue"
+
+html = f"""<!DOCTYPE html>
+<html>
+    <head>
+        <title>Profiel</title>
+        <style>
+            h1 {{ color: {kleur}; }}
+        </style>
+    </head>
+    <body>
+        <h1>{naam}</h1>
+        <p>Welkom op mijn pagina!</p>
+    </body>
+</html>"""
+
+print(html)
+print()
+print(f"De HTML is {len(html)} tekens lang.")`}
+</CodeExercise>

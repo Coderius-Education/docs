@@ -1,0 +1,120 @@
+---
+sidebar_position: 4
+hide_table_of_contents: true
+---
+
+# 3.4 Bouwsteen 2 — beide accumulators updaten
+
+**Leerdoel:** je voegt een for-lus met **twee** vergelijkingen per element
+toe, zodat zowel `klein` als `groot` aangepast worden.
+
+## Wat we willen
+
+Per element checken: *is het kleiner dan onze huidige `klein`? Is het
+groter dan onze huidige `groot`?* Zo ja → updaten.
+
+## Voorspel
+
+Wat denk je dat dit print? Volg met pen en papier mee.
+
+```python
+lijst = [5, 2, 8, 1, 7, 4]
+klein = groot = lijst[0]
+
+for waarde in lijst:
+    if waarde < klein:
+        klein = waarde
+    elif waarde > groot:
+        groot = waarde
+
+print(klein, groot)
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+1 8
+```
+
+Tabel:
+
+| waarde | klein vóór | groot vóór | actie | klein na | groot na |
+|---|---|---|---|---|---|
+| 5 | 5 | 5 | geen update | 5 | 5 |
+| 2 | 5 | 5 | 2 < 5 → klein = 2 | 2 | 5 |
+| 8 | 2 | 5 | 8 > 5 → groot = 8 | 2 | 8 |
+| 1 | 2 | 8 | 1 < 2 → klein = 1 | 1 | 8 |
+| 7 | 1 | 8 | 7 > 8? nee — geen update | 1 | 8 |
+| 4 | 1 | 8 | 4 < 1? nee — geen update | 1 | 8 |
+
+Eind: klein = 1, groot = 8.
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`lijst = [5, 2, 8, 1, 7, 4]
+klein = groot = lijst[0]
+
+for waarde in lijst:
+    if waarde < klein:
+        klein = waarde
+    elif waarde > groot:
+        groot = waarde
+
+print(klein, groot)`} />
+
+## Waarom `elif` en niet twee aparte `if`'s?
+
+Twee aparte `if`'s zou ook werken — maar dan doe je voor **elk** element
+twee vergelijkingen, ook als de eerste al raak was. Met `elif` slaan we
+de tweede check over als de eerste al een update deed.
+
+<details>
+<summary>Waarom is `elif` veilig?</summary>
+
+Een waarde kan **niet tegelijk** kleiner zijn dan `klein` én groter dan
+`groot`. Want: `klein <= groot`. Dus als `waarde < klein` (kleiner dan de
+huidige ondergrens), dan zeker `waarde < groot` — en dus zeker **niet**
+`waarde > groot`. De `elif`-check kunnen we veilig overslaan.
+
+</details>
+
+## Experimenteer
+
+Test extreme inputs:
+
+<PyRunner initialCode={`def max_en_min_los(lijst):
+    klein = groot = lijst[0]
+    for waarde in lijst:
+        if waarde < klein:
+            klein = waarde
+        elif waarde > groot:
+            groot = waarde
+    print(f"lijst={lijst} → klein={klein}, groot={groot}")
+
+max_en_min_los([5, 2, 8, 1, 7, 4])
+max_en_min_los([42])
+max_en_min_los([-5, -1, -9, -2])
+max_en_min_los([3, 3, 3])`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+- Standaard lijst → klein=1, groot=8.
+- Eén element → klein=groot=42 (de lus doet 1 iteratie zonder updates).
+- Alleen negatief → klein=-9, groot=-1. Geen bug: we starten op `lijst[0]`.
+- Allemaal gelijk → klein=groot=3.
+
+</details>
+
+<SteppingStoneModel stone="minmax-update" />
+
+## Wat nu nog mist
+
+We hebben de **logica**. Maar we **printen** alleen — we geven de waardes
+niet *terug*. In de volgende stap stoppen we het in een functie die een
+**tuple** returnt.
+
+Door naar [bouwsteen 3: tuple teruggeven](./05-bouwen-tuple-return).

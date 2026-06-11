@@ -1,0 +1,69 @@
+---
+sidebar_position: 1
+hide_table_of_contents: true
+---
+
+import WokwiSimulator from '@site/src/components/WokwiSimulator';
+
+# 5.1 De seriële monitor
+
+Een microcontroller heeft geen scherm. Hoe weet je dan wat er binnenin gebeurt? Via de **seriële monitor**: een tekstvenster op je computer waar de Arduino berichten naartoe stuurt via de USB-kabel.
+
+## Hallo via serieel
+
+```cpp
+void setup() {
+  Serial.begin(9600);
+  Serial.println("Hallo, ik ben je Arduino");
+}
+
+void loop() {
+}
+```
+
+<WokwiSimulator
+  projectUrl="https://wokwi.com/projects/new/arduino-uno"
+  title="Simuleer: hallo via serieel"
+/>
+
+Open in de simulator (of de Arduino IDE) de **seriële monitor**. Je ziet de tekst verschijnen.
+
+## Wat doen die regels?
+
+```cpp
+Serial.begin(9600);
+```
+
+`Serial.begin(9600)` start de verbinding op **9600 baud** (de snelheid waarmee de bits over de draad gaan). Dit zet je één keer in `setup()`.
+
+`Serial.println("...")` stuurt een regel tekst en gaat naar een nieuwe regel. Wil je geen nieuwe regel, gebruik dan `Serial.print()`.
+
+:::caution
+Staat de seriële monitor op een andere snelheid dan je `Serial.begin()`, dan zie je onleesbare tekens. Zet de monitor op dezelfde waarde (hier 9600). Zie [Onleesbare tekens in de monitor](/docs/er-gaat-iets-mis/onleesbare-serial).
+:::
+
+## Getallen en tekst combineren
+
+Je kunt ook waarden tonen, bijvoorbeeld van een sensor:
+
+```cpp
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  int waarde = analogRead(A0);
+  Serial.print("Sensorwaarde: ");
+  Serial.println(waarde);
+  delay(500);
+}
+```
+
+<WokwiSimulator
+  projectUrl="https://wokwi.com/projects/new/arduino-uno"
+  title="Simuleer: sensorwaarde tonen"
+/>
+
+`Serial.print("Sensorwaarde: ")` zet eerst de tekst neer (zonder nieuwe regel), daarna zet `Serial.println(waarde)` het getal erachter. Zo bouw je leesbare regels op.
+
+In de volgende les gebruik je dit om fouten op te sporen.

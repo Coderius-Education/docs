@@ -1,0 +1,73 @@
+---
+sidebar_position: 0
+sidebar_label: 'Begin hier'
+slug: /
+---
+
+# DVWA Challenges — Begin hier
+
+Welkom! Deze tutorial leert je websecurity door zélf kwetsbaarheden uit te buiten. Geen installatie nodig — alle uitdagingen draaien direct in je browser via PHP-WebAssembly.
+
+## Wat ga je leren?
+
+Je doorloopt 14 klassieke web-aanvalstechnieken: SQL-injectie, XSS, CSRF, command injection, file inclusion, en meer. Elke uitdaging heeft vier niveaus:
+
+- 🟢 **Low** — geen bescherming. Bedoeld om de aanval te begrijpen.
+- 🟡 **Medium** — de ontwikkelaar heeft *iets* gedaan. Vind de zwakte.
+- 🔴 **High** — slimmere bescherming. Vereist creativiteit.
+- 🔵 **Impossible** — zó zou de code er écht uit moeten zien. Dit is het lesdoel.
+
+Vergelijk altijd de broncode tussen niveaus (knop **Bekijk broncode** in elk lab). Daar zit de leerwinst.
+
+## Hoe is een level-pagina opgebouwd?
+
+Elke level-pagina volgt dezelfde vier stappen — de **PRIMM**-cyclus. Sla geen stap over: ze bouwen op elkaar voort.
+
+### 1. Predict (Voorspel)
+
+Je krijgt een stukje broncode te zien en een vraag. **Bedenk eerst zelf het antwoord** voordat je het `Antwoord`-blok open klikt. Dit is geen toets — het idee is dat je je voorstellingsvermogen voor wat code dóét traint. Voortijdig kijken straft alleen jezelf.
+
+### 2. Run & Investigate
+
+Klik op **Start Lab**. De eerste keer duurt het laden van PHP-WebAssembly ~10 seconden — dit is normaal en gebeurt maar één keer per browser-sessie. Daarna voer je een onschuldige actie uit (bijv. een geldig getal invullen) om te zien wat de applicatie *normaal* doet.
+
+> 💡 **Tip:** klik op **Bekijk broncode** om te zien welke PHP er onder de motorkap draait. Dit is je belangrijkste leerbron.
+
+### 3. Modify & Make (Aanpassen & Maken)
+
+Tijd voor de aanval. Je krijgt een doel ("haal alle gebruikers op", "voer een `alert()` uit"…). Probeer het eerst zonder de Tip te openen. Lukt het niet? Open de Tip. Nog steeds niet? Open Antwoord.
+
+### 4. ✓ Wat moest je zien?
+
+Korte controle: waar herken je succes aan? Als wat jij ziet niet overeenkomt met de criteria, ga je terug naar stap 3.
+
+## Beperkingen van het lab
+
+De labs draaien in een afgeschermd `<iframe>` (sandbox). Voor de meeste uitdagingen is dat geen probleem, maar bij een paar (XSS DOM, JavaScript Attacks, CSP Bypass) heb je toegang nodig tot de F12 Developer Tools van de iframe-inhoud — wat de browser blokkeert. Op die levels staat een ⚠️ **Labbeperking**-vermelding, met een verwijzing naar de [lokale DVWA-installatie](/docs/dvwa_installatie) voor de volledige ervaring.
+
+## In welke volgorde doe ik de uitdagingen?
+
+## Jouw Voortgang
+
+Gebruik deze checklist om bij te houden welke uitdagingen je hebt voltooid. Kun jij alle vinkjes op groen krijgen?
+
+| Challenge | Low | Medium | High | Impossible |
+| :--- | :---: | :---: | :---: | :---: |
+| 1. **[Brute Force](/dvwa_tutorial/brute-force/low)** | [ ] | [ ] | [ ] | [ ] |
+| 2. **[Command Injection](/dvwa_tutorial/command-injection/low)** | [ ] | [ ] | [ ] | [ ] |
+| 3. **[Authorization Bypass](/dvwa_tutorial/authorization-bypass/low)** | [ ] | [ ] | [ ] | [ ] |
+| 4. **[SQL Injection](/dvwa_tutorial/sql-injection/low)** | [ ] | [ ] | [ ] | [ ] |
+| 5. **[SQL Injection (Blind)](/dvwa_tutorial/sql-injection-blind/low)** | [ ] | [ ] | [ ] | [ ] |
+| 6. **[XSS (Reflected)](/dvwa_tutorial/xss-reflected/low)** | [ ] | [ ] | [ ] | [ ] |
+| 7. **[XSS (Stored)](/dvwa_tutorial/xss-stored/low)** | [ ] | [ ] | [ ] | [ ] |
+| 8. **[XSS (DOM)](/dvwa_tutorial/xss-dom/low)** | [ ] | [ ] | [ ] | [ ] |
+| 9. **[CSRF](/dvwa_tutorial/csrf/low)** | [ ] | [ ] | [ ] | [ ] |
+| 10. **[File Inclusion](/dvwa_tutorial/file-inclusion/low)** | [ ] | [ ] | [ ] | [ ] |
+| 11. **[File Upload](/dvwa_tutorial/file-upload/low)** | [ ] | [ ] | [ ] | [ ] |
+| 12. **[Weak Session IDs](/dvwa_tutorial/weak-session-ids/low)** | [ ] | [ ] | [ ] | [ ] |
+| 13. **[CSP Bypass](/dvwa_tutorial/csp-bypass/low)** | [ ] | [ ] | [ ] | [ ] |
+| 14. **[JavaScript Attacks](/dvwa_tutorial/javascript-attacks/low)** | [ ] | [ ] | [ ] | [ ] |
+
+---
+
+Klaar? Begin bij **[Brute Force — Low](/dvwa_tutorial/brute-force/low)**.

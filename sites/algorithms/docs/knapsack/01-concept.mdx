@@ -1,0 +1,90 @@
+---
+sidebar_position: 1
+hide_table_of_contents: true
+---
+
+# 10.1 Knapsack 0/1 — het idee
+
+**Leerdoel:** je begrijpt wat het 0/1 knapsack-probleem is en wat de
+"0/1" betekent. Nog geen code — eerst snappen.
+
+## Het verhaal
+
+Je gaat hiken. In je **rugzak** past maar 11 kg. Voor je liggen een
+paar items met elk een **waarde** (hoe nuttig in de natuur) en een
+**gewicht** (hoe zwaar):
+
+| Item | Waarde | Gewicht |
+|---|---|---|
+| 1 | 1 | 1 |
+| 2 | 6 | 2 |
+| 3 | 18 | 5 |
+| 4 | 22 | 6 |
+| 5 | 28 | 7 |
+
+Welke set items neem je mee om je rugzak **zo waardevol mogelijk** te
+maken zonder boven de 11 kg te komen?
+
+> *Niet zomaar zoveel mogelijk items — sommige duwen je over het
+> gewichtslimiet. Niet zomaar de waardevolste eerst — die kunnen samen
+> te zwaar zijn. Je moet de juiste **combinatie** vinden.*
+
+## Wat betekent "0/1"?
+
+De **0/1** in de naam zegt: elk item neem je óf **één keer** mee (1), óf
+**helemaal niet** (0). Je mag een item niet halveren, niet twee keer
+meenemen, niet "een beetje" pakken.
+
+(Er bestaan varianten waar dat wél mag — *fractional knapsack* of
+*unbounded knapsack*. Die zijn anders.)
+
+## De aanpak — twee vragen per item
+
+Voor elk item stel je deze vraag:
+
+> *"Neem ik dit item mee, of niet?"*
+
+Twee antwoorden. Twee keuzes. Vijf items → 2⁵ = **32 mogelijke
+combinaties**.
+
+Voor elke combinatie:
+
+1. Tel het totale gewicht. Past het binnen 11? Zo niet, sla over.
+2. Tel de totale waarde. Onthoud de hoogste tot nu toe.
+
+Klinkt eenvoudig — maar 32 combinaties is veel. Bij 10 items zijn er
+1024, bij 20 items meer dan een miljoen. Daarom hebben we een **slimmer
+algoritme** nodig.
+
+## De tabel-truc
+
+Het slimme idee: in plaats van alle 32 combinaties expliciet uit te
+proberen, vullen we een **tabel** in van klein naar groot. Eén cel
+per (items-tot-nu-toe, beschikbare-capaciteit). Bij elke cel
+beantwoord je dezelfde mini-vraag:
+
+- *"Wat is de beste waarde als ik dit item **niet** meeneem?"*
+- *"Wat is de beste waarde als ik dit item **wel** meeneem?"*
+- Neem het **maximum** van die twee.
+
+Het mooie: bij het invullen van een nieuwe cel kun je terugkijken
+naar **al ingevulde cellen** — geen herhaald rekenwerk. Voor
+5 items + W=11 is dat een tabel van `6 × 12 = 72` cellen, snel klaar.
+
+## Wat we gaan bouwen
+
+Na deze track schrijf je een Python-functie:
+
+```python
+def knapsack(items, capaciteit):
+    ...
+```
+
+die de tabel opbouwt en de eindcel `tabel[n][capaciteit]` returnt —
+de beste totaalwaarde. Plus een functie die de **welke-items?**-vraag
+beantwoordt door door de tabel terug te lopen.
+
+Maar eerst doen we het **met pen en papier**: een tabel zelf invullen
+om te begrijpen wat het algoritme doet.
+
+Door naar [stap 2: vul de tabel in →](./02-vul-de-tabel-in).

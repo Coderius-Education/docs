@@ -1,0 +1,186 @@
+---
+sidebar_position: 8
+hide_table_of_contents: true
+---
+
+# 4.8 Het complete algoritme
+
+**Leerdoel:** je herkent alle bouwstenen die je hebt geleerd en ziet ze
+samen werken. Daarna onderzoek je het algoritme als geheel.
+
+## Alles samen
+
+```python
+def binair_zoek(lijst, doel):
+    laag = 0
+    hoog = len(lijst) - 1
+    while laag <= hoog:
+        midden = (laag + hoog) // 2
+        if lijst[midden] == doel:
+            return midden
+        elif lijst[midden] < doel:
+            laag = midden + 1
+        else:
+            hoog = midden - 1
+    return -1
+```
+
+Zie je de bouwstenen?
+
+- Regels 2-3 → **bouwsteen 1**: grenzen `laag` en `hoog`.
+- Regel 5 → **bouwsteen 2**: het midden berekenen.
+- Regels 6-11 → **bouwsteen 3**: vergelijken en de juiste helft kiezen.
+- Regel 4 → **bouwsteen 4**: de while-lus.
+- Regel 12 → **bouwsteen 5**: `-1` bij niet gevonden.
+
+## Voorspel
+
+We gaan dit algoritme straks runnen met deze vier aanroepen. Wat denk
+je dat er uitkomt?
+
+```python
+getallen = [1, 3, 5, 7, 9, 11, 13, 15]
+print(binair_zoek(getallen, 7))
+print(binair_zoek(getallen, 4))
+print(binair_zoek([], 5))
+print(binair_zoek([42], 42))
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+3
+-1
+-1
+0
+```
+
+- `7` staat op index 3 — gevonden.
+- `4` staat niet in de lijst — `return -1`.
+- Lege lijst → de while-lus draait 0 keer (`laag=0 > hoog=-1`) → `-1`.
+- Lijst met één element `[42]`, doel `42` → midden = 0, direct raak → `0`.
+
+</details>
+
+## Run
+
+<PyRunner editable={false} initialCode={`def binair_zoek(lijst, doel):
+    laag = 0
+    hoog = len(lijst) - 1
+    while laag <= hoog:
+        midden = (laag + hoog) // 2
+        if lijst[midden] == doel:
+            return midden
+        elif lijst[midden] < doel:
+            laag = midden + 1
+        else:
+            hoog = midden - 1
+    return -1
+
+getallen = [1, 3, 5, 7, 9, 11, 13, 15]
+print(binair_zoek(getallen, 7))
+print(binair_zoek(getallen, 4))
+print(binair_zoek([], 5))
+print(binair_zoek([42], 42))`} />
+
+<AlgorithmModel algorithm="binary-search" />
+
+## Onderzoek
+
+Speel met de code. Probeer in elk geval:
+
+1. Wat gebeurt er op een **lege** lijst?
+2. Wat gebeurt er op een lijst van **één** element?
+3. Wat gebeurt er op een **ongesorteerde** lijst?
+
+<PyRunner initialCode={`def binair_zoek(lijst, doel):
+    laag = 0
+    hoog = len(lijst) - 1
+    while laag <= hoog:
+        midden = (laag + hoog) // 2
+        if lijst[midden] == doel:
+            return midden
+        elif lijst[midden] < doel:
+            laag = midden + 1
+        else:
+            hoog = midden - 1
+    return -1
+
+# Experimenteer
+print(binair_zoek([], 5))
+print(binair_zoek([42], 42))
+print(binair_zoek([3, 1, 4, 1, 5], 4))   # ongesorteerd!`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+- Lege lijst → `hoog = -1`, dus `laag (0) > hoog (-1)` → while draait 0
+  keer → `return -1`. Veilig.
+- Eén element → `laag = hoog = 0`, midden = 0. Check direct.
+- Ongesorteerd → een *toevallig* antwoord, vaak verkeerd. Het algoritme is
+  niet **correct** op ongesorteerde input.
+
+</details>
+
+## Visualiseer de stappen
+
+Soms helpt het om te **zien** hoeveel stappen er zijn. Hier draaien we het
+algoritme op lijsten van verschillende lengtes en plotten we het aantal
+stappen.
+
+<PyRunner initialCode={`import matplotlib.pyplot as plt
+
+def binair_zoek_tellen(lijst, doel):
+    laag = 0
+    hoog = len(lijst) - 1
+    stappen = 0
+    while laag <= hoog:
+        stappen += 1
+        midden = (laag + hoog) // 2
+        if lijst[midden] == doel:
+            return stappen
+        elif lijst[midden] < doel:
+            laag = midden + 1
+        else:
+            hoog = midden - 1
+    return stappen
+
+# Slechtste geval: doel groter dan alles in de lijst (bestaat niet)
+groottes = [10, 100, 1000, 10000, 100000]
+stappen_per_grootte = []
+for n in groottes:
+    lijst = list(range(n))
+    stappen_per_grootte.append(binair_zoek_tellen(lijst, n))
+
+print("n         max. stappen")
+for n, s in zip(groottes, stappen_per_grootte):
+    print(f"{n:<10} {s}")
+
+plt.plot(groottes, stappen_per_grootte, marker='o')
+plt.xscale('log')
+plt.xlabel('lijstgrootte n')
+plt.ylabel('aantal stappen (slechtste geval)')
+plt.title('Binair zoeken: stappen vs. lijstgrootte')
+plt.grid(True, which='both', linestyle=':')
+plt.show()`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+Op een **logaritmische** x-as zie je een **rechte lijn**. Dat is precies
+de definitie van O(log n): bij elke verdubbeling van `n` komt er één stap
+bij.
+
+- 10 → 4 stappen
+- 100 → 7 stappen
+- 1000 → 10 stappen
+- 10.000 → 14 stappen
+- 100.000 → 17 stappen
+
+Voor 100.000 elementen: **17 vergelijkingen** in het ergste geval. Lineair
+zoeken zou er **100.000** doen. Factor ~6000.
+
+</details>
+
+Door naar [stap 9: aanpassen](./09-aanpassen).

@@ -1,0 +1,120 @@
+---
+sidebar_position: 14
+hide_table_of_contents: true
+---
+
+# 11.14 Aanpassen — nieuwe woorden, nieuwe zinnen
+
+**Leerdoel:** je breidt het **lexicon** uit met nieuwe woorden, zonder de
+grammaticaregels te veranderen, en je zoekt een ambigue zin.
+
+## Het idee
+
+De **regels** beschrijven de *structuur*. Het **lexicon** koppelt echte
+*woorden* aan hun woordsoort. Wil je een nieuw woord laten herkennen, dan
+hoef je alleen het lexicon aan te vullen — je regels blijven hetzelfde.
+
+## Opdracht 1 — voeg een woord toe
+
+Plak je complete grammatica. De zin `Watson chuckled` mislukt nu: `watson`
+staat niet in het lexicon. Voeg in `LEXICON_EXTRA` een regel toe die
+`watson` een zelfstandig naamwoord (`N`) maakt — dezelfde
+aanhalingsteken-vorm als in het lexicon — en draai opnieuw.
+
+<PyRunner rows={20} initialCode={`# ===== JOUW WERK 1: plak je complete grammatica =====
+GRAMMATICA = """
+
+"""
+
+# ===== JOUW WERK 2: voeg nieuwe woorden toe aan het lexicon =====
+LEXICON_EXTRA = """
+
+"""
+
+# Verander deze zin om hem te testen:
+ZIN = "Watson chuckled"
+
+
+# ====== De parser-motor + basis-lexicon — hieronder NIET aanpassen ======
+LEXICON = """
+Adj -> "country" | "dreadful" | "enigmatical" | "little" | "moist" | "red"
+Adv -> "down" | "here" | "never"
+Conj -> "and" | "until"
+Det -> "a" | "an" | "his" | "my" | "the"
+N -> "armchair" | "companion" | "day" | "door" | "hand" | "he" | "himself"
+N -> "holmes" | "home" | "i" | "mess" | "paint" | "palm" | "pipe" | "she"
+N -> "smile" | "thursday" | "walk" | "we" | "word"
+P -> "at" | "before" | "in" | "of" | "on" | "to"
+V -> "arrived" | "came" | "chuckled" | "had" | "lit" | "said" | "sat"
+V -> "smiled" | "tell" | "were"
+"""
+
+def lees_grammatica(tekst):
+    regels = []
+    for regel in tekst.splitlines():
+        regel = regel.split("#")[0].strip()
+        if not regel:
+            continue
+        kop, rest = regel.split("->")
+        kop = kop.strip()
+        for optie in rest.split("|"):
+            regels.append((kop, optie.split()))
+    return regels
+
+def parse(grammatica, woorden):
+    woorden = list(woorden)
+    memo = {}
+    def combineer(rhs, i, j):
+        if len(rhs) == 1:
+            return [[boom] for boom in deel(rhs[0], i, j)]
+        eerste, rest = rhs[0], rhs[1:]
+        resultaat = []
+        for k in range(i + 1, j):
+            for boom1 in deel(eerste, i, k):
+                for staart in combineer(rest, k, j):
+                    resultaat.append([boom1] + staart)
+        return resultaat
+    def deel(sym, i, j):
+        sleutel = (sym, i, j)
+        if sleutel in memo:
+            return memo[sleutel]
+        memo[sleutel] = []
+        bomen = []
+        for kop, rhs in grammatica:
+            if kop != sym:
+                continue
+            if len(rhs) == 1 and rhs[0].startswith('"'):
+                woord = rhs[0].strip('"')
+                if j - i == 1 and woorden[i] == woord:
+                    bomen.append((sym, woorden[i]))
+                continue
+            for kinderen in combineer(rhs, i, j):
+                bomen.append((sym,) + tuple(kinderen))
+        memo[sleutel] = bomen
+        return bomen
+    return deel("S", 0, len(woorden))
+
+def ontleed(zin):
+    grammatica = lees_grammatica(GRAMMATICA + LEXICON + LEXICON_EXTRA)
+    bomen = parse(grammatica, zin.lower().split())
+    if not bomen:
+        print(f"Kon de zin niet ontleden: {zin}")
+        return
+    print(f"OK ({len(bomen)}x): {zin}")
+    print(f"aantal interpretaties: {len(bomen)}")
+
+ontleed(ZIN)`} />
+
+> **Let op** — voor opdracht 1 heb je je eigen grammatica nodig (anders
+> kent de cel `S`, je woordgroepen enzovoort niet). Plak die dus eerst.
+
+## Opdracht 2 — zoek een ambigue zin
+
+Verander `ZIN` in een zin die je grammatica op **meer dan één** manier
+ontleedt (aantal interpretaties > 1). De truc: zet **twee**
+voorzetselgroepen achter elkaar in één groep — dan kan de tweede bij
+verschillende stukken horen. Alle woorden van het voorbeeld
+`Holmes had a pipe in the armchair in the day` staan al in het lexicon;
+probeer maar of je er twee bomen voor krijgt, en bedenk waarom.
+
+Door naar [stap 15: zelf bouwen →](./15-zelf-bouwen).

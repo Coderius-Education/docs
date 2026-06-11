@@ -1,0 +1,249 @@
+---
+sidebar_position: 12
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# POST naar database
+
+Nu combineren we formulieren met een database: data van een gebruiker permanent opslaan.
+
+## Voorbeeld: Naam opslaan
+
+### Formulier (`static/pages/naam_opslaan.html`):
+
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Bewaar je naam</h1>
+        <form method="post" action="/opslaan">
+            <input type="text" name="naam" required>
+            <button type="submit">Opslaan</button>
+        </form>
+    </body>
+</html>
+```
+
+### Endpoints (`main.py`):
+
+```python
+from fastapi import FastAPI, Form
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.get("/naam")
+async def naam_formulier():
+    return FileResponse("static/pages/naam_opslaan.html")
+
+@app.post("/opslaan")
+async def naam_opslaan(naam: str = Form(...)):
+    with SqliteDict("namen.db") as db:
+        db["laatste_naam"] = naam
+        db.commit()
+
+    return {"bericht": f"'{naam}' opgeslagen!"}
+```
+
+## Testen
+
+1. Ga naar `http://127.0.0.1:8000/naam`
+2. Vul een naam in en klik Opslaan
+3. **Stop de server** en start opnieuw
+4. De naam staat nog in `namen.db`!
+
+## Data terug lezen
+
+```python
+@app.get("/toon_naam")
+async def toon_naam():
+    with SqliteDict("namen.db") as db:
+        naam = db.get("laatste_naam", "Nog niets opgeslagen")
+    return {"naam": naam}
+```
+
+:::danger Gaat er iets mis?
+Data niet opgeslagen? Check of je `db.commit()` niet vergeet. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
+:::
+
+## Opdrachten
+
+### Opdracht 1: Predict - Overschrijven
+
+Je slaat eerst "Jan" op, dan "Sarah". Wat staat er in de database?
+
+<details>
+<summary>Tip</summary>
+
+Beide worden opgeslagen onder dezelfde key (`"laatste_naam"`). Wat gebeurt er als je twee keer dezelfde key gebruikt?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Alleen "Sarah" — de nieuwe waarde overschrijft de oude bij dezelfde key.
+
+</details>
+
+### Opdracht 2: Run
+
+Maak het formulier en de endpoints uit het voorbeeld. Test of de naam echt bewaard blijft door de server te stoppen en opnieuw te starten.
+
+### Opdracht 3: Investigate - Dezelfde key
+
+Wat als twee gebruikers allebei hun naam opslaan via het formulier? Blijven beide namen bewaard?
+
+<details>
+<summary>Antwoord</summary>
+
+Nee! Beide namen worden opgeslagen onder `"laatste_naam"`, dus de tweede overschrijft de eerste. Om meerdere namen op te slaan heb je **unieke keys** nodig, bijvoorbeeld met `time.time()` (zie opdracht 5).
+
+</details>
+
+### Opdracht 4: Make - Score opslaan
+
+Maak een formulier met een number input voor een game score. Sla de score op in `scores.db` en maak een endpoint om de score te bekijken.
+
+<details>
+<summary>Tip</summary>
+
+Gebruik `<input type="number" name="score">` in je HTML en `score: int = Form(...)` in Python. Maak een apart GET endpoint dat `db.get("score", 0)` teruggeeft.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`static/pages/score_form.html`:
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Game Score</h1>
+        <form method="post" action="/score">
+            <input type="number" name="score" required>
+            <button type="submit">Opslaan</button>
+        </form>
+    </body>
+</html>
+```
+
+```python
+@app.get("/score")
+async def score_form():
+    return FileResponse("static/pages/score_form.html")
+
+@app.post("/score")
+async def score_opslaan(score: int = Form(...)):
+    with SqliteDict("scores.db") as db:
+        db["score"] = score
+        db.commit()
+    return {"bericht": f"Score {score} opgeslagen!"}
+
+@app.get("/toon_score")
+async def toon_score():
+    with SqliteDict("scores.db") as db:
+        score = db.get("score", 0)
+    return {"score": score}
+```
+
+</details>
+
+### Opdracht 5: Make - Gastenboek
+
+Maak een gastenboek met naam en bericht. Gebruik `time.time()` als unieke key zodat berichten niet overschreven worden:
+
+```python
+import time
+
+key = f"bericht_{int(time.time())}"
+db[key] = {"naam": naam, "bericht": bericht}
+```
+
+<details>
+<summary>Tip</summary>
+
+Je hebt twee `<input>` velden nodig (`name="naam"` en `name="bericht"`). Gebruik `time.time()` om een unieke key te genereren, zodat elk bericht apart wordt opgeslagen.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`static/pages/gastenboek_form.html`:
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Gastenboek</h1>
+        <form method="post" action="/gastenboek">
+            <input type="text" name="naam" placeholder="Je naam" required>
+            <input type="text" name="bericht" placeholder="Je bericht" required>
+            <button type="submit">Verstuur</button>
+        </form>
+    </body>
+</html>
+```
+
+```python
+import time
+
+@app.get("/gastenboek")
+async def gastenboek_form():
+    return FileResponse("static/pages/gastenboek_form.html")
+
+@app.post("/gastenboek")
+async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        key = f"bericht_{int(time.time())}"
+        db[key] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    return {"bericht": "Bedankt voor je bericht!"}
+
+@app.get("/berichten")
+async def berichten():
+    with SqliteDict("gastenboek.db") as db:
+        alle_berichten = [v for v in db.values()]
+    return {"berichten": alle_berichten}
+```
+
+</details>
+
+## Oefen met Python
+
+:::info Python oefenblok
+Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
+:::
+
+<CodeExercise>
+{`# Database simuleren met een dictionary
+import time
+
+database = {}
+
+# Berichten opslaan met unieke keys
+berichten = [
+    {"naam": "Jan", "bericht": "Hallo!"},
+    {"naam": "Sarah", "bericht": "Leuke site!"},
+    {"naam": "Piet", "bericht": "Cool project!"}
+]
+
+for i, b in enumerate(berichten):
+    key = f"bericht_{i}"
+    database[key] = b
+    print(f"Opgeslagen: {key} → {b}")
+
+# Alle berichten ophalen
+print("\n--- Gastenboek ---")
+for key, data in database.items():
+    print(f"{data['naam']}: {data['bericht']}")
+
+# Eén bericht ophalen
+print(f"\nLaatste: {database.get('bericht_2', 'Niet gevonden')}")
+print(f"Bestaat niet: {database.get('bericht_99', 'Niet gevonden')}")`}
+</CodeExercise>

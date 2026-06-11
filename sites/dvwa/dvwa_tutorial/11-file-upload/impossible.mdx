@@ -1,0 +1,62 @@
+---
+sidebar_position: 4
+sidebar_label: 'Impossible'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# File Upload — Impossible
+
+Hoe beveilig je een uploaddienst dan wél definitief?
+
+## 1. Predict (Voorspel)
+
+De server gooit het roer drastisch om. Alles wat binnenkomt wordt getransformeerd in plaats van alleen gecontroleerd:
+
+```php
+// Genereer een veilige, willekeurige naam zonder originele extensie:
+$target_file = md5( uniqid() . $uploaded_name ) . '.' . $uploaded_ext;
+
+// Herbouw de foto volledig via de GD library:
+$img = imagecreatefromjpeg( $uploaded_tmp );
+imagejpeg( $img, $temp_file, 100 ); // Verwoest alle metadata en verstopte code
+
+// Gooi het origineel direct weg:
+imagedestroy( $img );
+```
+
+**Vraag:** Hoe lossen het herbouwen (`imagecreate`) en het hernoemen de kwetsbaarheden op?
+
+<details>
+
+<summary>Antwoord</summary>
+
+- **Hernoemen:** De willekeurige naam die de server verzint bevat geen door de hacker gekozen extensie. Een `shell.php` of `../shell.php`-naam verdwijnt volledig.
+- **Herbouwen:** Door de foto niet op te slaan maar in het geheugen in te laden en als schone JPEG-pixels opnieuw te schrijven, verdwijnt álle metadata, verstopte PHP-code, of andere inhoud die hackers in het bestand hadden verwerkt. Alleen de zichtbare pixels worden bewaard.
+
+</details>
+
+## 2. Run & Investigate
+
+Start het lab en probeer alle eerder geleerde aanvallen.
+
+<DvwaLab module="file_upload" level="impossible" />
+
+Upload `shell.php`, een `.php.jpg`-bestand en een afbeelding met metadata-payload. Observeer hoe de applicatie reageert.
+
+## 3. ✓ Wat moest je zien?
+
+:::tip Controle
+- Elk geüpload PHP-bestand wordt geweigerd of geneutraliseerd.
+- Bestanden worden opgeslagen onder een willekeurige naam — geen enkel script kan het bestand voorspellen of direct opvragen.
+- Metadata in afbeeldingen verdwijnt door de herbouw-stap.
+
+Wil je de herbouw zelf zien? Upload een afbeelding met `exiftool`-metadata en bekijk de metadata van het opgeslagen bestand — alles is leeg.
+:::
+
+**Uploaden = Gecontroleerde uitvoering:** Een shell uploaden leidt tot *Remote Code Execution* (RCE) — de kroonjuwelen voor een aanvaller.
+
+**Vertrouw extensie en MIME-types nooit:** Beide worden door de client meegestuurd en zijn altijd te vervalsen.
+
+**Validatie vs. Mutatie:** Alleen controleren is onvoldoende gebleken. Je moet de input fysiek transformeren (image processing) en de bestandsnaam volledig overnemen.

@@ -1,0 +1,85 @@
+---
+sidebar_position: 3
+sidebar_label: 'High'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# Authorization Bypass — High
+
+Op het High-niveau gebruikt de programmeur JavaScript om controles uit te voeren vóórdat het formulier verstuurd wordt.
+
+## 1. Predict (Voorspel)
+
+De ontwikkelaar heeft een stukje JavaScript toegevoegd aan het formulier:
+```javascript
+form.onsubmit = function() {
+    if (geselecteerde_id != mijn_eigen_id) {
+        alert("Je mag dit account niet bekijken!");
+        return false; // Stop het verzenden
+    }
+}
+```
+
+**Vraag:** Waar draait deze controle-code en waarom is dit zinloos tegen een gerichte aanval?
+
+<details>
+
+<summary>Antwoord</summary>
+
+JavaScript draait in de browser van de gebruiker, op hun eigen apparaat (Client-Side). Als hacker kun je in de Developer Tools simpelweg JavaScript uitzetten, of het script verwijderen, of de gegevens via een ander programma direct naar de server sturen waardoor de JavaScript-validatie compleet gepasseerd wordt!
+
+</details>
+
+## 2. Run (Uitvoeren)
+
+Start het lab en open direct je Developer Tools.
+
+<DvwaLab module="authorization_bypass" level="high" />
+
+Probeer de waarde van de dropdown in de HTML aan te passen en te verzenden zoals je op het Medium level deed. Observeer wat er gebeurt.
+
+## 3. Investigate (Onderzoeken)
+
+Pas de `value` van de dropdown via F12 aan naar `1` en klik op Submit.
+
+**Vraag:** Wat zie je nu op het scherm? Wat houdt jou tegen, en waar draait die beveiliging?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Je krijgt waarschijnlijk een JavaScript-foutmelding of pop-up die het verzenden tegenhoudt. Dit bewijst dat de controle in de browser zit (client-side). De server zelf voert nog steeds geen autorisatiecheck uit — het enige obstakel is de JavaScript-code in jouw eigen browser. Dat betekent: schakel JavaScript uit, en de weg ligt open.
+
+</details>
+
+## 4. Modify & Make (Aanpassen & Maken)
+
+Jouw doel is om het verzoek tóch naar de server te forceren en het profiel van iemand anders op te halen.
+
+<details>
+
+<summary>Tip</summary>
+
+Als JavaScript de belemmering is... wat kun je in een browser dan doen met JavaScript?
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+Je kunt via de instellingen van je browser JavaScript tijdelijk uitschakelen (of een extensie zoals NoScript gebruiken). Als je daarna het formulierveld met F12 aanpast naar `value="1"` en op Submit klikt, wordt het formulier verstuurd zonder dat de JavaScript-controle wordt geactiveerd! De server levert de data weer braaf af.
+
+</details>
+
+## 5. ✓ Wat moest je zien?
+
+:::tip Controle
+- Na het uitschakelen van JavaScript en het aanpassen van de `value` naar `1` geeft de server de gegevens van de admin terug.
+- De JavaScript-blokkade verschijnt niet meer zodra scripts zijn uitgeschakeld.
+- De server accepteert het verzoek zonder verdere controle.
+
+Lukt het niet? Controleer of JavaScript daadwerkelijk is uitgeschakeld in je browserinstellingen en of je de `value` correct hebt aangepast vóórdat je op Submit klikte.
+:::

@@ -1,0 +1,105 @@
+---
+sidebar_position: 5
+hide_table_of_contents: true
+---
+
+# 10.5 Bouwsteen 2 — een lege tabel
+
+**Leerdoel:** je maakt een 2D-lijst (lijst van lijsten) van de juiste
+afmetingen, met alles op 0. Dat is de tabel die we straks gaan
+invullen.
+
+## Wat we willen
+
+Een tabel met `n + 1` rijen en `capaciteit + 1` kolommen. Alle cellen
+beginnen op 0.
+
+Voor het image-voorbeeld (5 items, W=11): `6 × 12 = 72` cellen, allemaal
+0.
+
+Waarom `+1`? Omdat we **rij 0** (= geen items) en **kolom 0** (= lege
+rugzak) als basisgevallen meetellen. Die zijn allemaal 0 (geen items
+of geen ruimte → geen waarde).
+
+## Specificatie
+
+- **Input**: `n` (aantal items), `capaciteit` (rugzakgrootte).
+- **Output**: een lijst van `n + 1` lijsten, elk met `capaciteit + 1`
+  nullen.
+
+## Voorspel
+
+Wat denk je dat dit print?
+
+```python
+n = 2
+capaciteit = 3
+tabel = [[0] * (capaciteit + 1) for _ in range(n + 1)]
+print(tabel)
+print(len(tabel), "rijen")
+print(len(tabel[0]), "kolommen")
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+[[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+3 rijen
+4 kolommen
+```
+
+Drie rijen (`n + 1 = 3`), elk met vier kolommen (`capaciteit + 1 = 4`).
+Allemaal 0.
+
+</details>
+
+## Bouw zelf en test
+
+<PyRunner initialCode={`def lege_tabel(n, capaciteit):
+    # Vul aan:
+    # Return een lijst van (n+1) lijsten,
+    # elk met (capaciteit+1) nullen.
+    return []
+
+
+# === Tests ===
+t = lege_tabel(5, 11)
+assert len(t) == 6, f"Verwacht 6 rijen, kreeg {len(t)}"
+assert len(t[0]) == 12, f"Verwacht 12 kolommen, kreeg {len(t[0])}"
+assert all(cel == 0 for rij in t for cel in rij), "Alle cellen moeten 0 zijn"
+
+# Belangrijk: rijen mogen geen alias zijn van elkaar
+t[0][0] = 99
+assert t[1][0] == 0, "Update aan rij 0 mag rij 1 niet beïnvloeden"
+
+# Klein voorbeeld
+t2 = lege_tabel(2, 3)
+assert t2 == [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+
+print("Alle tests gehaald ✓")`} />
+
+<details>
+<summary>Tip</summary>
+
+Eén regel doet alles:
+
+```python
+return [[0] * (capaciteit + 1) for _ in range(n + 1)]
+```
+
+- `[0] * (capaciteit + 1)` maakt één rij met de juiste lengte.
+- `for _ in range(n + 1)` herhaalt dat patroon voor elke rij.
+
+**Pas op** met `[[0] * (capaciteit + 1)] * (n + 1)` — dat lijkt korter,
+maar geeft `n + 1` keer **dezelfde** rij (alias). De laatste assertion
+hierboven vangt dat: update aan rij 0 zou dan ook rij 1 raken.
+
+</details>
+
+## Wat is er nu klaar?
+
+De tabel staat klaar. Rij 0 hoeft niet meer aangeraakt — die is per
+definitie 0. Vanaf de volgende stap vullen we rijen 1 t/m n in.
+
+Door naar [stap 6: vul één rij in →](./06-bouwen-een-rij).

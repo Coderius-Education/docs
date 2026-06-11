@@ -1,0 +1,25 @@
+packages:
+  - 'packages/*'
+  - 'sites/*'
+
+# One pinned version per shared dependency. Sites reference these with
+# "catalog:" so every site builds against the same toolchain.
+catalog:
+  '@docusaurus/core': 3.10.1
+  '@docusaurus/preset-classic': 3.10.1
+  '@docusaurus/plugin-content-docs': 3.10.1
+  '@docusaurus/plugin-pwa': 3.10.1
+  '@docusaurus/module-type-aliases': 3.10.1
+  '@docusaurus/tsconfig': 3.10.1
+  '@docusaurus/types': 3.10.1
+  '@mdx-js/react': ^3.0.0
+  clsx: ^2.0.0
+  prism-react-renderer: ^2.4.1
+  react: ^19.0.0
+  react-dom: ^19.0.0
+  '@types/react': ^19.0.0
+  typescript: ~5.6.2
+  monaco-editor: ^0.52.2
+  '@monaco-editor/react': ^4.7.0
+  idb-keyval: ^6.2.2
+  pyodide: ^0.29.3

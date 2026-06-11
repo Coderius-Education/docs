@@ -1,0 +1,130 @@
+---
+sidebar_position: 5
+hide_table_of_contents: true
+---
+
+# 5.5 Bouwsteen 3 — zoek vanaf een bepaalde positie
+
+**Leerdoel:** je breidt de "vind index van kleinste"-functie uit zodat hij
+vanaf een gegeven startpositie zoekt — niet vanaf 0.
+
+## Waarom dit nodig is
+
+Bij selection sort weet je na ronde `k` dat de eerste `k` elementen al
+goed staan. Je wil **niet** opnieuw daarin zoeken — je weet al dat ze
+goed zijn. Alleen het rest-stuk (vanaf index `k`) is interessant.
+
+## Wat we willen
+
+`index_van_kleinste_vanaf(lijst, start)` — return de index van het
+kleinste element in `lijst[start:]`, maar wel **uitgedrukt in indexen van
+de hele lijst** (niet vanaf 0 van het deel-stuk).
+
+Voorbeeld: `lijst = [1, 2, 8, 5, 4]`, `start = 1`:
+
+- Zoekgebied: `[2, 8, 5, 4]` — staat op indexen 1, 2, 3, 4 van de hele
+  lijst.
+- Kleinste daarin: 2, op index **1**.
+
+## Voorspel
+
+Wat denk je dat dit print?
+
+```python
+def index_van_kleinste_vanaf(lijst, start):
+    min_index = start
+    for i in range(start, len(lijst)):
+        if lijst[i] < lijst[min_index]:
+            min_index = i
+    return min_index
+
+lijst = [1, 2, 8, 5, 4]
+print(index_van_kleinste_vanaf(lijst, 0))
+print(index_van_kleinste_vanaf(lijst, 1))
+print(index_van_kleinste_vanaf(lijst, 2))
+print(index_van_kleinste_vanaf(lijst, 3))
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+0
+1
+4
+4
+```
+
+- `start=0` → zoek in hele lijst → 1 op index 0.
+- `start=1` → zoek in `[2,8,5,4]` → 2 op index 1.
+- `start=2` → zoek in `[8,5,4]` → 4 op index 4.
+- `start=3` → zoek in `[5,4]` → 4 op index 4.
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`def index_van_kleinste_vanaf(lijst, start):
+    min_index = start
+    for i in range(start, len(lijst)):
+        if lijst[i] < lijst[min_index]:
+            min_index = i
+    return min_index
+
+lijst = [1, 2, 8, 5, 4]
+print(index_van_kleinste_vanaf(lijst, 0))
+print(index_van_kleinste_vanaf(lijst, 1))
+print(index_van_kleinste_vanaf(lijst, 2))
+print(index_van_kleinste_vanaf(lijst, 3))`} />
+
+## Wat is nieuw?
+
+Twee veranderingen ten opzichte van [bouwsteen 1](./03-bouwen-vind-kleinste-index):
+
+1. **Startwaarde**: `min_index = start` (niet `0`). Anders zou de eerste
+   iteratie meteen alles voor `start` overslaan — en `lijst[0]` als
+   referentie gebruiken, wat fout is.
+
+2. **Lus**: `for i in range(start, len(lijst))` — begin bij `start`, ga
+   tot het eind. Het skipt netjes de elementen voor `start`.
+
+## Experimenteer — wat als `start` te groot is?
+
+<PyRunner initialCode={`def index_van_kleinste_vanaf(lijst, start):
+    min_index = start
+    for i in range(start, len(lijst)):
+        if lijst[i] < lijst[min_index]:
+            min_index = i
+    return min_index
+
+lijst = [1, 2, 3]
+print(index_van_kleinste_vanaf(lijst, 2))  # zoek in [3] → index 2
+# print(index_van_kleinste_vanaf(lijst, 3))  # leeg zoekgebied — wat zou er gebeuren?`} />
+
+<details>
+<summary>Wat doet `start = 3` op een lijst van lengte 3?</summary>
+
+- `min_index = 3` — maar `lijst[3]` bestaat niet. Pas op: we proberen dat
+  pas te lezen als de lus iets doet.
+- `range(3, 3)` is **leeg** → de for-lus doet 0 iteraties.
+- We retourneren `min_index = 3` zonder ooit `lijst[3]` aan te raken. Geen
+  crash, maar wel een onzinnige index.
+
+Voor selection sort is dit geen probleem — we roepen het nooit aan met
+`start == len(lijst)`. Maar als robuuste functie zou je eventueel een
+check toevoegen.
+
+</details>
+
+<SteppingStoneModel stone="selection-subrange" />
+
+## Wat nu nog mist
+
+We hebben alle ingrediënten:
+
+- **kleinste vinden vanaf positie** ([bouwsteen 3](./05-bouwen-vind-in-subreeks))
+- **swappen** ([bouwsteen 2](./04-bouwen-swap))
+
+Tijd om ze in een **lus** te zetten en zo de hele lijst te sorteren.
+
+Door naar [bouwsteen 4: de buitenste lus](./06-bouwen-buitenste-lus).

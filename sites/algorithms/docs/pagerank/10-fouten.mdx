@@ -1,0 +1,69 @@
+---
+sidebar_position: 10
+hide_table_of_contents: true
+---
+
+# 13.10 Er gaat iets mis — top-3 fouten
+
+**Leerdoel:** je herkent de drie klassieke valkuilen bij het bouwen van
+PageRank.
+
+## Ranks uit dezelfde ronde hergebruiken
+
+Symptoom: de ranks kloppen *bijna*, maar net niet — en ze hangen af van de
+volgorde van je pagina's.
+
+**Oorzaak:** je werkt `rank` ter plekke bij, zodat latere pagina's in
+dezelfde ronde al de nieuwe waarde van eerdere pagina's gebruiken. Eén
+iteratie moet volledig op de waarden van de **vorige** ronde gebaseerd
+zijn.
+
+```python
+# FOUT — overschrijft rank tijdens de ronde
+for p in web:
+    rank[p] = (1 - d) / n + d * som_voor(p, rank)   # rank verandert al
+```
+
+**Oplossing:** bouw eerst een nieuwe dict, vervang `rank` pas daarna.
+
+```python
+# GOED
+nieuw = {p: (1 - d) / n + d * som_voor(p, rank) for p in web}
+rank = nieuw
+```
+
+## Het basisdeel `(1 − d)/N` vergeten
+
+Symptoom: de som van de ranks zakt onder de 1 en pagina's lopen leeg.
+
+**Oorzaak:** je rekent alleen `d · Σ ...` en laat de willekeurige sprong
+weg. Dan "lekt" er belang weg en klopt de verdeling niet meer.
+
+```python
+# FOUT
+nieuw[p] = d * som          # basisdeel ontbreekt
+
+# GOED
+nieuw[p] = (1 - d) / n + d * som
+```
+
+## Dangling nodes — pagina's zonder uitgaande links
+
+Symptoom: zodra een pagina nergens naartoe linkt, telt de som niet meer op
+tot 1.
+
+**Oorzaak:** het belang van zo'n "doodlopende" pagina wordt nergens
+heen verdeeld en verdwijnt. In onze voorbeelden linkt elke pagina ergens
+naartoe, dus dit speelt niet — maar in een echt web wel.
+
+**Oplossing:** behandel een pagina zónder uitgaande links alsof hij naar
+**alle** pagina's linkt (de surfer springt dan willekeurig verder):
+
+```python
+def uitgaande_links(web, i, paginas):
+    return web[i] if web[i] else set(paginas)
+```
+
+Zo blijft het belang behouden en telt de som weer op tot 1.
+
+Door naar [stap 11: cheatsheet →](./11-cheatsheet).

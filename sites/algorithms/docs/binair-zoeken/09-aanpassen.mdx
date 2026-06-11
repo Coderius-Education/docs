@@ -1,0 +1,81 @@
+---
+sidebar_position: 9
+hide_table_of_contents: true
+---
+
+# 4.9 Aanpassen — geef ook het aantal stappen terug
+
+**Leerdoel:** je past binair zoeken aan zodat hij **twee** dingen returnt
+zonder de logica te veranderen.
+
+## Opdracht
+
+Pas `binair_zoek` aan zodat de functie een **tuple** returnt
+`(index, aantal_stappen)`:
+
+- `index` zoals voorheen (de gevonden index, of `-1`).
+- `aantal_stappen` is het aantal keer dat de `while`-lus draait.
+
+Voorbeeld: `binair_zoek_met_stappen([1, 3, 5, 7, 9, 11, 13, 15], 11)` moet
+`(5, 2)` returnen (index 5, in 2 stappen).
+
+<PyRunner initialCode={`def binair_zoek_met_stappen(lijst, doel):
+    laag = 0
+    hoog = len(lijst) - 1
+    # vul aan: tel hoe vaak de while-lus draait
+    while laag <= hoog:
+        midden = (laag + hoog) // 2
+        if lijst[midden] == doel:
+            return (midden, 0)   # pas aan
+        elif lijst[midden] < doel:
+            laag = midden + 1
+        else:
+            hoog = midden - 1
+    return (-1, 0)   # pas aan
+
+# Tests
+getallen = list(range(1, 101))   # 1 t/m 100
+print(binair_zoek_met_stappen(getallen, 1))    # verwacht: (0, ?)
+print(binair_zoek_met_stappen(getallen, 100))  # verwacht: (99, ?)
+print(binair_zoek_met_stappen(getallen, 50))   # verwacht: (49, ?)
+print(binair_zoek_met_stappen(getallen, 999))  # verwacht: (-1, ?)`} />
+
+<details>
+<summary>Tip</summary>
+
+Welke bouwsteen verandert er **niet**? (alles in de while-lus rondom het
+vergelijken/verschuiven blijft gelijk)
+
+Welke wel? Je hebt een **teller** nodig die je:
+- **vóór** de while-lus op 0 zet
+- **binnen** de while-lus met 1 ophoogt
+- bij elke `return` meegeeft
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def binair_zoek_met_stappen(lijst, doel):
+    laag = 0
+    hoog = len(lijst) - 1
+    stappen = 0
+    while laag <= hoog:
+        stappen += 1
+        midden = (laag + hoog) // 2
+        if lijst[midden] == doel:
+            return (midden, stappen)
+        elif lijst[midden] < doel:
+            laag = midden + 1
+        else:
+            hoog = midden - 1
+    return (-1, stappen)
+```
+
+Voor een lijst van 100 elementen zijn er **maximaal 7** stappen
+(`2⁷ = 128`). Dat sluit aan op de theorie: O(log₂ n).
+
+</details>
+
+Door naar [stap 10: bouw zelf](./10-zelf-bouwen).

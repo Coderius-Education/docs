@@ -1,0 +1,132 @@
+---
+sidebar_position: 4
+hide_table_of_contents: true
+---
+
+# 8.4 Bouwsteen 1 — de graph in Python
+
+**Leerdoel:** je kunt een gewogen graph opslaan in een Python-dict, en
+voor één node zijn buren ophalen.
+
+## Wat we willen
+
+We hebben dit plaatje:
+
+```
+       4
+   A ─────── B
+   │         │
+   2         1
+   │         │
+   C ─────── D
+       8
+```
+
+We moeten dit in Python zetten zodat we straks kunnen vragen: *"Wie zijn
+de buren van `A`?"* met antwoord *"`B` met gewicht 4, en `C` met gewicht
+2."*
+
+## Eén node, één lijstje
+
+Voor elke node hebben we een **lijstje van buren** nodig — met hun
+gewicht. Dat schrijven we als een lijst van tuples:
+
+```python
+buren_van_A = [('B', 4), ('C', 2)]
+```
+
+Lees: *"de buren van `A` zijn: `B` met gewicht 4, en `C` met gewicht 2."*
+
+Tuples met `()` haakjes houden twee dingen netjes samen: de
+naam-van-de-buur en het gewicht. Een **lijst** met meerdere tuples want
+een node kan meerdere buren hebben.
+
+## Alle nodes in één dict
+
+Voor alle vier nodes maken we één **dict**:
+
+```python
+graph = {
+    'A': [('B', 4), ('C', 2)],
+    'B': [('A', 4), ('D', 1)],
+    'C': [('A', 2), ('D', 8)],
+    'D': [('B', 1), ('C', 8)],
+}
+```
+
+Sleutel = node-naam. Waarde = lijstje van buren.
+
+Let op: elke edge staat **twee keer** in deze dict. De edge `A─B` met
+gewicht 4 zie je bij `'A': [..., ('B', 4), ...]` én bij
+`'B': [('A', 4), ...]`. Niet-gerichte edges sla je dus altijd aan
+**beide kanten** op.
+
+## Voorspel
+
+Wat denk je dat dit print?
+
+```python
+graph = {
+    'A': [('B', 4), ('C', 2)],
+    'B': [('A', 4), ('D', 1)],
+    'C': [('A', 2), ('D', 8)],
+    'D': [('B', 1), ('C', 8)],
+}
+
+print(graph['A'])
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+[('B', 4), ('C', 2)]
+```
+
+Een lijst met twee tuples. Vanuit `A` zijn er twee buren.
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`graph = {
+    'A': [('B', 4), ('C', 2)],
+    'B': [('A', 4), ('D', 1)],
+    'C': [('A', 2), ('D', 8)],
+    'D': [('B', 1), ('C', 8)],
+}
+
+print(graph['A'])`} />
+
+## Door de buren lopen
+
+Met `for buur, gewicht in graph['A']:` pakken we elke tuple in twee
+losse variabelen:
+
+<PyRunner initialCode={`graph = {
+    'A': [('B', 4), ('C', 2)],
+    'B': [('A', 4), ('D', 1)],
+    'C': [('A', 2), ('D', 8)],
+    'D': [('B', 1), ('C', 8)],
+}
+
+for buur, gewicht in graph['A']:
+    print(f"A → {buur} (gewicht {gewicht})")`} />
+
+<details>
+<summary>Verwachte uitvoer</summary>
+
+```
+A → B (gewicht 4)
+A → C (gewicht 2)
+```
+
+</details>
+
+## Wat nu nog mist
+
+We weten **hoe** we de graph opslaan en hoe we buren ophalen. We hebben
+nog geen plek om de **afstanden** en **bekend-status** bij te houden.
+Dat is bouwsteen 2.
+
+Door naar [bouwsteen 2: de tabel →](./05-bouwen-tabel).

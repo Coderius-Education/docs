@@ -1,0 +1,107 @@
+---
+sidebar_position: 1
+sidebar_label: 'Low'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# SQL Injection (Blind) — Low
+
+Soms zijn webservers kwetsbaar voor SQL Injection, maar tonen ze niet de volledige database-output op je scherm. We zijn dan "blind".
+
+## 1. Predict (Voorspel)
+
+De server gebruikt de volgende code om op zoek te gaan naar een user ID:
+
+```php
+$id = $_GET['id'];
+$query = "SELECT first_name, last_name FROM users WHERE user_id = '$id';";
+
+if (mysqli_num_rows($result) > 0) {
+    echo "User ID exists in the database.";
+} else {
+    echo "User ID is MISSING from the database.";
+}
+```
+
+**Vraag:** Wat is het allergrootste verschil in wat jij als aanvaller op het scherm ziet, vergeleken met de "normale" SQL Injection-uitdaging?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Bij normale SQL Injection print de website daadwerkelijk de Voornaam en Achternaam op je scherm, waardoor je met een UNION-commando complete tabellen kunt laten weergeven.
+Hier print de server **alleen** een vaste tekst: "Bestaat" of "Bestaat niet" (een Boolean resultaat). Er komt nooit data op je scherm! Je bent daardoor totaal blind.
+
+</details>
+
+## 2. Run (Uitvoeren)
+
+Start het lab en bekijk hoe de applicatie normaal reageert.
+
+<DvwaLab module="sql_injection_blind" level="low" />
+
+Vul ID `1` in. Het scherm zegt "Exists".
+Vul ID `99` in. Het scherm zegt "Missing".
+Vul ID `2` en `3` in. Noteer welke IDs bestaan.
+
+## 3. Investigate (Onderzoeken)
+
+Typ nu `1'` (het getal 1 gevolgd door één enkel aanhalingsteken) in het invoerveld en klik op Submit.
+
+**Vraag:** Wat zie je op het scherm? Verandert de reactie ten opzichte van een normaal ID? Wat zegt dit over hoe de applicatie de invoer verwerkt?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Je ziet waarschijnlijk een foutmelding of een onverwachte "Missing"-reactie ondanks dat het gebruikers-ID 1 wél bestaat. Dit onthult dat de applicatie jouw invoer ongefilterd in de SQL-query plakt. Het aanhalingsteken breekt de SQL-syntax. De applicatie is kwetsbaar — en nu weet je dat je Ja/Nee-vragen kunt stellen aan de database via de "Exists"/"Missing"-reactie.
+
+</details>
+
+## 4. Modify & Make (Aanpassen & Maken)
+
+Omdat de website nog steeds kwetsbaar is, kun je vragen stellen aan de database waarop het antwoord Ja of Nee is. Dit noemen we **Boolean Based Blind SQL Injection**.
+
+Vul de volgende twee payloads in en kijk naar het resultaat:
+1. `1' AND 1=1 #`
+2. `1' AND 1=2 #`
+
+<details>
+
+<summary>Tip</summary>
+
+Denk na over de SQL-code:
+`WHERE user_id = '1' AND 1=1` (1 is altijd 1 → Exists)
+`WHERE user_id = '1' AND 1=2` (1 is NOOIT 2 → Missing)
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+Bij de eerste query toont het scherm "Exists". Bij de tweede toont het "Missing", omdat het tweede deel van de AND-query niet waar was!
+Hiermee heb je een methode ontwikkeld om elke Ja/Nee-vraag aan de server te stellen:
+
+Voorbeeld: wil je weten of de database draait onder de gebruikersnaam "root"?
+Vul in: `1' AND user() = 'root@localhost' #`
+- Zegt het scherm "Exists"? Dan weten we dat de naam `root` is!
+- Zegt het scherm "Missing"? Dan heet de gebruiker in de database anders.
+
+</details>
+
+## 5. ✓ Wat moest je zien?
+
+:::tip Controle
+- `1' AND 1=1 #` geeft "Exists" terug — de AND-conditie is waar.
+- `1' AND 1=2 #` geeft "Missing" terug — de AND-conditie is onwaar.
+- De twee reacties zijn verschillend, wat bewijst dat jouw SQL-code daadwerkelijk door de database wordt uitgevoerd.
+
+Krijg je bij beide payloads hetzelfde resultaat? Controleer of je de aanhalingstekens en het hekje correct hebt overgetypt, inclusief de spatie vóór `#`.
+:::
+
+## 6. Er gaat iets mis...
+
+Blind SQL Injection is het spelen van een spelletje "Wie Ben Ik" waarbij je letter voor letter een database leegtrekt. Handmatig duurt dit monnikenwerk eeuwen. Daarom gebruiken professionele pentesters vrijwel altijd de tool **SQLmap** in Kali Linux. Die vuurt per seconde tientallen Ja/Nee-raadsels op de database af en puzzelt de antwoorden volautomatisch in elkaar.

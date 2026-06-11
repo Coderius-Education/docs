@@ -1,0 +1,251 @@
+---
+sidebar_position: 4
+hide_table_of_contents: true
+description: Loop door dictionaries met .items(), check of een sleutel bestaat met in, en voorkom KeyError.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 11b Door een dictionary loopen
+
+Je kunt nu dictionaries maken en waardes opzoeken met een sleutel. In deze les leer je hoe je **door** een dictionary loopt en hoe je veilig controleert of een sleutel bestaat.
+
+## Loopen over de sleutels
+
+Een simpele `for`-loop op een dictionary geeft je de **sleutels**:
+
+```python
+leerling = {"naam": "Sara", "leeftijd": 15, "klas": "3B"}
+
+for sleutel in leerling:
+    print(sleutel)
+```
+
+Uitvoer:
+
+```
+naam
+leeftijd
+klas
+```
+
+## Loopen over sleutels én waardes met .items()
+
+Wil je beide tegelijk? Gebruik `.items()`:
+
+```python
+for sleutel, waarde in leerling.items():
+    print(f"{sleutel}: {waarde}")
+```
+
+Uitvoer:
+
+```
+naam: Sara
+leeftijd: 15
+klas: 3B
+```
+
+`.items()` levert elke ronde een **paar**: eerst de sleutel, dan de waarde.
+
+## Bestaat de sleutel? — de in-operator
+
+Met `in` check je of een sleutel in de dictionary zit. Daarmee voorkom je een `KeyError`:
+
+```python
+if "naam" in leerling:
+    print(leerling["naam"])
+else:
+    print("Geen naam bekend.")
+```
+
+`in` controleert **sleutels**, niet waardes.
+
+---
+
+## Opdracht 11b.1: Prijzen-loop
+
+Maak een dictionary `prijzen = {"appel": 0.50, "banaan": 0.30}` en loop er met `.items()` doorheen om elke prijs te printen.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+`for product, prijs in prijzen.items():` — gebruik beide in een f-string.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+prijzen = {"appel": 0.50, "banaan": 0.30}
+
+for product, prijs in prijzen.items():
+    print(f"{product}: € {prijs}")
+```
+
+<CodeExercise>{`prijzen = {"appel": 0.50, "banaan": 0.30}
+
+for product, prijs in prijzen.items():
+    print(f"{product}: € {prijs}")`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 11b.2: Profielprinter
+
+Maak een dictionary `profiel` met minstens 5 sleutels over jezelf. Loop met `.items()` over de dictionary en print elke regel netjes met een kop en een afsluiting.
+
+Verwachte uitvoer:
+
+```
+=== Mijn Profiel ===
+  naam: Alex
+  leeftijd: 15
+  hobby: muziek
+  stad: Amsterdam
+  favoriete eten: pasta
+====================
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+`for sleutel, waarde in profiel.items():` met een f-string `f"  {sleutel}: {waarde}"` (let op de twee spaties voor de indent).
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+profiel = {
+    "naam": "Alex",
+    "leeftijd": 15,
+    "hobby": "muziek",
+    "stad": "Amsterdam",
+    "favoriete eten": "pasta"
+}
+
+print("=== Mijn Profiel ===")
+for sleutel, waarde in profiel.items():
+    print(f"  {sleutel}: {waarde}")
+print("====================")
+```
+
+<CodeExercise>{`profiel = {
+    "naam": "Alex",
+    "leeftijd": 15,
+    "hobby": "muziek",
+    "stad": "Amsterdam",
+    "favoriete eten": "pasta"
+}
+
+print("=== Mijn Profiel ===")
+for sleutel, waarde in profiel.items():
+    print(f"  {sleutel}: {waarde}")
+print("====================")`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 11b.3: Digitaal winkelmandje
+
+Dit is de eindbaas van de basiscursus. Bouw een winkelmandje met twee dictionaries: een `winkel` (product → prijs) en een `mandje` (product → aantal). Schrijf een functie `bereken_totaal(winkel, mandje)` die met `.items()` door het mandje loopt en de totaalprijs **teruggeeft** met `return`. Print daarnaast een kassabon.
+
+Verwachte uitvoer:
+
+```
+=== Kassabon ===
+  Brood x2  ->  5.0 euro
+  Melk x1  ->  1.2 euro
+  Chocola x3  ->  10.5 euro
+================
+Totaal: 16.7 euro
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Drie stappen binnen de loop van `bereken_totaal`:
+
+1. `prijs = winkel[product]` — zoek de prijs op.
+2. `regel = prijs * aantal` — bereken de regelprijs.
+3. `totaal += regel` — tel op.
+
+Daarna `return totaal`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+winkel = {
+    "Brood": 2.50,
+    "Kaas": 4.00,
+    "Melk": 1.20,
+    "Appel": 0.80,
+    "Chocola": 3.50
+}
+
+mandje = {
+    "Brood": 2,
+    "Melk": 1,
+    "Chocola": 3
+}
+
+def bereken_totaal(winkel, mandje):
+    totaal = 0
+    for product, aantal in mandje.items():
+        prijs = winkel[product]
+        totaal += prijs * aantal
+    return totaal
+
+print("=== Kassabon ===")
+for product, aantal in mandje.items():
+    prijs = winkel[product]
+    print(f"  {product} x{aantal}  ->  {prijs * aantal} euro")
+print("================")
+print(f"Totaal: {bereken_totaal(winkel, mandje)} euro")
+```
+
+<CodeExercise>{`winkel = {
+    "Brood": 2.50,
+    "Kaas": 4.00,
+    "Melk": 1.20,
+    "Appel": 0.80,
+    "Chocola": 3.50
+}
+
+mandje = {
+    "Brood": 2,
+    "Melk": 1,
+    "Chocola": 3
+}
+
+def bereken_totaal(winkel, mandje):
+    totaal = 0
+    for product, aantal in mandje.items():
+        prijs = winkel[product]
+        totaal += prijs * aantal
+    return totaal
+
+print("=== Kassabon ===")
+for product, aantal in mandje.items():
+    prijs = winkel[product]
+    print(f"  {product} x{aantal}  ->  {prijs * aantal} euro")
+print("================")
+print(f"Totaal: {bereken_totaal(winkel, mandje)} euro")`}</CodeExercise>
+
+</details>
+
+---
+
+## En nu?
+
+Gefeliciteerd! Je hebt de basis van Python onder de knie: variabelen, rekenen, tekst, beslissingen, herhaling, functies, lijsten en dictionaries. Hiermee kun je echte programma's bouwen.
+
+Klaar om iets **visueels** te maken — animaties, kleine games, dingen die bewegen? Ga dan verder met [**play-docs**](https://play.coderius.nl/). Daar leer je hoe je met de `play`-bibliotheek vormen tekent, ze laat bewegen en reageert op toetsenbord en muis. Alle Python die je hier hebt geleerd, gebruik je daar opnieuw.

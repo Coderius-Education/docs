@@ -1,0 +1,91 @@
+---
+sidebar_position: 3
+hide_table_of_contents: true
+---
+
+# 2.3 Bouwsteen 1 — vergelijken en bijhouden
+
+**Leerdoel:** je kunt één waarde vergelijken met "het maximum tot nu toe"
+en die laatste bijwerken als nodig.
+
+## Wat we willen
+
+We bouwen ons algoritme stukje voor stukje. Eerst de kleinste bouwsteen:
+**één** vergelijking. Stel je hebt al een variabele `max_tot_nu_toe` en je
+ziet een nieuw getal — wat doe je?
+
+## Voorspel
+
+Wat denk je dat dit print?
+
+```python
+max_tot_nu_toe = 3
+nieuw = 7
+
+if nieuw > max_tot_nu_toe:
+    max_tot_nu_toe = nieuw
+
+print(max_tot_nu_toe)
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+7
+```
+
+`nieuw` (7) is groter dan `max_tot_nu_toe` (3), dus de `if` is waar →
+`max_tot_nu_toe` wordt overgeschreven met 7.
+
+Als `nieuw` `2` was geweest, dan was de `if` onwaar → `max_tot_nu_toe`
+bleef gewoon 3.
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`max_tot_nu_toe = 3
+nieuw = 7
+
+if nieuw > max_tot_nu_toe:
+    max_tot_nu_toe = nieuw
+
+print(max_tot_nu_toe)`} />
+
+## Een variabele overschrijven
+
+```python
+max_tot_nu_toe = nieuw
+```
+
+Dit is een **toekenning**: de waarde van `nieuw` wordt opgeslagen in
+`max_tot_nu_toe`. Wat erin zat (de 3) is weg.
+
+Let op het verschil met **vergelijken**:
+
+- `=`  → toekennen (zet rechts in links)
+- `==` → vergelijken (klopt het dat ze gelijk zijn?)
+
+## Experimenteer
+
+Probeer verschillende waardes:
+
+<PyRunner initialCode={`# Wijzig de waardes en run opnieuw
+max_tot_nu_toe = 5
+nieuw = 3
+
+if nieuw > max_tot_nu_toe:
+    max_tot_nu_toe = nieuw
+    print(f"update! max is nu {max_tot_nu_toe}")
+else:
+    print(f"geen update. max blijft {max_tot_nu_toe}")`} />
+
+<SteppingStoneModel stone="maximum-compare" />
+
+## Wat nu nog mist
+
+Dit werkt voor **één** vergelijking. We willen dit doen voor **elk
+element** van de lijst — daarvoor hebben we een lus nodig.
+
+Door naar [bouwsteen 2: doorlopen](./04-bouwen-doorlopen).

@@ -1,0 +1,317 @@
+# Python Cheatsheet
+
+Een snel overzicht van alles wat je geleerd hebt. Hier zie je in één oogopslag alle belangrijke code-snippets die je tot nu toe hebt geleerd.
+
+---
+
+## Basis
+
+### Print
+
+```python
+print("Hallo, wereld!")
+print("Naam:", naam)
+print(f"Ik ben {leeftijd} jaar oud.")
+```
+
+### Variabelen
+
+```python
+naam = "Sara"          # str (tekst)
+leeftijd = 15          # int (geheel getal)
+lengte = 1.75          # float (decimaal)
+is_student = True      # bool (waar/niet waar)
+```
+
+### Rekenen
+
+```python
+5 + 3      # 8    optellen
+10 - 4     # 6    aftrekken
+3 * 7      # 21   vermenigvuldigen
+10 / 3     # 3.33 delen
+```
+
+---
+
+## Tekst
+
+### Strings
+
+```python
+tekst = "Hallo Wereld"
+
+tekst.upper()                      # "HALLO WERELD"
+tekst.lower()                      # "hallo wereld"
+tekst.replace("Wereld", "Python")  # "Hallo Python"
+len(tekst)                         # 12
+```
+
+### f-strings
+
+```python
+naam = "Lisa"
+leeftijd = 15
+
+print(f"Ik ben {naam}.")
+print(f"Volgend jaar ben ik {leeftijd + 1}.")
+```
+
+---
+
+## Booleans en vergelijken
+
+### Vergelijkingsoperatoren
+
+```python
+5 == 5     # True   is gelijk aan
+5 != 3     # True   is niet gelijk aan
+3 < 10     # True   kleiner dan
+3 > 10     # False  groter dan
+5 <= 5     # True   kleiner dan of gelijk aan
+3 >= 10    # False  groter dan of gelijk aan
+```
+
+### Logische operatoren
+
+```python
+True and True     # True   (beide waar)
+True and False    # False
+True or False     # True   (minstens één waar)
+False or False    # False
+not True          # False  (omgedraaid)
+```
+
+---
+
+## If en if/else
+
+### if
+
+```python
+if leeftijd >= 18:
+    print("Volwassen")
+```
+
+### if/else
+
+```python
+if temperatuur >= 20:
+    print("Warm")
+else:
+    print("Koud")
+```
+
+### elif (meerdere takken)
+
+```python
+if score >= 80:
+    print("Uitstekend")
+elif score >= 55:
+    print("Voldoende")
+else:
+    print("Onvoldoende")
+```
+
+---
+
+## For-loop
+
+### range()
+
+```python
+for i in range(5):          # 0, 1, 2, 3, 4
+    print(i)
+
+for i in range(1, 6):       # 1, 2, 3, 4, 5
+    print(i)
+
+for i in range(0, 10, 2):   # 0, 2, 4, 6, 8
+    print(i)
+```
+
+### Teller bijhouden
+
+```python
+som = 0
+for i in range(1, 11):
+    som += i               # som = som + i
+print(som)                 # 55
+```
+
+---
+
+## While-loop
+
+### While True
+
+```python
+while True:
+    print("Dit stopt nooit!")
+```
+
+### While met voorwaarde
+
+```python
+teller = 0
+
+while teller < 5:
+    print(teller)
+    teller += 1       # Vergeet dit niet!
+```
+
+### If in een while-loop
+
+```python
+getal = 1
+
+while getal <= 5:
+    if getal < 3:
+        print(f"{getal} is laag")
+    else:
+        print(f"{getal} is hoog")
+    getal += 1
+```
+
+---
+
+## Functies
+
+### Functie zonder parameters
+
+```python
+def zeg_hallo():
+    print("Hallo!")
+
+zeg_hallo()
+```
+
+### Functie met parameters
+
+```python
+def begroet(naam):
+    print(f"Hallo, {naam}!")
+
+begroet("Sara")
+```
+
+### Return
+
+```python
+def optellen(a, b):
+    return a + b
+
+resultaat = optellen(3, 5)   # 8
+```
+
+### print() vs return
+
+```python
+def met_print(x):
+    print(x * 2)     # toont op scherm
+
+def met_return(x):
+    return x * 2     # geeft waarde terug
+
+a = met_print(5)     # toont 10, a wordt None
+b = met_return(5)    # toont niets, b wordt 10
+```
+
+Een functie zonder `return` geeft automatisch `None` terug.
+
+---
+
+## Lijsten
+
+### Lijst maken en opvragen
+
+```python
+namen = ["Ali", "Sara", "Daan"]
+
+print(namen[0])     # "Ali"
+print(namen[-1])    # "Daan"
+print(len(namen))   # 3
+```
+
+### Toevoegen en verwijderen
+
+```python
+namen = ["Ali", "Sara"]
+
+namen.append("Daan")         # Toevoegen aan einde
+namen.insert(0, "Lisa")      # Toevoegen op positie 0
+namen.remove("Ali")          # Verwijderen op naam
+namen.pop()                  # Laatste verwijderen en teruggeven
+```
+
+### Door een lijst loopen
+
+```python
+namen = ["Ali", "Sara", "Daan"]
+
+for naam in namen:
+    print(naam)
+```
+
+### Handige functies
+
+```python
+getallen = [3, 1, 4, 1, 5]
+
+len(getallen)       # 5
+min(getallen)       # 1
+max(getallen)       # 5
+sum(getallen)       # 14
+sorted(getallen)    # [1, 1, 3, 4, 5]
+```
+
+---
+
+## Dictionaries
+
+### Dictionary maken en opvragen
+
+```python
+leerling = {
+    "naam": "Sara",
+    "leeftijd": 15
+}
+
+print(leerling["naam"])      # "Sara"
+leerling["klas"] = "3B"      # Toevoegen
+leerling["leeftijd"] = 16    # Veranderen
+```
+
+### Door een dictionary loopen
+
+```python
+for sleutel, waarde in leerling.items():
+    print(f"{sleutel}: {waarde}")
+```
+
+### Checken of een sleutel bestaat
+
+```python
+if "naam" in leerling:
+    print(leerling["naam"])
+else:
+    print("Geen naam bekend.")
+```
+
+Een niet-bestaande sleutel opvragen geeft een `KeyError`.
+
+---
+
+## Veelvoorkomende fouten
+
+```python
+SyntaxError                    # haakje vergeten / = i.p.v. ==
+IndentationError               # inspringen vergeten
+NameError                      # variabele bestaat niet
+TypeError                      # type klopt niet (str + int)
+ZeroDivisionError              # delen door 0
+IndexError: list index ...     # lijst-positie bestaat niet
+KeyError                       # dictionary-sleutel bestaat niet
+ValueError: ... not in list    # .remove() op iets dat niet bestaat
+```
+

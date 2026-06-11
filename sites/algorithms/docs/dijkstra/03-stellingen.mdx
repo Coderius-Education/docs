@@ -1,0 +1,123 @@
+---
+sidebar_position: 3
+hide_table_of_contents: true
+---
+
+# 8.3 Voorspel — waar of niet waar?
+
+**Leerdoel:** je test je intuïtie over Dijkstra op concept-niveau,
+voordat je begint met programmeren.
+
+Lees elke stelling. Bedenk eerst je antwoord. Klap dan pas open.
+
+## Stelling 1
+
+> *"De kortste route tussen twee nodes is altijd de directe verbinding,
+> als die bestaat."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Niet waar.**
+
+In onze voorbeeldgraph was `A → D` indirect (geen directe edge), maar
+zelfs als die wel had bestaan met gewicht 20, dan was `A → B → D = 5`
+nog steeds korter geweest. Een "omweg" kan totaal goedkoper zijn.
+
+</details>
+
+## Stelling 2
+
+> *"Als je Dijkstra runt vanuit A, weet je tegelijk de kortste afstand
+> naar alle andere bereikbare nodes."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Waar — dat is een van de mooie eigenschappen.**
+
+Aan het eind van Dijkstra heb je voor élke bereikbare node de kortste
+afstand. Eén pen-en-papier-sessie geeft je dus 4 antwoorden tegelijk
+(in onze 4-node graph).
+
+</details>
+
+## Stelling 3
+
+> *"Een edge tussen `A` en `B` met gewicht 4 betekent: vanaf `A` kun je
+> naar `B` met kost 4, én vanaf `B` kun je naar `A` met kost 4."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Waar — in een niet-gerichte graph.**
+
+In een **niet-gerichte** graph (zoals onze voorbeeldgraph) zijn alle
+edges tweerichtingsverkeer met hetzelfde gewicht.
+
+In een **gerichte** graph (eenrichtingsverkeer) zou dat anders kunnen
+zijn — je kunt zelfs verschillende gewichten heen en terug hebben
+(spitsuur op één route!). Dijkstra werkt voor beide soorten, je moet
+alleen je representatie kloppend houden.
+
+</details>
+
+## Stelling 4
+
+> *"Dijkstra werkt ook met negatieve gewichten."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Niet waar.**
+
+Dijkstra leunt op het idee "als een node bekend is, kan zijn afstand
+niet meer verbeteren". Bij negatieve gewichten klopt dat niet meer —
+een latere route met een negatieve edge zou alsnog korter kunnen zijn.
+
+Voor negatieve gewichten gebruik je *Bellman-Ford*.
+
+</details>
+
+## Stelling 5
+
+> *"Het is mogelijk dat een node tijdens Dijkstra wordt geüpdate naar
+> een **kortere** afstand, vóór hij als 'bekend' wordt gemarkeerd."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Waar — sterker nog, dat is precies wat er met `D` gebeurde in onze
+pen-en-papier ronde 3.**
+
+`D` had eerst afstand 10 (via `C`). Later vond Dijkstra een korter
+alternatief (via `B`, afstand 5). Pas dáárna werd `D` als bekend
+gemarkeerd.
+
+Dat is het hele punt: meerdere kandidaten testen voordat je iets
+"klaar" verklaart.
+
+</details>
+
+## Stelling 6
+
+> *"Zodra de bestemming-node als 'bekend' is gemarkeerd, kun je stoppen
+> met Dijkstra."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Waar — als je alleen die ene bestemming nodig hebt.**
+
+Zodra een node als "bekend" wordt aangewezen, is zijn afstand
+definitief. Verder zoeken voegt voor díe ene node niets toe.
+
+In onze educatieve versie laten we Dijkstra altijd uitlopen, omdat je
+dan ook de afstanden naar **alle** andere nodes hebt. Voor één
+specifieke bestemming kun je eerder stoppen.
+
+</details>
+
+Klaar met voorspellen? Tijd om te programmeren — heel kleine stapjes.
+
+Door naar [stap 4: de graph in Python →](./04-bouwen-graph).

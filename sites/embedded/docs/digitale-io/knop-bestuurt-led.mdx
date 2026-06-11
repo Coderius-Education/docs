@@ -1,0 +1,54 @@
+---
+sidebar_position: 3
+hide_table_of_contents: true
+---
+
+import WokwiSimulator from '@site/src/components/WokwiSimulator';
+
+# 3.3 Opdracht: een aan/uit-knop
+
+Tijd om input en output te combineren. In de vorige les ging de LED alleen aan zolang je de knop **ingedrukt hield**. Nu maak je een echte aan/uit-schakelaar: één keer drukken zet hem aan, nog een keer drukken zet hem uit.
+
+<WokwiSimulator
+  projectUrl="https://wokwi.com/projects/new/arduino-uno"
+  title="Simuleer: aan/uit-knop"
+/>
+
+## Opdracht 3.3.a: Toggle met een knop
+
+Maak een sketch waarbij de LED **van stand wisselt** elke keer dat je de knop indrukt. Sluit een knop aan op pin 2 en gebruik de LED op pin 13.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Je hebt een variabele nodig die onthoudt of de LED aan of uit is, bijvoorbeeld een `bool aan`. Wissel die om bij een druk: `aan = !aan;`. Voeg na een druk een klein `delay()` toe zodat één druk niet als tien drukken telt.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```cpp
+bool aan = false;
+
+void setup() {
+  pinMode(2, INPUT_PULLUP);
+  pinMode(13, OUTPUT);
+}
+
+void loop() {
+  if (digitalRead(2) == LOW) {
+    aan = !aan;
+    digitalWrite(13, aan);
+    delay(250);
+  }
+}
+```
+
+`aan = !aan;` draait de waarde om: van `false` naar `true` en terug. De `delay(250)` voorkomt dat één druk meerdere keren telt.
+
+</details>
+
+:::info
+Dit kleine `delay()` is een eenvoudige manier om "denderen" van de knop op te vangen. Een nettere manier (debouncing met `millis()`) leer je in [6.1 delay vs millis](/docs/timing-sensoren/delay-vs-millis).
+:::

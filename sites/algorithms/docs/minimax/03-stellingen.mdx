@@ -1,0 +1,129 @@
+---
+sidebar_position: 3
+hide_table_of_contents: true
+---
+
+# 9.3 Voorspel — waar of niet waar?
+
+**Leerdoel:** je toetst je intuïtie over minimax met een paar
+stellingen, voordat je begint te programmeren.
+
+Lees elke stelling. Bedenk eerst je antwoord. Klap dan pas open.
+
+## Stelling 1
+
+> *"Minimax kiest altijd de zet die het meest direct naar winst leidt."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Niet waar.**
+
+Minimax kiest de zet die het beste **eindresultaat** garandeert tegen
+een optimale tegenstander. Soms is dat een lange, voorzichtige route
+naar remise in plaats van een gokje op winst dat de tegenstander kan
+blokkeren.
+
+</details>
+
+## Stelling 2
+
+> *"Bij tic-tac-toe wint X altijd als hij Minimax gebruikt."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Niet waar.**
+
+X wint **als de tegenstander een fout maakt**. Maar als beide spelers
+optimaal spelen — bv. allebei Minimax gebruiken — eindigt het altijd in
+**remise**. Tic-tac-toe is een opgelost spel.
+
+Dat is precies wat we straks zelf zullen zien met de AI-vs-AI demo.
+
+</details>
+
+## Stelling 3
+
+> *"De MAX-speler kijkt altijd naar het hoogste blaadje in de tree."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Niet waar.**
+
+MAX kijkt naar zijn directe **kinderen**, en daar zit een MIN-laag
+tussen — de tegenstander. MAX kiest het kind met de hoogste **MIN-
+uitkomst**, niet het hoogste blaadje.
+
+In het deel-1 voorbeeld op de pen-en-papier-pagina was het hoogste
+blaadje 9 (onder tak B), maar MAX koos tak A omdat MIN daar `min(3,5)=3`
+opleverde, beter dan de `min(2,9)=2` onder tak B.
+
+</details>
+
+## Stelling 4
+
+> *"Minimax werkt voor elk spel waar beide spelers om de beurt zetten
+> doen."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Waar — voor *deterministische* spellen met *perfecte informatie*.**
+
+Dat betekent:
+- **Deterministisch**: geen dobbelstenen, kaarten of toeval. Een zet
+  heeft een vaste uitkomst.
+- **Perfecte informatie**: beide spelers zien het hele bord. Geen
+  verborgen kaarten of mist-of-war.
+
+Minimax werkt dus voor schaken, dammen, tic-tac-toe. Niet voor poker
+(verborgen kaarten) of backgammon (dobbelstenen) — daar zijn aanpassingen
+nodig.
+
+</details>
+
+## Stelling 5
+
+> *"Een Minimax-functie roept zichzelf aan."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Waar — Minimax is recursief.**
+
+Om uit te rekenen wat zet X waard is, moet je weten wat de tegenstander
+daarna zou kiezen. Dat is een mini-Minimax-vraag voor het bord-na-X.
+Die op zijn beurt vraagt "wat doet X dan?" — enzovoort, tot je een
+terminale positie raakt.
+
+Dat heet **recursie**. In Python: een functie die zichzelf binnen zijn
+eigen body aanroept.
+
+</details>
+
+## Stelling 6
+
+> *"De Minimax-functie hoeft niet de hele tree door te rekenen — alleen
+> de tak die hij uiteindelijk kiest."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Niet waar.**
+
+Om te wéten welke tak de beste is, moet je **alle** takken vergelijken.
+Je kunt pas een keuze maken nadat alle alternatieven zijn doorgerekend.
+
+Voor zeer grote spellen (schaken!) bestaan optimalisaties zoals
+**alpha-beta pruning** die sommige takken kunnen overslaan zonder de
+uitkomst te beïnvloeden. Maar dat is een **truc bovenop** Minimax. De
+kale Minimax doet alles.
+
+</details>
+
+Klaar met voorspellen? Eerst nog twee brug-pagina's: hoe het bord eruit
+ziet in Python, en hoe functies elkaar aanroepen.
+
+Door naar [stap 4: het bord in Python →](./04-bord-in-python).

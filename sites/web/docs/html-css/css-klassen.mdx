@@ -1,0 +1,211 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeEditor from '@site/src/components/CodeEditor';
+
+# CSS Klassen
+
+## Wat ga je leren?
+
+Je leert hoe je met CSS **klassen** specifieke elementen een eigen stijl geeft, en hoe je meerdere klassen op één element kunt zetten.
+
+## Theorie
+
+Tot nu toe heb je elementen gestijld via hun tagnaam (`h1`, `p`). Dat geldt dan voor **alle** `<h1>` of `<p>` elementen. Met een **klasse** kun je één specifiek element een stijl geven.
+
+Je geeft een element een klasse met het `class` attribuut:
+
+```html
+<p class="rood">Deze paragraaf is rood.</p>
+<p>Deze paragraaf is gewoon zwart.</p>
+```
+
+In CSS selecteer je een klasse met een **punt** voor de naam:
+
+```css
+.rood {
+  color: red;
+}
+```
+
+### Meerdere klassen
+
+Een element kan meerdere klassen hebben, gescheiden door een spatie:
+
+```html
+<p class="rood groot">Rood én groot.</p>
+```
+
+Beide klassen worden dan tegelijk toegepast.
+
+### En `id`? — uniek vs herbruikbaar
+
+Naast `class` bestaat ook het `id`-attribuut. Het verschil:
+
+- `class` is **herbruikbaar** — meerdere elementen mogen dezelfde klasse hebben.
+- `id` is **uniek** — een `id` mag maar één keer op de pagina voorkomen.
+
+In CSS selecteer je een id met een **hekje** (`#`) in plaats van een punt:
+
+```html
+<p id="welkom">Welkom op mijn site!</p>
+```
+
+```css
+#welkom {
+  color: green;
+  font-size: 2rem;
+}
+```
+
+Vuistregel: gebruik `class` voor stijlen die je vaker wilt hergebruiken, en `id` voor één specifiek element dat je later ook met JavaScript wilt aanspreken.
+
+## Predict
+
+Wat zie je als je `class="rood groot"` op een element zet, terwijl `.rood` en `.groot` beide in de CSS staan?
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+Beide stijlen worden **gecombineerd**: de tekst wordt zowel rood als groot. CSS past alle klassen toe die op een element staan.
+
+</details>
+
+## Probeer het zelf!
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>CSS Klassen</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>CSS Klassen</h1>
+  <p>Gewone paragraaf — geen klasse.</p>
+  <p class="rood">Alleen de klasse "rood".</p>
+  <p class="groot">Alleen de klasse "groot".</p>
+  <p class="rood groot">Beide klassen tegelijk.</p>
+</body>
+</html>`}
+  initialCss={`.rood {
+  color: red;
+}
+
+.groot {
+  font-size: 1.8rem;
+}`}
+  height="480px"
+/>
+
+## Investigate
+
+Experimenteer:
+
+- Wat zie je als je `class="rood"` verwijdert bij de derde paragraaf?
+- Voeg een klasse `.onderstreept` toe in de CSS met `text-decoration: underline`. Pas het op één element toe.
+- Wat gebeurt er als je dezelfde eigenschap in twee klassen hebt? (bijv. `color: red` in `.rood` en `color: blue` in een andere klasse — welke wint?)
+
+## Modify
+
+**Opdracht:** Maak een nieuwe klasse `.gemarkeerd` die een gele achtergrond geeft. Pas het toe op de tweede paragraaf.
+
+<details>
+<summary>Tip</summary>
+
+Gebruik `background-color: yellow` in de nieuwe klasse. Voeg de klasse toe aan het `class` attribuut van de gewenste paragraaf.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+CSS:
+```css
+.gemarkeerd {
+  background-color: yellow;
+}
+```
+
+HTML (pas de gewenste `<p>` aan):
+```html
+<p class="gemarkeerd">Alleen de klasse "rood".</p>
+```
+
+Of met meerdere klassen:
+```html
+<p class="rood gemarkeerd">Rood én gemarkeerd.</p>
+```
+
+</details>
+
+## Make
+
+**Opdracht:** Maak een prijzenlijst of feature-lijst met 3 items (bijvoorbeeld in 3 verschillende `<div>` elementen). Geef ze allemaal een standaard uiterlijk via hun HTML-tag. Geef vervolgens één van de items de klasse `class="premium"` en zorg ervoor dat deze via CSS een opvallende achtergrondkleur en rand krijgt.
+
+<details>
+<summary>Tip</summary>
+
+Dingen die je voor de hele lijst wil, kun je toepassen op `div`. De opvallende stijl zet je in CSS bij `.premium`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<!-- HTML -->
+<div>
+  <h3>Basis</h3>
+  <p>Gratis</p>
+</div>
+
+<div class="premium">
+  <h3>Pro</h3>
+  <p>€ 10 per maand</p>
+</div>
+
+<div>
+  <h3>Gevorderd</h3>
+  <p>€ 20 per maand</p>
+</div>
+```
+
+```css
+/* CSS */
+div {
+  border: 1px solid gray;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.premium {
+  background-color: gold;
+  border: 2px solid orange;
+  font-weight: bold;
+}
+```
+
+</details>
+
+## Er gaat iets mis
+
+**Punt vergeten in de CSS**
+
+```css
+/* Fout: geen punt voor de klassenaam */
+rood {
+  color: red;
+}
+```
+
+```css
+/* Goed: punt voor de klassenaam */
+.rood {
+  color: red;
+}
+```
+
+Zonder de punt denkt de browser dat je een HTML-element (`rood`) wilt stijlen, niet een klasse. De stijl wordt dan niet toegepast. Vergeet de punt nooit.

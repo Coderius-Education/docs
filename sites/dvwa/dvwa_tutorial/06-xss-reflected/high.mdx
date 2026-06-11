@@ -1,0 +1,90 @@
+---
+sidebar_position: 3
+sidebar_label: 'High'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# XSS (Reflected) — High
+
+Het wordt lastiger. De ontwikkelaar pakt nu reguliere expressies (regex) erbij om alle script-tags te blokkeren.
+
+## 1. Predict (Voorspel)
+
+De beveiligingscode ziet er nu als volgt uit:
+
+```php
+// Het /i vlaggetje betekent 'case-insensitive' (hoofdletterongevoelig)
+$name = preg_replace( '/<(.*)s(.*)c(.*)r(.*)i(.*)p(.*)t/i', '', $_GET[ 'name' ] );
+echo "Hello " . $name;
+```
+
+**Vraag:** Zowel `<script>` als `<SCRIPT>` en zelfs rommelige varianten zoals `< s c r i p t >` worden nu feilloos geblokkeerd. Is het toch mogelijk om JavaScript in een webpagina uit te voeren *zonder* de `<script>`-tag te gebruiken?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Ja! JavaScript kan ook geactiveerd worden via **Event Handlers** in andere HTML-elementen. Bijvoorbeeld als een afbeelding niet kan inladen (`onerror`), of als je met de muis over een knop beweegt (`onmouseover`).
+Bijvoorbeeld: `<img src="bestaatniet.jpg" onerror="alert(1)">`
+
+</details>
+
+## 2. Run (Uitvoeren)
+
+Start het lab en observeer het normale gedrag.
+
+<DvwaLab module="xss_reflected" level="high" />
+
+Vul een gewone naam in en klik op Submit. Bevestig dat de applicatie normaal werkt.
+
+## 3. Investigate (Onderzoeken)
+
+Probeer achtereenvolgens `<script>alert(1);</script>` en `<SCRIPT>alert(1);</SCRIPT>` in het veld. Kijk ook eens wat er gebeurt als je `<img src=x>` invoert.
+
+**Vraag:** Worden alle script-varianten geblokkeerd? Wat verschijnt er wel op de pagina als je een `<img>`-tag invoert?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Alle varianten met het woord "script" worden verwijderd. Maar de `<img>`-tag verschijnt wél — de browser probeert afbeelding `x` in te laden. Die bestaat niet, maar de tag zelf werd niet gefilterd. Dit onthult dat het filter specifiek zoekt naar het woord "script" en andere HTML-elementen ongemoeid laat. Event Handlers zoals `onerror` zijn een manier om JavaScript uit te voeren via zo'n ongefilterde tag.
+
+</details>
+
+## 4. Modify & Make (Aanpassen & Maken)
+
+Jouw taak is om een XSS-aanval te bouwen zonder de string "script" te gebruiken.
+
+<details>
+
+<summary>Tip</summary>
+
+Laad een nep-afbeelding in. Als een afbeelding crasht, kan de browser automatisch een stukje JavaScript uitvoeren via het `onerror`-attribuut.
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+Vul in: `<img src=x onerror=alert("hacked")>` of `<svg onload=alert(1)>`.
+Zodra je dit indient, ziet het filter géén "script"-tag, en laat de payload door. De browser probeert afbeelding "x" te laden. Dat mislukt (want die bestaat niet), en de `onerror`-handler triggert een pop-up!
+
+</details>
+
+## 5. ✓ Wat moest je zien?
+
+:::tip Controle
+- `<img src=x onerror=alert("hacked")>` triggert de **pop-up** ondanks het script-filter.
+- `<script>alert(1);</script>` en `<SCRIPT>` worden beide geblokkeerd.
+- De pop-up bewijst dat JavaScript via een andere HTML-tag werd uitgevoerd.
+
+Geen pop-up? Controleer of je de aanhalingstekens correct hebt — sommige browsers accepteren ook `onerror=alert(1)` zonder aanhalingstekens.
+:::
+
+## 6. Er gaat iets mis...
+
+Je probeert de payload `<body onload=alert(1)>`, maar er gebeurt niets.
+Let op waar de payload wordt *gereflecteerd* in de pagina. Als jouw payload midden in een bestaande HTML-tag wordt geplakt (bijvoorbeeld binnen een `<input value="...">`), dan werken sommige tags (zoals `<body>`) simpelweg niet omdat browsers ze daar negeren. De `<img>` of `<svg>`-truc werkt vrijwel altijd, zolang je eerst uit de eventueel omliggende aanhalingstekens breekt!

@@ -1,0 +1,89 @@
+---
+sidebar_position: 10
+hide_table_of_contents: true
+---
+
+# 12.10 Er gaat iets mis — top-3 fouten
+
+**Leerdoel:** je herkent de drie klassieke valkuilen bij de recursieve
+Hanoi-oplossing.
+
+## Basisgeval vergeten
+
+Foutmelding: `RecursionError: maximum recursion depth exceeded`.
+
+**Oorzaak:** zonder `if n == 0` blijft de functie zichzelf aanroepen met
+`n - 1`, ook onder nul. Er is geen afslag, dus de recursie stopt nooit.
+
+```python
+# FOUT — geen basisgeval
+def hanoi(n, bron, doel, hulp):
+    zetten = []
+    zetten += hanoi(n - 1, bron, hulp, doel)   # telt eindeloos af
+    zetten.append((bron, doel))
+    zetten += hanoi(n - 1, hulp, doel, bron)
+    return zetten
+```
+
+**Oplossing:** begin met de stopconditie.
+
+```python
+# GOED
+def hanoi(n, bron, doel, hulp):
+    if n == 0:
+        return []
+    ...
+```
+
+## `hulp` en `doel` verwisseld in de recursieve call
+
+Geen foutmelding — wél een **verkeerde zettenlijst** (schijven belanden op
+de verkeerde paal).
+
+**Oorzaak:** in stap 1 moeten de `n - 1` bovenste schijven naar de
+**hulp**-paal, niet naar het uiteindelijke doel. De derde paal (`doel`)
+dient daar even als tijdelijke hulp.
+
+```python
+# FOUT — n-1 schijven gaan meteen naar doel
+zetten += hanoi(n - 1, bron, doel, hulp)
+zetten.append((bron, doel))
+zetten += hanoi(n - 1, hulp, doel, bron)
+```
+
+**Oplossing:** in stap 1 staat `hulp` op de doel-plek, en `doel` is de
+tijdelijke hulp.
+
+```python
+# GOED
+zetten += hanoi(n - 1, bron, hulp, doel)   # naar de HULP-paal
+zetten.append((bron, doel))
+zetten += hanoi(n - 1, hulp, doel, bron)
+```
+
+Vuistregel: de schijven die je tijdelijk opzij zet, gaan altijd naar de
+paal die je in déze stap níet als bron of doel gebruikt.
+
+## Recursie met `n` in plaats van `n - 1`
+
+Foutmelding: opnieuw een `RecursionError`.
+
+**Oorzaak:** roep je de functie aan met dezelfde `n`, dan wordt het
+probleem nooit kleiner en bereik je het basisgeval nooit.
+
+```python
+# FOUT
+zetten += hanoi(n, bron, hulp, doel)   # zelfde n → oneindig
+```
+
+**Oplossing:** elke recursieve stap doet één schijf minder.
+
+```python
+# GOED
+zetten += hanoi(n - 1, bron, hulp, doel)
+```
+
+Vuistregel bij recursie: élke aanroep moet **dichter bij het basisgeval**
+komen — hier dus met een kleinere `n`.
+
+Door naar [stap 11: cheatsheet →](./11-cheatsheet).

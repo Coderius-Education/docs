@@ -1,0 +1,92 @@
+---
+sidebar_position: 1
+sidebar_label: 'Low'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# File Upload — Low
+
+Websites hebben vaak een functie om afbeeldingen te uploaden. Een slecht beveiligde upload-functie is een van de snelste manieren voor een hacker om de server over te nemen.
+
+## 1. Predict (Voorspel)
+
+Wanneer je op het Low level een bestand uploadt, doet de server dit:
+
+```php
+$target_path  = "../../hackable/uploads/";
+$target_path .= basename( $_FILES[ 'uploaded' ][ 'name' ] );
+
+move_uploaded_file( $_FILES[ 'uploaded' ][ 'tmp_name' ], $target_path );
+```
+
+**Vraag:** Dit script is ontworpen voor afbeeldingen. Wat gebeurt er als je een bestand met de naam `shell.php` uploadt met PHP-code erin? Wordt dit geweigerd?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Nee, de server weigert helemaal niets. Het script verplaatst elk geüpload bestand — ongeacht het type — naar een voor het publiek toegankelijke map (`/hackable/uploads/`). Als je daarna in je browser navigeert naar `http://localhost/hackable/uploads/shell.php`, voert de webserver jouw PHP-code uit. Met één bestand heb je een **Web Shell** gecreëerd.
+
+</details>
+
+## 2. Run (Uitvoeren)
+
+Start het lab en bekijk het uploadformulier.
+
+<DvwaLab module="file_upload" level="low" />
+
+Upload een gewone afbeelding (een .jpg of .png van je computer). Observeer het bericht dat de server teruggeeft na de upload — let op het pad waar het bestand is opgeslagen.
+
+## 3. Investigate (Onderzoeken)
+
+Maak een tekstbestand met de naam `test.txt` op je computer met de tekst `hallo`. Upload dit bestand via het formulier.
+
+**Vraag:** Accepteert de server het tekstbestand? Wat onthult dit over welke controles de server uitvoert op het bestandstype?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Ja, de server accepteert elk bestand zonder enige controle. Het pad in de succesboodschap (`../../hackable/uploads/test.txt`) onthult dat alle uploads naar dezelfde publiek toegankelijke map gaan — ongeacht of het een foto, tekstbestand of uitvoerbaar script is.
+
+</details>
+
+## 4. Modify & Make (Aanpassen & Maken)
+
+Maak een kwaadaardig PHP-bestand aan en upload het naar de server.
+
+<details>
+
+<summary>Tip</summary>
+
+Maak op je eigen computer (met Kladblok of een teksteditor) een bestand met de naam `shell.php` en zet de volgende code erin:
+`<?php echo system('whoami'); ?>`
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+1. Upload `shell.php` via het DVWA-formulier.
+2. Noteer het pad dat de server teruggeeft (bijv. `../../hackable/uploads/shell.php`).
+3. Navigeer in je browser naar dat bestand: `http://localhost/DVWA/hackable/uploads/shell.php`.
+4. In plaats van een gedownload bestand zie je de accountnaam van de webserver — jouw PHP-code is uitgevoerd!
+
+</details>
+
+## 5. ✓ Wat moest je zien?
+
+:::tip Controle
+- De server accepteert het uploaden van `shell.php` zonder foutmelding.
+- Na het navigeren naar de upload-URL zie je de output van `whoami` — de gebruikersnaam waaronder de webserver draait.
+- Er is geen beveiliging: de server voert elk geüpload bestand uit als broncode.
+
+Zie je een lege pagina? Controleer of je de PHP-code correct in `shell.php` hebt staan, inclusief de `<?php`- en `?>`-tags.
+:::
+
+## 6. Er gaat iets mis...
+
+Wat als de DVWA-server het bestand wel opslaat maar het script niet uitvoert? Controleer of je naar de juiste URL navigeert — het pad begint met `/DVWA/hackable/uploads/`, niet met het pad dat de server in de succesboodschap toont (dat is een relatief serverpad, niet een URL).

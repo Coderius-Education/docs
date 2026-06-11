@@ -1,0 +1,67 @@
+---
+sidebar_position: 8
+hide_table_of_contents: true
+---
+
+# 5.8 Aanpassen — sorteer aflopend
+
+**Leerdoel:** je past selection sort aan zodat hij sorteert van **groot
+naar klein** in plaats van klein naar groot.
+
+## Opdracht
+
+Pas `selection_sort` aan zodat het resultaat aflopend is.
+
+- `selection_sort_aflopend([5, 2, 8, 1, 4])` → `[8, 5, 4, 2, 1]`
+- `selection_sort_aflopend([3, 1, 4, 1, 5, 9, 2, 6])` → `[9, 6, 5, 4, 3, 2, 1, 1]`
+
+Hint: in plaats van *de kleinste* vooraan zetten, zet je *de grootste*
+vooraan.
+
+<PyRunner initialCode={`def selection_sort_aflopend(lijst):
+    n = len(lijst)
+    for i in range(n):
+        min_index = i
+        for j in range(i, n):
+            if lijst[j] < lijst[min_index]:   # pas deze regel aan
+                min_index = j
+        lijst[i], lijst[min_index] = lijst[min_index], lijst[i]
+    return lijst
+
+# Tests
+print(selection_sort_aflopend([5, 2, 8, 1, 4]))               # [8, 5, 4, 2, 1]
+print(selection_sort_aflopend([3, 1, 4, 1, 5, 9, 2, 6]))      # [9, 6, 5, 4, 3, 2, 1, 1]
+print(selection_sort_aflopend([1, 2, 3]))                      # [3, 2, 1]`} />
+
+<details>
+<summary>Tip</summary>
+
+Slechts **één** vergelijking moet anders. En misschien vind je het netter
+om de variabele `min_index` te hernoemen naar `max_index` — semantisch
+beter passend.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def selection_sort_aflopend(lijst):
+    n = len(lijst)
+    for i in range(n):
+        max_index = i
+        for j in range(i, n):
+            if lijst[j] > lijst[max_index]:    # < werd >
+                max_index = j
+        lijst[i], lijst[max_index] = lijst[max_index], lijst[i]
+    return lijst
+```
+
+Eén teken (`<` → `>`) en de variabelenaam. Verder identiek.
+
+Dit is dezelfde **symmetrie** als bij vind-max → vind-min: het patroon
+blijft, alleen de richting van de vergelijking draait om.
+
+</details>
+
+Door naar [stap 9: bouw zelf](./09-zelf-bouwen).

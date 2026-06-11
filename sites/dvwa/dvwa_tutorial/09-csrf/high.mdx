@@ -1,0 +1,89 @@
+---
+sidebar_position: 3
+sidebar_label: 'High'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# CSRF — High
+
+Om Referer-bypasses en CSRF definitief de kop in te drukken, grijpt de ontwikkelaar naar een token-systeem.
+
+## 1. Predict (Voorspel)
+
+De server dwingt nu af dat elk request een uniek token meebrengt (een willekeurige code). Het formulier ziet er achter de schermen zo uit:
+
+```html
+<input type="hidden" name="user_token" value="2d8b8e...e10">
+```
+
+De backend controleert dit strak:
+```php
+checkToken( $_REQUEST[ 'user_token' ], $_SESSION[ 'session_token' ] );
+```
+
+**Vraag:** Waarom is het voor een hacker onmogelijk om een kwaadaardige URL (`<img src="...password=hacked">`) te bouwen als deze beveiliging actief is?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Om het wachtwoord te wijzigen, moet het verzoek nu het *geheime token* bevatten (`&user_token=...`). Omdat dit token voor elke sessie uniek en willekeurig is, kan de hacker deze code onmogelijk raden. De CSRF-aanval loopt direct stuk op een 'Token Mismatch'-fout!
+
+</details>
+
+## 2. Run (Uitvoeren)
+
+Start het lab en bekijk het formulier.
+
+<DvwaLab module="csrf" level="high" />
+
+Open de Developer Tools (F12) en bekijk de HTML van het formulier. Zoek naar het verborgen veld `user_token`.
+
+## 3. Investigate (Onderzoeken)
+
+Probeer de URL van het Low-level rechtstreeks te kopiëren en aan te passen (zonder het `user_token`-parameter toe te voegen). Roep de URL op en kijk wat er gebeurt.
+
+**Vraag:** Wordt de wachtwoordwijziging uitgevoerd? Welke foutmelding zie je en waarom treedt die op?
+
+<details>
+
+<summary>Antwoord</summary>
+
+De server geeft een "CSRF token incorrect"-melding of weigert de aanvraag. Zonder het geldige, sessigebonden token wordt elk verzoek van buiten het formulier geblokkeerd. De token is uniek per sessie en per paginaweergave — je kunt hem niet raden of hergebruiken.
+
+</details>
+
+## 4. Modify & Make (Aanpassen & Maken)
+
+Een anti-CSRF token is steengoed, maar is kansloos als de website **ook** kwetsbaar is voor een andere veelvoorkomende bug: XSS!
+
+Hoe zou een hacker een XSS-kwetsbaarheid (ergens anders op dezelfde website) kunnen gebruiken om de anti-CSRF-tokenbeveiliging van het wachtwoordveld teniet te doen?
+
+<details>
+
+<summary>Tip</summary>
+
+XSS zorgt ervoor dat de hacker code kan draaien namens het slachtoffer *binnen in de webpagina zelf*.
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+Via XSS injecteert de hacker een klein JavaScriptje op de pagina van het slachtoffer.
+Dit script laadt stiekem de "Wachtwoord Veranderen"-pagina op de achtergrond. Het scriptje **leest** het `user_token` direct uit de opgevraagde HTML (wat mag, want de browser is van het slachtoffer), vult dat token in, en verstuurt direct daarna het request om het wachtwoord te wijzigen!
+
+</details>
+
+## 5. ✓ Wat moest je zien?
+
+:::tip Controle
+- Een URL zonder geldig token wordt geblokkeerd met een "CSRF token incorrect"-melding.
+- Het formulier zelf werkt normaal — het token wordt meegezonden bij een normale Submit.
+- De combinatie van CSRF-token + XSS-kwetsbaarheid zou de beveiliging alsnog kunnen omzeilen.
+
+Werkt het normaal invullen van het formulier ook niet? Controleer of je ingelogd bent en het security level correct is ingesteld.
+:::

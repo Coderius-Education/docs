@@ -1,0 +1,161 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeEditor from '@site/src/components/CodeEditor';
+
+# Intro tot HTML
+
+## Wat ga je leren?
+
+Je leert wat HTML is en hoe een webpagina is opgebouwd. Na deze les ken je de basisstructuur en kun je zelf tekst op een pagina zetten.
+
+## Theorie
+
+HTML staat voor **HyperText Markup Language**. Het is de taal die browsers begrijpen om een webpagina te bouwen. Je schrijft HTML met **tags** — woorden tussen punthaken:
+
+```html
+<h1>Dit is een kop</h1>
+<p>Dit is een paragraaf.</p>
+```
+
+Elke tag heeft een **openingstag** (`<p>`) en een **sluitingstag** (`</p>`). De inhoud staat er tussenin.
+
+### Klein extra: `<strong>`, `<em>`, `<br>`, `<hr>`
+
+Een paar veelgebruikte mini-tags:
+
+- **`<strong>`** — belangrijke (vetgedrukte) tekst. Net als `<b>`, maar `<strong>` vertelt screenreaders en zoekmachines dat het *belangrijk* is.
+- **`<em>`** — benadrukte (cursieve) tekst. Net als `<i>`, maar `<em>` betekent semantisch "benadrukken".
+- **`<br>`** — een **regeleinde**. Zelfsluitend (heeft geen `</br>`). Gebruik spaarzaam — meestal kun je beter een nieuwe `<p>` openen.
+- **`<hr>`** — een **horizontale lijn** ter scheiding van secties. Ook zelfsluitend.
+
+```html
+<p>Dit is <strong>belangrijk</strong> en dit is <em>benadrukt</em>.</p>
+<p>Eerste regel<br>Tweede regel</p>
+<hr>
+<p>Een stuk verderop op de pagina.</p>
+```
+
+Vuistregel: kies `<strong>` boven `<b>` en `<em>` boven `<i>` zodra je betekenis wilt overbrengen, niet alleen visuele opmaak.
+
+### Notities in je code: comments
+
+Met `<!-- ... -->` schrijf je een **comment** — tekst die wel in je code staat, maar niet op de pagina te zien is. Handig om jezelf (of een klasgenoot) iets uit te leggen:
+
+```html
+<!-- Dit is een comment. De browser laat dit niet zien. -->
+<p>Deze tekst zie je wel.</p>
+```
+
+Een complete HTML-pagina heeft altijd deze structuur:
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Informatie over de pagina, niet zichtbaar -->
+  </head>
+  <body>
+    <!-- Alles wat je op de pagina ziet -->
+  </body>
+</html>
+```
+
+## Predict
+
+Hieronder zie je een stukje code. Wat denk je dat er in de browser te zien is?
+
+```html
+<b>Hallo!</b>
+```
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+De tekst "Hallo!" wordt **vetgedrukt** weergegeven. De tag `<b>` staat voor *bold* (vet).
+
+</details>
+
+## Probeer het zelf!
+
+De editor hieronder bevat een complete HTML-pagina. Bekijk de code en de preview aan de rechterkant.
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Mijn eerste pagina</title>
+</head>
+<body>
+  <h1>Hallo wereld!</h1>
+  <p>Dit is mijn eerste webpagina.</p>
+  <p>HTML is <b>niet</b> zo moeilijk.</p>
+</body>
+</html>`}
+  height="460px"
+/>
+
+## Investigate
+
+Experimenteer met de code in de editor:
+
+- Wat gebeurt er als je `<h1>` verandert in `<h3>`?
+- Wat zie je als je de sluitingstag `</h1>` verwijdert?
+- Wat doet `<i>tekst</i>`?
+
+## Modify
+
+**Opdracht:** Voeg een tweede paragraaf toe aan de pagina met jouw naam erin.
+
+<details>
+<summary>Tip</summary>
+
+Gebruik de `<p>` tag. Zet hem binnen `<body>`, onder de bestaande paragrafen.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<p>Mijn naam is Lisa.</p>
+```
+
+Voeg dit toe tussen de laatste `</p>` en `</body>`.
+
+</details>
+
+## Make
+
+**Opdracht:** Bouw een simpele webpagina over jouw huisdier of favoriete dier. Gebruik een `<h1>` voor de naam van het dier en minimaal twee `<p>` attributen voor informatie of een leuk weetje.
+
+<details>
+<summary>Tip</summary>
+
+Elke tag die je opent, moet je ook weer netjes sluiten (bijvoorbeeld `</h1>` en `</p>`).
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<h1>Mijn hond Max</h1>
+<p>Max is een golden retriever van 3 jaar oud.</p>
+<p>Hij houdt heel erg van spelen met een bal buiten in het park.</p>
+```
+
+</details>
+
+## Er gaat iets mis
+
+**Vergeten sluitingstag**
+
+```html
+<p>Dit is een paragraaf
+<p>Dit is een tweede paragraaf</p>
+```
+
+Als je de sluitingstag `</p>` vergeet, werkt het soms nog — maar niet altijd. De browser probeert het te repareren, maar het kan onverwachte resultaten geven. Sluit altijd elke tag die je opent.

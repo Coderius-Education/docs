@@ -1,0 +1,29 @@
+---
+sidebar_position: 3
+sidebar_label: "Stap 3: git add"
+title: "Stap 3: bestanden klaarzetten met git add"
+hide_table_of_contents: true
+---
+
+import GitSimulator from '@site/src/components/GitSimulator';
+
+# Stap 3: bestanden klaarzetten met `git add`
+
+Met `git add <bestand>` zet je een bestand klaar in de **staging**-zone. Daar wachten je wijzigingen op de volgende commit.
+
+```bash
+git add hello.txt
+```
+
+Let in de simulator hieronder goed op de middelste kolom (Staging): zodra je `git add hello.txt` uitvoert, verschijnt het bestand daar.
+
+<GitSimulator
+  scenarioId="stap-3-add"
+  initialFiles={{'hello.txt': 'Hallo wereld!\n'}}
+  objective={{
+    description: 'Init, voeg hello.txt toe aan staging.',
+    check: (s) => s.initialized && s.staged !== null && 'hello.txt' in s.staged,
+  }}
+/>
+
+**Tip:** met `git add .` zet je in één keer **alle** veranderde bestanden klaar.

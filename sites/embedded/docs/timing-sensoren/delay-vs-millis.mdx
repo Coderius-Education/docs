@@ -1,0 +1,121 @@
+---
+sidebar_position: 1
+hide_table_of_contents: true
+---
+
+import WokwiSimulator from '@site/src/components/WokwiSimulator';
+
+# 6.1 delay vs millis
+
+`delay()` is makkelijk, maar het heeft een groot nadeel: tijdens een `delay()` doet de Arduino **helemaal niets anders**. Hij staat stil te wachten. Wil je twee dingen tegelijk — bijvoorbeeld een LED laten knipperen én een knop blijven uitlezen — dan zit `delay()` je in de weg.
+
+## Het probleem
+
+Bekijk deze sketch. De LED knippert, maar wat gebeurt er met de knop?
+
+```cpp
+void loop() {
+  digitalWrite(13, HIGH);
+  delay(1000);
+  digitalWrite(13, LOW);
+  delay(1000);
+  // de knop wordt alleen heel even gecheckt, één keer per 2 seconden
+}
+```
+
+<details>
+<summary>Wat denk je dat het probleem is?</summary>
+
+Tijdens elke `delay(1000)` reageert de Arduino nergens op. Druk je in die seconde op een knop, dan mist hij het. Het lijkt alsof de knop hapert.
+
+</details>
+
+## De oplossing: millis
+
+`millis()` geeft het aantal milliseconden sinds het bord aanging. In plaats van te **wachten**, kijk je telkens: "is er al genoeg tijd voorbij?" Zo blijft `loop()` doordraaien.
+
+```cpp
+unsigned long vorige = 0;
+const unsigned long interval = 1000;
+bool ledAan = false;
+
+void setup() {
+  pinMode(13, OUTPUT);
+}
+
+void loop() {
+  if (millis() - vorige >= interval) {
+    vorige = millis();
+    ledAan = !ledAan;
+    digitalWrite(13, ledAan);
+  }
+  // hier kun je nu óók een knop uitlezen, zonder te wachten
+}
+```
+
+<WokwiSimulator
+  projectUrl="https://wokwi.com/projects/new/arduino-uno"
+  title="Simuleer: knipperen zonder delay"
+/>
+
+## Hoe werkt dit?
+
+```cpp
+if (millis() - vorige >= interval) {
+  vorige = millis();
+  ...
+}
+```
+
+`millis() - vorige` is hoeveel tijd er voorbij is sinds de vorige keer. Is dat meer dan `interval` (1000 ms)? Dan is het tijd: we onthouden het nieuwe moment in `vorige` en wisselen de LED. Tussendoor loopt `loop()` gewoon door, zodat je andere dingen kunt blijven doen.
+
+:::note
+`unsigned long` is een getaltype dat heel grote getallen aankan. Dat is nodig, want `millis()` telt door tot in de miljoenen.
+:::
+
+## Opdracht 6.1.a: Knipperen én tellen
+
+Laat de LED op pin 13 knipperen met `millis()`, en tel ondertussen elke keer dat een knop op pin 2 wordt ingedrukt (print de teller naar de seriële monitor). De knop mag nooit "haperen" door het knipperen.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Houd het knipperen in een `if (millis() ...)`-blok, en lees daarbuiten in elke ronde van `loop()` de knop uit. Omdat je nergens `delay()` gebruikt, mis je geen druk.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```cpp
+unsigned long vorige = 0;
+const unsigned long interval = 1000;
+bool ledAan = false;
+int teller = 0;
+bool vorigeKnop = HIGH;
+
+void setup() {
+  pinMode(13, OUTPUT);
+  pinMode(2, INPUT_PULLUP);
+  Serial.begin(9600);
+}
+
+void loop() {
+  if (millis() - vorige >= interval) {
+    vorige = millis();
+    ledAan = !ledAan;
+    digitalWrite(13, ledAan);
+  }
+
+  bool knop = digitalRead(2);
+  if (vorigeKnop == HIGH && knop == LOW) {
+    teller++;
+    Serial.println(teller);
+  }
+  vorigeKnop = knop;
+}
+```
+
+Door de vorige knopstand te onthouden tel je alleen op het moment van indrukken, niet zolang je vasthoudt.
+
+</details>

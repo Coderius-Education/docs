@@ -1,0 +1,55 @@
+---
+sidebar_position: 1
+hide_table_of_contents: true
+---
+
+import WokwiSimulator from '@site/src/components/WokwiSimulator';
+
+# 4.1 Een potmeter uitlezen
+
+Een knop kent maar twee standen: ingedrukt of niet. Maar veel dingen in de wereld zijn niet aan/uit, maar **een beetje**: hoe fel is het licht, hoe warm is het, hoe ver is de draaiknop gedraaid. Daarvoor heb je een **analoge ingang** nodig.
+
+We oefenen met een **potentiometer** (een draaiknop, kortweg "potmeter"). Die geeft een spanning tussen 0 en 5 volt, afhankelijk van hoe ver je draait.
+
+## analogRead
+
+Met `analogRead()` lees je de spanning op een analoge pin (A0 t/m A5) in als een getal:
+
+```cpp
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  int waarde = analogRead(A0);
+  Serial.println(waarde);
+  delay(200);
+}
+```
+
+<WokwiSimulator
+  projectUrl="https://wokwi.com/projects/new/arduino-uno"
+  title="Simuleer: potmeter uitlezen"
+/>
+
+Sluit in de simulator de middelste pin van een potentiometer aan op A0, en de buitenste pinnen op `5V` en `GND`. Draai aan de knop en kijk naar de getallen in de seriële monitor.
+
+## Wat betekent de waarde?
+
+`analogRead()` geeft op de Uno een getal van **0 tot en met 1023**:
+
+- 0 volt → `0`
+- 5 volt → `1023`
+
+De Arduino verdeelt het bereik van 0–5 volt dus in 1024 stapjes. Dat heet de **ADC** (analoog-naar-digitaal-omzetter).
+
+`Serial.println(waarde)` print dat getal naar je computer, zodat je live ziet wat de knop doet. Meer over de seriële monitor lees je in [5.1 De seriële monitor](/docs/serieel/serial-monitor).
+
+## Controlevraag
+
+<details>
+<summary>Welke waarde verwacht je als de potmeter precies in het midden staat?</summary>
+
+Ongeveer `512` — de helft van 1023. In het echt is dat zelden exact het midden, omdat een potmeter nooit perfect lineair is.
+
+</details>

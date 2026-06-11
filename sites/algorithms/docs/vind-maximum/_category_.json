@@ -1,0 +1,11 @@
+{
+  "label": "Vind het maximum",
+  "position": 2,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "title": "Vind het maximum",
+    "description": "Onthoud de grootste tot nu toe en update onderweg."
+  }
+}

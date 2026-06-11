@@ -1,0 +1,81 @@
+---
+sidebar_position: 1
+hide_table_of_contents: true
+---
+
+import WokwiSimulator from '@site/src/components/WokwiSimulator';
+
+# 3.1 Een externe LED
+
+De ingebouwde LED op pin 13 is handig om te testen, maar echt leuk wordt het pas als je je eigen LED aansluit. Daarvoor heb je naast de LED ook een **weerstand** nodig.
+
+## Waarom een weerstand?
+
+Een LED laat heel veel stroom door als je hem zomaar op 5 volt aansluit — zo veel dat hij doorbrandt. Een **weerstand van 220 Ω** in serie beperkt die stroom tot een veilige waarde. Geen weerstand betekent een kapotte LED (en soms een kapotte pin).
+
+## Het circuit
+
+Sluit het zo aan:
+
+- Pin **8** → weerstand (220 Ω) → lange pootje van de LED (de **plus**, de anode).
+- Korte pootje van de LED (de **min**, de kathode) → `GND`.
+
+Een LED heeft dus een richting. Zit hij verkeerd om, dan brandt hij niet.
+
+## De code
+
+```cpp
+void setup() {
+  pinMode(8, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(8, HIGH);
+  delay(500);
+  digitalWrite(8, LOW);
+  delay(500);
+}
+```
+
+<WokwiSimulator
+  projectUrl="https://wokwi.com/projects/new/arduino-uno"
+  title="Simuleer: externe LED knipperen"
+/>
+
+Dit is bijna dezelfde sketch als de blink uit hoofdstuk 2, maar nu op pin 8 — een pin die jij zelf bedraadt. `digitalWrite(8, HIGH)` zet er 5 volt op, de stroom loopt door de weerstand en de LED, en de LED brandt.
+
+:::caution
+Vergeet de weerstand niet. In de simulator gebeurt er zonder weerstand niets ergs, maar in het echt brandt je LED door.
+:::
+
+## Opdracht 3.1.a: Twee LED's om en om
+
+Sluit een tweede LED aan op pin 9 (weer met een eigen weerstand). Laat de twee LED's **om en om** knipperen: als de een aan is, is de ander uit.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Stel beide pinnen in als `OUTPUT` in `setup()`. Zet in `loop()` de ene `HIGH` en de andere `LOW`, wacht, en draai het dan om.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```cpp
+void setup() {
+  pinMode(8, OUTPUT);
+  pinMode(9, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(8, HIGH);
+  digitalWrite(9, LOW);
+  delay(500);
+  digitalWrite(8, LOW);
+  digitalWrite(9, HIGH);
+  delay(500);
+}
+```
+
+</details>

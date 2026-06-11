@@ -1,0 +1,58 @@
+---
+sidebar_position: 4
+sidebar_label: 'Impossible'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# File Inclusion — Impossible
+
+Tijd om dit lek voor eens en altijd dicht te metselen.
+
+## 1. Predict (Voorspel)
+
+De ontwikkelaar stapt af van het filteren van slechte invoer (Blacklisting) en kiest voor **Whitelisting**:
+
+```php
+$file = $_GET['page'];
+
+if( $file != "include.php" && $file != "file1.php" && $file != "file2.php" ) {
+    echo "ERROR: File not found!";
+    exit;
+}
+```
+
+**Vraag:** Kun je hier nog op een of andere manier voorbij?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Nee. Het script vergelijkt de invoer letterlijk met drie exacte bestandsnamen. Alles wat ook maar één teken afwijkt — zelfs `include.php%00` of `file:///file1.php` — valt genadeloos in de `if`-controle en levert de foutmelding op. Geen enkele omzeiltechniek kan een strakke, letterlijke string-vergelijking verslaan.
+
+</details>
+
+## 2. Run & Investigate
+
+Start het lab en probeer alle eerder geleerde aanvallen.
+
+<DvwaLab module="file_inclusion" level="impossible" />
+
+Probeer `../../etc/passwd`, `....//etc/passwd` en `file:///etc/passwd`. Observeer dat alle varianten worden afgewezen.
+
+## 3. ✓ Wat moest je zien?
+
+:::tip Controle
+- Elke aanvalspayload levert de melding "ERROR: File not found!" op.
+- Alleen de exacte bestandsnamen `include.php`, `file1.php` en `file2.php` werken.
+- Geen enkel omzeil-kunstje (geneste paden, protocols, null-bytes) slaagt.
+
+Lukt het je toch om bestanden op te vragen? Controleer of het security level correct op **impossible** staat.
+:::
+
+**LFI is dodelijk:** Local File Inclusion laat hackers gevoelige bestanden, back-ups of configuraties (met databasewachtwoorden) uitlezen van de harde schijf.
+
+**Filters omzeilen (Filter Evasion):** Ontwikkelaars vergeten dat filters zichzelf kunnen omzeilen als invoer genest is (zoals `....//`).
+
+**Whitelisting is koning:** Sta uitsluitend toe wat je verwacht — filter geen verboden tekens, maar specificeer exact de toegestane waarden.

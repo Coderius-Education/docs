@@ -1,0 +1,197 @@
+---
+sidebar_position: 3
+hide_table_of_contents: true
+description: Laat een functie een resultaat teruggeven met return. Sla de uitkomst op of gebruik hem direct in een berekening.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 9b Return
+
+Je functies met parameters tonen iets op het scherm. Maar wat als je het resultaat **wilt gebruiken** voor verdere berekeningen of beslissingen? Daarvoor is `return`: een functie geeft een waarde terug, en die kun je opslaan of doorrekenen.
+
+## Een waarde teruggeven
+
+```python
+def verdubbel(getal):
+    return getal * 2
+
+resultaat = verdubbel(5)
+print(resultaat)             # 10
+print(verdubbel(7) + 1)      # 15
+```
+
+- `return getal * 2` geeft de uitkomst **terug** uit de functie.
+- `resultaat = verdubbel(5)` vangt die waarde op.
+- Je kunt het resultaat ook direct in een berekening of f-string gebruiken.
+
+## print versus return
+
+Dit verschil is essentieel — en een van de meest gemaakte fouten door beginners:
+
+| | `print()` | `return` |
+|--|----------|----------|
+| Wat doet het? | Toont iets op het scherm | Geeft een waarde terug uit de functie |
+| Kun je het opslaan? | Nee | Ja: `x = mijn_functie(...)` |
+| Geschikt voor | Output tonen | Berekeningen, beslissingen |
+
+Een functie zónder `return` levert automatisch `None` op — letterlijk "geen waarde". Stelregel: als je een functie maakt om een **waarde te berekenen**, hoort er een `return` in. Toont de functie alleen iets, dan is `print()` genoeg.
+
+---
+
+## Opdracht 9b.1: Kwadraat
+
+Schrijf een functie `kwadraat(getal)` die `getal * getal` **teruggeeft**. Sla het resultaat op en print het.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+`return getal * getal` binnen de functie. Daarna `resultaat = kwadraat(6)` en `print(resultaat)`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+def kwadraat(getal):
+    return getal * getal
+
+resultaat = kwadraat(6)
+print(resultaat)
+```
+
+Uitvoer: `36`.
+
+<CodeExercise>{`def kwadraat(getal):
+    return getal * getal
+
+resultaat = kwadraat(6)
+print(resultaat)`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 9b.2: Max van twee
+
+Schrijf een functie `max_van_twee(a, b)` die het grootste van twee getallen teruggeeft. Gebruik `if`/`else` in de functie.
+
+Verwachte uitvoer:
+
+```
+20
+7
+5
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Als `a > b`, `return a`. Anders `return b`. Bij gelijke getallen maakt het niet uit welke je teruggeeft.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+def max_van_twee(a, b):
+    if a > b:
+        return a
+    else:
+        return b
+
+print(max_van_twee(10, 20))
+print(max_van_twee(7, 3))
+print(max_van_twee(5, 5))
+```
+
+<CodeExercise>{`def max_van_twee(a, b):
+    if a > b:
+        return a
+    else:
+        return b
+
+print(max_van_twee(10, 20))
+print(max_van_twee(7, 3))
+print(max_van_twee(5, 5))`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 9b.3: Rekenmachine met functies
+
+Bouw vier functies die elk een resultaat teruggeven: `optellen`, `aftrekken`, `vermenigvuldigen`, `delen`. Bij `delen` moet je eerst checken of `b` niet `0` is — als dat zo is, geef de tekst `"Fout: delen door 0!"` terug.
+
+Verwachte uitvoer (bij `a = 20`, `b = 4`):
+
+```
+20 + 4 = 24
+20 - 4 = 16
+20 x 4 = 80
+20 / 4 = 5.0
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+`aftrekken` en `vermenigvuldigen` zijn één regel (`return a - b`, `return a * b`). Bij `delen`: `if b == 0:` → return de foutmelding, anders `return a / b`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+def optellen(a, b):
+    return a + b
+
+def aftrekken(a, b):
+    return a - b
+
+def vermenigvuldigen(a, b):
+    return a * b
+
+def delen(a, b):
+    if b == 0:
+        return "Fout: delen door 0!"
+    else:
+        return a / b
+
+a = 20
+b = 4
+
+print(f"{a} + {b} = {optellen(a, b)}")
+print(f"{a} - {b} = {aftrekken(a, b)}")
+print(f"{a} x {b} = {vermenigvuldigen(a, b)}")
+print(f"{a} / {b} = {delen(a, b)}")
+```
+
+Een variabele houdt één waarde vast. In de volgende les leer je **lijsten**: meerdere waardes in één variabele, met een vaste volgorde.
+
+<CodeExercise>{`def optellen(a, b):
+    return a + b
+
+def aftrekken(a, b):
+    return a - b
+
+def vermenigvuldigen(a, b):
+    return a * b
+
+def delen(a, b):
+    if b == 0:
+        return "Fout: delen door 0!"
+    else:
+        return a / b
+
+a = 20
+b = 4
+
+print(f"{a} + {b} = {optellen(a, b)}")
+print(f"{a} - {b} = {aftrekken(a, b)}")
+print(f"{a} x {b} = {vermenigvuldigen(a, b)}")
+print(f"{a} / {b} = {delen(a, b)}")`}</CodeExercise>
+
+</details>

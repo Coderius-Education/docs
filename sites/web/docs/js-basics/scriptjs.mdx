@@ -1,0 +1,171 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeEditor from '@site/src/components/CodeEditor';
+
+# script.js
+
+## Wat ga je leren?
+
+Je leert hoe je JavaScript verplaatst naar een apart bestand `script.js` en hoe je dat koppelt via `defer`.
+
+## Theorie
+
+In de vorige les schreef je JavaScript in een `<script>` tag onderaan de body. Bij grotere projecten wil je HTML en JavaScript in aparte bestanden houden — overzichtelijker en makkelijker te hergebruiken.
+
+Je maakt een bestand `script.js` en koppelt dat in de `<head>` met het `defer`-attribuut:
+
+```html
+<head>
+  <script src="script.js" defer></script>
+</head>
+```
+
+`defer` betekent: laad het script, maar voer het pas uit als de volledige HTML geladen is. Hetzelfde effect als de `<script>` tag onderaan de body, maar netter in de `<head>`.
+
+In de editor hieronder schrijf je de JavaScript-code in het **script.js-tabblad**. Uitvoer van `console.log()` zie je in het consolepanel rechtsonder.
+
+### Wat is `console.log`?
+
+`console.log()` is een opdracht om iets in de **console** te tonen. De console is een verborgen paneel in elke browser waar JavaScript berichten naartoe schrijft — handig om te zien wat je code doet zonder dat de bezoeker het ziet.
+
+```js
+console.log('Knop is geklikt!');
+console.log('Naam:', naam);
+```
+
+Je gebruikt `console.log` vooral om te **debuggen** (fouten opsporen): zet het op een paar plekken in je code, en je ziet precies welke regels uitgevoerd worden en met welke waarden. In een gewone browser open je de console met **F12** → tabblad "Console".
+
+## Predict
+
+Bekijk de startcode in beide tabbladen. Beantwoord de vraag hieronder **voordat** je op Run klikt.
+
+<details>
+<summary>Wat gebeurt er als je `defer` vergeet — werkt de knop dan nog?</summary>
+
+Zonder `defer` wordt `script.js` uitgevoerd zodra de browser de `<script>`-tag tegenkomt in de `<head>`. Op dat moment bestaat de `<body>` nog niet. `document.getElementById('bericht')` geeft `null` terug en de knop werkt niet — je ziet een foutmelding in het consolepanel. Met `defer` wacht de browser tot de volledige HTML geladen is.
+
+</details>
+
+## Probeer het zelf!
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>script.js</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <p id="bericht">Klik op de knop.</p>
+  <button onclick="verander()">Klik mij</button>
+</body>
+</html>`}
+  initialCss={`p {
+  font-size: 1.3rem;
+  padding: 12px;
+}
+
+button {
+  padding: 8px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+}`}
+  initialJs={`function verander() {
+  document.getElementById('bericht').textContent = 'Geklikt via script.js!';
+  console.log('De knop is geklikt.');
+}`}
+  height="500px"
+  livePreview={false}
+/>
+
+## Investigate
+
+Experimenteer:
+
+- Voeg meer `console.log()` regels toe — verschijnen ze allemaal in het consolepanel?
+- Verwijder `defer` uit de HTML — wat gaat er mis? Lees de foutmelding in het consolepanel
+- Voeg een tweede functie toe en roep die aan met een tweede knop
+
+## Modify
+
+**Opdracht:** Voeg een `console.log` toe die de huidige datum en tijd toont via `new Date()`.
+
+<details>
+<summary>Tip</summary>
+
+`new Date()` geeft een Date-object terug. Als je dat aan `console.log` meegeeft, toont die de datum als tekst.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```js
+function verander() {
+  document.getElementById('bericht').textContent = 'Geklikt via script.js!';
+  console.log('De knop is geklikt om:', new Date());
+}
+```
+
+</details>
+
+## Make
+
+**Opdracht:** Bouw een pagina met twee knoppen: "Start" en "Stop". Als je op Start klikt, verschijnt de tekst "Gestart!" in groen en wordt de tijd gelogd. Als je op Stop klikt, verschijnt "Gestopt." in rood en wordt de tijd opnieuw gelogd.
+
+Schrijf voor elke knop een aparte functie in `script.js`.
+
+<details>
+<summary>Tip</summary>
+
+Gebruik `style.color` voor de kleur en `console.log(new Date())` voor de tijd. Je hebt twee functies nodig: `start()` en `stop()`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+HTML:
+```html
+<p id="status">Wachten...</p>
+<button onclick="start()">Start</button>
+<button onclick="stop()">Stop</button>
+```
+
+script.js:
+```js
+function start() {
+  document.getElementById('status').textContent = 'Gestart!';
+  document.getElementById('status').style.color = 'green';
+  console.log('Gestart om:', new Date());
+}
+
+function stop() {
+  document.getElementById('status').textContent = 'Gestopt.';
+  document.getElementById('status').style.color = 'red';
+  console.log('Gestopt om:', new Date());
+}
+```
+
+</details>
+
+## Er gaat iets mis
+
+**`defer` vergeten**
+
+```html
+<!-- Zonder defer: script loopt vóór de HTML geladen is -->
+<head>
+  <script src="script.js"></script>
+</head>
+```
+
+Zonder `defer` wordt `script.js` uitgevoerd zodra de browser de tag tegenkomt — de `<body>` bestaat dan nog niet. `document.getElementById('bericht')` geeft `null` terug en je ziet een foutmelding in het consolepanel. Gebruik altijd `defer` als je een extern script in de `<head>` koppelt.
+
+---
+
+[← De script-tag](/docs/js-basics/script-tag) | [Variabelen →](/docs/js-basics/variabelen)

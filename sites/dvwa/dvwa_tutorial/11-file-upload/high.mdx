@@ -1,0 +1,90 @@
+---
+sidebar_position: 3
+sidebar_label: 'High'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# File Upload — High
+
+Nu wordt het lastiger. De MIME-type header manipuleren werkt niet meer, want de server voert een dieptecontrole uit op het bestand.
+
+## 1. Predict (Voorspel)
+
+De backend controleert nu de werkelijke inhoud van het bestand via `getimagesize()`:
+
+```php
+if( !getimagesize( $_FILES[ 'uploaded' ][ 'tmp_name' ] ) ) {
+    echo "Dit is geen geldige afbeelding!";
+}
+```
+
+De extensie moet ook eindigen op `.jpg`, `.jpeg` of `.png`.
+
+**Vraag:** De functie `getimagesize()` leest de eerste bytes van het bestand op zoek naar een *Image Signature* (de "Magic Bytes" van een JPG/PNG). Kun je dit omzeilen?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Je kunt een echte JPG-afbeelding downloaden en met een tool zoals `exiftool` PHP-code verstoppen in de metagegevens (bijv. in het Copyright-veld). De server scant de Magic Bytes: geldig! De extensie is `.jpg`: geldig! Maar verstopt in de metadata zit jouw uitvoerbare code. Om de code te activeren heb je daarna een File Inclusion-kwetsbaarheid nodig om het `.jpg`-bestand als PHP te laten uitvoeren.
+
+</details>
+
+## 2. Run (Uitvoeren)
+
+Start het lab.
+
+<DvwaLab module="file_upload" level="high" />
+
+> ⚠️ **Labbeperking:** Deze aanval vereist geavanceerde tools zoals **exiftool** en een combinatie met de **File Inclusion**-kwetsbaarheid. Het lab simuleert de server-side logica, maar voor de volledige hands-on ervaring heb je een [lokale DVWA-installatie](/docs/dvwa_installatie) nodig.
+
+Upload een normale .jpg-afbeelding en observeer dat dit werkt.
+
+## 3. Investigate (Onderzoeken)
+
+Probeer `shell.php` te uploaden (zelfs als je de Content-Type header aanpast). Probeer ook een bestand met de naam `shell.php.jpg`.
+
+**Vraag:** Welke controles stopt het High level tegelijk? Wat is de enige manier om door al deze controles heen te komen?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Het High level blokkeert: (1) foute extensies — de naam moet eindigen op `.jpg`/`.jpeg`/`.png`, en (2) foute bestandsinhoud — `getimagesize()` eist echte image Magic Bytes. Je kunt de extensie-check omzeilen door de naam `.jpg` te geven, maar dan nog controleert `getimagesize()` of de bytes kloppen. De enige doorgang is een **echt** afbeeldingsbestand met verstopte PHP-code in de metadata.
+
+</details>
+
+## 4. Modify & Make (Aanpassen & Maken)
+
+Stel dat je erin geslaagd bent een geldig `.jpg`-bestand met verstopte PHP-code (`hacked.jpg`) op de server te uploaden. Er is nog één probleem: hoe activeer je de PHP-code in een bestand met `.jpg`-extensie?
+
+<details>
+
+<summary>Tip</summary>
+
+Denk terug aan de File Inclusion-module. We moeten de webserver forceren om het `.jpg`-bestand als PHP-broncode in te laden in plaats van als afbeelding.
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+Je hebt een **File Inclusion (LFI)**-kwetsbaarheid nodig om dit af te ronden. Via de File Inclusion-module vraag je:
+`?page=../../hackable/uploads/hacked.jpg`
+
+De `include()`-functie laadt dan de `.jpg` als PHP-broncode en voert de verstopte code uit. Dit is waarom het **combineren** van kwetsbaarheden het meesterstuk van een hacker is.
+
+</details>
+
+## 5. ✓ Wat moest je zien?
+
+:::tip Controle
+- Een PHP-bestand met `.php`-extensie wordt geweigerd — zowel door de extensiecheck als `getimagesize()`.
+- Een `.jpg`-bestand met geldige Magic Bytes maar PHP-code in de metadata wordt **wel** geaccepteerd.
+- Activeren van de code vereist een tweede kwetsbaarheid (LFI).
+
+Wil je dit volledig uitproberen? Je hebt `exiftool` (in Kali), een echte .jpg-afbeelding, en de File Inclusion-module op High level nodig.
+:::

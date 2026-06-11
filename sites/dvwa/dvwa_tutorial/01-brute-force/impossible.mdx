@@ -1,0 +1,63 @@
+---
+sidebar_position: 3
+sidebar_label: 'Impossible'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# Brute Force — Impossible
+
+Hoe beveilig je een inlogpagina definitief tegen brute-force aanvallen?
+
+## 1. Predict (Voorspel)
+
+De server combineert nu meerdere beveiligingslagen:
+
+```php
+// Na 3 mislukte pogingen: account vergrendeld voor 15 minuten
+if ($failed_login_count >= 3) {
+    $last_attempt = strtotime($last_login);
+    $timeout = $last_attempt + (15 * 60); // 15 minuten lockout
+    if (time() < $timeout) {
+        echo "Account is tijdelijk vergrendeld. Probeer later opnieuw.";
+        exit;
+    }
+}
+```
+
+**Vraag:** Waarom maakt een combinatie van Account Lockout + CSRF-token + `sleep()`-vertraging tools als Hydra compleet nutteloos?
+
+<details>
+
+<summary>Antwoord</summary>
+
+- **Account Lockout:** Na 3 mislukte pogingen is het account 15 minuten geblokkeerd. Hydra kan nu maximaal 3 wachtwoorden per 15 minuten proberen — bij een lijst van 10.000 wachtwoorden duurt dit ruim 34 dagen.
+- **CSRF-token:** Elk formulierverzoek vereist een uniek token dat van tevoren opgehaald moet worden. Hydra kan niet meer blind duizenden requests sturen.
+- **Sleep-vertraging:** Zelfs correcte logins worden kunstmatig vertraagd, waardoor timing-aanvallen onmogelijk worden.
+
+</details>
+
+## 2. Run & Investigate
+
+Start het lab en probeer 4 keer in te loggen met een fout wachtwoord.
+
+<DvwaLab module="brute_force" level="impossible" />
+
+Na de derde mislukte poging toont de server een vergrendelingsmelding. Probeer daarna nog een keer in te loggen — ook met het juiste wachtwoord. Observeer hoe de server reageert.
+
+## 3. ✓ Wat moest je zien?
+
+:::tip Controle
+- Na 3 mislukte pogingen verschijnt de melding dat het account tijdelijk vergrendeld is.
+- Ook het correcte wachtwoord werkt niet tijdens de lockout-periode.
+- Elke Hydra-aanval stopt effectief na de eerste 3 pogingen.
+
+Zie je geen vergrendeling? Controleer of het security level correct op **impossible** staat.
+:::
+
+**Rate Limiting is essentieel:** Zonder vertraging kan Hydra miljoenen wachtwoorden per uur proberen. Met een lockout van 15 minuten na 3 pogingen is dit onhaalbaar.
+
+**Defense in Depth:** Eén maatregel is nooit genoeg. De combinatie van lockout + tokens + vertraging maakt brute-force aanvallen praktisch onmogelijk.
+
+**Hydra is een wapen, geen wondermiddel:** Hydra werkt alleen als de server geen enkele bescherming heeft. Professionele websites maken brute-force zinloos.

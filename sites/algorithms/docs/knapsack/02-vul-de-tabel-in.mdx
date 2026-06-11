@@ -1,0 +1,283 @@
+---
+sidebar_position: 2
+hide_table_of_contents: true
+---
+
+# 10.2 Vul de tabel in
+
+**Leerdoel:** je vult zelf de OPT-tabel in voor het image-voorbeeld
+(5 items, W=11), leest eruit af welke items in de optimale rugzak
+zitten, en snapt **het algoritme** voordat je het codeert.
+
+## De aanpak
+
+We bouwen een **tabel** op van **klein naar groot**. We beginnen met
+"0 items in de rugzak" (rij 0) en vullen rij voor rij omhoog tot
+"alle 5 items beschikbaar".
+
+Voor elke cel `(i, w)` beantwoorden we dezelfde vraag: *"als ik items
+1 t/m `i` mag gebruiken en mijn rugzak is `w`, wat is dan de beste
+totale waarde?"*
+
+Het mooie: bij het invullen van een cel hoef je alleen maar te kijken
+naar **cellen die je al hebt ingevuld** (in de rij erboven). Geen
+recursie, geen herhaald rekenwerk — gewoon één tabel die zichzelf
+opbouwt.
+
+## Het algoritme in drie regels
+
+Elke cel `OPT(i, w)` is "het beste totaalwaarde als je items 1 t/m i
+mag gebruiken en je rugzakcapaciteit `w` is".
+
+Drie regels bepalen elke cel:
+
+**Regel 1 — basisrij.** Voor `i = 0` (geen items): `OPT(0, w) = 0` voor
+alle `w`. Geen items → geen waarde.
+
+**Regel 2 — item past niet.** Als `w_i > w` (item i weegt méér dan de
+beschikbare ruimte), kun je hem niet meenemen. Kopieer dan de cel
+**boven**: `OPT(i, w) = OPT(i-1, w)`.
+
+**Regel 3 — item past wél.** Vergelijk twee opties:
+
+- **Skip**: `OPT(i-1, w)` (cel direct boven).
+- **Meenemen**: `v_i + OPT(i-1, w - w_i)` (waarde van item plus cel
+  boven, maar `w_i` kolommen naar links).
+
+Neem de hoogste: `OPT(i, w) = max(skip, meenemen)`.
+
+## De items
+
+Voor dit voorbeeld gebruiken we het 5-item, W=11 voorbeeld uit de
+docent's afbeelding:
+
+| Item | Waarde | Gewicht |
+|---|---|---|
+| 1 | 1 | 1 |
+| 2 | 6 | 2 |
+| 3 | 18 | 5 |
+| 4 | 22 | 6 |
+| 5 | 28 | 7 |
+
+W = 11.
+
+## Sjabloon — vul zelf in
+
+Hier is de tabel met alleen rij 0 en kolom 0 alvast ingevuld (allemaal 0,
+volgens regel 1 en omdat een rugzak van 0 sowieso leeg is):
+
+| `OPT(i,w)` | w=0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| **i=0** ∅ | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| **i=1** (v=1, w=1) | 0 | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |
+| **i=2** (v=6, w=2) | 0 | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |
+| **i=3** (v=18, w=5) | 0 | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |
+| **i=4** (v=22, w=6) | 0 | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |
+| **i=5** (v=28, w=7) | 0 | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |
+
+Print deze tabel of teken hem op papier. We vullen hem rij voor rij.
+
+## Rij 1 — item 1 (v=1, w=1)
+
+Item 1 weegt 1. Voor elke kolom `w ≥ 1` past hij. Regel 3:
+
+- `w=1`: skip = `OPT(0, 1)` = 0. Meenemen = `1 + OPT(0, 0)` = 1. → max = **1**.
+- `w=2`: skip = `OPT(0, 2)` = 0. Meenemen = `1 + OPT(0, 1)` = 1. → max = **1**.
+- `w=3` t/m `w=11`: zelfde patroon — alle nog steeds **1**.
+
+Vul rij 1 in.
+
+<details>
+<summary>Antwoord rij 1</summary>
+
+| **i=1** | 0 | **1** | **1** | **1** | **1** | **1** | **1** | **1** | **1** | **1** | **1** | **1** |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+
+Item 1 heeft waarde 1; meer kun je niet halen met alleen item 1.
+
+</details>
+
+## Rij 2 — item 2 (v=6, w=2)
+
+Item 2 weegt 2. Voor `w < 2` past hij niet → regel 2 (kopieer boven).
+Voor `w ≥ 2` past hij wél → regel 3 (max van skip en meenemen).
+
+- `w=1`: te zwaar → kopieer `OPT(1, 1)` = **1**.
+- `w=2`: skip = `OPT(1, 2)` = 1. Meenemen = `6 + OPT(1, 0)` = 6. → **6**.
+- `w=3`: skip = 1. Meenemen = `6 + OPT(1, 1)` = 7. → **7**.
+- `w=4`: skip = 1. Meenemen = `6 + OPT(1, 2)` = 7. → **7**.
+- `w=5` t/m `w=11`: skip = 1; meenemen = `6 + OPT(1, w-2)` = 7. → allemaal **7**.
+
+<details>
+<summary>Antwoord rij 2</summary>
+
+| **i=2** | 0 | 1 | **6** | **7** | **7** | **7** | **7** | **7** | **7** | **7** | **7** | **7** |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+
+Met items 1 en 2 samen haal je hoogstens waarde 7 (allebei
+meenemen, gewicht 1 + 2 = 3).
+
+</details>
+
+## Rij 3 — item 3 (v=18, w=5)
+
+Item 3 weegt 5. Voor `w < 5`: regel 2. Voor `w ≥ 5`: regel 3.
+
+- `w=0..4`: te zwaar → kopieer rij 2: `0, 1, 6, 7, 7`.
+- `w=5`: skip = `OPT(2, 5)` = 7. Meenemen = `18 + OPT(2, 0)` = 18. → **18**.
+- `w=6`: skip = 7. Meenemen = `18 + OPT(2, 1)` = 19. → **19**.
+- `w=7`: skip = 7. Meenemen = `18 + OPT(2, 2)` = 24. → **24**.
+- `w=8`: skip = 7. Meenemen = `18 + OPT(2, 3)` = 25. → **25**.
+- `w=9` t/m `w=11`: skip = 7; meenemen = `18 + OPT(2, w-5)` = `18 + 7` = 25 (voor w ≥ 9). → allemaal **25**.
+
+<details>
+<summary>Antwoord rij 3</summary>
+
+| **i=3** | 0 | 1 | 6 | 7 | 7 | **18** | **19** | **24** | **25** | **25** | **25** | **25** |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+
+Vanaf `w=5` kun je item 3 (waarde 18) meenemen — daarna stijgt de
+waarde met wat je nog aan items 1 en 2 erbij kan pakken.
+
+</details>
+
+## Rij 4 — item 4 (v=22, w=6)
+
+Item 4 weegt 6. Voor `w < 6`: regel 2. Voor `w ≥ 6`: regel 3.
+
+- `w=0..5`: te zwaar → kopieer rij 3: `0, 1, 6, 7, 7, 18`.
+- `w=6`: skip = `OPT(3, 6)` = 19. Meenemen = `22 + OPT(3, 0)` = 22. → **22**.
+- `w=7`: skip = 24. Meenemen = `22 + OPT(3, 1)` = 23. → **24**.
+- `w=8`: skip = 25. Meenemen = `22 + OPT(3, 2)` = 28. → **28**.
+- `w=9`: skip = 25. Meenemen = `22 + OPT(3, 3)` = 29. → **29**.
+- `w=10`: skip = 25. Meenemen = `22 + OPT(3, 4)` = 29. → **29**.
+- `w=11`: skip = 25. Meenemen = `22 + OPT(3, 5)` = `22 + 18` = **40**. → **40**.
+
+<details>
+<summary>Antwoord rij 4</summary>
+
+| **i=4** | 0 | 1 | 6 | 7 | 7 | 18 | **22** | **24** | **28** | **29** | **29** | **40** |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+
+Let goed op cel `(4, 11) = 40`: items 3 + 4 (gewicht 5 + 6 = 11, waarde
+18 + 22 = 40). Dat is de eerste keer dat we de **40** zien.
+
+</details>
+
+## Rij 5 — item 5 (v=28, w=7)
+
+Item 5 weegt 7. Voor `w < 7`: regel 2. Voor `w ≥ 7`: regel 3.
+
+- `w=0..6`: te zwaar → kopieer rij 4: `0, 1, 6, 7, 7, 18, 22`.
+- `w=7`: skip = `OPT(4, 7)` = 24. Meenemen = `28 + OPT(4, 0)` = 28. → **28**.
+- `w=8`: skip = 28. Meenemen = `28 + OPT(4, 1)` = 29. → **29**.
+- `w=9`: skip = 29. Meenemen = `28 + OPT(4, 2)` = 34. → **34**.
+- `w=10`: skip = 29. Meenemen = `28 + OPT(4, 3)` = 35. → **35**.
+- `w=11`: skip = **40**. Meenemen = `28 + OPT(4, 4)` = `28 + 7` = 35. → **40**.
+
+<details>
+<summary>Antwoord rij 5</summary>
+
+| **i=5** | 0 | 1 | 6 | 7 | 7 | 18 | 22 | **28** | **29** | **34** | **35** | **40** |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+
+Eindcel: `OPT(5, 11) = 40`. Item 5 voegt niets toe — de skip-tak (40)
+wint van meenemen (35). Dat zegt: in de optimale rugzak zit item 5
+**niet**.
+
+</details>
+
+## De complete tabel
+
+Hier is de hele OPT-tabel als referentie:
+
+| `OPT(i,w)` | w=0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| **i=0** ∅ | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| **i=1** (1,1) | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
+| **i=2** (6,2) | 0 | 1 | 6 | 7 | 7 | 7 | 7 | 7 | 7 | 7 | 7 | 7 |
+| **i=3** (18,5) | 0 | 1 | 6 | 7 | 7 | 18 | 19 | 24 | 25 | 25 | 25 | 25 |
+| **i=4** (22,6) | 0 | 1 | 6 | 7 | 7 | 18 | 22 | 24 | 28 | 29 | 29 | 40 |
+| **i=5** (28,7) | 0 | 1 | 6 | 7 | 7 | 18 | 22 | 28 | 29 | 34 | 35 | **40** |
+
+De beste totale waarde is **40**. Maar... welke items zijn dat?
+
+## Welke items meegenomen?
+
+De tabel zegt **wat** de beste waarde is, maar niet meteen **welke** items.
+Daarvoor lopen we de tabel **terug** vanaf rechtsonder.
+
+Voor elke rij `i` (van 5 naar 1):
+
+- Als `OPT(i, w) == OPT(i-1, w)`: item `i` was **niet** nodig → ga naar
+  `(i-1, w)`.
+- Anders: item `i` is **wel** meegenomen → ga naar `(i-1, w - w_i)`.
+
+Stop bij `i = 0`.
+
+Let op: in de tabel kun je dit visueel volgen. "Kopieer-cellen" (regel
+2 of skip-wint in regel 3) wijzen naar **boven**; "meenemen-cellen"
+wijzen **diagonaal naar links-boven**.
+
+## Backtrack — stap voor stap
+
+Begin bij cel `(i=5, w=11) = 40`.
+
+**Stap 1 — i=5, w=11**
+
+`OPT(5, 11) = 40`. `OPT(4, 11) = 40`. **Gelijk** → item 5 NIET mee.
+Ga naar `(4, 11)`.
+
+**Stap 2 — i=4, w=11**
+
+`OPT(4, 11) = 40`. `OPT(3, 11) = 25`. **Ongelijk** → item 4 WEL mee.
+Ga naar `(3, 11 - 6) = (3, 5)`.
+
+**Stap 3 — i=3, w=5**
+
+`OPT(3, 5) = 18`. `OPT(2, 5) = 7`. **Ongelijk** → item 3 WEL mee.
+Ga naar `(2, 5 - 5) = (2, 0)`.
+
+**Stap 4 — i=2, w=0**
+
+`OPT(2, 0) = 0`. We zijn bij capaciteit 0 → niks meer mee te nemen
+(en `OPT(1, 0) = OPT(0, 0) = 0`, dus de twee resterende rondes
+voegen niets toe). **Klaar**.
+
+## Het antwoord
+
+**Items meegenomen: {3, 4}**.
+
+- Totaal waarde: 18 + 22 = **40** ✓
+- Totaal gewicht: 5 + 6 = **11** (precies op de limiet) ✓
+
+Dit klopt met cel `(5, 11) = 40` in de tabel.
+
+## Wat hebben we nu gedaan?
+
+Je hebt het knapsack-algoritme **zelf uitgevoerd** zonder een regel
+Python te schrijven. De drie regels (basisrij, te zwaar, max van skip
+en meenemen) zijn de **hele** beslissingsregel — meer is er niet aan.
+
+De backtrack-procedure laat zien dat de tabel niet alleen het *getal*
+40 onthoudt, maar via vergelijking met de cel erboven ook **welke
+keuzes** tot dat getal hebben geleid.
+
+## Brug naar code
+
+In de volgende stappen schrijven we **exact deze tabel** in Python.
+Eerst de items, dan de lege tabel, dan rij voor rij invullen — precies
+zoals jij het hier met de hand deed.
+
+```python
+def knapsack(items, capaciteit):
+    n = len(items)
+    tabel = [[0] * (capaciteit + 1) for _ in range(n + 1)]
+    # ... vul rijen 1 t/m n in volgens de drie regels ...
+    return tabel[n][capaciteit]
+```
+
+Geen recursie. Geen kopieën. Eén tabel — die je zelf al hebt
+uitgerekend.
+
+Door naar [stap 3: voorspel zelf →](./03-stellingen).

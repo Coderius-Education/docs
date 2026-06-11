@@ -1,0 +1,168 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeEditor from '@site/src/components/CodeEditor';
+
+# prompt en alert
+
+## Wat ga je leren?
+
+Je leert twee ingebouwde JavaScript-functies waarmee je snel met de gebruiker kunt communiceren: **`alert()`** toont een berichtvenster, **`prompt()`** vraagt om invoer.
+
+## Theorie
+
+In [Formulier-data ophalen](/docs/js-basics/formulier-data) gebruikte je een formulier om invoer op te halen. Voor snelle demo's en oefeningen kan dat ook simpeler — met twee browser-ingebouwde functies:
+
+### `alert()` — toon een berichtvenster
+
+```js
+alert('Hallo wereld!');
+```
+
+Een pop-up venster verschijnt met je tekst en een OK-knop. De code wacht tot de gebruiker op OK klikt.
+
+### `prompt()` — vraag om invoer
+
+```js
+const naam = prompt('Hoe heet je?');
+```
+
+Een pop-up venster vraagt om tekst. Wat de gebruiker typt komt in `naam` te staan (als string). Klikt de gebruiker op Cancel, dan is `naam` gelijk aan `null`.
+
+### Beide combineren
+
+```js
+const naam = prompt('Hoe heet je?');
+alert('Welkom, ' + naam + '!');
+```
+
+:::tip Wanneer wel/niet?
+- **Wel**: snelle demo, mini-oefening, één losse vraag.
+- **Niet**: echte website. Pop-ups zijn storend, blokkeren de pagina, en kunnen niet gestyled worden. Gebruik daar [formulieren](/docs/js-basics/formulier-data) voor.
+:::
+
+## Predict
+
+Wat verschijnt er in de console als de gebruiker `"16"` typt in deze code?
+
+```js
+const leeftijd = prompt('Hoe oud ben je?');
+console.log(leeftijd + 4);
+```
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+`164`. `prompt()` geeft altijd een **string** terug — ook bij getallen. `'16' + 4` is dus string-concatenatie: `'16' + '4'` wordt `'164'`. Wil je rekenen, dan moet je `Number(prompt(...))` gebruiken.
+
+</details>
+
+## Probeer het zelf!
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Prompt &amp; alert</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <button onclick="vraagNaam()">Vraag mijn naam</button>
+  <p id="uitvoer"></p>
+</body>
+</html>`}
+  initialCss={`button { padding: 10px 20px; font-size: 1rem; cursor: pointer; }
+#uitvoer { margin-top: 20px; font-size: 1.3rem; color: darkgreen; }`}
+  initialJs={`function vraagNaam() {
+  const naam = prompt('Hoe heet je?');
+  if (naam) {
+    alert('Hallo ' + naam + '!');
+    document.getElementById('uitvoer').textContent = 'Welkom, ' + naam + '.';
+  }
+}`}
+  height="380px"
+  livePreview={false}
+/>
+
+## Investigate
+
+Experimenteer:
+
+- Klik op de knop en klik bij de prompt direct op **Cancel** — wat verandert er op de pagina? (Tip: `naam` is dan `null`)
+- Vraag in een tweede `prompt` om leeftijd. Toon ook die in de `alert`.
+- Verander `if (naam)` in `if (naam !== null)` — werkt het hetzelfde?
+
+## Modify
+
+**Opdracht:** Vraag de gebruiker om twee getallen en toon de som in een `alert`.
+
+<details>
+<summary>Tip</summary>
+
+Vergeet niet `Number()` om de strings naar getallen te zetten — anders worden ze geplakt in plaats van opgeteld (zie [Waarden en operatoren](/docs/js-basics/operatoren-types)).
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```js
+function telOp() {
+  const a = Number(prompt('Eerste getal:'));
+  const b = Number(prompt('Tweede getal:'));
+  alert('Som: ' + (a + b));
+}
+```
+
+</details>
+
+## Make
+
+**Opdracht:** Bouw een mini-quiz. Stel via `prompt` een vraag met meerdere mogelijke antwoorden (bijv. "Wat is de hoofdstad van Nederland?"). Vergelijk het antwoord met het juiste antwoord en geef via `alert` feedback ("Goed!" of "Fout, het was..."). Tip: gebruik `.toLowerCase()` om hoofdletters te negeren.
+
+<details>
+<summary>Tip</summary>
+
+`antwoord.toLowerCase() === 'amsterdam'` — zo accepteer je "amsterdam", "Amsterdam" en "AMSTERDAM".
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```js
+function quiz() {
+  const antwoord = prompt('Wat is de hoofdstad van Nederland?');
+
+  if (antwoord && antwoord.toLowerCase() === 'amsterdam') {
+    alert('Goed gedaan!');
+  } else {
+    alert('Fout. Het juiste antwoord is Amsterdam.');
+  }
+}
+```
+
+</details>
+
+## Er gaat iets mis
+
+**`prompt` geeft een string, ook bij getallen**
+
+```js
+const aantal = prompt('Hoeveel?');  // bijv. "5"
+const totaal = aantal * 2;          // werkt: '5' * 2 = 10
+const verkeerd = aantal + 1;        // werkt NIET: '5' + 1 = '51'
+```
+
+Vermenigvuldigen werkt soms toevallig (JS converteert automatisch bij `*`, `-`, `/`), maar **`+` plakt strings**. Dat is dezelfde val als bij `<input>.value` (zie [Formulier-data ophalen](/docs/js-basics/formulier-data)). Wikkel altijd `Number(...)` om numerieke invoer:
+
+```js
+const aantal = Number(prompt('Hoeveel?'));
+```
+
+---
+
+[← Formulier-data ophalen](/docs/js-basics/formulier-data) | [Loops →](/docs/js-basics/loops)

@@ -1,0 +1,86 @@
+/* Gedeelde stijlen voor console en run-knoppen, op Infima-variabelen zodat
+   licht/donker automatisch meeschakelt. */
+
+.console {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  padding: 0.6rem 0.8rem;
+  background: var(--ifm-pre-background);
+  color: var(--ifm-pre-color);
+}
+
+.consolePlaceholder {
+  color: var(--ifm-color-emphasis-500);
+  font-style: italic;
+}
+
+.consoleStderr {
+  color: var(--ifm-color-danger);
+}
+
+.consoleSystem {
+  color: var(--ifm-color-emphasis-600);
+  font-style: italic;
+}
+
+.runControls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.button {
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 0.3rem 0.9rem;
+  border-radius: var(--ifm-button-border-radius, 0.4rem);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  cursor: pointer;
+}
+
+.button:hover:not(:disabled) {
+  background: var(--ifm-color-emphasis-100);
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.buttonRun {
+  background: var(--ifm-color-primary);
+  border-color: var(--ifm-color-primary);
+  color: #fff;
+}
+
+.buttonRun:hover:not(:disabled) {
+  background: var(--ifm-color-primary-dark);
+}
+
+.buttonStop {
+  background: var(--ifm-color-danger);
+  border-color: var(--ifm-color-danger);
+  color: #fff;
+}
+
+.buttonStop:hover:not(:disabled) {
+  background: var(--ifm-color-danger-dark);
+}
+
+.status {
+  font-size: 0.8rem;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.statusError {
+  color: var(--ifm-color-danger);
+}

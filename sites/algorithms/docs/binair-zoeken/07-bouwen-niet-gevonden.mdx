@@ -1,0 +1,99 @@
+---
+sidebar_position: 7
+hide_table_of_contents: true
+---
+
+# 4.7 Bouwsteen 5 — niet gevonden en alles in een functie
+
+**Leerdoel:** je verpakt het algoritme in een functie en geeft `-1` terug
+als het doel niet voorkomt.
+
+## Wat we willen
+
+Twee dingen samen:
+
+1. **Functie** met parameters `lijst` en `doel`. Returnt de index, of `-1`.
+2. **Return-statements** vervangen het `print` + `break` van de vorige stap.
+
+## Voorspel
+
+Wat denk je dat dit print?
+
+```python
+def binair_zoek(lijst, doel):
+    laag = 0
+    hoog = len(lijst) - 1
+    while laag <= hoog:
+        midden = (laag + hoog) // 2
+        if lijst[midden] == doel:
+            return midden
+        elif lijst[midden] < doel:
+            laag = midden + 1
+        else:
+            hoog = midden - 1
+    return -1
+
+print(binair_zoek([1, 3, 5, 7, 9, 11, 13, 15], 11))
+print(binair_zoek([1, 3, 5, 7, 9, 11, 13, 15], 4))
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+5
+-1
+```
+
+- 11 staat op index 5 — gevonden bij stap 2 → `return 5`.
+- 4 staat er niet in — de while-lus stopt zonder match → de regel
+  `return -1` wordt bereikt.
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`def binair_zoek(lijst, doel):
+    laag = 0
+    hoog = len(lijst) - 1
+    while laag <= hoog:
+        midden = (laag + hoog) // 2
+        if lijst[midden] == doel:
+            return midden
+        elif lijst[midden] < doel:
+            laag = midden + 1
+        else:
+            hoog = midden - 1
+    return -1
+
+print(binair_zoek([1, 3, 5, 7, 9, 11, 13, 15], 11))
+print(binair_zoek([1, 3, 5, 7, 9, 11, 13, 15], 4))`} />
+
+## Waar staat `return -1`?
+
+Net als bij lineair zoeken: `return -1` staat **buiten** de `while`-lus, op
+functie-niveau. Hij wordt alleen bereikt als de hele while-lus is afgelopen
+zonder een `return midden`.
+
+Visueel (let op de inspringing):
+
+```python
+def binair_zoek(lijst, doel):              # 0 spaties
+    laag = 0                               # 4 spaties
+    ...
+    while laag <= hoog:                    # 4 spaties
+        midden = (laag + hoog) // 2        # 8 spaties (in while)
+        if lijst[midden] == doel:          # 8 spaties
+            return midden                  # 12 spaties (in if)
+        ...
+    return -1                              # 4 spaties (na while)
+```
+
+<SteppingStoneModel stone="binary-not-found" />
+
+## Wat nu?
+
+Je hebt alle bouwstenen. In de volgende stap zie je ze samen en kun je het
+algoritme als geheel onderzoeken.
+
+Door naar [stap 8: het complete algoritme](./08-compleet).

@@ -1,0 +1,67 @@
+---
+sidebar_position: 5
+hide_table_of_contents: true
+---
+
+# 12.5 Bouwsteen 2 — het basisgeval
+
+**Leerdoel:** je begrijpt waarom recursie een **stopconditie** nodig heeft
+en schrijft het basisgeval voor Hanoi.
+
+## Waarom een basisgeval?
+
+Straks gaat `hanoi` zichzelf aanroepen met steeds minder schijven:
+`n`, dan `n − 1`, dan `n − 2`, ... Zonder afslag blijft dat doorgaan —
+ook onder nul — en stopt het nooit. Python grijpt dan in met:
+
+```
+RecursionError: maximum recursion depth exceeded
+```
+
+Het **basisgeval** is die afslag: het allerkleinste probleem dat je
+**direct** kunt beantwoorden, zónder jezelf nog eens aan te roepen.
+
+## Wat is het kleinste geval?
+
+Nóg kleiner dan één schijf: **nul schijven**. Een lege stapel verplaatsen
+kost... geen enkele zet. Dus:
+
+> `n == 0`  →  geef een **lege lijst** `[]` terug.
+
+Dat is handiger dan stoppen bij `n == 1`, want straks valt alles netjes op
+zijn plek: de recursie telt vanzelf af tot 0.
+
+## Bouw en test
+
+<PyRunner initialCode={`def hanoi(n, bron, doel, hulp):
+    # Het basisgeval: bij 0 schijven hoef je niets te doen.
+    # Geef in dat geval een lege lijst terug.
+    if n == 0:
+        ...
+    # (de rest komt op de volgende pagina)
+    return [(bron, doel)]
+
+
+# === Tests ===
+assert hanoi(0, "A", "C", "B") == []
+assert hanoi(0, "B", "A", "C") == []
+
+print("Basisgeval werkt ✓")`} />
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def hanoi(n, bron, doel, hulp):
+    if n == 0:
+        return []
+    return [(bron, doel)]
+```
+
+`return` stopt de functie meteen, dus bij `n == 0` komt de regel eronder
+niet meer aan bod. Op de volgende pagina vervangen we die tijdelijke regel
+door de echte recursie.
+
+</details>
+
+Door naar [stap 6: de recursie →](./06-bouwen-recursie-stap).

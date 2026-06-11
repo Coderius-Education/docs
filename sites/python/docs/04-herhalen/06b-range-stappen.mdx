@@ -1,0 +1,165 @@
+---
+sidebar_position: 2
+hide_table_of_contents: true
+description: Gebruik range(start, stop) en range(start, stop, step) om met een begin-getal en stapgrootte te tellen.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 6b Range met start en stappen
+
+Je kunt `range(n)` gebruiken om n keer te herhalen — altijd vanaf `0`. In deze les leer je `range` met een **begin-getal** en een **stapgrootte**.
+
+## range(start, stop)
+
+`range()` kan een begin- én eindgetal krijgen:
+
+```python
+for i in range(1, 6):
+    print(i)
+```
+
+Uitvoer:
+
+```
+1
+2
+3
+4
+5
+```
+
+`range(1, 6)` begint bij **1** en stopt vóór **6**. Het einde is altijd exclusief — een klassieker om in de val te lopen.
+
+## range(start, stop, step)
+
+Met een derde argument bepaal je de **stapgrootte**:
+
+```python
+for i in range(0, 11, 2):
+    print(i)
+```
+
+Uitvoer:
+
+```
+0
+2
+4
+6
+8
+10
+```
+
+Stappen van 2 — handig voor even getallen. Een **negatieve** stap telt achteruit:
+
+```python
+for i in range(10, 0, -1):
+    print(i)
+```
+
+Dit print `10, 9, 8, ..., 1`. De stop-waarde (`0`) wordt zelf niet meer geprint, want exclusief.
+
+---
+
+## Opdracht 6b.1: Even getallen
+
+Print de even getallen van 0 t/m 10 met één `for`-loop.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+`range(0, 11, 2)` — begin 0, stop vóór 11, stappen van 2.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+for i in range(0, 11, 2):
+    print(i)
+```
+
+<CodeExercise>{`for i in range(0, 11, 2):
+    print(i)`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 6b.2: Tafel van 7
+
+Print de tafel van 7 (van 1 tot en met 10) met een for-loop en een f-string.
+
+Verwachte uitvoer:
+
+```
+7 x 1 = 7
+7 x 2 = 14
+7 x 3 = 21
+...
+7 x 10 = 70
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+`range(1, 11)` geeft `1` t/m `10`. F-string: `f"7 x {i} = {7 * i}"`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+for i in range(1, 11):
+    print(f"7 x {i} = {7 * i}")
+```
+
+<CodeExercise>{`for i in range(1, 11):
+    print(f"7 x {i} = {7 * i}")`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 6b.3: Driehoek van sterretjes
+
+Teken met `hoogte = 5` een driehoek van sterretjes. Per regel komt er één sterretje bij.
+
+Verwachte uitvoer:
+
+```
+*
+**
+***
+****
+*****
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Je kunt strings vermenigvuldigen: `"*" * 3` geeft `"***"`. Gebruik dus `"*" * i` in je print, met `range(1, hoogte + 1)`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+hoogte = 5
+
+for i in range(1, hoogte + 1):
+    print("*" * i)
+```
+
+Met `for` herhaal je een vast aantal keer. In de volgende les leer je de **while-loop**: doorgaan zolang een voorwaarde `True` is, ook als je niet weet hoe vaak.
+
+<CodeExercise>{`hoogte = 5
+
+for i in range(1, hoogte + 1):
+    print("*" * i)`}</CodeExercise>
+
+</details>

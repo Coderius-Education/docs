@@ -1,0 +1,72 @@
+---
+sidebar_position: 2
+hide_table_of_contents: true
+---
+
+import WokwiSimulator from '@site/src/components/WokwiSimulator';
+
+# 4.2 Een LED dimmen met PWM
+
+Een pin kan eigenlijk alleen aan (`HIGH`) of uit (`LOW`). Hoe kun je een LED dan toch **half** laten branden? Met een trucje dat **PWM** heet.
+
+## Wat is PWM?
+
+PWM staat voor *Pulse Width Modulation*. De pin gaat heel snel aan en uit — honderden keren per seconde. Als hij de helft van de tijd aan is, lijkt de LED half zo fel. Je oog ziet het knipperen niet; het ziet een gemiddelde.
+
+Niet elke pin kan dit. Op de Uno kan het alleen op de pinnen met een `~`: **3, 5, 6, 9, 10 en 11**.
+
+## analogWrite
+
+Met `analogWrite()` stel je in hoe fel de pin "gemiddeld" aan is, met een getal van **0 (uit) tot 255 (vol aan)**:
+
+```cpp
+void setup() {
+  pinMode(9, OUTPUT);
+}
+
+void loop() {
+  analogWrite(9, 64);    // zwak
+  delay(1000);
+  analogWrite(9, 255);   // fel
+  delay(1000);
+}
+```
+
+<WokwiSimulator
+  projectUrl="https://wokwi.com/projects/new/arduino-uno"
+  title="Simuleer: LED dimmen"
+/>
+
+Sluit een LED met weerstand aan op pin 9. De LED wisselt tussen zwak en fel branden.
+
+## Een LED langzaam laten op- en afzwellen
+
+Met een `for`-lus laat je de helderheid soepel veranderen:
+
+```cpp
+void setup() {
+  pinMode(9, OUTPUT);
+}
+
+void loop() {
+  for (int h = 0; h <= 255; h++) {
+    analogWrite(9, h);
+    delay(5);
+  }
+  for (int h = 255; h >= 0; h--) {
+    analogWrite(9, h);
+    delay(5);
+  }
+}
+```
+
+<WokwiSimulator
+  projectUrl="https://wokwi.com/projects/new/arduino-uno"
+  title="Simuleer: op- en afzwellen (fade)"
+/>
+
+De eerste lus telt `h` op van 0 naar 255 (steeds feller), de tweede telt weer af. Dit "ademen" van een LED heet een **fade**.
+
+:::caution
+`analogWrite()` werkt alleen op de `~`-pinnen. Gebruik je een gewone pin, dan gedraagt de LED zich als gewoon aan of uit.
+:::

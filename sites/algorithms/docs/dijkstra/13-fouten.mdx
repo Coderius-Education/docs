@@ -1,0 +1,98 @@
+---
+sidebar_position: 13
+hide_table_of_contents: true
+---
+
+# 8.13 Er gaat iets mis — top-3 fouten
+
+**Leerdoel:** je herkent de drie klassieke valkuilen bij het bouwen van
+Dijkstra.
+
+## Edge maar één kant op zetten
+
+Geen foutmelding — wél een **fout antwoord**. Sommige nodes blijven op
+`inf` staan terwijl ze wel bereikbaar zijn.
+
+**Oorzaak:** in een niet-gerichte graph moet elke verbinding **twee
+keer** in de dict staan. Mis je er één, dan denkt het algoritme dat die
+kant niet bestaat.
+
+```python
+# FOUT — A → B staat alleen onder A
+graph = {
+    'A': [('B', 4)],
+    'B': [],            # ← B kan niet terug naar A
+}
+
+# GOED
+graph = {
+    'A': [('B', 4)],
+    'B': [('A', 4)],
+}
+```
+
+**Tip:** bouw de dict programmatisch op uit een **lijst van edges**, dan
+kun je geen kant vergeten:
+
+```python
+edges = [('A', 'B', 4), ('A', 'C', 2), ('B', 'D', 1), ('C', 'D', 8)]
+graph = {}
+for u, v, w in edges:
+    graph.setdefault(u, []).append((v, w))
+    graph.setdefault(v, []).append((u, w))
+```
+
+## `bezocht.add()` vergeten — oneindige lus
+
+Geen foutmelding — Python loopt **oneindig** door. Browser-tab hangt.
+Druk op **Reset** als dit gebeurt.
+
+**Oorzaak:** zonder `bezocht.add(huidige)` blijf je dezelfde node steeds
+opnieuw kiezen. De hoofdlus eindigt nooit.
+
+```python
+while True:
+    huidige = kies_volgende(afstanden, bezocht)
+    if huidige is None:
+        break
+    # bezocht.add(huidige) ← VERGETEN!
+    for buur, gewicht in graph[huidige]:
+        ...
+```
+
+**Oplossing:** **eerst** markeren, **dan** relaxen. De volgorde maakt
+uit als een node naar zichzelf wijst:
+
+```python
+bezocht.add(huidige)
+for buur, gewicht in graph[huidige]:
+    ...
+```
+
+## Negatieve gewichten gebruiken
+
+Geen foutmelding — wél een **stilletjes verkeerd antwoord**.
+
+**Oorzaak:** Dijkstra gaat ervan uit dat "klaar verklaarde" nodes hun
+afstand niet meer kunnen verbeteren. Een negatieve edge kan dat
+omgooien.
+
+```python
+graph = {
+    'A': [('B', 5), ('C', 2)],
+    'B': [('A', 5), ('C', -10)],   # ← negatief!
+    'C': [('A', 2), ('B', -10)],
+}
+```
+
+In dit voorbeeld zou `B` correct afstand `5 + (-10) = -5` moeten
+krijgen — maar Dijkstra verklaart `C` al klaar op afstand 2 voordat hij
+die negatieve route ontdekt.
+
+**Oplossing:** voor negatieve gewichten gebruik je *Bellman-Ford*. Dat
+is een ander algoritme, niet Dijkstra.
+
+Voor typische routekaarten, vluchtkosten, of netwerkvertragingen zijn
+alle gewichten positief — daar is Dijkstra perfect voor.
+
+Door naar [stap 14: cheatsheet →](./14-cheatsheet).

@@ -1,0 +1,11 @@
+{
+  "label": "PageRank",
+  "position": 13,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "title": "PageRank — hoe Google pagina's rangschikt",
+    "description": "Links zijn stemmen, en belangrijke pagina's geven zwaardere stemmen. Een kip-ei-probleem dat je iteratief oplost — het algoritme waarmee Google groot werd."
+  }
+}

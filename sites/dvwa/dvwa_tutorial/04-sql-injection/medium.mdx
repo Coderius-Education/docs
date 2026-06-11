@@ -1,0 +1,103 @@
+---
+sidebar_position: 2
+sidebar_label: 'Medium'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# SQL Injection — Medium
+
+De ontwikkelaar probeert ons in de weg te zitten door het tekstvak te veranderen in een vast dropdown-menu en beveiligingsfuncties toe te voegen.
+
+## 1. Predict (Voorspel)
+
+De code is aangepast. De input wordt nu beveiligd met `mysqli_real_escape_string()`, een functie die aanhalingstekens onschadelijk maakt. Bovendien ziet de query er nu zo uit:
+
+```php
+$id = $_POST[ 'id' ];
+$id = mysqli_real_escape_string($GLOBALS["___mysqli_ston"], $id);
+$query  = "SELECT first_name, last_name FROM users WHERE user_id = $id;";
+```
+
+**Vraag:** Vergelijk deze query met die van het Low level. Zie je het verschil? Is de `escape`-functie hier nog nuttig?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Het cruciale verschil: `$id` staat nu **niet** meer tussen aanhalingstekens in de query!
+
+Bij Low: `WHERE user_id = '$id'` — aanhalingstekens aanwezig, escape functie zinvol.
+Bij Medium: `WHERE user_id = $id` — geen aanhalingstekens, escape functie doet niets.
+
+Omdat we geen aanhalingstekens hoeven te 'ontsnappen', werkt de escape-functie hier niet als bescherming. De kwetsbaarheid zit nu op een andere plek.
+
+</details>
+
+## 2. Run (Uitvoeren)
+
+Start het lab en bekijk wat er veranderd is.
+
+<DvwaLab module="sql_injection" level="medium" />
+
+Je ziet dat het tekstvak is vervangen door een dropdown-menu. Probeer een paar opties te selecteren en observeer de output.
+
+## 3. Investigate (Onderzoeken)
+
+Open de Developer Tools met **F12** en bekijk de HTML van het dropdown-menu.
+
+**Vraag:** Wat staat er in het `value`-attribuut van de `<option>`-elementen? Wat wordt er precies naar de server gestuurd als je een optie selecteert — de zichtbare tekst of de `value`?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Elk `<option>`-element heeft een `value="1"`, `value="2"` enzovoort. Het is altijd de `value` die naar de server wordt verstuurd, nooit de zichtbare tekst tussen de tags.
+
+Dat betekent: als jij de `value` in de HTML aanpast via F12 vóórdat je op Submit klikt, stuur je een andere waarde naar de server — ook al ziet de dropdown er normaal uit.
+
+Klik nu met de rechtermuisknop op het dropdown-element → **Inspecteren**. Zoek een `<option>`-tag en dubbelklik op de `value`.
+
+</details>
+
+## 4. Modify & Make (Aanpassen & Maken)
+
+Je weet nu dat je de `value` van een `<option>` kunt aanpassen via F12. Jouw doel: pas de `value` zo aan dat de server alle gebruikers teruggeeft.
+
+Denk aan de query: `WHERE user_id = $id` — geen aanhalingstekens. Welke waarde voor `$id` maakt de conditie altijd waar?
+
+<details>
+
+<summary>Tip</summary>
+
+Zonder aanhalingstekens heb je ook geen aanhalingstekens nodig om te 'ontsnappen'. Een wiskundige OR-conditie die altijd klopt, volstaat. Pas de `value` van één `<option>` aan in F12, selecteer die optie en klik Submit.
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+Verander in F12 de HTML naar: `<option value="1 OR 1=1">1</option>`.
+Selecteer die optie en klik op Submit.
+
+De server voert dan uit:
+`WHERE user_id = 1 OR 1=1` — altijd waar, alle gebruikers worden teruggegeven.
+
+</details>
+
+## 5. ✓ Wat moest je zien?
+
+:::tip Controle
+- Er verschijnt een lijst met **alle 5 gebruikers** in de database.
+- Je hebt de `value` van een `<option>` aangepast via F12 — zonder aanhalingstekens in de payload.
+- De `escape`-functie had geen effect omdat de query geen aanhalingstekens gebruikte.
+
+Zie je maar één gebruiker? Controleer of je het `value`-attribuut (niet de zichtbare tekst tussen de tags) hebt aangepast in de HTML.
+:::
+
+## 6. Er gaat iets mis...
+
+Wat als je in F12 typt: `<option value="1 OR 1=1">1 OR 1=1</option>` en je ziet ineens een lege pagina of de request mislukt?
+Soms verwacht het web-framework dat parameters van een dropdown een strikt type hebben. Hoewel je de zichtbare tekst (tussen de tags) kunt veranderen, is het áltijd de `value="..."` (het attribuut) dat naar de server wordt verstuurd! Zorg dus dat je het juiste aanpast.

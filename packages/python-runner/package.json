@@ -1,0 +1,19 @@
+{
+  "name": "@coderius/python-runner",
+  "version": "0.0.0",
+  "private": true,
+  "description": "In-browser Python via Pyodide: PythonPlayground, CodeExercise en de Pyodide-singleton. Gedeeld door python-docs en fullstack-docs.",
+  "type": "commonjs",
+  "exports": {
+    "./PyodideProvider": "./src/PyodideProvider.ts",
+    "./PythonPlayground": "./src/PythonPlayground/index.tsx",
+    "./CodeExercise": "./src/CodeExercise/index.tsx",
+    "./package.json": "./package.json"
+  },
+  "peerDependencies": {
+    "@docusaurus/core": "*",
+    "prism-react-renderer": "*",
+    "react": "*",
+    "react-dom": "*"
+  }
+}

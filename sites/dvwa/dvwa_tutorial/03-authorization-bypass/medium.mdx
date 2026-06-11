@@ -1,0 +1,80 @@
+---
+sidebar_position: 2
+sidebar_label: 'Medium'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# Authorization Bypass — Medium
+
+De webontwikkelaar probeert dit lek te verbergen door de opties in het keuzemenu te beperken.
+
+## 1. Predict (Voorspel)
+
+De ontwikkelaar past de website (de frontend) aan:
+"Als ik er gewoon voor zorg dat de gebruiker in het dropdown-menu alleen maar zijn *eigen* naam kan selecteren, kan hij nooit de ID's van anderen opvragen!"
+
+**Vraag:** Heeft de ontwikkelaar hiermee de *Insecure Direct Object Reference* (IDOR) kwetsbaarheid verholpen?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Nee! Het verwijderen van opties op je beeldscherm is slechts een optische verandering ("Security by Obscurity"). Een browser staat volledig onder controle van de gebruiker. Een hacker kan via de F12 Developer Tools zélf andere opties toevoegen of formulier-waardes aanpassen voordat ze naar de server verstuurd worden.
+Als de server het daarna klakkeloos goedkeurt, is het lek nog altijd aanwezig.
+
+</details>
+
+## 2. Run (Uitvoeren)
+
+Start het lab en bekijk het dropdown-menu.
+
+<DvwaLab module="authorization_bypass" level="medium" />
+
+Je ziet dat je nu alleen je eigen profiel kunt selecteren. Druk op F12 (Developer Tools) en inspecteer het dropdown-menu.
+
+## 3. Investigate (Onderzoeken)
+
+Open de Developer Tools (F12) en zoek het `<select>`-element in de HTML. Kijk naar de `value` van de enige optie die zichtbaar is.
+
+**Vraag:** Wat zie je als je de `value` bekijkt? Wat onthult dit over hoe de server controleert wat je opvraagt?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Je ziet dat de `value` een getal is (jouw eigen gebruikers-ID). De server ontvangt dit getal en haalt blindelings het bijbehorende profiel op. De controle zit volledig in de frontend (de dropdown), niet op de backend. Als jij de waarde van het veld aanpast vóórdat je op Submit klikt, stuurt de browser gewoon het aangepaste getal en de server pikt het klakkeloos op.
+
+</details>
+
+## 4. Modify & Make (Aanpassen & Maken)
+
+Je opdracht: vraag alsnog het profiel van iemand anders (bijvoorbeeld admin/ID 1) op door de HTML aan te passen.
+
+<details>
+
+<summary>Tip</summary>
+
+Verander in de Developer Tools de `value` van jouw enige optie in de lijst.
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+Zoek in de F12 Inspector naar: `<option value="...">...`. Verander de `value` naar `1` en druk op Enter. Klik nu in de normale webpagina op Submit.
+Je browser stuurt nu het valse ID naar de server. Omdat er op de backend nog altijd geen controle zit, zie je gewoon de gegevens!
+
+</details>
+
+## 5. ✓ Wat moest je zien?
+
+:::tip Controle
+- Na het aanpassen van de `value` in de Developer Tools zie je de gegevens van een andere gebruiker (ID 1).
+- Er verschijnt geen foutmelding — de server accepteert het gemanipuleerde ID.
+- De dropdown zelf liet maar één optie zien, maar de server controleert de waarde niet opnieuw.
+
+Zie je nog steeds je eigen profiel? Controleer of je de waarde van het `<option>` element correct hebt aangepast en op Enter hebt gedrukt vóórdat je op Submit klikte.
+:::

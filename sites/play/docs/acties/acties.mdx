@@ -1,0 +1,55 @@
+---
+sidebar_position: 1
+hide_table_of_contents: true
+---
+
+# 3.1 Acties
+Naast het aanpassen van eigenschappen zoals kleur, grootte en positie, kun je ook acties uitvoeren op je vormen.
+
+Een voorbeeld hiervan is **distance_to**: de afstand berekenen tussen twee vormen.
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle(x=-100)
+blok = play.new_box(x=100)
+
+afstand = cirkel.distance_to(blok)
+print(afstand)`} height={300} />
+
+Wat gebeurt hier?
+
+```python
+cirkel.distance_to(blok)
+```
+Met **distance_to()** bereken je de afstand tussen twee vormen. Hier berekenen we de afstand van **cirkel** tot **blok**. Het resultaat is een getal dat je kunt opslaan in een variabele.
+
+## Opdracht 3.1.a: Hoe ver is het?
+
+Maak twee cirkels aan op verschillende posities. Toon de afstand ertussen als tekst op het scherm.
+
+<PygbagRunner code={`import play
+
+cirkel1 = play.new_circle(color='red', x=-150, y=50, radius=30)
+cirkel2 = play.new_circle(color='blue', x=150, y=-50, radius=30)
+
+# bereken de afstand en toon deze op het scherm`} height={300} />
+
+<details>
+    <summary>Klik hier voor een tip!</summary>
+
+`distance_to()` geeft een kommagetal terug. Om dat als tekst te tonen, moet je het omzetten: `str(int(afstand))` maakt er eerst een geheel getal van en daarna tekst.
+
+</details>
+
+<details>
+    <summary>Klik hier voor de oplossing!</summary>
+
+<PygbagRunner code={`import play
+
+cirkel1 = play.new_circle(color='red', x=-150, y=50, radius=30)
+cirkel2 = play.new_circle(color='blue', x=150, y=-50, radius=30)
+
+afstand = cirkel1.distance_to(cirkel2)
+play.new_text(words="Afstand: " + str(int(afstand)), y=150)`} height={300} />
+
+</details>

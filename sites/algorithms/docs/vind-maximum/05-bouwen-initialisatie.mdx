@@ -1,0 +1,142 @@
+---
+sidebar_position: 5
+hide_table_of_contents: true
+---
+
+# 2.5 Bouwsteen 3 — een veilige startwaarde
+
+**Leerdoel:** je leert waarom de startwaarde van een accumulator-variabele
+zo belangrijk is, en welke keuze altijd werkt.
+
+## Wat we willen
+
+Een startwaarde voor `max_tot_nu_toe` die op **elke** lijst werkt — ook
+op lijsten met alleen negatieve getallen.
+
+## Twee aanpakken
+
+### Aanpak A — het eerste element
+
+```python
+max_tot_nu_toe = lijst[0]   # gegarandeerd een echte waarde uit de lijst
+```
+
+Daarna loop je vanaf index 1 verder (`lijst[1:]` of via `enumerate`).
+
+### Aanpak B — `float('-inf')`
+
+```python
+max_tot_nu_toe = float('-inf')   # negatieve oneindigheid: alles is groter
+```
+
+Een speciaal getal in Python dat *kleiner* is dan elk echt getal. Iedere
+echte waarde verslaat hem in de eerste vergelijking.
+
+In dit project gebruiken we **aanpak A** — dichter bij wat een mens zou
+doen ("begin met de eerste persoon en vergelijk de rest met hem/haar").
+
+## Voorspel
+
+Wat denk je dat dit print? Let op de `lijst[1:]` — dat is *de lijst vanaf
+index 1*.
+
+```python
+lijst = [-3, -1, -7]
+max_tot_nu_toe = lijst[0]
+
+for waarde in lijst[1:]:
+    if waarde > max_tot_nu_toe:
+        max_tot_nu_toe = waarde
+
+print(max_tot_nu_toe)
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+-1
+```
+
+Loop het mee:
+- start: `max_tot_nu_toe = lijst[0] = -3`
+- waarde = -1 → -1 > -3 → ja → `max_tot_nu_toe = -1`
+- waarde = -7 → -7 > -1 → nee → blijft -1
+- klaar: maximum = `-1`
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`lijst = [-3, -1, -7]
+max_tot_nu_toe = lijst[0]
+
+for waarde in lijst[1:]:
+    if waarde > max_tot_nu_toe:
+        max_tot_nu_toe = waarde
+
+print(max_tot_nu_toe)`} />
+
+## Wat is `lijst[1:]`?
+
+Dat is een **slice**: een nieuwe lijst met alles vanaf index 1 tot het
+eind. Voor `[10, 20, 30, 40]` is `lijst[1:]` gelijk aan `[20, 30, 40]`.
+
+We slaan index 0 over omdat we hem al hebben gebruikt als startwaarde.
+
+<details>
+<summary>Kan het ook zonder slice?</summary>
+
+Ja, dan loop je gewoon over de hele lijst — de eerste iteratie vergelijkt
+`lijst[0]` met zichzelf, wat geen kwaad kan:
+
+```python
+max_tot_nu_toe = lijst[0]
+for waarde in lijst:           # hele lijst, ook lijst[0]
+    if waarde > max_tot_nu_toe:
+        max_tot_nu_toe = waarde
+```
+
+Een vergelijking extra, maar simpeler om te lezen. Dat is wat we in het
+"complete algoritme" gaan gebruiken.
+
+</details>
+
+## Experimenteer
+
+Test op extreme lijsten:
+
+<PyRunner initialCode={`lijst = [-3, -1, -7]
+max_tot_nu_toe = lijst[0]
+
+for waarde in lijst[1:]:
+    if waarde > max_tot_nu_toe:
+        max_tot_nu_toe = waarde
+
+print("alleen negatief:", max_tot_nu_toe)
+
+lijst = [42]
+max_tot_nu_toe = lijst[0]
+for waarde in lijst[1:]:
+    if waarde > max_tot_nu_toe:
+        max_tot_nu_toe = waarde
+print("één element:", max_tot_nu_toe)`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+- Negatieve lijst: `-1` — was eerst `0`, bug opgelost.
+- Eén element: `42` — `lijst[1:]` is dan leeg, de lus draait 0 keer en de
+  startwaarde blijft staan.
+
+</details>
+
+<SteppingStoneModel stone="maximum-initialization" />
+
+## En een lege lijst?
+
+`lijst[0]` op `[]` geeft `IndexError`. Dat kun je opvangen met een
+`if`-check vooraan. Dat is nog niet *het algoritme zelf*, maar wel een
+keuze die je later moet maken.
+
+Door naar [stap 6: het complete algoritme](./06-compleet).

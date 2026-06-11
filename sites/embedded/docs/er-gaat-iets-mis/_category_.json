@@ -1,0 +1,8 @@
+{
+  "label": "Er gaat iets mis",
+  "position": 90,
+  "link": {
+    "type": "generated-index",
+    "description": "De meest voorkomende foutmeldingen, met hun oorzaak en oplossing."
+  }
+}

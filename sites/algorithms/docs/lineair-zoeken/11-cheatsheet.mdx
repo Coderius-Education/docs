@@ -1,0 +1,133 @@
+---
+sidebar_position: 11
+hide_table_of_contents: true
+---
+
+# 1.11 Cheatsheet — lineair zoeken
+
+Snelle referentie. Klap open wat je nodig hebt.
+
+## Het algoritme zelf
+
+<details>
+<summary>De canonieke implementatie (zoek)</summary>
+
+```python
+def zoek(lijst, doel):
+    for i, waarde in enumerate(lijst):
+        if waarde == doel:
+            return i
+    return -1
+```
+
+</details>
+
+<details>
+<summary>Variant met range (zoek)</summary>
+
+```python
+def zoek(lijst, doel):
+    for i in range(len(lijst)):
+        if lijst[i] == doel:
+            return i
+    return -1
+```
+
+</details>
+
+## De bouwstenen
+
+<details>
+<summary>Door een lijst lopen (for)</summary>
+
+```python
+for waarde in lijst:                  # alleen waarden
+    ...
+
+for i, waarde in enumerate(lijst):    # index + waarde
+    ...
+
+for i in range(len(lijst)):           # alleen index
+    ...
+```
+
+</details>
+
+<details>
+<summary>Vergelijken (==)</summary>
+
+- `==` → vergelijking (`if x == 5`)
+- `!=` → ongelijk (`if x != 5`)
+- `<`, `>`, `<=`, `>=` → andere vergelijkingen
+
+</details>
+
+<details>
+<summary>Functie en return (def, return)</summary>
+
+```python
+def naam(parameter1, parameter2):
+    ...
+    return iets         # stopt de functie en geeft 'iets' terug
+```
+
+`return` stopt de functie **direct** — code erna wordt niet meer
+uitgevoerd.
+
+</details>
+
+<details>
+<summary>Toevoegen aan een lijst (append)</summary>
+
+```python
+resultaat = []
+resultaat.append(42)        # achteraan toevoegen
+```
+
+</details>
+
+## Eigenschappen
+
+<details>
+<summary>Wanneer werkt het?</summary>
+
+- Op **elke** lijst — gesorteerd of niet.
+- Op lijsten van strings, getallen, of wat dan ook, zolang `==` betekenis
+  heeft.
+
+</details>
+
+<details>
+<summary>Hoe snel is het?</summary>
+
+- **Beste geval**: doel staat vooraan → 1 vergelijking.
+- **Slechtste geval**: doel staat achteraan of bestaat niet → `n`
+  vergelijkingen.
+- We zeggen: **O(n)** (lineair in de lengte).
+
+</details>
+
+<details>
+<summary>Conventie voor "niet gevonden"</summary>
+
+- `-1` — duidelijk geen geldige index.
+- Of `None` — Python-stijl.
+- Of `raise ValueError(...)` — als je écht wil dat de aanroeper het merkt.
+
+</details>
+
+## Veelgemaakte fouten (snel)
+
+<details>
+<summary>Top-3 fouten</summary>
+
+1. `return -1` **binnen** de `for`-lus → returnt na 1 iteratie.
+2. `=` waar je `==` bedoelt → `SyntaxError` of stille bug.
+3. `range(len(lijst) + 1)` → `IndexError` op de laatste iteratie.
+
+</details>
+
+---
+
+Klaar met lineair zoeken? Probeer nu [vind het maximum](/docs/vind-maximum/01-concept)
+en zie hoe je dezelfde "door de lijst lopen"-structuur opnieuw gebruikt.

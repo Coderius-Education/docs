@@ -1,0 +1,173 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeEditor from '@site/src/components/CodeEditor';
+
+# Randen en afmetingen
+
+## Wat ga je leren?
+
+Je leert hoe je elementen een **rand** geeft, hoe je hoeken **afrondt**, en hoe je een element een **vaste breedte en hoogte** geeft.
+
+## Theorie
+
+In [Ruimte rond elementen](/docs/html-css/elementen-opmaken) leerde je over padding en margin. Nu voegen we drie nieuwe stijlen toe:
+
+| Eigenschap | Wat het doet | Voorbeeld |
+|---|---|---|
+| `border` | Een rand om het element | `border: 2px solid blue;` |
+| `border-radius` | Ronde hoeken | `border-radius: 8px;` |
+| `width` | Vaste breedte | `width: 300px;` |
+| `height` | Vaste hoogte | `height: 100px;` |
+
+### Border in detail
+
+Een `border` heeft drie waarden achter elkaar: **dikte**, **stijl** en **kleur**:
+
+```css
+border: 3px dashed red;
+/*       ↑     ↑      ↑
+       dikte stijl  kleur */
+```
+
+Veelgebruikte stijlen: `solid` (doorgetrokken), `dashed` (streepjes), `dotted` (puntjes).
+
+## Predict
+
+Wat zie je als je `border-radius: 8px` verhoogt naar `border-radius: 50%`?
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+De hoeken worden zo rond dat het element een **cirkel** of **ovaal** wordt. Met `50%` worden de hoeken zo afgerond dat de helft van het element verdwijnt — alles wat overblijft is een ronde vorm.
+
+</details>
+
+## Probeer het zelf!
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Border en dimensies</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div>
+    <h2>Een kaartje</h2>
+    <p>Met een rand, afgeronde hoeken en een vaste breedte.</p>
+  </div>
+</body>
+</html>`}
+  initialCss={`div {
+  background-color: #f0f4ff;
+  border: 2px solid #4a90e2;
+  border-radius: 8px;
+  padding: 20px;
+  width: 300px;
+}`}
+  height="460px"
+/>
+
+## Investigate
+
+Experimenteer:
+
+- Verander `border` naar `5px dashed red` — wat zie je?
+- Zet `border-radius` op `20px`, dan op `50%` — wat is het verschil?
+- Verwijder `width: 300px` — hoe breed wordt het kaartje?
+- Voeg `height: 200px` toe — wat gebeurt er met de hoogte?
+
+## Modify
+
+**Opdracht:** Maak een rond knop-element van 100x100 pixels met een rode achtergrond en een dikke witte rand.
+
+<details>
+<summary>Tip</summary>
+
+Combineer `width`, `height`, `background-color`, `border` en `border-radius: 50%`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```css
+div {
+  width: 100px;
+  height: 100px;
+  background-color: red;
+  border: 4px solid white;
+  border-radius: 50%;
+}
+```
+
+</details>
+
+## Make
+
+**Opdracht:** Ontwerp een profielkaartje. Geef het een vaste breedte (bijv. 250px), een mooie rand, afgeronde hoeken en een zachte achtergrondkleur. Zet er een naam (`<h2>`) en een rol (`<p>`) in.
+
+<details>
+<summary>Tip</summary>
+
+Begin met een `<div>` als omhulsel. Combineer `width`, `border`, `border-radius`, `padding` en `background-color`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<!-- HTML -->
+<div>
+  <h2>Emma de Vries</h2>
+  <p>Web Developer</p>
+</div>
+```
+
+```css
+/* CSS */
+div {
+  width: 250px;
+  background-color: #fafafa;
+  border: 2px solid #4a90e2;
+  border-radius: 12px;
+  padding: 20px;
+}
+```
+
+</details>
+
+## Bonus: `box-sizing: border-box`
+
+Standaard telt CSS `width: 300px` **alleen voor de inhoud** — `padding` en `border` komen er nog *bovenop*. Een box met `width: 300px`, `padding: 20px` en `border: 2px` is in totaal **344px** breed.
+
+Dat is verwarrend. De oplossing: zet `box-sizing: border-box`. Dan rekent CSS padding en border **mee** in de breedte, en `width: 300px` is écht 300px.
+
+```css
+* {
+  box-sizing: border-box;  /* geldt voor alle elementen */
+}
+```
+
+In de praktijk zet bijna iedere ontwikkelaar dit in de eerste regels van zijn CSS. Daarna kun je `width` en `padding` combineren zonder rekenwerk.
+
+## Er gaat iets mis
+
+**Width zonder eenheid**
+
+```css
+/* Fout: geen eenheid */
+div {
+  width: 300;
+}
+```
+
+CSS-waarden voor afmetingen hebben **altijd** een eenheid nodig — meestal `px` (pixels), `rem` of `%`. Zonder eenheid negeert de browser de regel en blijft het element zijn standaardbreedte houden. Schrijf altijd `width: 300px`, niet `width: 300`.
+
+---
+
+[← Flexbox](/docs/html-css/flexbox) | [Semantische HTML →](/docs/html-css/semantische-html)

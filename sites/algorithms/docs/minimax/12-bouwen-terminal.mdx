@@ -1,0 +1,121 @@
+---
+sidebar_position: 12
+hide_table_of_contents: true
+---
+
+# 9.12 Bouwsteen 6 — `terminal(bord)`
+
+**Leerdoel:** je bepaalt of een spel afgelopen is. Deze functie gebruikt
+jouw `winner` uit pagina 11 — precies het patroon van pagina 9.
+
+## Wat doet deze functie?
+
+`terminal(bord)` returnt `True` als het spel klaar is, anders `False`.
+
+Een spel is "klaar" in **twee** gevallen:
+
+1. Er is een winnaar (X of O heeft drie op een rij).
+2. Er is geen lege cel meer (het bord is vol, dus geen zet mogelijk).
+
+Bij **één van beide** is het spel terminal. Geen winnaar en wel lege
+cellen → het spel gaat door.
+
+## Functies stapelen
+
+Deze functie gebruikt `winner(bord)` uit pagina 11. We *hergebruiken*
+hem in plaats van de check opnieuw te schrijven:
+
+```python
+def terminal(bord):
+    if winner(bord) is not None:
+        return True
+    # geen winnaar — check of er nog lege cellen zijn
+    ...
+```
+
+Zie hoe `terminal` zelf weinig nieuw werk doet. Hij delegeert aan
+`winner`. Dat is precies waar [pagina 9: functies in functies](./09-functies-in-functies)
+over ging.
+
+## Specificatie
+
+- **Input**: een `bord`.
+- **Output**: `True` of `False`.
+
+## Voorspel
+
+Voor elk van deze borden — terminal of niet?
+
+```python
+a = [[None]*3, [None]*3, [None]*3]              # leeg
+b = [["X","X","X"], ["O","O",None], [None]*3]   # X wint
+c = [["X","O","X"], ["O","X","O"], ["X","O","X"]]  # vol, geen winnaar
+d = [["X","O","X"], ["O",None,None], [None]*3]   # spel loopt nog
+```
+
+<details>
+<summary>Antwoord</summary>
+
+- `a`: niet terminal (leeg, geen winnaar).
+- `b`: terminal (X wint).
+- `c`: terminal (vol, remise).
+- `d`: niet terminal (lege cellen, geen winnaar).
+
+</details>
+
+## Bouw zelf en test
+
+<PyRunner initialCode={`def winner(bord):
+    for rij in bord:
+        if rij[0] == rij[1] == rij[2] and rij[0] is not None:
+            return rij[0]
+    for j in range(3):
+        if bord[0][j] == bord[1][j] == bord[2][j] and bord[0][j] is not None:
+            return bord[0][j]
+    if bord[0][0] == bord[1][1] == bord[2][2] and bord[0][0] is not None:
+        return bord[0][0]
+    if bord[0][2] == bord[1][1] == bord[2][0] and bord[0][2] is not None:
+        return bord[0][2]
+    return None
+
+
+def terminal(bord):
+    # Vul aan:
+    # 1. als winner(bord) niet None is -> True
+    # 2. als er geen lege cel meer is -> True
+    # 3. anders -> False
+    return False
+
+
+# === Tests ===
+assert terminal([[None]*3, [None]*3, [None]*3]) is False, "Leeg -> niet terminal"
+
+assert terminal([["X","X","X"], [None]*3, [None]*3]) is True, "X wint -> terminal"
+
+remise = [["X","O","X"], ["X","O","O"], ["O","X","X"]]
+assert terminal(remise) is True, "Vol bord, geen winnaar -> terminal"
+
+bezig = [["X","O", None], ["O","X", None], [None, None, None]]
+assert terminal(bezig) is False, "Spel loopt nog -> niet terminal"
+
+bijna_vol = [["X","O","X"], ["O","X","O"], ["O", None, "X"]]
+assert terminal(bijna_vol) is False, "8 cellen, geen winnaar -> niet terminal"
+
+print("Alle tests gehaald ✓")`} />
+
+<details>
+<summary>Tip</summary>
+
+Stap 1: `if winner(bord) is not None: return True`.
+
+Stap 2: loop door alle cellen. Vind je een `None`, dan is er nog een
+zet mogelijk → `return False`.
+
+Stap 3: lus klaar zonder `None` te vinden → bord vol → `return True`.
+
+Python-trucje (optioneel, korter):
+`if all(cel is not None for rij in bord for cel in rij): return True`.
+
+</details>
+
+Door naar [stap 13: bouwsteen 7 — utility →](./13-bouwen-utility).

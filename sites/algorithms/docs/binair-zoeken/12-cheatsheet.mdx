@@ -1,0 +1,191 @@
+---
+sidebar_position: 12
+hide_table_of_contents: true
+---
+
+# 4.12 Cheatsheet — binair zoeken
+
+Snelle referentie. Klap open wat je nodig hebt.
+
+## Het algoritme zelf
+
+<details>
+<summary>De canonieke implementatie (binair_zoek)</summary>
+
+```python
+def binair_zoek(lijst, doel):
+    laag = 0
+    hoog = len(lijst) - 1
+    while laag <= hoog:
+        midden = (laag + hoog) // 2
+        if lijst[midden] == doel:
+            return midden
+        elif lijst[midden] < doel:
+            laag = midden + 1
+        else:
+            hoog = midden - 1
+    return -1
+```
+
+</details>
+
+<details>
+<summary>Recursieve variant (binair_zoek_rec)</summary>
+
+```python
+def binair_zoek_rec(lijst, doel, laag=0, hoog=None):
+    if hoog is None:
+        hoog = len(lijst) - 1
+    if laag > hoog:
+        return -1
+    midden = (laag + hoog) // 2
+    if lijst[midden] == doel:
+        return midden
+    elif lijst[midden] < doel:
+        return binair_zoek_rec(lijst, doel, midden + 1, hoog)
+    else:
+        return binair_zoek_rec(lijst, doel, laag, midden - 1)
+```
+
+</details>
+
+## De bouwstenen
+
+<details>
+<summary>Grenzen — laag en hoog</summary>
+
+```python
+laag = 0
+hoog = len(lijst) - 1   # let op de -1!
+```
+
+`hoog` is de **laatste index**, niet de lengte.
+
+</details>
+
+<details>
+<summary>Het midden berekenen (//)</summary>
+
+```python
+midden = (laag + hoog) // 2
+```
+
+- `//` → integer-deling (`7 // 2 == 3`)
+- `/` → gewone deling (`7 / 2 == 3.5`)
+
+Voor een index heb je een **geheel getal** nodig → `//`.
+
+</details>
+
+<details>
+<summary>Vergelijken en helft kiezen (if/elif/else)</summary>
+
+```python
+if lijst[midden] == doel:
+    return midden
+elif lijst[midden] < doel:
+    laag = midden + 1     # zoek rechts
+else:
+    hoog = midden - 1     # zoek links
+```
+
+De `+ 1` en `- 1` zijn cruciaal — anders oneindige lus.
+
+</details>
+
+<details>
+<summary>De while-lus (while laag &lt;= hoog)</summary>
+
+```python
+while laag <= hoog:
+    ...
+```
+
+Gebruik `<=` — bij `laag == hoog` is er nog 1 element over.
+
+</details>
+
+<details>
+<summary>Niet gevonden (return -1)</summary>
+
+```python
+    return -1   # buiten de while, op functie-niveau
+```
+
+Wordt alleen bereikt als de while-lus stopt zonder match.
+
+</details>
+
+## Python-syntax
+
+<details>
+<summary>Tuples terug geven (return a, b)</summary>
+
+```python
+return (index, stappen)
+# of zonder haakjes:
+return index, stappen
+```
+
+Uitpakken:
+
+```python
+idx, stp = binair_zoek_met_stappen(getallen, 7)
+```
+
+</details>
+
+<details>
+<summary>break — uit een lus springen</summary>
+
+```python
+while voorwaarde:
+    ...
+    if klaar:
+        break    # stop de lus direct
+```
+
+</details>
+
+## Eigenschappen
+
+<details>
+<summary>Voorwaarden</summary>
+
+- Lijst moet **gesorteerd** zijn.
+- Elementen moeten **vergelijkbaar** zijn met `<` en `==`.
+
+</details>
+
+<details>
+<summary>Hoe snel?</summary>
+
+- **Beste geval**: doel staat op midden bij eerste stap → 1 vergelijking.
+- **Slechtste geval**: `⌈log₂(n)⌉` vergelijkingen.
+- We zeggen: **O(log n)**.
+
+| n | max. vergelijkingen |
+|---:|---:|
+| 10 | 4 |
+| 100 | 7 |
+| 1.000 | 10 |
+| 1.000.000 | 20 |
+| 1.000.000.000 | 30 |
+
+</details>
+
+## Veelgemaakte fouten (snel)
+
+<details>
+<summary>Top-3 fouten</summary>
+
+1. `laag = midden` zonder `+ 1` → **oneindige lus**.
+2. `while laag < hoog` → mist het laatste element bij `laag == hoog`.
+3. Ongesorteerde input → fout antwoord, geen exception.
+
+</details>
+
+---
+
+Klaar? Probeer ook [selection sort](/docs/selection-sort/01-concept) — een
+algoritme dat een lijst zélf gesorteerd maakt.

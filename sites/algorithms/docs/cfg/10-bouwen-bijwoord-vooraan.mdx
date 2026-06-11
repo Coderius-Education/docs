@@ -1,0 +1,127 @@
+---
+sidebar_position: 10
+hide_table_of_contents: true
+---
+
+# 11.10 Zin 8 — een bijwoord vooraan
+
+**Leerdoel:** je laat een bijwoord ook **vóór** een werkwoord-groep
+staan.
+
+## De zin
+
+> **She (N) never (Adv) said (V) a (Det) word (N) until (Conj) we (N) were (V) at (P) the (Det) door (N) here (Adv).**
+
+Een lange zin! Maar bijna alles ken je al. Twee zinsdelen, gekoppeld met
+`until`:
+
+- "She never said a word"
+- "we were at the door here"
+
+## Denk na
+
+- In het tweede deel staat het bijwoord *achter* het werkwoord ("...the
+  door **here**") — die vorm heb je al.
+- Maar in het eerste deel staat het bijwoord **vóór** het werkwoord:
+  "**never** said a word". Hoe laat je een bijwoord aan het *begin* van
+  een werkwoord-groep toe?
+- Past `until` al bij je manier om twee zinnen te koppelen?
+
+## Bouw en test
+
+<PyRunner rows={16} initialCode={`# ===== JOUW WERK: plak je grammatica van de vorige stap en breid hem uit =====
+GRAMMATICA = """
+
+"""
+
+# Zinnen die allemaal moeten werken:
+ZINNEN = [
+    "Holmes sat",
+    "Holmes lit a pipe",
+    "My companion smiled an enigmatical smile",
+    "Holmes sat down and lit his pipe",
+    "We arrived the day before Thursday",
+    "Holmes sat in the red armchair and he chuckled",
+    "Holmes chuckled to himself",
+    "She never said a word until we were at the door here",
+]
+
+
+# ====== De parser-motor + lexicon — hieronder NIET aanpassen ======
+LEXICON = """
+Adj -> "country" | "dreadful" | "enigmatical" | "little" | "moist" | "red"
+Adv -> "down" | "here" | "never"
+Conj -> "and" | "until"
+Det -> "a" | "an" | "his" | "my" | "the"
+N -> "armchair" | "companion" | "day" | "door" | "hand" | "he" | "himself"
+N -> "holmes" | "home" | "i" | "mess" | "paint" | "palm" | "pipe" | "she"
+N -> "smile" | "thursday" | "walk" | "we" | "word"
+P -> "at" | "before" | "in" | "of" | "on" | "to"
+V -> "arrived" | "came" | "chuckled" | "had" | "lit" | "said" | "sat"
+V -> "smiled" | "tell" | "were"
+"""
+
+def lees_grammatica(tekst):
+    regels = []
+    for regel in tekst.splitlines():
+        regel = regel.split("#")[0].strip()
+        if not regel:
+            continue
+        kop, rest = regel.split("->")
+        kop = kop.strip()
+        for optie in rest.split("|"):
+            regels.append((kop, optie.split()))
+    return regels
+
+def parse(grammatica, woorden):
+    woorden = list(woorden)
+    memo = {}
+    def combineer(rhs, i, j):
+        if len(rhs) == 1:
+            return [[boom] for boom in deel(rhs[0], i, j)]
+        eerste, rest = rhs[0], rhs[1:]
+        resultaat = []
+        for k in range(i + 1, j):
+            for boom1 in deel(eerste, i, k):
+                for staart in combineer(rest, k, j):
+                    resultaat.append([boom1] + staart)
+        return resultaat
+    def deel(sym, i, j):
+        sleutel = (sym, i, j)
+        if sleutel in memo:
+            return memo[sleutel]
+        memo[sleutel] = []
+        bomen = []
+        for kop, rhs in grammatica:
+            if kop != sym:
+                continue
+            if len(rhs) == 1 and rhs[0].startswith('"'):
+                woord = rhs[0].strip('"')
+                if j - i == 1 and woorden[i] == woord:
+                    bomen.append((sym, woorden[i]))
+                continue
+            for kinderen in combineer(rhs, i, j):
+                bomen.append((sym,) + tuple(kinderen))
+        memo[sleutel] = bomen
+        return bomen
+    return deel("S", 0, len(woorden))
+
+def controleer(grammatica_tekst, zinnen):
+    grammatica = lees_grammatica(grammatica_tekst + LEXICON)
+    alles_goed = True
+    for zin in zinnen:
+        bomen = parse(grammatica, zin.lower().split())
+        if bomen:
+            print(f"  OK  ({len(bomen)}x)  {zin}")
+        else:
+            print(f"  FOUT (0x)  {zin}   <-- parseert nog niet!")
+            alles_goed = False
+    print()
+    print("Gelukt: alle zinnen werken!" if alles_goed else "Nog niet alle zinnen werken.")
+
+controleer(GRAMMATICA, ZINNEN)`} />
+
+> **Bewaar je werk** — kopieer je uitgebreide grammatica voordat je
+> verder gaat.
+
+Door naar [stap 11: past het al? (deel 2) →](./11-bouwen-past-al-2).

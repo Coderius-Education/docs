@@ -1,0 +1,124 @@
+---
+sidebar_position: 6
+hide_table_of_contents: true
+---
+
+# 10.6 Bouwsteen 3 — vul één rij in
+
+**Leerdoel:** je schrijft de logica die voor **één** rij `i` alle cellen
+`OPT(i, w)` invult, volgens de drie regels uit pagina 02.
+
+## Wat we willen
+
+Gegeven:
+- de items-lijst,
+- een tabel met rijen 0 t/m `i-1` al ingevuld,
+- het rij-nummer `i` dat we nu willen invullen.
+
+Vul alle cellen van rij `i` in, voor `w = 0` t/m `W` (capaciteit).
+
+## De drie regels (herhaling)
+
+Voor elke cel `(i, w)`:
+
+1. Als `gewicht > w` (item past niet): `tabel[i][w] = tabel[i-1][w]`.
+2. Anders: `tabel[i][w] = max(skip, meenemen)` waarbij:
+   - `skip = tabel[i-1][w]`
+   - `meenemen = waarde + tabel[i-1][w - gewicht]`
+
+Kolom `w = 0` is per definitie 0 (lege rugzak), maar als we `range(W + 1)`
+gebruiken vult onze code dat ook netjes in via dezelfde regels.
+
+## Specificatie
+
+- **Input**: `tabel`, `items`, `i` (huidige rij), `capaciteit`.
+- **Output**: niets. We **muteren** `tabel` ter plekke — rij `i` is na
+  de aanroep ingevuld.
+
+## Voorspel
+
+We hebben rij 0 al klaar (allemaal 0). Wat moet er in rij 1 staan
+voor het image-voorbeeld (item 1 = waarde 1, gewicht 1)?
+
+<details>
+<summary>Antwoord</summary>
+
+`[0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]`
+
+- `w=0`: item past niet (gewicht 1 > 0) → kopieer `tabel[0][0]` = 0.
+- `w=1` t/m `w=11`: item past. Skip = `tabel[0][w]` = 0. Meenemen =
+  `1 + tabel[0][w-1]` = 1. → max = 1.
+
+Klopt met pagina 02.
+
+</details>
+
+## Bouw zelf en test
+
+<PyRunner initialCode={`def lege_tabel(n, capaciteit):
+    return [[0] * (capaciteit + 1) for _ in range(n + 1)]
+
+
+def vul_rij(tabel, items, i, capaciteit):
+    # Vul aan:
+    # Pak waarde en gewicht uit items[i - 1] (i is 1-gebaseerd)
+    # Loop over w van 0 t/m capaciteit:
+    #     als gewicht > w: tabel[i][w] = tabel[i-1][w]
+    #     anders: tabel[i][w] = max(skip, meenemen)
+    pass
+
+
+# === Tests ===
+items = [(1, 1), (6, 2), (18, 5), (22, 6), (28, 7)]
+capaciteit = 11
+
+tabel = lege_tabel(len(items), capaciteit)
+vul_rij(tabel, items, 1, capaciteit)
+verwacht_rij_1 = [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+assert tabel[1] == verwacht_rij_1, f"Rij 1 fout: {tabel[1]}"
+
+vul_rij(tabel, items, 2, capaciteit)
+verwacht_rij_2 = [0, 1, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7]
+assert tabel[2] == verwacht_rij_2, f"Rij 2 fout: {tabel[2]}"
+
+vul_rij(tabel, items, 3, capaciteit)
+verwacht_rij_3 = [0, 1, 6, 7, 7, 18, 19, 24, 25, 25, 25, 25]
+assert tabel[3] == verwacht_rij_3, f"Rij 3 fout: {tabel[3]}"
+
+# Rij 0 mag niet zijn aangepast
+assert tabel[0] == [0] * 12
+
+print("Alle tests gehaald ✓")`} />
+
+<details>
+<summary>Tip</summary>
+
+```python
+def vul_rij(tabel, items, i, capaciteit):
+    waarde, gewicht = items[i - 1]
+    for w in range(capaciteit + 1):
+        if gewicht > w:
+            tabel[i][w] = tabel[i - 1][w]
+        else:
+            skip = tabel[i - 1][w]
+            meenemen = waarde + tabel[i - 1][w - gewicht]
+            tabel[i][w] = max(skip, meenemen)
+```
+
+Let op:
+
+- `items[i - 1]` — `i` is 1-gebaseerd (rij-nummer in de tabel), maar
+  Python-lijsten zijn 0-gebaseerd, dus `-1`.
+- `range(capaciteit + 1)` — vergeet `+1` niet, anders mis je kolom
+  `w = capaciteit`.
+- `meenemen` gebruikt `tabel[i - 1][w - gewicht]` — terugkijken in de
+  vorige rij, `gewicht` kolommen naar links.
+
+</details>
+
+## Wat nu nog mist
+
+Eén rij invullen werkt. Voor het complete algoritme moeten we dat
+voor **alle** rijen herhalen — dat is een extra for-lus eromheen.
+
+Door naar [stap 7: vul de hele tabel →](./07-bouwen-volledige-tabel).

@@ -1,0 +1,121 @@
+﻿---
+sidebar_position: 3
+hide_table_of_contents: true
+---
+
+# 5.3 Animaties met `async play.repeat_forever`
+
+:::info Wat moet je al weten
+- [5.2 Wachten met async en await](/docs/tijd/async) - hoe `async`/`await` werkt
+- [1.6 Een vorm aanpassen](/docs/vormen/vorm_aanpassen) - eigenschappen als `color` en `radius` wijzigen
+:::
+
+Nu je weet hoe `async` en `await` werken, kun je ook eenvoudig animaties maken! Met `@play.repeat_forever` in combinatie met `async` kun je code steeds opnieuw laten uitvoeren.
+
+## 5.3.1 Kleur laten veranderen
+
+<PygbagRunner code={`import play
+
+bal = play.new_circle(color='red')
+
+@play.repeat_forever
+async def verander_kleur():
+    bal.color = 'orange'
+    await play.timer(seconds=0.5)
+    bal.color = 'yellow'
+    await play.timer(seconds=0.5)
+    bal.color = 'green'
+    await play.timer(seconds=0.5)
+    bal.color = 'blue'
+    await play.timer(seconds=0.5)
+    bal.color = 'purple'
+    await play.timer(seconds=0.5)
+    bal.color = 'red'
+    await play.timer(seconds=0.5)`} height={300} />
+
+De bal verandert nu steeds van kleur: rood → oranje → geel → groen → blauw → paars → rood, enzovoort!
+
+Hoe werkt dit?
+
+```python
+@play.repeat_forever
+async def verander_kleur():
+    ...
+```
+Deze functie wordt steeds opnieuw uitgevoerd, totdat het programma stopt. Door `async` ervoor te zetten kan de functie wachten zonder het hele spel te pauzeren.
+
+```python
+bal.color = 'orange'
+```
+We veranderen de kleur van de bal naar oranje door simpelweg een nieuwe waarde toe te wijzen.
+
+```
+await play.timer(seconds=0.5)
+```
+We wachten 0.5 seconden voordat we de volgende kleur instellen. Dit blijft maar herhalen!
+
+## Opdracht 5.3.a: Wissel tussen animaties
+
+Maak een programma waarbij je met de pijltjestoetsen kunt wisselen tussen twee verschillende animaties.
+
+- Druk op de **linker pijltjestoets** → de bal verandert van kleur
+- Druk op de **rechter pijltjestoets** → de bal wordt groter en kleiner
+
+:::info
+In deze opdracht gebruik je het `global` keyword en `if`-statements. Ken je die nog niet? Geen zorgen:
+- **`global`** heb je nodig om een variabele binnen een functie te veranderen. Meer uitleg vind je bij [4.5 Een score bijhouden](/docs/gebeurtenissen/score_bijhouden).
+- **`if`** checkt of iets waar is. Bijvoorbeeld: `if animatie == 'kleur':` voert de code eronder alleen uit als `animatie` de waarde `'kleur'` heeft.
+:::
+
+### Stappenplan:
+
+1. Maak een variabele `animatie` met de waarde `'kleur'`
+2. Maak een functie met `@play.when_key_pressed('left')` die `animatie` naar `'kleur'` zet (gebruik `global animatie` bovenaan de functie)
+3. Maak een functie met `@play.when_key_pressed('right')` die `animatie` naar `'grootte'` zet
+4. Maak een `@play.repeat_forever` async functie die:
+   - Met `if animatie == 'kleur':` controleert of de kleuranimatie moet draaien
+   - Met `if animatie == 'grootte':` controleert of de grootteanimatie moet draaien
+
+<details>
+<summary>Klik hier voor de oplossing</summary>
+
+<PygbagRunner code={`import play
+
+bal = play.new_circle(color='red', radius=50)
+animatie = 'kleur'
+
+@play.when_key_pressed('left')
+def kies_kleur():
+    global animatie
+    animatie = 'kleur'
+
+@play.when_key_pressed('right')
+def kies_grootte():
+    global animatie
+    animatie = 'grootte'
+
+@play.repeat_forever
+async def animeer():
+    if animatie == 'kleur':
+        bal.color = 'orange'
+        await play.timer(seconds=0.5)
+        bal.color = 'yellow'
+        await play.timer(seconds=0.5)
+        bal.color = 'green'
+        await play.timer(seconds=0.5)
+        bal.color = 'blue'
+        await play.timer(seconds=0.5)
+        bal.color = 'red'
+        await play.timer(seconds=0.5)
+
+    if animatie == 'grootte':
+        bal.radius = 60
+        await play.timer(seconds=0.3)
+        bal.radius = 70
+        await play.timer(seconds=0.3)
+        bal.radius = 60
+        await play.timer(seconds=0.3)
+        bal.radius = 50
+        await play.timer(seconds=0.3)`} height={300} />
+
+</details>

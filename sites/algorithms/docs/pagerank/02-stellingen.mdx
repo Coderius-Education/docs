@@ -1,0 +1,105 @@
+---
+sidebar_position: 2
+hide_table_of_contents: true
+---
+
+# 13.2 Stellingen — eerst voorspellen
+
+**Leerdoel:** je toetst je beeld van PageRank vóórdat je gaat bouwen.
+Denk eerst zelf na, klik dan open. We gebruiken het mini-web van stap 1:
+
+```
+A → B,  A → C
+B → C
+C → A
+D → C
+```
+
+---
+
+### Stelling 1
+
+> Als je de PageRank van alle pagina's optelt, kom je op 1 uit.
+
+<details>
+<summary>Waar of niet waar?</summary>
+
+**Waar.** Je kunt PageRank zien als "kans dat de random surfer hier is".
+Alle kansen samen zijn 1. Een goede implementatie houdt de som elke
+iteratie op (ongeveer) 1.
+
+</details>
+
+---
+
+### Stelling 2
+
+> De pagina met de **meeste inkomende links** heeft altijd de hoogste
+> PageRank.
+
+<details>
+<summary>Waar of niet waar?</summary>
+
+**Niet waar.** Niet het *aantal* links telt, maar *wie* er linkt en
+hoeveel die zelf te verdelen heeft. Eén link van een heel belangrijke
+pagina kan zwaarder wegen dan tien links van onbekende pagina's. (In ons
+mini-web heeft `C` toevallig wél de meeste links én de hoogste rank, maar
+dat hoeft niet zo te zijn.)
+
+</details>
+
+---
+
+### Stelling 3
+
+> Pagina `D` (waar niemand naar linkt) krijgt PageRank 0.
+
+<details>
+<summary>Waar of niet waar?</summary>
+
+**Niet waar.** Door de **damping** krijgt elke pagina een basisdeel
+`(1 − d)/N`. Met `d = 0,85` en `N = 4` is dat `0,15/4 = 0,0375`. `D`
+eindigt dus laag, maar niet op nul — de random surfer springt af en toe
+willekeurig óók naar `D`.
+
+</details>
+
+---
+
+### Stelling 4
+
+> Je moet de nieuwe ranks berekenen op basis van de ranks uit de
+> **vorige** ronde, niet op basis van ranks die je deze ronde al hebt
+> bijgewerkt.
+
+<details>
+<summary>Waar of niet waar?</summary>
+
+**Waar.** In één iteratie reken je álle nieuwe ranks uit met de waarden
+van de vórige iteratie. Meng je dat door elkaar, dan reken je iets anders
+uit en kan het resultaat scheef of instabiel worden.
+
+</details>
+
+---
+
+### Stelling 5
+
+> Zonder damping (`d = 1`) werkt het altijd netjes.
+
+<details>
+<summary>Waar of niet waar?</summary>
+
+**Niet waar.** Zonder damping kan alle "belang" zich ophopen in een
+groepje pagina's dat alleen naar elkaar linkt (een val waar de surfer
+niet meer uit komt), en kunnen pagina's zonder inkomende links helemaal
+leeglopen. Damping (`d = 0,85`) houdt het stabiel en zorgt dat elke
+pagina bereikbaar blijft.
+
+</details>
+
+---
+
+Klaar met voorspellen? Tijd om te bouwen.
+
+Door naar [stap 3: het web als graph →](./03-bouwen-graph).

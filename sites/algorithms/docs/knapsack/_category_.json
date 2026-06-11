@@ -1,0 +1,11 @@
+{
+  "label": "Knapsack 0/1",
+  "position": 10,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "title": "Knapsack 0/1 — kies de beste rugzak",
+    "description": "Welke items neem je mee als je rugzak beperkt is? Leer recursief denken via een klassiek optimalisatie-probleem."
+  }
+}

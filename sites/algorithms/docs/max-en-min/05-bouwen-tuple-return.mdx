@@ -1,0 +1,117 @@
+---
+sidebar_position: 5
+hide_table_of_contents: true
+---
+
+# 3.5 Bouwsteen 3 — twee waardes tegelijk teruggeven
+
+**Leerdoel:** je leert hoe je **twee** waardes uit een functie returnt
+met een tuple, en hoe je ze aan de andere kant weer uitpakt.
+
+## Wat we willen
+
+Een functie die `(klein, groot)` teruggeeft, zodat de aanroeper er allebei
+mee verder kan.
+
+## Twee waardes returnen
+
+In Python:
+
+```python
+return klein, groot          # zonder haakjes
+return (klein, groot)        # met haakjes — betekent hetzelfde
+```
+
+Beide regels returnen een **tuple** met twee elementen.
+
+## Voorspel
+
+Wat denk je dat dit print?
+
+```python
+def max_en_min(lijst):
+    klein = groot = lijst[0]
+    for waarde in lijst:
+        if waarde < klein:
+            klein = waarde
+        elif waarde > groot:
+            groot = waarde
+    return klein, groot
+
+resultaat = max_en_min([5, 2, 8, 1, 7, 4])
+print(resultaat)
+print(type(resultaat))
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+(1, 8)
+<class 'tuple'>
+```
+
+De functie geeft een tuple terug — Python zet de twee waardes automatisch
+in een tuple, ook al schreef je `return klein, groot` zonder haakjes.
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`def max_en_min(lijst):
+    klein = groot = lijst[0]
+    for waarde in lijst:
+        if waarde < klein:
+            klein = waarde
+        elif waarde > groot:
+            groot = waarde
+    return klein, groot
+
+resultaat = max_en_min([5, 2, 8, 1, 7, 4])
+print(resultaat)
+print(type(resultaat))`} />
+
+## Tuple uitpakken aan de andere kant
+
+```python
+k, g = max_en_min([5, 2, 8, 1, 7, 4])
+print(k)   # 1
+print(g)   # 8
+```
+
+De twee namen links **moeten** even veel zijn als het aantal elementen in
+de tuple rechts. Anders krijg je een `ValueError`.
+
+## Run
+
+<PyRunner initialCode={`def max_en_min(lijst):
+    klein = groot = lijst[0]
+    for waarde in lijst:
+        if waarde < klein:
+            klein = waarde
+        elif waarde > groot:
+            groot = waarde
+    return klein, groot
+
+# Uitpakken op één regel
+k, g = max_en_min([5, 2, 8, 1, 7, 4])
+print(f"kleinste: {k}")
+print(f"grootste: {g}")
+print(f"bereik:   {g - k}")`} />
+
+## Of: indexeren
+
+Als je de tuple **niet** uitpakt, kun je de elementen ook met index
+benaderen:
+
+```python
+r = max_en_min([5, 2, 8])
+print(r[0])   # klein
+print(r[1])   # groot
+```
+
+Maar uitpakken (`k, g = …`) is duidelijker — de namen zeggen wat je hebt.
+
+<SteppingStoneModel stone="minmax-return" />
+
+Door naar [stap 6: het complete algoritme →](./06-compleet)

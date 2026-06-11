@@ -1,0 +1,222 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeEditor from '@site/src/components/CodeEditor';
+
+# Formulieren
+
+## Wat ga je leren?
+
+Je leert hoe je een formulier bouwt met `<form>`, `<input>` en `<label>` — de bouwstenen waarmee je tekst, getallen en keuzes van bezoekers ophaalt.
+
+## Theorie
+
+Een **formulier** is een blok HTML waarmee gebruikers iets invullen. De drie belangrijkste onderdelen:
+
+```html
+<form>
+  <label for="naam">Naam:</label>
+  <input type="text" id="naam">
+  <button>Verstuur</button>
+</form>
+```
+
+- `<form>` — het omhulsel rondom het hele formulier.
+- `<label>` — het tekstlabel dat bij een invoerveld hoort. `for` koppelt het label aan het juiste `id`.
+- `<input>` — het invoerveld zelf. De `type` bepaalt wat voor soort invoer (tekst, getal, email...).
+
+### Veelgebruikte input-types
+
+| `type` | Wat het doet |
+|---|---|
+| `text` | Gewone tekst |
+| `number` | Alleen getallen |
+| `email` | Een e-mailadres (browser controleert formaat) |
+| `password` | Tekst, maar wordt verborgen als bolletjes |
+| `checkbox` | Aan/uit-vinkje |
+| `radio` | Eén keuze uit meerdere opties |
+
+### Grotere tekstvelden en keuzelijsten
+
+Naast `<input>` heb je twee speciale formulier-elementen:
+
+- **`<textarea>`** — een meerregelig tekstvak (bijv. voor een opmerking of bericht). Geef rijen en kolommen op met `rows` en `cols`.
+- **`<select>`** — een keuzelijst (dropdown) met meerdere `<option>`-keuzes.
+
+```html
+<label for="bericht">Je bericht:</label>
+<textarea id="bericht" rows="4" cols="40"></textarea>
+
+<label for="land">Land:</label>
+<select id="land">
+  <option value="nl">Nederland</option>
+  <option value="be">België</option>
+  <option value="de">Duitsland</option>
+</select>
+```
+
+Elke `<option>` heeft een zichtbare tekst (tussen de tags) en een `value` (de waarde die het formulier verstuurt).
+
+### Waarom heb je `<label>` nodig?
+
+Een `<label>` is niet alleen mooi — hij is **toegankelijk**. Als je het label aanklikt, springt de cursor in het invoerveld. Screenreaders lezen het label voor zodra het veld actief wordt.
+
+## Predict
+
+Wat denk je dat er gebeurt als je op het tekst-label "Naam:" klikt in het formulier hieronder?
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+De cursor springt naar het naam-veld en je kunt direct beginnen typen. Dat komt door `for="naam"` op het label dat verwijst naar `id="naam"` op het invoerveld. Zonder die koppeling gebeurt er niks bij klikken op het label.
+
+</details>
+
+## Probeer het zelf!
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Formulier</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <form>
+    <label for="naam">Naam:</label>
+    <input type="text" id="naam">
+
+    <label for="leeftijd">Leeftijd:</label>
+    <input type="number" id="leeftijd">
+
+    <label for="email">E-mail:</label>
+    <input type="email" id="email">
+
+    <label for="land">Land:</label>
+    <select id="land">
+      <option value="nl">Nederland</option>
+      <option value="be">België</option>
+      <option value="de">Duitsland</option>
+    </select>
+
+    <label for="bericht">Bericht:</label>
+    <textarea id="bericht" rows="3"></textarea>
+
+    <button>Verstuur</button>
+  </form>
+</body>
+</html>`}
+  initialCss={`form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 300px;
+}
+
+label {
+  font-weight: bold;
+}
+
+input, select, textarea {
+  padding: 6px;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+button {
+  margin-top: 10px;
+  padding: 8px 16px;
+  cursor: pointer;
+}`}
+  height="640px"
+/>
+
+## Investigate
+
+Experimenteer:
+
+- Probeer letters te typen in het leeftijd-veld — wat gebeurt er?
+- Vul iets onzinnigs in bij e-mail en klik op de knop — wat zegt de browser?
+- Verander `type="text"` naar `type="password"` bij het naam-veld — wat zie je tijdens typen?
+- Voeg `placeholder="bijv. Lisa"` toe aan het naam-veld — wat zie je in het lege veld?
+
+## Modify
+
+**Opdracht:** Voeg een vinkje (`checkbox`) toe met de tekst "Ik ga akkoord met de voorwaarden".
+
+<details>
+<summary>Tip</summary>
+
+Gebruik `<input type="checkbox" id="akkoord">` met daarnaast een `<label for="akkoord">`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<input type="checkbox" id="akkoord">
+<label for="akkoord">Ik ga akkoord met de voorwaarden</label>
+```
+
+</details>
+
+## Make
+
+**Opdracht:** Bouw een aanmeldformulier voor een fictieve game-toernooi. Vraag minimaal om: spelernaam, e-mail, leeftijd, favoriete spel (tekst), en een checkbox of de speler ervaring heeft.
+
+<details>
+<summary>Tip</summary>
+
+Geef elk veld een eigen `id` en koppel een `<label for="...">` aan elk veld. Sluit af met een knop "Inschrijven".
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<form>
+  <label for="speler">Spelernaam:</label>
+  <input type="text" id="speler">
+
+  <label for="email">E-mail:</label>
+  <input type="email" id="email">
+
+  <label for="leeftijd">Leeftijd:</label>
+  <input type="number" id="leeftijd">
+
+  <label for="spel">Favoriete spel:</label>
+  <input type="text" id="spel">
+
+  <input type="checkbox" id="ervaring">
+  <label for="ervaring">Ik heb toernooi-ervaring</label>
+
+  <button>Inschrijven</button>
+</form>
+```
+
+</details>
+
+## Er gaat iets mis
+
+**`<label>` zonder `for` of `<input>` zonder `id`**
+
+```html
+<!-- Fout: geen koppeling -->
+<label>Naam:</label>
+<input type="text">
+```
+
+Het werkt visueel, maar klikken op het label doet niks en screenreaders kunnen het label niet aan het veld koppelen. Geef je `<input>` altijd een uniek `id` en je `<label>` een matchende `for`:
+
+```html
+<label for="naam">Naam:</label>
+<input type="text" id="naam">
+```
+
+---
+
+[← Semantische HTML](/docs/html-css/semantische-html) | [Eenheden in CSS →](/docs/html-css/eenheden)

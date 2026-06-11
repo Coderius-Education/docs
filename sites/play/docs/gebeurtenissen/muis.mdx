@@ -1,0 +1,182 @@
+﻿---
+sidebar_position: 3
+hide_table_of_contents: true
+---
+
+# 4.3 De muis gebruiken
+
+:::info Wat moet je al weten
+- [4.1 Gebeurtenissen](/docs/gebeurtenissen/toetsenbord) - hoe een `@play.when_...` decorator werkt
+:::
+
+Naast het toetsenbord kun je ook de muis gebruiken in je spel. Met `play.mouse` kun je de positie van de muis opvragen en een vorm de muis laten volgen.
+
+## Muispositie opvragen
+
+<PygbagRunner code={`import play
+
+tekst = play.new_text(words="Beweeg je muis!")
+
+@play.repeat_forever
+def update():
+    tekst.words = "x=" + str(play.mouse.x) + " y=" + str(play.mouse.y)`} height={300} />
+
+- `play.mouse.x` geeft de x-positie van de muis
+- `play.mouse.y` geeft de y-positie van de muis
+
+## Een vorm de muis laten volgen
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle(radius=20, color='blue')
+
+@play.repeat_forever
+def volg_muis():
+    cirkel.x = play.mouse.x
+    cirkel.y = play.mouse.y`} height={300} />
+
+De cirkel volgt nu je muis!
+
+## Reageren op een muisklik
+
+Met `@play.when_mouse_clicked` kun je iets laten gebeuren zodra de speler op de muis klikt:
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle(color='blue')
+
+@play.when_mouse_clicked
+def muis_geklikt():
+    cirkel.color = 'red'`} height={300} />
+
+Als je op de muis klikt, wordt de cirkel rood.
+
+## Zolang de muis ingedrukt is
+
+Met `@play.while_mouse_pressed` kun je iets laten gebeuren **elk frame** zolang de muisknop ingedrukt is:
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle(color='blue', radius=20)
+
+@play.while_mouse_pressed
+def teken():
+    cirkel.x = play.mouse.x
+    cirkel.y = play.mouse.y`} height={300} />
+
+Het verschil met `@play.when_mouse_clicked`? Die vuurt maar **één keer** bij het klikken. `@play.while_mouse_pressed` vuurt **elk frame** zolang je de muisknop inhoudt.
+
+## Opdracht 4.3.a: Muisvolger
+
+Maak een programma waarbij:
+1. Een cirkel de muis volgt
+2. Een tekst bovenaan het scherm de muispositie toont
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle(radius=20, color='blue')
+tekst = play.new_text(words="", y=250)
+
+@play.repeat_forever
+def update():
+    cirkel.x = play.mouse.x
+    cirkel.y = play.mouse.y
+    tekst.words = "x=" + str(play.mouse.x) + " y=" + str(play.mouse.y)`} height={300} />
+
+</details>
+
+## Opdracht 4.3.b: Batje besturen met de muis
+
+Maak een programma waarbij:
+1. Een rechthoek (het batje) alleen verticaal beweegt met de muis (de x blijft vast)
+2. Een bal heen en weer beweegt en tegen het batje botst
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Zet alleen de `y` van het batje gelijk aan `play.mouse.y`. De `x` van het batje blijft hetzelfde.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+import play
+
+batje = play.new_box(x=300, width=15, height=80)
+
+bal = play.new_circle(radius=15, color='red')
+bal.start_physics(obeys_gravity=False, x_speed=200)
+
+@play.repeat_forever
+def update():
+    batje.y = play.mouse.y
+```
+
+</details>
+
+## Opdracht 4.3.c: Kleur wisselen bij klik
+
+:::info
+In deze opdracht gebruik je het `global` keyword. Ken je dat nog niet? Kijk dan bij [4.5 Een score bijhouden](/docs/gebeurtenissen/score_bijhouden).
+:::
+
+Maak een programma waarbij een cirkel elke keer als je klikt van kleur wisselt: blauw → rood → blauw → rood...
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Gebruik een variabele die onthoudt welke kleur het is. Met `if` en `global` kun je de kleur wisselen.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle(color='blue', radius=40)
+is_blauw = True
+
+@play.when_mouse_clicked
+def wissel_kleur():
+    global is_blauw
+    if is_blauw:
+        cirkel.color = 'red'
+    else:
+        cirkel.color = 'blue'
+    is_blauw = not is_blauw`} height={300} />
+
+</details>
+
+## Opdracht 4.3.d: Groeiende cirkel
+
+Maak een programma waarbij een cirkel groter wordt zolang je de muis ingedrukt houdt. Als je op 'r' drukt, wordt de cirkel weer klein.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Verhoog `cirkel.radius` met 1 bij elk frame dat de muis ingedrukt is.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle(color='green', radius=20)
+
+@play.while_mouse_pressed
+def groei():
+    cirkel.radius = cirkel.radius + 1
+
+@play.when_key_pressed("r")
+def reset():
+    cirkel.radius = 20`} height={300} />
+
+</details>

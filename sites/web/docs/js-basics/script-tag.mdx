@@ -1,0 +1,224 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeEditor from '@site/src/components/CodeEditor';
+
+# De script-tag
+
+## Wat ga je leren?
+
+Je leert hoe je meerdere JavaScript-regels samenvoegt in een **functie**, en hoe je die functie in een `<script>` tag in de HTML plaatst.
+
+## Het probleem: inline code wordt te lang
+
+Tot nu toe schreef je code direct in `onclick`. Dat werkt prima voor één regel. Maar wat als je bij een klik vijf dingen wilt doen?
+
+```html
+<!-- Onoverzichtelijk: -->
+<button onclick="document.getElementById('a').textContent='X'; document.getElementById('b').style.color='red'; ...">
+```
+
+Dit wordt snel onleesbaar. De oplossing is een **functie**.
+
+## Stap 1 — functies
+
+Een **functie** is een blok code met een naam. Je definieert hem één keer, en roept hem later aan zo vaak als je wil. Een functie bestaat uit vier onderdelen:
+
+```js
+function verander() {
+  document.getElementById('bericht').textContent = 'Geklikt!';
+  document.getElementById('bericht').style.color = 'green';
+}
+```
+
+1. **`function`** — het sleutelwoord dat zegt: "ik maak een functie aan".
+2. **`verander`** — de **naam** die je zelf kiest. Geen spaties; gebruik camelCase als je meer woorden wilt (`maakKleurRood`).
+3. **`()`** — twee ronde haakjes. (Later kun je hierin **parameters** zetten, maar voor nu blijven ze leeg.)
+4. **`{ ... }`** — accolades met daartussen de **regels code** die uitgevoerd worden zodra je de functie aanroept.
+
+### De functie aanroepen
+
+Een functie *definiëren* is niet hetzelfde als hem *uitvoeren*. De code binnenin draait pas zodra je de naam typt met `()` erachter:
+
+```js
+verander();   // nu draait de code binnenin
+```
+
+In HTML doe je dat via het `onclick`-attribuut: bij een klik op de knop wordt de functie aangeroepen.
+
+```html
+<button onclick="verander()">Klik mij</button>
+```
+
+:::tip Naam zonder haakjes vs. mét haakjes
+`verander` (zonder haakjes) is een **verwijzing** naar de functie — alsof je een telefoonnummer noemt.
+`verander()` (mét haakjes) is een **aanroep** — alsof je dat nummer ook daadwerkelijk belt.
+:::
+
+## Stap 2 — de `<script>` tag
+
+JavaScript-code in een HTML-bestand zet je in een `<script>` tag. Die tag staat **onderaan** de `<body>` — zodat alle HTML-elementen al bestaan op het moment dat de code geladen wordt:
+
+```html
+<body>
+  <p id="bericht">Klik op de knop.</p>
+  <button onclick="verander()">Klik mij</button>
+
+  <script>
+    function verander() {
+      document.getElementById('bericht').textContent = 'Geklikt!';
+      document.getElementById('bericht').style.color = 'green';
+    }
+  </script>
+</body>
+```
+
+## Predict
+
+Bekijk de startcode in de editor. Beantwoord de vraag hieronder **voordat** je op de knop klikt.
+
+<details>
+<summary>Hoeveel dingen veranderen er tegelijk als je op de knop klikt?</summary>
+
+Er veranderen twee dingen tegelijk: de tekst én de kleur van de `<p>`. De functie `verander()` voert alle regels binnenin uit zodra ze wordt aangeroepen — het maakt niet uit hoeveel regels erin staan.
+
+</details>
+
+## Probeer het zelf!
+
+:::tip JavaScript in het HTML-tabblad
+In deze les staat de JavaScript-code in een `<script>` tag **binnenin** de HTML. Je vindt de code in het **index.html-tabblad** — zoek naar het `<script>` blok onderaan de `<body>`.
+:::
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Script tag</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <p id="bericht">Klik op de knop.</p>
+  <button onclick="verander()">Klik mij</button>
+
+  <script>
+    function verander() {
+      document.getElementById('bericht').textContent = 'Geklikt!';
+      document.getElementById('bericht').style.color = 'green';
+    }
+  </script>
+</body>
+</html>`}
+  initialCss={`p {
+  font-size: 1.3rem;
+  padding: 12px;
+}
+
+button {
+  padding: 8px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+}`}
+  height="480px"
+  livePreview={false}
+/>
+
+## Investigate
+
+Experimenteer:
+
+- Voeg een extra regel toe in de functie die ook `style.fontSize` aanpast
+- Maak een tweede functie `herstel()` en een tweede knop die de tekst en kleur terugzet
+- Verplaats de `<script>` tag naar de `<head>` — wat gaat er mis? Waarom?
+
+## Modify
+
+**Opdracht:** Voeg een knop "Herstel" toe die de tekst en kleur terugzet naar de beginwaarden.
+
+<details>
+<summary>Tip</summary>
+
+Schrijf een tweede functie `herstel()` in de `<script>` tag. Zet de tekst terug met `.textContent` en de kleur met `.style.color = ''` (lege string verwijdert de inline stijl).
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+HTML-toevoeging:
+```html
+<button onclick="herstel()">Herstel</button>
+```
+
+JavaScript-toevoeging in `<script>`:
+```js
+function herstel() {
+  document.getElementById('bericht').textContent = 'Klik op de knop.';
+  document.getElementById('bericht').style.color = '';
+}
+```
+
+</details>
+
+## Make
+
+**Opdracht:** Bouw een mini-lichtenknop. Er is één `<p>` die begint als "Licht is uit". Maak twee knoppen:
+- "Aan" — zet de tekst op "Licht is aan" en de achtergrond op geel
+- "Uit" — zet alles terug naar de beginwaarden
+
+Schrijf voor elke knop een aparte functie in de `<script>` tag.
+
+<details>
+<summary>Tip</summary>
+
+Gebruik `style.backgroundColor` voor de achtergrondkleur. Een lege string (`''`) verwijdert een eerder ingestelde stijl.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<p id="lamp">Licht is uit.</p>
+<button onclick="aan()">Aan</button>
+<button onclick="uit()">Uit</button>
+
+<script>
+  function aan() {
+    document.getElementById('lamp').textContent = 'Licht is aan!';
+    document.getElementById('lamp').style.backgroundColor = 'yellow';
+  }
+
+  function uit() {
+    document.getElementById('lamp').textContent = 'Licht is uit.';
+    document.getElementById('lamp').style.backgroundColor = '';
+  }
+</script>
+```
+
+</details>
+
+## Er gaat iets mis
+
+**`<script>` tag staat vóór de HTML-elementen**
+
+```html
+<head>
+  <script>
+    function verander() {
+      document.getElementById('bericht').textContent = 'Hoi'; // Fout!
+    }
+  </script>
+</head>
+<body>
+  <p id="bericht">Tekst</p>
+</body>
+```
+
+Als de `<script>` tag in de `<head>` staat en de functie wordt direct aangeroepen (niet via een knop), bestaat de `<p>` nog niet — `getElementById` geeft dan `null` terug. Zet de `<script>` tag altijd **onderaan** de `<body>`, na alle HTML-elementen. (In [script.js](/docs/js-basics/scriptjs) zie je hoe je dit ook met `defer` oplost vanuit de `<head>`.)
+
+---
+
+[← Inline stijl](/docs/js-basics/inline-stijl) | [script.js →](/docs/js-basics/scriptjs)

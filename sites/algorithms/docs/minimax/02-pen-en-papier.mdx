@@ -1,0 +1,190 @@
+---
+sidebar_position: 2
+hide_table_of_contents: true
+---
+
+# 9.2 Doe het met pen en papier
+
+**Leerdoel:** je voert minimax zelf uit op twee voorbeelden — een
+abstracte tree met cijfers, en dan een echt tic-tac-toe eindspel. Geen
+Python.
+
+## Deel 1 — een abstracte tree
+
+We beginnen makkelijk: een tree waar de bladeren al cijfers hebben (de
+uitkomst is gegeven). Wij rekenen alleen min/max-niveaus uit.
+
+```
+                  MAX
+              ╱    │    ╲
+             A     B     C
+             │     │     │
+            MIN   MIN   MIN
+            ╱╲    ╱╲    ╱╲
+           3  5  2  9  6  0
+```
+
+MAX heeft drie keuzes: tak `A`, `B` of `C`. Onder elk staat MIN met
+twee opties. De cijfers onderaan zijn utilities (hoger = beter voor MAX,
+lager = beter voor MIN).
+
+### Stap 1 — reken **van onderop** elk MIN-niveau uit
+
+Een MIN-knoop kiest het **laagste** kind:
+
+- Tak `A`: `min(3, 5)` = **3**
+- Tak `B`: `min(2, 9)` = **2**
+- Tak `C`: `min(6, 0)` = **0**
+
+Tree wordt:
+
+```
+                  MAX
+              ╱    │    ╲
+              3    2    0
+```
+
+### Stap 2 — MAX kiest het **hoogste** kind
+
+`max(3, 2, 0)` = **3**.
+
+Beste zet voor MAX: **tak `A`**. Eindwaarde van het spel bij optimaal
+spel: **3**.
+
+### Wat had je verwacht?
+
+> Op het eerste gezicht lijkt tak `C` aantrekkelijk: hij heeft de **9**
+> aan zijn kant. Maar MIN zou daar nooit voor kiezen — die pakt de
+> **0**. Tak `B` heeft de hoogste blaadje (9), maar MIN minimaliseert
+> daar naar 2. Alleen tak `A` garandeert MAX een uitkomst van 3.
+
+Pas op: het kindje dat MIN kiest, is niet de "hoge" maar de "lage".
+Daarom is het hoogste blaadje misleidend.
+
+## Deel 2 — tic-tac-toe near-end
+
+Nu echt. Een positie waar nog drie vakjes leeg zijn. **X is aan zet.**
+
+```
+ X | O | X
+-----------
+ O | X | O
+-----------
+ . | . | .          (. = leeg)
+```
+
+Posities op het bord — we gebruiken `(rij, kolom)`-coordinaten met (0,0)
+linksboven:
+
+- `(2,0)`, `(2,1)`, `(2,2)` zijn leeg.
+
+X heeft als doel `+1` (X-win). De drie mogelijke X-zetten:
+
+### Zet 1: X speelt `(2,0)`
+
+```
+ X | O | X
+ O | X | O
+ X | . | .
+```
+
+Check de diagonalen: `(0,2)X`, `(1,1)X`, `(2,0)X` — **drie op een rij!**
+X wint direct. Utility: **+1**. Geen verdere zetten nodig — terminal.
+
+### Zet 2: X speelt `(2,1)`
+
+```
+ X | O | X
+ O | X | O
+ . | X | .
+```
+
+Geen drie op een rij. Spel gaat door. **O is aan zet** (MIN-speler).
+O heeft twee opties: `(2,0)` of `(2,2)`.
+
+#### Onder zet 2 — O speelt `(2,0)`
+
+```
+ X | O | X
+ O | X | O
+ O | X | .
+```
+
+Geen win voor O. X is weer aan zet, maar er is maar één vakje over:
+`(2,2)`. X speelt `(2,2)`:
+
+```
+ X | O | X
+ O | X | O
+ O | X | X
+```
+
+Check diagonaal `(0,0)X (1,1)X (2,2)X` — **drie op een rij!** X wint.
+Utility: **+1**.
+
+#### Onder zet 2 — O speelt `(2,2)`
+
+```
+ X | O | X
+ O | X | O
+ . | X | O
+```
+
+Bord vol bijna; controleer O-lijnen: nergens drie op een rij. X speelt
+het laatste vakje `(2,0)`:
+
+```
+ X | O | X
+ O | X | O
+ X | X | O
+```
+
+Check: geen drie op een rij. Bord vol → **remise**. Utility: **0**.
+
+#### Terug naar O's keuze onder zet 2
+
+O kiest tussen `+1` (na O→(2,0)) en `0` (na O→(2,2)). O minimaliseert
+voor X → kies **0**. Utility van zet 2 is dus **0**.
+
+### Zet 3: X speelt `(2,2)`
+
+```
+ X | O | X
+ O | X | O
+ . | . | X
+```
+
+Diagonaal `(0,0)X (1,1)X (2,2)X` — **drie op een rij!** X wint direct.
+Utility: **+1**.
+
+### X's keuze
+
+X kiest tussen:
+- Zet 1 `(2,0)`: utility **+1**
+- Zet 2 `(2,1)`: utility **0**
+- Zet 3 `(2,2)`: utility **+1**
+
+X maximaliseert → kiest `(2,0)` of `(2,2)`. Beide geven `+1`. Minimax
+mag óf de eerste die hij vindt teruggeven, óf willekeurig kiezen — beide
+zijn correct.
+
+## Samenvatting van het rekenpatroon
+
+```
+1. Begin onderaan met posities die "klaar" zijn (terminal).
+2. Bereken voor elke terminal de utility: +1 / -1 / 0.
+3. Ga één niveau omhoog:
+   - Was MAX aan zet? → return het hoogste kind.
+   - Was MIN aan zet? → return het laagste kind.
+4. Herhaal tot je bij de start bent.
+5. De zet die de start-utility opleverde, is de beste zet.
+```
+
+## Wat dit oplevert voor het coderen
+
+In Python wordt dit een **recursieve** functie: `minimax(board)` roept
+zichzelf aan op kindposities, en gebruikt `max(...)` of `min(...)`
+afhankelijk van wie aan zet is. Maar dat doen we later — eerst nog twee
+brug-pagina's.
+
+Door naar [stap 3: voorspel zelf →](./03-stellingen).

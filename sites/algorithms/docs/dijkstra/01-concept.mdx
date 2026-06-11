@@ -1,0 +1,93 @@
+---
+sidebar_position: 1
+hide_table_of_contents: true
+---
+
+# 8.1 Wat is een graph?
+
+**Leerdoel:** je weet wat een **graph**, een **pad** en een **gewicht**
+zijn. Nog geen code — eerst tekeningen en woorden.
+
+## Het verhaal
+
+Je hebt een navigatie-app. Je tikt in waar je heen wilt. Wat doet hij?
+
+> *Hij berekent welke route de **kortste totale tijd** kost.*
+
+Niet zomaar *een* route — de **bewijsbaar snelste**. Dat is precies wat
+het algoritme van **Dijkstra** doet. Voordat we het bouwen, moeten we
+weten hoe wegen-netwerken eruitzien in de informatica.
+
+## Drie nieuwe woorden
+
+```
+       4
+   A ─────── B
+   │         │
+   2         1
+   │         │
+   C ─────── D
+       8
+```
+
+Wat zie je?
+
+- **Nodes**: de letters `A`, `B`, `C`, `D`. Ook wel *knopen* of in een
+  routekaart: *plaatsen*.
+- **Edges**: de strepen tussen nodes. De *verbindingen*. In een
+  routekaart: *wegen*.
+- **Gewichten**: de getallen op de strepen. Hoeveel het *kost* om die
+  verbinding te gebruiken — afstand, tijd, geld. Hier kun je het lezen
+  als minuten.
+
+Samen heet zo'n plaatje een **graph** (Nederlands: *graaf*, maar we
+houden het op "graph"). Een graph met gewichten heet een **gewogen
+graph**.
+
+## Wat is een pad?
+
+Een **pad** is een rijtje nodes waar je achter elkaar doorheen loopt,
+en elke opeenvolgende paar moet **via een edge** verbonden zijn.
+
+Drie mogelijke paden van `A` naar `D`:
+
+- `A → B → D` met gewichten 4 + 1 = **5**.
+- `A → C → D` met gewichten 2 + 8 = **10**.
+- `A → B → D` (zelfde als hierboven) of `A → C → B → D` met 2 + 1 + 1 = **4**.
+
+De *kortste* (laagste totaal-gewicht) is **`A → C → B → D = 4`**.
+
+Niet altijd intuïtief: in dit voorbeeld is de directe `A → B = 4` even
+duur als de "omweg" `A → C → B → ... `. En de omweg via `C` slim
+combineren met `B → D` geeft je **4** — even goed of beter.
+
+## Gewichten zijn niet altijd letterlijk afstanden
+
+Gewichten zijn een **kost**. Wat dat is, hangt af van je probleem:
+
+| Wat is je graph? | Wat is een gewicht? |
+|---|---|
+| Steden + snelwegen | Aantal km of reistijd |
+| Vluchten | Prijs in euro |
+| Computernetwerk | Vertraging in milliseconden |
+| Eiland-vleksprongen | Energie die het kost |
+
+Dijkstra geeft niets om wat de gewichten betekenen — hij wil alleen het
+**totaal** zo laag mogelijk maken.
+
+## Eén belangrijke aanname
+
+Dijkstra werkt **alleen met positieve gewichten**. Geen negatieven, geen
+"sneller gaan dan stilstaan" trucs. Voor negatieve gewichten bestaat
+een ander algoritme (*Bellman-Ford*), maar dat doen we hier niet.
+
+## Wat we gaan leren
+
+Dijkstra beantwoordt: *"Vanaf één startnode, wat zijn de kortste
+afstanden naar **alle** andere nodes?"*
+
+In één keer dus — niet één bestemming per keer. Daarvoor heeft hij een
+slimme strategie. Die strategie ga je eerst **met pen en papier** zelf
+uitvoeren, voordat je een letter Python schrijft.
+
+Door naar [stap 2: doe het met pen en papier →](./02-met-pen-en-papier).

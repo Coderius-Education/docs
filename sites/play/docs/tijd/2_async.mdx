@@ -1,0 +1,158 @@
+---
+sidebar_position: 2
+hide_table_of_contents: true
+---
+
+# 5.2 Wachten met `async` en `await`
+
+:::info Wat je hier nieuw gaat zien
+Op deze pagina komen drie dingen samen. Twee daarvan ken je al, één is nieuw:
+- 🔁 In [5.1 Wachten in je spel](/docs/tijd/bal) zag je dat `time.sleep()` het hele spel bevriest.
+- 🔁 In [4.3 De muis gebruiken](/docs/gebeurtenissen/muis#reageren-op-een-muisklik) heb je `@play.when_mouse_clicked` gezien.
+- ⭐ **Nieuw**: de sleutelwoorden `async` en `await`. Daar gaat deze pagina over.
+
+Lees rustig — als de muis-decorator je nog niet helemaal duidelijk is, kijk dan eerst even terug naar 4.3.
+:::
+
+Ok, `time.sleep()` werkte niet. We hebben een manier nodig om een functie te laten wachten, terwijl de rest van het spel gewoon doorgaat. Hiervoor gebruiken we twee nieuwe sleutelwoorden: `async` en `await`.
+
+Het idee is simpel:
+- Met `async` vertel je Python: "deze functie mag even wachten"
+- Met `await` vertel je Python: "wacht hier even, maar laat de rest van het spel doorgaan"
+
+Bekijk de code hieronder. Wat is er anders dan de `time.sleep()` versie van de vorige pagina?
+
+<PygbagRunner code={`import play
+
+bal = play.new_circle(color='black')
+bal.start_physics(obeys_gravity=False, x_speed=10)
+
+@play.when_mouse_clicked
+async def tijdelijk_sneller():
+    bal.physics.x_speed = 100
+    await play.timer(seconds=1)
+    bal.physics.x_speed = 10`} height={300} />
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+Er zijn twee veranderingen:
+1. `def` is veranderd in `async def`
+2. `time.sleep(1)` is veranderd in `await play.timer(seconds=1)`
+
+</details>
+
+Hoe werkt dit precies?
+
+```python
+async def tijdelijk_sneller():
+    ...
+```
+We hebben **async** voor **def** gezet. Dit maakt het een asynchrone functie: de functie mag wachten zonder het spel te pauzeren.
+
+```python
+bal.physics.x_speed = 100
+```
+We zetten de x_speed van de bal op 100 pixels.
+
+```
+await play.timer(seconds=1)
+```
+We wachten 1 seconde. Het verschil met `time.sleep()`: het spel draait gewoon door terwijl deze functie wacht!
+
+```python
+bal.physics.x_speed = 10
+```
+We zetten de x_speed weer op 10 pixels.
+
+### Er gaat iets mis?
+
+Een veelgemaakte fout is `await` gebruiken zonder `async`:
+
+```python
+# FOUT - await kan alleen in een async functie
+@play.when_mouse_clicked
+def tijdelijk_sneller():
+    await play.timer(seconds=1)
+```
+
+De foutmelding die je krijgt:
+```
+SyntaxError: 'await' outside function
+```
+
+De oplossing: voeg `async` toe voor `def`.
+
+Een andere fout is `play.timer` gebruiken zonder `await`:
+```python
+# FOUT - play.timer zonder await doet niets
+async def tijdelijk_sneller():
+    play.timer(seconds=1)
+```
+
+Dit geeft geen foutmelding, maar de timer wordt genegeerd! Je moet altijd `await` ervoor zetten.
+
+## Samengevat
+
+| Sleutelwoord | Wat doet het? |
+| --- | --- |
+| `async` | Zet je voor `def`. Hiermee mag de functie wachten zonder het spel te pauzeren. |
+| `await` | Wacht op iets (zoals een timer). Kan alleen in een `async` functie. |
+
+Onthoud: `async` en `await` horen altijd bij elkaar. Als je `await` gebruikt, moet de functie `async` zijn.
+
+## Opdracht 5.2.a: Knipperend vierkant
+
+Maak een vierkant dat bij een muisklik 3 keer knippert (zichtbaar → onzichtbaar → zichtbaar) en dan weer normaal is.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Gebruik `hide()` en `show()` met `await play.timer(seconds=0.3)` ertussen.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+<PygbagRunner code={`import play
+
+blok = play.new_box(color='red')
+
+@play.when_mouse_clicked
+async def knipper():
+    blok.hide()
+    await play.timer(seconds=0.3)
+    blok.show()
+    await play.timer(seconds=0.3)
+    blok.hide()
+    await play.timer(seconds=0.3)
+    blok.show()
+    await play.timer(seconds=0.3)
+    blok.hide()
+    await play.timer(seconds=0.3)
+    blok.show()`} height={300} />
+
+</details>
+
+## Opdracht 5.2.b: Tijdelijke kleurverandering
+
+Maak een cirkel die:
+1. Normaal blauw is
+2. Bij het indrukken van spatie rood wordt
+3. Na 2 seconden weer blauw wordt
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle(color='blue', radius=50)
+
+@play.when_key_pressed("space")
+async def tijdelijk_rood():
+    cirkel.color = 'red'
+    await play.timer(seconds=2)
+    cirkel.color = 'blue'`} height={300} />
+
+</details>

@@ -1,0 +1,193 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeEditor from '@site/src/components/CodeEditor';
+
+# Events
+
+## Wat ga je leren?
+
+Je leert hoe je met `addEventListener` reageert op gebruikersacties zoals muisbewegingen en klikken — en waarom dat krachtiger is dan `onclick` in de HTML.
+
+## Theorie
+
+In de vorige lessen gebruikte je `onclick` direct in de HTML. Een krachtigere manier is `addEventListener` in JavaScript — zo houd je HTML en gedrag gescheiden.
+
+### Stap 1 — een functie maken (zoals je al kent)
+
+Schrijf eerst een gewone functie (zoals in [De script-tag](/docs/js-basics/script-tag)):
+
+```js
+function zegHoi() {
+  document.getElementById('status').textContent = 'Geklikt!';
+}
+```
+
+### Stap 2 — die functie koppelen aan een event
+
+Met `addEventListener` koppel je een functie aan een gebeurtenis op een element. De functie geef je mee **zonder haakjes** (anders roep je hem direct aan):
+
+```js
+document.getElementById('knop').addEventListener('click', zegHoi);
+```
+
+De drie onderdelen:
+- `'click'` — de naam van het event waarop je reageert
+- `zegHoi` — de functie die uitgevoerd wordt zodra het event plaatsvindt
+
+### Korte vorm: functie meteen erin schrijven
+
+Als je de functie maar één keer gebruikt, kun je hem ook **direct** in de listener zetten zonder hem een naam te geven. Dat heet een **anonieme functie**:
+
+```js
+document.getElementById('knop').addEventListener('click', function() {
+  document.getElementById('status').textContent = 'Geklikt!';
+});
+```
+
+Beide vormen doen exact hetzelfde. De anonieme versie is korter voor eenmalige acties.
+
+### Welke events bestaan er?
+
+Je kunt luisteren naar allerlei events:
+
+| Event | Wanneer |
+|-------|---------|
+| `'click'` | Muisklik op het element |
+| `'mouseover'` | Muis beweegt over het element |
+| `'mouseout'` | Muis verlaat het element |
+| `'keydown'` | Toets wordt ingedrukt |
+
+## Predict
+
+Bekijk de startcode in het script.js-tabblad. Beantwoord de vraag hieronder **voordat** je op Run klikt.
+
+<details>
+<summary>Wat zie je als je je muis op de knop zet — en wat als je de muis wegbeweegt?</summary>
+
+Als de muis de knop raakt, verandert de tekst in de `<p>` naar "Muis erop!" via het `mouseover`-event. Zodra de muis de knop verlaat, verandert de tekst naar "Muis weg." via het `mouseout`-event. Er zijn twee aparte listeners die elk op hun eigen event reageren.
+
+</details>
+
+## Probeer het zelf!
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Events</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <button id="knop">Beweeg je muis!</button>
+  <p id="status">Wachten op een event...</p>
+</body>
+</html>`}
+  initialCss={`button {
+  padding: 12px 24px;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+p {
+  margin-top: 16px;
+  font-size: 1.2rem;
+}`}
+  initialJs={`document.getElementById('knop').addEventListener('mouseover', function() {
+  document.getElementById('status').textContent = 'Muis erop!';
+});
+
+document.getElementById('knop').addEventListener('mouseout', function() {
+  document.getElementById('status').textContent = 'Muis weg.';
+});`}
+  height="480px"
+  livePreview={false}
+/>
+
+## Investigate
+
+Experimenteer:
+
+- Vervang `'mouseover'` door `'click'` — wat verandert er?
+- Voeg een derde `addEventListener` toe voor `'mouseout'` die de tekst rood kleurt
+- Wat is het verschil tussen `onclick="..."` in HTML en `addEventListener` in JavaScript?
+
+## Modify
+
+**Opdracht:** Voeg een `'click'` event toe dat een teller bijhoudt en toont hoe vaak er is geklikt.
+
+<details>
+<summary>Tip</summary>
+
+Declareer een variabele `let teller = 0;` buiten de event listener. Verhoog die elke klik met `teller = teller + 1` en toon de waarde in de `<p>`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```js
+let teller = 0;
+
+document.getElementById('knop').addEventListener('click', function() {
+  teller = teller + 1;
+  document.getElementById('status').textContent = 'Aantal klikken: ' + teller;
+});
+```
+
+</details>
+
+## Make
+
+**Opdracht:** Bouw een klik-counter. Eén knop, één paragraaf. Bij elke klik telt de teller met 1 omhoog en toon je het aantal in de paragraaf.
+
+<details>
+<summary>Tip</summary>
+
+Je hebt één variabele `teller` (buiten de listener!) en één `addEventListener('click', ...)`. Verhoog de teller binnenin met `teller = teller + 1`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+HTML:
+```html
+<button id="knop">Klik mij</button>
+<p id="status">Klik op de knop.</p>
+```
+
+script.js:
+```js
+let teller = 0;
+
+document.getElementById('knop').addEventListener('click', function() {
+  teller = teller + 1;
+  document.getElementById('status').textContent = 'Aantal klikken: ' + teller;
+});
+```
+
+</details>
+
+## Er gaat iets mis
+
+**`addEventListener` vs inline `onclick` — wanneer gebruik je welke?**
+
+```html
+<!-- inline onclick: eenvoudig, maar HTML en gedrag zijn vermengd -->
+<button onclick="verander()">Klik</button>
+```
+
+```js
+// addEventListener: JavaScript en HTML blijven gescheiden
+document.getElementById('knop').addEventListener('click', verander);
+```
+
+Met `addEventListener` kun je ook **meerdere** listeners aan hetzelfde element koppelen — dat kan niet met `onclick`, want die overschrijft de vorige. Voor kleine oefeningen is `onclick` prima; voor grotere projecten is `addEventListener` de betere keuze.
+
+---
+
+[← Variabelen](/docs/js-basics/variabelen) | [Waarden en operatoren →](/docs/js-basics/operatoren-types)

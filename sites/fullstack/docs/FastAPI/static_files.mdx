@@ -1,0 +1,257 @@
+---
+sidebar_position: 4
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Static files
+
+In de vorige les zette je CSS in een `<style>` tag in je Python code. Dat wordt snel rommelig. In deze les leer je hoe je bestanden (CSS, afbeeldingen, etc.) in een aparte folder zet.
+
+## Mappenstructuur
+
+Maak een `static` folder met een `css` subfolder:
+
+```
+je-project/
+├── main.py
+└── static/
+    └── css/
+        └── style.css
+```
+
+## Static files configureren
+
+Pas je `main.py` aan:
+
+```python
+from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+
+app = FastAPI()
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+```
+
+### Wat doet `app.mount`?
+
+Alle bestanden in de `static` folder worden bereikbaar via `/static/...` in de browser. Bijvoorbeeld:
+- `static/css/style.css` → `/static/css/style.css`
+
+## CSS in apart bestand
+
+Maak `static/css/style.css`:
+
+```css
+h1 {
+    color: blue;
+}
+
+p {
+    color: gray;
+}
+```
+
+## CSS koppelen aan HTML
+
+```python
+@app.get("/mooi", response_class=HTMLResponse)
+async def mooi():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Mooi</title>
+            <link rel="stylesheet" href="/static/css/style.css">
+        </head>
+        <body>
+            <h1>Mooie pagina</h1>
+            <p>De CSS komt uit een apart bestand!</p>
+        </body>
+    </html>
+    """
+```
+
+### Wat is nieuw?
+
+- `<link rel="stylesheet" href="/static/css/style.css">` - Laadt CSS uit het aparte bestand
+- De CSS geldt nu voor deze hele pagina
+- Je kunt dezelfde CSS gebruiken op meerdere pagina's
+
+## Testen
+
+Ga naar [http://127.0.0.1:8000/mooi](http://127.0.0.1:8000/mooi). De heading is blauw en de tekst grijs — de CSS uit het aparte bestand werkt!
+
+:::danger Gaat er iets mis?
+CSS werkt niet? Check of `app.mount("/static", ...)` in je code staat en of het pad in `<link>` klopt. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
+:::
+
+## Opdrachten
+
+### Opdracht 1: Predict - Wat gebeurt er?
+
+Je maakt twee endpoints die allebei dezelfde CSS laden:
+
+```python
+@app.get("/pagina1", response_class=HTMLResponse)
+async def pagina1():
+    return """...<link rel="stylesheet" href="/static/css/style.css">..."""
+
+@app.get("/pagina2", response_class=HTMLResponse)
+async def pagina2():
+    return """...<link rel="stylesheet" href="/static/css/style.css">..."""
+```
+
+**Vraag:** Wat gebeurt er met pagina2 als je de CSS in `style.css` aanpast?
+
+<details>
+<summary>Tip</summary>
+
+Beide pagina's laden hetzelfde bestand. Wat betekent dat als je dat ene bestand aanpast?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Pagina2 verandert ook! Beide pagina's laden hetzelfde CSS bestand. Als je dat bestand aanpast, veranderen alle pagina's die het gebruiken.
+
+</details>
+
+### Opdracht 2: Run
+
+Maak de `static/css/style.css` en het `/mooi` endpoint uit het voorbeeld. Start de server en controleer of de styling werkt.
+
+### Opdracht 3: Investigate - Ander pad
+
+Wat gebeurt er als je `app.mount("/static", ...)` verandert naar `app.mount("/bestanden", ...)`? Laadt de CSS dan nog?
+
+<details>
+<summary>Antwoord</summary>
+
+Nee! De CSS laadt niet meer, want de `<link>` tag verwijst naar `/static/css/style.css`, maar dat pad bestaat niet meer. Je zou de link moeten aanpassen naar `/bestanden/css/style.css`.
+
+</details>
+
+### Opdracht 4: Make - Eigen CSS
+
+Maak een eigen `style.css` met minimaal 3 CSS regels en een endpoint dat deze CSS gebruikt.
+
+<details>
+<summary>Tip</summary>
+
+Maak een CSS bestand in `static/css/` en koppel het met `<link rel="stylesheet" href="/static/css/style.css">` in de `<head>` van je HTML.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`static/css/style.css`:
+```css
+h1 { color: darkblue; }
+p { font-size: 18px; }
+body { background-color: lightyellow; }
+```
+
+`main.py`:
+```python
+@app.get("/mijn_pagina", response_class=HTMLResponse)
+async def mijn_pagina():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <link rel="stylesheet" href="/static/css/style.css">
+        </head>
+        <body>
+            <h1>Mijn pagina</h1>
+            <p>Met eigen styling!</p>
+        </body>
+    </html>
+    """
+```
+
+</details>
+
+### Opdracht 5: Make - Twee CSS bestanden
+
+Maak twee CSS bestanden (`style1.css` en `style2.css`) met verschillende kleuren. Maak twee endpoints die elk een ander CSS bestand gebruiken.
+
+<details>
+<summary>Tip</summary>
+
+Maak twee bestanden in `static/css/`. Gebruik in het ene endpoint `href="/static/css/style1.css"` en in het andere `href="/static/css/style2.css"`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`static/css/style1.css`:
+```css
+h1 { color: red; }
+body { background-color: lightyellow; }
+```
+
+`static/css/style2.css`:
+```css
+h1 { color: green; }
+body { background-color: lightblue; }
+```
+
+```python
+@app.get("/rood", response_class=HTMLResponse)
+async def rood():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head><link rel="stylesheet" href="/static/css/style1.css"></head>
+        <body><h1>Rode pagina</h1></body>
+    </html>
+    """
+
+@app.get("/groen", response_class=HTMLResponse)
+async def groen():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head><link rel="stylesheet" href="/static/css/style2.css"></head>
+        <body><h1>Groene pagina</h1></body>
+    </html>
+    """
+```
+
+</details>
+
+## Oefen met Python
+
+:::info Python oefenblok
+Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
+:::
+
+<CodeExercise>
+{`# Bestanden en paden
+import os.path
+
+# Bestandspaden samenvoegen
+map_naam = "static"
+bestand = "style.css"
+pad = f"{map_naam}/{bestand}"
+print(f"Pad: {pad}")
+
+# Extensie controleren
+bestanden = ["index.html", "style.css", "foto.png", "data.json"]
+
+html_bestanden = [b for b in bestanden if b.endswith(".html")]
+css_bestanden = [b for b in bestanden if b.endswith(".css")]
+
+print(f"HTML: {html_bestanden}")
+print(f"CSS: {css_bestanden}")
+
+# Pad splitsen
+volledig_pad = "static/pages/index.html"
+delen = volledig_pad.split("/")
+print(f"Map: {delen[0]}, Submap: {delen[1]}, Bestand: {delen[2]}")`}
+</CodeExercise>

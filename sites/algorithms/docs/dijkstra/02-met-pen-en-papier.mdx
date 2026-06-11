@@ -1,0 +1,282 @@
+---
+sidebar_position: 2
+hide_table_of_contents: true
+---
+
+# 8.2 Doe het met pen en papier
+
+**Leerdoel:** je begrijpt **hoe** Dijkstra werkt door hem zelf stap voor
+stap uit te voeren — geen code, alleen een tabel die je bijwerkt. Je
+zult zien hoe afstanden **steeds opnieuw** verbeterd worden naarmate je
+verder zoekt.
+
+## Onze mini-graph
+
+```
+                1
+       A ─────────── C
+       │         ╱   │   ╲
+       │       2     3     5
+       6     ╱       │       ╲
+       │   ╱         │         ╲
+       B ─────────── D ─── 1 ── E
+              2
+```
+
+Vijf nodes (`A` t/m `E`) en zeven verbindingen. We willen: **vanuit `A`,
+wat is de kortste afstand naar elke andere node?**
+
+Lees het plaatje:
+
+- `A─C` heeft gewicht **1** (de bovenste edge).
+- `A─B` heeft gewicht **6** (de linker edge).
+- `B─C` heeft gewicht **2** (de diagonaal).
+- `B─D` heeft gewicht **2** (onder).
+- `C─D` heeft gewicht **3** (middenverticaal).
+- `C─E` heeft gewicht **5** (de rechter-diagonaal).
+- `D─E` heeft gewicht **1** (rechtsonder).
+
+## De drie kolommen
+
+Dijkstra houdt drie dingen bij. Pak een vel papier en teken deze tabel:
+
+| node | kortste afstand bekend? | huidige beste afstand |
+|---|---|---|
+| A | nee | 0 |
+| B | nee | ? |
+| C | nee | ? |
+| D | nee | ? |
+| E | nee | ? |
+
+- **Bekend?**: of we al **definitief** weten wat de kortste afstand is.
+  We beginnen allemaal op **nee**.
+- **Huidige beste afstand**: ons beste *vermoeden* tot nu toe. De start
+  staat op **0** (daar zijn we al). De rest is **?** — nog onbekend.
+
+## De gouden regel — twee stappen herhalen
+
+> **Stap A**: pak onder de "nog niet bekend" rijen die met de
+> **laagste afstand**. Markeer hem als **bekend**.
+>
+> **Stap B**: kijk naar zijn buren. Voor elke buur, reken uit:
+> *"afstand van mij + gewicht naar buur"*. Is dat **kleiner** dan wat
+> de buur nu heeft? Update.
+
+Dat is alles. Herhaal tot er geen "nog niet bekend" rijen meer zijn.
+
+## Ronde 1 — start vanaf A
+
+**Stap A — Wie heeft de laagste afstand onder de nog-niet-bekende?**
+
+Dat is `A` met afstand 0. Markeer `A` als bekend:
+
+| node | bekend? | afstand |
+|---|---|---|
+| **A** | **ja** ✓ | 0 |
+| B | nee | ? |
+| C | nee | ? |
+| D | nee | ? |
+| E | nee | ? |
+
+**Stap B — `A`'s buren.**
+
+`A` heeft twee buren: `B` (gewicht 6) en `C` (gewicht 1).
+
+- `B`: kandidaat = `0 + 6 = 6`. Was `?` → update naar **6**.
+- `C`: kandidaat = `0 + 1 = 1`. Was `?` → update naar **1**.
+
+| node | bekend? | afstand |
+|---|---|---|
+| A | ja ✓ | 0 |
+| B | nee | **6** |
+| C | nee | **1** |
+| D | nee | ? |
+| E | nee | ? |
+
+## Ronde 2 — kies C, en pas op!
+
+**Stap A — Laagste onder nog-niet-bekend?**
+
+`C` met 1 wint van `B` met 6, `D` met `?` en `E` met `?`. Markeer als
+bekend:
+
+| node | bekend? | afstand |
+|---|---|---|
+| A | ja ✓ | 0 |
+| B | nee | 6 |
+| **C** | **ja** ✓ | 1 |
+| D | nee | ? |
+| E | nee | ? |
+
+**Stap B — `C`'s buren.**
+
+`C` heeft vier buren: `A` (1), `B` (2), `D` (3), `E` (5).
+
+- `A`: kandidaat = `1 + 1 = 2`. `A` is al 0 → **niet beter**, niets doen.
+- `B`: kandidaat = `1 + 2 = 3`. Was 6 → **3 is veel beter, update!** ⭐
+- `D`: kandidaat = `1 + 3 = 4`. Was `?` → update naar **4**.
+- `E`: kandidaat = `1 + 5 = 6`. Was `?` → update naar **6**.
+
+| node | bekend? | afstand |
+|---|---|---|
+| A | ja ✓ | 0 |
+| B | nee | **3** ⬇ |
+| C | ja ✓ | 1 |
+| D | nee | **4** |
+| E | nee | **6** |
+
+> **Belangrijk moment:** `B` is **opeens veel korter** geworden. Eerst
+> dachten we 6 (directe weg `A→B`), maar nu we via `C` kijken vinden we
+> 3 (`A→C→B`). Dat is precies waar Dijkstra om gaat — **niet stoppen
+> bij je eerste schatting**.
+
+## Ronde 3 — kies B, niets verbetert
+
+**Stap A — Laagste onder nog-niet-bekend?**
+
+`B` met 3 wint van `D` (4) en `E` (6):
+
+| node | bekend? | afstand |
+|---|---|---|
+| A | ja ✓ | 0 |
+| **B** | **ja** ✓ | 3 |
+| C | ja ✓ | 1 |
+| D | nee | 4 |
+| E | nee | 6 |
+
+**Stap B — `B`'s buren.**
+
+`B` heeft drie buren: `A` (6), `C` (2), `D` (2).
+
+- `A`: `3 + 6 = 9`. Al 0 → niets doen.
+- `C`: `3 + 2 = 5`. Al 1 → niets doen.
+- `D`: `3 + 2 = 5`. Huidige 4 → **5 is niet beter**, niets doen.
+
+Tabel **niet** veranderd:
+
+| node | bekend? | afstand |
+|---|---|---|
+| A | ja ✓ | 0 |
+| B | ja ✓ | 3 |
+| C | ja ✓ | 1 |
+| D | nee | 4 |
+| E | nee | 6 |
+
+> Een ronde zonder updates is ook normaal. Dijkstra doet altijd
+> *iedere* buur checken, ook al levert het niks op.
+
+## Ronde 4 — kies D, en weer een verbetering
+
+**Stap A — Laagste onder nog-niet-bekend?**
+
+`D` met 4 wint van `E` met 6:
+
+| node | bekend? | afstand |
+|---|---|---|
+| A | ja ✓ | 0 |
+| B | ja ✓ | 3 |
+| C | ja ✓ | 1 |
+| **D** | **ja** ✓ | 4 |
+| E | nee | 6 |
+
+**Stap B — `D`'s buren.**
+
+`D` heeft drie buren: `B` (2), `C` (3), `E` (1).
+
+- `B`: `4 + 2 = 6`. Al 3 → niets doen.
+- `C`: `4 + 3 = 7`. Al 1 → niets doen.
+- `E`: `4 + 1 = 5`. Huidige 6 → **5 is beter, update!** ⭐
+
+| node | bekend? | afstand |
+|---|---|---|
+| A | ja ✓ | 0 |
+| B | ja ✓ | 3 |
+| C | ja ✓ | 1 |
+| D | ja ✓ | 4 |
+| E | nee | **5** ⬇ |
+
+> **Tweede inzicht:** `E` was 6 (route `A→C→E`). Maar via `D` is het
+> `A→C→D→E` = 1 + 3 + 1 = **5**. Drie kortere stappen kunnen één lange
+> verslaan. Goed dat we niet stopten na ronde 2.
+
+## Ronde 5 — kies E, klaar
+
+**Stap A — Alleen `E` is nog over** met afstand 5:
+
+| node | bekend? | afstand |
+|---|---|---|
+| A | ja ✓ | 0 |
+| B | ja ✓ | 3 |
+| C | ja ✓ | 1 |
+| D | ja ✓ | 4 |
+| **E** | **ja** ✓ | 5 |
+
+**Stap B — `E`'s buren.**
+
+`C` (al 1) en `D` (al 4). Geen verbeteringen mogelijk.
+
+## Klaar!
+
+Alle nodes zijn bekend. Onze tabel:
+
+| node | kortste afstand vanuit A | bereikt via |
+|---|---|---|
+| A | 0 | (start) |
+| B | 3 | A → C → B |
+| C | 1 | A → C |
+| D | 4 | A → C → D |
+| E | 5 | A → C → D → E |
+
+## Wat is hier opvallend?
+
+- **`B` werd één keer geüpdate** (6 → 3). De omweg via `C` is meer dan
+  twee keer zo kort als de directe weg.
+- **`E` werd één keer geüpdate** (6 → 5). En dat gebeurde pas **drie
+  rondes** nadat we hem voor het eerst hadden gezien.
+- **Alle kortste routes lopen via `C`**. Dat zou je op het oog moeilijk
+  kunnen raden.
+- **Geen route is direct** voor `B`, `D` of `E`. De directe `A→B`
+  bestaat (6), maar is langer dan de omweg.
+
+## Waarom werkt dit?
+
+> **Sleutelidee:** elke keer dat we "laagste onder nog-niet-bekend" als
+> bekend markeren, **kan** zijn afstand niet meer verbeteren. Want elke
+> nieuwe route zou via een andere nog-niet-bekende node moeten lopen —
+> en die hebben per definitie een **hogere** afstand. Dus de totale
+> nieuwe route zou langer worden.
+
+Daarom mogen we hem "klaar" verklaren zonder later spijt te krijgen.
+
+## Probeer het zelf — een andere startnode
+
+Doe Dijkstra op dezelfde graph, maar nu vanuit `E` als start. Welke
+afstanden krijg je naar `A`, `B`, `C`, `D`?
+
+<details>
+<summary>Antwoord</summary>
+
+| node | afstand vanuit E |
+|---|---|
+| A | 5 (via D, C) |
+| B | 3 (via D) |
+| C | 4 (via D) |
+| D | 1 (direct) |
+| E | 0 |
+
+Let op: vanaf `E` is de directe `E─C` (gewicht 5) **niet** de kortste
+route naar `C`. Je gaat via `D` (1 + 3 = 4). Weer twee updates onderweg.
+
+</details>
+
+## Tijd om dit in Python te bouwen
+
+Je weet nu **wat** Dijkstra doet en **waarom** het werkt. In de volgende
+stappen vertalen we elke kolom van je tabel en elke regel van de gouden
+regel naar Python. Eén klein stukje per pagina.
+
+> In de code-pagina's gebruiken we een **simpelere graph** (4 nodes)
+> zodat de code overzichtelijk blijft. Het algoritme is hetzelfde —
+> alleen het voorbeeld is kleiner.
+
+Door naar [stap 3: voorspel zelf →](./03-stellingen).

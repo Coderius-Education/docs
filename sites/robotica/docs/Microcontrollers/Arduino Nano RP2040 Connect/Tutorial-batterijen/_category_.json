@@ -1,0 +1,8 @@
+{
+  "label": "Tutorial - Batterijen",
+  "position": 10,
+  "link": {
+    "type": "generated-index",
+    "description": "Leer hoe je de robot kan laten werken met batterijen"
+  }
+}

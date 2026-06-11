@@ -1,0 +1,185 @@
+---
+sidebar_position: 1
+hide_table_of_contents: true
+description: Sla waar of niet-waar op in een variabele met booleans, en vergelijk waardes met ==, !=, <, > en meer.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 5a Booleans en vergelijken
+
+Je kunt nu variabelen maken, rekenen en tekst opmaken. In deze les leer je een nieuw soort waarde: **booleans** (`True` of `False`). Met vergelijkingen levert Python automatisch booleans op — straks de bouwsteen voor `if`/`else`.
+
+## Booleans
+
+Een boolean heeft maar twee mogelijkheden: `True` (waar) of `False` (niet waar).
+
+```python
+is_student = True
+heeft_kaartje = False
+
+print(is_student)     # True
+print(heeft_kaartje)  # False
+```
+
+Booleans gebruik je om "ja of nee"-feiten op te slaan.
+
+## Vergelijkingsoperatoren
+
+Met vergelijkingsoperatoren krijg je altijd een boolean terug:
+
+| Operator | Betekenis | Voorbeeld | Resultaat |
+|:--------:|-----------|-----------|-----------|
+| `==` | gelijk aan | `5 == 5` | `True` |
+| `!=` | niet gelijk aan | `5 != 3` | `True` |
+| `<` | kleiner dan | `3 < 10` | `True` |
+| `>` | groter dan | `3 > 10` | `False` |
+| `<=` | kleiner of gelijk | `5 <= 5` | `True` |
+| `>=` | groter of gelijk | `3 >= 10` | `False` |
+
+```python
+leeftijd = 16
+
+print(leeftijd >= 18)  # False
+print(leeftijd < 18)   # True
+```
+
+**Let op:** `=` slaat een waarde op, `==` vergelijkt twee waardes. Dat verschil is een van de meest gemaakte fouten in Python.
+
+## Een vergelijking opslaan
+
+Een vergelijking levert een boolean op — die kan je gewoon in een variabele bewaren:
+
+```python
+leeftijd = 20
+
+mag_stemmen = leeftijd >= 18
+print(mag_stemmen)   # True
+```
+
+---
+
+## Opdracht 5a.1: 18 of ouder
+
+Maak een variabele `leeftijd` met de waarde `16`, en print of die persoon 18 of ouder is.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Print de vergelijking `leeftijd >= 18` direct.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+leeftijd = 16
+
+print(leeftijd >= 18)
+```
+
+Uitvoer: `False`.
+
+<CodeExercise>{`leeftijd = 16
+
+print(leeftijd >= 18)`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 5a.2: Twee booleans
+
+Print twee booleans: `is_volwassen` (leeftijd 18 of hoger) en `is_senior` (leeftijd boven 65).
+
+Verwachte uitvoer (bij `leeftijd = 70`):
+
+```
+Volwassen: True
+Senior: True
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+`is_volwassen = leeftijd >= 18` en `is_senior = leeftijd > 65`. Print met een komma: `print("Volwassen:", is_volwassen)`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+leeftijd = 70
+
+is_volwassen = leeftijd >= 18
+is_senior = leeftijd > 65
+
+print("Volwassen:", is_volwassen)
+print("Senior:", is_senior)
+```
+
+<CodeExercise>{`leeftijd = 70
+
+is_volwassen = leeftijd >= 18
+is_senior = leeftijd > 65
+
+print("Volwassen:", is_volwassen)
+print("Senior:", is_senior)`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 5a.3: Leeftijds-check
+
+Schrijf een programma dat met één variabele `leeftijd` drie booleans berekent en print: `is_kind` (jonger dan 12), `is_tiener` (12 of ouder) en `is_volwassen` (18 of ouder).
+
+Verwachte uitvoer (bij `leeftijd = 15`):
+
+```
+Kind: False
+Tiener: True
+Volwassen: False
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+- `is_kind = leeftijd < 12`
+- `is_tiener = leeftijd >= 12`
+- `is_volwassen = leeftijd >= 18`
+
+Een strengere tiener-check (12 t/m 19) leer je in de volgende lessen met `and`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+leeftijd = 15
+
+is_kind = leeftijd < 12
+is_tiener = leeftijd >= 12
+is_volwassen = leeftijd >= 18
+
+print("Kind:", is_kind)
+print("Tiener:", is_tiener)
+print("Volwassen:", is_volwassen)
+```
+
+In de volgende les ga je deze booleans gebruiken om je programma écht een **keuze** te laten maken met `if` en `else`.
+
+<CodeExercise>{`leeftijd = 15
+
+is_kind = leeftijd < 12
+is_tiener = leeftijd >= 12
+is_volwassen = leeftijd >= 18
+
+print("Kind:", is_kind)
+print("Tiener:", is_tiener)
+print("Volwassen:", is_volwassen)`}</CodeExercise>
+
+</details>

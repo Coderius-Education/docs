@@ -1,0 +1,77 @@
+---
+sidebar_position: 2
+sidebar_label: 'Medium'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# SQL Injection (Blind) — Medium
+
+Op het Medium level is het formulier veranderd naar een dropdown-menu én ontbreken de aanhalingstekens in de query.
+
+## 1. Predict (Voorspel)
+
+We weten nu hoe een Ja/Nee (Boolean) injectie werkt. Soms vertelt de applicatie je echter niet eens "Exists" of "Missing", maar gebeurt er in beide gevallen op de pagina *exact hetzelfde*. Hoe kunnen we dán Ja/Nee-vragen stellen aan de server?
+
+<details>
+
+<summary>Antwoord</summary>
+
+We kunnen overstappen op **Time-Based Blind SQL Injection**.
+We commanderen de database om, *alleen* als onze bewering waar is, 5 seconden te wachten voordat hij antwoord geeft. Als we direct antwoord krijgen, was de bewering onwaar. Als het verzoek lang duurt, weten we dat de bewering waar was!
+
+</details>
+
+## 2. Run (Uitvoeren)
+
+Start het lab en bekijk het formulier.
+
+<DvwaLab module="sql_injection_blind" level="medium" />
+
+Je ziet de vertrouwde dropdown-box (waar je niet vrij in kunt typen). Selecteer ID `1` en klik op Submit. Noteer hoe snel de pagina reageert.
+
+## 3. Investigate (Onderzoeken)
+
+Open de Developer Tools (F12) en zoek het `<select>`-element. Verander de `value` van één van de opties naar `1 AND SLEEP(5)` via de inspector en klik daarna op Submit.
+
+**Vraag:** Wat valt je op aan de laadtijd van de pagina? Wat onthult dit?
+
+<details>
+
+<summary>Antwoord</summary>
+
+De pagina wacht nu 5 seconden voordat hij antwoord geeft! Dit bewijst dat de applicatie jouw invoer ongefilterd in de SQL-query plakt en dat de database het `SLEEP(5)`-commando daadwerkelijk uitvoert. De backend filtert de dropdown-waarde niet — de bescherming zat alleen in de frontend (de dropdown), niet in de backend.
+
+</details>
+
+## 4. Modify & Make (Aanpassen & Maken)
+
+Omdat de backend `user_id = $id` verwerkt (zonder aanhalingstekens), kun je een Time-Based aanval uitvoeren via de Developer Tools.
+
+<details>
+
+<summary>Tip</summary>
+
+Druk op F12. Inspecteer het formulier, en verander de `value="1"` van een van de opties naar de gewenste payload. Gebruik het SQL-commando `SLEEP(5)`.
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+Verander de optie naar: `<option value="1 AND SLEEP(5)">`
+Selecteer deze in de webpagina en klik Submit. De browser wacht nu 5 volle seconden voordat de webpagina weer verschijnt! Je hebt succesvol de wachttijd gemanipuleerd en daarmee bewezen dat er een blind gat in de database zit.
+
+</details>
+
+## 5. ✓ Wat moest je zien?
+
+:::tip Controle
+- Na het invullen van `1 AND SLEEP(5)` duurt het zichtbaar **5 seconden** voordat de pagina reageert.
+- Een normaal ID (zoals `1`) geeft direct antwoord — geen vertraging.
+- Het verschil in laadtijd bewijst dat de SQL-code door de database wordt uitgevoerd.
+
+Zie je geen vertraging? Controleer of je de waarde correct hebt aangepast in de inspector en of je op Submit hebt geklikt ná het wijzigen.
+:::

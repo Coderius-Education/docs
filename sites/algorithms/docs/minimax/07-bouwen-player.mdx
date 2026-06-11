@@ -1,0 +1,110 @@
+---
+sidebar_position: 7
+hide_table_of_contents: true
+---
+
+# 9.7 Bouwsteen 2 — `player(bord)`
+
+**Leerdoel:** je schrijft een functie die kijkt wie aan zet is. Tellen
+in plaats van een "wiens beurt" variabele bijhouden.
+
+## Wat doet deze functie?
+
+In tic-tac-toe begint X. Daarna wisselen X en O elkaar af. Hoe weet je
+wiens beurt het is bij een willekeurig bord?
+
+> *"Tel het aantal X'en en het aantal O's. Als ze gelijk zijn, is X aan
+> de beurt. Als X er eentje meer heeft, is O aan de beurt."*
+
+Geen extra variabele nodig — de telling op het bord vertelt het zelf.
+
+## Specificatie
+
+- **Input**: een `bord` (3×3 lijst).
+- **Output**: `"X"` of `"O"` (de speler die nu aan zet is).
+- **Voorbeelden**:
+  - Leeg bord → `"X"` (X begint).
+  - Bord met 1 X en 0 O's → `"O"`.
+  - Bord met 2 X en 2 O's → `"X"`.
+
+## Voorspel
+
+Wat denk je dat dit print?
+
+```python
+bord_a = [[None, None, None],
+          [None, None, None],
+          [None, None, None]]
+
+bord_b = [["X", None, None],
+          [None, None, None],
+          [None, None, None]]
+
+bord_c = [["X", "O", "X"],
+          ["O", "X", "O"],
+          [None, None, None]]
+
+# Tel X'en en O's per bord
+for naam, bord in [("a", bord_a), ("b", bord_b), ("c", bord_c)]:
+    x_count = sum(rij.count("X") for rij in bord)
+    o_count = sum(rij.count("O") for rij in bord)
+    print(f"bord {naam}: X={x_count}, O={o_count}")
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+bord a: X=0, O=0
+bord b: X=1, O=0
+bord c: X=3, O=2
+```
+
+Bij bord a en c is X aan de beurt (gelijke telling, óf één O nodig).
+Bij bord b is O aan de beurt (X heeft één voorsprong).
+
+</details>
+
+## Bouw zelf en test
+
+<PyRunner initialCode={`def player(bord):
+    # Vul aan:
+    # 1. tel het aantal X'en
+    # 2. tel het aantal O's
+    # 3. als gelijk -> "X", anders -> "O"
+    return "X"
+
+
+# === Tests ===
+leeg = [[None]*3, [None]*3, [None]*3]
+assert player(leeg) == "X", "Leeg bord: X begint"
+
+na_een_x = [["X", None, None], [None, None, None], [None, None, None]]
+assert player(na_een_x) == "O", "Na 1 X: O is aan de beurt"
+
+na_xo = [["X", "O", None], [None, None, None], [None, None, None]]
+assert player(na_xo) == "X", "Na X en O: weer X"
+
+drie_om_twee = [["X", "O", "X"], ["O", "X", None], [None, None, None]]
+assert player(drie_om_twee) == "O", "3 X, 2 O: O is aan de beurt"
+
+vier_om_vier = [["X", "O", "X"], ["O", "X", "O"], ["X", "O", None]]
+assert player(vier_om_vier) == "X", "4 X en 4 O: X is aan de beurt"
+
+print("Alle tests gehaald ✓")`} />
+
+<details>
+<summary>Tip</summary>
+
+Gebruik `rij.count("X")` om in één rij te tellen, en
+`sum(... for rij in bord)` om over alle rijen op te tellen:
+
+```python
+x_count = sum(rij.count("X") for rij in bord)
+```
+
+Daarna een `if`-vergelijking met de twee tellingen.
+
+</details>
+
+Door naar [stap 8: bouwsteen 3 — actions →](./08-bouwen-actions).

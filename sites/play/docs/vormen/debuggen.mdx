@@ -1,0 +1,103 @@
+---
+sidebar_position: 8
+hide_table_of_contents: true
+---
+
+# 1.8 Debuggen: fouten opsporen
+
+Programmeren is vooral fouten oplossen. Dat heet **debuggen**. In dit hoofdstuk leer je hoe je fouten kunt opsporen in je `play`-programma.
+
+## Stap 1: Lees de foutmelding
+
+Python vertelt je altijd wat er mis is. Voer de code hieronder uit:
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle(color='red')
+cirkel.colr = 'blue'`} height={300} />
+
+Wat zie je in het console-paneel onder het scherm?
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+In het console-paneel verschijnt een foutmelding. De belangrijkste regel is:
+```
+AttributeError: 'Circle' object has no attribute 'colr'. Did you mean: 'color'?
+```
+
+Python vertelt je precies wat er mis is: `colr` bestaat niet, en hij suggereert zelfs `color`. Typ- en spelfouten zijn de meest voorkomende fouten!
+
+:::tip Lokaal werken?
+In Thonny of VS Code verschijnt de foutmelding in de terminal onderaan je scherm. De inhoud is hetzelfde.
+:::
+
+</details>
+
+## Stap 2: Gebruik print()
+
+Als je niet weet welke waarde een variabele heeft, gebruik dan `print()`:
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle(x=100, y=50)
+
+print(cirkel.x)
+print(cirkel.y)
+print(cirkel.color)`} height={300} />
+
+In het console-paneel onder het scherm zie je dan de waarden. Dit is handig als je programma iets anders doet dan je verwacht.
+
+## Stap 3: Gebruik .info()
+
+Met `.info()` print je in één keer alle informatie over een vorm:
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle(color='red', x=50, radius=30)
+
+cirkel.info()`} height={300} />
+
+Dit is veel sneller dan elke eigenschap apart te printen!
+
+## Tips voor debuggen
+
+1. **Lees de foutmelding** — Python vertelt je vaak precies wat er mis is en op welke regel
+2. **Kijk naar het regelnummer** — De foutmelding toont op welke regel de fout zit
+3. **Gebruik `print()`** — Print variabelen om te zien welke waarden ze hebben
+4. **Test kleine stukken** — Voeg code stap voor stap toe, niet alles tegelijk
+5. **Vergelijk met de cheatsheet** — Kijk of je de juiste namen en parameters gebruikt
+
+## Opdracht 1.8.a: Fout opsporen
+
+In de code hieronder zitten twee fouten. Kun je ze vinden en oplossen?
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle(colour='red', radius=30)
+cirkel.x = 100
+
+tekst = play.new_text(words=cirkel.x)`} height={300} />
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Voer de code uit en lees de foutmelding. De eerste fout gaat over een verkeerde parameternaam.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle(color='red', radius=30)
+cirkel.x = 100
+
+tekst = play.new_text(words=str(cirkel.x))`} height={300} />
+
+De fouten waren:
+1. `colour` moet `color` zijn (Engelse spelling zonder u)
+2. `words=cirkel.x` geeft een fout omdat `words` tekst verwacht, niet een getal. Met `str()` maak je er tekst van.
+
+</details>

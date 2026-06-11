@@ -1,0 +1,30 @@
+---
+sidebar_position: 5
+sidebar_label: "Stap 5: Tweede commit"
+title: "Stap 5: een tweede commit"
+hide_table_of_contents: true
+---
+
+import GitSimulator from '@site/src/components/GitSimulator';
+
+# Stap 5: een tweede commit
+
+Een project bestaat zelden uit één commit. Elke keer dat je iets verandert, herhaal je dezelfde drie stappen: aanpassen → `git add` → `git commit`.
+
+In de simulator hieronder kun je een bestand toevoegen of bewerken via de knoppen onder de zones. Voeg een tweede bestand toe, of pas `hello.txt` aan, en maak nog een commit.
+
+<GitSimulator
+  scenarioId="stap-5-tweede-commit"
+  initialFiles={{'hello.txt': 'Hallo wereld!\n'}}
+  objective={{
+    description: 'Maak twee commits achter elkaar.',
+    check: (s) => s.commits.length >= 2,
+  }}
+/>
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Begin met `git init`, `git add .` en de eerste commit. Klik daarna op **"+ nieuw bestand"** of **"bewerk hello.txt"** om een wijziging te maken. Vervolgens opnieuw `git add ...` en `git commit -m "..."`.
+
+</details>

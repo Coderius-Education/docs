@@ -1,0 +1,141 @@
+---
+sidebar_position: 1
+hide_table_of_contents: true
+description: Herhaal code automatisch met een for-loop en range(n). Laat Python het tellen voor je doen.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 6a For-loop
+
+Je kunt nu beslissingen maken met `if`/`else`. Maar wat als je tien keer hetzelfde wilt doen — bijvoorbeeld de getallen 0 t/m 9 printen? Met een `for`-loop laat je Python het werk herhalen.
+
+## Een simpele for-loop
+
+```python
+for i in range(5):
+    print(i)
+```
+
+Uitvoer:
+
+```
+0
+1
+2
+3
+4
+```
+
+- `range(5)` betekent: "geef vijf getallen, beginnend bij 0" — dus `0, 1, 2, 3, 4`.
+- `i` is de **loop-variabele**. Python vult hem elke ronde met het volgende getal.
+- De code binnen de loop springt **4 spaties** in, net als bij `if`.
+
+**Let op:** `range(5)` stopt bij **4**, niet bij 5. De stop-waarde is *exclusief*. Wil je tot en met 5 tellen? Gebruik `range(6)`.
+
+De naam `i` is geen wet — die variabele mag je elke gewenste naam geven, zoals `teller` of `getal`. `i` is traditie (van *index*).
+
+---
+
+## Opdracht 6a.1: Vijf keer hoera
+
+Schrijf een `for`-loop die **5 keer** `"Hoera!"` print.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+De loop-variabele heb je niet nodig in de print — gewoon `print("Hoera!")` binnen de loop.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+for i in range(5):
+    print("Hoera!")
+```
+
+<CodeExercise>{`for i in range(5):
+    print("Hoera!")`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 6a.2: Aftellen tot klaar
+
+Print de getallen 0 t/m 4 met een for-loop, en print daarna `"Klaar!"`.
+
+Verwachte uitvoer:
+
+```
+0
+1
+2
+3
+4
+Klaar!
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+`range(5)` geeft `0, 1, 2, 3, 4`. Print `i` in de loop. De regel `print("Klaar!")` staat **buiten** de loop (niet ingesprongen).
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+for i in range(5):
+    print(i)
+
+print("Klaar!")
+```
+
+<CodeExercise>{`for i in range(5):
+    print(i)
+
+print("Klaar!")`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 6a.3: Tafel van 2
+
+Print de eerste tien resultaten van de tafel van 2, met een f-string.
+
+Verwachte uitvoer:
+
+```
+2 x 0 = 0
+2 x 1 = 2
+2 x 2 = 4
+...
+2 x 9 = 18
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+`range(10)` loopt van `0` t/m `9`. Gebruik een f-string: `f"2 x {i} = {2 * i}"`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+for i in range(10):
+    print(f"2 x {i} = {2 * i}")
+```
+
+In de volgende les leer je hoe je `range` met een **begin-getal** en een **stapgrootte** gebruikt, zodat je niet altijd bij 0 hoeft te beginnen.
+
+<CodeExercise>{`for i in range(10):
+    print(f"2 x {i} = {2 * i}")`}</CodeExercise>
+
+</details>

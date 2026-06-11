@@ -1,0 +1,199 @@
+---
+sidebar_position: 3
+hide_table_of_contents: true
+description: Sla informatie op in variabelen met = en hergebruik die waar je maar wilt. Met type() controleer je het datatype.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 2 Jij als variabele
+
+In de vorige les heb je tekst getoond met `print()`. In je visitekaartje stond je naam steeds opnieuw in de tekst — als je iets wil aanpassen, moet je elke regel langs. Dat kan makkelijker met een **variabele**: je geeft een waarde een naam en gebruikt die overal.
+
+## Een waarde een naam geven
+
+Een variabele maak je met een `=`-teken. Links de naam, rechts de waarde:
+
+```python
+naam = "Alex Jansen"
+
+print(naam)
+print(naam)
+```
+
+Uitvoer:
+
+```
+Alex Jansen
+Alex Jansen
+```
+
+- `naam` is de **naam** van de variabele.
+- `"Alex Jansen"` is de **waarde**.
+- `print(naam)` toont de waarde — niet het woord "naam".
+
+Verander je later `naam = "Sara"`, dan veranderen beide regels mee. Dat is de kracht van variabelen: één plek aanpassen, overal effect.
+
+## Tekst of getal?
+
+Tekst (een **string**) krijgt aanhalingstekens. Getallen (een **integer**) niet:
+
+```python
+naam = "Alex"
+leeftijd = 15
+
+print(type(naam))      # <class 'str'>
+print(type(leeftijd))  # <class 'int'>
+```
+
+`type()` vertelt je welk soort waarde een variabele bevat. Onthoud: tekst met aanhalingstekens, getallen zonder.
+
+## Variabelen veranderen
+
+Je kunt op elk moment een nieuwe waarde in een variabele zetten:
+
+```python
+score = 0
+print(score)   # 0
+
+score = 10
+print(score)   # 10
+```
+
+De variabele onthoudt alleen de **laatst** toegewezen waarde.
+
+---
+
+## Opdracht 2.1: Favoriete kleur
+
+Maak een variabele `kleur` met je favoriete kleur, en print die twee keer.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+`kleur = "blauw"` — daarna twee keer `print(kleur)`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+kleur = "blauw"
+
+print(kleur)
+print(kleur)
+```
+
+<CodeExercise>{`kleur = "blauw"
+
+print(kleur)
+print(kleur)`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 2.2: Visitekaartje met variabelen
+
+Maak een visitekaartje waarbij je gegevens in vier variabelen staan: `naam`, `leeftijd`, `school`, `hobby`. Print ze daarna onder elkaar.
+
+Verwachte uitvoer:
+
+```
+Alex Jansen
+15
+Python College
+Muziek maken
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Vier variabelen, vier `print()`-regels. Tekst krijgt aanhalingstekens, het getal niet.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+naam = "Alex Jansen"
+leeftijd = 15
+school = "Python College"
+hobby = "Muziek maken"
+
+print(naam)
+print(leeftijd)
+print(school)
+print(hobby)
+```
+
+<CodeExercise>{`naam = "Alex Jansen"
+leeftijd = 15
+school = "Python College"
+hobby = "Muziek maken"
+
+print(naam)
+print(leeftijd)
+print(school)
+print(hobby)`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 2.3: Visitekaartje met labels
+
+Maak het visitekaartje uit opdracht 2.2 af met een titel, labels en een afsluitzin. Combineer tekst en variabele met een komma binnen `print()` — Python zet er automatisch een spatie tussen.
+
+Verwachte uitvoer:
+
+```
+=== Mijn Visitekaartje ===
+Naam: Alex Jansen
+Leeftijd: 15
+School: Python College
+Hobby: Muziek maken
+Tot ziens!
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+`print("Naam:", naam)` print eerst de tekst `Naam:` en daarna de waarde van `naam`, met een spatie ertussen.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+naam = "Alex Jansen"
+leeftijd = 15
+school = "Python College"
+hobby = "Muziek maken"
+
+print("=== Mijn Visitekaartje ===")
+print("Naam:", naam)
+print("Leeftijd:", leeftijd)
+print("School:", school)
+print("Hobby:", hobby)
+print("Tot ziens!")
+```
+
+In de volgende les laten we Python voor je **rekenen**, en daarna leer je f-strings waarmee deze uitvoer nog netter wordt.
+
+<CodeExercise>{`naam = "Alex Jansen"
+leeftijd = 15
+school = "Python College"
+hobby = "Muziek maken"
+
+print("=== Mijn Visitekaartje ===")
+print("Naam:", naam)
+print("Leeftijd:", leeftijd)
+print("School:", school)
+print("Hobby:", hobby)
+print("Tot ziens!")`}</CodeExercise>
+
+</details>

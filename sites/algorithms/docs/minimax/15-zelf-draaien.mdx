@@ -1,0 +1,186 @@
+---
+sidebar_position: 15
+hide_table_of_contents: true
+---
+
+# 9.15 Draai het zelf — buiten de browser
+
+**Leerdoel:** je verzamelt je 8 functies in één lokaal Python-bestand
+zodat je daar straks de laatste functie (`minimax`) bij kan schrijven —
+in een echte editor, niet in een PyRunner.
+
+## Wat heb je nu?
+
+Acht werkende functies, verspreid over 8 pagina's:
+
+```
+initial_state, player, actions, result,
+winner, terminal, utility, max_value, min_value
+```
+
+(De helpers `max_value` en `min_value` zijn samen één bouwsteen, dus
+**8 functies, 9 bouwstenen** — let goed op, want je hebt ze straks
+allemaal nodig.)
+
+De laatste bouwsteen, `minimax`, komt op de volgende pagina. Maar
+voordat we die schrijven, brengen we je 8 functies eerst **bij elkaar**.
+
+## Waarom uit de PyRunner stappen?
+
+Tot nu toe woonden je functies op losse pagina's. Werkt prima om te
+leren — maar nu wil je `minimax` schrijven en die heeft alle 8 nodig.
+Drie nadelen van in de PyRunner blijven:
+
+- Je moet je 8 functies elke keer opnieuw plakken om iets te kunnen
+  draaien.
+- De browser kan een lange minimax-run niet onderbreken.
+- Je hebt geen **echte file** met je werk; copy-pasten vanuit de
+  Coderius-site is geen project.
+
+Twee opties hieronder lossen dat op — kies wat bij jou past.
+
+## Optie A — verzamel-PyRunner (alleen als noodoplossing)
+
+Voor wie écht geen Python lokaal kan installeren (bv. op een
+Chromebook waar je geen software mag installeren). Plak je 8 functies
+in de PyRunner hieronder en print een sanity-check. De volgende pagina
+laat je dan ook minimax in dezelfde PyRunner schrijven (in een
+`<details>` blok onderaan).
+
+<PyRunner initialCode={`import copy
+import math
+
+
+# Plak hier je 8 functies (initial_state t/m min_value) uit pagina 06-14:
+
+def initial_state():
+    # vul aan
+    return None
+
+def player(bord):
+    # vul aan
+    return "X"
+
+def actions(bord):
+    # vul aan
+    return set()
+
+def result(bord, zet):
+    # vul aan
+    return bord
+
+def winner(bord):
+    # vul aan
+    return None
+
+def terminal(bord):
+    # vul aan
+    return False
+
+def utility(bord):
+    # vul aan
+    return 0
+
+def max_value(bord):
+    # vul aan
+    return 0
+
+def min_value(bord):
+    # vul aan
+    return 0
+
+
+# === Sanity check ===
+bord = initial_state()
+print("Leeg bord:", bord)
+print("Wie is aan zet?", player(bord))
+print("Aantal mogelijke zetten:", len(actions(bord)))`} />
+
+Als die output klopt (3×3 None, "X" aan zet, 9 zetten), zijn je 8
+functies klaar voor minimax.
+
+## Optie B — lokaal in VS Code (aanbevolen)
+
+Dit is hoe ontwikkelaars in het echt werken. Eén file, eigen editor,
+geen browser-traagheid. Eenmalig wat installeren, daarna heb je een
+écht Python-project.
+
+### Stap 1 — Python en VS Code installeren
+
+Volg de Coderius-tutorial op
+[editor.coderius.nl/python/](https://editor.coderius.nl/python/).
+Daar wordt stap voor stap uitgelegd hoe je:
+
+- Python installeert op Windows of macOS,
+- VS Code installeert,
+- de **Python-extensie** in VS Code zet, en
+- je eerste script draait.
+
+Eenmalig werk; daarna heb je het altijd.
+
+### Stap 2 — een project-map maken
+
+Open VS Code en maak een nieuwe map aan voor dit project, bijvoorbeeld:
+
+```
+minimax-tictactoe/
+└── tictactoe.py
+```
+
+`tictactoe.py` is een leeg bestand voor je code.
+
+### Stap 3 — je 8 functies in `tictactoe.py` plakken
+
+Open elke bouwsteen-pagina (06 t/m 14) van deze site, kopieer **jouw
+oplossing** uit elke PyRunner, en plak ze onder elkaar in
+`tictactoe.py`. Volgorde:
+
+```
+initial_state, player, actions, result,
+winner, terminal, utility, max_value, min_value
+```
+
+Vergeet de twee imports bovenaan niet:
+
+```python
+import copy
+import math
+```
+
+### Stap 4 — sanity check
+
+Plak helemaal onderaan `tictactoe.py` een paar regels om te checken dat
+alles laadt:
+
+```python
+bord = initial_state()
+print("Leeg bord:", bord)
+print("Wie is aan zet?", player(bord))
+print("Aantal mogelijke zetten:", len(actions(bord)))
+```
+
+Open een **terminal** in VS Code (`Ctrl + ~` of via menu *Terminal →
+New Terminal*) en typ:
+
+```
+python tictactoe.py
+```
+
+Verwachte output:
+
+```
+Leeg bord: [[None, None, None], [None, None, None], [None, None, None]]
+Wie is aan zet? X
+Aantal mogelijke zetten: 9
+```
+
+Werkt het? Mooi. Verwijder de sanity-check straks weer — `minimax`
+komt op die plek.
+
+## Tijd voor de laatste bouwsteen
+
+Je hebt nu alles bij elkaar. Op de volgende pagina schrijf je
+`minimax` — direct in je lokale `tictactoe.py` (of in de PyRunner-
+fallback van Optie A).
+
+Door naar [stap 16: bouwsteen 9 — minimax →](./16-bouwen-minimax).

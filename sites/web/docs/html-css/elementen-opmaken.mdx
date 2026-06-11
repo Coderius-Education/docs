@@ -1,0 +1,168 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeEditor from '@site/src/components/CodeEditor';
+
+# Ruimte rond elementen
+
+## Wat ga je leren?
+
+Je leert hoe je met **padding** en **margin** ruimte rond elementen instelt — en hoe je elementen groepeert in een `<div>` met een achtergrondkleur.
+
+## Theorie
+
+Elk HTML-element heeft een onzichtbare "doos" om zich heen. Je kunt op twee plekken ruimte toevoegen:
+
+- **`padding`** — ruimte **binnen** het element, tussen de inhoud en de rand.
+- **`margin`** — ruimte **buiten** het element, afstand tot andere elementen.
+
+```
+┌─────────────────────────────┐
+│         margin              │
+│  ┌───────────────────────┐  │
+│  │       padding         │  │
+│  │  ┌─────────────────┐  │  │
+│  │  │     inhoud      │  │  │
+│  │  └─────────────────┘  │  │
+│  └───────────────────────┘  │
+└─────────────────────────────┘
+```
+
+Met `background-color` geef je het element een achtergrondkleur — zo zie je goed waar het element begint en eindigt.
+
+### De `<div>` tag
+
+Een `<div>` is een onzichtbaar **blok** waarmee je andere elementen groepeert. Op zichzelf doet hij niets, maar via CSS kun je hem ruimte en kleur geven om groepen elementen visueel te scheiden.
+
+```html
+<div>
+  <h2>Een titel</h2>
+  <p>Wat tekst eronder.</p>
+</div>
+```
+
+## Predict
+
+Wat denk je dat er verandert als je `padding: 20px` verwijdert uit de CSS hieronder?
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+De tekst raakt direct de rand van de gekleurde achtergrond. Zonder padding is er geen ademruimte tussen de inhoud en de rand van het blok.
+
+</details>
+
+## Probeer het zelf!
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Ruimte rond elementen</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div>
+    <h2>Mijn blok</h2>
+    <p>Dit is een blok met padding en margin.</p>
+  </div>
+  <div>
+    <h2>Tweede blok</h2>
+    <p>Tussen de blokken zit margin-ruimte.</p>
+  </div>
+</body>
+</html>`}
+  initialCss={`div {
+  background-color: #f0f4ff;
+  padding: 20px;
+  margin: 20px;
+}`}
+  height="480px"
+/>
+
+## Investigate
+
+Experimenteer met de CSS:
+
+- Wat gebeurt er als je `padding` vergroot naar `40px`?
+- Wat verandert er als je `margin` vergroot naar `40px`?
+- Probeer `padding: 0` — wat zie je?
+- Vervang `margin: 20px` door `margin: 0` — wat gebeurt er tussen de blokken?
+
+## Modify
+
+**Opdracht:** Geef de blokken een lichtgele achtergrond en vergroot de padding zodat er meer ademruimte is.
+
+<details>
+<summary>Tip</summary>
+
+Pas `background-color` aan en zet `padding` op bijvoorbeeld `30px`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```css
+div {
+  background-color: lightyellow;
+  padding: 30px;
+  margin: 20px;
+}
+```
+
+</details>
+
+## Make
+
+**Opdracht:** Bouw twee "kaartjes" onder elkaar. Elk kaartje is een `<div>` met een kop en een paragraaf. Gebruik `background-color`, `padding` en `margin` om ze er rustig en goed verdeeld uit te laten zien.
+
+<details>
+<summary>Tip</summary>
+
+Eén `div`-regel in CSS werkt al voor allebei de kaartjes. Geef ze dezelfde stijl via de `div`-selector.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<!-- HTML -->
+<div>
+  <h2>Eerste kaartje</h2>
+  <p>Met wat tekst erin.</p>
+</div>
+<div>
+  <h2>Tweede kaartje</h2>
+  <p>Met ook wat tekst erin.</p>
+</div>
+```
+
+```css
+/* CSS */
+div {
+  background-color: #e6f4ea;
+  padding: 25px;
+  margin: 15px;
+}
+```
+
+</details>
+
+## Er gaat iets mis
+
+**`margin` en `padding` door elkaar halen**
+
+Een veelgemaakte fout is `margin` gebruiken als je `padding` bedoelt, of andersom. Onthoud:
+
+- Wil je ruimte **binnen** het element (tussen inhoud en rand)? → `padding`
+- Wil je ruimte **buiten** het element (afstand tot andere elementen)? → `margin`
+
+In [Randen en afmetingen](/docs/html-css/border-en-dimensies) leer je hoe je deze blokken ook een rand en een vaste breedte geeft.
+
+---
+
+[← Pagina's koppelen](/docs/html-css/paginas-koppelen) | [CSS Klassen →](/docs/html-css/css-klassen)

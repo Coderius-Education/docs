@@ -1,0 +1,37 @@
+{
+  "name": "@coderius/editor",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Monaco-gebaseerde code-editors voor Coderius-sites: InlineEditor (voor MDX-lespagina's) en ProjectEditor (volledige browser-IDE), met pluggable runners voor Python, web en MicroPython.",
+  "type": "commonjs",
+  "exports": {
+    "./InlineEditor": "./src/components/InlineEditor/index.tsx",
+    "./ProjectEditor": "./src/components/ProjectEditor/index.tsx",
+    "./runners": "./src/runners/registry.ts",
+    "./runners/types": "./src/runners/types.ts",
+    "./monaco": "./src/monaco/loader.ts",
+    "./monaco-pane": "./src/monaco/MonacoPane.tsx",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "copy:monaco": "node scripts/copy-monaco.mjs",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@coderius/python-runner": "workspace:*",
+    "@monaco-editor/react": "catalog:",
+    "idb-keyval": "catalog:"
+  },
+  "devDependencies": {
+    "@docusaurus/module-type-aliases": "catalog:",
+    "@types/react": "catalog:",
+    "monaco-editor": "catalog:",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "@docusaurus/core": "*",
+    "clsx": "*",
+    "react": "*",
+    "react-dom": "*"
+  }
+}

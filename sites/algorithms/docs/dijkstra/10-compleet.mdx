@@ -1,0 +1,238 @@
+---
+sidebar_position: 10
+hide_table_of_contents: true
+---
+
+# 8.10 Het complete algoritme
+
+**Leerdoel:** je ziet alle bouwstenen in één functie samenkomen en
+visualiseert het eindresultaat op de graph.
+
+## Alles samen
+
+```python
+def kies_volgende(afstanden, bezocht):
+    beste_node = None
+    kleinste = float('inf')
+    for node, d in afstanden.items():
+        if node in bezocht:
+            continue
+        if d < kleinste:
+            kleinste = d
+            beste_node = node
+    return beste_node
+
+
+def dijkstra(graph, start):
+    afstanden = {node: float('inf') for node in graph}
+    afstanden[start] = 0
+    bezocht = set()
+
+    while True:
+        huidige = kies_volgende(afstanden, bezocht)
+        if huidige is None:
+            break
+        bezocht.add(huidige)
+        for buur, gewicht in graph[huidige]:
+            nieuwe = afstanden[huidige] + gewicht
+            if nieuwe < afstanden[buur]:
+                afstanden[buur] = nieuwe
+
+    return afstanden
+```
+
+Zie je de bouwstenen?
+
+- Regels 1-9 → **bouwsteen 4**: kies volgende node.
+- Regel 13 → **bouwsteen 2**: afstanden initialiseren.
+- Regel 14 → start op 0 zetten.
+- Regel 15 → bezocht-set leeg.
+- Regels 17-25 → **bouwsteen 6**: de lus om **bouwsteen 5** (één ronde).
+- Regels 22-25 → **bouwsteen 3**: relax buren.
+
+## Voorspel
+
+We runnen `dijkstra(graph, 'A')` op de mini-graph. Wat denk je dat er
+als resultaat uit komt?
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+{'A': 0, 'B': 4, 'C': 2, 'D': 5}
+```
+
+Exact wat je op papier en in de losse rondes ook kreeg.
+
+</details>
+
+## Run
+
+<PyRunner editable={false} initialCode={`def kies_volgende(afstanden, bezocht):
+    beste_node = None
+    kleinste = float('inf')
+    for node, d in afstanden.items():
+        if node in bezocht:
+            continue
+        if d < kleinste:
+            kleinste = d
+            beste_node = node
+    return beste_node
+
+
+def dijkstra(graph, start):
+    afstanden = {node: float('inf') for node in graph}
+    afstanden[start] = 0
+    bezocht = set()
+
+    while True:
+        huidige = kies_volgende(afstanden, bezocht)
+        if huidige is None:
+            break
+        bezocht.add(huidige)
+        for buur, gewicht in graph[huidige]:
+            nieuwe = afstanden[huidige] + gewicht
+            if nieuwe < afstanden[buur]:
+                afstanden[buur] = nieuwe
+
+    return afstanden
+
+
+graph = {
+    'A': [('B', 4), ('C', 2)],
+    'B': [('A', 4), ('D', 1)],
+    'C': [('A', 2), ('D', 8)],
+    'D': [('B', 1), ('C', 8)],
+}
+
+print(dijkstra(graph, 'A'))
+print(dijkstra(graph, 'D'))`} />
+
+## Visualiseer de afstanden
+
+Onze graph met op elke node zijn kortste afstand vanaf `A`:
+
+<PyRunner initialCode={`import matplotlib.pyplot as plt
+
+def kies_volgende(afstanden, bezocht):
+    beste_node = None
+    kleinste = float('inf')
+    for node, d in afstanden.items():
+        if node in bezocht:
+            continue
+        if d < kleinste:
+            kleinste = d
+            beste_node = node
+    return beste_node
+
+
+def dijkstra(graph, start):
+    afstanden = {node: float('inf') for node in graph}
+    afstanden[start] = 0
+    bezocht = set()
+    while True:
+        huidige = kies_volgende(afstanden, bezocht)
+        if huidige is None:
+            break
+        bezocht.add(huidige)
+        for buur, gewicht in graph[huidige]:
+            nieuwe = afstanden[huidige] + gewicht
+            if nieuwe < afstanden[buur]:
+                afstanden[buur] = nieuwe
+    return afstanden
+
+
+graph = {
+    'A': [('B', 4), ('C', 2)],
+    'B': [('A', 4), ('D', 1)],
+    'C': [('A', 2), ('D', 8)],
+    'D': [('B', 1), ('C', 8)],
+}
+afstanden = dijkstra(graph, 'A')
+
+posities = {'A': (0, 1), 'B': (1, 1), 'C': (0, 0), 'D': (1, 0)}
+
+fig, ax = plt.subplots(figsize=(5, 4))
+getekend = set()
+for node, buren in graph.items():
+    x1, y1 = posities[node]
+    for buur, gewicht in buren:
+        edge = tuple(sorted([node, buur]))
+        if edge in getekend:
+            continue
+        getekend.add(edge)
+        x2, y2 = posities[buur]
+        ax.plot([x1, x2], [y1, y2], color='gray', zorder=1)
+        ax.text((x1+x2)/2, (y1+y2)/2 + 0.06, str(gewicht),
+                ha='center', color='blue', fontsize=11)
+for node, (x, y) in posities.items():
+    kleur = 'lightgreen' if node == 'A' else 'lightyellow'
+    ax.scatter(x, y, s=900, color=kleur, edgecolors='black', zorder=2)
+    ax.text(x, y, f"{node}\\nd={afstanden[node]}",
+            ha='center', va='center', fontsize=11, zorder=3)
+ax.set_xlim(-0.5, 1.5); ax.set_ylim(-0.5, 1.5)
+ax.axis('off')
+ax.set_title("Kortste afstand vanaf A")
+plt.show()`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+Elke node toont zijn kortste afstand vanaf `A` (groen = startnode):
+
+- `A`: 0
+- `B`: 4 (direct)
+- `C`: 2 (direct)
+- `D`: 5 (via `B`, niet via `C`!)
+
+</details>
+
+## Onderzoek
+
+Speel met de code. Probeer:
+
+1. Een andere startnode: `dijkstra(graph, 'D')`.
+2. Maak `A → B` veel duurder (bv. gewicht 100). Hoe verandert de
+   afstand naar `B`?
+3. Voeg een extra node `E` toe met een verbinding naar `B`. Welk gewicht
+   moet hij hebben om binnen 6 te vallen?
+
+<PyRunner initialCode={`def kies_volgende(afstanden, bezocht):
+    beste_node = None
+    kleinste = float('inf')
+    for node, d in afstanden.items():
+        if node in bezocht:
+            continue
+        if d < kleinste:
+            kleinste = d
+            beste_node = node
+    return beste_node
+
+
+def dijkstra(graph, start):
+    afstanden = {node: float('inf') for node in graph}
+    afstanden[start] = 0
+    bezocht = set()
+    while True:
+        huidige = kies_volgende(afstanden, bezocht)
+        if huidige is None:
+            break
+        bezocht.add(huidige)
+        for buur, gewicht in graph[huidige]:
+            nieuwe = afstanden[huidige] + gewicht
+            if nieuwe < afstanden[buur]:
+                afstanden[buur] = nieuwe
+    return afstanden
+
+
+# Experimenteer hier
+graph = {
+    'A': [('B', 4), ('C', 2)],
+    'B': [('A', 4), ('D', 1)],
+    'C': [('A', 2), ('D', 8)],
+    'D': [('B', 1), ('C', 8)],
+}
+
+print(dijkstra(graph, 'A'))`} />
+
+Door naar [stap 11: pad reconstrueren →](./11-aanpassen).

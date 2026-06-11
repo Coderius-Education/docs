@@ -1,0 +1,112 @@
+---
+sidebar_position: 9
+hide_table_of_contents: true
+---
+
+# 2.9 Er gaat iets mis — top-3 fouten
+
+**Leerdoel:** je herkent veelvoorkomende valkuilen bij het accumulator-
+patroon en begrijpt waarom ze optreden.
+
+## `max_tot_nu_toe = 0` als startwaarde
+
+Geen foutmelding — wél een **fout antwoord** op lijsten met enkel negatieve
+getallen.
+
+**Oorzaak:** geen enkele waarde is groter dan `0`, dus de `if` is nooit
+waar → `maximum` blijft `0`. Maar `0` zit niet in de lijst.
+
+**Oplossing:** gebruik `lijst[0]` als startwaarde. Dan is je startwaarde
+**altijd** een echte waarde uit de lijst.
+
+```python
+# FOUT
+def vind_maximum_fout(lijst):
+    maximum = 0   # onveilig!
+    for waarde in lijst:
+        if waarde > maximum:
+            maximum = waarde
+    return maximum
+
+print(vind_maximum_fout([-3, -1, -7]))   # geeft 0 — fout!
+
+# GOED
+def vind_maximum(lijst):
+    maximum = lijst[0]
+    for waarde in lijst:
+        if waarde > maximum:
+            maximum = waarde
+    return maximum
+```
+
+Meer uitleg: [Bouwsteen 3 — startwaarde](./05-bouwen-initialisatie).
+
+## `max` als variabelenaam
+
+```
+TypeError: 'int' object is not callable
+```
+
+**Oorzaak:** `max` is een **ingebouwde functie** in Python. Door er een
+variabele van te maken, **schaduw** je die functie — verderop in je code
+kun je hem niet meer aanroepen.
+
+**Oplossing:** gebruik een duidelijke andere naam. `maximum`, `grootste`,
+`max_waarde`, `max_tot_nu_toe`.
+
+```python
+# FOUT
+def slecht_idee(lijst):
+    max = lijst[0]
+    for waarde in lijst:
+        if waarde > max:
+            max = waarde
+    return max
+
+print(max([1, 2, 3]))   # TypeError: 'int' object is not callable
+
+# GOED
+def vind_maximum(lijst):
+    maximum = lijst[0]
+    for waarde in lijst:
+        if waarde > maximum:
+            maximum = waarde
+    return maximum
+```
+
+## IndexError op lege lijst
+
+```
+IndexError: list index out of range
+```
+
+**Oorzaak:** op een lege lijst bestaat `lijst[0]` niet. Het algoritme heeft
+geen betekenis op een lege input — er **is** geen maximum.
+
+**Oplossing:** vang de lege lijst af voor je begint, of return een
+speciale waarde.
+
+```python
+# FOUT
+def vind_maximum(lijst):
+    maximum = lijst[0]   # crasht hier op []
+    ...
+
+vind_maximum([])   # IndexError
+
+# GOED
+def vind_maximum(lijst):
+    if not lijst:        # 'lege lijst' is falsy in Python
+        return None
+    maximum = lijst[0]
+    for waarde in lijst:
+        if waarde > maximum:
+            maximum = waarde
+    return maximum
+```
+
+Welke fix je kiest is een **ontwerpkeuze**: wil je dat je functie netjes
+`None` returnt, of wil je dat de aanroeper duidelijk weet dat hij een lege
+lijst gaf (via `raise ValueError("lijst is leeg")`)?
+
+Door naar [stap 10: cheatsheet](./10-cheatsheet).

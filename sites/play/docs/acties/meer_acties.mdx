@@ -1,0 +1,217 @@
+﻿---
+sidebar_position: 4
+hide_table_of_contents: true
+---
+
+# 3.4 Meer acties
+
+:::info Wat moet je al weten
+- [3.1 Wat is een actie?](/docs/acties) - methodes aanroepen op een vorm
+- [4.1 Gebeurtenissen](/docs/gebeurtenissen/toetsenbord) - sommige opdrachten gebruiken `@play.when_key_pressed`
+:::
+
+## Een vorm kopiëren met clone
+
+Met `clone()` kun je een exacte kopie maken van een vorm. De kopie heeft dezelfde kleur, grootte en positie als het origineel.
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle(color='red', x=-100, radius=30)
+
+kopie = cirkel.clone()
+kopie.x = 100`} height={300} />
+
+Je hebt nu twee rode cirkels: het origineel links en de kopie rechts.
+
+### Opdracht 3.4.a: Pas de kopie aan
+
+Pas de code hierboven aan zodat er **drie** cirkels op het scherm staan: het origineel in het midden, een kopie links, en een kopie rechts. Geef de kopieën een andere kleur dan het origineel.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Je kunt meerdere keren `clone()` aanroepen, en daarna `kopie.color = '...'` instellen.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle(color='red', x=0, radius=30)
+
+kopie_links = cirkel.clone()
+kopie_links.x = -100
+kopie_links.color = 'blue'
+
+kopie_rechts = cirkel.clone()
+kopie_rechts.x = 100
+kopie_rechts.color = 'green'`} height={300} />
+
+</details>
+
+### Opdracht 3.4.b: Kloonleger
+
+:::info
+In deze opdracht gebruik je `@play.when_key_pressed` (zie [4.1 Toetsenbord](/docs/gebeurtenissen/toetsenbord)) en `play.random_number` (zie [3.3 Willekeurige waarden](/docs/acties/random)).
+:::
+
+Maak een programma waarbij elke keer als je op spatie drukt, er een kopie van een cirkel wordt gemaakt op een willekeurige positie.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Gebruik `clone()` om een kopie te maken en verander daarna de `x` en `y` van de kopie met `play.random_number()`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle(color='blue', radius=20)
+
+@play.when_key_pressed("space")
+def kloon():
+    kopie = cirkel.clone()
+    kopie.x = play.random_number(-350, 350)
+    kopie.y = play.random_number(-250, 250)`} height={300} />
+
+</details>
+
+## Het spel stoppen met stop_program
+
+Met `play.stop_program()` kun je het spel beëindigen vanuit je code. Dit is handig voor een game-over scherm.
+
+<PygbagRunner code={`import play
+
+play.new_text(words="Druk op Escape om te stoppen", font_size=30)
+
+@play.when_key_pressed("escape")
+def stop():
+    play.stop_program()`} height={300} />
+
+### Opdracht 3.4.c: Game over
+
+:::info
+In deze opdracht gebruik je het `global` keyword. Ken je dat nog niet? Kijk dan bij [4.5 Een score bijhouden](/docs/gebeurtenissen/score_bijhouden).
+:::
+
+Maak een programma waarbij:
+1. Een score begint op 5
+2. Elke keer als je op spatie drukt, gaat de score met 1 omlaag
+3. Als de score op 0 staat, stopt het programma
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+<PygbagRunner code={`import play
+
+score = 5
+tekst = play.new_text(words="Score: " + str(score), font_size=40)
+
+@play.when_key_pressed("space")
+def verminder():
+    global score
+    score = score - 1
+    tekst.words = "Score: " + str(score)
+    if score == 0:
+        play.stop_program()`} height={300} />
+
+</details>
+
+## Een vorm verbergen en weer tonen
+
+Met `hide()` en `show()` kun je een vorm onzichtbaar en weer zichtbaar maken:
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle(color='red', radius=30)
+
+@play.when_key_pressed("h")
+def verberg():
+    cirkel.hide()
+
+@play.when_key_pressed("s")
+def toon():
+    cirkel.show()`} height={300} />
+
+- `hide()` maakt een vorm onzichtbaar (maar hij bestaat nog wel)
+- `show()` maakt een verborgen vorm weer zichtbaar
+
+### Opdracht 3.4.d: Verstoppertje
+
+Maak een programma met een cirkel die verdwijnt als je op 'h' drukt en weer verschijnt als je op 's' drukt.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Gebruik `cirkel.hide()` en `cirkel.show()`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle(color='red', radius=30)
+
+@play.when_key_pressed("h")
+def verberg():
+    cirkel.hide()
+
+@play.when_key_pressed("s")
+def toon():
+    cirkel.show()`} height={300} />
+
+</details>
+
+## Een vorm verwijderen met remove
+
+Met `remove()` kun je een vorm **definitief** verwijderen. Anders dan `hide()` kun je de vorm niet meer terughalen met `show()`.
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle(color='red', radius=30)
+cirkel.remove()
+
+play.new_text(words="cirkel.alive(): " + str(cirkel.alive()), font_size=30)`} height={300} />
+
+### Opdracht 3.4.e: Eén voor één verdwijnen
+
+:::info
+In deze opdracht gebruik je het `global` keyword. Ken je dat nog niet? Kijk dan bij [4.5 Een score bijhouden](/docs/gebeurtenissen/score_bijhouden).
+:::
+
+Maak een programma met 3 cirkels op verschillende posities. Elke keer als je op spatie drukt, verdwijnt er eentje (met `remove()`). Na 3 keer drukken zijn ze allemaal weg.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Zet de cirkels in een lijst. Gebruik een teller die bijhoudt hoeveel er al verwijderd zijn.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+<PygbagRunner code={`import play
+
+cirkels = [
+    play.new_circle(color='red', x=-100, radius=25),
+    play.new_circle(color='blue', x=0, radius=25),
+    play.new_circle(color='green', x=100, radius=25),
+]
+teller = 0
+
+@play.when_key_pressed("space")
+def verwijder():
+    global teller
+    if teller < len(cirkels):
+        cirkels[teller].remove()
+        teller = teller + 1`} height={300} />
+
+</details>

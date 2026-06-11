@@ -1,0 +1,60 @@
+---
+sidebar_position: 7
+hide_table_of_contents: true
+---
+
+# 12.7 De complete oplossing
+
+**Leerdoel:** je ziet de volledige functie werken, bekijkt de zetten, en
+speelt met het aantal schijven.
+
+## De functie
+
+Alles wat je hebt opgebouwd, bij elkaar — zeven regels die elke toren
+verplaatsen:
+
+```python
+def hanoi(n, bron, doel, hulp):
+    if n == 0:
+        return []
+    zetten = []
+    zetten += hanoi(n - 1, bron, hulp, doel)
+    zetten.append((bron, doel))
+    zetten += hanoi(n - 1, hulp, doel, bron)
+    return zetten
+```
+
+## Probeer het zelf
+
+Verander `AANTAL` en draai opnieuw. Let op het aantal zetten: elke schijf
+erbij **verdubbelt** het werk (`2ⁿ − 1`). Bij `AANTAL = 20` zijn het al
+ruim een miljoen zetten — de cel print ze dan ook allemaal, dus houd het
+klein als je de lijst wilt lezen.
+
+<PyRunner rows={16} initialCode={`def hanoi(n, bron, doel, hulp):
+    if n == 0:
+        return []
+    zetten = []
+    zetten += hanoi(n - 1, bron, hulp, doel)
+    zetten.append((bron, doel))
+    zetten += hanoi(n - 1, hulp, doel, bron)
+    return zetten
+
+
+# Verander dit getal:
+AANTAL = 3
+
+zetten = hanoi(AANTAL, "A", "C", "B")
+for i, (bron, doel) in enumerate(zetten, start=1):
+    print(f"{i}. verplaats een schijf van {bron} naar {doel}")
+
+print(f"\\nTotaal: {len(zetten)} zetten   (2^{AANTAL} - 1 = {2 ** AANTAL - 1})")`} />
+
+## Wat je nu hebt
+
+Zeven regels code lossen een probleem op dat met de hand al bij een paar
+schijven lastig wordt. Dat is de kracht van recursie: je beschrijft
+*hoe een probleem in kleinere versies van zichzelf uiteenvalt*, en de rest
+volgt vanzelf.
+
+Door naar [stap 8: aanpassen →](./08-aanpassen).

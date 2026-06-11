@@ -1,0 +1,26 @@
+/**
+ * Globale CSS. De classic template bundelt Infima.
+ */
+
+:root {
+  --ifm-color-primary: #2e8555;
+  --ifm-color-primary-dark: #29784c;
+  --ifm-color-primary-darker: #277148;
+  --ifm-color-primary-darkest: #205d3b;
+  --ifm-color-primary-light: #33925d;
+  --ifm-color-primary-lighter: #359962;
+  --ifm-color-primary-lightest: #3cad6e;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] {
+  --ifm-color-primary: #4caf78;
+  --ifm-color-primary-dark: #3f9e69;
+  --ifm-color-primary-darker: #3b9563;
+  --ifm-color-primary-darkest: #317b51;
+  --ifm-color-primary-light: #5cba85;
+  --ifm-color-primary-lighter: #66bf8d;
+  --ifm-color-primary-lightest: #84cca4;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}

@@ -1,0 +1,88 @@
+---
+sidebar_position: 2
+sidebar_label: 'Medium'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# XSS (DOM) — Medium
+
+De backend-ontwikkelaar probeert de DOM-kwetsbaarheid in het *Medium* level te patchen door op de server in te grijpen.
+
+## 1. Predict (Voorspel)
+
+Voordat de webpagina aan de browser wordt gegeven, voert de webserver deze PHP-code uit op de opgevraagde URL-parameter:
+
+```php
+if (stripos ($_GET['default'], "<script") !== false) {
+    header ("location: ?default=English");
+    exit;
+}
+```
+
+**Vraag:** Wat doet dit server-side filter, en is hiermee de DOM-XSS-kwetsbaarheid écht verdwenen?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Het filter controleert of het woordje `<script` in de adresbalk staat. Zo ja, stuurt hij je direct terug naar de standaard Engelse versie.
+Het is echter niet volledig! Net als bij eerdere kwetsbaarheden wordt hier alleen de `<script>`-tag afgevangen. We kunnen nog steeds afbeeldingen, iFrames en SVG-elementen misbruiken om JavaScript te injecteren in de DOM!
+
+</details>
+
+## 2. Run (Uitvoeren)
+
+Start het lab en bekijk de dropdown.
+
+<DvwaLab module="xss_dom" level="medium" />
+
+Selecteer een taal in de dropdown en observeer het normale gedrag. Bevestig dat de pagina werkt.
+
+## 3. Investigate (Onderzoeken)
+
+Probeer de URL-parameter te veranderen naar `?default=<script>alert(1)</script>` (conceptueel, of als het lab het toelaat).
+
+**Vraag:** Wat gebeurt er? Word je doorgestuurd of zie je een foutmelding? Wat onthult dit over welke payloads het filter wel en niet blokkeert?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Je wordt teruggestuurd naar `?default=English` — het filter detecteert `<script` en blokkeert het. Maar het filter kijkt *alleen* naar het woord `<script`. Andere HTML-tags zoals `<img>` of `<svg>` worden niet geblokkeerd. De DOM-kwetsbaarheid (het ongefilterd in de pagina schrijven van de URL-waarde) bestaat nog steeds.
+
+</details>
+
+## 4. Modify & Make (Aanpassen & Maken)
+
+Schrijf een payload die de server-side controle omzeilt en via de client-side DOM alsnog zijn werk doet.
+
+<details>
+
+<summary>Tip</summary>
+
+Net als in de eerdere Low-opdracht moet je eerst uit de `<select>`-dropdown breken. Sluit de select-tag af (`></select>`) en voeg dan een afbeelding met het `onerror`-attribuut in.
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+Plaats dit achteraan in de adresbalk (als waarde voor `default=`):
+`English></select><img src="x" onerror="alert(1)">`
+
+De frontend-JavaScript plakt dit in de DOM. Omdat de tag geen `script` bevat, laat de backend-server het netjes door!
+
+</details>
+
+## 5. ✓ Wat moest je zien?
+
+:::tip Controle
+- `English></select><img src="x" onerror="alert(1)">` triggert een **pop-up** ondanks het server-side filter.
+- De URL met `<script>` wordt geblokkeerd en leidt terug naar `?default=English`.
+- Het verschil toont aan dat het filter te specifiek is en andere aanvalsvectoren mist.
+
+Geen pop-up? Controleer of de URL correct is ingevoerd en of de browser de `onerror`-handler ondersteunt.
+:::

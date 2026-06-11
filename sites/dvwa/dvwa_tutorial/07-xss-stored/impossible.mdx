@@ -1,0 +1,58 @@
+---
+sidebar_position: 4
+sidebar_label: 'Impossible'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# XSS (Stored) — Impossible
+
+Tijd om te leren hoe we gastenboeken écht veilig bouwen.
+
+## 1. Predict (Voorspel)
+
+De onveilige functies zijn vervangen door het zwaarste geschut in PHP:
+
+```php
+$message = htmlspecialchars( $_POST['txtMessage'] );
+$name = htmlspecialchars( $_POST['txtName'] );
+
+$stmt = $db->prepare('INSERT INTO guestbook (comment, name) VALUES (:message, :name)');
+$stmt->bindParam(':message', $message, PDO::PARAM_STR);
+```
+
+**Vraag:** Welke twee bekende kwetsbaarheden worden in deze code tegelijkertijd dichtgetimmerd?
+
+<details>
+
+<summary>Antwoord</summary>
+
+1. **SQL Injection** wordt gestopt doordat PDO Prepared Statements (`bindParam`) worden gebruikt voor het opslaan.
+2. **Cross-Site Scripting (XSS)** wordt gestopt doordat álle invoer door `htmlspecialchars()` wordt gehaald. Eventuele `<` en `>`-tekens worden geneutraliseerd tot onschadelijke tekst.
+
+</details>
+
+## 2. Run & Investigate
+
+Start het lab en probeer via F12, scripts en afbeeldingen de website te hacken.
+
+<DvwaLab module="xss_stored" level="impossible" />
+
+Vul `<script>alert(1);</script>` als naam en bericht in. Verhoog de `maxlength` via F12 als dat nodig is. Observeer wat er in het gastenboek verschijnt.
+
+## 3. ✓ Wat moest je zien?
+
+:::tip Controle
+- Elke payload verschijnt als **letterlijke tekst** in het gastenboek — geen pop-up.
+- `<script>` staat zichtbaar als tekst in de lijst, niet als uitvoerbare code.
+- Ook na een paginaverversing wordt er niets uitgevoerd.
+
+Zie je toch een pop-up? Controleer of het security level correct op **impossible** staat.
+:::
+
+**Stored XSS is gevaarlijker dan Reflected XSS:** De payload leeft in de database. Je raakt niet één persoon met een foute link, maar iedereen die de website bezoekt.
+
+**Client-Side restricties (zoals `maxlength`) zijn een lachertje.** Een hacker trekt zich daar niets van aan. Bouw áltijd validatie in je backend.
+
+De combinatie van **Prepared Statements** en **htmlspecialchars** (of soortgelijke functies in andere talen) is de heilige graal voor veilige formulieren.

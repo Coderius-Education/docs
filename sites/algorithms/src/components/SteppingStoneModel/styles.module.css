@@ -1,0 +1,299 @@
+.checkpoint {
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 8px;
+  background: var(--ifm-background-surface-color);
+  margin: 1.25rem 0;
+  overflow: hidden;
+}
+
+.header {
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+  background: var(--ifm-color-emphasis-100);
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.header p {
+  margin: 0.2rem 0 0;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.kicker {
+  margin: 0 0 0.15rem;
+  color: var(--ifm-color-primary);
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.95fr);
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.visualPanel,
+.exercisePanel {
+  min-width: 0;
+}
+
+.metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.75rem;
+}
+
+.metrics span {
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 999px;
+  background: var(--ifm-color-emphasis-100);
+  color: var(--ifm-color-emphasis-800);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.22rem 0.5rem;
+}
+
+.array {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(52px, 1fr));
+  gap: 0.4rem;
+  margin-bottom: 0.75rem;
+}
+
+.cell {
+  position: relative;
+  display: grid;
+  grid-template-rows: 0.9rem 1.8rem 1rem;
+  align-items: center;
+  min-height: 68px;
+  border: 2px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  background: var(--ifm-background-color);
+  text-align: center;
+  transition:
+    border-color 140ms ease,
+    background 140ms ease,
+    opacity 140ms ease;
+}
+
+.cell strong {
+  font-size: 1rem;
+}
+
+.cellIndex,
+.cellLabels {
+  min-height: 0.9rem;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.cellActive {
+  border-color: #2563eb;
+  background: rgba(37, 99, 235, 0.12);
+}
+
+.cellMin {
+  border-color: #0891b2;
+  background: rgba(8, 145, 178, 0.12);
+}
+
+.cellMax {
+  border-color: #be123c;
+  background: rgba(190, 18, 60, 0.12);
+}
+
+.cellSwap {
+  border-color: #d97706;
+  background: rgba(217, 119, 6, 0.13);
+}
+
+.cellFound,
+.cellSorted {
+  border-color: #16a34a;
+  background: rgba(22, 163, 74, 0.14);
+}
+
+.cellMuted {
+  opacity: 0.38;
+}
+
+.explanation {
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 8px;
+  background: var(--ifm-color-emphasis-100);
+  padding: 0.7rem 0.8rem;
+}
+
+.explanation p {
+  margin: 0.18rem 0 0;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.stepper {
+  display: grid;
+  grid-template-columns: auto minmax(120px, 1fr) auto;
+  gap: 0.45rem;
+  align-items: center;
+  margin-top: 0.75rem;
+}
+
+.stepper input {
+  width: 100%;
+}
+
+.stepper button,
+.panelHeader button,
+.runButton {
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 6px;
+  background: var(--ifm-background-color);
+  color: var(--ifm-font-color-base);
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0.4rem 0.6rem;
+}
+
+.stepper button:disabled,
+.panelHeader button:disabled,
+.runButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.exercisePanel {
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+  background: var(--ifm-color-emphasis-100);
+  font-weight: 700;
+  padding: 0.45rem 0.7rem;
+}
+
+.testList {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.7rem;
+}
+
+.testItem {
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 8px;
+  background: var(--ifm-background-color);
+  padding: 0.5rem 0.6rem;
+}
+
+.testItem strong {
+  display: block;
+  margin-bottom: 0.15rem;
+}
+
+.testItem p {
+  margin: 0.1rem 0 0;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.84rem;
+  overflow-wrap: anywhere;
+}
+
+.testItem p span {
+  color: var(--ifm-font-color-base);
+  font-weight: 700;
+}
+
+.runButton {
+  border-color: var(--ifm-color-primary);
+  background: var(--ifm-color-primary);
+  color: white;
+  margin: 0 0.7rem 0.7rem;
+}
+
+.status {
+  border-left: 3px solid var(--ifm-color-primary);
+  background: var(--ifm-color-emphasis-100);
+  margin: 0 0.7rem 0.7rem;
+  padding: 0.5rem 0.65rem;
+}
+
+.statusError {
+  color: var(--ifm-color-danger);
+}
+
+.results {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0 0.7rem 0.7rem;
+}
+
+.resultRow {
+  display: grid;
+  grid-template-columns: 3.4rem 1fr;
+  gap: 0.55rem;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 8px;
+  padding: 0.5rem 0.6rem;
+}
+
+.resultRow > span {
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.resultRow p {
+  margin: 0.12rem 0 0;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.resultPass {
+  border-color: rgba(22, 163, 74, 0.45);
+}
+
+.resultPass > span {
+  color: #15803d;
+}
+
+.resultFail {
+  border-color: rgba(220, 38, 38, 0.45);
+}
+
+.resultFail > span {
+  color: var(--ifm-color-danger);
+}
+
+.consoleOutput {
+  margin: 0 0.7rem 0.7rem;
+  border-radius: 6px;
+  background: var(--ifm-code-background);
+  padding: 0.6rem;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .stepper {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .stepper input {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+}

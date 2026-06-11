@@ -1,0 +1,8 @@
+{
+  "label": "2. Arduino IDE & je eerste blink",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "description": "Installeer de Arduino IDE en laat je eerste LED knipperen."
+  }
+}

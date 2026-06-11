@@ -1,0 +1,5 @@
+{
+  "label": "Installatie VS Code",
+  "position": 1,
+  "link": { "type": "doc", "id": "installatie-vscode/index" }
+}

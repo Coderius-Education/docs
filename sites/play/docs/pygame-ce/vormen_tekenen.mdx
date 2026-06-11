@@ -1,0 +1,142 @@
+﻿---
+sidebar_position: 3
+hide_table_of_contents: true
+---
+
+
+# 7.3 Vormen tekenen
+
+In pygame-ce teken je vormen met `pygame.draw`. Elke vorm heeft een **scherm**, een **kleur** en een **positie** nodig.
+
+## Een cirkel tekenen
+
+```python
+import pygame
+
+pygame.init()
+
+scherm = pygame.display.set_mode((800, 600))
+
+actief = True
+
+while actief:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            actief = False
+
+    scherm.fill((30, 30, 30))
+
+    pygame.draw.circle(scherm, (255, 0, 0), (400, 300), 50)
+
+    pygame.display.flip()
+
+pygame.quit()
+```
+
+
+
+```python
+pygame.draw.circle(scherm, (255, 0, 0), (400, 300), 50)
+```
+- `scherm` - waar je tekent
+- `(255, 0, 0)` - de kleur (rood)
+- `(400, 300)` - het middelpunt (x, y)
+- `50` - de straal
+
+:::info
+Let op: in pygame-ce begint **(0, 0) linksboven**, niet in het midden zoals bij coderius-play.
+De y-as gaat **naar beneden** in plaats van naar boven.
+:::
+
+## Een rechthoek tekenen
+
+```python
+pygame.draw.rect(scherm, (0, 0, 255), (100, 200, 150, 80))
+```
+- `(0, 0, 255)` - de kleur (blauw)
+- `(100, 200, 150, 80)` - de rechthoek: (x, y, breedte, hoogte)
+
+## Een lijn tekenen
+
+```python
+pygame.draw.line(scherm, (255, 255, 255), (0, 300), (800, 300), 3)
+```
+- `(255, 255, 255)` - de kleur (wit)
+- `(0, 300)` - startpunt
+- `(800, 300)` - eindpunt
+- `3` - dikte van de lijn
+
+## Opdracht 7.3.a: Meerdere vormen
+
+Teken op een donkere achtergrond:
+1. Een gele cirkel linksboven
+2. Een groene rechthoek in het midden
+3. Een witte lijn onderaan het scherm
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+import pygame
+
+pygame.init()
+
+scherm = pygame.display.set_mode((800, 600))
+
+actief = True
+
+while actief:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            actief = False
+
+    scherm.fill((30, 30, 30))
+
+    pygame.draw.circle(scherm, (255, 255, 0), (100, 100), 40)
+    pygame.draw.rect(scherm, (0, 200, 0), (300, 250, 200, 100))
+    pygame.draw.line(scherm, (255, 255, 255), (0, 550), (800, 550), 3)
+
+    pygame.display.flip()
+
+pygame.quit()
+```
+
+</details>
+
+## Opdracht 7.3.b: Een gezicht tekenen
+
+Teken een simpel gezicht met:
+1. Een grote gele cirkel als hoofd
+2. Twee kleine zwarte cirkels als ogen
+3. Een rode lijn als mond
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+import pygame
+
+pygame.init()
+
+scherm = pygame.display.set_mode((800, 600))
+
+actief = True
+
+while actief:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            actief = False
+
+    scherm.fill((30, 30, 30))
+
+    pygame.draw.circle(scherm, (255, 255, 0), (400, 300), 120)
+    pygame.draw.circle(scherm, (0, 0, 0), (360, 270), 15)
+    pygame.draw.circle(scherm, (0, 0, 0), (440, 270), 15)
+    pygame.draw.line(scherm, (255, 0, 0), (360, 350), (440, 350), 4)
+
+    pygame.display.flip()
+
+pygame.quit()
+```
+
+</details>

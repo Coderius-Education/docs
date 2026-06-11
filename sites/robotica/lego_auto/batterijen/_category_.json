@@ -1,0 +1,8 @@
+{
+  "label": "Batterijen",
+  "position": 8,
+  "link": {
+    "type": "generated-index",
+    "description": "Leer in de volgende stappen hoe je de robot kan laten werken met de voeding van batterijen."
+  }
+}

@@ -1,0 +1,104 @@
+---
+sidebar_position: 11
+hide_table_of_contents: true
+---
+
+# 12.11 Cheatsheet — Torens van Hanoi
+
+Snelle referentie. Klap open wat je nodig hebt.
+
+## De drie regels
+
+<details>
+<summary>Wat mag wel en niet?</summary>
+
+1. Eén schijf per keer verplaatsen.
+2. Alleen de **bovenste** schijf van een paal.
+3. Nooit een grotere schijf op een kleinere.
+
+Doel: verplaats de hele stapel van de bron-paal naar de doel-paal.
+
+</details>
+
+## De oplossing
+
+<details>
+<summary>De canonieke functie (lijst zetten)</summary>
+
+```python
+def hanoi(n, bron, doel, hulp):
+    if n == 0:
+        return []
+    zetten = []
+    zetten += hanoi(n - 1, bron, hulp, doel)   # n-1 naar de hulp-paal
+    zetten.append((bron, doel))                 # grootste schijf naar doel
+    zetten += hanoi(n - 1, hulp, doel, bron)   # n-1 op hun plek
+    return zetten
+```
+
+</details>
+
+<details>
+<summary>Alleen het aantal zetten</summary>
+
+```python
+def tel_zetten(n):
+    if n == 0:
+        return 0
+    return 2 * tel_zetten(n - 1) + 1
+```
+
+</details>
+
+## Het recursieve recept
+
+<details>
+<summary>Drie stappen + basisgeval</summary>
+
+Om `n` schijven van **bron** naar **doel** te verplaatsen:
+
+1. verplaats `n − 1` schijven van **bron** naar **hulp**;
+2. verplaats de grootste schijf van **bron** naar **doel**;
+3. verplaats `n − 1` schijven van **hulp** naar **doel**.
+
+**Basisgeval:** bij `n == 0` is er niets te doen. Zonder basisgeval stopt
+de recursie nooit (`RecursionError`).
+
+Let op de rolwisseling: in stap 1 en 3 wisselen `hulp` en `doel` van plek
+in de recursieve aanroep.
+
+</details>
+
+## Aantal zetten
+
+<details>
+<summary>Waarom 2ⁿ − 1?</summary>
+
+Elke oplossing doet twee keer een kleiner probleem plus één losse zet:
+
+```
+T(n) = 2 · T(n − 1) + 1      met T(0) = 0
+```
+
+Uitgerekend: `T(n) = 2ⁿ − 1`. Voor 1, 2, 3, 4, ... schijven dus
+1, 3, 7, 15, ... Elke schijf erbij verdubbelt (ongeveer) het werk. Dit is
+het **minimum** — sneller kan niet met drie palen.
+
+</details>
+
+## Begrippen
+
+<details>
+<summary>Recursie, basisgeval, recurrence</summary>
+
+- **Recursie** — een functie die zichzelf aanroept op een kleiner stuk van
+  het probleem.
+- **Basisgeval** — het kleinste geval dat je direct beantwoordt, zonder
+  nieuwe aanroep. Het zorgt dat de recursie stopt.
+- **Recurrence** — een formule die de kosten van `n` uitdrukt in de kosten
+  van een kleiner probleem (hier `T(n) = 2·T(n−1)+1`).
+
+</details>
+
+Klaar! Je hebt Torens van Hanoi recursief opgelost en gezien waarom het
+precies `2ⁿ − 1` zetten kost.

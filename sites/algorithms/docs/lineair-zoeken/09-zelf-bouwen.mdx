@@ -1,0 +1,108 @@
+---
+sidebar_position: 9
+hide_table_of_contents: true
+---
+
+# 1.9 Bouw zelf — een nieuw probleem
+
+**Leerdoel:** je gebruikt de bouwstenen van lineair zoeken om een **nieuw**
+probleem op te lossen, zonder dat je het algoritme letterlijk kopieert.
+
+## Opdracht
+
+Bouw een functie `alle_indexen(lijst, doel)` die een **lijst van alle
+indexen** terug geeft waar het doel voorkomt.
+
+- `alle_indexen([3, 1, 4, 1, 5], 1)` → `[1, 3]`
+- `alle_indexen([7, 7, 7], 7)` → `[0, 1, 2]`
+- `alle_indexen([], 9)` → `[]`
+- `alle_indexen([1, 2, 3], 9)` → `[]`
+
+Aan het eind plotten we een **staafdiagram** dat per testlijst toont hoeveel
+matches er waren. Daarmee zie je in één oogopslag of je code klopt.
+
+<PyRunner initialCode={`def alle_indexen(lijst, doel):
+    # vul aan
+    return []
+
+# Tests
+tests = [
+    ([3, 1, 4, 1, 5], 1),
+    ([7, 7, 7], 7),
+    ([], 9),
+    ([1, 2, 3], 9),
+]
+resultaten = []
+for lijst, doel in tests:
+    r = alle_indexen(lijst, doel)
+    print(f"alle_indexen({lijst}, {doel}) = {r}")
+    resultaten.append(len(r))
+
+# Visualiseer aantal matches per test
+import matplotlib.pyplot as plt
+labels = [f"test {i+1}" for i in range(len(tests))]
+plt.bar(labels, resultaten)
+plt.title("Aantal matches per test")
+plt.ylabel("aantal")
+plt.show()`} />
+
+<details>
+<summary>Tip</summary>
+
+Twee dingen veranderen ten opzichte van `zoek`:
+
+1. Je hebt een **lijst** nodig om resultaten in op te slaan
+   (`resultaat = []`).
+2. Je mag **niet** stoppen bij de eerste match — loop door tot het eind.
+
+Aan het eind van de functie return je de lijst.
+
+Welke bouwsteen valt weg? Welke krijgen er een variant?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def alle_indexen(lijst, doel):
+    resultaat = []
+    for i, waarde in enumerate(lijst):
+        if waarde == doel:
+            resultaat.append(i)
+    return resultaat
+```
+
+Wat hier opvalt:
+
+- **Bouwsteen 1 en 2** zijn precies hetzelfde gebleven (doorlopen +
+  vergelijken).
+- **Bouwsteen 3** is nu *toevoegen aan lijst* in plaats van *direct return*.
+- **Bouwsteen 4** valt weg — geen `-1` meer, een lege lijst is al een
+  betekenisvol "niet-gevonden"-signaal.
+
+</details>
+
+## Onderzoek
+
+<details>
+<summary>Kun je `alle_indexen` eerder laten stoppen als het doel nergens voorkomt?</summary>
+
+Nee — en dat is precies het verschil met `zoek`. Bij `zoek` mocht je
+stoppen zodra je het doel **één keer** had gezien. Bij `alle_indexen`
+weet je pas aan het **einde** van de lijst zeker dat er geen extra match
+meer komt. Je **moet** dus altijd de hele lijst doorlopen, ongeacht
+input.
+
+Conclusie: `alle_indexen` doet **altijd** `n` vergelijkingen. `zoek` doet
+*in het beste geval* maar 1.
+
+</details>
+
+## Uitdaging (optioneel)
+
+Schrijf `eerste_groter_dan(lijst, drempel)` die de index van het **eerste**
+element returnt dat groter is dan `drempel`, of `-1` als er geen zo'n
+element is.
+
+Door naar [stap 10: veelgemaakte fouten](./10-fouten).

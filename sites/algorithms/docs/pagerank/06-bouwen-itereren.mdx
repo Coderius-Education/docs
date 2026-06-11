@@ -1,0 +1,86 @@
+---
+sidebar_position: 6
+hide_table_of_contents: true
+---
+
+# 13.6 Bouwsteen 4 — itereren tot het stabiel is
+
+**Leerdoel:** je herhaalt de update voor álle pagina's tot de ranks
+nauwelijks meer veranderen — dán heb je de PageRank.
+
+## Het kip-ei-probleem oplossen
+
+Je kunt de rank van een pagina pas goed berekenen als je de ranks van de
+anderen kent. De truc: begin met de startverdeling, reken **één volledige
+ronde** uit (alle pagina's, op basis van de waarden uit de **vorige**
+ronde), en herhaal. Na elke ronde veranderen de waarden minder; je stopt
+als de grootste verandering kleiner is dan een kleine `epsilon`.
+
+Let op: bereken een ronde altijd uit de ranks van de **vorige** ronde,
+niet uit ranks die je deze ronde al hebt aangepast.
+
+## Bouw en test
+
+<PyRunner rows={16} initialCode={`WEB = {
+    "A": {"B", "C"},
+    "B": {"C"},
+    "C": {"A"},
+    "D": {"C"},
+}
+
+# Al gebouwd in de vorige stappen:
+def startverdeling(web):
+    n = len(web)
+    return {p: 1 / n for p in web}
+
+def nieuwe_rank(web, rank, p, d=0.85):
+    n = len(web)
+    som = 0.0
+    for i in web:
+        if p in web[i]:
+            som += rank[i] / len(web[i])
+    return (1 - d) / n + d * som
+
+
+def pagerank(web, d=0.85, epsilon=1e-9):
+    rank = startverdeling(web)
+    while True:
+        # Vul aan:
+        # 1. bereken een NIEUWE dict met nieuwe_rank(...) voor elke pagina,
+        #    op basis van de huidige 'rank'
+        # 2. bepaal de grootste verandering t.o.v. 'rank'
+        # 3. zet rank = nieuw
+        # 4. stop (return rank) zodra die verandering < epsilon is
+        ...
+
+
+# === Tests ===
+r = pagerank(WEB)
+afgerond = {p: round(r[p], 4) for p in r}
+assert afgerond == {"A": 0.3725, "B": 0.1958, "C": 0.3941, "D": 0.0375}, afgerond
+assert round(sum(r.values()), 6) == 1.0
+
+print("PageRank werkt ✓")
+for p in sorted(r, key=lambda x: -r[x]):
+    print(f"  {p}: {r[p]:.4f}")`} />
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def pagerank(web, d=0.85, epsilon=1e-9):
+    rank = startverdeling(web)
+    while True:
+        nieuw = {p: nieuwe_rank(web, rank, p, d) for p in web}
+        verschil = max(abs(nieuw[p] - rank[p]) for p in web)
+        rank = nieuw
+        if verschil < epsilon:
+            return rank
+```
+
+De dict-comprehension berekent álle nieuwe ranks uit de oude `rank`
+voordat je `rank` overschrijft — precies wat je nodig hebt.
+
+</details>
+
+Door naar [stap 7: compleet →](./07-compleet).

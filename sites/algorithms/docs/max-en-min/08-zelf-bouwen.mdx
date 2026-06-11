@@ -1,0 +1,121 @@
+---
+sidebar_position: 8
+hide_table_of_contents: true
+---
+
+# 3.8 Bouw zelf — het bereik van een lijst
+
+**Leerdoel:** je gebruikt `max_en_min` om een **nieuwe waarde** af te
+leiden: het *bereik* (`groot − klein`). Dit is een veelgebruikte
+statistische maat.
+
+## Opdracht
+
+Schrijf `bereik(lijst)` die het verschil tussen het grootste en kleinste
+element returnt.
+
+- `bereik([5, 2, 8, 1, 7, 4])` → `7` (want 8 − 1)
+- `bereik([-3, -1, -7])` → `6` (want -1 − (-7))
+- `bereik([42])` → `0`
+
+Aan het eind plot je het bereik per testlijst in een staafdiagram.
+
+<PyRunner initialCode={`def max_en_min(lijst):
+    klein = groot = lijst[0]
+    for waarde in lijst:
+        if waarde < klein:
+            klein = waarde
+        elif waarde > groot:
+            groot = waarde
+    return klein, groot
+
+def bereik(lijst):
+    # vul aan: gebruik max_en_min en return de juiste waarde
+    return 0
+
+# Tests met visualisatie
+import matplotlib.pyplot as plt
+
+testlijsten = [
+    [5, 2, 8, 1, 7, 4],
+    [-3, -1, -7],
+    [42],
+    [10, 10, 10],
+    [1, 1000],
+]
+
+bereiken = []
+labels = []
+for lijst in testlijsten:
+    b = bereik(lijst)
+    print(f"bereik({lijst}) = {b}")
+    bereiken.append(b)
+    labels.append(str(lijst))
+
+plt.barh(range(len(testlijsten)), bereiken)
+plt.yticks(range(len(testlijsten)), labels)
+plt.xlabel("bereik (groot − klein)")
+plt.title("Bereik per testlijst")
+plt.tight_layout()
+plt.show()`} />
+
+<details>
+<summary>Tip</summary>
+
+`max_en_min(lijst)` geeft een tuple terug. Pak hem uit met
+`klein, groot = max_en_min(lijst)` en bereken dan het verschil.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def bereik(lijst):
+    klein, groot = max_en_min(lijst)
+    return groot - klein
+```
+
+Of zonder uitpakken:
+
+```python
+def bereik(lijst):
+    return max_en_min(lijst)[1] - max_en_min(lijst)[0]
+```
+
+Maar dit laatste is **slechter**: je roept `max_en_min` **twee keer** aan
+— dubbel werk. Uitpakken is netter.
+
+</details>
+
+## Onderzoek
+
+<details>
+<summary>Wat gebeurt er als je `bereik([])` aanroept op een lege lijst?</summary>
+
+Probeer het maar — pas de tests-lijst aan en voeg `[]` toe.
+
+Je krijgt een `IndexError: list index out of range` op de regel
+`klein = groot = lijst[0]` binnen `max_en_min`. De functie gaat er
+namelijk vanuit dat er een eerste element bestaat om mee te starten.
+
+Dit is een **invoer-conventie**, geen bug: `max_en_min` is alleen
+gedefinieerd voor **niet-lege** lijsten. Wil je een lege lijst veilig
+afhandelen? Dan moet `bereik` of `max_en_min` daar eerst op checken
+(bv. `if not lijst: return 0`).
+
+</details>
+
+## Uitdaging (optioneel)
+
+Schrijf `genormaliseerd(lijst)` die elk element omrekent naar een waarde
+tussen 0 en 1, op basis van het bereik:
+
+```
+genormaliseerd(x) = (x - klein) / (groot - klein)
+```
+
+Voor `[1, 5, 9]` → `[0.0, 0.5, 1.0]`. Wat gebeurt er als alle waardes
+gelijk zijn? (Hint: deling door 0.)
+
+Door naar [stap 9: veelgemaakte fouten](./09-fouten).

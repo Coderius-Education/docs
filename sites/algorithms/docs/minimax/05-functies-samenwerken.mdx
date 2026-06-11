@@ -1,0 +1,166 @@
+---
+sidebar_position: 5
+hide_table_of_contents: true
+---
+
+# 9.5 Functies werken samen
+
+**Leerdoel:** je weet wat een functie doet (input → output), en je ziet
+hoe de output van één functie de input van een andere kan zijn. Dit
+patroon gebruiken we straks **achtmaal**.
+
+## Wat is een functie ook al weer?
+
+Een functie is een **mini-machine**: je stopt er iets in, je krijgt er
+iets uit.
+
+```python
+def kwadraat(x):
+    return x * x
+```
+
+- `def kwadraat(x):` — declaratie. `x` is de input (parameter).
+- `return x * x` — wat eruit komt.
+- Aanroepen: `kwadraat(5)` → `25`.
+
+In ons minimax-project:
+
+```python
+def player(bord):
+    # ... uitwerking ...
+    return "X"          # of "O"
+```
+
+- **Input**: een bord (3×3 lijst).
+- **Output**: `"X"` of `"O"`.
+
+## Functies kun je **stapelen**
+
+De output van de ene functie kan direct de input van een andere zijn.
+
+```python
+print(kwadraat(kwadraat(2)))     # (2²)² = 16
+```
+
+Werkt van **binnen naar buiten**: `kwadraat(2)` is `4`, dan
+`kwadraat(4)` is `16`, dan print.
+
+## Een minimax-voorbeeld vooruit
+
+Straks gaan we dit doen:
+
+```python
+nieuw_bord = result(bord, (0, 0))     # past zet toe
+wie_won = winner(nieuw_bord)          # checkt of er een winnaar is
+```
+
+`result` geeft een **nieuw bord** terug. Dat bord stoppen we direct in
+`winner`. Of korter, gestapeld:
+
+```python
+wie_won = winner(result(bord, (0, 0)))
+```
+
+Lees van binnen naar buiten: pas zet `(0,0)` toe, geef het nieuwe bord
+aan `winner`.
+
+## Voorspel
+
+Wat denk je dat dit print?
+
+```python
+def verdubbel(x):
+    return x * 2
+
+def plus_drie(x):
+    return x + 3
+
+print(plus_drie(verdubbel(5)))
+print(verdubbel(plus_drie(5)))
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+13
+16
+```
+
+`plus_drie(verdubbel(5))`: eerst `verdubbel(5)` = `10`, dan
+`plus_drie(10)` = `13`.
+
+`verdubbel(plus_drie(5))`: eerst `plus_drie(5)` = `8`, dan
+`verdubbel(8)` = `16`.
+
+**De volgorde maakt uit!** Functies stapelen heen-en-weer wisselen
+geeft een ander antwoord.
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`def verdubbel(x):
+    return x * 2
+
+def plus_drie(x):
+    return x + 3
+
+print(plus_drie(verdubbel(5)))
+print(verdubbel(plus_drie(5)))`} />
+
+## Een functie kan ook een **andere functie aanroepen**
+
+Tot nu toe zagen we functies stapelen *bij de aanroep*. Maar een functie
+mag binnenin zijn body ook een andere aanroepen:
+
+```python
+def kwadraat(x):
+    return x * x
+
+def som_van_kwadraten(a, b):
+    return kwadraat(a) + kwadraat(b)
+```
+
+`som_van_kwadraten` doet zelf niks bijzonders — hij delegeert aan
+`kwadraat`. Dat heet **compositie**: een functie bouwen door anderen
+te combineren.
+
+<PyRunner initialCode={`def kwadraat(x):
+    return x * x
+
+def som_van_kwadraten(a, b):
+    return kwadraat(a) + kwadraat(b)
+
+print(som_van_kwadraten(3, 4))      # 9 + 16 = 25`} />
+
+## Waarom dit relevant is
+
+In de komende 8 pagina's bouw je 8 functies, en ze gaan **elkaar
+aanroepen**:
+
+- `terminal(bord)` roept `winner(bord)` aan.
+- `result(bord, zet)` wordt door `minimax` aangeroepen, vaak met de
+  output direct doorgegeven aan `winner` of `terminal`.
+- `minimax(bord)` roept `actions`, `result`, `player`, en zichzelf aan.
+
+Elke functie is op zichzelf klein. Pas door **slim samenwerken** wordt
+het een AI.
+
+## Eén gouden regel: één functie, één taak
+
+Een goede functie doet **één** ding. `winner` zegt wie heeft gewonnen —
+hij print niks, hij verandert het bord niet, hij speelt zelf geen zet.
+Hij geeft alleen `"X"`, `"O"` of `None` terug.
+
+Door je code in zulke kleine functies te splitsen, kun je ze los testen.
+Werkt `winner` op een vol bord? Werkt hij op een leeg bord? Werkt hij
+als alleen de diagonaal vol is? Je test elk geval **zonder** dat je de
+hele AI hoeft te draaien.
+
+## Wat nu?
+
+Tijd voor de eerste functie. We beginnen met de makkelijkste:
+`initial_state()` — een leeg bord teruggeven.
+
+Door naar [stap 6: bouwsteen 1 — initial_state →](./06-bouwen-initial_state).

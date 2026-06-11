@@ -1,0 +1,11 @@
+{
+  "label": "Context-vrije grammatica",
+  "position": 11,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "title": "Context-vrije grammatica — zinnen ontleden met regels",
+    "description": "Hoe weet een computer of een zin klopt? Leer een context-vrije grammatica (CFG) bouwen die Engelse zinnen ontleedt — zin voor zin, regel voor regel."
+  }
+}

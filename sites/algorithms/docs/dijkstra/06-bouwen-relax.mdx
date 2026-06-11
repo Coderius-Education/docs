@@ -1,0 +1,159 @@
+---
+sidebar_position: 6
+hide_table_of_contents: true
+---
+
+# 8.6 Bouwsteen 3 — update één buur (relax)
+
+**Leerdoel:** je vertaalt **stap B** uit de pen-en-papier-aanpak naar
+Python: één buur bekijken en zijn afstand updaten als de route via mij
+korter is.
+
+## Wat we willen
+
+Op papier deed je dit voor elke buur:
+
+> *"Kijk: vanuit mij + de stap naar buur, geeft dat een kortere afstand
+> dan wat buur nu heeft? Zo ja, update."*
+
+In ons mini-graph-voorbeeld, ronde 3: vanuit `B` (afstand 4) keken we
+naar buur `D` (gewicht 1). Kandidaat = `4 + 1 = 5`. `D` had 10 →
+update naar 5.
+
+## De formule
+
+```python
+nieuwe_afstand = afstanden[huidige] + gewicht
+if nieuwe_afstand < afstanden[buur]:
+    afstanden[buur] = nieuwe_afstand
+```
+
+Drie regels. Eén berekening, één vergelijking, één toewijzing.
+
+- `afstanden[huidige]` = afstand vanuit start naar de node waar we nu
+  staan.
+- `gewicht` = de kost om naar deze buur te lopen.
+- `nieuwe_afstand` = totaal als we via *mij* gaan.
+
+## Voorspel
+
+Wat denk je dat dit print?
+
+```python
+afstanden = {'A': 0, 'B': 4, 'C': 2, 'D': 10}
+huidige = 'B'
+buur = 'D'
+gewicht = 1
+
+nieuwe_afstand = afstanden[huidige] + gewicht
+if nieuwe_afstand < afstanden[buur]:
+    afstanden[buur] = nieuwe_afstand
+
+print(afstanden)
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+{'A': 0, 'B': 4, 'C': 2, 'D': 5}
+```
+
+`nieuwe_afstand` is `4 + 1 = 5`. Dat is **kleiner** dan 10, dus
+`afstanden['D']` wordt 5.
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`afstanden = {'A': 0, 'B': 4, 'C': 2, 'D': 10}
+huidige = 'B'
+buur = 'D'
+gewicht = 1
+
+nieuwe_afstand = afstanden[huidige] + gewicht
+print(f"Kandidaat via {huidige}: {nieuwe_afstand}")
+print(f"Huidige afstand naar {buur}: {afstanden[buur]}")
+
+if nieuwe_afstand < afstanden[buur]:
+    afstanden[buur] = nieuwe_afstand
+    print(f"Update! {buur} → {nieuwe_afstand}")
+else:
+    print(f"Niet beter, blijft op {afstanden[buur]}")
+
+print(f"Eind: {afstanden}")`} />
+
+## Wat als de buur al beter is?
+
+Run hetzelfde, maar nu kijken we vanuit `C` (afstand 2) naar buur `A`
+(gewicht 2). Kandidaat = `2 + 2 = 4`. Maar `A` heeft al **0**. Dus geen
+update.
+
+<PyRunner initialCode={`afstanden = {'A': 0, 'B': 4, 'C': 2, 'D': 10}
+huidige = 'C'
+buur = 'A'
+gewicht = 2
+
+nieuwe_afstand = afstanden[huidige] + gewicht
+print(f"Kandidaat: {nieuwe_afstand}, huidige: {afstanden[buur]}")
+
+if nieuwe_afstand < afstanden[buur]:
+    afstanden[buur] = nieuwe_afstand
+    print("Update!")
+else:
+    print("Niet beter — niets veranderen.")
+
+print(f"Eind: {afstanden}")`} />
+
+## Voor **alle** buren van een node
+
+Dit is wat we straks per ronde willen doen. Eén `for`-lus over `graph[huidige]`:
+
+```python
+huidige = 'A'
+for buur, gewicht in graph[huidige]:
+    nieuwe = afstanden[huidige] + gewicht
+    if nieuwe < afstanden[buur]:
+        afstanden[buur] = nieuwe
+```
+
+Vanaf `A` (afstand 0) updaten we tegelijk `B` en `C` in één lusje.
+
+<PyRunner initialCode={`graph = {
+    'A': [('B', 4), ('C', 2)],
+    'B': [('A', 4), ('D', 1)],
+    'C': [('A', 2), ('D', 8)],
+    'D': [('B', 1), ('C', 8)],
+}
+
+afstanden = {'A': 0, 'B': float('inf'), 'C': float('inf'), 'D': float('inf')}
+huidige = 'A'
+
+print(f"Voor: {afstanden}")
+for buur, gewicht in graph[huidige]:
+    nieuwe = afstanden[huidige] + gewicht
+    if nieuwe < afstanden[buur]:
+        afstanden[buur] = nieuwe
+        print(f"  update {buur} → {nieuwe}")
+print(f"Na:   {afstanden}")`} />
+
+<details>
+<summary>Verwachte uitvoer</summary>
+
+```
+Voor: {'A': 0, 'B': inf, 'C': inf, 'D': inf}
+  update B → 4
+  update C → 2
+Na:   {'A': 0, 'B': 4, 'C': 2, 'D': inf}
+```
+
+Dit komt precies overeen met ronde 1 uit je pen-en-papier-tabel.
+
+</details>
+
+## Wat nu nog mist
+
+We kunnen één node uitwerken. Maar **welke** node nemen we als
+volgende? Dat is bouwsteen 4: kiezen wie aan de beurt is.
+
+Door naar [bouwsteen 4: kies de volgende →](./07-bouwen-kies-volgende).

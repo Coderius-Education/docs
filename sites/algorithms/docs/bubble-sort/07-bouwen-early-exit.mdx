@@ -1,0 +1,106 @@
+---
+sidebar_position: 7
+hide_table_of_contents: true
+---
+
+# 6.7 Bouwsteen 5 — vroeg klaar als er niets meer hoeft
+
+**Leerdoel:** je voegt een vlag toe die detecteert wanneer een pass geen
+swaps had — dat betekent dat de lijst al klaar is.
+
+## Het idee
+
+Als een hele pass voorbij komt zonder **één enkele swap**, dan stonden
+alle paren al goed → de lijst is gesorteerd. Verder gaan is dan zinloos.
+
+Daarvoor introduceren we een **vlag-variabele** `geswapt`:
+
+- Begin van elke pass: `geswapt = False`.
+- Bij elke swap: `geswapt = True`.
+- Einde van pass: als `geswapt == False` → `break` uit de buitenste lus.
+
+## Voorspel
+
+Wat denk je dat dit print?
+
+```python
+def bubble_sort(lijst):
+    n = len(lijst)
+    for ronde in range(n - 1):
+        geswapt = False
+        for i in range(n - 1 - ronde):
+            if lijst[i] > lijst[i + 1]:
+                lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+                geswapt = True
+        print(f"ronde {ronde}: lijst={lijst}, geswapt={geswapt}")
+        if not geswapt:
+            break
+    return lijst
+
+bubble_sort([1, 2, 3, 4, 5])
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+ronde 0: lijst=[1, 2, 3, 4, 5], geswapt=False
+```
+
+Eén ronde, geen swaps → `break`. Op een al-gesorteerde lijst klaar in één
+pass van `n − 1` vergelijkingen — dat is O(n)!
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`def bubble_sort(lijst):
+    n = len(lijst)
+    for ronde in range(n - 1):
+        geswapt = False
+        for i in range(n - 1 - ronde):
+            if lijst[i] > lijst[i + 1]:
+                lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+                geswapt = True
+        print(f"ronde {ronde}: lijst={lijst}, geswapt={geswapt}")
+        if not geswapt:
+            break
+    return lijst
+
+print()
+print("AL GESORTEERD:")
+bubble_sort([1, 2, 3, 4, 5])
+
+print()
+print("OMGEKEERD:")
+bubble_sort([5, 4, 3, 2, 1])
+
+print()
+print("BIJNA GESORTEERD:")
+bubble_sort([1, 2, 4, 3, 5])`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+- **Al gesorteerd**: 1 ronde, geswapt=False → `break`. Maximaal slim.
+- **Omgekeerd**: 4 rondes, in elke ronde wel swaps. Pas bij ronde 4 is
+  alles goed.
+- **Bijna gesorteerd**: 2 rondes. Eerst de 4 en 3 swappen (ronde 0), dan
+  een ronde zonder swaps om te bevestigen → klaar.
+
+</details>
+
+## Waarom is dit zo handig?
+
+Vooral op **bijna gesorteerde** data. In de praktijk hebben veel datasets
+al een natuurlijke ordening — bijna gesorteerd of zelfs al gesorteerd
+(bijv. een al-gesorteerde lijst waar één element bij is gekomen). Met
+early-exit is bubble sort dan O(n) in plaats van O(n²).
+
+<SteppingStoneModel stone="bubble-early-exit" />
+
+## Wat nu?
+
+Je hebt alle bouwstenen. Tijd om ze samen in **één algoritme** te zien.
+
+Door naar [stap 8: het complete algoritme](./08-compleet).

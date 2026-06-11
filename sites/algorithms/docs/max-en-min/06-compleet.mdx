@@ -1,0 +1,109 @@
+---
+sidebar_position: 6
+hide_table_of_contents: true
+---
+
+# 3.6 Het complete algoritme
+
+**Leerdoel:** je ziet alle bouwstenen samen en onderzoekt het algoritme.
+
+## Alles samen
+
+```python
+def max_en_min(lijst):
+    klein = groot = lijst[0]
+    for waarde in lijst:
+        if waarde < klein:
+            klein = waarde
+        elif waarde > groot:
+            groot = waarde
+    return klein, groot
+```
+
+Zes regels. Vergelijk dat eens met de combinatie van twee aparte
+vind-maximum + vind-minimum functies — daar had je twee aparte for-lussen
+voor nodig. Hier doen we het in één.
+
+## Run
+
+<PyRunner editable={false} initialCode={`def max_en_min(lijst):
+    klein = groot = lijst[0]
+    for waarde in lijst:
+        if waarde < klein:
+            klein = waarde
+        elif waarde > groot:
+            groot = waarde
+    return klein, groot
+
+print(max_en_min([5, 2, 8, 1, 7, 4]))    # (1, 8)
+print(max_en_min([-3, -1, -7]))           # (-7, -1)
+print(max_en_min([42]))                   # (42, 42)
+print(max_en_min([3, 3, 3]))              # (3, 3)`} />
+
+<AlgorithmModel algorithm="min-and-max" />
+
+## Onderzoek — tel de vergelijkingen
+
+Hoeveel werk doet ons algoritme? We bouwen een teller-versie en
+vergelijken hem met twee-aparte-passes.
+
+<PyRunner initialCode={`def max_en_min_telt(lijst):
+    vergelijkingen = 0
+    klein = groot = lijst[0]
+    for waarde in lijst:
+        vergelijkingen += 1
+        if waarde < klein:
+            klein = waarde
+        else:
+            vergelijkingen += 1
+            if waarde > groot:
+                groot = waarde
+    return klein, groot, vergelijkingen
+
+def vind_max_telt(lijst):
+    vergelijkingen = 0
+    groot = lijst[0]
+    for waarde in lijst:
+        vergelijkingen += 1
+        if waarde > groot:
+            groot = waarde
+    return groot, vergelijkingen
+
+def vind_min_telt(lijst):
+    vergelijkingen = 0
+    klein = lijst[0]
+    for waarde in lijst:
+        vergelijkingen += 1
+        if waarde < klein:
+            klein = waarde
+    return klein, vergelijkingen
+
+import random
+lijst = [random.randint(0, 1000) for _ in range(1000)]
+
+k1, g1, v_combi = max_en_min_telt(lijst)
+g2, v_max = vind_max_telt(lijst)
+k2, v_min = vind_min_telt(lijst)
+
+print(f"één pass:      {v_combi} vergelijkingen")
+print(f"twee passes:   {v_max + v_min} vergelijkingen ({v_max} + {v_min})")
+print(f"resultaten gelijk? {(k1 == k2) and (g1 == g2)}")`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+Het exacte aantal hangt af van de willekeurige lijst. Maar:
+
+- **Eén pass**: ergens tussen `n` en `2n` vergelijkingen (afhankelijk van
+  hoe vaak de `else` wordt bereikt).
+- **Twee passes**: precies `2n` vergelijkingen.
+
+De winst is dus: tussen 0% en ~50% minder vergelijkingen. Bij willekeurige
+data ligt het ergens in het midden.
+
+**En**: de éne-pass-versie leest elk element één keer in plaats van twee
+keer. Bij grote data (of trage data-bronnen) is dat een echte besparing.
+
+</details>
+
+Door naar [stap 7: aanpassen](./07-aanpassen).

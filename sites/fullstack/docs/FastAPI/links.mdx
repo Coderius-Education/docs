@@ -1,0 +1,219 @@
+---
+sidebar_position: 6
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Links tussen pagina's
+
+In deze les leer je hoe je links maakt tussen je pagina's met de `<a>` tag.
+
+## De a-tag
+
+Met `<a>` maak je een klikbare link:
+
+```html
+<a href="/about">Ga naar Over Mij</a>
+```
+
+- `href="/about"` — naar welk **endpoint** de link verwijst
+- De tekst tussen `<a>` en `</a>` is klikbaar
+
+:::warning Link naar endpoint, niet naar bestand
+Gebruik `href="/about"` (het endpoint), **niet** `href="about.html"` (het bestand). De browser kent je bestanden niet — alleen de endpoints die je in Python hebt aangemaakt.
+:::
+
+## Voorbeeld
+
+Twee pagina's die naar elkaar linken:
+
+**`static/pages/home.html`:**
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Home</h1>
+        <a href="/about">Ga naar Over Mij</a>
+    </body>
+</html>
+```
+
+**`static/pages/about.html`:**
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Over Mij</h1>
+        <a href="/">Terug naar Home</a>
+    </body>
+</html>
+```
+
+**`main.py`:**
+```python
+@app.get("/")
+async def home():
+    return FileResponse("static/pages/home.html")
+
+@app.get("/about")
+async def about():
+    return FileResponse("static/pages/about.html")
+```
+
+Klik op "Ga naar Over Mij" → je gaat naar `/about`.
+Klik op "Terug naar Home" → je gaat naar `/`.
+
+:::danger Gaat er iets mis?
+Krijg je een 404 als je op een link klikt? Dan bestaat het endpoint waarschijnlijk niet in je `main.py`. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
+:::
+
+## Opdrachten
+
+### Opdracht 1: Predict - Waar ga je heen?
+
+```html
+<a href="/contact">Neem contact op</a>
+```
+
+**Vraag:** Welk endpoint roept de browser aan als je hierop klikt?
+
+<details>
+<summary>Tip</summary>
+
+Kijk naar de waarde van `href`. Dat is het pad waar de browser naartoe gaat.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+De browser gaat naar `/contact`. Je hebt dus een `@app.get("/contact")` endpoint nodig in Python.
+
+</details>
+
+### Opdracht 2: Run
+
+Maak de twee pagina's uit het voorbeeld (home.html en about.html) en de bijbehorende endpoints. Test of je heen en weer kunt klikken.
+
+### Opdracht 3: Investigate - Bestandsnaam als link
+
+Wat gebeurt er als je `href="about.html"` schrijft in plaats van `href="/about"`?
+
+<details>
+<summary>Antwoord</summary>
+
+De browser probeert naar `http://127.0.0.1:8000/about.html` te gaan, maar dat endpoint bestaat niet in je Python code. Je krijgt een **404 Not Found** error. Links moeten altijd verwijzen naar **endpoints**, niet naar bestanden.
+
+</details>
+
+### Opdracht 4: Make - Drie pagina's
+
+Maak drie pagina's (home, about, contact) die allemaal links naar de andere twee hebben.
+
+<details>
+<summary>Tip</summary>
+
+Maak drie HTML bestanden en drie endpoints. Zet op elke pagina twee `<a>` tags naar de andere pagina's.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Drie HTML bestanden in `static/pages/` met elk links naar de andere twee, bijvoorbeeld `home.html`:
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Home</h1>
+        <a href="/about">Over Mij</a>
+        <a href="/contact">Contact</a>
+    </body>
+</html>
+```
+
+En drie endpoints:
+```python
+@app.get("/")
+async def home():
+    return FileResponse("static/pages/home.html")
+
+@app.get("/about")
+async def about():
+    return FileResponse("static/pages/about.html")
+
+@app.get("/contact")
+async def contact():
+    return FileResponse("static/pages/contact.html")
+```
+
+</details>
+
+### Opdracht 5: Make - Navigatie menu
+
+Zet op elke pagina dezelfde drie links bovenaan:
+
+```html
+<nav>
+    <a href="/">Home</a>
+    <a href="/about">Over Mij</a>
+    <a href="/contact">Contact</a>
+</nav>
+```
+
+<details>
+<summary>Tip</summary>
+
+Kopieer het `<nav>` blok naar elke HTML pagina, bovenaan de `<body>`. Zo heeft elke pagina dezelfde navigatiebalk.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Zet in elk HTML bestand (home.html, about.html, contact.html) hetzelfde navigatie-blok:
+
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/about">Over Mij</a>
+            <a href="/contact">Contact</a>
+        </nav>
+        <h1>Home</h1>
+        <p>Welkom op de homepagina!</p>
+    </body>
+</html>
+```
+
+</details>
+
+## Oefen met Python
+
+:::info Python oefenblok
+Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
+:::
+
+<CodeExercise>
+{`# URL's bouwen met f-strings
+basis_url = "http://127.0.0.1:8000"
+
+paginas = {
+    "home": "/",
+    "info": "/info",
+    "contact": "/contact",
+    "profiel": "/profiel"
+}
+
+for naam, pad in paginas.items():
+    volledige_url = f"{basis_url}{pad}"
+    print(f"{naam}: {volledige_url}")
+
+# HTML links genereren
+print("\n--- HTML links ---")
+for naam, pad in paginas.items():
+    link = f'<a href="{pad}">{naam.title()}</a>'
+    print(link)`}
+</CodeExercise>

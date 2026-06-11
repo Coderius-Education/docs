@@ -1,0 +1,198 @@
+---
+sidebar_position: 3
+hide_table_of_contents: true
+description: Combineer voorwaarden met and en or, en kies tussen meer dan twee opties met elif.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 5c And, or en elif
+
+Je kunt nu kiezen tussen twee paden met `if`/`else`. In deze les voeg je twee dingen toe: meerdere voorwaarden combineren met `and` en `or`, en meer dan twee takken met `elif`.
+
+## Twee voorwaarden combineren: and en or
+
+| Operator | Wanneer `True`? |
+|:--------:|-----------------|
+| `and`    | Als **beide** voorwaarden `True` zijn |
+| `or`     | Als **minstens één** voorwaarde `True` is |
+
+```python
+leeftijd = 16
+heeft_kaartje = True
+
+if leeftijd >= 14 and heeft_kaartje:
+    print("Je mag naar binnen!")
+else:
+    print("Sorry, je mag er niet in.")
+```
+
+Vraag jezelf bij twijfel: "moet allebei, of mag één?" — dat bepaalt of je `and` of `or` kiest.
+
+## Meer dan twee takken: elif
+
+`if`/`else` geeft je twee opties. Met `elif` (een afkorting van *else if*) voeg je extra takken toe:
+
+```python
+score = 65
+
+if score >= 80:
+    print("Uitstekend!")
+elif score >= 55:
+    print("Voldoende.")
+else:
+    print("Helaas, onvoldoende.")
+```
+
+Python kijkt de voorwaarden **van boven naar beneden** na en stopt zodra er één `True` is. De andere takken worden dan niet meer gecheckt. Je kunt zoveel `elif`-takken plaatsen als je wilt.
+
+---
+
+## Opdracht 5c.1: Beide tegelijk
+
+Print `True` als zowel `score` minstens `7` is **én** `aanwezig` `True` is.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Combineer met `and`: `score >= 7 and aanwezig`. Dat resultaat is meteen een boolean.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+score = 8
+aanwezig = True
+
+print(score >= 7 and aanwezig)
+```
+
+<CodeExercise>{`score = 8
+aanwezig = True
+
+print(score >= 7 and aanwezig)`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 5c.2: Scorebeoordeling
+
+Beoordeel een score van 0 tot 100 met `if`/`elif`/`else`: 80 of hoger → `Uitstekend`, 55 of hoger → `Voldoende`, anders → `Onvoldoende`.
+
+Verwachte uitvoer (bij `score = 70`):
+
+```
+Voldoende
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Eerst de strengste voorwaarde (`>= 80`), daarna `elif score >= 55:`, daarna `else`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+score = 70
+
+if score >= 80:
+    print("Uitstekend")
+elif score >= 55:
+    print("Voldoende")
+else:
+    print("Onvoldoende")
+```
+
+<CodeExercise>{`score = 70
+
+if score >= 80:
+    print("Uitstekend")
+elif score >= 55:
+    print("Voldoende")
+else:
+    print("Onvoldoende")`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 5c.3: Strenge toegangscontrole
+
+Bouw een toegangscontrole die per reden uitlegt waarom iemand niet binnen mag. Gebruik `op_lijst` en `leeftijd` (drempel: 14).
+
+Verwachte uitvoer (bij `op_lijst = False`, `leeftijd = 12`):
+
+```
+Sorry Alex, je staat niet op de lijst én je bent te jong.
+```
+
+Verwachte uitvoer (bij `op_lijst = False`, `leeftijd = 18`):
+
+```
+Sorry Alex, je staat niet op de gastenlijst.
+```
+
+Verwachte uitvoer (bij `op_lijst = True`, `leeftijd = 12`):
+
+```
+Sorry Alex, je bent te jong (minimum: 14).
+```
+
+Verwachte uitvoer (bij `op_lijst = True`, `leeftijd = 18`):
+
+```
+Welkom Alex!
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+`not op_lijst` is `True` als de gast **niet** op de lijst staat. Vier takken op volgorde:
+
+1. `not op_lijst and leeftijd < 14` → beide problemen
+2. `not op_lijst` → alleen lijst-probleem
+3. `leeftijd < 14` → alleen leeftijd-probleem
+4. `else` → welkom
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+naam = "Alex"
+leeftijd = 12
+op_lijst = False
+
+if not op_lijst and leeftijd < 14:
+    print(f"Sorry {naam}, je staat niet op de lijst én je bent te jong.")
+elif not op_lijst:
+    print(f"Sorry {naam}, je staat niet op de gastenlijst.")
+elif leeftijd < 14:
+    print(f"Sorry {naam}, je bent te jong (minimum: 14).")
+else:
+    print(f"Welkom {naam}!")
+```
+
+In de volgende les leer je de **for-loop**: een rijtje getallen of namen aflopen zonder elke regel zelf te typen.
+
+<CodeExercise>{`naam = "Alex"
+leeftijd = 12
+op_lijst = False
+
+if not op_lijst and leeftijd < 14:
+    print(f"Sorry {naam}, je staat niet op de lijst én je bent te jong.")
+elif not op_lijst:
+    print(f"Sorry {naam}, je staat niet op de gastenlijst.")
+elif leeftijd < 14:
+    print(f"Sorry {naam}, je bent te jong (minimum: 14).")
+else:
+    print(f"Welkom {naam}!")`}</CodeExercise>
+
+</details>

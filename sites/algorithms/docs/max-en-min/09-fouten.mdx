@@ -1,0 +1,110 @@
+---
+sidebar_position: 9
+hide_table_of_contents: true
+---
+
+# 3.9 Er gaat iets mis — top-3 fouten
+
+**Leerdoel:** je herkent valkuilen bij het werken met twee accumulators
+tegelijk.
+
+## Twee aparte for-lussen
+
+Geen foutmelding — wél het **hele punt** van dit algoritme gemist.
+
+**Oorzaak:** je doet twee passes over de lijst (één voor max, één voor min)
+in plaats van één pass met twee accumulators. Elk element wordt twee keer
+gelezen.
+
+**Oplossing:** één for-lus, twee accumulators, twee vergelijkingen per
+element.
+
+```python
+# FOUT
+def max_en_min_traag(lijst):
+    groot = lijst[0]
+    for waarde in lijst:           # pass 1
+        if waarde > groot:
+            groot = waarde
+
+    klein = lijst[0]
+    for waarde in lijst:           # pass 2
+        if waarde < klein:
+            klein = waarde
+
+    return klein, groot
+
+# GOED
+def max_en_min(lijst):
+    klein = groot = lijst[0]
+    for waarde in lijst:
+        if waarde < klein:
+            klein = waarde
+        elif waarde > groot:
+            groot = waarde
+    return klein, groot
+```
+
+## Onveilige startwaardes
+
+```python
+klein = 0
+groot = 0
+```
+
+**Oorzaak:** als alle waardes negatief zijn, blijft `groot = 0` (terwijl 0
+niet in de lijst staat). Andersom: bij alleen positieve waardes blijft
+`klein = 0` ten onrechte.
+
+**Oplossing:** start beide op `lijst[0]`. Gegarandeerd een echte waarde uit
+de lijst.
+
+```python
+# FOUT
+def max_en_min_fout(lijst):
+    klein = 0
+    groot = 0
+    for waarde in lijst:
+        if waarde < klein:
+            klein = waarde
+        elif waarde > groot:
+            groot = waarde
+    return klein, groot
+
+print(max_en_min_fout([-3, -1, -7]))   # (-7, 0) — groot is fout
+print(max_en_min_fout([3, 5, 7]))       # (0, 7) — klein is fout
+
+# GOED
+klein = groot = lijst[0]
+```
+
+Meer uitleg: [Bouwsteen 1 — twee variabelen](./03-bouwen-twee-variabelen).
+
+## `if … if …` in plaats van `if … elif …`
+
+Geen foutmelding — wel **één extra vergelijking** per element. Geen
+catastrofe, maar verspilling.
+
+**Oorzaak:** twee aparte `if`'s checken **altijd** allebei de condities,
+ook als de eerste al een update deed.
+
+**Oplossing:** gebruik `elif`. Een waarde kan niet tegelijk kleiner dan
+`klein` én groter dan `groot` zijn (want `klein <= groot`).
+
+```python
+# FOUT (werkt, maar inefficiënt)
+for waarde in lijst:
+    if waarde < klein:
+        klein = waarde
+    if waarde > groot:
+        groot = waarde
+
+# GOED
+for waarde in lijst:
+    if waarde < klein:
+        klein = waarde
+    elif waarde > groot:
+        groot = waarde
+```
+
+Door naar [stap 10: cheatsheet](./10-cheatsheet).

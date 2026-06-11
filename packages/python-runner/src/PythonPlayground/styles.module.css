@@ -1,0 +1,155 @@
+.playground {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.editorSection,
+.outputSection {
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-global-radius);
+  overflow: hidden;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background: var(--ifm-color-emphasis-100);
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.label {
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.runButton {
+  background: var(--ifm-color-primary);
+  color: #fff;
+  border: none;
+  padding: 0.4rem 1rem;
+  border-radius: var(--ifm-global-radius);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.runButton:hover:not(:disabled) {
+  background: var(--ifm-color-primary-dark);
+}
+
+.runButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.clearButton {
+  background: transparent;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--ifm-global-radius);
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: var(--ifm-font-color-base);
+}
+
+.clearButton:hover {
+  background: var(--ifm-color-emphasis-200);
+}
+
+.editorWrapper {
+  position: relative;
+  min-height: 250px;
+}
+
+.gutter {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2.5rem;
+  padding: 1rem 0;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--ifm-color-emphasis-500);
+  background: var(--ifm-color-emphasis-100);
+  border-right: 1px solid var(--ifm-color-emphasis-300);
+  text-align: right;
+  user-select: none;
+  overflow: hidden;
+  height: 100%;
+  z-index: 2;
+}
+
+.gutterLine {
+  padding-right: 0.5rem;
+}
+
+.highlightPre {
+  margin: 0;
+  padding: 1rem 1rem 1rem 3.5rem;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  min-height: 250px;
+  overflow: auto;
+  tab-size: 4;
+  pointer-events: none;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.editorTextarea {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 1rem 1rem 1rem 3.5rem;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  border: none;
+  outline: none;
+  resize: none;
+  background: transparent;
+  color: transparent;
+  caret-color: var(--ifm-font-color-base);
+  tab-size: 4;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow: auto;
+}
+
+.editorTextarea::selection {
+  background: rgba(100, 100, 255, 0.3);
+}
+
+.editorTextarea:disabled {
+  opacity: 0.5;
+}
+
+.hint {
+  padding: 0.3rem 1rem;
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-600);
+  background: var(--ifm-color-emphasis-100);
+  border-top: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.output {
+  margin: 0;
+  padding: 1rem;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  min-height: 120px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  background: var(--ifm-background-color);
+  color: var(--ifm-font-color-base);
+}

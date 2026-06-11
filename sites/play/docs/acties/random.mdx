@@ -1,0 +1,82 @@
+---
+sidebar_position: 3
+hide_table_of_contents: true
+---
+
+# 3.3 Willekeurige waarden
+
+Bij het maken van spelletjes wil je vaak iets willekeurigs laten gebeuren: een bal die op een willekeurige plek verschijnt, een willekeurige kleur, of een willekeurig getal voor de score. Hiervoor heeft coderius-play handige functies.
+
+## play.random_number
+
+Met `play.random_number()` krijg je een willekeurig geheel getal.
+
+**Eerst voorspellen:** als je `play.random_number(1, 10)` uitvoert, welk getal denk je dat je krijgt? En wat verwacht je als je het programma nog een keer start?
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+Je krijgt een willekeurig geheel getal tussen 1 en 10 (de grenzen tellen mee). Bij elke nieuwe start kan het getal anders zijn — dat is juist de bedoeling van "willekeurig".
+
+</details>
+
+Probeer het uit:
+
+<PygbagRunner code={`import play
+
+getal = play.random_number(1, 10)
+play.new_text(words="Willekeurig getal: " + str(getal))`} height={300} />
+
+Klik een paar keer op ▶ Speel — krijg je inderdaad steeds een ander getal?
+
+## play.random_position
+
+Met `play.random_position()` krijg je een willekeurige positie op het scherm:
+
+<PygbagRunner code={`import play
+
+positie = play.random_position()
+play.new_circle(x=positie.x, y=positie.y, radius=20, color='red')`} height={300} />
+
+De cirkel verschijnt elke keer op een andere plek!
+
+## play.random_color
+
+Met `play.random_color()` krijg je een willekeurige kleur:
+
+<PygbagRunner code={`import play
+
+kleur = play.random_color()
+play.new_circle(color=kleur)`} height={300} />
+
+## Opdracht 3.3.a: Willekeurige cirkels
+
+:::info
+In deze opdracht gebruik je `@play.when_key_pressed`. Ken je dat nog niet? Kijk dan bij [4.1 Toetsenbord](/docs/gebeurtenissen/toetsenbord).
+:::
+
+Maak een programma waarbij elke keer als je op spatie drukt, er een nieuwe cirkel verschijnt op een willekeurige positie met een willekeurige kleur.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Gebruik `@play.when_key_pressed("space")` in combinatie met `play.random_position()` en `play.random_color()`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+<PygbagRunner code={`import play
+
+@play.when_key_pressed("space")
+def nieuwe_cirkel():
+    positie = play.random_position()
+    play.new_circle(
+        x=positie.x,
+        y=positie.y,
+        radius=20,
+        color=play.random_color()
+    )`} height={300} />
+
+</details>

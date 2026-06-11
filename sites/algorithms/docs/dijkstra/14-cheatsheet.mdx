@@ -1,0 +1,206 @@
+---
+sidebar_position: 14
+hide_table_of_contents: true
+---
+
+# 8.14 Cheatsheet — Dijkstra
+
+Snelle referentie. Klap open wat je nodig hebt.
+
+## Het algoritme zelf
+
+<details>
+<summary>De canonieke implementatie (afstanden + voorgangers)</summary>
+
+```python
+def kies_volgende(afstanden, bezocht):
+    beste_node = None
+    kleinste = float('inf')
+    for node, d in afstanden.items():
+        if node in bezocht:
+            continue
+        if d < kleinste:
+            kleinste = d
+            beste_node = node
+    return beste_node
+
+
+def dijkstra(graph, start):
+    afstanden = {node: float('inf') for node in graph}
+    afstanden[start] = 0
+    bezocht = set()
+    voorgangers = {}
+
+    while True:
+        huidige = kies_volgende(afstanden, bezocht)
+        if huidige is None:
+            break
+        bezocht.add(huidige)
+        for buur, gewicht in graph[huidige]:
+            nieuwe = afstanden[huidige] + gewicht
+            if nieuwe < afstanden[buur]:
+                afstanden[buur] = nieuwe
+                voorgangers[buur] = huidige
+
+    return afstanden, voorgangers
+```
+
+</details>
+
+<details>
+<summary>Pad reconstrueren van start naar doel</summary>
+
+```python
+def reconstrueer_pad(voorgangers, start, doel):
+    pad = []
+    huidige = doel
+    while huidige is not None:
+        pad.append(huidige)
+        if huidige == start:
+            break
+        huidige = voorgangers.get(huidige)
+    pad.reverse()
+    return pad if pad and pad[0] == start else []
+```
+
+`[]` betekent: `doel` is onbereikbaar vanuit `start`.
+
+</details>
+
+## De bouwstenen
+
+<details>
+<summary>1. Graph als adjacency-dict</summary>
+
+```python
+graph = {
+    'A': [('B', 4), ('C', 2)],
+    'B': [('A', 4), ('D', 1)],
+    'C': [('A', 2), ('D', 8)],
+    'D': [('B', 1), ('C', 8)],
+}
+```
+
+Elke verbinding **twee keer** in een niet-gerichte graph.
+
+</details>
+
+<details>
+<summary>2. Afstanden + bezocht initialiseren</summary>
+
+```python
+afstanden = {node: float('inf') for node in graph}
+afstanden[start] = 0
+bezocht = set()
+```
+
+`float('inf')` = "nog niet gevonden". Zo werkt elke gevonden route
+automatisch als een verbetering.
+
+</details>
+
+<details>
+<summary>3. Relax (één node's buren)</summary>
+
+```python
+for buur, gewicht in graph[huidige]:
+    nieuwe = afstanden[huidige] + gewicht
+    if nieuwe < afstanden[buur]:
+        afstanden[buur] = nieuwe
+```
+
+"Is de route via mij korter? Update."
+
+</details>
+
+<details>
+<summary>4. Kies volgende node</summary>
+
+```python
+def kies_volgende(afstanden, bezocht):
+    beste_node = None
+    kleinste = float('inf')
+    for node, d in afstanden.items():
+        if node in bezocht:
+            continue
+        if d < kleinste:
+            kleinste = d
+            beste_node = node
+    return beste_node
+```
+
+Lineair zoeken naar minimum, met `bezocht` als filter. `None` als alles
+bezocht is.
+
+</details>
+
+<details>
+<summary>5+6. Een ronde + de lus</summary>
+
+```python
+while True:
+    huidige = kies_volgende(afstanden, bezocht)
+    if huidige is None:
+        break
+    bezocht.add(huidige)
+    for buur, gewicht in graph[huidige]:
+        nieuwe = afstanden[huidige] + gewicht
+        if nieuwe < afstanden[buur]:
+            afstanden[buur] = nieuwe
+```
+
+**Eerst** markeren, **dan** relaxen.
+
+</details>
+
+## Eigenschappen
+
+<details>
+<summary>Wat werkt en wat niet?</summary>
+
+| Werkt op | Werkt **niet** op |
+|---|---|
+| Niet-gerichte graphs | Negatieve gewichten |
+| Gerichte graphs | "Beloningen" die door negatieve som korter maken |
+| Positieve gewichten (afstand, tijd, kosten) | — |
+| Gewogen én ongewogen (gewicht = 1) | — |
+
+Voor negatieve gewichten → **Bellman-Ford**.
+
+</details>
+
+<details>
+<summary>Complexiteit</summary>
+
+| Versie | Per ronde | Totaal |
+|---|---|---|
+| Onze versie (lineair `kies_volgende`) | O(V) | **O(V²)** |
+| Met priority queue (heap) | O(log V) | **O((V + E) log V)** |
+
+Voor kleine graphs is `O(V²)` prima en duidelijker te lezen. Zie
+[Big O notatie](../big-o/01-concept) voor een uitleg van die termen.
+
+</details>
+
+## Top-3 valkuilen
+
+<details>
+<summary>Veelgemaakte fouten</summary>
+
+1. **Edges maar één kant op** in niet-gerichte graph → onbereikbare nodes.
+2. **`bezocht.add()` vergeten** → oneindige lus.
+3. **Negatieve gewichten** → stille fout, antwoord klopt niet.
+
+Volledig overzicht: [stap 13: er gaat iets mis](./13-fouten).
+
+</details>
+
+## Verder lezen
+
+- [stap 1: wat is een graph?](./01-concept) — opnieuw door het concept.
+- [stap 2: met pen en papier](./02-met-pen-en-papier) — hand-trace
+  voor wie het algoritme nog niet "ziet".
+- [stap 10: het complete algoritme](./10-compleet) — alles samen met
+  visualisatie.
+- [Big O — logaritmisch](../big-o/05-logaritmisch) — waarom een
+  priority queue helpt.

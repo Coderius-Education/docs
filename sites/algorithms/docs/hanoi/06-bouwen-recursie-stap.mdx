@@ -1,0 +1,75 @@
+---
+sidebar_position: 6
+hide_table_of_contents: true
+---
+
+# 12.6 Bouwsteen 3 — de recursie
+
+**Leerdoel:** je zet de drie stappen om in code en maakt de functie
+volledig recursief.
+
+## De drie stappen
+
+Herinner je het inzicht uit stap 1. Om `n` schijven van `bron` naar `doel`
+te verplaatsen:
+
+1. **`n − 1` schijven naar de hulp-paal** — dat is hetzelfde probleem, met
+   `doel` even als hulp:
+   `hanoi(n - 1, bron, hulp, doel)`
+2. **de grootste schijf naar doel** — één losse zet: `(bron, doel)`
+3. **`n − 1` schijven van hulp naar doel** — weer hetzelfde probleem, nu
+   met `bron` als hulp:
+   `hanoi(n - 1, hulp, doel, bron)`
+
+Let goed op hoe de palen **van rol wisselen** in stap 1 en 3. Dat is de
+kern: in elke deelstap is een andere paal de "tijdelijke parkeerplek".
+
+Je plakt de drie stukken aan elkaar tot één lijst zetten.
+
+## Bouw en test
+
+<PyRunner initialCode={`def hanoi(n, bron, doel, hulp):
+    if n == 0:
+        return []
+
+    zetten = []
+    # 1. verplaats n-1 schijven van bron naar hulp (doel is even de hulp)
+    zetten += ...
+    # 2. verplaats de grootste schijf van bron naar doel
+    zetten.append(...)
+    # 3. verplaats die n-1 schijven van hulp naar doel (bron is even de hulp)
+    zetten += ...
+    return zetten
+
+
+# === Tests ===
+assert hanoi(1, "A", "C", "B") == [("A", "C")]
+assert hanoi(2, "A", "C", "B") == [("A", "B"), ("A", "C"), ("B", "C")]
+assert len(hanoi(3, "A", "C", "B")) == 7
+assert len(hanoi(10, "A", "C", "B")) == 1023   # 2**10 - 1
+
+print("Alle tests gehaald ✓ — je functie werkt voor elke n!")`} />
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def hanoi(n, bron, doel, hulp):
+    if n == 0:
+        return []
+
+    zetten = []
+    zetten += hanoi(n - 1, bron, hulp, doel)   # n-1 naar de hulp-paal
+    zetten.append((bron, doel))                 # grootste schijf naar doel
+    zetten += hanoi(n - 1, hulp, doel, bron)   # n-1 op hun plek
+    return zetten
+```
+
+Merk op: in stap 1 staat `hulp` op de plek van `doel` (de schijven moeten
+nu naar de hulp-paal), en `doel` doet dienst als tijdelijke hulp. In stap 3
+is het andersom. Verwissel je die twee, dan klopt de oplossing niet meer —
+zie de [fouten-pagina](./10-fouten).
+
+</details>
+
+Door naar [stap 7: compleet →](./07-compleet).

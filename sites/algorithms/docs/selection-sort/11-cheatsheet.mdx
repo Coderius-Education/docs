@@ -1,0 +1,161 @@
+---
+sidebar_position: 11
+hide_table_of_contents: true
+---
+
+# 5.11 Cheatsheet — selection sort
+
+Snelle referentie. Klap open wat je nodig hebt.
+
+## Het algoritme zelf
+
+<details>
+<summary>Canonieke implementatie (selection_sort)</summary>
+
+```python
+def selection_sort(lijst):
+    n = len(lijst)
+    for i in range(n):
+        min_index = i
+        for j in range(i, n):
+            if lijst[j] < lijst[min_index]:
+                min_index = j
+        lijst[i], lijst[min_index] = lijst[min_index], lijst[i]
+    return lijst
+```
+
+</details>
+
+<details>
+<summary>Aflopend, groot → klein (selection_sort_aflopend)</summary>
+
+```python
+def selection_sort_aflopend(lijst):
+    n = len(lijst)
+    for i in range(n):
+        max_index = i
+        for j in range(i, n):
+            if lijst[j] > lijst[max_index]:
+                max_index = j
+        lijst[i], lijst[max_index] = lijst[max_index], lijst[i]
+    return lijst
+```
+
+Eén `<` → `>` en de variabelenaam. Verder identiek.
+
+</details>
+
+## De bouwstenen
+
+<details>
+<summary>Index van kleinste vanaf positie</summary>
+
+```python
+def index_van_kleinste_vanaf(lijst, start):
+    min_index = start
+    for i in range(start, len(lijst)):
+        if lijst[i] < lijst[min_index]:
+            min_index = i
+    return min_index
+```
+
+</details>
+
+<details>
+<summary>Twee elementen swappen</summary>
+
+```python
+# Pythonisch (één regel):
+lijst[a], lijst[b] = lijst[b], lijst[a]
+
+# Klassiek (drie regels, werkt in elke taal):
+tijdelijk = lijst[a]
+lijst[a] = lijst[b]
+lijst[b] = tijdelijk
+```
+
+</details>
+
+## Python-syntax
+
+<details>
+<summary>range met startwaarde</summary>
+
+```python
+range(start, stop)     # start, start+1, ..., stop-1
+range(2, 5)            # 2, 3, 4 (geen 5!)
+range(len(lijst))      # 0, 1, ..., len-1
+```
+
+</details>
+
+<details>
+<summary>Tuple-swap</summary>
+
+```python
+a, b = b, a            # variabelen ruilen
+lijst[i], lijst[j] = lijst[j], lijst[i]   # elementen ruilen
+```
+
+</details>
+
+<details>
+<summary>Geneste lussen</summary>
+
+```python
+for i in range(n):          # buitenste lus
+    for j in range(i, n):   # binnenste lus
+        # voor elke combinatie van i en j ...
+```
+
+Totaal aantal iteraties: ongeveer `n²/2`.
+
+</details>
+
+## Eigenschappen
+
+<details>
+<summary>Hoe snel?</summary>
+
+- **Beste, gemiddelde, slechtste geval**: allemaal `O(n²)`.
+- **Vergelijkingen**: altijd `n(n − 1)/2`.
+- **Swaps**: hoogstens `n − 1` (één per ronde, soms minder).
+
+Voor:
+
+| n | vergelijkingen | tijd op moderne CPU |
+|---:|---:|---:|
+| 100 | 4.950 | < 1 ms |
+| 1.000 | ~500.000 | ~5 ms |
+| 10.000 | ~50 miljoen | ~500 ms |
+| 100.000 | ~5 miljard | ~50 seconden |
+
+Bij grote `n` is dit te traag.
+
+</details>
+
+<details>
+<summary>Eigenschappen</summary>
+
+- **In-place**: geen extra lijst nodig.
+- **Niet stabiel**: gelijke elementen kunnen van volgorde wisselen.
+- **Voorspelbaar**: zelfde aantal vergelijkingen op elke input.
+
+</details>
+
+## Veelgemaakte fouten (snel)
+
+<details>
+<summary>Top-3 fouten</summary>
+
+1. Zoeken vanaf index 0 i.p.v. vanaf `i` → vernielt al-gesorteerde deel.
+2. Swap zonder tijdelijke variabele (`lijst[a] = lijst[b]; lijst[b] = lijst[a]`) → waarde gaat verloren.
+3. `range(0, n)` in binnenste lus i.p.v. `range(i, n)` → onnodig werk én potentieel fout.
+
+</details>
+
+---
+
+Klaar? Probeer ook [bubble sort](/docs/bubble-sort/01-concept) — een andere
+manier om in O(n²) te sorteren, maar met meer swaps en minder uniforme
+vergelijkingen.

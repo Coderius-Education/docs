@@ -1,0 +1,83 @@
+---
+sidebar_position: 9
+hide_table_of_contents: true
+---
+
+# 12.9 Zelf bouwen — speel de zetten na
+
+**Leerdoel:** je gebruikt de zettenlijst om de **toestand van de drie
+palen** bij te houden, en controleert dat de toren echt op doel belandt.
+
+## De uitdaging
+
+Je `hanoi`-functie geeft een lijst zetten. Maar klopt het ook? Bewijs het
+door de zetten **na te spelen** en te kijken waar de schijven eindigen.
+
+We stellen elke paal voor als een **lijst van schijfgroottes**, met de
+**grootste onderaan** (index 0) en de bovenste schijf achteraan:
+
+```python
+# 3 schijven, alles op paal A:
+{"A": [3, 2, 1], "B": [], "C": []}
+```
+
+Schrijf `speel(n)`: begin met alle schijven op `A`, loop door de zetten van
+`hanoi(n, "A", "C", "B")`, en verplaats telkens de **bovenste** schijf van
+de bron-paal naar de doel-paal. Geef de eindtoestand terug.
+
+> **Hint** — "bovenste schijf van een lijst pakken en op een andere leggen"
+> is precies wat `.pop()` en `.append(...)` doen.
+
+## Bouw en test
+
+<PyRunner rows={16} initialCode={`def hanoi(n, bron, doel, hulp):
+    if n == 0:
+        return []
+    zetten = []
+    zetten += hanoi(n - 1, bron, hulp, doel)
+    zetten.append((bron, doel))
+    zetten += hanoi(n - 1, hulp, doel, bron)
+    return zetten
+
+
+def speel(n):
+    # Startopstelling: schijven n..1 op paal A (grootste onderaan).
+    palen = {"A": list(range(n, 0, -1)), "B": [], "C": []}
+    for bron, doel in hanoi(n, "A", "C", "B"):
+        # Vul aan: pak de bovenste schijf van 'bron' en leg hem op 'doel'.
+        ...
+    return palen
+
+
+# === Tests ===
+assert speel(1) == {"A": [], "B": [], "C": [1]}
+assert speel(3) == {"A": [], "B": [], "C": [3, 2, 1]}
+assert speel(4) == {"A": [], "B": [], "C": [4, 3, 2, 1]}
+
+print("De toren staat netjes op doel ✓")
+print("Eindopstelling 3 schijven:", speel(3))`} />
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def speel(n):
+    palen = {"A": list(range(n, 0, -1)), "B": [], "C": []}
+    for bron, doel in hanoi(n, "A", "C", "B"):
+        schijf = palen[bron].pop()      # bovenste schijf van bron
+        palen[doel].append(schijf)      # bovenop doel
+    return palen
+```
+
+Omdat `hanoi` correct is, ligt op het eind alles op `C` in de juiste
+volgorde — en je legt nooit een grotere op een kleinere.
+
+</details>
+
+### Extra uitdaging
+
+Kun je ook bepalen bij welke zet de **grootste** schijf voor het eerst op
+doel komt? (Tip: het is precies in het midden van de zettenlijst —
+zet `2ⁿ⁻¹`.)
+
+Door naar [stap 10: fouten →](./10-fouten).

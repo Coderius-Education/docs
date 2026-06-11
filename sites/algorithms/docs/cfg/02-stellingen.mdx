@@ -1,0 +1,115 @@
+---
+sidebar_position: 2
+hide_table_of_contents: true
+---
+
+# 11.2 Stellingen — eerst voorspellen
+
+**Leerdoel:** je toetst je beeld van een context-vrije grammatica
+vóórdat je gaat bouwen. Denk eerst zelf na, klik dan open.
+
+We gebruiken weer het mini-voorbeeld uit de vorige pagina:
+
+```
+Zin   -> Groet Naam
+Groet -> "hallo" | "hoi"
+Naam  -> "sam" | "kim"
+```
+
+---
+
+### Stelling 1
+
+> De zin **hallo sam** wordt door deze grammatica geaccepteerd.
+
+<details>
+<summary>Waar of niet waar?</summary>
+
+**Waar.** `hallo` is een geldige `Groet` en `sam` een geldige `Naam`,
+dus samen vormen ze een `Zin`. ✓
+
+</details>
+
+---
+
+### Stelling 2
+
+> De zin **sam hallo** wordt geaccepteerd.
+
+<details>
+<summary>Waar of niet waar?</summary>
+
+**Niet waar.** De regel `Zin -> Groet Naam` zegt: eerst een groet, dán
+een naam. De **volgorde** klopt hier niet. Afgekeurd.
+
+</details>
+
+---
+
+### Stelling 3
+
+> `Groet` en `Naam` zijn terminals.
+
+<details>
+<summary>Waar of niet waar?</summary>
+
+**Niet waar.** `Groet` en `Naam` zijn **non-terminals** — groepen die uit
+andere bouwstenen bestaan. De **terminals** zijn de echte woorden tussen
+aanhalingstekens: `"hallo"`, `"hoi"`, `"sam"`, `"kim"`.
+
+</details>
+
+---
+
+### Stelling 4
+
+> Een grammatica controleert of een zin qua **betekenis** klopt.
+
+<details>
+<summary>Waar of niet waar?</summary>
+
+**Niet waar.** Een CFG kijkt alleen naar de **structuur** (de vorm). Of
+de zin ergens op slaat, boeit de grammatica niet. *hoi kim* wordt
+geaccepteerd, ook al weet de computer niet wie Kim is.
+
+</details>
+
+---
+
+### Stelling 5
+
+> Eén zin kan nooit meer dan één boom hebben.
+
+<details>
+<summary>Waar of niet waar?</summary>
+
+**Niet waar.** Sommige zinnen zijn **ambigu**: er zijn meerdere geldige
+manieren om ze te ontleden. Denk aan *"Ik zag de man met de
+verrekijker"* — wie heeft de verrekijker? Een grammatica kan voor zo'n
+zin meerdere bomen vinden. Later tel je het **aantal interpretaties** van
+een zin, en kom je dit zelf tegen.
+
+</details>
+
+---
+
+### Stelling 6
+
+> Als je een nieuwe regel **toevoegt** om een extra zin te accepteren,
+> blijven alle eerder geaccepteerde zinnen geldig.
+
+<details>
+<summary>Waar of niet waar?</summary>
+
+**Waar** — een regel *toevoegen* maakt de grammatica alleen maar ruimer;
+bestaande zinnen blijven dus altijd geldig. Daarom kun je in deze track
+zin voor zin uitbreiden. Wél blijf je elke stap álle zinnen tot nu toe
+opnieuw testen, voor de zekerheid.
+
+</details>
+
+---
+
+Klaar met voorspellen? Tijd om je eigen grammatica te bouwen.
+
+Door naar [stap 3: de eerste zin →](./03-bouwen-simpele-zin).

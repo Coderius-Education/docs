@@ -1,0 +1,112 @@
+---
+sidebar_position: 1
+hide_table_of_contents: true
+---
+
+# 9.1 Minimax — het idee
+
+> **Bronvermelding** — deze track is een afgeleide bewerking van
+> [CS50 AI Project 0: Tic-Tac-Toe](https://cs50.harvard.edu/ai/projects/0/tictactoe/)
+> van Harvard University, gelicenseerd onder
+> [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+> Wij hebben het vertaald naar het Nederlands, opgeknipt in PRIMM-stappen
+> en aangevuld met conceptuele uitleg. Deze hele track wordt onder
+> dezelfde licentie verspreid.
+
+**Leerdoel:** je begrijpt het kernidee van minimax: als jij je beste zet
+doet en je tegenstander óók zijn beste zet doet, wat is dan voor jou
+het beste startpunt? Geen code nog — eerst snappen.
+
+## Het verhaal
+
+Je speelt boter-kaas-en-eieren (tic-tac-toe) tegen iemand die **net zo
+goed nadenkt als jij**. Geen blunders, geen mazzel. Welke zet doe je?
+
+Een veelgehoorde fout: *"Ik kies de zet die mij het snelst kan laten
+winnen."* Maar dat klopt niet — je tegenstander kan jouw plan blokkeren.
+
+Wat je écht wilt weten:
+
+> *"Welke zet zorgt dat ik **niet verlies**, ook als mijn tegenstander
+> daarna zijn allerbeste tegenzet kiest?"*
+
+Dat is Minimax in één zin.
+
+## Twee spelers, twee doelen
+
+In een spel zijn er twee perspectieven:
+
+- **Max-speler** (wij, `X` in tic-tac-toe) wil de uitkomst **maximeren**:
+  voor ons is winnen = `+1`, gelijk = `0`, verliezen = `-1`.
+- **Min-speler** (de tegenstander, `O`) wil dezelfde uitkomst
+  **minimeren**: hij wil dat wij verliezen.
+
+Beide spelers spelen om beurten. Beiden kiezen telkens de zet die voor
+*hen* het best is. Minimax rekent uit wat er gebeurt als allebei
+optimaal spelen.
+
+## Een game tree
+
+Een **game tree** is een boom van toekomstige zetten. Aan de top staat
+de huidige positie. Elke "tak" is een mogelijke zet. Aan de bladeren
+(blaadjes) staan eindposities (winst, verlies, of remise) met hun
+*utility*: `+1`, `-1`, of `0`.
+
+Heel kleine illustratie (niet een echt tic-tac-toe spel, maar even ter
+visualisatie):
+
+```
+                MAX (wij kiezen)
+              ╱            ╲
+             A              B
+             │              │
+            MIN            MIN
+           ╱ ╲             ╱ ╲
+         +1   -1         0    +1
+```
+
+Wij (MAX) kunnen kiezen tussen tak `A` en tak `B`. Daarna kiest de
+tegenstander (MIN) tussen zijn twee opties.
+
+**Tegenstander redeneert:**
+
+- Tak `A`: MIN kiest uit `+1` en `-1`. Hij minimiseert → `-1`.
+- Tak `B`: MIN kiest uit `0` en `+1`. Hij minimiseert → `0`.
+
+**Wij redeneren:**
+
+- Tak `A` leidt tot uitkomst `-1` (omdat MIN daar `-1` pakt).
+- Tak `B` leidt tot uitkomst `0`.
+
+Wij maximaliseren → kies `B`. Beter een gegarandeerde remise dan een
+gegarandeerd verlies.
+
+## Het sleutelwoord: *gegarandeerd*
+
+Minimax denkt **van het einde naar het begin**. Pas als de uitkomst van
+een bladeren-positie bekend is, kun je terugrekenen wat de niveau daar-
+boven waard is. En zo verder, helemaal terug naar de huidige zet.
+
+Dat heet **terug-redeneren** (Engels: *backwards induction*). Het werkt
+omdat we aannemen: **beide spelers spelen optimaal**.
+
+## Waarom tic-tac-toe?
+
+Tic-tac-toe heeft een **klein** aantal mogelijke spellen (~250.000 als
+je alles meerekent). Een computer kan de hele game tree in een seconde
+doorrekenen. Een mens niet — wij gebruiken patronen en intuïtie.
+
+Voor schaken (~10⁴⁰ posities) is de hele tree te groot. Daar gebruik je
+slimmere varianten zoals *alpha-beta pruning* of *Monte Carlo Tree
+Search*. Maar het **fundament** blijft minimax.
+
+## Wat we gaan bouwen
+
+Na deze track schrijf je 8 Python-functies die samen een tic-tac-toe-AI
+vormen die **nooit verliest**. Dat is geen overdrijving — als beide
+spelers optimaal spelen, eindigt tic-tac-toe altijd in remise.
+
+Maar eerst: doe het zelf met pen en papier, zodat je ziet hoe minimax
+werkt voordat je het programmeert.
+
+Door naar [stap 2: pen en papier →](./02-pen-en-papier).

@@ -1,0 +1,122 @@
+---
+sidebar_position: 10
+hide_table_of_contents: true
+---
+
+# 4.10 Bouw zelf — vergelijk lineair en binair
+
+**Leerdoel:** je zet beide algoritmes naast elkaar op dezelfde data en
+visualiseert het verschil. Theorie wordt nu **zichtbaar**.
+
+## Opdracht
+
+Schrijf beide algoritmes zó dat ze het **aantal vergelijkingen** tellen.
+Vergelijk dan op een reeks lijstgroottes en plot een grafiek.
+
+<PyRunner initialCode={`import matplotlib.pyplot as plt
+
+def lineair_tellen(lijst, doel):
+    # vul aan: doorloop de lijst, tel elke vergelijking,
+    # return het totaal aantal vergelijkingen
+    return 0
+
+def binair_tellen(lijst, doel):
+    # vul aan: zelfde als binair_zoek, maar return het aantal vergelijkingen
+    return 0
+
+# Slechtste geval: doel komt NIET voor
+groottes = [10, 100, 1000, 10000, 100000]
+lineair_resultaten = []
+binair_resultaten = []
+
+for n in groottes:
+    lijst = list(range(n))   # 0..n-1, gesorteerd
+    doel = -1                # bestaat niet
+    lineair_resultaten.append(lineair_tellen(lijst, doel))
+    binair_resultaten.append(binair_tellen(lijst, doel))
+
+print("n        lineair    binair")
+for n, l, b in zip(groottes, lineair_resultaten, binair_resultaten):
+    print(f"{n:<8} {l:<10} {b}")
+
+fig, ax = plt.subplots()
+ax.plot(groottes, lineair_resultaten, marker='o', label='lineair')
+ax.plot(groottes, binair_resultaten, marker='o', label='binair')
+ax.set_xscale('log')
+ax.set_yscale('log')
+ax.set_xlabel('lijstgrootte n')
+ax.set_ylabel('aantal vergelijkingen (slechtste geval)')
+ax.set_title('Lineair vs. binair zoeken')
+ax.legend()
+ax.grid(True, which='both', linestyle=':')
+plt.show()`} />
+
+<details>
+<summary>Tip</summary>
+
+Voor `lineair_tellen`: doorloop de lijst, hoog elke ronde een teller op,
+returnt aan het eind die teller — ook als je niets vond.
+
+Voor `binair_tellen`: kopieer `binair_zoek` en vervang de `return midden`
+en `return -1` door `return vergelijkingen`. Hoog `vergelijkingen` op
+**binnen** de while-lus.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def lineair_tellen(lijst, doel):
+    vergelijkingen = 0
+    for waarde in lijst:
+        vergelijkingen += 1
+        if waarde == doel:
+            return vergelijkingen
+    return vergelijkingen
+
+def binair_tellen(lijst, doel):
+    laag = 0
+    hoog = len(lijst) - 1
+    vergelijkingen = 0
+    while laag <= hoog:
+        vergelijkingen += 1
+        midden = (laag + hoog) // 2
+        if lijst[midden] == doel:
+            return vergelijkingen
+        elif lijst[midden] < doel:
+            laag = midden + 1
+        else:
+            hoog = midden - 1
+    return vergelijkingen
+```
+
+</details>
+
+## Wat zie je in de grafiek?
+
+<details>
+<summary>Interpretatie</summary>
+
+Op **log-log**-assen (zowel x als y logaritmisch) zie je:
+
+- **Lineair**: een rechte lijn met helling 1 → werk groeit **lineair** in n.
+- **Binair**: een rechte, veel platter lijn → werk groeit **logaritmisch**
+  in n.
+
+Voor n = 100.000:
+- Lineair: 100.000 vergelijkingen
+- Binair: ~17 vergelijkingen
+
+Op een lijst van een miljard zou het verschil nog dramatischer zijn: 1
+miljard versus ~30.
+
+</details>
+
+## Uitdaging (optioneel)
+
+Pas binair zoeken aan zodat het bij duplicaten **de eerste** voorkomende
+index returnt. Hint: stop niet bij de eerste match — blijf doorzoeken in
+de **linker** helft.
+
+Door naar [stap 11: veelgemaakte fouten](./11-fouten).

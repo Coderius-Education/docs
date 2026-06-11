@@ -1,0 +1,7 @@
+/* Site-specifieke aanvullingen op de gedeelde Coderius-huisstijl. */
+
+/* De IDE-pagina vult het hele scherm onder de navbar; geen scroll op body. */
+html.ide-fullscreen,
+html.ide-fullscreen body {
+  overflow: hidden;
+}

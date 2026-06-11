@@ -1,0 +1,42 @@
+---
+sidebar_position: 4
+sidebar_label: "Stap 4: git commit"
+title: "Stap 4: een snapshot maken met git commit"
+hide_table_of_contents: true
+---
+
+import GitSimulator from '@site/src/components/GitSimulator';
+
+# Stap 4: een snapshot maken met `git commit`
+
+Een **commit** is een opgeslagen snapshot. Je geeft elke commit een korte boodschap die uitlegt wat je veranderd hebt.
+
+```bash
+git commit -m "eerste versie"
+```
+
+Na de commit:
+
+- staging is weer leeg
+- in de repository-kolom verschijnt een nieuwe commit
+- `git status` zegt: "niets te committen, werkmap is schoon"
+
+<GitSimulator
+  scenarioId="stap-4-commit"
+  initialFiles={{'hello.txt': 'Hallo wereld!\n'}}
+  objective={{
+    description: 'Maak je eerste commit met de boodschap "eerste versie".',
+    check: (s) => s.commits.length >= 1,
+  }}
+/>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```bash
+git init
+git add hello.txt
+git commit -m "eerste versie"
+```
+
+</details>

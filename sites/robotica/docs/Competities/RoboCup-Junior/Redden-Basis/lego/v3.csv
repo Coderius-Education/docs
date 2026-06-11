@@ -1,0 +1,21 @@
+BLItemNo,ElementId,LdrawId,PartName,BLColorId,LDrawColorId,ColorName,ColorCategory,Qty,Weight
+15100,6282140,15100.dat,"Technic, Pin with Friction Ridges and Pin Hole",11,0,Black,Solid Colors,2,0.4
+2780,6279875,2780.dat,"Technic, Pin with Short Friction Ridges",11,0,Black,Solid Colors,25,0.16
+4265c,6271167,32123a.dat,Technic Bush 1/2 Smooth,3,14,Yellow,Solid Colors,6,0.1
+32140,6271824,32140.dat,"Technic, Liftarm, Modified Bent Thick L-Shape 2 x 4",1,15,White,Solid Colors,2,1.43
+32278,6151070,32278.dat,"Technic, Liftarm Thick 1 x 15",63,272,Dark Blue,Solid Colors,5,4.0
+32498,4255563,32498.dat,"Technic, Gear 36 Tooth Double Bevel",11,0,Black,Solid Colors,2,3.5
+32526,4585040,32526.dat,"Technic, Liftarm, Modified Bent Thick L-Shape 3 x 5",1,15,White,Solid Colors,2,1.77
+3707,370726,3707.dat,"Technic, Axle  8L",11,0,Black,Solid Colors,2,1.18
+39367pb01,6460453,39367pb01.dat,Wheel 56 x 14 Technic with Axle Hole and 8 Pin Holes with Molded Medium Azure Hard Rubber Tire Pattern,11,0,Black,Solid Colors,2,0
+41531,6074417,41531.dat,Cylinder 4 x 4 x 1 2/3 with Pin Holes and Center Bar,77,148,Pearl Dark Gray,Pearl Colors,1,2.83
+43093,4206482,43093.dat,"Technic, Axle  1L with Pin with Friction Ridges",7,1,Blue,Solid Colors,4,0
+48989,6282158,48989.dat,"Technic, Pin Connector Perpendicular 3L with 4 Pins",86,71,Light Bluish Gray,Solid Colors,4,1.22
+50451,6317564,50451.dat,"Technic, Axle 16L",11,0,Black,Solid Colors,1,2.37
+64179,6016156,64179.dat,"Technic, Liftarm, Modified Frame Thick 5 x 7 Open Center",1,15,White,Solid Colors,2,0
+6558,6299413,6558.dat,"Technic, Pin 3L with Friction Ridges",7,1,Blue,Solid Colors,2,0.31
+6629,6279886,6629.dat,"Technic, Liftarm, Modified Bent Thick 1 x 9 (6 - 4)",1,15,White,Solid Colors,2,2.6
+73507,6330585,73507.dat,"Technic, Liftarm, Modified Perpendicular Holes Thick 1 x 11",11,0,Black,Solid Colors,1,0
+,,,,,,,,,
+Total qty,Total Weight,,,,,,,,
+65,57.06,,,,,,,,

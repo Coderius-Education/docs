@@ -1,0 +1,11 @@
+{
+  "label": "Binair zoeken",
+  "position": 4,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "title": "Binair zoeken",
+    "description": "Volg de stappen en leer binair zoeken stap voor stap."
+  }
+}

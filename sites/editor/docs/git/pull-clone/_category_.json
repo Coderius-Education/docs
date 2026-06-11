@@ -1,0 +1,5 @@
+{
+  "label": "Pull en clone",
+  "position": 5,
+  "link": { "type": "doc", "id": "git/pull-clone/index" }
+}

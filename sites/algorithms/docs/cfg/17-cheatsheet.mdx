@@ -1,0 +1,139 @@
+---
+sidebar_position: 17
+hide_table_of_contents: true
+---
+
+# 11.17 Cheatsheet — context-vrije grammatica
+
+Snelle referentie. Klap open wat je nodig hebt. De voorbeelden gebruiken
+een neutraal mini-grammaticaatje, geen oplossing van de opdracht.
+
+## Notatie
+
+<details>
+<summary>Wat betekent een regel?</summary>
+
+```
+Zin -> Groet Naam
+```
+
+Lees als: *"een `Zin` mag bestaan uit een `Groet` gevolgd door een
+`Naam`."* Links altijd **één** groep (non-terminal), rechts de onderdelen
+op een rij.
+
+- Meerdere mogelijkheden voor dezelfde groep schrijf je als aparte
+  regels, óf op één regel met `|`:
+
+  ```
+  Groet -> "hallo"
+  Groet -> "hoi"
+  ```
+  is hetzelfde als
+  ```
+  Groet -> "hallo" | "hoi"
+  ```
+
+- Een **terminal** (echt woord) staat tussen aanhalingstekens:
+  `Naam -> "sam"`.
+
+</details>
+
+## Terminal vs. non-terminal
+
+<details>
+<summary>Het verschil</summary>
+
+- **Terminal** = een echt woord, een eindpunt. Staat tussen
+  aanhalingstekens: `"hallo"`, `"sam"`. Wordt niet verder ontleed.
+- **Non-terminal** = een groep die uit andere bouwstenen bestaat: het
+  startsymbool en alle groepen die jij verzint, plus de woordsoorten uit
+  het lexicon (`N`, `V`, `Det`, `Adj`, `Adv`, `P`, `Conj`). Heeft altijd
+  minstens één regel die zegt waaruit hij bestaat.
+- Het **startsymbool** is het bovenste non-terminal; in deze opdracht is
+  dat `S`. Elke geldige zin moet daaruit voortkomen.
+
+</details>
+
+## Recursie: "één of meer"
+
+<details>
+<summary>Hoe laat je onbeperkt veel van iets toe?</summary>
+
+Wil je *willekeurig veel* van iets achter elkaar, dan verwijst een groep
+naar **zichzelf**:
+
+```
+Reeks -> "ja" Reeks
+Reeks -> "ja"
+```
+
+Dit dekt "ja", "ja ja", "ja ja ja", ... De ketting eindigt altijd via de
+tweede regel. Hetzelfde idee gebruik je als je een groep wilt laten
+herhalen of een staart wilt laten aangroeien. De parser-motor kan dit
+veilig aan, omdat elk recursief stuk een **korter** stuk van de zin
+beslaat.
+
+</details>
+
+## Een zin testen
+
+<details>
+<summary>Hoe ontleed je een zin?</summary>
+
+1. Combineer je **grammatica** (de regels) met het **lexicon** (woorden).
+2. Maak van de zin een lijst kleine-letter-woorden: `zin.lower().split()`.
+   Géén leestekens.
+3. Vraag de parser naar alle bomen voor het startsymbool `S`.
+4. Geen bomen → zin afgekeurd. Eén of meer bomen → geaccepteerd; het
+   **aantal** bomen is het aantal interpretaties (ambiguïteit).
+
+</details>
+
+## Goed om te weten
+
+<details>
+<summary>Vorm versus betekenis</summary>
+
+Een CFG controleert alleen de **structuur** van een zin, niet of hij
+*klopt* qua betekenis. Een zin die grammaticaal de juiste vorm heeft,
+wordt geaccepteerd — ook als hij inhoudelijk nergens op slaat. Dat een
+grammatica de betekenis negeert, is juist wat hem zo simpel en algemeen
+maakt.
+
+</details>
+
+<details>
+<summary>"Echte" tools gebruiken hetzelfde idee</summary>
+
+De parser-motor in deze track is met opzet klein, zodat hij in je browser
+draait zonder installatie. Professionele tools (zoals de Python-bibliotheek
+**NLTK**) gebruiken precies dezelfde bouwstenen — terminals, non-terminals
+en regels met `->` — maar met meer features.
+
+</details>
+
+## Licentie en bronvermelding
+
+Deze track is een afgeleide bewerking van
+[CS50 AI Project 6: Parser](https://cs50.harvard.edu/ai/projects/6/parser/)
+van Harvard University. Het origineel is gelicenseerd onder
+[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+
+**Wijzigingen ten opzichte van het origineel:**
+
+- Volledig vertaald naar het Nederlands.
+- Opgeknipt in PRIMM-stappen (concept → stellingen → zin-voor-zin bouwen
+  → compleet → aanpassen → zelf-bouwen → fouten → cheatsheet).
+- De NLTK-parser is vervangen door een eigen, compacte pure-Python
+  parser-motor die zonder installatie in de browser draait (Pyodide).
+- Bewust **geen oplossings-grammatica gepubliceerd**: je ontwerpt de
+  regels zelf. Dit respecteert CS50's academic-honesty-beleid.
+
+Conform de share-alike-eis wordt deze track onder dezelfde licentie
+verspreid:
+[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+
+De rest van de Coderius Algoritmes-site staat onder
+[CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) —
+zie [LICENSE.md](https://github.com/Coderius-Education/algorithms-docs/blob/main/LICENSE.md)
+in de repository voor details.

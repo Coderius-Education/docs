@@ -1,0 +1,102 @@
+---
+sidebar_position: 6
+hide_table_of_contents: true
+---
+
+# 6.6 Bouwsteen 4 — herhalen tot het klopt
+
+**Leerdoel:** je verpakt de "één pass"-logica in een buitenste lus die
+genoeg keer herhaalt om de hele lijst te sorteren.
+
+## Hoe vaak moet je herhalen?
+
+Per pass komt het grootste-van-de-rest naar achteren. Voor `n` elementen
+zijn dus **maximaal `n − 1` passes** genoeg om alles op zijn plek te
+krijgen. (Het laatste element komt vanzelf goed als al de rest goed staat.)
+
+```python
+for ronde in range(len(lijst) - 1):
+    for i in range(len(lijst) - 1):
+        if lijst[i] > lijst[i + 1]:
+            lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+```
+
+## Voorspel
+
+Wat denk je dat dit print?
+
+```python
+def bubble_sort_basis(lijst):
+    n = len(lijst)
+    for ronde in range(n - 1):
+        for i in range(n - 1):
+            if lijst[i] > lijst[i + 1]:
+                lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+    return lijst
+
+print(bubble_sort_basis([3, 1, 4, 1, 5]))
+print(bubble_sort_basis([5, 4, 3, 2, 1]))
+print(bubble_sort_basis([1, 2, 3, 4, 5]))
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+[1, 1, 3, 4, 5]
+[1, 2, 3, 4, 5]
+[1, 2, 3, 4, 5]
+```
+
+Alledrie gesorteerd.
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`def bubble_sort_basis(lijst):
+    n = len(lijst)
+    for ronde in range(n - 1):
+        for i in range(n - 1):
+            if lijst[i] > lijst[i + 1]:
+                lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+    return lijst
+
+print(bubble_sort_basis([3, 1, 4, 1, 5]))
+print(bubble_sort_basis([5, 4, 3, 2, 1]))
+print(bubble_sort_basis([1, 2, 3, 4, 5]))`} />
+
+## Een kleine optimalisatie
+
+Na ronde `k` staan de laatste `k` elementen al goed. We hoeven dus niet
+elke ronde tot het einde te kijken — we kunnen één positie eerder stoppen
+per ronde:
+
+```python
+for ronde in range(n - 1):
+    for i in range(n - 1 - ronde):     # steeds 1 minder
+        ...
+```
+
+Dit doet **minder werk** zonder de logica te veranderen — al-gesorteerde
+achterstand laten we met rust.
+
+<PyRunner initialCode={`def bubble_sort_geoptimaliseerd(lijst):
+    n = len(lijst)
+    for ronde in range(n - 1):
+        for i in range(n - 1 - ronde):
+            if lijst[i] > lijst[i + 1]:
+                lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+    return lijst
+
+print(bubble_sort_geoptimaliseerd([3, 1, 4, 1, 5, 9, 2, 6]))`} />
+
+<SteppingStoneModel stone="bubble-multiple-passes" />
+
+## Wat nu nog mist
+
+Op een **al gesorteerde** lijst doet dit nog steeds `n − 1` passes. Dat
+is verspilling — als er in een hele ronde geen swap is gebeurd, is de
+lijst klaar. In de volgende stap voegen we die **vroege uitstap** toe.
+
+Door naar [bouwsteen 5: early-exit](./07-bouwen-early-exit).

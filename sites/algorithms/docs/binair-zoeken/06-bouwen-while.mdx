@@ -1,0 +1,134 @@
+---
+sidebar_position: 6
+hide_table_of_contents: true
+---
+
+# 4.6 Bouwsteen 4 — herhalen met een while-lus
+
+**Leerdoel:** je verpakt de vergelijking-stap in een lus die net zo lang
+draait tot het zoekgebied leeg is — of tot we het doel hebben gevonden.
+
+## Waarom een `while` en geen `for`?
+
+Bij lineair zoeken gebruikten we `for`. Daar wist je vooraf hoe vaak je
+moest loopen: één keer per element.
+
+Bij binair zoeken **weet je het niet**. Soms vind je het in stap 1, soms
+in stap 7, soms niet. Daarom: `while`. Een while-lus draait *zolang een
+voorwaarde waar is*.
+
+```python
+while voorwaarde:
+    # blijft draaien zolang 'voorwaarde' True is
+```
+
+## Wat is hier de voorwaarde?
+
+De lus moet stoppen als het zoekgebied **leeg** is. Dat is het geval
+zodra `laag > hoog`. Dus we draaien zolang `laag <= hoog`:
+
+```python
+while laag <= hoog:
+    ...
+```
+
+## Waarom `<=` en niet `<`?
+
+Bij `laag == hoog` is er nog **één** element over (namelijk `lijst[laag]`).
+Dat moeten we nog bekijken — anders missen we mogelijk het doel.
+
+<details>
+<summary>Test met een lijst van één element</summary>
+
+Lijst `[5]`, doel `5`. Start: `laag = 0, hoog = 0`.
+
+- Met `<=` → lus draait 1 keer → vindt 5 → returnt 0. Goed.
+- Met `<` → lus draait 0 keer → geeft niets. Fout.
+
+</details>
+
+## Voorspel
+
+We voegen nu een `print` toe bij elke ronde om de stappen zichtbaar te
+maken. Wat denk je dat dit print bij doel = 11?
+
+```python
+lijst = [1, 3, 5, 7, 9, 11, 13, 15]
+laag = 0
+hoog = len(lijst) - 1
+doel = 11
+
+while laag <= hoog:
+    midden = (laag + hoog) // 2
+    print(f"laag={laag}, hoog={hoog}, midden={midden}, lijst[midden]={lijst[midden]}")
+    if lijst[midden] == doel:
+        print(f"→ gevonden op {midden}")
+        break
+    elif lijst[midden] < doel:
+        laag = midden + 1
+    else:
+        hoog = midden - 1
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+laag=0, hoog=7, midden=3, lijst[midden]=7
+laag=4, hoog=7, midden=5, lijst[midden]=11
+→ gevonden op 5
+```
+
+Twee stappen. Bij stap 1 was 7 < 11, dus `laag = 4`. Bij stap 2 vinden we
+het.
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`lijst = [1, 3, 5, 7, 9, 11, 13, 15]
+laag = 0
+hoog = len(lijst) - 1
+doel = 11
+
+while laag <= hoog:
+    midden = (laag + hoog) // 2
+    print(f"laag={laag}, hoog={hoog}, midden={midden}, lijst[midden]={lijst[midden]}")
+    if lijst[midden] == doel:
+        print(f"→ gevonden op {midden}")
+        break
+    elif lijst[midden] < doel:
+        laag = midden + 1
+    else:
+        hoog = midden - 1`} />
+
+## Wat als het doel er niet in zit?
+
+Verander `doel` in `4` en run opnieuw.
+
+<details>
+<summary>Wat zie je?</summary>
+
+Drie stappen, geen "gevonden"-regel — de while-lus stopt vanzelf zodra
+`laag > hoog`. Er gebeurt verder niets.
+
+Dat is **een probleem** voor de aanroeper: hoe weten zij of het doel
+gevonden is of niet? In de volgende stap stoppen we het in een functie en
+voegen we het "niet-gevonden"-geval toe.
+
+</details>
+
+## Een veiligheid bij experimenteren
+
+Met `while` kun je een **oneindige lus** veroorzaken als je voorwaarde nooit
+`False` wordt. In de Pyodide-omgeving merk je dat omdat het runnen niet
+stopt. Druk gewoon op **Reset**.
+
+<SteppingStoneModel stone="binary-loop" />
+
+## Wat nu nog mist
+
+- De code in een **functie** stoppen (zodat je hem makkelijk hergebruikt).
+- Een duidelijk antwoord bij "niet gevonden" — een `return -1`.
+
+Door naar [bouwsteen 5: niet gevonden](./07-bouwen-niet-gevonden).

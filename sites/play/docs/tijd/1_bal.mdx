@@ -1,0 +1,63 @@
+---
+sidebar_position: 1
+hide_table_of_contents: true
+---
+
+# 5.1 Wachten in je spel
+Soms wil je een pauze in je spel. Bijvoorbeeld om een object even te laten wachten voordat het weer verdergaat. Een veelgebruikte functie in Python is `time.sleep()`. Laten we eens kijken wat er gebeurt als we die in een `play`-programma gebruiken.
+
+Op deze pagina ontdek je waarom `time.sleep()` vaak niet het gewenste effect heeft. Wil je meteen de juiste oplossing zien? Ga dan direct naar de volgende pagina.
+
+We beginnen met een bewegende bal.
+
+<PygbagRunner code={`import play
+
+bal = play.new_circle(color='black')
+bal.start_physics(obeys_gravity=False, x_speed=10)`} height={300} />
+
+## 5.1.1 Wachten met time.sleep
+We gaan nu proberen om de bal tijdelijk sneller te laten bewegen bij een muisklik.
+Je meest logische gedachte is misschien om **time.sleep** te gebruiken:
+
+<PygbagRunner code={`import play
+import time
+
+bal = play.new_circle(color='black')
+bal.start_physics(obeys_gravity=False, x_speed=10)
+
+@play.when_mouse_clicked
+def tijdelijk_sneller():
+    bal.physics.x_speed = 1000
+    time.sleep(1)
+    bal.physics.x_speed = 10`} height={300} />
+
+Gaat de bal sneller bewegen? Wat gebeurt er eigenlijk?
+
+```python
+@play.when_mouse_clicked
+def tijdelijk_sneller():
+    ...
+```
+Wanneer de muis geklikt wordt:
+- **def tijdelijk_sneller():** voeren we deze functie uit
+- **bal.physics.x_speed = 1000** we veranderen de snelheid van de bal. Via `bal.physics` kun je achteraf fysica-eigenschappen zoals `x_speed` en `y_speed` aanpassen
+- **time.sleep(1)** we wachten een seconde
+- **bal.physics.x_speed = 10** we geven de bal een lage snelheid
+
+Het probleem is dat **time.sleep** het hele spel op pauze zet! Dat werkt dus niet.
+
+### Opdracht 5.1.a: Zelf ervaren
+
+Voer de code met `time.sleep()` hierboven uit. Klik met je muis in het scherm.
+
+Wat merk je op?
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+Het hele scherm bevriest voor 1 seconde. De bal staat stil, je kunt niks doen. Dat is niet wat we willen in een spel!
+
+De reden: `time.sleep()` blokkeert het **hele programma**, inclusief het tekenen van het scherm en het verwerken van muisklikken.
+</details>
+
+Op naar iets dat wel werkt!

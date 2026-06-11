@@ -1,0 +1,86 @@
+---
+sidebar_position: 1
+hide_table_of_contents: true
+---
+
+# 7.1 Big O — het idee
+
+**Leerdoel:** je begrijpt wat Big O is en waarom we **stappen tellen** in
+plaats van **seconden meten**. Geen wiskunde nog — eerst snappen, dan pas
+formules.
+
+## Het verhaal
+
+Stel je hebt twee algoritmes die hetzelfde probleem oplossen. Welke is
+**beter**? Je kunt met een stopwatch meten — maar de uitkomst hangt af van
+je computer, hoe druk hij is, welke browser, welke dag.
+
+Big O lost dat op door één vraag te stellen:
+
+> **Als de invoer twee keer zo groot wordt, hoeveel meer werk doet het
+> algoritme dan?**
+
+Geen klokken. Geen computers. Alleen **stappen vs. grootte**.
+
+## Analogie — wegtypes
+
+Stel je rijdt naar een vriend. Als hij twee keer zo ver weg woont, hoeveel
+langer doe je erover?
+
+- **Snelweg** (`O(1)`): even lang. Snelheid is constant; afstand zelf doet
+  er niet zo toe. *Dat is "constante tijd".*
+- **Stadsrit** (`O(n)`): twee keer langer. Tijd groeit recht-evenredig met
+  afstand. *Dat is "lineair".*
+- **File die elke kilometer drukker wordt** (`O(n²)`): vier keer langer.
+  *Dat is "kwadratisch".*
+
+Big O is dus een **categorie**, geen exacte tijd.
+
+## Visualisatie
+
+We tellen het aantal vergelijkingen op een lijst van groeiende grootte:
+
+```
+n     lineair zoeken    binair zoeken
+10    10                4
+100   100               7
+1000  1000              10
+10000 10000             14
+```
+
+Bij `n = 100.000` doet lineair zoeken **100.000** stappen — binair zoeken
+slechts **17**. Het verschil is geen toeval: het zit in de **groei**.
+
+- Lineair zoeken groeit als `n` → we noemen dat **O(n)**.
+- Binair zoeken groeit als `log₂(n)` → we noemen dat **O(log n)**.
+
+## Waarom is dat handig?
+
+Voor kleine `n` doet het er weinig toe welk algoritme je kiest. Voor
+**grote** `n` is het verschil dramatisch:
+
+- `O(n)` op een miljard elementen → een miljard stappen.
+- `O(log n)` op een miljard elementen → 30 stappen.
+
+Big O laat je **voorspellen** of een algoritme schaalbaar is, **zonder**
+dat je het hoeft te draaien.
+
+## Wat we wel en niet meetellen
+
+Big O ziet:
+
+- **Het groeigedrag** als `n` heel groot wordt.
+- **De slechtste situatie** (worst case) — we doen geen optimistische
+  aannames.
+
+Big O **negeert**:
+
+- **Constante factoren**: `2n` en `100n` zijn allebei `O(n)`.
+- **Lagere-orde termen**: `n² + n` is `O(n²)` — de `n` wordt overheerst.
+- **Vaste opstartkosten**: 5 regels initialisatie tellen niet mee bij
+  groot `n`.
+
+Dat klinkt slordig, maar is bewust: Big O is een **abstractie** die je
+laat zien wat schaalt en wat niet, zonder af te leiden in details.
+
+Door naar [stap 2: voorspel zelf →](./02-stellingen).

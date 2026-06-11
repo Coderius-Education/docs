@@ -1,0 +1,113 @@
+﻿---
+sidebar_position: 8
+hide_table_of_contents: true
+---
+
+
+# 7.8 Pymunk: een bal laten vallen
+
+Nu je de bouwstenen kent, gaan we ze combineren met pygame-ce om een bal te laten vallen door zwaartekracht.
+
+## Pymunk en pygame-ce combineren
+
+```python
+import pygame
+import pymunk
+
+pygame.init()
+
+scherm = pygame.display.set_mode((800, 600))
+clock = pygame.time.Clock()
+
+# 1. Maak een Space aan met zwaartekracht
+space = pymunk.Space()
+space.gravity = (0, 500)
+
+# 2. Maak een Body aan (massa=1, moment berekend door pymunk)
+bal_body = pymunk.Body(1, pymunk.moment_for_circle(1, 0, 20))
+bal_body.position = (400, 50)
+
+# 3. Maak een Shape aan en voeg alles toe aan de Space
+bal_shape = pymunk.Circle(bal_body, 20)
+space.add(bal_body, bal_shape)
+
+actief = True
+
+while actief:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            actief = False
+
+    space.step(1 / 60)
+
+    scherm.fill((30, 30, 30))
+
+    # Teken de bal op de positie van de Body
+    bal_x = int(bal_body.position.x)
+    bal_y = int(bal_body.position.y)
+    pygame.draw.circle(scherm, (0, 200, 255), (bal_x, bal_y), 20)
+
+    pygame.display.flip()
+    clock.tick(60)
+
+pygame.quit()
+```
+
+
+
+Het idee is simpel: pymunk berekent de fysica, en pygame-ce tekent het resultaat.
+
+Elke frame doen we twee dingen:
+1. `space.step(1/60)` - laat pymunk de posities berekenen
+2. `pygame.draw.circle(...)` - teken de bal op de nieuwe positie
+
+De bal valt nu naar beneden en verdwijnt van het scherm. In de volgende les voegen we een vloer toe!
+
+## Opdracht 7.8.a: Zwaartekracht aanpassen
+
+Probeer de zwaartekracht te veranderen:
+1. Zet de zwaartekracht op `(0, 100)`. Wat gebeurt er?
+2. Zet de zwaartekracht op `(0, -500)`. Wat gebeurt er?
+3. Zet de zwaartekracht op `(200, 500)`. Wat gebeurt er?
+
+<details>
+<summary>Klik hier voor het antwoord!</summary>
+
+1. De bal valt langzamer (minder zwaartekracht)
+2. De bal vliegt omhoog (negatieve zwaartekracht)
+3. De bal valt naar rechtsonder (zwaartekracht trekt ook naar rechts)
+
+</details>
+
+## Opdracht 7.8.b: Meerdere ballen
+
+Voeg een tweede bal toe die op een andere plek begint. Beide ballen moeten vallen door de zwaartekracht.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Je hebt een tweede Body en een tweede Shape nodig. Vergeet niet beide toe te voegen aan de Space met `space.add()`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+Voeg dit toe onder de eerste bal, maar voor de game loop:
+
+```python
+# Tweede bal
+bal2_body = pymunk.Body(1, pymunk.moment_for_circle(1, 0, 15))
+bal2_body.position = (200, 100)
+bal2_shape = pymunk.Circle(bal2_body, 15)
+space.add(bal2_body, bal2_shape)
+```
+
+En teken de tweede bal in de game loop:
+```
+    bal2_x = int(bal2_body.position.x)
+    bal2_y = int(bal2_body.position.y)
+    pygame.draw.circle(scherm, (255, 100, 0), (bal2_x, bal2_y), 15)
+```
+
+</details>

@@ -1,0 +1,230 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeEditor from '@site/src/components/CodeEditor';
+
+# Beslissingen met if/else
+
+## Wat ga je leren?
+
+Je leert hoe je je code anders laat reageren op verschillende situaties met `if`, `else` en `else if`.
+
+## Theorie
+
+Tot nu toe deed je code altijd hetzelfde. Maar soms wil je een andere actie afhankelijk van een waarde — "als de score boven 10 is, toon dan...". Dat doe je met een `if`-statement.
+
+```js
+if (score > 10) {
+  document.getElementById('uitvoer').textContent = 'Gewonnen!';
+}
+```
+
+Tussen de haakjes staat een **voorwaarde** — iets dat `true` of `false` oplevert (zie [Waarden en operatoren](/docs/js-basics/operatoren-types) over vergelijken). Als de voorwaarde `true` is, voert JavaScript de regels tussen `{ ... }` uit. Anders slaat hij het blok over.
+
+### `else` — anders dit
+
+Met `else` voeg je een alternatief toe voor wanneer de voorwaarde **niet** waar is:
+
+```js
+if (score > 10) {
+  document.getElementById('uitvoer').textContent = 'Gewonnen!';
+} else {
+  document.getElementById('uitvoer').textContent = 'Niet genoeg punten.';
+}
+```
+
+Precies één van de twee blokken wordt uitgevoerd — nooit allebei.
+
+### `else if` — meerdere opties
+
+Voor meer dan twee gevallen ketting je `else if`:
+
+```js
+if (score >= 90) {
+  cijfer = 'A';
+} else if (score >= 70) {
+  cijfer = 'B';
+} else if (score >= 50) {
+  cijfer = 'C';
+} else {
+  cijfer = 'Onvoldoende';
+}
+```
+
+JavaScript probeert de voorwaarden van boven naar beneden en stopt bij de eerste die `true` is.
+
+## Predict
+
+Wat verschijnt er op de pagina als je deze code uitvoert?
+
+```js
+const leeftijd = 16;
+
+if (leeftijd >= 18) {
+  document.getElementById('uitvoer').textContent = 'Je mag stemmen.';
+} else {
+  document.getElementById('uitvoer').textContent = 'Nog even wachten.';
+}
+```
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+`Nog even wachten.` De voorwaarde `16 >= 18` is `false`, dus het `if`-blok wordt overgeslagen en het `else`-blok wordt uitgevoerd.
+
+</details>
+
+## Probeer het zelf!
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>If / else</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <p id="uitvoer">Klik op de knop om je cijfer te zien.</p>
+  <button onclick="bepaalCijfer()">Bepaal cijfer</button>
+</body>
+</html>`}
+  initialCss={`p {
+  font-size: 1.4rem;
+  padding: 12px;
+}
+
+button {
+  padding: 8px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+}`}
+  initialJs={`function bepaalCijfer() {
+  const score = 75;
+  let cijfer;
+
+  if (score >= 90) {
+    cijfer = 'A';
+  } else if (score >= 70) {
+    cijfer = 'B';
+  } else if (score >= 50) {
+    cijfer = 'C';
+  } else {
+    cijfer = 'Onvoldoende';
+  }
+
+  document.getElementById('uitvoer').textContent = 'Score: ' + score + ' → ' + cijfer;
+}`}
+  height="540px"
+  livePreview={false}
+/>
+
+## Investigate
+
+Experimenteer:
+
+- Verander `score` naar `95` — welk cijfer krijg je?
+- Verander `score` naar `45` — wat gebeurt er?
+- Wissel de volgorde om: zet `score >= 50` als eerste — wat gebeurt er nu bij `score = 95`? Waarom?
+- Voeg een vierde categorie toe: `score >= 80` → 'A-'
+
+## Modify
+
+**Opdracht:** Voeg een grens toe voor `score >= 30` die `'Bijna'` als waarde teruggeeft. Onder de 30 blijft het `'Onvoldoende'`.
+
+<details>
+<summary>Tip</summary>
+
+Voeg een extra `else if` toe tussen `score >= 50` en de laatste `else`. Volgorde is belangrijk — van hoog naar laag.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```js
+if (score >= 90) {
+  cijfer = 'A';
+} else if (score >= 70) {
+  cijfer = 'B';
+} else if (score >= 50) {
+  cijfer = 'C';
+} else if (score >= 30) {
+  cijfer = 'Bijna';
+} else {
+  cijfer = 'Onvoldoende';
+}
+```
+
+</details>
+
+## Make
+
+**Opdracht:** Bouw een "weer-adviseur". Sla een temperatuur op in een variabele en toon een passend advies:
+
+- Boven 25 graden: "Het is heet — drink water!"
+- Tussen 15 en 25: "Lekker weer."
+- Tussen 5 en 15: "Trek een jas aan."
+- Onder 5: "Het is koud — sjaal en muts mee."
+
+Voeg ook een knop toe waarmee de gebruiker de temperatuur kan veranderen (bijvoorbeeld via een random getal).
+
+<details>
+<summary>Tip</summary>
+
+Gebruik vier `if`/`else if`/`else`-takken, van warm naar koud. Voor een willekeurige temperatuur tussen -5 en 30: `Math.floor(Math.random() * 36) - 5`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+HTML:
+```html
+<p id="temp"></p>
+<p id="advies"></p>
+<button onclick="check()">Check het weer</button>
+```
+
+script.js:
+```js
+function check() {
+  const temp = Math.floor(Math.random() * 36) - 5;
+  let advies;
+
+  if (temp > 25) {
+    advies = 'Het is heet — drink water!';
+  } else if (temp >= 15) {
+    advies = 'Lekker weer.';
+  } else if (temp >= 5) {
+    advies = 'Trek een jas aan.';
+  } else {
+    advies = 'Het is koud — sjaal en muts mee.';
+  }
+
+  document.getElementById('temp').textContent = 'Temperatuur: ' + temp + '°C';
+  document.getElementById('advies').textContent = advies;
+}
+```
+
+</details>
+
+## Er gaat iets mis
+
+**Toekenning (`=`) in plaats van vergelijking (`===`)**
+
+```js
+if (score = 10) {   // Fout: één =-teken
+  // ...
+}
+```
+
+Eén `=`-teken **kent toe** in plaats van **vergelijkt**. Deze regel zet `score` op `10` (toekenning) en geeft daarna `10` terug — wat in JavaScript als `true` telt. Het `if`-blok wordt dus altijd uitgevoerd, ongeacht de oorspronkelijke waarde van `score`.
+
+Schrijf voor vergelijking altijd `===` (drie `=`-tekens). De editor of een linter waarschuwt je vaak voor deze fout — neem die waarschuwing serieus.
+
+---
+
+[← Waarden en operatoren](/docs/js-basics/operatoren-types) | [Formulier-data ophalen →](/docs/js-basics/formulier-data)

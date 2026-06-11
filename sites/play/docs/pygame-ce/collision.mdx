@@ -1,0 +1,136 @@
+﻿---
+sidebar_position: 10
+hide_table_of_contents: true
+---
+
+
+# 7.10 Pymunk: een botsing detecteren
+
+De bal stuitert op de vloer, maar hoe weet je *wanneer* dat gebeurt? Bijvoorbeeld om een geluid af te spelen of een score te verhogen? Dat doe je met **`on_collision`**.
+
+## Collision types
+
+Elke Shape in pymunk krijgt een `collision_type`. Dit is een nummer dat je zelf kiest:
+
+```python
+bal_shape.collision_type = 1
+vloer_shape.collision_type = 2
+```
+
+## Een collision handler koppelen
+
+Met `space.on_collision()` koppel je een functie aan de botsing tussen twee collision types:
+
+```python
+def bal_raakt_vloer(arbiter, space, data):
+    print("Bots!")
+
+space.on_collision(1, 2, begin=bal_raakt_vloer)
+```
+
+- De functie `bal_raakt_vloer` wordt aangeroepen zodra collision_type `1` (de bal) collision_type `2` (de vloer) raakt.
+- `begin=` wordt aangeroepen op het moment dat de botsing **begint**.
+
+## Het volledige programma
+
+```python
+import pygame
+import pymunk
+
+pygame.init()
+
+scherm = pygame.display.set_mode((800, 600))
+clock = pygame.time.Clock()
+font = pygame.font.SysFont("arial", 40)
+
+space = pymunk.Space()
+space.gravity = (0, 500)
+
+# Bal (collision_type = 1)
+bal_body = pymunk.Body(1, pymunk.moment_for_circle(1, 0, 20))
+bal_body.position = (400, 50)
+bal_shape = pymunk.Circle(bal_body, 20)
+bal_shape.elasticity = 0.8
+bal_shape.collision_type = 1
+space.add(bal_body, bal_shape)
+
+# Vloer (collision_type = 2)
+vloer_body = pymunk.Body(body_type=pymunk.Body.STATIC)
+vloer_shape = pymunk.Segment(vloer_body, (0, 550), (800, 550), 5)
+vloer_shape.elasticity = 0.8
+vloer_shape.collision_type = 2
+space.add(vloer_body, vloer_shape)
+
+# Collision handler
+aantal_botsingen = 0
+
+def bal_raakt_vloer(arbiter, space, data):
+    global aantal_botsingen
+    aantal_botsingen = aantal_botsingen + 1
+
+space.on_collision(1, 2, begin=bal_raakt_vloer)
+
+actief = True
+
+while actief:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            actief = False
+
+    space.step(1 / 60)
+
+    scherm.fill((30, 30, 30))
+
+    bal_x = int(bal_body.position.x)
+    bal_y = int(bal_body.position.y)
+    pygame.draw.circle(scherm, (0, 200, 255), (bal_x, bal_y), 20)
+    pygame.draw.line(scherm, (255, 255, 255), (0, 550), (800, 550), 5)
+
+    tekst = font.render("Botsingen: " + str(aantal_botsingen), True, (255, 255, 255))
+    scherm.blit(tekst, (10, 10))
+
+    pygame.display.flip()
+    clock.tick(60)
+
+pygame.quit()
+```
+
+
+
+Elke keer dat de bal de vloer raakt, gaat `aantal_botsingen` omhoog en wordt dit op het scherm getoond.
+
+## Opdracht 7.10.a: Kleur veranderen bij botsing
+
+Pas het programma aan zodat de bal van kleur verandert elke keer als hij de vloer raakt. Wissel bijvoorbeeld tussen blauw en rood.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Maak een globale variabele `kleur` en verander die in de collision handler functie.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+Voeg bovenaan toe:
+```python
+kleur = (0, 200, 255)
+```
+
+Pas de collision handler aan:
+```python
+def bal_raakt_vloer(arbiter, space, data):
+    global kleur
+    if kleur == (0, 200, 255):
+        kleur = (255, 0, 0)
+    else:
+        kleur = (0, 200, 255)
+```
+
+En gebruik `kleur` bij het tekenen:
+```
+    pygame.draw.circle(scherm, kleur, (bal_x, bal_y), 20)
+```
+
+</details>

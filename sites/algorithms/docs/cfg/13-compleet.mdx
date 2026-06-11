@@ -1,0 +1,149 @@
+---
+sidebar_position: 13
+hide_table_of_contents: true
+---
+
+# 11.13 Alles samen — test je complete grammatica
+
+**Leerdoel:** je test je eigen grammatica tegen alle tien de zinnen
+tegelijk, bekijkt de echte parse-bomen, en voert zelf zinnen in.
+
+## Plak je grammatica
+
+Hieronder plak je de **complete** grammatica die je zin voor zin hebt
+opgebouwd. De cel doet twee dingen:
+
+1. **Controleert alle 10 zinnen** in één keer — staan ze allemaal op groen?
+2. **Toont de boom (of bomen)** van de zin in `ZIN`. Verander die zin en
+   draai opnieuw. Probeer eens:
+   - `Holmes lit a pipe` — één duidelijke boom
+   - `I had a little moist red paint in the palm of my hand` — **twee**
+     bomen (ambigu!)
+   - een zin met een woord dat niet in het lexicon staat — "Kon de zin
+     niet ontleden."
+
+<PyRunner rows={20} initialCode={`# ===== JOUW WERK: plak hier je complete grammatica =====
+GRAMMATICA = """
+
+"""
+
+# Verander deze zin om de boom ervan te zien:
+ZIN = "I had a little moist red paint in the palm of my hand"
+
+# De tien zinnen van de opdracht:
+ZINNEN = [
+    "Holmes sat",
+    "Holmes lit a pipe",
+    "My companion smiled an enigmatical smile",
+    "Holmes sat down and lit his pipe",
+    "We arrived the day before Thursday",
+    "Holmes sat in the red armchair and he chuckled",
+    "Holmes chuckled to himself",
+    "She never said a word until we were at the door here",
+    "I had a country walk on Thursday and came home in a dreadful mess",
+    "I had a little moist red paint in the palm of my hand",
+]
+
+
+# ====== De parser-motor + lexicon — hieronder NIET aanpassen ======
+LEXICON = """
+Adj -> "country" | "dreadful" | "enigmatical" | "little" | "moist" | "red"
+Adv -> "down" | "here" | "never"
+Conj -> "and" | "until"
+Det -> "a" | "an" | "his" | "my" | "the"
+N -> "armchair" | "companion" | "day" | "door" | "hand" | "he" | "himself"
+N -> "holmes" | "home" | "i" | "mess" | "paint" | "palm" | "pipe" | "she"
+N -> "smile" | "thursday" | "walk" | "we" | "word"
+P -> "at" | "before" | "in" | "of" | "on" | "to"
+V -> "arrived" | "came" | "chuckled" | "had" | "lit" | "said" | "sat"
+V -> "smiled" | "tell" | "were"
+"""
+
+def lees_grammatica(tekst):
+    regels = []
+    for regel in tekst.splitlines():
+        regel = regel.split("#")[0].strip()
+        if not regel:
+            continue
+        kop, rest = regel.split("->")
+        kop = kop.strip()
+        for optie in rest.split("|"):
+            regels.append((kop, optie.split()))
+    return regels
+
+def parse(grammatica, woorden):
+    woorden = list(woorden)
+    memo = {}
+    def combineer(rhs, i, j):
+        if len(rhs) == 1:
+            return [[boom] for boom in deel(rhs[0], i, j)]
+        eerste, rest = rhs[0], rhs[1:]
+        resultaat = []
+        for k in range(i + 1, j):
+            for boom1 in deel(eerste, i, k):
+                for staart in combineer(rest, k, j):
+                    resultaat.append([boom1] + staart)
+        return resultaat
+    def deel(sym, i, j):
+        sleutel = (sym, i, j)
+        if sleutel in memo:
+            return memo[sleutel]
+        memo[sleutel] = []
+        bomen = []
+        for kop, rhs in grammatica:
+            if kop != sym:
+                continue
+            if len(rhs) == 1 and rhs[0].startswith('"'):
+                woord = rhs[0].strip('"')
+                if j - i == 1 and woorden[i] == woord:
+                    bomen.append((sym, woorden[i]))
+                continue
+            for kinderen in combineer(rhs, i, j):
+                bomen.append((sym,) + tuple(kinderen))
+        memo[sleutel] = bomen
+        return bomen
+    return deel("S", 0, len(woorden))
+
+def toon_boom(boom, inspring=0):
+    streep = "  " * inspring
+    if len(boom) == 2 and isinstance(boom[1], str):
+        print(f"{streep}{boom[0]}: {boom[1]}")
+    else:
+        print(f"{streep}{boom[0]}")
+        for kind in boom[1:]:
+            toon_boom(kind, inspring + 1)
+
+def controleer(grammatica, zinnen):
+    print("=== Alle zinnen ===")
+    alles_goed = True
+    for zin in zinnen:
+        bomen = parse(grammatica, zin.lower().split())
+        if bomen:
+            print(f"  OK  ({len(bomen)}x)  {zin}")
+        else:
+            print(f"  FOUT (0x)  {zin}")
+            alles_goed = False
+    print("Alle zinnen werken!" if alles_goed else "Nog niet alle zinnen werken.")
+
+def ontleed(grammatica, zin):
+    print(f"\\n=== Boom van: {zin} ===")
+    bomen = parse(grammatica, zin.lower().split())
+    if not bomen:
+        print("Kon de zin niet ontleden.")
+        return
+    for i, boom in enumerate(bomen, start=1):
+        print(f"--- boom {i} ---")
+        toon_boom(boom)
+    print(f"aantal interpretaties: {len(bomen)}")
+
+grammatica = lees_grammatica(GRAMMATICA + LEXICON)
+controleer(grammatica, ZINNEN)
+ontleed(grammatica, ZIN)`} />
+
+## Wat je nu kunt
+
+Met één eindige set regels ontleed je een onbeperkt aantal zinnen — ook
+zinnen die je nooit expliciet hebt opgegeven. Dát is de kracht van een
+context-vrije grammatica.
+
+Door naar [stap 14: aanpassen →](./14-aanpassen).

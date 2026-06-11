@@ -1,0 +1,27 @@
+---
+sidebar_position: 2
+sidebar_label: "Stap 2: git status"
+title: "Stap 2: kijken wat git ziet met git status"
+hide_table_of_contents: true
+---
+
+import GitSimulator from '@site/src/components/GitSimulator';
+
+# Stap 2: kijken wat git ziet met `git status`
+
+`git status` is je meest gebruikte commando. Het vertelt je welke bestanden veranderd zijn, welke al klaarliggen voor een commit, en welke git nog niet kent.
+
+Een nieuw bestand dat git nog niet kent heet **untracked** (niet-gevolgd).
+
+```bash
+git status
+```
+
+<GitSimulator
+  scenarioId="stap-2-status"
+  initialFiles={{'hello.txt': 'Hallo wereld!\n'}}
+  objective={{
+    description: 'Voer eerst git init uit en daarna git status. Je zou hello.txt als niet-gevolgd moeten zien.',
+    check: (s) => s.initialized && s.commands.some((c) => c.trim() === 'git status'),
+  }}
+/>

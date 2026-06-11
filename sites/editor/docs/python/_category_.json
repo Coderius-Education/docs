@@ -1,0 +1,5 @@
+{
+  "label": "Python in VS Code",
+  "position": 3,
+  "link": { "type": "doc", "id": "python/index" }
+}

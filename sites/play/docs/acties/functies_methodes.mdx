@@ -1,0 +1,101 @@
+---
+sidebar_position: 2
+hide_table_of_contents: true
+---
+
+# 3.2 Zijn acties functies?
+
+:::info Wat moet je al weten
+- [3.1 Wat is een actie?](/docs/acties) - acties op een vorm uitvoeren
+:::
+
+Nu zul je denken, zijn acties niet gewoon hetzelfde als de functies die we eerder gezien hebben?
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle(x=-100)
+blok = play.new_box(x=100)
+
+afstand = cirkel.distance_to(blok)`} height={300} />
+
+Oftewel, is **distance_to()** niet gewoon een functie? Het antwoord is: ja en nee.
+
+## Voorbeeld van een Python functie:
+Het doel van een functie is om een aantal Python-commando's te bundelen, zodat je niet elke keer dezelfde regels code hoeft te typen:
+
+<PygbagRunner code={`def happy_birthday(name):
+    print("Happy birthday to you!")
+    print("Happy birthday to you!")
+    print("Happy birthday, dear " + name + ".")
+    print("Happy birthday to you!")
+
+happy_birthday("Rachab")`} height={200} />
+
+Kijk in het **console-paneel** onder het scherm — daar zie je de uitvoer van `print()`.
+
+Een vraag: hoeveel regels code komen erbij als je ook "Happy birthday" willen zingen voor de tweelingzus Rachel?
+
+<details>
+    <summary>Klik hier voor het antwoord</summary>
+
+Slechts één! De functie wordt maar één keer gedefinieerd. Daarna heb je iedere keer maar één regel code nodig om de functie aan te roepen.
+
+<PygbagRunner code={`def happy_birthday(name):
+    print("Happy birthday to you!")
+    print("Happy birthday to you!")
+    print("Happy birthday, dear " + name + ".")
+    print("Happy birthday to you!")
+
+happy_birthday("Rachab")
+happy_birthday("Rachel")`} height={200} />
+
+</details>
+
+## En een methode?
+Wat we veel gebruiken in coderius-play is een functie, maar die is dan vastgeplakt aan bijvoorbeeld een vorm. Dit noemen we een methode:
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle(x=-100)
+blok = play.new_box(x=100)
+
+afstand = cirkel.distance_to(blok)`} height={300} />
+
+In dit voorbeeld zit de methode **distance_to()** vast aan het **cirkel**-object. Wanneer we **cirkel.distance_to(blok)** uitvoeren, weet Python dat de afstand specifiek vanaf deze ene cirkel moet worden berekend.
+
+## Opdracht 3.2.a: Functie of methode?
+
+Hieronder zie je een programma met **vier** verschillende aanroepen. Bekijk de code en probeer voor jezelf te beantwoorden: welke zijn functies en welke zijn methodes?
+
+```python
+import play
+
+cirkel = play.new_circle(x=-100)
+blok = play.new_box(x=100)
+
+afstand = cirkel.distance_to(blok)
+print(afstand)
+willekeurig = play.random_number(1, 10)
+cirkel.hide()
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Kijk goed naar de punt (`.`). Wat staat er *vóór* de punt, en wat *erna*?
+
+</details>
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+- **`play.new_circle(x=-100)`** — functie van de `play`-bibliotheek
+- **`play.new_box(x=100)`** — functie van de `play`-bibliotheek
+- **`cirkel.distance_to(blok)`** — methode, vastgeplakt aan het `cirkel`-object
+- **`print(afstand)`** — functie (een ingebouwde Python-functie, geen punt ervoor)
+- **`play.random_number(1, 10)`** — functie van de `play`-bibliotheek
+- **`cirkel.hide()`** — methode, vastgeplakt aan het `cirkel`-object
+
+Een vuistregel: staat er een variabele (zoals `cirkel`) gevolgd door een punt, dan is het een **methode**. Staat er alleen `play.` of een woord op zichzelf, dan is het een **functie**.
+
+</details>

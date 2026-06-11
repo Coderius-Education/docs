@@ -1,0 +1,105 @@
+---
+sidebar_position: 9
+hide_table_of_contents: true
+---
+
+# 6.9 Aanpassen — tel het aantal swaps
+
+**Leerdoel:** je past bubble sort aan zodat hij naast de gesorteerde lijst
+ook **het aantal swaps** returnt.
+
+## Opdracht
+
+Schrijf `bubble_sort_met_swaps(lijst)` die een **tuple** returnt
+`(gesorteerde_lijst, aantal_swaps)`.
+
+- `bubble_sort_met_swaps([1, 2, 3])` → `([1, 2, 3], 0)`
+- `bubble_sort_met_swaps([3, 2, 1])` → `([1, 2, 3], 3)`
+- `bubble_sort_met_swaps([3, 1, 4, 1, 5])` → `([1, 1, 3, 4, 5], 3)`
+
+<PyRunner initialCode={`def bubble_sort_met_swaps(lijst):
+    n = len(lijst)
+    # vul aan: tel hoeveel swaps er gebeuren
+    for ronde in range(n - 1):
+        geswapt = False
+        for i in range(n - 1 - ronde):
+            if lijst[i] > lijst[i + 1]:
+                lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+                geswapt = True
+        if not geswapt:
+            break
+    return lijst, 0   # pas dit aan
+
+# Tests
+print(bubble_sort_met_swaps([1, 2, 3]))           # ([1, 2, 3], 0)
+print(bubble_sort_met_swaps([3, 2, 1]))           # ([1, 2, 3], 3)
+print(bubble_sort_met_swaps([3, 1, 4, 1, 5]))     # ([1, 1, 3, 4, 5], 3)`} />
+
+<details>
+<summary>Tip</summary>
+
+Initialiseer `swaps = 0` **vóór** de buitenste lus. Hoog `swaps` op met
+**1** bij elke swap. Return de lijst én `swaps` als tuple.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def bubble_sort_met_swaps(lijst):
+    n = len(lijst)
+    swaps = 0
+    for ronde in range(n - 1):
+        geswapt = False
+        for i in range(n - 1 - ronde):
+            if lijst[i] > lijst[i + 1]:
+                lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+                geswapt = True
+                swaps += 1
+        if not geswapt:
+            break
+    return lijst, swaps
+```
+
+</details>
+
+## Inversies — een wiskundig leuk feitje
+
+Het aantal swaps dat bubble sort doet, is **precies** gelijk aan het
+aantal **inversies** in de lijst — paren `(i, j)` met `i < j` maar
+`lijst[i] > lijst[j]`.
+
+Voor `[3, 1, 2]`:
+- (3, 1): 3 > 1 → inversie
+- (3, 2): 3 > 2 → inversie
+- (1, 2): 1 > 2 → niet
+
+Twee inversies → twee swaps. Klopt!
+
+Het idee: elke swap herstelt precies één inversie (twee buren die fout
+stonden). Daarom is het aantal swaps gelijk aan het aantal inversies.
+
+<details>
+<summary>Verifieer dit zelf</summary>
+
+```python
+def aantal_inversies(lijst):
+    n = len(lijst)
+    inv = 0
+    for i in range(n):
+        for j in range(i + 1, n):
+            if lijst[i] > lijst[j]:
+                inv += 1
+    return inv
+
+lijst = [3, 1, 4, 1, 5, 9, 2, 6]
+print("inversies:", aantal_inversies(lijst.copy()))
+print("bubble sort swaps:", bubble_sort_met_swaps(lijst.copy())[1])
+```
+
+Beide getallen zouden gelijk moeten zijn.
+
+</details>
+
+Door naar [stap 10: bouw zelf](./10-zelf-bouwen).

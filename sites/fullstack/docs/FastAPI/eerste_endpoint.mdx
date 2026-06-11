@@ -1,0 +1,187 @@
+---
+sidebar_position: 2
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Je eerste endpoint
+
+In deze les maak je je eerste FastAPI endpoint. Een endpoint is een URL waarop je server reageert.
+
+## main.py aanmaken
+
+Maak een bestand `main.py` in je project:
+
+```python
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+async def root():
+    return {"bericht": "Hallo wereld!"}
+```
+
+### Wat doet deze code?
+
+- `FastAPI()` - Maakt een nieuwe app
+- `@app.get("/")` - Reageert op de URL `/`
+- `return {"bericht": "..."}` - Stuurt JSON data terug
+
+## Server starten
+
+Start je server in de terminal:
+
+```bash
+fastapi dev main.py
+```
+
+Ga naar [http://127.0.0.1:8000](http://127.0.0.1:8000) in je browser. Je ziet:
+
+```json
+{"bericht": "Hallo wereld!"}
+```
+
+:::tip Wijzigingen niet zichtbaar?
+Je browser slaat pagina's op (caching). Als je iets aanpast en het verandert niet, druk dan op **Ctrl+Shift+R** om de pagina te herladen zonder cache.
+:::
+
+## Meerdere endpoints
+
+Je kunt meerdere endpoints toevoegen:
+
+```python
+@app.get("/info")
+async def info():
+    return {"naam": "Jouw Naam", "leeftijd": 16}
+```
+
+Ga naar [http://127.0.0.1:8000/info](http://127.0.0.1:8000/info) om dit te testen.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Wat zie je?
+
+```python
+@app.get("/school")
+async def school():
+    return {"school": "Corderius", "vak": "Informatica"}
+```
+
+**Vraag:** Wat zie je als je naar `/school` gaat?
+
+<details>
+<summary>Tip</summary>
+
+Let op: de functie returnt een Python dictionary. Wat doet FastAPI standaard met een dictionary?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```json
+{"school": "Corderius", "vak": "Informatica"}
+```
+
+FastAPI zet de dictionary automatisch om naar JSON.
+
+</details>
+
+### Opdracht 2: Run
+
+Voer de code hierboven uit. Voeg het `/school` endpoint toe aan je `main.py`, start de server, en ga naar `http://127.0.0.1:8000/school`. Zie je dezelfde output als het antwoord hierboven?
+
+### Opdracht 3: Investigate - Dubbele URL
+
+Wat gebeurt er als je twee endpoints met dezelfde URL maakt?
+
+```python
+@app.get("/test")
+async def test1():
+    return {"bericht": "Eerste"}
+
+@app.get("/test")
+async def test2():
+    return {"bericht": "Tweede"}
+```
+
+Probeer het uit! Welke van de twee zie je?
+
+<details>
+<summary>Antwoord</summary>
+
+Je ziet `{"bericht": "Eerste"}`. FastAPI gebruikt het **eerste** endpoint dat matcht. Het tweede wordt genegeerd.
+
+</details>
+
+### Opdracht 4: Make - Eigen endpoint
+
+Maak een endpoint `/hobby` dat jouw favoriete hobby teruggeeft als JSON.
+
+<details>
+<summary>Tip</summary>
+
+Je hebt een `@app.get("/hobby")` nodig met een functie die een dictionary returnt, bijvoorbeeld `{"hobby": "voetbal"}`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+@app.get("/hobby")
+async def hobby():
+    return {"hobby": "voetbal"}
+```
+
+</details>
+
+### Opdracht 5: Make - Meerdere endpoints
+
+Maak drie endpoints: `/eten`, `/muziek`, en `/game` die elk jouw favorieten teruggeven.
+
+<details>
+<summary>Tip</summary>
+
+Maak voor elk endpoint een aparte functie met `@app.get(...)`. Elke functie heeft een unieke naam nodig.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+@app.get("/eten")
+async def eten():
+    return {"eten": "pizza"}
+
+@app.get("/muziek")
+async def muziek():
+    return {"muziek": "pop"}
+
+@app.get("/game")
+async def game():
+    return {"game": "Minecraft"}
+```
+
+</details>
+
+## Oefen met Python
+
+:::info Python oefenblok
+Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
+:::
+
+<CodeExercise>
+{`# Python dictionaries — de basis van JSON
+school_info = {"school": "Corderius", "vak": "Informatica"}
+
+# Waarden ophalen
+print(school_info["school"])
+print(school_info["vak"])
+
+# Nieuw veld toevoegen
+school_info["docent"] = "Meneer de Vries"
+print(school_info)`}
+</CodeExercise>

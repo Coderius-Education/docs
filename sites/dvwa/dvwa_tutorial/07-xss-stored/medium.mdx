@@ -1,0 +1,85 @@
+---
+sidebar_position: 2
+sidebar_label: 'Medium'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# XSS (Stored) — Medium
+
+De ontwikkelaar heeft gemerkt dat het berichtveld wordt misbruikt en voegt een filter toe.
+
+## 1. Predict (Voorspel)
+
+De code op de backend is deels aangepast:
+
+```php
+$message = strip_tags( addslashes( $_POST['txtMessage'] ) );
+$name = str_replace( '<script>', '', $_POST['txtName'] );
+```
+
+**Vraag:** Het bericht (message) is nu muurvast beveiligd met `strip_tags()` (haalt alle HTML weg). Maar zie je een zwakte in de beveiliging van het `$name`-veld?
+
+<details>
+
+<summary>Antwoord</summary>
+
+De variabele `$name` wordt wél nog met XSS-kwetsbare functies behandeld! De `str_replace` haalt alleen exacte `<script>`-tags weg. Dit lek zagen we eerder bij Reflected XSS: we kunnen dit eenvoudig omzeilen met hoofdletters of andere HTML-tags!
+
+</details>
+
+## 2. Run (Uitvoeren)
+
+Start het lab en bekijk het gastenboek.
+
+<DvwaLab module="xss_stored" level="medium" />
+
+Vul een onschuldige naam en een normaal bericht in. Klik op Submit en observeer dat het bericht netjes verschijnt.
+
+## 3. Investigate (Onderzoeken)
+
+Probeer `<script>alert(1);</script>` in het **Name**-veld te typen. Let op wat er tijdens het typen al gebeurt.
+
+**Vraag:** Wat valt je op? Kun je meer dan 10 tekens typen? Wat onthult dit over de beveiliging?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Je kunt maximaal 10 tekens typen — er zit een `maxlength="10"`-attribuut op het invoerveld. Dit is een client-side beperking in de HTML. De server heeft ook een filter op `<script>` in kleine letters. Dit onthult twee zwaktes: (1) de `maxlength` zit in de HTML en is via F12 te verwijderen, en (2) het filter is hoofdlettergevoelig.
+
+</details>
+
+## 4. Modify & Make (Aanpassen & Maken)
+
+Breek door de `maxlength`-beperking heen en injecteer je payload via het Name-veld.
+
+<details>
+
+<summary>Tip</summary>
+
+Client-side beveiligingen kunnen worden uitgeschakeld. Gebruik F12 (Developer Tools) om de eigenschappen van het HTML-invoerveld te wijzigen.
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+1. Druk op F12. Inspecteer het veld "Name".
+2. Verander de code `maxlength="10"` naar `maxlength="100"`.
+3. Typ nu je XSS-payload in het Name-veld: `<SCRIPT>alert(1);</SCRIPT>`.
+4. Typ een willekeurig bericht en klik Submit. De pop-up verschijnt!
+
+</details>
+
+## 5. ✓ Wat moest je zien?
+
+:::tip Controle
+- Na het aanpassen van `maxlength` naar `100` kun je de volledige payload typen.
+- `<SCRIPT>alert(1);</SCRIPT>` triggert een **pop-up** — het filter laat het door.
+- Na een paginaverversing verschijnt de pop-up opnieuw — het is opgeslagen.
+
+Lukt het niet? Controleer of je het juiste HTML-element hebt aangepast (het `<input name="txtName">` veld, niet het berichtveld).
+:::

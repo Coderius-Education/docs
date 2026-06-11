@@ -1,0 +1,57 @@
+---
+sidebar_position: 4
+sidebar_label: 'Impossible'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# XSS (DOM) — Impossible
+
+Hoe beveilig je een frontend tegen dit soort lokale DOM-manipulaties?
+
+## 1. Predict (Voorspel)
+
+De server hoeft hiervoor helemaal niets te doen! De oplossing zit verborgen in de manier waarop we de tekst op het scherm "tekenen" via JavaScript in plaats van het aan de HTML vast te knopen.
+
+In plaats van: `document.write(lang)`
+Doen ontwikkelaars nu dit:
+```javascript
+const element = document.getElementById("taalDropdown");
+element.textContent = lang; // Of .innerText
+```
+
+**Vraag:** Waarom zijn `.textContent` of vergelijkbare eigenschappen immuun voor DOM XSS?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Wanneer je `document.write` of `.innerHTML` gebruikt, zegt de browser: "Ik ga deze tekst ontleden en opbouwen alsof het HTML is." Als daar `<script>` in zit, wekt hij dat tot leven.
+Gebruik je `.textContent` of `.innerText`, dan zegt de browser: "Dit is uitsluitend platte letter-tekst." Een script-tag wordt dan letterlijk als platte tekst op het scherm gezet en absoluut genegeerd door de parser!
+
+</details>
+
+## 2. Run & Investigate
+
+Start het lab en probeer alle eerdere aanvallen.
+
+<DvwaLab module="xss_dom" level="impossible" />
+
+Probeer de hash-truc en de dropdown-escape-truc. Observeer dat alle payloads als platte tekst op het scherm verschijnen.
+
+## 3. ✓ Wat moest je zien?
+
+:::tip Controle
+- Elke payload (inclusief `<script>alert(1)</script>`) verschijnt als **letterlijke tekst** — geen pop-up.
+- De browser behandelt alle invoer als platte tekst, niet als HTML-code.
+- Ook de hash-truc heeft geen effect meer.
+
+Zie je toch een pop-up? Controleer of het security level correct op **impossible** staat.
+:::
+
+**DOM XSS is uniek:** De aanval bereikt de backend-server vaak niet eens (zeker als je de `#`-hash-truc gebruikt).
+
+**Backend-filters zijn zinloos:** Een firewall of server-side check heeft geen enkele waarde als de kwaadaardige code rechtstreeks in de browser van de gebruiker rondzwerft.
+
+**Gebruik veilige JS-functies:** Vermijd het gebruik van `document.write()`, `.innerHTML` en `eval()`. Gebruik altijd data-binders (zoals React gebruikt) of `.textContent`!

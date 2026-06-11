@@ -1,0 +1,107 @@
+---
+sidebar_position: 2
+hide_table_of_contents: true
+---
+
+# 3.2 Stellingen — toets je begrip
+
+**Leerdoel:** je toetst of je het idee van *meerdere accumulators in één
+pass* snapt.
+
+## Stelling 1
+
+*"Eerst het maximum vinden en daarna het minimum is sneller dan beide
+tegelijk."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Onjuist.** Twee aparte passes lezen elk element **twee keer** — dat is
+*meer* werk. Eén pass leest elk element één keer, met twee vergelijkingen
+per element. In totaal minder werk.
+
+(Je doet wel ongeveer hetzelfde aantal *vergelijkingen* — `2n` in beide
+gevallen. Het winstpunt zit in de *leestijd* — bij grote data scheelt dat.)
+
+</details>
+
+## Stelling 2
+
+*"Voor het max-én-min-algoritme heb je twee aparte for-lussen nodig."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Onjuist.** Dat is juist het hele punt: **één** for-lus, twee
+accumulators. Twee lussen → twee passes → terug bij aanpak A.
+
+</details>
+
+## Stelling 3
+
+*"Beide accumulators moeten dezelfde startwaarde hebben."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Juist.** Allebei beginnen op `lijst[0]`. Hierdoor weten we zeker dat
+beide startwaardes echt voorkomen in de lijst — geen negatieve-getal-bug.
+
+Bij `klein = lijst[0]` en `groot = lijst[0]` zijn de eerste paar
+vergelijkingen meteen geldig.
+
+</details>
+
+## Stelling 4
+
+*"Bij een lijst van één element zijn `klein` en `groot` gelijk."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Juist.** Beide beginnen op `lijst[0]`. De for-lus doet één iteratie en
+vergelijkt `lijst[0]` met zichzelf — niet groter, niet kleiner → geen
+update. Resultaat: `klein == groot == lijst[0]`.
+
+</details>
+
+## Stelling 5
+
+*"Als je `if … elif …` gebruikt in plaats van twee aparte `if`'s, kun je
+soms een waarde missen die kleiner én groter is."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Onjuist.** Eén getal kan **niet tegelijk** groter zijn dan de huidige
+`groot` én kleiner dan de huidige `klein`. Want: `groot >= klein` (na
+initialisatie), dus als `x > groot` dan zeker `x > klein` (en dus niet
+`x < klein`). De `elif` is dus veilig.
+
+Het scheelt zelfs een vergelijking per element: na een geslaagde
+update-`groot` slaan we de check-`klein` over.
+
+</details>
+
+## Stelling 6
+
+*"Tuples zoals `(klein, groot)` kun je niet uit een functie returnen."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Onjuist.** Python ondersteunt **meerdere return-waarden** als tuple:
+
+```python
+return klein, groot          # of: return (klein, groot)
+```
+
+Aan de andere kant uitpakken:
+
+```python
+k, g = max_en_min(lijst)
+```
+
+</details>
+
+Door naar [stap 3: we bouwen het op](./03-bouwen-twee-variabelen).

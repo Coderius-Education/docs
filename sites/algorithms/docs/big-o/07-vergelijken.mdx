@@ -1,0 +1,155 @@
+---
+sidebar_position: 7
+hide_table_of_contents: true
+---
+
+# 7.7 Vergelijk de klassen
+
+**Leerdoel:** je ziet alle vier complexiteits-klassen **tegelijk** in
+één grafiek, en begrijpt waarom de verschillen bij grote `n` dramatisch
+worden.
+
+## Wat we gaan doen
+
+We zetten de **theoretische** groei-curves van O(1), O(log n), O(n) en
+O(n²) naast elkaar. Geen echte algoritmes — alleen de formules. Zo zie
+je de **vorm** van elke klasse zonder dat ruis (constanten, opstarttijd)
+de boel vertroebelt.
+
+## Voorspel
+
+Welke klasse, denk je, blijft het langst beheersbaar bij grote `n`?
+
+<details>
+<summary>Antwoord</summary>
+
+**O(1)**, gevolgd door **O(log n)**.
+
+O(1) is per definitie vlak — het maakt niet uit hoe groot `n` wordt.
+O(log n) groeit zó traag dat zelfs een miljard elementen maar 30 stappen
+kost.
+
+O(n) is "fair" — werk schaalt mee. O(n²) loopt vroeg of laat **vast** —
+bij `n = 10.000` zit je al op 100 miljoen stappen.
+
+</details>
+
+## Run — alle klassen tegelijk
+
+<PyRunner initialCode={`import matplotlib.pyplot as plt
+import math
+
+n_waarden = [10, 100, 1000, 10000, 100000]
+
+def stappen_O1(n):
+    return 1
+
+def stappen_log_n(n):
+    return math.log2(n)
+
+def stappen_n(n):
+    return n
+
+def stappen_n2(n):
+    return n * n
+
+klassen = [
+    ('O(1)',     stappen_O1),
+    ('O(log n)', stappen_log_n),
+    ('O(n)',     stappen_n),
+    ('O(n²)',    stappen_n2),
+]
+
+print(f"{'n':<10} {'O(1)':<8} {'O(log n)':<10} {'O(n)':<12} {'O(n²)':<14}")
+for n in n_waarden:
+    rij = f"{n:<10} "
+    for _, fn in klassen:
+        rij += f"{fn(n):<10.0f}".ljust(12)
+    print(rij)
+
+fig, ax = plt.subplots()
+for naam, fn in klassen:
+    ax.plot(n_waarden, [fn(n) for n in n_waarden], marker='o', label=naam)
+ax.set_xscale('log')
+ax.set_yscale('log')
+ax.set_xlabel('lijstgrootte n (log-schaal)')
+ax.set_ylabel('aantal stappen (log-schaal)')
+ax.set_title('Vier complexiteits-klassen vergeleken')
+ax.legend()
+ax.grid(True, which='both', linestyle=':')
+plt.show()`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+Op **log-log assen** (beide assen logaritmisch) zijn de klassen rechte
+lijnen met verschillende **hellingen**:
+
+- **O(1)** — horizontale lijn op 1.
+- **O(log n)** — lijn met heel kleine helling. Groeit nauwelijks.
+- **O(n)** — lijn met helling **1**: verdubbel `n`, verdubbel stappen.
+- **O(n²)** — lijn met helling **2**: verdubbel `n`, verviervoudig
+  stappen.
+
+De helling op log-log assen verraadt direct de **klasse**: hoe steiler,
+hoe slechter het schaalt.
+
+Bij `n = 100.000`:
+- O(1) → 1 stap
+- O(log n) → 17 stappen
+- O(n) → 100.000 stappen
+- O(n²) → 10.000.000.000 stappen (10 miljard!)
+
+</details>
+
+## Op een lineaire schaal
+
+Soms is de log-log plot lastig om aan te voelen. Hier dezelfde curves op
+gewone (lineaire) assen, met een kleinere `n`-range:
+
+<PyRunner initialCode={`import matplotlib.pyplot as plt
+import math
+
+n_waarden = list(range(1, 51))
+
+def stappen_O1(n):       return 1
+def stappen_log_n(n):    return math.log2(n) if n > 0 else 0
+def stappen_n(n):        return n
+def stappen_n2(n):       return n * n
+
+klassen = [
+    ('O(1)',     stappen_O1),
+    ('O(log n)', stappen_log_n),
+    ('O(n)',     stappen_n),
+    ('O(n²)',    stappen_n2),
+]
+
+fig, ax = plt.subplots()
+for naam, fn in klassen:
+    ax.plot(n_waarden, [fn(n) for n in n_waarden], label=naam)
+ax.set_xlabel('lijstgrootte n')
+ax.set_ylabel('aantal stappen')
+ax.set_title('Lineaire schaal — n tot 50')
+ax.legend()
+ax.grid(True, linestyle=':')
+plt.show()`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+O(n²) gaat door het dak terwijl O(1), O(log n) en O(n) nog dicht bij
+elkaar lopen. De pijnlijke realiteit van kwadratische algoritmes: voor
+kleine `n` lijken ze prima, voor grote `n` zijn ze niet meer te
+gebruiken.
+
+</details>
+
+## De vuistregel
+
+> **Welke klasse je hebt, bepaalt of je algoritme schaalt — niet hoe
+> snel je code is.**
+
+Een goed-geschreven O(n²) is nog steeds trager dan een slordig-geschreven
+O(n) zodra `n` groot genoeg wordt. **Klasse > constanten**.
+
+Door naar [stap 8: overzicht per algoritme →](./08-overzicht).

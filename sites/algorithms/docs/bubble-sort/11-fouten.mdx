@@ -1,0 +1,104 @@
+---
+sidebar_position: 11
+hide_table_of_contents: true
+---
+
+# 6.11 Er gaat iets mis — top-3 fouten
+
+**Leerdoel:** je herkent de klassieke valkuilen van bubble sort.
+
+## IndexError: `range(len(lijst))` zonder `- 1`
+
+```
+IndexError: list index out of range
+```
+
+**Oorzaak:** bij de laatste iteratie is `i = n - 1` → `lijst[i + 1] =
+lijst[n]` → bestaat niet → `IndexError`.
+
+**Oplossing:** gebruik `range(n - 1)`. Bij paarsgewijze vergelijkingen
+(`lijst[i]` met `lijst[i + 1]`) is de laatste geldige `i` altijd één
+minder dan de lijst-lengte.
+
+```python
+# FOUT
+def bubble_sort_fout(lijst):
+    n = len(lijst)
+    for ronde in range(n - 1):
+        for i in range(n):                # te ver!
+            if lijst[i] > lijst[i + 1]:   # crash bij i = n - 1
+                lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+    return lijst
+
+# GOED
+for i in range(n - 1):                    # nu loopt i tot n - 2
+    ...
+```
+
+Meer uitleg: [Bouwsteen 3 — één pass](./05-bouwen-een-pass).
+
+## SyntaxError: `=` in plaats van `==`
+
+```
+SyntaxError: invalid syntax
+```
+
+**Oorzaak:** `=` is **toekenning**, niet vergelijken. In een `if`-conditie
+heb je een vergelijking nodig: `==`, `<`, `>`, etc.
+
+**Oplossing:** gebruik een vergelijking. Voor bubble sort gebruiken we
+trouwens niet `==` maar `>` — want we willen weten of het paar **fout**
+staat.
+
+```python
+# FOUT
+if lijst[i] = lijst[i + 1]:
+    ...
+
+# GOED
+if lijst[i] > lijst[i + 1]:
+    ...
+```
+
+Onthouden: één `=` is toekennen, twee `==` is vergelijken.
+
+## `geswapt` op de verkeerde plek initialiseren
+
+Geen Python-foutmelding — wel een **logische** fout: de early-exit werkt
+niet of werkt verkeerd.
+
+**Oorzaak:** `geswapt` wordt **één keer** geïnitialiseerd op `False`, en
+daarna **nooit meer gereset**. Zodra er één swap gebeurt, blijft
+`geswapt = True` voor **alle** verdere rondes. De early-exit gaat dan
+nooit meer af.
+
+**Oplossing:** zet `geswapt = False` **binnen** de buitenste lus, aan het
+begin van elke pass. Algemener: bij elke pass die "iets nieuws" moet
+detecteren, hoort de vlag op `False` aan het begin van die pass.
+
+```python
+# FOUT
+def bubble_sort_fout(lijst):
+    n = len(lijst)
+    geswapt = False                       # VOOR de buitenste lus
+    for ronde in range(n - 1):
+        for i in range(n - 1 - ronde):
+            if lijst[i] > lijst[i + 1]:
+                lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+                geswapt = True
+        if not geswapt:
+            break
+    return lijst
+
+# GOED
+for ronde in range(n - 1):
+    geswapt = False                       # elke pass opnieuw op False
+    for i in range(n - 1 - ronde):
+        if lijst[i] > lijst[i + 1]:
+            lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+            geswapt = True
+    if not geswapt:
+        break
+```
+
+Door naar [stap 12: cheatsheet](./12-cheatsheet).

@@ -1,0 +1,188 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeEditor from '@site/src/components/CodeEditor';
+
+# Tekst opmaken met CSS
+
+## Wat ga je leren?
+
+Je leert wat CSS is en hoe je de kleur, grootte en het lettertype van tekst aanpast. Dit is de eerste les waarin je de **style.css** tab gebruikt.
+
+## Theorie
+
+CSS staat voor **Cascading Style Sheets**. Met CSS bepaal je hoe HTML eruitziet: kleuren, lettertypen, groottes en meer.
+
+Je schrijft CSS in een apart bestand (`style.css`) en koppelt het aan je HTML met een `<link>` tag in de `<head>`:
+
+```html
+<link rel="stylesheet" href="style.css">
+```
+
+:::note Let op
+`<link>` is **geen** klikbare link voor de bezoeker — het koppelt alleen je CSS-bestand aan de pagina. Klikbare links (waar je echt naartoe kunt) leer je in [Pagina's koppelen](/docs/html-css/paginas-koppelen).
+:::
+
+Een CSS-regel ziet er zo uit:
+
+```css
+h1 {
+  color: darkblue;
+  font-size: 2rem;
+}
+```
+
+- `h1` is de **selector** — welk element wordt gestijld
+- `color` en `font-size` zijn **eigenschappen**
+- `darkblue` en `2rem` zijn de **waarden**
+
+:::info Wat is `rem`?
+`2rem` betekent "2 keer de basisgrootte van de pagina" — meestal 32px. Het volledige verschil tussen `px`, `rem`, `em` en `%` leer je in [Eenheden in CSS](/docs/html-css/eenheden). Voor nu: weet dat hogere waarden grotere tekst geven.
+:::
+
+### Notities in je CSS: comments
+
+Net als in HTML kun je in CSS notities maken die niet zichtbaar zijn op de pagina. Een CSS-comment staat tussen `/*` en `*/`:
+
+```css
+/* Dit is een comment in CSS. Handig om jezelf te herinneren wat een regel doet. */
+h1 {
+  color: red;
+}
+```
+
+### Handige eigenschappen voor tekst
+
+| Eigenschap | Wat het doet | Voorbeeld |
+|---|---|---|
+| `color` | Tekstkleur | `color: red;` |
+| `font-size` | Tekstgrootte | `font-size: 1.5rem;` |
+| `font-family` | Lettertype | `font-family: Arial;` |
+
+## Predict
+
+Wat denk je dat er verandert als je `color: darkblue` verwijdert uit de CSS?
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+De kop krijgt zijn standaardkleur terug — in de meeste browsers is dat zwart. Zonder een `color` eigenschap gebruikt de browser de standaardstijl.
+
+</details>
+
+## Probeer het zelf!
+
+Let op: de CSS schrijf je in de **style.css** tab!
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Tekst opmaken</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Mijn website</h1>
+  <p>Dit is een paragraaf met tekst.</p>
+  <p>En nog een paragraaf.</p>
+</body>
+</html>`}
+  initialCss={`h1 {
+  color: darkblue;
+  font-size: 2rem;
+}
+
+p {
+  color: gray;
+  font-family: Arial, sans-serif;
+  font-size: 1rem;
+}`}
+  height="480px"
+/>
+
+## Investigate
+
+Experimenteer met de CSS:
+
+- Wat gebeurt er als je `color: darkblue` verandert in `color: tomato`?
+- Probeer `font-size: 3rem` — wat verandert er?
+- Wat doet `font-family: Georgia`?
+
+## Modify
+
+**Opdracht:** Verander de stijl zodat de kop rood is en de paragraaftekst groter is (`1.5rem`).
+
+<details>
+<summary>Tip</summary>
+
+Pas de waarden aan in de **style.css** tab. Verander `color:` bij `h1` en `font-size:` bij `p`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```css
+h1 {
+  color: red;
+  font-size: 2rem;
+}
+
+p {
+  color: gray;
+  font-family: Arial, sans-serif;
+  font-size: 1.5rem;
+}
+```
+
+</details>
+
+## Make
+
+**Opdracht:** Schrijf een kort gedicht of een quote met een titel. Gebruik CSS om de kop een andere kleur en groter lettertype te geven, en de paragraaftekst een eigen stijl.
+
+<details>
+<summary>Tip</summary>
+
+Je navigeert naar de **style.css** tab en selecteert het element met de HTML-tag naam (bijv. `h1` en `p`).
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<!-- HTML -->
+<h1>Mijn favoriete quote</h1>
+<p>Waar een wil is, is een weg.</p>
+```
+
+```css
+/* CSS */
+h1 {
+  color: purple;
+  font-size: 2.5rem;
+}
+
+p {
+  color: darkgreen;
+  font-family: Arial, sans-serif;
+  font-size: 1.2rem;
+}
+```
+
+</details>
+
+## Er gaat iets mis
+
+**`<link>` tag vergeten**
+
+Als je de CSS schrijft maar de `<link>` tag vergeet in de HTML, zie je geen enkel verschil in de preview. De browser laadt de CSS gewoon niet.
+
+Controleer altijd of je dit in de `<head>` hebt staan:
+
+```html
+<link rel="stylesheet" href="style.css">
+```

@@ -1,0 +1,101 @@
+---
+sidebar_position: 8
+hide_table_of_contents: true
+---
+
+# 9.8 Bouwsteen 3 — `actions(bord)`
+
+**Leerdoel:** je geeft alle mogelijke zetten op een bord terug: alle
+lege cellen als `(rij, kolom)` tuples.
+
+## Wat doet deze functie?
+
+Voor minimax moet je weten welke zetten er **überhaupt** mogelijk zijn
+op een bord. Dat zijn precies de cellen die nog leeg (`None`) zijn.
+
+We returnen die als een **set** van tuples. Set, omdat de volgorde er
+niet toe doet — alle lege cellen tellen even zwaar.
+
+## Specificatie
+
+- **Input**: een `bord`.
+- **Output**: een `set` van `(i, j)` tuples voor alle cellen waar
+  `bord[i][j] is None`.
+- **Voorbeelden**:
+  - Leeg bord → set van 9 tuples: `{(0,0), (0,1), ..., (2,2)}`.
+  - Bord met 1 zet → set van 8 tuples.
+  - Vol bord → lege set: `set()`.
+
+## Voorspel
+
+Wat denk je dat de output is?
+
+```python
+bord = [["X", None, "X"],
+        ["O", "X", "O"],
+        [None, None, None]]
+
+# Welke cellen zijn None?
+```
+
+<details>
+<summary>Antwoord</summary>
+
+`{(0, 1), (2, 0), (2, 1), (2, 2)}` — vier lege cellen.
+
+Volgorde maakt niet uit; een set is ongeordend.
+
+</details>
+
+## Bouw zelf en test
+
+<PyRunner initialCode={`def actions(bord):
+    # Vul aan:
+    # 1. maak een lege set
+    # 2. loop over i en j
+    # 3. als bord[i][j] is None: voeg (i, j) toe
+    # 4. return de set
+    return set()
+
+
+# === Tests ===
+leeg = [[None]*3, [None]*3, [None]*3]
+assert len(actions(leeg)) == 9, "Leeg bord heeft 9 mogelijke zetten"
+assert (0, 0) in actions(leeg)
+assert (2, 2) in actions(leeg)
+
+bord = [["X", None, "X"],
+        ["O", "X", "O"],
+        [None, None, None]]
+assert actions(bord) == {(0, 1), (2, 0), (2, 1), (2, 2)}
+
+vol = [["X", "O", "X"],
+       ["O", "X", "O"],
+       ["X", "O", "X"]]
+assert actions(vol) == set(), "Vol bord -> lege set"
+
+assert isinstance(actions(leeg), set), "Output moet een set zijn, geen lijst"
+
+print("Alle tests gehaald ✓")`} />
+
+<details>
+<summary>Tip</summary>
+
+Twee genestelde lussen en een `set.add`:
+
+```python
+mogelijk = set()
+for i in range(3):
+    for j in range(3):
+        if bord[i][j] is None:
+            mogelijk.add((i, j))
+return mogelijk
+```
+
+Let op de **dubbele haakjes**: `mogelijk.add((i, j))` voegt één tuple
+toe. `mogelijk.add(i, j)` zou Python verwarren — `add` accepteert maar
+één argument.
+
+</details>
+
+Door naar [stap 9: functies in functies →](./09-functies-in-functies).

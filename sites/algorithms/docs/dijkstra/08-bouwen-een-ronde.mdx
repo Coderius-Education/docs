@@ -1,0 +1,197 @@
+---
+sidebar_position: 8
+hide_table_of_contents: true
+---
+
+# 8.8 Bouwsteen 5 — doe één ronde
+
+**Leerdoel:** je combineert *kies volgende* en *relax* tot precies één
+ronde van Dijkstra — zonder herhaling, zonder lus. Eén rij van je
+pen-en-papier-tabel.
+
+## Wat we willen
+
+Eén ronde doet drie dingen, in volgorde:
+
+1. **Kies** de volgende node (laagste afstand onder niet-bezocht).
+2. **Markeer** hem als bezocht.
+3. **Relax** al zijn buren.
+
+```python
+huidige = kies_volgende(afstanden, bezocht)   # stap 1
+bezocht.add(huidige)                           # stap 2
+for buur, gewicht in graph[huidige]:           # stap 3
+    nieuwe = afstanden[huidige] + gewicht
+    if nieuwe < afstanden[buur]:
+        afstanden[buur] = nieuwe
+```
+
+Dat is alles. Geen lus, geen while, geen recursie. Eén ronde.
+
+## Belangrijk: eerst markeren, dan relaxen
+
+Waarom in deze volgorde?
+
+- Als we `bezocht.add(huidige)` **vergeten** of pas later doen, kunnen
+  we hem volgende ronde opnieuw kiezen.
+- Sommige graphs hebben *zelf-edges* (een node verbonden met zichzelf).
+  Door eerst te markeren, voorkomen we dat de relax-stap onnodig naar
+  onszelf kijkt.
+
+## Voorspel
+
+We starten met:
+
+```
+afstanden = {'A': 0, 'B': inf, 'C': inf, 'D': inf}
+bezocht   = {}
+```
+
+Wat denk je dat afstanden en bezocht zijn **na één ronde**?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+afstanden = {'A': 0, 'B': 4, 'C': 2, 'D': inf}
+bezocht   = {'A'}
+```
+
+- Kies = `A` (laagste afstand 0, niemand bezocht).
+- Mark `A` als bezocht.
+- Buren van `A`: `B` met gewicht 4 → update naar 4. `C` met gewicht 2 →
+  update naar 2.
+
+Dit komt exact overeen met **ronde 1** uit je pen-en-papier-tabel.
+
+</details>
+
+## Run — één ronde vanaf de start
+
+<PyRunner initialCode={`def kies_volgende(afstanden, bezocht):
+    beste_node = None
+    kleinste = float('inf')
+    for node, d in afstanden.items():
+        if node in bezocht:
+            continue
+        if d < kleinste:
+            kleinste = d
+            beste_node = node
+    return beste_node
+
+
+graph = {
+    'A': [('B', 4), ('C', 2)],
+    'B': [('A', 4), ('D', 1)],
+    'C': [('A', 2), ('D', 8)],
+    'D': [('B', 1), ('C', 8)],
+}
+
+afstanden = {'A': 0, 'B': float('inf'), 'C': float('inf'), 'D': float('inf')}
+bezocht = set()
+
+# Eén ronde
+huidige = kies_volgende(afstanden, bezocht)
+print(f"Kies: {huidige}")
+
+bezocht.add(huidige)
+print(f"Bezocht: {bezocht}")
+
+for buur, gewicht in graph[huidige]:
+    nieuwe = afstanden[huidige] + gewicht
+    if nieuwe < afstanden[buur]:
+        afstanden[buur] = nieuwe
+        print(f"  update {buur} → {nieuwe}")
+
+print(f"Afstanden: {afstanden}")`} />
+
+<details>
+<summary>Verwachte uitvoer</summary>
+
+```
+Kies: A
+Bezocht: {'A'}
+  update B → 4
+  update C → 2
+Afstanden: {'A': 0, 'B': 4, 'C': 2, 'D': inf}
+```
+
+</details>
+
+## Doe een tweede ronde
+
+Plak hetzelfde blok nog een keer onder de vorige. Bekijk hoe de tabel
+verder evolueert:
+
+<PyRunner initialCode={`def kies_volgende(afstanden, bezocht):
+    beste_node = None
+    kleinste = float('inf')
+    for node, d in afstanden.items():
+        if node in bezocht:
+            continue
+        if d < kleinste:
+            kleinste = d
+            beste_node = node
+    return beste_node
+
+
+graph = {
+    'A': [('B', 4), ('C', 2)],
+    'B': [('A', 4), ('D', 1)],
+    'C': [('A', 2), ('D', 8)],
+    'D': [('B', 1), ('C', 8)],
+}
+
+afstanden = {'A': 0, 'B': float('inf'), 'C': float('inf'), 'D': float('inf')}
+bezocht = set()
+
+def ronde():
+    huidige = kies_volgende(afstanden, bezocht)
+    print(f"\\nRonde — kies {huidige}")
+    bezocht.add(huidige)
+    for buur, gewicht in graph[huidige]:
+        nieuwe = afstanden[huidige] + gewicht
+        if nieuwe < afstanden[buur]:
+            afstanden[buur] = nieuwe
+            print(f"  update {buur} → {nieuwe}")
+    print(f"  afstanden: {afstanden}")
+
+# Vier keer hetzelfde — eens kijken hoe ver we komen
+ronde()
+ronde()
+ronde()
+ronde()`} />
+
+<details>
+<summary>Verwachte uitvoer</summary>
+
+```
+Ronde — kies A
+  update B → 4
+  update C → 2
+  afstanden: {'A': 0, 'B': 4, 'C': 2, 'D': inf}
+
+Ronde — kies C
+  update D → 10
+  afstanden: {'A': 0, 'B': 4, 'C': 2, 'D': 10}
+
+Ronde — kies B
+  update D → 5
+  afstanden: {'A': 0, 'B': 4, 'C': 2, 'D': 5}
+
+Ronde — kies D
+  afstanden: {'A': 0, 'B': 4, 'C': 2, 'D': 5}
+```
+
+Vergelijk met je pen-en-papier-tabel — exact dezelfde rondes. Let op
+ronde 3: `D` zakt van 10 naar 5 omdat de route via `B` korter is dan
+via `C`.
+
+</details>
+
+## Wat nu nog mist
+
+Vier keer dezelfde regels herhalen is omslachtig. Volgende stap: zet er
+een `while`-lus omheen. Eén regel — meer niet.
+
+Door naar [bouwsteen 6: de lus →](./09-bouwen-de-lus).

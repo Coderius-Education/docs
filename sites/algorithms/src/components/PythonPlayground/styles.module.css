@@ -1,0 +1,57 @@
+.wrapper {
+  position: relative;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  tab-size: 4;
+  /* The wrapper's min-height is set inline from the minHeight prop;
+     both children (highlight + textarea) are absolutely positioned to
+     fill it, so clicking anywhere in the visible area focuses the
+     textarea. */
+  display: block;
+}
+
+/* The highlight layer and textarea share identical box-model and font
+   metrics so the caret position lines up with the painted tokens.
+   Both are absolutely positioned to fill the wrapper. */
+.highlight,
+.textarea {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0.85rem 1rem;
+  border: 0;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  tab-size: inherit;
+  white-space: pre;
+  overflow-wrap: normal;
+  width: 100%;
+}
+
+.highlight {
+  background: transparent !important;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.textarea {
+  resize: none;
+  background: transparent;
+  color: transparent;
+  caret-color: var(--ifm-font-color-base);
+  outline: none;
+  overflow: auto;
+  z-index: 1;
+}
+
+.textarea::selection {
+  background: var(--ifm-color-emphasis-300);
+}
+
+.textarea:disabled {
+  cursor: progress;
+}

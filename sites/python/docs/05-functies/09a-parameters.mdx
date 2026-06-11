@@ -1,0 +1,190 @@
+---
+sidebar_position: 2
+hide_table_of_contents: true
+description: Geef informatie mee aan een functie met parameters, zodat dezelfde functie verschillende dingen kan doen.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 9a Parameters
+
+Je functies uit de vorige les deden altijd precies hetzelfde. Met een **parameter** geef je informatie mee aan een functie — dan kan dezelfde functie verschillende dingen doen.
+
+## Een parameter meegeven
+
+Tussen de haakjes van `def` zet je de naam van de parameter. Binnen de functie gebruik je hem als gewone variabele:
+
+```python
+def begroet(naam):
+    print(f"Hallo, {naam}!")
+
+begroet("Sara")
+begroet("Alex")
+```
+
+Uitvoer:
+
+```
+Hallo, Sara!
+Hallo, Alex!
+```
+
+- `naam` (tussen de haakjes van `def begroet`) is de **parameter**.
+- `"Sara"` en `"Alex"` zijn de **argumenten** — de waardes die je meegeeft bij de aanroep.
+
+## Meerdere parameters
+
+Scheid meerdere parameters met komma's:
+
+```python
+def adres(straat, nummer):
+    print(f"{straat} {nummer}")
+
+adres("Hoofdstraat", 12)
+```
+
+De volgorde van de argumenten moet overeenkomen met de volgorde van de parameters: het eerste argument vult de eerste parameter, het tweede vult de tweede, enzovoort.
+
+Roep je de functie aan zonder argument terwijl hij wel een parameter heeft? Dan krijg je `TypeError: missing 1 required positional argument`. Python kan niet raden wat de naam moet zijn.
+
+---
+
+## Opdracht 9a.1: Welkom met naam
+
+Maak een functie `welkom(naam)` die `"Welkom, [naam]!"` print, en roep hem aan met je eigen naam.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+`def welkom(naam):` met een f-string `f"Welkom, {naam}!"`. Roep aan met `welkom("Alex")`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+def welkom(naam):
+    print(f"Welkom, {naam}!")
+
+welkom("Alex")
+```
+
+<CodeExercise>{`def welkom(naam):
+    print(f"Welkom, {naam}!")
+
+welkom("Alex")`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 9a.2: Gepersonaliseerde groet
+
+Schrijf een functie `groet(naam, taal)` die op basis van de taal een begroeting print. Roep hem drie keer aan.
+
+Verwachte uitvoer:
+
+```
+Hallo, Sara!
+Hello, Alex!
+Hola, Maria!
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Binnen de functie: `if taal == "nl":` → Nederlandse groet, `elif taal == "en":` → Engelse groet, `elif taal == "es":` → Spaanse groet. Telkens met `{naam}` in een f-string.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+def groet(naam, taal):
+    if taal == "nl":
+        print(f"Hallo, {naam}!")
+    elif taal == "en":
+        print(f"Hello, {naam}!")
+    elif taal == "es":
+        print(f"Hola, {naam}!")
+
+groet("Sara", "nl")
+groet("Alex", "en")
+groet("Maria", "es")
+```
+
+<CodeExercise>{`def groet(naam, taal):
+    if taal == "nl":
+        print(f"Hallo, {naam}!")
+    elif taal == "en":
+        print(f"Hello, {naam}!")
+    elif taal == "es":
+        print(f"Hola, {naam}!")
+
+groet("Sara", "nl")
+groet("Alex", "en")
+groet("Maria", "es")`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 9a.3: Vormen tekenen
+
+Maak twee functies: `driehoek(hoogte)` en `vierkant(grootte)`. De driehoek groeit per regel; het vierkant is altijd even breed als hoog. Roep ze beide aan.
+
+Verwachte uitvoer (bij `driehoek(4)` en `vierkant(4)`):
+
+```
+*
+**
+***
+****
+
+****
+****
+****
+****
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+`"*" * i` voor de driehoek (groeit per ronde). `"*" * grootte` voor het vierkant (vaste breedte).
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+def driehoek(hoogte):
+    for i in range(1, hoogte + 1):
+        print("*" * i)
+
+def vierkant(grootte):
+    for i in range(grootte):
+        print("*" * grootte)
+
+driehoek(4)
+print()
+vierkant(4)
+```
+
+In de volgende les leer je hoe een functie een **resultaat teruggeeft** met `return`, zodat je het in de rest van je programma kunt gebruiken.
+
+<CodeExercise>{`def driehoek(hoogte):
+    for i in range(1, hoogte + 1):
+        print("*" * i)
+
+def vierkant(grootte):
+    for i in range(grootte):
+        print("*" * grootte)
+
+driehoek(4)
+print()
+vierkant(4)`}</CodeExercise>
+
+</details>

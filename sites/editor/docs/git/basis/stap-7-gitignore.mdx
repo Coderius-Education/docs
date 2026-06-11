@@ -1,0 +1,42 @@
+---
+sidebar_position: 7
+sidebar_label: "Stap 7: .gitignore"
+title: "Stap 7: bestanden negeren met .gitignore"
+hide_table_of_contents: true
+---
+
+import GitSimulator from '@site/src/components/GitSimulator';
+
+# Stap 7: bestanden negeren met `.gitignore`
+
+Soms wil je dat git bepaalde bestanden **negeert** — bijvoorbeeld tijdelijke bestanden of wachtwoorden. Daarvoor maak je een speciaal bestand: `.gitignore`. Elke regel in `.gitignore` is een bestandsnaam die git moet overslaan.
+
+Probeer het hieronder:
+
+1. Klik op **"+ nieuw bestand"** en maak een bestand `geheim.txt`.
+2. Doe `git status` — git ziet `geheim.txt` als niet-gevolgd.
+3. Klik weer op **"+ nieuw bestand"** en maak een bestand `.gitignore` met als inhoud één regel: `geheim.txt`.
+4. Doe opnieuw `git status` — `geheim.txt` is verdwenen uit de lijst en wordt doorgestreept in de werkmap.
+
+<GitSimulator
+  scenarioId="stap-7-gitignore"
+  initialFiles={{'hello.txt': 'Hallo wereld!\n'}}
+  objective={{
+    description: 'Maak een .gitignore aan die geheim.txt negeert.',
+    check: (s) => s.ignored.includes('geheim.txt'),
+  }}
+/>
+
+## Wat je nu kunt
+
+Je kent nu de kerncyclus van git:
+
+1. Bestanden aanpassen in je werkmap.
+2. `git add` om ze klaar te zetten.
+3. `git commit -m "..."` om een snapshot te maken.
+4. `git status` en `git log` om te zien wat er gebeurt.
+5. `.gitignore` om bestanden buiten git te houden.
+
+## Volgende tutorial
+
+Tijd om dit op je echte computer te doen: **[Git in VS Code](/git/vscode/)**.

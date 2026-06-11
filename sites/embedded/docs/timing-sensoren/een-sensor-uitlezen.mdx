@@ -1,0 +1,117 @@
+---
+sidebar_position: 2
+hide_table_of_contents: true
+---
+
+import WokwiSimulator from '@site/src/components/WokwiSimulator';
+
+# 6.2 Een sensor uitlezen
+
+Je kunt nu LED's aansturen, knoppen lezen en analoge waarden meten. Tijd voor een echte sensor: de **HC-SR04 ultrasoonsensor**, die afstand meet zoals een vleermuis — met geluid dat je niet kunt horen.
+
+## Hoe meet hij afstand?
+
+De sensor stuurt een korte geluidspuls en meet hoe lang het duurt voor de echo terugkomt. Hoe verder het object, hoe langer de echo onderweg is. Uit die tijd reken je de afstand uit.
+
+De sensor heeft vier pinnen: `VCC` (naar 5V), `GND`, `TRIG` (puls versturen) en `ECHO` (echo ontvangen).
+
+## De code
+
+```cpp
+const int trigPin = 9;
+const int echoPin = 10;
+
+void setup() {
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  long duur = pulseIn(echoPin, HIGH);
+  long afstand = duur * 0.034 / 2;
+
+  Serial.print("Afstand: ");
+  Serial.print(afstand);
+  Serial.println(" cm");
+  delay(300);
+}
+```
+
+<WokwiSimulator
+  projectUrl="https://wokwi.com/projects/new/arduino-uno"
+  title="Simuleer: afstand meten"
+/>
+
+Sleep in de simulator een **HC-SR04** naar het bord en sluit `TRIG` op pin 9 en `ECHO` op pin 10 aan. In de simulator kun je de afstand met een schuifje instellen; je ziet de gemeten waarde in de monitor.
+
+## Wat gebeurt hier?
+
+Twee regels zijn de kern:
+
+```cpp
+long duur = pulseIn(echoPin, HIGH);
+long afstand = duur * 0.034 / 2;
+```
+
+`pulseIn(echoPin, HIGH)` meet hoeveel microseconden de echo-pin hoog blijft — dat is de heen-en-terugtijd van het geluid. Geluid gaat ongeveer 0,034 cm per microseconde; je deelt door 2 omdat het geluid heen én terug ging.
+
+## Opdracht 6.2.a: Parkeersensor
+
+Maak een parkeersensor: hoe dichterbij een object, hoe sneller een LED knippert. Vanaf heel dichtbij blijft de LED gewoon aan.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Gebruik de gemeten `afstand` als knipperpauze. Een grotere afstand betekent een langere `delay()` tussen het aan- en uitzetten. Onder een bepaalde afstand laat je de LED continu branden.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```cpp
+const int trigPin = 9;
+const int echoPin = 10;
+const int ledPin = 13;
+
+void setup() {
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  pinMode(ledPin, OUTPUT);
+}
+
+long meetAfstand() {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  long duur = pulseIn(echoPin, HIGH);
+  return duur * 0.034 / 2;
+}
+
+void loop() {
+  long afstand = meetAfstand();
+
+  if (afstand < 5) {
+    digitalWrite(ledPin, HIGH);
+  } else {
+    int pauze = map(afstand, 5, 100, 50, 800);
+    digitalWrite(ledPin, HIGH);
+    delay(pauze);
+    digitalWrite(ledPin, LOW);
+    delay(pauze);
+  }
+}
+```
+
+Hier zit het meten netjes in een eigen functie `meetAfstand()`, zodat `loop()` leesbaar blijft.
+
+</details>

@@ -1,0 +1,109 @@
+---
+sidebar_position: 8
+hide_table_of_contents: true
+---
+
+# 2.8 Bouw zelf — vind ook de index van het maximum
+
+**Leerdoel:** je past het patroon aan om niet alleen de **waarde**, maar
+ook de **positie** (index) terug te geven.
+
+## Opdracht
+
+Schrijf `vind_index_van_maximum(lijst)` die de **index** terug geeft van
+het maximum. Bij meerdere voorkomende → de **eerste** index.
+
+- `vind_index_van_maximum([3, 7, 2, 9, 4])` → `3`
+- `vind_index_van_maximum([10, 20, 20, 10])` → `1` (eerste 20)
+- `vind_index_van_maximum([42])` → `0`
+
+Aan het eind plotten we de lijsten en markeren we de gevonden index met een
+rode dot.
+
+<PyRunner initialCode={`def vind_index_van_maximum(lijst):
+    # vul aan: net als vind_maximum, maar bewaar de INDEX
+    return 0
+
+# Tests
+testlijsten = [
+    [3, 7, 2, 9, 4],
+    [10, 20, 20, 10],
+    [42],
+    [-5, -1, -9, -2],
+]
+
+import matplotlib.pyplot as plt
+
+fig, axes = plt.subplots(len(testlijsten), 1, figsize=(6, 2.0 * len(testlijsten)))
+if len(testlijsten) == 1:
+    axes = [axes]
+
+for ax, lijst in zip(axes, testlijsten):
+    idx = vind_index_van_maximum(lijst)
+    print(f"lijst={lijst} → index={idx}, waarde={lijst[idx]}")
+    ax.bar(range(len(lijst)), lijst, color='lightgray')
+    ax.bar([idx], [lijst[idx]], color='red')
+    ax.set_title(f"max op index {idx}")
+
+plt.tight_layout()
+plt.show()`} />
+
+<details>
+<summary>Tip</summary>
+
+Zelfde patroon als `vind_maximum`, maar nu houd je een **index** bij in
+plaats van een waarde. Vergelijken doe je via `lijst[max_index]`.
+
+Welke startwaarde kies je voor `max_index`? Welke variabele update je bij
+een nieuwe winnaar?
+
+Loop door de lijst met `enumerate` zodat je in elke ronde **zowel** de
+huidige index als de huidige waarde hebt.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def vind_index_van_maximum(lijst):
+    max_index = 0
+    for i, waarde in enumerate(lijst):
+        if waarde > lijst[max_index]:
+            max_index = i
+    return max_index
+```
+
+Waarom `>` en niet `>=`?
+
+- `>` → bij gelijke waardes blijft de **eerste** index staan.
+- `>=` → bij gelijke waardes wordt de **laatste** index gepakt.
+
+Beide zijn geldige keuzes — kies bewust.
+
+</details>
+
+## Onderzoek
+
+<details>
+<summary>Wat als alle elementen gelijk zijn? Welke index krijg je terug?</summary>
+
+Bijvoorbeeld `vind_index_van_maximum([7, 7, 7, 7])`. Probeer het in de
+code-omgeving hierboven.
+
+Met de `>`-versie krijg je `0` terug — de eerste 7 wint, want geen latere
+waarde is **strict groter**. Met `>=` zou je `3` krijgen — de laatste.
+
+Geen van beide is "fout". Het is een **ontwerpkeuze**: bij gelijke
+waardes, welke positie tel je als de winnaar? In de praktijk kies je
+meestal de eerste, want dat is voorspelbaarder en past bij hoe lineair
+zoeken werkt.
+
+</details>
+
+## Uitdaging (optioneel)
+
+Schrijf `vind_alle_indexen_van_maximum(lijst)` die een **lijst** van alle
+indexen returnt waar het maximum staat. Bijv. `[5, 3, 5, 2, 5]` → `[0, 2, 4]`.
+
+Door naar [stap 9: veelgemaakte fouten](./09-fouten).

@@ -1,0 +1,129 @@
+---
+sidebar_position: 11
+hide_table_of_contents: true
+---
+
+# 9.11 Bouwsteen 5 — `winner(bord)`
+
+**Leerdoel:** je checkt drie rijen, drie kolommen en twee diagonalen om
+te bepalen of iemand heeft gewonnen.
+
+## Wat doet deze functie?
+
+`winner(bord)` geeft terug **wie** drie op een rij heeft. Acht
+mogelijke winnende lijnen in tic-tac-toe:
+
+- 3 rijen (horizontaal)
+- 3 kolommen (verticaal)
+- 2 diagonalen
+
+Als geen enkele lijn vol is met dezelfde speler, return `None`.
+
+## Specificatie
+
+- **Input**: een `bord`.
+- **Output**: `"X"`, `"O"` of `None`.
+- **Voorbeelden**:
+  - X vol op rij 0 → `"X"`.
+  - O op de hoofd-diagonaal → `"O"`.
+  - Leeg bord → `None`.
+  - Vol bord zonder drie-op-een-rij → `None`.
+
+## Hoe controleer je een lijn?
+
+Een lijn is een rij van drie cellen. Hij is "gewonnen door X" als alle
+drie `"X"` zijn. Idem voor O.
+
+Compacte check:
+
+```python
+if rij[0] == rij[1] == rij[2] and rij[0] is not None:
+    return rij[0]    # de winnaar
+```
+
+De `and rij[0] is not None` is belangrijk: drie keer `None` mag niet
+tellen als "winnaar".
+
+## Voorspel
+
+Welke lijn is winnend op dit bord?
+
+```python
+bord = [["X", "O", "X"],
+        ["O", "X", "O"],
+        ["O", "O", "X"]]
+```
+
+<details>
+<summary>Antwoord</summary>
+
+De **anti-diagonaal** `(0,2) (1,1) (2,0)` is `X X O` — niet winnend.
+
+De **hoofd-diagonaal** `(0,0) (1,1) (2,2)` is `X X X` — X wint!
+
+Kolommen, rijen: geen drie op een rij.
+
+Dus `winner(bord)` → `"X"`.
+
+</details>
+
+## Bouw zelf en test
+
+<PyRunner initialCode={`def winner(bord):
+    # Check de 3 rijen
+    for rij in bord:
+        if rij[0] == rij[1] == rij[2] and rij[0] is not None:
+            return rij[0]
+
+    # Vul aan: check de 3 kolommen
+    # tip: bord[0][j], bord[1][j], bord[2][j] voor kolom j
+
+    # Vul aan: check de 2 diagonalen
+    # hoofd-diagonaal: bord[0][0], bord[1][1], bord[2][2]
+    # anti-diagonaal:  bord[0][2], bord[1][1], bord[2][0]
+
+    return None
+
+
+# === Tests ===
+assert winner([[None]*3]*3) is None, "Leeg bord -> None"
+
+assert winner([["X","X","X"], [None]*3, [None]*3]) == "X", "X-rij"
+
+assert winner([["O","X",None], ["O","X",None], ["O",None,None]]) == "O", "O-kolom"
+
+assert winner([["X","O",None], ["O","X",None], [None,None,"X"]]) == "X", "X hoofd-diagonaal"
+
+assert winner([[None,None,"O"], [None,"O",None], ["O",None,None]]) == "O", "O anti-diagonaal"
+
+# Remise: vol bord zonder drie op een rij
+remise = [["X","O","X"], ["X","O","O"], ["O","X","X"]]
+assert winner(remise) is None, "Remise -> None"
+
+print("Alle tests gehaald ✓")`} />
+
+<details>
+<summary>Tip</summary>
+
+Kolom-check:
+
+```python
+for j in range(3):
+    if bord[0][j] == bord[1][j] == bord[2][j] and bord[0][j] is not None:
+        return bord[0][j]
+```
+
+Diagonalen — twee aparte if's:
+
+```python
+if bord[0][0] == bord[1][1] == bord[2][2] and bord[0][0] is not None:
+    return bord[0][0]
+if bord[0][2] == bord[1][1] == bord[2][0] and bord[0][2] is not None:
+    return bord[0][2]
+```
+
+Helemaal aan het eind blijft `return None` staan: geen winnaar gevonden.
+
+</details>
+
+Door naar [stap 12: bouwsteen 6 — terminal →](./12-bouwen-terminal).

@@ -1,0 +1,1503 @@
+---
+title: Cheatsheet HTML, CSS & JavaScript
+---
+
+import CodeEditor from '@site/src/components/CodeEditor';
+
+# Cheatsheet HTML, CSS & JavaScript
+
+Snelle naslag voor de meest gebruikte HTML-tags en CSS-eigenschappen.
+
+## HTML
+
+### Paginastructuur
+
+<details>
+<summary>Basisstructuur van een HTML-pagina</summary>
+
+Elke HTML-pagina begint met dezelfde basisstructuur:
+
+- `<!DOCTYPE html>` — vertelt de browser dat dit een HTML5-pagina is
+- `<html>` — de buitenste tag die alles omhult
+- `<head>` — informatie over de pagina (niet zichtbaar op de pagina zelf)
+- `<meta charset="UTF-8">` — zorgt dat speciale tekens zoals é en ij goed worden weergegeven
+- `<title>` — de tekst die in het browsertabblad verschijnt
+- `<body>` — alles wat de bezoeker ziet staat hier
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Paginatitel</title>
+</head>
+<body>
+  <h1>Hallo!</h1>
+  <p>Dit is de basisstructuur.</p>
+</body>
+</html>`}
+  height="340px"
+/>
+
+</details>
+
+### Tekst
+
+<details>
+<summary>Koppen — <code>h1</code> t/m <code>h6</code></summary>
+
+Koppen geven structuur aan een pagina. `<h1>` is de hoofdkop — gebruik die maar één keer per pagina. `<h2>` en `<h3>` zijn tussenkoppen voor secties en subsecties. Gebruik koppen altijd op volgorde: sla geen nummers over.
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head><meta charset="UTF-8"></head>
+<body>
+  <h1>Kop 1</h1>
+  <h2>Kop 2</h2>
+  <h3>Kop 3</h3>
+  <h4>Kop 4</h4>
+</body>
+</html>`}
+  height="300px"
+/>
+
+</details>
+
+<details>
+<summary>Paragraaf — <code>p</code></summary>
+
+Een `<p>` tag maakt een alinea. De browser voegt automatisch ruimte toe boven en onder elke paragraaf, zodat alinea's duidelijk van elkaar gescheiden zijn.
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head><meta charset="UTF-8"></head>
+<body>
+  <p>Dit is de eerste paragraaf.</p>
+  <p>Dit is de tweede paragraaf.</p>
+</body>
+</html>`}
+  height="280px"
+/>
+
+</details>
+
+<details>
+<summary>Vetgedrukt en cursief — <code>b</code>, <code>i</code></summary>
+
+Met `<b>` maak je tekst **vetgedrukt** en met `<i>` maak je tekst *cursief*. Je kunt ze ook combineren door de ene tag binnen de andere te zetten.
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head><meta charset="UTF-8"></head>
+<body>
+  <p>Dit is <b>vetgedrukt</b> en dit is <i>cursief</i>.</p>
+  <p>Je kunt ze ook <b><i>combineren</i></b>.</p>
+</body>
+</html>`}
+  height="280px"
+/>
+
+</details>
+
+### Lijsten
+
+<details>
+<summary>Ongenummerde lijst — <code>ul</code></summary>
+
+Een `<ul>` (unordered list) maakt een lijst met bolletjes. Elk item staat in een `<li>` tag. Gebruik een ongenummerde lijst als de volgorde niet uitmaakt, bijvoorbeeld een boodschappenlijst.
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head><meta charset="UTF-8"></head>
+<body>
+  <ul>
+    <li>Eerste item</li>
+    <li>Tweede item</li>
+    <li>Derde item</li>
+  </ul>
+</body>
+</html>`}
+  height="280px"
+/>
+
+</details>
+
+<details>
+<summary>Genummerde lijst — <code>ol</code></summary>
+
+Een `<ol>` (ordered list) maakt een genummerde lijst. De browser nummert de items automatisch. Gebruik een genummerde lijst als de volgorde wél uitmaakt, bijvoorbeeld stappen in een recept.
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head><meta charset="UTF-8"></head>
+<body>
+  <ol>
+    <li>Stap één</li>
+    <li>Stap twee</li>
+    <li>Stap drie</li>
+  </ol>
+</body>
+</html>`}
+  height="280px"
+/>
+
+</details>
+
+### Afbeeldingen en links
+
+<details>
+<summary>Afbeelding — <code>img</code></summary>
+
+Met `<img>` voeg je een afbeelding in. Het is een zelfsluitende tag — hij heeft geen sluitingstag. De drie belangrijkste attributen:
+
+- `src` — de URL van de afbeelding
+- `alt` — een beschrijving van de afbeelding; wordt getoond als de afbeelding niet laadt en voorgelezen door schermlezers voor slechtzienden
+- `width` — de breedte in pixels; de hoogte past automatisch mee zodat de afbeelding niet vervormd raakt
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head><meta charset="UTF-8"></head>
+<body>
+  <img
+    src="https://picsum.photos/id/237/300/200"
+    alt="Een hond"
+    width="300"
+  >
+</body>
+</html>`}
+  height="300px"
+/>
+
+</details>
+
+<details>
+<summary>Link — <code>a</code></summary>
+
+Met `<a>` maak je een klikbare link. Het `href` attribuut bevat de URL waar de link naartoe gaat. Met `target="_blank"` opent de link in een nieuw tabblad in plaats van het huidige.
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head><meta charset="UTF-8"></head>
+<body>
+  <a href="https://example.com">Gewone link</a>
+  <br>
+  <a href="https://example.com" target="_blank">Opent nieuw tabblad</a>
+</body>
+</html>`}
+  height="280px"
+/>
+
+</details>
+
+### Semantische HTML
+
+<details>
+<summary>Pagina-structuur — <code>header</code>, <code>nav</code>, <code>main</code>, <code>section</code>, <code>article</code>, <code>footer</code></summary>
+
+Semantische tags vertellen *wat* een blok is, niet alleen hoe het eruitziet. Ze werken net als `<div>`, maar zijn beter voor screenreaders en zoekmachines.
+
+| Tag | Betekenis |
+|---|---|
+| `<header>` | Bovenkant pagina (logo, titel) |
+| `<nav>` | Navigatiemenu |
+| `<main>` | Hoofdinhoud |
+| `<section>` | Afgebakend onderdeel |
+| `<article>` | Op zichzelf staand stuk (blogpost) |
+| `<footer>` | Onderkant pagina |
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header><h1>Mijn site</h1></header>
+  <nav><a href="#">Home</a> | <a href="#">Over</a></nav>
+  <main>
+    <article>
+      <h2>Bericht</h2>
+      <p>Inhoud van het artikel.</p>
+    </article>
+  </main>
+  <footer><p>&copy; 2025</p></footer>
+</body>
+</html>`}
+  initialCss={`header, footer { background: #eee; padding: 10px; }
+nav { padding: 10px; }
+main { padding: 16px; }`}
+  height="420px"
+/>
+
+</details>
+
+### Formulieren
+
+<details>
+<summary>Invoervelden — <code>form</code>, <code>input</code>, <code>label</code></summary>
+
+Een formulier bestaat uit `<input>`-velden met `<label>` ervoor. Het `for`-attribuut van het label moet overeenkomen met het `id` van de input. Veelgebruikte `type`-waarden: `text`, `number`, `email`, `password`, `checkbox`, `radio`.
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <form>
+    <label for="naam">Naam:</label>
+    <input type="text" id="naam">
+
+    <label for="leeftijd">Leeftijd:</label>
+    <input type="number" id="leeftijd">
+
+    <label for="email">E-mail:</label>
+    <input type="email" id="email">
+
+    <button>Verstuur</button>
+  </form>
+</body>
+</html>`}
+  initialCss={`form { display: flex; flex-direction: column; gap: 6px; max-width: 280px; }
+label { font-weight: bold; }
+input { padding: 6px; }
+button { margin-top: 8px; padding: 6px 12px; }`}
+  height="440px"
+/>
+
+</details>
+
+<details>
+<summary>Tekstvak en dropdown — <code>textarea</code>, <code>select</code></summary>
+
+Voor langere teksten gebruik je `<textarea>`. Voor een keuzelijst (dropdown) gebruik je `<select>` met `<option>`-elementen.
+
+```html
+<label for="bericht">Bericht:</label>
+<textarea id="bericht" rows="4"></textarea>
+
+<label for="land">Land:</label>
+<select id="land">
+  <option value="nl">Nederland</option>
+  <option value="be">België</option>
+</select>
+```
+
+Elke `<option>` heeft een zichtbare tekst (tussen de tags) en een `value` (de waarde die het formulier verstuurt).
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <form>
+    <label for="land">Land:</label>
+    <select id="land">
+      <option value="nl">Nederland</option>
+      <option value="be">België</option>
+      <option value="de">Duitsland</option>
+    </select>
+
+    <label for="bericht">Bericht:</label>
+    <textarea id="bericht" rows="3"></textarea>
+  </form>
+</body>
+</html>`}
+  initialCss={`form { display: flex; flex-direction: column; gap: 6px; max-width: 280px; }
+label { font-weight: bold; }
+select, textarea { padding: 6px; font-family: inherit; }`}
+  height="380px"
+/>
+
+</details>
+
+### Groeperingen
+
+<details>
+<summary>Inline-element — <code>span</code></summary>
+
+`<span>` is het inline-tegendeel van `<div>`. Gebruik hem om een **klein stukje tekst** binnen een paragraaf te stijlen zonder een nieuwe regel te beginnen.
+
+```html
+<p>Dit is <span class="highlight">een gemarkeerd</span> woord.</p>
+```
+
+```css
+.highlight {
+  background-color: yellow;
+  color: red;
+}
+```
+
+Vuistregel: `<div>` voor blokken (rondom elementen), `<span>` voor tekst-stukjes binnen een regel.
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <p>Dit is <span class="highlight">gemarkeerd</span> in een paragraaf.</p>
+</body>
+</html>`}
+  initialCss={`.highlight {
+  background-color: yellow;
+  color: darkred;
+  padding: 2px 6px;
+}`}
+  height="240px"
+/>
+
+</details>
+
+<details>
+<summary>Display-types — <code>block</code>, <code>inline</code>, <code>inline-block</code></summary>
+
+Elk HTML-element heeft een standaard display-type:
+
+| Type | Gedrag | Voorbeelden |
+|---|---|---|
+| `block` | Nieuwe regel, vult breedte | `<p>`, `<h1>`, `<div>` |
+| `inline` | In de tekst-stroom, breedte = inhoud | `<a>`, `<span>`, `<b>` |
+| `inline-block` | In de stroom, mét `width`/`padding` | (zelf instellen) |
+
+Je verandert het met de CSS-eigenschap `display`:
+
+```css
+.knop {
+  display: inline-block;  /* naast elkaar, maar mét padding en breedte */
+  padding: 8px 16px;
+}
+```
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a href="#" class="knop">Een</a>
+  <a href="#" class="knop">Twee</a>
+  <a href="#" class="knop">Drie</a>
+</body>
+</html>`}
+  initialCss={`.knop {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #4a90e2;
+  color: white;
+  text-decoration: none;
+  margin-right: 4px;
+}`}
+  height="260px"
+/>
+
+</details>
+
+<details>
+<summary>Blok-element — <code>div</code></summary>
+
+Een `<div>` is een onzichtbaar blok dat je gebruikt om elementen te groeperen. Op zichzelf heeft een `<div>` geen opmaak — je stijlt hem via CSS. Het is handig om meerdere elementen samen te stijlen of te positioneren.
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div>
+    <h2>Titel</h2>
+    <p>Inhoud van het blok.</p>
+  </div>
+</body>
+</html>`}
+  initialCss={`div {
+  background-color: #f0f4ff;
+  border: 2px solid #4a90e2;
+  padding: 16px;
+  border-radius: 8px;
+  width: 300px;
+}`}
+  height="360px"
+/>
+
+</details>
+
+---
+
+## CSS
+
+### Tekst opmaken
+
+<details>
+<summary>Kleur, lettergrootte en lettertype — <code>color</code>, <code>font-size</code>, <code>font-family</code></summary>
+
+Met `color` verander je de tekstkleur. Kleuren kun je opgeven als naam (`red`), hex-code (`#e63946`) of RGB-waarde (`rgb(230,57,70)`).
+
+Met `font-size` stel je de lettergrootte in. `rem` is relatief aan de basisgrootte van de browser (standaard 16px), `px` is een vaste pixelgrootte.
+
+Met `font-family` kies je het lettertype. Zet altijd een algemeen alternatief achter de komma (`sans-serif`, `serif`) voor het geval het gewenste lettertype niet beschikbaar is.
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Kop</h1>
+  <p>Een paragraaf met aangepaste stijl.</p>
+</body>
+</html>`}
+  initialCss={`h1 {
+  color: #e63946;
+  font-family: Georgia, serif;
+}
+
+p {
+  color: #333;
+  font-size: 1.2rem;
+  font-family: Arial, sans-serif;
+}`}
+  height="360px"
+/>
+
+</details>
+
+### Eenheden
+
+<details>
+<summary>CSS-eenheden — <code>px</code>, <code>rem</code>, <code>em</code>, <code>%</code></summary>
+
+| Eenheid | Wat | Wanneer |
+|---|---|---|
+| `px` | Vaste pixels | Borders, kleine vaste spacing |
+| `rem` | Relatief aan pagina-basis (meestal 16px) | Lettergrootte, padding, margin |
+| `em` | Relatief aan eigen `font-size` | Padding binnen een knop |
+| `%` | Procent van de ouder | Layout-breedte |
+
+```css
+h1 { font-size: 2rem; }          /* 32px bij standaard */
+button { padding: 0.5em 1em; }   /* schaalt mee met font-size */
+.kaart { width: 80%; }           /* 80% van de ouder */
+border: 2px solid black;         /* altijd 2 pixels */
+```
+
+Vuistregel: `rem` voor tekst en spacing (toegankelijk), `px` voor borders, `%` voor layout-breedte, `em` alleen als bewuste keuze.
+
+</details>
+
+### Box-model
+
+<details>
+<summary>Achtergrond, padding, margin en border</summary>
+
+Het box-model beschrijft hoe ruimte rondom een element werkt:
+
+- `background-color` — de achtergrondkleur van het element
+- `padding` — ruimte **binnen** het element, tussen de inhoud en de rand
+- `margin` — ruimte **buiten** het element, afstand tot andere elementen
+- `border` — een zichtbare rand om het element; opbouw is `dikte stijl kleur` (bijv. `2px solid blue`)
+- `border-radius` — maakt de hoeken afgerond
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div>
+    <p>Dit is een kaart.</p>
+  </div>
+</body>
+</html>`}
+  initialCss={`div {
+  background-color: #f0f4ff;
+  border: 2px solid #4a90e2;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px;
+  width: 280px;
+}`}
+  height="360px"
+/>
+
+</details>
+
+<details>
+<summary>Box-sizing — <code>border-box</code></summary>
+
+Standaard telt `width` alleen voor de inhoud — `padding` en `border` komen er bovenop. Met `box-sizing: border-box` worden padding en border meegerekend in de breedte:
+
+```css
+* {
+  box-sizing: border-box;
+}
+```
+
+Zet bovenaan je CSS-bestand. Dan is `width: 300px` écht 300px, ook met padding en border.
+
+</details>
+
+<details>
+<summary>Breedte en hoogte — <code>width</code>, <code>height</code></summary>
+
+Met `width` en `height` stel je de afmetingen van een element in pixels in. Als je alleen `width` instelt bij een afbeelding, past de hoogte automatisch mee. Bij een `<div>` moet je beide instellen als je een vaste grootte wilt.
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div></div>
+</body>
+</html>`}
+  initialCss={`div {
+  background-color: #4a90e2;
+  width: 200px;
+  height: 100px;
+}`}
+  height="300px"
+/>
+
+</details>
+
+### Selectoren
+
+<details>
+<summary>Klasse-selector — <code>.naam</code></summary>
+
+Met een klasse geef je één specifiek element een eigen stijl, zonder alle elementen van dat type te veranderen. Je voegt een klasse toe via het `class` attribuut in HTML. In CSS selecteer je een klasse met een punt voor de naam (`.uitgelicht`). Een element kan meerdere klassen tegelijk hebben, gescheiden door een spatie.
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <p>Gewone paragraaf.</p>
+  <p class="uitgelicht">Gemarkeerde paragraaf.</p>
+  <p class="rood groot">Rood én groot.</p>
+</body>
+</html>`}
+  initialCss={`.uitgelicht {
+  background-color: yellow;
+}
+
+.rood {
+  color: red;
+}
+
+.groot {
+  font-size: 1.5rem;
+}`}
+  height="380px"
+/>
+
+</details>
+
+<details>
+<summary>Id-selector — <code>#naam</code></summary>
+
+Een `id` is een **unieke** naam voor één element (mag maar één keer per pagina voorkomen). In CSS selecteer je een id met een hekje (`#`):
+
+```html
+<p id="welkom">Welkom!</p>
+```
+
+```css
+#welkom {
+  color: green;
+  font-size: 2rem;
+}
+```
+
+Gebruik `class` voor stijlen die je hergebruikt, `id` voor één specifiek element dat je later ook met JavaScript wilt aanspreken.
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <p id="welkom">Welkom!</p>
+  <p>Een gewone paragraaf.</p>
+</body>
+</html>`}
+  initialCss={`#welkom {
+  color: green;
+  font-size: 2rem;
+  font-weight: bold;
+}`}
+  height="320px"
+/>
+
+</details>
+
+<details>
+<summary>Pseudo-klassen — <code>:hover</code>, <code>:first-child</code>, <code>:last-child</code>, <code>:nth-child</code></summary>
+
+Pseudo-klassen stijlen een element op basis van zijn **toestand** of **positie**, zonder dat je een klasse in de HTML hoeft toe te voegen:
+
+- `:hover` — actief als de muis over het element beweegt
+- `:first-child` — het eerste kind-element van zijn ouder
+- `:last-child` — het laatste kind-element
+- `:nth-child(n)` — het n-de kind-element
+
+Schrijf de pseudo-klasse direct na de selector, zonder spatie: `a:hover` is anders dan `a :hover`.
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a href="#">Beweeg je muis over mij</a>
+  <ul>
+    <li>Eerste item</li>
+    <li>Tweede item</li>
+    <li>Derde item</li>
+  </ul>
+</body>
+</html>`}
+  initialCss={`a:hover {
+  color: red;
+  text-decoration: none;
+}
+
+li:first-child {
+  font-weight: bold;
+}
+
+li:last-child {
+  color: gray;
+}
+
+li:nth-child(2) {
+  color: blue;
+}`}
+  height="420px"
+/>
+
+</details>
+
+### Flexbox
+
+<details>
+<summary>Flexbox — <code>display: flex</code>, <code>justify-content</code>, <code>align-items</code>, <code>gap</code></summary>
+
+Flexbox zet elementen naast elkaar en laat je ze eenvoudig uitlijnen. Je zet `display: flex` op de **container** (het omhullende element), niet op de items zelf.
+
+- `justify-content` — uitlijning langs de **horizontale** as: `flex-start` (links), `center`, `space-between` (verspreid)
+- `align-items` — uitlijning langs de **verticale** as: `flex-start` (boven), `center`, `stretch`
+- `gap` — ruimte tussen de items onderling
+- `flex-direction: column` — zet de items **onder elkaar** in plaats van naast elkaar
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="item">1</div>
+    <div class="item">2</div>
+    <div class="item">3</div>
+  </div>
+</body>
+</html>`}
+  initialCss={`.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  background-color: #eee;
+  padding: 16px;
+  height: 120px;
+}
+
+.item {
+  background-color: #4a90e2;
+  color: white;
+  padding: 20px 30px;
+  font-size: 1.2rem;
+}`}
+  height="420px"
+/>
+
+</details>
+
+### Position
+
+<details>
+<summary>Positioneren — <code>position</code>, <code>top</code>/<code>right</code>/<code>bottom</code>/<code>left</code></summary>
+
+Met `position` haal je een element uit de gewone tekstvolgorde en bepaal je waar het komt te staan:
+
+| Waarde | Wat |
+|---|---|
+| `static` | Standaard (geen verschuiving mogelijk) |
+| `relative` | Schuif t.o.v. eigen plek |
+| `absolute` | Schuif t.o.v. dichtstbijzijnde ouder met `position: relative` |
+| `fixed` | Blijf op vaste plek in browservenster (ook bij scrollen) |
+
+```css
+.container { position: relative; }   /* referentie voor absolute */
+
+.badge {
+  position: absolute;
+  top: 0;
+  right: 0;                          /* hoek rechtsboven van container */
+}
+
+.scroll-knop {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;                       /* blijft op het scherm bij scrollen */
+}
+```
+
+</details>
+
+### Grid
+
+<details>
+<summary>2D-layout — <code>display: grid</code></summary>
+
+`display: grid` op een container maakt een **rooster** met rijen en kolommen. De `fr`-eenheid verdeelt beschikbare ruimte in delen.
+
+```css
+.galerij {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;   /* drie even brede kolommen */
+  gap: 10px;
+}
+```
+
+| Eigenschap | Wat |
+|---|---|
+| `grid-template-columns` | Definieert kolommen (bijv. `1fr 1fr 1fr`, `200px 1fr`) |
+| `grid-template-rows` | Definieert rijen |
+| `gap` | Ruimte tussen rijen en kolommen |
+| `grid-column: span 2` | Item neemt 2 kolommen in beslag |
+| `grid-column: 1 / -1` | Item over volle breedte (eerste tot laatste lijn) |
+
+Gebruik Grid voor 2D-layouts (foto-galerij, dashboard); Flexbox voor 1D (rij of kolom).
+
+</details>
+
+### Media queries
+
+<details>
+<summary>Responsief design — <code>@media (max-width: ...)</code></summary>
+
+Een media query past CSS alleen toe als de schermbreedte aan een voorwaarde voldoet:
+
+```css
+.kaart { width: 600px; }
+
+@media (max-width: 700px) {
+  .kaart { width: 100%; }
+}
+```
+
+| Voorwaarde | Wanneer geldig |
+|---|---|
+| `(max-width: 700px)` | Schermen smaller dan 700px (mobiel) |
+| `(min-width: 800px)` | Schermen breder dan 800px (desktop) |
+
+**Mobile-first**: schrijf je basis-CSS voor mobiel, voeg `@media (min-width: ...)`-regels toe voor groter.
+
+:::warning Viewport-meta vergeten
+Zonder deze meta-tag in `<head>` rendert de browser de pagina alsof het scherm 980px breed is — media queries triggeren dan niet op telefoons:
+```html
+<meta name="viewport" content="width=device-width, initial-scale=1">
+```
+:::
+
+</details>
+
+---
+
+## JavaScript
+
+### DOM manipulatie
+
+<details>
+<summary>Tekst veranderen — <code>getElementById</code> en <code>textContent</code></summary>
+
+Met `document.getElementById('id')` selecteer je een HTML-element op basis van zijn `id`-attribuut. Via `.textContent` verander je de tekst van dat element.
+
+Je schrijft de code direct in het `onclick`-attribuut — geen functie nodig voor eenvoudige acties:
+
+```html
+<button onclick="document.getElementById('bericht').textContent = 'Geklikt!'">
+  Klik mij
+</button>
+```
+
+Let op hoofdletters: `getElementById` (niet `getElementByID`). En het `id` in de HTML moet exact overeenkomen — `'bericht'` is iets anders dan `'Bericht'`.
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <p id="bericht">Nog niet geklikt.</p>
+  <button onclick="document.getElementById('bericht').textContent = 'Je hebt geklikt!'">
+    Klik mij
+  </button>
+</body>
+</html>`}
+  initialCss={`p { font-size: 1.3rem; padding: 12px; }
+button { padding: 8px 16px; font-size: 1rem; cursor: pointer; }`}
+  height="340px"
+/>
+
+</details>
+
+<details>
+<summary>Stijl veranderen — <code>.style</code> en camelCase</summary>
+
+Met `.style` pas je de CSS-stijl van een element aan vanuit JavaScript. CSS-eigenschappen met een koppelteken schrijf je als **camelCase** — zonder koppelteken, tweede woord met hoofdletter:
+
+| CSS | JavaScript |
+|-----|-----------|
+| `color` | `color` |
+| `background-color` | `backgroundColor` |
+| `font-size` | `fontSize` |
+| `border-radius` | `borderRadius` |
+
+```html
+<button onclick="document.getElementById('tekst').style.color = 'red'">
+  Rood
+</button>
+```
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <p id="tekst">Klik een knop om de stijl te veranderen.</p>
+  <button onclick="document.getElementById('tekst').style.color = 'red'">Rood</button>
+  <button onclick="document.getElementById('tekst').style.color = 'blue'">Blauw</button>
+  <button onclick="document.getElementById('tekst').style.fontSize = '2rem'">Groter</button>
+</body>
+</html>`}
+  initialCss={`p { font-size: 1.3rem; padding: 12px; }
+button { padding: 8px 16px; font-size: 1rem; cursor: pointer; margin-right: 8px; }`}
+  height="360px"
+/>
+
+</details>
+
+### Functies en scripts
+
+<details>
+<summary>Functie in een <code>&lt;script&gt;</code> tag</summary>
+
+Als je meerdere dingen tegelijk wilt doen bij een klik, zet je de code in een **functie** in een `<script>` tag. De `<script>` tag staat **onderaan** de `<body>`, zodat de HTML-elementen al geladen zijn.
+
+```html
+<body>
+  <button onclick="verander()">Klik mij</button>
+
+  <script>
+    function verander() {
+      document.getElementById('bericht').textContent = 'Geklikt!';
+      document.getElementById('bericht').style.color = 'green';
+    }
+  </script>
+</body>
+```
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <p id="bericht">Klik op de knop.</p>
+  <button onclick="verander()">Klik mij</button>
+
+  <script>
+    function verander() {
+      document.getElementById('bericht').textContent = 'Geklikt!';
+      document.getElementById('bericht').style.color = 'green';
+    }
+  </script>
+</body>
+</html>`}
+  initialCss={`p { font-size: 1.3rem; padding: 12px; }
+button { padding: 8px 16px; font-size: 1rem; cursor: pointer; }`}
+  height="400px"
+/>
+
+</details>
+
+<details>
+<summary>Extern script — <code>script.js</code> en <code>defer</code></summary>
+
+Bij een groter project zet je de JavaScript-code in een apart bestand `script.js`. Je koppelt dat in de `<head>` met het `defer`-attribuut — dan wacht de browser met uitvoeren tot de HTML volledig geladen is.
+
+```html
+<head>
+  <script src="script.js" defer></script>
+</head>
+```
+
+Met `console.log()` schrijf je berichten naar het consolepanel om te controleren of je code werkt.
+
+```js
+function verander() {
+  document.getElementById('bericht').textContent = 'Geklikt via script.js!';
+  console.log('De knop is geklikt.');
+}
+```
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <p id="bericht">Klik op de knop.</p>
+  <button onclick="verander()">Klik mij</button>
+</body>
+</html>`}
+  initialCss={`p { font-size: 1.3rem; padding: 12px; }
+button { padding: 8px 16px; font-size: 1rem; cursor: pointer; }`}
+  initialJs={`function verander() {
+  document.getElementById('bericht').textContent = 'Geklikt via script.js!';
+  console.log('De knop is geklikt.');
+}`}
+  height="480px"
+  livePreview={false}
+/>
+
+</details>
+
+### Waarden en operatoren
+
+<details>
+<summary>Datatypes — <code>number</code>, <code>string</code>, <code>boolean</code></summary>
+
+JavaScript kent drie basis-datatypes:
+
+| Type | Wat | Voorbeeld |
+|---|---|---|
+| `number` | Getal | `42`, `3.14` |
+| `string` | Tekst tussen quotes | `'hallo'`, `"wereld"` |
+| `boolean` | Waar of onwaar | `true`, `false` |
+
+```js
+let leeftijd = 16;        // number
+let naam = 'Lisa';        // string
+let isIngelogd = true;    // boolean
+```
+
+Check het type van een waarde met `typeof`:
+
+```js
+console.log(typeof leeftijd);  // 'number'
+console.log(typeof naam);      // 'string'
+```
+
+</details>
+
+<details>
+<summary>Reken-operatoren — <code>+ - * /</code></summary>
+
+```js
+10 + 5   // 15
+10 - 5   // 5
+10 * 5   // 50
+10 / 5   // 2
+```
+
+Bij **strings** plakt `+` ze aan elkaar (concatenatie):
+
+```js
+'Hallo, ' + 'wereld!'      // 'Hallo, wereld!'
+'Ik ben ' + 16 + ' jaar.'  // 'Ik ben 16 jaar.'
+```
+
+Let op: `'5' + 1` is `'51'` (plakken), niet `6`. Gebruik `Number('5') + 1` om om te zetten.
+
+</details>
+
+<details>
+<summary>Template literals — backticks en placeholders</summary>
+
+Met backticks (`` ` ``) kun je variabelen direct in tekst plaatsen via placeholders met dollar-accolades:
+
+```js
+const naam = 'Lisa';
+const leeftijd = 16;
+
+// Oud (met +)
+const zin1 = 'Hoi ' + naam + ', je bent ' + leeftijd + ' jaar.';
+
+// Nieuw (template literal)
+const zin2 = `Hoi ${naam}, je bent ${leeftijd} jaar.`;
+```
+
+Voordelen:
+- Leesbaarder bij veel variabelen
+- Berekeningen mogen in een placeholder: `` `Volgend jaar: ${leeftijd + 1}` ``
+- Werkt over meerdere regels
+
+Let op: het is een **backtick** (linksboven op het toetsenbord), geen apostrof.
+
+</details>
+
+<details>
+<summary>Vergelijk-operatoren — <code>===</code>, <code>!==</code>, <code>&gt;</code>, <code>&lt;</code></summary>
+
+Vergelijken levert altijd `true` of `false` op:
+
+| Operator | Betekenis |
+|---|---|
+| `===` | Gelijk aan (strikt) |
+| `!==` | Niet gelijk aan |
+| `>` | Groter dan |
+| `<` | Kleiner dan |
+| `>=` | Groter of gelijk |
+| `<=` | Kleiner of gelijk |
+
+```js
+5 > 3       // true
+5 === 5     // true
+5 === '5'   // false  (number vs string)
+```
+
+Gebruik altijd `===` (strikt), niet `==`. `==` doet automatische type-conversie en geeft soms verrassende resultaten.
+
+</details>
+
+### Variabelen
+
+<details>
+<summary>Variabele aanmaken en aanpassen — <code>let</code> en <code>const</code></summary>
+
+Met `let` maak je een variabele aan die **kan veranderen**. Met `const` maak je een constante — de waarde blijft hetzelfde.
+
+```js
+let teller = 0;          // mag veranderen
+teller = teller + 1;     // waarde aanpassen
+
+const startwaarde = 0;   // mag niet meer veranderen
+```
+
+**Vuistregel**: gebruik standaard `const`. Pas als de waarde echt moet kunnen veranderen, gebruik je `let`.
+
+Zet variabelen die je wilt **onthouden tussen klikken** altijd **buiten** de functie. Binnen een functie wordt de variabele elke keer opnieuw aangemaakt en reset hij naar de beginwaarde.
+
+```js
+let teller = 0;  // buiten de functie: onthoudt de waarde
+
+document.getElementById('knop').addEventListener('click', function() {
+  teller = teller + 1;
+  document.getElementById('uitvoer').textContent = teller;
+});
+```
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <p id="uitvoer">0</p>
+  <button id="knop">Klik mij</button>
+</body>
+</html>`}
+  initialCss={`p { font-size: 2rem; padding: 12px; }
+button { padding: 8px 16px; font-size: 1rem; cursor: pointer; }`}
+  initialJs={`let teller = 0;
+
+document.getElementById('knop').addEventListener('click', function() {
+  teller = teller + 1;
+  document.getElementById('uitvoer').textContent = teller;
+});`}
+  height="460px"
+  livePreview={false}
+/>
+
+</details>
+
+### Beslissingen
+
+<details>
+<summary>If / else — verschillende acties op basis van een voorwaarde</summary>
+
+Met `if` voer je code alleen uit als een voorwaarde `true` is. Met `else` geef je een alternatief op voor als de voorwaarde `false` is.
+
+```js
+if (score > 10) {
+  document.getElementById('uitvoer').textContent = 'Gewonnen!';
+} else {
+  document.getElementById('uitvoer').textContent = 'Niet genoeg punten.';
+}
+```
+
+Voor meerdere gevallen ketting je `else if`:
+
+```js
+if (score >= 90) {
+  cijfer = 'A';
+} else if (score >= 70) {
+  cijfer = 'B';
+} else if (score >= 50) {
+  cijfer = 'C';
+} else {
+  cijfer = 'Onvoldoende';
+}
+```
+
+JavaScript probeert de takken van boven naar beneden en stopt bij de eerste die klopt.
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <p id="uitvoer">Klik op de knop.</p>
+  <button onclick="check()">Check</button>
+</body>
+</html>`}
+  initialCss={`p { font-size: 1.4rem; padding: 12px; }
+button { padding: 8px 16px; font-size: 1rem; cursor: pointer; }`}
+  initialJs={`function check() {
+  const leeftijd = 16;
+  if (leeftijd >= 18) {
+    document.getElementById('uitvoer').textContent = 'Je mag stemmen.';
+  } else {
+    document.getElementById('uitvoer').textContent = 'Nog even wachten.';
+  }
+}`}
+  height="440px"
+  livePreview={false}
+/>
+
+</details>
+
+<details>
+<summary>Logische operatoren — <code>&amp;&amp;</code>, <code>||</code>, <code>!</code></summary>
+
+Combineer meerdere voorwaarden met:
+
+| Operator | Wat | Voorbeeld |
+|---|---|---|
+| `&&` | EN — beide moeten waar zijn | `leeftijd >= 18 && heeftToegang` |
+| `\|\|` | OF — minstens één moet waar zijn | `dag === 'za' \|\| dag === 'zo'` |
+| `!` | NIET — keert de waarde om | `!isIngelogd` |
+
+```js
+if (leeftijd >= 18 && heeftToegang) {
+  console.log('Welkom!');
+}
+
+if (dag === 'za' || dag === 'zo') {
+  console.log('Weekend');
+}
+
+if (!isJarig) {
+  console.log('Niet jarig vandaag');
+}
+```
+
+</details>
+
+### Events
+
+<details>
+<summary>Events met <code>addEventListener</code></summary>
+
+Met `addEventListener` koppel je een functie aan een event op een element — zonder dat je de HTML hoeft aan te passen. Je kunt meerdere listeners aan hetzelfde element koppelen.
+
+```js
+document.getElementById('knop').addEventListener('click', function() {
+  document.getElementById('status').textContent = 'Geklikt!';
+});
+```
+
+Veelgebruikte events:
+
+| Event | Wanneer |
+|-------|---------|
+| `'click'` | Muisklik op het element |
+| `'mouseover'` | Muis beweegt over het element |
+| `'mouseout'` | Muis verlaat het element |
+| `'keydown'` | Toets wordt ingedrukt |
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <button id="knop">Beweeg je muis of klik!</button>
+  <p id="status">Wachten op een event...</p>
+</body>
+</html>`}
+  initialCss={`button { padding: 12px 24px; font-size: 1.1rem; cursor: pointer; }
+p { margin-top: 16px; font-size: 1.2rem; }`}
+  initialJs={`document.getElementById('knop').addEventListener('mouseover', function() {
+  document.getElementById('status').textContent = 'Muis erop!';
+});
+
+document.getElementById('knop').addEventListener('mouseout', function() {
+  document.getElementById('status').textContent = 'Muis weg.';
+});
+
+document.getElementById('knop').addEventListener('click', function() {
+  document.getElementById('status').textContent = 'Geklikt!';
+});`}
+  height="480px"
+  livePreview={false}
+/>
+
+</details>
+
+### Formulier-data ophalen
+
+<details>
+<summary>Invoer uitlezen met <code>.value</code></summary>
+
+Met `.value` lees je uit wat de gebruiker in een formulierveld heeft getypt of gekozen. Werkt voor `<input>`, `<textarea>` en `<select>`.
+
+```js
+const naam = document.getElementById('naam').value;             // string
+const leeftijd = Number(document.getElementById('lft').value);  // number
+const keuze = document.getElementById('land').value;            // value van <option>
+```
+
+:::tip Vergeet `Number()` niet
+`.value` is **altijd een string**, ook bij `<input type="number">`. Zonder `Number()` plakt `+` getallen aan elkaar in plaats van op te tellen.
+:::
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <input type="text" id="naam" placeholder="Je naam">
+  <button type="button" onclick="begroet()">Begroet</button>
+  <p id="uitvoer"></p>
+</body>
+</html>`}
+  initialCss={`input { padding: 6px; font-size: 1rem; }
+button { padding: 6px 12px; cursor: pointer; }
+#uitvoer { margin-top: 12px; color: darkgreen; }`}
+  initialJs={`function begroet() {
+  const naam = document.getElementById('naam').value;
+  document.getElementById('uitvoer').textContent = 'Hoi ' + naam + '!';
+}`}
+  height="360px"
+  livePreview={false}
+/>
+
+</details>
+
+### prompt & alert
+
+<details>
+<summary>Snelle input/output — <code>prompt()</code> en <code>alert()</code></summary>
+
+Ingebouwde browser-functies voor snelle demo's:
+
+```js
+alert('Hallo wereld!');               // toont popup met OK-knop
+
+const naam = prompt('Hoe heet je?');  // vraagt om invoer
+alert('Hoi ' + naam + '!');
+```
+
+- `prompt()` geeft een **string** terug (ook bij getallen — gebruik `Number(prompt(...))` om te rekenen).
+- Klikt de gebruiker op Cancel, dan is `prompt()` gelijk aan `null`.
+
+:::tip Wanneer wel/niet?
+Voor een echte website is `prompt`/`alert` te storend. Gebruik [`<input>` + `.value`](#formulier-data-ophalen) voor netjes ingebouwde invoer. `prompt`/`alert` zijn alleen handig voor mini-demo's.
+:::
+
+</details>
+
+### Loops
+
+<details>
+<summary>Herhaling — <code>for</code>-loop</summary>
+
+Een `for`-loop herhaalt een blok code een vast aantal keer:
+
+```js
+for (let i = 0; i < 5; i++) {
+  console.log('Ronde ' + i);
+}
+```
+
+De drie delen tussen haakjes:
+- **`let i = 0`** — beginwaarde van de tellervariabele
+- **`i < 5`** — voorwaarde: zolang dit `true` is, blijft de loop draaien
+- **`i++`** — wat er na elke ronde gebeurt (kort voor `i = i + 1`)
+
+Resultaat: `Ronde 0`, `Ronde 1`, ..., `Ronde 4`.
+
+</details>
+
+<details>
+<summary>Herhaling met voorwaarde — <code>while</code></summary>
+
+`while` draait zolang een voorwaarde `true` is:
+
+```js
+let teller = 0;
+while (teller < 5) {
+  console.log(teller);
+  teller = teller + 1;   // niet vergeten — anders oneindige loop!
+}
+```
+
+Vergeet binnenin de loop niet de variabele aan te passen — anders bevriest de browser.
+
+</details>
+
+### Arrays
+
+<details>
+<summary>Lijsten — <code>[]</code>, index, <code>.length</code>, <code>.push()</code></summary>
+
+Een array is een geordende lijst tussen vierkante haken:
+
+```js
+const namen = ['Anna', 'Bram', 'Chris'];
+
+console.log(namen[0]);      // 'Anna' — eerste item (index 0!)
+console.log(namen.length);  // 3
+namen.push('Daan');         // voeg toe aan einde
+namen[0] = 'Anouk';         // vervang eerste item
+```
+
+Items beginnen bij **index 0**, niet 1.
+
+Combineren met een loop om alle items te bewerken:
+
+```js
+for (let i = 0; i < namen.length; i++) {
+  console.log('Hallo ' + namen[i]);
+}
+```
+
+</details>
+
+### Modern DOM
+
+<details>
+<summary>Selecteren met CSS-syntax — <code>querySelector</code></summary>
+
+`document.querySelector(...)` selecteert met een **CSS-selector** — krachtiger dan `getElementById`:
+
+```js
+document.querySelector('#welkom');        // id="welkom"
+document.querySelector('.kaart');         // eerste class="kaart"
+document.querySelector('button');         // eerste <button>
+document.querySelector('.kaart h2');      // h2 binnen .kaart
+```
+
+`document.querySelectorAll(...)` geeft **alle** matchende elementen (loop eroverheen):
+
+```js
+const knoppen = document.querySelectorAll('button');
+for (let i = 0; i < knoppen.length; i++) {
+  knoppen[i].textContent = 'Klik!';
+}
+```
+
+Geeft `null` terug als er geen match is — check op `null` voordat je iets doet met het resultaat.
+
+</details>
+
+<details>
+<summary>CSS-klassen toevoegen/verwijderen — <code>classList</code></summary>
+
+In plaats van `.style.xxx = '...'` definieer je je stijl in CSS, en zet/verwijder je een klasse:
+
+```js
+const kaart = document.querySelector('.kaart');
+
+kaart.classList.add('actief');       // klasse toevoegen
+kaart.classList.remove('actief');    // klasse verwijderen
+kaart.classList.toggle('actief');    // aan/uit schakelen
+kaart.classList.contains('actief');  // true/false
+```
+
+In CSS definieer je dan twee toestanden:
+
+```css
+.kaart { background-color: lightgray; }
+.kaart.actief { background-color: gold; }
+```
+
+Schoner dan veel `.style`-regels.
+
+</details>
+

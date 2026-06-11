@@ -1,0 +1,87 @@
+---
+sidebar_position: 1
+sidebar_label: 'Low'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# XSS (DOM) — Low
+
+Bij DOM-based XSS vindt de aanval *volledig* in de browser (via JavaScript) plaats. De server in de achtergrond doet er soms niet eens toe!
+
+## 1. Predict (Voorspel)
+
+Bij het openen van deze pagina staat er een parameter in de URL: `?default=English`.
+De broncode van de webpagina bevat dit stukje JavaScript:
+
+```javascript
+var lang = document.location.href.substring(document.location.href.indexOf("default=") + 8);
+document.write("<option value='" + lang + "'>" + lang + "</option>");
+```
+
+**Vraag:** Wat gebeurt er als je het woord `English` in de adresbalk verandert in een stukje HTML zoals `<script>alert(1)</script>` ?
+
+<details>
+
+<summary>Antwoord</summary>
+
+De JavaScript-code in je eigen browser pakt exact de letters achter `default=` uit de URL-balk en 'schrijft' dit met `document.write()` in de pagina. Jouw `<script>`-tag wordt daardoor midden in de dropdown-box opgebouwd en direct door de browser uitgevoerd!
+
+</details>
+
+## 2. Run (Uitvoeren)
+
+Start de testomgeving en bekijk de taalkeuze-dropdown.
+
+<DvwaLab module="xss_dom" level="low" />
+
+Selecteer een andere taal uit de dropdown en observeer hoe de waarde in de URL verandert (bijv. `?default=French`). Bevestig dat de dropdown normaal werkt.
+
+## 3. Investigate (Onderzoeken)
+
+Verander de URL-parameter handmatig naar `?default=<b>test</b>` (als het lab directe URL-manipulatie ondersteunt) of bekijk via F12 → Sources de JavaScript-code die de dropdown opbouwt.
+
+**Vraag:** Wat zie je als je naar de broncode van de dropdown-opbouw kijkt? Wordt de URL-waarde rechtstreeks in de HTML geschreven?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Ja — de JavaScript-code haalt de waarde achter `default=` uit de URL op en plakt die direct via `document.write()` in de pagina. Er is geen filtering of escaping. Dit onthult dat alles wat je achter `default=` zet, als raw HTML in de pagina terechtkomt en door de browser wordt uitgevoerd.
+
+</details>
+
+## 4. Modify & Make (Aanpassen & Maken)
+
+Omdat de tekst klakkeloos achter `<option value='` wordt geplakt in de pagina, moeten we er soms eerst voor zorgen dat we de HTML-tag 'afsluiten' voordat we onze XSS-payload inbrengen.
+
+<details>
+
+<summary>Tip</summary>
+
+Verander de parameterwaarde in de URL in: `></option><script>alert(1)</script>`
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+Door de string te beginnen met `></option>` sluit je de openstaande tag van de ontwikkelaar netjes af. Daarna kun je je eigen `<script>` openen. DOM-XSS vereist vaak een stukje "HTML-puzzelen" om de structuur weer heel te maken!
+
+</details>
+
+## 5. ✓ Wat moest je zien?
+
+:::tip Controle
+- De pop-up verschijnt nadat je de URL-parameter hebt aangepast.
+- De aanval vindt volledig in de browser plaats — de server ontvangt geen kwaadaardige query.
+- Via F12 zie je dat `document.write()` jouw payload direct in de pagina heeft geschreven.
+
+Geen pop-up? Moderne browsers kunnen `document.write()` met scripts blokkeren. Dit is een ingebouwde browserbeveiliging die DOM-XSS in de praktijk bemoeilijkt.
+:::
+
+## 6. Er gaat iets mis...
+
+Je typt keurig je JavaScript-payload en... er gebeurt niets. Vaak blokkeren moderne webbrowsers `document.write()` als ze merken dat er plots een script uit het niets wordt geschreven. Dit is een ingebouwde browserbeveiliging. Hacken met DOM XSS is in moderne browsers extreem lastig geworden zonder complexe *bypasses*!

@@ -1,0 +1,88 @@
+---
+sidebar_position: 2
+sidebar_label: 'Medium'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# XSS (Reflected) — Medium
+
+Op het *Medium* niveau is een beveiliging toegevoegd om de `<script>`-tags tegen te houden.
+
+## 1. Predict (Voorspel)
+
+De programmeur gebruikt nu de `str_replace()`-functie om het probleem op te lossen:
+
+```php
+// Haal het woord <script> weg uit de naam
+$name = str_replace( '<script>', '', $_GET[ 'name' ] );
+echo "Hello " . $name;
+```
+
+**Vraag:** Waarom is dit geen sluitende oplossing? Kun je een manier bedenken om alsnog JavaScript op de pagina te krijgen, zónder dat het exacte woordje `<script>` (alles in kleine letters) wordt gebruikt?
+
+<details>
+
+<summary>Antwoord</summary>
+
+De functie `str_replace` is **hoofdlettergevoelig**. Het filtert wél `<script>`, maar kijkt helemaal niet naar `<SCRIPT>` of `<Script>`. HTML en browsers zijn echter flexibel: een browser snapt `<SCRIPT>` net zo goed!
+Een andere truc is het *nesten* van scripts: `<scr<script>ipt>`. Het filter haalt het binnenste woordje weg, waardoor de buitenste letters aan elkaar plakken en alsnog `<script>` vormen!
+
+</details>
+
+## 2. Run (Uitvoeren)
+
+Start het lab en observeer het normale gedrag.
+
+<DvwaLab module="xss_reflected" level="medium" />
+
+Vul een gewone naam in en klik op Submit. Bekijk hoe de pagina reageert.
+
+## 3. Investigate (Onderzoeken)
+
+Probeer je eerdere aanval: vul `<script>alert(1);</script>` in en klik op Submit.
+
+**Vraag:** Wat zie je op het scherm? Wordt de alert getriggerd, of verschijnt er iets anders? Wat onthult de reactie van de pagina over het filter?
+
+<details>
+
+<summary>Antwoord</summary>
+
+De tekst zegt iets als "Hello alert(1);&lt;/script&gt;" — het filter heeft letterlijk het `<script>`-tag eruit geknipt, maar de rest van de payload staat er nog. Dit onthult hoe het filter werkt: het zoekt exact naar de string `<script>` in kleine letters en verwijdert die. Alles wat hiervan afwijkt (andere hoofdletters, geneste tags) laat het door.
+
+</details>
+
+## 4. Modify & Make (Aanpassen & Maken)
+
+Bedenk nu een manier om het filter te slim af te zijn en alsnog je pop-up te laten verschijnen.
+
+<details>
+
+<summary>Tip</summary>
+
+Maak gebruik van de hoofdlettergevoeligheid van het filter.
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+Vul in: `<SCRIPT>alert(1);</SCRIPT>`. Omdat het filter alleen naar kleine letters zoekt, wordt dit volledig genegeerd. De browser voert het keurig uit!
+
+</details>
+
+## 5. ✓ Wat moest je zien?
+
+:::tip Controle
+- `<SCRIPT>alert(1);</SCRIPT>` triggert de **pop-up** — het filter laat het door.
+- `<script>alert(1);</script>` triggert géén pop-up — het filter verwijdert de tags.
+- Het verschil bewijst dat het filter hoofdlettergevoelig is.
+
+Werkt `<SCRIPT>` ook niet? Probeer de geneste variant: `<scr<script>ipt>alert(1);</scr<script>ipt>`.
+:::
+
+## 6. Er gaat iets mis...
+
+Soms gebruik je `<SCRIPT>` en werkt het nog steeds niet. In veel moderne backend-talen wordt de input stiekem eerst omgezet naar kleine letters (`strtolower`) voordat er bewerkingen worden uitgevoerd, wat de truc ongedaan maakt. Hacken in software vereist constant meebewegen met kleine details!

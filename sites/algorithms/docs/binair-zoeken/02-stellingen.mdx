@@ -1,0 +1,109 @@
+---
+sidebar_position: 2
+hide_table_of_contents: true
+---
+
+# 4.2 Stellingen — toets je begrip
+
+**Leerdoel:** je toetst of je het *idee* van binair zoeken (halveren) snapt,
+**voordat** je gaat programmeren.
+
+## Stelling 1
+
+*"Binair zoeken werkt ook op een ongesorteerde lijst."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Onjuist.** Het algoritme gaat ervan uit: *"als het midden te hoog is,
+moet het doel links liggen"*. Die aanname klopt **alleen** als de lijst
+gesorteerd is. Op een rommelige lijst krijg je willekeurige antwoorden.
+
+</details>
+
+## Stelling 2
+
+*"Bij een lijst van 1000 elementen heb je in het ergste geval maximaal 10
+stappen nodig."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Juist.** 2¹⁰ = 1024, dus na 10 halveringen is er van 1000 elementen nog
+maximaal 1 over.
+
+Algemeen: voor `n` elementen heb je ongeveer `log₂(n)` stappen — preciezer:
+`⌊log₂(n)⌋ + 1` in het ergste geval (als het doel niet bestaat). We zeggen:
+het algoritme is **O(log n)**.
+
+</details>
+
+## Stelling 3
+
+*"Als een waarde meerdere keren voorkomt, geeft binair zoeken altijd de
+**eerste** voorkomende index."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Onjuist.** Welke index je krijgt, hangt af van waar het `midden` toevallig
+landt. Het kan **elk** van de gelijke waarden zijn. Wil je per se de
+*eerste*? Dan moet je het algoritme aanpassen — komt later.
+
+</details>
+
+## Stelling 4
+
+*"Voor een lijst van 8 elementen zijn er maximaal 8 stappen nodig."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Onjuist.** Voor 8 elementen zijn er maximaal **4** stappen nodig. Bij een
+lijst van 8:
+
+- stap 1 → 4 elementen over
+- stap 2 → 2 over
+- stap 3 → 1 over
+- stap 4 → het laatst overgebleven element vergelijken → klaar
+
+(De formule `⌊log₂(8)⌋ + 1 = 4`. Veel mensen schatten 3 omdat `2³ = 8` —
+maar je hebt na 3 halveringen nog **één** element over dat je nog moet
+checken. Vandaar de `+ 1`.)
+
+Het zou *lineair* zoeken zijn dat tot 8 stappen nodig heeft.
+
+</details>
+
+## Stelling 5
+
+*"Bij elke stap wordt het zoekgebied precies gehalveerd."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Bijna juist.** Het wordt **ongeveer** gehalveerd. Door de
+afronding-bij-deling kan de ene helft 1 groter zijn dan de andere. Maar het
+*idee* van halveren klopt, en de **groeisnelheid** (log n) wordt er niet
+door veranderd.
+
+</details>
+
+## Stelling 6
+
+*"Binair zoeken is een soort recept dat je in je hoofd kunt uitvoeren, op
+elke gesorteerde lijst."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Juist.** Een algoritme is precies dat: een stappenplan dat je
+mechanisch kunt volgen. Probeer het zelf: gesorteerde lijst maken, doel
+kiezen, met pen en papier de stappen volgen. Snap je hoe `laag`, `hoog` en
+`midden` veranderen, dan snap je het algoritme.
+
+</details>
+
+Snap je het idee? Tijd om het te bouwen — stukje voor stukje.
+
+Door naar [stap 3: bouwsteen 1](./03-bouwen-grenzen).

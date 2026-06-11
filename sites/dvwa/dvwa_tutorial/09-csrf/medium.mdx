@@ -1,0 +1,99 @@
+---
+sidebar_position: 2
+sidebar_label: 'Medium'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# CSRF — Medium
+
+De backend heeft in de gaten dat er valse linkjes worden gestuurd vanuit e-mails of externe forums. Tijd voor een verdediging.
+
+## 1. Predict (Voorspel)
+
+De server voert nu een extra controle uit op de binnenkomende requests:
+
+```php
+if ( stripos( $_SERVER[ 'HTTP_REFERER' ], $_SERVER[ 'SERVER_NAME' ]) !== false ) {
+    // Wachtwoord succesvol gewijzigd
+} else {
+    // Fout! Je probeert dit vanaf een andere site!
+}
+```
+
+**Vraag:** Waar kijkt de server in deze code precies naar om te bepalen of het verzoek betrouwbaar is?
+
+<details>
+
+<summary>Antwoord</summary>
+
+De server bekijkt de **HTTP Referer**-header. Dit is een regeltje data die elke browser meestuurt om aan te geven *"Vanaf welke URL klikte deze persoon op de link?"*
+De code controleert of de referer overeenkomt met de eigen server (`SERVER_NAME`). Hij weigert wachtwoordwijzigingen als de gebruiker vanaf een andere website kwam!
+
+</details>
+
+## 2. Run (Uitvoeren)
+
+Start het lab en probeer het wachtwoord te wijzigen via het normale formulier.
+
+<DvwaLab module="csrf" level="medium" />
+
+Vul een nieuw wachtwoord in en klik op Submit. Observeer dat het normaal werkt.
+
+## 3. Investigate (Onderzoeken)
+
+Probeer de URL van het Low-level direct in de adresbalk in te voeren (zonder via het formulier te gaan): pas de URL-parameters handmatig aan en druk op Enter.
+
+**Vraag:** Wat zie je? Wordt de wijziging geaccepteerd of geblokkeerd? Wat onthult dit over hoe het filter werkt?
+
+<details>
+
+<summary>Antwoord</summary>
+
+De wijziging wordt geblokkeerd wanneer je de URL direct intypt, omdat dan de Referer-header ontbreekt of niet overeenkomt met de eigen server. Maar het filter kijkt alleen of de domeinnaam *ergens* in de Referer voorkomt — niet of de Referer exact de eigen domeinnaam is. Een URL zoals `http://kwaad.nl/ik_ben_stiekem_localhost/` bevat het woord `localhost` en zou het filter omzeilen!
+
+</details>
+
+## 4. Modify & Make (Aanpassen & Maken)
+
+Is het controleren van de Referer een onbreekbare verdediging? Nee!
+
+Kijk goed naar de specifieke code: `stripos( $_SERVER[ 'HTTP_REFERER' ], $_SERVER[ 'SERVER_NAME' ]) !== false`.
+Dit betekent: als de originele domeinnaam maar *ergens* voorkomt in de Referer-URL, wordt het goedgekeurd.
+
+Hoe kun je als hacker dit lek misbruiken om alsnog de Referer-check te passeren vanaf je *eigen* kwaadaardige website?
+
+<details>
+
+<summary>Tip</summary>
+
+Stel, jouw kwaadaardige website heet `boos.nl`. Hoe kun je jouw URL zó aanpassen dat de server denkt dat de eigen domeinnaam in de verwijzing staat?
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+Een hacker kan zijn kwaadaardige pagina opslaan op een adres dat de naam van het slachtoffer-domein imiteert. Bijvoorbeeld een folder:
+`http://boos.nl/ik_ben_stiekem_localhost/index.html`
+
+Als het slachtoffer hierop klikt, is de Referer: `http://boos.nl/ik_ben_stiekem_localhost/`.
+De backend-code checkt of de serverdomeinnaam erin staat. Ja hoor! De controle wordt omzeild en de CSRF-aanval slaagt alsnog.
+
+</details>
+
+## 5. ✓ Wat moest je zien?
+
+:::tip Controle
+- Het normale formulier werkt correct — de Referer klopt.
+- Direct de URL intypen (zonder Referer) wordt geblokkeerd.
+- Via een URL die de domeinnaam in de padnaam bevat, kan het filter alsnog worden omzeild.
+
+Lukt het niet? In een lab-omgeving is de Referer-bypass het moeilijkst te demonstreren zonder een externe server. Focus op het begrijpen van de kwetsbaarheid.
+:::
+
+## 6. Er gaat iets mis...
+
+Je probeert CSRF via het veranderen van HTTP-headers met tools, maar het slaagt niet. Let op: bij een CSRF-aanval forceer je de *browser van de gebruiker* om het verzoek te sturen. Je kunt vanuit een HTML-script niet zomaar de headers (zoals de Referer) vervalsen in de browser van het slachtoffer. Daarom maken hackers gebruik van creatieve mapnamen op hun eigen server om de URL te imiteren.

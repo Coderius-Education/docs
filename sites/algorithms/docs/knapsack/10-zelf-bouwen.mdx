@@ -1,0 +1,124 @@
+---
+sidebar_position: 10
+hide_table_of_contents: true
+---
+
+# 10.10 Bouw zelf — de hike-rugzak
+
+**Leerdoel:** je past de tabel-aanpak toe op een **nieuw** scenario:
+een trekking-rugzak met 6 items en gewichtslimiet 15 kg.
+
+## Opdracht
+
+Je gaat 4 dagen wandelen. In je rugzak past **15 kg**. Voor je liggen
+deze items, elk met een "nuttigheids-score" (waarde) en gewicht:
+
+| Item | Wat | Waarde | Gewicht |
+|---|---|---|---|
+| 1 | Slaapzak | 12 | 4 |
+| 2 | Tent | 18 | 7 |
+| 3 | Kookstel | 8 | 3 |
+| 4 | Waterfilter | 10 | 2 |
+| 5 | Eten (3 dagen) | 14 | 5 |
+| 6 | Powerbank | 6 | 1 |
+
+Bouw een functie `kies_rugzak(items, capaciteit)` die teruggeeft:
+
+1. de totale waarde,
+2. de lijst met Python-indexen van de meegenomen items.
+
+<PyRunner initialCode={`def kies_rugzak(items, capaciteit):
+    # Vul aan:
+    # 1. bouw de tabel met de aanpak van pagina 07
+    # 2. lees tabel[n][capaciteit] = de beste totale waarde
+    # 3. backtrack (pagina 09) voor de lijst van indexen
+    # Return (totale_waarde, lijst_van_indexen).
+    return 0, []
+
+
+# === Tests ===
+items = [
+    (12, 4),    # slaapzak
+    (18, 7),    # tent
+    (8, 3),     # kookstel
+    (10, 2),    # waterfilter
+    (14, 5),    # eten
+    (6, 1),     # powerbank
+]
+
+waarde, keuze = kies_rugzak(items, 15)
+
+# Bewijsbaar optimum: items 1, 3, 4, 5, 6 (alles behalve de tent), waarde 50
+assert waarde == 50, f"Verwacht totaalwaarde 50, kreeg {waarde}"
+
+# Check dat het gewicht binnen 15 valt
+totaal_gewicht = sum(items[i][1] for i in keuze)
+assert totaal_gewicht <= 15, f"Gewicht {totaal_gewicht} > 15!"
+
+# Check dat de gekozen items de juiste totaalwaarde hebben
+gekozen_waarde = sum(items[i][0] for i in keuze)
+assert gekozen_waarde == 50
+
+print(f"Totale waarde: {waarde}")
+print(f"Indexen: {sorted(keuze)}")
+print(f"Items: {[i + 1 for i in sorted(keuze)]}")
+print(f"Totaal gewicht: {totaal_gewicht}")
+print("Alle tests gehaald ✓")`} />
+
+<details>
+<summary>Tip</summary>
+
+Bouw de tabel inline en backtrack erover:
+
+```python
+def kies_rugzak(items, capaciteit):
+    n = len(items)
+    tabel = [[0] * (capaciteit + 1) for _ in range(n + 1)]
+    for i in range(1, n + 1):
+        v, g = items[i - 1]
+        for w in range(capaciteit + 1):
+            if g > w:
+                tabel[i][w] = tabel[i - 1][w]
+            else:
+                tabel[i][w] = max(tabel[i - 1][w], v + tabel[i - 1][w - g])
+
+    # Backtrack
+    keuze = []
+    w = capaciteit
+    for i in range(n, 0, -1):
+        if tabel[i][w] != tabel[i - 1][w]:
+            keuze.append(i - 1)
+            w -= items[i - 1][1]
+
+    return tabel[n][capaciteit], keuze
+```
+
+</details>
+
+<details>
+<summary>Verwacht antwoord</summary>
+
+Beste combinatie: **items 1, 3, 4, 5, 6** (alles behalve de tent).
+
+- Waarde: 12 + 8 + 10 + 14 + 6 = **50**
+- Gewicht: 4 + 3 + 2 + 5 + 1 = **15** (precies op de limiet)
+
+De tent is met gewicht 7 zó duur dat hij meerdere kleinere items
+verdringt. Pak je hem mee, dan kun je nog hoogstens 8 kg aan andere
+items kwijt — dat geeft maximum 48.
+
+</details>
+
+## Uitdaging (optioneel)
+
+Voeg een 7e item toe — een verrekijker met waarde 4 en gewicht 1.
+Verandert de optimale keuze?
+
+## Wat heb je nu geleerd?
+
+Je hebt het **klassieke knapsack-probleem** in zijn DP-tabel-vorm
+gebouwd, getest, en toegepast op een echt scenario. De tabel-aanpak
+schaalt naar veel grotere problemen dan met de hand zou kunnen — en
+de backtrack-procedure haalt er de items uit.
+
+Door naar [stap 11: veelgemaakte fouten →](./11-fouten).

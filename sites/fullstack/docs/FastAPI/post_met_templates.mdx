@@ -1,0 +1,279 @@
+---
+sidebar_position: 10
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# POST met templates
+
+In de vorige les gaf je POST endpoint JSON terug. In deze les leer je hoe je een mooie HTML pagina toont met **Jinja2 templates**.
+
+## Templates configureren
+
+Maak een `templates` folder en configureer Jinja2 in `main.py`:
+
+```
+je-project/
+├── main.py
+├── static/
+└── templates/
+    └── resultaat.html
+```
+
+```python
+from fastapi import FastAPI, Form, Request
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
+```
+
+## Voorbeeld
+
+### Formulier (`static/pages/groet_form.html`):
+
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Hoe heet je?</h1>
+        <form method="post" action="/groet">
+            <input type="text" name="naam" required>
+            <button type="submit">Verstuur</button>
+        </form>
+    </body>
+</html>
+```
+
+### Template (`templates/groet_resultaat.html`):
+
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Hallo {{ naam }}!</h1>
+        <a href="/groet">Terug</a>
+    </body>
+</html>
+```
+
+`{{ naam }}` wordt vervangen door de waarde uit Python.
+
+### Endpoints (`main.py`):
+
+```python
+@app.get("/groet")
+async def groet_form():
+    return FileResponse("static/pages/groet_form.html")
+
+@app.post("/groet")
+async def groet_verwerk(request: Request, naam: str = Form(...)):
+    return templates.TemplateResponse(
+        "groet_resultaat.html",
+        {"request": request, "naam": naam}
+    )
+```
+
+### Wat is nieuw?
+
+- `TemplateResponse` — Rendert een HTML template met variabelen
+- `{"request": request, "naam": naam}` — Stuurt data naar de template
+- `"request": request` — Moet altijd mee!
+- `{{ naam }}` — Wordt in de template vervangen door de waarde
+
+<details>
+<summary>Waarom moet "request" altijd mee?</summary>
+
+Jinja2 in FastAPI heeft het `request` object nodig om te weten welke gebruiker de pagina opvraagt. Zonder `"request": request` in het dictionary krijg je een **TypeError**. Dit is een vereiste van het framework — vergeet het niet!
+
+</details>
+
+## Testen
+
+1. Ga naar `http://127.0.0.1:8000/groet`
+2. Vul je naam in en klik Verstuur
+3. Je ziet een mooie HTML pagina: "Hallo [jouw naam]!"
+
+:::danger Gaat er iets mis?
+Krijg je een **TemplateNotFound** error? Check of je template in de `templates/` folder staat en of de bestandsnaam klopt. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
+:::
+
+## Opdrachten
+
+### Opdracht 1: Predict - Wat zie je?
+
+Template:
+```html
+<h1>Welkom {{ naam }}!</h1>
+<p>Leeftijd: {{ leeftijd }}</p>
+```
+
+Python:
+```python
+return templates.TemplateResponse("welkom.html", {
+    "request": request, "naam": "Jan", "leeftijd": 16
+})
+```
+
+**Vraag:** Wat zie je op de pagina?
+
+<details>
+<summary>Tip</summary>
+
+De `{{ }}` variabelen worden vervangen door de waarden uit het Python dictionary. Welke waarden staan er voor `naam` en `leeftijd`?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```
+Welkom Jan!
+Leeftijd: 16
+```
+
+</details>
+
+### Opdracht 2: Run
+
+Maak het formulier, de template en de endpoints uit het voorbeeld. Test of het werkt door een naam in te vullen.
+
+### Opdracht 3: Investigate - Request vergeten
+
+Wat gebeurt er als je `"request": request` weghaalt uit het dictionary? Probeer het:
+
+```python
+return templates.TemplateResponse("groet_resultaat.html", {"naam": naam})
+```
+
+<details>
+<summary>Antwoord</summary>
+
+Je krijgt een **TypeError: context must include a "request" key**. FastAPI/Jinja2 vereist altijd dat het request object wordt meegegeven.
+
+</details>
+
+### Opdracht 4: Make - Favoriete eten
+
+Maak een formulier voor je favoriete eten. Na versturen toont een template: "Jouw favoriete eten is: [eten]"
+
+<details>
+<summary>Tip</summary>
+
+Je hebt nodig: een HTML formulier met `name="eten"`, een template met `{{ eten }}`, en een POST endpoint dat `TemplateResponse` teruggeeft met `{"request": request, "eten": eten}`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`static/pages/eten_form.html`:
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Favoriete eten</h1>
+        <form method="post" action="/eten">
+            <input type="text" name="eten" required>
+            <button type="submit">Verstuur</button>
+        </form>
+    </body>
+</html>
+```
+
+`templates/eten_resultaat.html`:
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Jouw favoriete eten is: {{ eten }}</h1>
+        <a href="/eten">Terug</a>
+    </body>
+</html>
+```
+
+```python
+@app.get("/eten")
+async def eten_form():
+    return FileResponse("static/pages/eten_form.html")
+
+@app.post("/eten")
+async def eten_verwerk(request: Request, eten: str = Form(...)):
+    return templates.TemplateResponse(
+        "eten_resultaat.html",
+        {"request": request, "eten": eten}
+    )
+```
+
+</details>
+
+### Opdracht 5: Make - Profiel pagina
+
+Maak een formulier met naam, leeftijd en hobby. Na versturen toont een template alle drie de waarden.
+
+<details>
+<summary>Tip</summary>
+
+Je hebt drie `<input>` velden nodig, drie `Form(...)` parameters, en drie `{{ }}` variabelen in je template. Vergeet niet alle drie de waarden in het context dictionary te zetten.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`templates/profiel.html`:
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Profiel van {{ naam }}</h1>
+        <p>Leeftijd: {{ leeftijd }}</p>
+        <p>Hobby: {{ hobby }}</p>
+    </body>
+</html>
+```
+
+```python
+@app.post("/profiel")
+async def profiel(request: Request, naam: str = Form(...), leeftijd: int = Form(...), hobby: str = Form(...)):
+    return templates.TemplateResponse(
+        "profiel.html",
+        {"request": request, "naam": naam, "leeftijd": leeftijd, "hobby": hobby}
+    )
+```
+
+</details>
+
+## Oefen met Python
+
+:::info Python oefenblok
+Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
+:::
+
+<CodeExercise>
+{`# Templates simuleren (zoals Jinja2)
+template = """<!DOCTYPE html>
+<html>
+<body>
+    <h1>Hallo {{ naam }}!</h1>
+    <p>Je bent {{ leeftijd }} jaar oud.</p>
+    <p>Je favoriete kleur is {{ kleur }}.</p>
+</body>
+</html>"""
+
+# Variabelen invullen (zoals Jinja2 doet)
+gegevens = {
+    "naam": "Sarah",
+    "leeftijd": "16",
+    "kleur": "blauw"
+}
+
+resultaat = template
+for sleutel, waarde in gegevens.items():
+    resultaat = resultaat.replace("{{ " + sleutel + " }}", waarde)
+
+print(resultaat)`}
+</CodeExercise>

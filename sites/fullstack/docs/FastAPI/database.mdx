@@ -1,0 +1,198 @@
+---
+sidebar_position: 11
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Gegevens opslaan
+
+Tot nu toe verdwijnt alle data als je programma stopt. Met `sqlitedict` kun je data **permanent** opslaan.
+
+## Installatie
+
+```bash
+pip install sqlitedict
+```
+
+## Data opslaan
+
+Maak `test_db.py`:
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("mijn_data.db") as db:
+    db["naam"] = "Jan"
+    db["leeftijd"] = 16
+    db.commit()
+
+print("Data opgeslagen!")
+```
+
+Run: `python test_db.py` — Er wordt een bestand `mijn_data.db` aangemaakt.
+
+## Data uitlezen
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("mijn_data.db") as db:
+    print(db["naam"])      # Jan
+    print(db["leeftijd"])  # 16
+```
+
+De data is er nog, zelfs na herstarten!
+
+## Overzicht commando's
+
+```python
+with SqliteDict("data.db") as db:
+    db["key"] = "waarde"      # Opslaan
+    waarde = db["key"]        # Uitlezen
+    del db["key"]             # Verwijderen
+    db.commit()               # Wijzigingen opslaan (NIET vergeten!)
+
+    for k, v in db.items():   # Alles bekijken
+        print(k, v)
+
+    if "key" in db:           # Checken of iets bestaat
+        print("Bestaat!")
+```
+
+<details>
+<summary>Waarom is db.commit() nodig?</summary>
+
+Een database slaat wijzigingen niet meteen op in het bestand. Met `db.commit()` zeg je: "Sla nu alles echt op." Als je dit vergeet, staan je wijzigingen alleen in het geheugen en verdwijnen ze als het programma stopt. Vergelijk het met een Word-document: je moet op "Opslaan" klikken, anders ben je je werk kwijt.
+
+</details>
+
+:::danger Gaat er iets mis?
+Data verdwenen na herstarten? Dan ben je waarschijnlijk `db.commit()` vergeten. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
+:::
+
+## Opdrachten
+
+### Opdracht 1: Predict - Wat gebeurt er?
+
+```python
+with SqliteDict("test.db") as db:
+    db["score"] = 100
+    db.commit()
+
+with SqliteDict("test.db") as db:
+    print(db["score"])
+```
+
+**Vraag:** Wat print dit?
+
+<details>
+<summary>Tip</summary>
+
+De data wordt opgeslagen met `commit()`. Daarna wordt het bestand opnieuw geopend. Blijft de data bewaard in het bestand?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`100` — De data blijft bewaard in het bestand dankzij `db.commit()`.
+
+</details>
+
+### Opdracht 2: Run - Eerste database
+
+Maak een programma dat een contact opslaat (naam + telefoonnummer) en het weer uitleest. Werkt het?
+
+<details>
+<summary>Tip</summary>
+
+Sla twee waarden op met verschillende keys, bijvoorbeeld `db["naam"] = "Jan"` en `db["telefoon"] = "0612345678"`. Vergeet `db.commit()` niet!
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("contacten.db") as db:
+    db["naam"] = "Jan"
+    db["telefoon"] = "0612345678"
+    db.commit()
+
+with SqliteDict("contacten.db") as db:
+    print(f"Naam: {db['naam']}")
+    print(f"Telefoon: {db['telefoon']}")
+```
+
+</details>
+
+### Opdracht 3: Investigate - Commit vergeten
+
+Wat gebeurt er als je `db.commit()` vergeet? Probeer het uit!
+
+<details>
+<summary>Antwoord</summary>
+
+De data wordt **niet** opgeslagen. Na herstarten is het weg. Zonder `commit()` staan de wijzigingen alleen in het geheugen.
+
+</details>
+
+### Opdracht 4: Make - Favorieten opslaan
+
+Maak een programma dat drie favorieten opslaat (eten, muziek, game) en ze daarna weer uitleest.
+
+<details>
+<summary>Tip</summary>
+
+Gebruik drie keys: `db["eten"]`, `db["muziek"]`, `db["game"]`. Sla alles op met één `db.commit()` aan het eind.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("favorieten.db") as db:
+    db["eten"] = "pizza"
+    db["muziek"] = "pop"
+    db["game"] = "Minecraft"
+    db.commit()
+
+with SqliteDict("favorieten.db") as db:
+    for key, value in db.items():
+        print(f"{key}: {value}")
+```
+
+</details>
+
+## Oefen met Python
+
+:::info Python oefenblok
+Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
+:::
+
+<CodeExercise>
+{`# Oefen met dictionaries (vergelijkbaar met een database)
+data = {}
+
+# Toevoegen (CREATE)
+data["naam"] = "Jan"
+data["leeftijd"] = 16
+data["hobby"] = "programmeren"
+print("Toegevoegd:", data)
+
+# Lezen (READ)
+print(f"Naam: {data['naam']}")
+
+# Bijwerken (UPDATE)
+data["leeftijd"] = 17
+print(f"Nieuwe leeftijd: {data['leeftijd']}")
+
+# Alle items bekijken
+for sleutel, waarde in data.items():
+    print(f"  {sleutel}: {waarde}")`}
+</CodeExercise>

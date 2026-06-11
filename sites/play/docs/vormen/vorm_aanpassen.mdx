@@ -1,0 +1,71 @@
+﻿---
+sidebar_position: 6
+hide_table_of_contents: true
+---
+
+# 1.6 Je vorm aanpassen
+
+:::info Wat moet je al weten
+- [1.2 Je eerste cirkel](/docs/vormen/je_eerste_cirkel) - vormen tekenen en hun eigenschappen kennen
+:::
+
+Tot nu toe hebben de vormen stilgestaan op je scherm.
+Om een spel te kunnen programmeren, hebben we beweging nodig.
+Daarvoor moeten we leren hoe je een vorm kunt aanpassen *nadat* deze is gemaakt.
+
+Kijk eens naar het volgende voorbeeld:
+
+<PygbagRunner code={`import play 
+
+play.new_circle()`} height={300} />
+
+Hoe kan ik de cirkel veranderen **nadat** deze gemaakt is?
+Oftewel, kan ik via code na **play.new_circle()** iets veranderen aan de cirkel?
+
+## 1.6.1 De variabele
+We hebben een **variabele** nodig die ons toegang geeft tot de cirkel. Kijk maar eens goed naar het onderstaande voorbeeld:
+
+<PygbagRunner code={`import play 
+
+mijn_cirkel = play.new_circle()
+mijn_cirkel.color = 'blue'`} height={300} />
+
+In dit codefragment gebeurt veel:
+- **play.new_circle()**: dit tekent de cirkel op het scherm
+- **mijn_cirkel = play.new_circle()**: dit tekent de cirkel EN zorgt ervoor dat de variabele **mijn_cirkel** verwijst naar onze cirkel
+- **mijn_cirkel.color = 'blue'**: dit wijzigt van onze cirkel alleen de kleur naar blauw
+
+Naast kleur kun je ook de x-positie, y-positie etc. aanpassen. Probeer het maar eens in de volgende opdracht.
+
+### Opdracht 1.6.1.a: je aangepaste cirkel
+Maak een nieuwe cirkel en pas deze aan:
+- Verander de kleur naar 'blue' 
+- Verander de x-positie naar 150 
+- Verander de y-positie naar 200 
+- Vergroot de cirkel door de 'radius' (straal) aan te passen naar 200
+
+```python
+import play 
+
+mijn_cirkel = play.new_circle()
+# JOUW CODE HIER
+```
+
+<details>
+    <summary>Klik hier voor een tip!</summary>
+
+De attributen die je gaat veranderen zijn: **color**, **x**, **y** en **radius**.
+
+</details>
+
+<details>
+    <summary>Klik hier voor de oplossing!</summary>
+
+<PygbagRunner code={`import play 
+
+mijn_cirkel = play.new_circle()
+mijn_cirkel.color = 'blue'
+mijn_cirkel.x = 150
+mijn_cirkel.y = 200
+mijn_cirkel.radius = 200`} height={300} />
+</details>

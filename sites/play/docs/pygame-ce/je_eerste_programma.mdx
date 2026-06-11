@@ -1,0 +1,125 @@
+﻿---
+sidebar_position: 1
+hide_table_of_contents: true
+---
+
+
+# 7.1 Je eerste venster
+
+Met **coderius-play** heb je geleerd om snel games te maken. Maar wat als je meer controle wilt? Dan kun je **pygame-ce** gebruiken. Dat is de bibliotheek waar coderius-play bovenop gebouwd is.
+
+:::info Vervolg, geen vervanging
+Deze sectie is een **vervolg**, niet een alternatief. Voor de meeste games blijft `coderius-play` de snelste route. Stap pas over op `pygame-ce` als je iets nodig hebt wat play niet biedt — bijvoorbeeld eigen pixel-tekeningen, fijne event-controle, of een vorm van game-loop die buiten play's standaard valt.
+
+**Wat is anders dan in play?**
+- **Eigen game-loop**: je schrijft zelf de `while`-lus die elk frame draait. Play doet dit voor je.
+- **Coördinatensysteem**: pygame-ce zet `(0, 0)` linksboven en de y-as loopt naar beneden. In play zit `(0, 0)` in het midden en gaat y omhoog (zoals in wiskunde).
+- **Geen automatische physics**: voor zwaartekracht en botsingen gebruik je apart de `pymunk`-bibliotheek (in lessen 7.7-7.10).
+- **Geen automatische start_program**: jij bent verantwoordelijk voor het tekenen, het bijwerken van het scherm (`pygame.display.flip()`) en het sluiten van het venster.
+
+Verwacht dus iets meer regels code voor hetzelfde resultaat — in ruil krijg je meer controle.
+:::
+
+## Een venster openen
+
+```python
+import pygame
+
+pygame.init()
+
+scherm = pygame.display.set_mode((800, 600))
+pygame.display.set_caption("Mijn eerste pygame-ce programma")
+
+actief = True
+
+while actief:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            actief = False
+
+pygame.quit()
+```
+
+
+
+{/* Fictieve screenshot: Een leeg venster met de titel "Mijn eerste pygame-ce programma" en afmetingen 800x600 pixels. */}
+Je zou nu een leeg venster moeten zien met de titel "Mijn eerste pygame-ce programma" en een afmeting van 800 bij 600 pixels.
+
+Wat gebeurt hier?
+
+```python
+pygame.init()
+```
+Start pygame op. Dit moet je altijd als eerste doen.
+
+```python
+scherm = pygame.display.set_mode((800, 600))
+```
+Maakt een venster van 800 pixels breed en 600 pixels hoog.
+
+```python
+pygame.display.set_caption("Mijn eerste pygame-ce programma")
+```
+Geeft het venster een titel.
+
+```python
+while actief:
+    ...
+```
+Dit is de **game loop**. Zolang `actief` True is, blijft het programma draaien. Elk spel in pygame-ce heeft een game loop.
+
+```python
+for event in pygame.event.get():
+    if event.type == pygame.QUIT:
+        actief = False
+```
+Hier luisteren we naar gebeurtenissen. Als je op het kruisje klikt, stopt het programma.
+
+```python
+pygame.quit()
+```
+Sluit pygame netjes af.
+
+### Er gaat iets mis?
+
+Als je `pygame.init()` vergeet, krijg je een foutmelding zoals:
+
+```
+pygame.error: video system not initialized
+```
+
+De oplossing: zorg dat `pygame.init()` altijd de eerste regel is na `import pygame`.
+
+Een andere veelgemaakte fout is de game loop vergeten. Zonder de `while`-loop opent het venster en sluit het meteen weer!
+
+## Opdracht 7.1.a: Venstergrootte aanpassen
+
+Maak een venster dat:
+1. 400 bij 400 pixels groot is
+2. De titel "Mijn spel" heeft
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+import pygame
+
+pygame.init()
+
+scherm = pygame.display.set_mode((400, 400))
+pygame.display.set_caption("Mijn spel")
+
+actief = True
+
+while actief:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            actief = False
+
+pygame.quit()
+```
+
+{/* Fictieve screenshot: Een leeg venster met de titel "Mijn spel" en afmetingen 400x400 pixels. */}
+Na het uitvoeren van deze code, zou je een leeg venster moeten zien met de titel "Mijn spel" en afmetingen van 400 bij 400 pixels.
+
+</details>

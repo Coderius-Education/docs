@@ -1,0 +1,92 @@
+---
+sidebar_position: 1
+hide_table_of_contents: true
+---
+
+# 4.1 Binair zoeken — het idee
+
+**Leerdoel:** je begrijpt het idee van *halveren* bij zoeken, en waarom dat
+veel sneller kan dan [lineair zoeken](/docs/lineair-zoeken/01-concept).
+Nog geen Python — eerst snappen.
+
+## Het verhaal
+
+We doen een **raadspel**: ik denk aan een getal tussen 1 en 100. Bij elke
+gok zeg ik *"hoger"*, *"lager"* of *"goed!"*.
+
+Wat is jouw eerste gok?
+
+<details>
+<summary>De slimste eerste gok</summary>
+
+**50.** Daarmee elimineer je in één klap de helft van alle mogelijkheden.
+
+- Zeg ik *hoger* → het zit tussen 51 en 100.
+- Zeg ik *lager* → het zit tussen 1 en 49.
+
+Jouw tweede gok? Weer **precies in het midden** van het overgebleven
+bereik. En zo verder.
+
+Op deze manier ben je er bij 100 getallen in **maximaal 7 gokken** (want
+2⁷ = 128 ≥ 100).
+
+</details>
+
+Dat is **binair zoeken** in één zin: *kies steeds het midden, halveer het
+zoekgebied, herhaal.*
+
+## Belangrijke voorwaarde
+
+Binair zoeken werkt **alleen op een gesorteerde lijst**. Anders heeft "het
+midden" geen betekenis — je weet niet of het doel links of rechts ligt.
+
+## Visualisatie — wel gevonden
+
+We zoeken **7** in deze **gesorteerde** lijst:
+
+```
+zoeken: 7
+lijst:  [ 1 , 3 , 5 , 7 , 9 , 11 , 13 , 15 ]
+index:    0   1   2   3   4   5    6    7
+
+stap 1: laag=0, hoog=7 → midden=3 → lijst[3]=7
+        [ 1 , 3 , 5 ,(7), 9 , 11 , 13 , 15 ]   7 == 7?  JA → index 3
+```
+
+In één stap raak! Dat was geluk: 7 zat precies op het midden.
+
+## Visualisatie — niet gevonden
+
+We zoeken **4** in dezelfde lijst:
+
+```
+zoeken: 4
+lijst:  [ 1 , 3 , 5 , 7 , 9 , 11 , 13 , 15 ]
+
+stap 1: laag=0, hoog=7 → midden=3 → lijst[3]=7
+        midden te hoog → kijk alleen nog links → hoog wordt 2
+
+stap 2: laag=0, hoog=2 → midden=1 → lijst[1]=3
+        midden te laag → kijk alleen nog rechts → laag wordt 2
+
+stap 3: laag=2, hoog=2 → midden=2 → lijst[2]=5
+        midden te hoog → hoog wordt 1
+        laag > hoog → stop → niet gevonden → -1
+```
+
+Drie stappen, geen match. We zijn klaar.
+
+## Hoe snel?
+
+Voor een lijst van 1.000.000 elementen:
+
+| | Lineair zoeken | Binair zoeken |
+|---|---|---|
+| Werkt op ongesorteerd | ja | nee |
+| Max. vergelijkingen | 1.000.000 | ~20 |
+| Snelheidsklasse | O(n) | O(log n) |
+
+Dat is een **factor 50.000 verschil**. Bij een miljard zou het verschil al
+nog veel groter zijn — *exponentieel* groter zelfs.
+
+Door naar [stap 2: stellingen](./02-stellingen).

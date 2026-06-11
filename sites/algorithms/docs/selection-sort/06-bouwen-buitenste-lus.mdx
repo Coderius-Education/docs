@@ -1,0 +1,132 @@
+---
+sidebar_position: 6
+hide_table_of_contents: true
+---
+
+# 5.6 Bouwsteen 4 — de bouwstenen aan elkaar rijgen
+
+**Leerdoel:** je verpakt *vind kleinste vanaf i* en *swap met positie i*
+in een lus die elke positie `i` van 0 tot het einde behandelt.
+
+## Wat we willen
+
+Voor elke positie `i` van 0 tot `n − 1`:
+1. Vind de kleinste in `lijst[i:]`.
+2. Swap die met `lijst[i]`.
+
+Na deze lus is de hele lijst gesorteerd.
+
+## Voorspel
+
+Wat denk je dat dit print?
+
+```python
+def selection_sort(lijst):
+    n = len(lijst)
+    for i in range(n):
+        min_index = i
+        for j in range(i, n):
+            if lijst[j] < lijst[min_index]:
+                min_index = j
+        lijst[i], lijst[min_index] = lijst[min_index], lijst[i]
+    return lijst
+
+print(selection_sort([5, 2, 8, 1, 4]))
+print(selection_sort([3, 1, 2]))
+print(selection_sort([42]))
+print(selection_sort([]))
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+[1, 2, 4, 5, 8]
+[1, 2, 3]
+[42]
+[]
+```
+
+- Standaardlijst → gesorteerd.
+- Drie elementen → gesorteerd.
+- Eén element → trivially gesorteerd (lus doet één iteratie, swap met
+  zichzelf).
+- Lege lijst → de buitenste lus doet 0 iteraties. Veilig.
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`def selection_sort(lijst):
+    n = len(lijst)
+    for i in range(n):
+        min_index = i
+        for j in range(i, n):
+            if lijst[j] < lijst[min_index]:
+                min_index = j
+        lijst[i], lijst[min_index] = lijst[min_index], lijst[i]
+    return lijst
+
+print(selection_sort([5, 2, 8, 1, 4]))
+print(selection_sort([3, 1, 2]))
+print(selection_sort([42]))
+print(selection_sort([]))`} />
+
+## Wat zijn de twee lussen?
+
+```python
+for i in range(n):              # buitenste lus — i = 0, 1, 2, ..., n-1
+    min_index = i
+    for j in range(i, n):       # binnenste lus — vind kleinste vanaf i
+        ...
+    # swap
+```
+
+- **Buitenste lus (`i`)**: welke positie krijgt nu de volgende kleinste.
+- **Binnenste lus (`j`)**: zoekt het kleinste element in het ongesorteerde
+  stuk.
+
+Twee geneste lussen → het totale werk is ongeveer **`n × n / 2 = n²/2`**
+operaties. **O(n²)**.
+
+## Visualiseer de stappen
+
+Voeg een print per ronde toe om te zien hoe de lijst groeit:
+
+<PyRunner initialCode={`def selection_sort_uitleg(lijst):
+    n = len(lijst)
+    for i in range(n):
+        min_index = i
+        for j in range(i, n):
+            if lijst[j] < lijst[min_index]:
+                min_index = j
+        # swap
+        lijst[i], lijst[min_index] = lijst[min_index], lijst[i]
+        print(f"na ronde i={i}: {lijst}    (kleinste gevonden op orig. positie {min_index})")
+    return lijst
+
+selection_sort_uitleg([5, 2, 8, 1, 4])`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+```
+na ronde i=0: [1, 2, 8, 5, 4]    (kleinste gevonden op orig. positie 3)
+na ronde i=1: [1, 2, 8, 5, 4]    (kleinste gevonden op orig. positie 1)
+na ronde i=2: [1, 2, 4, 5, 8]    (kleinste gevonden op orig. positie 4)
+na ronde i=3: [1, 2, 4, 5, 8]    (kleinste gevonden op orig. positie 3)
+na ronde i=4: [1, 2, 4, 5, 8]    (kleinste gevonden op orig. positie 4)
+```
+
+Bij i=1 is `lijst[1]` (2) toevallig al de kleinste van het ongesorteerde
+stuk — swap met zichzelf, geen verandering. Idem bij i=3.
+
+Een snelle optimalisatie zou zijn: `if i != min_index: swap`. Spaart een
+nutteloze swap. Maar voor de **duidelijkheid** van het algoritme laten we
+het zo.
+
+</details>
+
+<SteppingStoneModel stone="selection-loop" />
+
+Door naar [stap 7: het complete algoritme →](./07-compleet)

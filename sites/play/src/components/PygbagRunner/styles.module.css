@@ -1,0 +1,160 @@
+.runner {
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 1.5rem 0;
+  background: var(--ifm-background-color);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  background: var(--ifm-color-emphasis-100);
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.title {
+  flex: 1;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--ifm-font-color-base);
+}
+
+.badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  background: var(--ifm-color-primary-lightest);
+  color: var(--ifm-color-primary-darkest);
+}
+
+.codeSection {
+  max-height: 400px;
+  overflow-y: auto;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.canvasArea {
+  background: #1a1a2e;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--ifm-color-emphasis-100);
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.playButton {
+  padding: 0.5rem 1.25rem;
+  background: #27c93f;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: opacity 0.2s;
+}
+
+.playButton:hover {
+  opacity: 0.85;
+}
+
+.copyButton {
+  padding: 0.5rem 1rem;
+  background: var(--ifm-color-emphasis-200);
+  color: var(--ifm-color-emphasis-800);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background 0.2s;
+}
+
+.copyButton:hover {
+  background: var(--ifm-color-emphasis-300);
+}
+
+.stopButton {
+  padding: 0.5rem 1rem;
+  background: #ff5f56;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.8rem;
+  transition: opacity 0.2s;
+}
+
+.stopButton:hover {
+  opacity: 0.85;
+}
+
+.loadingHint {
+  margin: 0;
+  padding: 0.4rem 1rem;
+  font-size: 0.78rem;
+  color: var(--ifm-color-emphasis-500);
+  background: var(--ifm-background-surface-color);
+}
+
+.instructions {
+  padding: 0.75rem 1rem;
+  font-size: 0.8rem;
+  color: var(--ifm-color-emphasis-700);
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.instructions p {
+  margin: 0 0 0.3rem;
+}
+
+.instructions ol {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.instructions li {
+  margin: 0.15rem 0;
+}
+
+.instructions code {
+  background: var(--ifm-color-emphasis-200);
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  font-size: 0.85em;
+}
+
+.consolePanel {
+  background: #111;
+  color: #cfc;
+  font-family: monospace;
+  font-size: 12px;
+  padding: 4px 8px;
+  min-height: 1.5em;
+  max-height: 100px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.consolePlaceholder {
+  color: #666;
+  font-style: italic;
+}
+
+.errLine {
+  color: #f88;
+}

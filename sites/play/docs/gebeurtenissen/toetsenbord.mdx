@@ -1,0 +1,179 @@
+---
+sidebar_position: 1
+hide_table_of_contents: true
+---
+
+# 4.1 Gebeurtenissen
+
+"Als ik op de spatiebalk druk, wil ik dat er iets beweegt. Kan dat?"
+Jazeker! Met **play** kun je reageren op acties van de gebruiker. Zo'n actie noemen we een **gebeurtenis**.
+
+<PygbagRunner code={`import play
+
+blok = play.new_box()
+
+@play.when_key_pressed("space")
+def spatie_ingedrukt():
+    blok.x = blok.x + 10`} height={300} />
+
+Wat gebeurt hier allemaal?
+
+```python
+@play.when_key_pressed("space")
+def spatie_ingedrukt():
+    ...
+```
+Dit is de gebeurtenis. De gebeurtenis heet dus **when_key_pressed**.
+We moeten de gebeurtenis wel vertellen bij welke toets we iets willen doen, in dit geval **space** wat natuurlijk staat voor spatie.
+
+```python
+def spatie_ingedrukt():
+      blok.x = blok.x + 10
+```
+Direct onder de gebeurtenis plaatsen we een functie **spatie_ingedrukt**.
+Deze functie wordt uitgevoerd zodra de gebeurtenis gebeurt, in dit geval het indrukken van de spatiebalk.
+
+### Onderzoek
+
+Probeer eens de volgende aanpassingen:
+- Wat gebeurt er als je `"space"` verandert in `"a"`?
+- Wat als je `blok.x = blok.x + 10` verandert in `blok.x = blok.x + 100`?
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+- Met `"a"` reageert de rechthoek op de letter A in plaats van de spatiebalk.
+- Met `+ 100` maakt de rechthoek veel grotere sprongen naar rechts.
+
+</details>
+
+## Opdracht 4.1.a: ook links en rechts
+a) Voer het onderstaand code fragment uit. Wat gebeurt er als je op pijltje omhoog drukt?
+
+<PygbagRunner code={`import play
+
+blok = play.new_box()
+
+@play.when_key_pressed("up")
+def omhoog():
+    blok.y = blok.y + 10
+
+@play.when_key_pressed('down')
+def omlaag():
+    blok.y = blok.y - 10`} height={300} />
+
+<details>
+  <summary>Klik hier voor het antwoord</summary>
+
+  Als het goed is, gaat de rechthoek omhoog.
+
+</details>
+
+b) Pas het aan zodat als je op pijltje naar rechts klikt, de rechthoek naar rechts gaat
+
+<details>
+  <summary>Klik hier voor de oplossing</summary>
+
+<PygbagRunner code={`import play
+
+blok = play.new_box()
+
+@play.when_key_pressed("right")
+def naar_rechts():
+    blok.x = blok.x + 10
+
+@play.when_key_pressed("up")
+def omhoog():
+    blok.y = blok.y + 10
+
+@play.when_key_pressed('down')
+def omlaag():
+    blok.y = blok.y - 10`} height={300} />
+
+</details>
+
+c) Voeg nu code toe zodat het reageert op pijltje naar links en het blok dan ook naar links beweegt
+
+<details>
+  <summary>Klik hier voor de oplossing</summary>
+
+<PygbagRunner code={`import play
+
+blok = play.new_box()
+
+@play.when_key_pressed("up")
+def omhoog():
+    blok.y = blok.y + 10
+
+@play.when_key_pressed('down')
+def omlaag():
+    blok.y = blok.y - 10
+
+@play.when_key_pressed("left")
+def naar_links():
+    blok.x = blok.x - 10
+
+@play.when_key_pressed('right')
+def naar_rechts():
+    blok.x = blok.x + 10`} height={300} />
+
+</details>
+
+## 4.1.1 Zolang een toets ingedrukt is
+
+Met `@play.when_key_pressed` reageer je op het moment dat een toets wordt ingedrukt — de actie gebeurt dan maar **één keer**. Maar soms wil je dat iets **continu** gebeurt zolang je een toets ingedrukt houdt, bijvoorbeeld voor vloeiende beweging. Hiervoor gebruik je `@play.while_key_pressed`:
+
+<PygbagRunner code={`import play
+
+blok = play.new_box()
+
+@play.while_key_pressed('up', 'down', 'left', 'right')
+def beweeg(key):
+    if key == 'up':
+        blok.y = blok.y + 2
+    if key == 'down':
+        blok.y = blok.y - 2
+    if key == 'left':
+        blok.x = blok.x - 2
+    if key == 'right':
+        blok.x = blok.x + 2`} height={300} />
+
+Het verschil? Met `when_key_pressed` gebeurt de actie één keer bij het indrukken. Met `while_key_pressed` gebeurt de actie **elk frame** zolang je de toets inhoudt. Dat voelt veel vloeiender!
+
+:::info
+Je kunt ook `play.key_is_pressed()` in combinatie met `@play.repeat_forever` gebruiken voor hetzelfde effect. Maar `@play.while_key_pressed` is korter en duidelijker.
+:::
+
+### Opdracht 4.1.1.a: Vloeiende besturing
+
+Maak een cirkel die vloeiend beweegt met de pijltjestoetsen. Gebruik `@play.while_key_pressed`.
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle(color='blue', radius=20)
+
+@play.while_key_pressed('up', 'down', 'left', 'right')
+def beweeg(key):
+    if key == 'up':
+        cirkel.y = cirkel.y + 3
+    if key == 'down':
+        cirkel.y = cirkel.y - 3
+    if key == 'left':
+        cirkel.x = cirkel.x - 3
+    if key == 'right':
+        cirkel.x = cirkel.x + 3`} height={300} />
+
+</details>
+
+## Opdracht 4.1.b: Klikken
+Naast **when_key_pressed** bestaan er nog meer gebeurtenissen.
+Kijk maar eens in de [cheatsheet](/docs/cheatsheet).
+
+a) Kies één gebeurtenis uit de [cheatsheet](/docs/cheatsheet)
+
+b) voer het voorbeeld van de gekozen gebeurtenis uit via de ▶ knop in de cheatsheet
+
+c) pas de code van het voorbeeld aan naar iets wat jij leuker vindt :)

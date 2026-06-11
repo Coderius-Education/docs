@@ -1,0 +1,11 @@
+{
+  "label": "Selection sort",
+  "position": 5,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "title": "Selection sort",
+    "description": "Vind steeds het kleinste van de rest en zet het vooraan."
+  }
+}

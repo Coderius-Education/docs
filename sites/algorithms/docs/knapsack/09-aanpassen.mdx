@@ -1,0 +1,174 @@
+---
+sidebar_position: 9
+hide_table_of_contents: true
+---
+
+# 10.9 Pas aan — welke items neem je mee?
+
+**Leerdoel:** je breidt knapsack uit zodat hij niet alleen de **beste
+totaalwaarde** teruggeeft, maar ook **welke items** je daarvoor moet
+meenemen — via backtracking door de tabel, precies zoals je dat op
+pagina 02 met de hand deed.
+
+## Wat we willen
+
+Tot nu toe weten we: *"de beste waarde is 40."* Maar **welke** items?
+Antwoord: een lijst van indexen die je meeneemt. Voor het image-
+voorbeeld → `[2, 3]` (Python-indexen voor item 3 en 4).
+
+## Het idee — backtrack door de tabel
+
+Op pagina 02 leerde je: begin in cel `(n, W)` en loop naar boven.
+Voor elke rij `i`:
+
+- Als `tabel[i][w] == tabel[i-1][w]` → item `i` was **niet** nodig
+  (skip wint). Ga naar `(i-1, w)`.
+- Anders → item `i` was **wel** meegenomen. Ga naar `(i-1, w - gewicht_i)`.
+
+In Python is dat één for-loop van groot naar klein.
+
+## Specificatie
+
+- **Input**: `items`, `capaciteit`.
+- **Output**: een lijst van **Python-indexen** van de meegenomen items.
+
+## Opdracht
+
+<PyRunner initialCode={`def knapsack_tabel(items, capaciteit):
+    n = len(items)
+    tabel = [[0] * (capaciteit + 1) for _ in range(n + 1)]
+    for i in range(1, n + 1):
+        waarde, gewicht = items[i - 1]
+        for w in range(capaciteit + 1):
+            if gewicht > w:
+                tabel[i][w] = tabel[i - 1][w]
+            else:
+                tabel[i][w] = max(tabel[i - 1][w], waarde + tabel[i - 1][w - gewicht])
+    return tabel
+
+
+def knapsack_items(items, capaciteit):
+    # Vul aan:
+    # 1. bouw de hele tabel met knapsack_tabel
+    # 2. start bij w = capaciteit
+    # 3. loop i van n omlaag naar 1:
+    #    - als tabel[i][w] != tabel[i-1][w]: item (i-1) is meegenomen,
+    #      voeg toe aan keuze, en doe w -= gewicht_i
+    # 4. return de lijst (in willekeurige volgorde is prima)
+    return []
+
+
+# === Tests ===
+items = [(1, 1), (6, 2), (18, 5), (22, 6), (28, 7)]
+keuze = knapsack_items(items, 11)
+keuze_gesorteerd = sorted(keuze)
+
+# Indexen 2 en 3 (= item 3 en item 4)
+assert keuze_gesorteerd == [2, 3], f"Verwacht [2, 3], kreeg {keuze_gesorteerd}"
+
+# Totaal moet 40 zijn
+totale_waarde = sum(items[i][0] for i in keuze)
+totaal_gewicht = sum(items[i][1] for i in keuze)
+assert totale_waarde == 40
+assert totaal_gewicht == 11
+
+# Klein voorbeeld voor zekerheid
+mini = [(6, 2), (5, 3), (8, 4)]
+keuze2 = sorted(knapsack_items(mini, 5))
+assert keuze2 == [0, 1], f"Verwacht items A en B = [0, 1], kreeg {keuze2}"
+
+print("Alle tests gehaald ✓")`} />
+
+<details>
+<summary>Tip</summary>
+
+```python
+def knapsack_items(items, capaciteit):
+    n = len(items)
+    tabel = knapsack_tabel(items, capaciteit)
+
+    keuze = []
+    w = capaciteit
+    for i in range(n, 0, -1):                # van n omlaag naar 1
+        if tabel[i][w] != tabel[i - 1][w]:   # item i was meegenomen
+            keuze.append(i - 1)              # 0-gebaseerde index
+            w -= items[i - 1][1]             # capaciteit verminderen
+    return keuze
+```
+
+Drie cruciale dingen:
+
+1. `range(n, 0, -1)` loopt `n, n-1, ..., 1` — achteruit.
+2. `i - 1` als Python-index (lijst-index), `i` als tabel-rij (1-gebaseerd).
+3. **Vergeet `w -= ...` niet** als item meegenomen is — anders blijf
+   je in dezelfde kolom hangen en raakt de backtrack van slag.
+
+</details>
+
+## Print de keuze
+
+<PyRunner initialCode={`def knapsack_tabel(items, capaciteit):
+    n = len(items)
+    tabel = [[0] * (capaciteit + 1) for _ in range(n + 1)]
+    for i in range(1, n + 1):
+        waarde, gewicht = items[i - 1]
+        for w in range(capaciteit + 1):
+            if gewicht > w:
+                tabel[i][w] = tabel[i - 1][w]
+            else:
+                tabel[i][w] = max(tabel[i - 1][w], waarde + tabel[i - 1][w - gewicht])
+    return tabel
+
+
+def knapsack_items(items, capaciteit):
+    n = len(items)
+    tabel = knapsack_tabel(items, capaciteit)
+    keuze = []
+    w = capaciteit
+    for i in range(n, 0, -1):
+        if tabel[i][w] != tabel[i - 1][w]:
+            keuze.append(i - 1)
+            w -= items[i - 1][1]
+    return keuze
+
+
+items = [(1, 1), (6, 2), (18, 5), (22, 6), (28, 7)]
+keuze = sorted(knapsack_items(items, 11))
+
+print(f"Indexen (Python): {keuze}")
+print(f"Items (mens-nummering): {[i + 1 for i in keuze]}")
+
+totale_waarde = sum(items[i][0] for i in keuze)
+totaal_gewicht = sum(items[i][1] for i in keuze)
+print(f"Totale waarde: {totale_waarde}")
+print(f"Totaal gewicht: {totaal_gewicht} (van 11 toegestaan)")
+
+print("\\nDetails per item:")
+for i in keuze:
+    waarde, gewicht = items[i]
+    print(f"  item {i + 1}: waarde={waarde}, gewicht={gewicht}")`} />
+
+<details>
+<summary>Verwachte uitvoer</summary>
+
+```
+Indexen (Python): [2, 3]
+Items (mens-nummering): [3, 4]
+Totale waarde: 40
+Totaal gewicht: 11 (van 11 toegestaan)
+
+Details per item:
+  item 3: waarde=18, gewicht=5
+  item 4: waarde=22, gewicht=7
+```
+
+Exact dezelfde indices als je op pagina 02 met de hand uitkwam. De
+backtrack-procedure in Python is een 1-op-1 vertaling van wat je daar
+deed.
+
+Wacht — *item 4 weegt 6, niet 7.* Klein typo in de verwachte uitvoer
+hierboven; werkelijke output zal `gewicht=6` zijn. Test het zelf!
+
+</details>
+
+Door naar [stap 10: bouw zelf →](./10-zelf-bouwen).

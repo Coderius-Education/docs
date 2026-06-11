@@ -1,0 +1,77 @@
+---
+sidebar_position: 1
+hide_table_of_contents: true
+---
+
+# 1.1 Lineair zoeken — het idee
+
+**Leerdoel:** je begrijpt wat lineair zoeken is, in mensentaal. Nog geen
+Python — eerst snappen, dan pas programmeren.
+
+## Het verhaal
+
+Je hebt een **boekenkast** waarin de boeken niet op alfabet staan. Je zoekt
+*"De ontdekking van de hemel"*. Wat doe je?
+
+Je pakt het eerste boek, kijkt naar de titel — niet de juiste. Tweede boek,
+kijken — niet de juiste. Net zo lang tot je het boek vindt, of tot je bij
+het laatste boek bent geweest en weet dat het er niet is.
+
+Dat is **lineair zoeken** in één zin: *één voor één, van begin tot eind,
+tot je vindt wat je zoekt.*
+
+## Visualisatie
+
+We zoeken het getal **5** in deze lijst:
+
+```
+zoeken: 5
+lijst:  [ 3 , 1 , 4 , 1 , 5 , 9 , 2 , 6 ]
+index:    0   1   2   3   4   5   6   7
+
+stap 1:  [(3), 1 , 4 , 1 , 5 , 9 , 2 , 6 ]   3 == 5?  nee
+stap 2:  [ 3 ,(1), 4 , 1 , 5 , 9 , 2 , 6 ]   1 == 5?  nee
+stap 3:  [ 3 , 1 ,(4), 1 , 5 , 9 , 2 , 6 ]   4 == 5?  nee
+stap 4:  [ 3 , 1 , 4 ,(1), 5 , 9 , 2 , 6 ]   1 == 5?  nee
+stap 5:  [ 3 , 1 , 4 , 1 ,(5), 9 , 2 , 6 ]   5 == 5?  JA → index 4
+```
+
+In stap 5 vinden we het: het zit op **index 4**.
+
+## En als het er niet in zit?
+
+We zoeken **7**:
+
+```
+zoeken: 7
+stap 1:  3 == 7?  nee
+stap 2:  1 == 7?  nee
+stap 3:  4 == 7?  nee
+stap 4:  1 == 7?  nee
+stap 5:  5 == 7?  nee
+stap 6:  9 == 7?  nee
+stap 7:  2 == 7?  nee
+stap 8:  6 == 7?  nee
+→ alles gehad, niet gevonden
+```
+
+We hebben **alle** elementen bekeken en niets gevonden. Conclusie:
+"7 zit er niet in". We spreken meestal af om dan `-1` terug te geven — een
+duidelijk "niet-gevonden"-signaal (want geldige indexen beginnen bij 0).
+
+## Twee dingen om te onthouden
+
+1. **Eén voor één** — geen slimmigheden, gewoon door de lijst lopen.
+2. **Stop bij de eerste match**, of geef `-1` als je bij het einde bent.
+
+<details>
+<summary>Wanneer is dit eigenlijk slim?</summary>
+
+- Bij **kleine** lijsten — verschil met snellere algoritmes merk je niet.
+- Bij **ongesorteerde** lijsten — slimmere algoritmes (zoals binair zoeken)
+  werken daar niet.
+- Als je **toch alles** moet bekijken (bijv. *tellen* hoe vaak iets voorkomt).
+
+</details>
+
+Door naar [stap 2: stellingen](./02-stellingen).

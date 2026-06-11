@@ -1,0 +1,58 @@
+---
+sidebar_position: 4
+sidebar_label: 'Impossible'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# XSS (Reflected) — Impossible
+
+Welkom op het hoogste niveau. Hoe pakken we XSS voor eens en voor altijd aan?
+
+## 1. Predict (Voorspel)
+
+De code is aangepast naar dit:
+
+```php
+$name = htmlspecialchars( $_GET[ 'name' ] );
+echo "Hello " . $name;
+```
+
+**Vraag:** Wat doet `htmlspecialchars()` en waarom stopt dit XSS?
+
+<details>
+
+<summary>Antwoord</summary>
+
+`htmlspecialchars()` vertaalt de speciale karakters (die code vormen) naar zogeheten HTML-entiteiten.
+Het kleiner-dan teken `<` wordt `&lt;` (Less Than).
+Het groter-dan teken `>` wordt `&gt;` (Greater Than).
+
+Als jij dus `<script>alert(1)</script>` invult, spuugt de server dit uit:
+`&lt;script&gt;alert(1)&lt;/script&gt;`.
+Jouw browser ziet deze entiteiten en denkt: "Ah, de gebruiker wil letterlijk dat ik een pijltje-teken teken!" De browser tekent het als veilige tekst op het scherm, in plaats van het uit te voeren als code.
+
+</details>
+
+## 2. Run & Investigate
+
+Start het lab en probeer elke XSS-truc die je kent.
+
+<DvwaLab module="xss_reflected" level="impossible" />
+
+Vul achtereenvolgens `<script>alert(1);</script>`, `<SCRIPT>alert(1);</SCRIPT>` en `<img src=x onerror=alert(1)>` in. Observeer wat er op het scherm verschijnt.
+
+## 3. ✓ Wat moest je zien?
+
+:::tip Controle
+- Elke XSS-payload wordt als **letterlijke tekst** op het scherm weergegeven — er verschijnt geen pop-up.
+- Je ziet de tekens `<`, `>` en `"` als onschadelijke karakters in plaats van HTML-code.
+- De browser voert niets uit, ongeacht welke payload je invoert.
+
+Verschijnt er toch een pop-up? Controleer of het security level correct op **impossible** staat.
+:::
+
+**Blacklisting werkt niet:** Het proberen weg te filteren van `<script>` of andere specifieke elementen faalt altijd, omdat HTML en browsers te veel alternatieve ontsnappingsroutes bieden (`onerror`, `<svg>`, hoofdletters, encoderen).
+
+**Escapen is de oplossing:** Voordat je data van een gebruiker op het scherm toont, moet je dit *altijd* escapen. Functies zoals `htmlspecialchars()` zorgen ervoor dat de browser weet dat het platte tekst is, en geen code.

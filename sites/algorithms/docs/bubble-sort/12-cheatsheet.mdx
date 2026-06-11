@@ -1,0 +1,196 @@
+---
+sidebar_position: 12
+hide_table_of_contents: true
+---
+
+# 6.12 Cheatsheet — bubble sort
+
+Snelle referentie. Klap open wat je nodig hebt.
+
+## Het algoritme zelf
+
+<details>
+<summary>Canonieke implementatie, met early-exit (bubble_sort)</summary>
+
+```python
+def bubble_sort(lijst):
+    n = len(lijst)
+    for ronde in range(n - 1):
+        geswapt = False
+        for i in range(n - 1 - ronde):
+            if lijst[i] > lijst[i + 1]:
+                lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+                geswapt = True
+        if not geswapt:
+            break
+    return lijst
+```
+
+</details>
+
+<details>
+<summary>Basisversie zonder early-exit (bubble_sort_basis)</summary>
+
+```python
+def bubble_sort_basis(lijst):
+    n = len(lijst)
+    for ronde in range(n - 1):
+        for i in range(n - 1):
+            if lijst[i] > lijst[i + 1]:
+                lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+    return lijst
+```
+
+Werkt, maar minder efficiënt op (bijna-)gesorteerde data.
+
+</details>
+
+## De bouwstenen
+
+<details>
+<summary>Buren vergelijken</summary>
+
+```python
+if lijst[i] > lijst[i + 1]:
+    # paar staat fout
+```
+
+Let op: `i + 1` moet een geldige index zijn → laatste `i` is
+`len(lijst) - 2`.
+
+</details>
+
+<details>
+<summary>Twee elementen swappen</summary>
+
+```python
+lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+```
+
+Pythonische tuple-swap. Geen tijdelijke variabele nodig.
+
+</details>
+
+<details>
+<summary>Eén pass</summary>
+
+```python
+for i in range(len(lijst) - 1):       # 0 t/m len-2
+    if lijst[i] > lijst[i + 1]:
+        lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+```
+
+</details>
+
+<details>
+<summary>Meerdere passes met krimpend bereik</summary>
+
+```python
+for ronde in range(n - 1):
+    for i in range(n - 1 - ronde):    # steeds 1 minder
+        ...
+```
+
+Na ronde `k` staan de laatste `k` elementen al goed.
+
+</details>
+
+<details>
+<summary>Early-exit met een vlag (geswapt)</summary>
+
+```python
+for ronde in range(n - 1):
+    geswapt = False                   # binnen de lus!
+    for i in range(n - 1 - ronde):
+        if lijst[i] > lijst[i + 1]:
+            ...
+            geswapt = True
+    if not geswapt:
+        break
+```
+
+</details>
+
+## Python-syntax
+
+<details>
+<summary>break — uit een lus springen</summary>
+
+```python
+while True:
+    if klaar:
+        break        # stop de lus direct
+```
+
+</details>
+
+<details>
+<summary>not — logische negatie</summary>
+
+```python
+if not geswapt:      # gelijk aan: if geswapt == False:
+    break
+```
+
+</details>
+
+<details>
+<summary>Geneste lussen</summary>
+
+```python
+for ronde in range(n - 1):
+    for i in range(n - 1 - ronde):
+        ...
+```
+
+Buitenste lus zet de **ronde**. Binnenste loopt door **één pass**.
+
+</details>
+
+## Eigenschappen
+
+<details>
+<summary>Hoe snel?</summary>
+
+- **Beste geval** (al gesorteerd + early-exit): O(n) — één pass.
+- **Slechtste geval** (omgekeerd): O(n²) — `n − 1` passes.
+- **Gemiddeld**: O(n²).
+
+| n | beste (sorted) | slechtste (rev) |
+|---:|---:|---:|
+| 100 | 99 | 4.950 |
+| 1.000 | 999 | 499.500 |
+| 10.000 | 9.999 | ~50 miljoen |
+
+</details>
+
+<details>
+<summary>Eigenschappen</summary>
+
+- **In-place**: geen extra lijst nodig.
+- **Stabiel**: gelijke elementen houden hun oorspronkelijke volgorde.
+- **Adaptief**: sneller op (bijna-)gesorteerde data dankzij early-exit.
+
+</details>
+
+## Veelgemaakte fouten (snel)
+
+<details>
+<summary>Top-3 fouten</summary>
+
+1. `range(len(lijst))` in binnenste lus zonder `- 1` → `IndexError`.
+2. `=` in `if` waar je `==` of `>` bedoelt → `SyntaxError`.
+3. `geswapt = False` vóór de buitenste lus → vlag wordt niet gereset →
+   early-exit werkt verkeerd.
+
+</details>
+
+---
+
+Klaar met bubble sort? Je hebt nu twee sorteer-algoritmes gezien:
+- [Selection sort](/docs/selection-sort/01-concept) — veel vergelijkingen,
+  weinig swaps, niet stabiel.
+- **Bubble sort** — adaptief, stabiel, simpel.
+
+Volgende stap: sneller sorteren met **merge sort** of **quicksort**
+(O(n log n)) — komt later.

@@ -1,0 +1,55 @@
+---
+sidebar_position: 4
+sidebar_label: 'Impossible'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# SQL Injection (Blind) — Impossible
+
+Er is maar één manier om een database compleet immuun te maken.
+
+## 1. Predict (Voorspel)
+
+We zagen de verdediging ook al bij de normale SQL Injection-module.
+
+```php
+$stmt = $db->prepare( 'SELECT first_name, last_name FROM users WHERE user_id = (:id) LIMIT 1;' );
+$stmt->bindParam( ':id', $id, PDO::PARAM_INT );
+$stmt->execute();
+```
+
+**Vraag:** Wat doet `PDO::PARAM_INT` en waarom doodt dit elke poging tot de `SLEEP(5)`-injectie?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Het framework controleert of de variabele wiskundig en letterlijk een Integer (rond getal) is, voordat het de database bereikt. Tekst zoals `AND SLEEP(5)` of aanhalingstekens worden onmiddellijk geweigerd door de backend nog voordat de query wordt uitgevoerd. Zelfs als het filter hem zou doorlaten, zorgt de Prepared Statement (`prepare()`) ervoor dat de database hem weigert!
+
+</details>
+
+## 2. Run & Investigate
+
+Start het lab en probeer alle eerdere payloads.
+
+<DvwaLab module="sql_injection_blind" level="impossible" />
+
+Vul `1' AND SLEEP(5) #` in en kijk of de pagina vertraagt. Probeer ook `1 AND SLEEP(5)`. Observeer hoe de applicatie reageert.
+
+## 3. ✓ Wat moest je zien?
+
+:::tip Controle
+- Elke SQL-injectie-poging levert direct een "Invalid" of "Missing"-melding op — zonder enige vertraging.
+- `1 AND SLEEP(5)` veroorzaakt geen 5-secondenvertraging meer.
+- De applicatie gedraagt zich exact hetzelfde, ongeacht wat je invoert.
+
+Zie je toch een vertraging? Controleer of het security level correct op **impossible** staat.
+:::
+
+**Blind is niet veilig:** Ontwikkelaars denken soms: "Als ik de SQL-foutmelding of de database-rijen niet op het scherm print, ben ik veilig." Dit heet *Security by Obscurity*. Boolean- en Time-Based aanvallen omzeilen dit volledig.
+
+**SQLmap automatiseert dit:** Wat we hier handmatig deden met het controleren van pagina-laadtijden, kan een hacker via tools met duizenden raadsels per seconde laten doen.
+
+**Input Filtering én Prepared Statements:** Enkel de combinatie van goede data-validatie (alleen Integers verwachten) én parameter-binding (Prepared Statements) garandeert een veilige applicatie.

@@ -1,0 +1,61 @@
+---
+sidebar_position: 4
+sidebar_label: 'Impossible'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# Command Injection — Impossible
+
+Hoe voorkom je dat een hacker ooit nog een systeem-commando door je webapplicatie heen smokkelt?
+
+## 1. Predict (Voorspel)
+
+De ontwikkelaar stapt compleet af van het filteren van "gevaarlijke" tekens (Blacklisting) en kiest voor het tegenovergestelde: **Whitelisting**.
+
+```php
+$target = stripslashes( $target );
+
+// Splits het IP adres op in 4 losse stukken
+$octet = explode( ".", $target );
+
+// Controleer of elk stuk daadwerkelijk een getal is
+if( ( is_numeric( $octet[0] ) ) && ( is_numeric( $octet[1] ) )
+ && ( is_numeric( $octet[2] ) ) && ( is_numeric( $octet[3] ) )
+ && ( sizeof( $octet ) == 4 ) ) {
+    $target = $octet[0] . "." . $octet[1] . "." . $octet[2] . "." . $octet[3];
+    $cmd = shell_exec( 'ping  -c 4 ' . $target );
+}
+```
+
+**Vraag:** Waarom is het onmogelijk om hier nog een `; cat /etc/passwd` of `| whoami` achter te plakken?
+
+<details>
+
+<summary>Antwoord</summary>
+
+De server splitst de invoer op de punten (`.`) en controleert of elk van de vier stukken een puur getal is (`is_numeric`). De string `127.0.0.1; cat /etc/passwd` zou worden opgesplitst in `["127", "0", "0", "1; cat /etc/passwd"]`. Het vierde deel (`1; cat /etc/passwd`) is géén getal, dus de hele operatie wordt direct afgebroken!
+Bovendien bouwt de server het IP-adres zélf opnieuw op uit de vier losse getallen, waardoor eventuele rommel nooit in het uiteindelijke commando terechtkomt.
+
+</details>
+
+## 2. Run & Investigate
+
+Start het lab en probeer al je eerdere bypasses. Geen enkele zal nog werken.
+
+<DvwaLab module="command_injection" level="impossible" />
+
+## 3. ✓ Wat moest je zien?
+
+:::tip Controle
+- Geen van je payloads (`;`, `&&`, `|`, `||`) produceert serveruitvoer buiten de ping.
+- Een invoer als `127.0.0.1; ls` levert alleen normale ping-output op — geen bestandslijst.
+- Invoer die geen geldig IP-formaat heeft (4 getallen gescheiden door punten) wordt stilletjes genegeerd.
+
+Lukt het je tóch een tweede commando te injecteren? Controleer of security écht op **Impossible** staat.
+:::
+
+- **Blacklisting faalt altijd:** Er zijn te veel manieren om tekens te coderen of te nestelen. Je kunt nooit álles voorzien.
+- **Whitelisting is de gouden standaard:** Definieer precies welke invoer je verwacht (4 getallen, gescheiden door punten) en weiger alles wat daar niet aan voldoet.
+- **Herbouw de input:** Door de invoer zelf opnieuw samen te stellen uit gevalideerde delen, elimineer je alle restjes kwaadaardige code.

@@ -1,0 +1,15 @@
+{
+  "extends": "@docusaurus/tsconfig",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "skipLibCheck": true,
+    // Ambient declaraties voor @docusaurus/*, @theme/* en *.module.css.
+    // Sites krijgen die normaal binnen via `import type ... from
+    // '@docusaurus/preset-classic'` in hun config, maar onze configs
+    // gebruiken createConfig (plain JS) — dus hier expliciet opnemen.
+    "types": ["node", "@docusaurus/module-type-aliases", "@docusaurus/theme-classic"]
+  }
+}

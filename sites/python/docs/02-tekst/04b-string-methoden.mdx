@@ -1,0 +1,156 @@
+---
+sidebar_position: 2
+hide_table_of_contents: true
+description: Bewerk tekst met string-methoden zoals .upper(), .lower(), .replace() en len(). Aanroepen doe je met een punt.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 4b String-methoden
+
+Je kunt nu variabelen netjes in tekst verweven. In deze les leer je hoe je die tekst ook kunt **veranderen**: in hoofdletters zetten, een woord vervangen, of het aantal letters tellen.
+
+## Methoden aanroepen met een punt
+
+Een **methode** is een functie die bij een waarde hoort. Je roept hem aan met een punt achter de variabele:
+
+```python
+tekst = "hallo wereld"
+
+print(tekst.upper())                       # HALLO WERELD
+print(tekst.lower())                       # hallo wereld
+print(tekst.capitalize())                  # Hallo wereld
+print(tekst.replace("wereld", "python"))   # hallo python
+```
+
+Daarnaast is er `len()` voor de lengte van een string. Die werkt **zonder** punt — je geeft de string als argument mee:
+
+```python
+tekst = "hallo wereld"
+
+print(len(tekst))   # 11 (inclusief de spatie)
+```
+
+Deze methoden veranderen `tekst` **niet**. Wil je het resultaat bewaren? Sla het op in een variabele:
+
+```python
+naam = naam.upper()
+```
+
+---
+
+## Opdracht 4b.1: Hoofdletters
+
+Maak een variabele met het woord `"hallo"` en print het in hoofdletters.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Roep `.upper()` aan op de variabele.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+woord = "hallo"
+
+print(woord.upper())
+```
+
+<CodeExercise>{`woord = "hallo"
+
+print(woord.upper())`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 4b.2: Naam-info
+
+Toon informatie over een naam: in hoofdletters, in kleine letters, en de lengte.
+
+Verwachte uitvoer (bij `naam = "alex"`):
+
+```
+ALEX
+alex
+4 letters
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+`.upper()`, `.lower()` en `len()`. Voor de laatste regel gebruik je een f-string: `f"{len(naam)} letters"`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+naam = "alex"
+
+print(naam.upper())
+print(naam.lower())
+print(f"{len(naam)} letters")
+```
+
+<CodeExercise>{`naam = "alex"
+
+print(naam.upper())
+print(naam.lower())
+print(f"{len(naam)} letters")`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 4b.3: Gepersonaliseerde uitnodiging
+
+Bouw een uitnodiging die de naam van de gast in **hoofdletters** weergeeft.
+
+Verwachte uitvoer (bij `naam = "alex"`, `evenement = "Eindfeest"`, `datum = "20 juni"`):
+
+```
+=== Uitnodiging voor ALEX ===
+Je bent uitgenodigd voor: Eindfeest
+Datum: 20 juni
+
+We hopen je te zien!
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Voor de naam: `{naam.upper()}` binnen de f-string. Voor de andere variabelen gewoon `{evenement}` en `{datum}`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+naam = "alex"
+evenement = "Eindfeest"
+datum = "20 juni"
+
+print(f"=== Uitnodiging voor {naam.upper()} ===")
+print(f"Je bent uitgenodigd voor: {evenement}")
+print(f"Datum: {datum}")
+print()
+print("We hopen je te zien!")
+```
+
+<CodeExercise>{`naam = "alex"
+evenement = "Eindfeest"
+datum = "20 juni"
+
+print(f"=== Uitnodiging voor {naam.upper()} ===")
+print(f"Je bent uitgenodigd voor: {evenement}")
+print(f"Datum: {datum}")
+print()
+print("We hopen je te zien!")`}</CodeExercise>
+
+</details>

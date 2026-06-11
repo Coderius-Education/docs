@@ -1,0 +1,205 @@
+---
+sidebar_position: 1
+hide_table_of_contents: true
+description: Geef een blok code een naam met def en hergebruik het zo vaak je wilt. De basis van herbruikbare programma's.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 8 Functies
+
+Je kunt nu beslissingen maken en code herhalen. Maar wat als je hetzelfde stuk code op meerdere plekken in je programma wilt gebruiken? Daarvoor zijn **functies**: je geeft een blok code een naam, en daarna kan je het zo vaak aanroepen als je wilt.
+
+## Een functie maken en aanroepen
+
+Met `def` definieer je een functie. Roepen doe je met de naam en haakjes:
+
+```python
+def groet():
+    print("Hallo!")
+
+groet()
+groet()
+```
+
+Uitvoer:
+
+```
+Hallo!
+Hallo!
+```
+
+- `def groet():` definieert de functie. Python onthoudt hem, maar voert nog niets uit.
+- `groet()` roept de functie aan — pas dan wordt de code binnenin uitgevoerd.
+- De code binnen de functie springt **4 spaties** in.
+
+De haakjes zijn essentieel: zonder haakjes (`groet` zonder `()`) verwijs je alleen naar de functie, je voert hem niet uit. Geen foutmelding, maar ook geen output. Dat is een van de meest sluipende beginnersfouten.
+
+## Functies mogen functies aanroepen
+
+```python
+def lijn():
+    print("=" * 20)
+
+def welkom():
+    lijn()
+    print("  Welkom bij Python!")
+    lijn()
+
+welkom()
+```
+
+Uitvoer:
+
+```
+====================
+  Welkom bij Python!
+====================
+```
+
+Eén kleine functie (`lijn`) gebruik je twee keer binnen een grotere functie (`welkom`). Dat is de kracht: schrijf het stukje één keer, hergebruik het oneindig vaak.
+
+---
+
+## Opdracht 8.1: Welkom-functie
+
+Maak een functie `welkom()` die `"Welkom bij Python!"` print, en roep hem twee keer aan.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+`def welkom():` met `print(...)` op de regel eronder (4 spaties inspringen). Daarna twee keer `welkom()`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+def welkom():
+    print("Welkom bij Python!")
+
+welkom()
+welkom()
+```
+
+<CodeExercise>{`def welkom():
+    print("Welkom bij Python!")
+
+welkom()
+welkom()`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 8.2: Vierkant van sterretjes
+
+Maak een functie `vierkant()` die een vierkant van sterretjes tekent (5 breed en 5 hoog). Gebruik een for-loop binnenin de functie.
+
+Verwachte uitvoer:
+
+```
+*****
+*****
+*****
+*****
+*****
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+`"*" * 5` geeft `"*****"`. Een for-loop van 5 rondes herhaalt dat 5 keer.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+def vierkant():
+    for i in range(5):
+        print("*" * 5)
+
+vierkant()
+```
+
+<CodeExercise>{`def vierkant():
+    for i in range(5):
+        print("*" * 5)
+
+vierkant()`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 8.3: Een huisje bouwen
+
+Maak een tekening van een huis door **kleine functies te combineren**: `dak()`, `muur()` en `deur()`. Roep ze allemaal aan binnen één `huis()`-functie, met twee muren tussen het dak en de deur.
+
+Verwachte uitvoer:
+
+```
+   /\
+  /  \
+ /____\
+|      |
+|      |
+|  []  |
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Een backslash in een string schrijf je als `\\`. Dus `print("   /\\")` print `   /\`. In `huis()` roep je `dak()`, `muur()`, `muur()`, `deur()` aan.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+def dak():
+    print("   /\\")
+    print("  /  \\")
+    print(" /____\\")
+
+def muur():
+    print("|      |")
+
+def deur():
+    print("|  []  |")
+
+def huis():
+    dak()
+    muur()
+    muur()
+    deur()
+
+huis()
+```
+
+In de volgende les leer je hoe je informatie aan een functie **meegeeft** met parameters, zodat dezelfde functie verschillende dingen kan doen.
+
+<CodeExercise>{`def dak():
+    print("   /\\\\")
+    print("  /  \\\\")
+    print(" /____\\\\")
+
+def muur():
+    print("|      |")
+
+def deur():
+    print("|  []  |")
+
+def huis():
+    dak()
+    muur()
+    muur()
+    deur()
+
+huis()`}</CodeExercise>
+
+</details>

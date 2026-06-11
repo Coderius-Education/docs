@@ -1,0 +1,146 @@
+---
+sidebar_position: 3
+hide_table_of_contents: true
+---
+
+# 10.3 Voorspel — waar of niet waar?
+
+**Leerdoel:** je toetst je intuïtie over 0/1 knapsack voordat je begint
+te programmeren.
+
+Lees elke stelling. Bedenk eerst je antwoord. Klap dan pas open.
+
+## Stelling 1
+
+> *"De optimale strategie is: pak items in volgorde van **waarde**, te
+> beginnen met de hoogste, tot je rugzak vol is."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Niet waar.**
+
+Voorbeeld: rugzak 5 kg, item X = (waarde 10, gewicht 5), items Y en Z
+= elk (waarde 6, gewicht 2).
+
+- "Waarde-eerst"-strategie: pak X → totaal **10**.
+- Slimmer: pak Y + Z → totaal **12**.
+
+De hoogste waarde kan zoveel ruimte pakken dat hij de rest blokkeert.
+
+</details>
+
+## Stelling 2
+
+> *"De optimale strategie is: pak items in volgorde van **waarde per
+> kg**, te beginnen met de hoogste."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Niet waar — niet altijd.**
+
+Die strategie heet **greedy**. Voor de *fractionele* knapsack (waar
+je een halve item mag pakken) werkt het wél optimaal. Voor **0/1**
+knapsack kan greedy een verkeerd antwoord geven, omdat je items niet
+kunt halveren.
+
+Voorbeeld: rugzak 10 kg, items A = (60, 5), B = (60, 5), C = (90, 8).
+
+- Waarde/kg: A=12, B=12, C=11.25 → greedy pakt A en B → totaal **120**.
+- Maar: A + B = gewicht 10, dat past. ✓
+- Of: C + ? — alleen C past in zijn eentje binnen 10 (kan A of B niet
+  meer aanpakken want 8 + 5 = 13 > 10) → totaal **90**.
+
+Hier wint greedy toevallig. Maar bij andere getallen kan het misgaan
+— bv. rugzak 50, items (60, 10), (100, 20), (120, 30). Greedy ordent
+60/10=6, 100/20=5, 120/30=4 → pakt eerste twee → 160. Maar tweede +
+derde = 220.
+
+Voor 0/1 knapsack: gebruik **recursie** (deze track) of **dynamic
+programming**. Niet greedy.
+
+</details>
+
+## Stelling 3
+
+> *"Bij N items zijn er 2ᴺ mogelijke combinaties."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Waar.**
+
+Elk item heeft twee keuzes (skip of meenemen). Bij N items: 2 × 2 × …
+× 2 (N keer) = 2ᴺ.
+
+Bij N = 20 zijn dat ruim een miljoen. Bij N = 30 al een miljard. Dat
+is waarom een **slimme** aanpak nodig is — al die combinaties expliciet
+proberen wordt snel onhaalbaar.
+
+</details>
+
+## Stelling 4
+
+> *"De tabel heeft altijd `(n+1) × (W+1)` cellen."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Waar.**
+
+Eén extra rij (voor `i = 0` = geen items, allemaal 0) en één extra
+kolom (voor `w = 0` = lege rugzak, allemaal 0). Die "0-rij" en
+"0-kolom" zijn de basisgevallen waaruit we de tabel opbouwen.
+
+Bij 5 items en W=11 (het image-voorbeeld) is dat dus `6 × 12 = 72`
+cellen. Ongeacht wat de waardes of gewichten van de items zijn.
+
+</details>
+
+## Stelling 5
+
+> *"Als een item zwaarder is dan de resterende capaciteit, kunnen we
+> hem niet meenemen, maar moeten we hem nog wel **overwegen**."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Half waar.**
+
+We moeten doorrekenen wat we **zonder** dit item kunnen halen (skip-
+tak). Maar de meenemen-tak slaan we over — dat zou de capaciteit
+**negatief** maken, en dat is niet zinvol.
+
+Praktisch: een `if gewicht > capaciteit:` brengt je direct naar de
+skip-tak, zonder de meenemen-tak te proberen.
+
+</details>
+
+## Stelling 6
+
+> *"Met de tabel-aanpak (`O(n × W)`) kun je ook 100 items aan, zolang
+> de capaciteit niet onmenselijk groot wordt."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Waar.**
+
+Bij 100 items en W = 1.000 is de tabel `101 × 1001 ≈ 100.000` cellen.
+Elke cel kost één lookup → in een fractie van een seconde klaar.
+
+Vergelijk met de **naïeve recursie** die per item zichzelf twee keer
+aanroept: bij 30 items al 2³⁰ ≈ een miljard oproepen. De tabel is
+miljoenen keren sneller omdat hij elke subvraag exact **één** keer
+uitrekent in plaats van eindeloos te herhalen.
+
+De tabel-aanpak schaalt prima totdat `W` zelf gigantisch wordt (bv.
+een miljoen). Dan zijn er nog snellere varianten, maar voor de meeste
+echte problemen is `O(n × W)` ruim voldoende.
+
+</details>
+
+Klaar met voorspellen? Tijd voor de eerste regel Python.
+
+Door naar [stap 4: items in Python →](./04-bouwen-items).

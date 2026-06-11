@@ -1,0 +1,136 @@
+---
+sidebar_position: 9
+hide_table_of_contents: true
+---
+
+# 8.9 Bouwsteen 6 — herhaal tot klaar
+
+**Leerdoel:** je zet één enkele regel rondom je ronde-blok zodat hij
+zichzelf herhaalt tot alle nodes bezocht zijn.
+
+## Wat we willen
+
+We willen zeggen: *"blijf rondes doen, tot er geen nog-niet-bezochte
+node meer is."*
+
+In Python: een `while`-lus met een **stop-conditie**.
+
+## Wanneer stoppen?
+
+Onze `kies_volgende` returnt `None` als alles bezocht is. Dat is dus
+ons stop-signaal:
+
+```python
+while True:
+    huidige = kies_volgende(afstanden, bezocht)
+    if huidige is None:
+        break                         # niemand meer over → klaar
+    bezocht.add(huidige)
+    for buur, gewicht in graph[huidige]:
+        nieuwe = afstanden[huidige] + gewicht
+        if nieuwe < afstanden[buur]:
+            afstanden[buur] = nieuwe
+```
+
+`while True` zegt: *"blijf maar bezig"*. De `if ... break` is de
+uitgang.
+
+## Waarom geen "for node in graph"?
+
+Op het eerste gezicht lijkt het verleidelijk:
+
+```python
+for node in graph:
+    # doe een ronde voor node
+```
+
+Maar dat klopt **niet**. We willen elke ronde de node met de **laagste
+afstand** kiezen — niet gewoon in alfabetische volgorde. `kies_volgende`
+doet die slimme keuze.
+
+## Stopt deze lus altijd?
+
+Ja — gegarandeerd. Elke ronde voegen we precies **één** node aan
+`bezocht` toe. Na maximaal `len(graph)` rondes is iedereen erin.
+`kies_volgende` returnt dan `None`, en `break` springt eruit.
+
+Geen risico op een oneindige lus. Belangrijk: vergeet `bezocht.add()`
+niet — anders blijf je dezelfde node steeds opnieuw kiezen. Daarom
+zetten we dat altijd direct na de kies-stap.
+
+## Voorspel
+
+Wat denk je dat de eindafstanden zijn voor onze mini-graph, start `A`?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+{'A': 0, 'B': 4, 'C': 2, 'D': 5}
+```
+
+Exact wat je op papier kreeg.
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`def kies_volgende(afstanden, bezocht):
+    beste_node = None
+    kleinste = float('inf')
+    for node, d in afstanden.items():
+        if node in bezocht:
+            continue
+        if d < kleinste:
+            kleinste = d
+            beste_node = node
+    return beste_node
+
+
+graph = {
+    'A': [('B', 4), ('C', 2)],
+    'B': [('A', 4), ('D', 1)],
+    'C': [('A', 2), ('D', 8)],
+    'D': [('B', 1), ('C', 8)],
+}
+
+afstanden = {node: float('inf') for node in graph}
+afstanden['A'] = 0
+bezocht = set()
+
+while True:
+    huidige = kies_volgende(afstanden, bezocht)
+    if huidige is None:
+        break
+    bezocht.add(huidige)
+    print(f"Ronde — bezoek {huidige} (afstand {afstanden[huidige]})")
+    for buur, gewicht in graph[huidige]:
+        nieuwe = afstanden[huidige] + gewicht
+        if nieuwe < afstanden[buur]:
+            afstanden[buur] = nieuwe
+
+print(f"\\nKlaar! Afstanden vanaf A: {afstanden}")`} />
+
+<details>
+<summary>Verwachte uitvoer</summary>
+
+```
+Ronde — bezoek A (afstand 0)
+Ronde — bezoek C (afstand 2)
+Ronde — bezoek B (afstand 4)
+Ronde — bezoek D (afstand 5)
+
+Klaar! Afstanden vanaf A: {'A': 0, 'B': 4, 'C': 2, 'D': 5}
+```
+
+Vier rondes, één per node. Vergelijk met je pen-en-papier — exact
+dezelfde volgorde van "klaar" verklaren.
+
+</details>
+
+## Wat nu nog mist
+
+Niks — we hebben Dijkstra werkend! In de volgende stap zetten we alles
+netjes in **één** functie en zien we het hele algoritme tegelijk.
+
+Door naar [stap 10: het complete algoritme →](./10-compleet).

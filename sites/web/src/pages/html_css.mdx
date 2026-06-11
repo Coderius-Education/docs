@@ -1,0 +1,67 @@
+---
+sidebar_display: none
+hide_table_of_contents: true
+---
+
+import CodeEditor from '@site/src/components/CodeEditor';
+
+# Je eerste website
+
+Wij zijn groot fan van de cursus Web Lab op de site van de non-profit code.org.
+
+Je leert in deze cursus de basis van web development: HTML & CSS.
+
+## Hoe te beginnen?
+Je gaat naar [deze link](https://studio.code.org/courses/web-development-2025/units/1/lessons/2/levels/1?login_required=true). 
+
+- Volg je Informatica? Dan krijg je een inlogcode van je docent
+- Volg je dit buiten een les? Vergeet dan niet een account aan te maken.
+
+## Welke lessen zijn interessant?
+
+De volgende lessen zijn erg nuttig (let op de titels van de lessen zijn uit de versie uit 2025).
+De volgorde is expres zo gedaan om je te helpen zo prettig mogelijk te leren:
+
+| Les | Onderwerp | Oefenen |
+|-----|-----------|---------|
+| Lesson 2 | Intro to HTML | [Intro to HTML](/docs/html-css/intro-html) |
+| Lesson 3 | Headings and Lists | [Koppen en lijsten](/docs/html-css/koppen-lijsten) |
+| Lesson 6 | Styling Text with CSS | [Tekst opmaken met CSS](/docs/html-css/tekst-opmaken-css) |
+| Lesson 8 | Using Images | [Afbeeldingen](/docs/html-css/afbeeldingen) |
+| Lesson 17 | Linking Pages | [Pagina's koppelen](/docs/html-css/paginas-koppelen) |
+| Lesson 9 | Styling Elements with CSS | [Elementen opmaken](/docs/html-css/elementen-opmaken) |
+| Lesson 11 | CSS Classes | [CSS Klassen](/docs/html-css/css-klassen) |
+| Lesson 18 | CSS Pseudo-classes | [CSS Pseudo-klassen](/docs/html-css/pseudo-klassen) |
+| Lesson 12 | Organizing Content with Flexbox | [Flexbox](/docs/html-css/flexbox) |
+
+Hierna kun je in één van de laatste levels je eigen website maken!
+
+---
+
+## Probeer het zelf!
+
+Gebruik de editor hieronder om HTML, CSS en JavaScript te oefenen.
+Schrijf je code aan de linkerkant en zie het resultaat direct rechts.
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Mijn pagina</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Hallo wereld!</h1>
+  <p>Dit is mijn eerste webpagina.</p>
+</body>
+</html>`}
+  initialCss={`h1 {
+  color: #2e8555;
+}
+
+p {
+  font-size: 1.1rem;
+}`}
+  height="480px"
+/>

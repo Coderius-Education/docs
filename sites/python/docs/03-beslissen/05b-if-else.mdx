@@ -1,0 +1,171 @@
+---
+sidebar_position: 2
+hide_table_of_contents: true
+description: Laat je programma beslissingen nemen met if en else. De code-blokken springen 4 spaties in.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 5b If en else
+
+Je kunt nu vergelijkingen maken die `True` of `False` opleveren. In deze les laat je je programma daar **iets mee doen** met `if` en `else`.
+
+## if en else
+
+Met `if` voer je code uit als een voorwaarde `True` is. Met `else` zeg je wat er anders moet gebeuren:
+
+```python
+leeftijd = 15
+
+if leeftijd >= 18:
+    print("Je bent volwassen!")
+else:
+    print("Je bent nog minderjarig.")
+```
+
+De regels ná `if` en `else` springen **4 spaties** in. Die inspringing is geen opmaak — het is verplicht in Python en vertelt welke regels bij het blok horen. Laat je het weg, dan krijg je een `IndentationError`.
+
+## if zonder else
+
+Je hebt niet altijd een `else` nodig:
+
+```python
+score = 80
+
+if score >= 50:
+    print("Gefeliciteerd, je bent geslaagd!")
+
+print("Je score was:", score)
+```
+
+De tweede `print` springt niet in en wordt dus **altijd** uitgevoerd — hij staat buiten het `if`-blok.
+
+---
+
+## Opdracht 5b.1: Geslaagd?
+
+Schrijf een `if`/`else` die `"Gefeliciteerd, je bent geslaagd!"` print als `cijfer` minstens `5.5` is, en anders `"Helaas, gezakt."`.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+`if cijfer >= 5.5:` voor de eerste tak, `else:` voor de tweede. Vergeet de dubbele punt en de inspringing niet.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+cijfer = 6.0
+
+if cijfer >= 5.5:
+    print("Gefeliciteerd, je bent geslaagd!")
+else:
+    print("Helaas, gezakt.")
+```
+
+<CodeExercise>{`cijfer = 6.0
+
+if cijfer >= 5.5:
+    print("Gefeliciteerd, je bent geslaagd!")
+else:
+    print("Helaas, gezakt.")`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 5b.2: Toegangscontrole
+
+Een feestje heeft een minimumleeftijd van 14. Print of de gast welkom is.
+
+Verwachte uitvoer (bij `leeftijd = 15`):
+
+```
+Welkom op het feestje!
+```
+
+Verwachte uitvoer (bij `leeftijd = 12`):
+
+```
+Sorry, je bent te jong.
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+`if leeftijd >= 14:` — de drempel is 14, niet 18.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+leeftijd = 15
+
+if leeftijd >= 14:
+    print("Welkom op het feestje!")
+else:
+    print("Sorry, je bent te jong.")
+```
+
+<CodeExercise>{`leeftijd = 15
+
+if leeftijd >= 14:
+    print("Welkom op het feestje!")
+else:
+    print("Sorry, je bent te jong.")`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 5b.3: Gepersonaliseerd resultaat
+
+Schrijf een programma dat met `naam` en `cijfer` een persoonlijk bericht print. Gebruik een f-string in beide takken.
+
+Verwachte uitvoer (bij `naam = "Alex"`, `cijfer = 6.5`):
+
+```
+Gefeliciteerd Alex, je hebt een 6.5 — geslaagd!
+```
+
+Verwachte uitvoer (bij `cijfer = 4.0`):
+
+```
+Helaas Alex, een 4.0 is niet genoeg.
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Drempel: `cijfer >= 5.5`. In beide takken een f-string met `{naam}` en `{cijfer}`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+naam = "Alex"
+cijfer = 6.5
+
+if cijfer >= 5.5:
+    print(f"Gefeliciteerd {naam}, je hebt een {cijfer} — geslaagd!")
+else:
+    print(f"Helaas {naam}, een {cijfer} is niet genoeg.")
+```
+
+In de volgende les leer je hoe je **drie of meer** mogelijkheden afhandelt en hoe je twee voorwaarden combineert.
+
+<CodeExercise>{`naam = "Alex"
+cijfer = 6.5
+
+if cijfer >= 5.5:
+    print(f"Gefeliciteerd {naam}, je hebt een {cijfer} — geslaagd!")
+else:
+    print(f"Helaas {naam}, een {cijfer} is niet genoeg.")`}</CodeExercise>
+
+</details>

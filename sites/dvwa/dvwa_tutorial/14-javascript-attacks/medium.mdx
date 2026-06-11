@@ -1,0 +1,86 @@
+---
+sidebar_position: 2
+sidebar_label: 'Medium'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# JavaScript Attacks — Medium
+
+De ontwikkelaar is geschrokken dat mensen zijn functies via de Console aanroepen en maakt de code onleesbaar.
+
+## 1. Predict (Voorspel)
+
+De broncode van de pagina bevat nu een zwaar ge-obfusceerd (minified) JavaScript-bestand. Het ziet eruit als een wirwar van letters:
+
+```javascript
+eval(function(p,a,c,k,e,d){e=function(c){return c.toString(36)};if(!''.replace(/^/,String)){while(c--){d[c.toString(a)]=k[c]||c.toString(a)}...
+```
+
+**Vraag:** Heeft de ontwikkelaar hiermee de kwetsbaarheid uit het Low level weggenomen?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Nee. De code is misschien moeilijk leesbaar voor een mens (Security by Obscurity), maar de **browser** moet de code uiteindelijk kunnen uitvoeren. Via de Developer Tools kun je de "Pretty Print"-knop gebruiken of een online de-obfuscator — de code komt netjes terug in leesbare inspringing. De functie om het token te maken staat er nog steeds in, alleen met een gekker naam.
+
+</details>
+
+## 2. Run (Uitvoeren)
+
+Start het lab en bekijk het formulier.
+
+<DvwaLab module="javascript_attacks" level="medium" />
+
+> ⚠️ **Labbeperking:** Deze aanval vereist toegang tot de F12 Sources en Console. Omdat het lab in een beveiligd iframe draait, is dit beperkt mogelijk. Voor de volledige ervaring heb je een [lokale DVWA-installatie](/docs/dvwa_installatie) nodig.
+
+Vul `success` in en klik op Submit. Observeer de foutmelding.
+
+## 3. Investigate (Onderzoeken)
+
+Ga in F12 naar het tabblad **Sources** (of Debugger in Firefox). Zoek het externe JavaScript-bestand van deze module (bijv. `medium.js`). Klik onderin op het `{}`-icoon (Pretty Print).
+
+**Vraag:** Wat zie je na het uitvoeren van Pretty Print? Zijn er herkenbare functienamen? Wat onthult dit over de bescherming die obfuscatie biedt?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Na Pretty Print is de code veel beter leesbaar. Je ziet functies met namen als `do_something(e)` of vergelijkbaar. Dit onthult dat obfuscatie alleen de leesbaarheid vermindert — niet de functionaliteit. Elke browser-tool die "Pretty Print" ondersteunt of online de-obfuscators (zoals beautifier.io) kunnen de code direct terugbrengen naar leesbare broncode.
+
+</details>
+
+## 4. Modify & Make (Aanpassen & Maken)
+
+Ontcijfer de functienaam en roep die aan via de Console met het woord `success`.
+
+<details>
+
+<summary>Tip</summary>
+
+Zoek in de ge-de-obfusceerde code naar een functie die een token berekent. In veel DVWA-versies heet die `do_something`. Roep haar aan via de Console.
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+1. Open F12 → **Sources** en "Pretty Print" het JavaScript-bestand.
+2. Zoek de tokengeneratiefunctie (bijv. `do_something`).
+3. Open F12 → **Console** en typ: `do_something("XXsuccessXX")` (of de exacte input die het script verwacht).
+4. Klik op Submit. De server accepteert de request!
+
+</details>
+
+## 5. ✓ Wat moest je zien?
+
+:::tip Controle
+- Zonder de Console aanpassing geeft het formulier "Invalid Token".
+- Na het aanroepen van de ge-de-obfusceerde functie slaagt het formulier.
+- Pretty Print toont de volledige logica van het script, ongeacht de obfuscatie.
+
+Werkt de Console niet in het lab? Probeer het in een lokale DVWA-installatie met volledige toegang tot F12.
+:::

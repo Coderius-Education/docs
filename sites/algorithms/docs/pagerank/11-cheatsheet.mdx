@@ -1,0 +1,101 @@
+---
+sidebar_position: 11
+hide_table_of_contents: true
+---
+
+# 13.11 Cheatsheet — PageRank
+
+Snelle referentie. Klap open wat je nodig hebt. Het college staat op
+[stap 1 (de slides)](./01-concept).
+
+## Het idee
+
+<details>
+<summary>In één zin</summary>
+
+Een pagina is belangrijk als er **belangrijke** pagina's naar linken;
+links zijn stemmen, en je lost het circulaire karakter op door te
+**itereren** tot de waarden stabiel zijn.
+
+</details>
+
+## De formule
+
+<details>
+<summary>De update-regel</summary>
+
+```
+rank(p) = (1 − d)/N  +  d · Σ  rank(i) / aantal_links(i)
+                              i → p
+```
+
+- `d` = damping factor (meestal **0,85**)
+- `N` = aantal pagina's
+- `(1 − d)/N` = basisdeel: de surfer springt soms willekeurig
+- de som loopt over alle pagina's `i` die naar `p` linken
+
+</details>
+
+## De functie
+
+<details>
+<summary>De iteratieve implementatie</summary>
+
+```python
+def pagerank(web, d=0.85, epsilon=1e-9):
+    n = len(web)
+    rank = {p: 1 / n for p in web}
+    while True:
+        nieuw = {}
+        for p in web:
+            som = sum(rank[i] / len(web[i]) for i in web if p in web[i])
+            nieuw[p] = (1 - d) / n + d * som
+        verschil = max(abs(nieuw[p] - rank[p]) for p in web)
+        rank = nieuw
+        if verschil < epsilon:
+            return rank
+```
+
+</details>
+
+## Belangrijke punten
+
+<details>
+<summary>Damping, convergentie, som</summary>
+
+- **Damping** (`d = 0,85`) houdt het stabiel: de surfer loopt nooit
+  definitief vast en elke pagina blijft bereikbaar.
+- **Convergentie**: elke iteratie verandert minder; stop als de grootste
+  verandering kleiner is dan een kleine `epsilon`.
+- De **som** van alle ranks blijft (ongeveer) **1** — je kunt rank lezen
+  als "kans dat de random surfer hier is".
+- Reken een ronde altijd uit de ranks van de **vorige** ronde.
+
+</details>
+
+<details>
+<summary>Dangling nodes</summary>
+
+Een pagina zonder uitgaande links laat anders belang "weglekken".
+Oplossing: behandel hem alsof hij naar **alle** pagina's linkt.
+
+```python
+links = web[i] if web[i] else set(web)
+```
+
+</details>
+
+## Twee invalshoeken
+
+<details>
+<summary>Formule ↔ random surfer</summary>
+
+De **iteratieve formule** rekent PageRank exact uit. De **random
+surfer-simulatie** (veel klikken tellen) benadert dezelfde waarden. Het
+zijn twee kanten van hetzelfde idee: waar komt een eindeloze surfer op de
+lange termijn terecht?
+
+</details>
+
+Klaar! Je hebt PageRank van idee tot werkende code gebouwd — en gezien
+waarom links méér zijn dan een telling.

@@ -1,0 +1,56 @@
+---
+sidebar_position: 4
+sidebar_label: 'Impossible'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# SQL Injection — Impossible
+
+Op het *Impossible* niveau gaan we kijken hoe de kwetsbaarheid daadwerkelijk professioneel wordt opgelost.
+
+## 1. Predict (Voorspel)
+
+De code is volledig herschreven en ziet er nu ongeveer zo uit (met behulp van PDO: PHP Data Objects):
+
+```php
+$stmt = $db->prepare( 'SELECT first_name, last_name FROM users WHERE user_id = (:id) LIMIT 1;' );
+$stmt->bindParam( ':id', $id, PDO::PARAM_INT );
+$stmt->execute();
+```
+
+**Vraag:** Waarom is het invoeren van `1' OR '1'='1` hier volstrekt nutteloos?
+
+<details>
+
+<summary>Antwoord</summary>
+
+De code gebruikt **Prepared Statements**. Dit is de gouden standaard tegen SQL Injection.
+Hierbij wordt de structuur van het SQL commando alvast naar de database gestuurd, vóórdat de variabelen worden toegevoegd.
+De database wéét hierdoor precies wat commando's zijn en wat data is. Als je nu `1' OR '1'='1` invult, denkt de database: "Ah, deze persoon is op zoek naar een gebruiker wiens naam/id letterlijk de tekst '1' OR '1'='1' is." Hij voert het dus niet meer uit als code!
+Bovendien dwingt `PDO::PARAM_INT` af dat de invoer een wiskundig getal (integer) móét zijn.
+
+</details>
+
+## 2. Run & Investigate
+
+Start het lab en probeer je beste SQL injection hacks.
+
+<DvwaLab module="sql_injection" level="impossible" />
+
+Je zult zien dat het onmogelijk is. De applicatie gedraagt zich alsof je een rare zoekopdracht hebt ingetikt en geeft simpelweg nul resultaten terug.
+
+## 3. ✓ Wat moest je zien?
+
+:::tip Controle
+- Geen van je SQL injection payloads haalt meer dan 1 resultaat op.
+- De applicatie geeft "User ID does not exist" of een leeg resultaat bij injectie-pogingen.
+- Prepared Statements zorgen ervoor dat jouw invoer altijd als data wordt behandeld, nooit als SQL-code.
+
+Lukt het je tóch om meerdere gebruikers op te halen? Controleer of het security-level écht op **Impossible** staat.
+:::
+
+- **String Concatenation is levensgevaarlijk:** Het plakken van gebruikersinvoer in SQL queries via `$query = "SELECT * FROM users WHERE id = " . $id;` leidt gegarandeerd tot SQL injection.
+- **Escape functies zijn onbetrouwbaar:** Functies zoals `mysqli_real_escape_string` kunnen onder bepaalde omstandigheden omzeild worden (bijv. als aanhalingstekens in de query ontbreken).
+- **Prepared Statements:** Dit is de énige 100% waterdichte verdediging tegen SQL Injection. Gebruik altijd PDO of vergelijkbare libraries in andere programmeertalen.

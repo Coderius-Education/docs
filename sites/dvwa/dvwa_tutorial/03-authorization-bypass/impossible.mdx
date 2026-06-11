@@ -1,0 +1,57 @@
+---
+sidebar_position: 4
+sidebar_label: 'Impossible'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# Authorization Bypass — Impossible
+
+Hoe beveilig je een systeem dan wél tegen Insecure Direct Object References?
+
+## 1. Predict (Voorspel)
+
+De back-end (PHP) code is aangepast. Wanneer de server een verzoek krijgt voor `klant_id=4593`, kijkt hij niet meer alleen naar dát nummer.
+
+De server doet nu het volgende in de achtergrond:
+```php
+$gevraagd_id = $_POST['id'];
+$mijn_echte_id = $_SESSION['user_id']; // Uit de onkraakbare sessie
+
+if ($gevraagd_id !== $mijn_echte_id && !is_admin($mijn_echte_id)) {
+    die("Toegang geweigerd!");
+}
+```
+
+**Vraag:** Waarom kun je deze beveiliging niet via F12 of externe tools manipuleren?
+
+<details>
+
+<summary>Antwoord</summary>
+
+De server vertrouwt niet langer blindelings op de data die door de browser (Client-Side) wordt ingestuurd. De server vergelijkt de gevraagde data nu met de `$_SESSION` van de gebruiker. Sessie-variabelen staan op de webserver opgeslagen en kunnen door een externe bezoeker op geen enkele manier vervalst of uitgelezen worden. Dit is echte "Server-Side Validatie"!
+
+</details>
+
+## 2. Run & Investigate
+
+Start het lab en probeer alle trucs die je eerder hebt geleerd.
+
+<DvwaLab module="authorization_bypass" level="impossible" />
+
+Pas via Developer Tools de `value` aan naar `1`, schakel JavaScript uit en klik op Submit. Observeer wat de server teruggeeft.
+
+## 3. ✓ Wat moest je zien?
+
+:::tip Controle
+- De server weigert het verzoek met een "Toegang Geweigerd"-melding, ook al heb je de waarde in de browser aangepast.
+- JavaScript uitschakelen heeft geen effect meer — de controle zit nu op de server.
+- Elke poging om een ander ID op te vragen leidt tot een foutmelding.
+
+Zie je toch gegevens? Controleer of het security level correct op **impossible** staat.
+:::
+
+**Vertrouw nooit data uit de frontend:** Alles wat uit de browser komt (HTML-velden, dropdowns, JavaScript-variabelen) kan door een bezoeker vervalst worden.
+
+**Autorisatie is Server-Side:** Controles of een gebruiker bij specifieke data mag komen, moeten altijd op de backend webserver gebeuren, gebaseerd op onvervalsbare sessiegegevens.

@@ -1,0 +1,61 @@
+---
+sidebar_position: 3
+hide_table_of_contents: true
+---
+
+import WokwiSimulator from '@site/src/components/WokwiSimulator';
+
+# 4.3 Opdracht: potmeter dimt de LED
+
+Nu combineer je een analoge **ingang** (de potmeter) met een analoge **uitgang** (PWM). Je draait aan de knop en de LED wordt feller of zwakker.
+
+<WokwiSimulator
+  projectUrl="https://wokwi.com/projects/new/arduino-uno"
+  title="Simuleer: potmeter dimt de LED"
+/>
+
+## Het schaalprobleem
+
+`analogRead()` geeft 0–1023, maar `analogWrite()` wil 0–255. Die getallen passen niet op elkaar. Gelukkig bestaat er een functie die een getal van het ene bereik naar het andere omrekent: **`map()`**.
+
+```cpp
+int helderheid = map(waarde, 0, 1023, 0, 255);
+```
+
+Dit zegt: "neem `waarde` (die tussen 0 en 1023 ligt) en reken hem om naar het bereik 0 tot 255".
+
+## Opdracht 4.3.a: Draaiknop-dimmer
+
+Lees de potmeter op A0 uit, reken de waarde om met `map()`, en gebruik die om een LED op pin 9 te dimmen.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Je hebt drie stappen in `loop()`: lees A0 met `analogRead()`, reken om met `map()`, en stuur het resultaat naar pin 9 met `analogWrite()`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```cpp
+void setup() {
+  pinMode(9, OUTPUT);
+}
+
+void loop() {
+  int waarde = analogRead(A0);
+  int helderheid = map(waarde, 0, 1023, 0, 255);
+  analogWrite(9, helderheid);
+}
+```
+
+Draai je aan de knop, dan verandert `waarde`, en dus `helderheid`, en dus de felheid van de LED.
+
+</details>
+
+## Mogelijke uitbreidingen
+
+- Gebruik twee potmeters voor twee LED's.
+- Laat de LED pas branden vanaf de helft van de knop (gebruik een `if`).
+- Stuur de helderheid ook naar de seriële monitor zodat je de waarde ziet.

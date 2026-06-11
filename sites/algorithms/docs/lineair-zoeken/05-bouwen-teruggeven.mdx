@@ -1,0 +1,118 @@
+---
+sidebar_position: 5
+hide_table_of_contents: true
+---
+
+# 1.5 Bouwsteen 3 — de index teruggeven
+
+**Leerdoel:** je verpakt je code in een **functie** en gebruikt `return` om
+de **index** terug te geven waar je het doel vond.
+
+## Wat we willen
+
+Twee dingen tegelijk:
+
+1. Niet alleen *melden* dat we het vonden, maar de **positie** (index)
+   teruggeven.
+2. Het geheel in een **functie** stoppen die we kunnen aanroepen — zo kun
+   je hem op meerdere lijsten gebruiken.
+
+## Een nieuw stukje syntax: `enumerate`
+
+Om bij de **index** te kunnen, gebruiken we `enumerate`:
+
+```python
+for i, waarde in enumerate(lijst):
+    print(i, waarde)
+```
+
+Dit geeft je in elke ronde **twee** dingen: de index `i` en de bijhorende
+waarde.
+
+<details>
+<summary>Voorbeeld-output van enumerate</summary>
+
+```
+0 3
+1 1
+2 4
+3 1
+4 5
+```
+
+`i` telt mee: 0, 1, 2, 3, 4. Daarnaast krijg je `waarde`: 3, 1, 4, 1, 5.
+
+</details>
+
+## Voorspel
+
+Wat denk je dat dit print?
+
+```python
+def zoek(lijst, doel):
+    for i, waarde in enumerate(lijst):
+        if waarde == doel:
+            return i
+
+print(zoek([3, 1, 4, 1, 5], 4))
+print(zoek([3, 1, 4, 1, 5], 1))
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+2
+1
+```
+
+- `zoek([3, 1, 4, 1, 5], 4)` → 4 staat op index 2. De `return 2` stopt de
+  functie direct.
+- `zoek([3, 1, 4, 1, 5], 1)` → de **eerste** 1 staat op index 1. Daarna
+  stopt de functie — de tweede 1 op index 3 zien we niet meer.
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`def zoek(lijst, doel):
+    for i, waarde in enumerate(lijst):
+        if waarde == doel:
+            return i
+
+print(zoek([3, 1, 4, 1, 5], 4))
+print(zoek([3, 1, 4, 1, 5], 1))`} />
+
+## Belangrijk: `return` stopt de functie
+
+Zodra Python `return i` uitvoert, **springt de functie eruit**. De `for`-lus
+gaat dus **niet** verder. Dat is precies wat we willen: stop bij de eerste
+match.
+
+## Wat als we het niet vinden?
+
+Probeer dit:
+
+<PyRunner initialCode={`def zoek(lijst, doel):
+    for i, waarde in enumerate(lijst):
+        if waarde == doel:
+            return i
+
+print(zoek([3, 1, 4, 1, 5], 9))`} />
+
+<SteppingStoneModel stone="linear-return-index" />
+
+<details>
+<summary>Wat zie je?</summary>
+
+```
+None
+```
+
+Als de functie **nooit** een `return` uitvoert, geeft Python automatisch
+`None` terug. Dat is niet wat we willen — we beloofden eerder dat we `-1`
+zouden teruggeven bij "niet gevonden". Dat lossen we in de volgende stap op.
+
+</details>
+
+Door naar [bouwsteen 4: niet gevonden](./06-bouwen-niet-gevonden).

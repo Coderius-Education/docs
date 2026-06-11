@@ -1,0 +1,56 @@
+---
+sidebar_position: 4
+sidebar_label: 'Impossible'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# Weak Session IDs — Impossible
+
+Hoe worden cookies op professionele websites dan wél gegenereerd?
+
+## 1. Predict (Voorspel)
+
+De server stopt met zelf knutselen en combineert echte willekeur met een sterk hashalgoritme:
+
+```php
+$cookie_value = sha1( mt_rand() . time() . "Impossible" );
+setcookie("dvwaSession", $cookie_value);
+```
+
+**Vraag:** Waarom maakt de combinatie van een willekeurig getal (`mt_rand`), de huidige tijd (`time`) en een vast woordje, daarna gehasht via SHA1, deze sessie onmogelijk te raden?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Deze string bevat echte **entropie** (onvoorspelbaarheid). Zelfs als je exact de seconde weet waarop de sessie is aangemaakt, kun je nooit raden welk gigantisch willekeurig getal `mt_rand()` op dat moment heeft gegenereerd. Er zijn miljoenen mogelijkheden per seconde, en de SHA1-hash ervan is niet terug te draaien of te voorspellen. (In moderne PHP-versies worden nog robuustere functies gebruikt zoals `random_bytes()` via de standaard `session_start()`.)
+
+</details>
+
+## 2. Run & Investigate
+
+Start het lab en bekijk de cookies.
+
+<DvwaLab module="weak_session_ids" level="impossible" />
+
+Klik meerdere keren op de knop en vergelijk de cookie-waarden. Probeer een patroon te ontdekken of een waarde te voorspellen.
+
+## 3. ✓ Wat moest je zien?
+
+:::tip Controle
+- De cookie-waarden zijn lange, willekeurig lijkende strings zonder enig zichtbaar patroon.
+- Elke klik geeft een compleet andere waarde — er is geen oplopende reeks of tijdstempel te herkennen.
+- CrackStation of een MD5/SHA1-calculator kan de waarden niet ontcijferen.
+
+Zie je toch een patroon? Controleer of het security level correct op **impossible** staat.
+:::
+
+**Session Hijacking is dodelijk:** Een overgenomen sessiecookie geeft direct dezelfde rechten als het correct invullen van een wachtwoord.
+
+**Tijd of teller is geen random:** Getallen die oplopen of datums voelen willekeurig, maar zijn voor hackers eenvoudig voorspelbaar.
+
+**Crypto-hashing verbloemt slechte logica niet:** Een zwakke variabele (1, 2, 3) door MD5 halen maakt het geen sterke variabele — het verbergt de zwakte alleen tijdelijk achter een optische illusie.
+
+**Gebruik ingebouwde functies:** Ontwerp nooit zelf een sessiebeheersysteem. Elk populair framework heeft ijzersterke generatoren ingebouwd via `session_start()`.

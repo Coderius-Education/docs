@@ -1,0 +1,122 @@
+---
+sidebar_position: 4
+hide_table_of_contents: true
+---
+
+import WokwiSimulator from '@site/src/components/WokwiSimulator';
+
+# 2.4 Blink aanpassen
+
+Je begrijpt nu de blink-sketch. Tijd om er zelf mee te spelen. Gebruik voor elke opdracht de simulator hieronder.
+
+<WokwiSimulator
+  projectUrl="https://wokwi.com/projects/new/arduino-uno"
+  title="Simuleer: speel met blink"
+/>
+
+## Opdracht 2.4.a: Sneller knipperen
+
+Pas de blink-sketch aan zodat de LED **vijf keer per seconde** knippert (dus heel snel). Eén keer aan en uit duurt dan samen 200 milliseconden.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Eén keer aan en uit bestaat uit twee `delay()`-regels. Samen moeten die 200 ms duren, dus elke `delay` is 100.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```cpp
+void setup() {
+  pinMode(13, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(13, HIGH);
+  delay(100);
+  digitalWrite(13, LOW);
+  delay(100);
+}
+```
+
+</details>
+
+## Opdracht 2.4.b: Aan langer dan uit
+
+Maak een knipperpatroon waarbij de LED **2 seconden aan** is en daarna **kort (200 ms) uit**. Net als het knipperlicht van een opladende telefoon.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+De twee `delay()`-regels hoeven niet even lang te zijn. Geef de eerste een andere waarde dan de tweede.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```cpp
+void setup() {
+  pinMode(13, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(13, HIGH);
+  delay(2000);
+  digitalWrite(13, LOW);
+  delay(200);
+}
+```
+
+</details>
+
+## Opdracht 2.4.c: SOS
+
+Laat de LED het morseteken **SOS** knipperen: drie korte knipjes, drie lange, drie korte. Daarna een lange pauze en opnieuw.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Een kort knipje is bijvoorbeeld 200 ms aan, een lang knipje 600 ms. Tussen de knipjes steeds 200 ms uit. Je herhaalt dus gewoon vaker dezelfde twee regels.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```cpp
+void setup() {
+  pinMode(13, OUTPUT);
+}
+
+void loop() {
+  // S: drie korte
+  for (int i = 0; i < 3; i++) {
+    digitalWrite(13, HIGH);
+    delay(200);
+    digitalWrite(13, LOW);
+    delay(200);
+  }
+  // O: drie lange
+  for (int i = 0; i < 3; i++) {
+    digitalWrite(13, HIGH);
+    delay(600);
+    digitalWrite(13, LOW);
+    delay(200);
+  }
+  // S: drie korte
+  for (int i = 0; i < 3; i++) {
+    digitalWrite(13, HIGH);
+    delay(200);
+    digitalWrite(13, LOW);
+    delay(200);
+  }
+  delay(1500);
+}
+```
+
+Met een `for`-lus herhaal je dezelfde regels zonder ze drie keer over te typen.
+
+</details>

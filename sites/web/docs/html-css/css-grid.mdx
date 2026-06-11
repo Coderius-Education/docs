@@ -1,0 +1,217 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeEditor from '@site/src/components/CodeEditor';
+
+# CSS Grid
+
+## Wat ga je leren?
+
+Je leert hoe je een twee-dimensionale layout bouwt met **CSS Grid** — rijen én kolommen tegelijk, zonder geneste flexboxen.
+
+## Theorie
+
+In [Flexbox](/docs/html-css/flexbox) gebruikte je Flexbox om elementen op **één lijn** te zetten (rij óf kolom). CSS Grid kun je gebruiken om elementen in een **rooster** te plaatsen — rijen én kolommen tegelijk.
+
+Je activeert Grid met `display: grid` op de **container**:
+
+```css
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;  /* drie even brede kolommen */
+  gap: 10px;
+}
+```
+
+Alle directe kinderen van de container worden **grid-items** en worden automatisch over de kolommen verdeeld.
+
+### Belangrijke eigenschappen
+
+| Eigenschap | Wat het doet |
+|---|---|
+| `grid-template-columns` | Definieert de kolommen (breedtes) |
+| `grid-template-rows` | Definieert de rijen (hoogtes) |
+| `gap` | Ruimte tussen rijen en kolommen |
+| `grid-column: span 2` | Een item neemt 2 kolommen in beslag |
+
+### De `fr`-eenheid
+
+`fr` staat voor **fraction** — een deel van de beschikbare ruimte. `1fr 1fr 1fr` betekent: drie even grote kolommen. `1fr 2fr` betekent: kolom 2 is dubbel zo breed als kolom 1.
+
+```css
+grid-template-columns: 1fr 2fr;   /* 1/3 en 2/3 van de breedte */
+grid-template-columns: 200px 1fr; /* kolom 1 vast, kolom 2 vult de rest */
+```
+
+### Grid vs Flexbox — wanneer wat?
+
+- **Flexbox**: elementen op één lijn (menubalk, knoppenrij, kaartjes naast elkaar).
+- **Grid**: een echt rooster (foto-galerij, dashboard, complete pagina-layout).
+
+Ze zijn complementair — je kunt ze prima combineren.
+
+## Predict
+
+Wat denk je dat dit doet?
+
+```css
+.galerij {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+```
+
+Met zes items in `.galerij`:
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+Drie kolommen, dus de zes items vormen automatisch **twee rijen van drie**. CSS Grid breekt zelf naar een nieuwe rij zodra de kolommen vol zijn. De `gap` geeft 8px ruimte tussen alle items (horizontaal én verticaal).
+
+</details>
+
+## Probeer het zelf!
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>CSS Grid</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="galerij">
+    <div class="cel">1</div>
+    <div class="cel">2</div>
+    <div class="cel">3</div>
+    <div class="cel">4</div>
+    <div class="cel">5</div>
+    <div class="cel">6</div>
+  </div>
+</body>
+</html>`}
+  initialCss={`.galerij {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  padding: 10px;
+}
+
+.cel {
+  background-color: #4a90e2;
+  color: white;
+  text-align: center;
+  padding: 40px;
+  font-size: 2rem;
+}`}
+  height="500px"
+/>
+
+## Investigate
+
+Experimenteer:
+
+- Verander `1fr 1fr 1fr` naar `1fr 1fr` — wat gebeurt er met de zes items?
+- Probeer `200px 1fr 200px` — wat verandert er?
+- Voeg `grid-column: span 2` toe aan `.cel:first-child` — wat doet de eerste cel nu?
+- Probeer `grid-template-columns: repeat(3, 1fr)` — wat zie je? (Hint: hetzelfde als handmatig drie keer `1fr`)
+
+## Modify
+
+**Opdracht:** Maak de eerste cel zo breed dat hij **alle drie de kolommen** vult (als een header bovenaan).
+
+<details>
+<summary>Tip</summary>
+
+Gebruik `grid-column: 1 / -1` (van eerste tot laatste lijn) op de eerste cel. Of `span 3`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```css
+.cel:first-child {
+  grid-column: 1 / -1;
+  background-color: orange;
+}
+```
+
+</details>
+
+## Make
+
+**Opdracht:** Bouw een eenvoudig dashboard-rooster: een brede header bovenaan (3 kolommen breed), daaronder een sidebar (1 kolom) naast de hoofdinhoud (2 kolommen), en een footer onderaan (3 kolommen breed).
+
+<details>
+<summary>Tip</summary>
+
+Vier elementen, drie kolommen. Header en footer: `grid-column: 1 / -1`. Sidebar: 1 kolom. Hoofdinhoud: `grid-column: span 2`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<div class="dashboard">
+  <div class="header">Header</div>
+  <div class="sidebar">Sidebar</div>
+  <div class="inhoud">Inhoud</div>
+  <div class="footer">Footer</div>
+</div>
+```
+
+```css
+.dashboard {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  padding: 10px;
+}
+
+.dashboard > div {
+  background-color: #eef;
+  padding: 30px;
+  text-align: center;
+}
+
+.header, .footer {
+  grid-column: 1 / -1;
+  background-color: #4a90e2;
+  color: white;
+}
+
+.inhoud {
+  grid-column: span 2;
+}
+```
+
+</details>
+
+## Er gaat iets mis
+
+**Geen `gap`, maar `margin` op de items**
+
+```css
+/* Werkt minder fijn dan gap */
+.cel {
+  margin: 10px;
+}
+```
+
+Met `margin` op de items krijg je dubbele ruimte tussen items (margin links + margin rechts) en geen ruimte aan de buitenkant. `gap` werkt voor zowel rij- als kolom-tussenruimte met één regel:
+
+```css
+.galerij {
+  display: grid;
+  gap: 10px;   /* één eigenschap voor alles */
+}
+```
+
+---
+
+[← Media queries](/docs/html-css/media-queries)

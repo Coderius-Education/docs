@@ -1,0 +1,211 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeEditor from '@site/src/components/CodeEditor';
+
+# CSS Pseudo-klassen
+
+## Wat ga je leren?
+
+Je leert hoe je elementen anders kunt stijlen op basis van hun **toestand** of **positie** — bijvoorbeeld als de muis eroverheen beweegt of als het het eerste item in een lijst is.
+
+## Theorie
+
+Een **pseudo-klasse** is een selector die een speciale toestand of positie beschrijft. Je schrijft ze met een dubbele punt direct na de selector:
+
+```css
+a:hover {
+  color: red;
+}
+```
+
+### Veelgebruikte pseudo-klassen
+
+| Pseudo-klasse | Wanneer actief |
+|---|---|
+| `:hover` | Als de muis over het element beweegt |
+| `:active` | Op het moment dat je klikt (de muis is ingedrukt) |
+| `:focus` | Als het element "focus" heeft (bijv. een invoerveld waarin je typt) |
+| `:visited` | Een link die de bezoeker al eens heeft bezocht |
+| `:disabled` | Een uitgeschakeld formulier-element (knop of invoerveld) |
+| `:first-child` | Het eerste kind-element van zijn ouder |
+| `:last-child` | Het laatste kind-element van zijn ouder |
+| `:nth-child(n)` | Het n-de kind-element (bijv. `nth-child(2)`) |
+
+:::tip `:focus` en formulieren
+`:focus` is vooral nuttig voor [formulieren](/docs/html-css/formulieren) — geef een actief invoerveld of geselecteerde knop een opvallende rand zodat de gebruiker ziet waar hij/zij bezig is. Belangrijk voor toegankelijkheid (mensen die met Tab navigeren).
+:::
+
+## Predict
+
+Bekijk de CSS hieronder. Wat denk je dat er gebeurt als je:
+1. Je muis over de link beweegt?
+2. Op de knop klikt en de muisknop **ingedrukt houdt**?
+3. In het invoerveld klikt om te typen?
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+1. **Hover**: de kleur van de link wordt rood en de onderstreping verdwijnt. Zodra je de muis wegbeweegt komt de blauwe link terug.
+2. **Active**: zolang je de muisknop ingedrukt houdt, krijgt de knop een andere kleur. Laat je los, dan gaat hij terug.
+3. **Focus**: het invoerveld krijgt een opvallende rand zodra je erin klikt of er met Tab naartoe navigeert.
+
+</details>
+
+## Probeer het zelf!
+
+Beweeg je muis over de link, klik (en houd vast) op de knop, en klik in het invoerveld.
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Pseudo-klassen</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Pseudo-klassen</h1>
+
+  <p><a href="#">Beweeg je muis over mij</a></p>
+
+  <button>Klik mij en houd vast</button>
+
+  <p><input type="text" placeholder="Klik in dit veld"></p>
+
+  <ul>
+    <li>Eerste item</li>
+    <li>Tweede item</li>
+    <li>Derde item</li>
+  </ul>
+</body>
+</html>`}
+  initialCss={`a {
+  color: blue;
+  text-decoration: underline;
+}
+
+a:hover {
+  color: red;
+  text-decoration: none;
+}
+
+button {
+  padding: 8px 16px;
+  background-color: lightgray;
+  border: 2px solid gray;
+  cursor: pointer;
+}
+
+button:active {
+  background-color: orange;
+}
+
+input:focus {
+  outline: 3px solid dodgerblue;
+}
+
+li:first-child {
+  font-weight: bold;
+  color: darkgreen;
+}`}
+  height="540px"
+/>
+
+## Investigate
+
+Experimenteer:
+
+- Verander `li:first-child` in `li:last-child` — welk item wordt nu gestijld?
+- Probeer `li:nth-child(2)` — welk item krijgt dan de stijl?
+- Voeg `:hover` toe aan de `<li>` items — wat zie je als je eroverheen beweegt?
+- Vervang `button:active` door `button:hover` — wat verandert er aan wanneer de oranje kleur verschijnt?
+- Verwijder `input:focus` — klik in het veld. Hoe weet je nu nog dat het veld actief is?
+
+## Modify
+
+**Opdracht:** Voeg een stijl toe zodat het **laatste** lijstitem een andere kleur krijgt.
+
+<details>
+<summary>Tip</summary>
+
+Gebruik `li:last-child` als selector in de CSS.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```css
+li:last-child {
+  color: purple;
+  font-style: italic;
+}
+```
+
+</details>
+
+## Make
+
+**Opdracht:** Maak een interactieve knop in HTML (bijvoorbeeld `<button>Klik Mij!</button>`). Gebruik CSS pseudo-klassen zodat de knop van kleur verandert als je er met je muis overheen gaat (`:hover`), en nóg een andere kleur krijgt of iets kleiner wordt als je erop klikt (`:active`).
+
+<details>
+<summary>Tip</summary>
+
+Je hebt drie stukjes CSS nodig:
+1. `button` (basisstijl)
+2. `button:hover` (als de muis erop staat)
+3. `button:active` (tijdens het klikken)
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<!-- HTML -->
+<button>Bestel nu</button>
+```
+
+```css
+/* CSS */
+button {
+  background-color: blue;
+  color: white;
+  padding: 15px 30px;
+  font-size: 1.2rem;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: darkblue;
+}
+
+button:active {
+  background-color: red;
+}
+```
+
+</details>
+
+## Er gaat iets mis
+
+**Spatie voor de pseudo-klasse**
+
+```css
+/* Fout: spatie voor :hover */
+a :hover {
+  color: red;
+}
+```
+
+```css
+/* Goed: geen spatie voor :hover */
+a:hover {
+  color: red;
+}
+```
+
+Met een spatie betekent `a :hover`: "een element met `:hover` **binnen** een `<a>`". Zonder spatie betekent het: "een `<a>` die de `:hover` toestand heeft". In de meeste gevallen wil je **geen** spatie.

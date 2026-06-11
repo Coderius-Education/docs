@@ -1,0 +1,96 @@
+---
+sidebar_position: 11
+hide_table_of_contents: true
+---
+
+# 10.11 Er gaat iets mis — top-3 fouten
+
+**Leerdoel:** je herkent de drie klassieke valkuilen bij de
+DP-tabel-aanpak van knapsack.
+
+## Off-by-one in tabel-grootte
+
+Foutmelding: `IndexError: list index out of range` of een tabel die
+te klein is.
+
+**Oorzaak:** vergeet de `+1` bij rijen of kolommen. De tabel heeft
+`(n + 1) × (capaciteit + 1)` cellen, niet `n × capaciteit`. Die extra
+rij is voor "geen items" (basisgeval); die extra kolom is voor "lege
+rugzak".
+
+```python
+# FOUT
+tabel = [[0] * capaciteit for _ in range(n)]
+
+# Probleem: tabel[n][capaciteit] bestaat niet → crash bij return.
+```
+
+**Oplossing:**
+
+```python
+# GOED
+tabel = [[0] * (capaciteit + 1) for _ in range(n + 1)]
+```
+
+Vuistregel: als je naar een cel `[i][w]` wilt kunnen met `i = n` én
+`w = capaciteit`, heb je `n + 1` rijen en `W + 1` kolommen nodig.
+
+## `i`-loop start bij 0
+
+Geen Python-foutmelding — wél **stille verkeerde antwoorden** of
+crashes diep in de logica.
+
+**Oorzaak:** rij 0 in de tabel is al ingevuld (basisgeval: allemaal 0).
+Je werkelijke "vul-rij"-werk start bij `i = 1`. Begin je bij `i = 0`,
+dan probeer je `items[-1]` op te halen — Python's negatieve indexing
+geeft je het **laatste** item. Soms werkt het toevallig, vaak niet.
+
+```python
+# FOUT
+for i in range(n + 1):       # start bij 0
+    waarde, gewicht = items[i - 1]   # items[-1] = laatste item
+    ...
+```
+
+**Oplossing:**
+
+```python
+# GOED
+for i in range(1, n + 1):    # start bij 1
+    waarde, gewicht = items[i - 1]
+    ...
+```
+
+Vergeet `range(1, n + 1)` niet — die `1` is essentieel.
+
+## Backtrack vergeet capaciteit te verminderen
+
+Geen Python-foutmelding — wél **een verkeerde lijst van items**.
+
+**Oorzaak:** bij elke "item meegenomen"-stap moet je niet alleen de
+index opslaan, maar **ook** de capaciteit verminderen met het gewicht
+van dat item. Vergeet je dat, dan blijf je naar dezelfde kolom kijken
+en lijken meer items "meegenomen" dan klopt.
+
+```python
+# FOUT
+for i in range(n, 0, -1):
+    if tabel[i][w] != tabel[i - 1][w]:
+        keuze.append(i - 1)
+        # w wordt NIET aangepast → fout
+```
+
+**Oplossing:**
+
+```python
+# GOED
+for i in range(n, 0, -1):
+    if tabel[i][w] != tabel[i - 1][w]:
+        keuze.append(i - 1)
+        w -= items[i - 1][1]    # cruciaal!
+```
+
+De cel waarop je nu zit verschuift naar links omdat je dit item al hebt
+"verzilverd" — de resterende capaciteit is verminderd met het gewicht.
+
+Door naar [stap 12: cheatsheet →](./12-cheatsheet).

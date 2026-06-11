@@ -1,0 +1,90 @@
+---
+sidebar_position: 7
+hide_table_of_contents: true
+---
+
+# 3.7 Aanpassen — ook de indexen teruggeven
+
+**Leerdoel:** je breidt de tuple uit van 2 naar 4 waardes — `klein`, de
+**index van klein**, `groot`, en de **index van groot**.
+
+## Opdracht
+
+Pas `max_en_min` aan zodat hij **vier** waardes returnt:
+
+```
+(klein, idx_klein, groot, idx_groot)
+```
+
+Voor `[5, 2, 8, 1, 7, 4]` moet het resultaat `(1, 3, 8, 2)` zijn:
+- klein = 1, staat op index 3
+- groot = 8, staat op index 2
+
+<PyRunner initialCode={`def max_en_min_met_index(lijst):
+    klein = groot = lijst[0]
+    idx_klein = idx_groot = 0
+    # vul aan: in de lus moet je ook de indexen updaten
+    for waarde in lijst:
+        if waarde < klein:
+            klein = waarde
+        elif waarde > groot:
+            groot = waarde
+    return klein, idx_klein, groot, idx_groot
+
+# Tests
+print(max_en_min_met_index([5, 2, 8, 1, 7, 4]))   # verwacht: (1, 3, 8, 2)
+print(max_en_min_met_index([3, 1, 4, 1, 5]))      # verwacht: (1, 1, 5, 4)
+print(max_en_min_met_index([42]))                  # verwacht: (42, 0, 42, 0)`} />
+
+<details>
+<summary>Tip</summary>
+
+Twee dingen veranderen:
+
+1. Gebruik **`enumerate`** zodat je in elke ronde de index `i` én de
+   waarde hebt.
+2. Wanneer je `klein` updatet, update je **ook** `idx_klein` naar `i`.
+   Idem voor `groot`/`idx_groot`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def max_en_min_met_index(lijst):
+    klein = groot = lijst[0]
+    idx_klein = idx_groot = 0
+    for i, waarde in enumerate(lijst):
+        if waarde < klein:
+            klein = waarde
+            idx_klein = i
+        elif waarde > groot:
+            groot = waarde
+            idx_groot = i
+    return klein, idx_klein, groot, idx_groot
+```
+
+Twee extra regels (`idx_klein = i` en `idx_groot = i`) en de wisseling van
+`for waarde in lijst` naar `for i, waarde in enumerate(lijst)`. De rest
+blijft hetzelfde.
+
+</details>
+
+## Aandachtspunt — duplicaten
+
+Wat gebeurt er bij `[1, 5, 1, 5]`? Welke index krijg je voor `klein`? En
+voor `groot`?
+
+<details>
+<summary>Antwoord</summary>
+
+- `idx_klein = 0` (eerste 1).
+- `idx_groot = 1` (eerste 5).
+
+Omdat we `<` en `>` (strict) gebruiken, updaten we **niet** bij gelijke
+waardes. Dus de eerste voorkomende wint.
+
+</details>
+
+Door naar [stap 8: bouw zelf](./08-zelf-bouwen).

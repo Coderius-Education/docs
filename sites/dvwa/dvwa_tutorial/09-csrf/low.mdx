@@ -1,0 +1,83 @@
+---
+sidebar_position: 1
+sidebar_label: 'Low'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# CSRF — Low
+
+Welkom bij Cross-Site Request Forgery (CSRF). Dit is een kwetsbaarheid waarbij een aanvaller een ingelogde gebruiker misleidt om zonder dat hij het weet ongewenste acties uit te voeren.
+
+## 1. Predict (Voorspel)
+
+Kijk naar de manier waarop een ingelogde gebruiker (zoals de admin) op het *Low* level zijn wachtwoord verandert. Wanneer hij op Opslaan klikt, ziet de URL er zo uit:
+
+`http://localhost/DVWA/vulnerabilities/csrf/?password_new=wachtwoord&password_conf=wachtwoord&Change=Change`
+
+**Vraag:** Stel, jij bent een kwade hacker. Je stuurt een mail naar de beheerder (admin) van DVWA met een grappig plaatje, maar onder het plaatje verstop je een onzichtbare HTML-afbeelding:
+`<img src="http://localhost/DVWA/vulnerabilities/csrf/?password_new=hacked&password_conf=hacked&Change=Change" style="display:none;">`
+
+Wat gebeurt er als de admin op dat moment toevallig in zijn browser op DVWA ingelogd is, en de mail opent?
+
+<details>
+
+<summary>Antwoord</summary>
+
+De browser probeert de verborgen 'afbeelding' in te laden door de URL op te vragen. Omdat de admin nog is ingelogd op DVWA, voegt zijn browser netjes zijn sessie-cookies toe aan het verzoek.
+De webserver krijgt een geldige aanvraag ("verander het wachtwoord naar 'hacked'!") afkomstig van de admin. En boem: het wachtwoord van de admin is zonder dat hij ook maar iets heeft ingetypt veranderd! Dit is de essentie van CSRF.
+
+</details>
+
+## 2. Run (Uitvoeren)
+
+Start het lab en bekijk het wachtwoord-wijzigformulier.
+
+<DvwaLab module="csrf" level="low" />
+
+Vul een nieuw wachtwoord in en bevestig het. Klik op Submit en observeer wat er met de URL gebeurt na het verzenden.
+
+## 3. Investigate (Onderzoeken)
+
+Kijk naar de URL in de adresbalk nadat je het formulier hebt verstuurd.
+
+**Vraag:** Zijn de wachtwoordwaarden zichtbaar in de URL? Wat betekent dit voor een aanvaller die jou een link stuurt?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Ja, de nieuwe wachtwoordwaarden zijn volledig zichtbaar in de URL als GET-parameters. Dit betekent dat iemand die jou een speciaal geconstrueerde link stuurt, jouw wachtwoord kan wijzigen zonder dat je ooit het formulier hebt ingevuld — zolang je maar op die link klikt terwijl je ingelogd bent.
+
+</details>
+
+## 4. Modify & Make (Aanpassen & Maken)
+
+Bouw nu zelf een "kwaadaardige" URL om het wachtwoord van buitenaf te forceren.
+
+<details>
+
+<summary>Tip</summary>
+
+Kijk goed naar de structuur van het HTTP GET-request (de URL). Verander de waarden achter de `=`-tekens naar een nieuw wachtwoord naar keuze.
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+Maak een URL zoals: `?password_new=12345&password_conf=12345&Change=Change`. In een real-life scenario zou je een slachtoffer verleiden om op deze link te klikken. Zodra de link in de achtergrond laadt, is het wachtwoord gewijzigd zonder waarschuwing!
+
+</details>
+
+## 5. ✓ Wat moest je zien?
+
+:::tip Controle
+- Het wachtwoord is gewijzigd zonder dat je het formulier handmatig hebt ingevuld.
+- De URL bevat alle benodigde parameters om de actie te triggeren.
+- Er is geen bevestigingsvraag of extra verificatie door de server.
+
+Werkt de URL niet? Controleer of de parameters exact overeenkomen met de veldnamen in de URL en of je ingelogd bent in DVWA.
+:::

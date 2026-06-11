@@ -1,0 +1,97 @@
+---
+sidebar_position: 6
+hide_table_of_contents: true
+---
+
+# 9.6 Bouwsteen 1 — `initial_state()`
+
+**Leerdoel:** je schrijft de eenvoudigste functie van de track: een
+**leeg bord** teruggeven.
+
+## Wat doet deze functie?
+
+`initial_state()` geeft het bord terug zoals het er aan het begin van
+het spel uitziet: een 3×3 grid waar nog niets is gespeeld. Alle negen
+cellen staan op `None`.
+
+Deze functie heeft **geen input** — je hoeft nergens iets over te
+vertellen, er is gewoon één antwoord.
+
+## Specificatie
+
+- **Input**: geen.
+- **Output**: een lijst van 3 lijsten, elk met 3× `None`.
+- **Voorbeeld**: `initial_state()` →
+  ```python
+  [[None, None, None],
+   [None, None, None],
+   [None, None, None]]
+  ```
+
+## Voorspel
+
+Als `initial_state()` correct werkt, wat denk je dat dit print?
+
+```python
+bord = initial_state()
+print(len(bord))
+print(bord[1][1])
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+3
+None
+```
+
+`len(bord)` is het aantal rijen (3). `bord[1][1]` is de middencel, en
+die hoort leeg te zijn (`None`).
+
+</details>
+
+## Bouw zelf en test
+
+Vul de functie in. Onder de functie staan tests die controleren of het
+klopt — runt zonder fouten als alles goed is.
+
+<PyRunner initialCode={`def initial_state():
+    # vul aan: return een 3x3 lijst van None's
+    return None
+
+
+# === Tests ===
+bord = initial_state()
+
+assert bord is not None, "initial_state() returnt nog niets"
+assert len(bord) == 3, "Bord moet 3 rijen hebben"
+assert len(bord[0]) == 3, "Elke rij moet 3 cellen hebben"
+assert all(cel is None for rij in bord for cel in rij), "Alle cellen moeten None zijn"
+
+# Belangrijke test: rijen mogen niet hetzelfde object zijn (geen alias)
+bord[0][0] = "X"
+assert bord[1][0] is None, "Update aan rij 0 mag rij 1 niet beïnvloeden"
+
+print("Alle tests gehaald ✓")`} />
+
+<details>
+<summary>Tip</summary>
+
+Schrijf de drie rijen letterlijk uit:
+
+```python
+return [[None, None, None],
+        [None, None, None],
+        [None, None, None]]
+```
+
+Kortere variant: `[[None] * 3 for _ in range(3)]`.
+
+⚠ Pas op met `[[None] * 3] * 3` — dat lijkt korter, maar geeft drie
+keer dezélfde rij (alias). De laatste test hierboven vangt dat:
+update aan rij 0 zou anders ook rij 1 raken.
+
+</details>
+
+Door naar [stap 7: bouwsteen 2 — player →](./07-bouwen-player).

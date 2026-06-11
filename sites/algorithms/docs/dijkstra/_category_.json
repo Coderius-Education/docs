@@ -1,0 +1,11 @@
+{
+  "label": "Dijkstra",
+  "position": 8,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "title": "Dijkstra — kortste pad in een graph",
+    "description": "Bereken de kortste route tussen twee punten in een gewogen graph, stap voor stap."
+  }
+}

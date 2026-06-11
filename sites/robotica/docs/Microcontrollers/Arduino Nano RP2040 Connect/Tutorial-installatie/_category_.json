@@ -1,0 +1,8 @@
+{
+  "label": "Tutorial - Installatie",
+  "position": 1,
+  "link": {
+    "type": "generated-index",
+    "description": "Leer om MicroPython te installeren"
+  }
+}

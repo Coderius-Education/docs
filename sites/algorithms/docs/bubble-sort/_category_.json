@@ -1,0 +1,11 @@
+{
+  "label": "Bubble sort",
+  "position": 6,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "title": "Bubble sort",
+    "description": "Vergelijk buren en swap — tot de lijst klopt."
+  }
+}

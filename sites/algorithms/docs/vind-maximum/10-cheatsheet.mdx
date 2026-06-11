@@ -1,0 +1,166 @@
+---
+sidebar_position: 10
+hide_table_of_contents: true
+---
+
+# 2.10 Cheatsheet — vind het maximum
+
+Snelle referentie. Klap open wat je nodig hebt.
+
+## Het algoritme zelf
+
+<details>
+<summary>Canonieke implementatie (vind_maximum)</summary>
+
+```python
+def vind_maximum(lijst):
+    maximum = lijst[0]
+    for waarde in lijst:
+        if waarde > maximum:
+            maximum = waarde
+    return maximum
+```
+
+</details>
+
+<details>
+<summary>Variant met enumerate, ook index bijhouden (vind_index_van_maximum)</summary>
+
+```python
+def vind_index_van_maximum(lijst):
+    max_index = 0
+    for i, waarde in enumerate(lijst):
+        if waarde > lijst[max_index]:
+            max_index = i
+    return max_index
+```
+
+</details>
+
+<details>
+<summary>Variant: minimum vinden (vind_minimum)</summary>
+
+```python
+def vind_minimum(lijst):
+    minimum = lijst[0]
+    for waarde in lijst:
+        if waarde < minimum:
+            minimum = waarde
+    return minimum
+```
+
+Eén teken verschil met `vind_maximum` (`>` → `<`).
+
+</details>
+
+## Het accumulator-patroon
+
+<details>
+<summary>Algemeen recept (accumulator)</summary>
+
+```python
+accumulator = startwaarde_van_eerste_element
+for waarde in lijst:
+    if <iets bijzonders aan waarde>:
+        accumulator = <update>
+return accumulator
+```
+
+Gebruikt voor: maximum, minimum, som, product, aantal-tellen, …
+
+</details>
+
+## Python-syntax
+
+<details>
+<summary>Toekennen vs. vergelijken (= en ==)</summary>
+
+- `=` → toekennen (`x = 5`)
+- `==` → vergelijken (`if x == 5`)
+- `<`, `>`, `<=`, `>=`, `!=` → andere vergelijkingen
+
+</details>
+
+<details>
+<summary>Slicing — deel van een lijst (lijst[a:b])</summary>
+
+```python
+lijst[1:]    # alles vanaf index 1
+lijst[:3]    # alles tot (niet inclusief) index 3
+lijst[1:3]   # index 1 en 2
+lijst[-1]    # laatste element
+lijst[::-1]  # omgedraaide lijst
+```
+
+</details>
+
+<details>
+<summary>Index én waarde tegelijk (enumerate)</summary>
+
+```python
+for i, waarde in enumerate(lijst):
+    print(i, waarde)
+```
+
+</details>
+
+<details>
+<summary>Python heeft een ingebouwde max()</summary>
+
+```python
+print(max([3, 7, 2, 9, 4]))   # 9
+print(max([]))                # ValueError
+print(max("hallo"))           # 'o'
+```
+
+In productie-code gebruik je vaak gewoon `max()` van Python. Maar de
+**oefening** is om hem zelf te bouwen — zodat je het patroon snapt.
+
+</details>
+
+## Eigenschappen
+
+<details>
+<summary>Wanneer werkt het?</summary>
+
+- Op niet-lege lijsten.
+- Op alles dat onderling vergeleken kan worden met `<` en `>` (getallen,
+  strings, tuples).
+- Niet op gemengde types (`1` versus `"twee"` → `TypeError`).
+
+</details>
+
+<details>
+<summary>Hoe snel?</summary>
+
+- Elke positie wordt één keer bekeken.
+- `n` elementen → `n − 1` vergelijkingen (of `n` als je `lijst[0]` ook
+  meedoet).
+- **O(n)**.
+
+</details>
+
+<details>
+<summary>Lege-lijst-keuze</summary>
+
+- Return `None` → "geen maximum bestaat".
+- `raise ValueError` → aanroeper móet ermee dealen.
+- Geen check → crash met `IndexError`. **Niet doen** in productie-code.
+
+</details>
+
+## Veelgemaakte fouten (snel)
+
+<details>
+<summary>Top-3 fouten</summary>
+
+1. `maximum = 0` als startwaarde → mist negatieve lijsten.
+2. `max` als variabelenaam → schaduwt de ingebouwde `max()`.
+3. Geen lege-lijst-check → `IndexError` bij `lijst[0]`.
+
+</details>
+
+---
+
+Klaar? Probeer ook [max én min in één pass](/docs/max-en-min/01-concept) —
+hetzelfde patroon, twee keer tegelijk.

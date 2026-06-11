@@ -1,0 +1,102 @@
+---
+sidebar_position: 2
+hide_table_of_contents: true
+---
+
+# 6.2 Stellingen — toets je begrip
+
+**Leerdoel:** je toetst of je de structuur van bubble sort snapt.
+
+## Stelling 1
+
+*"Eén pass van bubble sort sorteert de hele lijst."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Onjuist.** Eén pass garandeert alleen dat het **grootste** element op
+zijn juiste plek staat (helemaal achteraan het ongesorteerde stuk). De
+rest kan nog door elkaar staan. Je hebt typisch meerdere passes nodig.
+
+</details>
+
+## Stelling 2
+
+*"Na pass `k` staan de laatste `k` elementen op hun juiste plek."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Juist.** Elke pass borrelt de grootste-van-het-rest naar achteren. Na
+pass 1 zit het grootste op de juiste plek. Na pass 2 ook het tweede
+grootste. Enzovoort.
+
+Dat heeft een fijn gevolg: in pass `k` hoef je alleen tot positie
+`n − k − 1` te kijken — alles daarna staat al.
+
+</details>
+
+## Stelling 3
+
+*"Bubble sort vergelijkt alleen **buren** (`lijst[i]` met `lijst[i+1]`)."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Juist.** Dat is het kenmerk. Selection sort vergelijkt elk element met
+"de tot-nu-toe-kleinste" — die kan ver weg staan. Bubble sort doet alleen
+**lokale** vergelijkingen.
+
+Voordeel: simpele logica. Nadeel: ver-uit-elkaar-staande elementen kunnen
+maar één positie per pass opschuiven richting hun juiste plek.
+
+</details>
+
+## Stelling 4
+
+*"Op een al-gesorteerde lijst doet bubble sort precies één pass."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Juist** — als je het slimme algoritme met *early-exit* gebruikt. Eén
+pass doet `n − 1` vergelijkingen, vindt geen swaps, en concludeert: lijst
+is af. Stoppen.
+
+Zonder early-exit zou bubble sort onnodig `n − 1` passes doen.
+
+</details>
+
+## Stelling 5
+
+*"De binnenste lus loopt tot `len(lijst)` (inclusief)."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Onjuist.** Hij loopt tot `len(lijst) - 1`. Want je vergelijkt `lijst[i]`
+met `lijst[i+1]`, dus de **laatste** geldige `i` is `len(lijst) - 2`. Met
+`range(len(lijst) - 1)` krijg je precies dat.
+
+Eén te ver → `IndexError` op `lijst[i+1]`.
+
+</details>
+
+## Stelling 6
+
+*"Bubble sort kan elementen die ver van hun juiste plek staan ook in één
+pass naar voren brengen."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Onjuist** voor *naar voren*. Kleine waardes schuiven maar **één plek
+per pass** naar voren. Grote waardes kunnen wél in één pass helemaal naar
+achteren bubbelen.
+
+Dat is een asymmetrie van bubble sort — soms aangepakt met **cocktail
+sort** (alternerend voor- en achterwaarts).
+
+</details>
+
+Door naar [stap 3: we bouwen het op](./03-bouwen-vergelijk-buren).

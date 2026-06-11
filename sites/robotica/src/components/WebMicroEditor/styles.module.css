@@ -1,0 +1,322 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 6px;
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--ifm-color-emphasis-100);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btnPrimary {
+  background: var(--ifm-color-primary);
+  color: white;
+  border-color: var(--ifm-color-primary);
+}
+
+.btnPrimary:hover:not(:disabled) {
+  background: var(--ifm-color-primary-dark);
+}
+
+.btnDanger {
+  background: #d33;
+  color: white;
+  border-color: #d33;
+}
+
+.btnDanger:hover:not(:disabled) {
+  background: #b22;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.statusDisconnected {
+  background: #f5d5d5;
+  color: #7a1f1f;
+}
+.statusDisconnected .statusDot {
+  background: #c33;
+}
+.statusConnected {
+  background: #d6f0d6;
+  color: #1f5b1f;
+}
+.statusConnected .statusDot {
+  background: #2a8a2a;
+}
+.statusBusy {
+  background: #fff2cc;
+  color: #6b5300;
+}
+.statusBusy .statusDot {
+  background: #c89500;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.select {
+  padding: 6px 8px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 6px;
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  font-size: 14px;
+}
+
+.workArea {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.workPane {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.workPaneWide {
+  flex: 1.6 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.workPaneNarrow {
+  flex: 0 0 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+@media (max-width: 900px) {
+  .workPaneNarrow {
+    flex: 1 1 auto;
+  }
+}
+
+@media (max-width: 900px) {
+  .workArea {
+    flex-direction: column;
+  }
+}
+
+.editorWrap {
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.fileLabel {
+  font-size: 13px;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.fileLabel code {
+  background: var(--ifm-color-emphasis-100);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-family: Consolas, "Courier New", monospace;
+}
+
+.dirtyMark {
+  color: #c89500;
+  font-weight: 700;
+}
+
+.replWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.replLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.repl {
+  background: #1e1e1e;
+  color: #e0e0e0;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 13px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  height: 380px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+  flex: 1 1 auto;
+}
+
+@media (max-width: 900px) {
+  .repl {
+    height: 240px;
+  }
+}
+
+.warning {
+  padding: 12px 16px;
+  border: 1px solid #e0b06a;
+  background: #fff7ea;
+  color: #5b3a00;
+  border-radius: 8px;
+}
+
+.warning a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+[data-theme="dark"] .warning {
+  border-color: #6b531f;
+  background: #2c2410;
+  color: #f0d9a8;
+}
+
+.progress {
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: var(--ifm-color-emphasis-100);
+  font-size: 13px;
+}
+
+.flashHelp {
+  padding: 12px 16px;
+  border: 1px solid var(--ifm-color-primary);
+  border-radius: 8px;
+  background: var(--ifm-background-surface-color);
+  font-size: 14px;
+}
+
+.flashHelpHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.flashHelp ol {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.flashHelp li {
+  margin: 4px 0;
+}
+
+.flashHelp code {
+  background: var(--ifm-color-emphasis-100);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-family: Consolas, "Courier New", monospace;
+}
+
+.flashHelpFoot {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.fileList {
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  background: var(--ifm-background-surface-color);
+  height: 380px;
+  overflow-y: auto;
+}
+
+@media (max-width: 900px) {
+  .fileList {
+    height: auto;
+    max-height: 240px;
+  }
+}
+
+.fileRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 0;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.fileRow:last-child {
+  border-bottom: none;
+}
+
+.fileName {
+  flex: 1;
+  font-family: Consolas, "Courier New", monospace;
+}
+.fileKind {
+  color: var(--ifm-color-emphasis-600);
+  font-size: 12px;
+  min-width: 50px;
+}
+.fileDelete {
+  background: transparent;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 4px;
+  padding: 2px 8px;
+  cursor: pointer;
+  font-size: 12px;
+}
+.fileDelete:hover {
+  background: #f5d5d5;
+  border-color: #c33;
+  color: #7a1f1f;
+}

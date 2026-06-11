@@ -1,0 +1,87 @@
+---
+sidebar_position: 1
+hide_table_of_contents: true
+---
+
+# 5.1 Selection sort — het idee
+
+**Leerdoel:** je begrijpt hoe selection sort werkt: telkens het kleinste
+element vinden en vooraan zetten. Nog geen Python — eerst snappen.
+
+## Het verhaal
+
+Je hebt een **stapel speelkaarten** op tafel liggen — door elkaar. Je wilt
+ze **van laag naar hoog** sorteren.
+
+Een natuurlijke aanpak:
+
+1. Kijk in de **hele stapel**: welke kaart is de laagste? Leg die op
+   positie 1 (linker plek).
+2. Kijk in de **rest** (zonder de net-gekozen kaart): welke is nu de
+   laagste? Leg die op positie 2.
+3. Herhaal: zoek de laagste van de rest, leg hem op positie 3.
+4. Net zo lang tot je niets meer over hebt.
+
+Dat is **selection sort** in één zin: *kies steeds het kleinste van de
+rest en zet het vooraan.*
+
+## Visualisatie
+
+We sorteren `[5, 2, 8, 1, 4]`. De **groene** elementen staan al op hun
+juiste plek.
+
+```
+start:    [ 5 , 2 , 8 , 1 , 4 ]     vind kleinste in [5,2,8,1,4] → 1 (op index 3)
+swap 0↔3: [(1), 2 , 8 , 5 , 4 ]     1 staat goed (groen vooraan)
+
+stap 2:   [ 1 |  2 , 8 , 5 , 4 ]    vind kleinste in [2,8,5,4] → 2 (op index 1)
+swap 1↔1: [(1)|(2), 8 , 5 , 4 ]     2 staat al goed (swap met zichzelf)
+
+stap 3:   [ 1 , 2 |  8 , 5 , 4 ]    vind kleinste in [8,5,4] → 4 (op index 4)
+swap 2↔4: [(1)|(2)|(4), 5 , 8 ]     4 staat goed
+
+stap 4:   [ 1 , 2 , 4 |  5 , 8 ]    vind kleinste in [5,8] → 5 (op index 3)
+swap 3↔3: [(1)|(2)|(4)|(5), 8 ]     5 staat al goed
+
+stap 5:   [ 1 , 2 , 4 , 5 |  8 ]    nog 1 over, dus klaar
+eind:     [ 1 , 2 , 4 , 5 , 8 ]
+```
+
+## Het idee in stappen
+
+Twee dingen die je per ronde doet:
+
+1. **Vind het kleinste** in het deel van de lijst dat nog niet gesorteerd
+   is. Dat is precies het *vind-minimum*-algoritme — maar dan op een
+   *deel-lijst*.
+2. **Ruil** (swap) dat kleinste element met het element op positie `i`
+   (de eerste plek van het ongesorteerde deel).
+
+Herhaal voor `i = 0, 1, 2, …` tot je bij het laatste element bent.
+
+## Twee bouwstenen die je herkent
+
+- **Vind het minimum** — gebruikt het accumulator-patroon dat je al kent
+  van [vind het maximum](/docs/vind-maximum/01-concept). Alleen nu zoeken
+  we naar de **index** van het minimum, en in een **deel-lijst**.
+- **Swap** — twee elementen ruilen. In Python heel kort: `a, b = b, a`.
+
+<details>
+<summary>Hoe snel is dit?</summary>
+
+Voor `n` elementen doe je:
+
+- Ronde 1: vind kleinste in `n` elementen → `n − 1` vergelijkingen.
+- Ronde 2: vind kleinste in `n − 1` elementen → `n − 2` vergelijkingen.
+- …
+- Ronde `n − 1`: vind kleinste in 2 elementen → 1 vergelijking.
+
+Totaal: `1 + 2 + … + (n − 1) = n(n − 1) / 2` ≈ **O(n²)**.
+
+Voor 1.000 elementen: ~500.000 vergelijkingen. Voor 10.000 elementen:
+~50.000.000. Selection sort is dus *langzaam* voor grote lijsten — maar
+**simpel** om te begrijpen, en daarom een mooie eerste sorteer.
+
+</details>
+
+Door naar [stap 2: stellingen](./02-stellingen).

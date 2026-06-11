@@ -1,0 +1,8 @@
+{
+  "label": "10. STM32 interfaces",
+  "position": 10,
+  "link": {
+    "type": "generated-index",
+    "description": "Communiceer met andere chips via UART, I2C en SPI, en gebruik hardware-timers."
+  }
+}

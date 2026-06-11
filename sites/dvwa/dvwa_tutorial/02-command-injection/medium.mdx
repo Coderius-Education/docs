@@ -1,0 +1,107 @@
+---
+sidebar_position: 2
+sidebar_label: 'Medium'
+hide_table_of_contents: true
+---
+
+import LinuxTerminal from '@site/src/components/LinuxTerminal';
+
+# Command Injection — Medium
+
+De aanvaller heeft ons door. Op de Medium-beveiliging kunnen we niet meer zomaar `&&` of `;` gebruiken.
+
+## 1. Predict (Voorspel)
+
+De programmeur heeft besloten om de invoer veiliger te maken. Er wordt nu een "filter" (blacklisting) toegepast.
+
+**Vraag:** Wat gebeurt er onder water met jouw commando als jij `127.0.0.1; ls` of `127.0.0.1 && ls` intypt?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Het filter zoekt naar exact de tekens `;` en `&&` en haalt deze weg.
+Jouw invoer `127.0.0.1; ls` verandert dus in `127.0.0.1 ls`. Omdat dit geen geldig commando is voor de server, zal de injection mislukken en krijg je hooguit een ping-error.
+
+</details>
+
+## 2. Run & Investigate
+
+Probeer je Low-payload in de terminal hieronder — de filter is actief en haalt `&&` en `;` weg. Kun je een andere manier vinden om twee commando's uit te voeren?
+
+<LinuxTerminal
+  title="Command Injection — Medium (&& en ; gefilterd)"
+  filter={(input) => input.replace(/&&/g, '').replace(/;/g, '')}
+/>
+
+Wat zouden we kunnen gebruiken zodat de filter het mist, maar Linux toch doorgaat met het uitvoeren van ons tweede commando?
+
+<details>
+
+<summary>Tip</summary>
+
+De programmeur is vergeten álle mogelijke scheidingstekens in Linux te blokkeren. Kijk nog eens naar de Linux sectie op je [Cheatsheet](../../docs/cheatsheet). Welk leesteken is een verticaal streepje?
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+De pipe-operator `|` wordt niet gefilterd! Je kunt ook de logische OR-operator `||` proberen.
+
+</details>
+
+## 3. Modify & Make
+
+Probeer de `|` operator in de terminal hieronder om te bevestigen dat het werkt:
+
+<LinuxTerminal
+  title="Command Injection — Medium (&& en ; gefilterd)"
+  filter={(input) => input.replace(/&&/g, '').replace(/;/g, '')}
+/>
+
+Werkt het? Probeer het nu op DVWA:
+
+1. Start `DVWA` en ga naar de challenge `Command Injection`. Zorg dat je `DVWA Security` op **medium** hebt staan.
+2. Vul je payload in en klik op **Submit**.
+
+<details>
+
+<summary>Tip</summary>
+
+Probeer de pipe operator direct na het IP-adres te zetten.
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+Vul in: `127.0.0.1 | ls` of `127.0.0.1 || ls`
+
+Het resultaat van een succesvolle poging zie je hieronder:
+
+![succes](medium_succes.png)
+
+</details>
+
+## 4. ✓ Wat moest je zien?
+
+:::tip Controle
+- Na `127.0.0.1 | ls` verschijnt een **bestandslijst** — de ping-output ontbreekt, dat is normaal bij `|`.
+- Je eerdere payloads met `&&` of `;` geven géén tweede output meer.
+- De `|` en `||` operators omzeilen het filter wél.
+
+Werkt `|` toch niet? Controleer of `DVWA Security` op **medium** staat en dat er geen typfout in je payload zit.
+:::
+
+## 5. Er gaat iets mis...
+
+Je typt vol goede moed `127.0.0.1 | ls` in en je ziet ineens... géén ping-resultaat meer! Alleen de lijst met bestanden. Waarom zie je de ping-output niet?
+
+Dit is de werking van de pipe (`|`). Een pipe pakt letterlijk de onzichtbare output van het eerste commando (de ping) en duwt dit als een pakketje in de mond van het tweede commando (`ls`). Het `ls` commando doet echter helemaal niets met die invoer, het print gewoon de huidige map. Daardoor verdwijnt de ping-tekst in het niets. Wil je beide zien? Gebruik dan `||` of andere constructies als het filter dat toelaat!
+
+## Walkthrough
+
+<iframe width="920" height="517" src="https://www.youtube.com/embed/WiqRvlN_UIU?start=456" title="2 - Command Injection (low/med/high) - Damn Vulnerable Web Application (DVWA)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>

@@ -1,0 +1,82 @@
+---
+sidebar_position: 3
+sidebar_label: 'High'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# SQL Injection (Blind) — High
+
+Op het High level probeert de applicatie je aanval af te weren door het invulveld op een aparte pagina te zetten en de data via een sessie-cookie door te sturen.
+
+## 1. Predict (Voorspel)
+
+De server gebruikt een aparte POST-request via een cookie (`$_COOKIE['id']`) of sessie in plaats van een directe GET-parameter in de URL:
+
+```php
+$id = $_COOKIE['id'];
+$query  = "SELECT first_name, last_name FROM users WHERE user_id = '$id' LIMIT 1;";
+```
+
+**Vraag:** Waarom maakt het de hacker helemaal niets uit of de data via een GET-parameter, POST-verzoek of via een Cookie binnenkomt?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Elk van deze kanalen (GET, POST, Cookies, HTTP-headers) is data die vanuit de browser van de hacker naar de server stroomt. Als de server deze stroom oppakt en direct de database infietst zonder te filteren, ontstaat er altijd SQL Injection! Met de Developer Tools kan een hacker een Cookie net zo makkelijk veranderen als een simpel woordje in de adresbalk.
+
+</details>
+
+## 2. Run (Uitvoeren)
+
+Start het lab en verken hoe het invulveld werkt.
+
+<DvwaLab module="sql_injection_blind" level="high" />
+
+Vul ID `1` en `2` in via het formulier (dat mogelijk via een popup of apart venster werkt). Noteer de reactie van de server.
+
+## 3. Investigate (Onderzoeken)
+
+Open de Developer Tools (F12), ga naar het tabblad **Application** → **Cookies**, en bekijk de cookie-waarden die door de applicatie worden gebruikt.
+
+**Vraag:** Welke cookie bevat het ID dat je hebt ingevuld? Wat onthult dit over waar de kwetsbaarheid zit?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Je ziet een cookie (zoals `dvwaSession` of een vergelijkbare naam) die de ID-waarde bevat die je in het formulier hebt getypt. De server haalt dit cookie op en plakt het direct in de SQL-query. Dat betekent: als je de cookie-waarde aanpast naar een SQL-payload, voert de server die payload uit — precies zoals bij de GET- en POST-varianten.
+
+</details>
+
+## 4. Modify & Make (Aanpassen & Maken)
+
+Jouw taak: voer via de cookie of het extra formulier een Time-Based SQL Injection-aanval uit.
+
+<details>
+
+<summary>Tip</summary>
+
+Als je de Developer Tools of een Browser Extensie hebt, pauzeer of modificeer dan je HTTP-verzoek. Wijzig de cookie-waarde (of het popup-veld) naar de klassieke time-based bypass: `1' AND SLEEP(5) #`.
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+Door `1' AND SLEEP(5) #` in te sturen, breek je uit de string (met de enkele quote) en forceer je de database om via een Time-Based aanval 5 seconden te wachten. Als de pagina daadwerkelijk 5 seconden trager reageert, heb je bewezen dat de injectie werkt!
+
+</details>
+
+## 5. ✓ Wat moest je zien?
+
+:::tip Controle
+- Na het invullen van `1' AND SLEEP(5) #` in het cookie of popup-veld duurt de serverrespons zichtbaar **5 seconden** langer.
+- Een normaal ID geeft direct antwoord.
+- Het verschil bewijst dat de SQL-code uitgevoerd wordt, ook via dit indirecte kanaal.
+
+Werkt het niet? Controleer of je de enkele aanhalingstekens correct hebt getypt en of het hekje `#` aan het einde staat zonder extra spaties erna.
+:::

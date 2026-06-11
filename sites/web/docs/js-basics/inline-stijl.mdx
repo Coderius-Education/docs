@@ -1,0 +1,155 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeEditor from '@site/src/components/CodeEditor';
+
+# Inline stijl
+
+## Wat ga je leren?
+
+Je leert hoe je via `onclick` de CSS-stijl van een element aanpast met `.style`.
+
+## Theorie
+
+Net als `.textContent` kun je via JavaScript ook de stijl van een element aanpassen. Dat doe je met `.style` gevolgd door de CSS-eigenschap:
+
+```html
+<button onclick="document.getElementById('tekst').style.color = 'red'">
+  Kleur!
+</button>
+```
+
+Let op: CSS-eigenschappen met een koppelteken schrijf je in JavaScript als **camelCase** — zonder koppelteken, tweede woord met hoofdletter:
+
+| CSS | JavaScript |
+|-----|-----------|
+| `color` | `color` |
+| `background-color` | `backgroundColor` |
+| `font-size` | `fontSize` |
+| `border-radius` | `borderRadius` |
+
+## Predict
+
+Bekijk de startcode in de editor. Beantwoord de vraag hieronder **voordat** je op **Run** klikt en de knoppen in de preview uitprobeert.
+
+<details>
+<summary>De twee knoppen gebruiken allebei hetzelfde id. Wat is er dan anders?</summary>
+
+De knoppen doen hetzelfde: ze passen `.style.color` aan op hetzelfde element. Het enige verschil is de kleurwaarde — `'red'` of `'blue'`. De tekst zelf blijft ongewijzigd; alleen de kleur verandert.
+
+</details>
+
+## Probeer het zelf!
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Inline stijl</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <p id="tekst">Klik op een knop om de stijl te veranderen.</p>
+  <button onclick="document.getElementById('tekst').style.color = 'red'">
+    Rood
+  </button>
+  <button onclick="document.getElementById('tekst').style.color = 'blue'">
+    Blauw
+  </button>
+</body>
+</html>`}
+  initialCss={`p {
+  font-size: 1.4rem;
+  padding: 12px;
+}
+
+button {
+  padding: 8px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-right: 8px;
+}`}
+  height="420px"
+  livePreview={false}
+/>
+
+## Investigate
+
+Experimenteer:
+
+- Voeg een derde knop toe die de kleur terugzet naar zwart: `style.color = 'black'`
+- Probeer `style.backgroundColor = 'yellow'` — wat zie je?
+- Wat doet `style.fontSize = '2rem'`?
+- Kun je meerdere stijl-wijzigingen in één onclick zetten? Gebruik een puntkomma tussen de twee regels.
+
+## Modify
+
+**Opdracht:** Voeg een knop "Groter" toe die de tekst groter maakt via `style.fontSize`.
+
+<details>
+<summary>Tip</summary>
+
+Gebruik `document.getElementById('tekst').style.fontSize = '2rem'` in het `onclick`-attribuut.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<button onclick="document.getElementById('tekst').style.fontSize = '2rem'">
+  Groter
+</button>
+```
+
+</details>
+
+## Make
+
+**Opdracht:** Bouw een "stijl-mixer" — een pagina met vier knoppen:
+- één die de tekstkleur rood maakt
+- één die de achtergrond geel maakt
+- één die de letters groter maakt
+- één die alles terugzet naar de beginwaarden
+
+<details>
+<summary>Tip</summary>
+
+Voor terugzetten: een lege string verwijdert de inline stijl. Bijvoorbeeld: `style.color = ''` zet de kleur terug naar wat CSS bepaalt.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<p id="tekst">Pas mijn stijl aan!</p>
+<button onclick="document.getElementById('tekst').style.color = 'red'">Rood</button>
+<button onclick="document.getElementById('tekst').style.backgroundColor = 'yellow'">Geel</button>
+<button onclick="document.getElementById('tekst').style.fontSize = '2rem'">Groter</button>
+<button onclick="document.getElementById('tekst').style.color = ''; document.getElementById('tekst').style.backgroundColor = ''; document.getElementById('tekst').style.fontSize = ''">Herstel</button>
+```
+
+</details>
+
+## Er gaat iets mis
+
+**CSS-naam met koppelteken gebruiken**
+
+```html
+<!-- Fout: background-color bestaat niet in JavaScript -->
+<button onclick="document.getElementById('tekst').style.background-color = 'yellow'">
+```
+
+```html
+<!-- Goed: camelCase -->
+<button onclick="document.getElementById('tekst').style.backgroundColor = 'yellow'">
+```
+
+JavaScript interpreteert het koppelteken als een min-teken en geeft een fout. Schrijf CSS-eigenschappen altijd in camelCase als je ze via `.style` instelt.
+
+---
+
+[← Inline onclick](/docs/js-basics/inline-onclick) | [De script-tag →](/docs/js-basics/script-tag)

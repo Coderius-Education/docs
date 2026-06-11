@@ -1,0 +1,220 @@
+---
+sidebar_position: 3
+hide_table_of_contents: true
+description: Herhaal code zolang een voorwaarde waar is met de while-loop, en voorkom de gevreesde oneindige loop.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 7 While-loop
+
+Met een `for`-loop weet je van tevoren hoe vaak je herhaalt (bijvoorbeeld 5 keer met `range(5)`). Maar wat als je niet weet hoe vaak — alleen dat je moet doorgaan totdat iets klaar is? Daarvoor is de `while`-loop: hij herhaalt **zolang een voorwaarde `True` is**.
+
+## Een simpele while-loop
+
+```python
+getal = 5
+
+while getal > 0:
+    print(getal)
+    getal -= 1
+
+print("Start!")
+```
+
+Uitvoer:
+
+```
+5
+4
+3
+2
+1
+Start!
+```
+
+Drie ingrediënten die je altijd nodig hebt:
+
+1. Een variabele met een startwaarde (`getal = 5`).
+2. Een voorwaarde achter `while` (`getal > 0`).
+3. Een **update**-stap binnen de loop (`getal -= 1`).
+
+Vergeet je die update? Dan blijft `getal` voor altijd `5`, blijft `getal > 0` voor altijd `True`, en stopt de loop nooit. Dat heet een **oneindige loop** — je browser of computer loopt vast. Klik dan op de Stop-knop.
+
+`getal -= 1` is een korte schrijfwijze voor `getal = getal - 1`. Hetzelfde geldt voor `+=`, `*=` en `/=`.
+
+---
+
+## Opdracht 7.1: Aftellen
+
+Schrijf een `while`-loop die aftelt van **3 naar 1** en daarna `"Klaar!"` print.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Voorwaarde: `getal > 0`. Binnen de loop: eerst printen, dan `getal -= 1`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+getal = 3
+
+while getal > 0:
+    print(getal)
+    getal -= 1
+
+print("Klaar!")
+```
+
+<CodeExercise>{`getal = 3
+
+while getal > 0:
+    print(getal)
+    getal -= 1
+
+print("Klaar!")`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 7.2: Raket-aftellen
+
+Tel af van **10 naar 1** en print daarna `"Lift-off!"`.
+
+Verwachte uitvoer:
+
+```
+10
+9
+8
+...
+2
+1
+Lift-off!
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Zelfde patroon als 7.1, alleen met startwaarde `10`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+teller = 10
+
+while teller > 0:
+    print(teller)
+    teller -= 1
+
+print("Lift-off!")
+```
+
+<CodeExercise>{`teller = 10
+
+while teller > 0:
+    print(teller)
+    teller -= 1
+
+print("Lift-off!")`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 7.3: Sparen tot je doelbedrag
+
+Je hebt een startsaldo van `50` euro en spaart elke maand `15` euro bij. Tel met een while-loop hoeveel maanden je nodig hebt om minstens `200` euro te hebben.
+
+Verwachte uitvoer:
+
+```
+Binnen 10 maanden heb je je doelbedrag bereikt!
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Voorwaarde: `saldo < 200`. Binnen de loop: `saldo += 15` en `maanden += 1`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+saldo = 50
+maanden = 0
+
+while saldo < 200:
+    saldo += 15
+    maanden += 1
+
+print(f"Binnen {maanden} maanden heb je je doelbedrag bereikt!")
+```
+
+<CodeExercise>{`saldo = 50
+maanden = 0
+
+while saldo < 200:
+    saldo += 15
+    maanden += 1
+
+print(f"Binnen {maanden} maanden heb je je doelbedrag bereikt!")`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 7.4: Virus dat verdubbelt
+
+Een virus begint met `1` geïnfecteerd bestand en verdubbelt elke seconde. Print elke seconde het huidige aantal, totdat het boven **1 000 000** uitkomt. Print daarna `"Systeem is gekaapt!"`.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Drie stappen binnen de loop:
+
+1. Print `infecties`.
+2. Verdubbel: `infecties *= 2`.
+3. Hoog `secondes` met 1 op.
+
+Voorwaarde: `infecties <= 1_000_000`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+infecties = 1
+secondes = 0
+
+while infecties <= 1_000_000:
+    print(infecties)
+    infecties *= 2
+    secondes += 1
+
+print("Systeem is gekaapt!")
+```
+
+In de volgende les ga je code **een naam geven** zodat je hem makkelijk kunt hergebruiken — dat doe je met **functies**.
+
+<CodeExercise>{`infecties = 1
+secondes = 0
+
+while infecties <= 1_000_000:
+    print(infecties)
+    infecties *= 2
+    secondes += 1
+
+print("Systeem is gekaapt!")`}</CodeExercise>
+
+</details>

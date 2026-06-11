@@ -1,0 +1,175 @@
+---
+sidebar_position: 1
+hide_table_of_contents: true
+description: Sla meerdere waardes op in een lijst, pak elementen met een index en loop er met for doorheen.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 10a Lijsten
+
+Een variabele houdt één waarde vast. Maar wat als je tien waardes wilt opslaan — bijvoorbeeld een boodschappenlijstje, een klassenlijst of een rij cijfers? Daarvoor heb je een **lijst** (Engels: *list*).
+
+## Een lijst maken
+
+Zet de elementen tussen blokhaken, gescheiden door komma's:
+
+```python
+kleuren = ["rood", "groen", "blauw"]
+
+print(kleuren)         # ['rood', 'groen', 'blauw']
+print(len(kleuren))    # 3
+```
+
+`len()` geeft het aantal elementen in de lijst.
+
+## Een element opzoeken
+
+Elk element heeft een **positie** (index). Python begint met tellen vanaf **0**:
+
+```python
+kleuren = ["rood", "groen", "blauw"]
+
+print(kleuren[0])    # rood       (eerste)
+print(kleuren[1])    # groen      (tweede)
+print(kleuren[2])    # blauw      (derde)
+print(kleuren[-1])   # blauw      (laatste — handige truc)
+```
+
+`-1` is altijd het laatste element, `-2` het voorlaatste, enzovoort. Vraag je een index op die niet bestaat (bijvoorbeeld `kleuren[3]` op een lijst van 3 elementen), dan krijg je `IndexError: list index out of range`.
+
+## Door een lijst loopen
+
+Met een `for`-loop pak je elk element automatisch:
+
+```python
+kleuren = ["rood", "groen", "blauw"]
+
+for kleur in kleuren:
+    print(kleur)
+```
+
+Uitvoer:
+
+```
+rood
+groen
+blauw
+```
+
+In elke ronde krijgt `kleur` automatisch de volgende waarde uit de lijst.
+
+---
+
+## Opdracht 10a.1: Tweede element
+
+Maak een lijst `getallen` met de waardes `10`, `20` en `30`, en print het **tweede** element.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Het tweede element heeft index `1`, niet `2` — Python begint bij `0`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+getallen = [10, 20, 30]
+
+print(getallen[1])
+```
+
+<CodeExercise>{`getallen = [10, 20, 30]
+
+print(getallen[1])`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 10a.2: Vruchten-lus
+
+Maak een lijst van 4 vruchten en print voor elk een zin: `Ik hou van [vrucht]!`.
+
+Verwachte uitvoer:
+
+```
+Ik hou van appel!
+Ik hou van banaan!
+Ik hou van kers!
+Ik hou van mango!
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Loop met `for vrucht in vruchten:` en gebruik een f-string met `{vrucht}`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+vruchten = ["appel", "banaan", "kers", "mango"]
+
+for vrucht in vruchten:
+    print(f"Ik hou van {vrucht}!")
+```
+
+<CodeExercise>{`vruchten = ["appel", "banaan", "kers", "mango"]
+
+for vrucht in vruchten:
+    print(f"Ik hou van {vrucht}!")`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 10a.3: Hoogste cijfer vinden
+
+Gegeven een lijst cijfers, vind het **hoogste** cijfer zónder een ingebouwde functie te gebruiken. Loop door de lijst en vergelijk elk cijfer met de hoogste-tot-nu-toe.
+
+Verwachte uitvoer (bij `cijfers = [7, 4, 8, 5, 9, 3, 6]`):
+
+```
+Het hoogste cijfer is: 9
+```
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Begin met `hoogste = cijfers[0]`. In de loop: als `cijfer > hoogste`, sla dan `cijfer` op in `hoogste`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing!</summary>
+
+```python
+cijfers = [7, 4, 8, 5, 9, 3, 6]
+
+hoogste = cijfers[0]
+
+for cijfer in cijfers:
+    if cijfer > hoogste:
+        hoogste = cijfer
+
+print(f"Het hoogste cijfer is: {hoogste}")
+```
+
+In de volgende les leer je hoe je een lijst **verandert** — elementen toevoegen, verwijderen of invoegen.
+
+<CodeExercise>{`cijfers = [7, 4, 8, 5, 9, 3, 6]
+
+hoogste = cijfers[0]
+
+for cijfer in cijfers:
+    if cijfer > hoogste:
+        hoogste = cijfer
+
+print(f"Het hoogste cijfer is: {hoogste}")`}</CodeExercise>
+
+</details>

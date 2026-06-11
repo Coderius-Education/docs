@@ -1,0 +1,133 @@
+---
+sidebar_position: 4
+hide_table_of_contents: true
+---
+
+# 10.4 Bouwsteen 1 — items in Python
+
+**Leerdoel:** je slaat de items op als een lijst van
+`(waarde, gewicht)` tuples, en kunt erin "kijken".
+
+## Wat we willen
+
+De items uit de afbeelding van je docent (en de rest van deze track):
+
+| Item | Waarde | Gewicht |
+|---|---|---|
+| 1 | 1 | 1 |
+| 2 | 6 | 2 |
+| 3 | 18 | 5 |
+| 4 | 22 | 6 |
+| 5 | 28 | 7 |
+
+In Python: een **lijst van tuples**, waarbij elke tuple `(waarde, gewicht)`
+is.
+
+```python
+items = [(1, 1), (6, 2), (18, 5), (22, 6), (28, 7)]
+```
+
+Elk element is een tuple `(waarde, gewicht)` voor één item.
+
+## Indexen
+
+`items[0]` = `(1, 1)` — de eerste tuple.
+`items[2]` = `(18, 5)` — de derde tuple (item 3 uit de tabel).
+
+Let op: Python begint te tellen bij **0**. De tabel hierboven gebruikt
+1-gebaseerde nummering ("item 1, item 2, ..."). Onze code gebruikt
+0-gebaseerde indexen. Dat is even wennen, maar consistent met al je
+andere Python-werk.
+
+## Tuple uitpakken
+
+Met tuple-unpacking pak je waarde en gewicht in één regel:
+
+```python
+waarde, gewicht = items[2]
+print(waarde, gewicht)   # 18 5
+```
+
+Of zonder unpacking:
+
+```python
+print(items[2][0])   # 18  (waarde)
+print(items[2][1])   # 5   (gewicht)
+```
+
+Beide werken; unpacking leest beter.
+
+## Voorspel
+
+Wat denk je dat dit print?
+
+```python
+items = [(1, 1), (6, 2), (18, 5), (22, 6), (28, 7)]
+n = len(items)
+
+for i in range(n):
+    waarde, gewicht = items[i]
+    print(f"item {i + 1}: waarde={waarde}, gewicht={gewicht}")
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+item 1: waarde=1, gewicht=1
+item 2: waarde=6, gewicht=2
+item 3: waarde=18, gewicht=5
+item 4: waarde=22, gewicht=6
+item 5: waarde=28, gewicht=7
+```
+
+We tellen vanaf `i + 1` om de tabel-nummering te matchen, maar
+gebruiken `items[i]` om de echte Python-index op te halen.
+
+</details>
+
+## Bouw zelf en test
+
+Maak een functie `item_info(items, i)` die de string
+`"item N: waarde=V, gewicht=G"` returnt voor item op Python-index `i`.
+
+<PyRunner initialCode={`def item_info(items, i):
+    # Vul aan:
+    # 1. pak waarde en gewicht uit items[i] via tuple-unpacking
+    # 2. return een f-string in dit formaat:
+    #    "item N: waarde=V, gewicht=G"
+    #    waarbij N de mens-nummering is (i + 1)
+    return ""
+
+
+# === Tests ===
+items = [(1, 1), (6, 2), (18, 5), (22, 6), (28, 7)]
+
+assert item_info(items, 0) == "item 1: waarde=1, gewicht=1"
+assert item_info(items, 2) == "item 3: waarde=18, gewicht=5"
+assert item_info(items, 4) == "item 5: waarde=28, gewicht=7"
+
+print("Alle tests gehaald ✓")`} />
+
+<details>
+<summary>Tip</summary>
+
+Eén regel werk:
+
+```python
+waarde, gewicht = items[i]
+return f"item {i + 1}: waarde={waarde}, gewicht={gewicht}"
+```
+
+Een f-string (`f"..."`) staat Python toe om variabelen direct in een
+tekst te zetten met `{...}`.
+
+</details>
+
+## Wat nu nog mist
+
+We hebben de items. Nu hebben we ook **een tabel** nodig waar we de
+OPT-waardes per `(i, w)` in opslaan. Op de volgende pagina maken we
+hem leeg aan.
+
+Door naar [stap 5: lege tabel →](./05-bouwen-tabel-leeg).

@@ -1,0 +1,58 @@
+---
+sidebar_position: 4
+sidebar_label: 'Impossible'
+hide_table_of_contents: true
+---
+
+import DvwaLab from '@site/src/components/DvwaLab';
+
+# CSRF — Impossible
+
+Naast tokens, hoe kunnen we de functionaliteit om een wachtwoord te wijzigen 100% hufterproof maken?
+
+## 1. Predict (Voorspel)
+
+De ontwerper van de applicatie heeft goed nagedacht en de logica van de interface zélf gewijzigd. Je mag niet zomaar een nieuw wachtwoord invullen.
+
+```html
+Oud wachtwoord: <input type="password" name="password_current">
+Nieuw wachtwoord: <input type="password" name="password_new">
+Bevestig nieuw wachtwoord: <input type="password" name="password_conf">
+```
+
+**Vraag:** Waarom maakt het veld `Oud wachtwoord` een CSRF-aanval absoluut kansloos (zelfs zonder het gebruik van complexe tokens)?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Bij een CSRF-aanval proberen we het slachtoffer via een linkje onbewust de server te laten vertellen: "Zet mijn wachtwoord op X".
+Maar omdat de server nu eist dat het *huidige* wachtwoord óók wordt meegestuurd in dat linkje, is de hacker schaakmat! De hacker wéét het huidige wachtwoord immers niet. Een blind linkje zoals `?password_current=RAADMAAR&password_new=hacked` zal daarom altijd genadeloos afgewezen worden door de server.
+
+</details>
+
+## 2. Run & Investigate
+
+Start het lab en bekijk het nieuwe formulier.
+
+<DvwaLab module="csrf" level="impossible" />
+
+Probeer je wachtwoord te wijzigen en merk op dat het formulier nu vraagt om het huidige wachtwoord. Probeer ook een URL-aanval zonder het huidige wachtwoord mee te sturen en observeer het resultaat.
+
+## 3. ✓ Wat moest je zien?
+
+:::tip Controle
+- Het formulier heeft nu een extra veld voor het **huidige wachtwoord**.
+- Een URL zonder het juiste huidige wachtwoord wordt geblokkeerd.
+- Zelfs als een aanvaller een token weet te bemachtigen, heeft hij nog steeds het huidige wachtwoord nodig.
+
+Lukt het wijzigen niet? Controleer of je het juiste huidige wachtwoord hebt ingevuld (standaard is dit `password` voor de admin-account).
+:::
+
+**CSRF is een blinde aanval:** De hacker dwingt een ingelogde browser om ongemerkt een request te sturen namens het slachtoffer.
+
+**Referers checken is zwak:** Beveiligingen op basis van de HTTP-referer zijn vaak te omzeilen.
+
+**Anti-CSRF tokens zijn noodzaak:** Bijna elk modern web-framework (Laravel, Django, React) voegt automatisch onkraakbare, onzichtbare tokens toe aan formulieren om CSRF onmogelijk te maken.
+
+**Vraag om bevestiging:** Het beste middel tegen acties-zonder-toestemming is het eisen van verificatie (bijv. "Typ eerst je huidige wachtwoord in").

@@ -1,0 +1,196 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeEditor from '@site/src/components/CodeEditor';
+
+# Semantische HTML
+
+## Wat ga je leren?
+
+Je leert wat **semantische** HTML-tags zijn — tags zoals `<header>` en `<nav>` die *betekenis* geven aan stukken van je pagina, in plaats van alleen visueel groeperen.
+
+## Theorie
+
+Tot nu toe heb je vooral `<div>` gebruikt om elementen te groeperen. Een `<div>` zegt niks over *wat* een blok is — het is gewoon een doos.
+
+**Semantische tags** zien er voor de bezoeker hetzelfde uit als een `<div>`, maar vertellen de browser, screenreader of zoekmachine *welke rol* een blok heeft.
+
+### De belangrijkste semantische tags
+
+| Tag | Betekenis |
+|---|---|
+| `<header>` | De bovenkant van je pagina (logo, titel) |
+| `<nav>` | Een navigatiemenu met links |
+| `<main>` | De hoofdinhoud van de pagina |
+| `<section>` | Een afgebakend onderdeel met eigen onderwerp |
+| `<article>` | Een op zichzelf staand stuk inhoud (zoals een blogpost) |
+| `<footer>` | De onderkant van je pagina (copyright, links) |
+
+### Waarom zou je dit doen?
+
+- **Screenreaders** (voor slechtzienden) kunnen op `<nav>` springen om snel het menu te vinden.
+- **Zoekmachines** begrijpen je pagina-structuur beter — goed voor SEO.
+- **Voor jezelf**: je code is makkelijker te lezen. `<nav>` zegt direct waar het over gaat, `<div class="menu">` moet je interpreteren.
+
+## Predict
+
+Wat is het verschil tussen deze twee stukken HTML qua **uiterlijk** in de browser?
+
+```html
+<div>Hoofdmenu</div>
+<nav>Hoofdmenu</nav>
+```
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+Visueel is er **geen verschil** — beide tonen gewoon "Hoofdmenu". Maar voor screenreaders en zoekmachines maakt het wél verschil: `<nav>` wordt herkend als navigatie, `<div>` is betekenisloos.
+
+</details>
+
+## Probeer het zelf!
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Semantische HTML</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Mijn Blog</h1>
+    <nav>
+      <a href="#">Home</a> |
+      <a href="#">Over</a> |
+      <a href="#">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <article>
+      <h2>Mijn eerste post</h2>
+      <p>Welkom op mijn blog! Dit is mijn eerste bericht.</p>
+    </article>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 — Mijn Blog</p>
+  </footer>
+</body>
+</html>`}
+  initialCss={`header {
+  background-color: #f0f4ff;
+  padding: 20px;
+}
+
+nav {
+  margin-top: 10px;
+}
+
+main {
+  padding: 20px;
+}
+
+footer {
+  background-color: #eee;
+  padding: 10px;
+  text-align: center;
+}`}
+  height="540px"
+/>
+
+## Investigate
+
+Experimenteer:
+
+- Vervang `<header>` door `<div>` — wat verandert er aan het uiterlijk? (Tip: pas ook de CSS-selector aan.)
+- Voeg een tweede `<article>` toe binnen `<main>`.
+- Wat zou je in `<footer>` kunnen zetten? Probeer een copyright-regel of social media links.
+
+## Modify
+
+**Opdracht:** Voeg een `<section>` toe binnen `<main>`, tussen `<header>` en `<article>`, met een korte intro-tekst over jouw blog.
+
+<details>
+<summary>Tip</summary>
+
+Een `<section>` lijkt op een `<article>` maar is bedoeld voor een onderdeel dat bij de rest van de pagina hoort (geen losstaand artikel). Geef hem een kop en een paragraaf.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<main>
+  <section>
+    <h2>Welkom!</h2>
+    <p>Op deze blog deel ik mijn programmeer-avonturen.</p>
+  </section>
+
+  <article>
+    <h2>Mijn eerste post</h2>
+    <p>Welkom op mijn blog! Dit is mijn eerste bericht.</p>
+  </article>
+</main>
+```
+
+</details>
+
+## Make
+
+**Opdracht:** Bouw de skeletten van een eigen homepagina met `<header>`, `<nav>`, `<main>` en `<footer>`. Vul ze met je eigen inhoud (naam, korte intro, contactgegevens).
+
+<details>
+<summary>Tip</summary>
+
+Begin met de structuur zonder CSS. Eerst de tags goed, daarna kun je het stylen.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<header>
+  <h1>Sam Janssen</h1>
+  <nav>
+    <a href="#over">Over mij</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<main>
+  <section id="over">
+    <h2>Over mij</h2>
+    <p>Ik ben een beginnend webdeveloper.</p>
+  </section>
+</main>
+
+<footer>
+  <p>Bereikbaar via sam@example.com</p>
+</footer>
+```
+
+</details>
+
+## Er gaat iets mis
+
+**Alles in `<div>` blijven proppen**
+
+```html
+<div class="header">
+  <div class="nav">...</div>
+</div>
+<div class="main">...</div>
+<div class="footer">...</div>
+```
+
+Dit *werkt* wel, maar je verliest alle voordelen van semantiek. Screenreaders kunnen niet snel navigeren, en zoekmachines begrijpen je structuur niet. Gebruik semantische tags als ze passen — `<div>` alleen als geen enkele andere tag de lading dekt.
+
+---
+
+[← Randen en afmetingen](/docs/html-css/border-en-dimensies) | [Formulieren →](/docs/html-css/formulieren)

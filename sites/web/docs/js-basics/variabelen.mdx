@@ -1,0 +1,200 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeEditor from '@site/src/components/CodeEditor';
+
+# Variabelen
+
+## Wat ga je leren?
+
+Je leert hoe je een waarde opslaat in een **variabele**, en hoe je die waarde gebruikt en aanpast in je code.
+
+## Theorie
+
+Een variabele is een plek in het geheugen met een naam. Je maakt een variabele aan met `let`, geeft hem een naam, en kent er een waarde aan toe:
+
+```js
+let teller = 0;
+```
+
+- `let` — maakt een nieuwe variabele aan
+- `teller` — de naam (kies zelf, gebruik kleine letters en geen spaties)
+- `= 0` — de beginwaarde
+
+Je kunt de waarde daarna aanpassen:
+
+```js
+teller = teller + 1;  // voeg 1 toe aan de huidige waarde
+```
+
+En je kunt de waarde tonen op de pagina:
+
+```js
+document.getElementById('uitvoer').textContent = teller;
+```
+
+### `let` of `const`?
+
+Naast `let` bestaat ook `const`. Het verschil:
+
+- `let` — de waarde **kan veranderen** (zoals een teller die optelt)
+- `const` — de waarde **blijft constant**, hij mag na het toekennen niet meer veranderen
+
+```js
+const startwaarde = 0;   // verandert nooit
+let teller = startwaarde; // mag wel veranderen
+teller = teller + 1;
+```
+
+**Vuistregel**: gebruik standaard `const`. Pas als de waarde echt moet kunnen veranderen, gebruik je `let`.
+
+## Predict
+
+Bekijk de startcode in het script.js-tabblad. Beantwoord de vraag hieronder **voordat** je op Run klikt.
+
+<details>
+<summary>Wat zie je in de `<p>` na drie klikken?</summary>
+
+Na elke klik wordt `teller` met 1 verhoogd en op de pagina getoond. Na drie klikken staat er `3`. De variabele onthoudt de vorige waarde — hij begint bij 0 en telt op zolang de pagina open is.
+
+</details>
+
+## Probeer het zelf!
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Variabelen</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <p id="uitvoer">0</p>
+  <button onclick="telOp()">Klik mij</button>
+</body>
+</html>`}
+  initialCss={`p {
+  font-size: 2rem;
+  padding: 12px;
+}
+
+button {
+  padding: 8px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+}`}
+  initialJs={`let teller = 0;
+
+function telOp() {
+  teller = teller + 1;
+  document.getElementById('uitvoer').textContent = teller;
+  console.log('Teller staat op:', teller);
+}`}
+  height="500px"
+  livePreview={false}
+/>
+
+## Investigate
+
+Experimenteer:
+
+- Verander de beginwaarde van `teller` naar `10` — waar begint de teller dan?
+- Verander `teller + 1` naar `teller + 5` — wat telt hij dan per klik?
+- Voeg een tweede knop toe die de teller weer op `0` zet
+
+## Modify
+
+**Opdracht:** Voeg een knop "Reset" toe die de teller terugzet naar 0 en dat ook op de pagina toont.
+
+<details>
+<summary>Tip</summary>
+
+Schrijf een functie `reset()` die `teller = 0` zet en de `<p>` bijwerkt. Roep die aan vanuit een `onclick`-attribuut op een nieuwe knop.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+HTML-toevoeging:
+```html
+<button onclick="reset()">Reset</button>
+```
+
+Toevoeging in script.js:
+```js
+function reset() {
+  teller = 0;
+  document.getElementById('uitvoer').textContent = teller;
+}
+```
+
+</details>
+
+## Make
+
+**Opdracht:** Bouw een eenvoudige score-bijhouder voor een spelletje. Er zijn twee knoppen: "+1 punt" en "-1 punt". De score staat centraal op de pagina. De score mag niet onder 0 komen — als de score al 0 is, doet de min-knop niets.
+
+<details>
+<summary>Tip</summary>
+
+Je hebt een **beslissing** nodig: alleen aftrekken als de score boven 0 is. In JavaScript schrijf je dat met `if`. De volledige uitleg krijg je in [Beslissingen](/docs/js-basics/if-else), maar voor nu kun je dit patroon kopiëren:
+
+```js
+if (score > 0) {
+  score = score - 1;
+}
+```
+
+Tussen de haakjes staat de voorwaarde (`score > 0`). De regels tussen `{ ... }` worden alleen uitgevoerd als die voorwaarde klopt.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+HTML:
+```html
+<p id="score">0</p>
+<button onclick="plus()">+1 punt</button>
+<button onclick="min()">-1 punt</button>
+```
+
+script.js:
+```js
+let score = 0;
+
+function plus() {
+  score = score + 1;
+  document.getElementById('score').textContent = score;
+}
+
+function min() {
+  if (score > 0) {
+    score = score - 1;
+    document.getElementById('score').textContent = score;
+  }
+}
+```
+
+</details>
+
+## Er gaat iets mis
+
+**Variabele binnen de functie declareren**
+
+```js
+function telOp() {
+  let teller = 0;       // Fout: elke klik reset de teller naar 0!
+  teller = teller + 1;
+}
+```
+
+Als je `let teller = 0` binnen de functie zet, wordt de variabele bij elke klik opnieuw aangemaakt en begint hij altijd bij 0. De teller telt dan nooit verder dan 1. Zet variabelen die je wilt onthouden **buiten** de functie.
+
+---
+
+[← script.js](/docs/js-basics/scriptjs) | [Events →](/docs/js-basics/events)

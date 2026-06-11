@@ -1,0 +1,98 @@
+---
+sidebar_position: 4
+hide_table_of_contents: true
+---
+
+# 2.4 Bouwsteen 2 — door de lijst lopen en updaten
+
+**Leerdoel:** je voegt een `for`-lus toe rondom de vergelijking uit
+bouwsteen 1, zodat *elk* element wordt vergeleken.
+
+## Wat we willen
+
+We hebben vergelijken-en-updaten voor één getal. Nu willen we dat doen
+voor elk getal in de lijst.
+
+## Voorspel
+
+Wat denk je dat dit print?
+
+```python
+lijst = [3, 7, 2, 9, 4]
+max_tot_nu_toe = 0
+
+for waarde in lijst:
+    if waarde > max_tot_nu_toe:
+        max_tot_nu_toe = waarde
+
+print(max_tot_nu_toe)
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+9
+```
+
+Loop het mee:
+
+| waarde | max_tot_nu_toe vóór | check | max_tot_nu_toe na |
+|---|---|---|---|
+| 3 | 0 | 3 > 0 → ja | 3 |
+| 7 | 3 | 7 > 3 → ja | 7 |
+| 2 | 7 | 2 > 7 → nee | 7 |
+| 9 | 7 | 9 > 7 → ja | 9 |
+| 4 | 9 | 4 > 9 → nee | 9 |
+
+Eindwaarde: **9**.
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`lijst = [3, 7, 2, 9, 4]
+max_tot_nu_toe = 0
+
+for waarde in lijst:
+    if waarde > max_tot_nu_toe:
+        max_tot_nu_toe = waarde
+
+print(max_tot_nu_toe)`} />
+
+## Experimenteer — een probleem ontdekken
+
+Verander de lijst in `[-3, -1, -7]`. Wat krijg je nu?
+
+<PyRunner initialCode={`lijst = [-3, -1, -7]
+max_tot_nu_toe = 0
+
+for waarde in lijst:
+    if waarde > max_tot_nu_toe:
+        max_tot_nu_toe = waarde
+
+print(max_tot_nu_toe)`} />
+
+<details>
+<summary>Wat klopt er niet?</summary>
+
+Output: **`0`**. Maar **0 staat niet in de lijst.** Het echte maximum is
+`-1`.
+
+Wat ging er mis? Alle waardes in de lijst zijn negatief — geen enkele is
+groter dan onze startwaarde `0`. Dus de `if` was nooit waar, en
+`max_tot_nu_toe` is nooit gewijzigd. We krijgen onze startwaarde terug.
+
+**Bug**: onze startwaarde `0` is onveilig. De fix komt in de volgende
+bouwsteen.
+
+</details>
+
+<SteppingStoneModel stone="maximum-loop" />
+
+## Wat nu nog mist
+
+We hebben een werkend principe — maar onze **startwaarde** is fout. In de
+volgende stap kiezen we een betere.
+
+Door naar [bouwsteen 3: een veilige startwaarde](./05-bouwen-initialisatie).
