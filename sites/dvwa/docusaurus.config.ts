@@ -29,13 +29,6 @@ export default createConfig({
     ],
   ],
 
-  plugins: [
-    [
-      '@docusaurus/plugin-content-docs',
-      {id: 'dvwa_tutorial', path: 'dvwa_tutorial', routeBasePath: 'dvwa_tutorial'},
-    ],
-  ],
-
   themeConfig: {
     image: 'img/docusaurus-social-card.jpg',
     navbar: {
@@ -45,24 +38,24 @@ export default createConfig({
         {to: '/docs/installatie', label: 'WSL installeren', position: 'left'},
         {to: '/docs/dvwa_installatie', label: 'DVWA installeren', position: 'left'},
         {
-          to: 'dvwa_tutorial/brute-force/low',
+          to: 'docs/dvwa_tutorial/brute-force/low',
           label: 'DVWA Challenges',
           position: 'left',
           items: [
-            {to: 'dvwa_tutorial/brute-force/low', label: 'Brute Force'},
-            {to: 'dvwa_tutorial/command-injection/low', label: 'Command Injection'},
-            {to: 'dvwa_tutorial/authorization-bypass/low', label: 'Authorization Bypass'},
-            {to: 'dvwa_tutorial/sql-injection/low', label: 'SQL Injection'},
-            {to: 'dvwa_tutorial/sql-injection-blind/low', label: 'SQL Injection (Blind)'},
-            {to: 'dvwa_tutorial/xss-reflected/low', label: 'XSS (Reflected)'},
-            {to: 'dvwa_tutorial/xss-stored/low', label: 'XSS (Stored)'},
-            {to: 'dvwa_tutorial/xss-dom/low', label: 'XSS (DOM)'},
-            {to: 'dvwa_tutorial/csrf/low', label: 'CSRF'},
-            {to: 'dvwa_tutorial/file-inclusion/low', label: 'File Inclusion'},
-            {to: 'dvwa_tutorial/file-upload/low', label: 'File Upload'},
-            {to: 'dvwa_tutorial/weak-session-ids/low', label: 'Weak Session IDs'},
-            {to: 'dvwa_tutorial/csp-bypass/low', label: 'CSP Bypass'},
-            {to: 'dvwa_tutorial/javascript-attacks/low', label: 'JavaScript Attacks'},
+            {to: 'docs/dvwa_tutorial/brute-force/low', label: 'Brute Force'},
+            {to: 'docs/dvwa_tutorial/command-injection/low', label: 'Command Injection'},
+            {to: 'docs/dvwa_tutorial/authorization-bypass/low', label: 'Authorization Bypass'},
+            {to: 'docs/dvwa_tutorial/sql-injection/low', label: 'SQL Injection'},
+            {to: 'docs/dvwa_tutorial/sql-injection-blind/low', label: 'SQL Injection (Blind)'},
+            {to: 'docs/dvwa_tutorial/xss-reflected/low', label: 'XSS (Reflected)'},
+            {to: 'docs/dvwa_tutorial/xss-stored/low', label: 'XSS (Stored)'},
+            {to: 'docs/dvwa_tutorial/xss-dom/low', label: 'XSS (DOM)'},
+            {to: 'docs/dvwa_tutorial/csrf/low', label: 'CSRF'},
+            {to: 'docs/dvwa_tutorial/file-inclusion/low', label: 'File Inclusion'},
+            {to: 'docs/dvwa_tutorial/file-upload/low', label: 'File Upload'},
+            {to: 'docs/dvwa_tutorial/weak-session-ids/low', label: 'Weak Session IDs'},
+            {to: 'docs/dvwa_tutorial/csp-bypass/low', label: 'CSP Bypass'},
+            {to: 'docs/dvwa_tutorial/javascript-attacks/low', label: 'JavaScript Attacks'},
           ],
         },
         {to: '/docs/cheatsheet', label: 'Cheatsheet', position: 'left'},
