@@ -1,0 +1,88 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Coderius docs-monorepo — één .gitignore voor de hele workspace.
+# Per-site .gitignores zijn bewust verwijderd; alles staat hier.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Dependencies ─────────────────────────────────────────────────────────────
+node_modules/
+.pnpm-store/
+.yarn/
+jspm_packages/
+
+# ── Build- en Docusaurus-output ──────────────────────────────────────────────
+build/
+.docusaurus/
+.cache-loader/
+.cache/
+.temp/
+.tmp/
+
+# ── TypeScript / bundler / linter caches ─────────────────────────────────────
+*.tsbuildinfo
+.eslintcache
+.stylelintcache
+
+# ── Logs ─────────────────────────────────────────────────────────────────────
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ── Omgevingsvariabelen / secrets ────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+*.pem
+
+# ── Test- en coverage-output ─────────────────────────────────────────────────
+coverage/
+.nyc_output/
+
+# ── Editors / IDE's ──────────────────────────────────────────────────────────
+.idea/
+*.iml
+*.swp
+*.swo
+*~
+.project
+.classpath
+*.sublime-workspace
+
+# ── Backup- / patch-rommel ───────────────────────────────────────────────────
+*.bak
+*.backup
+*.orig
+*.rej
+
+# ── Besturingssysteem-rommel ─────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ── Lokale AI-assistent bestanden ────────────────────────────────────────────
+# (CLAUDE.md wordt wél gecommit: dat zijn projectinstructies, geen scratch.)
+.claude/
+.gemini/
+.aider*
+
+# ── Site-specifieke gegenereerde / lokale bestanden ──────────────────────────
+# Bewust gescoped per site, zodat een gelijknamig bestand elders niet per
+# ongeluk genegeerd wordt.
+/sites/godot/static/zips/
+/sites/algorithms/.trace-tests/
+/sites/dvwa/GEMINI.md
+/sites/play/database.json
+/sites/play/development.py
+/sites/play/TODO.md
+# leerlijn.md werd in deze sites gegenereerd (stond in hun originele .gitignore).
+/sites/godot/**/leerlijn.md
+/sites/python/**/leerlijn.md
+/sites/web/**/leerlijn.md

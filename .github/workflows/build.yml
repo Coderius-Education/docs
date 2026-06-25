@@ -1,0 +1,88 @@
+name: Build sites
+
+# Bouwt elke site naar een zelfstandige statische bundle en uploadt die
+# als artifact. Geen deploy hier: een aparte backend pakt de artifacts op
+# (hosting, A/B-tests, analytics).
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# Snel achter elkaar pushen op dezelfde branch: alleen de nieuwste build telt.
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Niet-blokkerend: de uit losse repos gemigreerde sites hebben nog
+      # honderden bestaande biome-fouten. Zodra die zijn opgeschoond kan
+      # continue-on-error weg.
+      - name: Lint (biome)
+        run: pnpm lint
+        continue-on-error: true
+
+      - name: Typecheck (sites + packages)
+        run: pnpm typecheck
+
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Mapnamen onder sites/; het filter werkt op de map, niet op de
+        # package-naam (sites/ide heet @coderius/ide, zonder -docs-suffix).
+        site:
+          - python
+          - web
+          - fullstack
+          - robotica
+          - ctf
+          - embedded
+          - editor
+          - godot
+          - dvwa
+          - play
+          - algorithms
+          - ide
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build ${{ matrix.site }}
+        run: pnpm --filter "./sites/${{ matrix.site }}" build
+
+      - name: Upload static bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.site }}-static
+          path: sites/${{ matrix.site }}/build
+          if-no-files-found: error
