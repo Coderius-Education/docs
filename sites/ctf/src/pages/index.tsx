@@ -31,7 +31,7 @@ export default function Home(): ReactNode {
     <Layout
       title="Home"
       description="Leer cybersecurity door Capture the Flag challenges op te lossen">
-      <HomepageHero ctas={ctas} />
+      <HomepageHero title="Coderius CTF" ctas={ctas} />
       <HomepageFeatures heading="Waar wil je mee aan de slag?" features={features} />
     </Layout>
   );

@@ -1,7 +1,7 @@
 import {createConfig} from '@coderius/shared/config';
 
 export default createConfig({
-  title: 'Python Leren Programmeren — Coderius',
+  title: 'Python Leren — Coderius',
   tagline: 'Leer stap voor stap programmeren in Python',
   url: 'https://python.coderius.nl',
   projectName: 'python-docs',

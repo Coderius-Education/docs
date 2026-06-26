@@ -1,7 +1,7 @@
 import {createConfig, prismThemes} from '@coderius/shared/config';
 
 export default createConfig({
-  title: 'DVWA Security Training — Leer Websecurity — Coderius',
+  title: 'DVWA Websecurity — Coderius',
   tagline: 'Oefen websecurity met DVWA direct in je browser',
   url: 'https://dvwa.coderius.nl',
   projectName: 'DVWA',

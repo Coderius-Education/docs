@@ -36,7 +36,7 @@ export default function Home(): ReactNode {
     <Layout
       title="Embedded programmeren"
       description="Leer embedded programmeren: van een blink-LED in de Arduino IDE tot IO en interfaces op een STM32.">
-      <HomepageHero title="Embedded programmeren" ctas={ctas} />
+      <HomepageHero title="Coderius Embedded" ctas={ctas} />
       <HomepageFeatures
         heading="Waar wil je mee aan de slag?"
         subheading="Kies hieronder een startpunt"

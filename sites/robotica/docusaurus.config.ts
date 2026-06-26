@@ -4,7 +4,7 @@ const organizationName = 'Coderius-Education';
 const projectName = 'robotica-docs';
 
 export default createConfig({
-  title: 'Robotica Lessenpakket',
+  title: 'Robotica — Coderius',
   url: 'https://robotica.coderius.nl',
   projectName,
 

@@ -31,7 +31,7 @@ export default function Home(): ReactNode {
   const {siteConfig} = useDocusaurusContext();
   return (
     <Layout title={siteConfig.title} description={siteConfig.tagline}>
-      <HomepageHero ctas={ctas} />
+      <HomepageHero title="Coderius Fullstack" ctas={ctas} />
       <HomepageFeatures heading="Waar wil je mee aan de slag?" features={features} />
     </Layout>
   );

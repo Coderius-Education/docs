@@ -1,7 +1,7 @@
 import {createConfig} from '@coderius/shared/config';
 
 export default createConfig({
-  title: 'Fullstack Ontwikkeling — FastAPI — Coderius',
+  title: 'Fullstack met FastAPI — Coderius',
   tagline: 'Leer hier een Python back-end toe te voegen aan je website',
   url: 'https://fullstack.coderius.nl',
   projectName: 'fullstack-docs',

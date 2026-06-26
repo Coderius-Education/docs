@@ -1,7 +1,7 @@
 import {createConfig} from '@coderius/shared/config';
 
 export default createConfig({
-  title: 'Coderius Godot — Nederlandse cursus 2D gamedev',
+  title: 'Games met Godot — Coderius',
   tagline: 'De eerste stappen in Godot',
   url: 'https://godot.coderius.nl',
   projectName: 'GoDot',

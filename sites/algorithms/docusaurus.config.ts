@@ -1,7 +1,7 @@
 import {createConfig, prismThemes} from '@coderius/shared/config';
 
 export default createConfig({
-  title: 'Coderius Algoritmes',
+  title: 'Algoritmes — Coderius',
   tagline: 'Leer algoritmes door ze zelf uit te voeren',
   url: 'https://algoritmes.coderius.nl',
   organizationName: 'coderius',

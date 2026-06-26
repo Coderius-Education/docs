@@ -13,7 +13,7 @@ function HomepageHeader() {
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
       <div className="container">
         <Heading as="h1" className={clsx('hero__title', styles.heroTitle)}>
-          {siteConfig.title}
+          Coderius Algoritmes
         </Heading>
         <p className={clsx('hero__subtitle', styles.heroSubtitle)}>
           {siteConfig.tagline}
