@@ -1,43 +1,37 @@
-import clsx from 'clsx';
-import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
-import HomepageFeatures from '@site/src/components/HomepageFeatures';
+import HomepageHero from '@coderius/shared/components/HomepageHero';
+import HomepageFeatures from '@coderius/shared/components/HomepageFeatures';
 
-import Heading from '@theme/Heading';
-import styles from './index.module.css';
+const ctas = [{label: 'Begin met de labs', to: '/docs/installatie'}];
 
-function HomepageHeader() {
-  const {siteConfig} = useDocusaurusContext();
-  return (
-    <header className={clsx('hero hero--primary', styles.heroBanner)}>
-      <div className="container">
-        <Heading as="h1" className="hero__title">
-          {siteConfig.title}
-        </Heading>
-        <p className="hero__subtitle">{siteConfig.tagline}</p>
-        <div className={styles.buttons}>
-          <Link
-            className="button button--secondary button--lg"
-            to="/docs/installatie">
-            Coderius-DVWA
-          </Link>
-        </div>
-      </div>
-    </header>
-  );
-}
+const features = [
+  {
+    icon: '🐧',
+    title: 'Linux leren',
+    description: 'De basis van de command line voor je begint.',
+    link: '/docs/linux_leren',
+  },
+  {
+    icon: '🛠️',
+    title: 'DVWA installeren',
+    description: 'Zet je eigen oefenomgeving op.',
+    link: '/docs/dvwa_installatie',
+  },
+  {
+    icon: '🎯',
+    title: 'Challenges',
+    description: 'SQL-injectie, XSS, command injection en meer.',
+    link: '/docs/dvwa_tutorial',
+  },
+];
 
 export default function Home() {
   const {siteConfig} = useDocusaurusContext();
   return (
-    <Layout
-      title={`Hello from ${siteConfig.title}`}
-      description="Description will go into a meta tag in <head />">
-      <HomepageHeader />
-      <main>
-        <HomepageFeatures />
-      </main>
+    <Layout title={siteConfig.title} description={siteConfig.tagline}>
+      <HomepageHero ctas={ctas} />
+      <HomepageFeatures heading="Waar wil je mee aan de slag?" features={features} />
     </Layout>
   );
 }

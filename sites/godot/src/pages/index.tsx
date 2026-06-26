@@ -1,44 +1,38 @@
 import type {ReactNode} from 'react';
-import clsx from 'clsx';
-import Link from '@docusaurus/Link';
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
-import HomepageFeatures from '@site/src/components/HomepageFeatures';
-import Heading from '@theme/Heading';
+import HomepageHero, {type HeroCta} from '@coderius/shared/components/HomepageHero';
+import HomepageFeatures, {type FeatureItem} from '@coderius/shared/components/HomepageFeatures';
 
-import styles from './index.module.css';
+const ctas: HeroCta[] = [{label: 'Begin met je 1e 2D game', to: '/docs/installatie'}];
 
-function HomepageHeader() {
-  const {siteConfig} = useDocusaurusContext();
-  return (
-    <header className={clsx('hero hero--primary', styles.heroBanner)}>
-      <div className="container">
-        <Heading as="h1" className="hero__title">
-          {siteConfig.title}
-        </Heading>
-        <p className="hero__subtitle">{siteConfig.tagline}</p>
-        <div className={styles.buttons}>
-          <Link
-            className="button button--secondary button--lg"
-            to="/docs/installatie">
-            Begin met je 1e 2D game
-          </Link>
-        </div>
-      </div>
-    </header>
-  );
-}
+const features: FeatureItem[] = [
+  {
+    icon: '🕹️',
+    title: 'Begin de tutorial',
+    description: 'Van installatie tot je eerste speelbare 2D game.',
+    link: '/docs/installatie',
+  },
+  {
+    icon: '🧩',
+    title: 'Nodes cheatsheet',
+    description: 'De belangrijkste Godot-nodes op een rij.',
+    link: '/cheatsheet',
+  },
+  {
+    icon: '📝',
+    title: 'GDScript-tips',
+    description: 'Handige patronen en valkuilen in GDScript.',
+    link: '/gdscript-tips',
+  },
+];
 
 export default function Home(): ReactNode {
-  const {siteConfig} = useDocusaurusContext();
   return (
     <Layout
       title="Coderius Godot — Leer je eerste 2D game maken"
       description="Gratis Nederlandse cursus Godot 4: bouw stap voor stap je eerste 2D game met sprites, GDScript, animaties en collisions.">
-      <HomepageHeader />
-      <main>
-        <HomepageFeatures />
-      </main>
+      <HomepageHero ctas={ctas} />
+      <HomepageFeatures heading="Waar wil je mee aan de slag?" features={features} />
     </Layout>
   );
 }

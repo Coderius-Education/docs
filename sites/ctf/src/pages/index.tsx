@@ -1,44 +1,38 @@
 import type {ReactNode} from 'react';
-import clsx from 'clsx';
-import Link from '@docusaurus/Link';
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
-import HomepageFeatures from '@site/src/components/HomepageFeatures';
-import Heading from '@theme/Heading';
+import HomepageHero, {type HeroCta} from '@coderius/shared/components/HomepageHero';
+import HomepageFeatures, {type FeatureItem} from '@coderius/shared/components/HomepageFeatures';
 
-import styles from './index.module.css';
+const ctas: HeroCta[] = [{label: 'Start de challenges', to: '/docs/intro'}];
 
-function HomepageHeader() {
-  const {siteConfig} = useDocusaurusContext();
-  return (
-    <header className={clsx('hero hero--primary', styles.heroBanner)}>
-      <div className="container">
-        <Heading as="h1" className="hero__title">
-          {siteConfig.title}
-        </Heading>
-        <p className="hero__subtitle">{siteConfig.tagline}</p>
-        <div className={styles.buttons}>
-          <Link
-            className="button button--secondary button--lg"
-            to="/docs/intro">
-            Start de challenges
-          </Link>
-        </div>
-      </div>
-    </header>
-  );
-}
+const features: FeatureItem[] = [
+  {
+    icon: '🚩',
+    title: 'Challenges',
+    description: 'Begin met de eerste Capture the Flag-opdrachten.',
+    link: '/docs/intro',
+  },
+  {
+    icon: '🧰',
+    title: 'Toolbox',
+    description: 'De tools die je nodig hebt om challenges te kraken.',
+    link: '/toolbox',
+  },
+  {
+    icon: '📖',
+    title: 'Woordenlijst',
+    description: 'Snel de cybersecurity-termen opzoeken.',
+    link: '/woordenlijst',
+  },
+];
 
 export default function Home(): ReactNode {
-  const {siteConfig} = useDocusaurusContext();
   return (
     <Layout
       title="Home"
       description="Leer cybersecurity door Capture the Flag challenges op te lossen">
-      <HomepageHeader />
-      <main>
-        <HomepageFeatures />
-      </main>
+      <HomepageHero ctas={ctas} />
+      <HomepageFeatures heading="Waar wil je mee aan de slag?" features={features} />
     </Layout>
   );
 }

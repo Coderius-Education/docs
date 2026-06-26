@@ -1,38 +1,38 @@
-import Link from '@docusaurus/Link';
+import type {ReactNode} from 'react';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import HomepageFeatures from '@site/src/components/HomepageFeatures';
-import Heading from '@theme/Heading';
 import Layout from '@theme/Layout';
-import clsx from 'clsx';
-import type { ReactNode } from 'react';
+import HomepageHero, {type HeroCta} from '@coderius/shared/components/HomepageHero';
+import HomepageFeatures, {type FeatureItem} from '@coderius/shared/components/HomepageFeatures';
 
-import styles from './index.module.css';
+const ctas: HeroCta[] = [{label: 'Start met de Lego-auto', to: '/lego_auto/intro'}];
 
-function HomepageHeader() {
-  const { siteConfig } = useDocusaurusContext();
-  return (
-    <header className={clsx('hero hero--primary', styles.heroBanner)}>
-      <div className="container">
-        <Heading as="h1" className="hero__title">
-          {siteConfig.title}
-        </Heading>
-        <p className="hero__subtitle">{siteConfig.tagline}</p>
-      </div>
-    </header>
-  );
-}
+const features: FeatureItem[] = [
+  {
+    icon: '🤖',
+    title: 'Lego-auto',
+    description: 'Bouw stap voor stap je eigen rijdende robot.',
+    link: '/lego_auto/intro',
+  },
+  {
+    icon: '🧰',
+    title: 'Editor',
+    description: 'Schrijf en upload code naar je microcontroller.',
+    link: '/editor',
+  },
+  {
+    icon: '📋',
+    title: 'Cheatsheet',
+    description: 'Pin-aansluitingen en code-snippets snel opzoeken.',
+    link: '/cheatsheet',
+  },
+];
 
 export default function Home(): ReactNode {
-  const { siteConfig } = useDocusaurusContext();
+  const {siteConfig} = useDocusaurusContext();
   return (
-    <Layout
-      title={`Hello from ${siteConfig.title}`}
-      description="Description will go into a meta tag in <head />"
-    >
-      <HomepageHeader />
-      <main>
-        <HomepageFeatures />
-      </main>
+    <Layout title={siteConfig.title} description={siteConfig.tagline}>
+      <HomepageHero ctas={ctas} />
+      <HomepageFeatures heading="Waar wil je mee aan de slag?" features={features} />
     </Layout>
   );
 }

@@ -11,6 +11,9 @@
     "build": "pnpm --filter \"./sites/*\" -r build",
     "typecheck": "pnpm --filter \"./sites/*\" --filter \"./packages/*\" -r typecheck",
     "clear": "pnpm --filter \"./sites/*\" -r clear",
+    "preview-all": "node scripts/run-all-sites.mjs serve --build",
+    "preview-all:nobuild": "node scripts/run-all-sites.mjs serve",
+    "sites:start": "node scripts/run-all-sites.mjs start",
     "format": "biome format --write .",
     "lint": "biome check ."
   },
