@@ -31,7 +31,7 @@ const features: FeatureItem[] = [
 export default function Home(): ReactNode {
   return (
     <Layout title="Home" description="Leer hoe je kunt werken met een code editor">
-      <HomepageHero ctas={ctas} />
+      <HomepageHero title="Coderius Editor" ctas={ctas} />
       <HomepageFeatures heading="Waar wil je mee aan de slag?" features={features} />
     </Layout>
   );

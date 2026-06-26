@@ -1,6 +1,5 @@
 ---
 sidebar_position: 3
-hide_table_of_contents: true
 sidebar_label: 'VS Code'
 sidebar_custom_props:
   level: expert

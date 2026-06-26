@@ -31,7 +31,7 @@ export default function Home(): ReactNode {
     <Layout
       title="Leer Python programmeren"
       description="Leer stap voor stap programmeren in Python met interactieve oefeningen.">
-      <HomepageHero ctas={ctas} />
+      <HomepageHero title="Coderius Python" ctas={ctas} />
       <HomepageFeatures features={features} />
     </Layout>
   );

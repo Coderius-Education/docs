@@ -31,7 +31,7 @@ export default function Home(): ReactNode {
     <Layout
       title="Coderius Godot — Leer je eerste 2D game maken"
       description="Gratis Nederlandse cursus Godot 4: bouw stap voor stap je eerste 2D game met sprites, GDScript, animaties en collisions.">
-      <HomepageHero ctas={ctas} />
+      <HomepageHero title="Coderius Godot" ctas={ctas} />
       <HomepageFeatures heading="Waar wil je mee aan de slag?" features={features} />
     </Layout>
   );

@@ -1,7 +1,6 @@
 ---
 sidebar_position: 7
 title: "Het resultaat"
-hide_table_of_contents: true
 ---
 
 # Het resultaat

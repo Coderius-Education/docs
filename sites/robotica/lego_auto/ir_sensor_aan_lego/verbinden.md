@@ -1,6 +1,5 @@
 ---
 sidebar_position: 2
-hide_table_of_contents: true
 ---
 
 # IR-sensor aan het frame bevestigen

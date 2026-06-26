@@ -2,7 +2,6 @@
 sidebar_position: 5
 sidebar_label: "Stap 5: uitvoeren"
 title: "Stap 5: je Python-bestand uitvoeren"
-hide_table_of_contents: true
 ---
 
 # Stap 5: je Python-bestand uitvoeren

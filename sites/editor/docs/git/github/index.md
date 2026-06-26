@@ -1,7 +1,6 @@
 ---
 sidebar_position: 0
 title: GitHub - account en repo
-hide_table_of_contents: true
 ---
 
 # GitHub: account en repo

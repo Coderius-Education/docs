@@ -1,7 +1,7 @@
 import {createConfig} from '@coderius/shared/config';
 
 export default createConfig({
-  title: 'Webontwikkeling Leren — HTML, CSS & JavaScript — Coderius',
+  title: 'Webontwikkeling — Coderius',
   tagline: 'leer hier je eerste website te maken',
   url: 'https://web.coderius.nl',
   projectName: 'web-docs',

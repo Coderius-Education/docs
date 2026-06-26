@@ -2,7 +2,6 @@
 sidebar_position: 4
 sidebar_label: "Stap 4: mergen op GitHub"
 title: "Stap 4: de pull request mergen"
-hide_table_of_contents: true
 ---
 
 # Stap 4: de pull request mergen

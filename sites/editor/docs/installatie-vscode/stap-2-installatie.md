@@ -1,7 +1,6 @@
 ---
 sidebar_position: 2
 title: "Stap 2: installatie"
-hide_table_of_contents: true
 ---
 
 # Stap 2: installatie

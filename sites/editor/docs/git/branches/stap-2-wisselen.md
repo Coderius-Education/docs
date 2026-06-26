@@ -2,7 +2,6 @@
 sidebar_position: 2
 sidebar_label: "Stap 2: wisselen"
 title: "Stap 2: wisselen tussen branches"
-hide_table_of_contents: true
 ---
 
 # Stap 2: wisselen tussen branches

@@ -2,7 +2,6 @@
 sidebar_position: 5
 sidebar_label: "Stap 5: stagen"
 title: "Stap 5: een bestand stagen (git add)"
-hide_table_of_contents: true
 ---
 
 # Stap 5: een bestand stagen (`git add`)

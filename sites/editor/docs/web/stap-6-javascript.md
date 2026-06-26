@@ -1,7 +1,6 @@
 ---
 sidebar_position: 6
 title: "Stap 6: JavaScript toevoegen"
-hide_table_of_contents: true
 ---
 
 # Stap 6: JavaScript toevoegen

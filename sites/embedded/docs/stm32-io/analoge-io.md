@@ -1,6 +1,5 @@
 ---
 sidebar_position: 3
-hide_table_of_contents: true
 ---
 
 # 9.3 Analoge IO met HAL

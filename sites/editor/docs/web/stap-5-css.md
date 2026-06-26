@@ -1,7 +1,6 @@
 ---
 sidebar_position: 5
 title: "Stap 5: CSS toevoegen"
-hide_table_of_contents: true
 ---
 
 # Stap 5: CSS toevoegen

@@ -2,7 +2,6 @@
 sidebar_position: 5
 sidebar_label: "Stap 5: lokaal bijwerken"
 title: "Stap 5: lokaal bijwerken en opruimen"
-hide_table_of_contents: true
 ---
 
 # Stap 5: lokaal bijwerken en opruimen

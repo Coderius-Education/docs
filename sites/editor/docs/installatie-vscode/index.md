@@ -1,7 +1,6 @@
 ---
 sidebar_position: 0
 title: Installatie VS Code
-hide_table_of_contents: true
 ---
 
 # Installatie VS Code

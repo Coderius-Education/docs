@@ -1,7 +1,7 @@
 import {createConfig, prismThemes} from '@coderius/shared/config';
 
 export default createConfig({
-  title: 'Embedded Programmeren — Arduino & STM32 — Coderius',
+  title: 'Embedded Programmeren — Coderius',
   tagline: 'Van knipperende LED tot STM32: leer microcontrollers programmeren',
   url: 'https://embedded.coderius.nl',
   projectName: 'embedded-docs',

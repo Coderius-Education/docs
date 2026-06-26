@@ -2,7 +2,6 @@
 sidebar_position: 4
 sidebar_label: "Stap 4: virtual environment"
 title: "Stap 4: virtual environment aanmaken"
-hide_table_of_contents: true
 ---
 
 # Stap 4: virtual environment aanmaken

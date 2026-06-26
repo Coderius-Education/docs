@@ -2,7 +2,6 @@
 sidebar_position: 2
 sidebar_label: "Stap 2: repo aanmaken"
 title: "Stap 2: een lege repository aanmaken"
-hide_table_of_contents: true
 ---
 
 # Stap 2: een lege repository aanmaken

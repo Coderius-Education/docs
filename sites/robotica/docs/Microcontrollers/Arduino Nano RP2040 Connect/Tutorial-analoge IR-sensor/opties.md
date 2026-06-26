@@ -1,6 +1,5 @@
 ---
 sidebar_position: 4
-hide_table_of_contents: true
 ---
 
 # 11.4 Hoeveel sensoren kan ik aansluiten?

@@ -2,7 +2,6 @@
 sidebar_position: 1
 sidebar_label: "Stap 1: git config"
 title: "Stap 1: vertel git wie je bent"
-hide_table_of_contents: true
 ---
 
 # Stap 1: vertel git wie je bent

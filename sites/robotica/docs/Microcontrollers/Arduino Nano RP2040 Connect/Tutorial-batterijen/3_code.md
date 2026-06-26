@@ -1,6 +1,5 @@
 ---
 sidebar_position: 3
-hide_table_of_contents: true
 ---
 
 # 14.3 Code op de microcontroller zetten

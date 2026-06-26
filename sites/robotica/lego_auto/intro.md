@@ -1,6 +1,5 @@
 ---
 sidebar_position: 1
-hide_table_of_contents: true
 ---
 import PdfFile from '@site/static/bricklink_studio/bom_lego.pdf';
 import ObjViewer from '@site/src/components/ObjViewer';

@@ -1,6 +1,5 @@
 ---
 sidebar_position: 91
-hide_table_of_contents: true
 slug: /meer-leren
 ---
 

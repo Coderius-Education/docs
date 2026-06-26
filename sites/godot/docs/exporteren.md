@@ -1,6 +1,5 @@
 ---
 sidebar_position: 90
-hide_table_of_contents: true
 slug: /exporteren
 ---
 

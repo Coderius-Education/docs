@@ -1,7 +1,6 @@
 ---
 sidebar_position: 4
 title: "Clone vs. Open Folder"
-hide_table_of_contents: true
 ---
 
 # Clone vs. Open Folder

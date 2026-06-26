@@ -2,7 +2,6 @@
 sidebar_position: 7
 sidebar_label: "Stap 7: tweede commit"
 title: "Stap 7: een tweede commit"
-hide_table_of_contents: true
 ---
 
 # Stap 7: een tweede commit

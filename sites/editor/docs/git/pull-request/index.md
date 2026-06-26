@@ -1,7 +1,6 @@
 ---
 sidebar_position: 0
 title: Pull Requests
-hide_table_of_contents: true
 ---
 
 # Pull Requests

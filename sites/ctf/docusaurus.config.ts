@@ -3,7 +3,7 @@ import {createConfig} from '@coderius/shared/config';
 // Site-specifieke config; gedeelde standaarden (assets, merk-CSS, CC BY-NC 4.0,
 // i18n, prism, transpilatie van @coderius/* componenten) komen uit createConfig.
 export default createConfig({
-  title: 'Capture The Flag — Cybersecurity Leren — Coderius',
+  title: 'Capture The Flag — Coderius',
   tagline: 'Leer cybersecurity door Capture the Flag challenges',
   url: 'https://ctf.coderius.nl',
   projectName: 'ctf-docs',

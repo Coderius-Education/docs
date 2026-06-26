@@ -2,7 +2,6 @@
 sidebar_position: 2
 sidebar_label: "Stap 2: Git: Pull"
 title: "Stap 2: pull-only via het Command Palette"
-hide_table_of_contents: true
 ---
 
 # Stap 2: pull-only via het Command Palette

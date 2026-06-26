@@ -1,6 +1,5 @@
 ---
 sidebar_position: 9
-hide_table_of_contents: true
 ---
 
 # 2.8 Eindpunt detecteren

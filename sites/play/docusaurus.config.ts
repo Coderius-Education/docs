@@ -4,7 +4,7 @@ const organizationName = 'Coderius-Education';
 const projectName = 'play-docs';
 
 export default createConfig({
-  title: 'coderius-play',
+  title: 'Python Games — Coderius',
   tagline: 'Leer nog beter Python door het maken van games',
   url: 'https://play.coderius.nl',
   projectName,

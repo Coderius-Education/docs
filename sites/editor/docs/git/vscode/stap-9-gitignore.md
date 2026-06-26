@@ -2,7 +2,6 @@
 sidebar_position: 9
 sidebar_label: "Stap 9: .gitignore"
 title: "Stap 9: een .gitignore aanmaken"
-hide_table_of_contents: true
 ---
 
 # Stap 9: een `.gitignore` aanmaken

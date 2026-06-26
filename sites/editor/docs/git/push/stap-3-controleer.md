@@ -1,7 +1,6 @@
 ---
 sidebar_position: 3
 title: "Stap 3: controleer op GitHub"
-hide_table_of_contents: true
 ---
 
 # Stap 3: controleer op GitHub
