@@ -23,12 +23,11 @@ Elke pagina begint met YAML-frontmatter:
 ```yaml
 ---
 sidebar_position: <getal>
-hide_table_of_contents: true
 ---
 ```
 
 - `sidebar_position` bepaalt de volgorde in de sidebar.
-- `hide_table_of_contents: true` is de standaard voor lespagina's (de structuur is al duidelijk via H2's en opdrachten).
+- De rechter inhoudsopgave (TOC) staat standaard aan en toont **alleen H2-koppen** (centraal ingesteld in `packages/shared/config`). Voeg dus géén `hide_table_of_contents` toe; structureer je pagina met `##`-secties zodat ze in de TOC verschijnen.
 - Cheatsheets en losse referentiepagina's mogen `displayed_sidebar: null` en `hide_pagination: true` gebruiken.
 - Gebruik `sidebar_label` alleen als de paginatitel te lang is voor de sidebar.
 

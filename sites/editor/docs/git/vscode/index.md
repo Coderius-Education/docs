@@ -1,7 +1,6 @@
 ---
 sidebar_position: 0
 title: Git in VS Code
-hide_table_of_contents: true
 ---
 
 # Git in VS Code

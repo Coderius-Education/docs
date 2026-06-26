@@ -1,6 +1,5 @@
 ---
 sidebar_position: 1
-hide_table_of_contents: true
 title: Hoe werkt een TOF-sensor?
 ---
 

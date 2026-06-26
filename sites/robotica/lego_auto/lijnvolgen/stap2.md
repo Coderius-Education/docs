@@ -1,6 +1,5 @@
 ---
 sidebar_position: 3
-hide_table_of_contents: true
 title: Stap 2 — Twee sensoren tegelijk
 ---
 

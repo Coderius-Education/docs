@@ -1,6 +1,5 @@
 ---
 sidebar_position: 3
-hide_table_of_contents: true
 ---
 
 # 8.3 Code uploaden naar de STM32

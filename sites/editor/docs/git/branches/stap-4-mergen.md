@@ -2,7 +2,6 @@
 sidebar_position: 4
 sidebar_label: "Stap 4: mergen"
 title: "Stap 4: branches samenvoegen (merge)"
-hide_table_of_contents: true
 ---
 
 # Stap 4: branches samenvoegen (merge)

@@ -2,7 +2,6 @@
 sidebar_position: 3
 sidebar_label: "Stap 3: Python-bestand"
 title: "Stap 3: een Python-bestand aanmaken"
-hide_table_of_contents: true
 ---
 
 # Stap 3: een Python-bestand aanmaken

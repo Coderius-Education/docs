@@ -1,6 +1,5 @@
 ---
 sidebar_position: 1
-hide_table_of_contents: true
 ---
 
 # 9.1 GPIO als uitgang

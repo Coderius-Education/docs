@@ -1,7 +1,6 @@
 ---
 sidebar_position: 1
 title: "Stap 1: download VS Code"
-hide_table_of_contents: true
 ---
 
 # Stap 1: download VS Code

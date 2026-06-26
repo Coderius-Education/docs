@@ -2,7 +2,6 @@
 sidebar_position: 3
 sidebar_label: "Stap 3: Source Control"
 title: "Stap 3: de Source Control-knop"
-hide_table_of_contents: true
 ---
 
 # Stap 3: de Source Control-knop

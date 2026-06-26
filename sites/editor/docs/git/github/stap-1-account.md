@@ -2,7 +2,6 @@
 sidebar_position: 1
 sidebar_label: "Stap 1: account"
 title: "Stap 1: een GitHub-account aanmaken"
-hide_table_of_contents: true
 ---
 
 # Stap 1: een GitHub-account aanmaken

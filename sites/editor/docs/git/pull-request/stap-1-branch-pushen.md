@@ -2,7 +2,6 @@
 sidebar_position: 1
 sidebar_label: "Stap 1: branch pushen"
 title: "Stap 1: je feature-branch pushen"
-hide_table_of_contents: true
 ---
 
 # Stap 1: je feature-branch pushen

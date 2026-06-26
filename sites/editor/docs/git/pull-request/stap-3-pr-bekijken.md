@@ -2,7 +2,6 @@
 sidebar_position: 3
 sidebar_label: "Stap 3: PR bekijken"
 title: "Stap 3: de pull request bekijken"
-hide_table_of_contents: true
 ---
 
 # Stap 3: de pull request bekijken

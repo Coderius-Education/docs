@@ -98,6 +98,9 @@ function createConfig(site = {}) {
   const themeConfig = {
     colorMode: {respectPrefersColorScheme: true},
     prism: {theme: prismThemes.github, darkTheme: prismThemes.dracula},
+    // Rechter inhoudsopgave toont standaard alleen H2-koppen. Een site mag dit
+    // overschrijven via themeConfig.tableOfContents.
+    tableOfContents: {minHeadingLevel: 2, maxHeadingLevel: 2},
     ...siteThemeConfig,
   };
   if (themeConfig.footer && !themeConfig.footer.copyright) {

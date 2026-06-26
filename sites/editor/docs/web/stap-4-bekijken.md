@@ -1,7 +1,6 @@
 ---
 sidebar_position: 4
 title: "Stap 4: bekijk je website"
-hide_table_of_contents: true
 ---
 
 # Stap 4: bekijk je website

@@ -1,6 +1,5 @@
 ---
 sidebar_position: 10
-hide_table_of_contents: true
 ---
 
 # 2.9 Pinoverzicht Nano RP2040 Connect

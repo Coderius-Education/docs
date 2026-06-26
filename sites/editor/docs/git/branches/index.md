@@ -1,7 +1,6 @@
 ---
 sidebar_position: 0
 title: Branches
-hide_table_of_contents: true
 ---
 
 # Branches

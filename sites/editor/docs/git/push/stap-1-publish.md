@@ -2,7 +2,6 @@
 sidebar_position: 1
 sidebar_label: "Stap 1: Publish Branch"
 title: "Stap 1: eerste publish vanuit VS Code"
-hide_table_of_contents: true
 ---
 
 # Stap 1: eerste publish vanuit VS Code

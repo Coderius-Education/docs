@@ -1,6 +1,5 @@
 ---
 sidebar_position: 5
-hide_table_of_contents: true
 ---
 
 # 4.5 Een score bijhouden met `global`

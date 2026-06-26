@@ -2,7 +2,6 @@
 sidebar_position: 6
 sidebar_label: "Stap 6: pip (optioneel)"
 title: "Stap 6 (optioneel): packages installeren met pip"
-hide_table_of_contents: true
 ---
 
 # Stap 6 (optioneel): packages installeren met pip

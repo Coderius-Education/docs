@@ -1,7 +1,6 @@
 ---
 sidebar_position: 0
 title: Git & GitHub
-hide_table_of_contents: true
 ---
 
 # Git & GitHub

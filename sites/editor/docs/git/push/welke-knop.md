@@ -1,7 +1,6 @@
 ---
 sidebar_position: 4
 title: "Welke knop is welk commando?"
-hide_table_of_contents: true
 ---
 
 # Welke knop is welk commando?

@@ -2,7 +2,6 @@
 sidebar_position: 8
 sidebar_label: "Stap 8: git log"
 title: "Stap 8: controleer met git log"
-hide_table_of_contents: true
 ---
 
 # Stap 8: controleer met `git log`

@@ -1,6 +1,5 @@
 ---
 sidebar_position: 3
-hide_table_of_contents: true
 ---
 
 # 13.3 Let op: bezet pinnen

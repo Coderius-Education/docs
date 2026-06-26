@@ -2,7 +2,6 @@
 sidebar_position: 1
 sidebar_label: "Stap 1: Sync Changes"
 title: "Stap 1: pull via Sync Changes"
-hide_table_of_contents: true
 ---
 
 # Stap 1: pull via Sync Changes

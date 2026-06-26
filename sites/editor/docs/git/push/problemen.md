@@ -1,7 +1,6 @@
 ---
 sidebar_position: 5
 title: "Er gaat iets mis"
-hide_table_of_contents: true
 ---
 
 # Er gaat iets mis

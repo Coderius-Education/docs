@@ -1,7 +1,6 @@
 ---
 sidebar_position: 0
 title: Python in VS Code
-hide_table_of_contents: true
 ---
 
 # Python in VS Code

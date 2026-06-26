@@ -1,6 +1,5 @@
 ---
 sidebar_position: 4
-hide_table_of_contents: true
 ---
 
 # 9.4 Twee of meer TOFs met multiplexer

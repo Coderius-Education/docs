@@ -2,7 +2,6 @@
 sidebar_position: 1
 sidebar_label: "Stap 1: branch aanmaken"
 title: "Stap 1: een branch aanmaken"
-hide_table_of_contents: true
 ---
 
 # Stap 1: een branch aanmaken

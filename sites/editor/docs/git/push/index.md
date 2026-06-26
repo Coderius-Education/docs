@@ -1,7 +1,6 @@
 ---
 sidebar_position: 0
 title: Code online zetten met push
-hide_table_of_contents: true
 ---
 
 # Code online zetten met push

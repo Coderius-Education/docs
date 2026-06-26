@@ -1,7 +1,6 @@
 ---
 sidebar_position: 0
 title: Website in VS Code
-hide_table_of_contents: true
 ---
 
 # Webontwikkeling met VS Code

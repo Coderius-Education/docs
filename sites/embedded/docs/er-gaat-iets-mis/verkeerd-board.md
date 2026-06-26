@@ -1,6 +1,5 @@
 ---
 sidebar_position: 6
-hide_table_of_contents: true
 ---
 
 # Verkeerd board in platformio.ini

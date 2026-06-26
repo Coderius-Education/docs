@@ -2,7 +2,6 @@
 sidebar_position: 4
 sidebar_label: "Stap 4: wat git ziet"
 title: "Stap 4: zien wat git ziet"
-hide_table_of_contents: true
 ---
 
 # Stap 4: zien wat git ziet
