@@ -21,6 +21,21 @@ Deze gids is geen format-gids (dat is `WRITING_STYLE_GUIDE.md`), maar een verzam
 - **Disclaimer-stapeling.** "Let op: dit is een voorbeeld. Het is niet de enige manier. In de praktijk gebruik je …" → kies één punt en zeg dat.
 - **Engels als opvulling.** Geen "let's" of "we're gonna" — gewoon Nederlands.
 
+### Dat "door-een-AI-geschreven"-gevoel
+
+Deze patronen verraden gegenereerde tekst. Vermijd ze:
+
+- **Emoji als versiering.** Niet in koppen, bullets of lopende tekst om iets "leuker" te maken. (Zie ook de emoji-regel in `WRITING_STYLE_GUIDE.md` §1.)
+- **Formulaire openers.** "In dit hoofdstuk…", "Laten we…", "We gaan kijken naar…", "Duik in…" → begin met de inhoud.
+- **Holle superlatieven.** *geweldig, supereenvoudig, krachtig, naadloos, moeiteloos.* Laat het voorbeeld het werk doen.
+- **De rule-of-three-reflex.** Niet alles in keurige drietallen ("snel, simpel en krachtig").
+- **Alles vet.** Vet verliest betekenis als het overal staat; benadruk alleen de kernterm.
+- **Em-dash-overdaad.** Niet elke zin aan elkaar rijgen met "—"; een punt mag.
+- **Lege overgangen.** "Daarnaast", "Bovendien", "Kortom", "Het is belangrijk om te benadrukken dat…".
+- **Robotachtige symmetrie.** Elke alinea even lang, elke bullet dezelfde structuur, elke zin met hetzelfde woord beginnen. Varieer.
+
+Een goede test: lees het hardop. Klinkt het als een docent die naast de leerling zit, of als een brochure?
+
 ## 3. Voorbeelden vóór abstractie
 
 Toon **eerst** een concreet, klein, werkend snippet. **Dan** pas de definitie of theorie.
@@ -65,6 +80,8 @@ Wanneer welk hulpmiddel:
 | "In deze opdracht ga je leren hoe je …" | "## Opdracht 3.2.a: Sorteren met `sort()`" + 1 zin wat te doen |
 | "We zullen nu een voorbeeld bekijken." | (toon het voorbeeld) |
 | "Met behulp van de functie `len()` kunnen we …" | "`len()` geeft de lengte van een lijst." |
+| "🚀 Aan de slag met lijsten! 🎉" | "## Lijsten" |
+| "In dit hoofdstuk duiken we in de krachtige wereld van loops." | "Een loop herhaalt code. Hier tel je tot 5:" + voorbeeld |
 
 ## 6. Opdrachten schrijven
 
@@ -81,7 +98,8 @@ Wanneer welk hulpmiddel:
 
 ## 8. Review-checklist (kort, vóór publicatie)
 
-- [ ] **Toon:** geen "u", geen vulwoorden, geen onnodige uitroeptekens.
+- [ ] **Toon:** geen "u", geen vulwoorden, geen uitroeptekens, geen holle superlatieven.
+- [ ] **Geen slop-signalen:** geen emoji als versiering, geen formulaire opener, niet alles vet, gevarieerde zinsopeningen.
 - [ ] **Eén concept-check:** introduceert deze pagina maximaal één nieuw idee?
 - [ ] **Voorbeeld vóór definitie:** zie ik eerst werkende code, dan uitleg?
 - [ ] **Opdrachten:** elke opdracht heeft tip én oplossing in `<details>`?

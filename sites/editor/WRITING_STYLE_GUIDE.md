@@ -11,10 +11,10 @@ Dit document beschrijft de schrijfstijl die binnen `play-docs` consequent wordt 
 - **Doelgroep:** middelbare scholieren die net beginnen met programmeren / een nieuw onderwerp.
 - **Taal:** Nederlands. Engelse termen alleen waar het technisch nodig is (functienamen, keywords, foutmeldingen).
 - **Stem:** vriendelijk, direct, aanmoedigend. Spreek de lezer aan met **"je"** en **"jouw"** (nooit "u").
-- **Energie:** warm en uitnodigend ("Het is tijd voor je eerste programma!", "Wat leuk dat je…").
+- **Energie:** warm en uitnodigend, maar zónder uitroeptekens of superlatieven. Schrijf "Tijd voor je eerste programma." en "Leuk dat je er bent.", niet "Het is tijd voor je eerste programma!".
 - **Lengte:** kort en concreet. Eén concept per paragraaf. Geen lange inleidingen, geen samenvatting aan het einde van een hoofdstuk.
 - **Geen jargon zonder uitleg.** Introduceer een term, leg uit, gebruik daarna consequent.
-- **Geen emoji's** in lesmateriaal (behalve op cheatsheet als markering voor "nieuw in versie X" zoals ⭐).
+- **Geen emoji's in lesmateriaal:** niet in lopende tekst, niet in koppen, niet in opsommingen, niet in admonitions. Eén uitzondering: de ⭐-markering voor "nieuw in versie X" op de cheatsheet. (UI-componenten zoals homepage-kaarten of de navbar mogen een terughoudende, vaste iconenset gebruiken — dat is geen lesmateriaal.)
 
 ## 2. Bestandsstructuur en frontmatter
 
@@ -183,13 +183,15 @@ Meer uitleg: [<sectienaam>](<relatieve link>)
 ## 9. Opmaak en typografie
 
 - **`code-fences`** voor zowel inline (`` `clone()` ``) als blok (` ```python `).
-- **Vet** voor benadrukking van termen en methodenamen in lopende tekst: **`distance_to()`**, **dynamic**, **kinematic**.
+- **Vet spaarzaam.** Alleen de eerste keer dat je een kernterm of methodenaam noemt: **`distance_to()`**, **dynamic**, **kinematic**. Geen hele zinnen vet — als alles vet is, valt niets meer op.
 - **Cursief** alleen voor woordklemtoon (`*easy*`, `*medium*`).
+- **Em-dash (—) spaarzaam.** Meestal is een punt of komma beter. Rijg niet elke zin aan elkaar met een gedachtestreepje.
 - **Lijsten:**
   - Gebruik bullet points (`-`) voor opsommingen zonder volgorde.
   - Gebruik genummerde lijsten (`1.`, `2.`, …) voor stappen of vereisten.
+  - Niet elke alinea hoeft een lijst te worden; lopende tekst mag.
 - **Tabellen** voor attribuut-vergelijkingen of fysica-types. Gecenterde headers (`|:---:|`).
-- **Geen ALL CAPS**, geen uitroeptekens stapelen.
+- **Geen ALL CAPS** en liefst geen uitroeptekens in lestekst (zeker niet gestapeld).
 
 ## 10. Admonitions
 
@@ -265,7 +267,10 @@ Voor pagina's onder `jouw_project/` (of vergelijkbaar):
 - [ ] Bij MDX is `<TryButton>` toegevoegd voor elk runnable codeblok.
 - [ ] Interne links bestaan en wijzen naar de juiste pagina.
 - [ ] Methodenamen consequent in `**vet**` of `` `code` `` (kies één stijl per project en houd 'm vol).
-- [ ] Geen "u", geen emoji's in lopende tekst, geen onnodige uitroeptekens.
+- [ ] Geen "u", geen uitroeptekens.
+- [ ] Geen emoji in lestekst, koppen of opsommingen (alleen de ⭐-versiemarker op de cheatsheet).
+- [ ] Geen holle superlatieven of formulaire openers ("In dit hoofdstuk…", "Laten we…").
+- [ ] Niet alles vet; varieer de openingswoorden van zinnen en bullets.
 - [ ] Voor elk gebruikt concept dat elders is uitgelegd: een `:::info`-verwijzing.
 
 ---
