@@ -25,7 +25,7 @@ $stmt->execute();
 
 <summary>Antwoord</summary>
 
-Het framework controleert of de variabele wiskundig en letterlijk een Integer (rond getal) is, voordat het de database bereikt. Tekst zoals `AND SLEEP(5)` of aanhalingstekens worden onmiddellijk geweigerd door de backend nog voordat de query wordt uitgevoerd. Zelfs als het filter hem zou doorlaten, zorgt de Prepared Statement (`prepare()`) ervoor dat de database hem weigert!
+Het framework controleert of de variabele wiskundig en letterlijk een Integer (rond getal) is, voordat het de database bereikt. Tekst zoals `AND SLEEP(5)` of aanhalingstekens worden onmiddellijk geweigerd door de backend nog voordat de query wordt uitgevoerd. Zelfs als het filter hem zou doorlaten, zorgt de Prepared Statement (`prepare()`) ervoor dat de database hem weigert.
 
 </details>
 
@@ -39,7 +39,7 @@ Vul `1' AND SLEEP(5) #` in en kijk of de pagina vertraagt. Probeer ook `1 AND SL
 
 ## 3. ✓ Wat moest je zien?
 
-:::tip Controle
+:::tip[Controle]
 - Elke SQL-injectie-poging levert direct een "Invalid" of "Missing"-melding op — zonder enige vertraging.
 - `1 AND SLEEP(5)` veroorzaakt geen 5-secondenvertraging meer.
 - De applicatie gedraagt zich exact hetzelfde, ongeacht wat je invoert.

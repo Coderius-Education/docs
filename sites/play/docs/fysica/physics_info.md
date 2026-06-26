@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # 2.2 Soorten fysica
 
-:::info Wat moet je al weten
+:::info[Wat moet je al weten]
 - [2.1 Links en rechts bewegen](/docs/fysica/links_en_rechts) - hoe je `start_physics()` aanroept
 :::
 
@@ -107,7 +107,7 @@ Stel je maakt een pong-spel. Welk type fysica (**dynamic**, **static** of **kine
 | De muren aan de boven- en onderkant | ??? |
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 | Onderdeel | Type fysica | Waarom? |
 | --- | --- | --- |
@@ -137,7 +137,7 @@ vorm_c.start_physics(can_move=True, obeys_gravity=False, stable=True, x_speed=50
 ```
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 ```python
 import play
@@ -164,6 +164,6 @@ vorm_c.physics_info()
 
 </details>
 
-:::info Waar kom je dit later weer tegen?
+:::info[Waar kom je dit later weer tegen?]
 Bij [Pong (eindproject)](/docs/jouw_project/pong) pas je deze drie types direct toe: de bal is **dynamic**, de batjes zijn **kinematic**, en de muren zijn **static**. Opdracht 2.2.a hierboven is feitelijk al de voorbereiding op die keuze.
 :::

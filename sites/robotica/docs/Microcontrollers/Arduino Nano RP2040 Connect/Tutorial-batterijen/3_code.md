@@ -6,7 +6,7 @@ sidebar_position: 3
 
 Zonder USB-kabel kan niemand op **Run** drukken. De code moet dus al **op de microcontroller** staan. De truc: een bestand dat **`main.py`** heet wordt automatisch uitgevoerd zodra de microcontroller stroom krijgt.
 
-:::info Samengevat
+:::info[Samengevat]
 
 - Code op je **laptop** opslaan → werkt alleen als je in Thonny op **Run** drukt.
 - Code als **`main.py`** op de **microcontroller** opslaan → start automatisch zodra de microcontroller stroom krijgt.
@@ -52,7 +52,7 @@ Het belangrijkste is dat je de `>>>`-prompt ziet.
    - **Boven**: bestanden op je **laptop**.
    - **Onder**: bestanden op de **microcontroller**.
 
-:::warning Let op
+:::warning[Let op]
 
 Alleen bestanden met **blokhaken** `[ ]` om de naam in het tabblad staan op de microcontroller. Tabbladen zonder blokhaken zijn bestanden op je laptop.
 
@@ -67,13 +67,13 @@ Alleen bestanden met **blokhaken** `[ ]` om de naam in het tabblad staan op de m
 
 Het bestand `[main.py]` opent vanzelf. Hier komt je code te staan.
 
-:::danger Bestandsnaam moet kloppen
+:::danger[Bestandsnaam moet kloppen]
 
 Het moet precies **`main.py`** zijn. Niet `Main.py`, niet `main.PY`, niet `mijn_code.py`. Alleen `main.py` wordt automatisch uitgevoerd.
 
 :::
 
-:::warning Vergeet de while-loop niet
+:::warning[Vergeet de while-loop niet]
 
 Zorg dat je code een `while True:`-loop heeft. Anders voert de microcontroller je code één keer uit en stopt.
 

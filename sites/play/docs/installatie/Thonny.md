@@ -48,7 +48,7 @@ Klik op de groene knop (`Run current script`) om de code te draaien
 
 ![run](@site/static/img/thonny_run_current_script.png)
 
-Als er een zwarte bal verschijnt, dan is de installatie gelukt!
+Als er een zwarte bal verschijnt, dan is de installatie gelukt.
 
-## Stap 3: En beginnen maar!
+## Stap 3: En beginnen maar.
 Je kan nu beginnen [met het lesmateriaal](../vormen/je_eerste_programma.mdx).

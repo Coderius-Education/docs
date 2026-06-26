@@ -57,7 +57,7 @@ Heb je een animatie als GIF (bijvoorbeeld uit een tutorial of YouTube)?
 
 1. Ga naar [ezgif.com/split](https://ezgif.com/split).
 2. Upload je GIF.
-3. Klik op **Split to frames!** en daarna op **Download frames as ZIP**.
+3. Klik op **Split to frames.** en daarna op **Download frames as ZIP**.
 4. Je krijgt elke frame als losse PNG.
 
 ## Stap 2: Maak de achtergrond transparant

@@ -36,7 +36,7 @@ Start het lab en bekijk het formulier.
 
 <DvwaLab module="csp_bypass" level="medium" />
 
-> ⚠️ **Labbeperking:** Het inspecteren van HTTP-response headers in een iframe is beperkt. Het lab simuleert de nonce-logica, maar voor het volledig inspecteren van headers heb je een [lokale DVWA-installatie](/docs/dvwa_installatie) nodig.
+> **Labbeperking:** Het inspecteren van HTTP-response headers in een iframe is beperkt. Het lab simuleert de nonce-logica, maar voor het volledig inspecteren van headers heb je een [lokale DVWA-installatie](/docs/dvwa_installatie) nodig.
 
 Probeer `<script>alert(1)</script>` in te vullen. Observeer dat het geblokkeerd wordt.
 
@@ -79,7 +79,7 @@ De browser controleert de nonce, ziet dat die exact overeenkomt met de waarde in
 
 ## 5. ✓ Wat moest je zien?
 
-:::tip Controle
+:::tip[Controle]
 - Een script zonder de nonce wordt door de browser geblokkeerd.
 - Een script **met** de juiste nonce wordt wél uitgevoerd — er verschijnt een pop-up.
 - De nonce-waarde in de broncode is gelijk aan de waarde in de CSP-header — ze zijn hardcoded en identiek.

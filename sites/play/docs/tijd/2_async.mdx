@@ -4,10 +4,10 @@ sidebar_position: 2
 
 # 5.2 Wachten met `async` en `await`
 
-:::info Wat je hier nieuw gaat zien
+:::info[Wat je hier nieuw gaat zien]
 Op deze pagina komen drie dingen samen. Twee daarvan ken je al, één is nieuw:
-- 🔁 In [5.1 Wachten in je spel](/docs/tijd/bal) zag je dat `time.sleep()` het hele spel bevriest.
-- 🔁 In [4.3 De muis gebruiken](/docs/gebeurtenissen/muis#reageren-op-een-muisklik) heb je `@play.when_mouse_clicked` gezien.
+- In [5.1 Wachten in je spel](/docs/tijd/bal) zag je dat `time.sleep()` het hele spel bevriest.
+- In [4.3 De muis gebruiken](/docs/gebeurtenissen/muis#reageren-op-een-muisklik) heb je `@play.when_mouse_clicked` gezien.
 - ⭐ **Nieuw**: de sleutelwoorden `async` en `await`. Daar gaat deze pagina over.
 
 Lees rustig — als de muis-decorator je nog niet helemaal duidelijk is, kijk dan eerst even terug naar 4.3.
@@ -57,7 +57,7 @@ We zetten de x_speed van de bal op 100 pixels.
 ```
 await play.timer(seconds=1)
 ```
-We wachten 1 seconde. Het verschil met `time.sleep()`: het spel draait gewoon door terwijl deze functie wacht!
+We wachten 1 seconde. Het verschil met `time.sleep()`: het spel draait gewoon door terwijl deze functie wacht.
 
 ```python
 bal.physics.x_speed = 10
@@ -89,7 +89,7 @@ async def tijdelijk_sneller():
     play.timer(seconds=1)
 ```
 
-Dit geeft geen foutmelding, maar de timer wordt genegeerd! Je moet altijd `await` ervoor zetten.
+Dit geeft geen foutmelding, maar de timer wordt genegeerd. Je moet altijd `await` ervoor zetten.
 
 ## Samengevat
 
@@ -105,14 +105,14 @@ Onthoud: `async` en `await` horen altijd bij elkaar. Als je `await` gebruikt, mo
 Maak een vierkant dat bij een muisklik 3 keer knippert (zichtbaar → onzichtbaar → zichtbaar) en dan weer normaal is.
 
 <details>
-<summary>Klik hier voor een tip!</summary>
+<summary>Klik hier voor een tip.</summary>
 
 Gebruik `hide()` en `show()` met `await play.timer(seconds=0.3)` ertussen.
 
 </details>
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 <PygbagRunner code={`import play
 
@@ -142,7 +142,7 @@ Maak een cirkel die:
 3. Na 2 seconden weer blauw wordt
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 <PygbagRunner code={`import play
 

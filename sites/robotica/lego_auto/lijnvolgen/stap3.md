@@ -43,7 +43,7 @@ while True:
 
 Zet de robot op de baan met de lijn tussen de sensoren. Rijdt hij rechtdoor?
 
-:::tip Python opfrissen
+:::tip[Python opfrissen]
 Deze stap draait om beslissen. Lees na wat je nodig hebt:
 - [Booleans & vergelijken (`==`)](https://python.coderius.nl/docs/beslissen/05a-booleans-en-vergelijken)
 - [if / else](https://python.coderius.nl/docs/beslissen/05b-if-else)

@@ -30,7 +30,7 @@ Het groter-dan teken `>` wordt `&gt;` (Greater Than).
 
 Als jij dus `<script>alert(1)</script>` invult, spuugt de server dit uit:
 `&lt;script&gt;alert(1)&lt;/script&gt;`.
-Jouw browser ziet deze entiteiten en denkt: "Ah, de gebruiker wil letterlijk dat ik een pijltje-teken teken!" De browser tekent het als veilige tekst op het scherm, in plaats van het uit te voeren als code.
+Jouw browser ziet deze entiteiten en denkt: "Ah, de gebruiker wil letterlijk dat ik een pijltje-teken teken." De browser tekent het als veilige tekst op het scherm, in plaats van het uit te voeren als code.
 
 </details>
 
@@ -44,7 +44,7 @@ Vul achtereenvolgens `<script>alert(1);</script>`, `<SCRIPT>alert(1);</SCRIPT>` 
 
 ## 3. ✓ Wat moest je zien?
 
-:::tip Controle
+:::tip[Controle]
 - Elke XSS-payload wordt als **letterlijke tekst** op het scherm weergegeven — er verschijnt geen pop-up.
 - Je ziet de tekens `<`, `>` en `"` als onschadelijke karakters in plaats van HTML-code.
 - De browser voert niets uit, ongeacht welke payload je invoert.

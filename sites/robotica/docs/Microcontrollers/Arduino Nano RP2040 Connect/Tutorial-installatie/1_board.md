@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # 1.1 Het bord
 
-Welkom! Je gaat dit project bouwen met de **Arduino Nano RP2040 Connect**. Dat is een klein microcontroller-bord waarop je sensoren en actuatoren kunt aansluiten. Hieronder zie je het bord met al zijn pinnen.
+Welkom. Je gaat dit project bouwen met de **Arduino Nano RP2040 Connect**. Dat is een klein microcontroller-bord waarop je sensoren en actuatoren kunt aansluiten. Hieronder zie je het bord met al zijn pinnen.
 
 ![arduino nano rp2040 connect](pinout_nano_rp2040_connect.png)
 

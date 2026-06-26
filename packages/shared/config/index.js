@@ -129,6 +129,8 @@ function createConfig(site = {}) {
   const navbar = themeConfig.navbar ? {...themeConfig.navbar} : {};
   navbar.items = [
     ...(navbar.items || []),
+    // Elke site heeft een docentenhandleiding op /docenten (zie stijlgids §15).
+    {to: '/docenten', label: 'Docenten', position: 'right'},
     {
       type: 'dropdown',
       label: 'Cursussen',

@@ -31,7 +31,7 @@ while True:
 
 Beweeg de sensor boven een witte ondergrond en boven een zwarte lijn. Verandert de tekst op het scherm mee?
 
-:::tip Python opfrissen
+:::tip[Python opfrissen]
 Snap je de bouwstenen van deze stap nog niet helemaal? Lees:
 - [Variabelen](https://python.coderius.nl/docs/basis/jij-als-variabele)
 - [While-loop](https://python.coderius.nl/docs/herhalen/while-loop)

@@ -25,7 +25,7 @@ echo "Hello " . $name;
 
 <summary>Antwoord</summary>
 
-Ja! JavaScript kan ook geactiveerd worden via **Event Handlers** in andere HTML-elementen. Bijvoorbeeld als een afbeelding niet kan inladen (`onerror`), of als je met de muis over een knop beweegt (`onmouseover`).
+Ja. JavaScript kan ook geactiveerd worden via **Event Handlers** in andere HTML-elementen. Bijvoorbeeld als een afbeelding niet kan inladen (`onerror`), of als je met de muis over een knop beweegt (`onmouseover`).
 Bijvoorbeeld: `<img src="bestaatniet.jpg" onerror="alert(1)">`
 
 </details>
@@ -69,13 +69,13 @@ Laad een nep-afbeelding in. Als een afbeelding crasht, kan de browser automatisc
 <summary>Antwoord</summary>
 
 Vul in: `<img src=x onerror=alert("hacked")>` of `<svg onload=alert(1)>`.
-Zodra je dit indient, ziet het filter géén "script"-tag, en laat de payload door. De browser probeert afbeelding "x" te laden. Dat mislukt (want die bestaat niet), en de `onerror`-handler triggert een pop-up!
+Zodra je dit indient, ziet het filter géén "script"-tag, en laat de payload door. De browser probeert afbeelding "x" te laden. Dat mislukt (want die bestaat niet), en de `onerror`-handler triggert een pop-up.
 
 </details>
 
 ## 5. ✓ Wat moest je zien?
 
-:::tip Controle
+:::tip[Controle]
 - `<img src=x onerror=alert("hacked")>` triggert de **pop-up** ondanks het script-filter.
 - `<script>alert(1);</script>` en `<SCRIPT>` worden beide geblokkeerd.
 - De pop-up bewijst dat JavaScript via een andere HTML-tag werd uitgevoerd.
@@ -86,4 +86,4 @@ Geen pop-up? Controleer of je de aanhalingstekens correct hebt — sommige brows
 ## 6. Er gaat iets mis...
 
 Je probeert de payload `<body onload=alert(1)>`, maar er gebeurt niets.
-Let op waar de payload wordt *gereflecteerd* in de pagina. Als jouw payload midden in een bestaande HTML-tag wordt geplakt (bijvoorbeeld binnen een `<input value="...">`), dan werken sommige tags (zoals `<body>`) simpelweg niet omdat browsers ze daar negeren. De `<img>` of `<svg>`-truc werkt vrijwel altijd, zolang je eerst uit de eventueel omliggende aanhalingstekens breekt!
+Let op waar de payload wordt *gereflecteerd* in de pagina. Als jouw payload midden in een bestaande HTML-tag wordt geplakt (bijvoorbeeld binnen een `<input value="...">`), dan werken sommige tags (zoals `<body>`) simpelweg niet omdat browsers ze daar negeren. De `<img>` of `<svg>`-truc werkt vrijwel altijd, zolang je eerst uit de eventueel omliggende aanhalingstekens breekt.

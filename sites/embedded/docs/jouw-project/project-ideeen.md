@@ -21,7 +21,7 @@ Gebruik `millis()` om de tijd vast te leggen op het moment dat de LED aangaat en
 
 </details>
 
-**Mogelijke uitbreidingen:** meerdere rondes met een gemiddelde, een tweede knop voor twee spelers, een "te vroeg!"-melding.
+**Mogelijke uitbreidingen:** meerdere rondes met een gemiddelde, een tweede knop voor twee spelers, een "te vroeg."-melding.
 
 ## Idee 2: Thermometer met waarschuwing
 

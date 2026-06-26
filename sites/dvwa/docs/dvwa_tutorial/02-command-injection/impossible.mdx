@@ -34,7 +34,7 @@ if( ( is_numeric( $octet[0] ) ) && ( is_numeric( $octet[1] ) )
 
 <summary>Antwoord</summary>
 
-De server splitst de invoer op de punten (`.`) en controleert of elk van de vier stukken een puur getal is (`is_numeric`). De string `127.0.0.1; cat /etc/passwd` zou worden opgesplitst in `["127", "0", "0", "1; cat /etc/passwd"]`. Het vierde deel (`1; cat /etc/passwd`) is géén getal, dus de hele operatie wordt direct afgebroken!
+De server splitst de invoer op de punten (`.`) en controleert of elk van de vier stukken een puur getal is (`is_numeric`). De string `127.0.0.1; cat /etc/passwd` zou worden opgesplitst in `["127", "0", "0", "1; cat /etc/passwd"]`. Het vierde deel (`1; cat /etc/passwd`) is géén getal, dus de hele operatie wordt direct afgebroken.
 Bovendien bouwt de server het IP-adres zélf opnieuw op uit de vier losse getallen, waardoor eventuele rommel nooit in het uiteindelijke commando terechtkomt.
 
 </details>
@@ -47,7 +47,7 @@ Start het lab en probeer al je eerdere bypasses. Geen enkele zal nog werken.
 
 ## 3. ✓ Wat moest je zien?
 
-:::tip Controle
+:::tip[Controle]
 - Geen van je payloads (`;`, `&&`, `|`, `||`) produceert serveruitvoer buiten de ping.
 - Een invoer als `127.0.0.1; ls` levert alleen normale ping-output op — geen bestandslijst.
 - Invoer die geen geldig IP-formaat heeft (4 getallen gescheiden door punten) wordt stilletjes genegeerd.

@@ -2,8 +2,8 @@
 sidebar_position: 1
 ---
 
-# Als docent aan de slag met dit materiaal!
-Wat leuk dat je als docent aan de slag wilt met dit lesmateriaal!
+# Als docent aan de slag met dit materiaal.
+Wat leuk dat je als docent aan de slag wilt met dit lesmateriaal.
 Hierbij geven we je een paar tips.
 
 ## Wat heeft een leerling nodig?
@@ -21,13 +21,13 @@ We raden de volgende opties aan:
 - **VS Code**: Biedt meer functionaliteit (zoals code-completion), maar de installatie kost iets meer tijd.
 
 ## Hoe doceer ik dit materiaal?
-Wat het beste bij jou past! De ervaring leert dat leerlingen grotendeels zelfstandig door het materiaal kunnen komen.
+Wat het beste bij jou past. De ervaring leert dat leerlingen grotendeels zelfstandig door het materiaal kunnen komen.
 De uitdaging ligt bij het coachen van de projecten, waarbij vaak misvattingen over de programmeertaal Python zichtbaar worden.
 
 
 ## Vertalen naar een cijfer
 De meest natuurlijke manier is om iedere leerling zijn eigen project te laten programmeren.
-Dit vertaal je dan zelf als docent naar een cijfer. Binnen Informatica-ACTIEF hebben we zelfs een PO-beschrijving gemaakt!
+Dit vertaal je dan zelf als docent naar een cijfer. Binnen Informatica-ACTIEF hebben we zelfs een PO-beschrijving gemaakt.
  
 ## Wat is de relatie tot het examenprogramma Informatica?
 Daar hebben we een aparte pagina voor gemaakt: [examenprogramma](examenprogramma.md)

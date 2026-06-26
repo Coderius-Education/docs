@@ -4,13 +4,13 @@ sidebar_position: 4
 
 # 6.4 Maar kan ik dit niet allemaal zelf?
 
-:::info Wat moet je al weten
+:::info[Wat moet je al weten]
 - [6.1 Gegevens opslaan en ophalen](/docs/database/basis) - waarom een database handig is
 - [4.5 Een score bijhouden](/docs/gebeurtenissen/score_bijhouden) - `global` keyword
 - Basis-Python: dictionaries
 :::
 
-Zeker! Mocht je Informatica-ACTIEF gebruiken, is er een mooi hoofdstuk over dictionaries waarin je ook leert om deze als JSON op te slaan. Durf je het aan om dit zelf te doen?
+Zeker. Mocht je Informatica-ACTIEF gebruiken, is er een mooi hoofdstuk over dictionaries waarin je ook leert om deze als JSON op te slaan. Durf je het aan om dit zelf te doen?
 
 Hieronder geven we je een voorzet om je op gang te helpen.
 - Kopieer dit codefragment en voer de code uit

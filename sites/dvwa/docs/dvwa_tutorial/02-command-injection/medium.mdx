@@ -47,7 +47,7 @@ De programmeur is vergeten álle mogelijke scheidingstekens in Linux te blokkere
 
 <summary>Antwoord</summary>
 
-De pipe-operator `|` wordt niet gefilterd! Je kunt ook de logische OR-operator `||` proberen.
+De pipe-operator `|` wordt niet gefilterd. Je kunt ook de logische OR-operator `||` proberen.
 
 </details>
 
@@ -87,7 +87,7 @@ Het resultaat van een succesvolle poging zie je hieronder:
 
 ## 4. ✓ Wat moest je zien?
 
-:::tip Controle
+:::tip[Controle]
 - Na `127.0.0.1 | ls` verschijnt een **bestandslijst** — de ping-output ontbreekt, dat is normaal bij `|`.
 - Je eerdere payloads met `&&` of `;` geven géén tweede output meer.
 - De `|` en `||` operators omzeilen het filter wél.
@@ -97,9 +97,9 @@ Werkt `|` toch niet? Controleer of `DVWA Security` op **medium** staat en dat er
 
 ## 5. Er gaat iets mis...
 
-Je typt vol goede moed `127.0.0.1 | ls` in en je ziet ineens... géén ping-resultaat meer! Alleen de lijst met bestanden. Waarom zie je de ping-output niet?
+Je typt vol goede moed `127.0.0.1 | ls` in en je ziet ineens... géén ping-resultaat meer. Alleen de lijst met bestanden. Waarom zie je de ping-output niet?
 
-Dit is de werking van de pipe (`|`). Een pipe pakt letterlijk de onzichtbare output van het eerste commando (de ping) en duwt dit als een pakketje in de mond van het tweede commando (`ls`). Het `ls` commando doet echter helemaal niets met die invoer, het print gewoon de huidige map. Daardoor verdwijnt de ping-tekst in het niets. Wil je beide zien? Gebruik dan `||` of andere constructies als het filter dat toelaat!
+Dit is de werking van de pipe (`|`). Een pipe pakt letterlijk de onzichtbare output van het eerste commando (de ping) en duwt dit als een pakketje in de mond van het tweede commando (`ls`). Het `ls` commando doet echter helemaal niets met die invoer, het print gewoon de huidige map. Daardoor verdwijnt de ping-tekst in het niets. Wil je beide zien? Gebruik dan `||` of andere constructies als het filter dat toelaat.
 
 ## Walkthrough
 

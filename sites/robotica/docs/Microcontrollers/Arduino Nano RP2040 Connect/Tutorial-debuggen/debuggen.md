@@ -38,7 +38,7 @@ Dan heb je een moderne laptop. Gebruik een **USB-C naar USB-A**-adapter of vraag
 
 ## IR-sensoren
 
-:::danger A4 en A5 zijn bezet bij gebruik van een multiplexer
+:::danger[A4 en A5 zijn bezet bij gebruik van een multiplexer]
 
 Pinnen **A4** en **A5** zijn nodig voor **I2C** (SDA en SCL). Heb je een multiplexer, TOF-sensor of OLED-scherm? Dan zijn deze pinnen bezet. Sluit IR-sensoren alleen aan op **A0, A1, A2, A3, A6** of **A7**.
 
@@ -76,7 +76,7 @@ Beweeg je hand boven de sensor of houd er een zwart/wit vel papier voor. Verande
 
 ## Motoren
 
-:::danger D2, D3, D4 en D11 zijn bezet door het motor shield
+:::danger[D2, D3, D4 en D11 zijn bezet door het motor shield]
 
 Sluit hier **geen** andere sensoren of actuatoren op aan (geen buzzer, LED of sensor). Zie [13.3 Let op: bezet pinnen](../Tutorial-Dcmotor/2_b_let_op.md).
 

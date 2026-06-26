@@ -86,7 +86,7 @@ De camera stopt nu netjes bij die grenzen, ook al loopt je speler er nog voorbij
 Pas de **Limit**-waarden aan zodat de camera precies binnen jouw level blijft. Loop met je speler naar de level-rand om te checken dat de camera niet meer doorslaat.
 
 <details>
-<summary>Klik hier voor een tip!</summary>
+<summary>Klik hier voor een tip.</summary>
 
 - Selecteer je `TileMapLayer` in de Scene Tree.
 - Kijk in de Inspector naar **Position** en de grootte van je level (bijv. 64 tiles × 32 pixels = 2048 pixels breed).
@@ -95,7 +95,7 @@ Pas de **Limit**-waarden aan zodat de camera precies binnen jouw level blijft. L
 </details>
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 Voor een level van bijvoorbeeld 2048 × 720 pixels, met de oorsprong linksboven:
 

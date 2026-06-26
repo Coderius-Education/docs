@@ -106,7 +106,7 @@ Je `Global.score` blijft staan tijdens de overgang (dankzij [Global variables](.
 Je hebt nu twee levels en kunt switchen. Breid uit: maak een derde level en zorg dat de speler vanuit level 2 daarheen gaat.
 
 <details>
-<summary>Klik hier voor een tip!</summary>
+<summary>Klik hier voor een tip.</summary>
 
 - Maak `level3.tscn` op dezelfde manier als level 2.
 - Voeg ook in level 2 een `Vlag`-node toe met dezelfde structuur.
@@ -117,7 +117,7 @@ Bonus: voeg op level 3 een vlag toe die teruggaat naar level 1 — dan kan je sp
 </details>
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 **Stappen:**
 

@@ -33,7 +33,7 @@ while True:
 
 Leg de robot zo neer dat de lijn **tussen** de twee sensoren door loopt. Zie je twee keer `white`? Schuif hem dan naar links en rechts en kijk welke sensor `black` gaat zien.
 
-:::tip Python opfrissen
+:::tip[Python opfrissen]
 Twee metingen, twee variabelen. Twijfel je hoe variabelen werken?
 - [Variabelen](https://python.coderius.nl/docs/basis/jij-als-variabele)
 :::

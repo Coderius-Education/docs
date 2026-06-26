@@ -27,7 +27,7 @@ De extensie moet ook eindigen op `.jpg`, `.jpeg` of `.png`.
 
 <summary>Antwoord</summary>
 
-Je kunt een echte JPG-afbeelding downloaden en met een tool zoals `exiftool` PHP-code verstoppen in de metagegevens (bijv. in het Copyright-veld). De server scant de Magic Bytes: geldig! De extensie is `.jpg`: geldig! Maar verstopt in de metadata zit jouw uitvoerbare code. Om de code te activeren heb je daarna een File Inclusion-kwetsbaarheid nodig om het `.jpg`-bestand als PHP te laten uitvoeren.
+Je kunt een echte JPG-afbeelding downloaden en met een tool zoals `exiftool` PHP-code verstoppen in de metagegevens (bijv. in het Copyright-veld). De server scant de Magic Bytes: geldig. De extensie is `.jpg`: geldig. Maar verstopt in de metadata zit jouw uitvoerbare code. Om de code te activeren heb je daarna een File Inclusion-kwetsbaarheid nodig om het `.jpg`-bestand als PHP te laten uitvoeren.
 
 </details>
 
@@ -37,7 +37,7 @@ Start het lab.
 
 <DvwaLab module="file_upload" level="high" />
 
-> ⚠️ **Labbeperking:** Deze aanval vereist geavanceerde tools zoals **exiftool** en een combinatie met de **File Inclusion**-kwetsbaarheid. Het lab simuleert de server-side logica, maar voor de volledige hands-on ervaring heb je een [lokale DVWA-installatie](/docs/dvwa_installatie) nodig.
+> **Labbeperking:** Deze aanval vereist geavanceerde tools zoals **exiftool** en een combinatie met de **File Inclusion**-kwetsbaarheid. Het lab simuleert de server-side logica, maar voor de volledige hands-on ervaring heb je een [lokale DVWA-installatie](/docs/dvwa_installatie) nodig.
 
 Upload een normale .jpg-afbeelding en observeer dat dit werkt.
 
@@ -80,7 +80,7 @@ De `include()`-functie laadt dan de `.jpg` als PHP-broncode en voert de verstopt
 
 ## 5. ✓ Wat moest je zien?
 
-:::tip Controle
+:::tip[Controle]
 - Een PHP-bestand met `.php`-extensie wordt geweigerd — zowel door de extensiecheck als `getimagesize()`.
 - Een `.jpg`-bestand met geldige Magic Bytes maar PHP-code in de metadata wordt **wel** geaccepteerd.
 - Activeren van de code vereist een tweede kwetsbaarheid (LFI).

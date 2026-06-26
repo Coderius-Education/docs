@@ -5,7 +5,7 @@ sidebar_position: 9
 
 # 7.9 Pymunk: een vloer toevoegen
 
-In de vorige les viel de bal naar beneden en verdween van het scherm. Laten we een vloer toevoegen zodat de bal kan stuiteren!
+In de vorige les viel de bal naar beneden en verdween van het scherm. Laten we een vloer toevoegen zodat de bal kan stuiteren.
 
 ## Een static body
 
@@ -23,7 +23,7 @@ Een `STATIC` body beweegt nooit, ongeacht hoeveel kracht erop wordt uitgeoefend.
 vloer_shape = pymunk.Segment(vloer_body, (0, 550), (800, 550), 5)
 ```
 
-Een `Segment` is een lijn van punt `(0, 550)` naar punt `(800, 550)` met dikte `5`. Perfect voor een vloer!
+Een `Segment` is een lijn van punt `(0, 550)` naar punt `(800, 550)` met dikte `5`. Perfect voor een vloer.
 
 ## Elasticity: stuiteren
 
@@ -89,7 +89,7 @@ pygame.quit()
 
 
 
-De bal stuitert nu op de vloer!
+De bal stuitert nu op de vloer.
 
 ## Opdracht 7.9.a: Elasticity uitproberen
 
@@ -99,7 +99,7 @@ Verander de `elasticity` van de bal en de vloer. Probeer:
 3. `elasticity = 1.0` op de bal en `0.0` op de vloer. Wat gebeurt er?
 
 <details>
-<summary>Klik hier voor het antwoord!</summary>
+<summary>Klik hier voor het antwoord.</summary>
 
 1. De bal stuitert eindeloos op dezelfde hoogte (geen energieverlies)
 2. De bal valt en blijft liggen (geen stuitering)
@@ -112,14 +112,14 @@ Verander de `elasticity` van de bal en de vloer. Probeer:
 Voeg naast de vloer ook een linker- en rechtermuur toe, zodat de bal niet van het scherm kan vallen.
 
 <details>
-<summary>Klik hier voor een tip!</summary>
+<summary>Klik hier voor een tip.</summary>
 
 Maak nog twee Segments: eentje van `(0, 0)` naar `(0, 600)` (linkermuur) en eentje van `(800, 0)` naar `(800, 600)` (rechtermuur). Gebruik dezelfde `vloer_body` (een static body kan meerdere shapes hebben).
 
 </details>
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 Voeg dit toe na de vloer:
 

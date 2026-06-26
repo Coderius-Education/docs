@@ -25,8 +25,8 @@ echo "Hello " . $name;
 
 <summary>Antwoord</summary>
 
-De functie `str_replace` is **hoofdlettergevoelig**. Het filtert wél `<script>`, maar kijkt helemaal niet naar `<SCRIPT>` of `<Script>`. HTML en browsers zijn echter flexibel: een browser snapt `<SCRIPT>` net zo goed!
-Een andere truc is het *nesten* van scripts: `<scr<script>ipt>`. Het filter haalt het binnenste woordje weg, waardoor de buitenste letters aan elkaar plakken en alsnog `<script>` vormen!
+De functie `str_replace` is **hoofdlettergevoelig**. Het filtert wél `<script>`, maar kijkt helemaal niet naar `<SCRIPT>` of `<Script>`. HTML en browsers zijn echter flexibel: een browser snapt `<SCRIPT>` net zo goed.
+Een andere truc is het *nesten* van scripts: `<scr<script>ipt>`. Het filter haalt het binnenste woordje weg, waardoor de buitenste letters aan elkaar plakken en alsnog `<script>` vormen.
 
 </details>
 
@@ -68,13 +68,13 @@ Maak gebruik van de hoofdlettergevoeligheid van het filter.
 
 <summary>Antwoord</summary>
 
-Vul in: `<SCRIPT>alert(1);</SCRIPT>`. Omdat het filter alleen naar kleine letters zoekt, wordt dit volledig genegeerd. De browser voert het keurig uit!
+Vul in: `<SCRIPT>alert(1);</SCRIPT>`. Omdat het filter alleen naar kleine letters zoekt, wordt dit volledig genegeerd. De browser voert het keurig uit.
 
 </details>
 
 ## 5. ✓ Wat moest je zien?
 
-:::tip Controle
+:::tip[Controle]
 - `<SCRIPT>alert(1);</SCRIPT>` triggert de **pop-up** — het filter laat het door.
 - `<script>alert(1);</script>` triggert géén pop-up — het filter verwijdert de tags.
 - Het verschil bewijst dat het filter hoofdlettergevoelig is.
@@ -84,4 +84,4 @@ Werkt `<SCRIPT>` ook niet? Probeer de geneste variant: `<scr<script>ipt>alert(1)
 
 ## 6. Er gaat iets mis...
 
-Soms gebruik je `<SCRIPT>` en werkt het nog steeds niet. In veel moderne backend-talen wordt de input stiekem eerst omgezet naar kleine letters (`strtolower`) voordat er bewerkingen worden uitgevoerd, wat de truc ongedaan maakt. Hacken in software vereist constant meebewegen met kleine details!
+Soms gebruik je `<SCRIPT>` en werkt het nog steeds niet. In veel moderne backend-talen wordt de input stiekem eerst omgezet naar kleine letters (`strtolower`) voordat er bewerkingen worden uitgevoerd, wat de truc ongedaan maakt. Hacken in software vereist constant meebewegen met kleine details.

@@ -8,7 +8,7 @@ sidebar_position: 2
 
 ![circuit](@site/static/fritzing/shield_with_motors_bb.png)
 
-:::danger Pinnen D2, D3, D4 en D11 zijn bezet door het motor shield
+:::danger[Pinnen D2, D3, D4 en D11 zijn bezet door het motor shield]
 
 Deze pinnen worden door het motor shield gebruikt om de motoren aan te sturen. Sluit hier **geen** andere sensoren of actuatoren op aan. Gebruik andere vrije pinnen voor je overige onderdelen.
 
@@ -22,7 +22,7 @@ Deze pinnen worden door het motor shield gebruikt om de motoren aan te sturen. S
 Elke motor heeft twee draden die in de **schroefterminals** van het motor shield gaan:
 
 1. Pak een schroevendraaier.
-2. Draai de kleine schroef op de terminal **los** (niet helemaal eruit!).
+2. Draai de kleine schroef op de terminal **los** (niet helemaal eruit.).
 3. Steek de draad van de motor in het gaatje (rood bij `+`, zwart bij `-`).
 4. Draai de schroef weer **vast** zodat de draad goed klemt.
 5. Trek voorzichtig aan de draad om te checken of hij goed vastzit.

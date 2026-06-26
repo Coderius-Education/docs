@@ -6,7 +6,7 @@ sidebar_position: 5
 
 Voor de sensoren en motoren gebruiken we een kant-en-klare bibliotheek: **leaphymicropython**. Die moet één keer op je microcontroller staan.
 
-:::tip Sneller met de online editor
+:::tip[Sneller met de online editor]
 
 Gebruik je de [online editor](/editor)? Verbind met je board en klik op **Installeer Leaphy-library**. De editor zet alle bestanden automatisch in `/lib/leaphymicropython/` op de microcontroller. Hieronder staat de Thonny-werkwijze als fallback.
 

@@ -28,7 +28,7 @@ if ( stripos( $_SERVER[ 'HTTP_REFERER' ], $_SERVER[ 'SERVER_NAME' ]) !== false )
 <summary>Antwoord</summary>
 
 De server bekijkt de **HTTP Referer**-header. Dit is een regeltje data die elke browser meestuurt om aan te geven *"Vanaf welke URL klikte deze persoon op de link?"*
-De code controleert of de referer overeenkomt met de eigen server (`SERVER_NAME`). Hij weigert wachtwoordwijzigingen als de gebruiker vanaf een andere website kwam!
+De code controleert of de referer overeenkomt met de eigen server (`SERVER_NAME`). Hij weigert wachtwoordwijzigingen als de gebruiker vanaf een andere website kwam.
 
 </details>
 
@@ -50,13 +50,13 @@ Probeer de URL van het Low-level direct in de adresbalk in te voeren (zonder via
 
 <summary>Antwoord</summary>
 
-De wijziging wordt geblokkeerd wanneer je de URL direct intypt, omdat dan de Referer-header ontbreekt of niet overeenkomt met de eigen server. Maar het filter kijkt alleen of de domeinnaam *ergens* in de Referer voorkomt — niet of de Referer exact de eigen domeinnaam is. Een URL zoals `http://kwaad.nl/ik_ben_stiekem_localhost/` bevat het woord `localhost` en zou het filter omzeilen!
+De wijziging wordt geblokkeerd wanneer je de URL direct intypt, omdat dan de Referer-header ontbreekt of niet overeenkomt met de eigen server. Maar het filter kijkt alleen of de domeinnaam *ergens* in de Referer voorkomt — niet of de Referer exact de eigen domeinnaam is. Een URL zoals `http://kwaad.nl/ik_ben_stiekem_localhost/` bevat het woord `localhost` en zou het filter omzeilen.
 
 </details>
 
 ## 4. Modify & Make (Aanpassen & Maken)
 
-Is het controleren van de Referer een onbreekbare verdediging? Nee!
+Is het controleren van de Referer een onbreekbare verdediging? Nee.
 
 Kijk goed naar de specifieke code: `stripos( $_SERVER[ 'HTTP_REFERER' ], $_SERVER[ 'SERVER_NAME' ]) !== false`.
 Dit betekent: als de originele domeinnaam maar *ergens* voorkomt in de Referer-URL, wordt het goedgekeurd.
@@ -79,13 +79,13 @@ Een hacker kan zijn kwaadaardige pagina opslaan op een adres dat de naam van het
 `http://boos.nl/ik_ben_stiekem_localhost/index.html`
 
 Als het slachtoffer hierop klikt, is de Referer: `http://boos.nl/ik_ben_stiekem_localhost/`.
-De backend-code checkt of de serverdomeinnaam erin staat. Ja hoor! De controle wordt omzeild en de CSRF-aanval slaagt alsnog.
+De backend-code checkt of de serverdomeinnaam erin staat. Ja hoor. De controle wordt omzeild en de CSRF-aanval slaagt alsnog.
 
 </details>
 
 ## 5. ✓ Wat moest je zien?
 
-:::tip Controle
+:::tip[Controle]
 - Het normale formulier werkt correct — de Referer klopt.
 - Direct de URL intypen (zonder Referer) wordt geblokkeerd.
 - Via een URL die de domeinnaam in de padnaam bevat, kan het filter alsnog worden omzeild.

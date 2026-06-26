@@ -8,7 +8,7 @@ sidebar_custom_props:
 # VS Code
 
 :::caution
-**Belangrijk:** Gaaf dat je VS Code wilt gebruiken! Het kan wel uitdagend zijn vanwege de integratie van Python, een werkende virtuele omgeving en de terminal configuratie. Mocht je de installatie van VS code niet zo fijn vinden, dan kun je altijd Thonny proberen.
+**Belangrijk:** Gaaf dat je VS Code wilt gebruiken. Het kan wel uitdagend zijn vanwege de integratie van Python, een werkende virtuele omgeving en de terminal configuratie. Mocht je de installatie van VS code niet zo fijn vinden, dan kun je altijd Thonny proberen.
 :::
 
 ## Visual Studio Code installeren

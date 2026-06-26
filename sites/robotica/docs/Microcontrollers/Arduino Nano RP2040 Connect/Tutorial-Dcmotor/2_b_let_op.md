@@ -4,7 +4,7 @@ sidebar_position: 3
 
 # 13.3 Let op: bezet pinnen
 
-:::danger Pinnen D2, D3, D4 en D11 zijn bezet
+:::danger[Pinnen D2, D3, D4 en D11 zijn bezet]
 
 Zodra je het motor shield gebruikt, zijn deze pinnen **niet meer beschikbaar** voor andere onderdelen:
 

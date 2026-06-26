@@ -27,7 +27,7 @@ $stmt->execute();
 
 De code gebruikt **Prepared Statements**. Dit is de gouden standaard tegen SQL Injection.
 Hierbij wordt de structuur van het SQL commando alvast naar de database gestuurd, vóórdat de variabelen worden toegevoegd.
-De database wéét hierdoor precies wat commando's zijn en wat data is. Als je nu `1' OR '1'='1` invult, denkt de database: "Ah, deze persoon is op zoek naar een gebruiker wiens naam/id letterlijk de tekst '1' OR '1'='1' is." Hij voert het dus niet meer uit als code!
+De database wéét hierdoor precies wat commando's zijn en wat data is. Als je nu `1' OR '1'='1` invult, denkt de database: "Ah, deze persoon is op zoek naar een gebruiker wiens naam/id letterlijk de tekst '1' OR '1'='1' is." Hij voert het dus niet meer uit als code.
 Bovendien dwingt `PDO::PARAM_INT` af dat de invoer een wiskundig getal (integer) móét zijn.
 
 </details>
@@ -42,7 +42,7 @@ Je zult zien dat het onmogelijk is. De applicatie gedraagt zich alsof je een rar
 
 ## 3. ✓ Wat moest je zien?
 
-:::tip Controle
+:::tip[Controle]
 - Geen van je SQL injection payloads haalt meer dan 1 resultaat op.
 - De applicatie geeft "User ID does not exist" of een leeg resultaat bij injectie-pogingen.
 - Prepared Statements zorgen ervoor dat jouw invoer altijd als data wordt behandeld, nooit als SQL-code.

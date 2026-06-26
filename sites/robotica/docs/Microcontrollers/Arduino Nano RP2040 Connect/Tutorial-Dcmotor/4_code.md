@@ -44,7 +44,7 @@ motor_b.forward(255)
 
 `forward()` en `backward()` krijgen een snelheid mee tussen **0** en **255**.
 
-:::caution Onder de 200 beweegt vaak niets
+:::caution[Onder de 200 beweegt vaak niets]
 
 Vanwege het gewicht van je robot beginnen de motoren pas rond **180–200** te draaien. Daaronder probeert de motor het wel (het LED'je op het shield knippert), maar de wielen blijven staan.
 

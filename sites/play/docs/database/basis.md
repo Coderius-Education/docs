@@ -17,7 +17,7 @@ import play
 database = play.new_database()
 ```
 
-In dezelfde map als je Python bestand verschijnt nu het bestand **database.json**. Hierin worden je gegevens opgeslagen!
+In dezelfde map als je Python bestand verschijnt nu het bestand **database.json**. Hierin worden je gegevens opgeslagen.
 
 ## Gegevens opslaan met set_data
 
@@ -59,7 +59,7 @@ Wat als je een waarde ophaalt die nog niet bestaat? Dan krijg je `None` terug. M
 mijn_punten = database.get_data('punten', 0)
 ```
 
-Als `'punten'` nog niet in de database staat, krijg je nu `0` terug in plaats van `None`. Dit is handig bij de eerste keer dat je programma start, wanneer de database nog leeg is!
+Als `'punten'` nog niet in de database staat, krijg je nu `0` terug in plaats van `None`. Dit is handig bij de eerste keer dat je programma start, wanneer de database nog leeg is.
 
 ### Er gaat iets mis?
 
@@ -72,7 +72,7 @@ mijn_punten = database.get_data('punten')
 tekst = play.new_text(words="Punten: " + str(mijn_punten))
 ```
 
-Als `'punten'` nog niet in de database staat, is `mijn_punten` gelijk aan `None`. De tekst op het scherm wordt dan `"Punten: None"` — waarschijnlijk niet wat je bedoelde! Gebruik altijd een default waarde als je niet zeker weet of de sleutel al bestaat:
+Als `'punten'` nog niet in de database staat, is `mijn_punten` gelijk aan `None`. De tekst op het scherm wordt dan `"Punten: None"` — waarschijnlijk niet wat je bedoelde. Gebruik altijd een default waarde als je niet zeker weet of de sleutel al bestaat:
 
 ```python
 mijn_punten = database.get_data('punten', 0)
@@ -87,7 +87,7 @@ Maak een programma dat:
 4. Je naam op het scherm toont
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 ```python
 import play
@@ -112,14 +112,14 @@ Je kunt meerdere gegevens opslaan in dezelfde database. Maak een programma dat:
 4. Alle drie de gegevens ophaalt en op het scherm toont
 
 <details>
-<summary>Klik hier voor een tip!</summary>
+<summary>Klik hier voor een tip.</summary>
 
 Je kunt `set_data()` meerdere keren aanroepen met verschillende sleutels.
 
 </details>
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 ```python
 import play
@@ -151,7 +151,7 @@ Maak een programma dat:
 Draai het programma twee keer. De eerste keer zou je `1` moeten zien (de default waarde). Voeg daarna een `set_data('level', 5)` toe en draai opnieuw. Wat zie je nu?
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 ```python
 import play

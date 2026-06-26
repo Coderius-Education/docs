@@ -28,7 +28,7 @@ checkToken( $_REQUEST[ 'user_token' ], $_SESSION[ 'session_token' ] );
 
 <summary>Antwoord</summary>
 
-Om het wachtwoord te wijzigen, moet het verzoek nu het *geheime token* bevatten (`&user_token=...`). Omdat dit token voor elke sessie uniek en willekeurig is, kan de hacker deze code onmogelijk raden. De CSRF-aanval loopt direct stuk op een 'Token Mismatch'-fout!
+Om het wachtwoord te wijzigen, moet het verzoek nu het *geheime token* bevatten (`&user_token=...`). Omdat dit token voor elke sessie uniek en willekeurig is, kan de hacker deze code onmogelijk raden. De CSRF-aanval loopt direct stuk op een 'Token Mismatch'-fout.
 
 </details>
 
@@ -56,7 +56,7 @@ De server geeft een "CSRF token incorrect"-melding of weigert de aanvraag. Zonde
 
 ## 4. Modify & Make (Aanpassen & Maken)
 
-Een anti-CSRF token is steengoed, maar is kansloos als de website **ook** kwetsbaar is voor een andere veelvoorkomende bug: XSS!
+Een anti-CSRF token is steengoed, maar is kansloos als de website **ook** kwetsbaar is voor een andere veelvoorkomende bug: XSS.
 
 Hoe zou een hacker een XSS-kwetsbaarheid (ergens anders op dezelfde website) kunnen gebruiken om de anti-CSRF-tokenbeveiliging van het wachtwoordveld teniet te doen?
 
@@ -73,13 +73,13 @@ XSS zorgt ervoor dat de hacker code kan draaien namens het slachtoffer *binnen i
 <summary>Antwoord</summary>
 
 Via XSS injecteert de hacker een klein JavaScriptje op de pagina van het slachtoffer.
-Dit script laadt stiekem de "Wachtwoord Veranderen"-pagina op de achtergrond. Het scriptje **leest** het `user_token` direct uit de opgevraagde HTML (wat mag, want de browser is van het slachtoffer), vult dat token in, en verstuurt direct daarna het request om het wachtwoord te wijzigen!
+Dit script laadt stiekem de "Wachtwoord Veranderen"-pagina op de achtergrond. Het scriptje **leest** het `user_token` direct uit de opgevraagde HTML (wat mag, want de browser is van het slachtoffer), vult dat token in, en verstuurt direct daarna het request om het wachtwoord te wijzigen.
 
 </details>
 
 ## 5. ✓ Wat moest je zien?
 
-:::tip Controle
+:::tip[Controle]
 - Een URL zonder geldig token wordt geblokkeerd met een "CSRF token incorrect"-melding.
 - Het formulier zelf werkt normaal — het token wordt meegezonden bij een normale Submit.
 - De combinatie van CSRF-token + XSS-kwetsbaarheid zou de beveiliging alsnog kunnen omzeilen.

@@ -4,12 +4,12 @@ sidebar_position: 3
 
 # 5.3 Animaties met `async play.repeat_forever`
 
-:::info Wat moet je al weten
+:::info[Wat moet je al weten]
 - [5.2 Wachten met async en await](/docs/tijd/async) - hoe `async`/`await` werkt
 - [1.6 Een vorm aanpassen](/docs/vormen/vorm_aanpassen) - eigenschappen als `color` en `radius` wijzigen
 :::
 
-Nu je weet hoe `async` en `await` werken, kun je ook eenvoudig animaties maken! Met `@play.repeat_forever` in combinatie met `async` kun je code steeds opnieuw laten uitvoeren.
+Nu je weet hoe `async` en `await` werken, kun je ook eenvoudig animaties maken. Met `@play.repeat_forever` in combinatie met `async` kun je code steeds opnieuw laten uitvoeren.
 
 ## 5.3.1 Kleur laten veranderen
 
@@ -32,7 +32,7 @@ async def verander_kleur():
     bal.color = 'red'
     await play.timer(seconds=0.5)`} height={300} />
 
-De bal verandert nu steeds van kleur: rood → oranje → geel → groen → blauw → paars → rood, enzovoort!
+De bal verandert nu steeds van kleur: rood → oranje → geel → groen → blauw → paars → rood, enzovoort.
 
 Hoe werkt dit?
 
@@ -51,7 +51,7 @@ We veranderen de kleur van de bal naar oranje door simpelweg een nieuwe waarde t
 ```
 await play.timer(seconds=0.5)
 ```
-We wachten 0.5 seconden voordat we de volgende kleur instellen. Dit blijft maar herhalen!
+We wachten 0.5 seconden voordat we de volgende kleur instellen. Dit blijft maar herhalen.
 
 ## Opdracht 5.3.a: Wissel tussen animaties
 

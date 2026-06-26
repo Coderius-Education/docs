@@ -1,0 +1,64 @@
+---
+title: Docentenhandleiding
+hide_table_of_contents: false
+---
+
+# Docentenhandleiding
+
+Praktische informatie voor docenten die deze cursus klassikaal willen inzetten: wat de site is, welke randvoorwaarden er zijn, en hoe je de lessen indeelt.
+
+## Wat is dit?
+
+Een interactieve cursus **fullstack-ontwikkeling met FastAPI**: je leerlingen voegen een Python-back-end toe aan een website. Doelgroep: leerlingen die al wat Python én HTML kennen en willen leren hoe front-end en back-end samenwerken.
+
+Per onderwerp staat er een minimale, werkende handler die je daarna uitbreidt met validatie, templates en een database. De nadruk ligt op het samenspel tussen verzoek (browser) en antwoord (server).
+
+:::note[Voorkennis]
+Deze cursus bouwt voort op [Python](https://python.coderius.nl) en [HTML & CSS](https://web.coderius.nl). Plan die eerst in als je leerlingen daar nog niet mee bekend zijn.
+:::
+
+## Technische randvoorwaarden
+
+| Wat | Antwoord |
+|---|---|
+| Operating system | Windows, macOS of Linux |
+| Oefenen | Veel voorbeelden draaien in de browser |
+| Eigen project | Python 3 en een editor (VS Code) lokaal aanbevolen |
+| Account | Niet nodig |
+| Internet | Vereist — de site is online |
+
+## Didactische aanpak (PRIMM)
+
+Elke les volgt hetzelfde vaste patroon — de **PRIMM-methode** — afgesloten met een troubleshooting-sectie:
+
+1. **Predict** — je leerling voorspelt wat een endpoint of stuk code doet.
+2. **Run** — je leerling draait het en controleert die voorspelling.
+3. **Investigate** — kleine experimenten met het verzoek of het antwoord.
+4. **Modify** — een opdracht die voortbouwt op de bestaande handler.
+5. **Make** — een vrijere opdracht waarin je leerling zelf een endpoint bouwt.
+6. **Er gaat iets mis** — veelvoorkomende fouten, met oorzaak en oplossing.
+
+Tips en antwoorden staan in `<details>`-blokken. Laat je leerlingen eerst zelf proberen voordat ze openklikken.
+
+## Klassikaal gebruik & differentiatie
+
+- **Plenair starten**: bespreek de Predict-vraag klassikaal, daarna werken je leerlingen zelfstandig door.
+- **Snelle leerlingen** breiden een endpoint uit met extra validatie of een tweede route.
+- **Langzamere leerlingen** mogen de Make-opdracht overslaan zonder dat de volgende les daarop bouwt.
+- **Beoordelen**: laat leerlingen een eigen kleine API met database bouwen als eindproject.
+
+## Leerlijn
+
+De lessen staan in de **FastAPI**-sidebar en bouwen op elkaar voort. Begin bij [Installatie](/docs/FastAPI/installatie); de [Cheatsheet](/docs/cheatsheet) en [Er gaat iets mis](/docs/troubleshooting) zijn naslag.
+
+| Onderwerp | Leerdoel |
+|---|---|
+| Je eerste endpoint | Een API-route maken en aanroepen |
+| GET vs POST | Verschil tussen data ophalen en versturen |
+| HTML tonen & templates | Pagina's serveren en dynamisch vullen |
+| Formulieren | Gebruikersinvoer verwerken |
+| Database | Gegevens opslaan en ophalen met SQLite |
+
+## Feedback & bijdragen
+
+Suggesties, fouten of nieuwe ideeën? Open een issue of pull request op [GitHub](https://github.com/Coderius-Education/fullstack). Alle bijdragen — van een typo tot een nieuwe les — zijn welkom.

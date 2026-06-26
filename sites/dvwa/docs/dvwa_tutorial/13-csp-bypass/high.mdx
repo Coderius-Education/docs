@@ -46,7 +46,7 @@ Start het lab.
 
 <DvwaLab module="csp_bypass" level="high" />
 
-> ⚠️ **Labbeperking:** Het manipuleren van de JSONP callback-parameter vereist directe URL-toegang. Het lab simuleert de CSP-logica, maar voor de volledige JSONP-bypass heb je een [lokale DVWA-installatie](/docs/dvwa_installatie) nodig.
+> **Labbeperking:** Het manipuleren van de JSONP callback-parameter vereist directe URL-toegang. Het lab simuleert de CSP-logica, maar voor de volledige JSONP-bypass heb je een [lokale DVWA-installatie](/docs/dvwa_installatie) nodig.
 
 Klik op de knop op de pagina. Bekijk in F12 → **Network** welke URL het uitvoert.
 
@@ -91,7 +91,7 @@ De browser laadt dit script van `self` (toegestaan door CSP), voert `alert("Hack
 
 ## 5. ✓ Wat moest je zien?
 
-:::tip Controle
+:::tip[Controle]
 - De JSONP-aanroep met aangepaste callback triggert een pop-up ondanks de strikte CSP.
 - De server zelf genereert het kwaadaardige script — de CSP ziet alleen `script-src 'self'` en laat het door.
 - Een normale inline `<script>` wordt nog steeds geblokkeerd.

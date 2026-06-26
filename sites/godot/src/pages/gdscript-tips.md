@@ -221,7 +221,7 @@ $AnimatedSprite2D.flip_h       # Leest een eigenschap van die node
 
 `$AnimatedSprite2D` is hetzelfde als `get_node("AnimatedSprite2D")`, maar korter.
 
-**Let op:** De naam moet **exact** overeenkomen met de naam in de scene tree (hoofdlettergevoelig!).
+**Let op:** De naam moet **exact** overeenkomen met de naam in de scene tree (hoofdlettergevoelig.).
 
 </details>
 
@@ -370,6 +370,6 @@ func reset():
     levens = 3
 ```
 
-Vergeet niet dit script als **Autoload** in te stellen via Project Settings!
+Vergeet niet dit script als **Autoload** in te stellen via Project Settings.
 
 </details>

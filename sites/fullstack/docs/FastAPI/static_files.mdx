@@ -81,9 +81,9 @@ async def mooi():
 
 ## Testen
 
-Ga naar [http://127.0.0.1:8000/mooi](http://127.0.0.1:8000/mooi). De heading is blauw en de tekst grijs — de CSS uit het aparte bestand werkt!
+Ga naar [http://127.0.0.1:8000/mooi](http://127.0.0.1:8000/mooi). De heading is blauw en de tekst grijs — de CSS uit het aparte bestand werkt.
 
-:::danger Gaat er iets mis?
+:::danger[Gaat er iets mis?]
 CSS werkt niet? Check of `app.mount("/static", ...)` in je code staat en of het pad in `<link>` klopt. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
 :::
 
@@ -115,7 +115,7 @@ Beide pagina's laden hetzelfde bestand. Wat betekent dat als je dat ene bestand 
 <details>
 <summary>Antwoord</summary>
 
-Pagina2 verandert ook! Beide pagina's laden hetzelfde CSS bestand. Als je dat bestand aanpast, veranderen alle pagina's die het gebruiken.
+Pagina2 verandert ook. Beide pagina's laden hetzelfde CSS bestand. Als je dat bestand aanpast, veranderen alle pagina's die het gebruiken.
 
 </details>
 
@@ -130,7 +130,7 @@ Wat gebeurt er als je `app.mount("/static", ...)` verandert naar `app.mount("/be
 <details>
 <summary>Antwoord</summary>
 
-Nee! De CSS laadt niet meer, want de `<link>` tag verwijst naar `/static/css/style.css`, maar dat pad bestaat niet meer. Je zou de link moeten aanpassen naar `/bestanden/css/style.css`.
+Nee. De CSS laadt niet meer, want de `<link>` tag verwijst naar `/static/css/style.css`, maar dat pad bestaat niet meer. Je zou de link moeten aanpassen naar `/bestanden/css/style.css`.
 
 </details>
 
@@ -227,7 +227,7 @@ async def groen():
 
 ## Oefen met Python
 
-:::info Python oefenblok
+:::info[Python oefenblok]
 Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
 :::
 

@@ -25,7 +25,7 @@ $query  = "SELECT first_name, last_name FROM users WHERE user_id = $id;";
 
 <summary>Antwoord</summary>
 
-Het cruciale verschil: `$id` staat nu **niet** meer tussen aanhalingstekens in de query!
+Het cruciale verschil: `$id` staat nu **niet** meer tussen aanhalingstekens in de query.
 
 Bij Low: `WHERE user_id = '$id'` — aanhalingstekens aanwezig, escape functie zinvol.
 Bij Medium: `WHERE user_id = $id` — geen aanhalingstekens, escape functie doet niets.
@@ -88,7 +88,7 @@ De server voert dan uit:
 
 ## 5. ✓ Wat moest je zien?
 
-:::tip Controle
+:::tip[Controle]
 - Er verschijnt een lijst met **alle 5 gebruikers** in de database.
 - Je hebt de `value` van een `<option>` aangepast via F12 — zonder aanhalingstekens in de payload.
 - De `escape`-functie had geen effect omdat de query geen aanhalingstekens gebruikte.
@@ -99,4 +99,4 @@ Zie je maar één gebruiker? Controleer of je het `value`-attribuut (niet de zic
 ## 6. Er gaat iets mis...
 
 Wat als je in F12 typt: `<option value="1 OR 1=1">1 OR 1=1</option>` en je ziet ineens een lege pagina of de request mislukt?
-Soms verwacht het web-framework dat parameters van een dropdown een strikt type hebben. Hoewel je de zichtbare tekst (tussen de tags) kunt veranderen, is het áltijd de `value="..."` (het attribuut) dat naar de server wordt verstuurd! Zorg dus dat je het juiste aanpast.
+Soms verwacht het web-framework dat parameters van een dropdown een strikt type hebben. Hoewel je de zichtbare tekst (tussen de tags) kunt veranderen, is het áltijd de `value="..."` (het attribuut) dat naar de server wordt verstuurd. Zorg dus dat je het juiste aanpast.

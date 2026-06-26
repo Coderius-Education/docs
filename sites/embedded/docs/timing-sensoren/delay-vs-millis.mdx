@@ -77,14 +77,14 @@ if (millis() - vorige >= interval) {
 Laat de LED op pin 13 knipperen met `millis()`, en tel ondertussen elke keer dat een knop op pin 2 wordt ingedrukt (print de teller naar de seriële monitor). De knop mag nooit "haperen" door het knipperen.
 
 <details>
-<summary>Klik hier voor een tip!</summary>
+<summary>Klik hier voor een tip.</summary>
 
 Houd het knipperen in een `if (millis() ...)`-blok, en lees daarbuiten in elke ronde van `loop()` de knop uit. Omdat je nergens `delay()` gebruikt, mis je geen druk.
 
 </details>
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 ```cpp
 unsigned long vorige = 0;

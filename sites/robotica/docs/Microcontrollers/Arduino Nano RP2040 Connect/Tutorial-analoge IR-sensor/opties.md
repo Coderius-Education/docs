@@ -16,7 +16,7 @@ In totaal zijn er **zes** analoge pinnen bruikbaar voor IR-sensoren. Twee is gan
 
 **A4 en A5**
 
-:::danger A4 en A5 zijn bezet
+:::danger[A4 en A5 zijn bezet]
 
 Pinnen **A4** en **A5** worden gebruikt voor **I2C communicatie** (SDA en SCL). Als je een multiplexer, TOF-sensor of OLED-scherm gebruikt, zijn deze pinnen al bezet. Sluit hier **geen** IR-sensoren op aan, anders werken je I2C-apparaten niet meer.
 

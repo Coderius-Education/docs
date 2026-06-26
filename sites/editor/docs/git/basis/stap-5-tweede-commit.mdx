@@ -14,7 +14,7 @@ In de simulator hieronder kun je een bestand toevoegen of bewerken via de knoppe
 
 <GitSimulator
   scenarioId="stap-5-tweede-commit"
-  initialFiles={{'hello.txt': 'Hallo wereld!\n'}}
+  initialFiles={{'hello.txt': 'Hallo wereld.\n'}}
   objective={{
     description: 'Maak twee commits achter elkaar.',
     check: (s) => s.commits.length >= 2,
@@ -22,7 +22,7 @@ In de simulator hieronder kun je een bestand toevoegen of bewerken via de knoppe
 />
 
 <details>
-<summary>Klik hier voor een tip!</summary>
+<summary>Klik hier voor een tip.</summary>
 
 Begin met `git init`, `git add .` en de eerste commit. Klik daarna op **"+ nieuw bestand"** of **"bewerk hello.txt"** om een wijziging te maken. Vervolgens opnieuw `git add ...` en `git commit -m "..."`.
 

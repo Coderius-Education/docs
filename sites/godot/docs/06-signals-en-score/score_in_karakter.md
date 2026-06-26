@@ -105,7 +105,7 @@ Je hebt nu een score in je karakter. Voeg er een **levens-systeem** aan toe en l
 3. **Nieuw:** als `body.levens` op 0 (of lager) komt, print `"GAME OVER"` in **Uitvoer** en sluit het spel met `get_tree().quit()`.
 
 <details>
-<summary>Klik hier voor een tip!</summary>
+<summary>Klik hier voor een tip.</summary>
 
 - Voeg `var levens = 3` toe onder `var score = 0` in je karakter-script.
 - Open je vijand-script.
@@ -116,7 +116,7 @@ Je hebt nu een score in je karakter. Voeg er een **levens-systeem** aan toe en l
 </details>
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 **In je karakter-script:**
 

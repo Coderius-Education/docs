@@ -59,14 +59,14 @@ Let op het patroon: bij `PB0` hoort poort `GPIOB` en pin `GPIO_PIN_0`, bij `PA5`
 Maak een stoplicht met drie LED's op `PB0` (rood), `PB1` (geel) en `PB5` (groen). Doorloop de volgorde: rood → rood+geel → groen → geel → rood.
 
 <details>
-<summary>Klik hier voor een tip!</summary>
+<summary>Klik hier voor een tip.</summary>
 
 Alle drie de pinnen zitten op poort B, dus je hoeft de klok maar één keer aan te zetten (`__HAL_RCC_GPIOB_CLK_ENABLE()`). Je kunt drie keer `HAL_GPIO_Init()` doen, of de drie pinnen combineren met `GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_5`.
 
 </details>
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 ```c
 #include "stm32f1xx_hal.h"

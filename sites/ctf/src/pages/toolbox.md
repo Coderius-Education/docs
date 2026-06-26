@@ -1,6 +1,6 @@
 # Toolbox
 
-Een overzicht van handige tools die je nodig hebt bij de challenges. Allemaal gratis te gebruiken!
+Een overzicht van handige tools die je nodig hebt bij de challenges. Allemaal gratis te gebruiken.
 
 ## Browser tools
 

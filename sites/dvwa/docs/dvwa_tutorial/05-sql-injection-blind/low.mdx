@@ -31,7 +31,7 @@ if (mysqli_num_rows($result) > 0) {
 <summary>Antwoord</summary>
 
 Bij normale SQL Injection print de website daadwerkelijk de Voornaam en Achternaam op je scherm, waardoor je met een UNION-commando complete tabellen kunt laten weergeven.
-Hier print de server **alleen** een vaste tekst: "Bestaat" of "Bestaat niet" (een Boolean resultaat). Er komt nooit data op je scherm! Je bent daardoor totaal blind.
+Hier print de server **alleen** een vaste tekst: "Bestaat" of "Bestaat niet" (een Boolean resultaat). Er komt nooit data op je scherm. Je bent daardoor totaal blind.
 
 </details>
 
@@ -81,19 +81,19 @@ Denk na over de SQL-code:
 
 <summary>Antwoord</summary>
 
-Bij de eerste query toont het scherm "Exists". Bij de tweede toont het "Missing", omdat het tweede deel van de AND-query niet waar was!
+Bij de eerste query toont het scherm "Exists". Bij de tweede toont het "Missing", omdat het tweede deel van de AND-query niet waar was.
 Hiermee heb je een methode ontwikkeld om elke Ja/Nee-vraag aan de server te stellen:
 
 Voorbeeld: wil je weten of de database draait onder de gebruikersnaam "root"?
 Vul in: `1' AND user() = 'root@localhost' #`
-- Zegt het scherm "Exists"? Dan weten we dat de naam `root` is!
+- Zegt het scherm "Exists"? Dan weten we dat de naam `root` is.
 - Zegt het scherm "Missing"? Dan heet de gebruiker in de database anders.
 
 </details>
 
 ## 5. ✓ Wat moest je zien?
 
-:::tip Controle
+:::tip[Controle]
 - `1' AND 1=1 #` geeft "Exists" terug — de AND-conditie is waar.
 - `1' AND 1=2 #` geeft "Missing" terug — de AND-conditie is onwaar.
 - De twee reacties zijn verschillend, wat bewijst dat jouw SQL-code daadwerkelijk door de database wordt uitgevoerd.

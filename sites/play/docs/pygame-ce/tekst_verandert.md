@@ -70,7 +70,7 @@ Maak een programma waarbij:
 4. De score wordt op het scherm getoond
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 ```python
 import pygame

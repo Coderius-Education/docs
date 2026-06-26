@@ -26,7 +26,7 @@ Bevestig nieuw wachtwoord: <input type="password" name="password_conf">
 <summary>Antwoord</summary>
 
 Bij een CSRF-aanval proberen we het slachtoffer via een linkje onbewust de server te laten vertellen: "Zet mijn wachtwoord op X".
-Maar omdat de server nu eist dat het *huidige* wachtwoord óók wordt meegestuurd in dat linkje, is de hacker schaakmat! De hacker wéét het huidige wachtwoord immers niet. Een blind linkje zoals `?password_current=RAADMAAR&password_new=hacked` zal daarom altijd genadeloos afgewezen worden door de server.
+Maar omdat de server nu eist dat het *huidige* wachtwoord óók wordt meegestuurd in dat linkje, is de hacker schaakmat. De hacker wéét het huidige wachtwoord immers niet. Een blind linkje zoals `?password_current=RAADMAAR&password_new=hacked` zal daarom altijd genadeloos afgewezen worden door de server.
 
 </details>
 
@@ -40,7 +40,7 @@ Probeer je wachtwoord te wijzigen en merk op dat het formulier nu vraagt om het 
 
 ## 3. ✓ Wat moest je zien?
 
-:::tip Controle
+:::tip[Controle]
 - Het formulier heeft nu een extra veld voor het **huidige wachtwoord**.
 - Een URL zonder het juiste huidige wachtwoord wordt geblokkeerd.
 - Zelfs als een aanvaller een token weet te bemachtigen, heeft hij nog steeds het huidige wachtwoord nodig.

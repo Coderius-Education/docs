@@ -74,7 +74,7 @@ Je hebt nu een Score-Label. Doe hetzelfde voor `Global.levens`.
 Voeg een tweede Label toe (`LevensLabel`) die `Global.levens` toont in **rood**.
 
 <details>
-<summary>Klik hier voor een tip!</summary>
+<summary>Klik hier voor een tip.</summary>
 
 - Voeg een nieuwe `Label` toe aan je level-scène en hernoem naar `LevensLabel`.
 - Koppel een script met dezelfde structuur als `ScoreLabel`, maar verwijs naar `Global.levens`.
@@ -83,7 +83,7 @@ Voeg een tweede Label toe (`LevensLabel`) die `Global.levens` toont in **rood**.
 </details>
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 **Script op `LevensLabel`:**
 

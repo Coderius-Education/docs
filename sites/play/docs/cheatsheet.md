@@ -42,7 +42,7 @@ Vervang `VERSIENUMMER` door de gewenste versie, bijvoorbeeld `3.3.3`.
 <details>
   <summary>Nieuw of verbeterd in coderius-play versie 3.3.3</summary>
 
-In versie 3.3.3 hebben we een nieuwe feature en een aantal verbeteringen toegevoegd!
+In versie 3.3.3 hebben we een nieuwe feature en een aantal verbeteringen toegevoegd.
 
 Bij **Kleuren**: je kunt nu **hex-codes** gebruiken om kleuren op te geven, bijvoorbeeld `play.new_circle(color='#FF8800')`. Handig als je een heel specifieke kleur wilt — dit werkt naast de bestaande kleurnamen (`'red'`, `'blue'`, ...) en RGB-tuples.
 
@@ -55,7 +55,7 @@ Bij **Tekst**: rotatie via `angle` werkt nu correct op Text-objecten. Als je `fo
 <details>
   <summary>Nieuw of verbeterd in coderius-play versie 3.3.2</summary>
 
-In versie 3.3.2 hebben we **`while_`-gebeurtenissen** toegevoegd! Deze vuren **elk frame** zolang je een toets, muisknop of controller-knop ingedrukt houdt. Perfect voor vloeiende beweging!
+In versie 3.3.2 hebben we **`while_`-gebeurtenissen** toegevoegd. Deze vuren **elk frame** zolang je een toets, muisknop of controller-knop ingedrukt houdt. Perfect voor vloeiende beweging.
 
 Bij **Toetsenbord**: nieuw: `@play.while_key_pressed('left')` vuurt elk frame zolang je de toets inhoudt. Ideaal voor het besturen van een karakter. Er is ook `@play.while_any_key_pressed` voor een willekeurige toets.
 
@@ -70,7 +70,7 @@ Bij **Bugfix**: `when_button_pressed` op de controller vuurt nu echt maar één 
 <details>
   <summary>Nieuw of verbeterd in coderius-play versie 3.3.1</summary>
 
-In versie 3.3.1 hebben we meer dan 30 bugs opgelost en een aantal verbeteringen doorgevoerd!
+In versie 3.3.1 hebben we meer dan 30 bugs opgelost en een aantal verbeteringen doorgevoerd.
 
 Bij **Async**: meerdere `await`-aanroepen in dezelfde callback blokkeren het spel niet meer. Animaties en timers draaien nu netjes naast elkaar, zonder dat het scherm vastloopt.
 
@@ -95,9 +95,9 @@ Bij **Bugfixes**: het programma sluit nu altijd netjes af, ook bij een fout. Fou
 <details>
   <summary>Nieuw of verbeterd in coderius-play versie 3.3</summary>
 
-We hebben flink wat verbeteringen doorgevoerd in coderius-play versie 3.3!
+We hebben flink wat verbeteringen doorgevoerd in coderius-play versie 3.3.
 
-Bij **Scherm**: je kunt nu het scherm van grootte veranderen met `play.screen.resize()`. Handig als je een groter of kleiner speelveld wilt!
+Bij **Scherm**: je kunt nu het scherm van grootte veranderen met `play.screen.resize()`. Handig als je een groter of kleiner speelveld wilt.
 
 Bij **Programma starten**: `play.start_program()` is nu optioneel. Als je het niet aanroept, start het programma automatisch.
 
@@ -119,7 +119,7 @@ Bij **Bugfixes**: toetsenbord-events worden nu maar één keer per frame afgevuu
 
 Bij **Bugfixes**: het wisselen van een achtergrondafbeelding terug naar een kleur met `set_backdrop()` werkt nu correct.
 
-Bij **Fysica**: je kunt nu `sensor=True` meegeven aan `start_physics()`. Een sensor detecteert botsingen (bijv. `when_touching`) maar blokkeert andere vormen niet — ze gaan er gewoon doorheen. Handig voor scorezones, triggers en checkpoints!
+Bij **Fysica**: je kunt nu `sensor=True` meegeven aan `start_physics()`. Een sensor detecteert botsingen (bijv. `when_touching`) maar blokkeert andere vormen niet — ze gaan er gewoon doorheen. Handig voor scorezones, triggers en checkpoints.
 
 Bij **Verwijderd**: het `Line`-object is verwijderd omdat het niet goed werkte met de physics engine.
 
@@ -149,7 +149,7 @@ Bij **een foutmelding** sluit het spel nu meteen. Dat helpt bij het debuggen.
 
 Bij **Acties**: als je twee of meer keer achter elkaar **hide**, **show** of **remove** aanroept, krijg je geen foutmelding meer
 
-Bij **Acties**: the *distance_to* wordt nu uitgelegd in deze cheatsheet. Misschien leuk voor het programmeren van een tegenstander bij pong!
+Bij **Acties**: the *distance_to* wordt nu uitgelegd in deze cheatsheet. Misschien leuk voor het programmeren van een tegenstander bij pong.
 
 Bij **Fysica**: bij grote vormen raken de vormen weer netjes de muren zonder gekke onzichtbare rand
 
@@ -209,7 +209,7 @@ Je kunt elke kleur gebruiken die je ook bij vormen gebruikt, bijvoorbeeld `'red'
 
 Met **play.set_backdrop_image()** kun je een afbeelding als achtergrond gebruiken in plaats van een kleur. De afbeelding moet in dezelfde map staan als je Python-bestand.
 
-:::warning Online speeltuin
+:::warning[Online speeltuin]
 Achtergrondafbeeldingen laden werkt **niet** in de online speeltuin. Je hebt hiervoor een lokale installatie nodig (Thonny of VS Code).
 :::
 
@@ -267,7 +267,7 @@ cirkel = play.new_circle(color='blue', radius=20, x=100)
 play.new_box()
 `} height={350} />
 
-Net zoals bij **play.new_circle** heeft het programma voor ons nu ook al de kleur en grootte bepaald. Je kunt dit zelf natuurlijk aanpassen!
+Net zoals bij **play.new_circle** heeft het programma voor ons nu ook al de kleur en grootte bepaald. Je kunt dit zelf natuurlijk aanpassen.
 Dit zijn de attributen voor **play.new_box**:
 - **color**: Kleur, staat standaard op 'black'. [Op deze pagina](https://www.pygame.org/docs/ref/color_list.html) zie je welke kleuropties er zijn. Je kunt ook direct een [RGB-waarde opgeven](https://www.w3schools.com/colors/colors_picker.asp) zoals **color=(100,100,100)**.
 - **x**: x-positie, staat standaard op 0 (het midden). Kleiner dan 0 is naar links, groter dan 0 is naar rechts.
@@ -317,7 +317,7 @@ tekst = play.new_text(words="Hello world", y=200, font_size=50)
 <details>
   <summary>Afbeelding (play.new_image)</summary>
 
-:::warning Online speeltuin
+:::warning[Online speeltuin]
 Afbeeldingen laden werkt **niet** in de online speeltuin. Je hebt hiervoor een lokale installatie nodig (Thonny of VS Code).
 :::
 
@@ -589,7 +589,7 @@ Je hebt nu twee rode cirkels: het origineel links en de kopie rechts.
 <details>
   <summary>Hoe vraag ik alle informatie van een vorm op? (info)</summary>
 
-Met **.info()** kun je in één keer alle informatie over een vorm printen. Dit is erg handig bij het debuggen!
+Met **.info()** kun je in één keer alle informatie over een vorm printen. Dit is erg handig bij het debuggen.
 
 <PygbagRunner code={`import play
 
@@ -879,14 +879,14 @@ def beweeg():
 
 Het verschil met `@play.when_key_pressed`: die reageert één keer per klik, terwijl `key_is_pressed` elk frame checkt zolang je de toets inhoudt.
 
-**Tip:** Sinds versie 3.3.2 kun je ook `@play.while_key_pressed` gebruiken. Dat is korter en duidelijker!
+**Tip:** Sinds versie 3.3.2 kun je ook `@play.while_key_pressed` gebruiken. Dat is korter en duidelijker.
 
 </details>
 
 <details>
   <summary>Zolang een toets ingedrukt is (@play.while_key_pressed) ⭐ nieuw in 3.3.2</summary>
 
-Met **@play.while_key_pressed** vuurt de functie **elk frame** zolang je de toets inhoudt. Dit is ideaal voor vloeiende beweging!
+Met **@play.while_key_pressed** vuurt de functie **elk frame** zolang je de toets inhoudt. Dit is ideaal voor vloeiende beweging.
 
 **Sinds 3.3.3:** geen vertraging meer bij het eerste frame — de beweging begint direct.
 
@@ -1555,7 +1555,7 @@ def een_knop_losgelaten(button):
 <details>
   <summary>Zolang een knop ingedrukt is op de controller (play.controllers.while_button_pressed) ⭐ nieuw in 3.3.2</summary>
 
-Je gebruikt **play.controllers.while_button_pressed** als je wilt dat een actie **elk frame** wordt uitgevoerd zolang een knop ingedrukt is. Ideaal voor vloeiende besturing!
+Je gebruikt **play.controllers.while_button_pressed** als je wilt dat een actie **elk frame** wordt uitgevoerd zolang een knop ingedrukt is. Ideaal voor vloeiende besturing.
 
 ```python
 import play

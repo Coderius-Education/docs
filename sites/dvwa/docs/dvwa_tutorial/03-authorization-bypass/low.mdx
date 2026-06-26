@@ -20,7 +20,7 @@ Stel, je bent ingelogd op een app en klikt op de knop om je adresgegevens te zie
 
 <summary>Antwoord</summary>
 
-Als de backend domweg blind vertrouwt op de parameter (`klant_id=4593`), trekt hij de privégegevens van klant 4593 uit de database en laat ze aan jou zien! Dit heet Insecure Direct Object Reference, omdat je direct mag verwijzen naar objecten/data die niet van jou zijn.
+Als de backend domweg blind vertrouwt op de parameter (`klant_id=4593`), trekt hij de privégegevens van klant 4593 uit de database en laat ze aan jou zien. Dit heet Insecure Direct Object Reference, omdat je direct mag verwijzen naar objecten/data die niet van jou zijn.
 
 </details>
 
@@ -68,7 +68,7 @@ Omdat er op de backend geen controle wordt uitgevoerd, rolt het profiel van elke
 
 ## 5. ✓ Wat moest je zien?
 
-:::tip Controle
+:::tip[Controle]
 - De server geeft de gegevens van een andere gebruiker terug zodra je een ander ID selecteert.
 - Er verschijnt geen foutmelding of toegangsweigering.
 - De server controleert niet of het gevraagde ID overeenkomt met de ingelogde gebruiker.
@@ -79,4 +79,4 @@ Zie je een foutmelding? Controleer of het lab correct is opgestart en of je een 
 ## 6. Er gaat iets mis...
 
 Wat als je in de dropdown de ID-waarde aanpast naar `9999` (een ID dat niet bestaat)?
-Soms crasht de hele pagina met een 500 Internal Server Error omdat de applicatie verwacht dat de opgevraagde data bestaat, en geen 'Niet Gevonden' foutafhandeling heeft geschreven. Hacken draait om grenzen opzoeken!
+Soms crasht de hele pagina met een 500 Internal Server Error omdat de applicatie verwacht dat de opgevraagde data bestaat, en geen 'Niet Gevonden' foutafhandeling heeft geschreven. Hacken draait om grenzen opzoeken.

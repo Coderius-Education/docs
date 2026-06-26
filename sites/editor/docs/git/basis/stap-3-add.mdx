@@ -18,7 +18,7 @@ Let in de simulator hieronder goed op de middelste kolom (Staging): zodra je `gi
 
 <GitSimulator
   scenarioId="stap-3-add"
-  initialFiles={{'hello.txt': 'Hallo wereld!\n'}}
+  initialFiles={{'hello.txt': 'Hallo wereld.\n'}}
   objective={{
     description: 'Init, voeg hello.txt toe aan staging.',
     check: (s) => s.initialized && s.staged !== null && 'hello.txt' in s.staged,

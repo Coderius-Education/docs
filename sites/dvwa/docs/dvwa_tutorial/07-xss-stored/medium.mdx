@@ -24,7 +24,7 @@ $name = str_replace( '<script>', '', $_POST['txtName'] );
 
 <summary>Antwoord</summary>
 
-De variabele `$name` wordt wél nog met XSS-kwetsbare functies behandeld! De `str_replace` haalt alleen exacte `<script>`-tags weg. Dit lek zagen we eerder bij Reflected XSS: we kunnen dit eenvoudig omzeilen met hoofdletters of andere HTML-tags!
+De variabele `$name` wordt wél nog met XSS-kwetsbare functies behandeld. De `str_replace` haalt alleen exacte `<script>`-tags weg. Dit lek zagen we eerder bij Reflected XSS: we kunnen dit eenvoudig omzeilen met hoofdletters of andere HTML-tags.
 
 </details>
 
@@ -69,13 +69,13 @@ Client-side beveiligingen kunnen worden uitgeschakeld. Gebruik F12 (Developer To
 1. Druk op F12. Inspecteer het veld "Name".
 2. Verander de code `maxlength="10"` naar `maxlength="100"`.
 3. Typ nu je XSS-payload in het Name-veld: `<SCRIPT>alert(1);</SCRIPT>`.
-4. Typ een willekeurig bericht en klik Submit. De pop-up verschijnt!
+4. Typ een willekeurig bericht en klik Submit. De pop-up verschijnt.
 
 </details>
 
 ## 5. ✓ Wat moest je zien?
 
-:::tip Controle
+:::tip[Controle]
 - Na het aanpassen van `maxlength` naar `100` kun je de volledige payload typen.
 - `<SCRIPT>alert(1);</SCRIPT>` triggert een **pop-up** — het filter laat het door.
 - Na een paginaverversing verschijnt de pop-up opnieuw — het is opgeslagen.

@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Welkom bij coderius-ctf
 
-Welkom bij de Cybersecurity **Capture the Flag** challenges van Coderius!
+Welkom bij de Cybersecurity **Capture the Flag** challenges van Coderius.
 
 De challenges worden gehost op [**ctf.hackchallenges.nl**](https://ctf.hackchallenges.nl/). Op deze site vind je per challenge een uitleg, hints en achtergrondinformatie.
 
