@@ -13,7 +13,7 @@ title: "Code - Broncode"
 **HTML-broncode**
 
 ## Beschrijving
-De flag is verborgen in de broncode van de pagina. Zoek goed!
+De flag is verborgen in de broncode van de pagina. Zoek goed.
 
 ## Wat je leert
 - Hoe je de broncode van een webpagina kunt bekijken

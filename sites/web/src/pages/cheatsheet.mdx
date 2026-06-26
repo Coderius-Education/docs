@@ -1148,7 +1148,7 @@ document.getElementById('knop').addEventListener('click', function() {
 ```
 
 <CodeEditor
-  initialHtml={`<!DOCTYPE html>
+  initialHtml={`<.DOCTYPE html>
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
@@ -1206,7 +1206,7 @@ if (score >= 90) {
 JavaScript probeert de takken van boven naar beneden en stopt bij de eerste die klopt.
 
 <CodeEditor
-  initialHtml={`<!DOCTYPE html>
+  initialHtml={`<.DOCTYPE html>
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
@@ -1284,7 +1284,7 @@ Veelgebruikte events:
 | `'keydown'` | Toets wordt ingedrukt |
 
 <CodeEditor
-  initialHtml={`<!DOCTYPE html>
+  initialHtml={`<.DOCTYPE html>
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
@@ -1292,14 +1292,14 @@ Veelgebruikte events:
   <script src="script.js" defer></script>
 </head>
 <body>
-  <button id="knop">Beweeg je muis of klik!</button>
+  <button id="knop">Beweeg je muis of klik.</button>
   <p id="status">Wachten op een event...</p>
 </body>
 </html>`}
   initialCss={`button { padding: 12px 24px; font-size: 1.1rem; cursor: pointer; }
 p { margin-top: 16px; font-size: 1.2rem; }`}
   initialJs={`document.getElementById('knop').addEventListener('mouseover', function() {
-  document.getElementById('status').textContent = 'Muis erop!';
+  document.getElementById('status').textContent = 'Muis erop.';
 });
 
 document.getElementById('knop').addEventListener('mouseout', function() {
@@ -1307,7 +1307,7 @@ document.getElementById('knop').addEventListener('mouseout', function() {
 });
 
 document.getElementById('knop').addEventListener('click', function() {
-  document.getElementById('status').textContent = 'Geklikt!';
+  document.getElementById('status').textContent = 'Geklikt.';
 });`}
   height="480px"
   livePreview={false}
@@ -1333,7 +1333,7 @@ const keuze = document.getElementById('land').value;            // value van <op
 :::
 
 <CodeEditor
-  initialHtml={`<!DOCTYPE html>
+  initialHtml={`<.DOCTYPE html>
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
@@ -1351,7 +1351,7 @@ button { padding: 6px 12px; cursor: pointer; }
 #uitvoer { margin-top: 12px; color: darkgreen; }`}
   initialJs={`function begroet() {
   const naam = document.getElementById('naam').value;
-  document.getElementById('uitvoer').textContent = 'Hoi ' + naam + '!';
+  document.getElementById('uitvoer').textContent = 'Hoi ' + naam + '.';
 }`}
   height="360px"
   livePreview={false}

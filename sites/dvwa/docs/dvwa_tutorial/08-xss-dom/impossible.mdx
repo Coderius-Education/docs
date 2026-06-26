@@ -11,7 +11,7 @@ Hoe beveilig je een frontend tegen dit soort lokale DOM-manipulaties?
 
 ## 1. Predict (Voorspel)
 
-De server hoeft hiervoor helemaal niets te doen! De oplossing zit verborgen in de manier waarop we de tekst op het scherm "tekenen" via JavaScript in plaats van het aan de HTML vast te knopen.
+De server hoeft hiervoor helemaal niets te doen. De oplossing zit verborgen in de manier waarop we de tekst op het scherm "tekenen" via JavaScript in plaats van het aan de HTML vast te knopen.
 
 In plaats van: `document.write(lang)`
 Doen ontwikkelaars nu dit:
@@ -27,7 +27,7 @@ element.textContent = lang; // Of .innerText
 <summary>Antwoord</summary>
 
 Wanneer je `document.write` of `.innerHTML` gebruikt, zegt de browser: "Ik ga deze tekst ontleden en opbouwen alsof het HTML is." Als daar `<script>` in zit, wekt hij dat tot leven.
-Gebruik je `.textContent` of `.innerText`, dan zegt de browser: "Dit is uitsluitend platte letter-tekst." Een script-tag wordt dan letterlijk als platte tekst op het scherm gezet en absoluut genegeerd door de parser!
+Gebruik je `.textContent` of `.innerText`, dan zegt de browser: "Dit is uitsluitend platte letter-tekst." Een script-tag wordt dan letterlijk als platte tekst op het scherm gezet en absoluut genegeerd door de parser.
 
 </details>
 

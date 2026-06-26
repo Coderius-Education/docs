@@ -31,8 +31,8 @@ switch ($_GET['default']) {
 
 <summary>Antwoord</summary>
 
-Het `#`-symbool in een URL (bijv. `website.nl/#contact`) is bedoeld voor ankerlinks op een pagina (scrollen naar een kopje). **Een heel belangrijke regel van het internet:** Alles wat ná het `#`-symbool komt, wordt door de webbrowser lokaal bewaard en wordt **nooit** meegestuurd in het HTTP-request naar de webserver!
-De server kan dit dus ook nooit controleren of blokkeren!
+Het `#`-symbool in een URL (bijv. `website.nl/#contact`) is bedoeld voor ankerlinks op een pagina (scrollen naar een kopje). **Een heel belangrijke regel van het internet:** Alles wat ná het `#`-symbool komt, wordt door de webbrowser lokaal bewaard en wordt **nooit** meegestuurd in het HTTP-request naar de webserver.
+De server kan dit dus ook nooit controleren of blokkeren.
 
 </details>
 
@@ -42,7 +42,7 @@ Start het lab en bekijk het gedrag van de dropdown.
 
 <DvwaLab module="xss_dom" level="high" />
 
-> ⚠️ **Labbeperking:** De `#`-hash-truc vereist directe toegang tot de **URL-balk** van je browser, wat niet mogelijk is in het embedded lab. Het lab toont de server-side logica (de whitelist), maar om de aanval daadwerkelijk uit te voeren heb je een [lokale DVWA-installatie](/docs/dvwa_installatie) nodig.
+> **Labbeperking:** De `#`-hash-truc vereist directe toegang tot de **URL-balk** van je browser, wat niet mogelijk is in het embedded lab. Het lab toont de server-side logica (de whitelist), maar om de aanval daadwerkelijk uit te voeren heb je een [lokale DVWA-installatie](/docs/dvwa_installatie) nodig.
 
 Selecteer de beschikbare talen en observeer hoe de whitelist werkt.
 
@@ -56,13 +56,13 @@ Probeer de URL te veranderen naar `?default=Klingon`. Kijk wat de server terugge
 
 <summary>Antwoord</summary>
 
-De server blokkeert de aanvraag met "Taal niet toegestaan!" — de whitelist werkt correct voor de querystring. Maar de server ziet nooit wat er ná het `#`-symbool staat. Als jij `?default=English#<script>alert(1)</script>` invoert, stuurt de browser naar de server alleen `?default=English`. De server keurt dit goed. Maar de JavaScript in de browser leest wél de volledige URL inclusief de hash!
+De server blokkeert de aanvraag met "Taal niet toegestaan." — de whitelist werkt correct voor de querystring. Maar de server ziet nooit wat er ná het `#`-symbool staat. Als jij `?default=English#<script>alert(1)</script>` invoert, stuurt de browser naar de server alleen `?default=English`. De server keurt dit goed. Maar de JavaScript in de browser leest wél de volledige URL inclusief de hash.
 
 </details>
 
 ## 4. Modify & Make (Aanpassen & Maken)
 
-Omdat de backend `English` in de parameter verwacht, geef je hem dat. Maar je plakt stiekem via de *hash* je payload erachter!
+Omdat de backend `English` in de parameter verwacht, geef je hem dat. Maar je plakt stiekem via de *hash* je payload erachter.
 
 <details>
 
@@ -81,8 +81,8 @@ Gebruik de waarde:
 
 Wat er gebeurt:
 1. Je vraagt aan de backend-server de pagina op: `?default=English`.
-2. De backend checkt de whitelist. "English" klopt! De pagina wordt veilig doorgestuurd.
-3. De JavaScript *in je lokale browser* leest wél de volledige adresbalk inclusief de hash! De JS schrijft de ongefilterde string direct in de pagina en triggert het script!
+2. De backend checkt de whitelist. "English" klopt. De pagina wordt veilig doorgestuurd.
+3. De JavaScript *in je lokale browser* leest wél de volledige adresbalk inclusief de hash. De JS schrijft de ongefilterde string direct in de pagina en triggert het script.
 
 </details>
 

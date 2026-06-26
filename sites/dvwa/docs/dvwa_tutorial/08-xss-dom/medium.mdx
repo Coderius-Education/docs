@@ -27,7 +27,7 @@ if (stripos ($_GET['default'], "<script") !== false) {
 <summary>Antwoord</summary>
 
 Het filter controleert of het woordje `<script` in de adresbalk staat. Zo ja, stuurt hij je direct terug naar de standaard Engelse versie.
-Het is echter niet volledig! Net als bij eerdere kwetsbaarheden wordt hier alleen de `<script>`-tag afgevangen. We kunnen nog steeds afbeeldingen, iFrames en SVG-elementen misbruiken om JavaScript te injecteren in de DOM!
+Het is echter niet volledig. Net als bij eerdere kwetsbaarheden wordt hier alleen de `<script>`-tag afgevangen. We kunnen nog steeds afbeeldingen, iFrames en SVG-elementen misbruiken om JavaScript te injecteren in de DOM.
 
 </details>
 
@@ -72,7 +72,7 @@ Net als in de eerdere Low-opdracht moet je eerst uit de `<select>`-dropdown brek
 Plaats dit achteraan in de adresbalk (als waarde voor `default=`):
 `English></select><img src="x" onerror="alert(1)">`
 
-De frontend-JavaScript plakt dit in de DOM. Omdat de tag geen `script` bevat, laat de backend-server het netjes door!
+De frontend-JavaScript plakt dit in de DOM. Omdat de tag geen `script` bevat, laat de backend-server het netjes door.
 
 </details>
 

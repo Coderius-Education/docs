@@ -4,14 +4,14 @@ sidebar_position: 2
 
 # Klikspelletje
 
-Een compleet ander genre dan pong: een spel waarbij de gebruiker zo snel mogelijk op een bal moet klikken!
+Een compleet ander genre dan pong: een spel waarbij de gebruiker zo snel mogelijk op een bal moet klikken.
 
 ## Stap 1: De bal
 
 Maak een cirkel die als doelwit dient. Kies zelf een kleur en grootte.
 
 <details>
-<summary>Klik hier voor een tip!</summary>
+<summary>Klik hier voor een tip.</summary>
 
 Gebruik `play.new_circle()` met een `radius` en `color` naar keuze.
 
@@ -24,7 +24,7 @@ De bal moet elke seconde naar een willekeurige plek op het scherm springen. Hier
 - `async` en `await play.timer()` om te wachten (zie [5.2 Wachten met async en await](/docs/tijd/async))
 
 <details>
-<summary>Klik hier voor een tip!</summary>
+<summary>Klik hier voor een tip.</summary>
 
 Gebruik `@play.repeat_forever` met een `async` functie. Met `play.random_number(-400, 400)` krijg je een willekeurig getal voor de x-positie.
 
@@ -35,7 +35,7 @@ Gebruik `@play.repeat_forever` met een `async` functie. Met `play.random_number(
 Gebruik `@bal.when_clicked` om te detecteren of de speler op de bal klikt. Houd een score bij en toon die op het scherm.
 
 <details>
-<summary>Klik hier voor een tip!</summary>
+<summary>Klik hier voor een tip.</summary>
 
 Je hebt `global` nodig om de score binnen een functie te veranderen. Kijk bij [4.5 Een score bijhouden](/docs/gebeurtenissen/score_bijhouden) als je niet meer weet hoe dat werkt.
 

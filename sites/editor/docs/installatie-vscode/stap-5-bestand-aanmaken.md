@@ -10,7 +10,7 @@ title: "Stap 5: een bestand aanmaken"
 3. Geef het bestand een naam, bijvoorbeeld `test.txt`
 4. Sla het bestand op via **File** → **Save**
 
-## Klaar! Wat nu?
+## Klaar. Wat nu?
 
 Kies waar je mee aan de slag wilt:
 

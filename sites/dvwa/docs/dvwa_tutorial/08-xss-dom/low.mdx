@@ -7,7 +7,7 @@ import DvwaLab from '@site/src/components/DvwaLab';
 
 # XSS (DOM) — Low
 
-Bij DOM-based XSS vindt de aanval *volledig* in de browser (via JavaScript) plaats. De server in de achtergrond doet er soms niet eens toe!
+Bij DOM-based XSS vindt de aanval *volledig* in de browser (via JavaScript) plaats. De server in de achtergrond doet er soms niet eens toe.
 
 ## 1. Predict (Voorspel)
 
@@ -25,7 +25,7 @@ document.write("<option value='" + lang + "'>" + lang + "</option>");
 
 <summary>Antwoord</summary>
 
-De JavaScript-code in je eigen browser pakt exact de letters achter `default=` uit de URL-balk en 'schrijft' dit met `document.write()` in de pagina. Jouw `<script>`-tag wordt daardoor midden in de dropdown-box opgebouwd en direct door de browser uitgevoerd!
+De JavaScript-code in je eigen browser pakt exact de letters achter `default=` uit de URL-balk en 'schrijft' dit met `document.write()` in de pagina. Jouw `<script>`-tag wordt daardoor midden in de dropdown-box opgebouwd en direct door de browser uitgevoerd.
 
 </details>
 
@@ -67,7 +67,7 @@ Verander de parameterwaarde in de URL in: `></option><script>alert(1)</script>`
 
 <summary>Antwoord</summary>
 
-Door de string te beginnen met `></option>` sluit je de openstaande tag van de ontwikkelaar netjes af. Daarna kun je je eigen `<script>` openen. DOM-XSS vereist vaak een stukje "HTML-puzzelen" om de structuur weer heel te maken!
+Door de string te beginnen met `></option>` sluit je de openstaande tag van de ontwikkelaar netjes af. Daarna kun je je eigen `<script>` openen. DOM-XSS vereist vaak een stukje "HTML-puzzelen" om de structuur weer heel te maken.
 
 </details>
 
@@ -83,4 +83,4 @@ Geen pop-up? Moderne browsers kunnen `document.write()` met scripts blokkeren. D
 
 ## 6. Er gaat iets mis...
 
-Je typt keurig je JavaScript-payload en... er gebeurt niets. Vaak blokkeren moderne webbrowsers `document.write()` als ze merken dat er plots een script uit het niets wordt geschreven. Dit is een ingebouwde browserbeveiliging. Hacken met DOM XSS is in moderne browsers extreem lastig geworden zonder complexe *bypasses*!
+Je typt keurig je JavaScript-payload en... er gebeurt niets. Vaak blokkeren moderne webbrowsers `document.write()` als ze merken dat er plots een script uit het niets wordt geschreven. Dit is een ingebouwde browserbeveiliging. Hacken met DOM XSS is in moderne browsers extreem lastig geworden zonder complexe *bypasses*.

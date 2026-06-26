@@ -107,7 +107,7 @@ Stel je maakt een pong-spel. Welk type fysica (**dynamic**, **static** of **kine
 | De muren aan de boven- en onderkant | ??? |
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 | Onderdeel | Type fysica | Waarom? |
 | --- | --- | --- |
@@ -137,7 +137,7 @@ vorm_c.start_physics(can_move=True, obeys_gravity=False, stable=True, x_speed=50
 ```
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 ```python
 import play

@@ -32,14 +32,14 @@ Maak een programma waarbij:
 4. Als je het programma opnieuw start, heeft de cirkel meteen de kleur die je de vorige keer had gekozen
 
 <details>
-<summary>Klik hier voor een tip!</summary>
+<summary>Klik hier voor een tip.</summary>
 
 Haal bij het aanmaken van de cirkel de kleur op uit de database met een default waarde, bijvoorbeeld `'black'`.
 
 </details>
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 ```python
 import play
@@ -77,7 +77,7 @@ Maak een programma waarbij:
 4. De keuze wordt opgeslagen in de database
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 ```python
 import play

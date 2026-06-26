@@ -94,7 +94,7 @@ async def verstuur(naam: str = Form(...)):
     return {"naam": naam}
 ```
 
-**Let op:** de `name` in HTML moet matchen met de Python parameter!
+**Let op:** de `name` in HTML moet matchen met de Python parameter.
 
 </details>
 
@@ -115,7 +115,7 @@ async def groet(request: Request, naam: str = Form(...)):
     )
 ```
 
-**Let op:** `"request": request` moet altijd in het dictionary!
+**Let op:** `"request": request` moet altijd in het dictionary.
 
 </details>
 
@@ -164,7 +164,7 @@ async def groet(request: Request, naam: str = Form(...)):
 <a href="/about">Ga naar About</a>
 ```
 
-**Let op:** link naar het **endpoint**, niet naar het bestand!
+**Let op:** link naar het **endpoint**, niet naar het bestand.
 
 </details>
 
@@ -178,7 +178,7 @@ async def groet(request: Request, naam: str = Form(...)):
 </form>
 ```
 
-**Let op:** `name` in HTML moet matchen met de parameter in Python!
+**Let op:** `name` in HTML moet matchen met de parameter in Python.
 
 </details>
 

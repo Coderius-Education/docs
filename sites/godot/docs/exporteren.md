@@ -113,7 +113,7 @@ De `.exe` laat het spel draaien, maar je docent kan er niet *in* kijken. Voor de
 
    Je ziet nu je projectmap als één pictogram tussen eventuele andere mappen.
 
-5. Rechtermuisknop **op de projectmap zelf** (niet op de witte ruimte ernaast!) → **Verzenden naar → Gecomprimeerde (zipped) map**.
+5. Rechtermuisknop **op de projectmap zelf** (niet op de witte ruimte ernaast.) → **Verzenden naar → Gecomprimeerde (zipped) map**.
 6. Naast je projectmap verschijnt `mijn-project.zip` (Windows neemt de naam van je projectmap over).
 
 :::tip
@@ -128,7 +128,7 @@ Lever bij je docent **beide** bestanden in:
 - `mijn-project.zip` (uit Stap 7) — om de broncode te bekijken.
 
 <details>
-<summary>Klik hier voor een tip!</summary>
+<summary>Klik hier voor een tip.</summary>
 
 - Zet beide bestanden in dezelfde map en lever die map in via het systeem dat jouw docent gebruikt (Magister, Teams, Google Classroom, een gedeelde map…).
 - Naamgeving helpt: gebruik je eigen naam in beide bestandsnamen, bijvoorbeeld `marten-game.exe` en `marten-project.zip`.
@@ -137,7 +137,7 @@ Lever bij je docent **beide** bestanden in:
 </details>
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 Heb je beide bestanden ingeleverd en kan je docent zowel het spel starten als je broncode bekijken? Dan is je inlevering compleet.
 

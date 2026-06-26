@@ -27,7 +27,7 @@ $stmt->execute();
 
 De code gebruikt **Prepared Statements**. Dit is de gouden standaard tegen SQL Injection.
 Hierbij wordt de structuur van het SQL commando alvast naar de database gestuurd, vóórdat de variabelen worden toegevoegd.
-De database wéét hierdoor precies wat commando's zijn en wat data is. Als je nu `1' OR '1'='1` invult, denkt de database: "Ah, deze persoon is op zoek naar een gebruiker wiens naam/id letterlijk de tekst '1' OR '1'='1' is." Hij voert het dus niet meer uit als code!
+De database wéét hierdoor precies wat commando's zijn en wat data is. Als je nu `1' OR '1'='1` invult, denkt de database: "Ah, deze persoon is op zoek naar een gebruiker wiens naam/id letterlijk de tekst '1' OR '1'='1' is." Hij voert het dus niet meer uit als code.
 Bovendien dwingt `PDO::PARAM_INT` af dat de invoer een wiskundig getal (integer) móét zijn.
 
 </details>

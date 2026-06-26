@@ -5,7 +5,7 @@ displayed_sidebar: null
 
 # Foutje gevonden?
 
-Goed speurwerk! Er zijn twee soorten foutjes die je kunt tegenkomen:
+Goed speurwerk. Er zijn twee soorten foutjes die je kunt tegenkomen:
 
 ## 1. Een bug in de software
 

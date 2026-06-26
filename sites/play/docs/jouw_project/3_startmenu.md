@@ -91,14 +91,14 @@ def start_spel():
 Breid het programma uit met een game-over scherm. Wanneer de bal de onderkant van het scherm raakt, moet het spel stoppen en een "Game Over" tekst tonen.
 
 <details>
-<summary>Klik hier voor een tip!</summary>
+<summary>Klik hier voor een tip.</summary>
 
 Gebruik `@bal.when_touching_wall` met `wall=play.WallSide.BOTTOM` om te detecteren wanneer de bal de onderkant raakt.
 
 </details>
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 Voeg dit toe aan je programma:
 

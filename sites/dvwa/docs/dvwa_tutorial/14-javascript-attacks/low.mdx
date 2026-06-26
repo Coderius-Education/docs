@@ -29,7 +29,7 @@ Start het lab en bekijk het formulier.
 
 <DvwaLab module="javascript_attacks" level="low" />
 
-> ⚠️ **Labbeperking:** Deze aanval vereist toegang tot de F12 Console van de kwetsbare pagina. Omdat het lab in een beveiligd iframe draait, is dit beperkt mogelijk. Voor de volledige ervaring heb je een [lokale DVWA-installatie](/docs/dvwa_installatie) nodig.
+> **Labbeperking:** Deze aanval vereist toegang tot de F12 Console van de kwetsbare pagina. Omdat het lab in een beveiligd iframe draait, is dit beperkt mogelijk. Voor de volledige ervaring heb je een [lokale DVWA-installatie](/docs/dvwa_installatie) nodig.
 
 Vul het woord `success` in het tekstvak in en klik op Submit. Observeer de foutmelding.
 
@@ -66,7 +66,7 @@ Ga in F12 naar het tabblad **Console**. Alle JavaScript-functies op de pagina zi
 1. Open F12 → **Console**.
 2. Typ: `generate_token("success")` en druk op Enter.
 3. Het script berekent nu het correcte token voor `success` en stopt het in het verborgen formulierveld.
-4. Klik daarna op Submit. De server accepteert je request!
+4. Klik daarna op Submit. De server accepteert je request.
 
 </details>
 
@@ -82,4 +82,4 @@ Werkt de Console niet in het lab? Probeer het in een lokale DVWA-installatie.
 
 ## 6. Er gaat iets mis...
 
-Als een webserver blind de input van een browser gelooft zolang de "rekensom" klopt, noem je zo'n systeem "Client-Authoritative". Bij online games zie je dit veel: als de game-client beslist of een schot raak was en de server dat klakkeloos goedkeurt, staat de deur wagenwijd open voor cheaters. **Never trust the client!**
+Als een webserver blind de input van een browser gelooft zolang de "rekensom" klopt, noem je zo'n systeem "Client-Authoritative". Bij online games zie je dit veel: als de game-client beslist of een schot raak was en de server dat klakkeloos goedkeurt, staat de deur wagenwijd open voor cheaters. **Never trust the client.**

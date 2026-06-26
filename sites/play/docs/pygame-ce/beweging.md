@@ -77,14 +77,14 @@ Verander het programma zodat:
 2. De normale snelheid is 5, de snelle snelheid is 15
 
 <details>
-<summary>Klik hier voor een tip!</summary>
+<summary>Klik hier voor een tip.</summary>
 
 Je kunt checken of shift ingedrukt is met `toetsen[pygame.K_LSHIFT]`.
 
 </details>
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 ```python
 import pygame
@@ -136,14 +136,14 @@ pygame.quit()
 De cirkel kan nu van het scherm af bewegen. Zorg ervoor dat de cirkel niet buiten het venster kan komen.
 
 <details>
-<summary>Klik hier voor een tip!</summary>
+<summary>Klik hier voor een tip.</summary>
 
 Het scherm is 800 breed en 600 hoog. De cirkel heeft een straal van 30. Dus `x` mag niet kleiner worden dan 30 en niet groter dan 770.
 
 </details>
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 Voeg dit toe na de toetsen-code, maar voor het tekenen:
 

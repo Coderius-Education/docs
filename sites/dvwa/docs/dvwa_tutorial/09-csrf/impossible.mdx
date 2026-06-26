@@ -26,7 +26,7 @@ Bevestig nieuw wachtwoord: <input type="password" name="password_conf">
 <summary>Antwoord</summary>
 
 Bij een CSRF-aanval proberen we het slachtoffer via een linkje onbewust de server te laten vertellen: "Zet mijn wachtwoord op X".
-Maar omdat de server nu eist dat het *huidige* wachtwoord óók wordt meegestuurd in dat linkje, is de hacker schaakmat! De hacker wéét het huidige wachtwoord immers niet. Een blind linkje zoals `?password_current=RAADMAAR&password_new=hacked` zal daarom altijd genadeloos afgewezen worden door de server.
+Maar omdat de server nu eist dat het *huidige* wachtwoord óók wordt meegestuurd in dat linkje, is de hacker schaakmat. De hacker wéét het huidige wachtwoord immers niet. Een blind linkje zoals `?password_current=RAADMAAR&password_new=hacked` zal daarom altijd genadeloos afgewezen worden door de server.
 
 </details>
 

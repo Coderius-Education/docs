@@ -22,7 +22,7 @@ De online speeltuin werkt alleen binnen dit lesmateriaal. Voor een eigen project
 
 ## Optie 2: Thonny
 
-Wil je gewoon snel aan de slag? Kies dan voor Thonny. Het is een simpele editor die speciaal gemaakt is voor beginners. Python zit er al bij inbegrepen!
+Wil je gewoon snel aan de slag? Kies dan voor Thonny. Het is een simpele editor die speciaal gemaakt is voor beginners. Python zit er al bij inbegrepen.
 
 Ga naar [de Thonny-tutorial](Thonny.md) voor de stappen.
 

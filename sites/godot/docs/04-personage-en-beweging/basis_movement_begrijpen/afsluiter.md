@@ -55,7 +55,7 @@ Je begrijpt nu elke regel. Tijd om het script vanaf nul zelf te schrijven — zo
    - **Voeg lopen toe** (Blok 3c). Test → karakter loopt links/rechts.
 
 <details>
-<summary>Klik hier voor een tip!</summary>
+<summary>Klik hier voor een tip.</summary>
 
 - Werk **één blok tegelijk** af. Krijg je fouten? Eerst dit blok werkend voor je verder gaat.
 - Vergeet niet: `move_and_slide()` blijft altijd als laatste regel binnen `_physics_process` staan.
@@ -64,7 +64,7 @@ Je begrijpt nu elke regel. Tijd om het script vanaf nul zelf te schrijven — zo
 </details>
 
 <details>
-<summary>Klik hier voor de oplossing (volledig script)!</summary>
+<summary>Klik hier voor de oplossing (volledig script).</summary>
 
 ```gdscript
 extends CharacterBody2D

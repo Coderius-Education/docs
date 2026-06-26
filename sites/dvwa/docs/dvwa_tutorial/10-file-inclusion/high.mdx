@@ -28,7 +28,7 @@ include($file);
 
 <summary>Antwoord</summary>
 
-Op Linux en macOS bestaat het **`file://`-protocol** (net als `http://` en `ftp://`). Dit protocol wordt gebruikt om in een browser naar lokale bestanden op de harde schijf te verwijzen. Omdat de ontwikkelaar eist dat de invoer begint met `file`, staat hij onbewust het gebruik van dit protocol toe — waarmee de volledige harde schijf uitgelezen kan worden!
+Op Linux en macOS bestaat het **`file://`-protocol** (net als `http://` en `ftp://`). Dit protocol wordt gebruikt om in een browser naar lokale bestanden op de harde schijf te verwijzen. Omdat de ontwikkelaar eist dat de invoer begint met `file`, staat hij onbewust het gebruik van dit protocol toe — waarmee de volledige harde schijf uitgelezen kan worden.
 
 </details>
 
@@ -42,7 +42,7 @@ Probeer `?page=file1.php` en `?page=file2.php`. Observeer dat dit werkt. Probeer
 
 ## 3. Investigate (Onderzoeken)
 
-Probeer verschillende payloads en kijk welke de "ERROR: File not found!"-melding geven en welke door het filter komen.
+Probeer verschillende payloads en kijk welke de "ERROR: File not found."-melding geven en welke door het filter komen.
 
 **Vraag:** Welk patroon moet jouw payload hebben om door de `fnmatch("file*", ...)` check te komen? Welk protocol begint toevallig ook met het woord `file`?
 
@@ -81,7 +81,7 @@ Omdat de string netjes begint met "file", gooit het beveiligingsfilter het niet 
 
 :::tip Controle
 - De pagina toont de inhoud van `/etc/passwd` via het `file://`-protocol.
-- De aanval met `../../etc/passwd` geeft nog steeds "ERROR: File not found!" — de whitelist werkt voor dat patroon.
+- De aanval met `../../etc/passwd` geeft nog steeds "ERROR: File not found." — de whitelist werkt voor dat patroon.
 - Het `file://`-protocol is een blinde vlek in de whitelist-check.
 
 Werkt het niet? Controleer of je drie slashes gebruikt: `file:///etc/passwd` (twee na `file:` en één voor het absolute pad).

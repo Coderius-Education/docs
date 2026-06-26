@@ -18,7 +18,7 @@ We weten nu hoe een Ja/Nee (Boolean) injectie werkt. Soms vertelt de applicatie 
 <summary>Antwoord</summary>
 
 We kunnen overstappen op **Time-Based Blind SQL Injection**.
-We commanderen de database om, *alleen* als onze bewering waar is, 5 seconden te wachten voordat hij antwoord geeft. Als we direct antwoord krijgen, was de bewering onwaar. Als het verzoek lang duurt, weten we dat de bewering waar was!
+We commanderen de database om, *alleen* als onze bewering waar is, 5 seconden te wachten voordat hij antwoord geeft. Als we direct antwoord krijgen, was de bewering onwaar. Als het verzoek lang duurt, weten we dat de bewering waar was.
 
 </details>
 
@@ -40,7 +40,7 @@ Open de Developer Tools (F12) en zoek het `<select>`-element. Verander de `value
 
 <summary>Antwoord</summary>
 
-De pagina wacht nu 5 seconden voordat hij antwoord geeft! Dit bewijst dat de applicatie jouw invoer ongefilterd in de SQL-query plakt en dat de database het `SLEEP(5)`-commando daadwerkelijk uitvoert. De backend filtert de dropdown-waarde niet — de bescherming zat alleen in de frontend (de dropdown), niet in de backend.
+De pagina wacht nu 5 seconden voordat hij antwoord geeft. Dit bewijst dat de applicatie jouw invoer ongefilterd in de SQL-query plakt en dat de database het `SLEEP(5)`-commando daadwerkelijk uitvoert. De backend filtert de dropdown-waarde niet — de bescherming zat alleen in de frontend (de dropdown), niet in de backend.
 
 </details>
 
@@ -61,7 +61,7 @@ Druk op F12. Inspecteer het formulier, en verander de `value="1"` van een van de
 <summary>Antwoord</summary>
 
 Verander de optie naar: `<option value="1 AND SLEEP(5)">`
-Selecteer deze in de webpagina en klik Submit. De browser wacht nu 5 volle seconden voordat de webpagina weer verschijnt! Je hebt succesvol de wachttijd gemanipuleerd en daarmee bewezen dat er een blind gat in de database zit.
+Selecteer deze in de webpagina en klik Submit. De browser wacht nu 5 volle seconden voordat de webpagina weer verschijnt. Je hebt succesvol de wachttijd gemanipuleerd en daarmee bewezen dat er een blind gat in de database zit.
 
 </details>
 

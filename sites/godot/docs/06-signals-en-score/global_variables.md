@@ -135,7 +135,7 @@ Je hebt nu `Global.score`. Pas dezelfde aanpak toe op `levens`.
 Voeg `var levens = 3` toe aan `global.gd` en laat je vijand-script `Global.levens -= 1` doen bij contact (in plaats van `body.levens -= 1` uit de vorige les).
 
 <details>
-<summary>Klik hier voor een tip!</summary>
+<summary>Klik hier voor een tip.</summary>
 
 - Open `global.gd` en voeg `var levens = 3` toe onder `var score = 0`.
 - Open je vijand-script en vervang `body.levens -= 1` door `Global.levens -= 1`.
@@ -145,7 +145,7 @@ Voeg `var levens = 3` toe aan `global.gd` en laat je vijand-script `Global.leven
 </details>
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 **In `global.gd`:**
 

@@ -25,7 +25,7 @@ Wat gebeurt er als de admin op dat moment toevallig in zijn browser op DVWA inge
 <summary>Antwoord</summary>
 
 De browser probeert de verborgen 'afbeelding' in te laden door de URL op te vragen. Omdat de admin nog is ingelogd op DVWA, voegt zijn browser netjes zijn sessie-cookies toe aan het verzoek.
-De webserver krijgt een geldige aanvraag ("verander het wachtwoord naar 'hacked'!") afkomstig van de admin. En boem: het wachtwoord van de admin is zonder dat hij ook maar iets heeft ingetypt veranderd! Dit is de essentie van CSRF.
+De webserver krijgt een geldige aanvraag ("verander het wachtwoord naar 'hacked'.") afkomstig van de admin. En boem: het wachtwoord van de admin is zonder dat hij ook maar iets heeft ingetypt veranderd. Dit is de essentie van CSRF.
 
 </details>
 
@@ -67,7 +67,7 @@ Kijk goed naar de structuur van het HTTP GET-request (de URL). Verander de waard
 
 <summary>Antwoord</summary>
 
-Maak een URL zoals: `?password_new=12345&password_conf=12345&Change=Change`. In een real-life scenario zou je een slachtoffer verleiden om op deze link te klikken. Zodra de link in de achtergrond laadt, is het wachtwoord gewijzigd zonder waarschuwing!
+Maak een URL zoals: `?password_new=12345&password_conf=12345&Change=Change`. In een real-life scenario zou je een slachtoffer verleiden om op deze link te klikken. Zodra de link in de achtergrond laadt, is het wachtwoord gewijzigd zonder waarschuwing.
 
 </details>
 

@@ -7,7 +7,7 @@ import LinuxTerminal from '@site/src/components/LinuxTerminal';
 
 # Command Injection — High
 
-De ontwikkelaar heeft ons wéér door. Nu worden vrijwel alle injectie-tekens systematisch gefilterd!
+De ontwikkelaar heeft ons wéér door. Nu worden vrijwel alle injectie-tekens systematisch gefilterd.
 
 ## 1. Predict (Voorspel)
 
@@ -42,8 +42,8 @@ Kijk heel nauwkeurig naar het filter van de enkele pipe (`|`). Wat staat daar n�
 
 <summary>Antwoord</summary>
 
-Er staat `'| ' => ''`. Let op de extra **spatie** na het pipe-teken! Dit betekent dat de webserver specifiek op zoek is naar een pipe-symbool waarna een spatie volgt. Als hij dat tegenkomt, haalt hij het weg.
-Maar... wat als we een pipe gebruiken zónder spatie? Dan wordt het niet herkend door dit rammelende filter!
+Er staat `'| ' => ''`. Let op de extra **spatie** na het pipe-teken. Dit betekent dat de webserver specifiek op zoek is naar een pipe-symbool waarna een spatie volgt. Als hij dat tegenkomt, haalt hij het weg.
+Maar... wat als we een pipe gebruiken zónder spatie? Dan wordt het niet herkend door dit rammelende filter.
 
 </details>
 
@@ -82,7 +82,7 @@ Haal de spatie weg die direct nà het pipe-teken komt in jouw payload.
 
 <summary>Antwoord</summary>
 
-Vul in: `127.0.0.1|ls` (zonder spatie achter de pipe). Doordat de exact match in het filter niet meer klopt, laat de firewall het commando er gewoon doorheen glippen!
+Vul in: `127.0.0.1|ls` (zonder spatie achter de pipe). Doordat de exact match in het filter niet meer klopt, laat de firewall het commando er gewoon doorheen glippen.
 
 Het resultaat van een succesvolle poging zie je hieronder:
 
@@ -102,7 +102,7 @@ Werkt het toch niet? Controleer of er écht geen spatie tussen `|` en `ls` staat
 
 ## 5. Er gaat iets mis...
 
-Je hack is gelukt op High! Maar waarom lossen de ontwikkelaars dit niet gewoon op door álle speciale karakters er uit te slopen in het Impossible-level?
+Je hack is gelukt op High. Maar waarom lossen de ontwikkelaars dit niet gewoon op door álle speciale karakters er uit te slopen in het Impossible-level?
 
 Dat klinkt logisch, maar de praktijk is weerbarstig. Dit noemen we de **"Blacklisting Fallacy"**. Telkens als je een nieuw trucje leert en toevoegt aan de verboden lijst (blacklist), verzinnen hackers (of de gigantische Linux/Windows community) wel weer een obscure manier om een commando uit te voeren met leestekens die je nóg niet geblokkeerd hebt.
 De énige echte oplossing is **Whitelisting**: niet op zoek gaan naar *slechte* tekens, maar enkel en alleen letters en cijfers toestaan die exact passen in het profiel van een IP-adres.

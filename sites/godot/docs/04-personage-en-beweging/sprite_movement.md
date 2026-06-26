@@ -68,7 +68,7 @@ Start het spel met `F5` en probeer:
 - **Spatiebalk** — springen.
 - Loop van een platform af — je valt naar beneden.
 
-<iframe width="100%" height="500px" src="https://www.youtube.com/embed/5V9f3MT86M8?start=570&end=712" title="Start Your Game Creation Journey Today! (Godot beginner tutorial)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<iframe width="100%" height="500px" src="https://www.youtube.com/embed/5V9f3MT86M8?start=570&end=712" title="Start Your Game Creation Journey Today. (Godot beginner tutorial)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ## Er gaat iets mis
 

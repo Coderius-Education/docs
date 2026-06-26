@@ -5,7 +5,7 @@ sidebar_position: 1
 # 4.1 Gebeurtenissen
 
 "Als ik op de spatiebalk druk, wil ik dat er iets beweegt. Kan dat?"
-Jazeker! Met **play** kun je reageren op acties van de gebruiker. Zo'n actie noemen we een **gebeurtenis**.
+Jazeker. Met **play** kun je reageren op acties van de gebruiker. Zo'n actie noemen we een **gebeurtenis**.
 
 <PygbagRunner code={`import play
 
@@ -137,7 +137,7 @@ def beweeg(key):
     if key == 'right':
         blok.x = blok.x + 2`} height={300} />
 
-Het verschil? Met `when_key_pressed` gebeurt de actie één keer bij het indrukken. Met `while_key_pressed` gebeurt de actie **elk frame** zolang je de toets inhoudt. Dat voelt veel vloeiender!
+Het verschil? Met `when_key_pressed` gebeurt de actie één keer bij het indrukken. Met `while_key_pressed` gebeurt de actie **elk frame** zolang je de toets inhoudt. Dat voelt veel vloeiender.
 
 :::info
 Je kunt ook `play.key_is_pressed()` in combinatie met `@play.repeat_forever` gebruiken voor hetzelfde effect. Maar `@play.while_key_pressed` is korter en duidelijker.
@@ -148,7 +148,7 @@ Je kunt ook `play.key_is_pressed()` in combinatie met `@play.repeat_forever` geb
 Maak een cirkel die vloeiend beweegt met de pijltjestoetsen. Gebruik `@play.while_key_pressed`.
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 <PygbagRunner code={`import play
 

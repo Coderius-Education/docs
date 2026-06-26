@@ -8,7 +8,7 @@ sidebar_position: 2
 - [6.1 Gegevens opslaan en ophalen](/docs/database/basis) - `set_data()` en `get_data()`
 :::
 
-Nu we weten hoe `set_data()` en `get_data()` werken, kunnen we een high score systeem maken!
+Nu we weten hoe `set_data()` en `get_data()` werken, kunnen we een high score systeem maken.
 
 ## Een simpele high score
 
@@ -28,7 +28,7 @@ def update_high_score():
     tekst.words = "High score: " + str(database.get_data('punten'))
 ```
 
-Elke keer dat je op spatie drukt, wordt de high score met 1 verhoogd en opgeslagen. Sluit het programma af en start het opnieuw. Je high score is bewaard!
+Elke keer dat je op spatie drukt, wordt de high score met 1 verhoogd en opgeslagen. Sluit het programma af en start het opnieuw. Je high score is bewaard.
 
 ## Opdracht 6.2.a: Klik-teller
 
@@ -39,14 +39,14 @@ Maak een programma waarbij:
 4. Als je het programma opnieuw start, begint de teller waar je was gebleven
 
 <details>
-<summary>Klik hier voor een tip!</summary>
+<summary>Klik hier voor een tip.</summary>
 
-Gebruik `@cirkel.when_clicked` om te detecteren of je op de cirkel klikt. Vergeet niet om de teller op te halen met een default waarde!
+Gebruik `@cirkel.when_clicked` om te detecteren of je op de cirkel klikt. Vergeet niet om de teller op te halen met een default waarde.
 
 </details>
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 ```python
 import play
@@ -77,14 +77,14 @@ Bij een echte high score sla je alleen de score op als die **hoger** is dan de v
 4. Alleen als de score hoger is dan de high score, wordt de high score bijgewerkt
 
 <details>
-<summary>Klik hier voor een tip!</summary>
+<summary>Klik hier voor een tip.</summary>
 
 Je hebt twee variabelen nodig: `score` (de huidige score) en `highscore` (de opgeslagen best score). Vergelijk ze met een `if`-statement.
 
 </details>
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 ```python
 import play

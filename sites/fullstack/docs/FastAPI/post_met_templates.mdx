@@ -81,13 +81,13 @@ async def groet_verwerk(request: Request, naam: str = Form(...)):
 
 - `TemplateResponse` — Rendert een HTML template met variabelen
 - `{"request": request, "naam": naam}` — Stuurt data naar de template
-- `"request": request` — Moet altijd mee!
+- `"request": request` — Moet altijd mee.
 - `{{ naam }}` — Wordt in de template vervangen door de waarde
 
 <details>
 <summary>Waarom moet "request" altijd mee?</summary>
 
-Jinja2 in FastAPI heeft het `request` object nodig om te weten welke gebruiker de pagina opvraagt. Zonder `"request": request` in het dictionary krijg je een **TypeError**. Dit is een vereiste van het framework — vergeet het niet!
+Jinja2 in FastAPI heeft het `request` object nodig om te weten welke gebruiker de pagina opvraagt. Zonder `"request": request` in het dictionary krijg je een **TypeError**. Dit is een vereiste van het framework — vergeet het niet.
 
 </details>
 
@@ -95,7 +95,7 @@ Jinja2 in FastAPI heeft het `request` object nodig om te weten welke gebruiker d
 
 1. Ga naar `http://127.0.0.1:8000/groet`
 2. Vul je naam in en klik Verstuur
-3. Je ziet een mooie HTML pagina: "Hallo [jouw naam]!"
+3. Je ziet een mooie HTML pagina: "Hallo [jouw naam]."
 
 :::danger Gaat er iets mis?
 Krijg je een **TemplateNotFound** error? Check of je template in de `templates/` folder staat en of de bestandsnaam klopt. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.

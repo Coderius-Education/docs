@@ -2,20 +2,20 @@
 
 Handige tips en veelvoorkomende problemen voor jouw robotica-project.
 
-:::danger Let op: A4 en A5 zijn bezet bij gebruik van een multiplexer!
+:::danger Let op: A4 en A5 zijn bezet bij gebruik van een multiplexer.
 
-Pinnen **A4** en **A5** worden gebruikt voor **I2C communicatie** (SDA en SCL). Als je een multiplexer, TOF-sensor of OLED-scherm gebruikt, zijn deze pinnen al bezet. Sluit hier **geen** IR-sensoren op aan! Gebruik alleen **A0, A1, A2, A3, A6, A7** voor IR-sensoren.
+Pinnen **A4** en **A5** worden gebruikt voor **I2C communicatie** (SDA en SCL). Als je een multiplexer, TOF-sensor of OLED-scherm gebruikt, zijn deze pinnen al bezet. Sluit hier **geen** IR-sensoren op aan. Gebruik alleen **A0, A1, A2, A3, A6, A7** voor IR-sensoren.
 
 :::
 
-:::danger Let op: D2, D3, D4 en D11 zijn bezet bij gebruik van het motor shield!
+:::danger Let op: D2, D3, D4 en D11 zijn bezet bij gebruik van het motor shield.
 
-Pinnen **D2**, **D3**, **D4** en **D11** worden door het motor shield gebruikt om de motoren aan te sturen. Sluit hier **geen** andere sensoren of actuatoren op aan!
+Pinnen **D2**, **D3**, **D4** en **D11** worden door het motor shield gebruikt om de motoren aan te sturen. Sluit hier **geen** andere sensoren of actuatoren op aan.
 
 :::
 ---
 
-## 🔴 IR-Sensor (Analoog)
+## IR-Sensor (Analoog)
 
 <details>
 <summary>IR-sensor uitlezen</summary>
@@ -31,7 +31,7 @@ kleur = a0.black_or_white()     # Geeft "black" of "white"
 
 ---
 
-## ⚙️ DC Motoren
+## DC Motoren
 
 <details>
 <summary>Testen welke motor welke is</summary>
@@ -86,7 +86,7 @@ Gebruik de zwarte schakelaar op het motor shield om de motoren volledig uit te s
 
 ---
 
-## 📏 TOF-Sensor (Time of Flight)
+## TOF-Sensor (Time of Flight)
 
 <details>
 <summary>Basis code (zonder multiplexer)</summary>
@@ -144,7 +144,7 @@ De volgende `get_distance()` probeert na een fout vanzelf opnieuw te verbinden.
 </details>
 ---
 
-## 🖥️ OLED-Scherm (SH1106 128x64)
+## OLED-Scherm (SH1106 128x64)
 
 <details>
 <summary>Basis code</summary>

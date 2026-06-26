@@ -106,7 +106,7 @@ Start het spel met `F5`. Je belandt nu eerst in het menu — pas zodra je op **S
 Maak het menu uitgebreider: voeg een derde knop toe waarmee de speler rechtstreeks naar level 2 kan springen, handig om snel verder te testen.
 
 <details>
-<summary>Klik hier voor een tip!</summary>
+<summary>Klik hier voor een tip.</summary>
 
 - Voeg een derde `Button` toe in de `VBoxContainer`, tekst `Level 2`.
 - Verbind het `pressed`-signaal en noem de functie `_on_level2_pressed()`.
@@ -115,7 +115,7 @@ Maak het menu uitgebreider: voeg een derde knop toe waarmee de speler rechtstree
 </details>
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 ```gdscript
 extends Control

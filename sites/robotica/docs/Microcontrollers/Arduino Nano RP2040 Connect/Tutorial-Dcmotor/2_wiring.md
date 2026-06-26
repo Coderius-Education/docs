@@ -22,7 +22,7 @@ Deze pinnen worden door het motor shield gebruikt om de motoren aan te sturen. S
 Elke motor heeft twee draden die in de **schroefterminals** van het motor shield gaan:
 
 1. Pak een schroevendraaier.
-2. Draai de kleine schroef op de terminal **los** (niet helemaal eruit!).
+2. Draai de kleine schroef op de terminal **los** (niet helemaal eruit.).
 3. Steek de draad van de motor in het gaatje (rood bij `+`, zwart bij `-`).
 4. Draai de schroef weer **vast** zodat de draad goed klemt.
 5. Trek voorzichtig aan de draad om te checken of hij goed vastzit.

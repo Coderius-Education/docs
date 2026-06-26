@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # 2.1 Ingebouwd lampje aanzetten
 
-Je eerste programma! Op de Nano RP2040 Connect zit een **ingebouwd lampje** met de naam `LED`. Dat zetten we aan met een paar regels code, zonder dat je iets aan hoeft te sluiten.
+Je eerste programma. Op de Nano RP2040 Connect zit een **ingebouwd lampje** met de naam `LED`. Dat zetten we aan met een paar regels code, zonder dat je iets aan hoeft te sluiten.
 
 ## Code
 

@@ -8,7 +8,7 @@ sidebar_position: 3
 - [2.1 Links en rechts bewegen](/docs/fysica/links_en_rechts) en [2.2 Soorten fysica](/docs/fysica/physics_info) - de basis van fysica in play
 :::
 
-Je hebt al geleerd hoe je vormen kunt laten bewegen en welke soorten fysica er zijn. Maar er is meer! Met eigenschappen als **bounciness**, **mass** en **sensor** kun je het gedrag van je vormen fijner instellen.
+Je hebt al geleerd hoe je vormen kunt laten bewegen en welke soorten fysica er zijn. Maar er is meer. Met eigenschappen als **bounciness**, **mass** en **sensor** kun je het gedrag van je vormen fijner instellen.
 
 ## Bounciness (stuiteren)
 
@@ -33,7 +33,7 @@ De bal stuitert bijna eindeloos op en neer (maar verliest heel langzaam energie)
 Maak drie ballen naast elkaar met verschillende `bounciness` waarden: `0.2`, `0.6` en `1.0`. Laat ze allemaal vanaf dezelfde hoogte vallen op een vloer. Welke bal stuitert het hoogst?
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 ```python
 import play
@@ -79,7 +79,7 @@ Maak twee ballen die naar elkaar toe bewegen:
 Wat gebeurt er? Verander daarna de massa van één bal naar `mass=20`. Wat is het verschil?
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 ```python
 import play
@@ -135,17 +135,17 @@ Maak een spel met:
 2. Een onzichtbare scorezone (gebruik `sensor=True` en `transparency=50`) in het midden van het scherm
 3. Een bal die van boven valt
 
-Als de bal door de scorezone valt, laat een tekst zien: "Punt!"
+Als de bal door de scorezone valt, laat een tekst zien: "Punt."
 
 <details>
-<summary>Klik hier voor een tip!</summary>
+<summary>Klik hier voor een tip.</summary>
 
 Gebruik `@bal.when_touching(zone)` om te detecteren wanneer de bal de zone raakt. De bal valt er doorheen omdat de zone een sensor is.
 
 </details>
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 ```python
 import play
@@ -165,7 +165,7 @@ def punt():
     tekst.words = "Punt!"
 ```
 
-De bal valt door de groene zone en landt op de vloer. Zodra de bal de zone raakt, verschijnt "Punt!".
+De bal valt door de groene zone en landt op de vloer. Zodra de bal de zone raakt, verschijnt "Punt.".
 
 </details>
 

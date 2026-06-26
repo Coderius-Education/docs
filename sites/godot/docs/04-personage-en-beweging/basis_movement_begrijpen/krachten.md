@@ -32,7 +32,7 @@ move_and_slide()
 - Stilstaan: `(0, 0)` — geen beweging.
 - Naar rechts lopen: `(300, 0)` — 300 pixels/sec naar rechts, 0 verticaal.
 - Naar links lopen: `(-300, 0)`.
-- Vallend: `(0, 200)`, daarna `(0, 400)`, daarna `(0, 600)` — verticaal versneld!
+- Vallend: `(0, 200)`, daarna `(0, 400)`, daarna `(0, 600)` — verticaal versneld.
 
 Je kunt `.x` en `.y` los aanspreken (`velocity.x = 100`) — handig om alleen horizontaal of alleen verticaal aan te passen.
 

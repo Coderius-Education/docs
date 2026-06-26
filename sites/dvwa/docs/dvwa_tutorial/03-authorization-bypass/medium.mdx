@@ -12,7 +12,7 @@ De webontwikkelaar probeert dit lek te verbergen door de opties in het keuzemenu
 ## 1. Predict (Voorspel)
 
 De ontwikkelaar past de website (de frontend) aan:
-"Als ik er gewoon voor zorg dat de gebruiker in het dropdown-menu alleen maar zijn *eigen* naam kan selecteren, kan hij nooit de ID's van anderen opvragen!"
+"Als ik er gewoon voor zorg dat de gebruiker in het dropdown-menu alleen maar zijn *eigen* naam kan selecteren, kan hij nooit de ID's van anderen opvragen."
 
 **Vraag:** Heeft de ontwikkelaar hiermee de *Insecure Direct Object Reference* (IDOR) kwetsbaarheid verholpen?
 
@@ -20,7 +20,7 @@ De ontwikkelaar past de website (de frontend) aan:
 
 <summary>Antwoord</summary>
 
-Nee! Het verwijderen van opties op je beeldscherm is slechts een optische verandering ("Security by Obscurity"). Een browser staat volledig onder controle van de gebruiker. Een hacker kan via de F12 Developer Tools zélf andere opties toevoegen of formulier-waardes aanpassen voordat ze naar de server verstuurd worden.
+Nee. Het verwijderen van opties op je beeldscherm is slechts een optische verandering ("Security by Obscurity"). Een browser staat volledig onder controle van de gebruiker. Een hacker kan via de F12 Developer Tools zélf andere opties toevoegen of formulier-waardes aanpassen voordat ze naar de server verstuurd worden.
 Als de server het daarna klakkeloos goedkeurt, is het lek nog altijd aanwezig.
 
 </details>
@@ -64,7 +64,7 @@ Verander in de Developer Tools de `value` van jouw enige optie in de lijst.
 <summary>Antwoord</summary>
 
 Zoek in de F12 Inspector naar: `<option value="...">...`. Verander de `value` naar `1` en druk op Enter. Klik nu in de normale webpagina op Submit.
-Je browser stuurt nu het valse ID naar de server. Omdat er op de backend nog altijd geen controle zit, zie je gewoon de gegevens!
+Je browser stuurt nu het valse ID naar de server. Omdat er op de backend nog altijd geen controle zit, zie je gewoon de gegevens.
 
 </details>
 

@@ -56,7 +56,7 @@ Werk je liever met losse PNG-bestanden (één per frame)? Zie [Je eigen animatie
 Zet de **FPS** (frames per seconde) van elke animatie op een waarde die er soepel uitziet. Probeer 8 of 10 als startpunt.
 :::
 
-<iframe width="100%" height="500px" src="https://www.youtube.com/embed/5V9f3MT86M8?start=712&end=868" title="Start Your Game Creation Journey Today! (Godot beginner tutorial)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<iframe width="100%" height="500px" src="https://www.youtube.com/embed/5V9f3MT86M8?start=712&end=868" title="Start Your Game Creation Journey Today. (Godot beginner tutorial)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 In de volgende les laat je via code de juiste animatie afspelen op het juiste moment.
 

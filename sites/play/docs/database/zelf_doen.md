@@ -10,7 +10,7 @@ sidebar_position: 4
 - Basis-Python: dictionaries
 :::
 
-Zeker! Mocht je Informatica-ACTIEF gebruiken, is er een mooi hoofdstuk over dictionaries waarin je ook leert om deze als JSON op te slaan. Durf je het aan om dit zelf te doen?
+Zeker. Mocht je Informatica-ACTIEF gebruiken, is er een mooi hoofdstuk over dictionaries waarin je ook leert om deze als JSON op te slaan. Durf je het aan om dit zelf te doen?
 
 Hieronder geven we je een voorzet om je op gang te helpen.
 - Kopieer dit codefragment en voer de code uit

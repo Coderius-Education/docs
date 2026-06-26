@@ -36,5 +36,5 @@ Bekijk de broncode, cookies, headers, URL-parameters, en alles wat je kunt vinde
 </details>
 
 :::caution Let op
-Deze challenge is nog nooit opgelost. Je zult creatief moeten zijn en buiten de gebaande paden moeten denken!
+Deze challenge is nog nooit opgelost. Je zult creatief moeten zijn en buiten de gebaande paden moeten denken.
 :::

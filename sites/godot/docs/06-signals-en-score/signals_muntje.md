@@ -114,7 +114,7 @@ func _on_body_entered(body: Node2D) -> void:
 3. Plaats het waar je wilt.
 4. Sleep meerdere keren om meerdere muntjes neer te zetten.
 
-Start het spel met `F5`, loop tegen een muntje aan en kijk in **Uitvoer**: het muntje verdwijnt en je ziet "Muntje opgepakt!".
+Start het spel met `F5`, loop tegen een muntje aan en kijk in **Uitvoer**: het muntje verdwijnt en je ziet "Muntje opgepakt.".
 
 ## Opdracht 6.1.a: voeg een vijand toe
 
@@ -123,7 +123,7 @@ Je weet nu hoe een muntje op een botsing reageert. Pas hetzelfde principe toe op
 Maak een **vijand**-scène. Als de speler de vijand raakt, drukt de vijand een bericht af in **Uitvoer** en verdwijnt daarna.
 
 <details>
-<summary>Klik hier voor een tip!</summary>
+<summary>Klik hier voor een tip.</summary>
 
 - Gebruik dezelfde structuur als het muntje: een `Area2D` met `Sprite2D` en `CollisionShape2D`.
 - Koppel het `body_entered`-signal aan een functie in het vijand-script.
@@ -132,7 +132,7 @@ Maak een **vijand**-scène. Als de speler de vijand raakt, drukt de vijand een b
 </details>
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 **Scène-structuur (`vijand.tscn`):**
 

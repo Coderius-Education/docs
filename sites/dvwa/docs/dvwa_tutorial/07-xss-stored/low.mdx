@@ -7,7 +7,7 @@ import DvwaLab from '@site/src/components/DvwaLab';
 
 # XSS (Stored) — Low
 
-Bij **Stored XSS** wordt de kwaadaardige code daadwerkelijk op de server (in de database) opgeslagen. Dit is veel gevaarlijker dan Reflected XSS!
+Bij **Stored XSS** wordt de kwaadaardige code daadwerkelijk op de server (in de database) opgeslagen. Dit is veel gevaarlijker dan Reflected XSS.
 
 ## 1. Predict (Voorspel)
 
@@ -28,7 +28,7 @@ echo "<div>Naam: $name <br> Bericht: $message</div>";
 
 <summary>Antwoord</summary>
 
-Omdat het script in de database wordt opgeslagen, wordt het vanaf nu permanent op de pagina geprint. **Elke bezoeker** die het gastenboek opent, zal de pop-up krijgen, zonder dat ze op een vreemd linkje hoefden te klikken! Dit maakt Stored XSS extreem besmettelijk.
+Omdat het script in de database wordt opgeslagen, wordt het vanaf nu permanent op de pagina geprint. **Elke bezoeker** die het gastenboek opent, zal de pop-up krijgen, zonder dat ze op een vreemd linkje hoefden te klikken. Dit maakt Stored XSS extreem besmettelijk.
 
 </details>
 
@@ -70,7 +70,7 @@ Gebruik exact dezelfde payload als bij Reflected XSS, maar vul deze in als beric
 
 <summary>Antwoord</summary>
 
-Vul als bericht (of naam) in: `<script>alert(1);</script>`. Zodra je dit opslaat, wordt de pagina herladen en krijg je de alert. Ververs de pagina nog eens (F5). Je krijgt *weer* de alert, omdat de payload nu vast in het gastenboek staat!
+Vul als bericht (of naam) in: `<script>alert(1);</script>`. Zodra je dit opslaat, wordt de pagina herladen en krijg je de alert. Ververs de pagina nog eens (F5). Je krijgt *weer* de alert, omdat de payload nu vast in het gastenboek staat.
 
 </details>
 
@@ -87,4 +87,4 @@ Geen pop-up? Controleer of je de payload als bericht hebt ingevuld en of het sec
 ## 6. Er gaat iets mis...
 
 Wat als je per ongeluk een script opslaat dat de pagina oneindig blijft herladen (`window.location.reload()`)?
-Omdat het Stored XSS is, kom je zelf óók vast te zitten in de oneindige loop! Om dit te herstellen moet je vaak de database van DVWA resetten via de `Setup / Reset DB`-knop in het hoofdmenu. Pas op met wat je opslaat!
+Omdat het Stored XSS is, kom je zelf óók vast te zitten in de oneindige loop. Om dit te herstellen moet je vaak de database van DVWA resetten via de `Setup / Reset DB`-knop in het hoofdmenu. Pas op met wat je opslaat.

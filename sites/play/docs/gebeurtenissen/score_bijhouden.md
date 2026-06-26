@@ -63,7 +63,7 @@ Maak een programma waarbij:
 4. De score wordt op het scherm getoond
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 ```python
 import play
@@ -119,17 +119,17 @@ SyntaxError: invalid syntax
 Maak een programma waarbij:
 1. Een score begint op 0
 2. Met spatie gaat de score +1
-3. Als de score 10 bereikt, verandert de tekst in 'Je hebt gewonnen!' en stopt het programma
+3. Als de score 10 bereikt, verandert de tekst in 'Je hebt gewonnen.' en stopt het programma
 
 <details>
-<summary>Klik hier voor een tip!</summary>
+<summary>Klik hier voor een tip.</summary>
 
 Combineer `global`, `if score == 10:` en `play.stop_program()` in dezelfde functie.
 
 </details>
 
 <details>
-<summary>Klik hier voor de oplossing!</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 ```python
 import play

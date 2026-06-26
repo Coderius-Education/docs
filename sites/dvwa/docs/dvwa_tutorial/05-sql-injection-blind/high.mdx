@@ -24,7 +24,7 @@ $query  = "SELECT first_name, last_name FROM users WHERE user_id = '$id' LIMIT 1
 
 <summary>Antwoord</summary>
 
-Elk van deze kanalen (GET, POST, Cookies, HTTP-headers) is data die vanuit de browser van de hacker naar de server stroomt. Als de server deze stroom oppakt en direct de database infietst zonder te filteren, ontstaat er altijd SQL Injection! Met de Developer Tools kan een hacker een Cookie net zo makkelijk veranderen als een simpel woordje in de adresbalk.
+Elk van deze kanalen (GET, POST, Cookies, HTTP-headers) is data die vanuit de browser van de hacker naar de server stroomt. Als de server deze stroom oppakt en direct de database infietst zonder te filteren, ontstaat er altijd SQL Injection. Met de Developer Tools kan een hacker een Cookie net zo makkelijk veranderen als een simpel woordje in de adresbalk.
 
 </details>
 
@@ -66,7 +66,7 @@ Als je de Developer Tools of een Browser Extensie hebt, pauzeer of modificeer da
 
 <summary>Antwoord</summary>
 
-Door `1' AND SLEEP(5) #` in te sturen, breek je uit de string (met de enkele quote) en forceer je de database om via een Time-Based aanval 5 seconden te wachten. Als de pagina daadwerkelijk 5 seconden trager reageert, heb je bewezen dat de injectie werkt!
+Door `1' AND SLEEP(5) #` in te sturen, breek je uit de string (met de enkele quote) en forceer je de database om via een Time-Based aanval 5 seconden te wachten. Als de pagina daadwerkelijk 5 seconden trager reageert, heb je bewezen dat de injectie werkt.
 
 </details>
 

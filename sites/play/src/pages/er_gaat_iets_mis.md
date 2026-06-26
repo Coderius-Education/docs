@@ -46,7 +46,7 @@ Zoek nu je fout op in een van de andere tips op deze pagina.
 <details>
   <summary>Een <code>IndentationError</code></summary>
 
-Je hebt een `IndentationError` gevonden. Goed gedaan!
+Je hebt een `IndentationError` gevonden. Goed gedaan.
 
 Ergens is er een regel code waar je `te veel` of `te weinig` spaties hebt gebruikt.
 
@@ -100,7 +100,7 @@ def spatie_ingedrukt():
 <details>
   <summary>Een <code>NameError</code></summary>
 
-Je hebt een `NameError` gevonden. Goed gedaan!
+Je hebt een `NameError` gevonden. Goed gedaan.
 Je gebruikt ergens een `variabele` die nog niet is aangemaakt.
 
 Hier is een voorbeeld:

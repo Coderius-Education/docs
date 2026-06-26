@@ -71,7 +71,7 @@ Check:
 
 - Check of het pad in `FileResponse("...")` klopt
 - Check of het bestand echt op die plek staat
-- Let op hoofdletters in bestandsnamen!
+- Let op hoofdletters in bestandsnamen.
 
 </details>
 
@@ -79,7 +79,7 @@ Check:
 <summary>Afbeelding laadt niet (broken image)</summary>
 
 - Staat de afbeelding in de `static` folder?
-- Klopt de bestandsnaam exact? (hoofdletters tellen!)
+- Klopt de bestandsnaam exact? (hoofdletters tellen.)
 - Klopt het pad in `src="/static/foto.jpg"`?
 - Heb je `app.mount("/static", ...)` in je code?
 
@@ -196,7 +196,7 @@ Installeer het:
 pip install sqlitedict
 ```
 
-Check dat je in je virtual environment zit!
+Check dat je in je virtual environment zit.
 
 </details>
 
