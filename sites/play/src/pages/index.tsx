@@ -1,37 +1,38 @@
-import Link from '@docusaurus/Link';
+import type {ReactNode} from 'react';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import HomepageFeatures from '@site/src/components/HomepageFeatures';
 import Layout from '@theme/Layout';
-import clsx from 'clsx';
-import type { ReactNode } from 'react';
+import HomepageHero, {type HeroCta} from '@coderius/shared/components/HomepageHero';
+import HomepageFeatures, {type FeatureItem} from '@coderius/shared/components/HomepageFeatures';
 
-import styles from './index.module.css';
+const ctas: HeroCta[] = [{label: 'Klik hier om te beginnen!', to: '/docs/eerste-keer-python/IA'}];
 
-function HomepageHeader() {
-  const { siteConfig } = useDocusaurusContext();
-  return (
-    <header className={clsx('hero hero--primary', styles.heroBanner)}>
-      <div className="container">
-        <h1 className="hero__title">{siteConfig.title}</h1>
-        <p className="hero__subtitle">{siteConfig.tagline}</p>
-        <div className={styles.buttons}>
-          <Link className="button button--secondary button--lg" to="/docs/eerste-keer-python/IA">
-            Klik hier om te beginnen!
-          </Link>
-        </div>
-      </div>
-    </header>
-  );
-}
+const features: FeatureItem[] = [
+  {
+    icon: '📘',
+    title: 'Begin bij het begin',
+    description: 'Je allereerste Python-programma, stap voor stap.',
+    link: '/docs/eerste-keer-python/IA',
+  },
+  {
+    icon: '🎮',
+    title: 'Speeltuin',
+    description: 'Speel met kant-en-klare voorbeelden en pas ze direct aan.',
+    link: '/speeltuin',
+  },
+  {
+    icon: '📋',
+    title: 'Cheatsheet',
+    description: 'Snel iets opzoeken: vormen, fysica, acties en gebeurtenissen.',
+    link: '/docs/cheatsheet',
+  },
+];
 
 export default function Home(): ReactNode {
-  const { siteConfig } = useDocusaurusContext();
+  const {siteConfig} = useDocusaurusContext();
   return (
-    <Layout title={`${siteConfig.title}`} description="">
-      <HomepageHeader />
-      <main>
-        <HomepageFeatures />
-      </main>
+    <Layout title={siteConfig.title} description={siteConfig.tagline}>
+      <HomepageHero ctas={ctas} />
+      <HomepageFeatures heading="Waar wil je mee aan de slag?" features={features} />
     </Layout>
   );
 }

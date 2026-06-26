@@ -8,6 +8,8 @@
     "./config": "./config/index.js",
     "./plugins/transpile-shared": "./plugins/transpile-shared.js",
     "./css/custom.css": "./css/custom.css",
+    "./components/HomepageHero": "./components/HomepageHero/index.tsx",
+    "./components/HomepageHero/styles.module.css": "./components/HomepageHero/styles.module.css",
     "./components/HomepageFeatures": "./components/HomepageFeatures/index.tsx",
     "./components/HomepageFeatures/styles.module.css": "./components/HomepageFeatures/styles.module.css",
     "./package.json": "./package.json"

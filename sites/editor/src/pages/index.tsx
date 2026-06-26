@@ -1,43 +1,38 @@
 import type {ReactNode} from 'react';
-import clsx from 'clsx';
-import Link from '@docusaurus/Link';
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
-import HomepageFeatures from '@site/src/components/HomepageFeatures';
-import Heading from '@theme/Heading';
+import HomepageHero, {type HeroCta} from '@coderius/shared/components/HomepageHero';
+import HomepageFeatures, {type FeatureItem} from '@coderius/shared/components/HomepageFeatures';
 
-import styles from './index.module.css';
+const ctas: HeroCta[] = [
+  {label: 'Klik hier om te beginnen met VS Code', to: '/installatie-vscode'},
+];
 
-function HomepageHeader() {
-  const {siteConfig} = useDocusaurusContext();
-  return (
-    <header className={clsx('hero hero--primary', styles.heroBanner)}>
-      <div className="container">
-        <Heading as="h1" className="hero__title">
-          {siteConfig.title}
-        </Heading>
-        <p className="hero__subtitle">{siteConfig.tagline}</p>
-        <div className={styles.buttons}>
-          <Link
-            className="button button--secondary button--lg"
-            to="/installatie-vscode">
-            Klik hier om te beginnen met VS Code
-          </Link>
-        </div>
-      </div>
-    </header>
-  );
-}
+const features: FeatureItem[] = [
+  {
+    icon: '🌐',
+    title: 'Website in VS Code',
+    description: 'Maak en bewerk je webproject in de editor.',
+    link: '/web',
+  },
+  {
+    icon: '🐍',
+    title: 'Python in VS Code',
+    description: 'Schrijf en run Python-scripts lokaal.',
+    link: '/python',
+  },
+  {
+    icon: '🔀',
+    title: 'Git & GitHub',
+    description: 'Versiebeheer: commits, branches en pull requests.',
+    link: '/git',
+  },
+];
 
 export default function Home(): ReactNode {
   return (
-    <Layout
-      title="Home"
-      description="Leer hoe je kunt werken met een code editor">
-      <HomepageHeader />
-      <main>
-        <HomepageFeatures />
-      </main>
+    <Layout title="Home" description="Leer hoe je kunt werken met een code editor">
+      <HomepageHero ctas={ctas} />
+      <HomepageFeatures heading="Waar wil je mee aan de slag?" features={features} />
     </Layout>
   );
 }

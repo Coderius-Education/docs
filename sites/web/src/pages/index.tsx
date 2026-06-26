@@ -1,44 +1,38 @@
 import type {ReactNode} from 'react';
-import clsx from 'clsx';
-import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
-import HomepageFeatures from '@site/src/components/HomepageFeatures';
-import Heading from '@theme/Heading';
+import HomepageHero, {type HeroCta} from '@coderius/shared/components/HomepageHero';
+import HomepageFeatures, {type FeatureItem} from '@coderius/shared/components/HomepageFeatures';
 
-import styles from './index.module.css';
+const ctas: HeroCta[] = [{label: 'Begin de cursus', to: '/docs/html-css/intro-html'}];
 
-function HomepageHeader() {
-  const {siteConfig} = useDocusaurusContext();
-  return (
-    <header className={clsx('hero hero--primary', styles.heroBanner)}>
-      <div className="container">
-        <Heading as="h1" className="hero__title">
-          {siteConfig.title}
-        </Heading>
-        <p className="hero__subtitle">{siteConfig.tagline}</p>
-        <div className={styles.buttons}>
-          <Link
-            className="button button--secondary button--lg"
-            to="/docs/html-css/intro-html">
-            Begin de cursus
-          </Link>
-        </div>
-      </div>
-    </header>
-  );
-}
+const features: FeatureItem[] = [
+  {
+    icon: '🎨',
+    title: 'HTML & CSS',
+    description: 'Bouw en style je eerste webpagina.',
+    link: '/docs/html-css/intro-html',
+  },
+  {
+    icon: '⚡',
+    title: 'JavaScript',
+    description: 'Maak je pagina interactief met JavaScript.',
+    link: '/js',
+  },
+  {
+    icon: '🚀',
+    title: 'Jouw website',
+    description: 'Zet alles samen in je eigen project.',
+    link: '/jouw-website',
+  },
+];
 
 export default function Home(): ReactNode {
   const {siteConfig} = useDocusaurusContext();
   return (
-    <Layout
-      title={`${siteConfig.title}`}
-      description="Description will go into a meta tag in <head />">
-      <HomepageHeader />
-      <main>
-        <HomepageFeatures />
-      </main>
+    <Layout title={siteConfig.title} description={siteConfig.tagline}>
+      <HomepageHero ctas={ctas} />
+      <HomepageFeatures heading="Waar wil je mee aan de slag?" features={features} />
     </Layout>
   );
 }

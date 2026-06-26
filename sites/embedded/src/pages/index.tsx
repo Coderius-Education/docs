@@ -1,46 +1,47 @@
-import Link from '@docusaurus/Link';
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import HomepageFeatures from '@site/src/components/HomepageFeatures';
-import Heading from '@theme/Heading';
+import type {ReactNode} from 'react';
 import Layout from '@theme/Layout';
-import clsx from 'clsx';
-import type React from 'react';
+import HomepageHero, {type HeroCta} from '@coderius/shared/components/HomepageHero';
+import HomepageFeatures, {type FeatureItem} from '@coderius/shared/components/HomepageFeatures';
 
-import styles from './index.module.css';
+const ctas: HeroCta[] = [
+  {label: 'Start met je eerste LED →', to: '/docs/introductie/wat-is-embedded'},
+];
 
-function HomepageHeader() {
-  const { siteConfig } = useDocusaurusContext();
-  return (
-    <header className={clsx('hero hero--primary', styles.heroBanner)}>
-      <div className="container">
-        <Heading as="h1" className="hero__title">
-          Embedded programmeren
-        </Heading>
-        <p className="hero__subtitle">{siteConfig.tagline}</p>
-        <div className={styles.buttons}>
-          <Link
-            className="button button--secondary button--lg"
-            to="/docs/introductie/wat-is-embedded"
-          >
-            Start met je eerste LED →
-          </Link>
-        </div>
-      </div>
-    </header>
-  );
-}
+const features: FeatureItem[] = [
+  {
+    icon: '💡',
+    title: 'Begin hier',
+    description: 'Je eerste knipperende LED in de Arduino IDE',
+    link: '/docs/introductie/wat-is-embedded',
+    info: 'Start hier als je nog nooit een microcontroller hebt geprogrammeerd. Je hebt geen hardware nodig: alles werkt in de simulator.',
+  },
+  {
+    icon: '🔧',
+    title: 'Naar de STM32',
+    description: 'Van Arduino IDE via PlatformIO naar een echte STM32',
+    link: '/docs/platformio/waarom-platformio',
+    info: 'Klaar met de basis? Stap over op PlatformIO en leer IO en interfaces configureren op een STM32 Blue Pill.',
+  },
+  {
+    icon: '📋',
+    title: 'Cheatsheet',
+    description: 'Snel iets opzoeken: functies, pinnen en commando’s',
+    link: '/cheatsheet',
+    info: 'Gebruik de cheatsheet als naslagwerk voor syntax, pin-namen en veelgebruikte commando’s.',
+  },
+];
 
-export default function Home(): React.JSX.Element {
-  const { siteConfig } = useDocusaurusContext();
+export default function Home(): ReactNode {
   return (
     <Layout
-      title={siteConfig.title}
-      description="Leer embedded programmeren: van een blink-LED in de Arduino IDE tot IO en interfaces op een STM32."
-    >
-      <HomepageHeader />
-      <main>
-        <HomepageFeatures />
-      </main>
+      title="Embedded programmeren"
+      description="Leer embedded programmeren: van een blink-LED in de Arduino IDE tot IO en interfaces op een STM32.">
+      <HomepageHero title="Embedded programmeren" ctas={ctas} />
+      <HomepageFeatures
+        heading="Waar wil je mee aan de slag?"
+        subheading="Kies hieronder een startpunt"
+        features={features}
+      />
     </Layout>
   );
 }
