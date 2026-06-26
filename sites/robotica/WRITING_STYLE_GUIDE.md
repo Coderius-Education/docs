@@ -254,7 +254,9 @@ Voor pagina's onder `jouw_project/` (of vergelijkbaar):
 
 ## 15. Voor de docent
 
-- Aparte sectie / map: `voor-de-docent/`.
+- **Elke site heeft een Docentenhandleiding** op `/docenten` (`src/pages/docenten.mdx`). De "Docenten"-link in de navbar wordt centraal toegevoegd door `createConfig` — niets per site instellen.
+- Standaardstructuur: `## Wat is dit?`, `## Technische randvoorwaarden`, `## Didactische aanpak (PRIMM)`, `## Klassikaal gebruik & differentiatie`, `## Leerlijn`, `## Feedback & bijdragen`. Zie [web/src/pages/docenten.mdx](../sites/web/src/pages/docenten.mdx) als referentie.
+- Diepere docent-onderwerpen mogen in een aparte `voor-de-docent/`-docsmap; laat `/docenten` daar dan naartoe linken (zoals play en embedded).
 - Andere toon: collegiaal, korter, geen "je leert" — wel "je leerlingen".
 - Voor docent-pagina's mag `hide_table_of_contents` weggelaten worden.
 

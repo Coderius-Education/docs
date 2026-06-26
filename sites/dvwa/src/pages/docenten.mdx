@@ -1,0 +1,52 @@
+---
+title: Docentenhandleiding
+hide_table_of_contents: false
+---
+
+# Docentenhandleiding
+
+Praktische informatie voor docenten die deze cursus klassikaal willen inzetten: wat de site is, welke randvoorwaarden er zijn, en hoe je de lessen indeelt.
+
+## Wat is dit?
+
+Een interactieve cursus **websecurity** met **DVWA** (Damn Vulnerable Web Application). Je leerlingen leren veelvoorkomende kwetsbaarheden begrijpen en misbruiken — SQL-injectie, XSS, command injection en meer — in een veilige oefenomgeving. Doelgroep: leerlingen die al wat web (HTML/JS) kennen en security willen verkennen.
+
+:::caution[Alleen in je eigen installatie]
+DVWA is expres kwetsbaar. Gebruik het uitsluitend in een **eigen, lokale installatie** — nooit op systemen van anderen of op het schoolnetwerk zonder toestemming.
+:::
+
+## Technische randvoorwaarden
+
+| Wat | Antwoord |
+|---|---|
+| Operating system | Windows met WSL2, of Linux |
+| Software | DVWA (de cursus leert je het installeren, o.a. via WSL) |
+| Account | Niet nodig |
+| Internet | Vereist voor de installatie; daarna werkt DVWA lokaal |
+
+## Didactische aanpak
+
+Elk lab volgt een vaste opbouw: eerst leg je de kwetsbaarheid uit, dan volgt een walkthrough met screenshots, en daarna proberen je leerlingen het **zelf** met hints in `<details>`-blokken. Elke kwetsbaarheid wordt op meerdere **difficulty-levels** (low → medium → high → impossible) behandeld, zodat je het tempo kunt opvoeren.
+
+Laat je leerlingen het Impossible-level vergelijken met de andere: daar zien ze hoe veilige code eruitziet — dat is het eigenlijke leerdoel.
+
+## Klassikaal gebruik & differentiatie
+
+- **Plenair starten**: doe de installatie en het eerste lab samen voor.
+- **Snelle leerlingen** klimmen naar de hogere difficulty-levels van dezelfde kwetsbaarheid.
+- **Langzamere leerlingen** blijven op low/medium en gebruiken de walkthrough.
+- **Beoordelen**: laat leerlingen uitleggen *waarom* een aanval werkt en hoe je hem voorkomt.
+
+## Leerlijn
+
+Begin met de basis en de installatie, en werk daarna door de challenges. Naslag staat in de [Cheatsheet](/docs/cheatsheet).
+
+| Onderwerp | Leerdoel |
+|---|---|
+| [Linux leren](/docs/linux_leren) | De command line voor je begint |
+| [DVWA installeren](/docs/dvwa_installatie) | Je eigen oefenomgeving opzetten |
+| [Challenges](/docs/dvwa_tutorial) | SQL-injectie, XSS, command injection, CSRF, file inclusion en meer |
+
+## Feedback & bijdragen
+
+Suggesties, fouten of nieuwe ideeën? Open een issue of pull request op [GitHub](https://github.com/Coderius-Education/DVWA). Alle bijdragen — van een typo tot een nieuw lab — zijn welkom.

@@ -1,0 +1,57 @@
+---
+title: Docentenhandleiding
+hide_table_of_contents: false
+---
+
+# Docentenhandleiding
+
+Praktische informatie voor docenten die deze cursus klassikaal willen inzetten: wat de site is, welke randvoorwaarden er zijn, en hoe je de lessen indeelt.
+
+## Wat is dit?
+
+Een doe-cursus **robotica**: je leerlingen sturen zelf sensoren en actuatoren aan met een **Arduino Nano RP2040 Connect** en MicroPython. Doelgroep: leerlingen die al wat Python kennen en met echte hardware aan de slag willen.
+
+Elke tutorial bouwt één onderdeel op — een lampje, een sensor, een motor — met de exacte aansluitingen en een minimale werkende schets vóór de uitbreidingen.
+
+:::note[Voorkennis]
+Handig als je leerlingen de basis van [Python](https://python.coderius.nl) al kennen (variabelen, loops, functies).
+:::
+
+## Technische randvoorwaarden
+
+| Wat | Antwoord |
+|---|---|
+| Hardware | Arduino Nano RP2040 Connect + USB-kabel; sensoren/actuatoren per les |
+| Software | Een MicroPython-editor (bijv. Thonny) of de webeditor |
+| Operating system | Windows, macOS of Linux |
+| Account | Niet nodig |
+| Internet | Vereist voor de site; de robot zelf werkt offline |
+
+## Didactische aanpak
+
+Elke tutorial werkt van **voordoen naar zelf doen**: je leest eerst wat een onderdeel doet en hoe je het aansluit, draait dan een minimale schets, en breidt die daarna uit in opdrachten. Na de uitleg staat vaak een korte controlevraag in een `<details>`-blok, zodat je leerling zelf toetst of het is begrepen.
+
+Laat je leerlingen eerst zelf voorspellen wat een schets doet voordat ze hem uploaden — dat scheelt veel "waarom werkt dit niet"-momenten.
+
+## Klassikaal gebruik & differentiatie
+
+- **Plenair starten**: bespreek de aansluiting en de eerste schets samen, daarna werken je leerlingen per tweetal aan de hardware.
+- **Snelle leerlingen** pakken de uitbreidingen of een extra sensor erbij.
+- **Langzamere leerlingen** krijgen de minimale werkende schets eerst werkend voordat ze uitbreiden.
+- **Veiligheid**: laat leerlingen altijd de voeding loskoppelen vóór ze de bedrading veranderen.
+
+## Leerlijn
+
+De **Bibliotheek**-sidebar bevat de losse tutorials (lampje, sensoren, motoren, scherm…). Daarnaast is er de [Lego-auto](/lego_auto/intro)-leerlijn die alles samenbrengt in één rijdende robot. Snel iets opzoeken kan in de [Cheatsheet](/cheatsheet); code uploaden gaat via de [Editor](/editor).
+
+| Onderwerp | Leerdoel |
+|---|---|
+| Ingebouwd lampje | Een eerste pin aansturen (digital out) |
+| Sensoren (IR, afstand, TOF) | Waarden uitlezen (analog/digital in) |
+| Actuatoren (motor, servo, buzzer) | Beweging en geluid aansturen |
+| Scherm & debuggen | Tussenwaarden zichtbaar maken |
+| Lego-auto | Sensoren en motoren combineren tot één robot |
+
+## Feedback & bijdragen
+
+Suggesties, fouten of nieuwe ideeën? Open een issue of pull request op [GitHub](https://github.com/Coderius-Education/robotica-docs). Alle bijdragen — van een typo tot een nieuwe tutorial — zijn welkom.
