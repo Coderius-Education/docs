@@ -841,7 +841,7 @@ Een media query past CSS alleen toe als de schermbreedte aan een voorwaarde vold
 
 **Mobile-first**: schrijf je basis-CSS voor mobiel, voeg `@media (min-width: ...)`-regels toe voor groter.
 
-:::warning Viewport-meta vergeten
+:::warning[Viewport-meta vergeten]
 Zonder deze meta-tag in `<head>` rendert de browser de pagina alsof het scherm 980px breed is — media queries triggeren dan niet op telefoons:
 ```html
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -1328,7 +1328,7 @@ const leeftijd = Number(document.getElementById('lft').value);  // number
 const keuze = document.getElementById('land').value;            // value van <option>
 ```
 
-:::tip Vergeet `Number()` niet
+:::tip[Vergeet `Number()` niet]
 `.value` is **altijd een string**, ook bij `<input type="number">`. Zonder `Number()` plakt `+` getallen aan elkaar in plaats van op te tellen.
 :::
 
@@ -1376,7 +1376,7 @@ alert('Hoi ' + naam + '!');
 - `prompt()` geeft een **string** terug (ook bij getallen — gebruik `Number(prompt(...))` om te rekenen).
 - Klikt de gebruiker op Cancel, dan is `prompt()` gelijk aan `null`.
 
-:::tip Wanneer wel/niet?
+:::tip[Wanneer wel/niet?]
 Voor een echte website is `prompt`/`alert` te storend. Gebruik [`<input>` + `.value`](#formulier-data-ophalen) voor netjes ingebouwde invoer. `prompt`/`alert` zijn alleen handig voor mini-demo's.
 :::
 

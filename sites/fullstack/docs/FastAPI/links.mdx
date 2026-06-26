@@ -19,7 +19,7 @@ Met `<a>` maak je een klikbare link:
 - `href="/about"` — naar welk **endpoint** de link verwijst
 - De tekst tussen `<a>` en `</a>` is klikbaar
 
-:::warning Link naar endpoint, niet naar bestand
+:::warning[Link naar endpoint, niet naar bestand]
 Gebruik `href="/about"` (het endpoint), **niet** `href="about.html"` (het bestand). De browser kent je bestanden niet — alleen de endpoints die je in Python hebt aangemaakt.
 :::
 
@@ -63,7 +63,7 @@ async def about():
 Klik op "Ga naar Over Mij" → je gaat naar `/about`.
 Klik op "Terug naar Home" → je gaat naar `/`.
 
-:::danger Gaat er iets mis?
+:::danger[Gaat er iets mis?]
 Krijg je een 404 als je op een link klikt? Dan bestaat het endpoint waarschijnlijk niet in je `main.py`. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
 :::
 
@@ -192,7 +192,7 @@ Zet in elk HTML bestand (home.html, about.html, contact.html) hetzelfde navigati
 
 ## Oefen met Python
 
-:::info Python oefenblok
+:::info[Python oefenblok]
 Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
 :::
 

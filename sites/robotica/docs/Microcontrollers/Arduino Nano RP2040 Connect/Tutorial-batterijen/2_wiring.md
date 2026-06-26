@@ -11,7 +11,7 @@ Meet met je multimeter (op **DC voltage**) de spanning van iedere AA-batterij.
 - **Vol**: ongeveer **1,5V**
 - **Te zwak**: minder dan **1,2V** → vervang die batterij
 
-:::tip Nog nooit een multimeter gebruikt?
+:::tip[Nog nooit een multimeter gebruikt?]
 
 Kijk eerst even bij [4.1 Pin nameten](../Tutorial-meten%20is%20weten/1_pin_nameten.md).
 

@@ -7,7 +7,7 @@ title: Debuggen met schermpje
 
 Wanneer je robot los van de laptop rijdt, kun je de Shell niet meer zien. Door waardes op het OLED-scherm te tonen, kun je toch volgen wat je sensoren doen.
 
-:::danger A4 en A5 zijn bezet
+:::danger[A4 en A5 zijn bezet]
 
 Omdat je een multiplexer en OLED-scherm gebruikt, zijn pinnen **A4** en **A5** bezet voor I2C-communicatie. Sluit hier **geen** IR-sensoren op aan. Gebruik alleen **A0, A1, A2, A3, A6** of **A7** voor IR-sensoren.
 

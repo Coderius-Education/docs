@@ -79,7 +79,7 @@ Omdat de string netjes begint met "file", gooit het beveiligingsfilter het niet 
 
 ## 5. ✓ Wat moest je zien?
 
-:::tip Controle
+:::tip[Controle]
 - De pagina toont de inhoud van `/etc/passwd` via het `file://`-protocol.
 - De aanval met `../../etc/passwd` geeft nog steeds "ERROR: File not found." — de whitelist werkt voor dat patroon.
 - Het `file://`-protocol is een blinde vlek in de whitelist-check.

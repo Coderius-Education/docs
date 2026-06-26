@@ -6,7 +6,7 @@ sidebar_position: 2
 
 Om Python-code te schrijven heb je een editor nodig: een programma waarin je je code typt en runt.
 
-:::tip Geen installatie nodig
+:::tip[Geen installatie nodig]
 
 Werk je in Chrome of Microsoft Edge? Dan kun je ook de [online editor](/editor) gebruiken: typen, op **Run op board** klikken, klaar. Geen installatie nodig.
 

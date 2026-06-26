@@ -4,7 +4,7 @@ sidebar_position: 5
 
 # 4.5 Een score bijhouden met `global`
 
-:::info Wat moet je al weten
+:::info[Wat moet je al weten]
 - [4.1 Gebeurtenissen](/docs/gebeurtenissen/toetsenbord) - reageren op een toets
 - Basis-Python: `if`-statements en variabelen
 :::

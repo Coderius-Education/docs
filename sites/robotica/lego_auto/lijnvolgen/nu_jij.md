@@ -54,7 +54,7 @@ while True:
 
 Vervang elke `# TODO` en de `pass` door de juiste `motor_a.forward(...)` en `motor_b.forward(...)`. Het scherm laat ondertussen zien wat de sensoren meten — handig om te controleren of je robot het goede geval kiest.
 
-:::tip Python opfrissen
+:::tip[Python opfrissen]
 Je hebt hier vooral `elif` en vergelijkingen nodig:
 - [`and` / `or` / `elif`](https://python.coderius.nl/docs/beslissen/05c-and-or-elif)
 - [if / else](https://python.coderius.nl/docs/beslissen/05b-if-else)

@@ -4,7 +4,7 @@ sidebar_position: 4
 
 # 6.4 Maar kan ik dit niet allemaal zelf?
 
-:::info Wat moet je al weten
+:::info[Wat moet je al weten]
 - [6.1 Gegevens opslaan en ophalen](/docs/database/basis) - waarom een database handig is
 - [4.5 Een score bijhouden](/docs/gebeurtenissen/score_bijhouden) - `global` keyword
 - Basis-Python: dictionaries

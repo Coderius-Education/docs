@@ -209,7 +209,7 @@ Je kunt elke kleur gebruiken die je ook bij vormen gebruikt, bijvoorbeeld `'red'
 
 Met **play.set_backdrop_image()** kun je een afbeelding als achtergrond gebruiken in plaats van een kleur. De afbeelding moet in dezelfde map staan als je Python-bestand.
 
-:::warning Online speeltuin
+:::warning[Online speeltuin]
 Achtergrondafbeeldingen laden werkt **niet** in de online speeltuin. Je hebt hiervoor een lokale installatie nodig (Thonny of VS Code).
 :::
 
@@ -317,7 +317,7 @@ tekst = play.new_text(words="Hello world", y=200, font_size=50)
 <details>
   <summary>Afbeelding (play.new_image)</summary>
 
-:::warning Online speeltuin
+:::warning[Online speeltuin]
 Afbeeldingen laden werkt **niet** in de online speeltuin. Je hebt hiervoor een lokale installatie nodig (Thonny of VS Code).
 :::
 

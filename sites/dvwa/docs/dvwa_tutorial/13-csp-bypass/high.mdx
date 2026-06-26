@@ -91,7 +91,7 @@ De browser laadt dit script van `self` (toegestaan door CSP), voert `alert("Hack
 
 ## 5. ✓ Wat moest je zien?
 
-:::tip Controle
+:::tip[Controle]
 - De JSONP-aanroep met aangepaste callback triggert een pop-up ondanks de strikte CSP.
 - De server zelf genereert het kwaadaardige script — de CSP ziet alleen `script-src 'self'` en laat het door.
 - Een normale inline `<script>` wordt nog steeds geblokkeerd.

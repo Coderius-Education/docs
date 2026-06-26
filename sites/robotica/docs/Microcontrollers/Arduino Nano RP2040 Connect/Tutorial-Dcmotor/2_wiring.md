@@ -8,7 +8,7 @@ sidebar_position: 2
 
 ![circuit](@site/static/fritzing/shield_with_motors_bb.png)
 
-:::danger Pinnen D2, D3, D4 en D11 zijn bezet door het motor shield
+:::danger[Pinnen D2, D3, D4 en D11 zijn bezet door het motor shield]
 
 Deze pinnen worden door het motor shield gebruikt om de motoren aan te sturen. Sluit hier **geen** andere sensoren of actuatoren op aan. Gebruik andere vrije pinnen voor je overige onderdelen.
 

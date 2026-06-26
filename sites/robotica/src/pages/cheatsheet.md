@@ -2,13 +2,13 @@
 
 Handige tips en veelvoorkomende problemen voor jouw robotica-project.
 
-:::danger Let op: A4 en A5 zijn bezet bij gebruik van een multiplexer.
+:::danger[Let op: A4 en A5 zijn bezet bij gebruik van een multiplexer.]
 
 Pinnen **A4** en **A5** worden gebruikt voor **I2C communicatie** (SDA en SCL). Als je een multiplexer, TOF-sensor of OLED-scherm gebruikt, zijn deze pinnen al bezet. Sluit hier **geen** IR-sensoren op aan. Gebruik alleen **A0, A1, A2, A3, A6, A7** voor IR-sensoren.
 
 :::
 
-:::danger Let op: D2, D3, D4 en D11 zijn bezet bij gebruik van het motor shield.
+:::danger[Let op: D2, D3, D4 en D11 zijn bezet bij gebruik van het motor shield.]
 
 Pinnen **D2**, **D3**, **D4** en **D11** worden door het motor shield gebruikt om de motoren aan te sturen. Sluit hier **geen** andere sensoren of actuatoren op aan.
 

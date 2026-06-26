@@ -16,7 +16,7 @@ Hieronder geven we drie opties. Kies er één of vraag je docent om advies.
 
 Wil je meteen beginnen zonder iets te installeren? Gebruik dan de [online speeltuin](/speeltuin). Je typt je code direct op de pagina en klikt op de afspeelknop — geen downloads, geen gedoe.
 
-:::info Let op
+:::info[Let op]
 De online speeltuin werkt alleen binnen dit lesmateriaal. Voor een eigen project dat je lokaal opslaat en uitvoert, heb je toch een editor en Python nodig (zie de opties hieronder).
 :::
 

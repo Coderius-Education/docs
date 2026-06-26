@@ -13,7 +13,7 @@ sidebar_position: 2
 - **SDA** van de TOF aan **A4** (SDA)
 - **SCL** van de TOF aan **A5** (SCL)
 
-:::tip Beschermend stickertje
+:::tip[Beschermend stickertje]
 
 Op een nieuwe TOF zit vaak een doorzichtig plastic stickertje. Trek dat er voorzichtig af voor een betere meting.
 

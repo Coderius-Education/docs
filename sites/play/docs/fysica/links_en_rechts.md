@@ -92,7 +92,7 @@ cirkel.start_physics(obeys_gravity=False, x_speed=100, y_speed=100)
 
 </details>
 
-:::info Waar kom je dit later weer tegen?
+:::info[Waar kom je dit later weer tegen?]
 - In [5.1 Wachten in je spel](/docs/tijd/bal) gebruik je opnieuw `x_speed` om een bal te laten bewegen — en zie je waarom `time.sleep()` daar problemen veroorzaakt.
 - In [Pong (eindproject)](/docs/jouw_project/pong) gebruik je `x_speed` én `y_speed` om de bal diagonaal te laten stuiteren.
 :::

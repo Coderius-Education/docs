@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # 6.2 High score bijhouden
 
-:::info Wat moet je al weten
+:::info[Wat moet je al weten]
 - [6.1 Gegevens opslaan en ophalen](/docs/database/basis) - `set_data()` en `get_data()`
 :::
 

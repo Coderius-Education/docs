@@ -27,7 +27,7 @@ while True:
 
 Zodra de twee draden via het aluminiumtape verbinden, valt **pin D5** naar **0**.
 
-:::danger Gebruik nooit D2, D3, D10 of D11
+:::danger[Gebruik nooit D2, D3, D10 of D11]
 
 Deze pinnen zijn bezet door het **motor shield**. Kies dus een andere vrije pin (bijvoorbeeld **D5** zoals hierboven).
 

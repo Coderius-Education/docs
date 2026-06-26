@@ -4,7 +4,7 @@ sidebar_position: 3
 
 # 6.3 Instellingen opslaan
 
-:::info Wat moet je al weten
+:::info[Wat moet je al weten]
 - [6.1 Gegevens opslaan en ophalen](/docs/database/basis) - `set_data()` en `get_data()`
 :::
 
