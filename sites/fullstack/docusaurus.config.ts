@@ -41,16 +41,7 @@ export default createConfig({
     },
     footer: {
       style: 'dark',
-      links: [
-        {
-          title: 'Meer van Coderius',
-          items: [
-            {label: 'Leer eerst Python', href: 'https://python.coderius.nl'},
-            {label: 'Leer HTML & CSS', href: 'https://web.coderius.nl'},
-            {label: 'Web security met DVWA', href: 'https://dvwa.coderius.nl'},
-          ],
-        },
-      ],
+      links: [],
     },
   },
 });

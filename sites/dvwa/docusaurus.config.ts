@@ -64,16 +64,7 @@ export default createConfig({
     },
     footer: {
       style: 'dark',
-      links: [
-        {
-          title: 'Meer van Coderius',
-          items: [
-            {label: 'Leer Python', href: 'https://python.coderius.nl'},
-            {label: 'CTF Challenges', href: 'https://ctf.coderius.nl'},
-            {label: 'Fullstack Development', href: 'https://fullstack.coderius.nl'},
-          ],
-        },
-      ],
+      links: [],
     },
     prism: {
       theme: prismThemes.github,

@@ -63,15 +63,7 @@ export default createConfig({
     },
     footer: {
       style: 'dark',
-      links: [
-        {
-          title: 'Meer van Coderius',
-          items: [
-            {label: 'Leer eerst Python', href: 'https://python.coderius.nl'},
-            {label: 'Fullstack met FastAPI', href: 'https://fullstack.coderius.nl'},
-          ],
-        },
-      ],
+      links: [],
     },
   },
 });

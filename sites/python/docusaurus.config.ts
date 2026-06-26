@@ -46,15 +46,7 @@ export default createConfig({
     },
     footer: {
       style: 'dark',
-      links: [
-        {
-          title: 'Meer van Coderius',
-          items: [
-            {label: 'Maak games met Python', href: 'https://play.coderius.nl'},
-            {label: 'Python als back-end met FastAPI', href: 'https://fullstack.coderius.nl'},
-          ],
-        },
-      ],
+      links: [],
     },
   },
 });
