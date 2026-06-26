@@ -215,6 +215,26 @@ In de lopende tekst is `**Let op:** …` of `**Tip:** …` ook gangbaar en korte
 - **Controleer dat de links bestaan** (zie ook `play-docs/CLAUDE.md`).
 - Cross-link gul: aan het begin van een opdracht naar de behandelde secties, en aan het einde van een foutmelding naar de uitleg.
 
+### Cross-site links (naar een andere cursus)
+
+De cursussen zijn aparte sites op losse subdomeinen. Hardcode **nooit** een
+`https://*.coderius.nl`-URL in de tekst; die staan centraal in de registry
+`packages/shared/sites.js` (de enige bron van waarheid).
+
+- **Voorkennis uit een andere cursus** → gebruik de globale `<Voorkennis>`-component
+  (inklapbaar, standaard dicht). Zonder import beschikbaar in elke `.md`/`.mdx`:
+
+  ```mdx
+  <Voorkennis items={[{site: 'python', to: '/docs/basis/jij-als-variabele', label: 'Variabelen in Python'}]} />
+  ```
+
+  Laat `site` weg voor voorkennis bínnen dezelfde cursus. Dit vervangt het
+  oude handmatige `:::info Wat moet je al weten`-blok.
+- **Footer "Andere cursussen"** en de **navbar-dropdown "Cursussen"** worden
+  automatisch uit de registry gegenereerd door `createConfig` — niets per site
+  toevoegen. Het volledige overzicht staat op `/cursussen`.
+- Nieuwe cursus of gewijzigde URL? Pas alleen `packages/shared/sites.js` aan.
+
 ## 13. Verbeteringen, versies en changelog
 
 - Per docs-project één plek voor versie-overzichten (in `cheatsheet.md` of een aparte `verbeteringen.md`).

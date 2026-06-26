@@ -47,14 +47,6 @@ export default createConfig({
           title: 'Links',
           items: [{label: 'CTF Platform', href: 'https://ctf.hackchallenges.nl/register'}],
         },
-        {
-          title: 'Meer van Coderius',
-          items: [
-            {label: 'Leer Python voor scripts', href: 'https://python.coderius.nl'},
-            {label: 'Leer HTML/JS voor hacking', href: 'https://web.coderius.nl'},
-            {label: 'DVWA Security Training', href: 'https://dvwa.coderius.nl'},
-          ],
-        },
       ],
     },
   },

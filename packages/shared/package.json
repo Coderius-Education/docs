@@ -6,12 +6,17 @@
   "type": "commonjs",
   "exports": {
     "./config": "./config/index.js",
+    "./sites": "./sites.js",
     "./plugins/transpile-shared": "./plugins/transpile-shared.js",
+    "./plugins/cursussen-route": "./plugins/cursussen-route.js",
     "./css/custom.css": "./css/custom.css",
     "./components/HomepageHero": "./components/HomepageHero/index.tsx",
     "./components/HomepageHero/styles.module.css": "./components/HomepageHero/styles.module.css",
     "./components/HomepageFeatures": "./components/HomepageFeatures/index.tsx",
     "./components/HomepageFeatures/styles.module.css": "./components/HomepageFeatures/styles.module.css",
+    "./components/Voorkennis": "./components/Voorkennis/index.tsx",
+    "./components/Leerlijnen": "./components/Leerlijnen/index.tsx",
+    "./components/Leerlijnen/CursussenPage": "./components/Leerlijnen/CursussenPage.tsx",
     "./package.json": "./package.json"
   },
   "dependencies": {

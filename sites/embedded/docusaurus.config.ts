@@ -41,16 +41,7 @@ export default createConfig({
     },
     footer: {
       style: 'dark',
-      links: [
-        {
-          title: 'Meer van Coderius',
-          items: [
-            {label: 'Leer eerst Python', href: 'https://python.coderius.nl'},
-            {label: 'Robotica', href: 'https://robotica.coderius.nl'},
-            {label: 'Python games', href: 'https://play.coderius.nl'},
-          ],
-        },
-      ],
+      links: [],
     },
     prism: {
       theme: prismThemes.github,

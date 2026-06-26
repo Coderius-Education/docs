@@ -4,6 +4,8 @@ sidebar_position: 2
 
 # 3.2 Aansluiten en code
 
+<Voorkennis items={[{site: 'python', to: '/docs/basis/jij-als-variabele', label: 'Variabelen in Python'}]} />
+
 ## Aansluiten
 
 ![led](nano_rp2040_led_bb.svg)

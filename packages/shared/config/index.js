@@ -2,7 +2,16 @@ const fs = require('node:fs');
 const path = require('node:path');
 const {themes: prismThemes} = require('prism-react-renderer');
 const transpileShared = require('../plugins/transpile-shared');
+const cursussenRoute = require('../plugins/cursussen-route');
+const {SITES, normalizeUrl} = require('../sites');
 const {resolvePackageDir} = transpileShared;
+
+// Alle cursussen behalve de huidige (op url gematcht). Voedt de footerkolom en
+// de navbar-dropdown, zodat cross-site links uit één registry komen.
+function otherSites(currentUrl) {
+  const norm = normalizeUrl(currentUrl);
+  return SITES.filter((s) => normalizeUrl(s.url) !== norm);
+}
 
 // Absolute paths into deze package — robuust ongeacht waar de site staat.
 const SHARED_STATIC = path.join(__dirname, '..', 'static');
@@ -103,9 +112,34 @@ function createConfig(site = {}) {
     tableOfContents: {minHeadingLevel: 2, maxHeadingLevel: 2},
     ...siteThemeConfig,
   };
-  if (themeConfig.footer && !themeConfig.footer.copyright) {
-    themeConfig.footer = {...themeConfig.footer, copyright: CC_BY_NC};
-  }
+  const others = otherSites(rest.url);
+
+  // Footer: voeg overal dezelfde "Andere cursussen"-kolom toe (uit de registry)
+  // en zorg voor de CC-BY-NC copyright.
+  const footer = themeConfig.footer ? {...themeConfig.footer} : {style: 'dark'};
+  footer.links = [
+    ...(footer.links || []),
+    {title: 'Andere cursussen', items: others.map((s) => ({label: s.label, href: s.url}))},
+  ];
+  if (!footer.copyright) footer.copyright = CC_BY_NC;
+  themeConfig.footer = footer;
+
+  // Navbar: één "Cursussen"-dropdown (rechts) om naar een andere cursus te
+  // springen, plus een link naar het volledige overzicht op /cursussen.
+  const navbar = themeConfig.navbar ? {...themeConfig.navbar} : {};
+  navbar.items = [
+    ...(navbar.items || []),
+    {
+      type: 'dropdown',
+      label: 'Cursussen',
+      position: 'right',
+      items: [
+        ...others.map((s) => ({label: `${s.icon} ${s.label}`, href: s.url})),
+        {label: 'Alle cursussen', to: '/cursussen'},
+      ],
+    },
+  ];
+  themeConfig.navbar = navbar;
 
   return {
     // ---- gedeelde standaarden (site mag overschrijven via ...rest) ----
@@ -126,7 +160,7 @@ function createConfig(site = {}) {
       staticDirectories ||
       uniqueDirs(['static', SHARED_STATIC, ...packageStaticDirs(sharedPackages)]),
     presets: withSharedCustomCss(presets),
-    plugins: [...(plugins || []), [transpileShared, {packages: sharedPackages}]],
+    plugins: [...(plugins || []), [transpileShared, {packages: sharedPackages}], cursussenRoute],
     themeConfig,
   };
 }
