@@ -90,8 +90,12 @@
 }
 
 .highlightPre {
-  margin: 0;
-  padding: 1rem 1rem 1rem 3.5rem;
+  /* Infima's base-pre regel (pre:not(#\#):not(#\#)) heeft specificity (2,0,1) en
+     zet padding/margin terug; geen class kan dat verslaan, dus !important zodat
+     de code-tekst links de gutter (2.5rem) blijft vrijhouden i.p.v. eronder te
+     schuiven. Zie ook de tegeltitel-fix in HomepageFeatures. */
+  margin: 0 !important;
+  padding: 1rem 1rem 1rem 3.5rem !important;
   font-family: var(--ifm-font-family-monospace);
   font-size: 0.9rem;
   line-height: 1.5;
