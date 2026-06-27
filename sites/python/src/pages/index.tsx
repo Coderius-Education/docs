@@ -12,14 +12,17 @@ const features: FeatureItem[] = [
   {
     title: 'Stap voor stap',
     description: 'Van je eerste print() tot functies en lijsten. Elke les bouwt voort op de vorige.',
+    link: '/docs/basis/introductie',
   },
   {
     title: 'Direct uitvoeren',
     description: 'Schrijf en run Python code in je browser. Geen installatie nodig.',
+    link: '/playground',
   },
   {
     title: 'Leren door doen',
     description: 'Elke les heeft oefeningen met tips en oplossingen om zelf mee te oefenen.',
+    link: '/docs/basis/jouw-naam-op-het-scherm',
   },
 ];
 
