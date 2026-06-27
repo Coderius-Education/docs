@@ -7,9 +7,7 @@ slug: /animaties
 
 Je karakter beweegt, maar staat er nog stijf bij. In deze les vervang je de statische `Sprite2D` door een `AnimatedSprite2D` zodat je karakter kan rennen, springen en stilstaan met echte animaties.
 
-:::info[Godot 4.5]
-Geschreven voor **Godot 4.5.x** — zie [Godot-versies](/docs/godot-versies) voor compatibiliteit.
-:::
+<GodotVersie />
 
 ## Voorspel: hoe krijg je een lopend mannetje?
 

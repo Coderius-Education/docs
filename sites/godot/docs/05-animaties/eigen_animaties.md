@@ -7,9 +7,7 @@ slug: /eigen_animaties
 
 Tot nu toe heb je gewerkt met kant-en-klare sprite-sheets uit het Pixel Adventure-pack. Tijd om dat los te laten en je eigen personage te animeren — uit een eigen tekening, een geknipte GIF of een afbeelding die je ergens vond. In deze les leer je hoe je losse frames maakt, ze transparant achtergrondje geeft en in Godot zet.
 
-:::info[Godot 4.5]
-Geschreven voor **Godot 4.5.x** — zie [Godot-versies](/docs/godot-versies) voor compatibiliteit.
-:::
+<GodotVersie />
 
 ## Voorspel: wat heb je nodig om je eigen animatie te maken?
 

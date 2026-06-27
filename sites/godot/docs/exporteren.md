@@ -10,9 +10,7 @@ Tot nu toe heb je je game alleen kunnen spelen vanuit de Godot-editor zelf. Tijd
 1. Een **`.exe`** waarmee je docent het spel direct kan spelen, zonder dat hij Godot hoeft te installeren. Dit maak je in Stap 0 tot en met 6.
 2. Een **`.zip`** met je volledige projectmap (alle scenes en GDScript-bestanden). Daarmee kan je docent je broncode bekijken en beoordelen. Dit doe je in Stap 7.
 
-:::info[Godot 4.5]
-Geschreven voor **Godot 4.5.x** — zie [Godot-versies](/docs/godot-versies) voor compatibiliteit.
-:::
+<GodotVersie />
 
 ## Voorspel: wat heb je nodig om een .exe te maken?
 
@@ -52,7 +50,7 @@ Heb je een [startmenu](/docs/start_menu) gemaakt? Zet `menu.tscn` als Main Scene
 4. Wacht — het downloadt ongeveer 500 MB en kan een paar minuten duren.
 
 :::tip
-Templates passen bij **één specifieke Godot-versie**. Update je later naar Godot 4.6? Dan moet je opnieuw de bijbehorende templates downloaden.
+Templates passen bij **één specifieke Godot-versie**. Update je later naar Godot 4.8? Dan moet je opnieuw de bijbehorende templates downloaden.
 :::
 
 ## Stap 2: Open het Export-dialoog

@@ -7,9 +7,7 @@ slug: /movement-motor
 
 In [Deel 1](./skelet.md) zag je het skelet — `extends CharacterBody2D` plus twee constanten. Nu de motor die alles aandrijft: de functie die Godot **60× per seconde** automatisch aanroept.
 
-:::info[Godot 4.5]
-Geschreven voor **Godot 4.5.x** — zie [Godot-versies](/docs/godot-versies) voor compatibiliteit.
-:::
+<GodotVersie />
 
 ## Blok 2: De motor — `_physics_process(delta)` als kloppend hart
 

@@ -7,9 +7,9 @@ slug: /tilemap_opzetten
 
 Een tile-gebaseerd level is een rooster van kleine afbeeldingen (**tiles**) die je naast en op elkaar zet. Veel platformers werken zo: één tegeltje gras dat je honderden keren gebruikt. In deze les leg je de basis: tegels importeren en je level tekenen. De **botsingen** komen in de volgende les.
 
-:::info[Godot 4.5]
-Geschreven voor **Godot 4.5.x** — zie [Godot-versies](/docs/godot-versies) voor compatibiliteit.
+<GodotVersie />
 
+:::info
 `TileMapLayer` is geïntroduceerd in **Godot 4.3**. In oudere versies heet de node `TileMap` en werkt de workflow iets anders.
 :::
 

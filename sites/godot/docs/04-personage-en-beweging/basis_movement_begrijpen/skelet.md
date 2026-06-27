@@ -7,9 +7,7 @@ slug: /basis_movement_begrijpen
 
 Het bewegingsscript dat Godot voor je genereerde lijkt op het eerste gezicht ondoorgrondelijk: 17 regels code met losse termen als `velocity`, `delta` en `move_and_slide()`. Maar onder de motorkap bestaat het script uit **vier logische blokken**, met elk een eigen doel. We pakken ze één voor één — verspreid over **vier deeltjes** — eerst snappen, dan veranderen, dan zelf bouwen.
 
-:::info[Godot 4.5]
-Geschreven voor **Godot 4.5.x** — zie [Godot-versies](/docs/godot-versies) voor compatibiliteit.
-:::
+<GodotVersie />
 
 ## Het hele script in vogelvlucht
 

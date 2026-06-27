@@ -7,9 +7,7 @@ slug: /score_in_karakter
 
 Je raapt nu muntjes op, maar je weet niet hoeveel. In deze les voeg je een **score** toe die elke keer met 1 omhoog gaat als je een muntje raakt.
 
-:::info[Godot 4.5]
-Geschreven voor **Godot 4.5.x** — zie [Godot-versies](/docs/godot-versies) voor compatibiliteit.
-:::
+<GodotVersie />
 
 ## Voorspel: waar leeft de score?
 

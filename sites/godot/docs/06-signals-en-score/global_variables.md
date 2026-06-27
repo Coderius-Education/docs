@@ -7,9 +7,7 @@ slug: /global_variables
 
 In de vorige les heb je `var score = 0` in je karakter gezet en vanuit het muntje `body.score += 1` aangeroepen. Dat werkt — totdat je de score op het scherm wilt tonen en je vanuit een Label-script via `get_node("../CharacterBody2D").score` moet gaan zoeken. Eén verschuiving in de Scene Tree en het breekt. In deze les leer je een schonere oplossing: **global variables** die overal in je project beschikbaar zijn.
 
-:::info[Godot 4.5]
-Geschreven voor **Godot 4.5.x** — zie [Godot-versies](/docs/godot-versies) voor compatibiliteit.
-:::
+<GodotVersie />
 
 ## Voorspel: een variabele die overal woont
 

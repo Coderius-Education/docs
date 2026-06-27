@@ -9,9 +9,9 @@ slug: /godot-versies
 
 ## Doel-versie
 
-Het curriculum is geschreven voor **Godot 4.5.x** (4.5.1-stable was de meest recente versie op het moment van schrijven).
+Het curriculum is geschreven voor **Godot 4.7.x** (de nieuwste 4.7-stable op het moment van schrijven).
 
-In de [installatie-les](/docs/installatie) lees je waar je deze versie downloadt. Controleer na installatie via menu **Help → About Godot** dat je echt `4.5.x` draait.
+In de [installatie-les](/docs/installatie) lees je waar je deze versie downloadt. Controleer na installatie via menu **Help → About Godot** dat je echt `4.7.x` draait.
 
 ## Minimum-vereisten per concept
 
@@ -28,7 +28,7 @@ Sommige nodes en functies zijn pas in een specifieke 4.x-versie toegevoegd. Voor
 
 In `<` 4.3 heet de tile-node `TileMap` (zonder "Layer"). De tutorial werkt dan met aanpassingen, maar de Paint-tool / Physics Layer-workflow is anders georganiseerd.
 
-## Latere versies (4.6 en hoger)
+## Latere versies (4.8 en hoger)
 
 Toekomstige minor-versies van Godot **kunnen** UI-paden of property-namen verschuiven. Bekende risicogebieden:
 
@@ -36,6 +36,10 @@ Toekomstige minor-versies van Godot **kunnen** UI-paden of property-namen versch
 - **TileSet-editor**-toolbar (Paint-knop, Physics Layer-dropdown).
 - **Anchors Preset** in `TextureRect`.
 - Menu-volgorde **Editor → Editor Layout**.
+
+:::note[Editor-thema]
+Sinds **Godot 4.6** is het standaard editor-thema grijswaarden ("Modern") in plaats van het oude blauw-getinte thema. Sommige screenshots in deze cursus kunnen er daardoor nog blauwig uitzien — de stappen blijven hetzelfde. Wil je het oude uiterlijk terug? Ga naar **Editor → Editor Settings → Interface → Theme** en kies `Classic`.
+:::
 
 Als je tijdens een tutorial een menu-item niet kunt vinden:
 
@@ -55,7 +59,7 @@ Het curriculum gebruikt drie externe bronnen die offline kunnen gaan:
 
 ## Hoe houden we dit up-to-date?
 
-Bij elke nieuwe Godot-minor-release (bv. 4.6):
+Bij elke nieuwe Godot-minor-release (bv. 4.8):
 
 1. Doorloop het curriculum één keer in de nieuwe versie.
 2. Noteer afwijkingen in de UI-paden.

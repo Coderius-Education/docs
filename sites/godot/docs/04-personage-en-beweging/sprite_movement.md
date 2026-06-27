@@ -7,9 +7,7 @@ slug: /sprite_movement
 
 Je karakter staat op het scherm, maar doet niets. Tijd om hem te laten lopen, springen en vallen. Het mooie is: Godot geeft je een compleet startscript cadeau zodra je een script aan een `CharacterBody2D` koppelt.
 
-:::info[Godot 4.5]
-Geschreven voor **Godot 4.5.x** — zie [Godot-versies](/docs/godot-versies) voor compatibiliteit.
-:::
+<GodotVersie />
 
 ## Voorspel: wat zit er in dat standaardscript?
 

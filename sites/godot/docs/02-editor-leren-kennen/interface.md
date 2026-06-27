@@ -7,9 +7,7 @@ slug: /interface
 
 Open je project. Je belandt in de editor: een venster vol panelen, knoppen en tabbladen. Op deze pagina leer je hoe de panelen heten en waar ze staan. Wat ze precies doen, ervaar je vanzelf in de volgende lessen.
 
-:::info[Godot 4.5]
-Geschreven voor **Godot 4.5.x** — zie [Godot-versies](/docs/godot-versies) voor compatibiliteit.
-:::
+<GodotVersie />
 
 ## Voorspel: waar staan de nodes?
 

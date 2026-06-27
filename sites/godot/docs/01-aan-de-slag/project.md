@@ -7,9 +7,7 @@ slug: /project
 
 Nu Godot geïnstalleerd is, maak je een nieuw, leeg project aan. Een project is gewoon een map op je computer waarin Godot al je scènes, scripts en afbeeldingen bewaart.
 
-:::info[Godot 4.5]
-Geschreven voor **Godot 4.5.x** — zie [Godot-versies](/docs/godot-versies) voor compatibiliteit.
-:::
+<GodotVersie />
 
 ## Stap 1: Open de Project Manager
 
