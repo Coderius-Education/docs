@@ -114,13 +114,9 @@ function createConfig(site = {}) {
   };
   const others = otherSites(rest.url);
 
-  // Footer: voeg overal dezelfde "Andere cursussen"-kolom toe (uit de registry)
-  // en zorg voor de CC-BY-NC copyright.
+  // Footer: zorg voor de CC-BY-NC copyright. Cross-site navigatie zit al in de
+  // navbar-dropdown "Cursussen" en op /cursussen, dus geen footerkolom.
   const footer = themeConfig.footer ? {...themeConfig.footer} : {style: 'dark'};
-  footer.links = [
-    ...(footer.links || []),
-    {title: 'Andere cursussen', items: others.map((s) => ({label: s.label, href: s.url}))},
-  ];
   if (!footer.copyright) footer.copyright = CC_BY_NC;
   themeConfig.footer = footer;
 
