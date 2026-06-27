@@ -7,19 +7,16 @@ const ctas: HeroCta[] = [{label: 'Begin met je 1e 2D game', to: '/docs/installat
 
 const features: FeatureItem[] = [
   {
-    icon: '🕹️',
     title: 'Begin de tutorial',
     description: 'Van installatie tot je eerste speelbare 2D game.',
     link: '/docs/installatie',
   },
   {
-    icon: '🧩',
     title: 'Nodes cheatsheet',
     description: 'De belangrijkste Godot-nodes op een rij.',
     link: '/cheatsheet',
   },
   {
-    icon: '📝',
     title: 'GDScript-tips',
     description: 'Handige patronen en valkuilen in GDScript.',
     link: '/gdscript-tips',

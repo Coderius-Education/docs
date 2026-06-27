@@ -7,7 +7,7 @@ title: "Forensics - Voor altijd"
 
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Voor altijd"* onder Forensics.
 
-**Moeilijkheid:** ⭐ Makkelijk
+**Moeilijkheid:** Makkelijk
 
 ## Onderwerp
 **Wayback Machine**

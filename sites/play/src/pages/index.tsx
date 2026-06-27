@@ -8,19 +8,16 @@ const ctas: HeroCta[] = [{label: 'Klik hier om te beginnen!', to: '/docs/eerste-
 
 const features: FeatureItem[] = [
   {
-    icon: '📘',
     title: 'Begin bij het begin',
     description: 'Je allereerste Python-programma, stap voor stap.',
     link: '/docs/eerste-keer-python/IA',
   },
   {
-    icon: '🎮',
     title: 'Speeltuin',
     description: 'Speel met kant-en-klare voorbeelden en pas ze direct aan.',
     link: '/speeltuin',
   },
   {
-    icon: '📋',
     title: 'Cheatsheet',
     description: 'Snel iets opzoeken: vormen, fysica, acties en gebeurtenissen.',
     link: '/docs/cheatsheet',

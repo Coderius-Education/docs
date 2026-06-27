@@ -7,19 +7,16 @@ const ctas: HeroCta[] = [{label: 'Start de challenges', to: '/docs/intro'}];
 
 const features: FeatureItem[] = [
   {
-    icon: '🚩',
     title: 'Challenges',
     description: 'Begin met de eerste Capture the Flag-opdrachten.',
     link: '/docs/intro',
   },
   {
-    icon: '🧰',
     title: 'Toolbox',
     description: 'De tools die je nodig hebt om challenges te kraken.',
     link: '/toolbox',
   },
   {
-    icon: '📖',
     title: 'Woordenlijst',
     description: 'Snel de cybersecurity-termen opzoeken.',
     link: '/woordenlijst',

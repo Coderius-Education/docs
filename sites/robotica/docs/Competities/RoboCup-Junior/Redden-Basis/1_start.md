@@ -8,7 +8,7 @@ Welkom bij **Redden Basis**. Voordat je begint met de competitie, is het handig 
 
 | Kan ik het? | Doel | Hoe? | Link |
 |:---:|:---:|:---:|:---:|
-| ✅ | Informatie tonen op een schermpje | Volg de tutorial | [Tutorial – OLED-scherm](/docs/category/tutorial---oled-scherm) |
+| ✓ | Informatie tonen op een schermpje | Volg de tutorial | [Tutorial – OLED-scherm](/docs/category/tutorial---oled-scherm) |
 
 ## Klaar met de tutorials?
 

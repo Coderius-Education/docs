@@ -7,7 +7,7 @@ title: "Code - Encrypted"
 
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Encrypted"* onder Code.
 
-**Moeilijkheid:** ⭐⭐⭐ Moeilijk
+**Moeilijkheid:** Moeilijk
 
 ## Onderwerp
 **Versleuteling**

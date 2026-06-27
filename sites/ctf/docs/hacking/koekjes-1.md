@@ -7,7 +7,7 @@ title: "Hacking - Koekjes 1"
 
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Koekjes 1"* onder Hacking.
 
-**Moeilijkheid:** ⭐⭐ Gemiddeld
+**Moeilijkheid:** Gemiddeld
 
 ## Onderwerp
 **Cookies**

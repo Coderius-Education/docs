@@ -80,7 +80,7 @@ Wanneer welk hulpmiddel:
 | "In deze opdracht ga je leren hoe je …" | "## Opdracht 3.2.a: Sorteren met `sort()`" + 1 zin wat te doen |
 | "We zullen nu een voorbeeld bekijken." | (toon het voorbeeld) |
 | "Met behulp van de functie `len()` kunnen we …" | "`len()` geeft de lengte van een lijst." |
-| "🚀 Aan de slag met lijsten! 🎉" | "## Lijsten" |
+| "Aan de slag met lijsten!" (met emoji-versiering) | "## Lijsten" |
 | "In dit hoofdstuk duiken we in de krachtige wereld van loops." | "Een loop herhaalt code. Hier tel je tot 5:" + voorbeeld |
 
 ## 6. Opdrachten schrijven

@@ -8,19 +8,16 @@ const ctas: HeroCta[] = [{label: 'Start met de Lego-auto', to: '/lego_auto/intro
 
 const features: FeatureItem[] = [
   {
-    icon: '🤖',
     title: 'Lego-auto',
     description: 'Bouw stap voor stap je eigen rijdende robot.',
     link: '/lego_auto/intro',
   },
   {
-    icon: '🧰',
     title: 'Editor',
     description: 'Schrijf en upload code naar je microcontroller.',
     link: '/editor',
   },
   {
-    icon: '📋',
     title: 'Cheatsheet',
     description: 'Pin-aansluitingen en code-snippets snel opzoeken.',
     link: '/cheatsheet',

@@ -14,7 +14,7 @@ Dit document beschrijft de schrijfstijl die binnen `play-docs` consequent wordt 
 - **Energie:** warm en uitnodigend, maar zónder uitroeptekens of superlatieven. Schrijf "Tijd voor je eerste programma." en "Leuk dat je er bent.", niet "Het is tijd voor je eerste programma!".
 - **Lengte:** kort en concreet. Eén concept per paragraaf. Geen lange inleidingen, geen samenvatting aan het einde van een hoofdstuk.
 - **Geen jargon zonder uitleg.** Introduceer een term, leg uit, gebruik daarna consequent.
-- **Geen emoji's in lesmateriaal:** niet in lopende tekst, niet in koppen, niet in opsommingen, niet in admonitions. Eén uitzondering: de ⭐-markering voor "nieuw in versie X" op de cheatsheet. (UI-componenten zoals homepage-kaarten of de navbar mogen een terughoudende, vaste iconenset gebruiken — dat is geen lesmateriaal.)
+- **Geen emoji's, nergens:** niet in lopende tekst, niet in koppen, niet in opsommingen, niet in admonitions, niet in code-voorbeelden — en ook niet in UI (homepage-kaarten, navbar, footer). Geen uitzonderingen, ook niet als versiemarker of cursus-icoon. Functionele symbolen als `✓`, `⚠` en pijlen (`→`) zijn geen emoji en mogen blijven.
 
 ## 2. Bestandsstructuur en frontmatter
 
@@ -151,7 +151,7 @@ import play
 Conventies:
 
 - Groepeer items onder H2's per thema (`## Vormen`, `## Fysica`, `## Acties`, `## Gebeurtenissen`, …).
-- Markeer nieuw gedrag per versie met `⭐ nieuw in <versie>` in de summary.
+- Markeer nieuw gedrag per versie met `(nieuw in <versie>)` als tekst in de summary.
 - Begin nieuwe-versie-overzichten met `<details><summary>Nieuw of verbeterd in <project> versie X.Y</summary>`.
 
 ## 8. "Er gaat iets mis" / veelgemaakte fouten
@@ -270,7 +270,7 @@ Voor pagina's onder `jouw_project/` (of vergelijkbaar):
 - [ ] Interne links bestaan en wijzen naar de juiste pagina.
 - [ ] Methodenamen consequent in `**vet**` of `` `code` `` (kies één stijl per project en houd 'm vol).
 - [ ] Geen "u", geen uitroeptekens.
-- [ ] Geen emoji in lestekst, koppen of opsommingen (alleen de ⭐-versiemarker op de cheatsheet).
+- [ ] Geen emoji — nergens (lestekst, koppen, opsommingen, code, UI). Wel toegestaan: `✓`, `⚠`, pijlen.
 - [ ] Geen holle superlatieven of formulaire openers ("In dit hoofdstuk…", "Laten we…").
 - [ ] Niet alles vet; varieer de openingswoorden van zinnen en bullets.
 - [ ] Voor elk gebruikt concept dat elders is uitgelegd: een `:::info`-verwijzing.

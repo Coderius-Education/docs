@@ -7,7 +7,7 @@ title: "Hacking - Standaard"
 
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Standaard"* onder Hacking.
 
-**Moeilijkheid:** ⭐ Makkelijk
+**Moeilijkheid:** Makkelijk
 
 ## Onderwerp
 **Wachtwoorden**

@@ -7,7 +7,7 @@ title: "Code - Broncode"
 
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Broncode"* onder Code.
 
-**Moeilijkheid:** ⭐ Makkelijk
+**Moeilijkheid:** Makkelijk
 
 ## Onderwerp
 **HTML-broncode**

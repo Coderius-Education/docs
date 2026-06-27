@@ -8,7 +8,6 @@
 //   label       weergavenaam
 //   url         productie-URL (subdomein); bepaalt ook welke site "huidig" is
 //   description korte omschrijving (footer/overzicht)
-//   icon        emoji-markering
 //   requires    leerlijn-voorkennis: cursussen waarop deze voortbouwt
 //
 // De volgorde hieronder is de globale leerlijn-volgorde (gebruikt door het
@@ -20,7 +19,6 @@ const SITES = [
     label: 'VS Code & Git',
     url: 'https://editor.coderius.nl',
     description: 'Werken met een code-editor, VS Code en Git.',
-    icon: '🧰',
     requires: [],
   },
   {
@@ -28,7 +26,6 @@ const SITES = [
     label: 'Python',
     url: 'https://python.coderius.nl',
     description: 'Leer stap voor stap programmeren in Python.',
-    icon: '🐍',
     requires: [],
   },
   {
@@ -36,7 +33,6 @@ const SITES = [
     label: 'Webontwikkeling',
     url: 'https://web.coderius.nl',
     description: 'Maak je eerste website met HTML, CSS en JavaScript.',
-    icon: '🎨',
     requires: [],
   },
   {
@@ -44,7 +40,6 @@ const SITES = [
     label: 'Python Games',
     url: 'https://play.coderius.nl',
     description: 'Maak games met Python en pygame.',
-    icon: '🎮',
     requires: ['python'],
   },
   {
@@ -52,7 +47,6 @@ const SITES = [
     label: 'Algoritmes',
     url: 'https://algoritmes.coderius.nl',
     description: 'Leer algoritmes door ze zelf uit te voeren.',
-    icon: '🧠',
     requires: ['python'],
   },
   {
@@ -60,7 +54,6 @@ const SITES = [
     label: 'Fullstack (FastAPI)',
     url: 'https://fullstack.coderius.nl',
     description: 'Voeg een Python back-end toe aan je website met FastAPI.',
-    icon: '🚀',
     requires: ['python', 'web'],
   },
   {
@@ -68,7 +61,6 @@ const SITES = [
     label: 'Robotica',
     url: 'https://robotica.coderius.nl',
     description: 'Stuur sensoren en motoren aan met MicroPython.',
-    icon: '🤖',
     requires: ['python'],
   },
   {
@@ -76,7 +68,6 @@ const SITES = [
     label: 'Embedded',
     url: 'https://embedded.coderius.nl',
     description: 'Programmeer microcontrollers: van Arduino tot STM32.',
-    icon: '🔌',
     requires: [],
   },
   {
@@ -84,7 +75,6 @@ const SITES = [
     label: 'Godot',
     url: 'https://godot.coderius.nl',
     description: 'Bouw je eerste 2D game in Godot 4.',
-    icon: '🕹️',
     requires: [],
   },
   {
@@ -92,7 +82,6 @@ const SITES = [
     label: 'Capture The Flag',
     url: 'https://ctf.coderius.nl',
     description: 'Leer cybersecurity door CTF-challenges op te lossen.',
-    icon: '🚩',
     requires: ['python', 'web'],
   },
   {
@@ -100,7 +89,6 @@ const SITES = [
     label: 'DVWA Websecurity',
     url: 'https://dvwa.coderius.nl',
     description: 'Oefen websecurity in een veilige DVWA-omgeving.',
-    icon: '🛡️',
     requires: ['web'],
   },
   {
@@ -108,7 +96,6 @@ const SITES = [
     label: 'Online Editor',
     url: 'https://ide.coderius.nl',
     description: 'Schrijf en draai code direct in je browser.',
-    icon: '💻',
     requires: [],
   },
 ];

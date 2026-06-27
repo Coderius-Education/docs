@@ -7,7 +7,7 @@ title: "Hacking - Robots"
 
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Robots"* onder Hacking.
 
-**Moeilijkheid:** ⭐ Makkelijk
+**Moeilijkheid:** Makkelijk
 
 ## Onderwerp
 **robots.txt**

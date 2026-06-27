@@ -7,7 +7,7 @@ title: "Forensics - Logfile"
 
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Logfile"* onder Forensics.
 
-**Moeilijkheid:** ⭐⭐⭐⭐ Expert
+**Moeilijkheid:** Expert
 
 ## Onderwerp
 **HTTP-statuscodes**

@@ -7,7 +7,7 @@ title: "Hacking - Hallo"
 
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Hallo"* onder Hacking.
 
-**Moeilijkheid:** ⭐⭐⭐ Moeilijk
+**Moeilijkheid:** Moeilijk
 
 ## Onderwerp
 **Cross-Site Scripting (XSS)**

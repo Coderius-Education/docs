@@ -7,7 +7,7 @@ title: "Forensics - Geluidsfragment"
 
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Geluidsfragment"* onder Forensics.
 
-**Moeilijkheid:** ⭐ Makkelijk
+**Moeilijkheid:** Makkelijk
 
 ## Onderwerp
 **Audio-analyse**

@@ -11,9 +11,6 @@ export default function AlgorithmGrid(): ReactNode {
         <div className={styles.cards}>
           {algoritmes.map((a) => (
             <Link key={a.slug} to={a.startPad} className={styles.card}>
-              <div className={styles.cardEmoji} aria-hidden="true">
-                {a.emoji}
-              </div>
               <div className={styles.cardBody}>
                 <Heading as="h3" className={styles.cardTitle}>
                   {a.titel}

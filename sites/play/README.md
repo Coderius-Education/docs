@@ -94,7 +94,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      # 👇 Build steps
+      # Build steps
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
@@ -104,13 +104,13 @@ jobs:
         run: yarn install --frozen-lockfile --non-interactive
       - name: Build
         run: yarn build
-      # 👆 Build steps
+      # Build steps
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
-          # 👇 Specify build output path
+          # Specify build output path
           path: build
       - name: Deploy to GitHub Pages
         id: deployment
