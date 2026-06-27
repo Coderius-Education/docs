@@ -4,11 +4,38 @@ import { python } from '@codemirror/lang-python';
 import { indentUnit } from '@codemirror/language';
 import { Prec } from '@codemirror/state';
 import { EditorView, keymap } from '@codemirror/view';
-import { useColorMode } from '@docusaurus/theme-common';
 import CodeMirror from '@uiw/react-codemirror';
 import clsx from 'clsx';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
+// Lees de kleurmodus van het `data-theme`-attribuut op <html> i.p.v. via
+// useColorMode uit @docusaurus/theme-common. Met pnpm krijgt theme-common
+// anders een tweede fysieke kopie, wat een tweede React-context oplevert
+// ("Hook ... outside the <ColorModeProvider>") en deze pagina laat crashen.
+// Zelfde patroon als MonacoPane/PythonPlayground in de gedeelde packages.
+function useColorMode(): { colorMode: 'light' | 'dark' } {
+  const [colorMode, setColorMode] = useState<'light' | 'dark'>(() =>
+    typeof document !== 'undefined' &&
+    document.documentElement.getAttribute('data-theme') === 'dark'
+      ? 'dark'
+      : 'light',
+  );
+  useEffect(() => {
+    const read = () =>
+      setColorMode(
+        document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light',
+      );
+    read();
+    const observer = new MutationObserver(read);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    });
+    return () => observer.disconnect();
+  }, []);
+  return { colorMode };
+}
 
 import { BoardFS } from './filesystem';
 import { type InstallProgress, installLeaphyLibrary } from './leaphyInstaller';
