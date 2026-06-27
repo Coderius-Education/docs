@@ -3,7 +3,16 @@
 // De base-URL is instelbaar zodat een site Pyodide lokaal kan serveren
 // (offline, vanuit static/pyodide/) of vanaf de CDN. Standaard: CDN.
 // Roep setPyodideBaseUrl() aan in een clientModule om dit te overschrijven.
-const DEFAULT_PYODIDE_BASE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.27.4/full/';
+//
+// Eén bron van waarheid voor de Pyodide-versie. Houd PYODIDE_VERSION gelijk aan
+// de `pyodide`-versie in de catalog (pnpm-workspace.yaml): de copy-pyodide-
+// scripts kopiëren díe versie naar static/pyodide/ van self-hostende sites.
+// De CDN-default hieronder geldt voor sites die NIET self-hosten (bijv.
+// fullstack), zodat die dezelfde Pyodide draaien als de rest.
+// Let op: play gebruikt bewust een oudere Pyodide (Python 3.12) vanwege zijn
+// cp312-wheels — zie sites/play/src/components/CodeRunner/engine.js.
+export const PYODIDE_VERSION = '0.29.4';
+const DEFAULT_PYODIDE_BASE_URL = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/`;
 let pyodideBaseUrl = DEFAULT_PYODIDE_BASE_URL;
 
 export function setPyodideBaseUrl(url: string): void {
