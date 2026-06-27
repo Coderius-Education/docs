@@ -7,9 +7,7 @@ slug: /animaties_code
 
 Je hebt nu drie animaties — `idle`, `run` en `jump` — maar ze spelen nog niet automatisch op het juiste moment. In deze les koppel je de animaties aan wat je karakter doet: op de grond rennen, in de lucht springen, of stilstaan.
 
-:::info[Godot 4.5]
-Geschreven voor **Godot 4.5.x** — zie [Godot-versies](/docs/godot-versies) voor compatibiliteit.
-:::
+<GodotVersie />
 
 ## Voorspel: welke informatie heb je nodig?
 

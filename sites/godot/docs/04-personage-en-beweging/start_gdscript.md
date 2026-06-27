@@ -7,9 +7,7 @@ slug: /start_gdscript
 
 Je hebt nu een werkende scène met een bewegend karakter. Maar om je spel echt te laten doen wat *jij* wilt, moet je leren programmeren in **GDScript** — de programmeertaal van Godot. In deze les leer je de bouwstenen.
 
-:::info[Godot 4.5]
-Geschreven voor **Godot 4.5.x** — zie [Godot-versies](/docs/godot-versies) voor compatibiliteit.
-:::
+<GodotVersie />
 
 ## Waarom GDScript?
 

@@ -7,9 +7,7 @@ slug: /sprite
 
 Tijd voor een speler. In deze les bouw je je karakter op uit drie nodes die samen één geheel vormen: een lichaam dat kan bewegen en botsen, een sprite die je ziet, en een collision-vorm zodat de physics weet waar het karakter ophoudt.
 
-:::info[Godot 4.5]
-Geschreven voor **Godot 4.5.x** — zie [Godot-versies](/docs/godot-versies) voor compatibiliteit.
-:::
+<GodotVersie />
 
 ## Voorspel: waarom drie nodes?
 

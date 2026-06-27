@@ -5,9 +5,7 @@ slug: /spel-top_down
 
 # Top-down dungeon crawler
 
-:::info[Godot 4.5]
-Geschreven voor **Godot 4.5.x** — zie [Godot-versies](/docs/godot-versies) voor compatibiliteit.
-:::
+<GodotVersie />
 
 ## Het idee
 

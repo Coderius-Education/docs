@@ -7,9 +7,7 @@ slug: /camera2d
 
 Tot nu toe stond je beeld stil terwijl je speler bewoog. Bij grotere levels betekent dat: zodra je karakter naar rechts loopt, verdwijnt hij gewoon uit beeld. Tijd voor een **camera die meebeweegt**.
 
-:::info[Godot 4.5]
-Geschreven voor **Godot 4.5.x** — zie [Godot-versies](/docs/godot-versies) voor compatibiliteit.
-:::
+<GodotVersie />
 
 ## Voorspel: hoe laat je een camera meebewegen?
 

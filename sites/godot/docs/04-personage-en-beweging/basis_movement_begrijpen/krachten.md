@@ -7,9 +7,7 @@ slug: /movement-krachten
 
 In [Deel 2](./motor.md) zag je hoe `_physics_process` 60× per seconde draait. In *die* functie werken drie krachten op je karakter: **zwaartekracht** trekt hem naar beneden, **springen** geeft hem een omhoog-zetje, en **horizontaal lopen** beweegt hem links of rechts. Elke kracht is een eigen sub-blok.
 
-:::info[Godot 4.5]
-Geschreven voor **Godot 4.5.x** — zie [Godot-versies](/docs/godot-versies) voor compatibiliteit.
-:::
+<GodotVersie />
 
 ## Blok 3: De drie krachten op je karakter
 

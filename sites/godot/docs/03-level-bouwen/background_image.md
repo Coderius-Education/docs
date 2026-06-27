@@ -5,49 +5,32 @@ slug: /background_image
 
 # Achtergrond
 
-Tijd om je lege scène iets minder grijs te maken. In deze les zet je een achtergrondafbeelding op je scherm die zich aanpast aan elk schermformaat.
+Tijd om je lege scène iets minder grijs te maken. In deze les zet je een achtergrondafbeelding op je scherm.
 
-:::info[Godot 4.5]
-Geschreven voor **Godot 4.5.x** — zie [Godot-versies](/docs/godot-versies) voor compatibiliteit.
-:::
+<GodotVersie />
 
 :::note
 Heb je de assets nog niet gedownload? Volg eerst de stappen op [Bestanden downloaden](../02-editor-leren-kennen/bestanden-downloaden.md).
 :::
 
-## Voorspel: `Sprite2D` of `TextureRect`?
-
-Godot heeft twee nodes om een afbeelding te tonen: `Sprite2D` en `TextureRect`. **Welke denk je dat handiger is voor een achtergrond?**
-
-<details>
-<summary>Antwoord</summary>
-
-`TextureRect`. Het verschil:
-
-- `Sprite2D` is een gewone 2D-afbeelding met een vaste grootte. Je moet hem handmatig schalen — en als je later het schermformaat verandert, schaalt hij niet mee.
-- `TextureRect` is een **UI-node** (Control). Hij heeft ingebouwde *anchors* en *stretch modes*: in één klik zeg je "vul het hele scherm" en het past zich automatisch aan als het venster groter of kleiner wordt.
-
-Voor een statische achtergrond is `TextureRect` de logische keuze.
-
-</details>
-
 ## Stap 1: Voeg een `TextureRect` toe
+
+Een `TextureRect` is een node die een afbeelding toont. Voor een achtergrond is dat precies wat je nodig hebt.
 
 1. Klik met rechts op de root-node van je scène → **Add Child Node**.
 2. Zoek naar `TextureRect` en voeg deze toe.
 3. Sleep hem in de Scene Tree **bovenaan**, boven al je andere nodes. Godot tekent van boven naar beneden, dus wat bovenaan staat in de tree komt onderaan in beeld — precies wat je wilt voor een achtergrond.
 
-## Wat zie je nu in de viewport?
+## Stap 2: Zet de afbeelding erin
 
-Selecteer de `TextureRect` in de Scene Tree en kijk goed naar de viewport. Een paar lijnen en symbolen zijn belangrijk om te herkennen:
+1. Selecteer de `TextureRect`.
+2. Sleep `Green.png` (of een andere achtergrond uit je `Background`-map) naar de eigenschap **Texture** in de Inspector.
 
-- **Roze stippelrand** — dat is de rand van je **canvas**, het zichtbare game-scherm. Wat erbuiten valt, zie je straks niet als je het spel start.
-- **Blauwe selectierechthoek met hoek-handgrepen** — dat is je geselecteerde `TextureRect` met sleeppunten om de grootte te wijzigen.
-- **Vier kleine driehoekjes** in de hoeken van de selectie — dat zijn de **anchor-punten**. Die bepalen aan welke rand van het scherm de TextureRect blijft "vastzitten" als het scherm van grootte verandert. Daarover meer in Stap 3.
+De afbeelding verschijnt in de viewport, meestal klein in een hoek. In de volgende stappen plaats je hem zelf goed.
 
 ## Bewegen in de viewport
 
-Voordat je verder gaat: leer rondkijken in de editor-viewport.
+Voordat je de afbeelding gaat plaatsen: leer rondkijken in de editor-viewport.
 
 - **Inzoomen / uitzoomen** — draai aan het scrollwiel, of gebruik `Ctrl + scroll` voor fijnere stappen.
 - **Verschuiven (pannen)** — houd de **middelmuisknop** ingedrukt en sleep. Geen middelmuisknop? Houd `Spatie` ingedrukt en sleep met de linkermuisknop.
@@ -57,33 +40,25 @@ Voordat je verder gaat: leer rondkijken in de editor-viewport.
 Raak je je `TextureRect` kwijt buiten beeld? Selecteer hem in de Scene Tree en druk `F` — Godot springt terug naar de juiste plek.
 :::
 
-## Stap 2: Stel de afbeelding in
+## Stap 3: Plaats de afbeelding handmatig in de viewport
+
+Selecteer de `TextureRect` in de viewport. Je ziet een blauwe rechthoek met **handgrepen** op de hoeken en zijkanten.
+
+De **roze stippelrand** is de rand van je canvas — je zichtbare game-scherm. Wat daarbuiten valt, zie je straks niet.
+
+1. Sleep aan de hoek-handgrepen om de `TextureRect` groter te maken.
+2. Sleep aan het midden om hem te verschuiven.
+3. Maak hem zo groot dat hij de hele roze stippelrand bedekt.
+
+## Stap 4: Zet Stretch Mode op `Tile`
+
+Je afbeelding is nu waarschijnlijk uitgerekt of bedekt maar een deel van het vlak. Met **Tile** herhaalt Godot de afbeelding als tegels, zodat het hele vlak gevuld wordt zonder vervorming.
 
 1. Selecteer de `TextureRect`.
-2. Sleep `Green.png` (of een andere achtergrond uit je `Background`-map) naar de eigenschap **Texture** in de Inspector.
+2. Zoek in de Inspector de eigenschap **Stretch Mode**.
+3. Zet die op `Tile`.
 
-De afbeelding verschijnt in de hoek, meestal piepklein. Dat lossen we in de volgende stap op.
-
-## Stap 3: Laat de afbeelding het scherm vullen
-
-In de Inspector onder **Layout** (of via het ankerpunten-knopje boven de viewport):
-
-1. Klik op **Anchors Preset** → kies **Full Rect** (het icoontje met de vier hoeken).
-2. De `TextureRect` vult nu de hele scène.
-
-Wil je dat de afbeelding netjes schaalt zonder vervorming?
-
-1. Zet **Expand Mode** op `Ignore Size`.
-2. Zet **Stretch Mode** op `Keep Aspect Covered` — de afbeelding vult het scherm en behoudt de verhoudingen, eventueel met een klein stukje aan de rand dat wegvalt.
-
-| Stretch Mode          | Wat doet het?                                                   |
-| :-------------------: | :-------------------------------------------------------------- |
-| `Stretch`             | Trekt de afbeelding uit; mogelijk vervormd                      |
-| `Keep Aspect`         | Behoudt verhoudingen; laat zwarte randen toe                    |
-| `Keep Aspect Covered` | Behoudt verhoudingen; vult het scherm, snijdt randen weg        |
-| `Tile`                | Herhaalt de afbeelding als tegels                               |
-
-Voor een pixel-art achtergrond werkt **Keep Aspect Covered** meestal het beste.
+De afbeelding wordt nu herhaald binnen de `TextureRect`. Pas zo nodig de grootte uit Stap 3 nog wat aan tot het er goed uitziet.
 
 ## Er gaat iets mis
 

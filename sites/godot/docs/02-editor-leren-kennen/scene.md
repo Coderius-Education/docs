@@ -7,9 +7,7 @@ slug: /scene
 
 Een scène in Godot is één "bouwsteen" van je game: een level, een speler, een muntje. Voor je begint moet je beslissen of je een **2D-game** of een **3D-game** maakt. Godot ondersteunt allebei, maar de aanpak is totaal anders.
 
-:::info[Godot 4.5]
-Geschreven voor **Godot 4.5.x** — zie [Godot-versies](/docs/godot-versies) voor compatibiliteit.
-:::
+<GodotVersie />
 
 ## Voorspel: waarom 2D?
 

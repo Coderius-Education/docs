@@ -7,9 +7,7 @@ slug: /movement-afsluiter
 
 In [Deel 3](./krachten.md) heb je de drie krachten (zwaartekracht, springen, lopen) één voor één ontleed. Tot nu toe hebben we alleen `velocity` ingesteld — maar dat verplaatst je karakter nog niet. Eén regel rondt het verhaal af, en daarna bouw je het script zelf opnieuw op.
 
-:::info[Godot 4.5]
-Geschreven voor **Godot 4.5.x** — zie [Godot-versies](/docs/godot-versies) voor compatibiliteit.
-:::
+<GodotVersie />
 
 ## Blok 4: De afsluiter — `move_and_slide()`
 

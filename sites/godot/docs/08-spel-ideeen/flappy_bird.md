@@ -5,9 +5,7 @@ slug: /spel-flappy_bird
 
 # Flappy Bird-kloon
 
-:::info[Godot 4.5]
-Geschreven voor **Godot 4.5.x** — zie [Godot-versies](/docs/godot-versies) voor compatibiliteit.
-:::
+<GodotVersie />
 
 ## Het idee
 

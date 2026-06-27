@@ -7,9 +7,7 @@ slug: /start_menu
 
 Wanneer je je spel start, val je nu meteen in het level. In deze les bouw je een echt menu met knoppen waarmee de speler het spel start of afsluit.
 
-:::info[Godot 4.5]
-Geschreven voor **Godot 4.5.x** — zie [Godot-versies](/docs/godot-versies) voor compatibiliteit.
-:::
+<GodotVersie />
 
 ## Voorspel: welke nodes heb je nodig?
 

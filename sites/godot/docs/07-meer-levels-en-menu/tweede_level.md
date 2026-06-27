@@ -7,9 +7,7 @@ slug: /tweede_level
 
 Tijd om je spel uit te breiden. In deze les maak je een tweede level en zorg je dat de speler automatisch overschakelt zodra hij het einde van het eerste level bereikt.
 
-:::info[Godot 4.5]
-Geschreven voor **Godot 4.5.x** — zie [Godot-versies](/docs/godot-versies) voor compatibiliteit.
-:::
+<GodotVersie />
 
 ## Voorspel: hoe laad je een ander level?
 

@@ -7,9 +7,7 @@ slug: /score_op_scherm
 
 Je hebt nu `Global.score` die de hele speelsessie blijft bestaan. Tijd om hem zichtbaar te maken bovenaan het scherm — met een `Label`.
 
-:::info[Godot 4.5]
-Geschreven voor **Godot 4.5.x** — zie [Godot-versies](/docs/godot-versies) voor compatibiliteit.
-:::
+<GodotVersie />
 
 ## Voorspel: hoe vaak update je de tekst?
 
@@ -22,13 +20,25 @@ Het simpelst is om de tekst **elke frame** opnieuw te zetten. Dan staat hij alti
 
 </details>
 
-## Stap 1: Voeg een `Label` toe
+## Stap 1: Voeg een `CanvasLayer` met een `Label` toe
+
+Een score hoort altijd op dezelfde plek op het scherm te blijven — ook als je camera de speler volgt. Daarom zet je de Label op een **`CanvasLayer`**: die tekent bovenop je spel en beweegt **niet** mee met de camera.
 
 1. Open je level-scène (bijvoorbeeld `world.tscn`).
-2. Klik met rechts op de root-node → **Add Child Node** → zoek `Label`.
-3. Hernoem de Label naar `ScoreLabel`.
-4. Sleep de Label in de viewport naar de plek waar je hem wilt (bijvoorbeeld linksboven).
-5. Pas eventueel de tekstgrootte aan onder **Theme Overrides → Font Sizes** in de Inspector.
+2. Klik met rechts op de root-node → **Add Child Node** → zoek `CanvasLayer` en voeg deze toe.
+3. Klik met rechts op de `CanvasLayer` → **Add Child Node** → zoek `Label`.
+4. Hernoem de Label naar `ScoreLabel`.
+5. Sleep de Label in de viewport naar de plek waar je hem wilt (bijvoorbeeld linksboven).
+6. Pas eventueel de tekstgrootte aan onder **Theme Overrides → Font Sizes** in de Inspector.
+
+Je Scene Tree ziet er nu zo uit:
+
+```
+World
+├── ...
+└── CanvasLayer
+    └── ScoreLabel (Label)
+```
 
 ## Stap 2: Voeg een script toe aan de Label
 
@@ -76,7 +86,7 @@ Voeg een tweede Label toe (`LevensLabel`) die `Global.levens` toont in **rood**.
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-- Voeg een nieuwe `Label` toe aan je level-scène en hernoem naar `LevensLabel`.
+- Voeg een nieuwe `Label` toe onder dezelfde `CanvasLayer` en hernoem naar `LevensLabel`.
 - Koppel een script met dezelfde structuur als `ScoreLabel`, maar verwijs naar `Global.levens`.
 - Voor de kleur: selecteer de Label en zoek in de Inspector naar **Theme Overrides → Colors → Font Color** — zet die op rood.
 

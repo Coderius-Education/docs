@@ -7,9 +7,7 @@ slug: /tilemap_collision
 
 In de [vorige les](./tilemap_opzetten.md) heb je tegels getekend. Voor Godot zijn die nu nog gewoon plaatjes — een karakter zou er straks dwars doorheen vallen. In deze les vertel je Godot welke tegels **massief** zijn, zodat ze later een echte vloer vormen voor het karakter dat je in [Een speelbaar karakter](../04-personage-en-beweging/sprite.md) toevoegt.
 
-:::info[Godot 4.5]
-Geschreven voor **Godot 4.5.x** — zie [Godot-versies](/docs/godot-versies) voor compatibiliteit.
-:::
+<GodotVersie />
 
 ## Voorspel: hoe weet Godot welke tegels massief zijn?
 
