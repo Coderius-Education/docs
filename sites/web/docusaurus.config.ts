@@ -29,6 +29,7 @@ export default createConfig({
       title: 'coderius-web',
       logo: {alt: 'My Site Logo', src: 'img/logo.svg'},
       items: [
+        {to: '/html_css', label: 'Met Code.org', position: 'left'},
         {type: 'docSidebar', sidebarId: 'htmlCssSidebar', label: 'HTML & CSS', position: 'left'},
         {type: 'docSidebar', sidebarId: 'jsSidebar', label: 'JavaScript', position: 'left'},
         {to: '/cheatsheet', label: 'Cheatsheet', position: 'left'},
