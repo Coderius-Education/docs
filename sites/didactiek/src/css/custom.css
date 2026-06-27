@@ -1,0 +1,44 @@
+:root {
+  --ifm-color-primary: #5b4bd1;
+  --ifm-color-primary-dark: #4a3ac0;
+  --ifm-color-primary-darker: #4636b5;
+  --ifm-color-primary-darkest: #3a2c95;
+  --ifm-color-primary-light: #6c5dd6;
+  --ifm-color-primary-lighter: #7363d9;
+  --ifm-color-primary-lightest: #8f82e1;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #a99cf5;
+  --ifm-color-primary-dark: #8f7df2;
+  --ifm-color-primary-darker: #826ff0;
+  --ifm-color-primary-darkest: #5e46ea;
+  --ifm-color-primary-light: #c3bbf8;
+  --ifm-color-primary-lighter: #d0c9fa;
+  --ifm-color-primary-lightest: #f6f4ff;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+/* Progressive disclosure: <details> blokken visueel onderscheiden van running tekst */
+.markdown details {
+  border-left: 3px solid var(--ifm-color-primary);
+  padding: 0.6rem 0.9rem;
+  margin: 1rem 0;
+  background: var(--ifm-color-emphasis-100);
+  border-radius: 0 6px 6px 0;
+}
+
+.markdown details > summary {
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.markdown details[open] > summary {
+  margin-bottom: 0.5rem;
+}
+
+.markdown details > summary::marker {
+  color: var(--ifm-color-primary);
+}

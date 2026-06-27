@@ -22,13 +22,13 @@ jobs:
   checks:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 22
           cache: pnpm
 
       - name: Install dependencies
@@ -64,14 +64,15 @@ jobs:
           - play
           - algorithms
           - ide
+          - didactiek
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 22
           cache: pnpm
 
       - name: Install dependencies
@@ -81,7 +82,7 @@ jobs:
         run: pnpm --filter "./sites/${{ matrix.site }}" build
 
       - name: Upload static bundle
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: ${{ matrix.site }}-static
           path: sites/${{ matrix.site }}/build

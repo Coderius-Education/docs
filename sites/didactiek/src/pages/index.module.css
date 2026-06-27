@@ -1,0 +1,14 @@
+.hero {
+  padding: 2.5rem 0 0.5rem;
+}
+
+.heroInner {
+  max-width: 720px;
+}
+
+.tagline {
+  margin: 0.5rem 0 0;
+  font-size: 1.05rem;
+  color: var(--ifm-color-emphasis-700);
+  line-height: 1.5;
+}
