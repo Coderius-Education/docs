@@ -1,0 +1,115 @@
+.zoeker {
+  padding: 1.5rem 0 3rem;
+}
+
+.zoekveld {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 10px;
+  background: var(--ifm-background-surface-color);
+  color: inherit;
+}
+
+.zoekveld:focus {
+  outline: none;
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 0 0 3px rgba(91, 75, 209, 0.15);
+}
+
+.telling {
+  margin: 0.6rem 0 1rem;
+  font-size: 0.8rem;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.leeg {
+  color: var(--ifm-color-emphasis-700);
+}
+
+.lijst {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.kaart {
+  padding: 1.1rem 1.25rem;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 12px;
+  background: var(--ifm-background-surface-color);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.kaart:hover {
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+}
+
+.kaartKop {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.titel {
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--ifm-heading-color);
+}
+
+.titel:hover {
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+.categorie {
+  flex-shrink: 0;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ifm-color-primary);
+  background: var(--ifm-color-emphasis-100);
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+}
+
+.samenvatting {
+  margin: 0.5rem 0 0.75rem;
+  color: var(--ifm-color-emphasis-800);
+  line-height: 1.45;
+}
+
+.termen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.term {
+  font-size: 0.78rem;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 999px;
+  color: var(--ifm-color-emphasis-800);
+  background: transparent;
+}
+
+.term:hover {
+  border-color: var(--ifm-color-primary);
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+.bron {
+  margin: 0.75rem 0 0;
+  font-size: 0.8rem;
+  color: var(--ifm-color-emphasis-600);
+}
