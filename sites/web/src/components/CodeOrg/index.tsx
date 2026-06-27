@@ -1,5 +1,5 @@
 import type {ReactNode} from 'react';
-import {codeorgBySlug, codeorgUnit1} from '@site/src/data/codeorg';
+import {codeorgBySlug, codeorgProjects, codeorgUnit1} from '@site/src/data/codeorg';
 import styles from './styles.module.css';
 
 /**
@@ -58,6 +58,30 @@ export function CodeOrgTabel(): ReactNode {
         ))}
       </tbody>
     </table>
+  );
+}
+
+/**
+ * Callout op de capstone-pagina die verwijst naar Code.org's projectlessen,
+ * waarin leerlingen een eigen website bouwen.
+ */
+export function CodeOrgProjecten(): ReactNode {
+  return (
+    <aside className={styles.callout}>
+      <span className={styles.badge}>Code.org Web Lab</span>
+      <span className={styles.text}>
+        Wil je dit bij Code.org doen? Zie de projectlessen{' '}
+        {codeorgProjects.map((p, i) => (
+          <span key={p.lesson}>
+            {i > 0 ? ', ' : ''}
+            <a href={p.url} target="_blank" rel="noopener noreferrer">
+              Lesson {p.lesson}: {p.title}
+            </a>
+          </span>
+        ))}
+        .
+      </span>
+    </aside>
   );
 }
 
