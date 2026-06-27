@@ -9,19 +9,16 @@ const ctas: HeroCta[] = [
 
 const features: FeatureItem[] = [
   {
-    icon: '🌐',
     title: 'Website in VS Code',
     description: 'Maak en bewerk je webproject in de editor.',
     link: '/web',
   },
   {
-    icon: '🐍',
     title: 'Python in VS Code',
     description: 'Schrijf en run Python-scripts lokaal.',
     link: '/python',
   },
   {
-    icon: '🔀',
     title: 'Git & GitHub',
     description: 'Versiebeheer: commits, branches en pull requests.',
     link: '/git',

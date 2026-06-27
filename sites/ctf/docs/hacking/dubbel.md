@@ -7,7 +7,7 @@ title: "Hacking - Dubbel"
 
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Dubbel"* onder Hacking.
 
-**Moeilijkheid:** ⭐⭐⭐⭐ Expert
+**Moeilijkheid:** Expert
 
 ## Onderwerp
 **Gecombineerde technieken**

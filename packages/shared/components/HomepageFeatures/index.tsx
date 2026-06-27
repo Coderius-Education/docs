@@ -8,20 +8,17 @@ import styles from './styles.module.css';
 export type FeatureItem = {
   title: string;
   description: ReactNode;
-  /** Emoji of teken bovenaan de kaart, bijv. '💡'. Optioneel. */
-  icon?: string;
   /** Maakt de hele kaart klikbaar naar deze (interne) link. Optioneel. */
   link?: string;
   /** Extra uitleg achter een (i)-knop, als tooltip. Optioneel. */
   info?: string;
 };
 
-function Feature({title, description, icon, link, info}: FeatureItem) {
+function Feature({title, description, link, info}: FeatureItem) {
   const [showInfo, setShowInfo] = useState(false);
 
   const body = (
     <>
-      {icon && <div className={styles.featureIcon}>{icon}</div>}
       <Heading as="h3">{title}</Heading>
       <p>{description}</p>
     </>
@@ -45,7 +42,7 @@ function Feature({title, description, icon, link, info}: FeatureItem) {
               className={styles.infoButton}
               onClick={() => setShowInfo(!showInfo)}
               aria-label="Meer informatie">
-              ℹ️
+              i
             </button>
             {showInfo && (
               <div className={styles.infoTooltip}>

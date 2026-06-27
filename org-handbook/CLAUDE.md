@@ -44,7 +44,7 @@ Plaats dit in de footer.
 7. SEO
 Pas de meest simpele strategie toe die past bij een docusarus project.
 
-📂 Projectstructuur & Conventies
+Projectstructuur & Conventies
 - Bestandsnamen: Gebruik kebab-case en nummering (bijv. 01-introductie-play.md).
 - Taal: Nederlands (informeel "je", maar professioneel).
 
@@ -52,7 +52,7 @@ Mappen:
 - docs/: Bevat alle leerinhoud.
 - docs/assets/: Afbeeldingen en schema's.
 
-✅ Workflow voor Auteurs
+Workflow voor Auteurs
 - Leerdoel: Welk concept moet de student beheersen? Is dit er maximaal één (Cognitive Load)?
 - De Fout: Welke fout gaat de student maken? Maak een "Er gaat iets mis" blok.
 - Interactie: Gebruik <details> voor "Predict", "Tips" en "Antwoorden".

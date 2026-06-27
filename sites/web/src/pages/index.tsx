@@ -8,19 +8,16 @@ const ctas: HeroCta[] = [{label: 'Begin de cursus', to: '/docs/html-css/intro-ht
 
 const features: FeatureItem[] = [
   {
-    icon: '🎨',
     title: 'HTML & CSS',
     description: 'Bouw en style je eerste webpagina.',
     link: '/docs/html-css/intro-html',
   },
   {
-    icon: '⚡',
     title: 'JavaScript',
     description: 'Maak je pagina interactief met JavaScript.',
     link: '/js',
   },
   {
-    icon: '🚀',
     title: 'Jouw website',
     description: 'Zet alles samen in je eigen project.',
     link: '/jouw-website',

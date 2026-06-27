@@ -9,21 +9,18 @@ const ctas: HeroCta[] = [
 
 const features: FeatureItem[] = [
   {
-    icon: '💡',
     title: 'Begin hier',
     description: 'Je eerste knipperende LED in de Arduino IDE',
     link: '/docs/introductie/wat-is-embedded',
     info: 'Start hier als je nog nooit een microcontroller hebt geprogrammeerd. Je hebt geen hardware nodig: alles werkt in de simulator.',
   },
   {
-    icon: '🔧',
     title: 'Naar de STM32',
     description: 'Van Arduino IDE via PlatformIO naar een echte STM32',
     link: '/docs/platformio/waarom-platformio',
     info: 'Klaar met de basis? Stap over op PlatformIO en leer IO en interfaces configureren op een STM32 Blue Pill.',
   },
   {
-    icon: '📋',
     title: 'Cheatsheet',
     description: 'Snel iets opzoeken: functies, pinnen en commando’s',
     link: '/cheatsheet',

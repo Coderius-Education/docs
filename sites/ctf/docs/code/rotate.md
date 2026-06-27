@@ -7,7 +7,7 @@ title: "Code - Rotate"
 
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Rotate"* onder Code.
 
-**Moeilijkheid:** ⭐⭐⭐ Moeilijk
+**Moeilijkheid:** Moeilijk
 
 ## Onderwerp
 **Caesar cipher**

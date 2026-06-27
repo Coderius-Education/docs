@@ -4,7 +4,6 @@ export type Algoritme = {
   niveau: string;
   samenvatting: string;
   startPad: string;
-  emoji: string;
 };
 
 export const algoritmes: Algoritme[] = [
@@ -14,7 +13,6 @@ export const algoritmes: Algoritme[] = [
     niveau: 'Beginner',
     samenvatting: 'Loop één voor één door de lijst tot je het doel vindt.',
     startPad: '/docs/lineair-zoeken/01-concept',
-    emoji: '🔎',
   },
   {
     slug: 'vind-maximum',
@@ -22,7 +20,6 @@ export const algoritmes: Algoritme[] = [
     niveau: 'Beginner',
     samenvatting: 'Onthoud de grootste tot nu toe en update onderweg.',
     startPad: '/docs/vind-maximum/01-concept',
-    emoji: '🏔️',
   },
   {
     slug: 'max-en-min',
@@ -30,7 +27,6 @@ export const algoritmes: Algoritme[] = [
     niveau: 'Beginner+',
     samenvatting: 'Twee accumulators tegelijk — minder werk dan twee losse passes.',
     startPad: '/docs/max-en-min/01-concept',
-    emoji: '📊',
   },
   {
     slug: 'binair-zoeken',
@@ -38,7 +34,6 @@ export const algoritmes: Algoritme[] = [
     niveau: 'Beginner+',
     samenvatting: 'Halveer steeds een gesorteerde lijst — sneller dan lineair.',
     startPad: '/docs/binair-zoeken/01-concept',
-    emoji: '✂️',
   },
   {
     slug: 'selection-sort',
@@ -46,7 +41,6 @@ export const algoritmes: Algoritme[] = [
     niveau: 'Gemiddeld',
     samenvatting: 'Vind steeds het kleinste van de rest en zet het vooraan.',
     startPad: '/docs/selection-sort/01-concept',
-    emoji: '📥',
   },
   {
     slug: 'bubble-sort',
@@ -54,7 +48,6 @@ export const algoritmes: Algoritme[] = [
     niveau: 'Gemiddeld',
     samenvatting: 'Vergelijk buren en swap — tot de lijst klopt.',
     startPad: '/docs/bubble-sort/01-concept',
-    emoji: '🫧',
   },
   {
     slug: 'big-o',
@@ -62,7 +55,6 @@ export const algoritmes: Algoritme[] = [
     niveau: 'Verdieping',
     samenvatting: 'Hoe schaalt een algoritme als de invoer groeit?',
     startPad: '/docs/big-o/01-concept',
-    emoji: '📈',
   },
   {
     slug: 'dijkstra',
@@ -70,7 +62,6 @@ export const algoritmes: Algoritme[] = [
     niveau: 'Gevorderd',
     samenvatting: 'Vind de kortste route in een gewogen graph.',
     startPad: '/docs/dijkstra/01-concept',
-    emoji: '🗺️',
   },
   {
     slug: 'minimax',
@@ -78,7 +69,6 @@ export const algoritmes: Algoritme[] = [
     niveau: 'Gevorderd',
     samenvatting: 'Bouw een tic-tac-toe-AI die nooit verliest.',
     startPad: '/docs/minimax/01-concept',
-    emoji: '🎮',
   },
   {
     slug: 'knapsack',
@@ -86,7 +76,6 @@ export const algoritmes: Algoritme[] = [
     niveau: 'Gevorderd',
     samenvatting: 'Pak de meest waardevolle rugzak binnen je gewichtslimiet.',
     startPad: '/docs/knapsack/01-concept',
-    emoji: '🎒',
   },
   {
     slug: 'cfg',
@@ -94,7 +83,6 @@ export const algoritmes: Algoritme[] = [
     niveau: 'Gevorderd',
     samenvatting: 'Ontwerp regels die Engelse zinnen ontleden — zin voor zin.',
     startPad: '/docs/cfg/01-concept',
-    emoji: '🌳',
   },
   {
     slug: 'hanoi',
@@ -102,7 +90,6 @@ export const algoritmes: Algoritme[] = [
     niveau: 'Gevorderd',
     samenvatting: 'Speel het spel, ontdek het patroon (2ⁿ−1) en los het op met recursie.',
     startPad: '/docs/hanoi/01-spel',
-    emoji: '🗼',
   },
   {
     slug: 'pagerank',
@@ -110,6 +97,5 @@ export const algoritmes: Algoritme[] = [
     niveau: 'Gevorderd',
     samenvatting: 'Hoe rangschikt Google pagina’s? Links als stemmen, iteratief uitgerekend.',
     startPad: '/docs/pagerank/01-concept',
-    emoji: '🔗',
   },
 ];

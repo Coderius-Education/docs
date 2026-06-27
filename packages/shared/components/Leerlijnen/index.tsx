@@ -31,7 +31,6 @@ export default function Leerlijnen(): ReactNode {
                 className={styles.card}
                 href={href}
                 {...(isCurrent ? {} : {target: '_blank', rel: 'noopener noreferrer'})}>
-                <div className={styles.icon}>{site.icon}</div>
                 <h3 className={styles.title}>
                   {site.label}
                   {isCurrent && <span className={styles.here}>je bent hier</span>}

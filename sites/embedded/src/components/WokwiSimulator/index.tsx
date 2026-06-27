@@ -24,14 +24,13 @@ function WokwiSimulatorInner({ projectUrl, height = 500, title }: WokwiSimulator
     return (
       <div className={styles.placeholder}>
         <div className={styles.placeholderContent}>
-          <div className={styles.icon}>🔌</div>
           <h3>{title || 'Wokwi Simulator'}</h3>
           <p>
             Simuleer het circuit direct in je browser. Je kunt de code aanpassen en het resultaat
             live zien — zonder hardware.
           </p>
           <button className={styles.launchButton} onClick={() => setShowSimulator(true)}>
-            ▶ Start Simulator
+            Start Simulator
           </button>
           <a className={styles.externalLink} href={url} target="_blank" rel="noopener noreferrer">
             Open in Wokwi ↗

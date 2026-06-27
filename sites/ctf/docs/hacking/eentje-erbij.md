@@ -7,7 +7,7 @@ title: "Hacking - Eentje erbij"
 
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Eentje erbij"* onder Hacking.
 
-**Moeilijkheid:** ⭐ Makkelijk
+**Moeilijkheid:** Makkelijk
 
 ## Onderwerp
 **URL-manipulatie**

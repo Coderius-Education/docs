@@ -136,7 +136,7 @@ function createConfig(site = {}) {
       label: 'Cursussen',
       position: 'right',
       items: [
-        ...others.map((s) => ({label: `${s.icon} ${s.label}`, href: s.url})),
+        ...others.map((s) => ({label: s.label, href: s.url})),
         {label: 'Alle cursussen', to: '/cursussen'},
       ],
     },

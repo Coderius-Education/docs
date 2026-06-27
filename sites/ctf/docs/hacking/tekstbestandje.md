@@ -7,7 +7,7 @@ title: "Hacking - Tekstbestandje"
 
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Tekstbestandje"* onder Hacking.
 
-**Moeilijkheid:** ⭐⭐ Gemiddeld
+**Moeilijkheid:** Gemiddeld
 
 ## Onderwerp
 **Verborgen bestanden**

@@ -3,7 +3,12 @@
  * Supports two modes: "pygame" (pure pygame-ce) and "play" (coderius-play library).
  */
 
-const PYODIDE_CDN = 'https://cdn.jsdelivr.net/pyodide/v0.27.5/full/pyodide.mjs';
+// play draait bewust op Pyodide 0.27.x (Python 3.12), NIET op de catalog-versie
+// die de andere sites gebruiken (0.29.x / Python 3.13): de physics-wheel
+// pymunk-7.2.0 hieronder is cp312-only. Bump deze versie pas als pymunk (en de
+// coderius_play-wheel) voor de nieuwere Python zijn herbouwd.
+const PYODIDE_VERSION = '0.27.5';
+const PYODIDE_CDN = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/pyodide.mjs`;
 const PYMUNK_WHEEL = '/whl/pymunk-7.2.0-cp312-cp312-pyodide_2024_0_wasm32.whl';
 const PLAY_WHEEL = '/whl/coderius_play-3.3.3-py3-none-any.whl';
 

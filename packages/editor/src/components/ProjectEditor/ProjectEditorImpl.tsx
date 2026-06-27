@@ -461,7 +461,7 @@ export default function ProjectEditorImpl({
                   title="Nieuwe map"
                   onClick={newFolder}
                 >
-                  📁＋
+                  ▸＋
                 </button>
               </span>
             </div>

@@ -2,7 +2,7 @@
 
 Gratis, interactief curriculum waarmee leerlingen stap voor stap hun eerste 2D game bouwen in [Godot 4](https://godotengine.org/). Geschikt voor het voortgezet onderwijs (vak Informatica, HAVO/VWO) en voor zelfstudie door beginners.
 
-🔗 **Live site:** [https://godot.coderius.nl](https://godot.coderius.nl)
+**Live site:** [https://godot.coderius.nl](https://godot.coderius.nl)
 
 ## Wat leer je?
 

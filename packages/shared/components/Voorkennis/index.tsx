@@ -45,7 +45,7 @@ export default function Voorkennis({
             return (
               <li key={idx}>
                 <span className={styles.badge} title={target.label}>
-                  {target.icon} {target.label}
+                  {target.label}
                 </span>{' '}
                 <a href={href} target="_blank" rel="noopener noreferrer">
                   {item.label}

@@ -8,19 +8,16 @@ const ctas: HeroCta[] = [{label: 'Begin met FastAPI', to: '/docs/FastAPI/install
 
 const features: FeatureItem[] = [
   {
-    icon: '🚀',
     title: 'Je eerste endpoint',
     description: 'Bouw je eerste API-route met FastAPI.',
     link: '/docs/FastAPI/eerste_endpoint',
   },
   {
-    icon: '🗄️',
     title: 'Database',
     description: 'Sla gegevens op en haal ze weer op met SQLite.',
     link: '/docs/FastAPI/database',
   },
   {
-    icon: '📋',
     title: 'Cheatsheet',
     description: 'Snel terugvinden hoe een route, form of template werkt.',
     link: '/docs/cheatsheet',

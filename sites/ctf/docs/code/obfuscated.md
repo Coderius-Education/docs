@@ -7,7 +7,7 @@ title: "Code - Obfuscated"
 
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Obfuscated"* onder Code.
 
-**Moeilijkheid:** ⭐⭐ Gemiddeld
+**Moeilijkheid:** Gemiddeld
 
 ## Onderwerp
 **Code obfuscation**

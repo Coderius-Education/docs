@@ -134,10 +134,10 @@ def toon_structuur(structuur, inspringing=0):
     for naam, inhoud in structuur.items():
         prefix = "  " * inspringing
         if isinstance(inhoud, dict):
-            print(f"{prefix}📁 {naam}/")
+            print(f"{prefix}{naam}/")
             toon_structuur(inhoud, inspringing + 1)
         else:
-            print(f"{prefix}📄 {naam} — {inhoud}")
+            print(f"{prefix}{naam} — {inhoud}")
 
 toon_structuur(project)`}
 </CodeExercise>

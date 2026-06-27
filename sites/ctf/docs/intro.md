@@ -27,7 +27,7 @@ De challenges zijn verdeeld in drie categorieën:
 
 Begin met de makkelijke challenges om de basis te leren, en werk daarna door naar moeilijkere:
 
-### ⭐ Makkelijk - Begin hier
+### Makkelijk - Begin hier
 1. [Hacking - Standaard](/docs/hacking/standaard) - Leer over wachtwoorden
 2. [Hacking - Eentje erbij](/docs/hacking/eentje-erbij) - URL-manipulatie
 3. [Hacking - Robots](/docs/hacking/robots) - Ontdek robots.txt
@@ -37,7 +37,7 @@ Begin met de makkelijke challenges om de basis te leren, en werk daarna door naa
 7. [Forensics - België](/docs/forensics/belgie) - IP-adres geolocatie
 8. [Forensics - Geluidsfragment](/docs/forensics/geluidsfragment) - Audio-analyse
 
-### ⭐⭐ Gemiddeld - Nu wordt het interessanter
+### Gemiddeld - Nu wordt het interessanter
 9. [Hacking - Virus](/docs/hacking/virus) - Malware-analyse
 10. [Hacking - Tekstbestandje](/docs/hacking/tekstbestandje) - Verborgen bestanden
 11. [Hacking - Koekjes 1](/docs/hacking/koekjes-1) - Cookies bekijken
@@ -45,7 +45,7 @@ Begin met de makkelijke challenges om de basis te leren, en werk daarna door naa
 13. [Code - Obfuscated](/docs/code/obfuscated) - Geobfusceerde code
 14. Code - Base64 - Base64 decodering
 
-### ⭐⭐⭐ Moeilijk - Voor de doorzetters
+### Moeilijk - Voor de doorzetters
 15. [Hacking - Koekjes 2](/docs/hacking/koekjes-2) - Cookies wijzigen
 16. [Hacking - Hallo](/docs/hacking/hallo) - Input validatie & XSS
 17. [Code - Rotate](/docs/code/rotate) - Caesar cipher
@@ -53,7 +53,7 @@ Begin met de makkelijke challenges om de basis te leren, en werk daarna door naa
 19. [Forensics - Niet gevonden](/docs/forensics/niet-gevonden) - Bestandstypes
 20. [Forensics - Plaats delict](/docs/forensics/plaats-delict) - Metadata & verborgen data
 
-### ⭐⭐⭐⭐ Expert - Nog nooit opgelost
+### Expert - Nog nooit opgelost
 21. [Forensics - Logfile](/docs/forensics/logfile) - HTTP-statuscodes
 22. [Hacking - Dubbel](/docs/hacking/dubbel) - De ultieme uitdaging
 

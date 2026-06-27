@@ -48,16 +48,16 @@ Je hebt een typfout in je code. Veelvoorkomende oorzaken:
 
 ```python
 # Haakje vergeten
-print("Hallo"      # ❌
-print("Hallo")     # ✅
+print("Hallo"      # FOUT
+print("Hallo")     # GOED
 
 # Dubbele punt vergeten (bij if/for/def)
-if leeftijd >= 18  # ❌
-if leeftijd >= 18: # ✅
+if leeftijd >= 18  # FOUT
+if leeftijd >= 18: # GOED
 
 # Aanhalingsteken vergeten
-print("Hallo)      # ❌
-print("Hallo")     # ✅
+print("Hallo)      # FOUT
+print("Hallo")     # GOED
 ```
 :::
 
@@ -67,11 +67,11 @@ print("Hallo")     # ✅
 De code na `if`, `for`, `def` of `else` móet inspringen met 4 spaties in Python.
 
 ```python
-# ❌ Geen inspringing
+# FOUT Geen inspringing
 if leeftijd >= 18:
 print("Volwassen")
 
-# ✅ Met inspringing
+# GOED Met inspringing
 if leeftijd >= 18:
     print("Volwassen")
 ```
@@ -84,16 +84,16 @@ Je gebruikt een variabele die niet bestaat (of waarvan de spelling afwijkt). Vee
 
 ```python
 # Variabele nog niet aangemaakt, of pas later aangemaakt
-print(leeftijd)     # ❌ NameError
+print(leeftijd)     # FOUT NameError
 leeftijd = 15
 
 # Typfout in de naam (Hoofdletters zijn belangrijk!)
 naam = "Alex"
-print(Naam)         # ❌ NameError
+print(Naam)         # FOUT NameError
 
 # Vergeten aanhalingstekens bij tekst
-print(Hallo)        # ❌ Python denkt nu dat Hallo een variabele is!
-print("Hallo")      # ✅
+print(Hallo)        # FOUT Python denkt nu dat Hallo een variabele is!
+print("Hallo")      # GOED
 ```
 :::
 
@@ -105,10 +105,10 @@ Je probeert bewerkingen te doen met types die niet samen kunnen, zoals tekst (`s
 ```python
 leeftijd = 15
 
-# ❌ TypeError: Python mag geen nummers en letters plussen
+# FOUT TypeError: Python mag geen nummers en letters plussen
 print("Ik ben " + leeftijd + " jaar oud.")
 
-# ✅ De oplossing is altijd een f-string:
+# GOED De oplossing is altijd een f-string:
 print(f"Ik ben {leeftijd} jaar oud.")
 ```
 :::
@@ -119,10 +119,10 @@ print(f"Ik ben {leeftijd} jaar oud.")
 Je deelt door 0, wat mathematisch niet kan.
 
 ```python
-# ❌ ZeroDivisionError
+# FOUT ZeroDivisionError
 print(10 / 0)
 
-# ✅ Controleer eerst de invoer
+# GOED Controleer eerst de invoer
 if noemer != 0:
     print(10 / noemer)
 ```
@@ -136,10 +136,10 @@ Je probeert een element uit een lijst op te vragen die niet bestaat. Vergeet nie
 ```python
 namen = ["Ali", "Sara", "Daan"]
 
-# ❌ IndexError (er is geen 4e persoon op index 3!)
+# FOUT IndexError (er is geen 4e persoon op index 3!)
 print(namen[3])
 
-# ✅ Index 0, 1 of 2
+# GOED Index 0, 1 of 2
 print(namen[2])     # "Daan"
 ```
 :::
@@ -152,10 +152,10 @@ Je zoekt een sleutel op die niet in de dictionary staat.
 ```python
 leerling = {"naam": "Sara"}
 
-# ❌ KeyError (want leeftijd ontbreekt in de dictionary)
+# FOUT KeyError (want leeftijd ontbreekt in de dictionary)
 print(leerling["leeftijd"])
 
-# ✅ Controleer eerst (bijvoorbeeld in een if statement)
+# GOED Controleer eerst (bijvoorbeeld in een if statement)
 if "leeftijd" in leerling:
     print(leerling["leeftijd"])
 ```
@@ -171,12 +171,12 @@ if "leeftijd" in leerling:
 Je hebt per ongeluk een **Infinite Loop** gebouwd. Als dit gebeurt in de browser, loopt het tabblad helemaal vast, reageert het scherm niet meer, en moet je de pagina verversen. Dit gebeurt als je een *While-loop* start en je bent vergeten de teller in de loop groter te maken, waardoor de conditie altijd `True` blijft.
 
 ```python
-# ❌ Infinite loop: 'teller' is en blijft altijd kleiner dan 5!
+# FOUT Infinite loop: 'teller' is en blijft altijd kleiner dan 5!
 teller = 0
 while teller < 5:
     print("Deze regel print Python tot het einde der tijden...")
 
-# ✅ Vergeet teller += 1 niet aan de loop toe te voegen:
+# GOED Vergeet teller += 1 niet aan de loop toe te voegen:
 teller = 0
 while teller < 5:
     print("Dit wordt netjes 5 keer geprint.")
@@ -190,11 +190,11 @@ while teller < 5:
 `=` slaat een waarde op, `==` vergelijkt twee waarden met elkaar. Dit levert vaak bizarre resultaten of errors op.
 
 ```python
-# ❌ Dit slaat de waarde 18 op in de variabele 'leeftijd' (Fout in een If-statement!)
+# FOUT Dit slaat de waarde 18 op in de variabele 'leeftijd' (Fout in een If-statement!)
 if leeftijd = 18:
     print("Bingo!")
 
-# ✅ Dit vergelijkt de waarde van leeftijd met 18
+# GOED Dit vergelijkt de waarde van leeftijd met 18
 if leeftijd == 18:
     print("Bingo!")
 ```
@@ -206,11 +206,11 @@ if leeftijd == 18:
 Python kent geen haakjes `{ }` voor blokken code. Code behoort pas tot de `if`, `for`, `def` of `else` met **inspringing**. 
 
 ```python
-# ❌ Fout: dit print het woord Error maar één keer aan het EINDE van de loop!
+# FOUT Fout: dit print het woord Error maar één keer aan het EINDE van de loop!
 for i in range(5):
 print("Error")
 
-# ✅ Goed: in de loop
+# GOED Goed: in de loop
 for i in range(5):
     print("Success")
 ```
@@ -222,11 +222,11 @@ for i in range(5):
 `range(5)` geeft 0, 1, 2, 3, 4 — **niet** de 5.
 
 ```python
-# ❌ Print 0 t/m 4
+# FOUT Print 0 t/m 4
 for i in range(5):
     print(i)
 
-# ✅ Wil je 1 tot en met 5 printen? Dan stop je bij 6!
+# GOED Wil je 1 tot en met 5 printen? Dan stop je bij 6!
 for i in range(1, 6):
     print(i)
 ```
@@ -241,10 +241,10 @@ Als je een zelfgemaakte (of ingebouwde) functie runt zónder de ronde haakjes `(
 def zeg_hallo():
     print("Hallo!")
 
-# ❌ Dit doet niks en leidt niet tot een error (zeer frustrerende bug!)
+# FOUT Dit doet niks en leidt niet tot een error (zeer frustrerende bug!)
 zeg_hallo
 
-# ✅ Functies eisen dat de parameters direct volgen tussen haakjes
+# GOED Functies eisen dat de parameters direct volgen tussen haakjes
 zeg_hallo()
 ```
 :::
@@ -255,13 +255,13 @@ zeg_hallo()
 Een variabele op het scherm printen (`print()`) betekent *niet* dat je daarna met dat resultaat door kan rekenen in andere functies. Wil je het antwoord later opslaan of hergebruiken? Dan móet je `return` gebruiken.
 
 ```python
-# ❌ Je kunt het resultaat hier niet opslaan om mee door te werken
+# FOUT Je kunt het resultaat hier niet opslaan om mee door te werken
 def optellen(a, b):
     print(a + b)
 
 x = optellen(3, 5)   # x heeft nu de waarde 'None'!
 
-# ✅ Met return kun je het resultaat gebruiken in je code:
+# GOED Met return kun je het resultaat gebruiken in je code:
 def optellen(a, b):
     return a + b
 

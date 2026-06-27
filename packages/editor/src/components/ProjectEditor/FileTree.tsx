@@ -83,10 +83,7 @@ export default function FileTree({
           style={{ paddingLeft: `${0.5 + depth * 0.9}rem` }}
         >
           {node.isFolder ? (
-            <span className={styles.treeName}>
-              <span aria-hidden="true">📁 </span>
-              {node.name}
-            </span>
+            <span className={styles.treeName}>{node.name}</span>
           ) : (
             <button
               type="button"

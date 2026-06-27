@@ -7,7 +7,7 @@ title: "Forensics - Plaats delict"
 
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Plaats delict"* onder Forensics.
 
-**Moeilijkheid:** ⭐⭐⭐ Moeilijk
+**Moeilijkheid:** Moeilijk
 
 ## Onderwerp
 **Metadata & verborgen data**

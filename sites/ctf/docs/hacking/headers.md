@@ -7,7 +7,7 @@ title: "Hacking - Headers"
 
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Headers"* onder Hacking.
 
-**Moeilijkheid:** ⭐⭐ Gemiddeld
+**Moeilijkheid:** Gemiddeld
 
 ## Onderwerp
 **HTTP Headers**

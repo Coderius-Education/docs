@@ -664,7 +664,7 @@ play.new_circle(color=kleur)
 </details>
 
 <details>
-  <summary>Hex-kleurcodes gebruiken (color='#FF8800') ⭐ nieuw in 3.3.3</summary>
+  <summary>Hex-kleurcodes gebruiken (color='#FF8800') (nieuw in 3.3.3)</summary>
 
 Naast namen (`'red'`, `'blue'`, ...) en RGB-tuples (`(255, 136, 0)`) kun je sinds versie 3.3.3 ook **hex-codes** opgeven. Handig als je een hele specifieke kleur wilt — bijvoorbeeld eentje die je hebt uitgekozen via een [kleurkiezer](https://www.w3schools.com/colors/colors_picker.asp).
 
@@ -884,7 +884,7 @@ Het verschil met `@play.when_key_pressed`: die reageert één keer per klik, ter
 </details>
 
 <details>
-  <summary>Zolang een toets ingedrukt is (@play.while_key_pressed) ⭐ nieuw in 3.3.2</summary>
+  <summary>Zolang een toets ingedrukt is (@play.while_key_pressed) (nieuw in 3.3.2)</summary>
 
 Met **@play.while_key_pressed** vuurt de functie **elk frame** zolang je de toets inhoudt. Dit is ideaal voor vloeiende beweging.
 
@@ -907,7 +907,7 @@ Het verschil met `@play.when_key_pressed`: die reageert één keer bij het indru
 </details>
 
 <details>
-  <summary>Zolang een willekeurige toets ingedrukt is (@play.while_any_key_pressed) ⭐ nieuw in 3.3.2</summary>
+  <summary>Zolang een willekeurige toets ingedrukt is (@play.while_any_key_pressed) (nieuw in 3.3.2)</summary>
 
 Met **@play.while_any_key_pressed** vuurt de functie elk frame zolang je een willekeurige toets inhoudt. Met de `key` parameter weet je welke toets het is.
 
@@ -923,7 +923,7 @@ def toon_toets(key):
 </details>
 
 <details>
-  <summary>Zolang de muis ingedrukt is (@play.while_mouse_pressed) ⭐ nieuw in 3.3.2</summary>
+  <summary>Zolang de muis ingedrukt is (@play.while_mouse_pressed) (nieuw in 3.3.2)</summary>
 
 Met **@play.while_mouse_pressed** vuurt de functie elk frame zolang je de muisknop ingedrukt houdt.
 
@@ -1553,7 +1553,7 @@ def een_knop_losgelaten(button):
 </details>
 
 <details>
-  <summary>Zolang een knop ingedrukt is op de controller (play.controllers.while_button_pressed) ⭐ nieuw in 3.3.2</summary>
+  <summary>Zolang een knop ingedrukt is op de controller (play.controllers.while_button_pressed) (nieuw in 3.3.2)</summary>
 
 Je gebruikt **play.controllers.while_button_pressed** als je wilt dat een actie **elk frame** wordt uitgevoerd zolang een knop ingedrukt is. Ideaal voor vloeiende besturing.
 
@@ -1572,7 +1572,7 @@ Het verschil met `when_button_pressed`: die vuurt één keer bij het indrukken. 
 </details>
 
 <details>
-  <summary>Zolang een willekeurige knop ingedrukt is op de controller (play.controllers.while_any_button_pressed) ⭐ nieuw in 3.3.2</summary>
+  <summary>Zolang een willekeurige knop ingedrukt is op de controller (play.controllers.while_any_button_pressed) (nieuw in 3.3.2)</summary>
 
 Je gebruikt **play.controllers.while_any_button_pressed** als je wilt dat een actie elk frame wordt uitgevoerd zolang een willekeurige knop ingedrukt is.
 

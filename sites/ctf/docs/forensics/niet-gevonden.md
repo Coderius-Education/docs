@@ -7,7 +7,7 @@ title: "Forensics - Niet gevonden"
 
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Niet gevonden"* onder Forensics.
 
-**Moeilijkheid:** ⭐⭐⭐ Moeilijk
+**Moeilijkheid:** Moeilijk
 
 ## Onderwerp
 **Bestandstypes**

@@ -10,17 +10,14 @@ const ctas: HeroCta[] = [
 
 const features: FeatureItem[] = [
   {
-    icon: '🪜',
     title: 'Stap voor stap',
     description: 'Van je eerste print() tot functies en lijsten. Elke les bouwt voort op de vorige.',
   },
   {
-    icon: '▶️',
     title: 'Direct uitvoeren',
     description: 'Schrijf en run Python code in je browser. Geen installatie nodig.',
   },
   {
-    icon: '🛠️',
     title: 'Leren door doen',
     description: 'Elke les heeft oefeningen met tips en oplossingen om zelf mee te oefenen.',
   },

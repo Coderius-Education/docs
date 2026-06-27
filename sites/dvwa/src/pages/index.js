@@ -7,19 +7,16 @@ const ctas = [{label: 'Begin met de labs', to: '/docs/installatie'}];
 
 const features = [
   {
-    icon: '🐧',
     title: 'Linux leren',
     description: 'De basis van de command line voor je begint.',
     link: '/docs/linux_leren',
   },
   {
-    icon: '🛠️',
     title: 'DVWA installeren',
     description: 'Zet je eigen oefenomgeving op.',
     link: '/docs/dvwa_installatie',
   },
   {
-    icon: '🎯',
     title: 'Challenges',
     description: 'SQL-injectie, XSS, command injection en meer.',
     link: '/docs/dvwa_tutorial',

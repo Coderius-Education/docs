@@ -9,7 +9,7 @@ import InlineEditor from '@coderius/editor/InlineEditor';
 
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Plakken"* onder Code.
 
-**Moeilijkheid:** ⭐ Makkelijk
+**Moeilijkheid:** Makkelijk
 
 ## Onderwerp
 **Code uitvoeren**
