@@ -23,7 +23,8 @@ const labels: Record<string, string> = {
 
 export type JsLes = {to: string; label: string};
 
-const ids = (sidebars.jsSidebar ?? []).filter(
+const jsSidebar = sidebars.jsSidebar;
+const ids = (Array.isArray(jsSidebar) ? jsSidebar : []).filter(
   (item): item is string => typeof item === 'string',
 );
 
