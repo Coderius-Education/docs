@@ -12,6 +12,7 @@ jspm_packages/
 # ── Build- en Docusaurus-output ──────────────────────────────────────────────
 build/
 .docusaurus/
+.svelte-kit/
 .cache-loader/
 .cache/
 .temp/
