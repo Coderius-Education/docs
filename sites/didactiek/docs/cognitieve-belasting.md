@@ -5,8 +5,10 @@ title: Verlaag de cognitieve belasting
 
 # Verlaag de cognitieve belasting
 
-**De tip:** introduceer één concept per pagina en houd voorbeelden minimaal, want
-het werkgeheugen verwerkt maar een paar nieuwe dingen tegelijk.
+**De tip:** belasting op het werkgeheugen bestaat uit drie soorten — intrinsiek
+(de moeilijkheid van de stof zelf), extrinsiek (veroorzaakt door de manier van
+presenteren) en relevant (het opbouwen van schema's) — dus snijd extrinsieke
+belasting weg en houd ruimte over voor de relevante.
 
 ## Waar komt dit vandaan
 
@@ -20,9 +22,12 @@ koste van de capaciteit die voor het echte leren nodig is.
 
 John Sweller toonde in een reeks experimenten aan dat de manier waarop een taak
 wordt aangeboden bepaalt hoeveel werkgeheugen het kost, en daarmee hoeveel een
-leerling overhoudt om te leren. De theorie onderscheidt belasting die inherent is
-aan de stof (intrinsiek) van belasting die door de presentatie wordt veroorzaakt
-(extrinsiek). De praktische les: snijd extrinsieke belasting weg.
+leerling overhoudt om te leren. De theorie onderscheidt drie soorten belasting:
+**intrinsiek** (inherent aan de moeilijkheid van de stof), **extrinsiek**
+(veroorzaakt door de manier van presenteren) en **relevant** (besteed aan het
+opbouwen van schema's in het langetermijngeheugen). Samen vullen ze hetzelfde
+beperkte werkgeheugen. De praktische les: snijd extrinsieke belasting weg, zodat
+er capaciteit overblijft voor de relevante.
 
 Sweller, J. (1988). *Cognitive load during problem solving: Effects on learning.*
 Cognitive Science, 12(2), 257–285.
