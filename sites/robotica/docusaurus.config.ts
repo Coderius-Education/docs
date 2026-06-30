@@ -39,6 +39,15 @@ export default createConfig({
         sidebarPath: './sidebarsLegoAuto.ts',
       },
     ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'click_golfer',
+        path: 'click_golfer',
+        routeBasePath: 'click_golfer',
+        sidebarPath: './sidebarsClickGolfer.ts',
+      },
+    ],
   ],
 
   themeConfig: {
@@ -55,6 +64,7 @@ export default createConfig({
           label: 'Er gaat iets mis',
           position: 'left',
         },
+        {type: 'doc', docId: 'intro', position: 'left', label: 'Click Golfer', docsPluginId: 'click_golfer'},
         {href: 'https://github.com/Coderius-Education/robotica-docs', label: 'GitHub', position: 'right'},
       ],
     },
