@@ -484,6 +484,10 @@ importers:
         version: 5.6.3
 
   sites/home:
+    dependencies:
+      '@coderius/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
     devDependencies:
       '@internationalized/date':
         specifier: ^3.8.1

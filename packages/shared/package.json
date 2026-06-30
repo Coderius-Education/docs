@@ -6,7 +6,7 @@
   "type": "commonjs",
   "exports": {
     "./config": "./config/index.js",
-    "./sites": "./sites.js",
+    "./sites": {"types": "./sites.d.ts", "default": "./sites.js"},
     "./plugins/transpile-shared": "./plugins/transpile-shared.js",
     "./plugins/cursussen-route": "./plugins/cursussen-route.js",
     "./css/custom.css": "./css/custom.css",

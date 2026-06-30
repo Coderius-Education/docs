@@ -100,6 +100,16 @@ const SITES = [
   },
 ];
 
+// De apex-homepage. Bewust GEEN cursus: niet in SITES (anders verschijnt hij in
+// /cursussen en in elke "Cursussen"-dropdown als kaart), maar wel de centrale
+// bron voor de teruglink vanaf elke cursussite naar coderius.nl.
+const HOME = {
+  id: 'home',
+  label: 'Coderius',
+  url: 'https://coderius.nl',
+  description: 'Alle cursussen op één plek.',
+};
+
 const SITES_BY_ID = Object.fromEntries(SITES.map((s) => [s.id, s]));
 
 // Normaliseer een url voor vergelijking (trailing slash weg).
@@ -113,4 +123,4 @@ function siteByUrl(url) {
   return SITES.find((s) => normalizeUrl(s.url) === norm);
 }
 
-module.exports = {SITES, SITES_BY_ID, siteByUrl, normalizeUrl};
+module.exports = {SITES, SITES_BY_ID, HOME, siteByUrl, normalizeUrl};
