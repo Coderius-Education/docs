@@ -65,6 +65,7 @@ jobs:
           - algorithms
           - ide
           - didactiek
+          - home
     steps:
       - uses: actions/checkout@v5
 
