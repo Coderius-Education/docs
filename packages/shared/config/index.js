@@ -3,7 +3,7 @@ const path = require('node:path');
 const {themes: prismThemes} = require('prism-react-renderer');
 const transpileShared = require('../plugins/transpile-shared');
 const cursussenRoute = require('../plugins/cursussen-route');
-const {SITES, normalizeUrl} = require('../sites');
+const {SITES, HOME, normalizeUrl} = require('../sites');
 const {resolvePackageDir} = transpileShared;
 
 // Alle cursussen behalve de huidige (op url gematcht). Voedt de footerkolom en
@@ -114,10 +114,19 @@ function createConfig(site = {}) {
   };
   const others = otherSites(rest.url);
 
-  // Footer: zorg voor de CC-BY-NC copyright. Cross-site navigatie zit al in de
-  // navbar-dropdown "Cursussen" en op /cursussen, dus geen footerkolom.
+  // Footer: zorg voor de CC-BY-NC copyright en één teruglink naar de homepage.
+  // Cross-site navigatie tussen cursussen zit in de navbar-dropdown "Cursussen"
+  // en op /cursussen; de footer wijst terug naar de overkoepelende coderius.nl.
   const footer = themeConfig.footer ? {...themeConfig.footer} : {style: 'dark'};
   if (!footer.copyright) footer.copyright = CC_BY_NC;
+  const footerLinks = footer.links ? [...footer.links] : [];
+  const hasHomeLink = footerLinks.some((col) =>
+    (col.items || []).some((item) => item.href === HOME.url),
+  );
+  if (!hasHomeLink) {
+    footerLinks.push({title: HOME.label, items: [{label: 'Home', href: HOME.url}]});
+  }
+  footer.links = footerLinks;
   themeConfig.footer = footer;
 
   // Navbar: één "Cursussen"-dropdown (rechts) om naar een andere cursus te
@@ -132,6 +141,7 @@ function createConfig(site = {}) {
       label: 'Cursussen',
       position: 'right',
       items: [
+        {label: `${HOME.label} (home)`, href: HOME.url},
         ...others.map((s) => ({label: s.label, href: s.url})),
         {label: 'Alle cursussen', to: '/cursussen'},
       ],

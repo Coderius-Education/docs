@@ -12,6 +12,9 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
 	},
+	"dependencies": {
+		"@coderius/shared": "workspace:*"
+	},
 	"devDependencies": {
 		"@internationalized/date": "^3.8.1",
 		"@lucide/svelte": "^0.544.0",
