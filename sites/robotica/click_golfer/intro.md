@@ -21,8 +21,8 @@ Een robot is een **programmeerbare machine** die zelf taken uitvoert en kan reag
 
 ## Wat ga je doen?
 
-1. Verzamel de Lego-onderdelen en **[bouw het robotje](bouwen)**.
-2. Sluit daarna de motor en de sensor aan en laat het robotje bewegen met blokken. Alle stappen — bouwen, aansluiten én programmeren — staan in het werkboek op de [Bouwen](bouwen)-pagina.
+1. Verzamel de Lego-onderdelen en **[bouw het robotje](bouwen)**. De onderdelenlijst en alle bouwstappen staan in het werkboek.
+2. Daarna **[sluit je de motor en de sensor aan](aansluiten)**. Het programmeren met blokken volgt later.
 
 <details>
 <summary>Controlevraag</summary>
