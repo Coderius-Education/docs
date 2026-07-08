@@ -17,7 +17,7 @@
 }
 
 .voorkennis > summary::before {
-  content: '📌';
+  content: "📌";
 }
 
 /* Verberg de standaard disclosure-driehoek (we tonen 📌). */

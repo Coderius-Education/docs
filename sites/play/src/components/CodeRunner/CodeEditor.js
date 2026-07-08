@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
 import BrowserOnly from '@docusaurus/BrowserOnly';
+import React, { useEffect, useRef, useState } from 'react';
 import styles from './CodeEditor.module.css';
 
 /**
@@ -34,17 +34,28 @@ function CodeEditorInner({ value, onChange, readOnly = false, height = '300px' }
   const viewRef = useRef(null);
   const colorMode = useColorModeSafe();
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: value/onChange zijn bewust weggelaten — deze effect herbouwt de hele CodeMirror-instantie en mag dat alleen bij thema/readOnly-wissel doen (zie comment onderaan de deps); de aparte effect hieronder zet value-wijzigingen door zonder herbouw.
   useEffect(() => {
     let destroyed = false;
 
     async function init() {
       const {
-        EditorView, keymap, lineNumbers, highlightActiveLine, highlightActiveLineGutter,
+        EditorView,
+        keymap,
+        lineNumbers,
+        highlightActiveLine,
+        highlightActiveLineGutter,
         EditorState,
         python,
         oneDark,
-        defaultKeymap, history, historyKeymap, indentWithTab,
-        indentOnInput, bracketMatching, syntaxHighlighting, defaultHighlightStyle,
+        defaultKeymap,
+        history,
+        historyKeymap,
+        indentWithTab,
+        indentOnInput,
+        bracketMatching,
+        syntaxHighlighting,
+        defaultHighlightStyle,
         closeBrackets,
       } = await import('./codemirror');
 
@@ -72,12 +83,14 @@ function CodeEditorInner({ value, onChange, readOnly = false, height = '300px' }
         extensions.push(oneDark);
       } else {
         extensions.push(syntaxHighlighting(defaultHighlightStyle));
-        extensions.push(EditorView.theme({
-          '&': { backgroundColor: '#fafafa' },
-          '.cm-gutters': { backgroundColor: '#f0f0f0', borderRight: '1px solid #ddd' },
-          '.cm-activeLineGutter': { backgroundColor: '#e8e8e8' },
-          '.cm-activeLine': { backgroundColor: '#f0f4ff' },
-        }));
+        extensions.push(
+          EditorView.theme({
+            '&': { backgroundColor: '#fafafa' },
+            '.cm-gutters': { backgroundColor: '#f0f0f0', borderRight: '1px solid #ddd' },
+            '.cm-activeLineGutter': { backgroundColor: '#e8e8e8' },
+            '.cm-activeLine': { backgroundColor: '#f0f4ff' },
+          }),
+        );
       }
 
       if (readOnly) {
@@ -86,11 +99,13 @@ function CodeEditorInner({ value, onChange, readOnly = false, height = '300px' }
       }
 
       if (onChange) {
-        extensions.push(EditorView.updateListener.of((update) => {
-          if (update.docChanged) {
-            onChange(update.state.doc.toString());
-          }
-        }));
+        extensions.push(
+          EditorView.updateListener.of((update) => {
+            if (update.docChanged) {
+              onChange(update.state.doc.toString());
+            }
+          }),
+        );
       }
 
       const state = EditorState.create({
@@ -131,13 +146,7 @@ function CodeEditorInner({ value, onChange, readOnly = false, height = '300px' }
     }
   }, [value]);
 
-  return (
-    <div
-      ref={containerRef}
-      className={styles.editor}
-      style={{ height }}
-    />
-  );
+  return <div ref={containerRef} className={styles.editor} style={{ height }} />;
 }
 
 export default function CodeEditor(props) {

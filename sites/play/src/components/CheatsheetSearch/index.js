@@ -8,15 +8,15 @@ export default function CheatsheetSearch() {
     if (typeof document === 'undefined') return;
     const q = query.toLowerCase().trim();
 
-    document.querySelectorAll('[data-cheatsheet-grid]').forEach(grid => {
+    for (const grid of document.querySelectorAll('[data-cheatsheet-grid]')) {
       const items = grid.querySelectorAll('details');
       let visible = 0;
-      items.forEach(d => {
+      for (const d of items) {
         const text = d.querySelector('summary')?.textContent?.toLowerCase() || '';
         const match = !q || text.includes(q);
         d.style.display = match ? '' : 'none';
         if (match) visible++;
-      });
+      }
 
       const hidden = q && visible === 0;
       grid.style.display = hidden ? 'none' : '';
@@ -25,7 +25,7 @@ export default function CheatsheetSearch() {
       let el = grid.previousElementSibling;
       while (el && el.tagName !== 'H2') el = el.previousElementSibling;
       if (el?.tagName === 'H2') el.style.display = hidden ? 'none' : '';
-    });
+    }
   }, [query]);
 
   return (
@@ -35,7 +35,7 @@ export default function CheatsheetSearch() {
         type="search"
         placeholder="Zoek in cheatsheet..."
         value={query}
-        onChange={e => setQuery(e.target.value)}
+        onChange={(e) => setQuery(e.target.value)}
         autoComplete="off"
       />
     </div>

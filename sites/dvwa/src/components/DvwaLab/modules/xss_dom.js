@@ -1,7 +1,8 @@
 export const xssDom = {
   low: {
     title: 'XSS DOM — Low',
-    description: 'DOM-gebaseerde XSS: invoer wordt via JavaScript in de DOM ingevoegd zonder sanitisatie',
+    description:
+      'DOM-gebaseerde XSS: invoer wordt via JavaScript in de DOM ingevoegd zonder sanitisatie',
     method: 'GET',
     php: `<?php
 $default = isset($_GET['default']) ? $_GET['default'] : 'Nederlands';
@@ -24,7 +25,8 @@ echo '</form>';
   },
   medium: {
     title: 'XSS DOM — Medium',
-    description: 'Script-tags worden geblokkeerd maar de DOM-injectie via innerHTML blijft kwetsbaar',
+    description:
+      'Script-tags worden geblokkeerd maar de DOM-injectie via innerHTML blijft kwetsbaar',
     method: 'GET',
     php: `<?php
 $default = isset($_GET['default']) ? $_GET['default'] : 'Nederlands';

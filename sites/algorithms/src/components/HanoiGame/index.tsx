@@ -1,5 +1,6 @@
-import React, {useCallback, useMemo, useState} from 'react';
 import clsx from 'clsx';
+import type React from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import styles from './styles.module.css';
 
 type HanoiGameProps = {
@@ -39,16 +40,13 @@ export default function HanoiGame({
 
   const opgelost = useMemo(() => isOpgelost(pegs, aantal), [pegs, aantal]);
 
-  const herstart = useCallback(
-    (nieuwAantal: number) => {
-      setAantal(nieuwAantal);
-      setPegs(maakStart(nieuwAantal));
-      setBron(null);
-      setZetten(0);
-      setMelding('');
-    },
-    [],
-  );
+  const herstart = useCallback((nieuwAantal: number) => {
+    setAantal(nieuwAantal);
+    setPegs(maakStart(nieuwAantal));
+    setBron(null);
+    setZetten(0);
+    setMelding('');
+  }, []);
 
   const klikPaal = useCallback(
     (index: number) => {
@@ -87,11 +85,7 @@ export default function HanoiGame({
       setPegs(volgende);
       setBron(null);
       setZetten((n) => n + 1);
-      setMelding(
-        klaar
-          ? `Opgelost in ${zetten + 1} zetten! Kun je het in minder?`
-          : '',
-      );
+      setMelding(klaar ? `Opgelost in ${zetten + 1} zetten! Kun je het in minder?` : '');
     },
     [aantal, bron, opgelost, pegs, zetten],
   );
@@ -102,9 +96,8 @@ export default function HanoiGame({
         <div>
           <p className={styles.kicker}>Speel zelf</p>
           <p className={styles.summary}>
-            Klik een paal om de bovenste schijf op te pakken, klik dan een
-            andere paal om hem neer te leggen. Verplaats de hele toren naar
-            paal C.
+            Klik een paal om de bovenste schijf op te pakken, klik dan een andere paal om hem neer
+            te leggen. Verplaats de hele toren naar paal C.
           </p>
         </div>
         <div className={styles.zetten} aria-live="polite">
@@ -115,18 +108,19 @@ export default function HanoiGame({
 
       <div className={styles.controls}>
         <span className={styles.controlsLabel}>Aantal schijven:</span>
-        <div className={styles.diskButtons} role="group" aria-label="Aantal schijven">
-          {Array.from({length: maxDisks}, (_, i) => i + 1).map((n) => (
+        <fieldset className={styles.diskButtons} aria-label="Aantal schijven">
+          {Array.from({ length: maxDisks }, (_, i) => i + 1).map((n) => (
             <button
               key={n}
               type="button"
               className={clsx(styles.diskButton, aantal === n && styles.diskButtonActive)}
               aria-pressed={aantal === n}
-              onClick={() => herstart(n)}>
+              onClick={() => herstart(n)}
+            >
               {n}
             </button>
           ))}
-        </div>
+        </fieldset>
         <button type="button" className={styles.resetButton} onClick={() => herstart(aantal)}>
           Opnieuw
         </button>
@@ -137,14 +131,12 @@ export default function HanoiGame({
           const isBron = bron === index;
           return (
             <button
-              key={index}
+              key={PEG_NAMEN[index]}
               type="button"
               className={clsx(styles.peg, isBron && styles.pegActive)}
               onClick={() => klikPaal(index)}
-              aria-label={
-                `Paal ${PEG_NAMEN[index]}, ${paal.length} schijven` +
-                (isBron ? ', schijf opgepakt' : '')
-              }>
+              aria-label={`Paal ${PEG_NAMEN[index]}, ${paal.length} schijven${isBron ? ', schijf opgepakt' : ''}`}
+            >
               <div className={styles.pole} aria-hidden="true" />
               <div className={styles.stack}>
                 {paal.map((grootte, hoogte) => {
@@ -152,14 +144,12 @@ export default function HanoiGame({
                   return (
                     <span
                       key={grootte}
-                      className={clsx(
-                        styles.disk,
-                        isBron && isTop && styles.diskLifted,
-                      )}
+                      className={clsx(styles.disk, isBron && isTop && styles.diskLifted)}
                       style={{
                         width: `${20 + (grootte / aantal) * 80}%`,
                         background: `hsl(${(grootte / aantal) * 280} 70% 55%)`,
-                      }}>
+                      }}
+                    >
                       {grootte}
                     </span>
                   );
@@ -173,16 +163,14 @@ export default function HanoiGame({
         })}
       </div>
 
-      <div
-        className={clsx(styles.status, opgelost && styles.statusWin)}
-        role="status"
-        aria-live="polite">
+      <output className={clsx(styles.status, opgelost && styles.statusWin)} aria-live="polite">
         {opgelost
           ? melding || `Opgelost in ${zetten} zetten! Kun je het in minder?`
-          : melding || (bron === null
+          : melding ||
+            (bron === null
               ? 'Kies een paal om een schijf op te pakken.'
               : `Schijf van paal ${PEG_NAMEN[bron]} opgepakt — kies een doelpaal.`)}
-      </div>
+      </output>
     </section>
   );
 }

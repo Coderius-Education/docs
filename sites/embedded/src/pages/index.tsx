@@ -1,10 +1,10 @@
-import type {ReactNode} from 'react';
+import HomepageFeatures, { type FeatureItem } from '@coderius/shared/components/HomepageFeatures';
+import HomepageHero, { type HeroCta } from '@coderius/shared/components/HomepageHero';
 import Layout from '@theme/Layout';
-import HomepageHero, {type HeroCta} from '@coderius/shared/components/HomepageHero';
-import HomepageFeatures, {type FeatureItem} from '@coderius/shared/components/HomepageFeatures';
+import type { ReactNode } from 'react';
 
 const ctas: HeroCta[] = [
-  {label: 'Start met je eerste LED →', to: '/docs/introductie/wat-is-embedded'},
+  { label: 'Start met je eerste LED →', to: '/docs/introductie/wat-is-embedded' },
 ];
 
 const features: FeatureItem[] = [
@@ -32,7 +32,8 @@ export default function Home(): ReactNode {
   return (
     <Layout
       title="Embedded programmeren"
-      description="Leer embedded programmeren: van een blink-LED in de Arduino IDE tot IO en interfaces op een STM32.">
+      description="Leer embedded programmeren: van een blink-LED in de Arduino IDE tot IO en interfaces op een STM32."
+    >
       <HomepageHero title="Coderius Embedded" ctas={ctas} />
       <HomepageFeatures
         heading="Waar wil je mee aan de slag?"

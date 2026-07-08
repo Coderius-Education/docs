@@ -18,15 +18,23 @@
   gap: 6px;
 }
 
-.dotRed, .dotYellow, .dotGreen {
+.dotRed,
+.dotYellow,
+.dotGreen {
   width: 12px;
   height: 12px;
   border-radius: 50%;
 }
 
-.dotRed { background: #ff5f56; }
-.dotYellow { background: #ffbd2e; }
-.dotGreen { background: #27c93f; }
+.dotRed {
+  background: #ff5f56;
+}
+.dotYellow {
+  background: #ffbd2e;
+}
+.dotGreen {
+  background: #27c93f;
+}
 
 .title {
   color: #ccc;

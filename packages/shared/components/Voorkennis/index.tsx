@@ -1,8 +1,8 @@
-import type {ReactNode} from 'react';
 import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+import type { ReactNode } from 'react';
 // sites.js is CommonJS; named imports werken via de bundler-interop.
-import {SITES_BY_ID, siteByUrl, normalizeUrl} from '../../sites';
+import { SITES_BY_ID, normalizeUrl, siteByUrl } from '../../sites';
 import styles from './styles.module.css';
 
 export type VoorkennisItem = {
@@ -27,7 +27,7 @@ export default function Voorkennis({
   items?: VoorkennisItem[];
   title?: string;
 }): ReactNode {
-  const {siteConfig} = useDocusaurusContext();
+  const { siteConfig } = useDocusaurusContext();
   const current = siteByUrl(siteConfig.url);
 
   if (items.length === 0) return null;
@@ -36,14 +36,15 @@ export default function Voorkennis({
     <details className={styles.voorkennis}>
       <summary>{title}</summary>
       <ul>
-        {items.map((item, idx) => {
+        {items.map((item) => {
           const target = item.site ? SITES_BY_ID[item.site] : current;
           const isExternal = !!target && (!current || target.id !== current.id);
+          const key = `${item.site ?? ''}:${item.to}`;
 
           if (isExternal && target) {
             const href = normalizeUrl(target.url) + item.to;
             return (
-              <li key={idx}>
+              <li key={key}>
                 <span className={styles.badge} title={target.label}>
                   {target.label}
                 </span>{' '}
@@ -55,7 +56,7 @@ export default function Voorkennis({
           }
 
           return (
-            <li key={idx}>
+            <li key={key}>
               <Link to={item.to}>{item.label}</Link>
             </li>
           );

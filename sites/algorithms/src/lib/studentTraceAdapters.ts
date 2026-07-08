@@ -1,5 +1,5 @@
-import type {AlgorithmInput, AlgorithmModelId} from '../data/algorithmModels';
-import type {TraceMarkers, TraceResult, TraceStep} from './algorithmTraces';
+import type { AlgorithmInput, AlgorithmModelId } from '../data/algorithmModels';
+import type { TraceMarkers, TraceResult, TraceStep } from './algorithmTraces';
 
 export type RawPythonTraceFrame = {
   event: 'line' | 'return' | 'exception';
@@ -25,10 +25,7 @@ function asNumberArray(value: unknown): number[] | undefined {
   return value as number[];
 }
 
-function localNumber(
-  locals: Record<string, unknown>,
-  names: string[],
-): number | undefined {
+function localNumber(locals: Record<string, unknown>, names: string[]): number | undefined {
   for (const name of names) {
     const number = asNumber(locals[name]);
     if (number !== undefined) return number;
@@ -36,10 +33,7 @@ function localNumber(
   return undefined;
 }
 
-function localInteger(
-  locals: Record<string, unknown>,
-  names: string[],
-): number | undefined {
+function localInteger(locals: Record<string, unknown>, names: string[]): number | undefined {
   for (const name of names) {
     const number = asInteger(locals[name]);
     if (number !== undefined) return number;
@@ -47,10 +41,7 @@ function localInteger(
   return undefined;
 }
 
-function localArray(
-  locals: Record<string, unknown>,
-  fallback: number[],
-): number[] {
+function localArray(locals: Record<string, unknown>, fallback: number[]): number[] {
   const named = asNumberArray(locals.lijst);
   if (named) return [...named];
 
@@ -105,7 +96,7 @@ function resultToTraceResult(
   if (algorithm === 'min-and-max' && Array.isArray(result) && result.length >= 2) {
     const min = asNumber(result[0]);
     const max = asNumber(result[1]);
-    if (min !== undefined && max !== undefined) return {min, max};
+    if (min !== undefined && max !== undefined) return { min, max };
   }
   const number = asNumber(result);
   if (number !== undefined) return number;
@@ -162,8 +153,7 @@ function markersForFrame(
   }
 
   if (algorithm === 'maximum') {
-    const i =
-      localInteger(locals, ['i', 'index']) ?? indexOfValue(values, locals.waarde);
+    const i = localInteger(locals, ['i', 'index']) ?? indexOfValue(values, locals.waarde);
     const maxIndex =
       localInteger(locals, ['max_index', 'maximum_index', 'grootste_index']) ??
       indexOfValue(values, locals.maximum) ??
@@ -178,8 +168,7 @@ function markersForFrame(
   }
 
   if (algorithm === 'min-and-max') {
-    const i =
-      localInteger(locals, ['i', 'index']) ?? indexOfValue(values, locals.waarde);
+    const i = localInteger(locals, ['i', 'index']) ?? indexOfValue(values, locals.waarde);
     const minIndex =
       localInteger(locals, ['min_index', 'klein_index', 'minimum_index']) ??
       indexOfValue(values, locals.klein) ??
@@ -260,7 +249,7 @@ export function adaptStudentTrace(
         description: 'De functie leverde geen traceerbare stappen op.',
         array: [...input.values],
         markers: {},
-        stats: {steps: 0},
+        stats: { steps: 0 },
         result: resultToTraceResult(algorithm, result),
       },
     ];
@@ -275,7 +264,7 @@ export function adaptStudentTrace(
         description: 'De functie gaf direct een resultaat terug.',
         array: [...input.values],
         markers: {},
-        stats: {steps: 1},
+        stats: { steps: 1 },
         result: resultToTraceResult(algorithm, result),
       },
     ];
@@ -304,10 +293,7 @@ export function adaptStudentTrace(
       markers,
       stats: {
         steps: steps.length + 1,
-        swaps:
-          algorithm === 'selection-sort' || algorithm === 'bubble-sort'
-            ? swaps
-            : undefined,
+        swaps: algorithm === 'selection-sort' || algorithm === 'bubble-sort' ? swaps : undefined,
       },
       result: undefined,
     };

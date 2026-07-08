@@ -123,4 +123,4 @@ function siteByUrl(url) {
   return SITES.find((s) => normalizeUrl(s.url) === norm);
 }
 
-module.exports = {SITES, SITES_BY_ID, HOME, siteByUrl, normalizeUrl};
+module.exports = { SITES, SITES_BY_ID, HOME, siteByUrl, normalizeUrl };

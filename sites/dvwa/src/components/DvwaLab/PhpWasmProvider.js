@@ -87,7 +87,7 @@ export async function runPhp(code, getData, postData) {
   // Capture stdout output
   let output = '';
   const outputHandler = (event) => {
-    if (event.detail && event.detail[0]) {
+    if (event.detail?.[0]) {
       output += event.detail[0];
     }
   };

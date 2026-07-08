@@ -36,7 +36,8 @@ echo $message;
   },
   medium: {
     title: 'SQL Injection — Medium',
-    description: 'Beperkte bescherming: numerieke invoer via dropdown, maar geen prepared statement',
+    description:
+      'Beperkte bescherming: numerieke invoer via dropdown, maar geen prepared statement',
     method: 'POST',
     php: `<?php
 $db = new SQLite3('/tmp/dvwa.db');

@@ -1,9 +1,9 @@
+import HomepageFeatures from '@coderius/shared/components/HomepageFeatures';
+import HomepageHero from '@coderius/shared/components/HomepageHero';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
-import HomepageHero from '@coderius/shared/components/HomepageHero';
-import HomepageFeatures from '@coderius/shared/components/HomepageFeatures';
 
-const ctas = [{label: 'Begin met de labs', to: '/docs/installatie'}];
+const ctas = [{ label: 'Begin met de labs', to: '/docs/installatie' }];
 
 const features = [
   {
@@ -24,7 +24,7 @@ const features = [
 ];
 
 export default function Home() {
-  const {siteConfig} = useDocusaurusContext();
+  const { siteConfig } = useDocusaurusContext();
   return (
     <Layout title={siteConfig.title} description={siteConfig.tagline}>
       <HomepageHero title="Coderius DVWA" ctas={ctas} />

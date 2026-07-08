@@ -1,6 +1,6 @@
-import type {ReactNode} from 'react';
 import BrowserOnly from '@docusaurus/BrowserOnly';
-import type {PyRunnerProps} from './PyRunnerImpl';
+import type { ReactNode } from 'react';
+import type { PyRunnerProps } from './PyRunnerImpl';
 import styles from './styles.module.css';
 
 export default function PyRunner(props: PyRunnerProps): ReactNode {

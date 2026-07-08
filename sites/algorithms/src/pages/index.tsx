@@ -1,34 +1,33 @@
-import type {ReactNode} from 'react';
-import clsx from 'clsx';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import Layout from '@theme/Layout';
-import Heading from '@theme/Heading';
 import AlgorithmGrid from '@site/src/components/AlgorithmGrid';
+import Heading from '@theme/Heading';
+import Layout from '@theme/Layout';
+import clsx from 'clsx';
+import type { ReactNode } from 'react';
 
 import styles from './index.module.css';
 
 function HomepageHeader() {
-  const {siteConfig} = useDocusaurusContext();
+  const { siteConfig } = useDocusaurusContext();
   return (
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
       <div className="container">
         <Heading as="h1" className={clsx('hero__title', styles.heroTitle)}>
           Coderius Algoritmes
         </Heading>
-        <p className={clsx('hero__subtitle', styles.heroSubtitle)}>
-          {siteConfig.tagline}
-        </p>
+        <p className={clsx('hero__subtitle', styles.heroSubtitle)}>{siteConfig.tagline}</p>
       </div>
     </header>
   );
 }
 
 export default function Home(): ReactNode {
-  const {siteConfig} = useDocusaurusContext();
+  const { siteConfig } = useDocusaurusContext();
   return (
     <Layout
       title={siteConfig.title}
-      description="Leer algoritmes door ze zelf uit te voeren in de browser.">
+      description="Leer algoritmes door ze zelf uit te voeren in de browser."
+    >
       <HomepageHeader />
       <main>
         <AlgorithmGrid />

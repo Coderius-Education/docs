@@ -3,7 +3,16 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "docusaurus": "docusaurus","start": "docusaurus start","build": "docusaurus build","swizzle": "docusaurus swizzle","serve": "docusaurus serve","clear": "docusaurus clear","write-translations": "docusaurus write-translations","write-heading-ids": "docusaurus write-heading-ids","typecheck": "tsc","test:traces": "node scripts/test-traces.mjs"
+    "docusaurus": "docusaurus",
+    "start": "docusaurus start",
+    "build": "docusaurus build",
+    "swizzle": "docusaurus swizzle",
+    "serve": "docusaurus serve",
+    "clear": "docusaurus clear",
+    "write-translations": "docusaurus write-translations",
+    "write-heading-ids": "docusaurus write-heading-ids",
+    "typecheck": "tsc",
+    "test:traces": "node scripts/test-traces.mjs"
   },
   "dependencies": {
     "@coderius/shared": "workspace:*",
@@ -17,6 +26,9 @@
     "react-dom": "catalog:"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "catalog:","@docusaurus/tsconfig": "catalog:","@docusaurus/types": "catalog:","typescript": "catalog:"
+    "@docusaurus/module-type-aliases": "catalog:",
+    "@docusaurus/tsconfig": "catalog:",
+    "@docusaurus/types": "catalog:",
+    "typescript": "catalog:"
   }
 }

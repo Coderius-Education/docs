@@ -57,7 +57,8 @@ echo $message;
   },
   high: {
     title: 'Weak Session IDs — High',
-    description: 'MD5-hash van een combinatie van teller en tijd — beter maar nog steeds analyseerbaar',
+    description:
+      'MD5-hash van een combinatie van teller en tijd — beter maar nog steeds analyseerbaar',
     method: 'POST',
     php: `<?php
 $db = new SQLite3('/tmp/dvwa_session_high.db');

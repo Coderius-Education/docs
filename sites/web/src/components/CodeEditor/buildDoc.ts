@@ -38,7 +38,7 @@ export function buildDoc(html: string, css: string, js: string): string {
   // Inject console interceptor as the very first script in <head> (always, so inline <script> tags also reach the console)
   result = result.includes('<head>')
     ? result.replace('<head>', `<head>\n${CONSOLE_INTERCEPTOR}`)
-    : CONSOLE_INTERCEPTOR + '\n' + result;
+    : `${CONSOLE_INTERCEPTOR}\n${result}`;
 
   // Replace <link rel="stylesheet" ...> with a <style> tag containing the CSS tab content
   const linkRegex = /<link[^>]*rel=["']stylesheet["'][^>]*\/?>/i;
@@ -54,7 +54,7 @@ export function buildDoc(html: string, css: string, js: string): string {
     result = result.replace(scriptSrcRegex, '');
     result = result.includes('</body>')
       ? result.replace('</body>', `${scriptTag}\n</body>`)
-      : result + '\n' + scriptTag;
+      : `${result}\n${scriptTag}`;
   }
 
   return result;

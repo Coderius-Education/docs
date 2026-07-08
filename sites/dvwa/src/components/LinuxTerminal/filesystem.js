@@ -4,8 +4,8 @@
  */
 
 const defaultFilesystem = {
-  'etc': {
-    'passwd': [
+  etc: {
+    passwd: [
       'root:x:0:0:root:/root:/bin/bash',
       'daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin',
       'bin:x:2:2:bin:/bin:/usr/sbin/nologin',
@@ -14,62 +14,63 @@ const defaultFilesystem = {
       'nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin',
       'student:x:1000:1000:student:/home/student:/bin/bash',
     ].join('\n'),
-    'shadow': null, // permission denied
-    'hostname': 'dvwa-lab',
+    shadow: null, // permission denied
+    hostname: 'dvwa-lab',
     'os-release': [
       'NAME="Debian GNU/Linux"',
       'VERSION="12 (bookworm)"',
       'ID=debian',
       'PRETTY_NAME="Debian GNU/Linux 12 (bookworm)"',
     ].join('\n'),
-    'hosts': [
+    hosts: [
       '127.0.0.1\tlocalhost',
       '127.0.1.1\tdvwa-lab',
       '::1\t\tlocalhost ip6-localhost ip6-loopback',
     ].join('\n'),
-    'group': [
-      'root:x:0:',
-      'www-data:x:33:',
-      'student:x:1000:',
-    ].join('\n'),
+    group: ['root:x:0:', 'www-data:x:33:', 'student:x:1000:'].join('\n'),
   },
-  'home': {
-    'student': {
-      '.bashrc': '# ~/.bashrc\nexport PS1="student@dvwa:~$ "\nexport PATH="/usr/local/bin:/usr/bin:/bin"',
-      'notities.txt': 'TODO: DVWA challenges afmaken\n- Brute force: klaar\n- Command injection: bezig\n- Authorization bypass: nog niet begonnen',
+  home: {
+    student: {
+      '.bashrc':
+        '# ~/.bashrc\nexport PS1="student@dvwa:~$ "\nexport PATH="/usr/local/bin:/usr/bin:/bin"',
+      'notities.txt':
+        'TODO: DVWA challenges afmaken\n- Brute force: klaar\n- Command injection: bezig\n- Authorization bypass: nog niet begonnen',
     },
   },
-  'var': {
-    'www': {
-      'html': {
+  var: {
+    www: {
+      html: {
         'index.php': '<?php echo "<h1>Welcome to DVWA</h1>"; ?>',
-        'login.php': '<?php\n// Vulnerable login - no input sanitization\n$user = $_GET["username"];\n$pass = $_GET["password"];\n?>',
-        'config': {
-          'config.inc.php': "<?php\n$_DVWA['db_server'] = '127.0.0.1';\n$_DVWA['db_database'] = 'dvwa';\n$_DVWA['db_user'] = 'admin';\n$_DVWA['db_password'] = 'password';\n?>",
+        'login.php':
+          '<?php\n// Vulnerable login - no input sanitization\n$user = $_GET["username"];\n$pass = $_GET["password"];\n?>',
+        config: {
+          'config.inc.php':
+            "<?php\n$_DVWA['db_server'] = '127.0.0.1';\n$_DVWA['db_database'] = 'dvwa';\n$_DVWA['db_user'] = 'admin';\n$_DVWA['db_password'] = 'password';\n?>",
         },
         '.htaccess': 'RewriteEngine On\nRewriteRule ^index\\.php$ - [L]',
       },
     },
-    'log': {
+    log: {
       'auth.log': [
         'Mar 26 10:15:01 dvwa-lab sshd[1234]: Failed password for admin from 192.168.1.100',
         'Mar 26 10:15:03 dvwa-lab sshd[1234]: Failed password for admin from 192.168.1.100',
         'Mar 26 10:15:04 dvwa-lab sshd[1234]: Failed password for admin from 192.168.1.100',
         'Mar 26 10:15:05 dvwa-lab sshd[1234]: Accepted password for admin from 192.168.1.100',
       ].join('\n'),
-      'apache2': {
-        'access.log': '192.168.1.100 - - [26/Mar/2026:10:15:01 +0100] "GET /login.php HTTP/1.1" 200 1234',
+      apache2: {
+        'access.log':
+          '192.168.1.100 - - [26/Mar/2026:10:15:01 +0100] "GET /login.php HTTP/1.1" 200 1234',
         'error.log': '',
       },
     },
   },
-  'tmp': {},
-  'usr': {
-    'bin': {},
-    'local': { 'bin': {} },
+  tmp: {},
+  usr: {
+    bin: {},
+    local: { bin: {} },
   },
-  'bin': {},
-  'root': null, // permission denied
+  bin: {},
+  root: null, // permission denied
 };
 
 /**
@@ -92,7 +93,7 @@ export function resolvePath(cwd, inputPath) {
       resolved.push(part);
     }
   }
-  return '/' + resolved.join('/');
+  return `/${resolved.join('/')}`;
 }
 
 /**
@@ -134,15 +135,18 @@ export function getNode(fs, absPath) {
  */
 export function listDir(fs, absPath) {
   const { node, isDir, permissionDenied } = getNode(fs, absPath);
-  if (permissionDenied) return { error: `ls: cannot open directory '${absPath}': Permission denied` };
+  if (permissionDenied)
+    return { error: `ls: cannot open directory '${absPath}': Permission denied` };
   if (!isDir) return { error: `ls: cannot access '${absPath}': Not a directory` };
 
   return {
-    entries: Object.keys(node).sort().map(name => {
-      const child = node[name];
-      const isChildDir = child !== null && typeof child === 'object';
-      return { name, isDir: isChildDir };
-    }),
+    entries: Object.keys(node)
+      .sort()
+      .map((name) => {
+        const child = node[name];
+        const isChildDir = child !== null && typeof child === 'object';
+        return { name, isDir: isChildDir };
+      }),
   };
 }
 
@@ -169,8 +173,13 @@ export function createFilesystem(extraFiles) {
 
 function mergeDeep(target, source) {
   for (const key of Object.keys(source)) {
-    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])
-        && target[key] && typeof target[key] === 'object') {
+    if (
+      source[key] &&
+      typeof source[key] === 'object' &&
+      !Array.isArray(source[key]) &&
+      target[key] &&
+      typeof target[key] === 'object'
+    ) {
       mergeDeep(target[key], source[key]);
     } else {
       target[key] = source[key];

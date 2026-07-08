@@ -1,6 +1,7 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Highlight, themes } from 'prism-react-renderer';
-import { getPyodide, runPython } from '../PyodideProvider';
+import type React from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { type PyodideInterface, getPyodide, runPython } from '../PyodideProvider';
 import styles from './styles.module.css';
 
 // Lees de kleurmodus rechtstreeks van het `data-theme`-attribuut op <html> i.p.v.
@@ -18,9 +19,7 @@ function useColorMode(): { colorMode: 'light' | 'dark' } {
   useEffect(() => {
     const read = () =>
       setColorMode(
-        document.documentElement.getAttribute('data-theme') === 'dark'
-          ? 'dark'
-          : 'light',
+        document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light',
       );
     read();
     const observer = new MutationObserver(read);
@@ -76,7 +75,10 @@ export function HighlightedEditor({
     <div className={styles.editorWrapper} style={{ minHeight }}>
       <div ref={gutterRef} className={styles.gutter} aria-hidden="true">
         {Array.from({ length: lineCount }, (_, i) => (
-          <div key={i} className={styles.gutterLine}>{i + 1}</div>
+          // biome-ignore lint/suspicious/noArrayIndexKey: index is de regelnummer-identiteit zelf.
+          <div key={i} className={styles.gutterLine}>
+            {i + 1}
+          </div>
         ))}
       </div>
       <Highlight theme={theme} code={code} language="python">
@@ -88,8 +90,10 @@ export function HighlightedEditor({
             aria-hidden="true"
           >
             {tokens.map((line, i) => (
+              // biome-ignore lint/suspicious/noArrayIndexKey: index is de regelnummer-identiteit zelf.
               <div key={i} {...getLineProps({ line })}>
                 {line.map((token, key) => (
+                  // biome-ignore lint/suspicious/noArrayIndexKey: index is de token-positie in de regel.
                   <span key={key} {...getTokenProps({ token })} />
                 ))}
               </div>
@@ -118,7 +122,7 @@ export default function PythonPlayground(): React.JSX.Element {
   const [output, setOutput] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isRunning, setIsRunning] = useState(false);
-  const pyodideRef = useRef<any>(null);
+  const pyodideRef = useRef<PyodideInterface | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -135,7 +139,9 @@ export default function PythonPlayground(): React.JSX.Element {
           setIsLoading(false);
         }
       });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const execCode = useCallback(async () => {
@@ -145,8 +151,8 @@ export default function PythonPlayground(): React.JSX.Element {
     try {
       const result = await runPython(pyodideRef.current, code);
       setOutput(result);
-    } catch (err: any) {
-      setOutput(`Fout:\n${err.message}`);
+    } catch (err) {
+      setOutput(`Fout:\n${err instanceof Error ? err.message : String(err)}`);
     } finally {
       setIsRunning(false);
     }
@@ -159,7 +165,7 @@ export default function PythonPlayground(): React.JSX.Element {
         const target = e.target as HTMLTextAreaElement;
         const start = target.selectionStart;
         const end = target.selectionEnd;
-        setCode(code.substring(0, start) + '    ' + code.substring(end));
+        setCode(`${code.substring(0, start)}    ${code.substring(end)}`);
         requestAnimationFrame(() => {
           target.selectionStart = target.selectionEnd = start + 4;
         });
@@ -178,6 +184,7 @@ export default function PythonPlayground(): React.JSX.Element {
         <div className={styles.toolbar}>
           <span className={styles.label}>Python Code</span>
           <button
+            type="button"
             className={styles.runButton}
             onClick={execCode}
             disabled={isLoading || isRunning}
@@ -196,10 +203,7 @@ export default function PythonPlayground(): React.JSX.Element {
       <div className={styles.outputSection}>
         <div className={styles.toolbar}>
           <span className={styles.label}>Output</span>
-          <button
-            className={styles.clearButton}
-            onClick={() => setOutput('')}
-          >
+          <button type="button" className={styles.clearButton} onClick={() => setOutput('')}>
             Wissen
           </button>
         </div>

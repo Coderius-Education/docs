@@ -1,13 +1,11 @@
-import React, { lazy, Suspense, useState, useEffect, useCallback, useRef } from 'react';
 import BrowserOnly from '@docusaurus/BrowserOnly';
+import React, { lazy, Suspense, useState, useEffect, useCallback, useRef } from 'react';
+import styles from './CodeEditor.module.css';
 import { PreviewPane } from './PreviewPane';
 import { buildDoc } from './buildDoc';
 import { useDebounce } from './useDebounce';
-import styles from './CodeEditor.module.css';
 
-const EditorPane = lazy(() =>
-  import('./EditorPane').then((mod) => ({ default: mod.EditorPane }))
-);
+const EditorPane = lazy(() => import('./EditorPane').then((mod) => ({ default: mod.EditorPane })));
 
 type Tab = 'html' | 'css' | 'javascript';
 
@@ -38,7 +36,9 @@ function CodeEditorInner({
   const [html, setHtml] = useState(initialHtml);
   const [css, setCss] = useState(initialCss);
   const [js, setJs] = useState(initialJs);
-  const [srcDoc, setSrcDoc] = useState(() => livePreview ? buildDoc(initialHtml, initialCss, initialJs) : '');
+  const [srcDoc, setSrcDoc] = useState(() =>
+    livePreview ? buildDoc(initialHtml, initialCss, initialJs) : '',
+  );
   const [consoleLogs, setConsoleLogs] = useState<{ level: string; text: string }[]>([]);
   const consoleBodyRef = useRef<HTMLDivElement>(null);
 
@@ -59,7 +59,11 @@ function CodeEditorInner({
   }, [html, css, js]);
 
   const handleReset = useCallback(() => {
-    if (window.confirm('Weet je zeker dat je terug wilt naar de startcode? Je huidige wijzigingen gaan verloren.')) {
+    if (
+      window.confirm(
+        'Weet je zeker dat je terug wilt naar de startcode? Je huidige wijzigingen gaan verloren.',
+      )
+    ) {
       setHtml(initialHtml);
       setCss(initialCss);
       setJs(initialJs);
@@ -71,13 +75,14 @@ function CodeEditorInner({
   useEffect(() => {
     function handler(e: MessageEvent) {
       if (e.data?.source === 'code-editor' && e.data?.type === 'console') {
-        setConsoleLogs(prev => [...prev, { level: e.data.level, text: e.data.text }]);
+        setConsoleLogs((prev) => [...prev, { level: e.data.level, text: e.data.text }]);
       }
     }
     window.addEventListener('message', handler);
     return () => window.removeEventListener('message', handler);
   }, []);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: consoleLogs triggert bewust een her-scroll bij nieuwe regels; de body zelf leest alleen de ref.
   useEffect(() => {
     if (consoleBodyRef.current) {
       consoleBodyRef.current.scrollTop = consoleBodyRef.current.scrollHeight;
@@ -104,6 +109,7 @@ function CodeEditorInner({
         <div className={styles.tabBar}>
           {visibleTabs.map((tab) => (
             <button
+              type="button"
               key={tab}
               className={`${styles.tab} ${activeTab === tab ? styles.tabActive : ''}`}
               onClick={() => setActiveTab(tab)}
@@ -112,11 +118,16 @@ function CodeEditorInner({
             </button>
           ))}
           {!livePreview && (
-            <button className={styles.runButton} onClick={handleRun}>
+            <button type="button" className={styles.runButton} onClick={handleRun}>
               ▶ Run
             </button>
           )}
-          <button className={styles.resetButton} onClick={handleReset} title="Terug naar startcode">
+          <button
+            type="button"
+            className={styles.resetButton}
+            onClick={handleReset}
+            title="Terug naar startcode"
+          >
             ↺ Reset
           </button>
         </div>
@@ -139,18 +150,30 @@ function CodeEditorInner({
             <div className={styles.consolePanelHeader}>
               <span>Console</span>
               {consoleLogs.length > 0 && (
-                <button className={styles.consoleClear} onClick={() => setConsoleLogs([])}>wissen</button>
+                <button
+                  type="button"
+                  className={styles.consoleClear}
+                  onClick={() => setConsoleLogs([])}
+                >
+                  wissen
+                </button>
               )}
             </div>
             <div className={styles.consolePanelBody} ref={consoleBodyRef}>
-              {consoleLogs.length === 0
-                ? <span className={styles.consolePlaceholder}>Nog geen uitvoer. Gebruik console.log() om hier iets te tonen.</span>
-                : consoleLogs.map((log, i) => (
-                  <div key={i} className={`${styles.consoleLine} ${styles['consoleLevel_' + log.level]}`}>
+              {consoleLogs.length === 0 ? (
+                <span className={styles.consolePlaceholder}>
+                  Nog geen uitvoer. Gebruik console.log() om hier iets te tonen.
+                </span>
+              ) : (
+                consoleLogs.map((log, i) => (
+                  <div
+                    key={`${i}-${log.text}`}
+                    className={`${styles.consoleLine} ${styles[`consoleLevel_${log.level}`]}`}
+                  >
                     {log.text}
                   </div>
                 ))
-              }
+              )}
             </div>
           </div>
         )}

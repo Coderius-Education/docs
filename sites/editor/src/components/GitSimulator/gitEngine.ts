@@ -24,7 +24,7 @@ export type CommandResult = {
 export function emptyState(initialFiles: Record<string, string> = {}): RepoState {
   return {
     initialized: false,
-    workingDir: {...initialFiles},
+    workingDir: { ...initialFiles },
     staged: null,
     commits: [],
     head: null,
@@ -151,14 +151,14 @@ export function runCommand(state: RepoState, input: string): CommandResult {
   if (!trimmed) return result;
   return {
     ...result,
-    newState: {...result.newState, commands: [...state.commands, trimmed]},
+    newState: { ...result.newState, commands: [...state.commands, trimmed] },
   };
 }
 
 function _runCommand(state: RepoState, input: string): CommandResult {
   const trimmed = input.trim();
   if (!trimmed) {
-    return {newState: state, output: '', ok: true};
+    return { newState: state, output: '', ok: true };
   }
   if (!trimmed.startsWith('git')) {
     return {
@@ -172,7 +172,7 @@ function _runCommand(state: RepoState, input: string): CommandResult {
   if (!afterGit) {
     return {
       newState: state,
-      output: "gebruik: git <commando> (probeer: init, status, add, commit, log)",
+      output: 'gebruik: git <commando> (probeer: init, status, add, commit, log)',
       ok: false,
     };
   }
@@ -191,14 +191,14 @@ function _runCommand(state: RepoState, input: string): CommandResult {
         };
       }
       return {
-        newState: {...state, initialized: true, staged: {}},
+        newState: { ...state, initialized: true, staged: {} },
         output: 'Lege Git repository geïnitialiseerd op branch main',
         ok: true,
       };
     }
 
     case 'status': {
-      return {newState: state, output: statusOutput(state), ok: state.initialized};
+      return { newState: state, output: statusOutput(state), ok: state.initialized };
     }
 
     case 'add': {
@@ -213,15 +213,13 @@ function _runCommand(state: RepoState, input: string): CommandResult {
       if (!args) {
         return {
           newState: state,
-          output: "gebruik: git add <bestand> of git add .",
+          output: 'gebruik: git add <bestand> of git add .',
           ok: false,
         };
       }
-      const staged = {...(state.staged ?? {})};
+      const staged = { ...(state.staged ?? {}) };
       const targets =
-        args[0] === '.'
-          ? visibleFiles(state)
-          : args.filter((f) => !state.ignored.includes(f));
+        args[0] === '.' ? visibleFiles(state) : args.filter((f) => !state.ignored.includes(f));
 
       const missing = targets.filter((f) => !(f in state.workingDir));
       if (missing.length) {
@@ -234,7 +232,7 @@ function _runCommand(state: RepoState, input: string): CommandResult {
       for (const f of targets) {
         staged[f] = state.workingDir[f];
       }
-      return {newState: {...state, staged}, output: '', ok: true};
+      return { newState: { ...state, staged }, output: '', ok: true };
     }
 
     case 'commit': {
@@ -249,15 +247,14 @@ function _runCommand(state: RepoState, input: string): CommandResult {
       if (message === null) {
         return {
           newState: state,
-          output: "gebruik: git commit -m \"je bericht\"",
+          output: 'gebruik: git commit -m "je bericht"',
           ok: false,
         };
       }
       const staged = state.staged ?? {};
       const head = committedTree(state);
       const stagedNames = Object.keys(staged);
-      const realChange =
-        stagedNames.length > 0 && stagedNames.some((k) => staged[k] !== head[k]);
+      const realChange = stagedNames.length > 0 && stagedNames.some((k) => staged[k] !== head[k]);
 
       if (!realChange) {
         return {
@@ -266,7 +263,7 @@ function _runCommand(state: RepoState, input: string): CommandResult {
           ok: false,
         };
       }
-      const newTree: Record<string, string> = {...head, ...staged};
+      const newTree: Record<string, string> = { ...head, ...staged };
       const commit: Commit = {
         id: shortId(),
         message,
@@ -286,7 +283,7 @@ function _runCommand(state: RepoState, input: string): CommandResult {
     }
 
     case 'log': {
-      return {newState: state, output: logOutput(state), ok: state.commits.length > 0};
+      return { newState: state, output: logOutput(state), ok: state.commits.length > 0 };
     }
 
     default:
@@ -299,16 +296,16 @@ function _runCommand(state: RepoState, input: string): CommandResult {
 }
 
 export function setFile(state: RepoState, name: string, content: string): RepoState {
-  return {...state, workingDir: {...state.workingDir, [name]: content}};
+  return { ...state, workingDir: { ...state.workingDir, [name]: content } };
 }
 
 export function deleteFile(state: RepoState, name: string): RepoState {
-  const wd = {...state.workingDir};
+  const wd = { ...state.workingDir };
   delete wd[name];
-  return {...state, workingDir: wd};
+  return { ...state, workingDir: wd };
 }
 
 export function addToIgnore(state: RepoState, name: string): RepoState {
   if (state.ignored.includes(name)) return state;
-  return {...state, ignored: [...state.ignored, name]};
+  return { ...state, ignored: [...state.ignored, name] };
 }

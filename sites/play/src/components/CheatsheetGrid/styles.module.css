@@ -25,7 +25,7 @@
 }
 
 /* Tighter inner content */
-.grid :global([class*='collapsibleContent']) {
+.grid :global([class*="collapsibleContent"]) {
   margin-top: 0.5rem;
   padding-top: 0.5rem;
 }

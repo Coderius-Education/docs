@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import Layout from '@theme/Layout';
 import BrowserOnly from '@docusaurus/BrowserOnly';
+import Layout from '@theme/Layout';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import styles from './speeltuin.module.css';
 
 const DEFAULT_CODE_PLAY = `import play
@@ -50,6 +50,7 @@ function PlaygroundInner() {
   const [shared, setShared] = useState(null);
   const [presets, setPresets] = useState([]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: mount-only — prewarmt Pyodide met de begincode; latere bewerkingen mogen dit niet opnieuw triggeren (dat zou de dynamic imports herladen).
   useEffect(() => {
     Promise.all([
       import('../components/CodeRunner/CodeEditor'),
@@ -64,7 +65,6 @@ function PlaygroundInner() {
       // Prewarm Pyodide via SharedRunner as soon as the page is mounted.
       sharedMod.schedule(code);
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Load from URL hash on mount
@@ -108,6 +108,7 @@ function PlaygroundInner() {
   }, []);
 
   // Auto-scroll console
+  // biome-ignore lint/correctness/useExhaustiveDependencies: consoleLines triggert bewust een her-scroll; de body zelf leest alleen de ref.
   useEffect(() => {
     if (consoleRef.current) {
       consoleRef.current.scrollTop = consoleRef.current.scrollHeight;
@@ -121,9 +122,9 @@ function PlaygroundInner() {
     };
   }, [shared, ownerId]);
 
-  function appendLine(text, isError) {
+  const appendLine = useCallback((text, isError) => {
     setConsoleLines((prev) => [...prev, { text, isError }]);
-  }
+  }, []);
 
   const handleRun = useCallback(() => {
     if (!engine || !shared) return;
@@ -136,7 +137,7 @@ function PlaygroundInner() {
       userPythonCode = wrapped.code;
       lineOffset = wrapped.lineOffset;
     } else if (!userPythonCode.includes('start_program')) {
-      userPythonCode = userPythonCode + '\nplay.start_program()';
+      userPythonCode = `${userPythonCode}\nplay.start_program()`;
     }
 
     pendingRunRef.current = { code: userPythonCode, mode, lineOffset };
@@ -162,7 +163,9 @@ function PlaygroundInner() {
       listeners: {
         onStdout: (text) => appendLine(text, false),
         onStderr: (text) => appendLine(text, true),
-        onDone: () => { /* keep canvas visible */ },
+        onDone: () => {
+          /* keep canvas visible */
+        },
         onError: (msg, fatal) => {
           appendLine(msg, true);
           if (fatal) setIsRunning(false);
@@ -171,7 +174,7 @@ function PlaygroundInner() {
         onPreempted: () => setIsRunning(false),
       },
     });
-  }, [isRunning, ownerId, shared]);
+  }, [isRunning, ownerId, shared, appendLine]);
 
   function loadPreset(preset) {
     setCode(preset.code);
@@ -195,17 +198,25 @@ function PlaygroundInner() {
       <div className={styles.toolbar}>
         <div className={styles.toolbarLeft}>
           {!isRunning ? (
-            <button onClick={handleRun} className={styles.runButton} disabled={!code.trim()}>
+            <button
+              type="button"
+              onClick={handleRun}
+              className={styles.runButton}
+              disabled={!code.trim()}
+            >
               &#x25B6; Uitvoeren
             </button>
           ) : (
-            <button onClick={handleStop} className={styles.stopButton}>
+            <button type="button" onClick={handleStop} className={styles.stopButton}>
               &#x23F9; Stop
             </button>
           )}
           <select
             value={mode}
-            onChange={(e) => { setMode(e.target.value); handleStop(); }}
+            onChange={(e) => {
+              setMode(e.target.value);
+              handleStop();
+            }}
             className={styles.modeSelect}
           >
             <option value="play">play</option>
@@ -215,6 +226,7 @@ function PlaygroundInner() {
         <div className={styles.toolbarRight}>
           <div className={styles.presetsWrapper} ref={presetsRef}>
             <button
+              type="button"
               onClick={() => setPresetsOpen(!presetsOpen)}
               className={styles.presetsButton}
             >
@@ -222,9 +234,10 @@ function PlaygroundInner() {
             </button>
             {presetsOpen && (
               <div className={styles.presetsDropdown}>
-                {presets.map((p, i) => (
+                {presets.map((p) => (
                   <button
-                    key={i}
+                    type="button"
+                    key={p.name}
                     onClick={() => loadPreset(p)}
                     className={styles.presetItem}
                   >
@@ -235,7 +248,7 @@ function PlaygroundInner() {
               </div>
             )}
           </div>
-          <button onClick={handleReset} className={styles.resetButton}>
+          <button type="button" onClick={handleReset} className={styles.resetButton}>
             Reset
           </button>
         </div>
@@ -249,22 +262,22 @@ function PlaygroundInner() {
         <div className={styles.outputPanel}>
           {isRunning ? (
             <>
-              <div
-                ref={slotRef}
-                className={styles.outputFrame}
-                style={{ background: '#1a1a2e' }}
-              >
+              <div ref={slotRef} className={styles.outputFrame} style={{ background: '#1a1a2e' }}>
                 {/* SharedRunner positions its iframe over this slot */}
               </div>
-              <div
-                ref={consoleRef}
-                className={styles.consolePanel}
-              >
+              <div ref={consoleRef} className={styles.consolePanel}>
                 {consoleLines.length === 0 ? (
-                  <span className={styles.consolePlaceholder}>Console - output van print() verschijnt hier</span>
+                  <span className={styles.consolePlaceholder}>
+                    Console - output van print() verschijnt hier
+                  </span>
                 ) : (
                   consoleLines.map((line, i) => (
-                    <span key={i} className={line.isError ? styles.errLine : undefined}>{line.text}</span>
+                    <span
+                      key={`${i}-${line.text}`}
+                      className={line.isError ? styles.errLine : undefined}
+                    >
+                      {line.text}
+                    </span>
                   ))
                 )}
               </div>
@@ -272,7 +285,9 @@ function PlaygroundInner() {
           ) : (
             <div className={styles.outputPlaceholder}>
               <div className={styles.placeholderIcon}>&#x1F3AE;</div>
-              <p>Klik op <strong>Uitvoeren</strong> om je code te starten</p>
+              <p>
+                Klik op <strong>Uitvoeren</strong> om je code te starten
+              </p>
               <p className={styles.placeholderHint}>
                 Kies een voorbeeld uit het menu of schrijf je eigen code
               </p>
@@ -286,10 +301,7 @@ function PlaygroundInner() {
 
 export default function Speeltuin() {
   return (
-    <Layout
-      title="Speeltuin"
-      description="Probeer Python game code direct in je browser"
-    >
+    <Layout title="Speeltuin" description="Probeer Python game code direct in je browser">
       <BrowserOnly fallback={<div style={{ padding: '2rem', textAlign: 'center' }}>Laden...</div>}>
         {() => <PlaygroundInner />}
       </BrowserOnly>

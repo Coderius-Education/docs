@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
 import { progressData } from '@site/src/data/progress';
+import React, { useState } from 'react';
 
 const SkillGraph = () => {
   const concepts = Object.keys(progressData[0].levels);
@@ -32,8 +32,17 @@ const SkillGraph = () => {
 
   return (
     <div style={{ width: '100%', overflowX: 'auto', marginBottom: '2em' }}>
-      <div style={{ minWidth: '600px', backgroundColor: 'var(--ifm-background-surface-color)', padding: '20px', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+      <div
+        style={{
+          minWidth: '600px',
+          backgroundColor: 'var(--ifm-background-surface-color)',
+          padding: '20px',
+          borderRadius: '12px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+        }}
+      >
         <svg width="100%" viewBox={`0 0 ${width} ${height}`} style={{ overflow: 'visible' }}>
+          <title>Voortgang per concept, per tutorial</title>
           {/* Y-axis grid lines */}
           {[0, 2, 4, 6, 8, 10].map((level) => (
             <g key={level}>
@@ -61,7 +70,10 @@ const SkillGraph = () => {
 
           {/* X-axis labels (Tutorials) */}
           {progressData.map((d, i) => (
-            <g key={i} transform={`translate(${getX(i)}, ${height - paddingBottom + 15}) rotate(45)`}>
+            <g
+              key={d.tutorial}
+              transform={`translate(${getX(i)}, ${height - paddingBottom + 15}) rotate(45)`}
+            >
               <text
                 x="0"
                 y="0"
@@ -84,8 +96,8 @@ const SkillGraph = () => {
             const isAnyHovered = hoveredConcept !== null;
 
             return (
-              <g 
-                key={concept} 
+              <g
+                key={concept}
                 onMouseEnter={() => setHoveredConcept(concept)}
                 onMouseLeave={() => setHoveredConcept(null)}
                 style={{ cursor: 'pointer', transition: 'opacity 0.2s' }}
@@ -101,7 +113,7 @@ const SkillGraph = () => {
                 />
                 {progressData.map((d, i) => (
                   <circle
-                    key={i}
+                    key={d.tutorial}
                     cx={getX(i)}
                     cy={getY(d.levels[concept])}
                     r={isHovered ? 5 : 4}
@@ -114,33 +126,43 @@ const SkillGraph = () => {
         </svg>
 
         {/* Legend */}
-        <div style={{ 
-          display: 'flex', 
-          flexWrap: 'wrap', 
-          justifyContent: 'center', 
-          gap: '15px', 
-          marginTop: '20px',
-          borderTop: '1px solid var(--ifm-color-emphasis-200)',
-          paddingTop: '20px'
-        }}>
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            gap: '15px',
+            marginTop: '20px',
+            borderTop: '1px solid var(--ifm-color-emphasis-200)',
+            paddingTop: '20px',
+          }}
+        >
           {concepts.map((concept, i) => (
-            <div 
-              key={concept} 
+            <div
+              key={concept}
               onMouseEnter={() => setHoveredConcept(concept)}
               onMouseLeave={() => setHoveredConcept(null)}
-              style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '8px', 
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
                 cursor: 'pointer',
                 opacity: hoveredConcept && hoveredConcept !== concept ? 0.4 : 1,
                 transition: 'opacity 0.2s',
                 padding: '4px 8px',
                 borderRadius: '4px',
-                backgroundColor: hoveredConcept === concept ? 'var(--ifm-color-emphasis-100)' : 'transparent'
+                backgroundColor:
+                  hoveredConcept === concept ? 'var(--ifm-color-emphasis-100)' : 'transparent',
               }}
             >
-              <div style={{ width: '12px', height: '12px', borderRadius: '2px', backgroundColor: colors[i % colors.length] }} />
+              <div
+                style={{
+                  width: '12px',
+                  height: '12px',
+                  borderRadius: '2px',
+                  backgroundColor: colors[i % colors.length],
+                }}
+              />
               <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{concept}</span>
             </div>
           ))}

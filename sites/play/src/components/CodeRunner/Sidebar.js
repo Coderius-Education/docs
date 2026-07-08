@@ -1,21 +1,12 @@
-import React, { useEffect } from 'react';
 import BrowserOnly from '@docusaurus/BrowserOnly';
-import { useCodeRunner } from './context';
+import React, { useEffect } from 'react';
 import CodeEditor from './CodeEditor';
-import { buildSrcDoc } from './engine';
 import styles from './Sidebar.module.css';
+import { useCodeRunner } from './context';
+import { buildSrcDoc } from './engine';
 
 function SidebarInner() {
-  const {
-    isOpen,
-    code,
-    mode,
-    isRunning,
-    setCode,
-    setMode,
-    setIsRunning,
-    close,
-  } = useCodeRunner();
+  const { isOpen, code, mode, isRunning, setCode, setMode, setIsRunning, close } = useCodeRunner();
 
   // Close on Escape
   useEffect(() => {
@@ -35,7 +26,9 @@ function SidebarInner() {
     } else {
       document.body.style.overflow = '';
     }
-    return () => { document.body.style.overflow = ''; };
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, [isOpen]);
 
   function handleRun() {
@@ -46,14 +39,15 @@ function SidebarInner() {
     setIsRunning(false);
   }
 
-  const srcDoc = isRunning
-    ? buildSrcDoc({ code, mode })
-    : null;
+  const srcDoc = isRunning ? buildSrcDoc({ code, mode }) : null;
 
   return (
     <>
       {/* Backdrop */}
-      {isOpen && <div className={styles.backdrop} onClick={close} />}
+      {isOpen && (
+        // biome-ignore lint/a11y/useKeyWithClickEvents: decoratieve overlay, geen tab-stop; Escape sluit de sidebar al (zie de globale keydown-listener hierboven).
+        <div className={styles.backdrop} onClick={close} />
+      )}
 
       {/* Sidebar panel */}
       <div className={`${styles.sidebar} ${isOpen ? styles.open : ''}`}>
@@ -69,7 +63,12 @@ function SidebarInner() {
               <option value="play">play</option>
               <option value="pygame">pygame-ce</option>
             </select>
-            <button onClick={close} className={styles.closeButton} aria-label="Sluiten">
+            <button
+              type="button"
+              onClick={close}
+              className={styles.closeButton}
+              aria-label="Sluiten"
+            >
               &times;
             </button>
           </div>
@@ -77,21 +76,22 @@ function SidebarInner() {
 
         {/* Code editor */}
         <div className={styles.editorArea}>
-          <CodeEditor
-            value={code}
-            onChange={setCode}
-            height="100%"
-          />
+          <CodeEditor value={code} onChange={setCode} height="100%" />
         </div>
 
         {/* Action buttons */}
         <div className={styles.toolbar}>
           {!isRunning ? (
-            <button onClick={handleRun} className={styles.runButton} disabled={!code.trim()}>
+            <button
+              type="button"
+              onClick={handleRun}
+              className={styles.runButton}
+              disabled={!code.trim()}
+            >
               &#x25B6; Uitvoeren
             </button>
           ) : (
-            <button onClick={handleStop} className={styles.stopButton}>
+            <button type="button" onClick={handleStop} className={styles.stopButton}>
               &#x23F9; Stop
             </button>
           )}
@@ -104,6 +104,7 @@ function SidebarInner() {
                 from the same origin. Removing it gives the iframe a null origin,
                 which causes the wheel fetch to fail due to CORS. */}
             <iframe
+              title="Uitvoer van je code"
               srcDoc={srcDoc}
               className={styles.outputFrame}
               sandbox="allow-scripts allow-same-origin allow-downloads"
@@ -112,11 +113,11 @@ function SidebarInner() {
         )}
 
         {!isRunning && (
-          <>
-            <div className={styles.placeholder}>
-              <p>Klik op <strong>Uitvoeren</strong> om je code te starten.</p>
-            </div>
-          </>
+          <div className={styles.placeholder}>
+            <p>
+              Klik op <strong>Uitvoeren</strong> om je code te starten.
+            </p>
+          </div>
         )}
       </div>
     </>
@@ -124,9 +125,5 @@ function SidebarInner() {
 }
 
 export default function Sidebar() {
-  return (
-    <BrowserOnly fallback={null}>
-      {() => <SidebarInner />}
-    </BrowserOnly>
-  );
+  return <BrowserOnly fallback={null}>{() => <SidebarInner />}</BrowserOnly>;
 }

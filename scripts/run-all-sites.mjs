@@ -9,10 +9,10 @@
 // Poorten lopen op vanaf BASE_PORT (3001, 3002, ...). De mapping site -> poort
 // wordt bovenaan geprint. Ctrl-C stopt alle processen tegelijk.
 
-import {spawn, spawnSync} from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
-import {fileURLToPath} from 'node:url';
+import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, '..');
@@ -29,7 +29,7 @@ if (mode !== 'serve' && mode !== 'start') {
 
 // Map-namen onder sites/ — gesorteerd zodat poorten stabiel blijven.
 const sites = fs
-  .readdirSync(SITES_DIR, {withFileTypes: true})
+  .readdirSync(SITES_DIR, { withFileTypes: true })
   .filter((d) => d.isDirectory())
   .map((d) => d.name)
   .sort();
@@ -37,7 +37,7 @@ const sites = fs
 // `serve` heeft een bestaande build nodig; bouw eerst als --build is gegeven.
 if (mode === 'serve' && doBuild) {
   console.log('Bouwen van alle sites (pnpm build)...\n');
-  const build = spawnSync('pnpm', ['build'], {cwd: ROOT, stdio: 'inherit', shell: true});
+  const build = spawnSync('pnpm', ['build'], { cwd: ROOT, stdio: 'inherit', shell: true });
   if (build.status !== 0) process.exit(build.status ?? 1);
 }
 
@@ -56,10 +56,21 @@ sites.forEach((name, i) => {
 
   const args =
     mode === 'serve'
-      ? ['--filter', `./sites/${name}`, 'exec', 'docusaurus', 'serve', '--port', String(port), '--dir', 'build', '--no-open']
+      ? [
+          '--filter',
+          `./sites/${name}`,
+          'exec',
+          'docusaurus',
+          'serve',
+          '--port',
+          String(port),
+          '--dir',
+          'build',
+          '--no-open',
+        ]
       : ['--filter', `./sites/${name}`, 'start', '--port', String(port), '--no-open'];
 
-  const child = spawn('pnpm', args, {cwd: ROOT, stdio: 'inherit', shell: true});
+  const child = spawn('pnpm', args, { cwd: ROOT, stdio: 'inherit', shell: true });
   children.push(child);
 });
 

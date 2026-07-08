@@ -21,7 +21,7 @@ const labels: Record<string, string> = {
   'js-basics/modern-dom': 'Modern DOM',
 };
 
-export type JsLes = {to: string; label: string};
+export type JsLes = { to: string; label: string };
 
 const jsSidebar = sidebars.jsSidebar;
 const ids = (Array.isArray(jsSidebar) ? jsSidebar : []).filter(

@@ -1,8 +1,8 @@
-import type {ReactNode} from 'react';
-import {useState} from 'react';
-import clsx from 'clsx';
 import Link from '@docusaurus/Link';
 import Heading from '@theme/Heading';
+import clsx from 'clsx';
+import type { ReactNode } from 'react';
+import { useState } from 'react';
 import styles from './styles.module.css';
 
 export type FeatureItem = {
@@ -14,7 +14,7 @@ export type FeatureItem = {
   info?: string;
 };
 
-function Feature({title, description, link, info}: FeatureItem) {
+function Feature({ title, description, link, info }: FeatureItem) {
   const [showInfo, setShowInfo] = useState(false);
 
   const body = (
@@ -41,7 +41,8 @@ function Feature({title, description, link, info}: FeatureItem) {
               type="button"
               className={styles.infoButton}
               onClick={() => setShowInfo(!showInfo)}
-              aria-label="Meer informatie">
+              aria-label="Meer informatie"
+            >
               i
             </button>
             {showInfo && (
@@ -84,8 +85,8 @@ export default function HomepageFeatures({
           </div>
         )}
         <div className="row">
-          {features.map((props, idx) => (
-            <Feature key={idx} {...props} />
+          {features.map((props) => (
+            <Feature key={props.title} {...props} />
           ))}
         </div>
       </div>

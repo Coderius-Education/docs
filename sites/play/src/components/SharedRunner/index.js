@@ -17,7 +17,7 @@ let scheduledCodes = [];
 let scheduleTimer = null;
 let pyodideReady = false;
 let messageListenerAttached = false;
-let currentOwner = null;   // { id, slotEl, listeners }
+let currentOwner = null; // { id, slotEl, listeners }
 let nextRequestId = 1;
 let trackingHandler = null;
 
@@ -86,10 +86,10 @@ function handleMessage(e) {
 function positionOverSlot(slotEl) {
   if (!iframe || !slotEl) return;
   const rect = slotEl.getBoundingClientRect();
-  iframe.style.top = rect.top + 'px';
-  iframe.style.left = rect.left + 'px';
-  iframe.style.width = rect.width + 'px';
-  iframe.style.height = rect.height + 'px';
+  iframe.style.top = `${rect.top}px`;
+  iframe.style.left = `${rect.left}px`;
+  iframe.style.width = `${rect.width}px`;
+  iframe.style.height = `${rect.height}px`;
   iframe.style.visibility = 'visible';
   iframe.style.pointerEvents = 'auto';
 }
@@ -122,7 +122,7 @@ function stopTracking() {
  */
 export function requestRun({ ownerId, slotEl, code, mode, lineOffset, listeners }) {
   if (!isBrowser() || !iframe) {
-    if (listeners && listeners.onError) {
+    if (listeners?.onError) {
       listeners.onError('SharedRunner not initialised yet — try again in a second.', false);
     }
     return null;
@@ -131,7 +131,7 @@ export function requestRun({ ownerId, slotEl, code, mode, lineOffset, listeners 
   // Switch owner
   if (currentOwner && currentOwner.id !== ownerId) {
     iframe.contentWindow.postMessage({ type: 'stop' }, '*');
-    if (currentOwner.listeners && currentOwner.listeners.onPreempted) {
+    if (currentOwner.listeners?.onPreempted) {
       currentOwner.listeners.onPreempted();
     }
   }
@@ -143,7 +143,7 @@ export function requestRun({ ownerId, slotEl, code, mode, lineOffset, listeners 
   const requestId = nextRequestId++;
   iframe.contentWindow.postMessage(
     { type: 'run', requestId, code, mode, lineOffset: lineOffset || 0 },
-    '*'
+    '*',
   );
   return requestId;
 }

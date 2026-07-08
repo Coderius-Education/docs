@@ -1,5 +1,5 @@
-import type {ReactNode} from 'react';
-import {codeorgBySlug, codeorgProjects, codeorgUnit1} from '@site/src/data/codeorg';
+import { codeorgBySlug, codeorgProjects, codeorgUnit1 } from '@site/src/data/codeorg';
+import type { ReactNode } from 'react';
 import styles from './styles.module.css';
 
 /**
@@ -8,7 +8,7 @@ import styles from './styles.module.css';
  * dus bruikbaar als `<CodeOrg slug="intro-html" />` zonder import. Een slug die
  * niet in de mapping staat, rendert niets.
  */
-export function CodeOrg({slug}: {slug: string}): ReactNode {
+export function CodeOrg({ slug }: { slug: string }): ReactNode {
   const les = codeorgBySlug[slug];
   if (!les) return null;
   return (

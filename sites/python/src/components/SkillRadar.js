@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
 import { progressData } from '@site/src/data/progress';
+import React, { useState } from 'react';
 
 const SkillRadar = () => {
   const [currentIndex, setCurrentIndex] = useState(progressData.length - 1);
   const data = progressData[currentIndex];
   const concepts = Object.keys(data.levels);
   const values = Object.values(data.levels);
-  
+
   const size = 400;
   const center = size / 2;
   const radius = size * 0.4;
@@ -43,11 +43,11 @@ const SkillRadar = () => {
   ));
 
   // Axis lines
-  const axes = concepts.map((_, i) => {
+  const axes = concepts.map((concept, i) => {
     const { x, y } = getCoordinates(i, totalLevels);
     return (
       <line
-        key={i}
+        key={concept}
         x1={center}
         y1={center}
         x2={x}
@@ -63,7 +63,7 @@ const SkillRadar = () => {
     const { x, y } = getCoordinates(i, totalLevels + 1.5);
     return (
       <text
-        key={i}
+        key={concept}
         x={x}
         y={y}
         textAnchor="middle"
@@ -85,7 +85,7 @@ const SkillRadar = () => {
         <select
           id="tutorial-select"
           value={currentIndex}
-          onChange={(e) => setCurrentIndex(parseInt(e.target.value))}
+          onChange={(e) => setCurrentIndex(Number.parseInt(e.target.value))}
           style={{
             padding: '8px',
             borderRadius: '4px',
@@ -95,7 +95,7 @@ const SkillRadar = () => {
           }}
         >
           {progressData.map((d, i) => (
-            <option key={i} value={i}>
+            <option key={d.tutorial} value={i}>
               {d.tutorial}
             </option>
           ))}
@@ -103,6 +103,7 @@ const SkillRadar = () => {
       </div>
 
       <svg width="100%" height={size} viewBox={`0 0 ${size} ${size}`}>
+        <title>Radardiagram van je voortgang per concept</title>
         {circles}
         {axes}
         <polygon
@@ -113,16 +114,26 @@ const SkillRadar = () => {
         />
         {values.map((v, i) => {
           const { x, y } = getCoordinates(i, v);
-          return <circle key={i} cx={x} cy={y} r="4" fill="var(--ifm-color-primary)" />;
+          return <circle key={concepts[i]} cx={x} cy={y} r="4" fill="var(--ifm-color-primary)" />;
         })}
         {labels}
       </svg>
-      
-      <div style={{ marginTop: '20px', padding: '15px', backgroundColor: 'var(--ifm-color-emphasis-100)', borderRadius: '8px' }}>
+
+      <div
+        style={{
+          marginTop: '20px',
+          padding: '15px',
+          backgroundColor: 'var(--ifm-color-emphasis-100)',
+          borderRadius: '8px',
+        }}
+      >
         <h3>Details: {data.tutorial}</h3>
         <ul style={{ textAlign: 'left', listStyle: 'none', padding: 0 }}>
-          {concepts.map((c, i) => (
-            <li key={i} style={{ marginBottom: '5px', display: 'flex', justifyContent: 'space-between' }}>
+          {concepts.map((c) => (
+            <li
+              key={c}
+              style={{ marginBottom: '5px', display: 'flex', justifyContent: 'space-between' }}
+            >
               <span>{c}</span>
               <span style={{ fontWeight: 'bold' }}>Niveau {data.levels[c]} / 10</span>
             </li>

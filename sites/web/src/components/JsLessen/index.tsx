@@ -1,5 +1,5 @@
-import type {ReactNode} from 'react';
-import {jsLessons} from '@site/src/data/jsLessons';
+import { jsLessons } from '@site/src/data/jsLessons';
+import type { ReactNode } from 'react';
 
 /**
  * Overzichtstabel van de JavaScript-lessen voor de /js-pagina. De lessen en hun
