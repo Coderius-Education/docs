@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ide.coderius.nl/sitemap.xml

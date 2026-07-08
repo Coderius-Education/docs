@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://algoritmes.coderius.nl/sitemap.xml
