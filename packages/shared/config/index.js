@@ -1,10 +1,12 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const {themes: prismThemes} = require('prism-react-renderer');
+const { themes: prismThemes } = require('prism-react-renderer');
 const transpileShared = require('../plugins/transpile-shared');
 const cursussenRoute = require('../plugins/cursussen-route');
-const {SITES, HOME, normalizeUrl} = require('../sites');
-const {resolvePackageDir} = transpileShared;
+const privacyRoute = require('../plugins/privacy-route');
+const matomoPlugin = require('../plugins/matomo');
+const { SITES, HOME, normalizeUrl } = require('../sites');
+const { resolvePackageDir } = transpileShared;
 
 // Alle cursussen behalve de huidige (op url gematcht). Voedt de footerkolom en
 // de navbar-dropdown, zodat cross-site links uit één registry komen.
@@ -63,11 +65,11 @@ function withSharedCustomCss(presets) {
     if (!Array.isArray(entry)) return entry;
     const [name, opts] = entry;
     if (name !== 'classic' || !opts) return entry;
-    const theme = {...opts.theme};
+    const theme = { ...opts.theme };
     const existing = theme.customCss;
     const local = existing == null ? [] : Array.isArray(existing) ? existing : [existing];
     theme.customCss = [SHARED_CSS, ...local];
-    return [name, {...opts, theme}];
+    return [name, { ...opts, theme }];
   });
 }
 
@@ -95,21 +97,22 @@ function createConfig(site = {}) {
     plugins,
     staticDirectories,
     future,
+    matomoSiteId,
     ...rest
   } = site;
 
   const seoTags = [];
   if (description)
-    seoTags.push({tagName: 'meta', attributes: {name: 'description', content: description}});
+    seoTags.push({ tagName: 'meta', attributes: { name: 'description', content: description } });
   if (keywords)
-    seoTags.push({tagName: 'meta', attributes: {name: 'keywords', content: keywords}});
+    seoTags.push({ tagName: 'meta', attributes: { name: 'keywords', content: keywords } });
 
   const themeConfig = {
-    colorMode: {respectPrefersColorScheme: true},
-    prism: {theme: prismThemes.github, darkTheme: prismThemes.dracula},
+    colorMode: { respectPrefersColorScheme: true },
+    prism: { theme: prismThemes.github, darkTheme: prismThemes.dracula },
     // Rechter inhoudsopgave toont standaard alleen H2-koppen. Een site mag dit
     // overschrijven via themeConfig.tableOfContents.
-    tableOfContents: {minHeadingLevel: 2, maxHeadingLevel: 2},
+    tableOfContents: { minHeadingLevel: 2, maxHeadingLevel: 2 },
     ...siteThemeConfig,
   };
   const others = otherSites(rest.url);
@@ -117,33 +120,44 @@ function createConfig(site = {}) {
   // Footer: zorg voor de CC-BY-NC copyright en één teruglink naar de homepage.
   // Cross-site navigatie tussen cursussen zit in de navbar-dropdown "Cursussen"
   // en op /cursussen; de footer wijst terug naar de overkoepelende coderius.nl.
-  const footer = themeConfig.footer ? {...themeConfig.footer} : {style: 'dark'};
+  const footer = themeConfig.footer ? { ...themeConfig.footer } : { style: 'dark' };
   if (!footer.copyright) footer.copyright = CC_BY_NC;
   const footerLinks = footer.links ? [...footer.links] : [];
   const hasHomeLink = footerLinks.some((col) =>
     (col.items || []).some((item) => item.href === HOME.url),
   );
+  const hasPrivacyLink = footerLinks.some((col) =>
+    (col.items || []).some((item) => item.to === '/privacy'),
+  );
   if (!hasHomeLink) {
-    footerLinks.push({title: HOME.label, items: [{label: 'Home', href: HOME.url}]});
+    footerLinks.push({
+      title: HOME.label,
+      items: [
+        { label: 'Home', href: HOME.url },
+        ...(hasPrivacyLink ? [] : [{ label: 'Privacy', to: '/privacy' }]),
+      ],
+    });
+  } else if (!hasPrivacyLink) {
+    footerLinks.push({ title: 'Privacy', items: [{ label: 'Privacy', to: '/privacy' }] });
   }
   footer.links = footerLinks;
   themeConfig.footer = footer;
 
   // Navbar: één "Cursussen"-dropdown (rechts) om naar een andere cursus te
   // springen, plus een link naar het volledige overzicht op /cursussen.
-  const navbar = themeConfig.navbar ? {...themeConfig.navbar} : {};
+  const navbar = themeConfig.navbar ? { ...themeConfig.navbar } : {};
   navbar.items = [
     ...(navbar.items || []),
     // Elke site heeft een docentenhandleiding op /docenten (zie stijlgids §15).
-    {to: '/docenten', label: 'Docenten', position: 'right'},
+    { to: '/docenten', label: 'Docenten', position: 'right' },
     {
       type: 'dropdown',
       label: 'Cursussen',
       position: 'right',
       items: [
-        {label: `${HOME.label} (home)`, href: HOME.url},
-        ...others.map((s) => ({label: s.label, href: s.url})),
-        {label: 'Alle cursussen', to: '/cursussen'},
+        { label: `${HOME.label} (home)`, href: HOME.url },
+        ...others.map((s) => ({ label: s.label, href: s.url })),
+        { label: 'Alle cursussen', to: '/cursussen' },
       ],
     },
   ];
@@ -159,8 +173,8 @@ function createConfig(site = {}) {
     // transpile-plugin voor gedeelde componenten leunt op de klassieke
     // webpack-loader (utils.getJSLoader). Sites zonder gedeelde componenten
     // mogen faster weer aanzetten via future.faster.
-    future: {v4: true, faster: false, ...future},
-    i18n: {defaultLocale: 'nl', locales: ['nl']},
+    future: { v4: true, faster: false, ...future },
+    i18n: { defaultLocale: 'nl', locales: ['nl'] },
     ...rest,
     // ---- door de factory beheerd (niet overschrijfbaar via ...rest) ----
     headTags: headTags || (seoTags.length ? seoTags : undefined),
@@ -168,9 +182,15 @@ function createConfig(site = {}) {
       staticDirectories ||
       uniqueDirs(['static', SHARED_STATIC, ...packageStaticDirs(sharedPackages)]),
     presets: withSharedCustomCss(presets),
-    plugins: [...(plugins || []), [transpileShared, {packages: sharedPackages}], cursussenRoute],
+    plugins: [
+      ...(plugins || []),
+      [transpileShared, { packages: sharedPackages }],
+      cursussenRoute,
+      privacyRoute,
+      [matomoPlugin, { siteId: matomoSiteId }],
+    ],
     themeConfig,
   };
 }
 
-module.exports = {createConfig, prismThemes, CC_BY_NC};
+module.exports = { createConfig, prismThemes, CC_BY_NC };

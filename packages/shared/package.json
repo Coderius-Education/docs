@@ -6,9 +6,13 @@
   "type": "commonjs",
   "exports": {
     "./config": "./config/index.js",
-    "./sites": {"types": "./sites.d.ts", "default": "./sites.js"},
+    "./sites": { "types": "./sites.d.ts", "default": "./sites.js" },
+    "./matomo": { "types": "./matomo.d.ts", "default": "./matomo.js" },
+    "./privacy-content": { "types": "./privacy-content.d.ts", "default": "./privacy-content.js" },
     "./plugins/transpile-shared": "./plugins/transpile-shared.js",
     "./plugins/cursussen-route": "./plugins/cursussen-route.js",
+    "./plugins/privacy-route": "./plugins/privacy-route.js",
+    "./plugins/matomo": "./plugins/matomo.js",
     "./css/custom.css": "./css/custom.css",
     "./components/HomepageHero": "./components/HomepageHero/index.tsx",
     "./components/HomepageHero/styles.module.css": "./components/HomepageHero/styles.module.css",
@@ -17,6 +21,8 @@
     "./components/Voorkennis": "./components/Voorkennis/index.tsx",
     "./components/Leerlijnen": "./components/Leerlijnen/index.tsx",
     "./components/Leerlijnen/CursussenPage": "./components/Leerlijnen/CursussenPage.tsx",
+    "./components/Privacy/PrivacyPage": "./components/Privacy/PrivacyPage.tsx",
+    "./components/Privacy/MatomoOptOut": "./components/Privacy/MatomoOptOut.tsx",
     "./package.json": "./package.json"
   },
   "dependencies": {

@@ -1,15 +1,15 @@
-import {createConfig} from '@coderius/shared/config';
+import { createConfig } from '@coderius/shared/config';
 
 export default createConfig({
   title: 'Fullstack met FastAPI — Coderius',
   tagline: 'Leer hier een Python back-end toe te voegen aan je website',
   url: 'https://fullstack.coderius.nl',
   projectName: 'fullstack-docs',
+  matomoSiteId: 11,
 
   description:
     'Leer een back-end bouwen met FastAPI (Python). Van frontend naar database, direct in je browser.',
-  keywords:
-    'fastapi leren, fullstack python, backend leren beginners, sqlite database python',
+  keywords: 'fastapi leren, fullstack python, backend leren beginners, sqlite database python',
 
   // Pyodide-componenten gedeeld; fullstack gebruikt de CDN (geen lokale setup).
   sharedPackages: ['@coderius/shared', '@coderius/python-runner'],
@@ -31,12 +31,16 @@ export default createConfig({
     image: 'img/docusaurus-social-card.jpg',
     navbar: {
       title: 'coderius-fullstack',
-      logo: {alt: 'My Site Logo', src: 'img/logo.svg'},
+      logo: { alt: 'My Site Logo', src: 'img/logo.svg' },
       items: [
-        {type: 'docSidebar', sidebarId: 'apiSidebar', position: 'left', label: 'FastAPI'},
-        {type: 'doc', docId: 'cheatsheet', position: 'left', label: 'Cheatsheet'},
-        {type: 'doc', docId: 'troubleshooting', position: 'left', label: 'Er gaat iets mis'},
-        {href: 'https://github.com/Coderius-Education/fullstack', label: 'GitHub', position: 'right'},
+        { type: 'docSidebar', sidebarId: 'apiSidebar', position: 'left', label: 'FastAPI' },
+        { type: 'doc', docId: 'cheatsheet', position: 'left', label: 'Cheatsheet' },
+        { type: 'doc', docId: 'troubleshooting', position: 'left', label: 'Er gaat iets mis' },
+        {
+          href: 'https://github.com/Coderius-Education/fullstack',
+          label: 'GitHub',
+          position: 'right',
+        },
       ],
     },
     footer: {

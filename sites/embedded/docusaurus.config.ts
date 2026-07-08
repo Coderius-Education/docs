@@ -1,17 +1,18 @@
-import {createConfig, prismThemes} from '@coderius/shared/config';
+import { createConfig, prismThemes } from '@coderius/shared/config';
 
 export default createConfig({
   title: 'Embedded Programmeren — Coderius',
   tagline: 'Van knipperende LED tot STM32: leer microcontrollers programmeren',
   url: 'https://embedded.coderius.nl',
   projectName: 'embedded-docs',
+  matomoSiteId: 13,
 
   description:
     'Leer embedded programmeren: van je eerste blink-LED in de Arduino IDE tot het configureren van IO en interfaces op een STM32. Simuleer alles in je browser.',
   keywords:
     'arduino leren, platformio tutorial, stm32 blue pill, embedded programmeren, microcontroller beginners, arduino uno blink, stm32 gpio, wokwi simulator',
 
-  markdown: {hooks: {onBrokenMarkdownLinks: 'throw'}},
+  markdown: { hooks: { onBrokenMarkdownLinks: 'throw' } },
 
   presets: [
     [
@@ -22,7 +23,7 @@ export default createConfig({
           editUrl: 'https://github.com/Coderius-Education/embedded-docs/tree/main/',
         },
         blog: false,
-        theme: {customCss: './src/css/custom.css'},
+        theme: { customCss: './src/css/custom.css' },
       },
     ],
   ],
@@ -31,12 +32,25 @@ export default createConfig({
     image: 'img/logo.svg',
     navbar: {
       title: 'Embedded',
-      logo: {alt: 'Coderius Embedded', src: 'img/logo.svg'},
+      logo: { alt: 'Coderius Embedded', src: 'img/logo.svg' },
       items: [
-        {type: 'docSidebar', sidebarId: 'tutorialSidebar', position: 'left', label: 'Begin hier!'},
-        {to: '/cheatsheet', label: 'Cheatsheet', position: 'left'},
-        {to: '/docs/er-gaat-iets-mis/upload-mislukt', label: 'Er gaat iets mis', position: 'left'},
-        {href: 'https://github.com/Coderius-Education/embedded-docs', label: 'GitHub', position: 'right'},
+        {
+          type: 'docSidebar',
+          sidebarId: 'tutorialSidebar',
+          position: 'left',
+          label: 'Begin hier!',
+        },
+        { to: '/cheatsheet', label: 'Cheatsheet', position: 'left' },
+        {
+          to: '/docs/er-gaat-iets-mis/upload-mislukt',
+          label: 'Er gaat iets mis',
+          position: 'left',
+        },
+        {
+          href: 'https://github.com/Coderius-Education/embedded-docs',
+          label: 'GitHub',
+          position: 'right',
+        },
       ],
     },
     footer: {

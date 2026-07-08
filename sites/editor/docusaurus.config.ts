@@ -1,11 +1,11 @@
-import {createConfig} from '@coderius/shared/config';
+import { createConfig } from '@coderius/shared/config';
 
 export default createConfig({
   title: 'VS Code & Git — Coderius',
-  tagline:
-    'Een cursus voor leerlingen die voor het eerst met een code editor aan de slag gaan',
+  tagline: 'Een cursus voor leerlingen die voor het eerst met een code editor aan de slag gaan',
   url: 'https://editor.coderius.nl',
   projectName: 'editor-docs',
+  matomoSiteId: 6,
 
   presets: [
     [
@@ -25,14 +25,29 @@ export default createConfig({
     image: 'img/docusaurus-social-card.jpg',
     navbar: {
       title: 'coderius-editor',
-      logo: {alt: 'coderius-editor', src: 'img/logo.svg'},
+      logo: { alt: 'coderius-editor', src: 'img/logo.svg' },
       items: [
-        {type: 'docSidebar', sidebarId: 'installatieSidebar', position: 'left', label: 'Installatie VS Code'},
-        {type: 'docSidebar', sidebarId: 'webSidebar', position: 'left', label: 'Website in VS Code'},
-        {type: 'docSidebar', sidebarId: 'pythonSidebar', position: 'left', label: 'Python in VS Code'},
-        {type: 'docSidebar', sidebarId: 'gitSidebar', position: 'left', label: 'Git & GitHub'},
+        {
+          type: 'docSidebar',
+          sidebarId: 'installatieSidebar',
+          position: 'left',
+          label: 'Installatie VS Code',
+        },
+        {
+          type: 'docSidebar',
+          sidebarId: 'webSidebar',
+          position: 'left',
+          label: 'Website in VS Code',
+        },
+        {
+          type: 'docSidebar',
+          sidebarId: 'pythonSidebar',
+          position: 'left',
+          label: 'Python in VS Code',
+        },
+        { type: 'docSidebar', sidebarId: 'gitSidebar', position: 'left', label: 'Git & GitHub' },
       ],
     },
-    footer: {style: 'dark', links: []},
+    footer: { style: 'dark', links: [] },
   },
 });
