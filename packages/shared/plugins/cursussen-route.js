@@ -8,7 +8,7 @@
 module.exports = function cursussenRoutePlugin() {
   return {
     name: 'coderius-cursussen-route',
-    contentLoaded({actions}) {
+    contentLoaded({ actions }) {
       actions.addRoute({
         path: '/cursussen',
         component: '@coderius/shared/components/Leerlijnen/CursussenPage',

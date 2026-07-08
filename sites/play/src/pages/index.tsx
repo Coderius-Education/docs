@@ -1,10 +1,10 @@
-import type {ReactNode} from 'react';
+import HomepageFeatures, { type FeatureItem } from '@coderius/shared/components/HomepageFeatures';
+import HomepageHero, { type HeroCta } from '@coderius/shared/components/HomepageHero';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
-import HomepageHero, {type HeroCta} from '@coderius/shared/components/HomepageHero';
-import HomepageFeatures, {type FeatureItem} from '@coderius/shared/components/HomepageFeatures';
+import type { ReactNode } from 'react';
 
-const ctas: HeroCta[] = [{label: 'Klik hier om te beginnen!', to: '/docs/eerste-keer-python/IA'}];
+const ctas: HeroCta[] = [{ label: 'Klik hier om te beginnen!', to: '/docs/eerste-keer-python/IA' }];
 
 const features: FeatureItem[] = [
   {
@@ -25,7 +25,7 @@ const features: FeatureItem[] = [
 ];
 
 export default function Home(): ReactNode {
-  const {siteConfig} = useDocusaurusContext();
+  const { siteConfig } = useDocusaurusContext();
   return (
     <Layout title={siteConfig.title} description={siteConfig.tagline}>
       <HomepageHero title="Coderius Play" ctas={ctas} />

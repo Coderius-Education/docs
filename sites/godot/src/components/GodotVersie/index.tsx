@@ -1,7 +1,7 @@
-import type {ReactNode} from 'react';
-import Admonition from '@theme/Admonition';
 import Link from '@docusaurus/Link';
-import {GODOT_VERSION} from '@site/src/data/godot';
+import { GODOT_VERSION } from '@site/src/data/godot';
+import Admonition from '@theme/Admonition';
+import type { ReactNode } from 'react';
 
 /**
  * Versie-banner bovenaan elke tutorial. Leest de doelversie uit één bron

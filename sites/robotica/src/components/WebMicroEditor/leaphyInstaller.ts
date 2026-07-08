@@ -44,7 +44,7 @@ export async function installLeaphyLibrary(
       throw new Error(`Kon ${entry.path} niet ophalen (HTTP ${fileRes.status}).`);
     }
     const bytes = new Uint8Array(await fileRes.arrayBuffer());
-    const boardPath = '/lib/' + entry.path;
+    const boardPath = `/lib/${entry.path}`;
     await fs.writeFile(boardPath, bytes);
     done += 1;
   }

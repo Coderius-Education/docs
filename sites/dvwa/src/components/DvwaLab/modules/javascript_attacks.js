@@ -74,7 +74,8 @@ echo $message;
   },
   high: {
     title: 'JavaScript Attacks — High',
-    description: 'SHA-256 hash van een samengesteld token — sterker maar server-side validatie ontbreekt',
+    description:
+      'SHA-256 hash van een samengesteld token — sterker maar server-side validatie ontbreekt',
     method: 'POST',
     php: `<?php
 $message = '';
@@ -115,7 +116,8 @@ echo $message;
   },
   impossible: {
     title: 'JavaScript Attacks — Impossible',
-    description: 'Server-side token generatie en validatie — client-side code kan niet worden vertrouwd',
+    description:
+      'Server-side token generatie en validatie — client-side code kan niet worden vertrouwd',
     method: 'POST',
     php: `<?php
 $secret = 'dvwa_server_secret_2024';

@@ -101,7 +101,8 @@ echo $message;
   },
   impossible: {
     title: 'CSRF — Impossible',
-    description: 'Veilige implementatie: huidig wachtwoord vereist + anti-CSRF token + prepared statements',
+    description:
+      'Veilige implementatie: huidig wachtwoord vereist + anti-CSRF token + prepared statements',
     method: 'GET',
     php: `<?php
 $db = new SQLite3('/tmp/dvwa.db');

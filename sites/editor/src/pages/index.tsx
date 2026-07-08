@@ -1,10 +1,10 @@
-import type {ReactNode} from 'react';
+import HomepageFeatures, { type FeatureItem } from '@coderius/shared/components/HomepageFeatures';
+import HomepageHero, { type HeroCta } from '@coderius/shared/components/HomepageHero';
 import Layout from '@theme/Layout';
-import HomepageHero, {type HeroCta} from '@coderius/shared/components/HomepageHero';
-import HomepageFeatures, {type FeatureItem} from '@coderius/shared/components/HomepageFeatures';
+import type { ReactNode } from 'react';
 
 const ctas: HeroCta[] = [
-  {label: 'Klik hier om te beginnen met VS Code', to: '/installatie-vscode'},
+  { label: 'Klik hier om te beginnen met VS Code', to: '/installatie-vscode' },
 ];
 
 const features: FeatureItem[] = [

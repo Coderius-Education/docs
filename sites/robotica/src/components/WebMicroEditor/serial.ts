@@ -9,6 +9,17 @@ interface SerialPort {
   close(): Promise<void>;
 }
 
+interface SerialPortFilter {
+  usbVendorId?: number;
+  usbProductId?: number;
+}
+
+interface NavigatorWithSerial extends Navigator {
+  serial: {
+    requestPort(options?: { filters: SerialPortFilter[] }): Promise<SerialPort>;
+  };
+}
+
 type PendingRead =
   | {
       kind: 'bytes';
@@ -70,11 +81,16 @@ export class SerialClient {
 
   async connect(): Promise<void> {
     if (!SerialClient.isSupported()) throw new Error('WebSerial niet ondersteund in deze browser.');
-    const port = await (navigator as any).serial.requestPort({ filters: RP2040_PORT_FILTERS });
+    const port = await (navigator as NavigatorWithSerial).serial.requestPort({
+      filters: RP2040_PORT_FILTERS,
+    });
     await port.open({ baudRate: 115200 });
     this.port = port;
-    this.reader = port.readable!.getReader();
-    this.writer = port.writable!.getWriter();
+    if (!port.readable || !port.writable) {
+      throw new Error('Serieel apparaat heeft geen readable/writable stream na open().');
+    }
+    this.reader = port.readable.getReader();
+    this.writer = port.writable.getWriter();
     this.buffer = [];
     this.mode = 'normal';
     this.readLoopDone = this.readLoop();
@@ -212,7 +228,7 @@ export class SerialClient {
   /** Type a line into the normal REPL (for ad-hoc commands). */
   async typeLine(line: string): Promise<void> {
     if (this.mode !== 'normal') throw new Error('not in normal REPL');
-    await this.writeRaw(line + '\r\n');
+    await this.writeRaw(`${line}\r\n`);
   }
 
   /**

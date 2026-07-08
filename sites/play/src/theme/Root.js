@@ -1,6 +1,6 @@
 import React from 'react';
-import { CodeRunnerProvider } from '../components/CodeRunner/context';
 import Sidebar from '../components/CodeRunner/Sidebar';
+import { CodeRunnerProvider } from '../components/CodeRunner/context';
 
 export default function Root({ children }) {
   return (

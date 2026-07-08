@@ -1,8 +1,4 @@
-import type {
-  AlgorithmExercise,
-  AlgorithmInput,
-  AlgorithmModelId,
-} from './algorithmModels';
+import type { AlgorithmExercise, AlgorithmInput, AlgorithmModelId } from './algorithmModels';
 
 export type SteppingStoneModelId =
   | 'linear-iterate'
@@ -52,7 +48,7 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     title: 'Door de lijst lopen',
     summary: 'Controleer of je elk element precies een keer bezoekt.',
     visual: {
-      input: {values: [3, 1, 4, 1, 5], target: 5},
+      input: { values: [3, 1, 4, 1, 5], target: 5 },
       focusStep: 1,
       hint: 'Let op de actieve cel: die schuift bij elke stap een positie naar rechts.',
     },
@@ -63,9 +59,9 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     # Schrijf je oplossing hier
     return resultaat`,
       tests: [
-        {label: 'standaard lijst', args: [[3, 1, 4, 1, 5]], expected: [3, 1, 4, 1, 5]},
-        {label: 'lege lijst', args: [[]], expected: []},
-        {label: 'negatieve getallen', args: [[-2, 0, 6]], expected: [-2, 0, 6]},
+        { label: 'standaard lijst', args: [[3, 1, 4, 1, 5]], expected: [3, 1, 4, 1, 5] },
+        { label: 'lege lijst', args: [[]], expected: [] },
+        { label: 'negatieve getallen', args: [[-2, 0, 6]], expected: [-2, 0, 6] },
       ],
     },
   },
@@ -75,7 +71,7 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     title: 'Vergelijken met het doel',
     summary: 'Oefen de boolean die zegt of de huidige waarde raak is.',
     visual: {
-      input: {values: [3, 1, 4, 1, 5], target: 4},
+      input: { values: [3, 1, 4, 1, 5], target: 4 },
       focusStep: 2,
       hint: 'De vergelijking gebeurt tussen de actieve waarde en het doelgetal.',
     },
@@ -85,9 +81,9 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     # Schrijf je oplossing hier
     return None`,
       tests: [
-        {label: 'raak', args: [4, 4], expected: true},
-        {label: 'mis', args: [3, 4], expected: false},
-        {label: 'negatieve match', args: [-2, -2], expected: true},
+        { label: 'raak', args: [4, 4], expected: true },
+        { label: 'mis', args: [3, 4], expected: false },
+        { label: 'negatieve match', args: [-2, -2], expected: true },
       ],
     },
   },
@@ -97,7 +93,7 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     title: 'Index teruggeven',
     summary: 'Return de index zodra je de eerste match ziet.',
     visual: {
-      input: {values: [3, 1, 4, 1, 5], target: 1},
+      input: { values: [3, 1, 4, 1, 5], target: 1 },
       focusStep: 2,
       hint: 'Bij de eerste match stopt de functie meteen; latere matches tellen niet meer.',
     },
@@ -107,9 +103,9 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     # Schrijf je oplossing hier
     return None`,
       tests: [
-        {label: 'waarde in het midden', args: [[3, 1, 4, 1, 5], 4], expected: 2},
-        {label: 'eerste match telt', args: [[3, 1, 4, 1, 5], 1], expected: 1},
-        {label: 'eerste element', args: [[7, 8, 9], 7], expected: 0},
+        { label: 'waarde in het midden', args: [[3, 1, 4, 1, 5], 4], expected: 2 },
+        { label: 'eerste match telt', args: [[3, 1, 4, 1, 5], 1], expected: 1 },
+        { label: 'eerste element', args: [[7, 8, 9], 7], expected: 0 },
       ],
     },
   },
@@ -119,7 +115,7 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     title: 'Niet gevonden',
     summary: 'Plaats de fallback pas na de lus.',
     visual: {
-      input: {values: [3, 1, 4, 1, 5], target: 9},
+      input: { values: [3, 1, 4, 1, 5], target: 9 },
       focusStep: 6,
       hint: 'Als de actieve index voorbij het laatste element is, mag pas -1 terugkomen.',
     },
@@ -129,9 +125,9 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     # Schrijf je oplossing hier
     return None`,
       tests: [
-        {label: 'gevonden', args: [[3, 1, 4, 1, 5], 4], expected: 2},
-        {label: 'niet gevonden', args: [[3, 1, 4, 1, 5], 9], expected: -1},
-        {label: 'lege lijst', args: [[], 9], expected: -1},
+        { label: 'gevonden', args: [[3, 1, 4, 1, 5], 4], expected: 2 },
+        { label: 'niet gevonden', args: [[3, 1, 4, 1, 5], 9], expected: -1 },
+        { label: 'lege lijst', args: [[], 9], expected: -1 },
       ],
     },
   },
@@ -141,7 +137,7 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     title: 'Maximum bijwerken',
     summary: 'Kies tussen het oude maximum en de nieuwe waarde.',
     visual: {
-      input: {values: [3, 7, 2, 9, 4]},
+      input: { values: [3, 7, 2, 9, 4] },
       focusStep: 2,
       hint: 'De max-markering springt alleen wanneer de actieve waarde groter is.',
     },
@@ -151,9 +147,9 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     # Schrijf je oplossing hier
     return None`,
       tests: [
-        {label: 'nieuw wint', args: [3, 7], expected: 7},
-        {label: 'oud blijft', args: [7, 2], expected: 7},
-        {label: 'negatief', args: [-3, -1], expected: -1},
+        { label: 'nieuw wint', args: [3, 7], expected: 7 },
+        { label: 'oud blijft', args: [7, 2], expected: 7 },
+        { label: 'negatief', args: [-3, -1], expected: -1 },
       ],
     },
   },
@@ -163,7 +159,7 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     title: 'Vergelijking herhalen',
     summary: 'Gebruik dezelfde update bij elke waarde in de lijst.',
     visual: {
-      input: {values: [3, 7, 2, 9, 4]},
+      input: { values: [3, 7, 2, 9, 4] },
       focusStep: 4,
       hint: 'Elke actieve waarde krijgt dezelfde vraag: is dit groter dan het maximum tot nu toe?',
     },
@@ -174,9 +170,9 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     # Schrijf je oplossing hier
     return max_tot_nu_toe`,
       tests: [
-        {label: 'positieve lijst', args: [[3, 7, 2, 9, 4]], expected: 9},
-        {label: 'een update', args: [[1, 5, 2]], expected: 5},
-        {label: 'geen lege lijst nodig', args: [[6]], expected: 6},
+        { label: 'positieve lijst', args: [[3, 7, 2, 9, 4]], expected: 9 },
+        { label: 'een update', args: [[1, 5, 2]], expected: 5 },
+        { label: 'geen lege lijst nodig', args: [[6]], expected: 6 },
       ],
     },
   },
@@ -186,7 +182,7 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     title: 'Veilige startwaarde',
     summary: 'Start met een echte waarde uit de lijst.',
     visual: {
-      input: {values: [-3, -1, -7]},
+      input: { values: [-3, -1, -7] },
       focusStep: 2,
       hint: 'De max-markering begint op index 0, niet op een verzonnen waarde zoals 0.',
     },
@@ -196,9 +192,9 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     # Schrijf je oplossing hier
     return None`,
       tests: [
-        {label: 'positieve lijst', args: [[3, 7, 2, 9, 4]], expected: 9},
-        {label: 'alleen negatief', args: [[-3, -1, -7]], expected: -1},
-        {label: 'een element', args: [[42]], expected: 42},
+        { label: 'positieve lijst', args: [[3, 7, 2, 9, 4]], expected: 9 },
+        { label: 'alleen negatief', args: [[-3, -1, -7]], expected: -1 },
+        { label: 'een element', args: [[42]], expected: 42 },
       ],
     },
   },
@@ -208,7 +204,7 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     title: 'Twee startwaardes',
     summary: 'Zet klein en groot allebei op het eerste element.',
     visual: {
-      input: {values: [5, 2, 8, 1, 7, 4]},
+      input: { values: [5, 2, 8, 1, 7, 4] },
       focusStep: 0,
       hint: 'In de eerste stap wijzen min en max naar dezelfde echte lijstwaarde.',
     },
@@ -218,9 +214,9 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     # Schrijf je oplossing hier
     return None`,
       tests: [
-        {label: 'standaard lijst', args: [[5, 2, 8]], expected: [5, 5]},
-        {label: 'negatieve lijst', args: [[-3, -1, -7]], expected: [-3, -3]},
-        {label: 'een element', args: [[42]], expected: [42, 42]},
+        { label: 'standaard lijst', args: [[5, 2, 8]], expected: [5, 5] },
+        { label: 'negatieve lijst', args: [[-3, -1, -7]], expected: [-3, -3] },
+        { label: 'een element', args: [[42]], expected: [42, 42] },
       ],
     },
   },
@@ -230,7 +226,7 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     title: 'Klein en groot updaten',
     summary: 'Werk twee accumulators bij in dezelfde lus.',
     visual: {
-      input: {values: [5, 2, 8, 1, 7, 4]},
+      input: { values: [5, 2, 8, 1, 7, 4] },
       focusStep: 4,
       hint: 'Soms verandert klein, soms groot, en soms geen van beide.',
     },
@@ -240,9 +236,9 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     # Schrijf je oplossing hier
     return None`,
       tests: [
-        {label: 'gemengde lijst', args: [[5, 2, 8, 1, 7, 4]], expected: [1, 8]},
-        {label: 'alleen negatief', args: [[-5, -1, -9, -2]], expected: [-9, -1]},
-        {label: 'allemaal gelijk', args: [[3, 3, 3]], expected: [3, 3]},
+        { label: 'gemengde lijst', args: [[5, 2, 8, 1, 7, 4]], expected: [1, 8] },
+        { label: 'alleen negatief', args: [[-5, -1, -9, -2]], expected: [-9, -1] },
+        { label: 'allemaal gelijk', args: [[3, 3, 3]], expected: [3, 3] },
       ],
     },
   },
@@ -252,7 +248,7 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     title: 'Tuple teruggeven',
     summary: 'Return twee waardes in een vaste volgorde: klein, groot.',
     visual: {
-      input: {values: [5, 2, 8, 1, 7, 4]},
+      input: { values: [5, 2, 8, 1, 7, 4] },
       focusStep: 7,
       hint: 'De eindstap combineert de twee accumulators tot een antwoord.',
     },
@@ -262,9 +258,9 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     # Schrijf je oplossing hier
     return None`,
       tests: [
-        {label: 'standaard lijst', args: [[5, 2, 8, 1, 7, 4]], expected: [1, 8]},
-        {label: 'een element', args: [[42]], expected: [42, 42]},
-        {label: 'negatieve lijst', args: [[-3, -1, -7]], expected: [-7, -1]},
+        { label: 'standaard lijst', args: [[5, 2, 8, 1, 7, 4]], expected: [1, 8] },
+        { label: 'een element', args: [[42]], expected: [42, 42] },
+        { label: 'negatieve lijst', args: [[-3, -1, -7]], expected: [-7, -1] },
       ],
     },
   },
@@ -274,7 +270,7 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     title: 'Zoekgrenzen',
     summary: 'Bereken de eerste en laatste geldige index.',
     visual: {
-      input: {values: [1, 3, 5, 7, 9, 11, 13, 15], target: 11},
+      input: { values: [1, 3, 5, 7, 9, 11, 13, 15], target: 11 },
       focusStep: 0,
       hint: 'Laag en hoog omsluiten het deel van de lijst dat nog mogelijk is.',
     },
@@ -284,9 +280,9 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     # Schrijf je oplossing hier
     return None`,
       tests: [
-        {label: 'acht elementen', args: [[1, 3, 5, 7, 9, 11, 13, 15]], expected: [0, 7]},
-        {label: 'een element', args: [[42]], expected: [0, 0]},
-        {label: 'lege lijst', args: [[]], expected: [0, -1]},
+        { label: 'acht elementen', args: [[1, 3, 5, 7, 9, 11, 13, 15]], expected: [0, 7] },
+        { label: 'een element', args: [[42]], expected: [0, 0] },
+        { label: 'lege lijst', args: [[]], expected: [0, -1] },
       ],
     },
   },
@@ -296,7 +292,7 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     title: 'Midden berekenen',
     summary: 'Gebruik integerdeling zodat de midden-index altijd een geheel getal is.',
     visual: {
-      input: {values: [1, 3, 5, 7, 9, 11, 13, 15], target: 11},
+      input: { values: [1, 3, 5, 7, 9, 11, 13, 15], target: 11 },
       focusStep: 1,
       hint: 'De mid-markering valt altijd tussen laag en hoog.',
     },
@@ -306,9 +302,9 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     # Schrijf je oplossing hier
     return None`,
       tests: [
-        {label: 'hele lijst', args: [0, 7], expected: 3},
-        {label: 'een element', args: [4, 4], expected: 4},
-        {label: 'deelgebied', args: [2, 5], expected: 3},
+        { label: 'hele lijst', args: [0, 7], expected: 3 },
+        { label: 'een element', args: [4, 4], expected: 4 },
+        { label: 'deelgebied', args: [2, 5], expected: 3 },
       ],
     },
   },
@@ -318,7 +314,7 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     title: 'Helft kiezen',
     summary: 'Vergelijk het midden en geef aan welk zoekgebied overblijft.',
     visual: {
-      input: {values: [1, 3, 5, 7, 9, 11, 13, 15], target: 11},
+      input: { values: [1, 3, 5, 7, 9, 11, 13, 15], target: 11 },
       focusStep: 2,
       hint: 'Na de vergelijking wordt de linker- of rechterhelft weggegooid.',
     },
@@ -329,9 +325,17 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     # Schrijf je oplossing hier
     return None`,
       tests: [
-        {label: 'rechter helft', args: [[1, 3, 5, 7, 9, 11, 13, 15], 11, 0, 7], expected: ['rechts', 4, 7]},
-        {label: 'linker helft', args: [[1, 3, 5, 7, 9, 11, 13, 15], 3, 0, 7], expected: ['links', 0, 2]},
-        {label: 'direct gevonden', args: [[1, 3, 5, 7, 9], 5, 0, 4], expected: ['gevonden', 2]},
+        {
+          label: 'rechter helft',
+          args: [[1, 3, 5, 7, 9, 11, 13, 15], 11, 0, 7],
+          expected: ['rechts', 4, 7],
+        },
+        {
+          label: 'linker helft',
+          args: [[1, 3, 5, 7, 9, 11, 13, 15], 3, 0, 7],
+          expected: ['links', 0, 2],
+        },
+        { label: 'direct gevonden', args: [[1, 3, 5, 7, 9], 5, 0, 4], expected: ['gevonden', 2] },
       ],
     },
   },
@@ -341,7 +345,7 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     title: 'Herhalen met while',
     summary: 'Blijf halveren zolang het zoekgebied niet leeg is.',
     visual: {
-      input: {values: [1, 3, 5, 7, 9, 11, 13, 15], target: 11},
+      input: { values: [1, 3, 5, 7, 9, 11, 13, 15], target: 11 },
       focusStep: 3,
       hint: 'De tweede ronde gebruikt de grenzen die in de eerste ronde zijn overgebleven.',
     },
@@ -351,9 +355,9 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     # Schrijf je oplossing hier
     return None`,
       tests: [
-        {label: 'gevonden rechts', args: [[1, 3, 5, 7, 9, 11, 13, 15], 11], expected: 5},
-        {label: 'gevonden links', args: [[1, 3, 5, 7, 9, 11, 13, 15], 3], expected: 1},
-        {label: 'een element', args: [[42], 42], expected: 0},
+        { label: 'gevonden rechts', args: [[1, 3, 5, 7, 9, 11, 13, 15], 11], expected: 5 },
+        { label: 'gevonden links', args: [[1, 3, 5, 7, 9, 11, 13, 15], 3], expected: 1 },
+        { label: 'een element', args: [[42], 42], expected: 0 },
       ],
     },
   },
@@ -363,7 +367,7 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     title: 'Niet gevonden',
     summary: 'Return -1 wanneer laag voorbij hoog schuift.',
     visual: {
-      input: {values: [1, 3, 5, 7, 9, 11, 13, 15], target: 4},
+      input: { values: [1, 3, 5, 7, 9, 11, 13, 15], target: 4 },
       focusStep: 5,
       hint: 'Laag groter dan hoog betekent: er is geen geldig zoekgebied meer.',
     },
@@ -373,9 +377,9 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     # Schrijf je oplossing hier
     return None`,
       tests: [
-        {label: 'gevonden', args: [[1, 3, 5, 7, 9], 7], expected: 3},
-        {label: 'niet gevonden', args: [[1, 3, 5, 7, 9], 4], expected: -1},
-        {label: 'lege lijst', args: [[], 5], expected: -1},
+        { label: 'gevonden', args: [[1, 3, 5, 7, 9], 7], expected: 3 },
+        { label: 'niet gevonden', args: [[1, 3, 5, 7, 9], 4], expected: -1 },
+        { label: 'lege lijst', args: [[], 5], expected: -1 },
       ],
     },
   },
@@ -385,7 +389,7 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     title: 'Index van kleinste',
     summary: 'Bewaar de positie van de kleinste waarde, niet alleen de waarde zelf.',
     visual: {
-      input: {values: [5, 2, 8, 1, 4]},
+      input: { values: [5, 2, 8, 1, 4] },
       focusStep: 3,
       hint: 'De min-markering beweegt wanneer de scan een kleinere waarde vindt.',
     },
@@ -395,9 +399,9 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     # Schrijf je oplossing hier
     return None`,
       tests: [
-        {label: 'standaard lijst', args: [[5, 2, 8, 1, 4]], expected: 3},
-        {label: 'eerste is kleinste', args: [[10, 20, 30]], expected: 0},
-        {label: 'gelijke waardes', args: [[3, 3, 3]], expected: 0},
+        { label: 'standaard lijst', args: [[5, 2, 8, 1, 4]], expected: 3 },
+        { label: 'eerste is kleinste', args: [[10, 20, 30]], expected: 0 },
+        { label: 'gelijke waardes', args: [[3, 3, 3]], expected: 0 },
       ],
     },
   },
@@ -407,7 +411,7 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     title: 'Twee plekken ruilen',
     summary: 'Swap twee indexen zonder een waarde kwijt te raken.',
     visual: {
-      input: {values: [5, 2, 8, 1, 4]},
+      input: { values: [5, 2, 8, 1, 4] },
       focusStep: 6,
       hint: 'Bij een swap wisselen twee cellen tegelijk van rol.',
     },
@@ -417,9 +421,9 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     # Schrijf je oplossing hier
     return lijst`,
       tests: [
-        {label: 'voorste met kleinste', args: [[5, 2, 8, 1, 4], 0, 3], expected: [1, 2, 8, 5, 4]},
-        {label: 'buren', args: [[1, 2, 3], 1, 2], expected: [1, 3, 2]},
-        {label: 'zelfde plek', args: [[4, 5], 0, 0], expected: [4, 5]},
+        { label: 'voorste met kleinste', args: [[5, 2, 8, 1, 4], 0, 3], expected: [1, 2, 8, 5, 4] },
+        { label: 'buren', args: [[1, 2, 3], 1, 2], expected: [1, 3, 2] },
+        { label: 'zelfde plek', args: [[4, 5], 0, 0], expected: [4, 5] },
       ],
     },
   },
@@ -429,7 +433,7 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     title: 'Zoeken vanaf start',
     summary: 'Zoek het kleinste alleen in het ongesorteerde deel.',
     visual: {
-      input: {values: [1, 2, 8, 5, 4]},
+      input: { values: [1, 2, 8, 5, 4] },
       focusStep: 8,
       hint: 'De gesorteerde prefix blijft met rust; de scan begint pas bij i.',
     },
@@ -439,9 +443,9 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     # Schrijf je oplossing hier
     return None`,
       tests: [
-        {label: 'hele lijst', args: [[1, 2, 8, 5, 4], 0], expected: 0},
-        {label: 'vanaf 2', args: [[1, 2, 8, 5, 4], 2], expected: 4},
-        {label: 'laatste twee', args: [[1, 2, 8, 5, 4], 3], expected: 4},
+        { label: 'hele lijst', args: [[1, 2, 8, 5, 4], 0], expected: 0 },
+        { label: 'vanaf 2', args: [[1, 2, 8, 5, 4], 2], expected: 4 },
+        { label: 'laatste twee', args: [[1, 2, 8, 5, 4], 3], expected: 4 },
       ],
     },
   },
@@ -451,7 +455,7 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     title: 'Buitenste lus',
     summary: 'Herhaal zoeken en swappen voor elke positie.',
     visual: {
-      input: {values: [5, 2, 8, 1, 4]},
+      input: { values: [5, 2, 8, 1, 4] },
       focusStep: 10,
       hint: 'Na elke ronde groeit de gesorteerde prefix links.',
     },
@@ -461,9 +465,9 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     # Schrijf je oplossing hier
     return None`,
       tests: [
-        {label: 'standaard lijst', args: [[5, 2, 8, 1, 4]], expected: [1, 2, 4, 5, 8]},
-        {label: 'al gesorteerd', args: [[1, 2, 3]], expected: [1, 2, 3]},
-        {label: 'leeg', args: [[]], expected: []},
+        { label: 'standaard lijst', args: [[5, 2, 8, 1, 4]], expected: [1, 2, 4, 5, 8] },
+        { label: 'al gesorteerd', args: [[1, 2, 3]], expected: [1, 2, 3] },
+        { label: 'leeg', args: [[]], expected: [] },
       ],
     },
   },
@@ -473,7 +477,7 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     title: 'Buren vergelijken',
     summary: 'Detecteer of twee opeenvolgende waardes verkeerd staan.',
     visual: {
-      input: {values: [3, 1, 4, 1, 5]},
+      input: { values: [3, 1, 4, 1, 5] },
       focusStep: 1,
       hint: 'Bubble sort kijkt steeds naar een paar buren: i en i+1.',
     },
@@ -483,9 +487,9 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     # Schrijf je oplossing hier
     return None`,
       tests: [
-        {label: 'fout paar', args: [[3, 1, 4, 1, 5], 0], expected: true},
-        {label: 'goed paar', args: [[3, 1, 4, 1, 5], 1], expected: false},
-        {label: 'later fout paar', args: [[3, 1, 4, 1, 5], 2], expected: true},
+        { label: 'fout paar', args: [[3, 1, 4, 1, 5], 0], expected: true },
+        { label: 'goed paar', args: [[3, 1, 4, 1, 5], 1], expected: false },
+        { label: 'later fout paar', args: [[3, 1, 4, 1, 5], 2], expected: true },
       ],
     },
   },
@@ -495,7 +499,7 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     title: 'Swap als buren fout staan',
     summary: 'Ruil alleen wanneer links groter is dan rechts.',
     visual: {
-      input: {values: [3, 1, 4, 1, 5]},
+      input: { values: [3, 1, 4, 1, 5] },
       focusStep: 2,
       hint: 'Bij een fout paar zie je de swap-markering op beide buren.',
     },
@@ -505,9 +509,9 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     # Schrijf je oplossing hier
     return lijst`,
       tests: [
-        {label: 'swap nodig', args: [[3, 1, 4, 1, 5], 0], expected: [1, 3, 4, 1, 5]},
-        {label: 'geen swap', args: [[1, 3, 4, 1, 5], 1], expected: [1, 3, 4, 1, 5]},
-        {label: 'later paar', args: [[1, 3, 4, 1, 5], 2], expected: [1, 3, 1, 4, 5]},
+        { label: 'swap nodig', args: [[3, 1, 4, 1, 5], 0], expected: [1, 3, 4, 1, 5] },
+        { label: 'geen swap', args: [[1, 3, 4, 1, 5], 1], expected: [1, 3, 4, 1, 5] },
+        { label: 'later paar', args: [[1, 3, 4, 1, 5], 2], expected: [1, 3, 1, 4, 5] },
       ],
     },
   },
@@ -517,7 +521,7 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     title: 'Een pass',
     summary: 'Loop langs alle buren zodat de grootste naar achteren borrelt.',
     visual: {
-      input: {values: [4, 2, 7, 1, 3]},
+      input: { values: [4, 2, 7, 1, 3] },
       focusStep: 5,
       hint: 'Na een volledige pass staat de grootste waarde rechts op zijn plek.',
     },
@@ -527,9 +531,9 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     # Schrijf je oplossing hier
     return None`,
       tests: [
-        {label: 'standaard lijst', args: [[3, 1, 4, 1, 5]], expected: [1, 3, 1, 4, 5]},
-        {label: 'omgekeerd', args: [[5, 4, 3, 2, 1]], expected: [4, 3, 2, 1, 5]},
-        {label: 'al gesorteerd', args: [[1, 2, 3]], expected: [1, 2, 3]},
+        { label: 'standaard lijst', args: [[3, 1, 4, 1, 5]], expected: [1, 3, 1, 4, 5] },
+        { label: 'omgekeerd', args: [[5, 4, 3, 2, 1]], expected: [4, 3, 2, 1, 5] },
+        { label: 'al gesorteerd', args: [[1, 2, 3]], expected: [1, 2, 3] },
       ],
     },
   },
@@ -539,7 +543,7 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     title: 'Meerdere passes',
     summary: 'Herhaal de pass vaak genoeg om de hele lijst te sorteren.',
     visual: {
-      input: {values: [3, 1, 4, 1, 5]},
+      input: { values: [3, 1, 4, 1, 5] },
       focusStep: 8,
       hint: 'De gesorteerde suffix rechts groeit na elke ronde.',
     },
@@ -549,9 +553,9 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     # Schrijf je oplossing hier
     return None`,
       tests: [
-        {label: 'standaard lijst', args: [[3, 1, 4, 1, 5]], expected: [1, 1, 3, 4, 5]},
-        {label: 'omgekeerd', args: [[5, 4, 3, 2, 1]], expected: [1, 2, 3, 4, 5]},
-        {label: 'leeg', args: [[]], expected: []},
+        { label: 'standaard lijst', args: [[3, 1, 4, 1, 5]], expected: [1, 1, 3, 4, 5] },
+        { label: 'omgekeerd', args: [[5, 4, 3, 2, 1]], expected: [1, 2, 3, 4, 5] },
+        { label: 'leeg', args: [[]], expected: [] },
       ],
     },
   },
@@ -561,7 +565,7 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     title: 'Early-exit',
     summary: 'Stop zodra een hele ronde geen swap meer had.',
     visual: {
-      input: {values: [1, 2, 3, 4, 5]},
+      input: { values: [1, 2, 3, 4, 5] },
       focusStep: 5,
       hint: 'Zonder swap in een ronde weet je dat de lijst klaar is.',
     },
@@ -572,17 +576,15 @@ export const steppingStoneModels: SteppingStoneModelDefinition[] = [
     # Schrijf je oplossing hier
     return lijst, rondes`,
       tests: [
-        {label: 'al gesorteerd stopt snel', args: [[1, 2, 3, 4]], expected: [[1, 2, 3, 4], 1]},
-        {label: 'bijna gesorteerd', args: [[1, 3, 2, 4]], expected: [[1, 2, 3, 4], 2]},
-        {label: 'omgekeerd', args: [[3, 2, 1]], expected: [[1, 2, 3], 2]},
+        { label: 'al gesorteerd stopt snel', args: [[1, 2, 3, 4]], expected: [[1, 2, 3, 4], 1] },
+        { label: 'bijna gesorteerd', args: [[1, 3, 2, 4]], expected: [[1, 2, 3, 4], 2] },
+        { label: 'omgekeerd', args: [[3, 2, 1]], expected: [[1, 2, 3], 2] },
       ],
     },
   },
 ];
 
-export function getSteppingStoneModel(
-  id: SteppingStoneModelId,
-): SteppingStoneModelDefinition {
+export function getSteppingStoneModel(id: SteppingStoneModelId): SteppingStoneModelDefinition {
   const model = steppingStoneModels.find((entry) => entry.id === id);
   if (!model) {
     throw new Error(`Onbekend bouwsteen-model: ${id}`);

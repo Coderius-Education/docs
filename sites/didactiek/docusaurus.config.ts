@@ -1,4 +1,4 @@
-import {createConfig, prismThemes} from '@coderius/shared/config';
+import { createConfig, prismThemes } from '@coderius/shared/config';
 
 export default createConfig({
   title: 'Didactiek — Coderius',
@@ -6,6 +6,7 @@ export default createConfig({
   url: 'https://didactiek.coderius.nl',
   organizationName: 'coderius',
   projectName: 'coderius-didactiek',
+  matomoSiteId: 14,
   deploymentBranch: 'gh-pages',
   trailingSlash: false,
 
@@ -24,7 +25,7 @@ export default createConfig({
           numberPrefixParser: false,
         },
         blog: false,
-        theme: {customCss: './src/css/custom.css'},
+        theme: { customCss: './src/css/custom.css' },
       },
     ],
   ],
@@ -32,10 +33,10 @@ export default createConfig({
   themeConfig: {
     navbar: {
       title: 'Coderius Didactiek',
-      logo: {alt: 'Coderius Didactiek logo', src: 'img/logo.svg'},
+      logo: { alt: 'Coderius Didactiek logo', src: 'img/logo.svg' },
       items: [
-        {to: '/', label: 'Tips', position: 'left'},
-        {type: 'docSidebar', sidebarId: 'bronnenSidebar', position: 'left', label: 'Bronnen'},
+        { to: '/', label: 'Tips', position: 'left' },
+        { type: 'docSidebar', sidebarId: 'bronnenSidebar', position: 'left', label: 'Bronnen' },
       ],
     },
     prism: {

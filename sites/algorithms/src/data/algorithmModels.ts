@@ -1,11 +1,11 @@
 import {
+  type TraceStep,
   traceBinarySearch,
   traceBubbleSort,
   traceLinearSearch,
   traceMaximum,
   traceMinAndMax,
   traceSelectionSort,
-  type TraceStep,
 } from '../lib/algorithmTraces';
 
 export type AlgorithmModelId =
@@ -80,7 +80,7 @@ export const algorithmModels: AlgorithmModelDefinition[] = [
         help: 'Het getal dat je zoekt.',
       },
     ],
-    defaultInput: {values: [3, 1, 4, 1, 5, 9, 2, 6], target: 5},
+    defaultInput: { values: [3, 1, 4, 1, 5, 9, 2, 6], target: 5 },
     trace: (input) => traceLinearSearch(input.values, targetOrZero(input)),
     traceArgs: (input) => [[...input.values], targetOrZero(input)],
     exercise: {
@@ -89,10 +89,10 @@ export const algorithmModels: AlgorithmModelDefinition[] = [
     # Schrijf je oplossing hier
     return None`,
       tests: [
-        {label: 'gevonden in het midden', args: [[3, 1, 4, 1, 5], 5], expected: 4},
-        {label: 'niet gevonden', args: [[3, 1, 4, 1, 5], 9], expected: -1},
-        {label: 'lege lijst', args: [[], 7], expected: -1},
-        {label: 'eerste match telt', args: [[7, 7, 7], 7], expected: 0},
+        { label: 'gevonden in het midden', args: [[3, 1, 4, 1, 5], 5], expected: 4 },
+        { label: 'niet gevonden', args: [[3, 1, 4, 1, 5], 9], expected: -1 },
+        { label: 'lege lijst', args: [[], 7], expected: -1 },
+        { label: 'eerste match telt', args: [[7, 7, 7], 7], expected: 0 },
       ],
     },
   },
@@ -109,7 +109,7 @@ export const algorithmModels: AlgorithmModelDefinition[] = [
         help: 'Gebruik een niet-lege lijst voor hetzelfde gedrag als de lescode.',
       },
     ],
-    defaultInput: {values: [3, 7, 2, 9, 4]},
+    defaultInput: { values: [3, 7, 2, 9, 4] },
     trace: (input) => traceMaximum(valuesOnly(input)),
     traceArgs: (input) => [[...input.values]],
     exercise: {
@@ -118,10 +118,10 @@ export const algorithmModels: AlgorithmModelDefinition[] = [
     # Schrijf je oplossing hier
     return None`,
       tests: [
-        {label: 'positieve getallen', args: [[3, 7, 2, 9, 4]], expected: 9},
-        {label: 'negatieve getallen', args: [[-3, -1, -7]], expected: -1},
-        {label: 'een element', args: [[42]], expected: 42},
-        {label: 'duplicaten', args: [[5, 5, 5]], expected: 5},
+        { label: 'positieve getallen', args: [[3, 7, 2, 9, 4]], expected: 9 },
+        { label: 'negatieve getallen', args: [[-3, -1, -7]], expected: -1 },
+        { label: 'een element', args: [[42]], expected: 42 },
+        { label: 'duplicaten', args: [[5, 5, 5]], expected: 5 },
       ],
     },
   },
@@ -138,7 +138,7 @@ export const algorithmModels: AlgorithmModelDefinition[] = [
         help: 'Gebruik een niet-lege lijst voor hetzelfde gedrag als de lescode.',
       },
     ],
-    defaultInput: {values: [5, 2, 8, 1, 7, 4]},
+    defaultInput: { values: [5, 2, 8, 1, 7, 4] },
     trace: (input) => traceMinAndMax(valuesOnly(input)),
     traceArgs: (input) => [[...input.values]],
     exercise: {
@@ -147,10 +147,10 @@ export const algorithmModels: AlgorithmModelDefinition[] = [
     # Schrijf je oplossing hier
     return None`,
       tests: [
-        {label: 'gemengde lijst', args: [[5, 2, 8, 1, 7, 4]], expected: [1, 8]},
-        {label: 'negatieve getallen', args: [[-3, -1, -7]], expected: [-7, -1]},
-        {label: 'een element', args: [[42]], expected: [42, 42]},
-        {label: 'duplicaten', args: [[3, 3, 3]], expected: [3, 3]},
+        { label: 'gemengde lijst', args: [[5, 2, 8, 1, 7, 4]], expected: [1, 8] },
+        { label: 'negatieve getallen', args: [[-3, -1, -7]], expected: [-7, -1] },
+        { label: 'een element', args: [[42]], expected: [42, 42] },
+        { label: 'duplicaten', args: [[3, 3, 3]], expected: [3, 3] },
       ],
     },
   },
@@ -173,7 +173,7 @@ export const algorithmModels: AlgorithmModelDefinition[] = [
         help: 'Het getal dat je zoekt.',
       },
     ],
-    defaultInput: {values: [1, 3, 5, 7, 9, 11, 13, 15], target: 4},
+    defaultInput: { values: [1, 3, 5, 7, 9, 11, 13, 15], target: 4 },
     trace: (input) => traceBinarySearch(input.values, targetOrZero(input)),
     traceArgs: (input) => [[...input.values], targetOrZero(input)],
     exercise: {
@@ -182,10 +182,10 @@ export const algorithmModels: AlgorithmModelDefinition[] = [
     # Schrijf je oplossing hier
     return None`,
       tests: [
-        {label: 'gevonden', args: [[1, 3, 5, 7, 9], 7], expected: 3},
-        {label: 'niet gevonden', args: [[1, 3, 5, 7, 9], 4], expected: -1},
-        {label: 'lege lijst', args: [[], 5], expected: -1},
-        {label: 'een element', args: [[42], 42], expected: 0},
+        { label: 'gevonden', args: [[1, 3, 5, 7, 9], 7], expected: 3 },
+        { label: 'niet gevonden', args: [[1, 3, 5, 7, 9], 4], expected: -1 },
+        { label: 'lege lijst', args: [[], 5], expected: -1 },
+        { label: 'een element', args: [[42], 42], expected: 0 },
       ],
     },
   },
@@ -202,7 +202,7 @@ export const algorithmModels: AlgorithmModelDefinition[] = [
         help: 'De visualisatie sorteert oplopend.',
       },
     ],
-    defaultInput: {values: [5, 2, 8, 1, 4]},
+    defaultInput: { values: [5, 2, 8, 1, 4] },
     trace: (input) => traceSelectionSort(valuesOnly(input)),
     traceArgs: (input) => [[...input.values]],
     exercise: {
@@ -211,10 +211,10 @@ export const algorithmModels: AlgorithmModelDefinition[] = [
     # Schrijf je oplossing hier
     return None`,
       tests: [
-        {label: 'door elkaar', args: [[5, 2, 8, 1, 4]], expected: [1, 2, 4, 5, 8]},
-        {label: 'al gesorteerd', args: [[1, 2, 3]], expected: [1, 2, 3]},
-        {label: 'omgekeerd', args: [[3, 2, 1]], expected: [1, 2, 3]},
-        {label: 'leeg', args: [[]], expected: []},
+        { label: 'door elkaar', args: [[5, 2, 8, 1, 4]], expected: [1, 2, 4, 5, 8] },
+        { label: 'al gesorteerd', args: [[1, 2, 3]], expected: [1, 2, 3] },
+        { label: 'omgekeerd', args: [[3, 2, 1]], expected: [1, 2, 3] },
+        { label: 'leeg', args: [[]], expected: [] },
       ],
     },
   },
@@ -231,7 +231,7 @@ export const algorithmModels: AlgorithmModelDefinition[] = [
         help: 'De visualisatie sorteert oplopend met early-exit.',
       },
     ],
-    defaultInput: {values: [3, 1, 4, 1, 5]},
+    defaultInput: { values: [3, 1, 4, 1, 5] },
     trace: (input) => traceBubbleSort(valuesOnly(input)),
     traceArgs: (input) => [[...input.values]],
     exercise: {
@@ -240,18 +240,16 @@ export const algorithmModels: AlgorithmModelDefinition[] = [
     # Schrijf je oplossing hier
     return None`,
       tests: [
-        {label: 'door elkaar', args: [[3, 1, 4, 1, 5]], expected: [1, 1, 3, 4, 5]},
-        {label: 'al gesorteerd', args: [[1, 2, 3]], expected: [1, 2, 3]},
-        {label: 'omgekeerd', args: [[3, 2, 1]], expected: [1, 2, 3]},
-        {label: 'leeg', args: [[]], expected: []},
+        { label: 'door elkaar', args: [[3, 1, 4, 1, 5]], expected: [1, 1, 3, 4, 5] },
+        { label: 'al gesorteerd', args: [[1, 2, 3]], expected: [1, 2, 3] },
+        { label: 'omgekeerd', args: [[3, 2, 1]], expected: [1, 2, 3] },
+        { label: 'leeg', args: [[]], expected: [] },
       ],
     },
   },
 ];
 
-export function getAlgorithmModel(
-  id: AlgorithmModelId,
-): AlgorithmModelDefinition {
+export function getAlgorithmModel(id: AlgorithmModelId): AlgorithmModelDefinition {
   const model = algorithmModels.find((entry) => entry.id === id);
   if (!model) {
     throw new Error(`Onbekend algoritme-model: ${id}`);

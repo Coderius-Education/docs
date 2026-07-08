@@ -1,9 +1,9 @@
-import React from 'react';
-import CodeMirror from '@uiw/react-codemirror';
-import { html } from '@codemirror/lang-html';
 import { css } from '@codemirror/lang-css';
+import { html } from '@codemirror/lang-html';
 import { javascript } from '@codemirror/lang-javascript';
 import { vscodeDark } from '@uiw/codemirror-theme-vscode';
+import CodeMirror from '@uiw/react-codemirror';
+import React from 'react';
 import styles from './CodeEditor.module.css';
 
 const langExtension = {

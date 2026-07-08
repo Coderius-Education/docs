@@ -1,8 +1,8 @@
 // src/theme/DocSidebar/index.js
 
-import React from 'react';
 import { useLocation } from '@docusaurus/router';
 import OriginalDocSidebar from '@theme-original/DocSidebar';
+import React from 'react';
 
 // Helper function to check the URL
 function isEmbeddedInMoodle(search) {
@@ -15,11 +15,11 @@ export default function DocSidebarWrapper(props) {
 
   // If the URL parameter is present, return null to hide the sidebar
   if (isEmbeddedInMoodle(search)) {
-    console.log('moodle embedded')
+    console.log('moodle embedded');
     return null;
   }
 
-  console.log('not embedded')
+  console.log('not embedded');
 
   // Otherwise, render the original sidebar as normal
   return <OriginalDocSidebar {...props} />;

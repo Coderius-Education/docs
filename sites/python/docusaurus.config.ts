@@ -1,10 +1,11 @@
-import {createConfig} from '@coderius/shared/config';
+import { createConfig } from '@coderius/shared/config';
 
 export default createConfig({
   title: 'Python Leren — Coderius',
   tagline: 'Leer stap voor stap programmeren in Python',
   url: 'https://python.coderius.nl',
   projectName: 'python-docs',
+  matomoSiteId: 4,
 
   description:
     'Leer stap voor stap programmeren in Python. Gratis cursus met interactieve oefeningen direct in je browser.',
@@ -19,9 +20,9 @@ export default createConfig({
     [
       'classic',
       {
-        docs: {sidebarPath: './sidebars.ts'},
+        docs: { sidebarPath: './sidebars.ts' },
         blog: false,
-        theme: {customCss: './src/css/custom.css'},
+        theme: { customCss: './src/css/custom.css' },
       },
     ],
   ],
@@ -29,19 +30,23 @@ export default createConfig({
   themeConfig: {
     image: 'img/docusaurus-social-card.jpg',
     metadata: [
-      {name: 'og:type', content: 'website'},
-      {name: 'og:locale', content: 'nl_NL'},
+      { name: 'og:type', content: 'website' },
+      { name: 'og:locale', content: 'nl_NL' },
     ],
     navbar: {
       title: 'coderius-python',
-      logo: {alt: 'coderius-python', src: 'img/logo.svg'},
+      logo: { alt: 'coderius-python', src: 'img/logo.svg' },
       items: [
-        {type: 'docSidebar', sidebarId: 'tutorialSidebar', position: 'left', label: 'Tutorial'},
-        {to: '/playground', label: 'Playground', position: 'left'},
-        {to: '/cheatsheet', label: 'Cheatsheet', position: 'left'},
-        {to: '/begrippenlijst', label: 'Begrippenlijst', position: 'left'},
-        {to: '/hulp', label: 'Hulp', position: 'left'},
-        {href: 'https://github.com/Coderius-Education/python-docs', label: 'GitHub', position: 'right'},
+        { type: 'docSidebar', sidebarId: 'tutorialSidebar', position: 'left', label: 'Tutorial' },
+        { to: '/playground', label: 'Playground', position: 'left' },
+        { to: '/cheatsheet', label: 'Cheatsheet', position: 'left' },
+        { to: '/begrippenlijst', label: 'Begrippenlijst', position: 'left' },
+        { to: '/hulp', label: 'Hulp', position: 'left' },
+        {
+          href: 'https://github.com/Coderius-Education/python-docs',
+          label: 'GitHub',
+          position: 'right',
+        },
       ],
     },
     footer: {

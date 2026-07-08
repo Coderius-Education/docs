@@ -1,7 +1,7 @@
-import type {ReactNode} from 'react';
 import Link from '@docusaurus/Link';
+import { algoritmes } from '@site/src/data/algorithms';
 import Heading from '@theme/Heading';
-import {algoritmes} from '@site/src/data/algorithms';
+import type { ReactNode } from 'react';
 import styles from './styles.module.css';
 
 export default function AlgorithmGrid(): ReactNode {

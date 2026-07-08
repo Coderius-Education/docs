@@ -58,7 +58,8 @@ echo $message;
   },
   high: {
     title: 'File Inclusion — High',
-    description: 'Bestandsnaam moet beginnen met "file" — maar null-byte en andere tricks werken soms',
+    description:
+      'Bestandsnaam moet beginnen met "file" — maar null-byte en andere tricks werken soms',
     method: 'GET',
     php: `<?php
 $files = [

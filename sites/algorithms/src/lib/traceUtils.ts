@@ -1,12 +1,8 @@
-import type {ExerciseTestCase} from '@site/src/data/algorithmModels';
-import type {
-  TraceMarkers,
-  TraceResult,
-  TraceStep,
-} from '@site/src/lib/algorithmTraces';
+import type { ExerciseTestCase } from '@site/src/data/algorithmModels';
+import type { TraceMarkers, TraceResult, TraceStep } from '@site/src/lib/algorithmTraces';
 
 export type PyProxyLike = {
-  toJs: (opts?: {dict_converter?: typeof Object.fromEntries}) => unknown;
+  toJs: (opts?: { dict_converter?: typeof Object.fromEntries }) => unknown;
   destroy?: () => void;
 };
 
@@ -48,20 +44,14 @@ export function markerLabels(index: number, markers: TraceMarkers): string[] {
   return labels;
 }
 
-export function isSortedMarker(
-  index: number,
-  markers: TraceMarkers,
-): boolean {
+export function isSortedMarker(index: number, markers: TraceMarkers): boolean {
   return (
     (markers.sortedUntil !== undefined && index <= markers.sortedUntil) ||
     (markers.sortedFrom !== undefined && index >= markers.sortedFrom)
   );
 }
 
-export function isOutsideSearchWindow(
-  index: number,
-  markers: TraceMarkers,
-): boolean {
+export function isOutsideSearchWindow(index: number, markers: TraceMarkers): boolean {
   if (markers.low === undefined || markers.high === undefined) return false;
   return index < markers.low || index > markers.high;
 }
@@ -75,9 +65,7 @@ export function filterTraceback(raw: string): string {
   }
 
   const errorLine =
-    [...lines]
-      .reverse()
-      .find((line) => /^[A-Z]\w*(Error|Exception)/.test(line.trim())) ??
+    [...lines].reverse().find((line) => /^[A-Z]\w*(Error|Exception)/.test(line.trim())) ??
     [...lines].reverse().find((line) => line.trim().length > 0) ??
     raw;
 

@@ -117,6 +117,7 @@ export default function WebMicroEditor(): React.JSX.Element {
     else localStorage.setItem(FILE_STORAGE_KEY, currentFile);
   }, [currentFile]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: replText triggert bewust een her-scroll bij nieuwe REPL-output; de body zelf leest alleen de ref.
   useEffect(() => {
     const el = replRef.current;
     if (el) el.scrollTop = el.scrollHeight;
@@ -149,8 +150,8 @@ export default function WebMicroEditor(): React.JSX.Element {
       clientRef.current = client;
       setStatus('connected');
       appendRepl('[verbonden]\n');
-    } catch (err: any) {
-      appendRepl(`[verbinden mislukt: ${err.message ?? err}]\n`);
+    } catch (err) {
+      appendRepl(`[verbinden mislukt: ${err instanceof Error ? err.message : String(err)}]\n`);
     }
   }, [supported, appendRepl]);
 
@@ -176,8 +177,8 @@ export default function WebMicroEditor(): React.JSX.Element {
       appendRepl('[main.py opgeslagen, soft reboot]\n');
       await c.softReboot();
       setIdle();
-    } catch (err: any) {
-      appendRepl(`\n[fout: ${err.message ?? err}]\n`);
+    } catch (err) {
+      appendRepl(`\n[fout: ${err instanceof Error ? err.message : String(err)}]\n`);
       setIdle();
     }
   }, [code, appendRepl, clearRepl, setBusy, setIdle]);
@@ -192,8 +193,8 @@ export default function WebMicroEditor(): React.JSX.Element {
       setLoadedCode(code);
       appendRepl(`[opgeslagen: ${currentFile}]\n`);
       setIdle();
-    } catch (err: any) {
-      appendRepl(`\n[opslaan mislukt: ${err.message ?? err}]\n`);
+    } catch (err) {
+      appendRepl(`\n[opslaan mislukt: ${err instanceof Error ? err.message : String(err)}]\n`);
       setIdle();
     }
   }, [code, currentFile, appendRepl, setBusy, setIdle]);
@@ -213,8 +214,8 @@ export default function WebMicroEditor(): React.JSX.Element {
         setCurrentFile(path);
         appendRepl(`[geopend: ${path}]\n`);
         setIdle();
-      } catch (err: any) {
-        appendRepl(`\n[openen mislukt: ${err.message ?? err}]\n`);
+      } catch (err) {
+        appendRepl(`\n[openen mislukt: ${err instanceof Error ? err.message : String(err)}]\n`);
         setIdle();
       }
     },
@@ -234,8 +235,8 @@ export default function WebMicroEditor(): React.JSX.Element {
     try {
       await c.interrupt();
       appendRepl('\n[KeyboardInterrupt verstuurd]\n');
-    } catch (err: any) {
-      appendRepl(`\n[stop mislukt: ${err.message ?? err}]\n`);
+    } catch (err) {
+      appendRepl(`\n[stop mislukt: ${err instanceof Error ? err.message : String(err)}]\n`);
     }
   }, [appendRepl]);
 
@@ -250,9 +251,9 @@ export default function WebMicroEditor(): React.JSX.Element {
       setProgress(null);
       appendRepl('\n[Leaphy-library geïnstalleerd]\n');
       setIdle();
-    } catch (err: any) {
+    } catch (err) {
       setProgress(null);
-      appendRepl(`\n[installer mislukt: ${err.message ?? err}]\n`);
+      appendRepl(`\n[installer mislukt: ${err instanceof Error ? err.message : String(err)}]\n`);
       setIdle();
     }
   }, [appendRepl, setBusy, setIdle]);
@@ -267,7 +268,7 @@ export default function WebMicroEditor(): React.JSX.Element {
         const items = await fs.listdir(dir);
         const withPaths = items.map((it) => ({
           ...it,
-          path: dir.endsWith('/') ? dir + it.name : dir + '/' + it.name,
+          path: dir.endsWith('/') ? dir + it.name : `${dir}/${it.name}`,
         }));
         // Toon alleen .py-bestanden en de lib-map. In de root verbergen we andere
         // mappen; binnen lib blijven submappen zichtbaar zodat je kunt bladeren.
@@ -277,8 +278,10 @@ export default function WebMicroEditor(): React.JSX.Element {
         setFiles(visible);
         setCurrentDir(dir);
         setIdle();
-      } catch (err: any) {
-        appendRepl(`\n[bestandslijst mislukt: ${err.message ?? err}]\n`);
+      } catch (err) {
+        appendRepl(
+          `\n[bestandslijst mislukt: ${err instanceof Error ? err.message : String(err)}]\n`,
+        );
         setIdle();
       }
     },
@@ -299,12 +302,14 @@ export default function WebMicroEditor(): React.JSX.Element {
           setCurrentFile(null);
         }
         await refreshFiles();
-      } catch (err: any) {
-        appendRepl(`\n[verwijderen mislukt: ${err.message ?? err}]\n`);
+      } catch (err) {
+        appendRepl(
+          `\n[verwijderen mislukt: ${err instanceof Error ? err.message : String(err)}]\n`,
+        );
         setIdle();
       }
     },
-    [appendRepl, refreshFiles, setBusy, currentFile],
+    [appendRepl, refreshFiles, setBusy, setIdle, currentFile],
   );
 
   const applyTemplate = useCallback(
@@ -363,24 +368,30 @@ export default function WebMicroEditor(): React.JSX.Element {
             status === 'busy' && styles.statusBusy,
           )}
         >
-          <span className={styles.statusDot}></span>
+          <span className={styles.statusDot} />
           {status === 'disconnected' && 'Niet verbonden'}
           {status === 'connected' && 'Verbonden'}
           {status === 'busy' && 'Bezig...'}
         </span>
 
         {!connected && (
-          <button className={clsx(styles.btn, styles.btnPrimary)} onClick={connect}>
+          <button type="button" className={clsx(styles.btn, styles.btnPrimary)} onClick={connect}>
             Verbind met board
           </button>
         )}
         {connected && (
-          <button className={styles.btn} onClick={disconnect} disabled={status === 'busy'}>
+          <button
+            type="button"
+            className={styles.btn}
+            onClick={disconnect}
+            disabled={status === 'busy'}
+          >
             Verbreek
           </button>
         )}
 
         <button
+          type="button"
           className={clsx(styles.btn, styles.btnPrimary)}
           onClick={runOnBoard}
           disabled={!connected || status === 'busy'}
@@ -390,6 +401,7 @@ export default function WebMicroEditor(): React.JSX.Element {
         </button>
         {currentFile && currentFile !== '/main.py' && (
           <button
+            type="button"
             className={styles.btn}
             onClick={saveCurrent}
             disabled={!connected || status === 'busy' || !isDirty}
@@ -399,17 +411,24 @@ export default function WebMicroEditor(): React.JSX.Element {
           </button>
         )}
         <button
+          type="button"
           className={styles.btn}
           onClick={newFile}
           title="Leeg de editor (begin een nieuw bestand)"
         >
           Nieuw
         </button>
-        <button className={clsx(styles.btn, styles.btnDanger)} onClick={stop} disabled={!connected}>
+        <button
+          type="button"
+          className={clsx(styles.btn, styles.btnDanger)}
+          onClick={stop}
+          disabled={!connected}
+        >
           Stop
         </button>
 
         <button
+          type="button"
           className={styles.btn}
           onClick={installLib}
           disabled={!connected || status === 'busy'}
@@ -417,6 +436,7 @@ export default function WebMicroEditor(): React.JSX.Element {
           Installeer Leaphy-library
         </button>
         <button
+          type="button"
           className={styles.btn}
           onClick={downloadFirmware}
           title={`Download de MicroPython-firmware (${MICROPYTHON_VERSION}) om op het board te flashen`}
@@ -424,9 +444,10 @@ export default function WebMicroEditor(): React.JSX.Element {
           MicroPython-firmware ({MICROPYTHON_VERSION})
         </button>
 
-        <span className={styles.spacer}></span>
+        <span className={styles.spacer} />
 
         <button
+          type="button"
           className={styles.btn}
           onClick={() => (files === null ? refreshFiles('/') : setFiles(null))}
           disabled={!connected || status === 'busy'}
@@ -464,6 +485,7 @@ export default function WebMicroEditor(): React.JSX.Element {
           <div className={styles.flashHelpHead}>
             <strong>MicroPython flashen ({MICROPYTHON_VERSION})</strong>
             <button
+              type="button"
               className={styles.fileDelete}
               onClick={() => setShowFlashHelp(false)}
               title="Sluiten"
@@ -506,6 +528,7 @@ export default function WebMicroEditor(): React.JSX.Element {
                 {currentDir}
                 {currentDir !== '/' && (
                   <button
+                    type="button"
                     className={styles.fileDelete}
                     style={{ marginLeft: 10 }}
                     onClick={() => {
@@ -521,15 +544,20 @@ export default function WebMicroEditor(): React.JSX.Element {
               {files.map((f) => (
                 <div className={styles.fileRow} key={f.name}>
                   <span className={styles.fileKind}>{f.isDir ? 'map' : 'bestand'}</span>
-                  <span
+                  <button
+                    type="button"
                     className={styles.fileName}
                     style={{ cursor: 'pointer', textDecoration: 'underline' }}
                     onClick={() => (f.isDir ? refreshFiles(f.path) : openFile(f.path))}
                     title={f.isDir ? 'Open map' : 'Open in editor'}
                   >
                     {f.name}
-                  </span>
-                  <button className={styles.fileDelete} onClick={() => deleteFile(f.path)}>
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.fileDelete}
+                    onClick={() => deleteFile(f.path)}
+                  >
                     ✕
                   </button>
                 </div>
@@ -574,6 +602,7 @@ export default function WebMicroEditor(): React.JSX.Element {
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <span className={styles.replLabel}>REPL-output</span>
               <button
+                type="button"
                 className={styles.btn}
                 onClick={clearRepl}
                 style={{ padding: '2px 8px', fontSize: 12 }}

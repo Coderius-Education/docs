@@ -1,9 +1,10 @@
-import React, {useCallback, useMemo, useRef, useState} from 'react';
-import clsx from 'clsx';
 import useBaseUrl from '@docusaurus/useBaseUrl';
-import {HighlightedEditor} from '@site/src/components/PythonPlayground';
-import {loadPyodideOnce, type PyodideInterface} from './usePyodide';
+import { HighlightedEditor } from '@site/src/components/PythonPlayground';
+import clsx from 'clsx';
+import type React from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import styles from './styles.module.css';
+import { type PyodideInterface, loadPyodideOnce } from './usePyodide';
 
 // Approximate textarea-rows → pixel-height mapping. Matches the editor's
 // line-height (1.5) × font-size (0.9rem ≈ 14.4px) plus vertical padding
@@ -84,14 +85,9 @@ export default function PyRunnerImpl({
   packages,
   rows = 10,
 }: PyRunnerProps): React.ReactElement {
-  const source = useMemo(
-    () => dedent(initialCode ?? children ?? ''),
-    [initialCode, children],
-  );
+  const source = useMemo(() => dedent(initialCode ?? children ?? ''), [initialCode, children]);
   const [code, setCode] = useState(source);
-  const [status, setStatus] = useState<
-    'idle' | 'loading' | 'running' | 'done' | 'error'
-  >('idle');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'running' | 'done' | 'error'>('idle');
   const [statusMsg, setStatusMsg] = useState<string>('');
   const [stdout, setStdout] = useState<string>('');
   const [stderr, setStderr] = useState<string>('');
@@ -101,10 +97,7 @@ export default function PyRunnerImpl({
   const matplotlibLoadedRef = useRef(false);
   const pyodideIndexURL = useBaseUrl('/pyodide/');
 
-  const needsMatplotlib = useMemo(
-    () => /\b(matplotlib|pyplot|plt\.)\b/.test(code),
-    [code],
-  );
+  const needsMatplotlib = useMemo(() => /\b(matplotlib|pyplot|plt\.)\b/.test(code), [code]);
 
   const handleRun = useCallback(async () => {
     setStdout('');
@@ -129,8 +122,16 @@ export default function PyRunnerImpl({
 
       let out = '';
       let err = '';
-      py.setStdout({batched: (s) => (out += s + '\n')});
-      py.setStderr({batched: (s) => (err += s + '\n')});
+      py.setStdout({
+        batched: (s) => {
+          out += `${s}\n`;
+        },
+      });
+      py.setStderr({
+        batched: (s) => {
+          err += `${s}\n`;
+        },
+      });
 
       if (needsMatplotlib && !matplotlibLoadedRef.current) {
         await py.runPythonAsync(MATPLOTLIB_SETUP);
@@ -168,7 +169,7 @@ export default function PyRunnerImpl({
         const target = e.target as HTMLTextAreaElement;
         const start = target.selectionStart;
         const end = target.selectionEnd;
-        setCode(code.substring(0, start) + '    ' + code.substring(end));
+        setCode(`${code.substring(0, start)}    ${code.substring(end)}`);
         requestAnimationFrame(() => {
           target.selectionStart = target.selectionEnd = start + 4;
         });
@@ -193,10 +194,7 @@ export default function PyRunnerImpl({
 
   const busy = status === 'loading' || status === 'running';
   const hasOutput =
-    stdout.length > 0 ||
-    stderr.length > 0 ||
-    errorMsg.length > 0 ||
-    plots.length > 0;
+    stdout.length > 0 || stderr.length > 0 || errorMsg.length > 0 || plots.length > 0;
 
   return (
     <div className={styles.runner}>
@@ -208,7 +206,8 @@ export default function PyRunnerImpl({
               type="button"
               onClick={handleReset}
               disabled={busy}
-              className={clsx('button button--sm button--secondary')}>
+              className={clsx('button button--sm button--secondary')}
+            >
               ↺ Reset
             </button>
           )}
@@ -216,7 +215,8 @@ export default function PyRunnerImpl({
             type="button"
             onClick={handleRun}
             disabled={busy}
-            className={clsx('button button--sm button--primary')}>
+            className={clsx('button button--sm button--primary')}
+          >
             {busy ? '… bezig' : '▶ Voer uit'}
           </button>
         </div>
@@ -234,22 +234,19 @@ export default function PyRunnerImpl({
           className={clsx(styles.status, {
             [styles.statusError]: status === 'error',
             [styles.statusBusy]: busy,
-          })}>
+          })}
+        >
           {statusMsg}
         </div>
       )}
       {hasOutput && (
         <div className={styles.output}>
           {stdout && <pre className={styles.stdout}>{stdout}</pre>}
-          {stderr && (
-            <pre className={clsx(styles.stdout, styles.stderr)}>{stderr}</pre>
-          )}
-          {errorMsg && (
-            <pre className={clsx(styles.stdout, styles.error)}>{errorMsg}</pre>
-          )}
+          {stderr && <pre className={clsx(styles.stdout, styles.stderr)}>{stderr}</pre>}
+          {errorMsg && <pre className={clsx(styles.stdout, styles.error)}>{errorMsg}</pre>}
           {plots.map((b64, i) => (
             <img
-              key={i}
+              key={b64}
               src={`data:image/png;base64,${b64}`}
               alt={`Plot ${i + 1}`}
               className={styles.plot}

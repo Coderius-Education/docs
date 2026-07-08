@@ -29,7 +29,11 @@ function WokwiSimulatorInner({ projectUrl, height = 500, title }: WokwiSimulator
             Simuleer het circuit direct in je browser. Je kunt de code aanpassen en het resultaat
             live zien — zonder hardware.
           </p>
-          <button className={styles.launchButton} onClick={() => setShowSimulator(true)}>
+          <button
+            type="button"
+            className={styles.launchButton}
+            onClick={() => setShowSimulator(true)}
+          >
             Start Simulator
           </button>
           <a className={styles.externalLink} href={url} target="_blank" rel="noopener noreferrer">

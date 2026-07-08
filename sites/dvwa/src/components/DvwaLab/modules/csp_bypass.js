@@ -52,7 +52,8 @@ echo $message;
   },
   high: {
     title: 'CSP Bypass — High',
-    description: 'Strikte CSP met nonce — alleen scripts met het juiste nonce-attribuut worden uitgevoerd',
+    description:
+      'Strikte CSP met nonce — alleen scripts met het juiste nonce-attribuut worden uitgevoerd',
     method: 'POST',
     php: `<?php
 $nonce = base64_encode(random_bytes(16));

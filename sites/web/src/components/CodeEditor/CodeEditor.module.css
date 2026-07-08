@@ -38,7 +38,7 @@
   height: 130px;
   border-top: 1px solid var(--ifm-color-emphasis-300);
   background: #1e1e1e;
-  font-family: 'Menlo', 'Consolas', monospace;
+  font-family: "Menlo", "Consolas", monospace;
   font-size: 0.78rem;
 }
 
@@ -91,10 +91,20 @@
   border-bottom: 1px solid #2a2a2a;
 }
 
-.consoleLevel_log   { color: #d4d4d4; }
-.consoleLevel_info  { color: #9cdcfe; }
-.consoleLevel_warn  { color: #dcdcaa; background: #2a2600; }
-.consoleLevel_error { color: #f44747; background: #2a0000; }
+.consoleLevel_log {
+  color: #d4d4d4;
+}
+.consoleLevel_info {
+  color: #9cdcfe;
+}
+.consoleLevel_warn {
+  color: #dcdcaa;
+  background: #2a2600;
+}
+.consoleLevel_error {
+  color: #f44747;
+  background: #2a0000;
+}
 
 .tabBar {
   display: flex;

@@ -66,7 +66,8 @@ echo $entries;
   },
   high: {
     title: 'XSS Stored — High',
-    description: 'Beide velden gefilterd via preg_replace — maar onerror-handlers zijn nog mogelijk',
+    description:
+      'Beide velden gefilterd via preg_replace — maar onerror-handlers zijn nog mogelijk',
     method: 'POST',
     php: `<?php
 $db = new SQLite3('/tmp/dvwa_xss_high.db');

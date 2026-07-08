@@ -76,10 +76,7 @@
   border-radius: 8px;
   background: var(--ifm-background-color);
   text-align: center;
-  transition:
-    border-color 140ms ease,
-    background 140ms ease,
-    opacity 140ms ease;
+  transition: border-color 140ms ease, background 140ms ease, opacity 140ms ease;
 }
 
 .cell strong {
@@ -222,6 +219,7 @@
 }
 
 .status {
+  display: block;
   border-left: 3px solid var(--ifm-color-primary);
   background: var(--ifm-color-emphasis-100);
   margin: 0 0.7rem 0.7rem;

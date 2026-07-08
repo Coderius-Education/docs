@@ -4,7 +4,7 @@
  * env contains: { cwd, fs, setCwd, terminal, write, writeln }
  */
 
-import { resolvePath, getNode, listDir, readFile } from './filesystem';
+import { getNode, listDir, readFile, resolvePath } from './filesystem';
 
 /**
  * Parse a command line into chained commands, respecting ;, &&, ||, and |
@@ -106,7 +106,7 @@ const COMMANDS = {
   ls(args, env) {
     const showAll = args.includes('-a') || args.includes('-la') || args.includes('-al');
     const showLong = args.includes('-l') || args.includes('-la') || args.includes('-al');
-    const target = args.find(a => !a.startsWith('-')) || env.cwd;
+    const target = args.find((a) => !a.startsWith('-')) || env.cwd;
     const absPath = resolvePath(env.cwd, target);
     const result = listDir(env.fs, absPath);
 
@@ -114,11 +114,11 @@ const COMMANDS = {
 
     let entries = result.entries;
     if (!showAll) {
-      entries = entries.filter(e => !e.name.startsWith('.'));
+      entries = entries.filter((e) => !e.name.startsWith('.'));
     }
 
     if (showLong) {
-      const lines = entries.map(e => {
+      const lines = entries.map((e) => {
         const perms = e.isDir ? 'drwxr-xr-x' : '-rw-r--r--';
         const size = e.isDir ? '4096' : ' 256';
         return `${perms}  1 student student ${size} Mar 26 10:00 ${e.name}${e.isDir ? '' : ''}`;
@@ -126,7 +126,7 @@ const COMMANDS = {
       return { output: lines.join('\n'), exitCode: 0 };
     }
 
-    const names = entries.map(e => e.isDir ? `\x1b[1;34m${e.name}\x1b[0m` : e.name);
+    const names = entries.map((e) => (e.isDir ? `\x1b[1;34m${e.name}\x1b[0m` : e.name));
     return { output: names.join('  '), exitCode: 0 };
   },
 
@@ -162,7 +162,10 @@ const COMMANDS = {
 
   uname(args) {
     if (args.includes('-a')) {
-      return { output: 'Linux dvwa-lab 5.15.0-1 #1 SMP Debian 5.15.0-1 x86_64 GNU/Linux', exitCode: 0 };
+      return {
+        output: 'Linux dvwa-lab 5.15.0-1 #1 SMP Debian 5.15.0-1 x86_64 GNU/Linux',
+        exitCode: 0,
+      };
     }
     if (args.includes('-r')) {
       return { output: '5.15.0-1', exitCode: 0 };
@@ -200,7 +203,7 @@ const COMMANDS = {
     if (args.length === 0) return { output: 'grep: missing pattern', exitCode: 1 };
 
     const caseInsensitive = args.includes('-i');
-    const filteredArgs = args.filter(a => !a.startsWith('-'));
+    const filteredArgs = args.filter((a) => !a.startsWith('-'));
     const pattern = filteredArgs[0];
     const file = filteredArgs[1];
 
@@ -217,7 +220,7 @@ const COMMANDS = {
     }
 
     const regex = new RegExp(pattern, caseInsensitive ? 'i' : '');
-    const matching = lines.filter(line => regex.test(line));
+    const matching = lines.filter((line) => regex.test(line));
 
     if (matching.length === 0) return { output: '', exitCode: 1 };
     return { output: matching.join('\n'), exitCode: 0 };
@@ -231,7 +234,7 @@ const COMMANDS = {
   help() {
     return {
       output: [
-        'Beschikbare commando\'s:',
+        "Beschikbare commando's:",
         '  ls [pad]          - Bestanden tonen',
         '  cat <bestand>     - Bestandsinhoud tonen',
         '  cd [pad]          - Van map wisselen',
@@ -260,7 +263,7 @@ const COMMANDS = {
     const filteredArgs = [];
     for (let i = 0; i < args.length; i++) {
       if (args[i] === '-n' && args[i + 1]) {
-        numLines = parseInt(args[i + 1], 10) || 10;
+        numLines = Number.parseInt(args[i + 1], 10) || 10;
         i++; // skip next arg
       } else if (!args[i].startsWith('-')) {
         filteredArgs.push(args[i]);
@@ -279,7 +282,7 @@ const COMMANDS = {
     const filteredArgs = [];
     for (let i = 0; i < args.length; i++) {
       if (args[i] === '-n' && args[i + 1]) {
-        numLines = parseInt(args[i + 1], 10) || 10;
+        numLines = Number.parseInt(args[i + 1], 10) || 10;
         i++;
       } else if (!args[i].startsWith('-')) {
         filteredArgs.push(args[i]);
@@ -298,7 +301,7 @@ const COMMANDS = {
     const countLines = args.includes('-l');
     const countWords = args.includes('-w');
     const countChars = args.includes('-c') || args.includes('-m');
-    const filteredArgs = args.filter(a => !a.startsWith('-'));
+    const filteredArgs = args.filter((a) => !a.startsWith('-'));
     if (filteredArgs.length === 0) return { output: 'wc: missing operand', exitCode: 1 };
     const absPath = resolvePath(env.cwd, filteredArgs[0]);
     const result = readFile(env.fs, absPath);
@@ -336,11 +339,11 @@ const COMMANDS = {
       const results = [];
       if (node === null || typeof node === 'string') return results;
       for (const key of Object.keys(node).sort()) {
-        const childPath = currentPath === '/' ? '/' + key : currentPath + '/' + key;
+        const childPath = currentPath === '/' ? `/${key}` : `${currentPath}/${key}`;
         const child = node[key];
         if (child === null) continue; // permission denied
         if (namePattern) {
-          const regex = new RegExp('^' + namePattern.replace(/\./g, '\\.').replace(/\*/g, '.*') + '$');
+          const regex = new RegExp(`^${namePattern.replace(/\./g, '\\.').replace(/\*/g, '.*')}$`);
           if (regex.test(key)) {
             results.push(childPath);
           }
@@ -356,12 +359,13 @@ const COMMANDS = {
 
     const { node, exists, isDir, permissionDenied } = getNode(env.fs, absPath);
     if (!exists) return { output: `find: '${searchPath}': No such file or directory`, exitCode: 1 };
-    if (permissionDenied) return { output: `find: '${searchPath}': Permission denied`, exitCode: 1 };
+    if (permissionDenied)
+      return { output: `find: '${searchPath}': Permission denied`, exitCode: 1 };
     if (!isDir) {
       // It's a file — check if it matches
       if (namePattern) {
         const fileName = absPath.split('/').pop();
-        const regex = new RegExp('^' + namePattern.replace(/\./g, '\\.').replace(/\*/g, '.*') + '$');
+        const regex = new RegExp(`^${namePattern.replace(/\./g, '\\.').replace(/\*/g, '.*')}$`);
         if (regex.test(fileName)) return { output: absPath, exitCode: 0 };
         return { output: '', exitCode: 0 };
       }
@@ -376,7 +380,10 @@ const COMMANDS = {
     if (args.length < 2) return { output: 'chmod: missing operand', exitCode: 1 };
     const mode = args[0];
     const file = args[1];
-    return { output: `chmod: mode van '${file}' gewijzigd naar ${mode} (gesimuleerd)`, exitCode: 0 };
+    return {
+      output: `chmod: mode van '${file}' gewijzigd naar ${mode} (gesimuleerd)`,
+      exitCode: 0,
+    };
   },
 
   ping(args, env) {
@@ -386,7 +393,7 @@ const COMMANDS = {
     let host = args[args.length - 1];
     const cIdx = args.indexOf('-c');
     if (cIdx >= 0 && args[cIdx + 1]) {
-      count = parseInt(args[cIdx + 1], 10) || 4;
+      count = Number.parseInt(args[cIdx + 1], 10) || 4;
       if (host === args[cIdx + 1]) host = args[args.length - 1];
     }
 

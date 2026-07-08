@@ -145,6 +145,7 @@
 }
 
 .traceNotice {
+  display: block;
   border-left: 3px solid var(--ifm-color-primary);
   border-radius: 0 6px 6px 0;
   background: var(--ifm-color-emphasis-100);
@@ -169,10 +170,7 @@
   border-radius: 8px;
   background: var(--ifm-background-color);
   text-align: center;
-  transition:
-    border-color 140ms ease,
-    background 140ms ease,
-    opacity 140ms ease;
+  transition: border-color 140ms ease, background 140ms ease, opacity 140ms ease;
 }
 
 .cell strong {
@@ -349,6 +347,7 @@
 }
 
 .exerciseStatus {
+  display: block;
   border-left: 3px solid var(--ifm-color-primary);
   background: var(--ifm-color-emphasis-100);
   padding: 0.55rem 0.7rem;

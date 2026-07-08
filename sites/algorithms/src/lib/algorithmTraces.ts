@@ -57,7 +57,7 @@ export function traceLinearSearch(values: number[], target: number): TraceStep[]
     description: `We zoeken ${target} van links naar rechts.`,
     array: copy(values),
     markers: {},
-    stats: {steps: 0, comparisons},
+    stats: { steps: 0, comparisons },
   });
 
   for (let i = 0; i < values.length; i += 1) {
@@ -75,7 +75,7 @@ export function traceLinearSearch(values: number[], target: number): TraceStep[]
         compareIndex: i,
         foundIndex: found ? i : undefined,
       },
-      stats: {steps: i + 1, comparisons},
+      stats: { steps: i + 1, comparisons },
       result: found ? i : undefined,
     });
     if (found) return steps;
@@ -87,7 +87,7 @@ export function traceLinearSearch(values: number[], target: number): TraceStep[]
     description: `Geen enkel element was gelijk aan ${target}. Het resultaat is -1.`,
     array: copy(values),
     markers: {},
-    stats: {steps: values.length, comparisons},
+    stats: { steps: values.length, comparisons },
     result: -1,
   });
 
@@ -103,7 +103,7 @@ export function traceMaximum(values: number[]): TraceStep[] {
         description: 'Een lege lijst heeft geen maximum.',
         array: [],
         markers: {},
-        stats: {steps: 0, comparisons: 0},
+        stats: { steps: 0, comparisons: 0 },
         result: null,
       },
     ];
@@ -115,8 +115,8 @@ export function traceMaximum(values: number[]): TraceStep[] {
       title: 'Startwaarde',
       description: `We starten met ${values[0]} als grootste tot nu toe.`,
       array: copy(values),
-      markers: {activeIndex: 0, maxIndex: 0},
-      stats: {steps: 0, comparisons: 0},
+      markers: { activeIndex: 0, maxIndex: 0 },
+      stats: { steps: 0, comparisons: 0 },
       result: values[0],
     },
   ];
@@ -134,8 +134,8 @@ export function traceMaximum(values: number[]): TraceStep[] {
         ? `${values[i]} is groter, dus dit wordt het nieuwe maximum.`
         : `${values[i]} is niet groter dan ${values[maxIndex]}. Het maximum blijft staan.`,
       array: copy(values),
-      markers: {activeIndex: i, compareIndex: i, maxIndex},
-      stats: {steps: i + 1, comparisons},
+      markers: { activeIndex: i, compareIndex: i, maxIndex },
+      stats: { steps: i + 1, comparisons },
       result: values[maxIndex],
     });
   }
@@ -152,7 +152,7 @@ export function traceMinAndMax(values: number[]): TraceStep[] {
         description: 'Een lege lijst heeft geen minimum of maximum.',
         array: [],
         markers: {},
-        stats: {steps: 0, comparisons: 0},
+        stats: { steps: 0, comparisons: 0 },
         result: null,
       },
     ];
@@ -164,9 +164,9 @@ export function traceMinAndMax(values: number[]): TraceStep[] {
       title: 'Startwaardes',
       description: `We starten met ${values[0]} als minimum en maximum.`,
       array: copy(values),
-      markers: {activeIndex: 0, minIndex: 0, maxIndex: 0},
-      stats: {steps: 0, comparisons: 0},
-      result: {min: values[0], max: values[0]},
+      markers: { activeIndex: 0, minIndex: 0, maxIndex: 0 },
+      stats: { steps: 0, comparisons: 0 },
+      result: { min: values[0], max: values[0] },
     },
   ];
   let minIndex = 0;
@@ -194,9 +194,9 @@ export function traceMinAndMax(values: number[]): TraceStep[] {
       title: `Vergelijk index ${i}`,
       description,
       array: copy(values),
-      markers: {activeIndex: i, compareIndex: i, minIndex, maxIndex},
-      stats: {steps: i + 1, comparisons},
-      result: {min: values[minIndex], max: values[maxIndex]},
+      markers: { activeIndex: i, compareIndex: i, minIndex, maxIndex },
+      stats: { steps: i + 1, comparisons },
+      result: { min: values[minIndex], max: values[maxIndex] },
     });
   }
 
@@ -215,8 +215,8 @@ export function traceBinarySearch(values: number[], target: number): TraceStep[]
     title: 'Start',
     description: `Het zoekgebied loopt van index ${low} tot ${high}.`,
     array: copy(values),
-    markers: {low, high},
-    stats: {steps: stepCount, comparisons},
+    markers: { low, high },
+    stats: { steps: stepCount, comparisons },
   });
 
   while (low <= high) {
@@ -231,8 +231,8 @@ export function traceBinarySearch(values: number[], target: number): TraceStep[]
         title: `Midden is index ${mid}`,
         description: `${current} is gelijk aan ${target}. We geven index ${mid} terug.`,
         array: copy(values),
-        markers: {low, high, mid, activeIndex: mid, foundIndex: mid},
-        stats: {steps: stepCount, comparisons},
+        markers: { low, high, mid, activeIndex: mid, foundIndex: mid },
+        stats: { steps: stepCount, comparisons },
         result: mid,
       });
       return steps;
@@ -246,8 +246,8 @@ export function traceBinarySearch(values: number[], target: number): TraceStep[]
         title: `Midden is index ${mid}`,
         description: `${current} is te klein. Alles tot en met index ${mid} valt af.`,
         array: copy(values),
-        markers: {low, high, mid, activeIndex: mid, sortedUntil: oldLow - 1},
-        stats: {steps: stepCount, comparisons},
+        markers: { low, high, mid, activeIndex: mid, sortedUntil: oldLow - 1 },
+        stats: { steps: stepCount, comparisons },
       });
     } else {
       const oldHigh = high;
@@ -257,8 +257,8 @@ export function traceBinarySearch(values: number[], target: number): TraceStep[]
         title: `Midden is index ${mid}`,
         description: `${current} is te groot. Alles vanaf index ${mid} valt af.`,
         array: copy(values),
-        markers: {low, high, mid, activeIndex: mid, sortedFrom: oldHigh + 1},
-        stats: {steps: stepCount, comparisons},
+        markers: { low, high, mid, activeIndex: mid, sortedFrom: oldHigh + 1 },
+        stats: { steps: stepCount, comparisons },
       });
     }
   }
@@ -268,8 +268,8 @@ export function traceBinarySearch(values: number[], target: number): TraceStep[]
     title: 'Niet gevonden',
     description: `Laag is ${low} en hoog is ${high}. Het zoekgebied is leeg, dus het resultaat is -1.`,
     array: copy(values),
-    markers: {low, high},
-    stats: {steps: stepCount, comparisons},
+    markers: { low, high },
+    stats: { steps: stepCount, comparisons },
     result: -1,
   });
 
@@ -284,8 +284,8 @@ export function traceSelectionSort(values: number[]): TraceStep[] {
       title: 'Start',
       description: 'We zoeken telkens het kleinste element van het ongesorteerde deel.',
       array: copy(list),
-      markers: {sortedUntil: -1},
-      stats: {steps: 0, comparisons: 0, swaps: 0},
+      markers: { sortedUntil: -1 },
+      stats: { steps: 0, comparisons: 0, swaps: 0 },
     },
   ];
   let comparisons = 0;
@@ -298,8 +298,8 @@ export function traceSelectionSort(values: number[]): TraceStep[] {
       title: `Ronde ${i + 1}`,
       description: `Zoek het kleinste element vanaf index ${i}.`,
       array: copy(list),
-      markers: {outerIndex: i, minIndex, sortedUntil: i - 1},
-      stats: {steps: steps.length, comparisons, swaps},
+      markers: { outerIndex: i, minIndex, sortedUntil: i - 1 },
+      stats: { steps: steps.length, comparisons, swaps },
     });
 
     for (let j = i; j < list.length; j += 1) {
@@ -320,7 +320,7 @@ export function traceSelectionSort(values: number[]): TraceStep[] {
           minIndex,
           sortedUntil: i - 1,
         },
-        stats: {steps: steps.length, comparisons, swaps},
+        stats: { steps: steps.length, comparisons, swaps },
       });
     }
 
@@ -338,7 +338,7 @@ export function traceSelectionSort(values: number[]): TraceStep[] {
         swapB: minIndex,
         sortedUntil: i,
       },
-      stats: {steps: steps.length, comparisons, swaps},
+      stats: { steps: steps.length, comparisons, swaps },
     });
   }
 
@@ -347,8 +347,8 @@ export function traceSelectionSort(values: number[]): TraceStep[] {
     title: 'Klaar',
     description: 'De hele lijst is gesorteerd.',
     array: copy(list),
-    markers: {sortedUntil: list.length - 1},
-    stats: {steps: steps.length, comparisons, swaps},
+    markers: { sortedUntil: list.length - 1 },
+    stats: { steps: steps.length, comparisons, swaps },
     result: 'gesorteerd',
   });
 
@@ -364,7 +364,7 @@ export function traceBubbleSort(values: number[]): TraceStep[] {
       description: 'We vergelijken steeds twee buren en swappen als ze verkeerd staan.',
       array: copy(list),
       markers: {},
-      stats: {steps: 0, comparisons: 0, swaps: 0, passes: 0},
+      stats: { steps: 0, comparisons: 0, swaps: 0, passes: 0 },
     },
   ];
   let comparisons = 0;
@@ -380,8 +380,8 @@ export function traceBubbleSort(values: number[]): TraceStep[] {
       title: `Pass ${round + 1}`,
       description: 'Begin een nieuwe pass. Als er niets wisselt, zijn we klaar.',
       array: copy(list),
-      markers: {sortedFrom: n - round},
-      stats: {steps: steps.length, comparisons, swaps, passes},
+      markers: { sortedFrom: n - round },
+      stats: { steps: steps.length, comparisons, swaps, passes },
     });
 
     for (let i = 0; i < n - 1 - round; i += 1) {
@@ -400,7 +400,7 @@ export function traceBubbleSort(values: number[]): TraceStep[] {
           compareWithIndex: i + 1,
           sortedFrom: n - round,
         },
-        stats: {steps: steps.length, comparisons, swaps, passes},
+        stats: { steps: steps.length, comparisons, swaps, passes },
       });
 
       if (shouldSwap) {
@@ -418,7 +418,7 @@ export function traceBubbleSort(values: number[]): TraceStep[] {
             swapB: i + 1,
             sortedFrom: n - round,
           },
-          stats: {steps: steps.length, comparisons, swaps, passes},
+          stats: { steps: steps.length, comparisons, swaps, passes },
         });
       }
     }
@@ -429,8 +429,8 @@ export function traceBubbleSort(values: number[]): TraceStep[] {
         title: 'Vroeg klaar',
         description: 'Er was een hele pass zonder swaps. De lijst is gesorteerd.',
         array: copy(list),
-        markers: {sortedFrom: 0},
-        stats: {steps: steps.length, comparisons, swaps, passes},
+        markers: { sortedFrom: 0 },
+        stats: { steps: steps.length, comparisons, swaps, passes },
         result: 'gesorteerd',
       });
       return steps;
@@ -442,8 +442,8 @@ export function traceBubbleSort(values: number[]): TraceStep[] {
     title: 'Klaar',
     description: 'Alle nodige passes zijn uitgevoerd.',
     array: copy(list),
-    markers: {sortedFrom: 0},
-    stats: {steps: steps.length, comparisons, swaps, passes},
+    markers: { sortedFrom: 0 },
+    stats: { steps: steps.length, comparisons, swaps, passes },
     result: 'gesorteerd',
   });
 

@@ -1,4 +1,4 @@
-import {createConfig} from '@coderius/shared/config';
+import { createConfig } from '@coderius/shared/config';
 
 // Site-specifieke config; gedeelde standaarden (assets, merk-CSS, CC BY-NC 4.0,
 // i18n, prism, transpilatie van @coderius/* componenten) komen uit createConfig.
@@ -7,6 +7,7 @@ export default createConfig({
   tagline: 'Leer cybersecurity door Capture the Flag challenges',
   url: 'https://ctf.coderius.nl',
   projectName: 'ctf-docs',
+  matomoSiteId: 8,
 
   description:
     'Los CTF-challenges op en leer cybersecurity. Codes kraken, websites hacken, forensisch onderzoek — direct in je browser.',
@@ -22,7 +23,7 @@ export default createConfig({
     [
       'classic',
       {
-        docs: {sidebarPath: './sidebars.ts'},
+        docs: { sidebarPath: './sidebars.ts' },
         blog: false,
       },
     ],
@@ -32,20 +33,20 @@ export default createConfig({
     navbar: {
       title: 'coderius-ctf',
       items: [
-        {type: 'docSidebar', sidebarId: 'tutorialSidebar', position: 'left', label: 'Challenges'},
-        {to: '/presentatie', label: 'Presentatie', position: 'left'},
-        {to: '/toolbox', label: 'Toolbox', position: 'left'},
-        {to: '/woordenlijst', label: 'Woordenlijst', position: 'left'},
-        {href: 'https://ctf.hackchallenges.nl/register', label: 'Registreer', position: 'right'},
+        { type: 'docSidebar', sidebarId: 'tutorialSidebar', position: 'left', label: 'Challenges' },
+        { to: '/presentatie', label: 'Presentatie', position: 'left' },
+        { to: '/toolbox', label: 'Toolbox', position: 'left' },
+        { to: '/woordenlijst', label: 'Woordenlijst', position: 'left' },
+        { href: 'https://ctf.hackchallenges.nl/register', label: 'Registreer', position: 'right' },
       ],
     },
     footer: {
       style: 'dark',
       links: [
-        {title: 'Challenges', items: [{label: 'Aan de slag', to: '/docs/intro'}]},
+        { title: 'Challenges', items: [{ label: 'Aan de slag', to: '/docs/intro' }] },
         {
           title: 'Links',
-          items: [{label: 'CTF Platform', href: 'https://ctf.hackchallenges.nl/register'}],
+          items: [{ label: 'CTF Platform', href: 'https://ctf.hackchallenges.nl/register' }],
         },
       ],
     },

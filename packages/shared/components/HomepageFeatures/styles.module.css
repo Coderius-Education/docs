@@ -29,7 +29,11 @@
   --ifm-link-color: #fff;
   --ifm-link-hover-color: #fff;
   /* Merkkleur van de site, niet hardgecodeerd: elke site krijgt zijn eigen tint. */
-  background: linear-gradient(135deg, var(--ifm-color-primary) 0%, var(--ifm-color-primary-dark) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--ifm-color-primary) 0%,
+    var(--ifm-color-primary-dark) 100%
+  );
   border-radius: 16px;
   padding: 2rem;
   margin: 1rem;

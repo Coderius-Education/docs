@@ -1,12 +1,12 @@
-import {useEffect, useRef, useState, type ReactNode, type KeyboardEvent} from 'react';
 import BrowserOnly from '@docusaurus/BrowserOnly';
+import { type KeyboardEvent, type ReactNode, useEffect, useRef, useState } from 'react';
 import {
+  type RepoState,
+  addToIgnore,
+  deleteFile,
   emptyState,
   runCommand,
   setFile,
-  deleteFile,
-  addToIgnore,
-  type RepoState,
 } from './gitEngine';
 import styles from './styles.module.css';
 
@@ -28,9 +28,7 @@ type HistoryLine = {
   text: string;
 };
 
-type EditorTarget =
-  | {mode: 'new'}
-  | {mode: 'edit'; name: string};
+type EditorTarget = { mode: 'new' } | { mode: 'edit'; name: string };
 
 export default function GitSimulator(props: Props): ReactNode {
   return (
@@ -57,6 +55,7 @@ function SimulatorInner({
   const [editorContent, setEditorContent] = useState('');
   const outputRef = useRef<HTMLDivElement>(null);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: history triggert bewust een her-scroll bij nieuwe terminalregels; de body zelf leest alleen de ref.
   useEffect(() => {
     if (outputRef.current) {
       outputRef.current.scrollTop = outputRef.current.scrollHeight;
@@ -74,11 +73,11 @@ function SimulatorInner({
   const submit = () => {
     const cmd = input;
     if (!cmd.trim()) return;
-    const {newState, output, ok} = runCommand(state, cmd);
+    const { newState, output, ok } = runCommand(state, cmd);
     setState(newState);
     setHistory((h) => {
-      const next: HistoryLine[] = [...h, {kind: 'input', text: cmd}];
-      if (output) next.push({kind: ok ? 'output' : 'error', text: output});
+      const next: HistoryLine[] = [...h, { kind: 'input', text: cmd }];
+      if (output) next.push({ kind: ok ? 'output' : 'error', text: output });
       return next;
     });
     setCmdHistory((h) => [...h, cmd]);
@@ -113,13 +112,13 @@ function SimulatorInner({
   const openNewFile = () => {
     setEditorName('');
     setEditorContent('');
-    setEditor({mode: 'new'});
+    setEditor({ mode: 'new' });
   };
 
   const openEditFile = (name: string) => {
     setEditorName(name);
     setEditorContent(state.workingDir[name] ?? '');
-    setEditor({mode: 'edit', name});
+    setEditor({ mode: 'edit', name });
   };
 
   const saveEditor = () => {
@@ -132,12 +131,12 @@ function SimulatorInner({
         .split('\n')
         .map((l) => l.trim())
         .filter((l) => l && !l.startsWith('#'));
-      next = {...next, ignored: lines};
+      next = { ...next, ignored: lines };
       for (const ign of lines) {
         next = addToIgnore(next, ign);
       }
     } else if (state.ignored.length) {
-      next = {...next, ignored: state.ignored};
+      next = { ...next, ignored: state.ignored };
     }
     setState(next);
     setEditor(null);
@@ -208,7 +207,7 @@ function SimulatorInner({
                 + nieuw bestand
               </button>
               {wdFiles.map((f) => (
-                <span key={f} style={{display: 'inline-flex', gap: '0.2rem'}}>
+                <span key={f} style={{ display: 'inline-flex', gap: '0.2rem' }}>
                   <button
                     type="button"
                     className={styles.fileButton}
@@ -233,14 +232,15 @@ function SimulatorInner({
         <div className={styles.terminal}>
           <div className={styles.terminalOutput} ref={outputRef}>
             {history.length === 0 && (
-              <div className={styles.terminalLine} style={{color: '#888'}}>
-                Typ een commando, bijvoorbeeld <span style={{color: '#dcdcaa'}}>git init</span>
+              <div className={styles.terminalLine} style={{ color: '#888' }}>
+                Typ een commando, bijvoorbeeld <span style={{ color: '#dcdcaa' }}>git init</span>
               </div>
             )}
             {history.map((line, i) => {
+              const key = `${i}-${line.text}`;
               if (line.kind === 'input') {
                 return (
-                  <div key={i} className={styles.terminalLine}>
+                  <div key={key} className={styles.terminalLine}>
                     <span className={styles.terminalPrompt}>$ </span>
                     {line.text}
                   </div>
@@ -248,7 +248,7 @@ function SimulatorInner({
               }
               return (
                 <div
-                  key={i}
+                  key={key}
                   className={`${styles.terminalLine} ${
                     line.kind === 'error' ? styles.terminalError : ''
                   }`}
@@ -281,7 +281,9 @@ function SimulatorInner({
       </div>
 
       {editor && (
+        // biome-ignore lint/a11y/useKeyWithClickEvents: decoratieve overlay, geen tab-stop; de "annuleren"-knop hieronder doet hetzelfde en is met toetsenbord bereikbaar.
         <div className={styles.editor} onClick={() => setEditor(null)}>
+          {/* biome-ignore lint/a11y/useKeyWithClickEvents: stopt alleen event-bubbling naar de backdrop, geen eigen actie. */}
           <div className={styles.editorBox} onClick={(e) => e.stopPropagation()}>
             <div className={styles.editorTitle}>
               {editor.mode === 'new' ? 'Nieuw bestand' : `Bewerk ${editor.name}`}

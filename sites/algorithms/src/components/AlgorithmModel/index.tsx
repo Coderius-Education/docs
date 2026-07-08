@@ -1,29 +1,16 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import clsx from 'clsx';
 import useBaseUrl from '@docusaurus/useBaseUrl';
-import {HighlightedEditor} from '@site/src/components/PythonPlayground';
+import { type PyodideInterface, loadPyodideOnce } from '@site/src/components/PyRunner/usePyodide';
+import { HighlightedEditor } from '@site/src/components/PythonPlayground';
 import {
-  getAlgorithmModel,
   type AlgorithmInput,
   type AlgorithmModelId,
   type ExerciseTestCase,
+  getAlgorithmModel,
 } from '@site/src/data/algorithmModels';
-import {type TraceStep} from '@site/src/lib/algorithmTraces';
+import type { TraceStep } from '@site/src/lib/algorithmTraces';
+import { type RawPythonTraceFrame, adaptStudentTrace } from '@site/src/lib/studentTraceAdapters';
 import {
-  adaptStudentTrace,
-  type RawPythonTraceFrame,
-} from '@site/src/lib/studentTraceAdapters';
-import {
-  loadPyodideOnce,
-  type PyodideInterface,
-} from '@site/src/components/PyRunner/usePyodide';
-import {
+  type PyProxyLike,
   buildPythonHarness,
   clampStep,
   filterTraceback,
@@ -33,8 +20,10 @@ import {
   isOutsideSearchWindow,
   isSortedMarker,
   markerLabels,
-  type PyProxyLike,
 } from '@site/src/lib/traceUtils';
+import clsx from 'clsx';
+import type React from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styles from './styles.module.css';
 
 type AlgorithmModelProps = {
@@ -46,13 +35,11 @@ type InputDraft = {
   target: string;
 };
 
-type ParsedInput =
-  | {input: AlgorithmInput; error: null}
-  | {input: null; error: string};
+type ParsedInput = { input: AlgorithmInput; error: null } | { input: null; error: string };
 
 type ParsedExerciseTests =
-  | {tests: ExerciseTestCase[]; error: null}
-  | {tests: ExerciseTestCase[]; error: string};
+  | { tests: ExerciseTestCase[]; error: null }
+  | { tests: ExerciseTestCase[]; error: string };
 
 type ExerciseStatus = 'idle' | 'loading' | 'running' | 'done' | 'error';
 
@@ -93,15 +80,15 @@ function parseNumberList(raw: string): number[] {
 function parseInput(draft: InputDraft, needsTarget: boolean): ParsedInput {
   try {
     const values = parseNumberList(draft.values);
-    const input: AlgorithmInput = {values};
+    const input: AlgorithmInput = { values };
     if (needsTarget) {
       const target = Number(draft.target);
       if (!Number.isFinite(target)) {
-        return {input: null, error: 'Vul een geldig doelgetal in.'};
+        return { input: null, error: 'Vul een geldig doelgetal in.' };
       }
       input.target = target;
     }
-    return {input, error: null};
+    return { input, error: null };
   } catch (error) {
     return {
       input: null,
@@ -114,7 +101,7 @@ function parseExerciseTests(raw: string): ParsedExerciseTests {
   try {
     const parsed = JSON.parse(raw) as ExerciseTestCase[];
     if (!Array.isArray(parsed)) {
-      return {tests: [], error: 'Tests moeten een JSON-lijst zijn.'};
+      return { tests: [], error: 'Tests moeten een JSON-lijst zijn.' };
     }
     for (const [index, test] of parsed.entries()) {
       if (
@@ -129,7 +116,7 @@ function parseExerciseTests(raw: string): ParsedExerciseTests {
         };
       }
     }
-    return {tests: parsed, error: null};
+    return { tests: parsed, error: null };
   } catch (error) {
     return {
       tests: [],
@@ -138,11 +125,7 @@ function parseExerciseTests(raw: string): ParsedExerciseTests {
   }
 }
 
-function buildStudentTraceHarness(
-  code: string,
-  functionName: string,
-  args: unknown[],
-): string {
+function buildStudentTraceHarness(code: string, functionName: string, args: unknown[]): string {
   const argsJson = JSON.stringify(args);
   return `${code}
 
@@ -209,30 +192,21 @@ except Exception as _coderius_exc:
 }`;
 }
 
-export default function AlgorithmModel({
-  algorithm,
-}: AlgorithmModelProps): React.ReactElement {
+export default function AlgorithmModel({ algorithm }: AlgorithmModelProps): React.ReactElement {
   const model = getAlgorithmModel(algorithm);
   const pyodideIndexURL = useBaseUrl('/pyodide/');
   const pyodideRef = useRef<PyodideInterface | null>(null);
   const [activeTab, setActiveTab] = useState<'visual' | 'exercise'>('visual');
-  const [draft, setDraft] = useState<InputDraft>(() =>
-    inputToDraft(model.defaultInput),
-  );
+  const [draft, setDraft] = useState<InputDraft>(() => inputToDraft(model.defaultInput));
   const [stepIndex, setStepIndex] = useState(0);
   const [code, setCode] = useState(model.exercise.starterCode);
-  const [testsDraft, setTestsDraft] = useState(() =>
-    JSON.stringify(model.exercise.tests, null, 2),
-  );
-  const [exerciseStatus, setExerciseStatus] =
-    useState<ExerciseStatus>('idle');
+  const [testsDraft, setTestsDraft] = useState(() => JSON.stringify(model.exercise.tests, null, 2));
+  const [exerciseStatus, setExerciseStatus] = useState<ExerciseStatus>('idle');
   const [exerciseMessage, setExerciseMessage] = useState('');
   const [testResults, setTestResults] = useState<TestRunResult[]>([]);
   const [stdout, setStdout] = useState('');
   const [stderr, setStderr] = useState('');
-  const [traceMode, setTraceMode] = useState<'reference' | 'student'>(
-    'reference',
-  );
+  const [traceMode, setTraceMode] = useState<'reference' | 'student'>('reference');
   const [studentSteps, setStudentSteps] = useState<TraceStep[] | null>(null);
   const [studentTraceMessage, setStudentTraceMessage] = useState('');
 
@@ -252,20 +226,13 @@ export default function AlgorithmModel({
   }, [model]);
 
   const needsTarget = model.controls.some((control) => control.key === 'target');
-  const parsedInput = useMemo(
-    () => parseInput(draft, needsTarget),
-    [draft, needsTarget],
-  );
-  const testPreview = useMemo(
-    () => parseExerciseTests(testsDraft),
-    [testsDraft],
-  );
+  const parsedInput = useMemo(() => parseInput(draft, needsTarget), [draft, needsTarget]);
+  const testPreview = useMemo(() => parseExerciseTests(testsDraft), [testsDraft]);
   const referenceSteps = useMemo(
     () => (parsedInput.input ? model.trace(parsedInput.input) : []),
     [model, parsedInput],
   );
-  const visibleSteps =
-    traceMode === 'student' && studentSteps ? studentSteps : referenceSteps;
+  const visibleSteps = traceMode === 'student' && studentSteps ? studentSteps : referenceSteps;
   const safeStepIndex = clampStep(stepIndex, visibleSteps);
   const currentStep = visibleSteps[safeStepIndex];
 
@@ -274,7 +241,7 @@ export default function AlgorithmModel({
   }, [visibleSteps]);
 
   const updateDraft = useCallback((key: keyof InputDraft, value: string) => {
-    setDraft((current) => ({...current, [key]: value}));
+    setDraft((current) => ({ ...current, [key]: value }));
     setStepIndex(0);
     setTraceMode('reference');
     setStudentSteps(null);
@@ -310,8 +277,16 @@ export default function AlgorithmModel({
       const py = pyodideRef.current;
       let out = '';
       let err = '';
-      py.setStdout({batched: (value) => (out += value + '\n')});
-      py.setStderr({batched: (value) => (err += value + '\n')});
+      py.setStdout({
+        batched: (value) => {
+          out += `${value}\n`;
+        },
+      });
+      py.setStderr({
+        batched: (value) => {
+          err += `${value}\n`;
+        },
+      });
       setExerciseStatus('running');
       setExerciseMessage('Tests draaien...');
 
@@ -321,7 +296,7 @@ export default function AlgorithmModel({
       const proxy = result as PyProxyLike;
       const jsResult =
         proxy && typeof proxy.toJs === 'function'
-          ? proxy.toJs({dict_converter: Object.fromEntries})
+          ? proxy.toJs({ dict_converter: Object.fromEntries })
           : result;
       proxy?.destroy?.();
       setStdout(out);
@@ -331,9 +306,7 @@ export default function AlgorithmModel({
       setExerciseMessage('Tests klaar');
     } catch (error) {
       setExerciseStatus('error');
-      setExerciseMessage(
-        filterTraceback(error instanceof Error ? error.message : String(error)),
-      );
+      setExerciseMessage(filterTraceback(error instanceof Error ? error.message : String(error)));
     }
   }, [code, model.exercise.functionName, pyodideIndexURL, testsDraft]);
 
@@ -357,8 +330,16 @@ export default function AlgorithmModel({
       const py = pyodideRef.current;
       let out = '';
       let err = '';
-      py.setStdout({batched: (value) => (out += value + '\n')});
-      py.setStderr({batched: (value) => (err += value + '\n')});
+      py.setStdout({
+        batched: (value) => {
+          out += `${value}\n`;
+        },
+      });
+      py.setStderr({
+        batched: (value) => {
+          err += `${value}\n`;
+        },
+      });
       setExerciseStatus('running');
       setExerciseMessage('Jouw code wordt getraceerd...');
 
@@ -372,7 +353,7 @@ export default function AlgorithmModel({
       const proxy = result as PyProxyLike;
       const jsResult =
         proxy && typeof proxy.toJs === 'function'
-          ? proxy.toJs({dict_converter: Object.fromEntries})
+          ? proxy.toJs({ dict_converter: Object.fromEntries })
           : result;
       proxy?.destroy?.();
       const traceRun = jsResult as StudentTraceRun;
@@ -398,9 +379,7 @@ export default function AlgorithmModel({
       );
     } catch (error) {
       setExerciseStatus('error');
-      setExerciseMessage(
-        filterTraceback(error instanceof Error ? error.message : String(error)),
-      );
+      setExerciseMessage(filterTraceback(error instanceof Error ? error.message : String(error)));
     }
   }, [code, model, parsedInput, pyodideIndexURL]);
 
@@ -419,16 +398,15 @@ export default function AlgorithmModel({
           <button
             type="button"
             className={clsx(styles.tab, activeTab === 'visual' && styles.tabActive)}
-            onClick={() => setActiveTab('visual')}>
+            onClick={() => setActiveTab('visual')}
+          >
             Visualisatie
           </button>
           <button
             type="button"
-            className={clsx(
-              styles.tab,
-              activeTab === 'exercise' && styles.tabActive,
-            )}
-            onClick={() => setActiveTab('exercise')}>
+            className={clsx(styles.tab, activeTab === 'exercise' && styles.tabActive)}
+            onClick={() => setActiveTab('exercise')}
+          >
             Code-oefening
           </button>
         </div>
@@ -441,27 +419,18 @@ export default function AlgorithmModel({
               <label key={control.key} className={styles.field}>
                 <span>{control.label}</span>
                 <input
-                  value={
-                    control.key === 'values' ? draft.values : draft.target
-                  }
+                  value={control.key === 'values' ? draft.values : draft.target}
                   type="text"
                   inputMode={control.kind === 'number' ? 'decimal' : 'text'}
                   onChange={(event) =>
-                    updateDraft(
-                      control.key === 'values' ? 'values' : 'target',
-                      event.target.value,
-                    )
+                    updateDraft(control.key === 'values' ? 'values' : 'target', event.target.value)
                   }
                   aria-describedby={`${model.id}-${control.key}-help`}
                 />
-                <small id={`${model.id}-${control.key}-help`}>
-                  {control.help}
-                </small>
+                <small id={`${model.id}-${control.key}-help`}>{control.help}</small>
               </label>
             ))}
-            {parsedInput.error && (
-              <div className={styles.inputError}>{parsedInput.error}</div>
-            )}
+            {parsedInput.error && <div className={styles.inputError}>{parsedInput.error}</div>}
           </div>
 
           <div className={styles.stage}>
@@ -469,7 +438,10 @@ export default function AlgorithmModel({
               <span>
                 Bron {traceMode === 'student' && studentSteps ? 'mijn code' : 'referentie'}
               </span>
-              <span>Stap {visibleSteps.length ? safeStepIndex : 0}/{Math.max(visibleSteps.length - 1, 0)}</span>
+              <span>
+                Stap {visibleSteps.length ? safeStepIndex : 0}/
+                {Math.max(visibleSteps.length - 1, 0)}
+              </span>
               <span>Vergelijkingen {currentStep?.stats.comparisons ?? 0}</span>
               {currentStep?.stats.swaps !== undefined && (
                 <span>Swaps {currentStep.stats.swaps}</span>
@@ -490,7 +462,8 @@ export default function AlgorithmModel({
                 onClick={() => {
                   setTraceMode('reference');
                   setStepIndex(0);
-                }}>
+                }}
+              >
                 Referentie
               </button>
               <button
@@ -505,19 +478,16 @@ export default function AlgorithmModel({
                     setStepIndex(0);
                   }
                 }}
-                disabled={!studentSteps}>
+                disabled={!studentSteps}
+              >
                 Mijn code
               </button>
             </div>
 
             {studentTraceMessage && traceMode === 'student' && (
-              <div
-                className={styles.traceNotice}
-                role="status"
-                aria-live="polite"
-                aria-atomic="true">
+              <output className={styles.traceNotice} aria-live="polite" aria-atomic="true">
                 {studentTraceMessage}
-              </div>
+              </output>
             )}
 
             <div className={styles.array} aria-label="Algoritme status">
@@ -536,17 +506,15 @@ export default function AlgorithmModel({
                       [styles.cellActive]: active,
                       [styles.cellMin]: markers.minIndex === index,
                       [styles.cellMax]: markers.maxIndex === index,
-                      [styles.cellSwap]:
-                        markers.swapA === index || markers.swapB === index,
+                      [styles.cellSwap]: markers.swapA === index || markers.swapB === index,
                       [styles.cellFound]: markers.foundIndex === index,
                       [styles.cellSorted]: isSortedMarker(index, markers),
                       [styles.cellMuted]: isOutsideSearchWindow(index, markers),
-                    })}>
+                    })}
+                  >
                     <span className={styles.cellIndex}>{index}</span>
                     <strong>{value}</strong>
-                    <span className={styles.cellLabels}>
-                      {labels.join(' ')}
-                    </span>
+                    <span className={styles.cellLabels}>{labels.join(' ')}</span>
                   </div>
                 );
               })}
@@ -560,16 +528,14 @@ export default function AlgorithmModel({
             )}
 
             <div className={styles.stepper}>
-              <button
-                type="button"
-                onClick={() => setStepIndex(0)}
-                disabled={safeStepIndex === 0}>
+              <button type="button" onClick={() => setStepIndex(0)} disabled={safeStepIndex === 0}>
                 Eerste
               </button>
               <button
                 type="button"
                 onClick={() => setStepIndex((index) => Math.max(index - 1, 0))}
-                disabled={safeStepIndex === 0}>
+                disabled={safeStepIndex === 0}
+              >
                 Vorige
               </button>
               <input
@@ -583,17 +549,17 @@ export default function AlgorithmModel({
               <button
                 type="button"
                 onClick={() =>
-                  setStepIndex((index) =>
-                    Math.min(index + 1, visibleSteps.length - 1),
-                  )
+                  setStepIndex((index) => Math.min(index + 1, visibleSteps.length - 1))
                 }
-                disabled={safeStepIndex >= visibleSteps.length - 1}>
+                disabled={safeStepIndex >= visibleSteps.length - 1}
+              >
                 Volgende
               </button>
               <button
                 type="button"
                 onClick={() => setStepIndex(Math.max(visibleSteps.length - 1, 0))}
-                disabled={safeStepIndex >= visibleSteps.length - 1}>
+                disabled={safeStepIndex >= visibleSteps.length - 1}
+              >
                 Laatste
               </button>
             </div>
@@ -607,7 +573,8 @@ export default function AlgorithmModel({
               <button
                 type="button"
                 onClick={() => handleCodeChange(model.exercise.starterCode)}
-                disabled={busy}>
+                disabled={busy}
+              >
                 Reset
               </button>
             </div>
@@ -630,9 +597,7 @@ export default function AlgorithmModel({
                 <div className={styles.inputError}>{testPreview.error}</div>
               ) : (
                 testPreview.tests.map((test, index) => (
-                  <div
-                    key={`${test.label}-${index}`}
-                    className={styles.testItem}>
+                  <div key={`${test.label}-${index}`} className={styles.testItem}>
                     <strong>{test.label}</strong>
                     <p>
                       <span>Input</span>{' '}
@@ -662,27 +627,29 @@ export default function AlgorithmModel({
                 type="button"
                 className={styles.runButton}
                 onClick={runExerciseTests}
-                disabled={busy}>
+                disabled={busy}
+              >
                 {busy ? 'Bezig...' : 'Run tests'}
               </button>
               <button
                 type="button"
                 className={styles.traceButton}
                 onClick={runStudentTrace}
-                disabled={busy}>
+                disabled={busy}
+              >
                 Visualiseer mijn code
               </button>
             </div>
             {exerciseMessage && (
-              <div
+              <output
                 className={clsx(styles.exerciseStatus, {
                   [styles.exerciseError]: exerciseStatus === 'error',
                 })}
-                role="status"
                 aria-live="polite"
-                aria-atomic="true">
+                aria-atomic="true"
+              >
                 {exerciseMessage}
-              </div>
+              </output>
             )}
             {testResults.length > 0 && (
               <div className={styles.results}>
@@ -695,7 +662,8 @@ export default function AlgorithmModel({
                     className={clsx(styles.resultRow, {
                       [styles.resultPass]: result.passed,
                       [styles.resultFail]: !result.passed,
-                    })}>
+                    })}
+                  >
                     <span>{result.passed ? 'PASS' : 'FAIL'}</span>
                     <div>
                       <strong>{result.label}</strong>

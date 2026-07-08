@@ -1,17 +1,18 @@
-import type {ReactNode} from 'react';
+import HomepageFeatures, { type FeatureItem } from '@coderius/shared/components/HomepageFeatures';
+import HomepageHero, { type HeroCta } from '@coderius/shared/components/HomepageHero';
 import Layout from '@theme/Layout';
-import HomepageHero, {type HeroCta} from '@coderius/shared/components/HomepageHero';
-import HomepageFeatures, {type FeatureItem} from '@coderius/shared/components/HomepageFeatures';
+import type { ReactNode } from 'react';
 
 const ctas: HeroCta[] = [
-  {label: 'Begin met leren', to: '/docs/basis/introductie'},
-  {label: 'Playground', to: '/playground'},
+  { label: 'Begin met leren', to: '/docs/basis/introductie' },
+  { label: 'Playground', to: '/playground' },
 ];
 
 const features: FeatureItem[] = [
   {
     title: 'Stap voor stap',
-    description: 'Van je eerste print() tot functies en lijsten. Elke les bouwt voort op de vorige.',
+    description:
+      'Van je eerste print() tot functies en lijsten. Elke les bouwt voort op de vorige.',
     link: '/docs/basis/introductie',
   },
   {
@@ -30,7 +31,8 @@ export default function Home(): ReactNode {
   return (
     <Layout
       title="Leer Python programmeren"
-      description="Leer stap voor stap programmeren in Python met interactieve oefeningen.">
+      description="Leer stap voor stap programmeren in Python met interactieve oefeningen."
+    >
       <HomepageHero title="Coderius Python" ctas={ctas} />
       <HomepageFeatures features={features} />
     </Layout>

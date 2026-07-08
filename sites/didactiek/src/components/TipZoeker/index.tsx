@@ -1,11 +1,18 @@
-import {type ReactNode, useMemo, useState} from 'react';
 import Link from '@docusaurus/Link';
-import {tips, type Tip} from '@site/src/data/tips';
+import { type Tip, tips } from '@site/src/data/tips';
+import { type ReactNode, useMemo, useState } from 'react';
 import styles from './styles.module.css';
 
 // Alles waar de zoekterm tegen mag matchen, samengevoegd tot één kleine-letter string.
 function zoekTekst(tip: Tip): string {
-  return [tip.term, tip.categorie, tip.samenvatting, tip.paper.titel, tip.paper.auteurs, ...tip.termen]
+  return [
+    tip.term,
+    tip.categorie,
+    tip.samenvatting,
+    tip.paper.titel,
+    tip.paper.auteurs,
+    ...tip.termen,
+  ]
     .join(' ')
     .toLowerCase();
 }
@@ -13,10 +20,10 @@ function zoekTekst(tip: Tip): string {
 export default function TipZoeker(): ReactNode {
   const [query, setQuery] = useState('');
 
-  const index = useMemo(() => tips.map((tip) => ({tip, tekst: zoekTekst(tip)})), []);
+  const index = useMemo(() => tips.map((tip) => ({ tip, tekst: zoekTekst(tip) })), []);
   const woorden = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
   const resultaten = woorden.length
-    ? index.filter(({tekst}) => woorden.every((w) => tekst.includes(w))).map(({tip}) => tip)
+    ? index.filter(({ tekst }) => woorden.every((w) => tekst.includes(w))).map(({ tip }) => tip)
     : tips;
 
   return (

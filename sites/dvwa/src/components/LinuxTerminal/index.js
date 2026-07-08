@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useCallback, useState } from 'react';
 import BrowserOnly from '@docusaurus/BrowserOnly';
-import styles from './styles.module.css';
-import { createFilesystem } from './filesystem';
+import React, { useEffect, useRef, useCallback, useState } from 'react';
 import { executeCommandLine } from './commands';
+import { createFilesystem } from './filesystem';
+import styles from './styles.module.css';
 
 /**
  * LinuxTerminal — Interactive browser-based Linux terminal simulator.
@@ -32,48 +32,58 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, filte
     return `\x1b[1;32mstudent@dvwa\x1b[0m:\x1b[1;34m${display}\x1b[0m$ `;
   }, []);
 
-  const writePrompt = useCallback((term) => {
-    term.write('\r\n' + getPrompt());
-  }, [getPrompt]);
+  const writePrompt = useCallback(
+    (term) => {
+      term.write(`\r\n${getPrompt()}`);
+    },
+    [getPrompt],
+  );
 
-  const handleCommand = useCallback((term, line) => {
-    if (!line.trim()) {
-      writePrompt(term);
-      return;
-    }
+  const handleCommand = useCallback(
+    (term, line) => {
+      if (!line.trim()) {
+        writePrompt(term);
+        return;
+      }
 
-    // Add to history
-    history.current.unshift(line);
-    if (history.current.length > 50) history.current.pop();
-    historyIndex.current = -1;
+      // Add to history
+      history.current.unshift(line);
+      if (history.current.length > 50) history.current.pop();
+      historyIndex.current = -1;
 
-    // Apply DVWA filter if provided
-    let processedLine = line;
-    if (filter) {
-      processedLine = filter(line);
-    }
+      // Apply DVWA filter if provided
+      let processedLine = line;
+      if (filter) {
+        processedLine = filter(line);
+      }
 
-    const env = {
-      cwd: cwdRef.current,
-      fs: fsRef.current,
-      setCwd: (newCwd) => { cwdRef.current = newCwd; },
-      clear: () => { term.clear(); },
-    };
+      const env = {
+        cwd: cwdRef.current,
+        fs: fsRef.current,
+        setCwd: (newCwd) => {
+          cwdRef.current = newCwd;
+        },
+        clear: () => {
+          term.clear();
+        },
+      };
 
-    const results = executeCommandLine(processedLine, env);
+      const results = executeCommandLine(processedLine, env);
 
-    for (const result of results) {
-      if (result.output) {
-        // Write each line separately for proper terminal rendering
-        const lines = result.output.split('\n');
-        for (const l of lines) {
-          term.write('\r\n' + l);
+      for (const result of results) {
+        if (result.output) {
+          // Write each line separately for proper terminal rendering
+          const lines = result.output.split('\n');
+          for (const l of lines) {
+            term.write(`\r\n${l}`);
+          }
         }
       }
-    }
 
-    writePrompt(term);
-  }, [filter, writePrompt]);
+      writePrompt(term);
+    },
+    [filter, writePrompt],
+  );
 
   useEffect(() => {
     let isMounted = true;
@@ -147,7 +157,9 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, filte
             historyIndex.current++;
             const entry = history.current[historyIndex.current];
             // Clear current line
-            term.write('\r' + getPrompt() + ' '.repeat(lineBuffer.current.length) + '\r' + getPrompt() + entry);
+            term.write(
+              `\r${getPrompt()}${' '.repeat(lineBuffer.current.length)}\r${getPrompt()}${entry}`,
+            );
             lineBuffer.current = entry;
           }
         } else if (data === '\x1b[B') {
@@ -155,11 +167,13 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, filte
           if (historyIndex.current > 0) {
             historyIndex.current--;
             const entry = history.current[historyIndex.current];
-            term.write('\r' + getPrompt() + ' '.repeat(lineBuffer.current.length) + '\r' + getPrompt() + entry);
+            term.write(
+              `\r${getPrompt()}${' '.repeat(lineBuffer.current.length)}\r${getPrompt()}${entry}`,
+            );
             lineBuffer.current = entry;
           } else if (historyIndex.current === 0) {
             historyIndex.current = -1;
-            term.write('\r' + getPrompt() + ' '.repeat(lineBuffer.current.length) + '\r' + getPrompt());
+            term.write(`\r${getPrompt()}${' '.repeat(lineBuffer.current.length)}\r${getPrompt()}`);
             lineBuffer.current = '';
           }
         } else if (data === '\x1b[C' || data === '\x1b[D') {

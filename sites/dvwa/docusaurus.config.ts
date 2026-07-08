@@ -1,10 +1,11 @@
-import {createConfig, prismThemes} from '@coderius/shared/config';
+import { createConfig, prismThemes } from '@coderius/shared/config';
 
 export default createConfig({
   title: 'DVWA Websecurity — Coderius',
   tagline: 'Oefen websecurity met DVWA direct in je browser',
   url: 'https://dvwa.coderius.nl',
   projectName: 'DVWA',
+  matomoSiteId: 10,
 
   description:
     'Oefen websecurity met DVWA direct in je browser. Geen installatie nodig. Leer SQL-injectie, XSS, command injection en meer.',
@@ -34,32 +35,32 @@ export default createConfig({
     navbar: {
       title: 'Coderius-DVWA',
       items: [
-        {to: '/docs/linux_leren', label: 'Linux leren', position: 'left'},
-        {to: '/docs/installatie', label: 'WSL installeren', position: 'left'},
-        {to: '/docs/dvwa_installatie', label: 'DVWA installeren', position: 'left'},
+        { to: '/docs/linux_leren', label: 'Linux leren', position: 'left' },
+        { to: '/docs/installatie', label: 'WSL installeren', position: 'left' },
+        { to: '/docs/dvwa_installatie', label: 'DVWA installeren', position: 'left' },
         {
           to: 'docs/dvwa_tutorial/brute-force/low',
           label: 'DVWA Challenges',
           position: 'left',
           items: [
-            {to: 'docs/dvwa_tutorial/brute-force/low', label: 'Brute Force'},
-            {to: 'docs/dvwa_tutorial/command-injection/low', label: 'Command Injection'},
-            {to: 'docs/dvwa_tutorial/authorization-bypass/low', label: 'Authorization Bypass'},
-            {to: 'docs/dvwa_tutorial/sql-injection/low', label: 'SQL Injection'},
-            {to: 'docs/dvwa_tutorial/sql-injection-blind/low', label: 'SQL Injection (Blind)'},
-            {to: 'docs/dvwa_tutorial/xss-reflected/low', label: 'XSS (Reflected)'},
-            {to: 'docs/dvwa_tutorial/xss-stored/low', label: 'XSS (Stored)'},
-            {to: 'docs/dvwa_tutorial/xss-dom/low', label: 'XSS (DOM)'},
-            {to: 'docs/dvwa_tutorial/csrf/low', label: 'CSRF'},
-            {to: 'docs/dvwa_tutorial/file-inclusion/low', label: 'File Inclusion'},
-            {to: 'docs/dvwa_tutorial/file-upload/low', label: 'File Upload'},
-            {to: 'docs/dvwa_tutorial/weak-session-ids/low', label: 'Weak Session IDs'},
-            {to: 'docs/dvwa_tutorial/csp-bypass/low', label: 'CSP Bypass'},
-            {to: 'docs/dvwa_tutorial/javascript-attacks/low', label: 'JavaScript Attacks'},
+            { to: 'docs/dvwa_tutorial/brute-force/low', label: 'Brute Force' },
+            { to: 'docs/dvwa_tutorial/command-injection/low', label: 'Command Injection' },
+            { to: 'docs/dvwa_tutorial/authorization-bypass/low', label: 'Authorization Bypass' },
+            { to: 'docs/dvwa_tutorial/sql-injection/low', label: 'SQL Injection' },
+            { to: 'docs/dvwa_tutorial/sql-injection-blind/low', label: 'SQL Injection (Blind)' },
+            { to: 'docs/dvwa_tutorial/xss-reflected/low', label: 'XSS (Reflected)' },
+            { to: 'docs/dvwa_tutorial/xss-stored/low', label: 'XSS (Stored)' },
+            { to: 'docs/dvwa_tutorial/xss-dom/low', label: 'XSS (DOM)' },
+            { to: 'docs/dvwa_tutorial/csrf/low', label: 'CSRF' },
+            { to: 'docs/dvwa_tutorial/file-inclusion/low', label: 'File Inclusion' },
+            { to: 'docs/dvwa_tutorial/file-upload/low', label: 'File Upload' },
+            { to: 'docs/dvwa_tutorial/weak-session-ids/low', label: 'Weak Session IDs' },
+            { to: 'docs/dvwa_tutorial/csp-bypass/low', label: 'CSP Bypass' },
+            { to: 'docs/dvwa_tutorial/javascript-attacks/low', label: 'JavaScript Attacks' },
           ],
         },
-        {to: '/docs/cheatsheet', label: 'Cheatsheet', position: 'left'},
-        {href: 'https://github.com/Coderius-Education/DVWA', label: 'GitHub', position: 'right'},
+        { to: '/docs/cheatsheet', label: 'Cheatsheet', position: 'left' },
+        { href: 'https://github.com/Coderius-Education/DVWA', label: 'GitHub', position: 'right' },
       ],
     },
     footer: {

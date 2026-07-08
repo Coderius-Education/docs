@@ -1,5 +1,7 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
 import BrowserOnly from '@docusaurus/BrowserOnly';
+import type React from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { PyodideInterface } from '../PyodideProvider';
 import { HighlightedEditor } from '../PythonPlayground';
 import styles from './styles.module.css';
 
@@ -8,7 +10,7 @@ function CodeExerciseInner({ starterCode }: { starterCode: string }) {
   const [output, setOutput] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isRunning, setIsRunning] = useState(false);
-  const pyodideRef = useRef<any>(null);
+  const pyodideRef = useRef<PyodideInterface | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -28,7 +30,9 @@ function CodeExerciseInner({ starterCode }: { starterCode: string }) {
           }
         });
     });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const execCode = useCallback(async () => {
@@ -39,8 +43,8 @@ function CodeExerciseInner({ starterCode }: { starterCode: string }) {
       const { runPython } = await import('../PyodideProvider');
       const result = await runPython(pyodideRef.current, code);
       setOutput(result);
-    } catch (err: any) {
-      setOutput(err.message || String(err));
+    } catch (err) {
+      setOutput(err instanceof Error ? err.message : String(err));
     } finally {
       setIsRunning(false);
     }
@@ -53,7 +57,7 @@ function CodeExerciseInner({ starterCode }: { starterCode: string }) {
         const target = e.target as HTMLTextAreaElement;
         const start = target.selectionStart;
         const end = target.selectionEnd;
-        setCode(code.substring(0, start) + '    ' + code.substring(end));
+        setCode(`${code.substring(0, start)}    ${code.substring(end)}`);
         requestAnimationFrame(() => {
           target.selectionStart = target.selectionEnd = start + 4;
         });
@@ -73,6 +77,7 @@ function CodeExerciseInner({ starterCode }: { starterCode: string }) {
           <span className={styles.label}>Probeer het zelf</span>
           <div className={styles.buttons}>
             <button
+              type="button"
               className={styles.resetButton}
               onClick={() => setCode(starterCode)}
               title="Reset naar begincode"
@@ -80,6 +85,7 @@ function CodeExerciseInner({ starterCode }: { starterCode: string }) {
               Reset
             </button>
             <button
+              type="button"
               className={styles.runButton}
               onClick={execCode}
               disabled={isLoading || isRunning}
@@ -96,12 +102,8 @@ function CodeExerciseInner({ starterCode }: { starterCode: string }) {
           minHeight={120}
         />
       </div>
-      {output && (
-        <pre className={styles.output}>{output}</pre>
-      )}
-      {isLoading && (
-        <div className={styles.loading}>Python wordt geladen...</div>
-      )}
+      {output && <pre className={styles.output}>{output}</pre>}
+      {isLoading && <div className={styles.loading}>Python wordt geladen...</div>}
     </div>
   );
 }
@@ -109,7 +111,13 @@ function CodeExerciseInner({ starterCode }: { starterCode: string }) {
 export default function CodeExercise({ children }: { children: string }) {
   const code = (children || '').trim();
   return (
-    <BrowserOnly fallback={<div className={styles.exercise}><pre>{code}</pre></div>}>
+    <BrowserOnly
+      fallback={
+        <div className={styles.exercise}>
+          <pre>{code}</pre>
+        </div>
+      }
+    >
       {() => <CodeExerciseInner starterCode={code} />}
     </BrowserOnly>
   );

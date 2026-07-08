@@ -5,17 +5,17 @@ const DEFAULT_INDEX = '/pyodide/';
 
 declare global {
   interface Window {
-    loadPyodide?: (opts: {indexURL: string}) => Promise<PyodideInterface>;
+    loadPyodide?: (opts: { indexURL: string }) => Promise<PyodideInterface>;
     __pyodidePromise?: Promise<PyodideInterface>;
   }
 }
 
 export type PyodideInterface = {
   runPythonAsync: (code: string) => Promise<unknown>;
-  setStdout: (opts: {batched: (s: string) => void}) => void;
-  setStderr: (opts: {batched: (s: string) => void}) => void;
+  setStdout: (opts: { batched: (s: string) => void }) => void;
+  setStderr: (opts: { batched: (s: string) => void }) => void;
   loadPackage: (names: string | string[]) => Promise<void>;
-  globals: {get: (key: string) => unknown};
+  globals: { get: (key: string) => unknown };
   FS: unknown;
 };
 
@@ -24,9 +24,7 @@ function injectScript(src: string): Promise<void> {
     const existing = document.querySelector(`script[src="${src}"]`);
     if (existing) {
       existing.addEventListener('load', () => resolve());
-      existing.addEventListener('error', () =>
-        reject(new Error(`Kan ${src} niet laden`)),
-      );
+      existing.addEventListener('error', () => reject(new Error(`Kan ${src} niet laden`)));
       if ((existing as HTMLScriptElement).dataset.loaded === 'true') resolve();
       return;
     }
@@ -42,22 +40,20 @@ function injectScript(src: string): Promise<void> {
   });
 }
 
-export async function loadPyodideOnce(
-  indexURL: string = DEFAULT_INDEX,
-): Promise<PyodideInterface> {
+export async function loadPyodideOnce(indexURL: string = DEFAULT_INDEX): Promise<PyodideInterface> {
   if (typeof window === 'undefined') {
     throw new Error('Pyodide kan alleen in de browser draaien');
   }
   if (window.__pyodidePromise) return window.__pyodidePromise;
 
-  const base = indexURL.endsWith('/') ? indexURL : indexURL + '/';
+  const base = indexURL.endsWith('/') ? indexURL : `${indexURL}/`;
   const promise = (async () => {
     try {
-      await injectScript(base + 'pyodide.js');
+      await injectScript(`${base}pyodide.js`);
       if (!window.loadPyodide) {
         throw new Error('Pyodide-script geladen maar loadPyodide ontbreekt');
       }
-      return await window.loadPyodide({indexURL: base});
+      return await window.loadPyodide({ indexURL: base });
     } catch (err) {
       // Drop the failed promise so the next call retries from scratch.
       window.__pyodidePromise = undefined;

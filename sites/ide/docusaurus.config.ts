@@ -5,6 +5,7 @@ export default createConfig({
   tagline: 'Schrijf en draai code direct in je browser',
   url: 'https://ide.coderius.nl',
   projectName: 'ide',
+  matomoSiteId: 15,
 
   description:
     'Een gratis browser-IDE voor leerlingen: Python, websites (HTML, CSS en JavaScript) en MicroPython, zonder installatie.',

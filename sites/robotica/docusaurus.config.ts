@@ -1,4 +1,4 @@
-import {createConfig} from '@coderius/shared/config';
+import { createConfig } from '@coderius/shared/config';
 
 const organizationName = 'Coderius-Education';
 const projectName = 'robotica-docs';
@@ -7,10 +7,11 @@ export default createConfig({
   title: 'Robotica — Coderius',
   url: 'https://robotica.coderius.nl',
   projectName,
+  matomoSiteId: 7,
 
   // Robotica is (nog) Engelstalig.
-  i18n: {defaultLocale: 'en', locales: ['en']},
-  markdown: {hooks: {onBrokenMarkdownLinks: 'warn'}},
+  i18n: { defaultLocale: 'en', locales: ['en'] },
+  markdown: { hooks: { onBrokenMarkdownLinks: 'warn' } },
 
   presets: [
     [
@@ -24,7 +25,7 @@ export default createConfig({
           showReadingTime: true,
           editUrl: `https://github.com/${organizationName}/${projectName}/tree/main/`,
         },
-        theme: {customCss: './src/css/custom.css'},
+        theme: { customCss: './src/css/custom.css' },
       },
     ],
   ],
@@ -55,17 +56,38 @@ export default createConfig({
     navbar: {
       title: 'Home',
       items: [
-        {type: 'docSidebar', sidebarId: 'tutorialSidebar', position: 'right', label: 'Bibliotheek'},
-        {type: 'doc', docId: 'intro', position: 'left', label: 'Lego-auto', docsPluginId: 'lego_auto'},
-        {to: '/cheatsheet', label: 'Cheatsheet', position: 'left'},
-        {to: '/editor', label: 'Editor', position: 'left'},
+        {
+          type: 'docSidebar',
+          sidebarId: 'tutorialSidebar',
+          position: 'right',
+          label: 'Bibliotheek',
+        },
+        {
+          type: 'doc',
+          docId: 'intro',
+          position: 'left',
+          label: 'Lego-auto',
+          docsPluginId: 'lego_auto',
+        },
+        { to: '/cheatsheet', label: 'Cheatsheet', position: 'left' },
+        { to: '/editor', label: 'Editor', position: 'left' },
         {
           to: '/docs/Microcontrollers/Arduino Nano RP2040 Connect/Tutorial-debuggen/debuggen',
           label: 'Er gaat iets mis',
           position: 'left',
         },
-        {type: 'doc', docId: 'intro', position: 'left', label: 'Click Golfer', docsPluginId: 'click_golfer'},
-        {href: 'https://github.com/Coderius-Education/robotica-docs', label: 'GitHub', position: 'right'},
+        {
+          type: 'doc',
+          docId: 'intro',
+          position: 'left',
+          label: 'Click Golfer',
+          docsPluginId: 'click_golfer',
+        },
+        {
+          href: 'https://github.com/Coderius-Education/robotica-docs',
+          label: 'GitHub',
+          position: 'right',
+        },
       ],
     },
     footer: {

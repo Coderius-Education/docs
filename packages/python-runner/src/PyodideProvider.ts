@@ -20,15 +20,31 @@ export function setPyodideBaseUrl(url: string): void {
   pyodideBaseUrl = url.endsWith('/') ? url : `${url}/`;
 }
 
-let pyodidePromise: Promise<any> | null = null;
+// Minimale vorm van de geladen Pyodide-instantie — er is geen officieel
+// @types/pyodide-pakket hier; dit dekt precies wat runPython/runPythonStream
+// en de componenten die pyodide doorgeven daadwerkelijk aanroepen.
+export interface PyodideInterface {
+  runPython(code: string): unknown;
+  runPythonAsync(code: string, options?: { globals?: unknown }): Promise<unknown>;
+  loadPackage(packages: string[]): Promise<void>;
+  setStdout(options?: { batched: (text: string) => void }): void;
+  setStderr(options?: { batched: (text: string) => void }): void;
+  setStdin(options?: { stdin: () => string }): void;
+}
 
-export function getPyodide(): Promise<any> {
+interface WindowWithPyodide extends Window {
+  loadPyodide?: (options: { indexURL: string }) => Promise<PyodideInterface>;
+}
+
+let pyodidePromise: Promise<PyodideInterface> | null = null;
+
+export function getPyodide(): Promise<PyodideInterface> {
   if (pyodidePromise) return pyodidePromise;
 
-  pyodidePromise = new Promise(async (resolve, reject) => {
+  pyodidePromise = (async () => {
     try {
       // Only add script tag once
-      if (!(window as any).loadPyodide) {
+      if (!(window as WindowWithPyodide).loadPyodide) {
         const script = document.createElement('script');
         script.src = `${pyodideBaseUrl}pyodide.js`;
         script.async = true;
@@ -38,13 +54,14 @@ export function getPyodide(): Promise<any> {
           document.head.appendChild(script);
         });
       }
-      const pyodide = await (window as any).loadPyodide({ indexURL: pyodideBaseUrl });
-      resolve(pyodide);
+      const loadPyodide = (window as WindowWithPyodide).loadPyodide;
+      if (!loadPyodide) throw new Error('Pyodide script loaded but window.loadPyodide is missing');
+      return await loadPyodide({ indexURL: pyodideBaseUrl });
     } catch (err) {
       pyodidePromise = null; // allow retry
-      reject(err);
+      throw err;
     }
-  });
+  })();
 
   return pyodidePromise;
 }
@@ -102,7 +119,7 @@ export interface RunPythonStreamOptions {
   onStderr: (text: string) => void;
   // Optionele namespace (PyProxy van een dict) zodat een aanroeper elke run
   // met schone globals kan starten.
-  globals?: any;
+  globals?: unknown;
 }
 
 export interface RunPythonStreamResult {
@@ -117,7 +134,7 @@ export interface RunPythonStreamResult {
  * string achteraf, zoals runPython). `input()` werkt via window.prompt.
  */
 export async function runPythonStream(
-  pyodide: any,
+  pyodide: PyodideInterface,
   code: string,
   { onStdout, onStderr, globals }: RunPythonStreamOptions,
 ): Promise<RunPythonStreamResult> {
@@ -144,7 +161,7 @@ export async function runPythonStream(
   }
 }
 
-export async function runPython(pyodide: any, code: string): Promise<string> {
+export async function runPython(pyodide: PyodideInterface, code: string): Promise<string> {
   pyodide.runPython(`
 import sys
 from io import StringIO
@@ -159,8 +176,10 @@ sys.stderr = StringIO()
     didError = true;
   }
 
-  const stdout = pyodide.runPython('sys.stdout.getvalue()');
-  const stderr = pyodide.runPython('sys.stderr.getvalue()');
+  // sys.stdout.getvalue()/sys.stderr.getvalue() zijn Python str's; Pyodide
+  // converteert die automatisch naar JS strings.
+  const stdout = pyodide.runPython('sys.stdout.getvalue()') as string;
+  const stderr = pyodide.runPython('sys.stderr.getvalue()') as string;
 
   pyodide.runPython(`
 sys.stdout = sys.__stdout__
@@ -170,7 +189,7 @@ sys.stderr = sys.__stderr__
   if (didError && stderr) {
     // The traceback lands in stderr — filter out Pyodide internals
     const filtered = filterTraceback(stderr);
-    return (stdout ? stdout + '\n' : '') + filtered;
+    return (stdout ? `${stdout}\n` : '') + filtered;
   }
 
   return stdout + (stderr ? `\n${stderr}` : '');

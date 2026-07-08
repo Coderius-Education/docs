@@ -65,6 +65,10 @@
 .diskButtons {
   display: flex;
   gap: 0.3rem;
+  /* reset browser-default <fieldset>-uiterlijk (border/padding/margin) */
+  border: none;
+  padding: 0;
+  margin: 0;
 }
 
 .diskButton,
@@ -163,6 +167,7 @@
 }
 
 .status {
+  display: block;
   margin-top: 0.9rem;
   padding: 0.5rem 0.75rem;
   border-radius: 6px;

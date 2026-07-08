@@ -301,6 +301,13 @@
 .fileName {
   flex: 1;
   font-family: Consolas, "Courier New", monospace;
+  /* reset browser-default <button>-uiterlijk: dit is bewust een tekstlink-achtige knop */
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: inherit;
+  color: inherit;
+  text-align: left;
 }
 .fileKind {
   color: var(--ifm-color-emphasis-600);

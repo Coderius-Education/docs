@@ -1,18 +1,14 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import clsx from 'clsx';
 import useBaseUrl from '@docusaurus/useBaseUrl';
-import {HighlightedEditor} from '@site/src/components/PythonPlayground';
-import {getAlgorithmModel} from '@site/src/data/algorithmModels';
+import { type PyodideInterface, loadPyodideOnce } from '@site/src/components/PyRunner/usePyodide';
+import { HighlightedEditor } from '@site/src/components/PythonPlayground';
+import { getAlgorithmModel } from '@site/src/data/algorithmModels';
 import {
-  getSteppingStoneModel,
   type SteppingStoneModelId,
+  getSteppingStoneModel,
 } from '@site/src/data/steppingStoneModels';
-import {type TraceStep} from '@site/src/lib/algorithmTraces';
+import type { TraceStep } from '@site/src/lib/algorithmTraces';
 import {
-  loadPyodideOnce,
-  type PyodideInterface,
-} from '@site/src/components/PyRunner/usePyodide';
-import {
+  type PyProxyLike,
   buildPythonHarness,
   clampStep,
   filterTraceback,
@@ -22,8 +18,10 @@ import {
   isOutsideSearchWindow,
   isSortedMarker,
   markerLabels,
-  type PyProxyLike,
 } from '@site/src/lib/traceUtils';
+import clsx from 'clsx';
+import type React from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styles from './styles.module.css';
 
 type SteppingStoneModelProps = {
@@ -40,9 +38,7 @@ type TestRunResult = {
   error: string | null;
 };
 
-export default function SteppingStoneModel({
-  stone,
-}: SteppingStoneModelProps): React.ReactElement {
+export default function SteppingStoneModel({ stone }: SteppingStoneModelProps): React.ReactElement {
   const checkpoint = getSteppingStoneModel(stone);
   const algorithm = getAlgorithmModel(checkpoint.algorithm);
   const pyodideIndexURL = useBaseUrl('/pyodide/');
@@ -51,9 +47,7 @@ export default function SteppingStoneModel({
     () => algorithm.trace(checkpoint.visual.input),
     [algorithm, checkpoint.visual.input],
   );
-  const [stepIndex, setStepIndex] = useState(() =>
-    clampStep(checkpoint.visual.focusStep, steps),
-  );
+  const [stepIndex, setStepIndex] = useState(() => clampStep(checkpoint.visual.focusStep, steps));
   const [code, setCode] = useState(checkpoint.exercise.starterCode);
   const [status, setStatus] = useState<ExerciseStatus>('idle');
   const [message, setMessage] = useState('');
@@ -90,22 +84,26 @@ export default function SteppingStoneModel({
       const py = pyodideRef.current;
       let out = '';
       let err = '';
-      py.setStdout({batched: (value) => (out += value + '\n')});
-      py.setStderr({batched: (value) => (err += value + '\n')});
+      py.setStdout({
+        batched: (value) => {
+          out += `${value}\n`;
+        },
+      });
+      py.setStderr({
+        batched: (value) => {
+          err += `${value}\n`;
+        },
+      });
       setStatus('running');
       setMessage('Feedbacktests draaien...');
 
       const result = await py.runPythonAsync(
-        buildPythonHarness(
-          code,
-          checkpoint.exercise.functionName,
-          checkpoint.exercise.tests,
-        ),
+        buildPythonHarness(code, checkpoint.exercise.functionName, checkpoint.exercise.tests),
       );
       const proxy = result as PyProxyLike;
       const jsResult =
         proxy && typeof proxy.toJs === 'function'
-          ? proxy.toJs({dict_converter: Object.fromEntries})
+          ? proxy.toJs({ dict_converter: Object.fromEntries })
           : result;
       proxy?.destroy?.();
       setStdout(out);
@@ -115,9 +113,7 @@ export default function SteppingStoneModel({
       setMessage('Feedback klaar');
     } catch (error) {
       setStatus('error');
-      setMessage(
-        filterTraceback(error instanceof Error ? error.message : String(error)),
-      );
+      setMessage(filterTraceback(error instanceof Error ? error.message : String(error)));
     }
   }, [checkpoint.exercise, code, pyodideIndexURL]);
 
@@ -138,9 +134,7 @@ export default function SteppingStoneModel({
               Stap {steps.length ? safeStepIndex : 0}/{Math.max(steps.length - 1, 0)}
             </span>
             <span>Vergelijkingen {currentStep?.stats.comparisons ?? 0}</span>
-            {currentStep?.stats.swaps !== undefined && (
-              <span>Swaps {currentStep.stats.swaps}</span>
-            )}
+            {currentStep?.stats.swaps !== undefined && <span>Swaps {currentStep.stats.swaps}</span>}
             {currentStep?.stats.passes !== undefined && (
               <span>Passes {currentStep.stats.passes}</span>
             )}
@@ -163,12 +157,12 @@ export default function SteppingStoneModel({
                     [styles.cellActive]: active,
                     [styles.cellMin]: markers.minIndex === index,
                     [styles.cellMax]: markers.maxIndex === index,
-                    [styles.cellSwap]:
-                      markers.swapA === index || markers.swapB === index,
+                    [styles.cellSwap]: markers.swapA === index || markers.swapB === index,
                     [styles.cellFound]: markers.foundIndex === index,
                     [styles.cellSorted]: isSortedMarker(index, markers),
                     [styles.cellMuted]: isOutsideSearchWindow(index, markers),
-                  })}>
+                  })}
+                >
                   <span className={styles.cellIndex}>{index}</span>
                   <strong>{value}</strong>
                   <span className={styles.cellLabels}>{labels.join(' ')}</span>
@@ -189,7 +183,8 @@ export default function SteppingStoneModel({
             <button
               type="button"
               onClick={() => setStepIndex((index) => Math.max(index - 1, 0))}
-              disabled={safeStepIndex === 0}>
+              disabled={safeStepIndex === 0}
+            >
               Vorige
             </button>
             <input
@@ -202,10 +197,9 @@ export default function SteppingStoneModel({
             />
             <button
               type="button"
-              onClick={() =>
-                setStepIndex((index) => Math.min(index + 1, steps.length - 1))
-              }
-              disabled={safeStepIndex >= steps.length - 1}>
+              onClick={() => setStepIndex((index) => Math.min(index + 1, steps.length - 1))}
+              disabled={safeStepIndex >= steps.length - 1}
+            >
               Volgende
             </button>
           </div>
@@ -217,7 +211,8 @@ export default function SteppingStoneModel({
             <button
               type="button"
               onClick={() => setCode(checkpoint.exercise.starterCode)}
-              disabled={busy}>
+              disabled={busy}
+            >
               Reset
             </button>
           </div>
@@ -242,23 +237,19 @@ export default function SteppingStoneModel({
               </div>
             ))}
           </div>
-          <button
-            type="button"
-            className={styles.runButton}
-            onClick={runTests}
-            disabled={busy}>
+          <button type="button" className={styles.runButton} onClick={runTests} disabled={busy}>
             {busy ? 'Bezig...' : 'Check mijn bouwsteen'}
           </button>
           {message && (
-            <div
+            <output
               className={clsx(styles.status, {
                 [styles.statusError]: status === 'error',
               })}
-              role="status"
               aria-live="polite"
-              aria-atomic="true">
+              aria-atomic="true"
+            >
               {message}
-            </div>
+            </output>
           )}
           {results.length > 0 && (
             <div className={styles.results}>
@@ -271,7 +262,8 @@ export default function SteppingStoneModel({
                   className={clsx(styles.resultRow, {
                     [styles.resultPass]: result.passed,
                     [styles.resultFail]: !result.passed,
-                  })}>
+                  })}
+                >
                   <span>{result.passed ? 'PASS' : 'FAIL'}</span>
                   <div>
                     <strong>{result.label}</strong>
@@ -279,8 +271,7 @@ export default function SteppingStoneModel({
                       <p>{result.error}</p>
                     ) : (
                       <p>
-                        verwacht {formatValue(result.expected)}; kreeg{' '}
-                        {formatValue(result.actual)}
+                        verwacht {formatValue(result.expected)}; kreeg {formatValue(result.actual)}
                       </p>
                     )}
                   </div>

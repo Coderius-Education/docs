@@ -18,7 +18,7 @@ function b64decode(s: string): Uint8Array {
 
 function pyStr(s: string): string {
   // safely quote as a python single-quoted string
-  return "'" + s.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + "'";
+  return `'${s.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
 }
 
 const BINASCII_IMPORT = `
@@ -38,7 +38,7 @@ export class BoardFS {
     const dirs: string[] = [];
     let cur = '';
     for (let i = 0; i < parts.length - 1; i++) {
-      cur += '/' + parts[i];
+      cur += `/${parts[i]}`;
       dirs.push(cur);
     }
     const code = `
@@ -79,20 +79,14 @@ print('OK')
     const chunks: string[] = [];
     for (let i = 0; i < b64.length; i += CHUNK) chunks.push(b64.slice(i, i + CHUNK));
 
-    const code =
-      BINASCII_IMPORT +
-      `f = open(${pyStr(path)}, 'wb')\n` +
-      chunks.map((c) => `f.write(_b.a2b_base64(${pyStr(c)}))\n`).join('') +
-      `f.close()\nprint('OK')\n`;
+    const code = `${BINASCII_IMPORT}f = open(${pyStr(path)}, 'wb')\n${chunks.map((c) => `f.write(_b.a2b_base64(${pyStr(c)}))\n`).join('')}f.close()\nprint('OK')\n`;
     const { stdout, stderr } = await this.serial.runCode(code, 60000);
     if (stderr.trim()) throw new Error(`writeFile(${path}): ${stderr.trim()}`);
     if (!stdout.includes('OK')) throw new Error('writeFile kreeg geen OK');
   }
 
   async readFile(path: string): Promise<Uint8Array> {
-    const code =
-      BINASCII_IMPORT +
-      `
+    const code = `${BINASCII_IMPORT}
 with open(${pyStr(path)}, 'rb') as f:
     data = f.read()
 print(_b.b2a_base64(data).decode().strip())

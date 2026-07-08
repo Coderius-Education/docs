@@ -1,22 +1,22 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import CodeBlock from '@theme/CodeBlock';
-import styles from './styles.module.css';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { runPhp } from './PhpWasmProvider';
+import { authorizationBypass } from './modules/authorization_bypass';
 import { bruteForce } from './modules/brute_force';
 import { commandInjection } from './modules/command_injection';
-import { authorizationBypass } from './modules/authorization_bypass';
-import { sqlInjection } from './modules/sql_injection';
-import { sqlInjectionBlind } from './modules/sql_injection_blind';
-import { xssReflected } from './modules/xss_reflected';
-import { xssStored } from './modules/xss_stored';
-import { xssDom } from './modules/xss_dom';
+import { cspBypass } from './modules/csp_bypass';
 import { csrf } from './modules/csrf';
 import { fileInclusion } from './modules/file_inclusion';
 import { fileUpload } from './modules/file_upload';
-import { weakSessionIds } from './modules/weak_session_ids';
-import { cspBypass } from './modules/csp_bypass';
 import { javascriptAttacks } from './modules/javascript_attacks';
-import { runPhp } from './PhpWasmProvider';
+import { sqlInjection } from './modules/sql_injection';
+import { sqlInjectionBlind } from './modules/sql_injection_blind';
+import { weakSessionIds } from './modules/weak_session_ids';
+import { xssDom } from './modules/xss_dom';
+import { xssReflected } from './modules/xss_reflected';
+import { xssStored } from './modules/xss_stored';
+import styles from './styles.module.css';
 
 const modules = {
   brute_force: bruteForce,
@@ -47,7 +47,7 @@ function simulateShellExec(cmd) {
     const trimmed = part.trim();
     if ([';', '&&', '||', '|'].includes(trimmed)) continue;
     if (!trimmed) continue;
-    output += simulateCommand(trimmed) + '\n';
+    output += `${simulateCommand(trimmed)}\n`;
   }
   return output;
 }
@@ -62,7 +62,8 @@ function simulateCommand(cmd) {
   if (trimmed === 'id') return 'uid=33(www-data) gid=33(www-data) groups=33(www-data)';
   if (trimmed === 'ls') return 'config\nindex.php\nlogin.php\n.htaccess';
   if (trimmed === 'pwd') return '/var/www/html';
-  if (trimmed === 'cat /etc/passwd') return 'root:x:0:0:root:/root:/bin/bash\nwww-data:x:33:33:www-data:/var/www:/usr/sbin/nologin\nstudent:x:1000:1000::/home/student:/bin/bash';
+  if (trimmed === 'cat /etc/passwd')
+    return 'root:x:0:0:root:/root:/bin/bash\nwww-data:x:33:33:www-data:/var/www:/usr/sbin/nologin\nstudent:x:1000:1000::/home/student:/bin/bash';
   if (trimmed === 'uname -a') return 'Linux dvwa-lab 5.15.0 #1 SMP x86_64 GNU/Linux';
   if (trimmed === 'hostname') return 'dvwa-lab';
   const firstWord = trimmed.split(' ')[0];
@@ -98,21 +99,25 @@ function simulateCommandInjection(level, formData) {
     } else if (level === 'impossible') {
       // Strict IPv4 allowlist
       if (!/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(target.trim())) {
-        message = '<div style="color:#ff5f56;padding:10px;border:1px solid #ff5f56;border-radius:4px;margin:10px 0">Ongeldig IP-adres. Alleen IPv4-adressen (bijv. 127.0.0.1) zijn toegestaan.</div>';
+        message =
+          '<div style="color:#ff5f56;padding:10px;border:1px solid #ff5f56;border-radius:4px;margin:10px 0">Ongeldig IP-adres. Alleen IPv4-adressen (bijv. 127.0.0.1) zijn toegestaan.</div>';
         return message + commandInjectionForm(level);
       }
     }
 
-    const fullCmd = 'ping -c 4 ' + target;
+    const fullCmd = `ping -c 4 ${target}`;
     const output = simulateShellExec(fullCmd);
     message = `<pre style="background:#1e1e1e;color:#d4d4d4;padding:12px;border-radius:4px;overflow-x:auto">${escapeHtml(output)}</pre>`;
 
     if (level === 'medium') {
-      message += '<p style="font-size:0.85em;color:#888">Gefilterde tekens: <code>&&</code> <code>;</code></p>';
+      message +=
+        '<p style="font-size:0.85em;color:#888">Gefilterde tekens: <code>&&</code> <code>;</code></p>';
     } else if (level === 'high') {
-      message += '<p style="font-size:0.85em;color:#888">Gefilterde tekens: <code>&&</code> <code>;</code> <code>|| </code> <code>| </code></p>';
+      message +=
+        '<p style="font-size:0.85em;color:#888">Gefilterde tekens: <code>&&</code> <code>;</code> <code>|| </code> <code>| </code></p>';
     } else if (level === 'impossible') {
-      message += '<p style="font-size:0.85em;color:#888">Beveiliging: strikte IPv4-validatie via regex.</p>';
+      message +=
+        '<p style="font-size:0.85em;color:#888">Beveiliging: strikte IPv4-validatie via regex.</p>';
     }
   }
 
@@ -130,11 +135,16 @@ function commandInjectionForm(level) {
 
 function getLevelColor(level) {
   switch (level) {
-    case 'low': return 'levelLow';
-    case 'medium': return 'levelMedium';
-    case 'high': return 'levelHigh';
-    case 'impossible': return 'levelImpossible';
-    default: return 'levelLow';
+    case 'low':
+      return 'levelLow';
+    case 'medium':
+      return 'levelMedium';
+    case 'high':
+      return 'levelHigh';
+    case 'impossible':
+      return 'levelImpossible';
+    default:
+      return 'levelLow';
   }
 }
 
@@ -149,27 +159,30 @@ function DvwaLabInner({ module: moduleName, level, title }) {
 
   const config = modules[moduleName]?.[level];
 
-  const executePhp = useCallback(async (formData = {}) => {
-    if (!config) return;
+  const executePhp = useCallback(
+    async (formData = {}) => {
+      if (!config) return;
 
-    // Command injection uses JS simulation (shell commands don't work in php-wasm)
-    if (moduleName === 'command_injection') {
-      const output = simulateCommandInjection(level, formData);
-      setHtmlOutput(output);
-      setError(null);
-      return;
-    }
+      // Command injection uses JS simulation (shell commands don't work in php-wasm)
+      if (moduleName === 'command_injection') {
+        const output = simulateCommandInjection(level, formData);
+        setHtmlOutput(output);
+        setError(null);
+        return;
+      }
 
-    try {
-      const getData = config.method === 'GET' ? formData : {};
-      const postData = config.method === 'POST' ? formData : {};
-      const output = await runPhp(config.php, getData, postData);
-      setHtmlOutput(output);
-      setError(null);
-    } catch (err) {
-      setError('Fout bij PHP-uitvoering: ' + err.message);
-    }
-  }, [config, moduleName, level]);
+      try {
+        const getData = config.method === 'GET' ? formData : {};
+        const postData = config.method === 'POST' ? formData : {};
+        const output = await runPhp(config.php, getData, postData);
+        setHtmlOutput(output);
+        setError(null);
+      } catch (err) {
+        setError(`Fout bij PHP-uitvoering: ${err.message}`);
+      }
+    },
+    [config, moduleName, level],
+  );
 
   const handleStart = useCallback(async () => {
     setIsStarted(true);
@@ -182,7 +195,7 @@ function DvwaLabInner({ module: moduleName, level, title }) {
     try {
       await executePhp({});
     } catch (err) {
-      setError('Fout bij starten: ' + err.message);
+      setError(`Fout bij starten: ${err.message}`);
     } finally {
       setIsLoading(false);
     }
@@ -218,7 +231,9 @@ function DvwaLabInner({ module: moduleName, level, title }) {
     return (
       <div className={styles.lab}>
         <div className={styles.header}>
-          <span className={styles.title}>Module niet gevonden: {moduleName}/{level}</span>
+          <span className={styles.title}>
+            Module niet gevonden: {moduleName}/{level}
+          </span>
         </div>
       </div>
     );
@@ -316,6 +331,7 @@ ${htmlOutput}
         </span>
         {isStarted && (
           <button
+            type="button"
             className={styles.sourceToggle}
             onClick={() => setShowSource(!showSource)}
           >
@@ -327,7 +343,7 @@ ${htmlOutput}
       {!isStarted && (
         <div className={styles.startContainer}>
           <p className={styles.description}>{config.description}</p>
-          <button className={styles.startButton} onClick={handleStart}>
+          <button type="button" className={styles.startButton} onClick={handleStart}>
             Start Lab
           </button>
         </div>
@@ -335,7 +351,7 @@ ${htmlOutput}
 
       {isStarted && isLoading && (
         <div className={styles.loading}>
-          <div className={styles.spinner}></div>
+          <div className={styles.spinner} />
           <p>{loadingMessage}</p>
         </div>
       )}
@@ -348,7 +364,9 @@ ${htmlOutput}
 
       {isStarted && !isLoading && showSource && (
         <div className={styles.sourceCode}>
-          <CodeBlock language="php" showLineNumbers>{config.php}</CodeBlock>
+          <CodeBlock language="php" showLineNumbers>
+            {config.php}
+          </CodeBlock>
         </div>
       )}
 

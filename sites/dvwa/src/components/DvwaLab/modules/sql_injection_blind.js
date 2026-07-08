@@ -1,7 +1,8 @@
 export const sqlInjectionBlind = {
   low: {
     title: 'SQL Injection (Blind) — Low',
-    description: 'Boolean-based blind injection: de applicatie toont alleen "bestaat" of "bestaat niet"',
+    description:
+      'Boolean-based blind injection: de applicatie toont alleen "bestaat" of "bestaat niet"',
     method: 'GET',
     php: `<?php
 $db = new SQLite3('/tmp/dvwa.db');
@@ -27,7 +28,8 @@ echo $message;
   },
   medium: {
     title: 'SQL Injection (Blind) — Medium',
-    description: 'Numerieke controle via POST — minder flexibel maar nog steeds kwetsbaar via sleep-technieken',
+    description:
+      'Numerieke controle via POST — minder flexibel maar nog steeds kwetsbaar via sleep-technieken',
     method: 'POST',
     php: `<?php
 $db = new SQLite3('/tmp/dvwa.db');
@@ -60,7 +62,8 @@ echo $message;
   },
   high: {
     title: 'SQL Injection (Blind) — High',
-    description: 'ID via cookie — LIMIT 1 en willekeurige slaaptijd om timing-aanvallen te bemoeilijken',
+    description:
+      'ID via cookie — LIMIT 1 en willekeurige slaaptijd om timing-aanvallen te bemoeilijken',
     method: 'GET',
     php: `<?php
 $db = new SQLite3('/tmp/dvwa.db');

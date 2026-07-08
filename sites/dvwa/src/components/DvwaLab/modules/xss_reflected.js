@@ -37,7 +37,8 @@ echo $message;
   },
   high: {
     title: 'XSS Reflected — High',
-    description: 'Script-tags gewhitelisted geblokkeerd via preg_replace, maar htmlspecialchars ontbreekt',
+    description:
+      'Script-tags gewhitelisted geblokkeerd via preg_replace, maar htmlspecialchars ontbreekt',
     method: 'GET',
     php: `<?php
 $message = '';

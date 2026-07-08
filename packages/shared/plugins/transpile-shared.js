@@ -50,7 +50,7 @@ function resolvePackageDir(name, siteDir) {
 }
 
 module.exports = function transpileSharedPlugin(context, options = {}) {
-  const siteDir = context && context.siteDir;
+  const siteDir = context?.siteDir;
   const dirs = (options.packages || [])
     .map((name) => resolvePackageDir(name, siteDir))
     .filter(Boolean);
@@ -65,7 +65,7 @@ module.exports = function transpileSharedPlugin(context, options = {}) {
             {
               test: /\.[jt]sx?$/,
               include: dirs,
-              use: [utils.getJSLoader({isServer})],
+              use: [utils.getJSLoader({ isServer })],
             },
           ],
         },

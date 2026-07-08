@@ -4,7 +4,7 @@ export type Tip = {
   categorie: string; // thema waaronder de tip valt
   termen: string[]; // klikbare trefwoorden/synoniemen, ook doorzoekbaar
   samenvatting: string; // één zin
-  paper: {titel: string; auteurs: string; jaar: number};
+  paper: { titel: string; auteurs: string; jaar: number };
   detailPad: string; // '/bronnen/<slug>'
 };
 
@@ -16,9 +16,16 @@ export const tips: Tip[] = [
     slug: 'cognitieve-belasting',
     term: 'Verlaag de cognitieve belasting',
     categorie: 'Cognitive load',
-    termen: ['cognitive load', 'werkgeheugen', 'intrinsieke belasting', 'extrinsieke belasting', 'relevante belasting'],
-    samenvatting: 'Drie soorten belasting op het werkgeheugen — intrinsiek, extrinsiek en relevant; snijd de extrinsieke weg.',
-    paper: {titel: 'Cognitive load during problem solving', auteurs: 'Sweller', jaar: 1988},
+    termen: [
+      'cognitive load',
+      'werkgeheugen',
+      'intrinsieke belasting',
+      'extrinsieke belasting',
+      'relevante belasting',
+    ],
+    samenvatting:
+      'Drie soorten belasting op het werkgeheugen — intrinsiek, extrinsiek en relevant; snijd de extrinsieke weg.',
+    paper: { titel: 'Cognitive load during problem solving', auteurs: 'Sweller', jaar: 1988 },
     detailPad: '/bronnen/cognitieve-belasting',
   },
 ];

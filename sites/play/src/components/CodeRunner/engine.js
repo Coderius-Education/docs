@@ -44,7 +44,7 @@ export function ensureAsync(code) {
     }
   }
 
-  if (!importLines.some(l => /\basyncio\b/.test(l))) {
+  if (!importLines.some((l) => /\basyncio\b/.test(l))) {
     importLines.push('import asyncio');
   }
 
@@ -52,13 +52,13 @@ export function ensureAsync(code) {
   const indentedBody = [];
   for (let i = 0; i < bodyLines.length; i++) {
     const line = bodyLines[i];
-    indentedBody.push('    ' + line);
+    indentedBody.push(`    ${line}`);
 
     if (/^\s*while\s+.+:\s*(#.*)?$/.test(line)) {
       const nextLine = bodyLines[i + 1] || '';
       const match = nextLine.match(/^(\s+)/);
       const loopBodyIndent = match ? match[1] : '    ';
-      indentedBody.push('    ' + loopBodyIndent + 'await asyncio.sleep(0)');
+      indentedBody.push(`    ${loopBodyIndent}await asyncio.sleep(0)`);
     }
   }
 
@@ -70,14 +70,7 @@ export function ensureAsync(code) {
   const lineOffset = importLines.length + 2;
 
   return {
-    code: [
-      ...importLines,
-      '',
-      'async def main():',
-      ...indentedBody,
-      '',
-      'await main()',
-    ].join('\n'),
+    code: [...importLines, '', 'async def main():', ...indentedBody, '', 'await main()'].join('\n'),
     lineOffset,
   };
 }
@@ -174,8 +167,8 @@ export function buildPrewarmSrcDoc(codes) {
   const siteOrigin = typeof window !== 'undefined' ? window.location.origin : '';
   const combined = codes.join('\n');
   const { pyodidePackages, micropipNoDepsPackages } = detectPackages(combined, siteOrigin);
-  const pyodidePackagesCode = pyodidePackages.map(p => `'${p}'`).join(', ');
-  const wheelsCode = micropipNoDepsPackages.map(p => `'${p}'`).join(', ');
+  const pyodidePackagesCode = pyodidePackages.map((p) => `'${p}'`).join(', ');
+  const wheelsCode = micropipNoDepsPackages.map((p) => `'${p}'`).join(', ');
 
   return `<!DOCTYPE html>
 <html><head><meta charset="utf-8"></head><body>
@@ -203,7 +196,10 @@ try {
  */
 export function buildSrcDoc({ code, mode = 'pygame', canvasWidth, canvasHeight }) {
   // Normalize line endings to LF and sanitize code.
-  const sanitized = code.replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/<\/script>/gi, '<\\/script>');
+  const sanitized = code
+    .replace(/\r\n/g, '\n')
+    .replace(/\r/g, '\n')
+    .replace(/<\/script>/gi, '<\\/script>');
 
   // Split bootstrap and user-code so each gets its own runPythonAsync call
   // with a meaningful filename — that way Python tracebacks show line numbers
@@ -238,12 +234,13 @@ export function buildSrcDoc({ code, mode = 'pygame', canvasWidth, canvasHeight }
   // Pyodide's own packages can be loaded in parallel with the WASM init via
   // the `packages` option of loadPyodide() — saves ~1-2 sec per cold start.
   // URL wheels (pymunk, play) still need loadPackage() after init.
-  const pyodidePackagesCode = pyodidePackages.map(p => `'${p}'`).join(', ');
-  const wheelsCode = micropipNoDepsPackages.map(p => `'${p}'`).join(', ');
+  const pyodidePackagesCode = pyodidePackages.map((p) => `'${p}'`).join(', ');
+  const wheelsCode = micropipNoDepsPackages.map((p) => `'${p}'`).join(', ');
 
-  const canvasStyle = canvasWidth && canvasHeight
-    ? `width: ${canvasWidth}px; height: ${canvasHeight}px;`
-    : 'max-height: 100%; width: auto;';
+  const canvasStyle =
+    canvasWidth && canvasHeight
+      ? `width: ${canvasWidth}px; height: ${canvasHeight}px;`
+      : 'max-height: 100%; width: auto;';
 
   return `<!DOCTYPE html>
 <html>
@@ -402,16 +399,17 @@ export function buildSharedRunnerSrcDoc(codes) {
   const siteOrigin = typeof window !== 'undefined' ? window.location.origin : '';
   const combined = codes.join('\n');
   const { pyodidePackages, micropipNoDepsPackages } = detectPackages(combined, siteOrigin);
-  const pyodidePackagesCode = pyodidePackages.map(p => `'${p}'`).join(', ');
-  const wheelsCode = micropipNoDepsPackages.map(p => `'${p}'`).join(', ');
+  const pyodidePackagesCode = pyodidePackages.map((p) => `'${p}'`).join(', ');
+  const wheelsCode = micropipNoDepsPackages.map((p) => `'${p}'`).join(', ');
 
   // Pre-bake the play bootstrap if any of the codes need it. Avoids paying
   // its ~1s import cost on the first click.
   const needsPlay = /\bimport\s+play\b|from\s+play\s+import\b/.test(combined);
   const bootstrap = needsPlay ? buildPlayBootstrap() : '';
-  const escape = (s) => s.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$');
-  const escapedBootstrap = escape(bootstrap);
-  const escapedReset = escape(PYTHON_RESET);
+  const escapeForTemplate = (s) =>
+    s.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$');
+  const escapedBootstrap = escapeForTemplate(bootstrap);
+  const escapedReset = escapeForTemplate(PYTHON_RESET);
 
   return `<!DOCTYPE html>
 <html>

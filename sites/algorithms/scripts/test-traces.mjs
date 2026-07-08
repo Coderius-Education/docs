@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
-import {createRequire} from 'node:module';
-import {mkdirSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
-import {dirname, join} from 'node:path';
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
+import { dirname, join } from 'node:path';
 import ts from 'typescript';
 
 const outDir = '.trace-tests';
@@ -31,20 +31,14 @@ function compileTs(sourcePath, outputName) {
   }
 
   const outputPath = join(outDir, outputName);
-  mkdirSync(dirname(outputPath), {recursive: true});
+  mkdirSync(dirname(outputPath), { recursive: true });
   writeFileSync(outputPath, compiled.outputText);
   return outputPath;
 }
 
-rmSync(outDir, {force: true, recursive: true});
-const tracesPath = compileTs(
-  'src/lib/algorithmTraces.ts',
-  'src/lib/algorithmTraces.js',
-);
-const catalogPath = compileTs(
-  'src/data/algorithmModels.ts',
-  'src/data/algorithmModels.js',
-);
+rmSync(outDir, { force: true, recursive: true });
+const tracesPath = compileTs('src/lib/algorithmTraces.ts', 'src/lib/algorithmTraces.js');
+const catalogPath = compileTs('src/data/algorithmModels.ts', 'src/data/algorithmModels.js');
 const steppingStonesPath = compileTs(
   'src/data/steppingStoneModels.ts',
   'src/data/steppingStoneModels.js',
@@ -82,7 +76,7 @@ function finalStep(steps) {
 {
   const steps = traces.traceMinAndMax([5, 2, 8, 1, 7, 4]);
   const final = finalStep(steps);
-  assert.deepEqual(final.result, {min: 1, max: 8});
+  assert.deepEqual(final.result, { min: 1, max: 8 });
   assert.equal(final.markers.minIndex, 3);
   assert.equal(final.markers.maxIndex, 2);
 }
@@ -168,23 +162,28 @@ function finalStep(steps) {
 }
 
 {
-  const steps = adapters.adaptStudentTrace('binary-search', {values: [1, 3, 5, 7, 9], target: 7}, [
-    {
-      event: 'line',
-      line: 4,
-      locals: {lijst: [1, 3, 5, 7, 9], doel: 7, laag: 0, hoog: 4},
-    },
-    {
-      event: 'line',
-      line: 5,
-      locals: {lijst: [1, 3, 5, 7, 9], doel: 7, laag: 0, hoog: 4, midden: 2},
-    },
-    {
-      event: 'line',
-      line: 9,
-      locals: {lijst: [1, 3, 5, 7, 9], doel: 7, laag: 3, hoog: 4, midden: 2},
-    },
-  ], undefined);
+  const steps = adapters.adaptStudentTrace(
+    'binary-search',
+    { values: [1, 3, 5, 7, 9], target: 7 },
+    [
+      {
+        event: 'line',
+        line: 4,
+        locals: { lijst: [1, 3, 5, 7, 9], doel: 7, laag: 0, hoog: 4 },
+      },
+      {
+        event: 'line',
+        line: 5,
+        locals: { lijst: [1, 3, 5, 7, 9], doel: 7, laag: 0, hoog: 4, midden: 2 },
+      },
+      {
+        event: 'line',
+        line: 9,
+        locals: { lijst: [1, 3, 5, 7, 9], doel: 7, laag: 3, hoog: 4, midden: 2 },
+      },
+    ],
+    undefined,
+  );
   assert.equal(steps.at(1).markers.low, 0);
   assert.equal(steps.at(1).markers.high, 4);
   assert.equal(steps.at(1).markers.mid, 2);
@@ -192,38 +191,48 @@ function finalStep(steps) {
 }
 
 {
-  const steps = adapters.adaptStudentTrace('min-and-max', {values: [5, 2, 8, 1]}, [
-    {
-      event: 'line',
-      line: 2,
-      locals: {lijst: [5, 2, 8, 1], klein: 5, groot: 5},
-    },
-    {
-      event: 'line',
-      line: 5,
-      locals: {lijst: [5, 2, 8, 1], waarde: 8, klein: 2, groot: 8},
-    },
-  ], [1, 8]);
+  const steps = adapters.adaptStudentTrace(
+    'min-and-max',
+    { values: [5, 2, 8, 1] },
+    [
+      {
+        event: 'line',
+        line: 2,
+        locals: { lijst: [5, 2, 8, 1], klein: 5, groot: 5 },
+      },
+      {
+        event: 'line',
+        line: 5,
+        locals: { lijst: [5, 2, 8, 1], waarde: 8, klein: 2, groot: 8 },
+      },
+    ],
+    [1, 8],
+  );
   assert.equal(steps.at(0).markers.minIndex, 0);
   assert.equal(steps.at(0).markers.maxIndex, 0);
   assert.equal(steps.at(1).markers.minIndex, 1);
   assert.equal(steps.at(1).markers.maxIndex, 2);
-  assert.deepEqual(steps.at(-1).result, {min: 1, max: 8});
+  assert.deepEqual(steps.at(-1).result, { min: 1, max: 8 });
 }
 
 {
-  const steps = adapters.adaptStudentTrace('bubble-sort', {values: [3, 1, 4]}, [
-    {
-      event: 'line',
-      line: 5,
-      locals: {lijst: [3, 1, 4], ronde: 0, i: 0},
-    },
-    {
-      event: 'line',
-      line: 7,
-      locals: {lijst: [1, 3, 4], ronde: 0, i: 0, geswapt: true},
-    },
-  ], [1, 3, 4]);
+  const steps = adapters.adaptStudentTrace(
+    'bubble-sort',
+    { values: [3, 1, 4] },
+    [
+      {
+        event: 'line',
+        line: 5,
+        locals: { lijst: [3, 1, 4], ronde: 0, i: 0 },
+      },
+      {
+        event: 'line',
+        line: 7,
+        locals: { lijst: [1, 3, 4], ronde: 0, i: 0, geswapt: true },
+      },
+    ],
+    [1, 3, 4],
+  );
   assert.deepEqual(steps.at(1).array, [1, 3, 4]);
   assert.equal(steps.at(1).markers.swapA, 0);
   assert.equal(steps.at(1).markers.swapB, 1);
@@ -231,20 +240,30 @@ function finalStep(steps) {
 }
 
 {
-  const steps = adapters.adaptStudentTrace('linear-search', {values: [3, 1, 4, 1, 5], target: 5}, [
-    {event: 'line', line: 2, locals: {lijst: [3, 1, 4, 1, 5], doel: 5}},
-    {event: 'line', line: 3, locals: {lijst: [3, 1, 4, 1, 5], doel: 5, i: 0, waarde: 3}},
-    {event: 'line', line: 2, locals: {lijst: [3, 1, 4, 1, 5], doel: 5, i: 0, waarde: 3}},
-    {event: 'line', line: 3, locals: {lijst: [3, 1, 4, 1, 5], doel: 5, i: 1, waarde: 1}},
-    {event: 'line', line: 2, locals: {lijst: [3, 1, 4, 1, 5], doel: 5, i: 1, waarde: 1}},
-    {event: 'line', line: 3, locals: {lijst: [3, 1, 4, 1, 5], doel: 5, i: 2, waarde: 4}},
-    {event: 'line', line: 2, locals: {lijst: [3, 1, 4, 1, 5], doel: 5, i: 2, waarde: 4}},
-    {event: 'line', line: 3, locals: {lijst: [3, 1, 4, 1, 5], doel: 5, i: 3, waarde: 1}},
-    {event: 'line', line: 2, locals: {lijst: [3, 1, 4, 1, 5], doel: 5, i: 3, waarde: 1}},
-    {event: 'line', line: 3, locals: {lijst: [3, 1, 4, 1, 5], doel: 5, i: 4, waarde: 5}},
-    {event: 'line', line: 4, locals: {lijst: [3, 1, 4, 1, 5], doel: 5, i: 4, waarde: 5}},
-    {event: 'return', line: 4, locals: {lijst: [3, 1, 4, 1, 5], doel: 5, i: 4, waarde: 5}, returnValue: 4},
-  ], 4);
+  const steps = adapters.adaptStudentTrace(
+    'linear-search',
+    { values: [3, 1, 4, 1, 5], target: 5 },
+    [
+      { event: 'line', line: 2, locals: { lijst: [3, 1, 4, 1, 5], doel: 5 } },
+      { event: 'line', line: 3, locals: { lijst: [3, 1, 4, 1, 5], doel: 5, i: 0, waarde: 3 } },
+      { event: 'line', line: 2, locals: { lijst: [3, 1, 4, 1, 5], doel: 5, i: 0, waarde: 3 } },
+      { event: 'line', line: 3, locals: { lijst: [3, 1, 4, 1, 5], doel: 5, i: 1, waarde: 1 } },
+      { event: 'line', line: 2, locals: { lijst: [3, 1, 4, 1, 5], doel: 5, i: 1, waarde: 1 } },
+      { event: 'line', line: 3, locals: { lijst: [3, 1, 4, 1, 5], doel: 5, i: 2, waarde: 4 } },
+      { event: 'line', line: 2, locals: { lijst: [3, 1, 4, 1, 5], doel: 5, i: 2, waarde: 4 } },
+      { event: 'line', line: 3, locals: { lijst: [3, 1, 4, 1, 5], doel: 5, i: 3, waarde: 1 } },
+      { event: 'line', line: 2, locals: { lijst: [3, 1, 4, 1, 5], doel: 5, i: 3, waarde: 1 } },
+      { event: 'line', line: 3, locals: { lijst: [3, 1, 4, 1, 5], doel: 5, i: 4, waarde: 5 } },
+      { event: 'line', line: 4, locals: { lijst: [3, 1, 4, 1, 5], doel: 5, i: 4, waarde: 5 } },
+      {
+        event: 'return',
+        line: 4,
+        locals: { lijst: [3, 1, 4, 1, 5], doel: 5, i: 4, waarde: 5 },
+        returnValue: 4,
+      },
+    ],
+    4,
+  );
   const visited = steps
     .map((step) => step.markers.activeIndex)
     .filter((index) => index !== undefined);

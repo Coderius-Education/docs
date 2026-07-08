@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
 import BrowserOnly from '@docusaurus/BrowserOnly';
+import React, { useCallback, useState, useEffect, useRef, useMemo } from 'react';
 import CodeEditor from '../CodeRunner/CodeEditor';
-import { ensureAsync, detectMode } from '../CodeRunner/engine';
-import { schedule, requestRun, stop as sharedStop } from '../SharedRunner';
+import { detectMode, ensureAsync } from '../CodeRunner/engine';
+import { requestRun, schedule, stop as sharedStop } from '../SharedRunner';
 import styles from './styles.module.css';
 
 let nextOwnerId = 1;
@@ -30,6 +30,7 @@ function PygbagRunnerInner({ code, title, width, height, mode }) {
   }, [canRunInBrowser, code]);
 
   // Auto-scroll console to bottom when new lines arrive
+  // biome-ignore lint/correctness/useExhaustiveDependencies: consoleLines triggert bewust een her-scroll; de body zelf leest alleen de ref.
   useEffect(() => {
     if (consoleRef.current) {
       consoleRef.current.scrollTop = consoleRef.current.scrollHeight;
@@ -39,16 +40,19 @@ function PygbagRunnerInner({ code, title, width, height, mode }) {
   // Stop our run if the component unmounts (page navigation, etc).
   useEffect(() => () => sharedStop(ownerId), [ownerId]);
 
-  function appendLine(text, isError) {
+  const appendLine = useCallback((text, isError) => {
     setConsoleLines((prev) => [...prev, { text, isError }]);
-  }
+  }, []);
 
   function handleCopy() {
     if (navigator.clipboard) {
-      navigator.clipboard.writeText(editableCode).then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      }).catch(() => {});
+      navigator.clipboard
+        .writeText(editableCode)
+        .then(() => {
+          setCopied(true);
+          setTimeout(() => setCopied(false), 2000);
+        })
+        .catch(() => {});
     }
   }
 
@@ -65,7 +69,7 @@ function PygbagRunnerInner({ code, title, width, height, mode }) {
       userPythonCode = wrapped.code;
       lineOffset = wrapped.lineOffset;
     } else if (!userPythonCode.includes('start_program')) {
-      userPythonCode = userPythonCode + '\nplay.start_program()';
+      userPythonCode = `${userPythonCode}\nplay.start_program()`;
     }
 
     // Park the run params until React has rendered the slot div (effect below).
@@ -88,7 +92,9 @@ function PygbagRunnerInner({ code, title, width, height, mode }) {
       listeners: {
         onStdout: (text) => appendLine(text, false),
         onStderr: (text) => appendLine(text, true),
-        onDone: () => { /* keep canvas visible until user stops */ },
+        onDone: () => {
+          /* keep canvas visible until user stops */
+        },
         onError: (msg, fatal) => {
           appendLine(msg, true);
           if (fatal) setIsRunning(false);
@@ -97,7 +103,7 @@ function PygbagRunnerInner({ code, title, width, height, mode }) {
         onPreempted: () => setIsRunning(false),
       },
     });
-  }, [isRunning, ownerId]);
+  }, [isRunning, ownerId, appendLine]);
 
   function handleStop() {
     sharedStop(ownerId);
@@ -109,13 +115,11 @@ function PygbagRunnerInner({ code, title, width, height, mode }) {
       <div className={styles.header}>
         <span className={styles.title}>{title || 'Python Game'}</span>
         {isRunning ? (
-          <button onClick={handleStop} className={styles.stopButton}>
+          <button type="button" onClick={handleStop} className={styles.stopButton}>
             &#x23F9; Stop
           </button>
         ) : (
-          <span className={styles.badge}>
-            {execMode === 'play' ? 'play' : 'pygame-ce'}
-          </span>
+          <span className={styles.badge}>{execMode === 'play' ? 'play' : 'pygame-ce'}</span>
         )}
       </div>
 
@@ -128,15 +132,19 @@ function PygbagRunnerInner({ code, title, width, height, mode }) {
           >
             {/* SharedRunner positions its iframe over this slot via fixed CSS */}
           </div>
-          <div
-            ref={consoleRef}
-            className={styles.consolePanel}
-          >
+          <div ref={consoleRef} className={styles.consolePanel}>
             {consoleLines.length === 0 ? (
-              <span className={styles.consolePlaceholder}>Console - output van print() verschijnt hier</span>
+              <span className={styles.consolePlaceholder}>
+                Console - output van print() verschijnt hier
+              </span>
             ) : (
               consoleLines.map((line, i) => (
-                <span key={i} className={line.isError ? styles.errLine : undefined}>{line.text}</span>
+                <span
+                  key={`${i}-${line.text}`}
+                  className={line.isError ? styles.errLine : undefined}
+                >
+                  {line.text}
+                </span>
               ))
             )}
           </div>
@@ -148,11 +156,11 @@ function PygbagRunnerInner({ code, title, width, height, mode }) {
           </div>
           <div className={styles.actions}>
             {canRunInBrowser && (
-              <button onClick={handleRun} className={styles.playButton}>
+              <button type="button" onClick={handleRun} className={styles.playButton}>
                 &#x25B6; Speel in browser
               </button>
             )}
-            <button onClick={handleCopy} className={styles.copyButton}>
+            <button type="button" onClick={handleCopy} className={styles.copyButton}>
               {copied ? '✓ Gekopieerd' : 'Kopieer code'}
             </button>
           </div>

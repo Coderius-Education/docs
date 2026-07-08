@@ -7,8 +7,8 @@
  *
  * Works line-by-line so it never matches across unrelated code blocks.
  */
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 
 const docsDir = path.join(__dirname, '..', 'docs');
 
@@ -35,7 +35,8 @@ function canRunInBrowser(code) {
   if (/play\.new_image|set_backdrop_image/.test(code)) return false;
   if (/new_database|database\./.test(code)) return false;
   if (/play\.controllers|controller\.get_/.test(code)) return false;
-  const hasVisual = /play\.new_circle|play\.new_box|play\.new_text|play\.set_backdrop|start_physics/.test(code);
+  const hasVisual =
+    /play\.new_circle|play\.new_box|play\.new_text|play\.set_backdrop|start_physics/.test(code);
   const hasPrintOnly = /\bprint\s*\(/.test(code) && !hasVisual;
   if (hasPrintOnly) return false;
   return true;
@@ -48,8 +49,11 @@ function processFile(filePath) {
   const n = lines.length;
 
   // Label each line
-  const OPEN = 'open', CLOSE = 'close', ORPHAN = 'orphan', NORMAL = 'normal';
-  const labels = lines.map(l => {
+  const OPEN = 'open';
+  const CLOSE = 'close';
+  const ORPHAN = 'orphan';
+  const NORMAL = 'normal';
+  const labels = lines.map((l) => {
     if (/^```(python|py)\s*$/.test(l)) return OPEN;
     if (l === '```') return CLOSE;
     if (l.endsWith('`} />')) return ORPHAN;
@@ -100,7 +104,7 @@ function processFile(filePath) {
     if (canRunInBrowser(code)) {
       // Replace lines[block.start .. orphanIdx] with a single PygbagRunner line
       const escaped = code.replace(/`/g, '\\`').replace(/\$/g, '\\$');
-      const pygbag = '<PygbagRunner code={`' + escaped + '`} height={300} />';
+      const pygbag = `<PygbagRunner code={\`${escaped}\`} height={300} />`;
       lines.splice(block.start, orphanIdx - block.start + 1, pygbag);
       converted++;
     } else {
@@ -116,7 +120,10 @@ function processFile(filePath) {
 let total = 0;
 for (const rel of targets) {
   const fp = path.join(docsDir, rel);
-  if (!fs.existsSync(fp)) { console.log('SKIP:', rel); continue; }
+  if (!fs.existsSync(fp)) {
+    console.log('SKIP:', rel);
+    continue;
+  }
   const n = processFile(fp);
   console.log(n > 0 ? 'OK ' : '-- ', rel, n > 0 ? `(${n} converted)` : '(no changes)');
   total += n;

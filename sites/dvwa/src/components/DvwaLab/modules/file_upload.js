@@ -70,7 +70,8 @@ echo $message;
   },
   high: {
     title: 'File Upload — High',
-    description: 'Extensie- en groottecontrole — alleen bekende afbeeldingsextensies worden geaccepteerd',
+    description:
+      'Extensie- en groottecontrole — alleen bekende afbeeldingsextensies worden geaccepteerd',
     method: 'POST',
     php: `<?php
 $message = '';

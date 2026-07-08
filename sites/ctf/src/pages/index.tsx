@@ -1,9 +1,9 @@
-import type {ReactNode} from 'react';
+import HomepageFeatures, { type FeatureItem } from '@coderius/shared/components/HomepageFeatures';
+import HomepageHero, { type HeroCta } from '@coderius/shared/components/HomepageHero';
 import Layout from '@theme/Layout';
-import HomepageHero, {type HeroCta} from '@coderius/shared/components/HomepageHero';
-import HomepageFeatures, {type FeatureItem} from '@coderius/shared/components/HomepageFeatures';
+import type { ReactNode } from 'react';
 
-const ctas: HeroCta[] = [{label: 'Start de challenges', to: '/docs/intro'}];
+const ctas: HeroCta[] = [{ label: 'Start de challenges', to: '/docs/intro' }];
 
 const features: FeatureItem[] = [
   {
@@ -27,7 +27,8 @@ export default function Home(): ReactNode {
   return (
     <Layout
       title="Home"
-      description="Leer cybersecurity door Capture the Flag challenges op te lossen">
+      description="Leer cybersecurity door Capture the Flag challenges op te lossen"
+    >
       <HomepageHero title="Coderius CTF" ctas={ctas} />
       <HomepageFeatures heading="Waar wil je mee aan de slag?" features={features} />
     </Layout>

@@ -1,0 +1,30 @@
+.content {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.section {
+  margin-bottom: 2rem;
+}
+
+.section h2 {
+  margin-bottom: 0.75rem;
+}
+
+.updated {
+  color: var(--ifm-color-emphasis-600);
+  font-size: 0.85rem;
+}
+
+.optOut {
+  padding: 1rem;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 8px;
+  background: var(--ifm-background-surface-color);
+}
+
+.optOutNote {
+  margin: 0.5rem 0 0;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.9rem;
+}
