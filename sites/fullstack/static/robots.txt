@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://fullstack.coderius.nl/sitemap.xml

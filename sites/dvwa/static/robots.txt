@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://dvwa.coderius.nl/sitemap.xml
