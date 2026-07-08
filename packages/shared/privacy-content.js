@@ -48,7 +48,6 @@ const PRIVACY_CONTENT = {
         'welke pagina’s je bezoekt en op welk tijdstip',
         'een geanonimiseerd IP-adres (het laatste deel wordt gemaskeerd), waaruit hooguit een globale regio af te leiden is',
         'het type browser en besturingssysteem',
-        'de website die je naar ons doorverwees, als die er is',
       ],
       trailingParagraphs: [
         'We verzamelen geen naam, e-mailadres of ander persoonlijk gegeven, en combineren de statistieken niet met andere diensten of trackers buiten Matomo.',
