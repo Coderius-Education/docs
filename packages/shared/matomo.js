@@ -48,16 +48,23 @@ function matomoForgetOptOut() {
 }
 
 // callback(status): status is 'active' | 'opted-out' | 'unavailable'.
-// Let op: Matomo's queue-syntax voor custom code is een kale functie
-// (this = tracker-instance) — GEEN array zoals bij ['methodNaam', ...args].
+// Let op: een kale functie naar _paq.push() sturen (het patroon uit de
+// Matomo-documentatie voor "custom code") crasht in deze tracker-build —
+// de queue-verwerking doet intern `arg.shift()` op elk item, en een
+// functie heeft geen .shift (TypeError: shift is not a function, gezien
+// in productie). Lees de tracker-instantie daarom rechtstreeks via de
+// eveneens door Matomo gedocumenteerde Matomo.getAsyncTracker().
 function matomoIsOptedOut(callback) {
-  if (typeof window === 'undefined' || !window._paq) {
+  if (typeof window === 'undefined' || typeof window.Matomo?.getAsyncTracker !== 'function') {
     callback('unavailable');
     return;
   }
-  window._paq.push(function () {
-    callback(this.isUserOptedOut() ? 'opted-out' : 'active');
-  });
+  const tracker = window.Matomo.getAsyncTracker();
+  if (!tracker) {
+    callback('unavailable');
+    return;
+  }
+  callback(tracker.isUserOptedOut() ? 'opted-out' : 'active');
 }
 
 module.exports = {
