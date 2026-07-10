@@ -35,6 +35,7 @@ export default createConfig({
         { type: 'docSidebar', sidebarId: 'jsSidebar', label: 'JavaScript', position: 'left' },
         { to: '/cheatsheet', label: 'Cheatsheet', position: 'left' },
         { to: '/jouw-website', label: 'Jouw website', position: 'left' },
+        { to: '/website-checken', label: 'Website checken', position: 'left' },
         { href: 'https://github.com/Coderius-Education/web', label: 'GitHub', position: 'right' },
       ],
     },
