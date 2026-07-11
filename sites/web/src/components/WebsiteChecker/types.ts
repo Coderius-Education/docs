@@ -4,7 +4,11 @@ export interface ProjectFile {
   /** Genormaliseerd, "/"-gescheiden pad, geen leidende "/". */
   path: string;
   kind: FileKind;
-  /** null = niet gelezen (binair bestand, of te groot). */
+  /**
+   * Voor html/css/js de tekstinhoud; voor een afbeelding een data:-URL
+   * (zie readFiles.ts). null = niet gelezen (te groot, of een niet-
+   * ondersteund binair bestand).
+   */
   content: string | null;
   sizeBytes: number;
   tooLarge: boolean;
