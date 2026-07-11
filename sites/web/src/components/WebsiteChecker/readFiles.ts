@@ -4,6 +4,37 @@ import type { ProjectFiles } from './types';
 export const MAX_TOTAL_SIZE = 20 * 1024 * 1024; // 20 MB
 export const MAX_FILE_COUNT = 500;
 export const MAX_TEXT_FILE_SIZE = 2 * 1024 * 1024; // 2 MB per HTML/CSS/JS-bestand
+export const MAX_IMAGE_FILE_SIZE = 5 * 1024 * 1024; // 5 MB per afbeelding (voor de IDE-preview)
+
+const IMAGE_MIME_TYPES: Record<string, string> = {
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.gif': 'image/gif',
+  '.svg': 'image/svg+xml',
+  '.webp': 'image/webp',
+  '.ico': 'image/x-icon',
+  '.bmp': 'image/bmp',
+};
+
+function mimeTypeForPath(path: string): string {
+  const dot = path.lastIndexOf('.');
+  const ext = dot === -1 ? '' : path.slice(dot).toLowerCase();
+  return IMAGE_MIME_TYPES[ext] ?? 'application/octet-stream';
+}
+
+// Zet afbeeldingsbytes om naar een data:-URL, zodat ze als gewone string in
+// ProjectFile.content passen — nodig om ze later (via "Bekijk in Online
+// Editor") mee te kunnen sturen naar de preview-iframe, die geen echte
+// bestandslocatie heeft waar een relatief pad naartoe zou kunnen wijzen.
+function bytesToDataUrl(bytes: Uint8Array, mimeType: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(reader.error ?? new Error('Kon afbeelding niet lezen.'));
+    reader.readAsDataURL(new Blob([bytes], { type: mimeType }));
+  });
+}
 
 export interface ReadFilesResult {
   files: ProjectFiles;
@@ -179,6 +210,13 @@ async function entriesToProjectFiles(rawEntries: RawEntry[]): Promise<ReadFilesR
         const bytes = await entry.getBytes();
         content = new TextDecoder('utf-8', { fatal: false }).decode(bytes);
       }
+    } else if (kind === 'image' && entry.size <= MAX_IMAGE_FILE_SIZE) {
+      // Stilzwijgend overslaan boven de cap: telt gewoon mee in het
+      // bestandsoverzicht, alleen zonder preview-ondersteuning. Geen aparte
+      // waarschuwing — dat is iets anders dan de "te groot voor analyse"-melding
+      // hierboven.
+      const bytes = await entry.getBytes();
+      content = await bytesToDataUrl(bytes, mimeTypeForPath(path));
     }
 
     files[path] = { path, kind, content, sizeBytes: entry.size, tooLarge };

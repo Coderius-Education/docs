@@ -25,15 +25,13 @@ export function pickEntry(files: ProjectFiles): string | null {
   return htmlPaths.slice().sort()[0];
 }
 
-function buildTextFiles(files: ProjectFiles): Record<string, string> {
+// html/css/js komen als platte tekst binnen, afbeeldingen als data:-URL
+// (zie readFiles.ts) — 'other' blijft altijd null. Voor beide volstaat het
+// dus om simpelweg elk bestand met inhoud mee te sturen.
+function buildTransferFiles(files: ProjectFiles): Record<string, string> {
   const result: Record<string, string> = {};
   for (const [path, file] of Object.entries(files)) {
-    if (
-      (file.kind === 'html' || file.kind === 'css' || file.kind === 'js') &&
-      file.content !== null
-    ) {
-      result[path] = file.content;
-    }
+    if (file.content !== null) result[path] = file.content;
   }
   return result;
 }
@@ -57,7 +55,7 @@ export function openInIde(
   const payload = {
     source: MESSAGE_SOURCE,
     type: 'import-files' as const,
-    files: buildTextFiles(files),
+    files: buildTransferFiles(files),
     entry,
     name: projectName,
   };
