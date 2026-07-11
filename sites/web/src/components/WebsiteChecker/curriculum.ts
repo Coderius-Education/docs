@@ -6,35 +6,35 @@ import type { HtmlElementInfo, Technique } from './types';
 // wordt.
 
 export const HTML_ELEMENTS: HtmlElementInfo[] = [
-  { tag: 'h1', label: '<h1> — hoofdkop' },
-  { tag: 'h2', label: '<h2> — tussenkop' },
-  { tag: 'h3', label: '<h3> — subkop' },
-  { tag: 'h4', label: '<h4> — subkop' },
-  { tag: 'h5', label: '<h5> — subkop' },
-  { tag: 'h6', label: '<h6> — subkop' },
-  { tag: 'p', label: '<p> — paragraaf' },
-  { tag: 'b', label: '<b> — vetgedrukt' },
-  { tag: 'i', label: '<i> — cursief' },
-  { tag: 'ul', label: '<ul> — ongenummerde lijst' },
-  { tag: 'ol', label: '<ol> — genummerde lijst' },
-  { tag: 'li', label: '<li> — lijst-item' },
-  { tag: 'img', label: '<img> — afbeelding' },
-  { tag: 'a', label: '<a> — link' },
-  { tag: 'header', label: '<header>' },
-  { tag: 'nav', label: '<nav>' },
-  { tag: 'main', label: '<main>' },
-  { tag: 'section', label: '<section>' },
-  { tag: 'article', label: '<article>' },
-  { tag: 'footer', label: '<footer>' },
-  { tag: 'form', label: '<form>' },
-  { tag: 'input', label: '<input>' },
-  { tag: 'label', label: '<label>' },
-  { tag: 'textarea', label: '<textarea>' },
-  { tag: 'select', label: '<select>' },
-  { tag: 'option', label: '<option>' },
-  { tag: 'span', label: '<span>' },
-  { tag: 'div', label: '<div>' },
-  { tag: 'button', label: '<button>' },
+  { tag: 'h1', label: '<h1> — hoofdkop', level: 'basis' },
+  { tag: 'h2', label: '<h2> — tussenkop', level: 'basis' },
+  { tag: 'h3', label: '<h3> — subkop', level: 'basis' },
+  { tag: 'h4', label: '<h4> — subkop', level: 'basis' },
+  { tag: 'h5', label: '<h5> — subkop', level: 'basis' },
+  { tag: 'h6', label: '<h6> — subkop', level: 'basis' },
+  { tag: 'p', label: '<p> — paragraaf', level: 'basis' },
+  { tag: 'b', label: '<b> — vetgedrukt', level: 'basis' },
+  { tag: 'i', label: '<i> — cursief', level: 'basis' },
+  { tag: 'ul', label: '<ul> — ongenummerde lijst', level: 'basis' },
+  { tag: 'ol', label: '<ol> — genummerde lijst', level: 'basis' },
+  { tag: 'li', label: '<li> — lijst-item', level: 'basis' },
+  { tag: 'img', label: '<img> — afbeelding', level: 'basis' },
+  { tag: 'a', label: '<a> — link', level: 'basis' },
+  { tag: 'header', label: '<header>', level: 'basis' },
+  { tag: 'nav', label: '<nav>', level: 'basis' },
+  { tag: 'main', label: '<main>', level: 'basis' },
+  { tag: 'section', label: '<section>', level: 'basis' },
+  { tag: 'article', label: '<article>', level: 'basis' },
+  { tag: 'footer', label: '<footer>', level: 'basis' },
+  { tag: 'form', label: '<form>', level: 'gevorderd' },
+  { tag: 'input', label: '<input>', level: 'gevorderd' },
+  { tag: 'label', label: '<label>', level: 'gevorderd' },
+  { tag: 'textarea', label: '<textarea>', level: 'gevorderd' },
+  { tag: 'select', label: '<select>', level: 'gevorderd' },
+  { tag: 'option', label: '<option>', level: 'gevorderd' },
+  { tag: 'span', label: '<span>', level: 'basis' },
+  { tag: 'div', label: '<div>', level: 'basis' },
+  { tag: 'button', label: '<button>', level: 'gevorderd' },
 ];
 
 export const CSS_TECHNIQUES: Technique[] = [
@@ -45,6 +45,7 @@ export const CSS_TECHNIQUES: Technique[] = [
     group: 'Tekst opmaken',
     label: 'color',
     pattern: /(?<![\w-])color\s*:/g,
+    level: 'basis',
   },
   {
     id: 'css-font-size',
@@ -52,6 +53,7 @@ export const CSS_TECHNIQUES: Technique[] = [
     group: 'Tekst opmaken',
     label: 'font-size',
     pattern: /font-size\s*:/g,
+    level: 'basis',
   },
   {
     id: 'css-font-family',
@@ -59,17 +61,33 @@ export const CSS_TECHNIQUES: Technique[] = [
     group: 'Tekst opmaken',
     label: 'font-family',
     pattern: /font-family\s*:/g,
+    level: 'basis',
   },
 
   // Eenheden
-  { id: 'css-rem', category: 'css', group: 'Eenheden', label: 'rem', pattern: /\d+(\.\d+)?rem\b/g },
-  { id: 'css-em', category: 'css', group: 'Eenheden', label: 'em', pattern: /\d+(\.\d+)?em\b/g },
+  {
+    id: 'css-rem',
+    category: 'css',
+    group: 'Eenheden',
+    label: 'rem',
+    pattern: /\d+(\.\d+)?rem\b/g,
+    level: 'gevorderd',
+  },
+  {
+    id: 'css-em',
+    category: 'css',
+    group: 'Eenheden',
+    label: 'em',
+    pattern: /\d+(\.\d+)?em\b/g,
+    level: 'gevorderd',
+  },
   {
     id: 'css-percent',
     category: 'css',
     group: 'Eenheden',
     label: '% (procent)',
     pattern: /\d+(\.\d+)?%/g,
+    level: 'gevorderd',
   },
 
   // Box-model
@@ -79,6 +97,7 @@ export const CSS_TECHNIQUES: Technique[] = [
     group: 'Box-model',
     label: 'background-color',
     pattern: /background-color\s*:/g,
+    level: 'basis',
   },
   {
     id: 'css-padding',
@@ -86,6 +105,7 @@ export const CSS_TECHNIQUES: Technique[] = [
     group: 'Box-model',
     label: 'padding',
     pattern: /(?<![\w-])padding\s*:/g,
+    level: 'basis',
   },
   {
     id: 'css-margin',
@@ -93,6 +113,7 @@ export const CSS_TECHNIQUES: Technique[] = [
     group: 'Box-model',
     label: 'margin',
     pattern: /(?<![\w-])margin\s*:/g,
+    level: 'basis',
   },
   {
     id: 'css-border',
@@ -100,6 +121,7 @@ export const CSS_TECHNIQUES: Technique[] = [
     group: 'Box-model',
     label: 'border',
     pattern: /(?<![\w-])border\s*:/g,
+    level: 'basis',
   },
   {
     id: 'css-border-radius',
@@ -107,6 +129,7 @@ export const CSS_TECHNIQUES: Technique[] = [
     group: 'Box-model',
     label: 'border-radius',
     pattern: /border-radius\s*:/g,
+    level: 'basis',
   },
   {
     id: 'css-box-sizing',
@@ -114,6 +137,7 @@ export const CSS_TECHNIQUES: Technique[] = [
     group: 'Box-model',
     label: 'box-sizing: border-box',
     pattern: /box-sizing\s*:\s*border-box/g,
+    level: 'gevorderd',
   },
 
   // Breedte en hoogte
@@ -123,6 +147,7 @@ export const CSS_TECHNIQUES: Technique[] = [
     group: 'Breedte en hoogte',
     label: 'width',
     pattern: /(?<![\w-])width\s*:/g,
+    level: 'basis',
   },
   {
     id: 'css-height',
@@ -130,6 +155,7 @@ export const CSS_TECHNIQUES: Technique[] = [
     group: 'Breedte en hoogte',
     label: 'height',
     pattern: /(?<![\w-])height\s*:/g,
+    level: 'basis',
   },
 
   // Selectoren
@@ -139,6 +165,7 @@ export const CSS_TECHNIQUES: Technique[] = [
     group: 'Selectoren',
     label: 'klasse-selector (.naam)',
     pattern: /\.[a-zA-Z_-][\w-]*\s*[{,]/g,
+    level: 'basis',
   },
   {
     id: 'css-id-selector',
@@ -146,14 +173,23 @@ export const CSS_TECHNIQUES: Technique[] = [
     group: 'Selectoren',
     label: 'id-selector (#naam)',
     pattern: /#[a-zA-Z_-][\w-]*\s*[{,]/g,
+    level: 'gevorderd',
   },
-  { id: 'css-hover', category: 'css', group: 'Selectoren', label: ':hover', pattern: /:hover\b/g },
+  {
+    id: 'css-hover',
+    category: 'css',
+    group: 'Selectoren',
+    label: ':hover',
+    pattern: /:hover\b/g,
+    level: 'basis',
+  },
   {
     id: 'css-first-child',
     category: 'css',
     group: 'Selectoren',
     label: ':first-child',
     pattern: /:first-child\b/g,
+    level: 'gevorderd',
   },
   {
     id: 'css-last-child',
@@ -161,6 +197,7 @@ export const CSS_TECHNIQUES: Technique[] = [
     group: 'Selectoren',
     label: ':last-child',
     pattern: /:last-child\b/g,
+    level: 'gevorderd',
   },
   {
     id: 'css-nth-child',
@@ -168,6 +205,7 @@ export const CSS_TECHNIQUES: Technique[] = [
     group: 'Selectoren',
     label: ':nth-child()',
     pattern: /:nth-child\s*\(/g,
+    level: 'gevorderd',
   },
 
   // Display-types
@@ -177,6 +215,7 @@ export const CSS_TECHNIQUES: Technique[] = [
     group: 'Display-types',
     label: 'display: block/inline/inline-block',
     pattern: /display\s*:\s*(block|inline-block|inline)\b/g,
+    level: 'basis',
   },
 
   // Flexbox
@@ -186,6 +225,7 @@ export const CSS_TECHNIQUES: Technique[] = [
     group: 'Flexbox',
     label: 'display: flex',
     pattern: /display\s*:\s*(inline-flex|flex)\b/g,
+    level: 'gevorderd',
   },
   {
     id: 'css-justify-content',
@@ -193,6 +233,7 @@ export const CSS_TECHNIQUES: Technique[] = [
     group: 'Flexbox',
     label: 'justify-content',
     pattern: /justify-content\s*:/g,
+    level: 'gevorderd',
   },
   {
     id: 'css-align-items',
@@ -200,14 +241,23 @@ export const CSS_TECHNIQUES: Technique[] = [
     group: 'Flexbox',
     label: 'align-items',
     pattern: /align-items\s*:/g,
+    level: 'gevorderd',
   },
-  { id: 'css-gap', category: 'css', group: 'Flexbox', label: 'gap', pattern: /(?<![\w-])gap\s*:/g },
+  {
+    id: 'css-gap',
+    category: 'css',
+    group: 'Flexbox',
+    label: 'gap',
+    pattern: /(?<![\w-])gap\s*:/g,
+    level: 'gevorderd',
+  },
   {
     id: 'css-flex-direction',
     category: 'css',
     group: 'Flexbox',
     label: 'flex-direction',
     pattern: /flex-direction\s*:/g,
+    level: 'gevorderd',
   },
 
   // Position
@@ -217,6 +267,7 @@ export const CSS_TECHNIQUES: Technique[] = [
     group: 'Position',
     label: 'position: relative/absolute/fixed',
     pattern: /(?<![\w-])position\s*:\s*(relative|absolute|fixed|sticky)/g,
+    level: 'gevorderd',
   },
   {
     id: 'css-offsets',
@@ -224,6 +275,7 @@ export const CSS_TECHNIQUES: Technique[] = [
     group: 'Position',
     label: 'top/right/bottom/left',
     pattern: /(?<![\w-])(top|right|bottom|left)\s*:/g,
+    level: 'gevorderd',
   },
 
   // Grid
@@ -233,6 +285,7 @@ export const CSS_TECHNIQUES: Technique[] = [
     group: 'Grid',
     label: 'display: grid',
     pattern: /display\s*:\s*grid\b/g,
+    level: 'gevorderd',
   },
   {
     id: 'css-grid-template-columns',
@@ -240,6 +293,7 @@ export const CSS_TECHNIQUES: Technique[] = [
     group: 'Grid',
     label: 'grid-template-columns',
     pattern: /grid-template-columns\s*:/g,
+    level: 'gevorderd',
   },
   {
     id: 'css-grid-template-rows',
@@ -247,6 +301,7 @@ export const CSS_TECHNIQUES: Technique[] = [
     group: 'Grid',
     label: 'grid-template-rows',
     pattern: /grid-template-rows\s*:/g,
+    level: 'gevorderd',
   },
   {
     id: 'css-grid-column',
@@ -254,6 +309,7 @@ export const CSS_TECHNIQUES: Technique[] = [
     group: 'Grid',
     label: 'grid-column',
     pattern: /grid-column\s*:/g,
+    level: 'gevorderd',
   },
 
   // Media queries
@@ -263,6 +319,7 @@ export const CSS_TECHNIQUES: Technique[] = [
     group: 'Media queries',
     label: '@media (max-width/min-width)',
     pattern: /@media[^{]*\(\s*(max|min)-width/g,
+    level: 'gevorderd',
   },
 ];
 
@@ -274,6 +331,7 @@ export const JS_TECHNIQUES: Technique[] = [
     group: 'DOM-selectie',
     label: 'getElementById()',
     pattern: /\bgetElementById\s*\(/g,
+    level: 'basis',
   },
   {
     id: 'js-query-selector',
@@ -281,6 +339,7 @@ export const JS_TECHNIQUES: Technique[] = [
     group: 'DOM-selectie',
     label: 'querySelector()',
     pattern: /\bquerySelector\s*\(/g,
+    level: 'basis',
   },
   {
     id: 'js-query-selector-all',
@@ -288,6 +347,7 @@ export const JS_TECHNIQUES: Technique[] = [
     group: 'DOM-selectie',
     label: 'querySelectorAll()',
     pattern: /\bquerySelectorAll\s*\(/g,
+    level: 'basis',
   },
 
   // DOM-manipulatie
@@ -297,6 +357,7 @@ export const JS_TECHNIQUES: Technique[] = [
     group: 'DOM-manipulatie',
     label: '.textContent',
     pattern: /\.textContent\b/g,
+    level: 'basis',
   },
   {
     id: 'js-style',
@@ -304,6 +365,7 @@ export const JS_TECHNIQUES: Technique[] = [
     group: 'DOM-manipulatie',
     label: '.style.xxx',
     pattern: /\.style\.[a-zA-Z]/g,
+    level: 'basis',
   },
   {
     id: 'js-class-list',
@@ -311,6 +373,7 @@ export const JS_TECHNIQUES: Technique[] = [
     group: 'DOM-manipulatie',
     label: '.classList (add/remove/toggle/contains)',
     pattern: /\.classList\.(add|remove|toggle|contains)\s*\(/g,
+    level: 'basis',
   },
 
   // Functies en scripts
@@ -320,6 +383,7 @@ export const JS_TECHNIQUES: Technique[] = [
     group: 'Functies en scripts',
     label: 'function ...() { }',
     pattern: /\bfunction\s+\w+\s*\(/g,
+    level: 'gevorderd',
   },
 
   // Waarden en operatoren
@@ -329,6 +393,7 @@ export const JS_TECHNIQUES: Technique[] = [
     group: 'Waarden en operatoren',
     label: 'typeof',
     pattern: /\btypeof\b/g,
+    level: 'gevorderd',
   },
   {
     id: 'js-template-literal',
@@ -336,6 +401,7 @@ export const JS_TECHNIQUES: Technique[] = [
     group: 'Waarden en operatoren',
     label: 'template literal (`${...}`)',
     pattern: /`[^`]*\$\{/g,
+    level: 'gevorderd',
   },
   {
     id: 'js-strict-equality',
@@ -343,6 +409,7 @@ export const JS_TECHNIQUES: Technique[] = [
     group: 'Waarden en operatoren',
     label: '=== / !==',
     pattern: /(===|!==)/g,
+    level: 'gevorderd',
   },
   {
     id: 'js-logical-operators',
@@ -350,6 +417,7 @@ export const JS_TECHNIQUES: Technique[] = [
     group: 'Waarden en operatoren',
     label: '&& / ||',
     pattern: /(&&|\|\|)/g,
+    level: 'gevorderd',
   },
 
   // Variabelen
@@ -359,6 +427,7 @@ export const JS_TECHNIQUES: Technique[] = [
     group: 'Variabelen',
     label: 'let',
     pattern: /\blet\s+[a-zA-Z_$]/g,
+    level: 'basis',
   },
   {
     id: 'js-const',
@@ -366,6 +435,7 @@ export const JS_TECHNIQUES: Technique[] = [
     group: 'Variabelen',
     label: 'const',
     pattern: /\bconst\s+[a-zA-Z_$]/g,
+    level: 'basis',
   },
 
   // Beslissingen
@@ -375,6 +445,7 @@ export const JS_TECHNIQUES: Technique[] = [
     group: 'Beslissingen',
     label: 'if / else',
     pattern: /\bif\s*\(/g,
+    level: 'gevorderd',
   },
 
   // Events
@@ -384,6 +455,7 @@ export const JS_TECHNIQUES: Technique[] = [
     group: 'Events',
     label: 'addEventListener()',
     pattern: /\baddEventListener\s*\(/g,
+    level: 'gevorderd',
   },
   // Telling komt uit analyzeHtml.ts (onclick-attributen), niet uit JS-broncode —
   // deze regex matcht bewust nooit iets; analyze.ts vult de echte count in.
@@ -393,6 +465,7 @@ export const JS_TECHNIQUES: Technique[] = [
     group: 'Events',
     label: 'onclick="..." (HTML-attribuut)',
     pattern: /(?!)/g,
+    level: 'gevorderd',
   },
 
   // Formulier-data ophalen
@@ -402,6 +475,7 @@ export const JS_TECHNIQUES: Technique[] = [
     group: 'Formulier-data ophalen',
     label: '.value',
     pattern: /\.value\b/g,
+    level: 'gevorderd',
   },
   {
     id: 'js-number',
@@ -409,6 +483,7 @@ export const JS_TECHNIQUES: Technique[] = [
     group: 'Formulier-data ophalen',
     label: 'Number(...)',
     pattern: /\bNumber\s*\(/g,
+    level: 'gevorderd',
   },
 
   // prompt & alert
@@ -418,6 +493,7 @@ export const JS_TECHNIQUES: Technique[] = [
     group: 'prompt & alert',
     label: 'prompt()',
     pattern: /\bprompt\s*\(/g,
+    level: 'basis',
   },
   {
     id: 'js-alert',
@@ -425,11 +501,26 @@ export const JS_TECHNIQUES: Technique[] = [
     group: 'prompt & alert',
     label: 'alert()',
     pattern: /\balert\s*\(/g,
+    level: 'basis',
   },
 
   // Loops
-  { id: 'js-for', category: 'js', group: 'Loops', label: 'for-loop', pattern: /\bfor\s*\(/g },
-  { id: 'js-while', category: 'js', group: 'Loops', label: 'while-loop', pattern: /\bwhile\s*\(/g },
+  {
+    id: 'js-for',
+    category: 'js',
+    group: 'Loops',
+    label: 'for-loop',
+    pattern: /\bfor\s*\(/g,
+    level: 'gevorderd',
+  },
+  {
+    id: 'js-while',
+    category: 'js',
+    group: 'Loops',
+    label: 'while-loop',
+    pattern: /\bwhile\s*\(/g,
+    level: 'gevorderd',
+  },
 
   // Arrays
   {
@@ -438,6 +529,7 @@ export const JS_TECHNIQUES: Technique[] = [
     group: 'Arrays',
     label: 'array ([...])',
     pattern: /=\s*\[/g,
+    level: 'gevorderd',
   },
   {
     id: 'js-array-length',
@@ -445,6 +537,7 @@ export const JS_TECHNIQUES: Technique[] = [
     group: 'Arrays',
     label: '.length',
     pattern: /\.length\b/g,
+    level: 'gevorderd',
   },
   {
     id: 'js-array-push',
@@ -452,5 +545,6 @@ export const JS_TECHNIQUES: Technique[] = [
     group: 'Arrays',
     label: '.push()',
     pattern: /\.push\s*\(/g,
+    level: 'gevorderd',
   },
 ];

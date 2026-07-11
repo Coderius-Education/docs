@@ -12,6 +12,8 @@ export interface ProjectFile {
 
 export type ProjectFiles = Record<string, ProjectFile>;
 
+export type Level = 'basis' | 'gevorderd';
+
 export interface Technique {
   id: string;
   category: 'css' | 'js';
@@ -20,6 +22,7 @@ export interface Technique {
   /** Nederlandstalig label voor de checklist. */
   label: string;
   pattern: RegExp;
+  level: Level;
 }
 
 export interface TechniqueMatch {
@@ -31,6 +34,7 @@ export interface TechniqueMatch {
 export interface HtmlElementInfo {
   tag: string;
   label: string;
+  level: Level;
 }
 
 export interface AnalysisReport {

@@ -1,0 +1,13 @@
+.wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - var(--ifm-navbar-height));
+  padding: 2rem;
+  text-align: center;
+}
+
+.message {
+  max-width: 30rem;
+  color: var(--ifm-color-emphasis-700);
+}
