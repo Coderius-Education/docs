@@ -11,6 +11,8 @@
     "./runners/types": "./src/runners/types.ts",
     "./monaco": "./src/monaco/loader.ts",
     "./monaco-pane": "./src/monaco/MonacoPane.tsx",
+    "./vfs/store": "./src/vfs/store.ts",
+    "./vfs/types": "./src/vfs/types.ts",
     "./package.json": "./package.json"
   },
   "scripts": {

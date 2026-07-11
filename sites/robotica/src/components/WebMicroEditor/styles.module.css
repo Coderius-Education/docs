@@ -327,3 +327,53 @@
   border-color: #c33;
   color: #7a1f1f;
 }
+
+.leaphyAdvanced {
+  font-size: 13px;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.leaphyAdvanced summary {
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.leaphyAdvancedFields {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.leaphyAdvancedField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+}
+
+.leaphyAdvancedField input {
+  padding: 5px 8px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 6px;
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  font-size: 13px;
+  min-width: 260px;
+}
+
+.replInput {
+  padding: 6px 10px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 6px;
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 13px;
+}
+
+.replInput:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
