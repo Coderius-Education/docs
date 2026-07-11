@@ -37,8 +37,14 @@ function useColorMode(): { colorMode: 'light' | 'dark' } {
   return { colorMode };
 }
 
+import { friendlyError } from './errorMessages';
 import { BoardFS } from './filesystem';
-import { type InstallProgress, installLeaphyLibrary } from './leaphyInstaller';
+import {
+  DEFAULT_LEAPHY_BRANCH,
+  DEFAULT_LEAPHY_REPO,
+  type InstallProgress,
+  installLeaphyLibrary,
+} from './leaphyInstaller';
 import { SerialClient } from './serial';
 import styles from './styles.module.css';
 import { TEMPLATES } from './templates';
@@ -64,6 +70,8 @@ const pythonTabExtensions = [
 
 const STORAGE_KEY = 'webMicroEditor.code';
 const FILE_STORAGE_KEY = 'webMicroEditor.currentFile';
+const LEAPHY_REPO_STORAGE_KEY = 'webMicroEditor.leaphyRepo';
+const LEAPHY_BRANCH_STORAGE_KEY = 'webMicroEditor.leaphyBranch';
 
 // Officiële MicroPython-firmware voor de Arduino Nano RP2040 Connect.
 // Nieuwe versie? Pak de laatste .uf2 van de download-pagina hieronder en werk
@@ -102,6 +110,17 @@ export default function WebMicroEditor(): React.JSX.Element {
   );
   const [currentDir, setCurrentDir] = useState<string>('/');
   const [showFlashHelp, setShowFlashHelp] = useState<boolean>(false);
+  const [leaphyRepo, setLeaphyRepo] = useState<string>(() => {
+    if (typeof window === 'undefined') return DEFAULT_LEAPHY_REPO;
+    return localStorage.getItem(LEAPHY_REPO_STORAGE_KEY) ?? DEFAULT_LEAPHY_REPO;
+  });
+  const [leaphyBranch, setLeaphyBranch] = useState<string>(() => {
+    if (typeof window === 'undefined') return DEFAULT_LEAPHY_BRANCH;
+    return localStorage.getItem(LEAPHY_BRANCH_STORAGE_KEY) ?? DEFAULT_LEAPHY_BRANCH;
+  });
+  const [replInput, setReplInput] = useState<string>('');
+  const [replHistory, setReplHistory] = useState<string[]>([]);
+  const [replHistoryIndex, setReplHistoryIndex] = useState<number>(-1);
 
   const isDirty = code !== loadedCode;
 
@@ -116,6 +135,18 @@ export default function WebMicroEditor(): React.JSX.Element {
     if (currentFile === null) localStorage.removeItem(FILE_STORAGE_KEY);
     else localStorage.setItem(FILE_STORAGE_KEY, currentFile);
   }, [currentFile]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(LEAPHY_REPO_STORAGE_KEY, leaphyRepo);
+    }
+  }, [leaphyRepo]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(LEAPHY_BRANCH_STORAGE_KEY, leaphyBranch);
+    }
+  }, [leaphyBranch]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: replText triggert bewust een her-scroll bij nieuwe REPL-output; de body zelf leest alleen de ref.
   useEffect(() => {
@@ -151,7 +182,7 @@ export default function WebMicroEditor(): React.JSX.Element {
       setStatus('connected');
       appendRepl('[verbonden]\n');
     } catch (err) {
-      appendRepl(`[verbinden mislukt: ${err instanceof Error ? err.message : String(err)}]\n`);
+      appendRepl(`[verbinden mislukt: ${friendlyError(err)}]\n`);
     }
   }, [supported, appendRepl]);
 
@@ -178,7 +209,7 @@ export default function WebMicroEditor(): React.JSX.Element {
       await c.softReboot();
       setIdle();
     } catch (err) {
-      appendRepl(`\n[fout: ${err instanceof Error ? err.message : String(err)}]\n`);
+      appendRepl(`\n[fout: ${friendlyError(err)}]\n`);
       setIdle();
     }
   }, [code, appendRepl, clearRepl, setBusy, setIdle]);
@@ -194,7 +225,7 @@ export default function WebMicroEditor(): React.JSX.Element {
       appendRepl(`[opgeslagen: ${currentFile}]\n`);
       setIdle();
     } catch (err) {
-      appendRepl(`\n[opslaan mislukt: ${err instanceof Error ? err.message : String(err)}]\n`);
+      appendRepl(`\n[opslaan mislukt: ${friendlyError(err)}]\n`);
       setIdle();
     }
   }, [code, currentFile, appendRepl, setBusy, setIdle]);
@@ -215,7 +246,7 @@ export default function WebMicroEditor(): React.JSX.Element {
         appendRepl(`[geopend: ${path}]\n`);
         setIdle();
       } catch (err) {
-        appendRepl(`\n[openen mislukt: ${err instanceof Error ? err.message : String(err)}]\n`);
+        appendRepl(`\n[openen mislukt: ${friendlyError(err)}]\n`);
         setIdle();
       }
     },
@@ -236,7 +267,7 @@ export default function WebMicroEditor(): React.JSX.Element {
       await c.interrupt();
       appendRepl('\n[KeyboardInterrupt verstuurd]\n');
     } catch (err) {
-      appendRepl(`\n[stop mislukt: ${err instanceof Error ? err.message : String(err)}]\n`);
+      appendRepl(`\n[stop mislukt: ${friendlyError(err)}]\n`);
     }
   }, [appendRepl]);
 
@@ -247,16 +278,67 @@ export default function WebMicroEditor(): React.JSX.Element {
     setProgress({ done: 0, total: 0, current: 'lijst ophalen...' });
     try {
       const fs = new BoardFS(c);
-      await installLeaphyLibrary(fs, (p) => setProgress(p));
+      await installLeaphyLibrary(fs, (p) => setProgress(p), {
+        repo: leaphyRepo,
+        branch: leaphyBranch,
+      });
       setProgress(null);
-      appendRepl('\n[Leaphy-library geïnstalleerd]\n');
+      const isDefault =
+        leaphyRepo === DEFAULT_LEAPHY_REPO && leaphyBranch === DEFAULT_LEAPHY_BRANCH;
+      appendRepl(
+        isDefault
+          ? '\n[Leaphy-library geïnstalleerd]\n'
+          : `\n[Leaphy-library geïnstalleerd vanaf ${leaphyRepo}@${leaphyBranch}]\n`,
+      );
       setIdle();
     } catch (err) {
       setProgress(null);
-      appendRepl(`\n[installer mislukt: ${err instanceof Error ? err.message : String(err)}]\n`);
+      appendRepl(`\n[installer mislukt: ${friendlyError(err)}]\n`);
       setIdle();
     }
-  }, [appendRepl, setBusy, setIdle]);
+  }, [appendRepl, setBusy, setIdle, leaphyRepo, leaphyBranch]);
+
+  const sendReplLine = useCallback(() => {
+    const c = clientRef.current;
+    if (!c || status !== 'connected') return;
+    const line = replInput;
+    c.typeLine(line).catch((err) => {
+      appendRepl(`\n[typen mislukt: ${friendlyError(err)}]\n`);
+    });
+    setReplHistory((prev) => [...prev, line]);
+    setReplHistoryIndex(-1);
+    setReplInput('');
+  }, [status, replInput, appendRepl]);
+
+  const handleReplKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        sendReplLine();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setReplHistoryIndex((idx) => {
+          if (replHistory.length === 0) return idx;
+          const next = idx === -1 ? replHistory.length - 1 : Math.max(0, idx - 1);
+          setReplInput(replHistory[next]);
+          return next;
+        });
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setReplHistoryIndex((idx) => {
+          if (idx === -1) return -1;
+          const next = idx + 1;
+          if (next >= replHistory.length) {
+            setReplInput('');
+            return -1;
+          }
+          setReplInput(replHistory[next]);
+          return next;
+        });
+      }
+    },
+    [sendReplLine, replHistory],
+  );
 
   const refreshFiles = useCallback(
     async (dir = currentDir) => {
@@ -279,9 +361,7 @@ export default function WebMicroEditor(): React.JSX.Element {
         setCurrentDir(dir);
         setIdle();
       } catch (err) {
-        appendRepl(
-          `\n[bestandslijst mislukt: ${err instanceof Error ? err.message : String(err)}]\n`,
-        );
+        appendRepl(`\n[bestandslijst mislukt: ${friendlyError(err)}]\n`);
         setIdle();
       }
     },
@@ -303,9 +383,7 @@ export default function WebMicroEditor(): React.JSX.Element {
         }
         await refreshFiles();
       } catch (err) {
-        appendRepl(
-          `\n[verwijderen mislukt: ${err instanceof Error ? err.message : String(err)}]\n`,
-        );
+        appendRepl(`\n[verwijderen mislukt: ${friendlyError(err)}]\n`);
         setIdle();
       }
     },
@@ -474,6 +552,42 @@ export default function WebMicroEditor(): React.JSX.Element {
         </select>
       </div>
 
+      <details className={styles.leaphyAdvanced}>
+        <summary>Geavanceerd: andere Leaphy-bron</summary>
+        <div className={styles.leaphyAdvancedFields}>
+          <label className={styles.leaphyAdvancedField}>
+            Repo
+            <input
+              type="text"
+              value={leaphyRepo}
+              onChange={(e) => setLeaphyRepo(e.target.value)}
+              placeholder={DEFAULT_LEAPHY_REPO}
+            />
+          </label>
+          <label className={styles.leaphyAdvancedField}>
+            Branch
+            <input
+              type="text"
+              value={leaphyBranch}
+              onChange={(e) => setLeaphyBranch(e.target.value)}
+              placeholder={DEFAULT_LEAPHY_BRANCH}
+            />
+          </label>
+          {(leaphyRepo !== DEFAULT_LEAPHY_REPO || leaphyBranch !== DEFAULT_LEAPHY_BRANCH) && (
+            <button
+              type="button"
+              className={styles.btn}
+              onClick={() => {
+                setLeaphyRepo(DEFAULT_LEAPHY_REPO);
+                setLeaphyBranch(DEFAULT_LEAPHY_BRANCH);
+              }}
+            >
+              Terug naar standaard
+            </button>
+          )}
+        </div>
+      </details>
+
       {progress && (
         <div className={styles.progress}>
           Bezig met installeren: {progress.current} ({progress.done}/{progress.total})
@@ -613,6 +727,17 @@ export default function WebMicroEditor(): React.JSX.Element {
             <div className={styles.repl} ref={replRef}>
               {replText || '(geen output)'}
             </div>
+            <input
+              type="text"
+              className={styles.replInput}
+              value={replInput}
+              onChange={(e) => setReplInput(e.target.value)}
+              onKeyDown={handleReplKeyDown}
+              disabled={status !== 'connected'}
+              placeholder=">>> voer een regel in"
+              spellCheck={false}
+              autoComplete="off"
+            />
           </div>
         </div>
       </div>

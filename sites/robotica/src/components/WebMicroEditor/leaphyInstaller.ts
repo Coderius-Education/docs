@@ -3,8 +3,8 @@
 
 import type { BoardFS } from './filesystem';
 
-const REPO = 'leaphy-robotics/leaphy-micropython';
-const BRANCH = 'main';
+export const DEFAULT_LEAPHY_REPO = 'leaphy-robotics/leaphy-micropython';
+export const DEFAULT_LEAPHY_BRANCH = 'main';
 
 type TreeEntry = { path: string; type: 'blob' | 'tree' | string; sha: string };
 type TreeResponse = { tree: TreeEntry[]; truncated: boolean };
@@ -15,11 +15,20 @@ export type InstallProgress = {
   current: string;
 };
 
+export interface InstallOptions {
+  /** GitHub-repo in "eigenaar/naam"-vorm. */
+  repo?: string;
+  branch?: string;
+}
+
 export async function installLeaphyLibrary(
   fs: BoardFS,
   onProgress: (p: InstallProgress) => void,
+  options: InstallOptions = {},
 ): Promise<void> {
-  const treeUrl = `https://api.github.com/repos/${REPO}/git/trees/${BRANCH}?recursive=1`;
+  const repo = options.repo || DEFAULT_LEAPHY_REPO;
+  const branch = options.branch || DEFAULT_LEAPHY_BRANCH;
+  const treeUrl = `https://api.github.com/repos/${repo}/git/trees/${branch}?recursive=1`;
   const r = await fetch(treeUrl);
   if (!r.ok)
     throw new Error(
@@ -38,7 +47,7 @@ export async function installLeaphyLibrary(
   let done = 0;
   for (const entry of files) {
     onProgress({ done, total: files.length, current: entry.path });
-    const rawUrl = `https://raw.githubusercontent.com/${REPO}/${BRANCH}/${entry.path}`;
+    const rawUrl = `https://raw.githubusercontent.com/${repo}/${branch}/${entry.path}`;
     const fileRes = await fetch(rawUrl);
     if (!fileRes.ok) {
       throw new Error(`Kon ${entry.path} niet ophalen (HTTP ${fileRes.status}).`);
