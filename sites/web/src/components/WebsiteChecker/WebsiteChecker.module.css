@@ -114,3 +114,83 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+.teacherPanel {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.notesLabel {
+  font-weight: 700;
+}
+
+.notesInput {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  font-family: inherit;
+  font-size: 0.95rem;
+  resize: vertical;
+}
+
+/* Alleen zichtbaar bij het printen: een nette weergave van de opmerkingen. */
+.notesPrint {
+  display: none;
+  white-space: pre-wrap;
+}
+
+.printButton {
+  align-self: flex-start;
+  border: 1px solid var(--ifm-color-primary);
+  border-radius: 6px;
+  background: var(--ifm-color-primary);
+  color: var(--ifm-color-white, #fff);
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+}
+
+.printButton:hover {
+  background: var(--ifm-color-primary-dark);
+}
+
+/* Tijdens het genereren van de PDF (html2canvas-pro kloont dit blok en voegt
+   .exporting toe): verberg de knoppen/textarea en toon de opmerkingen als
+   nette tekstblok, net als bij het printen. */
+.exporting .noPrint {
+  display: none !important;
+}
+
+.exporting .notesPrint {
+  display: block;
+  border: 1px solid #999;
+  border-radius: 8px;
+  padding: 0.6rem 0.75rem;
+}
+
+@media print {
+  /* Verberg alle interactieve elementen en de Docusaurus-chrome, zodat een
+     eventuele Ctrl+P-uitdraai alleen het rapport en de opmerkingen bevat. */
+  .noPrint {
+    display: none !important;
+  }
+
+  .notesPrint {
+    display: block;
+    border: 1px solid #999;
+    border-radius: 8px;
+    padding: 0.6rem 0.75rem;
+  }
+
+  :global(nav.navbar),
+  :global(footer),
+  :global(.theme-doc-footer),
+  :global(.pagination-nav) {
+    display: none !important;
+  }
+}
