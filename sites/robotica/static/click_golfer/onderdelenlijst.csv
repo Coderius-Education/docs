@@ -1,0 +1,26 @@
+BLItemNo,ElementId,LdrawId,PartName,BLColorId,LDrawColorId,ColorName,ColorCategory,Qty,Weight
+4265c,6271165,32123a.dat,Technic Bush 1/2 Smooth,86,71,Light Bluish Gray,Solid Colors,1,0.1
+32140,6271825,32140.dat,"Technic, Liftarm, Modified Bent Thick L-Shape 2 x 4 ",11,0,Black,Solid Colors,2,1.43
+32278pb038,,32278pb038.dat,"Technic, Liftarm Thick 1 x 15 with White 'LO' and 'HI' Pattern (Sticker) - Set 42110 ",85,72,Dark Bluish Gray,Solid Colors,4,4.5
+32316,4142135,32316.dat,"Technic, Liftarm Thick 1 x 5 ",11,0,Black,Solid Colors,1,1.21
+32449,6360072,32449.dat,"Technic, Liftarm Thin 1 x 4 - Axle Holes ",1,15,White,Solid Colors,1,
+32523,4142822,32523.dat,"Technic, Liftarm Thick 1 x 3 ",11,0,Black,Solid Colors,1,0.7
+32524,4495935,32524.dat,"Technic, Liftarm Thick 1 x 7 ",11,0,Black,Solid Colors,1,1.74
+32556,,32556b.dat,"Technic, Pin 3L without Friction Ridges ",7,1,Blue,Solid Colors,2,0.25
+3673,6331822,3673.dat,"Technic, Pin without Friction Ridges ",3,14,Yellow,Solid Colors,4,
+3705,,3705.dat,"Technic, Axle  4L ",86,71,Light Bluish Gray,Solid Colors,1,0.59
+3706,6130002,3706.dat,"Technic, Axle  6L ",5,4,Red,Solid Colors,1,0.94
+3749,4666579,3749.dat,"Technic, Axle  1L with Pin without Friction Ridges ",2,19,Tan,Solid Colors,2,0.22
+42003,6273708,42003.dat,"Technic, Axle and Pin Connector Perpendicular 3L with 2 Pin Holes ",11,0,Black,Solid Colors,1,0.77
+43093,4206482,43093.dat,"Technic, Axle  1L with Pin with Friction Ridges ",7,1,Blue,Solid Colors,3,
+4459,,4459.dat,"Technic, Pin with Long Friction Ridges ",11,0,Black,Solid Colors,12,0.19
+64179,4539880,64179.dat,"Technic, Liftarm, Modified Frame Thick 5 x 7 Open Center ",86,71,Light Bluish Gray,Solid Colors,1,5.3
+6536,6261371,6536.dat,"Technic, Axle and Pin Connector Perpendicular ",11,0,Black,Solid Colors,2,0.39
+6558,6299413,6558.dat,"Technic, Pin 3L with Friction Ridges ",7,1,Blue,Solid Colors,1,0.31
+6629,6279881,6629.dat,"Technic, Liftarm, Modified Bent Thick 1 x 9 (6 - 4) ",11,0,Black,Solid Colors,4,2.6
+94925,4640536,94925.dat,"Technic, Gear 16 Tooth - Axle Hole with Closed Sides ",86,71,Light Bluish Gray,Solid Colors,1,0.7
+,,mc31a86ca_20211217_042229.dat,Servo,,128,Dark Nougat,Solid Colors,1,
+,,,,,,,,,
+Total qty,Total Weight,,,,,,,,
+46,47.62 +a
+,,,,,,,,

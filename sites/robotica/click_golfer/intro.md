@@ -15,13 +15,15 @@ Hieronder zie je de Click Golfer in 3D. Sleep met je muis om hem te **draaien** 
 
 <ObjViewer src="/models/golfer.obj" mtl="/models/golfer.mtl" />
 
+Wil je zelf sleutelen aan het model? <a href="/click_golfer/golfer.io" download>Download het model</a> en open het in het gratis programma BrickLink Studio.
+
 ## Wat is een robot?
 
 Een robot is een **programmeerbare machine** die zelf taken uitvoert en kan reageren op wat er om hem heen gebeurt. Jouw Click Golfer doet straks precies dat: hij voelt met een sensor of er een balletje ligt en slaat het dan weg.
 
 ## Wat ga je doen?
 
-1. Verzamel de Lego-onderdelen en **[bouw het robotje](bouwen)**. De onderdelenlijst en alle bouwstappen staan in het werkboek.
+1. Verzamel de Lego-onderdelen en **[bouw het robotje](bouwen)**. De onderdelenlijst staat op de bouwpagina en alle bouwstappen in het werkboek.
 2. Daarna **[sluit je de motor en de sensor aan](aansluiten)**. Het programmeren met blokken volgt later.
 
 <details>
