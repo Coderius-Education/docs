@@ -1,10 +1,25 @@
+import clsx from 'clsx';
 import { FileStats } from './FileStats';
 import styles from './ReportView.module.css';
 import { CSS_TECHNIQUES, HTML_ELEMENTS, JS_TECHNIQUES } from './curriculum';
-import type { AnalysisReport, Technique, TechniqueMatch } from './types';
+import type { AnalysisReport, Level, Technique, TechniqueMatch } from './types';
 
 interface ReportViewProps {
   report: AnalysisReport;
+  activeLevel?: Level | null;
+}
+
+function LevelBadge({ level }: { level: Level }) {
+  return (
+    <span
+      className={clsx(
+        styles.levelBadge,
+        level === 'basis' ? styles.levelBadgeBasis : styles.levelBadgeGevorderd,
+      )}
+    >
+      {level}
+    </span>
+  );
 }
 
 interface TechniqueGroup {
@@ -12,10 +27,15 @@ interface TechniqueGroup {
   items: { technique: Technique; match: TechniqueMatch }[];
 }
 
-function groupTechniques(techniques: Technique[], matches: TechniqueMatch[]): TechniqueGroup[] {
+function groupTechniques(
+  techniques: Technique[],
+  matches: TechniqueMatch[],
+  activeLevel: Level | null,
+): TechniqueGroup[] {
   const matchById = new Map(matches.map((m) => [m.id, m]));
   const groups = new Map<string, TechniqueGroup>();
   for (const technique of techniques) {
+    if (activeLevel && technique.level !== activeLevel) continue;
     const match = matchById.get(technique.id);
     if (!match) continue;
     if (!groups.has(technique.group))
@@ -26,6 +46,7 @@ function groupTechniques(techniques: Technique[], matches: TechniqueMatch[]): Te
 }
 
 function TechniqueSection({ title, groups }: { title: string; groups: TechniqueGroup[] }) {
+  if (groups.length === 0) return null;
   const total = groups.reduce((sum, g) => sum + g.items.length, 0);
   const usedTotal = groups.reduce((sum, g) => sum + g.items.filter((i) => i.match.used).length, 0);
 
@@ -59,6 +80,7 @@ function TechniqueSection({ title, groups }: { title: string; groups: TechniqueG
                     {match.used && match.count > 1 && (
                       <span className={styles.chipCount}> ({match.count}×)</span>
                     )}
+                    <LevelBadge level={technique.level} />
                   </li>
                 ))}
               </ul>
@@ -70,14 +92,16 @@ function TechniqueSection({ title, groups }: { title: string; groups: TechniqueG
   );
 }
 
-export function ReportView({ report }: ReportViewProps) {
-  const curriculumTags = new Set(HTML_ELEMENTS.map((e) => e.tag));
+export function ReportView({ report, activeLevel = null }: ReportViewProps) {
+  const allTags = HTML_ELEMENTS.flatMap((e) => e.tags);
+  const curriculumTags = new Set(allTags);
   const otherTags = Object.keys(report.html.elementCounts)
     .filter((tag) => !curriculumTags.has(tag))
     .sort();
 
-  const cssGroups = groupTechniques(CSS_TECHNIQUES, report.css);
-  const jsGroups = groupTechniques(JS_TECHNIQUES, report.js);
+  const htmlElements = HTML_ELEMENTS.filter((e) => !activeLevel || e.level === activeLevel);
+  const cssGroups = groupTechniques(CSS_TECHNIQUES, report.css, activeLevel);
+  const jsGroups = groupTechniques(JS_TECHNIQUES, report.js, activeLevel);
 
   return (
     <div className={styles.report}>
@@ -91,33 +115,36 @@ export function ReportView({ report }: ReportViewProps) {
 
       <FileStats report={report} />
 
-      <section className={styles.section}>
-        <h2>HTML-elementen</h2>
-        <ul className={styles.chipList}>
-          {HTML_ELEMENTS.map(({ tag, label }) => {
-            const count = report.html.elementCounts[tag] || 0;
-            const used = count > 0;
-            return (
-              <li
-                key={tag}
-                className={`${styles.chip} ${used ? styles.chipUsed : styles.chipUnused}`}
-              >
-                {used ? '✓ ' : ''}
-                {label}
-                {used && count > 1 && <span className={styles.chipCount}> ({count}×)</span>}
-              </li>
-            );
-          })}
-        </ul>
-        {otherTags.length > 0 && (
-          <details className={styles.details}>
-            <summary>Overige tags gevonden ({otherTags.length})</summary>
-            <p className={styles.otherTags}>
-              {otherTags.map((tag) => `<${tag}> (${report.html.elementCounts[tag]}×)`).join(', ')}
-            </p>
-          </details>
-        )}
-      </section>
+      {htmlElements.length > 0 && (
+        <section className={styles.section}>
+          <h2>HTML-elementen</h2>
+          <ul className={styles.chipList}>
+            {htmlElements.map(({ tags, label, level }) => {
+              const count = tags.reduce((sum, t) => sum + (report.html.elementCounts[t] || 0), 0);
+              const used = count > 0;
+              return (
+                <li
+                  key={tags.join('-')}
+                  className={`${styles.chip} ${used ? styles.chipUsed : styles.chipUnused}`}
+                >
+                  {used ? '✓ ' : ''}
+                  {label}
+                  {used && count > 1 && <span className={styles.chipCount}> ({count}×)</span>}
+                  <LevelBadge level={level} />
+                </li>
+              );
+            })}
+          </ul>
+          {activeLevel === null && otherTags.length > 0 && (
+            <details className={styles.details}>
+              <summary>Overige tags gevonden ({otherTags.length})</summary>
+              <p className={styles.otherTags}>
+                {otherTags.map((tag) => `<${tag}> (${report.html.elementCounts[tag]}×)`).join(', ')}
+              </p>
+            </details>
+          )}
+        </section>
+      )}
 
       <TechniqueSection title="CSS-technieken" groups={cssGroups} />
       <TechniqueSection title="JavaScript-technieken" groups={jsGroups} />

@@ -8,7 +8,7 @@ import styles from './WebsiteChecker.module.css';
 import { analyze } from './analyze';
 import { exportReportToPdf } from './exportPdf';
 import { type OpenInIdeResult, openInIde, pickEntry } from './openInIde';
-import type { AnalysisReport, ProjectFiles } from './types';
+import type { AnalysisReport, Level, ProjectFiles } from './types';
 
 const IDE_ERROR_MESSAGES: Record<Exclude<OpenInIdeResult, 'opened'>, string> = {
   blocked: 'De pop-up werd geblokkeerd. Sta pop-ups toe voor deze pagina en probeer opnieuw.',
@@ -30,7 +30,12 @@ function WebsiteCheckerInner({ variant }: { variant: WebsiteCheckerVariant }) {
   const [notes, setNotes] = useState('');
   const [exporting, setExporting] = useState(false);
   const [pdfError, setPdfError] = useState<string | null>(null);
+  const [activeLevel, setActiveLevel] = useState<Level | null>(null);
   const reportRef = useRef<HTMLDivElement>(null);
+
+  const toggleLevel = useCallback((level: Level) => {
+    setActiveLevel((prev) => (prev === level ? null : level));
+  }, []);
 
   const handleLoaded = useCallback((loadedFiles: ProjectFiles, warnings: string[]) => {
     setError(null);
@@ -57,6 +62,10 @@ function WebsiteCheckerInner({ variant }: { variant: WebsiteCheckerVariant }) {
     const el = reportRef.current;
     if (!el) return;
     setPdfError(null);
+    // De PDF bevat altijd het volledige rapport: zet een actief filter uit en
+    // wacht één frame zodat de DOM alle punten toont vóór de capture.
+    setActiveLevel(null);
+    await new Promise((resolve) => requestAnimationFrame(() => resolve(null)));
     setExporting(true);
     try {
       await exportReportToPdf(el, styles.exporting);
@@ -115,7 +124,7 @@ function WebsiteCheckerInner({ variant }: { variant: WebsiteCheckerVariant }) {
       {report && isDocent && (
         <div ref={reportRef}>
           <div className={styles.reportHeader}>
-            <LevelSummary report={report} />
+            <LevelSummary report={report} activeLevel={activeLevel} onToggleLevel={toggleLevel} />
             {ideButton}
           </div>
           {ideError && (
@@ -123,7 +132,7 @@ function WebsiteCheckerInner({ variant }: { variant: WebsiteCheckerVariant }) {
               {ideError}
             </p>
           )}
-          <ReportView report={report} />
+          <ReportView report={report} activeLevel={activeLevel} />
 
           <section className={styles.teacherPanel}>
             <label className={styles.notesLabel} htmlFor="docent-opmerkingen">
