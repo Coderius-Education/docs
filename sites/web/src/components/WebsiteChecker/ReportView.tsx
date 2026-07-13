@@ -1,3 +1,4 @@
+import { FileStats } from './FileStats';
 import styles from './ReportView.module.css';
 import { CSS_TECHNIQUES, HTML_ELEMENTS, JS_TECHNIQUES } from './curriculum';
 import type { AnalysisReport, Technique, TechniqueMatch } from './types';
@@ -5,14 +6,6 @@ import type { AnalysisReport, Technique, TechniqueMatch } from './types';
 interface ReportViewProps {
   report: AnalysisReport;
 }
-
-const KIND_LABELS: Record<string, string> = {
-  html: 'HTML',
-  css: 'CSS',
-  js: 'JavaScript',
-  image: 'Afbeeldingen',
-  other: 'Overig',
-};
 
 interface TechniqueGroup {
   group: string;
@@ -96,21 +89,7 @@ export function ReportView({ report }: ReportViewProps) {
         </output>
       )}
 
-      <section className={styles.section}>
-        <h2>Bestandsoverzicht</h2>
-        <div className={styles.counterRow}>
-          <div className={styles.counter}>
-            <span className={styles.counterNumber}>{report.fileStats.total}</span>
-            <span className={styles.counterLabel}>Totaal</span>
-          </div>
-          {(['html', 'css', 'js', 'image', 'other'] as const).map((kind) => (
-            <div className={styles.counter} key={kind}>
-              <span className={styles.counterNumber}>{report.fileStats.byKind[kind]}</span>
-              <span className={styles.counterLabel}>{KIND_LABELS[kind]}</span>
-            </div>
-          ))}
-        </div>
-      </section>
+      <FileStats report={report} />
 
       <section className={styles.section}>
         <h2>HTML-elementen</h2>
