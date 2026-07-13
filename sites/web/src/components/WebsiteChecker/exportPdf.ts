@@ -101,5 +101,5 @@ export async function exportReportToPdf(
   }
 
   const blob = pdf.output('blob');
-  await savePdfBlob(blob, `website-check-${todayStamp()}.pdf`);
+  await savePdfBlob(blob, `Beoordeling Web Project - ${todayStamp()}.pdf`);
 }

@@ -36,9 +36,12 @@ export interface TechniqueMatch {
 }
 
 export interface HtmlElementInfo {
-  tag: string;
+  /** Eén of meer tags die samen als één checklist-punt tellen (bv. h1–h6). */
+  tags: string[];
   label: string;
   level: Level;
+  /** Concept-groep voor de niveau-telling (bv. 'Formulieren', 'Koppen'). */
+  group: string;
 }
 
 export interface AnalysisReport {

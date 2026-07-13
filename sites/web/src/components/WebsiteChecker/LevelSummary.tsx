@@ -1,29 +1,50 @@
+import clsx from 'clsx';
 import styles from './LevelSummary.module.css';
-import { computeLevelSummary } from './levelSummary';
-import type { AnalysisReport } from './types';
+import { type ConceptStats, computeLevelSummary } from './levelSummary';
+import type { AnalysisReport, Level } from './types';
 
 interface LevelSummaryProps {
   report: AnalysisReport;
+  activeLevel: Level | null;
+  onToggleLevel: (level: Level) => void;
 }
 
-const LABELS = {
-  basis: 'Basisconcepten',
-  gevorderd: 'Gevorderde concepten',
-} as const;
+export function LevelSummary({ report, activeLevel, onToggleLevel }: LevelSummaryProps) {
+  const { basis, gevorderd, bySubject } = computeLevelSummary(report);
 
-export function LevelSummary({ report }: LevelSummaryProps) {
-  const stats = computeLevelSummary(report);
+  const tile = (level: Level, label: string, total: ConceptStats) => (
+    <button
+      type="button"
+      className={clsx(styles.tile, activeLevel === level && styles.tileActive)}
+      onClick={() => onToggleLevel(level)}
+      aria-pressed={activeLevel === level}
+      title={`Klik om de checklist te filteren op ${label.toLowerCase()}`}
+    >
+      <span className={styles.number}>
+        {total.used}/{total.total}
+      </span>
+      <span className={styles.label}>{label} toegepast</span>
+      <span className={styles.breakdown}>
+        {bySubject.map((s) => {
+          const stat = level === 'basis' ? s.basis : s.gevorderd;
+          const done = stat.total > 0 && stat.used === stat.total;
+          return (
+            <span
+              key={s.subject}
+              className={clsx(styles.subject, done ? styles.subjectDone : styles.subjectTodo)}
+            >
+              {s.subject} {stat.used}/{stat.total}
+            </span>
+          );
+        })}
+      </span>
+    </button>
+  );
 
   return (
     <div className={styles.summary}>
-      {(['basis', 'gevorderd'] as const).map((level) => (
-        <div className={styles.tile} key={level}>
-          <span className={styles.number}>
-            {stats[level].used}/{stats[level].total}
-          </span>
-          <span className={styles.label}>{LABELS[level]} toegepast</span>
-        </div>
-      ))}
+      {tile('basis', 'Basisconcepten', basis)}
+      {tile('gevorderd', 'Gevorderde concepten', gevorderd)}
     </div>
   );
 }
