@@ -8,11 +8,11 @@ import type { ReactNode } from 'react';
 export default function NakijkenDocent(): ReactNode {
   return (
     <Layout
-      title="Nakijken — docent"
+      title="Game checken — docent"
       description="Docentweergave van de godot-nakijker met volledige rapportage en PDF-export"
     >
       <main className="container margin-vert--lg">
-        <h1>Nakijken — docent</h1>
+        <h1>Game checken — docent</h1>
         <Checker config={godotConfig} variant="docent" />
       </main>
     </Layout>

@@ -3,12 +3,18 @@ import type { ProjectFiles } from './types';
 // Leest een geüpload project (zip / map / losse bestanden) client-side in tot
 // een ProjectFiles-map. Domein-onafhankelijk: de aanroeper geeft mee hoe paden
 // geclassificeerd worden en welke kinds als tekst/afbeelding gelezen moeten
-// worden. (Gegeneraliseerde versie van web-docs' WebsiteChecker/readFiles.ts.)
+// worden.
+//
+// Belangrijk: we begrenzen NIET de totale uploadgrootte, maar alleen wat we
+// echt inlezen (code + optioneel afbeeldingen). Grote binaire assets/builds
+// worden geteld maar nooit gedecomprimeerd of gelezen, zodat een complete
+// projectmap of zip van honderden MB's gewoon werkt.
 
-export const MAX_TOTAL_SIZE = 20 * 1024 * 1024; // 20 MB
-export const MAX_FILE_COUNT = 500;
+export const MAX_FILE_COUNT = 10000; // runaway-beveiliging
 export const MAX_TEXT_FILE_SIZE = 2 * 1024 * 1024; // 2 MB per tekstbestand
 export const MAX_IMAGE_FILE_SIZE = 5 * 1024 * 1024; // 5 MB per afbeelding
+export const MAX_TEXT_TOTAL_SIZE = 10 * 1024 * 1024; // 10 MB code totaal
+export const MAX_IMAGE_TOTAL_SIZE = 25 * 1024 * 1024; // 25 MB afbeeldingen totaal
 
 const IGNORED_SEGMENTS = new Set([
   'node_modules',
@@ -19,6 +25,14 @@ const IGNORED_SEGMENTS = new Set([
   'venv',
   '__pycache__',
   '.godot',
+  'build',
+  'dist',
+  'out',
+  '.next',
+  '.svelte-kit',
+  '.idea',
+  '.vscode',
+  '.cache',
 ]);
 
 function isIgnoredPath(path: string): boolean {
@@ -65,7 +79,8 @@ export interface ReadFilesResult {
 interface RawEntry {
   relativePath: string;
   size: number;
-  getBytes: () => Promise<Uint8Array>;
+  /** null als de bytes niet beschikbaar zijn (bewust niet gedecomprimeerd). */
+  getBytes: (() => Promise<Uint8Array>) | null;
 }
 
 function fileToRawEntry(file: File, relativePath: string): RawEntry {
@@ -119,6 +134,8 @@ async function collectFromDataTransferItems(items: DataTransferItemList): Promis
       );
       entries.push(fileToRawEntry(file, `${prefix}${entry.name}`));
     } else if (entry.isDirectory) {
+      // Genegeerde mappen niet eens inlopen (scheelt enorm bij node_modules e.d.).
+      if (IGNORED_SEGMENTS.has(entry.name)) return;
       const children = await readAllEntries((entry as FileSystemDirectoryEntry).createReader());
       for (const child of children) {
         await walk(child, `${prefix}${entry.name}/`);
@@ -132,7 +149,10 @@ async function collectFromDataTransferItems(items: DataTransferItemList): Promis
   return entries;
 }
 
-async function unzipToRawEntries(file: File): Promise<RawEntry[]> {
+// Pakt een zip uit, maar decomprimeert alleen de tekst-/afbeeldingsbestanden
+// binnen de caps. Élke entry wordt wel geregistreerd (voor het bestandsoverzicht),
+// zodat grote binaire assets tellen maar niet in het geheugen belanden.
+async function unzipToRawEntries(file: File, opts: ReadOptions): Promise<RawEntry[]> {
   let unzipSync: typeof import('fflate').unzipSync;
   try {
     ({ unzipSync } = await import('fflate'));
@@ -140,23 +160,34 @@ async function unzipToRawEntries(file: File): Promise<RawEntry[]> {
     throw new Error('Kon de zip-uitpaklogica niet laden. Probeer de pagina te verversen.');
   }
 
+  const imageKinds = opts.imageKinds ?? [];
+  const meta: { name: string; size: number }[] = [];
   const bytes = new Uint8Array(await file.arrayBuffer());
+
   let unzipped: Record<string, Uint8Array>;
   try {
-    unzipped = unzipSync(bytes);
+    unzipped = unzipSync(bytes, {
+      filter: (f) => {
+        if (f.name.endsWith('/')) return false;
+        if (isIgnoredPath(f.name)) return false;
+        meta.push({ name: f.name, size: f.size });
+        const kind = opts.classify(f.name);
+        const wantText = opts.textKinds.includes(kind) && f.size <= MAX_TEXT_FILE_SIZE;
+        const wantImage = imageKinds.includes(kind) && f.size <= MAX_IMAGE_FILE_SIZE;
+        return wantText || wantImage;
+      },
+    });
   } catch {
     throw new Error(
       'Dit zip-bestand kon niet worden geopend. Controleer of het bestand niet beschadigd is.',
     );
   }
 
-  return Object.entries(unzipped)
-    .filter(([path]) => !path.endsWith('/'))
-    .map(([path, entryBytes]) => ({
-      relativePath: path,
-      size: entryBytes.byteLength,
-      getBytes: async () => entryBytes,
-    }));
+  return meta.map((m) => ({
+    relativePath: m.name,
+    size: m.size,
+    getBytes: m.name in unzipped ? async () => unzipped[m.name] : null,
+  }));
 }
 
 // Strip één gemeenschappelijke bovenliggende map (typisch bij een gezipte of
@@ -196,19 +227,15 @@ async function entriesToProjectFiles(
       `Dit project bevat ${filtered.length} bestanden — dat is meer dan de limiet van ${MAX_FILE_COUNT}. Upload een kleiner project.`,
     );
   }
-  const totalSize = filtered.reduce((sum, e) => sum + e.size, 0);
-  if (totalSize > MAX_TOTAL_SIZE) {
-    const mb = (totalSize / (1024 * 1024)).toFixed(1);
-    throw new Error(
-      `Dit project is samen ${mb} MB — dat is meer dan de limiet van ${MAX_TOTAL_SIZE / (1024 * 1024)} MB. Upload een kleiner project.`,
-    );
-  }
 
   const normalizedPaths = stripCommonRoot(filtered.map((e) => e.relativePath));
 
   const files: ProjectFiles = {};
   const warnings: string[] = [];
   let skippedTooLarge = 0;
+  let textBudget = MAX_TEXT_TOTAL_SIZE;
+  let imageBudget = MAX_IMAGE_TOTAL_SIZE;
+  let skippedByBudget = false;
 
   for (let i = 0; i < filtered.length; i++) {
     const entry = filtered[i];
@@ -220,17 +247,25 @@ async function entriesToProjectFiles(
     let content: string | null = null;
     let tooLarge = false;
 
-    if (isTextKind) {
+    if (isTextKind && entry.getBytes) {
       if (entry.size > MAX_TEXT_FILE_SIZE) {
         tooLarge = true;
         skippedTooLarge++;
+      } else if (entry.size > textBudget) {
+        skippedByBudget = true;
       } else {
         const bytes = await entry.getBytes();
         content = new TextDecoder('utf-8', { fatal: false }).decode(bytes);
+        textBudget -= entry.size;
       }
-    } else if (isImageKind && entry.size <= MAX_IMAGE_FILE_SIZE) {
-      const bytes = await entry.getBytes();
-      content = await bytesToDataUrl(bytes, mimeTypeForPath(path));
+    } else if (isImageKind && entry.getBytes && entry.size <= MAX_IMAGE_FILE_SIZE) {
+      if (entry.size > imageBudget) {
+        skippedByBudget = true;
+      } else {
+        const bytes = await entry.getBytes();
+        content = await bytesToDataUrl(bytes, mimeTypeForPath(path));
+        imageBudget -= entry.size;
+      }
     }
 
     files[path] = { path, kind, content, sizeBytes: entry.size, tooLarge };
@@ -239,6 +274,11 @@ async function entriesToProjectFiles(
   if (skippedTooLarge > 0) {
     warnings.push(
       `${skippedTooLarge} bestand(en) waren groter dan ${MAX_TEXT_FILE_SIZE / (1024 * 1024)} MB en zijn overgeslagen bij de analyse (ze tellen wel mee in het bestandsoverzicht).`,
+    );
+  }
+  if (skippedByBudget) {
+    warnings.push(
+      'Een deel van de bestanden is overgeslagen bij de analyse omdat het project erg groot is. De belangrijkste code is wel meegenomen.',
     );
   }
 
@@ -259,9 +299,10 @@ export async function readUploadedFiles(
 
   if (rawEntries.length === 1 && rawEntries[0].relativePath.toLowerCase().endsWith('.zip')) {
     const zipEntry = rawEntries[0];
+    if (!zipEntry.getBytes) throw new Error('Kon het zip-bestand niet lezen.');
     const bytes = await zipEntry.getBytes();
     const zipFile = new File([bytes], zipEntry.relativePath);
-    const unzipped = await unzipToRawEntries(zipFile);
+    const unzipped = await unzipToRawEntries(zipFile, opts);
     return entriesToProjectFiles(unzipped, opts);
   }
 

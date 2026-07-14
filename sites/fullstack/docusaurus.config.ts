@@ -37,7 +37,7 @@ export default createConfig({
         { type: 'docSidebar', sidebarId: 'apiSidebar', position: 'left', label: 'FastAPI' },
         { type: 'doc', docId: 'cheatsheet', position: 'left', label: 'Cheatsheet' },
         { type: 'doc', docId: 'troubleshooting', position: 'left', label: 'Er gaat iets mis' },
-        { to: '/nakijken', label: 'Nakijken', position: 'left' },
+        { to: '/project-checken', label: 'Project checken', position: 'left' },
         {
           href: 'https://github.com/Coderius-Education/fullstack',
           label: 'GitHub',
