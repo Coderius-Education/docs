@@ -11,6 +11,9 @@ export default createConfig({
     'Leer hier je eerste website te maken met HTML en CSS. Gratis cursus direct in je browser.',
   keywords: 'html leren, css leren, website maken beginners, webontwikkeling cursus gratis',
 
+  // @coderius/shared is de standaard; @coderius/checker levert de nakijker.
+  sharedPackages: ['@coderius/shared', '@coderius/checker'],
+
   presets: [
     [
       'classic',

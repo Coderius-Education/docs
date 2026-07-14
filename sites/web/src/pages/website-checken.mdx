@@ -2,7 +2,8 @@
 title: Website checken
 ---
 
-import WebsiteChecker from '@site/src/components/WebsiteChecker';
+import { Checker } from '@coderius/checker/Checker';
+import { webConfig } from '@site/src/checker/config';
 
 # Website checken
 
@@ -16,4 +17,4 @@ Heb je [je eigen website](/jouw-website) af, of ben je een eind op weg? Upload j
 - **Losse bestanden** (je `index.html`, `style.css`, `script.js`, …)
 - Een **hele map** met je project
 
-<WebsiteChecker />
+<Checker config={webConfig} variant="leerling" />

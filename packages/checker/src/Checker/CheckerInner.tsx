@@ -7,6 +7,7 @@ import { ReportView } from './ReportView';
 import { TeacherGate } from './TeacherGate';
 import { UploadZone } from './UploadZone';
 import { exportReportToPdf } from './exportPdf';
+import { type OpenInIdeResult, openInIde, pickEntry } from './openInIde';
 import styles from './styles.module.css';
 
 export type CheckerVariant = 'leerling' | 'docent';
@@ -16,11 +17,18 @@ interface CheckerInnerProps {
   variant: CheckerVariant;
 }
 
+const IDE_ERROR_MESSAGES: Record<Exclude<OpenInIdeResult, 'opened'>, string> = {
+  blocked: 'De pop-up werd geblokkeerd. Sta pop-ups toe voor deze pagina en probeer opnieuw.',
+  timeout: 'Kon geen verbinding maken met de editor. Probeer het opnieuw.',
+};
+
 export function CheckerInner({ config, variant }: CheckerInnerProps) {
   const isDocent = variant === 'docent';
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [report, setReport] = useState<CheckReport | null>(null);
+  const [files, setFiles] = useState<ProjectFiles | null>(null);
+  const [ideError, setIdeError] = useState<string | null>(null);
   const [notes, setNotes] = useState('');
   const [exporting, setExporting] = useState(false);
   const [pdfError, setPdfError] = useState<string | null>(null);
@@ -32,9 +40,11 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
   }, []);
 
   const handleLoaded = useCallback(
-    (files: ProjectFiles, warnings: string[]) => {
+    (loadedFiles: ProjectFiles, warnings: string[]) => {
       setError(null);
-      const result = analyze(files, config);
+      setFiles(loadedFiles);
+      setIdeError(null);
+      const result = analyze(loadedFiles, config);
       result.warnings = [...warnings, ...result.warnings];
       setReport(result);
     },
@@ -44,7 +54,30 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
   const handleError = useCallback((message: string) => {
     setError(message);
     setReport(null);
+    setFiles(null);
   }, []);
+
+  const ideUrl = config.ide?.url;
+  const entry = files && ideUrl ? pickEntry(files) : null;
+  const handleOpenInIde = useCallback(() => {
+    if (!files || !ideUrl) return;
+    setIdeError(null);
+    openInIde(files, 'Vanuit de nakijker', ideUrl, (result) => {
+      if (result !== 'opened') setIdeError(IDE_ERROR_MESSAGES[result]);
+    });
+  }, [files, ideUrl]);
+
+  const ideButton = ideUrl ? (
+    <button
+      type="button"
+      className={`${styles.ideButton} ${styles.noPrint}`}
+      onClick={handleOpenInIde}
+      disabled={!entry}
+      title={entry ? 'Open dit project in de Online Editor' : 'Geen HTML-bestand gevonden'}
+    >
+      Bekijk in Online Editor
+    </button>
+  ) : null;
 
   const handleExportPdf = useCallback(async () => {
     const el = reportRef.current;
@@ -83,16 +116,36 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
         )}
       </div>
 
-      {report && !isDocent && <FileStats report={report} config={config} />}
+      {report && !isDocent && (
+        <>
+          <div className={styles.reportHeader}>
+            <FileStats report={report} config={config} />
+            {ideButton}
+          </div>
+          {ideError && (
+            <p className={`${styles.error} ${styles.noPrint}`} role="alert">
+              {ideError}
+            </p>
+          )}
+        </>
+      )}
 
       {report && isDocent && (
         <div ref={reportRef}>
-          <LevelSummary
-            report={report}
-            config={config}
-            activeLevel={activeLevel}
-            onToggleLevel={toggleLevel}
-          />
+          <div className={styles.reportHeader}>
+            <LevelSummary
+              report={report}
+              config={config}
+              activeLevel={activeLevel}
+              onToggleLevel={toggleLevel}
+            />
+            {ideButton}
+          </div>
+          {ideError && (
+            <p className={`${styles.error} ${styles.noPrint}`} role="alert">
+              {ideError}
+            </p>
+          )}
           <ReportView report={report} config={config} activeLevel={activeLevel} />
 
           <section className={styles.teacherPanel}>

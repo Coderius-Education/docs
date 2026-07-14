@@ -80,6 +80,12 @@ export interface CheckerConfig {
   pdfFilename: (date: Date) => string;
   /** Korte privacy-belofte onder de uploadzone. */
   privacyNote?: string;
+  /**
+   * Optioneel: toon een "Bekijk in Online Editor"-knop die het project via
+   * window.open + postMessage naar de IDE stuurt (alleen zinvol voor projecten
+   * die in de web-IDE draaien, bv. HTML/CSS/JS).
+   */
+  ide?: { url: string };
 }
 
 export interface CheckReport {

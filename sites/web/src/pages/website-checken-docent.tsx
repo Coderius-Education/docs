@@ -1,11 +1,11 @@
-import { WebsiteChecker } from '@site/src/components/WebsiteChecker';
-import { TeacherGate } from '@site/src/components/WebsiteChecker/TeacherGate';
+import { Checker } from '@coderius/checker/Checker';
+import { webConfig } from '@site/src/checker/config';
 import Layout from '@theme/Layout';
 import type { ReactNode } from 'react';
 
-// Verborgen docentpagina: bewust niet in de navbar (zie docusaurus.config.ts).
-// De volledige rapportage + opmerkingen + PDF-export zit achter een zacht
-// wachtwoord (TeacherGate). Zie teacherAccess.ts om het wachtwoord te wijzigen.
+// Verborgen docentpagina: bewust niet in de navbar. De volledige rapportage +
+// opmerkingen + PDF-export zit achter een zacht wachtwoord (de Checker regelt
+// de gate zelf via de docent-variant; wachtwoord in src/checker/config.ts).
 export default function WebsiteCheckenDocent(): ReactNode {
   return (
     <Layout
@@ -14,9 +14,7 @@ export default function WebsiteCheckenDocent(): ReactNode {
     >
       <main className="container margin-vert--lg">
         <h1>Website checken — docent</h1>
-        <TeacherGate>
-          <WebsiteChecker variant="docent" />
-        </TeacherGate>
+        <Checker config={webConfig} variant="docent" />
       </main>
     </Layout>
   );
