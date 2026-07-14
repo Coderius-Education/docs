@@ -97,8 +97,10 @@ function simulateCommandInjection(level, formData) {
       target = target.replace(/\|\| /g, '');
       target = target.replace(/\| /g, '');
     } else if (level === 'impossible') {
-      // Strict IPv4 allowlist
-      if (!/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(target.trim())) {
+      // Strict IPv4 allowlist: elk octet 0-255 (net als de getoonde PHP).
+      const octet = '(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)';
+      const ipv4 = new RegExp(`^${octet}\\.${octet}\\.${octet}\\.${octet}$`);
+      if (!ipv4.test(target.trim())) {
         message =
           '<div style="color:#ff5f56;padding:10px;border:1px solid #ff5f56;border-radius:4px;margin:10px 0">Ongeldig IP-adres. Alleen IPv4-adressen (bijv. 127.0.0.1) zijn toegestaan.</div>';
         return message + commandInjectionForm(level);

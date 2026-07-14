@@ -11,73 +11,64 @@ Dit onderdeel draait om client-side logica. We kijken wat er misgaat als een web
 
 ## 1. Predict (Voorspel)
 
-Wanneer de pagina laadt, roept JavaScript de functie `generate_token()` aan en verbergt het resultaat in een verborgen formulierveld. Wanneer je het formulier verzendt met het woord `success`, controleert de backend of het token overeenkomt met de hash van dat woord.
+Het formulier heeft een tekstvak (**Woord**) en een verborgen `token`-veld. Bij het verzenden berekent JavaScript in de pagina zélf het token op basis van wat er op dat moment in het tekstvak staat. De server keurt de poging goed als het woord `success` is én het token bij dat woord past.
 
-**Vraag:** Je typt `success` in het tekstvak en klikt op Submit. De pagina geeft "Invalid Token". Waarom?
+**Vraag:** Je typt `success` in het tekstvak en klikt op Submit. Wat gebeurt er, en waarom is dat een probleem?
 
 <details>
 
 <summary>Antwoord</summary>
 
-JavaScript heeft het token aangemaakt voor het standaardwoord dat al in het veld stond (bijv. `ChangeMe`). Toen jij de tekst veranderde naar `success`, werd het token **niet** automatisch bijgewerkt. De PHP-backend ontvangt het woord `success` maar het token voor `ChangeMe` — die matchen niet, dus de server weigert de boel.
+Het werkt meteen — je krijgt "Gefeliciteerd". Je hoeft geen geheim token te kennen: de JavaScript in jouw browser rekent het token voor je uit op basis van het woord dat jij invult. Wie het formulier verzendt, levert dus zowel het woord als het bijpassende token aan. Een "beveiliging" die volledig in de browser wordt berekend, beveiligt niets.
 
 </details>
 
 ## 2. Run (Uitvoeren)
 
-Start het lab en bekijk het formulier.
+Start het lab, typ `success` in het tekstvak en klik op Submit.
 
 <DvwaLab module="javascript_attacks" level="low" />
 
-> **Labbeperking:** Deze aanval vereist toegang tot de F12 Console van de kwetsbare pagina. Omdat het lab in een beveiligd iframe draait, is dit beperkt mogelijk. Voor de volledige ervaring heb je een [lokale DVWA-installatie](/docs/dvwa_installatie) nodig.
-
-Vul het woord `success` in het tekstvak in en klik op Submit. Observeer de foutmelding.
+Je ziet de melding "Gefeliciteerd! Correct token ingevoerd." — zonder dat je ooit het token hoefde te kennen.
 
 ## 3. Investigate (Onderzoeken)
 
-Open F12 → **Elements** en zoek naar het verborgen invoerveld met `type="hidden"`. Bekijk de waarde van het `token`-veld vóór en nadat je `success` in het zichtbare veld typt.
+Open F12 → **Elements** (of **Sources**) en bekijk het `<script>` onder aan het formulier.
 
-**Vraag:** Verandert de token-waarde mee wanneer je de tekst aanpast? Wat onthult dit over wie het token bepaalt?
+**Vraag:** Hoe berekent de pagina het token uit het woord? Wat betekent dat voor de veiligheid?
 
 <details>
 
 <summary>Antwoord</summary>
 
-Het token verandert **niet** mee — het staat vast op de waarde die JavaScript heeft berekend voor het standaardwoord. Dit onthult dat het token volledig door JavaScript in de browser wordt bepaald. De browser heeft de logica, dus de gebruiker heeft de controle: als we de juiste JavaScript-functie aanroepen met het woord `success`, wordt het token correct bijgewerkt.
+Het script draait het woord simpelweg om (`success` → `sseccus`) en zet dat in het verborgen `token`-veld. Het "geheime" algoritme staat gewoon leesbaar in de pagina, dus iedereen kan het namaken. Omdat de browser het token maakt, bepaalt de gebruiker het token — niet de server.
+
+:::note[Labbeperking]
+Diep inspecteren van de pagina in het beveiligde lab-iframe lukt niet altijd. Voor de volledige F12-ervaring gebruik je een [lokale DVWA-installatie](/docs/dvwa_installatie).
+:::
 
 </details>
 
 ## 4. Modify & Make (Aanpassen & Maken)
 
-Roep de JavaScript-functie handmatig aan via de F12 Console om het token voor `success` te genereren.
+Verander het woord in het tekstvak naar iets anders dan `success` (bijvoorbeeld `hallo`) en verzend. Verzend daarna nog eens met `success`.
 
-<details>
-
-<summary>Tip</summary>
-
-Ga in F12 naar het tabblad **Console**. Alle JavaScript-functies op de pagina zijn vanuit de Console aanroepbaar. Zoek in de broncode (tabblad **Sources**) naar de functienaam die tokens genereert.
-
-</details>
+**Vraag:** Waarom lukt alleen `success`, ook al maakt de browser voor elk woord netjes een passend token?
 
 <details>
 
 <summary>Antwoord</summary>
 
-1. Open F12 → **Console**.
-2. Typ: `generate_token("success")` en druk op Enter.
-3. Het script berekent nu het correcte token voor `success` en stopt het in het verborgen formulierveld.
-4. Klik daarna op Submit. De server accepteert je request.
+De server controleert náást het token ook of het woord letterlijk `success` is. Het token-veld voegt daar niets aan toe, want het wordt toch in de browser gemaakt. De echte controle ("is het woord success?") had net zo goed zonder token gekund — het token is schijnveiligheid.
 
 </details>
 
 ## 5. ✓ Wat moest je zien?
 
 :::tip[Controle]
-- Het direct indienen van `success` geeft "Invalid Token" — het token klopt niet.
-- Na het aanroepen van `generate_token("success")` in de Console slaagt het formulier.
-- De server accepteert de request, wat bewijst dat het beveiligingssysteem volledig client-side is.
-
-Werkt de Console niet in het lab? Probeer het in een lokale DVWA-installatie.
+- Het invullen van `success` slaagt meteen, zonder dat je een token hoefde te kennen.
+- In de paginabron zie je precies hoe het token wordt berekend (het woord omgekeerd).
+- Alleen `success` wordt goedgekeurd, omdat de server ook het woord zelf controleert — het client-side token voegt geen beveiliging toe.
 :::
 
 ## 6. Er gaat iets mis...
