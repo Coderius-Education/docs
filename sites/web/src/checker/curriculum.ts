@@ -1,4 +1,4 @@
-import type { HtmlElementInfo, Technique } from './types';
+import type { HtmlElementInfo, Technique } from './curriculum-types';
 
 // Bron: sites/web/src/pages/cheatsheet.mdx. Dit bestand is bewust 1-op-1
 // afgeleid van de cheatsheet — wijzig je een les daar, werk dan ook hier de

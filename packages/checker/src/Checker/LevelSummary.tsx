@@ -1,16 +1,17 @@
 import clsx from 'clsx';
+import { type ConceptStats, computeLevelSummary } from '../levelSummary';
+import type { CheckReport, CheckerConfig, Level } from '../types';
 import styles from './LevelSummary.module.css';
-import { type ConceptStats, computeLevelSummary } from './levelSummary';
-import type { AnalysisReport, Level } from './types';
 
 interface LevelSummaryProps {
-  report: AnalysisReport;
+  report: CheckReport;
+  config: CheckerConfig;
   activeLevel: Level | null;
   onToggleLevel: (level: Level) => void;
 }
 
-export function LevelSummary({ report, activeLevel, onToggleLevel }: LevelSummaryProps) {
-  const { basis, gevorderd, bySubject } = computeLevelSummary(report);
+export function LevelSummary({ report, config, activeLevel, onToggleLevel }: LevelSummaryProps) {
+  const { basis, gevorderd, bySubject } = computeLevelSummary(report, config);
 
   const tile = (level: Level, label: string, total: ConceptStats) => (
     <button
@@ -33,7 +34,7 @@ export function LevelSummary({ report, activeLevel, onToggleLevel }: LevelSummar
               key={s.subject}
               className={clsx(styles.subject, done ? styles.subjectDone : styles.subjectTodo)}
             >
-              {s.subject} {stat.used}/{stat.total}
+              {s.label} {stat.used}/{stat.total}
             </span>
           );
         })}

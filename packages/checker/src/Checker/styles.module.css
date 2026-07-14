@@ -21,6 +21,12 @@
   color: var(--ifm-color-danger-dark, #c11);
 }
 
+.privacy {
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
 .dropZone {
   border: 2px dashed var(--ifm-color-emphasis-300);
   border-radius: 12px;
@@ -138,7 +144,6 @@
   resize: vertical;
 }
 
-/* Alleen zichtbaar bij het printen: een nette weergave van de opmerkingen. */
 .notesPrint {
   display: none;
   white-space: pre-wrap;
@@ -155,13 +160,17 @@
   padding: 0.5rem 1rem;
 }
 
-.printButton:hover {
+.printButton:hover:not(:disabled) {
   background: var(--ifm-color-primary-dark);
 }
 
-/* Tijdens het genereren van de PDF (html2canvas-pro kloont dit blok en voegt
-   .exporting toe): verberg de knoppen/textarea en toon de opmerkingen als
-   nette tekstblok, net als bij het printen. */
+.printButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Tijdens PDF-export (html2canvas-pro kloont dit blok en voegt .exporting toe):
+   verberg interactieve elementen en toon de opmerkingen als tekstblok. */
 .exporting .noPrint {
   display: none !important;
 }
@@ -174,8 +183,6 @@
 }
 
 @media print {
-  /* Verberg alle interactieve elementen en de Docusaurus-chrome, zodat een
-     eventuele Ctrl+P-uitdraai alleen het rapport en de opmerkingen bevat. */
   .noPrint {
     display: none !important;
   }

@@ -1,18 +1,18 @@
-import { SITES_BY_ID } from '@coderius/shared/sites';
-import type { ProjectFiles } from './types';
+import type { ProjectFiles } from '../types';
 
-// Stuurt het geüploade project naar een nieuw tabblad op ide.coderius.nl,
-// puur client-side (window.open + postMessage — geen server tussenin). De
-// ouder blijft pollen tot het kind een ack terugstuurt, in plaats van te
-// wachten op window.opener in het kind: dat werkt betrouwbaar ongeacht
-// Cross-Origin-Opener-Policy-instellingen, omdat de ouder zijn eigen
-// window.open()-handle gebruikt.
-const IDE_URL = SITES_BY_ID.ide.url;
+// Stuurt het geüploade project naar een nieuw tabblad op de IDE, puur
+// client-side (window.open + postMessage — geen server tussenin). De ouder
+// blijft pollen tot het kind een ack terugstuurt; dat werkt betrouwbaar
+// ongeacht Cross-Origin-Opener-Policy, omdat de ouder zijn eigen
+// window.open()-handle gebruikt. De message-source blijft
+// 'coderius-website-checker' zodat het bestaande /import-contract op
+// ide.coderius.nl blijft werken.
 const MESSAGE_SOURCE = 'coderius-website-checker';
 const ACK_SOURCE = 'coderius-editor-import';
 const POLL_INTERVAL_MS = 300;
 const TIMEOUT_MS = 15000;
 
+/** Kies het startbestand (index.html op de kortste diepte, anders eerste .html). */
 export function pickEntry(files: ProjectFiles): string | null {
   const htmlPaths = Object.keys(files).filter((p) => files[p].kind === 'html');
   if (htmlPaths.length === 0) return null;
@@ -25,9 +25,8 @@ export function pickEntry(files: ProjectFiles): string | null {
   return htmlPaths.slice().sort()[0];
 }
 
-// html/css/js komen als platte tekst binnen, afbeeldingen als data:-URL
-// (zie readFiles.ts) — 'other' blijft altijd null. Voor beide volstaat het
-// dus om simpelweg elk bestand met inhoud mee te sturen.
+// Tekst-inhoud gaat als string mee, afbeeldingen als data:-URL (zie
+// readFiles.ts); 'other' blijft null. Elk bestand met inhoud wordt meegestuurd.
 function buildTransferFiles(files: ProjectFiles): Record<string, string> {
   const result: Record<string, string> = {};
   for (const [path, file] of Object.entries(files)) {
@@ -41,12 +40,13 @@ export type OpenInIdeResult = 'opened' | 'blocked' | 'timeout';
 export function openInIde(
   files: ProjectFiles,
   projectName: string,
+  ideUrl: string,
   onResult: (result: OpenInIdeResult) => void,
 ): void {
   const entry = pickEntry(files);
   if (!entry) return;
 
-  const win = window.open(`${IDE_URL}/import`, '_blank');
+  const win = window.open(`${ideUrl}/import`, '_blank');
   if (!win) {
     onResult('blocked');
     return;
@@ -81,11 +81,11 @@ export function openInIde(
       finish('timeout');
       return;
     }
-    win.postMessage(payload, IDE_URL);
+    win.postMessage(payload, ideUrl);
   }, POLL_INTERVAL_MS);
 
   const timer = window.setTimeout(() => finish('timeout'), TIMEOUT_MS);
 
   window.addEventListener('message', onMessage);
-  win.postMessage(payload, IDE_URL);
+  win.postMessage(payload, ideUrl);
 }

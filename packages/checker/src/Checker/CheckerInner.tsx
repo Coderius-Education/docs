@@ -1,30 +1,32 @@
-import BrowserOnly from '@docusaurus/BrowserOnly';
 import { useCallback, useRef, useState } from 'react';
+import { analyze } from '../matchConcepts';
+import type { CheckReport, CheckerConfig, Level, ProjectFiles } from '../types';
 import { FileStats } from './FileStats';
 import { LevelSummary } from './LevelSummary';
 import { ReportView } from './ReportView';
+import { TeacherGate } from './TeacherGate';
 import { UploadZone } from './UploadZone';
-import styles from './WebsiteChecker.module.css';
-import { analyze } from './analyze';
 import { exportReportToPdf } from './exportPdf';
 import { type OpenInIdeResult, openInIde, pickEntry } from './openInIde';
-import type { AnalysisReport, Level, ProjectFiles } from './types';
+import styles from './styles.module.css';
+
+export type CheckerVariant = 'leerling' | 'docent';
+
+interface CheckerInnerProps {
+  config: CheckerConfig;
+  variant: CheckerVariant;
+}
 
 const IDE_ERROR_MESSAGES: Record<Exclude<OpenInIdeResult, 'opened'>, string> = {
   blocked: 'De pop-up werd geblokkeerd. Sta pop-ups toe voor deze pagina en probeer opnieuw.',
   timeout: 'Kon geen verbinding maken met de editor. Probeer het opnieuw.',
 };
 
-export type WebsiteCheckerVariant = 'leerling' | 'docent';
-
-interface WebsiteCheckerProps {
-  variant?: WebsiteCheckerVariant;
-}
-
-function WebsiteCheckerInner({ variant }: { variant: WebsiteCheckerVariant }) {
+export function CheckerInner({ config, variant }: CheckerInnerProps) {
+  const isDocent = variant === 'docent';
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [report, setReport] = useState<AnalysisReport | null>(null);
+  const [report, setReport] = useState<CheckReport | null>(null);
   const [files, setFiles] = useState<ProjectFiles | null>(null);
   const [ideError, setIdeError] = useState<string | null>(null);
   const [notes, setNotes] = useState('');
@@ -37,12 +39,17 @@ function WebsiteCheckerInner({ variant }: { variant: WebsiteCheckerVariant }) {
     setActiveLevel((prev) => (prev === level ? null : level));
   }, []);
 
-  const handleLoaded = useCallback((loadedFiles: ProjectFiles, warnings: string[]) => {
-    setError(null);
-    setFiles(loadedFiles);
-    setIdeError(null);
-    setReport(analyze(loadedFiles, warnings));
-  }, []);
+  const handleLoaded = useCallback(
+    (loadedFiles: ProjectFiles, warnings: string[]) => {
+      setError(null);
+      setFiles(loadedFiles);
+      setIdeError(null);
+      const result = analyze(loadedFiles, config);
+      result.warnings = [...warnings, ...result.warnings];
+      setReport(result);
+    },
+    [config],
+  );
 
   const handleError = useCallback((message: string) => {
     setError(message);
@@ -50,13 +57,27 @@ function WebsiteCheckerInner({ variant }: { variant: WebsiteCheckerVariant }) {
     setFiles(null);
   }, []);
 
+  const ideUrl = config.ide?.url;
+  const entry = files && ideUrl ? pickEntry(files) : null;
   const handleOpenInIde = useCallback(() => {
-    if (!files) return;
+    if (!files || !ideUrl) return;
     setIdeError(null);
-    openInIde(files, 'Vanuit Website-checker', (result) => {
+    openInIde(files, 'Vanuit de nakijker', ideUrl, (result) => {
       if (result !== 'opened') setIdeError(IDE_ERROR_MESSAGES[result]);
     });
-  }, [files]);
+  }, [files, ideUrl]);
+
+  const ideButton = ideUrl ? (
+    <button
+      type="button"
+      className={`${styles.ideButton} ${styles.noPrint}`}
+      onClick={handleOpenInIde}
+      disabled={!entry}
+      title={entry ? 'Open dit project in de Online Editor' : 'Geen HTML-bestand gevonden'}
+    >
+      Bekijk in Online Editor
+    </button>
+  ) : null;
 
   const handleExportPdf = useCallback(async () => {
     const el = reportRef.current;
@@ -68,37 +89,25 @@ function WebsiteCheckerInner({ variant }: { variant: WebsiteCheckerVariant }) {
     await new Promise((resolve) => requestAnimationFrame(() => resolve(null)));
     setExporting(true);
     try {
-      await exportReportToPdf(el, styles.exporting);
+      await exportReportToPdf(el, styles.exporting, config.pdfFilename(new Date()));
     } catch {
       setPdfError('Het opslaan als PDF is mislukt. Probeer het opnieuw.');
     } finally {
       setExporting(false);
     }
-  }, []);
+  }, [config]);
 
-  const entry = files ? pickEntry(files) : null;
-  const isDocent = variant === 'docent';
-
-  const ideButton = (
-    <button
-      type="button"
-      className={`${styles.ideButton} ${styles.noPrint}`}
-      onClick={handleOpenInIde}
-      disabled={!entry}
-      title={
-        entry
-          ? 'Open dit project in de Online Editor (ide.coderius.nl)'
-          : 'Geen HTML-bestand gevonden'
-      }
-    >
-      Bekijk in Online Editor
-    </button>
-  );
-
-  return (
+  const content = (
     <div className={styles.container}>
       <div className={styles.noPrint}>
-        <UploadZone onLoaded={handleLoaded} onError={handleError} busy={busy} setBusy={setBusy} />
+        <UploadZone
+          config={config}
+          onLoaded={handleLoaded}
+          onError={handleError}
+          busy={busy}
+          setBusy={setBusy}
+        />
+        {config.privacyNote && <p className={styles.privacy}>{config.privacyNote}</p>}
         {busy && <p className={styles.status}>Bezig met analyseren...</p>}
         {error && (
           <p className={styles.error} role="alert">
@@ -110,7 +119,7 @@ function WebsiteCheckerInner({ variant }: { variant: WebsiteCheckerVariant }) {
       {report && !isDocent && (
         <>
           <div className={styles.reportHeader}>
-            <FileStats report={report} />
+            <FileStats report={report} config={config} />
             {ideButton}
           </div>
           {ideError && (
@@ -124,7 +133,12 @@ function WebsiteCheckerInner({ variant }: { variant: WebsiteCheckerVariant }) {
       {report && isDocent && (
         <div ref={reportRef}>
           <div className={styles.reportHeader}>
-            <LevelSummary report={report} activeLevel={activeLevel} onToggleLevel={toggleLevel} />
+            <LevelSummary
+              report={report}
+              config={config}
+              activeLevel={activeLevel}
+              onToggleLevel={toggleLevel}
+            />
             {ideButton}
           </div>
           {ideError && (
@@ -132,7 +146,7 @@ function WebsiteCheckerInner({ variant }: { variant: WebsiteCheckerVariant }) {
               {ideError}
             </p>
           )}
-          <ReportView report={report} activeLevel={activeLevel} />
+          <ReportView report={report} config={config} activeLevel={activeLevel} />
 
           <section className={styles.teacherPanel}>
             <label className={styles.notesLabel} htmlFor="docent-opmerkingen">
@@ -165,14 +179,13 @@ function WebsiteCheckerInner({ variant }: { variant: WebsiteCheckerVariant }) {
       )}
     </div>
   );
-}
 
-export function WebsiteChecker({ variant = 'leerling' }: WebsiteCheckerProps) {
-  return (
-    <BrowserOnly fallback={<div className={styles.loading}>Website-checker laden...</div>}>
-      {() => <WebsiteCheckerInner variant={variant} />}
-    </BrowserOnly>
-  );
+  if (isDocent) {
+    return (
+      <TeacherGate password={config.teacher.password} storageKey={config.teacher.storageKey}>
+        {content}
+      </TeacherGate>
+    );
+  }
+  return content;
 }
-
-export default WebsiteChecker;

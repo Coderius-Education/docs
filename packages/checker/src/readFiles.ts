@@ -1,10 +1,29 @@
-import { classifyFile, isIgnoredPath } from './classifyFile';
 import type { ProjectFiles } from './types';
+
+// Leest een geüpload project (zip / map / losse bestanden) client-side in tot
+// een ProjectFiles-map. Domein-onafhankelijk: de aanroeper geeft mee hoe paden
+// geclassificeerd worden en welke kinds als tekst/afbeelding gelezen moeten
+// worden. (Gegeneraliseerde versie van web-docs' WebsiteChecker/readFiles.ts.)
 
 export const MAX_TOTAL_SIZE = 20 * 1024 * 1024; // 20 MB
 export const MAX_FILE_COUNT = 500;
-export const MAX_TEXT_FILE_SIZE = 2 * 1024 * 1024; // 2 MB per HTML/CSS/JS-bestand
-export const MAX_IMAGE_FILE_SIZE = 5 * 1024 * 1024; // 5 MB per afbeelding (voor de IDE-preview)
+export const MAX_TEXT_FILE_SIZE = 2 * 1024 * 1024; // 2 MB per tekstbestand
+export const MAX_IMAGE_FILE_SIZE = 5 * 1024 * 1024; // 5 MB per afbeelding
+
+const IGNORED_SEGMENTS = new Set([
+  'node_modules',
+  '.git',
+  '.DS_Store',
+  '__MACOSX',
+  '.venv',
+  'venv',
+  '__pycache__',
+  '.godot',
+]);
+
+function isIgnoredPath(path: string): boolean {
+  return path.split('/').some((segment) => IGNORED_SEGMENTS.has(segment));
+}
 
 const IMAGE_MIME_TYPES: Record<string, string> = {
   '.png': 'image/png',
@@ -23,17 +42,19 @@ function mimeTypeForPath(path: string): string {
   return IMAGE_MIME_TYPES[ext] ?? 'application/octet-stream';
 }
 
-// Zet afbeeldingsbytes om naar een data:-URL, zodat ze als gewone string in
-// ProjectFile.content passen — nodig om ze later (via "Bekijk in Online
-// Editor") mee te kunnen sturen naar de preview-iframe, die geen echte
-// bestandslocatie heeft waar een relatief pad naartoe zou kunnen wijzen.
 function bytesToDataUrl(bytes: Uint8Array, mimeType: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result as string);
-    reader.onerror = () => reject(reader.error ?? new Error('Kon afbeelding niet lezen.'));
+    reader.onerror = () => reject(reader.error ?? new Error('Kon bestand niet lezen.'));
     reader.readAsDataURL(new Blob([bytes], { type: mimeType }));
   });
+}
+
+export interface ReadOptions {
+  classify: (path: string) => string;
+  textKinds: string[];
+  imageKinds?: string[];
 }
 
 export interface ReadFilesResult {
@@ -41,7 +62,6 @@ export interface ReadFilesResult {
   warnings: string[];
 }
 
-/** Minimale, lazy weergave van één bestand — of het nou uit een File-object of uit een uitgepakte zip-entry komt. */
 interface RawEntry {
   relativePath: string;
   size: number;
@@ -56,7 +76,6 @@ function fileToRawEntry(file: File, relativePath: string): RawEntry {
   };
 }
 
-// Bestand/map-selectie geeft File[] (met evt. webkitRelativePath bij mapkeuze).
 function collectFromFiles(fileList: FileList | File[]): RawEntry[] {
   const files = Array.from(fileList);
   return files.map((file) => {
@@ -65,9 +84,6 @@ function collectFromFiles(fileList: FileList | File[]): RawEntry[] {
   });
 }
 
-// Drag-and-drop kan losse bestanden én hele mappen bevatten — die laatste
-// moeten recursief uitgelezen worden via de (niet-gestandaardiseerde maar
-// breed ondersteunde) FileSystemEntry-API.
 async function collectFromDataTransferItems(items: DataTransferItemList): Promise<RawEntry[]> {
   const topLevel: FileSystemEntry[] = [];
   for (let i = 0; i < items.length; i++) {
@@ -76,7 +92,6 @@ async function collectFromDataTransferItems(items: DataTransferItemList): Promis
   }
 
   if (topLevel.length === 0) {
-    // Browser zonder webkitGetAsEntry: val terug op losse bestanden.
     const files = Array.from(items)
       .map((item) => item.getAsFile())
       .filter((file): file is File => file !== null);
@@ -88,7 +103,6 @@ async function collectFromDataTransferItems(items: DataTransferItemList): Promis
   async function readAllEntries(reader: FileSystemDirectoryReader): Promise<FileSystemEntry[]> {
     const all: FileSystemEntry[] = [];
     for (;;) {
-      // readEntries() kan meerdere aanroepen nodig hebben tot een lege array.
       const batch = await new Promise<FileSystemEntry[]>((resolve, reject) =>
         reader.readEntries(resolve, reject),
       );
@@ -137,7 +151,7 @@ async function unzipToRawEntries(file: File): Promise<RawEntry[]> {
   }
 
   return Object.entries(unzipped)
-    .filter(([path]) => !path.endsWith('/')) // map-vermeldingen overslaan
+    .filter(([path]) => !path.endsWith('/'))
     .map(([path, entryBytes]) => ({
       relativePath: path,
       size: entryBytes.byteLength,
@@ -145,15 +159,14 @@ async function unzipToRawEntries(file: File): Promise<RawEntry[]> {
     }));
 }
 
-// Als alle bestanden onder één gemeenschappelijke map zitten (typisch bij een
-// gezipte of gesleepte projectmap), strip die ene laag zodat het rapport
-// onafhankelijk is van hoe de leerling precies geüpload heeft.
+// Strip één gemeenschappelijke bovenliggende map (typisch bij een gezipte of
+// gesleepte projectmap), zodat het rapport onafhankelijk is van hoe er precies
+// geüpload is.
 function stripCommonRoot(paths: string[]): string[] {
   if (paths.length <= 1) return paths;
   const segments = paths.map((p) => p.split('/'));
   const minLen = Math.min(...segments.map((s) => s.length));
   let commonLen = 0;
-  // De laatste laag is de bestandsnaam zelf — nooit meestrippen.
   for (let i = 0; i < minLen - 1; i++) {
     const candidate = segments[0][i];
     if (segments.every((s) => s[i] === candidate)) {
@@ -166,7 +179,11 @@ function stripCommonRoot(paths: string[]): string[] {
   return segments.map((s) => s.slice(commonLen).join('/'));
 }
 
-async function entriesToProjectFiles(rawEntries: RawEntry[]): Promise<ReadFilesResult> {
+async function entriesToProjectFiles(
+  rawEntries: RawEntry[],
+  opts: ReadOptions,
+): Promise<ReadFilesResult> {
+  const imageKinds = opts.imageKinds ?? [];
   const filtered = rawEntries.filter(
     (e) => !isIgnoredPath(e.relativePath) && e.relativePath.trim() !== '',
   );
@@ -196,8 +213,9 @@ async function entriesToProjectFiles(rawEntries: RawEntry[]): Promise<ReadFilesR
   for (let i = 0; i < filtered.length; i++) {
     const entry = filtered[i];
     const path = normalizedPaths[i];
-    const kind = classifyFile(path);
-    const isTextKind = kind === 'html' || kind === 'css' || kind === 'js';
+    const kind = opts.classify(path);
+    const isTextKind = opts.textKinds.includes(kind);
+    const isImageKind = imageKinds.includes(kind);
 
     let content: string | null = null;
     let tooLarge = false;
@@ -210,11 +228,7 @@ async function entriesToProjectFiles(rawEntries: RawEntry[]): Promise<ReadFilesR
         const bytes = await entry.getBytes();
         content = new TextDecoder('utf-8', { fatal: false }).decode(bytes);
       }
-    } else if (kind === 'image' && entry.size <= MAX_IMAGE_FILE_SIZE) {
-      // Stilzwijgend overslaan boven de cap: telt gewoon mee in het
-      // bestandsoverzicht, alleen zonder preview-ondersteuning. Geen aparte
-      // waarschuwing — dat is iets anders dan de "te groot voor analyse"-melding
-      // hierboven.
+    } else if (isImageKind && entry.size <= MAX_IMAGE_FILE_SIZE) {
       const bytes = await entry.getBytes();
       content = await bytesToDataUrl(bytes, mimeTypeForPath(path));
     }
@@ -231,12 +245,10 @@ async function entriesToProjectFiles(rawEntries: RawEntry[]): Promise<ReadFilesR
   return { files, warnings };
 }
 
-/**
- * Eén ingang voor alle upload-methoden (bestand/zip-kiezer, map-kiezer,
- * drag-and-drop). Herkent automatisch een los .zip-bestand en pakt die uit.
- */
+/** Eén ingang voor alle upload-methoden. Pakt een los .zip-bestand automatisch uit. */
 export async function readUploadedFiles(
   source: FileList | File[] | DataTransferItemList,
+  opts: ReadOptions,
 ): Promise<ReadFilesResult> {
   const isDataTransferItems =
     typeof DataTransferItemList !== 'undefined' && source instanceof DataTransferItemList;
@@ -250,8 +262,8 @@ export async function readUploadedFiles(
     const bytes = await zipEntry.getBytes();
     const zipFile = new File([bytes], zipEntry.relativePath);
     const unzipped = await unzipToRawEntries(zipFile);
-    return entriesToProjectFiles(unzipped);
+    return entriesToProjectFiles(unzipped, opts);
   }
 
-  return entriesToProjectFiles(rawEntries);
+  return entriesToProjectFiles(rawEntries, opts);
 }

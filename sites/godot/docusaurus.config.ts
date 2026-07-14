@@ -7,6 +7,9 @@ export default createConfig({
   projectName: 'GoDot',
   matomoSiteId: 9,
 
+  // @coderius/shared is de standaard; @coderius/checker levert de nakijk-validator.
+  sharedPackages: ['@coderius/shared', '@coderius/checker'],
+
   presets: [
     [
       'classic',
@@ -42,6 +45,7 @@ export default createConfig({
       items: [
         { type: 'docSidebar', sidebarId: 'tutorialSidebar', position: 'left', label: '1e 2D game' },
         { to: '/cheatsheet', label: 'Nodes cheatsheet', position: 'left' },
+        { to: '/nakijken', label: 'Nakijken', position: 'left' },
         { href: 'https://github.com/Coderius-Education/Godot', label: 'GitHub', position: 'right' },
       ],
     },

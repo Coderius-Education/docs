@@ -1,18 +1,17 @@
 import { useCallback, useRef, useState } from 'react';
-import styles from './WebsiteChecker.module.css';
-import { readUploadedFiles } from './readFiles';
-import type { ProjectFiles } from './types';
+import { readUploadedFiles } from '../readFiles';
+import type { CheckerConfig, ProjectFiles } from '../types';
+import styles from './styles.module.css';
 
 interface UploadZoneProps {
+  config: CheckerConfig;
   onLoaded: (files: ProjectFiles, warnings: string[]) => void;
   onError: (message: string) => void;
   busy: boolean;
   setBusy: (busy: boolean) => void;
 }
 
-const FILE_ACCEPT = '.zip,.html,.htm,.css,.js,.png,.jpg,.jpeg,.gif,.svg,.webp,.ico';
-
-export function UploadZone({ onLoaded, onError, busy, setBusy }: UploadZoneProps) {
+export function UploadZone({ config, onLoaded, onError, busy, setBusy }: UploadZoneProps) {
   const [dragging, setDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const folderInputRef = useRef<HTMLInputElement>(null);
@@ -21,7 +20,11 @@ export function UploadZone({ onLoaded, onError, busy, setBusy }: UploadZoneProps
     async (source: FileList | File[] | DataTransferItemList) => {
       setBusy(true);
       try {
-        const { files, warnings } = await readUploadedFiles(source);
+        const { files, warnings } = await readUploadedFiles(source, {
+          classify: config.classify,
+          textKinds: config.textKinds,
+          imageKinds: config.imageKinds,
+        });
         onLoaded(files, warnings);
       } catch (err) {
         onError(err instanceof Error ? err.message : String(err));
@@ -29,7 +32,7 @@ export function UploadZone({ onLoaded, onError, busy, setBusy }: UploadZoneProps
         setBusy(false);
       }
     },
-    [onLoaded, onError, setBusy],
+    [config, onLoaded, onError, setBusy],
   );
 
   const handleFileInputChange = useCallback(
@@ -88,7 +91,7 @@ export function UploadZone({ onLoaded, onError, busy, setBusy }: UploadZoneProps
         ref={fileInputRef}
         type="file"
         multiple
-        accept={FILE_ACCEPT}
+        accept={config.accept}
         className={styles.hiddenInput}
         onChange={handleFileInputChange}
         aria-label="Kies bestanden of een zip-bestand"

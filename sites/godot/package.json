@@ -15,6 +15,7 @@
     "test": "docusaurus build"
   },
   "dependencies": {
+    "@coderius/checker": "workspace:*",
     "@coderius/shared": "workspace:*",
     "@docusaurus/core": "catalog:",
     "@docusaurus/preset-classic": "catalog:",

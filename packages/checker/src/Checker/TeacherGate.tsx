@@ -1,23 +1,27 @@
 import { type ReactNode, useState } from 'react';
 import styles from './TeacherGate.module.css';
-import { TEACHER_PASSWORD, TEACHER_UNLOCK_KEY } from './teacherAccess';
 
 interface TeacherGateProps {
+  password: string;
+  storageKey: string;
   children: ReactNode;
 }
 
-export function TeacherGate({ children }: TeacherGateProps) {
+// Zacht wachtwoord-slot: houdt gewone leerlingen tegen, geen echte beveiliging
+// (het wachtwoord staat in de gebundelde JS). De ontgrendelde status blijft
+// binnen de sessie bewaard.
+export function TeacherGate({ password, storageKey, children }: TeacherGateProps) {
   const [unlocked, setUnlocked] = useState<boolean>(() => {
     if (typeof window === 'undefined') return false;
-    return sessionStorage.getItem(TEACHER_UNLOCK_KEY) === '1';
+    return sessionStorage.getItem(storageKey) === '1';
   });
   const [value, setValue] = useState('');
   const [wrong, setWrong] = useState(false);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (value === TEACHER_PASSWORD) {
-      sessionStorage.setItem(TEACHER_UNLOCK_KEY, '1');
+    if (value === password) {
+      sessionStorage.setItem(storageKey, '1');
       setUnlocked(true);
       setWrong(false);
     } else {
@@ -54,5 +58,3 @@ export function TeacherGate({ children }: TeacherGateProps) {
     </form>
   );
 }
-
-export default TeacherGate;
