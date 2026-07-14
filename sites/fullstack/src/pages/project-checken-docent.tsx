@@ -8,11 +8,11 @@ import type { ReactNode } from 'react';
 export default function NakijkenDocent(): ReactNode {
   return (
     <Layout
-      title="Nakijken — docent"
+      title="Project checken — docent"
       description="Docentweergave van de fullstack-nakijker met volledige rapportage en PDF-export"
     >
       <main className="container margin-vert--lg">
-        <h1>Nakijken — docent</h1>
+        <h1>Project checken — docent</h1>
         <Checker config={fullstackConfig} variant="docent" />
       </main>
     </Layout>
