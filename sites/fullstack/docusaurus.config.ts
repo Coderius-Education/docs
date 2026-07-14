@@ -12,7 +12,8 @@ export default createConfig({
   keywords: 'fastapi leren, fullstack python, backend leren beginners, sqlite database python',
 
   // Pyodide-componenten gedeeld; fullstack gebruikt de CDN (geen lokale setup).
-  sharedPackages: ['@coderius/shared', '@coderius/python-runner'],
+  // @coderius/checker levert de gedeelde 'nakijken'-validator (TSX-bron).
+  sharedPackages: ['@coderius/shared', '@coderius/python-runner', '@coderius/checker'],
 
   presets: [
     [
@@ -36,6 +37,7 @@ export default createConfig({
         { type: 'docSidebar', sidebarId: 'apiSidebar', position: 'left', label: 'FastAPI' },
         { type: 'doc', docId: 'cheatsheet', position: 'left', label: 'Cheatsheet' },
         { type: 'doc', docId: 'troubleshooting', position: 'left', label: 'Er gaat iets mis' },
+        { to: '/nakijken', label: 'Nakijken', position: 'left' },
         {
           href: 'https://github.com/Coderius-Education/fullstack',
           label: 'GitHub',

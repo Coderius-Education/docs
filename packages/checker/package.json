@@ -1,0 +1,31 @@
+{
+  "name": "@coderius/checker",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Config-gedreven 'nakijken'-validator: upload een project (zip/map/losse bestanden) en check het client-side tegen een conceptenlijst. Leerling- en docentweergave met niveau-samenvatting, opmerkingen en PDF-export. Gedeeld door meerdere Coderius-sites.",
+  "type": "commonjs",
+  "exports": {
+    "./Checker": "./src/Checker/index.tsx",
+    "./types": "./src/types.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "clsx": "catalog:",
+    "fflate": "^0.8.3",
+    "html2canvas-pro": "^2.2.4",
+    "jspdf": "^4.2.1"
+  },
+  "devDependencies": {
+    "@docusaurus/module-type-aliases": "catalog:",
+    "@types/react": "catalog:",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "@docusaurus/core": "*",
+    "react": "*",
+    "react-dom": "*"
+  }
+}
