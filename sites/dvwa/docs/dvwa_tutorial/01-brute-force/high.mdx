@@ -1,5 +1,5 @@
 ---
-sidebar_position: 2.5
+sidebar_position: 3
 sidebar_label: 'High'
 ---
 
@@ -30,6 +30,8 @@ Omdat het token bij elke poging verandert, kan Hydra niet simpelweg één comman
 
 ## 2. Run & Investigate
 
+<DvwaLab module="brute_force" level="high" />
+
 1. Start het lab op **High** niveau.
 2. Probeer je Hydra-commando van het Medium level nogmaals uit (vergeet niet `security=high` aan te passen).
 
@@ -43,7 +45,8 @@ In de professionele wereld zou je Burp Suite 'Intruder' gebruiken. Deze tool kan
 
 ![Burp Suite aanval](high_success.png)
 
-**Opdracht:**
+## Opdracht: Volg het token in het netwerkverkeer
+
 Omdat we in deze cursus Burp Suite proberen te vermijden ten gunste van browser-tools, is de uitdaging hier vooral **begrijpen** waarom het token de aanval stopt. 
 
 Kijk in de browser-inspector (F12) bij het tabblad **Network**. 
@@ -70,9 +73,3 @@ Je probeert het token handmatig te kopiëren en in je Hydra-commando te plakken:
 Waarom werkt dit nog steeds niet voor de rest van de lijst?
 
 Omdat zodra Hydra de éérste poging doet met dat token, de server dat token "verbruikt". Voor de tweede poging is een nieuw token nodig. Handmatig kopiëren is dus zinloos voor een lijst van 10.000 wachtwoorden.
-
-## Wat heb je geleerd?
-
-- **Anti-CSRF Tokens** zijn een krachtig middel tegen brute-force aanvallen.
-- Ze dwingen een aanvaller om veel complexere (en tragere) tools te gebruiken.
-- Beveiliging is vaak een kat-en-muisspel: hoe beter de verdediging, hoe geavanceerder de tools van de hacker moeten zijn.
