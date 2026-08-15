@@ -6,6 +6,13 @@ export const MATOMO_RETENTION_DAYS: number;
 
 export function buildMatomoSnippet(opts: { siteId: string | number; matomoUrl?: string }): string;
 
+export function matomoTrackEvent(
+  category: string,
+  action: string,
+  name?: string,
+  value?: number,
+): void;
+
 export type MatomoOptOutStatus = 'active' | 'opted-out' | 'unavailable';
 
 export function matomoOptOut(): void;

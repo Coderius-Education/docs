@@ -1,3 +1,4 @@
+import { matomoTrackEvent } from '@coderius/shared/matomo';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import React, { lazy, Suspense, useState, useEffect, useCallback, useRef } from 'react';
 import styles from './CodeEditor.module.css';
@@ -41,6 +42,14 @@ function CodeEditorInner({
   );
   const [consoleLogs, setConsoleLogs] = useState<{ level: string; text: string }[]>([]);
   const consoleBodyRef = useRef<HTMLDivElement>(null);
+  const editedRef = useRef(false);
+
+  // Telt hoe een oefening gebruikt wordt, zodat we per les kunnen zien of
+  // leerlingen hem echt draaien of alleen lezen. Alleen de actie en het
+  // paginapad gaan naar Matomo — nooit de code uit de editor.
+  const trackEditor = useCallback((action: string) => {
+    matomoTrackEvent('Editor', action, window.location.pathname);
+  }, []);
 
   const debouncedHtml = useDebounce(html, debounceMs);
   const debouncedCss = useDebounce(css, debounceMs);
@@ -56,7 +65,8 @@ function CodeEditorInner({
   const handleRun = useCallback(() => {
     setConsoleLogs([]);
     setSrcDoc(buildDoc(html, css, js));
-  }, [html, css, js]);
+    trackEditor('Run');
+  }, [html, css, js, trackEditor]);
 
   const handleReset = useCallback(() => {
     if (
@@ -69,8 +79,10 @@ function CodeEditorInner({
       setJs(initialJs);
       setConsoleLogs([]);
       setSrcDoc(livePreview ? buildDoc(initialHtml, initialCss, initialJs) : '');
+      // Pas na de bevestiging: een geannuleerde reset is geen reset.
+      trackEditor('Reset');
     }
-  }, [initialHtml, initialCss, initialJs, livePreview]);
+  }, [initialHtml, initialCss, initialJs, livePreview, trackEditor]);
 
   useEffect(() => {
     function handler(e: MessageEvent) {
@@ -89,17 +101,42 @@ function CodeEditorInner({
     }
   }, [consoleLogs]);
 
-  const handlers: Record<Tab, (v: string) => void> = {
-    html: setHtml,
-    css: setCss,
-    javascript: setJs,
-  };
-
   const values: Record<Tab, string> = {
     html,
     css,
     javascript: js,
   };
+
+  // Bij live preview is er geen Run-knop; daar is "de leerling heeft de
+  // startcode aangepast" het signaal dat de oefening gemaakt is. Eén keer per
+  // editor, en alleen bij inhoud die van de startcode afwijkt — CodeMirror
+  // geeft bij een tabwissel of een reset opnieuw de startcode door, en dat is
+  // geen bewerking.
+  //
+  // useCallback houdt de identiteit stabiel zolang je in hetzelfde tabblad
+  // typt; anders herconfigureert CodeMirror zijn change-listener bij elke
+  // toetsaanslag. De deps wisselen in de praktijk alleen bij een tabwissel, en
+  // die remount de editor toch al (zie `key` hieronder).
+  const handleChange = useCallback(
+    (value: string) => {
+      const setters: Record<Tab, (v: string) => void> = {
+        html: setHtml,
+        css: setCss,
+        javascript: setJs,
+      };
+      const initialValues: Record<Tab, string> = {
+        html: initialHtml,
+        css: initialCss,
+        javascript: initialJs,
+      };
+      setters[activeTab](value);
+      if (!editedRef.current && value !== initialValues[activeTab]) {
+        editedRef.current = true;
+        trackEditor('Bewerkt');
+      }
+    },
+    [activeTab, initialHtml, initialCss, initialJs, trackEditor],
+  );
 
   const visibleTabs: Tab[] = ['html', 'css', ...(initialJs !== '' ? ['javascript' as Tab] : [])];
 
@@ -137,7 +174,7 @@ function CodeEditorInner({
               key={activeTab}
               language={activeTab}
               value={values[activeTab]}
-              onChange={handlers[activeTab]}
+              onChange={handleChange}
               height={height}
             />
           </Suspense>

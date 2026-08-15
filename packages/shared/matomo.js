@@ -32,6 +32,28 @@ _paq.push(['enableLinkTracking']);
 `.trim();
 }
 
+// Stuurt een custom event (Matomo: Gedrag > Gebeurtenissen). Bedoeld voor
+// tellingen die iets zeggen over het lesmateriaal — hoe vaak een oefening
+// gedraaid of gereset wordt — niet voor het volgen van individuele leerlingen.
+//
+// Stuur nooit inhoud mee: geen code van de leerling, geen ingevulde formulier-
+// velden, geen bestandsnamen uit een geüpload project. Categorie, actie en een
+// paginapad zijn genoeg om per les te kunnen vergelijken.
+//
+// Matomo accepteert een waarde alleen samen met een naam, dus zonder naam laten
+// we de waarde weg. Zelfde no-op guard als de opt-out-helpers hieronder: zonder
+// actieve tracker (dev, adblocker, of bezwaar gemaakt) gebeurt er niets — een
+// leerling die opt-out heeft gekozen stuurt dus ook geen events.
+function matomoTrackEvent(category, action, name, value) {
+  if (typeof window === 'undefined' || !window._paq) return;
+  const event = ['trackEvent', category, action];
+  if (name !== undefined) {
+    event.push(name);
+    if (value !== undefined) event.push(value);
+  }
+  window._paq.push(event);
+}
+
 // Onderstaande drie functies zijn de enige plek die window._paq aanraakt voor
 // opt-out — MatomoOptOut.tsx/.svelte bevatten zelf geen _paq-logica. Elk is
 // een no-op guard zodat ze nooit crashen als tracking niet actief is (dev,
@@ -71,6 +93,7 @@ module.exports = {
   MATOMO_URL,
   MATOMO_RETENTION_DAYS,
   buildMatomoSnippet,
+  matomoTrackEvent,
   matomoOptOut,
   matomoForgetOptOut,
   matomoIsOptedOut,
