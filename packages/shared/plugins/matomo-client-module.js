@@ -12,7 +12,17 @@
 module.exports.onRouteDidUpdate = function onRouteDidUpdate({ location, previousLocation }) {
   if (typeof window === 'undefined' || !window._paq) return;
   if (!previousLocation || location.pathname === previousLocation.pathname) return;
-  window._paq.push(['setCustomUrl', location.pathname]);
-  window._paq.push(['setDocumentTitle', document.title]);
-  window._paq.push(['trackPageView']);
+
+  // De nieuwe <title> staat er op dit moment nog niet: Docusaurus werkt hem
+  // via react-helmet-async pas ná deze hook bij. document.title hier direct
+  // uitlezen levert de titel van de vórige pagina op, waardoor het
+  // titel-rapport in Matomo structureel één pagina achterloopt (de URL klopt
+  // wel). Daarom lezen we de titel een tick later, als de DOM bij is.
+  const { pathname } = location;
+  setTimeout(() => {
+    if (!window._paq) return;
+    window._paq.push(['setCustomUrl', pathname]);
+    window._paq.push(['setDocumentTitle', document.title]);
+    window._paq.push(['trackPageView']);
+  }, 0);
 };
