@@ -13,11 +13,20 @@ const MATOMO_RETENTION_DAYS = 100;
 // Kale JS-body (geen <script>-tags eromheen, dat is aan de caller) voor
 // cookieloze Matomo-tracking. `disableCookies` moet vóór `trackPageView`
 // staan, zodat de tracker nooit een cookie zet.
+//
+// De setCustomUrl hieronder past dezelfde normalisatie toe als
+// matomoPagePath(), maar dan inline: dit is een string die in de <head> belandt
+// en dus niets kan importeren. Zonder die regel gebruikt een harde load het
+// echte adres met afsluitende slash, terwijl navigatie binnen de site en alle
+// events het pad zonder slash sturen — dezelfde les komt dan als twee regels in
+// het Pagina's-rapport en is niet te koppelen aan de events. Bij wijziging dus
+// beide plekken aanpassen.
 function buildMatomoSnippet({ siteId, matomoUrl = MATOMO_URL }) {
   const url = `${matomoUrl.replace(/\/+$/, '')}/`;
   return `
 var _paq = window._paq = window._paq || [];
 _paq.push(['disableCookies']);
+_paq.push(['setCustomUrl', location.pathname.length > 1 ? location.pathname.replace(/\\/+$/, '') : location.pathname]);
 _paq.push(['trackPageView']);
 _paq.push(['enableLinkTracking']);
 (function() {
@@ -37,10 +46,17 @@ _paq.push(['enableLinkTracking']);
 // levert "/docs/html-css/flexbox/" op, een klik binnen de site
 // "/docs/html-css/flexbox". Zonder normalisatie staat dezelfde les als twee
 // regels in het rapport, afhankelijk van hoe de leerling er kwam.
-function matomoPagePath() {
-  if (typeof window === 'undefined') return '';
-  const { pathname } = window.location;
-  return pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname;
+// Zonder argument leest hij het pad van de browser; met argument normaliseert
+// hij het pad dat je meegeeft. Dat laatste is nodig in de routewissel-hook, die
+// het pad van de router al in handen heeft en niet mag afgaan op window: bij
+// twee navigaties kort achter elkaar staat daar al de volgende pagina.
+function matomoPagePath(pathname) {
+  let pad = pathname;
+  if (pad === undefined) {
+    if (typeof window === 'undefined') return '';
+    pad = window.location.pathname;
+  }
+  return pad.length > 1 ? pad.replace(/\/+$/, '') : pad;
 }
 
 // Stuurt een custom event (Matomo: Gedrag > Gebeurtenissen). Bedoeld voor

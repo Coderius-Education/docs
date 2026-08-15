@@ -9,6 +9,7 @@
 // CommonJS (niet ESM export): @coderius/shared staat op "type": "commonjs" en
 // Docusaurus' webpack-pipeline verwacht dit bestand niet als ES-module aan te
 // treffen — ESM export-syntax hier gaf een harde webpack parse-fout.
+const { matomoPagePath } = require('../matomo');
 const { startDetailsTracking } = require('./matomo-details');
 
 // Meteen aanhaken en niet per routewissel: de listener hangt aan document en
@@ -25,10 +26,13 @@ module.exports.onRouteDidUpdate = function onRouteDidUpdate({ location, previous
   // uitlezen levert de titel van de vórige pagina op, waardoor het
   // titel-rapport in Matomo structureel één pagina achterloopt (de URL klopt
   // wel). Daarom lezen we de titel een tick later, als de DOM bij is.
-  const { pathname } = location;
+  // Zelfde normalisatie als de events gebruiken, anders zijn het Pagina's-
+  // rapport en het Gebeurtenissen-rapport niet op pad te koppelen en werkt een
+  // verhouding als "runs per pageview" niet.
+  const pad = matomoPagePath(location.pathname);
   setTimeout(() => {
     if (!window._paq) return;
-    window._paq.push(['setCustomUrl', pathname]);
+    window._paq.push(['setCustomUrl', pad]);
     window._paq.push(['setDocumentTitle', document.title]);
     window._paq.push(['trackPageView']);
   }, 0);

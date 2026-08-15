@@ -17,9 +17,11 @@ const { matomoPagePath, matomoTrackEvent } = require('../matomo');
 // meetellen — precies de bedoeling, een nieuw paginabezoek telt opnieuw.
 const geteld = new WeakSet();
 
-// Een actie mag nooit onbegrensd lang worden: op andere cursussen kan een kop
-// een hele zin zijn.
-const MAX_ACTIE = 100;
+// Een sectienaam mag nooit onbegrensd lang worden: op andere cursussen kan een
+// kop een hele zin zijn. Afkappen gebeurt op de sectie en niet op de hele
+// actie, want het volgnummer staat achteraan en is juist het enige dat de tip
+// van het antwoord onderscheidt.
+const MAX_SECTIE = 90;
 
 // De kop waar een blok onder valt, bepaald op documentvolgorde. Niet via
 // previousElementSibling omhoog lopen: een <details> hoeft geen broer van de
@@ -32,8 +34,7 @@ const MAX_ACTIE = 100;
 // die het als ES-module importeert, en die import in dit CommonJS-bestand geeft
 // een harde webpack-fout (zelfde reden als de ESM-export in
 // matomo-client-module.js).
-function sectieVan(root, blok) {
-  const koppen = root.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]');
+function sectieVan(koppen, blok) {
   let sectie = '';
   for (let i = 0; i < koppen.length; i++) {
     // Een kop binnen het blok zelf levert CONTAINS op zonder FOLLOWING, en
@@ -49,11 +50,14 @@ function sectieVan(root, blok) {
 // antwoord. Het volgnummer telt alleen blokken uit dezelfde sectie, zodat
 // "modify #2" het antwoord blijft aanwijzen, ook als de summary-tekst bij een
 // stijl-pass herschreven wordt.
-function volgnummerIn(root, blok, sectie) {
-  const blokken = root.querySelectorAll('details');
+// De koppen komen als argument binnen en worden niet per blok opnieuw
+// opgezocht: cheatsheet-achtige pagina's hebben tientallen uitklapblokken, en
+// een querySelectorAll per blok maakt hier een merkbare hapering van bij het
+// openklappen.
+function volgnummerIn(blokken, koppen, blok, sectie) {
   let nummer = 0;
   for (let i = 0; i < blokken.length; i++) {
-    if (sectieVan(root, blokken[i]) !== sectie) continue;
+    if (sectieVan(koppen, blokken[i]) !== sectie) continue;
     nummer++;
     if (blokken[i] === blok) break;
   }
@@ -71,9 +75,14 @@ function opToggle(event) {
   if (!root || geteld.has(blok)) return;
   geteld.add(blok);
 
-  const sectie = sectieVan(root, blok);
-  const actie = `${sectie || 'pagina'} #${volgnummerIn(root, blok, sectie)}`;
-  matomoTrackEvent('Uitklapblok', actie.slice(0, MAX_ACTIE), matomoPagePath());
+  const koppen = root.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]');
+  const sectie = sectieVan(koppen, blok);
+  const nummer = volgnummerIn(root.querySelectorAll('details'), koppen, blok, sectie);
+  matomoTrackEvent(
+    'Uitklapblok',
+    `${(sectie || 'pagina').slice(0, MAX_SECTIE)} #${nummer}`,
+    matomoPagePath(),
+  );
 }
 
 function startDetailsTracking() {
