@@ -1,4 +1,4 @@
-import { matomoTrackEvent } from '@coderius/shared/matomo';
+import { matomoPagePath, matomoTrackEvent } from '@coderius/shared/matomo';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import React, { lazy, Suspense, useState, useEffect, useCallback, useRef } from 'react';
 import styles from './CodeEditor.module.css';
@@ -48,7 +48,7 @@ function CodeEditorInner({
   // leerlingen hem echt draaien of alleen lezen. Alleen de actie en het
   // paginapad gaan naar Matomo — nooit de code uit de editor.
   const trackEditor = useCallback((action: string) => {
-    matomoTrackEvent('Editor', action, window.location.pathname);
+    matomoTrackEvent('Editor', action, matomoPagePath());
   }, []);
 
   const debouncedHtml = useDebounce(html, debounceMs);

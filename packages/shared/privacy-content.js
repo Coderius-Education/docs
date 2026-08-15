@@ -49,9 +49,11 @@ const PRIVACY_CONTENT = {
         'een geanonimiseerd IP-adres (het laatste deel wordt gemaskeerd), waaruit hooguit een globale regio af te leiden is',
         'het type browser en besturingssysteem',
         'of je een oefening in de code-editor hebt aangepast, gedraaid of teruggezet naar de startcode',
+        'of je bij een opdracht een tip of het antwoord openklapt',
       ],
       trailingParagraphs: [
         'De code die je in een oefening typt blijft in je browser en gaat nooit mee naar de statistieken. Van een oefening tellen we alleen dát je hem gebruikt hebt, zodat we zien welke opdrachten gemaakt worden en welke blijven liggen.',
+        'Bij een uitklapblok registreren we alleen wélk blok het was, bijvoorbeeld het antwoord bij Make op deze les. Niet wat erin staat, en niet of je de opdracht goed had.',
         'We verzamelen geen naam, e-mailadres of ander persoonlijk gegeven, en combineren de statistieken niet met andere diensten of trackers buiten Matomo.',
       ],
     },

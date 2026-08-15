@@ -32,6 +32,17 @@ _paq.push(['enableLinkTracking']);
 `.trim();
 }
 
+// Het paginapad zoals we het als event-naam gebruiken. Matomo groepeert namen
+// letterlijk, en deze sites zetten geen trailingSlash: een harde page load
+// levert "/docs/html-css/flexbox/" op, een klik binnen de site
+// "/docs/html-css/flexbox". Zonder normalisatie staat dezelfde les als twee
+// regels in het rapport, afhankelijk van hoe de leerling er kwam.
+function matomoPagePath() {
+  if (typeof window === 'undefined') return '';
+  const { pathname } = window.location;
+  return pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname;
+}
+
 // Stuurt een custom event (Matomo: Gedrag > Gebeurtenissen). Bedoeld voor
 // tellingen die iets zeggen over het lesmateriaal — hoe vaak een oefening
 // gedraaid of gereset wordt — niet voor het volgen van individuele leerlingen.
@@ -93,6 +104,7 @@ module.exports = {
   MATOMO_URL,
   MATOMO_RETENTION_DAYS,
   buildMatomoSnippet,
+  matomoPagePath,
   matomoTrackEvent,
   matomoOptOut,
   matomoForgetOptOut,

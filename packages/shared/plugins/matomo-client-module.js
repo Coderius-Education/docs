@@ -9,6 +9,13 @@
 // CommonJS (niet ESM export): @coderius/shared staat op "type": "commonjs" en
 // Docusaurus' webpack-pipeline verwacht dit bestand niet als ES-module aan te
 // treffen — ESM export-syntax hier gaf een harde webpack parse-fout.
+const { startDetailsTracking } = require('./matomo-details');
+
+// Meteen aanhaken en niet per routewissel: de listener hangt aan document en
+// overleeft navigatie binnen de site, dus één keer is genoeg. De guard is nodig
+// omdat client-modules tijdens het bouwen ook in Node geëvalueerd worden.
+if (typeof document !== 'undefined') startDetailsTracking();
+
 module.exports.onRouteDidUpdate = function onRouteDidUpdate({ location, previousLocation }) {
   if (typeof window === 'undefined' || !window._paq) return;
   if (!previousLocation || location.pathname === previousLocation.pathname) return;

@@ -6,6 +6,8 @@ export const MATOMO_RETENTION_DAYS: number;
 
 export function buildMatomoSnippet(opts: { siteId: string | number; matomoUrl?: string }): string;
 
+export function matomoPagePath(): string;
+
 export function matomoTrackEvent(
   category: string,
   action: string,
