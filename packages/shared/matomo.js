@@ -14,19 +14,28 @@ const MATOMO_RETENTION_DAYS = 100;
 // cookieloze Matomo-tracking. `disableCookies` moet vóór `trackPageView`
 // staan, zodat de tracker nooit een cookie zet.
 //
-// De setCustomUrl hieronder past dezelfde normalisatie toe als
-// matomoPagePath(), maar dan inline: dit is een string die in de <head> belandt
-// en dus niets kan importeren. Zonder die regel gebruikt een harde load het
-// echte adres met afsluitende slash, terwijl navigatie binnen de site en alle
-// events het pad zonder slash sturen — dezelfde les komt dan als twee regels in
-// het Pagina's-rapport en is niet te koppelen aan de events. Bij wijziging dus
+// De setCustomUrl hieronder haalt de afsluitende slash van het pad. Zonder die
+// regel telt een harde load op het echte adres mét slash, terwijl navigatie
+// binnen de site en alle events het pad zonder slash sturen — dezelfde les komt
+// dan als twee regels in het Pagina's-rapport en is niet te koppelen aan de
+// events.
+//
+// Let op: alleen het pad wordt aangepast, querystring en hash blijven staan.
+// setCustomUrl geldt voor de rest van de sessie, dus een kaal pad zou ook de
+// campagneparameters (mtm_campaign en verwanten) wegnemen waarmee Matomo de
+// herkomst bepaalt — een bezoek via een gedeelde link zou dan als direct
+// verkeer binnenkomen. Matomo haalt die parameters er zelf uit voor het
+// rapport.
+//
+// Dit is een string die in de <head> belandt en dus niets kan importeren; de
+// regel is inline en spiegelt matomoPagePath() hieronder. Bij wijziging dus
 // beide plekken aanpassen.
 function buildMatomoSnippet({ siteId, matomoUrl = MATOMO_URL }) {
   const url = `${matomoUrl.replace(/\/+$/, '')}/`;
   return `
 var _paq = window._paq = window._paq || [];
 _paq.push(['disableCookies']);
-_paq.push(['setCustomUrl', location.pathname.length > 1 ? location.pathname.replace(/\\/+$/, '') : location.pathname]);
+_paq.push(['setCustomUrl', location.origin + (location.pathname.length > 1 ? location.pathname.replace(/\\/+$/, '') : location.pathname) + location.search + location.hash]);
 _paq.push(['trackPageView']);
 _paq.push(['enableLinkTracking']);
 (function() {

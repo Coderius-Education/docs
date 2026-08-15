@@ -1,7 +1,7 @@
 <script lang="ts">
 import { onMount } from "svelte";
 import { afterNavigate } from "$app/navigation";
-import { buildMatomoSnippet } from "@coderius/shared/matomo";
+import { buildMatomoSnippet, matomoPagePath } from "@coderius/shared/matomo";
 import { MATOMO_SITE_ID } from "$lib/matomo-config";
 
 // Geen zichtbare markup. Injecteert de cookieloze Matomo-snippet alleen in
@@ -22,7 +22,12 @@ onMount(() => {
 afterNavigate(({ from, to }) => {
 	if (typeof window === "undefined" || !window._paq) return;
 	if (!from || !to || from.url.pathname === to.url.pathname) return;
-	window._paq.push(["setCustomUrl", to.url.pathname]);
+	// Zelfde vorm als het snippet en de Docusaurus-sites sturen: volledige URL
+	// met genormaliseerd pad, zodat een adres met en zonder afsluitende slash
+	// niet als twee regels in het rapport belandt.
+	const url =
+		to.url.origin + matomoPagePath(to.url.pathname) + to.url.search + to.url.hash;
+	window._paq.push(["setCustomUrl", url]);
 	window._paq.push(["setDocumentTitle", document.title]);
 	window._paq.push(["trackPageView"]);
 });

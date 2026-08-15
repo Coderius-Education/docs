@@ -30,9 +30,18 @@ module.exports.onRouteDidUpdate = function onRouteDidUpdate({ location, previous
   // rapport en het Gebeurtenissen-rapport niet op pad te koppelen en werkt een
   // verhouding als "runs per pageview" niet.
   const pad = matomoPagePath(location.pathname);
+  // Zelfde vorm als het snippet bij een harde load stuurt: volledige URL met
+  // genormaliseerd pad, querystring en hash intact. Een kaal pad zou de tracker
+  // zelf absoluut maken, maar dan hangt het rapport af van hoe hij dat doet.
+  const url = window.location.origin + pad + location.search + location.hash;
   setTimeout(() => {
     if (!window._paq) return;
-    window._paq.push(['setCustomUrl', pad]);
+    // Wachten betekent dat er intussen alweer genavigeerd kan zijn, bij een
+    // redirect of twee keer snel terug. De titel die we dan uitlezen hoort bij
+    // de nieuwste pagina, niet bij deze. Sla die pageview over: de hook van de
+    // nieuwste routewissel stuurt zijn eigen, kloppende pageview.
+    if (matomoPagePath() !== pad) return;
+    window._paq.push(['setCustomUrl', url]);
     window._paq.push(['setDocumentTitle', document.title]);
     window._paq.push(['trackPageView']);
   }, 0);
