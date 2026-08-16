@@ -17,32 +17,51 @@ const { startDetailsTracking } = require('./matomo-details');
 // omdat client-modules tijdens het bouwen ook in Node geëvalueerd worden.
 if (typeof document !== 'undefined') startDetailsTracking();
 
+// Volgnummer van de laatste routewissel. Nodig omdat we de pageview uitgesteld
+// versturen: is er intussen alweer genavigeerd, dan hoort de titel die we dan
+// uitlezen bij een andere pagina. Een volgnummer en géén padvergelijking — het
+// pad van de router is onbewerkt ("…/5-seriële-communicatie") terwijl dat van
+// de browser percent-gecodeerd is ("…/5-seri%C3%ABle-communicatie"), zodat een
+// vergelijking op zulke pagina's nooit klopt en elke pageview zou wegvallen.
+let laatsteNavigatie = 0;
+
 module.exports.onRouteDidUpdate = function onRouteDidUpdate({ location, previousLocation }) {
   if (typeof window === 'undefined' || !window._paq) return;
   if (!previousLocation || location.pathname === previousLocation.pathname) return;
 
-  // De nieuwe <title> staat er op dit moment nog niet: Docusaurus werkt hem
-  // via react-helmet-async pas ná deze hook bij. document.title hier direct
-  // uitlezen levert de titel van de vórige pagina op, waardoor het
-  // titel-rapport in Matomo structureel één pagina achterloopt (de URL klopt
-  // wel). Daarom lezen we de titel een tick later, als de DOM bij is.
   // Zelfde normalisatie als de events gebruiken, anders zijn het Pagina's-
   // rapport en het Gebeurtenissen-rapport niet op pad te koppelen en werkt een
-  // verhouding als "runs per pageview" niet.
+  // verhouding als "runs per pageview" niet. En dezelfde vorm als het snippet
+  // bij een harde load stuurt: volledige URL, querystring en hash intact. Een
+  // kaal pad zou de tracker zelf absoluut maken, maar dan hangt het rapport af
+  // van hoe hij dat doet.
+  // Via new URL() zodat het pad net zo gecodeerd wordt als de browser het doet.
+  // De router levert het onbewerkt aan ("…/5-seriële-communicatie"), en dan zou
+  // dezelfde pagina na een harde load ("…/5-seri%C3%ABle-communicatie") toch
+  // weer twee regels in het rapport opleveren.
   const pad = matomoPagePath(location.pathname);
-  // Zelfde vorm als het snippet bij een harde load stuurt: volledige URL met
-  // genormaliseerd pad, querystring en hash intact. Een kaal pad zou de tracker
-  // zelf absoluut maken, maar dan hangt het rapport af van hoe hij dat doet.
-  const url = window.location.origin + pad + location.search + location.hash;
-  setTimeout(() => {
-    if (!window._paq) return;
-    // Wachten betekent dat er intussen alweer genavigeerd kan zijn, bij een
-    // redirect of twee keer snel terug. De titel die we dan uitlezen hoort bij
-    // de nieuwste pagina, niet bij deze. Sla die pageview over: de hook van de
-    // nieuwste routewissel stuurt zijn eigen, kloppende pageview.
-    if (matomoPagePath() !== pad) return;
+  const url = new URL(pad + location.search + location.hash, window.location.origin).href;
+  const dezeNavigatie = ++laatsteNavigatie;
+  let verstuurd = false;
+
+  function stuurPageview() {
+    if (verstuurd || !window._paq) return;
+    if (dezeNavigatie !== laatsteNavigatie) return;
+    verstuurd = true;
     window._paq.push(['setCustomUrl', url]);
     window._paq.push(['setDocumentTitle', document.title]);
     window._paq.push(['trackPageView']);
-  }, 0);
+  }
+
+  // De nieuwe <title> staat er op dit moment nog niet: react-helmet-async zet
+  // hem in een requestAnimationFrame (`defer` staat standaard aan). Hier direct
+  // document.title uitlezen levert dus de titel van de vórige pagina op, en het
+  // titel-rapport in Matomo loopt dan één pagina achter.
+  //
+  // Helmet plant die frame in tijdens de commit, vóór deze hook; rAF-callbacks
+  // lopen op volgorde van inplannen, dus de onze komt daarna. In een verborgen
+  // tabblad staat rAF stil — daar vangt de timer het op, zodat de pageview niet
+  // verloren gaat. Wie het eerst is wint, de rest is een no-op.
+  window.requestAnimationFrame(stuurPageview);
+  setTimeout(stuurPageview, 1000);
 };
