@@ -59,9 +59,16 @@ module.exports.onRouteDidUpdate = function onRouteDidUpdate({ location, previous
   // titel-rapport in Matomo loopt dan één pagina achter.
   //
   // Helmet plant die frame in tijdens de commit, vóór deze hook; rAF-callbacks
-  // lopen op volgorde van inplannen, dus de onze komt daarna. In een verborgen
-  // tabblad staat rAF stil — daar vangt de timer het op, zodat de pageview niet
-  // verloren gaat. Wie het eerst is wint, de rest is een no-op.
+  // lopen op volgorde van inplannen, dus de onze komt daarna.
   window.requestAnimationFrame(stuurPageview);
-  setTimeout(stuurPageview, 1000);
+
+  // Achtervang voor het geval de frame onverwacht uitblijft, maar alleen bij een
+  // zichtbaar tabblad. In een verborgen tabblad staat ook de frame van helmet
+  // stil, dus dan is de titel nog die van de vorige pagina en zou deze timer
+  // precies de fout maken die het uitstellen moet voorkomen. Komt het tabblad
+  // terug, dan lopen de ingeplande frames alsnog in volgorde af en gaat de
+  // pageview met de juiste titel de deur uit.
+  setTimeout(() => {
+    if (document.visibilityState === 'visible') stuurPageview();
+  }, 1000);
 };

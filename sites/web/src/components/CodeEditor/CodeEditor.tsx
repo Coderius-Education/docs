@@ -114,9 +114,11 @@ function CodeEditorInner({
   // geen bewerking.
   //
   // useCallback houdt de identiteit stabiel zolang je in hetzelfde tabblad
-  // typt; anders herconfigureert CodeMirror zijn change-listener bij elke
-  // toetsaanslag. De deps wisselen in de praktijk alleen bij een tabwissel, en
-  // die remount de editor toch al (zie `key` hieronder).
+  // typt. onChange staat namelijk in de dependencies van het effect dat
+  // CodeMirror opnieuw configureert; samen met de gestabiliseerde `extensions`
+  // en `basicSetup` in EditorPane blijft die reconfiguratie daarmee uit tijdens
+  // het typen. De deps hieronder wisselen in de praktijk alleen bij een
+  // tabwissel, en die remount de editor toch al (zie `key` verderop).
   const handleChange = useCallback(
     (value: string) => {
       const setters: Record<Tab, (v: string) => void> = {
