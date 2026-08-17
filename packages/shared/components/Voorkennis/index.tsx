@@ -15,14 +15,18 @@ export type VoorkennisItem = {
 };
 
 /**
- * Inklapbaar "Wat moet je al kennen?"-blok (standaard dicht) met voorkennis-
+ * Inklapbaar "Hier bouw je op verder"-blok (standaard dicht) met voorkennis-
  * links. Verwijst naar een andere cursus? Dan bouwt het component de absolute
  * URL uit de gedeelde site-registry en toont een klein cursus-badge. Binnen
  * dezelfde cursus wordt het een gewone interne link.
+ *
+ * De titel is bewust een geruststelling en geen eis: het blok is een vangnet
+ * voor wie iets wil terugzoeken, geen toelatingstoets ("Wat moet je al
+ * kennen?" bleek in de praktijk te scherp te klinken).
  */
 export default function Voorkennis({
   items = [],
-  title = 'Wat moet je al kennen?',
+  title = 'Hier bouw je op verder',
 }: {
   items?: VoorkennisItem[];
   title?: string;
