@@ -140,8 +140,14 @@ describe('webConfig — voorbeeldprojecten scoren', () => {
     const report = analyze(leesFixture('valkuilen'), webConfig);
     const perId = new Map(report.concepts.map((c) => [c.id, c.used]));
 
+    // Weggecommentarieerde CSS en JS tellen mee.
     expect(perId.get('css-color')).toBe(true);
     expect(perId.get('js-alert')).toBe(true);
+    // Een <select> die alleen in een HTML-commentaar staat, telt ook mee.
+    expect(perId.get('html-select')).toBe(true);
+    // En HTML-tags binnen een JavaScript-string net zo goed.
+    expect(perId.get('html-form')).toBe(true);
+    expect(perId.get('html-input')).toBe(true);
 
     // En twee patronen die juist té streng zijn:
     // `.kaart:hover {` telt niet als klasse-selector (het patroon eist { of ,

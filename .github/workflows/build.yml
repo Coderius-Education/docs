@@ -55,7 +55,15 @@ jobs:
     # Wacht op checks. De hostingbackend haalt de artifacts óók op als de run
     # is mislukt (bewust: met fail-fast:false mag één kapotte site de andere
     # niet blokkeren). Zonder deze afhankelijkheid zou een nakijker met rode
-    # tests dus alsnog live gaan. Kosten: de builds starten later.
+    # tests dus alsnog live gaan.
+    #
+    # Let op wat dit precies doet: het hangt aan de héle checks-job, dus ook de
+    # typecheck. Een tsc-fout in één site levert nu nul artifacts op voor alle
+    # sites, waar ze eerder gewoon werden gebouwd. Dat is bewust — bij rode
+    # checks is de eerste taak die repareren, niet deployen — maar het kost je
+    # wel het overzicht van welke sites nog wél bouwen. Wil je alleen op de
+    # tests blokkeren, splits die dan af naar een eigen job en verwijs
+    # daarnaar; dat kost een tweede pnpm install.
     needs: checks
     runs-on: ubuntu-latest
     strategy:

@@ -57,6 +57,9 @@ catalogs:
     typescript:
       specifier: ~5.6.2
       version: 5.6.3
+    vitest:
+      specifier: ^4.1.11
+      version: 4.1.11
 
 importers:
 
@@ -66,7 +69,7 @@ importers:
         specifier: ^1.9.4
         version: 1.9.4
       vitest:
-        specifier: ^4.1.11
+        specifier: 'catalog:'
         version: 4.1.11(@types/node@25.9.3)(vite@7.3.6(@types/node@25.9.3)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.48.0))
 
   packages/checker:
@@ -482,6 +485,9 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 5.6.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.11(@types/node@25.9.3)(vite@7.3.6(@types/node@25.9.3)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.48.0))
 
   sites/godot:
     dependencies:
@@ -525,6 +531,9 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 5.6.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.11(@types/node@25.9.3)(vite@7.3.6(@types/node@25.9.3)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.48.0))
 
   sites/home:
     dependencies:
@@ -876,6 +885,9 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 5.6.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.11(@types/node@25.9.3)(vite@7.3.6(@types/node@25.9.3)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.48.0))
 
 packages:
 

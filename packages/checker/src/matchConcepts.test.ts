@@ -81,8 +81,6 @@ describe('analyze — regex-concepten', () => {
 
 describe('analyze — pad-concepten', () => {
   it('herkent een pad ook als een eerder pad niet matcht', () => {
-    // Bewaakt de withoutGlobal()-guard: met een /g-patroon onthoudt RegExp zijn
-    // lastIndex tussen test()-aanroepen, waardoor de tweede aanroep zou missen.
     const files = projectFiles(
       file('README.md', 'other', null),
       file('src/main.py', 'other', null),
@@ -91,6 +89,22 @@ describe('analyze — pad-concepten', () => {
     const report = analyze(files, cfg);
 
     expect(matchOf(report, 'main')).toEqual({ id: 'main', count: 1, used: true });
+  });
+
+  it('scoort twee projecten achter elkaar hetzelfde met dezelfde config', () => {
+    // Bewaakt de withoutGlobal()-guard in matchConcepts.ts. Een RegExp met /g
+    // onthoudt zijn lastIndex tússen test()-aanroepen door, en de config (en
+    // daarmee het RegExp-object) leeft net zo lang als de pagina. Zonder die
+    // guard vindt de tweede analyse het pad dus niet meer — precies wat er
+    // gebeurt als een docent twee projecten na elkaar nakijkt.
+    const cfg = config([concept('main', { type: 'path', pattern: /(^|\/)main\.py$/g })]);
+    const project = projectFiles(file('src/main.py', 'other', null));
+
+    const eerste = analyze(project, cfg);
+    const tweede = analyze(project, cfg);
+
+    expect(matchOf(eerste, 'main')?.used).toBe(true);
+    expect(matchOf(tweede, 'main')?.used).toBe(true);
   });
 
   it('geeft count 0 als geen enkel pad matcht', () => {

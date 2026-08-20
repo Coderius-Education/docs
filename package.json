@@ -21,6 +21,6 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "vitest": "^4.1.11"
+    "vitest": "catalog:"
   }
 }
