@@ -1,8 +1,6 @@
 ---
-sidebar_position: 18
+sidebar_position: 21
 ---
-
-import CodeExercise from '@site/src/components/CodeExercise';
 
 # Projectstructuur
 
@@ -149,34 +147,3 @@ Je JavaScript komt naast je CSS te staan, in dezelfde `static`-map. Aan `main.py
 | `static/` | Afbeeldingen | `foto.jpg`, `logo.png` |
 | `templates/` | Jinja2 templates | `resultaat.html` |
 
-## Oefen met Python
-
-:::info[Python oefenblok]
-Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
-:::
-
-<CodeExercise>
-{`# Projectstructuur als dictionary
-project = {
-    "main.py": "FastAPI app",
-    "static": {
-        "style.css": "CSS bestand",
-        "pages": {
-            "index.html": "Hoofdpagina",
-            "form.html": "Formulier"
-        }
-    }
-}
-
-# Structuur tonen
-def toon_structuur(structuur, inspringing=0):
-    for naam, inhoud in structuur.items():
-        prefix = "  " * inspringing
-        if isinstance(inhoud, dict):
-            print(f"{prefix}{naam}/")
-            toon_structuur(inhoud, inspringing + 1)
-        else:
-            print(f"{prefix}{naam} — {inhoud}")
-
-toon_structuur(project)`}
-</CodeExercise>

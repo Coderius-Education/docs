@@ -2,8 +2,6 @@
 sidebar_position: 7
 ---
 
-import CodeExercise from '@site/src/components/CodeExercise';
-
 # Afbeeldingen tonen
 
 <Voorkennis
@@ -188,31 +186,3 @@ Zet drie afbeeldingen in je `static` folder. Gebruik voor elke foto een `<h3>` g
 
 </details>
 
-## Oefen met Python
-
-:::info[Python oefenblok]
-Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
-:::
-
-<CodeExercise>
-{`# Afbeeldingen filteren
-bestanden = [
-    "foto1.jpg", "logo.png", "style.css",
-    "banner.gif", "index.html", "icon.svg",
-    "foto2.jpeg", "bg.webp"
-]
-
-# Afbeelding-extensies
-img_extensies = (".jpg", ".jpeg", ".png", ".gif", ".svg", ".webp")
-
-afbeeldingen = [b for b in bestanden if b.endswith(img_extensies)]
-overige = [b for b in bestanden if not b.endswith(img_extensies)]
-
-print(f"Afbeeldingen ({len(afbeeldingen)}):")
-for img in afbeeldingen:
-    print(f"  {img}")
-
-print(f"\nOverige ({len(overige)}):")
-for b in overige:
-    print(f"  {b}")`}
-</CodeExercise>

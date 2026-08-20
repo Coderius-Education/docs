@@ -240,6 +240,14 @@ export const fullstackConfig: CheckerConfig = {
       detect: { type: 'regex', pattern: /querySelector(All)?\s*\(/g, in: ['js'] },
     },
     {
+      id: 'js-fetch',
+      subject: 'js',
+      group: 'In de browser',
+      label: 'Data ophalen bij je eigen server (fetch)',
+      level: 'gevorderd',
+      detect: { type: 'regex', pattern: /\bfetch\s*\(/g, in: ['js'] },
+    },
+    {
       id: 'js-event-listener',
       subject: 'js',
       group: 'In de browser',

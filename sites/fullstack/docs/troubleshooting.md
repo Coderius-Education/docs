@@ -287,6 +287,54 @@ Meer uitleg: [Server of browser?](/docs/FastAPI/server-of-browser).
 
 </details>
 
+<details>
+<summary>TypeError: antwoord.json is not a function</summary>
+
+Je bent een `await` vergeten bij `fetch`:
+
+```javascript
+// FOUT - antwoord is nog een belofte, geen antwoord
+const antwoord = fetch("/api/berichten");
+
+// GOED
+const antwoord = await fetch("/api/berichten");
+```
+
+Meer uitleg: [Data ophalen met fetch](/docs/FastAPI/fetch).
+
+</details>
+
+<details>
+<summary>await is only valid in async functions</summary>
+
+`await` mag alleen in een functie die zelf `async` is:
+
+```javascript
+// FOUT
+function laadBerichten() {
+    const antwoord = await fetch("/api/berichten");
+}
+
+// GOED
+async function laadBerichten() {
+    const antwoord = await fetch("/api/berichten");
+}
+```
+
+</details>
+
+<details>
+<summary>Mijn klasgenoot kan niet bij mijn server</summary>
+
+1. Draait je server met `--host 0.0.0.0`? Zonder dat luistert hij alleen naar je eigen computer.
+2. Geef je het juiste adres door? `127.0.0.1` verwijst bij hem naar zijn eigen computer, niet naar die van jou. Zoek je adres met `ipconfig` of `ip addr`.
+3. Zitten jullie op hetzelfde netwerk? Het gastennetwerk op school staat vaak los van het schoolnetwerk.
+4. Vraagt je firewall om toestemming? Die moet je toestaan.
+
+Meer uitleg: [Laat het aan anderen zien](/docs/FastAPI/laat-het-zien).
+
+</details>
+
 ## Database (sqlitedict)
 
 <details>

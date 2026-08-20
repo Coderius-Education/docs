@@ -245,11 +245,11 @@ for i, b in enumerate(berichten):
     print(f"Opgeslagen: {key} → {b}")
 
 # Alle berichten ophalen
-print("\n--- Gastenboek ---")
+print("\\n--- Gastenboek ---")
 for key, data in database.items():
     print(f"{data['naam']}: {data['bericht']}")
 
 # Eén bericht ophalen
-print(f"\nLaatste: {database.get('bericht_2', 'Niet gevonden')}")
+print(f"\\nLaatste: {database.get('bericht_2', 'Niet gevonden')}")
 print(f"Bestaat niet: {database.get('bericht_99', 'Niet gevonden')}")`}
 </CodeExercise>

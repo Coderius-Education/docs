@@ -1,5 +1,5 @@
 ---
-sidebar_position: 17
+sidebar_position: 18
 ---
 
 import CodeExercise from '@site/src/components/CodeExercise';
@@ -58,14 +58,7 @@ async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
 | **Mag je het vertrouwen** | Ja | Nee |
 | **Typisch voor** | Opslaan, ophalen, controleren | Reageren op klikken en typen |
 
-<details>
-<summary>Achtergrond: en als de browser tóch iets van de server nodig heeft?</summary>
-
-Dan kan JavaScript zelf een verzoek doen aan een van jouw endpoints, zonder dat de pagina verspringt. Zo werken de meeste sites die je kent: je klikt op "meer laden" en er komen berichten bij zonder dat je iets ziet knipperen.
-
-Daarvoor bestaat `fetch`. Dat valt buiten deze cursus, maar het is een logische volgende stap als je hier verder in wilt.
-
-</details>
+Er is een derde mogelijkheid, en die ken je al: JavaScript dat zélf een verzoek doet aan een van jouw endpoints, zonder dat de pagina verspringt. Dat is [fetch](/docs/FastAPI/fetch). De hoofdvraag verandert daar niet door — de berichten stáán nog steeds op de server, want ze moeten bewaard blijven. Alleen de manier waarop ze de pagina bereiken is anders.
 
 ## Opdrachten
 
@@ -164,7 +157,7 @@ Er is niet één goed antwoord. Twee voorbeelden:
 
 **Browser:** een zoekveld dat de berichten die al op de pagina staan filtert terwijl je typt. Het gebeurt bij elke toetsaanslag en hoeft niet bewaard te blijven.
 
-Zit jouw browser-idee eigenlijk aan data die nog niet op de pagina staat? Dan hoort het toch bij de server — of je hebt `fetch` nodig, zie het blok bovenaan deze pagina.
+Zit jouw browser-idee aan data die nog niet op de pagina staat? Dan hoort het toch bij de server, of je haalt het op met [fetch](/docs/FastAPI/fetch).
 
 </details>
 

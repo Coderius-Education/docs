@@ -1,0 +1,108 @@
+---
+sidebar_position: 20
+---
+
+# Jouw eigen project
+
+Alles wat je nodig hebt zit in je hoofd en in je `main.py`. Nu bouw je iets dat niet in de lessen staat: een eigen webapplicatie waar mensen gegevens achterlaten en terugvinden.
+
+Het gastenboek was daar de oefening voor. Wat je nu maakt mag erop lijken, maar het moet van jou zijn.
+
+## Wat het moet kunnen
+
+1. Een **formulier** waar een bezoeker iets invult.
+2. Dat wordt **opgeslagen** en overleeft het herstarten van de server.
+3. Een **overzichtspagina** die alles toont wat er is opgeslagen.
+4. Een **detailpagina** per item, met een eigen URL.
+5. Minstens één **controle in Python** op wat een bezoeker instuurt.
+6. Een nette **404** als iemand iets opvraagt dat niet bestaat.
+
+Lukt dat, dan heb je een complete applicatie. Alles daarboven is versiering, en versiering mag.
+
+## Ideeën
+
+Kies iets waar je zelf nieuwsgierig naar bent — dat scheelt bij het derde probleem dat je tegenkomt.
+
+- **Recensies** van games, films of boeken, met een cijfer erbij en een gemiddelde bovenaan
+- **Een verlanglijst** waar mensen items op zetten en kunnen afvinken
+- **Een quiz** die vragen stelt en de scores bewaart
+- **Een klassenagenda** met huiswerk per vak en per datum
+- **Een muziekaanvraag** voor het schoolfeest, met een teller hoe vaak een nummer is aangevraagd
+- **Een verzamelsite** voor iets waar je te veel van weet
+
+## Stap voor stap
+
+Bouw in deze volgorde. Elke stap levert iets op dat werkt, zodat je nooit lang zonder werkende versie zit.
+
+### Stap 1: Eén pagina die iets toont
+
+Begin met een endpoint en een template die drie verzonnen items laat zien, hardgecodeerd in je Python. Nog geen database, nog geen formulier.
+
+<details>
+<summary>Vastgelopen?</summary>
+
+Zet je items als lijst met dictionaries in je endpoint en stuur ze mee naar de template, precies zoals bij [Een lijst tonen](/docs/FastAPI/lijst_tonen). Werkt dat, dan staat je hele keten: endpoint, template, lus.
+
+</details>
+
+### Stap 2: Een formulier dat opslaat
+
+Vervang de verzonnen items door een database. Maak een formulier en een POST-endpoint, en stuur na het opslaan door naar je overzicht.
+
+<details>
+<summary>Vastgelopen?</summary>
+
+Doe het in twee helften: eerst opslaan en een JSON-antwoord teruggeven, en pas als dát werkt de redirect erbij. Zo weet je bij een fout aan welke kant je moet zoeken. Vergeet `db.commit()` niet.
+
+</details>
+
+### Stap 3: Detailpagina's
+
+Geef elk item een eigen URL met een path-parameter, en maak de items op je overzicht klikbaar.
+
+<details>
+<summary>Vastgelopen?</summary>
+
+Je hebt de sleutel nodig in je template, dus loop met `db.items()` in plaats van `db.values()`. Zie [Eén bericht tonen](/docs/FastAPI/detailpagina).
+
+</details>
+
+### Stap 4: Controleren en weigeren
+
+Bedenk wat er mis kan gaan als iemand anders je formulier invult. Een leeg veld, een cijfer van 200, een tekst van duizend woorden. Vang dat af in Python.
+
+<details>
+<summary>Vastgelopen?</summary>
+
+`raise HTTPException(status_code=400, detail="...")` stopt de functie en stuurt een foutmelding. Controleer aan het begin van je endpoint, vóór je iets opslaat.
+
+Test je controle door hem te omzeilen zoals in [Server of browser?](/docs/FastAPI/server-of-browser), niet door netjes je eigen formulier in te vullen.
+
+</details>
+
+### Stap 5: Iets dat de server niet nodig heeft
+
+Voeg één ding toe dat volledig in de browser gebeurt: een filterveld, een teller, een knop die iets in- of uitklapt.
+
+<details>
+<summary>Vastgelopen?</summary>
+
+Kijk eerst of de data die je nodig hebt al op de pagina staat. Zo ja, dan heb je alleen JavaScript nodig ([JavaScript erbij](/docs/FastAPI/javascript)). Zo nee, dan haal je het op met [fetch](/docs/FastAPI/fetch).
+
+</details>
+
+## Controleer je werk
+
+Upload je project op [Project checken](/project-checken). Je ziet dan welke onderwerpen uit de cursus erin terugkomen en welke nog niet. Dat is geen cijfer — het is een checklist die je helpt zien wat je nog kunt gebruiken.
+
+Kom je er niet uit met een foutmelding, kijk dan eerst op [Er gaat iets mis](/docs/troubleshooting). De meeste fouten die je nu tegenkomt staan daar, met de oorzaak erbij.
+
+## Mogelijke uitbreidingen
+
+- Items kunnen **verwijderen**, met een bevestiging vooraf
+- **Sorteren** op datum, cijfer of naam
+- Een **zoekveld** dat filtert terwijl je typt
+- **Afbeeldingen** bij je items, zoals in [Afbeeldingen tonen](/docs/FastAPI/afbeeldingen)
+- Een **statistiekpagina**: hoeveel items, gemiddeld cijfer, wie het meest heeft toegevoegd
+- Je project **openzetten** voor de klas en kijken wat er gebeurt ([Laat het aan anderen zien](/docs/FastAPI/laat-het-zien))
+- Een **JSON-endpoint** zodat iemand anders jouw data in zijn eigen project kan gebruiken

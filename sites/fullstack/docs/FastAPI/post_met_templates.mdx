@@ -2,8 +2,6 @@
 sidebar_position: 10
 ---
 
-import CodeExercise from '@site/src/components/CodeExercise';
-
 # POST met templates
 
 In de vorige les gaf je POST endpoint JSON terug. In deze les leer je hoe je een mooie HTML pagina toont met **Jinja2 templates**.
@@ -262,33 +260,3 @@ async def profiel(request: Request, naam: str = Form(...), leeftijd: int = Form(
 
 </details>
 
-## Oefen met Python
-
-:::info[Python oefenblok]
-Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
-:::
-
-<CodeExercise>
-{`# Templates simuleren (zoals Jinja2)
-template = """<!DOCTYPE html>
-<html>
-<body>
-    <h1>Hallo {{ naam }}!</h1>
-    <p>Je bent {{ leeftijd }} jaar oud.</p>
-    <p>Je favoriete kleur is {{ kleur }}.</p>
-</body>
-</html>"""
-
-# Variabelen invullen (zoals Jinja2 doet)
-gegevens = {
-    "naam": "Sarah",
-    "leeftijd": "16",
-    "kleur": "blauw"
-}
-
-resultaat = template
-for sleutel, waarde in gegevens.items():
-    resultaat = resultaat.replace("{{ " + sleutel + " }}", waarde)
-
-print(resultaat)`}
-</CodeExercise>

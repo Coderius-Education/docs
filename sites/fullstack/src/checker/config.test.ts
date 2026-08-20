@@ -1,3 +1,6 @@
+import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { join, relative } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { analyze } from '@coderius/checker/matchConcepts';
 import type { ProjectFiles } from '@coderius/checker/types';
 import { validateCheckerConfig } from '@coderius/checker/validateConfig';
@@ -18,6 +21,119 @@ function files(entries: Record<string, string | null>): ProjectFiles {
     ]),
   );
 }
+
+const FIXTURES = fileURLToPath(new URL('./__fixtures__', import.meta.url));
+
+// Leest een voorbeeldproject van schijf, net als de helper in web. Zelfde
+// afspraak: assereer op benoemde concept-id's en nooit op totalen, zodat een
+// nieuwe les deze tests alleen breekt als hij precies deze concepten raakt.
+function leesFixture(naam: string): ProjectFiles {
+  const wortel = join(FIXTURES, naam);
+  const files: ProjectFiles = {};
+
+  const loop = (map: string): void => {
+    for (const item of readdirSync(map)) {
+      const volledig = join(map, item);
+      if (statSync(volledig).isDirectory()) {
+        loop(volledig);
+        continue;
+      }
+      const path = relative(wortel, volledig).split('\\').join('/');
+      const content = readFileSync(volledig, 'utf8');
+      files[path] = {
+        path,
+        kind: fullstackConfig.classify(path),
+        content,
+        sizeBytes: content.length,
+        tooLarge: false,
+      };
+    }
+  };
+
+  loop(wortel);
+  return files;
+}
+
+function verwacht(naam: string, gebruikt: string[], ongebruikt: string[]): void {
+  const report = analyze(leesFixture(naam), fullstackConfig);
+  const perId = new Map(report.concepts.map((c) => [c.id, c.used]));
+
+  for (const id of [...gebruikt, ...ongebruikt]) {
+    expect(perId.has(id), `concept '${id}' bestaat niet in fullstackConfig`).toBe(true);
+  }
+  expect(gebruikt.filter((id) => !perId.get(id))).toEqual([]);
+  expect(ongebruikt.filter((id) => perId.get(id))).toEqual([]);
+}
+
+describe('fullstackConfig — voorbeeldprojecten scoren', () => {
+  it('een project met alleen een endpoint levert alleen de basis op', () => {
+    verwacht(
+      'minimaal',
+      ['fastapi-app', 'fastapi-get', 'struct-main'],
+      [
+        'fastapi-post',
+        'fastapi-templates',
+        'fastapi-redirect',
+        'fastapi-httpexception',
+        'db-sqlitedict',
+        'struct-static',
+        'struct-templates',
+        'html-basis',
+        'js-query-selector',
+      ],
+    );
+  });
+
+  it('een compleet gastenboek herkent wat er echt in staat', () => {
+    verwacht(
+      'compleet',
+      [
+        'fastapi-app',
+        'fastapi-get',
+        'fastapi-post',
+        'fastapi-path-param',
+        'fastapi-static',
+        'fastapi-fileresponse',
+        'fastapi-form',
+        'fastapi-templates',
+        'fastapi-request',
+        'fastapi-redirect',
+        'fastapi-httpexception',
+        'html-basis',
+        'html-css-link',
+        'html-img',
+        'html-link',
+        'html-form',
+        'html-jinja-var',
+        'html-jinja-loop',
+        'html-jinja-if',
+        'js-bestand-koppelen',
+        'js-query-selector',
+        'js-event-listener',
+        'db-sqlitedict',
+        'db-write',
+        'db-commit',
+        'db-get',
+        'db-items',
+        'struct-main',
+        'struct-static',
+        'struct-templates',
+      ],
+      // Even belangrijk: de nakijker vinkt niet zomaar alles aan. Deze fixture
+      // doet de fetch-les niet, dus js-fetch hoort uit te blijven.
+      ['fastapi-html-response', 'db-del', 'js-fetch'],
+    );
+  });
+
+  it('leest de fixture zoals de checker een upload ziet', () => {
+    const files = leesFixture('compleet');
+    // Als classify of textKinds wijzigt, valt het hier meteen op.
+    expect(files['main.py'].kind).toBe('py');
+    expect(files['static/js/app.js'].kind).toBe('js');
+    expect(files['static/css/style.css'].kind).toBe('css');
+    expect(files['templates/berichten.html'].kind).toBe('html');
+  });
+});
 
 describe('fullstackConfig', () => {
   it('bevat geen fouten die stil verkeerd zouden scoren', () => {
@@ -111,6 +227,22 @@ describe('fullstackConfig', () => {
     expect(perId.get('js-bestand-koppelen')).toBe(true);
     expect(perId.get('js-query-selector')).toBe(true);
     expect(perId.get('js-event-listener')).toBe(true);
+  });
+
+  it('herkent fetch, en niet in een bestand dat het alleen noemt', () => {
+    const met = analyze(
+      files({ 'static/js/app.js': 'const a = await fetch("/api/berichten");' }),
+      fullstackConfig,
+    );
+    expect(new Map(met.concepts.map((c) => [c.id, c.used])).get('js-fetch')).toBe(true);
+
+    // 'prefetch' of 'fetchData' mag niet meetellen: het patroon eist een
+    // woordgrens plus een haakje.
+    const zonder = analyze(
+      files({ 'static/js/app.js': 'const fetchData = 1; prefetch(x); element.fetchAll;' }),
+      fullstackConfig,
+    );
+    expect(new Map(zonder.concepts.map((c) => [c.id, c.used])).get('js-fetch')).toBe(false);
   });
 
   it('telt JavaScript in een HTML-bestand niet mee als JavaScript-concept', () => {

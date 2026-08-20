@@ -1,0 +1,248 @@
+---
+sidebar_position: 17
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Data ophalen met fetch
+
+<Voorkennis
+  items={[
+    {site: 'web', to: '/docs/js-basics/arrays', label: 'Arrays'},
+    {site: 'web', to: '/docs/js-basics/loops', label: 'Loops'},
+    {site: 'web', to: '/docs/js-basics/modern-dom', label: 'querySelector en de DOM'},
+  ]}
+/>
+
+De tekenteller uit de vorige les had de server niet nodig. Maar berichten die iemand anders net heeft achtergelaten staan wél op de server. Tot nu toe kwam je daar alleen bij door de hele pagina te herladen. In deze les haalt JavaScript ze zelf op.
+
+## Een endpoint dat data teruggeeft
+
+Je `/berichten` geeft een complete pagina terug: HTML met koppen, een lijst en een link. Handig voor de browser, lastig voor JavaScript — dat wil de berichten zelf, niet de opmaak eromheen.
+
+Maak er een tweede endpoint naast dat alleen de data geeft:
+
+```python
+@app.get("/api/berichten")
+async def api_berichten():
+    with SqliteDict("gastenboek.db") as db:
+        return list(db.values())
+```
+
+Ga er in je browser naartoe en je ziet JSON:
+
+```json
+[{"naam":"Jan","bericht":"Hallo"},{"naam":"Sarah","bericht":"Leuke site"}]
+```
+
+Dat is precies wat je in [Je eerste endpoint](/docs/FastAPI/eerste_endpoint) al maakte. Je app serveert nu allebei: pagina's voor de browser, data voor je JavaScript. De `/api/`-voorvoegsel is geen regel van FastAPI, maar een gewoonte die meteen laat zien waar je aan toe bent.
+
+## Het ophalen
+
+```javascript
+const antwoord = await fetch("/api/berichten");
+const berichten = await antwoord.json();
+```
+
+`fetch` doet hetzelfde als je browser doet bij het opvragen van een pagina — een GET-verzoek — maar dan zonder de pagina te vervangen. Je krijgt het antwoord terug in je code.
+
+Die `await` is nieuw. Een verzoek over het netwerk duurt even, en `await` zegt: wacht hier tot het antwoord er is, en ga dan verder. Een functie die `await` gebruikt moet zelf `async` zijn:
+
+```javascript
+async function laadBerichten() {
+    const antwoord = await fetch("/api/berichten");
+    const berichten = await antwoord.json();
+    console.log(berichten);
+}
+```
+
+## Er iets mee doen
+
+`berichten` is nu een gewone array met objecten. Daar maak je lijstitems van:
+
+```javascript
+const lijst = document.querySelector("#berichten-lijst");
+
+async function laadBerichten() {
+    const antwoord = await fetch("/api/berichten");
+    const berichten = await antwoord.json();
+
+    lijst.textContent = "";
+    for (const bericht of berichten) {
+        const item = document.createElement("li");
+        item.textContent = bericht.naam + ": " + bericht.bericht;
+        lijst.append(item);
+    }
+}
+```
+
+`lijst.textContent = ""` maakt de lijst eerst leeg, zodat je bij een tweede klik niet alles dubbel krijgt.
+
+<details>
+<summary>Waarom createElement en niet innerHTML?</summary>
+
+Je kunt een lijst ook in één regel bouwen:
+
+```javascript
+lijst.innerHTML = berichten.map(b => `<li>${b.naam}: ${b.bericht}</li>`).join("");
+```
+
+Korter, en fout. `innerHTML` leest wat erin gaat als HTML. Staat er in een bericht `<script>alert(1)</script>`, dan maakt de browser daar een echt script van en voert het uit. Alles wat een bezoeker in je formulier typt komt zo in je pagina terecht als code.
+
+Bij je Jinja2-template speelt dat niet: die zet `<` en `>` automatisch om naar onschadelijke tekst. Maar dat doet Jinja2 voor je, en `innerHTML` doet het niet.
+
+`textContent` zet er altijd tekst neer, nooit HTML. Daarom bouw je de elementen los op met `createElement`.
+
+</details>
+
+## Testen
+
+1. Zet de knop en de lege lijst in je template:
+
+```html
+<button id="laad-knop">Laad berichten</button>
+<ul id="berichten-lijst"></ul>
+```
+
+2. Koppel de functie: `knop.addEventListener("click", laadBerichten);`
+3. Klik, en kijk in de terminal waar `fastapi dev` draait
+
+Nu zie je er wél een verzoek bijkomen — naar `/api/berichten`. Anders dan bij de teller praat je hier met de server. Het verschil met een gewone link: de pagina blijft staan, alleen de lijst verandert.
+
+:::danger[Gaat er iets mis?]
+Blijft de lijst leeg? Open de console (F12) en kijk bij Network of het verzoek naar `/api/berichten` slaagt. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
+:::
+
+## Opdrachten
+
+### Opdracht 1: Predict - Wat staat er in de console?
+
+```javascript
+async function laadBerichten() {
+    const antwoord = await fetch("/api/berichten");
+    console.log(antwoord);
+}
+```
+
+**Vraag:** zie je nu de berichten?
+
+<details>
+<summary>Tip</summary>
+
+Er staan twee `await`s in het voorbeeld hierboven. Deze code heeft er maar één.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Nee. Je ziet een `Response`-object: de envelop van het antwoord, met de status en de headers. De inhoud zit er nog ingepakt. `await antwoord.json()` pakt hem uit en geeft je de array.
+
+</details>
+
+### Opdracht 2: Run
+
+Maak het `/api/berichten` endpoint, de knop en de functie. Klik en controleer dat je berichten verschijnen zonder dat de pagina verspringt.
+
+### Opdracht 3: Investigate - Await weglaten
+
+Haal de `await` weg bij `fetch` en kijk wat er gebeurt:
+
+```javascript
+async function laadBerichten() {
+    const antwoord = fetch("/api/berichten");
+    const berichten = await antwoord.json();
+}
+```
+
+<details>
+<summary>Antwoord</summary>
+
+Je krijgt `TypeError: antwoord.json is not a function`.
+
+Zonder `await` krijg je geen antwoord maar een **belofte**: een bonnetje waarmee je het antwoord later kunt ophalen. Op zo'n bonnetje zit geen `.json()`. `await` wisselt het bonnetje in voor het echte antwoord.
+
+</details>
+
+### Opdracht 4: Make - Automatisch verversen
+
+Laat de lijst zichzelf elke vijf seconden bijwerken, zonder knop.
+
+<details>
+<summary>Tip</summary>
+
+`setInterval(functie, 5000)` roept een functie elke vijf seconden aan. Roep `laadBerichten()` ook één keer meteen aan, anders blijft de lijst de eerste vijf seconden leeg.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```javascript
+laadBerichten();
+setInterval(laadBerichten, 5000);
+```
+
+Open je pagina in twee tabbladen. Verstuur in het ene een bericht en kijk in het andere: binnen vijf seconden staat het er, zonder dat je iets hebt aangeklikt.
+
+</details>
+
+### Opdracht 5: Make - Versturen zonder herladen
+
+Laat het formulier zijn bericht met `fetch` versturen, zodat de pagina blijft staan en de lijst daarna zichzelf bijwerkt.
+
+<details>
+<summary>Tip</summary>
+
+`event.preventDefault()` houdt tegen dat de browser het formulier op de gewone manier verstuurt. Met `new FormData(formulier)` pak je de ingevulde velden in, en die kun je als `body` meegeven aan `fetch`. Je endpoint hoeft niet te veranderen: `Form(...)` begrijpt dit net zo goed.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```javascript
+const formulier = document.querySelector("#bericht-formulier");
+
+formulier.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    await fetch("/gastenboek", {
+        method: "POST",
+        body: new FormData(formulier)
+    });
+
+    formulier.reset();
+    laadBerichten();
+});
+```
+
+Je Python-code blijft precies hetzelfde. Een formulier dat de browser verstuurt en een `fetch` met `FormData` sturen dezelfde soort verzoek; jouw endpoint met `Form(...)` merkt het verschil niet.
+
+Wat er wél verandert: de redirect uit [Terug naar de lijst](/docs/FastAPI/redirect) heb je niet meer nodig. Die was er om te voorkomen dat F5 je bericht opnieuw verstuurt — maar er ís geen paginawissel meer, dus dat probleem bestaat niet. Laat het endpoint wel gewoon werken zonder JavaScript: wie het formulier op de normale manier verstuurt moet nog steeds netjes op de lijst uitkomen.
+
+</details>
+
+## Oefen met Python
+
+:::info[Python oefenblok]
+Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
+:::
+
+<CodeExercise>
+{`# Wat je endpoint teruggeeft, is precies wat je JavaScript binnenkrijgt
+import json
+
+berichten = [
+    {"naam": "Jan", "bericht": "Hallo"},
+    {"naam": "Sarah", "bericht": "Leuke site"}
+]
+
+# FastAPI doet dit voor je bij het versturen
+print(json.dumps(berichten))
+
+# En dit is wat await antwoord.json() aan de andere kant oplevert
+binnen = json.loads(json.dumps(berichten))
+for bericht in binnen:
+    print(f"{bericht['naam']}: {bericht['bericht']}")`}
+</CodeExercise>

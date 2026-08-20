@@ -2,8 +2,6 @@
 sidebar_position: 4
 ---
 
-import CodeExercise from '@site/src/components/CodeExercise';
-
 # Static files
 
 In de vorige les zette je CSS in een `<style>` tag in je Python code. Dat wordt snel rommelig. In deze les leer je hoe je bestanden (CSS, afbeeldingen, etc.) in een aparte folder zet.
@@ -225,33 +223,3 @@ async def groen():
 
 </details>
 
-## Oefen met Python
-
-:::info[Python oefenblok]
-Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
-:::
-
-<CodeExercise>
-{`# Bestanden en paden
-import os.path
-
-# Bestandspaden samenvoegen
-map_naam = "static"
-bestand = "style.css"
-pad = f"{map_naam}/{bestand}"
-print(f"Pad: {pad}")
-
-# Extensie controleren
-bestanden = ["index.html", "style.css", "foto.png", "data.json"]
-
-html_bestanden = [b for b in bestanden if b.endswith(".html")]
-css_bestanden = [b for b in bestanden if b.endswith(".css")]
-
-print(f"HTML: {html_bestanden}")
-print(f"CSS: {css_bestanden}")
-
-# Pad splitsen
-volledig_pad = "static/pages/index.html"
-delen = volledig_pad.split("/")
-print(f"Map: {delen[0]}, Submap: {delen[1]}, Bestand: {delen[2]}")`}
-</CodeExercise>

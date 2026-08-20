@@ -311,6 +311,65 @@ Controles horen altijd óók op de server: `maxlength` en `required` in je HTML 
 
 </details>
 
+<details>
+<summary>Data ophalen bij je eigen server (fetch)</summary>
+
+Endpoint dat data teruggeeft:
+
+```python
+@app.get("/api/berichten")
+async def api_berichten():
+    with SqliteDict("gastenboek.db") as db:
+        return list(db.values())
+```
+
+En in je JavaScript:
+
+```javascript
+async function laadBerichten() {
+    const antwoord = await fetch("/api/berichten");
+    const berichten = await antwoord.json();
+
+    for (const bericht of berichten) {
+        const item = document.createElement("li");
+        item.textContent = bericht.naam;
+        lijst.append(item);
+    }
+}
+```
+
+**Let op:** twee keer `await` — één voor het verzoek, één voor het uitpakken.
+
+</details>
+
+<details>
+<summary>Een formulier versturen zonder de pagina te herladen</summary>
+
+```javascript
+formulier.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    await fetch("/gastenboek", { method: "POST", body: new FormData(formulier) });
+    formulier.reset();
+});
+```
+
+Je `Form(...)`-endpoint hoeft niet te veranderen.
+
+</details>
+
+<details>
+<summary>Je server openzetten voor het netwerk</summary>
+
+```bash
+fastapi dev main.py --host 0.0.0.0
+```
+
+Zoek je adres met `ipconfig` (Windows) of `ip addr` (macOS/Linux) en geef `http://<jouw-adres>:8000` door.
+
+**Let op:** iedereen op hetzelfde netwerk kan er dan bij.
+
+</details>
+
 ## Database (sqlitedict)
 
 <details>
