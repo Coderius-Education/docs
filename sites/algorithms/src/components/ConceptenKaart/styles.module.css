@@ -1,0 +1,137 @@
+.scroller {
+  overflow-x: auto;
+}
+
+.kaart {
+  /* Maten gespiegeld in index.tsx (NODE_H en GAP). */
+  --node-hoogte: 44px;
+  --rij-gap: 10px;
+  display: grid;
+  grid-template-columns: 1fr minmax(120px, 240px) 1fr;
+  min-width: 720px;
+}
+
+.kolom {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rij-gap);
+}
+
+.koppen {
+  display: grid;
+  grid-template-columns: 1fr minmax(120px, 240px) 1fr;
+  min-width: 720px;
+  margin-bottom: 0.75rem;
+}
+
+.kolomkop {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ifm-color-emphasis-600);
+  margin: 0;
+}
+
+.kolomkop:last-child {
+  text-align: left;
+}
+
+.lijnen {
+  width: 100%;
+  height: var(--kaart-hoogte);
+  display: block;
+}
+
+.lijn {
+  fill: none;
+  stroke: var(--ifm-color-emphasis-300);
+  stroke-width: 1.5;
+  pointer-events: none;
+  transition: opacity 150ms ease;
+}
+
+.lijnGedimd {
+  opacity: 0.25;
+}
+
+.lijnActief {
+  stroke: var(--ifm-color-primary);
+  stroke-width: 2.5;
+  opacity: 1;
+}
+
+.node {
+  height: var(--node-hoogte);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0 0.75rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-align: left;
+  transition: opacity 150ms ease, border-color 150ms ease;
+}
+
+.nodeLinks {
+  text-align: right;
+}
+
+.node:hover {
+  border-color: var(--ifm-color-primary);
+}
+
+.nodeActief {
+  border-color: var(--ifm-color-primary);
+  background: var(--ifm-hover-overlay);
+}
+
+.nodeGedimd {
+  opacity: 0.25;
+}
+
+.nodeLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.teller {
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-600);
+  flex-shrink: 0;
+}
+
+.paneel {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 8px;
+  background: var(--ifm-background-surface-color);
+  min-height: 7rem;
+}
+
+.paneelKop {
+  margin: 0 0 0.5rem;
+}
+
+.paneelLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lijn,
+  .node {
+    transition: none;
+  }
+}

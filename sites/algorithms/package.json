@@ -12,7 +12,8 @@
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
     "typecheck": "tsc",
-    "test:traces": "node scripts/test-traces.mjs"
+    "test:traces": "node scripts/test-traces.mjs",
+    "test:voorkennis": "node scripts/check-voorkennis.mjs"
   },
   "dependencies": {
     "@coderius/shared": "workspace:*",
