@@ -1,0 +1,112 @@
+---
+sidebar_position: 7
+---
+
+# 14.7 Torens van Hanoi op tafel
+
+<Handout>
+
+Verplaats een toren van schijven van de ene plek naar de andere, met één
+simpele beperking — en ontdek al spelend de formule én het recept dat je
+later in code giet.
+
+## Wat je nodig hebt
+
+- Vijf "schijven" van verschillende grootte per tweetal: muntjes van
+  klein naar groot, of vijf papiertjes genummerd 1 (kleinste) t/m 5
+  (grootste).
+- Drie vakken naast elkaar op tafel, gemarkeerd **A**, **B** en **C**
+  (drie briefjes volstaan).
+- Ongeveer 20 minuten.
+
+## De spelregels
+
+Start: alle schijven op vak A, grootste onderop, kleinste bovenop. Doel:
+de hele toren naar vak C.
+
+1. Verplaats één schijf per beurt, altijd de bovenste van een stapel.
+2. Een schijf mag nooit op een kleinere schijf liggen.
+
+## Werkvorm 1 — tel de zetten
+
+Los de puzzel op met 1 schijf, dan 2, dan 3, dan 4. Eén leerling
+verplaatst, de ander telt de zetten. Zoek per toren het **kleinste**
+aantal — opnieuw beginnen mag zo vaak je wilt.
+
+| Schijven | Minimaal aantal zetten |
+|:---:|:---:|
+| 1 |  |
+| 2 |  |
+| 3 |  |
+| 4 |  |
+| 5 | (voorspel eerst, speel dan) |
+
+## Werkvorm 2 — het patroon
+
+1. Kijk naar je rij getallen. Hoe kom je van elk getal bij het
+   volgende? Regel: ____________________
+2. Voorspel met die regel het aantal voor 5 schijven en controleer door
+   te spelen. Klopte het?
+3. Een oude legende: monniken verplaatsen een toren van **64** schijven,
+   één zet per seconde. Schat zonder precies te rekenen: duurt dat
+   minuten, jaren, of langer dan het heelal oud is?
+
+## Werkvorm 3 — het recept
+
+Speel nog een keer met 4 schijven en let alleen op de **grootste**
+schijf (nummer 5 doet niet mee, dus nummer 4).
+
+1. Wat moet er met de drie schijven erbóven gebeuren voordat de
+   grootste van A naar C kan? En op welk vak staan ze op dat moment?
+2. De grootste staat op C. Wat is nu nog de opdracht — en waarom is dat
+   precies dezelfde puzzel, maar kleiner?
+3. Schrijf het recept in drie regels op:
+   - Verplaats eerst ____________________ naar ____.
+   - Verplaats dan ____________________ naar ____.
+   - Verplaats tot slot ____________________ naar ____.
+
+## Bespreek na
+
+- Elke schijf erbij verdubbelt (ruwweg) het werk. Bij welke algoritmes
+  uit deze cursus zag je juist het omgekeerde — elke verdubbeling van de
+  invoer kost maar één stap extra?
+- Het recept uit werkvorm 3 gebruikt zichzelf voor een kleinere toren.
+  Waar houdt dat op?
+
+<div style={{breakBefore: 'page'}}>
+
+## Antwoorden
+
+Deze pagina print als losse laatste pagina — houd hem achter de hand of
+knip hem eraf.
+
+**Werkvorm 1**: 1, 3, 7, 15 — en 5 schijven kost 31 zetten.
+
+**Werkvorm 2**: elk getal is het dubbele van het vorige plus 1
+(`3 = 2·1 + 1`, `7 = 2·3 + 1`, …). Dat is de rij `2ⁿ − 1`. Voor de
+monniken: `2⁶⁴ − 1` zetten is ruim 18 triljoen — met één zet per seconde
+zo'n 580 miljard jaar, ruim veertig keer de leeftijd van het heelal.
+
+**Werkvorm 3**: de drie bovenste schijven moeten éérst compleet naar
+hulpvak **B**, dan pas kan de grootste van A naar C, en daarna is de
+opdracht "verplaats een toren van drie van B naar C" — dezelfde puzzel
+met één schijf minder. Het recept:
+
+1. Verplaats de toren-op-één-na (bovenste n − 1) naar het hulpvak.
+2. Verplaats de grootste schijf naar het doelvak.
+3. Verplaats de toren-op-één-na van het hulpvak naar het doelvak.
+
+Het houdt op bij een toren van één schijf: die verplaats je gewoon. Dat
+recept-in-zichzelf is recursie — precies wat je in de les in drie regels
+Python schrijft.
+
+</div>
+
+## Verder op de site
+
+- [12.1 Speel het spel](/docs/hanoi/01-spel) — dezelfde puzzel digitaal
+- [12.2 Op zoek naar patronen](/docs/hanoi/02-patronen) — de patronen
+  uit werkvorm 2 en 3, met uitleg
+- [12.4 Bouwen](/docs/hanoi/04-bouwen-een-zet) — het recept in Python
+
+</Handout>

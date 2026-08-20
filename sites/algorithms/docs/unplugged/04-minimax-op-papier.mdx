@@ -1,0 +1,120 @@
+---
+sidebar_position: 4
+---
+
+# 14.4 De perfecte speler — minimax op papier
+
+<Handout>
+
+Een computer die nooit verliest met boter-kaas-en-eieren rekent vooruit:
+"als ik dit doe, wat doet mijn tegenstander dan?" Dat vooruitrekenen heet
+minimax, en je voert het hier zelf uit met potlood en papier.
+
+## Wat je nodig hebt
+
+- Een geprinte hand-out en een potlood per tweetal.
+- Ongeveer 20 minuten.
+
+De ene leerling is **MAX** (wil de uitkomst zo hoog mogelijk), de ander
+is **MIN** (wil hem zo laag mogelijk). Jullie rekenen samen, maar ieder
+bewaakt zijn eigen keuzes.
+
+## Deel 1 — de boom met cijfers
+
+MAX mag kiezen uit tak A, B of C. Daarna kiest MIN uit twee opties. De
+cijfers onderaan zijn de uitkomsten (hoog = goed voor MAX, laag = goed
+voor MIN).
+
+```
+                  MAX
+              ╱    │    ╲
+             A     B     C
+             │     │     │
+            MIN   MIN   MIN
+            ╱╲    ╱╲    ╱╲
+           4  7  8  1  5  6
+```
+
+1. MIN kiest altijd het **laagste** van zijn twee opties. Schrijf onder
+   elke MIN-knoop op wat MIN daar kiest: A = ____, B = ____, C = ____.
+2. MAX kiest daarna het **hoogste** van die drie. Welke tak kiest MAX,
+   en welke uitkomst garandeert dat? Tak ____, uitkomst ____.
+3. Tak B heeft de hoogste uitkomst van het hele bord (de 8). Waarom
+   kiest MAX hem toch niet?
+
+## Deel 2 — echt boter-kaas-en-eieren
+
+X is aan zet (X = MAX, O = MIN). Drie vakjes zijn nog leeg; we noemen ze
+links, midden en rechts (de onderste rij).
+
+```
+ O | X | X
+-----------
+ X | O | O
+-----------
+ . | . | .
+```
+
+Uitkomsten: X wint = +1, O wint = −1, vol bord zonder winnaar = 0.
+
+1. Kijk eerst goed naar het bord: welke dreiging heeft O?
+2. Werk voor **elk** van de drie X-zetten uit hoe het spel verder gaat.
+   Na X's zet kiest O (MIN kiest de laagste uitkomst), daarna is het
+   laatste vakje gedwongen. Schrijf per X-zet de eind-uitkomst op:
+   links = ____, midden = ____, rechts = ____.
+3. X kiest het hoogste. Welke zet is dat, en wat is de uitkomst bij
+   perfect spel van beide kanten?
+
+## Deel 3 — speel het na
+
+Speel de positie uit Deel 2 twee keer echt uit, om de beurt als X.
+De X-speler moet hardop zijn minimax-redenering geven vóór elke zet;
+de O-speler probeert te winnen. Lukt het O ooit als X zich aan de
+berekening houdt?
+
+## Bespreek na
+
+- MIN "helpt" MAX nooit. Waarom is rekenen met een tegenstander die
+  fouten maakt gevaarlijker dan rekenen met een perfecte tegenstander?
+- Hoeveel borden moest je in Deel 2 uitwerken? En hoeveel zouden het er
+  zijn vanaf een leeg bord? (Daarom laat je dit een computer doen.)
+
+<div style={{breakBefore: 'page'}}>
+
+## Antwoorden
+
+Deze pagina print als losse laatste pagina — houd hem achter de hand of
+knip hem eraf.
+
+**Deel 1**: MIN kiest A = 4, B = 1, C = 5. MAX kiest tak **C** met
+uitkomst **5**. Tak B is een valstrik: de 8 staat er wel, maar MIN
+kiest daar de 1 — MAX moet rekenen met wat MIN dóét, niet met wat er
+te halen valt.
+
+**Deel 2**: O dreigt te winnen via de diagonaal linksboven-rechtsonder
+(twee O's, alleen rechtsonder nog leeg).
+
+| X-zet | Vervolg | Uitkomst |
+|:---:|---|:---:|
+| links | O pakt rechtsonder: diagonaal O-O-O | **−1** |
+| midden | O pakt rechtsonder: diagonaal O-O-O | **−1** |
+| rechts | O's dreiging is geblokt; beide vervolgen eindigen vol zonder winnaar | **0** |
+
+X speelt **rechts** (de blokkade) en de uitkomst bij perfect spel is
+**0** (remise). Het mooie: X hoeft "blokken" niet als regel te kennen —
+de berekening wijst de blokkade vanzelf aan.
+
+**Deel 3**: nee — vanaf deze positie kan O bij perfect X-spel nooit
+meer winnen.
+
+</div>
+
+## Verder op de site
+
+- [9.1 Minimax — het idee](/docs/minimax/01-concept)
+- [9.2 Doe het met pen en papier](/docs/minimax/02-pen-en-papier) —
+  dezelfde methode, voorgedaan op een andere positie
+- [9.4 Het bord in Python](/docs/minimax/04-bord-in-python) — hierna
+  bouw je de speler in Python
+
+</Handout>
