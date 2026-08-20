@@ -7,7 +7,7 @@ title: Verbinden
 
 ## Onderdelen
 
-- 3D-geprinte TOF-houder: [download op GitHub](https://github.com/Coderius-Education/robotica-docs/blob/main/docs/Competities/RoboCup-Junior/Redden-Basis/3d_models/TOF%20Mount%20-%20main.stl).
+- 3D-geprinte TOF-houder: [download op GitHub](https://github.com/Coderius-Education/docs/blob/main/sites/robotica/docs/Competities/RoboCup-Junior/Redden-Basis/3d_models/TOF%20Mount%20-%20main.stl).
 - Een **M2x5mm-schroefje** om de sensor in de houder vast te zetten. Vraag je docent.
 
 ## Aan Lego bevestigen

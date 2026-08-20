@@ -45,7 +45,7 @@ Als je tijdens een tutorial een menu-item niet kunt vinden:
 
 1. Typ de naam in de **zoekbalk** bovenin Project Settings (werkt voor de meeste settings).
 2. Bekijk de officiële [Godot Docs](https://docs.godotengine.org/) voor jouw versie.
-3. Meld het op de [GitHub-repository van dit curriculum](https://github.com/Coderius-Education/Godot/issues) — dan kunnen we de tutorial bijwerken.
+3. Meld het op de [GitHub-repository van dit curriculum](https://github.com/Coderius-Education/docs/issues) — dan kunnen we de tutorial bijwerken.
 
 ## Externe afhankelijkheden
 

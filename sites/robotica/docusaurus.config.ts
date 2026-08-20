@@ -1,6 +1,6 @@
 import { createConfig } from '@coderius/shared/config';
+import { REPO_URL, repoEditUrl } from '@coderius/shared/sites';
 
-const organizationName = 'Coderius-Education';
 const projectName = 'robotica-docs';
 
 export default createConfig({
@@ -19,11 +19,11 @@ export default createConfig({
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          editUrl: `https://github.com/${organizationName}/${projectName}/tree/main/`,
+          editUrl: repoEditUrl('robotica'),
         },
         blog: {
           showReadingTime: true,
-          editUrl: `https://github.com/${organizationName}/${projectName}/tree/main/`,
+          editUrl: repoEditUrl('robotica'),
         },
         theme: { customCss: './src/css/custom.css' },
       },
@@ -84,7 +84,7 @@ export default createConfig({
           docsPluginId: 'click_golfer',
         },
         {
-          href: 'https://github.com/Coderius-Education/robotica-docs',
+          href: REPO_URL,
           label: 'GitHub',
           position: 'right',
         },

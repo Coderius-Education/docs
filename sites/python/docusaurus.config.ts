@@ -1,4 +1,5 @@
 import { createConfig } from '@coderius/shared/config';
+import { REPO_URL } from '@coderius/shared/sites';
 
 export default createConfig({
   title: 'Python Leren — Coderius',
@@ -43,7 +44,7 @@ export default createConfig({
         { to: '/begrippenlijst', label: 'Begrippenlijst', position: 'left' },
         { to: '/hulp', label: 'Hulp', position: 'left' },
         {
-          href: 'https://github.com/Coderius-Education/python-docs',
+          href: REPO_URL,
           label: 'GitHub',
           position: 'right',
         },

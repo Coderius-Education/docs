@@ -110,6 +110,25 @@ const HOME = {
   description: 'Alle cursussen op één plek.',
 };
 
+// Alle cursussen en gedeelde packages leven sinds de samenvoeging in één
+// monorepo. De losse per-cursus repo's (web-docs, Godot, python-docs, …)
+// bestaan niet meer, dus verwijs daar nergens meer naar — vandaar dat ook deze
+// URL hier staat en niet in dertien losse configs.
+const REPO_URL = 'https://github.com/Coderius-Education/docs';
+const REPO_BRANCH = 'main';
+
+/**
+ * Basis-URL voor Docusaurus' `editUrl` van één cursus. Docusaurus plakt daar
+ * het pad van het bronbestand achter, gerekend vanaf de map van de site — dus
+ * `docs/FastAPI/links.mdx` wordt
+ * `…/tree/main/sites/fullstack/docs/FastAPI/links.mdx`.
+ *
+ * @param {string} siteFolder mapnaam onder `sites/`, bv. 'fullstack'
+ */
+function repoEditUrl(siteFolder) {
+  return `${REPO_URL}/tree/${REPO_BRANCH}/sites/${siteFolder}/`;
+}
+
 const SITES_BY_ID = Object.fromEntries(SITES.map((s) => [s.id, s]));
 
 // Normaliseer een url voor vergelijking (trailing slash weg).
@@ -123,4 +142,12 @@ function siteByUrl(url) {
   return SITES.find((s) => normalizeUrl(s.url) === norm);
 }
 
-module.exports = { SITES, SITES_BY_ID, HOME, siteByUrl, normalizeUrl };
+module.exports = {
+  SITES,
+  SITES_BY_ID,
+  HOME,
+  REPO_URL,
+  repoEditUrl,
+  siteByUrl,
+  normalizeUrl,
+};

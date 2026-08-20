@@ -1,4 +1,5 @@
 import { createConfig } from '@coderius/shared/config';
+import { REPO_URL, repoEditUrl } from '@coderius/shared/sites';
 
 export default createConfig({
   title: 'Fullstack met FastAPI — Coderius',
@@ -21,7 +22,7 @@ export default createConfig({
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          editUrl: 'https://github.com/Coderius-Education/fullstack/tree/main/',
+          editUrl: repoEditUrl('fullstack'),
         },
         blog: false,
       },
@@ -39,7 +40,7 @@ export default createConfig({
         { type: 'doc', docId: 'troubleshooting', position: 'left', label: 'Er gaat iets mis' },
         { to: '/project-checken', label: 'Project checken', position: 'left' },
         {
-          href: 'https://github.com/Coderius-Education/fullstack',
+          href: REPO_URL,
           label: 'GitHub',
           position: 'right',
         },

@@ -10,9 +10,9 @@ Voordat je de motoren kunt laten draaien, moeten ze stevig vastzitten aan je fra
 
 ## Benodigde onderdelen (klik voor preview)
 
-1. [Tandwiel](https://github.com/Coderius-Education/robotica-docs/blob/main/docs/Competities/RoboCup-Junior/Redden-Basis/3d_models/v3/32270_TT_motor.stl)
-2. [Vleugels (deel 2)](https://github.com/Coderius-Education/robotica-docs/blob/main/docs/Competities/RoboCup-Junior/Redden-Basis/3d_models/v3/Lego-TT_2.0_Deel2_vleugels.stl)
-3. [Deel 1](https://github.com/Coderius-Education/robotica-docs/blob/main/docs/Competities/RoboCup-Junior/Redden-Basis/3d_models/v3/Lego-TT_2.0_Deel1.stl)
+1. [Tandwiel](https://github.com/Coderius-Education/docs/blob/main/sites/robotica/docs/Competities/RoboCup-Junior/Redden-Basis/3d_models/v3/32270_TT_motor.stl)
+2. [Vleugels (deel 2)](https://github.com/Coderius-Education/docs/blob/main/sites/robotica/docs/Competities/RoboCup-Junior/Redden-Basis/3d_models/v3/Lego-TT_2.0_Deel2_vleugels.stl)
+3. [Deel 1](https://github.com/Coderius-Education/docs/blob/main/sites/robotica/docs/Competities/RoboCup-Junior/Redden-Basis/3d_models/v3/Lego-TT_2.0_Deel1.stl)
 
 ## Verbinden met Lego
 

@@ -1,4 +1,5 @@
 import { createConfig, prismThemes } from '@coderius/shared/config';
+import { REPO_URL, repoEditUrl } from '@coderius/shared/sites';
 
 export default createConfig({
   title: 'DVWA Websecurity — Coderius',
@@ -23,7 +24,7 @@ export default createConfig({
           path: 'docs',
           routeBasePath: 'docs',
           sidebarPath: './sidebars.js',
-          editUrl: 'https://github.com/Coderius-Education/DVWA/tree/main/',
+          editUrl: repoEditUrl('dvwa'),
         },
         blog: false,
       },
@@ -60,7 +61,7 @@ export default createConfig({
           ],
         },
         { to: '/docs/cheatsheet', label: 'Cheatsheet', position: 'left' },
-        { href: 'https://github.com/Coderius-Education/DVWA', label: 'GitHub', position: 'right' },
+        { href: REPO_URL, label: 'GitHub', position: 'right' },
       ],
     },
     footer: {
