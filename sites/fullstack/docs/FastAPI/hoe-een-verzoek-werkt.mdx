@@ -1,0 +1,37 @@
+---
+sidebar_position: 19
+---
+
+import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
+
+# Hoe een verzoek werkt
+
+Je hebt alle stukken gebouwd: endpoints, templates, een database, een formulier en JavaScript. Hier zie je ze een keer achter elkaar, zoals ze bij één klik samenwerken.
+
+Links staat wat er in de browser gebeurt, rechts wat er op de server gebeurt. Een blauwe rand betekent dat er iets over het netwerk gaat.
+
+<VerzoekCyclus variant="get" />
+
+Tussen stap 6 en 7 gebeurt het belangrijkste van de hele cursus: er gaat **alleen HTML** over de lijn. Je database blijft op de server, je Python-code ook. De browser krijgt het resultaat, niet de weg ernaartoe. Wie de broncode van je pagina bekijkt ziet de berichten, maar niet hoe je ze hebt opgehaald.
+
+## En als je iets verstuurt
+
+Een formulier volgt hetzelfde patroon, maar eindigt anders: niet met een pagina, maar met een omleiding.
+
+<VerzoekCyclus variant="post" />
+
+De laatste stap start het eerste diagram opnieuw. Dat is het post/redirect/get-patroon uit [Terug naar de lijst](/docs/FastAPI/redirect): versturen en tonen zijn twee losse verzoeken, zodat F5 de pagina herlaadt in plaats van je bericht nog een keer op te sturen.
+
+## Waar hoort jouw code
+
+Kom je vast te zitten bij een nieuwe functie, zoek dan eerst de stap op waar hij thuishoort:
+
+| Wat je wilt | Welke stap | Waar het staat |
+|---|---|---|
+| Een nieuwe pagina bereikbaar maken | 3 | `@app.get(...)` in `main.py` |
+| Iets uit de database halen | 4 | in je endpoint-functie |
+| Bepalen hoe het eruitziet | 5 | je template in `templates/` |
+| Reageren op klikken en typen | 7 | `static/js/app.js` |
+| Controleren wat een bezoeker instuurt | POST, stap 4 | in je endpoint-functie, nooit alleen in de HTML |
+
+De laatste regel is de valkuil. Stap 1 van het formulier gebeurt in de browser, en die is van de bezoeker — zie [Server of browser?](/docs/FastAPI/server-of-browser).
