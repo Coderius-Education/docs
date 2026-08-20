@@ -1,0 +1,240 @@
+---
+sidebar_position: 5
+description: Een verzameling zonder dubbelen. Wanneer je een set gebruikt in plaats van een lijst, en hoe add en in werken.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 12 Sets
+
+Je kent lijsten en dictionaries. Er is nog één datatype dat je vaak
+tegenkomt: kijk wat er gebeurt als je een lijst met dubbele namen in
+`set()` stopt.
+
+```python
+stemmen = ["Sara", "Alex", "Sara", "Maria", "Alex", "Sara"]
+
+unieke_stemmers = set(stemmen)
+print(unieke_stemmers)       # {'Maria', 'Alex', 'Sara'}
+print(len(unieke_stemmers))  # 3
+```
+
+Een **set** is een verzameling waarin elk element maar **één keer**
+voorkomt. Dubbelen verdwijnen vanzelf. En de volgorde? Die is er niet:
+een set onthoudt niet wat er eerst kwam, dus de volgorde van de print
+kan bij jou anders zijn.
+
+## Een set maken
+
+Met accolades, net als een dictionary — maar zonder dubbele punten:
+
+```python
+kleuren = {"rood", "groen", "blauw"}
+```
+
+**Let op:** `{}` maakt een lege *dictionary*, geen lege set. Een lege
+set maak je met `set()`:
+
+```python
+leeg = set()
+print(leeg)   # set()
+```
+
+## Toevoegen en checken
+
+Voor een set heb je maar drie handelingen nodig:
+
+```python
+bezocht = set()
+
+bezocht.add("A")            # voeg toe
+bezocht.add("B")
+bezocht.add("A")            # stond er al: er verandert niets
+
+print("A" in bezocht)       # True
+print("C" in bezocht)       # False
+
+bezocht.remove("B")         # haal weg
+print(bezocht)              # {'A'}
+```
+
+`add` op iets dat er al in zit is geen fout — de set blijft
+onveranderd. Precies daarom is een set zo handig om bij te houden wat
+je al gehad hebt.
+
+## Set of lijst?
+
+| | lijst | set |
+|---|:---:|:---:|
+| Volgorde blijft bewaard | ja | nee |
+| Dubbele waardes | mogen | verdwijnen |
+| `waardes[0]` opvragen | ja | nee |
+| Snel checken met `in` | traag bij grote lijsten | altijd snel |
+
+Vuistregel: gaat het om de **volgorde** of om **posities**, kies een
+lijst. Gaat het alleen om de vraag *"zit dit erin?"*, kies een set.
+
+---
+
+## Opdracht 12.1: Unieke woorden
+
+Hieronder staat een lijst met woorden waarin dubbelen zitten. Print
+hoeveel **verschillende** woorden er zijn.
+
+Verwachte uitvoer:
+
+```
+Er zijn 4 verschillende woorden
+```
+
+<CodeExercise>{`woorden = ["appel", "peer", "appel", "banaan", "kers", "peer", "appel"]
+
+# Schrijf hier je code`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+`set(woorden)` gooit de dubbelen weg. `len()` werkt op een set net als
+op een lijst.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+woorden = ["appel", "peer", "appel", "banaan", "kers", "peer", "appel"]
+
+uniek = set(woorden)
+print(f"Er zijn {len(uniek)} verschillende woorden")
+```
+
+<CodeExercise>{`woorden = ["appel", "peer", "appel", "banaan", "kers", "peer", "appel"]
+
+uniek = set(woorden)
+print(f"Er zijn {len(uniek)} verschillende woorden")`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 12.2: Al geweest?
+
+Je loopt een route langs plekken, maar sommige plekken komen dubbel
+voor. Print bij elke plek of je er voor het eerst bent of al eerder
+geweest bent. Houd de bezochte plekken bij in een set.
+
+Verwachte uitvoer:
+
+```
+park: nieuw
+markt: nieuw
+park: al geweest
+school: nieuw
+markt: al geweest
+```
+
+<CodeExercise>{`route = ["park", "markt", "park", "school", "markt"]
+
+# Schrijf hier je code`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Begin met een lege set. Check in de loop eerst met `in` of de plek er
+al in zit, en voeg hem daarna toe met `add`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+route = ["park", "markt", "park", "school", "markt"]
+
+bezocht = set()
+for plek in route:
+    if plek in bezocht:
+        print(f"{plek}: al geweest")
+    else:
+        print(f"{plek}: nieuw")
+    bezocht.add(plek)
+```
+
+Dit patroon — een `bezocht`-set die je vult terwijl je loopt — kom je
+later vaak tegen, bijvoorbeeld in zoekalgoritmes.
+
+<CodeExercise>{`route = ["park", "markt", "park", "school", "markt"]
+
+bezocht = set()
+for plek in route:
+    if plek in bezocht:
+        print(f"{plek}: al geweest")
+    else:
+        print(f"{plek}: nieuw")
+    bezocht.add(plek)`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 12.3: Gemeenschappelijke hobby's (uitdaging)
+
+Twee leerlingen hebben elk een lijst hobby's. Print welke hobby's ze
+**allebei** hebben.
+
+Verwachte uitvoer (volgorde mag anders):
+
+```
+{'gamen', 'voetbal'}
+```
+
+<CodeExercise>{`hobbys_sara = ["gamen", "lezen", "voetbal", "tekenen"]
+hobbys_alex = ["voetbal", "gamen", "zwemmen"]
+
+# Schrijf hier je code`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Maak van allebei een set. Loop over de ene set en check met `in` of de
+hobby ook in de andere zit — of zoek op wat de `&`-operator met twee
+sets doet.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+hobbys_sara = ["gamen", "lezen", "voetbal", "tekenen"]
+hobbys_alex = ["voetbal", "gamen", "zwemmen"]
+
+samen = set(hobbys_sara) & set(hobbys_alex)
+print(samen)
+```
+
+De `&`-operator geeft de **doorsnede**: alles wat in beide sets zit.
+Met een loop en `in` kom je op hetzelfde antwoord.
+
+<CodeExercise>{`hobbys_sara = ["gamen", "lezen", "voetbal", "tekenen"]
+hobbys_alex = ["voetbal", "gamen", "zwemmen"]
+
+samen = set(hobbys_sara) & set(hobbys_alex)
+print(samen)`}</CodeExercise>
+
+</details>
+
+---
+
+## En nu?
+
+Gefeliciteerd. Je hebt de basis van Python onder de knie: variabelen,
+rekenen, tekst, beslissingen, herhaling, functies, lijsten,
+dictionaries en sets. Hiermee kun je echte programma's bouwen.
+
+Klaar om iets **visueels** te maken — animaties, kleine games, dingen
+die bewegen? Ga dan verder met [**play-docs**](https://play.coderius.nl/).
+Daar leer je hoe je met de `play`-bibliotheek vormen tekent, ze laat
+bewegen en reageert op toetsenbord en muis. Alle Python die je hier
+hebt geleerd, gebruik je daar opnieuw.

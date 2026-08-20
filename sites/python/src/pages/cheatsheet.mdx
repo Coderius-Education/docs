@@ -302,6 +302,29 @@ Een niet-bestaande sleutel opvragen geeft een `KeyError`.
 
 ---
 
+## Sets
+
+### Set maken
+
+```python
+kleuren = {"rood", "groen", "blauw"}
+uniek = set(["a", "b", "a"])   # {'a', 'b'} — dubbelen verdwijnen
+leeg = set()                   # let op: {} is een lege dictionary
+```
+
+### Toevoegen, checken, verwijderen
+
+```python
+bezocht = set()
+bezocht.add("A")         # toevoegen (dubbel toevoegen doet niets)
+print("A" in bezocht)    # True
+bezocht.remove("A")      # verwijderen
+```
+
+Een set heeft geen volgorde: `bezocht[0]` bestaat niet.
+
+---
+
 ## Veelvoorkomende fouten
 
 ```python

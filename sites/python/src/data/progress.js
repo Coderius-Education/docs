@@ -208,4 +208,15 @@ export const progressData = [
       Data: 8,
     },
   },
+  {
+    tutorial: '12. Sets',
+    levels: {
+      Basis: 8,
+      Variabelen: 8,
+      Logica: 7,
+      Herhaling: 8,
+      Functies: 8,
+      Data: 9,
+    },
+  },
 ];

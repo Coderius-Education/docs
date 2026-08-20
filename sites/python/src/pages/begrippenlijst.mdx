@@ -80,6 +80,15 @@ Het sleutelwoord dat je gebruikt aan heteinde van een functie, waarmee je het re
 ### Scope
 De "geldigheid" van een variabele. Variabelen die binnenin een functie worden aangemaakt hebben een *lokale scope*, wat betekent dat ze niet bestaan buiten het ingesprongen blok van die functie.
 
+### Set (`set`)
+Een verzameling waarin elk element maar één keer voorkomt en die geen volgorde heeft. Handig om bij te houden wat je al gehad hebt: toevoegen met `.add()`, checken met `in`.
+
+```python
+bezocht = set()
+bezocht.add("A")
+print("A" in bezocht)  # True
+```
+
 ### String (`str`)
 Het datatype voor tekst. Strings staan altijd tussen enkele of dubbele aanhalingstekens (quotes) om ze te onderscheiden van code of wiskunde.
 

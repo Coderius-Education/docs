@@ -144,6 +144,17 @@ export const knowledgeGraph = {
         { concept: 'herhaling', depth: 'Je leert complexe herhalingen.', level: 4 },
       ],
     },
+    {
+      id: 't12',
+      title: '12. Sets',
+      impact: [
+        {
+          concept: 'data',
+          depth: 'Je leert verzamelingen zonder dubbelen in een `set`.',
+          level: 4,
+        },
+      ],
+    },
   ],
   connections: [
     { from: 'basis', to: 'variabelen' },
