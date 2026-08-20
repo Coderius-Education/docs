@@ -68,7 +68,10 @@ for n in n_waarden:
 
 fig, ax = plt.subplots()
 for naam, fn in klassen:
-    ax.plot(n_waarden, [fn(n) for n in n_waarden], marker='o', label=naam)
+    stappen = []
+    for n in n_waarden:
+        stappen.append(fn(n))
+    ax.plot(n_waarden, stappen, marker='o', label=naam)
 ax.set_xscale('log')
 ax.set_yscale('log')
 ax.set_xlabel('lijstgrootte n (log-schaal)')
@@ -112,7 +115,10 @@ import math
 n_waarden = list(range(1, 51))
 
 def stappen_O1(n):       return 1
-def stappen_log_n(n):    return math.log2(n) if n > 0 else 0
+def stappen_log_n(n):
+    if n > 0:
+        return math.log2(n)
+    return 0
 def stappen_n(n):        return n
 def stappen_n2(n):       return n * n
 
@@ -125,7 +131,10 @@ klassen = [
 
 fig, ax = plt.subplots()
 for naam, fn in klassen:
-    ax.plot(n_waarden, [fn(n) for n in n_waarden], label=naam)
+    stappen = []
+    for n in n_waarden:
+        stappen.append(fn(n))
+    ax.plot(n_waarden, stappen, label=naam)
 ax.set_xlabel('lijstgrootte n')
 ax.set_ylabel('aantal stappen')
 ax.set_title('Lineaire schaal — n tot 50')

@@ -36,7 +36,10 @@ niet uit ranks die je deze ronde al hebt aangepast.
 # Al gebouwd in de vorige stappen:
 def startverdeling(web):
     n = len(web)
-    return {p: 1 / n for p in web}
+    verdeling = {}
+    for p in web:
+        verdeling[p] = 1 / n
+    return verdeling
 
 def nieuwe_rank(web, rank, p, d=0.85):
     n = len(web)
@@ -61,7 +64,9 @@ def pagerank(web, d=0.85, epsilon=1e-9):
 
 # === Tests ===
 r = pagerank(WEB)
-afgerond = {p: round(r[p], 4) for p in r}
+afgerond = {}
+for p in r:
+    afgerond[p] = round(r[p], 4)
 assert afgerond == {"A": 0.3725, "B": 0.1958, "C": 0.3941, "D": 0.0375}, afgerond
 assert round(sum(r.values()), 6) == 1.0
 
@@ -76,15 +81,19 @@ for p in sorted(r, key=lambda x: -r[x]):
 def pagerank(web, d=0.85, epsilon=1e-9):
     rank = startverdeling(web)
     while True:
-        nieuw = {p: nieuwe_rank(web, rank, p, d) for p in web}
-        verschil = max(abs(nieuw[p] - rank[p]) for p in web)
+        nieuw = {}
+        for p in web:
+            nieuw[p] = nieuwe_rank(web, rank, p, d)
+        verschil = 0.0
+        for p in web:
+            verschil = max(verschil, abs(nieuw[p] - rank[p]))
         rank = nieuw
         if verschil < epsilon:
             return rank
 ```
 
-De dict-comprehension berekent álle nieuwe ranks uit de oude `rank`
-voordat je `rank` overschrijft — precies wat je nodig hebt.
+De eerste loop bouwt álle nieuwe ranks uit de oude `rank` voordat je
+`rank` overschrijft — precies wat je nodig hebt.
 
 </details>
 

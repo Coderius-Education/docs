@@ -1,8 +1,13 @@
 .wrapper {
   position: relative;
-  font-family: var(--ifm-font-family-monospace);
-  font-size: 0.9rem;
-  line-height: 1.5;
+  /* Eén bron van waarheid voor de metriek die beide lagen exact moeten delen. */
+  --editor-font-family: var(--ifm-font-family-monospace);
+  --editor-font-size: 0.9rem;
+  --editor-line-height: 1.5;
+  --editor-padding: 0.85rem 1rem;
+  font-family: var(--editor-font-family);
+  font-size: var(--editor-font-size);
+  line-height: var(--editor-line-height);
   tab-size: 4;
   /* The wrapper's min-height is set inline from the minHeight prop;
      both children (highlight + textarea) are absolutely positioned to
@@ -11,21 +16,25 @@
   display: block;
 }
 
-/* The highlight layer and textarea share identical box-model and font
+/* The highlight layer and textarea must share identical box-model and font
    metrics so the caret position lines up with the painted tokens.
-   Both are absolutely positioned to fill the wrapper. */
+   !important is nodig: Docusaurus/Infima levert `pre:not(#\#):not(#\#)`
+   (specificity (2,0,1)) die op de <pre> het font-shorthand (95%/1.45),
+   margin, padding en overflow terugzet. Een module-class (0,1,0) verliest
+   daar altijd van; alleen !important houdt de highlight-<pre> en de
+   textarea pixel-identiek. Op de textarea is !important onschadelijk. */
 .highlight,
 .textarea {
   position: absolute;
   inset: 0;
-  margin: 0;
-  padding: 0.85rem 1rem;
+  margin: 0 !important;
+  padding: var(--editor-padding) !important;
   border: 0;
   box-sizing: border-box;
-  font-family: inherit;
-  font-size: inherit;
-  line-height: inherit;
-  tab-size: inherit;
+  font-family: var(--editor-font-family) !important;
+  font-size: var(--editor-font-size) !important;
+  line-height: var(--editor-line-height) !important;
+  tab-size: 4 !important;
   white-space: pre;
   overflow-wrap: normal;
   width: 100%;
@@ -34,7 +43,9 @@
 .highlight {
   background: transparent !important;
   pointer-events: none;
-  overflow: hidden;
+  /* !important: Infima zet overflow: auto op pre; hidden voorkomt eigen
+     scrollbars en afwijkende scrollhoogte op de highlight-laag. */
+  overflow: hidden !important;
   z-index: 0;
 }
 

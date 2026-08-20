@@ -1,0 +1,243 @@
+---
+sidebar_position: 5
+description: Een vast rijtje waardes dat bij elkaar hoort. Tuples uitpakken, twee waardes returnen en de swap-truc.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 12 Tuples
+
+Bij het loopen door een dictionary zag je al `for sleutel, waarde in ...` —
+twee namen die samen één paar opvangen. Dat paar heeft een naam: kijk wat
+hier gebeurt.
+
+```python
+punt = (3, 5)
+
+print(punt[0])   # 3
+print(punt[1])   # 5
+```
+
+`punt` is een **tuple**: een vast rijtje waardes dat bij elkaar hoort,
+tussen ronde haakjes. Opvragen werkt met een index, net als bij een
+lijst. Het verschil: een tuple kun je na het maken **niet meer
+veranderen** — geen `append`, geen toewijzen aan `punt[0]`.
+
+## Uitpakken
+
+De waardes van een tuple kun je in één regel in losse variabelen zetten.
+Dat heet **unpacking**:
+
+```python
+punt = (3, 5)
+x, y = punt
+
+print(f"x is {x}, y is {y}")   # x is 3, y is 5
+```
+
+Het aantal namen links moet gelijk zijn aan het aantal waardes in de
+tuple, anders krijg je een `ValueError`. Dit is precies wat er in de
+vorige les gebeurde bij `for sleutel, waarde in leerling.items()`: elke
+ronde levert `.items()` een tuple, die je meteen uitpakt in twee namen.
+
+## Twee waardes returnen
+
+Een functie kan maar één ding teruggeven — maar dat ene ding mag een
+tuple zijn. Zo geef je toch twee waardes terug:
+
+```python
+def deel_met_rest(getal, deler):
+    return getal // deler, getal % deler
+
+heel, rest = deel_met_rest(17, 5)
+print(f"{heel} keer, rest {rest}")   # 3 keer, rest 2
+```
+
+Bij `return a, b` maakt Python vanzelf een tuple, ook zonder haakjes.
+De aanroeper pakt hem direct uit.
+
+## De swap
+
+Twee variabelen wisselen kan met een hulpvariabele — maar met een tuple
+gaat het in één regel:
+
+```python
+a = 1
+b = 99
+
+a, b = b, a
+print(a, b)   # 99 1
+```
+
+Python maakt eerst rechts de tuple `(99, 1)` en pakt die daarna links
+uit. Geen waarde gaat verloren, want de tuple bestaat al voordat het
+overschrijven begint.
+
+## Tuple of lijst?
+
+| | lijst | tuple |
+|---|:---:|:---:|
+| Aanpassen na het maken | ja | nee |
+| Lengte | groeit en krimpt | ligt vast |
+| Gebruik | verzameling losse items | waardes die bij elkaar horen |
+
+Vuistregel: een rij dingen van hetzelfde soort (namen, getallen) is een
+lijst; een klein groepje waardes dat samen één ding beschrijft (een
+coördinaat, een naam-met-score) is een tuple.
+
+---
+
+## Opdracht 12.1: Coördinaat uitpakken
+
+Hieronder staat een coördinaat. Pak hem uit in `x` en `y` en print de
+regel hieronder.
+
+Verwachte uitvoer:
+
+```
+Het punt ligt op x=4 en y=7
+```
+
+<CodeExercise>{`punt = (4, 7)
+
+# Schrijf hier je code`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+`x, y = punt` zet de eerste waarde in `x` en de tweede in `y`. Gebruik
+daarna een f-string.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+punt = (4, 7)
+
+x, y = punt
+print(f"Het punt ligt op x={x} en y={y}")
+```
+
+<CodeExercise>{`punt = (4, 7)
+
+x, y = punt
+print(f"Het punt ligt op x={x} en y={y}")`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 12.2: Kleinste en grootste tegelijk
+
+Schrijf een functie `kleinste_en_grootste(lijst)` die een tuple
+teruggeeft met eerst de kleinste en dan de grootste waarde. Gebruik
+`min()` en `max()`.
+
+Verwachte uitvoer:
+
+```
+kleinste: 2, grootste: 9
+```
+
+<CodeExercise>{`getallen = [5, 2, 8, 9, 3]
+
+# Schrijf hier je code`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+`return min(lijst), max(lijst)` geeft beide terug in één tuple. Vang ze
+op met `klein, groot = kleinste_en_grootste(getallen)`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+getallen = [5, 2, 8, 9, 3]
+
+def kleinste_en_grootste(lijst):
+    return min(lijst), max(lijst)
+
+klein, groot = kleinste_en_grootste(getallen)
+print(f"kleinste: {klein}, grootste: {groot}")
+```
+
+<CodeExercise>{`getallen = [5, 2, 8, 9, 3]
+
+def kleinste_en_grootste(lijst):
+    return min(lijst), max(lijst)
+
+klein, groot = kleinste_en_grootste(getallen)
+print(f"kleinste: {klein}, grootste: {groot}")`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 12.3: Scorelijst (uitdaging)
+
+Hieronder staat een lijst met (naam, score)-tuples. Print voor elke
+speler een regel, en wissel daarna de inhoud van `eerste` en `laatste`
+zonder hulpvariabele.
+
+Verwachte uitvoer:
+
+```
+Sara heeft 12 punten
+Alex heeft 9 punten
+Maria heeft 15 punten
+eerste: Maria, laatste: Sara
+```
+
+<CodeExercise>{`scores = [("Sara", 12), ("Alex", 9), ("Maria", 15)]
+eerste = "Sara"
+laatste = "Maria"
+
+# Schrijf hier je code`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+In de loop pak je elke tuple direct uit: `for naam, punten in scores:`.
+De wissel is één regel met een komma aan beide kanten.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+scores = [("Sara", 12), ("Alex", 9), ("Maria", 15)]
+eerste = "Sara"
+laatste = "Maria"
+
+for naam, punten in scores:
+    print(f"{naam} heeft {punten} punten")
+
+eerste, laatste = laatste, eerste
+print(f"eerste: {eerste}, laatste: {laatste}")
+```
+
+<CodeExercise>{`scores = [("Sara", 12), ("Alex", 9), ("Maria", 15)]
+eerste = "Sara"
+laatste = "Maria"
+
+for naam, punten in scores:
+    print(f"{naam} heeft {punten} punten")
+
+eerste, laatste = laatste, eerste
+print(f"eerste: {eerste}, laatste: {laatste}")`}</CodeExercise>
+
+</details>
+
+---
+
+## En nu?
+
+Nog één datatype: in [les 13](./13-sets.mdx) leer je de **set** — een
+verzameling zonder dubbelen, handig om bij te houden wat je al gehad
+hebt.

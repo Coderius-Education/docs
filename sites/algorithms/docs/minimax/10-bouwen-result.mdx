@@ -98,9 +98,14 @@ def initial_state():
 
 
 def player(bord):
-    x_count = sum(rij.count("X") for rij in bord)
-    o_count = sum(rij.count("O") for rij in bord)
-    return "X" if x_count == o_count else "O"
+    x_count = 0
+    o_count = 0
+    for rij in bord:
+        x_count += rij.count("X")
+        o_count += rij.count("O")
+    if x_count == o_count:
+        return "X"
+    return "O"
 
 
 def result(bord, zet):

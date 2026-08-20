@@ -66,7 +66,9 @@ bord = initial_state()
 assert bord is not None, "initial_state() returnt nog niets"
 assert len(bord) == 3, "Bord moet 3 rijen hebben"
 assert len(bord[0]) == 3, "Elke rij moet 3 cellen hebben"
-assert all(cel is None for rij in bord for cel in rij), "Alle cellen moeten None zijn"
+for rij in bord:
+    for cel in rij:
+        assert cel is None, "Alle cellen moeten None zijn"
 
 # Belangrijke test: rijen mogen niet hetzelfde object zijn (geen alias)
 bord[0][0] = "X"

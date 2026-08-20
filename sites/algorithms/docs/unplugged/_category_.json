@@ -1,0 +1,12 @@
+{
+  "label": "Unplugged",
+  "position": 14,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "slug": "/unplugged",
+    "title": "Unplugged — algoritmes zonder computer",
+    "description": "Werkvormen op papier en met speelkaarten. Print een hand-out en voer het algoritme zelf uit."
+  }
+}

@@ -1,0 +1,139 @@
+---
+sidebar_position: 3
+---
+
+# 14.3 De kortste route — Dijkstra op papier
+
+<Handout>
+
+Zeven plekken, tien wegen. Jij bent het navigatiesysteem: je voert
+Dijkstra's algoritme uit met potlood en papier, en ontdekt dat de
+kortste route er heel anders uitziet dan je zou gokken.
+
+## Wat je nodig hebt
+
+- Een geprinte hand-out per tweetal.
+- Potlood en gum (je gaat afstanden doorstrepen en verbeteren).
+- Ongeveer 20 minuten.
+
+## Gok eerst
+
+Kijk 30 seconden naar de kaart hieronder. Schrijf op — zonder te
+rekenen — welke route van `A` naar `F` volgens jou het kortst is, en
+hoe lang die is:
+
+Mijn gok: A → ____________________ → F, totale lengte: ______
+
+Straks check je of je gelijk had.
+
+## De kaart
+
+```
+        2         8
+   A ─────── B ─────── D
+   │       ╱         ╱ │
+   6     2         2   4
+   │   ╱         ╱     │
+   C ─── 3 ─── E ──7── F
+                ╲      │
+                 4     1
+                  ╲    │
+                   G ──┘
+```
+
+Tien wegen, elk met een lengte:
+
+| weg | lengte | weg | lengte |
+|:---:|:---:|:---:|:---:|
+| A─B | 2 | D─E | 2 |
+| A─C | 6 | D─F | 4 |
+| B─C | 2 | E─F | 7 |
+| B─D | 8 | E─G | 4 |
+| C─E | 3 | F─G | 1 |
+
+## De spelregels
+
+Start is `A` (afstand 0). Alle andere plekken beginnen op `?`. Herhaal
+deze twee stappen tot elke plek is afgevinkt:
+
+1. **Kies**: pak van de nog níet afgevinkte plekken die met de laagste
+   afstand. Vink hem af — deze afstand staat nu vast.
+2. **Reken**: bekijk elke buur van de gekozen plek. Reken uit: afstand
+   van de gekozen plek + lengte van de weg naar die buur. Is dat lager
+   dan wat de buur nu heeft (of heeft de buur nog `?`)? Streep door en
+   schrijf het nieuwe getal op.
+
+Werk in tweetallen: één van jullie kiest en vinkt af, de ander rekent
+de buren door. Wissel elke ronde van rol.
+
+## De tabel
+
+Vul per ronde de nieuwe stand in. Zet een vinkje bij de plek die je in
+die ronde afvinkt; een afgevinkte plek verandert daarna nooit meer.
+
+| plek | ronde 1 | ronde 2 | ronde 3 | ronde 4 | ronde 5 | ronde 6 | ronde 7 |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| A |   |   |   |   |   |   |   |
+| B |   |   |   |   |   |   |   |
+| C |   |   |   |   |   |   |   |
+| D |   |   |   |   |   |   |   |
+| E |   |   |   |   |   |   |   |
+| F |   |   |   |   |   |   |   |
+| G |   |   |   |   |   |   |   |
+
+## Bespreek na
+
+- Klopte je gok voor de route naar `F`? De meeste mensen zitten ernaast.
+- Hoe vaak is de afstand van `F` doorgestreept en verbeterd?
+- Waarom mag een afgevinkte plek nooit meer veranderen? (Hint: kan een
+  route via een plek met een hógere afstand ooit korter uitpakken?)
+
+<div style={{breakBefore: 'page'}}>
+
+## Antwoorden
+
+Deze pagina print als losse laatste pagina — houd hem achter de hand of
+knip hem eraf.
+
+Stand aan het eind van elke ronde (✓ = afgevinkt, daarna verandert de
+rij niet meer):
+
+| plek | ronde 1 | ronde 2 | ronde 3 | ronde 4 | ronde 5 | ronde 6 | ronde 7 |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| A | 0 ✓ | — | — | — | — | — | — |
+| B | 2 | 2 ✓ | — | — | — | — | — |
+| C | 6 | 4 | 4 ✓ | — | — | — | — |
+| D | ? | 10 | 10 | 9 | 9 ✓ | — | — |
+| E | ? | ? | 7 | 7 ✓ | — | — | — |
+| F | ? | ? | ? | 14 | 13 | 12 | 12 ✓ |
+| G | ? | ? | ? | 11 | 11 ✓ | — | — |
+
+Let op: in ronde 5 en 6 hebben `D` en `G` allebei nog niet-afgevinkte
+buren, dus de volgorde kiezen gaat op afstand: `D` (9) vóór `G` (11).
+
+De kortste routes vanuit `A`:
+
+| plek | afstand | route |
+|:---:|:---:|---|
+| B | 2 | A → B |
+| C | 4 | A → B → C |
+| D | 9 | A → B → C → E → D |
+| E | 7 | A → B → C → E |
+| F | 12 | A → B → C → E → G → F |
+| G | 11 | A → B → C → E → G |
+
+De route naar `F` gebruikt vijf wegen en komt tóch op 12 uit — korter
+dan de "logisch ogende" `A → B → D → F` (14) of `A → C → E → F` (16).
+`F` werd onderweg twee keer verbeterd: 14 → 13 → 12.
+
+</div>
+
+## Verder op de site
+
+- [8.1 Dijkstra — het idee](/docs/dijkstra/01-concept)
+- [8.2 Doe het met pen en papier](/docs/dijkstra/02-met-pen-en-papier) —
+  dezelfde methode, voorgedaan op een kleinere kaart
+- [8.4 Bouwsteen 1 — de graph in Python](/docs/dijkstra/04-bouwen-graph) —
+  hetzelfde algoritme in Python bouwen
+
+</Handout>

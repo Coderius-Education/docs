@@ -24,13 +24,21 @@ D = 0.85   # <-- verander dit
 
 def pagerank(web, d=0.85, epsilon=1e-9):
     n = len(web)
-    rank = {p: 1 / n for p in web}
+    rank = {}
+    for p in web:
+        rank[p] = 1 / n
     while True:
         nieuw = {}
         for p in web:
-            som = sum(rank[i] / len(web[i]) for i in web if p in web[i])
+            som = 0.0
+            for i in web:
+                if p in web[i]:
+                    som += rank[i] / len(web[i])
             nieuw[p] = (1 - d) / n + d * som
-        if max(abs(nieuw[p] - rank[p]) for p in web) < epsilon:
+        verschil = 0.0
+        for p in web:
+            verschil = max(verschil, abs(nieuw[p] - rank[p]))
+        if verschil < epsilon:
             return nieuw
         rank = nieuw
 

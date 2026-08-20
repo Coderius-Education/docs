@@ -1,0 +1,106 @@
+---
+sidebar_position: 8
+---
+
+# 14.8 Stemmen met fiches — PageRank
+
+<Handout>
+
+Hoe bepaalt een zoekmachine welke pagina belangrijk is? Links zijn
+stemmen. Jullie spelen een mini-web na met fiches en zien het antwoord
+letterlijk op tafel ontstaan.
+
+## Wat je nodig hebt
+
+- 48 fiches (of muntjes, blokjes, papiersnippers) per groepje van 2
+  tot 4.
+- Vier briefjes met de letters **A**, **B**, **C** en **D**, verspreid
+  op tafel.
+- Ongeveer 15 minuten.
+
+## Het mini-web
+
+Vier pagina's; een pijl betekent "linkt naar" (dezelfde vier als in de
+les):
+
+```
+   A ──────▶ B
+   ▲ ╲       │
+   │   ╲     │
+   │     ▼   ▼
+   └────── C ◀────── D
+```
+
+- A linkt naar B en C
+- B linkt naar C
+- C linkt naar A
+- D linkt naar C
+
+## Zo werkt het
+
+Elk fiche is een stukje "belang". Start: leg op elke pagina **12
+fiches**.
+
+Elke ronde, voor alle pagina's tegelijk:
+
+1. Pak alle fiches van de pagina.
+2. Verdeel ze **gelijk** over de pagina's waar hij naar linkt (A geeft
+   de helft aan B en de helft aan C; de anderen geven alles aan hun ene
+   link).
+3. Pas als iedereen verdeeld heeft, tel je per pagina de nieuwe stapel.
+
+Speel **vier rondes** en vul na elke ronde de stand in:
+
+| | A | B | C | D |
+|---|:---:|:---:|:---:|:---:|
+| start | 12 | 12 | 12 | 12 |
+| ronde 1 |  |  |  |  |
+| ronde 2 |  |  |  |  |
+| ronde 3 |  |  |  |  |
+| ronde 4 |  |  |  |  |
+
+## Bespreek na
+
+- Welke pagina's staan bovenaan, en welke is helemaal leeggebloed?
+  Waarom krijgt D nooit meer een fiche terug?
+- D heeft evenveel uitgaande links als B. Waarom eindigt B toch hoger?
+- De aantallen van A en C wiebelen per ronde. Het echte PageRank lost
+  dat op door elke pagina elke ronde ook een klein vast basisbedrag te
+  geven (damping) — waarom helpt dat ook tegen het leegbloeden van D?
+
+<div style={{breakBefore: 'page'}}>
+
+## Antwoorden
+
+Deze pagina print als losse laatste pagina — houd hem achter de hand of
+knip hem eraf.
+
+| | A | B | C | D |
+|---|:---:|:---:|:---:|:---:|
+| start | 12 | 12 | 12 | 12 |
+| ronde 1 | 12 | 6 | 30 | 0 |
+| ronde 2 | 30 | 6 | 12 | 0 |
+| ronde 3 | 12 | 15 | 21 | 0 |
+| ronde 4 | 21 | 6 | 21 | 0 |
+
+- **A en C** delen de top: iedereen stemt (direct of indirect) op C, en
+  C geeft alles weer aan A door.
+- **D** ontvangt niets omdat niemand naar D linkt — na één ronde is D
+  definitief leeg. Belang moet je *krijgen*, uitdelen alleen is niet
+  genoeg.
+- B ontvangt de helft van A's fiches, D ontvangt niets — uitgaande
+  links zeggen niets over je eigen belang, inkomende alles.
+- Met damping krijgt óók D elke ronde een klein basisbedrag en dempen
+  de schommelingen van A en C uit tot vaste waarden. Dat is precies de
+  berekening die je in de les in Python bouwt.
+
+</div>
+
+## Verder op de site
+
+- [13.1 PageRank — het idee](/docs/pagerank/01-concept) — het verhaal
+  achter links-als-stemmen en damping
+- [13.3 Bouwen](/docs/pagerank/03-bouwen-graph) — ditzelfde mini-web
+  in Python
+
+</Handout>

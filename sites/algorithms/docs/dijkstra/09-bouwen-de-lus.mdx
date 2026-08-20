@@ -99,7 +99,9 @@ graph = {
     'D': [('B', 1), ('C', 8)],
 }
 
-afstanden = {node: float('inf') for node in graph}
+afstanden = {}
+for node in graph:
+    afstanden[node] = float('inf')
 afstanden['A'] = 0
 bezocht = set()
 

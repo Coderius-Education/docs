@@ -34,7 +34,7 @@ export const knowledgeGraph = {
       id: 'data',
       label: 'Data Structuren',
       description: 'Lijsten en collecties van gegevens.',
-      maxLevel: 3,
+      maxLevel: 5,
     },
   ],
   tutorials: [
@@ -142,6 +142,28 @@ export const knowledgeGraph = {
       impact: [
         { concept: 'data', depth: 'Je leert sleutel-waarde paren in een `dict`.', level: 3 },
         { concept: 'herhaling', depth: 'Je leert complexe herhalingen.', level: 4 },
+      ],
+    },
+    {
+      id: 't12',
+      title: '12. Tuples',
+      impact: [
+        {
+          concept: 'data',
+          depth: 'Je leert vaste rijtjes waardes in een `tuple`, en unpacking.',
+          level: 4,
+        },
+      ],
+    },
+    {
+      id: 't13',
+      title: '13. Sets',
+      impact: [
+        {
+          concept: 'data',
+          depth: 'Je leert verzamelingen zonder dubbelen in een `set`.',
+          level: 5,
+        },
       ],
     },
   ],

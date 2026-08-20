@@ -28,7 +28,9 @@ tabel = [[0] * capaciteit for _ in range(n)]
 
 ```python
 # GOED
-tabel = [[0] * (capaciteit + 1) for _ in range(n + 1)]
+tabel = []
+for _ in range(n + 1):
+    tabel.append([0] * (capaciteit + 1))
 ```
 
 Vuistregel: als je naar een cel `[i][w]` wilt kunnen met `i = n` én

@@ -21,13 +21,23 @@ def initial_state():
 
 
 def player(bord):
-    x_count = sum(rij.count("X") for rij in bord)
-    o_count = sum(rij.count("O") for rij in bord)
-    return "X" if x_count == o_count else "O"
+    x_count = 0
+    o_count = 0
+    for rij in bord:
+        x_count += rij.count("X")
+        o_count += rij.count("O")
+    if x_count == o_count:
+        return "X"
+    return "O"
 
 
 def actions(bord):
-    return {(i, j) for i in range(3) for j in range(3) if bord[i][j] is None}
+    mogelijk = set()
+    for i in range(3):
+        for j in range(3):
+            if bord[i][j] is None:
+                mogelijk.add((i, j))
+    return mogelijk
 
 
 def result(bord, zet):
@@ -54,7 +64,11 @@ def winner(bord):
 def terminal(bord):
     if winner(bord) is not None:
         return True
-    return all(cel is not None for rij in bord for cel in rij)
+    for rij in bord:
+        for cel in rij:
+            if cel is None:
+                return False
+    return True
 
 
 def utility(bord):

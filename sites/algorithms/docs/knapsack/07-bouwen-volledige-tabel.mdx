@@ -47,7 +47,10 @@ Dat is de eindcel die je op pagina 02 met de hand uitrekende.
 ## Bouw zelf en test
 
 <PyRunner initialCode={`def lege_tabel(n, capaciteit):
-    return [[0] * (capaciteit + 1) for _ in range(n + 1)]
+    tabel = []
+    for _ in range(n + 1):
+        tabel.append([0] * (capaciteit + 1))
+    return tabel
 
 
 def vul_rij(tabel, items, i, capaciteit):
@@ -113,7 +116,10 @@ Print de tabel rij voor rij om hem visueel te controleren met pagina
 02:
 
 <PyRunner initialCode={`def lege_tabel(n, capaciteit):
-    return [[0] * (capaciteit + 1) for _ in range(n + 1)]
+    tabel = []
+    for _ in range(n + 1):
+        tabel.append([0] * (capaciteit + 1))
+    return tabel
 
 
 def vul_rij(tabel, items, i, capaciteit):
@@ -138,9 +144,15 @@ capaciteit = 11
 tabel = lege_tabel(len(items), capaciteit)
 vul_volledige_tabel(tabel, items, capaciteit)
 
-print("       " + "  ".join(f"{w:2}" for w in range(capaciteit + 1)))
+kolom_labels = []
+for w in range(capaciteit + 1):
+    kolom_labels.append(f"{w:2}")
+print("       " + "  ".join(kolom_labels))
 for i, rij in enumerate(tabel):
-    print(f"i={i}:  " + "  ".join(f"{c:2}" for c in rij))`} />
+    cel_teksten = []
+    for c in rij:
+        cel_teksten.append(f"{c:2}")
+    print(f"i={i}:  " + "  ".join(cel_teksten))`} />
 
 <details>
 <summary>Verwachte uitvoer</summary>

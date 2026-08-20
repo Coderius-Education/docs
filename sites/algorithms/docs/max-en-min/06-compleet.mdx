@@ -78,7 +78,9 @@ def vind_min_telt(lijst):
     return klein, vergelijkingen
 
 import random
-lijst = [random.randint(0, 1000) for _ in range(1000)]
+lijst = []
+for _ in range(1000):
+    lijst.append(random.randint(0, 1000))
 
 k1, g1, v_combi = max_en_min_telt(lijst)
 g2, v_max = vind_max_telt(lijst)

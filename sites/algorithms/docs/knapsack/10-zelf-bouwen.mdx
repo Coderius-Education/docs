@@ -51,16 +51,23 @@ waarde, keuze = kies_rugzak(items, 15)
 assert waarde == 50, f"Verwacht totaalwaarde 50, kreeg {waarde}"
 
 # Check dat het gewicht binnen 15 valt
-totaal_gewicht = sum(items[i][1] for i in keuze)
+totaal_gewicht = 0
+for i in keuze:
+    totaal_gewicht += items[i][1]
 assert totaal_gewicht <= 15, f"Gewicht {totaal_gewicht} > 15!"
 
 # Check dat de gekozen items de juiste totaalwaarde hebben
-gekozen_waarde = sum(items[i][0] for i in keuze)
+gekozen_waarde = 0
+for i in keuze:
+    gekozen_waarde += items[i][0]
 assert gekozen_waarde == 50
 
 print(f"Totale waarde: {waarde}")
 print(f"Indexen: {sorted(keuze)}")
-print(f"Items: {[i + 1 for i in sorted(keuze)]}")
+mens_nummers = []
+for i in sorted(keuze):
+    mens_nummers.append(i + 1)
+print(f"Items: {mens_nummers}")
 print(f"Totaal gewicht: {totaal_gewicht}")
 print("Alle tests gehaald ✓")`} />
 
@@ -72,7 +79,9 @@ Bouw de tabel inline en backtrack erover:
 ```python
 def kies_rugzak(items, capaciteit):
     n = len(items)
-    tabel = [[0] * (capaciteit + 1) for _ in range(n + 1)]
+    tabel = []
+    for _ in range(n + 1):
+        tabel.append([0] * (capaciteit + 1))
     for i in range(1, n + 1):
         v, g = items[i - 1]
         for w in range(capaciteit + 1):

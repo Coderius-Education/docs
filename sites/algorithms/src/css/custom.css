@@ -42,3 +42,32 @@
 .markdown details > summary::marker {
   color: var(--ifm-color-primary);
 }
+
+/* Hand-outs (unplugged): verberg site-chrome bij printen.
+   Het Handout-component (src/components/Handout) zet de class
+   "handout-page" op <body>; andere pagina's printen zoals altijd. */
+@media print {
+  body.handout-page nav.navbar,
+  body.handout-page .theme-doc-sidebar-container,
+  body.handout-page .theme-doc-toc-desktop,
+  body.handout-page .theme-doc-toc-mobile,
+  body.handout-page .theme-doc-breadcrumbs,
+  body.handout-page .theme-doc-footer,
+  body.handout-page .pagination-nav,
+  body.handout-page footer {
+    display: none !important;
+  }
+
+  body.handout-page .main-wrapper main {
+    padding: 0;
+  }
+
+  body.handout-page .container {
+    margin: 0;
+    max-width: 100%;
+  }
+
+  body.handout-page h2 {
+    break-after: avoid;
+  }
+}

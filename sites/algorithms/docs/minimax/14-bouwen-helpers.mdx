@@ -126,11 +126,21 @@ import math
 def initial_state():
     return [[None]*3 for _ in range(3)]
 def player(bord):
-    x = sum(rij.count("X") for rij in bord)
-    o = sum(rij.count("O") for rij in bord)
-    return "X" if x == o else "O"
+    x = 0
+    o = 0
+    for rij in bord:
+        x += rij.count("X")
+        o += rij.count("O")
+    if x == o:
+        return "X"
+    return "O"
 def actions(bord):
-    return {(i, j) for i in range(3) for j in range(3) if bord[i][j] is None}
+    mogelijk = set()
+    for i in range(3):
+        for j in range(3):
+            if bord[i][j] is None:
+                mogelijk.add((i, j))
+    return mogelijk
 def result(bord, zet):
     n = copy.deepcopy(bord)
     i, j = zet
@@ -149,10 +159,20 @@ def winner(bord):
         return bord[0][2]
     return None
 def terminal(bord):
-    return winner(bord) is not None or all(c is not None for r in bord for c in r)
+    if winner(bord) is not None:
+        return True
+    for rij in bord:
+        for cel in rij:
+            if cel is None:
+                return False
+    return True
 def utility(bord):
     w = winner(bord)
-    return 1 if w == "X" else (-1 if w == "O" else 0)
+    if w == "X":
+        return 1
+    if w == "O":
+        return -1
+    return 0
 
 
 def max_value(bord):

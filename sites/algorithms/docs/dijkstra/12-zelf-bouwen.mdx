@@ -98,7 +98,9 @@ return afstanden[doel], pad
 
 ```python
 def dijkstra(graph, start):
-    afstanden = {node: float('inf') for node in graph}
+    afstanden = {}
+    for node in graph:
+        afstanden[node] = float('inf')
     afstanden[start] = 0
     bezocht = set()
     voorgangers = {}
@@ -124,7 +126,9 @@ def reconstrueer_pad(voorgangers, start, doel):
             break
         huidige = voorgangers.get(huidige)
     pad.reverse()
-    return pad if pad and pad[0] == start else []
+    if pad and pad[0] == start:
+        return pad
+    return []
 
 
 def kortste_reis(graph, start, doel):

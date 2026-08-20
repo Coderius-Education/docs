@@ -130,6 +130,15 @@ for i in range(0, 10, 2):   # 0, 2, 4, 6, 8
     print(i)
 ```
 
+### Een ronde overslaan
+
+```python
+for i in range(6):
+    if i == 3:
+        continue    # sla deze ronde over, loop draait door
+    print(i)        # print 0, 1, 2, 4, 5
+```
+
 ### Teller bijhouden
 
 ```python
@@ -299,6 +308,53 @@ else:
 ```
 
 Een niet-bestaande sleutel opvragen geeft een `KeyError`.
+
+---
+
+## Tuples
+
+### Tuple maken en uitpakken
+
+```python
+punt = (3, 5)
+x, y = punt          # unpacking: x wordt 3, y wordt 5
+```
+
+### Twee waardes returnen en de swap
+
+```python
+def kleinste_en_grootste(lijst):
+    return min(lijst), max(lijst)
+
+klein, groot = kleinste_en_grootste([5, 2, 8])
+
+a, b = b, a          # twee variabelen wisselen in één regel
+```
+
+Een tuple kun je na het maken niet veranderen (geen `append`, geen toewijzen).
+
+---
+
+## Sets
+
+### Set maken
+
+```python
+kleuren = {"rood", "groen", "blauw"}
+uniek = set(["a", "b", "a"])   # {'a', 'b'} — dubbelen verdwijnen
+leeg = set()                   # let op: {} is een lege dictionary
+```
+
+### Toevoegen, checken, verwijderen
+
+```python
+bezocht = set()
+bezocht.add("A")         # toevoegen (dubbel toevoegen doet niets)
+print("A" in bezocht)    # True
+bezocht.remove("A")      # verwijderen
+```
+
+Een set heeft geen volgorde: `bezocht[0]` bestaat niet.
 
 ---
 

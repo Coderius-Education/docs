@@ -1,0 +1,23 @@
+.noPrint {
+  margin-bottom: 1.5rem;
+}
+
+.printButton {
+  border: 1px solid var(--ifm-color-primary);
+  border-radius: 6px;
+  background: var(--ifm-color-primary);
+  color: var(--ifm-color-white, #fff);
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+}
+
+.printButton:hover {
+  background: var(--ifm-color-primary-dark);
+}
+
+@media print {
+  .noPrint {
+    display: none !important;
+  }
+}

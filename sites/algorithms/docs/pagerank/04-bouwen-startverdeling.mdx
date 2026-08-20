@@ -50,7 +50,10 @@ print("Startverdeling werkt ✓", verdeling)`} />
 ```python
 def startverdeling(web):
     n = len(web)
-    return {p: 1 / n for p in web}
+    verdeling = {}
+    for p in web:
+        verdeling[p] = 1 / n
+    return verdeling
 ```
 
 </details>

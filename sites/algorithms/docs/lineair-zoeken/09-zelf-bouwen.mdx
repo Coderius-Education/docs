@@ -39,7 +39,9 @@ for lijst, doel in tests:
 
 # Visualiseer aantal matches per test
 import matplotlib.pyplot as plt
-labels = [f"test {i+1}" for i in range(len(tests))]
+labels = []
+for i in range(len(tests)):
+    labels.append(f"test {i+1}")
 plt.bar(labels, resultaten)
 plt.title("Aantal matches per test")
 plt.ylabel("aantal")

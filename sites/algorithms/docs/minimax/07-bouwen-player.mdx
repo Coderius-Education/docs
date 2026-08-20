@@ -45,8 +45,11 @@ bord_c = [["X", "O", "X"],
 
 # Tel X'en en O's per bord
 for naam, bord in [("a", bord_a), ("b", bord_b), ("c", bord_c)]:
-    x_count = sum(rij.count("X") for rij in bord)
-    o_count = sum(rij.count("O") for rij in bord)
+    x_count = 0
+    o_count = 0
+    for rij in bord:
+        x_count += rij.count("X")
+        o_count += rij.count("O")
     print(f"bord {naam}: X={x_count}, O={o_count}")
 ```
 
@@ -95,11 +98,13 @@ print("Alle tests gehaald ✓")`} />
 <details>
 <summary>Tip</summary>
 
-Gebruik `rij.count("X")` om in één rij te tellen, en
-`sum(... for rij in bord)` om over alle rijen op te tellen:
+Gebruik `rij.count("X")` om in één rij te tellen, en tel de rijen
+bij elkaar op met een loop:
 
 ```python
-x_count = sum(rij.count("X") for rij in bord)
+x_count = 0
+for rij in bord:
+    x_count += rij.count("X")
 ```
 
 Daarna een `if`-vergelijking met de twee tellingen.

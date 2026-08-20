@@ -7,6 +7,7 @@ sidebar_position: 3
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/data/11a-dictionaries-basis', label: 'Dictionaries'},
+    {site: 'python', to: '/docs/data/sets', label: 'Sets'},
     {site: 'python', to: '/docs/functies/functies', label: 'Functies en return-waarden'},
   ]}
 />
@@ -69,7 +70,11 @@ print("Graph-helpers werken ✓")`} />
 
 ```python
 def wie_linkt_naar(web, p):
-    return {i for i in web if p in web[i]}
+    resultaat = set()
+    for i in web:
+        if p in web[i]:
+            resultaat.add(i)
+    return resultaat
 ```
 
 Voor elke pagina `i` kijk je of `p` in zijn linkset zit. `D` zit bij
