@@ -75,7 +75,10 @@ def parse(grammatica, woorden):
     memo = {}
     def combineer(rhs, i, j):
         if len(rhs) == 1:
-            return [[boom] for boom in deel(rhs[0], i, j)]
+            resultaten = []
+            for boom in deel(rhs[0], i, j):
+                resultaten.append([boom])
+            return resultaten
         eerste, rest = rhs[0], rhs[1:]
         resultaat = []
         for k in range(i + 1, j):
@@ -122,7 +125,10 @@ def controleer(grammatica, zinnen):
         else:
             print(f"  FOUT (0x)  {zin}")
             alles_goed = False
-    print("Alle zinnen werken!" if alles_goed else "Nog niet alle zinnen werken.")
+    if alles_goed:
+        print("Alle zinnen werken!")
+    else:
+        print("Nog niet alle zinnen werken.")
 
 def ontleed(grammatica, zin):
     print(f"\\n=== Boom van: {zin} ===")

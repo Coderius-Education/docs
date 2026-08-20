@@ -13,7 +13,9 @@ totaalwaarde returnt.
 ```python
 def knapsack(items, capaciteit):
     n = len(items)
-    tabel = [[0] * (capaciteit + 1) for _ in range(n + 1)]
+    tabel = []
+    for _ in range(n + 1):
+        tabel.append([0] * (capaciteit + 1))
 
     for i in range(1, n + 1):
         waarde, gewicht = items[i - 1]
@@ -56,7 +58,9 @@ Identiek aan wat je op pagina 02 met de hand uitrekende.
 
 <PyRunner editable={false} initialCode={`def knapsack(items, capaciteit):
     n = len(items)
-    tabel = [[0] * (capaciteit + 1) for _ in range(n + 1)]
+    tabel = []
+    for _ in range(n + 1):
+        tabel.append([0] * (capaciteit + 1))
     for i in range(1, n + 1):
         waarde, gewicht = items[i - 1]
         for w in range(capaciteit + 1):
@@ -109,7 +113,9 @@ Speel met de code. Probeer:
 
 <PyRunner initialCode={`def knapsack(items, capaciteit):
     n = len(items)
-    tabel = [[0] * (capaciteit + 1) for _ in range(n + 1)]
+    tabel = []
+    for _ in range(n + 1):
+        tabel.append([0] * (capaciteit + 1))
     for i in range(1, n + 1):
         waarde, gewicht = items[i - 1]
         for w in range(capaciteit + 1):
@@ -135,7 +141,9 @@ Beste waarde als functie van rugzakcapaciteit:
 
 def knapsack(items, capaciteit):
     n = len(items)
-    tabel = [[0] * (capaciteit + 1) for _ in range(n + 1)]
+    tabel = []
+    for _ in range(n + 1):
+        tabel.append([0] * (capaciteit + 1))
     for i in range(1, n + 1):
         waarde, gewicht = items[i - 1]
         for w in range(capaciteit + 1):
@@ -149,7 +157,9 @@ def knapsack(items, capaciteit):
 items = [(1, 1), (6, 2), (18, 5), (22, 6), (28, 7)]
 
 capaciteiten = list(range(0, 22))
-waardes = [knapsack(items, W) for W in capaciteiten]
+waardes = []
+for W in capaciteiten:
+    waardes.append(knapsack(items, W))
 
 plt.plot(capaciteiten, waardes, marker='o')
 plt.xlabel('rugzakcapaciteit W')

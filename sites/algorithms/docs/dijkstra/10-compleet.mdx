@@ -23,7 +23,9 @@ def kies_volgende(afstanden, bezocht):
 
 
 def dijkstra(graph, start):
-    afstanden = {node: float('inf') for node in graph}
+    afstanden = {}
+    for node in graph:
+        afstanden[node] = float('inf')
     afstanden[start] = 0
     bezocht = set()
 
@@ -80,7 +82,9 @@ Exact wat je op papier en in de losse rondes ook kreeg.
 
 
 def dijkstra(graph, start):
-    afstanden = {node: float('inf') for node in graph}
+    afstanden = {}
+    for node in graph:
+        afstanden[node] = float('inf')
     afstanden[start] = 0
     bezocht = set()
 
@@ -126,7 +130,9 @@ def kies_volgende(afstanden, bezocht):
 
 
 def dijkstra(graph, start):
-    afstanden = {node: float('inf') for node in graph}
+    afstanden = {}
+    for node in graph:
+        afstanden[node] = float('inf')
     afstanden[start] = 0
     bezocht = set()
     while True:
@@ -165,7 +171,10 @@ for node, buren in graph.items():
         ax.text((x1+x2)/2, (y1+y2)/2 + 0.06, str(gewicht),
                 ha='center', color='blue', fontsize=11)
 for node, (x, y) in posities.items():
-    kleur = 'lightgreen' if node == 'A' else 'lightyellow'
+    if node == 'A':
+        kleur = 'lightgreen'
+    else:
+        kleur = 'lightyellow'
     ax.scatter(x, y, s=900, color=kleur, edgecolors='black', zorder=2)
     ax.text(x, y, f"{node}\\nd={afstanden[node]}",
             ha='center', va='center', fontsize=11, zorder=3)
@@ -209,7 +218,9 @@ Speel met de code. Probeer:
 
 
 def dijkstra(graph, start):
-    afstanden = {node: float('inf') for node in graph}
+    afstanden = {}
+    for node in graph:
+        afstanden[node] = float('inf')
     afstanden[start] = 0
     bezocht = set()
     while True:

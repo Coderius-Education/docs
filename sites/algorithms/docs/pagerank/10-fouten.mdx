@@ -27,7 +27,9 @@ for p in web:
 
 ```python
 # GOED
-nieuw = {p: (1 - d) / n + d * som_voor(p, rank) for p in web}
+nieuw = {}
+for p in web:
+    nieuw[p] = (1 - d) / n + d * som_voor(p, rank)
 rank = nieuw
 ```
 
@@ -60,7 +62,9 @@ naartoe, dus dit speelt niet — maar in een echt web wel.
 
 ```python
 def uitgaande_links(web, i, paginas):
-    return web[i] if web[i] else set(paginas)
+    if web[i]:
+        return web[i]
+    return set(paginas)
 ```
 
 Zo blijft het belang behouden en telt de som weer op tot 1.

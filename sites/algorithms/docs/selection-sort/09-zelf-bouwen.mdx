@@ -62,11 +62,17 @@ import matplotlib.pyplot as plt
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4))
 
 namen = list(soorten.keys())
-ax1.bar(namen, [swaps_per_type[n] for n in namen], color='steelblue')
+swap_waardes = []
+for n in namen:
+    swap_waardes.append(swaps_per_type[n])
+ax1.bar(namen, swap_waardes, color='steelblue')
 ax1.set_title('Aantal echte swaps')
 ax1.set_ylabel('swaps')
 
-ax2.bar(namen, [verglk_per_type[n] for n in namen], color='salmon')
+verglk_waardes = []
+for n in namen:
+    verglk_waardes.append(verglk_per_type[n])
+ax2.bar(namen, verglk_waardes, color='salmon')
 ax2.set_title('Aantal vergelijkingen')
 ax2.set_ylabel('vergelijkingen')
 

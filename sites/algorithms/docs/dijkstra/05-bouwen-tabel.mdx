@@ -61,13 +61,15 @@ bezocht = set()
 - Alle andere nodes krijgen `inf` (nog niets ontdekt).
 - `bezocht` is **leeg** — niemand is "klaar" aan het begin.
 
-## Dit korter schrijven
+## Dit algemener schrijven
 
 We willen dat dit ook werkt als de graph er anders uitziet — niet alleen
-voor A/B/C/D. Een **dict comprehension** doet dat in één regel:
+voor A/B/C/D. Begin met een lege dict en vul hem met een for-loop:
 
 ```python
-afstanden = {node: float('inf') for node in graph}
+afstanden = {}
+for node in graph:
+    afstanden[node] = float('inf')
 afstanden[start] = 0
 ```
 
@@ -87,7 +89,9 @@ graph = {
 }
 start = 'A'
 
-afstanden = {node: float('inf') for node in graph}
+afstanden = {}
+for node in graph:
+    afstanden[node] = float('inf')
 afstanden[start] = 0
 bezocht = set()
 
@@ -118,7 +122,9 @@ weergeeft.
 }
 start = 'A'
 
-afstanden = {node: float('inf') for node in graph}
+afstanden = {}
+for node in graph:
+    afstanden[node] = float('inf')
 afstanden[start] = 0
 bezocht = set()
 

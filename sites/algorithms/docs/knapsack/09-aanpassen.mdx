@@ -35,7 +35,9 @@ In Python is dat één for-loop van groot naar klein.
 
 <PyRunner initialCode={`def knapsack_tabel(items, capaciteit):
     n = len(items)
-    tabel = [[0] * (capaciteit + 1) for _ in range(n + 1)]
+    tabel = []
+    for _ in range(n + 1):
+        tabel.append([0] * (capaciteit + 1))
     for i in range(1, n + 1):
         waarde, gewicht = items[i - 1]
         for w in range(capaciteit + 1):
@@ -66,8 +68,11 @@ keuze_gesorteerd = sorted(keuze)
 assert keuze_gesorteerd == [2, 3], f"Verwacht [2, 3], kreeg {keuze_gesorteerd}"
 
 # Totaal moet 40 zijn
-totale_waarde = sum(items[i][0] for i in keuze)
-totaal_gewicht = sum(items[i][1] for i in keuze)
+totale_waarde = 0
+totaal_gewicht = 0
+for i in keuze:
+    totale_waarde += items[i][0]
+    totaal_gewicht += items[i][1]
 assert totale_waarde == 40
 assert totaal_gewicht == 11
 
@@ -108,7 +113,9 @@ Drie cruciale dingen:
 
 <PyRunner initialCode={`def knapsack_tabel(items, capaciteit):
     n = len(items)
-    tabel = [[0] * (capaciteit + 1) for _ in range(n + 1)]
+    tabel = []
+    for _ in range(n + 1):
+        tabel.append([0] * (capaciteit + 1))
     for i in range(1, n + 1):
         waarde, gewicht = items[i - 1]
         for w in range(capaciteit + 1):
@@ -135,10 +142,16 @@ items = [(1, 1), (6, 2), (18, 5), (22, 6), (28, 7)]
 keuze = sorted(knapsack_items(items, 11))
 
 print(f"Indexen (Python): {keuze}")
-print(f"Items (mens-nummering): {[i + 1 for i in keuze]}")
+mens_nummers = []
+for i in keuze:
+    mens_nummers.append(i + 1)
+print(f"Items (mens-nummering): {mens_nummers}")
 
-totale_waarde = sum(items[i][0] for i in keuze)
-totaal_gewicht = sum(items[i][1] for i in keuze)
+totale_waarde = 0
+totaal_gewicht = 0
+for i in keuze:
+    totale_waarde += items[i][0]
+    totaal_gewicht += items[i][1]
 print(f"Totale waarde: {totale_waarde}")
 print(f"Totaal gewicht: {totaal_gewicht} (van 11 toegestaan)")
 

@@ -33,7 +33,9 @@ Wat denk je dat dit print?
 ```python
 n = 2
 capaciteit = 3
-tabel = [[0] * (capaciteit + 1) for _ in range(n + 1)]
+tabel = []
+for _ in range(n + 1):
+    tabel.append([0] * (capaciteit + 1))
 print(tabel)
 print(len(tabel), "rijen")
 print(len(tabel[0]), "kolommen")
@@ -66,7 +68,9 @@ Allemaal 0.
 t = lege_tabel(5, 11)
 assert len(t) == 6, f"Verwacht 6 rijen, kreeg {len(t)}"
 assert len(t[0]) == 12, f"Verwacht 12 kolommen, kreeg {len(t[0])}"
-assert all(cel == 0 for rij in t for cel in rij), "Alle cellen moeten 0 zijn"
+for rij in t:
+    for cel in rij:
+        assert cel == 0, "Alle cellen moeten 0 zijn"
 
 # Belangrijk: rijen mogen geen alias zijn van elkaar
 t[0][0] = 99
@@ -81,14 +85,17 @@ print("Alle tests gehaald ✓")`} />
 <details>
 <summary>Tip</summary>
 
-Eén regel doet alles:
+Bouw de tabel rij voor rij op:
 
 ```python
-return [[0] * (capaciteit + 1) for _ in range(n + 1)]
+tabel = []
+for _ in range(n + 1):
+    tabel.append([0] * (capaciteit + 1))
+return tabel
 ```
 
 - `[0] * (capaciteit + 1)` maakt één rij met de juiste lengte.
-- `for _ in range(n + 1)` herhaalt dat patroon voor elke rij.
+- De loop maakt zo'n rij voor elke `i` en plakt hem aan de tabel.
 
 **Pas op** met `[[0] * (capaciteit + 1)] * (n + 1)` — dat lijkt korter,
 maar geeft `n + 1` keer **dezelfde** rij (alias). De laatste assertion

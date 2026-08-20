@@ -70,7 +70,11 @@ print("Graph-helpers werken ✓")`} />
 
 ```python
 def wie_linkt_naar(web, p):
-    return {i for i in web if p in web[i]}
+    resultaat = set()
+    for i in web:
+        if p in web[i]:
+            resultaat.add(i)
+    return resultaat
 ```
 
 Voor elke pagina `i` kijk je of `p` in zijn linkset zit. `D` zit bij

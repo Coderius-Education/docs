@@ -68,8 +68,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 namen = list(soorten.keys())
-zonder_vals = [zonder[n] for n in namen]
-met_vals = [met[n] for n in namen]
+zonder_vals = []
+met_vals = []
+for n in namen:
+    zonder_vals.append(zonder[n])
+    met_vals.append(met[n])
 
 x = np.arange(len(namen))
 breedte = 0.35

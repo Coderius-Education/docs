@@ -67,7 +67,9 @@ hulpfunctie `reconstrueer_pad` die het pad teruggeeft.
 
 
 def dijkstra(graph, start):
-    afstanden = {node: float('inf') for node in graph}
+    afstanden = {}
+    for node in graph:
+        afstanden[node] = float('inf')
     afstanden[start] = 0
     bezocht = set()
     voorgangers = {}     # nieuw
@@ -128,7 +130,9 @@ Aan het eind: `pad.reverse()` of `pad[::-1]`.
 
 ```python
 def dijkstra(graph, start):
-    afstanden = {node: float('inf') for node in graph}
+    afstanden = {}
+    for node in graph:
+        afstanden[node] = float('inf')
     afstanden[start] = 0
     bezocht = set()
     voorgangers = {}
@@ -156,7 +160,9 @@ def reconstrueer_pad(voorgangers, start, doel):
             break
         huidige = voorgangers.get(huidige)
     pad.reverse()
-    return pad if pad and pad[0] == start else []
+    if pad and pad[0] == start:
+        return pad
+    return []
 ```
 
 Verwacht:
@@ -192,7 +198,9 @@ def kies_volgende(afstanden, bezocht):
 
 
 def dijkstra(graph, start):
-    afstanden = {node: float('inf') for node in graph}
+    afstanden = {}
+    for node in graph:
+        afstanden[node] = float('inf')
     afstanden[start] = 0
     bezocht = set()
     voorgangers = {}
@@ -218,7 +226,9 @@ def reconstrueer_pad(voorgangers, start, doel):
             break
         huidige = voorgangers.get(huidige)
     pad.reverse()
-    return pad if pad and pad[0] == start else []
+    if pad and pad[0] == start:
+        return pad
+    return []
 
 
 graph = {
@@ -233,7 +243,9 @@ _, voorgangers = dijkstra(graph, start)
 pad = reconstrueer_pad(voorgangers, start, doel)
 print("Kortste pad:", " → ".join(pad))
 
-pad_edges = {tuple(sorted([pad[i], pad[i+1]])) for i in range(len(pad)-1)}
+pad_edges = set()
+for i in range(len(pad) - 1):
+    pad_edges.add(tuple(sorted([pad[i], pad[i + 1]])))
 posities = {'A': (0, 1), 'B': (1, 1), 'C': (0, 0), 'D': (1, 0)}
 fig, ax = plt.subplots(figsize=(5, 4))
 getekend = set()
@@ -245,15 +257,22 @@ for node, buren in graph.items():
             continue
         getekend.add(edge)
         x2, y2 = posities[buur]
-        is_pad = edge in pad_edges
+        if edge in pad_edges:
+            lijn_kleur = 'red'
+            lijn_dikte = 3
+        else:
+            lijn_kleur = 'lightgray'
+            lijn_dikte = 1
         ax.plot([x1, x2], [y1, y2],
-                color='red' if is_pad else 'lightgray',
-                linewidth=3 if is_pad else 1, zorder=1)
+                color=lijn_kleur, linewidth=lijn_dikte, zorder=1)
         ax.text((x1+x2)/2, (y1+y2)/2 + 0.06, str(gewicht),
                 ha='center', color='blue', fontsize=11)
 for node, (x, y) in posities.items():
     is_op_pad = node in pad
-    kleur = 'lightcoral' if is_op_pad else 'lightyellow'
+    if is_op_pad:
+        kleur = 'lightcoral'
+    else:
+        kleur = 'lightyellow'
     ax.scatter(x, y, s=700, color=kleur, edgecolors='black', zorder=2)
     ax.text(x, y, node, ha='center', va='center', fontsize=13, zorder=3)
 ax.set_xlim(-0.5, 1.5); ax.set_ylim(-0.5, 1.5)

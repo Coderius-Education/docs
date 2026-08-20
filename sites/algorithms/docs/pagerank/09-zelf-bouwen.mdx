@@ -36,11 +36,21 @@ WEB = {
 # De exacte berekening uit de vorige stappen (gegeven, ter vergelijking):
 def pagerank(web, d=0.85, epsilon=1e-9):
     n = len(web)
-    rank = {p: 1 / n for p in web}
+    rank = {}
+    for p in web:
+        rank[p] = 1 / n
     while True:
-        nieuw = {p: (1 - d) / n + d * sum(rank[i] / len(web[i])
-                 for i in web if p in web[i]) for p in web}
-        if max(abs(nieuw[p] - rank[p]) for p in web) < epsilon:
+        nieuw = {}
+        for p in web:
+            som = 0.0
+            for i in web:
+                if p in web[i]:
+                    som += rank[i] / len(web[i])
+            nieuw[p] = (1 - d) / n + d * som
+        verschil = 0.0
+        for p in web:
+            verschil = max(verschil, abs(nieuw[p] - rank[p]))
+        if verschil < epsilon:
             return nieuw
         rank = nieuw
 
@@ -48,7 +58,9 @@ def pagerank(web, d=0.85, epsilon=1e-9):
 def random_surfer(web, d=0.85, n=50000, seed=42):
     random.seed(seed)
     paginas = list(web)
-    tel = {p: 0 for p in web}
+    tel = {}
+    for p in web:
+        tel[p] = 0
     huidig = random.choice(paginas)
     for _ in range(n):
         tel[huidig] += 1
@@ -57,7 +69,10 @@ def random_surfer(web, d=0.85, n=50000, seed=42):
         # - met kans d en als er links zijn: volg een willekeurige link
         # - anders: spring naar een willekeurige pagina
         ...
-    return {p: tel[p] / n for p in web}
+    verdeling = {}
+    for p in web:
+        verdeling[p] = tel[p] / n
+    return verdeling
 
 
 # === Tests ===

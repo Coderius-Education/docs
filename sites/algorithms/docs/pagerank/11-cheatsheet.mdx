@@ -43,7 +43,9 @@ rank(p) = (1 − d)/N  +  d · Σ  rank(i) / aantal_links(i)
 ```python
 def pagerank(web, d=0.85, epsilon=1e-9):
     n = len(web)
-    rank = {p: 1 / n for p in web}
+    rank = {}
+    for p in web:
+        rank[p] = 1 / n
     while True:
         nieuw = {}
         for p in web:
@@ -79,7 +81,10 @@ Een pagina zonder uitgaande links laat anders belang "weglekken".
 Oplossing: behandel hem alsof hij naar **alle** pagina's linkt.
 
 ```python
-links = web[i] if web[i] else set(web)
+if web[i]:
+    links = web[i]
+else:
+    links = set(web)
 ```
 
 </details>

@@ -61,7 +61,10 @@ Klopt met pagina 02.
 ## Bouw zelf en test
 
 <PyRunner initialCode={`def lege_tabel(n, capaciteit):
-    return [[0] * (capaciteit + 1) for _ in range(n + 1)]
+    tabel = []
+    for _ in range(n + 1):
+        tabel.append([0] * (capaciteit + 1))
+    return tabel
 
 
 def vul_rij(tabel, items, i, capaciteit):

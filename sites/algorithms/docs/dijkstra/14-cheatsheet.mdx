@@ -25,7 +25,9 @@ def kies_volgende(afstanden, bezocht):
 
 
 def dijkstra(graph, start):
-    afstanden = {node: float('inf') for node in graph}
+    afstanden = {}
+    for node in graph:
+        afstanden[node] = float('inf')
     afstanden[start] = 0
     bezocht = set()
     voorgangers = {}
@@ -59,7 +61,9 @@ def reconstrueer_pad(voorgangers, start, doel):
             break
         huidige = voorgangers.get(huidige)
     pad.reverse()
-    return pad if pad and pad[0] == start else []
+    if pad and pad[0] == start:
+        return pad
+    return []
 ```
 
 `[]` betekent: `doel` is onbereikbaar vanuit `start`.
@@ -88,7 +92,9 @@ Elke verbinding **twee keer** in een niet-gerichte graph.
 <summary>2. Afstanden + bezocht initialiseren</summary>
 
 ```python
-afstanden = {node: float('inf') for node in graph}
+afstanden = {}
+for node in graph:
+    afstanden[node] = float('inf')
 afstanden[start] = 0
 bezocht = set()
 ```

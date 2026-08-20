@@ -271,7 +271,9 @@ zoals jij het hier met de hand deed.
 ```python
 def knapsack(items, capaciteit):
     n = len(items)
-    tabel = [[0] * (capaciteit + 1) for _ in range(n + 1)]
+    tabel = []
+    for _ in range(n + 1):
+        tabel.append([0] * (capaciteit + 1))
     # ... vul rijen 1 t/m n in volgens de drie regels ...
     return tabel[n][capaciteit]
 ```
