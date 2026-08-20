@@ -19,6 +19,32 @@ permissions:
   contents: read
 
 jobs:
+  # Aparte, kleine job omdat `build` erop wacht. De nakijker bepaalt wat een
+  # leerling als beoordeling ziet, en een scoringsfout geeft geen foutmelding —
+  # die telt gewoon stil iets verkeerd. Zulke code mag niet gedeployd worden.
+  #
+  # Bewust niet samen met lint en typecheck in één job: dan zou een tsc-fout in
+  # een willekeurige site de artifacts van alle veertien tegenhouden, en zou de
+  # trage typecheck (~30s) elke build vertragen. De installatie hier kost 12s en
+  # loopt parallel aan checks, dus dit kost vrijwel geen doorlooptijd.
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Test (nakijker)
+        run: pnpm test
+
   checks:
     runs-on: ubuntu-latest
     steps:
@@ -45,6 +71,14 @@ jobs:
         run: pnpm typecheck
 
   build:
+    # Alleen op de tests wachten, niet op lint of typecheck. De hostingbackend
+    # haalt de artifacts namelijk óók op als de run is mislukt (bewust: met
+    # fail-fast:false mag één kapotte site de andere niet blokkeren), dus zonder
+    # deze afhankelijkheid zou een nakijker met rode tests alsnog live gaan.
+    #
+    # Lint en typecheck blijven bewust buiten deze poort: die falen op eigen
+    # kracht de run, en zo blijft zichtbaar welke sites nog wél bouwen.
+    needs: test
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false

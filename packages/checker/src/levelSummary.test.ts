@@ -1,0 +1,86 @@
+import { describe, expect, it } from 'vitest';
+import { computeLevelSummary } from './levelSummary';
+import type { CheckReport, CheckerConfig, Concept } from './types';
+
+function concept(id: string, subject: string, level: 'basis' | 'gevorderd'): Concept {
+  return {
+    id,
+    subject,
+    group: 'Groep',
+    label: id,
+    level,
+    detect: { type: 'regex', pattern: /x/g },
+  };
+}
+
+function config(concepts: Concept[], subjectIds = ['html', 'css']): CheckerConfig {
+  return {
+    subjects: subjectIds.map((id) => ({ id, label: id.toUpperCase() })),
+    concepts,
+    fileKinds: [{ id: 'html', label: 'HTML' }],
+    classify: () => 'html',
+    textKinds: ['html'],
+    accept: '.html',
+    teacher: { password: 'x', storageKey: 'x' },
+    pdfFilename: () => 'x.pdf',
+  };
+}
+
+function report(used: Record<string, boolean>): CheckReport {
+  return {
+    fileStats: { total: 0, byKind: {}, skippedTooLarge: 0 },
+    concepts: Object.entries(used).map(([id, u]) => ({ id, count: u ? 1 : 0, used: u })),
+    warnings: [],
+  };
+}
+
+describe('computeLevelSummary', () => {
+  it('telt per onderwerp en per niveau hoeveel concepten gebruikt zijn', () => {
+    const cfg = config([
+      concept('a', 'html', 'basis'),
+      concept('b', 'html', 'basis'),
+      concept('c', 'html', 'gevorderd'),
+      concept('d', 'css', 'basis'),
+    ]);
+    const summary = computeLevelSummary(report({ a: true, b: false, c: true, d: true }), cfg);
+
+    const html = summary.bySubject.find((s) => s.subject === 'html');
+    expect(html?.basis).toEqual({ used: 1, total: 2 });
+    expect(html?.gevorderd).toEqual({ used: 1, total: 1 });
+
+    const css = summary.bySubject.find((s) => s.subject === 'css');
+    expect(css?.basis).toEqual({ used: 1, total: 1 });
+    expect(css?.gevorderd).toEqual({ used: 0, total: 0 });
+  });
+
+  it('telt de totalen op als de som over alle onderwerpen', () => {
+    const cfg = config([
+      concept('a', 'html', 'basis'),
+      concept('b', 'css', 'basis'),
+      concept('c', 'css', 'gevorderd'),
+    ]);
+    const summary = computeLevelSummary(report({ a: true, b: true, c: false }), cfg);
+
+    expect(summary.basis).toEqual({ used: 2, total: 2 });
+    expect(summary.gevorderd).toEqual({ used: 0, total: 1 });
+  });
+
+  it('behandelt een concept dat niet in het rapport staat als niet-gebruikt', () => {
+    // Gebeurt als een rapport uit een andere config komt: geen crash, geen telling.
+    const cfg = config([concept('a', 'html', 'basis')]);
+    const summary = computeLevelSummary(report({ onbekend: true }), cfg);
+
+    expect(summary.basis).toEqual({ used: 0, total: 1 });
+  });
+
+  it('laat een concept met een onbekend onderwerp stilzwijgend buiten de telling', () => {
+    // Vastgelegd bestaand gedrag, geen gewenst gedrag: een typefout in `subject`
+    // maakt het concept onzichtbaar in het rapport zonder enige waarschuwing.
+    // De guard-test op de echte site-configs zorgt dat dit daar niet voorkomt.
+    const cfg = config([concept('a', 'html', 'basis'), concept('zoek', 'typefout', 'basis')]);
+    const summary = computeLevelSummary(report({ a: true, zoek: true }), cfg);
+
+    expect(summary.basis).toEqual({ used: 1, total: 1 });
+    expect(summary.bySubject.map((s) => s.subject)).toEqual(['html', 'css']);
+  });
+});

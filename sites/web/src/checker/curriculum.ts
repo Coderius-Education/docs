@@ -4,6 +4,9 @@ import type { HtmlElementInfo, Technique } from './curriculum-types';
 // afgeleid van de cheatsheet — wijzig je een les daar, werk dan ook hier de
 // bijbehorende regel bij, zodat het rapport aansluit bij wat er onderwezen
 // wordt.
+//
+// Draai na een wijziging `pnpm test`: config.test.ts scoort een paar
+// voorbeeldprojecten en legt vast welke concepten daarin herkend worden.
 
 export const HTML_ELEMENTS: HtmlElementInfo[] = [
   {
