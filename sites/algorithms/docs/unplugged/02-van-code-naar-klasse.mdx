@@ -1,0 +1,198 @@
+---
+sidebar_position: 2
+---
+
+# 14.2 Van code naar klasse
+
+<Handout>
+
+Twaalf stukjes Python-code, vier complexiteits-klassen. Knip de kaartjes
+uit en sorteer ze in groepjes: welke code hoort bij O(1), O(log n), O(n)
+en O(n²)? Je hoeft de code niet uit te voeren — kijk naar de lussen.
+
+## Wat je nodig hebt
+
+- Een geprinte hand-out en een schaar per groepje van 2 tot 4 leerlingen.
+- Vier briefjes of vakken op tafel met de labels **O(1)**, **O(log n)**,
+  **O(n)** en **O(n²)**.
+- Ongeveer 15 tot 20 minuten.
+
+## Zo werkt het
+
+1. Knip de twaalf kaartjes uit en schud ze.
+2. Leg om de beurt een kaartje bij een klasse en leg hardop uit waarom.
+3. Is je groepje het oneens? Gebruik de beslisboom hieronder om er samen
+   uit te komen.
+4. Alles verdeeld? Controleer met de antwoorden (laatste pagina) — of
+   laat je docent controleren.
+
+Bij elke klasse horen precies **drie** kaartjes.
+
+## De beslisboom
+
+```
+Wel of geen lus door de invoer?
+├── Nee → O(1)
+└── Ja, één lus door alles
+    ├── Halveert het de zoekruimte per stap?
+    │   └── Ja → O(log n)
+    └── Bekijkt het elk element één keer?
+        └── Ja → O(n)
+        Geneste lus over de invoer?
+        └── Ja → O(n²)
+```
+
+## De kaartjes
+
+**Kaartje A**
+
+```python
+def eerste(lijst):
+    return lijst[0]
+```
+
+**Kaartje B**
+
+```python
+def tel_voorkomens(lijst, doel):
+    teller = 0
+    for waarde in lijst:
+        if waarde == doel:
+            teller += 1
+    return teller
+```
+
+**Kaartje C**
+
+```python
+def alle_duos(namen):
+    for a in namen:
+        for b in namen:
+            print(a, "en", b)
+```
+
+**Kaartje D**
+
+```python
+def halveer_tot_een(n):
+    while n > 1:
+        n = n // 2
+    return n
+```
+
+**Kaartje E**
+
+```python
+def voeg_achteraan_toe(lijst, waarde):
+    lijst.append(waarde)
+    return len(lijst)
+```
+
+**Kaartje F**
+
+```python
+def print_alles(lijst):
+    for waarde in lijst:
+        print(waarde)
+```
+
+**Kaartje G**
+
+```python
+def zoek(lijst, doel):
+    laag = 0
+    hoog = len(lijst) - 1
+    while laag <= hoog:
+        midden = (laag + hoog) // 2
+        if lijst[midden] == doel:
+            return midden
+        if lijst[midden] < doel:
+            laag = midden + 1
+        else:
+            hoog = midden - 1
+    return -1
+```
+
+**Kaartje H**
+
+```python
+def vergelijk_alle_paren(lijst):
+    wissels = 0
+    for i in range(len(lijst)):
+        for j in range(len(lijst)):
+            if lijst[i] > lijst[j]:
+                wissels += 1
+    return wissels
+```
+
+**Kaartje I**
+
+```python
+def grootste(lijst):
+    beste = lijst[0]
+    for waarde in lijst:
+        if waarde > beste:
+            beste = waarde
+    return beste
+```
+
+**Kaartje J**
+
+```python
+def is_even(getal):
+    return getal % 2 == 0
+```
+
+**Kaartje K**
+
+```python
+def keren_verdubbelen(doel):
+    waarde = 1
+    stappen = 0
+    while waarde < doel:
+        waarde = waarde * 2
+        stappen += 1
+    return stappen
+```
+
+**Kaartje L**
+
+```python
+def tafel(lijst):
+    for a in lijst:
+        for b in lijst:
+            print(a * b)
+```
+
+## Bespreek na
+
+- Welk kaartje was het lastigst om te plaatsen, en waarom?
+- Kaartje G is veel langer dan kaartje D. Waarom zitten ze toch in
+  dezelfde klasse?
+- Wat zegt de **lengte** van code over de snelheid? (Weinig.)
+
+<div style={{breakBefore: 'page'}}>
+
+## Antwoorden
+
+Deze pagina print als losse laatste pagina — houd hem achter de hand of
+knip hem eraf.
+
+| Klasse | Kaartjes | Herkenning |
+|:---:|:---:|---|
+| O(1) | A, E, J | geen lus (append, index en rekenen zijn één stap) |
+| O(log n) | D, G, K | halveren of verdubbelen per stap |
+| O(n) | B, F, I | één lus, elk element één keer |
+| O(n²) | C, H, L | een lus in een lus, beide over de invoer |
+
+</div>
+
+## Verder op de site
+
+- [7.1 Big O — het idee](/docs/big-o/01-concept)
+- [7.9 Van code naar klasse](/docs/big-o/09-welke-klasse) — dezelfde
+  oefening met uitleg per snippet
+- [7.8 Overzicht per algoritme](/docs/big-o/08-overzicht) — de beslisboom
+  met toelichting
+
+</Handout>

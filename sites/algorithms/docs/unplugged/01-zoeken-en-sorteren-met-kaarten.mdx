@@ -1,0 +1,89 @@
+---
+sidebar_position: 1
+---
+
+# 14.1 Zoeken en sorteren met kaarten
+
+<Handout>
+
+Vier algoritmes van deze site voer je hier uit met een gewoon kaartspel, zonder computer. Jij bént het algoritme: je volgt de stappen precies zoals Python dat zou doen, en je telt hoeveel werk het kost.
+
+## Wat je nodig hebt
+
+- Eén kaartspel per groepje van 2 tot 4 leerlingen.
+- Een tafel met ruimte voor een rij van ongeveer 13 kaarten.
+- Per werkvorm ongeveer 10 tot 15 minuten.
+
+Afspraken over de kaartwaarden: aas = 1, boer = 11, vrouw = 12, heer = 13. Bij het sorteren gebruik je kaarten van één kleur (bijvoorbeeld alleen harten), zodat elke waarde maar één keer voorkomt.
+
+## Werkvorm 1 — Lineair zoeken
+
+**Nodig:** 10 kaarten van één kleur, geschud.
+
+**Opstelling:** leg de kaarten gedekt (met de rug omhoog) op een rij. Eén leerling is de *zoeker*, een ander noemt een waarde tussen 1 en 13. Die waarde kan in de rij liggen, maar dat hoeft niet.
+
+**Stappen:**
+
+1. Draai de meest linkse kaart om. Is dit de gezochte waarde? Dan ben je klaar.
+2. Zo niet: draai de volgende kaart om. Sla nooit een kaart over.
+3. Ligt de hele rij open zonder match? Dan is de conclusie: de waarde zit er niet in.
+4. Tel hoeveel kaarten je hebt omgedraaid en schrijf dat op.
+
+Wissel van rol en speel een paar rondes. Bespreek daarna: wat is het kleinste aantal kaarten dat de zoeker moet omdraaien, en wat het grootste? Wanneer gebeurt dat?
+
+## Werkvorm 2 — Binair zoeken
+
+**Nodig:** alle 13 kaarten van één kleur.
+
+**Opstelling:** leg de kaarten eerst open op volgorde, van aas links tot heer rechts. Draai ze daarna allemaal om, zonder de volgorde te veranderen. Dit sorteren vooraf is geen detail: binair zoeken werkt alleen op een gesorteerde rij. Eén leerling noemt weer een waarde tussen 1 en 13.
+
+**Stappen:**
+
+1. Draai de middelste kaart van de rij om.
+2. Is het de gezochte waarde? Klaar.
+3. Is de kaart te hoog? Schuif de omgedraaide kaart én alles rechts ervan opzij. Te laag? Schuif de kaart én alles links ervan opzij.
+4. Herhaal met het deel dat overblijft: steeds de middelste omdraaien en een helft wegschuiven.
+5. Tel ook nu hoeveel kaarten je omdraait.
+
+Vergelijk je telling met werkvorm 1. Bij 13 kaarten draai je er hooguit vier om. Hoe kan het verschil zo groot zijn, en waarom lukt dit alleen doordat de rij gesorteerd is?
+
+## Werkvorm 3 — Selection sort
+
+**Nodig:** 8 kaarten van één kleur, geschud.
+
+**Opstelling:** leg de kaarten open op een rij. Eén leerling sorteert, een ander telt hardop de wissels.
+
+**Stappen:**
+
+1. Zoek met je ogen de laagste kaart in de hele rij.
+2. Wissel die kaart van plek met de kaart op positie 1 (helemaal links). Alleen deze twee kaarten bewegen; de rest blijft liggen.
+3. Zoek nu de laagste kaart in de rest van de rij (positie 1 doet niet meer mee) en wissel die naar positie 2.
+4. Herhaal tot de hele rij van laag naar hoog ligt.
+
+Bespreek in je groepje: hoeveel kaarten moet je bekijken om de laagste te vinden in de eerste ronde, en hoeveel in de laatste? Dit is dezelfde stapel-speelkaarten-aanpak als in [5.1 Selection sort — het idee](/docs/selection-sort/01-concept).
+
+## Werkvorm 4 — Bubble sort
+
+**Nodig:** 8 kaarten van één kleur, geschud.
+
+**Opstelling:** leg de kaarten open op een rij. Eén leerling sorteert, een ander telt de wissels per ronde.
+
+**Stappen:**
+
+1. Kijk naar de twee meest linkse kaarten. Staat de linker hoger dan de rechter? Wissel ze om.
+2. Schuif één plek op naar rechts en vergelijk het volgende paar buren. Ga zo door tot het einde van de rij; dat is één ronde.
+3. Noteer hoeveel wissels deze ronde had en begin opnieuw vooraan.
+4. Stop zodra een hele ronde nul wissels heeft: de rij is gesorteerd.
+
+Kijk na de eerste ronde naar de meest rechtse kaart. Waarom is dat altijd de hoogste van de rij, hoe geschud de kaarten ook lagen?
+
+## Verder op de site
+
+Elk van deze werkvormen hoort bij een les waarin je hetzelfde algoritme in Python bouwt:
+
+- [1.1 Lineair zoeken — het idee](/docs/lineair-zoeken/01-concept)
+- [4.1 Binair zoeken — het idee](/docs/binair-zoeken/01-concept)
+- [5.1 Selection sort — het idee](/docs/selection-sort/01-concept)
+- [6.1 Bubble sort — het idee](/docs/bubble-sort/01-concept)
+
+</Handout>
