@@ -113,7 +113,7 @@ Houd bij hoe vaak `/berichten` is opgevraagd en toon dat onderaan de pagina.
 <details>
 <summary>Tip</summary>
 
-Dit moet bewaard blijven en voor iedereen gelden, dus het hoort in je database. Lees de huidige stand met `db.get("bezoeken", 0)`, tel er één bij op, sla op, en stuur het getal mee naar je template.
+Dit moet bewaard blijven en voor iedereen gelden, dus het hoort in je database. Zet de teller in een **eigen** databasebestand, los van je berichten. Lees de stand met `db.get("aantal", 0)`, tel er één bij op, sla op, en stuur het getal mee naar je template.
 
 </details>
 
@@ -123,11 +123,13 @@ Dit moet bewaard blijven en voor iedereen gelden, dus het hoort in je database. 
 ```python
 @app.get("/berichten")
 async def berichten(request: Request):
+    with SqliteDict("bezoeken.db") as teller_db:
+        bezoeken = teller_db.get("aantal", 0) + 1
+        teller_db["aantal"] = bezoeken
+        teller_db.commit()
+
     with SqliteDict("gastenboek.db") as db:
-        bezoeken = db.get("bezoeken", 0) + 1
-        db["bezoeken"] = bezoeken
-        db.commit()
-        alle_berichten = [v for k, v in db.items() if k != "bezoeken"]
+        alle_berichten = list(db.items())
 
     return templates.TemplateResponse(
         request,
@@ -138,7 +140,7 @@ async def berichten(request: Request):
 
 In je template: `<p>Deze pagina is {{ bezoeken }} keer bekeken.</p>`
 
-Let op de regel die `bezoeken` uit de berichtenlijst filtert. Je gebruikt één database voor twee soorten gegevens, dus je moet ze uit elkaar houden. Dat is precies het soort rommeligheid waar je tegenaan loopt als alles in één key-value-opslag zit.
+Let op dat de teller in `bezoeken.db` staat en niet in `gastenboek.db`. Zet je hem er wél bij, dan komt hij tussen je berichten terecht: je lijst krijgt er een regel bij die geen naam en geen bericht heeft, en `{% for sleutel, bericht in berichten %}` gaat er raar van doen. Twee soorten gegevens, twee bestanden.
 
 </details>
 
@@ -184,22 +186,34 @@ Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier 
 :::
 
 <CodeExercise>
-{`# Twee soorten gegevens in één opslag uit elkaar houden
+{`# Waarom de teller een eigen bestand krijgt
 from datetime import datetime
 
-database = {
+# Alles door elkaar: de teller staat tussen de berichten
+rommelig = {
     "bezoeken": 12,
     "bericht_100": {"naam": "Jan", "bericht": "Hallo"},
     "bericht_200": {"naam": "Sarah", "bericht": "Leuke site"}
 }
 
-# Alleen de berichten, niet de teller
-berichten = [waarde for sleutel, waarde in database.items() if sleutel != "bezoeken"]
-print(f"{len(berichten)} berichten, {database['bezoeken']} bezoeken")
+for sleutel, waarde in rommelig.items():
+    print(f"{sleutel} -> {waarde}")
 
-for bericht in berichten:
+# Je template verwacht bij elke waarde een naam. De teller heeft die niet:
+for sleutel, waarde in rommelig.items():
+    naam = waarde["naam"] if isinstance(waarde, dict) else "GEEN NAAM"
+    print(f"  {naam}")
+
+# Netjes: twee opslagplaatsen, elk met één soort gegeven
+gastenboek = {
+    "bericht_100": {"naam": "Jan", "bericht": "Hallo"},
+    "bericht_200": {"naam": "Sarah", "bericht": "Leuke site"}
+}
+bezoeken = {"aantal": 12}
+
+print(f"\\n{len(gastenboek)} berichten, {bezoeken['aantal']} bezoeken")
+for sleutel, bericht in gastenboek.items():
     print(f"  {bericht['naam']}: {bericht['bericht']}")
 
-# Een tijd bij een nieuw bericht
 print("\\nNieuw bericht om", datetime.now().strftime("%H:%M"))`}
 </CodeExercise>
