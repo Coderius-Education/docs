@@ -34,6 +34,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # Blokkerend, in tegenstelling tot de lint hieronder: de nakijker bepaalt
+      # wat een leerling als beoordeling ziet, en een scoringsfout geeft geen
+      # foutmelding — die telt gewoon stil iets verkeerd. Draait in een seconde,
+      # dus vóór de trage typecheck.
+      - name: Test (nakijker)
+        run: pnpm test
+
       # Niet-blokkerend: de uit losse repos gemigreerde sites hebben nog
       # honderden bestaande biome-fouten. Zodra die zijn opgeschoond kan
       # continue-on-error weg.
@@ -45,6 +52,11 @@ jobs:
         run: pnpm typecheck
 
   build:
+    # Wacht op checks. De hostingbackend haalt de artifacts óók op als de run
+    # is mislukt (bewust: met fail-fast:false mag één kapotte site de andere
+    # niet blokkeren). Zonder deze afhankelijkheid zou een nakijker met rode
+    # tests dus alsnog live gaan. Kosten: de builds starten later.
+    needs: checks
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false

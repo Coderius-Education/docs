@@ -15,9 +15,12 @@
     "preview-all:nobuild": "node scripts/run-all-sites.mjs serve",
     "sites:start": "node scripts/run-all-sites.mjs start",
     "format": "biome format --write .",
-    "lint": "biome check ."
+    "lint": "biome check .",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4"
+    "@biomejs/biome": "^1.9.4",
+    "vitest": "^4.1.11"
   }
 }

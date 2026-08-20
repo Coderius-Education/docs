@@ -1,0 +1,4 @@
+/* color: red; -- dit stond er eerst in */
+.kaart:hover {
+  background-color: #eee;
+}
