@@ -2,8 +2,6 @@
 sidebar_position: 16
 ---
 
-import CodeExercise from '@site/src/components/CodeExercise';
-
 # JavaScript erbij
 
 <Voorkennis
@@ -198,27 +196,3 @@ knop.addEventListener("click", function () {
 Ook hier komt de server er niet aan te pas. Het formulier stond de hele tijd al in de HTML die Python stuurde; JavaScript laat het alleen zien of verbergt het.
 
 </details>
-
-## Oefen met Python
-
-:::info[Python oefenblok]
-Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
-:::
-
-<CodeExercise>
-{`# Dezelfde teller, maar dan in Python
-MAX = 80
-
-bericht = "Hallo allemaal"
-over = MAX - len(bericht)
-print(f"{over} tekens over")
-
-# Bij elke toetsaanslag opnieuw
-tot_nu_toe = ""
-for letter in "hallo":
-    tot_nu_toe = tot_nu_toe + letter
-    print(f"'{tot_nu_toe}' -> {MAX - len(tot_nu_toe)} tekens over")
-
-# Het rekenwerk is hetzelfde. Het verschil zit hem in de plek: doe je dit in
-# Python, dan moet elke letter eerst naar de server en het antwoord weer terug.`}
-</CodeExercise>

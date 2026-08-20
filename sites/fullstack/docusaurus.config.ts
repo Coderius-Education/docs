@@ -12,9 +12,8 @@ export default createConfig({
     'Leer een back-end bouwen met FastAPI (Python). Van frontend naar database, direct in je browser.',
   keywords: 'fastapi leren, fullstack python, backend leren beginners, sqlite database python',
 
-  // Pyodide-componenten gedeeld; fullstack gebruikt de CDN (geen lokale setup).
   // @coderius/checker levert de gedeelde 'nakijken'-validator (TSX-bron).
-  sharedPackages: ['@coderius/shared', '@coderius/python-runner', '@coderius/checker'],
+  sharedPackages: ['@coderius/shared', '@coderius/checker'],
 
   presets: [
     [

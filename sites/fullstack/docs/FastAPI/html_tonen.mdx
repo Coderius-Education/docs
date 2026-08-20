@@ -2,8 +2,6 @@
 sidebar_position: 3
 ---
 
-import CodeExercise from '@site/src/components/CodeExercise';
-
 # HTML tonen
 
 <Voorkennis
@@ -209,33 +207,3 @@ async def pagina2():
 ```
 
 </details>
-
-## Oefen met Python
-
-:::info[Python oefenblok]
-Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
-:::
-
-<CodeExercise>
-{`# Multi-line strings — zo bouw je HTML in Python
-naam = "Jan"
-kleur = "blue"
-
-html = f"""<!DOCTYPE html>
-<html>
-    <head>
-        <title>Profiel</title>
-        <style>
-            h1 {{ color: {kleur}; }}
-        </style>
-    </head>
-    <body>
-        <h1>{naam}</h1>
-        <p>Welkom op mijn pagina!</p>
-    </body>
-</html>"""
-
-print(html)
-print()
-print(f"De HTML is {len(html)} tekens lang.")`}
-</CodeExercise>

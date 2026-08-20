@@ -2,8 +2,6 @@
 sidebar_position: 13
 ---
 
-import CodeExercise from '@site/src/components/CodeExercise';
-
 # Een lijst tonen
 
 <Voorkennis
@@ -211,37 +209,3 @@ De `<tr>` met de kopjes hoort buiten de lus. Alleen de `<tr>` met de data herhaa
 De kopregel staat buiten de lus, dus die verschijnt één keer. De rij met `<td>` staat erbinnen en wordt per bericht herhaald.
 
 </details>
-
-## Oefen met Python
-
-:::info[Python oefenblok]
-Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
-:::
-
-<CodeExercise>
-{`# Een lijst met dictionaries doorlopen, zoals Jinja2 dat in je template doet
-berichten = [
-    {"naam": "Jan", "bericht": "Hallo"},
-    {"naam": "Sarah", "bericht": "Leuke site"},
-    {"naam": "Piet", "bericht": "Cool project"}
-]
-
-# Elk bericht op een eigen regel
-for bericht in berichten:
-    print(f"{bericht['naam']}: {bericht['bericht']}")
-
-print()
-
-# Met een volgnummer, zoals loop.index
-for nummer, bericht in enumerate(berichten, start=1):
-    print(f"{nummer}. {bericht['naam']}")
-
-print()
-
-# Het lege geval
-lege_lijst = []
-if lege_lijst:
-    print("Er zijn berichten")
-else:
-    print("Nog geen berichten. Wees de eerste.")`}
-</CodeExercise>

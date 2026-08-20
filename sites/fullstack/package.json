@@ -22,8 +22,7 @@
     "clsx": "catalog:",
     "prism-react-renderer": "catalog:",
     "react": "catalog:",
-    "react-dom": "catalog:",
-    "@coderius/python-runner": "workspace:*"
+    "react-dom": "catalog:"
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "catalog:",

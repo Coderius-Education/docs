@@ -2,8 +2,6 @@
 sidebar_position: 17
 ---
 
-import CodeExercise from '@site/src/components/CodeExercise';
-
 # Data ophalen met fetch
 
 <Voorkennis
@@ -222,27 +220,3 @@ Je Python-code blijft precies hetzelfde. Een formulier dat de browser verstuurt 
 Wat er wél verandert: de redirect uit [Terug naar de lijst](/docs/FastAPI/redirect) heb je niet meer nodig. Die was er om te voorkomen dat F5 je bericht opnieuw verstuurt — maar er ís geen paginawissel meer, dus dat probleem bestaat niet. Laat het endpoint wel gewoon werken zonder JavaScript: wie het formulier op de normale manier verstuurt moet nog steeds netjes op de lijst uitkomen.
 
 </details>
-
-## Oefen met Python
-
-:::info[Python oefenblok]
-Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
-:::
-
-<CodeExercise>
-{`# Wat je endpoint teruggeeft, is precies wat je JavaScript binnenkrijgt
-import json
-
-berichten = [
-    {"naam": "Jan", "bericht": "Hallo"},
-    {"naam": "Sarah", "bericht": "Leuke site"}
-]
-
-# FastAPI doet dit voor je bij het versturen
-print(json.dumps(berichten))
-
-# En dit is wat await antwoord.json() aan de andere kant oplevert
-binnen = json.loads(json.dumps(berichten))
-for bericht in binnen:
-    print(f"{bericht['naam']}: {bericht['bericht']}")`}
-</CodeExercise>

@@ -2,8 +2,6 @@
 sidebar_position: 14
 ---
 
-import CodeExercise from '@site/src/components/CodeExercise';
-
 # Terug naar de lijst
 
 Je gastenboek werkt, maar na het versturen van een bericht sta je op een doodlopende pagina. Druk je daar op F5, dan vraagt je browser of je het formulier nog een keer wilt versturen — en zo krijg je hetzelfde bericht twee keer in je database. In deze les stuur je de bezoeker na het opslaan terug naar de lijst.
@@ -174,29 +172,3 @@ In `templates/berichten.html`:
 De `if sleutel in db` voorkomt een crash als iemand twee keer op verwijderen klikt.
 
 </details>
-
-## Oefen met Python
-
-:::info[Python oefenblok]
-Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
-:::
-
-<CodeExercise>
-{`# Een sleutel veilig verwijderen, zoals bij het verwijder-endpoint
-database = {
-    "bericht_1": {"naam": "Jan", "bericht": "Hallo"},
-    "bericht_2": {"naam": "Sarah", "bericht": "Leuke site"}
-}
-
-print("Voor:", list(database.keys()))
-
-# Twee keer verwijderen mag geen crash geven
-for sleutel in ["bericht_1", "bericht_1"]:
-    if sleutel in database:
-        del database[sleutel]
-        print(f"{sleutel} verwijderd")
-    else:
-        print(f"{sleutel} bestond al niet meer")
-
-print("Na:", list(database.keys()))`}
-</CodeExercise>

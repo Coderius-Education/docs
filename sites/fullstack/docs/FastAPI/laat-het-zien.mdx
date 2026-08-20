@@ -1,8 +1,6 @@
 ---
-sidebar_position: 19
+sidebar_position: 20
 ---
-
-import CodeExercise from '@site/src/components/CodeExercise';
 
 # Laat het aan anderen zien
 
@@ -178,42 +176,3 @@ In je template: `<li>{{ bericht.tijd }} — {{ bericht.naam }}: {{ bericht.beric
 Berichten die je vóór deze wijziging hebt opgeslagen hebben geen `tijd`. Jinja2 laat dan gewoon niets zien in plaats van te crashen.
 
 </details>
-
-## Oefen met Python
-
-:::info[Python oefenblok]
-Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
-:::
-
-<CodeExercise>
-{`# Waarom de teller een eigen bestand krijgt
-from datetime import datetime
-
-# Alles door elkaar: de teller staat tussen de berichten
-rommelig = {
-    "bezoeken": 12,
-    "bericht_100": {"naam": "Jan", "bericht": "Hallo"},
-    "bericht_200": {"naam": "Sarah", "bericht": "Leuke site"}
-}
-
-for sleutel, waarde in rommelig.items():
-    print(f"{sleutel} -> {waarde}")
-
-# Je template verwacht bij elke waarde een naam. De teller heeft die niet:
-for sleutel, waarde in rommelig.items():
-    naam = waarde["naam"] if isinstance(waarde, dict) else "GEEN NAAM"
-    print(f"  {naam}")
-
-# Netjes: twee opslagplaatsen, elk met één soort gegeven
-gastenboek = {
-    "bericht_100": {"naam": "Jan", "bericht": "Hallo"},
-    "bericht_200": {"naam": "Sarah", "bericht": "Leuke site"}
-}
-bezoeken = {"aantal": 12}
-
-print(f"\\n{len(gastenboek)} berichten, {bezoeken['aantal']} bezoeken")
-for sleutel, bericht in gastenboek.items():
-    print(f"  {bericht['naam']}: {bericht['bericht']}")
-
-print("\\nNieuw bericht om", datetime.now().strftime("%H:%M"))`}
-</CodeExercise>

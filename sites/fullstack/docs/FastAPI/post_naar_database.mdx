@@ -2,8 +2,6 @@
 sidebar_position: 12
 ---
 
-import CodeExercise from '@site/src/components/CodeExercise';
-
 # POST naar database
 
 Nu combineren we formulieren met een database: data van een gebruiker permanent opslaan.
@@ -219,37 +217,3 @@ async def berichten():
 Je berichten staan nu in de database, maar `/berichten` geeft ze nog als JSON terug. In [Een lijst tonen](/docs/FastAPI/lijst_tonen) zet je ze op een echte pagina.
 
 </details>
-
-## Oefen met Python
-
-:::info[Python oefenblok]
-Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
-:::
-
-<CodeExercise>
-{`# Database simuleren met een dictionary
-import time
-
-database = {}
-
-# Berichten opslaan met unieke keys
-berichten = [
-    {"naam": "Jan", "bericht": "Hallo!"},
-    {"naam": "Sarah", "bericht": "Leuke site!"},
-    {"naam": "Piet", "bericht": "Cool project!"}
-]
-
-for i, b in enumerate(berichten):
-    key = f"bericht_{i}"
-    database[key] = b
-    print(f"Opgeslagen: {key} → {b}")
-
-# Alle berichten ophalen
-print("\\n--- Gastenboek ---")
-for key, data in database.items():
-    print(f"{data['naam']}: {data['bericht']}")
-
-# Eén bericht ophalen
-print(f"\\nLaatste: {database.get('bericht_2', 'Niet gevonden')}")
-print(f"Bestaat niet: {database.get('bericht_99', 'Niet gevonden')}")`}
-</CodeExercise>

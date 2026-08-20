@@ -2,8 +2,6 @@
 sidebar_position: 15
 ---
 
-import CodeExercise from '@site/src/components/CodeExercise';
-
 # Eén bericht tonen
 
 <Voorkennis
@@ -215,35 +213,3 @@ async def bericht_nummer(request: Request, nummer: int):
 Door `nummer: int` te schrijven controleert FastAPI zelf of het een getal is. Typ je `/bericht-nummer/abc`, dan krijg je een 422 nog voordat jouw code draait.
 
 </details>
-
-## Oefen met Python
-
-:::info[Python oefenblok]
-Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
-:::
-
-<CodeExercise>
-{`# Opzoeken wat er misschien niet is
-database = {
-    "bericht_1": {"naam": "Jan", "bericht": "Hallo"},
-    "bericht_2": {"naam": "Sarah", "bericht": "Leuke site"}
-}
-
-# db[...] crasht als de sleutel niet bestaat
-try:
-    print(database["bericht_9"])
-except KeyError:
-    print("KeyError: bericht_9 bestaat niet")
-
-# .get() geeft None in plaats van een crash
-bericht = database.get("bericht_9")
-print("get() geeft:", bericht)
-
-# Daarom controleer je op None voordat je verder gaat
-for sleutel in ["bericht_1", "bericht_9"]:
-    bericht = database.get(sleutel)
-    if bericht is None:
-        print(f"{sleutel}: 404, bestaat niet")
-    else:
-        print(f"{sleutel}: {bericht['naam']}")`}
-</CodeExercise>

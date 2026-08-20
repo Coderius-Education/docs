@@ -2,8 +2,6 @@
 sidebar_position: 9
 ---
 
-import CodeExercise from '@site/src/components/CodeExercise';
-
 # Eigen POST request
 
 <Voorkennis
@@ -222,31 +220,3 @@ async def profiel(naam: str = Form(...), leeftijd: int = Form(...)):
 ```
 
 </details>
-
-## Oefen met Python
-
-:::info[Python oefenblok]
-Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
-:::
-
-<CodeExercise>
-{`# Formulierdata simuleren met dictionaries
-formulier_data = {
-    "naam": "Sarah",
-    "leeftijd": "16",
-    "kleur": "blauw"
-}
-
-# Data uitlezen (zoals FastAPI doet met Form(...))
-print("Ontvangen formulierdata:")
-for veld, waarde in formulier_data.items():
-    print(f"  {veld} = {waarde}")
-
-# f-string voor antwoord
-naam = formulier_data["naam"]
-print(f"\\nHallo {naam}!")
-
-# Meerdere velden combineren
-profiel = f"{formulier_data['naam']}, {formulier_data['leeftijd']} jaar, houdt van {formulier_data['kleur']}"
-print(f"Profiel: {profiel}")`}
-</CodeExercise>

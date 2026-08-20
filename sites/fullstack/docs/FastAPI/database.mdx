@@ -2,8 +2,6 @@
 sidebar_position: 11
 ---
 
-import CodeExercise from '@site/src/components/CodeExercise';
-
 # Gegevens opslaan
 
 <Voorkennis
@@ -174,31 +172,3 @@ with SqliteDict("favorieten.db") as db:
 ```
 
 </details>
-
-## Oefen met Python
-
-:::info[Python oefenblok]
-Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
-:::
-
-<CodeExercise>
-{`# Oefen met dictionaries (vergelijkbaar met een database)
-data = {}
-
-# Toevoegen (CREATE)
-data["naam"] = "Jan"
-data["leeftijd"] = 16
-data["hobby"] = "programmeren"
-print("Toegevoegd:", data)
-
-# Lezen (READ)
-print(f"Naam: {data['naam']}")
-
-# Bijwerken (UPDATE)
-data["leeftijd"] = 17
-print(f"Nieuwe leeftijd: {data['leeftijd']}")
-
-# Alle items bekijken
-for sleutel, waarde in data.items():
-    print(f"  {sleutel}: {waarde}")`}
-</CodeExercise>

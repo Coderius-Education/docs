@@ -2,8 +2,6 @@
 sidebar_position: 18
 ---
 
-import CodeExercise from '@site/src/components/CodeExercise';
-
 # Server of browser?
 
 Je hebt nu twee plekken waar je code kunt zetten. Het gastenboek draait op de server: Python slaat op, Python bouwt de lijst. De tekenteller draait in de browser: JavaScript rekent, de server weet van niets.
@@ -160,32 +158,3 @@ Er is niet één goed antwoord. Twee voorbeelden:
 Zit jouw browser-idee aan data die nog niet op de pagina staat? Dan hoort het toch bij de server, of je haalt het op met [fetch](/docs/FastAPI/fetch).
 
 </details>
-
-## Oefen met Python
-
-:::info[Python oefenblok]
-Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
-:::
-
-<CodeExercise>
-{`# Waarom "bewaren" bij de server hoort: alles in het geheugen is weg
-# zodra het programma stopt. Precies zo werkt het in de browser.
-
-berichten = []
-
-def voeg_toe(tekst):
-    if len(tekst) > 80:
-        print(f"Geweigerd: {len(tekst)} tekens is te lang")
-        return
-    berichten.append(tekst)
-    print(f"Opgeslagen: {tekst}")
-
-voeg_toe("Hallo allemaal")
-voeg_toe("x" * 100)
-
-print(f"\\nIn het geheugen: {len(berichten)} bericht(en)")
-
-# Start dit blok opnieuw met de knop hierboven. De lijst begint weer leeg,
-# hoeveel je er ook aan toevoegt. Dat is waarom een gastenboek een database
-# nodig heeft, en waarom die database bij de server staat.`}
-</CodeExercise>
