@@ -32,6 +32,19 @@ Open: `http://127.0.0.1:8000`
 </details>
 
 <details>
+<summary>Je server openzetten voor het netwerk</summary>
+
+```bash
+fastapi dev main.py --host 0.0.0.0
+```
+
+Zoek je adres met `ipconfig` (Windows) of `ip addr` (macOS/Linux) en geef `http://<jouw-adres>:8000` door.
+
+**Let op:** iedereen op hetzelfde netwerk kan er dan bij.
+
+</details>
+
+<details>
 <summary>GET endpoint (JSON)</summary>
 
 ```python
@@ -302,16 +315,6 @@ veld.addEventListener("input", function () {
 </details>
 
 <details>
-<summary>Server of browser?</summary>
-
-Moet het bewaard blijven of moet iemand anders het zien? Dan hoort het bij de server.
-Gebeurt het alleen hier en nu voor deze bezoeker? Dan hoort het in de browser.
-
-Controles horen altijd óók op de server: `maxlength` en `required` in je HTML gelden alleen in de browser van de bezoeker.
-
-</details>
-
-<details>
 <summary>Data ophalen bij je eigen server (fetch)</summary>
 
 Endpoint dat data teruggeeft:
@@ -354,19 +357,6 @@ formulier.addEventListener("submit", async function (event) {
 ```
 
 Je `Form(...)`-endpoint hoeft niet te veranderen.
-
-</details>
-
-<details>
-<summary>Je server openzetten voor het netwerk</summary>
-
-```bash
-fastapi dev main.py --host 0.0.0.0
-```
-
-Zoek je adres met `ipconfig` (Windows) of `ip addr` (macOS/Linux) en geef `http://<jouw-adres>:8000` door.
-
-**Let op:** iedereen op hetzelfde netwerk kan er dan bij.
 
 </details>
 
