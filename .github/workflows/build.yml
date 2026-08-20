@@ -19,6 +19,32 @@ permissions:
   contents: read
 
 jobs:
+  # Aparte, kleine job omdat `build` erop wacht. De nakijker bepaalt wat een
+  # leerling als beoordeling ziet, en een scoringsfout geeft geen foutmelding —
+  # die telt gewoon stil iets verkeerd. Zulke code mag niet gedeployd worden.
+  #
+  # Bewust niet samen met lint en typecheck in één job: dan zou een tsc-fout in
+  # een willekeurige site de artifacts van alle veertien tegenhouden, en zou de
+  # trage typecheck (~30s) elke build vertragen. De installatie hier kost 12s en
+  # loopt parallel aan checks, dus dit kost vrijwel geen doorlooptijd.
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Test (nakijker)
+        run: pnpm test
+
   checks:
     runs-on: ubuntu-latest
     steps:
@@ -34,13 +60,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # Blokkerend, in tegenstelling tot de lint hieronder: de nakijker bepaalt
-      # wat een leerling als beoordeling ziet, en een scoringsfout geeft geen
-      # foutmelding — die telt gewoon stil iets verkeerd. Draait in een seconde,
-      # dus vóór de trage typecheck.
-      - name: Test (nakijker)
-        run: pnpm test
-
       # Niet-blokkerend: de uit losse repos gemigreerde sites hebben nog
       # honderden bestaande biome-fouten. Zodra die zijn opgeschoond kan
       # continue-on-error weg.
@@ -52,19 +71,14 @@ jobs:
         run: pnpm typecheck
 
   build:
-    # Wacht op checks. De hostingbackend haalt de artifacts óók op als de run
-    # is mislukt (bewust: met fail-fast:false mag één kapotte site de andere
-    # niet blokkeren). Zonder deze afhankelijkheid zou een nakijker met rode
-    # tests dus alsnog live gaan.
+    # Alleen op de tests wachten, niet op lint of typecheck. De hostingbackend
+    # haalt de artifacts namelijk óók op als de run is mislukt (bewust: met
+    # fail-fast:false mag één kapotte site de andere niet blokkeren), dus zonder
+    # deze afhankelijkheid zou een nakijker met rode tests alsnog live gaan.
     #
-    # Let op wat dit precies doet: het hangt aan de héle checks-job, dus ook de
-    # typecheck. Een tsc-fout in één site levert nu nul artifacts op voor alle
-    # sites, waar ze eerder gewoon werden gebouwd. Dat is bewust — bij rode
-    # checks is de eerste taak die repareren, niet deployen — maar het kost je
-    # wel het overzicht van welke sites nog wél bouwen. Wil je alleen op de
-    # tests blokkeren, splits die dan af naar een eigen job en verwijs
-    # daarnaar; dat kost een tweede pnpm install.
-    needs: checks
+    # Lint en typecheck blijven bewust buiten deze poort: die falen op eigen
+    # kracht de run, en zo blijft zichtbaar welke sites nog wél bouwen.
+    needs: test
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
