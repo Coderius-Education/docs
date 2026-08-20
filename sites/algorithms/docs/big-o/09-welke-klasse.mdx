@@ -1,0 +1,158 @@
+---
+sidebar_position: 9
+---
+
+# 7.9 Van code naar klasse
+
+**Leerdoel:** je kunt van een stuk Python-code dat je nog nooit gezien
+hebt de complexiteits-klasse bepalen: O(1), O(log n), O(n) of O(n²).
+
+Gebruik de decision tree uit [stap 8](./08-overzicht#decision-tree):
+kijk naar de **lussen**, niet naar wat de code inhoudelijk doet.
+
+:::info
+Deze oefening bestaat ook als printbare werkvorm met knipkaartjes:
+[14.2 Van code naar klasse](/docs/unplugged/02-van-code-naar-klasse).
+:::
+
+## Snippet 1
+
+```python
+def som(lijst):
+    totaal = 0
+    for waarde in lijst:
+        totaal += waarde
+    return totaal
+```
+
+Welke klasse?
+
+<details>
+<summary>Antwoord</summary>
+
+**O(n).** Eén lus die elk element precies één keer bekijkt. Twee keer
+zoveel elementen → twee keer zoveel stappen.
+
+</details>
+
+## Snippet 2
+
+```python
+def eerste_en_laatste(lijst):
+    return lijst[0], lijst[-1]
+```
+
+Welke klasse?
+
+<details>
+<summary>Antwoord</summary>
+
+**O(1).** Geen lus. Index-toegang kost één stap, hoe lang de lijst ook
+is. Twee stappen blijft twee stappen — een constante.
+
+</details>
+
+## Snippet 3
+
+```python
+def alle_paren(lijst):
+    paren = []
+    for a in lijst:
+        for b in lijst:
+            paren.append((a, b))
+    return paren
+```
+
+Welke klasse?
+
+<details>
+<summary>Antwoord</summary>
+
+**O(n²).** Een geneste lus: voor élk element loop je nóg een keer door
+de hele lijst. Bij 10 elementen 100 paren, bij 100 elementen 10.000.
+
+</details>
+
+## Snippet 4
+
+```python
+def aantal_halveringen(n):
+    teller = 0
+    while n > 1:
+        n = n // 2
+        teller += 1
+    return teller
+```
+
+Welke klasse?
+
+<details>
+<summary>Antwoord</summary>
+
+**O(log n).** De invoer wordt elke ronde **gehalveerd**. Van een miljoen
+naar 1 kost maar ~20 halveringen. Halveren per stap is hét kenmerk van
+logaritmisch — precies wat binair zoeken doet met de zoekruimte.
+
+</details>
+
+## Snippet 5
+
+```python
+def grootste_en_kleinste(lijst):
+    grootste = max(lijst)
+    kleinste = min(lijst)
+    return grootste, kleinste
+```
+
+Welke klasse?
+
+<details>
+<summary>Antwoord</summary>
+
+**O(n).** Een instinker: `max` en `min` doorlopen elk de hele lijst, dus
+dit zijn **twee lussen ná elkaar** — niet in elkaar. `n + n = 2n` stappen,
+en constante factoren negeren we: O(n). Kwadratisch word je pas van een
+lus **in** een lus.
+
+</details>
+
+## Snippet 6
+
+```python
+def eerste_tien(lijst):
+    for i in range(10):
+        print(lijst[i])
+```
+
+Welke klasse?
+
+<details>
+<summary>Antwoord</summary>
+
+**O(1).** Er staat wel een lus, maar hij draait **altijd tien rondes** —
+onafhankelijk van hoe groot de lijst is. Een lus met een vast aantal
+rondes is een constante, geen `n`.
+
+</details>
+
+## Zelf controleren
+
+Twijfel je ergens? Tel de stappen zelf: laat de functie een teller
+bijhouden en roep hem aan met steeds grotere lijsten.
+
+<PyRunner initialCode={`def som(lijst):
+    stappen = 0
+    totaal = 0
+    for waarde in lijst:
+        stappen += 1
+        totaal += waarde
+    return stappen
+
+for n in [10, 100, 1000, 10000]:
+    lijst = list(range(n))
+    print(f"n={n:<8} stappen={som(lijst)}")`} />
+
+Groeit het aantal stappen mee met `n`? Dan is het O(n). Blijft het
+gelijk? O(1). Verdubbelt `n` en verviervoudigen de stappen? O(n²).
+
+Door naar [stap 10: veelgemaakte fouten →](./10-fouten).
