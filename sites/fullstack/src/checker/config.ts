@@ -74,6 +74,18 @@ export const fullstackConfig: CheckerConfig = {
       detect: { type: 'regex', pattern: /@app\.post\s*\(/g, in: ['py'] },
     },
     {
+      id: 'fastapi-path-param',
+      subject: 'fastapi',
+      group: 'App & endpoints',
+      label: 'Path-parameter in de URL',
+      level: 'gevorderd',
+      detect: {
+        type: 'regex',
+        pattern: /@app\.(get|post)\s*\(\s*["'][^"']*\{[^}]*\}/g,
+        in: ['py'],
+      },
+    },
+    {
       id: 'fastapi-html-response',
       subject: 'fastapi',
       group: 'HTML tonen',
@@ -120,6 +132,23 @@ export const fullstackConfig: CheckerConfig = {
       label: 'Request-object',
       level: 'gevorderd',
       detect: { type: 'regex', pattern: /\bRequest\b/g, in: ['py'] },
+    },
+
+    {
+      id: 'fastapi-redirect',
+      subject: 'fastapi',
+      group: 'Doorsturen & fouten',
+      label: 'Doorsturen na POST (RedirectResponse)',
+      level: 'gevorderd',
+      detect: { type: 'regex', pattern: /RedirectResponse/g, in: ['py'] },
+    },
+    {
+      id: 'fastapi-httpexception',
+      subject: 'fastapi',
+      group: 'Doorsturen & fouten',
+      label: '404 sturen (HTTPException)',
+      level: 'gevorderd',
+      detect: { type: 'regex', pattern: /HTTPException/g, in: ['py'] },
     },
 
     // --- HTML ---
@@ -170,6 +199,22 @@ export const fullstackConfig: CheckerConfig = {
       label: 'Template-variabele ({{ … }})',
       level: 'gevorderd',
       detect: { type: 'regex', pattern: /\{\{[^}]+\}\}/g, in: ['html'] },
+    },
+    {
+      id: 'html-jinja-loop',
+      subject: 'html',
+      group: 'Lijsten',
+      label: 'Lijst herhalen (for-lus in template)',
+      level: 'gevorderd',
+      detect: { type: 'regex', pattern: /\{%\s*for\b/g, in: ['html'] },
+    },
+    {
+      id: 'html-jinja-if',
+      subject: 'html',
+      group: 'Lijsten',
+      label: 'Leeg geval opvangen (if in template)',
+      level: 'gevorderd',
+      detect: { type: 'regex', pattern: /\{%\s*if\b/g, in: ['html'] },
     },
 
     // --- Database (sqlitedict) ---

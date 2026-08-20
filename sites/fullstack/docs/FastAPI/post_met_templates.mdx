@@ -72,22 +72,31 @@ async def groet_form():
 @app.post("/groet")
 async def groet_verwerk(request: Request, naam: str = Form(...)):
     return templates.TemplateResponse(
+        request,
         "groet_resultaat.html",
-        {"request": request, "naam": naam}
+        {"naam": naam}
     )
 ```
 
 ### Wat is nieuw?
 
 - `TemplateResponse` — Rendert een HTML template met variabelen
-- `{"request": request, "naam": naam}` — Stuurt data naar de template
-- `"request": request` — Moet altijd mee.
+- `request` — Gaat als eerste mee, altijd
+- `{"naam": naam}` — De data die de template invult
 - `{{ naam }}` — Wordt in de template vervangen door de waarde
 
 <details>
 <summary>Waarom moet "request" altijd mee?</summary>
 
-Jinja2 in FastAPI heeft het `request` object nodig om te weten welke gebruiker de pagina opvraagt. Zonder `"request": request` in het dictionary krijg je een **TypeError**. Dit is een vereiste van het framework — vergeet het niet.
+FastAPI heeft het request-object nodig om te weten welke gebruiker de pagina opvraagt. Daarom is het het eerste argument, vóór de bestandsnaam.
+
+Kom je online een voorbeeld tegen waarin `request` juist ín het dictionary staat, zo?
+
+```python
+templates.TemplateResponse("groet_resultaat.html", {"request": request, "naam": naam})
+```
+
+Dat is de oude schrijfwijze. Die werkt niet meer, en de foutmelding die je krijgt legt dat niet uit — zie [Er gaat iets mis](/docs/troubleshooting).
 
 </details>
 
@@ -113,8 +122,8 @@ Template:
 
 Python:
 ```python
-return templates.TemplateResponse("welkom.html", {
-    "request": request, "naam": "Jan", "leeftijd": 16
+return templates.TemplateResponse(request, "welkom.html", {
+    "naam": "Jan", "leeftijd": 16
 })
 ```
 
@@ -141,18 +150,22 @@ Leeftijd: 16
 
 Maak het formulier, de template en de endpoints uit het voorbeeld. Test of het werkt door een naam in te vullen.
 
-### Opdracht 3: Investigate - Request vergeten
+### Opdracht 3: Investigate - De oude schrijfwijze
 
-Wat gebeurt er als je `"request": request` weghaalt uit het dictionary? Probeer het:
+De meeste voorbeelden die je online vindt zetten `request` ín het dictionary in plaats van ervoor. Probeer dat eens:
 
 ```python
-return templates.TemplateResponse("groet_resultaat.html", {"naam": naam})
+return templates.TemplateResponse("groet_resultaat.html", {"request": request, "naam": naam})
 ```
 
 <details>
 <summary>Antwoord</summary>
 
-Je krijgt een **TypeError: context must include a "request" key**. FastAPI/Jinja2 vereist altijd dat het request object wordt meegegeven.
+Je krijgt **TypeError: unhashable type: 'dict'**.
+
+Die melding zegt niets over templates, en dat maakt 'm lastig. Wat er gebeurt: het eerste argument is tegenwoordig `request`, dus jouw bestandsnaam belandt op de plek van `request` en jouw dictionary op de plek van de bestandsnaam. FastAPI probeert dan een template op te zoeken met een dictionary als naam — en dat kan niet.
+
+Zie je deze fout in je eigen code, of in een voorbeeld dat je overneemt? Zet `request` vooraan.
 
 </details>
 
@@ -163,7 +176,7 @@ Maak een formulier voor je favoriete eten. Na versturen toont een template: "Jou
 <details>
 <summary>Tip</summary>
 
-Je hebt nodig: een HTML formulier met `name="eten"`, een template met `{{ eten }}`, en een POST endpoint dat `TemplateResponse` teruggeeft met `{"request": request, "eten": eten}`.
+Je hebt nodig: een HTML formulier met `name="eten"`, een template met `{{ eten }}`, en een POST endpoint dat `TemplateResponse` teruggeeft met `request` vooraan en `{"eten": eten}` erachter.
 
 </details>
 
@@ -203,8 +216,9 @@ async def eten_form():
 @app.post("/eten")
 async def eten_verwerk(request: Request, eten: str = Form(...)):
     return templates.TemplateResponse(
+        request,
         "eten_resultaat.html",
-        {"request": request, "eten": eten}
+        {"eten": eten}
     )
 ```
 
@@ -217,7 +231,7 @@ Maak een formulier met naam, leeftijd en hobby. Na versturen toont een template 
 <details>
 <summary>Tip</summary>
 
-Je hebt drie `<input>` velden nodig, drie `Form(...)` parameters, en drie `{{ }}` variabelen in je template. Vergeet niet alle drie de waarden in het context dictionary te zetten.
+Je hebt drie `<input>` velden nodig, drie `Form(...)` parameters, en drie `{{ }}` variabelen in je template. Vergeet niet alle drie de waarden in het dictionary te zetten.
 
 </details>
 
@@ -240,8 +254,9 @@ Je hebt drie `<input>` velden nodig, drie `Form(...)` parameters, en drie `{{ }}
 @app.post("/profiel")
 async def profiel(request: Request, naam: str = Form(...), leeftijd: int = Form(...), hobby: str = Form(...)):
     return templates.TemplateResponse(
+        request,
         "profiel.html",
-        {"request": request, "naam": naam, "leeftijd": leeftijd, "hobby": hobby}
+        {"naam": naam, "leeftijd": leeftijd, "hobby": hobby}
     )
 ```
 

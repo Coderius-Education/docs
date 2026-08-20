@@ -110,12 +110,60 @@ templates = Jinja2Templates(directory="templates")
 @app.post("/groet")
 async def groet(request: Request, naam: str = Form(...)):
     return templates.TemplateResponse(
+        request,
         "resultaat.html",
-        {"request": request, "naam": naam}
+        {"naam": naam}
     )
 ```
 
-**Let op:** `"request": request` moet altijd in het dictionary.
+**Let op:** `request` is het eerste argument, vóór de bestandsnaam.
+
+</details>
+
+<details>
+<summary>Redirect na een POST</summary>
+
+```python
+from fastapi.responses import RedirectResponse
+
+@app.post("/opslaan")
+async def opslaan(naam: str = Form(...)):
+    return RedirectResponse(url="/lijst", status_code=303)
+```
+
+**Let op:** zonder `status_code=303` krijg je een 405. De standaard is 307, en die herhaalt je POST.
+
+</details>
+
+<details>
+<summary>Path-parameter in de URL</summary>
+
+```python
+@app.get("/bericht/{sleutel}")
+async def bericht_detail(sleutel: str):
+    return {"sleutel": sleutel}
+```
+
+**Let op:** de naam tussen accolades moet gelijk zijn aan de parameternaam.
+
+</details>
+
+<details>
+<summary>404 sturen als iets niet bestaat</summary>
+
+```python
+from fastapi import HTTPException
+
+@app.get("/bericht/{sleutel}")
+async def bericht_detail(sleutel: str):
+    with SqliteDict("gastenboek.db") as db:
+        bericht = db.get(sleutel)
+    if bericht is None:
+        raise HTTPException(status_code=404, detail="Bestaat niet")
+    return bericht
+```
+
+**Let op:** `raise`, niet `return`.
 
 </details>
 
@@ -191,6 +239,34 @@ In de template:
 ```
 
 Wordt vervangen door de waarde uit Python.
+
+</details>
+
+<details>
+<summary>Lijst herhalen in een template (for-lus)</summary>
+
+```html
+<ul>
+    {% for bericht in berichten %}
+        <li>{{ bericht.naam }}: {{ bericht.bericht }}</li>
+    {% endfor %}
+</ul>
+```
+
+Binnen de lus telt `{{ loop.index }}` vanaf 1.
+
+</details>
+
+<details>
+<summary>Lege lijst opvangen (if en else)</summary>
+
+```html
+{% if berichten %}
+    <p>Er zijn berichten</p>
+{% else %}
+    <p>Nog geen berichten</p>
+{% endif %}
+```
 
 </details>
 

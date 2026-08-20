@@ -1,0 +1,247 @@
+---
+sidebar_position: 13
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Een lijst tonen
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/herhalen/06a-for-loop', label: 'De for-loop'},
+    {site: 'python', to: '/docs/beslissen/05b-if-else', label: 'If en else'},
+  ]}
+/>
+
+Je gastenboek slaat berichten op, maar om ze te zien moet je nog naar `/berichten` en een hoop JSON lezen. In deze les zet je ze op een echte pagina.
+
+## De for-lus in een template
+
+Tot nu toe vulde je template één waarde in met `{{ naam }}`. Met `{% for %}` herhaalt Jinja2 een stuk HTML voor elk item in een lijst:
+
+```html
+<ul>
+    {% for bericht in berichten %}
+        <li>{{ bericht.naam }}: {{ bericht.bericht }}</li>
+    {% endfor %}
+</ul>
+```
+
+Dit werkt net als een for-lus in Python. Het verschil: er staat `{% endfor %}` in plaats van inspringen, want HTML kent geen inspringing die betekenis heeft.
+
+## De data meesturen
+
+In je endpoint haal je alle berichten op en stuurt ze mee onder de naam die de template gebruikt:
+
+```python
+@app.get("/berichten")
+async def berichten(request: Request):
+    with SqliteDict("gastenboek.db") as db:
+        alle_berichten = list(db.values())
+    return templates.TemplateResponse(
+        request,
+        "berichten.html",
+        {"berichten": alle_berichten}
+    )
+```
+
+**Let op de `list()`.** `db.values()` haalt de rijen pas op als je erdoorheen loopt, en dat gebeurt in de template — als de database allang weer dicht is. `list()` haalt ze binnen het `with`-blok op. Vergeet je dat, dan krijg je `AttributeError: 'NoneType' object has no attribute 'select'`.
+
+## Het lege geval
+
+Een gastenboek zonder berichten toont nu een lege `<ul>`. Met `{% if %}` vang je dat op:
+
+```html
+{% if berichten %}
+    <ul>
+        {% for bericht in berichten %}
+            <li>{{ bericht.naam }}: {{ bericht.bericht }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Nog geen berichten. Wees de eerste.</p>
+{% endif %}
+```
+
+## Compleet voorbeeld
+
+`templates/berichten.html`:
+
+```html
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Gastenboek</title>
+        <link rel="stylesheet" href="/static/css/style.css">
+    </head>
+    <body>
+        <h1>Gastenboek</h1>
+
+        {% if berichten %}
+            <ul>
+                {% for bericht in berichten %}
+                    <li>{{ bericht.naam }}: {{ bericht.bericht }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Nog geen berichten. Wees de eerste.</p>
+        {% endif %}
+
+        <a href="/gastenboek">Nieuw bericht</a>
+    </body>
+</html>
+```
+
+## Testen
+
+1. Start je server en ga naar `http://127.0.0.1:8000/berichten`
+2. Zonder berichten zie je "Nog geen berichten"
+3. Vul het formulier op `/gastenboek` een paar keer in
+4. Ga terug naar `/berichten` — je ziet nu een lijst
+
+:::danger[Gaat er iets mis?]
+Blijft de lijst leeg terwijl er wel data in je database staat? Dan komt de lijst waarschijnlijk onder een andere naam binnen dan de template verwacht. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
+:::
+
+## Opdrachten
+
+### Opdracht 1: Predict - Hoeveel regels?
+
+```python
+namen = ["Jan", "Sarah", "Piet"]
+return templates.TemplateResponse(request, "namen.html", {"namen": namen})
+```
+
+Template:
+```html
+<h1>Bezoekers</h1>
+{% for naam in namen %}
+    <p>{{ naam }}</p>
+{% endfor %}
+```
+
+**Vraag:** hoeveel `<h1>` en hoeveel `<p>` staan er straks op de pagina?
+
+<details>
+<summary>Tip</summary>
+
+Alleen wat tússen `{% for %}` en `{% endfor %}` staat wordt herhaald. De rest staat er één keer.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Eén `<h1>` en drie `<p>`. De `<h1>` staat buiten de lus, dus die wordt niet herhaald.
+
+</details>
+
+### Opdracht 2: Run
+
+Maak `templates/berichten.html` uit het voorbeeld en pas je `/berichten` endpoint aan. Vul het gastenboek een paar keer in en kijk of je lijst groeit.
+
+### Opdracht 3: Investigate - Endfor vergeten
+
+Haal `{% endfor %}` weg uit je template en herlaad de pagina.
+
+<details>
+<summary>Antwoord</summary>
+
+Je krijgt `jinja2.exceptions.TemplateSyntaxError: Unexpected end of template. Jinja was looking for the following tags: 'endfor' or 'else'. The innermost block that needs to be closed is 'for'.`
+
+Jinja2 leest je template van boven naar beneden en wacht op het einde van de lus. Komt dat er niet, dan is het bestand op terwijl de lus nog openstaat. Elke `{% for %}` heeft een `{% endfor %}` nodig, en elke `{% if %}` een `{% endif %}`.
+
+</details>
+
+### Opdracht 4: Make - Nummer erbij
+
+Zet een volgnummer voor elk bericht: "1. Jan: Hallo", "2. Sarah: Leuke site".
+
+<details>
+<summary>Tip</summary>
+
+Jinja2 houdt zelf bij hoeveel keer de lus gedraaid heeft. Binnen een `{% for %}` kun je `{{ loop.index }}` gebruiken; die begint bij 1.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<ul>
+    {% for bericht in berichten %}
+        <li>{{ loop.index }}. {{ bericht.naam }}: {{ bericht.bericht }}</li>
+    {% endfor %}
+</ul>
+```
+
+`loop.index` telt vanaf 1. Wil je vanaf 0 tellen, gebruik dan `loop.index0`.
+
+</details>
+
+### Opdracht 5: Make - Tabel met bezoekers
+
+Toon de berichten in een `<table>` in plaats van een lijst, met twee kolommen: naam en bericht. Zorg dat de kopregel er één keer staat.
+
+<details>
+<summary>Tip</summary>
+
+De `<tr>` met de kopjes hoort buiten de lus. Alleen de `<tr>` met de data herhaal je.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<table>
+    <tr>
+        <th>Naam</th>
+        <th>Bericht</th>
+    </tr>
+    {% for bericht in berichten %}
+        <tr>
+            <td>{{ bericht.naam }}</td>
+            <td>{{ bericht.bericht }}</td>
+        </tr>
+    {% endfor %}
+</table>
+```
+
+De kopregel staat buiten de lus, dus die verschijnt één keer. De rij met `<td>` staat erbinnen en wordt per bericht herhaald.
+
+</details>
+
+## Oefen met Python
+
+:::info[Python oefenblok]
+Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
+:::
+
+<CodeExercise>
+{`# Een lijst met dictionaries doorlopen, zoals Jinja2 dat in je template doet
+berichten = [
+    {"naam": "Jan", "bericht": "Hallo"},
+    {"naam": "Sarah", "bericht": "Leuke site"},
+    {"naam": "Piet", "bericht": "Cool project"}
+]
+
+# Elk bericht op een eigen regel
+for bericht in berichten:
+    print(f"{bericht['naam']}: {bericht['bericht']}")
+
+print()
+
+# Met een volgnummer, zoals loop.index
+for nummer, bericht in enumerate(berichten, start=1):
+    print(f"{nummer}. {bericht['naam']}")
+
+print()
+
+# Het lege geval
+lege_lijst = []
+if lege_lijst:
+    print("Er zijn berichten")
+else:
+    print("Nog geen berichten. Wees de eerste.")`}
+</CodeExercise>

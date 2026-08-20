@@ -101,7 +101,7 @@ Wat als twee gebruikers allebei hun naam opslaan via het formulier? Blijven beid
 <details>
 <summary>Antwoord</summary>
 
-Nee. Beide namen worden opgeslagen onder `"laatste_naam"`, dus de tweede overschrijft de eerste. Om meerdere namen op te slaan heb je **unieke keys** nodig, bijvoorbeeld met `time.time()` (zie opdracht 5).
+Nee. Beide namen worden opgeslagen onder `"laatste_naam"`, dus de tweede overschrijft de eerste. Om meerdere namen op te slaan heb je **unieke keys** nodig, bijvoorbeeld met `time.time_ns()` (zie opdracht 5).
 
 </details>
 
@@ -156,19 +156,23 @@ async def toon_score():
 
 ### Opdracht 5: Make - Gastenboek
 
-Maak een gastenboek met naam en bericht. Gebruik `time.time()` als unieke key zodat berichten niet overschreven worden:
+Maak een gastenboek met naam en bericht. Gebruik `time.time_ns()` als unieke key zodat berichten niet overschreven worden:
 
 ```python
 import time
 
-key = f"bericht_{int(time.time())}"
+key = f"bericht_{time.time_ns()}"
 db[key] = {"naam": naam, "bericht": bericht}
 ```
+
+:::caution
+Gebruik `time.time_ns()` (nanoseconden) en niet `int(time.time())` (hele seconden). Twee berichten die binnen dezelfde seconde binnenkomen krijgen anders dezelfde sleutel, en dan overschrijft het tweede het eerste.
+:::
 
 <details>
 <summary>Tip</summary>
 
-Je hebt twee `<input>` velden nodig (`name="naam"` en `name="bericht"`). Gebruik `time.time()` om een unieke key te genereren, zodat elk bericht apart wordt opgeslagen.
+Je hebt twee `<input>` velden nodig (`name="naam"` en `name="bericht"`). Gebruik `time.time_ns()` om een unieke key te genereren, zodat elk bericht apart wordt opgeslagen.
 
 </details>
 
@@ -200,7 +204,7 @@ async def gastenboek_form():
 @app.post("/gastenboek")
 async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
     with SqliteDict("gastenboek.db") as db:
-        key = f"bericht_{int(time.time())}"
+        key = f"bericht_{time.time_ns()}"
         db[key] = {"naam": naam, "bericht": bericht}
         db.commit()
     return {"bericht": "Bedankt voor je bericht!"}
@@ -208,9 +212,11 @@ async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
 @app.get("/berichten")
 async def berichten():
     with SqliteDict("gastenboek.db") as db:
-        alle_berichten = [v for v in db.values()]
+        alle_berichten = list(db.values())
     return {"berichten": alle_berichten}
 ```
+
+Je berichten staan nu in de database, maar `/berichten` geeft ze nog als JSON terug. In [Een lijst tonen](/docs/FastAPI/lijst_tonen) zet je ze op een echte pagina.
 
 </details>
 

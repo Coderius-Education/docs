@@ -162,27 +162,80 @@ Je stuurt een POST naar een GET endpoint of andersom. Check:
 Check of je de variabele meestuurt in het dictionary:
 
 ```python
-# Fout - naam niet meegestuurd
-return templates.TemplateResponse("pagina.html", {"request": request})
+# FOUT - naam niet meegestuurd
+return templates.TemplateResponse(request, "pagina.html", {})
 
-# Goed - naam meegestuurd
-return templates.TemplateResponse("pagina.html", {"request": request, "naam": naam})
+# GOED - naam meegestuurd
+return templates.TemplateResponse(request, "pagina.html", {"naam": naam})
 ```
 
 </details>
 
 <details>
-<summary>TypeError: context must include a "request" key</summary>
+<summary>TypeError: unhashable type: 'dict'</summary>
 
-Je bent `"request": request` vergeten:
+Je gebruikt de oude volgorde, waarin `request` ín het dictionary staat. Die kom je nog overal online tegen, maar hij werkt niet meer. `request` gaat tegenwoordig als eerste mee:
 
 ```python
-# Fout
-return templates.TemplateResponse("pagina.html", {"naam": naam})
-
-# Goed
+# FOUT - oude schrijfwijze
 return templates.TemplateResponse("pagina.html", {"request": request, "naam": naam})
+
+# GOED - request vooraan
+return templates.TemplateResponse(request, "pagina.html", {"naam": naam})
 ```
+
+De foutmelding noemt templates niet, omdat jouw bestandsnaam op de plek van `request` belandt en jouw dictionary op de plek van de bestandsnaam. FastAPI zoekt dan een template met een dictionary als naam.
+
+Meer uitleg: [POST met templates](/docs/FastAPI/post_met_templates).
+
+</details>
+
+<details>
+<summary>Lijst blijft leeg terwijl er wel data in de database staat</summary>
+
+Een `{% for %}` die niets toont betekent bijna altijd dat de lijst leeg bij de template aankomt. Check in deze volgorde:
+
+1. Staat de naam in `{% for bericht in berichten %}` precies gelijk aan de sleutel in `{"berichten": ...}`?
+2. Print `alle_berichten` in je endpoint. Zie je daar wél data, dan zit de fout in de template.
+3. Staat je database wel echt vol? Open `/berichten` nadat je een bericht hebt verstuurd, niet ervoor.
+
+Meer uitleg: [Een lijst tonen](/docs/FastAPI/lijst_tonen).
+
+</details>
+
+<details>
+<summary>AttributeError: 'NoneType' object has no attribute 'select'</summary>
+
+Je gebruikt de data van je database buiten het `with`-blok, zonder er eerst een lijst van te maken. `db.values()` geeft geen lijst maar een generator: die haalt de rijen pas op als je erdoorheen loopt, en tegen die tijd is de database al dicht.
+
+```python
+# FOUT - de generator wordt pas buiten het with-blok gebruikt
+with SqliteDict("gastenboek.db") as db:
+    alle_berichten = db.values()
+
+# GOED - list() haalt de data binnen het with-blok op
+with SqliteDict("gastenboek.db") as db:
+    alle_berichten = list(db.values())
+```
+
+Meer uitleg: [Een lijst tonen](/docs/FastAPI/lijst_tonen).
+
+</details>
+
+<details>
+<summary>Na het versturen van een formulier krijg je 405 Method Not Allowed</summary>
+
+Je stuurt een redirect terug zonder `status_code=303`:
+
+```python
+# FOUT - stuurt 307, de browser herhaalt je POST op de nieuwe URL
+return RedirectResponse(url="/berichten")
+
+# GOED - stuurt 303, de browser doet een GET
+return RedirectResponse(url="/berichten", status_code=303)
+```
+
+Meer uitleg: [Terug naar de lijst](/docs/FastAPI/redirect).
 
 </details>
 
