@@ -170,10 +170,15 @@ async function unzipToRawEntries(file: File, opts: ReadOptions): Promise<RawEntr
       filter: (f) => {
         if (f.name.endsWith('/')) return false;
         if (isIgnoredPath(f.name)) return false;
-        meta.push({ name: f.name, size: f.size });
+        // originalSize, niet size: die laatste is de gecomprimeerde grootte, en
+        // tekst comprimeert enorm (6 MB JavaScript wordt zo'n 12 kB). Daarop
+        // wegen zou elk codebestand langs de limieten hieronder laten glippen,
+        // en het bestandsoverzicht een onzinnig getal geven.
+        const size = f.originalSize;
+        meta.push({ name: f.name, size });
         const kind = opts.classify(f.name);
-        const wantText = opts.textKinds.includes(kind) && f.size <= MAX_TEXT_FILE_SIZE;
-        const wantImage = imageKinds.includes(kind) && f.size <= MAX_IMAGE_FILE_SIZE;
+        const wantText = opts.textKinds.includes(kind) && size <= MAX_TEXT_FILE_SIZE;
+        const wantImage = imageKinds.includes(kind) && size <= MAX_IMAGE_FILE_SIZE;
         return wantText || wantImage;
       },
     });
@@ -190,9 +195,15 @@ async function unzipToRawEntries(file: File, opts: ReadOptions): Promise<RawEntr
   }));
 }
 
-// Strip één gemeenschappelijke bovenliggende map (typisch bij een gezipte of
+// Strip élke gemeenschappelijke bovenliggende map (typisch bij een gezipte of
 // gesleepte projectmap), zodat het rapport onafhankelijk is van hoe er precies
 // geüpload is.
+//
+// Let op de keerzijde: zit een heel project onder één diep pad — bijvoorbeeld
+// alleen bestanden in `proj/templates/` — dan verdwijnt ook die `templates/`
+// uit het pad, en vinden de pad-concepten van fullstack en godot hem niet meer.
+// Zeldzaam (een echt project heeft meerdere mappen naast elkaar) maar stil.
+// Vastgelegd in readFiles.test.ts.
 function stripCommonRoot(paths: string[]): string[] {
   if (paths.length <= 1) return paths;
   const segments = paths.map((p) => p.split('/'));
@@ -247,11 +258,15 @@ async function entriesToProjectFiles(
     let content: string | null = null;
     let tooLarge = false;
 
-    if (isTextKind && entry.getBytes) {
-      if (entry.size > MAX_TEXT_FILE_SIZE) {
-        tooLarge = true;
-        skippedTooLarge++;
-      } else if (entry.size > textBudget) {
+    // De grootte-check staat vóór de getBytes-guard, want bij een zip zijn de
+    // bytes van een te groot bestand er bewust al niet: de uitpak-filter slaat
+    // die over. Zonder deze volgorde zou zo'n bestand stil buiten de analyse
+    // vallen, terwijl dezelfde upload als map wél een waarschuwing geeft.
+    if (isTextKind && entry.size > MAX_TEXT_FILE_SIZE) {
+      tooLarge = true;
+      skippedTooLarge++;
+    } else if (isTextKind && entry.getBytes) {
+      if (entry.size > textBudget) {
         skippedByBudget = true;
       } else {
         const bytes = await entry.getBytes();

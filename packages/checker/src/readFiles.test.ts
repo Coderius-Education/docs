@@ -211,6 +211,23 @@ describe('readUploadedFiles — zip', () => {
     expect(files['project.zip'].kind).toBe('other');
   });
 
+  it('weegt bestanden in een zip op hun uitgepakte grootte, niet de gecomprimeerde', async () => {
+    // Tekst comprimeert enorm: 6 MB JavaScript wordt zo'n 12 kB in de zip.
+    // Wie de gecomprimeerde grootte weegt, laat dat bestand langs de limiet van
+    // 2 MB glippen en leest het alsnog volledig in — precies de bescherming die
+    // voor losse mappen wél geldt.
+    const groot = 'const x = 1;\n'.repeat(500_000);
+    const { files, warnings } = await readUploadedFiles(
+      [maakZip({ 'p/index.html': '<h1>Hoi</h1>', 'p/enorm.js': groot })],
+      webAchtig,
+    );
+
+    expect(files['enorm.js'].sizeBytes).toBe(groot.length);
+    expect(files['enorm.js'].tooLarge).toBe(true);
+    expect(files['enorm.js'].content).toBeNull();
+    expect(warnings.join(' ')).toContain('groter dan 2 MB');
+  });
+
   it('geeft een leesbare fout bij een kapotte zip', async () => {
     const rommel = makeFile('kapot.zip', new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]));
 
