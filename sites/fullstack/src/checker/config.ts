@@ -1,9 +1,12 @@
 import type { CheckerConfig } from '@coderius/checker/types';
 
 // Conceptenlijst voor de fullstack-nakijker, 1-op-1 afgeleid van
-// sites/fullstack/docs/cheatsheet.md (koppen: FastAPI, HTML, Database, plus een
-// mappenstructuur-check). Wijzig je de cheatsheet, werk dan ook hier de
-// bijbehorende regel bij.
+// sites/fullstack/docs/cheatsheet.md (koppen: FastAPI, HTML, JavaScript,
+// Database, plus een mappenstructuur-check). Wijzig je de cheatsheet, werk dan
+// ook hier de bijbehorende regel bij.
+//
+// JavaScript en Database hebben bewust alleen gevorderde concepten: ze komen
+// pas na de helft van de cursus aan bod.
 
 const IMAGE_EXT = new Set(['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.ico', '.bmp']);
 
