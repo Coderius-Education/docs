@@ -1,5 +1,9 @@
 import useBaseUrl from '@docusaurus/useBaseUrl';
-import { type PyodideInterface, loadPyodideOnce } from '@site/src/components/PyRunner/usePyodide';
+import {
+  type PyodideInterface,
+  loadPyodideOnce,
+  warmupPyodide,
+} from '@site/src/components/PyRunner/usePyodide';
 import { HighlightedEditor } from '@site/src/components/PythonPlayground';
 import {
   type AlgorithmInput,
@@ -196,6 +200,11 @@ export default function AlgorithmModel({ algorithm }: AlgorithmModelProps): Reac
   const model = getAlgorithmModel(algorithm);
   const pyodideIndexURL = useBaseUrl('/pyodide/');
   const pyodideRef = useRef<PyodideInterface | null>(null);
+
+  // Warm Pyodide alvast op in de achtergrond (zie warmupPyodide).
+  useEffect(() => {
+    warmupPyodide(pyodideIndexURL);
+  }, [pyodideIndexURL]);
   const [activeTab, setActiveTab] = useState<'visual' | 'exercise'>('visual');
   const [draft, setDraft] = useState<InputDraft>(() => inputToDraft(model.defaultInput));
   const [stepIndex, setStepIndex] = useState(0);

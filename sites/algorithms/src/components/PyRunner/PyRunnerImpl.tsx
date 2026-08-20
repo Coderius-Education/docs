@@ -2,9 +2,14 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 import { HighlightedEditor } from '@site/src/components/PythonPlayground';
 import clsx from 'clsx';
 import type React from 'react';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styles from './styles.module.css';
-import { type PyodideInterface, loadPyodideOnce } from './usePyodide';
+import {
+  type PyodideInterface,
+  hasPyodideStarted,
+  loadPyodideOnce,
+  warmupPyodide,
+} from './usePyodide';
 
 // Approximate textarea-rows → pixel-height mapping. Matches the editor's
 // line-height (1.5) × font-size (0.9rem ≈ 14.4px) plus vertical padding
@@ -25,6 +30,12 @@ import matplotlib
 matplotlib.use('AGG')
 import matplotlib.pyplot as _coderius_plt
 import io as _coderius_io, base64 as _coderius_b64
+
+# plt.show() kan niets tonen met de AGG-backend en geeft dan een
+# UserWarning op stderr die leerlingen als foutmelding zien. De plots
+# worden na afloop via _coderius_collect_plots opgehaald, dus show()
+# mag een no-op zijn.
+_coderius_plt.show = lambda *args, **kwargs: None
 
 def _coderius_collect_plots():
     images = []
@@ -99,6 +110,16 @@ export default function PyRunnerImpl({
 
   const needsMatplotlib = useMemo(() => /\b(matplotlib|pyplot|plt\.)\b/.test(code), [code]);
 
+  // Start de Pyodide-download op de achtergrond zodra de pagina idle is, zodat
+  // de eerste "Voer uit" (bijna) direct start. Wheels voor matplotlib worden
+  // alleen meegewarmd als de startercode ze nodig heeft (dat is ~39 MB extra,
+  // gerechtvaardigd op matplotlib-lespagina's, verspilling elders).
+  useEffect(() => {
+    const wantsMatplotlib = /\b(matplotlib|pyplot|plt\.)\b/.test(source);
+    const warmPackages = [...(packages ?? []), ...(wantsMatplotlib ? ['matplotlib'] : [])];
+    warmupPyodide(pyodideIndexURL, warmPackages.length > 0 ? warmPackages : undefined);
+  }, [source, packages, pyodideIndexURL]);
+
   const handleRun = useCallback(async () => {
     setStdout('');
     setStderr('');
@@ -107,17 +128,26 @@ export default function PyRunnerImpl({
     try {
       if (!pyodideRef.current) {
         setStatus('loading');
-        setStatusMsg('Python wordt geladen (eenmalig, ~10 MB)…');
+        setStatusMsg(
+          hasPyodideStarted()
+            ? 'Python wordt geladen…'
+            : 'Python wordt geladen (eenmalig, ~14 MB)…',
+        );
         pyodideRef.current = await loadPyodideOnce(pyodideIndexURL);
       }
       const py = pyodideRef.current;
 
+      // Let op: geen [...set]-spread hier. Docusaurus compileert spreads in
+      // loose mode naar [].concat(set), waardoor de Set als één element
+      // doorgegeven wordt en pyodide's loadPackage crasht ("t.replace is
+      // not a function"). Array.from werkt wel op een Set.
       const extraPackages = new Set<string>(packages ?? []);
       if (needsMatplotlib) extraPackages.add('matplotlib');
       if (extraPackages.size > 0) {
+        const packageList = Array.from(extraPackages);
         setStatus('loading');
-        setStatusMsg(`Pakketten laden: ${[...extraPackages].join(', ')}…`);
-        await py.loadPackage([...extraPackages]);
+        setStatusMsg(`Pakketten laden: ${packageList.join(', ')}…`);
+        await py.loadPackage(packageList);
       }
 
       let out = '';
@@ -129,6 +159,9 @@ export default function PyRunnerImpl({
       });
       py.setStderr({
         batched: (s) => {
+          // Eenmalige, onschuldige melding bij de eerste matplotlib-import;
+          // voor leerlingen alleen maar ruis.
+          if (s.includes('building the font cache')) return;
           err += `${s}\n`;
         },
       });

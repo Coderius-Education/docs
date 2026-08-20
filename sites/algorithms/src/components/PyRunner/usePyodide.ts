@@ -63,3 +63,29 @@ export async function loadPyodideOnce(indexURL: string = DEFAULT_INDEX): Promise
   window.__pyodidePromise = promise;
   return promise;
 }
+
+// Warm de Pyodide-singleton op zodra de browser idle is. Mag door elke runner
+// bij mount worden aangeroepen: loadPyodideOnce dedupliceert de zware download
+// via window.__pyodidePromise en loadPackage slaat al geladen wheels over.
+// Fouten zijn hier bewust stil: de klik-route probeert het opnieuw omdat
+// loadPyodideOnce een mislukte promise weggooit.
+export function warmupPyodide(indexURL: string = DEFAULT_INDEX, packages?: string[]): void {
+  if (typeof window === 'undefined') return;
+  const start = () => {
+    loadPyodideOnce(indexURL)
+      .then((py) => (packages && packages.length > 0 ? py.loadPackage(packages) : undefined))
+      .catch(() => {
+        // Stil: de klik-route retryt.
+      });
+  };
+  if (typeof window.requestIdleCallback === 'function') {
+    window.requestIdleCallback(start, { timeout: 3000 });
+  } else {
+    window.setTimeout(start, 1000);
+  }
+}
+
+// Is de download al gestart (of klaar)? Voor een eerlijk statusbericht.
+export function hasPyodideStarted(): boolean {
+  return typeof window !== 'undefined' && window.__pyodidePromise !== undefined;
+}

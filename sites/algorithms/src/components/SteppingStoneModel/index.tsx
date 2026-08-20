@@ -1,5 +1,9 @@
 import useBaseUrl from '@docusaurus/useBaseUrl';
-import { type PyodideInterface, loadPyodideOnce } from '@site/src/components/PyRunner/usePyodide';
+import {
+  type PyodideInterface,
+  loadPyodideOnce,
+  warmupPyodide,
+} from '@site/src/components/PyRunner/usePyodide';
 import { HighlightedEditor } from '@site/src/components/PythonPlayground';
 import { getAlgorithmModel } from '@site/src/data/algorithmModels';
 import {
@@ -43,6 +47,12 @@ export default function SteppingStoneModel({ stone }: SteppingStoneModelProps): 
   const algorithm = getAlgorithmModel(checkpoint.algorithm);
   const pyodideIndexURL = useBaseUrl('/pyodide/');
   const pyodideRef = useRef<PyodideInterface | null>(null);
+
+  // Warm Pyodide alvast op in de achtergrond (zie warmupPyodide).
+  useEffect(() => {
+    warmupPyodide(pyodideIndexURL);
+  }, [pyodideIndexURL]);
+
   const steps = useMemo(
     () => algorithm.trace(checkpoint.visual.input),
     [algorithm, checkpoint.visual.input],

@@ -96,9 +96,12 @@
      schuiven. Zie ook de tegeltitel-fix in HomepageFeatures. */
   margin: 0 !important;
   padding: 1rem 1rem 1rem 3.5rem !important;
-  font-family: var(--ifm-font-family-monospace);
-  font-size: 0.9rem;
-  line-height: 1.5;
+  /* Dezelfde Infima pre-regel zet ook `font: 95%/1.45 monospace`; zonder
+     !important wijkt de highlight-laag af van de textarea (0.9rem/1.5) en
+     landt de caret naast de geklikte plek. */
+  font-family: var(--ifm-font-family-monospace) !important;
+  font-size: 0.9rem !important;
+  line-height: 1.5 !important;
   min-height: 250px;
   overflow: auto;
   tab-size: 4;
