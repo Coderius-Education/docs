@@ -270,6 +270,47 @@ Binnen de lus telt `{{ loop.index }}` vanaf 1.
 
 </details>
 
+## JavaScript
+
+<details>
+<summary>JavaScript koppelen aan je pagina</summary>
+
+Bestand in `static/js/app.js`, en in de `<head>` van je template:
+
+```html
+<script src="/static/js/app.js" defer></script>
+```
+
+`app.mount("/static", ...)` serveert het al; aan `main.py` verandert niets.
+
+**Let op:** zonder `defer` draait je script voordat de pagina er staat, en vindt `querySelector` niets.
+
+</details>
+
+<details>
+<summary>Reageren op typen of klikken</summary>
+
+```javascript
+const veld = document.querySelector("#bericht-veld");
+const teller = document.querySelector("#teller");
+
+veld.addEventListener("input", function () {
+    teller.textContent = 80 - veld.value.length + " tekens over";
+});
+```
+
+</details>
+
+<details>
+<summary>Server of browser?</summary>
+
+Moet het bewaard blijven of moet iemand anders het zien? Dan hoort het bij de server.
+Gebeurt het alleen hier en nu voor deze bezoeker? Dan hoort het in de browser.
+
+Controles horen altijd óók op de server: `maxlength` en `required` in je HTML gelden alleen in de browser van de bezoeker.
+
+</details>
+
 ## Database (sqlitedict)
 
 <details>

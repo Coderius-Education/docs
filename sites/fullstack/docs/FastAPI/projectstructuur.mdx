@@ -1,5 +1,5 @@
 ---
-sidebar_position: 16
+sidebar_position: 18
 ---
 
 import CodeExercise from '@site/src/components/CodeExercise';
@@ -118,12 +118,33 @@ je-project/
 
 Er komen geen mappen bij: een lijstpagina en een detailpagina zijn gewoon twee templates naast elkaar.
 
+## Bij [JavaScript erbij](/docs/FastAPI/javascript)
+
+```
+je-project/
+├── main.py
+├── gastenboek.db
+├── static/
+│   ├── css/
+│   │   └── style.css
+│   ├── js/
+│   │   └── app.js
+│   └── pages/
+│       └── gastenboek_form.html
+└── templates/
+    ├── berichten.html
+    └── bericht.html
+```
+
+Je JavaScript komt naast je CSS te staan, in dezelfde `static`-map. Aan `main.py` verandert niets: `app.mount` serveert die map al.
+
 ## Compleet overzicht
 
 | Map | Wat staat er? | Voorbeeld |
 |-----|---------------|-----------|
 | `/` | Python code en database | `main.py`, `mijn_data.db` |
 | `static/css/` | CSS bestanden | `style.css` |
+| `static/js/` | JavaScript | `app.js` |
 | `static/pages/` | Vaste HTML pagina's | `home.html`, `form.html` |
 | `static/` | Afbeeldingen | `foto.jpg`, `logo.png` |
 | `templates/` | Jinja2 templates | `resultaat.html` |

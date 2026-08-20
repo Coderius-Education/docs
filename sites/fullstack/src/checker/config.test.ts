@@ -90,6 +90,46 @@ describe('fullstackConfig', () => {
     expect(perId.get('fastapi-httpexception')).toBe(false);
   });
 
+  // Voor de JS-lessen werd .js als 'other' geclassificeerd en stond het niet in
+  // textKinds, dus werd een JavaScript-bestand niet eens ingelezen.
+  it('leest JavaScript-bestanden en herkent wat erin staat', () => {
+    expect(fullstackConfig.classify('static/js/app.js')).toBe('js');
+    expect(fullstackConfig.textKinds).toContain('js');
+
+    const report = analyze(
+      files({
+        'templates/form.html': '<script src="/static/js/app.js" defer></script>',
+        'static/js/app.js': [
+          'const veld = document.querySelector("#bericht-veld");',
+          'veld.addEventListener("input", function () {});',
+        ].join('\n'),
+      }),
+      fullstackConfig,
+    );
+    const perId = new Map(report.concepts.map((c) => [c.id, c.used]));
+
+    expect(perId.get('js-bestand-koppelen')).toBe(true);
+    expect(perId.get('js-query-selector')).toBe(true);
+    expect(perId.get('js-event-listener')).toBe(true);
+  });
+
+  it('telt JavaScript in een HTML-bestand niet mee als JavaScript-concept', () => {
+    // De cursus leert een apart bestand in static/js/. Een inline <script>-blok
+    // met dezelfde code hoort dus niet als "querySelector gebruikt" te tellen.
+    const report = analyze(
+      files({
+        'templates/form.html':
+          '<script>document.querySelector("#x").addEventListener("click", f);</script>',
+      }),
+      fullstackConfig,
+    );
+    const perId = new Map(report.concepts.map((c) => [c.id, c.used]));
+
+    expect(perId.get('js-query-selector')).toBe(false);
+    expect(perId.get('js-event-listener')).toBe(false);
+    expect(perId.get('js-bestand-koppelen')).toBe(false);
+  });
+
   it('onderscheidt een template met een lus van een template met alleen variabelen', () => {
     const metLus = analyze(
       files({

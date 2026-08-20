@@ -239,6 +239,54 @@ Meer uitleg: [Terug naar de lijst](/docs/FastAPI/redirect).
 
 </details>
 
+## JavaScript
+
+<details>
+<summary>Cannot read properties of null (reading 'addEventListener')</summary>
+
+Je script draait voordat het element bestaat. Zet `defer` op je script-tag:
+
+```html
+<!-- FOUT - draait terwijl de browser nog in de head zit -->
+<script src="/static/js/app.js"></script>
+
+<!-- GOED - wacht tot de pagina er staat -->
+<script src="/static/js/app.js" defer></script>
+```
+
+Staat `defer` er wel? Check dan of de `id` in je HTML precies gelijk is aan die in je `querySelector`, inclusief hoofdletters.
+
+Meer uitleg: [JavaScript erbij](/docs/FastAPI/javascript).
+
+</details>
+
+<details>
+<summary>Mijn JavaScript-bestand wordt niet geladen (404 in de console)</summary>
+
+Check in deze volgorde:
+
+1. Staat het bestand in `static/js/`?
+2. Staat `app.mount("/static", StaticFiles(directory="static"), name="static")` in je `main.py`?
+3. Begint het pad in je script-tag met een slash: `src="/static/js/app.js"`?
+
+Open `http://127.0.0.1:8000/static/js/app.js` rechtstreeks in je browser. Zie je je code, dan ligt het aan de script-tag; krijg je een 404, dan aan het pad of de mount.
+
+</details>
+
+<details>
+<summary>Mijn controle in de HTML wordt genegeerd</summary>
+
+`maxlength` en `required` gelden alleen in de browser van de bezoeker. Wie het formulier omzeilt, komt er gewoon langs. Wil je echt een grens, controleer dan óók in Python:
+
+```python
+if len(bericht) > 80:
+    raise HTTPException(status_code=400, detail="Bericht is te lang")
+```
+
+Meer uitleg: [Server of browser?](/docs/FastAPI/server-of-browser).
+
+</details>
+
 ## Database (sqlitedict)
 
 <details>

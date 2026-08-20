@@ -1,0 +1,224 @@
+---
+sidebar_position: 16
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# JavaScript erbij
+
+<Voorkennis
+  items={[
+    {site: 'web', to: '/docs/js-basics/scriptjs', label: 'script.js koppelen met defer'},
+    {site: 'web', to: '/docs/js-basics/events', label: 'addEventListener'},
+    {site: 'web', to: '/docs/js-basics/formulier-data', label: 'Formulier-data uitlezen'},
+  ]}
+/>
+
+Alles wat je tot nu toe hebt gebouwd gaat via de server. Je klikt, de browser vraagt een pagina op, Python stuurt HTML terug, de pagina verspringt. Voor sommige dingen is dat omslachtig — en soms onmogelijk. In deze les zet je JavaScript in je FastAPI-project.
+
+## Waar het bestand komt
+
+JavaScript is een gewoon bestand in je `static`-map, net als je CSS:
+
+```
+je-project/
+├── main.py
+├── static/
+│   ├── css/
+│   │   └── style.css
+│   └── js/
+│       └── app.js
+└── templates/
+```
+
+Je hoeft niets aan `main.py` te veranderen. De regel `app.mount("/static", StaticFiles(directory="static"), name="static")` uit [Static files](/docs/FastAPI/static_files) serveert alles in die map, dus ook je JavaScript.
+
+Koppelen doe je in de `<head>` van je template:
+
+```html
+<script src="/static/js/app.js" defer></script>
+```
+
+## Een teller die meteen reageert
+
+Op het gastenboekformulier laat je zien hoeveel tekens er nog over zijn. Voeg een plek toe waar de teller kan staan:
+
+```html
+<form method="post" action="/gastenboek">
+    <input type="text" name="naam" required>
+    <input type="text" id="bericht-veld" name="bericht" maxlength="80" required>
+    <p id="teller">80 tekens over</p>
+    <button type="submit">Verstuur</button>
+</form>
+```
+
+En in `static/js/app.js`:
+
+```javascript
+const veld = document.querySelector("#bericht-veld");
+const teller = document.querySelector("#teller");
+
+veld.addEventListener("input", function () {
+    const over = 80 - veld.value.length;
+    teller.textContent = over + " tekens over";
+});
+```
+
+Bij elke toetsaanslag stuurt de browser een `input`-event, en jouw functie past de tekst aan.
+
+## Kijk wat de server ervan merkt
+
+Typ een paar letters in het veld en kijk dan naar de terminal waar `fastapi dev` draait.
+
+Daar staat niets nieuws. Geen enkele regel. Je server heeft de teller nooit gezien: het bestand `app.js` is één keer opgehaald, en daarna doet de browser alles zelf.
+
+Dat is precies het verschil met alles wat je hiervoor bouwde. Een formulier versturen betekent een verzoek naar Python. Een teller bijwerken bij elke toetsaanslag zou dat ook betekenen — twintig verzoeken voor twintig letters, met steeds een halve seconde wachten. Daarom hoort dit in de browser.
+
+## Testen
+
+1. Start je server en ga naar het gastenboekformulier
+2. Typ in het berichtveld en kijk of de teller meeloopt
+3. Kijk in de terminal: er komt geen enkel verzoek bij
+
+:::danger[Gaat er iets mis?]
+Doet de teller niets? Open de console van je browser (F12). Staat daar `Cannot read properties of null`, dan vindt je script het element niet. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
+:::
+
+## Opdrachten
+
+### Opdracht 1: Predict - Wat ziet de server?
+
+Je typt het woord "hallo" in het berichtveld, letter voor letter.
+
+**Vraag:** hoeveel verzoeken ziet je server in de terminal?
+
+<details>
+<summary>Tip</summary>
+
+Kijk naar wat er gebeurt bij een toetsaanslag: verandert er iets aan de pagina die de server heeft gestuurd, of vraagt de browser een nieuwe pagina op?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Nul. De pagina en `app.js` waren al opgehaald voordat je begon te typen. Alle vijf de toetsaanslagen worden afgehandeld door code die al in de browser zit.
+
+</details>
+
+### Opdracht 2: Run
+
+Maak `static/js/app.js`, koppel het in je template en voeg het `<p id="teller">` toe. Controleer dat de teller meeloopt.
+
+### Opdracht 3: Investigate - Defer weghalen
+
+Haal `defer` weg uit je script-tag, zodat er `<script src="/static/js/app.js"></script>` staat. Herlaad de pagina en kijk in de console.
+
+<details>
+<summary>Antwoord</summary>
+
+Je krijgt `TypeError: Cannot read properties of null (reading 'addEventListener')`.
+
+Zonder `defer` draait je script meteen, terwijl de browser de `<head>` leest. De `<form>` bestaat dan nog niet, dus `document.querySelector("#bericht-veld")` vindt niets en geeft `null` terug. Met `defer` wacht de browser tot de hele pagina er staat.
+
+</details>
+
+### Opdracht 4: Make - Rood bij bijna vol
+
+Laat de teller rood worden zodra er nog minder dan tien tekens over zijn, en weer zwart als er weer ruimte is.
+
+<details>
+<summary>Tip</summary>
+
+`teller.style.color = "red"` verandert de kleur. Je hebt een `if` nodig die kijkt of `over` kleiner is dan tien, met een `else` voor het andere geval.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```javascript
+const veld = document.querySelector("#bericht-veld");
+const teller = document.querySelector("#teller");
+
+veld.addEventListener("input", function () {
+    const over = 80 - veld.value.length;
+    teller.textContent = over + " tekens over";
+
+    if (over < 10) {
+        teller.style.color = "red";
+    } else {
+        teller.style.color = "black";
+    }
+});
+```
+
+De `else` is nodig: zonder die regel blijft de teller rood zodra je één keer onder de tien bent geweest, ook als je tekst weer weghaalt.
+
+</details>
+
+### Opdracht 5: Make - Formulier in- en uitklappen
+
+Zet op je berichtenpagina een knop "Nieuw bericht" die het formulier toont of verbergt. Het formulier begint verborgen.
+
+<details>
+<summary>Tip</summary>
+
+Geef het formulier `style="display: none"` als beginstand. In je JavaScript kun je `formulier.style.display` op `"block"` of `"none"` zetten. Kijk met een `if` welke van de twee er nu staat.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<button id="klap-knop">Nieuw bericht</button>
+<form id="bericht-formulier" method="post" action="/gastenboek" style="display: none">
+    <input type="text" name="naam" required>
+    <input type="text" name="bericht" required>
+    <button type="submit">Verstuur</button>
+</form>
+```
+
+```javascript
+const knop = document.querySelector("#klap-knop");
+const formulier = document.querySelector("#bericht-formulier");
+
+knop.addEventListener("click", function () {
+    if (formulier.style.display === "none") {
+        formulier.style.display = "block";
+        knop.textContent = "Annuleren";
+    } else {
+        formulier.style.display = "none";
+        knop.textContent = "Nieuw bericht";
+    }
+});
+```
+
+Ook hier komt de server er niet aan te pas. Het formulier stond de hele tijd al in de HTML die Python stuurde; JavaScript laat het alleen zien of verbergt het.
+
+</details>
+
+## Oefen met Python
+
+:::info[Python oefenblok]
+Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
+:::
+
+<CodeExercise>
+{`# Dezelfde teller, maar dan in Python
+MAX = 80
+
+bericht = "Hallo allemaal"
+over = MAX - len(bericht)
+print(f"{over} tekens over")
+
+# Bij elke toetsaanslag opnieuw
+tot_nu_toe = ""
+for letter in "hallo":
+    tot_nu_toe = tot_nu_toe + letter
+    print(f"'{tot_nu_toe}' -> {MAX - len(tot_nu_toe)} tekens over")
+
+# Het rekenwerk is hetzelfde. Het verschil zit hem in de plek: doe je dit in
+# Python, dan moet elke letter eerst naar de server en het antwoord weer terug.`}
+</CodeExercise>
