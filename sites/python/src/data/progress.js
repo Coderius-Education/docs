@@ -209,7 +209,7 @@ export const progressData = [
     },
   },
   {
-    tutorial: '12. Sets',
+    tutorial: '12. Tuples',
     levels: {
       Basis: 8,
       Variabelen: 8,
@@ -217,6 +217,17 @@ export const progressData = [
       Herhaling: 8,
       Functies: 8,
       Data: 9,
+    },
+  },
+  {
+    tutorial: '13. Sets',
+    levels: {
+      Basis: 8,
+      Variabelen: 8,
+      Logica: 7,
+      Herhaling: 8,
+      Functies: 8,
+      Data: 10,
     },
   },
 ];

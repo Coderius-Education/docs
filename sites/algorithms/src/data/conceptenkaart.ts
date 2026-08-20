@@ -31,6 +31,7 @@ export const pythonConcepten: PythonConcept[] = [
     label: 'Itereren over dictionaries',
     to: '/docs/data/11b-itereren-dictionaries',
   },
+  { id: 'tuples', label: 'Tuples', to: '/docs/data/tuples' },
   { id: 'sets', label: 'Sets', to: '/docs/data/sets' },
 ];
 
@@ -38,11 +39,19 @@ export const pythonConcepten: PythonConcept[] = [
 export const voorkennisPerAlgoritme: Record<string, string[]> = {
   'lineair-zoeken': ['if-else', 'for-loop', 'functies', 'lijsten'],
   'vind-maximum': ['f-strings', 'if-else', 'for-loop', 'functies', 'lijsten'],
-  'max-en-min': ['f-strings', 'if-else', 'and-or-elif', 'for-loop', 'return', 'lijsten'],
-  'binair-zoeken': ['if-else', 'and-or-elif', 'while-loop', 'functies', 'lijsten'],
-  'selection-sort': ['if-else', 'for-loop', 'functies', 'lijsten'],
-  'bubble-sort': ['f-strings', 'if-else', 'for-loop', 'functies', 'lijsten'],
-  'big-o': ['if-else', 'and-or-elif', 'for-loop', 'while-loop', 'functies', 'lijst-methoden'],
+  'max-en-min': ['f-strings', 'if-else', 'and-or-elif', 'for-loop', 'return', 'lijsten', 'tuples'],
+  'binair-zoeken': ['if-else', 'and-or-elif', 'while-loop', 'functies', 'lijsten', 'tuples'],
+  'selection-sort': ['if-else', 'for-loop', 'functies', 'lijsten', 'tuples'],
+  'bubble-sort': ['f-strings', 'if-else', 'for-loop', 'functies', 'lijsten', 'tuples'],
+  'big-o': [
+    'if-else',
+    'and-or-elif',
+    'for-loop',
+    'while-loop',
+    'functies',
+    'lijst-methoden',
+    'tuples',
+  ],
   dijkstra: [
     'f-strings',
     'if-else',
@@ -52,6 +61,7 @@ export const voorkennisPerAlgoritme: Record<string, string[]> = {
     'lijsten',
     'dictionaries',
     'itereren-dicts',
+    'tuples',
     'sets',
   ],
   minimax: [
@@ -63,11 +73,12 @@ export const voorkennisPerAlgoritme: Record<string, string[]> = {
     'parameters',
     'return',
     'lijsten',
+    'tuples',
     'sets',
   ],
-  knapsack: ['f-strings', 'if-else', 'for-loop', 'functies', 'lijsten'],
-  cfg: ['if-else', 'for-loop', 'functies', 'lijsten', 'lijst-methoden'],
-  hanoi: ['if-else', 'functies', 'lijst-methoden'],
+  knapsack: ['f-strings', 'if-else', 'for-loop', 'functies', 'lijsten', 'tuples'],
+  cfg: ['if-else', 'for-loop', 'functies', 'lijsten', 'lijst-methoden', 'tuples'],
+  hanoi: ['if-else', 'functies', 'lijst-methoden', 'tuples'],
   pagerank: [
     'if-else',
     'for-loop',

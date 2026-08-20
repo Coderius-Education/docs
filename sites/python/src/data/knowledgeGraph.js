@@ -34,7 +34,7 @@ export const knowledgeGraph = {
       id: 'data',
       label: 'Data Structuren',
       description: 'Lijsten en collecties van gegevens.',
-      maxLevel: 3,
+      maxLevel: 5,
     },
   ],
   tutorials: [
@@ -146,12 +146,23 @@ export const knowledgeGraph = {
     },
     {
       id: 't12',
-      title: '12. Sets',
+      title: '12. Tuples',
+      impact: [
+        {
+          concept: 'data',
+          depth: 'Je leert vaste rijtjes waardes in een `tuple`, en unpacking.',
+          level: 4,
+        },
+      ],
+    },
+    {
+      id: 't13',
+      title: '13. Sets',
       impact: [
         {
           concept: 'data',
           depth: 'Je leert verzamelingen zonder dubbelen in een `set`.',
-          level: 4,
+          level: 5,
         },
       ],
     },

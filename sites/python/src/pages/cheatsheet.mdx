@@ -302,6 +302,30 @@ Een niet-bestaande sleutel opvragen geeft een `KeyError`.
 
 ---
 
+## Tuples
+
+### Tuple maken en uitpakken
+
+```python
+punt = (3, 5)
+x, y = punt          # unpacking: x wordt 3, y wordt 5
+```
+
+### Twee waardes returnen en de swap
+
+```python
+def kleinste_en_grootste(lijst):
+    return min(lijst), max(lijst)
+
+klein, groot = kleinste_en_grootste([5, 2, 8])
+
+a, b = b, a          # twee variabelen wisselen in één regel
+```
+
+Een tuple kun je na het maken niet veranderen (geen `append`, geen toewijzen).
+
+---
+
 ## Sets
 
 ### Set maken
