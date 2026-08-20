@@ -121,6 +121,17 @@ export const progressData = [
     },
   },
   {
+    tutorial: '06c. Continue',
+    levels: {
+      Basis: 7,
+      Variabelen: 6,
+      Logica: 6,
+      Herhaling: 5,
+      Functies: 0,
+      Data: 0,
+    },
+  },
+  {
     tutorial: '07. While-loop',
     levels: {
       Basis: 7,
