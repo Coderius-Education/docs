@@ -1,7 +1,3 @@
----
-sidebar_class_name: hidden
----
-
 # Cheatsheet
 
 Snelle referentie voor alles wat je hebt geleerd. Klik op een onderwerp om het te openen.

@@ -1,7 +1,3 @@
----
-sidebar_class_name: hidden
----
-
 # Er gaat iets mis
 
 Klik op je probleem om de oplossing te zien.
