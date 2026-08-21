@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { fragmentenUit } from './extract';
+import { autoloadUit, fragmentenUit } from './extract';
 
 // De extractie bepaalt wát Godot in CI te zien krijgt. Neemt hij te weinig mee,
 // dan is de suite stil groen zonder iets te controleren; neemt hij fragmenten
@@ -73,5 +73,33 @@ describe('GDScript uit de lespagina´s halen', () => {
     );
     expect(fragmenten).toHaveLength(0);
     expect(overgeslagen[0].reden).toBe('bewust fout voorbeeld');
+  });
+});
+
+describe('het Global-autoload uit de les bouwen', () => {
+  it('voegt losse leden uit verschillende stappen samen tot één script', () => {
+    const les = [
+      '```gdscript\nextends Node\n\nvar score = 0\n```',
+      '```gdscript\nfunc is_game_over() -> bool:\n    return levens <= 0\n```',
+      // Een aanroep, geen definitie: hoort er niet in.
+      '```gdscript\nif Global.is_game_over():\n    print("einde")\n```',
+    ].join('\n\n');
+
+    expect(autoloadUit(les)).toBe(
+      'extends Node\n\nvar score = 0\n\nfunc is_game_over() -> bool:\n    return levens <= 0\n',
+    );
+  });
+
+  it('houdt van een lid dat meermaals voorkomt de uitgewerkte versie', () => {
+    const les = [
+      '```gdscript\nextends Node\n\nfunc reset():\n    pass\n```',
+      '```gdscript\nextends Node\n\nfunc reset():\n    score = 0\n    levens = 3\n```',
+    ].join('\n\n');
+
+    expect(autoloadUit(les)).toContain('levens = 3');
+  });
+
+  it('geeft niets terug als de pagina geen global-script bevat', () => {
+    expect(autoloadUit('# Les\n\n```gdscript\n    print(velocity)\n```')).toBeUndefined();
   });
 });

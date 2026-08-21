@@ -3,7 +3,8 @@
 ; de zeven tussenstanden van het bewegingsscript echt uit.
 ;
 ; De stub-scenes hieronder bestaan alleen omdat `preload()` bij het compileren
-; al een bestaand bestand nodig heeft.
+; al een bestaand bestand nodig heeft. Het Global-autoload wordt uit de les
+; gegenereerd door `pnpm godot:extract` en staat daarom in extracted/.
 
 config_version=5
 
@@ -15,7 +16,7 @@ config/features=PackedStringArray("4.4")
 
 [autoload]
 
-Global="*res://autoload/global.gd"
+Global="*res://extracted/global.gd"
 
 [debug]
 

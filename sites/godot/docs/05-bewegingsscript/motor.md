@@ -40,7 +40,7 @@ func _physics_process(delta: float) -> void:
     move_and_slide()
 ```
 
-`get_gravity()` geeft de zwaartekracht van je project terug, standaard ongeveer 980 pixels per seconde naar beneden.
+`get_gravity()` geeft de zwaartekracht van je project terug, standaard `(0, 980)`. Dat is geen snelheid maar een versnelling: elke seconde komt er 980 bij je snelheid.
 
 Het stukje `* delta` laat je even voor wat het is — dat is Deel 3.
 
@@ -48,8 +48,13 @@ Het stukje `* delta` laat je even voor wat het is — dat is Deel 3.
 
 `velocity` is de snelheid van je karakter: een X en een Y in één waarde. Zet tijdelijk `print(velocity)` boven `move_and_slide()` en kijk in **Uitvoer** terwijl je speelt:
 
-- Stilstaan: `(0, 0)` — geen beweging.
-- Vallen: `(0, 200)`, dan `(0, 400)`, dan `(0, 600)` — steeds sneller naar beneden.
+```
+(0, 16.33)
+(0, 32.67)
+(0, 49)
+```
+
+De X blijft `0`, want je beweegt niet zijwaarts. De Y wordt elke frame `16.33` groter: dat is die 980 verdeeld over zestig frames. Steeds hetzelfde stukje erbij, en juist daardoor val je steeds sneller.
 
 Je kunt `.x` en `.y` los aanspreken, bijvoorbeeld `velocity.y = 0`. Dat gebruik je vanaf Deel 5.
 

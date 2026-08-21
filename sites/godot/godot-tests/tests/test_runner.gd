@@ -153,8 +153,19 @@ func _test_vallen(index: Array) -> void:
 	if pad == "":
 		_faal("Deel 2: geen script gevonden")
 		return
-	var speler := await _draai(pad, 10)
+	var speler := await _draai(pad, 3)
 	_verwacht(speler.position.y > 100.0, "Deel 2: karakter hoort te vallen, y=%s" % speler.position.y)
+
+	# Deel 2 toont drie opeenvolgende prints die telkens 16.33 verder staan.
+	# Dat getal is 980 gedeeld door zestig frames; hier meten we de stap zelf,
+	# nog in de lucht.
+	var eerste: float = speler.gemeten_y
+	await _stap(1)
+	var stap: float = speler.gemeten_y - eerste
+	_verwacht(
+		stap > 15.0 and stap < 18.0,
+		"Deel 2: velocity.y hoort per frame ~16.33 op te lopen tijdens het vallen, is %s" % stap
+	)
 	await _stap(120)
 	_verwacht(speler.position.y < 400.0, "Deel 2: karakter hoort op de vloer te blijven, y=%s" % speler.position.y)
 	# Zonder de if uit Deel 4 staat er vlak vóór move_and_slide() één frame

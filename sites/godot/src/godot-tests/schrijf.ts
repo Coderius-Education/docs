@@ -1,10 +1,10 @@
 // Schrijft de uit de docs geëxtraheerde GDScript naar het testproject.
 // Aanroep: `pnpm --filter @coderius/godot-docs godot:extract`
 
-import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { verzamel } from './extract';
+import { autoloadUit, verzamel } from './extract';
 
 const HIER = dirname(fileURLToPath(import.meta.url));
 const SITE = join(HIER, '..', '..');
@@ -18,6 +18,15 @@ mkdirSync(UIT, { recursive: true });
 for (const f of fragmenten) {
   writeFileSync(join(UIT, `${f.naam}.gd`), f.code);
 }
+
+// Het Global-autoloadscript komt uit de les zelf, zodat het testproject niet
+// naast de cursus kan gaan leven. project.godot wijst hiernaartoe.
+const globalPagina = join(SITE, 'docs', '07-signals-en-score', 'global_variables.md');
+const global = autoloadUit(readFileSync(globalPagina, 'utf8'));
+if (!global) {
+  throw new Error(`geen Global-script gevonden in ${globalPagina}`);
+}
+writeFileSync(join(UIT, 'global.gd'), global);
 
 // Godot leest deze index om per fout de bronpagina te kunnen noemen.
 writeFileSync(
@@ -34,7 +43,7 @@ writeFileSync(
   )}\n`,
 );
 
-console.log(`${fragmenten.length} volledige scripts geschreven.`);
+console.log(`${fragmenten.length} volledige scripts geschreven, plus het Global-autoload.`);
 console.log(`${overgeslagen.length} blokken overgeslagen:`);
 for (const [reden, aantal] of Object.entries(
   overgeslagen.reduce<Record<string, number>>((acc, o) => {

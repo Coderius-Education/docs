@@ -114,3 +114,48 @@ export function verzamel(wortels: string[]): {
   }
   return { fragmenten, overgeslagen };
 }
+
+/**
+ * Bouwt het Global-autoloadscript uit de les zelf, in plaats van het naast de
+ * cursus te onderhouden. De les toont `Global` in stukjes — variabelen in de
+ * ene stap, `reset()` in de volgende, `is_game_over()` weer verderop — dus
+ * voegen we alle `extends Node`-blokken van die pagina samen tot één script
+ * met elk lid één keer. Van een lid dat meermaals voorkomt wint de langste
+ * versie, want dat is de uitgewerkte.
+ */
+export function autoloadUit(inhoud: string): string | undefined {
+  const leden = new Map<string, string>();
+
+  for (const match of inhoud.matchAll(BLOK)) {
+    const code = match[1].replace(/\s+$/, '');
+    // Het volledige script, of een los lid dat de tekst erbij laat zetten
+    // ("Zet daarnaast in je global script:"). Alles wat binnen een functie
+    // hoort of een aanroep laat zien, valt af.
+    const heelScript = code.startsWith('extends Node');
+    if (!heelScript && !/^(?:func|var|const)\s/.test(code)) continue;
+
+    let naam: string | undefined;
+    let body: string[] = [];
+    const bewaar = () => {
+      if (!naam) return;
+      const tekst = body.join('\n').replace(/\s+$/, '');
+      const eerder = leden.get(naam);
+      if (eerder === undefined || tekst.length > eerder.length) leden.set(naam, tekst);
+    };
+
+    for (const regel of code.split('\n').slice(heelScript ? 1 : 0)) {
+      const kop = regel.match(/^(?:var|const)\s+(\w+)|^func\s+(\w+)/);
+      if (kop) {
+        bewaar();
+        naam = kop[1] ?? kop[2];
+        body = [regel];
+      } else if (naam) {
+        body.push(regel);
+      }
+    }
+    bewaar();
+  }
+
+  if (leden.size === 0) return undefined;
+  return `extends Node\n\n${[...leden.values()].join('\n\n')}\n`;
+}
