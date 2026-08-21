@@ -27,7 +27,7 @@ Drie: links, rechts, en niets. Je zou dat met losse checks kunnen doen, maar God
 
 </details>
 
-## Stap 1: Je loopsnelheid als constante \{#var-const}
+## Stap 1: Je loopsnelheid als constante \{#const}
 
 Zet deze regel bovenaan je script, ónder `extends` en bóven de functie:
 
@@ -55,7 +55,7 @@ Zet deze twee regels binnen de functie, ónder het valblok en bóven `move_and_s
     velocity.x = direction * SPEED
 ```
 
-## Stap 3: Wat `Input.get_axis()` teruggeeft
+## Stap 3: Wat `Input.get_axis()` teruggeeft \{#get-axis}
 
 In plaats van twee losse checks doet `get_axis` het in één regel:
 

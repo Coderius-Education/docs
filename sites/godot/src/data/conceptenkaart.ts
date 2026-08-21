@@ -154,10 +154,16 @@ export const godotConcepten: GodotConcept[] = [
   { id: 'timer', label: 'Timer', leerlijn: 'nodes', to: '/docs/spawn_timer#timer' },
   // GDScript
   {
-    id: 'var-const',
-    label: 'var en const',
+    id: 'var',
+    label: 'var (een variabele)',
     leerlijn: 'gdscript',
-    to: '/docs/movement-krachten#var-const',
+    to: '/docs/start_gdscript#var',
+  },
+  {
+    id: 'const',
+    label: 'const (een vaste waarde)',
+    leerlijn: 'gdscript',
+    to: '/docs/movement-krachten#const',
   },
   {
     id: 'func-ready',
@@ -178,8 +184,14 @@ export const godotConcepten: GodotConcept[] = [
     to: '/docs/movement-motor#velocity',
   },
   {
-    id: 'input-functies',
-    label: 'Input-functies',
+    id: 'input-get-axis',
+    label: 'Input.get_axis()',
+    leerlijn: 'gdscript',
+    to: '/docs/movement-krachten#get-axis',
+  },
+  {
+    id: 'input-just-pressed',
+    label: 'Input.is_action_just_pressed()',
     leerlijn: 'gdscript',
     to: '/docs/movement-afsluiter#springen',
   },
@@ -272,6 +284,7 @@ export const lessen: Les[] = [
   { slug: 'camera2d', titel: 'Camera die de speler volgt', hoofdstuk: 5 },
   { slug: 'animaties', titel: 'Animaties maken', hoofdstuk: 6 },
   { slug: 'animaties_code', titel: 'Animaties in code', hoofdstuk: 6 },
+  { slug: 'eigen_animaties', titel: 'Je eigen animaties maken', hoofdstuk: 6 },
   { slug: 'signals_muntje', titel: 'Signals & een muntje oppakken', hoofdstuk: 7 },
   { slug: 'score_in_karakter', titel: 'Score bijhouden', hoofdstuk: 7 },
   { slug: 'global_variables', titel: 'Global variables', hoofdstuk: 7 },
@@ -286,6 +299,19 @@ export const lessen: Les[] = [
   { slug: 'spel-endless_runner', titel: 'Spelidee: endless runner', hoofdstuk: 9 },
 ];
 
+/**
+ * Lespagina's die bewust niet op de kaart staan, met de reden erbij. De test
+ * eist dat elke docs-pagina óf in `lessen` óf hier voorkomt; zonder die lijst
+ * kan een nieuwe les er stil buiten vallen.
+ */
+export const BUITEN_DE_KAART: Record<string, string> = {
+  installatie: 'gaat over Godot installeren, raakt geen van de drie leerlijnen',
+  project: 'gaat over de Project Manager, raakt geen van de drie leerlijnen',
+  exporteren: 'naslag over je projectmap, geen les',
+  'godot-versies': 'naslag over versies en bronnen, geen les',
+  'meer-leren': 'doorverwijspagina, geen les',
+};
+
 // Gesleuteld op Les.slug; waarden zijn concept-id's uit godotConcepten.
 export const conceptenPerLes: Record<string, string[]> = {
   interface: ['spel-starten'],
@@ -296,30 +322,32 @@ export const conceptenPerLes: Record<string, string[]> = {
   tilemap_collision: ['physics-layer', 'tilemaplayer'],
   sprite: ['characterbody2d', 'sprite2d', 'collisionshape2d', 'node-toevoegen', 'scene-opslaan'],
   sprite_movement: ['characterbody2d', 'spel-starten'],
-  start_gdscript: ['var-const', 'func-ready'],
+  start_gdscript: ['var', 'func-ready'],
   basis_movement_begrijpen: ['physics-process-delta', 'characterbody2d', 'func-ready'],
   'movement-motor': ['velocity-move-and-slide'],
   'movement-delta': ['physics-process-delta'],
   'movement-grond': ['if-elif', 'velocity-move-and-slide'],
-  'movement-krachten': ['var-const', 'input-functies'],
+  'movement-krachten': ['const', 'input-get-axis'],
   'movement-remmen': ['if-elif', 'velocity-move-and-slide'],
-  'movement-afsluiter': ['input-functies', 'if-elif', 'var-const'],
+  'movement-afsluiter': ['input-just-pressed', 'if-elif', 'const'],
   'fouten-zoeken': [
     'foutmelding-lezen',
     'runtime-meldingen',
     'print-debuggen',
     'if-elif',
-    'input-functies',
+    'input-get-axis',
+    'input-just-pressed',
   ],
   camera2d: ['camera2d', 'node-toevoegen'],
   animaties: ['animatedsprite2d'],
   animaties_code: [
     'dollar-teken',
     'if-elif',
-    'var-const',
+    'const',
     'velocity-move-and-slide',
     'animatedsprite2d',
   ],
+  eigen_animaties: ['bestanden-importeren', 'animatedsprite2d'],
   signals_muntje: [
     'area2d',
     'sprite2d',
@@ -329,8 +357,8 @@ export const conceptenPerLes: Record<string, string[]> = {
     'queue-free',
     'scene-opslaan',
   ],
-  score_in_karakter: ['var-const', 'signal-functie', 'queue-free'],
-  global_variables: ['autoload-instellen', 'global-autoload', 'var-const'],
+  score_in_karakter: ['var', 'signal-functie', 'queue-free'],
+  global_variables: ['autoload-instellen', 'global-autoload', 'var'],
   score_op_scherm: ['canvaslayer-label', 'global-autoload'],
   groups: ['groups'],
   tweede_level: ['change-scene', 'area2d', 'signal-koppelen', 'signal-functie', 'scene-opslaan'],
@@ -351,7 +379,8 @@ export const conceptenPerLes: Record<string, string[]> = {
     'timer',
     'canvaslayer-label',
     'preload-instantiate',
-    'input-functies',
+    'input-get-axis',
+    'input-just-pressed',
     'velocity-move-and-slide',
     'queue-free',
     'signal-functie',
@@ -364,7 +393,8 @@ export const conceptenPerLes: Record<string, string[]> = {
     'physics-layer',
     'camera2d',
     'area2d',
-    'input-functies',
+    'input-get-axis',
+    'input-just-pressed',
     'velocity-move-and-slide',
     'dollar-teken',
     'if-elif',

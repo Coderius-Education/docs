@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import {
+  BUITEN_DE_KAART,
   HOOFDSTUKKEN,
   LEERLIJNEN,
   conceptenPerLes,
@@ -158,6 +159,28 @@ describe('conceptenkaart-data', () => {
       .filter((c) => !opDeKaart.has(uitlegSlug(c)))
       .map((c) => `${c.id} legt uit in '${uitlegSlug(c)}', maar die les staat niet op de kaart`);
 
+    expect(kapot).toEqual([]);
+  });
+
+  it('zet elke lespagina op de kaart, of noemt hem expliciet als uitzondering', () => {
+    // De omgekeerde richting van de test hierboven. Zonder deze kant kan een
+    // nieuwe les er stil buiten vallen: de kaart klopt dan nog steeds met
+    // zichzelf, maar mist een hoofdstuk van de cursus.
+    const opDeKaart = new Set(lessen.map((l) => l.slug));
+    const vergeten = [...inhoudPerSlug.keys()]
+      .filter((slug) => !opDeKaart.has(slug) && !(slug in BUITEN_DE_KAART))
+      .sort();
+
+    expect(vergeten).toEqual([]);
+  });
+
+  it('houdt de uitzonderingenlijst zelf ook schoon', () => {
+    const kapot: string[] = [];
+    for (const [slug, reden] of Object.entries(BUITEN_DE_KAART)) {
+      if (!inhoudPerSlug.has(slug)) kapot.push(`${slug} bestaat niet als pagina`);
+      if (lessen.some((l) => l.slug === slug)) kapot.push(`${slug} staat óók op de kaart`);
+      if (reden.trim() === '') kapot.push(`${slug} heeft geen reden`);
+    }
     expect(kapot).toEqual([]);
   });
 });

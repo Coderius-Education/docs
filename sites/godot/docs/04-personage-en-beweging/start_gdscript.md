@@ -17,7 +17,7 @@ Je karakter staat op het scherm en er hangt een script aan met één regel erin.
   ]}
 />
 
-## Stap 1: Een functie die bij de start draait
+## Stap 1: Een functie die bij de start draait \{#var}
 
 Open in Godot het script van je `CharacterBody2D`. Er staat één regel in: `extends CharacterBody2D`. Typ daaronder, met een lege regel ertussen:
 

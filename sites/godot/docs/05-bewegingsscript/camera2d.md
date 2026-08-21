@@ -153,3 +153,7 @@ Je level zal per project anders zijn — meet of bereken de exacte grenzen van j
 **Oplossing:** Selecteer de `Camera2D` in de Scene Tree en druk `F` in de viewport om er meteen op te zoomen. Reset zo nodig de `Position`-property in de Inspector terug naar `(0, 0)` — als child van de speler hoort hij op `(0, 0)` te staan.
 
 </details>
+
+---
+
+← [Fouten zoeken](./fouten-zoeken.md) · **Volgende:** [Animaties aanmaken](../06-animaties/animaties.md) →
