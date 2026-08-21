@@ -3,66 +3,121 @@ sidebar_position: 4
 slug: /movement-afsluiter
 ---
 
-# Het bewegingsscript begrijpen — Deel 4: De afsluiter en je eigen script bouwen
+# Het bewegingsscript bouwen — Deel 4: Springen
 
-In [Deel 3](./krachten.md) heb je de drie krachten (zwaartekracht, springen, lopen) één voor één ontleed. Tot nu toe hebben we alleen `velocity` ingesteld — maar dat verplaatst je karakter nog niet. Eén regel rondt het verhaal af, en daarna bouw je het script zelf opnieuw op.
+Je karakter loopt en valt. Er ontbreekt één ding: omhoog. In deze les maak je het bewegingsscript af.
 
 <GodotVersie />
 
-## Blok 4: De afsluiter — `move_and_slide()` \{#move-and-slide}
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/beslissen/05c-and-or-elif', label: 'And, or en elif'},
+  ]}
+/>
 
-```gdscript
-move_and_slide()
-```
+## Wat je nu gaat toevoegen
 
-Tot nu toe hebben we alleen `velocity` ingesteld — maar dat verplaatst je karakter nog niet. `move_and_slide()` is de **trigger** die zegt: "Godot, kijk naar mijn `velocity`, kijk naar collisions, en verplaats me correct."
+Een tweede constante en één `if` met twee voorwaarden. Daarna is je bewegingsscript compleet en heb je het helemaal zelf getypt.
 
-In één regel doet Godot voor je:
+## Voorspel: waarom is springen negatief? \{#springen}
 
-- Je karakter verplaatsen op basis van `velocity` en `delta`.
-- Collisions detecteren met de wereld (tegels, andere bodies).
-- "Sliden" langs muren in plaats van vast te blijven kleven.
-
-#### Waarom helemaal **onderaan** de functie?
-
-**Wat denk je dat er gebeurt als je `move_and_slide()` als eerste regel in `_physics_process` zet?**
+Springen betekent `velocity.y` een waarde geven. **Moet dat een positief of een negatief getal zijn?**
 
 <details>
 <summary>Antwoord</summary>
 
-Dan past Godot de beweging toe op basis van de `velocity` van de **vorige** frame, niet op je nieuwe aanpassingen (zwaartekracht, springen, lopen) die je daaronder doet. Je krijgt een vreemde vertraging van één frame, of input voelt "traag".
+Negatief. In Godot ligt `(0, 0)` in de **linkerbovenhoek** van het scherm:
 
-Houd de volgorde: eerst alle aanpassingen aan `velocity`, dan als laatste `move_and_slide()`.
+- naar rechts wordt `x` groter
+- naar beneden wordt `y` groter
+- naar boven wordt `y` dus **kleiner**, en dat betekent negatief
 
-</details>
+Een sprong is beweging naar boven, dus `velocity.y` moet negatief worden.
 
----
-
-## Make-opdracht: bouw het script zelf op
-
-Je begrijpt nu elke regel. Tijd om het script vanaf nul zelf te schrijven — zo merk je écht wat blijft hangen.
-
-**Opdracht:**
-
-1. Maak een back-up: kopieer je huidige script naar een tekstbestand of plak het in een comment-blok onderaan.
-2. Verwijder al je code (alles boven die back-up).
-3. Bouw het opnieuw op, blok voor blok, en test telkens:
-   - **Skelet:** `extends CharacterBody2D`, de twee `const`s, en een lege `_physics_process(delta: float) -> void:` met alleen `move_and_slide()` erin. Test → karakter beweegt niet, maar crasht ook niet.
-   - **Voeg zwaartekracht toe** (Blok 3a). Test → karakter valt.
-   - **Voeg springen toe** (Blok 3b). Test → karakter kan springen met spatie.
-   - **Voeg lopen toe** (Blok 3c). Test → karakter loopt links/rechts.
-
-<details>
-<summary>Klik hier voor een tip.</summary>
-
-- Werk **één blok tegelijk** af. Krijg je fouten? Eerst dit blok werkend voor je verder gaat.
-- Vergeet niet: `move_and_slide()` blijft altijd als laatste regel binnen `_physics_process` staan.
-- De volgorde van de blokken binnen `_physics_process` maakt iets uit. Houd: zwaartekracht → springen → lopen → `move_and_slide()`.
+![Godot coördinatenstelsel](../../images/coordinaten.svg)
 
 </details>
 
+## Stap 1: De sprongkracht als constante
+
+Zet deze regel onder je bestaande `const SPEED`:
+
+```gdscript
+const JUMP_VELOCITY = -400.0
+```
+
+Een negatief getal, precies zoals je voorspelde. Hoe verder van nul, hoe hoger de sprong.
+
+## Stap 2: De sprong zelf
+
+Zet dit binnen de functie, ónder het zwaartekracht-blok en bóven de regels voor lopen:
+
+```gdscript
+    if Input.is_action_just_pressed("ui_accept") and is_on_floor():
+        velocity.y = JUMP_VELOCITY
+```
+
+`ui_accept` is een standaardactie van Godot, gekoppeld aan de spatiebalk en Enter.
+
+## Stap 3: `just_pressed` of `pressed`?
+
+Godot heeft twee manieren om naar een toets te kijken:
+
+| Functie                                     | Wanneer is het `true`?                              |
+| :------------------------------------------ | :--------------------------------------------------- |
+| `Input.is_action_pressed("ui_accept")`      | zolang je de toets **ingedrukt houdt**               |
+| `Input.is_action_just_pressed("ui_accept")` | alleen op het ene frame dat je hem **indrukt**       |
+
+**Wat denk je dat er gebeurt als je `just_pressed` vervangt door `pressed`?**
+
 <details>
-<summary>Klik hier voor de oplossing (volledig script).</summary>
+<summary>Antwoord</summary>
+
+Je karakter stuitert continu omhoog zolang je de spatie vasthoudt. Elke frame voldoet `pressed` aan de check, dus elke frame krijgt hij opnieuw de volle sprongkracht. Hij komt nooit meer naar beneden.
+
+Met `just_pressed` gebeurt het één keer per druk, en moet de speler loslaten voor een volgende sprong.
+
+</details>
+
+Het verschil staat ook in de [GDScript-tips](/gdscript-tips#input).
+
+## Stap 4: Twee voorwaarden met `and`
+
+De check bestaat uit twee delen: de speler drukt op de knop **en** het karakter staat op de grond. Met `and` moeten ze allebei waar zijn.
+
+Bij GDQuest oefen je dit in de lessen over **voorwaarden**, verderop in de cursus. Die staan niet op de schermafdruk hierboven, dus scroll even door de lessenlijst tot je ze tegenkomt.
+
+**Wat gebeurt er zonder dat tweede deel?**
+
+<details>
+<summary>Antwoord</summary>
+
+Je kunt in de lucht springen. Tijdens een sprong nog eens drukken geeft opnieuw de volle sprongkracht, en zo kun je jezelf omhoog blijven pompen. Elk gat is dan over te steken en je level wordt betekenisloos.
+
+</details>
+
+## Stap 5: `=` en niet `+=`
+
+Bij de zwaartekracht gebruikte je `+=`, hier gebruik je `=`. Dat is bewust.
+
+**Je karakter valt al met `velocity.y = 200`. Wat gebeurt er als je hier `velocity.y += JUMP_VELOCITY` schrijft?**
+
+<details>
+<summary>Antwoord</summary>
+
+Dan wordt het `200 + (-400) = -200`: je springt half zo hoog, alleen omdat je toevallig al aan het vallen was.
+
+Met `=` vervang je de verticale snelheid volledig door `-400`. Een sprong is dan altijd even hoog, en dat voelt voorspelbaar.
+
+</details>
+
+## Stap 6: Test het
+
+Start met `F5`. Je karakter loopt, springt met de spatiebalk, valt terug en kan niet in de lucht nog een keer springen.
+
+Je bewegingsscript is compleet — en je hebt geen regel gekregen die je niet zelf hebt getypt.
+
+## Je complete script
 
 ```gdscript
 extends CharacterBody2D
@@ -86,72 +141,104 @@ func _physics_process(delta: float) -> void:
     move_and_slide()
 ```
 
+<details>
+<summary>Klik om WASD-besturing toe te voegen (W = springen, A = links, D = rechts)</summary>
+
+Veel platformers laten je naast de pijltjestoetsen ook met WASD spelen. Dat doe je door **extra toetsen te koppelen aan bestaande acties**, zonder de pijltjestoetsen te slopen.
+
+**Stap 1 — Open de Input Map**
+
+1. Klik bovenin op **Project → Project Settings**.
+2. Klik op het tabblad **Input Map** (naast *General*).
+3. In de lijst onder *All Actions* staan `ui_accept`, `ui_left`, `ui_right` en meer. Klap een actie open met het pijltje ervoor om de huidige toetsen te zien.
+
+**Stap 2 — Voeg W toe aan `ui_accept`**
+
+1. Zoek `ui_accept` en klik op het **plus-icoontje (+)** ernaast.
+2. Er verschijnt een venster: druk op de **W**-toets.
+3. Klik op **OK**.
+
+**Stap 3 — Doe hetzelfde voor A en D**
+
+Bij `ui_left`: klik **+**, druk **A**, klik **OK**. Bij `ui_right`: klik **+**, druk **D**, klik **OK**.
+
+**Stap 4 — Test**
+
+Start met `F5`. WASD en de pijltjestoetsen werken nu allebei.
+
+:::tip
+Een toets juist vervangen in plaats van toevoegen? Klap de actie open en klik op het prullenbak-icoontje naast de toets die weg mag.
+:::
+
+</details>
+
+## Opdracht 4.4.b: voeg een vierde kracht toe
+
+Je script kent nu drie krachten: vallen, lopen en springen. Voeg er zelf één bij die niet in de les staat. Kies er één:
+
+- **Sprinten**: houd shift ingedrukt en je loopt sneller.
+- **Dubbel springen**: één keer extra springen terwijl je in de lucht bent.
+
+:::info
+Dit is de eerste opdracht zonder uitgewerkte oplossing, en dat is met opzet. Tot nu toe kon je je antwoord vergelijken met het onze. Vanaf hier gaat het erom dat je zelf iets bedenkt met wat je kent — een oplossing die je overschrijft leert je iets anders dan een oplossing die je vindt.
+:::
+
+## Denk na
+
+Beantwoord deze vragen voor jezelf voordat je gaat typen. Ze wijzen allebei de weg.
+
+**Bij sprinten:**
+
+- Welke waarde moet er anders zijn als shift ingedrukt is? En welke regel zet die waarde nu?
+- Je hebt een actie nodig die "shift" heet. Waar maak je die aan? (Zie het WASD-blok hierboven.)
+
+**Bij dubbel springen:**
+
+- Je moet onthouden hóé vaak er al gesprongen is sinds de laatste landing. Een `const` kan dat niet bijhouden — wat wel?
+- Waar in je functie weet je zeker dat het karakter net geland is?
+
+<details>
+<summary>Vastgelopen?</summary>
+
+Bouw het in twee helften. Zorg eerst dat je in **Uitvoer** kunt zien dat je nieuwe toets wordt herkend, met een `print()`. Werkt dat, dan pas de snelheid of de sprong aanpassen.
+
+Zo weet je bij een fout meteen aan welke kant je moet zoeken: bij het uitlezen van de toets, of bij het toepassen ervan.
+
 </details>
 
 ## Er gaat iets mis
 
 <details>
-<summary>Mijn script geeft een Indentation-fout</summary>
+<summary>Mijn karakter springt niet</summary>
 
-**Oorzaak:** Je hebt tabs en spaties door elkaar gebruikt. GDScript is streng: elke regel binnen dezelfde functie moet op dezelfde manier ingesprongen zijn (allemaal tabs óf allemaal spaties).
+**Oorzaak:** De `if` staat op het verkeerde niveau, of `ui_accept` is niet aan een toets gekoppeld.
 
 **Oplossing:**
 
-1. Selecteer de regel die de fout geeft.
-2. Verwijder de inspringing aan het begin volledig.
-3. Druk **één keer op Tab** om opnieuw in te springen (Godot gebruikt standaard tabs).
+1. Controleer dat de `if`-regel op hetzelfde niveau staat als de andere regels binnen de functie.
+2. Controleer in **Project → Project Settings → Input Map** dat `ui_accept` bestaat en aan de spatiebalk hangt.
+3. Zet `print("spring")` binnen de `if` om te zien of hij überhaupt wordt bereikt.
 
 </details>
 
 <details>
-<summary>Ik zie niets in de Uitvoer als ik <code>print()</code> gebruik</summary>
+<summary>Mijn karakter springt oneindig hoog of blijft hangen</summary>
 
-**Oorzaak:** Het Uitvoer-paneel staat niet open, of je hebt het spel nog niet gestart.
+**Oorzaak:** `is_action_pressed` in plaats van `is_action_just_pressed`, of de `and is_on_floor()` ontbreekt.
 
-**Oplossing:**
-
-1. Klik onderaan het scherm op het tabblad **Uitvoer** (of **Output**).
-2. Start het spel met `F5`.
-3. Beweeg je karakter — nu verschijnen de print-regels.
+**Oplossing:** Vergelijk je regel letterlijk met die uit Stap 2.
 
 </details>
 
 <details>
-<summary>Het karakter beweegt niet meer nadat ik iets aanpaste</summary>
+<summary>Mijn sprong voelt elke keer anders</summary>
 
-**Oorzaak:** Vaak is `move_and_slide()` per ongeluk verwijderd, of staat een regel niet meer correct ingesprongen binnen `_physics_process`.
+**Oorzaak:** Je gebruikt `+=` in plaats van `=` bij `velocity.y`.
 
-**Oplossing:**
-
-1. Controleer dat `move_and_slide()` als laatste regel **binnen** `_physics_process` staat (dus ingesprongen).
-2. Controleer dat alle regels op dezelfde inspringing staan.
-
-</details>
-
-<details>
-<summary>Mijn karakter springt niet, of springt vreemd</summary>
-
-**Oorzaak:** Vaak een verkeerde teken-keuze: `JUMP_VELOCITY` is positief in plaats van negatief, of `=` is `+=` geworden bij `velocity.y`.
-
-**Oplossing:**
-
-1. Controleer dat `JUMP_VELOCITY` een **negatief** getal is (`-400.0`, niet `400.0`).
-2. Controleer dat de regel `velocity.y = JUMP_VELOCITY` is, niet `velocity.y += JUMP_VELOCITY`.
-
-</details>
-
-<details>
-<summary>Mijn karakter blijft eindeloos doorglijden na links/rechts loslaten</summary>
-
-**Oorzaak:** De `else`-tak met `move_toward` is weg, of de stap is veel te klein.
-
-**Oplossing:**
-
-1. Controleer dat na de `if direction:` een `else:`-tak komt met `velocity.x = move_toward(velocity.x, 0, SPEED)`.
-2. De derde parameter (de stap) bepaalt hoe snel je afremt. `SPEED` als stap = direct stoppen. Kleinere waardes geven een glij-effect — bewuste keuze of bug.
+**Oplossing:** Gebruik `velocity.y = JUMP_VELOCITY`. Zie Stap 5 voor waarom.
 
 </details>
 
 ---
 
-← [Deel 3 — De drie krachten](./krachten.md)
+← [Deel 3 — Lopen](./krachten.md) · **Volgende:** [Camera die de speler volgt](../camera2d.md) →

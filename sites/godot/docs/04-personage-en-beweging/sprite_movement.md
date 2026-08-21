@@ -3,117 +3,91 @@ sidebar_position: 2
 slug: /sprite_movement
 ---
 
-# Beweging toevoegen
+# Je eerste eigen script
 
-Je karakter staat op het scherm, maar doet niets. Tijd om hem te laten lopen, springen en vallen. Het mooie is: Godot geeft je een compleet startscript cadeau zodra je een script aan een `CharacterBody2D` koppelt.
+Je karakter staat op het scherm, maar doet niets. Vanaf hier ga je hem zelf laten bewegen — regel voor regel, in een script dat je van nul opbouwt. In deze les maak je het script aan en schrijf je de eerste regel.
 
 <GodotVersie />
 
-## Voorspel: wat zit er in dat standaardscript?
+## Waarom je zelf begint met een leeg bestand
 
-Godot genereert automatisch een startscript zodra je een script aan een `CharacterBody2D` hangt. **Wat denk je dat dat script in grote lijnen doet?** Denk aan: bewegen, springen, vallen.
+Godot kan een startscript voor je invullen. Handig, maar dan lees je iets wat je niet zelf hebt bedacht, en bij de eerste foutmelding weet je niet waar je moet kijken.
 
-Op deze pagina hoef je nog geen code te begrijpen — gewoon klikken, draaien, testen. In [Het bewegingsscript begrijpen](./basis_movement_begrijpen/skelet.md) ontleed je het regel voor regel.
+In deze cursus begin je daarom leeg. Elke regel die erbij komt, komt erbij omdat jij hem nodig hebt. Na elke les draait je spel weer, en doet het net iets meer dan daarvoor.
 
-<details>
-<summary>Bekijk het standaardscript (hoeft nu niet)</summary>
+Daarnaast loop je de interactieve cursus [Learn GDScript From Zero](https://gdquest.github.io/learn-gdscript/) van GDQuest door. Daar oefen je elk concept los, zonder Godot erbij. In elke les hieronder staat welke GDQuest-les bij de regel hoort die je net hebt geschreven.
 
-```gdscript
-extends CharacterBody2D
-
-const SPEED = 300.0
-const JUMP_VELOCITY = -400.0
-
-func _physics_process(delta: float) -> void:
-    if not is_on_floor():
-        velocity += get_gravity() * delta
-
-    if Input.is_action_just_pressed("ui_accept") and is_on_floor():
-        velocity.y = JUMP_VELOCITY
-
-    var direction := Input.get_axis("ui_left", "ui_right")
-    if direction:
-        velocity.x = direction * SPEED
-    else:
-        velocity.x = move_toward(velocity.x, 0, SPEED)
-
-    move_and_slide()
-```
-
-Een paar dingen die je waarschijnlijk al herkent:
-
-- `SPEED` en `JUMP_VELOCITY` — vaste waarden voor snelheid en sprongkracht.
-- `is_on_floor()` — checkt of het karakter de grond raakt.
-- `Input.is_action_just_pressed("ui_accept")` — spatiebalk indrukken.
-- `move_and_slide()` — past de beweging toe.
-
-In [Het bewegingsscript begrijpen](./basis_movement_begrijpen/skelet.md) krijgt elke regel zijn eigen uitleg.
-
-</details>
-
-## Stap 1: Koppel een script aan je `CharacterBody2D`
+## Stap 1: Koppel een leeg script
 
 1. Selecteer je `CharacterBody2D` in de Scene Tree.
 2. Klik op het script-icoontje bovenaan de Inspector (of klik met rechts → **Attach Script**).
-3. Laat alles op de standaardwaarden staan en klik op **Create**.
-4. Godot opent automatisch het script. Klik op **OK** bij een eventuele pop-up over het gebruik van een template.
+3. Zoek in het venster de keuze **Template**. Die staat standaard op `Node: Default`. Zet hem op **`Object: Empty`**.
+4. Klik op **Create**.
 
-## Stap 2: Test je karakter
+Godot opent nu je script. Er staat één regel in:
 
-Start het spel met `F5` en probeer:
+```gdscript
+extends CharacterBody2D
+```
 
-- **Pijltjestoetsen links/rechts** — bewegen.
-- **Spatiebalk** — springen.
-- Loop van een platform af — je valt naar beneden.
+Meer niet. Dat is precies de bedoeling.
+
+## Stap 2: Wat die ene regel doet
+
+**Wat denk je dat er gebeurt als je die regel weghaalt?**
+
+<details>
+<summary>Antwoord</summary>
+
+Godot geeft een foutmelding en je script doet niets meer. `extends CharacterBody2D` betekent: "dit script *is* een `CharacterBody2D`, met daarbovenop mijn eigen code". Zonder die regel weet Godot niet welk soort node je aanstuurt, en bestaan functies als `is_on_floor()` en `move_and_slide()` niet voor jou.
+
+Vergelijk het met een basisrecept. Met `extends` zeg je: ik bak hetzelfde recept, plus mijn eigen toevoegingen.
+
+</details>
+
+<GDQuestLes nummer={3} />
+
+## Stap 3: Test dat er niets kapot is
+
+Start het spel met `F5`. Je karakter staat stil en er verschijnt geen foutmelding.
+
+Dat is winst: je hebt een script dat draait. In de volgende les zorg je dat het ook iets doet.
+
+:::tip
+Zie je een foutmelding over een ontbrekende Main Scene? Stel die eerst in via **Project → Project Settings**, zoek `main scene` en kies je level-scène.
+:::
+
+## Waar je naartoe werkt
+
+Over vier lessen loopt, springt en valt je karakter. Zo ziet dat eruit:
 
 <iframe width="100%" height="500px" src="https://www.youtube.com/embed/5V9f3MT86M8?start=570&end=712" title="Start Your Game Creation Journey Today. (Godot beginner tutorial)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ## Er gaat iets mis
 
 <details>
-<summary>Mijn karakter beweegt niet</summary>
+<summary>Mijn script staat vol code die ik niet heb getypt</summary>
 
-**Oorzaak:** Het script is niet gekoppeld aan de `CharacterBody2D`, of de input-acties zijn niet ingesteld.
+**Oorzaak:** Bij **Attach Script** stond **Template** nog op `Node: Default`. Godot heeft dan een compleet bewegingsscript ingevuld.
 
-**Oplossing:**
-
-1. Controleer of je `CharacterBody2D` een script-icoontje heeft in de Scene Tree.
-2. Dubbelklik op het script en controleer of de code er zo uitziet:
-
-```gdscript
-extends CharacterBody2D
-
-const SPEED = 300.0
-const JUMP_VELOCITY = -400.0
-
-func _physics_process(delta: float) -> void:
-    ...
-    move_and_slide()
-```
-
-3. Controleer of `move_and_slide()` aanwezig is — zonder deze regel beweegt er niets.
+**Oplossing:** Selecteer alles in het script (`Ctrl + A`) en verwijder het, op de regel `extends CharacterBody2D` na. Je kunt ook het script losmaken (rechtermuisknop op de node → **Detach Script**) en Stap 1 opnieuw doen met de juiste template.
 
 </details>
 
 <details>
-<summary>Mijn karakter zweeft of valt niet</summary>
+<summary>Ik zie geen script-icoontje bij mijn node</summary>
 
-**Oorzaak:** De zwaartekrachtcode ontbreekt in het script.
+**Oorzaak:** Het script is niet gekoppeld, of je hebt de verkeerde node geselecteerd.
 
-**Oplossing:** Controleer of dit stukje aanwezig is in `_physics_process`:
-
-```gdscript
-if not is_on_floor():
-    velocity += get_gravity() * delta
-```
+**Oplossing:** Klik in de Scene Tree op je `CharacterBody2D` (niet op de `Sprite2D` of `CollisionShape2D` eronder) en herhaal Stap 1. Een gekoppeld script laat een klein icoontje rechts van de nodenaam zien.
 
 </details>
 
 <details>
-<summary>Ik zie een fout: "CharacterBody2D: move_and_slide called without physics frame"</summary>
+<summary>Foutmelding: <code>Script inherits from native type 'Node2D', so it can't be assigned to an object of type: 'CharacterBody2D'</code></summary>
 
-**Oorzaak:** `move_and_slide()` staat buiten `_physics_process`.
+**Oorzaak:** In de eerste regel staat een ander node-type dan de node waar het script op zit.
 
-**Oplossing:** Zorg dat `move_and_slide()` altijd als laatste regel **binnen** `_physics_process` staat.
+**Oplossing:** Zorg dat er `extends CharacterBody2D` staat, precies zoals het node-type in je Scene Tree heet.
 
 </details>

@@ -81,8 +81,9 @@ describe('godot Voorkennis naar de python-cursus', () => {
     // Bewust een exacte lijst: een per ongeluk verwijderd of verplaatst blok
     // valt dan direct op, net als een nieuw blok dat hier nog niet staat.
     expect([...voorkennisPerLes().keys()].sort()).toEqual([
+      '04-personage-en-beweging/basis_movement_begrijpen/afsluiter.md',
       '04-personage-en-beweging/basis_movement_begrijpen/krachten.md',
-      '04-personage-en-beweging/basis_movement_begrijpen/motor.md',
+      '04-personage-en-beweging/basis_movement_begrijpen/skelet.md',
       '04-personage-en-beweging/start_gdscript.md',
       '05-animaties/animaties_code.md',
       '06-signals-en-score/groups.md',

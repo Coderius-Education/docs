@@ -5,7 +5,7 @@ slug: /start_gdscript
 
 # Start met GDScript
 
-Je hebt nu een werkende scène met een bewegend karakter. Maar om je spel echt te laten doen wat *jij* wilt, moet je leren programmeren in **GDScript** — de programmeertaal van Godot. In deze les leer je de bouwstenen.
+Je karakter staat op het scherm en je hebt een leeg script gekoppeld. Vanaf hier ga je dat script vullen met **GDScript**, de programmeertaal van Godot. Deze les regelt eerst je oefenspoor ernaast.
 
 <GodotVersie />
 
@@ -18,51 +18,51 @@ Je hebt nu een werkende scène met een bewegend karakter. Maar om je spel echt t
   ]}
 />
 
-## Waarom GDScript?
+## Twee sporen naast elkaar
 
-Het script dat Godot in de vorige les voor je genereerde, is ook gewoon GDScript. In de komende lessen ga je dat script begrijpen en uitbreiden.
+Programmeren leer je door het te doen, maar in je eigen game oefenen is lastig: als er iets niet werkt, weet je niet of het aan je code ligt of aan je scène.
 
-## Wat ga je leren?
+Daarom loop je twee sporen tegelijk:
 
-Dit zijn de GDScript-concepten die je in dit project nodig hebt:
+- **Hier** bouw je je game. Elke les voegt regels toe aan een script dat je zelf typt, en aan het eind van de les draait je spel weer.
+- **Bij GDQuest** oefen je elk concept los, in je browser, zonder Godot erbij. Gaat het daar mis, dan ligt het aan de code — meer kan het niet zijn.
 
-| Concept       | Waarvoor gebruik je het?                                                    |
-| :-----------: | :-------------------------------------------------------------------------- |
-| `var`         | Informatie opslaan (bijvoorbeeld snelheid, score)                           |
-| `const`       | Vaste waarden die niet veranderen (bijvoorbeeld `SPEED`)                    |
-| `if` / `else` | Beslissingen nemen ("als op de grond, dan springen")                        |
-| `elif`        | Meerdere voorwaarden na elkaar testen                                       |
-| `func`        | Code groeperen in een herbruikbare functie                                  |
-| `print()`     | Waarden bekijken tijdens het testen                                         |
+In elke les hieronder staat bij de regel die je net hebt geschreven welke GDQuest-les erbij hoort. Zo zie je meteen waar je iets kunt naslaan of extra kunt oefenen.
 
-Alles wat je hier leert kun je later terugzoeken in de [GDScript-tips](/gdscript-tips) — de naslag bij alle GDScript-lessen.
+## Stap 1: Open de GDQuest-cursus
 
-## Stap 1: Doe de online tutorial
+Ga naar [Learn GDScript From Zero](https://gdquest.github.io/learn-gdscript/). Je werkt direct in je browser en hoeft niets te installeren.
 
-We volgen [deze interactieve tutorial van GDQuest](https://gdquest.github.io/learn-gdscript/) om de basis te leren. Je werkt direct in je browser — niets te installeren.
-
-Maak de volgende lessen — de afbeelding hieronder laat zien welke je nodig hebt:
+Je ziet een lijst met genummerde lessen:
 
 ![GDQuest learn-gdscript lessenoverzicht met de relevante lessen gemarkeerd](../images/gdscript.png)
 
-:::tip
-Je hoeft niet alle lessen te maken. Focus op:
+Begin met les 1 en 2. Die kosten samen een kwartier en leggen uit wat code is en hoe je een foutmelding leest — precies wat je nodig hebt zodra je zelf gaat typen.
 
-- **Variabelen** (`var`)
-- **Functies** (`func`)
-- **Voorwaarden** (`if` / `elif` / `else`)
-- **Vergelijkingsoperatoren** (`==`, `>`, `<`)
-- **`print()`**
+## Wat je waar tegenkomt
 
-Die dekken precies wat je in dit project gebruikt.
-:::
+Deze concepten heb je in dit project nodig. Achter elk concept staat de les waar je het bouwt en de GDQuest-les waar je het los oefent.
 
-## Stap 2: Test het in je eigen project
+| Concept       | Waarvoor in je game?                          | Waar bouw je het?                                        | GDQuest |
+| :------------ | :-------------------------------------------- | :------------------------------------------------------- | :------ |
+| `extends`     | Zeggen welk soort node je script aanstuurt    | [Je eerste eigen script](./sprite_movement.md)            | 3       |
+| `func`        | Code groeperen die vanzelf draait             | [Deel 1](./basis_movement_begrijpen/skelet.md)            | 5       |
+| parameters    | Informatie meekrijgen, zoals `delta`          | [Deel 1](./basis_movement_begrijpen/skelet.md)            | 6       |
+| `+=`          | Snelheid opbouwen                             | [Deel 2](./basis_movement_begrijpen/motor.md)             | 9       |
+| `const`       | Vaste waarden zoals `SPEED`                   | [Deel 3](./basis_movement_begrijpen/krachten.md)          | 8       |
+| `if` / `else` | Beslissingen nemen                            | [Deel 3](./basis_movement_begrijpen/krachten.md)          | voorwaarden |
+| `and`         | Twee voorwaarden combineren                   | [Deel 4](./basis_movement_begrijpen/afsluiter.md)         | voorwaarden |
+| `var`         | Waarden die tijdens het spel veranderen       | [Score bijhouden](../06-signals-en-score/score_in_karakter.md) | 7 en 8 |
+| `print()`     | Zien wat er in je code gebeurt                | [GDScript-tips](/gdscript-tips#debuggen)                  | 2       |
 
-De GDQuest tutorial is handig om de syntax te leren, maar het wordt pas écht leuk als je het in je eigen game ziet werken.
+Alles hieruit staat kort bij elkaar in de [GDScript-tips](/gdscript-tips), de naslag bij alle lessen.
 
-1. Open in Godot het script van je karakter (`CharacterBody2D`).
-2. Voeg de `_ready()`-functie toe. Deze functie wordt één keer uitgevoerd zodra het spel start.
+## Stap 2: Schrijf je eerste eigen regels
+
+Voordat je aan het bewegingsscript begint, gebruik je je lege script één keer om te zien dat je code echt draait.
+
+1. Open in Godot het script van je karakter (`CharacterBody2D`). Er staat één regel in: `extends CharacterBody2D`.
+2. Voeg daaronder de `_ready()`-functie toe. Die draait één keer, zodra het spel start.
 3. Maak binnen die functie een variabele aan en gebruik `print()`:
 
 ```gdscript
@@ -77,7 +77,11 @@ func _ready() -> void:
 
 ![Uitvoer-paneel met print()-output](../images/is_on_floor.png)
 
-We gaan dit Uitvoer-tabblad later vaak gebruiken om foutjes op te sporen.
+Dit Uitvoer-tabblad wordt je belangrijkste gereedschap: telkens als je niet zeker weet of een stuk code draait, zet je er een `print()` in en kijk je hier.
+
+<GDQuestLes nummer={2} />
+
+Haal deze `_ready()`-functie daarna weer weg. In de volgende les begin je met een schone lei aan het bewegingsscript.
 
 ## Check je begrip: `_ready()` versus `_process()` \{#func-ready}
 
@@ -120,4 +124,4 @@ We gaan dit Uitvoer-tabblad later vaak gebruiken om foutjes op te sporen.
 
 ## Wat daarna?
 
-In de volgende les ([Het bewegingsscript begrijpen](./basis_movement_begrijpen/skelet.md)) ga je het bewegingsscript regel voor regel ontleden en aanpassen. Je hoeft de tutorial niet perfect te kennen — als je de bovenstaande concepten globaal beheerst, kom je een heel eind.
+In de volgende vier lessen ([Het bewegingsscript bouwen](./basis_movement_begrijpen/skelet.md)) schrijf je regel voor regel het script waarmee je karakter valt, loopt en springt. Je hoeft de GDQuest-cursus niet uitgespeeld te hebben; je loopt hem naast deze lessen door, in je eigen tempo.

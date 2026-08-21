@@ -3,274 +3,210 @@ sidebar_position: 3
 slug: /movement-krachten
 ---
 
-# Het bewegingsscript begrijpen — Deel 3: De drie krachten
+# Het bewegingsscript bouwen — Deel 3: Lopen
 
-In [Deel 2](./motor.md) zag je hoe `_physics_process` 60× per seconde draait. In *die* functie werken drie krachten op je karakter: **zwaartekracht** trekt hem naar beneden, **springen** geeft hem een omhoog-zetje, en **horizontaal lopen** beweegt hem links of rechts. Elke kracht is een eigen sub-blok.
+Je karakter valt, maar je kunt hem nog niet besturen. In deze les leest je script de pijltjestoetsen uit en zet het die om in horizontale snelheid.
 
 <GodotVersie />
 
 <Voorkennis
   items={[
-    {site: 'python', to: '/docs/beslissen/05c-and-or-elif', label: 'And, or en elif'},
+    {site: 'python', to: '/docs/beslissen/05b-if-else', label: 'If en else'},
   ]}
 />
 
-## Blok 3: De drie krachten op je karakter
+## Wat je nu gaat toevoegen
 
-### 3a. Zwaartekracht
+Een eigen constante voor de loopsnelheid, en vier regels die links en rechts afhandelen. Na deze les loopt je karakter, en staat hij stil als je loslaat.
+
+## Voorspel: hoe vertaal je een toets naar snelheid?
+
+Je wilt dat links indrukken `velocity.x` negatief maakt en rechts indrukken positief. **Hoeveel verschillende waarden moet je script daarvoor uit elkaar houden?**
+
+<details>
+<summary>Antwoord</summary>
+
+Drie: links, rechts, en niets. Je zou dat met twee losse `if`-checks kunnen doen, maar Godot heeft er één functie voor die de drie gevallen in één getal stopt: `-1`, `0` of `1`. Dat getal kun je direct met je snelheid vermenigvuldigen.
+
+</details>
+
+## Stap 1: Een eigen constante \{#var-const}
+
+Zet deze regel bovenaan je script, ónder `extends` en bóven de functie:
 
 ```gdscript
-if not is_on_floor():
-    velocity += get_gravity() * delta
+const SPEED = 300.0
 ```
 
-#### Wat is `velocity`?
+Een **constante** is een waarde met een naam die nooit verandert terwijl je spel draait. Schrijf ze in hoofdletters — dat is de afspraak, zodat je in één oogopslag ziet dat er niet aan gesleuteld wordt.
 
-`velocity` is **een Vector2 met de snelheid van je karakter** — een X en een Y samen in één variabele. Voeg `print(velocity)` toe boven `move_and_slide()` en kijk in **Uitvoer**:
+<GDQuestLes nummer={8} />
+
+**Wat verwacht je dat er gebeurt als je `SPEED` ergens in de functie probeert te veranderen, bijvoorbeeld `SPEED = 500.0`?**
+
+<details>
+<summary>Antwoord</summary>
+
+Godot weigert het met een foutmelding. Een `const` staat vast. Waarden die tijdens het spelen wél veranderen — zoals een score of het aantal levens — zet je in een `var`.
+
+</details>
+
+## Stap 2: De toets uitlezen
+
+Zet deze regels binnen de functie, ónder het zwaartekracht-blok en bóven `move_and_slide()`:
 
 ```gdscript
-print(velocity)
-move_and_slide()
+    var direction := Input.get_axis("ui_left", "ui_right")
+    if direction:
+        velocity.x = direction * SPEED
+    else:
+        velocity.x = move_toward(velocity.x, 0, SPEED)
 ```
 
-- Stilstaan: `(0, 0)` — geen beweging.
-- Naar rechts lopen: `(300, 0)` — 300 pixels/sec naar rechts, 0 verticaal.
-- Naar links lopen: `(-300, 0)`.
-- Vallend: `(0, 200)`, daarna `(0, 400)`, daarna `(0, 600)` — verticaal versneld.
+## Stap 3: Wat `Input.get_axis()` teruggeeft
 
-Je kunt `.x` en `.y` los aanspreken (`velocity.x = 100`) — handig om alleen horizontaal of alleen verticaal aan te passen.
+In plaats van twee losse checks doet `get_axis` het in één regel:
 
-#### Waarom `+=` en niet `=`?
+- niets ingedrukt → `direction` is `0`
+- links ingedrukt → `direction` is `-1`
+- rechts ingedrukt → `direction` is `1`
 
-`velocity += iets` is een verkorting voor `velocity = velocity + iets`. Dus de zwaartekracht wordt **opgeteld bij de bestaande snelheid**, frame na frame. Zo bouwt valsnelheid zich op: na 1 seconde val je hard, na 2 seconden harder.
+Probeer het: zet `print(direction)` eronder en kijk in **Uitvoer** terwijl je de pijltjes indrukt.
 
-**Wat zou er gebeuren als je `+=` vervangt door `=`?**
+Dat getal vermenigvuldig je met je snelheid: `-1 * 300` is 300 naar links, `1 * 300` is 300 naar rechts. Eén regel, twee richtingen.
 
-<details>
-<summary>Antwoord</summary>
+## Stap 4: `:=` in plaats van `=`
 
-Je karakter valt steeds in een constant tempo, niet versneld. Want elke frame zet je `velocity` weer terug op `get_gravity() * delta` — een klein getal — in plaats van het op te bouwen. Je krijgt een soort "zacht zwevend" effect dat niet meer als zwaartekracht voelt.
-
-</details>
-
-#### Wat doet `get_gravity()`?
-
-Een ingebouwde Godot-functie die de zwaartekracht-vector teruggeeft, standaard ongeveer `(0, 980)` — 980 pixels/sec² naar beneden. Je hoeft dit getal niet zelf in te stellen; Godot leest het uit Project Settings.
-
-#### Waarom de `if not is_on_floor()`-check?
-
-**Wat denk je dat er gebeurt als je deze check weghaalt en altijd zwaartekracht toepast?**
-
-<details>
-<summary>Antwoord</summary>
-
-Je `velocity.y` blijft eeuwig groeien terwijl je op de grond staat. Fysiek houdt de collision je tegen, maar je verticale snelheid loopt onzichtbaar op tot enorme waarden. Spring je dan, dan moet `velocity.y = JUMP_VELOCITY` eerst dat hele bouwwerk terugzetten — vaak werkt het, maar bij hoge waarden krijg je rare effecten.
-
-Vandaar: alleen zwaartekracht toepassen **als je niet op de grond staat**.
-
-</details>
-
-#### Wat doet `is_on_floor()` eigenlijk?
-
-Geeft `true` als je karakter de vloer raakt, anders `false`. Test het: voeg `print(is_on_floor())` toe vlak boven `if not is_on_floor()`:
-
-```gdscript
-print(is_on_floor())
-if not is_on_floor():
-    velocity += get_gravity() * delta
-```
-
-In **Uitvoer** zie je `true` zolang je op de grond staat, `false` tijdens een sprong of val:
-
-![Uitvoer-paneel met true/false-output van is_on_floor()](../../images/is_on_floor.png)
-
-#### Predict: wat als je `* delta` weglaat?
-
-Dus: `velocity += get_gravity()` zonder `* delta`. Wat denk je?
-
-<details>
-<summary>Antwoord</summary>
-
-Je karakter valt **veel** sneller — `get_gravity()` is `(0, 980)`. Zonder `* delta` tel je elke frame `980` op bij `velocity.y`. Bij 60 FPS is dat 60× per seconde, dus na één seconde heb je `velocity.y = 58.800` (in plaats van `980`).
-
-Dit is precies waarom we `delta` gebruiken: het maakt de snelheid framerate-onafhankelijk.
-
-</details>
-
-### 3b. Springen \{#springen}
-
-```gdscript
-if Input.is_action_just_pressed("ui_accept") and is_on_floor():
-    velocity.y = JUMP_VELOCITY
-```
-
-#### `just_pressed` versus `pressed` — waarom maakt dat uit?
-
-In Godot zijn er twee manieren om naar een toets te kijken:
-
-| Functie                              | Wanneer geeft hij `true`?                    |
-| :----------------------------------- | :------------------------------------------- |
-| `Input.is_action_pressed("ui_accept")`     | Zolang je de toets ingedrukt **houdt**       |
-| `Input.is_action_just_pressed("ui_accept")` | Alleen op het ene frame dat je de toets **indrukt** |
-
-**Wat denk je dat er gebeurt als je `just_pressed` vervangt door `pressed`?**
-
-<details>
-<summary>Antwoord</summary>
-
-Je karakter "stuitert" continu omhoog zolang je de spatie ingedrukt houdt. Want elk frame voldoet `pressed` aan de check, dus elk frame zet je `velocity.y` opnieuw op `JUMP_VELOCITY`. Hij komt nooit naar beneden zolang je drukt.
-
-Met `just_pressed` activeert de sprong maar één frame — daarna moet de speler de spatie loslaten en opnieuw indrukken voor een nieuwe sprong.
-
-</details>
-
-Het verschil tussen deze twee input-functies staat ook in de [GDScript-tips](/gdscript-tips#input).
-
-`ui_accept` is een standaard input-actie van Godot — gekoppeld aan de spatiebalk en Enter. Je kunt de toets-binding aanpassen in **Project → Project Settings → Input Map**.
-
-<details>
-<summary>Klik om WASD-besturing toe te voegen (W = springen, A = links, D = rechts)</summary>
-
-Veel platformers laten je naast de pijltjestoetsen ook met WASD spelen. Dat doe je door **extra toetsen te koppelen aan bestaande acties** — `ui_accept`, `ui_left` en `ui_right`. Zo zonder de pijltjestoetsen te slopen.
-
-**Stap 1 — Open de Input Map**
-
-1. Klik bovenin op **Project → Project Settings**.
-2. Klik bovenaan op het tabblad **Input Map** (naast *General*).
-3. In de lijst onder *All Actions* zie je `ui_accept`, `ui_left`, `ui_right` en meer staan. Klap een actie open met het pijltje ervoor — je ziet de huidige toetsen (Space, Enter, →, ←, etc.).
-
-**Stap 2 — Voeg W toe aan `ui_accept`**
-
-1. Zoek `ui_accept` in de lijst en klik op het **plus-icoontje (+)** rechts ernaast.
-2. Een venster verschijnt: *"Press a key…"* — druk gewoon op de **W**-toets.
-3. Klik op **OK**. De W staat nu als extra binding bij `ui_accept`.
-
-**Stap 3 — Doe hetzelfde voor A (links) en D (rechts)**
-
-1. Bij `ui_left`: klik op **+**, druk **A**, klik **OK**.
-2. Bij `ui_right`: klik op **+**, druk **D**, klik **OK**.
-
-**Stap 4 — Test**
-
-Start je spel met `F5`. Je kunt nu met WASD én met de pijltjestoetsen + spatie spelen — beide werken tegelijk.
-
-:::tip
-Wil je een toets juist *vervangen* in plaats van toevoegen? Klap de actie open, klik op het **prullenbak-icoontje** naast de toets die je wilt weghalen.
-:::
-
-:::tip
-Wil je een eigen actie aanmaken (bijvoorbeeld `schieten`)? Type bovenaan een naam in en klik op **Add**. Daarna voeg je toetsen toe op precies dezelfde manier. In je script gebruik je hem dan met `Input.is_action_just_pressed("schieten")`.
-:::
-
-</details>
-
-#### Waarom de extra `and is_on_floor()`?
-
-**Wat denk je dat er gebeurt zonder deze tweede check?**
-
-<details>
-<summary>Antwoord</summary>
-
-Je kunt **in de lucht** springen. Tijdens een sprong (al in de lucht) drukt de speler nog een keer spatie → `velocity.y = JUMP_VELOCITY` → tweede sprong vanuit de lucht. Klinkt cool, maar maakt platforming triviaal: gewoon vier keer springen om elk gat over te vliegen.
-
-De `and is_on_floor()`-check zorgt dat je alleen kunt springen wanneer je daadwerkelijk op de grond staat.
-
-**Bonus:** wil je toch dubbel kunnen springen? Dan voeg je een variabele toe die het aantal extra sprongen bijhoudt. Eerst eens nadenken — kun je deze zelf schrijven?
-
-</details>
-
-#### `=` versus `+=` bij springen — een belangrijk detail
-
-We gebruiken `velocity.y = JUMP_VELOCITY` (gewone toewijzing), niet `+=`. Dat is bewust.
-
-**Stel je voor: je karakter valt al met `velocity.y = 200`. Wat gebeurt er als je `velocity.y += JUMP_VELOCITY` (`+= -400`) gebruikt in plaats van `=`?**
-
-<details>
-<summary>Antwoord</summary>
-
-Met `+=` wordt je `velocity.y = 200 + (-400) = -200`. Je springt dus, maar slechts met half de kracht omdat je val-snelheid wordt verrekend.
-
-Met `=` *vervang* je de bestaande verticale snelheid volledig: `velocity.y = -400`. Een sprong is altijd even hoog, ongeacht hoe hard je net viel. Veel voorspelbaarder gevoel.
-
-</details>
-
-### 3c. Horizontaal lopen \{#if-elif}
-
-```gdscript
-var direction := Input.get_axis("ui_left", "ui_right")
-if direction:
-    velocity.x = direction * SPEED
-else:
-    velocity.x = move_toward(velocity.x, 0, SPEED)
-```
-
-#### `Input.get_axis(...)` — een handige truc
-
-In plaats van twee `Input.is_action_pressed`-checks doet `get_axis` het in één regel:
-
-- Druk je **niets** → `direction = 0`
-- Druk je **links** in → `direction = -1`
-- Druk je **rechts** in → `direction = +1`
-
-Probeer het: voeg `print(direction)` toe onder de regel en kijk in **Uitvoer** terwijl je beweegt.
-
-#### `:=` versus `=` bij `var direction`
-
-Het `:=`-pijltje is **type-inferentie**: Godot bekijkt zelf de waarde rechts (`-1`, `0` of `+1`) en concludeert dat `direction` een `float` is. Je hoeft het type niet zelf op te schrijven.
+Bij `var direction :=` staat een dubbele punt vóór het isgelijkteken. Dat is **type-inferentie**: Godot kijkt zelf naar de waarde rechts en concludeert dat `direction` een `float` is. Je hoeft het type niet op te schrijven.
 
 Dit is hetzelfde als:
+
 ```gdscript
 var direction: float = Input.get_axis("ui_left", "ui_right")
 ```
 
-Beide werken; de `:=`-vorm is korter. Geen verschil in snelheid of gedrag.
+Beide werken. De korte vorm is gebruikelijker.
 
-#### `if direction:` — wat is dat voor check?
+## Stap 5: `if direction:` zonder vergelijking \{#if-elif}
 
-Geen `==` of `!=` te zien — gewoon `if direction:`. Hoe werkt dat?
+Er staat geen `==` of `!=` in die `if`. Dat kan, omdat GDScript het getal `0` als "onwaar" behandelt en elk ander getal als "waar":
 
-GDScript behandelt het getal `0` als "onwaar" en alle andere getallen als "waar" (een truc die in veel programmeertalen werkt). Dus:
+- `direction` is `0` → de `if` is onwaar → de `else` draait.
+- `direction` is `-1` of `1` → de `if` is waar → je gaat lopen.
 
-- `direction = 0` → `if direction:` is `false` → ga naar `else`.
-- `direction = -1` of `+1` → `if direction:` is `true` → voer de loop-code uit.
-
-**Predict: doet `if direction != 0:` exact hetzelfde?**
+**Doet `if direction != 0:` precies hetzelfde?**
 
 <details>
 <summary>Antwoord</summary>
 
-Ja, exact hetzelfde. `if direction:` is gewoon een kortere schrijfwijze van `if direction != 0:`. Sommige programmeurs vinden `!= 0` duidelijker; anderen vinden de korte vorm netter.
+Ja. `if direction:` is een kortere schrijfwijze van `if direction != 0:`. Kies wat jij duidelijker vindt en houd het consequent.
 
 </details>
 
-#### `velocity.x = direction * SPEED`
+## Stap 6: Afremmen met `move_toward()`
 
-Hier zit de logica om naar links of rechts te bewegen:
+Drukt de speler niets in, dan moet je karakter stoppen. Dat gebeurt in de `else`.
 
-- Druk links → `direction = -1` → `velocity.x = -1 * 300 = -300` → karakter beweegt naar links met 300 pixels/sec.
-- Druk rechts → `direction = +1` → `velocity.x = +1 * 300 = +300` → karakter beweegt naar rechts.
+`move_toward(huidige, doel, stap)` geeft een waarde terug die dichter bij het doel ligt, en hoogstens `stap` groot. Met `move_toward(velocity.x, 0, SPEED)` stap je dus met 300 tegelijk richting nul — en omdat je snelheid ook 300 was, sta je meteen stil.
 
-Eén regel, twee richtingen. Compact en symmetrisch.
-
-#### `else: velocity.x = move_toward(velocity.x, 0, SPEED)` — afremmen
-
-Als de speler niets drukt (`direction = 0`), willen we het karakter laten **stoppen** — maar niet abrupt. `move_toward(huidige, doel, stap)` geeft een waarde terug die dichter bij `doel` ligt, maximaal `stap` per aanroep.
-
-Voorbeeld: stel `velocity.x = 300` en het doel is `0` met stap `300`:
-
-- 1e frame: `move_toward(300, 0, 300)` → `0`. Karakter staat direct stil.
-
-Met een **kleinere stap** dan SPEED kun je een sliding-effect maken — de speler glijdt nog een eindje door na het loslaten van de toets. Probeer eens `move_toward(velocity.x, 0, 50)` en kijk wat er gebeurt.
-
-**Predict: wat als je deze hele `else`-tak weghaalt?**
+**Wat gebeurt er als je de hele `else`-tak weghaalt?**
 
 <details>
 <summary>Antwoord</summary>
 
-Je karakter blijft eeuwig op `velocity.x = 300` (of -300) rondrijden, zelfs als je niets indrukt. De `else` is wat hem laat stoppen wanneer je geen toets aanraakt.
+Je karakter blijft voor eeuwig doorrijden zodra je één keer een pijltje hebt ingedrukt. Zonder `else` zet niemand de snelheid ooit terug naar nul.
+
+</details>
+
+:::tip
+Wil je een glij-effect, alsof je karakter over ijs loopt? Maak de stap kleiner dan `SPEED`, bijvoorbeeld `move_toward(velocity.x, 0, 50)`. Hij glijdt dan nog een stukje door na het loslaten.
+:::
+
+## Stap 7: Test het
+
+Start met `F5`. Je karakter loopt naar links en rechts met de pijltjestoetsen, valt nog steeds van platforms af, en staat stil als je loslaat.
+
+## Je script tot nu toe
+
+<details>
+<summary>Klik hier om te vergelijken</summary>
+
+```gdscript
+extends CharacterBody2D
+
+const SPEED = 300.0
+
+func _physics_process(delta: float) -> void:
+    if not is_on_floor():
+        velocity += get_gravity() * delta
+
+    var direction := Input.get_axis("ui_left", "ui_right")
+    if direction:
+        velocity.x = direction * SPEED
+    else:
+        velocity.x = move_toward(velocity.x, 0, SPEED)
+
+    move_and_slide()
+```
+
+</details>
+
+## Opdracht 4.4.a: kies je eigen loopsnelheid
+
+Zoek de snelheid die bij jouw level past. Probeer minstens drie waarden voor `SPEED`, bijvoorbeeld `100.0`, `300.0` en `1000.0`, en start telkens opnieuw met `F5`.
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Let niet alleen op hoe snel het voelt, maar ook of je nog nauwkeurig op een smal platform kunt landen. Te snel is net zo onspeelbaar als te traag.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+Er is geen goede waarde — er is een waarde die bij jouw level past. Twee vuistregels:
+
+- Bij `100.0` voelt je karakter zwaar en duurt oversteken lang.
+- Bij `1000.0` schiet je over smalle platforms heen en is precies landen bijna onmogelijk.
+
+Ergens tussen `250.0` en `400.0` speelt een platformer meestal prettig. Noteer welke waarde je kiest; in Deel 4 stem je de sprongkracht daarop af.
+
+</details>
+
+## Er gaat iets mis
+
+<details>
+<summary>Mijn karakter beweegt niet als ik op de pijltjes druk</summary>
+
+**Oorzaak:** De regels staan buiten de functie, of de actienamen kloppen niet.
+
+**Oplossing:**
+
+1. Controleer dat de vier regels ingesprongen staan binnen `_physics_process`.
+2. Controleer de spelling: `"ui_left"` en `"ui_right"`, met een underscore en kleine letters.
+3. Staat `move_and_slide()` nog steeds als laatste regel binnen de functie?
+
+</details>
+
+<details>
+<summary>Mijn karakter beweegt maar stopt nooit meer</summary>
+
+**Oorzaak:** De `else`-tak ontbreekt, of hij springt niet goed in.
+
+**Oplossing:** Zorg dat `else:` op hetzelfde niveau staat als de `if` erboven, en dat de regel met `move_toward` daaronder één niveau verder inspringt.
+
+</details>
+
+<details>
+<summary>Foutmelding: <code>Expected end of statement after expression</code></summary>
+
+**Oorzaak:** Meestal een ontbrekende dubbele punt aan het eind van de `if`- of `else`-regel.
+
+**Oplossing:** Zowel `if direction:` als `else:` eindigt op een dubbele punt.
 
 </details>
 
 ---
 
-← [Deel 2 — De motor](./motor.md) · **Volgende:** [Deel 4 — De afsluiter en je eigen script bouwen](./afsluiter.md) →
+← [Deel 2 — Vallen](./motor.md) · **Volgende:** [Deel 4 — Springen](./afsluiter.md) →

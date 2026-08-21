@@ -3,101 +3,154 @@ sidebar_position: 1
 slug: /basis_movement_begrijpen
 ---
 
-# Het bewegingsscript begrijpen — Deel 1: Het skelet
+# Het bewegingsscript bouwen — Deel 1: Een script dat draait
 
-Het bewegingsscript dat Godot voor je genereerde lijkt op het eerste gezicht ondoorgrondelijk: 17 regels code met losse termen als `velocity`, `delta` en `move_and_slide()`. Maar onder de motorkap bestaat het script uit **vier logische blokken**, met elk een eigen doel. We pakken ze één voor één — verspreid over **vier deeltjes** — eerst snappen, dan veranderen, dan zelf bouwen.
+Je script bestaat uit één regel: `extends CharacterBody2D`. In deze les voeg je de functie toe waar de rest van je spel in komt te staan — het kloppend hart dat Godot zestig keer per seconde aanroept.
 
 <GodotVersie />
 
-## Het hele script in vogelvlucht
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/functies/functies', label: 'Functies'},
+    {site: 'python', to: '/docs/functies/09a-parameters', label: 'Parameters'},
+  ]}
+/>
 
-Dit is wat Godot voor je heeft gegenereerd. Je hoeft het nu nog niet te snappen — herken alleen de vier blokken:
+## Wat je nu gaat toevoegen
+
+Een functie die vanzelf draait, met daarin één opdracht aan Godot: verplaats mijn karakter. Na deze les beweegt er nog niets — maar het skelet staat, en alles wat je hierna schrijft komt op deze plek.
+
+## Voorspel: hoe vaak draait een functie in een spel?
+
+In Python roep je een functie zelf aan: je schrijft ergens `groet()` en dan gebeurt het. **Hoe zou dat werken in een spel, waar dingen continu doorgaan zonder dat iemand iets aanroept?**
+
+<details>
+<summary>Antwoord</summary>
+
+Godot roept bepaalde functies **zelf** aan, telkens opnieuw, zolang je spel draait. Zo'n functie heet een game loop. Je schrijft hem één keer op, en Godot voert hem ongeveer zestig keer per seconde uit.
+
+Dat is de reden dat een spel beweegt: zestig keer per seconde rekent Godot een nieuwe positie uit en tekent het beeld opnieuw.
+
+</details>
+
+## Stap 1: De functie die vanzelf draait \{#physics-process}
+
+Typ dit onder `extends CharacterBody2D`, met één lege regel ertussen:
 
 ```gdscript
-extends CharacterBody2D                              # Blok 1: het skelet
-
-const SPEED = 300.0
-const JUMP_VELOCITY = -400.0
-
-func _physics_process(delta: float) -> void:         # Blok 2: de motor
-    if not is_on_floor():                            # Blok 3a: zwaartekracht
-        velocity += get_gravity() * delta
-
-    if Input.is_action_just_pressed("ui_accept") \   # Blok 3b: springen
-       and is_on_floor():
-        velocity.y = JUMP_VELOCITY
-
-    var direction := Input.get_axis("ui_left", "ui_right")  # Blok 3c: lopen
-    if direction:
-        velocity.x = direction * SPEED
-    else:
-        velocity.x = move_toward(velocity.x, 0, SPEED)
-
-    move_and_slide()                                 # Blok 4: toepassen
+func _physics_process(delta: float) -> void:
+    move_and_slide()
 ```
 
-We pakken nu elk blok los, met steeds een **voorspel**, een **test** in je eigen project en een **uitleg**. Dit eerste deel doet **Blok 1**: het skelet.
+Let op het inspringen: `move_and_slide()` staat één tab naar rechts. Daaraan ziet GDScript dat die regel **binnen** de functie hoort. Alles wat je in de volgende lessen toevoegt komt op datzelfde niveau te staan.
 
----
+<GDQuestLes nummer={5} />
 
-## Blok 1: Het skelet — wie ben je en wat is je snelheid?
+## Stap 2: Wat hier staat, woord voor woord
+
+**`func`** begint een functie, net als `def` in Python.
+
+**`_physics_process`** is geen naam die jij verzint. Godot kent deze naam en roept hem automatisch aan, ongeveer zestig keer per seconde. De underscore vooraan is het teken dat het een functie van Godot zelf is.
+
+<GDQuestLes nummer={10} />
+
+**`(delta: float)`** is een parameter: informatie die Godot bij elke aanroep meegeeft. `delta` is de tijd in seconden sinds de vorige keer. In Deel 2 ga je hem gebruiken.
+
+<GDQuestLes nummer={6} />
+
+**`-> void`** zegt: deze functie geeft niets terug. Ze *doet* iets, in plaats van iets te berekenen dat je later gebruikt. In Python is dat een functie zonder `return`.
+
+**`move_and_slide()`** is de opdracht "verplaats mij nu". Godot kijkt naar de snelheid van je karakter, houdt rekening met muren en vloeren, en zet hem op zijn nieuwe plek. Die snelheid is nu nog nul, dus er beweegt niets.
+
+:::tip
+Zet Godot een gele waarschuwing bij `delta` dat de parameter niet gebruikt wordt? Dat klopt, en het mag. Vanaf Deel 2 gebruik je hem wel en verdwijnt de waarschuwing.
+:::
+
+## Stap 3: Test het
+
+Start met `F5`.
+
+Je karakter staat nog steeds stil, en er is geen foutmelding. Dat is precies goed: de functie draait, hij doet alleen nog niets zinnigs.
+
+Wil je zien dát hij draait? Zet er tijdelijk een `print()` in:
+
+```gdscript
+func _physics_process(delta: float) -> void:
+    print("ik draai")
+    move_and_slide()
+```
+
+In het paneel **Uitvoer** onderin verschijnt nu een eindeloze stroom regels. Haal die `print` daarna weer weg — zestig regels per seconde maakt Uitvoer onbruikbaar.
+
+## Voorspel: wat als je `_physics_process` vervangt door `_ready`?
+
+<details>
+<summary>Antwoord</summary>
+
+`_ready` draait maar één keer, bij de start van de scène. Met de `print` erin zie je dan één regel in plaats van een stroom. Beweging zou één frame duren en daarna stoppen.
+
+Beide functies bestaan naast elkaar: `_ready` voor wat één keer moet gebeuren, `_physics_process` voor wat continu moet gebeuren.
+
+</details>
+
+## `_process` of `_physics_process`?
+
+Godot heeft twee functies die elke frame draaien. Welke je kiest hangt af van of er physics bij komt kijken:
+
+| Functie                   | Wanneer gebruik je het?                                              |
+| :------------------------ | :------------------------------------------------------------------- |
+| `_process(delta)`         | UI bijwerken, tellers, animatie-logica zonder botsingen              |
+| `_physics_process(delta)` | Beweging, zwaartekracht, botsingen — alles waar physics bij hoort     |
+
+Wij bouwen beweging met botsingen, dus `_physics_process`. Deze tabel staat ook in de [GDScript-tips](/gdscript-tips#functies).
+
+## Je script tot nu toe
+
+<details>
+<summary>Klik hier om te vergelijken</summary>
 
 ```gdscript
 extends CharacterBody2D
 
-const SPEED = 300.0
-const JUMP_VELOCITY = -400.0
+func _physics_process(delta: float) -> void:
+    move_and_slide()
 ```
 
-### `extends CharacterBody2D` — wat doet dit?
+</details>
 
-**Wat denk je dat er gebeurt als je de eerste regel weghaalt?**
+## Er gaat iets mis
 
 <details>
-<summary>Antwoord</summary>
+<summary>Foutmelding over inspringen (Indentation / Expected indented block)</summary>
 
-Godot crasht met een foutmelding. `extends CharacterBody2D` betekent: "dit script *is* een `CharacterBody2D`, met daarbovenop wat extra eigen code". Zonder die regel weet Godot niet welke node-soort je script aanstuurt — en functies zoals `is_on_floor()` en `move_and_slide()` zijn niet beschikbaar.
+**Oorzaak:** De regel `move_and_slide()` springt niet in, of je hebt tabs en spaties door elkaar gebruikt.
 
-Analogie: een `CharacterBody2D` is een "basisrecept". Met `extends` zeg je: ik bak hetzelfde recept, plus mijn eigen toevoegingen.
+**Oplossing:**
+
+1. Zet de cursor aan het begin van `move_and_slide()` en verwijder alle witruimte ervoor.
+2. Druk één keer op `Tab`.
+3. Gebruik in het hele bestand hetzelfde: alleen tabs, of alleen spaties.
 
 </details>
 
-### `const` versus `var` — waarom kiezen we hier `const`? \{#var-const}
-
-**Wat verwacht je dat er gebeurt als je `const SPEED = 300.0` ergens in `_physics_process` probeert te veranderen, bijvoorbeeld `SPEED = 500.0`?**
-
 <details>
-<summary>Antwoord</summary>
+<summary>Foutmelding: <code>move_and_slide called without physics frame</code></summary>
 
-Godot weigert: `const`-variabelen zijn vaste waarden die nooit veranderen. Een prima keuze voor instellingen die je per niveau wilt afstemmen maar niet *tijdens* het spelen. Voor waarden die wel veranderen tijdens het spel (bijvoorbeeld `score`) gebruik je `var`.
+**Oorzaak:** `move_and_slide()` staat buiten `_physics_process`, bijvoorbeeld helemaal links tegen de kantlijn.
+
+**Oplossing:** Zorg dat de regel ingesprongen staat onder `func _physics_process(delta: float) -> void:`.
 
 </details>
 
-### Modify: `SPEED` en `JUMP_VELOCITY` aanpassen
-
-1. Verander `const SPEED = 300.0` naar `1000.0`. Start met `F5`. → Karakter racet.
-2. Verander `const JUMP_VELOCITY = -400.0` naar `-800.0`. Start met `F5`. → Karakter springt veel hoger.
-
-### Waarom is `JUMP_VELOCITY` negatief?
-
-**Wat zou er gebeuren als je `JUMP_VELOCITY = 400.0` (positief) maakt?**
-
 <details>
-<summary>Antwoord</summary>
+<summary>Ik krijg een foutmelding over een dubbele punt</summary>
 
-Je karakter "springt" **naar beneden** — hij dweilt direct door de vloer of versnelt naar beneden. In Godot is het coördinatenstelsel namelijk omgekeerd aan wiskunde:
+**Oorzaak:** De `:` aan het eind van de `func`-regel ontbreekt.
 
-- Linksboven op het scherm is `x=0` en `y=0`.
-- Naar **rechts** wordt `x` hoger (positief).
-- Naar **beneden** wordt `y` hoger (positief).
-- Naar **boven** wordt `y` dus *lager* (negatief).
-
-Daarom moet `JUMP_VELOCITY` negatief zijn om omhoog te bewegen.
-
-![Godot coördinatenstelsel](../../images/coordinaten.svg)
+**Oplossing:** Elke functie-regel eindigt op een dubbele punt: `func _physics_process(delta: float) -> void:`. Net als in Python.
 
 </details>
 
 ---
 
-**Volgende:** [Deel 2 — De motor (`_physics_process`)](./motor.md) →
+**Volgende:** [Deel 2 — Vallen](./motor.md) →
