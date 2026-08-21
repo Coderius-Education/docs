@@ -1,9 +1,9 @@
 ---
-sidebar_position: 4
+sidebar_position: 7
 slug: /movement-afsluiter
 ---
 
-# Het bewegingsscript bouwen — Deel 4: Springen
+# Het bewegingsscript bouwen — Deel 7: Springen
 
 Je karakter loopt en valt. Er ontbreekt één ding: omhoog. In deze les maak je het bewegingsscript af.
 
@@ -19,7 +19,7 @@ Je karakter loopt en valt. Er ontbreekt één ding: omhoog. In deze les maak je 
 
 ## Wat je nu gaat toevoegen
 
-Een tweede constante en één `if` met twee voorwaarden. Daarna is je bewegingsscript compleet en heb je het helemaal zelf getypt.
+Twee begrippen: het verschil tussen **`just_pressed`** en **`pressed`**, en **`and`** om twee voorwaarden te combineren. Daarna is je bewegingsscript compleet en heb je het helemaal zelf getypt.
 
 ## Voorspel: waarom is springen negatief? \{#springen}
 
@@ -86,8 +86,6 @@ Het verschil staat ook in de [GDScript-tips](/gdscript-tips#input).
 ## Stap 4: Twee voorwaarden met `and`
 
 De check bestaat uit twee delen: de speler drukt op de knop **en** het karakter staat op de grond. Met `and` moeten ze allebei waar zijn.
-
-Bij GDQuest oefen je dit in de lessen over **voorwaarden**, verderop in de cursus. Die staan niet op de schermafdruk hierboven, dus scroll even door de lessenlijst tot je ze tegenkomt.
 
 **Wat gebeurt er zonder dat tweede deel?**
 
@@ -174,9 +172,9 @@ Een toets juist vervangen in plaats van toevoegen? Klap de actie open en klik op
 
 </details>
 
-## Opdracht 4.4.b: voeg een vierde kracht toe
+## Opdracht 4.4.d: voeg een eigen kracht toe
 
-Je script kent nu drie krachten: vallen, lopen en springen. Voeg er zelf één bij die niet in de les staat. Kies er één:
+Je script kent nu vallen, lopen en springen. Voeg er zelf iets bij dat niet in de les staat. Kies er één:
 
 - **Sprinten**: houd shift ingedrukt en je loopt sneller.
 - **Dubbel springen**: één keer extra springen terwijl je in de lucht bent.
@@ -243,4 +241,4 @@ Zo weet je bij een fout meteen aan welke kant je moet zoeken: bij het uitlezen v
 
 ---
 
-← [Deel 3 — Lopen](./krachten.md) · **Volgende:** [Fouten zoeken](../fouten-zoeken.md) →
+← [Deel 6 — Stoppen](./remmen.md) · **Volgende:** [Fouten zoeken](../fouten-zoeken.md) →

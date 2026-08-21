@@ -52,7 +52,7 @@ Let op het inspringen: `move_and_slide()` staat één tab naar rechts. Daaraan z
 
 **`_physics_process`** is geen naam die jij verzint. Godot kent deze naam en roept hem automatisch aan, ongeveer zestig keer per seconde. De underscore vooraan is het teken dat het een functie van Godot zelf is.
 
-**`(delta: float)`** is een parameter: informatie die Godot bij elke aanroep meegeeft. `delta` is de tijd in seconden sinds de vorige keer. In Deel 2 ga je hem gebruiken.
+**`(delta: float)`** is een parameter: informatie die Godot bij elke aanroep meegeeft. `delta` is de tijd in seconden sinds de vorige keer. In Deel 3 ga je hem gebruiken.
 
 **`-> void`** zegt: deze functie geeft niets terug. Ze *doet* iets, in plaats van iets te berekenen dat je later gebruikt. In Python is dat een functie zonder `return`.
 
