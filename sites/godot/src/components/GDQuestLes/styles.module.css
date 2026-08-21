@@ -1,0 +1,23 @@
+.blok {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.75rem 0 1.25rem;
+  padding: 0.5rem 0.75rem;
+  border-left: 3px solid var(--ifm-color-emphasis-400);
+  background: var(--ifm-background-surface-color);
+  font-size: 0.95rem;
+}
+
+.label {
+  flex-shrink: 0;
+  padding: 0.05rem 0.4rem;
+  border-radius: 4px;
+  background: var(--ifm-color-emphasis-200);
+  color: var(--ifm-color-emphasis-800);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
