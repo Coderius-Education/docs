@@ -9,6 +9,8 @@ Je karakter loopt en valt. Er ontbreekt één ding: omhoog. In deze les maak je 
 
 <GodotVersie />
 
+<GDQuestLes slug="movement-afsluiter" />
+
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/beslissen/05c-and-or-elif', label: 'And, or en elif'},

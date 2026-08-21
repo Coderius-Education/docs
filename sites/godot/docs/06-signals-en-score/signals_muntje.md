@@ -9,6 +9,8 @@ Tijd om iets te kunnen verzamelen in je level. In deze les bouw je een muntje al
 
 <GodotVersie />
 
+<GDQuestLes slug="signals_muntje" />
+
 ## Voorspel: zonder signals?
 
 Stel je hebt twee losse scripts: één voor je muntje, één voor je karakter. Het muntje moet verdwijnen als het karakter het raakt.
@@ -89,11 +91,7 @@ func _on_body_entered(body: Node2D) -> void:
 
 Dit is een gewone functie, zoals je er zelf ook een schrijft. Het enige verschil: jij roept hem nooit aan — Godot doet dat, zodra het signal afgaat. `pass` betekent "hier gebeurt niets"; die regel vervang je zo door je eigen code.
 
-<GDQuestLes nummer={5} />
-
 De parameter `body` is de node die het muntje raakte. Die krijg je meegeleverd, net zoals `delta` bij `_physics_process`.
-
-<GDQuestLes nummer={6} />
 
 ## Stap 5: Laat het muntje verdwijnen \{#signal-functie}
 

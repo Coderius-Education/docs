@@ -11,6 +11,8 @@ Dat hoort erbij. Wat je nu leert is niet hoe je fouten voorkomt, maar hoe je ze 
 
 <GodotVersie />
 
+<GDQuestLes slug="fouten-zoeken" />
+
 ## Drie soorten fouten \{#drie-soorten}
 
 Ze zien er anders uit en vragen een andere eerste stap. Bepaal daarom altijd eerst welke je voor je hebt.
@@ -38,8 +40,6 @@ Lees hem in drie stukken:
 3. **De rest** — wat er mis is. Hier: de functie `plya` bestaat niet. Dat is een typefout voor `play`.
 
 De laatste zin is vaak Engels en klinkt technischer dan hij is. Zoek de woorden die je herkent: een naam die je zelf hebt getypt, of een node-type uit je scène.
-
-<GDQuestLes nummer={2} />
 
 :::tip
 Krijg je meerdere meldingen tegelijk? Los alleen de **bovenste** op en start opnieuw. De rest is vaak gevolgschade en verdwijnt vanzelf.

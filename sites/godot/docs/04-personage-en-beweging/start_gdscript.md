@@ -41,19 +41,9 @@ Begin met les 1 en 2. Die kosten samen een kwartier en leggen uit wat code is en
 
 ## Wat je waar tegenkomt
 
-Deze concepten heb je in dit project nodig. Achter elk concept staat de les waar je het bouwt en de GDQuest-les waar je het los oefent.
+Elke les hier gaat over één of twee begrippen, en begint met een blok dat zegt welke GDQuest-les datzelfde begrip los oefent. Dit is het overzicht:
 
-| Concept       | Waarvoor in je game?                          | Waar bouw je het?                                        | GDQuest |
-| :------------ | :-------------------------------------------- | :------------------------------------------------------- | :------ |
-| `extends`     | Zeggen welk soort node je script aanstuurt    | [Je eerste eigen script](./sprite_movement.md)            | 3       |
-| `func`        | Code groeperen die vanzelf draait             | [Deel 1](./basis_movement_begrijpen/skelet.md)            | 5       |
-| parameters    | Informatie meekrijgen, zoals `delta`          | [Deel 1](./basis_movement_begrijpen/skelet.md)            | 6       |
-| `+=`          | Snelheid opbouwen                             | [Deel 2](./basis_movement_begrijpen/motor.md)             | 9       |
-| `const`       | Vaste waarden zoals `SPEED`                   | [Deel 3](./basis_movement_begrijpen/krachten.md)          | 8       |
-| `if` / `else` | Beslissingen nemen                            | [Deel 3](./basis_movement_begrijpen/krachten.md)          | voorwaarden |
-| `and`         | Twee voorwaarden combineren                   | [Deel 4](./basis_movement_begrijpen/afsluiter.md)         | voorwaarden |
-| `var`         | Waarden die tijdens het spel veranderen       | [Score bijhouden](../06-signals-en-score/score_in_karakter.md) | 7 en 8 |
-| `print()`     | Zien wat er in je code gebeurt                | [Fouten zoeken](./fouten-zoeken.md)                       | 2       |
+<GDQuestTabel />
 
 Alles hieruit staat kort bij elkaar in de [GDScript-tips](/gdscript-tips), de naslag bij alle lessen.
 
@@ -78,8 +68,6 @@ func _ready() -> void:
 ![Uitvoer-paneel met print()-output](../images/is_on_floor.png)
 
 Dit Uitvoer-tabblad wordt je belangrijkste gereedschap: telkens als je niet zeker weet of een stuk code draait, zet je er een `print()` in en kijk je hier.
-
-<GDQuestLes nummer={2} />
 
 Haal deze `_ready()`-functie daarna weer weg. In de volgende les begin je met een schone lei aan het bewegingsscript.
 

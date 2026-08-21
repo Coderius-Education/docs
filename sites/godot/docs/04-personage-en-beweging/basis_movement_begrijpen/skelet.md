@@ -9,6 +9,8 @@ Je script bestaat uit één regel: `extends CharacterBody2D`. In deze les voeg j
 
 <GodotVersie />
 
+<GDQuestLes slug="basis_movement_begrijpen" />
+
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/functies/functies', label: 'Functies'},
@@ -44,19 +46,13 @@ func _physics_process(delta: float) -> void:
 
 Let op het inspringen: `move_and_slide()` staat één tab naar rechts. Daaraan ziet GDScript dat die regel **binnen** de functie hoort. Alles wat je in de volgende lessen toevoegt komt op datzelfde niveau te staan.
 
-<GDQuestLes nummer={5} />
-
 ## Stap 2: Wat hier staat, woord voor woord
 
 **`func`** begint een functie, net als `def` in Python.
 
 **`_physics_process`** is geen naam die jij verzint. Godot kent deze naam en roept hem automatisch aan, ongeveer zestig keer per seconde. De underscore vooraan is het teken dat het een functie van Godot zelf is.
 
-<GDQuestLes nummer={10} />
-
 **`(delta: float)`** is een parameter: informatie die Godot bij elke aanroep meegeeft. `delta` is de tijd in seconden sinds de vorige keer. In Deel 2 ga je hem gebruiken.
-
-<GDQuestLes nummer={6} />
 
 **`-> void`** zegt: deze functie geeft niets terug. Ze *doet* iets, in plaats van iets te berekenen dat je later gebruikt. In Python is dat een functie zonder `return`.
 

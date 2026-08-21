@@ -9,6 +9,8 @@ Je functie draait, maar je karakter staat stil. In deze les geef je hem snelheid
 
 <GodotVersie />
 
+<GDQuestLes slug="movement-motor" />
+
 ## Wat je nu gaat toevoegen
 
 Twee regels die zwaartekracht op je karakter loslaten. Na deze les valt hij van een platform af en blijft hij op de vloer liggen.
@@ -41,13 +43,9 @@ func _physics_process(delta: float) -> void:
 
 Let op het inspringen: de regel met `velocity` staat twee niveaus in, want hij hoort bij de `if`.
 
-<GDQuestLes nummer={9} />
-
 ## Stap 2: Wat `velocity` is
 
 `velocity` is de snelheid van je karakter: een `Vector2`, dus een X en een Y in één waarde. Je hebt hem niet zelf aangemaakt — hij hoort bij `CharacterBody2D`, en door `extends` is hij van jou.
-
-<GDQuestLes nummer={7} />
 
 Zet tijdelijk `print(velocity)` boven `move_and_slide()` en kijk in **Uitvoer** terwijl je speelt:
 
@@ -74,8 +72,6 @@ Je karakter valt met een constante, hele lage snelheid in plaats van versneld. E
 `get_gravity()` geeft de zwaartekracht terug die in je project is ingesteld, standaard ongeveer `(0, 980)`: 980 pixels per seconde naar beneden.
 
 Dat getal is per **seconde**, maar je functie draait zestig keer per seconde. Daarom vermenigvuldig je met `delta`, de tijd sinds de vorige frame (ongeveer `0.0167`). Zo telt elke frame precies zijn eigen stukje van die seconde mee.
-
-<GDQuestLes nummer={11} />
 
 **Wat gebeurt er als je `* delta` weglaat?**
 

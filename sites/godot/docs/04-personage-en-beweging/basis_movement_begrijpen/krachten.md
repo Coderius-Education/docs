@@ -9,6 +9,8 @@ Je karakter valt, maar je kunt hem nog niet besturen. In deze les leest je scrip
 
 <GodotVersie />
 
+<GDQuestLes slug="movement-krachten" />
+
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/beslissen/05b-if-else', label: 'If en else'},
@@ -39,8 +41,6 @@ const SPEED = 300.0
 ```
 
 Een **constante** is een waarde met een naam die nooit verandert terwijl je spel draait. Schrijf ze in hoofdletters — dat is de afspraak, zodat je in één oogopslag ziet dat er niet aan gesleuteld wordt.
-
-<GDQuestLes nummer={8} />
 
 **Wat verwacht je dat er gebeurt als je `SPEED` ergens in de functie probeert te veranderen, bijvoorbeeld `SPEED = 500.0`?**
 

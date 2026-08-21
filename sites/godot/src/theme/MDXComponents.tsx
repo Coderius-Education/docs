@@ -1,5 +1,5 @@
 import Voorkennis from '@coderius/shared/components/Voorkennis';
-import GDQuestLes from '@site/src/components/GDQuestLes';
+import GDQuestLes, { GDQuestTabel } from '@site/src/components/GDQuestLes';
 import GodotVersie from '@site/src/components/GodotVersie';
 import MDXComponents from '@theme-original/MDXComponents';
 
@@ -9,4 +9,5 @@ export default {
   Voorkennis,
   GodotVersie,
   GDQuestLes,
+  GDQuestTabel,
 };

@@ -9,6 +9,8 @@ Je karakter staat op het scherm, maar doet niets. Vanaf hier ga je hem zelf late
 
 <GodotVersie />
 
+<GDQuestLes slug="sprite_movement" />
+
 ## Waarom je zelf begint met een leeg bestand
 
 Godot kan een startscript voor je invullen. Handig, maar dan lees je iets wat je niet zelf hebt bedacht, en bij de eerste foutmelding weet je niet waar je moet kijken.
@@ -44,8 +46,6 @@ Godot geeft een foutmelding en je script doet niets meer. `extends CharacterBody
 Vergelijk het met een basisrecept. Met `extends` zeg je: ik bak hetzelfde recept, plus mijn eigen toevoegingen.
 
 </details>
-
-<GDQuestLes nummer={3} />
 
 ## Stap 3: Test dat er niets kapot is
 
