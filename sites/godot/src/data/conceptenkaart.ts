@@ -25,7 +25,22 @@ export type Les = {
   /** Docusaurus-slug zonder voorloopslash-prefix, bv. 'scene'. */
   slug: string;
   titel: string;
+  /** Hoofdstuknummer; moet overeenkomen met de docs-mapnaam (NN-...). */
+  hoofdstuk: number;
 };
+
+// De kaart toont één hoofdstuk tegelijk. Labels en nummers komen uit de
+// _category_.json-bestanden; conceptenkaart.test.ts bewaakt dat.
+export const HOOFDSTUKKEN: { nummer: number; label: string }[] = [
+  { nummer: 2, label: 'De editor leren kennen' },
+  { nummer: 3, label: 'Level bouwen' },
+  { nummer: 4, label: 'Je personage' },
+  { nummer: 5, label: 'Het bewegingsscript bouwen' },
+  { nummer: 6, label: 'Animaties' },
+  { nummer: 7, label: 'Signals & score' },
+  { nummer: 8, label: 'Meer levels & menu' },
+  { nummer: 9, label: 'Uitdagende spel-ideeën' },
+];
 
 // Volgorde = leerlijn-groepen, binnen een groep de cursusvolgorde; bepaalt de
 // verticale volgorde van de linkerkolom op de kaart.
@@ -223,38 +238,42 @@ export const godotConcepten: GodotConcept[] = [
 
 // Volgorde = cursusvolgorde; bepaalt de rechterkolom op de kaart.
 export const lessen: Les[] = [
-  { slug: 'interface', titel: 'De Godot-interface' },
-  { slug: 'scene', titel: 'Je eerste 2D-scène' },
-  { slug: 'bestanden-downloaden', titel: 'Bestanden downloaden' },
-  { slug: 'background_image', titel: 'Achtergrond' },
-  { slug: 'tilemap_opzetten', titel: 'Level tekenen met een TileMap' },
-  { slug: 'tilemap_collision', titel: 'Collision op je tegels' },
-  { slug: 'sprite', titel: 'Een speelbaar karakter' },
-  { slug: 'sprite_movement', titel: 'Je eerste eigen script' },
-  { slug: 'start_gdscript', titel: 'Je eerste regels code' },
-  { slug: 'basis_movement_begrijpen', titel: 'Bewegingsscript 1: een script dat draait' },
-  { slug: 'movement-motor', titel: 'Bewegingsscript 2: vallen' },
-  { slug: 'movement-delta', titel: 'Bewegingsscript 3: delta' },
-  { slug: 'movement-grond', titel: 'Bewegingsscript 4: je eerste if' },
-  { slug: 'movement-krachten', titel: 'Bewegingsscript 5: lopen' },
-  { slug: 'movement-remmen', titel: 'Bewegingsscript 6: stoppen' },
-  { slug: 'movement-afsluiter', titel: 'Bewegingsscript 7: springen' },
-  { slug: 'fouten-zoeken', titel: 'Fouten zoeken' },
-  { slug: 'camera2d', titel: 'Camera die de speler volgt' },
-  { slug: 'animaties', titel: 'Animaties maken' },
-  { slug: 'animaties_code', titel: 'Animaties in code' },
-  { slug: 'signals_muntje', titel: 'Signals & een muntje oppakken' },
-  { slug: 'score_in_karakter', titel: 'Score bijhouden' },
-  { slug: 'global_variables', titel: 'Global variables' },
-  { slug: 'score_op_scherm', titel: 'Score op het scherm' },
-  { slug: 'groups', titel: 'Groups' },
-  { slug: 'tweede_level', titel: 'Een tweede level' },
-  { slug: 'start_menu', titel: 'Een startmenu' },
-  { slug: 'spawnen', titel: 'Spawnen: nodes maken in code' },
-  { slug: 'spawn_timer', titel: 'Automatisch spawnen met een Timer' },
-  { slug: 'spel-flappy_bird', titel: 'Spelidee: Flappy Bird' },
-  { slug: 'spel-top_down', titel: 'Spelidee: top-down crawler' },
-  { slug: 'spel-endless_runner', titel: 'Spelidee: endless runner' },
+  { slug: 'interface', titel: 'De Godot-interface', hoofdstuk: 2 },
+  { slug: 'scene', titel: 'Je eerste 2D-scène', hoofdstuk: 2 },
+  { slug: 'bestanden-downloaden', titel: 'Bestanden downloaden', hoofdstuk: 2 },
+  { slug: 'background_image', titel: 'Achtergrond', hoofdstuk: 3 },
+  { slug: 'tilemap_opzetten', titel: 'Level tekenen met een TileMap', hoofdstuk: 3 },
+  { slug: 'tilemap_collision', titel: 'Collision op je tegels', hoofdstuk: 3 },
+  { slug: 'sprite', titel: 'Een speelbaar karakter', hoofdstuk: 4 },
+  { slug: 'sprite_movement', titel: 'Je eerste eigen script', hoofdstuk: 4 },
+  { slug: 'start_gdscript', titel: 'Je eerste regels code', hoofdstuk: 4 },
+  {
+    slug: 'basis_movement_begrijpen',
+    titel: 'Bewegingsscript 1: een script dat draait',
+    hoofdstuk: 5,
+  },
+  { slug: 'movement-motor', titel: 'Bewegingsscript 2: vallen', hoofdstuk: 5 },
+  { slug: 'movement-delta', titel: 'Bewegingsscript 3: delta', hoofdstuk: 5 },
+  { slug: 'movement-grond', titel: 'Bewegingsscript 4: je eerste if', hoofdstuk: 5 },
+  { slug: 'movement-krachten', titel: 'Bewegingsscript 5: lopen', hoofdstuk: 5 },
+  { slug: 'movement-remmen', titel: 'Bewegingsscript 6: stoppen', hoofdstuk: 5 },
+  { slug: 'movement-afsluiter', titel: 'Bewegingsscript 7: springen', hoofdstuk: 5 },
+  { slug: 'fouten-zoeken', titel: 'Fouten zoeken', hoofdstuk: 5 },
+  { slug: 'camera2d', titel: 'Camera die de speler volgt', hoofdstuk: 5 },
+  { slug: 'animaties', titel: 'Animaties maken', hoofdstuk: 6 },
+  { slug: 'animaties_code', titel: 'Animaties in code', hoofdstuk: 6 },
+  { slug: 'signals_muntje', titel: 'Signals & een muntje oppakken', hoofdstuk: 7 },
+  { slug: 'score_in_karakter', titel: 'Score bijhouden', hoofdstuk: 7 },
+  { slug: 'global_variables', titel: 'Global variables', hoofdstuk: 7 },
+  { slug: 'score_op_scherm', titel: 'Score op het scherm', hoofdstuk: 7 },
+  { slug: 'groups', titel: 'Groups', hoofdstuk: 7 },
+  { slug: 'tweede_level', titel: 'Een tweede level', hoofdstuk: 8 },
+  { slug: 'start_menu', titel: 'Een startmenu', hoofdstuk: 8 },
+  { slug: 'spawnen', titel: 'Spawnen: nodes maken in code', hoofdstuk: 8 },
+  { slug: 'spawn_timer', titel: 'Automatisch spawnen met een Timer', hoofdstuk: 8 },
+  { slug: 'spel-flappy_bird', titel: 'Spelidee: Flappy Bird', hoofdstuk: 9 },
+  { slug: 'spel-top_down', titel: 'Spelidee: top-down crawler', hoofdstuk: 9 },
+  { slug: 'spel-endless_runner', titel: 'Spelidee: endless runner', hoofdstuk: 9 },
 ];
 
 // Gesleuteld op Les.slug; waarden zijn concept-id's uit godotConcepten.

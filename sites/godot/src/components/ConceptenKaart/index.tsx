@@ -1,5 +1,6 @@
 import Link from '@docusaurus/Link';
 import {
+  HOOFDSTUKKEN,
   LEERLIJNEN,
   type Leerlijn,
   conceptenPerLes,
@@ -36,16 +37,34 @@ function rijMidden(index: number): number {
 }
 
 export default function ConceptenKaart(): React.ReactElement {
+  const [hoofdstuk, setHoofdstuk] = useState<number | 'alles'>(HOOFDSTUKKEN[0].nummer);
   const [actief, setActief] = useState<Actief>(null);
   const [gepind, setGepind] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const conceptIndex = useMemo(() => new Map(godotConcepten.map((c, i) => [c.id, i])), []);
   const leerlijnVan = useMemo(() => new Map(godotConcepten.map((c) => [c.id, c.leerlijn])), []);
+
+  // Eén hoofdstuk tegelijk: links alleen de concepten die in de zichtbare
+  // lessen voorkomen, in de vaste leerlijn-volgorde van godotConcepten.
+  const zichtbareLessen = useMemo(
+    () => (hoofdstuk === 'alles' ? lessen : lessen.filter((l) => l.hoofdstuk === hoofdstuk)),
+    [hoofdstuk],
+  );
+
+  const zichtbareConcepten = useMemo(() => {
+    if (hoofdstuk === 'alles') return godotConcepten;
+    const gebruikt = new Set(zichtbareLessen.flatMap((l) => conceptenPerLes[l.slug] ?? []));
+    return godotConcepten.filter((c) => gebruikt.has(c.id));
+  }, [hoofdstuk, zichtbareLessen]);
+
+  const conceptIndex = useMemo(
+    () => new Map(zichtbareConcepten.map((c, i) => [c.id, i])),
+    [zichtbareConcepten],
+  );
 
   const edges = useMemo(
     () =>
-      lessen.flatMap((les, lesIdx) =>
+      zichtbareLessen.flatMap((les, lesIdx) =>
         (conceptenPerLes[les.slug] ?? []).map((conceptId) => ({
           key: `${conceptId}:${les.slug}`,
           conceptId,
@@ -55,10 +74,11 @@ export default function ConceptenKaart(): React.ReactElement {
           y2: rijMidden(lesIdx),
         })),
       ),
-    [conceptIndex, leerlijnVan],
+    [conceptIndex, leerlijnVan, zichtbareLessen],
   );
 
-  const hoogte = rijMidden(Math.max(godotConcepten.length, lessen.length) - 1) + NODE_H / 2;
+  const hoogte =
+    rijMidden(Math.max(zichtbareConcepten.length, zichtbareLessen.length) - 1) + NODE_H / 2;
 
   // Welke nodes horen bij de actieve selectie?
   const verbonden = useMemo(() => {
@@ -132,6 +152,13 @@ export default function ConceptenKaart(): React.ReactElement {
       : false,
   );
 
+  const kiesHoofdstuk = (keuze: number | 'alles') => {
+    setHoofdstuk(keuze);
+    // Een gepinde selectie kan buiten het nieuwe hoofdstuk vallen.
+    setActief(null);
+    setGepind(false);
+  };
+
   const actiefConcept =
     actief?.kind === 'concept' ? godotConcepten.find((c) => c.id === actief.id) : undefined;
   const actieveLes = actief?.kind === 'les' ? lessen.find((l) => l.slug === actief.id) : undefined;
@@ -140,6 +167,34 @@ export default function ConceptenKaart(): React.ReactElement {
 
   return (
     <div ref={containerRef}>
+      <div className={styles.hoofdstukken}>
+        <span className={styles.filterLabel} id="hoofdstuk-label">
+          Hoofdstuk
+        </span>
+        <div className={styles.hoofdstukKnoppen} aria-labelledby="hoofdstuk-label">
+          {HOOFDSTUKKEN.map((h) => (
+            <button
+              key={h.nummer}
+              type="button"
+              className={clsx(styles.tab, hoofdstuk === h.nummer && styles.tabActief)}
+              aria-pressed={hoofdstuk === h.nummer}
+              onClick={() => kiesHoofdstuk(h.nummer)}
+            >
+              <span className={styles.tabNummer}>{h.nummer}</span>
+              {h.label}
+            </button>
+          ))}
+          <button
+            type="button"
+            className={clsx(styles.tab, hoofdstuk === 'alles' && styles.tabActief)}
+            aria-pressed={hoofdstuk === 'alles'}
+            onClick={() => kiesHoofdstuk('alles')}
+          >
+            Alles tegelijk
+          </button>
+        </div>
+      </div>
+
       <div className={styles.legenda}>
         {LEERLIJNEN.map((leerlijn) => (
           <button
@@ -170,7 +225,7 @@ export default function ConceptenKaart(): React.ReactElement {
         </div>
         <div className={styles.kaart} style={{ ['--kaart-hoogte' as string]: `${hoogte}px` }}>
           <div className={styles.kolom}>
-            {godotConcepten.map((concept) => (
+            {zichtbareConcepten.map((concept) => (
               <button
                 key={concept.id}
                 type="button"
@@ -220,7 +275,7 @@ export default function ConceptenKaart(): React.ReactElement {
           </svg>
 
           <div className={styles.kolom}>
-            {lessen.map((les) => (
+            {zichtbareLessen.map((les) => (
               <button
                 key={les.slug}
                 type="button"
@@ -249,7 +304,7 @@ export default function ConceptenKaart(): React.ReactElement {
         {actiefConcept && (
           <>
             <p className={styles.paneelKop}>
-              <strong>{actiefConcept.label}</strong> gebruik je in deze lessen.{' '}
+              <strong>{actiefConcept.label}</strong> gebruik je in deze lessen, in de hele cursus.{' '}
               <Link to={actiefConcept.to}>Naar de uitleg</Link>
             </p>
             <ul className={styles.paneelLinks}>
@@ -257,6 +312,7 @@ export default function ConceptenKaart(): React.ReactElement {
                 .filter((l) => (conceptenPerLes[l.slug] ?? []).includes(actiefConcept.id))
                 .map((l) => (
                   <li key={l.slug}>
+                    <span className={styles.paneelHoofdstuk}>{l.hoofdstuk}</span>
                     <Link to={`/docs/${l.slug}`}>{l.titel}</Link>
                   </li>
                 ))}

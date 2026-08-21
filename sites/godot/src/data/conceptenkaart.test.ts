@@ -2,7 +2,13 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { LEERLIJNEN, conceptenPerLes, godotConcepten, lessen } from './conceptenkaart';
+import {
+  HOOFDSTUKKEN,
+  LEERLIJNEN,
+  conceptenPerLes,
+  godotConcepten,
+  lessen,
+} from './conceptenkaart';
 
 // Bewaakt dat de conceptenkaart gelijk blijft aan de lessen: elke slug
 // bestaat, elk `to`-anker staat letterlijk als \{#anker} in het bronbestand,
@@ -25,12 +31,25 @@ function alleLesbestanden(map: string): string[] {
   return paden;
 }
 
-// slug (zonder slash) -> bestandsinhoud
+// slug (zonder slash) -> bestandsinhoud, en -> hoofdstuknummer uit de mapnaam
 const inhoudPerSlug = new Map<string, string>();
+const hoofdstukPerSlug = new Map<string, number>();
 for (const pad of alleLesbestanden(DOCS)) {
   const inhoud = readFileSync(pad, 'utf8');
   const slug = inhoud.match(/^slug:\s*\/(\S+)/m)?.[1];
-  if (slug) inhoudPerSlug.set(slug, inhoud);
+  if (!slug) continue;
+  inhoudPerSlug.set(slug, inhoud);
+  const map = pad.slice(DOCS.length + 1).split(/[/\\]/)[0];
+  const nummer = map.match(/^(\d+)-/)?.[1];
+  if (nummer) hoofdstukPerSlug.set(slug, Number(nummer));
+}
+
+function categorieLabel(nummer: number): string | undefined {
+  const map = readdirSync(DOCS, { withFileTypes: true }).find(
+    (e) => e.isDirectory() && e.name.startsWith(`${String(nummer).padStart(2, '0')}-`),
+  );
+  if (!map) return undefined;
+  return JSON.parse(readFileSync(join(DOCS, map.name, '_category_.json'), 'utf8')).label;
 }
 
 describe('conceptenkaart-data', () => {
@@ -98,6 +117,33 @@ describe('conceptenkaart-data', () => {
       const slug = concept.to.match(/^\/docs\/([^#]+)#/)?.[1] ?? '';
       if (!(conceptenPerLes[slug] ?? []).includes(concept.id)) {
         kapot.push(`${concept.id} wijst naar '${slug}' maar staat daar niet bij`);
+      }
+    }
+    expect(kapot).toEqual([]);
+  });
+
+  it('geeft elke les het hoofdstuk van de map waarin hij staat', () => {
+    // Vangt een verplaatst hoofdstuk: de kaart filtert hierop, en een
+    // verkeerd nummer laat een les in het verkeerde hoofdstuk opduiken.
+    const kapot = lessen
+      .filter((l) => hoofdstukPerSlug.get(l.slug) !== l.hoofdstuk)
+      .map((l) => `${l.slug}: kaart zegt ${l.hoofdstuk}, map zegt ${hoofdstukPerSlug.get(l.slug)}`);
+
+    expect(kapot).toEqual([]);
+  });
+
+  it('kent elk hoofdstuk dat lessen heeft, met het label uit _category_.json', () => {
+    const bekend = new Set(HOOFDSTUKKEN.map((h) => h.nummer));
+    expect([...new Set(lessen.map((l) => l.hoofdstuk))].filter((n) => !bekend.has(n))).toEqual([]);
+
+    const kapot: string[] = [];
+    for (const h of HOOFDSTUKKEN) {
+      if (!lessen.some((l) => l.hoofdstuk === h.nummer)) {
+        kapot.push(`hoofdstuk ${h.nummer} heeft geen lessen op de kaart`);
+      }
+      const label = categorieLabel(h.nummer);
+      if (label !== h.label) {
+        kapot.push(`hoofdstuk ${h.nummer}: kaart zegt '${h.label}', map zegt '${label}'`);
       }
     }
     expect(kapot).toEqual([]);
