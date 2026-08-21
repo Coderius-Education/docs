@@ -2,7 +2,7 @@
   "name": "coderius-docs",
   "version": "0.0.0",
   "private": true,
-  "description": "Coderius College documentatie — monorepo van alle leersites (Docusaurus) met gedeelde resources.",
+  "description": "Coderius-documentatie — monorepo van alle leersites (Docusaurus) met gedeelde resources.",
   "packageManager": "pnpm@10.15.0",
   "engines": {
     "node": ">=20.0"

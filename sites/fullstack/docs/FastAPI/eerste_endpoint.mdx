@@ -71,7 +71,7 @@ Start je server niet, met `NameError: name 'app' is not defined`? Dan staat je e
 ```python
 @app.get("/school")
 async def school():
-    return {"school": "Corderius", "vak": "Informatica"}
+    return {"school": "Mijn school", "vak": "Informatica"}
 ```
 
 **Vraag:** Wat zie je als je naar `/school` gaat?
@@ -87,7 +87,7 @@ Let op: de functie returnt een Python dictionary. Wat doet FastAPI standaard met
 <summary>Antwoord</summary>
 
 ```json
-{"school": "Corderius", "vak": "Informatica"}
+{"school": "Mijn school", "vak": "Informatica"}
 ```
 
 FastAPI zet de dictionary automatisch om naar JSON.
