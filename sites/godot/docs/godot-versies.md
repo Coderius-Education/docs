@@ -53,7 +53,7 @@ Het curriculum gebruikt drie externe bronnen die offline kunnen gaan:
 
 | Bron | Gebruikt in | Wat als hij offline is? |
 |---|---|---|
-| [GDQuest learn-gdscript](https://gdquest.github.io/learn-gdscript/) | [Start GDScript](/docs/start_gdscript) | Gebruik de officiële [GDScript-docs](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_basics.html). |
+| [GDQuest learn-gdscript](https://gdquest.github.io/learn-gdscript/) | [Het bewegingsscript bouwen](/docs/basis_movement_begrijpen) | Gebruik de officiële [GDScript-docs](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_basics.html). |
 | [Pixel Adventure asset pack](https://pixelfrog-assets.itch.io/pixel-adventure-1) | [Bestanden downloaden](/docs/bestanden-downloaden) | Andere gratis pixel-art packs op [itch.io](https://itch.io/game-assets/free/tag-2d) of [opengameart.org](https://opengameart.org/) werken ook. Belangrijk: zorg dat het pack `.png`-sprites bevat. |
 | [Godot online editor](https://editor.godotengine.org/) | [Installatie](/docs/installatie) (Chromebook-route) | Offline gaan is onwaarschijnlijk (officieel Godot). Anders: installeer Godot lokaal op een ander apparaat. |
 

@@ -25,7 +25,7 @@ In deze les doe je beide.
 
 </details>
 
-## Stap 1: Physics Layer aanmaken
+## Stap 1: Physics Layer aanmaken \{#physics-layer}
 
 Voordat je collision kunt verven, moet er een **Physics Layer** bestaan op je TileSet. Zie het als een "kanaal" waarop botsingen worden geregistreerd.
 
@@ -51,6 +51,26 @@ Je hoeft niet elke tile collision te geven. Decoratie zoals wolkjes of struiken 
 :::
 
 De lichtblauwe vakjes zijn jouw bewijs dat collision actief is op die tegels. Echt **testen** kun je dit pas zodra je in de volgende les een karakter toevoegt — dan blijft dat karakter bij `F5` netjes op de gekleurde tegels staan in plaats van erdoorheen te zakken.
+
+## Opdracht 3.3.a: laat één tegel bewust open
+
+Niet-massieve tegels zijn geen vergissing, maar een gereedschap. Kies één decoratieve tegel uit je tileset (een struik, wolkje of ander sier-element), zorg dat die **géén** collision heeft, en zet er een paar van in je level — bijvoorbeeld voor het gat uit Opdracht 3.2.a.
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Heeft je gekozen tegel al een lichtblauw vakje? Met dezelfde Paint-tool waarmee je verft, kun je ook wissen: klik in de Paint-modus nog een keer op de tegel.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+Controleer in het **TileSet**-tabblad, met de Paint-tool op **Physics Layer 0**, dat jouw decoratie-tegel géén lichtblauw vakje heeft. Teken hem daarna in het **TileMap**-tabblad gewoon in je level.
+
+Het resultaat zie je in hoofdstuk 5: je karakter loopt dwars door de struik heen, maar blijft op het gras staan. Zo maak je straks ook doorkijk-elementen, of een nep-vloer boven een valkuil.
+
+</details>
 
 ## Er gaat iets mis
 

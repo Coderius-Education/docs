@@ -31,15 +31,18 @@ Op Windows 11 kun je bestanden direct uit een zip slepen zonder eerst uit te pak
 
 Je hebt nu een map met alle afbeeldingen uit het pack.
 
-## Stap 3: Kopieer naar je projectmap
+## Stap 3: Kopieer naar je projectmap \{#projectmap}
 
 Godot ziet alleen bestanden die **in je projectmap** staan. Vanuit de editor kun je die map snel openen.
 
 1. Open je project in Godot.
 2. Klik met de **rechtermuisknop** op `res://` in het **FileSystem**-paneel (linksonder).
-3. Kies **Open in File Manager** — Verkenner opent nu je projectmap.
+3. Kies **Open in File Manager** (heet **Openen in Bestandsbeheer** als je editor Nederlands is) — Verkenner opent nu je projectmap.
+
+![Rechtsklikmenu op res:// met Openen in Bestandsbeheer](../images/res.png)
+
 4. Open in een tweede Verkenner-venster de uitgepakte asset-map.
-5. Sleep de mappen of bestanden die je nodig hebt naar je projectmap.
+5. Maak in je projectmap een nieuwe map `assets` en sleep de mappen die je nodig hebt (bijvoorbeeld `Background`) daarin. In latere lessen verwijzen we naar deze `assets`-map.
 
 :::tip
 Je hoeft niet alles te kopiëren. Voor de achtergrond heb je alleen de map `Background` nodig. Later kun je altijd meer toevoegen.
@@ -50,6 +53,39 @@ Ga terug naar Godot — de bestanden verschijnen automatisch in het FileSystem-p
 :::note[Chromebook / online editor]
 Gebruik je de [online editor](https://editor.godotengine.org/)? Dan kun je geen bestanden via de Verkenner kopiëren. Sleep de uitgepakte bestanden in plaats daarvan rechtstreeks naar het **FileSystem**-paneel in de editor.
 :::
+
+## Voorspel: wat betekent `res://`?
+
+Bovenaan het FileSystem-paneel staat `res://`. **Wat denk je dat dat is?** Denk terug aan [Opdracht 1.2.a](../01-aan-de-slag/project.md#opdracht-12a-vind-je-projectmap-terug), waar je je projectmap opzocht in de Verkenner.
+
+<details>
+<summary>Antwoord</summary>
+
+`res://` is je **projectmap**, gezien vanuit Godot. `res` staat voor *resources*: alle bestanden van je project. Een pad als `res://assets/Background/Green.png` betekent dus: het bestand `Green.png`, in de map `assets/Background`, binnen je projectmap. Zo kan een project verwijzen naar zijn eigen bestanden, op welke computer het ook staat.
+
+</details>
+
+## Opdracht 2.3.a: verken het asset-pack
+
+Je gaat de komende hoofdstukken steeds bestanden uit dit pack gebruiken. Kijk nu alvast wat erin zit. Zoek in het FileSystem-paneel (of in de Verkenner) op:
+
+1. Welke kleuren achtergrond de map `Background` bevat.
+2. Waar de speelbare figuren staan, en hoe hun loop-animatie als bestand is opgeslagen.
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Klap de mappen in het FileSystem-paneel open met het pijltje ervoor. Klik op een afbeelding om rechtsonder een voorbeeld te zien.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+1. `Background` bevat effen kleurtegels, waaronder `Green.png` — die gebruik je in [Achtergrond](../03-level-bouwen/background_image.md).
+2. De figuren staan in `Main Characters`, elk in een eigen map. Een animatie is één breed bestand zoals `Run (32x32).png`: alle stapjes van de beweging naast elkaar in een **sprite-sheet**. In hoofdstuk 6 knip je die frames in Godot los.
+
+</details>
 
 ## Er gaat iets mis
 

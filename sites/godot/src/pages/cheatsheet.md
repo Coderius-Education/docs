@@ -4,7 +4,7 @@ Snelle naslag van alle node-types die in deze tutorial worden gebruikt.
 
 ---
 
-## Coördinatensysteem
+## Coördinatensysteem \{#coordinaten}
 
 <details>
 <summary>Hoe werkt het coördinatensysteem?</summary>
@@ -22,7 +22,7 @@ Het punt `(0, 0)` zit in de **linkerbovenhoek** van het scherm. Daarom is de jum
 
 ---
 
-## Level & wereld
+## Level & wereld \{#level-wereld}
 
 <details>
 <summary>Node2D — basis van je level-scene</summary>
@@ -65,14 +65,16 @@ Als achtergrond — sleep hem **bovenaan** in de Scene Tree zodat hij achter all
 
 **Instellen in de Inspector:**
 - `Texture` — sleep een afbeelding vanuit het FileSystem.
-- `Layout` → `Anchors Preset` → **Full Rect** — laat hem het hele scherm vullen.
-- `Stretch Mode` → **Keep Aspect Covered** — vult zonder vervorming.
+- Trek de node met de handgrepen over het hele zichtbare vlak.
+- `Stretch Mode` → **Tile** — herhaalt een kleine afbeelding als tegels.
+
+Zo leer je het in [Achtergrond](/docs/background_image). Anchors en de andere stretch modes komen bij het startmenu aan bod.
 
 </details>
 
 ---
 
-## Hoofdpersoon
+## Hoofdpersoon \{#hoofdpersoon}
 
 <details>
 <summary>CharacterBody2D — je speler</summary>
@@ -138,7 +140,7 @@ Als child van `CharacterBody2D` voor een mee-bewegende camera bij grotere levels
 
 ---
 
-## Collectibles & vijanden
+## Collectibles & vijanden \{#collectibles-vijanden}
 
 <details>
 <summary>Area2D — muntjes en vijanden detecteren</summary>
@@ -174,7 +176,7 @@ Voor objecten zonder animatie, zoals een muntje of een stilstaande vijand.
 
 ---
 
-## UI & menu
+## UI & menu \{#ui-menu}
 
 <details>
 <summary>CanvasLayer — UI die altijd op het scherm blijft</summary>
@@ -249,7 +251,7 @@ In menu's (start spel, afsluiten, level 2) en dialoogvensters.
 
 ---
 
-## Autoload
+## Autoload \{#autoload}
 
 <details>
 <summary>Node — Autoload-root voor global.gd</summary>
@@ -270,6 +272,29 @@ func reset() -> void:
     score  = 0
     levens = 3
 ```
+
+</details>
+
+---
+
+## Spawnen \{#spawnen}
+
+<details>
+<summary>Timer — periodiek iets laten gebeuren</summary>
+
+Een onzichtbare stopwatch die aftelt en dan het signal `timeout` stuurt.
+
+**Wanneer gebruik je het?**
+Voor alles dat "elke X seconden" moet gebeuren, zoals muntjes of vijanden spawnen.
+
+**Instellen in de Inspector:**
+- `Wait Time` — aantal seconden per aftel-ronde
+- `One Shot` — uit voor herhalen, aan voor één keer
+- `Autostart` — aan om direct bij de start van de scène te beginnen
+
+**Signal:** Koppel `timeout` via het **Node**-tabblad aan een functie in het script van je level.
+
+Zo leer je het in [Automatisch spawnen met een Timer](/docs/spawn_timer). De bijbehorende code (`preload`, `instantiate`, `add_child`) staat in de [GDScript-tips](/gdscript-tips#nodes-scenes).
 
 </details>
 

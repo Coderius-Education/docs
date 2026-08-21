@@ -45,6 +45,93 @@ jobs:
       - name: Test (nakijker)
         run: pnpm test
 
+  # De godot-cursus laat leerlingen elk script zelf opbouwen, dus staan de
+  # tussenstanden alleen in de lestekst. Niets in de docusaurus-build leest die
+  # codeblokken: een typefout of een API die in 4.7 niet meer bestaat, komt pas
+  # bij een leerling in de klas aan het licht. Deze job draait Godot headless en
+  # doet twee dingen: elk blok compileren, en de zeven tussenstanden van het
+  # bewegingsscript echt uitvoeren om te zien of ze doen wat de les belooft.
+  #
+  # Blokkeert `build` bewust niet: dit gaat over de inhoud van de lessen, niet
+  # over of de site bouwt.
+  godot:
+    runs-on: ubuntu-latest
+    env:
+      GODOT_VERSIE: 4.7.2-stable
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Cache Godot
+        id: godot-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/godot-bin
+          key: godot-${{ env.GODOT_VERSIE }}
+
+      # De bestandsnaam van het asset is per release wel eens veranderd, dus
+      # zoeken we hem op in plaats van hem te raden.
+      - name: Download Godot
+        if: steps.godot-cache.outputs.cache-hit != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p ~/godot-bin
+          url=$(gh api "repos/godotengine/godot-builds/releases/tags/${GODOT_VERSIE}" \
+            --jq '.assets[] | select(.name | test("linux\\.x86_64\\.zip$")) | .browser_download_url' | head -1)
+          echo "Asset: $url"
+          curl -fsSL "$url" -o /tmp/godot.zip
+          unzip -q -o /tmp/godot.zip -d /tmp/godot
+          mv "$(find /tmp/godot -type f -name 'Godot_v*' | head -1)" ~/godot-bin/godot
+          chmod +x ~/godot-bin/godot
+
+      - name: Godot-versie
+        run: ~/godot-bin/godot --headless --version
+
+      - name: Codeblokken uit de docs halen
+        run: pnpm --filter @coderius/godot-docs godot:extract
+
+      # Eerste run bouwt de importcache op; die eindigt zelf met een exitcode
+      # die niets over de tests zegt, vandaar de tweede run.
+      - name: Project importeren
+        run: ~/godot-bin/godot --headless --path sites/godot/godot-tests --import || true
+
+      # Geen --quit-after: die stopt met code 0 en zou een echte fout maskeren.
+      # De runner sluit zelf af; `timeout` is alleen de vangnet tegen vastlopen.
+      - name: Codevoorbeelden testen
+        run: timeout 300 ~/godot-bin/godot --headless --path sites/godot/godot-tests
+
+      # Een hernoemd menu-item verandert niets aan de code en niets aan de
+      # build; het valt pas op als een leerling naar een knop zoekt die er niet
+      # meer is. De editor-binary bevat al zijn eigen labels, dus die zoeken we
+      # er gewoon in op.
+      - name: UI-labels uit de lessen bestaan in deze Godot-versie
+        run: |
+          set -uo pipefail
+          strings -n 2 ~/godot-bin/godot > /tmp/godot-strings.txt
+          mist=0
+          while IFS= read -r label; do
+            [ -z "$label" ] && continue
+            # Substring, geen hele regel: Godot hangt er soms iets achter,
+            # zoals "Add Child Node..." of "Physics Layer 0".
+            if ! grep -qF "$label" /tmp/godot-strings.txt; then
+              echo "::error::label '$label' komt niet voor in Godot ${GODOT_VERSIE}"
+              mist=$((mist + 1))
+            fi
+          done < sites/godot/godot-tests/extracted/labels.txt
+          echo "$(wc -l < sites/godot/godot-tests/extracted/labels.txt) labels gecontroleerd, $mist niet gevonden."
+          exit $((mist > 0))
+
   checks:
     runs-on: ubuntu-latest
     steps:

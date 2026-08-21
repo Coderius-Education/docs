@@ -29,6 +29,7 @@ export const godotConfig: CheckerConfig = {
     { id: 'beweging', label: 'Beweging & fysica' },
     { id: 'input', label: 'Input' },
     { id: 'nodes', label: 'Nodes & signals' },
+    { id: 'scene', label: 'Scene-nodes' },
   ],
 
   fileKinds: [
@@ -40,7 +41,7 @@ export const godotConfig: CheckerConfig = {
   ],
 
   classify,
-  textKinds: ['gd'],
+  textKinds: ['gd', 'tscn'],
   accept: '.zip,.gd,.tscn,.godot,.tres,.import,.png,.jpg,.jpeg,.gif,.svg,.webp',
 
   teacher: { password: 'coderius-docent', storageKey: 'godotChecker.docentUnlocked' },
@@ -263,6 +264,96 @@ export const godotConfig: CheckerConfig = {
       label: 'project.godot',
       level: 'basis',
       detect: { type: 'path', pattern: /(^|\/)project\.godot$/ },
+    },
+
+    // --- Scene-nodes ---
+    // Het tekstuele .tscn-formaat schrijft elke node als
+    // [node name="Speler" type="CharacterBody2D" parent="."]. Het patroon eist
+    // "[node " plus de sluitquote na de typenaam, zodat "RichTextLabel" niet
+    // als Label telt en [ext_resource ...]-regels niets triggeren.
+    {
+      id: 'sc-characterbody2d',
+      subject: 'scene',
+      group: 'Speler',
+      label: 'CharacterBody2D',
+      level: 'basis',
+      detect: { type: 'regex', pattern: /\[node [^\]]*type="CharacterBody2D"/g, in: ['tscn'] },
+    },
+    {
+      id: 'sc-sprite',
+      subject: 'scene',
+      group: 'Speler',
+      label: 'Sprite2D / AnimatedSprite2D',
+      level: 'basis',
+      detect: {
+        type: 'regex',
+        pattern: /\[node [^\]]*type="(?:Sprite2D|AnimatedSprite2D)"/g,
+        in: ['tscn'],
+      },
+    },
+    {
+      id: 'sc-collisionshape2d',
+      subject: 'scene',
+      group: 'Speler',
+      label: 'CollisionShape2D',
+      level: 'basis',
+      detect: { type: 'regex', pattern: /\[node [^\]]*type="CollisionShape2D"/g, in: ['tscn'] },
+    },
+    {
+      id: 'sc-camera2d',
+      subject: 'scene',
+      group: 'Speler',
+      label: 'Camera2D',
+      level: 'basis',
+      detect: { type: 'regex', pattern: /\[node [^\]]*type="Camera2D"/g, in: ['tscn'] },
+    },
+    {
+      id: 'sc-tilemaplayer',
+      subject: 'scene',
+      group: 'Wereld',
+      label: 'TileMapLayer',
+      level: 'basis',
+      detect: { type: 'regex', pattern: /\[node [^\]]*type="TileMapLayer"/g, in: ['tscn'] },
+    },
+    {
+      id: 'sc-area2d',
+      subject: 'scene',
+      group: 'Gameplay',
+      label: 'Area2D',
+      level: 'gevorderd',
+      detect: { type: 'regex', pattern: /\[node [^\]]*type="Area2D"/g, in: ['tscn'] },
+    },
+    {
+      id: 'sc-timer',
+      subject: 'scene',
+      group: 'Gameplay',
+      label: 'Timer',
+      level: 'gevorderd',
+      detect: { type: 'regex', pattern: /\[node [^\]]*type="Timer"/g, in: ['tscn'] },
+    },
+    {
+      id: 'sc-canvaslayer',
+      subject: 'scene',
+      group: 'UI',
+      label: 'CanvasLayer',
+      level: 'gevorderd',
+      detect: { type: 'regex', pattern: /\[node [^\]]*type="CanvasLayer"/g, in: ['tscn'] },
+    },
+    {
+      id: 'sc-label',
+      subject: 'scene',
+      group: 'UI',
+      label: 'Label',
+      level: 'gevorderd',
+      detect: { type: 'regex', pattern: /\[node [^\]]*type="Label"/g, in: ['tscn'] },
+    },
+    {
+      id: 'sc-button',
+      subject: 'scene',
+      group: 'UI',
+      label: 'Button',
+      level: 'gevorderd',
+      detect: { type: 'regex', pattern: /\[node [^\]]*type="Button"/g, in: ['tscn'] },
     },
   ],
 };

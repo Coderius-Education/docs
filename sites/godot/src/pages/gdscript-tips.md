@@ -4,7 +4,7 @@ Handige tips en trucs voor GDScript. Klik op een onderwerp om het open te klappe
 
 ---
 
-## Variabelen
+## Variabelen \{#variabelen}
 
 <details>
 <summary>Wat is het verschil tussen <code>var</code> en <code>const</code>?</summary>
@@ -57,7 +57,7 @@ func _physics_process(delta): # 4. Functies
 
 ---
 
-## Functies
+## Functies \{#functies}
 
 <details>
 <summary>Wat is <code>_physics_process(delta)</code>?</summary>
@@ -107,9 +107,92 @@ var resultaat = bereken_schade(10, 3)  # resultaat = 7
 
 </details>
 
+<details>
+<summary>Hoe geef ik een waarde terug uit een functie? (<code>return</code>)</summary>
+
+Met `return` stuur je een antwoord terug naar de plek waar de functie werd aangeroepen. Achter de pijl zet je wat voor soort waarde dat is.
+
+```gdscript
+func is_game_over() -> bool:
+    return levens <= 0
+
+func aantal_muntjes() -> int:
+    return get_tree().get_nodes_in_group("muntjes").size()
+```
+
+Gebruiken doe je zo:
+
+```gdscript
+if Global.is_game_over():
+    print("Einde")
+```
+
+`-> void` betekent dat een functie niets teruggeeft. Dat is hetzelfde als een Python-functie zonder `return`, die daar `None` oplevert.
+
+</details>
+
 ---
 
-## If-statements
+## Lussen en lijsten \{#lussen}
+
+<details>
+<summary>Hoe herhaal ik iets een vast aantal keer? (<code>for</code> + <code>range</code>)</summary>
+
+Precies zoals in Python:
+
+```gdscript
+for i in range(3):
+    print(i)
+```
+
+Dit print `0`, `1`, `2`. De stopwaarde zelf doet niet mee: `range(3)` stopt vóór de 3.
+
+</details>
+
+<details>
+<summary>Hoe loop ik door een lijst?</summary>
+
+```gdscript
+var kleuren = ["rood", "groen", "blauw"]
+
+for kleur in kleuren:
+    print(kleur)
+```
+
+De lusvariabele (`kleur`) krijgt elke ronde het volgende item. In een game gebruik je dit vaak op een group:
+
+```gdscript
+for vijand in get_tree().get_nodes_in_group("vijanden"):
+    vijand.stop()
+```
+
+</details>
+
+<details>
+<summary>Lijsten: van Python naar GDScript</summary>
+
+De vorm is gelijk — blokhaken, index vanaf 0 — maar een paar namen verschillen:
+
+| Python | GDScript | Let op |
+|---|---|---|
+| `len(lijst)` | `lijst.size()` | |
+| `lijst.append(x)` | `lijst.append(x)` | gelijk |
+| `lijst.remove(x)` | `lijst.erase(x)` | |
+| `sorted(lijst)` | `lijst.sort()` | GDScript sorteert de lijst **zelf**; Python geeft een kopie terug |
+
+```gdscript
+var scores = [3, 1, 2]
+scores.append(5)
+scores.sort()
+print(scores.size())   # 4
+print(scores[0])       # 1
+```
+
+</details>
+
+---
+
+## If-statements \{#if-statements}
 
 <details>
 <summary>Hoe werkt een if-statement?</summary>
@@ -162,7 +245,7 @@ if not is_on_floor():
 
 ---
 
-## Input
+## Input \{#input}
 
 <details>
 <summary>Wat is het verschil tussen <code>is_action_pressed</code> en <code>is_action_just_pressed</code>?</summary>
@@ -206,7 +289,7 @@ velocity.x = direction * SPEED
 
 ---
 
-## Nodes & Scenes
+## Nodes & Scenes \{#nodes-scenes}
 
 <details>
 <summary>Wat betekent het <code>$</code>-teken?</summary>
@@ -221,7 +304,7 @@ $AnimatedSprite2D.flip_h       # Leest een eigenschap van die node
 
 `$AnimatedSprite2D` is hetzelfde als `get_node("AnimatedSprite2D")`, maar korter.
 
-**Let op:** De naam moet **exact** overeenkomen met de naam in de scene tree (hoofdlettergevoelig.).
+**Let op:** De naam moet **exact** overeenkomen met de naam in de scene tree (hoofdlettergevoelig).
 
 </details>
 
@@ -239,9 +322,29 @@ De node wordt niet direct verwijderd, maar aan het einde van het huidige frame. 
 
 </details>
 
+<details>
+<summary>Hoe spawn ik een scène in code? (<code>preload</code> + <code>instantiate</code>)</summary>
+
+Drie stappen: scène-bestand inladen, een exemplaar maken, in de Scene Tree hangen.
+
+```gdscript
+const MUNTJE = preload("res://muntje.tscn")
+
+func spawn_muntje(x: float, y: float) -> void:
+    var nieuw_muntje = MUNTJE.instantiate()
+    nieuw_muntje.position = Vector2(x, y)
+    add_child(nieuw_muntje)
+```
+
+- `preload()` — laadt het bestand één keer, bij het starten van je spel
+- `instantiate()` — maakt een nieuw exemplaar van die bouwtekening
+- `add_child()` — hangt het exemplaar in de Scene Tree; zonder deze regel zie je niets
+
+</details>
+
 ---
 
-## Signals
+## Signals \{#signals}
 
 <details>
 <summary>Hoe koppel ik een signal via de editor?</summary>
@@ -277,7 +380,9 @@ func _on_body_entered(body: Node2D) -> void:
 
 ---
 
-## Debuggen
+## Debuggen \{#debuggen}
+
+De methode om zélf een onbekende fout te vinden staat in [Fouten zoeken](/docs/fouten-zoeken). Hieronder alleen de losse hulpmiddelen.
 
 <details>
 <summary>Hoe debug ik mijn code?</summary>
@@ -298,22 +403,19 @@ De output verschijnt in het **Output** paneel onderaan in Godot.
 <details>
 <summary>Hoe lees ik een foutmelding?</summary>
 
-Een foutmelding in Godot ziet er zo uit:
-
 ```
 res://scripts/player.gd:15 - Invalid call. Nonexistent function 'plya' in base 'AnimatedSprite2D'.
 ```
 
-Lees het zo:
-- **`res://scripts/player.gd`** → Het bestand waar de fout zit
-- **`:15`** → Op regel 15
-- **De rest** → Wat er mis is (in dit geval: de functie `plya` bestaat niet — het moet `play` zijn)
+Bestand → regelnummer → wat er mis is. Dubbelklik op de melding en Godot springt naar die regel.
+
+Uitgebreider, met de veelvoorkomende meldingen erbij: [Een foutmelding lezen](/docs/fouten-zoeken#foutmelding-lezen).
 
 </details>
 
 ---
 
-## Veelgebruikte patronen
+## Veelgebruikte patronen \{#patronen}
 
 <details>
 <summary>Compleet movement script</summary>
@@ -353,6 +455,27 @@ func _on_body_entered(body: Node2D) -> void:
     print("Score: ", Global.score)
     queue_free()
 ```
+
+</details>
+
+<details>
+<summary>Compleet spawner script (level met Timer)</summary>
+
+```gdscript
+extends Node2D
+
+const MUNTJE = preload("res://muntje.tscn")
+
+func spawn_muntje(x: float, y: float) -> void:
+    var nieuw_muntje = MUNTJE.instantiate()
+    nieuw_muntje.position = Vector2(x, y)
+    add_child(nieuw_muntje)
+
+func _on_timer_timeout() -> void:
+    spawn_muntje(randf_range(50, 1000), 100)
+```
+
+Vereist een `Timer`-node in de scène met het `timeout`-signal gekoppeld.
 
 </details>
 

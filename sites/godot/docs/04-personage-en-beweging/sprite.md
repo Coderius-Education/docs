@@ -20,14 +20,14 @@ Elke node doet één ding goed. `CharacterBody2D` regelt beweging en physics; `S
 
 </details>
 
-## Stap 1: Voeg een `CharacterBody2D` toe
+## Stap 1: Voeg een `CharacterBody2D` toe \{#characterbody2d}
 
 `CharacterBody2D` is de basis van een speelbaar 2D-karakter. Hij ondersteunt beweging, zwaartekracht en botsingen met andere physics-objecten (zoals je tegels).
 
 1. Klik met rechts in de Scene Tree → **Add Child Node**.
 2. Zoek naar `CharacterBody2D` en voeg hem toe.
 
-## Stap 2: Voeg een `Sprite2D` toe als child
+## Stap 2: Voeg een `Sprite2D` toe als child \{#sprite2d}
 
 Een `Sprite2D` is een platte 2D-afbeelding. We hangen hem onder de `CharacterBody2D` zodat hij mee beweegt.
 
@@ -35,7 +35,7 @@ Een `Sprite2D` is een platte 2D-afbeelding. We hangen hem onder de `CharacterBod
 2. Voeg een `Sprite2D` toe.
 3. Selecteer de `Sprite2D` en sleep je karakter-afbeelding naar het **Texture**-veld in de Inspector.
 
-## Stap 3: Voeg een `CollisionShape2D` toe als child
+## Stap 3: Voeg een `CollisionShape2D` toe als child \{#collisionshape2d}
 
 Zonder collision-vorm weet Godot niet waar je karakter eindigt en zakt hij door alles heen.
 
@@ -53,6 +53,8 @@ CharacterBody2D
 ```
 
 In de volgende les voegen we beweging toe.
+
+Deze drie nodes vormen samen je speler; hun instellingen staan in de [Nodes cheatsheet](/cheatsheet#hoofdpersoon).
 
 ## Er gaat iets mis
 

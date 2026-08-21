@@ -6,3 +6,11 @@ Algemene schrijfstijl, didactiek en schrijfskills staan in `../CLAUDE.md` (en de
 - Bij GDScript-voorbeelden: gebruik dezelfde conventies als bij Python (variabelnamen NL, keywords/methoden EN).
 - Bij scene-/node-uitleg: noem expliciet welk node-type je toevoegt en waar in de tree het komt.
 - Voor de "jouw project"-pagina's: verwijs naar de cheatsheet i.p.v. voorbeelden te dupliceren.
+
+## Blokken "Er gaat iets mis"
+
+Naast **Oorzaak:** en **Oplossing:** (zie de schrijfgids §8) krijgt een blok een derde element zodra de fout zich zonder foutmelding voordoet:
+
+- **Zelf vinden:** — welke concrete meting de leerling had kunnen doen om hier zelf te komen, meestal één `print()` op een genoemde plek, met erbij wat elke uitkomst betekent.
+
+Dit hoort alleen bij symptoomblokken ("mijn karakter valt niet"), niet bij blokken die met een letterlijke foutmelding beginnen — daar is de melding zelf al de aanwijzing. De methode erachter staat in [Fouten zoeken](docs/05-bewegingsscript/fouten-zoeken.md); verwijs daarheen in plaats van de uitleg te herhalen.

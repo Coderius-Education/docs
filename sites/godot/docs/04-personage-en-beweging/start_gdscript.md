@@ -3,79 +3,92 @@ sidebar_position: 3
 slug: /start_gdscript
 ---
 
-# Start met GDScript
+# Je eerste regels code
 
-Je hebt nu een werkende scène met een bewegend karakter. Maar om je spel echt te laten doen wat *jij* wilt, moet je leren programmeren in **GDScript** — de programmeertaal van Godot. In deze les leer je de bouwstenen.
+Je karakter staat op het scherm en er hangt een script aan met één regel erin. Voordat je aan het bewegingsscript begint, gebruik je dat script één keer om te zien dat je code echt draait.
 
 <GodotVersie />
 
-## Waarom GDScript?
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/basis/jij-als-variabele', label: 'Variabelen'},
+    {site: 'python', to: '/docs/basis/jouw-naam-op-het-scherm', label: 'Print'},
+    {site: 'python', to: '/docs/functies/functies', label: 'Functies'},
+  ]}
+/>
 
-Het script dat Godot in de vorige les voor je genereerde, is ook gewoon GDScript. In de komende lessen ga je dat script begrijpen en uitbreiden.
+## Stap 1: Een functie die bij de start draait \{#var}
 
-## Wat ga je leren?
-
-Dit zijn de GDScript-concepten die je in dit project nodig hebt:
-
-| Concept       | Waarvoor gebruik je het?                                                    |
-| :-----------: | :-------------------------------------------------------------------------- |
-| `var`         | Informatie opslaan (bijvoorbeeld snelheid, score)                           |
-| `const`       | Vaste waarden die niet veranderen (bijvoorbeeld `SPEED`)                    |
-| `if` / `else` | Beslissingen nemen ("als op de grond, dan springen")                        |
-| `elif`        | Meerdere voorwaarden na elkaar testen                                       |
-| `func`        | Code groeperen in een herbruikbare functie                                  |
-| `print()`     | Waarden bekijken tijdens het testen                                         |
-
-## Stap 1: Doe de online tutorial
-
-We volgen [deze interactieve tutorial van GDQuest](https://gdquest.github.io/learn-gdscript/) om de basis te leren. Je werkt direct in je browser — niets te installeren.
-
-Maak de volgende lessen — de afbeelding hieronder laat zien welke je nodig hebt:
-
-![GDQuest learn-gdscript lessenoverzicht met de relevante lessen gemarkeerd](../images/gdscript.png)
-
-:::tip
-Je hoeft niet alle lessen te maken. Focus op:
-
-- **Variabelen** (`var`)
-- **Functies** (`func`)
-- **Voorwaarden** (`if` / `elif` / `else`)
-- **Vergelijkingsoperatoren** (`==`, `>`, `<`)
-- **`print()`**
-
-Die dekken precies wat je in dit project gebruikt.
-:::
-
-## Stap 2: Test het in je eigen project
-
-De GDQuest tutorial is handig om de syntax te leren, maar het wordt pas écht leuk als je het in je eigen game ziet werken.
-
-1. Open in Godot het script van je karakter (`CharacterBody2D`).
-2. Voeg de `_ready()`-functie toe. Deze functie wordt één keer uitgevoerd zodra het spel start.
-3. Maak binnen die functie een variabele aan en gebruik `print()`:
+Open in Godot het script van je `CharacterBody2D`. Er staat één regel in: `extends CharacterBody2D`. Typ daaronder, met een lege regel ertussen:
 
 ```gdscript
 func _ready() -> void:
     var levens = 3
-    print("Het spel is gestart!")
+    print("Het spel is gestart.")
     print("Ik heb ", levens, " levens.")
 ```
 
-4. Druk op `F5` om je spel te starten.
-5. Kijk onderin je Godot-scherm op het tabblad **Uitvoer** (of **Output**). Je tekst verschijnt daar:
+**`_ready()`** is een functie die Godot zelf aanroept, één keer, zodra je scène start. Je hoeft hem dus nergens aan te roepen — anders dan in Python, waar jij `groet()` schrijft om `groet()` te laten gebeuren.
 
-![Uitvoer-paneel met print()-output](../images/is_on_floor.png)
+De rest ken je uit Python: `var levens = 3` maakt een variabele, en `print()` zet iets op het scherm. In GDScript schrijf je `var` ervoor; verder werkt het hetzelfde.
 
-We gaan dit Uitvoer-tabblad later vaak gebruiken om foutjes op te sporen.
+## Stap 2: Kijk waar je output landt
 
-## Check je begrip: `_ready()` versus `_process()`
+1. Druk op `F5` om je spel te starten.
+2. Kijk onderin je Godot-scherm op het tabblad **Uitvoer** (Engels: **Output**).
+
+Daar staan nu twee regels:
+
+```
+Het spel is gestart.
+Ik heb 3 levens.
+```
+
+Dit tabblad wordt je belangrijkste gereedschap. Telkens als je niet zeker weet of een stuk code draait, zet je er een `print()` in en kijk je hier. In [Fouten zoeken](../05-bewegingsscript/fouten-zoeken.md) staat hoe je daar systematisch mee werkt.
+
+Haal deze `_ready()`-functie daarna weer weg. In het volgende hoofdstuk begin je met een schone lei aan het bewegingsscript.
+
+## Opdracht 4.3.a: laat Godot rekenen
+
+Breid je `_ready()` uit zodat Uitvoer drie regels toont:
+
+1. Een begroeting met je eigen naam erin.
+2. Het aantal levens, uit een variabele.
+3. Een regel die je punten per level laat zien, uitgerekend door Godot zelf — dus niet het antwoord ingetypt, maar een som in je code.
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Rekenen doe je in GDScript net als in Python: `10 * 3` mag zo tussen de haakjes van `print()`. Combineer tekst en een getal met komma's: `print("Punten: ", 10 * 3)`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```gdscript
+extends CharacterBody2D
+
+func _ready() -> void:
+    var naam = "Sam"
+    var levens = 3
+    print("Hallo ", naam)
+    print("Ik heb ", levens, " levens.")
+    print("Punten per level: ", 10 * 3)
+```
+
+In Uitvoer staat `Punten per level: 30`. Dat getal staat nergens in je script: Godot rekent het uit terwijl je spel draait.
+
+</details>
+
+## Check je begrip: `_ready()` versus `_process()` \{#func-ready}
 
 **Wat denk je dat er gebeurt als je `_ready()` vervangt door `_process(delta)`?**
 
 <details>
 <summary>Antwoord</summary>
 
-`_ready()` draait één keer bij start. `_process(delta)` draait **elke frame** (~60 keer per seconde). Je Uitvoer-tabblad raakt dan in een paar seconden vol met dezelfde regel. Handig om bewegende waardes te volgen, niet handig voor een eenmalige startmelding.
+`_ready()` draait één keer bij start. `_process(delta)` draait **elke frame** (~60 keer per seconde). Je Uitvoer-tabblad raakt dan in een paar seconden vol met dezelfde twee regels. Handig om bewegende waardes te volgen, niet handig voor een eenmalige startmelding.
 
 </details>
 
@@ -105,8 +118,10 @@ We gaan dit Uitvoer-tabblad later vaak gebruiken om foutjes op te sporen.
 2. Klik onderin op het tabblad **Uitvoer** (Engels: **Output**) — soms staat het verstopt naast **Debugger** of **Audio**.
 3. Geen `F5`-knop? Stel eerst een Main Scene in via **Project → Project Settings → Run → Main Scene** ([zie Je eerste 2D-scène](../02-editor-leren-kennen/scene.md)).
 
+**Zelf vinden:** zet `print("hier")` als allereerste regel in de functie. Blijft Uitvoer ook dan leeg, dan draait je script niet en ligt het aan de scène, niet aan je code.
+
 </details>
 
 ## Wat daarna?
 
-In de volgende les ([Het bewegingsscript begrijpen](./basis_movement_begrijpen/skelet.md)) ga je het bewegingsscript regel voor regel ontleden en aanpassen. Je hoeft de tutorial niet perfect te kennen — als je de bovenstaande concepten globaal beheerst, kom je een heel eind.
+In [Het bewegingsscript bouwen](../05-bewegingsscript/skelet.md) schrijf je in zeven korte lessen het script waarmee je karakter valt, loopt en springt.

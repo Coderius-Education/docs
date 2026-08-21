@@ -3,187 +3,195 @@ sidebar_position: 90
 slug: /exporteren
 ---
 
-# Je game exporteren naar een .exe
+# Je projectmap terugvinden
 
-Tot nu toe heb je je game alleen kunnen spelen vanuit de Godot-editor zelf. Tijd om hem **buiten Godot om** te draaien en bij je docent in te leveren. Je levert in totaal **twee bestanden** in:
-
-1. Een **`.exe`** waarmee je docent het spel direct kan spelen, zonder dat hij Godot hoeft te installeren. Dit maak je in Stap 0 tot en met 6.
-2. Een **`.zip`** met je volledige projectmap (alle scenes en GDScript-bestanden). Daarmee kan je docent je broncode bekijken en beoordelen. Dit doe je in Stap 7.
+Je project is een gewone map op je computer. In Godot zie je hem als `res://`, maar op je schijf heeft hij een echte plek, met een pad als `C:\Users\sam\Documents\mijn-eerste-game`. Die plek moet je kunnen terugvinden: om je werk in te leveren, mee te nemen op een USB-stick, of thuis verder te werken.
 
 <GodotVersie />
 
-## Voorspel: wat heb je nodig om een .exe te maken?
+## Voorspel: waarom is de map die je ziet niet de map die je nodig hebt?
 
-**Welke onderdelen denk je dat Godot nodig heeft om jouw project om te bouwen tot één enkel `.exe`-bestand?**
+Je opent je projectmap vanuit Godot en ziet meteen `project.godot`, je scenes en je scripts. Toch is dát niet wat je meeneemt of inlevert. **Waarom niet?**
 
 <details>
 <summary>Antwoord</summary>
 
-Twee dingen:
+Omdat je **ín** de map staat, en niet ernaar kijkt. Je ziet de inhoud: twintig losse bestanden. Wat je nodig hebt is de map **zelf**, als één ding dat je kunt kopiëren of verslepen.
 
-1. **Export Templates** — kant-en-klare Godot-uitvoerbare bestanden voor Windows, die Godot combineert met jouw project. Eenmalig downloaden, ~500 MB.
-2. **Een Windows-export-preset** — instellingen die Godot vertelt *hoe* hij moet exporteren (welk platform, waar naartoe, met welke naam).
+Vergelijk het met een la vol spullen. Je kunt de spullen er stuk voor stuk uithalen, of je pakt de hele la. Voor meenemen wil je de la.
 
-Daarnaast moet je **Main Scene** ingesteld zijn — anders weet de `.exe` niet welke scène hij moet openen als je hem dubbelklikt.
+Om die map als één pictogram te zien, ga je één niveau omhoog. Dat doe je in Stap 3.
 
 </details>
 
-## Stap 0: Check dat je Main Scene is ingesteld
+## Stap 1: Open je projectmap vanuit Godot
 
-1. Klik bovenin op **Project → Project Settings**.
-2. Zoek in het linkermenu naar **Run** (onder *General*).
-3. Kijk bij **Main Scene**.
+De snelste route loopt via de editor, precies zoals in [Bestanden downloaden](./02-editor-leren-kennen/bestanden-downloaden.md):
 
-Wijst die naar je level- of menu-scène? Top, ga door naar Stap 1.
+1. Klik met rechts op `res://` in het **FileSystem**-paneel (linksonder).
+2. Kies **Open in File Manager** (heet **Openen in Bestandsbeheer** als je editor Nederlands is).
 
-Staat er niets? Klik op het mapje-icoontje rechts en kies je startscène (vaak `world.tscn`, `level1.tscn` of `menu.tscn`).
+De Verkenner opent in je projectmap. Je ziet `project.godot`, je `.tscn`-bestanden, je scripts en je `assets`-map.
 
-:::tip
-Heb je een [startmenu](/docs/start_menu) gemaakt? Zet `menu.tscn` als Main Scene — dan opent het spel netjes met het menu.
-:::
+## Stap 2: Lees het volledige pad af
 
-## Stap 1: Download de Export Templates (eenmalig)
+Bovenin de Verkenner staat de **adresbalk**: een rij mapnamen met pijltjes ertussen. Dat is het pad naar waar je nu staat.
 
-1. Klik bovenin op **Editor → Manage Export Templates**.
-2. Het venster opent in offline-modus. Klik op **Go Online** om Godot toestemming te geven om de templates van internet te downloaden. (Dit hoef je maar één keer per project te doen.)
-3. Klik op **Download and Install**.
-4. Wacht — het downloadt ongeveer 500 MB en kan een paar minuten duren.
+Klik één keer op de lege ruimte rechts in die balk. De mapnamen veranderen in één regel tekst, bijvoorbeeld:
 
-:::tip
-Templates passen bij **één specifieke Godot-versie**. Update je later naar Godot 4.8? Dan moet je opnieuw de bijbehorende templates downloaden.
-:::
+```
+C:\Users\sam\Documents\mijn-eerste-game
+```
 
-## Stap 2: Open het Export-dialoog
+Van links naar rechts lees je dat zo: schijf `C:`, de map van gebruiker `sam`, daarbinnen `Documents`, en daarin je projectmap `mijn-eerste-game`.
 
-1. Klik bovenin op **Project → Export...**
-2. Een nieuw venster opent. De lijst links is leeg — dat is normaal, we voegen zo een preset toe.
+Die regel kun je selecteren en kopiëren met `Ctrl + C`. Handig om ergens te bewaren, want dit is het antwoord op "waar staat mijn project?".
 
-## Stap 3: Voeg een 'Windows Desktop'-preset toe
+## Stap 3: Ga één niveau omhoog
 
-1. Klik linksboven op de knop **Add...**
-2. Kies **Windows Desktop** uit het dropdown-menu.
-3. Rechts verschijnt nu een paneel met instellingen voor deze preset.
+Nu wil je de projectmap als één pictogram zien, in plaats van de inhoud ervan. Twee manieren:
 
-Je kunt veel laten staan op de standaardwaarde. Voor de naam van de preset zie je iets als "Windows Desktop" — dat is prima.
+- Klik linksboven in de werkbalk op de **pijl-omhoog (↑)**.
+- Klik in de adresbalk op de mapnaam die vóór je projectmap staat (in het voorbeeld hierboven: `Documents`).
 
-## Stap 4: (Aanbevolen) Embed PCK aanvinken
-
-Standaard maakt Godot **twee bestanden**: een `.exe` en een `.pck`. Beiden zijn nodig om het spel te starten. Handiger is om ze samen te voegen tot één enkel `.exe`.
-
-1. Klap in het preset-paneel **Binary Format** open.
-2. Vink **Embed PCK** aan.
-
-Nu krijg je straks één bestand dat je kunt versturen.
-
-## Stap 5: Exporteren
-
-1. Klik onderaan het export-venster op **Export Project...**
-2. Kies een **lege map** om naartoe te exporteren (maak er bijvoorbeeld eentje aan met de naam `mijn-game-exe`).
-3. Geef het bestand een naam, bijvoorbeeld `mijn-game.exe`.
-4. **Belangrijk:** vink **Export With Debug** UIT — die optie is voor jezelf tijdens ontwikkeling, niet voor de echte versie.
-5. Klik op **Save**.
-
-Godot verwerkt nu je project. Bij grote spellen kan dat een halve minuut duren.
-
-## Stap 6: Test je .exe
-
-1. Open de map waar je naartoe geëxporteerd hebt.
-2. Dubbelklik op `mijn-game.exe`.
-
-Je spel opent — buiten Godot om, op zichzelf. Het eerste inlever-bestand is klaar.
-
-## Stap 7: Je project als .zip inpakken
-
-De `.exe` laat het spel draaien, maar je docent kan er niet *in* kijken. Voor de broncode (je scenes en scripts) lever je daarnaast een `.zip` van je hele projectmap in.
-
-1. Open in Godot het **FileSystem**-paneel (linksonder).
-2. Rechtermuisknop op `res://` (de bovenste regel — dat is je projectmap).
-3. Kies **Open in File Manager**.
-4. De Windows-bestandsverkenner (Explorer) opent. Je ziet nu een lijst met alle losse bestanden uit je project: `project.godot`, `world.tscn`, je scripts, je `assets`-map, een verborgen `.godot`-map enzovoort. Je staat dus **ín** de projectmap, niet erbóven.
-
-   Dat is een probleem als je nu zou zippen: Windows pakt dan al die losse bestanden in een zip zonder de projectmap als "envelop". Pakt je docent zo'n zip uit, dan vallen alle bestanden los in de map waarin hij uitpakt — geen herkenbaar projectmapje meer.
-
-   **Daarom: ga één niveau omhoog.** Drie manieren die allemaal werken:
-
-   - Klik linksboven in Explorer op de **pijl-omhoog (↑)** in de werkbalk, naast vooruit/achteruit.
-   - Druk op **Backspace** op je toetsenbord.
-   - Klik bovenin in de **adresbalk** op de mapnaam die vóór je projectmap staat (bijvoorbeeld `Documents`).
-
-   Je ziet nu je projectmap als één pictogram tussen eventuele andere mappen.
-
-5. Rechtermuisknop **op de projectmap zelf** (niet op de witte ruimte ernaast.) → **Verzenden naar → Gecomprimeerde (zipped) map**.
-6. Naast je projectmap verschijnt `mijn-project.zip` (Windows neemt de naam van je projectmap over).
+Je ziet nu je projectmap tussen de andere mappen staan. Dít is het pictogram dat je sleept, kopieert of inlevert.
 
 :::tip
-Wil je controleren of je zip klopt? Pak hem ergens anders uit (bijvoorbeeld op je bureaublad) en open de uitgepakte `project.godot` opnieuw in Godot. Werkt dat, dan zit alles erin en kun je de zip met een gerust hart inleveren.
+Op een Mac werkt het vergelijkbaar: rechtermuisknop op de mapnaam bovenin het Finder-venster toont de mappen erboven, en `Command + ↑` gaat één niveau omhoog.
 :::
 
-## Opdracht: lever je game in
+## Wat zit er in je projectmap?
 
-Lever bij je docent **beide** bestanden in:
+| Bestand of map | Wat is het? |
+| :--- | :--- |
+| `project.godot` | Maakt de map tot een Godot-project. Zonder dit bestand herkent Godot je map niet. |
+| `*.tscn` | Je scenes: level, speler, muntje, menu. |
+| `*.gd` | Je scripts. |
+| `assets/` | Je afbeeldingen en geluiden. |
+| `.godot/` | Werkmap van Godot zelf. Die hoef je niet te begrijpen; Godot maakt hem opnieuw aan als hij ontbreekt. |
 
-- `mijn-game.exe` (uit Stap 5) — om mee te spelen.
-- `mijn-project.zip` (uit Stap 7) — om de broncode te bekijken.
+## Opdracht: vind je project terug zonder Godot
+
+Doe deze drie dingen achter elkaar. Daarna kun je je project altijd terugvinden, ook op een computer waar je nog nooit hebt gewerkt.
+
+1. Schrijf het volledige pad van je projectmap op (Stap 2).
+2. Sluit Godot helemaal af.
+3. Open je projectmap opnieuw, nu vanuit de Verkenner, alleen met het pad dat je hebt opgeschreven.
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-- Zet beide bestanden in dezelfde map en lever die map in via het systeem dat jouw docent gebruikt (Magister, Teams, Google Classroom, een gedeelde map…).
-- Naamgeving helpt: gebruik je eigen naam in beide bestandsnamen, bijvoorbeeld `marten-game.exe` en `marten-project.zip`.
-- Tip voor de docent: als de `.exe` op zijn pc niet wil starten, kan hij altijd de `.zip` uitpakken en het project in Godot openen.
+Je hoeft niet door alle mappen te klikken. Plak je pad in de adresbalk van de Verkenner en druk op Enter — je springt er direct naartoe.
 
 </details>
 
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
-Heb je beide bestanden ingeleverd en kan je docent zowel het spel starten als je broncode bekijken? Dan is je inlevering compleet.
+Je bent goed als je in een map staat waar `project.godot` in zit.
 
-Eén waarschuwing die je docent kan zien bij het openen van de `.exe`: "Windows protected your PC". Dat is omdat je `.exe` niet officieel ondertekend is — niet erg voor een schoolproject. Klik op **More info** → **Run anyway**.
+Wil je vanaf hier weer verder werken: start Godot, en de Project Manager toont je project in de lijst. Staat het er niet bij (bijvoorbeeld op een andere computer), klik dan op **Import** en kies het `project.godot`-bestand uit je map.
 
 </details>
 
 ## Er gaat iets mis
 
 <details>
-<summary>"No export template found" / rode waarschuwing in het export-venster</summary>
+<summary>Ik weet niet meer waar mijn project staat</summary>
 
-**Oorzaak:** De Export Templates zijn nog niet geïnstalleerd of passen niet bij je Godot-versie.
+**Oorzaak:** Je bent vergeten welke map je koos toen je het project aanmaakte.
 
-**Oplossing:**
-
-1. Ga naar **Editor → Manage Export Templates**.
-2. Klik op **Download and Install**.
-3. Wacht tot de download klaar is en probeer opnieuw.
+**Oplossing:** Start Godot zonder een project te openen. In de **Project Manager** staat onder de naam van elk project het volledige pad. Van daaruit kun je met rechts klikken en **Show in File Manager** kiezen.
 
 </details>
 
 <details>
-<summary>De .exe start, maar het scherm blijft zwart</summary>
+<summary>Ik zie "Open in File Manager" niet in het rechtsklikmenu</summary>
 
-**Oorzaak:** Er is geen **Main Scene** ingesteld, dus Godot weet niet welke scène hij moet openen.
+**Oorzaak:** Je hebt met rechts op een bestand geklikt in plaats van op `res://`, of je editor staat in het Nederlands.
 
-**Oplossing:** **Project → Project Settings → Run → Main Scene**. Kies je startscène (vaak `world.tscn` of `menu.tscn`) en exporteer opnieuw.
-
-</details>
-
-<details>
-<summary>Windows / antivirus blokkeert mijn .exe</summary>
-
-**Oorzaak:** Windows en sommige virusscanners blokkeren standaard onbekende `.exe`-bestanden ("Windows protected your PC").
-
-**Oplossing:** Klik op **More info** → **Run anyway**. Voor Microsoft Defender kun je je map als veilig toevoegen. Voor echte distributie naar het grote publiek heb je een code-signing-certificaat nodig — dat valt buiten deze cursus.
+**Oplossing:** Klik met rechts op de bovenste regel van het FileSystem-paneel, waar `res://` staat. In een Nederlandse editor heet de optie **Openen in Bestandsbeheer**.
 
 </details>
 
 <details>
-<summary>Mijn .exe werkt op mijn pc maar niet bij een vriend</summary>
+<summary>Ik zie de <code>.godot</code>-map niet in de Verkenner</summary>
 
-**Oorzaak:** Vaakste oorzaak: **Embed PCK** stond uit en je vergat het `.pck`-bestand mee te sturen. Alternatief: je hebt absolute paden in je code (`C:\Users\jouwnaam\...`) die op een andere pc niet bestaan.
+**Oorzaak:** Mappen die met een punt beginnen zijn verborgen. Windows toont ze standaard niet.
 
-**Oplossing:**
+**Oplossing:** Niets doen. Je hebt die map niet nodig, en Godot maakt hem opnieuw aan. Wil je hem tóch zien: zet in de Verkenner onder **Beeld** de optie **Verborgen items** aan.
 
-1. Open opnieuw **Project → Export...** en vink **Binary Format → Embed PCK** aan. Exporteer opnieuw.
-2. Controleer in je scripts dat alle paden met `res://` beginnen — nooit met een schijfletter zoals `C:\`.
+</details>
+
+## Optioneel: je game exporteren naar een `.exe`
+
+Wil je je spel laten spelen door iemand die Godot niet heeft — een klasgenoot, je ouders, of tijdens een presentatie? Dan bouw je je project om tot één `.exe`-bestand dat op elke Windows-computer start.
+
+Dit is niet nodig om je werk in te leveren of te bewaren; daarvoor volstaat je projectmap. Zie het als de laatste stap wanneer je game af is.
+
+<details>
+<summary>Klik hier voor de stappen.</summary>
+
+**Stap 1: Check je Main Scene**
+
+Ga naar **Project → Project Settings**, zoek `main scene` in de zoekbalk en controleer dat er een scène staat (vaak `menu.tscn` of `level1.tscn`). Staat er niets, dan opent je `.exe` straks een zwart scherm.
+
+**Stap 2: Download de Export Templates (eenmalig)**
+
+1. Klik op **Editor → Manage Export Templates**.
+2. Klik op **Go Online**. Godot haalt de templates dan op bij een mirror en installeert ze; dat duurt even.
+3. Wacht: het is ongeveer 500 MB.
+
+De templates horen bij één Godot-versie. Update je later naar een nieuwere versie, dan download je ze opnieuw.
+
+**Stap 3: Maak een Windows-preset**
+
+1. Klik op **Project → Export...**
+2. Klik linksboven op **Add...** en kies **Windows Desktop**.
+3. Rechts verschijnen de instellingen. Die kun je vrijwel allemaal laten staan.
+
+**Stap 4: Vink Embed PCK aan**
+
+Klap **Binary Format** open en vink **Embed PCK** aan.
+
+Zonder deze optie maakt Godot twee bestanden: een `.exe` én een `.pck`. Ze zijn allebei nodig, dus stuur je alleen de `.exe` door, dan start het spel bij de ander niet. Met Embed PCK zit alles in één bestand.
+
+**Stap 5: Exporteren en testen**
+
+1. Klik onderaan op **Export Project...**
+2. Kies een lege map en geef het bestand een naam, bijvoorbeeld `mijn-game.exe`.
+3. Vink **Export With Debug** uit.
+4. Klik op **Save**, open daarna die map en dubbelklik op je `.exe`.
+
+Je spel start buiten Godot om.
+
+</details>
+
+Loopt het exporteren vast? Dit zijn de drie meest voorkomende meldingen.
+
+<details>
+<summary>"No export template found" / een rode waarschuwing in het export-venster</summary>
+
+**Oorzaak:** De Export Templates zijn niet geïnstalleerd, of ze horen bij een andere Godot-versie dan je nu gebruikt.
+
+**Oplossing:** Ga naar **Editor → Manage Export Templates** en klik op **Go Online**. Wacht tot de download klaar is en exporteer opnieuw.
+
+</details>
+
+<details>
+<summary>De <code>.exe</code> start, maar het scherm blijft zwart</summary>
+
+**Oorzaak:** Er is geen Main Scene ingesteld, dus je spel weet niet welke scène het moet openen.
+
+**Oplossing:** **Project → Project Settings**, zoek `main scene`, kies je startscène en exporteer opnieuw.
+
+</details>
+
+<details>
+<summary>Windows of mijn antivirus blokkeert de <code>.exe</code></summary>
+
+**Oorzaak:** Windows blokkeert `.exe`-bestanden die het niet kent, met de melding "Windows protected your PC". Jouw bestand is niet ondertekend door een bekende maker.
+
+**Oplossing:** Klik op **More info** en daarna op **Run anyway**. Dat geldt ook voor degene aan wie je je spel doorstuurt: die krijgt dezelfde melding en moet hetzelfde doen.
 
 </details>

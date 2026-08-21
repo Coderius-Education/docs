@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3 uid="uid://bcomplsplr"]
+
+[ext_resource type="Script" path="res://scripts/speler.gd" id="1_spl"]
+
+[node name="Speler" type="CharacterBody2D"]
+script = ExtResource("1_spl")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position_smoothing_enabled = true

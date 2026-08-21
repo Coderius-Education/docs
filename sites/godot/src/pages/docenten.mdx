@@ -13,6 +13,8 @@ Een interactieve cursus **2D-gamedevelopment met Godot 4**: je leerlingen bouwen
 
 Veel handelingen zijn UI-acties in de Godot-editor, ondersteund met screenshots. GDScript volgt dezelfde conventies als Python, dus de overstap is klein.
 
+**Je leerlingen schrijven elk script zelf, vanaf een leeg bestand.** Godot kan een kant-en-klaar bewegingsscript invullen; deze cursus doet dat bewust niet. Elke les voegt een paar regels toe, legt het concept erachter uit, en eindigt met een spel dat draait. Deel 3 is de uitzondering: daar komt er niets bij, maar onderzoeken leerlingen wat `delta` doet door het weg te halen. Daarnaast loopt de interactieve cursus [Learn GDScript From Zero](https://gdquest.github.io/learn-gdscript/) van GDQuest mee: bij elke nieuwe regel staat welk lesnummer daar hetzelfde concept los oefent.
+
 ## Technische randvoorwaarden
 
 | Wat | Antwoord |
@@ -28,23 +30,28 @@ Elke les bouwt één stukje game op: je voegt een node of script toe, draait het
 
 Tips en uitwerkingen staan in `<details>`-blokken. Laat je leerlingen eerst zelf proberen.
 
+De begeleiding neemt bewust af naarmate de cursus vordert. In hoofdstuk 1 tot en met 3 staat elke oplossing uitgeschreven; in hoofdstuk 6 en verder krijgen leerlingen code met gaten erin; en [Opdracht 5.7.a](/docs/movement-afsluiter) is de eerste zonder uitgewerkte oplossing. Dat wordt in de les zelf aangekondigd, zodat het niet als een omissie voelt. Wijs leerlingen die vastlopen op [Fouten zoeken](/docs/fouten-zoeken): daar staat de methode om een onbekende fout zelf terug te vinden.
+
+**Tempo:** zelf typen kost meer tijd dan meelezen. Het bewegingsscript is opgeknipt in zeven korte delen die elk één of twee begrippen behandelen; reken op twee lesuren in plaats van één. Heb je die tijd niet, sla dan de opdrachten binnen die delen over — de zeven stappen zelf zijn de kern.
+
 ## Klassikaal gebruik & differentiatie
 
 - **Plenair starten**: doe een nieuwe scene of node samen voor, daarna werken je leerlingen zelfstandig door.
 - **Snelle leerlingen** pakken de "spel-ideeën" en breiden hun game uit.
 - **Langzamere leerlingen** houden zich aan de kern-stappen; uitbreidingen zijn optioneel.
-- **Beoordelen**: laat leerlingen hun game exporteren en presenteren.
+- **Beoordelen**: laat leerlingen hun projectmap inleveren ([Je projectmap terugvinden](/docs/exporteren) leert ze die te vinden) en hun game presenteren. Exporteren naar een `.exe` staat op diezelfde pagina en is optioneel.
 
 ## Leerlijn
 
-De lessen lopen van installatie naar een complete game. Begin bij [Installatie](/docs/installatie); de [Nodes cheatsheet](/cheatsheet) en [GDScript-tips](/gdscript-tips) zijn naslag.
+De lessen lopen van installatie naar een complete game. Begin bij [Installatie](/docs/installatie); de [Nodes cheatsheet](/cheatsheet) en [GDScript-tips](/gdscript-tips) zijn naslag. De cursus verweeft drie leerlijnen (editor-handelingen, nodes en GDScript); de [Conceptenkaart](/conceptenkaart) heeft per leerlijn een kaart die laat zien in welke les een concept wordt uitgelegd en waar het daarna terugkomt.
 
 | Blok | Leerdoel |
 |---|---|
 | Aan de slag | Godot installeren en je project opzetten |
 | Editor leren kennen | Scenes, nodes en de interface |
 | Level bouwen | Een speelbaar level met sprites |
-| Personage & beweging | Input en beweging met GDScript |
+| Je personage | Een speelbaar karakter en je eerste eigen script |
+| Het bewegingsscript bouwen | In zeven delen van een leeg script naar lopen en springen, en fouten leren zoeken |
 | Animaties | Sprites laten bewegen |
 | Signals & score | Gebeurtenissen en een scorebord |
 | Meer levels & menu | Scenes wisselen en een menu |

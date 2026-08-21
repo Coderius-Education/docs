@@ -12,7 +12,8 @@
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
     "typecheck": "tsc",
-    "test": "docusaurus build"
+    "test": "docusaurus build",
+    "godot:extract": "tsx src/godot-tests/schrijf.ts"
   },
   "dependencies": {
     "@coderius/checker": "workspace:*",
@@ -29,6 +30,7 @@
     "@docusaurus/module-type-aliases": "catalog:",
     "@docusaurus/tsconfig": "catalog:",
     "@docusaurus/types": "catalog:",
+    "tsx": "^4.23.12",
     "typescript": "catalog:",
     "vitest": "catalog:"
   }
