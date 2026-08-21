@@ -25,7 +25,7 @@ In deze les doe je beide.
 
 </details>
 
-## Stap 1: Physics Layer aanmaken
+## Stap 1: Physics Layer aanmaken \{#physics-layer}
 
 Voordat je collision kunt verven, moet er een **Physics Layer** bestaan op je TileSet. Zie het als een "kanaal" waarop botsingen worden geregistreerd.
 

@@ -9,7 +9,7 @@ In [Deel 3](./krachten.md) heb je de drie krachten (zwaartekracht, springen, lop
 
 <GodotVersie />
 
-## Blok 4: De afsluiter — `move_and_slide()`
+## Blok 4: De afsluiter — `move_and_slide()` \{#move-and-slide}
 
 ```gdscript
 move_and_slide()

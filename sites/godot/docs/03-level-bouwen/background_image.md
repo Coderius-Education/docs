@@ -13,7 +13,7 @@ Tijd om je lege scène iets minder grijs te maken. In deze les zet je een achter
 Heb je de assets nog niet gedownload? Volg eerst de stappen op [Bestanden downloaden](../02-editor-leren-kennen/bestanden-downloaden.md).
 :::
 
-## Stap 1: Voeg een `TextureRect` toe
+## Stap 1: Voeg een `TextureRect` toe \{#texturerect}
 
 Een `TextureRect` is een node die een afbeelding toont. Voor een achtergrond is dat precies wat je nodig hebt.
 

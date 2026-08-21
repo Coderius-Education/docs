@@ -97,7 +97,7 @@ Dit is precies waarom we `delta` gebruiken: het maakt de snelheid framerate-onaf
 
 </details>
 
-### 3b. Springen
+### 3b. Springen \{#springen}
 
 ```gdscript
 if Input.is_action_just_pressed("ui_accept") and is_on_floor():
@@ -194,7 +194,7 @@ Met `=` *vervang* je de bestaande verticale snelheid volledig: `velocity.y = -40
 
 </details>
 
-### 3c. Horizontaal lopen
+### 3c. Horizontaal lopen \{#if-elif}
 
 ```gdscript
 var direction := Input.get_axis("ui_left", "ui_right")

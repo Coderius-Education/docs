@@ -74,7 +74,7 @@ func _on_body_entered(body: Node2D) -> void:
     pass # hier komt je code
 ```
 
-## Stap 4: Vervang `pass` door de scene-switch
+## Stap 4: Vervang `pass` door de scene-switch \{#change-scene}
 
 ```gdscript
 extends Area2D

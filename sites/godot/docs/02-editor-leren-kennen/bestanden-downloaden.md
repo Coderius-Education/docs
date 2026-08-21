@@ -31,7 +31,7 @@ Op Windows 11 kun je bestanden direct uit een zip slepen zonder eerst uit te pak
 
 Je hebt nu een map met alle afbeeldingen uit het pack.
 
-## Stap 3: Kopieer naar je projectmap
+## Stap 3: Kopieer naar je projectmap \{#projectmap}
 
 Godot ziet alleen bestanden die **in je projectmap** staan. Vanuit de editor kun je die map snel openen.
 

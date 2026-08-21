@@ -22,7 +22,7 @@ Eén extra detail: je moet bij de camera ook **Enabled** aan laten staan — dan
 
 </details>
 
-## Stap 1: Voeg een `Camera2D`-node toe
+## Stap 1: Voeg een `Camera2D`-node toe \{#camera2d}
 
 1. Klik met rechts op je `CharacterBody2D` in de Scene Tree → **Add Child Node**.
 2. Zoek naar `Camera2D` en voeg deze toe.

@@ -20,7 +20,7 @@ Het simpelst is om de tekst **elke frame** opnieuw te zetten. Dan staat hij alti
 
 </details>
 
-## Stap 1: Voeg een `CanvasLayer` met een `Label` toe
+## Stap 1: Voeg een `CanvasLayer` met een `Label` toe \{#canvaslayer-label}
 
 Een score hoort altijd op dezelfde plek op het scherm te blijven — ook als je camera de speler volgt. Daarom zet je de Label op een **`CanvasLayer`**: die tekent bovenop je spel en beweegt **niet** mee met de camera.
 

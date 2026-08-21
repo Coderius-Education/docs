@@ -13,7 +13,7 @@ Een tile-gebaseerd level is een rooster van kleine afbeeldingen (**tiles**) die 
 `TileMapLayer` is geïntroduceerd in **Godot 4.3**. In oudere versies heet de node `TileMap` en werkt de workflow iets anders.
 :::
 
-## Stap 1: Een `TileMapLayer` toevoegen
+## Stap 1: Een `TileMapLayer` toevoegen \{#tilemaplayer}
 
 1. Open je level-scène.
 2. Klik met rechts op de hoofd-node (bijvoorbeeld `Node2D`) → **Add Child Node**.

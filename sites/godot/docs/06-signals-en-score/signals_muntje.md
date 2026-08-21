@@ -39,7 +39,7 @@ Een signal is een bericht dat een node verstuurt zodra er iets gebeurt. Andere n
 
 In Godot is het precies zo: een node *stuurt* een signal, een andere node *vangt* het op en voert code uit. De `Area2D`-node die je zo gebruikt staat in de [Nodes cheatsheet](/cheatsheet#collectibles-vijanden); de signal-code vind je terug in de [GDScript-tips](/gdscript-tips#signals).
 
-## Stap 1: Maak een muntje-scène
+## Stap 1: Maak een muntje-scène \{#area2d}
 
 1. Ga naar **Scene** → **New Scene**.
 2. Kies **Other Node** en zoek naar `Area2D`. `Area2D` is een node die botsingen kan detecteren zonder zelf physics te krijgen (geen zwaartekracht, niet wegrollen).
@@ -70,7 +70,7 @@ Muntje (Area2D)
 
 Sla de scène op als `muntje.tscn` (`Ctrl + S`).
 
-## Stap 4: Koppel een script en het signal
+## Stap 4: Koppel een script en het signal \{#signal-koppelen}
 
 1. Selecteer de `Muntje`-node.
 2. Klik op het script-icoontje of klik met rechts → **Attach Script** → **Create**.
@@ -87,7 +87,7 @@ func _on_body_entered(body: Node2D) -> void:
     pass # hier komt je code
 ```
 
-## Stap 5: Laat het muntje verdwijnen
+## Stap 5: Laat het muntje verdwijnen \{#signal-functie}
 
 Vervang de `pass` door:
 

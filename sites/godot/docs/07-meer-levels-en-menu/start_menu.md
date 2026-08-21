@@ -21,7 +21,7 @@ In Godot zit er een ingebouwde node-type voor knoppen. **Hoe denk je dat hij hee
 
 </details>
 
-## Stap 1: Nieuwe scène voor het menu
+## Stap 1: Nieuwe scène voor het menu \{#control-button}
 
 1. Klik op **Scene** → **New Scene**.
 2. Kies dit keer **User Interface** (geen 2D Scene) — Godot maakt automatisch een `Control`-node als root. `Control` is de basis voor alle UI; hij vult standaard het hele scherm.
@@ -91,7 +91,7 @@ func _on_afsluiten_pressed() -> void:
 Heb je `Global.reset()` niet gedefinieerd? Voeg in `global.gd` een functie toe die `score = 0` en `levens = 3` zet — zie [Global variables](../06-signals-en-score/global_variables.md).
 :::
 
-## Stap 7: Maak het menu de Main Scene
+## Stap 7: Maak het menu de Main Scene \{#main-scene}
 
 Zo zorg je dat het menu opent zodra je het spel start, in plaats van level 1.
 

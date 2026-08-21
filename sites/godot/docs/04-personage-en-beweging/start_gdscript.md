@@ -79,7 +79,7 @@ func _ready() -> void:
 
 We gaan dit Uitvoer-tabblad later vaak gebruiken om foutjes op te sporen.
 
-## Check je begrip: `_ready()` versus `_process()`
+## Check je begrip: `_ready()` versus `_process()` \{#func-ready}
 
 **Wat denk je dat er gebeurt als je `_ready()` vervangt door `_process(delta)`?**
 

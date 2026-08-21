@@ -64,7 +64,13 @@ function voorkennisPerLes(): Map<string, string[]> {
     const inhoud = readFileSync(pad, 'utf8');
     const paden = [...inhoud.matchAll(ITEM_RE)].map((m) => m[1]);
     if (paden.length > 0) {
-      perLes.set(pad.slice(GODOT_DOCS.length + 1).split('\\').join('/'), paden);
+      perLes.set(
+        pad
+          .slice(GODOT_DOCS.length + 1)
+          .split('\\')
+          .join('/'),
+        paden,
+      );
     }
   }
   return perLes;

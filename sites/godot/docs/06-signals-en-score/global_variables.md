@@ -42,7 +42,7 @@ var levens = 3
 
 Dat is alles. Dit script bevat variabelen die je overal wilt gebruiken.
 
-## Stap 3: Stel het in als Autoload
+## Stap 3: Stel het in als Autoload \{#autoload-instellen}
 
 Dit is de belangrijkste stap. Door het script als **Autoload** te registreren, laadt Godot het automatisch bij het opstarten en is het overal beschikbaar.
 
@@ -67,7 +67,7 @@ Godot crasht zodra die regel wordt uitgevoerd, met een melding als `Identifier "
 
 </details>
 
-## Stap 4: Refactor naar `Global.score`
+## Stap 4: Refactor naar `Global.score` \{#global-score}
 
 In de vorige les hoogde je de score op via `body.score += 1`. Nu we een `Global` hebben, gebruiken we dat.
 

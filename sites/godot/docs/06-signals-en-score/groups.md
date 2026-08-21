@@ -26,7 +26,7 @@ Je zou elk muntje met de hand kunnen opzoeken via `get_node(...)` en ze tellen. 
 
 </details>
 
-## Wat is een group?
+## Wat is een group? \{#group}
 
 Een group is een **label** dat je op een node plakt. Meerdere nodes mogen hetzelfde label dragen. Daarna kun je in één regel:
 

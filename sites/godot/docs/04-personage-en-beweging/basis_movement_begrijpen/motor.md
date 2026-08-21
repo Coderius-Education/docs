@@ -22,7 +22,7 @@ func _physics_process(delta: float) -> void:
     ...
 ```
 
-### Wat doet `_physics_process`?
+### Wat doet `_physics_process`? \{#physics-process}
 
 Godot roept deze functie **automatisch ongeveer 60 keer per seconde aan**. Alles wat erin staat gebeurt dus continu. Dat is waarom je karakter beweegt: 60× per seconde rekent Godot de nieuwe positie uit.
 

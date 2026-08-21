@@ -62,7 +62,7 @@ Analogie: een `CharacterBody2D` is een "basisrecept". Met `extends` zeg je: ik b
 
 </details>
 
-### `const` versus `var` — waarom kiezen we hier `const`?
+### `const` versus `var` — waarom kiezen we hier `const`? \{#var-const}
 
 **Wat verwacht je dat er gebeurt als je `const SPEED = 300.0` ergens in `_physics_process` probeert te veranderen, bijvoorbeeld `SPEED = 500.0`?**
 

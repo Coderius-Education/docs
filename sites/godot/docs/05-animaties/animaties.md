@@ -20,7 +20,7 @@ Een animatie is een serie afbeeldingen (frames) die snel achter elkaar worden ge
 
 </details>
 
-## Stap 1: Vervang `Sprite2D` door `AnimatedSprite2D`
+## Stap 1: Vervang `Sprite2D` door `AnimatedSprite2D` \{#animatedsprite2d}
 
 1. Klik met rechts op je bestaande `Sprite2D` → **Delete Node**.
 2. Klik met rechts op `CharacterBody2D` → **Add Child Node**.
