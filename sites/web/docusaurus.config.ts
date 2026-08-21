@@ -1,4 +1,5 @@
 import { createConfig } from '@coderius/shared/config';
+import { REPO_URL, repoEditUrl } from '@coderius/shared/sites';
 
 export default createConfig({
   title: 'Webontwikkeling — Coderius',
@@ -20,7 +21,7 @@ export default createConfig({
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          editUrl: 'https://github.com/Coderius-Education/web-docs/tree/main/',
+          editUrl: repoEditUrl('web'),
         },
         blog: false,
       },
@@ -39,7 +40,7 @@ export default createConfig({
         { to: '/cheatsheet', label: 'Cheatsheet', position: 'left' },
         { to: '/jouw-website', label: 'Jouw website', position: 'left' },
         { to: '/website-checken', label: 'Website checken', position: 'left' },
-        { href: 'https://github.com/Coderius-Education/web', label: 'GitHub', position: 'right' },
+        { href: REPO_URL, label: 'GitHub', position: 'right' },
       ],
     },
     footer: {

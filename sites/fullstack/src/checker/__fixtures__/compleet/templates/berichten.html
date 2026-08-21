@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Gastenboek</title>
+        <link rel="stylesheet" href="/static/css/style.css">
+        <script src="/static/js/app.js" defer></script>
+    </head>
+    <body>
+        <h1>Gastenboek</h1>
+        {% if berichten %}
+            <ul id="berichten-lijst">
+                {% for sleutel, bericht in berichten %}
+                    <li><a href="/bericht/{{ sleutel }}">{{ bericht.naam }}</a>: {{ bericht.bericht }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Nog geen berichten. Wees de eerste.</p>
+        {% endif %}
+        <img src="/static/logo.png" alt="Logo van het gastenboek">
+    </body>
+</html>

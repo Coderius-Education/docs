@@ -9,12 +9,14 @@ Praktische informatie voor docenten die deze cursus klassikaal willen inzetten: 
 
 ## Wat is dit?
 
-Een interactieve cursus **fullstack-ontwikkeling met FastAPI**: je leerlingen voegen een Python-back-end toe aan een website. Doelgroep: leerlingen die al wat Python én HTML kennen en willen leren hoe front-end en back-end samenwerken.
+Een interactieve cursus **fullstack-ontwikkeling met FastAPI**: je leerlingen voegen een Python-back-end toe aan een website. Doelgroep: leerlingen die al wat Python, HTML en JavaScript kennen en willen leren hoe front-end en back-end samenwerken.
 
 Per onderwerp staat er een minimale, werkende handler die je daarna uitbreidt met validatie, templates en een database. De nadruk ligt op het samenspel tussen verzoek (browser) en antwoord (server).
 
 :::note[Voorkennis]
-Deze cursus bouwt voort op [Python](https://python.coderius.nl) en [HTML & CSS](https://web.coderius.nl). Plan die eerst in als je leerlingen daar nog niet mee bekend zijn.
+Deze cursus bouwt voort op Python en op HTML, CSS en JavaScript. Plan die eerst in als je leerlingen daar nog niet mee bekend zijn. Op het [cursusoverzicht](/cursussen) staat welke cursus waarop voortbouwt.
+
+In de lessen zelf staat de voorkennis per les in een dichtgeklapt blok, zodat een leerling die vastloopt op een `def` of een `<form>` terug kan naar de uitleg zonder dat de les daarmee begint.
 :::
 
 ## Technische randvoorwaarden
@@ -45,11 +47,13 @@ Tips en antwoorden staan in `<details>`-blokken. Laat je leerlingen eerst zelf p
 - **Plenair starten**: bespreek de Predict-vraag klassikaal, daarna werken je leerlingen zelfstandig door.
 - **Snelle leerlingen** breiden een endpoint uit met extra validatie of een tweede route.
 - **Langzamere leerlingen** mogen de Make-opdracht overslaan zonder dat de volgende les daarop bouwt.
-- **Beoordelen**: laat leerlingen een eigen kleine API met database bouwen als eindproject.
+- **Beoordelen**: [Jouw eigen project](/docs/FastAPI/jouw-project) is de eindopdracht, met zes eisen en vijf stappen. De nakijker op [Project checken](/project-checken) laat zien welke onderwerpen erin terugkomen — bedoeld als checklist, niet als cijfer.
 
 ## Leerlijn
 
 De lessen staan in de **FastAPI**-sidebar en bouwen op elkaar voort. Begin bij [Installatie](/docs/FastAPI/installatie); de [Cheatsheet](/docs/cheatsheet) en [Er gaat iets mis](/docs/troubleshooting) zijn naslag.
+
+[Hoe een verzoek werkt](/docs/FastAPI/hoe-een-verzoek-werkt) zet de hele keten in twee diagrammen: browser links, server rechts, met per stap een link naar de les. Bruikbaar aan het eind als samenvatting, maar ook halverwege om te laten zien waar je nu bent.
 
 | Onderwerp | Leerdoel |
 |---|---|
@@ -58,7 +62,19 @@ De lessen staan in de **FastAPI**-sidebar en bouwen op elkaar voort. Begin bij [
 | HTML tonen & templates | Pagina's serveren en dynamisch vullen |
 | Formulieren | Gebruikersinvoer verwerken |
 | Database | Gegevens opslaan en ophalen met SQLite |
+| Een lijst tonen | Opgeslagen records op een pagina zetten met een for-lus |
+| Terug naar de lijst | Doorsturen na een POST (post/redirect/get) |
+| Eén bericht tonen | Path-parameters en zelf een 404 sturen |
+| JavaScript erbij | Code die in de browser draait in plaats van op de server |
+| Data ophalen met fetch | JavaScript praat met je eigen endpoints, zonder paginawissel |
+| Server of browser? | Kiezen waar iets hoort, en waarom controles op de server moeten |
+| Laat het aan anderen zien | De server openzetten voor het netwerk |
+| Jouw eigen project | Eindopdracht: een complete applicatie in vijf stappen |
+
+"Een lijst tonen" tot en met "Eén bericht tonen" maken samen het gastenboek af dat je leerlingen in de database-lessen bouwen. Tot en met "POST naar database" kunnen ze wel opslaan maar niet tonen; daarna hebben ze een werkende webapplicatie met een overzicht, een detailpagina en nette foutafhandeling.
+
+Vanaf "JavaScript erbij" komt de browserkant in beeld. Je leerlingen kennen JavaScript al uit de web-cursus; nieuw is de vraag wáár code hoort. Die vraag krijgt een eigen les ("Server of browser?") nadat ze het verschil hebben gevoeld: een formulier versturen gaat via de server en de pagina verspringt, een tekenteller draait in de browser en de server ziet er niets van. `fetch` zit daartussen: JavaScript dat zelf data ophaalt bij je eigen endpoints. De cursus sluit af met de server openzetten voor het netwerk en de eindopdracht.
 
 ## Feedback & bijdragen
 
-Suggesties, fouten of nieuwe ideeën? Open een issue of pull request op [GitHub](https://github.com/Coderius-Education/fullstack). Alle bijdragen — van een typo tot een nieuwe les — zijn welkom.
+Suggesties, fouten of nieuwe ideeën? Open een issue of pull request op [GitHub](https://github.com/Coderius-Education/docs). Alle bijdragen — van een typo tot een nieuwe les — zijn welkom.

@@ -1,4 +1,5 @@
 import { createConfig } from '@coderius/shared/config';
+import { REPO_URL, repoEditUrl } from '@coderius/shared/sites';
 
 export default createConfig({
   title: 'Games met Godot — Coderius',
@@ -16,7 +17,7 @@ export default createConfig({
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          editUrl: 'https://github.com/Coderius-Education/Godot/tree/main',
+          editUrl: repoEditUrl('godot'),
         },
         blog: false,
       },
@@ -46,7 +47,7 @@ export default createConfig({
         { type: 'docSidebar', sidebarId: 'tutorialSidebar', position: 'left', label: '1e 2D game' },
         { to: '/cheatsheet', label: 'Nodes cheatsheet', position: 'left' },
         { to: '/game-checken', label: 'Game checken', position: 'left' },
-        { href: 'https://github.com/Coderius-Education/Godot', label: 'GitHub', position: 'right' },
+        { href: REPO_URL, label: 'GitHub', position: 'right' },
       ],
     },
     footer: { style: 'dark', links: [] },

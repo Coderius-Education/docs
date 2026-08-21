@@ -1,0 +1,211 @@
+# Eén bericht tonen
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/data/11a-dictionaries-basis', label: 'Dictionaries'},
+  ]}
+/>
+
+Je lijst toont alle berichten door elkaar. Op echte websites klik je op één item en krijg je een eigen pagina, met een eigen URL die je kunt delen. Daarvoor moet de URL zeggen wélk bericht je bedoelt.
+
+## De URL als parameter
+
+In [GET vs POST](/docs/FastAPI/get_vs_post) haalde je data uit de URL met een vraagteken: `/zoek?term=python`. Voor een detailpagina is een **path-parameter** gebruikelijker. Die zet je tussen accolades in het pad:
+
+```python
+@app.get("/bericht/{sleutel}")
+async def bericht_detail(request: Request, sleutel: str):
+    return {"je_vroeg_om": sleutel}
+```
+
+Ga je naar `/bericht/bericht_17` dan krijg je `{"je_vroeg_om": "bericht_17"}`. Wat er op de plek van `{sleutel}` staat, komt binnen als de parameter met dezelfde naam.
+
+**Let op:** de naam tussen de accolades moet exact gelijk zijn aan de naam van de parameter in je functie.
+
+## Het bericht opzoeken
+
+Met die sleutel kun je het bericht uit de database halen:
+
+```python
+@app.get("/bericht/{sleutel}")
+async def bericht_detail(request: Request, sleutel: str):
+    with SqliteDict("gastenboek.db") as db:
+        bericht = db.get(sleutel)
+    return templates.TemplateResponse(
+        request,
+        "bericht.html",
+        {"bericht": bericht}
+    )
+```
+
+`db.get(sleutel)` geeft `None` als de sleutel niet bestaat, in plaats van te crashen met een `KeyError`.
+
+## Wat als het niet bestaat
+
+Iemand kan een URL intypen die nergens op slaat, of een bericht dat net verwijderd is opvragen. Dan is `bericht` gelijk aan `None` en toont je template een lege pagina. Dat is verwarrend: de bezoeker denkt dat er iets stuk is.
+
+Zeg liever expliciet dat het niet bestaat, met `HTTPException`:
+
+```python
+from fastapi import HTTPException
+
+@app.get("/bericht/{sleutel}")
+async def bericht_detail(request: Request, sleutel: str):
+    with SqliteDict("gastenboek.db") as db:
+        bericht = db.get(sleutel)
+
+    if bericht is None:
+        raise HTTPException(status_code=404, detail="Dit bericht bestaat niet")
+
+    return templates.TemplateResponse(
+        request,
+        "bericht.html",
+        {"bericht": bericht}
+    )
+```
+
+Let op `raise` in plaats van `return`. Je geeft geen antwoord terug, je onderbreekt de functie — de regels eronder worden niet meer uitgevoerd.
+
+**404** is de code die "niet gevonden" betekent. Diezelfde code kreeg je eerder als je een verkeerd pad in `FileResponse` had staan; nu stuur je hem zelf.
+
+## Linken vanuit de lijst
+
+Om op de detailpagina te komen heb je in je lijst de sleutel nodig. Loop dus over `db.items()`:
+
+```python
+with SqliteDict("gastenboek.db") as db:
+    alle_berichten = list(db.items())
+```
+
+```html
+{% for sleutel, bericht in berichten %}
+    <li><a href="/bericht/{{ sleutel }}">{{ bericht.naam }}</a></li>
+{% endfor %}
+```
+
+## Testen
+
+1. Ga naar `/berichten` en klik op een naam
+2. Je ziet één bericht, en de sleutel staat in de adresbalk
+3. Verander de sleutel in de adresbalk in iets willekeurigs
+4. Je krijgt `{"detail": "Dit bericht bestaat niet"}` met status 404
+
+:::danger[Gaat er iets mis?]
+Krijg je een lege pagina in plaats van een 404? Dan staat je `if bericht is None` waarschijnlijk ná de `return`, of gebruik je `return` in plaats van `raise`. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
+:::
+
+## Opdrachten
+
+### Opdracht 1: Predict - Welke waarde komt binnen?
+
+```python
+@app.get("/groet/{naam}")
+async def groet(naam: str):
+    return {"bericht": f"Hallo {naam}"}
+```
+
+**Vraag:** wat krijg je te zien op `/groet/Sarah`? En op `/groet/naam`?
+
+<details>
+<summary>Tip</summary>
+
+De accolades zijn een plekhouder, geen letterlijke tekst. Wat je ook intypt, dát komt binnen.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`/groet/Sarah` geeft `{"bericht": "Hallo Sarah"}` en `/groet/naam` geeft `{"bericht": "Hallo naam"}`. Ook het woord "naam" is gewoon een waarde.
+
+</details>
+
+### Opdracht 2: Run
+
+Maak het `/bericht/{sleutel}` endpoint en de template `bericht.html`. Pas je lijst aan zodat elke naam een link is.
+
+### Opdracht 3: Investigate - Andere naam
+
+Verander de parameter in je functie van `sleutel` naar `key`, maar laat `{sleutel}` in het pad staan:
+
+```python
+@app.get("/bericht/{sleutel}")
+async def bericht_detail(request: Request, key: str):
+```
+
+<details>
+<summary>Antwoord</summary>
+
+Je krijgt een **422 Unprocessable Entity**, met in het antwoord dat `key` ontbreekt.
+
+FastAPI koppelt op naam, niet op volgorde. Het ziet `{sleutel}` in het pad en zoekt een parameter die zo heet; die is er niet. Tegelijk vraagt je functie om `key`, en dat staat nergens in de URL — dus vraagt FastAPI erom als query-parameter. `/bericht/abc?key=abc` zou wél werken, maar dat is niet wat je bedoelde.
+
+</details>
+
+### Opdracht 4: Make - Bezoeker begroeten
+
+Maak een endpoint `/welkom/{naam}` dat een template toont met "Welkom, [naam]". Geef een 404 met de tekst "Onbekende bezoeker" als de naam korter is dan twee letters.
+
+<details>
+<summary>Tip</summary>
+
+`len(naam) < 2` controleert de lengte. Zet die controle vóór de `TemplateResponse`, met `raise`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`templates/welkom.html`:
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Welkom, {{ naam }}</h1>
+    </body>
+</html>
+```
+
+```python
+@app.get("/welkom/{naam}")
+async def welkom(request: Request, naam: str):
+    if len(naam) < 2:
+        raise HTTPException(status_code=404, detail="Onbekende bezoeker")
+    return templates.TemplateResponse(request, "welkom.html", {"naam": naam})
+```
+
+</details>
+
+### Opdracht 5: Make - Bericht per nummer
+
+Geef elk bericht een nummer in de URL: `/bericht-nummer/1` toont het eerste bericht, `/bericht-nummer/2` het tweede. Geef een 404 als dat nummer niet bestaat.
+
+<details>
+<summary>Tip</summary>
+
+Schrijf `nummer: int` als type. FastAPI zet de tekst uit de URL dan om naar een getal. Een lijst begint bij 0, dus het eerste bericht staat op `alle_berichten[nummer - 1]`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+@app.get("/bericht-nummer/{nummer}")
+async def bericht_nummer(request: Request, nummer: int):
+    with SqliteDict("gastenboek.db") as db:
+        alle_berichten = list(db.values())
+
+    if nummer < 1 or nummer > len(alle_berichten):
+        raise HTTPException(status_code=404, detail="Dit bericht bestaat niet")
+
+    return templates.TemplateResponse(
+        request,
+        "bericht.html",
+        {"bericht": alle_berichten[nummer - 1]}
+    )
+```
+
+Door `nummer: int` te schrijven controleert FastAPI zelf of het een getal is. Typ je `/bericht-nummer/abc`, dan krijg je een 422 nog voordat jouw code draait.
+
+</details>

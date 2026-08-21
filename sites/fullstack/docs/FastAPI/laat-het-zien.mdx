@@ -1,0 +1,178 @@
+# Laat het aan anderen zien
+
+Je server draait, maar alleen voor jou. `127.0.0.1` betekent letterlijk "deze computer": typ dat adres op de laptop van je buurman en er gebeurt niets. Dat is jammer, want een server bestaat juist zodat anderen erbij kunnen. In deze les zet je je project open voor de rest van het lokale netwerk.
+
+## Waarom niemand anders erbij kan
+
+Als je `fastapi dev main.py` start, staat er in de terminal iets als:
+
+```
+Server started at http://127.0.0.1:8000
+```
+
+Dat adres luistert bewust alleen naar verzoeken van je eigen computer. Handig tijdens het bouwen: je halfafgemaakte gastenboek staat niet meteen open voor de hele school.
+
+## Openzetten
+
+Start je server met een extra optie:
+
+```bash
+fastapi dev main.py --host 0.0.0.0
+```
+
+`0.0.0.0` betekent: luister naar verzoeken die van buiten binnenkomen, niet alleen van deze computer.
+
+Nu heb je nog het adres van je computer op het netwerk nodig:
+
+```bash
+# Windows
+ipconfig
+
+# macOS en Linux
+ip addr
+```
+
+Zoek een regel met een adres dat begint met `192.168.` of `10.`. Dat is jouw computer op dit netwerk. Je klasgenoot typt dan bijvoorbeeld:
+
+```
+http://192.168.1.42:8000/berichten
+```
+
+Hetzelfde project, dezelfde database, maar nu ziet iemand anders het.
+
+:::caution
+Zolang je server op `0.0.0.0` draait kan iedereen op hetzelfde netwerk bij je pagina's — en bij je formulieren. Zet 'm weer op de gewone manier aan als je klaar bent met testen. En zet nooit iets in je code dat je liever niet deelt: een wachtwoord in `main.py` is een wachtwoord dat je weggeeft.
+:::
+
+## Nu telt alles wat je hebt geleerd
+
+Dit is het moment waarop [Server of browser?](/docs/FastAPI/server-of-browser) niet langer theorie is. Zolang jij de enige bezoeker was, kon je jezelf vertrouwen. Vanaf nu vult iemand anders je formulier in, en die kan van alles typen dat je niet had verwacht.
+
+De controles die je in Python hebt gezet doen nu echt werk. De `maxlength` in je HTML nog steeds niet.
+
+## Buiten de school
+
+Een adres dat begint met `192.168.` werkt alleen binnen hetzelfde netwerk. Wil je je project vanaf thuis bereikbaar maken, dan heb je een computer nodig die altijd aanstaat en een vast adres heeft — een server bij een hostingpartij, of een dienst die je project voor je draait.
+
+Dat valt buiten deze cursus, maar het is dezelfde `main.py`. Wat je hier hebt gebouwd is niet een oefenversie van een echte webapplicatie; het is er een.
+
+:::danger[Gaat er iets mis?]
+Kan je klasgenoot er niet bij? Meestal mist `--host 0.0.0.0`, of zitten jullie niet op hetzelfde netwerk. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
+:::
+
+## Opdrachten
+
+### Opdracht 1: Predict - Wie kan erbij?
+
+Je server draait op `127.0.0.1:8000`. Je klasgenoot zit op hetzelfde wifi-netwerk en typt `http://127.0.0.1:8000` in zijn browser.
+
+**Vraag:** wat ziet hij?
+
+<details>
+<summary>Tip</summary>
+
+Wat betekent "deze computer" als iemand anders het intypt?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Zijn eigen computer, niet die van jou. `127.0.0.1` verwijst altijd naar de machine waar je het intypt. Draait daar geen server, dan krijgt hij een foutmelding dat de verbinding is geweigerd.
+
+</details>
+
+### Opdracht 2: Run - Samen testen
+
+Start je server met `--host 0.0.0.0`, zoek je adres op met `ipconfig` of `ip addr`, en laat iemand naast je een bericht achterlaten in je gastenboek. Kijk in je eigen terminal wat er gebeurt terwijl hij typt en verstuurt.
+
+<details>
+<summary>Tip</summary>
+
+Lukt het niet? Kijk of jullie op hetzelfde netwerk zitten (op school vaak niet vanzelf: het gastennetwerk staat los van het schoolnetwerk). Een firewall die om toestemming vraagt moet je toestaan.
+
+</details>
+
+### Opdracht 3: Investigate - Wat ziet de server van hem?
+
+Kijk in je terminal naar de regels die verschijnen als je klasgenoot iets doet.
+
+<details>
+<summary>Antwoord</summary>
+
+Je ziet zijn verzoeken langskomen, met het pad en de statuscode — precies de stappen 2 tot en met 6 uit [Hoe een verzoek werkt](/docs/FastAPI/hoe-een-verzoek-werkt). Wat je níét ziet: wat hij typte terwijl hij nog aan het invullen was. Dat gebeurde in zijn browser.
+
+</details>
+
+### Opdracht 4: Make - Een bezoekersteller
+
+Houd bij hoe vaak `/berichten` is opgevraagd en toon dat onderaan de pagina.
+
+<details>
+<summary>Tip</summary>
+
+Dit moet bewaard blijven en voor iedereen gelden, dus het hoort in je database. Zet de teller in een **eigen** databasebestand, los van je berichten. Lees de stand met `db.get("aantal", 0)`, tel er één bij op, sla op, en stuur het getal mee naar je template.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+@app.get("/berichten")
+async def berichten(request: Request):
+    with SqliteDict("bezoeken.db") as teller_db:
+        bezoeken = teller_db.get("aantal", 0) + 1
+        teller_db["aantal"] = bezoeken
+        teller_db.commit()
+
+    with SqliteDict("gastenboek.db") as db:
+        alle_berichten = list(db.items())
+
+    return templates.TemplateResponse(
+        request,
+        "berichten.html",
+        {"berichten": alle_berichten, "bezoeken": bezoeken}
+    )
+```
+
+In je template: `<p>Deze pagina is {{ bezoeken }} keer bekeken.</p>`
+
+Let op dat de teller in `bezoeken.db` staat en niet in `gastenboek.db`. Zet je hem er wél bij, dan komt hij tussen je berichten terecht: je lijst krijgt er een regel bij die geen naam en geen bericht heeft, en `{% for sleutel, bericht in berichten %}` gaat er raar van doen. Twee soorten gegevens, twee bestanden.
+
+</details>
+
+### Opdracht 5: Make - Wie was er?
+
+Sla bij elk bericht op wanneer het is achtergelaten, en toon dat in de lijst.
+
+<details>
+<summary>Tip</summary>
+
+Je hebt de tijd al: de sleutel `bericht_<nanoseconden>` bevat hem. Maar leesbaarder is een apart veld. `datetime.now().strftime("%H:%M")` geeft je "14:32".
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+from datetime import datetime
+
+@app.post("/gastenboek")
+async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        db[f"bericht_{time.time_ns()}"] = {
+            "naam": naam,
+            "bericht": bericht,
+            "tijd": datetime.now().strftime("%H:%M")
+        }
+        db.commit()
+    return RedirectResponse(url="/berichten", status_code=303)
+```
+
+In je template: `<li>{{ bericht.tijd }} — {{ bericht.naam }}: {{ bericht.bericht }}</li>`
+
+Berichten die je vóór deze wijziging hebt opgeslagen hebben geen `tijd`. Jinja2 laat dan gewoon niets zien in plaats van te crashen.
+
+</details>

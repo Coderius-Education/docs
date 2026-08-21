@@ -28,7 +28,12 @@ export function LevelSummary({ report, config, activeLevel, onToggleLevel }: Lev
       <span className={styles.breakdown}>
         {bySubject.map((s) => {
           const stat = level === 'basis' ? s.basis : s.gevorderd;
-          const done = stat.total > 0 && stat.used === stat.total;
+          // Niet elk onderwerp komt op elk niveau voor: fullstack heeft geen
+          // basis-concepten voor JavaScript en database, godot niet voor
+          // beweging. Een chip "Database 0/0" leest als iets wat nog moet
+          // gebeuren terwijl er niets te doen is.
+          if (stat.total === 0) return null;
+          const done = stat.used === stat.total;
           return (
             <span
               key={s.subject}

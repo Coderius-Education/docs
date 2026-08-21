@@ -1,6 +1,6 @@
 import { createConfig } from '@coderius/shared/config';
+import { repoEditUrl } from '@coderius/shared/sites';
 
-const organizationName = 'Coderius-Education';
 const projectName = 'play-docs';
 
 export default createConfig({
@@ -24,7 +24,7 @@ export default createConfig({
       {
         docs: {
           sidebarPath: './sidebars.js',
-          editUrl: `https://github.com/${organizationName}/${projectName}/tree/main/`,
+          editUrl: repoEditUrl('play'),
         },
         blog: false,
         theme: { customCss: './src/css/custom.css' },
@@ -60,7 +60,10 @@ export default createConfig({
         { href: '/docs/cheatsheet#play-package', label: 'Nieuw: v3.3.3', position: 'right' },
         { href: '/docs/voor-de-docent/bug', label: 'Foutje gevonden?', position: 'right' },
         {
-          href: 'https://github.com/Coderius-Education/play/tree/master/',
+          // Bewust de play-library en niet de docs-monorepo: op deze site is de
+          // software zelf wat een lezer op GitHub zoekt. Zie ook
+          // /docs/voor-de-docent/bug, dat de twee repo's uit elkaar houdt.
+          href: 'https://github.com/Coderius-Education/play',
           label: 'GitHub',
           position: 'right',
         },

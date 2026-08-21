@@ -1,0 +1,156 @@
+# Server of browser?
+
+Je hebt nu twee plekken waar je code kunt zetten. Het gastenboek draait op de server: Python slaat op, Python bouwt de lijst. De tekenteller draait in de browser: JavaScript rekent, de server weet van niets.
+
+Bij alles wat je vanaf nu bouwt kies je tussen die twee. Deze les gaat over hoe je kiest.
+
+## De hoofdvraag
+
+Moet het bewaard blijven, of moet iemand anders het kunnen zien?
+
+- **Ja** — dan hoort het op de server. Alleen Python komt bij je database, en alleen wat daar staat is er straks nog.
+- **Nee, het is alleen voor deze bezoeker, nu, op deze pagina** — dan hoort het in de browser.
+
+Een bericht in het gastenboek moet bewaard blijven en anderen moeten het lezen: server. Een teller die laat zien hoeveel tekens je nog mag typen is weg zodra je de pagina sluit, en niemand anders heeft er iets aan: browser.
+
+## De tweede vraag: hoe vaak gebeurt het?
+
+Alles wat via de server gaat kost een verzoek heen en een antwoord terug. Eén keer bij het versturen van een formulier merk je daar niets van. Bij elke toetsaanslag wél: veertien letters worden veertien verzoeken, en de pagina zou bij elke letter opnieuw geladen worden.
+
+Daarom hoort werk dat vaak gebeurt — meetypen, slepen, in- en uitklappen, iets rood kleuren — in de browser, ook als je het in Python zou kúnnen.
+
+## De derde vraag: mag je het geloven?
+
+Hier zit een valkuil. In je formulier staat:
+
+```html
+<input type="text" name="bericht" maxlength="80" required>
+```
+
+Dat ziet eruit als een regel: berichten zijn nooit langer dan 80 tekens. Maar `maxlength` is een instructie aan de **browser**, en de browser is van de bezoeker. Wie het formulier omzeilt en rechtstreeks naar je endpoint stuurt, komt met 500 tekens gewoon binnen — jouw Python-code slaat het op zonder klagen.
+
+Wil je echt een grens, dan moet Python die zelf controleren:
+
+```python
+@app.post("/gastenboek")
+async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
+    if len(bericht) > 80:
+        raise HTTPException(status_code=400, detail="Bericht is te lang")
+    ...
+```
+
+`maxlength` blijft nuttig: het helpt een gewone bezoeker die zich vergist. Maar het is geen controle, het is een hulpmiddel. **Controles horen op de server, want daar heeft de bezoeker geen invloed op.**
+
+## Naast elkaar
+
+| | Server (FastAPI) | Browser (JavaScript) |
+|:---:|:---:|:---:|
+| **Waar draait het** | Op jouw computer | Op die van de bezoeker |
+| **Blijft het bewaard** | Ja, in je database | Nee, weg bij het sluiten |
+| **Zien anderen het** | Ja | Nee |
+| **Kost een verzoek** | Elke keer | Alleen bij het laden |
+| **Mag je het vertrouwen** | Ja | Nee |
+| **Typisch voor** | Opslaan, ophalen, controleren | Reageren op klikken en typen |
+
+Er is een derde mogelijkheid, en die ken je al: JavaScript dat zélf een verzoek doet aan een van jouw endpoints, zonder dat de pagina verspringt. Dat is [fetch](/docs/FastAPI/fetch). De hoofdvraag verandert daar niet door — de berichten stáán nog steeds op de server, want ze moeten bewaard blijven. Alleen de manier waarop ze de pagina bereiken is anders.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Waar hoort het?
+
+Voor elk van deze vier: server of browser?
+
+1. Een bezoeker klikt op een naam en er klapt een bericht open dat al op de pagina stond.
+2. Een bezoeker verstuurt een bericht voor het gastenboek.
+3. De achtergrondkleur van de pagina wisselt tussen licht en donker als je op een knop klikt.
+4. Bijhouden hoe vaak een bericht is bekeken.
+
+<details>
+<summary>Tip</summary>
+
+Stel bij elk geval de hoofdvraag: moet dit bewaard blijven, of moet iemand anders dit kunnen zien?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+1. **Browser.** Het bericht stond er al; je laat het alleen zien.
+2. **Server.** Het moet bewaard blijven en anderen moeten het lezen.
+3. **Browser.** Het geldt alleen voor deze bezoeker en hoeft niet bewaard te blijven. Wil je dat de keuze onthouden wordt tot de volgende keer, dan wordt het lastiger — dan moet het ergens opgeslagen worden.
+4. **Server.** Een teller die van alle bezoekers samen optelt kan alleen op één plek staan, en dat is jouw database.
+
+</details>
+
+### Opdracht 2: Run - Omzeil je eigen formulier
+
+Je gastenboekveld heeft `maxlength="80"`. Open de ontwikkelaarstools (F12), zoek het `<input>`-element op en haal `maxlength` weg. Typ nu een heel lang bericht en verstuur het.
+
+Kijk daarna op `/berichten` wat er is opgeslagen.
+
+<details>
+<summary>Antwoord</summary>
+
+Het lange bericht staat er gewoon. `maxlength` zit alleen in de HTML die jij hebt gestuurd, en die HTML staat op de computer van de bezoeker — die mag ermee doen wat hij wil.
+
+</details>
+
+### Opdracht 3: Investigate - Repareer het aan de goede kant
+
+Voeg de controle toe in je POST-endpoint, zoals hierboven, en probeer opdracht 2 opnieuw.
+
+<details>
+<summary>Antwoord</summary>
+
+Nu krijg je een 400 met "Bericht is te lang", hoe je het ook probeert. De controle staat op de server, en daar komt de bezoeker niet bij.
+
+Let op dat je `maxlength` in de HTML laat staan. Die twee bijten elkaar niet: de browser helpt wie zich vergist, de server houdt tegen wie het expres probeert.
+
+</details>
+
+### Opdracht 4: Make - Een knop die niets aan de server vraagt
+
+Zet op je berichtenpagina een knop die de lijst omdraait: nieuwste eerst, oudste eerst. Doe dit in JavaScript, zonder de pagina te herladen.
+
+<details>
+<summary>Tip</summary>
+
+De lijstitems staan al in de HTML. Met `document.querySelectorAll("li")` haal je ze op, en met `lijst.prepend(item)` zet je een item weer vooraan. Loop door de items heen en zet ze allemaal opnieuw vooraan.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```javascript
+const knop = document.querySelector("#omdraai-knop");
+const lijst = document.querySelector("#berichten-lijst");
+
+knop.addEventListener("click", function () {
+    const items = document.querySelectorAll("#berichten-lijst li");
+    for (const item of items) {
+        lijst.prepend(item);
+    }
+});
+```
+
+Elk item weer vooraan zetten draait de volgorde om. De server komt er niet aan te pas: alle berichten stonden al op de pagina.
+
+</details>
+
+### Opdracht 5: Make - Bedenk het zelf
+
+Bedenk twee uitbreidingen voor je gastenboek: één die op de server hoort en één die in de browser hoort. Schrijf bij allebei in één zin waarom.
+
+<details>
+<summary>Antwoord</summary>
+
+Er is niet één goed antwoord. Twee voorbeelden:
+
+**Server:** een bericht kunnen verwijderen. Het moet weg blijven, ook voor andere bezoekers, dus het moet uit de database.
+
+**Browser:** een zoekveld dat de berichten die al op de pagina staan filtert terwijl je typt. Het gebeurt bij elke toetsaanslag en hoeft niet bewaard te blijven.
+
+Zit jouw browser-idee aan data die nog niet op de pagina staat? Dan hoort het toch bij de server, of je haalt het op met [fetch](/docs/FastAPI/fetch).
+
+</details>

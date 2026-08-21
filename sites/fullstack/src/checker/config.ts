@@ -1,9 +1,12 @@
 import type { CheckerConfig } from '@coderius/checker/types';
 
 // Conceptenlijst voor de fullstack-nakijker, 1-op-1 afgeleid van
-// sites/fullstack/docs/cheatsheet.md (koppen: FastAPI, HTML, Database, plus een
-// mappenstructuur-check). Wijzig je de cheatsheet, werk dan ook hier de
-// bijbehorende regel bij.
+// sites/fullstack/docs/cheatsheet.md (koppen: FastAPI, HTML, JavaScript,
+// Database, plus een mappenstructuur-check). Wijzig je de cheatsheet, werk dan
+// ook hier de bijbehorende regel bij.
+//
+// JavaScript en Database hebben bewust alleen gevorderde concepten: ze komen
+// pas na de helft van de cursus aan bod.
 
 const IMAGE_EXT = new Set(['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.ico', '.bmp']);
 
@@ -13,6 +16,7 @@ function classify(path: string): string {
   if (ext === '.py') return 'py';
   if (ext === '.html' || ext === '.htm') return 'html';
   if (ext === '.css') return 'css';
+  if (ext === '.js') return 'js';
   if (IMAGE_EXT.has(ext)) return 'image';
   return 'other';
 }
@@ -26,6 +30,7 @@ export const fullstackConfig: CheckerConfig = {
   subjects: [
     { id: 'fastapi', label: 'FastAPI' },
     { id: 'html', label: 'HTML' },
+    { id: 'js', label: 'JavaScript' },
     { id: 'database', label: 'Database' },
     { id: 'structuur', label: 'Structuur' },
   ],
@@ -34,13 +39,14 @@ export const fullstackConfig: CheckerConfig = {
     { id: 'py', label: 'Python' },
     { id: 'html', label: 'HTML' },
     { id: 'css', label: 'CSS' },
+    { id: 'js', label: 'JavaScript' },
     { id: 'image', label: 'Afbeeldingen' },
     { id: 'other', label: 'Overig' },
   ],
 
   classify,
-  textKinds: ['py', 'html', 'css'],
-  accept: '.zip,.py,.html,.htm,.css,.png,.jpg,.jpeg,.gif,.svg,.webp,.ico',
+  textKinds: ['py', 'html', 'css', 'js'],
+  accept: '.zip,.py,.html,.htm,.css,.js,.png,.jpg,.jpeg,.gif,.svg,.webp,.ico',
 
   teacher: { password: 'coderius-docent', storageKey: 'fullstackChecker.docentUnlocked' },
   pdfFilename: (d) => `Beoordeling Fullstack Project - ${todayStamp(d)}.pdf`,
@@ -72,6 +78,18 @@ export const fullstackConfig: CheckerConfig = {
       label: 'POST endpoint (@app.post)',
       level: 'gevorderd',
       detect: { type: 'regex', pattern: /@app\.post\s*\(/g, in: ['py'] },
+    },
+    {
+      id: 'fastapi-path-param',
+      subject: 'fastapi',
+      group: 'App & endpoints',
+      label: 'Path-parameter in de URL',
+      level: 'gevorderd',
+      detect: {
+        type: 'regex',
+        pattern: /@app\.(get|post)\s*\(\s*["'][^"']*\{[^}]*\}/g,
+        in: ['py'],
+      },
     },
     {
       id: 'fastapi-html-response',
@@ -122,6 +140,23 @@ export const fullstackConfig: CheckerConfig = {
       detect: { type: 'regex', pattern: /\bRequest\b/g, in: ['py'] },
     },
 
+    {
+      id: 'fastapi-redirect',
+      subject: 'fastapi',
+      group: 'Doorsturen & fouten',
+      label: 'Doorsturen na POST (RedirectResponse)',
+      level: 'gevorderd',
+      detect: { type: 'regex', pattern: /RedirectResponse/g, in: ['py'] },
+    },
+    {
+      id: 'fastapi-httpexception',
+      subject: 'fastapi',
+      group: 'Doorsturen & fouten',
+      label: '404 sturen (HTTPException)',
+      level: 'gevorderd',
+      detect: { type: 'regex', pattern: /HTTPException/g, in: ['py'] },
+    },
+
     // --- HTML ---
     {
       id: 'html-basis',
@@ -170,6 +205,58 @@ export const fullstackConfig: CheckerConfig = {
       label: 'Template-variabele ({{ … }})',
       level: 'gevorderd',
       detect: { type: 'regex', pattern: /\{\{[^}]+\}\}/g, in: ['html'] },
+    },
+    {
+      id: 'html-jinja-loop',
+      subject: 'html',
+      group: 'Lijsten',
+      label: 'Lijst herhalen (for-lus in template)',
+      level: 'gevorderd',
+      detect: { type: 'regex', pattern: /\{%\s*for\b/g, in: ['html'] },
+    },
+    {
+      id: 'html-jinja-if',
+      subject: 'html',
+      group: 'Lijsten',
+      label: 'Leeg geval opvangen (if in template)',
+      level: 'gevorderd',
+      detect: { type: 'regex', pattern: /\{%\s*if\b/g, in: ['html'] },
+    },
+
+    // --- JavaScript ---
+    // Kijkt bewust in het .js-bestand en niet in de HTML: de cursus leert
+    // JavaScript in static/js/ te zetten, niet in een <script>-blok.
+    {
+      id: 'js-bestand-koppelen',
+      subject: 'js',
+      group: 'In de browser',
+      label: 'JavaScript koppelen (<script src>)',
+      level: 'gevorderd',
+      detect: { type: 'regex', pattern: /<script\b[^>]*\bsrc\s*=/gi, in: ['html'] },
+    },
+    {
+      id: 'js-query-selector',
+      subject: 'js',
+      group: 'In de browser',
+      label: 'Element opzoeken (querySelector)',
+      level: 'gevorderd',
+      detect: { type: 'regex', pattern: /querySelector(All)?\s*\(/g, in: ['js'] },
+    },
+    {
+      id: 'js-fetch',
+      subject: 'js',
+      group: 'In de browser',
+      label: 'Data ophalen bij je eigen server (fetch)',
+      level: 'gevorderd',
+      detect: { type: 'regex', pattern: /\bfetch\s*\(/g, in: ['js'] },
+    },
+    {
+      id: 'js-event-listener',
+      subject: 'js',
+      group: 'In de browser',
+      label: 'Reageren op de bezoeker (addEventListener)',
+      level: 'gevorderd',
+      detect: { type: 'regex', pattern: /addEventListener\s*\(/g, in: ['js'] },
     },
 
     // --- Database (sqlitedict) ---

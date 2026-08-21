@@ -26,5 +26,11 @@ export interface HomeSite {
 export const SITES: Site[];
 export const SITES_BY_ID: Record<string, Site>;
 export const HOME: HomeSite;
+
+/** De monorepo waarin alle cursussen en gedeelde packages staan. */
+export const REPO_URL: string;
+
+/** Basis-URL voor Docusaurus' `editUrl`; `siteFolder` is de map onder `sites/`. */
+export function repoEditUrl(siteFolder: string): string;
 export function normalizeUrl(url: string | null | undefined): string;
 export function siteByUrl(url: string | null | undefined): Site | undefined;

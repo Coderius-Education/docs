@@ -18,8 +18,8 @@ Meld dit op de **play** repository:
 
 Er staat iets dat niet klopt in de uitleg of opdrachten. Bijvoorbeeld: een typfout, een verkeerd codevoorbeeld, of een onduidelijke uitleg.
 
-Meld dit op de **play-docs** repository:
-[Issues voor het lesmateriaal](https://github.com/Coderius-Education/play-docs/issues)
+Meld dit op de **docs** repository, waar alle Coderius-cursussen samen in staan:
+[Issues voor het lesmateriaal](https://github.com/Coderius-Education/docs/issues)
 
 ## 3. Hoe maak je een Issue aan?
 

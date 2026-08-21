@@ -1,9 +1,3 @@
----
-sidebar_position: 5
----
-
-import CodeExercise from '@site/src/components/CodeExercise';
-
 # HTML in bestanden
 
 Tot nu toe schrijf je HTML als strings in Python. Dat wordt onoverzichtelijk bij grote pagina's. In deze les leer je hoe je HTML in aparte bestanden zet.
@@ -210,35 +204,3 @@ async def contact():
 
 </details>
 
-## Oefen met Python
-
-:::info[Python oefenblok]
-Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
-:::
-
-<CodeExercise>
-{`# Bestanden herkennen aan extensie
-bestanden = [
-    "index.html",
-    "over.html",
-    "style.css",
-    "app.js",
-    "logo.png",
-    "data.json"
-]
-
-# Filter op type
-for bestand in bestanden:
-    if bestand.endswith(".html"):
-        print(f"Webpagina: {bestand}")
-    elif bestand.endswith(".css"):
-        print(f"Stylesheet: {bestand}")
-    elif bestand.endswith(".js"):
-        print(f"Script: {bestand}")
-    else:
-        print(f"Overig: {bestand}")
-
-# Naam zonder extensie
-voor_punt = "index.html".split(".")[0]
-print(f"\nBestandsnaam zonder extensie: {voor_punt}")`}
-</CodeExercise>

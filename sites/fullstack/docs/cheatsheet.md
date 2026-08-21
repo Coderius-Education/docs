@@ -1,7 +1,3 @@
----
-sidebar_class_name: hidden
----
-
 # Cheatsheet
 
 Snelle referentie voor alles wat je hebt geleerd. Klik op een onderwerp om het te openen.
@@ -28,6 +24,19 @@ fastapi dev main.py
 ```
 
 Open: `http://127.0.0.1:8000`
+
+</details>
+
+<details>
+<summary>Je server openzetten voor het netwerk</summary>
+
+```bash
+fastapi dev main.py --host 0.0.0.0
+```
+
+Zoek je adres met `ipconfig` (Windows) of `ip addr` (macOS/Linux) en geef `http://<jouw-adres>:8000` door.
+
+**Let op:** iedereen op hetzelfde netwerk kan er dan bij.
 
 </details>
 
@@ -110,12 +119,60 @@ templates = Jinja2Templates(directory="templates")
 @app.post("/groet")
 async def groet(request: Request, naam: str = Form(...)):
     return templates.TemplateResponse(
+        request,
         "resultaat.html",
-        {"request": request, "naam": naam}
+        {"naam": naam}
     )
 ```
 
-**Let op:** `"request": request` moet altijd in het dictionary.
+**Let op:** `request` is het eerste argument, vóór de bestandsnaam.
+
+</details>
+
+<details>
+<summary>Redirect na een POST</summary>
+
+```python
+from fastapi.responses import RedirectResponse
+
+@app.post("/opslaan")
+async def opslaan(naam: str = Form(...)):
+    return RedirectResponse(url="/lijst", status_code=303)
+```
+
+**Let op:** zonder `status_code=303` krijg je een 405. De standaard is 307, en die herhaalt je POST.
+
+</details>
+
+<details>
+<summary>Path-parameter in de URL</summary>
+
+```python
+@app.get("/bericht/{sleutel}")
+async def bericht_detail(sleutel: str):
+    return {"sleutel": sleutel}
+```
+
+**Let op:** de naam tussen accolades moet gelijk zijn aan de parameternaam.
+
+</details>
+
+<details>
+<summary>404 sturen als iets niet bestaat</summary>
+
+```python
+from fastapi import HTTPException
+
+@app.get("/bericht/{sleutel}")
+async def bericht_detail(sleutel: str):
+    with SqliteDict("gastenboek.db") as db:
+        bericht = db.get(sleutel)
+    if bericht is None:
+        raise HTTPException(status_code=404, detail="Bestaat niet")
+    return bericht
+```
+
+**Let op:** `raise`, niet `return`.
 
 </details>
 
@@ -191,6 +248,111 @@ In de template:
 ```
 
 Wordt vervangen door de waarde uit Python.
+
+</details>
+
+<details>
+<summary>Lijst herhalen in een template (for-lus)</summary>
+
+```html
+<ul>
+    {% for bericht in berichten %}
+        <li>{{ bericht.naam }}: {{ bericht.bericht }}</li>
+    {% endfor %}
+</ul>
+```
+
+Binnen de lus telt `{{ loop.index }}` vanaf 1.
+
+</details>
+
+<details>
+<summary>Lege lijst opvangen (if en else)</summary>
+
+```html
+{% if berichten %}
+    <p>Er zijn berichten</p>
+{% else %}
+    <p>Nog geen berichten</p>
+{% endif %}
+```
+
+</details>
+
+## JavaScript
+
+<details>
+<summary>JavaScript koppelen aan je pagina</summary>
+
+Bestand in `static/js/app.js`, en in de `<head>` van je template:
+
+```html
+<script src="/static/js/app.js" defer></script>
+```
+
+`app.mount("/static", ...)` serveert het al; aan `main.py` verandert niets.
+
+**Let op:** zonder `defer` draait je script voordat de pagina er staat, en vindt `querySelector` niets.
+
+</details>
+
+<details>
+<summary>Reageren op typen of klikken</summary>
+
+```javascript
+const veld = document.querySelector("#bericht-veld");
+const teller = document.querySelector("#teller");
+
+veld.addEventListener("input", function () {
+    teller.textContent = 80 - veld.value.length + " tekens over";
+});
+```
+
+</details>
+
+<details>
+<summary>Data ophalen bij je eigen server (fetch)</summary>
+
+Endpoint dat data teruggeeft:
+
+```python
+@app.get("/api/berichten")
+async def api_berichten():
+    with SqliteDict("gastenboek.db") as db:
+        return list(db.values())
+```
+
+En in je JavaScript:
+
+```javascript
+async function laadBerichten() {
+    const antwoord = await fetch("/api/berichten");
+    const berichten = await antwoord.json();
+
+    for (const bericht of berichten) {
+        const item = document.createElement("li");
+        item.textContent = bericht.naam;
+        lijst.append(item);
+    }
+}
+```
+
+**Let op:** twee keer `await` — één voor het verzoek, één voor het uitpakken.
+
+</details>
+
+<details>
+<summary>Een formulier versturen zonder de pagina te herladen</summary>
+
+```javascript
+formulier.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    await fetch("/gastenboek", { method: "POST", body: new FormData(formulier) });
+    formulier.reset();
+});
+```
+
+Je `Form(...)`-endpoint hoeft niet te veranderen.
 
 </details>
 

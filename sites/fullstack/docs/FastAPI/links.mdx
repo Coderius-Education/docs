@@ -1,10 +1,10 @@
----
-sidebar_position: 6
----
-
-import CodeExercise from '@site/src/components/CodeExercise';
-
 # Links tussen pagina's
+
+<Voorkennis
+  items={[
+    {site: 'web', to: '/docs/html-css/paginas-koppelen', label: "Pagina's koppelen"},
+  ]}
+/>
 
 In deze les leer je hoe je links maakt tussen je pagina's met de `<a>` tag.
 
@@ -189,31 +189,3 @@ Zet in elk HTML bestand (home.html, about.html, contact.html) hetzelfde navigati
 ```
 
 </details>
-
-## Oefen met Python
-
-:::info[Python oefenblok]
-Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
-:::
-
-<CodeExercise>
-{`# URL's bouwen met f-strings
-basis_url = "http://127.0.0.1:8000"
-
-paginas = {
-    "home": "/",
-    "info": "/info",
-    "contact": "/contact",
-    "profiel": "/profiel"
-}
-
-for naam, pad in paginas.items():
-    volledige_url = f"{basis_url}{pad}"
-    print(f"{naam}: {volledige_url}")
-
-# HTML links genereren
-print("\n--- HTML links ---")
-for naam, pad in paginas.items():
-    link = f'<a href="{pad}">{naam.title()}</a>'
-    print(link)`}
-</CodeExercise>

@@ -1,10 +1,11 @@
----
-sidebar_position: 8
----
-
-import CodeExercise from '@site/src/components/CodeExercise';
-
 # GET vs POST
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/functies/09a-parameters', label: 'Parameters'},
+    {site: 'python', to: '/docs/tekst/04a-f-strings', label: 'F-strings'},
+  ]}
+/>
 
 Tot nu toe gebruiken we alleen GET requests. In deze les leer je het verschil tussen GET en POST.
 
@@ -135,26 +136,3 @@ async def zoek(term: str):
 Test met: `http://127.0.0.1:8000/zoek?term=python`
 
 </details>
-
-## Oefen met Python
-
-:::info[Python oefenblok]
-Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
-:::
-
-<CodeExercise>
-{`# Oefen met f-strings (FastAPI gebruikt dit veel!)
-naam = "Jan"
-leeftijd = 16
-
-# f-string met variabelen
-print(f"Hallo {naam}!")
-print(f"{naam} is {leeftijd} jaar oud.")
-
-# Berekeningen in f-strings
-print(f"Volgend jaar is {naam} {leeftijd + 1} jaar.")
-
-# f-strings met dictionaries
-leerling = {"naam": "Piet", "klas": "4V"}
-print(f"Leerling: {leerling['naam']} uit {leerling['klas']}")`}
-</CodeExercise>

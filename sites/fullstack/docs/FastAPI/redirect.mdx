@@ -1,0 +1,170 @@
+# Terug naar de lijst
+
+Je gastenboek werkt, maar na het versturen van een bericht sta je op een doodlopende pagina. Druk je daar op F5, dan vraagt je browser of je het formulier nog een keer wilt versturen — en zo krijg je hetzelfde bericht twee keer in je database. In deze les stuur je de bezoeker na het opslaan terug naar de lijst.
+
+## RedirectResponse
+
+Met `RedirectResponse` stuur je de browser door naar een andere URL:
+
+```python
+from fastapi.responses import RedirectResponse
+
+@app.post("/gastenboek")
+async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    return RedirectResponse(url="/berichten", status_code=303)
+```
+
+Je endpoint slaat op en geeft daarna geen pagina terug, maar een opdracht: ga naar `/berichten`. De browser doet dat meteen, en de bezoeker ziet zijn eigen bericht bovenaan de lijst verschijnen.
+
+## Waarom 303
+
+`status_code=303` lijkt een detail, maar zonder dat getal werkt het niet. `RedirectResponse` stuurt standaard een **307**, en 307 betekent: doe hetzelfde verzoek nog een keer op de nieuwe URL. Jouw verzoek was een POST, dus de browser stuurt een POST naar `/berichten` — en dat endpoint is een `@app.get`. Resultaat: **405 Method Not Allowed**.
+
+**303** betekent wél wat je bedoelt: ga naar die URL met een GET.
+
+Deze combinatie — POST, dan doorsturen naar een GET — heet het **post/redirect/get**-patroon. Bijna elke website die je gebruikt doet dit na een formulier.
+
+## Testen
+
+1. Vul het gastenboek in en klik Verstuur
+2. Je belandt op `/berichten` en ziet je eigen bericht staan
+3. Druk op F5 — de pagina herlaadt gewoon, zonder vraag over opnieuw versturen
+
+:::danger[Gaat er iets mis?]
+Krijg je **405 Method Not Allowed** meteen na het versturen? Dan mist `status_code=303`. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
+:::
+
+## Opdrachten
+
+### Opdracht 1: Predict - Waar kom je uit?
+
+```python
+@app.post("/opslaan")
+async def opslaan(naam: str = Form(...)):
+    return RedirectResponse(url="/bedankt", status_code=303)
+
+@app.get("/bedankt")
+async def bedankt():
+    return {"bericht": "Bedankt"}
+```
+
+**Vraag:** welke URL staat er in de adresbalk nadat je het formulier hebt verstuurd?
+
+<details>
+<summary>Tip</summary>
+
+Een redirect verandert niet alleen wat je ziet, maar ook wat er in de adresbalk staat.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`/bedankt`. De browser volgt de redirect en vraagt die pagina op alsof je er zelf naartoe was gegaan. Van `/opslaan` zie je niets terug.
+
+</details>
+
+### Opdracht 2: Run
+
+Pas je `/gastenboek` POST-endpoint aan zodat het doorstuurt naar `/berichten`. Verstuur een bericht en kijk of je op de lijst uitkomt.
+
+### Opdracht 3: Investigate - Zonder 303
+
+Haal `status_code=303` weg en verstuur nog een keer.
+
+<details>
+<summary>Antwoord</summary>
+
+Je krijgt **405 Method Not Allowed**. Zonder dat getal stuurt FastAPI een 307, en dan herhaalt de browser je POST op `/berichten`. Daar staat alleen een `@app.get`, dus het antwoord is: dit endpoint doet geen POST.
+
+</details>
+
+### Opdracht 4: Make - Annuleren
+
+Maak een endpoint `/annuleren` dat niets opslaat en de bezoeker direct terugstuurt naar het formulier op `/gastenboek`. Zet er een link naartoe op je berichtenpagina.
+
+<details>
+<summary>Tip</summary>
+
+Dit endpoint wordt met een gewone link bezocht, dus het is een `@app.get`. Een redirect vanuit een GET heeft geen 303 nodig.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+@app.get("/annuleren")
+async def annuleren():
+    return RedirectResponse(url="/gastenboek")
+```
+
+In `templates/berichten.html`:
+```html
+<a href="/annuleren">Nieuw bericht schrijven</a>
+```
+
+Hier mag de standaard 307 blijven staan: het oorspronkelijke verzoek was al een GET, dus het herhalen daarvan levert precies op wat je wilt.
+
+</details>
+
+### Opdracht 5: Make - Verwijderen en terug
+
+Maak een endpoint dat een bericht verwijdert en daarna terugstuurt naar de lijst. Gebruik een formulier met een verborgen veld voor de sleutel:
+
+```html
+<form method="post" action="/verwijderen">
+    <input type="hidden" name="sleutel" value="{{ sleutel }}">
+    <button type="submit">Verwijderen</button>
+</form>
+```
+
+<details>
+<summary>Tip</summary>
+
+Om de sleutel in je template te hebben moet je de berichten mét hun sleutel meesturen. Gebruik `list(db.items())` in plaats van `list(db.values())` en loop in je template met `{% for sleutel, bericht in berichten %}`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+@app.get("/berichten")
+async def berichten(request: Request):
+    with SqliteDict("gastenboek.db") as db:
+        alle_berichten = list(db.items())
+    return templates.TemplateResponse(
+        request,
+        "berichten.html",
+        {"berichten": alle_berichten}
+    )
+
+@app.post("/verwijderen")
+async def verwijderen(sleutel: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        if sleutel in db:
+            del db[sleutel]
+            db.commit()
+    return RedirectResponse(url="/berichten", status_code=303)
+```
+
+In `templates/berichten.html`:
+```html
+{% for sleutel, bericht in berichten %}
+    <li>
+        {{ bericht.naam }}: {{ bericht.bericht }}
+        <form method="post" action="/verwijderen">
+            <input type="hidden" name="sleutel" value="{{ sleutel }}">
+            <button type="submit">Verwijderen</button>
+        </form>
+    </li>
+{% endfor %}
+```
+
+De `if sleutel in db` voorkomt een crash als iemand twee keer op verwijderen klikt.
+
+</details>

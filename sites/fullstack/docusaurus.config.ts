@@ -1,4 +1,5 @@
 import { createConfig } from '@coderius/shared/config';
+import { REPO_URL, repoEditUrl } from '@coderius/shared/sites';
 
 export default createConfig({
   title: 'Fullstack met FastAPI — Coderius',
@@ -11,9 +12,8 @@ export default createConfig({
     'Leer een back-end bouwen met FastAPI (Python). Van frontend naar database, direct in je browser.',
   keywords: 'fastapi leren, fullstack python, backend leren beginners, sqlite database python',
 
-  // Pyodide-componenten gedeeld; fullstack gebruikt de CDN (geen lokale setup).
   // @coderius/checker levert de gedeelde 'nakijken'-validator (TSX-bron).
-  sharedPackages: ['@coderius/shared', '@coderius/python-runner', '@coderius/checker'],
+  sharedPackages: ['@coderius/shared', '@coderius/checker'],
 
   presets: [
     [
@@ -21,7 +21,7 @@ export default createConfig({
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          editUrl: 'https://github.com/Coderius-Education/fullstack/tree/main/',
+          editUrl: repoEditUrl('fullstack'),
         },
         blog: false,
       },
@@ -39,7 +39,7 @@ export default createConfig({
         { type: 'doc', docId: 'troubleshooting', position: 'left', label: 'Er gaat iets mis' },
         { to: '/project-checken', label: 'Project checken', position: 'left' },
         {
-          href: 'https://github.com/Coderius-Education/fullstack',
+          href: REPO_URL,
           label: 'GitHub',
           position: 'right',
         },

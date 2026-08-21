@@ -1,6 +1,6 @@
 # embedded-docs
 
-Docusaurus-leersite voor embedded programmeren bij Coderius College: van een knipperende LED in de Arduino IDE, via PlatformIO, tot IO en interfaces op een STM32 Blue Pill.
+Docusaurus-leersite voor embedded programmeren bij Coderius: van een knipperende LED in de Arduino IDE, via PlatformIO, tot IO en interfaces op een STM32 Blue Pill.
 
 ## Lokaal draaien
 

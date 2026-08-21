@@ -1,0 +1,138 @@
+/* Twee kolommen: links wat in de browser gebeurt, rechts wat op de server
+   gebeurt. Onder de 700px klapt het naar één kolom, met een randje links dat
+   de kant blijft aangeven — een tweekolomsdiagram is op een telefoon
+   onleesbaar, maar de volgorde van de stappen blijft het verhaal. */
+
+.cyclus {
+  margin: 2rem 0;
+  padding: 0;
+}
+
+.titel {
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: var(--ifm-color-emphasis-800);
+}
+
+.koppen {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.kop {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ifm-color-emphasis-600);
+  text-align: center;
+}
+
+.stappen {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stap {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  background: var(--ifm-background-surface-color);
+}
+
+.browser {
+  grid-column: 1;
+}
+
+.server {
+  grid-column: 2;
+}
+
+/* Een stap die van kant wisselt is het moment dat er iets over het netwerk
+   gaat. Dat is het enige wat het diagram met kleur benadrukt. */
+.wisselt {
+  border-color: var(--ifm-color-primary);
+  box-shadow: inset 3px 0 0 var(--ifm-color-primary);
+}
+
+.nummer {
+  flex: 0 0 1.5rem;
+  height: 1.5rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--ifm-color-emphasis-200);
+  color: var(--ifm-color-emphasis-800);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.inhoud {
+  min-width: 0;
+}
+
+.stapTitel {
+  display: block;
+  line-height: 1.3;
+}
+
+.stapTekst {
+  margin: 0.25rem 0 0;
+  font-size: 0.9rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.les {
+  display: inline-block;
+  margin-top: 0.4rem;
+  font-size: 0.85rem;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 700px) {
+  .koppen {
+    display: none;
+  }
+
+  .stappen {
+    grid-template-columns: 1fr;
+  }
+
+  .browser,
+  .server {
+    /* De inline grid-row uit index.tsx blijft staan en houdt de volgorde. */
+    grid-column: 1;
+  }
+
+  /* Zonder kolommen valt de kant weg, dus die komt terug als randje. */
+  .browser {
+    border-left: 4px solid var(--ifm-color-emphasis-400);
+  }
+
+  .server {
+    border-left: 4px solid var(--ifm-color-primary);
+  }
+
+  .wisselt {
+    box-shadow: none;
+  }
+}

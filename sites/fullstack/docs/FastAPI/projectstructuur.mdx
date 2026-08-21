@@ -1,14 +1,8 @@
----
-sidebar_position: 13
----
-
-import CodeExercise from '@site/src/components/CodeExercise';
-
 # Projectstructuur
 
 Tijdens de lessen groeit je project stap voor stap. Hier zie je hoe de mappenstructuur evolueert.
 
-## Les 2: Je eerste endpoint
+## Bij [Je eerste endpoint](/docs/FastAPI/eerste_endpoint)
 
 ```
 je-project/
@@ -17,7 +11,7 @@ je-project/
 
 Alleen een Python bestand — meer heb je niet nodig.
 
-## Les 4: Static files
+## Bij [Static files](/docs/FastAPI/static_files)
 
 ```
 je-project/
@@ -29,7 +23,7 @@ je-project/
 
 CSS in een apart bestand, bereikbaar via `/static/css/style.css`.
 
-## Les 5: HTML in bestanden
+## Bij [HTML in bestanden](/docs/FastAPI/html_bestanden)
 
 ```
 je-project/
@@ -43,7 +37,7 @@ je-project/
 
 HTML staat nu ook in aparte bestanden.
 
-## Les 7: Afbeeldingen
+## Bij [Afbeeldingen tonen](/docs/FastAPI/afbeeldingen)
 
 ```
 je-project/
@@ -59,7 +53,7 @@ je-project/
 
 Afbeeldingen staan direct in de `static` folder.
 
-## Les 10: Templates (Jinja2)
+## Bij [POST met templates](/docs/FastAPI/post_met_templates)
 
 ```
 je-project/
@@ -81,7 +75,7 @@ Er komt een `templates/` folder bij voor Jinja2 templates.
 - **templates/** — HTML bestanden met `{{ variabelen }}` die door Python worden ingevuld
 :::
 
-## Les 11-12: Database
+## Bij [Gegevens opslaan](/docs/FastAPI/database) en [POST naar database](/docs/FastAPI/post_naar_database)
 
 ```
 je-project/
@@ -100,44 +94,52 @@ je-project/
 
 Het `.db` bestand wordt automatisch aangemaakt door `sqlitedict`.
 
+## Bij [Een lijst tonen](/docs/FastAPI/lijst_tonen) en [Eén bericht tonen](/docs/FastAPI/detailpagina)
+
+```
+je-project/
+├── main.py
+├── gastenboek.db
+├── static/
+│   ├── css/
+│   │   └── style.css
+│   └── pages/
+│       └── gastenboek_form.html
+└── templates/
+    ├── berichten.html
+    └── bericht.html
+```
+
+Er komen geen mappen bij: een lijstpagina en een detailpagina zijn gewoon twee templates naast elkaar.
+
+## Bij [JavaScript erbij](/docs/FastAPI/javascript)
+
+```
+je-project/
+├── main.py
+├── gastenboek.db
+├── static/
+│   ├── css/
+│   │   └── style.css
+│   ├── js/
+│   │   └── app.js
+│   └── pages/
+│       └── gastenboek_form.html
+└── templates/
+    ├── berichten.html
+    └── bericht.html
+```
+
+Je JavaScript komt naast je CSS te staan, in dezelfde `static`-map. Aan `main.py` verandert niets: `app.mount` serveert die map al.
+
 ## Compleet overzicht
 
 | Map | Wat staat er? | Voorbeeld |
 |-----|---------------|-----------|
 | `/` | Python code en database | `main.py`, `mijn_data.db` |
 | `static/css/` | CSS bestanden | `style.css` |
+| `static/js/` | JavaScript | `app.js` |
 | `static/pages/` | Vaste HTML pagina's | `home.html`, `form.html` |
 | `static/` | Afbeeldingen | `foto.jpg`, `logo.png` |
 | `templates/` | Jinja2 templates | `resultaat.html` |
 
-## Oefen met Python
-
-:::info[Python oefenblok]
-Dit oefenblok draait **pure Python** in je browser — geen FastAPI. Oefen hier de Python-concepten die je nodig hebt voor je server.
-:::
-
-<CodeExercise>
-{`# Projectstructuur als dictionary
-project = {
-    "main.py": "FastAPI app",
-    "static": {
-        "style.css": "CSS bestand",
-        "pages": {
-            "index.html": "Hoofdpagina",
-            "form.html": "Formulier"
-        }
-    }
-}
-
-# Structuur tonen
-def toon_structuur(structuur, inspringing=0):
-    for naam, inhoud in structuur.items():
-        prefix = "  " * inspringing
-        if isinstance(inhoud, dict):
-            print(f"{prefix}{naam}/")
-            toon_structuur(inhoud, inspringing + 1)
-        else:
-            print(f"{prefix}{naam} — {inhoud}")
-
-toon_structuur(project)`}
-</CodeExercise>

@@ -1,4 +1,4 @@
-# Coderius College — gedeelde instructies
+# Coderius — gedeelde instructies
 
 Deze map bevat twee soorten repos:
 

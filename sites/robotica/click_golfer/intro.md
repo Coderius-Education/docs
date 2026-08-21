@@ -42,4 +42,4 @@ Hij is een machine die je kunt programmeren en die reageert op zijn omgeving: me
 
 ---
 
-*ClickGolfer-lesmateriaal: ©Stichting Leaphy. Robotontwerp en lesmateriaal: Roeland Smith, Ronald Moesbergen en Peter Kaim, in samenwerking met het Corderius College.*
+*ClickGolfer-lesmateriaal: ©Stichting Leaphy. Robotontwerp en lesmateriaal: Roeland Smith, Ronald Moesbergen en Peter Kaim.*

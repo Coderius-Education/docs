@@ -1,4 +1,5 @@
 import { createConfig, prismThemes } from '@coderius/shared/config';
+import { REPO_URL, repoEditUrl } from '@coderius/shared/sites';
 
 export default createConfig({
   title: 'Embedded Programmeren — Coderius',
@@ -20,7 +21,7 @@ export default createConfig({
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          editUrl: 'https://github.com/Coderius-Education/embedded-docs/tree/main/',
+          editUrl: repoEditUrl('embedded'),
         },
         blog: false,
         theme: { customCss: './src/css/custom.css' },
@@ -47,7 +48,7 @@ export default createConfig({
           position: 'left',
         },
         {
-          href: 'https://github.com/Coderius-Education/embedded-docs',
+          href: REPO_URL,
           label: 'GitHub',
           position: 'right',
         },
