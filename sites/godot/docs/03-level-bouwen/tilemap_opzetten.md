@@ -58,6 +58,33 @@ Hij valt **dwars door de vloer heen**. De tegels die je hebt getekend zijn voor 
 
 </details>
 
+## Opdracht 3.2.a: teken een level met hoogteverschil
+
+Een vlakke vloer is snel saai. Bouw je level uit tot een echt platformer-parcours:
+
+1. Een doorlopende vloer onderin, met minstens één **gat** erin.
+2. Minstens twee **plateaus** op verschillende hoogtes.
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Teken met het potlood, gum met de rechtermuisknop. Houd de sprongen bescheiden: een plateau van twee à drie tegels hoger is straks nog net te halen, veel hoger niet.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+Er is geen fout of goed level, maar controleer deze drie dingen:
+
+- De vloer stopt ergens en gaat verderop weer door — dat is je gat.
+- Vanaf de vloer kun je in gedachten via de plateaus omhoog "klimmen", zonder sprongen van meer dan een paar tegels.
+- Alles wat begaanbaar moet zijn valt binnen de roze stippelrand, of net erbuiten — de camera leert je pas later meebewegen.
+
+Testen of de sprongen écht haalbaar zijn kan nog niet: daarvoor heb je het karakter uit hoofdstuk 4 nodig. Grote kans dat je hier dan nog iets bijstelt, en dat hoort erbij.
+
+</details>
+
 ## Er gaat iets mis
 
 <details>

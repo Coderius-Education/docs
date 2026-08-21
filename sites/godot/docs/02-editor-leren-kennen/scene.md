@@ -54,6 +54,32 @@ De `.tscn`-extensie staat voor "text scene" — Godot slaat je scène op als een
 Krijg je bij het eerste keer starten de vraag welke scène als **Main Scene** moet dienen? Kies `world.tscn` — dat is de scène die start zodra je op ▶ klikt.
 :::
 
+## Opdracht 2.2.a: voeg een child-node toe en hernoem hem
+
+In de komende hoofdstukken voeg je tientallen nodes toe aan je Scene Tree. Oefen die handeling nu een keer los:
+
+1. Voeg een child-node van het type `Node2D` toe aan je root-node.
+2. Hernoem hem naar `Oefening`.
+3. Verwijder hem daarna weer, zodat je scène leeg blijft voor de volgende les.
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Alle drie de acties zitten in het rechtermuisknop-menu op een node in de Scene Tree. Hernoemen kan ook met `F2` of door te dubbelklikken op de naam.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+1. Rechtermuisknop op `Node2D` (je root) → **Add Child Node** → zoek `Node2D` → **Create**. De nieuwe node verschijnt ingesprongen onder je root: het is een **child**.
+2. Dubbelklik op de naam (of druk `F2`) en typ `Oefening`.
+3. Rechtermuisknop op `Oefening` → **Delete Node(s)**, of selecteer hem en druk op `Delete`.
+
+De naam van een node mag je zelf kiezen, maar hij bepaalt straks wél hoe je hem vanuit code aanspreekt. Daar kom je in hoofdstuk 5 achter.
+
+</details>
+
 ## Er gaat iets mis
 
 <details>

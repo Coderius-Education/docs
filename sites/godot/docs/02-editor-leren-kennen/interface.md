@@ -49,6 +49,29 @@ De **Scene Tree** staat **linksboven**. Dat past bij hoe je leest: van links naa
 | Spel starten  | ▶ (rechtsboven) | `F5`              |
 | Spel stoppen  | ■ (rechtsboven) | `F8` of `Escape`  |
 
+## Opdracht 2.1.a: sloop de layout en herstel hem
+
+Panelen kun je verslepen, en vroeg of laat doe je dat per ongeluk. Doe het nu een keer expres, dan weet je hoe je het terugdraait.
+
+1. Pak het tabblad van de **Inspector** (rechtsboven) en sleep het naar een andere plek, bijvoorbeeld naast het FileSystem-paneel.
+2. Zet de layout daarna weer terug zoals hij was.
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Terugslepen hoeft niet — er is een menu-optie die de hele indeling in één keer herstelt. Kijk in het **Editor**-menu bovenaan.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+Ga naar **Editor** → **Editor Layout** → **Default**. Alle panelen springen terug naar de standaardindeling.
+
+Deze route komt nog vaak van pas: ziet je editor er ooit "kapot" uit, dan is dit vrijwel altijd de oplossing.
+
+</details>
+
 ## Er gaat iets mis
 
 <details>

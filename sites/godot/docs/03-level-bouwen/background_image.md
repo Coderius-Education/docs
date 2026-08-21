@@ -62,6 +62,29 @@ Je afbeelding is nu waarschijnlijk uitgerekt of bedekt maar een deel van het vla
 
 De afbeelding wordt nu herhaald binnen de `TextureRect`. Pas zo nodig de grootte uit Stap 3 nog wat aan tot het er goed uitziet.
 
+## Opdracht 3.1.a: wissel van achtergrond
+
+De map `Background` bevat meer kleuren dan alleen `Green.png`. Voorspel eerst, wissel dan:
+
+1. **Voorspel:** de achtergrond-afbeeldingen zijn kleine vierkantjes, veel kleiner dan je scherm. Wat verwacht je te zien als je zo'n klein plaatje in jouw grote `TextureRect` zet, met Stretch Mode op `Tile`? En wat zou je zien als het plaatje juist gróter was dan de `TextureRect`?
+2. Sleep een andere kleur uit `Background` naar de eigenschap **Texture** en controleer je voorspelling.
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Je hoeft niets opnieuw op te bouwen. De `TextureRect`, zijn grootte en de Stretch Mode blijven staan — alleen de eigenschap **Texture** krijgt een andere afbeelding.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+Selecteer de `TextureRect` en sleep bijvoorbeeld `Blue.png` naar **Texture** in de Inspector. De nieuwe kleur vult direct het hele vlak.
+
+Over de voorspelling: `Tile` herhaalt het plaatje net zo vaak als nodig is om de `TextureRect` te vullen — een klein plaatje wordt dus heel vaak herhaald. Is het plaatje groter dan de `TextureRect`, dan zie je maar één stukje ervan: `Tile` maakt een afbeelding nooit kleiner, hij knipt af wat niet past.
+
+</details>
+
 ## Er gaat iets mis
 
 <details>

@@ -22,6 +22,26 @@ Open Godot. Je ziet meteen het **Project Manager**-venster: een lijst van projec
 
 De editor opent nu met je lege project. In hoofdstuk 2 leer je hoe je de editor gebruikt.
 
+## Opdracht 1.2.a: vind je projectmap terug
+
+Een project is een map op je computer — dat kun je zelf controleren. Zoek in de Verkenner de map op die je bij Stap 2 hebt gekozen en bekijk welke bestanden Godot daar heeft neergezet.
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Weet je niet meer welke map je koos? In de Project Manager staat het volledige pad onder de naam van je project.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+In je projectmap staat onder andere `project.godot`. Dat bestand maakt de map tot een Godot-project: de Project Manager zoekt er naar, en alles wat je straks maakt (scènes, scripts, afbeeldingen) komt in deze map te staan.
+
+Onthoud waar deze map staat. In [Bestanden downloaden](../02-editor-leren-kennen/bestanden-downloaden.md) kopieer je hier je afbeeldingen naartoe.
+
+</details>
+
 ## Er gaat iets mis
 
 <details>

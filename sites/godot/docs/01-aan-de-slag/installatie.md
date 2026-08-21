@@ -43,6 +43,30 @@ Ziet jouw editor er grijzer uit dan op de screenshots? Dat klopt: sinds Godot 4.
 
 Open in Godot het menu **Help → About Godot**. Er verschijnt een venster met de exacte versie. Controleer dat het versienummer begint met `4.7.` — bijvoorbeeld `4.7-stable` of een latere 4.7-patch. Als je een andere versie ziet, ga terug naar Stap 1 en download de juiste.
 
+## Opdracht 1.1.a: verken de Project Manager
+
+Voordat je in de volgende les een project aanmaakt, kijk je even rond in het Project Manager-venster. Zoek twee dingen op:
+
+1. Waar je de **taal** van de editor kunt veranderen.
+2. Waar het tabblad **Asset Library** zit (daar kun je later kant-en-klare onderdelen vinden).
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Kijk langs de randen van het venster: bovenaan zitten tabbladen, rechtsboven een keuzemenu.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+- De taal wissel je met het keuzemenu **rechtsboven** in het venster (daar staat nu iets als `EN — English`).
+- **Asset Library** is een tabblad **bovenaan**, naast je projectenlijst.
+
+Laat de taal op Engels staan. Deze cursus gebruikt de Engelse namen van knoppen en menu's, dus dan komt alles op je scherm overeen met de lessen.
+
+</details>
+
 In de volgende les maak je je eerste project aan.
 
 ## Er gaat iets mis

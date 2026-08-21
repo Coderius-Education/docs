@@ -54,6 +54,39 @@ Ga terug naar Godot — de bestanden verschijnen automatisch in het FileSystem-p
 Gebruik je de [online editor](https://editor.godotengine.org/)? Dan kun je geen bestanden via de Verkenner kopiëren. Sleep de uitgepakte bestanden in plaats daarvan rechtstreeks naar het **FileSystem**-paneel in de editor.
 :::
 
+## Voorspel: wat betekent `res://`?
+
+Bovenaan het FileSystem-paneel staat `res://`. **Wat denk je dat dat is?** Denk terug aan [Opdracht 1.2.a](../01-aan-de-slag/project.md#opdracht-12a-vind-je-projectmap-terug), waar je je projectmap opzocht in de Verkenner.
+
+<details>
+<summary>Antwoord</summary>
+
+`res://` is je **projectmap**, gezien vanuit Godot. `res` staat voor *resources*: alle bestanden van je project. Een pad als `res://assets/Background/Green.png` betekent dus: het bestand `Green.png`, in de map `assets/Background`, binnen je projectmap. Zo kan een project verwijzen naar zijn eigen bestanden, op welke computer het ook staat.
+
+</details>
+
+## Opdracht 2.3.a: verken het asset-pack
+
+Je gaat de komende hoofdstukken steeds bestanden uit dit pack gebruiken. Kijk nu alvast wat erin zit. Zoek in het FileSystem-paneel (of in de Verkenner) op:
+
+1. Welke kleuren achtergrond de map `Background` bevat.
+2. Waar de speelbare figuren staan, en hoe hun loop-animatie als bestand is opgeslagen.
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Klap de mappen in het FileSystem-paneel open met het pijltje ervoor. Klik op een afbeelding om rechtsonder een voorbeeld te zien.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+1. `Background` bevat effen kleurtegels, waaronder `Green.png` — die gebruik je in [Achtergrond](../03-level-bouwen/background_image.md).
+2. De figuren staan in `Main Characters`, elk in een eigen map. Een animatie is één breed bestand zoals `Run (32x32).png`: alle stapjes van de beweging naast elkaar in een **sprite-sheet**. In hoofdstuk 5 knip je die frames in Godot los.
+
+</details>
+
 ## Er gaat iets mis
 
 <details>
