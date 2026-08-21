@@ -194,6 +194,28 @@ describe('fullstackConfig', () => {
     expect(perId.get('fastapi-path-param')).toBe(true);
   });
 
+  // De twee concepten die niet in de fixtures voorkomen; zonder deze test zou
+  // een kapotte regex voor precies deze twee stil de hele suite groen laten.
+  it('herkent HTMLResponse en verwijderen uit de database', () => {
+    const report = analyze(
+      files({
+        'main.py': [
+          'from fastapi.responses import HTMLResponse',
+          '@app.get("/pagina", response_class=HTMLResponse)',
+          'async def pagina():',
+          '    return "<h1>Hallo</h1>"',
+          'async def verwijderen(sleutel: str = Form(...)):',
+          '    del db[sleutel]',
+        ].join('\n'),
+      }),
+      fullstackConfig,
+    );
+    const perId = new Map(report.concepts.map((c) => [c.id, c.used]));
+
+    expect(perId.get('fastapi-html-response')).toBe(true);
+    expect(perId.get('db-del')).toBe(true);
+  });
+
   it('ziet een route zonder accolades niet aan voor een path-parameter', () => {
     const report = analyze(
       files({ 'main.py': '@app.get("/berichten")\nasync def berichten():\n    return []' }),
