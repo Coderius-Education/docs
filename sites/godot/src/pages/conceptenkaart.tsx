@@ -13,11 +13,14 @@ export default function ConceptenKaartPagina(): ReactNode {
         <Heading as="h1">Conceptenkaart</Heading>
         <p>
           Deze cursus verweeft drie leerlijnen: werken met de editor, bouwen met nodes, en
-          programmeren in GDScript. De kaart toont één hoofdstuk tegelijk: rechts de lessen van dat
-          hoofdstuk, links de concepten die daarin voorkomen, gekleurd per leerlijn. Beweeg over een
-          blok of klik erop om te zien wat waar aan bod komt; onder de kaart verschijnen dan links
-          naar de uitleg of de les. Klik je een concept aan, dan zie je álle lessen waarin het
-          terugkomt, ook buiten dit hoofdstuk.
+          programmeren in GDScript. Elke leerlijn heeft hier zijn eigen kaart. Links staan de
+          concepten, rechts de lessen waarin ze voorkomen, en de dikke lijn wijst naar de les waar
+          je het concept leert.
+        </p>
+        <p>
+          Zoek je waar iets wordt uitgelegd, klik dan op het concept: onder de kaart staat in welke
+          les je het leert en waar je het daarna nog gebruikt. Andersom kan ook — klik op een les en
+          je ziet wat daar nieuw is en wat je uit eerdere lessen meeneemt.
         </p>
         <ConceptenKaart />
       </main>

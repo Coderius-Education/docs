@@ -6,6 +6,7 @@ import {
   conceptenPerLes,
   godotConcepten,
   lessen,
+  uitlegSlug,
 } from '@site/src/data/conceptenkaart';
 import clsx from 'clsx';
 import type React from 'react';
@@ -18,7 +19,7 @@ const NODE_H = 44;
 const GAP = 10;
 const VIEW_W = 1000;
 
-type Actief = { kind: 'concept' | 'les' | 'leerlijn'; id: string } | null;
+type Actief = { kind: 'concept' | 'les'; id: string } | null;
 
 const leerlijnKlasse: Record<Leerlijn, string> = {
   editor: styles.nodeEditor,
@@ -36,49 +37,90 @@ function rijMidden(index: number): number {
   return index * (NODE_H + GAP) + NODE_H / 2;
 }
 
+function pad(y1: number, y2: number): string {
+  return `M 0 ${y1} C 400 ${y1}, 600 ${y2}, ${VIEW_W} ${y2}`;
+}
+
 export default function ConceptenKaart(): React.ReactElement {
-  const [hoofdstuk, setHoofdstuk] = useState<number | 'alles'>(HOOFDSTUKKEN[0].nummer);
+  const [leerlijn, setLeerlijn] = useState<Leerlijn>(LEERLIJNEN[0].id);
+  const [hoofdstuk, setHoofdstuk] = useState<number | 'alles'>('alles');
   const [actief, setActief] = useState<Actief>(null);
   const [gepind, setGepind] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const leerlijnVan = useMemo(() => new Map(godotConcepten.map((c) => [c.id, c.leerlijn])), []);
-
-  // Eén hoofdstuk tegelijk: links alleen de concepten die in de zichtbare
-  // lessen voorkomen, in de vaste leerlijn-volgorde van godotConcepten.
-  const zichtbareLessen = useMemo(
-    () => (hoofdstuk === 'alles' ? lessen : lessen.filter((l) => l.hoofdstuk === hoofdstuk)),
-    [hoofdstuk],
+  // Eén leerlijn tegelijk, eventueel ingeperkt tot één hoofdstuk.
+  const conceptenVanLeerlijn = useMemo(
+    () => godotConcepten.filter((c) => c.leerlijn === leerlijn),
+    [leerlijn],
   );
 
+  const lessenVanLeerlijn = useMemo(() => {
+    const ids = new Set(conceptenVanLeerlijn.map((c) => c.id));
+    return lessen.filter((l) => (conceptenPerLes[l.slug] ?? []).some((id) => ids.has(id)));
+  }, [conceptenVanLeerlijn]);
+
+  // Alleen hoofdstukken die in deze leerlijn iets te tonen hebben.
+  const beschikbareHoofdstukken = useMemo(() => {
+    const aanwezig = new Set(lessenVanLeerlijn.map((l) => l.hoofdstuk));
+    return HOOFDSTUKKEN.filter((h) => aanwezig.has(h.nummer));
+  }, [lessenVanLeerlijn]);
+
+  const zichtbareLessen = useMemo(
+    () =>
+      hoofdstuk === 'alles'
+        ? lessenVanLeerlijn
+        : lessenVanLeerlijn.filter((l) => l.hoofdstuk === hoofdstuk),
+    [hoofdstuk, lessenVanLeerlijn],
+  );
+
+  const lesVolgorde = useMemo(() => new Map(lessen.map((l, i) => [l.slug, i])), []);
+
   const zichtbareConcepten = useMemo(() => {
-    if (hoofdstuk === 'alles') return godotConcepten;
-    const gebruikt = new Set(zichtbareLessen.flatMap((l) => conceptenPerLes[l.slug] ?? []));
-    return godotConcepten.filter((c) => gebruikt.has(c.id));
-  }, [hoofdstuk, zichtbareLessen]);
+    const basis =
+      hoofdstuk === 'alles'
+        ? conceptenVanLeerlijn
+        : (() => {
+            const gebruikt = new Set(zichtbareLessen.flatMap((l) => conceptenPerLes[l.slug] ?? []));
+            return conceptenVanLeerlijn.filter((c) => gebruikt.has(c.id));
+          })();
+    // Sorteren op de les waar het concept wordt uitgelegd: zo lopen de dikke
+    // lijnen vrijwel parallel en leest de kolom als de volgorde waarin je ze
+    // tegenkomt.
+    return [...basis].sort(
+      (a, b) => (lesVolgorde.get(uitlegSlug(a)) ?? 0) - (lesVolgorde.get(uitlegSlug(b)) ?? 0),
+    );
+  }, [conceptenVanLeerlijn, hoofdstuk, lesVolgorde, zichtbareLessen]);
 
   const conceptIndex = useMemo(
     () => new Map(zichtbareConcepten.map((c, i) => [c.id, i])),
     [zichtbareConcepten],
   );
 
+  const uitlegPerConcept = useMemo(
+    () => new Map(godotConcepten.map((c) => [c.id, uitlegSlug(c)])),
+    [],
+  );
+
   const edges = useMemo(
     () =>
       zichtbareLessen.flatMap((les, lesIdx) =>
-        (conceptenPerLes[les.slug] ?? []).map((conceptId) => ({
-          key: `${conceptId}:${les.slug}`,
-          conceptId,
-          slug: les.slug,
-          leerlijn: leerlijnVan.get(conceptId) as Leerlijn,
-          y1: rijMidden(conceptIndex.get(conceptId) ?? 0),
-          y2: rijMidden(lesIdx),
-        })),
+        (conceptenPerLes[les.slug] ?? [])
+          .filter((conceptId) => conceptIndex.has(conceptId))
+          .map((conceptId) => ({
+            key: `${conceptId}:${les.slug}`,
+            conceptId,
+            slug: les.slug,
+            // De ene les waar het concept wordt uitgelegd; de rest gebruikt het.
+            isUitleg: uitlegPerConcept.get(conceptId) === les.slug,
+            y1: rijMidden(conceptIndex.get(conceptId) ?? 0),
+            y2: rijMidden(lesIdx),
+          })),
       ),
-    [conceptIndex, leerlijnVan, zichtbareLessen],
+    [conceptIndex, uitlegPerConcept, zichtbareLessen],
   );
 
   const hoogte =
-    rijMidden(Math.max(zichtbareConcepten.length, zichtbareLessen.length) - 1) + NODE_H / 2;
+    rijMidden(Math.max(zichtbareConcepten.length, zichtbareLessen.length, 1) - 1) + NODE_H / 2;
 
   // Welke nodes horen bij de actieve selectie?
   const verbonden = useMemo(() => {
@@ -87,11 +129,7 @@ export default function ConceptenKaart(): React.ReactElement {
     const slugs = new Set<string>();
     for (const edge of edges) {
       const raak =
-        actief.kind === 'concept'
-          ? edge.conceptId === actief.id
-          : actief.kind === 'les'
-            ? edge.slug === actief.id
-            : edge.leerlijn === actief.id;
+        actief.kind === 'concept' ? edge.conceptId === actief.id : edge.slug === actief.id;
       if (raak) {
         concepten.add(edge.conceptId);
         slugs.add(edge.slug);
@@ -122,10 +160,10 @@ export default function ConceptenKaart(): React.ReactElement {
     };
   }, [gepind, wisPin]);
 
-  const activeer = (kind: 'concept' | 'les' | 'leerlijn', id: string) => {
+  const activeer = (kind: 'concept' | 'les', id: string) => {
     if (!gepind) setActief({ kind, id });
   };
-  const toggle = (kind: 'concept' | 'les' | 'leerlijn', id: string) => {
+  const toggle = (kind: 'concept' | 'les', id: string) => {
     if (gepind && actief && actief.kind === kind && actief.id === id) {
       wisPin();
     } else {
@@ -137,7 +175,7 @@ export default function ConceptenKaart(): React.ReactElement {
     if (!gepind) setActief(null);
   };
 
-  const isActieveNode = (kind: 'concept' | 'les' | 'leerlijn', id: string) =>
+  const isActieveNode = (kind: 'concept' | 'les', id: string) =>
     actief !== null && actief.kind === kind && actief.id === id;
   const isVerbondenConcept = (id: string) => !verbonden || verbonden.concepten.has(id);
   const isVerbondenLes = (slug: string) => !verbonden || verbonden.slugs.has(slug);
@@ -146,11 +184,16 @@ export default function ConceptenKaart(): React.ReactElement {
     actief
       ? actief.kind === 'concept'
         ? edge.conceptId === actief.id
-        : actief.kind === 'les'
-          ? edge.slug === actief.id
-          : edge.leerlijn === actief.id
+        : edge.slug === actief.id
       : false,
   );
+
+  const kiesLeerlijn = (keuze: Leerlijn) => {
+    setLeerlijn(keuze);
+    setHoofdstuk('alles');
+    setActief(null);
+    setGepind(false);
+  };
 
   const kiesHoofdstuk = (keuze: number | 'alles') => {
     setHoofdstuk(keuze);
@@ -162,17 +205,69 @@ export default function ConceptenKaart(): React.ReactElement {
   const actiefConcept =
     actief?.kind === 'concept' ? godotConcepten.find((c) => c.id === actief.id) : undefined;
   const actieveLes = actief?.kind === 'les' ? lessen.find((l) => l.slug === actief.id) : undefined;
-  const actieveLeerlijn =
-    actief?.kind === 'leerlijn' ? LEERLIJNEN.find((l) => l.id === actief.id) : undefined;
+
+  const uitlegLes = actiefConcept
+    ? lessen.find((l) => l.slug === uitlegSlug(actiefConcept))
+    : undefined;
+  const herhaalLessen = actiefConcept
+    ? lessen.filter(
+        (l) =>
+          l.slug !== uitlegSlug(actiefConcept) &&
+          (conceptenPerLes[l.slug] ?? []).includes(actiefConcept.id),
+      )
+    : [];
+
+  const lesLeert = actieveLes
+    ? godotConcepten.filter(
+        (c) =>
+          uitlegSlug(c) === actieveLes.slug &&
+          (conceptenPerLes[actieveLes.slug] ?? []).includes(c.id),
+      )
+    : [];
+  const lesGebruikt = actieveLes
+    ? godotConcepten.filter(
+        (c) =>
+          uitlegSlug(c) !== actieveLes.slug &&
+          (conceptenPerLes[actieveLes.slug] ?? []).includes(c.id),
+      )
+    : [];
 
   return (
     <div ref={containerRef}>
+      <div className={styles.leerlijnTabs} role="tablist" aria-label="Leerlijn">
+        {LEERLIJNEN.map((l) => (
+          <button
+            key={l.id}
+            type="button"
+            role="tab"
+            aria-selected={leerlijn === l.id}
+            className={clsx(
+              styles.leerlijnTab,
+              leerlijnKlasse[l.id],
+              leerlijn === l.id && styles.leerlijnTabActief,
+            )}
+            onClick={() => kiesLeerlijn(l.id)}
+          >
+            <span className={styles.stip} aria-hidden="true" />
+            {l.label}
+          </button>
+        ))}
+      </div>
+
       <div className={styles.hoofdstukken}>
         <span className={styles.filterLabel} id="hoofdstuk-label">
           Hoofdstuk
         </span>
         <div className={styles.hoofdstukKnoppen} aria-labelledby="hoofdstuk-label">
-          {HOOFDSTUKKEN.map((h) => (
+          <button
+            type="button"
+            className={clsx(styles.tab, hoofdstuk === 'alles' && styles.tabActief)}
+            aria-pressed={hoofdstuk === 'alles'}
+            onClick={() => kiesHoofdstuk('alles')}
+          >
+            Alle
+          </button>
+          {beschikbareHoofdstukken.map((h) => (
             <button
               key={h.nummer}
               type="button"
@@ -184,38 +279,15 @@ export default function ConceptenKaart(): React.ReactElement {
               {h.label}
             </button>
           ))}
-          <button
-            type="button"
-            className={clsx(styles.tab, hoofdstuk === 'alles' && styles.tabActief)}
-            aria-pressed={hoofdstuk === 'alles'}
-            onClick={() => kiesHoofdstuk('alles')}
-          >
-            Alles tegelijk
-          </button>
         </div>
       </div>
 
-      <div className={styles.legenda}>
-        {LEERLIJNEN.map((leerlijn) => (
-          <button
-            key={leerlijn.id}
-            type="button"
-            className={clsx(
-              styles.chip,
-              leerlijnKlasse[leerlijn.id],
-              isActieveNode('leerlijn', leerlijn.id) && styles.chipActief,
-            )}
-            aria-pressed={gepind && isActieveNode('leerlijn', leerlijn.id)}
-            onMouseEnter={() => activeer('leerlijn', leerlijn.id)}
-            onMouseLeave={laatLos}
-            onFocus={() => activeer('leerlijn', leerlijn.id)}
-            onClick={() => toggle('leerlijn', leerlijn.id)}
-          >
-            <span className={styles.chipStip} aria-hidden="true" />
-            {leerlijn.label}
-          </button>
-        ))}
-      </div>
+      <p className={styles.uitlegLegenda}>
+        Een{' '}
+        <span className={clsx(styles.legendaLijn, leerlijnKlasse[leerlijn])} aria-hidden="true" />{' '}
+        dikke lijn wijst naar de les waar je het concept <strong>leert</strong>. De dunne lijnen
+        zijn lessen waar je het daarna nog gebruikt.
+      </p>
 
       <div className={styles.scroller}>
         <div className={styles.koppen}>
@@ -256,19 +328,41 @@ export default function ConceptenKaart(): React.ReactElement {
             preserveAspectRatio="none"
             aria-hidden="true"
           >
-            {edges.map((edge) => (
-              <path
-                key={edge.key}
-                className={clsx(styles.lijn, actief && styles.lijnGedimd)}
-                d={`M 0 ${edge.y1} C 400 ${edge.y1}, 600 ${edge.y2}, ${VIEW_W} ${edge.y2}`}
-                vectorEffect="non-scaling-stroke"
-              />
-            ))}
+            {edges
+              .filter((edge) => !edge.isUitleg)
+              .map((edge) => (
+                <path
+                  key={edge.key}
+                  className={clsx(styles.lijn, actief && styles.lijnGedimd)}
+                  d={pad(edge.y1, edge.y2)}
+                  vectorEffect="non-scaling-stroke"
+                />
+              ))}
+            {edges
+              .filter((edge) => edge.isUitleg)
+              .map((edge) => (
+                <path
+                  key={edge.key}
+                  className={clsx(
+                    styles.lijn,
+                    styles.lijnUitleg,
+                    lijnKlasse[leerlijn],
+                    actief && styles.lijnGedimd,
+                  )}
+                  d={pad(edge.y1, edge.y2)}
+                  vectorEffect="non-scaling-stroke"
+                />
+              ))}
             {actieveEdges.map((edge) => (
               <path
                 key={`actief-${edge.key}`}
-                className={clsx(styles.lijn, styles.lijnActief, lijnKlasse[edge.leerlijn])}
-                d={`M 0 ${edge.y1} C 400 ${edge.y1}, 600 ${edge.y2}, ${VIEW_W} ${edge.y2}`}
+                className={clsx(
+                  styles.lijn,
+                  styles.lijnActief,
+                  edge.isUitleg && styles.lijnUitleg,
+                  lijnKlasse[leerlijn],
+                )}
+                d={pad(edge.y1, edge.y2)}
                 vectorEffect="non-scaling-stroke"
               />
             ))}
@@ -304,58 +398,67 @@ export default function ConceptenKaart(): React.ReactElement {
         {actiefConcept && (
           <>
             <p className={styles.paneelKop}>
-              <strong>{actiefConcept.label}</strong> gebruik je in deze lessen, in de hele cursus.{' '}
-              <Link to={actiefConcept.to}>Naar de uitleg</Link>
+              <strong>{actiefConcept.label}</strong> leer je in{' '}
+              {uitlegLes ? (
+                <Link to={actiefConcept.to}>
+                  hoofdstuk {uitlegLes.hoofdstuk}, {uitlegLes.titel}
+                </Link>
+              ) : (
+                <Link to={actiefConcept.to}>de uitleg</Link>
+              )}
+              .
             </p>
-            <ul className={styles.paneelLinks}>
-              {lessen
-                .filter((l) => (conceptenPerLes[l.slug] ?? []).includes(actiefConcept.id))
-                .map((l) => (
-                  <li key={l.slug}>
-                    <span className={styles.paneelHoofdstuk}>{l.hoofdstuk}</span>
-                    <Link to={`/docs/${l.slug}`}>{l.titel}</Link>
-                  </li>
-                ))}
-            </ul>
+            {herhaalLessen.length > 0 && (
+              <>
+                <p className={styles.paneelSub}>Daarna gebruik je het nog in:</p>
+                <ul className={styles.paneelLinks}>
+                  {herhaalLessen.map((l) => (
+                    <li key={l.slug}>
+                      <span className={styles.paneelHoofdstuk}>{l.hoofdstuk}</span>
+                      <Link to={`/docs/${l.slug}`}>{l.titel}</Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
           </>
         )}
         {actieveLes && (
           <>
             <p className={styles.paneelKop}>
-              <strong>{actieveLes.titel}</strong> gebruikt deze concepten.{' '}
+              <strong>{actieveLes.titel}</strong>{' '}
               <Link to={`/docs/${actieveLes.slug}`}>Naar de les</Link>
             </p>
-            <ul className={styles.paneelLinks}>
-              {godotConcepten
-                .filter((c) => (conceptenPerLes[actieveLes.slug] ?? []).includes(c.id))
-                .map((c) => (
-                  <li key={c.id}>
-                    <Link to={c.to}>{c.label}</Link>
-                  </li>
-                ))}
-            </ul>
-          </>
-        )}
-        {actieveLeerlijn && (
-          <>
-            <p className={styles.paneelKop}>
-              De leerlijn <strong>{actieveLeerlijn.label}</strong> bevat deze concepten.
-            </p>
-            <ul className={styles.paneelLinks}>
-              {godotConcepten
-                .filter((c) => c.leerlijn === actieveLeerlijn.id)
-                .map((c) => (
-                  <li key={c.id}>
-                    <Link to={c.to}>{c.label}</Link>
-                  </li>
-                ))}
-            </ul>
+            {lesLeert.length > 0 && (
+              <>
+                <p className={styles.paneelSub}>Hier leer je:</p>
+                <ul className={styles.paneelLinks}>
+                  {lesLeert.map((c) => (
+                    <li key={c.id}>
+                      <Link to={c.to}>{c.label}</Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+            {lesGebruikt.length > 0 && (
+              <>
+                <p className={styles.paneelSub}>Hier gebruik je, uit eerdere lessen:</p>
+                <ul className={styles.paneelLinks}>
+                  {lesGebruikt.map((c) => (
+                    <li key={c.id}>
+                      <Link to={c.to}>{c.label}</Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
           </>
         )}
         {!actief && (
           <p className={styles.paneelKop}>
-            Beweeg over een blok, een les of een leerlijn-chip, of klik erop om de verbindingen te
-            zien. De links verschijnen hier.
+            Beweeg over een concept of een les, of klik erop om de verbindingen vast te zetten. De
+            links verschijnen hier.
           </p>
         )}
       </div>

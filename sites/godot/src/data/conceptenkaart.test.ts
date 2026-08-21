@@ -8,6 +8,7 @@ import {
   conceptenPerLes,
   godotConcepten,
   lessen,
+  uitlegSlug,
 } from './conceptenkaart';
 
 // Bewaakt dat de conceptenkaart gelijk blijft aan de lessen: elke slug
@@ -146,6 +147,17 @@ describe('conceptenkaart-data', () => {
         kapot.push(`hoofdstuk ${h.nummer}: kaart zegt '${h.label}', map zegt '${label}'`);
       }
     }
+    expect(kapot).toEqual([]);
+  });
+
+  it('legt elk concept uit in een les die ook op de kaart staat', () => {
+    // De kaart tekent een dikke lijn naar die ene les en noemt hem in het
+    // paneel; wijst `to` naar een pagina buiten `lessen`, dan valt dat weg.
+    const opDeKaart = new Set(lessen.map((l) => l.slug));
+    const kapot = godotConcepten
+      .filter((c) => !opDeKaart.has(uitlegSlug(c)))
+      .map((c) => `${c.id} legt uit in '${uitlegSlug(c)}', maar die les staat niet op de kaart`);
+
     expect(kapot).toEqual([]);
   });
 });

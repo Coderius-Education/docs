@@ -1,12 +1,14 @@
 /* Leerlijn-kleuren, met een donkere variant per thema. */
-.legenda,
+.leerlijnTabs,
+.uitlegLegenda,
 .kaart {
   --lijn-editor: #b45309;
   --lijn-nodes: #1d4ed8;
   --lijn-gdscript: #15803d;
 }
 
-:global([data-theme="dark"]) .legenda,
+:global([data-theme="dark"]) .leerlijnTabs,
+:global([data-theme="dark"]) .uitlegLegenda,
 :global([data-theme="dark"]) .kaart {
   --lijn-editor: #fbbf24;
   --lijn-nodes: #60a5fa;
@@ -81,33 +83,57 @@
   opacity: 0.85;
 }
 
-.legenda {
+/* Leerlijn = de hoofdindeling: één kaart per leerlijn. */
+.leerlijnTabs {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
   margin-bottom: 1rem;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+  padding-bottom: 0.75rem;
 }
 
-.chip {
+.leerlijnTab {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.25rem 0.75rem;
+  gap: 0.5rem;
+  padding: 0.45rem 1rem;
   border: 1px solid var(--ifm-color-emphasis-300);
-  border-radius: 999px;
+  border-radius: var(--ifm-global-radius);
   background: var(--ifm-background-surface-color);
   color: var(--ifm-font-color-base);
   font: inherit;
-  font-size: 0.85rem;
+  font-size: 1rem;
   cursor: pointer;
 }
 
-.chip:hover,
-.chipActief {
+.leerlijnTab:hover {
   border-color: var(--leerlijn-kleur);
 }
 
-.chipStip {
+.leerlijnTabActief {
+  border-color: var(--leerlijn-kleur);
+  border-bottom-width: 3px;
+  font-weight: 600;
+  background: var(--ifm-background-color);
+}
+
+/* Legenda-regel onder de filters: wat een dikke lijn betekent. */
+.uitlegLegenda {
+  margin: 0 0 0.75rem;
+  font-size: 0.9rem;
+  color: var(--ifm-color-emphasis-800);
+}
+
+.legendaLijn {
+  display: inline-block;
+  width: 1.6rem;
+  height: 0;
+  vertical-align: middle;
+  border-top: 3px solid var(--leerlijn-kleur);
+}
+
+.stip {
   width: 0.6rem;
   height: 0.6rem;
   border-radius: 50%;
@@ -175,6 +201,12 @@
   stroke: var(--ifm-color-primary);
   stroke-width: 2.5;
   opacity: 1;
+}
+
+/* De ene les waar het concept wordt uitgelegd. */
+.lijnUitleg {
+  stroke-width: 3;
+  opacity: 0.85;
 }
 
 .lijnEditor {
@@ -256,6 +288,16 @@
 
 .paneelKop {
   margin: 0 0 0.5rem;
+}
+
+.paneelSub {
+  margin: 0.75rem 0 0.35rem;
+  font-size: 0.85rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.paneelSub:first-of-type {
+  margin-top: 0.5rem;
 }
 
 .paneelLinks {

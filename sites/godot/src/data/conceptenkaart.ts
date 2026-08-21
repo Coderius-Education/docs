@@ -21,6 +21,16 @@ export type GodotConcept = {
   to: string;
 };
 
+/**
+ * De les waar een concept wordt uitgelegd, afgeleid uit `to`. De rest van de
+ * lessen waarin het concept voorkomt, gebruikt het alleen.
+ * conceptenkaart.test.ts bewaakt dat `to` deze vorm heeft en dat die les het
+ * concept ook echt op de kaart heeft staan.
+ */
+export function uitlegSlug(concept: GodotConcept): string {
+  return concept.to.replace(/^\/docs\//, '').replace(/#.*$/, '');
+}
+
 export type Les = {
   /** Docusaurus-slug zonder voorloopslash-prefix, bv. 'scene'. */
   slug: string;
