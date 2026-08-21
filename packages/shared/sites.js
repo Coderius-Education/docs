@@ -75,7 +75,7 @@ const SITES = [
     label: 'Godot',
     url: 'https://godot.coderius.nl',
     description: 'Bouw je eerste 2D game in Godot 4.',
-    requires: [],
+    requires: ['python'],
   },
   {
     id: 'ctf',

@@ -9,6 +9,12 @@ In [Deel 1](./skelet.md) zag je het skelet — `extends CharacterBody2D` plus tw
 
 <GodotVersie />
 
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/functies/09a-parameters', label: 'Parameters'},
+  ]}
+/>
+
 ## Blok 2: De motor — `_physics_process(delta)` als kloppend hart
 
 ```gdscript

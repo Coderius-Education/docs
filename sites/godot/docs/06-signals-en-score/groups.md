@@ -9,6 +9,12 @@ Je hebt nu meerdere muntjes en misschien een paar vijanden in je level. Maar hoe
 
 <GodotVersie />
 
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/data/10a-lijsten-basis', label: 'Lijsten'},
+  ]}
+/>
+
 ## Voorspel: alle muntjes tellen
 
 Stel je wilt weten hoeveel muntjes er nog in je level staan. **Hoe zou je dat aanpakken met wat je tot nu toe kent?**

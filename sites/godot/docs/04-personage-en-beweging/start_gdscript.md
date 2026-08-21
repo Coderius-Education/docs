@@ -9,6 +9,15 @@ Je hebt nu een werkende scène met een bewegend karakter. Maar om je spel echt t
 
 <GodotVersie />
 
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/basis/jij-als-variabele', label: 'Variabelen'},
+    {site: 'python', to: '/docs/basis/jouw-naam-op-het-scherm', label: 'Print'},
+    {site: 'python', to: '/docs/beslissen/05b-if-else', label: 'If en else'},
+    {site: 'python', to: '/docs/functies/functies', label: 'Functies'},
+  ]}
+/>
+
 ## Waarom GDScript?
 
 Het script dat Godot in de vorige les voor je genereerde, is ook gewoon GDScript. In de komende lessen ga je dat script begrijpen en uitbreiden.

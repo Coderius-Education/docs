@@ -9,6 +9,12 @@ Je hebt nu drie animaties — `idle`, `run` en `jump` — maar ze spelen nog nie
 
 <GodotVersie />
 
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/beslissen/05a-booleans-en-vergelijken', label: 'Booleans en vergelijken'},
+  ]}
+/>
+
 ## Voorspel: welke informatie heb je nodig?
 
 **Welke vragen moet je script per frame beantwoorden om de juiste animatie te kiezen?**

@@ -9,6 +9,12 @@ In [Deel 2](./motor.md) zag je hoe `_physics_process` 60× per seconde draait. I
 
 <GodotVersie />
 
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/beslissen/05c-and-or-elif', label: 'And, or en elif'},
+  ]}
+/>
+
 ## Blok 3: De drie krachten op je karakter
 
 ### 3a. Zwaartekracht
