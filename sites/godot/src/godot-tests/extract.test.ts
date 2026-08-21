@@ -18,36 +18,22 @@ describe('GDScript uit de lespagina´s halen', () => {
       pagina(`${kop}\`\`\`gdscript\nextends Node2D\n\nfunc _ready() -> void:\n    pass\n\`\`\``),
     );
     expect(fragmenten).toHaveLength(1);
-    expect(fragmenten[0].soort).toBe('script');
     expect(fragmenten[0].kop).toBe('Je script tot nu toe');
     expect(fragmenten[0].code).toContain('extends Node2D');
   });
 
-  it('pakt een losse functie in met de extends van diezelfde pagina', () => {
-    const { fragmenten } = fragmentenUit(
-      'les.md',
-      pagina(
-        '```gdscript\nfunc _spring() -> void:\n    velocity.y = -400\n```\n\n' +
-          '```gdscript\nextends CharacterBody2D\n\nfunc _ready() -> void:\n    pass\n```',
-      ),
-    );
-    // De extends staat ónder het fragment; die moet toch gevonden worden.
-    const ingepakt = fragmenten.find((f) => f.soort === 'ingepakt');
-    expect(ingepakt?.code).toBe(
-      'extends CharacterBody2D\n\nfunc _spring() -> void:\n    velocity.y = -400\n',
-    );
-  });
-
-  it('slaat een functie zonder body over', () => {
-    // Alleen de signatuurregel, als illustratie in de tekst. Ingepakt zou dat
-    // een compileerfout geven die niets over de les zegt.
+  it('slaat een losse functie over, ook al staat er elders op de pagina een extends', () => {
+    // Zo'n functie wijst naar leden die in het volledige script staan; onder een
+    // losse extends geplakt geeft dat een parse-fout die niets over de les zegt.
     const { fragmenten, overgeslagen } = fragmentenUit(
       'les.md',
       pagina(
-        '```gdscript\nextends Node\n```\n\n```gdscript\nfunc _physics_process(delta: float) -> void:\n```',
+        '```gdscript\nfunc _spring() -> void:\n    velocity.y = SPRONG\n```\n\n' +
+          '```gdscript\nextends CharacterBody2D\n\nconst SPRONG = -400\n```',
       ),
     );
     expect(fragmenten).toHaveLength(1);
+    expect(fragmenten[0].code).toContain('const SPRONG');
     expect(overgeslagen[0].reden).toBe('fragment, geen zelfstandig script');
   });
 

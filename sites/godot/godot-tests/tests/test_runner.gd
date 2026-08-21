@@ -41,8 +41,12 @@ func _compileer_alles(index: Array) -> void:
 		if not FileAccess.file_exists(pad):
 			_faal("%s — bestand ontbreekt na extractie" % bron)
 			continue
-		var script := ResourceLoader.load(pad, "GDScript", ResourceLoader.CACHE_MODE_IGNORE)
-		if script == null:
+		# Niet via ResourceLoader.load: die geeft ook bij een parse-fout nog een
+		# object terug, waardoor de check stil groen bleef. reload() geeft een
+		# foutcode.
+		var script := GDScript.new()
+		script.source_code = FileAccess.get_file_as_string(pad)
+		if script.reload() != OK:
 			_faal("%s — compileert niet (zie de fout hierboven)" % bron)
 		else:
 			gedaan += 1
@@ -80,10 +84,32 @@ func _maak_speler(script_pad: String) -> CharacterBody2D:
 	vorm.shape = rect
 	speler.add_child(vorm)
 	speler.position = Vector2(0, 100)
-	var script := ResourceLoader.load(script_pad, "GDScript", ResourceLoader.CACHE_MODE_IGNORE)
-	if script != null:
+	var script := GDScript.new()
+	script.source_code = _met_meting(FileAccess.get_file_as_string(script_pad))
+	if script.reload() == OK:
 		speler.set_script(script)
+	else:
+		_faal("kon %s niet compileren voor de gedragstest" % script_pad)
 	return speler
+
+# De les zet `print(velocity)` bóven move_and_slide(), en juist daar staat het
+# interessante getal: daarna heeft move_and_slide() de verticale snelheid op de
+# vloer alweer op nul gezet. Van buitenaf is dat moment niet te zien, dus zetten
+# we er een meting op precies die plek bij.
+func _met_meting(bron: String) -> String:
+	var regels := bron.split("\n")
+	var uit: Array[String] = []
+	var eerste := true
+	for regel in regels:
+		if regel.strip_edges() == "move_and_slide()":
+			var inspring := regel.substr(0, regel.length() - regel.strip_edges(true, false).length())
+			uit.append(inspring + "gemeten_y = velocity.y")
+		uit.append(regel)
+		if eerste and regel.begins_with("extends"):
+			uit.append("")
+			uit.append("var gemeten_y := 0.0")
+			eerste = false
+	return "\n".join(uit)
 
 func _stap(frames: int) -> void:
 	for i in frames:
@@ -131,12 +157,11 @@ func _test_vallen(index: Array) -> void:
 	_verwacht(speler.position.y > 100.0, "Deel 2: karakter hoort te vallen, y=%s" % speler.position.y)
 	await _stap(120)
 	_verwacht(speler.position.y < 400.0, "Deel 2: karakter hoort op de vloer te blijven, y=%s" % speler.position.y)
-	# Zonder de if uit Deel 4 staat er op de vloer één frame zwaartekracht in
-	# velocity.y: move_and_slide() haalt het er elke frame weer af, dus het
-	# loopt niet op. Precies wat het Voorspel-blok van Deel 4 nu belooft.
+	# Zonder de if uit Deel 4 staat er vlak vóór move_and_slide() één frame
+	# zwaartekracht in velocity.y — het getal dat Deel 4 belooft (ongeveer 16).
 	_verwacht(
-		speler.velocity.y > 1.0 and speler.velocity.y < 40.0,
-		"Deel 2: velocity.y hoort op de vloer rond één frame zwaartekracht te liggen, is %s" % speler.velocity.y
+		speler.gemeten_y > 10.0 and speler.gemeten_y < 25.0,
+		"Deel 2: velocity.y hoort op de vloer rond 16 te staan vóór move_and_slide(), is %s" % speler.gemeten_y
 	)
 	_ruim_op(speler)
 
@@ -146,11 +171,10 @@ func _test_grond(index: Array) -> void:
 		_faal("Deel 4: geen script gevonden")
 		return
 	var speler := await _draai(pad, 150)
-	# Precies wat Deel 4 oplevert: op de vloer staat velocity.y exact op nul,
-	# in plaats van op de 16 uit Deel 2.
+	# Precies wat Deel 4 oplevert: op dezelfde plek staat nu 0 in plaats van 16.
 	_verwacht(
-		is_zero_approx(speler.velocity.y),
-		"Deel 4: velocity.y hoort op de vloer 0 te zijn, is %s" % speler.velocity.y
+		is_zero_approx(speler.gemeten_y),
+		"Deel 4: velocity.y hoort op de vloer 0 te zijn vóór move_and_slide(), is %s" % speler.gemeten_y
 	)
 	_ruim_op(speler)
 

@@ -18,8 +18,6 @@ export type Fragment = {
   regel: number;
   /** de GDScript-broncode, klaar om te compileren */
   code: string;
-  /** volledig script uit de tekst, of een fragment dat wij hebben ingepakt */
-  soort: 'script' | 'ingepakt';
   /** de dichtstbijzijnde `##`-kop erboven; de gedragstest kiest hierop */
   kop: string;
 };
@@ -42,10 +40,10 @@ function slugVan(inhoud: string): string | undefined {
 }
 
 /**
- * Een blok is een volledig script als het met `extends` begint. Losse
- * fragmenten (een `func`, of een paar regels binnen een functie) pakken we in
- * met de `extends` van de pagina waar ze op staan; zonder zo'n basis kunnen we
- * niet weten welk node-type erbij hoort en slaan we het blok over.
+ * Alleen blokken die met `extends` beginnen gaan mee: die zijn op zichzelf een
+ * compileerbaar script. Losse fragmenten wijzen naar variabelen en functies die
+ * elders op de pagina staan; die onder een `extends` plakken levert
+ * compileerfouten op die niets over de les zeggen, en zo'n test wordt genegeerd.
  */
 export function fragmentenUit(
   bron: string,
@@ -56,9 +54,6 @@ export function fragmentenUit(
   const slug = slugVan(inhoud) ?? (bron.split('/').pop() ?? bron).replace(/\.mdx?$/, '');
   const fragmenten: Fragment[] = [];
   const overgeslagen: Overgeslagen[] = [];
-  // Eerst de hele pagina afzoeken: het volledige script staat vaak ónder de
-  // fragmenten die eruit komen, niet erboven.
-  const basis = inhoud.match(/^extends\s+(\w+)/m)?.[1];
   let n = 0;
 
   for (const match of inhoud.matchAll(BLOK)) {
@@ -76,27 +71,7 @@ export function fragmentenUit(
     }
 
     if (/^extends\s+\w+/m.test(code)) {
-      fragmenten.push({ naam, bron, regel, kop, code: `${code}\n`, soort: 'script' });
-      continue;
-    }
-
-    if (!basis) {
-      overgeslagen.push({ bron, regel, reden: 'fragment zonder extends op deze pagina' });
-      continue;
-    }
-
-    // Een functie met een body kan één op één onder de extends. Zonder body
-    // (alleen een signatuurregel, als illustratie) is het geen geldig script.
-    const regels = code.split('\n');
-    if (/^func\s/.test(regels[0]) && regels.slice(1).some((r) => /^\s+\S/.test(r))) {
-      fragmenten.push({
-        naam,
-        bron,
-        regel,
-        kop,
-        code: `extends ${basis}\n\n${code}\n`,
-        soort: 'ingepakt',
-      });
+      fragmenten.push({ naam, bron, regel, kop, code: `${code}\n` });
       continue;
     }
 

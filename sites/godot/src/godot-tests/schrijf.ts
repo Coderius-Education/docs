@@ -27,7 +27,6 @@ writeFileSync(
       naam: f.naam,
       bron: f.bron.slice(SITE.length + 1),
       regel: f.regel,
-      soort: f.soort,
       kop: f.kop,
     })),
     null,
@@ -35,10 +34,7 @@ writeFileSync(
   )}\n`,
 );
 
-const perSoort = fragmenten.filter((f) => f.soort === 'script').length;
-console.log(
-  `${fragmenten.length} blokken geschreven (${perSoort} volledige scripts, ${fragmenten.length - perSoort} ingepakte fragmenten).`,
-);
+console.log(`${fragmenten.length} volledige scripts geschreven.`);
 console.log(`${overgeslagen.length} blokken overgeslagen:`);
 for (const [reden, aantal] of Object.entries(
   overgeslagen.reduce<Record<string, number>>((acc, o) => {
