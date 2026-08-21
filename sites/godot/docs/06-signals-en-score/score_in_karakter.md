@@ -43,6 +43,8 @@ var score = 0
 # ... rest van je script
 ```
 
+<GDQuestLes nummer={8} />
+
 ## Stap 2: Hoog de score op vanuit het muntje
 
 Open het script van je muntje. In `_on_body_entered` heb je al een parameter `body` — dat is de node die het muntje aanraakt (jouw karakter). Vanuit het muntje kun je dus rechtstreeks bij `body.score`.

@@ -109,15 +109,34 @@ Voeg dit toe **vóór** `move_and_slide()` in je `_physics_process`.
 
 </details>
 
-## Stap 3: De idle-animatie als je stilstaat
+## Opdracht 5.2.a: de idle-animatie als je stilstaat
 
-`velocity.x` houdt de horizontale snelheid bij.
+`velocity.x` houdt de horizontale snelheid bij. Vul de twee gaten in:
 
-- Bij welke waarde staat je hoofdpersoon stil?
-- Hoe zet je de `idle`-animatie aan als hij stilstaat?
+```gdscript
+    staat_stil = # vul aan: wanneer staat je karakter stil?
+    op_de_grond = is_on_floor()
+    if not op_de_grond:
+        $AnimatedSprite2D.play('jump')
+    elif staat_stil:
+        # vul aan: speel de idle-animatie af
+
+    move_and_slide()
+```
+
+**Zo weet je dat het klopt:** start met `F5`. Sta je stil op de grond, dan speelt `idle`. Loop je, dan niet.
 
 <details>
-<summary>Bekijk het antwoord</summary>
+<summary>Klik hier voor een tip.</summary>
+
+Voor het eerste gat: welke waarde heeft `velocity.x` precies als er niemand op een toets drukt en je karakter is uitgeremd?
+
+Voor het tweede gat: kijk naar de regel erboven, in de `if`. Dezelfde vorm, andere animatienaam.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
 
 `velocity.x == 0` betekent stilstaan. Tot nu toe zag je `==` alleen bínnen een `if`, maar zo'n vergelijking is zelf ook een waarde: `true` of `false`. Die waarde kun je in een variabele bewaren:
 
@@ -143,14 +162,28 @@ Let op `elif`: de `idle`-animatie wordt alleen geprobeerd als `jump` níet aan i
 
 </details>
 
-## Stap 4: De run-animatie en spiegelen
+## Opdracht 5.2.b: de run-animatie en spiegelen
 
-- Bij welke waarde van `velocity.x` loopt je hoofdpersoon naar links? En naar rechts?
-- Speel de `run`-animatie af als hij niet stilstaat.
-- Met `$AnimatedSprite2D.flip_h = true` spiegel je het plaatje (kijkt links). Met `false` kijkt hij weer rechts.
+Nu de laatste twee takken van de keten. Met `$AnimatedSprite2D.flip_h = true` spiegel je het plaatje zodat je karakter naar links kijkt; met `false` kijkt hij weer naar rechts.
+
+```gdscript
+    elif velocity.x > 0:
+        # vul aan: speel run af en laat hem naar rechts kijken
+    elif velocity.x < 0:
+        # vul aan: speel run af en laat hem naar links kijken
+```
+
+**Zo weet je dat het klopt:** loop naar rechts en je karakter rent naar rechts; loop naar links en hij rent gespiegeld terug.
 
 <details>
-<summary>Bekijk het antwoord</summary>
+<summary>Klik hier voor een tip.</summary>
+
+Elke tak heeft twee regels nodig: één om de animatie te starten en één om `flip_h` goed te zetten. Bedenk bij welke richting `velocity.x` negatief is.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
 
 ```gdscript
 extends CharacterBody2D

@@ -73,19 +73,27 @@ Sla de scène op als `muntje.tscn` (`Ctrl + S`).
 ## Stap 4: Koppel een script en het signal \{#signal-koppelen}
 
 1. Selecteer de `Muntje`-node.
-2. Klik op het script-icoontje of klik met rechts → **Attach Script** → **Create**.
+2. Klik op het script-icoontje of klik met rechts → **Attach Script**. Zet **Template** op **`Object: Empty`** en klik op **Create**.
 3. Ga naar het **Node**-tabblad (rechts naast de Inspector).
 4. Dubbelklik op `body_entered`.
 5. Kies de `Muntje`-node als ontvanger en klik op **Connect**.
 
 `body_entered` is een ingebouwd signal van `Area2D`. Het wordt verstuurd zodra een fysiek lichaam (zoals je `CharacterBody2D`) het muntje raakt.
 
-Godot maakt automatisch een functie aan in je script:
+Je script bestond uit één regel, en Godot heeft er nu een functie bij gezet:
 
 ```gdscript
 func _on_body_entered(body: Node2D) -> void:
     pass # hier komt je code
 ```
+
+Dit is een gewone functie, zoals je er zelf ook een schrijft. Het enige verschil: jij roept hem nooit aan — Godot doet dat, zodra het signal afgaat. `pass` betekent "hier gebeurt niets"; die regel vervang je zo door je eigen code.
+
+<GDQuestLes nummer={5} />
+
+De parameter `body` is de node die het muntje raakte. Die krijg je meegeleverd, net zoals `delta` bij `_physics_process`.
+
+<GDQuestLes nummer={6} />
 
 ## Stap 5: Laat het muntje verdwijnen \{#signal-functie}
 
