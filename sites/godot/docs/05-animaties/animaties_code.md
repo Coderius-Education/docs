@@ -233,3 +233,5 @@ Over dat tweede: met stap `SPEED` (zoals in [Deel 3 — Lopen](../04-personage-e
 - Werk `staat_stil` bij **vlak voor** je if-keten, dus ná de regel met `move_toward`.
 
 </details>
+
+Staat je fout er niet bij? In [Fouten zoeken](../04-personage-en-beweging/fouten-zoeken.md) staat hoe je hem zelf opspoort.

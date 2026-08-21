@@ -203,3 +203,5 @@ In de volgende les bouw je een **score-teller** in je karakter, zodat opgepakte 
 - Selecteer de `CollisionShape2D` en stel in de Inspector een **Shape** in als die nog leeg is.
 
 </details>
+
+Staat je fout er niet bij? In [Fouten zoeken](../04-personage-en-beweging/fouten-zoeken.md) staat hoe je hem zelf opspoort.

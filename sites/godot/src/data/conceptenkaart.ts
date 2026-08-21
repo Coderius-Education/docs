@@ -201,6 +201,18 @@ export const godotConcepten: GodotConcept[] = [
     leerlijn: 'gdscript',
     to: '/docs/spawnen#preload',
   },
+  {
+    id: 'foutmelding-lezen',
+    label: 'Een foutmelding lezen',
+    leerlijn: 'gdscript',
+    to: '/docs/fouten-zoeken#foutmelding-lezen',
+  },
+  {
+    id: 'print-debuggen',
+    label: 'Debuggen met print()',
+    leerlijn: 'gdscript',
+    to: '/docs/fouten-zoeken#print-drie',
+  },
 ];
 
 // Volgorde = cursusvolgorde; bepaalt de rechterkolom op de kaart.
@@ -217,7 +229,8 @@ export const lessen: Les[] = [
   { slug: 'basis_movement_begrijpen', titel: 'Bewegingsscript 1: het skelet' },
   { slug: 'movement-motor', titel: 'Bewegingsscript 2: de motor' },
   { slug: 'movement-krachten', titel: 'Bewegingsscript 3: de krachten' },
-  { slug: 'movement-afsluiter', titel: 'Bewegingsscript 4: de afsluiter' },
+  { slug: 'movement-afsluiter', titel: 'Bewegingsscript 4: springen' },
+  { slug: 'fouten-zoeken', titel: 'Fouten zoeken' },
   { slug: 'camera2d', titel: 'Camera die de speler volgt' },
   { slug: 'animaties', titel: 'Animaties maken' },
   { slug: 'animaties_code', titel: 'Animaties in code' },
@@ -250,6 +263,7 @@ export const conceptenPerLes: Record<string, string[]> = {
   'movement-motor': ['velocity-move-and-slide', 'physics-process-delta'],
   'movement-krachten': ['var-const', 'if-elif', 'input-functies', 'velocity-move-and-slide'],
   'movement-afsluiter': ['input-functies', 'if-elif', 'var-const', 'velocity-move-and-slide'],
+  'fouten-zoeken': ['foutmelding-lezen', 'print-debuggen', 'if-elif', 'input-functies'],
   camera2d: ['camera2d', 'node-toevoegen'],
   animaties: ['animatedsprite2d'],
   animaties_code: [

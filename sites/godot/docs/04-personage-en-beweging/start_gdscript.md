@@ -53,7 +53,7 @@ Deze concepten heb je in dit project nodig. Achter elk concept staat de les waar
 | `if` / `else` | Beslissingen nemen                            | [Deel 3](./basis_movement_begrijpen/krachten.md)          | voorwaarden |
 | `and`         | Twee voorwaarden combineren                   | [Deel 4](./basis_movement_begrijpen/afsluiter.md)         | voorwaarden |
 | `var`         | Waarden die tijdens het spel veranderen       | [Score bijhouden](../06-signals-en-score/score_in_karakter.md) | 7 en 8 |
-| `print()`     | Zien wat er in je code gebeurt                | [GDScript-tips](/gdscript-tips#debuggen)                  | 2       |
+| `print()`     | Zien wat er in je code gebeurt                | [Fouten zoeken](./fouten-zoeken.md)                       | 2       |
 
 Alles hieruit staat kort bij elkaar in de [GDScript-tips](/gdscript-tips), de naslag bij alle lessen.
 

@@ -299,6 +299,8 @@ func _on_body_entered(body: Node2D) -> void:
 
 ## Debuggen \{#debuggen}
 
+De methode om zélf een onbekende fout te vinden staat in [Fouten zoeken](/docs/fouten-zoeken). Hieronder alleen de losse hulpmiddelen.
+
 <details>
 <summary>Hoe debug ik mijn code?</summary>
 

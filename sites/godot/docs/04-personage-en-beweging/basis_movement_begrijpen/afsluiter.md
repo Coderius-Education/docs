@@ -241,4 +241,4 @@ Zo weet je bij een fout meteen aan welke kant je moet zoeken: bij het uitlezen v
 
 ---
 
-← [Deel 3 — Lopen](./krachten.md) · **Volgende:** [Camera die de speler volgt](../camera2d.md) →
+← [Deel 3 — Lopen](./krachten.md) · **Volgende:** [Fouten zoeken](../fouten-zoeken.md) →

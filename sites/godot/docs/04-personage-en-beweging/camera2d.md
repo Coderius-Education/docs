@@ -1,5 +1,5 @@
 ---
-sidebar_position: 5
+sidebar_position: 6
 slug: /camera2d
 ---
 
@@ -81,7 +81,7 @@ Als je level eindigt bij een muur, wil je niet dat de camera in de zwarte leegte
 
 De camera stopt nu netjes bij die grenzen, ook al loopt je speler er nog voorbij.
 
-## Opdracht 4.5.a: stel Limit in voor jouw level
+## Opdracht 4.6.a: stel Limit in voor jouw level
 
 Pas de **Limit**-waarden aan zodat de camera precies binnen jouw level blijft. Loop met je speler naar de level-rand om te checken dat de camera niet meer doorslaat.
 

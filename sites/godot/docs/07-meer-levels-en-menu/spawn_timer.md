@@ -176,3 +176,5 @@ Elke timer telt onafhankelijk af: muntjes elke 2 seconden, vijanden elke 5.
 **Oplossing:** Meet je level na in de editor: selecteer een tegel aan de linker- en rechterrand en lees **Position** af. Gebruik die x-waarden als grenzen, en een y die ruim boven je vloer ligt.
 
 </details>
+
+Staat je fout er niet bij? In [Fouten zoeken](../04-personage-en-beweging/fouten-zoeken.md) staat hoe je hem zelf opspoort.
