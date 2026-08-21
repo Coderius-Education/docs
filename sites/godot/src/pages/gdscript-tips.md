@@ -239,6 +239,26 @@ De node wordt niet direct verwijderd, maar aan het einde van het huidige frame. 
 
 </details>
 
+<details>
+<summary>Hoe spawn ik een scène in code? (<code>preload</code> + <code>instantiate</code>)</summary>
+
+Drie stappen: scène-bestand inladen, een exemplaar maken, in de Scene Tree hangen.
+
+```gdscript
+const MUNTJE = preload("res://muntje.tscn")
+
+func spawn_muntje(x: float, y: float) -> void:
+    var nieuw_muntje = MUNTJE.instantiate()
+    nieuw_muntje.position = Vector2(x, y)
+    add_child(nieuw_muntje)
+```
+
+- `preload()` — laadt het bestand één keer, bij het starten van je spel
+- `instantiate()` — maakt een nieuw exemplaar van die bouwtekening
+- `add_child()` — hangt het exemplaar in de Scene Tree; zonder deze regel zie je niets
+
+</details>
+
 ---
 
 ## Signals \{#signals}
@@ -353,6 +373,27 @@ func _on_body_entered(body: Node2D) -> void:
     print("Score: ", Global.score)
     queue_free()
 ```
+
+</details>
+
+<details>
+<summary>Compleet spawner script (level met Timer)</summary>
+
+```gdscript
+extends Node2D
+
+const MUNTJE = preload("res://muntje.tscn")
+
+func spawn_muntje(x: float, y: float) -> void:
+    var nieuw_muntje = MUNTJE.instantiate()
+    nieuw_muntje.position = Vector2(x, y)
+    add_child(nieuw_muntje)
+
+func _on_timer_timeout() -> void:
+    spawn_muntje(randf_range(50, 1000), 100)
+```
+
+Vereist een `Timer`-node in de scène met het `timeout`-signal gekoppeld.
 
 </details>
 

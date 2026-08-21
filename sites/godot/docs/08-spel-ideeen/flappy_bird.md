@@ -15,8 +15,8 @@ Het hart van het spel is hetzelfde als in jouw platformer: `velocity.y` aanpasse
 
 ## Wat ga je leren?
 
-- Een spawner bouwen die met een `Timer` periodiek nieuwe obstakels aanmaakt.
-- Scenes "instantieren" met `preload()` + `instantiate()`.
+- Een spawner bouwen die met een `Timer` periodiek nieuwe obstakels aanmaakt — de techniek uit [Automatisch spawnen met een Timer](../07-meer-levels-en-menu/spawn_timer.md).
+- Scenes "instantieren" met `preload()` + `instantiate()` (zie [Spawnen: nodes maken in code](../07-meer-levels-en-menu/spawnen.md)).
 - Een Area2D als game-over-trigger inzetten.
 - Score per gepasseerde buis verhogen via een tweede Area2D.
 
@@ -52,7 +52,7 @@ Het hart van het spel is hetzelfde als in jouw platformer: `velocity.y` aanpasse
 - [GDQuest](https://www.gdquest.com/) — zoek op "Flappy Bird Godot" voor video-uitleg.
 - YouTube: zoek "Godot 4 Flappy Bird tutorial" (kanalen als KidsCanCode of Heartbeast hebben goede uitlegvideo's).
 - [Itch.io: gratis vogel-assets](https://itch.io/game-assets/free/tag-bird) — sprite-sheets om mee te beginnen.
-- [Godot Docs — Instancing scenes](https://docs.godotengine.org/en/stable/getting_started/step_by_step/instancing.html) — de officiële uitleg over `preload()` + `instantiate()`.
+- [Godot Docs — Instancing scenes](https://docs.godotengine.org/en/stable/getting_started/step_by_step/instancing.html) — verdieping op `preload()` + `instantiate()` uit [7.3](../07-meer-levels-en-menu/spawnen.md).
 
 ## Eerste stappen
 

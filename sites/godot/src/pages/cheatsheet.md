@@ -277,6 +277,29 @@ func reset() -> void:
 
 ---
 
+## Spawnen \{#spawnen}
+
+<details>
+<summary>Timer — periodiek iets laten gebeuren</summary>
+
+Een onzichtbare stopwatch die aftelt en dan het signal `timeout` stuurt.
+
+**Wanneer gebruik je het?**
+Voor alles dat "elke X seconden" moet gebeuren, zoals muntjes of vijanden spawnen.
+
+**Instellen in de Inspector:**
+- `Wait Time` — aantal seconden per aftel-ronde
+- `One Shot` — uit voor herhalen, aan voor één keer
+- `Autostart` — aan om direct bij de start van de scène te beginnen
+
+**Signal:** Koppel `timeout` via het **Node**-tabblad aan een functie in het script van je level.
+
+Zo leer je het in [Automatisch spawnen met een Timer](/docs/spawn_timer). De bijbehorende code (`preload`, `instantiate`, `add_child`) staat in de [GDScript-tips](/gdscript-tips#nodes-scenes).
+
+</details>
+
+---
+
 ## Handige links
 
 - [Godot documentatie](https://docs.godotengine.org/en/stable/)
