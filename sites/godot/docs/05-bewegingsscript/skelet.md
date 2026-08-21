@@ -10,8 +10,6 @@ Je script bestaat uit één regel: `extends CharacterBody2D`. In deze les voeg j
 
 <GodotVersie />
 
-<GDQuestLes slug="basis_movement_begrijpen" />
-
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/functies/functies', label: 'Functies'},
@@ -23,7 +21,7 @@ Je script bestaat uit één regel: `extends CharacterBody2D`. In deze les voeg j
 
 Programmeren leer je door het te doen, maar in je eigen game oefenen is lastig: als er iets niet werkt, weet je niet of het aan je code ligt of aan je scène.
 
-Daarom loopt er vanaf hier een tweede spoor mee. **Hier** bouw je je game: elke les voegt regels toe aan een script dat je zelf typt, en aan het eind draait je spel weer. **Bij GDQuest** oefen je elk concept los, in je browser, zonder Godot erbij — gaat het daar mis, dan ligt het aan de code, meer kan het niet zijn.
+Daarom loopt er vanaf hier een tweede spoor mee. **Hier** bouw je je game: elke les brengt het script dat je zelf typt een stap verder, en aan het eind draait je spel weer. **Bij GDQuest** oefen je elk concept los, in je browser, zonder Godot erbij — gaat het daar mis, dan ligt het aan de code, meer kan het niet zijn.
 
 Ga naar [Learn GDScript From Zero](https://gdquest.github.io/learn-gdscript/). Je werkt direct in je browser en hoeft niets te installeren.
 
@@ -31,7 +29,11 @@ Ga naar [Learn GDScript From Zero](https://gdquest.github.io/learn-gdscript/). J
 
 Begin met les 1 en 2. Die kosten samen een kwartier en leggen uit wat code is en hoe je een foutmelding leest. Les 3 gaat over `extends` — de regel die al in je script staat.
 
-Het GDQuest-blok bovenaan deze pagina verschijnt in elke les van dit hoofdstuk, telkens bij de regel die je net hebt geschreven. Je hoeft de GDQuest-cursus niet uitgespeeld te hebben; je loopt hem ernaast door, in je eigen tempo.
+Vanaf hier staat in elke les van dit hoofdstuk zo'n blok, bij de regel die je net hebt geschreven:
+
+<GDQuestLes slug="basis_movement_begrijpen" />
+
+Je hoeft de GDQuest-cursus niet uitgespeeld te hebben; je loopt hem ernaast door, in je eigen tempo.
 
 <details>
 <summary>Welke GDQuest-les hoort bij welke les hier?</summary>

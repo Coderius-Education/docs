@@ -91,6 +91,8 @@ Onthoud de vuistregel: **staat er een snelheid per seconde in je berekening, dan
 
 ## Je script tot nu toe
 
+Deze les heeft er niets aan veranderd. Dat is de bedoeling: van de zeven delen is dit het enige waarin je geen regel toevoegt, maar er één beter begrijpt.
+
 <details>
 <summary>Klik hier om te vergelijken</summary>
 

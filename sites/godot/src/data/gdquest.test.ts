@@ -2,7 +2,13 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { GDQUEST_LESSEN, GDQUEST_URL, gdquestBySlug, gdquestKoppelingen } from './gdquest';
+import {
+  GDQUEST_LESSEN,
+  GDQUEST_URL,
+  gdquestBySlug,
+  gdquestKoppelingen,
+  gdquestTabelRijen,
+} from './gdquest';
 
 // Bewaakt de <GDQuestLes>-callouts. Het component zoekt op paginaslug en
 // rendert niets bij een onbekende slug, dus een typefout is op de pagina zelf
@@ -121,5 +127,40 @@ describe('GDQuest-callouts in de lessen', () => {
       }
     }
     expect(verkeerd).toEqual([]);
+  });
+});
+
+describe('GDQuest-tabel', () => {
+  it('bevat elke koppeling, plus rijen zonder callout', () => {
+    const rijSlugs = gdquestTabelRijen.map((r) => r.slug);
+    expect(new Set(rijSlugs).size).toBe(rijSlugs.length);
+    for (const k of gdquestKoppelingen) {
+      expect(rijSlugs, `${k.slug} ontbreekt in de tabel`).toContain(k.slug);
+    }
+  });
+
+  it('wijst elke rij naar een bestaande lespagina met bekende lesnummers', () => {
+    const bekend = new Set(GDQUEST_LESSEN.map((l) => l.nummer));
+    const kapot: string[] = [];
+    for (const r of gdquestTabelRijen) {
+      if (!slugPerBestand.has(r.slug)) kapot.push(`${r.slug} bestaat niet als lespagina`);
+      if (r.to !== `/docs/${r.slug}`) kapot.push(`${r.slug} heeft een afwijkende to`);
+      if (r.lessen.length === 0 && !r.onderwerp) kapot.push(`${r.slug} zonder les of onderwerp`);
+      for (const n of r.lessen) {
+        if (!bekend.has(n)) kapot.push(`${r.slug} verwijst naar les ${n}`);
+      }
+    }
+    expect(kapot).toEqual([]);
+  });
+
+  it('geeft een rij zonder callout ook geen callout op de pagina zelf', () => {
+    // Anders staat er tóch een GDQuest-blok in hoofdstuk 4, vóór de
+    // introductie van het oefenspoor in Deel 1.
+    const zonderCallout = gdquestTabelRijen.filter((r) => !gdquestBySlug[r.slug]);
+    expect(zonderCallout.map((r) => r.slug)).toEqual(['sprite_movement']);
+    for (const r of zonderCallout) {
+      const inhoud = readFileSync(slugPerBestand.get(r.slug) as string, 'utf8');
+      expect(inhoud, `${r.slug} heeft tóch een callout`).not.toContain('<GDQuestLes');
+    }
   });
 });

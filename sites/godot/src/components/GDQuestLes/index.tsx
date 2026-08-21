@@ -2,8 +2,8 @@ import {
   GDQUEST_URL,
   type GDQuestKoppeling,
   gdquestBySlug,
-  gdquestKoppelingen,
   gdquestLes,
+  gdquestTabelRijen,
   lesUrl,
 } from '@site/src/data/gdquest';
 import type { ReactNode } from 'react';
@@ -69,7 +69,7 @@ export function GDQuestTabel(): ReactNode {
         </tr>
       </thead>
       <tbody>
-        {gdquestKoppelingen.map((k) => (
+        {gdquestTabelRijen.map((k) => (
           <tr key={k.slug}>
             <td>{k.concept}</td>
             <td>

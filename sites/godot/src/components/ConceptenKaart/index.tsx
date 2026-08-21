@@ -234,13 +234,12 @@ export default function ConceptenKaart(): React.ReactElement {
 
   return (
     <div ref={containerRef}>
-      <div className={styles.leerlijnTabs} role="tablist" aria-label="Leerlijn">
+      <div className={styles.leerlijnTabs} aria-label="Leerlijn">
         {LEERLIJNEN.map((l) => (
           <button
             key={l.id}
             type="button"
-            role="tab"
-            aria-selected={leerlijn === l.id}
+            aria-pressed={leerlijn === l.id}
             className={clsx(
               styles.leerlijnTab,
               leerlijnKlasse[l.id],
@@ -286,7 +285,8 @@ export default function ConceptenKaart(): React.ReactElement {
         Een{' '}
         <span className={clsx(styles.legendaLijn, leerlijnKlasse[leerlijn])} aria-hidden="true" />{' '}
         dikke lijn wijst naar de les waar je het concept <strong>leert</strong>. De dunne lijnen
-        zijn lessen waar je het daarna nog gebruikt.
+        zijn lessen waar je het daarna nog gebruikt. Het getal in een blok telt de lijnen die eraan
+        vastzitten.
       </p>
 
       <div className={styles.scroller}>
@@ -315,7 +315,10 @@ export default function ConceptenKaart(): React.ReactElement {
                 onClick={() => toggle('concept', concept.id)}
               >
                 <span className={styles.nodeLabel}>{concept.label}</span>
-                <span className={styles.teller}>
+                <span
+                  className={styles.teller}
+                  title={`Staat in ${edges.filter((e) => e.conceptId === concept.id).length} van de lessen hiernaast`}
+                >
                   {edges.filter((e) => e.conceptId === concept.id).length}
                 </span>
               </button>
@@ -384,7 +387,10 @@ export default function ConceptenKaart(): React.ReactElement {
                 onFocus={() => activeer('les', les.slug)}
                 onClick={() => toggle('les', les.slug)}
               >
-                <span className={styles.teller}>
+                <span
+                  className={styles.teller}
+                  title={`Gebruikt ${edges.filter((e) => e.slug === les.slug).length} concepten uit deze leerlijn`}
+                >
                   {edges.filter((e) => e.slug === les.slug).length}
                 </span>
                 <span className={styles.nodeLabel}>{les.titel}</span>

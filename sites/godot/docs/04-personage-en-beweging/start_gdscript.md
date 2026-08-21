@@ -48,6 +48,39 @@ Dit tabblad wordt je belangrijkste gereedschap. Telkens als je niet zeker weet o
 
 Haal deze `_ready()`-functie daarna weer weg. In het volgende hoofdstuk begin je met een schone lei aan het bewegingsscript.
 
+## Opdracht 4.3.a: laat Godot rekenen
+
+Breid je `_ready()` uit zodat Uitvoer drie regels toont:
+
+1. Een begroeting met je eigen naam erin.
+2. Het aantal levens, uit een variabele.
+3. Een regel die je punten per level laat zien, uitgerekend door Godot zelf — dus niet het antwoord ingetypt, maar een som in je code.
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Rekenen doe je in GDScript net als in Python: `10 * 3` mag zo tussen de haakjes van `print()`. Combineer tekst en een getal met komma's: `print("Punten: ", 10 * 3)`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```gdscript
+extends CharacterBody2D
+
+func _ready() -> void:
+    var naam = "Sam"
+    var levens = 3
+    print("Hallo ", naam)
+    print("Ik heb ", levens, " levens.")
+    print("Punten per level: ", 10 * 3)
+```
+
+In Uitvoer staat `Punten per level: 30`. Dat getal staat nergens in je script: Godot rekent het uit terwijl je spel draait.
+
+</details>
+
 ## Check je begrip: `_ready()` versus `_process()` \{#func-ready}
 
 **Wat denk je dat er gebeurt als je `_ready()` vervangt door `_process(delta)`?**

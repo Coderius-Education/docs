@@ -122,6 +122,25 @@ export const gdquestBySlug: Record<string, GDQuestKoppeling> = Object.fromEntrie
   gdquestKoppelingen.map((k) => [k.slug, k]),
 );
 
+/**
+ * Rijen die alleen in de tabel horen: het concept wordt op een pagina
+ * geschreven die zelf geen callout krijgt. Nu alleen `extends`, omdat
+ * hoofdstuk 4 GDQuest-vrij blijft — het oefenspoor wordt pas in Deel 1
+ * geïntroduceerd, en een callout vóór die introductie leest raar.
+ */
+const gdquestAlleenTabel: GDQuestKoppeling[] = [
+  {
+    slug: 'sprite_movement',
+    to: '/docs/sprite_movement',
+    nl: 'Je eerste eigen script',
+    concept: 'extends',
+    lessen: [3],
+  },
+];
+
+/** Alle rijen voor <GDQuestTabel>, in cursusvolgorde. */
+export const gdquestTabelRijen: GDQuestKoppeling[] = [...gdquestAlleenTabel, ...gdquestKoppelingen];
+
 export function gdquestLes(nummer: number): GDQuestLesInfo | undefined {
   return GDQUEST_LESSEN.find((les) => les.nummer === nummer);
 }

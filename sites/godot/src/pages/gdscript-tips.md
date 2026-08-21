@@ -403,16 +403,13 @@ De output verschijnt in het **Output** paneel onderaan in Godot.
 <details>
 <summary>Hoe lees ik een foutmelding?</summary>
 
-Een foutmelding in Godot ziet er zo uit:
-
 ```
 res://scripts/player.gd:15 - Invalid call. Nonexistent function 'plya' in base 'AnimatedSprite2D'.
 ```
 
-Lees het zo:
-- **`res://scripts/player.gd`** → Het bestand waar de fout zit
-- **`:15`** → Op regel 15
-- **De rest** → Wat er mis is (in dit geval: de functie `plya` bestaat niet — het moet `play` zijn)
+Bestand → regelnummer → wat er mis is. Dubbelklik op de melding en Godot springt naar die regel.
+
+Uitgebreider, met de veelvoorkomende meldingen erbij: [Een foutmelding lezen](/docs/fouten-zoeken#foutmelding-lezen).
 
 </details>
 
