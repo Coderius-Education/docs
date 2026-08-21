@@ -86,6 +86,7 @@ describe('godot Voorkennis naar de python-cursus', () => {
       '04-personage-en-beweging/basis_movement_begrijpen/skelet.md',
       '04-personage-en-beweging/start_gdscript.md',
       '05-animaties/animaties_code.md',
+      '06-signals-en-score/global_variables.md',
       '06-signals-en-score/groups.md',
     ]);
   });

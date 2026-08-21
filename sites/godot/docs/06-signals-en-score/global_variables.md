@@ -113,6 +113,49 @@ Global.verlies_leven()
 Global.reset()
 ```
 
+## Een functie die antwoord geeft \{#return}
+
+De functies hierboven **doen** iets: ze zetten waarden goed of printen iets. Daarom staat er `-> void` achter zodra je het type opschrijft. Dat pijltje betekent: deze functie geeft niets terug.
+
+Vaak wil je een functie juist iets laten **teruggeven**, zodat je het antwoord kunt gebruiken. Zet daarnaast in je global script:
+
+```gdscript
+func is_game_over() -> bool:
+    return levens <= 0
+```
+
+`-> bool` zegt: deze functie geeft een `true` of een `false` terug. Met `return` stuur je die waarde naar de plek waar de functie werd aangeroepen. Vanaf dan kun je hem gebruiken alsof je die vergelijking ter plekke had opgeschreven:
+
+```gdscript
+if Global.is_game_over():
+    print("Je hebt geen levens meer")
+```
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/functies/09b-return', label: 'Return'},
+  ]}
+/>
+
+In Python levert een functie zonder `return` de waarde `None` op. GDScript noemt dat `void`. Het is precies hetzelfde idee, met een andere naam:
+
+| Wat je schrijft | Wat de functie teruggeeft | In Python |
+| :--- | :--- | :--- |
+| `func reset() -> void:` | niets | een functie zonder `return` |
+| `func is_game_over() -> bool:` | `true` of `false` | `return levens <= 0` |
+| `func aantal_levens() -> int:` | een heel getal | `return levens` |
+
+**Waarom zou je `is_game_over()` maken in plaats van overal `if Global.levens <= 0:` te schrijven?**
+
+<details>
+<summary>Antwoord</summary>
+
+Omdat je dan één plek hebt waar staat wat "game over" betekent. Wil je later dat het spel al eindigt bij één leven over, of dat je ook game over bent als de tijd op is, dan pas je die ene functie aan in plaats van vijf verspreide `if`-regels.
+
+De naam helpt bovendien mee: `if Global.is_game_over():` lees je als een zin, `if Global.levens <= 0:` moet je ontcijferen.
+
+</details>
+
 ## Samenvatting
 
 | Begrip                | Uitleg                                                         |

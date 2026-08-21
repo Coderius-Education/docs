@@ -107,6 +107,89 @@ var resultaat = bereken_schade(10, 3)  # resultaat = 7
 
 </details>
 
+<details>
+<summary>Hoe geef ik een waarde terug uit een functie? (<code>return</code>)</summary>
+
+Met `return` stuur je een antwoord terug naar de plek waar de functie werd aangeroepen. Achter de pijl zet je wat voor soort waarde dat is.
+
+```gdscript
+func is_game_over() -> bool:
+    return levens <= 0
+
+func aantal_muntjes() -> int:
+    return get_tree().get_nodes_in_group("muntjes").size()
+```
+
+Gebruiken doe je zo:
+
+```gdscript
+if Global.is_game_over():
+    print("Einde")
+```
+
+`-> void` betekent dat een functie niets teruggeeft. Dat is hetzelfde als een Python-functie zonder `return`, die daar `None` oplevert.
+
+</details>
+
+---
+
+## Lussen en lijsten \{#lussen}
+
+<details>
+<summary>Hoe herhaal ik iets een vast aantal keer? (<code>for</code> + <code>range</code>)</summary>
+
+Precies zoals in Python:
+
+```gdscript
+for i in range(3):
+    print(i)
+```
+
+Dit print `0`, `1`, `2`. De stopwaarde zelf doet niet mee: `range(3)` stopt vóór de 3.
+
+</details>
+
+<details>
+<summary>Hoe loop ik door een lijst?</summary>
+
+```gdscript
+var kleuren = ["rood", "groen", "blauw"]
+
+for kleur in kleuren:
+    print(kleur)
+```
+
+De lusvariabele (`kleur`) krijgt elke ronde het volgende item. In een game gebruik je dit vaak op een group:
+
+```gdscript
+for vijand in get_tree().get_nodes_in_group("vijanden"):
+    vijand.stop()
+```
+
+</details>
+
+<details>
+<summary>Lijsten: van Python naar GDScript</summary>
+
+De vorm is gelijk — blokhaken, index vanaf 0 — maar een paar namen verschillen:
+
+| Python | GDScript | Let op |
+|---|---|---|
+| `len(lijst)` | `lijst.size()` | |
+| `lijst.append(x)` | `lijst.append(x)` | gelijk |
+| `lijst.remove(x)` | `lijst.erase(x)` | |
+| `sorted(lijst)` | `lijst.sort()` | GDScript sorteert de lijst **zelf**; Python geeft een kopie terug |
+
+```gdscript
+var scores = [3, 1, 2]
+scores.append(5)
+scores.sort()
+print(scores.size())   # 4
+print(scores[0])       # 1
+```
+
+</details>
+
 ---
 
 ## If-statements \{#if-statements}

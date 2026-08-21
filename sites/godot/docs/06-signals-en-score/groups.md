@@ -12,6 +12,7 @@ Je hebt nu meerdere muntjes en misschien een paar vijanden in je level. Maar hoe
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/data/10a-lijsten-basis', label: 'Lijsten'},
+    {site: 'python', to: '/docs/herhalen/06a-for-loop', label: 'De for-loop'},
   ]}
 />
 
@@ -56,9 +57,9 @@ func _ready() -> void:
 
 Doe hetzelfde voor je vijanden met het label `vijanden`.
 
-## Stap 2: Alle muntjes ophalen en tellen
+## Stap 2: Alle muntjes ophalen en tellen \{#lijst}
 
-Met `get_tree().get_nodes_in_group("muntjes")` krijg je een lijst van alle nodes in de group. De lengte daarvan is het aantal muntjes:
+Met `get_tree().get_nodes_in_group("muntjes")` krijg je een **lijst** van alle nodes in de group. De lengte daarvan is het aantal muntjes:
 
 ```gdscript
 var aantal = get_tree().get_nodes_in_group("muntjes").size()
@@ -71,15 +72,43 @@ print("Er zijn nog ", aantal, " muntjes.")
 | `get_nodes_in_group("muntjes")`               | De lijst met alle nodes in de group `muntjes`  |
 | `.size()`                                     | Hoeveel het er zijn                            |
 
-## Stap 3: Een functie op de hele group aanroepen
+Dit is dezelfde soort lijst als in Python, met één verschil in de naam: waar je daar `len(lijst)` schrijft, schrijf je hier `lijst.size()`.
 
-Met `call_group` roep je dezelfde functie aan op **elke** node in de group. Stel je vijand-script heeft een functie `stop()`:
+## Stap 3: Iets doen met elk item in de lijst \{#for-lus}
+
+Tellen is één ding, maar meestal wil je *iets doen* met elke node in de lijst. Daarvoor loop je er met een `for` doorheen — precies zoals je in Python door een lijst loopt.
+
+Stel je vijand-script heeft een functie `stop()`:
+
+```gdscript
+for vijand in get_tree().get_nodes_in_group("vijanden"):
+    vijand.stop()
+```
+
+Lees het als: "pak elke node uit die lijst, noem hem even `vijand`, en roep daarop `stop()` aan". De variabele `vijand` bestaat alleen binnen de lus en krijgt elke ronde de volgende node.
+
+Het inspringen doet hier hetzelfde werk als bij een `if`: alles wat inspringt hoort bij de lus en gebeurt dus per node.
+
+## Stap 4: `call_group` als afkorting
+
+Omdat "roep dezelfde functie aan op elke node in een group" zó vaak voorkomt, heeft Godot er een afkorting voor:
 
 ```gdscript
 get_tree().call_group("vijanden", "stop")
 ```
 
-Elke node in de group `vijanden` voert nu zijn eigen `stop()`-functie uit — handig om bijvoorbeeld alle vijanden te bevriezen als de speler wint.
+Deze regel doet exact hetzelfde als de lus uit Stap 3. Handig als je alleen een functie wilt aanroepen — maar zodra je per node iets anders wilt doen (bijvoorbeeld alleen de vijanden links van je speler), heb je de lus nodig.
+
+**Wat denk je dat er gebeurt als één vijand geen functie `stop()` heeft?**
+
+<details>
+<summary>Antwoord</summary>
+
+Bij de lus krijg je een foutmelding: Godot probeert `stop()` aan te roepen op een node die het niet kent. Bij `call_group` gebeurt er voor die node niets en draait de rest gewoon door.
+
+Dat verschil is precies waarom de foutmelding van de lus nuttig is tijdens het bouwen: je merkt meteen dat er een vijand tussen zit die niet klopt.
+
+</details>
 
 ## Opdracht 6.5.a: win als alle muntjes weg zijn
 
