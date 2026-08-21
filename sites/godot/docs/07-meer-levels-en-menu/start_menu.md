@@ -150,6 +150,8 @@ Bonus: voeg een vierde knop **Credits** toe die naar een derde scène `credits.t
 3. Zo niet: dubbelklik op `pressed`, kies de juiste ontvanger en klik **Connect**.
 4. Check ook of de functienaam in je script *exact* hetzelfde is als wat Godot heeft gekoppeld.
 
+**Zelf vinden:** zet een `print("geklikt")` in de callback. Verschijnt die niet, dan is het signal niet verbonden; verschijnt hij wél maar gebeurt er niets, dan ligt het aan de regel die de scène wisselt.
+
 </details>
 
 <details>

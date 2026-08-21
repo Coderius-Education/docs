@@ -157,6 +157,8 @@ Elke timer telt onafhankelijk af: muntjes elke 2 seconden, vijanden elke 5.
 2. Open het **Node**-tabblad. Staat er een groen pijltje bij `timeout`?
 3. Controleer dat de functienaam in je script exact overeenkomt met wat Godot heeft gekoppeld.
 
+**Zelf vinden:** zet een `print("timer")` als eerste regel in `_on_timer_timeout`. Blijft Uitvoer leeg, dan gaat het om de Timer of het signal en hoef je je spawn-code niet te doorzoeken.
+
 </details>
 
 <details>

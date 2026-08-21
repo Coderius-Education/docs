@@ -157,6 +157,8 @@ De y-waarde `100` past bij een vloer die lager ligt — vul hier coördinaten in
 - Controleer dat `add_child(nieuw_muntje)` in je functie staat.
 - Kies een positie waarvan je zeker weet dat hij in beeld is: zet in de editor tijdelijk een node op die plek en lees **Position** af.
 
+**Zelf vinden:** print `nieuw_muntje.position` vlak vóór `add_child()`. Staat daar een raar getal, dan klopt je berekening; staat er een net getal en zie je nog niets, dan hangt het muntje niet in de Scene Tree.
+
 </details>
 
 <details>

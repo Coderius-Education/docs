@@ -170,4 +170,6 @@ func _on_body_entered(body: Node2D) -> void:
 2. Heeft de speler een `CollisionShape2D` met een **Shape** ingesteld?
 3. Heeft de `Vlag` zelf ook een `CollisionShape2D` met **Shape**?
 
+**Zelf vinden:** zet een `print("vlag geraakt")` in `_on_body_entered`. Zo weet je meteen of het probleem in de scène zit (de functie wordt nooit aangeroepen) of in het pad naar je level.
+
 </details>

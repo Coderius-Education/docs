@@ -213,6 +213,12 @@ export const godotConcepten: GodotConcept[] = [
     leerlijn: 'gdscript',
     to: '/docs/fouten-zoeken#print-drie',
   },
+  {
+    id: 'runtime-meldingen',
+    label: 'Meldingen tijdens het spelen (null, property)',
+    leerlijn: 'gdscript',
+    to: '/docs/fouten-zoeken#runtime-meldingen',
+  },
 ];
 
 // Volgorde = cursusvolgorde; bepaalt de rechterkolom op de kaart.
@@ -269,7 +275,13 @@ export const conceptenPerLes: Record<string, string[]> = {
   'movement-krachten': ['var-const', 'input-functies'],
   'movement-remmen': ['if-elif', 'velocity-move-and-slide'],
   'movement-afsluiter': ['input-functies', 'if-elif', 'var-const'],
-  'fouten-zoeken': ['foutmelding-lezen', 'print-debuggen', 'if-elif', 'input-functies'],
+  'fouten-zoeken': [
+    'foutmelding-lezen',
+    'runtime-meldingen',
+    'print-debuggen',
+    'if-elif',
+    'input-functies',
+  ],
   camera2d: ['camera2d', 'node-toevoegen'],
   animaties: ['animatedsprite2d'],
   animaties_code: [

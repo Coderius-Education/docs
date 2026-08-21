@@ -134,6 +134,8 @@ Ergens tussen `250.0` en `400.0` speelt een platformer meestal prettig. Noteer w
 2. Controleer de spelling: `"ui_left"` en `"ui_right"`, met een underscore en kleine letters.
 3. Staat `move_and_slide()` nog steeds als laatste regel binnen de functie?
 
+**Zelf vinden:** zet `print(direction)` onder de regel die hem uitleest. Blijft er `0` staan terwijl je op de pijltjes drukt, dan komt de toets niet aan en hoef je de rest van je script niet te doorzoeken.
+
 </details>
 
 <details>

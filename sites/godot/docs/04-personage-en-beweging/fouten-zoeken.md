@@ -45,6 +45,41 @@ De laatste zin is vaak Engels en klinkt technischer dan hij is. Zoek de woorden 
 Krijg je meerdere meldingen tegelijk? Los alleen de **bovenste** op en start opnieuw. De rest is vaak gevolgschade en verdwijnt vanzelf.
 :::
 
+## Drie meldingen die je zult tegenkomen \{#runtime-meldingen}
+
+Deze drie komen tijdens het spelen, niet bij het starten. Je spel draait dus al even en klapt er dan uit. Ze zeggen alle drie iets anders over waar je moet kijken.
+
+### `Attempt to call function 'x' on a null instance`
+
+Je vraagt iets aan een node die er niet is. **`null`** betekent leeg: de variabele bestaat, maar er zit geen node in.
+
+```
+Invalid call. Nonexistent function 'play' in base 'Nil'.
+Attempt to call function 'play' on a null instance.
+```
+
+Bijna altijd staat er een `$Naam` in je regel die niet klopt met de Scene Tree. Vergelijk letter voor letter: `$AnimatedSprite2D` vindt niets als je node `$Sprite` heet. Twijfel je over de schrijfwijze, sleep de node dan vanuit de Scene Tree je script in met `Ctrl` ingedrukt — Godot typt het pad dan zelf.
+
+### `Invalid access to property or key 'x' on a base object of type 'y'`
+
+De node bestaat wél, maar die eigenschap heeft hij niet.
+
+```
+Invalid access to property or key 'text' on a base object of type 'Node2D'.
+```
+
+Lees het achterste stuk eerst: `type 'Node2D'`. Dat is wat Godot denkt dat je te pakken hebt. Een `Node2D` heeft geen `text` — een `Label` wel. Meestal wijs je dus naar de verkeerde node, of ligt de eigenschap één laag dieper: niet op je `CanvasLayer` maar op het `Label` daaronder.
+
+### Helemaal geen melding
+
+Het derde geval is het vervelendst: je klikt, je springt, je raakt het muntje — en er gebeurt niets. Godot zegt niets, want er is niets kapot. Er is alleen nooit iets aangeroepen.
+
+Bij een signal is dat bijna altijd de oorzaak: de functie staat in je script, maar het signal is niet verbonden. Controleer het zo:
+
+1. Selecteer de node, open het **Node**-paneel rechtsboven en kies **Signals**.
+2. Onder een verbonden signal staat de naam van de functie ingesprongen. Staat daar niets, dan is het nooit gekoppeld.
+3. Zet ter controle `print("hier")` als eerste regel in de functie. Blijft Uitvoer leeg terwijl je het muntje raakt, dan weet je het zeker.
+
 ## Print op drie plekken \{#print-drie}
 
 Draait je spel zonder foutmelding, maar gebeurt er niets? Dan weet je nog niets — en dat is precies het probleem. `print()` maakt zichtbaar wat je code doet.
@@ -197,7 +232,7 @@ Er is geen foutmelding en er ontbreekt niets. Vraag jezelf af hoe vaak deze `if`
         velocity.y = JUMP_VELOCITY
 ```
 
-Zie [Deel 4 — Springen](./basis_movement_begrijpen/afsluiter.md) voor het volledige verhaal.
+Zie [Deel 7 — Springen](./basis_movement_begrijpen/afsluiter.md) voor het volledige verhaal.
 
 </details>
 
@@ -210,7 +245,7 @@ Elke les in deze cursus eindigt met een blok **Er gaat iets mis** waarin de fout
 | Installatie en projectmap | [Installatie](../01-aan-de-slag/installatie.md), [Je projectmap terugvinden](../exporteren.md) |
 | Editor, scènes en bestanden | [De Godot-interface](../02-editor-leren-kennen/interface.md), [Bestanden downloaden](../02-editor-leren-kennen/bestanden-downloaden.md) |
 | Level en tegels | [Level tekenen](../03-level-bouwen/tilemap_opzetten.md), [Collision op je tegels](../03-level-bouwen/tilemap_collision.md) |
-| Beweging en springen | [Deel 2](./basis_movement_begrijpen/motor.md), [Deel 3](./basis_movement_begrijpen/krachten.md), [Deel 4](./basis_movement_begrijpen/afsluiter.md) |
+| Beweging en springen | [Deel 2 — Vallen](./basis_movement_begrijpen/motor.md), [Deel 4 — Je eerste if](./basis_movement_begrijpen/grond.md), [Deel 5 — Lopen](./basis_movement_begrijpen/krachten.md), [Deel 7 — Springen](./basis_movement_begrijpen/afsluiter.md) |
 | Camera | [Camera die de speler volgt](./camera2d.md) |
 | Animaties | [Animaties maken](../05-animaties/animaties.md), [Animaties in code](../05-animaties/animaties_code.md) |
 | Signals en score | [Signals & een muntje](../06-signals-en-score/signals_muntje.md), [Score op het scherm](../06-signals-en-score/score_op_scherm.md) |
@@ -220,4 +255,4 @@ Losse code-voorbeelden staan in de [GDScript-tips](/gdscript-tips), en alle node
 
 ---
 
-← [Deel 4 — Springen](./basis_movement_begrijpen/afsluiter.md) · **Volgende:** [Camera die de speler volgt](./camera2d.md) →
+← [Deel 7 — Springen](./basis_movement_begrijpen/afsluiter.md) · **Volgende:** [Camera die de speler volgt](./camera2d.md) →

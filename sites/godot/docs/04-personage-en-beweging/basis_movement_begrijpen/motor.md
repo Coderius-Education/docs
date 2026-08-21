@@ -112,6 +112,8 @@ func _physics_process(delta: float) -> void:
 
 **Oplossing:** De regel met `velocity` hoort één niveau in te springen, binnen de functie. En `move_and_slide()` blijft als laatste regel staan.
 
+**Zelf vinden:** zet `print(velocity)` boven `move_and_slide()`. Blijft daar `(0, 0)` staan, dan wordt je valregel niet uitgevoerd. Verandert `velocity` wél maar beweegt er niets, dan ligt het bij `move_and_slide()`.
+
 </details>
 
 <details>

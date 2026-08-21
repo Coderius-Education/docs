@@ -119,6 +119,8 @@ func _process(delta: float) -> void:
 
 **Oplossing:** Open je muntje-script en controleer dat er `Global.score += 1` staat (niet `body.score += 1` uit de vorige les).
 
+**Zelf vinden:** print `Global.score` op twee plekken: in het muntje-script vlak na het ophogen, en in je Label-script. Loopt de eerste wel op en de tweede niet, dan zit het verschil in je Label; loopt de eerste al niet op, dan is het muntje de boosdoener.
+
 </details>
 
 <details>

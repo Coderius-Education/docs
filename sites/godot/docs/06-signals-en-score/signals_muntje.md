@@ -183,6 +183,8 @@ In de volgende les bouw je een **score-teller** in je karakter, zodat opgepakte 
 2. Heeft het muntje een `CollisionShape2D` als child?
 3. Heeft die `CollisionShape2D` ook echt een **Shape** ingesteld (bijvoorbeeld `CircleShape2D`)?
 
+**Zelf vinden:** zet als eerste regel in `_on_body_entered` een `print("geraakt")`. Verschijnt die niet, dan is het een probleem van de scène (signal of collision). Verschijnt hij wél, dan ligt het aan de code eronder.
+
 </details>
 
 <details>

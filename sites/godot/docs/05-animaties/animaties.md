@@ -97,6 +97,8 @@ De `AnimatedSprite2D`-instellingen staan ook in de [Nodes cheatsheet](/cheatshee
 - Zorg dat je script `$AnimatedSprite2D` gebruikt met exact dezelfde naam.
 - Controleer dat `AnimatedSprite2D` een **child** is van `CharacterBody2D`, niet los in de scène.
 
+**Zelf vinden:** sleep de node vanuit de Scene Tree je script in met `Ctrl` ingedrukt. Godot typt het pad dan zelf, en verschilt dat van wat er stond, dan heb je je fout. Zie ook [Meldingen tijdens het spelen](/docs/fouten-zoeken#runtime-meldingen).
+
 </details>
 
 <details>

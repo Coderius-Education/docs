@@ -146,6 +146,8 @@ func _physics_process(delta: float) -> void:
 
 **Oplossing:** Vergelijk je code met het script hierboven. De regel met `move_toward` hoort binnen de `else` te staan.
 
+**Zelf vinden:** zet een `print("remmen")` binnen de `else`. Zie je die regel nooit verschijnen als je de toets loslaat, dan wordt je `else` niet bereikt.
+
 </details>
 
 ---

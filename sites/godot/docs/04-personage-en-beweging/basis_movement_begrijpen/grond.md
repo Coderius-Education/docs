@@ -120,6 +120,8 @@ func _physics_process(delta: float) -> void:
 
 **Oplossing:** De regel hoort te zijn: `if not is_on_floor():`.
 
+**Zelf vinden:** zet `print(is_on_floor())` boven je `if`. Zie je `true` terwijl je in de lucht hangt, dan lees je de vloer verkeerd uit; zie je `false` op de grond, dan klopt je collision niet.
+
 </details>
 
 <details>
