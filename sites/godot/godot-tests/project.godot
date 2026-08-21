@@ -1,0 +1,22 @@
+; Testproject voor de codevoorbeelden uit de cursus. Niet bedoeld om te spelen:
+; het draait headless in CI, compileert elk GDScript-blok uit de docs en voert
+; de zeven tussenstanden van het bewegingsscript echt uit.
+;
+; De stub-scenes hieronder bestaan alleen omdat `preload()` bij het compileren
+; al een bestaand bestand nodig heeft.
+
+config_version=5
+
+[application]
+
+config/name="Godot-docs codetests"
+run/main_scene="res://tests/test_runner.tscn"
+config/features=PackedStringArray("4.4")
+
+[autoload]
+
+Global="*res://autoload/global.gd"
+
+[debug]
+
+gdscript/warnings/enable=false

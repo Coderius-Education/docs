@@ -26,14 +26,14 @@ Twee begrippen: **`if`** om iets alleen soms te doen, en **`not`** om een voorwa
 
 Je regel telt elke frame zwaartekracht op bij `velocity`, ook terwijl je karakter stilligt op de grond. De vloer houdt hem tegen, dus je ziet niets bewegen.
 
-**Wat gebeurt er dan met het getal in `velocity.y`?**
+**Wat denk je dat er dan in `velocity.y` staat terwijl hij stilligt?**
 
 <details>
 <summary>Antwoord</summary>
 
-Dat blijft groeien. Elke frame komt er weer een stukje bij, en niemand zet het ooit terug. Na een halve minuut stilstaan staat er een enorme waarde in.
+Niet nul, maar ook niet een enorm getal: ongeveer `16`.
 
-Je merkt het pas als je gaat springen: die opgebouwde neerwaartse snelheid moet dan eerst worden weggewerkt, en dat maakt een sprong onvoorspelbaar.
+Dat is precies één frame zwaartekracht. Jouw regel telt er elke frame `16` bij op, en `move_and_slide()` haalt het er elke frame weer af zodra je de vloer raakt. Het loopt dus niet op — maar je snelheid staat wel voortdurend een tikje verkeerd, terwijl je stilstaat.
 
 </details>
 
@@ -84,7 +84,14 @@ De code binnen de `if` draait alleen als wat erachter staat `true` is. Dus: alle
 
 Start met `F5`. Aan de buitenkant is er niets veranderd: je karakter valt nog steeds en blijft op de vloer liggen.
 
-Dat is precies goed. Deze les repareerde iets wat je niet kon zien — en dat is bij programmeren vaker het geval dan je zou denken.
+Het verschil zit in de getallen. Zet tijdelijk `print(velocity)` boven `move_and_slide()`:
+
+- **Zonder** de `if` staat er op de vloer `(0, 16.33)`, elke frame opnieuw.
+- **Met** de `if` staat er `(0, 0)`.
+
+Nu zegt je code wat je bedoelt: trek hem alleen naar beneden als hij in de lucht hangt. Dit is ook precies wat Godot zelf doet in het sjabloon dat je in de eerste les hebt weggegooid.
+
+Deze les repareerde dus iets wat je niet kón zien zonder `print` — en dat is bij programmeren vaker het geval dan je zou denken.
 
 ## Je script tot nu toe
 
