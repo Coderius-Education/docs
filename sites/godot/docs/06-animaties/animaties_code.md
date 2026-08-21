@@ -109,7 +109,7 @@ Voeg dit toe **vóór** `move_and_slide()` in je `_physics_process`.
 
 </details>
 
-## Opdracht 5.2.a: de idle-animatie als je stilstaat
+## Opdracht 6.2.a: de idle-animatie als je stilstaat
 
 `velocity.x` houdt de horizontale snelheid bij. Vul de twee gaten in:
 
@@ -162,7 +162,7 @@ Let op `elif`: de `idle`-animatie wordt alleen geprobeerd als `jump` níet aan i
 
 </details>
 
-## Opdracht 5.2.b: de run-animatie en spiegelen
+## Opdracht 6.2.b: de run-animatie en spiegelen
 
 Nu de laatste twee takken van de keten. Met `$AnimatedSprite2D.flip_h = true` spiegel je het plaatje zodat je karakter naar links kijkt; met `false` kijkt hij weer naar rechts.
 
@@ -258,7 +258,7 @@ Dus bij `velocity.x < 0` (links bewegen): `flip_h = true`.
 1. De volgorde van je `if` / `elif` is verkeerd: `velocity.x > 0` of `< 0` wordt eerder waar dan `staat_stil`.
 2. `staat_stil` wordt bijgewerkt vóórdat `move_toward` de snelheid op `0` heeft gezet, en houdt dan een frame lang de oude waarde vast.
 
-Over dat tweede: met stap `SPEED` (zoals in [Deel 5 — Lopen](../04-personage-en-beweging/basis_movement_begrijpen/krachten.md)) maakt `move_toward` de snelheid in één frame exact `0`. Alleen als je bewust een kleinere stap koos voor een glij-effect, blijft `velocity.x` nog een paar frames ongelijk aan nul en start `idle` iets later — dat is dan geen bug, maar het gevolg van het glijden.
+Over dat tweede: met stap `SPEED` (zoals in [Deel 5 — Lopen](../05-bewegingsscript/krachten.md)) maakt `move_toward` de snelheid in één frame exact `0`. Alleen als je bewust een kleinere stap koos voor een glij-effect, blijft `velocity.x` nog een paar frames ongelijk aan nul en start `idle` iets later — dat is dan geen bug, maar het gevolg van het glijden.
 
 **Oplossing:**
 
@@ -267,4 +267,4 @@ Over dat tweede: met stap `SPEED` (zoals in [Deel 5 — Lopen](../04-personage-e
 
 </details>
 
-Staat je fout er niet bij? In [Fouten zoeken](../04-personage-en-beweging/fouten-zoeken.md) staat hoe je hem zelf opspoort.
+Staat je fout er niet bij? In [Fouten zoeken](../05-bewegingsscript/fouten-zoeken.md) staat hoe je hem zelf opspoort.

@@ -1,6 +1,7 @@
 ---
 sidebar_position: 3
 slug: /movement-delta
+sidebar_label: "Deel 3: Delta"
 ---
 
 # Het bewegingsscript bouwen — Deel 3: Delta
@@ -62,7 +63,7 @@ Draait het spel op een snellere computer met 120 frames per seconde, dan is `del
 
 **Dat is waar het om gaat:** met `delta` gaat je spel overal even snel. Zonder `delta` bepaalt de snelheid van je computer hoe hard je valt.
 
-## Opdracht 4.4.a: haal delta weg en kijk
+## Opdracht 5.3.a: haal delta weg en kijk
 
 Verwijder tijdelijk `* delta` uit je valregel, zodat er `velocity += get_gravity()` staat. Start met `F5`.
 

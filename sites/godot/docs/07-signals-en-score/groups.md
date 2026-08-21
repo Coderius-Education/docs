@@ -110,7 +110,7 @@ Dat verschil is precies waarom de foutmelding van de lus nuttig is tijdens het b
 
 </details>
 
-## Opdracht 6.5.a: win als alle muntjes weg zijn
+## Opdracht 7.5.a: win als alle muntjes weg zijn
 
 Laat in **Uitvoer** "Je hebt gewonnen!" verschijnen zodra de speler het laatste muntje oppakt.
 
@@ -144,7 +144,7 @@ Het laatste muntje wordt wel `queue_free()`'d, maar telt in dit frame nog mee â€
 
 </details>
 
-## Opdracht 6.5.b: laat alle vijanden stoppen
+## Opdracht 7.5.b: laat alle vijanden stoppen
 
 Geef je vijanden het label `vijanden` en een functie `stop()` die de vijand op zijn plek laat staan (bijvoorbeeld door een `print` of door beweging uit te zetten). Roep `stop()` op alle vijanden tegelijk aan zodra de speler wint.
 

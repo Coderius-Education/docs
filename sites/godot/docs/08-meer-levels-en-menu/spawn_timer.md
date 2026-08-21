@@ -11,7 +11,7 @@ In de [vorige les](./spawnen.md) spawn je muntjes bij de start van het level, me
 
 ## Voorspel: hoe doe je "elke 2 seconden"?
 
-Je wilt dat `spawn_muntje()` elke 2 seconden wordt aangeroepen. **Hoe zou Godot dat oplossen?** Denk aan wat je in [Signals & een muntje oppakken](../06-signals-en-score/signals_muntje.md) leerde over hoe nodes elkaar iets laten weten.
+Je wilt dat `spawn_muntje()` elke 2 seconden wordt aangeroepen. **Hoe zou Godot dat oplossen?** Denk aan wat je in [Signals & een muntje oppakken](../07-signals-en-score/signals_muntje.md) leerde over hoe nodes elkaar iets laten weten.
 
 <details>
 <summary>Antwoord</summary>
@@ -94,9 +94,9 @@ Start met `F5` en blijf even kijken: elke 2 seconden verschijnt er ergens een ni
 
 De `Timer`-instellingen staan ook in de [Nodes cheatsheet](/cheatsheet#spawnen).
 
-## Opdracht 7.4.a: spawn ook vijanden
+## Opdracht 8.4.a: spawn ook vijanden
 
-Muntjes verzamelen zonder gevaar is te makkelijk. Laat het level óók vijanden spawnen, langzamer dan de muntjes — bijvoorbeeld één per 5 seconden. Gebruik de vijand-scène uit [Opdracht 6.1.a](../06-signals-en-score/signals_muntje.md).
+Muntjes verzamelen zonder gevaar is te makkelijk. Laat het level óók vijanden spawnen, langzamer dan de muntjes — bijvoorbeeld één per 5 seconden. Gebruik de vijand-scène uit [Opdracht 7.1.a](../07-signals-en-score/signals_muntje.md).
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -179,4 +179,4 @@ Elke timer telt onafhankelijk af: muntjes elke 2 seconden, vijanden elke 5.
 
 </details>
 
-Staat je fout er niet bij? In [Fouten zoeken](../04-personage-en-beweging/fouten-zoeken.md) staat hoe je hem zelf opspoort.
+Staat je fout er niet bij? In [Fouten zoeken](../05-bewegingsscript/fouten-zoeken.md) staat hoe je hem zelf opspoort.

@@ -83,7 +83,7 @@ Klap de mappen in het FileSystem-paneel open met het pijltje ervoor. Klik op een
 <summary>Klik hier voor de oplossing.</summary>
 
 1. `Background` bevat effen kleurtegels, waaronder `Green.png` — die gebruik je in [Achtergrond](../03-level-bouwen/background_image.md).
-2. De figuren staan in `Main Characters`, elk in een eigen map. Een animatie is één breed bestand zoals `Run (32x32).png`: alle stapjes van de beweging naast elkaar in een **sprite-sheet**. In hoofdstuk 5 knip je die frames in Godot los.
+2. De figuren staan in `Main Characters`, elk in een eigen map. Een animatie is één breed bestand zoals `Run (32x32).png`: alle stapjes van de beweging naast elkaar in een **sprite-sheet**. In hoofdstuk 6 knip je die frames in Godot los.
 
 </details>
 

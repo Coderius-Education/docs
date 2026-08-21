@@ -76,7 +76,7 @@ Alle drie de acties zitten in het rechtermuisknop-menu op een node in de Scene T
 2. Dubbelklik op de naam (of druk `F2`) en typ `Oefening`.
 3. Rechtermuisknop op `Oefening` → **Delete Node(s)**, of selecteer hem en druk op `Delete`.
 
-De naam van een node mag je zelf kiezen, maar hij bepaalt straks wél hoe je hem vanuit code aanspreekt. Daar kom je in hoofdstuk 5 achter.
+De naam van een node mag je zelf kiezen, maar hij bepaalt straks wél hoe je hem vanuit code aanspreekt. Daar kom je in hoofdstuk 6 achter.
 
 </details>
 

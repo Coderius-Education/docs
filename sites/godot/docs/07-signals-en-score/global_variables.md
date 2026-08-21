@@ -171,7 +171,7 @@ Gebruik global variables voor dingen die je in meerdere scènes nodig hebt: scor
 In de **volgende les** zet je `Global.score` op het scherm met een `Label`.
 :::
 
-## Opdracht 6.3.a: voeg `levens` toe aan `Global`
+## Opdracht 7.3.a: voeg `levens` toe aan `Global`
 
 Je hebt nu `Global.score`. Pas dezelfde aanpak toe op `levens`.
 

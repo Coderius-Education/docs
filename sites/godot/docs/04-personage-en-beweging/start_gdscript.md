@@ -112,4 +112,4 @@ Haal deze `_ready()`-functie daarna weer weg. In de volgende les begin je met ee
 
 ## Wat daarna?
 
-In de volgende zeven korte lessen ([Het bewegingsscript bouwen](./basis_movement_begrijpen/skelet.md)) schrijf je stap voor stap het script waarmee je karakter valt, loopt en springt. Je hoeft de GDQuest-cursus niet uitgespeeld te hebben; je loopt hem naast deze lessen door, in je eigen tempo.
+In de volgende zeven korte lessen ([Het bewegingsscript bouwen](../05-bewegingsscript/skelet.md)) schrijf je stap voor stap het script waarmee je karakter valt, loopt en springt. Je hoeft de GDQuest-cursus niet uitgespeeld te hebben; je loopt hem naast deze lessen door, in je eigen tempo.

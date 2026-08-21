@@ -1,6 +1,7 @@
 ---
 sidebar_position: 7
 slug: /movement-afsluiter
+sidebar_label: "Deel 7: Springen"
 ---
 
 # Het bewegingsscript bouwen — Deel 7: Springen
@@ -36,7 +37,7 @@ Negatief. In Godot ligt `(0, 0)` in de **linkerbovenhoek** van het scherm:
 
 Een sprong is beweging naar boven, dus `velocity.y` moet negatief worden.
 
-![Godot coördinatenstelsel](../../images/coordinaten.svg)
+![Godot coördinatenstelsel](../images/coordinaten.svg)
 
 </details>
 
@@ -180,7 +181,7 @@ Een toets juist vervangen in plaats van toevoegen? Klap de actie open en klik op
 
 </details>
 
-## Opdracht 4.4.d: voeg een eigen kracht toe
+## Opdracht 5.7.a: voeg een eigen kracht toe
 
 Je script kent nu vallen, lopen en springen. Voeg er zelf iets bij dat niet in de les staat. Kies er één:
 
@@ -249,4 +250,4 @@ Zo weet je bij een fout meteen aan welke kant je moet zoeken: bij het uitlezen v
 
 ---
 
-← [Deel 6 — Stoppen](./remmen.md) · **Volgende:** [Fouten zoeken](../fouten-zoeken.md) →
+← [Deel 6 — Stoppen](./remmen.md) · **Volgende:** [Fouten zoeken](./fouten-zoeken.md) →

@@ -5,7 +5,7 @@ slug: /spawnen
 
 # Spawnen: nodes maken in code
 
-Tot nu toe heb je elke node met de hand in de editor gezet: muntjes gesleept, vijanden geplaatst, tegels getekend. Maar veel spellen maken dingen aan **terwijl het spel draait** — een nieuwe vijand elke paar seconden, een kogel bij elke druk op de knop. Dat aanmaken tijdens het spel heet **spawnen**. In deze les spawn je de muntjes uit [Signals & een muntje oppakken](../06-signals-en-score/signals_muntje.md) met code in plaats van met slepen.
+Tot nu toe heb je elke node met de hand in de editor gezet: muntjes gesleept, vijanden geplaatst, tegels getekend. Maar veel spellen maken dingen aan **terwijl het spel draait** — een nieuwe vijand elke paar seconden, een kogel bij elke druk op de knop. Dat aanmaken tijdens het spel heet **spawnen**. In deze les spawn je de muntjes uit [Signals & een muntje oppakken](../07-signals-en-score/signals_muntje.md) met code in plaats van met slepen.
 
 <GodotVersie />
 
@@ -99,7 +99,7 @@ Het spel doet exact hetzelfde als in Stap 2, maar een extra muntje spawnen is nu
 
 Deze drie functies staan ook kort bij elkaar in de [GDScript-tips](/gdscript-tips#nodes-scenes).
 
-## Opdracht 7.3.a: spawn een rij muntjes
+## Opdracht 8.3.a: spawn een rij muntjes
 
 Laat `_ready()` een rij van drie muntjes spawnen, naast elkaar met gelijke tussenruimte, op een plek waar je karakter erbij kan.
 

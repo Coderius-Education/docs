@@ -79,7 +79,7 @@ Voor een Label die alleen tekst toont is `_process` perfect.
 
 Start het spel met `F5` en pak een muntje op. De Label telt live mee.
 
-## Opdracht 6.4.a: een levens-Label
+## Opdracht 7.4.a: een levens-Label
 
 Je hebt nu een Score-Label. Doe hetzelfde voor `Global.levens`.
 

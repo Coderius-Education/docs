@@ -68,7 +68,7 @@ Heeft je gekozen tegel al een lichtblauw vakje? Met dezelfde Paint-tool waarmee 
 
 Controleer in het **TileSet**-tabblad, met de Paint-tool op **Physics Layer 0**, dat jouw decoratie-tegel géén lichtblauw vakje heeft. Teken hem daarna in het **TileMap**-tabblad gewoon in je level.
 
-Het resultaat zie je in hoofdstuk 4: je karakter loopt dwars door de struik heen, maar blijft op het gras staan. Zo maak je straks ook doorkijk-elementen, of een nep-vloer boven een valkuil.
+Het resultaat zie je in hoofdstuk 5: je karakter loopt dwars door de struik heen, maar blijft op het gras staan. Zo maak je straks ook doorkijk-elementen, of een nep-vloer boven een valkuil.
 
 </details>
 

@@ -81,7 +81,7 @@ Er is geen fout of goed level, maar controleer deze drie dingen:
 - Vanaf de vloer kun je in gedachten via de plateaus omhoog "klimmen", zonder sprongen van meer dan een paar tegels.
 - Alles wat begaanbaar moet zijn valt binnen de roze stippelrand, of net erbuiten — de camera leert je pas later meebewegen.
 
-Testen of de sprongen écht haalbaar zijn kan nog niet: daarvoor heb je het karakter uit hoofdstuk 4 nodig. Grote kans dat je hier dan nog iets bijstelt, en dat hoort erbij.
+Testen of de sprongen écht haalbaar zijn kan nog niet: daarvoor heb je het springende karakter uit hoofdstuk 5 nodig. Grote kans dat je hier dan nog iets bijstelt, en dat hoort erbij.
 
 </details>
 

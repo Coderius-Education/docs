@@ -15,8 +15,8 @@ Het hart van het spel is hetzelfde als in jouw platformer: `velocity.y` aanpasse
 
 ## Wat ga je leren?
 
-- Een spawner bouwen die met een `Timer` periodiek nieuwe obstakels aanmaakt — de techniek uit [Automatisch spawnen met een Timer](../07-meer-levels-en-menu/spawn_timer.md).
-- Scenes "instantieren" met `preload()` + `instantiate()` (zie [Spawnen: nodes maken in code](../07-meer-levels-en-menu/spawnen.md)).
+- Een spawner bouwen die met een `Timer` periodiek nieuwe obstakels aanmaakt — de techniek uit [Automatisch spawnen met een Timer](../08-meer-levels-en-menu/spawn_timer.md).
+- Scenes "instantieren" met `preload()` + `instantiate()` (zie [Spawnen: nodes maken in code](../08-meer-levels-en-menu/spawnen.md)).
 - Een Area2D als game-over-trigger inzetten.
 - Score per gepasseerde buis verhogen via een tweede Area2D.
 
@@ -50,7 +50,7 @@ Het hart van het spel is hetzelfde als in jouw platformer: `velocity.y` aanpasse
 ## Externe links
 
 - [Itch.io: gratis vogel-assets](https://itch.io/game-assets/free/tag-bird) — sprite-sheets om mee te beginnen.
-- [Godot Docs — Instancing scenes](https://docs.godotengine.org/en/stable/getting_started/step_by_step/instancing.html) — verdieping op `preload()` + `instantiate()` uit [7.3](../07-meer-levels-en-menu/spawnen.md).
+- [Godot Docs — Instancing scenes](https://docs.godotengine.org/en/stable/getting_started/step_by_step/instancing.html) — verdieping op `preload()` + `instantiate()` uit [8.3](../08-meer-levels-en-menu/spawnen.md).
 
 ## Eerste stappen
 

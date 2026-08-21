@@ -17,7 +17,7 @@ In Godot zit er een ingebouwde node-type voor knoppen. **Hoe denk je dat hij hee
 <summary>Antwoord</summary>
 
 - De node heet `Button` (UI-node uit de Control-familie).
-- Het signal heet `pressed` en wordt verstuurd zodra de speler de knop indrukt en weer loslaat — vergelijkbaar met `body_entered` uit [Signals & een muntje oppakken](../06-signals-en-score/signals_muntje.md).
+- Het signal heet `pressed` en wordt verstuurd zodra de speler de knop indrukt en weer loslaat — vergelijkbaar met `body_entered` uit [Signals & een muntje oppakken](../07-signals-en-score/signals_muntje.md).
 
 </details>
 
@@ -59,7 +59,7 @@ Alle UI-nodes uit deze les staan met hun instellingen in de [Nodes cheatsheet](/
 
 ## Stap 5: Koppel de `pressed`-signalen
 
-Per knop koppel je het `pressed`-signaal aan een functie in `menu.gd`. Dat doe je op dezelfde manier als `body_entered` in [6.1](../06-signals-en-score/signals_muntje.md).
+Per knop koppel je het `pressed`-signaal aan een functie in `menu.gd`. Dat doe je op dezelfde manier als `body_entered` in [7.1](../07-signals-en-score/signals_muntje.md).
 
 1. Selecteer de eerste knop (`Start spel`).
 2. Ga naar het **Node**-tabblad rechts naast de Inspector.
@@ -83,12 +83,12 @@ func _on_afsluiten_pressed() -> void:
 
 | Code                                          | Wat doet het?                                                |
 | :-------------------------------------------- | :----------------------------------------------------------- |
-| `Global.reset()`                              | Zet `score` en `levens` terug op beginwaarde (zie [6.3](../06-signals-en-score/global_variables.md)) |
-| `change_scene_to_file("res://level1.tscn")`   | Laadt level 1 (zoals je leerde in [7.1](./tweede_level.md))   |
+| `Global.reset()`                              | Zet `score` en `levens` terug op beginwaarde (zie [7.3](../07-signals-en-score/global_variables.md)) |
+| `change_scene_to_file("res://level1.tscn")`   | Laadt level 1 (zoals je leerde in [8.1](./tweede_level.md))   |
 | `get_tree().quit()`                           | Sluit het hele spel-venster                                  |
 
 :::tip
-Heb je `Global.reset()` niet gedefinieerd? Voeg in `global.gd` een functie toe die `score = 0` en `levens = 3` zet — zie [Global variables](../06-signals-en-score/global_variables.md).
+Heb je `Global.reset()` niet gedefinieerd? Voeg in `global.gd` een functie toe die `score = 0` en `levens = 3` zet — zie [Global variables](../07-signals-en-score/global_variables.md).
 :::
 
 ## Stap 7: Maak het menu de Main Scene \{#main-scene}
@@ -101,7 +101,7 @@ Zo zorg je dat het menu opent zodra je het spel start, in plaats van level 1.
 
 Start het spel met `F5`. Je belandt nu eerst in het menu — pas zodra je op **Start spel** klikt, begint het echte spel.
 
-## Opdracht 7.2.a: voeg een "Level 2" knop toe
+## Opdracht 8.2.a: voeg een "Level 2" knop toe
 
 Maak het menu uitgebreider: voeg een derde knop toe waarmee de speler rechtstreeks naar level 2 kan springen, handig om snel verder te testen.
 

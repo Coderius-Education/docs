@@ -1,6 +1,7 @@
 ---
 sidebar_position: 6
 slug: /movement-remmen
+sidebar_label: "Deel 6: Stoppen"
 ---
 
 # Het bewegingsscript bouwen — Deel 6: Stoppen
@@ -78,7 +79,7 @@ Je karakter blijft voor eeuwig doorrijden zodra je één keer een pijltje hebt i
 
 Start met `F5`. Lopen en stoppen werken als voorheen — maar nu heb je een plek waar je het afremmen kunt bijstellen.
 
-## Opdracht 4.4.c: laat je karakter uitglijden
+## Opdracht 5.6.a: laat je karakter uitglijden
 
 Maak de stap in `move_toward` kleiner dan `SPEED` en kijk wat er gebeurt. Zoek een waarde waarbij je karakter nog nét bestuurbaar blijft.
 

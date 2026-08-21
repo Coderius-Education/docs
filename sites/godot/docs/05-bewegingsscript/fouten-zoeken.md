@@ -1,5 +1,5 @@
 ---
-sidebar_position: 5
+sidebar_position: 8
 slug: /fouten-zoeken
 ---
 
@@ -137,7 +137,7 @@ Als je echt vastzit, beantwoord deze vier op papier of hardop. Ze dwingen je van
 
 Kom je er met een klasgenoot of docent niet uit, dan zijn dit ook precies de vier dingen die je moet kunnen vertellen.
 
-## Opdracht 4.5.a: het spel start niet
+## Opdracht 5.8.a: het spel start niet
 
 Dit script hoort te werken, maar Godot weigert het. Wat is er mis?
 
@@ -171,7 +171,7 @@ Elke regel die een blok opent — `func`, `if`, `else`, `for` — eindigt op een
 
 </details>
 
-## Opdracht 4.5.b: het spel draait, maar er gebeurt niets
+## Opdracht 5.8.b: het spel draait, maar er gebeurt niets
 
 Geen foutmelding, en toch beweegt het karakter niet.
 
@@ -206,7 +206,7 @@ Dit is een goed voorbeeld van de tweede soort fout: er is niets kapot, er ontbre
 
 </details>
 
-## Opdracht 4.5.c: het spel doet iets anders dan bedoeld
+## Opdracht 5.8.c: het spel doet iets anders dan bedoeld
 
 Dit karakter zou moeten springen bij een druk op de spatiebalk, maar hij blijft aan het plafond plakken zolang je de toets vasthoudt.
 
@@ -232,7 +232,7 @@ Er is geen foutmelding en er ontbreekt niets. Vraag jezelf af hoe vaak deze `if`
         velocity.y = JUMP_VELOCITY
 ```
 
-Zie [Deel 7 — Springen](./basis_movement_begrijpen/afsluiter.md) voor het volledige verhaal.
+Zie [Deel 7 — Springen](./afsluiter.md) voor het volledige verhaal.
 
 </details>
 
@@ -245,14 +245,14 @@ Elke les in deze cursus eindigt met een blok **Er gaat iets mis** waarin de fout
 | Installatie en projectmap | [Installatie](../01-aan-de-slag/installatie.md), [Je projectmap terugvinden](../exporteren.md) |
 | Editor, scènes en bestanden | [De Godot-interface](../02-editor-leren-kennen/interface.md), [Bestanden downloaden](../02-editor-leren-kennen/bestanden-downloaden.md) |
 | Level en tegels | [Level tekenen](../03-level-bouwen/tilemap_opzetten.md), [Collision op je tegels](../03-level-bouwen/tilemap_collision.md) |
-| Beweging en springen | [Deel 2 — Vallen](./basis_movement_begrijpen/motor.md), [Deel 4 — Je eerste if](./basis_movement_begrijpen/grond.md), [Deel 5 — Lopen](./basis_movement_begrijpen/krachten.md), [Deel 7 — Springen](./basis_movement_begrijpen/afsluiter.md) |
+| Beweging en springen | [Deel 2 — Vallen](./motor.md), [Deel 4 — Je eerste if](./grond.md), [Deel 5 — Lopen](./krachten.md), [Deel 7 — Springen](./afsluiter.md) |
 | Camera | [Camera die de speler volgt](./camera2d.md) |
-| Animaties | [Animaties maken](../05-animaties/animaties.md), [Animaties in code](../05-animaties/animaties_code.md) |
-| Signals en score | [Signals & een muntje](../06-signals-en-score/signals_muntje.md), [Score op het scherm](../06-signals-en-score/score_op_scherm.md) |
-| Levels, menu en spawnen | [Een tweede level](../07-meer-levels-en-menu/tweede_level.md), [Een startmenu](../07-meer-levels-en-menu/start_menu.md), [Spawnen](../07-meer-levels-en-menu/spawnen.md), [Timer](../07-meer-levels-en-menu/spawn_timer.md) |
+| Animaties | [Animaties maken](../06-animaties/animaties.md), [Animaties in code](../06-animaties/animaties_code.md) |
+| Signals en score | [Signals & een muntje](../07-signals-en-score/signals_muntje.md), [Score op het scherm](../07-signals-en-score/score_op_scherm.md) |
+| Levels, menu en spawnen | [Een tweede level](../08-meer-levels-en-menu/tweede_level.md), [Een startmenu](../08-meer-levels-en-menu/start_menu.md), [Spawnen](../08-meer-levels-en-menu/spawnen.md), [Timer](../08-meer-levels-en-menu/spawn_timer.md) |
 
 Losse code-voorbeelden staan in de [GDScript-tips](/gdscript-tips), en alle node-instellingen in de [Nodes cheatsheet](/cheatsheet).
 
 ---
 
-← [Deel 7 — Springen](./basis_movement_begrijpen/afsluiter.md) · **Volgende:** [Camera die de speler volgt](./camera2d.md) →
+← [Deel 7 — Springen](./afsluiter.md) · **Volgende:** [Camera die de speler volgt](./camera2d.md) →

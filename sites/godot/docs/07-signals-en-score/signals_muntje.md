@@ -120,7 +120,7 @@ func _on_body_entered(body: Node2D) -> void:
 
 Start het spel met `F5`, loop tegen een muntje aan en kijk in **Uitvoer**: het muntje verdwijnt en je ziet "Muntje opgepakt".
 
-## Opdracht 6.1.a: voeg een vijand toe
+## Opdracht 7.1.a: voeg een vijand toe
 
 Je weet nu hoe een muntje op een botsing reageert. Pas hetzelfde principe toe op een vijand.
 
@@ -212,4 +212,4 @@ In de volgende les bouw je een **score-teller** in je karakter, zodat opgepakte 
 
 </details>
 
-Staat je fout er niet bij? In [Fouten zoeken](../04-personage-en-beweging/fouten-zoeken.md) staat hoe je hem zelf opspoort.
+Staat je fout er niet bij? In [Fouten zoeken](../05-bewegingsscript/fouten-zoeken.md) staat hoe je hem zelf opspoort.

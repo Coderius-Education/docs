@@ -1,6 +1,7 @@
 ---
 sidebar_position: 2
 slug: /movement-motor
+sidebar_label: "Deel 2: Vallen"
 ---
 
 # Het bewegingsscript bouwen — Deel 2: Vallen
@@ -100,7 +101,7 @@ func _physics_process(delta: float) -> void:
 
 **Oplossing:**
 
-1. Controleer of je tegels een Physics Layer hebben ([Collision op je tegels](../../03-level-bouwen/tilemap_collision.md)).
+1. Controleer of je tegels een Physics Layer hebben ([Collision op je tegels](../03-level-bouwen/tilemap_collision.md)).
 2. Controleer of je `CharacterBody2D` een `CollisionShape2D` als child heeft, mét een **Shape** ingesteld.
 
 </details>

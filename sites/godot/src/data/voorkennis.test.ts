@@ -81,13 +81,13 @@ describe('godot Voorkennis naar de python-cursus', () => {
     // Bewust een exacte lijst: een per ongeluk verwijderd of verplaatst blok
     // valt dan direct op, net als een nieuw blok dat hier nog niet staat.
     expect([...voorkennisPerLes().keys()].sort()).toEqual([
-      '04-personage-en-beweging/basis_movement_begrijpen/afsluiter.md',
-      '04-personage-en-beweging/basis_movement_begrijpen/grond.md',
-      '04-personage-en-beweging/basis_movement_begrijpen/skelet.md',
       '04-personage-en-beweging/start_gdscript.md',
-      '05-animaties/animaties_code.md',
-      '06-signals-en-score/global_variables.md',
-      '06-signals-en-score/groups.md',
+      '05-bewegingsscript/afsluiter.md',
+      '05-bewegingsscript/grond.md',
+      '05-bewegingsscript/skelet.md',
+      '06-animaties/animaties_code.md',
+      '07-signals-en-score/global_variables.md',
+      '07-signals-en-score/groups.md',
     ]);
   });
 

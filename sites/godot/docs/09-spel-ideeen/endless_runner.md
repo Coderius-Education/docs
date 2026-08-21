@@ -15,8 +15,8 @@ De kern hier is **procedureel spawnen**: obstakels worden tijdens het spelen aan
 
 ## Wat ga je leren?
 
-- Scenes "instantieren" tijdens het spel met `preload()` + `instantiate()` — dat ken je uit [Spawnen: nodes maken in code](../07-meer-levels-en-menu/spawnen.md).
-- Een `Timer` gebruiken als spawn-klok, zoals in [Automatisch spawnen met een Timer](../07-meer-levels-en-menu/spawn_timer.md).
+- Scenes "instantieren" tijdens het spel met `preload()` + `instantiate()` — dat ken je uit [Spawnen: nodes maken in code](../08-meer-levels-en-menu/spawnen.md).
+- Een `Timer` gebruiken als spawn-klok, zoals in [Automatisch spawnen met een Timer](../08-meer-levels-en-menu/spawn_timer.md).
 - Oude nodes opruimen met `queue_free()` om geheugen vrij te maken.
 - Een meescrollende achtergrond met `ParallaxBackground`.
 
@@ -48,7 +48,7 @@ De kern hier is **procedureel spawnen**: obstakels worden tijdens het spelen aan
 
 ## Externe links
 
-- [Godot Docs — Instancing](https://docs.godotengine.org/en/stable/getting_started/step_by_step/instancing.html) — verdieping op `preload()` + `instantiate()` uit [7.3](../07-meer-levels-en-menu/spawnen.md).
+- [Godot Docs — Instancing](https://docs.godotengine.org/en/stable/getting_started/step_by_step/instancing.html) — verdieping op `preload()` + `instantiate()` uit [8.3](../08-meer-levels-en-menu/spawnen.md).
 - [Godot Docs — ParallaxBackground](https://docs.godotengine.org/en/stable/classes/class_parallaxbackground.html) — meescrollende achtergrond.
 - [Godot Docs — Timer](https://docs.godotengine.org/en/stable/classes/class_timer.html) — alle opties van het Timer-node.
 
@@ -67,7 +67,7 @@ De kern hier is **procedureel spawnen**: obstakels worden tijdens het spelen aan
        add_child(obstakel)
    ```
 
-   Dit is de spawner uit [7.3](../07-meer-levels-en-menu/spawnen.md) en [7.4](../07-meer-levels-en-menu/spawn_timer.md), met een `$Spawner`-node als spawn-positie in plaats van losse coördinaten.
+   Dit is de spawner uit [8.3](../08-meer-levels-en-menu/spawnen.md) en [8.4](../08-meer-levels-en-menu/spawn_timer.md), met een `$Spawner`-node als spawn-positie in plaats van losse coördinaten.
 
 4. Geef het obstakel een eigen script dat hem naar links beweegt en `queue_free()` aanroept zodra hij buiten beeld is.
 5. Voeg een `ParallaxBackground` toe met één of meer `ParallaxLayer`-children voor de scrollende achtergrond.

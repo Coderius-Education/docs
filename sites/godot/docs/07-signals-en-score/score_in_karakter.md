@@ -94,7 +94,7 @@ Dit werkt — *zolang* je karakter precies `CharacterBody2D` heet en op de juist
 
 </details>
 
-## Opdracht 6.2.a: levens met Game Over
+## Opdracht 7.2.a: levens met Game Over
 
 Je hebt nu een score in je karakter. Voeg er een **levens-systeem** aan toe en laat het spel reageren als ze op zijn.
 

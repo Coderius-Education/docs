@@ -1,6 +1,7 @@
 ---
 sidebar_position: 5
 slug: /movement-krachten
+sidebar_label: "Deel 5: Lopen"
 ---
 
 # Het bewegingsscript bouwen — Deel 5: Lopen
@@ -98,7 +99,7 @@ func _physics_process(delta: float) -> void:
 
 </details>
 
-## Opdracht 4.4.b: kies je eigen loopsnelheid
+## Opdracht 5.5.a: kies je eigen loopsnelheid
 
 Zoek de snelheid die bij jouw level past. Probeer minstens drie waarden voor `SPEED`, bijvoorbeeld `100.0`, `300.0` en `1000.0`, en start telkens opnieuw met `F5`.
 

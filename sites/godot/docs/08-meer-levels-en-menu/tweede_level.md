@@ -41,7 +41,7 @@ Zorg dat je level 1-bestand `level1.tscn` heet (of pas later het pad in je scrip
 
 ## Stap 2: Voeg een vlag toe aan level 1
 
-Aan het einde van level 1 plaats je een "vlag" die de overgang triggert. De opzet lijkt op het muntje uit [Signals & een muntje oppakken](../06-signals-en-score/signals_muntje.md).
+Aan het einde van level 1 plaats je een "vlag" die de overgang triggert. De opzet lijkt op het muntje uit [Signals & een muntje oppakken](../07-signals-en-score/signals_muntje.md).
 
 1. Open `level1.tscn`.
 2. Klik met rechts op de hoofd-node → **Add Child Node** → `Area2D`.
@@ -97,9 +97,9 @@ Heb je `level2.tscn` in een submap opgeslagen? Pas het pad dan aan: `res://level
 
 Start het spel met `F5` vanaf level 1. Loop je speler naar de vlag — zodra je hem raakt, opent level 2.
 
-Je `Global.score` blijft staan tijdens de overgang (dankzij [Global variables](../06-signals-en-score/global_variables.md)). Wil je per level opnieuw beginnen? Roep `Global.reset()` aan in `_on_body_entered` vóór de scene-switch.
+Je `Global.score` blijft staan tijdens de overgang (dankzij [Global variables](../07-signals-en-score/global_variables.md)). Wil je per level opnieuw beginnen? Roep `Global.reset()` aan in `_on_body_entered` vóór de scene-switch.
 
-## Opdracht 7.1.a: voeg een derde level toe
+## Opdracht 8.1.a: voeg een derde level toe
 
 Je hebt nu twee levels en kunt switchen. Breid uit: maak een derde level en zorg dat de speler vanuit level 2 daarheen gaat.
 

@@ -13,4 +13,4 @@ Naast **Oorzaak:** en **Oplossing:** (zie de schrijfgids §8) krijgt een blok ee
 
 - **Zelf vinden:** — welke concrete meting de leerling had kunnen doen om hier zelf te komen, meestal één `print()` op een genoemde plek, met erbij wat elke uitkomst betekent.
 
-Dit hoort alleen bij symptoomblokken ("mijn karakter valt niet"), niet bij blokken die met een letterlijke foutmelding beginnen — daar is de melding zelf al de aanwijzing. De methode erachter staat in [Fouten zoeken](docs/04-personage-en-beweging/fouten-zoeken.md); verwijs daarheen in plaats van de uitleg te herhalen.
+Dit hoort alleen bij symptoomblokken ("mijn karakter valt niet"), niet bij blokken die met een letterlijke foutmelding beginnen — daar is de melding zelf al de aanwijzing. De methode erachter staat in [Fouten zoeken](docs/05-bewegingsscript/fouten-zoeken.md); verwijs daarheen in plaats van de uitleg te herhalen.

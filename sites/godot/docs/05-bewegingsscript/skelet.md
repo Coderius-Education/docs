@@ -1,6 +1,7 @@
 ---
 sidebar_position: 1
 slug: /basis_movement_begrijpen
+sidebar_label: "Deel 1: Een script dat draait"
 ---
 
 # Het bewegingsscript bouwen — Deel 1: Een script dat draait

@@ -1,6 +1,7 @@
 ---
 sidebar_position: 4
 slug: /movement-grond
+sidebar_label: "Deel 4: Je eerste if"
 ---
 
 # Het bewegingsscript bouwen — Deel 4: Je eerste if
@@ -64,7 +65,7 @@ Test het: zet deze regel boven je `if` en start met `F5`.
 
 In **Uitvoer** zie je `true` zolang je op de vloer staat, en `false` tijdens een val.
 
-![Uitvoer-paneel met true/false-output van is_on_floor()](../../images/is_on_floor.png)
+![Uitvoer-paneel met true/false-output van is_on_floor()](../images/is_on_floor.png)
 
 Haal de `print` daarna weer weg.
 
