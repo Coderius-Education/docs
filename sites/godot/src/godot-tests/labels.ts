@@ -10,9 +10,15 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 /**
- * Vetgedrukte tekst die géén Godot-label is, met de reden erbij. De extractie
- * filtert het meeste er al uit (Nederlands, leestekens, lange zinnen); wat
- * overblijft en toch geen knop is, hoort hier.
+ * Vetgedrukte tekst die de check niet kan verifiëren, met de reden erbij. De
+ * extractie filtert het meeste er al uit (Nederlands, leestekens, lange
+ * zinnen); wat overblijft hoort hier. Drie soorten:
+ *
+ *  1. geen Godot-label — Nederlandse lestekst, of een knop van Windows of GIMP;
+ *  2. door Godot samengesteld — de Inspector maakt "Wait Time" van de
+ *     property `wait_time`, dus die tekst staat nergens in de binary;
+ *  3. Nederlandse UI-namen — de vertalingen zitten ingepakt in de binary en
+ *     zijn met `strings` niet te vinden.
  */
 export const GEEN_UI_LABEL: Record<string, string> = {
   Beeld: 'Nederlands woord in een tabel',
@@ -50,6 +56,14 @@ export const GEEN_UI_LABEL: Record<string, string> = {
   'Transparante achtergrond': 'Nederlands',
   'Verborgen items': 'optie in Windows Verkenner',
   Uitpakken: 'knop in Windows Verkenner',
+  'Anchors Preset': 'editor stelt dit samen uit de property-naam',
+  'Binary Format': 'Inspector stelt dit samen uit de property-naam',
+  'Embed PCK': 'Inspector stelt dit samen uit de property-naam',
+  'Physics Layers': 'Inspector stelt dit samen uit de property-naam',
+  'Stretch Mode': 'Inspector stelt dit samen uit stretch_mode',
+  'Wait Time': 'Inspector stelt dit samen uit wait_time',
+  Bureaublad: 'Nederlandse naam van de Windows-map',
+  Uitvoer: 'Nederlandse UI-naam; vertalingen zitten ingepakt in de binary',
   'Verschuiven (pannen)': 'Nederlands',
   'Welk bestand': 'Nederlands',
   Zonder: 'Nederlands',
