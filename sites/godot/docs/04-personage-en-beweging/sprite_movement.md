@@ -19,7 +19,7 @@ In deze cursus begin je daarom leeg. Elke regel die erbij komt, komt erbij omdat
 
 1. Selecteer je `CharacterBody2D` in de Scene Tree.
 2. Klik op het script-icoontje bovenaan de Inspector (of klik met rechts → **Attach Script**).
-3. Zoek in het venster de keuze **Template**. Die staat standaard op `Node: Default`. Zet hem op **`Object: Empty`**.
+3. Zoek in het venster de keuze **Template**. Bij een `CharacterBody2D` staat die op `CharacterBody2D: Basic Movement`: het complete bewegingsscript. Zet hem op **`Object: Empty`**.
 4. Klik op **Create**.
 
 Godot opent nu je script. Er staat één regel in:
@@ -58,7 +58,7 @@ Zie je een foutmelding over een ontbrekende Main Scene? Stel die eerst in via **
 <details>
 <summary>Mijn script staat vol code die ik niet heb getypt</summary>
 
-**Oorzaak:** Bij **Attach Script** stond **Template** nog op `Node: Default`. Godot heeft dan een compleet bewegingsscript ingevuld.
+**Oorzaak:** Bij **Attach Script** stond **Template** nog op `CharacterBody2D: Basic Movement`. Dat is de keuze die Godot zelf voorstelt voor dit node-type, en die vult een compleet bewegingsscript in — precies het script dat je in de volgende lessen zelf gaat schrijven.
 
 **Oplossing:** Selecteer alles in het script (`Ctrl + A`) en verwijder het, op de regel `extends CharacterBody2D` na. Je kunt ook het script losmaken (rechtermuisknop op de node → **Detach Script**) en Stap 1 opnieuw doen met de juiste template.
 
