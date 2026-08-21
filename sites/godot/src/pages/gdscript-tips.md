@@ -4,7 +4,7 @@ Handige tips en trucs voor GDScript. Klik op een onderwerp om het open te klappe
 
 ---
 
-## Variabelen
+## Variabelen \{#variabelen}
 
 <details>
 <summary>Wat is het verschil tussen <code>var</code> en <code>const</code>?</summary>
@@ -57,7 +57,7 @@ func _physics_process(delta): # 4. Functies
 
 ---
 
-## Functies
+## Functies \{#functies}
 
 <details>
 <summary>Wat is <code>_physics_process(delta)</code>?</summary>
@@ -109,7 +109,7 @@ var resultaat = bereken_schade(10, 3)  # resultaat = 7
 
 ---
 
-## If-statements
+## If-statements \{#if-statements}
 
 <details>
 <summary>Hoe werkt een if-statement?</summary>
@@ -162,7 +162,7 @@ if not is_on_floor():
 
 ---
 
-## Input
+## Input \{#input}
 
 <details>
 <summary>Wat is het verschil tussen <code>is_action_pressed</code> en <code>is_action_just_pressed</code>?</summary>
@@ -206,7 +206,7 @@ velocity.x = direction * SPEED
 
 ---
 
-## Nodes & Scenes
+## Nodes & Scenes \{#nodes-scenes}
 
 <details>
 <summary>Wat betekent het <code>$</code>-teken?</summary>
@@ -221,7 +221,7 @@ $AnimatedSprite2D.flip_h       # Leest een eigenschap van die node
 
 `$AnimatedSprite2D` is hetzelfde als `get_node("AnimatedSprite2D")`, maar korter.
 
-**Let op:** De naam moet **exact** overeenkomen met de naam in de scene tree (hoofdlettergevoelig.).
+**Let op:** De naam moet **exact** overeenkomen met de naam in de scene tree (hoofdlettergevoelig).
 
 </details>
 
@@ -241,7 +241,7 @@ De node wordt niet direct verwijderd, maar aan het einde van het huidige frame. 
 
 ---
 
-## Signals
+## Signals \{#signals}
 
 <details>
 <summary>Hoe koppel ik een signal via de editor?</summary>
@@ -277,7 +277,7 @@ func _on_body_entered(body: Node2D) -> void:
 
 ---
 
-## Debuggen
+## Debuggen \{#debuggen}
 
 <details>
 <summary>Hoe debug ik mijn code?</summary>
@@ -313,7 +313,7 @@ Lees het zo:
 
 ---
 
-## Veelgebruikte patronen
+## Veelgebruikte patronen \{#patronen}
 
 <details>
 <summary>Compleet movement script</summary>

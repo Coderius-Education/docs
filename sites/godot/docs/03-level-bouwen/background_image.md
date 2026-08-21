@@ -21,6 +21,8 @@ Een `TextureRect` is een node die een afbeelding toont. Voor een achtergrond is 
 2. Zoek naar `TextureRect` en voeg deze toe.
 3. Sleep hem in de Scene Tree **bovenaan**, boven al je andere nodes. Godot tekent van boven naar beneden, dus wat bovenaan staat in de tree komt onderaan in beeld — precies wat je wilt voor een achtergrond.
 
+De `TextureRect`-instellingen staan ook in de [Nodes cheatsheet](/cheatsheet#level-wereld).
+
 ## Stap 2: Zet de afbeelding erin
 
 1. Selecteer de `TextureRect`.

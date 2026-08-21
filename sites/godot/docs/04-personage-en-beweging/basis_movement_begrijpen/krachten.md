@@ -118,6 +118,8 @@ Met `just_pressed` activeert de sprong maar één frame — daarna moet de spele
 
 </details>
 
+Het verschil tussen deze twee input-functies staat ook in de [GDScript-tips](/gdscript-tips#input).
+
 `ui_accept` is een standaard input-actie van Godot — gekoppeld aan de spatiebalk en Enter. Je kunt de toets-binding aanpassen in **Project → Project Settings → Input Map**.
 
 <details>

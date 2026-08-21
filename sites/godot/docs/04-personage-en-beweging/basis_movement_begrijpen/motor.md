@@ -40,6 +40,8 @@ Godot heeft *twee* "draait-elke-frame"-functies. Welke je kiest hangt af van of 
 
 Voor het bewegingsscript kiezen we `_physics_process` omdat Godot's physics-engine (botsingen, `move_and_slide`) hierop synchroniseert.
 
+Het verschil tussen beide functies staat als tabel in de [GDScript-tips](/gdscript-tips#functies).
+
 ### Wat is `delta`?
 
 `delta` is de tijd in seconden **sinds de vorige aanroep van de functie**. Bij 60 FPS dus ongeveer `0.0167` (1 / 60). Bij 30 FPS ongeveer `0.033`.

@@ -58,6 +58,8 @@ Zet de **FPS** (frames per seconde) van elke animatie op een waarde die er soepe
 
 In de volgende les laat je via code de juiste animatie afspelen op het juiste moment.
 
+De `AnimatedSprite2D`-instellingen staan ook in de [Nodes cheatsheet](/cheatsheet#hoofdpersoon).
+
 ## Er gaat iets mis
 
 <details>
@@ -67,7 +69,7 @@ In de volgende les laat je via code de juiste animatie afspelen op het juiste mo
 
 **Oplossing:**
 
-1. Controleer of je in het script `$AnimatedSprite2D.play("idle")` (of een andere animatienaam) aanroept.
+1. Controleer of je in het script `$AnimatedSprite2D.play("idle")` (of een andere animatienaam) aanroept — het `$`-teken leer je in [Animaties in code](./animaties_code.md).
 2. Controleer of de naam in het script **exact** overeenkomt met de naam in SpriteFrames (hoofdlettergevoelig).
 3. Controleer dat de node `AnimatedSprite2D` heet in de Scene Tree — anders past `$AnimatedSprite2D` niet.
 

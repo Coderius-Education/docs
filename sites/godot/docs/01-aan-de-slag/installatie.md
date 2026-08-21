@@ -19,15 +19,21 @@ Ga naar [godotengine.org/download/archive](https://godotengine.org/download/arch
 
 Klik op **Download**, zoek het kopje **Windows** en klik op **Standard**.
 
+![Downloadpagina met per platform een Standard-knop](windows.png)
+
 ## Stap 2: Uitpakken
 
-In je `Downloads`-map vind je nu een zip-bestand:
+In je `Downloads`-map vind je nu een zip-bestand met een naam als `Godot_v4.7-stable_win64.zip`.
 
 Dubbelklik erop en kies bovenaan voor **Alles uitpakken**. Verplaats de uitgepakte bestanden naar een vaste map op je computer waar je ze later snel terugvindt (bijvoorbeeld `Documenten\Godot\`).
 
 ## Stap 3: De editor openen
 
-Dubbelklik op het Godot-bestand (de bestandsnaam ziet er ongeveer zo uit: `Godot_v4.7.x-stable_win64.exe`). Godot opent en je belandt in het **Project Manager**-venster:
+Dubbelklik op het Godot-bestand — de bestandsnaam ziet er ongeveer zo uit:
+
+![Verkenner met het uitvoerbare Godot-bestand](download.png)
+
+Godot opent en je belandt in het **Project Manager**-venster:
 
 ![Godot Project Manager bij eerste opstart](godot.png)
 

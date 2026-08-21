@@ -37,9 +37,12 @@ Godot ziet alleen bestanden die **in je projectmap** staan. Vanuit de editor kun
 
 1. Open je project in Godot.
 2. Klik met de **rechtermuisknop** op `res://` in het **FileSystem**-paneel (linksonder).
-3. Kies **Open in File Manager** — Verkenner opent nu je projectmap.
+3. Kies **Open in File Manager** (heet **Openen in Bestandsbeheer** als je editor Nederlands is) — Verkenner opent nu je projectmap.
+
+![Rechtsklikmenu op res:// met Openen in Bestandsbeheer](../images/res.png)
+
 4. Open in een tweede Verkenner-venster de uitgepakte asset-map.
-5. Sleep de mappen of bestanden die je nodig hebt naar je projectmap.
+5. Maak in je projectmap een nieuwe map `assets` en sleep de mappen die je nodig hebt (bijvoorbeeld `Background`) daarin. In latere lessen verwijzen we naar deze `assets`-map.
 
 :::tip
 Je hoeft niet alles te kopiëren. Voor de achtergrond heb je alleen de map `Background` nodig. Later kun je altijd meer toevoegen.

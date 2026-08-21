@@ -40,6 +40,8 @@ World
     └── ScoreLabel (Label)
 ```
 
+De `CanvasLayer` en `Label` staan met hun instellingen in de [Nodes cheatsheet](/cheatsheet#ui-menu).
+
 ## Stap 2: Voeg een script toe aan de Label
 
 1. Selecteer `ScoreLabel`.

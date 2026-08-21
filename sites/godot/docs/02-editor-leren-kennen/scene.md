@@ -42,6 +42,8 @@ Wij maken een **2D platformer**, dus we kiezen 2D. De hoofdnode van onze scène 
 
 Godot maakt automatisch een `Node2D` aan als root-node. Dit is de basis van je 2D-wereld en je ziet hem linksboven in de **Scene Tree** verschijnen.
 
+Wat een `Node2D` allemaal kan staat in de [Nodes cheatsheet](/cheatsheet#level-wereld).
+
 ## Stap 2: Opslaan als `world.tscn`
 
 Druk op `Ctrl + S` en geef de scène de naam `world.tscn`.

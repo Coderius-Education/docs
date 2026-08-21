@@ -32,7 +32,7 @@ In Godot zit er een ingebouwde node-type voor knoppen. **Hoe denk je dat hij hee
 Een `VBoxContainer` stapelt zijn child-nodes netjes verticaal onder elkaar — perfect voor een lijstje knoppen.
 
 1. Klik met rechts op de `Control`-root → **Add Child Node** → `VBoxContainer`.
-2. Selecteer de `VBoxContainer` en zet in de Inspector onder **Layout** de **Anchors Preset** op **Center** (zoals je leerde in [Achtergrond](../03-level-bouwen/background_image.md)). De container zit nu mooi in het midden.
+2. Selecteer de `VBoxContainer`. Onder **Layout** in de Inspector vind je **Anchors Preset**: daarmee plak je een UI-node aan een vast punt van het scherm, zodat hij op elke schermgrootte op die plek blijft. Kies **Center** — de container zit nu mooi in het midden.
 
 ## Stap 3: Twee knoppen en een titel
 
@@ -49,6 +49,8 @@ Menu (Control)
     ├── Button (Start)     (tekst: Start spel)
     └── Button (Afsluiten) (tekst: Afsluiten)
 ```
+
+Alle UI-nodes uit deze les staan met hun instellingen in de [Nodes cheatsheet](/cheatsheet#ui-menu).
 
 ## Stap 4: Script aan de root koppelen
 

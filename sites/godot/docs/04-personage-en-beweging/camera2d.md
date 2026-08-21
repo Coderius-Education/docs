@@ -36,6 +36,8 @@ CharacterBody2D
 └── Camera2D
 ```
 
+Alle `Camera2D`-instellingen uit deze les staan ook in de [Nodes cheatsheet](/cheatsheet#hoofdpersoon).
+
 ## Stap 2: Check dat Enabled aan staat
 
 Selecteer de `Camera2D` en zoek in de Inspector de eigenschap **Enabled**. Die staat standaard al aan — controleer dat het vinkje aan staat.

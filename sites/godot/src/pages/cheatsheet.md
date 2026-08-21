@@ -4,7 +4,7 @@ Snelle naslag van alle node-types die in deze tutorial worden gebruikt.
 
 ---
 
-## Coördinatensysteem
+## Coördinatensysteem \{#coordinaten}
 
 <details>
 <summary>Hoe werkt het coördinatensysteem?</summary>
@@ -22,7 +22,7 @@ Het punt `(0, 0)` zit in de **linkerbovenhoek** van het scherm. Daarom is de jum
 
 ---
 
-## Level & wereld
+## Level & wereld \{#level-wereld}
 
 <details>
 <summary>Node2D — basis van je level-scene</summary>
@@ -65,14 +65,16 @@ Als achtergrond — sleep hem **bovenaan** in de Scene Tree zodat hij achter all
 
 **Instellen in de Inspector:**
 - `Texture` — sleep een afbeelding vanuit het FileSystem.
-- `Layout` → `Anchors Preset` → **Full Rect** — laat hem het hele scherm vullen.
-- `Stretch Mode` → **Keep Aspect Covered** — vult zonder vervorming.
+- Trek de node met de handgrepen over het hele zichtbare vlak.
+- `Stretch Mode` → **Tile** — herhaalt een kleine afbeelding als tegels.
+
+Zo leer je het in [Achtergrond](/docs/background_image). Anchors en de andere stretch modes komen bij het startmenu aan bod.
 
 </details>
 
 ---
 
-## Hoofdpersoon
+## Hoofdpersoon \{#hoofdpersoon}
 
 <details>
 <summary>CharacterBody2D — je speler</summary>
@@ -138,7 +140,7 @@ Als child van `CharacterBody2D` voor een mee-bewegende camera bij grotere levels
 
 ---
 
-## Collectibles & vijanden
+## Collectibles & vijanden \{#collectibles-vijanden}
 
 <details>
 <summary>Area2D — muntjes en vijanden detecteren</summary>
@@ -174,7 +176,7 @@ Voor objecten zonder animatie, zoals een muntje of een stilstaande vijand.
 
 ---
 
-## UI & menu
+## UI & menu \{#ui-menu}
 
 <details>
 <summary>CanvasLayer — UI die altijd op het scherm blijft</summary>
@@ -249,7 +251,7 @@ In menu's (start spel, afsluiten, level 2) en dialoogvensters.
 
 ---
 
-## Autoload
+## Autoload \{#autoload}
 
 <details>
 <summary>Node — Autoload-root voor global.gd</summary>

@@ -37,7 +37,7 @@ Een signal is een bericht dat een node verstuurt zodra er iets gebeurt. Andere n
 - De **deurbel** stuurt een signaal als iemand erop drukt.
 - **Jij** luistert naar dat signaal en doet de deur open.
 
-In Godot is het precies zo: een node *stuurt* een signal, een andere node *vangt* het op en voert code uit.
+In Godot is het precies zo: een node *stuurt* een signal, een andere node *vangt* het op en voert code uit. De `Area2D`-node die je zo gebruikt staat in de [Nodes cheatsheet](/cheatsheet#collectibles-vijanden); de signal-code vind je terug in de [GDScript-tips](/gdscript-tips#signals).
 
 ## Stap 1: Maak een muntje-scène
 
@@ -95,7 +95,7 @@ Vervang de `pass` door:
 extends Area2D
 
 func _on_body_entered(body: Node2D) -> void:
-    print("Muntje opgepakt!")
+    print("Muntje opgepakt")
     queue_free()
 ```
 
@@ -112,7 +112,7 @@ func _on_body_entered(body: Node2D) -> void:
 3. Plaats het waar je wilt.
 4. Sleep meerdere keren om meerdere muntjes neer te zetten.
 
-Start het spel met `F5`, loop tegen een muntje aan en kijk in **Uitvoer**: het muntje verdwijnt en je ziet "Muntje opgepakt.".
+Start het spel met `F5`, loop tegen een muntje aan en kijk in **Uitvoer**: het muntje verdwijnt en je ziet "Muntje opgepakt".
 
 ## Opdracht 6.1.a: voeg een vijand toe
 

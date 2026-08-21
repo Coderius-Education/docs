@@ -62,4 +62,4 @@ Het hart van het spel is hetzelfde als in jouw platformer: `velocity.y` aanpasse
 4. Bouw een `buis.tscn` met twee `StaticBody2D`'s (boven en onder) en een `Area2D` ertussen voor de score-trigger.
 5. Voeg een `Timer` toe aan de wereld. Koppel `timeout` aan een script-functie die `buis.tscn` instantieert op een willekeurige hoogte.
 
-Vanaf hier kun je polish toevoegen: een achtergrond, geluidseffecten, een game-over-scherm met de cursus-`start_menu`-techniek.
+Vanaf hier kun je polish toevoegen: een achtergrond, geluidseffecten, een game-over-scherm met de techniek uit [Een startmenu](/docs/start_menu).

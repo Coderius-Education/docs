@@ -54,6 +54,8 @@ Dit is de belangrijkste stap. Door het script als **Autoload** te registreren, l
 
 `Global` is nu overal beschikbaar in je project.
 
+De Autoload-instelling staat ook in de [Nodes cheatsheet](/cheatsheet#autoload).
+
 ### Voorspel: wat als je deze stap vergeet?
 
 **Wat denk je dat er gebeurt als je Stap 3 overslaat en meteen `Global.score += 1` in je muntje-script zet?**

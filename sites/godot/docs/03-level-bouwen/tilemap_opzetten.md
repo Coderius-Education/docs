@@ -21,6 +21,8 @@ Een tile-gebaseerd level is een rooster van kleine afbeeldingen (**tiles**) die 
 
 `TileMapLayer` is de node die de tegels op het scherm tekent.
 
+De `TileMapLayer` staat met alle stappen ook in de [Nodes cheatsheet](/cheatsheet#level-wereld).
+
 ## Stap 2: De TileSet instellen
 
 Een `TileSet` is de verzameling afbeeldingen die je als tegels gebruikt — je palet, als het ware.

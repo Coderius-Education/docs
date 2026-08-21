@@ -46,6 +46,7 @@ export default createConfig({
       items: [
         { type: 'docSidebar', sidebarId: 'tutorialSidebar', position: 'left', label: '1e 2D game' },
         { to: '/cheatsheet', label: 'Nodes cheatsheet', position: 'left' },
+        { to: '/gdscript-tips', label: 'GDScript-tips', position: 'left' },
         { to: '/game-checken', label: 'Game checken', position: 'left' },
         { href: REPO_URL, label: 'GitHub', position: 'right' },
       ],

@@ -26,6 +26,8 @@ Dit zijn de GDScript-concepten die je in dit project nodig hebt:
 | `func`        | Code groeperen in een herbruikbare functie                                  |
 | `print()`     | Waarden bekijken tijdens het testen                                         |
 
+Alles wat je hier leert kun je later terugzoeken in de [GDScript-tips](/gdscript-tips) — de naslag bij alle GDScript-lessen.
+
 ## Stap 1: Doe de online tutorial
 
 We volgen [deze interactieve tutorial van GDQuest](https://gdquest.github.io/learn-gdscript/) om de basis te leren. Je werkt direct in je browser — niets te installeren.

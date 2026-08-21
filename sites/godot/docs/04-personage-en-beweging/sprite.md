@@ -54,6 +54,8 @@ CharacterBody2D
 
 In de volgende les voegen we beweging toe.
 
+Deze drie nodes vormen samen je speler; hun instellingen staan in de [Nodes cheatsheet](/cheatsheet#hoofdpersoon).
+
 ## Er gaat iets mis
 
 <details>
