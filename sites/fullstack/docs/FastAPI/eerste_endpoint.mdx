@@ -60,6 +60,10 @@ async def info():
 
 Ga naar [http://127.0.0.1:8000/info](http://127.0.0.1:8000/info) om dit te testen.
 
+:::danger[Gaat er iets mis?]
+Start je server niet, met `NameError: name 'app' is not defined`? Dan staat je endpoint bóven de regel `app = FastAPI()` — Python leest van boven naar beneden. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
+:::
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - Wat zie je?
