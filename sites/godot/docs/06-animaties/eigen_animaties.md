@@ -46,7 +46,7 @@ Wil je een volledig eigen karakter tekenen?
 
 1. Open [Piskel](https://www.piskelapp.com/), LibreSprite of Pixilart.
 2. Maak een nieuw canvas (bijv. 32×32 of 64×64 pixels — kies hetzelfde formaat als je andere sprites).
-3. Teken je idle-pose. Klik op **Add new frame** en teken de volgende fase. Herhaal tot je 4-8 frames hebt.
+3. Teken je idle-pose. Klik op **Add Frame** en teken de volgende fase. Herhaal tot je 4-8 frames hebt.
 4. Exporteer als losse PNG's **of** als sprite-sheet — beide werkt in Godot.
 
 ### Aanpak C — Frames knippen uit een GIF

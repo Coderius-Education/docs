@@ -40,9 +40,9 @@ Een animatie is een serie afbeeldingen (frames) die snel achter elkaar worden ge
 In het SpriteFrames-paneel zie je linksboven een lijst met animaties. Standaard staat er één animatie genaamd `default`.
 
 1. Hernoem `default` naar `idle`.
-2. Klik in het SpriteFrames-paneel op het icoontje **Add frames from a Sprite Sheet** (een rooster-icoontje, naast de andere knoppen bovenin het paneel). Kies in het FileSystem het sprite-sheet voor je idle-animatie — bijvoorbeeld `Idle (32x32).png` uit het Pixel Adventure-pack. Dit is **één** afbeelding waarin meerdere frames naast elkaar staan.
+2. Klik in het SpriteFrames-paneel op het icoontje **Add Frames from Sprite Sheet** (een rooster-icoontje, naast de andere knoppen bovenin het paneel). Kies in het FileSystem het sprite-sheet voor je idle-animatie — bijvoorbeeld `Idle (32x32).png` uit het Pixel Adventure-pack. Dit is **één** afbeelding waarin meerdere frames naast elkaar staan.
 3. Er opent een dialoog. Stel bovenin **Horizontal** en **Vertical** in zodat de blauwe lijnen netjes elke afzonderlijke frame omkaderen — voor een sprite-sheet van 11 frames op één rij is dat `Horizontal: 11`, `Vertical: 1`.
-4. Selecteer alle frames (sleep een rechthoek over de rij, of klik elke frame aan) en klik op **Add X Frames**.
+4. Selecteer alle frames (sleep een rechthoek over de rij, of klik elke frame aan) en klik op de knop rechtsonder. Die telt mee hoeveel je er hebt gekozen, dus er staat bijvoorbeeld **Add 6 Frame(s)**.
 5. Voor `run`: klik linksboven op het `+`-icoontje om een nieuwe animatie toe te voegen, noem deze `run`, en herhaal stap 2–4 met het sprite-sheet voor rennen (bijv. `Run (32x32).png`).
 6. Doe hetzelfde voor `jump`.
 

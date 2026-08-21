@@ -18,7 +18,7 @@ Open Godot. Je ziet meteen het **Project Manager**-venster: een lijst van projec
 1. Klik rechtsboven op **New Project**.
 2. Geef je project een naam, bijvoorbeeld `mijn-eerste-game`.
 3. Klik op **Browse** en kies een map op je computer (bijvoorbeeld in `Documenten`).
-4. Klik op **Create & Edit**.
+4. Klik op **Create**.
 
 De editor opent nu met je lege project. In hoofdstuk 2 leer je hoe je de editor gebruikt.
 

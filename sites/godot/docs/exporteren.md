@@ -139,7 +139,7 @@ Ga naar **Project → Project Settings**, zoek `main scene` in de zoekbalk en co
 **Stap 2: Download de Export Templates (eenmalig)**
 
 1. Klik op **Editor → Manage Export Templates**.
-2. Klik op **Go Online** en daarna op **Download and Install**.
+2. Klik op **Go Online**. Godot haalt de templates dan op bij een mirror en installeert ze; dat duurt even.
 3. Wacht: het is ongeveer 500 MB.
 
 De templates horen bij één Godot-versie. Update je later naar een nieuwere versie, dan download je ze opnieuw.
@@ -174,7 +174,7 @@ Loopt het exporteren vast? Dit zijn de drie meest voorkomende meldingen.
 
 **Oorzaak:** De Export Templates zijn niet geïnstalleerd, of ze horen bij een andere Godot-versie dan je nu gebruikt.
 
-**Oplossing:** Ga naar **Editor → Manage Export Templates** en klik op **Download and Install**. Wacht tot de download klaar is en exporteer opnieuw.
+**Oplossing:** Ga naar **Editor → Manage Export Templates** en klik op **Go Online**. Wacht tot de download klaar is en exporteer opnieuw.
 
 </details>
 

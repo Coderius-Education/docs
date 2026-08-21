@@ -5,6 +5,7 @@ import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { autoloadUit, verzamel } from './extract';
+import { verzamelLabels } from './labels';
 
 const HIER = dirname(fileURLToPath(import.meta.url));
 const SITE = join(HIER, '..', '..');
@@ -43,7 +44,13 @@ writeFileSync(
   )}\n`,
 );
 
+// De UI-labels gaan als platte lijst mee; de godot-job zoekt ze op in de
+// strings van de binary. Een hernoemd menu-item valt zo op bij een upgrade.
+const labels = verzamelLabels([join(SITE, 'docs')]);
+writeFileSync(join(UIT, 'labels.txt'), `${labels.join('\n')}\n`);
+
 console.log(`${fragmenten.length} volledige scripts geschreven, plus het Global-autoload.`);
+console.log(`${labels.length} UI-labels om tegen de Godot-binary te controleren.`);
 console.log(`${overgeslagen.length} blokken overgeslagen:`);
 for (const [reden, aantal] of Object.entries(
   overgeslagen.reduce<Record<string, number>>((acc, o) => {

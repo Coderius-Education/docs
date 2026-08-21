@@ -48,7 +48,7 @@ Open in Godot het menu **Help → About Godot**. Er verschijnt een venster met d
 Voordat je in de volgende les een project aanmaakt, kijk je even rond in het Project Manager-venster. Zoek twee dingen op:
 
 1. Waar je de **taal** van de editor kunt veranderen.
-2. Waar het tabblad **Asset Library** zit (daar kun je later kant-en-klare onderdelen vinden).
+2. Waar het tabblad **Asset Store** zit (daar kun je later kant-en-klare onderdelen vinden).
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -61,7 +61,7 @@ Kijk langs de randen van het venster: bovenaan zitten tabbladen, rechtsboven een
 <summary>Klik hier voor de oplossing.</summary>
 
 - De taal wissel je met het keuzemenu **rechtsboven** in het venster (daar staat nu iets als `EN — English`).
-- **Asset Library** is een tabblad **bovenaan**, naast je projectenlijst.
+- **Asset Store** is een tabblad **bovenaan**, naast je projectenlijst.
 
 Laat de taal op Engels staan. Deze cursus gebruikt de Engelse namen van knoppen en menu's, dus dan komt alles op je scherm overeen met de lessen.
 
