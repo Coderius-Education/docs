@@ -49,8 +49,6 @@ Het hart van het spel is hetzelfde als in jouw platformer: `velocity.y` aanpasse
 
 ## Externe links
 
-- [GDQuest](https://www.gdquest.com/) — zoek op "Flappy Bird Godot" voor video-uitleg.
-- YouTube: zoek "Godot 4 Flappy Bird tutorial" (kanalen als KidsCanCode of Heartbeast hebben goede uitlegvideo's).
 - [Itch.io: gratis vogel-assets](https://itch.io/game-assets/free/tag-bird) — sprite-sheets om mee te beginnen.
 - [Godot Docs — Instancing scenes](https://docs.godotengine.org/en/stable/getting_started/step_by_step/instancing.html) — verdieping op `preload()` + `instantiate()` uit [7.3](../07-meer-levels-en-menu/spawnen.md).
 

@@ -117,6 +117,14 @@ Start met `F5`. Je karakter loopt, springt met de spatiebalk, valt terug en kan 
 
 Je bewegingsscript is compleet — en je hebt geen regel gekregen die je niet zelf hebt getypt.
 
+## Hoe anderen dit doen
+
+Zoek je straks zelf een tutorial op, dan zie je vaak een andere route: veel makers laten Godot het bewegingsscript invullen met de kant-en-klare template, en passen daarna wat getallen aan. Sneller, maar je slaat het begrijpen over.
+
+Nu je je eigen versie hebt, kun je zo'n video met winst bekijken: je herkent elke regel en je ziet meteen waar iemand iets anders doet dan jij.
+
+<iframe width="100%" height="500px" src="https://www.youtube-nocookie.com/embed/5V9f3MT86M8?start=570&end=712" title="Start Your Game Creation Journey Today. (Godot beginner tutorial)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ## Je complete script
 
 ```gdscript

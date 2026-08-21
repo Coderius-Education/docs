@@ -57,12 +57,6 @@ Dat is winst: je hebt een script dat draait. In de volgende les zorg je dat het 
 Zie je een foutmelding over een ontbrekende Main Scene? Stel die eerst in via **Project → Project Settings**, zoek `main scene` en kies je level-scène.
 :::
 
-## Waar je naartoe werkt
-
-Over een paar korte lessen loopt, springt en valt je karakter. Zo ziet dat eruit:
-
-<iframe width="100%" height="500px" src="https://www.youtube.com/embed/5V9f3MT86M8?start=570&end=712" title="Start Your Game Creation Journey Today. (Godot beginner tutorial)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-
 ## Er gaat iets mis
 
 <details>

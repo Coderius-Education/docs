@@ -46,7 +46,6 @@ De grootste verandering ten opzichte van de platformer: je gebruikt **beide** as
 ## Externe links
 
 - [Godot Docs — Your first 2D game](https://docs.godotengine.org/en/stable/getting_started/first_2d_game/index.html) — top-down voorbeeld in het officiële tutorial.
-- YouTube: zoek "Godot 4 Action RPG" (Heartbeast heeft een complete serie, ook handig als naslag).
 - [Itch.io — top-down assets](https://itch.io/game-assets/free/tag-top-down) — gratis tileset- en karakter-packs.
 - [Godot Docs — Input.get_vector()](https://docs.godotengine.org/en/stable/classes/class_input.html#class-input-method-get-vector) — officiële uitleg.
 

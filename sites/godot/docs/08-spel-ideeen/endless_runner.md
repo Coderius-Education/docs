@@ -51,7 +51,6 @@ De kern hier is **procedureel spawnen**: obstakels worden tijdens het spelen aan
 - [Godot Docs — Instancing](https://docs.godotengine.org/en/stable/getting_started/step_by_step/instancing.html) — verdieping op `preload()` + `instantiate()` uit [7.3](../07-meer-levels-en-menu/spawnen.md).
 - [Godot Docs — ParallaxBackground](https://docs.godotengine.org/en/stable/classes/class_parallaxbackground.html) — meescrollende achtergrond.
 - [Godot Docs — Timer](https://docs.godotengine.org/en/stable/classes/class_timer.html) — alle opties van het Timer-node.
-- YouTube: zoek "Godot 4 endless runner tutorial" — diverse uitlegvideo's beschikbaar.
 
 ## Eerste stappen
 
