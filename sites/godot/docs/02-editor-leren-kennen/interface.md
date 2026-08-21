@@ -40,7 +40,7 @@ De **Scene Tree** staat **linksboven**. Dat past bij hoe je leest: van links naa
 - **Scene Tree** (linksboven) — alle nodes in je huidige scène.
 - **Inspector** (rechtsboven) — eigenschappen van de geselecteerde node.
 - **FileSystem** (linksonder) — alle bestanden in je project.
-- **Uitvoer** (onderin) — foutmeldingen en `print()`-output. Vanaf [Start GDScript](../04-personage-en-beweging/start_gdscript.md) ga je hier vaak naartoe.
+- **Uitvoer** (onderin) — foutmeldingen en `print()`-output. Vanaf [Je eerste regels code](../04-personage-en-beweging/start_gdscript.md) ga je hier vaak naartoe.
 
 ## Het spel starten en stoppen \{#spel-starten}
 

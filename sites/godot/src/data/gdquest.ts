@@ -55,12 +55,9 @@ export type GDQuestKoppeling = {
 // Volgorde = de volgorde waarin een leerling de lessen doorloopt.
 export const gdquestKoppelingen: GDQuestKoppeling[] = (
   [
-    {
-      slug: 'sprite_movement',
-      nl: 'Je eerste eigen script',
-      concept: 'extends',
-      lessen: [3],
-    },
+    // Hoofdstuk 4 blijft GDQuest-vrij: het oefenspoor wordt in Deel 1
+    // geïntroduceerd, waar het bouwen begint. Les 3 (extends) noemt die
+    // pagina in lopende tekst, omdat die regel er al staat.
     {
       slug: 'basis_movement_begrijpen',
       nl: 'Deel 1: Een script dat draait',

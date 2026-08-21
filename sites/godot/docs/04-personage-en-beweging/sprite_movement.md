@@ -9,15 +9,11 @@ Je karakter staat op het scherm, maar doet niets. Vanaf hier ga je hem zelf late
 
 <GodotVersie />
 
-<GDQuestLes slug="sprite_movement" />
-
 ## Waarom je zelf begint met een leeg bestand
 
 Godot kan een startscript voor je invullen. Handig, maar dan lees je iets wat je niet zelf hebt bedacht, en bij de eerste foutmelding weet je niet waar je moet kijken.
 
 In deze cursus begin je daarom leeg. Elke regel die erbij komt, komt erbij omdat jij hem nodig hebt. Na elke les draait je spel weer, en doet het net iets meer dan daarvoor.
-
-Daarnaast loop je de interactieve cursus [Learn GDScript From Zero](https://gdquest.github.io/learn-gdscript/) van GDQuest door. Daar oefen je elk concept los, zonder Godot erbij. In elke les hieronder staat welke GDQuest-les bij de regel hoort die je net hebt geschreven.
 
 ## Stap 1: Koppel een leeg script
 
