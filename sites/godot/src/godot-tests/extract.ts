@@ -35,6 +35,14 @@ function isFoutVoorbeeld(code: string): boolean {
   return /^\s*#\s*FOUT\b/m.test(code);
 }
 
+/**
+ * Sommige lessen tónen juist een kapot script — "wat is er mis?" is dan de
+ * opdracht. Die horen niet te compileren, dus markeert de bron ze met een
+ * commentaar vlak boven het blok. Onzichtbaar voor de leerling. Let op: de
+ * MDX-vorm, want `<!-- -->` laat de docusaurus-build stuklopen.
+ */
+const NIET_COMPILEREN = '{/* niet-compileren:';
+
 function slugVan(inhoud: string): string | undefined {
   return inhoud.match(/^slug:\s*\/(\S+)/m)?.[1];
 }
@@ -65,7 +73,7 @@ export function fragmentenUit(
     n += 1;
     const naam = `${slug.replace(/[^a-z0-9]+/gi, '_')}_${n}`;
 
-    if (isFoutVoorbeeld(code)) {
+    if (isFoutVoorbeeld(code) || ervoor.slice(-200).includes(NIET_COMPILEREN)) {
       overgeslagen.push({ bron, regel, reden: 'bewust fout voorbeeld' });
       continue;
     }

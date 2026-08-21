@@ -37,7 +37,7 @@ func _lees_index() -> Array:
 func _compileer_alles(index: Array) -> void:
 	for item in index:
 		var pad: String = EXTRACTED + "/" + item["naam"] + ".gd"
-		var bron: String = "%s:%s" % [item["bron"], item["regel"]]
+		var bron: String = "%s:%d" % [item["bron"], int(item["regel"])]
 		if not FileAccess.file_exists(pad):
 			_faal("%s — bestand ontbreekt na extractie" % bron)
 			continue

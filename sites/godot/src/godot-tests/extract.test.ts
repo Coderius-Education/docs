@@ -62,4 +62,16 @@ describe('GDScript uit de lespagina´s halen', () => {
     expect(a.fragmenten[0].naam).toBe(b.fragmenten[0].naam);
     expect(a.fragmenten[0].naam).toBe('cheatsheet_1');
   });
+
+  it('slaat een blok over dat de bron als opzettelijk kapot markeert', () => {
+    const { fragmenten, overgeslagen } = fragmentenUit(
+      'les.md',
+      pagina(
+        '{/* niet-compileren: dit script is opzettelijk kapot, dat is de opdracht */}\n\n' +
+          '```gdscript\nextends Node\n\nfunc _ready() -> void\n    pass\n```',
+      ),
+    );
+    expect(fragmenten).toHaveLength(0);
+    expect(overgeslagen[0].reden).toBe('bewust fout voorbeeld');
+  });
 });

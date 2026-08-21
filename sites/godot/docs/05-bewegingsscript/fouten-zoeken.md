@@ -141,6 +141,8 @@ Kom je er met een klasgenoot of docent niet uit, dan zijn dit ook precies de vie
 
 Dit script hoort te werken, maar Godot weigert het. Wat is er mis?
 
+{/* niet-compileren: dit script is opzettelijk kapot, dat is de opdracht */}
+
 ```gdscript
 extends CharacterBody2D
 
