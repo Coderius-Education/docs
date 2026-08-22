@@ -1,45 +1,28 @@
 ---
-sidebar_position: 6
+sidebar_position: 4
 slug: /lijnvolgen/nu-jij
-title: Nu jij!
+title: "Deel 8: Nu jij"
 ---
 
-# Nu jij!
+# Het robotscript bouwen — Deel 8: Nu jij
 
-Je robot rijdt rechtdoor zolang beide sensoren wit zien. Maar zodra hij afdwaalt, komt de lijn onder één van de sensoren — en dan gebeurt er nog niets. **Aan jou de taak** om het bijsturen toe te voegen, zodat de robot de lijn echt blijft volgen.
+Je robot rijdt rechtdoor zolang beide sensoren wit zien. Zodra hij afdwaalt, ziet één sensor de lijn — en dan gebeurt er nog niets. Dit laatste deel is aan jou: zoals in Deel 7 aangekondigd, staat hier geen uitwerking. Alles wat je nodig hebt, heb je in de vorige delen zelf gebouwd.
 
-## De opdracht
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/beslissen/05c-and-or-elif', label: 'and, or en elif'},
+    {site: 'python', to: '/docs/beslissen/05b-if-else', label: 'If en else'},
+  ]}
+/>
 
-Breid de code van stap 3 uit met **twee extra gevallen**:
+## Opdracht 10.4.a: maak de lijnvolger af
 
-1. **Linkersensor ziet zwart, rechter wit** → de lijn ligt links. Stuur bij.
-2. **Linkersensor ziet wit, rechter zwart** → de lijn ligt rechts. Stuur bij.
+Breid het `if`-blok uit Deel 7 uit met **twee extra gevallen**, met `elif`:
 
-Gebruik hiervoor `elif`. De vuistregel: zet de motor aan de kant van de **sensor die de lijn ziet** wat **zachter**, dan draait de robot precies die kant op — terug naar de lijn.
+1. **Links ziet zwart, rechts wit** → de lijn ligt links. Stuur bij.
+2. **Links ziet wit, rechts zwart** → de lijn ligt rechts. Stuur bij.
 
 ```python
-from leaphymicropython.sensors.linesensor import AnalogIR
-from leaphymicropython.actuators.dcmotor import DCMotors
-from leaphymicropython.actuators.oled_screen import OLEDSH1106
-from time import sleep
-
-motoren = DCMotors()
-motor_a = motoren.motor_a
-motor_b = motoren.motor_b
-
-links = AnalogIR("A0", 2500)
-rechts = AnalogIR("A1", 2500)
-oled = OLEDSH1106(width=128, height=64, channel=7)
-
-while True:
-    kleur_links = links.black_or_white()
-    kleur_rechts = rechts.black_or_white()
-
-    oled.fill('white')
-    oled.text('Links: ' + kleur_links, 0, 0)
-    oled.text('Rechts: ' + kleur_rechts, 0, 10)
-    oled.show()
-
     if kleur_links == "white" and kleur_rechts == "white":
         motor_a.forward(255)
         motor_b.forward(255)
@@ -49,26 +32,24 @@ while True:
     elif kleur_links == "white" and kleur_rechts == "black":
         # TODO: en hier de andere kant op
         pass
-
-    sleep(0.01)
 ```
 
-Vervang elke `# TODO` en de `pass` door de juiste `motor_a.forward(...)` en `motor_b.forward(...)`. Het scherm laat ondertussen zien wat de sensoren meten — handig om te controleren of je robot het goede geval kiest.
+Vervang elke `# TODO` en de `pass` door de juiste `motor_a.forward(...)` en `motor_b.forward(...)`. Het scherm draait mee — daaraan zie je of je robot het goede geval te pakken heeft.
 
-:::tip[Python opfrissen]
-Je hebt hier vooral `elif` en vergelijkingen nodig:
-- [`and` / `or` / `elif`](https://python.coderius.nl/docs/beslissen/05c-and-or-elif)
-- [if / else](https://python.coderius.nl/docs/beslissen/05b-if-else)
+## Denk na
 
-Meer oefenen met `while` en `if` op sensoren? Bekijk [Code beter begrijpen](../analoog_ir/while_loop.md).
-:::
+Drie vragen om je op weg te helpen — beantwoord ze voor jezelf voordat je typt:
+
+1. De lijn ligt **links**. Welke kant moet de robot dan op draaien, en welke motor moet daarvoor zachter?
+2. Hoe véél zachter? Wat verwacht je bij een klein verschil (255 tegenover 200), en wat bij een groot verschil (255 tegenover 0)?
+3. In [Hoe werkt lijnvolgen?](./hoe_werkt.md) heb je dit al eens beredeneerd. Klopt je antwoord daar nog mee?
 
 <details>
 <summary>Tip — ik kom er niet uit</summary>
 
-- Ziet de **linkersensor** de lijn (`black`)? Zet dan `motor_a` (links) bijvoorbeeld op `150` en `motor_b` (rechts) op `255`.
-- Ziet de **rechtersensor** de lijn? Dan precies andersom.
-- Draait je robot de verkeerde kant op? Dan zit je bedrading gespiegeld — wissel `motor_a` en `motor_b` om, of test eerst met `motor_a.test()`.
+- Ziet de **linkersensor** de lijn (`black`)? Zet dan `motor_a` (links) bijvoorbeeld op `150` en laat `motor_b` (rechts) op `255`.
+- Ziet de **rechtersensor** de lijn? Precies andersom.
+- Draait je robot de verkeerde kant op? Dan kloppen de namen niet met de werkelijkheid — check met `motor_a.test()` welke motor echt links zit ([Deel 6](../motoren/deel6_draaien.md)).
 
 </details>
 
@@ -77,11 +58,49 @@ Meer oefenen met `while` en `if` op sensoren? Bekijk [Code beter begrijpen](../a
 
 Werkt het, maar niet soepel?
 
-- **Slingert** hij hard heen en weer? Maak het verschil kleiner (bijvoorbeeld `200` in plaats van `150`).
-- **Reageert** hij te traag in de bocht? Maak het verschil juist groter.
+- **Slingert** hij hard heen en weer? Maak het verschil tussen de motoren kleiner (bijvoorbeeld `200` in plaats van `150`).
+- **Mist** hij de bocht? Maak het verschil juist groter, tot aan `0` toe.
+- Denk aan Deel 6: onder de **180–200** komt een beladen robot vaak niet in beweging — "zachter" kan dus ook "stil" betekenen.
 
 </details>
 
-## Extra uitdaging
+## Test het
 
-Wat doet je robot als **beide** sensoren tegelijk zwart zien? Dat is meestal een **kruising**. Voeg zelf een extra `elif` toe en bedenk wat er dan moet gebeuren: stoppen, rechtdoor, of een kant op draaien.
+Zet je robot aan het begin van de baan en laat los. Volgt hij de lijn, ook door een bocht? Werkt het aan de kabel, zet je script dan als `main.py` op het bord ([Batterijen](../batterijen/code.md)) en laat hem echt los rijden.
+
+Dit is het moment waarop het hele traject samenkomt: elk deel van je script heb je zelf getypt, en je weet van elke regel waarom hij er staat.
+
+## Opdracht 10.4.b: de kruising
+
+Wat doet je robot als **beide** sensoren tegelijk zwart zien? Dat is meestal een kruising. Voeg zelf een extra `elif` toe en maak een keuze: stoppen, rechtdoor, of een kant op draaien. Er is geen fout antwoord — er is alleen wat jouw robot op jouw baan moet doen.
+
+<details>
+<summary>Tip</summary>
+
+Stoppen is het makkelijkst om te zien: allebei de motoren `forward(0)`. Kijk op het scherm of het kruising-geval echt geraakt wordt — flitsen de twee kolommen maar heel even allebei op `black`, dan rijdt je robot er misschien al overheen voordat de loop het ziet.
+
+</details>
+
+## Er gaat iets mis
+
+<details>
+<summary>De robot draait bij de lijn juist de verkeerde kant op</summary>
+
+**Oorzaak:** Je code is goed — maar de namen kloppen niet. `motor_a` is bij jou niet links, of `links` is niet de linkersensor.
+
+**Oplossing:** Je hebt beide checks al gedaan: [Opdracht 5.5.a](../analoog_ir/deel4_twee_sensoren.md) voor de sensoren en [Deel 6](../motoren/deel6_draaien.md) voor de motoren. Doe ze allebei opnieuw en verwissel wat niet klopt. **Zelf vinden:** houd de robot in je hand en dek de linkersensor af. Kijk op het scherm welke kolom omklapt, en voel welke motor zachter gaat draaien — dan zie je meteen welke van de twee verwisseld is.
+
+</details>
+
+<details>
+<summary>Hij rijdt de bocht uit alsof er geen lijn is</summary>
+
+**Oorzaak:** De `elif`-takken worden nooit waar: de drempel klopt niet meer, of de loop is te traag omdat de `sleep` nog op `0.2` staat.
+
+**Oplossing:** Controleer op het scherm dat de sensoren echt `black` zeggen boven de lijn, en dat je `sleep(0.01)` uit Deel 7 hebt overgenomen.
+
+</details>
+
+---
+
+← [Deel 7 — Rechtdoor rijden](./deel7_rechtdoor.md) · **Volgende:** [de afstandssensor](../afstand/doel.md) →
