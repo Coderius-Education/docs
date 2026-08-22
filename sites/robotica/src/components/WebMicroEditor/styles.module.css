@@ -394,6 +394,18 @@
   font-size: 12px;
 }
 
+.btnActief {
+  background: var(--ifm-color-emphasis-200);
+  border-color: var(--ifm-color-emphasis-500);
+}
+
+.plot {
+  width: 100%;
+  height: 160px;
+  border-radius: 6px;
+  background: #1e1e1e;
+}
+
 .replFout {
   color: #ff9a9a;
 }

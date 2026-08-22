@@ -9,8 +9,11 @@ import { installLeaphyLibrary } from './leaphyInstaller';
 function nepFs() {
   const geschreven: Array<{ path: string; inhoud: string }> = [];
   const fs = {
-    writeFile: async (path: string, bytes: Uint8Array) => {
-      geschreven.push({ path, inhoud: new TextDecoder().decode(bytes) });
+    writeFile: async (path: string, inhoud: Uint8Array | string) => {
+      geschreven.push({
+        path,
+        inhoud: typeof inhoud === 'string' ? inhoud : new TextDecoder().decode(inhoud),
+      });
     },
   } as unknown as BoardFS;
   return { fs, geschreven };
@@ -21,7 +24,8 @@ function nepFetch(tree: unknown, bestanden: Record<string, string>) {
     if (url.includes('api.github.com')) {
       return { ok: true, status: 200, json: async () => tree } as Response;
     }
-    const pad = url.split('/main/')[1];
+    // raw.githubusercontent.com/<eigenaar>/<repo>/<branch>/<pad...>
+    const pad = new URL(url).pathname.split('/').slice(4).join('/');
     const inhoud = bestanden[pad];
     if (inhoud === undefined) return { ok: false, status: 404 } as Response;
     return {
@@ -61,8 +65,25 @@ describe('installLeaphyLibrary', () => {
     expect(geschreven.map((g) => g.path)).toEqual([
       '/lib/leaphymicropython/__init__.py',
       '/lib/leaphymicropython/sensors/tof.py',
+      '/lib/leaphymicropython_meta.json',
     ]);
     expect(geschreven[1].inhoud).toBe('class TimeOfFlight: pass\n');
+  });
+
+  it('laat een herkomst-stempel achter op het board', async () => {
+    const tree = {
+      truncated: false,
+      tree: [{ path: 'leaphymicropython/a.py', type: 'blob', sha: 'a' }],
+    };
+    vi.stubGlobal('fetch', nepFetch(tree, { 'leaphymicropython/a.py': '' }));
+    const { fs, geschreven } = nepFs();
+
+    await installLeaphyLibrary(fs, () => {}, { repo: 'iemand/fork', branch: 'test' });
+
+    const meta = JSON.parse(geschreven[geschreven.length - 1].inhoud);
+    expect(meta.repo).toBe('iemand/fork');
+    expect(meta.branch).toBe('test');
+    expect(typeof meta.installedAt).toBe('string');
   });
 
   it('meldt voortgang per bestand en sluit af met klaar', async () => {

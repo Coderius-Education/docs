@@ -25,6 +25,8 @@ class NepBoard {
     private stdout: string,
     private stderr: string,
     private rawPasteOndersteund = true,
+    /** stuur stdout druppelsgewijs met echte vertraging, zoals een print-loop */
+    private druppelStdout = false,
   ) {}
 
   /** Laat het board uit zichzelf tekst sturen (zoals print-uitvoer van main.py). */
@@ -52,6 +54,7 @@ class NepBoard {
       writable,
       open: async () => {},
       close: async () => {},
+      getInfo: () => ({ usbVendorId: 0x2341, usbProductId: 0x025b }),
     };
   }
 
@@ -62,11 +65,25 @@ class NepBoard {
         // einde input: ack, dan stdout- en stderr-frames en de raw-prompt
         this.stand = 'raw';
         this.stuur([0x04]);
-        this.stuur(this.stdout);
-        this.stuur([0x04]);
-        this.stuur(this.stderr);
-        this.stuur([0x04]);
-        this.stuur('>');
+        const sluitAf = () => {
+          this.stuur([0x04]);
+          this.stuur(this.stderr);
+          this.stuur([0x04]);
+          this.stuur('>');
+        };
+        if (this.druppelStdout) {
+          // eerste helft nu, tweede helft en het einde pas later — zoals een
+          // programma dat al draaiend print
+          const helft = Math.ceil(this.stdout.length / 2);
+          this.stuur(this.stdout.slice(0, helft));
+          setTimeout(() => {
+            this.stuur(this.stdout.slice(helft));
+            setTimeout(sluitAf, 5);
+          }, 5);
+        } else {
+          this.stuur(this.stdout);
+          sluitAf();
+        }
         return;
       }
       this.codeBytes.push(b);
@@ -161,6 +178,36 @@ describe('SerialClient raw-paste', () => {
 
     expect(board.geschreven).toContain(0x02);
     expect(client.status).toBe('connected');
+  });
+
+  it('streamt uitvoer live via onOutput en levert dezelfde tekst als resultaat', async () => {
+    const board = new NepBoard(64, 'Links: 800\r\nLinks: 5000\r\n', '', true, true);
+    const client = verbonden(board);
+    const live: string[] = [];
+
+    const { stdout, stderr } = await client.runCode('x', 0, (t) => live.push(t));
+
+    expect(live.join('')).toBe('Links: 800\r\nLinks: 5000\r\n');
+    expect(stdout).toBe('Links: 800\r\nLinks: 5000\r\n');
+    expect(stderr).toBe('');
+    // de eerste helft kwam binnen vóór het einde van het programma
+    expect(live.length).toBeGreaterThan(1);
+  });
+
+  it('streamt ook stderr, zodat een traceback live zichtbaar is', async () => {
+    const board = new NepBoard(64, 'output\r\n', 'NameError: x\r\n');
+    const client = verbonden(board);
+    const live: string[] = [];
+
+    const { stderr } = await client.runCode('x', 0, (t) => live.push(t));
+
+    expect(live.join('')).toContain('NameError');
+    expect(stderr).toBe('NameError: x\r\n');
+  });
+
+  it('geeft de USB-info van de poort door', () => {
+    const client = verbonden(new NepBoard(64, '', ''));
+    expect(client.portInfo).toEqual({ usbVendorId: 0x2341, usbProductId: 0x025b });
   });
 
   it('typt een losse regel in de normale REPL met regeleinde', async () => {

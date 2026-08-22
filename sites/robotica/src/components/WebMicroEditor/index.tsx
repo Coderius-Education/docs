@@ -37,14 +37,18 @@ function useColorMode(): { colorMode: 'light' | 'dark' } {
   return { colorMode };
 }
 
+import { leesEditorHash } from './codeLink';
 import { friendlyError } from './errorMessages';
 import { BoardFS } from './filesystem';
 import {
   DEFAULT_LEAPHY_BRANCH,
   DEFAULT_LEAPHY_REPO,
   type InstallProgress,
+  LEAPHY_META_PATH,
+  type LeaphyMeta,
   installLeaphyLibrary,
 } from './leaphyInstaller';
+import { MAX_REEKSEN, voegSample } from './plotter';
 import { type PythonFout, splitsFoutSegmenten, vindLaatsteFout } from './pythonErrors';
 import { SerialClient } from './serial';
 import styles from './styles.module.css';
@@ -63,6 +67,64 @@ function foutRegelExtension(regel: number, klasse: string): Extension {
 
 function foutSignatuur(fout: PythonFout): string {
   return `${fout.type}|${fout.melding}|${fout.regel}`;
+}
+
+const PLOT_KLEUREN = ['#4fc3f7', '#ffb74d', '#81c784', '#e57373'];
+
+/** Tekent de meetreeksen als lijnen; schaal past zich aan de data aan. */
+function tekenPlot(canvas: HTMLCanvasElement, samples: number[][]): void {
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+  const b = canvas.width;
+  const h = canvas.height;
+  ctx.fillStyle = '#1e1e1e';
+  ctx.fillRect(0, 0, b, h);
+  if (samples.length < 2) {
+    ctx.fillStyle = '#9a9a9a';
+    ctx.font = '13px monospace';
+    ctx.fillText('wachten op getallen in de uitvoer...', 10, 22);
+    return;
+  }
+  let min = Number.POSITIVE_INFINITY;
+  let max = Number.NEGATIVE_INFINITY;
+  for (const s of samples) {
+    for (const v of s) {
+      if (v < min) min = v;
+      if (v > max) max = v;
+    }
+  }
+  if (min === max) {
+    min -= 1;
+    max += 1;
+  }
+  const reeksen = Math.min(MAX_REEKSEN, Math.max(...samples.map((s) => s.length)));
+  const x = (i: number) => 4 + (i / (samples.length - 1)) * (b - 8);
+  const y = (v: number) => h - 6 - ((v - min) / (max - min)) * (h - 28);
+  for (let r = 0; r < reeksen; r++) {
+    ctx.strokeStyle = PLOT_KLEUREN[r];
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    let begonnen = false;
+    samples.forEach((s, i) => {
+      if (s[r] === undefined) return;
+      if (begonnen) ctx.lineTo(x(i), y(s[r]));
+      else {
+        ctx.moveTo(x(i), y(s[r]));
+        begonnen = true;
+      }
+    });
+    ctx.stroke();
+  }
+  // legenda: de laatste waarde per reeks, in de reekskleur
+  ctx.font = '12px monospace';
+  const laatste = samples[samples.length - 1];
+  let tx = 8;
+  for (let r = 0; r < reeksen; r++) {
+    const label = laatste[r] === undefined ? '-' : String(laatste[r]);
+    ctx.fillStyle = PLOT_KLEUREN[r];
+    ctx.fillText(label, tx, 15);
+    tx += ctx.measureText(label).width + 16;
+  }
 }
 
 const pythonTabExtensions = [
@@ -88,6 +150,7 @@ const STORAGE_KEY = 'webMicroEditor.code';
 const FILE_STORAGE_KEY = 'webMicroEditor.currentFile';
 const LEAPHY_REPO_STORAGE_KEY = 'webMicroEditor.leaphyRepo';
 const LEAPHY_BRANCH_STORAGE_KEY = 'webMicroEditor.leaphyBranch';
+const FONT_STORAGE_KEY = 'webMicroEditor.fontSize';
 
 // Officiële MicroPython-firmware voor de Arduino Nano RP2040 Connect.
 // Nieuwe versie? Pak de laatste .uf2 van de download-pagina hieronder en werk
@@ -138,6 +201,16 @@ export default function WebMicroEditor(): React.JSX.Element {
   const [replHistory, setReplHistory] = useState<string[]>([]);
   const [replHistoryIndex, setReplHistoryIndex] = useState<number>(-1);
   const [foutWeggedrukt, setFoutWeggedrukt] = useState<string | null>(null);
+  const [portLabel, setPortLabel] = useState<string | null>(null);
+  const [plotterAan, setPlotterAan] = useState<boolean>(false);
+  const [fontSize, setFontSize] = useState<number>(() => {
+    if (typeof window === 'undefined') return 14;
+    const bewaard = Number(localStorage.getItem(FONT_STORAGE_KEY));
+    return bewaard >= 12 && bewaard <= 24 ? bewaard : 14;
+  });
+  const samplesRef = useRef<number[][]>([]);
+  const lineBufRef = useRef<string>('');
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const isDirty = code !== loadedCode;
 
@@ -177,13 +250,60 @@ export default function WebMicroEditor(): React.JSX.Element {
   }, [replText]);
 
   const appendRepl = useCallback((text: string) => {
+    // Voed de plotter met complete regels; de rest wacht op de volgende chunk.
+    lineBufRef.current += text;
+    const delen = lineBufRef.current.split('\n');
+    lineBufRef.current = delen.pop() ?? '';
+    for (const regel of delen) voegSample(samplesRef.current, regel.trim());
+
     setReplText((prev) => {
       const next = (prev + text).slice(-20000); // cap at ~20KB
       return next;
     });
   }, []);
 
-  const clearRepl = useCallback(() => setReplText(''), []);
+  const clearRepl = useCallback(() => {
+    samplesRef.current = [];
+    lineBufRef.current = '';
+    setReplText('');
+  }, []);
+
+  // Code die via "Open in de editor" onder een lesvoorbeeld meekomt (#code=…).
+  // biome-ignore lint/correctness/useExhaustiveDependencies: bewust alleen bij mount; `code` is daar nog de beginstand.
+  useEffect(() => {
+    const geladen = leesEditorHash(window.location.hash);
+    if (geladen === null) return;
+    window.history.replaceState(null, '', window.location.pathname);
+    if (
+      code.trim() !== '' &&
+      code !== geladen &&
+      !confirm('De code uit de les vervangt je huidige code in de editor. Doorgaan?')
+    ) {
+      return;
+    }
+    setCode(geladen);
+    setLoadedCode(geladen);
+    setCurrentFile(null);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(FONT_STORAGE_KEY, String(fontSize));
+    }
+  }, [fontSize]);
+
+  // De plotter tekent op een eigen ritme vanuit de sample-ref, zodat een
+  // print-loop van 100 Hz geen 100 React-renders per seconde veroorzaakt.
+  useEffect(() => {
+    if (!plotterAan) return;
+    let raf = 0;
+    const teken = () => {
+      if (canvasRef.current) tekenPlot(canvasRef.current, samplesRef.current);
+      raf = requestAnimationFrame(teken);
+    };
+    raf = requestAnimationFrame(teken);
+    return () => cancelAnimationFrame(raf);
+  }, [plotterAan]);
 
   const setBusy = useCallback(() => setStatus('busy'), []);
   const setIdle = useCallback(() => setStatus('connected'), []);
@@ -196,12 +316,17 @@ export default function WebMicroEditor(): React.JSX.Element {
     client.onDisconnect = () => {
       clientRef.current = null;
       setStatus('disconnected');
+      setPortLabel(null);
       appendRepl('\n[verbinding verbroken]\n');
     };
     try {
       await client.connect();
       clientRef.current = client;
       setStatus('connected');
+      const info = client.portInfo;
+      setPortLabel(
+        info?.usbVendorId === 0x2341 ? 'Arduino' : info?.usbVendorId === 0x2e8a ? 'RP2040' : null,
+      );
       appendRepl('[verbonden]\n');
     } catch (err) {
       appendRepl(`[verbinden mislukt: ${friendlyError(err)}]\n`);
@@ -214,6 +339,7 @@ export default function WebMicroEditor(): React.JSX.Element {
     await c.disconnect();
     clientRef.current = null;
     setStatus('disconnected');
+    setPortLabel(null);
   }, []);
 
   const runOnBoard = useCallback(async () => {
@@ -260,6 +386,21 @@ export default function WebMicroEditor(): React.JSX.Element {
       setIdle();
     }
   }, [code, currentFile, appendRepl, setBusy, setIdle]);
+
+  /** Draait de editor-code eenmalig via de raw REPL, zonder main.py aan te raken. */
+  const testDirect = useCallback(async () => {
+    const c = clientRef.current;
+    if (!c) return;
+    setBusy();
+    clearRepl();
+    appendRepl('[test zonder opslaan — Stop onderbreekt]\n');
+    try {
+      await c.runCode(code, 0, appendRepl);
+    } catch (err) {
+      appendRepl(`\n[test mislukt: ${friendlyError(err)}]\n`);
+    }
+    setIdle();
+  }, [code, appendRepl, clearRepl, setBusy, setIdle]);
 
   const openFile = useCallback(
     async (path: string) => {
@@ -500,6 +641,57 @@ export default function WebMicroEditor(): React.JSX.Element {
     [appendRepl, refreshFiles, setBusy, setIdle, currentFile],
   );
 
+  const saveAs = useCallback(async () => {
+    const c = clientRef.current;
+    if (!c) return;
+    const invoer = prompt('Bestandsnaam op het board:', currentFile ?? '/mijn_script.py');
+    if (!invoer || !invoer.trim()) return;
+    let pad = invoer.trim();
+    if (!pad.startsWith('/')) pad = `/${pad}`;
+    if (!pad.includes('.')) pad = `${pad}.py`;
+    setBusy();
+    try {
+      const fs = new BoardFS(c);
+      await fs.writeFile(pad, code);
+      setCurrentFile(pad);
+      setLoadedCode(code);
+      appendRepl(`[opgeslagen: ${pad}]\n`);
+      if (files !== null) await refreshFiles();
+      setIdle();
+    } catch (err) {
+      appendRepl(`\n[opslaan mislukt: ${friendlyError(err)}]\n`);
+      setIdle();
+    }
+  }, [code, currentFile, files, refreshFiles, appendRepl, setBusy, setIdle]);
+
+  /** Toont welke Leaphy-library op het board staat (herkomst-stempel van de installer). */
+  const checkLibrary = useCallback(async () => {
+    const c = clientRef.current;
+    if (!c) return;
+    setBusy();
+    const fs = new BoardFS(c);
+    try {
+      const meta: LeaphyMeta = JSON.parse(
+        new TextDecoder().decode(await fs.readFile(LEAPHY_META_PATH)),
+      );
+      appendRepl(
+        `[library op board: ${meta.repo}@${meta.branch}, geïnstalleerd op ${meta.installedAt.slice(0, 10)}]\n`,
+      );
+    } catch {
+      try {
+        const lib = await fs.listdir('/lib');
+        appendRepl(
+          lib.some((i) => i.name === 'leaphymicropython')
+            ? '[library aanwezig; herkomst onbekend (niet via deze editor geïnstalleerd)]\n'
+            : '[geen leaphymicropython-library op het board gevonden]\n',
+        );
+      } catch {
+        appendRepl('[geen leaphymicropython-library op het board gevonden]\n');
+      }
+    }
+    setIdle();
+  }, [appendRepl, setBusy, setIdle]);
+
   const applyTemplate = useCallback(
     (id: string) => {
       if (!id) return;
@@ -558,7 +750,7 @@ export default function WebMicroEditor(): React.JSX.Element {
         >
           <span className={styles.statusDot} />
           {status === 'disconnected' && 'Niet verbonden'}
-          {status === 'connected' && 'Verbonden'}
+          {status === 'connected' && `Verbonden${portLabel ? ` — ${portLabel}` : ''}`}
           {status === 'busy' && 'Bezig...'}
         </span>
 
@@ -587,6 +779,15 @@ export default function WebMicroEditor(): React.JSX.Element {
         >
           Run op board
         </button>
+        <button
+          type="button"
+          className={styles.btn}
+          onClick={testDirect}
+          disabled={!connected || status === 'busy'}
+          title="Draait de code eenmalig, zonder main.py te veranderen"
+        >
+          Test direct
+        </button>
         {currentFile && currentFile !== '/main.py' && (
           <button
             type="button"
@@ -598,6 +799,15 @@ export default function WebMicroEditor(): React.JSX.Element {
             Opslaan
           </button>
         )}
+        <button
+          type="button"
+          className={styles.btn}
+          onClick={saveAs}
+          disabled={!connected || status === 'busy'}
+          title="Sla de code onder een zelfgekozen naam op het board op"
+        >
+          Opslaan als...
+        </button>
         <button
           type="button"
           className={clsx(styles.btn, styles.btnDanger)}
@@ -626,6 +836,25 @@ export default function WebMicroEditor(): React.JSX.Element {
         </button>
 
         <span className={styles.spacer} />
+
+        <button
+          type="button"
+          className={clsx(styles.btn, styles.btnKlein)}
+          onClick={() => setFontSize((v) => Math.max(12, v - 2))}
+          disabled={fontSize <= 12}
+          title="Kleinere letters"
+        >
+          A−
+        </button>
+        <button
+          type="button"
+          className={clsx(styles.btn, styles.btnKlein)}
+          onClick={() => setFontSize((v) => Math.min(24, v + 2))}
+          disabled={fontSize >= 24}
+          title="Grotere letters (handig op de beamer)"
+        >
+          A+
+        </button>
 
         <button
           type="button"
@@ -699,6 +928,19 @@ export default function WebMicroEditor(): React.JSX.Element {
               title={connected ? undefined : 'Verbind eerst met het board'}
             >
               2. Installeer Leaphy-library
+            </button>
+            <button
+              type="button"
+              className={styles.btn}
+              onClick={checkLibrary}
+              disabled={!connected || status === 'busy'}
+              title={
+                connected
+                  ? 'Kijk welke library-versie er op het board staat'
+                  : 'Verbind eerst met het board'
+              }
+            >
+              Check library op board
             </button>
           </div>
           <details className={styles.leaphyAdvanced}>
@@ -877,7 +1119,7 @@ export default function WebMicroEditor(): React.JSX.Element {
             </span>
           </div>
 
-          <div className={styles.editorWrap}>
+          <div className={styles.editorWrap} style={{ fontSize }}>
             <CodeMirror
               value={code}
               onChange={setCode}
@@ -906,8 +1148,19 @@ export default function WebMicroEditor(): React.JSX.Element {
               >
                 Wis
               </button>
+              <button
+                type="button"
+                className={clsx(styles.btn, styles.btnKlein, plotterAan && styles.btnActief)}
+                onClick={() => setPlotterAan((v) => !v)}
+                title="Tekent getallen uit de uitvoer als grafiek — handig bij het kalibreren van je sensoren"
+              >
+                Plotter
+              </button>
             </div>
-            <div className={styles.repl} ref={replRef}>
+            {plotterAan && (
+              <canvas ref={canvasRef} className={styles.plot} width={600} height={160} />
+            )}
+            <div className={styles.repl} ref={replRef} style={{ fontSize }}>
               {replText
                 ? (() => {
                     let positie = 0;
@@ -928,6 +1181,7 @@ export default function WebMicroEditor(): React.JSX.Element {
             <input
               type="text"
               className={styles.replInput}
+              style={{ fontSize }}
               value={replInput}
               onChange={(e) => setReplInput(e.target.value)}
               onKeyDown={handleReplKeyDown}

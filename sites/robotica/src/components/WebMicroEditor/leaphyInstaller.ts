@@ -6,6 +6,16 @@ import type { BoardFS } from './filesystem';
 export const DEFAULT_LEAPHY_REPO = 'leaphy-robotics/leaphy-micropython';
 export const DEFAULT_LEAPHY_BRANCH = 'main';
 
+// Herkomst-stempel dat de installer op het board achterlaat, zodat de editor
+// later kan tonen welke library-versie erop staat ("Check library op board").
+export const LEAPHY_META_PATH = '/lib/leaphymicropython_meta.json';
+
+export type LeaphyMeta = {
+  repo: string;
+  branch: string;
+  installedAt: string;
+};
+
 type TreeEntry = { path: string; type: 'blob' | 'tree' | string; sha: string };
 type TreeResponse = { tree: TreeEntry[]; truncated: boolean };
 
@@ -57,5 +67,7 @@ export async function installLeaphyLibrary(
     await fs.writeFile(boardPath, bytes);
     done += 1;
   }
+  const meta: LeaphyMeta = { repo, branch, installedAt: new Date().toISOString() };
+  await fs.writeFile(LEAPHY_META_PATH, JSON.stringify(meta));
   onProgress({ done, total: files.length, current: 'klaar' });
 }
