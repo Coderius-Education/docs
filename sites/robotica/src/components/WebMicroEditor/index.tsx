@@ -2,8 +2,8 @@ import { acceptCompletion, completionStatus } from '@codemirror/autocomplete';
 import { indentMore } from '@codemirror/commands';
 import { python } from '@codemirror/lang-python';
 import { indentUnit } from '@codemirror/language';
-import { Prec } from '@codemirror/state';
-import { EditorView, keymap } from '@codemirror/view';
+import { type Extension, Prec } from '@codemirror/state';
+import { Decoration, EditorView, keymap } from '@codemirror/view';
 import CodeMirror from '@uiw/react-codemirror';
 import clsx from 'clsx';
 import type React from 'react';
@@ -45,9 +45,25 @@ import {
   type InstallProgress,
   installLeaphyLibrary,
 } from './leaphyInstaller';
+import { type PythonFout, splitsFoutSegmenten, vindLaatsteFout } from './pythonErrors';
 import { SerialClient } from './serial';
 import styles from './styles.module.css';
 import { TEMPLATES } from './templates';
+
+const DEBUG_DOCS_URL =
+  '/docs/Microcontrollers/Arduino Nano RP2040 Connect/Tutorial-debuggen/debuggen';
+
+/** Markeert één regel in de editor als foutregel. */
+function foutRegelExtension(regel: number, klasse: string): Extension {
+  return EditorView.decorations.compute(['doc'], (state) => {
+    if (regel < 1 || regel > state.doc.lines) return Decoration.none;
+    return Decoration.set([Decoration.line({ class: klasse }).range(state.doc.line(regel).from)]);
+  });
+}
+
+function foutSignatuur(fout: PythonFout): string {
+  return `${fout.type}|${fout.melding}|${fout.regel}`;
+}
 
 const pythonTabExtensions = [
   python(),
@@ -121,8 +137,14 @@ export default function WebMicroEditor(): React.JSX.Element {
   const [replInput, setReplInput] = useState<string>('');
   const [replHistory, setReplHistory] = useState<string[]>([]);
   const [replHistoryIndex, setReplHistoryIndex] = useState<number>(-1);
+  const [foutWeggedrukt, setFoutWeggedrukt] = useState<string | null>(null);
 
   const isDirty = code !== loadedCode;
+
+  // De laatste Python-fout uit de REPL-stroom, voor de banner en de
+  // regelmarkering. Wissen van de REPL (bij elke Run) reset dit vanzelf.
+  const fout = useMemo(() => vindLaatsteFout(replText), [replText]);
+  const foutZichtbaar = fout !== null && foutSignatuur(fout) !== foutWeggedrukt;
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -197,6 +219,15 @@ export default function WebMicroEditor(): React.JSX.Element {
   const runOnBoard = useCallback(async () => {
     const c = clientRef.current;
     if (!c) return;
+    if (
+      currentFile &&
+      currentFile !== '/main.py' &&
+      !confirm(
+        `Run schrijft je code naar /main.py, niet naar het geopende ${currentFile}. Doorgaan?`,
+      )
+    ) {
+      return;
+    }
     setBusy();
     clearRepl();
     appendRepl('[uploaden naar main.py...]\n');
@@ -212,7 +243,7 @@ export default function WebMicroEditor(): React.JSX.Element {
       appendRepl(`\n[fout: ${friendlyError(err)}]\n`);
       setIdle();
     }
-  }, [code, appendRepl, clearRepl, setBusy, setIdle]);
+  }, [code, currentFile, appendRepl, clearRepl, setBusy, setIdle]);
 
   const saveCurrent = useCallback(async () => {
     const c = clientRef.current;
@@ -270,6 +301,85 @@ export default function WebMicroEditor(): React.JSX.Element {
       appendRepl(`\n[stop mislukt: ${friendlyError(err)}]\n`);
     }
   }, [appendRepl]);
+
+  const herstart = useCallback(async () => {
+    const c = clientRef.current;
+    if (!c) return;
+    clearRepl();
+    appendRepl('[herstart: main.py draait opnieuw]\n');
+    try {
+      await c.softReboot();
+    } catch (err) {
+      appendRepl(`\n[herstart mislukt: ${friendlyError(err)}]\n`);
+    }
+  }, [appendRepl, clearRepl]);
+
+  // Ctrl+S hoort niet de browser-opslaan-dialoog te openen. Is er een los
+  // bestand open, dan slaat hij dat op; anders volstaat de melding dat de
+  // browser al automatisch bewaart (Run schrijft naar het board).
+  const saveShortcut = useCallback(() => {
+    if (currentFile && currentFile !== '/main.py' && clientRef.current) {
+      saveCurrent();
+    } else {
+      appendRepl('[je code staat automatisch bewaard in de browser]\n');
+    }
+  }, [currentFile, saveCurrent, appendRepl]);
+
+  // Sneltoetsen via een ref, zodat de CodeMirror-extensies stabiel blijven
+  // terwijl de callbacks per toetsaanslag veranderen (ze hangen aan `code`).
+  const actiesRef = useRef<{ run: () => void; save: () => void }>({
+    run: () => {},
+    save: () => {},
+  });
+  useEffect(() => {
+    actiesRef.current = { run: runOnBoard, save: saveShortcut };
+  });
+
+  const sneltoetsen = useMemo(
+    () =>
+      Prec.highest(
+        keymap.of([
+          {
+            key: 'Mod-Enter',
+            run: () => {
+              actiesRef.current.run();
+              return true;
+            },
+          },
+          {
+            key: 'Mod-s',
+            run: () => {
+              actiesRef.current.save();
+              return true;
+            },
+          },
+        ]),
+      ),
+    [],
+  );
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.defaultPrevented || !(e.ctrlKey || e.metaKey)) return;
+      if (e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        actiesRef.current.save();
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        actiesRef.current.run();
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
+
+  const editorExtensions = useMemo(() => {
+    const ext: Extension[] = [...pythonTabExtensions, sneltoetsen];
+    if (foutZichtbaar && fout?.regel && fout.bron === 'main.py' && currentFile === '/main.py') {
+      ext.push(foutRegelExtension(fout.regel, styles.foutRegel));
+    }
+    return ext;
+  }, [sneltoetsen, fout, foutZichtbaar, currentFile]);
 
   const installLib = useCallback(async () => {
     const c = clientRef.current;
@@ -490,36 +600,29 @@ export default function WebMicroEditor(): React.JSX.Element {
         )}
         <button
           type="button"
+          className={clsx(styles.btn, styles.btnDanger)}
+          onClick={stop}
+          disabled={!connected}
+          title="Onderbreek het draaiende programma (KeyboardInterrupt)"
+        >
+          Stop
+        </button>
+        <button
+          type="button"
+          className={styles.btn}
+          onClick={herstart}
+          disabled={!connected || status === 'busy'}
+          title="Herstart het board; main.py draait dan opnieuw"
+        >
+          Herstart
+        </button>
+        <button
+          type="button"
           className={styles.btn}
           onClick={newFile}
           title="Leeg de editor (begin een nieuw bestand)"
         >
           Nieuw
-        </button>
-        <button
-          type="button"
-          className={clsx(styles.btn, styles.btnDanger)}
-          onClick={stop}
-          disabled={!connected}
-        >
-          Stop
-        </button>
-
-        <button
-          type="button"
-          className={styles.btn}
-          onClick={installLib}
-          disabled={!connected || status === 'busy'}
-        >
-          Installeer Leaphy-library
-        </button>
-        <button
-          type="button"
-          className={styles.btn}
-          onClick={downloadFirmware}
-          title={`Download de MicroPython-firmware (${MICROPYTHON_VERSION}) om op het board te flashen`}
-        >
-          MicroPython-firmware ({MICROPYTHON_VERSION})
         </button>
 
         <span className={styles.spacer} />
@@ -535,6 +638,7 @@ export default function WebMicroEditor(): React.JSX.Element {
 
         <select
           className={styles.select}
+          aria-label="Voorbeeld laden"
           defaultValue=""
           onChange={(e) => {
             applyTemplate(e.target.value);
@@ -542,7 +646,7 @@ export default function WebMicroEditor(): React.JSX.Element {
           }}
         >
           <option value="" disabled>
-            Template laden...
+            Voorbeeld laden...
           </option>
           {TEMPLATES.map((t) => (
             <option key={t.id} value={t.id}>
@@ -552,45 +656,125 @@ export default function WebMicroEditor(): React.JSX.Element {
         </select>
       </div>
 
-      <details className={styles.leaphyAdvanced}>
-        <summary>Geavanceerd: andere Leaphy-bron</summary>
-        <div className={styles.leaphyAdvancedFields}>
-          <label className={styles.leaphyAdvancedField}>
-            Repo
-            <input
-              type="text"
-              value={leaphyRepo}
-              onChange={(e) => setLeaphyRepo(e.target.value)}
-              placeholder={DEFAULT_LEAPHY_REPO}
-            />
-          </label>
-          <label className={styles.leaphyAdvancedField}>
-            Branch
-            <input
-              type="text"
-              value={leaphyBranch}
-              onChange={(e) => setLeaphyBranch(e.target.value)}
-              placeholder={DEFAULT_LEAPHY_BRANCH}
-            />
-          </label>
-          {(leaphyRepo !== DEFAULT_LEAPHY_REPO || leaphyBranch !== DEFAULT_LEAPHY_BRANCH) && (
+      {!connected && (
+        <div className={styles.startHulp}>
+          <strong>Zo werkt het</strong>
+          <ol>
+            <li>Sluit het board met een USB-kabel aan op je computer.</li>
+            <li>
+              Klik op <strong>Verbind met board</strong> en kies je board in de lijst.
+            </li>
+            <li>
+              Klik op <strong>Run op board</strong> om de code uit de editor te draaien.
+            </li>
+          </ol>
+          <p>
+            Splinternieuw board, of werkt <code>import leaphymicropython</code> niet? Doe dan eerst
+            de eenmalige stappen onder <strong>Board instellen</strong> hieronder.
+          </p>
+        </div>
+      )}
+
+      <details className={styles.setup}>
+        <summary>Board instellen (eenmalig)</summary>
+        <div className={styles.setupBody}>
+          <p>
+            Twee stappen die je per board maar één keer doet: MicroPython op het board zetten, en
+            daarna de Leaphy-library installeren.
+          </p>
+          <div className={styles.setupActies}>
             <button
               type="button"
               className={styles.btn}
-              onClick={() => {
-                setLeaphyRepo(DEFAULT_LEAPHY_REPO);
-                setLeaphyBranch(DEFAULT_LEAPHY_BRANCH);
-              }}
+              onClick={downloadFirmware}
+              title={`Download de MicroPython-firmware (${MICROPYTHON_VERSION}) om op het board te flashen`}
             >
-              Terug naar standaard
+              1. MicroPython-firmware ({MICROPYTHON_VERSION})
             </button>
-          )}
+            <button
+              type="button"
+              className={styles.btn}
+              onClick={installLib}
+              disabled={!connected || status === 'busy'}
+              title={connected ? undefined : 'Verbind eerst met het board'}
+            >
+              2. Installeer Leaphy-library
+            </button>
+          </div>
+          <details className={styles.leaphyAdvanced}>
+            <summary>Geavanceerd: andere Leaphy-bron</summary>
+            <div className={styles.leaphyAdvancedFields}>
+              <label className={styles.leaphyAdvancedField}>
+                Repo
+                <input
+                  type="text"
+                  value={leaphyRepo}
+                  onChange={(e) => setLeaphyRepo(e.target.value)}
+                  placeholder={DEFAULT_LEAPHY_REPO}
+                />
+              </label>
+              <label className={styles.leaphyAdvancedField}>
+                Branch
+                <input
+                  type="text"
+                  value={leaphyBranch}
+                  onChange={(e) => setLeaphyBranch(e.target.value)}
+                  placeholder={DEFAULT_LEAPHY_BRANCH}
+                />
+              </label>
+              {(leaphyRepo !== DEFAULT_LEAPHY_REPO || leaphyBranch !== DEFAULT_LEAPHY_BRANCH) && (
+                <button
+                  type="button"
+                  className={styles.btn}
+                  onClick={() => {
+                    setLeaphyRepo(DEFAULT_LEAPHY_REPO);
+                    setLeaphyBranch(DEFAULT_LEAPHY_BRANCH);
+                  }}
+                >
+                  Terug naar standaard
+                </button>
+              )}
+            </div>
+          </details>
         </div>
       </details>
 
       {progress && (
         <div className={styles.progress}>
-          Bezig met installeren: {progress.current} ({progress.done}/{progress.total})
+          <span>
+            Bezig met installeren: {progress.current}
+            {progress.total > 0 && ` (${progress.done}/${progress.total})`}
+          </span>
+          {progress.total > 0 && (
+            <progress className={styles.progressBalk} value={progress.done} max={progress.total} />
+          )}
+        </div>
+      )}
+
+      {foutZichtbaar && fout && (
+        <div className={styles.foutBanner}>
+          <div className={styles.foutBannerHead}>
+            <strong>
+              {fout.type}
+              {fout.regel !== null && ` op regel ${fout.regel}`}
+            </strong>
+            <button
+              type="button"
+              className={styles.fileDelete}
+              onClick={() => setFoutWeggedrukt(foutSignatuur(fout))}
+              title="Sluiten"
+            >
+              ✕
+            </button>
+          </div>
+          {fout.melding && <code className={styles.foutBannerMelding}>{fout.melding}</code>}
+          <p className={styles.foutBannerUitleg}>
+            {fout.uitleg} Kom je er niet uit? Kijk op de{' '}
+            <a href={DEBUG_DOCS_URL} target="_blank" rel="noreferrer">
+              Debuggen-pagina
+            </a>
+            .
+          </p>
         </div>
       )}
 
@@ -638,17 +822,17 @@ export default function WebMicroEditor(): React.JSX.Element {
               <span>Bestanden op board</span>
             </div>
             <div className={styles.fileList}>
-              <div style={{ marginBottom: 6, fontWeight: 600 }}>
+              <div className={styles.fileDirHeader}>
                 {currentDir}
                 {currentDir !== '/' && (
                   <button
                     type="button"
-                    className={styles.fileDelete}
-                    style={{ marginLeft: 10 }}
+                    className={clsx(styles.fileDelete, styles.fileUp)}
                     onClick={() => {
                       const parent = currentDir.replace(/\/[^/]+\/?$/, '') || '/';
                       refreshFiles(parent);
                     }}
+                    title="Naar de bovenliggende map"
                   >
                     ↑ omhoog
                   </button>
@@ -661,7 +845,6 @@ export default function WebMicroEditor(): React.JSX.Element {
                   <button
                     type="button"
                     className={styles.fileName}
-                    style={{ cursor: 'pointer', textDecoration: 'underline' }}
                     onClick={() => (f.isDir ? refreshFiles(f.path) : openFile(f.path))}
                     title={f.isDir ? 'Open map' : 'Open in editor'}
                   >
@@ -671,6 +854,7 @@ export default function WebMicroEditor(): React.JSX.Element {
                     type="button"
                     className={styles.fileDelete}
                     onClick={() => deleteFile(f.path)}
+                    title={`Verwijder ${f.name} van het board`}
                   >
                     ✕
                   </button>
@@ -697,7 +881,7 @@ export default function WebMicroEditor(): React.JSX.Element {
             <CodeMirror
               value={code}
               onChange={setCode}
-              extensions={pythonTabExtensions}
+              extensions={editorExtensions}
               theme={colorMode === 'dark' ? 'dark' : 'light'}
               height="380px"
               basicSetup={{
@@ -713,19 +897,33 @@ export default function WebMicroEditor(): React.JSX.Element {
 
         <div className={styles.workPane}>
           <div className={styles.replWrap}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div className={styles.replHeader}>
               <span className={styles.replLabel}>REPL-output</span>
               <button
                 type="button"
-                className={styles.btn}
+                className={clsx(styles.btn, styles.btnKlein)}
                 onClick={clearRepl}
-                style={{ padding: '2px 8px', fontSize: 12 }}
               >
                 Wis
               </button>
             </div>
             <div className={styles.repl} ref={replRef}>
-              {replText || '(geen output)'}
+              {replText
+                ? (() => {
+                    let positie = 0;
+                    return splitsFoutSegmenten(replText).map((segment) => {
+                      const key = positie;
+                      positie += segment.tekst.length;
+                      return segment.fout ? (
+                        <span key={key} className={styles.replFout}>
+                          {segment.tekst}
+                        </span>
+                      ) : (
+                        <span key={key}>{segment.tekst}</span>
+                      );
+                    });
+                  })()
+                : '(geen output)'}
             </div>
             <input
               type="text"
