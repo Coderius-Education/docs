@@ -5,6 +5,7 @@
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { TEMPLATES } from '../components/WebMicroEditor/templates';
 import { verzamel } from './extract';
 
 const HIER = dirname(fileURLToPath(import.meta.url));
@@ -22,6 +23,20 @@ mkdirSync(UIT, { recursive: true });
 
 for (const f of fragmenten) {
   writeFileSync(join(UIT, `${f.naam}.py`), f.code);
+}
+
+// De editor-templates zijn een tweede codebron naast de docs; die compileren
+// mee zodat een kapot startsjabloon net zo hard opvalt als een kapotte les.
+for (const t of TEMPLATES) {
+  const naam = `template_${t.id.replace(/[^a-z0-9]+/gi, '_')}`;
+  writeFileSync(join(UIT, `${naam}.py`), `${t.code.replace(/\s+$/, '')}\n`);
+  fragmenten.push({
+    naam,
+    bron: 'src/components/WebMicroEditor/templates.ts',
+    regel: 1,
+    kop: t.label ?? t.id,
+    code: t.code,
+  });
 }
 
 // compileer.py leest deze index om per fout de bronpagina te kunnen noemen.

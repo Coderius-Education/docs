@@ -18,8 +18,8 @@ from time import sleep
 
 motoren = DCMotors()
 
-motoren.motor_a.forward(255)   # rechts vooruit (snelheid 0-255)
-motoren.motor_b.forward(255)   # links vooruit
+motoren.motor_a.forward(255)   # snelheid 0-255
+motoren.motor_b.forward(255)   # welke motor A/B is: test met .test()
 sleep(2)
 
 motoren.motor_a.stop()
