@@ -1,51 +1,49 @@
 ---
-sidebar_position: 6
+sidebar_position: 5
 slug: /afstand/op-het-scherm
-hide_title: true
-title: TOF met OLED
+title: De afstand op het scherm
 ---
 
-# TOF-waardes op het OLED-scherm
+# De afstand op het scherm
 
-Tot nu toe print je de afstand in de **Shell**. Maar zodra je auto los van de laptop rijdt, kun je dat niet meer zien. Tijd om het op je OLED-scherm te tonen.
+De afstand staat nu in de Shell, maar je robot rijdt los van de laptop. Je weet inmiddels precies hoe je dat oplost — dus dit is een opdracht, geen uitleg.
 
-## Uitdaging
+## Opdracht 11.5.a: toon de afstand op het OLED-scherm
 
-Combineer de code uit:
-
-- [9.4 Twee of meer TOFs met multiplexer](/docs/Microcontrollers/Arduino%20Nano%20RP2040%20Connect/Tutorial-TOF/wiring_code_2_met_mux)
-- [15.2 OLED-scherm aansluiten en code](/docs/Microcontrollers/Arduino%20Nano%20RP2040%20Connect/Tutorial-oled-scherm/code_met_mux)
-
-Laat de afstand van elke TOF op een eigen regel op het OLED-scherm verschijnen.
+Combineer wat je hebt: de TOF-uitlezing uit de [vorige stap](./uitlezen.md) en het scherm uit je robotscript ([Deel 5](../debuggen_met_scherm/deel5_scherm.md)). Laat de afstand elke ronde op het scherm verschijnen.
 
 <details>
-<summary>Tip</summary>
+<summary>Klik hier voor een tip.</summary>
 
-Je hebt al iets vergelijkbaars gedaan voor de IR-sensoren in `lego_auto/debuggen_met_scherm/debuggen_met_schermpje.md`. Kijk daar voor inspiratie. Vergeet niet `oled.fill("white")` aan het begin van elke loop en `oled.show()` aan het einde.
+Zelfde drieslag als altijd: `fill`, `text`, `show`. De afstand is een getal, dus door `str()` heen voordat hij het scherm op kan. De TOF zit op channel **0**, je scherm op channel **7** — twee objecten, elk met hun eigen channel.
 
 </details>
 
 <details>
-<summary>Oplossing</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 ```python
 from time import sleep
 from leaphymicropython.sensors.tof import TimeOfFlight
 from leaphymicropython.actuators.oled_screen import OLEDSH1106
 
-tof_0 = TimeOfFlight(channel=0)
-tof_7 = TimeOfFlight(channel=7)
-oled = OLEDSH1106(width=128, height=64, channel=6)  # pas channel aan
+tof = TimeOfFlight(channel=0)
+oled = OLEDSH1106(width=128, height=64, channel=7)
 
 while True:
-    afstand_0 = tof_0.get_distance()
-    afstand_7 = tof_7.get_distance()
+    afstand = tof.get_distance()
 
-    oled.fill("white")
-    oled.text('TOF 0: ' + str(afstand_0), x=0, y=0)
-    oled.text('TOF 7: ' + str(afstand_7), x=0, y=10)
+    oled.fill('white')
+    oled.text('Afstand: ' + str(afstand), 0, 0)
     oled.show()
     sleep(0.1)
 ```
 
 </details>
+
+## Verder bouwen
+
+Wil je meer? Twee richtingen, zonder stappenplan:
+
+- Laat je **lijnvolger stoppen** zodra de TOF een obstakel dichterbij dan 10 cm ziet — een extra `if` in je robotscript.
+- **Meer TOF-sensoren** aansluiten kan via de andere channels van de multiplexer; hoe dat werkt staat in de bibliotheek bij de [Time of Flight-tutorial](/docs/Microcontrollers/Arduino%20Nano%20RP2040%20Connect/Tutorial-TOF/wiring_code_zonder_mux).
