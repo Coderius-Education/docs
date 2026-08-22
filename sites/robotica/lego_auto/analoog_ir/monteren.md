@@ -3,7 +3,7 @@ sidebar_position: 3
 slug: /lijnsensor/monteren
 ---
 
-# IR-sensor aan het frame bevestigen
+# IR-sensoren monteren en aansluiten
 
 Volg de foto's stap voor stap. Per IR-sensor heb je één **3D-geprinte adapter** nodig.
 
@@ -20,8 +20,17 @@ De IR-sensor werkt het best op ongeveer **5–10 mm** boven de ondergrond. Te ho
 
 </details>
 
+## Aansluiten op het shield
+
+Elke sensor heeft drie draadjes: signaal, voeding en ground. Steek ze op de driepins-rij van één analoge pin van het Leaphy Murphy Shield, precies zoals op het schema:
+
+![twee analoge IR-sensoren aangesloten op A0 en A1 van het shield](@site/static/fritzing/analog_irs_shield_bb.png)
+
+Sluit de ene sensor aan op pin **A0** en de andere op pin **A1**. Welke van de twee links zit, maakt nu nog niet uit — dat controleer je straks in [Deel 4](./deel4_twee_sensoren.md) met de code erbij.
+
 ## Wanneer heb je deze stap gehaald?
 
 
 - Elke IR-sensor zit vast aan een 3D-geprinte adapter.
 - Het geheel (sensor + adapter) zit op je Lego-frame, op de juiste hoogte om de ondergrond te zien.
+- Beide sensoren zijn met hun drie draadjes aangesloten op het shield: één op **A0**, één op **A1**.

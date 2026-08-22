@@ -46,4 +46,4 @@ while True:
 Wil je meer? Twee richtingen, zonder stappenplan:
 
 - Laat je **lijnvolger stoppen** zodra de TOF een obstakel dichterbij dan 10 cm ziet — een extra `if` in je robotscript.
-- **Meer TOF-sensoren** aansluiten kan via de andere channels van de multiplexer; hoe dat werkt staat in de bibliotheek bij de [Time of Flight-tutorial](/docs/Microcontrollers/Arduino%20Nano%20RP2040%20Connect/Tutorial-TOF/wiring_code_zonder_mux).
+- **Meer TOF-sensoren** aansluiten kan via de andere channels van de multiplexer; hoe dat werkt staat in de bibliotheek bij [twee TOF-sensoren met multiplexer](/docs/Microcontrollers/Arduino%20Nano%20RP2040%20Connect/Tutorial-TOF/wiring_code_2_met_mux).

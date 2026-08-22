@@ -22,7 +22,7 @@ De robot rijdt met de lijn **tussen** de twee sensoren. Vier situaties — wat m
 <details>
 <summary>Tip</summary>
 
-Dwaalt de robot naar links af, dan schuift de lijn onder de línkersensor. Hij moet dan terug naar rechts. Dat doe je niet met een stuur — dat heeft hij niet — maar door de twee motoren **verschillend hard** te laten draaien.
+Dwaalt de robot naar links af, dan schuift de lijn onder de réchtersensor. Hij moet dan terug naar rechts. Dat doe je niet met een stuur — dat heeft hij niet — maar door de twee motoren **verschillend hard** te laten draaien.
 
 </details>
 
@@ -30,7 +30,7 @@ Dwaalt de robot naar links af, dan schuift de lijn onder de línkersensor. Hij m
 <summary>Antwoord</summary>
 
 1. **Beide wit**: rechtdoor, beide motoren even hard vooruit.
-2. **Alleen links zwart**: hij is naar links afgedwaald. De linkermotor zachter, dan draait hij terug naar rechts.
+2. **Alleen links zwart**: de lijn ligt onder de linkersensor, dus hij is naar réchts afgedwaald. De linkermotor zachter, dan draait hij terug naar links.
 3. **Alleen rechts zwart**: precies andersom.
 4. **Beide zwart**: meestal een kruising of het einde van het parcours. Wat je dan doet is een ontwerpkeuze — daarover meer in Deel 8.
 
@@ -41,7 +41,7 @@ Situatie 1 bouw je in [Deel 7](./deel7_rechtdoor.md). Situatie 2 en 3 zijn in [D
 <details>
 <summary>Controlevraag</summary>
 
-Waarom stuurt "de linkermotor zachter" de robot naar réchts?
+Waarom stuurt "de linkermotor zachter" de robot naar línks?
 
 </details>
 
