@@ -2,7 +2,7 @@
 // Mirrors what pyboard.py / mpremote does, but in the browser.
 
 // Minimal WebSerial types — the standard lib.dom typing is gated behind newer TS libs.
-interface SerialPort {
+export interface SerialPort {
   readable: ReadableStream<Uint8Array> | null;
   writable: WritableStream<Uint8Array> | null;
   open(options: { baudRate: number }): Promise<void>;
@@ -85,10 +85,18 @@ export class SerialClient {
       filters: RP2040_PORT_FILTERS,
     });
     await port.open({ baudRate: 115200 });
-    this.port = port;
+    this.attach(port);
+  }
+
+  /**
+   * Koppel een al geopende poort. Los van connect() zodat tests een
+   * nagemaakte poort kunnen aanbieden zonder WebSerial/browser.
+   */
+  attach(port: SerialPort): void {
     if (!port.readable || !port.writable) {
       throw new Error('Serieel apparaat heeft geen readable/writable stream na open().');
     }
+    this.port = port;
     this.reader = port.readable.getReader();
     this.writer = port.writable.getWriter();
     this.buffer = [];
