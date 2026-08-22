@@ -9,6 +9,7 @@ import { describe, expect, it } from 'vitest';
 // schuift — precies wat er bij deze verbouwing twee keer bijna gebeurde.
 
 const LEGO = fileURLToPath(new URL('../../lego_auto', import.meta.url));
+const DOCS = fileURLToPath(new URL('../../docs', import.meta.url));
 const SITE = fileURLToPath(new URL('../..', import.meta.url));
 const PYTHON_DOCS = fileURLToPath(new URL('../../../python/docs', import.meta.url));
 
@@ -118,7 +119,32 @@ describe('Voorkennis-links naar de python-site', () => {
   // Zelfde aanpak als sites/godot/src/data/voorkennis.test.ts: cross-site
   // links vallen buiten de linkcheck van de build, dus zonder deze test
   // breekt een hernoemde python-les de robotica-links pas in productie.
+  // Geldt voor lego_auto én de Bibliotheek (docs/) — beide hebben
+  // Voorkennis-blokken.
   const ITEM_RE = /\{site: 'python', to: '([^']+)', label: '([^']+)'\}/g;
+
+  function verzamelInhoud(wortel: string, prefix: string): { rel: string; inhoud: string }[] {
+    const out: { rel: string; inhoud: string }[] = [];
+    const loop = (map: string) => {
+      for (const entry of readdirSync(map, { withFileTypes: true })) {
+        const volledig = join(map, entry.name);
+        if (entry.isDirectory()) loop(volledig);
+        else if (/\.mdx?$/.test(entry.name)) {
+          out.push({
+            rel: `${prefix}/${volledig.slice(wortel.length + 1)}`,
+            inhoud: readFileSync(volledig, 'utf8'),
+          });
+        }
+      }
+    };
+    loop(wortel);
+    return out;
+  }
+
+  const alleZones = [
+    ...paginas.map((p) => ({ rel: `lego_auto/${p.rel}`, inhoud: p.inhoud })),
+    ...verzamelInhoud(DOCS, 'docs'),
+  ];
 
   function pythonUrlBestaat(to: string): boolean {
     const segmenten = to.replace(/^\/docs\//, '').split('/');
@@ -144,7 +170,7 @@ describe('Voorkennis-links naar de python-site', () => {
 
   it('elk Voorkennis-pad bestaat als python-lespagina', () => {
     const kapot: string[] = [];
-    for (const p of paginas) {
+    for (const p of alleZones) {
       for (const m of p.inhoud.matchAll(ITEM_RE)) {
         if (!pythonUrlBestaat(m[1])) kapot.push(`${p.rel}: ${m[1]}`);
       }
@@ -152,11 +178,11 @@ describe('Voorkennis-links naar de python-site', () => {
     expect(kapot).toEqual([]);
   });
 
-  it('de kaal-geharde python-links zijn verdwenen uit lego_auto', () => {
+  it('nergens kaal-geharde python-links', () => {
     // De :::tip[Python opfrissen]-blokken met https://python.coderius.nl-URL's
     // zijn vervangen door Voorkennis-blokken; hardcoded cross-site-URL's
     // horen niet terug te komen (registry is de bron van waarheid).
-    const kapot = paginas.filter((p) => p.inhoud.includes('python.coderius.nl'));
+    const kapot = alleZones.filter((p) => p.inhoud.includes('python.coderius.nl'));
     expect(kapot.map((p) => p.rel)).toEqual([]);
   });
 });
