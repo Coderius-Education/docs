@@ -1,5 +1,6 @@
 ---
 sidebar_position: 4
+slug: /scherm/waardes-op-scherm
 hide_title: true
 title: Aansturen
 ---

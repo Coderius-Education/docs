@@ -1,5 +1,6 @@
 ---
-sidebar_position: 4
+sidebar_position: 5
+slug: /lijnsensor/twee-sensoren
 hide_title: true
 title: IR-sensoren
 ---

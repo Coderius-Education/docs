@@ -1,5 +1,6 @@
 ---
-sidebar_position: 4
+sidebar_position: 6
+slug: /afstand/op-het-scherm
 hide_title: true
 title: TOF met OLED
 ---

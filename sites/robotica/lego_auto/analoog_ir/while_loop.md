@@ -1,5 +1,6 @@
 ---
-sidebar_position: 5
+sidebar_position: 7
+slug: /lijnsensor/code-begrijpen
 hide_title: true
 title: Code beter begrijpen
 ---

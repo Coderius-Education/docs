@@ -1,5 +1,6 @@
 ---
-sidebar_position: 2
+sidebar_position: 3
+slug: /lijnsensor/monteren
 ---
 
 # IR-sensor aan het frame bevestigen
@@ -18,3 +19,9 @@ Als de sensor in de adapter zit, klik je het geheel aan je Lego-frame. Plaats he
 De IR-sensor werkt het best op ongeveer **5–10 mm** boven de ondergrond. Te hoog en hij ziet alles als wit; te laag en hij schraapt over de grond.
 
 </details>
+
+## Wanneer heb je deze stap gehaald?
+
+
+- Elke IR-sensor zit vast aan een 3D-geprinte adapter.
+- Het geheel (sensor + adapter) zit op je Lego-frame, op de juiste hoogte om de ondergrond te zien.

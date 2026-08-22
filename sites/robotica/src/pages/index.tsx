@@ -4,13 +4,13 @@ import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import type { ReactNode } from 'react';
 
-const ctas: HeroCta[] = [{ label: 'Start met de Lego-auto', to: '/lego_auto/intro' }];
+const ctas: HeroCta[] = [{ label: 'Start met de Lego-auto', to: '/lego_auto/frame' }];
 
 const features: FeatureItem[] = [
   {
     title: 'Lego-auto',
     description: 'Bouw stap voor stap je eigen rijdende robot.',
-    link: '/lego_auto/intro',
+    link: '/lego_auto/frame',
   },
   {
     title: 'Editor',

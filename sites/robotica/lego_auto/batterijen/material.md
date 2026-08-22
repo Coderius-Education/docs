@@ -1,5 +1,6 @@
 ---
-sidebar_position: 2
+sidebar_position: 3
+slug: /batterijen/materiaal
 hide_title: true
 title: Materiaal
 ---

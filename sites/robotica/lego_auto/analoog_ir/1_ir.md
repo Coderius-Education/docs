@@ -1,5 +1,6 @@
 ---
-sidebar_position: 2
+sidebar_position: 4
+slug: /lijnsensor/een-sensor
 hide_title: true
 title: IR-sensor
 ---

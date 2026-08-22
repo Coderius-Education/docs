@@ -1,5 +1,6 @@
 ---
-sidebar_position: 0
+sidebar_position: 1
+slug: /motoren
 title: Wat is de bedoeling?
 ---
 

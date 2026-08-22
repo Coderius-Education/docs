@@ -1,5 +1,6 @@
 ---
-sidebar_position: 3
+sidebar_position: 5
+slug: /afstand/twee-tofs
 hide_title: true
 title: 2 TOFs
 ---

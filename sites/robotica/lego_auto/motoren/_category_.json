@@ -1,8 +1,10 @@
 {
   "label": "Motoren",
-  "position": 5,
+  "position": 7,
   "link": {
     "type": "generated-index",
     "description": "Leer in de volgende stappen hoe je de motoren aansluit en aanstuurt."
-  }
+  },
+  "collapsible": true,
+  "collapsed": true
 }

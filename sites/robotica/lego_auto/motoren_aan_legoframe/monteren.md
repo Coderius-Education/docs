@@ -1,5 +1,6 @@
 ---
 sidebar_position: 1
+slug: /motoren-op-lego
 hide_title: true
 title: Motoren op Lego
 ---

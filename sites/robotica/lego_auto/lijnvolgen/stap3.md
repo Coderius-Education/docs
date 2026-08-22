@@ -1,5 +1,6 @@
 ---
-sidebar_position: 4
+sidebar_position: 5
+slug: /lijnvolgen/rechtdoor
 title: Stap 3 — Rechtdoor rijden
 ---
 

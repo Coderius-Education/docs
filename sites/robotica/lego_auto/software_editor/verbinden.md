@@ -1,5 +1,6 @@
 ---
-sidebar_position: 2
+sidebar_position: 3
+slug: /software/verbinden
 hide_title: true
 title: Microcontroller verbinden met computer
 ---

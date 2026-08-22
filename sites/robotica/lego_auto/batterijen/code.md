@@ -1,5 +1,6 @@
 ---
-sidebar_position: 4
+sidebar_position: 5
+slug: /batterijen/main-py
 hide_title: true
 title: Code
 ---

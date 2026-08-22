@@ -1,5 +1,6 @@
 ---
 sidebar_position: 2
+slug: /scherm/concept
 title: Hoe werkt een OLED-scherm?
 ---
 

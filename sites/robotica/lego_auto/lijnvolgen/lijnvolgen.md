@@ -1,5 +1,6 @@
 ---
-sidebar_position: 1
+sidebar_position: 2
+slug: /lijnvolgen/hoe-werkt-het
 hide_title: true
 title: Hoe werkt lijnvolgen?
 ---

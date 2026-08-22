@@ -1,5 +1,6 @@
 ---
 sidebar_position: 5
+slug: /scherm/debuggen
 title: Debuggen met schermpje
 ---
 

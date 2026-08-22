@@ -1,5 +1,6 @@
 ---
-sidebar_position: 3
+sidebar_position: 4
+slug: /lijnvolgen/stap2
 title: Stap 2 — Twee sensoren tegelijk
 ---
 

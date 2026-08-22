@@ -1,5 +1,6 @@
 ---
-sidebar_position: 3
+sidebar_position: 4
+slug: /software/micropython
 hide_title: true
 title: Een besturingssysteem op je microcontroller
 ---

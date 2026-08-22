@@ -1,5 +1,6 @@
 ---
-sidebar_position: 2
+sidebar_position: 4
+slug: /afstand/uitlezen
 hide_title: true
 title: 1 TOF
 ---

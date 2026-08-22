@@ -1,5 +1,6 @@
 ---
 sidebar_position: 6
+slug: /lijnsensor/opties
 hide_title: true
 title: Hoeveel IR-sensoren kan ik gebruiken?
 ---
