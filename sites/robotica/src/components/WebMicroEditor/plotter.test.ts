@@ -29,6 +29,17 @@ describe('parseGetallen', () => {
     expect(parseGetallen('>>> print(800)')).toEqual([]);
   });
 
+  it('negeert traceback-regels (regelnummers en errno´s zijn geen metingen)', () => {
+    expect(parseGetallen('Traceback (most recent call last):')).toEqual([]);
+    expect(parseGetallen('  File "main.py", line 7, in <module>')).toEqual([]);
+    expect(parseGetallen('OSError: [Errno 5] EIO')).toEqual([]);
+    expect(parseGetallen('ZeroDivisionError: divide by zero')).toEqual([]);
+  });
+
+  it('haalt een \\r aan het regeleinde weg voordat hij parseert', () => {
+    expect(parseGetallen('800\r')).toEqual([800]);
+  });
+
   it('begrenst op vier reeksen', () => {
     expect(parseGetallen('1 2 3 4 5 6')).toEqual([1, 2, 3, 4]);
   });

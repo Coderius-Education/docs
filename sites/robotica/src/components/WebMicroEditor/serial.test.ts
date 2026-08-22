@@ -27,6 +27,8 @@ class NepBoard {
     private rawPasteOndersteund = true,
     /** stuur stdout druppelsgewijs met echte vertraging, zoals een print-loop */
     private druppelStdout = false,
+    /** stuur na de EOF-ack niets meer, zodat de client blijft wachten */
+    private zwijgNaEof = false,
   ) {}
 
   /** Laat het board uit zichzelf tekst sturen (zoals print-uitvoer van main.py). */
@@ -34,11 +36,19 @@ class NepBoard {
     this.stuur(t);
   }
 
+  /** Simuleer een losgetrokken kabel: de leesstroom faalt hard. */
+  trekKabelLos(): void {
+    this.kabelLos(new Error('unplugged'));
+  }
+
+  private kabelLos!: (e: Error) => void;
+
   maakPoort(): SerialPort {
     let controller!: ReadableStreamDefaultController<Uint8Array>;
     const readable = new ReadableStream<Uint8Array>({
-      start(c) {
+      start: (c) => {
         controller = c;
+        this.kabelLos = (e) => controller.error(e);
       },
     });
     this.stuur = (bytes) => {
@@ -65,6 +75,7 @@ class NepBoard {
         // einde input: ack, dan stdout- en stderr-frames en de raw-prompt
         this.stand = 'raw';
         this.stuur([0x04]);
+        if (this.zwijgNaEof) return; // programma "draait" en print niets
         const sluitAf = () => {
           this.stuur([0x04]);
           this.stuur(this.stderr);
@@ -208,6 +219,21 @@ describe('SerialClient raw-paste', () => {
   it('geeft de USB-info van de poort door', () => {
     const client = verbonden(new NepBoard(64, '', ''));
     expect(client.portInfo).toEqual({ usbVendorId: 0x2341, usbProductId: 0x025b });
+  });
+
+  it('rejecteert een lopende run zodra de kabel loskomt', async () => {
+    // Het stream-leestype heeft bewust geen timeout; zonder pending-reject in
+    // readLoop zou deze promise voor altijd blijven hangen.
+    const board = new NepBoard(64, '', '', true, false, true);
+    const client = verbonden(board);
+
+    const run = client.runCode('while True:\n    pass', 0, () => {});
+    // wacht tot de run voorbij de 50ms-interruptpauze van enterRawRepl is en
+    // echt in de streaming-leesfase hangt
+    await new Promise((r) => setTimeout(r, 120));
+    board.trekKabelLos();
+
+    await expect(run).rejects.toThrow('disconnected');
   });
 
   it('typt een losse regel in de normale REPL met regeleinde', async () => {

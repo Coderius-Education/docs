@@ -167,6 +167,14 @@ export class SerialClient {
     } catch (e) {
       // stream error (e.g. cable unplugged)
     } finally {
+      // Zonder dit blijft een pending read — het 'stream'-type heeft bewust
+      // geen timeout — na een kabelverlies voor altijd hangen.
+      if (this.pending) {
+        const p = this.pending;
+        this.pending = null;
+        if (p.timer !== null) clearTimeout(p.timer);
+        p.reject(new Error('disconnected'));
+      }
       this.onDisconnect?.();
     }
   }

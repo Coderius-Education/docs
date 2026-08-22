@@ -33,7 +33,9 @@ for (const t of TEMPLATES) {
   fragmenten.push({
     naam,
     bron: 'src/components/WebMicroEditor/templates.ts',
-    regel: 1,
+    // 0, zodat compileer.py (regel + e.lineno) het regelnummer bínnen de
+    // template meldt — een bestandsregel van templates.ts zou nergens op slaan.
+    regel: 0,
     kop: t.label ?? t.id,
     code: t.code,
   });

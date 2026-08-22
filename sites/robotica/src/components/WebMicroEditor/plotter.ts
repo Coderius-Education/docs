@@ -8,12 +8,25 @@ const GETAL_RE = /(?<![\w.])-?\d+(?:\.\d+)?(?![\w.])/g;
 export const MAX_REEKSEN = 4;
 export const MAX_SAMPLES = 300;
 
+/**
+ * Regels die geen metingen zijn: editor-statusmeldingen ("[verbonden]"),
+ * prompt/echo-regels van de REPL (">>> sleep(2)") en traceback-regels — de
+ * kop, de ingesprongen frames ('  File "main.py", line 7') en de foutregel
+ * zelf ('OSError: [Errno 5] EIO'). Zonder deze filters zou een crash de
+ * autoschaal van de kalibratiegrafiek verpesten met regelnummers en errno's.
+ */
+const GEEN_MEETREGEL = [
+  /^\[/,
+  />>>/,
+  /^Traceback/,
+  /^\s/,
+  /^[A-Za-z_][A-Za-z0-9_.]*(Error|Exception|Interrupt)\b/,
+];
+
 export function parseGetallen(regel: string): number[] {
-  // Editor-statusmeldingen als "[verbonden]" horen niet in de grafiek, en
-  // prompt/echo-regels van de REPL (">>> sleep(2)") evenmin — anders wordt
-  // een zelf getypt getal een nep-meetpunt.
-  if (regel.startsWith('[') || regel.includes('>>>')) return [];
-  return [...regel.matchAll(GETAL_RE)].map((m) => Number(m[0])).slice(0, MAX_REEKSEN);
+  const kaal = regel.replace(/\r$/, '');
+  if (GEEN_MEETREGEL.some((re) => re.test(kaal))) return [];
+  return [...kaal.matchAll(GETAL_RE)].map((m) => Number(m[0])).slice(0, MAX_REEKSEN);
 }
 
 /**

@@ -201,6 +201,10 @@ export default function WebMicroEditor(): React.JSX.Element {
   const [replHistory, setReplHistory] = useState<string[]>([]);
   const [replHistoryIndex, setReplHistoryIndex] = useState<number>(-1);
   const [foutWeggedrukt, setFoutWeggedrukt] = useState<string | null>(null);
+  // Kwam de laatste <stdin>-uitvoer van "Test direct" (editorcode) of van een
+  // los getypte REPL-regel? Alleen in het eerste geval mag een <stdin>-fout
+  // een regel in de editor markeren.
+  const [stdinVanTest, setStdinVanTest] = useState<boolean>(false);
   const [portLabel, setPortLabel] = useState<string | null>(null);
   const [plotterAan, setPlotterAan] = useState<boolean>(false);
   const [fontSize, setFontSize] = useState<number>(() => {
@@ -262,8 +266,10 @@ export default function WebMicroEditor(): React.JSX.Element {
     lineBufRef.current += text;
     const delen = lineBufRef.current.split('\n');
     lineBufRef.current = delen.pop() ?? '';
+    // Niet trimmen: de inspringing van traceback-regels is juist het signaal
+    // waarmee de plotter ze herkent en overslaat.
     for (const regel of delen) {
-      if (voegSample(samplesRef.current, regel.trim())) plotVersieRef.current += 1;
+      if (voegSample(samplesRef.current, regel)) plotVersieRef.current += 1;
     }
 
     setReplText((prev) => {
@@ -285,7 +291,8 @@ export default function WebMicroEditor(): React.JSX.Element {
   useEffect(() => {
     const geladen = leesEditorHash(window.location.hash);
     if (geladen === null) return;
-    window.history.replaceState(null, '', window.location.pathname);
+    // Pas ná de keuze de hash strippen: wie annuleert (bv. om eerst eigen
+    // code te kopiëren) houdt zo een URL die de lescode opnieuw aanbiedt.
     if (
       code.trim() !== '' &&
       code !== geladen &&
@@ -293,6 +300,7 @@ export default function WebMicroEditor(): React.JSX.Element {
     ) {
       return;
     }
+    window.history.replaceState(null, '', window.location.pathname);
     setCode(geladen);
     setLoadedCode(geladen);
     setCurrentFile(null);
@@ -323,7 +331,12 @@ export default function WebMicroEditor(): React.JSX.Element {
   }, [plotterAan]);
 
   const setBusy = useCallback(() => setStatus('busy'), []);
-  const setIdle = useCallback(() => setStatus('connected'), []);
+  // Valt de verbinding weg tijdens een operatie, dan mag de afronding daarvan
+  // de door onDisconnect gezette status niet terug op 'connected' zetten.
+  const setIdle = useCallback(
+    () => setStatus(clientRef.current ? 'connected' : 'disconnected'),
+    [],
+  );
 
   const connect = useCallback(async () => {
     if (!supported) return;
@@ -410,6 +423,7 @@ export default function WebMicroEditor(): React.JSX.Element {
     if (!c || statusRef.current === 'busy') return;
     setBusy();
     clearRepl();
+    setStdinVanTest(true);
     appendRepl('[test zonder opslaan — Stop onderbreekt]\n');
     try {
       await c.runCode(code, 0, appendRepl);
@@ -466,6 +480,11 @@ export default function WebMicroEditor(): React.JSX.Element {
     clearRepl();
     appendRepl('[herstart: main.py draait opnieuw]\n');
     try {
+      // Eerst onderbreken: Ctrl-D werkt alleen vanuit de REPL-prompt. Tijdens
+      // een draaiende while True-loop zou hij anders genegeerd worden
+      // (mpremote doet dit om dezelfde reden).
+      await c.interrupt();
+      await new Promise((r) => setTimeout(r, 100));
       await c.softReboot();
     } catch (err) {
       appendRepl(`\n[herstart mislukt: ${friendlyError(err)}]\n`);
@@ -531,17 +550,20 @@ export default function WebMicroEditor(): React.JSX.Element {
     return () => window.removeEventListener('keydown', handler);
   }, []);
 
+  // <stdin>-tracebacks passen alleen op de editorbuffer als ze uit "Test
+  // direct" komen (een los getypte REPL-regel heeft ook <stdin>); main.py-
+  // fouten alleen markeren als main.py ook echt openstaat.
+  const foutRegelInEditor =
+    (fout?.bron === '<stdin>' && stdinVanTest) ||
+    (fout?.bron === 'main.py' && currentFile === '/main.py');
+
   const editorExtensions = useMemo(() => {
     const ext: Extension[] = [...pythonTabExtensions, sneltoetsen];
-    // <stdin>-tracebacks komen van "Test direct" en passen 1-op-1 op de
-    // editorbuffer; main.py-fouten alleen markeren als main.py ook openstaat.
-    const markeerbaar =
-      fout?.bron === '<stdin>' || (fout?.bron === 'main.py' && currentFile === '/main.py');
-    if (foutZichtbaar && fout?.regel && markeerbaar) {
+    if (foutZichtbaar && fout?.regel && foutRegelInEditor) {
       ext.push(foutRegelExtension(fout.regel, styles.foutRegel));
     }
     return ext;
-  }, [sneltoetsen, fout, foutZichtbaar, currentFile]);
+  }, [sneltoetsen, fout, foutZichtbaar, foutRegelInEditor]);
 
   const installLib = useCallback(async () => {
     const c = clientRef.current;
@@ -574,6 +596,7 @@ export default function WebMicroEditor(): React.JSX.Element {
     const c = clientRef.current;
     if (!c || status !== 'connected') return;
     const line = replInput;
+    setStdinVanTest(false);
     c.typeLine(line).catch((err) => {
       appendRepl(`\n[typen mislukt: ${friendlyError(err)}]\n`);
     });
@@ -1021,7 +1044,7 @@ export default function WebMicroEditor(): React.JSX.Element {
           <div className={styles.foutBannerHead}>
             <strong>
               {fout.type}
-              {fout.regel !== null && ` op regel ${fout.regel}`}
+              {fout.regel !== null && foutRegelInEditor && ` op regel ${fout.regel}`}
             </strong>
             <button
               type="button"
@@ -1163,7 +1186,9 @@ export default function WebMicroEditor(): React.JSX.Element {
         <div className={styles.workPane}>
           <div className={styles.replWrap}>
             <div className={styles.replHeader}>
-              <span className={styles.replLabel}>REPL-output</span>
+              <span className={styles.replLabel} title="ook wel REPL-output genoemd">
+                Shell
+              </span>
               <button
                 type="button"
                 className={clsx(styles.btn, styles.btnKlein)}

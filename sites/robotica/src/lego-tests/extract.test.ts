@@ -93,4 +93,16 @@ describe('Python uit de lespagina´s halen', () => {
     const { fragmenten } = fragmentenUit('les.md', pagina('```\ngeen code\n```'));
     expect(fragmenten).toHaveLength(0);
   });
+
+  it('compileert ook fences met een meta, zoals geen-editor-link', () => {
+    const { fragmenten } = fragmentenUit(
+      'les.md',
+      pagina('```python geen-editor-link\nx = 1\n```'),
+    );
+    expect(fragmenten).toHaveLength(1);
+    expect(fragmenten[0].code).toBe('x = 1\n');
+    // maar geen andere talen die toevallig met python beginnen
+    const anders = fragmentenUit('les.md', pagina('```pythonachtig\nx = 1\n```'));
+    expect(anders.fragmenten).toHaveLength(0);
+  });
 });

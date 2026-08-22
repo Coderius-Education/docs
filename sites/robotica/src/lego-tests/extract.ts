@@ -29,7 +29,9 @@ export type Overgeslagen = {
   reden: string;
 };
 
-const BLOK = /```python\n([\s\S]*?)```/g;
+// Ook fences met een meta ("```python geen-editor-link") tellen mee — anders
+// zou zo'n blok stil aan de CI-compilatie ontsnappen.
+const BLOK = /```python(?:[ \t][^\n]*)?\n([\s\S]*?)```/g;
 
 /**
  * Sommige blokken horen niet te compileren: een bewust kapot voorbeeld

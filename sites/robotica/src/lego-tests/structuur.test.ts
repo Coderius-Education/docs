@@ -11,6 +11,7 @@ import { alleLesbestanden } from './extract';
 
 const LEGO = fileURLToPath(new URL('../../lego_auto', import.meta.url));
 const DOCS = fileURLToPath(new URL('../../docs', import.meta.url));
+const PAGES = fileURLToPath(new URL('../pages', import.meta.url));
 const SITE = fileURLToPath(new URL('../..', import.meta.url));
 const PYTHON_DOCS = fileURLToPath(new URL('../../../python/docs', import.meta.url));
 
@@ -49,9 +50,66 @@ function verzamelPaginas(): Pagina[] {
 
 const paginas = verzamelPaginas();
 
+// De bevroren URL's van het traject. Een slug wijzigen breekt bookmarks,
+// cross-site-links en geprinte QR-codes — daarom moet elke slug uit deze
+// lijst blijven bestaan, en hoort elke nieuwe pagina zijn slug hier toe te
+// voegen (vanaf dat moment is ook die bevroren).
+const BEVROREN_SLUGS = [
+  '/afstand',
+  '/afstand/concept',
+  '/afstand/monteren',
+  '/afstand/op-het-scherm',
+  '/afstand/uitlezen',
+  '/batterijen',
+  '/batterijen/aansluiten',
+  '/batterijen/concept',
+  '/batterijen/main-py',
+  '/batterijen/materiaal',
+  '/doosje',
+  '/eerste-programma',
+  '/eerste-programma/knipperen',
+  '/eerste-programma/lampje',
+  '/frame',
+  '/lijnsensor',
+  '/lijnsensor/code-begrijpen',
+  '/lijnsensor/een-sensor',
+  '/lijnsensor/materiaal',
+  '/lijnsensor/monteren',
+  '/lijnsensor/twee-sensoren',
+  '/lijnvolgen',
+  '/lijnvolgen/hoe-werkt-het',
+  '/lijnvolgen/nu-jij',
+  '/lijnvolgen/rechtdoor',
+  '/motoren',
+  '/motoren-op-lego',
+  '/motoren/aansluiten',
+  '/motoren/concept',
+  '/motoren/draaien',
+  '/motoren/let-op',
+  '/motoren/materiaal',
+  '/scherm',
+  '/scherm/concept',
+  '/scherm/materiaal',
+  '/scherm/waardes-op-scherm',
+  '/software/bibliotheek',
+  '/software/bord',
+  '/software/editor',
+  '/software/micropython',
+  '/software/verbinden',
+];
+
 describe('lego_auto-structuur', () => {
   it('elke pagina heeft een expliciete slug (bevroren URL)', () => {
     expect(paginas.filter((p) => !p.slug).map((p) => p.rel)).toEqual([]);
+  });
+
+  it('slugs zijn echt bevroren: elke bevroren slug bestaat nog, elke slug staat op de lijst', () => {
+    const huidig = new Set(paginas.map((p) => p.slug));
+    // een slug wijzigen of een pagina weghalen laat de oude URL verdwijnen
+    expect(BEVROREN_SLUGS.filter((s) => !huidig.has(s))).toEqual([]);
+    // een nieuwe slug moet aan BEVROREN_SLUGS toegevoegd worden (en is dan bevroren)
+    const bekend = new Set(BEVROREN_SLUGS);
+    expect(paginas.filter((p) => p.slug && !bekend.has(p.slug)).map((p) => p.slug)).toEqual([]);
   });
 
   it('sidebar_positions zijn uniek binnen elke map', () => {
@@ -121,6 +179,11 @@ describe('Voorkennis-links naar de python-site', () => {
     ...paginas.map((p) => ({ rel: `lego_auto/${p.rel}`, inhoud: p.inhoud })),
     ...alleLesbestanden(DOCS).map((pad) => ({
       rel: `docs/${pad.slice(DOCS.length + 1)}`,
+      inhoud: readFileSync(pad, 'utf8'),
+    })),
+    // src/pages (docenten, cursusoverzicht) linkt ook cross-site
+    ...alleLesbestanden(PAGES).map((pad) => ({
+      rel: `src/pages/${pad.slice(PAGES.length + 1)}`,
       inhoud: readFileSync(pad, 'utf8'),
     })),
   ];
