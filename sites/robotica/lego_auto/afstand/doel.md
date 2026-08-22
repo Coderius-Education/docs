@@ -1,5 +1,6 @@
 ---
-sidebar_position: 0
+sidebar_position: 1
+slug: /afstand
 title: Wat is de bedoeling?
 ---
 
@@ -9,8 +10,7 @@ In dit hoofdstuk leer je de **Time of Flight**-sensor (TOF) gebruiken op je Lego
 
 ## Wanneer heb je deze stap gehaald?
 
-- Je kunt de afstand meten met **één** TOF-sensor.
-- Je kunt **meerdere** TOFs verbinden via een multiplexer en ze los uitlezen.
-- Je kunt de waardes van de TOFs **op het OLED-schermpje** tonen.
+- De TOF-sensor zit gemonteerd en je leest de afstand uit.
+- De afstand staat op het OLED-schermpje, zodat je hem ook ziet als de robot los rijdt.
 
 De volgende pagina's helpen je om dit doel te bereiken.

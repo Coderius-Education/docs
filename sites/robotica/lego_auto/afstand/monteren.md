@@ -1,6 +1,6 @@
 ---
-sidebar_position: 1
-title: Verbinden
+sidebar_position: 3
+slug: /afstand/monteren
 ---
 
 # TOF aan het frame bevestigen
@@ -20,3 +20,9 @@ Met **twee zwarte pinnetjes** van Lego klik je de houder vast aan je Lego-frame.
 Vooraan op de robot, op ongeveer dezelfde hoogte als de obstakels die je wilt zien. Voor de Redden-Basis-baan is dat ongeveer 5–8 cm boven de grond.
 
 </details>
+
+## Wanneer heb je deze stap gehaald?
+
+
+- Je kunt de TOF-sensor aan een 3D-geprint onderdeel bevestigen.
+- Je kunt dat onderdeel aan je Lego-frame koppelen.

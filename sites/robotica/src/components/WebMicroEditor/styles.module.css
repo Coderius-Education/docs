@@ -193,10 +193,13 @@
   padding: 10px 12px;
   border-radius: 6px;
   height: 380px;
+  min-height: 160px;
   overflow-y: auto;
   white-space: pre-wrap;
   word-break: break-all;
   flex: 1 1 auto;
+  /* sleepbaar aan de onderrand: lange sensor-uitvoer verdient meer ruimte */
+  resize: vertical;
 }
 
 @media (max-width: 900px) {
@@ -308,6 +311,8 @@
   font-size: inherit;
   color: inherit;
   text-align: left;
+  cursor: pointer;
+  text-decoration: underline;
 }
 .fileKind {
   color: var(--ifm-color-emphasis-600);
@@ -376,4 +381,150 @@
 .replInput:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.replHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btnKlein {
+  padding: 2px 8px;
+  font-size: 12px;
+}
+
+.btnActief {
+  background: var(--ifm-color-emphasis-200);
+  border-color: var(--ifm-color-emphasis-500);
+}
+
+.plot {
+  width: 100%;
+  height: 160px;
+  border-radius: 6px;
+  background: #1e1e1e;
+}
+
+.replFout {
+  color: #ff9a9a;
+}
+
+.foutRegel {
+  background: rgba(211, 51, 51, 0.14);
+}
+
+[data-theme="dark"] .foutRegel {
+  background: rgba(255, 120, 120, 0.16);
+}
+
+.foutBanner {
+  padding: 12px 16px;
+  border: 1px solid #d33;
+  border-radius: 8px;
+  background: #fdf0f0;
+  color: var(--ifm-font-color-base);
+  font-size: 14px;
+}
+
+[data-theme="dark"] .foutBanner {
+  background: #3a1d1d;
+  border-color: #a44;
+}
+
+.foutBannerHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.foutBannerMelding {
+  display: inline-block;
+  margin-top: 4px;
+  background: var(--ifm-color-emphasis-100);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 13px;
+}
+
+.foutBannerUitleg {
+  margin: 6px 0 0;
+}
+
+.startHulp {
+  padding: 12px 16px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  background: var(--ifm-background-surface-color);
+  font-size: 14px;
+}
+
+.startHulp ol {
+  margin: 6px 0;
+  padding-left: 20px;
+}
+
+.startHulp li {
+  margin: 3px 0;
+}
+
+.startHulp p {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.startHulp code {
+  background: var(--ifm-color-emphasis-100);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-family: Consolas, "Courier New", monospace;
+}
+
+.setup {
+  font-size: 14px;
+}
+
+.setup > summary {
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.setupBody {
+  margin-top: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.setupBody p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.setupActies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.progressBalk {
+  width: 100%;
+  margin-top: 6px;
+}
+
+.fileDirHeader {
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.fileUp {
+  margin-left: 10px;
 }

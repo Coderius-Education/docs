@@ -1,0 +1,16 @@
+.editorLink {
+  display: flex;
+  justify-content: flex-end;
+  /* direct onder het codeblok, dat zelf al een marge meebrengt */
+  margin: calc(-1 * var(--ifm-leading) + 4px) 2px var(--ifm-leading);
+  font-size: 13px;
+}
+
+.editorLink a {
+  color: var(--ifm-color-emphasis-600);
+}
+
+.editorLink a:hover {
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+}

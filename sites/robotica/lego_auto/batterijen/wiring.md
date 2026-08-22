@@ -1,5 +1,6 @@
 ---
-sidebar_position: 3
+sidebar_position: 4
+slug: /batterijen/aansluiten
 hide_title: true
 title: Aansluiten
 ---

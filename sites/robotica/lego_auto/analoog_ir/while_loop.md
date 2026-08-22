@@ -1,5 +1,6 @@
 ---
-sidebar_position: 5
+sidebar_position: 7
+slug: /lijnsensor/code-begrijpen
 hide_title: true
 title: Code beter begrijpen
 ---
@@ -10,7 +11,7 @@ Op deze pagina oefen je met **voorspellen** wat code doet. Lees elke vraag, prob
 
 ---
 
-## Opdracht 1: simpele while-loop
+## Opdracht 5.7.a: simpele while-loop
 
 ```python
 from time import sleep
@@ -48,7 +49,7 @@ Tussen elke print zit 1 seconde pauze door `sleep(1)`.
 
 ---
 
-## Opdracht 2: twee loops onder elkaar
+## Opdracht 5.7.b: twee loops onder elkaar
 
 ```python
 from time import sleep
@@ -97,7 +98,7 @@ De eerste loop draait 2 keer (teller 0 en 1), daarna wordt `teller` weer 0 en dr
 
 ---
 
-## Opdracht 3: while True met sensor
+## Opdracht 5.7.c: while True met sensor
 
 ```python
 from leaphymicropython.sensors.linesensor import AnalogIR
@@ -129,7 +130,7 @@ Wat betekent `while True:`?
 
 ---
 
-## Opdracht 4: while met voorwaarde
+## Opdracht 5.7.d: while met voorwaarde
 
 ```python
 from leaphymicropython.sensors.linesensor import AnalogIR
@@ -162,7 +163,7 @@ Zodra de sensor **zwart** ziet stopt de while-loop, en dan komt `"Ik zie zwart!"
 
 ---
 
-## Opdracht 5: teller met sensor
+## Opdracht 5.7.e: teller met sensor
 
 ```python
 from leaphymicropython.sensors.linesensor import AnalogIR
@@ -200,7 +201,7 @@ Je moet de sensor **5 keer** over een zwarte lijn bewegen. Pas dan is `zwarte_li
 
 ---
 
-## Opdracht 6: met of zonder sleep?
+## Opdracht 5.7.f: met of zonder sleep?
 
 **Code A:**
 
@@ -249,7 +250,7 @@ Gebruik altijd een kleine `sleep()` in je loop, anders rent het programma weg.
 
 ---
 
-## Opdracht 7: twee sensoren combineren
+## Opdracht 5.7.g: twee sensoren combineren
 
 ```python
 from leaphymicropython.sensors.linesensor import AnalogIR
@@ -295,7 +296,7 @@ Handig om bijvoorbeeld een **kruising** op de baan te detecteren.
 
 ---
 
-## Opdracht 8: alleen bij verandering
+## Opdracht 5.7.h: alleen bij verandering
 
 ```python
 from leaphymicropython.sensors.linesensor import AnalogIR

@@ -1,5 +1,6 @@
 ---
 sidebar_position: 4
+slug: /motoren/let-op
 hide_title: true
 title: Let op!
 ---

@@ -1,8 +1,10 @@
 {
   "label": "Motoren op lego",
-  "position": 6,
+  "position": 8,
   "link": {
     "type": "generated-index",
     "description": "Leer in de volgende stappen hoe je de motoren kan verbinden met het legoframe"
-  }
+  },
+  "collapsible": true,
+  "collapsed": true
 }

@@ -1,5 +1,6 @@
 ---
 sidebar_position: 1
+slug: /motoren-op-lego
 hide_title: true
 title: Motoren op Lego
 ---
@@ -24,3 +25,9 @@ De motor klikt samen met de drie onderdelen aan je Lego-balk. Vraag je docent al
 Het tandwiel moet aan de zijkant van je frame uitsteken zodat het wiel er recht op zit. Test eerst even of de motor goed past voor je alles vastmaakt.
 
 </details>
+
+## Test het
+
+Zitten de motoren en wielen vast? Draai dan [Opdracht 7.6.a](../motoren/deel6_draaien.md) nog een keer — hetzelfde losse script, maar nu rijdt er echt iets. Zet de robot op de grond, niet op tafel: twee seconden op volle kracht is verder dan je denkt.
+
+Rijdt hij achteruit in plaats van vooruit? Dan zitten de twee draadjes van die motor omgekeerd in de klem; wissel ze om.

@@ -1,5 +1,6 @@
 ---
 sidebar_position: 3
+slug: /scherm/materiaal
 hide_title: true
 title: Materiaal
 ---

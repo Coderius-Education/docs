@@ -1,5 +1,6 @@
 ---
 sidebar_position: 1
+slug: /frame
 ---
 import PdfFile from '@site/static/bricklink_studio/bom_lego.pdf';
 import ObjViewer from '@site/src/components/ObjViewer';

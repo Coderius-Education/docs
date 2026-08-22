@@ -2,11 +2,12 @@
 // Mirrors what pyboard.py / mpremote does, but in the browser.
 
 // Minimal WebSerial types — the standard lib.dom typing is gated behind newer TS libs.
-interface SerialPort {
+export interface SerialPort {
   readable: ReadableStream<Uint8Array> | null;
   writable: WritableStream<Uint8Array> | null;
   open(options: { baudRate: number }): Promise<void>;
   close(): Promise<void>;
+  getInfo?(): { usbVendorId?: number; usbProductId?: number };
 }
 
 interface SerialPortFilter {
@@ -34,6 +35,17 @@ type PendingRead =
       resolve: (v: Uint8Array) => void;
       reject: (e: Error) => void;
       timer: ReturnType<typeof setTimeout>;
+    }
+  | {
+      // Stroomt bytes direct door naar onChunk tot de terminator-byte komt.
+      // Voor live output van een draaiend programma; bewust zonder timeout,
+      // want een while True-loop mag uren draaien tot de leerling stopt.
+      kind: 'stream';
+      terminator: number;
+      onChunk: (v: Uint8Array) => void;
+      resolve: () => void;
+      reject: (e: Error) => void;
+      timer: null;
     };
 
 function findPattern(buf: number[], pat: Uint8Array): number {
@@ -79,16 +91,29 @@ export class SerialClient {
     return this.mode === 'raw' ? 'busy' : 'connected';
   }
 
+  /** USB-info van de verbonden poort (browsers geven geen vriendelijke naam). */
+  get portInfo(): { usbVendorId?: number; usbProductId?: number } | null {
+    return this.port?.getInfo?.() ?? null;
+  }
+
   async connect(): Promise<void> {
     if (!SerialClient.isSupported()) throw new Error('WebSerial niet ondersteund in deze browser.');
     const port = await (navigator as NavigatorWithSerial).serial.requestPort({
       filters: RP2040_PORT_FILTERS,
     });
     await port.open({ baudRate: 115200 });
-    this.port = port;
+    this.attach(port);
+  }
+
+  /**
+   * Koppel een al geopende poort. Los van connect() zodat tests een
+   * nagemaakte poort kunnen aanbieden zonder WebSerial/browser.
+   */
+  attach(port: SerialPort): void {
     if (!port.readable || !port.writable) {
       throw new Error('Serieel apparaat heeft geen readable/writable stream na open().');
     }
+    this.port = port;
     this.reader = port.readable.getReader();
     this.writer = port.writable.getWriter();
     this.buffer = [];
@@ -124,7 +149,7 @@ export class SerialClient {
     if (this.pending) {
       const p = this.pending;
       this.pending = null;
-      clearTimeout(p.timer);
+      if (p.timer !== null) clearTimeout(p.timer);
       p.reject(new Error('disconnected'));
     }
   }
@@ -142,6 +167,14 @@ export class SerialClient {
     } catch (e) {
       // stream error (e.g. cable unplugged)
     } finally {
+      // Zonder dit blijft een pending read — het 'stream'-type heeft bewust
+      // geen timeout — na een kabelverlies voor altijd hangen.
+      if (this.pending) {
+        const p = this.pending;
+        this.pending = null;
+        if (p.timer !== null) clearTimeout(p.timer);
+        p.reject(new Error('disconnected'));
+      }
       this.onDisconnect?.();
     }
   }
@@ -155,6 +188,17 @@ export class SerialClient {
         this.pending = null;
         clearTimeout(p.timer);
         p.resolve(out);
+      } else if (p.kind === 'stream') {
+        const idx = this.buffer.indexOf(p.terminator);
+        if (idx < 0) {
+          // Terminator nog niet gezien: stuur alles door en blijf wachten.
+          if (this.buffer.length > 0) p.onChunk(new Uint8Array(this.buffer.splice(0)));
+          return;
+        }
+        if (idx > 0) p.onChunk(new Uint8Array(this.buffer.splice(0, idx)));
+        this.buffer.splice(0, 1); // de terminator zelf
+        this.pending = null;
+        p.resolve();
       } else {
         const idx = findPattern(this.buffer, p.pattern);
         if (idx < 0) return;
@@ -182,6 +226,15 @@ export class SerialClient {
       }, timeoutMs);
       const r: PendingRead = { kind: 'bytes', n, resolve, reject, timer };
       this.pending = r;
+      this.serviceBuffer();
+    });
+  }
+
+  /** Stroom bytes naar onChunk tot de terminator; geen timeout (zie 'stream'). */
+  private readStream(terminator: number, onChunk: (v: Uint8Array) => void): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (this.pending) return reject(new Error('concurrent read'));
+      this.pending = { kind: 'stream', terminator, onChunk, resolve, reject, timer: null };
       this.serviceBuffer();
     });
   }
@@ -234,11 +287,19 @@ export class SerialClient {
   /**
    * Enter raw REPL, run code via raw-paste, leave raw REPL again,
    * and return whatever the board printed on stdout/stderr.
+   *
+   * Met een onOutput-callback stroomt de uitvoer (stdout én stderr) live
+   * binnen terwijl het programma draait, zonder timeout — voor "Test direct"
+   * met een while True-loop die pas stopt als de leerling op Stop drukt.
    */
-  async runCode(code: string, timeoutMs = 30000): Promise<{ stdout: string; stderr: string }> {
+  async runCode(
+    code: string,
+    timeoutMs = 30000,
+    onOutput?: (text: string) => void,
+  ): Promise<{ stdout: string; stderr: string }> {
     await this.enterRawRepl();
     try {
-      const result = await this.execRawPaste(code, timeoutMs);
+      const result = await this.execRawPaste(code, timeoutMs, onOutput);
       return result;
     } finally {
       await this.exitRawRepl();
@@ -273,6 +334,7 @@ export class SerialClient {
   private async execRawPaste(
     code: string,
     timeoutMs: number,
+    onOutput?: (text: string) => void,
   ): Promise<{ stdout: string; stderr: string }> {
     // Begin raw-paste: CAN 'A' SOH
     await this.writeRaw(new Uint8Array([0x05, 0x41, 0x01]));
@@ -306,6 +368,24 @@ export class SerialClient {
     await this.writeRaw(new Uint8Array([0x04]));
     const eofAck = await this.readBytes(1, 5000);
     if (eofAck[0] !== 0x04) throw new Error('einde-input niet bevestigd');
+
+    if (onOutput) {
+      // Live doorgeven; eigen decoders per fase zodat multi-byte-tekens die
+      // over een chunkgrens vallen goed samenkomen.
+      const verzamel = (decoder: TextDecoder, delen: string[]) => (bytes: Uint8Array) => {
+        const tekst = decoder.decode(bytes, { stream: true });
+        if (tekst) {
+          delen.push(tekst);
+          onOutput(tekst);
+        }
+      };
+      const stdoutDelen: string[] = [];
+      const stderrDelen: string[] = [];
+      await this.readStream(0x04, verzamel(new TextDecoder(), stdoutDelen));
+      await this.readStream(0x04, verzamel(new TextDecoder(), stderrDelen));
+      await this.readUntil(new Uint8Array([0x3e]), 5000); // raw REPL '>' prompt
+      return { stdout: stdoutDelen.join(''), stderr: stderrDelen.join('') };
+    }
 
     const stdoutRaw = await this.readUntil(new Uint8Array([0x04]), timeoutMs);
     const stderrRaw = await this.readUntil(new Uint8Array([0x04]), timeoutMs);

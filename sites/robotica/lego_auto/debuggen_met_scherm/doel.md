@@ -1,5 +1,6 @@
 ---
 sidebar_position: 1
+slug: /scherm
 title: Wat is de bedoeling?
 ---
 

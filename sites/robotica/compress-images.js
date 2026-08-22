@@ -4,7 +4,7 @@ const path = require('node:path');
 // Simple image compression script
 // This will create a backup and compress images
 
-const imageDir = process.argv[2] || './lego_auto/ir_sensor_aan_lego';
+const imageDir = process.argv[2] || './lego_auto/analoog_ir';
 const quality = Number.parseInt(process.argv[3]) || 70;
 const maxWidth = Number.parseInt(process.argv[4]) || 1200;
 
@@ -19,9 +19,9 @@ OPTIE 1: Gebruik een online tool (makkelijkst!)
 ----------------------------------------
 1. Ga naar https://tinyjpg.com/
 2. Sleep deze bestanden erin:
-   - lego_auto/ir_sensor_aan_lego/ir_0.jpg (6.9MB)
-   - lego_auto/ir_sensor_aan_lego/ir_1.jpg (7.5MB)
-   - lego_auto/ir_sensor_aan_lego/ir_2.jpg (2.1MB)
+   - lego_auto/analoog_ir/ir_0.jpg
+   - lego_auto/analoog_ir/ir_1.jpg
+   - lego_auto/analoog_ir/ir_2.jpg
 3. Download de gecomprimeerde versies
 4. Vervang de originele bestanden
 

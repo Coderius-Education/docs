@@ -132,6 +132,33 @@ jobs:
           echo "$(wc -l < sites/godot/godot-tests/extracted/labels.txt) labels gecontroleerd, $mist niet gevonden."
           exit $((mist > 0))
 
+  # De robotica-lessen bevatten MicroPython die verder nergens wordt
+  # uitgevoerd — er is geen board in CI. Deze job compileert elk python-blok
+  # uit de docs (puur syntactisch, CPython volstaat daarvoor); een typefout of
+  # kapot voorbeeld valt zo hier op in plaats van bij een leerling die hem
+  # overtypt. Blokkeert `build` bewust niet: dit gaat over de inhoud van de
+  # lessen, niet over of de site bouwt.
+  robotica:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Codeblokken uit de docs halen
+        run: pnpm --filter @coderius/robotica-docs lego:extract
+
+      - name: Codevoorbeelden compileren
+        run: python3 sites/robotica/src/lego-tests/compileer.py
+
   checks:
     runs-on: ubuntu-latest
     steps:
