@@ -211,6 +211,14 @@ export default function WebMicroEditor(): React.JSX.Element {
   const samplesRef = useRef<number[][]>([]);
   const lineBufRef = useRef<string>('');
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  // Verhoogd bij elk nieuw sample; de tekenloop slaat identieke frames over.
+  const plotVersieRef = useRef<number>(0);
+  // Spiegel van `status` voor de sneltoetsen: die moeten dezelfde
+  // busy-blokkering hebben als de uitgeschakelde toolbar-knoppen.
+  const statusRef = useRef<Status>('disconnected');
+  useEffect(() => {
+    statusRef.current = status;
+  }, [status]);
 
   const isDirty = code !== loadedCode;
 
@@ -254,7 +262,9 @@ export default function WebMicroEditor(): React.JSX.Element {
     lineBufRef.current += text;
     const delen = lineBufRef.current.split('\n');
     lineBufRef.current = delen.pop() ?? '';
-    for (const regel of delen) voegSample(samplesRef.current, regel.trim());
+    for (const regel of delen) {
+      if (voegSample(samplesRef.current, regel.trim())) plotVersieRef.current += 1;
+    }
 
     setReplText((prev) => {
       const next = (prev + text).slice(-20000); // cap at ~20KB
@@ -265,6 +275,8 @@ export default function WebMicroEditor(): React.JSX.Element {
   const clearRepl = useCallback(() => {
     samplesRef.current = [];
     lineBufRef.current = '';
+    plotVersieRef.current += 1;
+    setFoutWeggedrukt(null);
     setReplText('');
   }, []);
 
@@ -294,11 +306,16 @@ export default function WebMicroEditor(): React.JSX.Element {
 
   // De plotter tekent op een eigen ritme vanuit de sample-ref, zodat een
   // print-loop van 100 Hz geen 100 React-renders per seconde veroorzaakt.
+  // Zonder nieuwe samples wordt er ook niet hertekend (batterij/beamer).
   useEffect(() => {
     if (!plotterAan) return;
     let raf = 0;
+    let getekend = -1;
     const teken = () => {
-      if (canvasRef.current) tekenPlot(canvasRef.current, samplesRef.current);
+      if (canvasRef.current && plotVersieRef.current !== getekend) {
+        tekenPlot(canvasRef.current, samplesRef.current);
+        getekend = plotVersieRef.current;
+      }
       raf = requestAnimationFrame(teken);
     };
     raf = requestAnimationFrame(teken);
@@ -344,7 +361,7 @@ export default function WebMicroEditor(): React.JSX.Element {
 
   const runOnBoard = useCallback(async () => {
     const c = clientRef.current;
-    if (!c) return;
+    if (!c || statusRef.current === 'busy') return;
     if (
       currentFile &&
       currentFile !== '/main.py' &&
@@ -373,7 +390,7 @@ export default function WebMicroEditor(): React.JSX.Element {
 
   const saveCurrent = useCallback(async () => {
     const c = clientRef.current;
-    if (!c || !currentFile) return;
+    if (!c || !currentFile || statusRef.current === 'busy') return;
     setBusy();
     try {
       const fs = new BoardFS(c);
@@ -390,7 +407,7 @@ export default function WebMicroEditor(): React.JSX.Element {
   /** Draait de editor-code eenmalig via de raw REPL, zonder main.py aan te raken. */
   const testDirect = useCallback(async () => {
     const c = clientRef.current;
-    if (!c) return;
+    if (!c || statusRef.current === 'busy') return;
     setBusy();
     clearRepl();
     appendRepl('[test zonder opslaan — Stop onderbreekt]\n');
@@ -445,7 +462,7 @@ export default function WebMicroEditor(): React.JSX.Element {
 
   const herstart = useCallback(async () => {
     const c = clientRef.current;
-    if (!c) return;
+    if (!c || statusRef.current === 'busy') return;
     clearRepl();
     appendRepl('[herstart: main.py draait opnieuw]\n');
     try {
@@ -516,7 +533,11 @@ export default function WebMicroEditor(): React.JSX.Element {
 
   const editorExtensions = useMemo(() => {
     const ext: Extension[] = [...pythonTabExtensions, sneltoetsen];
-    if (foutZichtbaar && fout?.regel && fout.bron === 'main.py' && currentFile === '/main.py') {
+    // <stdin>-tracebacks komen van "Test direct" en passen 1-op-1 op de
+    // editorbuffer; main.py-fouten alleen markeren als main.py ook openstaat.
+    const markeerbaar =
+      fout?.bron === '<stdin>' || (fout?.bron === 'main.py' && currentFile === '/main.py');
+    if (foutZichtbaar && fout?.regel && markeerbaar) {
       ext.push(foutRegelExtension(fout.regel, styles.foutRegel));
     }
     return ext;
@@ -643,7 +664,7 @@ export default function WebMicroEditor(): React.JSX.Element {
 
   const saveAs = useCallback(async () => {
     const c = clientRef.current;
-    if (!c) return;
+    if (!c || statusRef.current === 'busy') return;
     const invoer = prompt('Bestandsnaam op het board:', currentFile ?? '/mijn_script.py');
     if (!invoer || !invoer.trim()) return;
     let pad = invoer.trim();
@@ -678,6 +699,8 @@ export default function WebMicroEditor(): React.JSX.Element {
         `[library op board: ${meta.repo}@${meta.branch}, geïnstalleerd op ${meta.installedAt.slice(0, 10)}]\n`,
       );
     } catch {
+      // Geen stempel: kijk of de library er überhaupt staat. Faalt ook dat,
+      // dan is het een verbindingsprobleem — niet "geen library" melden.
       try {
         const lib = await fs.listdir('/lib');
         appendRepl(
@@ -685,8 +708,8 @@ export default function WebMicroEditor(): React.JSX.Element {
             ? '[library aanwezig; herkomst onbekend (niet via deze editor geïnstalleerd)]\n'
             : '[geen leaphymicropython-library op het board gevonden]\n',
         );
-      } catch {
-        appendRepl('[geen leaphymicropython-library op het board gevonden]\n');
+      } catch (err) {
+        appendRepl(`\n[check mislukt: ${friendlyError(err)}]\n`);
       }
     }
     setIdle();

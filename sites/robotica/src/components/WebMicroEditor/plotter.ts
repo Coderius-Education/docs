@@ -9,8 +9,10 @@ export const MAX_REEKSEN = 4;
 export const MAX_SAMPLES = 300;
 
 export function parseGetallen(regel: string): number[] {
-  // Editor-statusmeldingen als "[verbonden]" horen niet in de grafiek.
-  if (regel.startsWith('[')) return [];
+  // Editor-statusmeldingen als "[verbonden]" horen niet in de grafiek, en
+  // prompt/echo-regels van de REPL (">>> sleep(2)") evenmin — anders wordt
+  // een zelf getypt getal een nep-meetpunt.
+  if (regel.startsWith('[') || regel.includes('>>>')) return [];
   return [...regel.matchAll(GETAL_RE)].map((m) => Number(m[0])).slice(0, MAX_REEKSEN);
 }
 

@@ -24,6 +24,11 @@ describe('parseGetallen', () => {
     expect(parseGetallen('[opgeslagen: /main.py]')).toEqual([]);
   });
 
+  it('negeert prompt- en echo-regels van de REPL', () => {
+    expect(parseGetallen('>>> sleep(2)')).toEqual([]);
+    expect(parseGetallen('>>> print(800)')).toEqual([]);
+  });
+
   it('begrenst op vier reeksen', () => {
     expect(parseGetallen('1 2 3 4 5 6')).toEqual([1, 2, 3, 4]);
   });

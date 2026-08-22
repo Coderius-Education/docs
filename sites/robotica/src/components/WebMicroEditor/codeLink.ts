@@ -26,8 +26,25 @@ export function maakEditorLink(code: string): string {
 export function leesEditorHash(hash: string): string | null {
   if (!hash.startsWith(HASH_PREFIX)) return null;
   try {
-    return vanBase64(decodeURIComponent(hash.slice(HASH_PREFIX.length)));
+    const code = vanBase64(decodeURIComponent(hash.slice(HASH_PREFIX.length)));
+    // Een afgeknotte link (#code=) mag nooit de eigen code van de leerling
+    // door een lege buffer vervangen.
+    return code === '' ? null : code;
   } catch {
     return null;
   }
+}
+
+/**
+ * Bepaalt of een python-codeblok een "Open in de editor"-link verdient.
+ * Niet voor REPL-transcripten, niet voor ingesprongen fragmenten (die horen
+ * ín een groter script en falen los met een IndentationError), en niet als
+ * de auteur het blok met de meta `geen-editor-link` heeft gemarkeerd.
+ */
+export function verdientEditorLink(code: string, metastring?: string): boolean {
+  if (metastring?.includes('geen-editor-link')) return false;
+  if (code.includes('>>>')) return false;
+  const eersteRegel = code.split('\n').find((r) => r.trim() !== '');
+  if (!eersteRegel || /^\s/.test(eersteRegel)) return false;
+  return true;
 }

@@ -91,7 +91,7 @@ Wat doet `Pin.OUT`?
 </details>
 
 <details>
-<summary>Foutmelding: <code>NameError: name '...' is not defined</code></summary>
+<summary>Foutmelding: <code>NameError: name '...' isn't defined</code></summary>
 
 **Oorzaak:** De naam in regel 3 is niet precies dezelfde als de naam in regel 2. Python ziet `pin_van_lampje` en `pin_van_lampie` als twee verschillende variabelen.
 
