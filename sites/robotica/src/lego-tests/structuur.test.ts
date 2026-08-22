@@ -1,7 +1,8 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import { alleLesbestanden } from './extract';
 
 // Bewaakt de structuur van het lego_auto-traject: opdrachtnummers die kloppen
 // met de plek van de pagina, imports die echt bestaan, unieke posities en
@@ -30,27 +31,20 @@ function categoriePositie(map: string): number | undefined {
 }
 
 function verzamelPaginas(): Pagina[] {
-  const paginas: Pagina[] = [];
-  const loop = (map: string, hoofdstuk: number | undefined) => {
-    for (const entry of readdirSync(map, { withFileTypes: true })) {
-      const volledig = join(map, entry.name);
-      if (entry.isDirectory()) {
-        loop(volledig, categoriePositie(volledig));
-      } else if (/\.mdx?$/.test(entry.name)) {
-        const inhoud = readFileSync(volledig, 'utf8');
-        paginas.push({
-          pad: volledig,
-          rel: volledig.slice(LEGO.length + 1),
-          inhoud,
-          positie: Number(inhoud.match(/^sidebar_position:\s*(\d+)/m)?.[1]) || undefined,
-          slug: inhoud.match(/^slug:\s*(\S+)/m)?.[1],
-          hoofdstuk,
-        });
-      }
-    }
-  };
-  loop(LEGO, undefined);
-  return paginas;
+  return alleLesbestanden(LEGO).map((pad) => {
+    const inhoud = readFileSync(pad, 'utf8');
+    // Let op: 0 is een geldige positie — geen `|| undefined`, dat maakt van
+    // een falsy nul "geen positie".
+    const positieMatch = inhoud.match(/^sidebar_position:\s*(\d+)/m);
+    return {
+      pad,
+      rel: pad.slice(LEGO.length + 1),
+      inhoud,
+      positie: positieMatch ? Number(positieMatch[1]) : undefined,
+      slug: inhoud.match(/^slug:\s*(\S+)/m)?.[1],
+      hoofdstuk: categoriePositie(dirname(pad)),
+    };
+  });
 }
 
 const paginas = verzamelPaginas();
@@ -123,27 +117,12 @@ describe('Voorkennis-links naar de python-site', () => {
   // Voorkennis-blokken.
   const ITEM_RE = /\{site: 'python', to: '([^']+)', label: '([^']+)'\}/g;
 
-  function verzamelInhoud(wortel: string, prefix: string): { rel: string; inhoud: string }[] {
-    const out: { rel: string; inhoud: string }[] = [];
-    const loop = (map: string) => {
-      for (const entry of readdirSync(map, { withFileTypes: true })) {
-        const volledig = join(map, entry.name);
-        if (entry.isDirectory()) loop(volledig);
-        else if (/\.mdx?$/.test(entry.name)) {
-          out.push({
-            rel: `${prefix}/${volledig.slice(wortel.length + 1)}`,
-            inhoud: readFileSync(volledig, 'utf8'),
-          });
-        }
-      }
-    };
-    loop(wortel);
-    return out;
-  }
-
   const alleZones = [
     ...paginas.map((p) => ({ rel: `lego_auto/${p.rel}`, inhoud: p.inhoud })),
-    ...verzamelInhoud(DOCS, 'docs'),
+    ...alleLesbestanden(DOCS).map((pad) => ({
+      rel: `docs/${pad.slice(DOCS.length + 1)}`,
+      inhoud: readFileSync(pad, 'utf8'),
+    })),
   ];
 
   function pythonUrlBestaat(to: string): boolean {

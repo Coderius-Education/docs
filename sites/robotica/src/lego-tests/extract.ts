@@ -34,8 +34,10 @@ const BLOK = /```python\n([\s\S]*?)```/g;
 /**
  * Sommige blokken horen niet te compileren: een bewust kapot voorbeeld
  * ("wat is er mis?"), of een fragment dat alleen binnen een groter script
- * betekenis heeft. De bron markeert ze met een MDX-commentaar vlak boven het
- * blok — onzichtbaar voor de leerling. Let op de MDX-vorm: `<!-- -->` laat
+ * betekenis heeft. De bron markeert ze met een MDX-commentaar boven het blok
+ * — onzichtbaar voor de leerling. De marker geldt voor precies één blok: het
+ * eerstvolgende na de marker (alles tussen het vorige codeblok en dit blok
+ * telt mee, hoe lang dat stuk ook is). Let op de MDX-vorm: `<!-- -->` laat
  * de docusaurus-build stuklopen.
  */
 const NIET_COMPILEREN = '{/* niet-compileren:';
@@ -61,9 +63,13 @@ export function fragmentenUit(
   bron: string,
   inhoud: string,
 ): { fragmenten: Fragment[]; overgeslagen: Overgeslagen[] } {
-  // Pagina's zonder slug krijgen hun bestandsnaam, zodat de fragmentnamen
-  // niet van het absolute pad afhangen.
-  const slug = slugVan(inhoud) ?? (bron.split('/').pop() ?? bron).replace(/\.mdx?$/, '');
+  // Pagina's zonder slug krijgen mapnaam plus bestandsnaam: gelijknamige
+  // bestanden in verschillende tutorials (4_code.md, 2_wiring.md, …) botsen
+  // dan niet, en de naam hangt nog steeds niet van het absolute pad af.
+  const delen = bron.split('/');
+  const bestand = (delen.pop() ?? bron).replace(/\.mdx?$/, '');
+  const mapNaam = delen.pop();
+  const slug = slugVan(inhoud) ?? (mapNaam ? `${mapNaam}_${bestand}` : bestand);
   const basis = slug.replace(/[^a-z0-9]+/gi, '_');
   const fragmenten: Fragment[] = [];
   const overgeslagen: Overgeslagen[] = [];
@@ -77,7 +83,9 @@ export function fragmentenUit(
     const kop = koppen ? koppen[koppen.length - 1].replace(/^#+ /, '') : '';
     n += 1;
 
-    if (ervoor.slice(-200).includes(NIET_COMPILEREN)) {
+    const vorigeFence = ervoor.lastIndexOf('```');
+    const tussenVorigBlok = vorigeFence === -1 ? ervoor : ervoor.slice(vorigeFence + 3);
+    if (tussenVorigBlok.includes(NIET_COMPILEREN)) {
       overgeslagen.push({ bron, regel, reden: 'bewust niet-compileerbaar (marker)' });
       continue;
     }
@@ -94,7 +102,7 @@ export function fragmentenUit(
   return { fragmenten, overgeslagen };
 }
 
-function alleLesbestanden(map: string): string[] {
+export function alleLesbestanden(map: string): string[] {
   const paden: string[] = [];
   for (const entry of readdirSync(map, { withFileTypes: true })) {
     const volledig = join(map, entry.name);
@@ -110,9 +118,21 @@ export function verzamel(wortels: string[]): {
 } {
   const fragmenten: Fragment[] = [];
   const overgeslagen: Overgeslagen[] = [];
+  // Botsende namen zouden elkaars .py-bestand stil overschrijven, waarna een
+  // deel van de blokken nooit gecompileerd wordt. Liever hard falen.
+  const bronPerNaam = new Map<string, string>();
   for (const wortel of wortels) {
     for (const pad of alleLesbestanden(wortel).sort()) {
       const resultaat = fragmentenUit(pad, readFileSync(pad, 'utf8'));
+      for (const f of resultaat.fragmenten) {
+        const eerder = bronPerNaam.get(f.naam);
+        if (eerder) {
+          throw new Error(
+            `Fragmentnaam '${f.naam}' botst: ${eerder} en ${f.bron}. Geef een van beide pagina's een eigen slug.`,
+          );
+        }
+        bronPerNaam.set(f.naam, f.bron);
+      }
       fragmenten.push(...resultaat.fragmenten);
       overgeslagen.push(...resultaat.overgeslagen);
     }

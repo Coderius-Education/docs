@@ -45,7 +45,9 @@ writeFileSync(
   `${JSON.stringify(
     fragmenten.map((f) => ({
       naam: f.naam,
-      bron: f.bron.slice(SITE.length + 1),
+      // Docs-fragmenten hebben een absoluut pad, template-entries al een
+      // relatief — alleen het eerste geval afkorten.
+      bron: f.bron.startsWith(SITE) ? f.bron.slice(SITE.length + 1) : f.bron,
       regel: f.regel,
       kop: f.kop,
     })),
