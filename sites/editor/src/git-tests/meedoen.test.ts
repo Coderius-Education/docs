@@ -91,6 +91,35 @@ describe('de stappen zijn uitvoerbaar zonder voorkennis van de interface', () =>
   });
 });
 
+describe('de leerlijn stuurt je precies één keer door', () => {
+  it('per tutorial staat "Volgende tutorial" op hoogstens één pagina', () => {
+    // Twee keer doorsturen binnen dezelfde tutorial laat de leerling raden
+    // welke de echte is. De conventie: op de laatste pagina, dus op
+    // problemen.md.
+    const dubbel: string[] = [];
+
+    for (const map of [...DOE_TUTORIALS, 'basis', 'github']) {
+      const met = readdirSync(join(GIT, map))
+        .filter((f) => f.endsWith('.md') || f.endsWith('.mdx'))
+        .filter((f) => /\n## Volgende tutorial/.test(tekst(map, f)));
+      if (met.length > 1) dubbel.push(`${map}: ${met.join(', ')}`);
+    }
+
+    expect(dubbel).toEqual([]);
+  });
+
+  it('elke tutorial behalve de laatste stuurt je door', () => {
+    const zonder = ['basis', 'github', 'vscode', 'push', 'pull-clone', 'branches'].filter(
+      (map) =>
+        !readdirSync(join(GIT, map))
+          .filter((f) => f.endsWith('.md') || f.endsWith('.mdx'))
+          .some((f) => /\n## Volgende tutorial/.test(tekst(map, f))),
+    );
+
+    expect(zonder).toEqual([]);
+  });
+});
+
 describe('de mappen die geen doe-tutorial zijn', () => {
   it('staan niet per ongeluk in de lijst', () => {
     // basis draait in de simulator (die heeft zijn eigen vinkje) en github

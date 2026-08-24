@@ -59,9 +59,31 @@ afterAll(() => {
   }
 });
 
+// De hints in `git status` (`git restore <file>...`) bestaan pas sinds git
+// 2.23 uit 2019. Daaronder wijkt de uitvoer af en zegt een falende test niets
+// over deze repository — dus noemen we die ondergrens hier, in plaats van de
+// gebruiker te laten raden waarom zijn machine rood staat.
+const MINIMALE_GIT = [2, 23];
+
+function versie(): [number, number] {
+  const m = git(['--version']).match(/(\d+)\.(\d+)/);
+  if (!m) throw new Error(`Onverwachte uitvoer van git --version: ${git(['--version'])}`);
+  return [Number(m[1]), Number(m[2])];
+}
+
 describe('git staat op deze machine', () => {
   it('is te vinden en noemt zijn versie', () => {
     expect(git(['--version'])).toMatch(/^git version \d+\.\d+/);
+  });
+
+  it('is nieuw genoeg voor de uitvoer die de simulator nabootst', () => {
+    const [groot, klein] = versie();
+    const oud = groot < MINIMALE_GIT[0] || (groot === MINIMALE_GIT[0] && klein < MINIMALE_GIT[1]);
+
+    expect(
+      oud,
+      `git ${groot}.${klein} is te oud voor deze test; vanaf ${MINIMALE_GIT.join('.')} schrijft git de restore-hints die de simulator nabootst. Werk git bij.`,
+    ).toBe(false);
   });
 });
 

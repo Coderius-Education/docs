@@ -28,4 +28,4 @@ Welkomsbericht onderaan hello.txt toevoegen
 
 ## Wat je nu ziet
 
-GitHub maakt PR **#1** aan (als dit je eerste is) en stuurt je naar de PR-pagina. Bovenaan staat je titel met een groen **Open**-label ernaast, en onderaan een groene knop **Merge pull request**. Staat daar in plaats daarvan een grijze knop met "Can't automatically merge", dan is er een conflict — zie [Er gaat iets mis](./problemen).
+GitHub maakt PR **#1** aan (als dit je eerste is) en stuurt je naar de PR-pagina. Bovenaan staat je titel met een groen **Open**-label ernaast, en onderaan een groene knop **Merge pull request**. Staat er in plaats daarvan **Can't automatically merge** en is de knop grijs, dan is er een conflict — zie [Er gaat iets mis](./problemen).

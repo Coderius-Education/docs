@@ -17,6 +17,6 @@ Je beheerst nu de pull/push-cyclus: lokaal committen, online zetten, weer ophale
 
 Voor samenwerken — of voor netjes werken op je eigen projecten — kom je nog twee dingen tegen: **branches** (parallel werken zonder `main` te breken) en **pull requests** (een branch via GitHub mergen).
 
-## Volgende tutorial
+## Loopt er iets vast?
 
-- **[Branches](/git/branches/)** — werk parallel zonder je `main`-versie te breken. Voorbereiding op pull requests.
+Zie [Er gaat iets mis](./problemen).

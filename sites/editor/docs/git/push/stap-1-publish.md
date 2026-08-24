@@ -18,7 +18,7 @@ Open in VS Code je map `git-oefenen` uit de vorige tutorial. Zorg dat je daar al
 
 ## Wat je nu ziet
 
-Ververs je github.com-pagina (`https://github.com/<gebruiker>/git-oefenen`). Waar eerst instructies stonden, staat nu je bestandenlijst met `hello.txt` erin. Linksboven, in de dropdown die eerst leeg was, staat `main`.
+Ververs je github.com-pagina (`https://github.com/<gebruiker>/git-oefenen`). Waar eerst instructies stonden, staat nu je bestandenlijst met `hello.txt` erin. Linksboven staat een keuzemenu met de branchnaam `main` — dat was er nog niet toen de repository leeg was.
 
 In VS Code is de knop **Publish Branch** vervangen door **Sync Changes**.
 
