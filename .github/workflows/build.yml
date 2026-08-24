@@ -189,24 +189,66 @@ jobs:
       - name: Codevoorbeelden compileren
         run: python3 scripts/compileer-blokken.py sites/fullstack/code-tests/extracted
 
-  # Play gaat een stap verder dan compileren: elk speeltuin-blok wordt echt
-  # uitgevoerd tegen de gebundelde wheel uit static/whl/ — dezelfde die de
-  # browser serveert. Kale blokken worden alleen gecompileerd. Bewust kapotte
-  # lesvoorbeelden dragen een niet-draaien/niet-compileren-marker.
-  play:
+  # Lestekst is het product van deze repo, maar niets controleerde hem. Een
+  # typefout, een emoji, een "u" in plaats van "je" of een alinea vol vet:
+  # de build merkt er niets van en een reviewer die honderden regels diff
+  # doorleest ook niet. Deze job doet twee dingen op 642 pagina's:
+  #
+  #   spelling  cspell met de nl_NL-dictionary plus cspell-woorden.txt, de
+  #             eigen lijst met vaktermen en samenstellingen.
+  #   stijl     de regels uit org-handbook/WRITING_STYLE_GUIDE.md, uitgevoerd
+  #             door packages/shared/stijl.js. Code, frontmatter en JSX gaan
+  #             er eerst uit; een uitroepteken in print("Klaar!") is geen
+  #             stijlfout.
+  #
+  # Bewust niet-blokkerend, en bewust geen poort voor `build`. De sites die
+  # uit losse repos zijn gemigreerd hebben nog ruim 1900 waarschuwingen staan;
+  # zolang die er zijn zou blokkeren betekenen dat niemand nog iets kan
+  # mergen. De annotaties staan wel meteen in de diff van de pull request, dus
+  # nieuwe tekst valt op. Zodra de schuld is opgeruimd: continue-on-error weg
+  # en --streng erbij, dan tellen waarschuwingen ook mee.
+  #
+  # De regels zelf zijn getest in packages/shared/stijl.test.ts, en die test
+  # loopt in de `test`-job wél blokkerend mee. Zo kan een regel niet stilletjes
+  # stukgaan en toch groen blijven.
+  tekst:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
 
-      - uses: actions/setup-python@v6
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v5
         with:
-          python-version: '3.12'
+          node-version: 22
+          cache: pnpm
 
-      - name: Play-dependencies installeren
-        run: pip install pygame-ce numpy pymunk
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-      - name: Codevoorbeelden uitvoeren tegen de gebundelde wheel
-        run: python3 scripts/draai-play-blokken.py
+      # cspell schrijft "bestand:regel:kolom - Unknown word (x)". Dat omzetten
+      # naar een annotatie zet de melding op de juiste regel in de diff in
+      # plaats van onderin het joblog.
+      - name: Spelling (cspell)
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          pnpm run spel > "$RUNNER_TEMP/spel.txt" 2>&1 || uitkomst=$?
+          sed -n 's|^\(.*\):\([0-9]*\):\([0-9]*\) - \(.*\)$|::warning file=\1,line=\2,col=\3,title=spelling::\4|p' "$RUNNER_TEMP/spel.txt"
+          cat "$RUNNER_TEMP/spel.txt"
+          aantal=$(grep -c 'Unknown word' "$RUNNER_TEMP/spel.txt" || true)
+          {
+            echo "## Spelling"
+            echo
+            echo "$aantal onbekende woorden. Klopt een woord wel? Zet het in \`cspell-woorden.txt\`."
+            echo
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit ${uitkomst:-0}
+
+      # Schrijft zelf al annotaties en een tabel in de job-samenvatting.
+      - name: Stijl (schrijfgids)
+        continue-on-error: true
+        run: pnpm run stijl
 
   checks:
     runs-on: ubuntu-latest
