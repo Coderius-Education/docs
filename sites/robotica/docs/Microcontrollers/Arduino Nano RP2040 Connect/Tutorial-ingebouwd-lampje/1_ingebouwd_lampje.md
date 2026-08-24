@@ -17,11 +17,11 @@ Je eerste programma. Op de Nano RP2040 Connect zit een **ingebouwd lampje** met 
 
 Typ deze regel in je editor en druk op **Run**:
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 from machine import Pin
 ```
-
-**`machine`** is een module: een verzameling kant-en-klaar gereedschap die al op je bord zit. Met `from machine import Pin` pak je er één stuk gereedschap uit, `Pin`, waarmee je de pinnen van het bord kunt bedienen.
 
 Er gebeurt na Run niets zichtbaars. Dat klopt: je hebt alleen gereedschap klaargelegd, je gebruikt het nog nergens.
 
@@ -34,6 +34,12 @@ from machine import Pin
 
 pin_van_lampje = Pin('LED', Pin.OUT)
 ```
+
+<Regel n={1}>
+`machine` is een module: een verzameling kant-en-klaar gereedschap die al op je bord zit. Met `from machine import Pin` pak je er één stuk uit, `Pin`, waarmee je de pinnen van het bord kunt bedienen.
+</Regel>
+
+</CodeUitleg>
 
 `Pin('LED', Pin.OUT)` maakt een pin-object aan. Tussen de haakjes geef je twee dingen mee:
 

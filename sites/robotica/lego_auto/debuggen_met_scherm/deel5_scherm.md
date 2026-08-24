@@ -31,7 +31,9 @@ Het scherm gaat via een 4-pins jumperkabel naar de **multiplexer**: VCC → 3,3V
 
 Nieuw onderdeel, dus eerst een minimale test — los van je robotscript:
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 from leaphymicropython.actuators.oled_screen import OLEDSH1106
 
 oled = OLEDSH1106(width=128, height=64, channel=7)
@@ -41,9 +43,15 @@ oled.text('Hallo robot', 0, 0)
 oled.show()
 ```
 
-**`OLEDSH1106(width=128, height=64, channel=7)`** maakt het scherm-object: 128 pixels breed, 64 hoog, op channel 7 van de multiplexer.
+<Regel n={3}>
+Maakt het scherm-object: 128 pixels breed, 64 hoog, op channel 7 van de multiplexer.
+</Regel>
 
-Het tekenen gaat altijd in drie stappen: **`fill('white')`** maakt het scherm leeg, **`text(tekst, x, y)`** zet tekst klaar op een positie, en **`show()`** stuurt alles in één keer naar het scherm.
+<Regel n={5} tot={7}>
+Tekenen gaat altijd in drie stappen: `fill('white')` maakt het scherm leeg, `text(tekst, x, y)` zet tekst klaar op een positie, en `show()` stuurt alles in één keer naar het scherm.
+</Regel>
+
+</CodeUitleg>
 
 ## Voorspel: wat gebeurt er zonder `show()`?
 

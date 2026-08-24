@@ -1,0 +1,106 @@
+.blok {
+  margin: 0 0 1.5rem;
+}
+
+/* Het codeblok houdt zijn eigen marge; alleen de ruimte eronder halen we weg
+   zodat de uitleg er visueel aan vastzit in plaats van los eronder te zweven. */
+.code > :global(div[class*="codeBlockContainer"]) {
+  margin-bottom: 0;
+}
+
+/* Een tint in plaats van een vlak: de syntaxkleuren moeten leesbaar blijven,
+   anders verdwijnt juist de regel die je wilt laten zien. De streep links
+   doet het echte aanwijswerk. */
+.opgelicht {
+  background: rgb(0 0 0 / 6%);
+  background: color-mix(in srgb, var(--ifm-color-primary) 13%, transparent);
+  box-shadow: inset 3px 0 0 var(--ifm-color-primary);
+}
+
+[data-theme="dark"] .opgelicht {
+  background: rgb(255 255 255 / 10%);
+  background: color-mix(in srgb, var(--ifm-color-primary) 22%, transparent);
+}
+
+.uitleg {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.uitleg > li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.75rem;
+  align-items: start;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 8px;
+  background: var(--ifm-background-surface-color);
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.uitleg > li:hover,
+.uitleg > li:focus-within,
+.actief {
+  border-color: var(--ifm-color-primary);
+  background: var(--ifm-color-emphasis-100);
+}
+
+/* Het regelnummer is de brug naar de code: hetzelfde cijfer, dezelfde plek
+   links. Daarom een vaste kolombreedte en getallen die niet verspringen. */
+.nummer {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  height: 1.6rem;
+  padding: 0 0.4rem;
+  border-radius: 999px;
+  background: var(--ifm-color-primary);
+  color: #fff;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.tekst {
+  min-width: 0;
+}
+
+.tekst > :last-child {
+  margin-bottom: 0;
+}
+
+.tekst code {
+  font-size: 0.85em;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .uitleg > li {
+    transition: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .uitleg > li {
+    grid-template-columns: auto 1fr;
+    gap: 0.5rem;
+  }
+}

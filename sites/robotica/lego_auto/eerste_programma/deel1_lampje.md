@@ -21,24 +21,32 @@ Je script is nog leeg. In deze les schrijf je de eerste twee concepten die je st
 
 Vier regels. Daarna brandt het ingebouwde lampje van je bord — zonder dat je iets hoeft aan te sluiten.
 
-## Stap 1: Typ dit in je editor
+## Typ dit in je editor
 
-Op je Nano RP2040 Connect zit een ingebouwd lampje met de naam `LED`. Typ dit over (niet plakken — het typen zelf is het oefenen) en klik op **Run op board**:
+Op je Nano RP2040 Connect zit een ingebouwd lampje met de naam `LED`. Typ dit over (niet plakken — het typen zelf is het oefenen) en klik op **Run op board**. Wijs daarna een uitleg aan; de bijbehorende regel licht dan op.
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 from machine import Pin
 
 lampje = Pin('LED', Pin.OUT)
 lampje.on()
 ```
 
-## Stap 2: Wat hier staat, regel voor regel
+<Regel n={1}>
+Haalt het gereedschap `Pin` uit de module `machine`. Die module zit ingebouwd in MicroPython en regelt alles wat met de pinnen van je bord te maken heeft.
+</Regel>
 
-**`from machine import Pin`** haalt het gereedschap `Pin` uit de module `machine`. Die module zit ingebouwd in MicroPython en regelt alles wat met de pinnen van je bord te maken heeft.
+<Regel n={3}>
+Maakt een pin-object aan: de pin met de naam `LED`, gebruikt als **uitgang** — het bord stuurt er stroom naartoe in plaats van iets te meten. Dat object bewaar je in de variabele `lampje`.
+</Regel>
 
-**`Pin('LED', Pin.OUT)`** maakt een pin-object aan: de pin met de naam `LED`, gebruikt als **uitgang** — het bord stuurt er stroom naartoe in plaats van iets te meten. Dat object bewaar je in de variabele `lampje`.
+<Regel n={4}>
+Roept de methode `on()` aan op dat object. Nu loopt er stroom, en brandt het lampje.
+</Regel>
 
-**`lampje.on()`** roept de methode `on()` aan op dat object. Nu loopt er stroom, en brandt het lampje.
+</CodeUitleg>
 
 ## Test het
 

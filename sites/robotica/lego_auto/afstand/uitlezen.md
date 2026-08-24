@@ -14,7 +14,9 @@ Steek de TOF in **channel 0** van de multiplexer. Het cijfer staat boven het ste
 
 ## Stap 1: De sensor alleen
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 from time import sleep
 from leaphymicropython.sensors.tof import TimeOfFlight
 
@@ -25,7 +27,15 @@ while True:
     sleep(1)
 ```
 
-**`TimeOfFlight(channel=0)`** maakt het sensor-object aan op channel 0 van de multiplexer. **`get_distance()`** geeft de afstand in **millimeters**.
+<Regel n={4}>
+Maakt het sensor-object aan op channel 0 van de multiplexer.
+</Regel>
+
+<Regel n={7}>
+`get_distance()` geeft de afstand in **millimeters**.
+</Regel>
+
+</CodeUitleg>
 
 ## Test het
 

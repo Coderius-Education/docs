@@ -22,7 +22,9 @@ Een `if` met de eerste van de vier situaties, en een snellere loop. Na deze les 
 
 Twee wijzigingen in je loop: het `if`-blok erbij, en de `sleep` omlaag naar `0.01` — een robot die maar vijf keer per seconde kijkt, is in een bocht al van de lijn af.
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 from time import sleep
 from leaphymicropython.sensors.linesensor import AnalogIR
 from leaphymicropython.actuators.dcmotor import DCMotors
@@ -52,7 +54,15 @@ while True:
     sleep(0.01)
 ```
 
-**`==`** vergelijkt: is de tekst in `kleur_links` gelijk aan `"white"`? **`and`** eist dat het aan beide kanten klopt. Alleen dan draaien beide motoren vol vooruit.
+<Regel n={23}>
+`==` vergelijkt: is de tekst in `kleur_links` gelijk aan `"white"`? `and` eist dat het aan beide kanten klopt.
+</Regel>
+
+<Regel n={24} tot={25}>
+Alleen als die hele voorwaarde klopt, draaien beide motoren vol vooruit.
+</Regel>
+
+</CodeUitleg>
 
 ## Test het
 

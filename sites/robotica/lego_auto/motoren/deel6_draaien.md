@@ -16,14 +16,24 @@ Eerst twee losse testjes om te ontdekken welke motor welke is. Daarna zet je de 
 
 Op het shield staan de letters **A** en **B** bij de twee motoruitgangen. Draai dit als los testje:
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 from leaphymicropython.actuators.dcmotor import DCMotors
 
 motoren = DCMotors()
 motoren.motor_a.test()
 ```
 
-**`DCMotors()`** maakt één object voor het motorshield; **`motoren.motor_a`** en **`motoren.motor_b`** zijn de twee uitgangen. **`.test()`** laat een motor kort vooruit en achteruit draaien — zo zie je meteen wélke van de twee `motor_a` is.
+<Regel n={3}>
+Maakt één object voor het motorshield. `motoren.motor_a` en `motoren.motor_b` zijn de twee uitgangen.
+</Regel>
+
+<Regel n={4}>
+`.test()` laat een motor kort vooruit en achteruit draaien — zo zie je meteen wélke van de twee `motor_a` is.
+</Regel>
+
+</CodeUitleg>
 
 Draai daarna hetzelfde testje met `motoren.motor_b.test()`.
 

@@ -34,7 +34,9 @@ Aan, even wachten, uit, even wachten — en dat steeds opnieuw. Je hebt dus herh
 
 Breid je script uit tot dit. Let op het **inspringen**: de vier regels onder `while True:` horen bij de loop en staan daarom een tab naar rechts.
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 from machine import Pin
 from time import sleep
 
@@ -47,9 +49,15 @@ while True:
     sleep(0.5)
 ```
 
-**`while True:`** betekent: blijf dit herhalen, voor altijd. Alles wat ingesprongen onder die regel staat, wordt keer op keer uitgevoerd.
+<Regel n={6}>
+Betekent: blijf dit herhalen, voor altijd. Alles wat ingesprongen onder die regel staat, wordt keer op keer uitgevoerd.
+</Regel>
 
-**`sleep(0.5)`** pauzeert een halve seconde. Daarvoor importeer je `sleep` uit de module `time` — vandaar de nieuwe regel bovenaan.
+<Regel n={8}>
+Pauzeert een halve seconde. Daarvoor importeer je `sleep` uit de module `time` — vandaar de nieuwe regel bovenaan.
+</Regel>
+
+</CodeUitleg>
 
 ## Test het
 
