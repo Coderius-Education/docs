@@ -1,6 +1,6 @@
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { alleLesbestanden, lesBestaat, parseItems } from '@coderius/shared/voorkennis';
 import { describe, expect, it } from 'vitest';
 
 // Bewaakt de <Voorkennis>-blokken ("Hier bouw je op verder"): elk pad moet echt
@@ -9,80 +9,20 @@ import { describe, expect, it } from 'vitest';
 // web-cursus de fullstack-links pas op in productie — cross-site links vallen
 // buiten de linkcheck van `pnpm build`.
 //
-// Anders dan de godot-variant linkt fullstack naar drie sites (python, web,
-// editor), en die hebben niet dezelfde mapconventie: python nummert zijn
-// mappen ("06-data" -> "data"), web en editor niet.
+// Het zoekwerk zelf staat in packages/shared/voorkennis.js, samen met godot.
+// Fullstack linkt naar drie sites (python, web, editor) en die hebben niet
+// dezelfde mapconventie; die verschillen zitten in de gedeelde helper.
 
 const FULLSTACK_DOCS = fileURLToPath(new URL('../../docs', import.meta.url));
 const SITES_ROOT = fileURLToPath(new URL('../../..', import.meta.url));
 const SITES_JS = fileURLToPath(new URL('../../../../packages/shared/sites.js', import.meta.url));
-
-// Items staan letterlijk in deze vorm in de bron, dus een regex volstaat.
-// Zelfde afspraak als scripts/check-voorkennis.mjs in algorithms.
-const ITEM_RE = /\{site: '(\w+)', to: '([^']+)', label: '([^']+)'\}/g;
-
-function alleLesbestanden(map: string): string[] {
-  const paden: string[] = [];
-  for (const entry of readdirSync(map, { withFileTypes: true })) {
-    const volledig = join(map, entry.name);
-    if (entry.isDirectory()) paden.push(...alleLesbestanden(volledig));
-    else if (/\.mdx?$/.test(entry.name)) paden.push(volledig);
-  }
-  return paden;
-}
-
-/**
- * Vertaalt een docs-URL van een andere site terug naar een bronbestand.
- * Docusaurus stript alleen een puur numeriek prefix ("06-data" -> "data",
- * maar "10a-lijsten-basis" blijft staan); een slug in de frontmatter wint
- * van de bestandsnaam.
- */
-function lesBestaat(site: string, to: string): boolean {
-  const docsMap = join(SITES_ROOT, site, 'docs');
-  if (!existsSync(docsMap)) return false;
-
-  const segmenten = to
-    .replace(/^\/docs\/?/, '')
-    .split('/')
-    .filter(Boolean);
-  if (segmenten.length === 0) return false;
-
-  // Alle segmenten op één na zijn mappen; het laatste is de pagina.
-  let huidig = docsMap;
-  for (const segment of segmenten.slice(0, -1)) {
-    const mapNaam = readdirSync(huidig, { withFileTypes: true }).find(
-      (e) => e.isDirectory() && (e.name === segment || e.name.replace(/^\d+-/, '') === segment),
-    )?.name;
-    if (!mapNaam) return false;
-    huidig = join(huidig, mapNaam);
-  }
-
-  const paginaSegment = segmenten[segmenten.length - 1];
-  for (const bestand of readdirSync(huidig)) {
-    if (!/\.mdx?$/.test(bestand)) continue;
-    const inhoud = readFileSync(join(huidig, bestand), 'utf8');
-    const slug = inhoud.match(/^slug:\s*(\S+)/m)?.[1];
-    if (slug) {
-      if (slug === to || slug === `/${paginaSegment}` || slug === paginaSegment) return true;
-      continue;
-    }
-    const kaal = bestand.replace(/\.mdx?$/, '');
-    if (kaal === paginaSegment || kaal.replace(/^\d+-/, '') === paginaSegment) return true;
-  }
-  return false;
-}
 
 type Item = { site: string; to: string; label: string };
 
 function voorkennisPerLes(): Map<string, Item[]> {
   const perLes = new Map<string, Item[]>();
   for (const pad of alleLesbestanden(FULLSTACK_DOCS)) {
-    const inhoud = readFileSync(pad, 'utf8');
-    const items = [...inhoud.matchAll(ITEM_RE)].map((m) => ({
-      site: m[1],
-      to: m[2],
-      label: m[3],
-    }));
+    const items = parseItems(readFileSync(pad, 'utf8'));
     if (items.length > 0) {
       perLes.set(
         pad
@@ -122,11 +62,26 @@ describe('fullstack Voorkennis-blokken', () => {
     ]);
   });
 
+  it('de regex vangt elk item, ook met een apostrof in het label', () => {
+    // Telt alle label-voorkomens in de docs en vergelijkt dat met wat de
+    // parser oplevert. Zonder deze check viel een label tussen dubbele quotes
+    // stil buiten de controle.
+    let inBron = 0;
+    for (const pad of alleLesbestanden(FULLSTACK_DOCS)) {
+      inBron += [...readFileSync(pad, 'utf8').matchAll(/\blabel: /g)].length;
+    }
+    const gevonden = [...voorkennisPerLes().values()].flat();
+    expect(gevonden.length).toBe(inBron);
+    expect(gevonden.map((i) => i.label)).toContain("Pagina's koppelen");
+  });
+
   it('elk pad wijst naar een bestaande lespagina op de doelsite', () => {
     const kapot: string[] = [];
     for (const [les, items] of voorkennisPerLes()) {
       for (const item of items) {
-        if (!lesBestaat(item.site, item.to)) kapot.push(`${les} -> ${item.site}:${item.to}`);
+        if (!lesBestaat(SITES_ROOT, item.site, item.to)) {
+          kapot.push(`${les} -> ${item.site}:${item.to}`);
+        }
       }
     }
     expect(kapot).toEqual([]);
@@ -135,12 +90,12 @@ describe('fullstack Voorkennis-blokken', () => {
   it('de URL-vertaling herkent een niet-bestaande les als kapot', () => {
     // Zonder deze check zou een lesBestaat die altijd true geeft de hele
     // suite stil groen laten.
-    expect(lesBestaat('python', '/docs/basis/jij-als-variabele')).toBe(true);
-    expect(lesBestaat('web', '/docs/html-css/intro-html')).toBe(true);
-    expect(lesBestaat('editor', '/docs/python/stap-4-venv')).toBe(true);
-    expect(lesBestaat('python', '/docs/basis/bestaat-niet')).toBe(false);
-    expect(lesBestaat('web', '/docs/bestaat-niet/intro-html')).toBe(false);
-    expect(lesBestaat('bestaat-niet', '/docs/x/y')).toBe(false);
+    expect(lesBestaat(SITES_ROOT, 'python', '/docs/basis/jij-als-variabele')).toBe(true);
+    expect(lesBestaat(SITES_ROOT, 'web', '/docs/html-css/intro-html')).toBe(true);
+    expect(lesBestaat(SITES_ROOT, 'editor', '/docs/python/stap-4-venv')).toBe(true);
+    expect(lesBestaat(SITES_ROOT, 'python', '/docs/basis/bestaat-niet')).toBe(false);
+    expect(lesBestaat(SITES_ROOT, 'web', '/docs/bestaat-niet/intro-html')).toBe(false);
+    expect(lesBestaat(SITES_ROOT, 'bestaat-niet', '/docs/x/y')).toBe(false);
   });
 
   it('elke gebruikte site staat in de registry', () => {
@@ -155,8 +110,7 @@ describe('fullstack Voorkennis-blokken', () => {
     // De registry is de bron van waarheid voor cross-site links.
     const kapot: string[] = [];
     for (const pad of alleLesbestanden(FULLSTACK_DOCS)) {
-      const inhoud = readFileSync(pad, 'utf8');
-      if (/https:\/\/\w+\.coderius\.nl/.test(inhoud)) {
+      if (/https:\/\/\w+\.coderius\.nl/.test(readFileSync(pad, 'utf8'))) {
         kapot.push(pad.slice(FULLSTACK_DOCS.length + 1));
       }
     }

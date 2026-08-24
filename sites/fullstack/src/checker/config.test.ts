@@ -217,6 +217,37 @@ describe('fullstackConfig', () => {
     expect(perId.get('db-del')).toBe(true);
   });
 
+  it('herkent een cookie en een sessie in de code van de les', () => {
+    const report = analyze(
+      files({
+        'main.py': [
+          'import secrets',
+          'from fastapi import Cookie',
+          'async def form(sessie_id: str = Cookie(default="")):',
+          '    if not sessie_id:',
+          '        sessie_id = secrets.token_hex(16)',
+          '    antwoord.set_cookie(key="sessie_id", value=sessie_id)',
+        ].join('\n'),
+      }),
+      fullstackConfig,
+    );
+    const perId = new Map(report.concepts.map((c) => [c.id, c.used]));
+
+    expect(perId.get('fastapi-cookie')).toBe(true);
+    expect(perId.get('fastapi-sessie')).toBe(true);
+  });
+
+  it('ziet een gewone variabelenaam niet aan voor een cookie of sessie', () => {
+    const report = analyze(
+      files({ 'main.py': 'cookies = 3\nsessie = "x"\nprint(cookies, sessie)' }),
+      fullstackConfig,
+    );
+    const perId = new Map(report.concepts.map((c) => [c.id, c.used]));
+
+    expect(perId.get('fastapi-cookie')).toBe(false);
+    expect(perId.get('fastapi-sessie')).toBe(false);
+  });
+
   it('ziet een route zonder accolades niet aan voor een path-parameter', () => {
     const report = analyze(
       files({ 'main.py': '@app.get("/berichten")\nasync def berichten():\n    return []' }),
@@ -290,5 +321,28 @@ describe('fullstackConfig', () => {
     expect(plat.get('html-jinja-var')).toBe(true);
     expect(plat.get('html-jinja-loop')).toBe(false);
     expect(plat.get('html-jinja-if')).toBe(false);
+  });
+
+  it('precies deze concepten staan op gevorderd', () => {
+    // De niveau-indeling is vastgesteld voor de hele leerlijn en bepaalt wat
+    // een leerling aan het eind moet kunnen. Een verschuiving hoort een
+    // bewuste keuze te zijn, geen bijvangst van een nieuwe les — vandaar een
+    // exacte lijst in plaats van een telling.
+    const gevorderd = fullstackConfig.concepts
+      .filter((c) => c.level === 'gevorderd')
+      .map((c) => c.id)
+      .sort();
+
+    expect(gevorderd).toEqual([
+      'db-del',
+      'fastapi-cookie',
+      'fastapi-httpexception',
+      'fastapi-path-param',
+      'fastapi-redirect',
+      'fastapi-sessie',
+      'html-jinja-if',
+      'html-jinja-loop',
+      'js-event-listener',
+    ]);
   });
 });

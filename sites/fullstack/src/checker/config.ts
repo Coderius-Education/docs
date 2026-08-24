@@ -5,8 +5,11 @@ import type { CheckerConfig } from '@coderius/checker/types';
 // Database, plus een mappenstructuur-check). Wijzig je de cheatsheet, werk dan
 // ook hier de bijbehorende regel bij.
 //
-// JavaScript en Database hebben bewust alleen gevorderde concepten: ze komen
-// pas na de helft van de cursus aan bod.
+// De verdeling basis/gevorderd volgt de vastgestelde niveau-indeling van de
+// leerlijn, niet de volgorde waarin de lessen langskomen. Basis is wat elke
+// leerling aan het eind moet kunnen: routes, formulieren, templates en de
+// database horen daar allemaal bij. Gevorderd is wat daarbovenop komt —
+// path-parameters, doorsturen, eigen foutcodes, cookies en sessies.
 
 const IMAGE_EXT = new Set(['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.ico', '.bmp']);
 
@@ -76,7 +79,7 @@ export const fullstackConfig: CheckerConfig = {
       subject: 'fastapi',
       group: 'App & endpoints',
       label: 'POST endpoint (@app.post)',
-      level: 'gevorderd',
+      level: 'basis',
       detect: { type: 'regex', pattern: /@app\.post\s*\(/g, in: ['py'] },
     },
     {
@@ -120,7 +123,7 @@ export const fullstackConfig: CheckerConfig = {
       subject: 'fastapi',
       group: 'Formulieren & templates',
       label: 'Formulier verwerken (Form)',
-      level: 'gevorderd',
+      level: 'basis',
       detect: { type: 'regex', pattern: /Form\s*\(/g, in: ['py'] },
     },
     {
@@ -128,7 +131,7 @@ export const fullstackConfig: CheckerConfig = {
       subject: 'fastapi',
       group: 'Formulieren & templates',
       label: 'Jinja2 templates',
-      level: 'gevorderd',
+      level: 'basis',
       detect: { type: 'regex', pattern: /Jinja2Templates|TemplateResponse/g, in: ['py'] },
     },
     {
@@ -136,7 +139,7 @@ export const fullstackConfig: CheckerConfig = {
       subject: 'fastapi',
       group: 'Formulieren & templates',
       label: 'Request-object',
-      level: 'gevorderd',
+      level: 'basis',
       detect: { type: 'regex', pattern: /\bRequest\b/g, in: ['py'] },
     },
 
@@ -212,7 +215,7 @@ export const fullstackConfig: CheckerConfig = {
       subject: 'html',
       group: 'Formulieren',
       label: 'Formulier (method="post")',
-      level: 'gevorderd',
+      level: 'basis',
       detect: { type: 'regex', pattern: /<form\b[^>]*method\s*=\s*["']?\s*post/gi, in: ['html'] },
     },
     {
@@ -220,7 +223,7 @@ export const fullstackConfig: CheckerConfig = {
       subject: 'html',
       group: 'Formulieren',
       label: 'Template-variabele ({{ … }})',
-      level: 'gevorderd',
+      level: 'basis',
       detect: { type: 'regex', pattern: /\{\{[^}]+\}\}/g, in: ['html'] },
     },
     {
@@ -248,7 +251,7 @@ export const fullstackConfig: CheckerConfig = {
       subject: 'js',
       group: 'In de browser',
       label: 'JavaScript koppelen (<script src>)',
-      level: 'gevorderd',
+      level: 'basis',
       detect: { type: 'regex', pattern: /<script\b[^>]*\bsrc\s*=/gi, in: ['html'] },
     },
     {
@@ -256,7 +259,7 @@ export const fullstackConfig: CheckerConfig = {
       subject: 'js',
       group: 'In de browser',
       label: 'Element opzoeken (querySelector)',
-      level: 'gevorderd',
+      level: 'basis',
       detect: { type: 'regex', pattern: /querySelector(All)?\s*\(/g, in: ['js'] },
     },
     {
@@ -274,7 +277,7 @@ export const fullstackConfig: CheckerConfig = {
       subject: 'database',
       group: 'sqlitedict',
       label: 'SqliteDict gebruiken',
-      level: 'gevorderd',
+      level: 'basis',
       detect: { type: 'regex', pattern: /SqliteDict\s*\(/g, in: ['py'] },
     },
     {
@@ -282,7 +285,7 @@ export const fullstackConfig: CheckerConfig = {
       subject: 'database',
       group: 'sqlitedict',
       label: 'Data opslaan (db[…] = …)',
-      level: 'gevorderd',
+      level: 'basis',
       detect: { type: 'regex', pattern: /\bdb\s*\[[^\]]+\]\s*=/g, in: ['py'] },
     },
     {
@@ -290,7 +293,7 @@ export const fullstackConfig: CheckerConfig = {
       subject: 'database',
       group: 'sqlitedict',
       label: 'Opslaan bevestigen (.commit())',
-      level: 'gevorderd',
+      level: 'basis',
       detect: { type: 'regex', pattern: /\.commit\s*\(\s*\)/g, in: ['py'] },
     },
     {
@@ -298,7 +301,7 @@ export const fullstackConfig: CheckerConfig = {
       subject: 'database',
       group: 'sqlitedict',
       label: 'Veilig uitlezen (db.get())',
-      level: 'gevorderd',
+      level: 'basis',
       detect: { type: 'regex', pattern: /\bdb\.get\s*\(/g, in: ['py'] },
     },
     {
@@ -314,7 +317,7 @@ export const fullstackConfig: CheckerConfig = {
       subject: 'database',
       group: 'sqlitedict',
       label: 'Alles bekijken (.items())',
-      level: 'gevorderd',
+      level: 'basis',
       detect: { type: 'regex', pattern: /\.items\s*\(\s*\)/g, in: ['py'] },
     },
 
@@ -340,7 +343,7 @@ export const fullstackConfig: CheckerConfig = {
       subject: 'structuur',
       group: 'Mappen',
       label: 'templates/-map',
-      level: 'gevorderd',
+      level: 'basis',
       detect: { type: 'path', pattern: /(^|\/)templates\// },
     },
   ],

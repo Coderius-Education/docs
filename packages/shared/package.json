@@ -7,6 +7,7 @@
   "exports": {
     "./config": "./config/index.js",
     "./sites": { "types": "./sites.d.ts", "default": "./sites.js" },
+    "./voorkennis": { "types": "./voorkennis.d.ts", "default": "./voorkennis.js" },
     "./matomo": { "types": "./matomo.d.ts", "default": "./matomo.js" },
     "./privacy-content": { "types": "./privacy-content.d.ts", "default": "./privacy-content.js" },
     "./plugins/transpile-shared": "./plugins/transpile-shared.js",

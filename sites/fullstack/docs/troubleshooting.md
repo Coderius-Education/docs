@@ -515,7 +515,7 @@ Meer uitleg: [Onthouden met een cookie](/docs/FastAPI/cookies)
 <details>
 <summary>De cookie is er wel, maar mijn endpoint krijgt hem niet</summary>
 
-**Oorzaak:** de naam in `Cookie(...)` moet gelijk zijn aan de parameternaam, net als bij `Form`.
+**Oorzaak:** FastAPI zoekt de cookie op onder de naam van je parameter. Heet je parameter anders dan je cookie, dan vindt hij niets en krijg je de standaardwaarde.
 
 **Oplossing:** heet je cookie `sessie_id`, dan heet je parameter ook `sessie_id`:
 
@@ -570,11 +570,34 @@ Meer uitleg: [Sessies](/docs/FastAPI/sessies)
 <details>
 <summary>Iedereen krijgt dezelfde sessie te zien</summary>
 
-**Oorzaak:** je maakt bij elk verzoek een nieuw sessie-id aan, of je gebruikt een vaste waarde in plaats van `secrets.token_hex(16)`.
+**Oorzaak:** je gebruikt een vaste waarde als sessie-id in plaats van een willekeurige. Dan krijgt elke bezoeker dezelfde sleutel, en dus elkaars gegevens.
 
-**Oplossing:** maak alleen een nieuw sessie-id als er nog geen is:
+**Oplossing:** laat `secrets` het id maken:
 
 ```python
+# FOUT - iedereen deelt deze sessie
+sessie_id = "sessie1"
+
+# GOED - niet te raden, en voor elke bezoeker anders
+sessie_id = secrets.token_hex(16)
+```
+
+Meer uitleg: [Sessies](/docs/FastAPI/sessies)
+
+</details>
+
+<details>
+<summary>Mijn sessie wordt elke keer vergeten</summary>
+
+**Oorzaak:** je maakt bij elk verzoek een nieuw sessie-id aan, ook als de bezoeker er al een had. De vorige sessie blijft dan onaangeroerd achter in je database.
+
+**Oplossing:** maak alleen een nieuw id als er nog geen is:
+
+```python
+# FOUT - overschrijft ook een bestaande sessie
+sessie_id = secrets.token_hex(16)
+
+# GOED
 if not sessie_id:
     sessie_id = secrets.token_hex(16)
 ```
