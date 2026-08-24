@@ -12,6 +12,6 @@ Bovenaan het Source Control-paneel zie je een tekstveld. Typ daar je commitboods
 eerste versie
 ```
 
-Klik op de blauwe knop **Commit** (of druk **Ctrl+Enter**).
+Klik op de blauwe knop **Commit** (of druk **Ctrl+Enter**, op macOS **Cmd+Enter**).
 
 In de simulator zag je dat staging weer leeg werd en er een nieuwe commit in de repository-kolom verscheen. In VS Code zie je hetzelfde: **Staged Changes** is leeg en de teller bovenaan toont je nieuwe commit.

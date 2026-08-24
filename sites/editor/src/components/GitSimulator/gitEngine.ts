@@ -1,3 +1,21 @@
+// De simulator drukt af wat echte git afdrukt, woordelijk en in het Engels.
+// Dat is geen slordigheid maar het punt: tutorial 2 laat de leerling dezelfde
+// commando's in VS Code typen, en als hij daar geen enkele regel herkent van
+// wat hij hier geoefend heeft, is de oefening niets waard geweest. De
+// schrijfgids staat Engels toe voor foutmeldingen; dit valt daaronder.
+//
+// Uitleg die git zelf niet geeft, zetten we op een `hint:`-regel in het
+// Nederlands. Git gebruikt datzelfde voorvoegsel voor zijn eigen tips, dus de
+// vorm klopt en de leerling leert die regels lezen.
+//
+// De strings hieronder zijn overgenomen van git 2.43 en worden bewaakt door
+// echte-git.test.ts, die ze naast de uitvoer van de geïnstalleerde git legt.
+
+/** Waar de repository "staat". Alleen voor de tekst van `git init`. */
+const REPO_PAD = '/home/jij/git-oefenen/.git/';
+
+const NIET_IN_REPO = 'fatal: not a git repository (or any of the parent directories): .git';
+
 export type Commit = {
   id: string;
   message: string;
@@ -34,7 +52,9 @@ export function emptyState(initialFiles: Record<string, string> = {}): RepoState
 }
 
 function shortId(): string {
-  return Math.random().toString(16).slice(2, 9);
+  // Altijd zeven tekens, net als de afgekorte hash die git toont. Math.random()
+  // levert soms een korte hexweergave op ("0.5"), dus aanvullen tot zeven.
+  return Math.random().toString(16).slice(2).padEnd(7, '0').slice(0, 7);
 }
 
 function committedTree(state: RepoState): Record<string, string> {
@@ -49,7 +69,7 @@ function visibleFiles(state: RepoState): string[] {
 
 function statusOutput(state: RepoState): string {
   if (!state.initialized) {
-    return "fatal: niet in een git repository (gebruik eerst 'git init')";
+    return `${NIET_IN_REPO}\nhint: van deze map is nog geen repository gemaakt — begin met 'git init'`;
   }
   const head = committedTree(state);
   const staged = state.staged ?? {};
@@ -79,54 +99,98 @@ function statusOutput(state: RepoState): string {
     else if (inWd && !inStaged && !inHead) untracked.push(name);
   }
 
-  const lines: string[] = ['Op branch main'];
-  if (state.commits.length === 0 && stagedNew.length === 0 && stagedModified.length === 0) {
-    lines.push('Nog geen commits');
-  }
+  const geenCommits = state.commits.length === 0;
+  const ietsGestaged = stagedNew.length > 0 || stagedModified.length > 0;
 
-  if (stagedNew.length || stagedModified.length) {
-    lines.push('', 'Klaar om te committen:');
-    for (const f of stagedNew) lines.push(`  nieuw bestand: ${f}`);
-    for (const f of stagedModified) lines.push(`  gewijzigd:     ${f}`);
+  // Git bouwt zijn status uit losse blokken met een lege regel ertussen. De
+  // kop telt als eerste blok, dus 'On branch main' krijgt er alleen een lege
+  // regel achter als er iets volgt.
+  const blokken: string[][] = [];
+
+  if (ietsGestaged) {
+    // De tip om te unstagen verschilt: zonder commits bestaat er nog geen
+    // versie om naar terug te zetten, dus noemt git een ander commando.
+    const unstage = geenCommits
+      ? '  (use "git rm --cached <file>..." to unstage)'
+      : '  (use "git restore --staged <file>..." to unstage)';
+    blokken.push([
+      'Changes to be committed:',
+      unstage,
+      ...stagedNew.map((f) => `\tnew file:   ${f}`),
+      ...stagedModified.map((f) => `\tmodified:   ${f}`),
+    ]);
   }
 
   if (modified.length) {
-    lines.push('', 'Wijzigingen in werkmap (nog niet gestaged):');
-    for (const f of modified) lines.push(`  gewijzigd:     ${f}`);
+    blokken.push([
+      'Changes not staged for commit:',
+      '  (use "git add <file>..." to update what will be committed)',
+      '  (use "git restore <file>..." to discard changes in working directory)',
+      ...modified.map((f) => `\tmodified:   ${f}`),
+    ]);
   }
 
   if (untracked.length) {
-    lines.push('', 'Niet-gevolgde bestanden:');
-    for (const f of untracked) lines.push(`  ${f}`);
+    blokken.push([
+      'Untracked files:',
+      '  (use "git add <file>..." to include in what will be committed)',
+      ...untracked.map((f) => `\t${f}`),
+    ]);
   }
 
-  if (
-    stagedNew.length === 0 &&
-    stagedModified.length === 0 &&
-    modified.length === 0 &&
-    untracked.length === 0
-  ) {
-    lines.push('Niets te committen, werkmap is schoon');
+  // De slotregel die git kiest hangt af van wat het zwaarst weegt. Staat er
+  // iets klaar om te committen, dan laat git hem helemaal weg.
+  if (!ietsGestaged) {
+    if (modified.length) {
+      blokken.push(['no changes added to commit (use "git add" and/or "git commit -a")']);
+    } else if (untracked.length) {
+      blokken.push([
+        'nothing added to commit but untracked files present (use "git add" to track)',
+      ]);
+    } else if (geenCommits) {
+      blokken.push(['nothing to commit (create/copy files and use "git add" to track)']);
+    } else {
+      // Het enige geval waarin git geen lege regel invoegt.
+      return 'On branch main\nnothing to commit, working tree clean';
+    }
   }
 
-  return lines.join('\n');
+  // Git scheidt zijn blokken met een lege regel, met één uitzondering: bestaat
+  // er al een commit, dan plakt hij het eerste blok direct onder 'On branch
+  // main'. Zonder commits staat 'No commits yet' ertussen en geldt de lege
+  // regel wel.
+  const kop = geenCommits ? 'On branch main\n\nNo commits yet' : 'On branch main';
+  const rest = blokken.map((b) => b.join('\n'));
+  if (rest.length === 0) return kop;
+
+  const [eerste, ...verder] = rest;
+  const begin = geenCommits ? `${kop}\n\n${eerste}` : `${kop}\n${eerste}`;
+  return [begin, ...verder].join('\n\n');
 }
 
 function logOutput(state: RepoState): string {
   if (!state.initialized) {
-    return "fatal: niet in een git repository (gebruik eerst 'git init')";
+    return `${NIET_IN_REPO}\nhint: van deze map is nog geen repository gemaakt — begin met 'git init'`;
   }
   if (state.commits.length === 0) {
-    return "fatal: nog geen commits — maak er eerst een met 'git commit'";
+    return [
+      "fatal: your current branch 'main' does not have any commits yet",
+      'hint: er valt nog niets te tonen — maak eerst een commit met \'git commit -m "..."\'',
+    ].join('\n');
   }
   const lines: string[] = [];
   let id: string | null = state.head;
+  let eerste = true;
   while (id) {
     const c = state.commits.find((x) => x.id === id);
     if (!c) break;
-    lines.push(`commit ${c.id}`);
+    // Git zet achter de nieuwste commit waar HEAD staat. Author en Date laat
+    // deze simulator weg: hij kent geen naam en geen klok.
+    lines.push(`commit ${c.id}${eerste ? ' (HEAD -> main)' : ''}`);
+    lines.push('');
     lines.push(`    ${c.message}`);
     lines.push('');
+    eerste = false;
     id = c.parent;
   }
   return lines.join('\n').trimEnd();
@@ -163,7 +227,7 @@ function _runCommand(state: RepoState, input: string): CommandResult {
   if (!trimmed.startsWith('git')) {
     return {
       newState: state,
-      output: `commando '${trimmed.split(/\s+/)[0]}' niet herkend — alleen 'git ...' commando's werken hier`,
+      output: `${trimmed.split(/\s+/)[0]}: command not found\nhint: in deze simulator werken alleen commando's die met 'git' beginnen`,
       ok: false,
     };
   }
@@ -172,7 +236,10 @@ function _runCommand(state: RepoState, input: string): CommandResult {
   if (!afterGit) {
     return {
       newState: state,
-      output: 'gebruik: git <commando> (probeer: init, status, add, commit, log)',
+      output: [
+        'usage: git [-v | --version] [-h | --help] <command> [<args>]',
+        'hint: deze simulator kent init, status, add, commit en log',
+      ].join('\n'),
       ok: false,
     };
   }
@@ -186,13 +253,13 @@ function _runCommand(state: RepoState, input: string): CommandResult {
       if (state.initialized) {
         return {
           newState: state,
-          output: 'Bestaande Git repository opnieuw geïnitialiseerd',
+          output: `Reinitialized existing Git repository in ${REPO_PAD}`,
           ok: true,
         };
       }
       return {
         newState: { ...state, initialized: true, staged: {} },
-        output: 'Lege Git repository geïnitialiseerd op branch main',
+        output: `Initialized empty Git repository in ${REPO_PAD}`,
         ok: true,
       };
     }
@@ -205,7 +272,7 @@ function _runCommand(state: RepoState, input: string): CommandResult {
       if (!state.initialized) {
         return {
           newState: state,
-          output: "fatal: niet in een git repository (gebruik eerst 'git init')",
+          output: `${NIET_IN_REPO}\nhint: van deze map is nog geen repository gemaakt — begin met 'git init'`,
           ok: false,
         };
       }
@@ -213,7 +280,10 @@ function _runCommand(state: RepoState, input: string): CommandResult {
       if (!args) {
         return {
           newState: state,
-          output: 'gebruik: git add <bestand> of git add .',
+          output: [
+            'Nothing specified, nothing added.',
+            'hint: noem een bestand (git add hello.txt) of alles tegelijk (git add .)',
+          ].join('\n'),
           ok: false,
         };
       }
@@ -225,7 +295,7 @@ function _runCommand(state: RepoState, input: string): CommandResult {
       if (missing.length) {
         return {
           newState: state,
-          output: `fatal: pathspec '${missing[0]}' komt niet overeen met een bestand`,
+          output: `fatal: pathspec '${missing[0]}' did not match any files`,
           ok: false,
         };
       }
@@ -239,7 +309,7 @@ function _runCommand(state: RepoState, input: string): CommandResult {
       if (!state.initialized) {
         return {
           newState: state,
-          output: "fatal: niet in een git repository (gebruik eerst 'git init')",
+          output: `${NIET_IN_REPO}\nhint: van deze map is nog geen repository gemaakt — begin met 'git init'`,
           ok: false,
         };
       }
@@ -247,7 +317,10 @@ function _runCommand(state: RepoState, input: string): CommandResult {
       if (message === null) {
         return {
           newState: state,
-          output: 'gebruik: git commit -m "je bericht"',
+          output: [
+            "error: switch `m' requires a value",
+            'hint: geef je commit een boodschap mee: git commit -m "wat je veranderd hebt"',
+          ].join('\n'),
           ok: false,
         };
       }
@@ -259,7 +332,7 @@ function _runCommand(state: RepoState, input: string): CommandResult {
       if (!realChange) {
         return {
           newState: state,
-          output: 'Niets te committen, werkmap is schoon',
+          output: statusOutput(state),
           ok: false,
         };
       }
@@ -277,7 +350,9 @@ function _runCommand(state: RepoState, input: string): CommandResult {
           head: commit.id,
           staged: {},
         },
-        output: `[main ${commit.id.slice(0, 7)}] ${message}`,
+        // Git zet er bij de allereerste commit '(root-commit)' bij: die heeft
+        // als enige geen ouder.
+        output: `[main ${state.head === null ? '(root-commit) ' : ''}${commit.id}] ${message}`,
         ok: true,
       };
     }
@@ -289,7 +364,7 @@ function _runCommand(state: RepoState, input: string): CommandResult {
     default:
       return {
         newState: state,
-        output: `git: '${sub}' is geen git-commando in deze simulator (probeer: init, status, add, commit, log)`,
+        output: `git: '${sub}' is not a git command. See 'git --help'.\nhint: deze simulator kent init, status, add, commit en log`,
         ok: false,
       };
   }

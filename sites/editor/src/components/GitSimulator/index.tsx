@@ -8,17 +8,13 @@ import {
   runCommand,
   setFile,
 } from './gitEngine';
+import { scenario } from './scenarios';
 import styles from './styles.module.css';
 
-type Objective = {
-  description: string;
-  check: (state: RepoState) => boolean;
-};
-
 type Props = {
+  /** Verwijst naar een scenario in scenarios.ts; daar staat het doel en de
+      beginsituatie. Zo kan scenarios.test.ts elk doel echt naspelen. */
   scenarioId: string;
-  initialFiles?: Record<string, string>;
-  objective?: Objective;
   allowFileEditing?: boolean;
   intro?: ReactNode;
 };
@@ -38,13 +34,8 @@ export default function GitSimulator(props: Props): ReactNode {
   );
 }
 
-function SimulatorInner({
-  scenarioId,
-  initialFiles,
-  objective,
-  allowFileEditing = true,
-  intro,
-}: Props): ReactNode {
+function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): ReactNode {
+  const { initialFiles, objective } = scenario(scenarioId);
   const [state, setState] = useState<RepoState>(() => emptyState(initialFiles));
   const [history, setHistory] = useState<HistoryLine[]>([]);
   const [input, setInput] = useState('');

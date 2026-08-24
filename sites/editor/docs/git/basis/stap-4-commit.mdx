@@ -18,16 +18,9 @@ Na de commit:
 
 - staging is weer leeg
 - in de repository-kolom verschijnt een nieuwe commit
-- `git status` zegt: "niets te committen, werkmap is schoon"
+- `git status` antwoordt `nothing to commit, working tree clean` — niets te committen, je werkmap is schoon
 
-<GitSimulator
-  scenarioId="stap-4-commit"
-  initialFiles={{'hello.txt': 'Hallo wereld.\n'}}
-  objective={{
-    description: 'Maak je eerste commit met de boodschap "eerste versie".',
-    check: (s) => s.commits.length >= 1,
-  }}
-/>
+<GitSimulator scenarioId="stap-4-commit" />
 
 <details>
 <summary>Klik hier voor de oplossing.</summary>

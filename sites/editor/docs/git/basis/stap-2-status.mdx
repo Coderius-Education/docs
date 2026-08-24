@@ -16,11 +16,4 @@ Een nieuw bestand dat git nog niet kent heet **untracked** (niet-gevolgd).
 git status
 ```
 
-<GitSimulator
-  scenarioId="stap-2-status"
-  initialFiles={{'hello.txt': 'Hallo wereld.\n'}}
-  objective={{
-    description: 'Voer eerst git init uit en daarna git status. Je zou hello.txt als niet-gevolgd moeten zien.',
-    check: (s) => s.initialized && s.commands.some((c) => c.trim() === 'git status'),
-  }}
-/>
+<GitSimulator scenarioId="stap-2-status" />

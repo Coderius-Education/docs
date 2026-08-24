@@ -18,7 +18,7 @@ Online is alles netjes: je commits zitten in `main`, je feature-branch is weg. L
 
 ## Verwijder de lokale feature-branch
 
-1. Open het **Command Palette** met **Ctrl+Shift+P**
+1. Open het **Command Palette** met **Ctrl+Shift+P** (Windows/Linux) of **Cmd+Shift+P** (macOS)
 2. Typ `Git: Delete Branch...` en druk **Enter**
 3. Kies `feature/welkomsbericht`
 

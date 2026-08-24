@@ -33,6 +33,22 @@ git --version
 
 Als git niet aanwezig is, vraagt macOS om het te installeren. Volg de stappen.
 
+### Linux
+
+Git zit meestal al op je systeem. Controleer het met:
+
+```bash
+git --version
+```
+
+Krijg je een foutmelding, installeer git dan met de pakketbeheerder van je distributie:
+
+```bash
+sudo apt install git      # Ubuntu, Debian, Linux Mint
+sudo dnf install git      # Fedora
+sudo pacman -S git        # Arch, Manjaro
+```
+
 ## Aan de slag
 
 Begin met **[Stap 1: vertel git wie je bent](./stap-1-config)**.
