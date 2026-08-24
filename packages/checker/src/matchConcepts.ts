@@ -3,7 +3,9 @@ import type { CheckReport, CheckerConfig, ConceptMatch, ProjectFiles } from './t
 // Analyseert een geüpload project tegen de conceptenlijst van een site. Puur
 // een functie over ProjectFiles + config; geen DOM of netwerk. Regex-concepten
 // tellen hun voorkomens in de tekstbestanden; pad-concepten checken of er een
-// bestand met een matchend pad bestaat (mappenstructuur).
+// bestand met een matchend pad bestaat (mappenstructuur); handmatige concepten
+// blijven hier onaangeroerd, want die stelt een mens vast — de docentweergave
+// maakt er een vinkvakje van.
 
 function withoutGlobal(re: RegExp): RegExp {
   return re.global ? new RegExp(re.source, re.flags.replace('g', '')) : re;
@@ -35,6 +37,9 @@ export function analyze(files: ProjectFiles, config: CheckerConfig): CheckReport
   const allPaths = values.map((f) => f.path);
 
   const concepts: ConceptMatch[] = config.concepts.map((c) => {
+    if (c.detect.type === 'handmatig') {
+      return { id: c.id, count: 0, used: false };
+    }
     if (c.detect.type === 'path') {
       const re = withoutGlobal(c.detect.pattern);
       const used = allPaths.some((p) => re.test(p));
@@ -48,7 +53,7 @@ export function analyze(files: ProjectFiles, config: CheckerConfig): CheckReport
         if (m) count += m.length;
       }
     }
-    return { id: c.id, count, used: count > 0 };
+    return { id: c.id, count, used: count >= (c.detect.minCount ?? 1) };
   });
 
   const warnings: string[] = [];

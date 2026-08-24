@@ -1,3 +1,4 @@
+import { levelVoor } from './conceptLevel';
 import type { CheckReport, CheckerConfig, Level } from './types';
 
 // Vat het rapport samen als basis/gevorderd-tellingen, per onderwerp. Een
@@ -26,6 +27,7 @@ export interface LevelSummaryResult {
 export function computeLevelSummary(
   report: CheckReport,
   config: CheckerConfig,
+  track: string | null = null,
 ): LevelSummaryResult {
   const usedById = new Map(report.concepts.map((m) => [m.id, m.used]));
 
@@ -36,8 +38,9 @@ export function computeLevelSummary(
     };
     for (const c of config.concepts) {
       if (c.subject !== s.id) continue;
-      stats[c.level].total++;
-      if (usedById.get(c.id)) stats[c.level].used++;
+      const level = levelVoor(c, track);
+      stats[level].total++;
+      if (usedById.get(c.id)) stats[level].used++;
     }
     return { subject: s.id, label: s.label, basis: stats.basis, gevorderd: stats.gevorderd };
   });

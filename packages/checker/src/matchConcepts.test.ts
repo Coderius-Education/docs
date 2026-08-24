@@ -143,3 +143,56 @@ describe('analyze — bestandsoverzicht en waarschuwingen', () => {
     expect(report.warnings).toEqual([]);
   });
 });
+
+describe('analyze — minCount', () => {
+  // Zonder minCount zouden "twee sensoren" en "vier sensoren" hetzelfde
+  // concept zijn: allebei het patroon AnalogIR(, allebei used zodra er één
+  // staat. De drempel is het enige dat ze uit elkaar houdt.
+  const twee = concept('twee', { type: 'regex', pattern: /AnalogIR\(/g, minCount: 2 });
+  const vier = concept('vier', { type: 'regex', pattern: /AnalogIR\(/g, minCount: 4 });
+
+  const metSensoren = (n: number) =>
+    analyze(
+      projectFiles(
+        file('main.py', 'html', Array.from({ length: n }, () => 'AnalogIR("A0")').join('\n')),
+      ),
+      config([twee, vier]),
+    );
+
+  it('telt door maar slaat pas aan vanaf de drempel', () => {
+    const drie = metSensoren(3);
+    expect(matchOf(drie, 'twee')).toMatchObject({ count: 3, used: true });
+    expect(matchOf(drie, 'vier')).toMatchObject({ count: 3, used: false });
+  });
+
+  it('slaat aan zodra de drempel precies gehaald wordt', () => {
+    expect(matchOf(metSensoren(4), 'vier')?.used).toBe(true);
+  });
+
+  it('zonder minCount volstaat één voorkomen', () => {
+    const report = analyze(
+      projectFiles(file('main.py', 'html', 'AnalogIR("A0")')),
+      config([concept('een', { type: 'regex', pattern: /AnalogIR\(/g })]),
+    );
+    expect(matchOf(report, 'een')).toMatchObject({ count: 1, used: true });
+  });
+});
+
+describe('analyze — handmatige concepten', () => {
+  it('blijft ongebruikt, wat er ook in de bestanden staat', () => {
+    // De docent vinkt dit aan; analyze() mag er nooit zelf iets van maken.
+    const report = analyze(
+      projectFiles(file('main.py', 'html', 'frame gebouwd batterijen robot')),
+      config([concept('bouw', { type: 'handmatig' })]),
+    );
+    expect(matchOf(report, 'bouw')).toMatchObject({ count: 0, used: false });
+  });
+
+  it('telt wel gewoon mee in de conceptenlijst van het rapport', () => {
+    const report = analyze(
+      projectFiles(file('main.py', 'html', 'x')),
+      config([concept('bouw', { type: 'handmatig' })]),
+    );
+    expect(report.concepts).toHaveLength(1);
+  });
+});

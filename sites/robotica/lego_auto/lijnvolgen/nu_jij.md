@@ -69,6 +69,8 @@ Zet je robot aan het begin van de baan en laat los. Volgt hij de lijn, ook door 
 
 Dit is het moment waarop het hele traject samenkomt: elk deel van je script heb je zelf getypt, en je weet van elke regel waarom hij er staat.
 
+Klaar? Op [Robot checken](/robot-checken) zie je wat er in je `main.py` zit. Doe er een paar foto's van je robot bij — aan je code is niet te zien of het frame er staat en of hij op batterijen rijdt.
+
 ## Opdracht 10.4.b: de kruising
 
 Wat doet je robot als **beide** sensoren tegelijk zwart zien? Dat is meestal een kruising. Voeg zelf een extra `elif` toe en maak een keuze: stoppen, rechtdoor, of een kant op draaien. Er is geen fout antwoord — er is alleen wat jouw robot op jouw baan moet doen.

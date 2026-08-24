@@ -9,6 +9,9 @@ export default createConfig({
   projectName,
   matomoSiteId: 7,
 
+  // @coderius/shared is de standaard; @coderius/checker levert de nakijker.
+  sharedPackages: ['@coderius/shared', '@coderius/checker'],
+
   // Robotica is (nog) Engelstalig.
   i18n: { defaultLocale: 'en', locales: ['en'] },
   markdown: { hooks: { onBrokenMarkdownLinks: 'warn' } },
@@ -70,6 +73,7 @@ export default createConfig({
           docsPluginId: 'lego_auto',
         },
         { to: '/cheatsheet', label: 'Cheatsheet', position: 'left' },
+        { to: '/robot-checken', label: 'Robot checken', position: 'left' },
         { to: '/editor', label: 'Editor', position: 'left' },
         {
           to: '/docs/Microcontrollers/Arduino Nano RP2040 Connect/Tutorial-debuggen/debuggen',

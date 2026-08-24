@@ -84,3 +84,67 @@ describe('computeLevelSummary', () => {
     expect(summary.bySubject.map((s) => s.subject)).toEqual(['html', 'css']);
   });
 });
+
+describe('computeLevelSummary — tracks', () => {
+  // Hetzelfde project, dezelfde conceptenlijst, andere route: de tellingen
+  // horen te verschuiven zonder dat er iets aan het rapport verandert.
+  const concepten: Concept[] = [
+    {
+      id: 'afstand',
+      subject: 'robotica',
+      group: 'Sensoren',
+      label: 'Afstandsensor uitlezen',
+      level: { start: 'gevorderd', verdieping: 'basis' },
+      detect: { type: 'regex', pattern: /TimeOfFlight\(/g },
+    },
+    {
+      id: 'motoren',
+      subject: 'robotica',
+      group: 'Aansturen',
+      label: 'Motoren aansturen',
+      level: 'basis',
+      detect: { type: 'regex', pattern: /DCMotors\(/g },
+    },
+  ];
+
+  const config = {
+    subjects: [{ id: 'robotica', label: 'Robotica' }],
+    tracks: [
+      { id: 'start', label: 'Start' },
+      { id: 'verdieping', label: 'Verdieping' },
+    ],
+    concepts: concepten,
+    fileKinds: [{ id: 'py', label: 'Python' }],
+    classify: () => 'py',
+    textKinds: ['py'],
+    accept: '.py',
+    teacher: { password: 'x', storageKey: 'x' },
+    pdfFilename: () => 'x.pdf',
+  };
+
+  const rapport = {
+    fileStats: { total: 1, byKind: { py: 1 }, skippedTooLarge: 0 },
+    concepts: [
+      { id: 'afstand', count: 1, used: true },
+      { id: 'motoren', count: 1, used: true },
+    ],
+    warnings: [],
+  };
+
+  it('telt de afstandsensor bij start als gevorderd', () => {
+    const s = computeLevelSummary(rapport, config, 'start');
+    expect(s.basis).toEqual({ used: 1, total: 1 });
+    expect(s.gevorderd).toEqual({ used: 1, total: 1 });
+  });
+
+  it('en bij verdieping als basis', () => {
+    const s = computeLevelSummary(rapport, config, 'verdieping');
+    expect(s.basis).toEqual({ used: 2, total: 2 });
+    expect(s.gevorderd).toEqual({ used: 0, total: 0 });
+  });
+
+  it('zonder track valt alles terug op het eerste niveau', () => {
+    const s = computeLevelSummary(rapport, config);
+    expect(s.basis.total + s.gevorderd.total).toBe(2);
+  });
+});

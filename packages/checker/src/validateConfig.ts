@@ -12,6 +12,7 @@ export function validateCheckerConfig(config: CheckerConfig): string[] {
 
   const kindIds = new Set(config.fileKinds.map((k) => k.id));
   const subjectIds = new Set(config.subjects.map((s) => s.id));
+  const trackIds = (config.tracks ?? []).map((t) => t.id);
   const seenIds = new Set<string>();
 
   for (const kind of [...config.textKinds, ...(config.imageKinds ?? [])]) {
@@ -34,12 +35,31 @@ export function validateCheckerConfig(config: CheckerConfig): string[] {
       );
     }
 
+    if (typeof concept.level !== 'string') {
+      // Een niveau per track: elke track moet erin staan, anders valt het
+      // concept in die route terug op een willekeurig ander niveau.
+      if (trackIds.length === 0) {
+        problems.push(
+          `Concept '${concept.id}' geeft een niveau per track, maar de config heeft geen tracks.`,
+        );
+      }
+      for (const track of trackIds) {
+        if (!concept.level[track]) {
+          problems.push(`Concept '${concept.id}' heeft geen niveau voor track '${track}'.`);
+        }
+      }
+    }
+
     if (concept.detect.type === 'regex') {
       if (!concept.detect.pattern.global) {
         // analyze() telt via src.match(pattern).length. Zonder /g geeft match()
         // één treffer mét capture-groepen terug, en telt .length de groepen in
         // plaats van de voorkomens — een stille verkeerde telling.
         problems.push(`Patroon van concept '${concept.id}' mist de g-vlag.`);
+      }
+      const { minCount } = concept.detect;
+      if (minCount !== undefined && (!Number.isInteger(minCount) || minCount < 1)) {
+        problems.push(`Concept '${concept.id}' heeft een minCount die geen geheel getal ≥ 1 is.`);
       }
       for (const kind of concept.detect.in ?? []) {
         if (!kindIds.has(kind)) {

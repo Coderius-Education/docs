@@ -120,3 +120,39 @@
   background: var(--ifm-color-warning-contrast-background, #fff8e6);
   color: var(--ifm-color-warning-contrast-foreground, #7a5b00);
 }
+
+/* Handmatig beoordeelde concepten: de docent klikt ze aan terwijl hij naar de
+   foto's kijkt. Een knop in plaats van een checkbox, zodat de stand als tekst
+   in de PDF terechtkomt. */
+.handmatig {
+  display: inline-flex;
+  /* Bovenaan uitlijnen: een label dat over twee regels loopt mag het vakje
+     niet naar het midden duwen of uitrekken. */
+  align-items: flex-start;
+  gap: 0.4rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.handmatig:disabled {
+  cursor: default;
+}
+
+.vink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 1.15rem;
+  height: 1.15rem;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1;
+}
