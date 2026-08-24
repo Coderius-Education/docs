@@ -46,7 +46,10 @@ function alleGebruik(): Vondst[] {
   for (const pad of alleBronbestanden()) {
     for (const m of readFileSync(pad, 'utf8').matchAll(SITELINK_RE)) {
       vondsten.push({
-        bestand: pad.slice(SITES_ROOT.length + 1).split('\\').join('/'),
+        bestand: pad
+          .slice(SITES_ROOT.length + 1)
+          .split('\\')
+          .join('/'),
         site: m[1],
         to: m[2],
       });
@@ -70,7 +73,10 @@ function doelBestaat(site: string, to: string): boolean {
 
   if (lesBestaat(SITES_ROOT, site, zonder)) return true;
 
-  const segmenten = zonder.replace(/^\/docs\/?/, '').split('/').filter(Boolean);
+  const segmenten = zonder
+    .replace(/^\/docs\/?/, '')
+    .split('/')
+    .filter(Boolean);
 
   // Categorie-index onder docs/: elk segment een map (numeriek prefix mag
   // wegvallen, net als bij lesBestaat), de laatste met een index-pagina.
@@ -87,7 +93,10 @@ function doelBestaat(site: string, to: string): boolean {
     }
     huidig = join(huidig, naam);
   }
-  if (alleMappen && (existsSync(join(huidig, 'index.md')) || existsSync(join(huidig, 'index.mdx')))) {
+  if (
+    alleMappen &&
+    (existsSync(join(huidig, 'index.md')) || existsSync(join(huidig, 'index.mdx')))
+  ) {
     return true;
   }
 
@@ -144,7 +153,10 @@ describe('geen hardcoded cursus-URL in lestekst', () => {
     const fout: string[] = [];
 
     for (const pad of alleBronbestanden()) {
-      const kort = pad.slice(SITES_ROOT.length + 1).split('\\').join('/');
+      const kort = pad
+        .slice(SITES_ROOT.length + 1)
+        .split('\\')
+        .join('/');
       if (UITZONDERINGEN.includes(kort)) continue;
       readFileSync(pad, 'utf8')
         .split('\n')
