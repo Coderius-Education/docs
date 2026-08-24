@@ -16,11 +16,16 @@
     "sites:start": "node scripts/run-all-sites.mjs start",
     "format": "biome format --write .",
     "lint": "biome check .",
+    "spel": "cspell lint --no-progress --relative --no-must-find-files \"sites/*/docs/**/*.{md,mdx}\" \"sites/*/src/pages/**/*.{md,mdx}\"",
+    "stijl": "node scripts/controleer-tekst.mjs",
+    "tekst": "node scripts/controleer-tekst-alles.mjs",
     "test": "vitest run",
     "test:watch": "vitest"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
+    "@cspell/dict-nl-nl": "^2.4.2",
+    "cspell": "^10.1.0",
     "vitest": "catalog:"
   }
 }

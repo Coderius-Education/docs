@@ -284,6 +284,55 @@ Voor pagina's onder `jouw_project/` (of vergelijkbaar):
 - [ ] Geen holle superlatieven of formulaire openers ("In dit hoofdstuk…", "Laten we…").
 - [ ] Niet alles vet; varieer de openingswoorden van zinnen en bullets.
 - [ ] Voor elk gebruikt concept dat elders is uitgelegd: een `:::info`-verwijzing.
+- [ ] `pnpm tekst` gedraaid en de meldingen over jouw pagina opgelost of gemarkeerd (zie §17).
+
+---
+
+## 17. De geautomatiseerde controle
+
+Een deel van deze gids controleert CI zelf, in de job `tekst`. Lokaal draai je
+hem met `pnpm tekst`, of los met `pnpm spel` en `pnpm stijl`.
+
+**`pnpm spel`** is cspell met de nl_NL-dictionary. Code, frontmatter, JSX en
+linkdoelen slaat hij over. Kent hij een woord niet dat wél goed is (een
+merknaam, een vakterm, een samenstelling), zet het dan in `cspell-woorden.txt`
+in de juiste groep.
+
+**`pnpm stijl`** draait de regels uit `packages/shared/stijl.js` over elke
+pagina onder `sites/*/docs/` en `sites/*/src/pages/`. Alles wat geen proza is
+gaat er eerst uit, dus een uitroepteken in `print("Klaar!")` telt niet mee.
+Twee niveaus:
+
+- **fout** — `emoji`, `u-vorm`, `uitroepteken`, `all-caps`, `alt-tekst`.
+- **waarschuwing** — `vulwoord`, `superlatief`, `formulaire-opener`,
+  `lege-overgang`, `engels-opvulling`, `passief`, `em-dash`, `vet-overdaad`,
+  `lange-zin`, `herhaalde-opening`, `samenvatting`, `leerling-vorm`, plus de
+  structuurregels `frontmatter`, `opdracht-nummering` en `opdracht-oplossing`.
+
+De job is voorlopig niet-blokkerend: de gemigreerde sites hebben nog een
+achterstand. De meldingen staan wel als annotatie in de diff van je pull
+request, dus nieuwe tekst valt meteen op.
+
+### Een terechte uitzondering markeren
+
+Soms slaat een regel terecht niet op jouw geval, bijvoorbeeld een uitroepteken
+in een geciteerde foutmelding. Markeer dat in de bron met een MDX-commentaar,
+in dezelfde vorm als de bestaande `{/* niet-compileren: */}`-marker:
+
+```mdx
+{/* stijl-uitzondering: uitroepteken citaat uit de foutmelding van Python */}
+
+Traceback zegt letterlijk: Klaar!
+```
+
+De marker geldt voor de eerstvolgende alinea. Voor een hele pagina:
+
+```mdx
+{/* stijl-uitzondering-bestand: opdracht-nummering losse referentiepagina */}
+```
+
+Meerdere regels tegelijk scheid je met een komma. Zet er altijd een reden bij:
+zonder reden is het geen uitzondering maar een snelkoppeling.
 
 ---
 
