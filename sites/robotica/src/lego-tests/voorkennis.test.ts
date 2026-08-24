@@ -43,6 +43,7 @@ function heeftBlok(relatiefPad: string): boolean {
 // sidebar: hoofdstukpositie, dan sidebar_position.
 const LEGO_MET_BLOK = [
   'lego_auto/analoog_ir/deel3_een_sensor.md', //  5.4  print
+  'lego_auto/software_editor/bibliotheek.md', // 3.5  wat een module is
   'lego_auto/analoog_ir/while_loop.md', //         5.7  while, vergelijken, tellen
   'lego_auto/eerste_programma/deel1_lampje.md', // 4.2  variabelen, methode-aanroep
   'lego_auto/debuggen_met_scherm/deel5_scherm.md', // 6.4  f-strings
@@ -94,7 +95,6 @@ const LEGO_ZONDER_BLOK: { reden: string; lessen: string[] }[] = [
   {
     reden: 'installeren en verbinden: editor, bord en bibliotheek, geen Python-stof',
     lessen: [
-      'lego_auto/software_editor/bibliotheek.md',
       'lego_auto/software_editor/bord.md',
       'lego_auto/software_editor/editor.md',
       'lego_auto/software_editor/repl.md',

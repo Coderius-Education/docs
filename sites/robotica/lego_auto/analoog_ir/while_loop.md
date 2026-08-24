@@ -12,6 +12,7 @@ title: Code beter begrijpen
     {site: 'python', to: '/docs/herhalen/while-loop', label: 'De while-loop'},
     {site: 'python', to: '/docs/beslissen/05a-booleans-en-vergelijken', label: 'Vergelijken met < en =='},
     {site: 'python', to: '/docs/basis/rekenmachine', label: 'Rekenen met variabelen'},
+    {site: 'python', to: '/docs/herhalen/06d-break', label: 'Stoppen met break'},
   ]}
 />
 

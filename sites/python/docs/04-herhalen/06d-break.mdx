@@ -1,0 +1,250 @@
+---
+sidebar_position: 4
+description: Stop een loop halverwege met break. Leer het verschil met continue en wat er gebeurt met de regels na de loop.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 6d Stoppen met break
+
+```python
+saldo = 0
+
+for week in range(1, 11):
+    saldo = saldo + 3
+    print(f"Week {week}: {saldo} euro")
+    if saldo >= 20:
+        print("Genoeg gespaard.")
+        break
+```
+
+De loop staat op tien weken, maar hij haalt er zeven. Zodra `saldo` de 20 bereikt, stapt **`break`** uit de loop en gaat het programma verder onder de loop.
+
+<CodeExercise>{`saldo = 0
+
+for week in range(1, 11):
+    saldo = saldo + 3
+    print(f"Week {week}: {saldo} euro")
+    if saldo >= 20:
+        print("Genoeg gespaard.")
+        break`}</CodeExercise>
+
+## Wat break precies stopt
+
+`break` stopt de **hele loop**, niet één ronde. De rondes die nog zouden komen vervallen, en Python gaat verder met de eerste regel ná de loop:
+
+```python
+for getal in range(1, 6):
+    if getal == 3:
+        break
+    print(getal)
+
+print("Klaar")
+```
+
+Uitvoer:
+
+```
+1
+2
+Klaar
+```
+
+Bij `getal` is 3 stopt de loop. De `3` wordt niet meer geprint, `4` en `5` ook niet — maar `Klaar` wél, want die regel staat buiten de loop.
+
+<CodeExercise>{`for getal in range(1, 6):
+    if getal == 3:
+        break
+    print(getal)
+
+print("Klaar")`}</CodeExercise>
+
+## break versus continue
+
+Je kent `continue` al uit [6c](06c-continue.mdx). De twee lijken op elkaar en doen iets heel anders:
+
+| | `continue` | `break` |
+|:---:|:---:|:---:|
+| **Wat stopt er** | deze ronde | de hele loop |
+| **Gaat verder bij** | de volgende ronde | de eerste regel ná de loop |
+| **Rest van de rondes** | komt gewoon | vervalt |
+
+`break` gebruik je als je iets **gevonden** hebt of als er een grens bereikt is: doorzoeken heeft dan geen zin meer.
+
+**Tip:** `break` werkt ook in een while-loop, en juist daar zie je hem veel. Dat komt in de [volgende les](07-while-loop.mdx).
+
+## Er gaat iets mis
+
+```
+SyntaxError: 'break' outside loop
+```
+
+**Oorzaak:** je `break` staat niet in een loop. Meestal is hij te ver naar links ingesprongen en hoort hij eigenlijk bij de `if` binnen de loop.
+
+**Oplossing:** zet `break` binnen het ingesprongen blok van de `for` of `while`.
+
+```python
+# FOUT
+for getal in range(5):
+    print(getal)
+break
+
+# GOED
+for getal in range(5):
+    print(getal)
+    break
+```
+
+---
+
+## Opdracht 6d.1: Stop bij de eerste
+
+Print de getallen 1 tot en met 20, maar stop zodra je een getal tegenkomt dat groter is dan 6.
+
+Verwachte uitvoer:
+
+```
+1
+2
+3
+4
+5
+6
+```
+
+<CodeExercise>{`# Schrijf hier je code`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Loop met `range(1, 21)`. Zet de `if` met `break` bóven de `print`, anders wordt de 7 nog geprint voordat je stopt.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+for getal in range(1, 21):
+    if getal > 6:
+        break
+    print(getal)
+```
+
+De volgorde binnen de loop bepaalt alles: controleren en dan pas printen.
+
+<CodeExercise>{`for getal in range(1, 21):
+    if getal > 6:
+        break
+    print(getal)`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 6d.2: Wachtwoord raden
+
+Je hebt drie pogingen om het getal 4 te raden. De pogingen staan vast: eerst 2, dan 4, dan 7. Print bij elke poging wat je probeert, en stop met `break` zodra het klopt. Print daarna `Binnen!`.
+
+Verwachte uitvoer:
+
+```
+Poging: 2
+Poging: 4
+Binnen!
+```
+
+<CodeExercise>{`# Schrijf hier je code`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Je hebt nog geen lijsten gehad, dus tel gewoon met `range(1, 4)` en gebruik `if`/`elif` om te bepalen welk getal die poging is. Of eenvoudiger: schrijf de drie pogingen onder elkaar in één loop met `range(3)` en reken de poging uit.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+for poging in range(1, 4):
+    if poging == 1:
+        getal = 2
+    elif poging == 2:
+        getal = 4
+    else:
+        getal = 7
+
+    print(f"Poging: {getal}")
+
+    if getal == 4:
+        print("Binnen!")
+        break
+```
+
+De derde poging wordt nooit uitgevoerd: `break` stopt de loop na de tweede.
+
+<CodeExercise>{`for poging in range(1, 4):
+    if poging == 1:
+        getal = 2
+    elif poging == 2:
+        getal = 4
+    else:
+        getal = 7
+
+    print(f"Poging: {getal}")
+
+    if getal == 4:
+        print("Binnen!")
+        break`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 6d.3: Break of continue? (uitdaging)
+
+Print de getallen 1 tot en met 10, maar sla 5 over en stop helemaal bij 8.
+
+Verwachte uitvoer:
+
+```
+1
+2
+3
+4
+6
+7
+```
+
+<CodeExercise>{`# Schrijf hier je code`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Je hebt allebei nodig: `continue` voor de 5, `break` voor de 8. Let op dat de 8 zelf níét geprint wordt.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+for getal in range(1, 11):
+    if getal == 5:
+        continue
+    if getal == 8:
+        break
+    print(getal)
+```
+
+Bij 5 slaat hij één ronde over en gaat door met 6. Bij 8 stopt de loop, dus 8, 9 en 10 komen er niet.
+
+<CodeExercise>{`for getal in range(1, 11):
+    if getal == 5:
+        continue
+    if getal == 8:
+        break
+    print(getal)`}</CodeExercise>
+
+</details>
