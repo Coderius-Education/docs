@@ -1,0 +1,175 @@
+import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
+
+# Cookie of sessie?
+
+Je kunt nu allebei: een cookie met de naam erin, en een sessie waarbij alleen een sessie-id bij de bezoeker ligt. Ze lossen hetzelfde probleem op — je server herkent een terugkerende bezoeker niet — maar ze doen het op een andere plek. Deze les gaat over kiezen.
+
+## Wat ze allebei oplossen
+
+Elk verzoek staat op zichzelf. Vraag je twee pagina's achter elkaar op, dan ziet je server twee losse verzoeken zonder enig verband. Er is niets in HTTP dat zegt "dit is dezelfde persoon als daarnet".
+
+Een cookie is het enige wat dat gat dicht. De server geeft de browser een stukje tekst mee, en de browser stuurt dat vanaf dan bij élk verzoek terug. Dat geldt voor allebei de aanpakken: **een sessie is ook een cookie.** Het verschil zit niet in de techniek, maar in wát er in die cookie staat.
+
+## Het verschil in één zin
+
+Bij een cookie staat het antwoord zelf bij de bezoeker. Bij een sessie staat er alleen een nummertje, en het antwoord ligt bij jou.
+
+<VerzoekCyclus variant="sessie" />
+
+Zet je de naam in de cookie, dan slaat de server stap drie en vier over: hij leest de naam direct uit wat de browser stuurde. Sneller, maar hij gelooft op zijn woord wat er binnenkomt.
+
+## Naast elkaar
+
+| | Cookie met de gegevens erin | Sessie |
+|:---:|:---:|:---:|
+| **Waar staan de gegevens** | Bij de bezoeker | Op jouw server |
+| **Wat reist er mee** | Alles wat je bewaarde | Alleen het sessie-id |
+| **Kan de bezoeker het wijzigen** | Ja | Nee |
+| **Mag je het vertrouwen** | Nee | Ja |
+| **Blijft het na een herstart van je server** | Ja | Alleen als je het opslaat |
+| **Hoeveel past erin** | Ongeveer 4 kB | Zoveel als je database aankan |
+| **Wat kost het** | Niets extra's | Een extra opzoeking per verzoek |
+
+## De hoofdvraag
+
+Wat gebeurt er als de bezoeker deze waarde zelf verandert?
+
+- **Niets ergs** — dan mag het in de cookie. Hij verandert zijn eigen naam in het formulier, of zet het donkere thema aan terwijl hij het lichte koos. Hij benadeelt niemand, ook zichzelf niet.
+- **Dan komt hij ergens waar hij niet hoort** — dan moet het een sessie zijn. Berichten van iemand anders verwijderen, betalen zonder te betalen, bij andermans gegevens komen.
+
+Dat is dezelfde vraag als in [Server of browser?](/docs/FastAPI/server-of-browser), en het antwoord komt uit dezelfde regel: alles wat op de computer van de bezoeker staat, is van de bezoeker.
+
+## Waarom niet altijd een sessie
+
+Een sessie is veiliger, dus waarom zou je ooit een gewone cookie nemen?
+
+Omdat een sessie werk kost dat je niet altijd nodig hebt. Elk verzoek betekent een extra opzoeking in je database, en je moet die sessies ergens laten. Ze blijven groeien: elke bezoeker die één keer langskomt laat een rij achter, ook als hij nooit terugkomt. Op een echte site ruim je die na verloop van tijd op.
+
+Voor een voorkeur die niemand kan schaden — welke taal, welk thema, of het uitklapmenu open moet staan — is dat allemaal onnodig. Zet het in een cookie en klaar.
+
+## Testen
+
+Je hebt allebei al draaien. Kijk nog één keer met `F12` bij **Application** (of **Opslag**) naar je cookies en vergelijk wat je ziet: bij de cookie-aanpak stond je naam er leesbaar in, bij de sessie een rij tekens die niets verraadt.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Wie wint?
+
+Twee sites bewaren allebei je naam. Site A zet `naam=Jan` in een cookie. Site B zet `sessie_id=9f2c...` in een cookie en de naam in een database.
+
+Je opent bij allebei de ontwikkelaarshulpmiddelen en verandert de cookie in de naam van iemand anders.
+
+**Vraag:** bij welke site sta je daarna als die ander te boek?
+
+<details>
+<summary>Tip</summary>
+
+Bij welke van de twee komt de naam die de pagina toont uit iets wat jij zojuist hebt getypt?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Bij site A. Die leest de naam rechtstreeks uit de cookie, dus jouw wijziging is meteen waar.
+
+Bij site B verandert er niets: je hebt een sessie-id gewijzigd dat nu nergens meer op past, dus de server behandelt je als een nieuwe bezoeker met een leeg formulier. Je komt niet in de sessie van die ander terecht — daarvoor zou je zijn sessie-id moeten raden, en dat zijn 32 willekeurige tekens.
+
+</details>
+
+### Opdracht 2: Run - Kijk wat er over de lijn gaat
+
+Open `F12`, ga naar het tabblad **Netwerk**, herlaad je gastenboek en klik het bovenste verzoek aan. Zoek bij de verzoek-headers de regel die met `Cookie:` begint.
+
+<details>
+<summary>Antwoord</summary>
+
+Daar staat precies wat de browser meestuurde, bijvoorbeeld `Cookie: sessie_id=9f2c4a7e10b8d3f5a6c1e0b4d7928f3a`.
+
+Dit gebeurt bij elk verzoek, ook bij het ophalen van je CSS-bestand en je afbeeldingen. Daarom is die 4 kB-grens een echte grens: alles wat je in een cookie zet, reist de hele dag heen en weer over het netwerk.
+
+</details>
+
+### Opdracht 3: Investigate - Twee browsers
+
+Open je gastenboek in een gewoon venster en in een privévenster, en plaats in allebei een bericht met een andere naam.
+
+<details>
+<summary>Antwoord</summary>
+
+Je krijgt twee sessies. Een privévenster begint met een lege cookiejar, dus er gaat geen `sessie_id` mee en je server maakt een nieuwe aan.
+
+Dat laat zien waar de identiteit echt zit: niet bij de persoon achter het scherm en niet bij de computer, maar bij één browservenster met één cookie. Log je op een gedeelde computer in, dan zit die cookie er na jou nog steeds — daarom bestaat er een uitlogknop.
+
+</details>
+
+### Opdracht 4: Make - Een voorkeur in een cookie
+
+Geef je gastenboek een knop waarmee de bezoeker kiest of berichten van nieuw naar oud of van oud naar nieuw staan, en onthoud die keuze in een gewone cookie.
+
+<details>
+<summary>Tip</summary>
+
+Dit is een voorkeur die niemand kan schaden, dus een cookie volstaat — geen sessie nodig. Lees hem uit met `Cookie(default="nieuw")` en draai je lijst om met `list(reversed(...))` als de waarde `oud` is.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+@app.get("/volgorde/{keuze}")
+async def volgorde(keuze: str):
+    antwoord = RedirectResponse(url="/berichten", status_code=303)
+    antwoord.set_cookie(key="volgorde", value=keuze, max_age=60 * 60 * 24 * 30)
+    return antwoord
+
+@app.get("/berichten")
+async def berichten(request: Request, volgorde: str = Cookie(default="nieuw")):
+    with SqliteDict("gastenboek.db") as db:
+        alle_berichten = list(db.items())
+    if volgorde == "oud":
+        alle_berichten = list(reversed(alle_berichten))
+    return templates.TemplateResponse(request, "berichten.html", {"berichten": alle_berichten})
+```
+
+In je template:
+```html
+<a href="/volgorde/nieuw">Nieuwste eerst</a>
+<a href="/volgorde/oud">Oudste eerst</a>
+```
+
+Verandert een bezoeker deze cookie in `banaan`, dan valt hij terug op de standaardvolgorde. Vervelend voor hem, verder gebeurt er niets — en dat is precies waarom een cookie hier genoeg is.
+
+</details>
+
+### Opdracht 5: Make - Uitloggen
+
+Maak een endpoint `/uitloggen` dat de sessie op de server weggooit én de cookie bij de bezoeker weghaalt.
+
+<details>
+<summary>Tip</summary>
+
+Twee dingen dus: `del sessies[sessie_id]` op de server en `delete_cookie` op het antwoord. Vang met `if sessie_id in sessies` op dat de sessie er misschien niet meer is.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+@app.get("/uitloggen")
+async def uitloggen(sessie_id: str = Cookie(default="")):
+    with SqliteDict("sessies.db") as sessies:
+        if sessie_id in sessies:
+            del sessies[sessie_id]
+            sessies.commit()
+
+    antwoord = RedirectResponse(url="/gastenboek", status_code=303)
+    antwoord.delete_cookie("sessie_id")
+    return antwoord
+```
+
+Allebei is nodig. Haal je alleen de cookie weg, dan blijft de sessie op je server staan; iemand die het oude sessie-id nog heeft, is gewoon weer binnen. Gooi je alleen de sessie weg, dan houdt de bezoeker een cookie die nergens meer op past — dat werkt, maar je server maakt bij zijn volgende bezoek een tweede sessie aan naast de eerste.
+
+</details>

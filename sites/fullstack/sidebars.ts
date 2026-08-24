@@ -50,7 +50,7 @@ const sidebars: SidebarsConfig = {
     {
       type: 'category',
       label: 'Onthouden',
-      items: ['FastAPI/cookies', 'FastAPI/sessies'],
+      items: ['FastAPI/cookies', 'FastAPI/sessies', 'FastAPI/cookie-of-sessie'],
     },
     {
       type: 'category',
