@@ -1,9 +1,13 @@
 import type { CheckerConfig } from '@coderius/checker/types';
 
-// Conceptenlijst voor de fullstack-nakijker, 1-op-1 afgeleid van
+// Conceptenlijst voor de fullstack-nakijker, afgeleid van
 // sites/fullstack/docs/cheatsheet.md (koppen: FastAPI, HTML, JavaScript,
 // Database, plus een mappenstructuur-check). Wijzig je de cheatsheet, werk dan
 // ook hier de bijbehorende regel bij.
+//
+// Eén uitzondering op die één-op-één-afleiding: concepten die een andere cursus
+// aanleert en ook zelf nakijkt, staan hier niet. Dat geldt voor de
+// JavaScript-technieken uit de web-cursus (zie het blok hieronder).
 //
 // De verdeling basis/gevorderd volgt de vastgestelde niveau-indeling van de
 // leerlijn, niet de volgorde waarin de lessen langskomen. Basis is wat elke
@@ -244,8 +248,13 @@ export const fullstackConfig: CheckerConfig = {
     },
 
     // --- JavaScript ---
-    // Kijkt bewust in het .js-bestand en niet in de HTML: de cursus leert
-    // JavaScript in static/js/ te zetten, niet in een <script>-blok.
+    // Alleen het koppelen, en dat is een bewuste grens. `querySelector` en
+    // `addEventListener` worden in de web-cursus aangeleerd en daar ook
+    // nagekeken (js-query-selector en js-add-event-listener in
+    // web/src/checker/curriculum.ts); ze hier nóg een keer scoren zegt niets
+    // over wat een leerling in déze cursus heeft geleerd. Wat fullstack
+    // toevoegt is de plek: een apart bestand in static/js/, gemount door
+    // FastAPI — vandaar dat de detectie in de HTML kijkt en niet in de JS.
     {
       id: 'js-bestand-koppelen',
       subject: 'js',
@@ -253,22 +262,6 @@ export const fullstackConfig: CheckerConfig = {
       label: 'JavaScript koppelen (<script src>)',
       level: 'basis',
       detect: { type: 'regex', pattern: /<script\b[^>]*\bsrc\s*=/gi, in: ['html'] },
-    },
-    {
-      id: 'js-query-selector',
-      subject: 'js',
-      group: 'In de browser',
-      label: 'Element opzoeken (querySelector)',
-      level: 'basis',
-      detect: { type: 'regex', pattern: /querySelector(All)?\s*\(/g, in: ['js'] },
-    },
-    {
-      id: 'js-event-listener',
-      subject: 'js',
-      group: 'In de browser',
-      label: 'Reageren op de bezoeker (addEventListener)',
-      level: 'gevorderd',
-      detect: { type: 'regex', pattern: /addEventListener\s*\(/g, in: ['js'] },
     },
 
     // --- Database (sqlitedict) ---

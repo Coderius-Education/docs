@@ -79,7 +79,7 @@ describe('fullstackConfig — voorbeeldprojecten scoren', () => {
         'struct-static',
         'struct-templates',
         'html-basis',
-        'js-query-selector',
+        'js-bestand-koppelen',
       ],
     );
   });
@@ -108,8 +108,6 @@ describe('fullstackConfig — voorbeeldprojecten scoren', () => {
         'html-jinja-loop',
         'html-jinja-if',
         'js-bestand-koppelen',
-        'js-query-selector',
-        'js-event-listener',
         'db-sqlitedict',
         'db-write',
         'db-commit',
@@ -261,11 +259,17 @@ describe('fullstackConfig', () => {
   });
 
   // Voor de JS-lessen werd .js als 'other' geclassificeerd en stond het niet in
-  // textKinds, dus werd een JavaScript-bestand niet eens ingelezen.
-  it('leest JavaScript-bestanden en herkent wat erin staat', () => {
+  // textKinds. Een JavaScript-bestand telt dus mee in het bestandsoverzicht,
+  // ook nu er geen concept meer in de JS-broncode zoekt.
+  it('herkent een JavaScript-bestand als JavaScript', () => {
     expect(fullstackConfig.classify('static/js/app.js')).toBe('js');
     expect(fullstackConfig.textKinds).toContain('js');
+  });
 
+  it('kijkt naar de koppeling, niet naar wat er in het JavaScript staat', () => {
+    // querySelector en addEventListener horen bij de web-cursus en worden daar
+    // nagekeken. Fullstack toetst alleen dat het bestand netjes in static/js/
+    // staat en vanuit de HTML gekoppeld is.
     const report = analyze(
       files({
         'templates/form.html': '<script src="/static/js/app.js" defer></script>',
@@ -276,16 +280,16 @@ describe('fullstackConfig', () => {
       }),
       fullstackConfig,
     );
-    const perId = new Map(report.concepts.map((c) => [c.id, c.used]));
 
-    expect(perId.get('js-bestand-koppelen')).toBe(true);
-    expect(perId.get('js-query-selector')).toBe(true);
-    expect(perId.get('js-event-listener')).toBe(true);
+    const jsConcepten = fullstackConfig.concepts.filter((c) => c.subject === 'js').map((c) => c.id);
+    expect(jsConcepten).toEqual(['js-bestand-koppelen']);
+    expect(new Map(report.concepts.map((c) => [c.id, c.used])).get('js-bestand-koppelen')).toBe(
+      true,
+    );
   });
 
-  it('telt JavaScript in een HTML-bestand niet mee als JavaScript-concept', () => {
-    // De cursus leert een apart bestand in static/js/. Een inline <script>-blok
-    // met dezelfde code hoort dus niet als "querySelector gebruikt" te tellen.
+  it('een inline script-blok telt niet als koppelen', () => {
+    // De cursus leert een apart bestand in static/js/, gemount door FastAPI.
     const report = analyze(
       files({
         'templates/form.html':
@@ -295,8 +299,6 @@ describe('fullstackConfig', () => {
     );
     const perId = new Map(report.concepts.map((c) => [c.id, c.used]));
 
-    expect(perId.get('js-query-selector')).toBe(false);
-    expect(perId.get('js-event-listener')).toBe(false);
     expect(perId.get('js-bestand-koppelen')).toBe(false);
   });
 
@@ -342,7 +344,6 @@ describe('fullstackConfig', () => {
       'fastapi-sessie',
       'html-jinja-if',
       'html-jinja-loop',
-      'js-event-listener',
     ]);
   });
 });
