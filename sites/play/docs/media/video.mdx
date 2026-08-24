@@ -1,0 +1,111 @@
+---
+sidebar_position: 2
+---
+
+# 9.2 Video afspelen
+
+:::info[Wat moet je al weten]
+- [9.1 Geluid afspelen](/docs/media/geluid) - hoe je een mediabestand naast je Python-bestand zet
+:::
+
+:::warning[Online speeltuin]
+Video werkt **niet** in de online speeltuin. Je hebt hiervoor een lokale installatie nodig (Thonny of VS Code) met coderius-play versie 3.4 of nieuwer. Zie [installatie](/docs/installatie).
+:::
+
+Met **`play.new_video`** speel je een videobestand (`.mp4`) af in je spel — als intro, als uitleg of als filmpje tussen twee levels. Een video is een gewone sprite: hij heeft een `x`, een `y` en een grootte, net als een cirkel of afbeelding.
+
+Zet een videobestand in dezelfde map als je Python-bestand en probeer:
+
+```python
+import play
+
+video = play.new_video("intro.mp4", autoplay=True)
+```
+
+De video verschijnt in het midden van het scherm en begint meteen te spelen. Onderaan zie je afspeelknoppen: pauzeren, doorspoelen en het geluid dempen. Die krijg je standaard; wil je ze niet, geef dan `controls=False` mee.
+
+**Let op:** je ziet in je terminal de melding dat video *experimental* is. Dat is normaal — het onderdeel is nieuw en kan in een volgende versie nog veranderen.
+
+## De video besturen vanuit je code
+
+Alles wat de afspeelknoppen kunnen, kan je code ook:
+
+```python
+video = play.new_video("intro.mp4")
+
+video.play()        # afspelen
+video.pause()       # pauzeren
+video.toggle_play() # wisselen tussen die twee
+video.restart()     # terug naar het begin en afspelen
+video.seek(10)      # spring naar seconde 10
+```
+
+En er valt van alles uit te lezen of in te stellen:
+
+| Eigenschap | Betekenis |
+|:---:|:---|
+| `video.time` | huidige positie in seconden (ook te zetten: `video.time = 5`) |
+| `video.length` | totale duur in seconden |
+| `video.playing` / `video.paused` / `video.finished` | in welke toestand de video is |
+| `video.volume` | geluidssterkte van `0.0` tot `1.0` |
+| `video.muted` | `True` = geluid tijdelijk uit |
+| `video.speed` | afspeelsnelheid, `2.0` is dubbel zo snel |
+| `video.loop` | `True` = opnieuw beginnen bij het einde |
+
+## Groot of klein op het scherm
+
+Omdat een video een sprite is, gelden de bekende eigenschappen:
+
+```python
+video = play.new_video("intro.mp4", x=0, y=100, size=50, autoplay=True)
+```
+
+`size=50` maakt hem half zo groot. Je kunt ook `width=` of `height=` meegeven; geef je er één, dan rekent play de andere zelf uit zodat het beeld niet uitrekt.
+
+## Er gaat iets mis?
+
+```
+ImportError: Playing videos needs the 'av' package
+```
+
+**Oorzaak:** het pakket `av`, dat video's decodeert, ontbreekt. Het hoort automatisch mee te komen met coderius-play 3.4.
+
+**Oplossing:** voer in je terminal uit:
+
+```
+pip install av
+```
+
+Krijg je een `FileNotFoundError`, dan geldt hetzelfde als bij afbeeldingen en geluid: controleer of het bestand in dezelfde map staat en of de naam precies klopt.
+
+## Opdracht 9.2.a: Filmpje met eigen knoppen
+
+Speel een video af zonder de ingebouwde knoppen (`controls=False`) en maak er zelf twee onder: **Pauze** en **Opnieuw**.
+
+<details>
+<summary>Klik hier voor een tip</summary>
+
+`video.toggle_play()` is handiger dan losse play/pause: één knop kan dan allebei. Kijk in [8.1](/docs/ui/knop) hoe je een knop maakt.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing</summary>
+
+```python
+import play
+
+video = play.new_video("intro.mp4", y=60, size=60, autoplay=True, controls=False)
+pauze = play.new_button(text="Pauze", x=-100, y=-150)
+opnieuw = play.new_button(text="Opnieuw", x=100, y=-150)
+
+@pauze.when_clicked
+def pauzeer():
+    video.toggle_play()
+
+@opnieuw.when_clicked
+def herstart():
+    video.restart()
+```
+
+</details>

@@ -40,6 +40,19 @@ Vervang `VERSIENUMMER` door de gewenste versie, bijvoorbeeld `3.3.3`.
 </details>
 
 <details>
+  <summary>Nieuw of verbeterd in coderius-play versie 3.4</summary>
+
+Versie 3.4 voegt een familie **UI-elementen** en **video** toe.
+
+Bij **Knoppen en UI**: acht nieuwe elementen om je spel mee te bedienen — `play.new_button`, `play.new_slider`, `play.new_checkbox`, `play.new_radio_group` met `play.new_radio_button`, `play.new_dropdown`, `play.new_text_input`, `play.new_progress_bar` en `play.new_tooltip`. Zie de groep [Knoppen en UI](#knoppen-en-ui) hieronder en de lessen in [8. Knoppen en UI](/docs/ui/knop).
+
+Bij **Video**: `play.new_video` speelt een videobestand af als sprite, met ingebouwde afspeelknoppen en vijf gebeurtenissen zoals `@play.when_video_ends`. Zie de groep [Video](#video) hieronder. Werkt alleen lokaal, niet in de online speeltuin.
+
+Bij **Vormen**: elke vorm kent nu `anchor` (vastzetten aan een schermrand, bijvoorbeeld `anchor='top-left'`) en `layer` (wat bovenop tekent). Zie de nieuwe items onder [Vormen](#vormen).
+
+</details>
+
+<details>
   <summary>Nieuw of verbeterd in coderius-play versie 3.3.3</summary>
 
 In versie 3.3.3 hebben we een nieuwe feature en een aantal verbeteringen toegevoegd.
@@ -362,6 +375,36 @@ Als het goed is, zie je in het **console-paneel** onder het scherm iets als:
 ```
 
 Nu weet je dus dat de meest rechter pixel van de bal op x=100 staat.
+</details>
+
+<details>
+  <summary>Een vorm vastzetten aan de schermrand (anchor) (nieuw in 3.4)</summary>
+
+Met **anchor** plak je een vorm aan een rand of hoek van het scherm. De `x` en `y` zijn dan de afstand vanaf die rand, naar binnen gerekend — handig voor een score linksboven die blijft staan, hoe groot het venster ook is.
+
+<PygbagRunner code={`import play
+
+score = play.new_text(words="Score: 0", anchor='top-left', x=20, y=20)
+play.new_circle(color='red', radius=30, anchor='bottom-right', x=20, y=20)
+`} height={300} />
+
+Geldige waarden: `'top-left'`, `'top-center'`, `'top-right'`, `'center-left'`, `'center'`, `'center-right'`, `'bottom-left'`, `'bottom-center'`, `'bottom-right'`.
+
+</details>
+
+<details>
+  <summary>Welke vorm tekent er bovenop? (layer) (nieuw in 3.4)</summary>
+
+Vormen met een hogere **layer** worden over vormen met een lagere layer heen getekend. Standaard staat alles op layer 0; UI-elementen zoals knoppen staan standaard op 10, zodat ze altijd boven je spel liggen.
+
+<PygbagRunner code={`import play
+
+play.new_box(color='navy', width=200, height=200, layer=0)
+play.new_circle(color='gold', radius=60, layer=1)
+`} height={300} />
+
+Zonder `layer=1` zou de cirkel achter het vierkant kunnen verdwijnen; nu ligt hij er gegarandeerd bovenop.
+
 </details>
 
 </CheatsheetGrid>
@@ -1643,6 +1686,238 @@ def pijltje_bewogen(axis, value):
 ```
 
 De `axis` parameter geeft aan welke as bewoog (0 = horizontaal, 1 = verticaal) en `value` geeft de richting aan (-1, 0 of 1).
+
+</details>
+
+</CheatsheetGrid>
+
+## Knoppen en UI
+
+<CheatsheetGrid data-cheatsheet-grid>
+
+<details>
+  <summary>Hoe maak ik een knop? (play.new_button) (nieuw in 3.4)</summary>
+
+<PygbagRunner code={`import play
+
+knop = play.new_button(text="Klik mij")
+
+@knop.when_clicked
+def geklikt():
+    knop.text = "Bedankt"
+`} height={300} />
+
+De belangrijkste attributen:
+- **text**: de tekst op de knop, ook achteraf te wijzigen via `knop.text = '...'`
+- **color** / **hover_color**: kleur, en kleur als de muis erop staat
+- **text_color** en **font_size**: opmaak van de tekst
+- **width**, **height**, **border_radius**: vorm van de knop
+- **disabled**: `True` maakt de knop grijs en niet-klikbaar
+
+</details>
+
+<details>
+  <summary>Hoe maak ik een schuifbalk? (play.new_slider) (nieuw in 3.4)</summary>
+
+<PygbagRunner code={`import play
+
+tekst = play.new_text(words="50", y=80)
+schuif = play.new_slider(min_value=0, max_value=100, value=50)
+
+@schuif.when_changed
+def veranderd(waarde):
+    tekst.words = str(int(waarde))
+`} height={300} />
+
+- **min_value**, **max_value**, **value**: bereik en beginwaarde; uitlezen via `schuif.value`
+- **step**: laat de schuif verspringen in vaste stappen, bijvoorbeeld `step=5`
+- **show_value**: `True` toont de waarde naast de schuif
+- `@schuif.when_changed` krijgt de nieuwe waarde als parameter mee
+
+</details>
+
+<details>
+  <summary>Hoe maak ik een aanvinkvakje? (play.new_checkbox) (nieuw in 3.4)</summary>
+
+<PygbagRunner code={`import play
+
+vinkje = play.new_checkbox(label="Geluid aan", checked=True)
+
+@vinkje.when_changed
+def veranderd(aangevinkt):
+    print(aangevinkt)
+`} height={300} />
+
+- **label**: de tekst naast het vakje
+- **checked**: `True` of `False`; uitlezen via `vinkje.checked`
+- `@vinkje.when_changed` krijgt `True` of `False` mee
+
+</details>
+
+<details>
+  <summary>Hoe maak ik keuzerondjes? (play.new_radio_group) (nieuw in 3.4)</summary>
+
+<PygbagRunner code={`import play
+
+groep = play.new_radio_group()
+play.new_radio_button(label="Makkelijk", value="makkelijk", group=groep, y=30, selected=True)
+play.new_radio_button(label="Moeilijk", value="moeilijk", group=groep, y=-30)
+
+@groep.when_changed
+def gekozen(waarde):
+    print(waarde)
+`} height={300} />
+
+Maak eerst een groep met `play.new_radio_group()`; elk rondje krijgt `group=` mee. De groep zorgt dat er maar één rondje tegelijk aan staat.
+- **value**: de waarde die het rondje vertegenwoordigt; **selected**: `True` zet dit rondje aan
+- `groep.selected_value` geeft de waarde van het geselecteerde rondje
+- `@groep.when_changed` zet je op de **groep**, niet op een los rondje
+
+</details>
+
+<details>
+  <summary>Hoe maak ik een uitklapmenu? (play.new_dropdown) (nieuw in 3.4)</summary>
+
+<PygbagRunner code={`import play
+
+menu = play.new_dropdown(options=["rood", "groen", "blauw"])
+
+@menu.when_changed
+def gekozen(waarde, plek):
+    print(waarde, plek)
+`} height={320} />
+
+- **options**: de lijst met keuzes; **selected_index**: welke er bij de start gekozen is
+- `menu.selected_value` en `menu.selected_index` geven de huidige keuze
+- `@menu.when_changed` krijgt twee parameters: de waarde én de plek in de lijst (0 = eerste)
+
+</details>
+
+<details>
+  <summary>Hoe laat ik de speler tekst typen? (play.new_text_input) (nieuw in 3.4)</summary>
+
+<PygbagRunner code={`import play
+
+veld = play.new_text_input(placeholder="Typ en druk op Enter")
+
+@veld.when_submit
+def klaar(tekst):
+    print(tekst)
+`} height={300} />
+
+- **placeholder**: grijze hulptekst zolang het veld leeg is
+- **max_length**: maximum aantal tekens; **password_mode**: `True` toont rondjes
+- `veld.value` leest de huidige inhoud; `veld.value = ""` maakt het veld leeg
+- `@veld.when_submit` gaat af bij Enter; `@veld.when_changed` bij elke toetsaanslag — allebei met de tekst als parameter
+
+</details>
+
+<details>
+  <summary>Hoe maak ik een voortgangsbalk? (play.new_progress_bar) (nieuw in 3.4)</summary>
+
+<PygbagRunner code={`import play
+
+balk = play.new_progress_bar(min_value=0, max_value=100, value=70, show_label=True)
+`} height={280} />
+
+- **value**: de vulling, aan te passen via `balk.value = 30` — de speler kan er zelf niet aan slepen
+- **bar_color** / **background_color**: kleur van de vulling en van de lege balk
+- **show_label**: `True` toont het percentage in de balk
+
+</details>
+
+<details>
+  <summary>Hoe toon ik uitleg bij een knop? (play.new_tooltip) (nieuw in 3.4)</summary>
+
+<PygbagRunner code={`import play
+
+knop = play.new_button(text="?")
+play.new_tooltip(text="Deze knop doet nog niets", target=knop)
+`} height={280} />
+
+De tekst verschijnt vanzelf zodra de muis op het **target** staat en verdwijnt weer bij het weggaan. Het target mag elke vorm zijn, ook een cirkel of afbeelding.
+- **offset_x** / **offset_y**: hoe ver de tekst van de muis af staat
+
+</details>
+
+</CheatsheetGrid>
+
+## Geluid
+
+<CheatsheetGrid data-cheatsheet-grid>
+
+<details>
+  <summary>Hoe speel ik een geluid af? (play.new_sound)</summary>
+
+Laadt een geluidsbestand (`.mp3`, `.wav` of `.ogg`) uit dezelfde map als je Python-bestand. Werkt alleen lokaal, niet in de online speeltuin.
+
+```python
+import play
+
+muntje = play.new_sound("muntje.mp3")
+muntje.play()
+```
+
+- **volume**: van `0.0` tot `1.0`, ook achteraf via `muntje.volume = 0.5`
+- **loops**: aantal herhalingen; `-1` herhaalt eindeloos (achtergrondmuziek)
+- `.play()`, `.pause()` en `.stop()` besturen het afspelen
+
+</details>
+
+</CheatsheetGrid>
+
+## Video
+
+<CheatsheetGrid data-cheatsheet-grid>
+
+<details>
+  <summary>Hoe speel ik een video af? (play.new_video) (nieuw in 3.4)</summary>
+
+Speelt een videobestand (`.mp4`) af als sprite, met ingebouwde afspeelknoppen. Werkt alleen lokaal, niet in de online speeltuin.
+
+```python
+import play
+
+video = play.new_video("intro.mp4", autoplay=True)
+```
+
+- **autoplay**: `True` start meteen; **loop**: `True` begint na het einde opnieuw
+- **controls**: `False` verbergt de afspeelknoppen
+- **volume** (`0.0`–`1.0`), **muted** en **speed** (`2.0` = dubbel zo snel)
+- **size**, **width** of **height**: grootte op het scherm; één van de twee opgeven houdt de verhouding intact
+
+</details>
+
+<details>
+  <summary>Hoe bestuur ik een video vanuit code? (play, pause, seek) (nieuw in 3.4)</summary>
+
+```python
+video = play.new_video("intro.mp4")
+
+video.play()
+video.pause()
+video.toggle_play()
+video.restart()
+video.seek(10)
+```
+
+- `video.time` is de positie in seconden (ook te zetten), `video.length` de totale duur
+- `video.playing`, `video.paused` en `video.finished` vertellen de toestand
+
+</details>
+
+<details>
+  <summary>Reageren als een video afgelopen is (@play.when_video_ends) (nieuw in 3.4)</summary>
+
+```python
+intro = play.new_video("intro.mp4", autoplay=True)
+
+@play.when_video_ends(intro)
+def klaar():
+    intro.remove()
+```
+
+Verwante gebeurtenissen: `when_video_starts` (eerste start), `when_video_plays` (elke start of hervatting), `when_video_pauses` en `when_video_frame_changes` (elk beeldje). Meerdere video's mag: `@play.when_video_ends(video1, video2)`.
 
 </details>
 

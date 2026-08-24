@@ -1,0 +1,71 @@
+---
+sidebar_position: 1
+---
+
+# 9.1 Geluid afspelen
+
+:::info[Wat moet je al weten]
+- [1.5 Je eerste afbeelding](/docs/vormen/je_eerste_afbeelding) - hoe je een bestand naast je Python-bestand zet
+:::
+
+:::warning[Online speeltuin]
+Geluidsbestanden laden werkt **niet** in de online speeltuin. Je hebt hiervoor een lokale installatie nodig (Thonny of VS Code). Zie [installatie](/docs/installatie) als je dat nog niet gedaan hebt.
+:::
+
+Een spel zonder geluid is maar half af. Met **`play.new_sound`** laad je een geluidsbestand (`.mp3`, `.wav` of `.ogg`) dat je op elk moment kunt afspelen.
+
+Zet eerst een geluidsbestand in **dezelfde map** als je Python-bestand, net als bij een afbeelding. Dan:
+
+```python
+import play
+
+muntje = play.new_sound("muntje.mp3")
+knop = play.new_button(text="Speel af")
+
+@knop.when_clicked
+def afspelen():
+    muntje.play()
+```
+
+`play.new_sound` laadt het bestand één keer; `.play()` speelt het af. Roep je `.play()` opnieuw aan terwijl het geluid nog klinkt, dan begint het opnieuw.
+
+## Volume en herhalen
+
+```python
+muziek = play.new_sound("achtergrond.mp3", volume=0.3, loops=-1)
+muziek.play()
+```
+
+- `volume` loopt van `0.0` (stil) tot `1.0` (vol); ook achteraf te zetten met `muziek.volume = 0.5`
+- `loops=-1` herhaalt eindeloos — handig voor achtergrondmuziek; `loops=2` speelt het geluid drie keer (één keer plus twee herhalingen)
+- `muziek.pause()` pauzeert, nog een keer `.play()` gaat verder waar het was
+- `muziek.stop()` stopt helemaal
+
+## Er gaat iets mis?
+
+Hoor je niets, controleer dan:
+
+- Staat het geluidsbestand in **dezelfde map** als je Python-bestand?
+- Klopt de bestandsnaam precies, inclusief de extensie (`.mp3` vs `.wav`)?
+- Wordt `.play()` wel aangeroepen? Zet er ter controle een `print("afspelen")` naast.
+- Staat het volume van je computer aan?
+
+## Opdracht 9.1.a: Klikgeluid
+
+Maak een knop die bij elke klik een geluid afspeelt. Gebruik een kort geluidsbestand dat je zelf hebt opgezocht of opgenomen.
+
+<details>
+<summary>Klik hier voor de oplossing</summary>
+
+```python
+import play
+
+klik = play.new_sound("klik.mp3")
+knop = play.new_button(text="Klik")
+
+@knop.when_clicked
+def geklikt():
+    klik.play()
+```
+
+</details>

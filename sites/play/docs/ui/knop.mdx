@@ -1,0 +1,152 @@
+---
+sidebar_position: 1
+---
+
+# 8.1 Een knop maken
+
+:::info[Wat moet je al weten]
+- [4.1 Gebeurtenissen](/docs/gebeurtenissen/toetsenbord) - hoe een `@play.when_...` decorator werkt
+:::
+
+Tot nu toe reageerde je spel op het toetsenbord en de muis. Met **`play.new_button`** maak je een echte knop: hij licht op als je eroverheen beweegt en reageert op een klik.
+
+<PygbagRunner code={`import play
+
+teller = 0
+tekst = play.new_text(words="0 keer geklikt", y=100)
+knop = play.new_button(text="Klik mij")
+
+@knop.when_clicked
+def geklikt():
+    global teller
+    teller = teller + 1
+    tekst.words = str(teller) + " keer geklikt"`} height={300} />
+
+```python
+knop = play.new_button(text="Klik mij")
+
+@knop.when_clicked
+def geklikt():
+    ...
+```
+
+`play.new_button` maakt de knop, en `@knop.when_clicked` koppelt er een functie aan. Die functie wordt uitgevoerd bij elke klik op de knop. Het zweef-effect (de knop wordt lichter als je muis erop staat) krijg je er gratis bij.
+
+## De knop aanpassen
+
+Een knop heeft veel instelbare eigenschappen. De belangrijkste:
+
+```python
+knop = play.new_button(
+    text="Start",
+    x=0, y=0,
+    width=160, height=50,
+    color='royalblue',
+    text_color='white',
+    font_size=20,
+)
+```
+
+- `color` is de kleur van de knop, `hover_color` de kleur als je muis erop staat
+- `text` kun je ook achteraf veranderen: `knop.text = 'Opnieuw'`
+- `border_radius` bepaalt hoe rond de hoeken zijn
+
+## Een knop uitzetten
+
+Soms mag een knop tijdelijk niet klikbaar zijn, bijvoorbeeld zolang het spel bezig is. Zet dan `disabled` op `True`:
+
+<PygbagRunner code={`import play
+
+start = play.new_button(text="Start", x=-100)
+stop = play.new_button(text="Stop", x=100, disabled=True)
+
+@start.when_clicked
+def start_geklikt():
+    start.disabled = True
+    stop.disabled = False
+
+@stop.when_clicked
+def stop_geklikt():
+    stop.disabled = True
+    start.disabled = False`} height={300} />
+
+Een uitgezette knop wordt grijs en zijn `when_clicked`-functie wordt niet meer aangeroepen.
+
+## Opdracht 8.1.a: Kleurenknoppen
+
+Maak een cirkel en twee knoppen: **Rood** en **Blauw**. Klik je op een knop, dan krijgt de cirkel die kleur.
+
+<details>
+<summary>Klik hier voor een tip</summary>
+
+Zet de cirkel bovenin (`y=100`) en de knoppen eronder, links en rechts van elkaar (`x=-100` en `x=100`). Elke knop krijgt zijn eigen `@knop.when_clicked`-functie.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing</summary>
+
+```python
+import play
+
+cirkel = play.new_circle(color='black', y=100, radius=50)
+rood = play.new_button(text="Rood", x=-100, y=-100, color='firebrick')
+blauw = play.new_button(text="Blauw", x=100, y=-100)
+
+@rood.when_clicked
+def maak_rood():
+    cirkel.color = 'red'
+
+@blauw.when_clicked
+def maak_blauw():
+    cirkel.color = 'blue'
+```
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle(color='black', y=100, radius=50)
+rood = play.new_button(text="Rood", x=-100, y=-100, color='firebrick')
+blauw = play.new_button(text="Blauw", x=100, y=-100)
+
+@rood.when_clicked
+def maak_rood():
+    cirkel.color = 'red'
+
+@blauw.when_clicked
+def maak_blauw():
+    cirkel.color = 'blue'`} height={300} />
+
+</details>
+
+## Opdracht 8.1.b: Maar één keer
+
+Maak een knop **Start** die zichzelf uitzet zodra erop geklikt is, en een tekst die daarna "Gestart" laat zien.
+
+<details>
+<summary>Klik hier voor de oplossing</summary>
+
+```python
+import play
+
+tekst = play.new_text(words="", y=100)
+start = play.new_button(text="Start")
+
+@start.when_clicked
+def gestart():
+    start.disabled = True
+    tekst.words = "Gestart"
+```
+
+<PygbagRunner code={`import play
+
+tekst = play.new_text(words="", y=100)
+start = play.new_button(text="Start")
+
+@start.when_clicked
+def gestart():
+    start.disabled = True
+    tekst.words = "Gestart"`} height={300} />
+
+In de functie zet je `start.disabled = True`: de knop wordt grijs en reageert daarna nergens meer op.
+
+</details>

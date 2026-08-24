@@ -1,0 +1,94 @@
+---
+sidebar_position: 3
+---
+
+# 8.3 Kiezen uit een lijst
+
+:::info[Wat moet je al weten]
+- [8.2 Schuiven en aanvinken](/docs/ui/schuif-en-vink) - hoe `when_changed` een waarde meekrijgt
+:::
+
+Moet de speler één ding kiezen uit meerdere mogelijkheden, dan heb je twee opties: een uitklapmenu of een rijtje keuzerondjes.
+
+## Het uitklapmenu
+
+**`play.new_dropdown`** toont de gekozen optie; klik erop en de hele lijst klapt open. De `when_changed`-functie krijgt twee dingen mee: de gekozen waarde en zijn plek in de lijst.
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle(color='red', y=60)
+menu = play.new_dropdown(options=["red", "green", "blue"], y=-100)
+
+@menu.when_changed
+def kleur_gekozen(waarde, plek):
+    cirkel.color = waarde`} height={340} />
+
+```python
+menu = play.new_dropdown(options=["red", "green", "blue"])
+
+@menu.when_changed
+def kleur_gekozen(waarde, plek):
+    ...
+```
+
+Uitlezen zonder functie kan ook: `menu.selected_value` geeft de gekozen waarde, `menu.selected_index` de plek (0 is de eerste optie).
+
+## Keuzerondjes
+
+Bij keuzerondjes ziet de speler alle opties tegelijk, en er kan er maar één aan staan. Daarvoor werk je met een **groep**: de rondjes die bij elkaar horen stop je in dezelfde `play.new_radio_group()`, en die groep zorgt ervoor dat er nooit twee tegelijk geselecteerd zijn.
+
+<PygbagRunner code={`import play
+
+tekst = play.new_text(words="Kies een niveau", y=100)
+groep = play.new_radio_group()
+play.new_radio_button(label="Makkelijk", value="makkelijk", group=groep, y=20, selected=True)
+play.new_radio_button(label="Normaal", value="normaal", group=groep, y=-30)
+play.new_radio_button(label="Moeilijk", value="moeilijk", group=groep, y=-80)
+
+@groep.when_changed
+def niveau_gekozen(waarde):
+    tekst.words = "Niveau: " + waarde`} height={360} />
+
+Let op: `when_changed` zet je op de **groep**, niet op een los rondje. De waarde die je meekrijgt is de `value` van het rondje dat aan ging, en `groep.selected_value` geeft die waarde op elk moment.
+
+## Opdracht 8.3.a: Vormenkiezer
+
+Maak drie keuzerondjes: **Klein**, **Normaal** en **Groot**. De keuze bepaalt de straal van een cirkel (bijvoorbeeld 20, 50 en 90).
+
+<details>
+<summary>Klik hier voor een tip</summary>
+
+Geef elk rondje als `value` het getal als tekst mee (`value="20"`). In de `when_changed`-functie maak je er met `int(waarde)` weer een getal van.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing</summary>
+
+```python
+import play
+
+cirkel = play.new_circle(color='teal', radius=50, x=120)
+groep = play.new_radio_group()
+play.new_radio_button(label="Klein", value="20", group=groep, x=-150, y=60)
+play.new_radio_button(label="Normaal", value="50", group=groep, x=-150, y=10, selected=True)
+play.new_radio_button(label="Groot", value="90", group=groep, x=-150, y=-40)
+
+@groep.when_changed
+def maat_gekozen(waarde):
+    cirkel.radius = int(waarde)
+```
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle(color='teal', radius=50, x=120)
+groep = play.new_radio_group()
+play.new_radio_button(label="Klein", value="20", group=groep, x=-150, y=60)
+play.new_radio_button(label="Normaal", value="50", group=groep, x=-150, y=10, selected=True)
+play.new_radio_button(label="Groot", value="90", group=groep, x=-150, y=-40)
+
+@groep.when_changed
+def maat_gekozen(waarde):
+    cirkel.radius = int(waarde)`} height={340} />
+
+</details>

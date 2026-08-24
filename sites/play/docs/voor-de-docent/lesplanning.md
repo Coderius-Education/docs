@@ -40,6 +40,16 @@ Na afloop kan de leerling:
 - Vormen tekenen, tekst tonen, op toetsen reageren in raw pygame-ce.
 - Botsingen en fysica met `pymunk` toepassen.
 
+### Hoofdstuk 8 — Knoppen en UI
+- Een spel bedienbaar maken met `play.new_button`, `play.new_slider`, `play.new_checkbox`, keuzerondjes, een uitklapmenu en een invoerveld.
+- Het patroon herkennen dat elk UI-element hetzelfde werkt: maken, uitlezen via een eigenschap (`value`, `checked`, `selected_value`), en reageren met `when_changed` of `when_clicked`.
+- Voortgang tonen met `play.new_progress_bar` en uitleg geven met `play.new_tooltip`.
+
+### Hoofdstuk 9 — Geluid en video
+- Geluidseffecten en achtergrondmuziek afspelen met `play.new_sound` (volume, herhalen, pauzeren).
+- Een video als sprite afspelen met `play.new_video` en besturen vanuit code (`play`, `pause`, `seek`).
+- Op het einde van een video reageren met `@play.when_video_ends`, bijvoorbeeld om van intro naar spel te schakelen.
+
 ### Eindproject
 - Een werkend spel ontwerpen, plannen en bouwen (Pong of eigen idee).
 - De geleerde concepten zelfstandig combineren.

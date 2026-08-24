@@ -10,7 +10,7 @@
 const PYODIDE_VERSION = '0.27.5';
 const PYODIDE_CDN = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/pyodide.mjs`;
 const PYMUNK_WHEEL = '/whl/pymunk-7.2.0-cp312-cp312-pyodide_2024_0_wasm32.whl';
-const PLAY_WHEEL = '/whl/coderius_play-3.3.3-py3-none-any.whl';
+const PLAY_WHEEL = '/whl/coderius_play-3.4.0-py3-none-any.whl';
 
 /**
  * Ensure code has an async main loop for Pyodide compatibility.
