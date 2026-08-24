@@ -189,6 +189,25 @@ jobs:
       - name: Codevoorbeelden compileren
         run: python3 scripts/compileer-blokken.py sites/fullstack/code-tests/extracted
 
+  # Play gaat een stap verder dan compileren: elk speeltuin-blok wordt echt
+  # uitgevoerd tegen de gebundelde wheel uit static/whl/ — dezelfde die de
+  # browser serveert. Kale blokken worden alleen gecompileerd. Bewust kapotte
+  # lesvoorbeelden dragen een niet-draaien/niet-compileren-marker.
+  play:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Play-dependencies installeren
+        run: pip install pygame-ce numpy pymunk
+
+      - name: Codevoorbeelden uitvoeren tegen de gebundelde wheel
+        run: python3 scripts/draai-play-blokken.py
+
   # Lestekst is het product van deze repo, maar niets controleerde hem. Een
   # typefout, een emoji, een "u" in plaats van "je" of een alinea vol vet:
   # de build merkt er niets van en een reviewer die honderden regels diff
