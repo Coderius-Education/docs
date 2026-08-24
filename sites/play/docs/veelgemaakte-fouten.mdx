@@ -37,6 +37,7 @@ TypeError: can only concatenate str (not "int") to str
 
 Je probeert een getal (`int`) direct samen te voegen met tekst (`str`). Dat mag niet in Python.
 
+{/* niet-draaien: dit blok toont bewust de TypeError uit de les */}
 <PygbagRunner code={`import play
 
 score = 5
@@ -81,6 +82,7 @@ IndentationError: expected an indented block
 
 De code onder een `def`, `if`, of `for` moet ingesprongen zijn (4 spaties of 1 tab).
 
+{/* niet-compileren: dit blok toont bewust de IndentationError uit de les */}
 <PygbagRunner code={`import play
 
 @play.when_key_pressed("space")
@@ -106,6 +108,7 @@ SyntaxError: 'await' outside function
 
 `await` mag alleen gebruikt worden in een `async def` functie.
 
+{/* niet-compileren: toont bewust de SyntaxError van await zonder async */}
 ```python
 # FOUT
 @play.when_key_pressed("space")
@@ -162,6 +165,7 @@ or the RGB number form e.g. '(0, 255, 255)'.
 3. **Ongeldige tekens**: alleen cijfers `0`-`9` en letters `A`-`F` mogen. `'#GGGGGG'` werkt niet.
 4. **Typefout in kleurnaam**: `'reed'` in plaats van `'red'`.
 
+{/* niet-draaien: dit blok toont bewust de kleuren-foutmelding uit de les */}
 <PygbagRunner code={`import play
 
 play.new_circle(color='FF0000')  # FOUT: '#' vergeten`} height={250} />

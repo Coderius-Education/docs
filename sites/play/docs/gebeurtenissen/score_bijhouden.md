@@ -101,6 +101,7 @@ Dit checkt of `score` gelijk is aan `10`. Let op de **dubbele** `==` (vergelijke
 
 Een veelgemaakte fout is het gebruik van `=` in plaats van `==`:
 
+{/* niet-compileren: toont bewust de SyntaxError van = versus == */}
 ```python
 # FOUT - dit geeft een foutmelding
 if score = 10:
