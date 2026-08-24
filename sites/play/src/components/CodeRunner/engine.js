@@ -136,12 +136,15 @@ import importlib.metadata as _meta
 print("coderius-play", _meta.version("coderius-play"))
 
 def _browser_start_program():
+    # Mirrors play.api.utils.start_program (3.4: program_state-enum in plaats
+    # van de oude program_started-boolean), maar zonder run_forever — Pyodide's
+    # webloop draait al, dus de game loop wordt een taak op die loop.
     from play.callback import callback_manager, CallbackType
     from play.core import game_loop as _game_loop
-    from play.globals import globals_list
-    if globals_list.program_started:
+    from play.globals import globals_list, ProgramState
+    if globals_list.program_state is not ProgramState.NOT_STARTED:
         return
-    globals_list.program_started = True
+    globals_list.program_state = ProgramState.RUNNING
     globals_list.should_auto_start = False
     callback_manager.run_callbacks(CallbackType.WHEN_PROGRAM_START)
     # Keep a handle on the task so __pygbag_reset can cancel it between runs.
@@ -346,8 +349,8 @@ def __pygbag_reset():
     """
     import gc
     try:
-        from play.globals import globals_list
-        if not globals_list.program_started:
+        from play.globals import globals_list, ProgramState
+        if globals_list.program_state is ProgramState.NOT_STARTED:
             return
         task = getattr(globals_list, '_pygbag_task', None)
         if task is not None and not task.done():

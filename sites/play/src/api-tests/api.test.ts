@@ -23,16 +23,19 @@ function playWheel(): string {
 
 /** Alle publieke play-symbolen uit de wheel: new_…, when_…, while_… enz. */
 function wheelSymbolen(): Set<string> {
-  const zip = join(WHL_DIR, playWheel());
   // De api/__init__.py somt exact op wat `import play` aanbiedt.
-  const apiInit = execFileSync('unzip', ['-p', zip, 'play/api/__init__.py'], {
-    encoding: 'utf8',
-  });
+  const apiInit = uitWheel('play/api/__init__.py');
   const symbolen = new Set<string>();
   for (const m of apiInit.matchAll(/^\s{4}([a-z_][a-z0-9_]*),/gm) as Iterable<RegExpMatchArray>) {
     symbolen.add(m[1]);
   }
   return symbolen;
+}
+
+/** Leest één bestand uit de gebundelde wheel. */
+function uitWheel(bestand: string): string {
+  const zip = join(WHL_DIR, playWheel());
+  return execFileSync('unzip', ['-p', zip, bestand], { encoding: 'utf8' });
 }
 
 function lesPaginas(): string[] {
@@ -107,5 +110,66 @@ describe('lesstof en wheel spreken dezelfde taal', () => {
       .filter((naam) => !cheatsheet.includes(naam));
 
     expect(missend).toEqual([]);
+  });
+});
+
+describe('de bootstrap van de speeltuin past op de wheel', () => {
+  // engine.js draagt Python mee (bootstrap en reset) die diep in play's
+  // binnenkant grijpt. Die binnenkant is geen publiek API: toen 3.4 de
+  // program_started-boolean verving door een program_state-enum, crashte elke
+  // browser-run op een AttributeError. Deze tests leggen de Python-strings
+  // naast de wheel, zodat zulke drift een testfout wordt in plaats van een
+  // kapotte speeltuin.
+  const engine = readFileSync(ENGINE, 'utf8');
+
+  it('elk globals_list-attribuut uit engine.js bestaat in globals.py', () => {
+    const globalsPy = uitWheel('play/globals.py');
+    // _pygbag_task maakt de bootstrap zelf aan; die hoort hier niet te bestaan.
+    const eigen = new Set(['_pygbag_task']);
+    const missend = [
+      ...new Set([...engine.matchAll(/globals_list\.([a-zA-Z_][a-zA-Z0-9_]*)/g)].map((m) => m[1])),
+    ]
+      .filter((attr) => !eigen.has(attr))
+      .filter((attr) => !new RegExp(`\\b${attr}\\b`).test(globalsPy));
+
+    expect(missend).toEqual([]);
+  });
+
+  it('elke from play.… import uit engine.js resolvet in de wheel', () => {
+    const problemen: string[] = [];
+
+    for (const m of engine.matchAll(/from play((?:\.[a-z_]+)+) import ([a-zA-Z_, ]+)/g)) {
+      const modulePad = `play${m[1].split('.').join('/')}`;
+      let bron: string;
+      try {
+        bron = uitWheel(`${modulePad}.py`);
+      } catch {
+        try {
+          bron = uitWheel(`${modulePad}/__init__.py`);
+        } catch {
+          problemen.push(`module ${modulePad} bestaat niet in de wheel`);
+          continue;
+        }
+      }
+      for (const naam of m[2]
+        .split(',')
+        .map((n) => n.trim().split(' ')[0])
+        .filter(Boolean)) {
+        if (!new RegExp(`\\b${naam}\\b`).test(bron)) {
+          problemen.push(`${modulePad}: ${naam}`);
+        }
+      }
+    }
+
+    expect(problemen).toEqual([]);
+  });
+
+  it('de loop-patch wijst naar bestaande namen in play/loop.py', () => {
+    const loopPy = uitWheel('play/loop.py');
+    for (const naam of [
+      ...new Set([...engine.matchAll(/_play_loop\.([a-zA-Z_]+)/g)].map((m) => m[1])),
+    ]) {
+      expect(new RegExp(`\\b${naam}\\b`).test(loopPy), naam).toBe(true);
+    }
   });
 });
