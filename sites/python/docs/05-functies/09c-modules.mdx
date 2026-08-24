@@ -1,0 +1,238 @@
+---
+sidebar_position: 4
+description: Haal kant-en-klare functies binnen met import. Gebruik time.sleep om je programma te laten pauzeren, en leer het verschil tussen import time en from time import sleep.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 9c Modules importeren
+
+```python
+import time
+
+print("Klaar voor de start")
+time.sleep(2)
+print("Af!")
+```
+
+Klik op Uitvoeren. Er gebeurt eerst even niets, en dan staan allebei de regels er. Die wachttijd is `sleep`: een functie die je programma stillegt, en die je niet zelf hoeft te schrijven — hij zit al in Python.
+
+:::note
+In deze editor verschijnt je uitvoer pas als het hele programma klaar is, dus je ziet beide regels tegelijk. Draai je hetzelfde bestand op je eigen computer, dan zie je `Klaar voor de start` meteen en `Af!` twee seconden later.
+:::
+
+<CodeExercise>{`import time
+
+print("Klaar voor de start")
+time.sleep(2)
+print("Af!")`}</CodeExercise>
+
+## Waarom je hem eerst moet ophalen
+
+`print()` en `len()` liggen altijd klaar. De meeste andere functies niet: die zitten in een **module**, een verzameling functies die bij elkaar hoort. `time` is de module voor alles met tijd.
+
+Laat je de eerste regel weg, dan kent Python de naam niet:
+
+```
+NameError: name 'time' is not defined
+```
+
+**`import time`** zegt: haal die module erbij. Vanaf dat moment kun je alles wat erin zit gebruiken.
+
+## Twee manieren om te importeren
+
+Je kunt de hele module halen, of alleen het stuk dat je nodig hebt.
+
+```python
+import time
+
+time.sleep(1)
+```
+
+```python
+from time import sleep
+
+sleep(1)
+```
+
+Allebei pauzeren ze een seconde. Het verschil zit in wat je daarna typt:
+
+| | `import time` | `from time import sleep` |
+|:---:|:---:|:---:|
+| **Aanroepen met** | `time.sleep(1)` | `sleep(1)` |
+| **Wat krijg je** | de hele module | alleen `sleep` |
+| **Waar hij vandaan komt** | zie je aan de naam | zie je alleen bovenaan |
+
+De eerste vorm is duidelijker: `time.sleep` vertelt meteen waar die functie vandaan komt. De tweede is korter, en handig als je één functie heel vaak gebruikt.
+
+**Let op:** kies je `from time import sleep`, dan werkt `time.sleep(1)` níét meer — je hebt de module zelf immers niet gehaald.
+
+## Import staat bovenaan
+
+Zet je imports op de eerste regels van je bestand, vóór de rest van je code. Python leest je bestand van boven naar beneden: staat de import onder de plek waar je hem gebruikt, dan is hij daar nog niet bekend.
+
+```python
+# FOUT
+time.sleep(1)
+import time
+
+# GOED
+import time
+time.sleep(1)
+```
+
+## Er gaat iets mis
+
+```
+NameError: name 'sleep' is not defined
+```
+
+**Oorzaak:** je gebruikt `sleep(1)` maar je hebt `import time` geschreven. Dan heet hij `time.sleep`.
+
+**Oplossing:** kies één van de twee vormen en houd hem vol.
+
+```python
+# FOUT
+import time
+sleep(1)
+
+# GOED
+from time import sleep
+sleep(1)
+```
+
+---
+
+## Opdracht 9c.1: Aftellen
+
+Tel af van 3 naar 1 met een halve seconde pauze ertussen, en print daarna `Start!`.
+
+Verwachte uitvoer:
+
+```
+3
+2
+1
+Start!
+```
+
+<CodeExercise>{`# Schrijf hier je code`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Je hebt `time` nodig en een for-loop. Met `range(3, 0, -1)` tel je terug van 3 naar 1. Pauzeer met `time.sleep(0.5)`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+import time
+
+for getal in range(3, 0, -1):
+    print(getal)
+    time.sleep(0.5)
+
+print("Start!")
+```
+
+De pauze staat ín de loop, dus tussen elk getal zit een halve seconde. Samen duurt het aftellen anderhalve seconde.
+
+<CodeExercise>{`import time
+
+for getal in range(3, 0, -1):
+    print(getal)
+    time.sleep(0.5)
+
+print("Start!")`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 9c.2: Dezelfde code, andere import
+
+Schrijf de oplossing van 9c.1 om naar de vorm `from time import sleep`. De uitvoer blijft precies hetzelfde.
+
+<CodeExercise>{`# Schrijf hier je code`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Twee dingen veranderen: de importregel, en `time.sleep(0.5)` wordt `sleep(0.5)`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+from time import sleep
+
+for getal in range(3, 0, -1):
+    print(getal)
+    sleep(0.5)
+
+print("Start!")
+```
+
+<CodeExercise>{`from time import sleep
+
+for getal in range(3, 0, -1):
+    print(getal)
+    sleep(0.5)
+
+print("Start!")`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 9c.3: Wachten in een eigen functie
+
+Schrijf een functie `zeg_langzaam(tekst, seconden)` die eerst wacht en daarna de tekst print. Roep hem twee keer aan met verschillende waarden.
+
+Verwachte uitvoer:
+
+```
+Eerst dit
+En dan dit
+```
+
+<CodeExercise>{`# Schrijf hier je code`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+De import staat bovenaan je bestand, niet in de functie. In de functie zelf staan twee regels: pauzeren en printen.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+import time
+
+def zeg_langzaam(tekst, seconden):
+    time.sleep(seconden)
+    print(tekst)
+
+zeg_langzaam("Eerst dit", 0.5)
+zeg_langzaam("En dan dit", 1)
+```
+
+De pauze verschilt per aanroep, want `seconden` is gewoon een parameter. Zo bouw je met een kant-en-klare functie je eigen functie.
+
+<CodeExercise>{`import time
+
+def zeg_langzaam(tekst, seconden):
+    time.sleep(seconden)
+    print(tekst)
+
+zeg_langzaam("Eerst dit", 0.5)
+zeg_langzaam("En dan dit", 1)`}</CodeExercise>
+
+</details>

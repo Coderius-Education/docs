@@ -169,10 +169,10 @@ oled.show()
 <summary>Sensorwaarden tonen op het scherm</summary>
 
 ```python
-# Zet getallen om naar tekst met str()
+# Zet getallen in een f-string
 afstand = 123
 oled.fill("white")
-oled.text('Afstand: ' + str(afstand), x=0, y=0)
+oled.text(f'Afstand: {afstand}', x=0, y=0)
 oled.show()
 ```
 </details>

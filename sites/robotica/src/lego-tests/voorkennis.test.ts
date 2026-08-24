@@ -45,6 +45,7 @@ const LEGO_MET_BLOK = [
   'lego_auto/analoog_ir/deel3_een_sensor.md', //  5.4  print
   'lego_auto/analoog_ir/while_loop.md', //         5.7  while, vergelijken, tellen
   'lego_auto/eerste_programma/deel1_lampje.md', // 4.2  variabelen, methode-aanroep
+  'lego_auto/debuggen_met_scherm/deel5_scherm.md', // 6.4  f-strings
   'lego_auto/eerste_programma/deel2_knipperen.md', // 4.3 while-loop
   'lego_auto/lijnvolgen/deel7_rechtdoor.md', //    10.3 if en else
   'lego_auto/lijnvolgen/nu_jij.md', //             10.4 and, or en elif
@@ -107,7 +108,6 @@ const LEGO_ZONDER_BLOK: { reden: string; lessen: string[] }[] = [
       'lego_auto/afstand/uitlezen.md',
       'lego_auto/analoog_ir/deel4_twee_sensoren.md',
       'lego_auto/batterijen/code.md',
-      'lego_auto/debuggen_met_scherm/deel5_scherm.md',
       'lego_auto/motoren/deel6_draaien.md',
     ],
   },

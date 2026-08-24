@@ -16,11 +16,26 @@
   gap: 0.5rem;
 }
 
+/* Een driehoekje dat meedraait bij openklappen. Geen emoji (de schrijfgids
+   verbiedt die ook in UI), en het vertelt bovendien iets wat een vast icoon
+   niet kan: of het blok open of dicht staat. */
 .voorkennis > summary::before {
-  content: "📌";
+  content: "▸";
+  display: inline-block;
+  transition: transform 0.15s ease;
 }
 
-/* Verberg de standaard disclosure-driehoek (we tonen 📌). */
+.voorkennis[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .voorkennis > summary::before {
+    transition: none;
+  }
+}
+
+/* Verberg de standaard disclosure-driehoek; we tekenen er zelf een. */
 .voorkennis > summary::-webkit-details-marker {
   display: none;
 }

@@ -64,12 +64,12 @@ oled.show()
 
 ### Een getal tonen
 
-Getallen moet je eerst omzetten naar tekst met **`str()`**:
+Getallen zet je in een **f-string** om ze als tekst te tonen:
 
 ```python
 temperatuur = 22.5
 oled.fill("white")
-oled.text('Temp: ' + str(temperatuur) + 'C', x=0, y=40)
+oled.text(f'Temp: {temperatuur}C', x=0, y=40)
 oled.show()
 ```
 
@@ -99,7 +99,7 @@ oled = OLEDSH1106(width=128, height=64, channel=7)
 teller = 0
 while True:
     oled.fill("white")
-    oled.text('Teller: ' + str(teller), x=0, y=0)
+    oled.text(f'Teller: {teller}', x=0, y=0)
     oled.show()
     teller = teller + 1
     sleep(1)
