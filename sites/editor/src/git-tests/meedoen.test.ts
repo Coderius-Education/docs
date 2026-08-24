@@ -120,6 +120,32 @@ describe('de leerlijn stuurt je precies één keer door', () => {
   });
 });
 
+describe('de cursus schuift niets voor zich uit', () => {
+  it('belooft nergens iets dat nergens komt', () => {
+    // "Conflicten oplossen leer je later" stond in de branches-tutorial, en dat
+    // "later" bestond niet. Een vooruitwijzing mag, maar dan met een link.
+    const loos: string[] = [];
+
+    for (const map of readdirSync(GIT).filter((d) => statSync(join(GIT, d)).isDirectory())) {
+      for (const bestand of readdirSync(join(GIT, map)).filter((f) => /\.mdx?$/.test(f))) {
+        const regels = tekst(map, bestand).split('\n');
+        regels.forEach((regel, i) => {
+          if (!/\b(leer je later|komt later|later in deze cursus|zie je verderop)\b/i.test(regel)) {
+            return;
+          }
+          // Een link op dezelfde regel of de regel erna maakt het concreet.
+          const omgeving = regels.slice(i, i + 2).join(' ');
+          if (!/\]\(/.test(omgeving)) {
+            loos.push(`${map}/${bestand}:${i + 1}`);
+          }
+        });
+      }
+    }
+
+    expect(loos).toEqual([]);
+  });
+});
+
 describe('de mappen die geen doe-tutorial zijn', () => {
   it('staan niet per ongeluk in de lijst', () => {
     // basis draait in de simulator (die heeft zijn eigen vinkje) en github

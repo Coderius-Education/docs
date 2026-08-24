@@ -1,14 +1,7 @@
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import { type KeyboardEvent, type ReactNode, useEffect, useRef, useState } from 'react';
 import { vulAan } from './autocomplete';
-import {
-  type RepoState,
-  addToIgnore,
-  deleteFile,
-  emptyState,
-  runCommand,
-  setFile,
-} from './gitEngine';
+import { type RepoState, deleteFile, emptyState, runCommand, setFile } from './gitEngine';
 import { scenario } from './scenarios';
 import styles from './styles.module.css';
 
@@ -159,19 +152,19 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
     if (!editor) return;
     const name = editor.mode === 'edit' ? editor.name : editorName.trim();
     if (!name) return;
-    let next = setFile(state, name, editorContent);
-    if (name === '.gitignore') {
-      const lines = editorContent
-        .split('\n')
-        .map((l) => l.trim())
-        .filter((l) => l && !l.startsWith('#'));
-      next = { ...next, ignored: lines };
-      for (const ign of lines) {
-        next = addToIgnore(next, ign);
-      }
-    } else if (state.ignored.length) {
-      next = { ...next, ignored: state.ignored };
-    }
+    // De negeerlijst is een afgeleide van .gitignore, dus die lezen we hier
+    // opnieuw uit in plaats van hem bij te houden. Regels leeg of met # ervoor
+    // slaat git ook over.
+    const next =
+      name === '.gitignore'
+        ? {
+            ...setFile(state, name, editorContent),
+            ignored: editorContent
+              .split('\n')
+              .map((l) => l.trim())
+              .filter((l) => l && !l.startsWith('#')),
+          }
+        : setFile(state, name, editorContent);
     setState(next);
     setEditor(null);
   };

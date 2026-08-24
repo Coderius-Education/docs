@@ -63,8 +63,26 @@ function committedTree(state: RepoState): Record<string, string> {
   return c ? c.tree : {};
 }
 
+/**
+ * Volgt git dit bestand al? Zodra het in een commit of in staging zit, kent git
+ * het en blijft hij wijzigingen tonen.
+ */
+function gevolgd(state: RepoState, name: string): boolean {
+  return name in committedTree(state) || name in (state.staged ?? {});
+}
+
+/**
+ * Wordt dit bestand genegeerd? `.gitignore` geldt alléén voor bestanden die git
+ * nog niet volgt. Dat is precies de misvatting die leerlingen hebben — "zet het
+ * in .gitignore en git vergeet het" — en die deze simulator eerst bevestigde
+ * door ook gecommitte bestanden te verbergen.
+ */
+function genegeerd(state: RepoState, name: string): boolean {
+  return state.ignored.includes(name) && !gevolgd(state, name);
+}
+
 function visibleFiles(state: RepoState): string[] {
-  return Object.keys(state.workingDir).filter((f) => !state.ignored.includes(f));
+  return Object.keys(state.workingDir).filter((f) => !genegeerd(state, f));
 }
 
 function statusOutput(state: RepoState): string {
@@ -89,7 +107,7 @@ function statusOutput(state: RepoState): string {
   for (const name of allNames) {
     const inHead = name in head;
     const inStaged = name in staged;
-    const inWd = name in wd && !state.ignored.includes(name);
+    const inWd = name in wd && !genegeerd(state, name);
 
     if (inStaged && !inHead) stagedNew.push(name);
     else if (inStaged && inHead && staged[name] !== head[name]) stagedModified.push(name);
@@ -288,17 +306,35 @@ function _runCommand(state: RepoState, input: string): CommandResult {
         };
       }
       const staged = { ...(state.staged ?? {}) };
-      const targets =
-        args[0] === '.' ? visibleFiles(state) : args.filter((f) => !state.ignored.includes(f));
 
-      const missing = targets.filter((f) => !(f in state.workingDir));
-      if (missing.length) {
-        return {
-          newState: state,
-          output: `fatal: pathspec '${missing[0]}' did not match any files`,
-          ok: false,
-        };
+      if (args[0] !== '.') {
+        const missing = args.filter((f) => !(f in state.workingDir));
+        if (missing.length) {
+          return {
+            newState: state,
+            output: `fatal: pathspec '${missing[0]}' did not match any files`,
+            ok: false,
+          };
+        }
+        // Noem je een genegeerd bestand met naam, dan zwijgt git niet: hij legt
+        // uit waarom hij het overslaat. Stil niets doen zou de leerling laten
+        // denken dat het gelukt was.
+        const overgeslagen = args.filter((f) => genegeerd(state, f));
+        if (overgeslagen.length === args.length) {
+          return {
+            newState: state,
+            output: [
+              'The following paths are ignored by one of your .gitignore files:',
+              ...overgeslagen,
+              'hint: hoort dit bestand er wel in? Haal de regel dan uit .gitignore.',
+            ].join('\n'),
+            ok: false,
+          };
+        }
       }
+
+      const targets =
+        args[0] === '.' ? visibleFiles(state) : args.filter((f) => !genegeerd(state, f));
       for (const f of targets) {
         staged[f] = state.workingDir[f];
       }

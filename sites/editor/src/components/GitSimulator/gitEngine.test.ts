@@ -157,6 +157,37 @@ describe('.gitignore', () => {
     expect(uitvoer(s, 'git status')).not.toContain('geheim.txt');
   });
 
+  it('blijft een bestand volgen dat al gecommit was', () => {
+    // De hardnekkigste misvatting over .gitignore: "zet het erin en git vergeet
+    // het". Dat geldt alleen voor bestanden die git nog niet kende. Deze test
+    // legt vast wat echte git doet — zie echte-git.test.ts voor het bewijs.
+    let s = draai(START(), 'git init');
+    s = setFile(s, 'geheim.txt', 'wachtwoord\n');
+    s = draai(s, 'git add .', 'git commit -m "oeps"');
+
+    s = addToIgnore(s, 'geheim.txt');
+    s = setFile(s, 'geheim.txt', 'ander wachtwoord\n');
+
+    const out = uitvoer(s, 'git status');
+    expect(out).toContain('Changes not staged for commit:');
+    expect(out).toContain('modified:   geheim.txt');
+
+    // En git add . neemt hem gewoon mee, want hij is gevolgd.
+    expect(Object.keys(draai(s, 'git add .').staged ?? {})).toContain('geheim.txt');
+  });
+
+  it('legt uit waarom hij een genegeerd bestand overslaat', () => {
+    // Stil niets doen zou de leerling laten denken dat het gelukt was.
+    let s = draai(START(), 'git init');
+    s = setFile(s, 'geheim.txt', 'wachtwoord\n');
+    s = addToIgnore(s, 'geheim.txt');
+
+    const r = runCommand(s, 'git add geheim.txt');
+    expect(r.ok).toBe(false);
+    expect(r.output).toContain('The following paths are ignored');
+    expect(r.newState.staged).toEqual({});
+  });
+
   it('slaat een genegeerd bestand over bij git add .', () => {
     let s = draai(START(), 'git init');
     s = setFile(s, 'geheim.txt', 'wachtwoord\n');

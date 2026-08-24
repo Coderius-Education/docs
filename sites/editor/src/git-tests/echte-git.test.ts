@@ -222,6 +222,32 @@ describe('de simulator drukt af wat git afdrukt', () => {
     expect(runCommand(state, 'git status').output.trimEnd()).toBe(echt);
   });
 
+  it('.gitignore geldt niet voor een bestand dat al gecommit is', () => {
+    // Dit is waarom de simulator onderscheid maakt tussen gevolgd en
+    // niet-gevolgd. Zonder dit bewijs is dat gedrag een aanname.
+    const map = mkdtempSync(join(tmpdir(), 'git-ign-'));
+    try {
+      git(['init'], { in: map });
+      writeFileSync(join(map, 'geheim.txt'), 'wachtwoord\n');
+      git(['add', 'geheim.txt'], { in: map });
+      git(['commit', '-m', 'oeps'], { in: map });
+
+      writeFileSync(join(map, '.gitignore'), 'geheim.txt\n');
+      writeFileSync(join(map, 'geheim.txt'), 'ander wachtwoord\n');
+
+      // Nog steeds gevolgd, dus nog steeds zichtbaar als gewijzigd.
+      expect(git(['status', '--short'], { in: map })).toContain('M geheim.txt');
+
+      // En een niet-gevolgd bestand dat wél genegeerd wordt, weigert git.
+      writeFileSync(join(map, '.gitignore'), 'geheim.txt\nnieuw.txt\n');
+      writeFileSync(join(map, 'nieuw.txt'), 'x\n');
+      expect(git(['status', '--short'], { in: map })).not.toContain('nieuw.txt');
+      expect(gitFaalt(['add', 'nieuw.txt'], map)).toContain('The following paths are ignored');
+    } finally {
+      rmSync(map, { recursive: true, force: true });
+    }
+  });
+
   it('de foutmelding buiten een repository', () => {
     const buiten = mkdtempSync(join(tmpdir(), 'geen-repo-'));
     try {
