@@ -1,3 +1,4 @@
+import SiteLink from '@coderius/shared/components/SiteLink';
 import Voorkennis from '@coderius/shared/components/Voorkennis';
 import AlgorithmModel from '@site/src/components/AlgorithmModel';
 import Handout from '@site/src/components/Handout';
@@ -8,6 +9,7 @@ import MDXComponents from '@theme-original/MDXComponents';
 
 export default {
   ...MDXComponents,
+  SiteLink,
   Voorkennis,
   AlgorithmModel,
   Handout,

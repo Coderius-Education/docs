@@ -21,6 +21,7 @@
     "./components/HomepageFeatures": "./components/HomepageFeatures/index.tsx",
     "./components/HomepageFeatures/styles.module.css": "./components/HomepageFeatures/styles.module.css",
     "./components/Voorkennis": "./components/Voorkennis/index.tsx",
+    "./components/SiteLink": "./components/SiteLink/index.tsx",
     "./components/Leerlijnen": "./components/Leerlijnen/index.tsx",
     "./components/Leerlijnen/CursussenPage": "./components/Leerlijnen/CursussenPage.tsx",
     "./components/Privacy/PrivacyPage": "./components/Privacy/PrivacyPage.tsx",

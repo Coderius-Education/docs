@@ -48,7 +48,7 @@ Wat een `Node2D` allemaal kan staat in de [Nodes cheatsheet](/cheatsheet#level-w
 
 Druk op `Ctrl + S` en geef de scène de naam `world.tscn`.
 
-De `.tscn`-extensie staat voor "text scene" — Godot slaat je scène op als een tekstbestand in je projectmap. Dat is handig als je later met Git werkt: je kunt zien wat er veranderd is.
+De `.tscn`-extensie staat voor "text scene" — Godot slaat je scène op als een tekstbestand in je projectmap. Dat is handig als je later met <SiteLink site="editor" to="/git/">Git</SiteLink> werkt: je kunt dan per versie zien wat er veranderd is.
 
 :::tip
 Krijg je bij het eerste keer starten de vraag welke scène als **Main Scene** moet dienen? Kies `world.tscn` — dat is de scène die start zodra je op ▶ klikt.

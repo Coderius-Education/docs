@@ -14,6 +14,7 @@ Een eigen project maken is anders dan een opdracht volgen. Je bedenkt zelf wat h
 2. **Hergebruik wat je kent.** Bijna alles wat je nodig hebt, staat al in de eerdere hoofdstukken of in de [cheatsheet](/cheatsheet). Zoek het op in plaats van het opnieuw te bedenken.
 3. **Test vaak.** Voeg een klein stukje toe, test het, en pas dan het volgende. Eén grote brok code in één keer is bijna nooit meteen goed.
 4. **Gebruik de seriële monitor.** Print wat je niet ziet (zie [5.2 Debuggen met serieel](/docs/serieel/debuggen-met-serial)).
+5. **Leg werkende versies vast.** Je project is een gewone map in VS Code, dus git werkt er meteen op. Maak van elke versie die doet wat je wilt een commit; durf daarna alles aan te passen. Hoe dat werkt staat in <SiteLink site="editor" to="/git/vscode/">Git in VS Code</SiteLink>.
 
 ## Eerst simuleren, dan bouwen
 

@@ -12,7 +12,7 @@ sidebar_custom_props:
 :::
 
 ## Visual Studio Code installeren
-Ga naar [editor.coderius.nl/python](https://editor.coderius.nl/python) en volg de instructies om VS Code te installeren.
+Volg <SiteLink site="editor" to="/python/">Python in VS Code</SiteLink> om VS Code met Python werkend te krijgen.
 
 :::info
 **Let op:** Zorg ervoor dat Python 3.10 geïnstalleerd is op je computer. Dit is nodig om `coderius-play` te kunnen gebruiken.
