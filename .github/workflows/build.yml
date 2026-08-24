@@ -71,9 +71,12 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # v5 draait op Node 24; v4 werd door de runner geforceerd op Node 24 en
+      # gaf daar een deprecation-waarschuwing over. Inputs en de cache-hit
+      # output zijn ongewijzigd.
       - name: Cache Godot
         id: godot-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/godot-bin
           key: godot-${{ env.GODOT_VERSIE }}
