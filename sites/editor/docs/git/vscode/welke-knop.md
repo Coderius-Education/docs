@@ -16,4 +16,4 @@ title: "Welke knop is welk commando?"
 
 ## Volgende tutorial
 
-- **[GitHub: account en repo](/git/github/)** — maak een account en je eerste online repository.
+- **[Code online zetten met push](/git/push/)** — koppel je `git-oefenen`-map aan de repository die je op GitHub hebt gemaakt.

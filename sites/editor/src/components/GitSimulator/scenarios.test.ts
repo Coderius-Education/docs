@@ -11,8 +11,17 @@ import { SCENARIOS, type Scenario } from './scenarios';
 
 const BASIS = fileURLToPath(new URL('../../../docs/git/basis', import.meta.url));
 
-function speelNa(s: Scenario): RepoState {
+/** De toestand waarin de leerling binnenkomt, net als in de simulator. */
+function beginsituatie(s: Scenario): RepoState {
   let state = emptyState(s.initialFiles);
+  for (const cmd of s.voorbereiding) {
+    state = runCommand(state, cmd).newState;
+  }
+  return state;
+}
+
+function speelNa(s: Scenario): RepoState {
+  let state = beginsituatie(s);
   for (const stap of s.oplossing) {
     if (typeof stap === 'string') {
       const r = runCommand(state, stap);
@@ -47,12 +56,14 @@ describe('elk leerdoel is haalbaar', () => {
     });
 
     it(`${s.id}: het doel staat niet meteen op groen`, () => {
-      // Zonder deze kant is een doel als `() => true` ook "haalbaar".
-      expect(s.objective.check(emptyState(s.initialFiles))).toBe(false);
+      // Zonder deze kant is een doel als `() => true` ook "haalbaar" — en met
+      // een voorbereiding erbij is de valkuil groter: die zou het doel al
+      // kunnen halen voordat de leerling iets doet.
+      expect(s.objective.check(beginsituatie(s))).toBe(false);
     });
 
     it(`${s.id}: elk commando in de oplossing wordt geaccepteerd`, () => {
-      let state = emptyState(s.initialFiles);
+      let state = beginsituatie(s);
       for (const stap of s.oplossing) {
         if (typeof stap !== 'string') {
           state = setFile(
@@ -70,6 +81,44 @@ describe('elk leerdoel is haalbaar', () => {
       }
     });
   }
+});
+
+describe('elke stap begint waar de vorige ophield', () => {
+  const volgorde = Object.values(SCENARIOS);
+
+  it('alleen stap 1 begint met een map zonder repository', () => {
+    const zonderInit = volgorde.filter((s) => !beginsituatie(s).initialized).map((s) => s.id);
+    expect(zonderInit).toEqual(['stap-1-init']);
+  });
+
+  it('elk voorbereidend commando wordt begrepen', () => {
+    for (const s of volgorde) {
+      let state = emptyState(s.initialFiles);
+      for (const cmd of s.voorbereiding) {
+        const r = runCommand(state, cmd);
+        expect(r.ok, `${s.id}: voorbereiding '${cmd}' mislukte — ${r.output}`).toBe(true);
+        state = r.newState;
+      }
+    }
+  });
+
+  it('de latere stappen hebben al een commit', () => {
+    // Vanaf stap 5 gaat de les over een tweede commit, over de geschiedenis en
+    // over negeren. Die vragen allemaal om een repository die al iets bevat.
+    for (const id of ['stap-5-tweede-commit', 'stap-6-log', 'stap-7-gitignore']) {
+      expect(beginsituatie(SCENARIOS[id]).commits.length, id).toBeGreaterThan(0);
+    }
+  });
+
+  it('geen enkele oplossing begint nog met git init', () => {
+    // Precies de klacht: elke oefening opnieuw bij het begin beginnen.
+    const dubbel = volgorde
+      .filter((s) => s.id !== 'stap-1-init')
+      .filter((s) => s.oplossing.some((o) => typeof o === 'string' && o.startsWith('git init')))
+      .map((s) => s.id);
+
+    expect(dubbel).toEqual([]);
+  });
 });
 
 describe('de pagina en de scenario-lijst horen bij elkaar', () => {

@@ -5,9 +5,11 @@ title: GitHub - account en repo
 
 # GitHub: account en repo
 
-In [Git in VS Code](/git/vscode/) heb je commits gemaakt op je eigen computer. Tot nu toe staat alles **lokaal** — alleen jij kunt erbij. Met **GitHub** zet je je code online: je kunt hem delen, samenwerken met anderen, en je hebt meteen een back-up.
+In [Git basis](/git/basis/) heb je commits leren maken in de simulator. Straks doe je dat op je eigen computer, en dan wil je die commits ook **online** kunnen zetten: om ze te delen, om samen te werken, en om een back-up te hebben.
 
-In deze tutorial maak je een GitHub-account aan en een lege online repository. In [Code online zetten met push](/git/push/) koppel je je lokale project eraan.
+Daar heb je een account voor nodig. Dat regel je nu, in twee stappen, zodat het klaarstaat op het moment dat je het nodig hebt — het bevestigen van je e-mailadres duurt soms even, en dat wil je niet halverwege een les.
+
+In [Code online zetten met push](/git/push/) koppel je je project aan de repository die je hier maakt.
 
 ## Wat is GitHub?
 

@@ -1,5 +1,8 @@
 {
   "label": "Git in VS Code",
-  "position": 2,
-  "link": { "type": "doc", "id": "git/vscode/index" }
+  "position": 3,
+  "link": {
+    "type": "doc",
+    "id": "git/vscode/index"
+  }
 }

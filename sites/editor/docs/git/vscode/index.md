@@ -5,7 +5,7 @@ title: Git in VS Code
 
 # Git in VS Code
 
-In [Git basis](/git/basis/) heb je de werkmap, staging en commits leren kennen in de simulator. Nu ga je hetzelfde doen op je eigen computer, in VS Code.
+In [Git basis](/git/basis/) heb je de werkmap, staging en commits leren kennen in de simulator, en in [GitHub: account en repo](/git/github/) staat je online repository klaar. Nu ga je op je eigen computer werken, in VS Code.
 
 ## Voorbereiding
 

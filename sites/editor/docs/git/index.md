@@ -10,8 +10,8 @@ Hier leer je werken met **git** (versiebeheer) en **GitHub** (je code online). B
 ## De tutorials
 
 1. **[Git basis](./basis/)** — leer de drie git-zones (werkmap, staging, repository) in een veilige browser-simulator.
-2. **[Git in VS Code](./vscode/)** — doe hetzelfde nu op je eigen computer met de Source Control-knop in VS Code.
-3. **[GitHub: account en repo](./github/)** — maak een GitHub-account aan en maak je eerste online repository.
+2. **[GitHub: account en repo](./github/)** — maak een GitHub-account aan en maak je eerste online repository, zodat die klaarstaat.
+3. **[Git in VS Code](./vscode/)** — doe hetzelfde als in de simulator, nu op je eigen computer met de Source Control-knop.
 4. **[Code online zetten met push](./push/)** — koppel je lokale project aan GitHub en upload je commits.
 5. **[Pull en clone](./pull-clone/)** — haal wijzigingen op en kopieer bestaande projecten naar je computer.
 6. **[Branches](./branches/)** — werk parallel zonder je werkende versie te breken: maak een feature-branch, commit erop, en merge hem terug.

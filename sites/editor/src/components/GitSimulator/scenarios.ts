@@ -18,11 +18,19 @@ export type Handeling =
 export type Scenario = {
   id: string;
   initialFiles: Record<string, string>;
+  /**
+   * Wat er al gebeurd is als de leerling deze stap opent — het eindpunt van de
+   * vorige stap. Zonder dit begint elke oefening weer bij `git init`, en typ je
+   * in stap 7 zes regels aanloop voordat je aan de les toekomt. De simulator
+   * voert deze commando's uit vóór het eerste scherm en toont ze in de
+   * terminal, zodat je ziet waar je binnenkomt.
+   */
+  voorbereiding: string[];
   objective: {
     description: string;
     check: (state: RepoState) => boolean;
   };
-  /** Commando's en klikken die samen het doel halen, in volgorde. */
+  /** Wat de leerling zelf nog doet om het doel te halen, na de voorbereiding. */
   oplossing: (string | Handeling)[];
 };
 
@@ -32,6 +40,8 @@ export const SCENARIOS: Record<string, Scenario> = {
   'stap-1-init': {
     id: 'stap-1-init',
     initialFiles: HELLO,
+    // De enige stap die bij nul begint: dit ís de les.
+    voorbereiding: [],
     objective: {
       description: 'Voer git init uit op deze map.',
       check: (s) => s.initialized,
@@ -42,45 +52,45 @@ export const SCENARIOS: Record<string, Scenario> = {
   'stap-2-status': {
     id: 'stap-2-status',
     initialFiles: HELLO,
+    voorbereiding: ['git init'],
     objective: {
-      description:
-        'Voer eerst git init uit en daarna git status. Je zou hello.txt als niet-gevolgd moeten zien.',
+      description: 'Voer git status uit. Je zou hello.txt als untracked moeten zien.',
       check: (s) => s.initialized && s.commands.some((c) => c.trim() === 'git status'),
     },
-    oplossing: ['git init', 'git status'],
+    oplossing: ['git status'],
   },
 
   'stap-3-add': {
     id: 'stap-3-add',
     initialFiles: HELLO,
+    voorbereiding: ['git init'],
     objective: {
-      description: 'Init, voeg hello.txt toe aan staging.',
+      description: 'Zet hello.txt klaar in staging.',
       check: (s) => s.initialized && s.staged !== null && 'hello.txt' in s.staged,
     },
-    oplossing: ['git init', 'git add hello.txt'],
+    oplossing: ['git add hello.txt'],
   },
 
   'stap-4-commit': {
     id: 'stap-4-commit',
     initialFiles: HELLO,
+    voorbereiding: ['git init', 'git add hello.txt'],
     objective: {
       description: 'Maak je eerste commit met de boodschap "eerste versie".',
       check: (s) => s.commits.length >= 1,
     },
-    oplossing: ['git init', 'git add hello.txt', 'git commit -m "eerste versie"'],
+    oplossing: ['git commit -m "eerste versie"'],
   },
 
   'stap-5-tweede-commit': {
     id: 'stap-5-tweede-commit',
     initialFiles: HELLO,
+    voorbereiding: ['git init', 'git add .', 'git commit -m "eerste versie"'],
     objective: {
-      description: 'Maak twee commits achter elkaar.',
+      description: 'Er staat er al een. Verander iets en maak een tweede commit.',
       check: (s) => s.commits.length >= 2,
     },
     oplossing: [
-      'git init',
-      'git add .',
-      'git commit -m "eerste versie"',
       { soort: 'schrijf', naam: 'hello.txt', inhoud: 'Hallo wereld.\nEn nog een regel.\n' },
       'git add .',
       'git commit -m "regel toegevoegd"',
@@ -90,22 +100,23 @@ export const SCENARIOS: Record<string, Scenario> = {
   'stap-6-log': {
     id: 'stap-6-log',
     initialFiles: HELLO,
+    voorbereiding: ['git init', 'git add .', 'git commit -m "eerste versie"'],
     objective: {
-      description: 'Maak een commit en bekijk daarna de geschiedenis met git log.',
+      description: 'Bekijk de geschiedenis met git log.',
       check: (s) => s.commits.length >= 1 && s.commands.some((c) => c.trim() === 'git log'),
     },
-    oplossing: ['git init', 'git add .', 'git commit -m "eerste versie"', 'git log'],
+    oplossing: ['git log'],
   },
 
   'stap-7-gitignore': {
     id: 'stap-7-gitignore',
     initialFiles: HELLO,
+    voorbereiding: ['git init', 'git add .', 'git commit -m "eerste versie"'],
     objective: {
       description: 'Maak een .gitignore aan die geheim.txt negeert.',
       check: (s) => s.ignored.includes('geheim.txt'),
     },
     oplossing: [
-      'git init',
       { soort: 'schrijf', naam: 'geheim.txt', inhoud: 'wachtwoord123\n' },
       'git status',
       { soort: 'schrijf', naam: '.gitignore', inhoud: 'geheim.txt\n' },

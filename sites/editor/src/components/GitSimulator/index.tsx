@@ -1,5 +1,6 @@
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import { type KeyboardEvent, type ReactNode, useEffect, useRef, useState } from 'react';
+import { vulAan } from './autocomplete';
 import {
   type RepoState,
   addToIgnore,
@@ -22,6 +23,8 @@ type Props = {
 type HistoryLine = {
   kind: 'input' | 'output' | 'error';
   text: string;
+  /** Uit de voorbereiding: staat er wel, maar heb jij niet getypt. */
+  eerder?: boolean;
 };
 
 type EditorTarget = { mode: 'new' } | { mode: 'edit'; name: string };
@@ -34,10 +37,33 @@ export default function GitSimulator(props: Props): ReactNode {
   );
 }
 
+/**
+ * De toestand waarin de leerling binnenkomt: het eindpunt van de vorige stap.
+ * De voorbereidende commando's komen ook in de terminal te staan, gemarkeerd
+ * als "al gedaan" — anders lijkt het alsof de repository uit het niets bestaat.
+ */
+function beginsituatie(id: string): { state: RepoState; history: HistoryLine[] } {
+  const { initialFiles, voorbereiding } = scenario(id);
+  let state = emptyState(initialFiles);
+  const history: HistoryLine[] = [];
+
+  for (const cmd of voorbereiding) {
+    const r = runCommand(state, cmd);
+    state = r.newState;
+    history.push({ kind: 'input', text: cmd, eerder: true });
+    if (r.output) history.push({ kind: 'output', text: r.output, eerder: true });
+  }
+  return { state, history };
+}
+
 function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): ReactNode {
-  const { initialFiles, objective } = scenario(scenarioId);
-  const [state, setState] = useState<RepoState>(() => emptyState(initialFiles));
-  const [history, setHistory] = useState<HistoryLine[]>([]);
+  const { objective } = scenario(scenarioId);
+  // Eén aanroep voor allebei: de voorbereiding maakt commit-id's met
+  // Math.random(), dus twee aanroepen zouden een andere hash in de terminal
+  // zetten dan in de repository-kolom.
+  const [begin] = useState(() => beginsituatie(scenarioId));
+  const [state, setState] = useState<RepoState>(begin.state);
+  const [history, setHistory] = useState<HistoryLine[]>(begin.history);
   const [input, setInput] = useState('');
   const [cmdHistory, setCmdHistory] = useState<string[]>([]);
   const [cmdIndex, setCmdIndex] = useState<number>(-1);
@@ -54,8 +80,9 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
   }, [history]);
 
   const reset = () => {
-    setState(emptyState(initialFiles));
-    setHistory([]);
+    const begin = beginsituatie(scenarioId);
+    setState(begin.state);
+    setHistory(begin.history);
     setInput('');
     setCmdHistory([]);
     setCmdIndex(-1);
@@ -77,6 +104,22 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
   };
 
   const onKey = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Tab') {
+      // Aanvullen zoals een echte shell: één kandidaat vult aan, meer
+      // kandidaten tonen de lijst. Zonder preventDefault springt de focus uit
+      // het invoerveld en is de oefening voorbij.
+      e.preventDefault();
+      const { aangevuld, kandidaten } = vulAan(input, state);
+      if (aangevuld !== null) setInput(aangevuld);
+      if (kandidaten.length > 1) {
+        setHistory((h) => [
+          ...h,
+          { kind: 'input', text: input },
+          { kind: 'output', text: kandidaten.join('   ') },
+        ]);
+      }
+      return;
+    }
     if (e.key === 'Enter') {
       e.preventDefault();
       submit();
@@ -224,14 +267,18 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
           <div className={styles.terminalOutput} ref={outputRef}>
             {history.length === 0 && (
               <div className={styles.terminalLine} style={{ color: '#888' }}>
-                Typ een commando, bijvoorbeeld <span style={{ color: '#dcdcaa' }}>git init</span>
+                Typ een commando, bijvoorbeeld <span style={{ color: '#dcdcaa' }}>git init</span>.
+                Met <span style={{ color: '#dcdcaa' }}>Tab</span> vul je aan.
               </div>
             )}
             {history.map((line, i) => {
               const key = `${i}-${line.text}`;
+              // Gedimd wat uit de voorbereiding komt: je ziet waar je
+              // binnenkomt, en tegelijk dat jij het niet hoeft te typen.
+              const klasse = `${styles.terminalLine} ${line.eerder ? styles.terminalEerder : ''}`;
               if (line.kind === 'input') {
                 return (
-                  <div key={key} className={styles.terminalLine}>
+                  <div key={key} className={klasse}>
                     <span className={styles.terminalPrompt}>$ </span>
                     {line.text}
                   </div>
@@ -240,9 +287,7 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
               return (
                 <div
                   key={key}
-                  className={`${styles.terminalLine} ${
-                    line.kind === 'error' ? styles.terminalError : ''
-                  }`}
+                  className={`${klasse} ${line.kind === 'error' ? styles.terminalError : ''}`}
                 >
                   {line.text}
                 </div>

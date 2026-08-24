@@ -152,3 +152,75 @@ describe('de cursus is intern consistent', () => {
     expect(configPositie).toBeLessThan(initPositie);
   });
 });
+
+describe('de volgorde van de tutorials', () => {
+  // De leerlijn heeft een vaste volgorde en de pagina's verwijzen naar elkaar.
+  // Verschuif je er een, dan wijzen die verwijzingen achteruit zonder dat een
+  // build daarover klaagt — de links blijven immers bestaan.
+  const VOLGORDE = ['basis', 'github', 'vscode', 'push', 'pull-clone', 'branches', 'pull-request'];
+
+  function positie(map: string): number {
+    return JSON.parse(readFileSync(join(GIT, map, '_category_.json'), 'utf8')).position;
+  }
+
+  it('de sidebar staat in de bedoelde volgorde', () => {
+    const opVolgorde = [...VOLGORDE].sort((a, b) => positie(a) - positie(b));
+    expect(opVolgorde).toEqual(VOLGORDE);
+  });
+
+  it('elke map uit de sidebar staat in de lijst', () => {
+    const mappen = readdirSync(GIT)
+      .filter((d) => statSync(join(GIT, d)).isDirectory())
+      .sort();
+    expect(mappen).toEqual([...VOLGORDE].sort());
+  });
+
+  it('de overzichtspagina noemt ze in dezelfde volgorde', () => {
+    const index = readFileSync(join(GIT, 'index.md'), 'utf8');
+    const genoemd = [...index.matchAll(/\]\(\.\/([a-z-]+)\/\)/g)]
+      .map((m) => m[1])
+      .filter((naam, i, alle) => alle.indexOf(naam) === i);
+
+    expect(genoemd).toEqual(VOLGORDE);
+  });
+
+  it('geen enkele "Volgende tutorial" wijst achteruit', () => {
+    const fout: string[] = [];
+
+    for (const map of VOLGORDE) {
+      for (const pad of paginas().filter((p) => p.includes(`/${map}/`))) {
+        const tekst = readFileSync(pad, 'utf8');
+        const na = tekst.split('## Volgende tutorial')[1];
+        if (!na) continue;
+        for (const m of na.matchAll(/\/git\/([a-z-]+)\//g)) {
+          const doel = VOLGORDE.indexOf(m[1]);
+          if (doel !== -1 && doel <= VOLGORDE.indexOf(map)) {
+            fout.push(`${relative(GIT, pad)} wijst terug naar ${m[1]}`);
+          }
+        }
+      }
+    }
+
+    expect(fout).toEqual([]);
+  });
+
+  it('geen enkele inleiding beweert dat je iets al gehad hebt wat nog moet komen', () => {
+    // "In X heb je ..." is een terugblik en moet dus achteruit wijzen. Een
+    // vooruitblik ("In X koppel je ...") mag juist wel vooruit, dus die vorm
+    // laten we met rust.
+    const fout: string[] = [];
+
+    for (const map of VOLGORDE) {
+      const index = join(GIT, map, map === 'basis' ? 'index.mdx' : 'index.md');
+      const eerste = readFileSync(index, 'utf8').split('\n## ')[0];
+
+      for (const m of eerste.matchAll(/\[[^\]]+\]\(\/git\/([a-z-]+)\/\)[^.]*\bheb je\b/g)) {
+        if (VOLGORDE.indexOf(m[1]) > VOLGORDE.indexOf(map)) {
+          fout.push(`${map}/index zegt "heb je" over het latere ${m[1]}`);
+        }
+      }
+    }
+
+    expect(fout).toEqual([]);
+  });
+});

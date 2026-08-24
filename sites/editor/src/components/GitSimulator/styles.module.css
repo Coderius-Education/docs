@@ -146,6 +146,12 @@
   margin: 0;
 }
 
+/* Regels uit de voorbereiding: wel zichtbaar (je moet zien waar je binnenkomt)
+   maar duidelijk niet van jou. */
+.terminalEerder {
+  opacity: 0.55;
+}
+
 .terminalPrompt {
   color: #4ec9b0;
 }
