@@ -1,5 +1,5 @@
 // Schrijft de uit de docs geëxtraheerde Python naar lego-tests/extracted/,
-// waar compileer.py hem oppakt. Aanroep:
+// waar scripts/compileer-blokken.py hem oppakt. Aanroep:
 // `pnpm --filter @coderius/robotica-docs lego:extract`
 
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
@@ -33,7 +33,7 @@ for (const t of TEMPLATES) {
   fragmenten.push({
     naam,
     bron: 'src/components/WebMicroEditor/templates.ts',
-    // 0, zodat compileer.py (regel + e.lineno) het regelnummer bínnen de
+    // 0, zodat compileer-blokken.py (regel + e.lineno) het regelnummer bínnen de
     // template meldt — een bestandsregel van templates.ts zou nergens op slaan.
     regel: 0,
     kop: t.label ?? t.id,
@@ -41,7 +41,7 @@ for (const t of TEMPLATES) {
   });
 }
 
-// compileer.py leest deze index om per fout de bronpagina te kunnen noemen.
+// compileer-blokken.py leest deze index om per fout de bronpagina te kunnen noemen.
 writeFileSync(
   join(UIT, 'index.json'),
   `${JSON.stringify(

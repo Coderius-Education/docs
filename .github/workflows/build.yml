@@ -157,13 +157,14 @@ jobs:
         run: pnpm --filter @coderius/robotica-docs lego:extract
 
       - name: Codevoorbeelden compileren
-        run: python3 sites/robotica/src/lego-tests/compileer.py
+        run: python3 scripts/compileer-blokken.py sites/robotica/lego-tests/extracted
 
-  # Zelfde verhaal voor de fullstack-cursus: 115 python-blokken die nergens
-  # worden uitgevoerd. De extractie deelt zijn code met robotica
-  # (packages/shared/codeblokken.js). Bewust kapotte voorbeelden — de
-  # FOUT/GOED-blokken in troubleshooting en losse fragmenten uit een handler —
-  # slaan we over met de marker `{/* niet-compileren: reden */}`.
+  # Zelfde verhaal voor de fullstack-cursus: python-blokken die nergens worden
+  # uitgevoerd. Extractie én compilatie deelt deze job met robotica
+  # (packages/shared/codeblokken.js en scripts/compileer-blokken.py). Bewust
+  # kapotte voorbeelden — de FOUT/GOED-blokken in troubleshooting en losse
+  # fragmenten uit een handler — slaan we over met de marker
+  # `{/* niet-compileren: reden */}`.
   fullstack:
     runs-on: ubuntu-latest
     steps:
@@ -183,7 +184,7 @@ jobs:
         run: pnpm --filter @coderius/fullstack-docs code:extract
 
       - name: Codevoorbeelden compileren
-        run: python3 sites/fullstack/src/code-tests/compileer.py
+        run: python3 scripts/compileer-blokken.py sites/fullstack/code-tests/extracted
 
   checks:
     runs-on: ubuntu-latest

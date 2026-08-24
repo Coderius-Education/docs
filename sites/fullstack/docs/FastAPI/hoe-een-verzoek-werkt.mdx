@@ -2,7 +2,7 @@ import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
 
 # Hoe een verzoek werkt
 
-Je hebt alle stukken gebouwd: endpoints, templates, een database, een formulier en JavaScript. Hier zie je ze een keer achter elkaar, zoals ze bij één klik samenwerken.
+Je hebt alle stukken gebouwd: endpoints, templates, een database, een formulier, JavaScript en een sessie. Hier zie je ze een keer achter elkaar, zoals ze bij één klik samenwerken.
 
 Links staat wat er in de browser gebeurt, rechts wat er op de server gebeurt. Een blauwe rand betekent dat er iets over het netwerk gaat.
 
@@ -18,6 +18,14 @@ Een formulier volgt hetzelfde patroon, maar eindigt anders: niet met een pagina,
 
 De laatste stap start het eerste diagram opnieuw. Dat is het post/redirect/get-patroon uit [Terug naar de lijst](/docs/FastAPI/redirect): versturen en tonen zijn twee losse verzoeken, zodat F5 de pagina herlaadt in plaats van je bericht nog een keer op te sturen.
 
+## En als de server je moet herkennen
+
+Beide diagrammen hierboven gaan uit van een verzoek dat op zichzelf staat. Dat is ook wat er gebeurt: je server weet niet dat je er net ook al was. Een sessie is het rondje dat dat gat dicht.
+
+<VerzoekCyclus variant="sessie" />
+
+Stap 3 is het hele verschil met een gewone cookie. De server leest niet wat de browser stuurde, maar zoekt het op in zijn eigen database — zie [Cookie of sessie?](/docs/FastAPI/cookie-of-sessie).
+
 ## Waar hoort jouw code
 
 Kom je vast te zitten bij een nieuwe functie, zoek dan eerst de stap op waar hij thuishoort:
@@ -29,5 +37,6 @@ Kom je vast te zitten bij een nieuwe functie, zoek dan eerst de stap op waar hij
 | Bepalen hoe het eruitziet | 5 | je template in `templates/` |
 | Reageren op klikken en typen | 7 | `static/js/app.js` |
 | Controleren wat een bezoeker instuurt | POST, stap 4 | in je endpoint-functie, nooit alleen in de HTML |
+| Onthouden wie er terugkomt | sessie, stap 3 | `sessies.db`, met alleen het id in de cookie |
 
 De laatste regel is de valkuil. Stap 1 van het formulier gebeurt in de browser, en die is van de bezoeker — zie [Server of browser?](/docs/FastAPI/server-of-browser).

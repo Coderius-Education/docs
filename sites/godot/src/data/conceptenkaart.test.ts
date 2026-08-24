@@ -1,6 +1,7 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { alleLesbestanden } from '@coderius/shared/voorkennis';
 import { describe, expect, it } from 'vitest';
 import {
   BUITEN_DE_KAART,
@@ -19,19 +20,6 @@ import {
 // pas op in productie.
 
 const DOCS = fileURLToPath(new URL('../../docs', import.meta.url));
-
-function alleLesbestanden(map: string): string[] {
-  const paden: string[] = [];
-  for (const entry of readdirSync(map, { withFileTypes: true })) {
-    const volledig = join(map, entry.name);
-    if (entry.isDirectory()) {
-      paden.push(...alleLesbestanden(volledig));
-    } else if (/\.mdx?$/.test(entry.name)) {
-      paden.push(volledig);
-    }
-  }
-  return paden;
-}
 
 // slug (zonder slash) -> bestandsinhoud, en -> hoofdstuknummer uit de mapnaam
 const inhoudPerSlug = new Map<string, string>();

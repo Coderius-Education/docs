@@ -75,7 +75,7 @@ async def gastenboek_form(request: Request, sessie_id: str = Cookie(default=""))
     return templates.TemplateResponse(request, "gastenboek.html", {"naam": mijn.get("naam", "")})
 ```
 
-Voor de bezoeker verandert er niets: zijn naam staat nog steeds voorgevuld. Het verschil zit erin dat die naam nu van jouw server komt en niet van zijn computer.
+Voor de bezoeker verandert er niets: de naam staat nog steeds voorgevuld. Het verschil zit erin dat die naam nu van jouw server komt en niet van een computer waar je niets over te zeggen hebt.
 
 ## Testen
 
@@ -107,7 +107,7 @@ Kijk naar de tweede waarde in `sessies.get(sessie_id, {})`.
 
 De bezoeker ziet een leeg naamveld: onder de sleutel `hallo` staat niets, dus `get` geeft de lege dictionary terug. In `sessies.db` verandert er niets — uitlezen schrijft niet.
 
-Dat is precies de bedoeling. Wie aan zijn cookie sleutelt, wordt behandeld als een nieuwe bezoeker en komt niet in de sessie van iemand anders terecht.
+Dat is precies de bedoeling. Wie aan de eigen cookie sleutelt, wordt behandeld als een nieuwe bezoeker en komt niet in de sessie van iemand anders terecht.
 
 </details>
 

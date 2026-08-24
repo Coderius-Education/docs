@@ -1,5 +1,5 @@
 // Schrijft de uit de docs geëxtraheerde Python naar code-tests/extracted/,
-// waar compileer.py hem oppakt. Aanroep:
+// waar scripts/compileer-blokken.py hem oppakt. Aanroep:
 // `pnpm --filter @coderius/fullstack-docs code:extract`
 
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
@@ -20,7 +20,7 @@ for (const f of fragmenten) {
   writeFileSync(join(UIT, `${f.naam}.py`), f.code);
 }
 
-// compileer.py leest deze index om per fout de bronpagina te kunnen noemen.
+// compileer-blokken.py leest deze index om per fout de bronpagina te kunnen noemen.
 writeFileSync(
   join(UIT, 'index.json'),
   `${JSON.stringify(

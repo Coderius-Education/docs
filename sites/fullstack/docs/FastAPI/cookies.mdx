@@ -26,7 +26,7 @@ async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
 
 Het verschil met eerder: je maakt het antwoord eerst als variabele, zet er een cookie op, en geeft het daarna pas terug. Zolang je het antwoord meteen returnt, heb je geen plek om er iets aan toe te voegen.
 
-`max_age` is de houdbaarheid in seconden. Hier is dat 30 dagen: `60 * 60 * 24 * 30`. Laat je `max_age` weg, dan verdwijnt de cookie zodra de bezoeker zijn browser afsluit.
+`max_age` is de houdbaarheid in seconden. Hier is dat 30 dagen: `60 * 60 * 24 * 30`. Laat je `max_age` weg, dan verdwijnt de cookie zodra de bezoeker de browser afsluit.
 
 ## De cookie terugkrijgen
 
@@ -99,7 +99,7 @@ Zoek de cookie op bij `F12` en verander de waarde in een andere naam. Herlaad da
 
 In het formulier staat nu de naam die jij zelf in de cookie hebt getypt. Je server neemt hem klakkeloos over.
 
-Onthoud dat goed: een cookie staat op de computer van de bezoeker, en die kan er alles van maken wat hij wil. Voor een naam die je alleen als gemak invult is dat prima. Voor iets waar rechten aan hangen — wie mag verwijderen, wie is ingelogd — is het dat niet. Daar gaat de [volgende les](/docs/FastAPI/sessies) over.
+Onthoud dat goed: een cookie staat op de computer van de bezoeker, en die kan er alles van maken. Voor een naam die je alleen als gemak invult is dat prima. Voor iets waar rechten aan hangen — wie mag verwijderen, wie is ingelogd — is het dat niet. Daar gaat de [volgende les](/docs/FastAPI/sessies) over.
 
 </details>
 
