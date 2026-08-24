@@ -6,6 +6,7 @@ Algemene schrijfstijl, didactiek en schrijfskills staan in `../CLAUDE.md` (en de
 - Bij GDScript-voorbeelden: gebruik dezelfde conventies als bij Python (variabelnamen NL, keywords/methoden EN).
 - Bij scene-/node-uitleg: noem expliciet welk node-type je toevoegt en waar in de tree het komt.
 - Voor de "jouw project"-pagina's: verwijs naar de cheatsheet i.p.v. voorbeelden te dupliceren.
+- **Voorkennis-blokken** (`<Voorkennis>`, doelsite `python`) staan alleen waar er voor het eerst GDScript-stof langskomt die de python-cursus al uitlegt — zeven van de achtendertig lessen. `src/data/voorkennis.test.ts` houdt twee lijsten bij: `MET_BLOK` en `ZONDER_BLOK`, die laatste gegroepeerd per reden (editorwerk zonder code, voortbouwen op de vorige les, naslag, projectidee). Élk lesbestand moet in een van beide staan, dus een nieuwe les dwingt een expliciete keuze af. Dát de paden bestaan wordt monorepo-breed getest in `packages/shared/voorkennis.test.ts`.
 
 ## Blokken "Er gaat iets mis"
 

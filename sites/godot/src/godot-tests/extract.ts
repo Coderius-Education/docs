@@ -8,6 +8,7 @@
 
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
+import { alleLesbestanden } from '@coderius/shared/voorkennis';
 
 export type Fragment = {
   /** bestandsnaam zonder .gd, uniek binnen de bundel */
@@ -87,16 +88,6 @@ export function fragmentenUit(
   }
 
   return { fragmenten, overgeslagen };
-}
-
-function alleLesbestanden(map: string): string[] {
-  const paden: string[] = [];
-  for (const entry of readdirSync(map, { withFileTypes: true })) {
-    const volledig = join(map, entry.name);
-    if (entry.isDirectory()) paden.push(...alleLesbestanden(volledig));
-    else if (/\.mdx?$/.test(entry.name)) paden.push(volledig);
-  }
-  return paden;
 }
 
 export function verzamel(wortels: string[]): {

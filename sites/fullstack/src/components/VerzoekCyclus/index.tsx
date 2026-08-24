@@ -117,9 +117,53 @@ const POST_STAPPEN: Stap[] = [
   },
 ];
 
+const SESSIE_STAPPEN: Stap[] = [
+  {
+    kant: 'browser',
+    titel: 'De browser stuurt de cookie mee',
+    tekst: 'Bij elk verzoek aan jouw server gaat sessie_id automatisch mee, ongevraagd.',
+    to: '/docs/FastAPI/cookies',
+    les: 'Onthouden met een cookie',
+  },
+  {
+    kant: 'server',
+    titel: 'FastAPI geeft de cookie door',
+    tekst: 'De parameter met Cookie(default="") vangt hem op, net als Form bij een formulier.',
+    to: '/docs/FastAPI/cookies',
+    les: 'Onthouden met een cookie',
+  },
+  {
+    kant: 'server',
+    titel: 'De server zoekt de sessie op',
+    tekst: 'Het sessie-id is een sleutel in sessies.db; daar staan de echte gegevens.',
+    to: '/docs/FastAPI/sessies',
+    les: 'Sessies',
+  },
+  {
+    kant: 'server',
+    titel: 'Nu pas weet je wie er is',
+    tekst: 'De naam komt uit jouw database, niet uit de cookie — dus die klopt.',
+    to: '/docs/FastAPI/sessies',
+    les: 'Sessies',
+  },
+  {
+    kant: 'server',
+    titel: 'Het antwoord gaat terug',
+    tekst: 'Was er nog geen sessie, dan zet set_cookie het nieuwe sessie-id erop.',
+    to: '/docs/FastAPI/sessies',
+    les: 'Sessies',
+  },
+  {
+    kant: 'browser',
+    titel: 'De browser bewaart de cookie',
+    tekst: 'En stuurt hem bij het volgende verzoek weer mee — het rondje begint opnieuw.',
+  },
+];
+
 const VARIANTEN = {
   get: { stappen: GET_STAPPEN, titel: 'Een pagina opvragen' },
   post: { stappen: POST_STAPPEN, titel: 'Een formulier versturen' },
+  sessie: { stappen: SESSIE_STAPPEN, titel: 'Herkend worden met een sessie' },
 } as const;
 
 export default function VerzoekCyclus({

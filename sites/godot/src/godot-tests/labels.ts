@@ -8,6 +8,7 @@
 
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
+import { alleLesbestanden } from '@coderius/shared/voorkennis';
 
 /**
  * Vetgedrukte tekst die de check niet kan verifiëren, met de reden erbij. De
@@ -91,16 +92,6 @@ export function uiLabelsUit(inhoud: string): string[] {
     gevonden.add(label);
   }
   return [...gevonden];
-}
-
-function alleLesbestanden(map: string): string[] {
-  const paden: string[] = [];
-  for (const entry of readdirSync(map, { withFileTypes: true })) {
-    const volledig = join(map, entry.name);
-    if (entry.isDirectory()) paden.push(...alleLesbestanden(volledig));
-    else if (/\.mdx?$/.test(entry.name)) paden.push(volledig);
-  }
-  return paden;
 }
 
 export function verzamelLabels(wortels: string[]): string[] {

@@ -176,6 +176,69 @@ async def bericht_detail(sleutel: str):
 
 </details>
 
+<details>
+<summary>Een cookie meegeven</summary>
+
+```python
+@app.post("/gastenboek")
+async def gastenboek_opslaan(naam: str = Form(...)):
+    antwoord = RedirectResponse(url="/berichten", status_code=303)
+    antwoord.set_cookie(key="naam", value=naam, max_age=60 * 60 * 24 * 30)
+    return antwoord
+```
+
+**Let op:** maak het antwoord eerst als variabele, anders heb je geen plek om de cookie op te zetten. `max_age` is de houdbaarheid in seconden.
+
+</details>
+
+<details>
+<summary>Een cookie uitlezen</summary>
+
+```python
+from fastapi import Cookie
+
+@app.get("/gastenboek")
+async def gastenboek_form(request: Request, naam: str = Cookie(default="")):
+    return templates.TemplateResponse(request, "gastenboek.html", {"naam": naam})
+```
+
+Weghalen doe je met `antwoord.delete_cookie("naam")`.
+
+**Let op:** een cookie staat bij de bezoeker en kan door hem veranderd worden. Gebruik hem niet voor iets waar rechten aan hangen.
+
+</details>
+
+<details>
+<summary>Een sessie: gegevens op de server</summary>
+
+```python
+import secrets
+
+@app.post("/gastenboek")
+async def gastenboek_opslaan(naam: str = Form(...), sessie_id: str = Cookie(default="")):
+    if not sessie_id:
+        sessie_id = secrets.token_hex(16)
+
+    with SqliteDict("sessies.db") as sessies:
+        sessies[sessie_id] = {"naam": naam}
+        sessies.commit()
+
+    antwoord = RedirectResponse(url="/berichten", status_code=303)
+    antwoord.set_cookie(key="sessie_id", value=sessie_id, max_age=60 * 60 * 24 * 30)
+    return antwoord
+```
+
+Uitlezen:
+
+```python
+with SqliteDict("sessies.db") as sessies:
+    mijn = sessies.get(sessie_id, {})
+```
+
+**Let op:** in de cookie staat alleen het sessie-id, de gegevens staan op de server. Gebruik `.get()` met een standaardwaarde: bij een onbekend sessie-id bestaat de sleutel niet.
+
+</details>
+
 ## HTML
 
 <details>
@@ -307,52 +370,6 @@ veld.addEventListener("input", function () {
     teller.textContent = 80 - veld.value.length + " tekens over";
 });
 ```
-
-</details>
-
-<details>
-<summary>Data ophalen bij je eigen server (fetch)</summary>
-
-Endpoint dat data teruggeeft:
-
-```python
-@app.get("/api/berichten")
-async def api_berichten():
-    with SqliteDict("gastenboek.db") as db:
-        return list(db.values())
-```
-
-En in je JavaScript:
-
-```javascript
-async function laadBerichten() {
-    const antwoord = await fetch("/api/berichten");
-    const berichten = await antwoord.json();
-
-    for (const bericht of berichten) {
-        const item = document.createElement("li");
-        item.textContent = bericht.naam;
-        lijst.append(item);
-    }
-}
-```
-
-**Let op:** twee keer `await` — één voor het verzoek, één voor het uitpakken.
-
-</details>
-
-<details>
-<summary>Een formulier versturen zonder de pagina te herladen</summary>
-
-```javascript
-formulier.addEventListener("submit", async function (event) {
-    event.preventDefault();
-    await fetch("/gastenboek", { method: "POST", body: new FormData(formulier) });
-    formulier.reset();
-});
-```
-
-Je `Form(...)`-endpoint hoeft niet te veranderen.
 
 </details>
 

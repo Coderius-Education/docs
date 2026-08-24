@@ -1,6 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { parseItems } from '@coderius/shared/voorkennis';
 import { describe, expect, it } from 'vitest';
 import { alleLesbestanden } from './extract';
 
@@ -13,7 +14,6 @@ const LEGO = fileURLToPath(new URL('../../lego_auto', import.meta.url));
 const DOCS = fileURLToPath(new URL('../../docs', import.meta.url));
 const PAGES = fileURLToPath(new URL('../pages', import.meta.url));
 const SITE = fileURLToPath(new URL('../..', import.meta.url));
-const PYTHON_DOCS = fileURLToPath(new URL('../../../python/docs', import.meta.url));
 
 type Pagina = {
   pad: string;
@@ -168,13 +168,11 @@ describe('lego_auto-structuur', () => {
 });
 
 describe('Voorkennis-links naar de python-site', () => {
-  // Zelfde aanpak als sites/godot/src/data/voorkennis.test.ts: cross-site
-  // links vallen buiten de linkcheck van de build, dus zonder deze test
-  // breekt een hernoemde python-les de robotica-links pas in productie.
-  // Geldt voor lego_auto én de Bibliotheek (docs/) — beide hebben
-  // Voorkennis-blokken.
-  const ITEM_RE = /\{site: 'python', to: '([^']+)', label: '([^']+)'\}/g;
-
+  // Dát elk pad bestaat wordt monorepo-breed getest in
+  // packages/shared/voorkennis.test.ts, met de gedeelde parser. Hier stond
+  // een eigen regex die alleen `site: 'python'` en labels tussen enkele
+  // quotes ving — een label met een apostrof glipte er stil doorheen. Wat
+  // hieronder overblijft is robotica-eigen beleid.
   const alleZones = [
     ...paginas.map((p) => ({ rel: `lego_auto/${p.rel}`, inhoud: p.inhoud })),
     ...alleLesbestanden(DOCS).map((pad) => ({
@@ -188,36 +186,16 @@ describe('Voorkennis-links naar de python-site', () => {
     })),
   ];
 
-  function pythonUrlBestaat(to: string): boolean {
-    const segmenten = to.replace(/^\/docs\//, '').split('/');
-    if (segmenten.length !== 2) return false;
-    const [mapSegment, paginaSegment] = segmenten;
-    const mapNaam = readdirSync(PYTHON_DOCS).find(
-      (naam) => naam === mapSegment || naam.replace(/^\d+-/, '') === mapSegment,
+  it('alle Voorkennis-items wijzen naar de python-cursus', () => {
+    // Robotica bouwt alleen op python voort. Een item naar een andere site is
+    // geen fout in zichzelf, maar wel een koerswijziging die je bewust maakt.
+    const anders = alleZones.flatMap((p) =>
+      parseItems(p.inhoud)
+        .filter((item) => item.site !== 'python')
+        .map((item) => `${p.rel}: ${item.site}`),
     );
-    if (!mapNaam) return false;
-    for (const bestand of readdirSync(join(PYTHON_DOCS, mapNaam))) {
-      if (!/\.mdx?$/.test(bestand)) continue;
-      const inhoud = readFileSync(join(PYTHON_DOCS, mapNaam, bestand), 'utf8');
-      const slug = inhoud.match(/^slug:\s*(\S+)/m)?.[1];
-      if (slug) {
-        if (slug === to || slug === `/${paginaSegment}` || slug === paginaSegment) return true;
-        continue;
-      }
-      const kaal = bestand.replace(/\.mdx?$/, '');
-      if (kaal === paginaSegment || kaal.replace(/^\d+-/, '') === paginaSegment) return true;
-    }
-    return false;
-  }
 
-  it('elk Voorkennis-pad bestaat als python-lespagina', () => {
-    const kapot: string[] = [];
-    for (const p of alleZones) {
-      for (const m of p.inhoud.matchAll(ITEM_RE)) {
-        if (!pythonUrlBestaat(m[1])) kapot.push(`${p.rel}: ${m[1]}`);
-      }
-    }
-    expect(kapot).toEqual([]);
+    expect(anders).toEqual([]);
   });
 
   it('nergens kaal-geharde python-links', () => {

@@ -4,6 +4,7 @@
   items={[
     {site: 'python', to: '/docs/herhalen/06a-for-loop', label: 'De for-loop'},
     {site: 'python', to: '/docs/beslissen/05b-if-else', label: 'If en else'},
+    {site: 'web', to: '/docs/html-css/koppen-lijsten', label: 'Lijsten in HTML'},
   ]}
 />
 
@@ -101,6 +102,7 @@ Blijft de lijst leeg terwijl er wel data in je database staat? Dan komt de lijst
 
 ### Opdracht 1: Predict - Hoeveel regels?
 
+{/* niet-compileren: fragment uit een handler */}
 ```python
 namen = ["Jan", "Sarah", "Piet"]
 return templates.TemplateResponse(request, "namen.html", {"namen": namen})

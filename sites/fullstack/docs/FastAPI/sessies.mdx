@@ -1,0 +1,223 @@
+# Sessies
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/data/10b-lijst-methoden', label: 'Lijst-methoden (append)'},
+  ]}
+/>
+
+In de vorige les veranderde je je eigen cookie in een andere naam, en je server geloofde het meteen. Voor een naam in een formulier maakt dat weinig uit. Maar zodra er rechten aan hangen — wie mag een bericht verwijderen — is het een probleem. In deze les los je dat op met een **sessie**.
+
+## Waarom de naam niet in de cookie hoort
+
+Stel dat je op de berichtenpagina een verwijderknop wilt tonen, maar alleen bij berichten die de bezoeker zelf heeft geplaatst. Met de naam in de cookie werkt dat niet: iedereen kan er een andere naam in typen en zo bij de berichten van een ander komen.
+
+De vuistregel uit [Server of browser?](/docs/FastAPI/server-of-browser) geldt hier onverkort. Alles wat op de computer van de bezoeker staat, mag je niet vertrouwen. Alleen wat op jouw server staat, mag dat wel.
+
+## Alleen een kenmerk in de cookie
+
+De oplossing is de cookie leeg te maken van betekenis. In plaats van de naam zet je er een **sessie-id** in: een lang, willekeurig getal dat verder niets betekent. De gegevens zelf bewaar je op de server, met dat sessie-id als sleutel.
+
+Het sessie-id maak je met `secrets`, een ingebouwde module voor waarden die niet te raden mogen zijn:
+
+```python
+import secrets
+
+sessie_id = secrets.token_hex(16)
+```
+
+Dat geeft 32 tekens, bijvoorbeeld `9f2c4a7e10b8d3f5a6c1e0b4d7928f3a`. Een bezoeker kan dat wel veranderen, maar niet in het sessie-id van iemand anders — daar zijn te veel mogelijkheden voor.
+
+## De sessie opslaan
+
+Sessies bewaar je in een eigen database, los van je gastenboek:
+
+```python
+@app.post("/gastenboek")
+async def gastenboek_opslaan(
+    naam: str = Form(...),
+    bericht: str = Form(...),
+    sessie_id: str = Cookie(default=""),
+):
+    if not sessie_id:
+        sessie_id = secrets.token_hex(16)
+
+    sleutel = f"bericht_{time.time_ns()}"
+    with SqliteDict("gastenboek.db") as db:
+        db[sleutel] = {"naam": naam, "bericht": bericht}
+        db.commit()
+
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {"naam": naam, "berichten": []})
+        mijn["naam"] = naam
+        mijn["berichten"].append(sleutel)
+        sessies[sessie_id] = mijn
+        sessies.commit()
+
+    antwoord = RedirectResponse(url="/berichten", status_code=303)
+    antwoord.set_cookie(key="sessie_id", value=sessie_id, max_age=60 * 60 * 24 * 30)
+    return antwoord
+```
+
+Drie dingen gebeuren hier. Is er nog geen sessie-id, dan maak je er een. Het bericht gaat zoals altijd in `gastenboek.db`. En in `sessies.db` groeit onder dat ene sessie-id een lijst met de sleutels van de berichten die deze bezoeker heeft geplaatst.
+
+`sessies.get(sessie_id, {"naam": naam, "berichten": []})` doet het werk bij een eerste bezoek: bestaat de sessie nog niet, dan krijg je een verse dictionary in plaats van een foutmelding.
+
+## De sessie uitlezen
+
+Ophalen gaat omgekeerd: sessie-id uit de cookie, gegevens uit de database.
+
+```python
+@app.get("/gastenboek")
+async def gastenboek_form(request: Request, sessie_id: str = Cookie(default="")):
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {})
+    return templates.TemplateResponse(request, "gastenboek.html", {"naam": mijn.get("naam", "")})
+```
+
+Voor de bezoeker verandert er niets: de naam staat nog steeds voorgevuld. Het verschil zit erin dat die naam nu van jouw server komt en niet van een computer waar je niets over te zeggen hebt.
+
+## Testen
+
+1. Vul het gastenboek in en ga terug naar `/gastenboek` — je naam staat er nog
+2. Kijk bij `F12` naar de cookie: daar staat nu een rij tekens in plaats van je naam
+3. Verander die rij tekens en herlaad de pagina
+
+:::danger[Gaat er iets mis?]
+Krijg je `KeyError` bij het uitlezen? Gebruik `sessies.get(sessie_id, {})` en niet `sessies[sessie_id]` — bij een onbekend sessie-id bestaat die sleutel niet. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
+:::
+
+## Opdrachten
+
+### Opdracht 1: Predict - Een vreemd sessie-id
+
+Je verandert de cookie `sessie_id` in `hallo` en vraagt `/gastenboek` op.
+
+**Vraag:** wat ziet de bezoeker, en wat gebeurt er in `sessies.db`?
+
+<details>
+<summary>Tip</summary>
+
+Kijk naar de tweede waarde in `sessies.get(sessie_id, {})`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+De bezoeker ziet een leeg naamveld: onder de sleutel `hallo` staat niets, dus `get` geeft de lege dictionary terug. In `sessies.db` verandert er niets — uitlezen schrijft niet.
+
+Dat is precies de bedoeling. Wie aan de eigen cookie sleutelt, wordt behandeld als een nieuwe bezoeker en komt niet in de sessie van iemand anders terecht.
+
+</details>
+
+### Opdracht 2: Run
+
+Bouw je POST- en GET-endpoint om naar sessies. Verstuur een bericht, bekijk de cookie bij `F12` en controleer dat je naam nog steeds wordt onthouden.
+
+### Opdracht 3: Investigate - Kijk in je sessies
+
+Maak een tijdelijk endpoint dat alles in `sessies.db` als JSON teruggeeft, en bekijk het na twee berichten.
+
+<details>
+<summary>Tip</summary>
+
+Zo'n endpoint ken je al uit [POST naar database](/docs/FastAPI/post_naar_database): open de database en geef `dict(sessies)` terug.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+@app.get("/sessies")
+async def alle_sessies():
+    with SqliteDict("sessies.db") as sessies:
+        return dict(sessies)
+```
+
+Je ziet één sessie-id met daaronder je naam en een lijst met twee berichtsleutels. Open je dezelfde site in een privévenster en plaats je daar een bericht, dan komt er een tweede sessie-id bij: die browser stuurt jouw cookie niet mee.
+
+Haal dit endpoint daarna weg. Op een echte site zou je hiermee de sessies van al je bezoekers weggeven, en met een sessie-id kan iemand zich voordoen als die bezoeker.
+
+</details>
+
+### Opdracht 4: Make - Alleen je eigen berichten verwijderen
+
+Toon op `/berichten` de verwijderknop uit [Terug naar de lijst](/docs/FastAPI/redirect) alleen bij berichten die in de sessie van deze bezoeker staan.
+
+<details>
+<summary>Tip</summary>
+
+Geef de lijst met eigen berichtsleutels mee aan de template, en gebruik in je for-lus `{% if sleutel in mijn_berichten %}`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+@app.get("/berichten")
+async def berichten(request: Request, sessie_id: str = Cookie(default="")):
+    with SqliteDict("gastenboek.db") as db:
+        alle_berichten = list(db.items())
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {})
+    return templates.TemplateResponse(
+        request,
+        "berichten.html",
+        {"berichten": alle_berichten, "mijn_berichten": mijn.get("berichten", [])},
+    )
+```
+
+In `templates/berichten.html`:
+```html
+{% for sleutel, bericht in berichten %}
+    <li>
+        {{ bericht.naam }}: {{ bericht.bericht }}
+        {% if sleutel in mijn_berichten %}
+            <form method="post" action="/verwijderen">
+                <input type="hidden" name="sleutel" value="{{ sleutel }}">
+                <button type="submit">Verwijderen</button>
+            </form>
+        {% endif %}
+    </li>
+{% endfor %}
+```
+
+De knop verdwijnt bij berichten van anderen. Let op wat dit wél en niet is: de knop is weg, maar het endpoint `/verwijderen` verwijdert nog steeds alles wat het binnenkrijgt. Wie het formulier nabouwt, komt er alsnog bij.
+
+</details>
+
+### Opdracht 5: Make - Echt afschermen
+
+Zorg dat `/verwijderen` een bericht alleen weggooit als het in de sessie van de bezoeker staat.
+
+<details>
+<summary>Tip</summary>
+
+Het POST-endpoint kan de cookie net zo goed opvragen als de GET. Controleer de sleutel tegen de lijst uit de sessie voordat je iets verwijdert.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+@app.post("/verwijderen")
+async def verwijderen(sleutel: str = Form(...), sessie_id: str = Cookie(default="")):
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {})
+    if sleutel not in mijn.get("berichten", []):
+        raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
+
+    with SqliteDict("gastenboek.db") as db:
+        if sleutel in db:
+            del db[sleutel]
+            db.commit()
+    return RedirectResponse(url="/berichten", status_code=303)
+```
+
+**403 Forbidden** betekent: ik weet wie je bent, maar dit mag je niet. Nu ligt de controle op de server, waar de bezoeker er niet bij kan. De verborgen knop uit opdracht 4 blijft nuttig — die voorkomt dat iemand per ongeluk iets probeert wat toch niet mag — maar de echte afscherming zit hier.
+
+</details>

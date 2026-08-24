@@ -79,7 +79,7 @@ describe('fullstackConfig — voorbeeldprojecten scoren', () => {
         'struct-static',
         'struct-templates',
         'html-basis',
-        'js-query-selector',
+        'js-bestand-koppelen',
       ],
     );
   });
@@ -108,8 +108,6 @@ describe('fullstackConfig — voorbeeldprojecten scoren', () => {
         'html-jinja-loop',
         'html-jinja-if',
         'js-bestand-koppelen',
-        'js-query-selector',
-        'js-event-listener',
         'db-sqlitedict',
         'db-write',
         'db-commit',
@@ -120,8 +118,9 @@ describe('fullstackConfig — voorbeeldprojecten scoren', () => {
         'struct-templates',
       ],
       // Even belangrijk: de nakijker vinkt niet zomaar alles aan. Deze fixture
-      // doet de fetch-les niet, dus js-fetch hoort uit te blijven.
-      ['fastapi-html-response', 'db-del', 'js-fetch'],
+      // gebruikt geen HTMLResponse, verwijdert niets en onthoudt de bezoeker
+      // niet, dus die blijven uit.
+      ['fastapi-html-response', 'db-del', 'fastapi-cookie', 'fastapi-sessie'],
     );
   });
 
@@ -216,6 +215,37 @@ describe('fullstackConfig', () => {
     expect(perId.get('db-del')).toBe(true);
   });
 
+  it('herkent een cookie en een sessie in de code van de les', () => {
+    const report = analyze(
+      files({
+        'main.py': [
+          'import secrets',
+          'from fastapi import Cookie',
+          'async def form(sessie_id: str = Cookie(default="")):',
+          '    if not sessie_id:',
+          '        sessie_id = secrets.token_hex(16)',
+          '    antwoord.set_cookie(key="sessie_id", value=sessie_id)',
+        ].join('\n'),
+      }),
+      fullstackConfig,
+    );
+    const perId = new Map(report.concepts.map((c) => [c.id, c.used]));
+
+    expect(perId.get('fastapi-cookie')).toBe(true);
+    expect(perId.get('fastapi-sessie')).toBe(true);
+  });
+
+  it('ziet een gewone variabelenaam niet aan voor een cookie of sessie', () => {
+    const report = analyze(
+      files({ 'main.py': 'cookies = 3\nsessie = "x"\nprint(cookies, sessie)' }),
+      fullstackConfig,
+    );
+    const perId = new Map(report.concepts.map((c) => [c.id, c.used]));
+
+    expect(perId.get('fastapi-cookie')).toBe(false);
+    expect(perId.get('fastapi-sessie')).toBe(false);
+  });
+
   it('ziet een route zonder accolades niet aan voor een path-parameter', () => {
     const report = analyze(
       files({ 'main.py': '@app.get("/berichten")\nasync def berichten():\n    return []' }),
@@ -229,11 +259,17 @@ describe('fullstackConfig', () => {
   });
 
   // Voor de JS-lessen werd .js als 'other' geclassificeerd en stond het niet in
-  // textKinds, dus werd een JavaScript-bestand niet eens ingelezen.
-  it('leest JavaScript-bestanden en herkent wat erin staat', () => {
+  // textKinds. Een JavaScript-bestand telt dus mee in het bestandsoverzicht,
+  // ook nu er geen concept meer in de JS-broncode zoekt.
+  it('herkent een JavaScript-bestand als JavaScript', () => {
     expect(fullstackConfig.classify('static/js/app.js')).toBe('js');
     expect(fullstackConfig.textKinds).toContain('js');
+  });
 
+  it('kijkt naar de koppeling, niet naar wat er in het JavaScript staat', () => {
+    // querySelector en addEventListener horen bij de web-cursus en worden daar
+    // nagekeken. Fullstack toetst alleen dat het bestand netjes in static/js/
+    // staat en vanuit de HTML gekoppeld is.
     const report = analyze(
       files({
         'templates/form.html': '<script src="/static/js/app.js" defer></script>',
@@ -244,32 +280,16 @@ describe('fullstackConfig', () => {
       }),
       fullstackConfig,
     );
-    const perId = new Map(report.concepts.map((c) => [c.id, c.used]));
 
-    expect(perId.get('js-bestand-koppelen')).toBe(true);
-    expect(perId.get('js-query-selector')).toBe(true);
-    expect(perId.get('js-event-listener')).toBe(true);
+    const jsConcepten = fullstackConfig.concepts.filter((c) => c.subject === 'js').map((c) => c.id);
+    expect(jsConcepten).toEqual(['js-bestand-koppelen']);
+    expect(new Map(report.concepts.map((c) => [c.id, c.used])).get('js-bestand-koppelen')).toBe(
+      true,
+    );
   });
 
-  it('herkent fetch, en niet in een bestand dat het alleen noemt', () => {
-    const met = analyze(
-      files({ 'static/js/app.js': 'const a = await fetch("/api/berichten");' }),
-      fullstackConfig,
-    );
-    expect(new Map(met.concepts.map((c) => [c.id, c.used])).get('js-fetch')).toBe(true);
-
-    // 'prefetch' of 'fetchData' mag niet meetellen: het patroon eist een
-    // woordgrens plus een haakje.
-    const zonder = analyze(
-      files({ 'static/js/app.js': 'const fetchData = 1; prefetch(x); element.fetchAll;' }),
-      fullstackConfig,
-    );
-    expect(new Map(zonder.concepts.map((c) => [c.id, c.used])).get('js-fetch')).toBe(false);
-  });
-
-  it('telt JavaScript in een HTML-bestand niet mee als JavaScript-concept', () => {
-    // De cursus leert een apart bestand in static/js/. Een inline <script>-blok
-    // met dezelfde code hoort dus niet als "querySelector gebruikt" te tellen.
+  it('een inline script-blok telt niet als koppelen', () => {
+    // De cursus leert een apart bestand in static/js/, gemount door FastAPI.
     const report = analyze(
       files({
         'templates/form.html':
@@ -279,8 +299,6 @@ describe('fullstackConfig', () => {
     );
     const perId = new Map(report.concepts.map((c) => [c.id, c.used]));
 
-    expect(perId.get('js-query-selector')).toBe(false);
-    expect(perId.get('js-event-listener')).toBe(false);
     expect(perId.get('js-bestand-koppelen')).toBe(false);
   });
 
@@ -305,5 +323,27 @@ describe('fullstackConfig', () => {
     expect(plat.get('html-jinja-var')).toBe(true);
     expect(plat.get('html-jinja-loop')).toBe(false);
     expect(plat.get('html-jinja-if')).toBe(false);
+  });
+
+  it('precies deze concepten staan op gevorderd', () => {
+    // De niveau-indeling is vastgesteld voor de hele leerlijn en bepaalt wat
+    // een leerling aan het eind moet kunnen. Een verschuiving hoort een
+    // bewuste keuze te zijn, geen bijvangst van een nieuwe les — vandaar een
+    // exacte lijst in plaats van een telling.
+    const gevorderd = fullstackConfig.concepts
+      .filter((c) => c.level === 'gevorderd')
+      .map((c) => c.id)
+      .sort();
+
+    expect(gevorderd).toEqual([
+      'db-del',
+      'fastapi-cookie',
+      'fastapi-httpexception',
+      'fastapi-path-param',
+      'fastapi-redirect',
+      'fastapi-sessie',
+      'html-jinja-if',
+      'html-jinja-loop',
+    ]);
   });
 });

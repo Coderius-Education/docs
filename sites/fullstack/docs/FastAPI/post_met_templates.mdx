@@ -1,5 +1,11 @@
 # POST met templates
 
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/data/11a-dictionaries-basis', label: 'Dictionaries'},
+  ]}
+/>
+
 In de vorige les gaf je POST endpoint JSON terug. In deze les leer je hoe je een mooie HTML pagina toont met **Jinja2 templates**.
 
 ## Templates configureren
@@ -115,6 +121,7 @@ Template:
 ```
 
 Python:
+{/* niet-compileren: fragment uit een handler */}
 ```python
 return templates.TemplateResponse(request, "welkom.html", {
     "naam": "Jan", "leeftijd": 16
@@ -148,6 +155,7 @@ Maak het formulier, de template en de endpoints uit het voorbeeld. Test of het w
 
 De meeste voorbeelden die je online vindt zetten `request` ín het dictionary in plaats van ervoor. Probeer dat eens:
 
+{/* niet-compileren: fragment uit een handler */}
 ```python
 return templates.TemplateResponse("groet_resultaat.html", {"request": request, "naam": naam})
 ```

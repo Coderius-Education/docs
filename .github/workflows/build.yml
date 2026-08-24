@@ -71,9 +71,12 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # v5 draait op Node 24; v4 werd door de runner geforceerd op Node 24 en
+      # gaf daar een deprecation-waarschuwing over. Inputs en de cache-hit
+      # output zijn ongewijzigd.
       - name: Cache Godot
         id: godot-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/godot-bin
           key: godot-${{ env.GODOT_VERSIE }}
@@ -157,7 +160,34 @@ jobs:
         run: pnpm --filter @coderius/robotica-docs lego:extract
 
       - name: Codevoorbeelden compileren
-        run: python3 sites/robotica/src/lego-tests/compileer.py
+        run: python3 scripts/compileer-blokken.py sites/robotica/lego-tests/extracted
+
+  # Zelfde verhaal voor de fullstack-cursus: python-blokken die nergens worden
+  # uitgevoerd. Extractie én compilatie deelt deze job met robotica
+  # (packages/shared/codeblokken.js en scripts/compileer-blokken.py). Bewust
+  # kapotte voorbeelden — de FOUT/GOED-blokken in troubleshooting en losse
+  # fragmenten uit een handler — slaan we over met de marker
+  # `{/* niet-compileren: reden */}`.
+  fullstack:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Codeblokken uit de docs halen
+        run: pnpm --filter @coderius/fullstack-docs code:extract
+
+      - name: Codevoorbeelden compileren
+        run: python3 scripts/compileer-blokken.py sites/fullstack/code-tests/extracted
 
   checks:
     runs-on: ubuntu-latest

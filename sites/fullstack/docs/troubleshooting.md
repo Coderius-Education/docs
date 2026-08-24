@@ -258,6 +258,7 @@ Meer uitleg: [POST met templates](/docs/FastAPI/post_met_templates)
 
 **Oplossing:**
 
+{/* niet-compileren: FOUT/GOED-voorbeeld */}
 ```python
 # FOUT - naam niet meegestuurd
 return templates.TemplateResponse(request, "pagina.html", {})
@@ -279,6 +280,7 @@ Meer uitleg: [POST met templates](/docs/FastAPI/post_met_templates)
 
 **Oplossing:** zet `request` vooraan:
 
+{/* niet-compileren: FOUT/GOED-voorbeeld */}
 ```python
 # FOUT - oude schrijfwijze
 return templates.TemplateResponse("pagina.html", {"request": request, "naam": naam})
@@ -361,6 +363,7 @@ Meer uitleg: [Een lijst tonen](/docs/FastAPI/lijst_tonen)
 
 **Oplossing:**
 
+{/* niet-compileren: FOUT/GOED-voorbeeld */}
 ```python
 # FOUT - stuurt 307, de browser herhaalt je POST op de nieuwe URL
 return RedirectResponse(url="/berichten")
@@ -429,48 +432,6 @@ Meer uitleg: [Server of browser?](/docs/FastAPI/server-of-browser)
 
 </details>
 
-<details>
-<summary>TypeError: antwoord.json is not a function</summary>
-
-**Oorzaak:** zonder `await` krijg je geen antwoord maar een belofte — een bonnetje waarmee je het antwoord later kunt ophalen. Op zo'n bonnetje zit geen `.json()`.
-
-**Oplossing:**
-
-```javascript
-// FOUT - antwoord is nog een belofte, geen antwoord
-const antwoord = fetch("/api/berichten");
-
-// GOED
-const antwoord = await fetch("/api/berichten");
-```
-
-Meer uitleg: [Data ophalen met fetch](/docs/FastAPI/fetch)
-
-</details>
-
-<details>
-<summary>await is only valid in async functions</summary>
-
-**Oorzaak:** `await` mag alleen in een functie die zelf `async` is — de browser moet weten dat deze functie mag pauzeren.
-
-**Oplossing:**
-
-```javascript
-// FOUT
-function laadBerichten() {
-    const antwoord = await fetch("/api/berichten");
-}
-
-// GOED
-async function laadBerichten() {
-    const antwoord = await fetch("/api/berichten");
-}
-```
-
-Meer uitleg: [Data ophalen met fetch](/docs/FastAPI/fetch)
-
-</details>
-
 ## Database (sqlitedict)
 
 <details>
@@ -526,6 +487,127 @@ waarde = db.get("naam", "Onbekend")
 ```
 
 Meer uitleg: [Gegevens opslaan](/docs/FastAPI/database)
+
+</details>
+
+## Cookies & sessies
+
+<details>
+<summary>De cookie wordt niet onthouden</summary>
+
+**Oorzaak:** `set_cookie` staat op een ander antwoord dan het antwoord dat je returnt.
+
+**Oplossing:**
+
+{/* niet-compileren: FOUT/GOED-voorbeeld */}
+```python
+# FOUT - de cookie zit op een antwoord dat je weggooit
+antwoord = RedirectResponse(url="/berichten", status_code=303)
+antwoord.set_cookie(key="naam", value=naam)
+return RedirectResponse(url="/berichten", status_code=303)
+
+# GOED - dezelfde variabele erin en eruit
+antwoord = RedirectResponse(url="/berichten", status_code=303)
+antwoord.set_cookie(key="naam", value=naam)
+return antwoord
+```
+
+Meer uitleg: [Onthouden met een cookie](/docs/FastAPI/cookies)
+
+</details>
+
+<details>
+<summary>De cookie is er wel, maar mijn endpoint krijgt hem niet</summary>
+
+**Oorzaak:** FastAPI zoekt de cookie op onder de naam van je parameter. Heet je parameter anders dan je cookie, dan vindt hij niets en krijg je de standaardwaarde.
+
+**Oplossing:** heet je cookie `sessie_id`, dan heet je parameter ook `sessie_id`:
+
+{/* niet-compileren: FOUT/GOED-voorbeeld */}
+```python
+# FOUT - cookie heet 'sessie_id', parameter heet 'sid'
+async def gastenboek_form(request: Request, sid: str = Cookie(default="")):
+
+# GOED
+async def gastenboek_form(request: Request, sessie_id: str = Cookie(default="")):
+```
+
+Meer uitleg: [Onthouden met een cookie](/docs/FastAPI/cookies)
+
+</details>
+
+<details>
+<summary>De cookie verdwijnt zodra ik de browser sluit</summary>
+
+**Oorzaak:** zonder `max_age` maak je een cookie die alleen bestaat zolang de browser openstaat.
+
+**Oplossing:** geef een houdbaarheid in seconden mee, bijvoorbeeld dertig dagen:
+
+```python
+antwoord.set_cookie(key="naam", value=naam, max_age=60 * 60 * 24 * 30)
+```
+
+Meer uitleg: [Onthouden met een cookie](/docs/FastAPI/cookies)
+
+</details>
+
+<details>
+<summary>KeyError bij het uitlezen van een sessie</summary>
+
+**Oorzaak:** je vraagt een sessie-id op dat niet in je database staat. Dat gebeurt bij een eerste bezoek, en zodra iemand zijn cookie aanpast.
+
+**Oplossing:** gebruik `.get()` met een standaardwaarde in plaats van vierkante haken:
+
+```python
+# FOUT - crasht bij een onbekend sessie-id
+with SqliteDict("sessies.db") as sessies:
+    mijn = sessies[sessie_id]
+
+# GOED
+with SqliteDict("sessies.db") as sessies:
+    mijn = sessies.get(sessie_id, {})
+```
+
+Meer uitleg: [Sessies](/docs/FastAPI/sessies)
+
+</details>
+
+<details>
+<summary>Iedereen krijgt dezelfde sessie te zien</summary>
+
+**Oorzaak:** je gebruikt een vaste waarde als sessie-id in plaats van een willekeurige. Dan krijgt elke bezoeker dezelfde sleutel, en dus elkaars gegevens.
+
+**Oplossing:** laat `secrets` het id maken:
+
+```python
+# FOUT - iedereen deelt deze sessie
+sessie_id = "sessie1"
+
+# GOED - niet te raden, en voor elke bezoeker anders
+sessie_id = secrets.token_hex(16)
+```
+
+Meer uitleg: [Sessies](/docs/FastAPI/sessies)
+
+</details>
+
+<details>
+<summary>Mijn sessie wordt elke keer vergeten</summary>
+
+**Oorzaak:** je maakt bij elk verzoek een nieuw sessie-id aan, ook als de bezoeker er al een had. De vorige sessie blijft dan onaangeroerd achter in je database.
+
+**Oplossing:** maak alleen een nieuw id als er nog geen is:
+
+```python
+# FOUT - overschrijft ook een bestaande sessie
+sessie_id = secrets.token_hex(16)
+
+# GOED
+if not sessie_id:
+    sessie_id = secrets.token_hex(16)
+```
+
+Meer uitleg: [Sessies](/docs/FastAPI/sessies)
 
 </details>
 
