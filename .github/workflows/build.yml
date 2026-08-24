@@ -159,6 +159,32 @@ jobs:
       - name: Codevoorbeelden compileren
         run: python3 sites/robotica/src/lego-tests/compileer.py
 
+  # Zelfde verhaal voor de fullstack-cursus: 115 python-blokken die nergens
+  # worden uitgevoerd. De extractie deelt zijn code met robotica
+  # (packages/shared/codeblokken.js). Bewust kapotte voorbeelden — de
+  # FOUT/GOED-blokken in troubleshooting en losse fragmenten uit een handler —
+  # slaan we over met de marker `{/* niet-compileren: reden */}`.
+  fullstack:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Codeblokken uit de docs halen
+        run: pnpm --filter @coderius/fullstack-docs code:extract
+
+      - name: Codevoorbeelden compileren
+        run: python3 sites/fullstack/src/code-tests/compileer.py
+
   checks:
     runs-on: ubuntu-latest
     steps:

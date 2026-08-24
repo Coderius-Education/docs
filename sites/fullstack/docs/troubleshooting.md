@@ -258,6 +258,7 @@ Meer uitleg: [POST met templates](/docs/FastAPI/post_met_templates)
 
 **Oplossing:**
 
+{/* niet-compileren: FOUT/GOED-voorbeeld */}
 ```python
 # FOUT - naam niet meegestuurd
 return templates.TemplateResponse(request, "pagina.html", {})
@@ -279,6 +280,7 @@ Meer uitleg: [POST met templates](/docs/FastAPI/post_met_templates)
 
 **Oplossing:** zet `request` vooraan:
 
+{/* niet-compileren: FOUT/GOED-voorbeeld */}
 ```python
 # FOUT - oude schrijfwijze
 return templates.TemplateResponse("pagina.html", {"request": request, "naam": naam})
@@ -361,6 +363,7 @@ Meer uitleg: [Een lijst tonen](/docs/FastAPI/lijst_tonen)
 
 **Oplossing:**
 
+{/* niet-compileren: FOUT/GOED-voorbeeld */}
 ```python
 # FOUT - stuurt 307, de browser herhaalt je POST op de nieuwe URL
 return RedirectResponse(url="/berichten")
@@ -496,6 +499,7 @@ Meer uitleg: [Gegevens opslaan](/docs/FastAPI/database)
 
 **Oplossing:**
 
+{/* niet-compileren: FOUT/GOED-voorbeeld */}
 ```python
 # FOUT - de cookie zit op een antwoord dat je weggooit
 antwoord = RedirectResponse(url="/berichten", status_code=303)
@@ -519,6 +523,7 @@ Meer uitleg: [Onthouden met een cookie](/docs/FastAPI/cookies)
 
 **Oplossing:** heet je cookie `sessie_id`, dan heet je parameter ook `sessie_id`:
 
+{/* niet-compileren: FOUT/GOED-voorbeeld */}
 ```python
 # FOUT - cookie heet 'sessie_id', parameter heet 'sid'
 async def gastenboek_form(request: Request, sid: str = Cookie(default="")):

@@ -121,6 +121,7 @@ Template:
 ```
 
 Python:
+{/* niet-compileren: fragment uit een handler */}
 ```python
 return templates.TemplateResponse(request, "welkom.html", {
     "naam": "Jan", "leeftijd": 16
@@ -154,6 +155,7 @@ Maak het formulier, de template en de endpoints uit het voorbeeld. Test of het w
 
 De meeste voorbeelden die je online vindt zetten `request` ín het dictionary in plaats van ervoor. Probeer dat eens:
 
+{/* niet-compileren: fragment uit een handler */}
 ```python
 return templates.TemplateResponse("groet_resultaat.html", {"request": request, "naam": naam})
 ```

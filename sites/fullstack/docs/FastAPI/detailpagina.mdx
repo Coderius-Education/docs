@@ -129,6 +129,7 @@ Maak het `/bericht/{sleutel}` endpoint en de template `bericht.html`. Pas je lij
 
 Verander de parameter in je functie van `sleutel` naar `key`, maar laat `{sleutel}` in het pad staan:
 
+{/* niet-compileren: losse handler-signature, toont juist de mismatch */}
 ```python
 @app.get("/bericht/{sleutel}")
 async def bericht_detail(request: Request, key: str):
