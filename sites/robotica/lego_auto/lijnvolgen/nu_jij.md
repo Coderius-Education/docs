@@ -11,7 +11,6 @@ Je robot rijdt rechtdoor zolang beide sensoren wit zien. Zodra hij afdwaalt, zie
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/beslissen/05c-and-or-elif', label: 'and, or en elif'},
-    {site: 'python', to: '/docs/beslissen/05b-if-else', label: 'If en else'},
   ]}
 />
 
@@ -69,6 +68,8 @@ Werkt het, maar niet soepel?
 Zet je robot aan het begin van de baan en laat los. Volgt hij de lijn, ook door een bocht? Werkt het aan de kabel, zet je script dan als `main.py` op het bord ([Batterijen](../batterijen/code.md)) en laat hem echt los rijden.
 
 Dit is het moment waarop het hele traject samenkomt: elk deel van je script heb je zelf getypt, en je weet van elke regel waarom hij er staat.
+
+Klaar? Op [Robot checken](/robot-checken) zie je wat er in je `main.py` zit. Doe er een paar foto's van je robot bij — aan je code is niet te zien of het frame er staat en of hij op batterijen rijdt.
 
 ## Opdracht 10.4.b: de kruising
 

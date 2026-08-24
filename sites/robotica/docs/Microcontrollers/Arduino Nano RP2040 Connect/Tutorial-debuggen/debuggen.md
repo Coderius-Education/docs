@@ -224,11 +224,11 @@ oled.show()
 <details>
 <summary>Error bij het tonen van getallen</summary>
 
-- Zet getallen om met **`str()`**:
+- Zet getallen in een **f-string**:
 
 ```python
 afstand = 123
-oled.text('Afstand: ' + str(afstand), x=0, y=0)
+oled.text(f'Afstand: {afstand}', x=0, y=0)
 oled.show()
 ```
 

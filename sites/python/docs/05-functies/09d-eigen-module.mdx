@@ -1,0 +1,228 @@
+---
+sidebar_position: 5
+description: Zet je eigen functies in een apart bestand en importeer ze. De bestandsnaam is de modulenaam, en beide bestanden staan in dezelfde map.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 9d Je eigen module
+
+In [9c](09c-modules.mdx) haalde je `time` binnen: een module die iemand anders schreef. Een module is niets bijzonders — het is gewoon een Python-bestand. Dus kun je er zelf een maken.
+
+Twee bestanden, in dezelfde map:
+
+**`rekenen.py`**
+
+```python
+def optellen(a, b):
+    return a + b
+
+def verdubbel(getal):
+    return getal * 2
+```
+
+**`main.py`**
+
+```python
+import rekenen
+
+print(rekenen.optellen(2, 3))
+print(rekenen.verdubbel(10))
+```
+
+Draai je `main.py`, dan zie je `5` en `20`. De functies staan in het ene bestand en worden gebruikt in het andere.
+
+:::note
+Dit is de eerste les zonder oefenvenster bij de voorbeelden. Dat komt doordat er hier twee bestanden nodig zijn en het venster er maar één heeft. Maak deze bestanden dus in je eigen editor.
+:::
+
+## De bestandsnaam is de modulenaam
+
+`rekenen.py` importeer je als `rekenen`, **zonder** de `.py`:
+
+```python
+import rekenen        # klopt
+import rekenen.py     # klopt niet
+```
+
+Daarom is de bestandsnaam ineens belangrijk. Kies een naam zonder spaties en zonder streepjes, want die mag je niet typen achter `import`.
+
+| Bestandsnaam | Import | Werkt |
+|:---:|:---:|:---:|
+| `rekenen.py` | `import rekenen` | ja |
+| `mijn_rekenen.py` | `import mijn_rekenen` | ja |
+| `mijn-rekenen.py` | `import mijn-rekenen` | nee, een streepje mag niet |
+| `mijn rekenen.py` | — | nee, een spatie mag niet |
+
+## Ook hier twee vormen
+
+Net als bij `time` kun je kiezen wat je binnenhaalt:
+
+```python
+import rekenen
+
+print(rekenen.optellen(2, 3))
+```
+
+```python
+from rekenen import optellen
+
+print(optellen(2, 3))
+```
+
+Dezelfde afweging als in 9c: `rekenen.optellen` vertelt waar de functie vandaan komt, `optellen` is korter.
+
+## Waarom zou je dat doen
+
+Zolang je programma tien regels is, hoeft dit niet. Het wordt handig zodra:
+
+- je dezelfde functies in **meer dan één programma** wilt gebruiken. Schrijf ze één keer, importeer ze overal.
+- je bestand zo lang wordt dat je moet scrollen om iets terug te vinden.
+
+Zo werkt elke bibliotheek die je gebruikt: `time` is ook gewoon een bestand met functies erin, alleen niet één die jij hebt getypt.
+
+## Er gaat iets mis
+
+```
+ModuleNotFoundError: No module named 'rekenen'
+```
+
+**Oorzaak:** Python kan het bestand niet vinden. Bijna altijd staat het in een andere map dan het bestand dat de import doet, of er zit een typefout in de naam.
+
+**Oplossing:** zet beide bestanden in dezelfde map en controleer de spelling. Hoofdletters tellen mee: `Rekenen.py` is niet `rekenen.py`.
+
+```python
+# FOUT
+import Rekenen
+import rekenen.py
+
+# GOED
+import rekenen
+```
+
+### Noem je bestand nooit zoals een bestaande module
+
+Maak je een bestand `random.py`, dan vindt Python jóuw bestand in plaats van de echte module `random`. Je krijgt dan een foutmelding die nergens op slaat:
+
+```
+AttributeError: module 'random' has no attribute 'randint'
+```
+
+Python zegt hier eigenlijk: die module heb ik gevonden, maar er zit niet in wat je vraagt. Logisch, want hij kijkt in jouw bestand.
+
+**Oplossing:** geef je bestand een andere naam. `mijn_random.py` mag wel.
+
+---
+
+## Opdracht 9d.1: De inhoud van je module
+
+Voordat je gaat splitsen: schrijf de twee functies die straks in `vormen.py` komen. `oppervlakte(lengte, breedte)` geeft lengte maal breedte terug, `omtrek(lengte, breedte)` geeft twee keer de som terug. Print allebei voor een vorm van 4 bij 3.
+
+Verwachte uitvoer:
+
+```
+12
+14
+```
+
+<CodeExercise>{`# Schrijf hier je code`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Allebei één regel met `return`. Bij `omtrek` heb je haakjes nodig: `2 * (lengte + breedte)`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+def oppervlakte(lengte, breedte):
+    return lengte * breedte
+
+def omtrek(lengte, breedte):
+    return 2 * (lengte + breedte)
+
+print(oppervlakte(4, 3))
+print(omtrek(4, 3))
+```
+
+<CodeExercise>{`def oppervlakte(lengte, breedte):
+    return lengte * breedte
+
+def omtrek(lengte, breedte):
+    return 2 * (lengte + breedte)
+
+print(oppervlakte(4, 3))
+print(omtrek(4, 3))`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 9d.2: Nu in twee bestanden
+
+Doe dit in je eigen editor. Maak `vormen.py` met alleen de twee functies uit 9d.1 — dus zónder de `print`-regels. Maak daarnaast `main.py` dat `vormen` importeert en allebei de functies print voor 4 bij 3. De uitvoer blijft `12` en `14`.
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+De `print`-regels horen in `main.py`, niet in `vormen.py`. Zet je ze in je module, dan draaien ze zodra je die module importeert — en dat wil je niet.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+**`vormen.py`**
+
+```python
+def oppervlakte(lengte, breedte):
+    return lengte * breedte
+
+def omtrek(lengte, breedte):
+    return 2 * (lengte + breedte)
+```
+
+**`main.py`**
+
+```python
+import vormen
+
+print(vormen.oppervlakte(4, 3))
+print(vormen.omtrek(4, 3))
+```
+
+Beide bestanden in dezelfde map, en je draait `main.py`.
+
+</details>
+
+---
+
+## Opdracht 9d.3: Twee programma's, één module (uitdaging)
+
+Maak naast `main.py` een tweede programma `tuin.py` dat dezelfde module gebruikt, maar dan om te berekenen hoeveel meter hek je nodig hebt om een tuin van 8 bij 5. Gebruik de `from`-vorm, zodat je `omtrek(8, 5)` kunt schrijven zonder de modulenaam ervoor.
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Je hoeft `vormen.py` niet aan te passen. Dat is precies het punt: één module, twee programma's die hem gebruiken.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+**`tuin.py`**
+
+```python
+from vormen import omtrek
+
+meters = omtrek(8, 5)
+print(f"Je hebt {meters} meter hek nodig.")
+```
+
+`vormen.py` blijft onveranderd. Zo werkt hergebruik: de module weet niet wie hem gebruikt, en dat hoeft ook niet.
+
+</details>

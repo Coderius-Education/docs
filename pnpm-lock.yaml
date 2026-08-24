@@ -775,6 +775,9 @@ importers:
       '@codemirror/lang-python':
         specifier: ^6.2.1
         version: 6.2.1
+      '@coderius/checker':
+        specifier: workspace:*
+        version: link:../../packages/checker
       '@coderius/shared':
         specifier: workspace:*
         version: link:../../packages/shared

@@ -8,10 +8,18 @@ interface LevelSummaryProps {
   config: CheckerConfig;
   activeLevel: Level | null;
   onToggleLevel: (level: Level) => void;
+  /** Actieve leerroute; null als de site er geen heeft. */
+  track?: string | null;
 }
 
-export function LevelSummary({ report, config, activeLevel, onToggleLevel }: LevelSummaryProps) {
-  const { basis, gevorderd, bySubject } = computeLevelSummary(report, config);
+export function LevelSummary({
+  report,
+  config,
+  activeLevel,
+  onToggleLevel,
+  track = null,
+}: LevelSummaryProps) {
+  const { basis, gevorderd, bySubject } = computeLevelSummary(report, config, track);
 
   const tile = (level: Level, label: string, total: ConceptStats) => (
     <button

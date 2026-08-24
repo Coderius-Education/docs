@@ -6,6 +6,13 @@ title: "Deel 3: Eén sensor uitlezen"
 
 # Het robotscript bouwen — Deel 3: Eén sensor uitlezen
 
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/basis/jouw-naam-op-het-scherm', label: 'Tekst tonen met print'},
+  ]}
+/>
+
+
 Je sensoren zitten aangesloten en gemonteerd. Tijd om te zien wat zo'n sensor eigenlijk **ziet** — en dat blijkt geen "zwart" of "wit" te zijn, maar een getal.
 
 ## Wat je nu gaat toevoegen
@@ -16,7 +23,9 @@ De sensor komt in je loop. Het lampje uit Deel 1 en 2 heeft zijn werk gedaan: di
 
 Vervang je script door dit — de loop-opbouw herken je, alleen de inhoud is nieuw:
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 from time import sleep
 from leaphymicropython.sensors.linesensor import AnalogIR
 
@@ -27,9 +36,15 @@ while True:
     sleep(0.2)
 ```
 
-**`AnalogIR("A0", 2500)`** maakt een sensor-object voor de sensor op pin **A0**. We noemen hem alvast `links` — in Deel 4 komt er een tweede bij. Wat die `2500` doet, zie je in Stap 2.
+<Regel n={4}>
+Maakt een sensor-object voor de sensor op pin **A0**. We noemen hem alvast `links` — in Deel 4 komt er een tweede bij. Wat die `2500` doet, zie je in Stap 2.
+</Regel>
 
-**`get_analog_value()`** geeft het ruwe meetgetal terug, tussen 0 en 65535.
+<Regel n={7}>
+`get_analog_value()` geeft het ruwe meetgetal terug, tussen 0 en 65535.
+</Regel>
+
+</CodeUitleg>
 
 Klik op **Run op board** en beweeg je robot langzaam van de witte ondergrond naar de zwarte lijn en terug. In de Shell stroomt een rij getallen voorbij: **laag** boven wit, **hoog** boven zwart.
 
@@ -48,7 +63,9 @@ Met een grens: alles boven een gekozen waarde noem je zwart, alles eronder wit. 
 
 Vervang de print-regel:
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 from time import sleep
 from leaphymicropython.sensors.linesensor import AnalogIR
 
@@ -60,7 +77,11 @@ while True:
     sleep(0.2)
 ```
 
-**`black_or_white()`** vergelijkt de meting met je drempel van `2500` en geeft `"black"` of `"white"` terug. Die tekst bewaar je in de variabele `kleur_links`, zodat je er straks op kunt reageren.
+<Regel n={7}>
+Vergelijkt de meting met je drempel van `2500` en geeft `"black"` of `"white"` terug. Die tekst bewaar je in de variabele `kleur_links`, zodat je er straks op kunt reageren.
+</Regel>
+
+</CodeUitleg>
 
 ## Test het
 

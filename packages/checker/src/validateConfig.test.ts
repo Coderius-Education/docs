@@ -110,3 +110,63 @@ describe('validateCheckerConfig', () => {
     expect(problems).toHaveLength(2);
   });
 });
+
+describe('validateCheckerConfig — tracks en minCount', () => {
+  const basis = {
+    subjects: [{ id: 'a', label: 'A' }],
+    fileKinds: [{ id: 'py', label: 'Python' }],
+    classify: () => 'py',
+    textKinds: ['py'],
+    accept: '.py',
+    teacher: { password: 'x', storageKey: 'x' },
+    pdfFilename: () => 'x.pdf',
+  };
+
+  const metConcept = (concept: Concept, tracks?: { id: string; label: string }[]) =>
+    validateCheckerConfig({ ...basis, tracks, concepts: [concept] } as CheckerConfig);
+
+  const concept = (level: Concept['level'], detect?: Concept['detect']): Concept => ({
+    id: 'c',
+    subject: 'a',
+    group: 'G',
+    label: 'c',
+    level,
+    detect: detect ?? { type: 'regex', pattern: /x/g },
+  });
+
+  it('klaagt over een track die geen niveau heeft', () => {
+    const problemen = metConcept({ ...concept({ start: 'basis' }) }, [
+      { id: 'start', label: 'Start' },
+      { id: 'verdieping', label: 'Verdieping' },
+    ]);
+    expect(problemen).toContain("Concept 'c' heeft geen niveau voor track 'verdieping'.");
+  });
+
+  it('accepteert een niveau per track als alle tracks gedekt zijn', () => {
+    expect(
+      metConcept(concept({ start: 'basis', verdieping: 'gevorderd' }), [
+        { id: 'start', label: 'Start' },
+        { id: 'verdieping', label: 'Verdieping' },
+      ]),
+    ).toEqual([]);
+  });
+
+  it('klaagt over een niveau per track zonder tracks in de config', () => {
+    expect(metConcept(concept({ start: 'basis' }))).toContain(
+      "Concept 'c' geeft een niveau per track, maar de config heeft geen tracks.",
+    );
+  });
+
+  it('laat een kaal niveau met tracks gewoon toe', () => {
+    expect(metConcept(concept('basis'), [{ id: 'start', label: 'Start' }])).toEqual([]);
+  });
+
+  it('klaagt over een onbruikbare minCount', () => {
+    const problemen = metConcept(concept('basis', { type: 'regex', pattern: /x/g, minCount: 0 }));
+    expect(problemen).toContain("Concept 'c' heeft een minCount die geen geheel getal ≥ 1 is.");
+  });
+
+  it('laat handmatige concepten met rust', () => {
+    expect(metConcept(concept('basis', { type: 'handmatig' }))).toEqual([]);
+  });
+});

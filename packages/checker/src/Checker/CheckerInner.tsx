@@ -1,8 +1,9 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { analyze } from '../matchConcepts';
 import type { CheckReport, CheckerConfig, Level, ProjectFiles } from '../types';
 import { FileStats } from './FileStats';
 import { LevelSummary } from './LevelSummary';
+import { PhotoStrip } from './PhotoStrip';
 import { ReportView } from './ReportView';
 import { TeacherGate } from './TeacherGate';
 import { UploadZone } from './UploadZone';
@@ -33,10 +34,45 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
   const [exporting, setExporting] = useState(false);
   const [pdfError, setPdfError] = useState<string | null>(null);
   const [activeLevel, setActiveLevel] = useState<Level | null>(null);
+  const [track, setTrack] = useState<string | null>(config.tracks?.[0]?.id ?? null);
+  const [handmatigAan, setHandmatigAan] = useState<Set<string>>(() => new Set());
   const reportRef = useRef<HTMLDivElement>(null);
 
   const toggleLevel = useCallback((level: Level) => {
     setActiveLevel((prev) => (prev === level ? null : level));
+  }, []);
+
+  const toggleHandmatig = useCallback((id: string) => {
+    setHandmatigAan((prev) => {
+      const volgende = new Set(prev);
+      if (volgende.has(id)) volgende.delete(id);
+      else volgende.add(id);
+      return volgende;
+    });
+  }, []);
+
+  // Eén afgeleid rapport waarin de aangevinkte handmatige concepten als
+  // "toegepast" gelden. Zo hoeven computeLevelSummary en ReportView niets van
+  // vinkjes te weten: die zien gewoon een rapport.
+  const effectiefRapport = useMemo<CheckReport | null>(() => {
+    if (!report) return null;
+    if (handmatigAan.size === 0) return report;
+    return {
+      ...report,
+      concepts: report.concepts.map((m) =>
+        handmatigAan.has(m.id) ? { ...m, count: 1, used: true } : m,
+      ),
+    };
+  }, [report, handmatigAan]);
+
+  // Alles wat de docent zelf heeft ingevuld hoort bij één ingeleverd project.
+  // Een docent kijkt de hele klas achter elkaar na zonder de pagina te
+  // herladen; zonder deze reset dragen de vinkjes en de opmerkingen van de
+  // vorige leerling over naar de volgende — en de vinkjes tellen mee in de
+  // niveausamenvatting, dus dat verandert stilletjes een score.
+  const wisBeoordeling = useCallback(() => {
+    setHandmatigAan(new Set());
+    setNotes('');
   }, []);
 
   const handleLoaded = useCallback(
@@ -44,18 +80,23 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
       setError(null);
       setFiles(loadedFiles);
       setIdeError(null);
+      wisBeoordeling();
       const result = analyze(loadedFiles, config);
       result.warnings = [...warnings, ...result.warnings];
       setReport(result);
     },
-    [config],
+    [config, wisBeoordeling],
   );
 
-  const handleError = useCallback((message: string) => {
-    setError(message);
-    setReport(null);
-    setFiles(null);
-  }, []);
+  const handleError = useCallback(
+    (message: string) => {
+      setError(message);
+      setReport(null);
+      setFiles(null);
+      wisBeoordeling();
+    },
+    [wisBeoordeling],
+  );
 
   const ideUrl = config.ide?.url;
   const entry = files && ideUrl ? pickEntry(files) : null;
@@ -130,14 +171,31 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
         </>
       )}
 
-      {report && isDocent && (
+      {effectiefRapport && isDocent && (
         <div ref={reportRef}>
+          {config.tracks && config.tracks.length > 1 && (
+            <div className={styles.trackRow}>
+              <span className={styles.trackLabel}>Leerroute:</span>
+              {config.tracks.map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  className={`${styles.trackButton} ${track === t.id ? styles.trackButtonActief : ''}`}
+                  aria-pressed={track === t.id}
+                  onClick={() => setTrack(t.id)}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+          )}
           <div className={styles.reportHeader}>
             <LevelSummary
-              report={report}
+              report={effectiefRapport}
               config={config}
               activeLevel={activeLevel}
               onToggleLevel={toggleLevel}
+              track={track}
             />
             {ideButton}
           </div>
@@ -146,7 +204,14 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
               {ideError}
             </p>
           )}
-          <ReportView report={report} config={config} activeLevel={activeLevel} />
+          {files && <PhotoStrip files={files} config={config} />}
+          <ReportView
+            report={effectiefRapport}
+            config={config}
+            activeLevel={activeLevel}
+            track={track}
+            onToggleHandmatig={toggleHandmatig}
+          />
 
           <section className={styles.teacherPanel}>
             <label className={styles.notesLabel} htmlFor="docent-opmerkingen">

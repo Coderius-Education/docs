@@ -6,6 +6,13 @@ title: "Deel 5: Waardes op het scherm"
 
 # Het robotscript bouwen — Deel 5: Waardes op het scherm
 
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/tekst/04a-f-strings', label: 'Tekst en getallen combineren met f-strings'},
+  ]}
+/>
+
+
 Straks rijdt je robot los van de laptop, en dan is de Shell weg. Vanaf dat moment is het OLED-scherm je venster in de robot: daar zie je wat de sensoren zien. In dit deel vervang je de `print` door het scherm — en daarmee staat het eerste grote mijlpunt: een robot die zelf laat zien wat hij meet.
 
 :::danger[A4 en A5 zijn bezet]
@@ -24,7 +31,9 @@ Het scherm gaat via een 4-pins jumperkabel naar de **multiplexer**: VCC → 3,3V
 
 Nieuw onderdeel, dus eerst een minimale test — los van je robotscript:
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 from leaphymicropython.actuators.oled_screen import OLEDSH1106
 
 oled = OLEDSH1106(width=128, height=64, channel=7)
@@ -34,9 +43,15 @@ oled.text('Hallo robot', 0, 0)
 oled.show()
 ```
 
-**`OLEDSH1106(width=128, height=64, channel=7)`** maakt het scherm-object: 128 pixels breed, 64 hoog, op channel 7 van de multiplexer.
+<Regel n={3}>
+Maakt het scherm-object: 128 pixels breed, 64 hoog, op channel 7 van de multiplexer.
+</Regel>
 
-Het tekenen gaat altijd in drie stappen: **`fill('white')`** maakt het scherm leeg, **`text(tekst, x, y)`** zet tekst klaar op een positie, en **`show()`** stuurt alles in één keer naar het scherm.
+<Regel n={5} tot={7}>
+Tekenen gaat altijd in drie stappen: `fill('white')` maakt het scherm leeg, `text(tekst, x, y)` zet tekst klaar op een positie, en `show()` stuurt alles in één keer naar het scherm.
+</Regel>
+
+</CodeUitleg>
 
 ## Voorspel: wat gebeurt er zonder `show()`?
 
@@ -84,7 +99,7 @@ Nog even los van je robotscript: laat het scherm elke seconde een teller zien di
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Je hebt een variabele nodig die boven de loop op `0` begint en er in de loop `1` bij krijgt. Het scherm kan alleen tekst tonen, dus zet het getal om met `str()`.
+Je hebt een variabele nodig die boven de loop op `0` begint en er in de loop `1` bij krijgt. Het scherm kan alleen tekst tonen, dus zet het getal in een f-string.
 
 </details>
 
@@ -100,13 +115,13 @@ teller = 0
 
 while True:
     oled.fill('white')
-    oled.text('Teller: ' + str(teller), 0, 0)
+    oled.text(f'Teller: {teller}', 0, 0)
     oled.show()
     teller = teller + 1
     sleep(1)
 ```
 
-`teller = teller + 1` is het patroon voor alles wat moet oplopen; `str(teller)` maakt er tekst van, want `text()` accepteert geen kaal getal.
+`teller = teller + 1` is het patroon voor alles wat moet oplopen; de f-string maakt er tekst van, want `text()` accepteert geen kaal getal.
 
 </details>
 
@@ -167,7 +182,7 @@ while True:
 
 **Oorzaak:** `text()` accepteert alleen tekst, geen kaal getal.
 
-**Oplossing:** Zet het getal eerst om: `oled.text('Waarde: ' + str(meting), 0, 0)`.
+**Oplossing:** Zet het getal in een f-string: `oled.text(f'Waarde: {meting}', 0, 0)`.
 
 </details>
 

@@ -1,0 +1,49 @@
+.section {
+  margin-bottom: 2rem;
+}
+
+.section h2 {
+  margin-bottom: 0.75rem;
+}
+
+.count {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.strip {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.75rem;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.5rem;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 8px;
+  background: var(--ifm-color-emphasis-100);
+}
+
+/* Vaste hoogte met object-fit: een staande telefoonfoto naast een liggende
+   mag de rij niet uit elkaar trekken, en in de PDF-export scheelt het een
+   pagina vol witruimte. */
+.foto {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 4px;
+  background: var(--ifm-color-emphasis-200);
+}
+
+.naam {
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-700);
+  overflow-wrap: anywhere;
+}

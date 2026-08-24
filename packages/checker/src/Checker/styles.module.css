@@ -201,3 +201,34 @@
     display: none !important;
   }
 }
+
+/* Leerroute-schakelaar: alleen zichtbaar als een site meer dan één track
+   heeft. Verandert niets aan de detectie, alleen aan welk niveau een concept
+   in deze route krijgt. */
+.trackRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.trackLabel {
+  font-weight: 600;
+}
+
+.trackButton {
+  padding: 0.3rem 0.8rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 999px;
+  background: var(--ifm-background-surface-color);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.trackButtonActief {
+  border-color: var(--ifm-color-primary);
+  background: var(--ifm-color-primary);
+  color: #fff;
+}

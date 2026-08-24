@@ -15,7 +15,7 @@ Combineer wat je hebt: de TOF-uitlezing uit de [vorige stap](./uitlezen.md) en h
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Zelfde drieslag als altijd: `fill`, `text`, `show`. De afstand is een getal, dus door `str()` heen voordat hij het scherm op kan. De TOF zit op channel **0**, je scherm op channel **7** — twee objecten, elk met hun eigen channel.
+Zelfde drieslag als altijd: `fill`, `text`, `show`. De afstand is een getal, dus zet hem in een f-string voordat hij het scherm op kan. De TOF zit op channel **0**, je scherm op channel **7** — twee objecten, elk met hun eigen channel.
 
 </details>
 
@@ -34,7 +34,7 @@ while True:
     afstand = tof.get_distance()
 
     oled.fill('white')
-    oled.text('Afstand: ' + str(afstand), 0, 0)
+    oled.text(f'Afstand: {afstand}', 0, 0)
     oled.show()
     sleep(0.1)
 ```
