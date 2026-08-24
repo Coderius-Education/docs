@@ -232,6 +232,16 @@ De cursussen zijn aparte sites op losse subdomeinen. Hardcode **nooit** een
 
   Laat `site` weg voor voorkennis bínnen dezelfde cursus. Dit vervangt het
   oude handmatige `:::info Wat moet je al weten`-blok.
+- **Vooruitwijzen naar een andere cursus** (geen voorkennis maar een vervolg- of
+  zijstap, bv. "zet je project in git") → de globale `<SiteLink>`-component in
+  lopende tekst, ook zonder import beschikbaar:
+
+  ```mdx
+  Zie <SiteLink site="editor" to="/git/vscode/">Git in VS Code</SiteLink>.
+  ```
+
+  `packages/shared/sitelink.test.ts` controleert monorepo-breed dat elk doelpad
+  bestaat en verbiedt hardcoded cursus-URL's in lestekst.
 - **Footer "Andere cursussen"** en de **navbar-dropdown "Cursussen"** worden
   automatisch uit de registry gegenereerd door `createConfig` — niets per site
   toevoegen. Het volledige overzicht staat op `/cursussen`.

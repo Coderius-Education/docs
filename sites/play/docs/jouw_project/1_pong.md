@@ -10,6 +10,10 @@ Laten we eens bekijken wat je hiervoor nodig hebt. Bij elke stap geven we hints,
 Voor voorbeelden ga je uiteraard naar de [Cheatsheet](/docs/cheatsheet).
 
 :::tip
+Werk je lokaal, in Thonny of VS Code? Dit project groeit stap voor stap, en soms breekt een stap iets dat eerst werkte. Met git kun je elke werkende versie opslaan en altijd terug — zie <SiteLink site="editor" to="/git/basis/">Git basis</SiteLink>.
+:::
+
+:::tip
 In [opdracht 2.2.a](/docs/fysica/physics_info#opdracht-22a-welk-type-gebruik-je) heb je al nagedacht over welk type fysica je voor elk onderdeel van pong zou gebruiken. Dat komt hier goed van pas.
 :::
 

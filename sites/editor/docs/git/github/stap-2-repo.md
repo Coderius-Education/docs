@@ -17,4 +17,6 @@ title: "Stap 2: een lege repository aanmaken"
    Anders krijg je bij je eerste push een conflict — GitHub heeft dan al een commit en jij ook, en die kan git niet zomaar combineren.
 5. Klik op **Create repository**
 
-Je ziet nu een lege repository-pagina met instructies. Laat dit venster open — je hebt de URL straks nodig.
+Je ziet nu een lege repository-pagina met instructies.
+
+**Onthoud de URL** — die staat in je adresbalk en ziet er zo uit: `https://github.com/<jouw-naam>/git-oefenen`. Je hebt hem nodig in [Code online zetten met push](/git/push/), twee tutorials verderop. Je kunt hem altijd terugvinden door op github.com naar je repository te gaan.

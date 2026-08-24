@@ -12,6 +12,6 @@ title: "Welke knop is welk commando?"
 | Source Control **...** → **Branch** → **Merge Branch...** | `git merge <branch>` |
 | **Command Palette** → **Git: Delete Branch...** | `git branch -d <branch>` |
 
-## Volgende tutorial
+## Loopt er iets vast?
 
-- **[Pull Requests](/git/pull-request/)** — push je feature-branch naar GitHub en merge hem via een pull request.
+Zie [Er gaat iets mis](./problemen).

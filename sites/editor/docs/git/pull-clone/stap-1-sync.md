@@ -12,7 +12,7 @@ In VS Code is **Sync Changes** (de wolk/pijl-knop in Source Control) tegelijk ee
 2. Klik op **Source Control** (Ctrl+Shift+G)
 3. Klik op **Sync Changes**
 
-**Wat zie je?**
+## Wat je nu ziet
 
-- Zijn er nieuwe commits op GitHub die jij nog niet had? Dan downloadt VS Code ze en zie je ze in **Source Control Graph** verschijnen.
-- Zijn er geen nieuwe commits? Dan gebeurt er niets zichtbaars — dat is goed.
+- Zijn er nieuwe commits op GitHub die jij nog niet had? Dan downloadt VS Code ze en verschijnen ze in **Source Control Graph**.
+- Zijn er geen nieuwe commits? Dan gebeurt er niets zichtbaars — dat is goed. Geen melding betekent hier: niets aan de hand.

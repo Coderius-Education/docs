@@ -26,9 +26,13 @@ Welkom op mijn feature-branch!
 1. Klik linksonder op `feature/welkomsbericht` → kies **main**
 2. Open `hello.txt`
 
-De regel "Welkom op mijn feature-branch." is **weg**. Niet verwijderd — hij staat nog op de andere branch. `main` weet niets van die commit.
+De regel "Welkom op mijn feature-branch!" is **weg**. Niet verwijderd — hij staat nog op de andere branch. `main` weet niets van die commit.
 
 3. Wissel weer naar `feature/welkomsbericht` → de regel is terug.
+
+## Wat je nu ziet
+
+Linksonder staat de naam van de branch waar je op zit. Wissel je, dan verandert de inhoud van `hello.txt` in je editor mee — zonder dat je iets opslaat of ongedaan maakt. Dat is git die je bestanden terugzet naar hoe ze op die branch staan.
 
 ## Wat dit betekent
 

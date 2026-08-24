@@ -12,7 +12,9 @@ Wisselen tussen branches gaat via dezelfde knop in de statusbalk.
 2. Bovenaan opent een menu met al je branches
 3. Kies **main**
 
-Je zit nu weer op `main`. Je `hello.txt` ziet er nog net zo uit als voor je de branch maakte.
+## Wat je nu ziet
+
+Linksonder staat `main`. Je `hello.txt` ziet er nog net zo uit als voordat je de branch maakte — je hebt op de feature-branch immers nog niets gecommit.
 
 **Belangrijk:** je bestanden op je harde schijf **veranderen mee** met de branch. Als je op `feature/...` een wijziging committe en je wisselt naar `main`, dan zie je die wijziging niet meer in je editor — git heeft de bestanden teruggezet naar hoe ze op `main` staan.
 

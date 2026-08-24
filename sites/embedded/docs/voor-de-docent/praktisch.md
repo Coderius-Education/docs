@@ -35,6 +35,8 @@ De ST-Link kan gedeeld worden tussen groepjes: hij is alleen nodig op het moment
 
 Beide draaien op Windows, macOS en Linux. Op schoollaptops met beperkte rechten kan installatie lastig zijn; overweeg dan het simulator-spoor of een vooraf ingerichte image.
 
+Werken je leerlingen vanaf hoofdstuk 7 in VS Code, dan is dat ook het moment om git te introduceren: een PlatformIO-project is een gewone map. De leerlijn daarvoor staat op de <SiteLink site="editor" to="/git/">editor-site</SiteLink>; het eigen project verwijst ernaar.
+
 ## Veelvoorkomende struikelblokken
 
 - **Goedkope klonen** kunnen een CH340-driver nodig hebben (zie [Poort niet gevonden](/docs/er-gaat-iets-mis/poort-niet-gevonden)).

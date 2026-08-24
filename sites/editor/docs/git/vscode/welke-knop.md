@@ -14,6 +14,6 @@ title: "Welke knop is welk commando?"
 | **Changes**-lijst | `git status` |
 | **Source Control Graph** | `git log` |
 
-## Volgende tutorial
+## Loopt er iets vast?
 
-- **[GitHub: account en repo](/git/github/)** — maak een account en je eerste online repository.
+Zie [Er gaat iets mis](./problemen).

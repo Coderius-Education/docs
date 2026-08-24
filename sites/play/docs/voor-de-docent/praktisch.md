@@ -20,6 +20,8 @@ We raden de volgende opties aan:
 - **Thonny**: De eenvoudigste lokale optie met minimale installatie, ideaal om snel aan de slag te gaan.
 - **VS Code**: Biedt meer functionaliteit (zoals code-completion), maar de installatie kost iets meer tijd.
 
+Werken leerlingen lokaal (Thonny of VS Code), dan kan git helpen bij de grotere projecten: elke werkende versie een commit, zodat een misgelopen experiment nooit het hele spel kost. De leerlijn daarvoor staat op de <SiteLink site="editor" to="/git/">editor-site</SiteLink>.
+
 ## Hoe doceer ik dit materiaal?
 Wat het beste bij jou past. De ervaring leert dat leerlingen grotendeels zelfstandig door het materiaal kunnen komen.
 De uitdaging ligt bij het coachen van de projecten, waarbij vaak misvattingen over de programmeertaal Python zichtbaar worden.

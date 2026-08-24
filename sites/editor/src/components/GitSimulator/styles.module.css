@@ -25,23 +25,23 @@
   margin-right: 0.4rem;
 }
 
+/* Zones boven, terminal eronder over de volle breedte. Naast elkaar leek
+   logischer, maar de terminal hield dan 29 tekens over op een laptopscherm van
+   1100px — en git schrijft regels van 63 tekens, zoals
+   `  (use "git add <file>..." to include in what will be committed)`. Die
+   wikkelden tot drie regels en werden onleesbaar. Zelfs op 1920px paste er
+   maar net 60 tekens naast de zones. */
 .body {
   display: grid;
-  grid-template-columns: 1fr 1.2fr;
+  grid-template-columns: 1fr;
   gap: 0;
   min-height: 320px;
-}
-
-@media (max-width: 768px) {
-  .body {
-    grid-template-columns: 1fr;
-  }
 }
 
 .left {
   display: flex;
   flex-direction: column;
-  border-right: 1px solid var(--ifm-color-emphasis-300);
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
 }
 
 @media (max-width: 768px) {
@@ -144,6 +144,12 @@
 
 .terminalLine {
   margin: 0;
+}
+
+/* Regels uit de voorbereiding: wel zichtbaar (je moet zien waar je binnenkomt)
+   maar duidelijk niet van jou. */
+.terminalEerder {
+  opacity: 0.55;
 }
 
 .terminalPrompt {

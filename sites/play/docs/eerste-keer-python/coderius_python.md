@@ -6,4 +6,4 @@ sidebar_position: 1
 
 Programmeer je voor de eerste keer?
 
-Dan is [coderius-python](https://python.coderius.nl/) een laagdrempelige manier om te leren programmeren want je hoeft nog niets te installeren om het te oefenen.
+Dan is <SiteLink site="python" to="/">coderius-python</SiteLink> een laagdrempelige manier om te leren programmeren want je hoeft nog niets te installeren om het te oefenen.

@@ -5,7 +5,7 @@ title: Code online zetten met push
 
 # Code online zetten met push
 
-In [GitHub: account en repo](/git/github/) heb je een lege online repository gemaakt. Nu ga je je lokale `git-oefenen`-project eraan koppelen en je commits naar GitHub **pushen**.
+Twee dingen staan klaar: een lege online repository uit [GitHub: account en repo](/git/github/), en een map met commits uit [Git in VS Code](/git/vscode/). Nu koppel je ze aan elkaar en stuur je je commits naar GitHub — **pushen**.
 
 ## Wat is een remote?
 

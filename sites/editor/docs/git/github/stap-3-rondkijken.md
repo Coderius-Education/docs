@@ -15,4 +15,4 @@ Klik door deze knoppen op je nieuwe repository-pagina:
 
 ## Volgende tutorial
 
-- **[Code online zetten met push](/git/push/)** — koppel je lokale `git-oefenen` aan deze online repo en upload je commits.
+- **[Git in VS Code](/git/vscode/)** — nu je account klaarstaat, ga je git op je eigen computer gebruiken. Daarna koppel je het geheel in [Code online zetten met push](/git/push/).

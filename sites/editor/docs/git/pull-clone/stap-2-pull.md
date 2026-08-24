@@ -12,6 +12,10 @@ Soms wil je alleen pullen, zonder te pushen — bijvoorbeeld als je nog niets te
 2. Typ `Git: Pull` en druk **Enter**
 3. VS Code haalt de nieuwste commits binnen
 
+## Wat je nu ziet
+
+Waren er nieuwe commits, dan veranderen je bestanden voor je ogen en verschijnen de commits in **Source Control Graph**. Was er niets nieuws, dan gebeurt er niets zichtbaars — geen melding, geen vinkje. Dat voelt alsof het mislukt is, maar het is de normale uitkomst.
+
 **Wat gebeurt er onder de motorkap?**
 
 ```bash

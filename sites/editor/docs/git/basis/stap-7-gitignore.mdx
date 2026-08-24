@@ -17,14 +17,7 @@ Probeer het hieronder:
 3. Klik weer op **"+ nieuw bestand"** en maak een bestand `.gitignore` met als inhoud één regel: `geheim.txt`.
 4. Doe opnieuw `git status` — `geheim.txt` is verdwenen uit de lijst en wordt doorgestreept in de werkmap.
 
-<GitSimulator
-  scenarioId="stap-7-gitignore"
-  initialFiles={{'hello.txt': 'Hallo wereld.\n'}}
-  objective={{
-    description: 'Maak een .gitignore aan die geheim.txt negeert.',
-    check: (s) => s.ignored.includes('geheim.txt'),
-  }}
-/>
+<GitSimulator scenarioId="stap-7-gitignore" />
 
 ## Wat je nu kunt
 
@@ -38,4 +31,6 @@ Je kent nu de kerncyclus van git:
 
 ## Volgende tutorial
 
-Tijd om dit op je echte computer te doen: **[Git in VS Code](/git/vscode/)**.
+Voordat je dit op je eigen computer doet, regel je eerst je GitHub-account: **[GitHub: account en repo](/git/github/)**.
+
+Dat lijkt een omweg, maar het bevestigen van je e-mailadres kan even duren. Doe je dat nu, dan staat alles klaar zodra je het nodig hebt — in plaats van dat je halverwege moet wachten.

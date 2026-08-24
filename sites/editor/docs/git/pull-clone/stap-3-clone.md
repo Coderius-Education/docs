@@ -18,10 +18,22 @@ title: "Stap 3: een bestaand project klonen"
 2. Klik op de groene **Code**-knop
 3. Kopieer de URL die verschijnt (kies **HTTPS**)
 4. Open VS Code
-5. Open het **Command Palette** met **Ctrl+Shift+P**
+5. Open het **Command Palette** met **Ctrl+Shift+P** (Windows/Linux) of **Cmd+Shift+P** (macOS)
 6. Typ `Git: Clone` en druk **Enter**
 7. Plak de URL en druk **Enter**
 8. Kies een map op je computer waar de kopie moet komen
 9. Klik op **Open** om de gekloonde map in VS Code te openen
 
+## Wat je nu ziet
+
+Bovenaan het Explorer-paneel staat de naam van je repository, met de bestanden eronder. Linksonder staat de branchnaam. Open de terminal (**Terminal** → **New Terminal**) en typ `git log`: de hele geschiedenis staat er, ook de commits die je op een andere computer maakte.
+
 Je hebt nu een complete kopie van de repository, **inclusief alle commits**. Vanaf hier werk je gewoon zoals je gewend bent: aanpassen, committen, en met **Sync Changes** weer pushen.
+
+**Wat gebeurde er onder de motorkap?**
+
+```bash
+git clone https://github.com/<gebruiker>/git-oefenen.git
+```
+
+Clonen doet in één keer wat je bij je eigen project in stappen deed: het maakt de map, zet er een repository in, haalt alle commits op en koppelt `origin` alvast aan de URL. Je hoeft dus geen `git init` en geen `git remote add` meer te doen.

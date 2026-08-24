@@ -16,13 +16,6 @@ git add hello.txt
 
 Let in de simulator hieronder goed op de middelste kolom (Staging): zodra je `git add hello.txt` uitvoert, verschijnt het bestand daar.
 
-<GitSimulator
-  scenarioId="stap-3-add"
-  initialFiles={{'hello.txt': 'Hallo wereld.\n'}}
-  objective={{
-    description: 'Init, voeg hello.txt toe aan staging.',
-    check: (s) => s.initialized && s.staged !== null && 'hello.txt' in s.staged,
-  }}
-/>
+<GitSimulator scenarioId="stap-3-add" />
 
 **Tip:** met `git add .` zet je in één keer **alle** veranderde bestanden klaar.

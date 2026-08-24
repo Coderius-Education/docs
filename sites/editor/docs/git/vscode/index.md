@@ -5,7 +5,7 @@ title: Git in VS Code
 
 # Git in VS Code
 
-In [Git basis](/git/basis/) heb je de werkmap, staging en commits leren kennen in de simulator. Nu ga je hetzelfde doen op je eigen computer, in VS Code.
+In [Git basis](/git/basis/) heb je de werkmap, staging en commits leren kennen in de simulator, en in [GitHub: account en repo](/git/github/) staat je online repository klaar. Nu ga je op je eigen computer werken, in VS Code.
 
 ## Voorbereiding
 
@@ -25,13 +25,29 @@ Heb je git nog niet?
 
 ### macOS
 
-Open de terminal en typ:
+Open de terminal (in VS Code: **Terminal** → **New Terminal**) en typ:
 
 ```bash
 git --version
 ```
 
 Als git niet aanwezig is, vraagt macOS om het te installeren. Volg de stappen.
+
+### Linux
+
+Git zit meestal al op je systeem. Controleer het met:
+
+```bash
+git --version
+```
+
+Krijg je een foutmelding, installeer git dan met de pakketbeheerder van je distributie:
+
+```bash
+sudo apt install git      # Ubuntu, Debian, Linux Mint
+sudo dnf install git      # Fedora
+sudo pacman -S git        # Arch, Manjaro
+```
 
 ## Aan de slag
 

@@ -1,5 +1,8 @@
 {
   "label": "GitHub: account en repo",
-  "position": 3,
-  "link": { "type": "doc", "id": "git/github/index" }
+  "position": 2,
+  "link": {
+    "type": "doc",
+    "id": "git/github/index"
+  }
 }

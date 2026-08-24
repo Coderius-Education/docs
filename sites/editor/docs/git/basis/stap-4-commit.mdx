@@ -10,6 +10,8 @@ import GitSimulator from '@site/src/components/GitSimulator';
 
 Een **commit** is een opgeslagen snapshot. Je geeft elke commit een korte boodschap die uitlegt wat je veranderd hebt.
 
+`hello.txt` staat hieronder al klaar in staging, dus je kunt meteen committen.
+
 ```bash
 git commit -m "eerste versie"
 ```
@@ -18,23 +20,16 @@ Na de commit:
 
 - staging is weer leeg
 - in de repository-kolom verschijnt een nieuwe commit
-- `git status` zegt: "niets te committen, werkmap is schoon"
+- `git status` antwoordt `nothing to commit, working tree clean` — niets te committen, je werkmap is schoon
 
-<GitSimulator
-  scenarioId="stap-4-commit"
-  initialFiles={{'hello.txt': 'Hallo wereld.\n'}}
-  objective={{
-    description: 'Maak je eerste commit met de boodschap "eerste versie".',
-    check: (s) => s.commits.length >= 1,
-  }}
-/>
+<GitSimulator scenarioId="stap-4-commit" />
 
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
+`hello.txt` staat al klaar in staging, dus je hoeft alleen nog te committen:
+
 ```bash
-git init
-git add hello.txt
 git commit -m "eerste versie"
 ```
 
