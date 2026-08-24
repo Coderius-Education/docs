@@ -45,7 +45,7 @@ const sidebars: SidebarsConfig = {
     {
       type: 'category',
       label: 'In de browser',
-      items: ['FastAPI/javascript', 'FastAPI/fetch', 'FastAPI/server-of-browser'],
+      items: ['FastAPI/javascript', 'FastAPI/server-of-browser'],
     },
     {
       type: 'category',

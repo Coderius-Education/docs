@@ -429,48 +429,6 @@ Meer uitleg: [Server of browser?](/docs/FastAPI/server-of-browser)
 
 </details>
 
-<details>
-<summary>TypeError: antwoord.json is not a function</summary>
-
-**Oorzaak:** zonder `await` krijg je geen antwoord maar een belofte — een bonnetje waarmee je het antwoord later kunt ophalen. Op zo'n bonnetje zit geen `.json()`.
-
-**Oplossing:**
-
-```javascript
-// FOUT - antwoord is nog een belofte, geen antwoord
-const antwoord = fetch("/api/berichten");
-
-// GOED
-const antwoord = await fetch("/api/berichten");
-```
-
-Meer uitleg: [Data ophalen met fetch](/docs/FastAPI/fetch)
-
-</details>
-
-<details>
-<summary>await is only valid in async functions</summary>
-
-**Oorzaak:** `await` mag alleen in een functie die zelf `async` is — de browser moet weten dat deze functie mag pauzeren.
-
-**Oplossing:**
-
-```javascript
-// FOUT
-function laadBerichten() {
-    const antwoord = await fetch("/api/berichten");
-}
-
-// GOED
-async function laadBerichten() {
-    const antwoord = await fetch("/api/berichten");
-}
-```
-
-Meer uitleg: [Data ophalen met fetch](/docs/FastAPI/fetch)
-
-</details>
-
 ## Database (sqlitedict)
 
 <details>

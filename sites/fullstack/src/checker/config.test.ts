@@ -120,8 +120,8 @@ describe('fullstackConfig — voorbeeldprojecten scoren', () => {
         'struct-templates',
       ],
       // Even belangrijk: de nakijker vinkt niet zomaar alles aan. Deze fixture
-      // doet de fetch-les niet, dus js-fetch hoort uit te blijven.
-      ['fastapi-html-response', 'db-del', 'js-fetch'],
+      // gebruikt geen HTMLResponse en verwijdert niets, dus die blijven uit.
+      ['fastapi-html-response', 'db-del'],
     );
   });
 
@@ -249,22 +249,6 @@ describe('fullstackConfig', () => {
     expect(perId.get('js-bestand-koppelen')).toBe(true);
     expect(perId.get('js-query-selector')).toBe(true);
     expect(perId.get('js-event-listener')).toBe(true);
-  });
-
-  it('herkent fetch, en niet in een bestand dat het alleen noemt', () => {
-    const met = analyze(
-      files({ 'static/js/app.js': 'const a = await fetch("/api/berichten");' }),
-      fullstackConfig,
-    );
-    expect(new Map(met.concepts.map((c) => [c.id, c.used])).get('js-fetch')).toBe(true);
-
-    // 'prefetch' of 'fetchData' mag niet meetellen: het patroon eist een
-    // woordgrens plus een haakje.
-    const zonder = analyze(
-      files({ 'static/js/app.js': 'const fetchData = 1; prefetch(x); element.fetchAll;' }),
-      fullstackConfig,
-    );
-    expect(new Map(zonder.concepts.map((c) => [c.id, c.used])).get('js-fetch')).toBe(false);
   });
 
   it('telt JavaScript in een HTML-bestand niet mee als JavaScript-concept', () => {

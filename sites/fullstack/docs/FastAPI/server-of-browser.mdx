@@ -1,5 +1,11 @@
 # Server of browser?
 
+<Voorkennis
+  items={[
+    {site: 'web', to: '/docs/js-basics/modern-dom', label: 'querySelector en querySelectorAll'},
+  ]}
+/>
+
 Je hebt nu twee plekken waar je code kunt zetten. Het gastenboek draait op de server: Python slaat op, Python bouwt de lijst. De tekenteller draait in de browser: JavaScript rekent, de server weet van niets.
 
 Bij alles wat je vanaf nu bouwt kies je tussen die twee. Deze les gaat over hoe je kiest.
@@ -52,7 +58,7 @@ async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
 | **Mag je het vertrouwen** | Ja | Nee |
 | **Typisch voor** | Opslaan, ophalen, controleren | Reageren op klikken en typen |
 
-Er is een derde mogelijkheid, en die ken je al: JavaScript dat zélf een verzoek doet aan een van jouw endpoints, zonder dat de pagina verspringt. Dat is [fetch](/docs/FastAPI/fetch). De hoofdvraag verandert daar niet door — de berichten stáán nog steeds op de server, want ze moeten bewaard blijven. Alleen de manier waarop ze de pagina bereiken is anders.
+De vuistregel blijft: moet iets bewaard blijven of zichtbaar zijn voor anderen, dan hoort het op de server. Gaat het om reageren op wat de bezoeker doet met data die al op de pagina staat, dan is het de browser.
 
 ## Opdrachten
 
@@ -151,6 +157,6 @@ Er is niet één goed antwoord. Twee voorbeelden:
 
 **Browser:** een zoekveld dat de berichten die al op de pagina staan filtert terwijl je typt. Het gebeurt bij elke toetsaanslag en hoeft niet bewaard te blijven.
 
-Zit jouw browser-idee aan data die nog niet op de pagina staat? Dan hoort het toch bij de server, of je haalt het op met [fetch](/docs/FastAPI/fetch).
+Zit jouw browser-idee aan data die nog niet op de pagina staat? Dan hoort het bij de server: laat je endpoint die gegevens meegeven aan de template, zodat ze er bij het laden al staan.
 
 </details>
