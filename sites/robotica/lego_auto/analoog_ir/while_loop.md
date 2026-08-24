@@ -7,6 +7,15 @@ title: Code beter begrijpen
 
 # Code beter begrijpen
 
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/herhalen/while-loop', label: 'De while-loop'},
+    {site: 'python', to: '/docs/beslissen/05a-booleans-en-vergelijken', label: 'Vergelijken met < en =='},
+    {site: 'python', to: '/docs/basis/rekenmachine', label: 'Rekenen met variabelen'},
+  ]}
+/>
+
+
 Op deze pagina oefen je met **voorspellen** wat code doet. Lees elke vraag, probeer eerst zelf het antwoord te bedenken, en kijk dan pas naar de tip of de oplossing.
 
 ---

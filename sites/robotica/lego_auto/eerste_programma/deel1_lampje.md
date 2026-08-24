@@ -6,6 +6,14 @@ title: "Deel 1: Een lampje aan"
 
 # Het robotscript bouwen — Deel 1: Een lampje aan
 
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/basis/jij-als-variabele', label: 'Variabelen'},
+    {site: 'python', to: '/docs/tekst/04b-string-methoden', label: 'Aanroepen met een punt'},
+  ]}
+/>
+
+
 Je script is nog leeg. In deze les schrijf je de eerste twee concepten die je straks overal gebruikt: iets **importeren** en een **methode aanroepen**. Meer heb je niet nodig om een lampje aan te zetten.
 
 ## Wat je nu gaat toevoegen

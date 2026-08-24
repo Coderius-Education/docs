@@ -10,7 +10,6 @@ Voor het eerst reageren de motoren op de sensoren. Je begint met het makkelijkst
 
 <Voorkennis
   items={[
-    {site: 'python', to: '/docs/beslissen/05a-booleans-en-vergelijken', label: 'Booleans en vergelijken (==)'},
     {site: 'python', to: '/docs/beslissen/05b-if-else', label: 'If en else'},
   ]}
 />

@@ -6,6 +6,13 @@ title: "Deel 2: Knipperen met een loop"
 
 # Het robotscript bouwen — Deel 2: Knipperen met een loop
 
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/herhalen/while-loop', label: 'De while-loop'},
+  ]}
+/>
+
+
 Je lampje brandt, maar je programma is na vier regels klaar en stopt. Een robot stopt nooit: die blijft kijken, meten en reageren zolang hij aanstaat. Daarvoor bestaat de **loop** — en die schrijf je nu zelf.
 
 ## Wat je nu gaat toevoegen

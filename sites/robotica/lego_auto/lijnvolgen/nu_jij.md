@@ -11,7 +11,6 @@ Je robot rijdt rechtdoor zolang beide sensoren wit zien. Zodra hij afdwaalt, zie
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/beslissen/05c-and-or-elif', label: 'and, or en elif'},
-    {site: 'python', to: '/docs/beslissen/05b-if-else', label: 'If en else'},
   ]}
 />
 

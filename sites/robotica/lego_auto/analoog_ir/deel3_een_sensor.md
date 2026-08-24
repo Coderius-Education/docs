@@ -6,6 +6,13 @@ title: "Deel 3: Eén sensor uitlezen"
 
 # Het robotscript bouwen — Deel 3: Eén sensor uitlezen
 
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/basis/jouw-naam-op-het-scherm', label: 'Tekst tonen met print'},
+  ]}
+/>
+
+
 Je sensoren zitten aangesloten en gemonteerd. Tijd om te zien wat zo'n sensor eigenlijk **ziet** — en dat blijkt geen "zwart" of "wit" te zijn, maar een getal.
 
 ## Wat je nu gaat toevoegen
