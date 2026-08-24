@@ -15,7 +15,7 @@ Op je PR-pagina, onderaan de **Conversation**-tab, staat een groene knop **Merge
 
    Dit verwijdert alleen de **online** branch. Je lokale branch op je eigen computer blijft staan; die ruim je in de volgende stap op.
 
-## Wat staat er nu op GitHub?
+## Wat je nu ziet
 
 Ga naar het tabblad **`<> Code`** bovenaan en kijk in `hello.txt`. Je welkomsbericht staat erin — gemerged in `main`.
 

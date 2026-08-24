@@ -23,7 +23,9 @@ Je staat nu op `main`.
 3. Kies **Branch** → **Merge Branch...**
 4. Kies **feature/welkomsbericht** uit de lijst
 
-VS Code voegt de commits van je feature-branch samen met `main`. Open `hello.txt` — je welkomsbericht staat er weer, ditmaal op `main`.
+## Wat je nu ziet
+
+VS Code voegt de commits van je feature-branch samen met `main`. Open `hello.txt`: je welkomsbericht staat erin, terwijl linksonder `main` staat. Beide branches wijzen nu naar dezelfde commit.
 
 **Wat gebeurde er onder de motorkap?**
 

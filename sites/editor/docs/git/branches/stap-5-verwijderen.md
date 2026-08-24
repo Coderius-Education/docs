@@ -15,7 +15,9 @@ Na een geslaagde merge heb je de feature-branch niet meer nodig. Zijn commits zi
 3. Typ `Git: Delete Branch...` en druk **Enter**
 4. Kies `feature/welkomsbericht`
 
-De branch is weg uit je statusbalk-menu.
+## Wat je nu ziet
+
+Klik je linksonder op `main`, dan staat `feature/welkomsbericht` niet meer in de lijst. Je commits zijn niet weg — die zitten in `main`. Alleen het label is opgeruimd.
 
 **Wat gebeurde er onder de motorkap?**
 

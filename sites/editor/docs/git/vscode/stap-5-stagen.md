@@ -11,3 +11,7 @@ Zweef met je muis over `hello.txt` in de **Changes**-lijst. Er verschijnen drie 
 `hello.txt` verschuift naar **Staged Changes**. Dit is hetzelfde als `git add hello.txt` typen.
 
 **Tip:** wil je alle bestanden in één keer stagen? Klik op de **`+`** naast de kop **Changes** zelf — dat is `git add .`.
+
+## Wat je nu ziet
+
+Er staan twee koppen in het paneel: **Staged Changes** met `hello.txt` erin, en **Changes** is verdwenen omdat er niets meer in staat. De letter naast het bestand is veranderd van **U** naar **A** (Added).

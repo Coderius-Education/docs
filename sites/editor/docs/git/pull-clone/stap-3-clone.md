@@ -24,6 +24,10 @@ title: "Stap 3: een bestaand project klonen"
 8. Kies een map op je computer waar de kopie moet komen
 9. Klik op **Open** om de gekloonde map in VS Code te openen
 
+## Wat je nu ziet
+
+Bovenaan het Explorer-paneel staat de naam van je repository, met de bestanden eronder. Linksonder staat de branchnaam. Open de terminal (**Terminal** → **New Terminal**) en typ `git log`: de hele geschiedenis staat er, ook de commits die je op een andere computer maakte.
+
 Je hebt nu een complete kopie van de repository, **inclusief alle commits**. Vanaf hier werk je gewoon zoals je gewend bent: aanpassen, committen, en met **Sync Changes** weer pushen.
 
 **Wat gebeurde er onder de motorkap?**

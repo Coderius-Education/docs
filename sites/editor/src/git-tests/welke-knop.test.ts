@@ -122,7 +122,10 @@ describe('de cursus is intern consistent', () => {
     const fout: string[] = [];
 
     for (const pad of paginas()) {
-      if (pad.endsWith('stap-1-config.md')) continue;
+      // Een pagina die uitlegt hoe je master omzet naar main mag het woord
+      // noemen; die staat er juist om dit recht te zetten.
+      const inhoud = readFileSync(pad, 'utf8');
+      if (inhoud.includes('git branch -m main')) continue;
       readFileSync(pad, 'utf8')
         .split('\n')
         .forEach((regel, i) => {

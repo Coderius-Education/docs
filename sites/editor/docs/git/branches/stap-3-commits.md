@@ -30,6 +30,10 @@ De regel "Welkom op mijn feature-branch." is **weg**. Niet verwijderd — hij st
 
 3. Wissel weer naar `feature/welkomsbericht` → de regel is terug.
 
+## Wat je nu ziet
+
+Linksonder staat de naam van de branch waar je op zit. Wissel je, dan verandert de inhoud van `hello.txt` in je editor mee — zonder dat je iets opslaat of ongedaan maakt. Dat is git die je bestanden terugzet naar hoe ze op die branch staan.
+
 ## Wat dit betekent
 
 Branches zijn **echt gescheiden tijdlijnen**. Wat je op de ene branch doet, beïnvloedt de andere niet — totdat je ze samenvoegt. In de volgende stap voeg je je feature in `main` samen.

@@ -16,7 +16,9 @@ Nu je gekoppeld bent, gaat elke volgende push veel sneller. De hele cyclus is:
 
 Die laatste knop staat bovenaan met een wolk- of pijl-icoon, vaak met een cijfer ernaast: het aantal commits dat nog niet gesynchroniseerd is.
 
-Ververs je github.com-pagina: je nieuwe commit staat erop.
+## Wat je nu ziet
+
+De knop **Sync Changes** toont geen cijfer meer: alles staat online. Ververs je github.com-pagina en je nieuwe commit staat erop, met jouw boodschap ernaast.
 
 **Sync Changes** doet eigenlijk twee dingen:
 

@@ -25,7 +25,7 @@ Heb je git nog niet?
 
 ### macOS
 
-Open de terminal en typ:
+Open de terminal (in VS Code: **Terminal** → **New Terminal**) en typ:
 
 ```bash
 git --version

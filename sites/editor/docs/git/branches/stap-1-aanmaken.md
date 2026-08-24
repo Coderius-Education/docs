@@ -21,7 +21,11 @@ feature/welkomsbericht
 
 5. Druk op **Enter**
 
-In de statusbalk zie je nu `feature/welkomsbericht` staan in plaats van `main`. Je werkt nu op de nieuwe branch.
+## Wat je nu ziet
+
+In de statusbalk linksonder staat `feature/welkomsbericht` in plaats van `main`. Je werkt nu op de nieuwe branch.
+
+Je bestanden zijn niet veranderd, en dat klopt: een nieuwe branch begint als exacte kopie van waar je vandaan kwam. Het verschil ontstaat pas zodra je gaat committen.
 
 **Waarom een `/` in de naam?** De `/` is geen submap, maar een conventie om branches te groeperen. Je ziet vaak `feature/...`, `fix/...`, `experiment/...`. Een naam zonder `/` mag ook prima.
 

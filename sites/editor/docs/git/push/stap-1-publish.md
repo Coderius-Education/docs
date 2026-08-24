@@ -16,7 +16,11 @@ Open in VS Code je map `git-oefenen` uit de vorige tutorial. Zorg dat je daar al
    **Tip:** als je al een lege repo op GitHub hebt gemaakt (in de vorige stap), kies dan de optie die naar die bestaande repo verwijst.
 5. Wacht tot VS Code klaar is — bovenaan zie je kort een voortgangsbalk
 
-Ververs nu je github.com-pagina (`https://github.com/<gebruiker>/git-oefenen`). Je bestanden staan online.
+## Wat je nu ziet
+
+Ververs je github.com-pagina (`https://github.com/<gebruiker>/git-oefenen`). Waar eerst instructies stonden, staat nu je bestandenlijst met `hello.txt` erin. Linksboven, in de dropdown die eerst leeg was, staat `main`.
+
+In VS Code is de knop **Publish Branch** vervangen door **Sync Changes**.
 
 **Wat gebeurde er onder de motorkap?**
 

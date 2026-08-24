@@ -27,4 +27,8 @@ Alle commits die in deze PR zitten. Klik op een commit om te zien wat er precies
 3. Klik erop → tekstveld
 4. Typ je commentaar en klik **Add single comment** (of **Start a review** als je meer comments wil bundelen)
 
+## Wat je nu ziet
+
+Onder **Files changed** staat `hello.txt` met één groene regel: je welkomsbericht. Bovenaan staat `1 changed file` met `+1 −0` ernaast — één toegevoegde regel, geen weggehaalde.
+
 Dit is *de* manier waarop teams code reviewen. Ook voor jezelf is het waardevol om hier kritisch naar je eigen diff te kijken: zie ik nog typo's? Heb ik commentaar laten staan? Vergat ik een bestand?

@@ -14,6 +14,6 @@ title: "Welke knop is welk commando?"
 | **Changes**-lijst | `git status` |
 | **Source Control Graph** | `git log` |
 
-## Volgende tutorial
+## Loopt er iets vast?
 
-- **[Code online zetten met push](/git/push/)** — koppel je `git-oefenen`-map aan de repository die je op GitHub hebt gemaakt.
+Zie [Er gaat iets mis](./problemen).

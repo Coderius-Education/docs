@@ -32,7 +32,7 @@ Git zegt daar: "je vraagt me `main` te versturen, maar die branch bestaat hier n
 git branch -m main
 ```
 
-## Controleer of het gelukt is
+## Wat je nu ziet
 
 ```bash
 git config --global --list
