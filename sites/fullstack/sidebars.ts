@@ -49,6 +49,11 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
+      label: 'Onthouden',
+      items: ['FastAPI/cookies', 'FastAPI/sessies'],
+    },
+    {
+      type: 'category',
       label: 'Afronden',
       items: [
         'FastAPI/hoe-een-verzoek-werkt',

@@ -487,6 +487,102 @@ Meer uitleg: [Gegevens opslaan](/docs/FastAPI/database)
 
 </details>
 
+## Cookies & sessies
+
+<details>
+<summary>De cookie wordt niet onthouden</summary>
+
+**Oorzaak:** `set_cookie` staat op een ander antwoord dan het antwoord dat je returnt.
+
+**Oplossing:**
+
+```python
+# FOUT - de cookie zit op een antwoord dat je weggooit
+antwoord = RedirectResponse(url="/berichten", status_code=303)
+antwoord.set_cookie(key="naam", value=naam)
+return RedirectResponse(url="/berichten", status_code=303)
+
+# GOED - dezelfde variabele erin en eruit
+antwoord = RedirectResponse(url="/berichten", status_code=303)
+antwoord.set_cookie(key="naam", value=naam)
+return antwoord
+```
+
+Meer uitleg: [Onthouden met een cookie](/docs/FastAPI/cookies)
+
+</details>
+
+<details>
+<summary>De cookie is er wel, maar mijn endpoint krijgt hem niet</summary>
+
+**Oorzaak:** de naam in `Cookie(...)` moet gelijk zijn aan de parameternaam, net als bij `Form`.
+
+**Oplossing:** heet je cookie `sessie_id`, dan heet je parameter ook `sessie_id`:
+
+```python
+# FOUT - cookie heet 'sessie_id', parameter heet 'sid'
+async def gastenboek_form(request: Request, sid: str = Cookie(default="")):
+
+# GOED
+async def gastenboek_form(request: Request, sessie_id: str = Cookie(default="")):
+```
+
+Meer uitleg: [Onthouden met een cookie](/docs/FastAPI/cookies)
+
+</details>
+
+<details>
+<summary>De cookie verdwijnt zodra ik de browser sluit</summary>
+
+**Oorzaak:** zonder `max_age` maak je een cookie die alleen bestaat zolang de browser openstaat.
+
+**Oplossing:** geef een houdbaarheid in seconden mee, bijvoorbeeld dertig dagen:
+
+```python
+antwoord.set_cookie(key="naam", value=naam, max_age=60 * 60 * 24 * 30)
+```
+
+Meer uitleg: [Onthouden met een cookie](/docs/FastAPI/cookies)
+
+</details>
+
+<details>
+<summary>KeyError bij het uitlezen van een sessie</summary>
+
+**Oorzaak:** je vraagt een sessie-id op dat niet in je database staat. Dat gebeurt bij een eerste bezoek, en zodra iemand zijn cookie aanpast.
+
+**Oplossing:** gebruik `.get()` met een standaardwaarde in plaats van vierkante haken:
+
+```python
+# FOUT - crasht bij een onbekend sessie-id
+with SqliteDict("sessies.db") as sessies:
+    mijn = sessies[sessie_id]
+
+# GOED
+with SqliteDict("sessies.db") as sessies:
+    mijn = sessies.get(sessie_id, {})
+```
+
+Meer uitleg: [Sessies](/docs/FastAPI/sessies)
+
+</details>
+
+<details>
+<summary>Iedereen krijgt dezelfde sessie te zien</summary>
+
+**Oorzaak:** je maakt bij elk verzoek een nieuw sessie-id aan, of je gebruikt een vaste waarde in plaats van `secrets.token_hex(16)`.
+
+**Oplossing:** maak alleen een nieuw sessie-id als er nog geen is:
+
+```python
+if not sessie_id:
+    sessie_id = secrets.token_hex(16)
+```
+
+Meer uitleg: [Sessies](/docs/FastAPI/sessies)
+
+</details>
+
 ## Algemeen
 
 <details>

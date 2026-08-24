@@ -157,6 +157,23 @@ export const fullstackConfig: CheckerConfig = {
       detect: { type: 'regex', pattern: /HTTPException/g, in: ['py'] },
     },
 
+    {
+      id: 'fastapi-cookie',
+      subject: 'fastapi',
+      group: 'Onthouden',
+      label: 'Iets onthouden met een cookie (set_cookie)',
+      level: 'gevorderd',
+      detect: { type: 'regex', pattern: /set_cookie\s*\(|\bCookie\s*\(/g, in: ['py'] },
+    },
+    {
+      id: 'fastapi-sessie',
+      subject: 'fastapi',
+      group: 'Onthouden',
+      label: 'Sessie met gegevens op de server (secrets)',
+      level: 'gevorderd',
+      detect: { type: 'regex', pattern: /token_hex\s*\(|token_urlsafe\s*\(/g, in: ['py'] },
+    },
+
     // --- HTML ---
     {
       id: 'html-basis',

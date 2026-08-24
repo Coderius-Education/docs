@@ -117,6 +117,7 @@ describe('fullstack Voorkennis-blokken', () => {
       'FastAPI/post_met_templates.mdx',
       'FastAPI/post_naar_database.mdx',
       'FastAPI/server-of-browser.mdx',
+      'FastAPI/sessies.mdx',
       'FastAPI/static_files.mdx',
     ]);
   });

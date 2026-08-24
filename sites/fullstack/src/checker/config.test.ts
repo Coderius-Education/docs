@@ -120,8 +120,9 @@ describe('fullstackConfig — voorbeeldprojecten scoren', () => {
         'struct-templates',
       ],
       // Even belangrijk: de nakijker vinkt niet zomaar alles aan. Deze fixture
-      // gebruikt geen HTMLResponse en verwijdert niets, dus die blijven uit.
-      ['fastapi-html-response', 'db-del'],
+      // gebruikt geen HTMLResponse, verwijdert niets en onthoudt de bezoeker
+      // niet, dus die blijven uit.
+      ['fastapi-html-response', 'db-del', 'fastapi-cookie', 'fastapi-sessie'],
     );
   });
 

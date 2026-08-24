@@ -1,0 +1,162 @@
+# Onthouden met een cookie
+
+Je gastenboek werkt, maar het vraagt elke keer opnieuw je naam. Ook als je net een bericht hebt geplaatst. Dat komt niet doordat je iets vergeten bent te programmeren: je server kán het niet weten. In deze les laat je de browser het onthouden.
+
+## De server herkent je niet
+
+Elk verzoek staat op zichzelf. De browser vraagt een pagina op, Python stuurt een antwoord, en daarna is het contact verbroken. Vraag je een seconde later een tweede pagina op, dan begint alles opnieuw — je server heeft geen idee dat jij dezelfde bezoeker bent als daarnet. Dat is geen gebrek, het is hoe het web werkt.
+
+Wil je toch iets onthouden tussen twee verzoeken, dan moet die informatie ergens bewaard worden. Een **cookie** is daar de eenvoudigste vorm van: een klein stukje tekst dat je meegeeft met je antwoord, en dat de browser vanaf dan bij élk volgend verzoek automatisch terugstuurt.
+
+## Een cookie meegeven
+
+Tot nu toe gaf je endpoint alleen inhoud terug. Een antwoord kan ook opdrachten voor de browser bevatten, en `set_cookie` is er daar een van:
+
+```python
+@app.post("/gastenboek")
+async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
+        db.commit()
+
+    antwoord = RedirectResponse(url="/berichten", status_code=303)
+    antwoord.set_cookie(key="naam", value=naam, max_age=60 * 60 * 24 * 30)
+    return antwoord
+```
+
+Het verschil met eerder: je maakt het antwoord eerst als variabele, zet er een cookie op, en geeft het daarna pas terug. Zolang je het antwoord meteen returnt, heb je geen plek om er iets aan toe te voegen.
+
+`max_age` is de houdbaarheid in seconden. Hier is dat 30 dagen: `60 * 60 * 24 * 30`. Laat je `max_age` weg, dan verdwijnt de cookie zodra de bezoeker zijn browser afsluit.
+
+## De cookie terugkrijgen
+
+Vanaf nu stuurt de browser die cookie mee bij elk verzoek aan jouw server. Je vraagt hem op met `Cookie`, net zoals je formuliervelden met `Form` opvraagt:
+
+```python
+from fastapi import Cookie
+
+@app.get("/gastenboek")
+async def gastenboek_form(request: Request, naam: str = Cookie(default="")):
+    return templates.TemplateResponse(request, "gastenboek.html", {"naam": naam})
+```
+
+`default=""` bepaalt wat je krijgt als er nog geen cookie is — bij een eerste bezoek dus een lege tekst.
+
+Je formulier was tot nu toe een vast bestand in `static/pages/`. Om er een naam in te kunnen zetten moet het een **template** worden: verplaats het naar `templates/gastenboek.html` en zet de waarde in het naamveld:
+
+```html
+<form method="post" action="/gastenboek">
+    <input type="text" name="naam" value="{{ naam }}" required>
+    <input type="text" name="bericht" required>
+    <button type="submit">Verstuur</button>
+</form>
+```
+
+Bij een eerste bezoek is `{{ naam }}` leeg en zie je een gewoon leeg veld. Daarna staat je naam er al in.
+
+## Testen
+
+1. Start je server en vul het gastenboek in
+2. Ga terug naar `/gastenboek` — je naam staat er al
+3. Open de ontwikkelaarshulpmiddelen met `F12` en zoek bij **Application** (of **Opslag**) de cookies van `127.0.0.1`. Daar staat jouw naam
+
+:::danger[Gaat er iets mis?]
+Blijft het veld leeg terwijl je wel een bericht hebt verstuurd? Controleer of `set_cookie` op het antwoord staat dat je ook echt returnt. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
+:::
+
+## Opdrachten
+
+### Opdracht 1: Predict - Wie stuurt wat?
+
+Je hebt een cookie met je naam. Je vraagt daarna drie pagina's op: `/berichten`, `/gastenboek` en `/bericht/bericht_123`.
+
+**Vraag:** bij hoeveel van die drie verzoeken stuurt de browser de cookie mee?
+
+<details>
+<summary>Tip</summary>
+
+Bepaalt jouw Python-code wanneer een cookie meegaat, of de browser?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Alle drie. De browser stuurt de cookie bij elk verzoek aan jouw server mee, of je endpoint er nu iets mee doet of niet. Dat je hem alleen in `/gastenboek` uitleest, verandert daar niets aan.
+
+</details>
+
+### Opdracht 2: Run
+
+Pas je POST-endpoint aan zodat het de naam als cookie meegeeft, verplaats je formulier naar `templates/gastenboek.html` en lees de cookie uit in je GET-endpoint. Controleer dat je naam blijft staan.
+
+### Opdracht 3: Investigate - Verander je eigen cookie
+
+Zoek de cookie op bij `F12` en verander de waarde in een andere naam. Herlaad daarna `/gastenboek`.
+
+<details>
+<summary>Antwoord</summary>
+
+In het formulier staat nu de naam die jij zelf in de cookie hebt getypt. Je server neemt hem klakkeloos over.
+
+Onthoud dat goed: een cookie staat op de computer van de bezoeker, en die kan er alles van maken wat hij wil. Voor een naam die je alleen als gemak invult is dat prima. Voor iets waar rechten aan hangen — wie mag verwijderen, wie is ingelogd — is het dat niet. Daar gaat de [volgende les](/docs/FastAPI/sessies) over.
+
+</details>
+
+### Opdracht 4: Make - Vergeet mij
+
+Maak een endpoint `/vergeet` dat de cookie weghaalt en de bezoeker terugstuurt naar het formulier. Zet er een link naartoe onder je formulier.
+
+<details>
+<summary>Tip</summary>
+
+Naast `set_cookie` bestaat er ook `delete_cookie`, met alleen de naam van de cookie als argument. Ook hier geldt: eerst het antwoord maken, dan de cookie eraf halen, dan returnen.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+@app.get("/vergeet")
+async def vergeet():
+    antwoord = RedirectResponse(url="/gastenboek")
+    antwoord.delete_cookie("naam")
+    return antwoord
+```
+
+In `templates/gastenboek.html`:
+```html
+<a href="/vergeet">Ik ben iemand anders</a>
+```
+
+Na het klikken is het naamveld weer leeg: de browser heeft de cookie weggegooid en stuurt hem dus niet meer mee.
+
+</details>
+
+### Opdracht 5: Make - Welkom terug
+
+Laat boven het formulier "Welkom terug, [naam]" staan als de bezoeker al eens een bericht heeft geplaatst, en "Welkom" als dat niet zo is.
+
+<details>
+<summary>Tip</summary>
+
+De template weet al of `naam` gevuld is. Met `{% if naam %}` kun je daarop reageren, net zoals je in [Een lijst tonen](/docs/FastAPI/lijst_tonen) een lege lijst opving.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+In `templates/gastenboek.html`:
+```html
+{% if naam %}
+    <h1>Welkom terug, {{ naam }}</h1>
+{% else %}
+    <h1>Welkom</h1>
+{% endif %}
+```
+
+Je endpoint hoeft niet te veranderen: de lege standaardwaarde uit `Cookie(default="")` is voor Jinja2 al genoeg om te weten dat er niets is.
+
+</details>
