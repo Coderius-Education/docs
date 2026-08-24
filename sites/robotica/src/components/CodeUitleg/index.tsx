@@ -1,4 +1,12 @@
-import { Children, type ReactNode, isValidElement, useCallback, useRef, useState } from 'react';
+import {
+  Children,
+  type ReactNode,
+  isValidElement,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import styles from './styles.module.css';
 
 // De lessen leggen code regel voor regel uit. Dat stond eerst als een rij
@@ -32,9 +40,19 @@ function nummerLabel(n: number, tot?: number): string {
   return tot && tot > n ? `${n}-${tot}` : String(n);
 }
 
+interface Aanwijzing {
+  n: number;
+  tot?: number;
+}
+
 export default function CodeUitleg({ children }: { children?: ReactNode }): ReactNode {
   const codeRef = useRef<HTMLDivElement>(null);
-  const [actief, setActief] = useState<number | null>(null);
+  // Twee bronnen voor dezelfde markering. Zweven wint zolang het duurt, zodat
+  // de muis zich precies gedraagt zoals je verwacht; wie met het toetsenbord
+  // werkt zet er met Enter één vast en houdt hem.
+  const [zweef, setZweef] = useState<Aanwijzing | null>(null);
+  const [vast, setVast] = useState<Aanwijzing | null>(null);
+  const actief = zweef ?? vast;
 
   const kinderen = Children.toArray(children);
   const regels = kinderen.filter(
@@ -45,16 +63,18 @@ export default function CodeUitleg({ children }: { children?: ReactNode }): Reac
   // Prism rendert elke coderegel als .token-line. Vinden we die niet — een
   // andere theme-versie, of een blok zonder highlighting — dan gebeurt er
   // simpelweg niets extra's; de uitleg blijft gewoon leesbaar.
-  const markeer = useCallback((van: number | null, tot?: number) => {
-    setActief(van);
+  useEffect(() => {
     const lijnen = codeRef.current?.querySelectorAll<HTMLElement>('.token-line');
     if (!lijnen) return;
-    const laatste = tot ?? van;
     lijnen.forEach((lijn, i) => {
       const nummer = i + 1;
-      const aan = van !== null && laatste !== null && nummer >= van && nummer <= laatste;
+      const aan = actief !== null && nummer >= actief.n && nummer <= (actief.tot ?? actief.n);
       lijn.classList.toggle(styles.opgelicht, aan);
     });
+  }, [actief]);
+
+  const zetVast = useCallback((n: number, tot?: number) => {
+    setVast((huidig) => (huidig?.n === n ? null : { n, tot }));
   }, []);
 
   return (
@@ -67,20 +87,31 @@ export default function CodeUitleg({ children }: { children?: ReactNode }): Reac
         <ol className={styles.uitleg}>
           {regels.map((regel) => {
             const { n, tot } = regel.props;
+            const label = nummerLabel(n, tot);
             return (
               <li
                 key={`${n}-${tot ?? n}`}
-                className={actief === n ? styles.actief : undefined}
-                onMouseEnter={() => markeer(n, tot)}
-                onMouseLeave={() => markeer(null)}
-                onFocus={() => markeer(n, tot)}
-                onBlur={() => markeer(null)}
+                className={actief?.n === n ? styles.actief : undefined}
+                onMouseEnter={() => setZweef({ n, tot })}
+                onMouseLeave={() => setZweef(null)}
               >
-                <span className={styles.nummer} aria-hidden="true">
-                  {nummerLabel(n, tot)}
-                </span>
+                {/* Het nummer is een echte knop en niet een <li> met tabIndex:
+                    de uitleg eronder bestaat uit alinea's, en die horen niet in
+                    een knop. Zo krijgt wie tabt wél de bijbehorende regel te
+                    zien, met een gewone focusring erbij. */}
+                <button
+                  type="button"
+                  className={styles.nummer}
+                  aria-label={`Licht regel ${label} op in de code`}
+                  aria-pressed={vast?.n === n}
+                  onClick={() => zetVast(n, tot)}
+                  onFocus={() => setZweef({ n, tot })}
+                  onBlur={() => setZweef(null)}
+                >
+                  <span aria-hidden="true">{label}</span>
+                </button>
                 <div className={styles.tekst}>
-                  <span className={styles.srOnly}>{`Regel ${nummerLabel(n, tot)}: `}</span>
+                  <span className={styles.srOnly}>{`Regel ${label}: `}</span>
                   {regel}
                 </div>
               </li>

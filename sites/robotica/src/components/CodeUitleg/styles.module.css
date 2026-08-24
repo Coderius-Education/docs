@@ -50,7 +50,8 @@
 }
 
 /* Het regelnummer is de brug naar de code: hetzelfde cijfer, dezelfde plek
-   links. Daarom een vaste kolombreedte en getallen die niet verspringen. */
+   links. Daarom een vaste kolombreedte en getallen die niet verspringen.
+   Het is een <button>, dus de browserstijl gaat er eerst af. */
 .nummer {
   display: inline-flex;
   align-items: center;
@@ -58,6 +59,7 @@
   min-width: 2rem;
   height: 1.6rem;
   padding: 0 0.4rem;
+  border: 0;
   border-radius: 999px;
   background: var(--ifm-color-primary);
   color: #fff;
@@ -66,6 +68,13 @@
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+  cursor: pointer;
+}
+
+/* Vastgezet met Enter of een klik: een ring eromheen, zodat je ziet dat deze
+   markering blijft staan als je de muis weghaalt. */
+.nummer[aria-pressed="true"] {
+  box-shadow: 0 0 0 2px var(--ifm-background-surface-color), 0 0 0 4px var(--ifm-color-primary);
 }
 
 .tekst {

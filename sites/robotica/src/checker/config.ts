@@ -19,7 +19,10 @@ import type { CheckerConfig, Concept } from '@coderius/checker/types';
 // De twee leerroutes (start en verdieping) geven per concept een eigen niveau.
 // Waar dat gelijk is staat er één waarde; waar het verschilt een record.
 
-const IMAGE_EXT = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp', '.bmp']);
+// Exact de extensies uit `accept` hieronder. Wijkt die lijst af, dan valt een
+// foto uit een zip wél in de fotostrip terwijl dezelfde foto via de
+// bestandskiezer niet eens te selecteren is.
+const IMAGE_EXT = new Set(['.png', '.jpg', '.jpeg', '.webp']);
 
 function classify(path: string): string {
   const dot = path.lastIndexOf('.');
@@ -87,7 +90,10 @@ const pythonConcepts: Concept[] = [
     group: 'Beslissen',
     label: 'Booleans',
     level: 'basis',
-    detect: py(/\b(True|False)\b|[=!<>]=/g),
+    // `while True:` telt hier niet mee. Die regel staat in élk script van de
+    // cursus, al in het knipperscript van Deel 2, en zou dit concept dus
+    // aanvinken voordat de leerling één boolean heeft gebruikt.
+    detect: py(/[=!<>]=|(?<!\bwhile\s{1,8})\b(?:True|False)\b/g),
   },
   {
     id: 'py-if-else',

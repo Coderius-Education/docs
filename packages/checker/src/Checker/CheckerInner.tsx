@@ -65,23 +65,38 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
     };
   }, [report, handmatigAan]);
 
+  // Alles wat de docent zelf heeft ingevuld hoort bij één ingeleverd project.
+  // Een docent kijkt de hele klas achter elkaar na zonder de pagina te
+  // herladen; zonder deze reset dragen de vinkjes en de opmerkingen van de
+  // vorige leerling over naar de volgende — en de vinkjes tellen mee in de
+  // niveausamenvatting, dus dat verandert stilletjes een score.
+  const wisBeoordeling = useCallback(() => {
+    setHandmatigAan(new Set());
+    setNotes('');
+  }, []);
+
   const handleLoaded = useCallback(
     (loadedFiles: ProjectFiles, warnings: string[]) => {
       setError(null);
       setFiles(loadedFiles);
       setIdeError(null);
+      wisBeoordeling();
       const result = analyze(loadedFiles, config);
       result.warnings = [...warnings, ...result.warnings];
       setReport(result);
     },
-    [config],
+    [config, wisBeoordeling],
   );
 
-  const handleError = useCallback((message: string) => {
-    setError(message);
-    setReport(null);
-    setFiles(null);
-  }, []);
+  const handleError = useCallback(
+    (message: string) => {
+      setError(message);
+      setReport(null);
+      setFiles(null);
+      wisBeoordeling();
+    },
+    [wisBeoordeling],
+  );
 
   const ideUrl = config.ide?.url;
   const entry = files && ideUrl ? pickEntry(files) : null;

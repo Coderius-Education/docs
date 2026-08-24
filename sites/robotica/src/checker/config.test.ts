@@ -73,6 +73,10 @@ describe('roboticaConfig — voorbeeldprojecten scoren', () => {
       'minimaal',
       ['py-import', 'py-variabele', 'py-while', 'rb-main-py'],
       [
+        // Dit script heeft `while True:` en verder geen enkele boolean. Zou
+        // py-boolean hier aanslaan, dan stond het concept al aangevinkt bij
+        // het allereerste script dat een leerling typt.
+        'py-boolean',
         'py-if-else',
         'py-for',
         'py-fstring',
@@ -135,6 +139,21 @@ describe('roboticaConfig — voorbeeldprojecten scoren', () => {
     expect(roboticaConfig.textKinds).toEqual(['py']);
     expect(roboticaConfig.imageKinds).toEqual(['image']);
   });
+
+  it('herkent precies de beeldformaten die je ook mag kiezen', () => {
+    // Loopt dit uiteen, dan verschijnt een foto uit een zip wel in de
+    // fotostrip terwijl je diezelfde foto niet kunt selecteren.
+    const uitAccept = roboticaConfig.accept
+      .split(',')
+      .filter((ext) => ext !== '.zip' && ext !== '.py');
+
+    for (const ext of uitAccept) {
+      expect(roboticaConfig.classify(`foto${ext}`), ext).toBe('image');
+    }
+    for (const ext of ['.gif', '.bmp', '.svg', '.heic']) {
+      expect(roboticaConfig.classify(`foto${ext}`), ext).toBe('other');
+    }
+  });
 });
 
 describe('roboticaConfig', () => {
@@ -194,6 +213,22 @@ describe('roboticaConfig', () => {
     const perId = new Map(report.concepts.map((c) => [c.id, c.used]));
     for (const id of ['rb-frame', 'rb-robot-compleet', 'rb-batterijen', 'rb-obstakel-omheen']) {
       expect(perId.get(id), id).toBe(false);
+    }
+  });
+
+  it('rekent `while True:` niet als boolean, maar een vergelijking wel', () => {
+    // De lus staat in elk script van de cursus; hem laten meetellen zou dit
+    // concept tot een gratis vinkje maken.
+    const lus = analyze(
+      files({ 'main.py': 'while True:\n    lampje.on()\n    sleep(0.5)' }),
+      roboticaConfig,
+    );
+    expect(new Map(lus.concepts.map((c) => [c.id, c.used])).get('py-boolean')).toBe(false);
+
+    for (const regel of ['klaar = True', 'if kleur == "wit":', 'if afstand >= 100:']) {
+      const report = analyze(files({ 'main.py': `while True:\n    ${regel}` }), roboticaConfig);
+      const perId = new Map(report.concepts.map((c) => [c.id, c.used]));
+      expect(perId.get('py-boolean'), regel).toBe(true);
     }
   });
 
