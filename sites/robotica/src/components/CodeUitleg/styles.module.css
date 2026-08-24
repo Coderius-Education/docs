@@ -42,9 +42,12 @@
   transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 
+/* Alle drie via `.uitleg > li`, anders verliest de losse klasse het van de
+   regel hierboven op specificiteit en blijft een vastgezette uitleg er
+   onopgemerkt uitzien als de rest. */
 .uitleg > li:hover,
 .uitleg > li:focus-within,
-.actief {
+.uitleg > li.actief {
   border-color: var(--ifm-color-primary);
   background: var(--ifm-color-emphasis-100);
 }
