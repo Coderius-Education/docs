@@ -44,7 +44,7 @@ Vervang `VERSIENUMMER` door de gewenste versie, bijvoorbeeld `3.3.3`.
 
 Versie 3.4 voegt een familie **UI-elementen** en **video** toe.
 
-Bij **Knoppen en UI**: acht nieuwe elementen om je spel mee te bedienen — `play.new_button`, `play.new_slider`, `play.new_checkbox`, `play.new_radio_group` met `play.new_radio_button`, `play.new_dropdown`, `play.new_text_input`, `play.new_progress_bar` en `play.new_tooltip`. Zie de groep [Knoppen en UI](#knoppen-en-ui) hieronder en de lessen in [8. Knoppen en UI](/docs/ui/knop).
+Bij **Knoppen en UI**: acht nieuwe elementen om je spel mee te bedienen — `play.new_button`, `play.new_slider`, `play.new_checkbox`, `play.new_radio_group` met `play.new_radio_button`, `play.new_dropdown`, `play.new_text_input`, `play.new_progress_bar` en `play.new_tooltip`. Zie de groep [Knoppen en UI](#knoppen-en-ui) hieronder en de lessen in [7. Knoppen en UI](/docs/ui/knop).
 
 Bij **Video**: `play.new_video` speelt een videobestand af als sprite, met ingebouwde afspeelknoppen en vijf gebeurtenissen zoals `@play.when_video_ends`. Zie de groep [Video](#video) hieronder. Werkt alleen lokaal, niet in de online speeltuin.
 

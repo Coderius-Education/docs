@@ -2,13 +2,13 @@
 sidebar_position: 6
 ---
 
-# 7.6 Tekst die verandert
+# 9.6 Tekst die verandert
 
 In de vorige les heb je geleerd hoe je tekst op het scherm toont. Maar wat als de tekst moet veranderen, bijvoorbeeld een score die omhoog gaat?
 
 ## KEYDOWN: reageren op een toetsdruk
 
-In les 7.4 gebruikten we `pygame.key.get_pressed()` om continu te checken of een toets ingedrukt is. Maar soms wil je dat iets **één keer** gebeurt per toetsdruk. Hiervoor gebruik je `pygame.KEYDOWN` in de event loop:
+In les 9.4 gebruikten we `pygame.key.get_pressed()` om continu te checken of een toets ingedrukt is. Maar soms wil je dat iets **één keer** gebeurt per toetsdruk. Hiervoor gebruik je `pygame.KEYDOWN` in de event loop:
 
 ```python
 for event in pygame.event.get():
@@ -91,7 +91,7 @@ pygame.quit()`} height={350} />
 
 Elke keer dat je op spatie drukt, gaat de score omhoog. De tekst wordt elk frame opnieuw getekend met de nieuwe waarde van `score`.
 
-## Opdracht 7.6.a: Scoreteller
+## Opdracht 9.6.a: Scoreteller
 
 Maak een programma waarbij:
 1. Een score begint op 0

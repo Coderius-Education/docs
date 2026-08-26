@@ -3,7 +3,7 @@ sidebar_position: 1
 ---
 
 
-# 7.1 Je eerste venster
+# 9.1 Je eerste venster
 
 Met **coderius-play** heb je geleerd om snel games te maken. Maar wat als je meer controle wilt? Dan kun je **pygame-ce** gebruiken. Dat is de bibliotheek waar coderius-play bovenop gebouwd is.
 
@@ -13,7 +13,7 @@ Deze sectie is een **vervolg**, niet een alternatief. Voor de meeste games blijf
 **Wat is anders dan in play?**
 - **Eigen game-loop**: je schrijft zelf de `while`-lus die elk frame draait. Play doet dit voor je.
 - **Coördinatensysteem**: pygame-ce zet `(0, 0)` linksboven en de y-as loopt naar beneden. In play zit `(0, 0)` in het midden en gaat y omhoog (zoals in wiskunde).
-- **Geen automatische physics**: voor zwaartekracht en botsingen gebruik je apart de `pymunk`-bibliotheek (in lessen 7.7-7.10).
+- **Geen automatische physics**: voor zwaartekracht en botsingen gebruik je apart de `pymunk`-bibliotheek (in lessen 9.7-9.10).
 - **Geen automatische start_program**: jij bent verantwoordelijk voor het tekenen, het bijwerken van het scherm (`pygame.display.flip()`) en het sluiten van het venster.
 
 Verwacht dus iets meer regels code voor hetzelfde resultaat — in ruil krijg je meer controle.
@@ -107,7 +107,7 @@ De oplossing: zorg dat `pygame.init()` altijd de eerste regel is na `import pyga
 
 Een andere veelgemaakte fout is de game loop vergeten. Zonder de `while`-loop opent het venster en sluit het meteen weer.
 
-## Opdracht 7.1.a: Venstergrootte aanpassen
+## Opdracht 9.1.a: Venstergrootte aanpassen
 
 Maak een venster dat:
 1. 400 bij 400 pixels groot is
