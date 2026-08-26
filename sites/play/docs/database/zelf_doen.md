@@ -66,3 +66,7 @@ def update_database():
     with open(pad_mijn_db, 'w') as outfile:
         json.dump(mijn_db, outfile)
 ```
+
+:::info[Waar kom je dit later weer tegen?]
+In [9.3 Wanneer ga je naar het volgende level?](/docs/levels/wanneer-volgende) gebruik je de database om te onthouden hoe ver een speler kwam.
+:::

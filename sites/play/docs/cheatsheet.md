@@ -1866,6 +1866,69 @@ muntje.play()
 
 </CheatsheetGrid>
 
+## Levels
+
+<CheatsheetGrid data-cheatsheet-grid>
+
+<details>
+  <summary>Hoe maak ik levels met andere instellingen? (een lijst met instellingen)</summary>
+
+Zet per level de getallen in een lijst en lees het huidige level daaruit. Zo hoef je voor een level erbij maar op één plek iets te veranderen.
+
+```python
+import play
+
+snelheden = [100, 200, 300]
+level = 0
+
+bal = play.new_circle(radius=40)
+bal.start_physics(obeys_gravity=False, x_speed=snelheden[level])
+```
+
+Verandert er meer dan één ding per level, gebruik dan een lijst met dictionaries: `[{'snelheid': 100, 'straal': 60}, ...]`.
+
+</details>
+
+<details>
+  <summary>Hoe ruim ik een level op voordat ik het volgende bouw? (remove)</summary>
+
+Houd in een lijst bij wat er bij het huidige level hoort, en haal die vormen weg voor je de nieuwe maakt. `remove()` ruimt ook de fysica en de gebeurtenissen van die vorm op.
+
+```python
+import play
+
+vormen = []
+
+def bouw_level():
+    for vorm in vormen:
+        vorm.remove()
+    vormen.clear()
+    bal = play.new_circle()
+    vormen.append(bal)
+```
+
+**Let op:** een `@play.when_key_pressed` hoort níét in `bouw_level()`. Die zou zich per level opstapelen. Gebeurtenissen op een vorm (`@bal.when_clicked`) mogen er wél in.
+
+</details>
+
+<details>
+  <summary>Hoe onthoud ik het bereikte level? (new_database)</summary>
+
+Sla het level op met de database, en geef bij het ophalen `1` mee als startwaarde voor de allereerste keer.
+
+```python
+import play
+
+db = play.new_database()
+level = db.get_data('hoogste_level', 1)
+
+db.set_data('hoogste_level', level + 1)
+```
+
+</details>
+
+</CheatsheetGrid>
+
 ## Video
 
 <CheatsheetGrid data-cheatsheet-grid>

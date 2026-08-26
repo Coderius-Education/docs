@@ -12,6 +12,10 @@ In deze tutorial gebruik je het `global` keyword (zie [4.5 Een score bijhouden](
 
 ## Het idee
 
+:::tip
+Dit is hetzelfde patroon als bij levels: een variabele die bijhoudt welk scherm aan de beurt is, en één functie die het bijbehorende scherm opbouwt. Wil je verder dan twee schermen, kijk dan bij [9.2 Levels met andere vormen](/docs/levels/andere-vormen) — daar ruim je het oude scherm op met `remove()` in plaats van met `hide()`.
+:::
+
 We maken een variabele `scherm` die bijhoudt in welk scherm we zitten: `'menu'` of `'spel'`. Afhankelijk van de waarde tonen we andere vormen.
 
 ## Stap 1: De menu-elementen

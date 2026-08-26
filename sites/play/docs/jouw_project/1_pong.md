@@ -4,8 +4,7 @@ sidebar_position: 1
 
 # Pong
 
-Pong is een klassieker en een perfect project om met `coderius-play` te bouwen.
-Laten we eens bekijken wat je hiervoor nodig hebt. Bij elke stap geven we hints, maar je moet zelf de code schrijven.
+Pong is een klassieker en een goed project om met `coderius-play` te bouwen. Hieronder staat per stap wat je nodig hebt, met hints erbij — de code schrijf je zelf.
 
 Voor voorbeelden ga je uiteraard naar de [Cheatsheet](/docs/cheatsheet).
 
@@ -94,3 +93,4 @@ De bal beweegt nu alleen horizontaal. Gebruik naast `x_speed` ook `y_speed` om d
 - Power-ups: een groter batje, een snellere bal, of een tijdelijke onzichtbare bal.
 - Versnelling: verhoog de balsnelheid na elke keer dat een batje wordt geraakt.
 - Speltimer: voeg een timer toe die aftelt tot het einde van het spel.
+- Levels: laat de bal na elke drie punten sneller gaan en de batjes kleiner worden. Hoe je die getallen per level bijhoudt staat in [9.1 Levels met andere instellingen](/docs/levels/instellingen).

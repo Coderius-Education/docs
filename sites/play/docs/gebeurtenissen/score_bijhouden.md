@@ -223,3 +223,8 @@ def punt():
         play.stop_program()`} height={300} />
 
 </details>
+
+:::info[Waar kom je dit later weer tegen?]
+- In [6.2 Een high score bijhouden](/docs/database/highscore) blijft die score bewaard nadat je het spel afsluit.
+- In [9.3 Wanneer ga je naar het volgende level?](/docs/levels/wanneer-volgende) is `global` de manier waarop je level-variabele buiten je functies blijft bestaan.
+:::

@@ -238,3 +238,105 @@ def verhoog():
     tekst.words = "Score: " + str(score)`} height={250} />
 
 Meer uitleg: [4.5 Een score bijhouden met global](/docs/gebeurtenissen/score_bijhouden), of <SiteLink site="python" to="/docs/functies/09c-scope">Scope</SiteLink> in de python-cursus voor het achterliggende idee.
+
+---
+
+## Er komt geen geluid uit
+
+Geen foutmelding, geen geluid. Dit is de lastigste van de hele pagina, want je programma draait gewoon door.
+
+<PygbagRunner code={`import play
+
+geluid = play.new_sound("klik.mp3")
+geluid.play()`} height={250} />
+
+**Oorzaak:** play vindt het bestand niet. In plaats van te stoppen schrijft het een regel in je console en gaat het verder:
+
+```
+File not found
+No sound loaded. Use the 'load' method first.
+```
+
+**Oplossing:** kijk als eerste in je console — daar staat het wél. Controleer daarna of het bestand in dezelfde map staat als je Python-bestand, en of de naam en de extensie precies kloppen.
+
+Meer uitleg: [8.1 Geluid afspelen](/docs/media/geluid)
+
+---
+
+## FileNotFoundError — video niet gevonden
+
+**Foutmelding:**
+```
+FileNotFoundError: Video file 'intro.mp4' not found.
+```
+
+Anders dan geluid stopt video wél meteen. Dat is prettiger: je weet direct wat er mis is.
+
+{/* niet-draaien: toont bewust de FileNotFoundError uit de les */}
+<PygbagRunner code={`import play
+
+intro = play.new_video("intro.mp4")`} height={250} />
+
+**Oorzaak:** het `.mp4`-bestand staat niet naast je Python-bestand, of de naam klopt niet.
+
+**Oplossing:** zet het bestand in dezelfde map en controleer de spelling. Krijg je in plaats hiervan een melding over een ontbrekende module `av`, installeer die dan met `pip install av`.
+
+Meer uitleg: [8.2 Video afspelen](/docs/media/video)
+
+---
+
+## TypeError — een when_changed-functie zonder parameter
+
+**Foutmelding:**
+```
+TypeError: veranderd() takes 0 positional arguments but 1 was given
+```
+
+**Oorzaak:** een schuifbalk, uitklapmenu of invoerveld geeft zijn nieuwe waarde mee aan jouw functie. Vergeet je die parameter, dan past de aanroep niet.
+
+{/* niet-draaien: toont bewust de TypeError uit de les */}
+<PygbagRunner code={`import play
+
+schuif = play.new_slider(min_value=0, max_value=100, value=50)
+
+@schuif.when_changed
+def veranderd():
+    print("versleept")`} height={250} />
+
+**Oplossing:** zet een parameter tussen de haakjes. Hoe je hem noemt maakt niet uit, als er maar één staat:
+
+```python
+@schuif.when_changed
+def veranderd(waarde):
+    print(waarde)
+```
+
+Meer uitleg: [7.2 Schuiven en aanvinken](/docs/ui/schuif-en-vink)
+
+---
+
+## Eén toetsdruk doet het meerdere keren
+
+Je drukt één keer op spatie en je springt twee of drie levels vooruit.
+
+**Oorzaak:** je `@play.when_key_pressed` staat binnen een functie die je meer dan één keer aanroept, bijvoorbeeld een `bouw_level()`. Elke aanroep zet er een luisteraar bij, en die reageren daarna allemaal tegelijk.
+
+```python
+# FOUT
+def bouw_level():
+    @play.when_key_pressed('space')
+    def spatie():
+        volgende_level()
+
+# GOED
+def bouw_level():
+    ...
+
+@play.when_key_pressed('space')
+def spatie():
+    volgende_level()
+```
+
+**Oplossing:** registreer toetsen en muis één keer, buiten de functie die je herhaalt. Gebeurtenissen op een vorm (`@bal.when_clicked`, `@bal.when_touching(...)`) mogen er wél in: die verdwijnen samen met hun vorm.
+
+Meer uitleg: [9.2 Levels met andere vormen](/docs/levels/andere-vormen)

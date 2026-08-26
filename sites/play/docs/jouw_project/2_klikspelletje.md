@@ -57,5 +57,5 @@ Als je `hide()` gebruikt om een bal te verbergen, onthoud dan dat **de fysica oo
 - **Foute ballen**: voeg rode ballen toe die punten aftrekken als je erop klikt.
 - **High score opslaan**: gebruik de [database](/docs/database/basis) om de hoogste score te bewaren.
 - **Geluidssignaal**: verander de kleur van de bal als je erop klikt, zodat je feedback krijgt.
-- **Levels**: na elke 10 punten wordt het spel moeilijker (sneller, kleinere bal, meer foute ballen).
+- **Levels**: na elke 10 punten wordt het spel moeilijker (sneller, kleinere bal, meer foute ballen). Hoofdstuk [9.1 Levels met andere instellingen](/docs/levels/instellingen) laat zien hoe je die getallen per level in een lijst zet.
 - **Combo-systeem**: geef extra punten als je meerdere keren snel achter elkaar klikt.
