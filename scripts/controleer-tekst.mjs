@@ -75,10 +75,10 @@ for (const site of sites()) {
     }
 
     for (const pad of bestanden) {
-      const meldingen = controleer(readFileSync(pad, 'utf8'));
+      const relatief = relative(ROOT, pad).split('\\').join('/');
+      const meldingen = controleer(readFileSync(pad, 'utf8'), { bestand: relatief });
       if (!meldingen.length) continue;
       telling.bestanden += 1;
-      const relatief = relative(ROOT, pad).split('\\').join('/');
 
       for (const m of meldingen) {
         telling[m.niveau] += 1;

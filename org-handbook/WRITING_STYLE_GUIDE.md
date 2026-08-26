@@ -307,8 +307,10 @@ Twee niveaus:
 - **fout** — `emoji`, `u-vorm`, `uitroepteken`, `all-caps`, `alt-tekst`.
 - **waarschuwing** — `vulwoord`, `superlatief`, `formulaire-opener`,
   `lege-overgang`, `engels-opvulling`, `passief`, `em-dash`, `vet-overdaad`,
-  `lange-zin`, `herhaalde-opening`, `samenvatting`, `leerling-vorm`, plus de
-  structuurregels `frontmatter`, `opdracht-nummering` en `opdracht-oplossing`.
+  `lange-zin`, `herhaalde-opening`, `samenvatting` en `leerling-vorm`.
+
+`leerling-vorm` slaat docentmateriaal over (`voor-de-docent/` en `docenten.mdx`):
+daar schrijft §15 juist "je leerlingen" voor.
 
 De job is voorlopig niet-blokkerend: de gemigreerde sites hebben nog een
 achterstand van 255 onbekende woorden en 756 stijlmeldingen. De meldingen staan

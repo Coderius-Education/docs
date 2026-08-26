@@ -297,6 +297,8 @@ const REGELS = [
   {
     naam: 'leerling-vorm',
     niveau: 'waarschuwing',
+    // Niet op docentmateriaal: §15 schrijft daar juist "je leerlingen" voor.
+    nietIn: /voor-de-docent|docenten\.mdx?$/,
     zoek: (proza) =>
       treffers(
         proza,
@@ -337,16 +339,18 @@ function parseUitzonderingen(tekst) {
 
 /**
  * @param {string} tekst  de ruwe inhoud van een .md/.mdx-bestand
+ * @param {{bestand?: string}} opties  het pad, voor regels die niet overal gelden
  * @returns {{regel:number, naam:string, niveau:string, bericht:string}[]}
  */
-function controleer(tekst) {
+function controleer(tekst, { bestand = '' } = {}) {
   const proza = alleenProza(tekst);
   const prozaMetLinks = alleenProza(tekst, { linkdoelen: false });
-  const { bestand, lokaal } = parseUitzonderingen(tekst);
+  const { bestand: uitgezonderd, lokaal } = parseUitzonderingen(tekst);
   const meldingen = [];
 
   for (const regel of REGELS) {
-    if (bestand.has(regel.naam)) continue;
+    if (uitgezonderd.has(regel.naam)) continue;
+    if (regel.nietIn?.test(bestand)) continue;
     for (const { index, bericht } of regel.zoek(regel.metLinkdoelen ? prozaMetLinks : proza)) {
       const gedekt = lokaal.some(
         (u) => u.namen.has(regel.naam) && index >= u.van && index <= u.tot,

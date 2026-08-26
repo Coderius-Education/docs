@@ -68,7 +68,7 @@ Bij **Tekst**: rotatie via `angle` werkt nu correct op Text-objecten. Als je `fo
 <details>
   <summary>Nieuw of verbeterd in coderius-play versie 3.3.2</summary>
 
-In versie 3.3.2 hebben we **`while_`-gebeurtenissen** toegevoegd. Deze vuren **elk frame** zolang je een toets, muisknop of controller-knop ingedrukt houdt. Perfect voor vloeiende beweging.
+In versie 3.3.2 hebben we **`while_`-gebeurtenissen** toegevoegd. Deze vuren **elk frame** zolang je een toets, muisknop of controller-knop ingedrukt houdt. Handig voor beweging die soepel doorloopt.
 
 Bij **Toetsenbord**: nieuw: `@play.while_key_pressed('left')` vuurt elk frame zolang je de toets inhoudt. Ideaal voor het besturen van een karakter. Er is ook `@play.while_any_key_pressed` voor een willekeurige toets.
 

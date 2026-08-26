@@ -118,11 +118,15 @@ from play.globals import globals_list as _gl2
 # Argumenten raden op naam. Een when_changed-functie heet zijn parameter in de
 # lessen `waarde`, een when_submit-functie `naam` of `tekst`. Staat er iets
 # anders, dan krijgt hij 1 — genoeg om de regels erin uit te voeren.
+# De namen die de lessen echt gebruiken, zodat een callback met iets zinnigs
+# draait. Een naam die hier niet staat krijgt 1. Dat kan een blok ten onrechte
+# laten omvallen (`antwoord.strip()` op een getal), maar dan wordt CI rood en
+# zet je de naam erbij — een gemiste fout is erger dan een valse.
 _PROEF = {{
-    'active_key': 'space', 'key': 'space',
-    'waarde': 50, 'value': 50, 'plek': 0, 'index': 0,
-    'tekst': 'test', 'text': 'test', 'naam': 'test',
-    'sprite': None,
+    'active_key': 'space', 'key': 'space', 'button': 'a', 'axis': 0.5,
+    'waarde': 50, 'value': 50, 'plek': 0, 'index': 0, 'aangevinkt': True,
+    'tekst': 'test', 'text': 'test', 'naam': 'test', 'antwoord': 'test',
+    'wall': None, 'sprite': None,
 }}
 
 
