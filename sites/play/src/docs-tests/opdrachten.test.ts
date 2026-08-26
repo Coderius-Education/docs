@@ -59,6 +59,26 @@ const ZONDER_NUMMER = new Map([['jouw_project/3_startmenu.md', 'capstone zonder 
 
 const OPDRACHT_KOP = /^Opdracht (\d+)\.(\d+)\.([a-z]): \S/;
 
+// Een tip hoort erbij, behalve waar de opdracht zelf het onderzoek ís: probeer
+// deze drie waarden en kijk wat er gebeurt, of voorspel het type en controleer
+// het. Een tip zou daar het antwoord weggeven. Elke uitzondering staat hier met
+// zijn reden, zodat een nieuwe opdracht zonder tip een keuze is en geen
+// vergissing.
+const ZONDER_TIP = new Map([
+  ['Opdracht 1.2.b', 'voorspel-vraag; een tip verklapt de uitkomst'],
+  ['Opdracht 2.2.a', 'redeneervraag; de tip zou het antwoord zijn'],
+  ['Opdracht 2.2.b', 'voorspellen en daarna zelf controleren met physics_info()'],
+  ['Opdracht 4.1.a', 'uitvoeren en waarnemen wat er gebeurt'],
+  ['Opdracht 5.1.a', 'uitvoeren en waarnemen wat er gebeurt'],
+  ['Opdracht 10.1.a', 'twee getallen aanpassen in het voorbeeld er direct boven'],
+  ['Opdracht 10.2.a', 'drie kleuren uitproberen in het voorbeeld er direct boven'],
+  ['Opdracht 10.2.b', 'zelfde voorbeeld met een andere kleur en titel'],
+  ['Opdracht 10.5.a', 'zelfde voorbeeld met een andere tekst'],
+  ['Opdracht 10.7.a', 'terugzoekvragen; de tip zou het antwoord zijn'],
+  ['Opdracht 10.8.a', 'drie waarden uitproberen en waarnemen'],
+  ['Opdracht 10.9.a', 'drie waarden uitproberen en waarnemen'],
+]);
+
 describe('opdrachten', () => {
   const opdrachten = PAGINAS.flatMap((p) =>
     koppen(p.proza)
@@ -113,6 +133,34 @@ describe('opdrachten', () => {
       }
     }
     expect(fout).toEqual([]);
+  });
+
+  it('hebben een tip, of staan met reden in ZONDER_TIP', () => {
+    const fout = opdrachten
+      .filter(({ pagina, kop }) => {
+        const nummer = kop.tekst.split(':')[0].trim();
+        if (ZONDER_TIP.has(nummer)) return false;
+        const sectie = pagina.tekst.slice(kop.start, kop.eind);
+        return !sectie.includes('<summary>Klik hier voor een tip.</summary>');
+      })
+      .map(({ pagina, kop }) => `${pagina.pad}: ${kop.tekst}`);
+    expect(fout).toEqual([]);
+  });
+
+  it('staan niet voor niets in ZONDER_TIP', () => {
+    // Een uitzondering die z'n tip inmiddels wél heeft, hoort uit de lijst.
+    const overbodig = opdrachten
+      .filter(({ pagina, kop }) => {
+        const nummer = kop.tekst.split(':')[0].trim();
+        return (
+          ZONDER_TIP.has(nummer) &&
+          pagina.tekst
+            .slice(kop.start, kop.eind)
+            .includes('<summary>Klik hier voor een tip.</summary>')
+        );
+      })
+      .map(({ kop }) => kop.tekst.split(':')[0].trim());
+    expect(overbodig).toEqual([]);
   });
 
   it('hebben allemaal een uitgewerkte oplossing', () => {

@@ -111,6 +111,13 @@ Maak een programma dat:
 4. Je naam op het scherm toont
 
 <details>
+<summary>Klik hier voor een tip.</summary>
+
+De drie stappen staan al in de opdracht en komen in die volgorde onder elkaar. Denk eraan dat `new_text` tekst wil: een naam is al tekst, dus `str()` heb je hier niet nodig.
+
+</details>
+
+<details>
 <summary>Klik hier voor de oplossing.</summary>
 
 ```python
@@ -199,6 +206,13 @@ Maak een programma dat:
 3. Het level op het scherm toont
 
 Draai het programma twee keer. De eerste keer zou je `1` moeten zien (de default waarde). Voeg daarna een `set_data('level', 5)` toe en draai opnieuw. Wat zie je nu?
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+De default geef je mee als tweede argument aan `get_data`. Om de tweede keer iets anders te zien moet er tussendoor een `set_data` bij komen.
+
+</details>
 
 <details>
 <summary>Klik hier voor de oplossing.</summary>

@@ -94,6 +94,13 @@ Teken op een donkere achtergrond:
 3. Een witte lijn onderaan het scherm
 
 <details>
+<summary>Klik hier voor een tip.</summary>
+
+Alle drie de vormen teken je binnen de game-loop, ná `scherm.fill(...)` en vóór `pygame.display.flip()`. Anders overschrijft de achtergrond ze weer.
+
+</details>
+
+<details>
 <summary>Klik hier voor de oplossing.</summary>
 
 ```python
@@ -152,6 +159,13 @@ Teken een simpel gezicht met:
 1. Een grote gele cirkel als hoofd
 2. Twee kleine zwarte cirkels als ogen
 3. Een rode lijn als mond
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Een gezicht is gewoon drie cirkels en een lijn over elkaar heen. De volgorde bepaalt wat je ziet: het hoofd eerst, de ogen daarna.
+
+</details>
 
 <details>
 <summary>Klik hier voor de oplossing.</summary>

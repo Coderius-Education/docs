@@ -36,6 +36,13 @@ De bal stuitert bijna eindeloos op en neer (maar verliest heel langzaam energie)
 Maak drie ballen naast elkaar met verschillende `bounciness` waarden: `0.2`, `0.6` en `1.0`. Laat ze allemaal vanaf dezelfde hoogte vallen op een vloer. Welke bal stuitert het hoogst?
 
 <details>
+<summary>Klik hier voor een tip.</summary>
+
+Drie ballen betekent drie keer `new_circle` en drie keer `start_physics`. Zet ze met verschillende `x`-waarden naast elkaar en geef ze dezelfde `y`, anders vallen ze niet van dezelfde hoogte.
+
+</details>
+
+<details>
 <summary>Klik hier voor de oplossing.</summary>
 
 ```python
@@ -101,6 +108,13 @@ Maak twee ballen die naar elkaar toe bewegen:
 2. Eén bal met `mass=1`
 
 Wat gebeurt er? Verander daarna de massa van één bal naar `mass=20`. Wat is het verschil?
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Naar elkaar toe bewegen betekent dat de een een positieve `x_speed` heeft en de ander een negatieve. Zet `obeys_gravity=False`, anders vallen ze langs elkaar heen.
+
+</details>
 
 <details>
 <summary>Klik hier voor de oplossing.</summary>

@@ -100,6 +100,13 @@ Maak een programma waarbij:
 4. De score wordt op het scherm getoond
 
 <details>
+<summary>Klik hier voor een tip.</summary>
+
+De score verandert, dus je moet de tekst elk frame opnieuw maken met `font.render(...)`. Reageren op de pijltjes doe je in de event-lus, met `event.type == pygame.KEYDOWN`.
+
+</details>
+
+<details>
 <summary>Klik hier voor de oplossing.</summary>
 
 ```python

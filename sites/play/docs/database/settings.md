@@ -103,6 +103,13 @@ Maak een programma waarbij:
 4. De keuze wordt opgeslagen in de database
 
 <details>
+<summary>Klik hier voor een tip.</summary>
+
+Je krijgt drie bijna identieke functies, één per toets. Elke functie doet twee dingen: de keuze opslaan én de tekst op het scherm bijwerken. Vergeet de tweede niet, anders lijkt er niets te gebeuren.
+
+</details>
+
+<details>
 <summary>Klik hier voor de oplossing.</summary>
 
 ```python

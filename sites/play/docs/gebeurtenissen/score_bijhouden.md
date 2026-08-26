@@ -99,6 +99,13 @@ Maak een programma waarbij:
 4. De score wordt op het scherm getoond
 
 <details>
+<summary>Klik hier voor een tip.</summary>
+
+Twee toetsen betekent twee functies, en allebei hebben ze `global score` nodig. Bij `r` hoef je niets op te tellen — daar zet je de score gewoon terug op 0.
+
+</details>
+
+<details>
 <summary>Klik hier voor de oplossing.</summary>
 
 ```python
