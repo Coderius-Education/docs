@@ -34,7 +34,7 @@ registerRoute(
 );
 
 // Local wheels (pymunk, coderius-play). Small but versioned by filename
-// (coderius_play-3.3.3-…whl) so old versions safely fall out of cache.
+// (coderius_play-3.4.0-…whl) so old versions safely fall out of cache.
 registerRoute(
   ({ url }) => url.pathname.startsWith('/whl/'),
   new CacheFirst({

@@ -86,7 +86,7 @@ DRAAIEN_RE = re.compile(r"\{/\*\s*draaien:.*?\*/\}\s*$")
 # produceren die niets over de lescode zegt. Een expliciete
 # play.start_program() onderaan een ouder voorbeeld wordt een no-op.
 #
-# De wekker is er voor hoofdstuk 7. Een pygame-ce-voorbeeld schrijft zijn eigen
+# De wekker is er voor hoofdstuk 10. Een pygame-ce-voorbeeld schrijft zijn eigen
 # `while actief:` en die loopt hier, zonder venster om op het kruisje te
 # klikken, nooit af. In de browser is dat precies goed — daar draait het spel
 # tot de leerling op stop drukt. Hier is de vraag een andere: start het, en
@@ -255,6 +255,12 @@ for _sprite in list(_gl2.sprites_group):
     for _attr in ('_on_change_callbacks', '_on_submit_callbacks', '_on_click_callbacks'):
         _taken += list(getattr(_sprite, _attr, None) or [])
 
+# De wekker begint hier opnieuw, en zonder de QUIT-stap: er is geen event-lus
+# meer om netjes af te sluiten. _fase op 1 zetten laat het volgende alarm dus
+# meteen _Genoeg gooien, ongeacht hoeveel stappen de vorige fase al gebruikt
+# had — anders krijgt een blok dat de wekker haalde drie seconden en een blok
+# dat er ruim binnen bleef er vier.
+_fase['n'] = 1
 _signal.alarm({seconden})
 try:
     for _fn in _taken:

@@ -312,11 +312,17 @@ Twee niveaus:
 `leerling-vorm` slaat docentmateriaal over (`voor-de-docent/` en `docenten.mdx`):
 daar schrijft §15 juist "je leerlingen" voor.
 
+Structuur controleert `pnpm stijl` niet. Of de frontmatter klopt, of de
+opdrachtnummers doorlopen en of elke opdracht een oplossing heeft, hangt aan
+de nummering van één cursus; dat staat daarom per site in een test —
+`sites/play/src/docs-tests/opdrachten.test.ts` is het voorbeeld, en die draait
+blokkerend mee.
+
 De job is voorlopig niet-blokkerend: de gemigreerde sites hebben nog een
-achterstand van 255 onbekende woorden en 756 stijlmeldingen. De meldingen staan
-wel als annotatie in de diff van je pull request, dus nieuwe tekst valt meteen
-op. Zodra de achterstand weg is kan `continue-on-error` eruit en `--streng`
-erbij, en tellen de fouten mee.
+achterstand van 255 onbekende woorden en 647 stijlmeldingen (227 fouten en 420
+waarschuwingen). De meldingen staan wel als annotatie in de diff van je pull
+request, dus nieuwe tekst valt meteen op. Zodra de achterstand weg is kan
+`continue-on-error` eruit en `--streng` erbij, en tellen de fouten mee.
 
 Eén site staat al op nul fouten: `play`. Gebruik die als maat voor wat haalbaar
 is.

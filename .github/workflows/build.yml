@@ -211,7 +211,8 @@ jobs:
   # Lestekst is het product van deze repo, maar niets controleerde hem. Een
   # typefout, een emoji, een "u" in plaats van "je" of een alinea vol vet:
   # de build merkt er niets van en een reviewer die honderden regels diff
-  # doorleest ook niet. Deze job doet twee dingen op 642 pagina's:
+  # doorleest ook niet. Deze job doet twee dingen op elke lespagina in de
+  # repo:
   #
   #   spelling  cspell met de nl_NL-dictionary plus cspell-woorden.txt, de
   #             eigen lijst met vaktermen en samenstellingen.
@@ -221,11 +222,12 @@ jobs:
   #             stijlfout.
   #
   # Bewust niet-blokkerend, en bewust geen poort voor `build`. De sites die
-  # uit losse repos zijn gemigreerd hebben nog ruim 1900 waarschuwingen staan;
-  # zolang die er zijn zou blokkeren betekenen dat niemand nog iets kan
-  # mergen. De annotaties staan wel meteen in de diff van de pull request, dus
-  # nieuwe tekst valt op. Zodra de schuld is opgeruimd: continue-on-error weg
-  # en --streng erbij, dan tellen waarschuwingen ook mee.
+  # uit losse repos zijn gemigreerd hebben nog een achterstand van 255
+  # onbekende woorden en 647 stijlmeldingen; zolang die er is zou blokkeren
+  # betekenen dat niemand nog iets kan mergen. De annotaties staan wel meteen
+  # in de diff van de pull request, dus nieuwe tekst valt op. Zodra de schuld
+  # is opgeruimd: continue-on-error weg en --streng erbij, dan tellen
+  # waarschuwingen ook mee.
   #
   # De regels zelf zijn getest in packages/shared/stijl.test.ts, en die test
   # loopt in de `test`-job wél blokkerend mee. Zo kan een regel niet stilletjes

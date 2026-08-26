@@ -205,3 +205,68 @@ describe('koppen en inklapblokken', () => {
     expect(fout).toEqual([]);
   });
 });
+
+// De sidebar en de titels vertellen hetzelfde verhaal op twee plekken: het
+// hoofdstuknummer staat in `_category_.json`, het sectienummer in de
+// frontmatter, en allebei staan ze nog eens in de H1. Toen pygame-ce van
+// hoofdstuk 7 naar 10 verhuisde moesten er dertig van die getallen mee, en met
+// de hand is dat precies één vergeten regel van "10.4 Beweging" onder kopje 9.
+// Deze test legt de drie naast elkaar.
+describe('hoofdstuknummering', () => {
+  type Les = { pad: string; map: string; hoofdstuk: string; sectie: number; h1: string };
+
+  const lessen: Les[] = [];
+  for (const pagina of PAGINAS) {
+    const map = pagina.pad.includes('/') ? pagina.pad.split('/')[0] : '';
+    if (!map) continue;
+    let label: string;
+    try {
+      label = JSON.parse(readFileSync(join(DOCS, map, '_category_.json'), 'utf8')).label ?? '';
+    } catch {
+      continue;
+    }
+    // Installatie, Jouw project en Voor de docent dragen geen hoofdstuknummer.
+    const nummer = label.match(/^(\d+)\./);
+    if (!nummer) continue;
+    const kop = pagina.tekst.match(/^#\s+(.*)$/m);
+    const positie = pagina.tekst.replace(/^﻿/, '').match(/^sidebar_position:\s*(\d+)/m);
+    lessen.push({
+      pad: pagina.pad,
+      map,
+      hoofdstuk: nummer[1],
+      sectie: positie ? Number(positie[1]) : Number.NaN,
+      h1: kop ? kop[1].trim() : '',
+    });
+  }
+
+  it('er zijn genummerde hoofdstukken om te controleren', () => {
+    expect(lessen.length).toBeGreaterThan(30);
+  });
+
+  it('dragen in hun H1 het hoofdstuk van hun sidebar-categorie', () => {
+    const fout = lessen
+      .filter((l) => !new RegExp(`^${l.hoofdstuk}\\.\\d+\\s`).test(l.h1))
+      .map((l) => `${l.pad}: hoofdstuk ${l.hoofdstuk}, maar H1 is "${l.h1}"`);
+    expect(fout).toEqual([]);
+  });
+
+  it('dragen in hun H1 het sectienummer van hun sidebar_position', () => {
+    const fout = lessen
+      .filter((l) => l.h1.match(/^\d+\.(\d+)\s/)?.[1] !== String(l.sectie))
+      .map((l) => `${l.pad}: sidebar_position ${l.sectie}, maar H1 is "${l.h1}"`);
+    expect(fout).toEqual([]);
+  });
+
+  it('nummeren binnen een hoofdstuk door vanaf 1, zonder gaten of dubbelen', () => {
+    const fout: string[] = [];
+    for (const map of new Set(lessen.map((l) => l.map))) {
+      const posities = lessen
+        .filter((l) => l.map === map)
+        .map((l) => l.sectie)
+        .sort((a, b) => a - b);
+      const verwacht = posities.map((_, i) => i + 1);
+      if (posities.join() !== verwacht.join()) fout.push(`${map}: ${posities.join(', ')}`);
+    }
+    expect(fout).toEqual([]);
+  });
+});
