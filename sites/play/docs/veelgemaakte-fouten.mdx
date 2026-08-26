@@ -26,6 +26,8 @@ cirkel.colour = 'red'  # FOUT: 'colour' bestaat niet`} height={250} />
 
 **Oplossing:** gebruik `color` in plaats van `colour`.
 
+Meer uitleg: [1.6 Je vorm aanpassen](/docs/vormen/vorm_aanpassen)
+
 ---
 
 ## TypeError — getal optellen bij tekst
@@ -50,6 +52,8 @@ play.new_text(words="Score: " + score)  # FOUT: score is een getal, geen tekst`}
 score = 5
 play.new_text(words="Score: " + str(score))`} height={250} />
 
+Meer uitleg: [4.5 Een score bijhouden met global](/docs/gebeurtenissen/score_bijhouden)
+
 ---
 
 ## NameError — variabele niet gevonden
@@ -70,6 +74,8 @@ def beweeg():
 cirkel = play.new_circle()`} height={250} />
 
 **Oplossing:** controleer de spelling en zorg dat de variabele vóór gebruik aangemaakt is.
+
+Meer uitleg: [1.6 Je vorm aanpassen](/docs/vormen/vorm_aanpassen), of <SiteLink site="python" to="/docs/basis/jij-als-variabele">Jij als variabele</SiteLink> in de python-cursus.
 
 ---
 
@@ -96,6 +102,8 @@ play.new_circle()  # FOUT: niet ingesprongen`} height={250} />
 @play.when_key_pressed("space")
 def beweeg():
     play.new_circle()`} height={250} />
+
+Meer uitleg: <SiteLink site="python" to="/docs/functies/functies">Functies</SiteLink> in de python-cursus.
 
 ---
 
@@ -128,6 +136,8 @@ async def wacht():
     await play.timer(seconds=1)
     cirkel.color = 'red'`} height={250} />
 
+Meer uitleg: [5.2 Wachten met async en await](/docs/tijd/async)
+
 ---
 
 ## when_key_pressed reageert niet
@@ -146,6 +156,8 @@ blok = play.new_box()
 @play.when_key_pressed("space")  # let op: decorator direct boven def
 def beweeg():
     blok.x = blok.x + 20`} height={250} />
+
+Meer uitleg: [4.1 Gebeurtenissen](/docs/gebeurtenissen/toetsenbord)
 
 ---
 
@@ -178,6 +190,8 @@ play.new_circle(color='#FF0000', x=-150)
 play.new_circle(color='red', x=0)
 play.new_circle(color=(255, 0, 0), x=150)`} height={250} />
 
+Meer uitleg: [1.2 Je eerste cirkel](/docs/vormen/je_eerste_cirkel)
+
 ---
 
 ## global vergeten
@@ -209,3 +223,5 @@ def verhoog():
     global score
     score = score + 1
     tekst.words = "Score: " + str(score)`} height={250} />
+
+Meer uitleg: [4.5 Een score bijhouden met global](/docs/gebeurtenissen/score_bijhouden). De python-cursus behandelt `global` niet; play legt het daar zelf uit.

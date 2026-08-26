@@ -6,6 +6,7 @@ sidebar_position: 2
 
 <Voorkennis
   items={[
+    {to: '/docs/gebeurtenissen/score_bijhouden', label: '4.5 Een score bijhouden met global'},
     {site: 'python', to: '/docs/beslissen/05b-if-else', label: 'If en else'},
   ]}
 />
