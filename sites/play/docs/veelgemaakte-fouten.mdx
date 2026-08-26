@@ -253,7 +253,7 @@ geluid.play()`} height={250} />
 **Oorzaak:** play vindt het bestand niet. In plaats van te stoppen schrijft het een regel in je console en gaat het verder:
 
 ```
-File not found
+Could not load sound file 'klik.mp3'
 No sound loaded. Use the 'load' method first.
 ```
 
@@ -282,6 +282,49 @@ intro = play.new_video("intro.mp4")`} height={250} />
 **Oplossing:** zet het bestand in dezelfde map en controleer de spelling. Krijg je in plaats hiervan een melding over een ontbrekende module `av`, installeer die dan met `pip install av`.
 
 Meer uitleg: [8.2 Video afspelen](/docs/media/video)
+
+---
+
+## ValueError — een video-gebeurtenis zonder video
+
+**Foutmelding:**
+```
+ValueError: It looks like you wrote @play.when_video_ends without brackets.
+Put the video in brackets so play knows which video you mean:
+
+    @play.when_video_ends(my_video)
+    def klaar():
+        ...
+```
+
+{/* niet-draaien: toont bewust de ValueError uit de les */}
+<PygbagRunner code={`import play
+
+intro = play.new_video("intro.mp4")
+
+@play.when_video_ends
+def klaar():
+    print("de intro is afgelopen")`} height={280} />
+
+**Oorzaak:** je bent de haakjes vergeten. Bij een toets schrijf je `@play.when_key_pressed('space')` en bij een vorm `@bal.when_clicked` zónder haakjes, dus het is een makkelijke vergissing. Een video-gebeurtenis hoort altijd te weten over wélke video hij gaat.
+
+**Oplossing:** zet de video tussen haakjes.
+
+```python
+# FOUT
+@play.when_video_ends
+def klaar():
+    ...
+
+# GOED
+@play.when_video_ends(intro)
+def klaar():
+    ...
+```
+
+Dezelfde melding krijg je bij lege haakjes (`@play.when_video_ends()`) en als er iets in staat dat geen video is.
+
+Meer uitleg: [8.3 Reageren op een video](/docs/media/video-gebeurtenissen)
 
 ---
 

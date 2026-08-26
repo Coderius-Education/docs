@@ -31,8 +31,6 @@ def afspelen():
 
 `play.new_sound` laadt het bestand één keer; `.play()` speelt het af. Roep je `.play()` opnieuw aan terwijl het geluid nog klinkt, dan begint het opnieuw.
 
-**Let op:** je ziet in je terminal de melding dat geluid *experimental* is. Dat is normaal — het onderdeel is nieuw en kan in een volgende versie nog veranderen.
-
 ## Volume en herhalen
 
 ```python
@@ -41,7 +39,7 @@ muziek.play()
 ```
 
 - `volume` loopt van `0.0` (stil) tot `1.0` (vol); ook achteraf te zetten met `muziek.volume = 0.5`
-- `loops=-1` herhaalt eindeloos — handig voor achtergrondmuziek; `loops=2` speelt het geluid drie keer (één keer plus twee herhalingen)
+- zonder `loops` klinkt het geluid één keer; `loops=-1` herhaalt eindeloos — handig voor achtergrondmuziek; `loops=2` speelt het geluid drie keer (één keer plus twee herhalingen)
 - `muziek.pause()` pauzeert, nog een keer `.play()` gaat verder waar het was
 - `muziek.stop()` stopt helemaal
 

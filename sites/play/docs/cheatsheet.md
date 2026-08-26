@@ -50,6 +50,8 @@ Bij **Video**: `play.new_video` speelt een videobestand af als sprite, met ingeb
 
 Bij **Vormen**: elke vorm kent nu `anchor` (vastzetten aan een schermrand, bijvoorbeeld `anchor='top-left'`) en `layer` (wat bovenop tekent). Zie de nieuwe items onder [Vormen](#vormen).
 
+Bij **Geluid**: een geluid zonder `loops` klinkt nu één keer in plaats van twee, `sound.length` werkt ook vóór het afspelen, en een volume buiten `0.0`–`1.0` wordt bijgetrokken in plaats van doorgegeven.
+
 </details>
 
 <details>
@@ -1859,7 +1861,7 @@ muntje.play()
 ```
 
 - **volume**: van `0.0` tot `1.0`, ook achteraf via `muntje.volume = 0.5`
-- **loops**: aantal herhalingen; `-1` herhaalt eindeloos (achtergrondmuziek)
+- **loops**: aantal herhalingen; laat je hem weg dan klinkt het geluid één keer, `-1` herhaalt eindeloos (achtergrondmuziek)
 - `.play()`, `.pause()` en `.stop()` besturen het afspelen
 
 </details>
