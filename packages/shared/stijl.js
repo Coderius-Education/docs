@@ -4,6 +4,8 @@
 // pull request nodig heeft.
 const spaties = (tekst) => tekst.replace(/[^\n]/g, ' ');
 
+const LINKDOEL = /\]\([^)\n]*\)/g;
+
 const MASKERS = [
   /^---\n[\s\S]*?\n---\n/, // frontmatter
   /```[\s\S]*?```/g, // codeblokken
@@ -15,14 +17,22 @@ const MASKERS = [
   /`[^`\n]*`/g, // inline code
   /<[^>]*>/g, // losse JSX- en HTML-tags
   /\{\/\*[\s\S]*?\*\/\}/g, // MDX-commentaar
-  /\]\([^)\n]*\)/g, // linkdoelen (de linktekst blijft staan)
+  LINKDOEL, // linkdoelen (de linktekst blijft staan)
   /^\s*\|.*\|\s*$/gm, // tabelrijen: kolomkoppen zijn geen zinnen
 ];
 
-/** Alles wat geen proza is wordt spaties, met behoud van posities. */
-function alleenProza(tekst) {
+/**
+ * Alles wat geen proza is wordt spaties, met behoud van posities.
+ *
+ * `linkdoelen: false` laat het deel tussen de haakjes van een link staan. Dat
+ * is er voor de alt-tekst-regel: die moet juist naar `](` kijken, en had
+ * anders de ruwe tekst nodig — waarmee hij ook aansloeg op markdown-voorbeelden
+ * ín een codeblok.
+ */
+function alleenProza(tekst, { linkdoelen = true } = {}) {
   let uit = tekst;
   for (const masker of MASKERS) {
+    if (!linkdoelen && masker === LINKDOEL) continue;
     uit = uit.replace(masker, spaties);
   }
   return uit;
@@ -147,8 +157,8 @@ const REGELS = [
   {
     naam: 'alt-tekst',
     niveau: 'fout',
-    // Het linkdoel is al gemaskeerd, dus hier kijken we naar de originele tekst.
-    ruw: true,
+    // Kijkt naar tekst waarin de code wél gemaskeerd is maar het linkdoel niet.
+    metLinkdoelen: true,
     zoek: (tekst) =>
       treffers(
         tekst,
@@ -331,12 +341,13 @@ function parseUitzonderingen(tekst) {
  */
 function controleer(tekst) {
   const proza = alleenProza(tekst);
+  const prozaMetLinks = alleenProza(tekst, { linkdoelen: false });
   const { bestand, lokaal } = parseUitzonderingen(tekst);
   const meldingen = [];
 
   for (const regel of REGELS) {
     if (bestand.has(regel.naam)) continue;
-    for (const { index, bericht } of regel.zoek(regel.ruw ? tekst : proza)) {
+    for (const { index, bericht } of regel.zoek(regel.metLinkdoelen ? prozaMetLinks : proza)) {
       const gedekt = lokaal.some(
         (u) => u.namen.has(regel.naam) && index >= u.van && index <= u.tot,
       );

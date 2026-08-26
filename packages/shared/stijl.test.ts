@@ -58,6 +58,11 @@ describe('fouten', () => {
     expect(namen('![afbeelding](kat.png)')).toContain('alt-tekst');
     expect(namen('![een slapende kat](kat.png)')).not.toContain('alt-tekst');
   });
+
+  it('kijkt voor alt-tekst niet in een codeblok', () => {
+    // Een les die markdown-syntax uitlegt toont zo'n regel juist als voorbeeld.
+    expect(namen('Zo werkt het:\n\n```markdown\n![](kat.png)\n```\n')).toEqual([]);
+  });
 });
 
 describe('waarschuwingen', () => {
