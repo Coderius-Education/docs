@@ -1,0 +1,46 @@
+{
+  "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
+  "version": "0.2",
+  "language": "nl,en",
+  "import": ["@cspell/dict-nl-nl/cspell-ext.json"],
+  "dictionaries": [
+    "coderius",
+    "nl-nl",
+    "softwareTerms",
+    "typescript",
+    "python",
+    "html",
+    "css",
+    "node",
+    "companies",
+    "filetypes"
+  ],
+  "dictionaryDefinitions": [
+    {
+      "name": "coderius",
+      "path": "./cspell-woorden.txt",
+      "description": "Eigen namen, vaktermen en samenstellingen die in deze repo horen.",
+      "addWords": true
+    }
+  ],
+  "ignorePaths": [
+    "node_modules/**",
+    "build/**",
+    ".docusaurus/**",
+    "**/static/**",
+    "pnpm-lock.yaml"
+  ],
+  "ignoreRegExpList": [
+    "/```[\\s\\S]*?```/g",
+    "/`[^`\\n]*`/g",
+    "/^---[\\s\\S]*?^---/gm",
+    "/<[^>]*>/g",
+    "/\\]\\([^)]*\\)/g",
+    "/\\{\\/\\*[\\s\\S]*?\\*\\/\\}/g",
+    "/https?:\\/\\/\\S+/g",
+    "/\\{`[\\s\\S]*?`\\}/g",
+    "/=\\{`[\\s\\S]*?`\\}/g",
+    "/^\\s{4,}\\S.*$/gm"
+  ],
+  "words": []
+}

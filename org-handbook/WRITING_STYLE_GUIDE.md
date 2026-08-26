@@ -311,8 +311,13 @@ Twee niveaus:
   structuurregels `frontmatter`, `opdracht-nummering` en `opdracht-oplossing`.
 
 De job is voorlopig niet-blokkerend: de gemigreerde sites hebben nog een
-achterstand. De meldingen staan wel als annotatie in de diff van je pull
-request, dus nieuwe tekst valt meteen op.
+achterstand van 255 onbekende woorden en 756 stijlmeldingen. De meldingen staan
+wel als annotatie in de diff van je pull request, dus nieuwe tekst valt meteen
+op. Zodra de achterstand weg is kan `continue-on-error` eruit en `--streng`
+erbij, en tellen de fouten mee.
+
+Eén site staat al op nul fouten: `play`. Gebruik die als maat voor wat haalbaar
+is.
 
 ### Een terechte uitzondering markeren
 

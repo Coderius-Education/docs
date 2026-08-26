@@ -6,6 +6,8 @@ sidebar_position: 6
 
 In de vorige les heb je geleerd hoe je tekst op het scherm toont. Maar wat als de tekst moet veranderen, bijvoorbeeld een score die omhoog gaat?
 
+{/* stijl-uitzondering: all-caps KEYDOWN is de naam van de pygame-constante */}
+
 ## KEYDOWN: reageren op een toetsdruk
 
 In les 10.4 gebruikten we `pygame.key.get_pressed()` om continu te checken of een toets ingedrukt is. Maar soms wil je dat iets **één keer** gebeurt per toetsdruk. Hiervoor gebruik je `pygame.KEYDOWN` in de event loop:

@@ -530,7 +530,7 @@ bal.physics_info()
 <details>
   <summary>Hoe maak  ik een vorm onzichtbaar (hide)?</summary>
 
-Hiermee teken je een cirkel en maak je hem onmiddelijk onzichtbaar.
+Hiermee teken je een cirkel en maak je hem onmiddellijk onzichtbaar.
 
 Let op: .hide() verandert het volgende:
 - **cirkel.is_hidden** krijgt de waarde **True**
@@ -547,7 +547,7 @@ cirkel.hide()
 <details>
   <summary>Hoe maak een ik vorm weer zichtbaar (show)?</summary>
 
-Hiermee teken je een cirkel en maak je hem onmiddelijk onzichtbaar en weer zichtbaar
+Hiermee teken je een cirkel en maak je hem onmiddellijk onzichtbaar en weer zichtbaar
 
 Let op: .show() verandert het volgende:
 - **cirkel.is_hidden** krijgt de waarde **False**
