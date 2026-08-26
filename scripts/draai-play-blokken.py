@@ -35,6 +35,9 @@ Markers, direct boven het blok:
                                       (bewuste runtime-fout in een les)
     {/* niet-compileren: reden */}    blok helemaal overslaan
                                       (bewuste syntaxfout, of fragment)
+    {/* draaien: reden */}            kaal blok tóch uitvoeren
+                                      (hoofdstuk 10: compleet programma zonder
+                                      runner, want pygame draait zijn eigen lus)
 
 Aanroep vanuit de repo-root:
 
@@ -60,6 +63,12 @@ RUNNER_RE = re.compile(r"<PygbagRunner code=\{`(.*?)`\}", re.S)
 KAAL_RE = re.compile(r"```python[^\n]*\n(.*?)```", re.S)
 NIET_DRAAIEN_RE = re.compile(r"\{/\*\s*niet-draaien:.*?\*/\}\s*$")
 NIET_COMPILEREN_RE = re.compile(r"\{/\*\s*niet-compileren:.*?\*/\}\s*$")
+# Hoofdstuk 10 draait niet in de browser — een pygame-voorbeeld schrijft zijn
+# eigen game-loop en de stopknop krijgt die niet meer stil. Zonder runner zou
+# zo'n blok terugvallen op alleen compileren, terwijl het juist de code is die
+# een leerling zelf moet overtikken. Deze marker haalt hem alsnog door de
+# uitvoerslag.
+DRAAIEN_RE = re.compile(r"\{/\*\s*draaien:.*?\*/\}\s*$")
 
 # Het harnas: game-loop uit, geluid/beeld naar dummy, en het blok in een
 # try/except zodat een fout in de les een nette traceback en exitcode 1 geeft.
@@ -214,7 +223,8 @@ def verzamel():
             ervoor = tekst[: m.start()].rstrip()
             if NIET_COMPILEREN_RE.search(ervoor):
                 continue
-            blokken.append((bron, regel, m.group(1), "compileer"))
+            soort = "draai" if DRAAIEN_RE.search(ervoor) else "compileer"
+            blokken.append((bron, regel, m.group(1), soort))
     return blokken
 
 

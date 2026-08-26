@@ -2,13 +2,17 @@
 sidebar_position: 8
 ---
 
-
 # 10.8 Pymunk: een bal laten vallen
+
+:::warning[Online speeltuin]
+De voorbeelden in dit hoofdstuk draaien niet in de online speeltuin. Een pygame-ce-programma schrijft zijn eigen game-loop, en die is in de browser niet meer te stoppen. Draai ze op je eigen computer, in Thonny of VS Code — zie [installatie](/docs/installatie).
+:::
 
 Nu je de bouwstenen kent, gaan we ze combineren met pygame-ce om een bal te laten vallen door zwaartekracht.
 
 ## Pymunk en pygame-ce combineren
 
+{/* draaien: compleet programma, alleen zonder speeltuin */}
 ```python
 import pygame
 import pymunk
@@ -51,47 +55,6 @@ while actief:
 
 pygame.quit()
 ```
-
-<PygbagRunner code={`import pygame
-import pymunk
-
-pygame.init()
-
-scherm = pygame.display.set_mode((800, 600))
-clock = pygame.time.Clock()
-
-# 1. Maak een Space aan met zwaartekracht
-space = pymunk.Space()
-space.gravity = (0, 500)
-
-# 2. Maak een Body aan (massa=1, moment berekend door pymunk)
-bal_body = pymunk.Body(1, pymunk.moment_for_circle(1, 0, 20))
-bal_body.position = (400, 50)
-
-# 3. Maak een Shape aan en voeg alles toe aan de Space
-bal_shape = pymunk.Circle(bal_body, 20)
-space.add(bal_body, bal_shape)
-
-actief = True
-
-while actief:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            actief = False
-
-    space.step(1 / 60)
-
-    scherm.fill((30, 30, 30))
-
-    # Teken de bal op de positie van de Body
-    bal_x = int(bal_body.position.x)
-    bal_y = int(bal_body.position.y)
-    pygame.draw.circle(scherm, (0, 200, 255), (bal_x, bal_y), 20)
-
-    pygame.display.flip()
-    clock.tick(60)
-
-pygame.quit()`} height={350} />
 
 Het idee is simpel: pymunk berekent de fysica, en pygame-ce tekent het resultaat.
 

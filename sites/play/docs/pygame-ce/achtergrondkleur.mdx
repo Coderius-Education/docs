@@ -2,8 +2,11 @@
 sidebar_position: 2
 ---
 
-
 # 10.2 Achtergrondkleur
+
+:::warning[Online speeltuin]
+De voorbeelden in dit hoofdstuk draaien niet in de online speeltuin. Een pygame-ce-programma schrijft zijn eigen game-loop, en die is in de browser niet meer te stoppen. Draai ze op je eigen computer, in Thonny of VS Code — zie [installatie](/docs/installatie).
+:::
 
 Je venster is nu zwart. Dat verander je met één regel in de game-loop.
 
@@ -21,6 +24,7 @@ Enkele voorbeelden:
 
 ## De achtergrond vullen
 
+{/* draaien: compleet programma, alleen zonder speeltuin */}
 ```python
 import pygame
 
@@ -41,25 +45,6 @@ while actief:
 
 pygame.quit()
 ```
-
-<PygbagRunner code={`import pygame
-
-pygame.init()
-
-scherm = pygame.display.set_mode((800, 600))
-pygame.display.set_caption("Achtergrondkleur")
-
-actief = True
-
-while actief:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            actief = False
-
-    scherm.fill((30, 30, 30))
-    pygame.display.flip()
-
-pygame.quit()`} height={350} />
 
 Twee nieuwe regels:
 
@@ -98,6 +83,7 @@ Maak een venster met een groene achtergrond en de titel "Groene weide".
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
+{/* draaien: compleet programma, alleen zonder speeltuin */}
 ```python
 import pygame
 
@@ -118,24 +104,5 @@ while actief:
 
 pygame.quit()
 ```
-
-<PygbagRunner code={`import pygame
-
-pygame.init()
-
-scherm = pygame.display.set_mode((800, 600))
-pygame.display.set_caption("Groene weide")
-
-actief = True
-
-while actief:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            actief = False
-
-    scherm.fill((0, 200, 0))
-    pygame.display.flip()
-
-pygame.quit()`} height={350} />
 
 </details>

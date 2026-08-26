@@ -2,7 +2,6 @@
 sidebar_position: 1
 ---
 
-
 # 10.1 Je eerste venster
 
 <Voorkennis
@@ -11,6 +10,10 @@ sidebar_position: 1
     {site: 'python', to: '/docs/herhalen/06a-for-loop', label: 'For-loop'},
   ]}
 />
+
+:::warning[Online speeltuin]
+De voorbeelden in dit hoofdstuk draaien niet in de online speeltuin. Een pygame-ce-programma schrijft zijn eigen game-loop, en die is in de browser niet meer te stoppen. Draai ze op je eigen computer, in Thonny of VS Code — zie [installatie](/docs/installatie).
+:::
 
 Met **coderius-play** heb je geleerd om snel games te maken. Maar wat als je meer controle wilt? Dan kun je **pygame-ce** gebruiken. Dat is de bibliotheek waar coderius-play bovenop gebouwd is.
 
@@ -30,6 +33,7 @@ Verwacht dus iets meer regels code voor hetzelfde resultaat — in ruil krijg je
 
 <CodeUitleg>
 
+{/* draaien: compleet programma, alleen zonder speeltuin */}
 ```python showLineNumbers
 import pygame
 
@@ -59,22 +63,6 @@ pygame.quit()
 
 </CodeUitleg>
 
-<PygbagRunner code={`import pygame
-
-pygame.init()
-
-scherm = pygame.display.set_mode((800, 600))
-pygame.display.set_caption("Mijn eerste pygame-ce programma")
-
-actief = True
-
-while actief:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            actief = False
-
-pygame.quit()`} height={350} />
-
 Je ziet een leeg venster van 800 bij 600 pixels, met "Mijn eerste pygame-ce programma" in de titelbalk.
 
 ### Er gaat iets mis?
@@ -98,6 +86,7 @@ Maak een venster dat:
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
+{/* draaien: compleet programma, alleen zonder speeltuin */}
 ```python
 import pygame
 
@@ -115,22 +104,6 @@ while actief:
 
 pygame.quit()
 ```
-
-<PygbagRunner code={`import pygame
-
-pygame.init()
-
-scherm = pygame.display.set_mode((400, 400))
-pygame.display.set_caption("Mijn spel")
-
-actief = True
-
-while actief:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            actief = False
-
-pygame.quit()`} height={350} />
 
 {/* Fictieve screenshot: Een leeg venster met de titel "Mijn spel" en afmetingen 400x400 pixels. */}
 Na het uitvoeren van deze code, zou je een leeg venster moeten zien met de titel "Mijn spel" en afmetingen van 400 bij 400 pixels.

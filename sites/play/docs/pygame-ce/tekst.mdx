@@ -2,13 +2,17 @@
 sidebar_position: 5
 ---
 
-
 # 10.5 Tekst op het scherm
+
+:::warning[Online speeltuin]
+De voorbeelden in dit hoofdstuk draaien niet in de online speeltuin. Een pygame-ce-programma schrijft zijn eigen game-loop, en die is in de browser niet meer te stoppen. Draai ze op je eigen computer, in Thonny of VS Code — zie [installatie](/docs/installatie).
+:::
 
 In coderius-play maakte je tekst met `play.new_text()`. In pygame-ce gebruik je `pygame.font`.
 
 ## Tekst tonen
 
+{/* draaien: compleet programma, alleen zonder speeltuin */}
 ```python
 import pygame
 
@@ -33,29 +37,6 @@ while actief:
 
 pygame.quit()
 ```
-
-<PygbagRunner code={`import pygame
-
-pygame.init()
-
-scherm = pygame.display.set_mode((800, 600))
-font = pygame.font.SysFont("arial", 40)
-
-actief = True
-
-while actief:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            actief = False
-
-    scherm.fill((30, 30, 30))
-
-    tekst = font.render("Hallo!", True, (255, 255, 255))
-    scherm.blit(tekst, (350, 280))
-
-    pygame.display.flip()
-
-pygame.quit()`} height={350} />
 
 Wat gebeurt hier?
 
@@ -81,6 +62,7 @@ Toon je eigen naam op het scherm in een kleur naar keuze.
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
+{/* draaien: compleet programma, alleen zonder speeltuin */}
 ```python
 import pygame
 
@@ -105,29 +87,6 @@ while actief:
 
 pygame.quit()
 ```
-
-<PygbagRunner code={`import pygame
-
-pygame.init()
-
-scherm = pygame.display.set_mode((800, 600))
-font = pygame.font.SysFont("arial", 50)
-
-actief = True
-
-while actief:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            actief = False
-
-    scherm.fill((30, 30, 30))
-
-    tekst = font.render("Jouw Naam", True, (0, 255, 100))
-    scherm.blit(tekst, (300, 280))
-
-    pygame.display.flip()
-
-pygame.quit()`} height={350} />
 
 </details>
 
@@ -145,6 +104,7 @@ Maak twee fonts aan met verschillende groottes, bijvoorbeeld `60` voor de titel 
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
+{/* draaien: compleet programma, alleen zonder speeltuin */}
 ```python
 import pygame
 
@@ -173,32 +133,5 @@ while actief:
 
 pygame.quit()
 ```
-
-<PygbagRunner code={`import pygame
-
-pygame.init()
-
-scherm = pygame.display.set_mode((800, 600))
-groot_font = pygame.font.SysFont("arial", 60)
-klein_font = pygame.font.SysFont("arial", 30)
-
-actief = True
-
-while actief:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            actief = False
-
-    scherm.fill((30, 30, 30))
-
-    titel = groot_font.render("Mijn Spel", True, (255, 255, 0))
-    scherm.blit(titel, (280, 200))
-
-    ondertitel = klein_font.render("Druk op een toets om te starten", True, (200, 200, 200))
-    scherm.blit(ondertitel, (220, 300))
-
-    pygame.display.flip()
-
-pygame.quit()`} height={350} />
 
 </details>

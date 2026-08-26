@@ -4,6 +4,10 @@ sidebar_position: 6
 
 # 10.6 Tekst die verandert
 
+:::warning[Online speeltuin]
+De voorbeelden in dit hoofdstuk draaien niet in de online speeltuin. Een pygame-ce-programma schrijft zijn eigen game-loop, en die is in de browser niet meer te stoppen. Draai ze op je eigen computer, in Thonny of VS Code — zie [installatie](/docs/installatie).
+:::
+
 In de vorige les heb je geleerd hoe je tekst op het scherm toont. Maar wat als de tekst moet veranderen, bijvoorbeeld een score die omhoog gaat?
 
 {/* stijl-uitzondering: all-caps KEYDOWN is de naam van de pygame-constante */}
@@ -29,6 +33,7 @@ Het verschil: `pygame.key.get_pressed()` checkt **continu** of een toets ingedru
 
 Je kunt tekst elke frame opnieuw renderen met een variabele:
 
+{/* draaien: compleet programma, alleen zonder speeltuin */}
 ```python
 import pygame
 
@@ -60,36 +65,6 @@ while actief:
 
 pygame.quit()
 ```
-
-<PygbagRunner code={`import pygame
-
-pygame.init()
-
-scherm = pygame.display.set_mode((800, 600))
-clock = pygame.time.Clock()
-font = pygame.font.SysFont("arial", 40)
-
-score = 0
-
-actief = True
-
-while actief:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            actief = False
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                score = score + 1
-
-    scherm.fill((30, 30, 30))
-
-    tekst = font.render("Score: " + str(score), True, (255, 255, 255))
-    scherm.blit(tekst, (300, 280))
-
-    pygame.display.flip()
-    clock.tick(60)
-
-pygame.quit()`} height={350} />
 
 Elke keer dat je op spatie drukt, gaat de score omhoog. De tekst wordt elk frame opnieuw getekend met de nieuwe waarde van `score`.
 
@@ -111,6 +86,7 @@ De score verandert, dus je moet de tekst elk frame opnieuw maken met `font.rende
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
+{/* draaien: compleet programma, alleen zonder speeltuin */}
 ```python
 import pygame
 
@@ -144,37 +120,5 @@ while actief:
 
 pygame.quit()
 ```
-
-<PygbagRunner code={`import pygame
-
-pygame.init()
-
-scherm = pygame.display.set_mode((800, 600))
-clock = pygame.time.Clock()
-font = pygame.font.SysFont("arial", 50)
-
-score = 0
-
-actief = True
-
-while actief:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            actief = False
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
-                score = score + 1
-            if event.key == pygame.K_DOWN:
-                score = score - 1
-
-    scherm.fill((30, 30, 30))
-
-    tekst = font.render("Score: " + str(score), True, (255, 255, 255))
-    scherm.blit(tekst, (300, 280))
-
-    pygame.display.flip()
-    clock.tick(60)
-
-pygame.quit()`} height={350} />
 
 </details>

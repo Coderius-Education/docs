@@ -2,13 +2,17 @@
 sidebar_position: 3
 ---
 
-
 # 10.3 Vormen tekenen
+
+:::warning[Online speeltuin]
+De voorbeelden in dit hoofdstuk draaien niet in de online speeltuin. Een pygame-ce-programma schrijft zijn eigen game-loop, en die is in de browser niet meer te stoppen. Draai ze op je eigen computer, in Thonny of VS Code — zie [installatie](/docs/installatie).
+:::
 
 In pygame-ce teken je vormen met `pygame.draw`. Elke vorm heeft een **scherm**, een **kleur** en een **positie** nodig.
 
 ## Een cirkel tekenen
 
+{/* draaien: compleet programma, alleen zonder speeltuin */}
 ```python
 import pygame
 
@@ -31,27 +35,6 @@ while actief:
 
 pygame.quit()
 ```
-
-<PygbagRunner code={`import pygame
-
-pygame.init()
-
-scherm = pygame.display.set_mode((800, 600))
-
-actief = True
-
-while actief:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            actief = False
-
-    scherm.fill((30, 30, 30))
-
-    pygame.draw.circle(scherm, (255, 0, 0), (400, 300), 50)
-
-    pygame.display.flip()
-
-pygame.quit()`} height={350} />
 
 ```python
 pygame.draw.circle(scherm, (255, 0, 0), (400, 300), 50)
@@ -101,6 +84,7 @@ Alle drie de vormen teken je binnen de game-loop, ná `scherm.fill(...)` en vó�
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
+{/* draaien: compleet programma, alleen zonder speeltuin */}
 ```python
 import pygame
 
@@ -125,29 +109,6 @@ while actief:
 
 pygame.quit()
 ```
-
-<PygbagRunner code={`import pygame
-
-pygame.init()
-
-scherm = pygame.display.set_mode((800, 600))
-
-actief = True
-
-while actief:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            actief = False
-
-    scherm.fill((30, 30, 30))
-
-    pygame.draw.circle(scherm, (255, 255, 0), (100, 100), 40)
-    pygame.draw.rect(scherm, (0, 200, 0), (300, 250, 200, 100))
-    pygame.draw.line(scherm, (255, 255, 255), (0, 550), (800, 550), 3)
-
-    pygame.display.flip()
-
-pygame.quit()`} height={350} />
 
 </details>
 
@@ -168,6 +129,7 @@ Een gezicht is gewoon drie cirkels en een lijn over elkaar heen. De volgorde bep
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
+{/* draaien: compleet programma, alleen zonder speeltuin */}
 ```python
 import pygame
 
@@ -193,29 +155,5 @@ while actief:
 
 pygame.quit()
 ```
-
-<PygbagRunner code={`import pygame
-
-pygame.init()
-
-scherm = pygame.display.set_mode((800, 600))
-
-actief = True
-
-while actief:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            actief = False
-
-    scherm.fill((30, 30, 30))
-
-    pygame.draw.circle(scherm, (255, 255, 0), (400, 300), 120)
-    pygame.draw.circle(scherm, (0, 0, 0), (360, 270), 15)
-    pygame.draw.circle(scherm, (0, 0, 0), (440, 270), 15)
-    pygame.draw.line(scherm, (255, 0, 0), (360, 350), (440, 350), 4)
-
-    pygame.display.flip()
-
-pygame.quit()`} height={350} />
 
 </details>
