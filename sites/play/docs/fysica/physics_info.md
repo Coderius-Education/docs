@@ -6,7 +6,7 @@ sidebar_position: 2
 
 <Voorkennis
   items={[
-    {to: '/docs/fysica/links_en_rechts', label: '2.1 Links en rechts bewegen'},
+    {site: 'python', to: '/docs/basis/jouw-naam-op-het-scherm', label: 'Jouw naam op het scherm'},
   ]}
 />
 

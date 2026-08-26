@@ -6,9 +6,8 @@ sidebar_position: 5
 
 <Voorkennis
   items={[
-    {to: '/docs/gebeurtenissen/toetsenbord', label: '4.1 Gebeurtenissen'},
+    {site: 'python', to: '/docs/basis/jij-als-variabele', label: 'Jij als variabele'},
     {site: 'python', to: '/docs/beslissen/05b-if-else', label: 'If en else'},
-    {site: 'python', to: '/docs/basis/jij-als-variabele', label: 'Variabelen'},
   ]}
 />
 

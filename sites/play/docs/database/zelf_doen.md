@@ -6,9 +6,9 @@ sidebar_position: 4
 
 <Voorkennis
   items={[
-    {to: '/docs/database/basis', label: '6.1 Gegevens opslaan en ophalen'},
     {to: '/docs/gebeurtenissen/score_bijhouden', label: '4.5 Een score bijhouden met global'},
     {site: 'python', to: '/docs/data/11a-dictionaries-basis', label: 'Dictionaries'},
+    {site: 'python', to: '/docs/functies/09c-modules', label: 'Modules importeren'},
   ]}
 />
 

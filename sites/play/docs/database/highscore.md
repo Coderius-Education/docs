@@ -6,7 +6,7 @@ sidebar_position: 2
 
 <Voorkennis
   items={[
-    {to: '/docs/database/basis', label: '6.1 Gegevens opslaan en ophalen'},
+    {site: 'python', to: '/docs/beslissen/05b-if-else', label: 'If en else'},
   ]}
 />
 
