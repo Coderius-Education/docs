@@ -9,6 +9,8 @@ export default createConfig({
   url: 'https://play.coderius.nl',
   projectName,
   matomoSiteId: 5,
+  // @coderius/shared is de standaard; @coderius/checker levert de nakijker.
+  sharedPackages: ['@coderius/shared', '@coderius/checker'],
   trailingSlash: false,
 
   description:

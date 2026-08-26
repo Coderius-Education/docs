@@ -689,6 +689,9 @@ importers:
       '@codemirror/view':
         specifier: ^6.41.0
         version: 6.43.1
+      '@coderius/checker':
+        specifier: workspace:*
+        version: link:../../packages/checker
       '@coderius/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -10961,7 +10964,7 @@ snapshots:
       '@swc/html': 1.15.41
       browserslist: 4.28.2
       lightningcss: 1.32.0
-      semver: 7.8.4
+      semver: 7.8.5
       swc-loader: 0.2.7(@swc/core@1.15.41(@swc/helpers@0.5.23))(webpack@5.107.2(@swc/core@1.15.41(@swc/helpers@0.5.23))(lightningcss@1.32.0)(postcss@8.5.15))
       tslib: 2.8.1
       webpack: 5.107.2(@swc/core@1.15.41(@swc/helpers@0.5.23))(@swc/html@1.15.41)(lightningcss@1.32.0)(postcss@8.5.15)
@@ -10987,7 +10990,7 @@ snapshots:
       '@swc/html': 1.15.41
       browserslist: 4.28.2
       lightningcss: 1.32.0
-      semver: 7.8.4
+      semver: 7.8.5
       swc-loader: 0.2.7(@swc/core@1.15.41(@swc/helpers@0.5.23))(webpack@5.107.2(lightningcss@1.32.0))
       tslib: 2.8.1
       webpack: 5.107.2(@swc/core@1.15.41(@swc/helpers@0.5.23))(@swc/html@1.15.41)(lightningcss@1.32.0)
