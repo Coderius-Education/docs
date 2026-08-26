@@ -9,7 +9,7 @@ import Bibliotheek from '/docs/Microcontrollers/Arduino Nano RP2040 Connect/Tuto
 
 <Voorkennis
   items={[
-    {site: 'python', to: '/docs/functies/09d-eigen-module', label: 'Wat een module is: een .py-bestand dat je importeert'},
+    {site: 'python', to: '/docs/functies/09e-eigen-module', label: 'Wat een module is: een .py-bestand dat je importeert'},
   ]}
 />
 

@@ -8,7 +8,7 @@ sidebar_position: 4
   items={[
     {to: '/docs/gebeurtenissen/score_bijhouden', label: '4.5 Een score bijhouden met global'},
     {site: 'python', to: '/docs/data/11a-dictionaries-basis', label: 'Dictionaries'},
-    {site: 'python', to: '/docs/functies/09c-modules', label: 'Modules importeren'},
+    {site: 'python', to: '/docs/functies/09d-modules', label: 'Modules importeren'},
   ]}
 />
 

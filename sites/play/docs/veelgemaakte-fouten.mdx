@@ -198,7 +198,7 @@ Meer uitleg: [1.2 Je eerste cirkel](/docs/vormen/je_eerste_cirkel)
 
 **Foutmelding:**
 ```
-UnboundLocalError: local variable 'score' referenced before assignment
+UnboundLocalError: cannot access local variable 'score' where it is not associated with a value
 ```
 
 Je probeert een variabele buiten een functie aan te passen, maar vergeet `global` te schrijven.
@@ -224,4 +224,4 @@ def verhoog():
     score = score + 1
     tekst.words = "Score: " + str(score)`} height={250} />
 
-Meer uitleg: [4.5 Een score bijhouden met global](/docs/gebeurtenissen/score_bijhouden). De python-cursus behandelt `global` niet; play legt het daar zelf uit.
+Meer uitleg: [4.5 Een score bijhouden met global](/docs/gebeurtenissen/score_bijhouden), of <SiteLink site="python" to="/docs/functies/09c-scope">Scope</SiteLink> in de python-cursus voor het achterliggende idee.

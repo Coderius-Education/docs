@@ -8,7 +8,7 @@ title: "Deel 1: Een lampje aan"
 
 <Voorkennis
   items={[
-    {site: 'python', to: '/docs/functies/09c-modules', label: 'Modules importeren'},
+    {site: 'python', to: '/docs/functies/09d-modules', label: 'Modules importeren'},
     {site: 'python', to: '/docs/basis/jij-als-variabele', label: 'Variabelen'},
     {site: 'python', to: '/docs/tekst/04b-string-methoden', label: 'Aanroepen met een punt'},
   ]}

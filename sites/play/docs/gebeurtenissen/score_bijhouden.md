@@ -7,6 +7,7 @@ sidebar_position: 5
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/basis/jij-als-variabele', label: 'Jij als variabele'},
+    {site: 'python', to: '/docs/functies/09c-scope', label: 'Scope'},
     {site: 'python', to: '/docs/beslissen/05b-if-else', label: 'If en else'},
   ]}
 />
@@ -42,7 +43,7 @@ def spatie_ingedrukt():
 Druk maar eens op spatie. Als het goed is verandert er **niets** en zie je het volgende in je console (de eerste regel kan er bij jou anders uitzien):
 
 ```
-UnboundLocalError: local variable 'score' referenced before assignment
+UnboundLocalError: cannot access local variable 'score' where it is not associated with a value
 ```
 
 Python denkt dat `score` in de functie (bij score = score + 1) een nieuwe variabele is.

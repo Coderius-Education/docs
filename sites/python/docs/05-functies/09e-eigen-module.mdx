@@ -1,13 +1,13 @@
 ---
-sidebar_position: 5
+sidebar_position: 6
 description: Zet je eigen functies in een apart bestand en importeer ze. De bestandsnaam is de modulenaam, en beide bestanden staan in dezelfde map.
 ---
 
 import CodeExercise from '@site/src/components/CodeExercise';
 
-# 9d Je eigen module
+# 9e Je eigen module
 
-In [9c](09c-modules.mdx) haalde je `time` binnen: een module die iemand anders schreef. Een module is niets bijzonders — het is gewoon een Python-bestand. Dus kun je er zelf een maken.
+In [9d](09d-modules.mdx) haalde je `time` binnen: een module die iemand anders schreef. Een module is niets bijzonders — het is gewoon een Python-bestand. Dus kun je er zelf een maken.
 
 Twee bestanden, in dezelfde map:
 
@@ -114,7 +114,7 @@ Python zegt hier eigenlijk: die module heb ik gevonden, maar er zit niet in wat 
 
 ---
 
-## Opdracht 9d.1: De inhoud van je module
+## Opdracht 9e.1: De inhoud van je module
 
 Voordat je gaat splitsen: schrijf de twee functies die straks in `vormen.py` komen. `oppervlakte(lengte, breedte)` geeft lengte maal breedte terug, `omtrek(lengte, breedte)` geeft twee keer de som terug. Print allebei voor een vorm van 4 bij 3.
 
@@ -161,7 +161,7 @@ print(omtrek(4, 3))`}</CodeExercise>
 
 ---
 
-## Opdracht 9d.2: Nu in twee bestanden
+## Opdracht 9e.2: Nu in twee bestanden
 
 Doe dit in je eigen editor. Maak `vormen.py` met alleen de twee functies uit 9d.1 — dus zónder de `print`-regels. Maak daarnaast `main.py` dat `vormen` importeert en allebei de functies print voor 4 bij 3. De uitvoer blijft `12` en `14`.
 
@@ -200,7 +200,7 @@ Beide bestanden in dezelfde map, en je draait `main.py`.
 
 ---
 
-## Opdracht 9d.3: Twee programma's, één module (uitdaging)
+## Opdracht 9e.3: Twee programma's, één module (uitdaging)
 
 Maak naast `main.py` een tweede programma `tuin.py` dat dezelfde module gebruikt, maar dan om te berekenen hoeveel meter hek je nodig hebt om een tuin van 8 bij 5. Gebruik de `from`-vorm, zodat je `omtrek(8, 5)` kunt schrijven zonder de modulenaam ervoor.
 
