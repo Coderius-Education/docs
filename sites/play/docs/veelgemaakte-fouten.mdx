@@ -12,17 +12,28 @@ Lees de foutmelding altijd goed. Python vertelt je meestal precies wat er mis is
 
 ## AttributeError — typefout in een attribuutnaam
 
-**Foutmelding:**
-```
-AttributeError: 'Circle' object has no attribute 'colour'. Did you mean: 'color'?
-```
+De `play`-bibliotheek gebruikt de Amerikaanse spelling `color`, zonder u. Schrijf je `colour`, dan hangt het van je code af wat er gebeurt.
 
-`colour` bestaat niet — de `play`-bibliotheek gebruikt de Amerikaanse spelling `color` (zonder u).
+**Aanpassen gaat stilletjes fout.** Python maakt dan een nieuw attribuut met die naam aan. Je krijgt geen foutmelding, maar de cirkel blijft zwart:
 
 <PygbagRunner code={`import play
 
 cirkel = play.new_circle()
-cirkel.colour = 'red'  # FOUT: 'colour' bestaat niet`} height={250} />
+cirkel.colour = 'red'`} height={250} />
+
+Dit is de vervelendste variant, want er lijkt niets mis te zijn. Zie je een aanpassing niet terug op het scherm, controleer dan als eerste de spelling.
+
+**Opvragen geeft wél een foutmelding:**
+
+```
+AttributeError: 'Circle' object has no attribute 'colour'
+```
+
+{/* niet-draaien: toont bewust de AttributeError uit de les */}
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle()
+print(cirkel.colour)`} height={250} />
 
 **Oplossing:** gebruik `color` in plaats van `colour`.
 
@@ -65,6 +76,7 @@ NameError: name 'cirkel' is not defined
 
 Je gebruikt een variabele die nog niet bestaat, of je hebt de naam verkeerd gespeld.
 
+{/* niet-draaien: toont bewust de NameError uit de les */}
 <PygbagRunner code={`import play
 
 @play.when_key_pressed("space")
@@ -203,6 +215,7 @@ UnboundLocalError: cannot access local variable 'score' where it is not associat
 
 Je probeert een variabele buiten een functie aan te passen, maar vergeet `global` te schrijven.
 
+{/* niet-draaien: toont bewust de UnboundLocalError uit de les */}
 <PygbagRunner code={`import play
 
 score = 0

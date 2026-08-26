@@ -14,8 +14,20 @@ Uitvoeren gebeurt headless (SDL dummy) met de game-loop van play uitgeschakeld:
 module-niveau-code draait, decorators registreren hun callbacks, maar er start
 geen eindeloze lus. Een pygame-ce-voorbeeld schrijft zijn lus wél zelf; die
 krijgt een paar seconden en wordt daarna afgebroken zonder dat het een fout
-heet. Interactie (kliks, toetsen) blijft buiten beeld — dit is een opstart-test,
-geen speeltest.
+heet.
+
+Daarna gaat elke geregistreerde callback één keer af. Zonder die stap blijft de
+inhoud van elke `@play.when_key_pressed`-functie ongelezen — 321 regels lesstof
+waarin een tikfout ongestraft bleef staan. Wat een leerling ziet als "er gebeurt
+niets als ik op spatie druk" was hier gewoon groen. Dit blijft een opstart-test
+en geen speeltest: de callback draait één keer, zonder echte muis, toets of
+speelsituatie.
+
+Wat de callback-fase wél en niet vangt: alles wat een uitzondering geeft — een
+onbekende naam, een verkeerd argument, een methode die niet bestaat. Níét: een
+tikfout in een attribuut dat je *schrijft* (``cirkel.colour = 'red'`` maakt in
+Python gewoon een nieuw attribuut aan en gaat door). Lezen van datzelfde
+attribuut geeft wél een AttributeError, en dat vangt dit dus weer wel.
 
 Markers, direct boven het blok:
 
@@ -94,6 +106,74 @@ except BaseException:
     _sys.stderr.flush()
     _os._exit(1)
 _signal.alarm(0)
+
+# Fase twee: de callbacks. Play bewaart ze op twee plekken. Toetsen, kliks op
+# een vorm en when_touching gaan via de callback_manager; de UI-widgets houden
+# hun functies zelf bij, want new_slider().when_changed geeft de functie
+# ongewijzigd terug. Beide moeten mee, anders test je hoofdstuk 7 niet.
+import asyncio as _asyncio, inspect as _inspect
+from play.callback import CallbackType as _CT, callback_manager as _cm
+from play.globals import globals_list as _gl2
+
+# Argumenten raden op naam. Een when_changed-functie heet zijn parameter in de
+# lessen `waarde`, een when_submit-functie `naam` of `tekst`. Staat er iets
+# anders, dan krijgt hij 1 — genoeg om de regels erin uit te voeren.
+_PROEF = {{
+    'active_key': 'space', 'key': 'space',
+    'waarde': 50, 'value': 50, 'plek': 0, 'index': 0,
+    'tekst': 'test', 'text': 'test', 'naam': 'test',
+    'sprite': None,
+}}
+
+
+def _argumenten(_fn):
+    try:
+        _namen = list(_inspect.signature(_fn).parameters)
+    except (TypeError, ValueError):
+        return []
+    return [_PROEF.get(_naam, 1) for _naam in _namen]
+
+
+_taken = []
+for _soort in _CT:
+    try:
+        _cbs = _cm.get_callbacks(_soort)
+    except Exception:
+        continue
+    if not _cbs:
+        continue
+    _rij = []
+    if isinstance(_cbs, dict):
+        for _v in _cbs.values():
+            _rij += _v if isinstance(_v, list) else [_v]
+    else:
+        _rij = list(_cbs)
+    for _item in _rij:
+        # when_touching bewaart (functie, doelvorm); alleen het eerste deel
+        # is aanroepbaar.
+        _taken.append(_item[0] if isinstance(_item, tuple) and _item else _item)
+
+for _sprite in list(_gl2.sprites_group):
+    for _attr in ('_on_change_callbacks', '_on_submit_callbacks', '_on_click_callbacks'):
+        _taken += list(getattr(_sprite, _attr, None) or [])
+
+_signal.alarm({seconden})
+try:
+    for _fn in _taken:
+        if not callable(_fn):
+            continue
+        _uit = _fn(*_argumenten(_fn))
+        if _inspect.isawaitable(_uit):
+            _asyncio.get_event_loop().run_until_complete(_uit)
+except _Genoeg:
+    pass
+except BaseException:
+    _signal.alarm(0)
+    _tb.print_exc()
+    _sys.stderr.flush()
+    _os._exit(1)
+_signal.alarm(0)
+
 _sys.stdout.flush(); _sys.stderr.flush()
 _os._exit(0)
 """

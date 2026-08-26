@@ -30,6 +30,7 @@ def spatie_ingedrukt():
     score_tekst.words = str(score)
 ```
 
+{/* niet-draaien: de les toont hier bewust de UnboundLocalError zonder global */}
 <PygbagRunner code={`import play
 
 score = 0
