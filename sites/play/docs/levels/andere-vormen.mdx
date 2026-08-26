@@ -1,0 +1,213 @@
+---
+sidebar_position: 2
+---
+
+# 9.2 Levels met andere vormen
+
+<Voorkennis
+  items={[
+    {to: '/docs/levels/instellingen', label: '9.1 Levels met andere instellingen'},
+    {site: 'python', to: '/docs/beslissen/05c-and-or-elif', label: 'And, or en elif'},
+  ]}
+/>
+
+Bij 9.1 bleef de bal een bal. Soms wil je meer: level 1 is één stuiterende bal, level 2 is een rij blokken, level 3 is een bal die op een vloer valt. Dan moet je de oude vormen wegdoen en nieuwe maken.
+
+Wegdoen gaat met **`remove()`**, en dat is de hele truc. Je houdt in een lijst bij wat er bij het huidige level hoort, en bij een wissel ruim je die lijst op.
+
+```python showLineNumbers
+import play
+
+level = 1
+vormen = []
+tekst = play.new_text(words="Level 1", y=220, font_size=40)
+
+def bouw_level():
+    for vorm in vormen:
+        vorm.remove()
+    vormen.clear()
+    tekst.words = "Level " + str(level)
+
+    if level == 1:
+        bal = play.new_circle(color='red', radius=40)
+        bal.start_physics(obeys_gravity=False, x_speed=120)
+        vormen.append(bal)
+    elif level == 2:
+        for x in [-150, 0, 150]:
+            blok = play.new_box(x=x, y=100, width=60, height=60, color='blue')
+            vormen.append(blok)
+    else:
+        muur = play.new_box(y=-150, width=500, height=20, color='gray')
+        muur.start_physics(can_move=False, stable=True)
+        bal = play.new_circle(y=150, radius=25, color='purple')
+        bal.start_physics()
+        vormen.append(muur)
+        vormen.append(bal)
+
+def volgende_level():
+    global level
+    level = level + 1
+    if level > 3:
+        level = 1
+    bouw_level()
+
+@play.when_key_pressed('space')
+def spatie():
+    volgende_level()
+
+bouw_level()
+```
+
+<PygbagRunner code={`import play
+
+level = 1
+vormen = []
+tekst = play.new_text(words="Level 1", y=220, font_size=40)
+
+def bouw_level():
+    for vorm in vormen:
+        vorm.remove()
+    vormen.clear()
+    tekst.words = "Level " + str(level)
+
+    if level == 1:
+        bal = play.new_circle(color='red', radius=40)
+        bal.start_physics(obeys_gravity=False, x_speed=120)
+        vormen.append(bal)
+    elif level == 2:
+        for x in [-150, 0, 150]:
+            blok = play.new_box(x=x, y=100, width=60, height=60, color='blue')
+            vormen.append(blok)
+    else:
+        muur = play.new_box(y=-150, width=500, height=20, color='gray')
+        muur.start_physics(can_move=False, stable=True)
+        bal = play.new_circle(y=150, radius=25, color='purple')
+        bal.start_physics()
+        vormen.append(muur)
+        vormen.append(bal)
+
+def volgende_level():
+    global level
+    level = level + 1
+    if level > 3:
+        level = 1
+    bouw_level()
+
+@play.when_key_pressed('space')
+def spatie():
+    volgende_level()
+
+bouw_level()`} height={340} />
+
+Druk een paar keer op spatie. Elk level is een ander scherm, en na level 3 begin je weer bij 1.
+
+## De administratie
+
+<CodeUitleg>
+
+```python showLineNumbers
+level = 1
+vormen = []
+
+def bouw_level():
+    for vorm in vormen:
+        vorm.remove()
+    vormen.clear()
+```
+
+<Regel n={2}>
+De lijst met alles wat bij het huidige level hoort. Zonder die lijst weet je bij een wissel niet meer wat je moet opruimen.
+</Regel>
+
+<Regel n={5} tot={6}>
+Elke vorm van het vorige level van het scherm halen. `remove()` haalt ook de fysica en de gebeurtenissen van die vorm weg, dus er blijft niets achter dat stiekem nog meedoet.
+</Regel>
+
+<Regel n={7}>
+De lijst zelf leegmaken. Vergeet je dit, dan probeer je bij de volgende wissel vormen te verwijderen die al weg zijn.
+</Regel>
+
+</CodeUitleg>
+
+Alles wat je in `bouw_level()` maakt, zet je erachteraan in `vormen`. De tekst bovenin staat er expres **niet** in: die hoort bij het spel, niet bij een level, en moet dus blijven staan.
+
+## Er gaat iets mis
+
+Een `@play.when_key_pressed` die per ongeluk ín `bouw_level()` staat:
+
+```python
+# FOUT
+def bouw_level():
+    @play.when_key_pressed('space')
+    def spatie():
+        volgende_level()
+```
+
+**Oorzaak:** elke keer dat je een level bouwt, komt er een luisteraar bij. Na drie levels reageren er drie functies op spatie, dus één druk laat je drie levels vooruit springen.
+
+**Oplossing:** toetsen en muis registreer je **één keer**, buiten de bouwfunctie. In `bouw_level()` horen alleen vormen thuis.
+
+```python
+# GOED
+def bouw_level():
+    ...
+
+@play.when_key_pressed('space')
+def spatie():
+    volgende_level()
+```
+
+Voor gebeurtenissen op een vorm zelf (`@bal.when_clicked`, `@bal.when_touching(...)`) geldt dit niet: die verdwijnen samen met hun vorm zodra je `remove()` aanroept. Die mag je dus wél in `bouw_level()` zetten.
+
+## Opdracht 9.2.a: Level 4
+
+Voeg een vierde level toe: twee ballen die naar elkaar toe bewegen, links een rode en rechts een blauwe.
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Er komt een `elif level == 3:` bij, en het huidige `else` wordt level 4. Denk aan de grens in `volgende_level()`: die staat nu nog op 3.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+{/* niet-compileren: fragment dat je in bouw_level plakt, dus ingesprongen */}
+```python
+    elif level == 3:
+        links = play.new_circle(x=-200, radius=30, color='red')
+        links.start_physics(obeys_gravity=False, x_speed=100)
+        rechts = play.new_circle(x=200, radius=30, color='blue')
+        rechts.start_physics(obeys_gravity=False, x_speed=-100)
+        vormen.append(links)
+        vormen.append(rechts)
+```
+
+En in `volgende_level()` wordt `if level > 3:` nu `if level > 4:`.
+
+</details>
+
+## Opdracht 9.2.b: Opnieuw beginnen
+
+Laat de speler met de toets `r` het huidige level opnieuw starten, zonder naar het volgende te gaan.
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Je hebt er geen nieuwe code voor nodig, alleen een tweede toets die `bouw_level()` aanroept. Zet hem naast de spatie-functie, niet erin.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+@play.when_key_pressed('r')
+def opnieuw():
+    bouw_level()
+```
+
+`bouw_level()` ruimt eerst op en bouwt daarna weer op met dezelfde `level`, dus je krijgt precies hetzelfde level terug in zijn beginstand.
+
+</details>

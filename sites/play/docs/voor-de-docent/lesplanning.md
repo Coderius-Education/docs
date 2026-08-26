@@ -45,7 +45,12 @@ Na afloop kan de leerling:
 - Een video als sprite afspelen met `play.new_video` en besturen vanuit code (`play`, `pause`, `seek`).
 - Op het einde van een video reageren met `@play.when_video_ends`, bijvoorbeeld om van intro naar spel te schakelen.
 
-### Hoofdstuk 9 — Pygame-ce (gevorderd)
+### Hoofdstuk 9 — Levels
+- Eén spel per level anders instellen met een lijst of een lijst van dictionaries.
+- Een level opbouwen en weer opruimen met `remove()`, en bijhouden welke vormen erbij horen.
+- Een winst-conditie koppelen aan een gebeurtenis, en het bereikte level opslaan met de database.
+
+### Hoofdstuk 10 — Pygame-ce (gevorderd)
 - Een eigen game-loop schrijven met `pygame.init()` en `pygame.display.flip()`.
 - Vormen tekenen, tekst tonen, op toetsen reageren in raw pygame-ce.
 - Botsingen en fysica met `pymunk` toepassen.

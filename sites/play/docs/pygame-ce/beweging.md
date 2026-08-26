@@ -2,7 +2,7 @@
 sidebar_position: 4
 ---
 
-# 9.4 Beweging
+# 10.4 Beweging
 
 In coderius-play kon je een vorm laten bewegen met `start_physics()`. In pygame-ce doe je dit zelf: je verandert de positie van een vorm elke frame.
 
@@ -107,7 +107,7 @@ clock.tick(60)
 ```
 Zorgt ervoor dat de game loop maximaal 60 keer per seconde draait. Zonder dit zou het spel veel te snel gaan.
 
-## Opdracht 9.4.a: Snelheid aanpassen
+## Opdracht 10.4.a: Snelheid aanpassen
 
 Verander het programma zodat:
 1. De cirkel sneller beweegt als je `shift` ingedrukt houdt
@@ -209,7 +209,7 @@ pygame.quit()`} height={350} />
 
 </details>
 
-## Opdracht 9.4.b: Niet van het scherm af
+## Opdracht 10.4.b: Niet van het scherm af
 
 De cirkel kan nu van het scherm af bewegen. Zorg ervoor dat de cirkel niet buiten het venster kan komen.
 
