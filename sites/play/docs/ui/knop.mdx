@@ -24,15 +24,43 @@ def geklikt():
     teller = teller + 1
     tekst.words = str(teller) + " keer geklikt"`} height={300} />
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
+import play
+
+teller = 0
+tekst = play.new_text(words="0 keer geklikt", y=100)
 knop = play.new_button(text="Klik mij")
 
 @knop.when_clicked
 def geklikt():
-    ...
+    global teller
+    teller = teller + 1
+    tekst.words = str(teller) + " keer geklikt"
 ```
 
-`play.new_button` maakt de knop, en `@knop.when_clicked` koppelt er een functie aan. Die functie wordt uitgevoerd bij elke klik op de knop. Het zweef-effect (de knop wordt lichter als je muis erop staat) krijg je er gratis bij.
+<Regel n={3}>
+Het aantal kliks tot nu toe. Deze staat buiten de functie, want hij moet blijven bestaan tussen twee kliks door.
+</Regel>
+
+<Regel n={5}>
+Maakt de knop. Het zweef-effect — de knop wordt lichter als je muis erop staat — krijg je er gratis bij.
+</Regel>
+
+<Regel n={7}>
+Koppelt de functie eronder aan de knop. Bij elke klik roept play `geklikt()` aan.
+</Regel>
+
+<Regel n={9}>
+Zonder `global` zou `teller` op de volgende regel een nieuwe variabele binnen de functie worden, en begon het tellen elke klik opnieuw.
+</Regel>
+
+<Regel n={11}>
+Zet de nieuwe stand op het scherm. `str()` maakt van het getal weer tekst.
+</Regel>
+
+</CodeUitleg>
 
 ## De knop aanpassen
 

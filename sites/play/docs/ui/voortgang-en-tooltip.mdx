@@ -26,12 +26,39 @@ def opladen():
     if balk.value < 100:
         balk.value = balk.value + 10`} height={300} />
 
-```python
-balk = play.new_progress_bar(min_value=0, max_value=100, value=0)
-balk.value = 70
+<CodeUitleg>
+
+```python showLineNumbers
+import play
+
+balk = play.new_progress_bar(min_value=0, max_value=100, value=0, y=60, show_label=True)
+knop = play.new_button(text="Laad op", y=-60)
+
+@knop.when_clicked
+def opladen():
+    if balk.value < 100:
+        balk.value = balk.value + 10
 ```
 
-Met `show_label=True` staat het percentage in de balk. Een voortgangsbalk is bijvoorbeeld handig als levensbalk, als laadbalk of als timer.
+<Regel n={3}>
+De balk loopt van 0 tot 100 en begint leeg. Met `show_label=True` staat het percentage erin.
+</Regel>
+
+<Regel n={4}>
+De knop waarmee de speler de balk vult. De balk zelf reageert nergens op; jij bepaalt wanneer hij verandert.
+</Regel>
+
+<Regel n={8}>
+Zonder deze controle zou de balk voorbij zijn `max_value` blijven tellen.
+</Regel>
+
+<Regel n={9}>
+Tien procent erbij. `balk.value` uitlezen en zetten gaat allebei via dezelfde naam.
+</Regel>
+
+</CodeUitleg>
+
+Een voortgangsbalk is bijvoorbeeld handig als levensbalk, als laadbalk of als timer.
 
 ## De zweeftekst
 
@@ -42,11 +69,26 @@ Met `show_label=True` staat het percentage in de balk. Een voortgangsbalk is bij
 knop = play.new_button(text="?")
 play.new_tooltip(text="Deze knop doet nog niets", target=knop)`} height={280} />
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
+import play
+
+knop = play.new_button(text="?")
 play.new_tooltip(text="Deze knop doet nog niets", target=knop)
 ```
 
-Het `target` mag elke vorm zijn, dus ook een cirkel of afbeelding. Met `offset_x` en `offset_y` schuif je de tekst wat verder van de muis af.
+<Regel n={3}>
+Het doelwit: de vorm waar de muis overheen moet om de tekst te laten verschijnen.
+</Regel>
+
+<Regel n={4}>
+De zweeftekst zelf. Je hoeft hem niet in een variabele te zetten — hij hangt vanaf nu aan zijn `target`. Dat target mag elke vorm zijn, dus ook een cirkel of afbeelding.
+</Regel>
+
+</CodeUitleg>
+
+Met `offset_x` en `offset_y` schuif je de tekst wat verder van de muis af.
 
 ## Opdracht 7.5.a: Levensbalk
 

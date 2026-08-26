@@ -25,13 +25,36 @@ schuif = play.new_slider(min_value=10, max_value=100, value=50, y=-120)
 def grootte_veranderd(waarde):
     cirkel.radius = int(waarde)`} height={340} />
 
-```python
-schuif = play.new_slider(min_value=10, max_value=100, value=50)
+<CodeUitleg>
+
+```python showLineNumbers
+import play
+
+cirkel = play.new_circle(color='seagreen', y=80)
+schuif = play.new_slider(min_value=10, max_value=100, value=50, y=-120)
 
 @schuif.when_changed
 def grootte_veranderd(waarde):
-    ...
+    cirkel.radius = int(waarde)
 ```
+
+<Regel n={4}>
+De schuifbalk loopt van 10 tot 100 en begint op 50. Die 50 is dus ook meteen de startgrootte van de cirkel.
+</Regel>
+
+<Regel n={6}>
+Koppelt de functie eronder aan de schuif. Elke verandering roept hem opnieuw aan.
+</Regel>
+
+<Regel n={7}>
+`waarde` is de nieuwe stand van de schuif. Een `when_changed`-functie krijgt die als parameter mee; je hoeft hem niet zelf op te halen.
+</Regel>
+
+<Regel n={8}>
+`int()` maakt er een heel getal van, want de schuif geeft een kommagetal terug.
+</Regel>
+
+</CodeUitleg>
 
 Sleep aan de schuif en de cirkel groeit en krimpt mee. Je kunt de waarde ook altijd direct uitlezen met `schuif.value`.
 

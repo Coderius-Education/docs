@@ -8,13 +8,6 @@ Tijd voor beweging. Met **start_physics()** kun je een vorm laten bewegen.
 
 Bekijk de code hieronder. Wat denk je dat er gebeurt?
 
-```python
-import play
-
-cirkel = play.new_circle()
-cirkel.start_physics(obeys_gravity=False, x_speed=60)
-```
-
 <PygbagRunner code={`import play
 
 cirkel = play.new_circle()
@@ -32,13 +25,27 @@ De bal beweegt naar rechts en stuitert tegen de muur.
 
 Wat gebeurt hier?
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
+import play
+
+cirkel = play.new_circle()
 cirkel.start_physics(obeys_gravity=False, x_speed=60)
 ```
+
+<Regel n={3}>
+Een gewone cirkel, zoals in hoofdstuk 1. Zonder de regel eronder blijft hij stilstaan.
+</Regel>
+
+<Regel n={4}>
+Zet de fysica aan. Twee dingen stel je hier in:
+
 - **obeys_gravity=False**: de zwaartekracht staat uit, dus de bal valt niet naar beneden
 - **x_speed=60**: de bal beweegt met snelheid 60 naar rechts
+</Regel>
 
-Als het goed is, zie je de bal heen en weer bewegen.
+</CodeUitleg>
 
 ### Onderzoek
 

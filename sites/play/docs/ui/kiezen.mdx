@@ -25,13 +25,20 @@ menu = play.new_dropdown(options=["red", "green", "blue"], y=-100)
 def kleur_gekozen(waarde, plek):
     cirkel.color = waarde`} height={340} />
 
-```python
-menu = play.new_dropdown(options=["red", "green", "blue"])
+<CodeUitleg>
 
-@menu.when_changed
-def kleur_gekozen(waarde, plek):
-    ...
+```python showLineNumbers
+import play
+
+cirkel = play.new_circle(color='red', y=60)
+menu = play.new_dropdown(options=["red", "green", "blue"], y=-100)
 ```
+
+<Regel n={4}>
+De keuzes staan in een lijst. Wat je hier neerzet, ziet de speler in het menu.
+</Regel>
+
+</CodeUitleg>
 
 Uitlezen zonder functie kan ook: `menu.selected_value` geeft de gekozen waarde, `menu.selected_index` de plek (0 is de eerste optie).
 

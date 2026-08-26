@@ -134,7 +134,9 @@ Bij gelijke massa kaatsen de ballen gelijk terug. Met ongelijke massa wordt de l
 - `True` = de vorm is een sensor (objecten gaan er doorheen)
 - `False` = de vorm is normaal en blokkeert andere vormen (dit is de standaard)
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 import play
 
 vloer = play.new_box(y=-200, width=600, height=20)
@@ -151,6 +153,36 @@ tekst = play.new_text("", y=250, font_size=30)
 def in_de_zone():
     tekst.words = "In de zone!"
 ```
+
+<Regel n={3}>
+De vloer. Deze krijgt geen `start_physics()`, dus hij staat stil en de bal blijft erop liggen.
+</Regel>
+
+<Regel n={5} tot={6}>
+De bal, met fysica aan. Zonder die tweede regel valt hij niet.
+</Regel>
+
+<Regel n={8}>
+De zone. `transparency=50` maakt hem half doorzichtig, zodat je kunt zien waar hij zit.
+</Regel>
+
+<Regel n={9}>
+De kern van dit voorbeeld: **sensor=True** betekent dat de zone botsingen wel merkt, maar niets tegenhoudt.
+</Regel>
+
+<Regel n={11}>
+Een lege tekst bovenin, klaar om straks gevuld te worden.
+</Regel>
+
+<Regel n={13}>
+Gaat af zolang de bal de zone raakt.
+</Regel>
+
+<Regel n={15}>
+Zet de melding op het scherm.
+</Regel>
+
+</CodeUitleg>
 
 <PygbagRunner code={`import play
 

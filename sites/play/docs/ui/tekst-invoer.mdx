@@ -21,15 +21,38 @@ veld = play.new_text_input(placeholder="Typ je naam en druk op Enter")
 def naam_ingevuld(naam):
     welkom.words = "Welkom, " + naam`} height={300} />
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
+import play
+
+welkom = play.new_text(words="Hoe heet je?", y=100)
 veld = play.new_text_input(placeholder="Typ je naam en druk op Enter")
 
 @veld.when_submit
 def naam_ingevuld(naam):
-    ...
+    welkom.words = "Welkom, " + naam
 ```
 
-Klik op het veld en typ. De `placeholder` is de grijze hulptekst die verdwijnt zodra er iets staat. **`when_submit`** wordt aangeroepen als de speler op Enter drukt en krijgt de getypte tekst mee.
+<Regel n={4}>
+Het invoerveld. De `placeholder` is de grijze hulptekst die verdwijnt zodra de speler iets typt.
+</Regel>
+
+<Regel n={6}>
+**`when_submit`** gaat af als de speler op Enter drukt, niet bij elke letter.
+</Regel>
+
+<Regel n={7}>
+`naam` is de getypte tekst. Ook deze functie krijgt zijn waarde als parameter mee.
+</Regel>
+
+<Regel n={8}>
+Plakt de naam achter "Welkom, " en zet dat op het scherm.
+</Regel>
+
+</CodeUitleg>
+
+Klik op het veld en typ maar.
 
 ## Elke toetsaanslag volgen
 

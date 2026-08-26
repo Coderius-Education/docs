@@ -44,7 +44,9 @@ Door deze drie attributen te combineren, krijg je drie soorten fysica:
 
 Een **dynamic** vorm beweegt vrij rond. De zwaartekracht en botsingen hebben er invloed op. Dit is de standaard.
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 import play
 
 bal = play.new_circle()
@@ -53,6 +55,20 @@ bal.start_physics(can_move=True, obeys_gravity=True, stable=False)
 bal.physics_info()
 ```
 
+<Regel n={4}>
+Drie instellingen samen maken deze bal **dynamic**:
+
+- **can_move=True**: de bal mag bewegen
+- **obeys_gravity=True**: de bal valt naar beneden
+- **stable=False**: als iets tegen de bal botst, wordt de bal weggeduwd
+</Regel>
+
+<Regel n={6}>
+Print het gevonden type in je console, zodat je kunt controleren of het klopt.
+</Regel>
+
+</CodeUitleg>
+
 <PygbagRunner code={`import play
 
 bal = play.new_circle()
@@ -60,17 +76,15 @@ bal.start_physics(can_move=True, obeys_gravity=True, stable=False)
 
 bal.physics_info()`} height={300} />
 
-- **can_move=True**: de bal mag bewegen
-- **obeys_gravity=True**: de bal valt naar beneden
-- **stable=False**: als iets tegen de bal botst, wordt de bal weggeduwd
-
 De bal valt naar beneden en stuitert. Dat is dynamic gedrag.
 
 ## Static
 
 Een **static** vorm staat helemaal stil en kan niet bewegen. Andere vormen kunnen er wel tegenaan botsen.
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 import play
 
 muur = play.new_box(y=-200, width=400, height=20)
@@ -79,6 +93,20 @@ muur.start_physics(can_move=False, obeys_gravity=True, stable=True)
 muur.physics_info()
 ```
 
+<Regel n={3}>
+Een brede, platte doos onderin het scherm.
+</Regel>
+
+<Regel n={4}>
+Deze combinatie maakt hem **static**:
+
+- **can_move=False**: de muur kan niet bewegen
+- **obeys_gravity=True**: maakt niet uit, want de muur kan toch niet bewegen
+- **stable=True**: de muur wordt niet weggeduwd bij een botsing
+</Regel>
+
+</CodeUitleg>
+
 <PygbagRunner code={`import play
 
 muur = play.new_box(y=-200, width=400, height=20)
@@ -86,17 +114,15 @@ muur.start_physics(can_move=False, obeys_gravity=True, stable=True)
 
 muur.physics_info()`} height={300} />
 
-- **can_move=False**: de muur kan niet bewegen
-- **obeys_gravity=True**: maakt niet uit, want de muur kan toch niet bewegen
-- **stable=True**: de muur wordt niet weggeduwd bij een botsing
-
 De muur blijft op zijn plek, wat er ook tegenaan botst.
 
 ## Kinematic
 
 Een **kinematic** vorm beweegt volgens een vaste snelheid. De zwaartekracht heeft er geen invloed op, maar andere vormen botsen er wel tegenaan.
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 import play
 
 platform = play.new_box(width=200, height=20)
@@ -105,16 +131,22 @@ platform.start_physics(can_move=True, obeys_gravity=False, stable=True, x_speed=
 platform.physics_info()
 ```
 
+<Regel n={4}>
+Deze combinatie, mét een eigen `x_speed`, maakt hem **kinematic**:
+
+- **can_move=True**: het platform mag bewegen
+- **obeys_gravity=False**: het platform valt niet naar beneden
+- **stable=True**: het platform wordt niet weggeduwd bij een botsing
+</Regel>
+
+</CodeUitleg>
+
 <PygbagRunner code={`import play
 
 platform = play.new_box(width=200, height=20)
 platform.start_physics(can_move=True, obeys_gravity=False, stable=True, x_speed=40)
 
 platform.physics_info()`} height={300} />
-
-- **can_move=True**: het platform mag bewegen
-- **obeys_gravity=False**: het platform valt niet naar beneden
-- **stable=True**: het platform wordt niet weggeduwd bij een botsing
 
 Het platform beweegt heen en weer, maar valt niet naar beneden.
 
