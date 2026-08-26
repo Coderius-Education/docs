@@ -85,6 +85,7 @@ Je hebt nu twee rode cirkels: het origineel links en de kopie rechts.
 - **Strings die de gebruiker ziet in het Nederlands**: `play.new_text(words="Score: " + str(score))`.
 - **MDX-pagina's** voorzien runnable code van een `<TryButton code={`…`} />` direct ná het Markdown-codeblok (zelfde code, niet een variant).
 - **Geen overbodige comments in code.** Liever een korte zin in lopend Nederlands ónder het blok dan inline `# uitleg`.
+- **Code regel voor regel uitleggen** doe je met `<CodeUitleg>` (globaal beschikbaar in elke site die het registreert, geen import nodig). Het codeblok blijft een gewoon ```python-blok mét `showLineNumbers` als kind, zodat het zijn highlighting en de compileercheck in CI houdt; de uitleg staat eronder als `<Regel n={3}>`-blokken, of `<Regel n={5} tot={7}>` voor een groepje. Wie een uitleg aanwijst ziet de bijbehorende regel oplichten. Dit vervangt de rij losse fragment-codeblokken die elk één regel herhalen. `packages/shared/codeuitleg.test.ts` controleert monorepo-breed dat elk nummer bestaat, geen lege regel aanwijst en dat `showLineNumbers` erop staat.
 
 ## 6. Opdrachten
 

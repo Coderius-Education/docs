@@ -53,7 +53,9 @@ Met `global score` geef je aan dat de score die buiten de functie is gemaakt, bi
 
 Met `global score` vertel je Python dat je de variabele van *buiten* de functie wilt gebruiken:
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 import play
 
 score = 0
@@ -65,6 +67,15 @@ def spatie_ingedrukt():
     score = score + 1
     score_tekst.words = str(score)
 ```
+
+<Regel n={3}>De score zelf, buiten elke functie. Dit is de variabele die straks moet blijven bestaan tussen twee toetsaanslagen door.</Regel>
+<Regel n={4}>De tekst op het scherm. `str(score)` maakt van het getal 0 de tekst `"0"`, want `new_text` wil tekst.</Regel>
+<Regel n={6} tot={7}>Koppelt de functie eronder aan de spatiebalk. Laat je die los, dan roept play `spatie_ingedrukt()` aan.</Regel>
+<Regel n={8}>De sleutelregel. Zonder deze regel maakt Python op regel 9 een nieuwe variabele die alleen binnen de functie bestaat; met `global` gebruikt hij de `score` van regel 3.</Regel>
+<Regel n={9}>Eén punt erbij.</Regel>
+<Regel n={10}>Zet de nieuwe stand op het scherm. De tekst verandert niet vanzelf mee als `score` verandert; dat moet je zelf doen.</Regel>
+
+</CodeUitleg>
 
 <PygbagRunner code={`import play
 

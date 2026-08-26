@@ -28,7 +28,9 @@ Verwacht dus iets meer regels code voor hetzelfde resultaat — in ruil krijg je
 
 ## Een venster openen
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 import pygame
 
 pygame.init()
@@ -46,6 +48,17 @@ while actief:
 pygame.quit()
 ```
 
+<Regel n={1}>Haalt pygame-ce binnen. Anders dan bij play schrijf je hier alles zelf.</Regel>
+<Regel n={3}>Start pygame op. Dit moet altijd als eerste, vóór je iets met een venster doet.</Regel>
+<Regel n={5}>Maakt het venster: 800 pixels breed, 600 hoog. De variabele `scherm` is het vlak waarop je straks tekent.</Regel>
+<Regel n={6}>Zet de titel in de balk bovenaan het venster.</Regel>
+<Regel n={8}>Onthoudt of het programma nog moet draaien. Zet je dit op `False`, dan stopt de lus hieronder.</Regel>
+<Regel n={10}>De **game loop**. Alles wat elk frame opnieuw moet gebeuren staat hierin. Elk spel in pygame-ce heeft er een; play schreef hem tot nu toe voor je.</Regel>
+<Regel n={11} tot={13}>Loopt de gebeurtenissen af die sinds het vorige frame binnenkwamen. Klik je op het kruisje, dan stuurt pygame `QUIT` en zetten we `actief` op `False`.</Regel>
+<Regel n={15}>Sluit pygame netjes af nadat de lus is gestopt.</Regel>
+
+</CodeUitleg>
+
 <PygbagRunner code={`import pygame
 
 pygame.init()
@@ -62,45 +75,7 @@ while actief:
 
 pygame.quit()`} height={350} />
 
-
-
-{/* Fictieve screenshot: Een leeg venster met de titel "Mijn eerste pygame-ce programma" en afmetingen 800x600 pixels. */}
-Je zou nu een leeg venster moeten zien met de titel "Mijn eerste pygame-ce programma" en een afmeting van 800 bij 600 pixels.
-
-Wat gebeurt hier?
-
-```python
-pygame.init()
-```
-Start pygame op. Dit moet je altijd als eerste doen.
-
-```python
-scherm = pygame.display.set_mode((800, 600))
-```
-Maakt een venster van 800 pixels breed en 600 pixels hoog.
-
-```python
-pygame.display.set_caption("Mijn eerste pygame-ce programma")
-```
-Geeft het venster een titel.
-
-```python
-while actief:
-    ...
-```
-Dit is de **game loop**. Zolang `actief` True is, blijft het programma draaien. Elk spel in pygame-ce heeft een game loop.
-
-```python
-for event in pygame.event.get():
-    if event.type == pygame.QUIT:
-        actief = False
-```
-Hier luisteren we naar gebeurtenissen. Als je op het kruisje klikt, stopt het programma.
-
-```python
-pygame.quit()
-```
-Sluit pygame netjes af.
+Je ziet een leeg venster van 800 bij 600 pixels, met "Mijn eerste pygame-ce programma" in de titelbalk.
 
 ### Er gaat iets mis?
 
