@@ -86,6 +86,10 @@ De bal beweegt nu alleen horizontaal. Gebruik naast `x_speed` ook `y_speed` om d
 
 ![pong](pong.png)
 
+:::tip
+Ben je klaar, of wil je weten hoe ver je bent? Upload je project bij [Spel checken](/spel-checken) en zie welke onderdelen van de cursus erin zitten.
+:::
+
 ## Mogelijke uitbreidingen
 - Wanneer heeft iemand gewonnen?
 - Kun je een batje door de computer laten besturen? (tip: kijk eens naar `distance_to` in de [Cheatsheet](/docs/cheatsheet))

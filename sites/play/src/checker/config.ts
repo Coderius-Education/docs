@@ -70,7 +70,9 @@ export const playConfig: CheckerConfig = {
       group: 'Basis',
       label: 'een variabele gebruiken',
       level: 'basis',
-      detect: py(/(?<![=!<>])\s*\b\w+\s*=\s*[^=]/g),
+      // Aan het begin van een regel, anders telt `color="red"` in een
+      // aanroep ook mee en heeft élk programma dit concept.
+      detect: py(/^[ \t]*\w+\s*=\s*[^=\n]/gm),
     },
     {
       id: 'py-if',

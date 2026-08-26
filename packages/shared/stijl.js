@@ -7,6 +7,11 @@ const spaties = (tekst) => tekst.replace(/[^\n]/g, ' ');
 const MASKERS = [
   /^---\n[\s\S]*?\n---\n/, // frontmatter
   /```[\s\S]*?```/g, // codeblokken
+  // Template-literals in JSX-props vóór de tag-regex hieronder: een `>` in de
+  // code (`if a > b:`) sluit anders die tag af en de rest van het blok komt
+  // alsnog als proza binnen.
+  /=\{`[\s\S]*?`\}/g, // <PygbagRunner code={`…`} />
+  /\{`[\s\S]*?`\}/g, // <CodeExercise>{`…`}</CodeExercise>
   /`[^`\n]*`/g, // inline code
   /<[^>]*>/g, // losse JSX- en HTML-tags
   /\{\/\*[\s\S]*?\*\/\}/g, // MDX-commentaar

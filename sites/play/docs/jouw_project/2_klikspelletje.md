@@ -49,6 +49,10 @@ Draai je spel en stel de snelheid af. Verspringt de bal te snel of te langzaam? 
 Als je `hide()` gebruikt om een bal te verbergen, onthoud dan dat **de fysica ook op pauze gaat**. Een verborgen bal kan niet geraakt worden. Gebruik `show()` om de bal weer zichtbaar én klikbaar te maken.
 :::
 
+:::tip
+Ben je klaar, of wil je weten hoe ver je bent? Upload je project bij [Spel checken](/spel-checken) en zie welke onderdelen van de cursus erin zitten.
+:::
+
 ## Mogelijke uitbreidingen
 - **Timer**: voeg een aftellende timer toe. Hoeveel punten haal je in 30 seconden?
 - **Sneller worden**: laat de bal steeds sneller verspringen naarmate je meer punten hebt.
