@@ -15,10 +15,15 @@ cirkel = play.new_circle()
 cirkel.start_physics(obeys_gravity=False, x_speed=60)
 ```
 
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle()
+cirkel.start_physics(obeys_gravity=False, x_speed=60)`} height={300} />
+
 <details>
 <summary>Klik hier voor het antwoord.</summary>
 
-Voer de code uit. De bal beweegt naar rechts en stuitert tegen de muur.
+De bal beweegt naar rechts en stuitert tegen de muur.
 
 :::info
 `coderius-play` maakt automatisch onzichtbare muren aan de randen van het scherm. Vormen stuiteren hier standaard tegenaan.
@@ -69,6 +74,11 @@ cirkel = play.new_circle()
 cirkel.start_physics(obeys_gravity=False, x_speed=-100)
 ```
 
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle()
+cirkel.start_physics(obeys_gravity=False, x_speed=-100)`} height={300} />
+
 </details>
 
 b) Laat de bal schuin naar de rechterboven hoek bewegen.
@@ -89,6 +99,11 @@ import play
 cirkel = play.new_circle()
 cirkel.start_physics(obeys_gravity=False, x_speed=100, y_speed=100)
 ```
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle()
+cirkel.start_physics(obeys_gravity=False, x_speed=100, y_speed=100)`} height={300} />
 
 </details>
 

@@ -16,7 +16,7 @@ Hoe houd je een score bij in een spel? Als je een variabele, zoals `score`, wilt
 
 ## Een veelgemaakte fout
 
-Kopieer onderstaande code naar je editor en voer de code uit:
+Draai het programma en druk een paar keer op de spatiebalk:
 
 ```python
 import play
@@ -29,6 +29,16 @@ def spatie_ingedrukt():
     score = score + 1
     score_tekst.words = str(score)
 ```
+
+<PygbagRunner code={`import play
+
+score = 0
+score_tekst = play.new_text(str(score), y=100, font_size=40)
+
+@play.when_key_released("space")
+def spatie_ingedrukt():
+    score = score + 1
+    score_tekst.words = str(score)`} height={300} />
 
 Druk maar eens op spatie. Als het goed is verandert er **niets** en zie je het volgende in je console (de eerste regel kan er bij jou anders uitzien):
 
@@ -56,6 +66,17 @@ def spatie_ingedrukt():
     score = score + 1
     score_tekst.words = str(score)
 ```
+
+<PygbagRunner code={`import play
+
+score = 0
+score_tekst = play.new_text(str(score), y=100, font_size=40)
+
+@play.when_key_released("space")
+def spatie_ingedrukt():
+    global score
+    score = score + 1
+    score_tekst.words = str(score)`} height={300} />
 
 ## Opdracht 4.5.a: Score met twee toetsen
 
@@ -86,6 +107,23 @@ def reset():
     score = 0
     score_tekst.words = str(score)
 ```
+
+<PygbagRunner code={`import play
+
+score = 0
+score_tekst = play.new_text(str(score), y=100, font_size=40)
+
+@play.when_key_released("space")
+def punt():
+    global score
+    score = score + 1
+    score_tekst.words = str(score)
+
+@play.when_key_released("r")
+def reset():
+    global score
+    score = 0
+    score_tekst.words = str(score)`} height={300} />
 
 </details>
 
@@ -150,5 +188,19 @@ def punt():
         tekst.words = "Je hebt gewonnen!"
         play.stop_program()
 ```
+
+<PygbagRunner code={`import play
+
+score = 0
+tekst = play.new_text(words="Score: 0", font_size=40)
+
+@play.when_key_pressed("space")
+def punt():
+    global score
+    score = score + 1
+    tekst.words = "Score: " + str(score)
+    if score == 10:
+        tekst.words = "Je hebt gewonnen!"
+        play.stop_program()`} height={300} />
 
 </details>

@@ -39,6 +39,22 @@ while actief:
 pygame.quit()
 ```
 
+<PygbagRunner code={`import pygame
+
+pygame.init()
+
+scherm = pygame.display.set_mode((800, 600))
+pygame.display.set_caption("Mijn eerste pygame-ce programma")
+
+actief = True
+
+while actief:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            actief = False
+
+pygame.quit()`} height={350} />
+
 
 
 {/* Fictieve screenshot: Een leeg venster met de titel "Mijn eerste pygame-ce programma" en afmetingen 800x600 pixels. */}
@@ -117,6 +133,22 @@ while actief:
 
 pygame.quit()
 ```
+
+<PygbagRunner code={`import pygame
+
+pygame.init()
+
+scherm = pygame.display.set_mode((400, 400))
+pygame.display.set_caption("Mijn spel")
+
+actief = True
+
+while actief:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            actief = False
+
+pygame.quit()`} height={350} />
 
 {/* Fictieve screenshot: Een leeg venster met de titel "Mijn spel" en afmetingen 400x400 pixels. */}
 Na het uitvoeren van deze code, zou je een leeg venster moeten zien met de titel "Mijn spel" en afmetingen van 400 bij 400 pixels.

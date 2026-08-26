@@ -14,6 +14,10 @@ sidebar_position: 4
 
 Zeker. Mocht je Informatica-ACTIEF gebruiken, is er een mooi hoofdstuk over dictionaries waarin je ook leert om deze als JSON op te slaan. Durf je het aan om dit zelf te doen?
 
+:::warning[Online speeltuin]
+Deze opdracht draait niet in de online speeltuin: je moet het bestand `database.json` op je eigen computer kunnen openen om te zien wat er verandert. Gebruik Thonny of VS Code, zie [installatie](/docs/installatie).
+:::
+
 Hieronder geven we je een voorzet om je op gang te helpen.
 - Kopieer dit codefragment en voer de code uit
 - Klik op spatie en update de database

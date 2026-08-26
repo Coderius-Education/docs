@@ -10,10 +10,12 @@ De lessen tonen code in twee vormen, en die krijgen elk hun eigen diepte:
   fullstack doen): die mogen bestanden of context veronderstellen die hier
   niet bestaat.
 
-Uitvoeren gebeurt headless (SDL dummy) met de game-loop uitgeschakeld:
+Uitvoeren gebeurt headless (SDL dummy) met de game-loop van play uitgeschakeld:
 module-niveau-code draait, decorators registreren hun callbacks, maar er start
-geen eindeloze lus. Interactie (kliks, toetsen) blijft dus buiten beeld — dit
-is een opstart-test, geen speeltest.
+geen eindeloze lus. Een pygame-ce-voorbeeld schrijft zijn lus wél zelf; die
+krijgt een paar seconden en wordt daarna afgebroken zonder dat het een fout
+heet. Interactie (kliks, toetsen) blijft buiten beeld — dit is een opstart-test,
+geen speeltest.
 
 Markers, direct boven het blok:
 
@@ -53,8 +55,18 @@ NIET_COMPILEREN_RE = re.compile(r"\{/\*\s*niet-compileren:.*?\*/\}\s*$")
 # pymunks cffi-objecten anders ruis (en op sommige systemen een segfault)
 # produceren die niets over de lescode zegt. Een expliciete
 # play.start_program() onderaan een ouder voorbeeld wordt een no-op.
+#
+# De wekker is er voor hoofdstuk 7. Een pygame-ce-voorbeeld schrijft zijn eigen
+# `while actief:` en die loopt hier, zonder venster om op het kruisje te
+# klikken, nooit af. In de browser is dat precies goed — daar draait het spel
+# tot de leerling op stop drukt. Hier is de vraag een andere: start het, en
+# overleeft het een paar seconden draaien. Haalt het blok de wekker, dan is het
+# antwoord ja. _Genoeg erft van BaseException zodat een `except Exception` in de
+# lescode hem niet opeet.
+WEKKER_SECONDEN = 3
+
 HARNAS = """\
-import os as _os, sys as _sys, traceback as _tb
+import os as _os, signal as _signal, sys as _sys, traceback as _tb
 _os.environ.setdefault('SDL_VIDEODRIVER', 'dummy')
 _os.environ.setdefault('SDL_AUDIODRIVER', 'dummy')
 _sys.path.insert(0, {wheel_map!r})
@@ -64,12 +76,24 @@ _gl.start_program_fn = lambda: None
 import play as _play
 _play.start_program = lambda: None
 _play.api.utils.start_program = lambda: None
+
+
+class _Genoeg(BaseException):
+    pass
+
+
+_signal.signal(_signal.SIGALRM, lambda _nummer, _frame: (_ for _ in ()).throw(_Genoeg()))
+_signal.alarm({seconden})
 try:
     exec(compile(open('blok.py').read(), {bron!r}, 'exec'), {{'__name__': '__main__'}})
+except _Genoeg:
+    pass
 except BaseException:
+    _signal.alarm(0)
     _tb.print_exc()
     _sys.stderr.flush()
     _os._exit(1)
+_signal.alarm(0)
 _sys.stdout.flush(); _sys.stderr.flush()
 _os._exit(0)
 """
@@ -127,7 +151,9 @@ def draai(bron, regel, code, wheel_map: str) -> str | None:
     with tempfile.TemporaryDirectory() as werkmap:
         (Path(werkmap) / "blok.py").write_text(code)
         harnas = Path(werkmap) / "harnas.py"
-        harnas.write_text(HARNAS.format(wheel_map=wheel_map, bron=str(bron)))
+        harnas.write_text(
+            HARNAS.format(wheel_map=wheel_map, bron=str(bron), seconden=WEKKER_SECONDEN)
+        )
         try:
             r = subprocess.run(
                 [sys.executable, str(harnas)],

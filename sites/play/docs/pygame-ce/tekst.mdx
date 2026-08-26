@@ -34,6 +34,29 @@ while actief:
 pygame.quit()
 ```
 
+<PygbagRunner code={`import pygame
+
+pygame.init()
+
+scherm = pygame.display.set_mode((800, 600))
+font = pygame.font.SysFont("arial", 40)
+
+actief = True
+
+while actief:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            actief = False
+
+    scherm.fill((30, 30, 30))
+
+    tekst = font.render("Hallo!", True, (255, 255, 255))
+    scherm.blit(tekst, (350, 280))
+
+    pygame.display.flip()
+
+pygame.quit()`} height={350} />
+
 
 
 Wat gebeurt hier?
@@ -85,6 +108,29 @@ while actief:
 pygame.quit()
 ```
 
+<PygbagRunner code={`import pygame
+
+pygame.init()
+
+scherm = pygame.display.set_mode((800, 600))
+font = pygame.font.SysFont("arial", 50)
+
+actief = True
+
+while actief:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            actief = False
+
+    scherm.fill((30, 30, 30))
+
+    tekst = font.render("Jouw Naam", True, (0, 255, 100))
+    scherm.blit(tekst, (300, 280))
+
+    pygame.display.flip()
+
+pygame.quit()`} height={350} />
+
 </details>
 
 ## Opdracht 7.5.b: Meerdere teksten
@@ -129,5 +175,32 @@ while actief:
 
 pygame.quit()
 ```
+
+<PygbagRunner code={`import pygame
+
+pygame.init()
+
+scherm = pygame.display.set_mode((800, 600))
+groot_font = pygame.font.SysFont("arial", 60)
+klein_font = pygame.font.SysFont("arial", 30)
+
+actief = True
+
+while actief:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            actief = False
+
+    scherm.fill((30, 30, 30))
+
+    titel = groot_font.render("Mijn Spel", True, (255, 255, 0))
+    scherm.blit(titel, (280, 200))
+
+    ondertitel = klein_font.render("Druk op een toets om te starten", True, (200, 200, 200))
+    scherm.blit(ondertitel, (220, 300))
+
+    pygame.display.flip()
+
+pygame.quit()`} height={350} />
 
 </details>

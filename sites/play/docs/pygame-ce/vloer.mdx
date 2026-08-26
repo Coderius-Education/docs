@@ -87,6 +87,52 @@ while actief:
 pygame.quit()
 ```
 
+<PygbagRunner code={`import pygame
+import pymunk
+
+pygame.init()
+
+scherm = pygame.display.set_mode((800, 600))
+clock = pygame.time.Clock()
+
+space = pymunk.Space()
+space.gravity = (0, 500)
+
+# Bal
+bal_body = pymunk.Body(1, pymunk.moment_for_circle(1, 0, 20))
+bal_body.position = (400, 50)
+bal_shape = pymunk.Circle(bal_body, 20)
+bal_shape.elasticity = 0.8
+space.add(bal_body, bal_shape)
+
+# Vloer (static)
+vloer_body = pymunk.Body(body_type=pymunk.Body.STATIC)
+vloer_shape = pymunk.Segment(vloer_body, (0, 550), (800, 550), 5)
+vloer_shape.elasticity = 0.8
+space.add(vloer_body, vloer_shape)
+
+actief = True
+
+while actief:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            actief = False
+
+    space.step(1 / 60)
+
+    scherm.fill((30, 30, 30))
+
+    bal_x = int(bal_body.position.x)
+    bal_y = int(bal_body.position.y)
+    pygame.draw.circle(scherm, (0, 200, 255), (bal_x, bal_y), 20)
+
+    pygame.draw.line(scherm, (255, 255, 255), (0, 550), (800, 550), 5)
+
+    pygame.display.flip()
+    clock.tick(60)
+
+pygame.quit()`} height={350} />
+
 
 
 De bal stuitert nu op de vloer.

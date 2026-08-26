@@ -25,6 +25,13 @@ titel = play.new_text(words="Mijn Spel", y=100, font_size=60)
 uitleg = play.new_text(words="Druk op SPATIE om te starten", y=-50, font_size=30)
 ```
 
+<PygbagRunner code={`import play
+
+scherm = 'menu'
+
+titel = play.new_text(words="Mijn Spel", y=100, font_size=60)
+uitleg = play.new_text(words="Druk op SPATIE om te starten", y=-50, font_size=30)`} height={300} />
+
 ## Stap 2: De spel-elementen
 
 We maken de spel-elementen alvast aan, maar verbergen ze:
@@ -85,6 +92,32 @@ def start_spel():
         score_tekst.show()
         bal.start_physics(obeys_gravity=False, x_speed=200, y_speed=150)
 ```
+
+<PygbagRunner code={`import play
+
+scherm = 'menu'
+
+titel = play.new_text(words="Mijn Spel", y=100, font_size=60)
+uitleg = play.new_text(words="Druk op SPATIE om te starten", y=-50, font_size=30)
+
+bal = play.new_circle(color='blue', radius=20)
+bal.hide()
+
+score_tekst = play.new_text(words="Score: 0", y=250, font_size=30)
+score_tekst.hide()
+
+@play.when_key_pressed("space")
+def start_spel():
+    global scherm
+    if scherm == 'menu':
+        scherm = 'spel'
+
+        titel.hide()
+        uitleg.hide()
+
+        bal.show()
+        score_tekst.show()
+        bal.start_physics(obeys_gravity=False, x_speed=200, y_speed=150)`} height={300} />
 
 ## Opdracht: Game-over scherm
 

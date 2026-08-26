@@ -59,6 +59,36 @@ while actief:
 pygame.quit()
 ```
 
+<PygbagRunner code={`import pygame
+
+pygame.init()
+
+scherm = pygame.display.set_mode((800, 600))
+clock = pygame.time.Clock()
+font = pygame.font.SysFont("arial", 40)
+
+score = 0
+
+actief = True
+
+while actief:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            actief = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                score = score + 1
+
+    scherm.fill((30, 30, 30))
+
+    tekst = font.render("Score: " + str(score), True, (255, 255, 255))
+    scherm.blit(tekst, (300, 280))
+
+    pygame.display.flip()
+    clock.tick(60)
+
+pygame.quit()`} height={350} />
+
 Elke keer dat je op spatie drukt, gaat de score omhoog. De tekst wordt elk frame opnieuw getekend met de nieuwe waarde van `score`.
 
 ## Opdracht 7.6.a: Scoreteller
@@ -105,5 +135,37 @@ while actief:
 
 pygame.quit()
 ```
+
+<PygbagRunner code={`import pygame
+
+pygame.init()
+
+scherm = pygame.display.set_mode((800, 600))
+clock = pygame.time.Clock()
+font = pygame.font.SysFont("arial", 50)
+
+score = 0
+
+actief = True
+
+while actief:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            actief = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                score = score + 1
+            if event.key == pygame.K_DOWN:
+                score = score - 1
+
+    scherm.fill((30, 30, 30))
+
+    tekst = font.render("Score: " + str(score), True, (255, 255, 255))
+    scherm.blit(tekst, (300, 280))
+
+    pygame.display.flip()
+    clock.tick(60)
+
+pygame.quit()`} height={350} />
 
 </details>

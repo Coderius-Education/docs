@@ -30,6 +30,20 @@ def update_high_score():
     tekst.words = "High score: " + str(database.get_data('punten'))
 ```
 
+<PygbagRunner code={`import play
+
+database = play.new_database()
+
+huidige_highscore = database.get_data('punten', 0)
+
+tekst = play.new_text(words="High score: " + str(huidige_highscore))
+
+@play.when_key_pressed("space")
+def update_high_score():
+    punten = database.get_data('punten', 0)
+    database.set_data('punten', punten + 1)
+    tekst.words = "High score: " + str(database.get_data('punten'))`} height={300} />
+
 Elke keer dat je op spatie drukt, wordt de high score met 1 verhoogd en opgeslagen. Sluit het programma af en start het opnieuw. Je high score is bewaard.
 
 ## Opdracht 6.2.a: Klik-teller
@@ -67,6 +81,22 @@ def geklikt():
     database.set_data('klikken', teller)
     tekst.words = str(teller)
 ```
+
+<PygbagRunner code={`import play
+
+database = play.new_database()
+
+teller = database.get_data('klikken', 0)
+
+cirkel = play.new_circle(color='blue', radius=80)
+tekst = play.new_text(words=str(teller), y=200)
+
+@cirkel.when_clicked
+def geklikt():
+    global teller
+    teller = teller + 1
+    database.set_data('klikken', teller)
+    tekst.words = str(teller)`} height={300} />
 
 </details>
 
@@ -116,5 +146,32 @@ def reset():
     score = 0
     score_tekst.words = "Score: " + str(score)
 ```
+
+<PygbagRunner code={`import play
+
+database = play.new_database()
+
+score = 0
+highscore = database.get_data('highscore', 0)
+
+score_tekst = play.new_text(words="Score: " + str(score), y=100)
+highscore_tekst = play.new_text(words="High score: " + str(highscore), y=-100)
+
+@play.when_key_pressed("space")
+def punt():
+    global score, highscore
+    score = score + 1
+    score_tekst.words = "Score: " + str(score)
+
+    if score > highscore:
+        highscore = score
+        database.set_data('highscore', highscore)
+        highscore_tekst.words = "High score: " + str(highscore)
+
+@play.when_key_pressed("r")
+def reset():
+    global score
+    score = 0
+    score_tekst.words = "Score: " + str(score)`} height={300} />
 
 </details>

@@ -29,6 +29,13 @@ bal = play.new_circle(y=200, radius=20)
 bal.start_physics(bounciness=1.0)
 ```
 
+<PygbagRunner code={`import play
+
+vloer = play.new_box(y=-200, width=600, height=20)
+
+bal = play.new_circle(y=200, radius=20)
+bal.start_physics(bounciness=1.0)`} height={300} />
+
 De bal stuitert bijna eindeloos op en neer (maar verliest heel langzaam energie).
 
 ### Opdracht 2.3.a: Stuiterballen vergelijken
@@ -53,6 +60,19 @@ bal_c = play.new_circle(x=150, y=200, radius=20, color='green')
 bal_c.start_physics(bounciness=1.0)
 ```
 
+<PygbagRunner code={`import play
+
+vloer = play.new_box(y=-200, width=600, height=20)
+
+bal_a = play.new_circle(x=-150, y=200, radius=20, color='red')
+bal_a.start_physics(bounciness=0.2)
+
+bal_b = play.new_circle(x=0, y=200, radius=20, color='blue')
+bal_b.start_physics(bounciness=0.6)
+
+bal_c = play.new_circle(x=150, y=200, radius=20, color='green')
+bal_c.start_physics(bounciness=1.0)`} height={300} />
+
 De groene bal (`bounciness=1.0`) stuitert het hoogst.
 
 </details>
@@ -70,6 +90,14 @@ licht.start_physics(obeys_gravity=False, x_speed=50, mass=1)
 zwaar = play.new_circle(x=200, radius=40, color='blue')
 zwaar.start_physics(obeys_gravity=False, x_speed=-50, mass=10)
 ```
+
+<PygbagRunner code={`import play
+
+licht = play.new_circle(x=-200, radius=20, color='red')
+licht.start_physics(obeys_gravity=False, x_speed=50, mass=1)
+
+zwaar = play.new_circle(x=200, radius=40, color='blue')
+zwaar.start_physics(obeys_gravity=False, x_speed=-50, mass=10)`} height={300} />
 
 De blauwe bal (mass=10) duwt de rode bal (mass=1) makkelijk weg.
 
@@ -93,6 +121,14 @@ bal_a.start_physics(obeys_gravity=False, x_speed=50, mass=1)
 bal_b = play.new_circle(x=200, radius=20, color='blue')
 bal_b.start_physics(obeys_gravity=False, x_speed=-50, mass=20)
 ```
+
+<PygbagRunner code={`import play
+
+bal_a = play.new_circle(x=-200, radius=20, color='red')
+bal_a.start_physics(obeys_gravity=False, x_speed=50, mass=1)
+
+bal_b = play.new_circle(x=200, radius=20, color='blue')
+bal_b.start_physics(obeys_gravity=False, x_speed=-50, mass=20)`} height={300} />
 
 Bij gelijke massa kaatsen de ballen gelijk terug. Met ongelijke massa wordt de lichtere bal veel verder weggeduwd.
 
@@ -122,6 +158,22 @@ tekst = play.new_text("", y=250, font_size=30)
 def in_de_zone():
     tekst.words = "In de zone!"
 ```
+
+<PygbagRunner code={`import play
+
+vloer = play.new_box(y=-200, width=600, height=20)
+
+bal = play.new_circle(y=200, radius=20)
+bal.start_physics()
+
+zone = play.new_box(y=0, width=200, height=100, color='green', transparency=50)
+zone.start_physics(sensor=True)
+
+tekst = play.new_text("", y=250, font_size=30)
+
+@bal.when_touching(zone)
+def in_de_zone():
+    tekst.words = "In de zone!"`} height={300} />
 
 De bal valt door de groene zone heen (want die is een sensor), maar de tekst verandert zodra ze elkaar raken.
 
@@ -167,6 +219,22 @@ tekst = play.new_text("", y=250, font_size=30)
 def punt():
     tekst.words = "Punt!"
 ```
+
+<PygbagRunner code={`import play
+
+vloer = play.new_box(y=-200, width=600, height=20)
+
+zone = play.new_box(y=0, width=200, height=100, color='green', transparency=50)
+zone.start_physics(sensor=True)
+
+bal = play.new_circle(y=200, radius=20, color='red')
+bal.start_physics()
+
+tekst = play.new_text("", y=250, font_size=30)
+
+@bal.when_touching(zone)
+def punt():
+    tekst.words = "Punt!"`} height={300} />
 
 De bal valt door de groene zone en landt op de vloer. Zodra de bal de zone raakt, verschijnt "Punt.".
 

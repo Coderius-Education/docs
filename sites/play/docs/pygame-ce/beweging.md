@@ -47,6 +47,43 @@ while actief:
 pygame.quit()
 ```
 
+<PygbagRunner code={`import pygame
+
+pygame.init()
+
+scherm = pygame.display.set_mode((800, 600))
+clock = pygame.time.Clock()
+
+x = 400
+y = 300
+snelheid = 5
+
+actief = True
+
+while actief:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            actief = False
+
+    toetsen = pygame.key.get_pressed()
+
+    if toetsen[pygame.K_LEFT]:
+        x = x - snelheid
+    if toetsen[pygame.K_RIGHT]:
+        x = x + snelheid
+    if toetsen[pygame.K_UP]:
+        y = y - snelheid
+    if toetsen[pygame.K_DOWN]:
+        y = y + snelheid
+
+    scherm.fill((30, 30, 30))
+    pygame.draw.circle(scherm, (0, 200, 255), (x, y), 30)
+    pygame.display.flip()
+
+    clock.tick(60)
+
+pygame.quit()`} height={350} />
+
 Wat is er nieuw?
 
 ```python
@@ -128,6 +165,47 @@ while actief:
 
 pygame.quit()
 ```
+
+<PygbagRunner code={`import pygame
+
+pygame.init()
+
+scherm = pygame.display.set_mode((800, 600))
+clock = pygame.time.Clock()
+
+x = 400
+y = 300
+
+actief = True
+
+while actief:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            actief = False
+
+    toetsen = pygame.key.get_pressed()
+
+    if toetsen[pygame.K_LSHIFT]:
+        snelheid = 15
+    else:
+        snelheid = 5
+
+    if toetsen[pygame.K_LEFT]:
+        x = x - snelheid
+    if toetsen[pygame.K_RIGHT]:
+        x = x + snelheid
+    if toetsen[pygame.K_UP]:
+        y = y - snelheid
+    if toetsen[pygame.K_DOWN]:
+        y = y + snelheid
+
+    scherm.fill((30, 30, 30))
+    pygame.draw.circle(scherm, (0, 200, 255), (x, y), 30)
+    pygame.display.flip()
+
+    clock.tick(60)
+
+pygame.quit()`} height={350} />
 
 </details>
 

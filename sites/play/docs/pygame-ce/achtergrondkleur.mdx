@@ -42,6 +42,25 @@ while actief:
 pygame.quit()
 ```
 
+<PygbagRunner code={`import pygame
+
+pygame.init()
+
+scherm = pygame.display.set_mode((800, 600))
+pygame.display.set_caption("Achtergrondkleur")
+
+actief = True
+
+while actief:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            actief = False
+
+    scherm.fill((30, 30, 30))
+    pygame.display.flip()
+
+pygame.quit()`} height={350} />
+
 
 
 Twee nieuwe regels:
@@ -101,5 +120,24 @@ while actief:
 
 pygame.quit()
 ```
+
+<PygbagRunner code={`import pygame
+
+pygame.init()
+
+scherm = pygame.display.set_mode((800, 600))
+pygame.display.set_caption("Groene weide")
+
+actief = True
+
+while actief:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            actief = False
+
+    scherm.fill((0, 200, 0))
+    pygame.display.flip()
+
+pygame.quit()`} height={350} />
 
 </details>

@@ -25,6 +25,13 @@ database.set_data('punten', 0)
 database.set_data('moeilijkheid', 'makkelijk')
 ```
 
+<PygbagRunner code={`import play
+
+database = play.new_database()
+
+database.set_data('punten', 0)
+database.set_data('moeilijkheid', 'makkelijk')`} height={300} />
+
 ## Opdracht 6.3.a: Kleur onthouden
 
 Maak een programma waarbij:
@@ -68,6 +75,29 @@ def groen():
     database.set_data('kleur', 'green')
 ```
 
+<PygbagRunner code={`import play
+
+database = play.new_database()
+
+kleur = database.get_data('kleur', 'black')
+
+cirkel = play.new_circle(color=kleur, radius=80)
+
+@play.when_key_pressed("r")
+def rood():
+    cirkel.color = 'red'
+    database.set_data('kleur', 'red')
+
+@play.when_key_pressed("b")
+def blauw():
+    cirkel.color = 'blue'
+    database.set_data('kleur', 'blue')
+
+@play.when_key_pressed("g")
+def groen():
+    cirkel.color = 'green'
+    database.set_data('kleur', 'green')`} height={300} />
+
 </details>
 
 ## Opdracht 6.3.b: Moeilijkheid kiezen
@@ -105,5 +135,28 @@ def moeilijk():
     database.set_data('moeilijkheid', 'moeilijk')
     tekst.words = "Moeilijkheid: moeilijk"
 ```
+
+<PygbagRunner code={`import play
+
+database = play.new_database()
+
+moeilijkheid = database.get_data('moeilijkheid', 'makkelijk')
+
+tekst = play.new_text(words="Moeilijkheid: " + moeilijkheid)
+
+@play.when_key_pressed("1")
+def makkelijk():
+    database.set_data('moeilijkheid', 'makkelijk')
+    tekst.words = "Moeilijkheid: makkelijk"
+
+@play.when_key_pressed("2")
+def normaal():
+    database.set_data('moeilijkheid', 'normaal')
+    tekst.words = "Moeilijkheid: normaal"
+
+@play.when_key_pressed("3")
+def moeilijk():
+    database.set_data('moeilijkheid', 'moeilijk')
+    tekst.words = "Moeilijkheid: moeilijk"`} height={300} />
 
 </details>
