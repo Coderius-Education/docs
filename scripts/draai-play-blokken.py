@@ -16,6 +16,15 @@ geen eindeloze lus. Een pygame-ce-voorbeeld schrijft zijn lus wél zelf; die
 krijgt een paar seconden en wordt daarna afgebroken zonder dat het een fout
 heet.
 
+Hoofdstuk 10 vangt zijn toetsen niet met een decorator op maar in zijn eigen
+event-lus. Die krijgt daarom een ronde synthetische KEYDOWN-events voor elke
+toets die het blok noemt, en een `get_pressed()` die om en om wel en niet
+ingedrukt meldt zodat een if/else-paar allebei zijn takken haalt. Een seconde
+vóór de wekker komt er een QUIT langs, zodat ook `actief = False` en
+`pygame.quit()` meelopen. Zonder die injectie draaide 84% van de regels in dat
+hoofdstuk; nu 99% — de rest is een `global`-regel, en die levert in CPython
+geen trace-event op.
+
 Daarna gaat elke geregistreerde callback één keer af. Zonder die stap blijft de
 inhoud van elke `@play.when_key_pressed`-functie ongelezen — 321 regels lesstof
 waarin een tikfout ongestraft bleef staan. Wat een leerling ziet als "er gebeurt
@@ -103,10 +112,86 @@ class _Genoeg(BaseException):
     pass
 
 
-_signal.signal(_signal.SIGALRM, lambda _nummer, _frame: (_ for _ in ()).throw(_Genoeg()))
-_signal.alarm({seconden})
+# De wekker gaat in twee stappen. Eerst een seconde vóór het einde: dan zetten
+# we een QUIT klaar, zodat de lus zichzelf netjes afsluit en `actief = False` en
+# `pygame.quit()` ook meelopen. Pakt het blok die QUIT niet op, dan gooit de
+# tweede stap alsnog _Genoeg. Zo krijgt een voorbeeld zijn volle looptijd én is
+# zijn afsluitpad gedekt.
+_stoppen = {{'ja': False}}
+_fase = {{'n': 0}}
+
+
+def _wekker(_nummer, _frame):
+    _fase['n'] += 1
+    if _fase['n'] == 1:
+        _stoppen['ja'] = True
+        _signal.alarm(1)
+        return
+    raise _Genoeg
+
+
+_signal.signal(_signal.SIGALRM, _wekker)
+
+_BRON = open('blok.py').read()
+
+# Hoofdstuk 10 vangt zijn toetsen zelf op, in de event-lus, en niet met een
+# decorator. De callback-fase hieronder raakt die dus niet: `if event.key ==
+# pygame.K_SPACE:` en de regel eronder draaiden nooit, terwijl dat juist is
+# waar zo'n les over gaat. Daarom voeren we de lus zelf toetsen: één ronde met
+# een KEYDOWN voor elke toets die het blok noemt, daarna een QUIT zodat ook het
+# afsluitpad meeloopt. Bij een blok zonder pygame gebeurt er niets.
+if 'import pygame' in _BRON:
+    import re as _re
+
+    import pygame as _pg
+
+    _pg.init()
+    # Geen woordgrens in dit patroon: HARNAS is een gewone string, dus een
+    # `\\b` zou hier een backspace-teken worden en dan matcht de regex niets —
+    # precies de stille no-op die deze injectie moest voorkomen.
+    _TOETSEN = [
+        getattr(_pg, _naam)
+        for _naam in sorted(set(_re.findall('K_[A-Za-z0-9_]+', _BRON)))
+        if hasattr(_pg, _naam)
+    ]
+    if 'K_' in _BRON and not _TOETSEN:
+        print('geen toetsen herkend terwijl het blok er wel noemt', file=_sys.stderr)
+        _os._exit(1)
+    _echte_get = _pg.event.get
+    _ronde = {{'n': 0}}
+
+    def _get(*args, **kwargs):
+        _ronde['n'] += 1
+        if _ronde['n'] == 1 and _TOETSEN:
+            return [_pg.event.Event(_pg.KEYDOWN, key=_k, unicode='', mod=0) for _k in _TOETSEN] + [
+                _pg.event.Event(_pg.KEYUP, key=_k, mod=0) for _k in _TOETSEN
+            ]
+        if _stoppen['ja']:
+            return [_pg.event.Event(_pg.QUIT)]
+        return _echte_get(*args, **kwargs)
+
+    _pg.event.get = _get
+
+    # get_pressed() leest de echte toetsenbordstaat en is headless altijd leeg.
+    # Een les die daarmee beweegt ("zolang je pijltje links indrukt") zou dus
+    # nooit bewegen. Deze variant meldt precies de toetsen die het blok noemt.
+    class _Ingedrukt:
+        def __init__(self, _aan):
+            self._aan = _aan
+
+        def __getitem__(self, _k):
+            return self._aan and _k in _TOETSEN
+
+        def __len__(self):
+            return 512
+
+    # Om en om ingedrukt: anders wint bij `if shift: ... else: ...` altijd
+    # dezelfde tak en blijft de andere ongelezen.
+    _pg.key.get_pressed = lambda *a, **k: _Ingedrukt(_ronde['n'] % 2 == 1)
+
+_signal.alarm(max(1, {seconden} - 1))
 try:
-    exec(compile(open('blok.py').read(), {bron!r}, 'exec'), {{'__name__': '__main__'}})
+    exec(compile(_BRON, {bron!r}, 'exec'), {{'__name__': '__main__'}})
 except _Genoeg:
     pass
 except BaseException:
