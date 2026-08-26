@@ -4,9 +4,11 @@ sidebar_position: 2
 
 # 8.2 Schuiven en aanvinken
 
-:::info[Wat moet je al weten]
-- [8.1 Een knop maken](/docs/ui/knop) - hoe een UI-element aan een functie gekoppeld wordt
-:::
+<Voorkennis
+  items={[
+    {to: '/docs/ui/knop', label: '8.1 Een knop maken'},
+  ]}
+/>
 
 Een knop kent maar twee toestanden: geklikt of niet. Voor instellingen met een **waarde** zijn er twee andere elementen: de schuifbalk en het vinkje.
 
@@ -58,14 +60,14 @@ Uitlezen kan ook hier direct: `vinkje.checked` is `True` of `False`.
 Maak een cirkel die naar rechts beweegt en aan de linkerkant weer opnieuw begint. Zet er een schuifbalk onder (van 0 tot 10) die de snelheid bepaalt.
 
 <details>
-<summary>Klik hier voor een tip</summary>
+<summary>Klik hier voor een tip.</summary>
 
 Gebruik `@play.repeat_forever` voor de beweging en lees daarbinnen `schuif.value` uit. Is de cirkel voorbij `x = 300`, zet hem dan terug op `x = -300`.
 
 </details>
 
 <details>
-<summary>Klik hier voor de oplossing</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 ```python
 import play

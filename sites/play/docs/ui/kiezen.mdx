@@ -4,9 +4,11 @@ sidebar_position: 3
 
 # 8.3 Kiezen uit een lijst
 
-:::info[Wat moet je al weten]
-- [8.2 Schuiven en aanvinken](/docs/ui/schuif-en-vink) - hoe `when_changed` een waarde meekrijgt
-:::
+<Voorkennis
+  items={[
+    {to: '/docs/ui/schuif-en-vink', label: '8.2 Schuiven en aanvinken'},
+  ]}
+/>
 
 Moet de speler één ding kiezen uit meerdere mogelijkheden, dan heb je twee opties: een uitklapmenu of een rijtje keuzerondjes.
 
@@ -56,14 +58,14 @@ Let op: `when_changed` zet je op de **groep**, niet op een los rondje. De waarde
 Maak drie keuzerondjes: **Klein**, **Normaal** en **Groot**. De keuze bepaalt de straal van een cirkel (bijvoorbeeld 20, 50 en 90).
 
 <details>
-<summary>Klik hier voor een tip</summary>
+<summary>Klik hier voor een tip.</summary>
 
 Geef elk rondje als `value` het getal als tekst mee (`value="20"`). In de `when_changed`-functie maak je er met `int(waarde)` weer een getal van.
 
 </details>
 
 <details>
-<summary>Klik hier voor de oplossing</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 ```python
 import play

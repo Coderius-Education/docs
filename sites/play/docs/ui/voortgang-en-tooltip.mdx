@@ -4,9 +4,11 @@ sidebar_position: 5
 
 # 8.5 Voortgang en zweeftekst
 
-:::info[Wat moet je al weten]
-- [8.1 Een knop maken](/docs/ui/knop) - hoe een UI-element aan een functie gekoppeld wordt
-:::
+<Voorkennis
+  items={[
+    {to: '/docs/ui/knop', label: '8.1 Een knop maken'},
+  ]}
+/>
 
 De vorige elementen waren om te bedienen. Deze twee zijn om te **tonen**: een balk die voortgang laat zien, en een tekstje dat verschijnt als je ergens overheen zweeft.
 
@@ -51,14 +53,14 @@ Het `target` mag elke vorm zijn, dus ook een cirkel of afbeelding. Met `offset_x
 Maak een levensbalk die op 100 begint en een knop **Au**. Elke klik haalt er 20 vanaf. Is de balk leeg, dan verschijnt de tekst "Game over" en gaat de knop uit.
 
 <details>
-<summary>Klik hier voor een tip</summary>
+<summary>Klik hier voor een tip.</summary>
 
 Controleer ín de klikfunctie of `balk.value` op 0 staat. Zo ja: zet `knop.disabled = True` en verander de tekst.
 
 </details>
 
 <details>
-<summary>Klik hier voor de oplossing</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 ```python
 import play

@@ -4,9 +4,11 @@ sidebar_position: 2
 
 # 9.2 Video afspelen
 
-:::info[Wat moet je al weten]
-- [9.1 Geluid afspelen](/docs/media/geluid) - hoe je een mediabestand naast je Python-bestand zet
-:::
+<Voorkennis
+  items={[
+    {to: '/docs/media/geluid', label: '9.1 Geluid afspelen'},
+  ]}
+/>
 
 :::warning[Online speeltuin]
 Video werkt **niet** in de online speeltuin. Je hebt hiervoor een lokale installatie nodig (Thonny of VS Code) met coderius-play versie 3.4 of nieuwer. Zie [installatie](/docs/installatie).
@@ -83,14 +85,14 @@ Krijg je een `FileNotFoundError`, dan geldt hetzelfde als bij afbeeldingen en ge
 Speel een video af zonder de ingebouwde knoppen (`controls=False`) en maak er zelf twee onder: **Pauze** en **Opnieuw**.
 
 <details>
-<summary>Klik hier voor een tip</summary>
+<summary>Klik hier voor een tip.</summary>
 
 `video.toggle_play()` is handiger dan losse play/pause: één knop kan dan allebei. Kijk in [8.1](/docs/ui/knop) hoe je een knop maakt.
 
 </details>
 
 <details>
-<summary>Klik hier voor de oplossing</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 ```python
 import play

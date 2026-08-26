@@ -4,9 +4,11 @@ sidebar_position: 2
 
 # 2.2 Soorten fysica
 
-:::info[Wat moet je al weten]
-- [2.1 Links en rechts bewegen](/docs/fysica/links_en_rechts) - hoe je `start_physics()` aanroept
-:::
+<Voorkennis
+  items={[
+    {to: '/docs/fysica/links_en_rechts', label: '2.1 Links en rechts bewegen'},
+  ]}
+/>
 
 Niet elke vorm gedraagt zich hetzelfde. Een bal die rondstuitert is anders dan een platform dat stilstaat.
 

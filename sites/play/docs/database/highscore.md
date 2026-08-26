@@ -4,9 +4,11 @@ sidebar_position: 2
 
 # 6.2 High score bijhouden
 
-:::info[Wat moet je al weten]
-- [6.1 Gegevens opslaan en ophalen](/docs/database/basis) - `set_data()` en `get_data()`
-:::
+<Voorkennis
+  items={[
+    {to: '/docs/database/basis', label: '6.1 Gegevens opslaan en ophalen'},
+  ]}
+/>
 
 Nu we weten hoe `set_data()` en `get_data()` werken, kunnen we een high score systeem maken.
 

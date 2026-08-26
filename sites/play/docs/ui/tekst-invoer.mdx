@@ -4,9 +4,11 @@ sidebar_position: 4
 
 # 8.4 Tekst laten typen
 
-:::info[Wat moet je al weten]
-- [8.1 Een knop maken](/docs/ui/knop) - hoe een UI-element aan een functie gekoppeld wordt
-:::
+<Voorkennis
+  items={[
+    {to: '/docs/ui/knop', label: '8.1 Een knop maken'},
+  ]}
+/>
 
 Wil je de naam van de speler weten, of een antwoord op een vraag? Met **`play.new_text_input`** maak je een invoerveld waar de speler in kan typen.
 
@@ -51,14 +53,14 @@ De huidige inhoud kun je altijd uitlezen met `veld.value`, en leegmaken doe je m
 Stel een rekenvraag in een tekst, bijvoorbeeld "Hoeveel is 7 x 8?". De speler typt het antwoord in een invoerveld. Bij Enter verschijnt "Goed" of "Fout".
 
 <details>
-<summary>Klik hier voor een tip</summary>
+<summary>Klik hier voor een tip.</summary>
 
 De tekst uit het veld is een string. Vergelijk hem daarom met `"56"` (met aanhalingstekens), of maak er eerst met `int()` een getal van.
 
 </details>
 
 <details>
-<summary>Klik hier voor de oplossing</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 ```python
 import play

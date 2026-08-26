@@ -4,10 +4,13 @@ sidebar_position: 5
 
 # 4.5 Een score bijhouden met `global`
 
-:::info[Wat moet je al weten]
-- [4.1 Gebeurtenissen](/docs/gebeurtenissen/toetsenbord) - reageren op een toets
-- Basis-Python: `if`-statements en variabelen
-:::
+<Voorkennis
+  items={[
+    {to: '/docs/gebeurtenissen/toetsenbord', label: '4.1 Gebeurtenissen'},
+    {site: 'python', to: '/docs/beslissen/05b-if-else', label: 'If en else'},
+    {site: 'python', to: '/docs/basis/jij-als-variabele', label: 'Variabelen'},
+  ]}
+/>
 
 Hoe houd je een score bij in een spel? Als je een variabele, zoals `score`, wilt aanpassen *binnen* een functie, heb je het speciale sleutelwoord `global` nodig.
 
@@ -86,7 +89,7 @@ def reset():
 
 </details>
 
-## 4.5.1 Handige Python-kennis: `if`-statements
+## Handige Python-kennis: `if`-statements
 
 Nu je een score kunt bijhouden, wil je misschien ook iets laten gebeuren op basis van die score. Daarvoor gebruik je een `if`-statement:
 

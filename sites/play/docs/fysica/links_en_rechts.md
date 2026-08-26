@@ -16,7 +16,7 @@ cirkel.start_physics(obeys_gravity=False, x_speed=60)
 ```
 
 <details>
-<summary>Klik hier om het antwoord te zien</summary>
+<summary>Klik hier voor het antwoord.</summary>
 
 Voer de code uit. De bal beweegt naar rechts en stuitert tegen de muur.
 
@@ -42,14 +42,14 @@ Probeer eens de volgende aanpassingen en kijk wat er verandert:
 - Wat als je `obeys_gravity=False` weghaalt (of op `True` zet)?
 
 <details>
-<summary>Klik hier voor het antwoord</summary>
+<summary>Klik hier voor het antwoord.</summary>
 
 - Met `x_speed=0` staat de bal stil (er is geen horizontale snelheid).
 - Met `obeys_gravity=True` valt de bal naar beneden door de zwaartekracht.
 
 </details>
 
-## Opdracht 2.1.a
+## Opdracht 2.1.a: De andere kant op
 
 a) Laat de bal met snelheid 100 naar **links** bewegen.
 

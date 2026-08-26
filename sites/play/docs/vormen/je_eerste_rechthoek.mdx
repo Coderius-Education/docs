@@ -4,9 +4,11 @@ sidebar_position: 3
 
 # 1.3 Je eerste rechthoek
 
-:::info[Wat moet je al weten]
-- [1.2 Je eerste cirkel](/docs/vormen/je_eerste_cirkel) - hoe je een vorm tekent en aanpast
-:::
+<Voorkennis
+  items={[
+    {to: '/docs/vormen/je_eerste_cirkel', label: '1.2 Je eerste cirkel'},
+  ]}
+/>
 
 We kunnen ook andere vormen tekenen, bijvoorbeeld een rechthoek.
 
@@ -16,7 +18,7 @@ play.new_box()`} height={300} />
 
 Als het goed is, zie je een rechthoek op je scherm.
 
-## 1.3.1 Wat kan ik allemaal aanpassen?
+## Wat kan ik allemaal aanpassen?
 Net als bij **play.new_circle** worden de kleur en grootte standaard bepaald. Dit kun je zelf aanpassen.
 Dit zijn de attributen voor **play.new_box**:
 - **color**: Kleur, staat standaard op 'black'. [Op deze pagina](https://www.pygame.org/docs/ref/color_list.html) zie je welke kleuropties er zijn.
@@ -37,7 +39,7 @@ Om bijvoorbeeld de hoogte en breedte aan te passen kun je het volgende doen:
 
 play.new_box(width=200, height=200)`} height={300} />
 
-### Opdracht 1.3.1.a een weg tekenen
+### Opdracht 1.3.a: Een weg tekenen
 
 We gaan deze afbeelding namaken met **play.new_box**
 ![weg](weg.png)
@@ -65,7 +67,7 @@ en het is nuttig om de attributen **y**, **width** en **height** te gebruiken.
 </details>
 
 <details>
-    <summary>Klik hier voor een oplossing.</summary>
+    <summary>Klik hier voor de oplossing.</summary>
 
 <PygbagRunner code={`import play
 

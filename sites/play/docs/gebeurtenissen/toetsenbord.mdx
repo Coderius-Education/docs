@@ -39,14 +39,14 @@ Probeer eens de volgende aanpassingen:
 - Wat als je `blok.x = blok.x + 10` verandert in `blok.x = blok.x + 100`?
 
 <details>
-<summary>Klik hier voor het antwoord</summary>
+<summary>Klik hier voor het antwoord.</summary>
 
 - Met `"a"` reageert de rechthoek op de letter A in plaats van de spatiebalk.
 - Met `+ 100` maakt de rechthoek veel grotere sprongen naar rechts.
 
 </details>
 
-## Opdracht 4.1.a: ook links en rechts
+## Opdracht 4.1.a: Ook links en rechts
 a) Voer het onderstaand code fragment uit. Wat gebeurt er als je op pijltje omhoog drukt?
 
 <PygbagRunner code={`import play
@@ -62,7 +62,7 @@ def omlaag():
     blok.y = blok.y - 10`} height={300} />
 
 <details>
-  <summary>Klik hier voor het antwoord</summary>
+  <summary>Klik hier voor de oplossing.</summary>
 
   Als het goed is, gaat de rechthoek omhoog.
 
@@ -71,7 +71,7 @@ def omlaag():
 b) Pas het aan zodat als je op pijltje naar rechts klikt, de rechthoek naar rechts gaat
 
 <details>
-  <summary>Klik hier voor de oplossing</summary>
+  <summary>Klik hier voor de oplossing.</summary>
 
 <PygbagRunner code={`import play
 
@@ -94,7 +94,7 @@ def omlaag():
 c) Voeg nu code toe zodat het reageert op pijltje naar links en het blok dan ook naar links beweegt
 
 <details>
-  <summary>Klik hier voor de oplossing</summary>
+  <summary>Klik hier voor de oplossing.</summary>
 
 <PygbagRunner code={`import play
 
@@ -118,7 +118,7 @@ def naar_rechts():
 
 </details>
 
-## 4.1.1 Zolang een toets ingedrukt is
+## Zolang een toets ingedrukt is
 
 Met `@play.when_key_pressed` reageer je op het moment dat een toets wordt ingedrukt — de actie gebeurt dan maar **één keer**. Maar soms wil je dat iets **continu** gebeurt zolang je een toets ingedrukt houdt, bijvoorbeeld voor vloeiende beweging. Hiervoor gebruik je `@play.while_key_pressed`:
 
@@ -143,7 +143,7 @@ Het verschil? Met `when_key_pressed` gebeurt de actie één keer bij het indrukk
 Je kunt ook `play.key_is_pressed()` in combinatie met `@play.repeat_forever` gebruiken voor hetzelfde effect. Maar `@play.while_key_pressed` is korter en duidelijker.
 :::
 
-### Opdracht 4.1.1.a: Vloeiende besturing
+### Opdracht 4.1.b: Vloeiende besturing
 
 Maak een cirkel die vloeiend beweegt met de pijltjestoetsen. Gebruik `@play.while_key_pressed`.
 
@@ -167,12 +167,40 @@ def beweeg(key):
 
 </details>
 
-## Opdracht 4.1.b: Klikken
-Naast **when_key_pressed** bestaan er nog meer gebeurtenissen.
-Kijk maar eens in de [cheatsheet](/docs/cheatsheet).
+## Opdracht 4.1.c: Klikken
 
-a) Kies één gebeurtenis uit de [cheatsheet](/docs/cheatsheet)
+Een toets is niet de enige gebeurtenis waar je op kunt reageren. Er bestaat er ook een die afgaat zodra je met de muis op een vorm klikt. Zoek die op in de [cheatsheet](/docs/cheatsheet) en maak een programma waarin een cirkel van kleur verandert als je erop klikt.
 
-b) voer het voorbeeld van de gekozen gebeurtenis uit via de ▶ knop in de cheatsheet
+<PygbagRunner code={`import play
 
-c) pas de code van het voorbeeld aan naar iets wat jij leuker vindt :)
+# SCHRIJF HIER JE CODE`} height={300} />
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Zoek in de cheatsheet onder **Gebeurtenissen**. De decorator die je zoekt zet je niet op `play` maar op je eigen vorm, dus hij begint met de naam van je variabele.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+import play
+
+cirkel = play.new_circle(color='blue', radius=60)
+
+@cirkel.when_clicked
+def verander_kleur():
+    cirkel.color = 'orange'
+```
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle(color='blue', radius=60)
+
+@cirkel.when_clicked
+def verander_kleur():
+    cirkel.color = 'orange'`} height={300} />
+
+</details>

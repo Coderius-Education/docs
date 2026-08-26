@@ -4,9 +4,11 @@ sidebar_position: 3
 
 # 6.3 Instellingen opslaan
 
-:::info[Wat moet je al weten]
-- [6.1 Gegevens opslaan en ophalen](/docs/database/basis) - `set_data()` en `get_data()`
-:::
+<Voorkennis
+  items={[
+    {to: '/docs/database/basis', label: '6.1 Gegevens opslaan en ophalen'},
+  ]}
+/>
 
 Naast de high score kun je ook instellingen van de speler opslaan. Denk aan de moeilijkheidsgraad, de kleur van de speler, of het geluid aan of uit staat.
 

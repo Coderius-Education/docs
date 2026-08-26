@@ -4,9 +4,11 @@ sidebar_position: 2
 
 # 3.2 Zijn acties functies?
 
-:::info[Wat moet je al weten]
-- [3.1 Wat is een actie?](/docs/acties) - acties op een vorm uitvoeren
-:::
+<Voorkennis
+  items={[
+    {to: '/docs/acties', label: '3.1 Acties'},
+  ]}
+/>
 
 Nu zul je denken, zijn acties niet gewoon hetzelfde als de functies die we eerder gezien hebben?
 
@@ -35,7 +37,7 @@ Kijk in het **console-paneel** onder het scherm — daar zie je de uitvoer van `
 Een vraag: hoeveel regels code komen erbij als je ook "Happy birthday" willen zingen voor de tweelingzus Rachel?
 
 <details>
-    <summary>Klik hier voor het antwoord</summary>
+    <summary>Klik hier voor het antwoord.</summary>
 
 Slechts één. De functie wordt maar één keer gedefinieerd. Daarna heb je iedere keer maar één regel code nodig om de functie aan te roepen.
 
@@ -86,7 +88,7 @@ Kijk goed naar de punt (`.`). Wat staat er *vóór* de punt, en wat *erna*?
 </details>
 
 <details>
-<summary>Klik hier voor het antwoord</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 - **`play.new_circle(x=-100)`** — functie van de `play`-bibliotheek
 - **`play.new_box(x=100)`** — functie van de `play`-bibliotheek

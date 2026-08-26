@@ -4,9 +4,11 @@ sidebar_position: 1
 
 # 8.1 Een knop maken
 
-:::info[Wat moet je al weten]
-- [4.1 Gebeurtenissen](/docs/gebeurtenissen/toetsenbord) - hoe een `@play.when_...` decorator werkt
-:::
+<Voorkennis
+  items={[
+    {to: '/docs/gebeurtenissen/toetsenbord', label: '4.1 Gebeurtenissen'},
+  ]}
+/>
 
 Tot nu toe reageerde je spel op het toetsenbord en de muis. Met **`play.new_button`** maak je een echte knop: hij licht op als je eroverheen beweegt en reageert op een klik.
 
@@ -77,14 +79,14 @@ Een uitgezette knop wordt grijs en zijn `when_clicked`-functie wordt niet meer a
 Maak een cirkel en twee knoppen: **Rood** en **Blauw**. Klik je op een knop, dan krijgt de cirkel die kleur.
 
 <details>
-<summary>Klik hier voor een tip</summary>
+<summary>Klik hier voor een tip.</summary>
 
 Zet de cirkel bovenin (`y=100`) en de knoppen eronder, links en rechts van elkaar (`x=-100` en `x=100`). Elke knop krijgt zijn eigen `@knop.when_clicked`-functie.
 
 </details>
 
 <details>
-<summary>Klik hier voor de oplossing</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 ```python
 import play
@@ -123,7 +125,7 @@ def maak_blauw():
 Maak een knop **Start** die zichzelf uitzet zodra erop geklikt is, en een tekst die daarna "Gestart" laat zien.
 
 <details>
-<summary>Klik hier voor de oplossing</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 ```python
 import play

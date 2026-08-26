@@ -4,9 +4,11 @@ sidebar_position: 1
 
 # 9.1 Geluid afspelen
 
-:::info[Wat moet je al weten]
-- [1.5 Je eerste afbeelding](/docs/vormen/je_eerste_afbeelding) - hoe je een bestand naast je Python-bestand zet
-:::
+<Voorkennis
+  items={[
+    {to: '/docs/vormen/je_eerste_afbeelding', label: '1.5 Je eerste afbeelding'},
+  ]}
+/>
 
 :::warning[Online speeltuin]
 Geluidsbestanden laden werkt **niet** in de online speeltuin. Je hebt hiervoor een lokale installatie nodig (Thonny of VS Code). Zie [installatie](/docs/installatie) als je dat nog niet gedaan hebt.
@@ -57,7 +59,7 @@ Hoor je niets, controleer dan:
 Maak een knop die bij elke klik een geluid afspeelt. Gebruik een kort geluidsbestand dat je zelf hebt opgezocht of opgenomen.
 
 <details>
-<summary>Klik hier voor de oplossing</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 ```python
 import play

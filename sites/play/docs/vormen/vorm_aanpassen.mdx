@@ -4,9 +4,11 @@ sidebar_position: 6
 
 # 1.6 Je vorm aanpassen
 
-:::info[Wat moet je al weten]
-- [1.2 Je eerste cirkel](/docs/vormen/je_eerste_cirkel) - vormen tekenen en hun eigenschappen kennen
-:::
+<Voorkennis
+  items={[
+    {to: '/docs/vormen/je_eerste_cirkel', label: '1.2 Je eerste cirkel'},
+  ]}
+/>
 
 Tot nu toe hebben de vormen stilgestaan op je scherm.
 Om een spel te kunnen programmeren, hebben we beweging nodig.
@@ -21,7 +23,7 @@ play.new_circle()`} height={300} />
 Hoe kan ik de cirkel veranderen **nadat** deze gemaakt is?
 Oftewel, kan ik via code na **play.new_circle()** iets veranderen aan de cirkel?
 
-## 1.6.1 De variabele
+## De variabele
 We hebben een **variabele** nodig die ons toegang geeft tot de cirkel. Kijk maar eens goed naar het onderstaande voorbeeld:
 
 <PygbagRunner code={`import play 
@@ -36,7 +38,7 @@ In dit codefragment gebeurt veel:
 
 Naast kleur kun je ook de x-positie, y-positie etc. aanpassen. Probeer het maar eens in de volgende opdracht.
 
-### Opdracht 1.6.1.a: je aangepaste cirkel
+### Opdracht 1.6.a: Je aangepaste cirkel
 Maak een nieuwe cirkel en pas deze aan:
 - Verander de kleur naar 'blue' 
 - Verander de x-positie naar 150 

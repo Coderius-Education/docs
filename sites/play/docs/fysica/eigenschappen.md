@@ -4,9 +4,12 @@ sidebar_position: 3
 
 # 2.3 Fysica-eigenschappen
 
-:::info[Wat moet je al weten]
-- [2.1 Links en rechts bewegen](/docs/fysica/links_en_rechts) en [2.2 Soorten fysica](/docs/fysica/physics_info) - de basis van fysica in play
-:::
+<Voorkennis
+  items={[
+    {to: '/docs/fysica/links_en_rechts', label: '2.1 Links en rechts bewegen'},
+    {to: '/docs/fysica/physics_info', label: '2.2 Soorten fysica'},
+  ]}
+/>
 
 Je hebt al geleerd hoe je vormen kunt laten bewegen en welke soorten fysica er zijn. Maar er is meer. Met eigenschappen als **bounciness**, **mass** en **sensor** kun je het gedrag van je vormen fijner instellen.
 
