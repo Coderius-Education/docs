@@ -34,7 +34,7 @@ const NOG_NIET_BIJGEWERKT = new Map([
   ],
   [
     'algorithms',
-    'staat op Python 3.12.7 terwijl de rest 3.13 draait, en nergens staat waarom; uitzoeken vóór het verversen, want die site draait matplotlib-wheels',
+    'draait bewust op 0.27.4 (Python 3.12): de dertien meegeleverde wheels zijn cp312 en de npm-package bundelt sinds 0.28 geen wheels meer, dus verversen breekt matplotlib in vijftien lessen — zie sites/algorithms/CLAUDE.md',
   ],
 ]);
 
@@ -80,6 +80,33 @@ describe('de zelf geserveerde Pyodide-kopieën', () => {
       .filter((site) => somVan(join(SITES, site, 'static', 'pyodide', WASM)) === verwacht);
 
     expect(inmiddelsGelijk).toEqual([]);
+  });
+
+  it('hebben wheels die bij de Python-versie van hun eigen runtime horen', () => {
+    // De val waar algorithms in zou lopen bij een achteloze verversing. Tot en
+    // met 0.27 bundelde de npm-package van Pyodide zijn wheels; vanaf 0.28 niet
+    // meer. Draai je copy:pyodide op een map met wheels, dan krijg je dus een
+    // nieuwere runtime met de oude wheels ernaast: die zijn cp312 en laden niet
+    // op 3.13, waarna loadPackage terugvalt op de CDN die zo'n map juist
+    // vermijdt. Stil, want er komt geen foutmelding uit de build.
+    const mismatch: string[] = [];
+
+    for (const site of zelfHostendeSites()) {
+      const map = join(SITES, site, 'static', 'pyodide');
+      const lock = JSON.parse(readFileSync(join(map, 'pyodide-lock.json'), 'utf8'));
+      const [groot, klein] = String(lock.info.python).split('.');
+      const verwacht = `cp${groot}${klein}`;
+
+      for (const bestand of readdirSync(map).filter((n) => n.endsWith('.whl'))) {
+        const tag = bestand.match(/-(cp\d{2,3})-/)?.[1];
+        // Wheels zonder ABI-tag (py3-none-any) draaien op elke versie.
+        if (tag && tag !== verwacht) {
+          mismatch.push(`${site}: ${bestand} hoort bij ${tag}, runtime is ${verwacht}`);
+        }
+      }
+    }
+
+    expect(mismatch).toEqual([]);
   });
 
   it('declareren pyodide als devDependency', () => {
