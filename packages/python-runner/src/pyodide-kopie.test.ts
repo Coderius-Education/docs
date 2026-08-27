@@ -29,10 +29,6 @@ const WASM = 'pyodide.asm.wasm';
 // uitgezet; mét de lijst is de achterstand zichtbaar en telbaar.
 const NOG_NIET_BIJGEWERKT = new Map([
   [
-    'python',
-    'staat nog op de 0.28.0.dev0-snapshot uit de init-commit; verversen geeft 12 MB binaire diff en gebeurt in een eigen commit',
-  ],
-  [
     'algorithms',
     'draait bewust op 0.27.4 (Python 3.12): de dertien met de hand toegevoegde wheels zijn cp312, en verversen breekt matplotlib in vijftien lessen — zie sites/algorithms/CLAUDE.md',
   ],
