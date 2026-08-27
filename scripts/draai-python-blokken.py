@@ -39,10 +39,17 @@ de les die dat uitlegt zou het als eerste merken. Daarom wijst elke losse
 foutmelding aan waaruit hij te reproduceren is:
 
     {/* foutmelding-van: blok-erboven */}   het python-blok hierboven draaien
+    {/* foutmelding-van: blok-eronder */}   het blok of de oefening hieronder
     {/* foutmelding-van: fout-helft */}     de `# FOUT`-helft van het blok
                                             hieronder; de `# GOED`-helft moet
                                             dan juist schoon draaien
-    {/* foutmelding-van: import rekenen */} een eigen reproductie op één regel
+    {/* foutmelding-van: import rekenen */} een eigen reproductie; \n erin voor
+                                            meer dan één regel
+
+Datzelfde geldt voor een foutmelding die de lopende tekst noemt — "dan krijg je
+een `ValueError`". Daar staat de marker boven de alinea in plaats van boven het
+blok. Noemt de zin alleen de soort en niet de bewoording, dan wordt ook alleen
+de soort vergeleken; dat oordeel hangt niet aan een Python-versie.
 
 De reproductie draait in een lege map, zodat een regel als
 `open("random.py", "w").close(); import random` kan laten zien wat er gebeurt als
@@ -159,7 +166,6 @@ def verzamel():
         tekst = pad.read_text()
         bron = pad.relative_to(ROOT)
         vorige = None  # laatst geziene python-blok, kandidaat voor een uitvoerblok
-        laatste_py = None  # ook als de band met een uitvoerblok al verbroken is
 
         for m in BLOK_RE.finditer(tekst):
             if m.group("kaal") is not None:
@@ -183,7 +189,7 @@ def verzamel():
                             melding,
                             van.group(1) if van else None,
                             bool(LOS_RE.search(ervoor)),
-                            laatste_py,
+                            vorig_blok(tekst, m.start()),
                             volgend_blok(tekst, m.end()),
                         )
                     )
@@ -193,8 +199,6 @@ def verzamel():
             code = m.group("pycode") if m.group("py") is not None else m.group("oefcode")
             regel = tekst[: m.start()].count("\n") + 1
             ervoor = tekst[: m.start()].rstrip()
-            if m.group("py") is not None:
-                laatste_py = inspring_weg(code)
             if NIET_COMPILEREN_RE.search(ervoor):
                 vorige = None
                 continue
@@ -202,13 +206,86 @@ def verzamel():
             varieert = bool(VARIEERT_RE.search(ervoor))
             blokken.append((bron, regel, inspring_weg(code), soort, None, varieert))
             vorige = (m.end(), len(blokken) - 1) if m.group("py") is not None else None
+
+        claims += list(inline_claims(tekst, bron))
     return blokken, claims
 
 
 def volgend_blok(tekst: str, vanaf: int) -> str | None:
-    """De code van het eerstvolgende ```python-blok, voor `fout-helft`."""
-    m = re.search(r"^```python[^\n]*\n(.*?)^```", tekst[vanaf:], re.S | re.M)
-    return inspring_weg(m.group(1)) if m else None
+    """De code van het eerstvolgende blok, voor `fout-helft` en `blok-eronder`.
+
+    Ook een `<CodeExercise>` telt mee: een opdracht die een fout laat zien staat
+    daarin, niet in een ```python-fence.
+    """
+    m = re.search(
+        r"^```python[^\n]*\n(?P<py>.*?)^```|<CodeExercise>\{`(?P<oef>.*?)`\}</CodeExercise>",
+        tekst[vanaf:],
+        re.S | re.M,
+    )
+    if not m:
+        return None
+    return inspring_weg(m.group("py") if m.group("py") is not None else m.group("oef"))
+
+
+def vorig_blok(tekst: str, tot: int) -> str | None:
+    """De code van het laatste ```python-blok vóór deze plek, voor `blok-erboven`."""
+    treffers = list(re.finditer(r"^```python[^\n]*\n(.*?)^```", tekst[:tot], re.S | re.M))
+    return inspring_weg(treffers[-1].group(1)) if treffers else None
+
+
+# Een foutmelding staat niet altijd in een uitvoerblok. Vaak noemt de lopende
+# tekst hem: "dan krijg je een `ValueError`". Dat is dezelfde belofte over Python
+# en veroudert net zo goed, dus hij wordt op dezelfde manier nagelopen — met de
+# marker boven de alinea in plaats van boven het blok. Noemt zo'n zin alleen de
+# soort, dan wordt ook alleen de soort vergeleken.
+INLINE_CODE_RE = re.compile(r"`([^`\n]+)`")
+SOORT_RE = re.compile(r"\b([A-Z][A-Za-z]*(?:Error|Exception|Interrupt|Warning))\b")
+
+
+def proza_van(tekst: str) -> str:
+    """Alleen de lopende tekst, met de regelnummers intact.
+
+    Frontmatter, codeblokken en oefeningen gaan eruit: daar staat geen belofte
+    aan de lezer, en een `KeyError` in een `description:` is metadata, geen les.
+    """
+
+    def leeg(m):
+        return "\n" * m.group(0).count("\n")
+
+    zonder = re.sub(r"\A\ufeff?---\n.*?\n---\n", leeg, tekst, count=1, flags=re.S)
+    zonder = re.sub(r"^```.*?^```[^\n]*$", leeg, zonder, flags=re.S | re.M)
+    return re.sub(r"<CodeExercise>\{`.*?`\}</CodeExercise>", leeg, zonder, flags=re.S)
+
+
+def inline_claims(tekst: str, bron):
+    """De foutmeldingen die de lopende tekst noemt."""
+    proza = proza_van(tekst)
+    # proza houdt de regelnummers gelijk maar niet de posities — een codeblok
+    # wordt vervangen door zijn newlines en is dus korter. Zoeken naar de marker
+    # doen we in de bron, dus reken de treffer eerst om via zijn regelnummer.
+    begin_van_regel = [0]
+    for regel in tekst.split("\n"):
+        begin_van_regel.append(begin_van_regel[-1] + len(regel) + 1)
+
+    for m in INLINE_CODE_RE.finditer(proza):
+        inhoud = m.group(1).strip()
+        if not SOORT_RE.match(inhoud):
+            continue
+        regelnr = proza[: m.start()].count("\n")
+        kolom = m.start() - (proza.rfind("\n", 0, m.start()) + 1)
+        plek = begin_van_regel[regelnr] + kolom
+        alinea = tekst.rfind("\n\n", 0, plek)
+        ervoor = tekst[: alinea if alinea != -1 else 0].rstrip()
+        van = VAN_RE.search(ervoor)
+        yield (
+            bron,
+            regelnr + 1,
+            inhoud,
+            van.group(1) if van else None,
+            bool(LOS_RE.search(ervoor)),
+            vorig_blok(tekst, plek),
+            volgend_blok(tekst, plek),
+        )
 
 
 def compileer(bron, regel, code) -> str | None:
@@ -303,7 +380,7 @@ def controleer_claim(claim) -> str | None:
     if hoe is None:
         return (
             f"{plek}: {melding!r} staat er als belofte over Python, maar niets "
-            f"reproduceert hem — zet {{/* foutmelding-van: … */}} boven het blok"
+            f"reproduceert hem — zet er {{/* foutmelding-van: … */}} boven"
         )
 
     goed = None
@@ -311,6 +388,10 @@ def controleer_claim(claim) -> str | None:
         if erboven is None:
             return f"{plek}: 'blok-erboven', maar er staat geen python-blok boven"
         code = erboven
+    elif hoe == "blok-eronder":
+        if eronder is None:
+            return f"{plek}: 'blok-eronder', maar er volgt geen blok"
+        code = eronder
     elif hoe == "fout-helft":
         if eronder is None:
             return f"{plek}: 'fout-helft', maar er volgt geen python-blok"
@@ -318,7 +399,9 @@ def controleer_claim(claim) -> str | None:
         if goed is None:
             return f"{plek}: 'fout-helft', maar het blok eronder heeft geen '# GOED'"
     else:
-        code = hoe
+        # Een reproductie van meer dan één regel schrijf je met \\n; een
+        # inspringfout valt nu eenmaal niet op één regel te laten zien.
+        code = hoe.replace("\\n", "\n")
 
     exitcode, gegeven = los_fragment(code)
     if exitcode == 0:
@@ -326,7 +409,12 @@ def controleer_claim(claim) -> str | None:
     # Een melding die op … eindigt citeert alleen de vaste kop. Dat is nodig als
     # Python er iets machine-eigens achter zet — bij een overschaduwde module
     # noemt 3.13 het volledige pad van je bestand, en dat is bij niemand gelijk.
-    if not OORDEELT_OVER_TEKST:
+    if ":" not in melding:
+        # De zin noemt alleen de soort ("dan krijg je een `ValueError`"); dan is
+        # dát de belofte en niet de bewoording, en die is versieloos te toetsen.
+        if gegeven.split(":", 1)[0] != melding:
+            return f"{plek}: belooft {melding}, geeft {gegeven!r}"
+    elif not OORDEELT_OVER_TEKST:
         pass
     elif melding.endswith("…"):
         if not gegeven.startswith(melding[:-1].rstrip()):

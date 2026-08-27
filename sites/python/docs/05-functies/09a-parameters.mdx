@@ -44,7 +44,9 @@ adres("Hoofdstraat", 12)
 
 De volgorde van de argumenten moet overeenkomen met de volgorde van de parameters: het eerste argument vult de eerste parameter, het tweede vult de tweede, enzovoort.
 
-Roep je de functie aan zonder argument terwijl hij wel een parameter heeft? Dan krijg je `TypeError: missing 1 required positional argument`. Python kan niet raden wat de naam moet zijn.
+{/* foutmelding-van: def adres(straat, nummer): pass\nadres("Hoofdstraat") */}
+
+Vergeet je een argument? Dan krijg je `TypeError: adres() missing 1 required positional argument: 'nummer'`. Python noemt de functie en de parameter die hij mist, want raden welk nummer je bedoelt kan hij niet.
 
 ---
 

@@ -66,6 +66,8 @@ maak()
 print(binnenin)
 ```
 
+{/* foutmelding-van: blok-erboven */}
+
 Dit geeft `NameError: name 'binnenin' is not defined`. Buiten de functie bestaat `binnenin` niet.
 
 ## Met global mag het wel
@@ -139,6 +141,8 @@ punt()
 ---
 
 ## Opdracht 9c.1: Repareer de teller
+
+{/* foutmelding-van: blok-eronder */}
 
 Dit programma zou `3` moeten printen, maar geeft een `UnboundLocalError`. Repareer het met `global`.
 
@@ -272,6 +276,8 @@ Sam
 ```
 
 Binnen `begroet` maakt de regel `naam = "Alex"` een nieuwe, lokale `naam`. Die verdwijnt zodra de functie klaar is, dus de `naam` van buiten staat daarna nog gewoon op `"Sam"`.
+
+{/* foutmelding-los: hier staat juist dat die fout niet optreedt; het blok erboven draait en bewijst het */}
 
 En anders dan bij de teller hierboven krijg je hier géén `UnboundLocalError`: de functie leest de lokale `naam` pas nadat hij een waarde heeft gekregen.
 
