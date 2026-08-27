@@ -15,9 +15,9 @@
 //
 // Let op: de npm-package van Pyodide bevat alléén de runtime, geen enkele wheel
 // — niet in 0.29 en ook niet in 0.27. Een site die een pakket nodig heeft
-// (algorithms draait matplotlib) heeft die wheels er dus met de hand bij gezet,
-// uit een release of van de CDN. Dit script begon met de doelmap leeggooien en
-// zou ze daarmee wissen; vandaar de controle hieronder.
+// (algorithms draait matplotlib) haalt die wheels apart op — daarvoor is
+// haal-pyodide-wheels.mjs hiernaast. Dit script begon met de doelmap leeggooien
+// en zou ze daarmee wissen; vandaar de controle hieronder.
 
 import { cpSync, existsSync, readdirSync, rmSync, statSync, unlinkSync } from 'node:fs';
 import { createRequire } from 'node:module';

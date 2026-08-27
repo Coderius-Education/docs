@@ -14,7 +14,8 @@
     "typecheck": "tsc",
     "test:traces": "node scripts/test-traces.mjs",
     "test:voorkennis": "node scripts/check-voorkennis.mjs",
-    "copy:pyodide": "node ../../packages/python-runner/scripts/copy-pyodide.mjs"
+    "copy:pyodide": "node ../../packages/python-runner/scripts/copy-pyodide.mjs",
+    "haal:wheels": "node ../../packages/python-runner/scripts/haal-pyodide-wheels.mjs matplotlib"
   },
   "dependencies": {
     "@coderius/shared": "workspace:*",
