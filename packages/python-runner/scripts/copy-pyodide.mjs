@@ -4,6 +4,14 @@
 //
 // Gebruik vanuit een site: `"copy:pyodide": "node ../../packages/python-runner/scripts/copy-pyodide.mjs"`
 // (de site heeft `pyodide` als devDependency). Daarna: commit static/pyodide/.
+//
+// Die kopie is twaalf megabyte binair die daarna niemand meer inkijkt, en het
+// script draait met de hand — dus hij kan achterblijven zonder dat iets het
+// merkt. Dat is ook echt gebeurd: python-docs bleef op een 0.28.0.dev0-snapshot
+// staan en algorithms op Python 3.12, terwijl de catalog al op 0.29 stond.
+// `src/pyodide-kopie.test.ts` legt elke gecommitte kopie nu naast de
+// geïnstalleerde pyodide. Ververs je er een, dan hoort die site van de
+// uitzonderingslijst in die test af — de test dwingt dat zelf af.
 
 import { cpSync, existsSync, readdirSync, rmSync, statSync, unlinkSync } from 'node:fs';
 import { createRequire } from 'node:module';
