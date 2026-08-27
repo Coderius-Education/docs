@@ -34,7 +34,7 @@ const NOG_NIET_BIJGEWERKT = new Map([
   ],
   [
     'algorithms',
-    'draait bewust op 0.27.4 (Python 3.12): de dertien meegeleverde wheels zijn cp312 en de npm-package bundelt sinds 0.28 geen wheels meer, dus verversen breekt matplotlib in vijftien lessen — zie sites/algorithms/CLAUDE.md',
+    'draait bewust op 0.27.4 (Python 3.12): de dertien met de hand toegevoegde wheels zijn cp312, en verversen breekt matplotlib in vijftien lessen — zie sites/algorithms/CLAUDE.md',
   ],
 ]);
 
@@ -83,12 +83,12 @@ describe('de zelf geserveerde Pyodide-kopieën', () => {
   });
 
   it('hebben wheels die bij de Python-versie van hun eigen runtime horen', () => {
-    // De val waar algorithms in zou lopen bij een achteloze verversing. Tot en
-    // met 0.27 bundelde de npm-package van Pyodide zijn wheels; vanaf 0.28 niet
-    // meer. Draai je copy:pyodide op een map met wheels, dan krijg je dus een
-    // nieuwere runtime met de oude wheels ernaast: die zijn cp312 en laden niet
-    // op 3.13, waarna loadPackage terugvalt op de CDN die zo'n map juist
-    // vermijdt. Stil, want er komt geen foutmelding uit de build.
+    // De val waar algorithms in zou lopen. De npm-package van Pyodide bevat in
+    // geen enkele versie wheels, alleen de runtime; wie een pakket nodig heeft
+    // zet die wheels er met de hand bij. Vervang je dan alleen de runtime, dan
+    // staan er cp312-wheels naast een 3.13-interpreter: die laden niet, en
+    // loadPackage valt terug op de CDN die zo'n map juist vermijdt. Stil, want
+    // er komt geen foutmelding uit de build.
     const mismatch: string[] = [];
 
     for (const site of zelfHostendeSites()) {
