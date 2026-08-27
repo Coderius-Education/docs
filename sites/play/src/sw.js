@@ -18,7 +18,7 @@ import { registerRoute } from 'workbox-routing';
 import { CacheFirst } from 'workbox-strategies';
 
 // Pyodide CDN: WASM, Python stdlib zip, package wheels. ~15 MB total.
-// Versioned URLs (e.g. /pyodide/v0.27.5/...) so we can cache aggressively.
+// Versioned URLs (e.g. /pyodide/v0.29.4/...) so we can cache aggressively.
 registerRoute(
   ({ url }) => url.origin === 'https://cdn.jsdelivr.net' && url.pathname.startsWith('/pyodide/'),
   new CacheFirst({
@@ -34,7 +34,7 @@ registerRoute(
 );
 
 // Local wheels (pymunk, coderius-play). Small but versioned by filename
-// (coderius_play-3.4.0-…whl) so old versions safely fall out of cache.
+// (coderius_play-3.4.0-…whl, pymunk-7.3.0-…whl) so old versions safely fall out of cache.
 registerRoute(
   ({ url }) => url.pathname.startsWith('/whl/'),
   new CacheFirst({

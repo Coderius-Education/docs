@@ -9,8 +9,9 @@
 // scripts kopiëren díe versie naar static/pyodide/ van self-hostende sites.
 // De CDN-default hieronder geldt voor sites die NIET self-hosten (bijv.
 // fullstack), zodat die dezelfde Pyodide draaien als de rest.
-// Let op: play gebruikt bewust een oudere Pyodide (Python 3.12) vanwege zijn
-// cp312-wheels — zie sites/play/src/components/CodeRunner/engine.js.
+// play heeft een eigen constante in sites/play/src/components/CodeRunner/engine.js,
+// omdat die site zijn Pyodide in een iframe laadt en niet via deze provider.
+// Hij hoort dezelfde versie te noemen; pyodide-kopie.test.ts controleert dat.
 export const PYODIDE_VERSION = '0.29.4';
 const DEFAULT_PYODIDE_BASE_URL = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/`;
 let pyodideBaseUrl = DEFAULT_PYODIDE_BASE_URL;

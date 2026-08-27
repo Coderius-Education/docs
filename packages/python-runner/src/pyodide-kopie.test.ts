@@ -109,6 +109,47 @@ describe('de zelf geserveerde Pyodide-kopieën', () => {
     expect(mismatch).toEqual([]);
   });
 
+  it('elke vastgelegde Pyodide-versie in de bron wijst naar dezelfde build', () => {
+    // play laadt Pyodide in een eigen iframe en heeft daarom een eigen constante,
+    // los van die in PyodideProvider. Twee constanten betekent twee versies
+    // zodra iemand er één bumpt — play liep zo lang achter op 0.27.x. Deze test
+    // is wat ze bij elkaar houdt; een import zou play's bundel opzadelen met een
+    // module die die site verder niet gebruikt.
+    const require = createRequire(import.meta.url);
+    const geinstalleerd = JSON.parse(
+      readFileSync(require.resolve('pyodide/package.json'), 'utf8'),
+    ).version;
+
+    const bronnen: string[] = [];
+    const loop = (map: string): void => {
+      for (const item of readdirSync(map, { withFileTypes: true })) {
+        // static/ bevat de gekopieerde Pyodide zelf; die noemt zijn eigen versie.
+        if (['node_modules', 'build', 'static', '.docusaurus'].includes(item.name)) continue;
+        const pad = join(map, item.name);
+        if (item.isDirectory()) loop(pad);
+        // Tests overslaan: dit bestand bevat de zoekpatronen zelf, en zou
+        // zichzelf als afwijking rapporteren.
+        else if (/\.(ts|tsx|js|mjs)$/.test(item.name) && !item.name.includes('.test.'))
+          bronnen.push(pad);
+      }
+    };
+    loop(SITES);
+    loop(join(ROOT, 'packages'));
+
+    const afwijkend: string[] = [];
+    for (const pad of bronnen) {
+      const tekst = readFileSync(pad, 'utf8');
+      for (const m of tekst.matchAll(/PYODIDE_VERSION = '([^']+)'/g)) {
+        if (m[1] !== geinstalleerd) afwijkend.push(`${pad}: PYODIDE_VERSION ${m[1]}`);
+      }
+      for (const m of tekst.matchAll(/cdn\.jsdelivr\.net\/pyodide\/v(\d+\.\d+\.\d+)/g)) {
+        if (m[1] !== geinstalleerd) afwijkend.push(`${pad}: CDN-URL v${m[1]}`);
+      }
+    }
+
+    expect(afwijkend, `geïnstalleerd is ${geinstalleerd}`).toEqual([]);
+  });
+
   it('declareren pyodide als devDependency', () => {
     // Zonder die declaratie hangt de kopie aan niets: geen catalog, geen
     // lockfile-druk, geen signaal als de rest doorloopt. Zo dreef python-docs

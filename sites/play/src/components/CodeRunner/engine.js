@@ -3,13 +3,16 @@
  * Supports two modes: "pygame" (pure pygame-ce) and "play" (coderius-play library).
  */
 
-// play draait bewust op Pyodide 0.27.x (Python 3.12), NIET op de catalog-versie
-// die de andere sites gebruiken (0.29.x / Python 3.13): de physics-wheel
-// pymunk-7.2.0 hieronder is cp312-only. Bump deze versie pas als pymunk (en de
-// coderius_play-wheel) voor de nieuwere Python zijn herbouwd.
-const PYODIDE_VERSION = '0.27.5';
+// Deze versie hoort gelijk te lopen met PYODIDE_VERSION in
+// packages/python-runner en met de `pyodide` in de catalog; een test in dat
+// package houdt de drie naast elkaar. Play liep hier lang achter op 0.27.x
+// (Python 3.12), omdat de physics-wheel alleen als cp312 bestond. Sinds pymunk
+// 7.3.0 publiceert het project zelf een wasm-wheel voor Python 3.13, en die
+// staat hieronder. Ga je hierin bumpen, dan moet de pymunk-wheel mee: zijn
+// ABI-tag (pyemscripten_2025_0) hoort bij de abi_version van de Pyodide-versie.
+const PYODIDE_VERSION = '0.29.4';
 const PYODIDE_CDN = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/pyodide.mjs`;
-const PYMUNK_WHEEL = '/whl/pymunk-7.2.0-cp312-cp312-pyodide_2024_0_wasm32.whl';
+const PYMUNK_WHEEL = '/whl/pymunk-7.3.0-cp313-cp313-pyemscripten_2025_0_wasm32.whl';
 const PLAY_WHEEL = '/whl/coderius_play-3.4.0-py3-none-any.whl';
 
 /**
