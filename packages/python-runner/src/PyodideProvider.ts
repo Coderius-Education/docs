@@ -161,6 +161,72 @@ export async function runPythonStream(
   }
 }
 
+export interface StapVariabele {
+  naam: string;
+  soort: string;
+  waarde: string;
+}
+
+/** Eén scope binnen een stap: de globale ruimte of een functie die openstaat. */
+export interface StapFrame {
+  naam: string;
+  variabelen: StapVariabele[];
+}
+
+export interface Stap {
+  regel: number;
+  gebeurtenis: string;
+  frames: StapFrame[];
+  /** Hoeveel tekens er op dit moment geprint waren; snijpunt in `uitvoer`. */
+  uitvoerTot: number;
+}
+
+export interface Opname {
+  stappen: Stap[];
+  uitvoer: string;
+  /** True als de opname op de stappenlimiet is gestopt (meestal een oneindige lus). */
+  afgekapt: boolean;
+  fout: { soort: string; bericht: string; regel: number | null } | null;
+}
+
+/**
+ * Neemt de uitvoering op in plaats van hem alleen te draaien: per stap het
+ * regelnummer, de openstaande scopes met hun variabelen, en hoever de uitvoer
+ * op dat moment was. De UI bladert daarna door die opname.
+ *
+ * De leerlingcode gaat als Python-stringliteral mee. JSON.stringify levert een
+ * literal die Python net zo leest als JavaScript, dus er valt niets te escapen.
+ */
+export async function tracePython(pyodide: PyodideInterface, code: string): Promise<Opname> {
+  const { RECORDER } = await import('./trace/recorder');
+
+  pyodide.setStdin({
+    stdin: () => {
+      const answer = window.prompt('Invoer (input):');
+      return answer === null ? '' : answer;
+    },
+  });
+
+  try {
+    const ruw = (await pyodide.runPythonAsync(
+      `${RECORDER}\n_stapper_neem_op(${JSON.stringify(code)})`,
+    )) as string;
+    return JSON.parse(ruw) as Opname;
+  } catch (err) {
+    // Hier komen we alleen als de opnemer zelf omvalt; een fout ín de
+    // leerlingcode vangt hij op en levert hij als `fout` terug.
+    const raw = err instanceof Error ? err.message : String(err);
+    return {
+      stappen: [],
+      uitvoer: '',
+      afgekapt: false,
+      fout: { soort: 'Fout', bericht: filterTraceback(raw), regel: null },
+    };
+  } finally {
+    pyodide.setStdin();
+  }
+}
+
 export async function runPython(pyodide: PyodideInterface, code: string): Promise<string> {
   pyodide.runPython(`
 import sys

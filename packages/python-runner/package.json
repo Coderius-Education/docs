@@ -8,7 +8,9 @@
     "./PyodideProvider": "./src/PyodideProvider.ts",
     "./PythonPlayground": "./src/PythonPlayground/index.tsx",
     "./CodeExercise": "./src/CodeExercise/index.tsx",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./Stapper": "./src/Stapper/index.tsx",
+    "./HighlightedEditor": "./src/HighlightedEditor/index.tsx"
   },
   "peerDependencies": {
     "@docusaurus/core": "*",

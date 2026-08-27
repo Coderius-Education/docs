@@ -1,8 +1,9 @@
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import type React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { PyodideInterface } from '../PyodideProvider';
-import { HighlightedEditor } from '../PythonPlayground';
+import { HighlightedEditor } from '../HighlightedEditor';
+import type { Opname, PyodideInterface } from '../PyodideProvider';
+import Stapper from '../Stapper';
 import styles from './styles.module.css';
 
 function CodeExerciseInner({ starterCode }: { starterCode: string }) {
@@ -10,6 +11,11 @@ function CodeExerciseInner({ starterCode }: { starterCode: string }) {
   const [output, setOutput] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isRunning, setIsRunning] = useState(false);
+  const [opname, setOpname] = useState<Opname | null>(null);
+  // De code zoals hij was toen de opname werd gemaakt: de leerling mag intussen
+  // doortypen, en dan zouden de regelnummers uit de opname naar de verkeerde
+  // regels wijzen.
+  const [opnameCode, setOpnameCode] = useState('');
   const pyodideRef = useRef<PyodideInterface | null>(null);
 
   useEffect(() => {
@@ -39,10 +45,26 @@ function CodeExerciseInner({ starterCode }: { starterCode: string }) {
     if (!pyodideRef.current || isRunning) return;
     setIsRunning(true);
     setOutput('');
+    setOpname(null);
     try {
       const { runPython } = await import('../PyodideProvider');
       const result = await runPython(pyodideRef.current, code);
       setOutput(result);
+    } catch (err) {
+      setOutput(err instanceof Error ? err.message : String(err));
+    } finally {
+      setIsRunning(false);
+    }
+  }, [code, isRunning]);
+
+  const stapCode = useCallback(async () => {
+    if (!pyodideRef.current || isRunning) return;
+    setIsRunning(true);
+    setOutput('');
+    try {
+      const { tracePython } = await import('../PyodideProvider');
+      setOpnameCode(code);
+      setOpname(await tracePython(pyodideRef.current, code));
     } catch (err) {
       setOutput(err instanceof Error ? err.message : String(err));
     } finally {
@@ -86,6 +108,15 @@ function CodeExerciseInner({ starterCode }: { starterCode: string }) {
             </button>
             <button
               type="button"
+              className={styles.stapButton}
+              onClick={stapCode}
+              disabled={isLoading || isRunning}
+              title="Loop regel voor regel door je code en zie wat elke variabele doet"
+            >
+              Stap voor stap
+            </button>
+            <button
+              type="button"
               className={styles.runButton}
               onClick={execCode}
               disabled={isLoading || isRunning}
@@ -102,6 +133,7 @@ function CodeExerciseInner({ starterCode }: { starterCode: string }) {
           minHeight={120}
         />
       </div>
+      {opname && <Stapper code={opnameCode} opname={opname} onSluiten={() => setOpname(null)} />}
       {output && <pre className={styles.output}>{output}</pre>}
       {isLoading && <div className={styles.loading}>Python wordt geladen...</div>}
     </div>

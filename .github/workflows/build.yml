@@ -39,10 +39,19 @@ jobs:
           node-version: 22
           cache: pnpm
 
+      # De stap-voor-stap-opnemer is Python die in de browser in Pyodide draait.
+      # Zijn test draait hem tegen een echte CPython, en die hoort dezelfde
+      # taalversie te spreken als Pyodide meelevert: 3.13, zowel in de
+      # gebundelde als in de CDN-variant. De runner heeft standaard wel een
+      # python3, maar niet noodzakelijk die versie.
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Test (nakijker)
+      - name: Test (nakijker en de stap-opnemer)
         run: pnpm test
 
   # De godot-cursus laat leerlingen elk script zelf opbouwen, dus staan de

@@ -27,6 +27,12 @@
   font-size: 0.875rem;
 }
 
+.knoppen {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .runButton {
   background: var(--ifm-color-primary);
   color: #fff;
@@ -159,4 +165,21 @@
   word-wrap: break-word;
   background: var(--ifm-background-color);
   color: var(--ifm-font-color-base);
+}
+
+/* De regel die op dit moment wordt uitgevoerd, in de stapper. De markering zit
+   op de regel-div van prism-react-renderer zelf, dus hij loopt netjes mee als
+   een lange regel afbreekt (white-space: pre-wrap hierboven). De gutter heeft
+   vaste regelhoogtes en kan bij zo'n afgebroken regel een tel achterlopen —
+   dat doet de nummering vandaag al en staat los van deze markering. */
+.regelActief {
+  background: var(--ifm-color-warning-contrast-background);
+  box-shadow: -0.35rem 0 0 var(--ifm-color-warning-contrast-background);
+  border-radius: 2px;
+}
+
+.gutterLineActief {
+  color: var(--ifm-color-warning-contrast-foreground);
+  font-weight: 700;
+  background: var(--ifm-color-warning-contrast-background);
 }
