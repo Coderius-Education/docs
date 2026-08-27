@@ -40,6 +40,7 @@ print(teller)
 
 Het programma stopt met een foutmelding:
 
+{/* foutmelding-van: blok-erboven */}
 ```
 UnboundLocalError: cannot access local variable 'teller' where it is not associated with a value
 ```
@@ -106,6 +107,7 @@ Uitvoer: `2`, net als hierboven. De functie rekent, en buiten de functie bepaal 
 
 ## Er gaat iets mis
 
+{/* foutmelding-van: fout-helft */}
 ```
 UnboundLocalError: cannot access local variable 'score' where it is not associated with a value
 ```
@@ -114,6 +116,7 @@ UnboundLocalError: cannot access local variable 'score' where it is not associat
 
 **Oplossing:** zet `global` bovenaan de functie, of laat de functie de nieuwe waarde teruggeven met `return`.
 
+{/* niet-draaien: de FOUT-helft toont juist de fout die deze les uitlegt */}
 ```python
 # FOUT
 score = 0
@@ -121,12 +124,16 @@ score = 0
 def punt():
     score = score + 1
 
+punt()
+
 # GOED
 score = 0
 
 def punt():
     global score
     score = score + 1
+
+punt()
 ```
 
 ---

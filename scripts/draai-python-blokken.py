@@ -30,6 +30,27 @@ hele commentaar.
 Een uitvoerblok dat op een foutmelding eindigt hoort bij code die juist stuk
 moet gaan: dan wordt stderr vergeleken en is een exitcode van nul de fout.
 
+Datzelfde geldt voor de foutmeldingen die los in de tekst staan, onder "## Er
+gaat iets mis" of in een antwoord-`<details>`. Die horen bij code die de leerling
+zélf heeft (een aanroep, een bestand dat hij maakte), dus ze staan niet naast een
+draaibaar blok. Toch is het een letterlijke belofte over wat Python zegt, en juist
+die tekst verschuift: `UnboundLocalError` heet sinds 3.11 anders dan daarvoor, en
+de les die dat uitlegt zou het als eerste merken. Daarom wijst elke losse
+foutmelding aan waaruit hij te reproduceren is:
+
+    {/* foutmelding-van: blok-erboven */}   het python-blok hierboven draaien
+    {/* foutmelding-van: fout-helft */}     de `# FOUT`-helft van het blok
+                                            hieronder; de `# GOED`-helft moet
+                                            dan juist schoon draaien
+    {/* foutmelding-van: import rekenen */} een eigen reproductie op één regel
+
+De reproductie draait in een lege map, zodat een regel als
+`open("random.py", "w").close(); import random` kan laten zien wat er gebeurt als
+een eigen bestand een module overschaduwt. Kan een melding echt niet gereproduceerd
+worden, dan zegt `{/* foutmelding-los: reden */}` dat met reden — zonder marker
+valt de controle om, want een foutmelding zonder reproductie is precies wat hier
+stilletjes veroudert.
+
 Markers, direct boven het blok, net als in de play-cursus:
 
     {/* niet-draaien: reden */}       wel compileren, niet uitvoeren
@@ -49,6 +70,7 @@ Afsluitcode 0 als alles slaagt, 1 zodra er iets misgaat.
 import re
 import subprocess
 import sys
+import tempfile
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -72,6 +94,13 @@ VARIEERT_RE = re.compile(r"\{/\*\s*uitvoer-varieert:.*?\*/\}\s*$")
 BELOFTE_RE = re.compile(r"^\s*print\(.*\)\s+#\s*(.+?)\s*$")
 # Een uitvoerblok dat hierop eindigt hoort bij code die moet omvallen.
 FOUT_RE = re.compile(r"^[A-Z]\w*(Error|Exception):")
+# Een losse foutmelding wijst aan waaruit hij te reproduceren is; zonder zo'n
+# marker staat er een belofte over Python die niemand nakijkt.
+# Zonder re.S: `.` mag geen regels overspringen, anders rekt `(.+?)` zich uit tot
+# de láátste marker in het bestand en krijgt het tweede blok de waarde van het
+# eerste. Dat is ook waarom de markers hierboven geen re.S hebben.
+VAN_RE = re.compile(r"\{/\*\s*foutmelding-van:\s*(.+?)\s*\*/\}\s*$")
+LOS_RE = re.compile(r"\{/\*\s*foutmelding-los:.*?\*/\}\s*$")
 
 TIJDSLIMIET = 30
 
@@ -94,13 +123,30 @@ def waarde_van(belofte: str) -> str:
     return zonder or belofte
 
 
+def helften(code: str) -> tuple[str, str | None]:
+    """Splitst een `# FOUT` / `# GOED`-blok uit §8 in zijn twee helften."""
+    regels = code.split("\n")
+    grens = next((i for i, r in enumerate(regels) if r.strip() == "# GOED"), None)
+    if grens is None:
+        return code, None
+    fout = "\n".join(r for r in regels[:grens] if r.strip() != "# FOUT")
+    return fout.strip("\n"), "\n".join(regels[grens + 1 :]).strip("\n")
+
+
+def melding_van(kaalcode: str) -> str | None:
+    """De foutmelding waarop een uitvoerblok eindigt, als het er een is."""
+    regels = [r.strip() for r in kaalcode.strip().splitlines() if r.strip()]
+    return regels[-1] if regels and FOUT_RE.match(regels[-1]) else None
+
+
 def verzamel():
-    """Alle blokken: (bron, regel, code, soort, verwacht)."""
-    blokken = []
+    """(blokken, claims) — blokken zijn (bron, regel, code, soort, verwacht, varieert)."""
+    blokken, claims = [], []
     for pad in sorted(DOCS.rglob("*.mdx")) + sorted(DOCS.rglob("*.md")):
         tekst = pad.read_text()
         bron = pad.relative_to(ROOT)
         vorige = None  # laatst geziene python-blok, kandidaat voor een uitvoerblok
+        laatste_py = None  # ook als de band met een uitvoerblok al verbroken is
 
         for m in BLOK_RE.finditer(tekst):
             if m.group("kaal") is not None:
@@ -109,15 +155,33 @@ def verzamel():
                 # kopje. Onder "## Er gaat iets mis" hoort de foutmelding juist
                 # bij het blok dat erna komt.
                 tussen = tekst[vorige[0] : m.start()] if vorige is not None else ""
-                if vorige is not None and len(tussen.strip()) <= 40 and "#" not in tussen:
+                gepaard = vorige is not None and len(tussen.strip()) <= 40 and "#" not in tussen
+                if gepaard:
                     rij = blokken[vorige[1]]
                     blokken[vorige[1]] = rij[:4] + (inspring_weg(m.group("kaalcode")), rij[5])
+                melding = melding_van(m.group("kaalcode"))
+                if melding and not gepaard:
+                    ervoor = tekst[: m.start()].rstrip()
+                    van = VAN_RE.search(ervoor)
+                    claims.append(
+                        (
+                            bron,
+                            tekst[: m.start()].count("\n") + 1,
+                            melding,
+                            van.group(1) if van else None,
+                            bool(LOS_RE.search(ervoor)),
+                            laatste_py,
+                            volgend_blok(tekst, m.end()),
+                        )
+                    )
                 vorige = None
                 continue
 
             code = m.group("pycode") if m.group("py") is not None else m.group("oefcode")
             regel = tekst[: m.start()].count("\n") + 1
             ervoor = tekst[: m.start()].rstrip()
+            if m.group("py") is not None:
+                laatste_py = inspring_weg(code)
             if NIET_COMPILEREN_RE.search(ervoor):
                 vorige = None
                 continue
@@ -125,7 +189,13 @@ def verzamel():
             varieert = bool(VARIEERT_RE.search(ervoor))
             blokken.append((bron, regel, inspring_weg(code), soort, None, varieert))
             vorige = (m.end(), len(blokken) - 1) if m.group("py") is not None else None
-    return blokken
+    return blokken, claims
+
+
+def volgend_blok(tekst: str, vanaf: int) -> str | None:
+    """De code van het eerstvolgende ```python-blok, voor `fout-helft`."""
+    m = re.search(r"^```python[^\n]*\n(.*?)^```", tekst[vanaf:], re.S | re.M)
+    return inspring_weg(m.group(1)) if m else None
 
 
 def compileer(bron, regel, code) -> str | None:
@@ -189,8 +259,69 @@ def draai(bron, regel, code, verwacht, varieert=False) -> str | None:
     return None
 
 
+def los_fragment(code: str) -> tuple[int, str]:
+    """Draait een fragment in een lege map; geeft (exitcode, laatste stderr-regel).
+
+    De lege map doet er wel degelijk toe: `import rekenen` hoort te falen omdat
+    dat bestand er niet is, en een reproductie die zelf een `random.py` neerzet
+    moet dat niet in de repo doen.
+    """
+    with tempfile.TemporaryDirectory() as werkmap:
+        try:
+            r = subprocess.run(
+                [sys.executable, "-c", code],
+                capture_output=True,
+                text=True,
+                timeout=TIJDSLIMIET,
+                cwd=werkmap,
+            )
+        except subprocess.TimeoutExpired:
+            return -1, f"draait na {TIJDSLIMIET}s nog"
+    laatste = next((x.strip() for x in reversed(r.stderr.strip().splitlines()) if x.strip()), "")
+    return r.returncode, laatste
+
+
+def controleer_claim(claim) -> str | None:
+    bron, regel, melding, hoe, los, erboven, eronder = claim
+    plek = f"{bron}:{regel}"
+
+    if los:
+        return None
+    if hoe is None:
+        return (
+            f"{plek}: {melding!r} staat er als belofte over Python, maar niets "
+            f"reproduceert hem — zet {{/* foutmelding-van: … */}} boven het blok"
+        )
+
+    goed = None
+    if hoe == "blok-erboven":
+        if erboven is None:
+            return f"{plek}: 'blok-erboven', maar er staat geen python-blok boven"
+        code = erboven
+    elif hoe == "fout-helft":
+        if eronder is None:
+            return f"{plek}: 'fout-helft', maar er volgt geen python-blok"
+        code, goed = helften(eronder)
+        if goed is None:
+            return f"{plek}: 'fout-helft', maar het blok eronder heeft geen '# GOED'"
+    else:
+        code = hoe
+
+    exitcode, gegeven = los_fragment(code)
+    if exitcode == 0:
+        return f"{plek}: belooft {melding!r}, maar de reproductie draait gewoon door"
+    if gegeven != melding:
+        return f"{plek}: belooft {melding!r}, geeft {gegeven!r}"
+
+    if goed is not None:
+        exitcode, gegeven = los_fragment(goed)
+        if exitcode != 0:
+            return f"{plek}: de '# GOED'-helft hoort te werken, maar geeft {gegeven!r}"
+    return None
+
+
 def main() -> int:
-    blokken = verzamel()
+    blokken, claims = verzamel()
     te_draaien = [b for b in blokken if b[3] == "draai"]
     te_compileren = [b for b in blokken if b[3] == "compileer"]
     met_belofte = sum(
@@ -204,12 +335,15 @@ def main() -> int:
     with ThreadPoolExecutor(max_workers=8) as pool:
         resultaten = pool.map(lambda b: draai(b[0], b[1], b[2], b[4], b[5]), te_draaien)
         fouten += [f for f in resultaten if f]
+        fouten += [f for f in pool.map(controleer_claim, claims) if f]
 
     for fout in fouten:
         print(fout)
     print(
         f"Uitgevoerd: {len(te_draaien)} blokken, waarvan {met_belofte} met een "
-        f"beloofde uitvoer; gecompileerd: {len(te_compileren)} — {len(fouten)} fouten."
+        f"beloofde uitvoer; gecompileerd: {len(te_compileren)}; "
+        f"losse foutmeldingen gereproduceerd: {len([c for c in claims if not c[4]])} "
+        f"— {len(fouten)} fouten."
     )
     return 1 if fouten else 0
 

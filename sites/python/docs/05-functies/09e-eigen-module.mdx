@@ -87,6 +87,7 @@ Zo werkt elke bibliotheek die je gebruikt: `time` is ook gewoon een bestand met 
 
 ## Er gaat iets mis
 
+{/* foutmelding-van: import rekenen */}
 ```
 ModuleNotFoundError: No module named 'rekenen'
 ```
@@ -109,6 +110,7 @@ import rekenen
 
 Maak je een bestand `random.py`, dan vindt Python jóuw bestand in plaats van de echte module `random`. Je krijgt dan een foutmelding die nergens op slaat:
 
+{/* foutmelding-van: open("random.py", "w").close(); import random; random.randint(1, 6) */}
 ```
 AttributeError: module 'random' has no attribute 'randint'
 ```
