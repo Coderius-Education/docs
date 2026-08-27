@@ -71,6 +71,7 @@ De eerste vorm is duidelijker: `time.sleep` vertelt meteen waar die functie vand
 
 Zet je imports op de eerste regels van je bestand, vóór de rest van je code. Python leest je bestand van boven naar beneden: staat de import onder de plek waar je hem gebruikt, dan is hij daar nog niet bekend.
 
+{/* niet-draaien: toont bewust een import onder het gebruik */}
 ```python
 # FOUT
 time.sleep(1)
@@ -91,6 +92,7 @@ NameError: name 'sleep' is not defined
 
 **Oplossing:** kies één van de twee vormen en houd hem vol.
 
+{/* niet-draaien: toont bewust de verkeerde importvorm */}
 ```python
 # FOUT
 import time

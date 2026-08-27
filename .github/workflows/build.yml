@@ -217,6 +217,23 @@ jobs:
       - name: Codevoorbeelden uitvoeren tegen de gebundelde wheel
         run: python3 scripts/draai-play-blokken.py
 
+  # De python-cursus zegt bij veel voorbeelden wát er op het scherm komt: als
+  # commentaar achter de print-regel, of als uitvoerblok eronder. Die belofte is
+  # na te lopen, en dat is een sterkere controle dan "het draait": een blok dat
+  # iets anders print dan de les zegt, laat een leerling denken dat híj de fout
+  # maakt. Zo stond er in de les over len() een 11 bij een string van 12 tekens.
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Codevoorbeelden uitvoeren en de beloofde uitvoer vergelijken
+        run: python3 scripts/draai-python-blokken.py
+
   # Lestekst is het product van deze repo, maar niets controleerde hem. Een
   # typefout, een emoji, een "u" in plaats van "je" of een alinea vol vet:
   # de build merkt er niets van en een reviewer die honderden regels diff

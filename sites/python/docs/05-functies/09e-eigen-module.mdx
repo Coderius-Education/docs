@@ -23,6 +23,7 @@ def verdubbel(getal):
 
 **`main.py`**
 
+{/* niet-draaien: rekenen.py maakt de leerling zelf */}
 ```python
 import rekenen
 
@@ -40,6 +41,7 @@ Dit is de eerste les zonder oefenvenster bij de voorbeelden. Dat komt doordat er
 
 `rekenen.py` importeer je als `rekenen`, **zonder** de `.py`:
 
+{/* niet-draaien: rekenen.py maakt de leerling zelf */}
 ```python
 import rekenen        # klopt
 import rekenen.py     # klopt niet
@@ -58,12 +60,14 @@ Daarom is de bestandsnaam ineens belangrijk. Kies een naam zonder spaties en zon
 
 Net als bij `time` kun je kiezen wat je binnenhaalt:
 
+{/* niet-draaien: rekenen.py maakt de leerling zelf */}
 ```python
 import rekenen
 
 print(rekenen.optellen(2, 3))
 ```
 
+{/* niet-draaien: rekenen.py maakt de leerling zelf */}
 ```python
 from rekenen import optellen
 
@@ -91,6 +95,7 @@ ModuleNotFoundError: No module named 'rekenen'
 
 **Oplossing:** zet beide bestanden in dezelfde map en controleer de spelling. Hoofdletters tellen mee: `Rekenen.py` is niet `rekenen.py`.
 
+{/* niet-draaien: toont bewust een hoofdletterfout in de modulenaam */}
 ```python
 # FOUT
 import Rekenen
@@ -187,6 +192,7 @@ def omtrek(lengte, breedte):
 
 **`main.py`**
 
+{/* niet-draaien: vormen.py maakt de leerling zelf */}
 ```python
 import vormen
 
@@ -216,6 +222,7 @@ Je hoeft `vormen.py` niet aan te passen. Dat is precies het punt: één module, 
 
 **`tuin.py`**
 
+{/* niet-draaien: vormen.py maakt de leerling zelf */}
 ```python
 from vormen import omtrek
 

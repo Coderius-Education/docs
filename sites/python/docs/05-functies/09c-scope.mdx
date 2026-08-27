@@ -24,6 +24,7 @@ Veranderen is een ander verhaal.
 
 ## Voorspel: wat doet dit?
 
+{/* niet-draaien: toont bewust de UnboundLocalError die deze les uitlegt */}
 ```python
 teller = 0
 
@@ -55,6 +56,7 @@ Op `teller = teller + 1` moet hij eerst de rechterkant uitrekenen. Daarvoor heef
 
 De plek waar een variabele bestaat heet zijn **scope**. Wat je in een functie maakt, bestaat alleen daar:
 
+{/* niet-draaien: toont bewust dat een lokale naam buiten de functie niet bestaat */}
 ```python
 def maak():
     binnenin = 42
@@ -133,6 +135,7 @@ def punt():
 
 Dit programma zou `3` moeten printen, maar geeft een `UnboundLocalError`. Repareer het met `global`.
 
+{/* niet-draaien: de opdracht is juist deze fout zien en daarna oplossen */}
 <CodeExercise>{`teller = 0
 
 def tel_op():
