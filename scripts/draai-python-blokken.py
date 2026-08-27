@@ -51,6 +51,10 @@ worden, dan zegt `{/* foutmelding-los: reden */}` dat met reden — zonder marke
 valt de controle om, want een foutmelding zonder reproductie is precies wat hier
 stilletjes veroudert.
 
+Zet je er een … achter, dan telt alleen de kop ervoor. Dat is voor de meldingen
+waar Python iets achteraan plakt dat bij niemand gelijk is: bij een module die
+je eigen bestand overschaduwt noemt 3.13 het volledige pad van dat bestand.
+
 Markers, direct boven het blok, net als in de play-cursus:
 
     {/* niet-draaien: reden */}       wel compileren, niet uitvoeren
@@ -103,6 +107,15 @@ VAN_RE = re.compile(r"\{/\*\s*foutmelding-van:\s*(.+?)\s*\*/\}\s*$")
 LOS_RE = re.compile(r"\{/\*\s*foutmelding-los:.*?\*/\}\s*$")
 
 TIJDSLIMIET = 30
+
+# De speeltuin op de site draait Pyodide 0.29.4, en dat is CPython 3.13. Dáár
+# leest een leerling zijn foutmelding, dus die versie bepaalt of een citaat klopt.
+# De bewoording verschilt per versie — 3.12 raadt bij een NameError welke module
+# je vergat, 3.13 noemt bij een overschaduwde module het pad van je bestand — dus
+# op een oudere Python wordt de tekst niet vergeleken in plaats van ten onrechte
+# afgekeurd. De job draait op 3.13; daar telt hij wel.
+PYTHON_VAN_DE_SITE = (3, 13)
+OORDEELT_OVER_TEKST = sys.version_info[:2] == PYTHON_VAN_DE_SITE
 
 
 def inspring_weg(code: str) -> str:
@@ -310,7 +323,15 @@ def controleer_claim(claim) -> str | None:
     exitcode, gegeven = los_fragment(code)
     if exitcode == 0:
         return f"{plek}: belooft {melding!r}, maar de reproductie draait gewoon door"
-    if gegeven != melding:
+    # Een melding die op … eindigt citeert alleen de vaste kop. Dat is nodig als
+    # Python er iets machine-eigens achter zet — bij een overschaduwde module
+    # noemt 3.13 het volledige pad van je bestand, en dat is bij niemand gelijk.
+    if not OORDEELT_OVER_TEKST:
+        pass
+    elif melding.endswith("…"):
+        if not gegeven.startswith(melding[:-1].rstrip()):
+            return f"{plek}: belooft {melding!r}, geeft {gegeven!r}"
+    elif gegeven != melding:
         return f"{plek}: belooft {melding!r}, geeft {gegeven!r}"
 
     if goed is not None:
@@ -342,9 +363,18 @@ def main() -> int:
     print(
         f"Uitgevoerd: {len(te_draaien)} blokken, waarvan {met_belofte} met een "
         f"beloofde uitvoer; gecompileerd: {len(te_compileren)}; "
-        f"losse foutmeldingen gereproduceerd: {len([c for c in claims if not c[4]])} "
+        f"losse foutmeldingen gereproduceerd: {len([c for c in claims if not c[4]])}"
+        f"{'' if OORDEELT_OVER_TEKST else ' (tekst niet vergeleken, zie hieronder)'} "
         f"— {len(fouten)} fouten."
     )
+    if not OORDEELT_OVER_TEKST:
+        nu = ".".join(str(x) for x in sys.version_info[:2])
+        mikt = ".".join(str(x) for x in PYTHON_VAN_DE_SITE)
+        print(
+            f"\nJe draait Python {nu}; de speeltuin op de site draait {mikt}. De "
+            f"foutmeldingen zijn wel gereproduceerd, maar hun tekst is niet "
+            f"vergeleken — die verschilt per versie. De job doet dat op {mikt}."
+        )
     return 1 if fouten else 0
 
 

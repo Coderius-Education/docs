@@ -35,8 +35,10 @@ Laat je de eerste regel weg, dan kent Python de naam niet:
 
 {/* foutmelding-van: time.sleep(1) */}
 ```
-NameError: name 'time' is not defined
+NameError: name 'time' is not defined. Did you forget to import 'time'?
 ```
+
+Python raadt hier zelf wat eraan ontbreekt. Dat doet hij alleen bij namen die hij als module herkent, dus reken er niet op bij je eigen tikfouten.
 
 **`import time`** zegt: haal die module erbij. Vanaf dat moment kun je alles wat erin zit gebruiken.
 

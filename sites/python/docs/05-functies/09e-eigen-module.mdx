@@ -112,10 +112,10 @@ Maak je een bestand `random.py`, dan vindt Python jóuw bestand in plaats van de
 
 {/* foutmelding-van: open("random.py", "w").close(); import random; random.randint(1, 6) */}
 ```
-AttributeError: module 'random' has no attribute 'randint'
+AttributeError: module 'random' has no attribute 'randint'…
 ```
 
-Python zegt hier eigenlijk: die module heb ik gevonden, maar er zit niet in wat je vraagt. Logisch, want hij kijkt in jouw bestand.
+Python zegt hier eigenlijk: die module heb ik gevonden, maar er zit niet in wat je vraagt. Logisch, want hij kijkt in jouw bestand. Achter die regel zet hij nog het volledige pad van je eigen `random.py` met de tip om hem te hernoemen — precies de oplossing hieronder.
 
 **Oplossing:** geef je bestand een andere naam. `mijn_random.py` mag wel.
 
