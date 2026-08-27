@@ -283,6 +283,66 @@ _os._exit(0)
 """
 
 
+# De gebundelde wheel pint zijn eigen afhankelijkheden. Draait CI tegen andere
+# versies dan de browser krijgt, dan zegt een groene job niets over wat een
+# leerling ziet — en dat is precies de drift die deze repo elders al twee keer
+# heeft opgeleverd. Vandaar: de wheel is de bron, hier én in de workflow
+# (`pip install $(python3 scripts/draai-play-blokken.py --pins)`).
+PAKKETTEN = ("pygame-ce", "numpy", "pymunk")
+
+
+def _marker_geldt(marker: str) -> bool:
+    """Alleen de vorm die deze wheel gebruikt: python_version <op> "X.Y"."""
+    m = re.search(r'python_version\s*(<=|>=|<|>|==)\s*"([\d.]+)"', marker)
+    if not m:
+        return True
+    op, grens = m.group(1), tuple(int(x) for x in m.group(2).split("."))
+    nu = sys.version_info[: len(grens)]
+    return {
+        "<": nu < grens, "<=": nu <= grens, ">": nu > grens,
+        ">=": nu >= grens, "==": nu == grens,
+    }[op]
+
+
+def pins() -> dict[str, str]:
+    """De versies die de gebundelde wheel eist, voor deze Python."""
+    naam = wheel_pad().name.replace("-py3-none-any.whl", "")
+    metadata = zipfile.ZipFile(wheel_pad()).read(f"{naam}.dist-info/METADATA").decode()
+    uit = {}
+    for regel in metadata.splitlines():
+        if not regel.startswith("Requires-Dist:"):
+            continue
+        eis = regel.split(":", 1)[1].strip()
+        deel, _, marker = eis.partition(";")
+        m = re.match(r"([A-Za-z0-9._-]+)==([\d.]+)", deel.strip())
+        if m and m.group(1) in PAKKETTEN and _marker_geldt(marker):
+            uit[m.group(1)] = m.group(2)
+    return uit
+
+
+def controleer_pins() -> str | None:
+    """Klopt wat er geïnstalleerd is met wat de wheel eist?"""
+    import importlib.metadata as md
+
+    scheef = []
+    for naam, verwacht in pins().items():
+        try:
+            echt = md.version(naam)
+        except md.PackageNotFoundError:
+            scheef.append(f"{naam} ontbreekt (verwacht {verwacht})")
+            continue
+        if echt != verwacht:
+            scheef.append(f"{naam} is {echt}, de wheel eist {verwacht}")
+    if not scheef:
+        return None
+    return (
+        "De geïnstalleerde pakketten wijken af van wat de gebundelde wheel eist:\n  "
+        + "\n  ".join(scheef)
+        + "\n\nDan test je iets anders dan de browser draait. Installeer met:\n  "
+        + "pip install " + " ".join(f"{n}=={v}" for n, v in pins().items())
+    )
+
+
 def wheel_pad() -> Path:
     m = re.search(r"PLAY_WHEEL = '/whl/([^']+)'", ENGINE.read_text())
     if not m:
@@ -359,6 +419,15 @@ def draai(bron, regel, code, wheel_map: str) -> str | None:
 
 
 def main() -> int:
+    if "--pins" in sys.argv:
+        print(" ".join(f"{n}=={v}" for n, v in pins().items()))
+        return 0
+
+    scheef = controleer_pins()
+    if scheef:
+        print(scheef, file=sys.stderr)
+        return 1
+
     blokken = verzamel()
     te_draaien = [b for b in blokken if b[3] == "draai"]
     te_compileren = [b for b in blokken if b[3] == "compileer"]

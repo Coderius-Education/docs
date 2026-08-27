@@ -211,8 +211,12 @@ jobs:
         with:
           python-version: '3.12'
 
+      # De gebundelde wheel pint zijn dependencies exact. Installeren we hier
+      # iets anders, dan test deze job een andere pygame/numpy dan de browser
+      # draait — en dat is precies wat de job hoort uit te sluiten. --pins leest
+      # de versies uit de METADATA van de wheel zelf.
       - name: Play-dependencies installeren
-        run: pip install pygame-ce numpy pymunk
+        run: pip install $(python3 scripts/draai-play-blokken.py --pins)
 
       - name: Codevoorbeelden uitvoeren tegen de gebundelde wheel
         run: python3 scripts/draai-play-blokken.py
