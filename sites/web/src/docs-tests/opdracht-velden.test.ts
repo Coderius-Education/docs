@@ -70,6 +70,20 @@ describe('oefenvelden per opdracht (web)', () => {
     });
   }
 
+  it('de startcode-exports staan onder de H1', () => {
+    // Docusaurus leidt de paginatitel (en dus het sidebar-label) af uit de
+    // eerste H1, en slaat daarbij alleen import-regels over. Een export vóór
+    // de H1 laat titel én sidebar terugvallen op de bestandsnaam.
+    const fouten = lessen
+      .filter((l) => {
+        const h1 = l.inhoud.indexOf('\n# ');
+        const eersteExport = l.inhoud.indexOf('export const ');
+        return eersteExport !== -1 && (h1 === -1 || eersteExport < h1);
+      })
+      .map((l) => l.naam);
+    expect(fouten).toEqual([]);
+  });
+
   it('het Make-veld start met een eigen skelet, niet met de voorbeeldcode', () => {
     // De Make-fase is bouw-zelf; het veld hoort naar makeHtml of makeJs te
     // wijzen. Alleen initialCss mag de gedeelde start-stijl hergebruiken.
