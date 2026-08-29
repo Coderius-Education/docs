@@ -109,6 +109,38 @@ for (const [to, labels] of labelsPerPad) {
   }
 }
 
+// 6. De omgekeerde richting: elke concept-les in de python-cursus draagt een
+// "Waar kom je dit later weer tegen?"-blok dat terugwijst naar deze cursus.
+// De kaart en die blokken vertellen hetzelfde verhaal; drijft één van de twee
+// weg, dan hoort dat hier te knallen. Of de links in die blokken ook echt
+// ergens op uitkomen bewaakt packages/shared/sitelink.test.ts al monorepo-breed. De python-cursus stript puur numerieke
+// prefixen uit zijn URL's (06-data/12-tuples.mdx → /docs/data/tuples), dus zo
+// vinden we het bronbestand bij een kaart-pad.
+const pythonDocs = join('..', 'python', 'docs');
+const padNaarBestand = new Map(); // publiek pad -> bronbestand
+for (const entry of readdirSync(pythonDocs, { recursive: true, withFileTypes: true })) {
+  if (!entry.isFile() || !entry.name.endsWith('.mdx')) continue;
+  const bron = join(entry.parentPath, entry.name);
+  const publiek = relative(pythonDocs, bron)
+    .replace(/\.mdx$/, '')
+    .split(sep)
+    .map((deel) => deel.replace(/^\d+-/, ''))
+    .join('/');
+  padNaarBestand.set(`/docs/${publiek}`, bron);
+}
+
+const TERUG_KOP = 'Waar kom je dit later weer tegen?';
+for (const concept of pythonConcepten) {
+  const bron = padNaarBestand.get(concept.to);
+  assert.ok(bron, `Kaart-pad '${concept.to}' hoort bij geen bestand in ../python/docs`);
+  const inhoud = readFileSync(bron, 'utf8');
+  assert.ok(
+    inhoud.includes(TERUG_KOP) && inhoud.includes('site="algorithms"'),
+    `'${concept.label}' (${bron}) mist het "${TERUG_KOP}"-blok met een link naar deze cursus`,
+  );
+}
+
 console.log(
-  `check-voorkennis: ${perHoofdstuk.size} hoofdstukken, ${pythonConcepten.length} concepten — alles consistent`,
+  `check-voorkennis: ${perHoofdstuk.size} hoofdstukken, ${pythonConcepten.length} concepten, ` +
+    `${pythonConcepten.length} terugverwijzingen — alles consistent`,
 );
