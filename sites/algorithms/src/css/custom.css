@@ -70,4 +70,119 @@
   body.handout-page h2 {
     break-after: avoid;
   }
+
+  /* Onderdelen die alleen op het scherm horen (antwoorden voor het
+     nabespreken, links de site op) blijven van het papier. */
+  body.handout-page .handout-alleen-scherm {
+    display: none !important;
+  }
+
+  /* Schrijfruimte: op papier krijgt elke vraag een paar regels lucht
+     om het antwoord op de hand-out zelf te schrijven. */
+  body.handout-page .handout-vragen ol > li {
+    margin-bottom: 2em;
+  }
+
+  body.handout-compact .handout-vragen ol > li {
+    margin-bottom: 1.4em;
+  }
+
+  body.handout-page .handout-vragen ol > li:last-child {
+    margin-bottom: 0.6em;
+  }
+
+  body.handout-page table td {
+    height: 1.5em;
+  }
+
+  body.handout-page .handout-paginawissel {
+    break-before: page;
+  }
+
+  /* Compacte hand-out (Handout met compact): kleinere letter, twee
+     kolommen per bladzijde en een vaste paginawissel, zodat hij op
+     één dubbelzijdig vel past — voorkant zoeken, achterkant
+     sorteren. */
+  body.handout-compact .markdown {
+    font-size: 9.5pt;
+    line-height: 1.3;
+  }
+
+  body.handout-compact .markdown h1 {
+    /* Het thema zet de H1-grootte via een variabele met hogere
+       specificiteit; op de compacte hand-out moet hij klein. */
+    font-size: 15pt !important;
+    margin-bottom: 0.4em;
+  }
+
+  body.handout-compact .markdown h2 {
+    font-size: 11.5pt;
+    margin-top: 0.5em;
+    margin-bottom: 0.4em;
+  }
+
+  body.handout-compact .markdown p,
+  body.handout-compact .markdown ol,
+  body.handout-compact .markdown ul,
+  body.handout-compact .markdown table {
+    margin-bottom: 0.6em;
+  }
+
+  body.handout-compact .markdown li {
+    margin-top: 0.15em;
+  }
+
+  /* Ook de celpadding zit achter infima's specificiteits-hack. */
+  body.handout-compact .markdown table th,
+  body.handout-compact .markdown table td {
+    padding: 0.15em 0.3em !important;
+    overflow-wrap: normal;
+    word-break: normal;
+    hyphens: none;
+  }
+
+  body.handout-compact .markdown table td {
+    height: 2.2em;
+  }
+
+  /* Infima maakt tabellen scrollbaar (display: block, met een
+     specificiteits-hack van twee id-niveaus); bij printen knipt dat
+     de laatste kolom af. In de smalle printkolom moet de tabel zich
+     naar de breedte voegen — daarom hier wél !important. */
+  body.handout-compact .markdown table {
+    display: table !important;
+    width: 100%;
+  }
+
+  /* De telrijen (één rij cellen per ronde) verdelen de cellen vast,
+     met vaste ruimte voor de kopkolom; de andere tabellen laten hun
+     kolommen naar de koppen groeien. */
+  body.handout-compact .handout-teltabel table {
+    table-layout: fixed;
+  }
+
+  body.handout-compact .handout-teltabel th:first-child {
+    width: 5em;
+  }
+
+  body.handout-compact .handout-blad {
+    column-count: 2;
+    column-gap: 8mm;
+  }
+
+  body.handout-compact .handout-blad table {
+    break-inside: avoid;
+  }
+
+  body.handout-compact .handout-vragen ol > li {
+    break-inside: avoid;
+  }
+}
+
+/* Vaste, gelijke printmarges (browsers verschillen in hun standaard);
+   samen met de kolommen bepaalt dit dat een compacte hand-out op één
+   dubbelzijdig vel past. */
+@page {
+  size: A4;
+  margin: 10mm 12mm;
 }
