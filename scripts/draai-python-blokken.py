@@ -107,6 +107,7 @@ SITES = {
     "python": {
         "docs": ROOT / "sites" / "python" / "docs",
         "component": r"<CodeExercise>\{`(?P<oefcode>.*?)`\}</CodeExercise>",
+        "component_tag": r"<CodeExercise\b",
         "python_versie": (3, 13),
         "pins": (),
         "env": {},
@@ -115,9 +116,11 @@ SITES = {
     },
     "algorithms": {
         "docs": ROOT / "sites" / "algorithms" / "docs",
-        # rows/editable mogen voor of na initialCode staan; props staan op de
-        # openingsregel en bevatten nooit een backtick.
-        "component": r"<PyRunner\s[^`\n]*?initialCode=\{`(?P<oefcode>.*?)`\}",
+        # rows/editable mogen voor of na initialCode staan, en de props mogen
+        # over meerdere regels gespreid zijn; vóór de code-literal komt nooit
+        # een backtick, dus daar loopt de match op af.
+        "component": r"<PyRunner\s[^`]*?initialCode=\{`(?P<oefcode>.*?)`\}",
+        "component_tag": r"<PyRunner\b",
         "python_versie": (3, 12),
         # numpy en matplotlib bepalen wat een blok print; de rest van de
         # matplotlib-keten reist als dependency mee.
@@ -230,11 +233,21 @@ def melding_van(kaalcode: str) -> str | None:
 
 
 def verzamel():
-    """(blokken, claims) — blokken zijn (bron, regel, code, soort, verwacht, varieert)."""
-    blokken, claims = [], []
+    """(blokken, claims, fouten).
+
+    Elk blok is (bron, regel, code, soort, verwacht, varieert, voorplak);
+    voorplak is het aantal regels dat draaien-met ervoor heeft geplakt (0 als
+    er niets geplakt is). `fouten` zijn structurele problemen die het
+    verzamelen zelf vond, zoals een component-tag die niet geparseerd werd.
+    """
+    blokken, claims, fouten = [], [], []
+    tag_re = re.compile(SITE["component_tag"])
+    fence_weg = re.compile(r"^```.*?^```[^\n]*$", re.S | re.M)
+
     for pad in sorted(DOCS.rglob("*.mdx")) + sorted(DOCS.rglob("*.md")):
         tekst = pad.read_text()
         bron = pad.relative_to(ROOT)
+        verzameld_hier = 0  # componenten die BLOK_RE in dit bestand oppikt
         vorige = None  # laatst geziene python-blok, kandidaat voor een uitvoerblok
         # Voor draaien-met: de code van het vorige blok, mét zijn eigen
         # met-expansie. Zo mag een reeks blokken op elkaar doorbouwen, zoals
@@ -275,6 +288,8 @@ def verzamel():
                 vorige = None
                 continue
 
+            if m.group("py") is None:
+                verzameld_hier += 1
             code = m.group("pycode") if m.group("py") is not None else m.group("oefcode")
             regel = tekst[: m.start()].count("\n") + 1
             ervoor = tekst[: m.start()].rstrip()
@@ -318,7 +333,19 @@ def verzamel():
             vorige = (m.end(), len(blokken) - 1) if m.group("py") is not None else None
 
         claims += list(inline_claims(tekst, bron))
-    return blokken, claims
+
+        # De invariant die een stil gat dichthoudt: elk component-voorkomen in
+        # de bron (buiten code-fences) moet door BLOK_RE zijn opgepikt. Een
+        # component in een net iets andere schrijfwijze zou anders geruisloos
+        # uit álle controles vallen — niet gedraaid, beloftes genegeerd.
+        ruw = len(tag_re.findall(fence_weg.sub("", tekst)))
+        if ruw != verzameld_hier:
+            fouten.append(
+                f"{bron}: {ruw} component-tags in de bron, maar {verzameld_hier} "
+                f"verzameld — staat er een component in een vorm die BLOK_RE "
+                f"niet herkent?"
+            )
+    return blokken, claims, fouten
 
 
 def volgend_blok(tekst: str, vanaf: int) -> str | None:
@@ -502,7 +529,18 @@ def draai(bron, regel, code, verwacht, varieert=False, voorplak=0) -> str | None
         regels = uit.split("\n") if uit else []
         if voorplak:
             # Het eigen blok draait als laatste, dus zíjn prints zijn de staart
-            # van de uitvoer. Minder regels dan beloftes is dan gewoon fout.
+            # van de uitvoer — maar dat klopt alleen als élke eigen print een
+            # belofte draagt. Eén kale print erachter zou de staart stil
+            # verschuiven en een belofte tegen de verkeerde regel leggen; dat
+            # eisen we dus hardop af in plaats van het te laten gebeuren.
+            prints = sum(1 for x in eigen if re.match(r"\s*print\(", x))
+            if prints != len(beloftes):
+                return (
+                    f"{bron}:{regel}: in een draaien-met-blok met beloftes moet "
+                    f"elke print er een dragen ({prints} prints, "
+                    f"{len(beloftes)} beloftes) — anders is de staart van de "
+                    f"uitvoer niet uit te lijnen"
+                )
             if len(regels) < len(beloftes):
                 return (
                     f"{bron}:{regel}: belooft {len(beloftes)} regels uitvoer, "
@@ -688,7 +726,7 @@ def main() -> int:
         print(scheef, file=sys.stderr)
         return 1
 
-    blokken, claims = verzamel()
+    blokken, claims, fouten_vooraf = verzamel()
     te_draaien = [b for b in blokken if b[3] == "draai"]
     te_compileren = [b for b in blokken if b[3] != "draai"]
     met_belofte = sum(
@@ -698,7 +736,8 @@ def main() -> int:
         and (b[4] is not None or any(BELOFTE_RE.match(x) for x in b[2].split("\n")[b[6] :]))
     )
 
-    fouten = [f for b in te_compileren if (f := compileer(b[0], b[1], b[2]))]
+    fouten = fouten_vooraf
+    fouten += [f for b in te_compileren if (f := compileer(b[0], b[1], b[2]))]
     with ThreadPoolExecutor(max_workers=8) as pool:
         resultaten = pool.map(lambda b: draai(b[0], b[1], b[2], b[4], b[5], b[6]), te_draaien)
         fouten += [f for f in resultaten if f]
