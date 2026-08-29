@@ -5,6 +5,52 @@ import CodeEditor from '@site/src/components/CodeEditor';
 
 # De script-tag
 
+export const startHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Script tag</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <p id="bericht">Klik op de knop.</p>
+  <button onclick="verander()">Klik mij</button>
+
+  <script>
+    function verander() {
+      document.getElementById('bericht').textContent = 'Geklikt!';
+      document.getElementById('bericht').style.color = 'green';
+    }
+  </script>
+</body>
+</html>`;
+
+export const startCss = `p {
+  font-size: 1.3rem;
+  padding: 12px;
+}
+
+button {
+  padding: 8px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+}`;
+
+export const makeHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Script tag</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Bouw hier je pagina -->
+</body>
+</html>`;
+
+export const makeCss = `/* Schrijf hier je stijl */
+`;
+
 ## Wat ga je leren?
 
 Je leert hoe je meerdere JavaScript-regels samenvoegt in een **functie**, en hoe je die functie in een `<script>` tag in de HTML plaatst.
@@ -91,35 +137,8 @@ In deze les staat de JavaScript-code in een `<script>` tag **binnenin** de HTML.
 :::
 
 <CodeEditor
-  initialHtml={`<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>Script tag</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <p id="bericht">Klik op de knop.</p>
-  <button onclick="verander()">Klik mij</button>
-
-  <script>
-    function verander() {
-      document.getElementById('bericht').textContent = 'Geklikt!';
-      document.getElementById('bericht').style.color = 'green';
-    }
-  </script>
-</body>
-</html>`}
-  initialCss={`p {
-  font-size: 1.3rem;
-  padding: 12px;
-}
-
-button {
-  padding: 8px 16px;
-  font-size: 1rem;
-  cursor: pointer;
-}`}
+  initialHtml={startHtml}
+  initialCss={startCss}
   height="480px"
   livePreview={false}
 />
@@ -135,6 +154,13 @@ Experimenteer:
 ## Modify
 
 **Opdracht:** Voeg een knop "Herstel" toe die de tekst en kleur terugzet naar de beginwaarden.
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  height="480px"
+  livePreview={false}
+/>
 
 <details>
 <summary>Tip</summary>
@@ -166,6 +192,13 @@ function herstel() {
 **Opdracht:** Bouw een mini-lichtenknop. Er is één `<p>` die begint als "Licht is uit". Maak twee knoppen:
 - "Aan" — zet de tekst op "Licht is aan" en de achtergrond op geel
 - "Uit" — zet alles terug naar de beginwaarden
+
+<CodeEditor
+  initialHtml={makeHtml}
+  initialCss={makeCss}
+  height="480px"
+  livePreview={false}
+/>
 
 Schrijf voor elke knop een aparte functie in de `<script>` tag.
 

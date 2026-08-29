@@ -5,6 +5,57 @@ import CodeEditor from '@site/src/components/CodeEditor';
 
 # Waarden en operatoren
 
+export const startHtml = `<.DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Operatoren</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <p id="uitvoer">Klik op de knop om te rekenen.</p>
+  <button onclick="bereken()">Bereken</button>
+</body>
+</html>`;
+
+export const startCss = `p {
+  font-size: 1.4rem;
+  padding: 12px;
+}
+
+button {
+  padding: 8px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+}`;
+
+export const startJs = `function bereken() {
+  const prijs = 5;
+  const aantal = 3;
+  const totaal = prijs * aantal;
+  document.getElementById('uitvoer').textContent = 'Totaal: €' + totaal;
+  console.log('Prijs is een', typeof prijs);
+  console.log('Totaal is een', typeof totaal);
+}`;
+
+export const makeHtml = `<.DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Operatoren</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <p id="uitvoer">Klik op de knop.</p>
+  <button onclick="check()">Check leeftijd</button>
+</body>
+</html>`;
+
+export const makeJs = `// Schrijf hier je code
+`;
+
 ## Wat ga je leren?
 
 Je leert de drie basis-**datatypes** van JavaScript (string, number, boolean) en de **operatoren** waarmee je waarden combineert en vergelijkt.
@@ -107,37 +158,9 @@ document.getElementById('uitvoer').textContent = 'Totaal: €' + totaal;
 ## Probeer het zelf!
 
 <CodeEditor
-  initialHtml={`<.DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>Operatoren</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
-</head>
-<body>
-  <p id="uitvoer">Klik op de knop om te rekenen.</p>
-  <button onclick="bereken()">Bereken</button>
-</body>
-</html>`}
-  initialCss={`p {
-  font-size: 1.4rem;
-  padding: 12px;
-}
-
-button {
-  padding: 8px 16px;
-  font-size: 1rem;
-  cursor: pointer;
-}`}
-  initialJs={`function bereken() {
-  const prijs = 5;
-  const aantal = 3;
-  const totaal = prijs * aantal;
-  document.getElementById('uitvoer').textContent = 'Totaal: €' + totaal;
-  console.log('Prijs is een', typeof prijs);
-  console.log('Totaal is een', typeof totaal);
-}`}
+  initialHtml={startHtml}
+  initialCss={startCss}
+  initialJs={startJs}
   height="480px"
   livePreview={false}
 />
@@ -154,6 +177,14 @@ Experimenteer:
 ## Modify
 
 **Opdracht:** Bouw een mini-rekenmachine: laat de pagina het verschil, de som én het product van twee getallen tonen.
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  initialJs={startJs}
+  height="480px"
+  livePreview={false}
+/>
 
 <details>
 <summary>Tip</summary>
@@ -191,6 +222,14 @@ function reken() {
 **Opdracht:** Bouw een "leeftijd-checker". Sla een leeftijd op in een variabele en toon op de pagina:
 - de leeftijd zelf
 - of de persoon meerderjarig is (`true` / `false`)
+
+<CodeEditor
+  initialHtml={makeHtml}
+  initialCss={startCss}
+  initialJs={makeJs}
+  height="480px"
+  livePreview={false}
+/>
 
 <details>
 <summary>Tip</summary>

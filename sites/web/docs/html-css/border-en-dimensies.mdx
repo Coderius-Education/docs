@@ -5,6 +5,44 @@ import CodeEditor from '@site/src/components/CodeEditor';
 
 # Randen en afmetingen
 
+export const startHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Border en dimensies</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div>
+    <h2>Een kaartje</h2>
+    <p>Met een rand, afgeronde hoeken en een vaste breedte.</p>
+  </div>
+</body>
+</html>`;
+
+export const startCss = `div {
+  background-color: #f0f4ff;
+  border: 2px solid #4a90e2;
+  border-radius: 8px;
+  padding: 20px;
+  width: 300px;
+}`;
+
+export const makeHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Border en dimensies</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Bouw hier je pagina -->
+</body>
+</html>`;
+
+export const makeCss = `/* Schrijf hier je stijl */
+`;
+
 ## Wat ga je leren?
 
 Je leert hoe je elementen een **rand** geeft, hoe je hoeken **afrondt**, en hoe je een element een **vaste breedte en hoogte** geeft.
@@ -46,27 +84,8 @@ De hoeken worden zo rond dat het element een **cirkel** of **ovaal** wordt. Met 
 ## Probeer het zelf.
 
 <CodeEditor
-  initialHtml={`<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>Border en dimensies</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div>
-    <h2>Een kaartje</h2>
-    <p>Met een rand, afgeronde hoeken en een vaste breedte.</p>
-  </div>
-</body>
-</html>`}
-  initialCss={`div {
-  background-color: #f0f4ff;
-  border: 2px solid #4a90e2;
-  border-radius: 8px;
-  padding: 20px;
-  width: 300px;
-}`}
+  initialHtml={startHtml}
+  initialCss={startCss}
   height="460px"
 />
 
@@ -82,6 +101,12 @@ Experimenteer:
 ## Modify
 
 **Opdracht:** Maak een rond knop-element van 100x100 pixels met een rode achtergrond en een dikke witte rand.
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  height="460px"
+/>
 
 <details>
 <summary>Tip</summary>
@@ -108,6 +133,12 @@ div {
 ## Make
 
 **Opdracht:** Ontwerp een profielkaartje. Geef het een vaste breedte (bijv. 250px), een mooie rand, afgeronde hoeken en een zachte achtergrondkleur. Zet er een naam (`<h2>`) en een rol (`<p>`) in.
+
+<CodeEditor
+  initialHtml={makeHtml}
+  initialCss={makeCss}
+  height="460px"
+/>
 
 <details>
 <summary>Tip</summary>

@@ -5,6 +5,51 @@ import CodeEditor from '@site/src/components/CodeEditor';
 
 # Inline stijl
 
+export const startHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Inline stijl</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <p id="tekst">Klik op een knop om de stijl te veranderen.</p>
+  <button onclick="document.getElementById('tekst').style.color = 'red'">
+    Rood
+  </button>
+  <button onclick="document.getElementById('tekst').style.color = 'blue'">
+    Blauw
+  </button>
+</body>
+</html>`;
+
+export const startCss = `p {
+  font-size: 1.4rem;
+  padding: 12px;
+}
+
+button {
+  padding: 8px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-right: 8px;
+}`;
+
+export const makeHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Inline stijl</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Bouw hier je pagina -->
+</body>
+</html>`;
+
+export const makeCss = `/* Schrijf hier je stijl */
+`;
+
 ## Wat ga je leren?
 
 Je leert hoe je via `onclick` de CSS-stijl van een element aanpast met `.style`.
@@ -42,34 +87,8 @@ De knoppen doen hetzelfde: ze passen `.style.color` aan op hetzelfde element. He
 ## Probeer het zelf.
 
 <CodeEditor
-  initialHtml={`<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>Inline stijl</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <p id="tekst">Klik op een knop om de stijl te veranderen.</p>
-  <button onclick="document.getElementById('tekst').style.color = 'red'">
-    Rood
-  </button>
-  <button onclick="document.getElementById('tekst').style.color = 'blue'">
-    Blauw
-  </button>
-</body>
-</html>`}
-  initialCss={`p {
-  font-size: 1.4rem;
-  padding: 12px;
-}
-
-button {
-  padding: 8px 16px;
-  font-size: 1rem;
-  cursor: pointer;
-  margin-right: 8px;
-}`}
+  initialHtml={startHtml}
+  initialCss={startCss}
   height="420px"
   livePreview={false}
 />
@@ -86,6 +105,13 @@ Experimenteer:
 ## Modify
 
 **Opdracht:** Voeg een knop "Groter" toe die de tekst groter maakt via `style.fontSize`.
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  height="420px"
+  livePreview={false}
+/>
 
 <details>
 <summary>Tip</summary>
@@ -112,6 +138,13 @@ Gebruik `document.getElementById('tekst').style.fontSize = '2rem'` in het `oncli
 - één die de achtergrond geel maakt
 - één die de letters groter maakt
 - één die alles terugzet naar de beginwaarden
+
+<CodeEditor
+  initialHtml={makeHtml}
+  initialCss={makeCss}
+  height="420px"
+  livePreview={false}
+/>
 
 <details>
 <summary>Tip</summary>

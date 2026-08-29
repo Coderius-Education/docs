@@ -5,6 +5,77 @@ import CodeEditor from '@site/src/components/CodeEditor';
 
 # Formulier-data ophalen
 
+export const startHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Formulier-data</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <form>
+    <label for="naam">Naam:</label>
+    <input type="text" id="naam">
+
+    <label for="leeftijd">Leeftijd:</label>
+    <input type="number" id="leeftijd">
+
+    <button type="button" onclick="begroet()">Begroet mij</button>
+  </form>
+
+  <p id="uitvoer"></p>
+</body>
+</html>`;
+
+export const startCss = `form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 300px;
+}
+
+label { font-weight: bold; }
+input { padding: 6px; font-size: 1rem; }
+button { margin-top: 10px; padding: 8px 16px; cursor: pointer; }
+
+#uitvoer {
+  margin-top: 20px;
+  font-size: 1.3rem;
+  color: darkgreen;
+}`;
+
+export const startJs = `function begroet() {
+  const naam = document.getElementById('naam').value;
+  const leeftijd = Number(document.getElementById('leeftijd').value);
+
+  const bericht = 'Hoi ' + naam + '! Over 10 jaar ben je ' + (leeftijd + 10) + ' jaar.';
+  document.getElementById('uitvoer').textContent = bericht;
+}`;
+
+export const makeHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Formulier-data</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <label for="getal1">Getal 1:</label>
+  <input type="number" id="getal1">
+
+  <label for="getal2">Getal 2:</label>
+  <input type="number" id="getal2">
+
+  <button type="button" onclick="bereken()">Bereken</button>
+  <p id="uitvoer"></p>
+</body>
+</html>`;
+
+export const makeJs = `// Schrijf hier je code
+`;
+
 ## Wat ga je leren?
 
 Je leert hoe je tekst die de gebruiker in een formulierveld typt **uitleest** met JavaScript via `.value`, en die data direct gebruikt — bijvoorbeeld om te tonen, te controleren of mee te rekenen.
@@ -58,51 +129,9 @@ const bericht = 'Welkom, ' + naam + '!';
 ## Probeer het zelf.
 
 <CodeEditor
-  initialHtml={`<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>Formulier-data</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
-</head>
-<body>
-  <form>
-    <label for="naam">Naam:</label>
-    <input type="text" id="naam">
-
-    <label for="leeftijd">Leeftijd:</label>
-    <input type="number" id="leeftijd">
-
-    <button type="button" onclick="begroet()">Begroet mij</button>
-  </form>
-
-  <p id="uitvoer"></p>
-</body>
-</html>`}
-  initialCss={`form {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  max-width: 300px;
-}
-
-label { font-weight: bold; }
-input { padding: 6px; font-size: 1rem; }
-button { margin-top: 10px; padding: 8px 16px; cursor: pointer; }
-
-#uitvoer {
-  margin-top: 20px;
-  font-size: 1.3rem;
-  color: darkgreen;
-}`}
-  initialJs={`function begroet() {
-  const naam = document.getElementById('naam').value;
-  const leeftijd = Number(document.getElementById('leeftijd').value);
-
-  const bericht = 'Hoi ' + naam + '! Over 10 jaar ben je ' + (leeftijd + 10) + ' jaar.';
-  document.getElementById('uitvoer').textContent = bericht;
-}`}
+  initialHtml={startHtml}
+  initialCss={startCss}
+  initialJs={startJs}
   height="540px"
   livePreview={false}
 />
@@ -123,6 +152,14 @@ Experimenteer:
 ## Modify
 
 **Opdracht:** Voeg een `<select>` toe met drie opties (bijv. "ochtend", "middag", "avond"). Pas het bericht aan zodat het bijvoorbeeld zegt: "Goedemorgen, Lisa." als de gebruiker "ochtend" kiest.
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  initialJs={startJs}
+  height="540px"
+  livePreview={false}
+/>
 
 <details>
 <summary>Tip</summary>
@@ -168,6 +205,14 @@ function begroet() {
 ## Make
 
 **Opdracht:** Bouw een mini-rekenmachine. Twee number-velden voor twee getallen, en een knop "Bereken". Toon op de pagina de som, het verschil en het product van de twee getallen.
+
+<CodeEditor
+  initialHtml={makeHtml}
+  initialCss={startCss}
+  initialJs={makeJs}
+  height="540px"
+  livePreview={false}
+/>
 
 <details>
 <summary>Tip</summary>

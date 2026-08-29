@@ -5,6 +5,61 @@ import CodeEditor from '@site/src/components/CodeEditor';
 
 # Modern DOM
 
+export const startHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Modern DOM</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="kaart">
+    <h2>Klik om te markeren</h2>
+    <p>Klik op de knop om deze kaart te markeren.</p>
+  </div>
+  <button onclick="toggle()">Toggle markering</button>
+</body>
+</html>`;
+
+export const startCss = `.kaart {
+  background-color: lightgray;
+  padding: 20px;
+  margin: 10px;
+  border-radius: 8px;
+  transition: background-color 0.3s;
+}
+
+.kaart.actief {
+  background-color: gold;
+  border: 3px solid orange;
+}
+
+button { padding: 10px 20px; cursor: pointer; }`;
+
+export const startJs = `function toggle() {
+  const kaart = document.querySelector('.kaart');
+  kaart.classList.toggle('actief');
+}`;
+
+export const makeHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Modern DOM</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="kaart">Kaartje 1</div>
+  <div class="kaart">Kaartje 2</div>
+  <div class="kaart">Kaartje 3</div>
+</body>
+</html>`;
+
+export const makeJs = `// Schrijf hier je code
+`;
+
 ## Wat ga je leren?
 
 Je leert twee moderne manieren om met de DOM te werken: **`querySelector`** als krachtig alternatief voor `getElementById`, en **`classList`** voor netjes met CSS-klassen werken.
@@ -90,40 +145,9 @@ Alleen de **eerste** `<p>` krijgt de tekst "Veranderd.". `querySelector` stopt b
 ## Probeer het zelf.
 
 <CodeEditor
-  initialHtml={`<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>Modern DOM</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
-</head>
-<body>
-  <div class="kaart">
-    <h2>Klik om te markeren</h2>
-    <p>Klik op de knop om deze kaart te markeren.</p>
-  </div>
-  <button onclick="toggle()">Toggle markering</button>
-</body>
-</html>`}
-  initialCss={`.kaart {
-  background-color: lightgray;
-  padding: 20px;
-  margin: 10px;
-  border-radius: 8px;
-  transition: background-color 0.3s;
-}
-
-.kaart.actief {
-  background-color: gold;
-  border: 3px solid orange;
-}
-
-button { padding: 10px 20px; cursor: pointer; }`}
-  initialJs={`function toggle() {
-  const kaart = document.querySelector('.kaart');
-  kaart.classList.toggle('actief');
-}`}
+  initialHtml={startHtml}
+  initialCss={startCss}
+  initialJs={startJs}
   height="480px"
   livePreview={false}
 />
@@ -140,6 +164,14 @@ Experimenteer:
 ## Modify
 
 **Opdracht:** Voeg een tweede knop toe die de klasse `actief` **verwijdert** (alleen verwijderen, niet togglen).
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  initialJs={startJs}
+  height="480px"
+  livePreview={false}
+/>
 
 <details>
 <summary>Tip</summary>
@@ -168,6 +200,14 @@ function reset() {
 ## Make
 
 **Opdracht:** Bouw een lijst van drie kaartjes. Klik je op een kaartje, dan krijgt het de klasse `geselecteerd` (andere kleur). Klik je nog eens, dan verdwijnt de klasse. Gebruik `querySelectorAll` + een loop om alle kaartjes te koppelen.
+
+<CodeEditor
+  initialHtml={makeHtml}
+  initialCss={startCss}
+  initialJs={makeJs}
+  height="480px"
+  livePreview={false}
+/>
 
 <details>
 <summary>Tip</summary>

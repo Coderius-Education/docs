@@ -5,6 +5,75 @@ import CodeEditor from '@site/src/components/CodeEditor';
 
 # CSS Pseudo-klassen
 
+export const startHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Pseudo-klassen</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Pseudo-klassen</h1>
+
+  <p><a href="#">Beweeg je muis over mij</a></p>
+
+  <button>Klik mij en houd vast</button>
+
+  <p><input type="text" placeholder="Klik in dit veld"></p>
+
+  <ul>
+    <li>Eerste item</li>
+    <li>Tweede item</li>
+    <li>Derde item</li>
+  </ul>
+</body>
+</html>`;
+
+export const startCss = `a {
+  color: blue;
+  text-decoration: underline;
+}
+
+a:hover {
+  color: red;
+  text-decoration: none;
+}
+
+button {
+  padding: 8px 16px;
+  background-color: lightgray;
+  border: 2px solid gray;
+  cursor: pointer;
+}
+
+button:active {
+  background-color: orange;
+}
+
+input:focus {
+  outline: 3px solid dodgerblue;
+}
+
+li:first-child {
+  font-weight: bold;
+  color: darkgreen;
+}`;
+
+export const makeHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Pseudo-klassen</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Bouw hier je pagina -->
+</body>
+</html>`;
+
+export const makeCss = `/* Schrijf hier je stijl */
+`;
+
 <CodeOrg slug="pseudo-klassen" />
 
 ## Wat ga je leren?
@@ -59,58 +128,8 @@ Bekijk de CSS hieronder. Wat denk je dat er gebeurt als je:
 Beweeg je muis over de link, klik (en houd vast) op de knop, en klik in het invoerveld.
 
 <CodeEditor
-  initialHtml={`<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>Pseudo-klassen</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <h1>Pseudo-klassen</h1>
-
-  <p><a href="#">Beweeg je muis over mij</a></p>
-
-  <button>Klik mij en houd vast</button>
-
-  <p><input type="text" placeholder="Klik in dit veld"></p>
-
-  <ul>
-    <li>Eerste item</li>
-    <li>Tweede item</li>
-    <li>Derde item</li>
-  </ul>
-</body>
-</html>`}
-  initialCss={`a {
-  color: blue;
-  text-decoration: underline;
-}
-
-a:hover {
-  color: red;
-  text-decoration: none;
-}
-
-button {
-  padding: 8px 16px;
-  background-color: lightgray;
-  border: 2px solid gray;
-  cursor: pointer;
-}
-
-button:active {
-  background-color: orange;
-}
-
-input:focus {
-  outline: 3px solid dodgerblue;
-}
-
-li:first-child {
-  font-weight: bold;
-  color: darkgreen;
-}`}
+  initialHtml={startHtml}
+  initialCss={startCss}
   height="540px"
 />
 
@@ -127,6 +146,12 @@ Experimenteer:
 ## Modify
 
 **Opdracht:** Voeg een stijl toe zodat het **laatste** lijstitem een andere kleur krijgt.
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  height="540px"
+/>
 
 <details>
 <summary>Tip</summary>
@@ -150,6 +175,12 @@ li:last-child {
 ## Make
 
 **Opdracht:** Maak een interactieve knop in HTML (bijvoorbeeld `<button>Klik Mij!</button>`). Gebruik CSS pseudo-klassen zodat de knop van kleur verandert als je er met je muis overheen gaat (`:hover`), en nóg een andere kleur krijgt of iets kleiner wordt als je erop klikt (`:active`).
+
+<CodeEditor
+  initialHtml={makeHtml}
+  initialCss={makeCss}
+  height="540px"
+/>
 
 <details>
 <summary>Tip</summary>

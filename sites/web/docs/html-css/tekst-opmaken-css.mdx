@@ -5,6 +5,46 @@ import CodeEditor from '@site/src/components/CodeEditor';
 
 # Tekst opmaken met CSS
 
+export const startHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Tekst opmaken</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Mijn website</h1>
+  <p>Dit is een paragraaf met tekst.</p>
+  <p>En nog een paragraaf.</p>
+</body>
+</html>`;
+
+export const startCss = `h1 {
+  color: darkblue;
+  font-size: 2rem;
+}
+
+p {
+  color: gray;
+  font-family: Arial, sans-serif;
+  font-size: 1rem;
+}`;
+
+export const makeHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Tekst opmaken</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Bouw hier je pagina -->
+</body>
+</html>`;
+
+export const makeCss = `/* Schrijf hier je stijl */
+`;
+
 <CodeOrg slug="tekst-opmaken-css" />
 
 ## Wat ga je leren?
@@ -77,29 +117,8 @@ De kop krijgt zijn standaardkleur terug — in de meeste browsers is dat zwart. 
 Let op: de CSS schrijf je in de **style.css** tab.
 
 <CodeEditor
-  initialHtml={`<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>Tekst opmaken</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <h1>Mijn website</h1>
-  <p>Dit is een paragraaf met tekst.</p>
-  <p>En nog een paragraaf.</p>
-</body>
-</html>`}
-  initialCss={`h1 {
-  color: darkblue;
-  font-size: 2rem;
-}
-
-p {
-  color: gray;
-  font-family: Arial, sans-serif;
-  font-size: 1rem;
-}`}
+  initialHtml={startHtml}
+  initialCss={startCss}
   height="480px"
 />
 
@@ -114,6 +133,12 @@ Experimenteer met de CSS:
 ## Modify
 
 **Opdracht:** Verander de stijl zodat de kop rood is en de paragraaftekst groter is (`1.5rem`).
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  height="480px"
+/>
 
 <details>
 <summary>Tip</summary>
@@ -143,6 +168,12 @@ p {
 ## Make
 
 **Opdracht:** Schrijf een kort gedicht of een quote met een titel. Gebruik CSS om de kop een andere kleur en groter lettertype te geven, en de paragraaftekst een eigen stijl.
+
+<CodeEditor
+  initialHtml={makeHtml}
+  initialCss={makeCss}
+  height="480px"
+/>
 
 <details>
 <summary>Tip</summary>

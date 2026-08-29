@@ -5,6 +5,77 @@ import CodeEditor from '@site/src/components/CodeEditor';
 
 # Formulieren
 
+export const startHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Formulier</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <form>
+    <label for="naam">Naam:</label>
+    <input type="text" id="naam">
+
+    <label for="leeftijd">Leeftijd:</label>
+    <input type="number" id="leeftijd">
+
+    <label for="email">E-mail:</label>
+    <input type="email" id="email">
+
+    <label for="land">Land:</label>
+    <select id="land">
+      <option value="nl">Nederland</option>
+      <option value="be">België</option>
+      <option value="de">Duitsland</option>
+    </select>
+
+    <label for="bericht">Bericht:</label>
+    <textarea id="bericht" rows="3"></textarea>
+
+    <button>Verstuur</button>
+  </form>
+</body>
+</html>`;
+
+export const startCss = `form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 300px;
+}
+
+label {
+  font-weight: bold;
+}
+
+input, select, textarea {
+  padding: 6px;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+button {
+  margin-top: 10px;
+  padding: 8px 16px;
+  cursor: pointer;
+}`;
+
+export const makeHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Formulier</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Bouw hier je pagina -->
+</body>
+</html>`;
+
+export const makeCss = `/* Schrijf hier je stijl */
+`;
+
 ## Wat ga je leren?
 
 Je leert hoe je een formulier bouwt met `<form>`, `<input>` en `<label>` — de bouwstenen waarmee je tekst, getallen en keuzes van bezoekers ophaalt.
@@ -75,60 +146,8 @@ De cursor springt naar het naam-veld en je kunt direct beginnen typen. Dat komt 
 ## Probeer het zelf.
 
 <CodeEditor
-  initialHtml={`<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>Formulier</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <form>
-    <label for="naam">Naam:</label>
-    <input type="text" id="naam">
-
-    <label for="leeftijd">Leeftijd:</label>
-    <input type="number" id="leeftijd">
-
-    <label for="email">E-mail:</label>
-    <input type="email" id="email">
-
-    <label for="land">Land:</label>
-    <select id="land">
-      <option value="nl">Nederland</option>
-      <option value="be">België</option>
-      <option value="de">Duitsland</option>
-    </select>
-
-    <label for="bericht">Bericht:</label>
-    <textarea id="bericht" rows="3"></textarea>
-
-    <button>Verstuur</button>
-  </form>
-</body>
-</html>`}
-  initialCss={`form {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  max-width: 300px;
-}
-
-label {
-  font-weight: bold;
-}
-
-input, select, textarea {
-  padding: 6px;
-  font-size: 1rem;
-  font-family: inherit;
-}
-
-button {
-  margin-top: 10px;
-  padding: 8px 16px;
-  cursor: pointer;
-}`}
+  initialHtml={startHtml}
+  initialCss={startCss}
   height="640px"
 />
 
@@ -144,6 +163,12 @@ Experimenteer:
 ## Modify
 
 **Opdracht:** Voeg een vinkje (`checkbox`) toe met de tekst "Ik ga akkoord met de voorwaarden".
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  height="640px"
+/>
 
 <details>
 <summary>Tip</summary>
@@ -165,6 +190,12 @@ Gebruik `<input type="checkbox" id="akkoord">` met daarnaast een `<label for="ak
 ## Make
 
 **Opdracht:** Bouw een aanmeldformulier voor een fictieve game-toernooi. Vraag minimaal om: spelernaam, e-mail, leeftijd, favoriete spel (tekst), en een checkbox of de speler ervaring heeft.
+
+<CodeEditor
+  initialHtml={makeHtml}
+  initialCss={makeCss}
+  height="640px"
+/>
 
 <details>
 <summary>Tip</summary>

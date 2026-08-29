@@ -5,6 +5,57 @@ import CodeEditor from '@site/src/components/CodeEditor';
 
 # Eenheden in CSS
 
+export const startHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Eenheden</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Eenheden vergelijken</h1>
+  <p>Een paragraaf met tekst.</p>
+  <button>Een knop</button>
+  <div class="balk"></div>
+</body>
+</html>`;
+
+export const startCss = `h1 {
+  font-size: 2rem;
+}
+
+p {
+  font-size: 1rem;
+}
+
+button {
+  font-size: 1.2rem;
+  padding: 0.5em 1em;
+  border: 2px solid black;
+}
+
+.balk {
+  background-color: dodgerblue;
+  width: 50%;
+  height: 40px;
+  margin-top: 1rem;
+}`;
+
+export const makeHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Eenheden</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Bouw hier je pagina -->
+</body>
+</html>`;
+
+export const makeCss = `/* Schrijf hier je stijl */
+`;
+
 ## Wat ga je leren?
 
 Je leert het verschil tussen de vier meest-gebruikte CSS-eenheden — **`px`**, **`rem`**, **`em`** en **`%`** — en wanneer je welke kiest.
@@ -80,40 +131,8 @@ De paragraaftekst wordt 1,5 keer de basisgrootte (meestal 24px). De padding op d
 ## Probeer het zelf.
 
 <CodeEditor
-  initialHtml={`<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>Eenheden</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <h1>Eenheden vergelijken</h1>
-  <p>Een paragraaf met tekst.</p>
-  <button>Een knop</button>
-  <div class="balk"></div>
-</body>
-</html>`}
-  initialCss={`h1 {
-  font-size: 2rem;
-}
-
-p {
-  font-size: 1rem;
-}
-
-button {
-  font-size: 1.2rem;
-  padding: 0.5em 1em;
-  border: 2px solid black;
-}
-
-.balk {
-  background-color: dodgerblue;
-  width: 50%;
-  height: 40px;
-  margin-top: 1rem;
-}`}
+  initialHtml={startHtml}
+  initialCss={startCss}
   height="540px"
 />
 
@@ -129,6 +148,12 @@ Experimenteer:
 ## Modify
 
 **Opdracht:** Maak de paragraaf groter (`1.25rem`) en geef de knop een padding van `0.75em` boven/onder en `1.5em` links/rechts.
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  height="540px"
+/>
 
 <details>
 <summary>Tip</summary>
@@ -157,6 +182,12 @@ button {
 ## Make
 
 **Opdracht:** Ontwerp een visitekaartje van **80% breed** met een titel (`<h2>`, lettergrootte `1.5rem`), een paragraaf (`1rem`) en een knop met padding `0.5em 1em`. Geef de hele kaart een `border: 2px solid` en een `padding: 1.5rem`.
+
+<CodeEditor
+  initialHtml={makeHtml}
+  initialCss={makeCss}
+  height="540px"
+/>
 
 <details>
 <summary>Tip</summary>

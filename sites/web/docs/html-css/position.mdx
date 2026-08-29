@@ -5,6 +5,59 @@ import CodeEditor from '@site/src/components/CodeEditor';
 
 # Position
 
+export const startHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Position</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="kaart">
+      <span class="badge">NEW</span>
+      <h2>Product</h2>
+      <p>Beschrijving</p>
+    </div>
+  </div>
+</body>
+</html>`;
+
+export const startCss = `.container {
+  margin: 40px;
+}
+
+.kaart {
+  position: relative;
+  border: 2px solid #4a90e2;
+  padding: 20px;
+  width: 250px;
+}
+
+.badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: red;
+  color: white;
+  padding: 4px 10px;
+}`;
+
+export const makeHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Position</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Bouw hier je pagina -->
+</body>
+</html>`;
+
+export const makeCss = `/* Schrijf hier je stijl */
+`;
+
 ## Wat ga je leren?
 
 Je leert hoe `position` werkt: hoe je een element op een vaste plek op het scherm vasthoudt, of het laat verschuiven ten opzichte van zijn eigen plek of zijn ouder.
@@ -76,42 +129,8 @@ De oude plek **blijft leeg**. `relative` schuift het element visueel, maar laat 
 ## Probeer het zelf.
 
 <CodeEditor
-  initialHtml={`<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>Position</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div class="container">
-    <div class="kaart">
-      <span class="badge">NEW</span>
-      <h2>Product</h2>
-      <p>Beschrijving</p>
-    </div>
-  </div>
-</body>
-</html>`}
-  initialCss={`.container {
-  margin: 40px;
-}
-
-.kaart {
-  position: relative;
-  border: 2px solid #4a90e2;
-  padding: 20px;
-  width: 250px;
-}
-
-.badge {
-  position: absolute;
-  top: 0;
-  right: 0;
-  background-color: red;
-  color: white;
-  padding: 4px 10px;
-}`}
+  initialHtml={startHtml}
+  initialCss={startCss}
   height="460px"
 />
 
@@ -127,6 +146,12 @@ Experimenteer:
 ## Modify
 
 **Opdracht:** Maak van de badge een rondje (gebruik `border-radius`) in de **linkerbovenhoek** van de kaart.
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  height="460px"
+/>
 
 <details>
 <summary>Tip</summary>
@@ -159,6 +184,12 @@ Verander de `top`/`right` naar `top`/`left`, en voeg `border-radius: 50%` toe me
 ## Make
 
 **Opdracht:** Maak een "Terug naar boven"-knop die rechtsonder in het venster blijft staan terwijl je scrollt. Klikken hoeft (nog) niets te doen.
+
+<CodeEditor
+  initialHtml={makeHtml}
+  initialCss={makeCss}
+  height="460px"
+/>
 
 <details>
 <summary>Tip</summary>

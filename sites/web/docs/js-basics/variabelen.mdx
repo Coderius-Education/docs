@@ -5,6 +5,57 @@ import CodeEditor from '@site/src/components/CodeEditor';
 
 # Variabelen
 
+export const startHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Variabelen</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <p id="uitvoer">0</p>
+  <button onclick="telOp()">Klik mij</button>
+</body>
+</html>`;
+
+export const startCss = `p {
+  font-size: 2rem;
+  padding: 12px;
+}
+
+button {
+  padding: 8px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+}`;
+
+export const startJs = `let teller = 0;
+
+function telOp() {
+  teller = teller + 1;
+  document.getElementById('uitvoer').textContent = teller;
+  console.log('Teller staat op:', teller);
+}`;
+
+export const makeHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Variabelen</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <p id="score">0</p>
+  <button onclick="puntErbij()">+1 punt</button>
+  <button onclick="puntEraf()">-1 punt</button>
+</body>
+</html>`;
+
+export const makeJs = `// Schrijf hier je code
+`;
+
 ## Wat ga je leren?
 
 Je leert hoe je een waarde opslaat in een **variabele**, en hoe je die waarde gebruikt en aanpast in je code.
@@ -62,36 +113,9 @@ Na elke klik wordt `teller` met 1 verhoogd en op de pagina getoond. Na drie klik
 ## Probeer het zelf.
 
 <CodeEditor
-  initialHtml={`<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>Variabelen</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
-</head>
-<body>
-  <p id="uitvoer">0</p>
-  <button onclick="telOp()">Klik mij</button>
-</body>
-</html>`}
-  initialCss={`p {
-  font-size: 2rem;
-  padding: 12px;
-}
-
-button {
-  padding: 8px 16px;
-  font-size: 1rem;
-  cursor: pointer;
-}`}
-  initialJs={`let teller = 0;
-
-function telOp() {
-  teller = teller + 1;
-  document.getElementById('uitvoer').textContent = teller;
-  console.log('Teller staat op:', teller);
-}`}
+  initialHtml={startHtml}
+  initialCss={startCss}
+  initialJs={startJs}
   height="500px"
   livePreview={false}
 />
@@ -107,6 +131,14 @@ Experimenteer:
 ## Modify
 
 **Opdracht:** Voeg een knop "Reset" toe die de teller terugzet naar 0 en dat ook op de pagina toont.
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  initialJs={startJs}
+  height="500px"
+  livePreview={false}
+/>
 
 <details>
 <summary>Tip</summary>
@@ -136,6 +168,14 @@ function reset() {
 ## Make
 
 **Opdracht:** Bouw een eenvoudige score-bijhouder voor een spelletje. Er zijn twee knoppen: "+1 punt" en "-1 punt". De score staat centraal op de pagina. De score mag niet onder 0 komen — als de score al 0 is, doet de min-knop niets.
+
+<CodeEditor
+  initialHtml={makeHtml}
+  initialCss={startCss}
+  initialJs={makeJs}
+  height="500px"
+  livePreview={false}
+/>
 
 <details>
 <summary>Tip</summary>

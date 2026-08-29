@@ -5,6 +5,34 @@ import CodeEditor from '@site/src/components/CodeEditor';
 
 # Afbeeldingen
 
+export const startHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Afbeeldingen</title>
+</head>
+<body>
+  <h1>Mijn favoriete dier</h1>
+  <img
+    src="https://picsum.photos/id/237/300/200"
+    alt="Een hond"
+    width="300"
+  >
+  <p>Dit is een hond.</p>
+</body>
+</html>`;
+
+export const makeHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Afbeeldingen</title>
+</head>
+<body>
+  <!-- Bouw hier je pagina -->
+</body>
+</html>`;
+
 <CodeOrg slug="afbeeldingen" />
 
 ## Wat ga je leren?
@@ -46,22 +74,7 @@ De browser kan de afbeelding niet laden en toont in plaats daarvan de **`alt` te
 ## Probeer het zelf.
 
 <CodeEditor
-  initialHtml={`<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>Afbeeldingen</title>
-</head>
-<body>
-  <h1>Mijn favoriete dier</h1>
-  <img
-    src="https://picsum.photos/id/237/300/200"
-    alt="Een hond"
-    width="300"
-  >
-  <p>Dit is een hond.</p>
-</body>
-</html>`}
+  initialHtml={startHtml}
   height="460px"
 />
 
@@ -76,6 +89,11 @@ Experimenteer met de code:
 ## Modify
 
 **Opdracht:** Verander de afbeelding naar een kat. Gebruik de URL hieronder en pas de `alt` tekst aan.
+
+<CodeEditor
+  initialHtml={startHtml}
+  height="460px"
+/>
 
 ```
 https://picsum.photos/id/40/300/200
@@ -104,6 +122,11 @@ Vervang de waarde van het `src` attribuut door de nieuwe URL. Vergeet de `alt` t
 ## Make
 
 **Opdracht:** Bouw een kleine galerij met minstens 3 verschillende afbeeldingen. Geef ze allemaal een logische `alt` tekst en dezelfde `width` zodat ze mooi op een rij staan.
+
+<CodeEditor
+  initialHtml={makeHtml}
+  height="460px"
+/>
 
 <details>
 <summary>Tip</summary>

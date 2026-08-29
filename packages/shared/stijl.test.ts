@@ -27,6 +27,14 @@ describe('maskeren', () => {
   it('laat inline code, JSX en linkdoelen met rust', () => {
     expect(namen('Gebruik `u.py` en <Component u="1" /> en [link](/docs/u).')).toEqual([]);
   });
+
+  it('laat startcode in een MDX-export met rust', () => {
+    // web-docs hoist de startcode van de oefenvelden naar exports bovenin;
+    // een <button>Klik Mij!</button> dáárin is code, geen lestekst.
+    const tekst =
+      'export const startHtml = `<body>\n  <button>Klik Mij!</button>\n</body>`;\n\nLopende tekst.\n';
+    expect(namen(tekst)).toEqual([]);
+  });
 });
 
 describe('fouten', () => {
