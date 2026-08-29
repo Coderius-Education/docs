@@ -1,11 +1,11 @@
 ---
-sidebar_position: 4
+sidebar_position: 5
 description: Haal kant-en-klare functies binnen met import. Gebruik time.sleep om je programma te laten pauzeren, en leer het verschil tussen import time en from time import sleep.
 ---
 
 import CodeExercise from '@site/src/components/CodeExercise';
 
-# 9c Modules importeren
+# 9d Modules importeren
 
 ```python
 import time
@@ -33,9 +33,12 @@ print("Af!")`}</CodeExercise>
 
 Laat je de eerste regel weg, dan kent Python de naam niet:
 
+{/* foutmelding-van: time.sleep(1) */}
 ```
-NameError: name 'time' is not defined
+NameError: name 'time' is not defined. Did you forget to import 'time'?
 ```
+
+Python raadt hier zelf wat eraan ontbreekt. Dat doet hij alleen bij namen die hij als module herkent, dus reken er niet op bij je eigen tikfouten.
 
 **`import time`** zegt: haal die module erbij. Vanaf dat moment kun je alles wat erin zit gebruiken.
 
@@ -71,6 +74,7 @@ De eerste vorm is duidelijker: `time.sleep` vertelt meteen waar die functie vand
 
 Zet je imports op de eerste regels van je bestand, vóór de rest van je code. Python leest je bestand van boven naar beneden: staat de import onder de plek waar je hem gebruikt, dan is hij daar nog niet bekend.
 
+{/* niet-draaien: toont bewust een import onder het gebruik */}
 ```python
 # FOUT
 time.sleep(1)
@@ -83,6 +87,7 @@ time.sleep(1)
 
 ## Er gaat iets mis
 
+{/* foutmelding-van: fout-helft */}
 ```
 NameError: name 'sleep' is not defined
 ```
@@ -91,6 +96,7 @@ NameError: name 'sleep' is not defined
 
 **Oplossing:** kies één van de twee vormen en houd hem vol.
 
+{/* niet-draaien: toont bewust de verkeerde importvorm */}
 ```python
 # FOUT
 import time
@@ -103,7 +109,7 @@ sleep(1)
 
 ---
 
-## Opdracht 9c.1: Aftellen
+## Opdracht 9d.1: Aftellen
 
 Tel af van 3 naar 1 met een halve seconde pauze ertussen, en print daarna `Start!`.
 
@@ -152,7 +158,7 @@ print("Start!")`}</CodeExercise>
 
 ---
 
-## Opdracht 9c.2: Dezelfde code, andere import
+## Opdracht 9d.2: Dezelfde code, andere import
 
 Schrijf de oplossing van 9c.1 om naar de vorm `from time import sleep`. De uitvoer blijft precies hetzelfde.
 
@@ -190,7 +196,7 @@ print("Start!")`}</CodeExercise>
 
 ---
 
-## Opdracht 9c.3: Wachten in een eigen functie
+## Opdracht 9d.3: Wachten in een eigen functie
 
 Schrijf een functie `zeg_langzaam(tekst, seconden)` die eerst wacht en daarna de tekst print. Roep hem twee keer aan met verschillende waarden.
 

@@ -2,13 +2,17 @@
 sidebar_position: 5
 ---
 
+# 10.5 Tekst op het scherm
 
-# 7.5 Tekst op het scherm
+:::warning[Online speeltuin]
+De voorbeelden in dit hoofdstuk draaien niet in de online speeltuin. Een pygame-ce-programma schrijft zijn eigen game-loop, en die is in de browser niet meer te stoppen. Draai ze op je eigen computer, in Thonny of VS Code — zie [installatie](/docs/installatie).
+:::
 
 In coderius-play maakte je tekst met `play.new_text()`. In pygame-ce gebruik je `pygame.font`.
 
 ## Tekst tonen
 
+{/* draaien: compleet programma, alleen zonder speeltuin */}
 ```python
 import pygame
 
@@ -34,8 +38,6 @@ while actief:
 pygame.quit()
 ```
 
-
-
 Wat gebeurt hier?
 
 ```python
@@ -53,13 +55,14 @@ scherm.blit(tekst, (350, 280))
 ```
 Plaatst de tekst op positie (350, 280) op het scherm.
 
-## Opdracht 7.5.a: Je eigen tekst
+## Opdracht 10.5.a: Je eigen tekst
 
 Toon je eigen naam op het scherm in een kleur naar keuze.
 
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
+{/* draaien: compleet programma, alleen zonder speeltuin */}
 ```python
 import pygame
 
@@ -87,7 +90,7 @@ pygame.quit()
 
 </details>
 
-## Opdracht 7.5.b: Meerdere teksten
+## Opdracht 10.5.b: Meerdere teksten
 
 Toon twee regels tekst op het scherm: een titel bovenaan en een ondertitel daaronder. Gebruik verschillende groottes.
 
@@ -101,6 +104,7 @@ Maak twee fonts aan met verschillende groottes, bijvoorbeeld `60` voor de titel 
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
+{/* draaien: compleet programma, alleen zonder speeltuin */}
 ```python
 import pygame
 

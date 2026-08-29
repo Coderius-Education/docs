@@ -2,13 +2,19 @@
 sidebar_position: 6
 ---
 
-# 7.6 Tekst die verandert
+# 10.6 Tekst die verandert
+
+:::warning[Online speeltuin]
+De voorbeelden in dit hoofdstuk draaien niet in de online speeltuin. Een pygame-ce-programma schrijft zijn eigen game-loop, en die is in de browser niet meer te stoppen. Draai ze op je eigen computer, in Thonny of VS Code — zie [installatie](/docs/installatie).
+:::
 
 In de vorige les heb je geleerd hoe je tekst op het scherm toont. Maar wat als de tekst moet veranderen, bijvoorbeeld een score die omhoog gaat?
 
+{/* stijl-uitzondering: all-caps KEYDOWN is de naam van de pygame-constante */}
+
 ## KEYDOWN: reageren op een toetsdruk
 
-In les 7.4 gebruikten we `pygame.key.get_pressed()` om continu te checken of een toets ingedrukt is. Maar soms wil je dat iets **één keer** gebeurt per toetsdruk. Hiervoor gebruik je `pygame.KEYDOWN` in de event loop:
+In les 10.4 gebruikten we `pygame.key.get_pressed()` om continu te checken of een toets ingedrukt is. Maar soms wil je dat iets **één keer** gebeurt per toetsdruk. Hiervoor gebruik je `pygame.KEYDOWN` in de event loop:
 
 ```python
 for event in pygame.event.get():
@@ -27,6 +33,7 @@ Het verschil: `pygame.key.get_pressed()` checkt **continu** of een toets ingedru
 
 Je kunt tekst elke frame opnieuw renderen met een variabele:
 
+{/* draaien: compleet programma, alleen zonder speeltuin */}
 ```python
 import pygame
 
@@ -61,7 +68,7 @@ pygame.quit()
 
 Elke keer dat je op spatie drukt, gaat de score omhoog. De tekst wordt elk frame opnieuw getekend met de nieuwe waarde van `score`.
 
-## Opdracht 7.6.a: Scoreteller
+## Opdracht 10.6.a: Scoreteller
 
 Maak een programma waarbij:
 1. Een score begint op 0
@@ -70,8 +77,16 @@ Maak een programma waarbij:
 4. De score wordt op het scherm getoond
 
 <details>
+<summary>Klik hier voor een tip.</summary>
+
+De score verandert, dus je moet de tekst elk frame opnieuw maken met `font.render(...)`. Reageren op de pijltjes doe je in de event-lus, met `event.type == pygame.KEYDOWN`.
+
+</details>
+
+<details>
 <summary>Klik hier voor de oplossing.</summary>
 
+{/* draaien: compleet programma, alleen zonder speeltuin */}
 ```python
 import pygame
 

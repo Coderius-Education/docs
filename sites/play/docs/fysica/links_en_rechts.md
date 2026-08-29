@@ -8,17 +8,15 @@ Tijd voor beweging. Met **start_physics()** kun je een vorm laten bewegen.
 
 Bekijk de code hieronder. Wat denk je dat er gebeurt?
 
-```python
-import play
+<PygbagRunner code={`import play
 
 cirkel = play.new_circle()
-cirkel.start_physics(obeys_gravity=False, x_speed=60)
-```
+cirkel.start_physics(obeys_gravity=False, x_speed=60)`} height={300} />
 
 <details>
-<summary>Klik hier om het antwoord te zien</summary>
+<summary>Klik hier voor het antwoord.</summary>
 
-Voer de code uit. De bal beweegt naar rechts en stuitert tegen de muur.
+De bal beweegt naar rechts en stuitert tegen de muur.
 
 :::info
 `coderius-play` maakt automatisch onzichtbare muren aan de randen van het scherm. Vormen stuiteren hier standaard tegenaan.
@@ -27,13 +25,27 @@ Voer de code uit. De bal beweegt naar rechts en stuitert tegen de muur.
 
 Wat gebeurt hier?
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
+import play
+
+cirkel = play.new_circle()
 cirkel.start_physics(obeys_gravity=False, x_speed=60)
 ```
+
+<Regel n={3}>
+Een gewone cirkel, zoals in hoofdstuk 1. Zonder de regel eronder blijft hij stilstaan.
+</Regel>
+
+<Regel n={4}>
+Zet de fysica aan. Twee dingen stel je hier in:
+
 - **obeys_gravity=False**: de zwaartekracht staat uit, dus de bal valt niet naar beneden
 - **x_speed=60**: de bal beweegt met snelheid 60 naar rechts
+</Regel>
 
-Als het goed is, zie je de bal heen en weer bewegen.
+</CodeUitleg>
 
 ### Onderzoek
 
@@ -42,14 +54,14 @@ Probeer eens de volgende aanpassingen en kijk wat er verandert:
 - Wat als je `obeys_gravity=False` weghaalt (of op `True` zet)?
 
 <details>
-<summary>Klik hier voor het antwoord</summary>
+<summary>Klik hier voor het antwoord.</summary>
 
 - Met `x_speed=0` staat de bal stil (er is geen horizontale snelheid).
 - Met `obeys_gravity=True` valt de bal naar beneden door de zwaartekracht.
 
 </details>
 
-## Opdracht 2.1.a
+## Opdracht 2.1.a: De andere kant op
 
 a) Laat de bal met snelheid 100 naar **links** bewegen.
 
@@ -68,6 +80,11 @@ import play
 cirkel = play.new_circle()
 cirkel.start_physics(obeys_gravity=False, x_speed=-100)
 ```
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle()
+cirkel.start_physics(obeys_gravity=False, x_speed=-100)`} height={300} />
 
 </details>
 
@@ -89,6 +106,11 @@ import play
 cirkel = play.new_circle()
 cirkel.start_physics(obeys_gravity=False, x_speed=100, y_speed=100)
 ```
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle()
+cirkel.start_physics(obeys_gravity=False, x_speed=100, y_speed=100)`} height={300} />
 
 </details>
 

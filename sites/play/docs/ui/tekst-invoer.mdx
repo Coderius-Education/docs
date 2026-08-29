@@ -1,0 +1,120 @@
+---
+sidebar_position: 4
+---
+
+# 7.4 Tekst laten typen
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/beslissen/05b-if-else', label: 'If en else'},
+  ]}
+/>
+
+Wil je de naam van de speler weten, of een antwoord op een vraag? Met **`play.new_text_input`** maak je een invoerveld waar de speler in kan typen.
+
+<PygbagRunner code={`import play
+
+welkom = play.new_text(words="Hoe heet je?", y=100)
+veld = play.new_text_input(placeholder="Typ je naam en druk op Enter")
+
+@veld.when_submit
+def naam_ingevuld(naam):
+    welkom.words = "Welkom, " + naam`} height={300} />
+
+<CodeUitleg>
+
+```python showLineNumbers
+import play
+
+welkom = play.new_text(words="Hoe heet je?", y=100)
+veld = play.new_text_input(placeholder="Typ je naam en druk op Enter")
+
+@veld.when_submit
+def naam_ingevuld(naam):
+    welkom.words = "Welkom, " + naam
+```
+
+<Regel n={4}>
+Het invoerveld. De `placeholder` is de grijze hulptekst die verdwijnt zodra de speler iets typt.
+</Regel>
+
+<Regel n={6}>
+**`when_submit`** gaat af als de speler op Enter drukt, niet bij elke letter.
+</Regel>
+
+<Regel n={7}>
+`naam` is de getypte tekst. Ook deze functie krijgt zijn waarde als parameter mee.
+</Regel>
+
+<Regel n={8}>
+Plakt de naam achter "Welkom, " en zet dat op het scherm.
+</Regel>
+
+</CodeUitleg>
+
+Klik op het veld en typ maar.
+
+## Elke toetsaanslag volgen
+
+Naast `when_submit` is er ook `when_changed`: die gaat bij **elke** wijziging af, dus na elke letter die de speler typt of wist.
+
+<PygbagRunner code={`import play
+
+teller = play.new_text(words="0 letters", y=100)
+veld = play.new_text_input(placeholder="Typ maar iets")
+
+@veld.when_changed
+def getypt(tekst):
+    teller.words = str(len(tekst)) + " letters"`} height={300} />
+
+De huidige inhoud kun je altijd uitlezen met `veld.value`, en leegmaken doe je met `veld.value = ""`.
+
+**Tip:** voor een wachtwoordveld zet je `password_mode=True` — dan verschijnen er rondjes in plaats van letters. Met `max_length=10` beperk je de lengte.
+
+## Opdracht 7.4.a: Rekenvraag
+
+Stel een rekenvraag in een tekst, bijvoorbeeld "Hoeveel is 7 x 8?". De speler typt het antwoord in een invoerveld. Bij Enter verschijnt "Goed" of "Fout".
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+De tekst uit het veld is een string. Vergelijk hem daarom met `"56"` (met aanhalingstekens), of maak er eerst met `int()` een getal van.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+import play
+
+vraag = play.new_text(words="Hoeveel is 7 x 8?", y=100)
+uitslag = play.new_text(words="", y=-100)
+veld = play.new_text_input(placeholder="Antwoord")
+
+@veld.when_submit
+def antwoord_gegeven(antwoord):
+    if antwoord == "56":
+        uitslag.words = "Goed"
+    else:
+        uitslag.words = "Fout"
+    veld.value = ""
+```
+
+<PygbagRunner code={`import play
+
+vraag = play.new_text(words="Hoeveel is 7 x 8?", y=100)
+uitslag = play.new_text(words="", y=-100)
+veld = play.new_text_input(placeholder="Antwoord")
+
+@veld.when_submit
+def antwoord_gegeven(antwoord):
+    if antwoord == "56":
+        uitslag.words = "Goed"
+    else:
+        uitslag.words = "Fout"
+    veld.value = ""`} height={320} />
+
+Na het antwoord maakt `veld.value = ""` het veld weer leeg voor een nieuwe poging.
+
+</details>

@@ -4,10 +4,6 @@ sidebar_position: 3
 
 # 6.3 Instellingen opslaan
 
-:::info[Wat moet je al weten]
-- [6.1 Gegevens opslaan en ophalen](/docs/database/basis) - `set_data()` en `get_data()`
-:::
-
 Naast de high score kun je ook instellingen van de speler opslaan. Denk aan de moeilijkheidsgraad, de kleur van de speler, of het geluid aan of uit staat.
 
 ## Meerdere gegevens opslaan
@@ -22,6 +18,13 @@ database = play.new_database()
 database.set_data('punten', 0)
 database.set_data('moeilijkheid', 'makkelijk')
 ```
+
+<PygbagRunner code={`import play
+
+database = play.new_database()
+
+database.set_data('punten', 0)
+database.set_data('moeilijkheid', 'makkelijk')`} height={300} />
 
 ## Opdracht 6.3.a: Kleur onthouden
 
@@ -66,6 +69,29 @@ def groen():
     database.set_data('kleur', 'green')
 ```
 
+<PygbagRunner code={`import play
+
+database = play.new_database()
+
+kleur = database.get_data('kleur', 'black')
+
+cirkel = play.new_circle(color=kleur, radius=80)
+
+@play.when_key_pressed("r")
+def rood():
+    cirkel.color = 'red'
+    database.set_data('kleur', 'red')
+
+@play.when_key_pressed("b")
+def blauw():
+    cirkel.color = 'blue'
+    database.set_data('kleur', 'blue')
+
+@play.when_key_pressed("g")
+def groen():
+    cirkel.color = 'green'
+    database.set_data('kleur', 'green')`} height={300} />
+
 </details>
 
 ## Opdracht 6.3.b: Moeilijkheid kiezen
@@ -75,6 +101,13 @@ Maak een programma waarbij:
 2. De moeilijkheid staat op het scherm
 3. Met de toets `1` kies je makkelijk, met `2` normaal, met `3` moeilijk
 4. De keuze wordt opgeslagen in de database
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Je krijgt drie bijna identieke functies, één per toets. Elke functie doet twee dingen: de keuze opslaan én de tekst op het scherm bijwerken. Vergeet de tweede niet, anders lijkt er niets te gebeuren.
+
+</details>
 
 <details>
 <summary>Klik hier voor de oplossing.</summary>
@@ -103,5 +136,28 @@ def moeilijk():
     database.set_data('moeilijkheid', 'moeilijk')
     tekst.words = "Moeilijkheid: moeilijk"
 ```
+
+<PygbagRunner code={`import play
+
+database = play.new_database()
+
+moeilijkheid = database.get_data('moeilijkheid', 'makkelijk')
+
+tekst = play.new_text(words="Moeilijkheid: " + moeilijkheid)
+
+@play.when_key_pressed("1")
+def makkelijk():
+    database.set_data('moeilijkheid', 'makkelijk')
+    tekst.words = "Moeilijkheid: makkelijk"
+
+@play.when_key_pressed("2")
+def normaal():
+    database.set_data('moeilijkheid', 'normaal')
+    tekst.words = "Moeilijkheid: normaal"
+
+@play.when_key_pressed("3")
+def moeilijk():
+    database.set_data('moeilijkheid', 'moeilijk')
+    tekst.words = "Moeilijkheid: moeilijk"`} height={300} />
 
 </details>

@@ -34,12 +34,15 @@ Lookup via een naam is veel leesbaarder dan via een nummer: `leerling["naam"]` i
 
 Een waarde aanpassen of een nieuwe sleutel toevoegen werkt hetzelfde:
 
+{/* niet-draaien: fragment; leerling komt uit het blok erboven */}
 ```python
 leerling["leeftijd"] = 16        # wijzigt bestaande sleutel
 leerling["hobby"] = "muziek"     # voegt nieuwe sleutel toe
 ```
 
 Bestaat de sleutel al, dan wordt de waarde overschreven. Bestaat hij nog niet, dan wordt hij toegevoegd.
+
+{/* foutmelding-van: {"naam": "Sam"}["leeftijd"] */}
 
 Vraag je een sleutel op die niet bestaat? Dan krijg je een `KeyError` met de naam van de gezochte sleutel — handig om te debuggen. Hoe je dat vooraf checkt, leer je in de volgende les.
 

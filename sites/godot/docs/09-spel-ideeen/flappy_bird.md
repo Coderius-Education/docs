@@ -16,7 +16,7 @@ Het hart van het spel is hetzelfde als in jouw platformer: `velocity.y` aanpasse
 ## Wat ga je leren?
 
 - Een spawner bouwen die met een `Timer` periodiek nieuwe obstakels aanmaakt — de techniek uit [Automatisch spawnen met een Timer](../08-meer-levels-en-menu/spawn_timer.md).
-- Scenes "instantieren" met `preload()` + `instantiate()` (zie [Spawnen: nodes maken in code](../08-meer-levels-en-menu/spawnen.md)).
+- Scenes "instantiëren" met `preload()` + `instantiate()` (zie [Spawnen: nodes maken in code](../08-meer-levels-en-menu/spawnen.md)).
 - Een Area2D als game-over-trigger inzetten.
 - Score per gepasseerde buis verhogen via een tweede Area2D.
 
@@ -40,7 +40,7 @@ Het hart van het spel is hetzelfde als in jouw platformer: `velocity.y` aanpasse
 | `velocity.y = JUMP_VELOCITY` | Snap de verticale snelheid naar een vaste waarde omhoog. |
 | `velocity += get_gravity() * delta` | Laat de vogel vallen wanneer er niet wordt geflapt. |
 | `move_and_slide()` | Past `velocity` toe op de vogel. |
-| `preload("res://buis.tscn")` | Laadt de buis-scene in geheugen, klaar om te instantieren. |
+| `preload("res://buis.tscn")` | Laadt de buis-scene in geheugen, klaar om te instantiëren. |
 | `instantiate()` + `add_child(...)` | Maakt een nieuwe buis aan en hangt hem in de scene. |
 | `queue_free()` | Verwijdert een buis die buiten beeld is — anders blijven ze geheugen vreten. |
 | `Timer.timeout` (signal) | Trigger om elke X seconden een nieuwe buis te spawnen. |

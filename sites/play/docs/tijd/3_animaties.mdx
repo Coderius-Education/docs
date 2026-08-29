@@ -4,14 +4,16 @@ sidebar_position: 3
 
 # 5.3 Animaties met `async play.repeat_forever`
 
-:::info[Wat moet je al weten]
-- [5.2 Wachten met async en await](/docs/tijd/async) - hoe `async`/`await` werkt
-- [1.6 Een vorm aanpassen](/docs/vormen/vorm_aanpassen) - eigenschappen als `color` en `radius` wijzigen
-:::
+<Voorkennis
+  items={[
+    {to: '/docs/gebeurtenissen/score_bijhouden', label: '4.5 Een score bijhouden met global'},
+    {site: 'python', to: '/docs/beslissen/05b-if-else', label: 'If en else'},
+  ]}
+/>
 
 Nu je weet hoe `async` en `await` werken, kun je ook eenvoudig animaties maken. Met `@play.repeat_forever` in combinatie met `async` kun je code steeds opnieuw laten uitvoeren.
 
-## 5.3.1 Kleur laten veranderen
+## Kleur laten veranderen
 
 <PygbagRunner code={`import play
 
@@ -76,7 +78,14 @@ In deze opdracht gebruik je het `global` keyword en `if`-statements. Ken je die 
    - Met `if animatie == 'grootte':` controleert of de grootteanimatie moet draaien
 
 <details>
-<summary>Klik hier voor de oplossing</summary>
+<summary>Klik hier voor een tip.</summary>
+
+Het stappenplan hierboven loopt de opzet al door. De kern is dat de animatie-functie blijft draaien en met een `if` kijkt welke animatie op dit moment aan de beurt is.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
 
 <PygbagRunner code={`import play
 

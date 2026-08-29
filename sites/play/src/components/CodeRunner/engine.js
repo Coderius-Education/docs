@@ -3,14 +3,17 @@
  * Supports two modes: "pygame" (pure pygame-ce) and "play" (coderius-play library).
  */
 
-// play draait bewust op Pyodide 0.27.x (Python 3.12), NIET op de catalog-versie
-// die de andere sites gebruiken (0.29.x / Python 3.13): de physics-wheel
-// pymunk-7.2.0 hieronder is cp312-only. Bump deze versie pas als pymunk (en de
-// coderius_play-wheel) voor de nieuwere Python zijn herbouwd.
-const PYODIDE_VERSION = '0.27.5';
+// Deze versie hoort gelijk te lopen met PYODIDE_VERSION in
+// packages/python-runner en met de `pyodide` in de catalog; een test in dat
+// package houdt de drie naast elkaar. Play liep hier lang achter op 0.27.x
+// (Python 3.12), omdat de physics-wheel alleen als cp312 bestond. Sinds pymunk
+// 7.3.0 publiceert het project zelf een wasm-wheel voor Python 3.13, en die
+// staat hieronder. Ga je hierin bumpen, dan moet de pymunk-wheel mee: zijn
+// ABI-tag (pyemscripten_2025_0) hoort bij de abi_version van de Pyodide-versie.
+const PYODIDE_VERSION = '0.29.4';
 const PYODIDE_CDN = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/pyodide.mjs`;
-const PYMUNK_WHEEL = '/whl/pymunk-7.2.0-cp312-cp312-pyodide_2024_0_wasm32.whl';
-const PLAY_WHEEL = '/whl/coderius_play-3.3.3-py3-none-any.whl';
+const PYMUNK_WHEEL = '/whl/pymunk-7.3.0-cp313-cp313-pyemscripten_2025_0_wasm32.whl';
+const PLAY_WHEEL = '/whl/coderius_play-3.4.0-py3-none-any.whl';
 
 /**
  * Ensure code has an async main loop for Pyodide compatibility.
@@ -136,12 +139,15 @@ import importlib.metadata as _meta
 print("coderius-play", _meta.version("coderius-play"))
 
 def _browser_start_program():
+    # Mirrors play.api.utils.start_program (3.4: program_state-enum in plaats
+    # van de oude program_started-boolean), maar zonder run_forever — Pyodide's
+    # webloop draait al, dus de game loop wordt een taak op die loop.
     from play.callback import callback_manager, CallbackType
     from play.core import game_loop as _game_loop
-    from play.globals import globals_list
-    if globals_list.program_started:
+    from play.globals import globals_list, ProgramState
+    if globals_list.program_state is not ProgramState.NOT_STARTED:
         return
-    globals_list.program_started = True
+    globals_list.program_state = ProgramState.RUNNING
     globals_list.should_auto_start = False
     callback_manager.run_callbacks(CallbackType.WHEN_PROGRAM_START)
     # Keep a handle on the task so __pygbag_reset can cancel it between runs.
@@ -346,8 +352,8 @@ def __pygbag_reset():
     """
     import gc
     try:
-        from play.globals import globals_list
-        if not globals_list.program_started:
+        from play.globals import globals_list, ProgramState
+        if globals_list.program_state is ProgramState.NOT_STARTED:
             return
         task = getattr(globals_list, '_pygbag_task', None)
         if task is not None and not task.done():

@@ -75,6 +75,7 @@ Je kent `continue` al uit [6c](06c-continue.mdx). De twee lijken op elkaar en do
 
 ## Er gaat iets mis
 
+{/* foutmelding-van: fout-helft */}
 ```
 SyntaxError: 'break' outside loop
 ```
@@ -83,6 +84,7 @@ SyntaxError: 'break' outside loop
 
 **Oplossing:** zet `break` binnen het ingesprongen blok van de `for` of `while`.
 
+{/* niet-compileren: toont bewust break buiten een lus */}
 ```python
 # FOUT
 for getal in range(5):

@@ -4,6 +4,12 @@ sidebar_position: 2
 
 # 1.2 Je eerste cirkel
 
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/basis/jouw-naam-op-het-scherm', label: 'Jouw naam op het scherm'},
+  ]}
+/>
+
 Om eenvoudig games te maken in Python, gebruiken we de 'play'-bibliotheek. Deze bibliotheek is een vereenvoudigde laag bovenop 'pygame-ce', waardoor je snel aan de slag kunt zonder je zorgen te maken over de complexere details van 'pygame-ce'.
 
 Tijd om iets op het scherm te tekenen. Bekijk de code hieronder.
@@ -15,7 +21,7 @@ play.new_circle()`} height={300} />
 Wat denk je dat er gebeurt als je deze code uitvoert?
 
 <details>
-    <summary>Klik hier om het antwoord te zien</summary>
+    <summary>Klik hier voor het antwoord.</summary>
 
 Als het goed is, zie je een grote zwarte cirkel midden op je scherm. Klik op de ▶ knop hierboven om dit te controleren.
 </details>
@@ -27,7 +33,7 @@ Merk op dat we nergens hebben aangegeven:
 Dat is toch wel gek. Het programma heeft stiekem voor ons al een paar zaken gekozen.
 Het is toch wel fijn als we het zelf kunnen veranderen.
 
-## 1.2.1 De kleur aanpassen
+## De kleur aanpassen
 We kunnen de kleur aanpassen met het attribuut **color**.
 Om bijvoorbeeld de cirkel blauw te maken, kun je het volgende doen.
 
@@ -47,7 +53,7 @@ Je kunt kleuren op verschillende manieren opgeven:
 - **Hex-code** (sinds versie 3.3.3): `'#FF0000'` voor rood, `'#00FF00'` voor groen, `'#0000FF'` voor blauw. Op dezelfde [kleurkiezer-site](https://www.w3schools.com/colors/colors_picker.asp) kun je naast de RGB-waarde ook de hex-code aflezen.
 :::
 
-### Opdracht 1.2.1.a De kleur aanpassen
+### Opdracht 1.2.a: Een rode cirkel
 a) Schrijf een programma waarbij de kleur van de cirkel rood is. Pas de code hieronder aan en voer het uit.
 
 <PygbagRunner code={`import play
@@ -61,7 +67,7 @@ Het attribuut **color** gebruik je voor de kleur.
 </details>
 
 <details>
-    <summary>Klik hier voor een oplossing.</summary>
+    <summary>Klik hier voor de oplossing.</summary>
 
 <PygbagRunner code={`import play
 
@@ -82,7 +88,7 @@ De lijst van opties vind je op [deze pagina](https://www.pygame.org/docs/ref/col
 </details>
 
 <details>
-    <summary>Klik hier voor een oplossing.</summary>
+    <summary>Klik hier voor de oplossing.</summary>
 
 <PygbagRunner code={`import play
 play.new_circle(color='aquamarine4')`} height={300} />
@@ -102,7 +108,7 @@ Een hex-code begint altijd met `#` gevolgd door 6 tekens (cijfers 0-9 of letters
 </details>
 
 <details>
-    <summary>Klik hier voor een oplossing.</summary>
+    <summary>Klik hier voor de oplossing.</summary>
 
 <PygbagRunner code={`import play
 
@@ -110,7 +116,7 @@ play.new_circle(color='#FF8800')`} height={300} />
 {/* Fictieve screenshot: Een groot zwart venster met een grote oranje cirkel in het midden. */}
 </details>
 
-## 1.2.2 De positie aanpassen
+## De positie aanpassen
 Je kunt de cirkel ook op een andere plek zetten. Hiervoor gebruik je de **x** (horizontaal) en **y** (verticaal) attributen.
 
 ### Het coördinatensysteem
@@ -143,7 +149,7 @@ play.new_circle(x=0, y=0)`} height={300} />
 {/* Fictieve screenshot: Een groot zwart venster met een grote zwarte cirkel precies in het midden. */}
 Zie je de cirkel in het midden staan?
 
-### Opdracht 1.2.2.a: de positie aanpassen
+### Opdracht 1.2.b: De positie aanpassen
 
 Waar zie je de cirkel verschijnen bij:
 
@@ -154,7 +160,7 @@ a) x=100 en y=0
 # SCHRIJF HIER JE CODE`} height={300} />
 
 <details>
-    <summary>Klik hier voor het antwoord</summary>
+    <summary>Klik hier voor de oplossing.</summary>
 
 <PygbagRunner code={`import play
 
@@ -171,7 +177,7 @@ b) x=-100 en y=0
 # SCHRIJF HIER JE CODE`} height={300} />
 
 <details>
-    <summary>Klik hier voor het antwoord</summary>
+    <summary>Klik hier voor de oplossing.</summary>
 
 <PygbagRunner code={`import play
 
@@ -188,7 +194,7 @@ c) x=0 en y=100
 # SCHRIJF HIER JE CODE`} height={300} />
 
 <details>
-    <summary>Klik hier voor het antwoord</summary>
+    <summary>Klik hier voor de oplossing.</summary>
 
 <PygbagRunner code={`import play
 
@@ -205,7 +211,7 @@ d) x=0 en y=-100
 # SCHRIJF HIER JE CODE`} height={300} />
 
 <details>
-    <summary>Klik hier voor het antwoord</summary>
+    <summary>Klik hier voor de oplossing.</summary>
 
 <PygbagRunner code={`import play
 
@@ -215,7 +221,7 @@ De cirkel zou een klein stukje onder het midden moeten staan.
 
 </details>
 
-## 1.2.3 Wat kan ik aanpassen aan een cirkel?
+## Wat kan ik aanpassen aan een cirkel?
 Hieronder volgt een lijst van attributen voor een cirkel:
 - **color**: Kleur, staat standaard op 'black'. [Op deze pagina](https://www.pygame.org/docs/ref/color_list.html) zie je welke kleuropties er zijn.
 - **x**: x-positie, staat standaard op 0 (het midden). Kleiner dan 0 is naar links, groter dan 0 is naar rechts.
@@ -227,7 +233,7 @@ Hieronder volgt een lijst van attributen voor een cirkel:
 - **angle**: de hoek van de cirkel in graden. Staat standaard op 0.
 - **size**: de schaal van de cirkel als percentage. Staat standaard op 100.
 
-### Opdracht 1.2.3.a De mooiste cirkel
+### Opdracht 1.2.c: De mooiste cirkel
 
 a) Teken twee cirkels die elkaar niet mogen raken. De eerste cirkel is blauw en heeft geen rand. De tweede is rood en heeft een dunne groene rand. 
 
@@ -245,7 +251,7 @@ Kijk verder goed naar welke attributen je nodig hebt.
 </details>
 
 <details>
-    <summary>Klik hier voor een oplossing.</summary>
+    <summary>Klik hier voor de oplossing.</summary>
 
 <PygbagRunner code={`import play
 
@@ -254,7 +260,7 @@ play.new_circle(x=200, color='red', border_width=10, border_color='green')`} hei
 {/* Fictieve screenshot: Een groot zwart venster met een blauwe cirkel links en een rode cirkel met een groene rand rechts. */}
 </details>
 
-## 1.2.4 De achtergrondkleur aanpassen
+## De achtergrondkleur aanpassen
 
 Standaard is de achtergrond van je scherm wit. Met **play.set_backdrop** kun je dit veranderen:
 
@@ -265,7 +271,7 @@ play.set_backdrop('white')
 play.new_circle(color='red')`} height={300} />
 {/* Fictieve screenshot: Een groot wit venster met een grote rode cirkel in het midden. */}
 
-### Opdracht 1.2.4.a: Achtergrondkleur
+### Opdracht 1.2.d: Achtergrondkleur
 
 Maak een programma met een donkere achtergrond en een lichtgekleurde cirkel.
 
@@ -276,7 +282,7 @@ Probeer eens `'black'` als achtergrondkleur en `'yellow'` als cirkelkleur.
 </details>
 
 <details>
-    <summary>Klik hier voor een oplossing.</summary>
+    <summary>Klik hier voor de oplossing.</summary>
 
 <PygbagRunner code={`import play
 

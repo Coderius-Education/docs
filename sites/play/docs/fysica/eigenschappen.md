@@ -4,10 +4,6 @@ sidebar_position: 3
 
 # 2.3 Fysica-eigenschappen
 
-:::info[Wat moet je al weten]
-- [2.1 Links en rechts bewegen](/docs/fysica/links_en_rechts) en [2.2 Soorten fysica](/docs/fysica/physics_info) - de basis van fysica in play
-:::
-
 Je hebt al geleerd hoe je vormen kunt laten bewegen en welke soorten fysica er zijn. Maar er is meer. Met eigenschappen als **bounciness**, **mass** en **sensor** kun je het gedrag van je vormen fijner instellen.
 
 ## Bounciness (stuiteren)
@@ -26,11 +22,25 @@ bal = play.new_circle(y=200, radius=20)
 bal.start_physics(bounciness=1.0)
 ```
 
+<PygbagRunner code={`import play
+
+vloer = play.new_box(y=-200, width=600, height=20)
+
+bal = play.new_circle(y=200, radius=20)
+bal.start_physics(bounciness=1.0)`} height={300} />
+
 De bal stuitert bijna eindeloos op en neer (maar verliest heel langzaam energie).
 
 ### Opdracht 2.3.a: Stuiterballen vergelijken
 
 Maak drie ballen naast elkaar met verschillende `bounciness` waarden: `0.2`, `0.6` en `1.0`. Laat ze allemaal vanaf dezelfde hoogte vallen op een vloer. Welke bal stuitert het hoogst?
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Drie ballen betekent drie keer `new_circle` en drie keer `start_physics`. Zet ze met verschillende `x`-waarden naast elkaar en geef ze dezelfde `y`, anders vallen ze niet van dezelfde hoogte.
+
+</details>
 
 <details>
 <summary>Klik hier voor de oplossing.</summary>
@@ -50,6 +60,19 @@ bal_c = play.new_circle(x=150, y=200, radius=20, color='green')
 bal_c.start_physics(bounciness=1.0)
 ```
 
+<PygbagRunner code={`import play
+
+vloer = play.new_box(y=-200, width=600, height=20)
+
+bal_a = play.new_circle(x=-150, y=200, radius=20, color='red')
+bal_a.start_physics(bounciness=0.2)
+
+bal_b = play.new_circle(x=0, y=200, radius=20, color='blue')
+bal_b.start_physics(bounciness=0.6)
+
+bal_c = play.new_circle(x=150, y=200, radius=20, color='green')
+bal_c.start_physics(bounciness=1.0)`} height={300} />
+
 De groene bal (`bounciness=1.0`) stuitert het hoogst.
 
 </details>
@@ -68,6 +91,14 @@ zwaar = play.new_circle(x=200, radius=40, color='blue')
 zwaar.start_physics(obeys_gravity=False, x_speed=-50, mass=10)
 ```
 
+<PygbagRunner code={`import play
+
+licht = play.new_circle(x=-200, radius=20, color='red')
+licht.start_physics(obeys_gravity=False, x_speed=50, mass=1)
+
+zwaar = play.new_circle(x=200, radius=40, color='blue')
+zwaar.start_physics(obeys_gravity=False, x_speed=-50, mass=10)`} height={300} />
+
 De blauwe bal (mass=10) duwt de rode bal (mass=1) makkelijk weg.
 
 ### Opdracht 2.3.b: Botsende ballen
@@ -77,6 +108,13 @@ Maak twee ballen die naar elkaar toe bewegen:
 2. Eén bal met `mass=1`
 
 Wat gebeurt er? Verander daarna de massa van één bal naar `mass=20`. Wat is het verschil?
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Naar elkaar toe bewegen betekent dat de een een positieve `x_speed` heeft en de ander een negatieve. Zet `obeys_gravity=False`, anders vallen ze langs elkaar heen.
+
+</details>
 
 <details>
 <summary>Klik hier voor de oplossing.</summary>
@@ -91,6 +129,14 @@ bal_b = play.new_circle(x=200, radius=20, color='blue')
 bal_b.start_physics(obeys_gravity=False, x_speed=-50, mass=20)
 ```
 
+<PygbagRunner code={`import play
+
+bal_a = play.new_circle(x=-200, radius=20, color='red')
+bal_a.start_physics(obeys_gravity=False, x_speed=50, mass=1)
+
+bal_b = play.new_circle(x=200, radius=20, color='blue')
+bal_b.start_physics(obeys_gravity=False, x_speed=-50, mass=20)`} height={300} />
+
 Bij gelijke massa kaatsen de ballen gelijk terug. Met ongelijke massa wordt de lichtere bal veel verder weggeduwd.
 
 </details>
@@ -102,7 +148,9 @@ Bij gelijke massa kaatsen de ballen gelijk terug. Met ongelijke massa wordt de l
 - `True` = de vorm is een sensor (objecten gaan er doorheen)
 - `False` = de vorm is normaal en blokkeert andere vormen (dit is de standaard)
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 import play
 
 vloer = play.new_box(y=-200, width=600, height=20)
@@ -119,6 +167,52 @@ tekst = play.new_text("", y=250, font_size=30)
 def in_de_zone():
     tekst.words = "In de zone!"
 ```
+
+<Regel n={3}>
+De vloer. Deze krijgt geen `start_physics()`, dus hij staat stil en de bal blijft erop liggen.
+</Regel>
+
+<Regel n={5} tot={6}>
+De bal, met fysica aan. Zonder die tweede regel valt hij niet.
+</Regel>
+
+<Regel n={8}>
+De zone. `transparency=50` maakt hem half doorzichtig, zodat je kunt zien waar hij zit.
+</Regel>
+
+<Regel n={9}>
+De kern van dit voorbeeld: **sensor=True** betekent dat de zone botsingen wel merkt, maar niets tegenhoudt.
+</Regel>
+
+<Regel n={11}>
+Een lege tekst bovenin, klaar om straks gevuld te worden.
+</Regel>
+
+<Regel n={13}>
+Gaat af zolang de bal de zone raakt.
+</Regel>
+
+<Regel n={15}>
+Zet de melding op het scherm.
+</Regel>
+
+</CodeUitleg>
+
+<PygbagRunner code={`import play
+
+vloer = play.new_box(y=-200, width=600, height=20)
+
+bal = play.new_circle(y=200, radius=20)
+bal.start_physics()
+
+zone = play.new_box(y=0, width=200, height=100, color='green', transparency=50)
+zone.start_physics(sensor=True)
+
+tekst = play.new_text("", y=250, font_size=30)
+
+@bal.when_touching(zone)
+def in_de_zone():
+    tekst.words = "In de zone!"`} height={300} />
 
 De bal valt door de groene zone heen (want die is een sensor), maar de tekst verandert zodra ze elkaar raken.
 
@@ -164,6 +258,22 @@ tekst = play.new_text("", y=250, font_size=30)
 def punt():
     tekst.words = "Punt!"
 ```
+
+<PygbagRunner code={`import play
+
+vloer = play.new_box(y=-200, width=600, height=20)
+
+zone = play.new_box(y=0, width=200, height=100, color='green', transparency=50)
+zone.start_physics(sensor=True)
+
+bal = play.new_circle(y=200, radius=20, color='red')
+bal.start_physics()
+
+tekst = play.new_text("", y=250, font_size=30)
+
+@bal.when_touching(zone)
+def punt():
+    tekst.words = "Punt!"`} height={300} />
 
 De bal valt door de groene zone en landt op de vloer. Zodra de bal de zone raakt, verschijnt "Punt.".
 

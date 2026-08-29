@@ -4,6 +4,20 @@
 //
 // Gebruik vanuit een site: `"copy:pyodide": "node ../../packages/python-runner/scripts/copy-pyodide.mjs"`
 // (de site heeft `pyodide` als devDependency). Daarna: commit static/pyodide/.
+//
+// Die kopie is twaalf megabyte binair die daarna niemand meer inkijkt, en het
+// script draait met de hand — dus hij kan achterblijven zonder dat iets het
+// merkt. Dat is ook echt gebeurd: python-docs bleef op een 0.28.0.dev0-snapshot
+// staan en algorithms op Python 3.12, terwijl de catalog al op 0.29 stond.
+// `src/pyodide-kopie.test.ts` legt elke gecommitte kopie nu naast de
+// geïnstalleerde pyodide. Ververs je er een, dan hoort die site van de
+// uitzonderingslijst in die test af — de test dwingt dat zelf af.
+//
+// Let op: de npm-package van Pyodide bevat alléén de runtime, geen enkele wheel
+// — niet in 0.29 en ook niet in 0.27. Een site die een pakket nodig heeft
+// (algorithms draait matplotlib) haalt die wheels apart op — daarvoor is
+// haal-pyodide-wheels.mjs hiernaast. Dit script begon met de doelmap leeggooien
+// en zou ze daarmee wissen; vandaar de controle hieronder.
 
 import { cpSync, existsSync, readdirSync, rmSync, statSync, unlinkSync } from 'node:fs';
 import { createRequire } from 'node:module';
@@ -23,8 +37,23 @@ try {
 
 const dest = join(siteRoot, 'static', 'pyodide');
 
-// Schoonmaken om verweesde bestanden van een vorige versie te verwijderen.
+// Wheels die er staan maar niet uit de npm-package komen, zijn met de hand
+// toegevoegd. Ze wegvegen breekt de site stil: loadPackage valt dan terug op de
+// CDN die deze map juist vermijdt, zonder foutmelding. Liever hier stoppen dan
+// dat later in de klas ontdekken.
 if (existsSync(dest)) {
+  const bron = new Set(readdirSync(src));
+  const handmatig = readdirSync(dest).filter((n) => n.endsWith('.whl') && !bron.has(n));
+  if (handmatig.length > 0) {
+    console.error(`${dest} bevat ${handmatig.length} wheel(s) die niet uit de npm-package komen:`);
+    for (const naam of handmatig.slice(0, 5)) console.error(`  ${naam}`);
+    if (handmatig.length > 5) console.error(`  ... en nog ${handmatig.length - 5}`);
+    console.error('');
+    console.error('Die zijn met de hand toegevoegd en gaan bij een verversing verloren.');
+    console.error('Haal eerst de bijbehorende wheels van de nieuwe Pyodide-versie op,');
+    console.error('zet ze klaar, en verwijder daarna deze map zelf.');
+    process.exit(1);
+  }
   rmSync(dest, { recursive: true, force: true });
 }
 

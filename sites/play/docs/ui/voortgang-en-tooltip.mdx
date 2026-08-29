@@ -1,0 +1,139 @@
+---
+sidebar_position: 5
+---
+
+# 7.5 Voortgang en zweeftekst
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/beslissen/05b-if-else', label: 'If en else'},
+  ]}
+/>
+
+De vorige elementen waren om te bedienen. Deze twee zijn om te **tonen**: een balk die voortgang laat zien, en een tekstje dat verschijnt als je ergens overheen zweeft.
+
+## De voortgangsbalk
+
+**`play.new_progress_bar`** is een balk die zich vult tussen een minimum en een maximum. Je zet de vulling met `balk.value` — de speler kan er zelf niets aan slepen.
+
+<PygbagRunner code={`import play
+
+balk = play.new_progress_bar(min_value=0, max_value=100, value=0, y=60, show_label=True)
+knop = play.new_button(text="Laad op", y=-60)
+
+@knop.when_clicked
+def opladen():
+    if balk.value < 100:
+        balk.value = balk.value + 10`} height={300} />
+
+<CodeUitleg>
+
+```python showLineNumbers
+import play
+
+balk = play.new_progress_bar(min_value=0, max_value=100, value=0, y=60, show_label=True)
+knop = play.new_button(text="Laad op", y=-60)
+
+@knop.when_clicked
+def opladen():
+    if balk.value < 100:
+        balk.value = balk.value + 10
+```
+
+<Regel n={3}>
+De balk loopt van 0 tot 100 en begint leeg. Met `show_label=True` staat het percentage erin.
+</Regel>
+
+<Regel n={4}>
+De knop waarmee de speler de balk vult. De balk zelf reageert nergens op; jij bepaalt wanneer hij verandert.
+</Regel>
+
+<Regel n={8}>
+Zonder deze controle zou de balk voorbij zijn `max_value` blijven tellen.
+</Regel>
+
+<Regel n={9}>
+Tien procent erbij. `balk.value` uitlezen en zetten gaat allebei via dezelfde naam.
+</Regel>
+
+</CodeUitleg>
+
+Een voortgangsbalk is bijvoorbeeld handig als levensbalk, als laadbalk of als timer.
+
+## De zweeftekst
+
+**`play.new_tooltip`** hangt een korte uitleg aan een andere vorm of knop. De tekst verschijnt vanzelf zodra de muis op het doelwit staat, en verdwijnt weer zodra de muis weggaat.
+
+<PygbagRunner code={`import play
+
+knop = play.new_button(text="?")
+play.new_tooltip(text="Deze knop doet nog niets", target=knop)`} height={280} />
+
+<CodeUitleg>
+
+```python showLineNumbers
+import play
+
+knop = play.new_button(text="?")
+play.new_tooltip(text="Deze knop doet nog niets", target=knop)
+```
+
+<Regel n={3}>
+Het doelwit: de vorm waar de muis overheen moet om de tekst te laten verschijnen.
+</Regel>
+
+<Regel n={4}>
+De zweeftekst zelf. Je hoeft hem niet in een variabele te zetten — hij hangt vanaf nu aan zijn `target`. Dat target mag elke vorm zijn, dus ook een cirkel of afbeelding.
+</Regel>
+
+</CodeUitleg>
+
+Met `offset_x` en `offset_y` schuif je de tekst wat verder van de muis af.
+
+## Opdracht 7.5.a: Levensbalk
+
+Maak een levensbalk die op 100 begint en een knop **Au**. Elke klik haalt er 20 vanaf. Is de balk leeg, dan verschijnt de tekst "Game over" en gaat de knop uit.
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Controleer ín de klikfunctie of `balk.value` op 0 staat. Zo ja: zet `knop.disabled = True` en verander de tekst.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+import play
+
+tekst = play.new_text(words="", y=120)
+balk = play.new_progress_bar(min_value=0, max_value=100, value=100, y=40, bar_color='crimson', show_label=True)
+knop = play.new_button(text="Au", y=-60)
+
+@knop.when_clicked
+def au():
+    balk.value = balk.value - 20
+    if balk.value <= 0:
+        tekst.words = "Game over"
+        knop.disabled = True
+```
+
+<PygbagRunner code={`import play
+
+tekst = play.new_text(words="", y=120)
+balk = play.new_progress_bar(min_value=0, max_value=100, value=100, y=40, bar_color='crimson', show_label=True)
+knop = play.new_button(text="Au", y=-60)
+
+@knop.when_clicked
+def au():
+    balk.value = balk.value - 20
+    if balk.value <= 0:
+        tekst.words = "Game over"
+        knop.disabled = True`} height={340} />
+
+</details>
+
+:::info[Waar kom je dit later weer tegen?]
+Een voortgangsbalk werkt ook goed als levensbalk of als timer. In [9.1 Levels met andere instellingen](/docs/levels/instellingen) zet je zo'n balk per level anders.
+:::

@@ -4,9 +4,12 @@ sidebar_position: 3
 
 # 4.3 De muis gebruiken
 
-:::info[Wat moet je al weten]
-- [4.1 Gebeurtenissen](/docs/gebeurtenissen/toetsenbord) - hoe een `@play.when_...` decorator werkt
-:::
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/beslissen/05b-if-else', label: 'If en else'},
+    {site: 'python', to: '/docs/beslissen/05c-and-or-elif', label: 'And, or en elif'},
+  ]}
+/>
 
 Naast het toetsenbord kun je ook de muis gebruiken in je spel. Met `play.mouse` kun je de positie van de muis opvragen en een vorm de muis laten volgen.
 
@@ -70,6 +73,13 @@ Het verschil met `@play.when_mouse_clicked`? Die vuurt maar **één keer** bij h
 Maak een programma waarbij:
 1. Een cirkel de muis volgt
 2. Een tekst bovenaan het scherm de muispositie toont
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+De muispositie vraag je elk frame opnieuw op, dus dit hoort in een functie die zich blijft herhalen. Zoek in de cheatsheet naar `repeat_forever`.
+
+</details>
 
 <details>
 <summary>Klik hier voor de oplossing.</summary>

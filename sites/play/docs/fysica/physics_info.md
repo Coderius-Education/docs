@@ -4,9 +4,11 @@ sidebar_position: 2
 
 # 2.2 Soorten fysica
 
-:::info[Wat moet je al weten]
-- [2.1 Links en rechts bewegen](/docs/fysica/links_en_rechts) - hoe je `start_physics()` aanroept
-:::
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/basis/jouw-naam-op-het-scherm', label: 'Jouw naam op het scherm'},
+  ]}
+/>
 
 Niet elke vorm gedraagt zich hetzelfde. Een bal die rondstuitert is anders dan een platform dat stilstaat.
 
@@ -20,6 +22,13 @@ cirkel.start_physics()
 
 cirkel.physics_info()
 ```
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle()
+cirkel.start_physics()
+
+cirkel.physics_info()`} height={300} />
 
 Je ziet nu in je console informatie over het type fysica. Het type wordt bepaald door drie attributen:
 
@@ -35,7 +44,9 @@ Door deze drie attributen te combineren, krijg je drie soorten fysica:
 
 Een **dynamic** vorm beweegt vrij rond. De zwaartekracht en botsingen hebben er invloed op. Dit is de standaard.
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 import play
 
 bal = play.new_circle()
@@ -44,9 +55,26 @@ bal.start_physics(can_move=True, obeys_gravity=True, stable=False)
 bal.physics_info()
 ```
 
+<Regel n={4}>
+Drie instellingen samen maken deze bal **dynamic**:
+
 - **can_move=True**: de bal mag bewegen
 - **obeys_gravity=True**: de bal valt naar beneden
 - **stable=False**: als iets tegen de bal botst, wordt de bal weggeduwd
+</Regel>
+
+<Regel n={6}>
+Print het gevonden type in je console, zodat je kunt controleren of het klopt.
+</Regel>
+
+</CodeUitleg>
+
+<PygbagRunner code={`import play
+
+bal = play.new_circle()
+bal.start_physics(can_move=True, obeys_gravity=True, stable=False)
+
+bal.physics_info()`} height={300} />
 
 De bal valt naar beneden en stuitert. Dat is dynamic gedrag.
 
@@ -54,7 +82,9 @@ De bal valt naar beneden en stuitert. Dat is dynamic gedrag.
 
 Een **static** vorm staat helemaal stil en kan niet bewegen. Andere vormen kunnen er wel tegenaan botsen.
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 import play
 
 muur = play.new_box(y=-200, width=400, height=20)
@@ -63,9 +93,26 @@ muur.start_physics(can_move=False, obeys_gravity=True, stable=True)
 muur.physics_info()
 ```
 
+<Regel n={3}>
+Een brede, platte doos onderin het scherm.
+</Regel>
+
+<Regel n={4}>
+Deze combinatie maakt hem **static**:
+
 - **can_move=False**: de muur kan niet bewegen
 - **obeys_gravity=True**: maakt niet uit, want de muur kan toch niet bewegen
 - **stable=True**: de muur wordt niet weggeduwd bij een botsing
+</Regel>
+
+</CodeUitleg>
+
+<PygbagRunner code={`import play
+
+muur = play.new_box(y=-200, width=400, height=20)
+muur.start_physics(can_move=False, obeys_gravity=True, stable=True)
+
+muur.physics_info()`} height={300} />
 
 De muur blijft op zijn plek, wat er ook tegenaan botst.
 
@@ -73,7 +120,9 @@ De muur blijft op zijn plek, wat er ook tegenaan botst.
 
 Een **kinematic** vorm beweegt volgens een vaste snelheid. De zwaartekracht heeft er geen invloed op, maar andere vormen botsen er wel tegenaan.
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 import play
 
 platform = play.new_box(width=200, height=20)
@@ -82,9 +131,22 @@ platform.start_physics(can_move=True, obeys_gravity=False, stable=True, x_speed=
 platform.physics_info()
 ```
 
+<Regel n={4}>
+Deze combinatie, mét een eigen `x_speed`, maakt hem **kinematic**:
+
 - **can_move=True**: het platform mag bewegen
 - **obeys_gravity=False**: het platform valt niet naar beneden
 - **stable=True**: het platform wordt niet weggeduwd bij een botsing
+</Regel>
+
+</CodeUitleg>
+
+<PygbagRunner code={`import play
+
+platform = play.new_box(width=200, height=20)
+platform.start_physics(can_move=True, obeys_gravity=False, stable=True, x_speed=40)
+
+platform.physics_info()`} height={300} />
 
 Het platform beweegt heen en weer, maar valt niet naar beneden.
 
@@ -136,6 +198,19 @@ vorm_c.start_physics(can_move=True, obeys_gravity=False, stable=True, x_speed=50
 # print hier de physics_info() van elke vorm
 ```
 
+<PygbagRunner code={`import play
+
+vorm_a = play.new_circle()
+vorm_a.start_physics(can_move=True, obeys_gravity=True, stable=False)
+
+vorm_b = play.new_box(y=-200, width=400, height=20)
+vorm_b.start_physics(can_move=False, obeys_gravity=True, stable=True)
+
+vorm_c = play.new_circle(y=200, color='red')
+vorm_c.start_physics(can_move=True, obeys_gravity=False, stable=True, x_speed=50)
+
+# print hier de physics_info() van elke vorm`} height={300} />
+
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
@@ -157,6 +232,23 @@ vorm_c.start_physics(can_move=True, obeys_gravity=False, stable=True, x_speed=50
 print("vorm_c:")
 vorm_c.physics_info()
 ```
+
+<PygbagRunner code={`import play
+
+vorm_a = play.new_circle()
+vorm_a.start_physics(can_move=True, obeys_gravity=True, stable=False)
+print("vorm_a:")
+vorm_a.physics_info()
+
+vorm_b = play.new_box(y=-200, width=400, height=20)
+vorm_b.start_physics(can_move=False, obeys_gravity=True, stable=True)
+print("vorm_b:")
+vorm_b.physics_info()
+
+vorm_c = play.new_circle(y=200, color='red')
+vorm_c.start_physics(can_move=True, obeys_gravity=False, stable=True, x_speed=50)
+print("vorm_c:")
+vorm_c.physics_info()`} height={300} />
 
 - **vorm_a** is dynamic (kan bewegen, zwaartekracht aan, niet stabiel)
 - **vorm_b** is static (kan niet bewegen, stabiel)

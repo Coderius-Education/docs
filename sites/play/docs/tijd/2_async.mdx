@@ -33,7 +33,7 @@ async def tijdelijk_sneller():
     bal.physics.x_speed = 10`} height={300} />
 
 <details>
-<summary>Klik hier voor het antwoord</summary>
+<summary>Klik hier voor het antwoord.</summary>
 
 Er zijn twee veranderingen:
 1. `def` is veranderd in `async def`
@@ -43,31 +43,35 @@ Er zijn twee veranderingen:
 
 Hoe werkt dit precies?
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
+import play
+
+bal = play.new_circle(color='black')
+bal.start_physics(obeys_gravity=False, x_speed=10)
+
+@play.when_mouse_clicked
 async def tijdelijk_sneller():
-    ...
+    bal.physics.x_speed = 100
+    await play.timer(seconds=1)
+    bal.physics.x_speed = 10
 ```
-We hebben **async** voor **def** gezet. Dit maakt het een asynchrone functie: de functie mag wachten zonder het spel te pauzeren.
 
-```python
-bal.physics.x_speed = 100
-```
-We zetten de x_speed van de bal op 100 pixels.
+<Regel n={3} tot={4}>De bal, en de fysica die hem met snelheid 10 naar rechts stuurt.</Regel>
+<Regel n={6}>Koppelt de functie eronder aan een muisklik.</Regel>
+<Regel n={7}>Hier staat **async** voor `def`. Daarmee mag deze functie wachten zonder het spel te pauzeren.</Regel>
+<Regel n={8}>De bal gaat tien keer zo snel.</Regel>
+<Regel n={9}>**await** wacht één seconde. Dit is het verschil met `time.sleep()`: alleen deze functie staat stil, het spel draait door.</Regel>
+<Regel n={10}>Na die seconde gaat de snelheid terug naar 10.</Regel>
 
-```
-await play.timer(seconds=1)
-```
-We wachten 1 seconde. Het verschil met `time.sleep()`: het spel draait gewoon door terwijl deze functie wacht.
-
-```python
-bal.physics.x_speed = 10
-```
-We zetten de x_speed weer op 10 pixels.
+</CodeUitleg>
 
 ### Er gaat iets mis?
 
 Een veelgemaakte fout is `await` gebruiken zonder `async`:
 
+{/* niet-compileren: toont bewust de SyntaxError van await zonder async */}
 ```python
 # FOUT - await kan alleen in een async functie
 @play.when_mouse_clicked
@@ -140,6 +144,13 @@ Maak een cirkel die:
 1. Normaal blauw is
 2. Bij het indrukken van spatie rood wordt
 3. Na 2 seconden weer blauw wordt
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Dit zijn drie regels in één functie: kleur veranderen, wachten, kleur terugzetten. Denk aan `async` voor `def`, anders mag je niet wachten.
+
+</details>
 
 <details>
 <summary>Klik hier voor de oplossing.</summary>

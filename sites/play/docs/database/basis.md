@@ -17,7 +17,15 @@ import play
 database = play.new_database()
 ```
 
+<PygbagRunner code={`import play
+
+database = play.new_database()`} height={300} />
+
 In dezelfde map als je Python bestand verschijnt nu het bestand **database.json**. Hierin worden je gegevens opgeslagen.
+
+:::note[In de speeltuin]
+Draai je dit hierboven in de browser, dan bestaat `database.json` alleen daar: je vindt het bestand niet op je computer terug en het is weg zodra je de pagina sluit. Op je eigen computer blijft het gewoon staan, naast je Python-bestand.
+:::
 
 ## Gegevens opslaan met set_data
 
@@ -32,6 +40,12 @@ database = play.new_database()
 
 database.set_data('punten', 5)
 ```
+
+<PygbagRunner code={`import play
+
+database = play.new_database()
+
+database.set_data('punten', 5)`} height={300} />
 
 We slaan hier het getal `5` op onder de naam `'punten'`.
 
@@ -50,6 +64,16 @@ mijn_punten = database.get_data('punten')
 
 tekst = play.new_text(words="Punten: " + str(mijn_punten))
 ```
+
+<PygbagRunner code={`import play
+
+database = play.new_database()
+
+database.set_data('punten', 5)
+
+mijn_punten = database.get_data('punten')
+
+tekst = play.new_text(words="Punten: " + str(mijn_punten))`} height={300} />
 
 ## Default waarde
 
@@ -87,6 +111,13 @@ Maak een programma dat:
 4. Je naam op het scherm toont
 
 <details>
+<summary>Klik hier voor een tip.</summary>
+
+De drie stappen staan al in de opdracht en komen in die volgorde onder elkaar. Denk eraan dat `new_text` tekst wil: een naam is al tekst, dus `str()` heb je hier niet nodig.
+
+</details>
+
+<details>
 <summary>Klik hier voor de oplossing.</summary>
 
 ```python
@@ -100,6 +131,16 @@ opgeslagen_naam = database.get_data('naam')
 
 tekst = play.new_text(words="Hallo " + opgeslagen_naam)
 ```
+
+<PygbagRunner code={`import play
+
+database = play.new_database()
+
+database.set_data('naam', 'Anna')
+
+opgeslagen_naam = database.get_data('naam')
+
+tekst = play.new_text(words="Hallo " + opgeslagen_naam)`} height={300} />
 
 </details>
 
@@ -139,6 +180,22 @@ play.new_text(words=str(leeftijd) + " jaar", y=0)
 play.new_text(words="Favoriete kleur: " + kleur, y=-100)
 ```
 
+<PygbagRunner code={`import play
+
+database = play.new_database()
+
+database.set_data('naam', 'Anna')
+database.set_data('leeftijd', 15)
+database.set_data('kleur', 'blauw')
+
+naam = database.get_data('naam')
+leeftijd = database.get_data('leeftijd')
+kleur = database.get_data('kleur')
+
+play.new_text(words=naam, y=100)
+play.new_text(words=str(leeftijd) + " jaar", y=0)
+play.new_text(words="Favoriete kleur: " + kleur, y=-100)`} height={300} />
+
 </details>
 
 ## Opdracht 6.1.c: Default waarde gebruiken
@@ -149,6 +206,13 @@ Maak een programma dat:
 3. Het level op het scherm toont
 
 Draai het programma twee keer. De eerste keer zou je `1` moeten zien (de default waarde). Voeg daarna een `set_data('level', 5)` toe en draai opnieuw. Wat zie je nu?
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+De default geef je mee als tweede argument aan `get_data`. Om de tweede keer iets anders te zien moet er tussendoor een `set_data` bij komen.
+
+</details>
 
 <details>
 <summary>Klik hier voor de oplossing.</summary>
@@ -162,6 +226,14 @@ level = database.get_data('level', 1)
 
 tekst = play.new_text(words="Level: " + str(level))
 ```
+
+<PygbagRunner code={`import play
+
+database = play.new_database()
+
+level = database.get_data('level', 1)
+
+tekst = play.new_text(words="Level: " + str(level))`} height={300} />
 
 De eerste keer zie je `Level: 1` omdat `'level'` nog niet bestaat. Als je `database.set_data('level', 5)` toevoegt en opnieuw draait, zie je `Level: 5`.
 

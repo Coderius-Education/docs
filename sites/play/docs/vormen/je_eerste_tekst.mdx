@@ -4,9 +4,11 @@ sidebar_position: 4
 
 # 1.4 Je eerste tekst
 
-:::info[Wat moet je al weten]
-- [1.2 Je eerste cirkel](/docs/vormen/je_eerste_cirkel) - hoe je een vorm tekent en aanpast
-:::
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/basis/jouw-naam-op-het-scherm', label: 'Jouw naam op het scherm'},
+  ]}
+/>
 
 Tekeningen en spellen worden duidelijker met tekst. Met **coderius-play** kun je eenvoudig tekst toevoegen.
 De werkwijze is vergelijkbaar met **play.new_circle** en **play.new_box**.
@@ -28,7 +30,7 @@ Hieronder zie je een voorbeeld:
 
 play.new_text(words='hallo pythonista', font='default', font_size=30)`} height={300} />
 
-### Opdracht 1.4.a Johan Cruijff
+### Opdracht 1.4.a: Johan Cruijff
 
 Maak onderstaande afbeelding na.
 
@@ -50,7 +52,7 @@ De font_size is 40.
 </details> 
 
 <details>
-    <summary>Klik hier voor een oplossing.</summary>
+    <summary>Klik hier voor de oplossing.</summary>
 
 <PygbagRunner code={`import play
 

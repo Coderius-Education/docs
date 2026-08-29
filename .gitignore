@@ -42,6 +42,14 @@ lerna-debug.log*
 coverage/
 .nyc_output/
 
+# ── Python ───────────────────────────────────────────────────────────────────
+# De repo bevat Python-gereedschap (scripts/, de uitgepakte blokken van
+# robotica en fullstack). Wie dat lokaal draait, krijgt anders een untracked
+# __pycache__ terug.
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
 # ── Editors / IDE's ──────────────────────────────────────────────────────────
 .idea/
 *.iml

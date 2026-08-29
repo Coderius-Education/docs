@@ -85,6 +85,7 @@ Je hebt nu twee rode cirkels: het origineel links en de kopie rechts.
 - **Strings die de gebruiker ziet in het Nederlands**: `play.new_text(words="Score: " + str(score))`.
 - **MDX-pagina's** voorzien runnable code van een `<TryButton code={`…`} />` direct ná het Markdown-codeblok (zelfde code, niet een variant).
 - **Geen overbodige comments in code.** Liever een korte zin in lopend Nederlands ónder het blok dan inline `# uitleg`.
+- **Code regel voor regel uitleggen** doe je met `<CodeUitleg>` (globaal beschikbaar in elke site die het registreert, geen import nodig). Het codeblok blijft een gewoon ```python-blok mét `showLineNumbers` als kind, zodat het zijn highlighting en de compileercheck in CI houdt; de uitleg staat eronder als `<Regel n={3}>`-blokken, of `<Regel n={5} tot={7}>` voor een groepje. Wie een uitleg aanwijst ziet de bijbehorende regel oplichten. Dit vervangt de rij losse fragment-codeblokken die elk één regel herhalen. `packages/shared/codeuitleg.test.ts` controleert monorepo-breed dat elk nummer bestaat, geen lege regel aanwijst en dat `showLineNumbers` erop staat.
 
 ## 6. Opdrachten
 
@@ -306,12 +307,25 @@ Twee niveaus:
 - **fout** — `emoji`, `u-vorm`, `uitroepteken`, `all-caps`, `alt-tekst`.
 - **waarschuwing** — `vulwoord`, `superlatief`, `formulaire-opener`,
   `lege-overgang`, `engels-opvulling`, `passief`, `em-dash`, `vet-overdaad`,
-  `lange-zin`, `herhaalde-opening`, `samenvatting`, `leerling-vorm`, plus de
-  structuurregels `frontmatter`, `opdracht-nummering` en `opdracht-oplossing`.
+  `lange-zin`, `herhaalde-opening`, `samenvatting` en `leerling-vorm`.
+
+`leerling-vorm` slaat docentmateriaal over (`voor-de-docent/` en `docenten.mdx`):
+daar schrijft §15 juist "je leerlingen" voor.
+
+Structuur controleert `pnpm stijl` niet. Of de frontmatter klopt, of de
+opdrachtnummers doorlopen en of elke opdracht een oplossing heeft, hangt aan
+de nummering van één cursus; dat staat daarom per site in een test —
+`sites/play/src/docs-tests/opdrachten.test.ts` is het voorbeeld, en die draait
+blokkerend mee.
 
 De job is voorlopig niet-blokkerend: de gemigreerde sites hebben nog een
-achterstand. De meldingen staan wel als annotatie in de diff van je pull
-request, dus nieuwe tekst valt meteen op.
+achterstand van 255 onbekende woorden en 647 stijlmeldingen (227 fouten en 420
+waarschuwingen). De meldingen staan wel als annotatie in de diff van je pull
+request, dus nieuwe tekst valt meteen op. Zodra de achterstand weg is kan
+`continue-on-error` eruit en `--streng` erbij, en tellen de fouten mee.
+
+Eén site staat al op nul fouten: `play`. Gebruik die als maat voor wat haalbaar
+is.
 
 ### Een terechte uitzondering markeren
 

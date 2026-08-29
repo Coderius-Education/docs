@@ -12,19 +12,32 @@ Lees de foutmelding altijd goed. Python vertelt je meestal precies wat er mis is
 
 ## AttributeError — typefout in een attribuutnaam
 
-**Foutmelding:**
-```
-AttributeError: 'Circle' object has no attribute 'colour'. Did you mean: 'color'?
-```
+De `play`-bibliotheek gebruikt de Amerikaanse spelling `color`, zonder u. Schrijf je `colour`, dan hangt het van je code af wat er gebeurt.
 
-`colour` bestaat niet — de `play`-bibliotheek gebruikt de Amerikaanse spelling `color` (zonder u).
+**Aanpassen gaat stilletjes fout.** Python maakt dan een nieuw attribuut met die naam aan. Je krijgt geen foutmelding, maar de cirkel blijft zwart:
 
 <PygbagRunner code={`import play
 
 cirkel = play.new_circle()
-cirkel.colour = 'red'  # FOUT: 'colour' bestaat niet`} height={250} />
+cirkel.colour = 'red'`} height={250} />
+
+Dit is de vervelendste variant, want er lijkt niets mis te zijn. Zie je een aanpassing niet terug op het scherm, controleer dan als eerste de spelling.
+
+**Opvragen geeft wél een foutmelding:**
+
+```
+AttributeError: 'Circle' object has no attribute 'colour'
+```
+
+{/* niet-draaien: toont bewust de AttributeError uit de les */}
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle()
+print(cirkel.colour)`} height={250} />
 
 **Oplossing:** gebruik `color` in plaats van `colour`.
+
+Meer uitleg: [1.6 Je vorm aanpassen](/docs/vormen/vorm_aanpassen)
 
 ---
 
@@ -37,6 +50,7 @@ TypeError: can only concatenate str (not "int") to str
 
 Je probeert een getal (`int`) direct samen te voegen met tekst (`str`). Dat mag niet in Python.
 
+{/* niet-draaien: dit blok toont bewust de TypeError uit de les */}
 <PygbagRunner code={`import play
 
 score = 5
@@ -49,6 +63,8 @@ play.new_text(words="Score: " + score)  # FOUT: score is een getal, geen tekst`}
 score = 5
 play.new_text(words="Score: " + str(score))`} height={250} />
 
+Meer uitleg: [4.5 Een score bijhouden met global](/docs/gebeurtenissen/score_bijhouden)
+
 ---
 
 ## NameError — variabele niet gevonden
@@ -60,6 +76,7 @@ NameError: name 'cirkel' is not defined
 
 Je gebruikt een variabele die nog niet bestaat, of je hebt de naam verkeerd gespeld.
 
+{/* niet-draaien: toont bewust de NameError uit de les */}
 <PygbagRunner code={`import play
 
 @play.when_key_pressed("space")
@@ -69,6 +86,8 @@ def beweeg():
 cirkel = play.new_circle()`} height={250} />
 
 **Oplossing:** controleer de spelling en zorg dat de variabele vóór gebruik aangemaakt is.
+
+Meer uitleg: [1.6 Je vorm aanpassen](/docs/vormen/vorm_aanpassen), of <SiteLink site="python" to="/docs/basis/jij-als-variabele">Jij als variabele</SiteLink> in de python-cursus.
 
 ---
 
@@ -81,6 +100,7 @@ IndentationError: expected an indented block
 
 De code onder een `def`, `if`, of `for` moet ingesprongen zijn (4 spaties of 1 tab).
 
+{/* niet-compileren: dit blok toont bewust de IndentationError uit de les */}
 <PygbagRunner code={`import play
 
 @play.when_key_pressed("space")
@@ -95,6 +115,8 @@ play.new_circle()  # FOUT: niet ingesprongen`} height={250} />
 def beweeg():
     play.new_circle()`} height={250} />
 
+Meer uitleg: <SiteLink site="python" to="/docs/functies/functies">Functies</SiteLink> in de python-cursus.
+
 ---
 
 ## SyntaxError — await buiten async
@@ -106,6 +128,7 @@ SyntaxError: 'await' outside function
 
 `await` mag alleen gebruikt worden in een `async def` functie.
 
+{/* niet-compileren: toont bewust de SyntaxError van await zonder async */}
 ```python
 # FOUT
 @play.when_key_pressed("space")
@@ -124,6 +147,8 @@ async def wacht():
     cirkel.color = 'blue'
     await play.timer(seconds=1)
     cirkel.color = 'red'`} height={250} />
+
+Meer uitleg: [5.2 Wachten met async en await](/docs/tijd/async)
 
 ---
 
@@ -144,6 +169,8 @@ blok = play.new_box()
 def beweeg():
     blok.x = blok.x + 20`} height={250} />
 
+Meer uitleg: [4.1 Gebeurtenissen](/docs/gebeurtenissen/toetsenbord)
+
 ---
 
 ## ValueError — ongeldige kleur of hex-code
@@ -162,6 +189,7 @@ or the RGB number form e.g. '(0, 255, 255)'.
 3. **Ongeldige tekens**: alleen cijfers `0`-`9` en letters `A`-`F` mogen. `'#GGGGGG'` werkt niet.
 4. **Typefout in kleurnaam**: `'reed'` in plaats van `'red'`.
 
+{/* niet-draaien: dit blok toont bewust de kleuren-foutmelding uit de les */}
 <PygbagRunner code={`import play
 
 play.new_circle(color='FF0000')  # FOUT: '#' vergeten`} height={250} />
@@ -174,17 +202,20 @@ play.new_circle(color='#FF0000', x=-150)
 play.new_circle(color='red', x=0)
 play.new_circle(color=(255, 0, 0), x=150)`} height={250} />
 
+Meer uitleg: [1.2 Je eerste cirkel](/docs/vormen/je_eerste_cirkel)
+
 ---
 
 ## global vergeten
 
 **Foutmelding:**
 ```
-UnboundLocalError: local variable 'score' referenced before assignment
+UnboundLocalError: cannot access local variable 'score' where it is not associated with a value
 ```
 
 Je probeert een variabele buiten een functie aan te passen, maar vergeet `global` te schrijven.
 
+{/* niet-draaien: toont bewust de UnboundLocalError uit de les */}
 <PygbagRunner code={`import play
 
 score = 0
@@ -205,3 +236,150 @@ def verhoog():
     global score
     score = score + 1
     tekst.words = "Score: " + str(score)`} height={250} />
+
+Meer uitleg: [4.5 Een score bijhouden met global](/docs/gebeurtenissen/score_bijhouden), of <SiteLink site="python" to="/docs/functies/09c-scope">Scope</SiteLink> in de python-cursus voor het achterliggende idee.
+
+---
+
+## Er komt geen geluid uit
+
+Geen foutmelding, geen geluid. Dit is de lastigste van de hele pagina, want je programma draait gewoon door.
+
+<PygbagRunner code={`import play
+
+geluid = play.new_sound("klik.mp3")
+geluid.play()`} height={250} />
+
+**Oorzaak:** play vindt het bestand niet. In plaats van te stoppen schrijft het een regel in je console en gaat het verder:
+
+```
+Could not load sound file 'klik.mp3'
+No sound loaded. Use the 'load' method first.
+```
+
+**Oplossing:** kijk als eerste in je console — daar staat het wél. Controleer daarna of het bestand in dezelfde map staat als je Python-bestand, en of de naam en de extensie precies kloppen.
+
+Meer uitleg: [8.1 Geluid afspelen](/docs/media/geluid)
+
+---
+
+## FileNotFoundError — video niet gevonden
+
+**Foutmelding:**
+```
+FileNotFoundError: Video file 'intro.mp4' not found.
+```
+
+Anders dan geluid stopt video wél meteen. Dat is prettiger: je weet direct wat er mis is.
+
+{/* niet-draaien: toont bewust de FileNotFoundError uit de les */}
+<PygbagRunner code={`import play
+
+intro = play.new_video("intro.mp4")`} height={250} />
+
+**Oorzaak:** het `.mp4`-bestand staat niet naast je Python-bestand, of de naam klopt niet.
+
+**Oplossing:** zet het bestand in dezelfde map en controleer de spelling. Krijg je in plaats hiervan een melding over een ontbrekende module `av`, installeer die dan met `pip install av`.
+
+Meer uitleg: [8.2 Video afspelen](/docs/media/video)
+
+---
+
+## ValueError — een video-gebeurtenis zonder video
+
+**Foutmelding:**
+```
+ValueError: It looks like you wrote @play.when_video_ends without brackets.
+Put the video in brackets so play knows which video you mean:
+
+    @play.when_video_ends(my_video)
+    def klaar():
+        ...
+```
+
+{/* niet-draaien: toont bewust de ValueError uit de les */}
+<PygbagRunner code={`import play
+
+intro = play.new_video("intro.mp4")
+
+@play.when_video_ends
+def klaar():
+    print("de intro is afgelopen")`} height={280} />
+
+**Oorzaak:** je bent de haakjes vergeten. Bij een toets schrijf je `@play.when_key_pressed('space')` en bij een vorm `@bal.when_clicked` zónder haakjes, dus het is een makkelijke vergissing. Een video-gebeurtenis hoort altijd te weten over wélke video hij gaat.
+
+**Oplossing:** zet de video tussen haakjes.
+
+```python
+# FOUT
+@play.when_video_ends
+def klaar():
+    ...
+
+# GOED
+@play.when_video_ends(intro)
+def klaar():
+    ...
+```
+
+Dezelfde melding krijg je bij lege haakjes (`@play.when_video_ends()`) en als er iets in staat dat geen video is.
+
+Meer uitleg: [8.3 Reageren op een video](/docs/media/video-gebeurtenissen)
+
+---
+
+## TypeError — een when_changed-functie zonder parameter
+
+**Foutmelding:**
+```
+TypeError: veranderd() takes 0 positional arguments but 1 was given
+```
+
+**Oorzaak:** een schuifbalk, uitklapmenu of invoerveld geeft zijn nieuwe waarde mee aan jouw functie. Vergeet je die parameter, dan past de aanroep niet.
+
+{/* niet-draaien: toont bewust de TypeError uit de les */}
+<PygbagRunner code={`import play
+
+schuif = play.new_slider(min_value=0, max_value=100, value=50)
+
+@schuif.when_changed
+def veranderd():
+    print("versleept")`} height={250} />
+
+**Oplossing:** zet een parameter tussen de haakjes. Hoe je hem noemt maakt niet uit, als er maar één staat:
+
+```python
+@schuif.when_changed
+def veranderd(waarde):
+    print(waarde)
+```
+
+Meer uitleg: [7.2 Schuiven en aanvinken](/docs/ui/schuif-en-vink)
+
+---
+
+## Eén toetsdruk doet het meerdere keren
+
+Je drukt één keer op spatie en je springt twee of drie levels vooruit.
+
+**Oorzaak:** je `@play.when_key_pressed` staat binnen een functie die je meer dan één keer aanroept, bijvoorbeeld een `bouw_level()`. Elke aanroep zet er een luisteraar bij, en die reageren daarna allemaal tegelijk.
+
+```python
+# FOUT
+def bouw_level():
+    @play.when_key_pressed('space')
+    def spatie():
+        volgende_level()
+
+# GOED
+def bouw_level():
+    ...
+
+@play.when_key_pressed('space')
+def spatie():
+    volgende_level()
+```
+
+**Oplossing:** registreer toetsen en muis één keer, buiten de functie die je herhaalt. Gebeurtenissen op een vorm (`@bal.when_clicked`, `@bal.when_touching(...)`) mogen er wél in: die verdwijnen samen met hun vorm.
+
+Meer uitleg: [9.2 Levels met andere vormen](/docs/levels/andere-vormen)

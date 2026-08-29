@@ -4,10 +4,11 @@ sidebar_position: 4
 
 # 3.4 Meer acties
 
-:::info[Wat moet je al weten]
-- [3.1 Wat is een actie?](/docs/acties) - methodes aanroepen op een vorm
-- [4.1 Gebeurtenissen](/docs/gebeurtenissen/toetsenbord) - sommige opdrachten gebruiken `@play.when_key_pressed`
-:::
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/beslissen/05b-if-else', label: 'If en else'},
+  ]}
+/>
 
 ## Een vorm kopiëren met clone
 
@@ -102,6 +103,13 @@ Maak een programma waarbij:
 1. Een score begint op 5
 2. Elke keer als je op spatie drukt, gaat de score met 1 omlaag
 3. Als de score op 0 staat, stopt het programma
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Je hebt twee dingen nodig: `global score` om de score binnen de functie te mogen verlagen, en een `if` die kijkt of de score op nul staat. Zoek in de cheatsheet hoe je een programma laat stoppen.
+
+</details>
 
 <details>
 <summary>Klik hier voor de oplossing.</summary>
@@ -214,3 +222,8 @@ def verwijder():
         teller = teller + 1`} height={300} />
 
 </details>
+
+:::info[Waar kom je dit later weer tegen?]
+- `clone()` is handig zodra je meer van hetzelfde nodig hebt: rijen blokken in [9.2 Levels met andere vormen](/docs/levels/andere-vormen), of extra ballen in [het klikspelletje](/docs/jouw_project/klikspelletje).
+- `hide()` en `show()` gebruik je in [Een startmenu maken](/docs/jouw_project/startmenu) om tussen twee schermen te wisselen.
+:::

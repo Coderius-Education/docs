@@ -7,6 +7,15 @@ Deze map bevat twee soorten repos:
 
 Elke repo heeft zijn eigen `CLAUDE.md` met uitsluitend project-specifieke aanvullingen (lesvolgorde, naam-prefixen, lab-framing, …). Die wordt automatisch bovenop deze gids geladen.
 
+## Preview-links
+
+Elke branch krijgt per site automatisch een preview op
+`https://<branch-met-streepjes>--<site-id>.preview.coderius.nl/` — de `/` in de
+branchnaam wordt een `-`, de site-id is de mapnaam onder `sites/`. Voorbeeld:
+branch `claude/status-ttlwfx` + site `play` →
+`https://claude-status-ttlwfx--play.preview.coderius.nl/`. Zet in elke
+PR-beschrijving de preview-links van de aangepaste sites.
+
 ## Schrijfstijl (alleen voor *-docs)
 @org-handbook/WRITING_STYLE_GUIDE.md
 

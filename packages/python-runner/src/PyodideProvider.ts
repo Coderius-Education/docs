@@ -9,8 +9,9 @@
 // scripts kopiëren díe versie naar static/pyodide/ van self-hostende sites.
 // De CDN-default hieronder geldt voor sites die NIET self-hosten (bijv.
 // fullstack), zodat die dezelfde Pyodide draaien als de rest.
-// Let op: play gebruikt bewust een oudere Pyodide (Python 3.12) vanwege zijn
-// cp312-wheels — zie sites/play/src/components/CodeRunner/engine.js.
+// play heeft een eigen constante in sites/play/src/components/CodeRunner/engine.js,
+// omdat die site zijn Pyodide in een iframe laadt en niet via deze provider.
+// Hij hoort dezelfde versie te noemen; pyodide-kopie.test.ts controleert dat.
 export const PYODIDE_VERSION = '0.29.4';
 const DEFAULT_PYODIDE_BASE_URL = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/`;
 let pyodideBaseUrl = DEFAULT_PYODIDE_BASE_URL;
@@ -157,6 +158,72 @@ export async function runPythonStream(
   } finally {
     pyodide.setStdout();
     pyodide.setStderr();
+    pyodide.setStdin();
+  }
+}
+
+export interface StapVariabele {
+  naam: string;
+  soort: string;
+  waarde: string;
+}
+
+/** Eén scope binnen een stap: de globale ruimte of een functie die openstaat. */
+export interface StapFrame {
+  naam: string;
+  variabelen: StapVariabele[];
+}
+
+export interface Stap {
+  regel: number;
+  gebeurtenis: string;
+  frames: StapFrame[];
+  /** Hoeveel tekens er op dit moment geprint waren; snijpunt in `uitvoer`. */
+  uitvoerTot: number;
+}
+
+export interface Opname {
+  stappen: Stap[];
+  uitvoer: string;
+  /** True als de opname op de stappenlimiet is gestopt (meestal een oneindige lus). */
+  afgekapt: boolean;
+  fout: { soort: string; bericht: string; regel: number | null } | null;
+}
+
+/**
+ * Neemt de uitvoering op in plaats van hem alleen te draaien: per stap het
+ * regelnummer, de openstaande scopes met hun variabelen, en hoever de uitvoer
+ * op dat moment was. De UI bladert daarna door die opname.
+ *
+ * De leerlingcode gaat als Python-stringliteral mee. JSON.stringify levert een
+ * literal die Python net zo leest als JavaScript, dus er valt niets te escapen.
+ */
+export async function tracePython(pyodide: PyodideInterface, code: string): Promise<Opname> {
+  const { RECORDER } = await import('./trace/recorder');
+
+  pyodide.setStdin({
+    stdin: () => {
+      const answer = window.prompt('Invoer (input):');
+      return answer === null ? '' : answer;
+    },
+  });
+
+  try {
+    const ruw = (await pyodide.runPythonAsync(
+      `${RECORDER}\n_stapper_neem_op(${JSON.stringify(code)})`,
+    )) as string;
+    return JSON.parse(ruw) as Opname;
+  } catch (err) {
+    // Hier komen we alleen als de opnemer zelf omvalt; een fout ín de
+    // leerlingcode vangt hij op en levert hij als `fout` terug.
+    const raw = err instanceof Error ? err.message : String(err);
+    return {
+      stappen: [],
+      uitvoer: '',
+      afgekapt: false,
+      fout: { soort: 'Fout', bericht: filterTraceback(raw), regel: null },
+    };
+  } finally {
     pyodide.setStdin();
   }
 }

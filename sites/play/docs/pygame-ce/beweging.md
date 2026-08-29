@@ -2,12 +2,17 @@
 sidebar_position: 4
 ---
 
-# 7.4 Beweging
+# 10.4 Beweging
+
+:::warning[Online speeltuin]
+De voorbeelden in dit hoofdstuk draaien niet in de online speeltuin. Een pygame-ce-programma schrijft zijn eigen game-loop, en die is in de browser niet meer te stoppen. Draai ze op je eigen computer, in Thonny of VS Code — zie [installatie](/docs/installatie).
+:::
 
 In coderius-play kon je een vorm laten bewegen met `start_physics()`. In pygame-ce doe je dit zelf: je verandert de positie van een vorm elke frame.
 
 ## Een cirkel besturen met toetsen
 
+{/* draaien: compleet programma, alleen zonder speeltuin */}
 ```python
 import pygame
 
@@ -70,7 +75,7 @@ clock.tick(60)
 ```
 Zorgt ervoor dat de game loop maximaal 60 keer per seconde draait. Zonder dit zou het spel veel te snel gaan.
 
-## Opdracht 7.4.a: Snelheid aanpassen
+## Opdracht 10.4.a: Snelheid aanpassen
 
 Verander het programma zodat:
 1. De cirkel sneller beweegt als je `shift` ingedrukt houdt
@@ -86,6 +91,7 @@ Je kunt checken of shift ingedrukt is met `toetsen[pygame.K_LSHIFT]`.
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
+{/* draaien: compleet programma, alleen zonder speeltuin */}
 ```python
 import pygame
 
@@ -131,7 +137,7 @@ pygame.quit()
 
 </details>
 
-## Opdracht 7.4.b: Niet van het scherm af
+## Opdracht 10.4.b: Niet van het scherm af
 
 De cirkel kan nu van het scherm af bewegen. Zorg ervoor dat de cirkel niet buiten het venster kan komen.
 

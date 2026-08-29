@@ -4,14 +4,21 @@ sidebar_position: 4
 
 # 4.4 Een SNES-controller gebruiken
 
-:::info[Wat moet je al weten]
-- [4.1 Gebeurtenissen](/docs/gebeurtenissen/toetsenbord) - hoe een `@play.when_...` decorator werkt
-:::
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/herhalen/06a-for-loop', label: 'For-loop'},
+    {site: 'python', to: '/docs/tekst/04a-f-strings', label: 'F-strings'},
+  ]}
+/>
 
 Naast het toetsenbord en de muis kun je ook een SNES-controller gebruiken om je spel te besturen. Dit maakt je spel extra leuk om te spelen.
 
 :::info
 Hiervoor heb je een SNES-controller nodig die via USB op je computer is aangesloten. Deze zijn online te koop voor een paar euro. Kijk ook in de [Cheatsheet](/docs/cheatsheet#snes-controller) voor een snel overzicht van alle controller-gebeurtenissen.
+:::
+
+:::warning[Online speeltuin]
+De voorbeelden op deze pagina hebben een controller nodig, en die bereikt de online speeltuin niet. Draai ze op je eigen computer, in Thonny of VS Code. Zie [installatie](/docs/installatie).
 :::
 
 ## Checken of je controller werkt

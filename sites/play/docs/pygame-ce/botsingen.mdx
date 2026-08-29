@@ -2,7 +2,11 @@
 sidebar_position: 7
 ---
 
-# 7.7 Pymunk: de bouwstenen
+# 10.7 Pymunk: de bouwstenen
+
+:::warning[Online speeltuin]
+De voorbeelden in dit hoofdstuk draaien niet in de online speeltuin. Een pygame-ce-programma schrijft zijn eigen game-loop, en die is in de browser niet meer te stoppen. Draai ze op je eigen computer, in Thonny of VS Code — zie [installatie](/docs/installatie).
+:::
 
 Tot nu toe hebben we beweging zelf geprogrammeerd door x en y te veranderen. Maar wat als je echte fysica wilt, zoals zwaartekracht en botsingen? Dan gebruik je **pymunk**.
 
@@ -31,6 +35,7 @@ Je hebt altijd alle drie nodig:
 
 ### Space
 
+{/* draaien: compleet programma, alleen zonder speeltuin */}
 ```python
 import pymunk
 
@@ -62,7 +67,7 @@ space.step(1 / 60)
 ```
 Met `step()` laat je de fysica een stapje vooruit gaan. Dit doe je elke frame in de game loop.
 
-## Opdracht 7.7.a: Begrijp de bouwstenen
+## Opdracht 10.7.a: Begrijp de bouwstenen
 
 Beantwoord de volgende vragen:
 1. Welk onderdeel gebruik je om zwaartekracht in te stellen?
@@ -70,7 +75,7 @@ Beantwoord de volgende vragen:
 3. Welk onderdeel bepaalt de vorm voor botsingen?
 
 <details>
-<summary>Klik hier voor het antwoord.</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 1. **Space** - hier stel je `gravity` in
 2. **Body** - heeft `position` en massa

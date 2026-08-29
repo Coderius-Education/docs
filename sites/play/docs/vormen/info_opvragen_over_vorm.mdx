@@ -4,9 +4,11 @@ sidebar_position: 7
 
 # 1.7 Informatie opvragen over een vorm
 
-:::info[Wat moet je al weten]
-- [1.6 Een vorm aanpassen](/docs/vormen/vorm_aanpassen) - eigenschappen kunnen wijzigen
-:::
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/basis/jouw-naam-op-het-scherm', label: 'Jouw naam op het scherm'},
+  ]}
+/>
 
 Wanneer je een spel programmeert, gaan dingen vaak niet zoals je verwacht. Om problemen op te lossen (dit noemen we **debuggen**), moet je informatie over je vormen kunnen opvragen, zoals hun positie of kleur. Dit doe je meestal via de `VARIABELE.ATTRIBUUT` notatie.
 
@@ -26,7 +28,7 @@ black
 We hebben dus opgevraagd dat **mijn_cirkel.color** de waarde **black** heeft.
 Naast **color** kun je alle attributen opvragen van een vorm, bijvoorbeeld **x**, **y**, etc.
 
-## 1.7.1 Alle informatie in één keer opvragen
+## Alle informatie in één keer opvragen
 
 Soms wil je snel alles weten over een vorm. Met **.info()** print je in één keer alle informatie:
 
@@ -38,7 +40,7 @@ mijn_cirkel.info()`} height={300} />
 
 Dit is erg handig bij het debuggen: je ziet direct de kleur, positie, grootte en alle andere attributen van je vorm.
 
-## Opdracht 1.7.a
+## Opdracht 1.7.a: De positie uitlezen
 
 Bekijk het voorbeeld hieronder.
 - maak een cirkel en zet die op x-positie 50 en y-positie -100
@@ -51,6 +53,13 @@ mijn_cirkel = play.new_circle()
 mijn_cirkel.color = 'blue'
 
 print('print hieronder de x- en y-positie')`} height={300} />
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+De x- en y-positie geef je mee bij het maken van de cirkel. Uitlezen doe je met `mijn_cirkel.x` en `mijn_cirkel.y`, allebei in een `print`.
+
+</details>
 
 <details>
     <summary>Klik hier voor de oplossing.</summary>

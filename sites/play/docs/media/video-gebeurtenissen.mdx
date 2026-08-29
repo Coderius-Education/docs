@@ -1,0 +1,87 @@
+---
+sidebar_position: 3
+---
+
+# 8.3 Reageren op een video
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/functies/functies', label: 'Functies'},
+  ]}
+/>
+
+:::warning[Online speeltuin]
+Video werkt **niet** in de online speeltuin. Je hebt hiervoor een lokale installatie nodig (Thonny of VS Code) met coderius-play versie 3.4 of nieuwer. Zie [installatie](/docs/installatie).
+:::
+
+Een intro-filmpje is pas nuttig als het spel weet wanneer het is afgelopen. Daarvoor zijn er video-gebeurtenissen, en de belangrijkste is **`@play.when_video_ends`**:
+
+```python
+import play
+
+intro = play.new_video("intro.mp4", autoplay=True, controls=False)
+titel = play.new_text(words="", y=150)
+
+@play.when_video_ends(intro)
+def intro_klaar():
+    intro.remove()
+    titel.words = "Druk op spatie om te beginnen"
+```
+
+Zodra de video het einde bereikt, wordt `intro_klaar` aangeroepen: de video verdwijnt en het spel neemt het over. Let op de vorm — je geeft de video tussen haakjes mee aan de decorator, net als bij `@play.when_key_pressed('space')`.
+
+**Let op:** staat `loop=True` op de video, dan komt er nooit een einde en gaat `when_video_ends` dus nooit af.
+
+## Alle video-gebeurtenissen
+
+| Decorator | Gaat af... |
+|:---:|:---|
+| `@play.when_video_ends(video)` | als de video het einde bereikt |
+| `@play.when_video_starts(video)` | de **eerste** keer dat de video begint te spelen |
+| `@play.when_video_plays(video)` | elke keer dat hij start of verdergaat na een pauze |
+| `@play.when_video_pauses(video)` | elke keer dat hij gepauzeerd wordt |
+| `@play.when_video_frame_changes(video)` | bij elk nieuw beeldje |
+
+De laatste gaat tientallen keren per seconde af — gebruik die alleen als het echt nodig is, bijvoorbeeld om iets mee te laten bewegen met de video.
+
+Je kunt ook meerdere video's aan één functie koppelen: `@play.when_video_ends(video1, video2)` gaat af zodra een van beide klaar is.
+
+## Opdracht 8.3.a: Van intro naar spel
+
+Speel een intro-video af. Zodra hij is afgelopen: haal de video weg en laat een cirkel verschijnen die met de pijltjestoetsen te besturen is.
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Maak de cirkel meteen aan het begin aan, maar verstop hem met `.hide()`. In de `when_video_ends`-functie doe je `.show()`. Toetsbesturing staat in [4.1](/docs/gebeurtenissen/toetsenbord).
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+import play
+
+intro = play.new_video("intro.mp4", autoplay=True, controls=False)
+speler = play.new_circle(color='gold', radius=25)
+speler.hide()
+
+@play.when_video_ends(intro)
+def start_spel():
+    intro.remove()
+    speler.show()
+
+@play.repeat_forever
+def bestuur():
+    if play.key_is_pressed('left'):
+        speler.x = speler.x - 5
+    if play.key_is_pressed('right'):
+        speler.x = speler.x + 5
+```
+
+</details>
+
+:::info[Waar kom je dit later weer tegen?]
+Van intro naar spel schakelen is hetzelfde idee als van level naar level. In [9.2 Levels met andere vormen](/docs/levels/andere-vormen) bouw je dat scherm helemaal opnieuw op.
+:::

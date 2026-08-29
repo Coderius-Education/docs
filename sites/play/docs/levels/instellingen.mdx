@@ -1,0 +1,257 @@
+---
+sidebar_position: 1
+---
+
+# 9.1 Levels met andere instellingen
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/data/10a-lijsten-basis', label: 'Lijsten'},
+    {site: 'python', to: '/docs/functies/09c-scope', label: 'Scope'},
+  ]}
+/>
+
+Een spel met levels hoeft geen drie spellen te zijn. Meestal is het één spel dat per level anders is ingesteld: de bal gaat sneller, de vijand wordt groter, je krijgt minder tijd. De vormen blijven dezelfde, alleen hun getallen veranderen.
+
+```python showLineNumbers
+import play
+
+snelheden = [100, 200, 300]
+level = 0
+
+bal = play.new_circle(color='red', radius=40)
+bal.start_physics(obeys_gravity=False, x_speed=snelheden[level])
+tekst = play.new_text(words="Level 1", y=200, font_size=40)
+
+@play.when_key_pressed('space')
+def volgende_level():
+    global level
+    if level < len(snelheden) - 1:
+        level = level + 1
+        bal.physics.x_speed = snelheden[level]
+        tekst.words = "Level " + str(level + 1)
+```
+
+<PygbagRunner code={`import play
+
+snelheden = [100, 200, 300]
+level = 0
+
+bal = play.new_circle(color='red', radius=40)
+bal.start_physics(obeys_gravity=False, x_speed=snelheden[level])
+tekst = play.new_text(words="Level 1", y=200, font_size=40)
+
+@play.when_key_pressed('space')
+def volgende_level():
+    global level
+    if level < len(snelheden) - 1:
+        level = level + 1
+        bal.physics.x_speed = snelheden[level]
+        tekst.words = "Level " + str(level + 1)`} height={320} />
+
+Druk op spatie. De bal gaat harder, maar het is nog steeds dezelfde bal.
+
+## Waar het level in zit
+
+De truc zit in twee dingen: een **lijst met instellingen** en een variabele die bijhoudt waar je bent.
+
+<CodeUitleg>
+
+```python showLineNumbers
+snelheden = [100, 200, 300]
+level = 0
+
+bal = play.new_circle(color='red', radius=40)
+bal.start_physics(obeys_gravity=False, x_speed=snelheden[level])
+```
+
+<Regel n={1}>
+De instellingen van alle levels bij elkaar. Wil je een level erbij, dan zet je er een getal achter — je hoeft nergens anders iets te veranderen.
+</Regel>
+
+<Regel n={2}>
+Waar de speler nu is. Let op dat de eerste plek in een lijst nummer 0 is, dus `level = 0` betekent level 1 op het scherm.
+</Regel>
+
+<Regel n={5}>
+`snelheden[level]` haalt de instelling op die bij dit level hoort. Deze regel is straks de enige die je hoeft te herhalen bij een levelwissel.
+</Regel>
+
+</CodeUitleg>
+
+**Let op:** `len(snelheden) - 1` in de `if` zorgt dat je niet voorbij het laatste level telt. Zonder die controle krijg je een `IndexError` zodra de speler één keer te vaak op spatie drukt.
+
+## Meer dan één ding tegelijk
+
+Één lijst werkt zolang er per level één ding verandert. Wil je ook de grootte en de kleur aanpassen, gebruik dan een lijst met **dictionaries**: per level één regel met alles erin.
+
+```python showLineNumbers
+import play
+
+levels = [
+    {'snelheid': 100, 'straal': 60, 'kleur': 'green'},
+    {'snelheid': 200, 'straal': 40, 'kleur': 'orange'},
+    {'snelheid': 300, 'straal': 20, 'kleur': 'red'},
+]
+
+level = 0
+
+bal = play.new_circle()
+bal.start_physics(obeys_gravity=False)
+tekst = play.new_text(words="", y=200, font_size=40)
+
+def start_level():
+    instelling = levels[level]
+    bal.radius = instelling['straal']
+    bal.color = instelling['kleur']
+    bal.physics.x_speed = instelling['snelheid']
+    tekst.words = "Level " + str(level + 1)
+
+start_level()
+
+@play.when_key_pressed('space')
+def volgende():
+    global level
+    if level < len(levels) - 1:
+        level = level + 1
+        start_level()
+```
+
+<PygbagRunner code={`import play
+
+levels = [
+    {'snelheid': 100, 'straal': 60, 'kleur': 'green'},
+    {'snelheid': 200, 'straal': 40, 'kleur': 'orange'},
+    {'snelheid': 300, 'straal': 20, 'kleur': 'red'},
+]
+
+level = 0
+
+bal = play.new_circle()
+bal.start_physics(obeys_gravity=False)
+tekst = play.new_text(words="", y=200, font_size=40)
+
+def start_level():
+    instelling = levels[level]
+    bal.radius = instelling['straal']
+    bal.color = instelling['kleur']
+    bal.physics.x_speed = instelling['snelheid']
+    tekst.words = "Level " + str(level + 1)
+
+start_level()
+
+@play.when_key_pressed('space')
+def volgende():
+    global level
+    if level < len(levels) - 1:
+        level = level + 1
+        start_level()`} height={320} />
+
+`start_level()` staat nu apart. Die functie zet alle instellingen van het huidige level klaar, en je roept hem aan bij de start én bij elke wissel. Zo staat het instellen op één plek.
+
+## Opdracht 9.1.a: Een vierde level
+
+Voeg aan het voorbeeld hierboven een vierde level toe: snelheid 400, straal 10, kleur `'purple'`.
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Er hoeft maar op één plek iets bij. De `if` telt zelf al mee hoeveel levels er zijn.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+levels = [
+    {'snelheid': 100, 'straal': 60, 'kleur': 'green'},
+    {'snelheid': 200, 'straal': 40, 'kleur': 'orange'},
+    {'snelheid': 300, 'straal': 20, 'kleur': 'red'},
+    {'snelheid': 400, 'straal': 10, 'kleur': 'purple'},
+]
+```
+
+Verder verandert er niets: `len(levels) - 1` is nu vanzelf 3.
+
+</details>
+
+## Opdracht 9.1.b: De achtergrond mee laten kleuren
+
+Laat ook de achtergrond per level veranderen. Gebruik `play.set_backdrop(...)` in `start_level()`.
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Zet er een sleutel bij in elke dictionary, bijvoorbeeld `'achtergrond'`, en lees hem in `start_level()` uit zoals je `'kleur'` uitleest.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+import play
+
+levels = [
+    {'snelheid': 100, 'straal': 60, 'kleur': 'green', 'achtergrond': 'white'},
+    {'snelheid': 200, 'straal': 40, 'kleur': 'orange', 'achtergrond': 'lightyellow'},
+    {'snelheid': 300, 'straal': 20, 'kleur': 'red', 'achtergrond': 'lightgray'},
+]
+
+level = 0
+
+bal = play.new_circle()
+bal.start_physics(obeys_gravity=False)
+tekst = play.new_text(words="", y=200, font_size=40, color='black')
+
+def start_level():
+    instelling = levels[level]
+    bal.radius = instelling['straal']
+    bal.color = instelling['kleur']
+    bal.physics.x_speed = instelling['snelheid']
+    play.set_backdrop(instelling['achtergrond'])
+    tekst.words = "Level " + str(level + 1)
+
+start_level()
+
+@play.when_key_pressed('space')
+def volgende():
+    global level
+    if level < len(levels) - 1:
+        level = level + 1
+        start_level()
+```
+
+<PygbagRunner code={`import play
+
+levels = [
+    {'snelheid': 100, 'straal': 60, 'kleur': 'green', 'achtergrond': 'white'},
+    {'snelheid': 200, 'straal': 40, 'kleur': 'orange', 'achtergrond': 'lightyellow'},
+    {'snelheid': 300, 'straal': 20, 'kleur': 'red', 'achtergrond': 'lightgray'},
+]
+
+level = 0
+
+bal = play.new_circle()
+bal.start_physics(obeys_gravity=False)
+tekst = play.new_text(words="", y=200, font_size=40, color='black')
+
+def start_level():
+    instelling = levels[level]
+    bal.radius = instelling['straal']
+    bal.color = instelling['kleur']
+    bal.physics.x_speed = instelling['snelheid']
+    play.set_backdrop(instelling['achtergrond'])
+    tekst.words = "Level " + str(level + 1)
+
+start_level()
+
+@play.when_key_pressed('space')
+def volgende():
+    global level
+    if level < len(levels) - 1:
+        level = level + 1
+        start_level()`} height={320} />
+
+</details>

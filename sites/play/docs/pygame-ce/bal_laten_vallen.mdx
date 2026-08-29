@@ -2,13 +2,17 @@
 sidebar_position: 8
 ---
 
+# 10.8 Pymunk: een bal laten vallen
 
-# 7.8 Pymunk: een bal laten vallen
+:::warning[Online speeltuin]
+De voorbeelden in dit hoofdstuk draaien niet in de online speeltuin. Een pygame-ce-programma schrijft zijn eigen game-loop, en die is in de browser niet meer te stoppen. Draai ze op je eigen computer, in Thonny of VS Code — zie [installatie](/docs/installatie).
+:::
 
 Nu je de bouwstenen kent, gaan we ze combineren met pygame-ce om een bal te laten vallen door zwaartekracht.
 
 ## Pymunk en pygame-ce combineren
 
+{/* draaien: compleet programma, alleen zonder speeltuin */}
 ```python
 import pygame
 import pymunk
@@ -52,8 +56,6 @@ while actief:
 pygame.quit()
 ```
 
-
-
 Het idee is simpel: pymunk berekent de fysica, en pygame-ce tekent het resultaat.
 
 Elke frame doen we twee dingen:
@@ -62,7 +64,7 @@ Elke frame doen we twee dingen:
 
 De bal valt nu naar beneden en verdwijnt van het scherm. In de volgende les voegen we een vloer toe.
 
-## Opdracht 7.8.a: Zwaartekracht aanpassen
+## Opdracht 10.8.a: Zwaartekracht aanpassen
 
 Probeer de zwaartekracht te veranderen:
 1. Zet de zwaartekracht op `(0, 100)`. Wat gebeurt er?
@@ -70,7 +72,7 @@ Probeer de zwaartekracht te veranderen:
 3. Zet de zwaartekracht op `(200, 500)`. Wat gebeurt er?
 
 <details>
-<summary>Klik hier voor het antwoord.</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 1. De bal valt langzamer (minder zwaartekracht)
 2. De bal vliegt omhoog (negatieve zwaartekracht)
@@ -78,7 +80,7 @@ Probeer de zwaartekracht te veranderen:
 
 </details>
 
-## Opdracht 7.8.b: Meerdere ballen
+## Opdracht 10.8.b: Meerdere ballen
 
 Voeg een tweede bal toe die op een andere plek begint. Beide ballen moeten vallen door de zwaartekracht.
 

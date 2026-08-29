@@ -1,0 +1,194 @@
+---
+sidebar_position: 3
+---
+
+# 9.3 Wanneer ga je naar het volgende level?
+
+<Voorkennis
+  items={[
+    {to: '/docs/levels/andere-vormen', label: '9.2 Levels met andere vormen'},
+    {to: '/docs/fysica/eigenschappen', label: '2.3 Fysica-eigenschappen'},
+  ]}
+/>
+
+In de vorige twee lessen ging je met de spatiebalk verder. Dat is handig om te testen, maar een spel bepaalt zelf wanneer een level gehaald is: de bal raakt de finish, alle blokken zijn weg, de score is hoog genoeg.
+
+Hieronder is de finish een groene zone. Zodra de bal hem raakt, begint het volgende level — en dat gaat elke keer wat sneller.
+
+```python showLineNumbers
+import play
+
+level = 1
+vormen = []
+tekst = play.new_text(words="", y=220, font_size=40)
+
+def bouw_level():
+    for vorm in vormen:
+        vorm.remove()
+    vormen.clear()
+    tekst.words = "Level " + str(level)
+
+    doel = play.new_box(x=250, width=60, height=200, color='green', transparency=50)
+    doel.start_physics(sensor=True, can_move=False, stable=True)
+    bal = play.new_circle(x=-250, radius=25, color='red')
+    bal.start_physics(obeys_gravity=False, x_speed=60 * level)
+    vormen.append(doel)
+    vormen.append(bal)
+
+    @bal.when_touching(doel)
+    def gehaald():
+        volgende_level()
+
+def volgende_level():
+    global level
+    level = level + 1
+    bouw_level()
+
+bouw_level()
+```
+
+<PygbagRunner code={`import play
+
+level = 1
+vormen = []
+tekst = play.new_text(words="", y=220, font_size=40)
+
+def bouw_level():
+    for vorm in vormen:
+        vorm.remove()
+    vormen.clear()
+    tekst.words = "Level " + str(level)
+
+    doel = play.new_box(x=250, width=60, height=200, color='green', transparency=50)
+    doel.start_physics(sensor=True, can_move=False, stable=True)
+    bal = play.new_circle(x=-250, radius=25, color='red')
+    bal.start_physics(obeys_gravity=False, x_speed=60 * level)
+    vormen.append(doel)
+    vormen.append(bal)
+
+    @bal.when_touching(doel)
+    def gehaald():
+        volgende_level()
+
+def volgende_level():
+    global level
+    level = level + 1
+    bouw_level()
+
+bouw_level()`} height={340} />
+
+## Hoe de finish werkt
+
+<CodeUitleg>
+
+```python showLineNumbers
+doel = play.new_box(x=250, width=60, height=200, color='green', transparency=50)
+doel.start_physics(sensor=True, can_move=False, stable=True)
+bal = play.new_circle(x=-250, radius=25, color='red')
+bal.start_physics(obeys_gravity=False, x_speed=60 * level)
+
+@bal.when_touching(doel)
+def gehaald():
+    volgende_level()
+```
+
+<Regel n={2}>
+`sensor=True` maakt van de zone een doorgang in plaats van een muur: de bal merkt hem wel, maar stuitert er niet tegenaan.
+</Regel>
+
+<Regel n={4}>
+`60 * level` maakt elk level sneller. Dit is de instellingen-truc uit 9.1, midden in een level dat zichzelf opbouwt.
+</Regel>
+
+<Regel n={6}>
+Deze gebeurtenis hoort bij de bal, niet bij het spel. Hij staat daarom wél in `bouw_level()`: bij de volgende wissel verdwijnt hij samen met de bal.
+</Regel>
+
+<Regel n={8}>
+`volgende_level()` ruimt de bal op die deze functie zelf aanriep. Dat mag: play handelt de gebeurtenis eerst af en pas daarna verdwijnt de vorm.
+</Regel>
+
+</CodeUitleg>
+
+## Het hoogste level onthouden
+
+Sluit de speler het spel af, dan begint hij morgen weer bij level 1. Met de database uit [6.1](/docs/database/basis) onthoud je hoe ver hij kwam:
+
+```python
+import play
+
+db = play.new_database()
+level = db.get_data('hoogste_level', 1)
+
+def volgende_level():
+    global level
+    level = level + 1
+    db.set_data('hoogste_level', level)
+    bouw_level()
+```
+
+`get_data('hoogste_level', 1)` haalt het opgeslagen level op, en die `1` is de waarde voor de allereerste keer, als er nog niets is opgeslagen.
+
+:::note[In de speeltuin]
+Draai je dit in de browser, dan is het opgeslagen level weg zodra je de pagina sluit. Op je eigen computer blijft het staan, in `database.json` naast je Python-bestand.
+:::
+
+## Opdracht 9.3.a: Gewonnen
+
+Het spel hierboven gaat eindeloos door. Laat het na level 3 stoppen met de tekst "Gewonnen" in beeld, zonder dat er een nieuw level wordt gebouwd.
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Zet in `volgende_level()` een `if` om de laatste twee regels heen. Is het spel uit, zet dan alleen `tekst.words`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+def volgende_level():
+    global level
+    if level == 3:
+        for vorm in vormen:
+            vorm.remove()
+        vormen.clear()
+        tekst.words = "Gewonnen"
+    else:
+        level = level + 1
+        bouw_level()
+```
+
+De vormen ruim je hier zelf op, want `bouw_level()` wordt niet meer aangeroepen. Zonder die regels blijft de bal na afloop doorlopen onder de tekst.
+
+</details>
+
+## Opdracht 9.3.b: Twee manieren om te winnen
+
+Geef de speler naast de finish een tweede route: met de toets `s` slaat hij het level over. Zorg dat beide manieren via dezelfde functie lopen.
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+`volgende_level()` bestaat al. Je hebt alleen nog een toets nodig die hem aanroept — buiten `bouw_level()`, want anders komt er per level een luisteraar bij.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+@play.when_key_pressed('s')
+def overslaan():
+    volgende_level()
+```
+
+Beide routes komen uit bij `volgende_level()`, dus alles wat er bij een levelwissel moet gebeuren staat op één plek.
+
+</details>
+
+:::info[Waar kom je dit later weer tegen?]
+- Bij [Pong](/docs/jouw_project/pong) en [het klikspelletje](/docs/jouw_project/klikspelletje) staat "levels" als uitbreiding; hier heb je alles om dat te bouwen.
+- [Een startmenu maken](/docs/jouw_project/startmenu) gebruikt hetzelfde patroon voor de overgang tussen menu en spel.
+:::

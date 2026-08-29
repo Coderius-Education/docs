@@ -35,7 +35,22 @@ Na afloop kan de leerling:
 - Gegevens opslaan en ophalen met `set_data()` en `get_data()`.
 - Een high-score systeem en eenvoudige instellingen-opslag maken.
 
-### Hoofdstuk 7 — Pygame-ce (gevorderd)
+### Hoofdstuk 7 — Knoppen en UI
+- Een spel bedienbaar maken met `play.new_button`, `play.new_slider`, `play.new_checkbox`, keuzerondjes, een uitklapmenu en een invoerveld.
+- Het patroon herkennen dat elk UI-element hetzelfde werkt: maken, uitlezen via een eigenschap (`value`, `checked`, `selected_value`), en reageren met `when_changed` of `when_clicked`.
+- Voortgang tonen met `play.new_progress_bar` en uitleg geven met `play.new_tooltip`.
+
+### Hoofdstuk 8 — Geluid en video
+- Geluidseffecten en achtergrondmuziek afspelen met `play.new_sound` (volume, herhalen, pauzeren).
+- Een video als sprite afspelen met `play.new_video` en besturen vanuit code (`play`, `pause`, `seek`).
+- Op het einde van een video reageren met `@play.when_video_ends`, bijvoorbeeld om van intro naar spel te schakelen.
+
+### Hoofdstuk 9 — Levels
+- Eén spel per level anders instellen met een lijst of een lijst van dictionaries.
+- Een level opbouwen en weer opruimen met `remove()`, en bijhouden welke vormen erbij horen.
+- Een winst-conditie koppelen aan een gebeurtenis, en het bereikte level opslaan met de database.
+
+### Hoofdstuk 10 — Pygame-ce (gevorderd)
 - Een eigen game-loop schrijven met `pygame.init()` en `pygame.display.flip()`.
 - Vormen tekenen, tekst tonen, op toetsen reageren in raw pygame-ce.
 - Botsingen en fysica met `pymunk` toepassen.

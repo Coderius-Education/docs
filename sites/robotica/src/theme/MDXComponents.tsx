@@ -1,6 +1,6 @@
+import CodeUitleg, { Regel } from '@coderius/shared/components/CodeUitleg';
 import Voorkennis from '@coderius/shared/components/Voorkennis';
 import MDXComponents from '@theme-original/MDXComponents';
-import CodeUitleg, { Regel } from '../components/CodeUitleg';
 
 // Maakt <Voorkennis> en <CodeUitleg>/<Regel> globaal beschikbaar in alle
 // .md/.mdx zonder import. De lessen zijn .md-bestanden; zonder registratie

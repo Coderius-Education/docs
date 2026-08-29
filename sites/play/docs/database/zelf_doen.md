@@ -4,13 +4,19 @@ sidebar_position: 4
 
 # 6.4 Maar kan ik dit niet allemaal zelf?
 
-:::info[Wat moet je al weten]
-- [6.1 Gegevens opslaan en ophalen](/docs/database/basis) - waarom een database handig is
-- [4.5 Een score bijhouden](/docs/gebeurtenissen/score_bijhouden) - `global` keyword
-- Basis-Python: dictionaries
-:::
+<Voorkennis
+  items={[
+    {to: '/docs/gebeurtenissen/score_bijhouden', label: '4.5 Een score bijhouden met global'},
+    {site: 'python', to: '/docs/data/11a-dictionaries-basis', label: 'Dictionaries'},
+    {site: 'python', to: '/docs/functies/09d-modules', label: 'Modules importeren'},
+  ]}
+/>
 
 Zeker. Mocht je Informatica-ACTIEF gebruiken, is er een mooi hoofdstuk over dictionaries waarin je ook leert om deze als JSON op te slaan. Durf je het aan om dit zelf te doen?
+
+:::warning[Online speeltuin]
+Deze opdracht draait niet in de online speeltuin: je moet het bestand `database.json` op je eigen computer kunnen openen om te zien wat er verandert. Gebruik Thonny of VS Code, zie [installatie](/docs/installatie).
+:::
 
 Hieronder geven we je een voorzet om je op gang te helpen.
 - Kopieer dit codefragment en voer de code uit
@@ -60,3 +66,7 @@ def update_database():
     with open(pad_mijn_db, 'w') as outfile:
         json.dump(mijn_db, outfile)
 ```
+
+:::info[Waar kom je dit later weer tegen?]
+In [9.3 Wanneer ga je naar het volgende level?](/docs/levels/wanneer-volgende) gebruik je de database om te onthouden hoe ver een speler kwam.
+:::

@@ -36,6 +36,8 @@ print(dieren)            # ['kat', 'vis']
 
 `.remove("hond")` geeft niets terug; `.pop()` geeft het verwijderde element wél terug, zodat je het kunt opvangen.
 
+{/* foutmelding-van: ["kat"].remove("hond") */}
+
 Probeer je iets te verwijderen dat niet bestaat (`dieren.remove("hond")` als er geen hond meer in zit)? Dan krijg je een `ValueError`. Wil je veilig zijn: check eerst met `if "hond" in dieren:`.
 
 ## Handige ingebouwde functies

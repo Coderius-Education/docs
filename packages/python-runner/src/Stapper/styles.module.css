@@ -1,0 +1,202 @@
+.stapper {
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-global-radius);
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+
+.balk {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background: var(--ifm-color-emphasis-100);
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.titel {
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.sluitKnop {
+  background: transparent;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--ifm-global-radius);
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: var(--ifm-font-color-base);
+}
+
+.sluitKnop:hover {
+  background: var(--ifm-color-emphasis-200);
+}
+
+/* Naast elkaar als er ruimte is, onder elkaar op een telefoon. */
+.inhoud {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0;
+}
+
+@media (max-width: 768px) {
+  .inhoud {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.codeKant {
+  border-right: 1px solid var(--ifm-color-emphasis-300);
+  min-width: 0;
+}
+
+@media (max-width: 768px) {
+  .codeKant {
+    border-right: none;
+    border-bottom: 1px solid var(--ifm-color-emphasis-300);
+  }
+}
+
+.zijkant {
+  min-width: 0;
+  overflow: auto;
+  max-height: 22rem;
+}
+
+.scope + .scope {
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.scopeNaam {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: lowercase;
+  color: var(--ifm-color-emphasis-700);
+  background: var(--ifm-color-emphasis-100);
+}
+
+.geenVariabelen {
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.tabel {
+  width: 100%;
+  margin: 0;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  display: table;
+}
+
+.tabel th,
+.tabel td {
+  padding: 0.3rem 0.75rem;
+  border: none;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+  text-align: left;
+  vertical-align: top;
+}
+
+.tabel th {
+  font-family: var(--ifm-font-family-monospace);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.soort {
+  color: var(--ifm-color-emphasis-600);
+  white-space: nowrap;
+}
+
+.waarde {
+  font-family: var(--ifm-font-family-monospace);
+  word-break: break-all;
+  width: 100%;
+}
+
+.uitvoer {
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  background: var(--ifm-background-color);
+  color: var(--ifm-font-color-base);
+  max-height: 8rem;
+  overflow: auto;
+}
+
+.fout,
+.melding {
+  margin: 0;
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+  border-top: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.fout {
+  background: var(--ifm-color-danger-contrast-background);
+  color: var(--ifm-color-danger-contrast-foreground);
+}
+
+.melding {
+  background: var(--ifm-color-warning-contrast-background);
+  color: var(--ifm-color-warning-contrast-foreground);
+}
+
+.knoppen {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  background: var(--ifm-color-emphasis-100);
+  border-top: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.stapKnop {
+  background: var(--ifm-color-primary);
+  color: #fff;
+  border: none;
+  padding: 0.35rem 0.9rem;
+  border-radius: var(--ifm-global-radius);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.stapKnop:hover:not(:disabled) {
+  background: var(--ifm-color-primary-dark);
+}
+
+.stapKnop:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.schuif {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--ifm-color-primary);
+}
+
+.hint {
+  padding: 0.3rem 1rem;
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-600);
+  background: var(--ifm-color-emphasis-100);
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.leeg {
+  margin: 0;
+  padding: 1rem;
+  font-size: 0.85rem;
+  color: var(--ifm-color-danger-contrast-foreground);
+  background: var(--ifm-color-danger-contrast-background);
+}

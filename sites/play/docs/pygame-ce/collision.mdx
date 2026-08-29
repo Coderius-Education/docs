@@ -2,8 +2,17 @@
 sidebar_position: 10
 ---
 
+# 10.10 Pymunk: een botsing detecteren
 
-# 7.10 Pymunk: een botsing detecteren
+<Voorkennis
+  items={[
+    {to: '/docs/gebeurtenissen/score_bijhouden', label: '4.5 Een score bijhouden met global'},
+  ]}
+/>
+
+:::warning[Online speeltuin]
+De voorbeelden in dit hoofdstuk draaien niet in de online speeltuin. Een pygame-ce-programma schrijft zijn eigen game-loop, en die is in de browser niet meer te stoppen. Draai ze op je eigen computer, in Thonny of VS Code — zie [installatie](/docs/installatie).
+:::
 
 De bal stuitert op de vloer, maar hoe weet je *wanneer* dat gebeurt? Bijvoorbeeld om een geluid af te spelen of een score te verhogen? Dat doe je met **`on_collision`**.
 
@@ -32,6 +41,7 @@ space.on_collision(1, 2, begin=bal_raakt_vloer)
 
 ## Het volledige programma
 
+{/* draaien: compleet programma, alleen zonder speeltuin */}
 ```python
 import pygame
 import pymunk
@@ -94,11 +104,9 @@ while actief:
 pygame.quit()
 ```
 
-
-
 Elke keer dat de bal de vloer raakt, gaat `aantal_botsingen` omhoog en wordt dit op het scherm getoond.
 
-## Opdracht 7.10.a: Kleur veranderen bij botsing
+## Opdracht 10.10.a: Kleur veranderen bij botsing
 
 Pas het programma aan zodat de bal van kleur verandert elke keer als hij de vloer raakt. Wissel bijvoorbeeld tussen blauw en rood.
 

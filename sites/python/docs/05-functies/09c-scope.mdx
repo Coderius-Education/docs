@@ -1,0 +1,286 @@
+---
+sidebar_position: 4
+description: Waar een variabele bestaat. Een functie mag lezen wat erbuiten staat, maar niet zomaar veranderen. Met global mag het wel, en met return hoeft het meestal niet.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 9c Scope
+
+Een functie mag gebruiken wat erbuiten staat:
+
+```python
+naam = "Sam"
+
+def groet():
+    print(f"Hallo {naam}")
+
+groet()
+```
+
+Uitvoer: `Hallo Sam`. De variabele `naam` staat buiten de functie, en `groet()` komt er gewoon bij.
+
+Veranderen is een ander verhaal.
+
+## Voorspel: wat doet dit?
+
+{/* niet-draaien: toont bewust de UnboundLocalError die deze les uitlegt */}
+```python
+teller = 0
+
+def tel_op():
+    teller = teller + 1
+
+tel_op()
+print(teller)
+```
+
+<details>
+<summary>Klik hier voor het antwoord.</summary>
+
+Het programma stopt met een foutmelding:
+
+{/* foutmelding-van: blok-erboven */}
+```
+UnboundLocalError: cannot access local variable 'teller' where it is not associated with a value
+```
+
+Werk je met Python 3.10 of ouder, dan staat er `local variable 'teller' referenced before assignment`. Dezelfde fout, andere bewoording.
+
+</details>
+
+## Waarom dat misgaat
+
+Zodra ergens in een functie `teller = ...` staat, besluit Python: `teller` is hier een **lokale** variabele, eentje die alleen binnen deze functie bestaat. Dat geldt voor de hele functie, ook voor de regels ervóór.
+
+Op `teller = teller + 1` moet hij eerst de rechterkant uitrekenen. Daarvoor heeft hij die lokale `teller` nodig, en die heeft nog geen waarde gekregen. Vandaar de fout.
+
+De plek waar een variabele bestaat heet zijn **scope**. Wat je in een functie maakt, bestaat alleen daar:
+
+{/* niet-draaien: toont bewust dat een lokale naam buiten de functie niet bestaat */}
+```python
+def maak():
+    binnenin = 42
+
+maak()
+print(binnenin)
+```
+
+{/* foutmelding-van: blok-erboven */}
+
+Dit geeft `NameError: name 'binnenin' is not defined`. Buiten de functie bestaat `binnenin` niet.
+
+## Met global mag het wel
+
+Met **`global`** zeg je: ik bedoel de variabele van buiten, geen nieuwe.
+
+```python
+teller = 0
+
+def tel_op():
+    global teller
+    teller = teller + 1
+
+tel_op()
+tel_op()
+print(teller)
+```
+
+Uitvoer: `2`. De regel `global teller` staat bovenaan de functie, vóór het eerste gebruik.
+
+## Meestal wil je return
+
+Met `global` kan elke functie in je programma dezelfde variabele aanpassen. Bij een lang programma wordt dan lastig terug te vinden wie hem wanneer veranderde. Met `return` uit [9b](09b-return.mdx) blijft dat zichtbaar:
+
+```python
+teller = 0
+
+def opgeteld(getal):
+    return getal + 1
+
+teller = opgeteld(teller)
+teller = opgeteld(teller)
+print(teller)
+```
+
+Uitvoer: `2`, net als hierboven. De functie rekent, en buiten de functie bepaal jij wat er met het antwoord gebeurt.
+
+**Vuistregel:** kan het met `return`, doe het met `return`. `global` heb je nodig als jij de functie niet zelf aanroept en er dus niets aan kunt teruggeven — bijvoorbeeld een functie die afgaat zodra iemand op een toets drukt. Dat kom je tegen in <SiteLink site="play" to="/docs/gebeurtenissen/score_bijhouden">4.5 Een score bijhouden</SiteLink> van de play-cursus.
+
+## Er gaat iets mis
+
+{/* foutmelding-van: fout-helft */}
+```
+UnboundLocalError: cannot access local variable 'score' where it is not associated with a value
+```
+
+**Oorzaak:** een functie verandert een variabele van buiten, zonder `global`.
+
+**Oplossing:** zet `global` bovenaan de functie, of laat de functie de nieuwe waarde teruggeven met `return`.
+
+{/* niet-draaien: de FOUT-helft toont juist de fout die deze les uitlegt */}
+```python
+# FOUT
+score = 0
+
+def punt():
+    score = score + 1
+
+punt()
+
+# GOED
+score = 0
+
+def punt():
+    global score
+    score = score + 1
+
+punt()
+```
+
+---
+
+## Opdracht 9c.1: Repareer de teller
+
+{/* foutmelding-van: blok-eronder */}
+
+Dit programma zou `3` moeten printen, maar geeft een `UnboundLocalError`. Repareer het met `global`.
+
+{/* niet-draaien: de opdracht is juist deze fout zien en daarna oplossen */}
+<CodeExercise>{`teller = 0
+
+def tel_op():
+    teller = teller + 1
+
+tel_op()
+tel_op()
+tel_op()
+print(teller)`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Er hoeft maar één regel bij, als eerste regel binnen de functie.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+teller = 0
+
+def tel_op():
+    global teller
+    teller = teller + 1
+
+tel_op()
+tel_op()
+tel_op()
+print(teller)
+```
+
+Uitvoer: `3`.
+
+<CodeExercise>{`teller = 0
+
+def tel_op():
+    global teller
+    teller = teller + 1
+
+tel_op()
+tel_op()
+tel_op()
+print(teller)`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 9c.2: Dezelfde teller zonder global
+
+Los opdracht 9c.1 nog een keer op, nu zonder `global`. Laat `tel_op` het opgehoogde getal **teruggeven** en vang het buiten de functie op.
+
+Verwachte uitvoer:
+
+```
+3
+```
+
+<CodeExercise>{`# Schrijf hier je code`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Geef de functie een parameter, zodat je hem het huidige getal kunt meegeven: `def tel_op(getal):`. Buiten de functie schrijf je dan `teller = tel_op(teller)`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+teller = 0
+
+def tel_op(getal):
+    return getal + 1
+
+teller = tel_op(teller)
+teller = tel_op(teller)
+teller = tel_op(teller)
+print(teller)
+```
+
+Deze versie heeft geen `global` nodig: de functie rekent alleen, en de teller wordt buiten de functie bijgewerkt.
+
+<CodeExercise>{`teller = 0
+
+def tel_op(getal):
+    return getal + 1
+
+teller = tel_op(teller)
+teller = tel_op(teller)
+teller = tel_op(teller)
+print(teller)`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 9c.3: Twee keer dezelfde naam (uitdaging)
+
+Voorspel wat dit programma print. Draai het daarna en kijk of je gelijk had.
+
+<CodeExercise>{`naam = "Sam"
+
+def begroet():
+    naam = "Alex"
+    print(naam)
+
+begroet()
+print(naam)`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Er zijn hier twee variabelen die allebei `naam` heten. Bedenk per `print` welke van de twee aan de beurt is.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```
+Alex
+Sam
+```
+
+Binnen `begroet` maakt de regel `naam = "Alex"` een nieuwe, lokale `naam`. Die verdwijnt zodra de functie klaar is, dus de `naam` van buiten staat daarna nog gewoon op `"Sam"`.
+
+{/* foutmelding-los: hier staat juist dat die fout niet optreedt; het blok erboven draait en bewijst het */}
+
+En anders dan bij de teller hierboven krijg je hier géén `UnboundLocalError`: de functie leest de lokale `naam` pas nadat hij een waarde heeft gekregen.
+
+Wilde je de buitenste `naam` echt veranderen, dan had er `global naam` bovenaan de functie moeten staan.
+
+</details>

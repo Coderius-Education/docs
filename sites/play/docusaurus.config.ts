@@ -9,6 +9,8 @@ export default createConfig({
   url: 'https://play.coderius.nl',
   projectName,
   matomoSiteId: 5,
+  // @coderius/shared is de standaard; @coderius/checker levert de nakijker.
+  sharedPackages: ['@coderius/shared', '@coderius/checker'],
   trailingSlash: false,
 
   description:
@@ -57,7 +59,8 @@ export default createConfig({
         { href: '/er_gaat_iets_mis', label: 'Foutmeldingen', position: 'left' },
         { href: '/docs/pygame-ce/je_eerste_programma', label: 'pygame-ce', position: 'left' },
         { to: '/speeltuin', label: 'Speeltuin', position: 'left' },
-        { href: '/docs/cheatsheet#play-package', label: 'Nieuw: v3.3.3', position: 'right' },
+        { to: '/spel-checken', label: 'Spel checken', position: 'left' },
+        { href: '/docs/cheatsheet#play-package', label: 'Nieuw: v3.4', position: 'right' },
         { href: '/docs/voor-de-docent/bug', label: 'Foutje gevonden?', position: 'right' },
         {
           // Bewust de play-library en niet de docs-monorepo: op deze site is de

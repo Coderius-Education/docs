@@ -2,8 +2,18 @@
 sidebar_position: 1
 ---
 
+# 10.1 Je eerste venster
 
-# 7.1 Je eerste venster
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/herhalen/while-loop', label: 'While-loop'},
+    {site: 'python', to: '/docs/herhalen/06a-for-loop', label: 'For-loop'},
+  ]}
+/>
+
+:::warning[Online speeltuin]
+De voorbeelden in dit hoofdstuk draaien niet in de online speeltuin. Een pygame-ce-programma schrijft zijn eigen game-loop, en die is in de browser niet meer te stoppen. Draai ze op je eigen computer, in Thonny of VS Code — zie [installatie](/docs/installatie).
+:::
 
 Met **coderius-play** heb je geleerd om snel games te maken. Maar wat als je meer controle wilt? Dan kun je **pygame-ce** gebruiken. Dat is de bibliotheek waar coderius-play bovenop gebouwd is.
 
@@ -13,7 +23,7 @@ Deze sectie is een **vervolg**, niet een alternatief. Voor de meeste games blijf
 **Wat is anders dan in play?**
 - **Eigen game-loop**: je schrijft zelf de `while`-lus die elk frame draait. Play doet dit voor je.
 - **Coördinatensysteem**: pygame-ce zet `(0, 0)` linksboven en de y-as loopt naar beneden. In play zit `(0, 0)` in het midden en gaat y omhoog (zoals in wiskunde).
-- **Geen automatische physics**: voor zwaartekracht en botsingen gebruik je apart de `pymunk`-bibliotheek (in lessen 7.7-7.10).
+- **Geen automatische physics**: voor zwaartekracht en botsingen gebruik je apart de `pymunk`-bibliotheek (in lessen 10.7-10.10).
 - **Geen automatische start_program**: jij bent verantwoordelijk voor het tekenen, het bijwerken van het scherm (`pygame.display.flip()`) en het sluiten van het venster.
 
 Verwacht dus iets meer regels code voor hetzelfde resultaat — in ruil krijg je meer controle.
@@ -21,7 +31,10 @@ Verwacht dus iets meer regels code voor hetzelfde resultaat — in ruil krijg je
 
 ## Een venster openen
 
-```python
+<CodeUitleg>
+
+{/* draaien: compleet programma, alleen zonder speeltuin */}
+```python showLineNumbers
 import pygame
 
 pygame.init()
@@ -39,45 +52,18 @@ while actief:
 pygame.quit()
 ```
 
+<Regel n={1}>Haalt pygame-ce binnen. Anders dan bij play schrijf je hier alles zelf.</Regel>
+<Regel n={3}>Start pygame op. Dit moet altijd als eerste, vóór je iets met een venster doet.</Regel>
+<Regel n={5}>Maakt het venster: 800 pixels breed, 600 hoog. De variabele `scherm` is het vlak waarop je straks tekent.</Regel>
+<Regel n={6}>Zet de titel in de balk bovenaan het venster.</Regel>
+<Regel n={8}>Onthoudt of het programma nog moet draaien. Zet je dit op `False`, dan stopt de lus hieronder.</Regel>
+<Regel n={10}>De **game loop**. Alles wat elk frame opnieuw moet gebeuren staat hierin. Elk spel in pygame-ce heeft er een; play schreef hem tot nu toe voor je.</Regel>
+<Regel n={11} tot={13}>Loopt de gebeurtenissen af die sinds het vorige frame binnenkwamen. Klik je op het kruisje, dan stuurt pygame `QUIT` en zetten we `actief` op `False`.</Regel>
+<Regel n={15}>Sluit pygame netjes af nadat de lus is gestopt.</Regel>
 
+</CodeUitleg>
 
-{/* Fictieve screenshot: Een leeg venster met de titel "Mijn eerste pygame-ce programma" en afmetingen 800x600 pixels. */}
-Je zou nu een leeg venster moeten zien met de titel "Mijn eerste pygame-ce programma" en een afmeting van 800 bij 600 pixels.
-
-Wat gebeurt hier?
-
-```python
-pygame.init()
-```
-Start pygame op. Dit moet je altijd als eerste doen.
-
-```python
-scherm = pygame.display.set_mode((800, 600))
-```
-Maakt een venster van 800 pixels breed en 600 pixels hoog.
-
-```python
-pygame.display.set_caption("Mijn eerste pygame-ce programma")
-```
-Geeft het venster een titel.
-
-```python
-while actief:
-    ...
-```
-Dit is de **game loop**. Zolang `actief` True is, blijft het programma draaien. Elk spel in pygame-ce heeft een game loop.
-
-```python
-for event in pygame.event.get():
-    if event.type == pygame.QUIT:
-        actief = False
-```
-Hier luisteren we naar gebeurtenissen. Als je op het kruisje klikt, stopt het programma.
-
-```python
-pygame.quit()
-```
-Sluit pygame netjes af.
+Je ziet een leeg venster van 800 bij 600 pixels, met "Mijn eerste pygame-ce programma" in de titelbalk.
 
 ### Er gaat iets mis?
 
@@ -91,7 +77,7 @@ De oplossing: zorg dat `pygame.init()` altijd de eerste regel is na `import pyga
 
 Een andere veelgemaakte fout is de game loop vergeten. Zonder de `while`-loop opent het venster en sluit het meteen weer.
 
-## Opdracht 7.1.a: Venstergrootte aanpassen
+## Opdracht 10.1.a: Venstergrootte aanpassen
 
 Maak een venster dat:
 1. 400 bij 400 pixels groot is
@@ -100,6 +86,7 @@ Maak een venster dat:
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
+{/* draaien: compleet programma, alleen zonder speeltuin */}
 ```python
 import pygame
 

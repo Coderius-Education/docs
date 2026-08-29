@@ -4,10 +4,12 @@ sidebar_position: 2
 
 # 4.2 Gebeurtenissen bij een vorm
 
-:::info[Wat moet je al weten]
-- [4.1 Gebeurtenissen](/docs/gebeurtenissen/toetsenbord) - het `@`-decorator-patroon
-- [Hoofdstuk 2 Fysica](/docs/fysica/links_en_rechts) - `start_physics()` is nodig voor botsingen
-:::
+<Voorkennis
+  items={[
+    {to: '/docs/fysica/links_en_rechts', label: '2.1 Links en rechts bewegen'},
+    {site: 'python', to: '/docs/functies/functies', label: 'Functies'},
+  ]}
+/>
 
 Je hebt al geleerd hoe je programma kan reageren op de gebruiker, bijvoorbeeld als die een toets indrukt. Maar wat als je wilt reageren op gebeurtenissen *tussen vormen*? Bijvoorbeeld, wat moet er gebeuren als twee objecten elkaar raken? Dat leer je hier.
 
@@ -24,7 +26,7 @@ a) de basis
 - Maak daarna een batje met de naam `batje` en plaatst deze aan de rechterkant van het scherm.
 
 <details>
-<summary> Kijk hier voor het antwoord</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 <PygbagRunner code={`import play
 
@@ -40,13 +42,13 @@ b) Probeer nu het volgende:
 - Lukt het om de bal en het batje te laten botsen?
 
 <details>
-    <summary>Klik hier voor een tip</summary>
+    <summary>Klik hier voor een tip.</summary>
 
 Gebruik **start_physics()** voor laten bewegen. De eigenschappen **x_speed** en **obeys_gravity** kunnen erg nuttig zijn.
 </details>
 
 <details>
-<summary>Kijk hier voor het antwoord</summary>
+<summary>Klik hier voor de oplossing.</summary>
 
 ```python
 import play
@@ -97,7 +99,7 @@ Let op:
 
 Als onze bal dus botst tegen ons batje en weer terugkaatst, vindt deze gebeurtenis plaats.
 
-## 4.2.1 Een vorm raakt een muur
+## Een vorm raakt een muur
 
 Niet alleen botsingen tussen vormen kun je detecteren — ook het raken van de **rand van het scherm**. Daarvoor gebruik je `@vorm.when_touching_wall`.
 

@@ -1,0 +1,121 @@
+---
+sidebar_position: 2
+---
+
+# 7.2 Schuiven en aanvinken
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/functies/09a-parameters', label: 'Parameters'},
+  ]}
+/>
+
+Een knop kent maar twee toestanden: geklikt of niet. Voor instellingen met een **waarde** zijn er twee andere elementen: de schuifbalk en het vinkje.
+
+## De schuifbalk
+
+**`play.new_slider`** maakt een schuifbalk tussen een minimum en een maximum. Met `@schuif.when_changed` reageer je op elke verandering; de functie krijgt de nieuwe waarde mee als parameter.
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle(color='seagreen', y=80)
+schuif = play.new_slider(min_value=10, max_value=100, value=50, y=-120)
+
+@schuif.when_changed
+def grootte_veranderd(waarde):
+    cirkel.radius = int(waarde)`} height={340} />
+
+<CodeUitleg>
+
+```python showLineNumbers
+import play
+
+cirkel = play.new_circle(color='seagreen', y=80)
+schuif = play.new_slider(min_value=10, max_value=100, value=50, y=-120)
+
+@schuif.when_changed
+def grootte_veranderd(waarde):
+    cirkel.radius = int(waarde)
+```
+
+<Regel n={4}>
+De schuifbalk loopt van 10 tot 100 en begint op 50. Die 50 is dus ook meteen de startgrootte van de cirkel.
+</Regel>
+
+<Regel n={6}>
+Koppelt de functie eronder aan de schuif. Elke verandering roept hem opnieuw aan.
+</Regel>
+
+<Regel n={7}>
+`waarde` is de nieuwe stand van de schuif. Een `when_changed`-functie krijgt die als parameter mee; je hoeft hem niet zelf op te halen.
+</Regel>
+
+<Regel n={8}>
+`int()` maakt er een heel getal van, want de schuif geeft een kommagetal terug.
+</Regel>
+
+</CodeUitleg>
+
+Sleep aan de schuif en de cirkel groeit en krimpt mee. Je kunt de waarde ook altijd direct uitlezen met `schuif.value`.
+
+**Tip:** met `show_value=True` toont de schuifbalk zijn eigen waarde, en met `step=5` verspringt hij in stappen van 5.
+
+## Het vinkje
+
+**`play.new_checkbox`** maakt een aanvinkvakje met een label. De `when_changed`-functie krijgt `True` of `False` mee.
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle(color='orange', y=60)
+vinkje = play.new_checkbox(label="Cirkel zichtbaar", checked=True, y=-120)
+
+@vinkje.when_changed
+def zichtbaar_veranderd(aangevinkt):
+    if aangevinkt:
+        cirkel.show()
+    else:
+        cirkel.hide()`} height={320} />
+
+Uitlezen kan ook hier direct: `vinkje.checked` is `True` of `False`.
+
+## Opdracht 7.2.a: Snelheidsregelaar
+
+Maak een cirkel die naar rechts beweegt en aan de linkerkant weer opnieuw begint. Zet er een schuifbalk onder (van 0 tot 10) die de snelheid bepaalt.
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Gebruik `@play.repeat_forever` voor de beweging en lees daarbinnen `schuif.value` uit. Is de cirkel voorbij `x = 300`, zet hem dan terug op `x = -300`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+import play
+
+cirkel = play.new_circle(color='purple', radius=20, y=60)
+schuif = play.new_slider(min_value=0, max_value=10, value=3, y=-120, show_value=True)
+
+@play.repeat_forever
+def beweeg():
+    cirkel.x = cirkel.x + schuif.value
+    if cirkel.x > 300:
+        cirkel.x = -300
+```
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle(color='purple', radius=20, y=60)
+schuif = play.new_slider(min_value=0, max_value=10, value=3, y=-120, show_value=True)
+
+@play.repeat_forever
+def beweeg():
+    cirkel.x = cirkel.x + schuif.value
+    if cirkel.x > 300:
+        cirkel.x = -300`} height={340} />
+
+Hier is geen `when_changed` nodig: de beweging leest de waarde elk frame zelf uit. Staat de schuif op 0, dan staat de cirkel stil.
+
+</details>
