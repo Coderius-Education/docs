@@ -2,80 +2,164 @@
 sidebar_position: 1
 ---
 
+{/* stijl-uitzondering-bestand: em-dash de vier koppen "Werkvorm n — naam" op één hand-out */}
+
 # 14.1 Zoeken en sorteren met kaarten
 
-<Handout>
+<Handout compact>
 
-Vier algoritmes van deze site voer je hier uit met een gewoon kaartspel, zonder computer. Jij bént het algoritme: je volgt de stappen precies zoals Python dat zou doen, en je telt hoeveel werk het kost.
+Vier algoritmes van deze site voer je hier uit met een kaartspel, zonder computer. Jij bént het algoritme: je volgt de stappen precies zoals Python dat zou doen, en je telt hoeveel werk het kost. **Nodig per groepje van 2 tot 4 leerlingen:** één kaartspel, tafelruimte voor een rij van 13 kaarten, en een pen. Afspraken: aas = 1, boer = 11, vrouw = 12, heer = 13; gebruik steeds kaarten van één kleur (bijvoorbeeld alleen harten), dan komt elke waarde één keer voor.
 
-## Wat je nodig hebt
-
-- Eén kaartspel per groepje van 2 tot 4 leerlingen.
-- Een tafel met ruimte voor een rij van ongeveer 13 kaarten.
-- Per werkvorm ongeveer 10 tot 15 minuten.
-
-Afspraken over de kaartwaarden: aas = 1, boer = 11, vrouw = 12, heer = 13. Bij het sorteren gebruik je kaarten van één kleur (bijvoorbeeld alleen harten), zodat elke waarde maar één keer voorkomt.
+<div className="handout-blad">
 
 ## Werkvorm 1 — Lineair zoeken
 
-**Nodig:** 10 kaarten van één kleur, geschud.
-
-**Opstelling:** leg de kaarten gedekt (met de rug omhoog) op een rij. Eén leerling is de *zoeker*, een ander noemt een waarde tussen 1 en 13. Die waarde kan in de rij liggen, maar dat hoeft niet.
-
-**Stappen:**
+**Nodig:** 10 kaarten van één kleur, geschud. Leg ze gedekt (rug omhoog) op een rij. Eén leerling is de *zoeker*, een ander noemt een waarde tussen 1 en 13. Die waarde kan in de rij liggen, maar dat hoeft niet.
 
 1. Draai de meest linkse kaart om. Is dit de gezochte waarde? Dan ben je klaar.
 2. Zo niet: draai de volgende kaart om. Sla nooit een kaart over.
-3. Ligt de hele rij open zonder match? Dan is de conclusie: de waarde zit er niet in.
-4. Tel hoeveel kaarten je hebt omgedraaid en schrijf dat op.
+3. Ligt de hele rij open zonder match? Dan zit de waarde er niet in.
 
-Wissel van rol en speel een paar rondes. Bespreek daarna: wat is het kleinste aantal kaarten dat de zoeker moet omdraaien, en wat het grootste? Wanneer gebeurt dat?
+Speel drie rondes en wissel van rol. Vul per ronde in:
+
+| Ronde | Gezocht | Omgedraaid | Gevonden? |
+|:---:|:---:|:---:|:---:|
+| 1 | | | |
+| 2 | | | |
+| 3 | | | |
+
+<div className="handout-vragen">
+
+1. De gezochte kaart blijkt helemaal links te liggen. Hoeveel kaarten draai je om?
+2. De waarde zit niet in de rij. Hoeveel kaarten draai je om voordat je dat zeker weet?
+3. De rij wordt twee keer zo lang: 20 kaarten. Wat is dan het grootste aantal omdraaien?
+
+</div>
+
+<details className="handout-alleen-scherm">
+<summary>Antwoorden werkvorm 1 (voor het nabespreken)</summary>
+
+1. Eén: de eerste kaart is meteen raak. Dit is het beste geval.
+2. Alle tien: pas als de hele rij open ligt, weet je zeker dat de waarde ontbreekt. Dit is het slechtste geval.
+3. Twintig. Bij lineair zoeken groeit het slechtste geval precies mee met de rij.
+
+</details>
 
 ## Werkvorm 2 — Binair zoeken
 
-**Nodig:** alle 13 kaarten van één kleur.
+**Nodig:** alle 13 kaarten van één kleur. Leg ze eerst open op volgorde, van aas links tot heer rechts, en draai ze dan om zonder de volgorde te veranderen. Eén leerling noemt weer een waarde tussen 1 en 13.
 
-**Opstelling:** leg de kaarten eerst open op volgorde, van aas links tot heer rechts. Draai ze daarna allemaal om, zonder de volgorde te veranderen. Dit sorteren vooraf is geen detail: binair zoeken werkt alleen op een gesorteerde rij. Eén leerling noemt weer een waarde tussen 1 en 13.
-
-**Stappen:**
-
-1. Draai de middelste kaart van de rij om.
+1. Draai de middelste kaart om. Bij een even aantal kaarten kies je de linker van de twee middelste.
 2. Is het de gezochte waarde? Klaar.
-3. Is de kaart te hoog? Schuif de omgedraaide kaart én alles rechts ervan opzij. Te laag? Schuif de kaart én alles links ervan opzij.
-4. Herhaal met het deel dat overblijft: steeds de middelste omdraaien en een helft wegschuiven.
-5. Tel ook nu hoeveel kaarten je omdraait.
+3. Te hoog? Schuif de omgedraaide kaart én alles rechts ervan opzij. Te laag? De kaart én alles links ervan.
+4. Herhaal met wat overblijft: steeds de middelste omdraaien en een deel wegschuiven.
 
-Vergelijk je telling met werkvorm 1. Bij 13 kaarten draai je er hooguit vier om. Hoe kan het verschil zo groot zijn, en waarom lukt dit alleen doordat de rij gesorteerd is?
+Speel drie rondes en vul weer in:
+
+| Ronde | Gezocht | Omgedraaid | Gevonden? |
+|:---:|:---:|:---:|:---:|
+| 1 | | | |
+| 2 | | | |
+| 3 | | | |
+
+<div className="handout-vragen">
+
+1. Je zoekt de aas (waarde 1). Welke waardes draai je om, in volgorde?
+2. Hoeveel kaarten liggen er nog in het spel na de eerste omdraai? En na de tweede?
+3. Iemand schudt de rij voordat je begint. Waar gaat het stappenplan dan de mist in?
+4. Bij 13 kaarten draai je er hooguit vier om. Hoeveel zijn dat er hooguit bij 26 kaarten?
+
+</div>
+
+<details className="handout-alleen-scherm">
+<summary>Antwoorden werkvorm 2 (voor het nabespreken)</summary>
+
+1. Eerst de 7 (te hoog), dan de 3 (te hoog), dan de aas. Drie omdraaien.
+2. Na de eerste omdraai liggen er nog 6, na de tweede nog 2. Elke omdraai halveert het spel ongeveer.
+3. Bij stap 3: je schuift een helft weg omdat je weet dat de waarde daar niet kán liggen, en dat weet je alleen als de rij gesorteerd is. In een geschudde rij gooi je misschien net de helft weg waar de kaart in ligt.
+4. Vijf. Verdubbelen kost bij binair zoeken maar één extra omdraai; vergelijk dat met vraag 3 van werkvorm 1, waar het slechtste geval meegroeit van 10 naar 20.
+
+</details>
+
+</div>
+
+<div className="handout-blad handout-paginawissel">
 
 ## Werkvorm 3 — Selection sort
 
-**Nodig:** 8 kaarten van één kleur, geschud.
-
-**Opstelling:** leg de kaarten open op een rij. Eén leerling sorteert, een ander telt hardop de wissels.
-
-**Stappen:**
+**Nodig:** 8 kaarten van één kleur, geschud en open op een rij. Eén leerling sorteert, een ander telt hardop.
 
 1. Zoek met je ogen de laagste kaart in de hele rij.
-2. Wissel die kaart van plek met de kaart op positie 1 (helemaal links). Alleen deze twee kaarten bewegen; de rest blijft liggen.
-3. Zoek nu de laagste kaart in de rest van de rij (positie 1 doet niet meer mee) en wissel die naar positie 2.
+2. Wissel die kaart van plek met de kaart op positie 1 (helemaal links). Alleen deze twee bewegen.
+3. Zoek de laagste kaart in de rest van de rij (positie 1 doet niet meer mee) en wissel die naar positie 2.
 4. Herhaal tot de hele rij van laag naar hoog ligt.
 
-Bespreek in je groepje: hoeveel kaarten moet je bekijken om de laagste te vinden in de eerste ronde, en hoeveel in de laatste? Dit is dezelfde stapel-speelkaarten-aanpak als in [5.1 Selection sort — het idee](/docs/selection-sort/01-concept).
+Tel per ronde hoeveel kaarten je moet bekijken om de laagste te vinden:
+
+<div className="handout-teltabel">
+
+| Ronde | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Bekeken | | | | | | | |
+
+</div>
+
+<div className="handout-vragen">
+
+1. Hoeveel rondes zijn er nodig bij 8 kaarten? Waarom staat de laatste kaart dan vanzelf goed?
+2. Na drie rondes: wat weet je zeker over de eerste drie kaarten van de rij?
+3. De rij ligt bij toeval al gesorteerd. Bekijk je dan minder kaarten dan bij een geschudde rij?
+
+</div>
+
+<details className="handout-alleen-scherm">
+<summary>Antwoorden werkvorm 3 (voor het nabespreken)</summary>
+
+1. Zeven. Als zeven kaarten op hun plek staan, kan de achtste nergens anders meer heen.
+2. Het zijn de drie laagste van de hele rij, op volgorde, en ze verschuiven niet meer.
+3. Nee. Selection sort kijkt elke ronde de hele rest door, ook als daar niets te wisselen valt. Het aantal keren kijken hangt niet af van hoe de kaarten liggen.
+
+</details>
 
 ## Werkvorm 4 — Bubble sort
 
-**Nodig:** 8 kaarten van één kleur, geschud.
+**Nodig:** 8 kaarten van één kleur, geschud en open op een rij. Eén leerling sorteert, een ander telt de wissels per ronde.
 
-**Opstelling:** leg de kaarten open op een rij. Eén leerling sorteert, een ander telt de wissels per ronde.
-
-**Stappen:**
-
-1. Kijk naar de twee meest linkse kaarten. Staat de linker hoger dan de rechter? Wissel ze om.
-2. Schuif één plek op naar rechts en vergelijk het volgende paar buren. Ga zo door tot het einde van de rij; dat is één ronde.
-3. Noteer hoeveel wissels deze ronde had en begin opnieuw vooraan.
+1. Vergelijk de twee meest linkse kaarten. Staat de linker hoger? Wissel ze om.
+2. Schuif één plek naar rechts en vergelijk het volgende paar buren. Aan het einde van de rij is de ronde klaar.
+3. Noteer het aantal wissels van de ronde en begin opnieuw vooraan.
 4. Stop zodra een hele ronde nul wissels heeft: de rij is gesorteerd.
 
-Kijk na de eerste ronde naar de meest rechtse kaart. Waarom is dat altijd de hoogste van de rij, hoe geschud de kaarten ook lagen?
+<div className="handout-teltabel">
+
+| Ronde | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Wissels | | | | | | | |
+
+</div>
+
+<div className="handout-vragen">
+
+1. Kijk na ronde 1 naar de meest rechtse kaart. Waarom is dat altijd de hoogste, hoe de rij ook geschud was?
+2. De rij ligt al gesorteerd. Hoeveel wissels telt ronde 1, en hoeveel rondes speel je in totaal?
+3. De laagste kaart ligt helemaal rechts. Hoeveel rondes duurt het minstens voordat hij vooraan staat?
+4. Vergelijk je tabellen van werkvorm 3 en 4: welk algoritme was bij jullie het snelst klaar, en waar zat het verschil?
+
+</div>
+
+<details className="handout-alleen-scherm">
+<summary>Antwoorden werkvorm 4 (voor het nabespreken)</summary>
+
+1. Elke keer dat de hoogste kaart in een vergelijking zit, wint hij en schuift hij mee naar rechts. Hij reist dus in één ronde helemaal naar het einde.
+2. Nul wissels, één ronde. Bubble sort merkt aan een wisselloze ronde dat het klaar is; selection sort is daar blind voor.
+3. Zeven rondes. Een lage kaart schuift per ronde maar één plek naar links, terwijl een hoge kaart in één ronde naar rechts kan reizen.
+4. Eigen antwoord. Meestal wint selection sort op wissels (hooguit één per ronde) en scheelt het bij bubble sort per groepje hoeveel rondes er nodig waren.
+
+</details>
+
+</div>
+
+<div className="handout-alleen-scherm">
 
 ## Verder op de site
 
@@ -85,5 +169,7 @@ Elk van deze werkvormen hoort bij een les waarin je hetzelfde algoritme in Pytho
 - [4.1 Binair zoeken — het idee](/docs/binair-zoeken/01-concept)
 - [5.1 Selection sort — het idee](/docs/selection-sort/01-concept)
 - [6.1 Bubble sort — het idee](/docs/bubble-sort/01-concept)
+
+</div>
 
 </Handout>

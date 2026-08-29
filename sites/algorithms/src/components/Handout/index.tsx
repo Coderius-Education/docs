@@ -6,6 +6,9 @@ type HandoutProps = {
   children: React.ReactNode;
   /** Tekst op de printknop. */
   buttonLabel?: string;
+  /** Compacte print: kleinere letter en krappere marges, voor een
+   *  hand-out die op één dubbelzijdig vel moet passen. */
+  compact?: boolean;
 };
 
 /**
@@ -19,13 +22,16 @@ type HandoutProps = {
 export default function Handout({
   children,
   buttonLabel = 'Print deze hand-out',
+  compact = false,
 }: HandoutProps): React.ReactElement {
   useEffect(() => {
     document.body.classList.add('handout-page');
+    if (compact) document.body.classList.add('handout-compact');
     return () => {
       document.body.classList.remove('handout-page');
+      document.body.classList.remove('handout-compact');
     };
-  }, []);
+  }, [compact]);
 
   return (
     <>
