@@ -19,6 +19,7 @@ Straks gaat `hanoi` zichzelf aanroepen met steeds minder schijven:
 `n`, dan `n − 1`, dan `n − 2`, ... Zonder afslag blijft dat doorgaan —
 ook onder nul — en stopt het nooit. Python grijpt dan in met:
 
+{/* foutmelding-van: def f(n):\n    return f(n - 1)\nf(3) */}
 ```
 RecursionError: maximum recursion depth exceeded
 ```
@@ -38,6 +39,7 @@ zijn plek: de recursie telt vanzelf af tot 0.
 
 ## Bouw en test
 
+{/* niet-draaien: startcode; de leerling vult het basisgeval in en de assert faalt tot dan */}
 <PyRunner initialCode={`def hanoi(n, bron, doel, hulp):
     # Het basisgeval: bij 0 schijven hoef je niets te doen.
     # Geef in dat geval een lege lijst terug.

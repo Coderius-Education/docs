@@ -27,7 +27,7 @@ def vind_maximum_fout(lijst):
             maximum = waarde
     return maximum
 
-print(vind_maximum_fout([-3, -1, -7]))   # geeft 0 — fout!
+print(vind_maximum_fout([-3, -1, -7]))   # 0  (fout: 0 zit niet in de lijst)
 
 # GOED
 def vind_maximum(lijst):
@@ -42,6 +42,7 @@ Meer uitleg: [Bouwsteen 3 — startwaarde](./05-bouwen-initialisatie).
 
 ## `max` als variabelenaam
 
+{/* foutmelding-van: max = 5\nmax([1, 2, 3]) */}
 ```
 TypeError: 'int' object is not callable
 ```
@@ -53,16 +54,16 @@ kun je hem niet meer aanroepen.
 **Oplossing:** gebruik een duidelijke andere naam. `maximum`, `grootste`,
 `max_waarde`, `max_tot_nu_toe`.
 
+{/* niet-draaien: toont bewust de overschaduwde max; de melding hierboven is de reproductie */}
 ```python
 # FOUT
-def slecht_idee(lijst):
-    max = lijst[0]
-    for waarde in lijst:
-        if waarde > max:
-            max = waarde
-    return max
+lijst = [4, 1, 3]
+max = lijst[0]
+for waarde in lijst:
+    if waarde > max:
+        max = waarde
 
-print(max([1, 2, 3]))   # TypeError: 'int' object is not callable
+print(max([1, 2, 3]))   # hier is max een getal, geen functie meer
 
 # GOED
 def vind_maximum(lijst):
@@ -75,6 +76,7 @@ def vind_maximum(lijst):
 
 ## IndexError op lege lijst
 
+{/* foutmelding-van: [][0] */}
 ```
 IndexError: list index out of range
 ```

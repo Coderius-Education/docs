@@ -94,6 +94,8 @@ Maar dit laatste is **slechter**: je roept `max_en_min` **twee keer** aan
 
 Probeer het maar — pas de tests-lijst aan en voeg `[]` toe.
 
+{/* foutmelding-van: [][0] */}
+
 Je krijgt een `IndexError: list index out of range` op de regel
 `klein = groot = lijst[0]` binnen `max_en_min`. De functie gaat er
 namelijk vanuit dat er een eerste element bestaat om mee te starten.

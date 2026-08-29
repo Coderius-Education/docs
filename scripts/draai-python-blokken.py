@@ -71,13 +71,23 @@ Markers, direct boven het blok, net als in de play-cursus:
     {/* uitvoer-varieert: reden */}   wel draaien, de beloofde uitvoer niet
                                       vergelijken (een set heeft geen volgorde)
 
-Aanroep vanuit de repo-root:
+Aanroep vanuit de repo-root (zonder site-naam: de python-cursus):
 
     python3 scripts/draai-python-blokken.py
+    python3 scripts/draai-python-blokken.py algorithms
+    python3 scripts/draai-python-blokken.py algorithms --pins   # pip-regel voor CI
+
+Het script bedient meerdere cursussen; wat per site verschilt (docs-map, het
+runbare component, de Python-versie van de Pyodide, de gepinde pakketten) staat
+in de SITES-tabel bovenaan. Voor algorithms pint CI numpy en matplotlib op de
+versies die de browser laadt, uit static/pyodide/pyodide-lock.json — draait de
+controle tegen een andere numpy, dan zegt groen niets over wat een leerling ziet.
 
 Afsluitcode 0 als alles slaagt, 1 zodra er iets misgaat.
 """
 
+import json
+import os
 import re
 import subprocess
 import sys
@@ -86,16 +96,75 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-DOCS = ROOT / "sites" / "python" / "docs"
 
-# In documentvolgorde, zodat een uitvoerblok bij het blok ervóór hoort.
-BLOK_RE = re.compile(
-    r"(?P<py>^```python[^\n]*\n(?P<pycode>.*?)^```)"
-    r"|(?P<kaal>^```\n(?P<kaalcode>.*?)^```)"
-    r"|(?P<oef><CodeExercise>\{`(?P<oefcode>.*?)`\}</CodeExercise>)",
-    re.S | re.M,
-)
+# Twee cursussen delen dit script; hier staat alleen wat echt verschilt.
+# `component` is de regex van het runbare component op die site, met de code in
+# de named group `oefcode`. `python_versie` is de CPython van de Pyodide die de
+# site serveert — alleen op die versie worden foutmeldingsteksten beoordeeld.
+# `pins` zijn de pakketten die CI vastzet op de versie die de browser laadt,
+# afgelezen uit static/pyodide/pyodide-lock.json van de site zelf.
+SITES = {
+    "python": {
+        "docs": ROOT / "sites" / "python" / "docs",
+        "component": r"<CodeExercise>\{`(?P<oefcode>.*?)`\}</CodeExercise>",
+        "python_versie": (3, 13),
+        "pins": (),
+        "env": {},
+        # In deze cursus is elk kaal blok een compleet programma; draaien dus.
+        "fences_draaien": True,
+    },
+    "algorithms": {
+        "docs": ROOT / "sites" / "algorithms" / "docs",
+        # rows/editable mogen voor of na initialCode staan; props staan op de
+        # openingsregel en bevatten nooit een backtick.
+        "component": r"<PyRunner\s[^`\n]*?initialCode=\{`(?P<oefcode>.*?)`\}",
+        "python_versie": (3, 12),
+        # numpy en matplotlib bepalen wat een blok print; de rest van de
+        # matplotlib-keten reist als dependency mee.
+        "pins": ("numpy", "matplotlib"),
+        # Dezelfde backend als PyRunner in de browser; zonder deze wil
+        # matplotlib een venster.
+        "env": {"MPLBACKEND": "Agg"},
+        # De bouwen-lessen tonen bewust fragmenten van een paar regels die op
+        # de pagina ervoor leunen; een kaal blok wordt hier alleen
+        # gecompileerd. Draaien is opt-in: een uitvoerblok eronder, een
+        # print-belofte erin, of een {/* draaien: reden */}-marker erboven.
+        # PyRunner-blokken draaien altijd — daar drukt een leerling op de knop.
+        "fences_draaien": False,
+    },
+}
+
+SITE_NAAM = "python"
+SITE = SITES[SITE_NAAM]
+DOCS = SITE["docs"]
+COMPONENT_RE = None  # gezet in kies_site()
+BLOK_RE = None
+
+
+def kies_site(naam: str) -> None:
+    """Zet de module-globals op de gekozen site; main() roept dit als eerste."""
+    global SITE_NAAM, SITE, DOCS, COMPONENT_RE, BLOK_RE, PYTHON_VAN_DE_SITE
+    global OORDEELT_OVER_TEKST
+    SITE_NAAM = naam
+    SITE = SITES[naam]
+    DOCS = SITE["docs"]
+    COMPONENT_RE = re.compile(SITE["component"], re.S)
+    # In documentvolgorde, zodat een uitvoerblok bij het blok ervóór hoort.
+    BLOK_RE = re.compile(
+        r"(?P<py>^```python[^\n]*\n(?P<pycode>.*?)^```)"
+        r"|(?P<kaal>^```\n(?P<kaalcode>.*?)^```)"
+        rf"|(?P<oef>{SITE['component']})",
+        re.S | re.M,
+    )
+    PYTHON_VAN_DE_SITE = SITE["python_versie"]
+    OORDEELT_OVER_TEKST = sys.version_info[:2] == PYTHON_VAN_DE_SITE
 NIET_DRAAIEN_RE = re.compile(r"\{/\*\s*niet-draaien:.*?\*/\}\s*$")
+DRAAIEN_RE = re.compile(r"\{/\*\s*draaien:.*?\*/\}\s*$")
+# Een Voorspel-blok gebruikt vaak de functie die eerder op de pagina is
+# opgebouwd; met deze marker draait het met dat blok ervoor geplakt, zodat de
+# beloofde uitvoer tóch te controleren is. Regelnummers in een foutmelding
+# verschuiven daardoor; de melding noemt de marker erbij.
+MET_RE = re.compile(r"\{/\*\s*draaien-met:\s*blok-erboven\s*\*/\}\s*$")
 NIET_COMPILEREN_RE = re.compile(r"\{/\*\s*niet-compileren:.*?\*/\}\s*$")
 # Sommige uitvoer ligt niet vast: een set heeft geen volgorde, dus het getoonde
 # resultaat is een voorbeeld en geen belofte. Zo'n blok draait wel gewoon.
@@ -115,14 +184,14 @@ LOS_RE = re.compile(r"\{/\*\s*foutmelding-los:.*?\*/\}\s*$")
 
 TIJDSLIMIET = 30
 
-# De speeltuin op de site draait Pyodide 0.29.4, en dat is CPython 3.13. Dáár
-# leest een leerling zijn foutmelding, dus die versie bepaalt of een citaat klopt.
-# De bewoording verschilt per versie — 3.12 raadt bij een NameError welke module
-# je vergat, 3.13 noemt bij een overschaduwde module het pad van je bestand — dus
-# op een oudere Python wordt de tekst niet vergeleken in plaats van ten onrechte
-# afgekeurd. De job draait op 3.13; daar telt hij wel.
+# De runners op de site draaien de CPython van hun Pyodide; dáár leest een
+# leerling zijn foutmelding, dus die versie (per site, zie SITES) bepaalt of een
+# geciteerde tekst klopt. De bewoording verschilt per versie — 3.12 raadt bij
+# een NameError welke module je vergat, 3.13 noemt bij een overschaduwde module
+# het pad van je bestand — dus op een andere Python wordt de tekst niet
+# vergeleken in plaats van ten onrechte afgekeurd. De jobs draaien op de goede.
 PYTHON_VAN_DE_SITE = (3, 13)
-OORDEELT_OVER_TEKST = sys.version_info[:2] == PYTHON_VAN_DE_SITE
+OORDEELT_OVER_TEKST = False
 
 
 def inspring_weg(code: str) -> str:
@@ -137,9 +206,11 @@ def waarde_van(belofte: str) -> str:
 
     De spatie vóór het haakje is wat een toelichting onderscheidt van een
     waarde: `14  (eerst 3 * 4)` is een getal met uitleg, maar `set()` en
-    `(1, 2)` zijn zelf de uitvoer.
+    `(1, 2)` zijn zelf de uitvoer. Het voorvoegsel `verwacht:` — het
+    belofte-idioom van de algorithms-cursus — telt niet mee.
     """
-    zonder = re.sub(r"\s+\(.*\)$", "", belofte).strip()
+    zonder = re.sub(r"^verwacht:\s*", "", belofte)
+    zonder = re.sub(r"\s+\(.*\)$", "", zonder).strip()
     return zonder or belofte
 
 
@@ -166,6 +237,11 @@ def verzamel():
         tekst = pad.read_text()
         bron = pad.relative_to(ROOT)
         vorige = None  # laatst geziene python-blok, kandidaat voor een uitvoerblok
+        # Voor draaien-met: de code van het vorige blok, mét zijn eigen
+        # met-expansie. Zo mag een reeks blokken op elkaar doorbouwen, zoals
+        # een lezer ze ook van boven naar beneden leest. Bewust kapotte
+        # blokken (niet-draaien/niet-compileren) doen niet mee.
+        erboven_effectief = None
 
         for m in BLOK_RE.finditer(tekst):
             if m.group("kaal") is not None:
@@ -177,7 +253,11 @@ def verzamel():
                 gepaard = vorige is not None and len(tussen.strip()) <= 40 and "#" not in tussen
                 if gepaard:
                     rij = blokken[vorige[1]]
-                    blokken[vorige[1]] = rij[:4] + (inspring_weg(m.group("kaalcode")), rij[5])
+                    # Een uitvoerblok is een belofte; een fence die er een
+                    # draagt draait dus altijd, ook op een site waar kale
+                    # fences normaal alleen compileren.
+                    soort = "draai" if rij[3] != "compileer-marker" else "compileer"
+                    blokken[vorige[1]] = rij[:3] + (soort, inspring_weg(m.group("kaalcode")), rij[5])
                 melding = melding_van(m.group("kaalcode"))
                 if melding and not gepaard:
                     ervoor = tekst[: m.start()].rstrip()
@@ -202,9 +282,35 @@ def verzamel():
             if NIET_COMPILEREN_RE.search(ervoor):
                 vorige = None
                 continue
-            soort = "compileer" if NIET_DRAAIEN_RE.search(ervoor) else "draai"
+            kaalcode = inspring_weg(code)
+            if MET_RE.search(ervoor):
+                boven = erboven_effectief
+                if boven is None:
+                    blokken.append(
+                        (bron, regel, "raise SyntaxError('draaien-met zonder blok erboven')",
+                         "draai", None, False)
+                    )
+                    vorige = None
+                    continue
+                kaalcode = boven + "\n" + kaalcode
+            if NIET_DRAAIEN_RE.search(ervoor):
+                # Expliciet uitgezet; een uitvoerblok eronder mag dat niet
+                # meer terugdraaien.
+                soort = "compileer-marker"
+            elif (
+                m.group("py") is not None
+                and not SITE["fences_draaien"]
+                and not DRAAIEN_RE.search(ervoor)
+                and not MET_RE.search(ervoor)
+                and not any(BELOFTE_RE.match(x) for x in kaalcode.split("\n"))
+            ):
+                soort = "compileer"
+            else:
+                soort = "draai"
             varieert = bool(VARIEERT_RE.search(ervoor))
-            blokken.append((bron, regel, inspring_weg(code), soort, None, varieert))
+            blokken.append((bron, regel, kaalcode, soort, None, varieert))
+            if soort != "compileer-marker":
+                erboven_effectief = kaalcode
             vorige = (m.end(), len(blokken) - 1) if m.group("py") is not None else None
 
         claims += list(inline_claims(tekst, bron))
@@ -218,19 +324,28 @@ def volgend_blok(tekst: str, vanaf: int) -> str | None:
     daarin, niet in een ```python-fence.
     """
     m = re.search(
-        r"^```python[^\n]*\n(?P<py>.*?)^```|<CodeExercise>\{`(?P<oef>.*?)`\}</CodeExercise>",
+        rf"^```python[^\n]*\n(?P<py>.*?)^```|{SITE['component']}",
         tekst[vanaf:],
         re.S | re.M,
     )
     if not m:
         return None
-    return inspring_weg(m.group("py") if m.group("py") is not None else m.group("oef"))
+    return inspring_weg(m.group("py") if m.group("py") is not None else m.group("oefcode"))
 
 
 def vorig_blok(tekst: str, tot: int) -> str | None:
-    """De code van het laatste ```python-blok vóór deze plek, voor `blok-erboven`."""
-    treffers = list(re.finditer(r"^```python[^\n]*\n(.*?)^```", tekst[:tot], re.S | re.M))
-    return inspring_weg(treffers[-1].group(1)) if treffers else None
+    """De code van het laatste blok vóór deze plek (fence of component)."""
+    treffers = list(
+        re.finditer(
+            rf"^```python[^\n]*\n(?P<py>.*?)^```|{SITE['component']}",
+            tekst[:tot],
+            re.S | re.M,
+        )
+    )
+    if not treffers:
+        return None
+    t = treffers[-1]
+    return inspring_weg(t.group("py") if t.group("py") is not None else t.group("oefcode"))
 
 
 # Een foutmelding staat niet altijd in een uitvoerblok. Vaak noemt de lopende
@@ -254,7 +369,7 @@ def proza_van(tekst: str) -> str:
 
     zonder = re.sub(r"\A\ufeff?---\n.*?\n---\n", leeg, tekst, count=1, flags=re.S)
     zonder = re.sub(r"^```.*?^```[^\n]*$", leeg, zonder, flags=re.S | re.M)
-    return re.sub(r"<CodeExercise>\{`.*?`\}</CodeExercise>", leeg, zonder, flags=re.S)
+    return COMPONENT_RE.sub(leeg, zonder)
 
 
 def inline_claims(tekst: str, bron):
@@ -293,6 +408,19 @@ def compileer(bron, regel, code) -> str | None:
         compile(code, str(bron), "exec")
         return None
     except SyntaxError as e:
+        # Een cheatsheet-fragment toont vaak alleen het return- of break-deel
+        # van een functie of lus. Dat is geen fout in de les maar de vorm van
+        # een fragment; binnen een wrapper moet het wél gewoon compileren,
+        # zodat een echte tikfout in zo'n fragment blijft omvallen.
+        if e.msg and ("outside function" in e.msg or "outside loop" in e.msg):
+            ingepakt = "def _w():\n while True:\n" + "".join(
+                f"  {r}\n" for r in code.split("\n")
+            )
+            try:
+                compile(ingepakt, str(bron), "exec")
+                return None
+            except SyntaxError:
+                pass
         return f"{bron}:{regel + (e.lineno or 1)}: {e.msg}"
 
 
@@ -307,6 +435,7 @@ def draai(bron, regel, code, verwacht, varieert=False) -> str | None:
             capture_output=True,
             text=True,
             timeout=TIJDSLIMIET,
+            env={**os.environ, **SITE["env"]},
         )
     except subprocess.TimeoutExpired:
         return f"{bron}:{regel}: blok draait na {TIJDSLIMIET}s nog — een lus zonder eind?"
@@ -334,6 +463,12 @@ def draai(bron, regel, code, verwacht, varieert=False) -> str | None:
 
     if verwacht is not None and uit != verwacht:
         return f"{bron}:{regel}: uitvoerblok belooft {verwacht!r}, geeft {uit!r}"
+
+    # Een uitvoerblok legt de volledige uitvoer al vast; commentaren achter de
+    # prints zijn dan toelichting ("zou 2 moeten zijn" boven een antwoord dat
+    # bewust -1 toont) en geen tweede belofte.
+    if verwacht is not None:
+        return None
 
     beloftes = [BELOFTE_RE.match(x).group(1) for x in code.split("\n") if BELOFTE_RE.match(x)]
     if beloftes and not varieert:
@@ -364,6 +499,7 @@ def los_fragment(code: str) -> tuple[int, str]:
                 text=True,
                 timeout=TIJDSLIMIET,
                 cwd=werkmap,
+                env={**os.environ, **SITE["env"]},
             )
         except subprocess.TimeoutExpired:
             return -1, f"draait na {TIJDSLIMIET}s nog"
@@ -429,10 +565,58 @@ def controleer_claim(claim) -> str | None:
     return None
 
 
+def pins() -> dict[str, str]:
+    """De browser-versies van de gepinde pakketten, uit de eigen pyodide-lock."""
+    if not SITE["pins"]:
+        return {}
+    lock = json.loads((DOCS.parent / "static" / "pyodide" / "pyodide-lock.json").read_text())
+    return {naam: lock["packages"][naam]["version"] for naam in SITE["pins"]}
+
+
+def controleer_pins() -> str | None:
+    """Klopt wat er geïnstalleerd is met wat de browser laadt?"""
+    import importlib.metadata as md
+
+    scheef = []
+    for naam, verwacht in pins().items():
+        try:
+            echt = md.version(naam)
+        except md.PackageNotFoundError:
+            scheef.append(f"{naam} ontbreekt (verwacht {verwacht})")
+            continue
+        if echt != verwacht:
+            scheef.append(f"{naam} is {echt}, de browser laadt {verwacht}")
+    if not scheef:
+        return None
+    return (
+        "De geïnstalleerde pakketten wijken af van wat de browser laadt "
+        "(static/pyodide/pyodide-lock.json):\n  "
+        + "\n  ".join(scheef)
+        + "\n\nDan test je iets anders dan een leerling ziet. Installeer met:\n  "
+        + "pip install " + " ".join(f"{n}=={v}" for n, v in pins().items())
+    )
+
+
 def main() -> int:
+    argv = [a for a in sys.argv[1:] if a != "--pins"]
+    naam = argv[0] if argv else "python"
+    if naam not in SITES:
+        print(f"onbekende site {naam!r}; kies uit: {', '.join(SITES)}", file=sys.stderr)
+        return 2
+    kies_site(naam)
+
+    if "--pins" in sys.argv:
+        print(" ".join(f"{n}=={v}" for n, v in pins().items()))
+        return 0
+
+    scheef = controleer_pins()
+    if scheef:
+        print(scheef, file=sys.stderr)
+        return 1
+
     blokken, claims = verzamel()
     te_draaien = [b for b in blokken if b[3] == "draai"]
-    te_compileren = [b for b in blokken if b[3] == "compileer"]
+    te_compileren = [b for b in blokken if b[3] != "draai"]
     met_belofte = sum(
         1
         for b in te_draaien

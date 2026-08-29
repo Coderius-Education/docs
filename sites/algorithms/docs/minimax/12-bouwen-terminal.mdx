@@ -64,6 +64,7 @@ d = [["X","O","X"], ["O",None,None], [None]*3]   # spel loopt nog
 
 ## Bouw zelf en test
 
+{/* niet-draaien: startcode; de asserts falen tot de leerling de opdracht afmaakt */}
 <PyRunner initialCode={`def winner(bord):
     for rij in bord:
         if rij[0] == rij[1] == rij[2] and rij[0] is not None:

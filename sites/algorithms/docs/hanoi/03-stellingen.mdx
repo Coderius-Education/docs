@@ -65,6 +65,8 @@ kleiner Hanoi-probleem, met één losse zet ertussen.
 <details>
 <summary>Waar of niet waar?</summary>
 
+{/* foutmelding-van: def f(n):\n    return f(n - 1)\nf(3) */}
+
 **Niet waar.** Zonder basisgeval blijft de functie zichzelf aanroepen met
 steeds kleinere `n`, ook onder nul, en stopt nooit. Python kapt dat af met
 een `RecursionError`. Het basisgeval (`n == 0`) is wat de recursie laat

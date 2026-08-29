@@ -39,8 +39,9 @@ Meer uitleg: [Bouwsteen 4 — niet gevonden](./06-bouwen-niet-gevonden).
 
 ## SyntaxError: `==` vs `=`
 
+{/* foutmelding-van: if waarde = doel:\n    pass */}
 ```
-SyntaxError: invalid syntax
+SyntaxError: invalid syntax. Maybe you meant '==' or ':=' instead of '='?
 ```
 
 **Oorzaak:** `=` is **toekenning** (`x = 5` zet de waarde 5 in x);
@@ -49,6 +50,7 @@ SyntaxError: invalid syntax
 
 **Oplossing:** gebruik `==` in vergelijkingen.
 
+{/* niet-compileren: toont bewust de = in plaats van == */}
 ```python
 # FOUT
 if waarde = doel:
@@ -63,6 +65,7 @@ Onthouden: **één** `=` is toekennen, **twee** `==` is vergelijken.
 
 ## IndexError: list index out of range
 
+{/* foutmelding-van: [3, 1, 4][3] */}
 ```
 IndexError: list index out of range
 ```

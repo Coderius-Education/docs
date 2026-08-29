@@ -57,6 +57,7 @@ Eén teken verschil met `vind_maximum` (`>` → `<`).
 <details>
 <summary>Algemeen recept (accumulator)</summary>
 
+{/* niet-compileren: recept in pseudocode */}
 ```python
 accumulator = startwaarde_van_eerste_element
 for waarde in lijst:
@@ -108,8 +109,8 @@ for i, waarde in enumerate(lijst):
 
 ```python
 print(max([3, 7, 2, 9, 4]))   # 9
-print(max([]))                # ValueError
-print(max("hallo"))           # 'o'
+print(max("hallo"))           # o  (alfabetisch de grootste)
+# max([]) crasht: ValueError, want een lege lijst heeft geen grootste
 ```
 
 In productie-code gebruik je vaak gewoon `max()` van Python. Maar de
@@ -121,6 +122,8 @@ In productie-code gebruik je vaak gewoon `max()` van Python. Maar de
 
 <details>
 <summary>Wanneer werkt het?</summary>
+
+{/* foutmelding-van: "twee" > 1 */}
 
 - Op niet-lege lijsten.
 - Op alles dat onderling vergeleken kan worden met `<` en `>` (getallen,
@@ -142,6 +145,8 @@ In productie-code gebruik je vaak gewoon `max()` van Python. Maar de
 <details>
 <summary>Lege-lijst-keuze</summary>
 
+{/* foutmelding-van: [][0] */}
+
 - Return `None` → "geen maximum bestaat".
 - `raise ValueError` → aanroeper móet ermee dealen.
 - Geen check → crash met `IndexError`. **Niet doen** in productie-code.
@@ -152,6 +157,8 @@ In productie-code gebruik je vaak gewoon `max()` van Python. Maar de
 
 <details>
 <summary>Top-3 fouten</summary>
+
+{/* foutmelding-van: [][0] */}
 
 1. `maximum = 0` als startwaarde → mist negatieve lijsten.
 2. `max` als variabelenaam → schaduwt de ingebouwde `max()`.

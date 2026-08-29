@@ -59,16 +59,17 @@ for naam, bord in [("a", bord_a), ("b", bord_b), ("c", bord_c)]:
 ```
 bord a: X=0, O=0
 bord b: X=1, O=0
-bord c: X=3, O=2
+bord c: X=3, O=3
 ```
 
-Bij bord a en c is X aan de beurt (gelijke telling, óf één O nodig).
+Bij bord a en c is X aan de beurt (gelijke telling).
 Bij bord b is O aan de beurt (X heeft één voorsprong).
 
 </details>
 
 ## Bouw zelf en test
 
+{/* niet-draaien: startcode; de asserts falen tot de leerling de opdracht afmaakt */}
 <PyRunner initialCode={`def player(bord):
     # Vul aan:
     # 1. tel het aantal X'en

@@ -77,6 +77,8 @@ Zonder early-exit zou bubble sort onnodig `n − 1` passes doen.
 met `lijst[i+1]`, dus de **laatste** geldige `i` is `len(lijst) - 2`. Met
 `range(len(lijst) - 1)` krijg je precies dat.
 
+{/* foutmelding-van: lijst = [5, 2, 9]\nfor i in range(len(lijst)):\n    lijst[i + 1] */}
+
 Eén te ver → `IndexError` op `lijst[i+1]`.
 
 </details>

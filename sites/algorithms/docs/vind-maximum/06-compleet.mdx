@@ -71,13 +71,19 @@ print(vind_maximum(["banaan", "appel", "kers"]))
 <details>
 <summary>Wat zie je?</summary>
 
-- Strings → werkt. Alfabetisch vergelijken: `'k' > 'b' > 'a'`, dus
-  "kers" > "banaan" > "appel" → output `kers`. Python kan strings
-  vergelijken met `<` en `>` (alfabetisch).
-- Lege lijst → `IndexError` op `lijst[0]`. Ons algoritme heeft geen
-  bescherming.
-- Gemengd → `TypeError: '>' not supported between instances of 'str' and
-  'int'`. Je kunt 1 niet met "twee" vergelijken.
+Strings → werkt. Alfabetisch vergelijken: `'k' > 'b' > 'a'`, dus
+"kers" > "banaan" > "appel" → output `kers`. Python kan strings
+vergelijken met `<` en `>` (alfabetisch).
+
+{/* foutmelding-van: [][0] */}
+
+Lege lijst → `IndexError` op `lijst[0]`. Ons algoritme heeft geen
+bescherming.
+
+{/* foutmelding-van: "twee" > 1 */}
+
+Gemengd → `TypeError: '>' not supported between instances of 'str' and
+'int'`. Je kunt 1 niet met "twee" vergelijken.
 
 </details>
 
