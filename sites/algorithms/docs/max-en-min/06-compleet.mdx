@@ -8,7 +8,9 @@ sidebar_position: 6
 
 ## Alles samen
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 def max_en_min(lijst):
     klein = groot = lijst[0]
     for waarde in lijst:
@@ -18,6 +20,24 @@ def max_en_min(lijst):
             groot = waarde
     return klein, groot
 ```
+
+<Regel n={2}>
+Beide accumulatoren starten op `lijst[0]` — één regel, twee namen, allebei een echte waarde uit de lijst.
+</Regel>
+
+<Regel n={4} tot={5}>
+Kleiner dan de kleinste tot nu toe? Nieuwe kleinste.
+</Regel>
+
+<Regel n={6} tot={7}>
+De `elif` doet het spiegelbeeld, en alleen als de waarde géén nieuwe kleinste was — één waarde kan nooit allebei tegelijk zijn.
+</Regel>
+
+<Regel n={8}>
+Eén `return`, twee waardes: Python maakt er een tuple van.
+</Regel>
+
+</CodeUitleg>
 
 Zes regels. Vergelijk dat eens met de combinatie van twee aparte
 vind-maximum + vind-minimum functies — daar had je twee aparte for-lussen

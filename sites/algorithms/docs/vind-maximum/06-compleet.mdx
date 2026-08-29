@@ -15,7 +15,9 @@ algoritme als geheel.
 
 ## Alles samen
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 def vind_maximum(lijst):
     maximum = lijst[0]
     for waarde in lijst:
@@ -24,12 +26,23 @@ def vind_maximum(lijst):
     return maximum
 ```
 
-Zie je de bouwstenen?
+<Regel n={2}>
+**Bouwsteen 3** — de startwaarde is `lijst[0]`: gegarandeerd een echte waarde uit de lijst, dus ook veilig bij louter negatieve getallen.
+</Regel>
 
-- Regel 2 → **bouwsteen 3**: startwaarde is `lijst[0]` (veilig).
-- Regel 3 → **bouwsteen 2**: door de lijst lopen.
-- Regels 4-5 → **bouwsteen 1**: vergelijken en bij update overschrijven.
-- Regel 6 → het resultaat teruggeven.
+<Regel n={3}>
+**Bouwsteen 2** — door de lijst lopen, elke waarde precies één keer.
+</Regel>
+
+<Regel n={4} tot={5}>
+**Bouwsteen 1** — vergelijken met de kampioen tot nu toe, en bij een grotere waarde overschrijven.
+</Regel>
+
+<Regel n={6}>
+Het resultaat teruggeven — ná de lus, dus pas als alles bekeken is.
+</Regel>
+
+</CodeUitleg>
 
 ## Run
 

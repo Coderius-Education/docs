@@ -1,3 +1,9 @@
+import type {
+  Opname,
+  PyodideInterface as StapPyodide,
+} from '@coderius/python-runner/PyodideProvider';
+import { tracePython } from '@coderius/python-runner/PyodideProvider';
+import Stapper from '@coderius/python-runner/Stapper';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import { HighlightedEditor } from '@site/src/components/PythonPlayground';
 import clsx from 'clsx';
@@ -104,6 +110,10 @@ export default function PyRunnerImpl({
   const [stderr, setStderr] = useState<string>('');
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [plots, setPlots] = useState<string[]>([]);
+  const [opname, setOpname] = useState<Opname | null>(null);
+  // De code van het moment van opnemen: de leerling mag intussen doortypen,
+  // en dan zouden de regelnummers uit de opname naar de verkeerde regels wijzen.
+  const [opnameCode, setOpnameCode] = useState('');
   const pyodideRef = useRef<PyodideInterface | null>(null);
   const matplotlibLoadedRef = useRef(false);
   const pyodideIndexURL = useBaseUrl('/pyodide/');
@@ -125,6 +135,7 @@ export default function PyRunnerImpl({
     setStderr('');
     setErrorMsg('');
     setPlots([]);
+    setOpname(null);
     try {
       if (!pyodideRef.current) {
         setStatus('loading');
@@ -195,6 +206,57 @@ export default function PyRunnerImpl({
     }
   }, [code, needsMatplotlib, packages, pyodideIndexURL]);
 
+  // Zelfde voorbereiding als handleRun (Pyodide, pakketten, matplotlib-setup),
+  // maar dan opnemen met tracePython in plaats van draaien: de leerling bladert
+  // daarna per regel door de variabelen en de uitvoer, net als in de
+  // python-cursus. De opnemer draait de code onder een eigen bestandsnaam, dus
+  // de regelnummers kloppen exact met de editor.
+  const handleStap = useCallback(async () => {
+    setStdout('');
+    setStderr('');
+    setErrorMsg('');
+    setPlots([]);
+    setOpname(null);
+    try {
+      if (!pyodideRef.current) {
+        setStatus('loading');
+        setStatusMsg(
+          hasPyodideStarted()
+            ? 'Python wordt geladen…'
+            : 'Python wordt geladen (eenmalig, ~14 MB)…',
+        );
+        pyodideRef.current = await loadPyodideOnce(pyodideIndexURL);
+      }
+      const py = pyodideRef.current;
+
+      const extraPackages = new Set<string>(packages ?? []);
+      if (needsMatplotlib) extraPackages.add('matplotlib');
+      if (extraPackages.size > 0) {
+        const packageList = Array.from(extraPackages);
+        setStatus('loading');
+        setStatusMsg(`Pakketten laden: ${packageList.join(', ')}…`);
+        await py.loadPackage(packageList);
+      }
+      if (needsMatplotlib && !matplotlibLoadedRef.current) {
+        await py.runPythonAsync(MATPLOTLIB_SETUP);
+        matplotlibLoadedRef.current = true;
+      }
+
+      setStatus('running');
+      setStatusMsg('Bezig met opnemen…');
+      setOpnameCode(code);
+      // Het echte pyodide-object heeft ook setStdin; het smalle type hier niet.
+      setOpname(await tracePython(py as unknown as StapPyodide, code));
+      setStatus('done');
+      setStatusMsg('Klaar');
+    } catch (e: unknown) {
+      const raw = e instanceof Error ? e.message : String(e);
+      setErrorMsg(filterTraceback(raw));
+      setStatus('error');
+      setStatusMsg('Er ging iets mis');
+    }
+  }, [code, needsMatplotlib, packages, pyodideIndexURL]);
+
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
       if (e.key === 'Tab') {
@@ -221,6 +283,7 @@ export default function PyRunnerImpl({
     setStderr('');
     setErrorMsg('');
     setPlots([]);
+    setOpname(null);
     setStatus('idle');
     setStatusMsg('');
   }, [source]);
@@ -244,6 +307,15 @@ export default function PyRunnerImpl({
               ↺ Reset
             </button>
           )}
+          <button
+            type="button"
+            onClick={handleStap}
+            disabled={busy}
+            title="Loop regel voor regel door je code en zie wat elke variabele doet"
+            className={clsx('button button--sm button--secondary')}
+          >
+            Stap voor stap
+          </button>
           <button
             type="button"
             onClick={handleRun}
@@ -272,6 +344,7 @@ export default function PyRunnerImpl({
           {statusMsg}
         </div>
       )}
+      {opname && <Stapper code={opnameCode} opname={opname} onSluiten={() => setOpname(null)} />}
       {hasOutput && (
         <div className={styles.output}>
           {stdout && <pre className={styles.stdout}>{stdout}</pre>}

@@ -8,7 +8,9 @@ sidebar_position: 8
 
 ## Alles samen
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 def bubble_sort(lijst):
     n = len(lijst)
     for ronde in range(n - 1):
@@ -22,13 +24,31 @@ def bubble_sort(lijst):
     return lijst
 ```
 
-Zie je de bouwstenen?
+<Regel n={3}>
+**Bouwsteen 4** — meerdere passes: hooguit `n - 1` rondes, want elke ronde legt minstens één element definitief goed.
+</Regel>
 
-- Regel 5 → **bouwsteen 1**: vergelijk buren (`lijst[i] > lijst[i + 1]`).
-- Regel 6 → **bouwsteen 2**: swap.
-- Regels 4-6 → **bouwsteen 3**: één pass (`range(n - 1 - ronde)`).
-- Regels 3-7 → **bouwsteen 4**: meerdere passes.
-- Regels 4 + 7 + 8-9 → **bouwsteen 5**: early-exit met `geswapt`.
+<Regel n={4}>
+**Bouwsteen 5, deel één** — de vlag gaat elke ronde vers op `False`; alleen een echte swap zet hem om.
+</Regel>
+
+<Regel n={5}>
+**Bouwsteen 3** — één pass. De `- ronde` maakt hem elke ronde korter: de staart is al gesorteerd.
+</Regel>
+
+<Regel n={6}>
+**Bouwsteen 1** — vergelijk buren. De laatste geldige `i` is `n - 2`, want `i + 1` moet ook bestaan.
+</Regel>
+
+<Regel n={7} tot={8}>
+**Bouwsteen 2** — de swap, en de vlag om te onthouden dat er iets veranderde.
+</Regel>
+
+<Regel n={9} tot={10}>
+**Bouwsteen 5, deel twee** — een hele pass zonder swaps betekent: gesorteerd. Eerder stoppen mag dan.
+</Regel>
+
+</CodeUitleg>
 
 ## Run
 

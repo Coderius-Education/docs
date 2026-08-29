@@ -190,6 +190,9 @@ importers:
 
   sites/algorithms:
     dependencies:
+      '@coderius/python-runner':
+        specifier: workspace:*
+        version: link:../../packages/python-runner
       '@coderius/shared':
         specifier: workspace:*
         version: link:../../packages/shared

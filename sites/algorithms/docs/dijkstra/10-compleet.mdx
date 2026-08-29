@@ -9,7 +9,9 @@ visualiseert het eindresultaat op de graph.
 
 ## Alles samen
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 def kies_volgende(afstanden, bezocht):
     beste_node = None
     kleinste = float('inf')
@@ -42,14 +44,31 @@ def dijkstra(graph, start):
     return afstanden
 ```
 
-Zie je de bouwstenen?
+<Regel n={1} tot={10}>
+**Bouwsteen 4** — de helper `kies_volgende`: van alle onbezochte knopen die met de laagste afstand tot nu toe. Zijn ze allemaal bezocht, dan blijft `beste_node` op `None` staan.
+</Regel>
 
-- Regels 1-9 → **bouwsteen 4**: kies volgende node.
-- Regel 13 → **bouwsteen 2**: afstanden initialiseren.
-- Regel 14 → start op 0 zetten.
-- Regel 15 → bezocht-set leeg.
-- Regels 17-25 → **bouwsteen 6**: de lus om **bouwsteen 5** (één ronde).
-- Regels 22-25 → **bouwsteen 3**: relax buren.
+<Regel n={14} tot={16}>
+**Bouwsteen 2** — elke knoop begint op oneindig: nog geen route bekend.
+</Regel>
+
+<Regel n={17}>
+Behalve het startpunt: daar sta je al, afstand 0.
+</Regel>
+
+<Regel n={18}>
+De lege set voor knopen die definitief af zijn.
+</Regel>
+
+<Regel n={20} tot={23}>
+**Bouwsteen 6** — de hoofdlus: kies de volgende knoop, en stop zodra er geen onbezochte meer over is.
+</Regel>
+
+<Regel n={25} tot={28}>
+**Bouwsteen 3** — relax de buren: is de route via `huidige` korter dan wat we voor de buur hadden, dan overschrijven we die afstand.
+</Regel>
+
+</CodeUitleg>
 
 ## Voorspel
 

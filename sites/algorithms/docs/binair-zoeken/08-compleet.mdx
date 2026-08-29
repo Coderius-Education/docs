@@ -9,7 +9,9 @@ samen werken. Daarna onderzoek je het algoritme als geheel.
 
 ## Alles samen
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 def binair_zoek(lijst, doel):
     laag = 0
     hoog = len(lijst) - 1
@@ -24,13 +26,35 @@ def binair_zoek(lijst, doel):
     return -1
 ```
 
-Zie je de bouwstenen?
+<Regel n={2} tot={3}>
+**Bouwsteen 1** — de grenzen van het zoekgebied: `laag` en `hoog` wijzen naar de eerste en de laatste index die nog mee kunnen doen.
+</Regel>
 
-- Regels 2-3 → **bouwsteen 1**: grenzen `laag` en `hoog`.
-- Regel 5 → **bouwsteen 2**: het midden berekenen.
-- Regels 6-11 → **bouwsteen 3**: vergelijken en de juiste helft kiezen.
-- Regel 4 → **bouwsteen 4**: de while-lus.
-- Regel 12 → **bouwsteen 5**: `-1` bij niet gevonden.
+<Regel n={4}>
+**Bouwsteen 4** — de while-lus draait zolang het zoekgebied niet leeg is. Bij `laag == hoog` is er nog precies één kandidaat, vandaar `<=`.
+</Regel>
+
+<Regel n={5}>
+**Bouwsteen 2** — het midden berekenen, met `//` zodat er een hele index uitkomt.
+</Regel>
+
+<Regel n={6} tot={7}>
+**Bouwsteen 3, eerste tak** — raak: de index gaat direct terug.
+</Regel>
+
+<Regel n={8} tot={9}>
+Het midden is te klein, dus het doel kan alleen rechts liggen. De `+ 1` gooit het al-onderzochte midden weg — zonder die krimpt het zoekgebied niet.
+</Regel>
+
+<Regel n={10} tot={11}>
+Het spiegelbeeld: te groot, dus zoek links van het midden verder.
+</Regel>
+
+<Regel n={12}>
+**Bouwsteen 5** — hier kom je alleen als de lus stopt zonder match: het zoekgebied is leeg en `-1` betekent "niet gevonden".
+</Regel>
+
+</CodeUitleg>
 
 ## Voorspel
 

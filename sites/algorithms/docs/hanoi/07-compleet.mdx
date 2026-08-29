@@ -12,7 +12,9 @@ speelt met het aantal schijven.
 Alles wat je hebt opgebouwd, bij elkaar — zeven regels die elke toren
 verplaatsen:
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 def hanoi(n, bron, doel, hulp):
     if n == 0:
         return []
@@ -22,6 +24,24 @@ def hanoi(n, bron, doel, hulp):
     zetten += hanoi(n - 1, hulp, doel, bron)
     return zetten
 ```
+
+<Regel n={2} tot={3}>
+Het basisgeval: nul schijven verplaatsen kost nul zetten. Zonder deze afslag blijft de recursie eeuwig doorgaan.
+</Regel>
+
+<Regel n={5}>
+Stap 1 — verplaats `n - 1` schijven van bron naar de hulppaal. Let op de rolwisseling: `doel` is in deze deelstap even de parkeerplek.
+</Regel>
+
+<Regel n={6}>
+Stap 2 — de grootste schijf, één losse zet als tuple `(bron, doel)`.
+</Regel>
+
+<Regel n={7}>
+Stap 3 — dezelfde `n - 1` schijven van de hulppaal naar het doel; nu is `bron` de parkeerplek.
+</Regel>
+
+</CodeUitleg>
 
 ## Probeer het zelf
 

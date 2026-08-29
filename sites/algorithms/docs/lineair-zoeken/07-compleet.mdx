@@ -11,7 +11,9 @@ samen werken. Daarna onderzoek je het algoritme als geheel.
 
 Hier is het hele algoritme, in 5 regels:
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 def zoek(lijst, doel):
     for i, waarde in enumerate(lijst):
         if waarde == doel:
@@ -19,13 +21,23 @@ def zoek(lijst, doel):
     return -1
 ```
 
-Zie je de bouwstenen terug?
+<Regel n={2}>
+**Bouwsteen 1** — door de lijst lopen. `enumerate` geeft je elke ronde de index én de waarde tegelijk.
+</Regel>
 
-- Regel 2 → **bouwsteen 1**: door de lijst lopen (met `enumerate` voor de
-  index).
-- Regel 3 → **bouwsteen 2**: vergelijken met het doel.
-- Regel 4 → **bouwsteen 3**: index teruggeven bij match.
-- Regel 5 → **bouwsteen 4**: `-1` teruggeven als niets is gevonden.
+<Regel n={3}>
+**Bouwsteen 2** — vergelijken met het doel.
+</Regel>
+
+<Regel n={4}>
+**Bouwsteen 3** — de index teruggeven bij een match. `return` stopt meteen de functie én de lus: verder zoeken is niet meer nodig.
+</Regel>
+
+<Regel n={5}>
+**Bouwsteen 4** — deze regel wordt alleen bereikt als de lus afloopt zonder match. Let op de inspringing: hij staat buiten de `for`, op functie-niveau.
+</Regel>
+
+</CodeUitleg>
 
 ## Run
 
