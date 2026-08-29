@@ -10,7 +10,9 @@ totaalwaarde returnt.
 
 ## Alles samen
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 def knapsack(items, capaciteit):
     n = len(items)
     tabel = []
@@ -30,12 +32,27 @@ def knapsack(items, capaciteit):
     return tabel[n][capaciteit]
 ```
 
-Zie je de bouwstenen?
+<Regel n={3} tot={5}>
+**Bouwsteen 2** — de lege tabel: `(n + 1)` rijen van `(capaciteit + 1)` nullen. De extra rij is "geen items", de extra kolom "geen ruimte".
+</Regel>
 
-- Regel 3 → **bouwsteen 2**: lege tabel maken.
-- Regels 5-13 → **bouwsteen 3+4**: rij voor rij invullen volgens de
-  drie regels (te zwaar → kopieer, anders → max).
-- Regel 15 → eindcel returnen.
+<Regel n={7} tot={8}>
+**Bouwsteen 4** — rij voor rij; `items[i - 1]` omdat rij 1 over het eerste item gaat en Python vanaf 0 telt.
+</Regel>
+
+<Regel n={10} tot={11}>
+Past het item niet in capaciteit `w`? Kopieer dan de cel erboven: zonder dit item verandert er niets.
+</Regel>
+
+<Regel n={12} tot={15}>
+**Bouwsteen 3** — de kern: skip (cel erboven) tegen meenemen (waarde plus de beste vulling van de rest), en de grootste van de twee wint.
+</Regel>
+
+<Regel n={17}>
+De eindcel: de beste totaalwaarde voor alle items binnen de volle capaciteit.
+</Regel>
+
+</CodeUitleg>
 
 Vergelijk met de hand-uitgevulde tabel uit pagina 02: ze zouden
 **identiek** moeten zijn.

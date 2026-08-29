@@ -52,6 +52,7 @@ andere Python-werk.
 
 Met tuple-unpacking pak je waarde en gewicht in één regel:
 
+{/* draaien-met: blok-erboven */}
 ```python
 waarde, gewicht = items[2]
 print(waarde, gewicht)   # 18 5
@@ -59,6 +60,7 @@ print(waarde, gewicht)   # 18 5
 
 Of zonder unpacking:
 
+{/* draaien-met: blok-erboven */}
 ```python
 print(items[2][0])   # 18  (waarde)
 print(items[2][1])   # 5   (gewicht)
@@ -100,6 +102,7 @@ gebruiken `items[i]` om de echte Python-index op te halen.
 Maak een functie `item_info(items, i)` die de string
 `"item N: waarde=V, gewicht=G"` returnt voor item op Python-index `i`.
 
+{/* niet-draaien: startcode; de leerling vult item_info in en de assert faalt tot dan */}
 <PyRunner initialCode={`def item_info(items, i):
     # Vul aan:
     # 1. pak waarde en gewicht uit items[i] via tuple-unpacking

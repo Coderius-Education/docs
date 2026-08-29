@@ -9,7 +9,9 @@ je eigen web.
 
 ## De functie
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 def pagerank(web, d=0.85, epsilon=1e-9):
     n = len(web)
     rank = {}
@@ -30,6 +32,32 @@ def pagerank(web, d=0.85, epsilon=1e-9):
         if verschil < epsilon:
             return rank
 ```
+
+<Regel n={2} tot={5}>
+De startverdeling: elke pagina begint met een gelijk deel, samen precies 1.
+</Regel>
+
+<Regel n={6} tot={7}>
+Herhaal tot de waardes stil komen te staan; elke ronde bouwt een verse dictionary op uit de vórige ronde.
+</Regel>
+
+<Regel n={10} tot={12}>
+Wie linkt er naar `p`? Elke linker `i` geeft zijn rank gelijk verdeeld door over zijn uitgaande links.
+</Regel>
+
+<Regel n={13}>
+De formule: een klein vast deel voor de willekeurige springer (`1 - d`), plus `d` keer wat er via links binnenkomt.
+</Regel>
+
+<Regel n={14} tot={16}>
+De grootste verandering van deze ronde — dat is de maat voor "zijn we er al?".
+</Regel>
+
+<Regel n={18} tot={19}>
+Verandert er minder dan `epsilon`, dan is het stabiel en zijn de ranks klaar.
+</Regel>
+
+</CodeUitleg>
 
 ## Probeer het zelf
 

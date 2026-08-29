@@ -119,10 +119,10 @@ Omdat we dit elke ronde opnieuw doen, stoppen we het in een functie:
 
 afstanden = {'A': 0, 'B': 4, 'C': 2, 'D': float('inf')}
 
-print(kies_volgende(afstanden, set()))               # niets bezocht
-print(kies_volgende(afstanden, {'A'}))                # A klaar
-print(kies_volgende(afstanden, {'A', 'C'}))           # A, C klaar
-print(kies_volgende(afstanden, {'A', 'B', 'C', 'D'})) # alles klaar`} />
+print(kies_volgende(afstanden, set()))               # A  (niets bezocht)
+print(kies_volgende(afstanden, {'A'}))                # C  (A klaar)
+print(kies_volgende(afstanden, {'A', 'C'}))           # B  (A en C klaar)
+print(kies_volgende(afstanden, {'A', 'B', 'C', 'D'})) # None  (alles klaar)`} />
 
 <details>
 <summary>Verwachte uitvoer</summary>

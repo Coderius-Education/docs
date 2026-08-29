@@ -5,7 +5,11 @@ const DEFAULT_INDEX = '/pyodide/';
 
 declare global {
   interface Window {
-    loadPyodide?: (opts: { indexURL: string }) => Promise<PyodideInterface>;
+    // Bewust ruim getypeerd: @coderius/python-runner declareert dezelfde
+    // global met zijn eigen (smallere) PyodideInterface, en twee verschillende
+    // concrete types op een Window-property verdragen elkaar niet. Het echte
+    // object kan allebei; elke gebruiker cast naar zijn eigen interface.
+    loadPyodide?: (opts: { indexURL: string }) => Promise<unknown>;
     __pyodidePromise?: Promise<PyodideInterface>;
   }
 }
@@ -53,7 +57,7 @@ export async function loadPyodideOnce(indexURL: string = DEFAULT_INDEX): Promise
       if (!window.loadPyodide) {
         throw new Error('Pyodide-script geladen maar loadPyodide ontbreekt');
       }
-      return await window.loadPyodide({ indexURL: base });
+      return (await window.loadPyodide({ indexURL: base })) as PyodideInterface;
     } catch (err) {
       // Drop the failed promise so the next call retries from scratch.
       window.__pyodidePromise = undefined;

@@ -49,6 +49,7 @@ Werkt, maar minder efficiënt op (bijna-)gesorteerde data.
 <details>
 <summary>Buren vergelijken</summary>
 
+{/* niet-compileren: vormfragment; het lijf is een commentaar */}
 ```python
 if lijst[i] > lijst[i + 1]:
     # paar staat fout
@@ -176,6 +177,8 @@ Buitenste lus zet de **ronde**. Binnenste loopt door **één pass**.
 
 <details>
 <summary>Top-3 fouten</summary>
+
+{/* foutmelding-los: samenvatting van 6.11, waar beide meldingen gereproduceerd worden */}
 
 1. `range(len(lijst))` in binnenste lus zonder `- 1` → `IndexError`.
 2. `=` in `if` waar je `==` of `>` bedoelt → `SyntaxError`.

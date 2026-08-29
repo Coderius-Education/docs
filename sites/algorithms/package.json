@@ -18,6 +18,7 @@
     "haal:wheels": "node ../../packages/python-runner/scripts/haal-pyodide-wheels.mjs matplotlib"
   },
   "dependencies": {
+    "@coderius/python-runner": "workspace:*",
     "@coderius/shared": "workspace:*",
     "@docusaurus/core": "catalog:",
     "@docusaurus/preset-classic": "catalog:",

@@ -8,7 +8,9 @@ sidebar_position: 7
 
 ## Alles samen
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 def selection_sort(lijst):
     n = len(lijst)
     for i in range(n):
@@ -20,12 +22,19 @@ def selection_sort(lijst):
     return lijst
 ```
 
-Zie je de bouwstenen?
+<Regel n={3}>
+**Bouwsteen 4** — de buitenste lus: plek `i` krijgt deze ronde zijn definitieve waarde.
+</Regel>
 
-- Regels 4-7 → **bouwstenen 1 + 3**: vind index van kleinste, vanaf
-  positie `i`.
-- Regel 8 → **bouwsteen 2**: swap.
-- Regels 3-8 → **bouwsteen 4**: buitenste lus die alles aan elkaar rijgt.
+<Regel n={4} tot={7}>
+**Bouwstenen 1 + 3** — zoek de index van de kleinste, maar alleen vanaf positie `i`: alles daarvóór staat al goed.
+</Regel>
+
+<Regel n={8}>
+**Bouwsteen 2** — de swap zet de gevonden kleinste vooraan het ongesorteerde deel. Staat hij daar al (`min_index == i`), dan ruilt de regel hem onschuldig met zichzelf.
+</Regel>
+
+</CodeUitleg>
 
 ## Run
 
@@ -39,11 +48,11 @@ Zie je de bouwstenen?
         lijst[i], lijst[min_index] = lijst[min_index], lijst[i]
     return lijst
 
-print(selection_sort([5, 2, 8, 1, 4]))
-print(selection_sort([3, 1, 4, 1, 5, 9, 2, 6]))
-print(selection_sort([1, 2, 3, 4, 5]))   # al gesorteerd
-print(selection_sort([5, 4, 3, 2, 1]))   # omgekeerd
-print(selection_sort([]))`} />
+print(selection_sort([5, 2, 8, 1, 4]))          # [1, 2, 4, 5, 8]
+print(selection_sort([3, 1, 4, 1, 5, 9, 2, 6])) # [1, 1, 2, 3, 4, 5, 6, 9]
+print(selection_sort([1, 2, 3, 4, 5]))   # [1, 2, 3, 4, 5]  (al gesorteerd)
+print(selection_sort([5, 4, 3, 2, 1]))   # [1, 2, 3, 4, 5]  (omgekeerd)
+print(selection_sort([]))                # []`} />
 
 <AlgorithmModel algorithm="selection-sort" />
 

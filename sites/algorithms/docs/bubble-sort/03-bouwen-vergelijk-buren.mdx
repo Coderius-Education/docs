@@ -61,9 +61,12 @@ else:
 Bij elke vergelijking pakken we **twee** opeenvolgende indexen: `i` en
 `i + 1`. Daarmee komt deze regel:
 
+{/* niet-compileren: vormfragment; alleen de vergelijkingsregel */}
 ```python
 if lijst[i] > lijst[i + 1]:
 ```
+
+{/* foutmelding-van: lijst = [5, 2, 9]\ni = len(lijst) - 1\nlijst[i + 1] */}
 
 **Belangrijk**: `i + 1` moet een geldige index zijn. Dus `i` mag hoogstens
 `len(lijst) - 2` zijn. Anders krijg je `IndexError` op `lijst[i + 1]`.

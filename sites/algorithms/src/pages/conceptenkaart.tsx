@@ -16,6 +16,10 @@ export default function ConceptenKaartPagina(): ReactNode {
           een blok of klik erop om te zien welke voorkennis bij welk algoritme hoort. Onder de kaart
           verschijnen links naar de les of het algoritme.
         </p>
+        <p>
+          De kaart werkt twee kanten op: elke Python-les hiernaast sluit af met een blok "Waar kom
+          je dit later weer tegen?" dat terugwijst naar de algoritmes die erop bouwen.
+        </p>
         <ConceptenKaart />
       </main>
     </Layout>

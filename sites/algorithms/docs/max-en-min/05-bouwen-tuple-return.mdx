@@ -79,11 +79,14 @@ print(type(resultaat))`} />
 
 ## Tuple uitpakken aan de andere kant
 
+{/* draaien-met: blok-erboven */}
 ```python
 k, g = max_en_min([5, 2, 8, 1, 7, 4])
 print(k)   # 1
 print(g)   # 8
 ```
+
+{/* foutmelding-van: a, b = (1, 2, 3) */}
 
 De twee namen links **moeten** even veel zijn als het aantal elementen in
 de tuple rechts. Anders krijg je een `ValueError`.
@@ -110,10 +113,11 @@ print(f"bereik:   {g - k}")`} />
 Als je de tuple **niet** uitpakt, kun je de elementen ook met index
 benaderen:
 
+{/* draaien-met: blok-erboven */}
 ```python
 r = max_en_min([5, 2, 8])
-print(r[0])   # klein
-print(r[1])   # groot
+print(r[0])   # 2  (klein)
+print(r[1])   # 8  (groot)
 ```
 
 Maar uitpakken (`k, g = …`) is duidelijker — de namen zeggen wat je hebt.

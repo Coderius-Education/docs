@@ -9,6 +9,8 @@ Hanoi-oplossing.
 
 ## Basisgeval vergeten
 
+{/* foutmelding-van: def f(n):\n    return f(n - 1)\nf(3) */}
+
 Foutmelding: `RecursionError: maximum recursion depth exceeded`.
 
 **Oorzaak:** zonder `if n == 0` blijft de functie zichzelf aanroepen met
@@ -64,6 +66,8 @@ Vuistregel: de schijven die je tijdelijk opzij zet, gaan altijd naar de
 paal die je in déze stap níet als bron of doel gebruikt.
 
 ## Recursie met `n` in plaats van `n - 1`
+
+{/* foutmelding-van: def f(n):\n    return f(n)\nf(3) */}
 
 Foutmelding: opnieuw een `RecursionError`.
 

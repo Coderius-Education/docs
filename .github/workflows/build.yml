@@ -238,6 +238,27 @@ jobs:
       - name: Codevoorbeelden uitvoeren en de beloofde uitvoer vergelijken
         run: python3 scripts/draai-python-blokken.py
 
+  # Dezelfde controle als de python-cursus, maar dan voor algorithms: elk blok
+  # draait of compileert, beloofde uitvoer wordt vergeleken, en de geciteerde
+  # foutmeldingen worden tegen echte CPython gereproduceerd. De runners op de
+  # site draaien Pyodide 0.27.4 (Python 3.12) met numpy en matplotlib uit
+  # static/pyodide/ — dus test deze job op 3.12 en met precies die versies;
+  # --pins leest ze uit pyodide-lock.json van de site zelf.
+  algorithms:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Browser-versies van numpy en matplotlib installeren
+        run: pip install $(python3 scripts/draai-python-blokken.py algorithms --pins)
+
+      - name: Codevoorbeelden uitvoeren en de beloofde uitvoer vergelijken
+        run: python3 scripts/draai-python-blokken.py algorithms
+
   # Lestekst is het product van deze repo, maar niets controleerde hem. Een
   # typefout, een emoji, een "u" in plaats van "je" of een alinea vol vet:
   # de build merkt er niets van en een reviewer die honderden regels diff
@@ -378,3 +399,18 @@ jobs:
           name: ${{ matrix.site }}-static
           path: sites/${{ matrix.site }}/build
           if-no-files-found: error
+
+  # De branch protection eist een check die exact "build" heet, maar een
+  # matrix-job rapporteert alleen "build (site)" per site — die eis kon dus
+  # nooit vervuld raken en mergen kon alleen met een bypass. Deze verzameljob
+  # ís die ene check: hij draait altijd en slaagt alleen als élke site-build
+  # slaagde (fail-fast staat uit, dus needs.build.result is pas "success" als
+  # alles groen is).
+  build-klaar:
+    name: build
+    needs: build
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Alle site-builds gelukt?
+        run: test "${{ needs.build.result }}" = "success"
