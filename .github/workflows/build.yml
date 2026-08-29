@@ -399,3 +399,18 @@ jobs:
           name: ${{ matrix.site }}-static
           path: sites/${{ matrix.site }}/build
           if-no-files-found: error
+
+  # De branch protection eist een check die exact "build" heet, maar een
+  # matrix-job rapporteert alleen "build (site)" per site — die eis kon dus
+  # nooit vervuld raken en mergen kon alleen met een bypass. Deze verzameljob
+  # ís die ene check: hij draait altijd en slaagt alleen als élke site-build
+  # slaagde (fail-fast staat uit, dus needs.build.result is pas "success" als
+  # alles groen is).
+  build-klaar:
+    name: build
+    needs: build
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Alle site-builds gelukt?
+        run: test "${{ needs.build.result }}" = "success"
