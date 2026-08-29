@@ -130,6 +130,38 @@ export default function PyRunnerImpl({
     warmupPyodide(pyodideIndexURL, warmPackages.length > 0 ? warmPackages : undefined);
   }, [source, packages, pyodideIndexURL]);
 
+  // De gedeelde voorbereiding van uitvoeren én opnemen: Pyodide laden,
+  // pakketten binnenhalen, matplotlib op de AGG-backend zetten. Eén plek,
+  // zodat de run- en opnameroute nooit een verschillende omgeving krijgen.
+  const maakKlaar = useCallback(async () => {
+    if (!pyodideRef.current) {
+      setStatus('loading');
+      setStatusMsg(
+        hasPyodideStarted() ? 'Python wordt geladen…' : 'Python wordt geladen (eenmalig, ~14 MB)…',
+      );
+      pyodideRef.current = await loadPyodideOnce(pyodideIndexURL);
+    }
+    const py = pyodideRef.current;
+
+    // Let op: geen [...set]-spread hier. Docusaurus compileert spreads in
+    // loose mode naar [].concat(set), waardoor de Set als één element
+    // doorgegeven wordt en pyodide's loadPackage crasht ("t.replace is
+    // not a function"). Array.from werkt wel op een Set.
+    const extraPackages = new Set<string>(packages ?? []);
+    if (needsMatplotlib) extraPackages.add('matplotlib');
+    if (extraPackages.size > 0) {
+      const packageList = Array.from(extraPackages);
+      setStatus('loading');
+      setStatusMsg(`Pakketten laden: ${packageList.join(', ')}…`);
+      await py.loadPackage(packageList);
+    }
+    if (needsMatplotlib && !matplotlibLoadedRef.current) {
+      await py.runPythonAsync(MATPLOTLIB_SETUP);
+      matplotlibLoadedRef.current = true;
+    }
+    return py;
+  }, [needsMatplotlib, packages, pyodideIndexURL]);
+
   const handleRun = useCallback(async () => {
     setStdout('');
     setStderr('');
@@ -137,29 +169,7 @@ export default function PyRunnerImpl({
     setPlots([]);
     setOpname(null);
     try {
-      if (!pyodideRef.current) {
-        setStatus('loading');
-        setStatusMsg(
-          hasPyodideStarted()
-            ? 'Python wordt geladen…'
-            : 'Python wordt geladen (eenmalig, ~14 MB)…',
-        );
-        pyodideRef.current = await loadPyodideOnce(pyodideIndexURL);
-      }
-      const py = pyodideRef.current;
-
-      // Let op: geen [...set]-spread hier. Docusaurus compileert spreads in
-      // loose mode naar [].concat(set), waardoor de Set als één element
-      // doorgegeven wordt en pyodide's loadPackage crasht ("t.replace is
-      // not a function"). Array.from werkt wel op een Set.
-      const extraPackages = new Set<string>(packages ?? []);
-      if (needsMatplotlib) extraPackages.add('matplotlib');
-      if (extraPackages.size > 0) {
-        const packageList = Array.from(extraPackages);
-        setStatus('loading');
-        setStatusMsg(`Pakketten laden: ${packageList.join(', ')}…`);
-        await py.loadPackage(packageList);
-      }
+      const py = await maakKlaar();
 
       let out = '';
       let err = '';
@@ -176,11 +186,6 @@ export default function PyRunnerImpl({
           err += `${s}\n`;
         },
       });
-
-      if (needsMatplotlib && !matplotlibLoadedRef.current) {
-        await py.runPythonAsync(MATPLOTLIB_SETUP);
-        matplotlibLoadedRef.current = true;
-      }
 
       setStatus('running');
       setStatusMsg('Bezig met uitvoeren…');
@@ -204,13 +209,13 @@ export default function PyRunnerImpl({
       setStatus('error');
       setStatusMsg('Er ging iets mis');
     }
-  }, [code, needsMatplotlib, packages, pyodideIndexURL]);
+  }, [code, maakKlaar, needsMatplotlib]);
 
-  // Zelfde voorbereiding als handleRun (Pyodide, pakketten, matplotlib-setup),
-  // maar dan opnemen met tracePython in plaats van draaien: de leerling bladert
-  // daarna per regel door de variabelen en de uitvoer, net als in de
-  // python-cursus. De opnemer draait de code onder een eigen bestandsnaam, dus
-  // de regelnummers kloppen exact met de editor.
+  // Zelfde voorbereiding als handleRun (maakKlaar), maar dan opnemen met
+  // tracePython in plaats van draaien: de leerling bladert daarna per regel
+  // door de variabelen en de uitvoer, net als in de python-cursus. De opnemer
+  // draait de code onder een eigen bestandsnaam, dus de regelnummers kloppen
+  // exact met de editor.
   const handleStap = useCallback(async () => {
     setStdout('');
     setStderr('');
@@ -218,35 +223,23 @@ export default function PyRunnerImpl({
     setPlots([]);
     setOpname(null);
     try {
-      if (!pyodideRef.current) {
-        setStatus('loading');
-        setStatusMsg(
-          hasPyodideStarted()
-            ? 'Python wordt geladen…'
-            : 'Python wordt geladen (eenmalig, ~14 MB)…',
-        );
-        pyodideRef.current = await loadPyodideOnce(pyodideIndexURL);
-      }
-      const py = pyodideRef.current;
-
-      const extraPackages = new Set<string>(packages ?? []);
-      if (needsMatplotlib) extraPackages.add('matplotlib');
-      if (extraPackages.size > 0) {
-        const packageList = Array.from(extraPackages);
-        setStatus('loading');
-        setStatusMsg(`Pakketten laden: ${packageList.join(', ')}…`);
-        await py.loadPackage(packageList);
-      }
-      if (needsMatplotlib && !matplotlibLoadedRef.current) {
-        await py.runPythonAsync(MATPLOTLIB_SETUP);
-        matplotlibLoadedRef.current = true;
-      }
+      const py = await maakKlaar();
 
       setStatus('running');
       setStatusMsg('Bezig met opnemen…');
       setOpnameCode(code);
-      // Het echte pyodide-object heeft ook setStdin; het smalle type hier niet.
-      setOpname(await tracePython(py as unknown as StapPyodide, code));
+      try {
+        // Het echte pyodide-object heeft ook setStdin; het smalle type niet.
+        setOpname(await tracePython(py as unknown as StapPyodide, code));
+      } finally {
+        // De opname toont geen plots, maar de code heeft ze wel geregistreerd
+        // — in de gedeelde Pyodide. Zonder opruimen zou de eerstvolgende
+        // "Voer uit" (ook van een andere runner op de pagina) ze als
+        // achtergebleven figuren erbij tonen.
+        if (needsMatplotlib && matplotlibLoadedRef.current) {
+          await py.runPythonAsync("_coderius_plt.close('all')");
+        }
+      }
       setStatus('done');
       setStatusMsg('Klaar');
     } catch (e: unknown) {
@@ -255,7 +248,7 @@ export default function PyRunnerImpl({
       setStatus('error');
       setStatusMsg('Er ging iets mis');
     }
-  }, [code, needsMatplotlib, packages, pyodideIndexURL]);
+  }, [code, maakKlaar, needsMatplotlib]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {

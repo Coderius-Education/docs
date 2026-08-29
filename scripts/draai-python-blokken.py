@@ -134,13 +134,6 @@ SITES = {
     },
 }
 
-SITE_NAAM = "python"
-SITE = SITES[SITE_NAAM]
-DOCS = SITE["docs"]
-COMPONENT_RE = None  # gezet in kies_site()
-BLOK_RE = None
-
-
 def kies_site(naam: str) -> None:
     """Zet de module-globals op de gekozen site; main() roept dit als eerste."""
     global SITE_NAAM, SITE, DOCS, COMPONENT_RE, BLOK_RE, PYTHON_VAN_DE_SITE
@@ -162,8 +155,11 @@ NIET_DRAAIEN_RE = re.compile(r"\{/\*\s*niet-draaien:.*?\*/\}\s*$")
 DRAAIEN_RE = re.compile(r"\{/\*\s*draaien:.*?\*/\}\s*$")
 # Een Voorspel-blok gebruikt vaak de functie die eerder op de pagina is
 # opgebouwd; met deze marker draait het met dat blok ervoor geplakt, zodat de
-# beloofde uitvoer tóch te controleren is. Regelnummers in een foutmelding
-# verschuiven daardoor; de melding noemt de marker erbij.
+# beloofde uitvoer tóch te controleren is. De beloftes komen uit het blok zélf
+# en worden tegen de staart van de uitvoer gelegd (het eigen blok draait als
+# laatste); regelnummers in een foutmelding zijn teruggerekend naar dit blok en
+# de melding zegt erbij dat het blok erboven meedraait. Alleen blokken die
+# zelfstandig compileren mogen de keten voeden.
 MET_RE = re.compile(r"\{/\*\s*draaien-met:\s*blok-erboven\s*\*/\}\s*$")
 NIET_COMPILEREN_RE = re.compile(r"\{/\*\s*niet-compileren:.*?\*/\}\s*$")
 # Sommige uitvoer ligt niet vast: een set heeft geen volgorde, dus het getoonde
@@ -189,9 +185,12 @@ TIJDSLIMIET = 30
 # geciteerde tekst klopt. De bewoording verschilt per versie — 3.12 raadt bij
 # een NameError welke module je vergat, 3.13 noemt bij een overschaduwde module
 # het pad van je bestand — dus op een andere Python wordt de tekst niet
-# vergeleken in plaats van ten onrechte afgekeurd. De jobs draaien op de goede.
-PYTHON_VAN_DE_SITE = (3, 13)
-OORDEELT_OVER_TEKST = False
+# vergeleken in plaats van ten onrechte afgekeurd. De jobs draaien op de goede;
+# in CI is dat hard (zie main), lokaal een voetnoot.
+#
+# kies_site is de enige plek die de site-globals zet; deze aanroep maakt de
+# module direct bruikbaar (importeren + verzamel() zonder eerst kiezen).
+kies_site("python")
 
 
 def inspring_weg(code: str) -> str:
@@ -257,7 +256,7 @@ def verzamel():
                     # draagt draait dus altijd, ook op een site waar kale
                     # fences normaal alleen compileren.
                     soort = "draai" if rij[3] != "compileer-marker" else "compileer"
-                    blokken[vorige[1]] = rij[:3] + (soort, inspring_weg(m.group("kaalcode")), rij[5])
+                    blokken[vorige[1]] = rij[:3] + (soort, inspring_weg(m.group("kaalcode")), rij[5], rij[6])
                 melding = melding_van(m.group("kaalcode"))
                 if melding and not gepaard:
                     ervoor = tekst[: m.start()].rstrip()
@@ -283,15 +282,17 @@ def verzamel():
                 vorige = None
                 continue
             kaalcode = inspring_weg(code)
+            voorplak = 0
             if MET_RE.search(ervoor):
                 boven = erboven_effectief
                 if boven is None:
                     blokken.append(
                         (bron, regel, "raise SyntaxError('draaien-met zonder blok erboven')",
-                         "draai", None, False)
+                         "draai", None, False, 0)
                     )
                     vorige = None
                     continue
+                voorplak = boven.count("\n") + 1
                 kaalcode = boven + "\n" + kaalcode
             if NIET_DRAAIEN_RE.search(ervoor):
                 # Expliciet uitgezet; een uitvoerblok eronder mag dat niet
@@ -308,8 +309,11 @@ def verzamel():
             else:
                 soort = "draai"
             varieert = bool(VARIEERT_RE.search(ervoor))
-            blokken.append((bron, regel, kaalcode, soort, None, varieert))
-            if soort != "compileer-marker":
+            blokken.append((bron, regel, kaalcode, soort, None, varieert, voorplak))
+            # De keten mag alleen gevoed worden door blokken die op zichzelf
+            # kunnen bestaan: een fragment dat zelf niet compileert (een losse
+            # return-regel) zou elk volgend draaien-met-blok meeslepen.
+            if soort != "compileer-marker" and compileert_los(kaalcode):
                 erboven_effectief = kaalcode
             vorige = (m.end(), len(blokken) - 1) if m.group("py") is not None else None
 
@@ -353,7 +357,12 @@ def vorig_blok(tekst: str, tot: int) -> str | None:
 # en veroudert net zo goed, dus hij wordt op dezelfde manier nagelopen — met de
 # marker boven de alinea in plaats van boven het blok. Noemt zo'n zin alleen de
 # soort, dan wordt ook alleen de soort vergeleken.
-INLINE_CODE_RE = re.compile(r"`([^`\n]+)`")
+#
+# Eén regeleinde in de span mag: proza wrapt, en een lange melding als
+# "TypeError: '>' not supported …" breekt in de bron gewoon af. Een lege regel
+# beëindigt de span wél, anders slokt een los backtick alinea's op. Bij het
+# vergelijken wordt witruimte platgeslagen (zie normaliseer).
+INLINE_CODE_RE = re.compile(r"`((?:[^`\n]|\n(?!\n))+)`")
 SOORT_RE = re.compile(r"\b([A-Z][A-Za-z]*(?:Error|Exception|Interrupt|Warning))\b")
 
 
@@ -383,7 +392,7 @@ def inline_claims(tekst: str, bron):
         begin_van_regel.append(begin_van_regel[-1] + len(regel) + 1)
 
     for m in INLINE_CODE_RE.finditer(proza):
-        inhoud = m.group(1).strip()
+        inhoud = re.sub(r"\s+", " ", m.group(1)).strip()
         if not SOORT_RE.match(inhoud):
             continue
         regelnr = proza[: m.start()].count("\n")
@@ -401,6 +410,15 @@ def inline_claims(tekst: str, bron):
             vorig_blok(tekst, plek),
             volgend_blok(tekst, plek),
         )
+
+
+def compileert_los(code: str) -> bool:
+    """Compileert dit blok zonder wrapper? Alleen dan mag het de keten voeden."""
+    try:
+        compile(code, "<keten>", "exec")
+        return True
+    except SyntaxError:
+        return False
 
 
 def compileer(bron, regel, code) -> str | None:
@@ -424,10 +442,14 @@ def compileer(bron, regel, code) -> str | None:
         return f"{bron}:{regel + (e.lineno or 1)}: {e.msg}"
 
 
-def draai(bron, regel, code, verwacht, varieert=False) -> str | None:
-    fout = compileer(bron, regel, code)
+def draai(bron, regel, code, verwacht, varieert=False, voorplak=0) -> str | None:
+    # Bij draaien-met telt het voorgeplakte blok mee in de regelnummers van
+    # Python; door de startregel te verschuiven wijst een fout in het blok
+    # zélf weer naar de juiste documentregel, en de melding zegt erbij dat er
+    # is voorgeplakt (een fout kan immers ook dáár vandaan komen).
+    fout = compileer(bron, regel - voorplak, code) if voorplak else compileer(bron, regel, code)
     if fout:
-        return fout
+        return fout + (" (draaien-met: het blok erboven draait mee)" if voorplak else "")
 
     try:
         r = subprocess.run(
@@ -457,7 +479,9 @@ def draai(bron, regel, code, verwacht, varieert=False) -> str | None:
         return None
 
     if r.returncode != 0:
-        return f"{bron}:{regel}: {laatste_fout or f'exitcode {r.returncode}'}"
+        return f"{bron}:{regel}: {laatste_fout or f'exitcode {r.returncode}'}" + (
+            " (draaien-met: het blok erboven draait mee)" if voorplak else ""
+        )
 
     uit = r.stdout.rstrip("\n")
 
@@ -470,17 +494,29 @@ def draai(bron, regel, code, verwacht, varieert=False) -> str | None:
     if verwacht is not None:
         return None
 
-    beloftes = [BELOFTE_RE.match(x).group(1) for x in code.split("\n") if BELOFTE_RE.match(x)]
+    # Beloftes komen uit het blok zélf, niet uit een voorgeplakt blok — dat
+    # heeft zijn eigen beloftes al waargemaakt toen het als los blok draaide.
+    eigen = code.split("\n")[voorplak:]
+    beloftes = [BELOFTE_RE.match(x).group(1) for x in eigen if BELOFTE_RE.match(x)]
     if beloftes and not varieert:
         regels = uit.split("\n") if uit else []
-        # Alleen vergelijken als elke print precies één regel opleverde; anders
-        # weet je niet welke belofte bij welke regel hoort.
-        if len(regels) == len(beloftes):
+        if voorplak:
+            # Het eigen blok draait als laatste, dus zíjn prints zijn de staart
+            # van de uitvoer. Minder regels dan beloftes is dan gewoon fout.
+            if len(regels) < len(beloftes):
+                return (
+                    f"{bron}:{regel}: belooft {len(beloftes)} regels uitvoer, "
+                    f"maar er komen er {len(regels)}"
+                )
+            for echt, belofte in zip(regels[-len(beloftes) :], beloftes):
+                if echt != waarde_van(belofte):
+                    return f"{bron}:{regel}: belooft {waarde_van(belofte)!r}, geeft {echt!r}"
+        # Zonder voorplak vergelijken we alleen als elke print precies één
+        # regel opleverde; anders weet je niet welke belofte waarbij hoort.
+        elif len(regels) == len(beloftes):
             for echt, belofte in zip(regels, beloftes):
                 if echt != waarde_van(belofte):
-                    return (
-                        f"{bron}:{regel}: belooft {waarde_van(belofte)!r}, geeft {echt!r}"
-                    )
+                    return f"{bron}:{regel}: belooft {waarde_van(belofte)!r}, geeft {echt!r}"
     return None
 
 
@@ -565,6 +601,18 @@ def controleer_claim(claim) -> str | None:
     return None
 
 
+def python_van_de_lock() -> tuple[int, int] | None:
+    """De CPython-versie die de site echt serveert, uit zijn eigen pyodide-lock."""
+    lock = DOCS.parent / "static" / "pyodide" / "pyodide-lock.json"
+    if not lock.exists():
+        return None
+    versie = json.loads(lock.read_text()).get("info", {}).get("python")
+    if not versie:
+        return None
+    delen = versie.split(".")
+    return (int(delen[0]), int(delen[1]))
+
+
 def pins() -> dict[str, str]:
     """De browser-versies van de gepinde pakketten, uit de eigen pyodide-lock."""
     if not SITE["pins"]:
@@ -609,6 +657,32 @@ def main() -> int:
         print(" ".join(f"{n}=={v}" for n, v in pins().items()))
         return 0
 
+    # De site-versie staat op drie plekken: de SITES-tabel hier, python-version
+    # in build.yml, en wat static/pyodide/ echt serveert. Drijven die uiteen,
+    # dan zouden de foutmeldingsteksten stilletjes niet meer vergeleken worden —
+    # precies het "groen zegt niets" dat dit script moet uitsluiten. De lock is
+    # de waarheid (dat ís wat de browser draait), dus daar toetsen we tegen.
+    lock_versie = python_van_de_lock()
+    if lock_versie is not None and lock_versie != PYTHON_VAN_DE_SITE:
+        print(
+            f"SITES[{naam!r}] zegt Python {'.'.join(map(str, PYTHON_VAN_DE_SITE))}, "
+            f"maar static/pyodide/pyodide-lock.json van de site serveert "
+            f"{'.'.join(map(str, lock_versie))}. Pas python_versie in de SITES-tabel "
+            f"aan (en python-version van de job in build.yml).",
+            file=sys.stderr,
+        )
+        return 1
+    if os.environ.get("GITHUB_ACTIONS") and not OORDEELT_OVER_TEKST:
+        nu = ".".join(str(x) for x in sys.version_info[:2])
+        mikt = ".".join(str(x) for x in PYTHON_VAN_DE_SITE)
+        print(
+            f"Deze job draait Python {nu}, maar de site draait {mikt} — dan worden "
+            f"de geciteerde foutmeldingen niet vergeleken. Pas python-version van "
+            f"deze job in build.yml aan.",
+            file=sys.stderr,
+        )
+        return 1
+
     scheef = controleer_pins()
     if scheef:
         print(scheef, file=sys.stderr)
@@ -621,12 +695,12 @@ def main() -> int:
         1
         for b in te_draaien
         if not b[5]
-        and (b[4] is not None or any(BELOFTE_RE.match(x) for x in b[2].split("\n")))
+        and (b[4] is not None or any(BELOFTE_RE.match(x) for x in b[2].split("\n")[b[6] :]))
     )
 
     fouten = [f for b in te_compileren if (f := compileer(b[0], b[1], b[2]))]
     with ThreadPoolExecutor(max_workers=8) as pool:
-        resultaten = pool.map(lambda b: draai(b[0], b[1], b[2], b[4], b[5]), te_draaien)
+        resultaten = pool.map(lambda b: draai(b[0], b[1], b[2], b[4], b[5], b[6]), te_draaien)
         fouten += [f for f in resultaten if f]
         fouten += [f for f in pool.map(controleer_claim, claims) if f]
 
