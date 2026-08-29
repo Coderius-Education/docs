@@ -3,6 +3,55 @@
 
 import CodeEditor from '@site/src/components/CodeEditor';
 
+export const startHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>CSS Grid</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="galerij">
+    <div class="cel">1</div>
+    <div class="cel">2</div>
+    <div class="cel">3</div>
+    <div class="cel">4</div>
+    <div class="cel">5</div>
+    <div class="cel">6</div>
+  </div>
+</body>
+</html>`;
+
+export const startCss = `.galerij {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  padding: 10px;
+}
+
+.cel {
+  background-color: #4a90e2;
+  color: white;
+  text-align: center;
+  padding: 40px;
+  font-size: 2rem;
+}`;
+
+export const makeHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>CSS Grid</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Bouw hier je pagina -->
+</body>
+</html>`;
+
+export const makeCss = `/* Schrijf hier je stijl */
+`;
+
 # CSS Grid
 
 ## Wat ga je leren?
@@ -74,38 +123,8 @@ Drie kolommen, dus de zes items vormen automatisch **twee rijen van drie**. CSS 
 ## Probeer het zelf.
 
 <CodeEditor
-  initialHtml={`<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>CSS Grid</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div class="galerij">
-    <div class="cel">1</div>
-    <div class="cel">2</div>
-    <div class="cel">3</div>
-    <div class="cel">4</div>
-    <div class="cel">5</div>
-    <div class="cel">6</div>
-  </div>
-</body>
-</html>`}
-  initialCss={`.galerij {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 10px;
-  padding: 10px;
-}
-
-.cel {
-  background-color: #4a90e2;
-  color: white;
-  text-align: center;
-  padding: 40px;
-  font-size: 2rem;
-}`}
+  initialHtml={startHtml}
+  initialCss={startCss}
   height="500px"
 />
 
@@ -121,6 +140,12 @@ Experimenteer:
 ## Modify
 
 **Opdracht:** Maak de eerste cel zo breed dat hij **alle drie de kolommen** vult (als een header bovenaan).
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  height="500px"
+/>
 
 <details>
 <summary>Tip</summary>
@@ -144,6 +169,12 @@ Gebruik `grid-column: 1 / -1` (van eerste tot laatste lijn) op de eerste cel. Of
 ## Make
 
 **Opdracht:** Bouw een eenvoudig dashboard-rooster: een brede header bovenaan (3 kolommen breed), daaronder een sidebar (1 kolom) naast de hoofdinhoud (2 kolommen), en een footer onderaan (3 kolommen breed).
+
+<CodeEditor
+  initialHtml={makeHtml}
+  initialCss={makeCss}
+  height="500px"
+/>
 
 <details>
 <summary>Tip</summary>

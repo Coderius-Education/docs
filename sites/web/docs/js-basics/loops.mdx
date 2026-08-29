@@ -3,6 +3,47 @@
 
 import CodeEditor from '@site/src/components/CodeEditor';
 
+export const startHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Loops</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <button onclick="toonTafel()">Toon tafel van 5</button>
+  <p id="uitvoer"></p>
+</body>
+</html>`;
+
+export const startCss = `button { padding: 10px 20px; font-size: 1rem; cursor: pointer; }
+#uitvoer { margin-top: 20px; white-space: pre-line; font-family: monospace; }`;
+
+export const startJs = `function toonTafel() {
+  let resultaat = '';
+  for (let i = 1; i <= 10; i++) {
+    resultaat = resultaat + '5 × ' + i + ' = ' + (5 * i) + '\\n';
+  }
+  document.getElementById('uitvoer').textContent = resultaat;
+}`;
+
+export const makeHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Loops</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <button onclick="aftellen()">Start het aftellen</button>
+</body>
+</html>`;
+
+export const makeJs = `// Schrijf hier je code
+`;
+
 # Loops
 
 ## Wat ga je leren?
@@ -74,28 +115,9 @@ De loop begint bij `i = 0`, herhaalt zolang `i < 3` waar is, dus 0, 1 en 2. Bij 
 ## Probeer het zelf.
 
 <CodeEditor
-  initialHtml={`<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>Loops</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
-</head>
-<body>
-  <button onclick="toonTafel()">Toon tafel van 5</button>
-  <p id="uitvoer"></p>
-</body>
-</html>`}
-  initialCss={`button { padding: 10px 20px; font-size: 1rem; cursor: pointer; }
-#uitvoer { margin-top: 20px; white-space: pre-line; font-family: monospace; }`}
-  initialJs={`function toonTafel() {
-  let resultaat = '';
-  for (let i = 1; i <= 10; i++) {
-    resultaat = resultaat + '5 × ' + i + ' = ' + (5 * i) + '\\n';
-  }
-  document.getElementById('uitvoer').textContent = resultaat;
-}`}
+  initialHtml={startHtml}
+  initialCss={startCss}
+  initialJs={startJs}
   height="500px"
   livePreview={false}
 />
@@ -112,6 +134,14 @@ Experimenteer:
 ## Modify
 
 **Opdracht:** Pas de loop aan zodat alleen de **even** producten worden getoond (2, 4, 6...).
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  initialJs={startJs}
+  height="500px"
+  livePreview={false}
+/>
 
 <details>
 <summary>Tip</summary>
@@ -144,6 +174,14 @@ for (let i = 1; i <= 10; i++) {
 ## Make
 
 **Opdracht:** Bouw een **aftel-functie** die telt van 10 naar 1 in de console, en daarna "Lift-off." toont. Gebruik een loop.
+
+<CodeEditor
+  initialHtml={makeHtml}
+  initialCss={startCss}
+  initialJs={makeJs}
+  height="500px"
+  livePreview={false}
+/>
 
 <details>
 <summary>Tip</summary>

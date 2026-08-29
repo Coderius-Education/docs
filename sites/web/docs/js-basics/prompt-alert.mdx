@@ -3,6 +3,47 @@
 
 import CodeEditor from '@site/src/components/CodeEditor';
 
+export const startHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Prompt &amp; alert</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <button onclick="vraagNaam()">Vraag mijn naam</button>
+  <p id="uitvoer"></p>
+</body>
+</html>`;
+
+export const startCss = `button { padding: 10px 20px; font-size: 1rem; cursor: pointer; }
+#uitvoer { margin-top: 20px; font-size: 1.3rem; color: darkgreen; }`;
+
+export const startJs = `function vraagNaam() {
+  const naam = prompt('Hoe heet je?');
+  if (naam) {
+    alert('Hallo ' + naam + '!');
+    document.getElementById('uitvoer').textContent = 'Welkom, ' + naam + '.';
+  }
+}`;
+
+export const makeHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Prompt &amp; alert</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <button onclick="startQuiz()">Start de quiz</button>
+</body>
+</html>`;
+
+export const makeJs = `// Schrijf hier je code
+`;
+
 # prompt en alert
 
 ## Wat ga je leren?
@@ -60,28 +101,9 @@ console.log(leeftijd + 4);
 ## Probeer het zelf.
 
 <CodeEditor
-  initialHtml={`<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>Prompt &amp; alert</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
-</head>
-<body>
-  <button onclick="vraagNaam()">Vraag mijn naam</button>
-  <p id="uitvoer"></p>
-</body>
-</html>`}
-  initialCss={`button { padding: 10px 20px; font-size: 1rem; cursor: pointer; }
-#uitvoer { margin-top: 20px; font-size: 1.3rem; color: darkgreen; }`}
-  initialJs={`function vraagNaam() {
-  const naam = prompt('Hoe heet je?');
-  if (naam) {
-    alert('Hallo ' + naam + '!');
-    document.getElementById('uitvoer').textContent = 'Welkom, ' + naam + '.';
-  }
-}`}
+  initialHtml={startHtml}
+  initialCss={startCss}
+  initialJs={startJs}
   height="380px"
   livePreview={false}
 />
@@ -97,6 +119,14 @@ Experimenteer:
 ## Modify
 
 **Opdracht:** Vraag de gebruiker om twee getallen en toon de som in een `alert`.
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  initialJs={startJs}
+  height="380px"
+  livePreview={false}
+/>
 
 <details>
 <summary>Tip</summary>
@@ -121,6 +151,14 @@ function telOp() {
 ## Make
 
 **Opdracht:** Bouw een mini-quiz. Stel via `prompt` een vraag met meerdere mogelijke antwoorden (bijv. "Wat is de hoofdstad van Nederland?"). Vergelijk het antwoord met het juiste antwoord en geef via `alert` feedback ("Goed." of "Fout, het was..."). Tip: gebruik `.toLowerCase()` om hoofdletters te negeren.
+
+<CodeEditor
+  initialHtml={makeHtml}
+  initialCss={startCss}
+  initialJs={makeJs}
+  height="380px"
+  livePreview={false}
+/>
 
 <details>
 <summary>Tip</summary>

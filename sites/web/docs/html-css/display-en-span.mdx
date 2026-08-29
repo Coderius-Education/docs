@@ -3,6 +3,66 @@
 
 import CodeEditor from '@site/src/components/CodeEditor';
 
+export const startHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Display & span</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Block en inline</h1>
+
+  <p>
+    Een <span class="highlight">gemarkeerd woord</span> staat
+    in de tekstregel. Een <b>vetgedrukt</b> woord ook.
+  </p>
+
+  <p>Deze paragraaf is een block — vult de hele breedte.</p>
+
+  <div class="kader">Dit is een div (block).</div>
+
+  <a href="#" class="knop">Knop-link</a>
+  <a href="#" class="knop">Tweede knop</a>
+</body>
+</html>`;
+
+export const startCss = `.highlight {
+  background-color: yellow;
+  color: darkred;
+  padding: 2px 6px;
+}
+
+.kader {
+  background-color: #eef;
+  padding: 10px;
+  margin: 10px 0;
+}
+
+.knop {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: dodgerblue;
+  color: white;
+  text-decoration: none;
+  margin-right: 8px;
+}`;
+
+export const makeHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Display & span</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Bouw hier je pagina -->
+</body>
+</html>`;
+
+export const makeCss = `/* Schrijf hier je stijl */
+`;
+
 # Display & `<span>`
 
 ## Wat ga je leren?
@@ -63,49 +123,8 @@ De `<span>` gaat zich gedragen als een blok — hij begint op een nieuwe regel e
 ## Probeer het zelf.
 
 <CodeEditor
-  initialHtml={`<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>Display & span</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <h1>Block en inline</h1>
-
-  <p>
-    Een <span class="highlight">gemarkeerd woord</span> staat
-    in de tekstregel. Een <b>vetgedrukt</b> woord ook.
-  </p>
-
-  <p>Deze paragraaf is een block — vult de hele breedte.</p>
-
-  <div class="kader">Dit is een div (block).</div>
-
-  <a href="#" class="knop">Knop-link</a>
-  <a href="#" class="knop">Tweede knop</a>
-</body>
-</html>`}
-  initialCss={`.highlight {
-  background-color: yellow;
-  color: darkred;
-  padding: 2px 6px;
-}
-
-.kader {
-  background-color: #eef;
-  padding: 10px;
-  margin: 10px 0;
-}
-
-.knop {
-  display: inline-block;
-  padding: 8px 16px;
-  background-color: dodgerblue;
-  color: white;
-  text-decoration: none;
-  margin-right: 8px;
-}`}
+  initialHtml={startHtml}
+  initialCss={startCss}
   height="540px"
 />
 
@@ -121,6 +140,12 @@ Experimenteer:
 ## Modify
 
 **Opdracht:** Maak in een paragraaf drie verschillende stukjes tekst gekleurd door ze in `<span>` te zetten met een eigen klasse: één rood, één blauw, één met gele achtergrond.
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  height="540px"
+/>
 
 <details>
 <summary>Tip</summary>
@@ -151,6 +176,12 @@ Drie `<span>`'s met drie verschillende klasses. In CSS drie aparte regels (`.roo
 ## Make
 
 **Opdracht:** Bouw een navigatiebalk waarin de links **náást elkaar** staan met padding eromheen (alsof het knoppen zijn). Gebruik geen Flexbox — alleen `display: inline-block`.
+
+<CodeEditor
+  initialHtml={makeHtml}
+  initialCss={makeCss}
+  height="540px"
+/>
 
 <details>
 <summary>Tip</summary>

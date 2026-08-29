@@ -13,6 +13,9 @@ const MASKERS = [
   // code (`if a > b:`) sluit anders die tag af en de rest van het blok komt
   // alsnog als proza binnen.
   /=\{`[\s\S]*?`\}/g, // <PygbagRunner code={`…`} />
+  // MDX-exports met startcode (web-docs hoist die naar de kop van de pagina,
+  // zodat drie velden dezelfde literal delen): ook code, geen lestekst.
+  /export const \w+ = `[\s\S]*?`;/g,
   /\{`[\s\S]*?`\}/g, // <CodeExercise>{`…`}</CodeExercise>
   /`[^`\n]*`/g, // inline code
   /<[^>]*>/g, // losse JSX- en HTML-tags

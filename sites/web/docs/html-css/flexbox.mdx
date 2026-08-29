@@ -3,6 +3,52 @@
 
 import CodeEditor from '@site/src/components/CodeEditor';
 
+export const startHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Flexbox</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="item">1</div>
+    <div class="item">2</div>
+    <div class="item">3</div>
+  </div>
+</body>
+</html>`;
+
+export const startCss = `.container {
+  display: flex;
+  gap: 10px;
+  background-color: #eee;
+  padding: 10px;
+}
+
+.item {
+  background-color: #4a90e2;
+  color: white;
+  padding: 30px;
+  font-size: 1.5rem;
+  text-align: center;
+}`;
+
+export const makeHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Flexbox</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Bouw hier je pagina -->
+</body>
+</html>`;
+
+export const makeCss = `/* Schrijf hier je stijl */
+`;
+
 # Flexbox
 
 <CodeOrg slug="flexbox" />
@@ -46,35 +92,8 @@ De items komen **onder elkaar** te staan, in plaats van naast elkaar. `column` v
 ## Probeer het zelf.
 
 <CodeEditor
-  initialHtml={`<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>Flexbox</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div class="container">
-    <div class="item">1</div>
-    <div class="item">2</div>
-    <div class="item">3</div>
-  </div>
-</body>
-</html>`}
-  initialCss={`.container {
-  display: flex;
-  gap: 10px;
-  background-color: #eee;
-  padding: 10px;
-}
-
-.item {
-  background-color: #4a90e2;
-  color: white;
-  padding: 30px;
-  font-size: 1.5rem;
-  text-align: center;
-}`}
+  initialHtml={startHtml}
+  initialCss={startCss}
   height="480px"
 />
 
@@ -90,6 +109,12 @@ Experimenteer met de CSS:
 ## Modify
 
 **Opdracht:** Centreer de items horizontaal én voeg een vierde item toe.
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  height="480px"
+/>
 
 <details>
 <summary>Tip</summary>
@@ -122,6 +147,12 @@ HTML toevoeging:
 ## Make
 
 **Opdracht:** Bouw een standaard header-balk voor een website. Maak een flex-container (een `<div>` met de klasse `topbar`) met daarin twee onderdelen: een logo (een `<h1>`) en een menu (een `<div>` met wat links erin). Gebruik Flexbox om het logo links te zetten en het menu rechts, en centreer ze verticaal.
+
+<CodeEditor
+  initialHtml={makeHtml}
+  initialCss={makeCss}
+  height="480px"
+/>
 
 <details>
 <summary>Tip</summary>

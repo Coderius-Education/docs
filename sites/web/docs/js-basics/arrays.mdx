@@ -3,6 +3,52 @@
 
 import CodeEditor from '@site/src/components/CodeEditor';
 
+export const startHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Arrays</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <button onclick="toonNamen()">Toon namen</button>
+  <ul id="lijst"></ul>
+</body>
+</html>`;
+
+export const startCss = `button { padding: 10px 20px; font-size: 1rem; cursor: pointer; }
+ul { font-size: 1.2rem; }`;
+
+export const startJs = `function toonNamen() {
+  const namen = ['Anna', 'Bram', 'Chris', 'Daan'];
+  const lijst = document.getElementById('lijst');
+  lijst.innerHTML = '';
+
+  for (let i = 0; i < namen.length; i++) {
+    lijst.innerHTML = lijst.innerHTML + '<li>' + namen[i] + '</li>';
+  }
+
+  console.log('Totaal: ' + namen.length + ' namen');
+}`;
+
+export const makeHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Arrays</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <h2>Waar eten we vanavond?</h2>
+  <div id="opties"></div>
+</body>
+</html>`;
+
+export const makeJs = `// Schrijf hier je code
+`;
+
 # Arrays
 
 ## Wat ga je leren?
@@ -84,32 +130,9 @@ console.log(cijfers.length);
 ## Probeer het zelf.
 
 <CodeEditor
-  initialHtml={`<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>Arrays</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
-</head>
-<body>
-  <button onclick="toonNamen()">Toon namen</button>
-  <ul id="lijst"></ul>
-</body>
-</html>`}
-  initialCss={`button { padding: 10px 20px; font-size: 1rem; cursor: pointer; }
-ul { font-size: 1.2rem; }`}
-  initialJs={`function toonNamen() {
-  const namen = ['Anna', 'Bram', 'Chris', 'Daan'];
-  const lijst = document.getElementById('lijst');
-  lijst.innerHTML = '';
-
-  for (let i = 0; i < namen.length; i++) {
-    lijst.innerHTML = lijst.innerHTML + '<li>' + namen[i] + '</li>';
-  }
-
-  console.log('Totaal: ' + namen.length + ' namen');
-}`}
+  initialHtml={startHtml}
+  initialCss={startCss}
+  initialJs={startJs}
   height="460px"
   livePreview={false}
 />
@@ -126,6 +149,14 @@ Experimenteer:
 ## Modify
 
 **Opdracht:** Voeg na de lijst-loop een tweede loop toe die alleen de namen toont die met een **B** beginnen.
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  initialJs={startJs}
+  height="460px"
+  livePreview={false}
+/>
 
 <details>
 <summary>Tip</summary>
@@ -152,6 +183,14 @@ document.body.appendChild(bnamen);
 ## Make
 
 **Opdracht:** Bouw een mini-stemtool. Maak een array van drie opties (bijv. `['Pizza', 'Pasta', 'Salade']`) en toon ze als knoppen. Als de gebruiker op een knop klikt, toon dan een `alert` met "Je koos: [optie]".
+
+<CodeEditor
+  initialHtml={makeHtml}
+  initialCss={startCss}
+  initialJs={makeJs}
+  height="460px"
+  livePreview={false}
+/>
 
 <details>
 <summary>Tip</summary>

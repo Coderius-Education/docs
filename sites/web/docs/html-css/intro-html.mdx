@@ -3,6 +3,30 @@
 
 import CodeEditor from '@site/src/components/CodeEditor';
 
+export const startHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Mijn eerste pagina</title>
+</head>
+<body>
+  <h1>Hallo wereld!</h1>
+  <p>Dit is mijn eerste webpagina.</p>
+  <p>HTML is <b>niet</b> zo moeilijk.</p>
+</body>
+</html>`;
+
+export const makeHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Mijn eerste pagina</title>
+</head>
+<body>
+  <!-- Bouw hier je pagina -->
+</body>
+</html>`;
+
 # Intro tot HTML
 
 <CodeOrg slug="intro-html" />
@@ -83,18 +107,7 @@ De tekst "Hallo." wordt **vetgedrukt** weergegeven. De tag `<b>` staat voor *bol
 De editor hieronder bevat een complete HTML-pagina. Bekijk de code en de preview aan de rechterkant.
 
 <CodeEditor
-  initialHtml={`<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>Mijn eerste pagina</title>
-</head>
-<body>
-  <h1>Hallo wereld!</h1>
-  <p>Dit is mijn eerste webpagina.</p>
-  <p>HTML is <b>niet</b> zo moeilijk.</p>
-</body>
-</html>`}
+  initialHtml={startHtml}
   height="460px"
 />
 
@@ -109,6 +122,11 @@ Experimenteer met de code in de editor:
 ## Modify
 
 **Opdracht:** Voeg een tweede paragraaf toe aan de pagina met jouw naam erin.
+
+<CodeEditor
+  initialHtml={startHtml}
+  height="460px"
+/>
 
 <details>
 <summary>Tip</summary>
@@ -131,6 +149,11 @@ Voeg dit toe tussen de laatste `</p>` en `</body>`.
 ## Make
 
 **Opdracht:** Bouw een simpele webpagina over jouw huisdier of favoriete dier. Gebruik een `<h1>` voor de naam van het dier en minimaal twee `<p>` attributen voor informatie of een leuk weetje.
+
+<CodeEditor
+  initialHtml={makeHtml}
+  height="460px"
+/>
 
 <details>
 <summary>Tip</summary>

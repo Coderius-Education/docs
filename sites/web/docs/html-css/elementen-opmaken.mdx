@@ -3,6 +3,46 @@
 
 import CodeEditor from '@site/src/components/CodeEditor';
 
+export const startHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Ruimte rond elementen</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div>
+    <h2>Mijn blok</h2>
+    <p>Dit is een blok met padding en margin.</p>
+  </div>
+  <div>
+    <h2>Tweede blok</h2>
+    <p>Tussen de blokken zit margin-ruimte.</p>
+  </div>
+</body>
+</html>`;
+
+export const startCss = `div {
+  background-color: #f0f4ff;
+  padding: 20px;
+  margin: 20px;
+}`;
+
+export const makeHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Ruimte rond elementen</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Bouw hier je pagina -->
+</body>
+</html>`;
+
+export const makeCss = `/* Schrijf hier je stijl */
+`;
+
 # Ruimte rond elementen
 
 <CodeOrg slug="elementen-opmaken" />
@@ -57,29 +97,8 @@ De tekst raakt direct de rand van de gekleurde achtergrond. Zonder padding is er
 ## Probeer het zelf.
 
 <CodeEditor
-  initialHtml={`<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>Ruimte rond elementen</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div>
-    <h2>Mijn blok</h2>
-    <p>Dit is een blok met padding en margin.</p>
-  </div>
-  <div>
-    <h2>Tweede blok</h2>
-    <p>Tussen de blokken zit margin-ruimte.</p>
-  </div>
-</body>
-</html>`}
-  initialCss={`div {
-  background-color: #f0f4ff;
-  padding: 20px;
-  margin: 20px;
-}`}
+  initialHtml={startHtml}
+  initialCss={startCss}
   height="480px"
 />
 
@@ -95,6 +114,12 @@ Experimenteer met de CSS:
 ## Modify
 
 **Opdracht:** Geef de blokken een lichtgele achtergrond en vergroot de padding zodat er meer ademruimte is.
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  height="480px"
+/>
 
 <details>
 <summary>Tip</summary>
@@ -119,6 +144,12 @@ div {
 ## Make
 
 **Opdracht:** Bouw twee "kaartjes" onder elkaar. Elk kaartje is een `<div>` met een kop en een paragraaf. Gebruik `background-color`, `padding` en `margin` om ze er rustig en goed verdeeld uit te laten zien.
+
+<CodeEditor
+  initialHtml={makeHtml}
+  initialCss={makeCss}
+  height="480px"
+/>
 
 <details>
 <summary>Tip</summary>

@@ -3,6 +3,65 @@
 
 import CodeEditor from '@site/src/components/CodeEditor';
 
+export const startHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>If / else</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <p id="uitvoer">Klik op de knop om je cijfer te zien.</p>
+  <button onclick="bepaalCijfer()">Bepaal cijfer</button>
+</body>
+</html>`;
+
+export const startCss = `p {
+  font-size: 1.4rem;
+  padding: 12px;
+}
+
+button {
+  padding: 8px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+}`;
+
+export const startJs = `function bepaalCijfer() {
+  const score = 75;
+  let cijfer;
+
+  if (score >= 90) {
+    cijfer = 'A';
+  } else if (score >= 70) {
+    cijfer = 'B';
+  } else if (score >= 50) {
+    cijfer = 'C';
+  } else {
+    cijfer = 'Onvoldoende';
+  }
+
+  document.getElementById('uitvoer').textContent = 'Score: ' + score + ' → ' + cijfer;
+}`;
+
+export const makeHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>If / else</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <p id="advies">Klik op de knop voor het advies.</p>
+  <button onclick="geefAdvies()">Geef advies</button>
+</body>
+</html>`;
+
+export const makeJs = `// Schrijf hier je code
+`;
+
 # Beslissingen met if/else
 
 ## Wat ga je leren?
@@ -77,45 +136,9 @@ if (leeftijd >= 18) {
 ## Probeer het zelf.
 
 <CodeEditor
-  initialHtml={`<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>If / else</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
-</head>
-<body>
-  <p id="uitvoer">Klik op de knop om je cijfer te zien.</p>
-  <button onclick="bepaalCijfer()">Bepaal cijfer</button>
-</body>
-</html>`}
-  initialCss={`p {
-  font-size: 1.4rem;
-  padding: 12px;
-}
-
-button {
-  padding: 8px 16px;
-  font-size: 1rem;
-  cursor: pointer;
-}`}
-  initialJs={`function bepaalCijfer() {
-  const score = 75;
-  let cijfer;
-
-  if (score >= 90) {
-    cijfer = 'A';
-  } else if (score >= 70) {
-    cijfer = 'B';
-  } else if (score >= 50) {
-    cijfer = 'C';
-  } else {
-    cijfer = 'Onvoldoende';
-  }
-
-  document.getElementById('uitvoer').textContent = 'Score: ' + score + ' → ' + cijfer;
-}`}
+  initialHtml={startHtml}
+  initialCss={startCss}
+  initialJs={startJs}
   height="540px"
   livePreview={false}
 />
@@ -132,6 +155,14 @@ Experimenteer:
 ## Modify
 
 **Opdracht:** Voeg een grens toe voor `score >= 30` die `'Bijna'` als waarde teruggeeft. Onder de 30 blijft het `'Onvoldoende'`.
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  initialJs={startJs}
+  height="540px"
+  livePreview={false}
+/>
 
 <details>
 <summary>Tip</summary>
@@ -162,6 +193,14 @@ if (score >= 90) {
 ## Make
 
 **Opdracht:** Bouw een "weer-adviseur". Sla een temperatuur op in een variabele en toon een passend advies:
+
+<CodeEditor
+  initialHtml={makeHtml}
+  initialCss={startCss}
+  initialJs={makeJs}
+  height="540px"
+  livePreview={false}
+/>
 
 - Boven 25 graden: "Het is heet — drink water."
 - Tussen 15 en 25: "Lekker weer."

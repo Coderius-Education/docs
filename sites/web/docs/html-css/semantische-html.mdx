@@ -3,6 +3,70 @@
 
 import CodeEditor from '@site/src/components/CodeEditor';
 
+export const startHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Semantische HTML</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Mijn Blog</h1>
+    <nav>
+      <a href="#">Home</a> |
+      <a href="#">Over</a> |
+      <a href="#">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <article>
+      <h2>Mijn eerste post</h2>
+      <p>Welkom op mijn blog! Dit is mijn eerste bericht.</p>
+    </article>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 — Mijn Blog</p>
+  </footer>
+</body>
+</html>`;
+
+export const startCss = `header {
+  background-color: #f0f4ff;
+  padding: 20px;
+}
+
+nav {
+  margin-top: 10px;
+}
+
+main {
+  padding: 20px;
+}
+
+footer {
+  background-color: #eee;
+  padding: 10px;
+  text-align: center;
+}`;
+
+export const makeHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Semantische HTML</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Bouw hier je pagina -->
+</body>
+</html>`;
+
+export const makeCss = `/* Schrijf hier je stijl */
+`;
+
 # Semantische HTML
 
 ## Wat ga je leren?
@@ -51,53 +115,8 @@ Visueel is er **geen verschil** — beide tonen gewoon "Hoofdmenu". Maar voor sc
 ## Probeer het zelf.
 
 <CodeEditor
-  initialHtml={`<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>Semantische HTML</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <header>
-    <h1>Mijn Blog</h1>
-    <nav>
-      <a href="#">Home</a> |
-      <a href="#">Over</a> |
-      <a href="#">Contact</a>
-    </nav>
-  </header>
-
-  <main>
-    <article>
-      <h2>Mijn eerste post</h2>
-      <p>Welkom op mijn blog! Dit is mijn eerste bericht.</p>
-    </article>
-  </main>
-
-  <footer>
-    <p>&copy; 2025 — Mijn Blog</p>
-  </footer>
-</body>
-</html>`}
-  initialCss={`header {
-  background-color: #f0f4ff;
-  padding: 20px;
-}
-
-nav {
-  margin-top: 10px;
-}
-
-main {
-  padding: 20px;
-}
-
-footer {
-  background-color: #eee;
-  padding: 10px;
-  text-align: center;
-}`}
+  initialHtml={startHtml}
+  initialCss={startCss}
   height="540px"
 />
 
@@ -112,6 +131,12 @@ Experimenteer:
 ## Modify
 
 **Opdracht:** Voeg een `<section>` toe binnen `<main>`, tussen `<header>` en `<article>`, met een korte intro-tekst over jouw blog.
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  height="540px"
+/>
 
 <details>
 <summary>Tip</summary>
@@ -142,6 +167,12 @@ Een `<section>` lijkt op een `<article>` maar is bedoeld voor een onderdeel dat 
 ## Make
 
 **Opdracht:** Bouw de skeletten van een eigen homepagina met `<header>`, `<nav>`, `<main>` en `<footer>`. Vul ze met je eigen inhoud (naam, korte intro, contactgegevens).
+
+<CodeEditor
+  initialHtml={makeHtml}
+  initialCss={makeCss}
+  height="540px"
+/>
 
 <details>
 <summary>Tip</summary>

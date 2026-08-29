@@ -3,6 +3,59 @@
 
 import CodeEditor from '@site/src/components/CodeEditor';
 
+export const startHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Media queries</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="kaart">
+    <h2>Sleep de preview-rand om het effect te zien</h2>
+    <p>Maak het preview-venster smaller of breder en kijk wat er verandert.</p>
+  </div>
+</body>
+</html>`;
+
+export const startCss = `.kaart {
+  background-color: lightblue;
+  padding: 40px;
+  width: 80%;
+  margin: 20px auto;
+}
+
+.kaart h2 {
+  font-size: 2rem;
+}
+
+@media (max-width: 500px) {
+  .kaart {
+    background-color: lightcoral;
+    padding: 10px;
+    width: 100%;
+  }
+
+  .kaart h2 {
+    font-size: 1.2rem;
+  }
+}`;
+
+export const makeHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Media queries</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Bouw hier je pagina -->
+</body>
+</html>`;
+
+export const makeCss = `/* Schrijf hier je stijl */
+`;
+
 # Media queries
 
 ## Wat ga je leren?
@@ -71,42 +124,8 @@ Op brede schermen is `.titel` 3rem groot (zo'n 48px). Zodra je het venster onder
 ## Probeer het zelf.
 
 <CodeEditor
-  initialHtml={`<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>Media queries</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div class="kaart">
-    <h2>Sleep de preview-rand om het effect te zien</h2>
-    <p>Maak het preview-venster smaller of breder en kijk wat er verandert.</p>
-  </div>
-</body>
-</html>`}
-  initialCss={`.kaart {
-  background-color: lightblue;
-  padding: 40px;
-  width: 80%;
-  margin: 20px auto;
-}
-
-.kaart h2 {
-  font-size: 2rem;
-}
-
-@media (max-width: 500px) {
-  .kaart {
-    background-color: lightcoral;
-    padding: 10px;
-    width: 100%;
-  }
-
-  .kaart h2 {
-    font-size: 1.2rem;
-  }
-}`}
+  initialHtml={startHtml}
+  initialCss={startCss}
   height="540px"
 />
 
@@ -125,6 +144,12 @@ Experimenteer:
 ## Modify
 
 **Opdracht:** Voeg een tweede breekpunt toe op `max-width: 320px` (heel smal mobiel) waarbij de tekst over één regel verdeeld wordt en de padding nóg kleiner is.
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  height="540px"
+/>
 
 <details>
 <summary>Tip</summary>
@@ -152,6 +177,12 @@ Stapel meerdere `@media`-regels onder elkaar. Ze kunnen elkaar overschrijven —
 ## Make
 
 **Opdracht:** Bouw een navigatie van drie links. Op brede schermen staan ze **naast** elkaar (Flexbox `row`). Op smalle schermen (< 600px) staan ze **onder** elkaar (`column`).
+
+<CodeEditor
+  initialHtml={makeHtml}
+  initialCss={makeCss}
+  height="540px"
+/>
 
 <details>
 <summary>Tip</summary>

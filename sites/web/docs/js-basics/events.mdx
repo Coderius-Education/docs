@@ -3,6 +3,56 @@
 
 import CodeEditor from '@site/src/components/CodeEditor';
 
+export const startHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Events</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <button id="knop">Beweeg je muis!</button>
+  <p id="status">Wachten op een event...</p>
+</body>
+</html>`;
+
+export const startCss = `button {
+  padding: 12px 24px;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+p {
+  margin-top: 16px;
+  font-size: 1.2rem;
+}`;
+
+export const startJs = `document.getElementById('knop').addEventListener('mouseover', function() {
+  document.getElementById('status').textContent = 'Muis erop!';
+});
+
+document.getElementById('knop').addEventListener('mouseout', function() {
+  document.getElementById('status').textContent = 'Muis weg.';
+});`;
+
+export const makeHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Events</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <button id="knop">Klik mij</button>
+  <p id="teller">Aantal klikken: 0</p>
+</body>
+</html>`;
+
+export const makeJs = `// Schrijf hier je code
+`;
+
 # Events
 
 ## Wat ga je leren?
@@ -72,36 +122,9 @@ Als de muis de knop raakt, verandert de tekst in de `<p>` naar "Muis erop." via 
 ## Probeer het zelf.
 
 <CodeEditor
-  initialHtml={`<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>Events</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
-</head>
-<body>
-  <button id="knop">Beweeg je muis!</button>
-  <p id="status">Wachten op een event...</p>
-</body>
-</html>`}
-  initialCss={`button {
-  padding: 12px 24px;
-  font-size: 1.1rem;
-  cursor: pointer;
-}
-
-p {
-  margin-top: 16px;
-  font-size: 1.2rem;
-}`}
-  initialJs={`document.getElementById('knop').addEventListener('mouseover', function() {
-  document.getElementById('status').textContent = 'Muis erop!';
-});
-
-document.getElementById('knop').addEventListener('mouseout', function() {
-  document.getElementById('status').textContent = 'Muis weg.';
-});`}
+  initialHtml={startHtml}
+  initialCss={startCss}
+  initialJs={startJs}
   height="480px"
   livePreview={false}
 />
@@ -117,6 +140,14 @@ Experimenteer:
 ## Modify
 
 **Opdracht:** Voeg een `'click'` event toe dat een teller bijhoudt en toont hoe vaak er is geklikt.
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  initialJs={startJs}
+  height="480px"
+  livePreview={false}
+/>
 
 <details>
 <summary>Tip</summary>
@@ -142,6 +173,14 @@ document.getElementById('knop').addEventListener('click', function() {
 ## Make
 
 **Opdracht:** Bouw een klik-counter. Eén knop, één paragraaf. Bij elke klik telt de teller met 1 omhoog en toon je het aantal in de paragraaf.
+
+<CodeEditor
+  initialHtml={makeHtml}
+  initialCss={startCss}
+  initialJs={makeJs}
+  height="480px"
+  livePreview={false}
+/>
 
 <details>
 <summary>Tip</summary>

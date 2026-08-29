@@ -3,6 +3,45 @@
 
 import CodeEditor from '@site/src/components/CodeEditor';
 
+export const startHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>CSS Klassen</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>CSS Klassen</h1>
+  <p>Gewone paragraaf — geen klasse.</p>
+  <p class="rood">Alleen de klasse "rood".</p>
+  <p class="groot">Alleen de klasse "groot".</p>
+  <p class="rood groot">Beide klassen tegelijk.</p>
+</body>
+</html>`;
+
+export const startCss = `.rood {
+  color: red;
+}
+
+.groot {
+  font-size: 1.8rem;
+}`;
+
+export const makeHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>CSS Klassen</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Bouw hier je pagina -->
+</body>
+</html>`;
+
+export const makeCss = `/* Schrijf hier je stijl */
+`;
+
 # CSS Klassen
 
 <CodeOrg slug="css-klassen" />
@@ -76,28 +115,8 @@ Beide stijlen worden **gecombineerd**: de tekst wordt zowel rood als groot. CSS 
 ## Probeer het zelf.
 
 <CodeEditor
-  initialHtml={`<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>CSS Klassen</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <h1>CSS Klassen</h1>
-  <p>Gewone paragraaf — geen klasse.</p>
-  <p class="rood">Alleen de klasse "rood".</p>
-  <p class="groot">Alleen de klasse "groot".</p>
-  <p class="rood groot">Beide klassen tegelijk.</p>
-</body>
-</html>`}
-  initialCss={`.rood {
-  color: red;
-}
-
-.groot {
-  font-size: 1.8rem;
-}`}
+  initialHtml={startHtml}
+  initialCss={startCss}
   height="480px"
 />
 
@@ -112,6 +131,12 @@ Experimenteer:
 ## Modify
 
 **Opdracht:** Maak een nieuwe klasse `.gemarkeerd` die een gele achtergrond geeft. Pas het toe op de tweede paragraaf.
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  height="480px"
+/>
 
 <details>
 <summary>Tip</summary>
@@ -145,6 +170,12 @@ Of met meerdere klassen:
 ## Make
 
 **Opdracht:** Maak een prijzenlijst of feature-lijst met 3 items (bijvoorbeeld in 3 verschillende `<div>` elementen). Geef ze allemaal een standaard uiterlijk via hun HTML-tag. Geef vervolgens één van de items de klasse `class="premium"` en zorg ervoor dat deze via CSS een opvallende achtergrondkleur en rand krijgt.
+
+<CodeEditor
+  initialHtml={makeHtml}
+  initialCss={makeCss}
+  height="480px"
+/>
 
 <details>
 <summary>Tip</summary>

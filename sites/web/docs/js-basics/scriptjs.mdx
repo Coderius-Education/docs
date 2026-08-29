@@ -3,6 +3,54 @@
 
 import CodeEditor from '@site/src/components/CodeEditor';
 
+export const startHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>script.js</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <p id="bericht">Klik op de knop.</p>
+  <button onclick="verander()">Klik mij</button>
+</body>
+</html>`;
+
+export const startCss = `p {
+  font-size: 1.3rem;
+  padding: 12px;
+}
+
+button {
+  padding: 8px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+}`;
+
+export const startJs = `function verander() {
+  document.getElementById('bericht').textContent = 'Geklikt via script.js!';
+  console.log('De knop is geklikt.');
+}`;
+
+export const makeHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>script.js</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <button id="start">Start</button>
+  <button id="stop">Stop</button>
+  <p id="status"></p>
+</body>
+</html>`;
+
+export const makeJs = `// Schrijf hier je code
+`;
+
 # script.js
 
 ## Wat ga je leren?
@@ -50,33 +98,9 @@ Zonder `defer` wordt `script.js` uitgevoerd zodra de browser de `<script>`-tag t
 ## Probeer het zelf.
 
 <CodeEditor
-  initialHtml={`<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>script.js</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
-</head>
-<body>
-  <p id="bericht">Klik op de knop.</p>
-  <button onclick="verander()">Klik mij</button>
-</body>
-</html>`}
-  initialCss={`p {
-  font-size: 1.3rem;
-  padding: 12px;
-}
-
-button {
-  padding: 8px 16px;
-  font-size: 1rem;
-  cursor: pointer;
-}`}
-  initialJs={`function verander() {
-  document.getElementById('bericht').textContent = 'Geklikt via script.js!';
-  console.log('De knop is geklikt.');
-}`}
+  initialHtml={startHtml}
+  initialCss={startCss}
+  initialJs={startJs}
   height="500px"
   livePreview={false}
 />
@@ -92,6 +116,14 @@ Experimenteer:
 ## Modify
 
 **Opdracht:** Voeg een `console.log` toe die de huidige datum en tijd toont via `new Date()`.
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  initialJs={startJs}
+  height="500px"
+  livePreview={false}
+/>
 
 <details>
 <summary>Tip</summary>
@@ -115,6 +147,14 @@ function verander() {
 ## Make
 
 **Opdracht:** Bouw een pagina met twee knoppen: "Start" en "Stop". Als je op Start klikt, verschijnt de tekst "Gestart." in groen en wordt de tijd gelogd. Als je op Stop klikt, verschijnt "Gestopt." in rood en wordt de tijd opnieuw gelogd.
+
+<CodeEditor
+  initialHtml={makeHtml}
+  initialCss={startCss}
+  initialJs={makeJs}
+  height="500px"
+  livePreview={false}
+/>
 
 Schrijf voor elke knop een aparte functie in `script.js`.
 

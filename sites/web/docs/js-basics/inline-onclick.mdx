@@ -3,6 +3,46 @@
 
 import CodeEditor from '@site/src/components/CodeEditor';
 
+export const startHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Inline onclick</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <p id="bericht">Nog niet geklikt.</p>
+  <button onclick="document.getElementById('bericht').textContent = 'Je hebt geklikt!'">
+    Klik mij
+  </button>
+</body>
+</html>`;
+
+export const startCss = `button {
+  padding: 8px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+p {
+  font-size: 1.2rem;
+}`;
+
+export const makeHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Inline onclick</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Bouw hier je pagina -->
+</body>
+</html>`;
+
+export const makeCss = `/* Schrijf hier je stijl */
+`;
+
 # Inline onclick
 
 ## Wat ga je leren?
@@ -44,29 +84,8 @@ De tekst in de `<p>` verandert van "Nog niet geklikt." naar "Je hebt geklikt.". 
 ## Probeer het zelf.
 
 <CodeEditor
-  initialHtml={`<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <title>Inline onclick</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <p id="bericht">Nog niet geklikt.</p>
-  <button onclick="document.getElementById('bericht').textContent = 'Je hebt geklikt!'">
-    Klik mij
-  </button>
-</body>
-</html>`}
-  initialCss={`button {
-  padding: 8px 16px;
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-p {
-  font-size: 1.2rem;
-}`}
+  initialHtml={startHtml}
+  initialCss={startCss}
   height="420px"
   livePreview={false}
 />
@@ -82,6 +101,13 @@ Experimenteer:
 ## Modify
 
 **Opdracht:** Voeg een tweede `<p id="naam">` toe en laat een tweede knop die tekst veranderen naar jouw naam.
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  height="420px"
+  livePreview={false}
+/>
 
 <details>
 <summary>Tip</summary>
@@ -105,6 +131,13 @@ Maak een nieuwe `<p>` met een uniek `id`. Maak een nieuwe `<button>` met `onclic
 ## Make
 
 **Opdracht:** Bouw een pagina met drie knoppen. Elke knop toont een andere zin in dezelfde `<p>`. Bedenk zelf welke zinnen je toont — een grap, een quote, of iets anders.
+
+<CodeEditor
+  initialHtml={makeHtml}
+  initialCss={makeCss}
+  height="420px"
+  livePreview={false}
+/>
 
 <details>
 <summary>Tip</summary>
