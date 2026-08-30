@@ -712,6 +712,52 @@ li:nth-child(2) {
 
 </details>
 
+
+<details>
+<summary>Geneste selectoren — <code>ouder kind</code> en <code>ouder &gt; kind</code></summary>
+
+Met geneste selectoren selecteer je elementen op basis van hun plek binnen andere elementen:
+
+- **Spatie (`.container img`)** — nesting-selector: selecteert *alle* `<img>`-elementen binnen `.container`, hoe diep ze ook genest zijn.
+- **Groter-dan-teken (`.container > p`)** — kind-selector: selecteert alleen de `<p>`-elementen die een **direct kind** zijn van `.container` (en dus niet in een ander tussenliggend element zitten).
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <p>Direct kind van container (rood).</p>
+    <div class="kaart">
+      <p>Dieper genest in .kaart (blauw).</p>
+    </div>
+    <img src="https://picsum.photos/id/237/120/80" alt="Hond">
+  </div>
+  <p>Buiten de container (standaard).</p>
+</body>
+</html>`}
+  initialCss={`.container > p {
+  color: #e63946;
+  font-weight: bold;
+}
+
+.kaart p {
+  color: #4a90e2;
+}
+
+.container img {
+  border: 2px solid #4a90e2;
+  border-radius: 6px;
+  margin-top: 8px;
+}`}
+  height="420px"
+/>
+
+</details>
+
 ### Flexbox
 
 <details>
