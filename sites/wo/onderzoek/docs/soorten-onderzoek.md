@@ -37,6 +37,10 @@ Bij **veldonderzoek** ga je "het veld in": je verzamelt gegevens in de echte sit
 - **Interview** — met een paar mensen dieper doorpraten, bijvoorbeeld met de conciërge die de stalling elke dag ziet.
 - **Meten op locatie** — geluidsniveau in de aula, temperatuur in lokalen, wachttijd bij de kantine.
 
+:::tip Verder lezen
+Hoe je een goede observatie, enquête of interview opzet, lees je op de pagina [methoden van gegevensverzameling](./gegevensverzameling).
+:::
+
 **Sterk in:** de werkelijkheid in beeld brengen. Je meet gedrag en meningen waar ze echt plaatsvinden, dus je resultaten zijn realistisch — goed voor de externe validiteit. Voor ontwerpgericht onderzoek is veldonderzoek vaak onmisbaar: zo leer je je doelgroep en het probleem kennen, en zo test je je prototype in het echt.
 
 **Let op:** in het echte leven spelen veel [storende variabelen](./interne-externe-validiteit#interne-validiteit-klopt-de-conclusie-binnen-je-onderzoek) mee — je kunt minder goed bewijzen waar iets door komt. Zorg ook voor een [representatieve](./spelregels#2-valide-meet-je-wat-je-wilt-meten) groep: alleen je vrienden ondervragen zegt weinig. En vergeet de spelregel [aanvaardbaar](./spelregels#4-aanvaardbaar-is-je-onderzoek-eerlijk-en-zonder-schade) niet: toestemming en privacy gelden juist bij observeren, enquêteren en interviewen.

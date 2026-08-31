@@ -10,6 +10,7 @@ const sidebars = {
     'interne-externe-validiteit',
     'soorten-onderzoek',
     'kwalitatief-vs-kwantitatief',
+    'gegevensverzameling',
     'termen',
   ],
 };

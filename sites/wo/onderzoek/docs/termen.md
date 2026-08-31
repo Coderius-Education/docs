@@ -12,6 +12,10 @@ Een overzicht van de belangrijkste begrippen uit het materiaal, op alfabetische 
 
 Eén van de [vier spelregels van onderzoek](./spelregels#4-aanvaardbaar-is-je-onderzoek-eerlijk-en-zonder-schade). Onderzoek is aanvaardbaar als het ethisch verantwoord is: eerlijk uitgevoerd, met toestemming van deelnemers, met respect voor privacy en zonder iemand te schaden.
 
+### Analyse van tekst- of beeldmateriaal
+
+Een [methode van gegevensverzameling](./gegevensverzameling) waarbij je bestaand materiaal (artikelen, posts, reclames, foto's, video's) systematisch bestudeert met een analyseschema.
+
 ### Betrouwbaar
 
 Eén van de [vier spelregels van onderzoek](./spelregels#1-betrouwbaar-krijgt-een-ander-hetzelfde-resultaat). Onderzoek is betrouwbaar als het resultaat niet van toeval afhangt: wie het onderzoek op dezelfde manier herhaalt, krijgt (ongeveer) hetzelfde resultaat.
@@ -34,7 +38,7 @@ Een kleinere vraag die helpt om de hoofdvraag te beantwoorden. Meerdere deelvrag
 
 ### Enquête
 
-Een vorm van [veldonderzoek](./soorten-onderzoek#veldonderzoek) waarbij je veel mensen dezelfde (neutrale) vragen stelt, zodat je de antwoorden kunt tellen en vergelijken.
+Een [methode van gegevensverzameling](./gegevensverzameling) waarbij je veel mensen dezelfde (neutrale, meestal gesloten) vragen stelt, zodat je de antwoorden kunt tellen en vergelijken.
 
 ### Experimenteel onderzoek
 
@@ -58,7 +62,7 @@ De mate waarin de uitkomst van je onderzoek echt komt door wat je onderzocht, en
 
 ### Interview
 
-Een vorm van [veldonderzoek](./soorten-onderzoek#veldonderzoek) waarbij je met één of enkele personen dieper doorpraat over een onderwerp.
+Een [methode van gegevensverzameling](./gegevensverzameling) waarbij je met één of enkele personen dieper doorpraat over een onderwerp en kunt doorvragen naar het waarom.
 
 ### Kennisvraag
 
@@ -76,9 +80,13 @@ Onderzoek dat gegevens in cijfers oplevert: aantallen, percentages en gemiddelde
 
 Een [soort onderzoek](./soorten-onderzoek#literatuuronderzoek) (ook wel bronnenonderzoek) waarbij je bestaande bronnen zoekt, op betrouwbaarheid beoordeelt en met elkaar vergelijkt. Bijna elk onderzoek begint ermee.
 
+### Observatieschema
+
+Een vooraf gemaakt schema waarin staat wát je gaat turven of noteren tijdens een observatie (wie, wat, waar, wanneer). Maakt je observatie gericht en herhaalbaar.
+
 ### Observeren
 
-Een vorm van [veldonderzoek](./soorten-onderzoek#veldonderzoek) waarbij je gedrag of situaties bekijkt en turft, zonder er zelf iets aan te veranderen.
+Een [methode van gegevensverzameling](./gegevensverzameling#observatie-kijken-naar-wat-mensen-doen) waarbij je gedrag of situaties bekijkt en turft, zonder er zelf iets aan te veranderen.
 
 ### Ontwerpgericht onderzoek
 
