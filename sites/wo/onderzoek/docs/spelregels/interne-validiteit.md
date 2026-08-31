@@ -5,7 +5,11 @@ sidebar_position: 5
 
 # Interne validiteit
 
+<Definitie gewoneTaal="binnen je onderzoek klopt de redenering: het verschil dat je meet komt echt door wat jij veranderde.">
+
 Een onderzoek is **intern valide** als de uitkomst echt komt door wat jij onderzocht — en niet door iets anders dat stiekem meespeelde. Zo'n "iets anders" heet een **storende variabele**.
+
+</Definitie>
 
 ## Voorbeeld
 
@@ -21,6 +25,11 @@ Je wilt weten of leerlingen beter scoren op een toets als ze met muziek leren. G
 :::caution Samenhang is nog geen oorzaak
 Dat twee dingen samen voorkomen, bewijst niet dat het één het ander veroorzaakt. Leerlingen die ontbijten halen hogere cijfers — maar komt dat door het ontbijt, of doordat achter ontbijt én cijfers dezelfde factor zit (bijvoorbeeld een gestructureerd thuisleven)? Een intern valide onderzoek sluit zulke alternatieve verklaringen zo veel mogelijk uit.
 :::
+
+<WelNiet
+  wel="Beide groepen maken dezelfde toets op hetzelfde moment; alleen de muziek verschilt."
+  niet="Groep A ’s ochtends en groep B in het achtste uur — het tijdstip kan dan de uitkomst verklaren."
+/>
 
 ## Hangt samen met
 

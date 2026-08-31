@@ -5,7 +5,11 @@ sidebar_position: 6
 
 # Externe validiteit
 
+<Definitie gewoneTaal="je conclusie geldt ook buiten jouw testje: voor andere mensen en situaties.">
+
 Een onderzoek is **extern valide** als de conclusie ook opgaat buiten jouw onderzoek: voor andere mensen, andere situaties en andere momenten dan die jij hebt onderzocht. Dit heet ook wel **generaliseerbaarheid**.
+
+</Definitie>
 
 ## Voorbeeld
 
@@ -17,6 +21,11 @@ Je muziekonderzoek is perfect uitgevoerd, maar alle deelnemers waren 5-vwo-leerl
 - **Gebruik genoeg deelnemers.** Hoe kleiner de groep, hoe groter de kans dat toeval je beeld bepaalt.
 - **Test in een realistische situatie.** Werkt je app in een stil lokaal onder toezicht, dan wil dat nog niet zeggen dat hij ook werkt in een drukke aula.
 - **Wees bescheiden in je conclusie.** Heb je alleen 5-vwo onderzocht? Schrijf dan op dat je conclusie over 5-vwo gaat — en noem het uitbreiden naar andere groepen als vervolgonderzoek.
+
+<WelNiet
+  wel="Tachtig leerlingen uit alle leerjaren en niveaus ondervragen, en je conclusie beperken tot jouw school."
+  niet="Drie vrienden ondervragen en concluderen wat ‘scholieren’ vinden."
+/>
 
 ## Hangt samen met
 

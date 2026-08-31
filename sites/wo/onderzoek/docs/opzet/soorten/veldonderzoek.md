@@ -5,7 +5,11 @@ sidebar_position: 2
 
 # Veldonderzoek
 
+<Definitie gewoneTaal="je gaat kijken, vragen of meten in de echte situatie, zonder er iets aan te veranderen.">
+
 Bij **veldonderzoek** ga je "het veld in": je verzamelt gegevens in de echte situatie, zonder die situatie te veranderen. Dat kan door te [observeren](../methoden/observatie.md), te [enquêteren](../methoden/enquete.md), te [interviewen](../methoden/interview.md) of te meten op locatie (geluidsniveau in de aula, wachttijd bij de kantine).
+
+</Definitie>
 
 ## Sterk en zwak
 
@@ -18,6 +22,11 @@ In het echte leven spelen veel **storende variabelen** mee — je kunt minder go
 ## Voorbeeld
 
 Je turft per pauze hoeveel leerlingen de fietsenstalling verkeerd gebruiken, op verschillende dagen en tijdstippen, en vraagt de conciërge in een interview wat hij dagelijks ziet.
+
+<WelNiet
+  wel="In de aula turven hoeveel leerlingen hun afval laten slingeren."
+  niet="Extra prullenbakken neerzetten en het effect meten — dan verander je zelf iets: dat is een experiment."
+/>
 
 ## Hangt samen met
 

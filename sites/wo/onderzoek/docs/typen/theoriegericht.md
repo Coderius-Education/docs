@@ -5,7 +5,11 @@ sidebar_position: 1
 
 # Theoriegericht onderzoek
 
+<Definitie gewoneTaal="je wilt iets uitzoeken, niet iets bouwen — je antwoord is kennis.">
+
 Bij **theoriegericht onderzoek** wil je iets **te weten komen**: hoe iets in elkaar zit, waarom iets gebeurt of wat het effect van iets is. Het eindresultaat is een **conclusie** — een onderbouwd antwoord op je hoofdvraag.
+
+</Definitie>
 
 ## Herken het aan de hoofdvraag
 
@@ -23,6 +27,11 @@ Een **antwoord**: een conclusie die je onderbouwt met de gegevens die je hebt ve
 :::tip Goed om te weten
 Een conclusie als *"mijn hypothese klopt niet"* is óók een geldig resultaat! Het gaat erom dat je **eerlijk** antwoord geeft op je vraag, niet dat de uitkomst is wat je hoopte.
 :::
+
+<WelNiet
+  wel="Je meet bij dertig leerlingen of ze zich beter concentreren zonder telefoon — je wilt iets weten."
+  niet="Je bouwt een app die telefoons stil zet tijdens het huiswerk — je maakt iets, dus dat is ontwerpgericht onderzoek."
+/>
 
 ## Hangt samen met
 

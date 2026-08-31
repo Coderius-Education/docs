@@ -5,7 +5,11 @@ sidebar_position: 4
 
 # Analyse van tekst- of beeldmateriaal
 
+<Definitie gewoneTaal="je bestudeert dingen die al gemaakt zijn — teksten, foto’s, video’s — volgens een vast schema.">
+
 Bij deze methode verzamel je geen nieuwe antwoorden, maar analyseer je **bestaand materiaal**: krantenartikelen, websites, socialemediaposts, reclames, foto's, video's, songteksten — alles wat mensen gemaakt hebben.
+
+</Definitie>
 
 ## Zo pak je het aan
 
@@ -17,6 +21,11 @@ Bij deze methode verzamel je geen nieuwe antwoorden, maar analyseer je **bestaan
 ## Voorbeeld
 
 Je vergelijkt hoe twee nieuwssites in één maand over kunstmatige intelligentie schrijven: je turft positieve, neutrale en negatieve koppen (kwantitatief) en beschrijft welke voorbeelden en beelden ze kiezen (kwalitatief).
+
+<WelNiet
+  wel="Vijftig krantenkoppen over AI turven op positief, neutraal of negatief."
+  niet="Wat rondscrollen en onthouden wat je opvalt — zonder afbakening en analyseschema is het geen analyse."
+/>
 
 ## Hangt samen met
 

@@ -5,7 +5,11 @@ sidebar_position: 4
 
 # Beschrijvend-evaluerend onderzoek
 
+<Definitie gewoneTaal="beoordelen hoe goed iets is — aan de hand van criteria die je vooraf hebt vastgelegd.">
+
 Bij **beschrijvend-evaluerend** onderzoek beoordeel je iets aan de hand van **criteria** die je vooraf vastlegt. De kernvraag: **hoe goed is het — en waar wel en niet?**
+
+</Definitie>
 
 ## Herken het aan de hoofdvraag
 
@@ -19,6 +23,11 @@ Zonder criteria vooraf wordt evalueren al snel "ik vind het wel mooi" — en dat
 :::tip Herken je dit?
 Dit is precies wat je bij [ontwerpgericht onderzoek](../../typen/ontwerpgericht.md) doet als je je prototype test tegen je vooraf opgestelde eisen. Testen tegen eisen ís evaluerend onderzoek.
 :::
+
+<WelNiet
+  wel="De schoolsite testen met vijf brugklassers op drie vooraf vastgestelde taken en criteria."
+  niet="‘Ik vind de site wel overzichtelijk’ — een mening zonder criteria is geen evaluatie."
+/>
 
 ## Hangt samen met
 

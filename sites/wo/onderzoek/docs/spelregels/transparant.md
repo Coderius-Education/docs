@@ -5,7 +5,11 @@ sidebar_position: 3
 
 # Transparant
 
+<Definitie gewoneTaal="iemand anders kan precies zien wat je hebt gedaan, en het narekenen of overdoen.">
+
 Onderzoek is **transparant** als iemand anders precies kan nagaan wat je hebt gedaan — en het desnoods kan herhalen of controleren. Je laat je hele werkwijze zien, ook de dingen die tegenvielen.
+
+</Definitie>
 
 ## Zo maak je je onderzoek transparant
 
@@ -19,6 +23,11 @@ Stel je voor dat een kritische lezer bij elke zin vraagt: *"Hoe weet je dat?"* �
 :::
 
 **Bij [ontwerpgericht onderzoek](../typen/ontwerpgericht.md)** betekent transparant: onderbouw je ontwerpkeuzes ("ik koos grote knoppen omdat uit mijn vooronderzoek bleek dat…"), en beschrijf je tests zo dat een ander ze kan herhalen.
+
+<WelNiet
+  wel="Je verslag bevat je enquêtevragen, het aantal invullers, de ruwe resultaten en alle bronnen."
+  niet="Alleen je conclusie opschrijven (‘de meeste leerlingen willen X’) zonder te laten zien hoe je daaraan komt."
+/>
 
 ## Hangt samen met
 

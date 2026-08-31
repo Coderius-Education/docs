@@ -5,7 +5,11 @@ sidebar_position: 6
 
 # Verklarend-toetsend onderzoek
 
+<Definitie gewoneTaal="je hebt één verwachte verklaring en zoekt gericht uit of die klopt.">
+
 Bij **verklarend-toetsend** onderzoek heb je al een verwachte verklaring — een **hypothese** — en onderzoek je gericht of die klopt. De kernvraag: **klopt deze verklaring?**
+
+</Definitie>
 
 ## Herken het aan de hoofdvraag
 
@@ -19,6 +23,11 @@ Toetsend onderzoek vraagt om een gerichte meting: je houdt alles gelijk behalve 
 :::tip Een gesneuvelde hypothese is winst
 "Mijn hypothese klopt niet" is een prima uitkomst — je weet nu iets wat je eerst niet wist. Resultaten bijschaven zodat de hypothese "klopt" schendt de spelregel [aanvaardbaar](../../spelregels/aanvaardbaar.md).
 :::
+
+<WelNiet
+  wel="Hypothese: zonder telefoon betere concentratie — je test het met twee groepen en dezelfde taak."
+  niet="Zomaar rondvragen wat mensen dénken dat helpt — zonder hypothese en gerichte meting toets je niets."
+/>
 
 ## Hangt samen met
 

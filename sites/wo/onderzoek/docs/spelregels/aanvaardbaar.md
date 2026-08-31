@@ -5,7 +5,11 @@ sidebar_position: 4
 
 # Aanvaardbaar
 
+<Definitie gewoneTaal="je onderzoek is eerlijk en niemand wordt er slechter van.">
+
 Onderzoek is **aanvaardbaar** als het **ethisch verantwoord** is: eerlijk uitgevoerd, met respect voor de mensen (en dieren en spullen) die erbij betrokken zijn.
+
+</Definitie>
 
 ## Zo houd je je onderzoek aanvaardbaar
 
@@ -18,6 +22,11 @@ Onderzoek is **aanvaardbaar** als het **ethisch verantwoord** is: eerlijk uitgev
 :::caution Voorbeeld van onaanvaardbaar onderzoek
 Je onderzoekt hoe makkelijk wachtwoorden van klasgenoten te raden zijn — door het gewoon te proberen op hun echte accounts, zonder dat ze het weten. Interessante vraag, onaanvaardbare methode. Aanvaardbaar alternatief: laat vrijwilligers een *nep*-wachtwoord aanmaken volgens hun gewone gewoontes, en test dáárop.
 :::
+
+<WelNiet
+  wel="Vrijwilligers vullen anoniem je enquête in en weten waarvoor die is."
+  niet="Stiekem filmen in de aula ‘omdat het maar voor school is’ — zonder toestemming schend je privacy."
+/>
 
 ## Hangt samen met
 

@@ -5,7 +5,11 @@ sidebar_position: 2
 
 # Valide
 
+<Definitie gewoneTaal="je meet het juiste ding, bij de juiste mensen, op de juiste manier.">
+
 Onderzoek is **valide** als je gegevens echt gaan over de vraag die je wilt beantwoorden: je meet wat je wílt meten. Je kunt heel betrouwbaar (herhaalbaar!) het verkeerde meten — dan is je onderzoek alsnog waardeloos.
+
+</Definitie>
 
 ## Zo maak je je onderzoek valide
 
@@ -19,6 +23,11 @@ Je wilt weten of leerlingen je nieuwe school-app handig vinden en telt hoe vaak 
 :::
 
 **Bij [ontwerpgericht onderzoek](../typen/ontwerpgericht.md)** betekent valide: test je prototype op de eisen die je vooraf hebt opgesteld, en met de echte doelgroep. Is je spel bedoeld voor groep 8, dan bewijst een test met je klasgenoten van 16 weinig.
+
+<WelNiet
+  wel="Je leest de schermtijd af uit de telefooninstellingen als je schermtijd wilt weten."
+  niet="Je telt downloads om te weten of leerlingen de app handig vinden — je meet dan iets anders dan je wilt weten."
+/>
 
 ## Hangt samen met
 

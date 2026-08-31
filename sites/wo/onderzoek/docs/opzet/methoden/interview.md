@@ -5,7 +5,11 @@ sidebar_position: 2
 
 # Interview
 
+<Definitie gewoneTaal="een echt gesprek met één persoon, waarin je kunt doorvragen naar het waarom.">
+
 Een **interview** is een gesprek met één persoon (of een klein groepje) waarin je kunt **doorvragen**: "Waarom vind je dat? Kun je een voorbeeld geven?" Zo kom je achter verklaringen en ideeën — vooral [kwalitatieve](../../gegevens/kwalitatief.md) gegevens.
+
+</Definitie>
 
 ## Zo pak je het aan
 
@@ -20,6 +24,11 @@ Met vijf interviews kun je niet zeggen dat "de meeste leerlingen" iets vinden �
 ## Voorbeeld
 
 Je interviewt drie leerlingen die vaak te laat komen over hoe hun ochtend eruitziet — en ontdekt een verklaring waar je zelf nooit aan gedacht had.
+
+<WelNiet
+  wel="Een half uur doorpraten met de conciërge over wat hij dagelijks bij de fietsenstalling ziet."
+  niet="Twintig leerlingen dezelfde vijf gesloten vragen stellen — dat is een enquête."
+/>
 
 ## Hangt samen met
 

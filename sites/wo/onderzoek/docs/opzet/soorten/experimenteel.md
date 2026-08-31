@@ -5,7 +5,11 @@ sidebar_position: 1
 
 # Experimenteel onderzoek
 
+<Definitie gewoneTaal="jij verandert zelf precies één ding en kijkt wat er dan gebeurt.">
+
 Bij een **experiment** verander je zelf één ding (de **variabele** die je onderzoekt) en houd je al het andere gelijk. Daarna meet je wat het effect is. Meestal vergelijk je met een **controlegroep** die de verandering niet krijgt.
+
+</Definitie>
 
 ## Voorbeelden
 
@@ -20,6 +24,11 @@ Bij een **experiment** verander je zelf één ding (de **variabele** die je onde
 :::caution Let op
 Een experiment is een kunstmatige situatie. Wat in een stil lokaal werkt, werkt niet automatisch in het echte leven — de [externe validiteit](../../spelregels/externe-validiteit.md) is vaak lager. En [betrouwbaarheid](../../spelregels/betrouwbaar.md) vraagt om herhalen: één meting is geen meting.
 :::
+
+<WelNiet
+  wel="Jij bepaalt welke helft van de klas mét en welke zónder muziek leert; verder is alles gelijk."
+  niet="Vragen wie thuis met muziek leert en dan cijfers vergelijken — je verandert zelf niets, dat is veldonderzoek."
+/>
 
 ## Hangt samen met
 

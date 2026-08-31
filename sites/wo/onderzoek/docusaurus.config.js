@@ -31,7 +31,21 @@ const config = {
   markdown: {
     mermaid: true,
   },
-  themes: ['@docusaurus/theme-mermaid'],
+  themes: [
+    '@docusaurus/theme-mermaid',
+    [
+      '@easyops-cn/docusaurus-search-local',
+      /** @type {import('@easyops-cn/docusaurus-search-local').PluginOptions} */
+      ({
+        hashed: true,
+        language: ['nl'],
+        docsRouteBasePath: '/',
+        indexBlog: false,
+        indexPages: false,
+        searchBarShortcutHint: false,
+      }),
+    ],
+  ],
 
   plugins: [
     [

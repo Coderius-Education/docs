@@ -5,7 +5,11 @@ sidebar_position: 2
 
 # Ontwerpgericht onderzoek
 
+<Definitie gewoneTaal="je bouwt iets dat een probleem oplost, en je toont met tests aan dat het werkt.">
+
 Bij **ontwerpgericht onderzoek** wil je een **product maken** dat een probleem oplost: een app, een website, een machine, een lesprogramma, een spel of een prototype. Het eindresultaat is geen conclusie, maar een **werkend ontwerp**.
+
+</Definitie>
 
 ## Herken het aan de hoofdvraag
 
@@ -23,6 +27,11 @@ Een **ontwerp of prototype**, plus een verslag waarin je laat zien dat (en hoe g
 :::caution Let op
 Alleen iets maken is nog geen onderzoek. Het verschil zit in het **testen van je ontwerp aan vooraf opgestelde eisen** en het **onderbouwen van je keuzes**. Zonder eisen en tests heb je een knutselproject, geen ontwerponderzoek.
 :::
+
+<WelNiet
+  wel="Je ontwerpt een rooster-app voor brugklassers en test die met tien brugklassers tegen je vooraf opgestelde eisen."
+  niet="Je knutselt een app in elkaar zonder eisenlijst of tests — maken zonder toetsen is geen ontwerponderzoek."
+/>
 
 ## Hangt samen met
 

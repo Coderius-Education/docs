@@ -5,7 +5,11 @@ sidebar_position: 1
 
 # Observatie
 
+<Definitie gewoneTaal="je kijkt wat mensen echt dóén en noteert dat systematisch.">
+
 Bij een **observatie** bekijk je gedrag of situaties zoals ze echt gebeuren, zonder er zelf in in te grijpen. Wat mensen *zeggen* dat ze doen en wat ze *echt* doen, verschilt nogal eens — observeren laat het echte gedrag zien.
+
+</Definitie>
 
 ## Zo pak je het aan
 
@@ -20,6 +24,11 @@ Sta je met een klembord naast de prullenbak, dan gooit iedereen zijn afval opeen
 ## Voorbeeld
 
 Je turft per pauze hoeveel leerlingen de kortere trap of de lift nemen, op vijf schooldagen, met een schema per verdieping en tijdvak.
+
+<WelNiet
+  wel="Met een turflijst bijhouden hoeveel fietsers een helm dragen."
+  niet="Vragen ‘draag jij een helm?’ — dan meet je wat mensen zéggen, niet wat ze doen: dat is een enquête."
+/>
 
 ## Hangt samen met
 

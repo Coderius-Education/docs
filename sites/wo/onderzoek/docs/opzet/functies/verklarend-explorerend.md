@@ -5,7 +5,11 @@ sidebar_position: 5
 
 # Verklarend-explorerend onderzoek
 
+<Definitie gewoneTaal="open op zoek gaan naar mogelijke verklaringen, zonder vooraf te weten welke.">
+
 Bij **verklarend-explorerend** onderzoek weet je dát iets zo is, maar nog niet waardoor. Je gaat **op zoek** naar mogelijke verklaringen en samenhangen, zonder vooraf een vaste verwachting. De kernvraag: **welke verklaringen zijn er?**
+
+</Definitie>
 
 ## Herken het aan de hoofdvraag
 
@@ -19,6 +23,11 @@ Explorerend onderzoek is open van opzet: je wilt verklaringen ontdekken waar je 
 :::tip Van exploreren naar toetsen
 Eerst exploreer je (interviews leveren drie mogelijke verklaringen op), daarna [toets](./verklarend-toetsend.md) je de meest kansrijke met een experiment of gerichte meting. Zo bouwt het ene verklarende onderzoek op het andere voort.
 :::
+
+<WelNiet
+  wel="In interviews ontdekken welke redenen leerlingen zélf noemen om te laat te komen."
+  niet="Vooraf al één verklaring hebben (de volle bus) en alleen die checken — dat is toetsend onderzoek."
+/>
 
 ## Hangt samen met
 

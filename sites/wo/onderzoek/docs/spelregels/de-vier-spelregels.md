@@ -5,7 +5,7 @@ sidebar_position: 7
 
 # De vier spelregels samen
 
-**Het verband in één zin:** of je nu [theoriegericht of ontwerpgericht](../typen/theorie-vs-ontwerp.mdx) onderzoek doet, goed onderzoek voldoet altijd aan vier spelregels tegelijk — [betrouwbaar](./betrouwbaar.md), [valide](./valide.md), [transparant](./transparant.md) en [aanvaardbaar](./aanvaardbaar.md) — en een onderzoek dat er één schendt, kun je eigenlijk in de prullenbak gooien, hoeveel werk het ook was.
+**Het verband in één zin:** of je nu [theoriegericht of ontwerpgericht](../typen/theorie-vs-ontwerp.mdx) onderzoek doet, goed onderzoek voldoet altijd aan vier spelregels tegelijk — <B t="betrouwbaar" tekst="betrouwbaar"/>, <B t="valide" tekst="valide"/>, <B t="transparant" tekst="transparant"/> en <B t="aanvaardbaar" tekst="aanvaardbaar"/> — en een onderzoek dat er één schendt, kun je eigenlijk in de prullenbak gooien, hoeveel werk het ook was.
 
 ## De vier op een rij
 

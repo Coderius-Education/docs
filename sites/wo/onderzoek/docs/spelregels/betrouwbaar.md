@@ -5,7 +5,11 @@ sidebar_position: 1
 
 # Betrouwbaar
 
+<Definitie gewoneTaal="als iemand anders (of jijzelf, morgen) het onderzoek overdoet, komt er ongeveer hetzelfde uit.">
+
 Onderzoek is **betrouwbaar** als het resultaat niet van toeval afhangt: wie het onderzoek op dezelfde manier herhaalt, krijgt (ongeveer) hetzelfde resultaat.
+
+</Definitie>
 
 ## Zo maak je je onderzoek betrouwbaar
 
@@ -19,6 +23,11 @@ Je meet één keer hoe snel je oude laptop opstart en één keer hoe snel de nie
 :::
 
 **Bij [ontwerpgericht onderzoek](../typen/ontwerpgericht.md)** betekent betrouwbaar: test je prototype vaker dan één keer, en met meer dan één testpersoon. Dat je app bij jou op je eigen telefoon één keer werkte, bewijst nog niets.
+
+<WelNiet
+  wel="Je meet de opstarttijd van elke laptop tien keer en vergelijkt de gemiddelden."
+  niet="Eén meting per laptop — toeval (een update, een warme dag) kan dan de hele uitkomst bepalen."
+/>
 
 ## Hangt samen met
 

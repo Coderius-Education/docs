@@ -5,7 +5,11 @@ sidebar_position: 1
 
 # Kwantitatief onderzoek
 
+<Definitie gewoneTaal="je verzamelt cijfers: hoeveel, hoe vaak, hoe groot. Kwantitatief télt.">
+
 Bij **kwantitatief onderzoek** verzamel je gegevens die je in **getallen** kunt uitdrukken: aantallen, percentages, gemiddelden. Je wilt weten *hoeveel*, *hoe vaak* of *hoe groot* iets is — en je wilt groepen kunnen vergelijken. *Kwantiteit = hoeveelheid.*
+
+</Definitie>
 
 ## Voorbeelden
 
@@ -21,6 +25,11 @@ Bij **kwantitatief onderzoek** verzamel je gegevens die je in **getallen** kunt 
 :::caution Let op
 Cijfers vertellen niet **waarom** iets zo is. Dat 70% van de leerlingen de aula te druk vindt, zegt nog niet wat er precies stoort of wat er beter kan. Daarvoor heb je [kwalitatief onderzoek](./kwalitatief.md) nodig.
 :::
+
+<WelNiet
+  wel="68% van de leerlingen geeft de kantine een 6 of lager — een percentage dat je kunt vergelijken."
+  niet="Vijf leerlingen vertellen wat er volgens hen mis is met de kantine — dat zijn woorden: kwalitatief."
+/>
 
 ## Hangt samen met
 

@@ -5,7 +5,11 @@ sidebar_position: 3
 
 # Enquête
 
+<Definitie gewoneTaal="veel mensen dezelfde vragen laten beantwoorden, zodat je de antwoorden kunt tellen.">
+
 Een **enquête** stelt veel mensen exact dezelfde vragen, meestal **gesloten** (keuzeopties, schalen van 1–5). Daardoor kun je antwoorden tellen en groepen vergelijken — vooral [kwantitatieve](../../gegevens/kwantitatief.md) gegevens.
+
+</Definitie>
 
 ## Regels voor goede enquêtevragen
 
@@ -22,6 +26,11 @@ Een enquête kan naast gesloten vragen ook een open vraag bevatten (*"Wat zou ji
 ## Voorbeeld
 
 Tweehonderd leerlingen geven de kantine een cijfer van 1 tot 10 en kiezen uit vijf mogelijke verbeterpunten — daarna weet je hoe breed elke klacht gedeeld wordt.
+
+<WelNiet
+  wel="Tweehonderd leerlingen vullen dezelfde vragenlijst met keuzeopties in."
+  niet="Met drie leerlingen los doorpraten over de kantine — dat is een interview."
+/>
 
 ## Hangt samen met
 

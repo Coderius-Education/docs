@@ -5,7 +5,11 @@ sidebar_position: 2
 
 # Beschrijvend-vergelijkend onderzoek
 
+<Definitie gewoneTaal="twee of meer dingen op dezelfde manier beschrijven en naast elkaar zetten.">
+
 Bij **beschrijvend-vergelijkend** onderzoek beschrijf je twee of meer gevallen en zet je ze naast elkaar. De kernvraag: **wat zijn de overeenkomsten en verschillen?**
+
+</Definitie>
 
 ## Herken het aan de hoofdvraag
 
@@ -19,6 +23,11 @@ Je kunt alleen eerlijk vergelijken als je beide gevallen op **dezelfde manier** 
 :::tip Past vaak bij
 Dezelfde [enquête](../methoden/enquete.md) of [observatie](../methoden/observatie.md) uitvoeren bij twee groepen, en de resultaten naast elkaar zetten.
 :::
+
+<WelNiet
+  wel="Dezelfde schermtijd-vraag stellen aan brugklassers én bovenbouwers, en de uitkomsten naast elkaar zetten."
+  niet="Brugklassers een enquête geven en bovenbouwers interviewen — met twee verschillende meetlatten kun je niet eerlijk vergelijken."
+/>
 
 ## Hangt samen met
 

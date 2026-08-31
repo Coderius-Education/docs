@@ -5,7 +5,11 @@ sidebar_position: 1
 
 # Puur beschrijvend onderzoek
 
+<Definitie gewoneTaal="tellen, meten en beschrijven hoe iets is — zonder oordeel of verklaring.">
+
 Bij **puur beschrijvend** onderzoek breng je een situatie in kaart zoals die is, zonder te vergelijken, beoordelen of verklaren. De kernvraag: **hoe is het?**
+
+</Definitie>
 
 ## Herken het aan de hoofdvraag
 
@@ -19,6 +23,11 @@ Puur beschrijvend onderzoek lijkt simpel, maar is vaak de **basis** voor al het 
 :::tip Past vaak bij
 Een [enquête](../methoden/enquete.md), [observatie](../methoden/observatie.md) of meting in het veld — je wilt tellen en in kaart brengen.
 :::
+
+<WelNiet
+  wel="Turven hoeveel leerlingen per dag de lift nemen."
+  niet="Uitzoeken waaróm leerlingen de lift nemen — dat is verklarend onderzoek."
+/>
 
 ## Hangt samen met
 

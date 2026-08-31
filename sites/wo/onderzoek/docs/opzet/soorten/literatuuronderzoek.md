@@ -5,7 +5,11 @@ sidebar_position: 3
 
 # Literatuuronderzoek
 
+<Definitie gewoneTaal="je gebruikt wat anderen al hebben uitgezocht: bronnen zoeken, beoordelen en vergelijken.">
+
 Bij **literatuuronderzoek** (ook wel bronnenonderzoek) zoek je uit wat anderen al hebben onderzocht en geschreven: boeken, artikelen, websites, rapporten, statistieken. Je verzamelt bronnen, beoordeelt of ze te vertrouwen zijn en vergelijkt wat ze zeggen.
+
+</Definitie>
 
 ## Voorbeelden
 
@@ -22,6 +26,11 @@ Bij **literatuuronderzoek** (ook wel bronnenonderzoek) zoek je uit wat anderen a
 :::caution Alleen googelen is geen literatuuronderzoek
 Het eerste zoekresultaat overnemen is geen onderzoek. Literatuuronderzoek betekent: meerdere bronnen zoeken, ze op betrouwbaarheid beoordelen, ze met elkaar vergelijken en daar met bronvermelding je eigen conclusie uit trekken. Dat geldt ook voor antwoorden van een AI-chatbot: controleer die bij echte bronnen.
 :::
+
+<WelNiet
+  wel="Drie onderzoeken over slaap en concentratie vergelijken en samenvatten, met bronvermelding."
+  niet="Het eerste zoekresultaat (of een AI-antwoord) overnemen zonder te controleren — dat is googelen, geen onderzoek."
+/>
 
 ## Hangt samen met
 
