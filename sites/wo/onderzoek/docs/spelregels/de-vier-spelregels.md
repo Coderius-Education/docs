@@ -5,7 +5,7 @@ sidebar_position: 7
 
 # De vier spelregels samen
 
-**Het verband in één zin:** of je nu [theoriegericht of ontwerpgericht](../typen/theorie-vs-ontwerp.md) onderzoek doet, goed onderzoek voldoet altijd aan vier spelregels tegelijk — [betrouwbaar](./betrouwbaar.md), [valide](./valide.md), [transparant](./transparant.md) en [aanvaardbaar](./aanvaardbaar.md) — en een onderzoek dat er één schendt, kun je eigenlijk in de prullenbak gooien, hoeveel werk het ook was.
+**Het verband in één zin:** of je nu [theoriegericht of ontwerpgericht](../typen/theorie-vs-ontwerp.mdx) onderzoek doet, goed onderzoek voldoet altijd aan vier spelregels tegelijk — [betrouwbaar](./betrouwbaar.md), [valide](./valide.md), [transparant](./transparant.md) en [aanvaardbaar](./aanvaardbaar.md) — en een onderzoek dat er één schendt, kun je eigenlijk in de prullenbak gooien, hoeveel werk het ook was.
 
 ## De vier op een rij
 
@@ -38,4 +38,4 @@ Loop deze vragen na vóór je begint én vlak voor je je verslag inlevert:
 
 ## Verder lezen
 
-Validiteit heeft twee kanten — klopt je conclusie bínnen je onderzoek, en geldt die ook daarbuiten? Lees verder bij [interne validiteit](./interne-validiteit.md), [externe validiteit](./externe-validiteit.md) en [het spanningsveld tussen die twee](./intern-vs-extern.md).
+Validiteit heeft twee kanten — klopt je conclusie bínnen je onderzoek, en geldt die ook daarbuiten? Lees verder bij [interne validiteit](./interne-validiteit.md), [externe validiteit](./externe-validiteit.md) en [het spanningsveld tussen die twee](./intern-vs-extern.mdx).

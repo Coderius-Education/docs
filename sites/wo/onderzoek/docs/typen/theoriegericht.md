@@ -18,7 +18,7 @@ Theoriegerichte hoofdvragen zijn **kennisvragen**. Ze beginnen vaak met *hoe, wa
 
 ## Wat lever je op?
 
-Een **antwoord**: een conclusie die je onderbouwt met de gegevens die je hebt verzameld. Je verzamelt die gegevens systematisch — welke aanpak daarbij past, kies je met de [keuzedriehoek](../opzet/keuzedriehoek.md).
+Een **antwoord**: een conclusie die je onderbouwt met de gegevens die je hebt verzameld. Je verzamelt die gegevens systematisch — welke aanpak daarbij past, kies je met de [keuzedriehoek](../opzet/keuzedriehoek.mdx).
 
 :::tip Goed om te weten
 Een conclusie als *"mijn hypothese klopt niet"* is óók een geldig resultaat! Het gaat erom dat je **eerlijk** antwoord geeft op je vraag, niet dat de uitkomst is wat je hoopte.
@@ -27,5 +27,5 @@ Een conclusie als *"mijn hypothese klopt niet"* is óók een geldig resultaat! H
 ## Hangt samen met
 
 - [Ontwerpgericht onderzoek](./ontwerpgericht.md) — de tegenhanger: iets *maken* in plaats van iets *weten*
-- [Theoriegericht vs. ontwerpgericht](./theorie-vs-ontwerp.md) — het verband tussen beide typen
-- [Functies van onderzoek](../opzet/functies/functies-overzicht.md) — wat je antwoord precies moet doen: beschrijven of verklaren
+- [Theoriegericht vs. ontwerpgericht](./theorie-vs-ontwerp.mdx) — het verband tussen beide typen
+- [Functies van onderzoek](../opzet/functies/functies-overzicht.mdx) — wat je antwoord precies moet doen: beschrijven of verklaren

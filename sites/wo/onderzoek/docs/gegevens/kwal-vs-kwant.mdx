@@ -3,6 +3,8 @@ title: Kwalitatief vs. kwantitatief
 sidebar_position: 3
 ---
 
+import Quiz from '@site/src/components/Quiz';
+
 # Kwalitatief vs. kwantitatief
 
 **Het verband in één zin:** [kwantitatief onderzoek](./kwantitatief.md) levert **cijfers** en beantwoordt *hoeveel*, [kwalitatief onderzoek](./kwalitatief.md) levert **woorden** en beantwoordt *waarom* — en omdat elk de zwakte van de ander opvangt, zijn ze samen het sterkst.
@@ -34,23 +36,45 @@ Zo dekt je onderzoek beide kernvragen af: **hoeveel** én **waarom**.
 
 ## Oefenen: kwalitatief of kwantitatief?
 
-Bepaal van elke aanpak of die vooral **kwantitatief (KWANT)** of **kwalitatief (KWAL)** is:
+Bepaal van elke aanpak of die vooral kwantitatief of kwalitatief is:
 
-1. *Je telt per lesuur hoeveel leerlingen te laat komen.*
-2. *Je interviewt drie leerlingen die vaak te laat komen over hun ochtend.*
-3. *Je enquête vraagt: "Geef de kantine een cijfer van 1 tot 10."*
-4. *Je enquête vraagt: "Beschrijf wat je zou veranderen aan de kantine."*
-5. *Je meet de wachttijd bij de kassa op tien momenten.*
-6. *Je kijkt mee met vier testers van je website en noteert waar ze vastlopen en wat ze daarbij zeggen.*
-
-<details>
-<summary>Bekijk de antwoorden</summary>
-
-1. **KWANT** — tellen levert aantallen op.
-2. **KWAL** — je zoekt verklaringen in woorden.
-3. **KWANT** — een cijfer van 1 tot 10 kun je gemiddelen en vergelijken.
-4. **KWAL** — open antwoorden in woorden; dezelfde enquête kan dus beide soorten vragen bevatten.
-5. **KWANT** — meten in seconden.
-6. **KWAL** — observaties en uitspraken; het aantál keren dat testers vastlopen tellen zou weer kwantitatief zijn.
-
-</details>
+<Quiz
+  vragen={[
+    {
+      vraag: 'Je telt per lesuur hoeveel leerlingen te laat komen.',
+      opties: ['Kwantitatief', 'Kwalitatief'],
+      juist: 0,
+      uitleg: 'Tellen levert aantallen op.',
+    },
+    {
+      vraag: 'Je interviewt drie leerlingen die vaak te laat komen over hun ochtend.',
+      opties: ['Kwantitatief', 'Kwalitatief'],
+      juist: 1,
+      uitleg: 'Je zoekt verklaringen in woorden.',
+    },
+    {
+      vraag: 'Je enquête vraagt: "Geef de kantine een cijfer van 1 tot 10."',
+      opties: ['Kwantitatief', 'Kwalitatief'],
+      juist: 0,
+      uitleg: 'Een cijfer van 1 tot 10 kun je gemiddelen en vergelijken.',
+    },
+    {
+      vraag: 'Je enquête vraagt: "Beschrijf wat je zou veranderen aan de kantine."',
+      opties: ['Kwantitatief', 'Kwalitatief'],
+      juist: 1,
+      uitleg: 'Open antwoorden in woorden; dezelfde enquête kan dus beide soorten vragen bevatten.',
+    },
+    {
+      vraag: 'Je meet de wachttijd bij de kassa op tien momenten.',
+      opties: ['Kwantitatief', 'Kwalitatief'],
+      juist: 0,
+      uitleg: 'Meten in seconden — cijfers.',
+    },
+    {
+      vraag: 'Je kijkt mee met vier testers van je website en noteert waar ze vastlopen en wat ze daarbij zeggen.',
+      opties: ['Kwantitatief', 'Kwalitatief'],
+      juist: 1,
+      uitleg: 'Observaties en uitspraken; het aantál keren dat testers vastlopen tellen zou weer kwantitatief zijn.',
+    },
+  ]}
+/>

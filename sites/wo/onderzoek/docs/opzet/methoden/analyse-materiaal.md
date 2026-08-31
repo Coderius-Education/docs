@@ -20,6 +20,6 @@ Je vergelijkt hoe twee nieuwssites in één maand over kunstmatige intelligentie
 
 ## Hangt samen met
 
-- [Welke methode kies je?](./methode-kiezen.md) — analyse naast observatie, interview en enquête
+- [Welke methode kies je?](./methode-kiezen.mdx) — analyse naast observatie, interview en enquête
 - [Literatuuronderzoek](../soorten/literatuuronderzoek.md) — de verwante soort: bestaande bronnen gebruiken en kritisch beoordelen
 - [Transparant](../../spelregels/transparant.md) — bronvermelding bij alles wat je overneemt

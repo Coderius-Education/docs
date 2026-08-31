@@ -23,6 +23,6 @@ Je turft per pauze hoeveel leerlingen de kortere trap of de lift nemen, op vijf 
 
 ## Hangt samen met
 
-- [Welke methode kies je?](./methode-kiezen.md) — observatie naast interview, enquête en analyse
+- [Welke methode kies je?](./methode-kiezen.mdx) — observatie naast interview, enquête en analyse
 - [Veldonderzoek](../soorten/veldonderzoek.md) — de soort onderzoek waar observatie meestal bij hoort
 - [Betrouwbaar](../../spelregels/betrouwbaar.md) — meerdere momenten, vast schema

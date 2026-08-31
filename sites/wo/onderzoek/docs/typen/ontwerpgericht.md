@@ -27,5 +27,5 @@ Alleen iets maken is nog geen onderzoek. Het verschil zit in het **testen van je
 ## Hangt samen met
 
 - [Theoriegericht onderzoek](./theoriegericht.md) — de tegenhanger: iets *weten* in plaats van iets *maken*
-- [Theoriegericht vs. ontwerpgericht](./theorie-vs-ontwerp.md) — het verband tussen beide typen
+- [Theoriegericht vs. ontwerpgericht](./theorie-vs-ontwerp.mdx) — het verband tussen beide typen
 - [Beschrijvend-evaluerend onderzoek](../opzet/functies/beschrijvend-evaluerend.md) — de functie achter het testen tegen eisen

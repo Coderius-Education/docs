@@ -23,6 +23,6 @@ Een experiment is een kunstmatige situatie. Wat in een stil lokaal werkt, werkt 
 
 ## Hangt samen met
 
-- [Soorten onderzoek combineren](./soorten-combineren.md) — experiment, veld en literatuur naast elkaar
+- [Soorten onderzoek combineren](./soorten-combineren.mdx) — experiment, veld en literatuur naast elkaar
 - [Verklarend-toetsend](../functies/verklarend-toetsend.md) — de functie waar een experiment meestal bij hoort
 - [Interne validiteit](../../spelregels/interne-validiteit.md) — de grote kracht van het experiment

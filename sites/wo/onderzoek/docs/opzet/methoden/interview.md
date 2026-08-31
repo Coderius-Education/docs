@@ -23,7 +23,7 @@ Je interviewt drie leerlingen die vaak te laat komen over hoe hun ochtend eruitz
 
 ## Hangt samen met
 
-- [Welke methode kies je?](./methode-kiezen.md) — interview naast observatie, enquête en analyse
+- [Welke methode kies je?](./methode-kiezen.mdx) — interview naast observatie, enquête en analyse
 - [Enquête](./enquete.md) — de tegenhanger: veel mensen, dezelfde vragen
 - [Verklarend-explorerend](../functies/verklarend-explorerend.md) — de functie waar interviews meestal bij passen
 - [Aanvaardbaar](../../spelregels/aanvaardbaar.md) — toestemming en privacy

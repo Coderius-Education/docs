@@ -3,6 +3,8 @@ title: Theoriegericht vs. ontwerpgericht
 sidebar_position: 3
 ---
 
+import Quiz from '@site/src/components/Quiz';
+
 # Theoriegericht vs. ontwerpgericht
 
 **Het verband in één zin:** de eerste keuze van elk onderzoek is *wil ik iets te weten komen* ([theoriegericht](./theoriegericht.md)) *of wil ik iets maken* ([ontwerpgericht](./ontwerpgericht.md)) — en die keuze bepaalt hoe je hoofdvraag, je aanpak en je eindresultaat eruitzien.
@@ -31,23 +33,45 @@ Kies bewust. Vind je het leuk om iets te bouwen? Formuleer dan een ontwerpvraag 
 
 ## Oefenen: welk type is het?
 
-Bepaal van elke hoofdvraag of die **theoriegericht (T)** of **ontwerpgericht (O)** is:
+Bepaal van elke hoofdvraag of die theoriegericht of ontwerpgericht is:
 
-1. *In hoeverre beïnvloedt muziek tijdens het huiswerk maken de leerprestaties?*
-2. *Hoe kan ik een chatbot maken die vragen van brugklassers over het rooster beantwoordt?*
-3. *Welke factoren bepalen of een video op sociale media viraal gaat?*
-4. *Hoe ontwerp ik een schoolplein waar leerlingen meer bewegen?*
-5. *Waarom gebruiken jongeren steeds vaker een adblocker?*
-6. *Hoe ontwikkel ik een escaperoom die groep 7 leert over duurzaamheid?*
-
-<details>
-<summary>Bekijk de antwoorden</summary>
-
-1. **T** — je meet een effect, je maakt niets.
-2. **O** — je maakt een product (chatbot) voor een doelgroep.
-3. **T** — je zoekt uit hoe iets werkt.
-4. **O** — je ontwerpt iets (een schoolplein) dat een doel moet bereiken.
-5. **T** — je zoekt een verklaring.
-6. **O** — je ontwikkelt een product met een doel; het vooronderzoek (wat weet groep 7 al over duurzaamheid?) is theoriegericht.
-
-</details>
+<Quiz
+  vragen={[
+    {
+      vraag: 'In hoeverre beïnvloedt muziek tijdens het huiswerk maken de leerprestaties?',
+      opties: ['Theoriegericht', 'Ontwerpgericht'],
+      juist: 0,
+      uitleg: 'Je meet een effect, je maakt niets — een kennisvraag.',
+    },
+    {
+      vraag: 'Hoe kan ik een chatbot maken die vragen van brugklassers over het rooster beantwoordt?',
+      opties: ['Theoriegericht', 'Ontwerpgericht'],
+      juist: 1,
+      uitleg: 'Je maakt een product (chatbot) voor een doelgroep — een ontwerpvraag.',
+    },
+    {
+      vraag: 'Welke factoren bepalen of een video op sociale media viraal gaat?',
+      opties: ['Theoriegericht', 'Ontwerpgericht'],
+      juist: 0,
+      uitleg: 'Je zoekt uit hoe iets werkt — een kennisvraag.',
+    },
+    {
+      vraag: 'Hoe ontwerp ik een schoolplein waar leerlingen meer bewegen?',
+      opties: ['Theoriegericht', 'Ontwerpgericht'],
+      juist: 1,
+      uitleg: 'Je ontwerpt iets (een schoolplein) dat een doel moet bereiken.',
+    },
+    {
+      vraag: 'Waarom gebruiken jongeren steeds vaker een adblocker?',
+      opties: ['Theoriegericht', 'Ontwerpgericht'],
+      juist: 0,
+      uitleg: 'Je zoekt een verklaring — een kennisvraag.',
+    },
+    {
+      vraag: 'Hoe ontwikkel ik een escaperoom die groep 7 leert over duurzaamheid?',
+      opties: ['Theoriegericht', 'Ontwerpgericht'],
+      juist: 1,
+      uitleg: 'Je ontwikkelt een product met een doel; het vooronderzoek (wat weet groep 7 al over duurzaamheid?) is theoriegericht.',
+    },
+  ]}
+/>

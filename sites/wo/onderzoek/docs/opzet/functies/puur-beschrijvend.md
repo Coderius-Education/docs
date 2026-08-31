@@ -22,6 +22,6 @@ Een [enquête](../methoden/enquete.md), [observatie](../methoden/observatie.md) 
 
 ## Hangt samen met
 
-- [Functies van onderzoek](./functies-overzicht.md) — alle zes functies naast elkaar
+- [Functies van onderzoek](./functies-overzicht.mdx) — alle zes functies naast elkaar
 - [Beschrijvend-vergelijkend](./beschrijvend-vergelijkend.md) — de volgende stap: twee beschrijvingen naast elkaar
-- [De keuzedriehoek](../keuzedriehoek.md) — functie combineren met soort en methode
+- [De keuzedriehoek](../keuzedriehoek.mdx) — functie combineren met soort en methode

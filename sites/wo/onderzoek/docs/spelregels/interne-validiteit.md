@@ -26,5 +26,5 @@ Dat twee dingen samen voorkomen, bewijst niet dat het één het ander veroorzaak
 
 - [Valide](./valide.md) — interne validiteit is één van de twee kanten van validiteit
 - [Externe validiteit](./externe-validiteit.md) — de andere kant: geldt je conclusie ook daarbuiten?
-- [Intern vs. extern](./intern-vs-extern.md) — waarom de twee elkaar in de weg zitten
+- [Intern vs. extern](./intern-vs-extern.mdx) — waarom de twee elkaar in de weg zitten
 - [Experimenteel onderzoek](../opzet/soorten/experimenteel.md) — de soort onderzoek die het sterkst is in interne validiteit

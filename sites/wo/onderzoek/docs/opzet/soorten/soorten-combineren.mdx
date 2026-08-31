@@ -3,6 +3,8 @@ title: Soorten onderzoek
 sidebar_position: 4
 ---
 
+import Quiz from '@site/src/components/Quiz';
+
 # Soorten onderzoek combineren
 
 **Het verband in één zin:** [experimenteel onderzoek](./experimenteel.md), [veldonderzoek](./veldonderzoek.md) en [literatuuronderzoek](./literatuuronderzoek.md) beantwoorden elk een ander type deelvraag — en de sterkste onderzoeken combineren ze, met per deelvraag de soort die er het best bij past.
@@ -29,27 +31,49 @@ Drie soorten, één onderzoek — en elke deelvraag krijgt de soort die er het b
 
 ## Oefenen: welke soort past hier?
 
-Kies bij elke deelvraag de best passende soort: **experimenteel (E)**, **veldonderzoek (V)** of **literatuuronderzoek (L)**:
+Kies bij elke deelvraag de best passende soort onderzoek:
 
-1. *Hoeveel afval ligt er na de pauze op het schoolplein, en waar vooral?*
-2. *Wat zeggen bestaande onderzoeken over statiegeld en zwerfafval?*
-3. *Gooien leerlingen minder afval op de grond als er meer prullenbakken staan?*
-4. *Hoe ervaren buurtbewoners de overlast van zwerfafval rond de school?*
-5. *Welke afbreektijd hebben verschillende soorten verpakkingsmateriaal?*
-6. *Wordt onze nieuwe afvalposter opgemerkt: kijken leerlingen er langer naar dan naar de oude?*
-
-<details>
-<summary>Bekijk de antwoorden</summary>
-
-1. **V** — observeren en turven op locatie.
-2. **L** — je gebruikt bestaand onderzoek.
-3. **E** — je verandert zelf iets (aantal prullenbakken) en meet het effect; meet wel meerdere dagen en vergelijk met dagen zónder extra bakken.
-4. **V** — enquête of interviews in de buurt.
-5. **L** — dit is al vaak onderzocht; zelf testen zou jaren duren.
-6. **E** — twee situaties vergelijken waarbij jij één ding verandert (de poster).
-
-</details>
+<Quiz
+  vragen={[
+    {
+      vraag: 'Hoeveel afval ligt er na de pauze op het schoolplein, en waar vooral?',
+      opties: ['Experimenteel', 'Veldonderzoek', 'Literatuuronderzoek'],
+      juist: 1,
+      uitleg: 'Observeren en turven op locatie — je verandert zelf niets.',
+    },
+    {
+      vraag: 'Wat zeggen bestaande onderzoeken over statiegeld en zwerfafval?',
+      opties: ['Experimenteel', 'Veldonderzoek', 'Literatuuronderzoek'],
+      juist: 2,
+      uitleg: 'Je gebruikt bestaand onderzoek — het antwoord staat al ergens.',
+    },
+    {
+      vraag: 'Gooien leerlingen minder afval op de grond als er meer prullenbakken staan?',
+      opties: ['Experimenteel', 'Veldonderzoek', 'Literatuuronderzoek'],
+      juist: 0,
+      uitleg: 'Je verandert zelf iets (aantal prullenbakken) en meet het effect; meet wel meerdere dagen en vergelijk met dagen zónder extra bakken.',
+    },
+    {
+      vraag: 'Hoe ervaren buurtbewoners de overlast van zwerfafval rond de school?',
+      opties: ['Experimenteel', 'Veldonderzoek', 'Literatuuronderzoek'],
+      juist: 1,
+      uitleg: 'Enquête of interviews in de buurt — gegevens uit de echte situatie.',
+    },
+    {
+      vraag: 'Welke afbreektijd hebben verschillende soorten verpakkingsmateriaal?',
+      opties: ['Experimenteel', 'Veldonderzoek', 'Literatuuronderzoek'],
+      juist: 2,
+      uitleg: 'Dit is al vaak onderzocht; zelf testen zou jaren duren.',
+    },
+    {
+      vraag: 'Wordt onze nieuwe afvalposter opgemerkt: kijken leerlingen er langer naar dan naar de oude?',
+      opties: ['Experimenteel', 'Veldonderzoek', 'Literatuuronderzoek'],
+      juist: 0,
+      uitleg: 'Twee situaties vergelijken waarbij jij één ding verandert (de poster).',
+    },
+  ]}
+/>
 
 ## Verder
 
-Hoe je het soort onderzoek combineert met [functie](../functies/functies-overzicht.md) en [methode](../methoden/methode-kiezen.md), zie je in [de keuzedriehoek](../keuzedriehoek.md).
+Hoe je het soort onderzoek combineert met [functie](../functies/functies-overzicht.mdx) en [methode](../methoden/methode-kiezen.mdx), zie je in [de keuzedriehoek](../keuzedriehoek.mdx).

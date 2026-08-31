@@ -22,6 +22,6 @@ Dezelfde [enquête](../methoden/enquete.md) of [observatie](../methoden/observat
 
 ## Hangt samen met
 
-- [Functies van onderzoek](./functies-overzicht.md) — alle zes functies naast elkaar
+- [Functies van onderzoek](./functies-overzicht.mdx) — alle zes functies naast elkaar
 - [Puur beschrijvend](./puur-beschrijvend.md) — de basis: eerst elk geval apart beschrijven
 - [Betrouwbaar](../../spelregels/betrouwbaar.md) — steeds op dezelfde manier meten

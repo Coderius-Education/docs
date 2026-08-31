@@ -25,7 +25,7 @@ Tweehonderd leerlingen geven de kantine een cijfer van 1 tot 10 en kiezen uit vi
 
 ## Hangt samen met
 
-- [Welke methode kies je?](./methode-kiezen.md) — enquête naast observatie, interview en analyse
+- [Welke methode kies je?](./methode-kiezen.mdx) — enquête naast observatie, interview en analyse
 - [Interview](./interview.md) — de tegenhanger: weinig mensen, de diepte in
 - [Valide](../../spelregels/valide.md) — neutrale vragen, representatieve groep
 - [Kwantitatief onderzoek](../../gegevens/kwantitatief.md) — het soort gegevens dat een enquête vooral oplevert

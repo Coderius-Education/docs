@@ -23,6 +23,6 @@ Met vijf interviews kun je niet zeggen dat "de meeste leerlingen" iets vinden �
 
 ## Hangt samen met
 
-- [Kwalitatief vs. kwantitatief](./kwal-vs-kwant.md) — het verband tussen beide soorten gegevens
+- [Kwalitatief vs. kwantitatief](./kwal-vs-kwant.mdx) — het verband tussen beide soorten gegevens
 - [Interview](../opzet/methoden/interview.md) — de methode die vooral woorden oplevert
 - [Verklarend-explorerend](../opzet/functies/verklarend-explorerend.md) — de functie waar kwalitatief onderzoek bij uitblinkt

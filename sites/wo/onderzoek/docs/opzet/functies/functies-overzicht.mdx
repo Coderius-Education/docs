@@ -3,6 +3,8 @@ title: Functies van onderzoek
 sidebar_position: 7
 ---
 
+import Quiz from '@site/src/components/Quiz';
+
 # Functies van onderzoek
 
 **Het verband in één zin:** de **functie** van je onderzoek is wat je antwoord moet *doen* — **beschrijven** (hoe is het?) of **verklaren** (waarom is het zo?) — en binnen die twee families onderscheiden we zes functies, die je herkent aan de vorm van de hoofdvraag.
@@ -38,27 +40,49 @@ Eén onderzoek combineert vaak meerdere functies: de deelvragen **definiëren** 
 
 ## Oefenen: welke functie heeft deze vraag?
 
-Bepaal de functie van elke hoofdvraag: **puur beschrijvend (B)**, **vergelijkend (V)**, **definiërend (D)**, **evaluerend (EV)**, **explorerend (EX)** of **toetsend (T)**:
+Bepaal de functie van elke hoofdvraag:
 
-1. *Hoeveel plastic afval produceert onze school per week?*
-2. *Wat verstaan we onder "gezonde" kantineproducten?*
-3. *Waardoor zou het kunnen komen dat de bovenbouw de kantine mijdt?*
-4. *Is ons nieuwe rooster leerlingvriendelijker dan het oude, gemeten aan de vijf criteria van de leerlingenraad?*
-5. *Produceert onze school minder afval sinds de nieuwe afvalbakken er staan?*
-6. *Wat zijn de verschillen in kantinegebruik tussen onderbouw en bovenbouw?*
-
-<details>
-<summary>Bekijk de antwoorden</summary>
-
-1. **B** — in kaart brengen hoe het is, zonder oordeel of vergelijking.
-2. **D** — het begrip "gezond" afbakenen voordat je ermee kunt meten.
-3. **EX** — open op zoek naar mogelijke verklaringen.
-4. **EV** — beoordelen aan de hand van vooraf vastgelegde criteria (let op: er zit ook een vergelijking in — functies kunnen combineren).
-5. **T** — een verwachte verklaring (de nieuwe bakken helpen) gericht toetsen door voor en na te meten.
-6. **V** — twee groepen op dezelfde manier beschrijven en naast elkaar zetten.
-
-</details>
+<Quiz
+  vragen={[
+    {
+      vraag: 'Hoeveel plastic afval produceert onze school per week?',
+      opties: ['Puur beschrijvend', 'Vergelijkend', 'Definiërend', 'Evaluerend', 'Explorerend', 'Toetsend'],
+      juist: 0,
+      uitleg: 'In kaart brengen hoe het is, zonder oordeel of vergelijking.',
+    },
+    {
+      vraag: 'Wat verstaan we onder "gezonde" kantineproducten?',
+      opties: ['Puur beschrijvend', 'Vergelijkend', 'Definiërend', 'Evaluerend', 'Explorerend', 'Toetsend'],
+      juist: 2,
+      uitleg: 'Het begrip "gezond" afbakenen voordat je ermee kunt meten.',
+    },
+    {
+      vraag: 'Waardoor zou het kunnen komen dat de bovenbouw de kantine mijdt?',
+      opties: ['Puur beschrijvend', 'Vergelijkend', 'Definiërend', 'Evaluerend', 'Explorerend', 'Toetsend'],
+      juist: 4,
+      uitleg: 'Open op zoek naar mogelijke verklaringen, zonder vaste verwachting vooraf.',
+    },
+    {
+      vraag: 'Is ons nieuwe rooster leerlingvriendelijker dan het oude, gemeten aan de vijf criteria van de leerlingenraad?',
+      opties: ['Puur beschrijvend', 'Vergelijkend', 'Definiërend', 'Evaluerend', 'Explorerend', 'Toetsend'],
+      juist: 3,
+      uitleg: 'Beoordelen aan de hand van vooraf vastgelegde criteria — let op: er zit ook een vergelijking in, functies kunnen combineren.',
+    },
+    {
+      vraag: 'Produceert onze school minder afval sinds de nieuwe afvalbakken er staan?',
+      opties: ['Puur beschrijvend', 'Vergelijkend', 'Definiërend', 'Evaluerend', 'Explorerend', 'Toetsend'],
+      juist: 5,
+      uitleg: 'Een verwachte verklaring (de nieuwe bakken helpen) gericht toetsen door voor en na te meten.',
+    },
+    {
+      vraag: 'Wat zijn de verschillen in kantinegebruik tussen onderbouw en bovenbouw?',
+      opties: ['Puur beschrijvend', 'Vergelijkend', 'Definiërend', 'Evaluerend', 'Explorerend', 'Toetsend'],
+      juist: 1,
+      uitleg: 'Twee groepen op dezelfde manier beschrijven en naast elkaar zetten.',
+    },
+  ]}
+/>
 
 ## Verder
 
-Hoe je de functie combineert met [soort onderzoek](../soorten/soorten-combineren.md) en [methode](../methoden/methode-kiezen.md), zie je in [de keuzedriehoek](../keuzedriehoek.md).
+Hoe je de functie combineert met [soort onderzoek](../soorten/soorten-combineren.mdx) en [methode](../methoden/methode-kiezen.mdx), zie je in [de keuzedriehoek](../keuzedriehoek.mdx).

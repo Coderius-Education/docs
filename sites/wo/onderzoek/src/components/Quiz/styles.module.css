@@ -1,0 +1,116 @@
+.quiz {
+  margin: 1.5rem 0;
+}
+
+.vraag {
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-global-radius);
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+  background: var(--ifm-background-surface-color);
+}
+
+.vraagTekst {
+  margin-bottom: 0.75rem;
+}
+
+.vraagNummer {
+  display: inline-block;
+  min-width: 1.6rem;
+  height: 1.6rem;
+  line-height: 1.6rem;
+  text-align: center;
+  border-radius: 50%;
+  background: var(--ifm-color-primary);
+  color: var(--ifm-color-white);
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-right: 0.6rem;
+}
+
+.opties {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.optie {
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--ifm-color-primary);
+  background: transparent;
+  color: var(--ifm-color-primary);
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.optie:hover:not(:disabled) {
+  background: var(--ifm-color-primary);
+  color: var(--ifm-color-white);
+}
+
+.optie:disabled {
+  cursor: default;
+}
+
+.optieGoed {
+  border-color: var(--ifm-color-success-dark);
+  background: var(--ifm-color-success-contrast-background);
+  color: var(--ifm-color-success-darkest);
+  font-weight: 600;
+}
+
+.optieFout {
+  border-color: var(--ifm-color-danger-dark);
+  background: var(--ifm-color-danger-contrast-background);
+  color: var(--ifm-color-danger-darkest);
+}
+
+.optieUit {
+  border-color: var(--ifm-color-emphasis-300);
+  color: var(--ifm-color-emphasis-500);
+}
+
+.uitleg {
+  margin-top: 0.75rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: var(--ifm-global-radius);
+  font-size: 0.9rem;
+}
+
+.uitlegGoed {
+  background: var(--ifm-color-success-contrast-background);
+  color: var(--ifm-color-success-darkest);
+}
+
+.uitlegFout {
+  background: var(--ifm-color-danger-contrast-background);
+  color: var(--ifm-color-danger-darkest);
+}
+
+.score {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 1.25rem;
+  border-radius: var(--ifm-global-radius);
+  background: var(--ifm-color-primary-contrast-background, var(--ifm-color-emphasis-100));
+  border: 1px solid var(--ifm-color-primary);
+}
+
+.resetKnop {
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  border: none;
+  background: var(--ifm-color-primary);
+  color: var(--ifm-color-white);
+  cursor: pointer;
+}
+
+.resetKnop:hover {
+  background: var(--ifm-color-primary-dark);
+}

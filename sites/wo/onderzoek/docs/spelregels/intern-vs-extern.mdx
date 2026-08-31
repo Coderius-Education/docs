@@ -3,6 +3,8 @@ title: Intern vs. extern
 sidebar_position: 8
 ---
 
+import Quiz from '@site/src/components/Quiz';
+
 # Interne vs. externe validiteit
 
 **Het verband in één zin:** [interne validiteit](./interne-validiteit.md) (klopt mijn conclusie bínnen het onderzoek?) en [externe validiteit](./externe-validiteit.md) (geldt die ook daarbuiten?) zijn de twee kanten van [valide](./valide.md) onderzoek — en maatregelen die de één verhogen, verlagen vaak de ander.
@@ -25,19 +27,33 @@ Perfect scoren op allebei lukt zelden — ook echte wetenschappers moeten hierin
 
 ## Oefenen: wat is hier mis?
 
-Bepaal bij elke situatie of vooral de **interne (I)** of de **externe (E)** validiteit in gevaar is:
+Bepaal bij elke situatie of vooral de interne of de externe validiteit in gevaar is:
 
-1. *Je test je studie-app alleen met je twee beste vrienden en concludeert dat leerlingen de app fijn vinden.*
-2. *Je vergelijkt de kiemsnelheid van zaadjes op de vensterbank (met licht) met zaadjes in de kelder (zonder licht) — maar in de kelder is het ook tien graden kouder.*
-3. *Je onderzoekt of een beloningssysteem huiswerkgedrag verbetert, maar alleen bij leerlingen die zich er vrijwillig voor opgaven.*
-4. *Je meet in het lab dat fietsband-type X de minste weerstand heeft op een gladde rol, en concludeert dat X de beste band is voor op straat.*
-
-<details>
-<summary>Bekijk de antwoorden</summary>
-
-1. **E** — twee vrienden zijn niet representatief voor "leerlingen".
-2. **I** — temperatuur is een storende variabele: je weet niet of het aan het licht of aan de kou ligt.
-3. **I** (en een beetje E) — vrijwilligers zijn waarschijnlijk al gemotiveerder; de verbetering kan door hún motivatie komen in plaats van door het beloningssysteem.
-4. **E** — de testsituatie (gladde rol) lijkt niet op de echte situatie (ruwe straat), dus de conclusie generaliseert niet zomaar.
-
-</details>
+<Quiz
+  vragen={[
+    {
+      vraag: 'Je test je studie-app alleen met je twee beste vrienden en concludeert dat leerlingen de app fijn vinden.',
+      opties: ['Interne validiteit', 'Externe validiteit'],
+      juist: 1,
+      uitleg: 'Twee vrienden zijn niet representatief voor "leerlingen" — de conclusie generaliseert niet.',
+    },
+    {
+      vraag: 'Je vergelijkt de kiemsnelheid van zaadjes op de vensterbank (met licht) met zaadjes in de kelder (zonder licht) — maar in de kelder is het ook tien graden kouder.',
+      opties: ['Interne validiteit', 'Externe validiteit'],
+      juist: 0,
+      uitleg: 'Temperatuur is een storende variabele: je weet niet of het aan het licht of aan de kou ligt.',
+    },
+    {
+      vraag: 'Je onderzoekt of een beloningssysteem huiswerkgedrag verbetert, maar alleen bij leerlingen die zich er vrijwillig voor opgaven.',
+      opties: ['Interne validiteit', 'Externe validiteit'],
+      juist: 0,
+      uitleg: 'Vrijwilligers zijn waarschijnlijk al gemotiveerder; de verbetering kan door hún motivatie komen in plaats van door het beloningssysteem (en de groep is ook nog eens niet representatief).',
+    },
+    {
+      vraag: 'Je meet in het lab dat fietsband-type X de minste weerstand heeft op een gladde rol, en concludeert dat X de beste band is voor op straat.',
+      opties: ['Interne validiteit', 'Externe validiteit'],
+      juist: 1,
+      uitleg: 'De testsituatie (gladde rol) lijkt niet op de echte situatie (ruwe straat), dus de conclusie generaliseert niet zomaar.',
+    },
+  ]}
+/>

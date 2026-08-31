@@ -22,6 +22,6 @@ Dit is precies wat je bij [ontwerpgericht onderzoek](../../typen/ontwerpgericht.
 
 ## Hangt samen met
 
-- [Functies van onderzoek](./functies-overzicht.md) — alle zes functies naast elkaar
+- [Functies van onderzoek](./functies-overzicht.mdx) — alle zes functies naast elkaar
 - [Ontwerpgericht onderzoek](../../typen/ontwerpgericht.md) — waar evalueren het sluitstuk is
 - [Valide](../../spelregels/valide.md) — testen met de echte doelgroep, op de echte eisen

@@ -18,7 +18,7 @@ Een [methode van gegevensverzameling](./opzet/methoden/analyse-materiaal.md) waa
 
 ### Beschrijvend onderzoek
 
-Onderzoek met als [functie](./opzet/functies/functies-overzicht.md) te beschrijven hoe iets is. Kan [puur beschrijvend](./opzet/functies/puur-beschrijvend.md), [vergelijkend](./opzet/functies/beschrijvend-vergelijkend.md), [definiërend](./opzet/functies/beschrijvend-definierend.md) of [evaluerend](./opzet/functies/beschrijvend-evaluerend.md) zijn.
+Onderzoek met als [functie](./opzet/functies/functies-overzicht.mdx) te beschrijven hoe iets is. Kan [puur beschrijvend](./opzet/functies/puur-beschrijvend.md), [vergelijkend](./opzet/functies/beschrijvend-vergelijkend.md), [definiërend](./opzet/functies/beschrijvend-definierend.md) of [evaluerend](./opzet/functies/beschrijvend-evaluerend.md) zijn.
 
 ### Betrouwbaar
 
@@ -38,7 +38,7 @@ Een groep deelnemers die de "behandeling" die je onderzoekt níét krijgt, zodat
 
 ### Deelvraag
 
-Een kleinere vraag die helpt om de hoofdvraag te beantwoorden. Per deelvraag kies je een functie, soort en methode — zie [de keuzedriehoek](./opzet/keuzedriehoek.md).
+Een kleinere vraag die helpt om de hoofdvraag te beantwoorden. Per deelvraag kies je een functie, soort en methode — zie [de keuzedriehoek](./opzet/keuzedriehoek.mdx).
 
 ### Enquête
 
@@ -74,7 +74,7 @@ Een hoofdvraag waarmee je iets te weten wilt komen: *"Hoe zit het…?", "Welke i
 
 ### Keuzedriehoek
 
-De drie keuzes die je per deelvraag maakt bij het opzetten van onderzoek: de functie, het soort onderzoek en de methode van gegevensverzameling. Zie [de keuzedriehoek](./opzet/keuzedriehoek.md).
+De drie keuzes die je per deelvraag maakt bij het opzetten van onderzoek: de functie, het soort onderzoek en de methode van gegevensverzameling. Zie [de keuzedriehoek](./opzet/keuzedriehoek.mdx).
 
 ### Kwalitatief onderzoek
 
@@ -142,7 +142,7 @@ Een [soort onderzoek](./opzet/soorten/veldonderzoek.md) waarbij je gegevens verz
 
 ### Verklarend onderzoek
 
-Onderzoek met als [functie](./opzet/functies/functies-overzicht.md) te verklaren waaróm iets zo is. Kan [explorerend](./opzet/functies/verklarend-explorerend.md) zijn (mogelijke verklaringen opsporen) of [toetsend](./opzet/functies/verklarend-toetsend.md) (één hypothese gericht toetsen).
+Onderzoek met als [functie](./opzet/functies/functies-overzicht.mdx) te verklaren waaróm iets zo is. Kan [explorerend](./opzet/functies/verklarend-explorerend.md) zijn (mogelijke verklaringen opsporen) of [toetsend](./opzet/functies/verklarend-toetsend.md) (één hypothese gericht toetsen).
 
 ### Vooraf opgestelde eisen
 

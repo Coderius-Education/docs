@@ -24,6 +24,6 @@ Cijfers vertellen niet **waarom** iets zo is. Dat 70% van de leerlingen de aula 
 
 ## Hangt samen met
 
-- [Kwalitatief vs. kwantitatief](./kwal-vs-kwant.md) — het verband tussen beide soorten gegevens
+- [Kwalitatief vs. kwantitatief](./kwal-vs-kwant.mdx) — het verband tussen beide soorten gegevens
 - [Enquête](../opzet/methoden/enquete.md) en [observatie](../opzet/methoden/observatie.md) — methoden die vooral cijfers opleveren
 - [Externe validiteit](../spelregels/externe-validiteit.md) — generaliseren kan alleen met genoeg en de juiste deelnemers

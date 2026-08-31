@@ -22,6 +22,6 @@ Eerst exploreer je (interviews leveren drie mogelijke verklaringen op), daarna [
 
 ## Hangt samen met
 
-- [Functies van onderzoek](./functies-overzicht.md) — alle zes functies naast elkaar
+- [Functies van onderzoek](./functies-overzicht.mdx) — alle zes functies naast elkaar
 - [Verklarend-toetsend](./verklarend-toetsend.md) — het vervolg: één verklaring gericht toetsen
 - [Interview](../methoden/interview.md) en [kwalitatief onderzoek](../../gegevens/kwalitatief.md) — de aanpak die hier meestal bij past

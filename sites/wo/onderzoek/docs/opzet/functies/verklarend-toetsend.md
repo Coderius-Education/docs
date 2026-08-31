@@ -22,6 +22,6 @@ Toetsend onderzoek vraagt om een gerichte meting: je houdt alles gelijk behalve 
 
 ## Hangt samen met
 
-- [Functies van onderzoek](./functies-overzicht.md) — alle zes functies naast elkaar
+- [Functies van onderzoek](./functies-overzicht.mdx) — alle zes functies naast elkaar
 - [Verklarend-explorerend](./verklarend-explorerend.md) — de stap ervóór: verklaringen opsporen
 - [Experimenteel onderzoek](../soorten/experimenteel.md) en [interne validiteit](../../spelregels/interne-validiteit.md) — het gereedschap voor het toetsen

@@ -25,7 +25,7 @@ Het eerste zoekresultaat overnemen is geen onderzoek. Literatuuronderzoek beteke
 
 ## Hangt samen met
 
-- [Soorten onderzoek combineren](./soorten-combineren.md) — experiment, veld en literatuur naast elkaar
+- [Soorten onderzoek combineren](./soorten-combineren.mdx) — experiment, veld en literatuur naast elkaar
 - [Beschrijvend-definiërend](../functies/beschrijvend-definierend.md) — de functie waar literatuuronderzoek meestal bij hoort
 - [Analyse van tekst- of beeldmateriaal](../methoden/analyse-materiaal.md) — de verwante methode voor het systematisch bestuderen van materiaal
 - [Transparant](../../spelregels/transparant.md) — bronvermelding als hart van deze soort

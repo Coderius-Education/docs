@@ -21,6 +21,6 @@ Je turft per pauze hoeveel leerlingen de fietsenstalling verkeerd gebruiken, op 
 
 ## Hangt samen met
 
-- [Soorten onderzoek combineren](./soorten-combineren.md) — experiment, veld en literatuur naast elkaar
-- [Methoden van gegevensverzameling](../methoden/methode-kiezen.md) — observatie, interview, enquête en analyse: hoe je in het veld gegevens verzamelt
+- [Soorten onderzoek combineren](./soorten-combineren.mdx) — experiment, veld en literatuur naast elkaar
+- [Methoden van gegevensverzameling](../methoden/methode-kiezen.mdx) — observatie, interview, enquête en analyse: hoe je in het veld gegevens verzamelt
 - [Externe validiteit](../../spelregels/externe-validiteit.md) — de grote kracht van veldonderzoek
