@@ -45,21 +45,6 @@ Bij ontwerpgericht onderzoek wil je een **product** maken dat een probleem oplos
 
 Deze vragen beginnen bijna altijd met **"Hoe kan ik … ontwerpen/maken/ontwikkelen …"** gevolgd door een doel: **"… dat/die/waarmee …"**. Het zijn **ontwerpvragen**.
 
-### De ontwerpcyclus
-
-Ontwerpgericht onderzoek volgt de **ontwerpcyclus**:
-
-```mermaid
-flowchart TD
-    A["1. Probleem verkennen<br/>Voor wie is het een probleem? Wat is er al?"] --> B["2. Eisen opstellen<br/>Waaraan moet de oplossing voldoen?"]
-    B --> C["3. Ideeën bedenken<br/>Meerdere mogelijke oplossingen schetsen"]
-    C --> D["4. Kiezen en uitwerken<br/>Beste idee kiezen (onderbouwd!) en ontwerpen"]
-    D --> E["5. Prototype maken"]
-    E --> F["6. Testen<br/>Voldoet het aan je eisen?"]
-    F --> G["7. Evalueren en presenteren"]
-    F -.->|"Niet goed genoeg?<br/>Terug naar de tekentafel"| C
-```
-
 Je eindproduct is een **ontwerp of prototype**, plus een verslag waarin je laat zien dat (en hoe goed) het aan je eisen voldoet.
 
 :::caution Let op
@@ -114,5 +99,5 @@ Bepaal van elke hoofdvraag of die **theoriegericht (T)** of **ontwerpgericht (O)
 ## Samengevat
 
 - **Theoriegericht onderzoek** beantwoordt een **kennisvraag**; het resultaat is een onderbouwde **conclusie**.
-- **Ontwerpgericht onderzoek** beantwoordt een **ontwerpvraag** via de **ontwerpcyclus**; het resultaat is een **ontwerp** dat je toetst aan vooraf opgestelde **eisen**.
+- **Ontwerpgericht onderzoek** beantwoordt een **ontwerpvraag**; het resultaat is een **ontwerp** dat je toetst aan vooraf opgestelde **eisen**.
 - De twee vullen elkaar aan: goed ontwerpen begint met kennis, en nieuwe kennis leidt tot betere ontwerpen.

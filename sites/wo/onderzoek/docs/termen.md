@@ -1,0 +1,77 @@
+---
+id: termen
+title: Termen
+sidebar_position: 99
+---
+
+# Termen
+
+Een overzicht van de belangrijkste begrippen uit het materiaal, op alfabetische volgorde.
+
+### Aanvaardbaar
+
+Eén van de [vier spelregels van onderzoek](./spelregels#4-aanvaardbaar-is-je-onderzoek-eerlijk-en-zonder-schade). Onderzoek is aanvaardbaar als het ethisch verantwoord is: eerlijk uitgevoerd, met toestemming van deelnemers, met respect voor privacy en zonder iemand te schaden.
+
+### Betrouwbaar
+
+Eén van de [vier spelregels van onderzoek](./spelregels#1-betrouwbaar-krijgt-een-ander-hetzelfde-resultaat). Onderzoek is betrouwbaar als het resultaat niet van toeval afhangt: wie het onderzoek op dezelfde manier herhaalt, krijgt (ongeveer) hetzelfde resultaat.
+
+### Bronvermelding
+
+Het vermelden waar informatie vandaan komt, bij alles wat je van een ander overneemt: tekst, cijfers, ideeën, afbeeldingen of AI-output. Zo kan de lezer je bronnen controleren en pleeg je geen plagiaat.
+
+### Conclusie
+
+Het onderbouwde antwoord op je hoofdvraag, gebaseerd op de gegevens die je hebt verzameld. Het eindresultaat van [theoriegericht onderzoek](./theoriegericht-vs-ontwerpgericht#theoriegericht-onderzoek-hoe-zit-het).
+
+### Deelvraag
+
+Een kleinere vraag die helpt om de hoofdvraag te beantwoorden. Meerdere deelvragen samen dekken de hoofdvraag af.
+
+### Hoofdvraag
+
+De centrale vraag van je onderzoek. Bij theoriegericht onderzoek is het een kennisvraag, bij ontwerpgericht onderzoek een ontwerpvraag.
+
+### Hypothese
+
+Je verwachte antwoord op de hoofdvraag, opgesteld vóórdat je gegevens verzamelt. Na afloop toets je of je hypothese klopt — een hypothese die niet klopt is óók een geldig resultaat.
+
+### Kennisvraag
+
+Een hoofdvraag waarmee je iets te weten wilt komen: *"Hoe zit het…?", "Welke invloed…?", "In hoeverre…?"*. Hoort bij [theoriegericht onderzoek](./theoriegericht-vs-ontwerpgericht#theoriegericht-onderzoek-hoe-zit-het).
+
+### Ontwerpgericht onderzoek
+
+Onderzoek waarbij je een product maakt dat een probleem oplost (een app, machine, spel, lesprogramma …). Het resultaat is een werkend ontwerp dat je toetst aan vooraf opgestelde eisen. Zie [theoriegericht vs. ontwerpgericht](./theoriegericht-vs-ontwerpgericht#ontwerpgericht-onderzoek-hoe-maak-ik-iets-dat).
+
+### Ontwerpvraag
+
+Een hoofdvraag waarmee je iets wilt maken: *"Hoe kan ik … ontwerpen/maken/ontwikkelen dat …?"*. Hoort bij [ontwerpgericht onderzoek](./theoriegericht-vs-ontwerpgericht#ontwerpgericht-onderzoek-hoe-maak-ik-iets-dat).
+
+### Plagiaat
+
+Werk of ideeën van een ander presenteren alsof ze van jou zijn, zonder bronvermelding. Plagiaat maakt onderzoek niet-transparant en niet-aanvaardbaar.
+
+### Prototype
+
+Een eerste, testbare versie van je ontwerp. Hoeft nog niet af of mooi te zijn — het gaat erom dat je ermee kunt testen of je oplossing werkt.
+
+### Representatief
+
+Een groep deelnemers is representatief als die lijkt op de hele groep waarover je iets wilt zeggen. Alleen je vriendengroep ondervragen is meestal niet representatief voor "alle scholieren".
+
+### Theoriegericht onderzoek
+
+Onderzoek waarbij je iets te weten wilt komen: hoe iets in elkaar zit, waarom iets gebeurt of wat het effect van iets is. Het resultaat is een onderbouwde conclusie. Zie [theoriegericht vs. ontwerpgericht](./theoriegericht-vs-ontwerpgericht#theoriegericht-onderzoek-hoe-zit-het).
+
+### Transparant
+
+Eén van de [vier spelregels van onderzoek](./spelregels#3-transparant-kan-een-ander-het-narekenen). Onderzoek is transparant als een ander precies kan nagaan wat je hebt gedaan: methode beschreven, bronnen vermeld, gegevens zichtbaar.
+
+### Valide
+
+Eén van de [vier spelregels van onderzoek](./spelregels#2-valide-meet-je-wat-je-wilt-meten). Onderzoek is valide als je echt meet wat je wilt weten: passende methode, juiste groep, neutrale vragen en geen grotere conclusies dan je gegevens toelaten.
+
+### Vooraf opgestelde eisen
+
+De lijst met eisen waaraan je ontwerp moet voldoen, opgesteld vóórdat je gaat ontwerpen. Aan het einde test je je ontwerp tegen deze eisen: zo bepaal je of het geslaagd is.

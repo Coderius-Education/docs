@@ -72,6 +72,11 @@ const config = {
             label: 'Materiaal',
           },
           {
+            to: '/termen',
+            label: 'Termen',
+            position: 'left',
+          },
+          {
             href: 'https://github.com/Coderius-Education/onderzoek',
             label: 'GitHub',
             position: 'right',
