@@ -24,7 +24,7 @@ Theoriegerichte hoofdvragen zijn **kennisvragen**. Ze beginnen vaak met *hoe, wa
 
 Een **antwoord**: een conclusie die je onderbouwt met de gegevens die je hebt verzameld. Je verzamelt die gegevens systematisch — welke aanpak daarbij past, kies je met de [keuzedriehoek](../opzet/keuzedriehoek.mdx).
 
-:::tip Goed om te weten
+:::tip[Goed om te weten]
 Een conclusie als *"mijn hypothese klopt niet"* is óók een geldig resultaat! Het gaat erom dat je **eerlijk** antwoord geeft op je vraag, niet dat de uitkomst is wat je hoopte.
 :::
 

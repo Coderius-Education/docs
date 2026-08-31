@@ -16,11 +16,11 @@ Bij **beschrijvend-vergelijkend** onderzoek beschrijf je twee of meer gevallen e
 - *Wat zijn de verschillen in schermtijd tussen brugklassers en bovenbouwleerlingen?*
 - *In hoeverre verschilt het aanbod van de schoolkantine van dat van de school in het dorp ernaast?*
 
-:::caution Vergelijken vraagt om gelijke meetlatten
+:::caution[Vergelijken vraagt om gelijke meetlatten]
 Je kunt alleen eerlijk vergelijken als je beide gevallen op **dezelfde manier** meet: dezelfde vragen, dezelfde momenten, dezelfde criteria. Anders vergelijk je appels met peren.
 :::
 
-:::tip Past vaak bij
+:::tip[Past vaak bij]
 Dezelfde [enquête](../methoden/enquete.md) of [observatie](../methoden/observatie.md) uitvoeren bij twee groepen, en de resultaten naast elkaar zetten.
 :::
 

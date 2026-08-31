@@ -24,7 +24,7 @@ Ontwerpgerichte hoofdvragen zijn **ontwerpvragen**. Ze beginnen bijna altijd met
 
 Een **ontwerp of prototype**, plus een verslag waarin je laat zien dat (en hoe goed) het werkt. Daarvoor stel je vooraf **eisen** op waaraan je ontwerp moet voldoen, en test je je ontwerp daar aan het einde tegen — dat testen is de [evaluerende functie](../opzet/functies/beschrijvend-evaluerend.md) van onderzoek.
 
-:::caution Let op
+:::caution[Let op]
 Alleen iets maken is nog geen onderzoek. Het verschil zit in het **testen van je ontwerp aan vooraf opgestelde eisen** en het **onderbouwen van je keuzes**. Zonder eisen en tests heb je een knutselproject, geen ontwerponderzoek.
 :::
 

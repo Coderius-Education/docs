@@ -20,7 +20,7 @@ Bij **puur beschrijvend** onderzoek breng je een situatie in kaart zoals die is,
 
 Puur beschrijvend onderzoek lijkt simpel, maar is vaak de **basis** voor al het andere: je kunt pas vergelijken, beoordelen of verklaren als je eerst weet hoe het zit.
 
-:::tip Past vaak bij
+:::tip[Past vaak bij]
 Een [enquête](../methoden/enquete.md), [observatie](../methoden/observatie.md) of meting in het veld — je wilt tellen en in kaart brengen.
 :::
 

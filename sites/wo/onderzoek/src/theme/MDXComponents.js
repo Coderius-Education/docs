@@ -6,6 +6,7 @@ import Quiz from '@site/src/components/Quiz';
 import TermenTrainer from '@site/src/components/TermenTrainer';
 import TermenLijst from '@site/src/components/TermenLijst';
 import StartKaarten from '@site/src/components/StartKaarten';
+import EchtGebeurd from '@site/src/components/EchtGebeurd';
 
 // Globaal beschikbaar in alle .md/.mdx-pagina's, zonder import.
 export default {
@@ -17,4 +18,5 @@ export default {
   TermenTrainer,
   TermenLijst,
   StartKaarten,
+  EchtGebeurd,
 };

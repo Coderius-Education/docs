@@ -1,0 +1,64 @@
+.kader {
+  border: 1px solid #d0a848;
+  border-left-width: 6px;
+  border-radius: var(--ifm-global-radius);
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  background: rgba(224, 178, 82, 0.09);
+}
+
+.kop {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.6rem;
+}
+
+.icoon {
+  font-size: 1.1rem;
+}
+
+.label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #a97d1c;
+}
+
+[data-theme='dark'] .label {
+  color: #e3b95f;
+}
+
+.titel {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.jaar {
+  font-weight: 400;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.verhaal {
+  font-size: 0.93rem;
+}
+
+.verhaal p:last-child {
+  margin-bottom: 0;
+}
+
+.voet {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 0.7rem;
+  padding-top: 0.6rem;
+  border-top: 1px dashed rgba(208, 168, 72, 0.5);
+  font-size: 0.85rem;
+}
+
+.boek {
+  color: var(--ifm-color-emphasis-700);
+}

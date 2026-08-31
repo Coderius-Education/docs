@@ -22,7 +22,7 @@ Je wilt weten of leerlingen beter scoren op een toets als ze met muziek leren. G
 - **Verdeel deelnemers willekeurig over de groepen.** Laat je leerlingen zelf kiezen, dan kiezen muziekliefhebbers massaal voor de muziekgroep — en meet je misschien hún eigenschappen in plaats van het effect van muziek.
 - **Stel neutrale vragen en meet objectief.** Sturende enquêtevragen of "meten op gevoel" verpesten de interne validiteit net zo goed.
 
-:::caution Samenhang is nog geen oorzaak
+:::caution[Samenhang is nog geen oorzaak]
 Dat twee dingen samen voorkomen, bewijst niet dat het één het ander veroorzaakt. Leerlingen die ontbijten halen hogere cijfers — maar komt dat door het ontbijt, of doordat achter ontbijt én cijfers dezelfde factor zit (bijvoorbeeld een gestructureerd thuisleven)? Een intern valide onderzoek sluit zulke alternatieve verklaringen zo veel mogelijk uit.
 :::
 
@@ -30,6 +30,19 @@ Dat twee dingen samen voorkomen, bewijst niet dat het één het ander veroorzaak
   wel="Beide groepen maken dezelfde toets op hetzelfde moment; alleen de muziek verschilt."
   niet="Groep A ’s ochtends en groep B in het achtste uur — het tijdstip kan dan de uitkomst verklaren."
 />
+
+<EchtGebeurd
+  titel="Roken en longkanker"
+  jaar="1950–1964"
+  boek="Judea Pearl, The Book of Why (hoofdstuk over roken)"
+  linkUrl="https://en.wikipedia.org/wiki/The_Book_of_Why"
+  linkTekst="Over The Book of Why">
+
+In de jaren vijftig lieten grote onderzoeken zien dat rokers veel vaker longkanker kregen. Toch weigerde een van de beroemdste statistici ooit, R.A. Fisher (zelf fervent pijproker), de conclusie te trekken dat roken de oorzaak was. Zijn argument was precies een aanval op de interne validiteit: misschien bestond er een verborgen erfelijke factor die mensen én naar sigaretten liet grijpen én vatbaar maakte voor longkanker — een storende variabele op wereldschaal. Omdat je mensen niet willekeurig kunt "toewijzen" aan een leven lang roken, was een echt experiment onmogelijk. Het duurde tot in de jaren zestig voordat een berg aan bewijs uit allerlei soorten onderzoek samen zo overtuigend was dat de twijfel verdween.
+
+**Wat je hiervan leert:** wie jouw conclusie wil onderuithalen, zoekt een storende variabele die je niet hebt uitgesloten — doe dat dus zelf alvast.
+
+</EchtGebeurd>
 
 ## Hangt samen met
 

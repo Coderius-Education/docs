@@ -22,7 +22,7 @@ Bij **kwantitatief onderzoek** verzamel je gegevens die je in **getallen** kunt 
 
 **Sterk in:** vergelijken en onderbouwen. Cijfers kun je in tabellen en grafieken zetten, gemiddelden uitrekenen en naast elkaar leggen. Met genoeg deelnemers wordt je resultaat [betrouwbaar](../spelregels/betrouwbaar.md) en kun je voorzichtig generaliseren.
 
-:::caution Let op
+:::caution[Let op]
 Cijfers vertellen niet **waarom** iets zo is. Dat 70% van de leerlingen de aula te druk vindt, zegt nog niet wat er precies stoort of wat er beter kan. Daarvoor heb je [kwalitatief onderzoek](./kwalitatief.md) nodig.
 :::
 

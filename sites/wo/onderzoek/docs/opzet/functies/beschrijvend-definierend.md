@@ -20,7 +20,7 @@ Bij **beschrijvend-definiërend** onderzoek zoek je uit wat een begrip betekent 
 
 Definiërend onderzoek doe je vaak als **eerste deelvraag**: voordat je nepnieuws kunt tellen of verklaren, moet vaststaan wat je er precies onder verstaat. Zonder scherpe definitie meet iedereen iets anders — en is je onderzoek niet [valide](../../spelregels/valide.md).
 
-:::tip Past vaak bij
+:::tip[Past vaak bij]
 [Literatuuronderzoek](../soorten/literatuuronderzoek.md): je vergelijkt hoe bestaande bronnen het begrip omschrijven en kiest (of bouwt) daaruit jouw werkdefinitie.
 :::
 

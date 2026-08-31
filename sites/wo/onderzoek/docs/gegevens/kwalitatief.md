@@ -21,7 +21,7 @@ Bij **kwalitatief onderzoek** verzamel je gegevens in **woorden**: wat mensen vi
 
 **Sterk in:** begrijpen. Je ontdekt verklaringen, motieven en ideeën waar je zelf nooit aan gedacht had. Voor [ontwerpgericht onderzoek](../typen/ontwerpgericht.md) is dit goud waard: zo leer je wat je doelgroep écht nodig heeft.
 
-:::caution Let op
+:::caution[Let op]
 Met vijf interviews kun je niet zeggen dat "de meeste leerlingen" iets vinden — daarvoor is je groep te klein en niet representatief genoeg. Kwalitatieve resultaten generaliseren dus slecht (lage [externe validiteit](../spelregels/externe-validiteit.md)). En let op je eigen kleuring: vat antwoorden eerlijk samen, ook als ze je niet uitkomen — dat vraagt de spelregel [transparant](../spelregels/transparant.md).
 :::
 

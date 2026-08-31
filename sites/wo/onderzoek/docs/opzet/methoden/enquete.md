@@ -19,7 +19,7 @@ Een **enquête** stelt veel mensen exact dezelfde vragen, meestal **gesloten** (
 - **Zorg voor genoeg én de juiste invullers.** Een representatieve groep, niet alleen je vrienden — anders lijdt je [validiteit](../../spelregels/valide.md) eronder.
 - **Maak hem anoniem** waar het kan: mensen antwoorden dan eerlijker.
 
-:::tip Open vragen mogen ook
+:::tip[Open vragen mogen ook]
 Een enquête kan naast gesloten vragen ook een open vraag bevatten (*"Wat zou jij veranderen aan de kantine?"*). Die levert [kwalitatieve](../../gegevens/kwalitatief.md) antwoorden op — handig, maar lastiger te tellen.
 :::
 

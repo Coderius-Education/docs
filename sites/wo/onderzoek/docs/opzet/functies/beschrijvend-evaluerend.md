@@ -20,7 +20,7 @@ Bij **beschrijvend-evaluerend** onderzoek beoordeel je iets aan de hand van **cr
 
 Zonder criteria vooraf wordt evalueren al snel "ik vind het wel mooi" — en dat is geen onderzoek. Leg dus éérst vast waaraan iets moet voldoen, en toets daar daarna systematisch aan.
 
-:::tip Herken je dit?
+:::tip[Herken je dit?]
 Dit is precies wat je bij [ontwerpgericht onderzoek](../../typen/ontwerpgericht.md) doet als je je prototype test tegen je vooraf opgestelde eisen. Testen tegen eisen ís evaluerend onderzoek.
 :::
 

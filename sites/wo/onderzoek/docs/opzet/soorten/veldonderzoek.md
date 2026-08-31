@@ -15,7 +15,7 @@ Bij **veldonderzoek** ga je "het veld in": je verzamelt gegevens in de echte sit
 
 **Sterk in:** de werkelijkheid in beeld brengen. Je meet gedrag en meningen waar ze echt plaatsvinden, dus je resultaten zijn realistisch — goed voor de [externe validiteit](../../spelregels/externe-validiteit.md). Voor [ontwerpgericht onderzoek](../../typen/ontwerpgericht.md) is veldonderzoek vaak onmisbaar: zo leer je je doelgroep en het probleem kennen, en zo test je je prototype in het echt.
 
-:::caution Let op
+:::caution[Let op]
 In het echte leven spelen veel **storende variabelen** mee — je kunt minder goed bewijzen waar iets door komt (lagere [interne validiteit](../../spelregels/interne-validiteit.md)). Zorg ook voor een representatieve groep, en vergeet de spelregel [aanvaardbaar](../../spelregels/aanvaardbaar.md) niet: toestemming en privacy gelden juist bij observeren, enquêteren en interviewen.
 :::
 

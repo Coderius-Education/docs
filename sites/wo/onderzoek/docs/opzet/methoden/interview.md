@@ -17,7 +17,7 @@ Een **interview** is een gesprek met één persoon (of een klein groepje) waarin
 - Kies je gesprekspartners bewust: mensen die er echt iets over kunnen zeggen (de conciërge over de fietsenstalling, niet je buurman).
 - Neem het gesprek op (mét toestemming) of werk je aantekeningen direct na afloop uit — en vat eerlijk samen, ook wat je niet uitkomt.
 
-:::caution Weinig mensen = voorzichtig concluderen
+:::caution[Weinig mensen = voorzichtig concluderen]
 Met vijf interviews kun je niet zeggen dat "de meeste leerlingen" iets vinden — daarvoor is je groep te klein. Interviews zijn goud voor het **waarom**, maar voor het **hoeveel** heb je een [enquête](./enquete.md) nodig.
 :::
 

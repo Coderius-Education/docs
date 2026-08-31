@@ -19,7 +19,7 @@ Onderzoek is **aanvaardbaar** als het **ethisch verantwoord** is: eerlijk uitgev
 - **Breng niemand in gevaar of verlegenheid.** Geen experimenten die deelnemers kunnen schaden, geen vragen die onnodig kwetsen, geen tests die spullen van anderen slopen.
 - **Houd je aan de regels.** Van school, van de wet, en van de plek waar je onderzoek doet. Twijfel je? Overleg met je begeleider *voordat* je begint.
 
-:::caution Voorbeeld van onaanvaardbaar onderzoek
+:::caution[Voorbeeld van onaanvaardbaar onderzoek]
 Je onderzoekt hoe makkelijk wachtwoorden van klasgenoten te raden zijn — door het gewoon te proberen op hun echte accounts, zonder dat ze het weten. Interessante vraag, onaanvaardbare methode. Aanvaardbaar alternatief: laat vrijwilligers een *nep*-wachtwoord aanmaken volgens hun gewone gewoontes, en test dáárop.
 :::
 
@@ -27,6 +27,18 @@ Je onderzoekt hoe makkelijk wachtwoorden van klasgenoten te raden zijn — door 
   wel="Vrijwilligers vullen anoniem je enquête in en weten waarvoor die is."
   niet="Stiekem filmen in de aula ‘omdat het maar voor school is’ — zonder toestemming schend je privacy."
 />
+
+<EchtGebeurd
+  titel="De zaak-Stapel"
+  jaar="2011"
+  linkUrl="https://nl.wikipedia.org/wiki/Diederik_Stapel"
+  linkTekst="Diederik Stapel (Wikipedia)">
+
+Diederik Stapel was een gevierde Nederlandse hoogleraar sociale psychologie met opvallend mooie onderzoeksresultaten — tot in 2011 uitkwam dat hij jarenlang zijn data simpelweg had verzonnen. Hij vulde zelf de "enquêtes" in die zogenaamd door proefpersonen waren ingevuld. Tientallen wetenschappelijke artikelen moesten worden teruggetrokken, promovendi die op zijn data hadden gebouwd zagen hun werk waardeloos worden, en de affaire werd wereldnieuws.
+
+**Wat je hiervan leert:** verzonnen of opgepoetste resultaten vernietigen niet alleen je eigen onderzoek, maar ook het werk en vertrouwen van iedereen om je heen. Een tegenvallende uitkomst eerlijk rapporteren is altijd de betere keuze.
+
+</EchtGebeurd>
 
 ## Hangt samen met
 

@@ -36,6 +36,10 @@ Loop deze vragen na vóór je begint én vlak voor je je verslag inlevert:
 - [ ] Hebben mijn deelnemers vrijwillig en geïnformeerd meegedaan, en blijven ze anoniem? *(aanvaardbaar)*
 - [ ] Rapporteer ik ook de resultaten die me niet uitkomen? *(aanvaardbaar)*
 
+:::tip[Echt gebeurd]
+Bij elke spelregel vind je een kader **"Echt gebeurd"** met een beroemd onderzoek waar die spelregel het verschil maakte — van de peilingsblunder van 1936 tot de zaak-Stapel.
+:::
+
 ## Verder lezen
 
 Validiteit heeft twee kanten — klopt je conclusie bínnen je onderzoek, en geldt die ook daarbuiten? Lees verder bij [interne validiteit](./interne-validiteit.md), [externe validiteit](./externe-validiteit.md) en [het spanningsveld tussen die twee](./intern-vs-extern.mdx).

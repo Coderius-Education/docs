@@ -20,7 +20,7 @@ Bij **verklarend-explorerend** onderzoek weet je dát iets zo is, maar nog niet 
 
 Explorerend onderzoek is open van opzet: je wilt verklaringen ontdekken waar je zelf nog niet aan gedacht had. Daarom past het goed bij [kwalitatieve](../../gegevens/kwalitatief.md) methoden zoals [interviews](../methoden/interview.md) en open vragen. De opbrengst is vaak een **hypothese** voor vervolgonderzoek.
 
-:::tip Van exploreren naar toetsen
+:::tip[Van exploreren naar toetsen]
 Eerst exploreer je (interviews leveren drie mogelijke verklaringen op), daarna [toets](./verklarend-toetsend.md) je de meest kansrijke met een experiment of gerichte meting. Zo bouwt het ene verklarende onderzoek op het andere voort.
 :::
 

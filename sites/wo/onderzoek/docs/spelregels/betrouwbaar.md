@@ -18,7 +18,7 @@ Onderzoek is **betrouwbaar** als het resultaat niet van toeval afhangt: wie het 
 - **Meet nauwkeurig en steeds op dezelfde manier.** Zelfde meetinstrument, zelfde omstandigheden, zelfde vraagstelling.
 - **Houd alles gelijk behalve wat je onderzoekt.** Test je het effect van licht op plantengroei, geef dan alle plantjes dezelfde aarde, hetzelfde water en dezelfde temperatuur.
 
-:::caution Voorbeeld van onbetrouwbaar onderzoek
+:::caution[Voorbeeld van onbetrouwbaar onderzoek]
 Je meet één keer hoe snel je oude laptop opstart en één keer hoe snel de nieuwe opstart, en concludeert dat de nieuwe "twee keer zo snel" is. Misschien draaide er toevallig net een update. Meet tien keer en neem het gemiddelde — dan pas kun je iets zeggen.
 :::
 
@@ -28,6 +28,18 @@ Je meet één keer hoe snel je oude laptop opstart en één keer hoe snel de nie
   wel="Je meet de opstarttijd van elke laptop tien keer en vergelijkt de gemiddelden."
   niet="Eén meting per laptop — toeval (een update, een warme dag) kan dan de hele uitkomst bepalen."
 />
+
+<EchtGebeurd
+  titel="Koude kernfusie"
+  jaar="1989"
+  linkUrl="https://nl.wikipedia.org/wiki/Koude_kernfusie"
+  linkTekst="Koude kernfusie (Wikipedia)">
+
+In maart 1989 kondigden de chemici Fleischmann en Pons op een persconferentie aan dat ze kernfusie hadden bereikt op een gewone labtafel, bij kamertemperatuur — een ontdekking die het energieprobleem van de wereld zou oplossen. Laboratoria over de hele wereld lieten alles vallen om het experiment te herhalen. Vrijwel niemand kreeg hetzelfde resultaat, en de enkele "successen" bleken meetfouten. Binnen enkele maanden stortte de claim in en was de reputatie van de onderzoekers verwoest.
+
+**Wat je hiervan leert:** herhaalbaarheid is de lakmoesproef van onderzoek — een resultaat dat alleen bij jou uitkomt, is geen resultaat.
+
+</EchtGebeurd>
 
 ## Hangt samen met
 

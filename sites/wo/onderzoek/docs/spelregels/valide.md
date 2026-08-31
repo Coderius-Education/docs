@@ -18,7 +18,7 @@ Onderzoek is **valide** als je gegevens echt gaan over de vraag die je wilt bean
 - **Stel neutrale vragen.** *"Vind je ook niet dat er te veel huiswerk is?"* stuurt het antwoord. *"Hoeveel uur besteed je per week aan huiswerk?"* niet.
 - **Trek geen grotere conclusie dan je gegevens toelaten.** Heb je alleen 4-havo ondervraagd, dan gaat je conclusie over 4-havo — niet over "de jeugd".
 
-:::caution Betrouwbaar maar niet valide
+:::caution[Betrouwbaar maar niet valide]
 Je wilt weten of leerlingen je nieuwe school-app handig vinden en telt hoe vaak de app gedownload is. Dat kun je perfect herhaalbaar meten — maar downloads zeggen niets over *handig vinden*. Misschien was de download verplicht. Je meet het verkeerde: niet valide.
 :::
 

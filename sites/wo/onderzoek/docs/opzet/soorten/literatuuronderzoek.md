@@ -23,7 +23,7 @@ Bij **literatuuronderzoek** (ook wel bronnenonderzoek) zoek je uit wat anderen a
 
 **Let op:** je conclusie is zo goed als je bronnen. Beoordeel elke bron kritisch: wie schreef dit, met welk doel, hoe oud is het, en zeggen andere bronnen hetzelfde? En wees [transparant](../../spelregels/transparant.md): alles wat je overneemt krijgt een bronvermelding.
 
-:::caution Alleen googelen is geen literatuuronderzoek
+:::caution[Alleen googelen is geen literatuuronderzoek]
 Het eerste zoekresultaat overnemen is geen onderzoek. Literatuuronderzoek betekent: meerdere bronnen zoeken, ze op betrouwbaarheid beoordelen, ze met elkaar vergelijken en daar met bronvermelding je eigen conclusie uit trekken. Dat geldt ook voor antwoorden van een AI-chatbot: controleer die bij echte bronnen.
 :::
 

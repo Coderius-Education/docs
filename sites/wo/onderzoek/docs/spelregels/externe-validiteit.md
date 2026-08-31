@@ -27,6 +27,18 @@ Je muziekonderzoek is perfect uitgevoerd, maar alle deelnemers waren 5-vwo-leerl
   niet="Drie vrienden ondervragen en concluderen wat ‘scholieren’ vinden."
 />
 
+<EchtGebeurd
+  titel="De Literary Digest-peiling"
+  jaar="1936"
+  linkUrl="https://en.wikipedia.org/wiki/The_Literary_Digest"
+  linkTekst="The Literary Digest (Wikipedia)">
+
+Het Amerikaanse tijdschrift *The Literary Digest* verstuurde in 1936 tien miljoen enquêtes over de presidentsverkiezingen en kreeg er 2,4 miljoen terug — een gigantische steekproef. De voorspelling: uitdager Landon zou ruim winnen van Roosevelt. Het werd de grootste peilingsblunder uit de geschiedenis: Roosevelt won juist met overmacht. Wat ging er mis? De adressen kwamen vooral uit telefoonboeken en autoregistraties — en midden in de economische crisis waren dat vooral de rijkere Amerikanen. De steekproef was enorm, maar niet representatief. De jonge peiler George Gallup voorspelde de uitslag wél goed, met een véél kleinere maar zorgvuldig samengestelde steekproef.
+
+**Wat je hiervan leert:** een grote groep is niet hetzelfde als de juiste groep — representativiteit wint van omvang.
+
+</EchtGebeurd>
+
 ## Hangt samen met
 
 - [Valide](./valide.md) — externe validiteit is één van de twee kanten van validiteit
