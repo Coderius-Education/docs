@@ -6,6 +6,7 @@ const sidebars = {
   materiaalSidebar: [
     'intro',
     'theoriegericht-vs-ontwerpgericht',
+    'spelregels',
   ],
 };
 
