@@ -7,7 +7,7 @@ sidebar_position: 1
 
 <Definitie gewoneTaal="je kijkt wat mensen echt dóén en noteert dat systematisch.">
 
-Bij een **observatie** bekijk je gedrag of situaties zoals ze echt gebeuren, zonder er zelf in in te grijpen. Wat mensen *zeggen* dat ze doen en wat ze *echt* doen, verschilt nogal eens — observeren laat het echte gedrag zien.
+Bij een **observatie** bekijk je gedrag of situaties zoals ze echt gebeuren, zonder zelf in te grijpen. Wat mensen *zeggen* dat ze doen en wat ze *echt* doen, verschilt nogal eens — observeren laat het echte gedrag zien.
 
 </Definitie>
 
@@ -23,7 +23,7 @@ Sta je met een klembord naast de prullenbak, dan gooit iedereen zijn afval opeen
 
 ## Voorbeeld
 
-Je turft per pauze hoeveel leerlingen de kortere trap of de lift nemen, op vijf schooldagen, met een schema per verdieping en tijdvak.
+Je turft per pauze hoeveel leerlingen de trap of de lift nemen, op vijf schooldagen, met een schema per verdieping en tijdvak.
 
 <WelNiet
   wel="Met een turflijst bijhouden hoeveel fietsers een helm dragen."
@@ -38,7 +38,7 @@ Je turft per pauze hoeveel leerlingen de kortere trap of de lift nemen, op vijf 
 
 In de Hawthorne-fabriek van Western Electric bij Chicago onderzochten wetenschappers wat arbeiders productiever maakte. Ze draaiden het licht hoger: de productie steeg. Opmerkelijker: draaiden ze het licht weer lager, dan steeg de productie óók. Wat er ook veranderd werd, de arbeiders gingen harder werken. Een belangrijke verklaring: de arbeiders wisten dat ze onderzocht werden, en alleen al die aandacht veranderde hun gedrag. Dit verschijnsel — mensen gedragen zich anders zodra ze weten dat ze bekeken worden — heet sindsdien het Hawthorne-effect.
 
-**Wat je hiervan leert:** observeren verandert het geobserveerde. Houd daar rekening mee: observeer onopvallend (maar aanvaardbaar), of meet op meerdere momenten zodat het effect uitdooft.
+**Wat je hiervan leert:** observeren verandert het geobserveerde. Houd daar rekening mee: observeer onopvallend (maar aanvaardbaar), of meet op meerdere momenten zodat het effect kan afzwakken — mensen wennen aan je aanwezigheid.
 
 </EchtGebeurd>
 

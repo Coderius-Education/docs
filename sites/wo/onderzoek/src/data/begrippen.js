@@ -7,7 +7,7 @@ const begrippen = {
   aanvaardbaar: {
     term: 'Aanvaardbaar',
     kort: 'Ethisch verantwoord onderzoek: eerlijk uitgevoerd, met toestemming, met respect voor privacy en zonder iemand te schaden.',
-    lang: 'Eén van de vier spelregels: onderzoek is aanvaardbaar als het ethisch verantwoord is — eerlijk uitgevoerd, met toestemming, met respect voor privacy en zonder iemand te schaden.',
+    lang: 'Een van de vier spelregels: onderzoek is aanvaardbaar als het ethisch verantwoord is — eerlijk uitgevoerd, met toestemming, met respect voor privacy en zonder iemand te schaden.',
     url: '/spelregels/aanvaardbaar',
   },
   'analyse-materiaal': {
@@ -25,7 +25,7 @@ const begrippen = {
   betrouwbaar: {
     term: 'Betrouwbaar',
     kort: 'Het resultaat hangt niet van toeval af: wie het onderzoek herhaalt, krijgt (ongeveer) hetzelfde resultaat.',
-    lang: 'Eén van de vier spelregels: onderzoek is betrouwbaar als het resultaat niet van toeval afhangt — wie het herhaalt, krijgt (ongeveer) hetzelfde resultaat.',
+    lang: 'Een van de vier spelregels: onderzoek is betrouwbaar als het resultaat niet van toeval afhangt — wie het herhaalt, krijgt (ongeveer) hetzelfde resultaat.',
     url: '/spelregels/betrouwbaar',
   },
   bronvermelding: {
@@ -180,13 +180,13 @@ const begrippen = {
   transparant: {
     term: 'Transparant',
     kort: 'Een ander kan precies nagaan wat je hebt gedaan: methode beschreven, bronnen vermeld, gegevens zichtbaar.',
-    lang: 'Eén van de vier spelregels: onderzoek is transparant als een ander precies kan nagaan wat je hebt gedaan — methode beschreven, bronnen vermeld, gegevens zichtbaar.',
+    lang: 'Een van de vier spelregels: onderzoek is transparant als een ander precies kan nagaan wat je hebt gedaan — methode beschreven, bronnen vermeld, gegevens zichtbaar.',
     url: '/spelregels/transparant',
   },
   valide: {
     term: 'Valide',
     kort: 'Je meet echt wat je wilt weten: passende methode, juiste groep, neutrale vragen.',
-    lang: 'Eén van de vier spelregels: onderzoek is valide als je echt meet wat je wilt weten — passende methode, juiste groep, neutrale vragen en geen grotere conclusies dan je gegevens toelaten.',
+    lang: 'Een van de vier spelregels: onderzoek is valide als je echt meet wat je wilt weten — passende methode, juiste groep, neutrale vragen en geen grotere conclusies dan je gegevens toelaten.',
     url: '/spelregels/valide',
   },
   variabele: {

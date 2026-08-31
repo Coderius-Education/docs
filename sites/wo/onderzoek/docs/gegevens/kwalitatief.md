@@ -15,7 +15,7 @@ Bij **kwalitatief onderzoek** verzamel je gegevens in **woorden**: wat mensen vi
 
 - Een interview met vijf leerlingen over waaróm ze de aula mijden in de pauze.
 - Open vragen in een enquête: *"Wat zou jij veranderen aan de fietsenstalling?"*
-- Meekijken terwijl testers je app gebruiken en ze hardop laten denken: waar haken ze af, en wat verwarde hen?
+- Meekijken terwijl testers je app gebruiken en ze hardop laten denken: waar haken ze af, en wat verwart hen?
 
 ## Sterk en zwak
 

@@ -20,7 +20,7 @@ Onderzoek is **aanvaardbaar** als het **ethisch verantwoord** is: eerlijk uitgev
 - **Houd je aan de regels.** Van school, van de wet, en van de plek waar je onderzoek doet. Twijfel je? Overleg met je begeleider *voordat* je begint.
 
 :::caution[Voorbeeld van onaanvaardbaar onderzoek]
-Je onderzoekt hoe makkelijk wachtwoorden van klasgenoten te raden zijn — door het gewoon te proberen op hun echte accounts, zonder dat ze het weten. Interessante vraag, onaanvaardbare methode. Aanvaardbaar alternatief: laat vrijwilligers een *nep*-wachtwoord aanmaken volgens hun gewone gewoontes, en test dáárop.
+Je onderzoekt hoe makkelijk wachtwoorden van klasgenoten te raden zijn — door het gewoon te proberen op hun echte accounts, zonder dat ze het weten. Interessante vraag, onaanvaardbare methode. Aanvaardbaar alternatief: laat vrijwilligers een *nep*-wachtwoord aanmaken zoals ze dat gewend zijn, en test dáárop.
 :::
 
 <WelNiet
@@ -42,6 +42,6 @@ Diederik Stapel was een gevierde Nederlandse hoogleraar sociale psychologie met 
 
 ## Hangt samen met
 
-- [De vier spelregels samen](./de-vier-spelregels.md) — aanvaardbaar is één van de vier spelregels
+- [De vier spelregels samen](./de-vier-spelregels.md) — aanvaardbaar is een van de vier spelregels
 - [Transparant](./transparant.md) — eerlijk rapporteren hoort bij allebei
 - [Observatie](../opzet/methoden/observatie.md) en [interview](../opzet/methoden/interview.md) — methoden waar toestemming en privacy direct spelen

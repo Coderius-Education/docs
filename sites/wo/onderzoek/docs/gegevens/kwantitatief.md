@@ -20,7 +20,7 @@ Bij **kwantitatief onderzoek** verzamel je gegevens die je in **getallen** kunt 
 
 ## Sterk en zwak
 
-**Sterk in:** vergelijken en onderbouwen. Cijfers kun je in tabellen en grafieken zetten, gemiddelden uitrekenen en naast elkaar leggen. Met genoeg deelnemers wordt je resultaat [betrouwbaar](../spelregels/betrouwbaar.md) en kun je voorzichtig generaliseren.
+**Sterk in:** vergelijken en onderbouwen. Cijfers kun je in tabellen en grafieken zetten, gemiddelden uitrekenen en naast elkaar leggen. Met genoeg én [representatieve](../spelregels/externe-validiteit.md) deelnemers wordt je resultaat [betrouwbaar](../spelregels/betrouwbaar.md) en kun je voorzichtig generaliseren — een grote groep alleen is niet genoeg.
 
 :::caution[Let op]
 Cijfers vertellen niet **waarom** iets zo is. Dat 70% van de leerlingen de aula te druk vindt, zegt nog niet wat er precies stoort of wat er beter kan. Daarvoor heb je [kwalitatief onderzoek](./kwalitatief.md) nodig.

@@ -35,7 +35,7 @@ Stel je voor dat een kritische lezer bij elke zin vraagt: *"Hoe weet je dat?"* �
   linkUrl="https://en.wikipedia.org/wiki/John_Snow"
   linkTekst="John Snow (Wikipedia)">
 
-Toen in 1854 in Londen een cholera-epidemie uitbrak, geloofde bijna iedereen dat de ziekte via "slechte lucht" werd verspreid. Arts John Snow dacht aan het drinkwater — en hij maakte zijn bewijs voor iedereen zichtbaar: op een plattegrond van de wijk Soho tekende hij elk sterfgeval in. Wie de kaart bekeek, zag het zelf: de gevallen clusterden rond één waterpomp in Broad Street. Juist doordat zijn gegevens zo controleerbaar waren, kon hij het stadsbestuur overtuigen de zwengel van de pomp te verwijderen. Zijn kaart geldt als een van de beroemdste datavisualisaties ooit.
+Toen in 1854 in de Londense wijk Soho een cholera-epidemie uitbrak, geloofde bijna iedereen dat de ziekte via "slechte lucht" werd verspreid. Arts John Snow dacht aan het drinkwater. Hij ging deur langs deur, noteerde elk sterfgeval én waar de bewoners hun water haalden, en legde die gegevens voor aan het wijkbestuur — dat daarop de zwengel van de waterpomp in Broad Street liet weghalen. In zijn rapport publiceerde Snow vervolgens zijn beroemde kaart met elk sterfgeval ingetekend, zodat iedereen zelf kon narekenen dat de gevallen rond die ene pomp clusterden. De kaart geldt als een van de beroemdste datavisualisaties ooit.
 
 **Wat je hiervan leert:** wie zijn gegevens laat zien, hoeft niet geloofd te worden — hij kan gecontroleerd worden. Dat maakt een conclusie pas echt sterk.
 
@@ -43,6 +43,6 @@ Toen in 1854 in Londen een cholera-epidemie uitbrak, geloofde bijna iedereen dat
 
 ## Hangt samen met
 
-- [De vier spelregels samen](./de-vier-spelregels.md) — transparant is één van de vier spelregels
+- [De vier spelregels samen](./de-vier-spelregels.md) — transparant is een van de vier spelregels
 - [Aanvaardbaar](./aanvaardbaar.md) — eerlijk rapporteren raakt aan beide spelregels
 - [Literatuuronderzoek](../opzet/soorten/literatuuronderzoek.md) — waar bronvermelding het hart van de methode is
