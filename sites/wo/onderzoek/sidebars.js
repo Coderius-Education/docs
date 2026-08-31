@@ -8,10 +8,17 @@ const sidebars = {
     'theoriegericht-vs-ontwerpgericht',
     'spelregels',
     'interne-externe-validiteit',
-    'soorten-onderzoek',
     'kwalitatief-vs-kwantitatief',
-    'gegevensverzameling',
-    'functies-van-onderzoek',
+    {
+      type: 'category',
+      label: 'Onderzoek opzetten',
+      items: [
+        'functies-van-onderzoek',
+        'soorten-onderzoek',
+        'gegevensverzameling',
+        'keuzedriehoek',
+      ],
+    },
     'termen',
   ],
 };

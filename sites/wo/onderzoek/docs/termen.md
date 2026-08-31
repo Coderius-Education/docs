@@ -72,6 +72,10 @@ Een [methode van gegevensverzameling](./gegevensverzameling) waarbij je met éé
 
 Een hoofdvraag waarmee je iets te weten wilt komen: *"Hoe zit het…?", "Welke invloed…?", "In hoeverre…?"*. Hoort bij [theoriegericht onderzoek](./theoriegericht-vs-ontwerpgericht#theoriegericht-onderzoek-hoe-zit-het).
 
+### Keuzedriehoek
+
+De drie keuzes die je per deelvraag maakt bij het opzetten van onderzoek: de functie, het soort onderzoek en de methode van gegevensverzameling. Zie [de keuzedriehoek](./keuzedriehoek).
+
 ### Kwalitatief onderzoek
 
 Onderzoek dat gegevens in woorden oplevert: meningen, ervaringen en verklaringen, meestal van een klein aantal mensen. Sterk in begrijpen waaróm iets zo is. Zie [kwalitatief vs. kwantitatief](./kwalitatief-vs-kwantitatief).

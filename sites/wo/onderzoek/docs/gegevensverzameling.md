@@ -112,3 +112,4 @@ Kies bij elke deelvraag de best passende methode: **observatie (O)**, **intervie
 - **Enquête**: stel veel mensen dezelfde neutrale, gesloten vragen zodat je kunt tellen en vergelijken.
 - **Analyse van tekst- of beeldmateriaal**: bestudeer bestaand materiaal systematisch met een analyseschema.
 - Kies op basis van wat je zoekt — gedrag, meningen of materiaal — en combineer methoden waar dat je onderzoek sterker maakt.
+- Hoe je de methode combineert met functie en soort onderzoek, zie je in [de keuzedriehoek](./keuzedriehoek).

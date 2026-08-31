@@ -112,3 +112,4 @@ Kies bij elke deelvraag de best passende soort: **experimenteel (E)**, **veldond
 - **Veldonderzoek**: observeren, enquêteren, interviewen of meten in de echte situatie — sterk in een realistisch beeld.
 - **Literatuuronderzoek**: bestaande bronnen zoeken, beoordelen en vergelijken — sterk als voorbereiding en verdieping.
 - Combineer: geef elke deelvraag de soort onderzoek die er het best bij past.
+- Hoe je het soort onderzoek combineert met functie en methode, zie je in [de keuzedriehoek](./keuzedriehoek).

@@ -128,3 +128,4 @@ Bepaal de functie van elke hoofdvraag: **puur beschrijvend (B)**, **vergelijkend
 - Beschrijvend kan **puur**, **vergelijkend**, **definiërend** of **evaluerend** zijn; verklarend kan **explorerend** (verklaringen zoeken) of **toetsend** (één verklaring toetsen) zijn.
 - De functie zie je terug in de vorm van je hoofdvraag — en hij helpt je de juiste methode kiezen.
 - Deelvragen combineren vaak functies: eerst definiëren en beschrijven, dan verklaren of evalueren.
+- Hoe je de functie combineert met soort onderzoek en methode, zie je in [de keuzedriehoek](./keuzedriehoek).
