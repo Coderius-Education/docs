@@ -1,18 +1,11 @@
 ---
-id: keuzedriehoek
 title: De keuzedriehoek
 sidebar_position: 4
 ---
 
 # De keuzedriehoek
 
-Je kent nu de drie keuzes die je bij het opzetten van onderzoek maakt:
-
-- de [**functie**](./functies-van-onderzoek): wat moet mijn antwoord *doen* — beschrijven of verklaren?
-- het [**soort onderzoek**](./soorten-onderzoek): waar komt mijn antwoord *vandaan* — experiment, veld of literatuur?
-- de [**methode van gegevensverzameling**](./gegevensverzameling): *hoe* verzamel ik mijn gegevens — observatie, interview/enquête of analyse van materiaal?
-
-Samen vormen ze de **keuzedriehoek**. De regel: **je maakt de drie keuzes niet één keer voor je hele onderzoek, maar per deelvraag.** Elke deelvraag krijgt zo zijn eigen driehoek.
+**Het verband in één zin:** bij het opzetten van onderzoek maak je per deelvraag drie keuzes — de [functie](./functies/functies-overzicht.md) (wat moet mijn antwoord doen?), het [soort onderzoek](./soorten/soorten-combineren.md) (waar komt mijn antwoord vandaan?) en de [methode van gegevensverzameling](./methoden/methode-kiezen.md) (hoe verzamel ik mijn gegevens?) — en die drie moeten bij elkaar passen.
 
 ```mermaid
 flowchart TD
@@ -28,34 +21,34 @@ flowchart TD
     M --- F
 ```
 
+De regel: **je maakt de drie keuzes niet één keer voor je hele onderzoek, maar per deelvraag.** Elke deelvraag krijgt zo zijn eigen driehoek.
+
 ## Zo gebruik je de driehoek
 
 Loop voor **elke deelvraag** deze drie stappen langs:
 
-1. **Bepaal de functie.** Lees de deelvraag: moet het antwoord iets beschrijven (hoe is het?), vergelijken, definiëren, evalueren — of verklaren (waarom is het zo?)? De vorm van de vraag verraadt de functie.
-2. **Kies het soort onderzoek.** Staat het antwoord al ergens (literatuuronderzoek)? Moet je de echte situatie in (veldonderzoek)? Of moet je zelf iets veranderen om een effect te meten (experimenteel onderzoek)?
-3. **Kies de methode.** Wil je gedrag zien (observatie), meningen horen (interview of enquête) of bestaand materiaal bestuderen (analyse)? Bedenk ook of je [cijfers of woorden](./kwalitatief-vs-kwantitatief) nodig hebt.
+1. **Bepaal de [functie](./functies/functies-overzicht.md).** Moet het antwoord iets beschrijven (hoe is het?), vergelijken, definiëren, evalueren — of verklaren (waarom is het zo?)? De vorm van de vraag verraadt de functie.
+2. **Kies het [soort onderzoek](./soorten/soorten-combineren.md).** Staat het antwoord al ergens ([literatuuronderzoek](./soorten/literatuuronderzoek.md))? Moet je de echte situatie in ([veldonderzoek](./soorten/veldonderzoek.md))? Of moet je zelf iets veranderen om een effect te meten ([experimenteel](./soorten/experimenteel.md))?
+3. **Kies de [methode](./methoden/methode-kiezen.md).** Wil je gedrag zien ([observatie](./methoden/observatie.md)), meningen horen ([interview](./methoden/interview.md) of [enquête](./methoden/enquete.md)) of bestaand materiaal bestuderen ([analyse](./methoden/analyse-materiaal.md))? Bedenk ook of je [cijfers of woorden](../gegevens/kwal-vs-kwant.md) nodig hebt.
 
-Controleer daarna of de drie keuzes **bij elkaar passen**. Een toetsende functie met alleen een paar interviews wringt bijvoorbeeld: voor het toetsen van een verklaring heb je een gerichte meting of een experiment nodig. Wringt het? Pas je keuze aan — of formuleer je deelvraag scherper.
+Controleer daarna of de drie keuzes **bij elkaar passen**. Een [toetsende functie](./functies/verklarend-toetsend.md) met alleen een paar interviews wringt bijvoorbeeld: voor het toetsen van een verklaring heb je een gerichte meting of een experiment nodig. Wringt het? Pas je keuze aan — of formuleer je deelvraag scherper.
 
 ## Veelvoorkomende combinaties
 
-Niet elke combinatie komt even vaak voor. Deze driehoeken zie je het meest:
-
 | Functie | Soort onderzoek | Methode |
 |---|---|---|
-| Beschrijvend-definiërend | Literatuuronderzoek | Analyse van teksten |
-| Puur beschrijvend | Veldonderzoek | Observatie of enquête |
-| Beschrijvend-vergelijkend | Veldonderzoek | Dezelfde enquête of observatie bij twee groepen |
-| Beschrijvend-evaluerend | Veldonderzoek | Testen met gebruikers tegen vooraf opgestelde eisen |
-| Verklarend-explorerend | Veldonderzoek | Interviews, open vragen |
-| Verklarend-toetsend | Experimenteel onderzoek | Meting onder gecontroleerde omstandigheden |
+| [Definiërend](./functies/beschrijvend-definierend.md) | Literatuuronderzoek | Analyse van teksten |
+| [Puur beschrijvend](./functies/puur-beschrijvend.md) | Veldonderzoek | Observatie of enquête |
+| [Vergelijkend](./functies/beschrijvend-vergelijkend.md) | Veldonderzoek | Dezelfde enquête of observatie bij twee groepen |
+| [Evaluerend](./functies/beschrijvend-evaluerend.md) | Veldonderzoek | Testen met gebruikers tegen vooraf opgestelde eisen |
+| [Explorerend](./functies/verklarend-explorerend.md) | Veldonderzoek | Interviews, open vragen |
+| [Toetsend](./functies/verklarend-toetsend.md) | Experimenteel onderzoek | Meting onder gecontroleerde omstandigheden |
 
 Dit zijn géén verplichte recepten — een evaluerende deelvraag kan bijvoorbeeld ook via analyse van materiaal — maar als jouw driehoek er heel anders uitziet, is dat een goed moment om even te controleren of hij klopt.
 
 ## Uitgewerkt voorbeeld
 
-**Hoofdvraag:** *Hoe kan onze school ervoor zorgen dat meer leerlingen met de fiets komen?* (een ontwerpvraag)
+**Hoofdvraag:** *Hoe kan onze school ervoor zorgen dat meer leerlingen met de fiets komen?* (een [ontwerpvraag](../typen/ontwerpgericht.md))
 
 | Deelvraag | Functie | Soort onderzoek | Methode |
 |---|---|---|---|
@@ -85,10 +78,3 @@ Bepaal bij elke deelvraag de functie, het soort onderzoek en de methode. Hoofdvr
 4. **Verklarend-toetsend · experimenteel onderzoek · observatie/meting** — je verandert zelf één ding (de opstelling) en meet het effect, bijvoorbeeld met een geluidsmeting vóór en na.
 
 </details>
-
-## Samengevat
-
-- De **keuzedriehoek** bestaat uit functie, soort onderzoek en methode van gegevensverzameling.
-- Je vult de driehoek **per deelvraag** in — één onderzoek bevat dus meerdere driehoeken.
-- Werk in de volgorde: functie → soort → methode, en controleer of de drie keuzes bij elkaar passen.
-- Kloppen ze niet met elkaar? Pas je keuzes aan of scherp je deelvraag aan.

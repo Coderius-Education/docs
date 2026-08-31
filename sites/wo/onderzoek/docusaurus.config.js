@@ -33,6 +33,25 @@ const config = {
   },
   themes: ['@docusaurus/theme-mermaid'],
 
+  plugins: [
+    [
+      '@docusaurus/plugin-client-redirects',
+      {
+        // Oude URL's van vóór de herstructurering (aug 2026)
+        redirects: [
+          {from: '/theoriegericht-vs-ontwerpgericht', to: '/typen/theorie-vs-ontwerp'},
+          {from: '/spelregels', to: '/spelregels/de-vier-spelregels'},
+          {from: '/interne-externe-validiteit', to: '/spelregels/intern-vs-extern'},
+          {from: '/soorten-onderzoek', to: '/opzet/soorten/soorten-combineren'},
+          {from: '/gegevensverzameling', to: '/opzet/methoden/methode-kiezen'},
+          {from: '/functies-van-onderzoek', to: '/opzet/functies/functies-overzicht'},
+          {from: '/kwalitatief-vs-kwantitatief', to: '/gegevens/kwal-vs-kwant'},
+          {from: '/keuzedriehoek', to: '/opzet/keuzedriehoek'},
+        ],
+      },
+    ],
+  ],
+
   presets: [
     [
       'classic',
