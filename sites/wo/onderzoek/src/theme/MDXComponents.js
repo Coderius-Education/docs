@@ -5,6 +5,7 @@ import WelNiet from '@site/src/components/WelNiet';
 import Quiz from '@site/src/components/Quiz';
 import TermenTrainer from '@site/src/components/TermenTrainer';
 import TermenLijst from '@site/src/components/TermenLijst';
+import StartKaarten from '@site/src/components/StartKaarten';
 
 // Globaal beschikbaar in alle .md/.mdx-pagina's, zonder import.
 export default {
@@ -15,4 +16,5 @@ export default {
   Quiz,
   TermenTrainer,
   TermenLijst,
+  StartKaarten,
 };
