@@ -24,9 +24,17 @@ Het vermelden waar informatie vandaan komt, bij alles wat je van een ander overn
 
 Het onderbouwde antwoord op je hoofdvraag, gebaseerd op de gegevens die je hebt verzameld. Het eindresultaat van [theoriegericht onderzoek](./theoriegericht-vs-ontwerpgericht#theoriegericht-onderzoek-hoe-zit-het).
 
+### Controlegroep
+
+Een groep deelnemers die de "behandeling" die je onderzoekt níét krijgt, zodat je kunt vergelijken. Belangrijk hulpmiddel voor [interne validiteit](./interne-externe-validiteit#interne-validiteit-klopt-de-conclusie-binnen-je-onderzoek).
+
 ### Deelvraag
 
 Een kleinere vraag die helpt om de hoofdvraag te beantwoorden. Meerdere deelvragen samen dekken de hoofdvraag af.
+
+### Externe validiteit
+
+De mate waarin je conclusie ook geldt buiten je onderzoek: voor andere mensen, situaties en momenten (ook wel generaliseerbaarheid). Zie [interne en externe validiteit](./interne-externe-validiteit#externe-validiteit-geldt-de-conclusie-ook-daarbuiten).
 
 ### Hoofdvraag
 
@@ -35,6 +43,10 @@ De centrale vraag van je onderzoek. Bij theoriegericht onderzoek is het een kenn
 ### Hypothese
 
 Je verwachte antwoord op de hoofdvraag, opgesteld vóórdat je gegevens verzamelt. Na afloop toets je of je hypothese klopt — een hypothese die niet klopt is óók een geldig resultaat.
+
+### Interne validiteit
+
+De mate waarin de uitkomst van je onderzoek echt komt door wat je onderzocht, en niet door een storende variabele. Zie [interne en externe validiteit](./interne-externe-validiteit#interne-validiteit-klopt-de-conclusie-binnen-je-onderzoek).
 
 ### Kennisvraag
 
@@ -59,6 +71,10 @@ Een eerste, testbare versie van je ontwerp. Hoeft nog niet af of mooi te zijn �
 ### Representatief
 
 Een groep deelnemers is representatief als die lijkt op de hele groep waarover je iets wilt zeggen. Alleen je vriendengroep ondervragen is meestal niet representatief voor "alle scholieren".
+
+### Storende variabele
+
+Een factor die je níét onderzoekt maar wel de uitkomst beïnvloedt, waardoor je niet weet waar het resultaat door komt. Bedreigt de [interne validiteit](./interne-externe-validiteit#interne-validiteit-klopt-de-conclusie-binnen-je-onderzoek).
 
 ### Theoriegericht onderzoek
 

@@ -49,6 +49,10 @@ Je wilt weten of leerlingen je nieuwe school-app handig vinden en telt hoe vaak 
 
 **Bij ontwerpgericht onderzoek** betekent valide: test je prototype op de **eisen die je vooraf hebt opgesteld**, en met de **echte doelgroep**. Is je spel bedoeld voor groep 8, dan bewijst een test met je klasgenoten van 16 weinig.
 
+:::tip Verder lezen
+Validiteit heeft twee kanten: klopt je conclusie bínnen je onderzoek, en geldt die ook daarbuiten? Lees meer op de pagina over [interne en externe validiteit](./interne-externe-validiteit).
+:::
+
 ## 3. Transparant: kan een ander het narekenen?
 
 Een onderzoek is **transparant** als iemand anders precies kan nagaan wat je hebt gedaan, en het desnoods kan herhalen of controleren. Je laat je hele werkwijze zien — ook de dingen die tegenvielen.

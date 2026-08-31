@@ -7,6 +7,7 @@ const sidebars = {
     'intro',
     'theoriegericht-vs-ontwerpgericht',
     'spelregels',
+    'interne-externe-validiteit',
     'termen',
   ],
 };
