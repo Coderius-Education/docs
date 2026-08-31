@@ -26,21 +26,6 @@ Bij theoriegericht onderzoek wil je **kennis** opdoen. Je stelt een vraag over h
 
 Herken je het patroon? De vragen beginnen vaak met **hoe, waarom, welke invloed, in hoeverre**. Het zijn **kennisvragen**: je wilt de wereld beter begrijpen.
 
-### De onderzoekscyclus
-
-Theoriegericht onderzoek volgt meestal de **onderzoekscyclus**:
-
-```mermaid
-flowchart TD
-    A["1. Verkennen<br/>Wat weet ik al? Wat is er al onderzocht?"] --> B["2. Onderzoeksvraag opstellen<br/>Hoofdvraag + deelvragen"]
-    B --> C["3. Onderzoek opzetten<br/>Methode kiezen: experiment, enquête, bronnenonderzoek …"]
-    C --> D["4. Uitvoeren<br/>Gegevens verzamelen"]
-    D --> E["5. Resultaten analyseren<br/>Wat zeggen de gegevens?"]
-    E --> F["6. Concluderen<br/>Antwoord op de hoofdvraag"]
-    F --> G["7. Evalueren en presenteren"]
-    G -.->|"Nieuwe vragen?<br/>Opnieuw beginnen"| A
-```
-
 Je eindproduct is een **antwoord**: een conclusie die je kunt onderbouwen met de gegevens die je hebt verzameld.
 
 :::tip Goed om te weten
@@ -60,30 +45,17 @@ Bij ontwerpgericht onderzoek wil je een **product** maken dat een probleem oplos
 
 Deze vragen beginnen bijna altijd met **"Hoe kan ik … ontwerpen/maken/ontwikkelen …"** gevolgd door een doel: **"… dat/die/waarmee …"**. Het zijn **ontwerpvragen**.
 
-### Het programma van eisen
-
-Hoe weet je of je ontwerp geslaagd is? Daarvoor stel je vóórdat je gaat ontwerpen een **programma van eisen (PvE)** op: een lijst met eisen en wensen waaraan je product moet voldoen.
-
-Bijvoorbeeld voor de telefoon-app hierboven:
-
-1. De app laat zien hoeveel tijd je vandaag op je telefoon zat.
-2. De app stuurt maximaal twee meldingen per dag.
-3. De app is te gebruiken door leerlingen van 12 t/m 18 jaar zonder uitleg.
-4. De app werkt op Android én iOS.
-
-Aan het einde van je onderzoek **test** je je ontwerp tegen deze eisen. Zo maak je van "iets maken" echt **onderzoek**: je toont met tests aan of je oplossing werkt.
-
 ### De ontwerpcyclus
 
 Ontwerpgericht onderzoek volgt de **ontwerpcyclus**:
 
 ```mermaid
 flowchart TD
-    A["1. Probleem verkennen<br/>Voor wie is het een probleem? Wat is er al?"] --> B["2. Programma van eisen<br/>Waaraan moet de oplossing voldoen?"]
+    A["1. Probleem verkennen<br/>Voor wie is het een probleem? Wat is er al?"] --> B["2. Eisen opstellen<br/>Waaraan moet de oplossing voldoen?"]
     B --> C["3. Ideeën bedenken<br/>Meerdere mogelijke oplossingen schetsen"]
     C --> D["4. Kiezen en uitwerken<br/>Beste idee kiezen (onderbouwd!) en ontwerpen"]
     D --> E["5. Prototype maken"]
-    E --> F["6. Testen<br/>Voldoet het aan het programma van eisen?"]
+    E --> F["6. Testen<br/>Voldoet het aan je eisen?"]
     F --> G["7. Evalueren en presenteren"]
     F -.->|"Niet goed genoeg?<br/>Terug naar de tekentafel"| C
 ```
@@ -91,7 +63,7 @@ flowchart TD
 Je eindproduct is een **ontwerp of prototype**, plus een verslag waarin je laat zien dat (en hoe goed) het aan je eisen voldoet.
 
 :::caution Let op
-Alleen iets maken is nog geen onderzoek. Het verschil zit in het **testen tegen je programma van eisen** en het **onderbouwen van je keuzes**. Zonder eisen en tests heb je een knutselproject, geen ontwerponderzoek.
+Alleen iets maken is nog geen onderzoek. Het verschil zit in het **testen van je ontwerp aan de eisen die je vooraf opstelt** en het **onderbouwen van je keuzes**. Zonder eisen en tests heb je een knutselproject, geen ontwerponderzoek.
 :::
 
 ## De twee typen naast elkaar
@@ -100,10 +72,9 @@ Alleen iets maken is nog geen onderzoek. Het verschil zit in het **testen tegen 
 |---|---|---|
 | **Doel** | Iets te weten komen | Een probleem oplossen met een product |
 | **Soort hoofdvraag** | Kennisvraag: *"Hoe zit het…?", "Welke invloed…?", "In hoeverre…?"* | Ontwerpvraag: *"Hoe kan ik … maken dat …?"* |
-| **Werkwijze** | Onderzoekscyclus | Ontwerpcyclus |
-| **Meetlat** | Hypothese en deelvragen | Programma van eisen |
+| **Meetlat** | Hypothese en deelvragen | Vooraf opgestelde eisen |
 | **Eindresultaat** | Onderbouwde conclusie | Werkend ontwerp of prototype + testresultaten |
-| **Geslaagd als…** | Je vraag eerlijk en onderbouwd beantwoord is (ook als de uitkomst anders is dan verwacht) | Je product (grotendeels) aan het programma van eisen voldoet en je je keuzes kunt onderbouwen |
+| **Geslaagd als…** | Je vraag eerlijk en onderbouwd beantwoord is (ook als de uitkomst anders is dan verwacht) | Je product (grotendeels) aan de vooraf opgestelde eisen voldoet en je je keuzes kunt onderbouwen |
 | **Voorbeeld** | *Welke wachtwoorden worden het snelst gekraakt?* | *Hoe maak ik een tool die zwakke wachtwoorden herkent?* |
 
 ## Ze hebben elkaar nodig
@@ -142,6 +113,6 @@ Bepaal van elke hoofdvraag of die **theoriegericht (T)** of **ontwerpgericht (O)
 
 ## Samengevat
 
-- **Theoriegericht onderzoek** beantwoordt een **kennisvraag** via de **onderzoekscyclus**; het resultaat is een **conclusie**.
-- **Ontwerpgericht onderzoek** beantwoordt een **ontwerpvraag** via de **ontwerpcyclus**; het resultaat is een **ontwerp** dat je toetst aan een **programma van eisen**.
+- **Theoriegericht onderzoek** beantwoordt een **kennisvraag**; het resultaat is een onderbouwde **conclusie**.
+- **Ontwerpgericht onderzoek** beantwoordt een **ontwerpvraag** via de **ontwerpcyclus**; het resultaat is een **ontwerp** dat je toetst aan vooraf opgestelde **eisen**.
 - De twee vullen elkaar aan: goed ontwerpen begint met kennis, en nieuwe kennis leidt tot betere ontwerpen.

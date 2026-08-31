@@ -47,7 +47,7 @@ Een onderzoek is **valide** als je gegevens echt gaan over de vraag die je wilt 
 Je wilt weten of leerlingen je nieuwe school-app handig vinden en telt hoe vaak de app gedownload is. Dat kun je perfect herhaalbaar meten — maar downloads zeggen niets over *handig vinden*. Misschien was de download verplicht. Je meet het verkeerde: niet valide.
 :::
 
-**Bij ontwerpgericht onderzoek** betekent valide: test je prototype op de **eisen uit je programma van eisen**, en met de **echte doelgroep**. Is je spel bedoeld voor groep 8, dan bewijst een test met je klasgenoten van 16 weinig.
+**Bij ontwerpgericht onderzoek** betekent valide: test je prototype op de **eisen die je vooraf hebt opgesteld**, en met de **echte doelgroep**. Is je spel bedoeld voor groep 8, dan bewijst een test met je klasgenoten van 16 weinig.
 
 ## 3. Transparant: kan een ander het narekenen?
 
