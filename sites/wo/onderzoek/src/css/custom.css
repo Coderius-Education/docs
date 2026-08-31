@@ -1,0 +1,27 @@
+/**
+ * Globale stijlen. De classic template gebruikt het Infima CSS-framework;
+ * hier overschrijven we de standaardkleuren met een blauw palet.
+ */
+
+:root {
+  --ifm-color-primary: #1d5fa8;
+  --ifm-color-primary-dark: #1a5697;
+  --ifm-color-primary-darker: #19518f;
+  --ifm-color-primary-darkest: #144376;
+  --ifm-color-primary-light: #2068b9;
+  --ifm-color-primary-lighter: #216dc1;
+  --ifm-color-primary-lightest: #2f7cd3;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #6fa8e8;
+  --ifm-color-primary-dark: #529ae4;
+  --ifm-color-primary-darker: #4392e2;
+  --ifm-color-primary-darkest: #217bd7;
+  --ifm-color-primary-light: #8cb6ec;
+  --ifm-color-primary-lighter: #9bbfee;
+  --ifm-color-primary-lightest: #c7dbf6;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
