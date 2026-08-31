@@ -11,6 +11,7 @@ const sidebars = {
     'soorten-onderzoek',
     'kwalitatief-vs-kwantitatief',
     'gegevensverzameling',
+    'functies-van-onderzoek',
     'termen',
   ],
 };

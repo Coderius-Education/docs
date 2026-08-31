@@ -16,6 +16,10 @@ Eén van de [vier spelregels van onderzoek](./spelregels#4-aanvaardbaar-is-je-on
 
 Een [methode van gegevensverzameling](./gegevensverzameling) waarbij je bestaand materiaal (artikelen, posts, reclames, foto's, video's) systematisch bestudeert met een analyseschema.
 
+### Beschrijvend onderzoek
+
+Onderzoek met als [functie](./functies-van-onderzoek) te beschrijven hoe iets is. Kan puur beschrijvend, vergelijkend, definiërend of evaluerend zijn.
+
 ### Betrouwbaar
 
 Eén van de [vier spelregels van onderzoek](./spelregels#1-betrouwbaar-krijgt-een-ander-hetzelfde-resultaat). Onderzoek is betrouwbaar als het resultaat niet van toeval afhangt: wie het onderzoek op dezelfde manier herhaalt, krijgt (ongeveer) hetzelfde resultaat.
@@ -131,6 +135,10 @@ Iets wat kan verschillen of veranderen in je onderzoek. Bij een experiment veran
 ### Veldonderzoek
 
 Een [soort onderzoek](./soorten-onderzoek#veldonderzoek) waarbij je gegevens verzamelt in de echte situatie, bijvoorbeeld door te observeren, enquêteren, interviewen of meten op locatie.
+
+### Verklarend onderzoek
+
+Onderzoek met als [functie](./functies-van-onderzoek) te verklaren waaróm iets zo is. Kan explorerend zijn (mogelijke verklaringen opsporen) of toetsend (één verwachte verklaring — een hypothese — gericht toetsen).
 
 ### Vooraf opgestelde eisen
 
