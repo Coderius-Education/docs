@@ -9,6 +9,7 @@ const sidebars = {
     'spelregels',
     'interne-externe-validiteit',
     'soorten-onderzoek',
+    'kwalitatief-vs-kwantitatief',
     'termen',
   ],
 };

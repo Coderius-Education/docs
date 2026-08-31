@@ -64,6 +64,14 @@ Een vorm van [veldonderzoek](./soorten-onderzoek#veldonderzoek) waarbij je met �
 
 Een hoofdvraag waarmee je iets te weten wilt komen: *"Hoe zit het…?", "Welke invloed…?", "In hoeverre…?"*. Hoort bij [theoriegericht onderzoek](./theoriegericht-vs-ontwerpgericht#theoriegericht-onderzoek-hoe-zit-het).
 
+### Kwalitatief onderzoek
+
+Onderzoek dat gegevens in woorden oplevert: meningen, ervaringen en verklaringen, meestal van een klein aantal mensen. Sterk in begrijpen waaróm iets zo is. Zie [kwalitatief vs. kwantitatief](./kwalitatief-vs-kwantitatief).
+
+### Kwantitatief onderzoek
+
+Onderzoek dat gegevens in cijfers oplevert: aantallen, percentages en gemiddelden van een grote groep. Sterk in vergelijken en generaliseren. Zie [kwalitatief vs. kwantitatief](./kwalitatief-vs-kwantitatief).
+
 ### Literatuuronderzoek
 
 Een [soort onderzoek](./soorten-onderzoek#literatuuronderzoek) (ook wel bronnenonderzoek) waarbij je bestaande bronnen zoekt, op betrouwbaarheid beoordeelt en met elkaar vergelijkt. Bijna elk onderzoek begint ermee.
