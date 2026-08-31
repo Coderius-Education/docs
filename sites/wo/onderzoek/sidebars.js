@@ -8,6 +8,7 @@ const sidebars = {
     'theoriegericht-vs-ontwerpgericht',
     'spelregels',
     'interne-externe-validiteit',
+    'soorten-onderzoek',
     'termen',
   ],
 };

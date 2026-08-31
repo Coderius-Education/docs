@@ -32,6 +32,14 @@ Een groep deelnemers die de "behandeling" die je onderzoekt níét krijgt, zodat
 
 Een kleinere vraag die helpt om de hoofdvraag te beantwoorden. Meerdere deelvragen samen dekken de hoofdvraag af.
 
+### Enquête
+
+Een vorm van [veldonderzoek](./soorten-onderzoek#veldonderzoek) waarbij je veel mensen dezelfde (neutrale) vragen stelt, zodat je de antwoorden kunt tellen en vergelijken.
+
+### Experimenteel onderzoek
+
+Een [soort onderzoek](./soorten-onderzoek#experimenteel-onderzoek) waarbij je zelf één variabele verandert en al het andere gelijk houdt, om het effect te meten. Sterk in het aantonen van oorzaak en gevolg.
+
 ### Externe validiteit
 
 De mate waarin je conclusie ook geldt buiten je onderzoek: voor andere mensen, situaties en momenten (ook wel generaliseerbaarheid). Zie [interne en externe validiteit](./interne-externe-validiteit#externe-validiteit-geldt-de-conclusie-ook-daarbuiten).
@@ -48,9 +56,21 @@ Je verwachte antwoord op de hoofdvraag, opgesteld vóórdat je gegevens verzamel
 
 De mate waarin de uitkomst van je onderzoek echt komt door wat je onderzocht, en niet door een storende variabele. Zie [interne en externe validiteit](./interne-externe-validiteit#interne-validiteit-klopt-de-conclusie-binnen-je-onderzoek).
 
+### Interview
+
+Een vorm van [veldonderzoek](./soorten-onderzoek#veldonderzoek) waarbij je met één of enkele personen dieper doorpraat over een onderwerp.
+
 ### Kennisvraag
 
 Een hoofdvraag waarmee je iets te weten wilt komen: *"Hoe zit het…?", "Welke invloed…?", "In hoeverre…?"*. Hoort bij [theoriegericht onderzoek](./theoriegericht-vs-ontwerpgericht#theoriegericht-onderzoek-hoe-zit-het).
+
+### Literatuuronderzoek
+
+Een [soort onderzoek](./soorten-onderzoek#literatuuronderzoek) (ook wel bronnenonderzoek) waarbij je bestaande bronnen zoekt, op betrouwbaarheid beoordeelt en met elkaar vergelijkt. Bijna elk onderzoek begint ermee.
+
+### Observeren
+
+Een vorm van [veldonderzoek](./soorten-onderzoek#veldonderzoek) waarbij je gedrag of situaties bekijkt en turft, zonder er zelf iets aan te veranderen.
 
 ### Ontwerpgericht onderzoek
 
@@ -87,6 +107,14 @@ Eén van de [vier spelregels van onderzoek](./spelregels#3-transparant-kan-een-a
 ### Valide
 
 Eén van de [vier spelregels van onderzoek](./spelregels#2-valide-meet-je-wat-je-wilt-meten). Onderzoek is valide als je echt meet wat je wilt weten: passende methode, juiste groep, neutrale vragen en geen grotere conclusies dan je gegevens toelaten.
+
+### Variabele
+
+Iets wat kan verschillen of veranderen in je onderzoek. Bij een experiment verander je zelf één variabele en houd je de rest gelijk; een variabele die je níét onderzoekt maar wel meespeelt, heet een storende variabele.
+
+### Veldonderzoek
+
+Een [soort onderzoek](./soorten-onderzoek#veldonderzoek) waarbij je gegevens verzamelt in de echte situatie, bijvoorbeeld door te observeren, enquêteren, interviewen of meten op locatie.
 
 ### Vooraf opgestelde eisen
 
