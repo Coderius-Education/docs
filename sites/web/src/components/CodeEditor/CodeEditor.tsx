@@ -27,7 +27,8 @@ interface CodeEditorProps {
    *  elkaar (html-css). Gestapeld groeit de editor mee met de code, met
    *  `height` als maximum. */
   stacked?: boolean;
-  /** Hoogte van het uitvoer+console-blok in gestapelde vorm. */
+  /** Maximumhoogte van het voorbeeld in gestapelde vorm; het voorbeeld
+   *  groeit tot dit maximum mee met zijn inhoud. */
   previewHeight?: string;
 }
 
@@ -49,7 +50,9 @@ function CodeEditorInner({
     livePreview ? buildDoc(initialHtml, initialCss, initialJs) : '',
   );
   const [consoleLogs, setConsoleLogs] = useState<{ level: string; text: string }[]>([]);
+  const [previewInhoud, setPreviewInhoud] = useState<number | null>(null);
   const consoleBodyRef = useRef<HTMLDivElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const debouncedHtml = useDebounce(html, debounceMs);
   const debouncedCss = useDebounce(css, debounceMs);
@@ -77,14 +80,21 @@ function CodeEditorInner({
       setCss(initialCss);
       setJs(initialJs);
       setConsoleLogs([]);
+      setPreviewInhoud(null);
       setSrcDoc(livePreview ? buildDoc(initialHtml, initialCss, initialJs) : '');
     }
   }, [initialHtml, initialCss, initialJs, livePreview]);
 
   useEffect(() => {
     function handler(e: MessageEvent) {
-      if (e.data?.source === 'code-editor' && e.data?.type === 'console') {
+      // Alleen berichten van het eigen voorbeeld: er staan meerdere velden
+      // op een lespagina, en die mogen elkaars console en hoogte niet zien.
+      if (e.source !== iframeRef.current?.contentWindow) return;
+      if (e.data?.source !== 'code-editor') return;
+      if (e.data.type === 'console') {
         setConsoleLogs((prev) => [...prev, { level: e.data.level, text: e.data.text }]);
+      } else if (e.data.type === 'height' && typeof e.data.height === 'number') {
+        setPreviewInhoud(e.data.height);
       }
     }
     window.addEventListener('message', handler);
@@ -153,8 +163,16 @@ function CodeEditorInner({
           </Suspense>
         </div>
       </div>
-      <div className={styles.previewColumn} style={{ height: stacked ? previewHeight : height }}>
-        <PreviewPane srcDoc={srcDoc} />
+      <div className={styles.previewColumn} style={stacked ? undefined : { height }}>
+        <PreviewPane
+          srcDoc={srcDoc}
+          innerRef={iframeRef}
+          hoogte={
+            stacked
+              ? `${Math.min(Math.max(previewInhoud ?? 160, 100), Number.parseInt(previewHeight, 10))}px`
+              : undefined
+          }
+        />
         {visibleTabs.includes('javascript') && (
           <div className={styles.consolePanel}>
             <div className={styles.consolePanelHeader}>
