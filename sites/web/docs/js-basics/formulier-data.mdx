@@ -1,4 +1,6 @@
 ---
+title: Formulier-data ophalen
+description: Met .value lees je uit wat de gebruiker in een formulierveld typt, en met Number() reken je ermee.
 ---
 
 import CodeEditor from '@site/src/components/CodeEditor';
@@ -21,7 +23,7 @@ export const startHtml = `<!DOCTYPE html>
     <label for="leeftijd">Leeftijd:</label>
     <input type="number" id="leeftijd">
 
-    <button type="button" onclick="begroet()">Begroet mij</button>
+    <button type="button" id="knop">Begroet mij</button>
   </form>
 
   <p id="uitvoer"></p>
@@ -36,22 +38,25 @@ export const startCss = `form {
 }
 
 label { font-weight: bold; }
-input { padding: 6px; font-size: 1rem; }
+input, select { padding: 6px; font-size: 1rem; }
 button { margin-top: 10px; padding: 8px 16px; cursor: pointer; }
 
 #uitvoer {
   margin-top: 20px;
   font-size: 1.3rem;
   color: darkgreen;
+  white-space: pre-line;
 }`;
 
 export const startJs = `function begroet() {
   const naam = document.getElementById('naam').value;
   const leeftijd = Number(document.getElementById('leeftijd').value);
 
-  const bericht = 'Hoi ' + naam + '! Over 10 jaar ben je ' + (leeftijd + 10) + ' jaar.';
+  const bericht = 'Hoi ' + naam + '. Over 10 jaar ben je ' + (leeftijd + 10) + ' jaar.';
   document.getElementById('uitvoer').textContent = bericht;
-}`;
+}
+
+document.getElementById('knop').addEventListener('click', begroet);`;
 
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
@@ -62,13 +67,16 @@ export const makeHtml = `<!DOCTYPE html>
   <script src="script.js" defer></script>
 </head>
 <body>
-  <label for="getal1">Getal 1:</label>
-  <input type="number" id="getal1">
+  <form>
+    <label for="getal1">Getal 1:</label>
+    <input type="number" id="getal1">
 
-  <label for="getal2">Getal 2:</label>
-  <input type="number" id="getal2">
+    <label for="getal2">Getal 2:</label>
+    <input type="number" id="getal2">
 
-  <button type="button" onclick="bereken()">Bereken</button>
+    <button type="button" id="knop">Bereken</button>
+  </form>
+
   <p id="uitvoer"></p>
 </body>
 </html>`;
@@ -76,34 +84,26 @@ export const makeHtml = `<!DOCTYPE html>
 export const makeJs = `// Schrijf hier je code
 `;
 
-## Wat ga je leren?
-
-Je leert hoe je tekst die de gebruiker in een formulierveld typt **uitleest** met JavaScript via `.value`, en die data direct gebruikt — bijvoorbeeld om te tonen, te controleren of mee te rekenen.
-
-## Theorie
-
-In [Formulieren](/docs/html-css/formulieren) leerde je hoe je een formulier bouwt. Tot nu toe deed dat formulier nog niets — typen kon je wel, maar de tekst kwam nergens terecht.
-
-Met JavaScript haal je de ingevulde tekst op via de eigenschap **`.value`**:
+In [Formulieren](/docs/html-css/formulieren) bouwde je een formulier, maar typen leverde nog niets op. Met JavaScript lees je de ingevulde tekst uit via de eigenschap **`.value`**:
 
 ```js
 const naam = document.getElementById('naam-veld').value;
 ```
 
-`naam` bevat nu wat de gebruiker getypt heeft. Dat is een **string** (zie [Waarden en operatoren](/docs/js-basics/operatoren-types)).
+`naam` bevat nu wat de gebruiker typte — als **string**, altijd.
 
-### Werkt voor verschillende velden
+## Voor welke velden werkt dit?
 
 | Element | Wat `.value` teruggeeft |
 |---|---|
 | `<input type="text">` | De getypte tekst |
-| `<input type="number">` | De getypte tekst (let op: string, niet number.) |
+| `<input type="number">` | De getypte tekst (nog steeds een string) |
 | `<textarea>` | De inhoud van het tekstvak |
 | `<select>` | De `value` van de gekozen `<option>` |
 
-### Number-invoer: omzetten
+## Rekenen met invoer: eerst omzetten
 
-Bij `<input type="number">` is `.value` nog steeds een **string**. Om mee te rekenen converteer je met `Number()`:
+Ook bij `<input type="number">` is `.value` een string. Rekenen gaat dus via `Number()`, precies zoals bij `prompt()`:
 
 ```js
 const leeftijd = Number(document.getElementById('leeftijd').value);
@@ -112,17 +112,17 @@ const overTienJaar = leeftijd + 10;
 
 ## Predict
 
-Wat denk je dat in `bericht` staat als de gebruiker "Hallo" typt in het naam-veld en op de knop klikt?
+Wat staat er in `bericht` als de gebruiker "Hallo" typt in het naam-veld?
 
 ```js
 const naam = document.getElementById('naam').value;
-const bericht = 'Welkom, ' + naam + '!';
+const bericht = 'Welkom, ' + naam + '.';
 ```
 
 <details>
-<summary>Klik hier voor het antwoord</summary>
+<summary>Welke string wordt het?</summary>
 
-`bericht` bevat de string `'Welkom, Hallo!'`. De gebruiker typte "Hallo", dat wordt via `.value` opgehaald, en met `+` aan de begroeting geplakt.
+`'Welkom, Hallo.'` — `.value` geeft letterlijk terug wat er in het veld staat, en dat wordt met `+` in de zin geplakt. Het veld heet "naam", maar JavaScript controleert niet wat voor tekst erin staat.
 
 </details>
 
@@ -137,21 +137,20 @@ const bericht = 'Welkom, ' + naam + '!';
 />
 
 :::tip[Waarom `type="button"` op de knop?]
-Een knop binnen een `<form>` verstuurt het formulier standaard (en herlaadt de pagina). Met `type="button"` voorkom je dat — de knop voert alleen het `onclick`-script uit.
+Een knop binnen een `<form>` verstuurt het formulier standaard (en herlaadt de pagina). Met `type="button"` voorkom je dat: de knop doet alleen wat de listener zegt.
 :::
 
 ## Investigate
 
-Experimenteer:
+Experimenteer in het veld hierboven:
 
-- Vul niets in en klik op de knop — wat zie je? (Tip: `naam` is dan een lege string `''`)
-- Verwijder `Number(...)` rondom `leeftijd` en typ `5` in het leeftijd-veld — wat krijg je nu te zien? Waarom?
-- Voeg een derde veld toe (bijv. hobby) en gebruik die ook in het bericht.
-- Vervang `(leeftijd + 10)` door `leeftijd + 10` (zonder haakjes) — wat verandert er aan de uitkomst? (Hint: kijk goed.)
+- Vul niets in en klik op de knop. Wat komt er in de zin te staan?
+- Haal `Number(...)` weg rond de leeftijd en typ `5`. Welke leeftijd belooft de zin je nu, en waarom?
+- Haal de haakjes om `(leeftijd + 10)` weg. Wat verandert er aan de uitkomst?
 
-## Modify
+## Opdracht 1: Extra veld
 
-**Opdracht:** Voeg een `<select>` toe met drie opties (bijv. "ochtend", "middag", "avond"). Pas het bericht aan zodat het bijvoorbeeld zegt: "Goedemorgen, Lisa." als de gebruiker "ochtend" kiest.
+Voeg een derde veld "Hobby" toe en breid de zin uit: "Hoi (naam). Over 10 jaar ben je (leeftijd+10) jaar en hopelijk hou je dan nog steeds van (hobby)."
 
 <CodeEditor
   initialHtml={startHtml}
@@ -164,14 +163,57 @@ Experimenteer:
 <details>
 <summary>Tip</summary>
 
-Lees de gekozen optie uit met `document.getElementById('moment').value`. Gebruik `if`/`else` (uit [Beslissingen](/docs/js-basics/if-else)) om de juiste begroeting te kiezen.
+Een `<label>` en een `<input type="text" id="hobby">` in de HTML, een derde `.value`-regel in de functie, en de zin verder opbouwen met `+`.
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-HTML toevoegen:
+HTML-toevoeging in het formulier:
+```html
+<label for="hobby">Hobby:</label>
+<input type="text" id="hobby">
+```
+
+script.js:
+```js
+function begroet() {
+  const naam = document.getElementById('naam').value;
+  const leeftijd = Number(document.getElementById('leeftijd').value);
+  const hobby = document.getElementById('hobby').value;
+
+  const bericht = 'Hoi ' + naam + '. Over 10 jaar ben je ' + (leeftijd + 10) +
+    ' jaar en hopelijk hou je dan nog steeds van ' + hobby + '.';
+  document.getElementById('uitvoer').textContent = bericht;
+}
+```
+
+</details>
+
+## Opdracht 2: Dagdeel kiezen
+
+Voeg een `<select>` toe met de opties ochtend, middag en avond. Kies de begroeting op basis van de keuze: "Goedemorgen, Lisa.", "Goedemiddag, Lisa." of "Goedenavond, Lisa."
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  initialJs={startJs}
+  height="540px"
+  livePreview={false}
+/>
+
+<details>
+<summary>Tip</summary>
+
+Ook een `<select>` lees je uit met `.value`. Kies de groet met `if`/`else if`/`else` uit [Beslissingen](/docs/js-basics/if-else).
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+HTML-toevoeging in het formulier:
 ```html
 <label for="moment">Wanneer?</label>
 <select id="moment">
@@ -181,7 +223,7 @@ HTML toevoegen:
 </select>
 ```
 
-script.js aanpassen:
+script.js:
 ```js
 function begroet() {
   const naam = document.getElementById('naam').value;
@@ -196,15 +238,15 @@ function begroet() {
     groet = 'Goedenavond';
   }
 
-  document.getElementById('uitvoer').textContent = groet + ', ' + naam + '!';
+  document.getElementById('uitvoer').textContent = groet + ', ' + naam + '.';
 }
 ```
 
 </details>
 
-## Make
+## Opdracht 3: Mini-rekenmachine
 
-**Opdracht:** Bouw een mini-rekenmachine. Twee number-velden voor twee getallen, en een knop "Bereken". Toon op de pagina de som, het verschil en het product van de twee getallen.
+Bouw de rekenmachine af: twee number-velden staan klaar, met een Bereken-knop. Toon na een klik de som, het verschil en het product, elk op een eigen regel.
 
 <CodeEditor
   initialHtml={makeHtml}
@@ -217,36 +259,27 @@ function begroet() {
 <details>
 <summary>Tip</summary>
 
-Vergeet niet `Number(...)` te gebruiken bij het ophalen van `.value` — anders plakt `+` de getallen aan elkaar in plaats van op te tellen.
+Beide waarden door `Number()`, en dan drie regels verzamelen in één string met `'\n'` ertussen — zoals bij [Loops](/docs/js-basics/loops). De velden heten `getal1` en `getal2`, de knop `knop`.
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-HTML:
-```html
-<input type="number" id="a">
-<input type="number" id="b">
-<button type="button" onclick="reken()">Bereken</button>
-<p id="resultaat"></p>
-```
-
-script.js:
 ```js
 function reken() {
-  const a = Number(document.getElementById('a').value);
-  const b = Number(document.getElementById('b').value);
+  const a = Number(document.getElementById('getal1').value);
+  const b = Number(document.getElementById('getal2').value);
 
   const tekst = a + ' + ' + b + ' = ' + (a + b) + '\n' +
                 a + ' - ' + b + ' = ' + (a - b) + '\n' +
                 a + ' × ' + b + ' = ' + (a * b);
 
-  document.getElementById('resultaat').textContent = tekst;
+  document.getElementById('uitvoer').textContent = tekst;
 }
-```
 
-Voeg in CSS toe: `#resultaat { white-space: pre-line; }` om de regeleindes (`\n`) zichtbaar te maken.
+document.getElementById('knop').addEventListener('click', reken);
+```
 
 </details>
 
@@ -255,19 +288,19 @@ Voeg in CSS toe: `#resultaat { white-space: pre-line; }` om de regeleindes (`\n`
 **Number-veld vergeten te converteren**
 
 ```js
-const a = document.getElementById('a').value;  // string!
-const b = document.getElementById('b').value;  // string!
-console.log(a + b);  // '5' + '3' = '53'  niet 8!
+const a = document.getElementById('getal1').value;  // string
+const b = document.getElementById('getal2').value;  // string
+console.log(a + b);  // '5' + '3' wordt '53', niet 8
 ```
 
-`.value` is **altijd een string**, ook bij `<input type="number">`. Zonder `Number(...)` gaat `+` de waarden aan elkaar plakken in plaats van optellen. Wikkel altijd `Number()` om numerieke invoer:
+`.value` is **altijd een string**, ook bij `<input type="number">`. Zonder `Number(...)` plakt `+` de waarden aan elkaar in plaats van op te tellen — dezelfde val als bij `prompt()`. Wikkel `Number()` om elke numerieke invoer:
 
 ```js
-const a = Number(document.getElementById('a').value);
-const b = Number(document.getElementById('b').value);
-console.log(a + b);  // 8  ✓
+const a = Number(document.getElementById('getal1').value);
+const b = Number(document.getElementById('getal2').value);
+console.log(a + b);  // 8
 ```
 
 ---
 
-[← Beslissingen (if/else)](/docs/js-basics/if-else)
+[← Arrays](/docs/js-basics/arrays)

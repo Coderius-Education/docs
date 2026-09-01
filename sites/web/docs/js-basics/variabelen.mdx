@@ -1,4 +1,6 @@
 ---
+title: Variabelen
+description: Een variabele onthoudt een waarde - aanmaken met let of const, aanpassen en tonen op de pagina.
 ---
 
 import CodeEditor from '@site/src/components/CodeEditor';
@@ -56,43 +58,34 @@ export const makeHtml = `<!DOCTYPE html>
 export const makeJs = `// Schrijf hier je code
 `;
 
-## Wat ga je leren?
-
-Je leert hoe je een waarde opslaat in een **variabele**, en hoe je die waarde gebruikt en aanpast in je code.
-
-## Theorie
-
-Een variabele is een plek in het geheugen met een naam. Je maakt een variabele aan met `let`, geeft hem een naam, en kent er een waarde aan toe:
+Een variabele is een plek in het geheugen met een naam. Je maakt hem aan met `let`, geeft hem een naam en kent er een waarde aan toe:
 
 ```js
 let teller = 0;
 ```
 
-- `let` — maakt een nieuwe variabele aan
-- `teller` — de naam (kies zelf, gebruik kleine letters en geen spaties)
-- `= 0` — de beginwaarde
+- `let`: maakt een nieuwe variabele aan
+- `teller`: de naam (kies zelf; kleine letters, geen spaties)
+- `= 0`: de beginwaarde
 
-Je kunt de waarde daarna aanpassen:
+Daarna kun je de waarde aanpassen en tonen:
 
 ```js
 teller = teller + 1;  // voeg 1 toe aan de huidige waarde
-```
-
-En je kunt de waarde tonen op de pagina:
-
-```js
 document.getElementById('uitvoer').textContent = teller;
 ```
 
-### `let` of `const`?
+Zet de variabele **buiten** de functie: dan blijft hij bestaan tussen de klikken door en onthoudt hij zijn waarde. Dat onthouden is precies waar variabelen voor zijn.
 
-Naast `let` bestaat ook `const`. Het verschil:
+## `let` of `const`?
 
-- `let` — de waarde **kan veranderen** (zoals een teller die optelt)
-- `const` — de waarde **blijft constant**, hij mag na het toekennen niet meer veranderen
+Naast `let` bestaat `const`. Het verschil:
+
+- `let`: de waarde **kan veranderen** (zoals een teller die optelt)
+- `const`: de waarde **blijft constant**; na het toekennen mag hij niet meer veranderen
 
 ```js
-const startwaarde = 0;   // verandert nooit
+const startwaarde = 0;    // verandert nooit
 let teller = startwaarde; // mag wel veranderen
 teller = teller + 1;
 ```
@@ -101,12 +94,12 @@ teller = teller + 1;
 
 ## Predict
 
-Bekijk de startcode in het script.js-tabblad. Beantwoord de vraag hieronder **voordat** je op Run klikt.
+Bekijk de startcode in het script.js-tabblad. Beantwoord de vraag **voordat** je op Run klikt.
 
 <details>
 <summary>Wat zie je in de `<p>` na drie klikken?</summary>
 
-Na elke klik wordt `teller` met 1 verhoogd en op de pagina getoond. Na drie klikken staat er `3`. De variabele onthoudt de vorige waarde — hij begint bij 0 en telt op zolang de pagina open is.
+`3`. Elke klik verhoogt `teller` met 1 en toont de nieuwe waarde. De variabele onthoudt de vorige stand: hij begint bij 0 en telt op zolang de pagina open staat.
 
 </details>
 
@@ -122,15 +115,15 @@ Na elke klik wordt `teller` met 1 verhoogd en op de pagina getoond. Na drie klik
 
 ## Investigate
 
-Experimenteer:
+Experimenteer in het veld hierboven:
 
-- Verander de beginwaarde van `teller` naar `10` — waar begint de teller dan?
-- Verander `teller + 1` naar `teller + 5` — wat telt hij dan per klik?
-- Voeg een tweede knop toe die de teller weer op `0` zet
+- Klik een paar keer en druk dan opnieuw op Run. Waar staat de teller nu — en waarom?
+- Verander `teller + 1` in `teller - 1`. Wat gebeurt er bij elke klik?
+- Verander `let teller = 0;` in `const teller = 0;`. Welke foutmelding zie je in de console na een klik?
 
-## Modify
+## Opdracht 1: Andere start, grotere stappen
 
-**Opdracht:** Voeg een knop "Reset" toe die de teller terugzet naar 0 en dat ook op de pagina toont.
+Pas de startcode aan: de teller begint bij 10 en telt per klik 5 erbij.
 
 <CodeEditor
   initialHtml={startHtml}
@@ -143,7 +136,48 @@ Experimenteer:
 <details>
 <summary>Tip</summary>
 
-Schrijf een functie `reset()` die `teller = 0` zet en de `<p>` bijwerkt. Roep die aan vanuit een `onclick`-attribuut op een nieuwe knop.
+Er zijn twee getallen om aan te passen: de beginwaarde bij `let`, en wat er per klik bij komt. Klopt de `0` in de HTML dan nog?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+script.js:
+```js
+let teller = 10;
+
+function telOp() {
+  teller = teller + 5;
+  document.getElementById('uitvoer').textContent = teller;
+  console.log('Teller staat op:', teller);
+}
+```
+
+In de HTML zet je de begintekst ook op `10`, anders klopt de pagina pas na de eerste klik:
+
+```html
+<p id="uitvoer">10</p>
+```
+
+</details>
+
+## Opdracht 2: Reset-knop
+
+Voeg een knop "Reset" toe die de teller terugzet naar 0 en dat ook op de pagina toont.
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  initialJs={startJs}
+  height="500px"
+  livePreview={false}
+/>
+
+<details>
+<summary>Tip</summary>
+
+Schrijf een functie `reset()` die `teller = 0` zet en de `<p>` bijwerkt. Roep hem aan vanuit een `onclick` op een nieuwe knop.
 
 </details>
 
@@ -163,11 +197,13 @@ function reset() {
 }
 ```
 
+Beide functies gebruiken dezelfde variabele `teller` — daarom staat hij buiten de functies.
+
 </details>
 
-## Make
+## Opdracht 3: Score-bijhouder
 
-**Opdracht:** Bouw een eenvoudige score-bijhouder voor een spelletje. Er zijn twee knoppen: "+1 punt" en "-1 punt". De score staat centraal op de pagina. De score mag niet onder 0 komen — als de score al 0 is, doet de min-knop niets.
+Bouw een score-bijhouder voor een spelletje. De score staat in de `<p>` en begint op 0. De knop "+1 punt" telt een punt erbij, de knop "-1 punt" haalt er een af. Log bij elke wijziging de nieuwe score in de console.
 
 <CodeEditor
   initialHtml={makeHtml}
@@ -180,44 +216,30 @@ function reset() {
 <details>
 <summary>Tip</summary>
 
-Je hebt een **beslissing** nodig: alleen aftrekken als de score boven 0 is. In JavaScript schrijf je dat met `if`. De volledige uitleg krijg je in [Beslissingen](/docs/js-basics/if-else), maar voor nu kun je dit patroon kopiëren:
-
-```js
-if (score > 0) {
-  score = score - 1;
-}
-```
-
-Tussen de haakjes staat de voorwaarde (`score > 0`). De regels tussen `{ ... }` worden alleen uitgevoerd als die voorwaarde klopt.
+De knoppen roepen `puntErbij()` en `puntEraf()` aan — die twee functies schrijf jij, allebei rond dezelfde variabele `score`.
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-HTML:
-```html
-<p id="score">0</p>
-<button onclick="plus()">+1 punt</button>
-<button onclick="min()">-1 punt</button>
-```
-
-script.js:
 ```js
 let score = 0;
 
-function plus() {
+function puntErbij() {
   score = score + 1;
   document.getElementById('score').textContent = score;
+  console.log('Score:', score);
 }
 
-function min() {
-  if (score > 0) {
-    score = score - 1;
-    document.getElementById('score').textContent = score;
-  }
+function puntEraf() {
+  score = score - 1;
+  document.getElementById('score').textContent = score;
+  console.log('Score:', score);
 }
 ```
+
+De score kan nu ook onder nul komen. Hoe je dat tegenhoudt, leer je in [Beslissingen](/docs/js-basics/if-else) — kom daarna gerust hier terug.
 
 </details>
 
@@ -227,13 +249,13 @@ function min() {
 
 ```js
 function telOp() {
-  let teller = 0;       // Fout: elke klik reset de teller naar 0!
+  let teller = 0;       // Fout: elke klik begint opnieuw bij 0
   teller = teller + 1;
 }
 ```
 
-Als je `let teller = 0` binnen de functie zet, wordt de variabele bij elke klik opnieuw aangemaakt en begint hij altijd bij 0. De teller telt dan nooit verder dan 1. Zet variabelen die je wilt onthouden **buiten** de functie.
+Staat `let teller = 0` binnen de functie, dan maakt elke klik een verse variabele aan die weer bij 0 begint — de teller komt nooit verder dan 1. Zet variabelen die je wilt onthouden **buiten** de functie.
 
 ---
 
-[← script.js](/docs/js-basics/scriptjs) | [Events →](/docs/js-basics/events)
+[← script.js](/docs/js-basics/scriptjs) | [prompt en alert →](/docs/js-basics/prompt-alert)

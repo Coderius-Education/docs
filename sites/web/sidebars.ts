@@ -32,21 +32,28 @@ const sidebars: SidebarsConfig = {
     'html-css/semantische-html',
     'html-css/formulieren',
   ],
+  // De JS-leerlijn wijkt bewust af van de bestandsnamen: prompt/alert staat
+  // direct na variabelen (zodat de lessen erna met echte invoer werken),
+  // modern-dom vóór events (classList is de opmaat naar listeners), en
+  // formulier-data sluit af als toepassing van alles ervoor. Vanaf events is
+  // addEventListener de huisstijl; daarvoor is dat inline onclick.
   jsSidebar: [
     'js-basics/intro-javascript',
     'js-basics/inline-onclick',
+    'js-basics/tekst-veranderen',
     'js-basics/inline-stijl',
     'js-basics/script-tag',
     'js-basics/scriptjs',
     'js-basics/variabelen',
-    'js-basics/events',
-    'js-basics/operatoren-types',
-    'js-basics/if-else',
-    'js-basics/formulier-data',
     'js-basics/prompt-alert',
+    'js-basics/operatoren-types',
+    'js-basics/vergelijken',
+    'js-basics/if-else',
+    'js-basics/modern-dom',
+    'js-basics/events',
     'js-basics/loops',
     'js-basics/arrays',
-    'js-basics/modern-dom',
+    'js-basics/formulier-data',
   ],
 };
 
