@@ -1,4 +1,6 @@
 ---
+title: prompt en alert
+description: Met prompt vraag je de gebruiker om invoer en met alert toon je een bericht - de snelste manier om je pagina interactief te maken.
 ---
 
 import CodeEditor from '@site/src/components/CodeEditor';
@@ -14,7 +16,7 @@ export const startHtml = `<!DOCTYPE html>
   <script src="script.js" defer></script>
 </head>
 <body>
-  <button onclick="vraagNaam()">Vraag mijn naam</button>
+  <button id="knop">Vraag mijn naam</button>
   <p id="uitvoer"></p>
 </body>
 </html>`;
@@ -24,11 +26,11 @@ export const startCss = `button { padding: 10px 20px; font-size: 1rem; cursor: p
 
 export const startJs = `function vraagNaam() {
   const naam = prompt('Hoe heet je?');
-  if (naam) {
-    alert('Hallo ' + naam + '!');
-    document.getElementById('uitvoer').textContent = 'Welkom, ' + naam + '.';
-  }
-}`;
+  alert('Hallo ' + naam + '.');
+  document.getElementById('uitvoer').textContent = 'Welkom, ' + naam + '.';
+}
+
+document.getElementById('knop').addEventListener('click', vraagNaam);`;
 
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
@@ -39,52 +41,45 @@ export const makeHtml = `<!DOCTYPE html>
   <script src="script.js" defer></script>
 </head>
 <body>
-  <button onclick="startQuiz()">Start de quiz</button>
+  <button id="knop">Maak mijn verhaal</button>
+  <p id="verhaal"></p>
 </body>
 </html>`;
 
 export const makeJs = `// Schrijf hier je code
 `;
 
-## Wat ga je leren?
+Tot nu toe stond alle tekst vast in je code. Met twee ingebouwde functies praat je pagina met de gebruiker: **`alert()`** toont een bericht, **`prompt()`** stelt een vraag.
 
-Je leert twee ingebouwde JavaScript-functies waarmee je snel met de gebruiker kunt communiceren: **`alert()`** toont een berichtvenster, **`prompt()`** vraagt om invoer.
-
-## Theorie
-
-In [Formulier-data ophalen](/docs/js-basics/formulier-data) gebruikte je een formulier om invoer op te halen. Voor snelle demo's en oefeningen kan dat ook simpeler — met twee browser-ingebouwde functies:
-
-### `alert()` — toon een berichtvenster
+## `alert()`: toon een berichtvenster
 
 ```js
-alert('Hallo wereld!');
+alert('Hallo wereld.');
 ```
 
-Een pop-up venster verschijnt met je tekst en een OK-knop. De code wacht tot de gebruiker op OK klikt.
+Er verschijnt een pop-upvenster met je tekst en een OK-knop. De code wacht tot de gebruiker op OK klikt.
 
-### `prompt()` — vraag om invoer
+## `prompt()`: vraag om invoer
 
 ```js
 const naam = prompt('Hoe heet je?');
 ```
 
-Een pop-up venster vraagt om tekst. Wat de gebruiker typt komt in `naam` te staan (als string). Klikt de gebruiker op Cancel, dan is `naam` gelijk aan `null`.
-
-### Beide combineren
+Een pop-upvenster vraagt om tekst. Wat de gebruiker typt, komt in de variabele `naam` te staan. Daarna kun je die waarde gebruiken, bijvoorbeeld door hem met `+` aan een andere tekst te plakken:
 
 ```js
 const naam = prompt('Hoe heet je?');
-alert('Welkom, ' + naam + '!');
+alert('Welkom, ' + naam + '.');
 ```
 
 :::tip[Wanneer wel/niet?]
 - **Wel**: snelle demo, mini-oefening, één losse vraag.
-- **Niet**: echte website. Pop-ups zijn storend, blokkeren de pagina, en kunnen niet gestyled worden. Gebruik daar [formulieren](/docs/js-basics/formulier-data) voor.
+- **Niet**: een echte website. Pop-ups zijn storend, blokkeren de pagina en zijn niet te stylen. Daarvoor leer je later [formulieren uitlezen](/docs/js-basics/formulier-data).
 :::
 
 ## Predict
 
-Wat verschijnt er in de console als de gebruiker `"16"` typt in deze code?
+Wat verschijnt er in de console als de gebruiker `16` typt?
 
 ```js
 const leeftijd = prompt('Hoe oud ben je?');
@@ -92,9 +87,9 @@ console.log(leeftijd + 4);
 ```
 
 <details>
-<summary>Klik hier voor het antwoord</summary>
+<summary>Wat denk je: 20, of iets anders?</summary>
 
-`164`. `prompt()` geeft altijd een **string** terug — ook bij getallen. `'16' + 4` is dus string-concatenatie: `'16' + '4'` wordt `'164'`. Wil je rekenen, dan moet je `Number(prompt(...))` gebruiken.
+`164`. Alles wat uit `prompt()` komt is **tekst**, ook als de gebruiker een getal typt. `+` plakt teksten aan elkaar: `'16' + 4` wordt `'164'`. Waarom dat zo werkt en hoe je er wél mee rekent, leer je in [Waarden en operatoren](/docs/js-basics/operatoren-types).
 
 </details>
 
@@ -106,19 +101,20 @@ console.log(leeftijd + 4);
   initialJs={startJs}
   height="380px"
   livePreview={false}
+  stacked
 />
 
 ## Investigate
 
-Experimenteer:
+Experimenteer in het veld hierboven:
 
-- Klik op de knop en klik bij de prompt direct op **Cancel** — wat verandert er op de pagina? (Tip: `naam` is dan `null`)
-- Vraag in een tweede `prompt` om leeftijd. Toon ook die in de `alert`.
-- Verander `if (naam)` in `if (naam !== null)` — werkt het hetzelfde?
+- Klik op de knop en kies bij de prompt direct **Cancel**. Wat staat er dan op de pagina, en wat vind je daarvan?
+- Wat gebeurt er als je niets typt en op OK klikt?
+- Verwijder de `alert`-regel. Wat merk je bij het klikken?
 
-## Modify
+## Opdracht 1: Lievelingskleur
 
-**Opdracht:** Vraag de gebruiker om twee getallen en toon de som in een `alert`.
+Pas de startcode aan: de knop heet "Vraag mijn kleur", de prompt vraagt "Wat is je lievelingskleur?", en op de pagina verschijnt "Mooie kleur, " gevolgd door het antwoord.
 
 <CodeEditor
   initialHtml={startHtml}
@@ -126,12 +122,56 @@ Experimenteer:
   initialJs={startJs}
   height="380px"
   livePreview={false}
+  stacked
 />
 
 <details>
 <summary>Tip</summary>
 
-Vergeet niet `Number()` om de strings naar getallen te zetten — anders worden ze geplakt in plaats van opgeteld (zie [Waarden en operatoren](/docs/js-basics/operatoren-types)).
+Je hoeft alleen teksten aan te passen: de vraag in `prompt(...)`, de zin die je plakt, en de tekst op de knop.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+HTML:
+```html
+<button id="knop">Vraag mijn kleur</button>
+```
+
+script.js:
+```js
+function vraagNaam() {
+  const kleur = prompt('Wat is je lievelingskleur?');
+  alert('Mooie kleur.');
+  document.getElementById('uitvoer').textContent = 'Mooie kleur, ' + kleur + '.';
+}
+
+document.getElementById('knop').addEventListener('click', vraagNaam);
+```
+
+De functienaam mag blijven; je mag hem ook hernoemen naar `vraagKleur`, als je hem dan óók in de koppelregel onderaan aanpast.
+
+</details>
+
+## Opdracht 2: Twee vragen
+
+Vraag met twee prompts naar de naam én de hobby van de gebruiker, en toon daarna één zin op de pagina: "Ik ben (naam) en ik hou van (hobby)."
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  initialJs={startJs}
+  height="380px"
+  livePreview={false}
+  stacked
+/>
+
+<details>
+<summary>Tip</summary>
+
+Twee prompts betekent twee variabelen. Plak de zin daarna in stukken aan elkaar met `+`, en vergeet de spaties in de tussenstukken niet.
 
 </details>
 
@@ -139,18 +179,21 @@ Vergeet niet `Number()` om de strings naar getallen te zetten — anders worden 
 <summary>Antwoord</summary>
 
 ```js
-function telOp() {
-  const a = Number(prompt('Eerste getal:'));
-  const b = Number(prompt('Tweede getal:'));
-  alert('Som: ' + (a + b));
+function vraagNaam() {
+  const naam = prompt('Hoe heet je?');
+  const hobby = prompt('Wat is je hobby?');
+  document.getElementById('uitvoer').textContent =
+    'Ik ben ' + naam + ' en ik hou van ' + hobby + '.';
 }
+
+document.getElementById('knop').addEventListener('click', vraagNaam);
 ```
 
 </details>
 
-## Make
+## Opdracht 3: Verhaaltjesmachine
 
-**Opdracht:** Bouw een mini-quiz. Stel via `prompt` een vraag met meerdere mogelijke antwoorden (bijv. "Wat is de hoofdstad van Nederland?"). Vergelijk het antwoord met het juiste antwoord en geef via `alert` feedback ("Goed." of "Fout, het was..."). Tip: gebruik `.toLowerCase()` om hoofdletters te negeren.
+Bouw een verhaaltjesmachine: vraag met drie prompts om een naam, een dier en een plaats, en zet daarna een gek verhaaltje met die drie woorden op de pagina. Sluit af met een `alert` dat het verhaal klaarstaat.
 
 <CodeEditor
   initialHtml={makeHtml}
@@ -158,12 +201,13 @@ function telOp() {
   initialJs={makeJs}
   height="380px"
   livePreview={false}
+  stacked
 />
 
 <details>
 <summary>Tip</summary>
 
-`antwoord.toLowerCase() === 'amsterdam'` — zo accepteer je "amsterdam", "Amsterdam" en "AMSTERDAM".
+Schrijf een functie `maakVerhaal` en koppel hem met `addEventListener` aan de knop. Drie prompts, drie variabelen, en één lange geplakte zin naar `textContent`.
 
 </details>
 
@@ -171,35 +215,34 @@ function telOp() {
 <summary>Antwoord</summary>
 
 ```js
-function quiz() {
-  const antwoord = prompt('Wat is de hoofdstad van Nederland?');
-
-  if (antwoord && antwoord.toLowerCase() === 'amsterdam') {
-    alert('Goed gedaan!');
-  } else {
-    alert('Fout. Het juiste antwoord is Amsterdam.');
-  }
+function maakVerhaal() {
+  const naam = prompt('Een naam:');
+  const dier = prompt('Een dier:');
+  const plaats = prompt('Een plaats:');
+  document.getElementById('verhaal').textContent =
+    naam + ' fietste naar ' + plaats + ' en kwam daar een pratende ' + dier + ' tegen.';
+  alert('Je verhaal staat klaar.');
 }
+
+document.getElementById('knop').addEventListener('click', maakVerhaal);
 ```
 
 </details>
 
 ## Er gaat iets mis
 
-**`prompt` geeft een string, ook bij getallen**
+**De plus vergeten bij het plakken**
 
 ```js
-const aantal = prompt('Hoeveel?');  // bijv. "5"
-const totaal = aantal * 2;          // werkt: '5' * 2 = 10
-const verkeerd = aantal + 1;        // werkt NIET: '5' + 1 = '51'
+alert('Hallo ' naam);
 ```
 
-Vermenigvuldigen werkt soms toevallig (JS converteert automatisch bij `*`, `-`, `/`), maar **`+` plakt strings**. Dat is dezelfde val als bij `<input>.value` (zie [Formulier-data ophalen](/docs/js-basics/formulier-data)). Wikkel altijd `Number(...)` om numerieke invoer:
-
-```js
-const aantal = Number(prompt('Hoeveel?'));
 ```
+Uncaught SyntaxError: missing ) after argument list
+```
+
+Tussen elk stuk tekst en elke variabele hoort een `+`. Zonder die plus begrijpt JavaScript de regel niet meer en stopt het script meteen — er verschijnt dan helemaal geen pop-up. Controleer bij deze foutmelding of elke overgang tekst-variabele een `+` heeft: `alert('Hallo ' + naam);`.
 
 ---
 
-[← Formulier-data ophalen](/docs/js-basics/formulier-data) | [Loops →](/docs/js-basics/loops)
+[← Events](/docs/js-basics/events) | [Waarden en operatoren →](/docs/js-basics/operatoren-types)

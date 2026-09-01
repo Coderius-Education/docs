@@ -19,6 +19,28 @@ const CONSOLE_INTERCEPTOR = `<script>
 })();
 <\/script>`;
 
+// Meldt de hoogte van de inhoud aan het veld eromheen, zodat het voorbeeld
+// in de gestapelde vorm kan eindigen waar de inhoud eindigt. body.scrollHeight
+// is onafhankelijk van scrollen; de body-marges tellen we er zelf bij op.
+const HEIGHT_REPORTER = `<script>
+(function(){
+  var meld = function() {
+    var b = document.body;
+    if (!b) return;
+    var stijl = getComputedStyle(b);
+    var h = Math.ceil(b.scrollHeight + parseFloat(stijl.marginTop) + parseFloat(stijl.marginBottom));
+    window.parent.postMessage({ source: 'code-editor', type: 'height', height: h }, '*');
+  };
+  window.addEventListener('load', meld);
+  document.addEventListener('DOMContentLoaded', function() {
+    meld();
+    if (window.ResizeObserver && document.body) {
+      new ResizeObserver(meld).observe(document.body);
+    }
+  });
+})();
+<\/script>`;
+
 const JS_WRAPPER = (js: string) => `
 <script>
 try {
@@ -36,9 +58,10 @@ export function buildDoc(html: string, css: string, js: string): string {
   let result = html;
 
   // Inject console interceptor as the very first script in <head> (always, so inline <script> tags also reach the console)
+  const kopScripts = `${CONSOLE_INTERCEPTOR}\n${HEIGHT_REPORTER}`;
   result = result.includes('<head>')
-    ? result.replace('<head>', `<head>\n${CONSOLE_INTERCEPTOR}`)
-    : `${CONSOLE_INTERCEPTOR}\n${result}`;
+    ? result.replace('<head>', `<head>\n${kopScripts}`)
+    : `${kopScripts}\n${result}`;
 
   // Replace <link rel="stylesheet" ...> with a <style> tag containing the CSS tab content
   const linkRegex = /<link[^>]*rel=["']stylesheet["'][^>]*\/?>/i;

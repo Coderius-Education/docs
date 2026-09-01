@@ -24,8 +24,8 @@ Beschreven in [`CLAUDE.md`](CLAUDE.md). Kort samengevat:
 
 ```
 docs/
-  html-css/          # 12 HTML & CSS lessen (genummerd 01–12)
-  js-basics/         # 9 JavaScript lessen (genummerd 00–08)
+  html-css/          # 18 HTML & CSS lessen
+  js-basics/         # 16 JavaScript lessen
 src/
   pages/
     index.tsx        # Homepage met start-knop en cursus-kaartjes
@@ -57,7 +57,7 @@ GIT_USER=<jouw-github-username> yarn deploy
 
 ## Bijdragen
 
-Lees `CLAUDE.md` voor de auteurs-checklist (leerdoel, fout, interactie, scaffolding, cheatsheet) voordat je een nieuwe les schrijft of een bestaande aanpast. Nieuwe lessen volgen het patroon `NN-onderwerp.mdx` in `docs/html-css/` of `docs/js-basics/`.
+Lees `CLAUDE.md` voor de auteurs-checklist (leerdoel, fout, interactie, scaffolding, cheatsheet) voordat je een nieuwe les schrijft of een bestaande aanpast. Nieuwe lesbestanden heten kebab-case naar hun onderwerp (`css-grid.mdx`, `tekst-veranderen.mdx`); de lesvolgorde staat in `sidebars.ts`, los van de bestandsnamen.
 
 ## Gebouwd met
 

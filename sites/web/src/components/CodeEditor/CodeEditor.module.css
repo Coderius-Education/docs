@@ -8,15 +8,17 @@
   font-size: 0.9rem;
 }
 
+/* De code krijgt meer ruimte dan de preview: lesvoorbeelden zijn breed,
+   de preview is meestal een knop met een regel tekst. */
 .editorSide {
-  flex: 1 1 50%;
+  flex: 1 1 60%;
   display: flex;
   flex-direction: column;
   min-width: 0;
 }
 
 .previewColumn {
-  flex: 1 1 50%;
+  flex: 1 1 40%;
   display: flex;
   flex-direction: column;
   min-width: 0;
@@ -185,6 +187,12 @@
   height: 100%;
 }
 
+/* Meegroeiende editor (gestapelde velden): geen 100%-dwang, de hoogte
+   volgt de code tot het maximum uit de height-prop. */
+.codeMirrorAuto {
+  height: auto;
+}
+
 .previewLabel {
   padding: 0.4rem 0.75rem;
   font-size: 0.75rem;
@@ -209,6 +217,22 @@
   padding: 2rem;
   color: var(--ifm-color-emphasis-600);
   font-style: italic;
+}
+
+/* Gestapelde vorm (js-basics): code bovenaan, uitvoer en console eronder
+   over de volle breedte. */
+.containerStacked {
+  flex-direction: column;
+}
+
+.containerStacked .editorSide,
+.containerStacked .previewColumn {
+  flex: none;
+}
+
+.containerStacked .previewColumn {
+  border-left: none;
+  border-top: 1px solid var(--ifm-color-emphasis-300);
 }
 
 @media (max-width: 768px) {

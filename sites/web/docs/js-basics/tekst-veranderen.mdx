@@ -1,0 +1,197 @@
+---
+title: Tekst veranderen
+description: Met textContent verander je de tekst van een element - een eigenschap die je een nieuwe waarde geeft.
+---
+
+import CodeEditor from '@site/src/components/CodeEditor';
+
+# Tekst veranderen
+
+export const startHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Tekst veranderen</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <p id="zin">Klik een knop.</p>
+  <button onclick="document.getElementById('zin').textContent = 'De zon schijnt.'">Zin 1</button>
+  <button onclick="document.getElementById('zin').textContent = 'Het regent.'">Zin 2</button>
+</body>
+</html>`;
+
+export const startCss = `button {
+  padding: 8px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+p {
+  font-size: 1.2rem;
+}`;
+
+export const makeHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Tekst veranderen</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Bouw hier je pagina -->
+</body>
+</html>`;
+
+export const makeCss = `/* Schrijf hier je stijl */
+`;
+
+In de vorige les zag je dit recept al. Nu zoomen we in op het laatste stuk:
+
+```html
+<button onclick="document.getElementById('zin').textContent = 'De zon schijnt.'">Zin 1</button>
+```
+
+**`textContent`** is een eigenschap van een element: de zichtbare tekst die erin staat. Met het `=`-teken geef je die eigenschap een nieuwe waarde, en de pagina verandert meteen mee. De nieuwe tekst zet je tussen aanhalingstekens: `'De zon schijnt.'` — zo weet de browser dat het om letterlijke tekst gaat en niet om code.
+
+Lees de regel van links naar rechts als een zin: *pak het document → zoek het element met id "zin" → zet de tekst ervan op "De zon schijnt."*.
+
+Meerdere knoppen mogen naar hetzelfde element wijzen. Elke knop zet dan zijn eigen tekst in dezelfde `<p>` — de laatste klik wint.
+
+## Predict
+
+Bekijk de startcode: twee knoppen, allebei met `getElementById('zin')`.
+
+<details>
+<summary>Wat staat er in de `<p>` als je eerst op "Zin 1" en daarna op "Zin 2" klikt?</summary>
+
+"Het regent." — elke klik vervangt de hele tekst. De tekst van "Zin 1" wordt niet aangevuld maar overschreven, want `=` geeft de eigenschap een nieuwe waarde.
+
+</details>
+
+## Probeer het zelf.
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  height="420px"
+  livePreview={false}
+  stacked
+/>
+
+## Investigate
+
+Experimenteer in het veld hierboven:
+
+- Klik drie keer achter elkaar op "Zin 1". Verandert er na de eerste klik nog iets?
+- Haal de aanhalingstekens rond `'Het regent.'` weg en klik op "Zin 2". Wat zie je (kijk ook in de console met F12)?
+- Kun je een knop maken die de `<p>` leegmaakt?
+
+## Opdracht 1: Derde knop
+
+Voeg een derde knop "Zin 3" toe die een eigen zin in dezelfde `<p>` zet.
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  height="420px"
+  livePreview={false}
+  stacked
+/>
+
+<details>
+<summary>Tip</summary>
+
+Kopieer een bestaande knop en verander alleen de tekst op de knop en de tekst achter `.textContent =`. Het `id` blijft `'zin'`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<button onclick="document.getElementById('zin').textContent = 'Het waait hard.'">Zin 3</button>
+```
+
+Drie knoppen, één element: ze schrijven alle drie naar dezelfde `<p id="zin">`.
+
+</details>
+
+## Opdracht 2: Wissen
+
+Voeg een knop "Wis" toe die de tekst in de `<p>` weer leegmaakt.
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  height="420px"
+  livePreview={false}
+  stacked
+/>
+
+<details>
+<summary>Tip</summary>
+
+Leeg is ook een waarde: twee aanhalingstekens met niets ertussen.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<button onclick="document.getElementById('zin').textContent = ''">Wis</button>
+```
+
+`''` is een lege tekst. De `<p>` blijft op de pagina staan, maar er staat niets meer in.
+
+</details>
+
+## Opdracht 3: Smoelenboek
+
+Bouw vanaf een lege pagina een minipagina over jezelf: een `<p id="naam">` en een `<p id="hobby">`, allebei eerst met een vraagteken erin, en twee knoppen die elk het juiste element invullen ("Toon naam" en "Toon hobby").
+
+<CodeEditor
+  initialHtml={makeHtml}
+  initialCss={makeCss}
+  height="420px"
+  livePreview={false}
+  stacked
+/>
+
+<details>
+<summary>Tip</summary>
+
+Twee elementen, twee id's, twee knoppen. Controleer per knop of het `id` in de `onclick` bij het juiste element hoort.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<p id="naam">?</p>
+<p id="hobby">?</p>
+<button onclick="document.getElementById('naam').textContent = 'Sam'">Toon naam</button>
+<button onclick="document.getElementById('hobby').textContent = 'Voetbal'">Toon hobby</button>
+```
+
+</details>
+
+## Er gaat iets mis
+
+**Aanhalingstekens vergeten**
+
+```html
+<button onclick="document.getElementById('zin').textContent = Hallo">Klik</button>
+```
+
+```
+Uncaught ReferenceError: Hallo is not defined
+```
+
+Zonder aanhalingstekens denkt de browser dat `Hallo` een stukje code is (een naam die ergens gedefinieerd moet zijn), niet een tekst. De foutmelding zie je in de browser-console (F12). Zet letterlijke tekst altijd tussen aanhalingstekens: `'Hallo'`.
+
+---
+
+[← Een knop die iets doet](/docs/js-basics/inline-onclick) | [Inline stijl →](/docs/js-basics/inline-stijl)

@@ -1,4 +1,6 @@
 ---
+title: Loops
+description: Een for-loop herhaalt code een vast aantal keer, een while-loop zolang een voorwaarde waar is.
 ---
 
 import CodeEditor from '@site/src/components/CodeEditor';
@@ -14,7 +16,7 @@ export const startHtml = `<!DOCTYPE html>
   <script src="script.js" defer></script>
 </head>
 <body>
-  <button onclick="toonTafel()">Toon tafel van 5</button>
+  <button id="knop">Toon tafel van 5</button>
   <p id="uitvoer"></p>
 </body>
 </html>`;
@@ -28,7 +30,9 @@ export const startJs = `function toonTafel() {
     resultaat = resultaat + '5 × ' + i + ' = ' + (5 * i) + '\\n';
   }
   document.getElementById('uitvoer').textContent = resultaat;
-}`;
+}
+
+document.getElementById('knop').addEventListener('click', toonTafel);`;
 
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
@@ -39,45 +43,55 @@ export const makeHtml = `<!DOCTYPE html>
   <script src="script.js" defer></script>
 </head>
 <body>
-  <button onclick="aftellen()">Start het aftellen</button>
+  <button id="knop">Start het aftellen</button>
+  <p id="uitvoer"></p>
 </body>
 </html>`;
 
 export const makeJs = `// Schrijf hier je code
 `;
 
-## Wat ga je leren?
+Soms wil je dezelfde actie meerdere keren uitvoeren: een tafel printen, tien sterretjes tonen. In plaats van tien keer dezelfde regel typen, gebruik je een **loop**.
 
-Je leert hoe je een stukje code **meerdere keren** laat draaien met een **loop** — zonder dezelfde regels handmatig te kopiëren. We behandelen `for` en `while`.
-
-## Theorie
-
-Soms wil je dezelfde actie meerdere keren uitvoeren — bijvoorbeeld een tafel van 5 printen, of tien sterretjes op het scherm zetten. In plaats van tien keer dezelfde regel typen, gebruik je een **loop**.
-
-### `for`-loop — als je vooraf weet hoe vaak
+## De for-loop: vooraf bekend aantal keer
 
 ```js
 for (let i = 0; i < 5; i++) {
-  console.log('Hallo!');
+  console.log('Hallo.');
 }
 ```
 
-Lees dit als: "start met `i = 0`, blijf herhalen zolang `i < 5`, en verhoog `i` na elke ronde met 1". Resultaat: "Hallo." verschijnt 5 keer.
+Lees dit als: start met `i = 0`, blijf herhalen zolang `i < 5`, en verhoog `i` na elke ronde met 1. Resultaat: `Hallo.` verschijnt vijf keer in de console.
 
 De drie onderdelen tussen de haakjes:
-- **Beginwaarde**: `let i = 0` — een tellervariabele (vaak `i`).
-- **Voorwaarde**: `i < 5` — zolang dit `true` is, blijft de loop draaien.
-- **Stap**: `i++` — wat er na elke ronde gebeurt (`i++` is een kortere vorm van `i = i + 1`).
 
-Binnen de loop kun je `i` gebruiken — handig om iets te tonen dat verandert:
+- **Beginwaarde**: `let i = 0`, een tellervariabele (vaak `i`).
+- **Voorwaarde**: `i < 5`. Zolang dit `true` is, blijft de loop draaien.
+- **Stap**: `i++`, wat er na elke ronde gebeurt (`i++` is de korte vorm van `i = i + 1`).
+
+Binnen de loop kun je `i` gebruiken, zodat elke ronde net iets anders doet:
 
 ```js
 for (let i = 1; i <= 5; i++) {
-  console.log('Tafel: 5 × ' + i + ' = ' + (5 * i));
+  console.log('5 × ' + i + ' = ' + (5 * i));
 }
 ```
 
-### `while`-loop — zolang een voorwaarde waar is
+## Verzamelen in een string
+
+Wil je het resultaat op de pagina tonen in plaats van in de console, dan bouw je een verzamel-string op: begin leeg, en plak er elke ronde een regel bij. `'\n'` is een regeleinde.
+
+```js
+let resultaat = '';
+for (let i = 1; i <= 10; i++) {
+  resultaat = resultaat + '5 × ' + i + ' = ' + (5 * i) + '\n';
+}
+document.getElementById('uitvoer').textContent = resultaat;
+```
+
+Pas ná de loop, als alle regels verzameld zijn, zet je de string in één keer op de pagina. De CSS-regel `white-space: pre-line` in de startcode zorgt dat de regeleindes zichtbaar blijven in de `<p>`.
+
+## De while-loop: zolang iets waar is
 
 ```js
 let teller = 0;
@@ -87,7 +101,7 @@ while (teller < 5) {
 }
 ```
 
-Een `while` draait zolang de voorwaarde `true` is. Vergeet niet de variabele binnenin aan te passen — anders krijg je een **oneindige loop** die de browser laat vastlopen.
+Een `while` draait zolang de voorwaarde `true` is. Jij bent zelf verantwoordelijk voor de stap: vergeet je `teller = teller + 1`, dan draait de loop eindeloos door.
 
 ## Predict
 
@@ -100,7 +114,7 @@ for (let i = 0; i < 3; i++) {
 ```
 
 <details>
-<summary>Klik hier voor het antwoord</summary>
+<summary>Hoeveel regels, en met welke getallen?</summary>
 
 ```
 Ronde 0
@@ -108,7 +122,7 @@ Ronde 1
 Ronde 2
 ```
 
-De loop begint bij `i = 0`, herhaalt zolang `i < 3` waar is, dus 0, 1 en 2. Bij `i = 3` stopt de loop want `3 < 3` is `false`.
+De loop begint bij `i = 0` en herhaalt zolang `i < 3`: dus voor 0, 1 en 2. Bij `i = 3` is `3 < 3` `false` en stopt de loop.
 
 </details>
 
@@ -120,20 +134,20 @@ De loop begint bij `i = 0`, herhaalt zolang `i < 3` waar is, dus 0, 1 en 2. Bij 
   initialJs={startJs}
   height="500px"
   livePreview={false}
+  stacked
 />
 
 ## Investigate
 
-Experimenteer:
+Experimenteer in het veld hierboven:
 
-- Verander `i <= 10` naar `i <= 5` — wat verandert er aan het aantal regels?
-- Verander `i++` naar `i = i + 2` — wat zie je dan?
-- Vervang `5 *` door `i *` — welke uitkomst krijg je?
-- Probeer `i--` met `let i = 10; i >= 1; i--` — wat doet de loop nu?
+- Verander `i <= 10` in `i <= 5`. Hoeveel regels krijg je?
+- Vervang `5 * i` door `i * i`. Welke rij getallen zie je nu?
+- Zet een `console.log(i)` in de loop en klik. Hoe loopt de teller in de console?
 
-## Modify
+## Opdracht 1: Andere tafel
 
-**Opdracht:** Pas de loop aan zodat alleen de **even** producten worden getoond (2, 4, 6...).
+Pas de code aan zodat de knop de tafel van 7 toont, van `7 × 1` tot en met `7 × 12`.
 
 <CodeEditor
   initialHtml={startHtml}
@@ -141,39 +155,79 @@ Experimenteer:
   initialJs={startJs}
   height="500px"
   livePreview={false}
+  stacked
 />
 
 <details>
 <summary>Tip</summary>
 
-Optie 1: stap omhoog met `i = i + 2` startend bij `i = 2`. Optie 2: gebruik een `if`-check binnen de loop op `i % 2 === 0`.
+Er staan drie vijven en één 10 in de functie. Welke moeten er veranderen — en vergeet de tekst op de knop niet.
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-Optie 1 — stap omhoog met 2:
+```js
+function toonTafel() {
+  let resultaat = '';
+  for (let i = 1; i <= 12; i++) {
+    resultaat = resultaat + '7 × ' + i + ' = ' + (7 * i) + '\n';
+  }
+  document.getElementById('uitvoer').textContent = resultaat;
+}
+
+document.getElementById('knop').addEventListener('click', toonTafel);
+```
+
+In de HTML pas je de knoptekst aan naar "Toon tafel van 7".
+
+</details>
+
+## Opdracht 2: Alleen even
+
+Pas de tafel-loop aan zodat alleen de regels met een **even** waarde van `i` verschijnen (2, 4, 6, 8, 10).
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  initialJs={startJs}
+  height="500px"
+  livePreview={false}
+  stacked
+/>
+
+<details>
+<summary>Tip</summary>
+
+Twee routes: laat de stap met 2 tegelijk springen, of check binnen de loop met `if` en de modulo uit [Waarden en operatoren](/docs/js-basics/operatoren-types) (`i % 2 === 0` betekent: even).
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Route 1 — stap van 2:
 ```js
 for (let i = 2; i <= 10; i = i + 2) {
-  resultaat = resultaat + '5 × ' + i + ' = ' + (5 * i) + '\\n';
+  resultaat = resultaat + '5 × ' + i + ' = ' + (5 * i) + '\n';
 }
 ```
 
-Optie 2 — filter met `if`:
+Route 2 — filter met `if`:
 ```js
 for (let i = 1; i <= 10; i++) {
   if (i % 2 === 0) {
-    resultaat = resultaat + '5 × ' + i + ' = ' + (5 * i) + '\\n';
+    resultaat = resultaat + '5 × ' + i + ' = ' + (5 * i) + '\n';
   }
 }
 ```
 
 </details>
 
-## Make
+## Opdracht 3: Aftellen
 
-**Opdracht:** Bouw een **aftel-functie** die telt van 10 naar 1 in de console, en daarna "Lift-off." toont. Gebruik een loop.
+Bouw een aftelknop: bij een klik verschijnt op de pagina het aftellen van 10 naar 1, elk getal op een eigen regel, met als laatste regel "Lift-off."
 
 <CodeEditor
   initialHtml={makeHtml}
@@ -181,12 +235,13 @@ for (let i = 1; i <= 10; i++) {
   initialJs={makeJs}
   height="500px"
   livePreview={false}
+  stacked
 />
 
 <details>
 <summary>Tip</summary>
 
-Begin op `i = 10`, blijf doorgaan zolang `i >= 1`, en verlaag met `i--` of `i = i - 1`. Na de loop log je 'Lift-off.'.
+Een loop kan ook omlaag: begin bij `i = 10`, ga door zolang `i >= 1`, en verlaag met `i--`. Verzamel de regels in een string en plak "Lift-off." er ná de loop achteraan. Koppel je functie met `addEventListener` aan de knop.
 
 </details>
 
@@ -195,18 +250,22 @@ Begin op `i = 10`, blijf doorgaan zolang `i >= 1`, en verlaag met `i--` of `i = 
 
 ```js
 function aftellen() {
+  let resultaat = '';
   for (let i = 10; i >= 1; i--) {
-    console.log(i);
+    resultaat = resultaat + i + '\n';
   }
-  console.log('Lift-off!');
+  resultaat = resultaat + 'Lift-off.';
+  document.getElementById('uitvoer').textContent = resultaat;
 }
+
+document.getElementById('knop').addEventListener('click', aftellen);
 ```
 
 </details>
 
 ## Er gaat iets mis
 
-**Oneindige loop — browser bevriest**
+**Oneindige loop: de browser bevriest**
 
 ```js
 let i = 0;
@@ -216,10 +275,10 @@ while (i < 5) {
 }
 ```
 
-`i` wordt nooit verhoogd, dus `i < 5` blijft altijd `true`. De loop draait voor altijd door en de browser bevriest. Zorg altijd dat de variabele binnenin de loop verandert richting de stop-voorwaarde.
+`i` verandert nooit, dus `i < 5` blijft altijd `true`: de loop draait eindeloos en de pagina bevriest. Zorg dat de variabele binnen de loop richting de stopvoorwaarde beweegt.
 
-Bij een `for`-loop gebeurt dit minder snel omdat de stap (`i++`) al in het haakjes-blok staat. Bij `while` moet je het bewust toevoegen.
+Bij een `for`-loop gaat dit minder snel mis, omdat de stap (`i++`) al tussen de haakjes staat. Bij `while` moet je er zelf aan denken.
 
 ---
 
-[← prompt & alert](/docs/js-basics/prompt-alert) | [Arrays →](/docs/js-basics/arrays)
+[← Modern DOM](/docs/js-basics/modern-dom) | [Arrays →](/docs/js-basics/arrays)

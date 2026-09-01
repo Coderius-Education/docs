@@ -1,4 +1,6 @@
 ---
+title: Beslissingen met if/else
+description: Met if, else en else if laat je code anders reageren op verschillende situaties.
 ---
 
 import CodeEditor from '@site/src/components/CodeEditor';
@@ -15,7 +17,7 @@ export const startHtml = `<!DOCTYPE html>
 </head>
 <body>
   <p id="uitvoer">Klik op de knop om je cijfer te zien.</p>
-  <button onclick="bepaalCijfer()">Bepaal cijfer</button>
+  <button id="knop">Bepaal cijfer</button>
 </body>
 </html>`;
 
@@ -31,7 +33,7 @@ button {
 }`;
 
 export const startJs = `function bepaalCijfer() {
-  const score = 75;
+  const score = Number(prompt('Wat is je score (0-100)?'));
   let cijfer;
 
   if (score >= 90) {
@@ -45,7 +47,9 @@ export const startJs = `function bepaalCijfer() {
   }
 
   document.getElementById('uitvoer').textContent = 'Score: ' + score + ' → ' + cijfer;
-}`;
+}
+
+document.getElementById('knop').addEventListener('click', bepaalCijfer);`;
 
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
@@ -56,49 +60,46 @@ export const makeHtml = `<!DOCTYPE html>
   <script src="script.js" defer></script>
 </head>
 <body>
+  <p id="temp"></p>
   <p id="advies">Klik op de knop voor het advies.</p>
-  <button onclick="geefAdvies()">Geef advies</button>
+  <button id="knop">Geef advies</button>
 </body>
 </html>`;
 
 export const makeJs = `// Schrijf hier je code
 `;
 
-## Wat ga je leren?
-
-Je leert hoe je je code anders laat reageren op verschillende situaties met `if`, `else` en `else if`.
-
-## Theorie
-
-Tot nu toe deed je code altijd hetzelfde. Maar soms wil je een andere actie afhankelijk van een waarde — "als de score boven 10 is, toon dan...". Dat doe je met een `if`-statement.
+Tot nu toe deed je code altijd hetzelfde. Vaak wil je een andere actie afhankelijk van een waarde: "als de score boven 10 is, toon dan…". Dat schrijf je met een `if`-statement:
 
 ```js
 if (score > 10) {
-  document.getElementById('uitvoer').textContent = 'Gewonnen!';
+  document.getElementById('uitvoer').textContent = 'Gewonnen.';
 }
 ```
 
-Tussen de haakjes staat een **voorwaarde** — iets dat `true` of `false` oplevert (zie [Waarden en operatoren](/docs/js-basics/operatoren-types) over vergelijken). Als de voorwaarde `true` is, voert JavaScript de regels tussen `{ ... }` uit. Anders slaat hij het blok over.
+Tussen de haakjes staat een **voorwaarde**: een expressie die `true` of `false` oplevert, precies wat je in [Vergelijken](/docs/js-basics/vergelijken) leerde. Is de voorwaarde `true`, dan voert JavaScript de regels tussen `{ ... }` uit; anders slaat hij het blok over.
 
-### `else` — anders dit
+## `else`: anders dit
 
-Met `else` voeg je een alternatief toe voor wanneer de voorwaarde **niet** waar is:
+Met `else` geef je het alternatief voor wanneer de voorwaarde **niet** waar is:
 
 ```js
 if (score > 10) {
-  document.getElementById('uitvoer').textContent = 'Gewonnen!';
+  document.getElementById('uitvoer').textContent = 'Gewonnen.';
 } else {
   document.getElementById('uitvoer').textContent = 'Niet genoeg punten.';
 }
 ```
 
-Precies één van de twee blokken wordt uitgevoerd — nooit allebei.
+Precies één van de twee blokken draait — nooit allebei.
 
-### `else if` — meerdere opties
+## `else if`: meerdere opties
 
-Voor meer dan twee gevallen ketting je `else if`:
+Voor meer dan twee gevallen zet je er `else if`-takken tussen:
 
 ```js
+let cijfer;
+
 if (score >= 90) {
   cijfer = 'A';
 } else if (score >= 70) {
@@ -110,11 +111,11 @@ if (score >= 90) {
 }
 ```
 
-JavaScript probeert de voorwaarden van boven naar beneden en stopt bij de eerste die `true` is.
+JavaScript probeert de voorwaarden van boven naar beneden en stopt bij de eerste die `true` is. De regel `let cijfer;` maakt de variabele alvast aan zonder waarde; precies één van de takken vult hem daarna.
 
 ## Predict
 
-Wat verschijnt er op de pagina als je deze code uitvoert?
+Wat verschijnt er op de pagina als deze code draait?
 
 ```js
 const leeftijd = 16;
@@ -127,9 +128,9 @@ if (leeftijd >= 18) {
 ```
 
 <details>
-<summary>Klik hier voor het antwoord</summary>
+<summary>Welke van de twee zinnen wordt het?</summary>
 
-`Nog even wachten.` De voorwaarde `16 >= 18` is `false`, dus het `if`-blok wordt overgeslagen en het `else`-blok wordt uitgevoerd.
+`Nog even wachten.` De voorwaarde `16 >= 18` is `false`, dus JavaScript slaat het `if`-blok over en voert het `else`-blok uit.
 
 </details>
 
@@ -141,20 +142,20 @@ if (leeftijd >= 18) {
   initialJs={startJs}
   height="540px"
   livePreview={false}
+  stacked
 />
 
 ## Investigate
 
-Experimenteer:
+Experimenteer in het veld hierboven:
 
-- Verander `score` naar `95` — welk cijfer krijg je?
-- Verander `score` naar `45` — wat gebeurt er?
-- Wissel de volgorde om: zet `score >= 50` als eerste — wat gebeurt er nu bij `score = 95`? Waarom?
-- Voeg een vierde categorie toe: `score >= 80` → 'A-'
+- Vul `95` in. En daarna `45`. Kloppen de cijfers met de grenzen in de code?
+- Vul precies `50` in. Welke tak wint, en waarom die?
+- Wissel de volgorde om: zet de tak met `score >= 50` bovenaan. Wat krijg je nu bij `95`? Verklaar het.
 
-## Modify
+## Opdracht 1: Extra grens
 
-**Opdracht:** Voeg een grens toe voor `score >= 30` die `'Bijna'` als waarde teruggeeft. Onder de 30 blijft het `'Onvoldoende'`.
+Voeg een grens toe voor `score >= 30` met de waarde `'Bijna'`. Onder de 30 blijft het `'Onvoldoende'`.
 
 <CodeEditor
   initialHtml={startHtml}
@@ -162,12 +163,13 @@ Experimenteer:
   initialJs={startJs}
   height="540px"
   livePreview={false}
+  stacked
 />
 
 <details>
 <summary>Tip</summary>
 
-Voeg een extra `else if` toe tussen `score >= 50` en de laatste `else`. Volgorde is belangrijk — van hoog naar laag.
+Een extra `else if` tussen `score >= 50` en de laatste `else`. Houd de volgorde van hoog naar laag.
 
 </details>
 
@@ -190,9 +192,55 @@ if (score >= 90) {
 
 </details>
 
-## Make
+## Opdracht 2: Quizvraag met feedback
 
-**Opdracht:** Bouw een "weer-adviseur". Sla een temperatuur op in een variabele en toon een passend advies:
+Maak van de startcode een quizvraag: vraag met een prompt "Wat is de hoofdstad van Nederland?" en toon op de pagina "Goed." als het antwoord `amsterdam` is, en anders "Fout. Het juiste antwoord is Amsterdam."
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  initialJs={startJs}
+  height="540px"
+  livePreview={false}
+  stacked
+/>
+
+<details>
+<summary>Tip</summary>
+
+Eén `if` met `===` en één `else`. Het antwoord is tekst, dus hier geen `Number()`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```js
+function bepaalCijfer() {
+  const antwoord = prompt('Wat is de hoofdstad van Nederland?');
+
+  if (antwoord === 'amsterdam') {
+    document.getElementById('uitvoer').textContent = 'Goed.';
+  } else {
+    document.getElementById('uitvoer').textContent = 'Fout. Het juiste antwoord is Amsterdam.';
+  }
+}
+
+document.getElementById('knop').addEventListener('click', bepaalCijfer);
+```
+
+Typt iemand `Amsterdam` met een hoofdletter, dan telt dat nu als fout — strings vergelijken is hoofdlettergevoelig (zie [Vergelijken](/docs/js-basics/vergelijken)).
+
+</details>
+
+## Opdracht 3: Weer-adviseur
+
+Bouw een weer-adviseur. Vraag de temperatuur met een prompt en toon hem op de pagina, met daaronder het advies:
+
+- warmer dan 25: "Drink genoeg water."
+- 15 tot en met 25: "Lekker weer."
+- 5 tot en met 14: "Trek een jas aan."
+- onder de 5: "Sjaal en muts mee."
 
 <CodeEditor
   initialHtml={makeHtml}
@@ -200,51 +248,39 @@ if (score >= 90) {
   initialJs={makeJs}
   height="540px"
   livePreview={false}
+  stacked
 />
-
-- Boven 25 graden: "Het is heet — drink water."
-- Tussen 15 en 25: "Lekker weer."
-- Tussen 5 en 15: "Trek een jas aan."
-- Onder 5: "Het is koud — sjaal en muts mee."
-
-Voeg ook een knop toe waarmee de gebruiker de temperatuur kan veranderen (bijvoorbeeld via een random getal).
 
 <details>
 <summary>Tip</summary>
 
-Gebruik vier `if`/`else if`/`else`-takken, van warm naar koud. Voor een willekeurige temperatuur tussen -5 en 30: `Math.floor(Math.random() * 36) - 5`.
+Vier takken, van warm naar koud. Als `temp > 25` al niet waar was, weet je bij de volgende tak dat de temperatuur hoogstens 25 is — je hoeft alleen nog de ondergrens te checken. Schrijf een functie `geefAdvies` en koppel hem met `addEventListener` aan de knop.
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-HTML:
-```html
-<p id="temp"></p>
-<p id="advies"></p>
-<button onclick="check()">Check het weer</button>
-```
-
-script.js:
 ```js
-function check() {
-  const temp = Math.floor(Math.random() * 36) - 5;
+function geefAdvies() {
+  const temp = Number(prompt('Hoeveel graden is het?'));
   let advies;
 
   if (temp > 25) {
-    advies = 'Het is heet — drink water!';
+    advies = 'Drink genoeg water.';
   } else if (temp >= 15) {
     advies = 'Lekker weer.';
   } else if (temp >= 5) {
     advies = 'Trek een jas aan.';
   } else {
-    advies = 'Het is koud — sjaal en muts mee.';
+    advies = 'Sjaal en muts mee.';
   }
 
-  document.getElementById('temp').textContent = 'Temperatuur: ' + temp + '°C';
+  document.getElementById('temp').textContent = 'Temperatuur: ' + temp + ' graden';
   document.getElementById('advies').textContent = advies;
 }
+
+document.getElementById('knop').addEventListener('click', geefAdvies);
 ```
 
 </details>
@@ -259,10 +295,10 @@ if (score = 10) {   // Fout: één =-teken
 }
 ```
 
-Eén `=`-teken **kent toe** in plaats van **vergelijkt**. Deze regel zet `score` op `10` (toekenning) en geeft daarna `10` terug — wat in JavaScript als `true` telt. Het `if`-blok wordt dus altijd uitgevoerd, ongeacht de oorspronkelijke waarde van `score`.
+Eén `=`-teken **kent toe** in plaats van **vergelijkt**. Deze regel zet `score` op `10` en geeft die `10` terug — en dat telt in JavaScript als `true`. Het `if`-blok draait dus altijd, wat de oorspronkelijke waarde ook was.
 
-Schrijf voor vergelijking altijd `===` (drie `=`-tekens). De editor of een linter waarschuwt je vaak voor deze fout — neem die waarschuwing serieus.
+Schrijf voor een vergelijking altijd `===` (drie tekens). De editor of een linter waarschuwt vaak voor deze fout; neem die waarschuwing serieus.
 
 ---
 
-[← Waarden en operatoren](/docs/js-basics/operatoren-types) | [Formulier-data ophalen →](/docs/js-basics/formulier-data)
+[← Vergelijken](/docs/js-basics/vergelijken) | [Modern DOM →](/docs/js-basics/modern-dom)

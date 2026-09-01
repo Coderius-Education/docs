@@ -6,13 +6,15 @@ import sidebars from '@site/sidebars';
 
 const labels: Record<string, string> = {
   'js-basics/intro-javascript': 'Wat is JavaScript?',
-  'js-basics/inline-onclick': 'Inline onclick',
+  'js-basics/inline-onclick': 'Een knop die iets doet',
+  'js-basics/tekst-veranderen': 'Tekst veranderen',
   'js-basics/inline-stijl': 'Inline stijl',
   'js-basics/script-tag': 'De script-tag',
   'js-basics/scriptjs': 'script.js',
   'js-basics/variabelen': 'Variabelen',
   'js-basics/events': 'Events',
   'js-basics/operatoren-types': 'Waarden en operatoren',
+  'js-basics/vergelijken': 'Vergelijken',
   'js-basics/if-else': 'Beslissingen met if/else',
   'js-basics/formulier-data': 'Formulier-data ophalen',
   'js-basics/prompt-alert': 'prompt en alert',

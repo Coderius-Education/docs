@@ -1,20 +1,22 @@
 ---
+title: Een knop die iets doet
+description: Je eerste JavaScript - een knop die met onclick en getElementById de pagina verandert.
 ---
 
 import CodeEditor from '@site/src/components/CodeEditor';
 
-# Inline onclick
+# Een knop die iets doet
 
 export const startHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
-  <title>Inline onclick</title>
+  <title>Een knop die iets doet</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <p id="bericht">Nog niet geklikt.</p>
-  <button onclick="document.getElementById('bericht').textContent = 'Je hebt geklikt!'">
+  <button onclick="document.getElementById('bericht').textContent = 'Je hebt geklikt.'">
     Klik mij
   </button>
 </body>
@@ -34,7 +36,7 @@ export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
-  <title>Inline onclick</title>
+  <title>Een knop die iets doet</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -45,39 +47,34 @@ export const makeHtml = `<!DOCTYPE html>
 export const makeCss = `/* Schrijf hier je stijl */
 `;
 
-## Wat ga je leren?
-
-Je leert hoe je met JavaScript tekst op de pagina kunt veranderen via het `onclick`-attribuut en `document.getElementById()`.
-
-:::info[Wat is JavaScript?]
-**HTML** bepaalt wat er op de pagina staat. **CSS** bepaalt hoe het eruitziet. **JavaScript** bepaalt wat er *gebeurt*: hoe de pagina reageert op klikken, typen, scrollen of de tijd.
-
-Met JavaScript maak je een statische pagina interactief — knoppen die iets doen, formulieren die reageren, animaties, spelletjes. Een uitgebreide introductie vind je in [Wat is JavaScript](/docs/js-basics/intro-javascript).
-:::
-
-## Theorie
-
-JavaScript kun je direct in een HTML-attribuut schrijven. Het `onclick`-attribuut voert de code erin uit zodra je op het element klikt:
+Dit is je eerste regel JavaScript, en hij staat rechtstreeks in de HTML:
 
 ```html
-<button onclick="document.getElementById('bericht').textContent = 'Geklikt!'">
+<p id="bericht">Nog niet geklikt.</p>
+<button onclick="document.getElementById('bericht').textContent = 'Je hebt geklikt.'">
   Klik mij
 </button>
 ```
 
-Twee nieuwe dingen:
+Klik op de knop en de tekst in de `<p>` verandert. Er gebeuren twee dingen:
 
-- `document.getElementById('bericht')` — zoek het element met `id="bericht"` op de pagina
-- `.textContent = '...'` — verander de zichtbare tekst van dat element naar een nieuwe waarde
+- **`onclick`** is een HTML-attribuut. De code die erin staat, voert de browser uit zodra je op het element klikt.
+- **`document.getElementById('bericht')`** zoekt op de pagina het element met `id="bericht"`. Het `id` is het naamplaatje van een element; `getElementById` vindt het element dat dat naamplaatje draagt.
+
+Het stukje `.textContent = '...'` erachter verandert de tekst van het gevonden element. In [de volgende les](/docs/js-basics/tekst-veranderen) kijk je daar preciezer naar; in deze les draait het om het **vinden** van het juiste element.
+
+:::note[DOM]
+De browser bewaart alle elementen van je pagina in een boomstructuur, de **DOM** (Document Object Model). `document` is de ingang van die boom, en `getElementById` is een van de manieren om er een element uit op te halen. Alles wat JavaScript op een pagina verandert, verandert het in de DOM.
+:::
 
 ## Predict
 
-Bekijk de startcode in de editor. Beantwoord de vraag hieronder **voordat** je op **Run** klikt en de knop in de preview uitprobeert.
+Bekijk de startcode in de editor hieronder. Beantwoord de vraag **voordat** je op Run klikt.
 
 <details>
-<summary>Wat verandert er als je op de knop klikt — en wat verandert er niet?</summary>
+<summary>Wat verandert er als je op de knop klikt, en wat verandert er niet?</summary>
 
-De tekst in de `<p>` verandert van "Nog niet geklikt." naar "Je hebt geklikt.". De knop zelf verandert niet — die voert alleen de code in `onclick` uit en blijft verder ongewijzigd.
+De tekst in de `<p>` verandert van "Nog niet geklikt." naar "Je hebt geklikt.". De knop zelf verandert niet: die voert alleen de code in `onclick` uit.
 
 </details>
 
@@ -88,36 +85,71 @@ De tekst in de `<p>` verandert van "Nog niet geklikt." naar "Je hebt geklikt.". 
   initialCss={startCss}
   height="420px"
   livePreview={false}
+  stacked
 />
 
 ## Investigate
 
-Experimenteer:
+Experimenteer in het veld hierboven:
 
-- Verander de tekst `'Je hebt geklikt!'` naar iets anders — wat zie je na een klik?
-- Voeg een tweede knop toe met een andere tekst
-- Wat gebeurt er als je `id="bericht"` in de `<p>` verandert naar `id="tekst"` maar de onclick niet aanpast?
+- Verander de tekst `'Je hebt geklikt.'` in iets anders. Wat zie je na een klik?
+- Verander `id="bericht"` in de `<p>` naar `id="tekst"`, maar laat de `onclick` staan. Wat gebeurt er nu bij een klik?
+- Geef twee `<p>`-elementen hetzelfde `id` en klik. Welke van de twee verandert er?
 
-## Modify
+## Opdracht 1: Eigen teksten
 
-**Opdracht:** Voeg een tweede `<p id="naam">` toe en laat een tweede knop die tekst veranderen naar jouw naam.
+Pas de startcode aan: de knop heet "Zeg hallo" en na een klik staat er "Hallo allemaal." in de `<p>`.
 
 <CodeEditor
   initialHtml={startHtml}
   initialCss={startCss}
   height="420px"
   livePreview={false}
+  stacked
 />
 
 <details>
 <summary>Tip</summary>
 
-Maak een nieuwe `<p>` met een uniek `id`. Maak een nieuwe `<button>` met `onclick="document.getElementById('naam').textContent = '...'"`.
+Er zijn twee teksten om aan te passen: de tekst tussen `<button>` en `</button>` (dat is wat op de knop staat) en de tekst achter `.textContent =` (dat is wat er na de klik verschijnt).
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
+
+```html
+<p id="bericht">Nog niet geklikt.</p>
+<button onclick="document.getElementById('bericht').textContent = 'Hallo allemaal.'">
+  Zeg hallo
+</button>
+```
+
+</details>
+
+## Opdracht 2: Twee elementen
+
+Voeg een tweede `<p id="naam">` toe en een tweede knop die de tekst daarvan verandert naar jouw naam. De eerste knop moet blijven werken.
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  height="420px"
+  livePreview={false}
+  stacked
+/>
+
+<details>
+<summary>Tip</summary>
+
+Elke `<p>` heeft een eigen `id` nodig. De nieuwe knop gebruikt `getElementById('naam')`, de oude blijft `getElementById('bericht')` gebruiken.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Toevoeging onder de bestaande knop:
 
 ```html
 <p id="naam">Wat is jouw naam?</p>
@@ -126,23 +158,26 @@ Maak een nieuwe `<p>` met een uniek `id`. Maak een nieuwe `<button>` met `onclic
 </button>
 ```
 
+Twee elementen, twee naamplaatjes: elke knop wijst met zijn eigen `id` het juiste element aan.
+
 </details>
 
-## Make
+## Opdracht 3: Quizvraag
 
-**Opdracht:** Bouw een pagina met drie knoppen. Elke knop toont een andere zin in dezelfde `<p>`. Bedenk zelf welke zinnen je toont — een grap, een quote, of iets anders.
+Bouw vanaf een lege pagina een mini-quiz: een `<p>` met een vraag (bijvoorbeeld "Wat is de hoofdstad van Frankrijk?"), een lege `<p>` voor het antwoord, en een knop "Toon antwoord" die het antwoord in die tweede `<p>` zet.
 
 <CodeEditor
   initialHtml={makeHtml}
   initialCss={makeCss}
   height="420px"
   livePreview={false}
+  stacked
 />
 
 <details>
 <summary>Tip</summary>
 
-Je hebt maar één `<p>` nodig met één `id`. Alle drie de knoppen verwijzen naar hetzelfde `id`, maar geven elk een andere waarde aan `.textContent`.
+Alleen de antwoord-`<p>` heeft een `id` nodig: dat is het enige element dat de knop moet kunnen vinden.
 
 </details>
 
@@ -150,10 +185,11 @@ Je hebt maar één `<p>` nodig met één `id`. Alle drie de knoppen verwijzen na
 <summary>Antwoord</summary>
 
 ```html
-<p id="zin">Klik een knop.</p>
-<button onclick="document.getElementById('zin').textContent = 'Hallo wereld!'">Zin 1</button>
-<button onclick="document.getElementById('zin').textContent = 'JavaScript is cool.'">Zin 2</button>
-<button onclick="document.getElementById('zin').textContent = 'Dit werkt!'">Zin 3</button>
+<p>Wat is de hoofdstad van Frankrijk?</p>
+<p id="antwoord"></p>
+<button onclick="document.getElementById('antwoord').textContent = 'Parijs'">
+  Toon antwoord
+</button>
 ```
 
 </details>
@@ -167,8 +203,8 @@ Je hebt maar één `<p>` nodig met één `id`. Alle drie de knoppen verwijzen na
 <button onclick="document.getElementById('bericht').textContent = 'Hoi'">Klik</button>
 ```
 
-`getElementById` is hoofdlettergevoelig. `'Bericht'` en `'bericht'` zijn twee verschillende ID's. Als het element niet gevonden wordt, gebeurt er niets — of je krijgt een foutmelding in de browser-console (F12). Zorg dat het `id` in HTML en in `onclick` precies hetzelfde gespeld is.
+`getElementById` is hoofdlettergevoelig: `'Bericht'` en `'bericht'` zijn twee verschillende id's. De browser vindt dan geen element, en er gebeurt niets — of je ziet een foutmelding in de browser-console (F12). Zorg dat het `id` in de HTML en in de `onclick` precies hetzelfde gespeld is.
 
 ---
 
-[← Wat is JavaScript](/docs/js-basics/intro-javascript) | [Inline stijl →](/docs/js-basics/inline-stijl)
+[← Wat is JavaScript](/docs/js-basics/intro-javascript) | [Tekst veranderen →](/docs/js-basics/tekst-veranderen)

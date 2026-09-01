@@ -90,12 +90,16 @@ Returnt
 spawnen
 Spawnen
 spawnt
+toggelt
+togglen
 
 # ── Nederlandse samenstellingen die de nl-woordenlijst mist ─────────────────
 aanvinkvakje
 afsluitzin
 basisrij
 bestandsextensie
+bijhouder
+bonregel
 branchnaam
 commitboodschap
 doelvak
@@ -107,17 +111,19 @@ grammaticaatje
 hackchallenges
 hulpvak
 kliks
+Kortingschecker
+kortingschecker
 Labbeperking
-lespagina
 lesnummer
+lespagina
 levelwissel
 lijnvolgen
 Lijnvolgen
 mapnaam
 mapnamen
 mapstructuur
-meescrollende
 meeschalen
+meescrollende
 meetpen
 ondermuur
 rechtermuur
@@ -136,4 +142,5 @@ voorbeeldgraph
 voorgevuld
 wegbeweegt
 welkomsbericht
+zakgeldrekenaar
 zettenlijst

@@ -1,4 +1,6 @@
 ---
+title: Inline stijl
+description: Met .style pas je CSS-eigenschappen aan vanuit JavaScript, met camelCase-namen.
 ---
 
 import CodeEditor from '@site/src/components/CodeEditor';
@@ -50,21 +52,19 @@ export const makeHtml = `<!DOCTYPE html>
 export const makeCss = `/* Schrijf hier je stijl */
 `;
 
-## Wat ga je leren?
-
-Je leert hoe je via `onclick` de CSS-stijl van een element aanpast met `.style`.
-
-## Theorie
-
-Net als `.textContent` kun je via JavaScript ook de stijl van een element aanpassen. Dat doe je met `.style` gevolgd door de CSS-eigenschap:
+Naast de tekst kun je ook de stijl van een element veranderen. Dat gaat met `.style`, gevolgd door de CSS-eigenschap:
 
 ```html
 <button onclick="document.getElementById('tekst').style.color = 'red'">
-  Kleur!
+  Rood
 </button>
 ```
 
-Let op: CSS-eigenschappen met een koppelteken schrijf je in JavaScript als **camelCase** — zonder koppelteken, tweede woord met hoofdletter:
+Hetzelfde recept als bij `.textContent`: element opzoeken, eigenschap een nieuwe waarde geven. Alleen de eigenschap is anders.
+
+## CSS-namen worden camelCase
+
+CSS-eigenschappen met een koppelteken schrijf je in JavaScript als **camelCase**: zonder koppelteken, tweede woord met een hoofdletter.
 
 | CSS | JavaScript |
 |-----|-----------|
@@ -75,12 +75,12 @@ Let op: CSS-eigenschappen met een koppelteken schrijf je in JavaScript als **cam
 
 ## Predict
 
-Bekijk de startcode in de editor. Beantwoord de vraag hieronder **voordat** je op **Run** klikt en de knoppen in de preview uitprobeert.
+Bekijk de startcode in de editor. Beantwoord de vraag **voordat** je op Run klikt.
 
 <details>
 <summary>De twee knoppen gebruiken allebei hetzelfde id. Wat is er dan anders?</summary>
 
-De knoppen doen hetzelfde: ze passen `.style.color` aan op hetzelfde element. Het enige verschil is de kleurwaarde — `'red'` of `'blue'`. De tekst zelf blijft ongewijzigd; alleen de kleur verandert.
+De knoppen doen hetzelfde: ze passen `.style.color` aan op hetzelfde element. Het enige verschil is de kleurwaarde, `'red'` of `'blue'`. De tekst zelf blijft staan; alleen de kleur verandert.
 
 </details>
 
@@ -91,32 +91,33 @@ De knoppen doen hetzelfde: ze passen `.style.color` aan op hetzelfde element. He
   initialCss={startCss}
   height="420px"
   livePreview={false}
+  stacked
 />
 
 ## Investigate
 
-Experimenteer:
+Experimenteer in het veld hierboven:
 
 - Voeg een derde knop toe die de kleur terugzet naar zwart: `style.color = 'black'`
 - Probeer `style.backgroundColor = 'yellow'` — wat zie je?
-- Wat doet `style.fontSize = '2rem'`?
-- Kun je meerdere stijl-wijzigingen in één onclick zetten? Gebruik een puntkomma tussen de twee regels.
+- Wat gebeurt er als je `style.color = 'blauw'` schrijft in plaats van `'blue'`?
 
-## Modify
+## Opdracht 1: Groter
 
-**Opdracht:** Voeg een knop "Groter" toe die de tekst groter maakt via `style.fontSize`.
+Voeg een knop "Groter" toe die de tekst groter maakt via `style.fontSize`.
 
 <CodeEditor
   initialHtml={startHtml}
   initialCss={startCss}
   height="420px"
   livePreview={false}
+  stacked
 />
 
 <details>
 <summary>Tip</summary>
 
-Gebruik `document.getElementById('tekst').style.fontSize = '2rem'` in het `onclick`-attribuut.
+`fontSize` wil een waarde met een eenheid, net als in CSS: bijvoorbeeld `'2rem'`.
 
 </details>
 
@@ -131,25 +132,22 @@ Gebruik `document.getElementById('tekst').style.fontSize = '2rem'` in het `oncli
 
 </details>
 
-## Make
+## Opdracht 2: Twee stijlen in één klik
 
-**Opdracht:** Bouw een "stijl-mixer" — een pagina met vier knoppen:
-- één die de tekstkleur rood maakt
-- één die de achtergrond geel maakt
-- één die de letters groter maakt
-- één die alles terugzet naar de beginwaarden
+Maak een knop "Feest" die in één klik de tekst rood maakt én de achtergrond geel. Zet de twee opdrachten achter elkaar in dezelfde `onclick`, met een puntkomma ertussen.
 
 <CodeEditor
-  initialHtml={makeHtml}
-  initialCss={makeCss}
+  initialHtml={startHtml}
+  initialCss={startCss}
   height="420px"
   livePreview={false}
+  stacked
 />
 
 <details>
 <summary>Tip</summary>
 
-Voor terugzetten: een lege string verwijdert de inline stijl. Bijvoorbeeld: `style.color = ''` zet de kleur terug naar wat CSS bepaalt.
+Een `onclick` mag meer dan één regel code bevatten. De puntkomma zegt: hier eindigt de eerste opdracht, nu komt de volgende.
 
 </details>
 
@@ -157,7 +155,39 @@ Voor terugzetten: een lege string verwijdert de inline stijl. Bijvoorbeeld: `sty
 <summary>Antwoord</summary>
 
 ```html
-<p id="tekst">Pas mijn stijl aan!</p>
+<button onclick="document.getElementById('tekst').style.color = 'red'; document.getElementById('tekst').style.backgroundColor = 'yellow'">
+  Feest
+</button>
+```
+
+De regel wordt lang — in [De script-tag](/docs/js-basics/script-tag) leer je hoe je zulke code netjes buiten de HTML zet.
+
+</details>
+
+## Opdracht 3: Stijl-mixer
+
+Bouw vanaf een lege pagina een "stijl-mixer": een `<p>` met tekst en vier knoppen — tekstkleur rood, achtergrond geel, letters groter, en één knop die alles terugzet naar de beginwaarden.
+
+<CodeEditor
+  initialHtml={makeHtml}
+  initialCss={makeCss}
+  height="420px"
+  livePreview={false}
+  stacked
+/>
+
+<details>
+<summary>Tip</summary>
+
+Voor terugzetten: een lege string verwijdert de inline stijl. `style.color = ''` zet de kleur terug naar wat de CSS bepaalt.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<p id="tekst">Pas mijn stijl aan.</p>
 <button onclick="document.getElementById('tekst').style.color = 'red'">Rood</button>
 <button onclick="document.getElementById('tekst').style.backgroundColor = 'yellow'">Geel</button>
 <button onclick="document.getElementById('tekst').style.fontSize = '2rem'">Groter</button>
@@ -180,8 +210,8 @@ Voor terugzetten: een lege string verwijdert de inline stijl. Bijvoorbeeld: `sty
 <button onclick="document.getElementById('tekst').style.backgroundColor = 'yellow'">
 ```
 
-JavaScript interpreteert het koppelteken als een min-teken en geeft een fout. Schrijf CSS-eigenschappen altijd in camelCase als je ze via `.style` instelt.
+JavaScript leest het koppelteken als een min-teken en geeft een fout. Schrijf CSS-eigenschappen altijd in camelCase als je ze via `.style` instelt.
 
 ---
 
-[← Inline onclick](/docs/js-basics/inline-onclick) | [De script-tag →](/docs/js-basics/script-tag)
+[← Tekst veranderen](/docs/js-basics/tekst-veranderen) | [De script-tag →](/docs/js-basics/script-tag)

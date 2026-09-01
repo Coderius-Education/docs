@@ -1,4 +1,6 @@
 ---
+title: Modern DOM
+description: querySelector vindt elk element met een CSS-selector, en classList schakelt complete CSS-klassen aan en uit.
 ---
 
 import CodeEditor from '@site/src/components/CodeEditor';
@@ -18,7 +20,7 @@ export const startHtml = `<!DOCTYPE html>
     <h2>Klik om te markeren</h2>
     <p>Klik op de knop om deze kaart te markeren.</p>
   </div>
-  <button onclick="toggle()">Toggle markering</button>
+  <button id="knop">Toggle markering</button>
 </body>
 </html>`;
 
@@ -40,7 +42,9 @@ button { padding: 10px 20px; cursor: pointer; }`;
 export const startJs = `function toggle() {
   const kaart = document.querySelector('.kaart');
   kaart.classList.toggle('actief');
-}`;
+}
+
+document.getElementById('knop').addEventListener('click', toggle);`;
 
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
@@ -51,29 +55,35 @@ export const makeHtml = `<!DOCTYPE html>
   <script src="script.js" defer></script>
 </head>
 <body>
-  <div class="kaart">Kaartje 1</div>
-  <div class="kaart">Kaartje 2</div>
-  <div class="kaart">Kaartje 3</div>
+  <div class="kaart">
+    <h2>Wiskunde afmaken</h2>
+    <p>Paragraaf 3.2, opgave 1 tot en met 8.</p>
+  </div>
+  <button id="klaarKnop">Klaar</button>
+  <button id="belangrijkKnop">Belangrijk</button>
 </body>
 </html>`;
+
+export const makeCss = `.kaart {
+  background-color: lightgray;
+  padding: 20px;
+  margin: 10px;
+  border-radius: 8px;
+}
+
+button { padding: 10px 20px; cursor: pointer; }
+
+/* Schrijf hier je klassen voor klaar en belangrijk */
+`;
 
 export const makeJs = `// Schrijf hier je code
 `;
 
-## Wat ga je leren?
+Je kent `getElementById` voor elementen met een `id`. Deze les geeft je twee nieuwe gereedschappen: één zoekfunctie die met **elke CSS-selector** werkt, en een nette manier om stijlen aan en uit te zetten via **klassen**.
 
-Je leert twee moderne manieren om met de DOM te werken: **`querySelector`** als krachtig alternatief voor `getElementById`, en **`classList`** voor netjes met CSS-klassen werken.
+## `querySelector`: zoeken met een CSS-selector
 
-## Theorie
-
-In eerdere lessen gebruikte je `document.getElementById('naam')` om elementen op te halen, en `element.style.color = 'red'` om ze te stijlen. Beide werken, maar zijn beperkt:
-
-- `getElementById` werkt alleen voor `id`'s — niet voor klassen of tags.
-- `.style.xxx` is inline styling — verspreidt CSS over JS-bestanden, moeilijk te onderhouden.
-
-### `querySelector` — selecteer met CSS-selector
-
-`document.querySelector(...)` geeft het **eerste** element dat aan een **CSS-selector** voldoet. Je gebruikt dezelfde syntax als in CSS:
+`document.querySelector(...)` geeft het **eerste** element dat aan een CSS-selector voldoet — dezelfde selectors die je uit CSS kent:
 
 ```js
 document.querySelector('#welkom');     // element met id="welkom"
@@ -82,29 +92,24 @@ document.querySelector('button');      // eerste <button> op de pagina
 document.querySelector('.kaart h2');   // h2 binnen .kaart
 ```
 
-Wil je álle matchende elementen? Gebruik `querySelectorAll`:
+:::note[En álle matches dan?]
+Daarvoor bestaat `querySelectorAll`, die een lijst teruggeeft. Om daar iets mee te doen heb je [loops](/docs/js-basics/loops) nodig — die komen zo.
+:::
 
-```js
-const knoppen = document.querySelectorAll('button');  // alle knoppen
-for (let i = 0; i < knoppen.length; i++) {
-  knoppen[i].textContent = 'Klik!';
-}
-```
+## `classList`: klassen aan- en uitzetten
 
-### `classList` — werk netjes met CSS-klassen
-
-In plaats van `.style.xxx = '...'` definieer je je stijl in CSS, en zet/verwijder je een **klasse** met JavaScript:
+In plaats van losse `.style`-regels vanuit JavaScript definieer je de stijl in CSS, en schakel je met JavaScript een **klasse**:
 
 ```js
 const kaart = document.querySelector('.kaart');
 
-kaart.classList.add('actief');     // voeg klasse toe
-kaart.classList.remove('actief');  // verwijder klasse
-kaart.classList.toggle('actief');  // toggle: aan als af, af als aan
-kaart.classList.contains('actief'); // true/false
+kaart.classList.add('actief');      // voeg klasse toe
+kaart.classList.remove('actief');   // verwijder klasse
+kaart.classList.toggle('actief');   // aan als hij uit is, uit als hij aan is
+kaart.classList.contains('actief'); // true of false
 ```
 
-In CSS heb je dan twee toestanden:
+In CSS staan dan twee toestanden:
 
 ```css
 .kaart {
@@ -113,18 +118,18 @@ In CSS heb je dan twee toestanden:
 
 .kaart.actief {
   background-color: gold;
-  transform: scale(1.1);
+  border: 3px solid orange;
 }
 ```
 
-Toggle de klasse en de CSS doet de rest. Schoner dan veel `.style`-regels.
+Toggle de klasse en de CSS doet de rest. Zo blijft de vormgeving in het CSS-bestand, ook als er meerdere eigenschappen tegelijk veranderen.
 
 ## Predict
 
 Wat denk je dat dit doet?
 
 ```js
-document.querySelector('p').textContent = 'Veranderd!';
+document.querySelector('p').textContent = 'Veranderd.';
 ```
 
 Met deze HTML:
@@ -136,9 +141,9 @@ Met deze HTML:
 ```
 
 <details>
-<summary>Klik hier voor het antwoord</summary>
+<summary>Welke paragrafen veranderen er?</summary>
 
-Alleen de **eerste** `<p>` krijgt de tekst "Veranderd.". `querySelector` stopt bij het eerste match. Voor alle drie zou je `querySelectorAll` + een loop nodig hebben.
+Alleen de **eerste** `<p>` krijgt de tekst "Veranderd." — `querySelector` stopt bij de eerste match. De andere twee blijven staan.
 
 </details>
 
@@ -150,20 +155,20 @@ Alleen de **eerste** `<p>` krijgt de tekst "Veranderd.". `querySelector` stopt b
   initialJs={startJs}
   height="480px"
   livePreview={false}
+  stacked
 />
 
 ## Investigate
 
-Experimenteer:
+Experimenteer in het veld hierboven:
 
-- Vervang `toggle` door `add` — wat gebeurt er als je nog eens klikt?
-- Verander `querySelector('.kaart')` naar `querySelector('h2')` — wat verandert er nu bij de toggle?
-- Voeg een tweede `.kaart` toe in de HTML — toggle dan alleen de eerste of allebei?
-- Probeer `querySelectorAll('.kaart')` met een loop om beide te toggelen.
+- Vervang `toggle` door `add`. Wat gebeurt er als je twee keer klikt?
+- Verander `querySelector('.kaart')` in `querySelector('h2')`. Waar komt de markering nu terecht, en waarom ziet dat er anders uit?
+- Voeg in de HTML een tweede `.kaart` toe. Welke van de twee reageert op de knop?
 
-## Modify
+## Opdracht 1: Reset-knop
 
-**Opdracht:** Voeg een tweede knop toe die de klasse `actief` **verwijdert** (alleen verwijderen, niet togglen).
+Voeg een tweede knop toe die de klasse `actief` **verwijdert** (alleen verwijderen, niet togglen).
 
 <CodeEditor
   initialHtml={startHtml}
@@ -171,12 +176,13 @@ Experimenteer:
   initialJs={startJs}
   height="480px"
   livePreview={false}
+  stacked
 />
 
 <details>
 <summary>Tip</summary>
 
-Gebruik `classList.remove('actief')` in een aparte functie. Maak een knop met een eigen `onclick`.
+Een aparte functie met `classList.remove('actief')`, gekoppeld aan een eigen knop met een eigen `id`.
 
 </details>
 
@@ -185,7 +191,7 @@ Gebruik `classList.remove('actief')` in een aparte functie. Maak een knop met ee
 
 HTML:
 ```html
-<button onclick="reset()">Reset</button>
+<button id="resetKnop">Reset</button>
 ```
 
 script.js:
@@ -193,26 +199,29 @@ script.js:
 function reset() {
   document.querySelector('.kaart').classList.remove('actief');
 }
+
+document.getElementById('resetKnop').addEventListener('click', reset);
 ```
 
 </details>
 
-## Make
+## Opdracht 2: Nachtmodus
 
-**Opdracht:** Bouw een lijst van drie kaartjes. Klik je op een kaartje, dan krijgt het de klasse `geselecteerd` (andere kleur). Klik je nog eens, dan verdwijnt de klasse. Gebruik `querySelectorAll` + een loop om alle kaartjes te koppelen.
+Maak een knop "Nachtmodus" die een klasse `donker` op de `<body>` toggelt. Schrijf zelf de CSS: donkere achtergrond, lichte tekst.
 
 <CodeEditor
-  initialHtml={makeHtml}
+  initialHtml={startHtml}
   initialCss={startCss}
-  initialJs={makeJs}
+  initialJs={startJs}
   height="480px"
   livePreview={false}
+  stacked
 />
 
 <details>
 <summary>Tip</summary>
 
-`querySelectorAll('.kaart')` geeft een lijst terug. Loop erover en zet op elke kaart een `onclick` die `classList.toggle('geselecteerd')` op zichzelf aanroept.
+Ook `'body'` is een geldige selector. De CSS-klasse schrijf je als `body.donker { ... }`.
 
 </details>
 
@@ -221,57 +230,105 @@ function reset() {
 
 HTML:
 ```html
-<div class="kaart">Kaart 1</div>
-<div class="kaart">Kaart 2</div>
-<div class="kaart">Kaart 3</div>
+<button id="nachtKnop">Nachtmodus</button>
 ```
 
+CSS-toevoeging:
 ```css
-.kaart {
-  padding: 20px;
-  margin: 5px;
-  background-color: lightgray;
-  cursor: pointer;
-}
-
-.kaart.geselecteerd {
-  background-color: lightgreen;
+body.donker {
+  background-color: #222;
+  color: white;
 }
 ```
 
 script.js:
 ```js
-const kaarten = document.querySelectorAll('.kaart');
-
-for (let i = 0; i < kaarten.length; i++) {
-  kaarten[i].onclick = function() {
-    kaarten[i].classList.toggle('geselecteerd');
-  };
+function nachtmodus() {
+  document.querySelector('body').classList.toggle('donker');
 }
+
+document.getElementById('nachtKnop').addEventListener('click', nachtmodus);
+```
+
+Eén toggle, en alles wat in de klasse staat schakelt tegelijk mee — dat is de winst ten opzichte van losse `.style`-regels.
+
+</details>
+
+## Opdracht 3: Takenkaartje
+
+Bouw een takenkaartje af. De kaart staat al klaar, met twee knoppen: "Klaar" toggelt de klasse `klaar` (groene achtergrond, doorgestreepte tekst) en "Belangrijk" toggelt de klasse `belangrijk` (rode rand). Schrijf de CSS voor beide klassen en de twee functies.
+
+<CodeEditor
+  initialHtml={makeHtml}
+  initialCss={makeCss}
+  initialJs={makeJs}
+  height="480px"
+  livePreview={false}
+  stacked
+/>
+
+<details>
+<summary>Tip</summary>
+
+Schrijf twee functies en koppel ze met `addEventListener` aan de knoppen (`klaarKnop` en `belangrijkKnop`). Doorstrepen doe je in CSS met `text-decoration: line-through;`. De twee klassen mogen tegelijk aan staan.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+CSS-toevoeging:
+```css
+.kaart.klaar {
+  background-color: lightgreen;
+  text-decoration: line-through;
+}
+
+.kaart.belangrijk {
+  border: 3px solid red;
+}
+```
+
+script.js:
+```js
+function markeerKlaar() {
+  document.querySelector('.kaart').classList.toggle('klaar');
+}
+
+function markeerBelangrijk() {
+  document.querySelector('.kaart').classList.toggle('belangrijk');
+}
+
+document.getElementById('klaarKnop').addEventListener('click', markeerKlaar);
+document.getElementById('belangrijkKnop').addEventListener('click', markeerBelangrijk);
 ```
 
 </details>
 
 ## Er gaat iets mis
 
-**`querySelector` geeft `null` als er niks gevonden wordt**
+**`querySelector` geeft `null` als er niets gevonden wordt**
 
 ```js
 const kaart = document.querySelector('.bestaat-niet');
-kaart.classList.add('actief');  // TypeError: Cannot read properties of null
+kaart.classList.add('actief');
 ```
 
-Zo'n foutmelding zie je in de console (F12). Check of het element bestaat voordat je er iets mee doet:
+```
+Uncaught TypeError: Cannot read properties of null (reading 'classList')
+```
+
+Geen match betekent `null`, en op `null` bestaat geen `classList`. Controleer bij twijfel eerst of het element gevonden is:
 
 ```js
 const kaart = document.querySelector('.bestaat-niet');
-if (kaart) {
+if (kaart !== null) {
   kaart.classList.add('actief');
 }
 ```
 
-Vergelijkbaar bij `getElementById` — die geeft ook `null` bij een onbekende `id`.
+Hetzelfde geldt voor `getElementById`: ook die geeft `null` bij een onbekend `id`.
 
 ---
 
-[← Arrays](/docs/js-basics/arrays)
+[← Beslissingen met if/else](/docs/js-basics/if-else) | [Loops →](/docs/js-basics/loops)

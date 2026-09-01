@@ -1,0 +1,261 @@
+---
+title: Vergelijken
+description: Vergelijkingsoperatoren geven true of false terug, en met en/of combineer je voorwaarden.
+---
+
+import CodeEditor from '@site/src/components/CodeEditor';
+
+# Vergelijken
+
+export const startHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Vergelijken</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <p id="uitvoer">Klik op de knop.</p>
+  <button id="knop">Check</button>
+</body>
+</html>`;
+
+export const startCss = `p {
+  font-size: 1.4rem;
+  padding: 12px;
+}
+
+button {
+  padding: 8px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+}`;
+
+export const startJs = `function check() {
+  const leeftijd = Number(prompt('Hoe oud ben je?'));
+  const meerderjarig = leeftijd >= 18;
+  document.getElementById('uitvoer').textContent = 'Meerderjarig: ' + meerderjarig;
+  console.log('leeftijd is', leeftijd, 'en meerderjarig is', meerderjarig);
+}
+
+document.getElementById('knop').addEventListener('click', check);`;
+
+export const makeHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Vergelijken</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <p id="uitvoer">Klik op de knop.</p>
+  <button id="knop">Check korting</button>
+</body>
+</html>`;
+
+export const makeJs = `// Schrijf hier je code
+`;
+
+Een vergelijking is een vraag met twee mogelijke antwoorden: `true` of `false`. Dat antwoord is een **boolean**, en je kunt hem opslaan en tonen als elke andere waarde:
+
+```js
+const leeftijd = 16;
+const meerderjarig = leeftijd >= 18;
+console.log(meerderjarig);   // false
+```
+
+De vergelijkingsoperatoren:
+
+| Operator | Wat het doet |
+|---|---|
+| `===` | Gelijk aan |
+| `!==` | Niet gelijk aan |
+| `>` | Groter dan |
+| `<` | Kleiner dan |
+| `>=` | Groter of gelijk |
+| `<=` | Kleiner of gelijk |
+
+```js
+5 > 3       // true
+5 === 5     // true
+5 === '5'   // false (number en string zijn niet gelijk)
+'a' !== 'b' // true
+```
+
+## Voorwaarden combineren met en/of
+
+Soms is één vergelijking niet genoeg. Met **`&&`** (en) en **`||`** (of) combineer je er twee; met **`!`** (niet) draai je een boolean om.
+
+```js
+const leeftijd = 15;
+const lidVanDeClub = true;
+
+leeftijd >= 12 && leeftijd <= 17   // true: allebei waar (en)
+leeftijd < 12 || leeftijd >= 65    // false: geen van beide waar (of)
+!lidVanDeClub                      // false: het omgekeerde van true
+```
+
+`&&` is alleen `true` als **beide** kanten waar zijn; `||` is al `true` zodra **één** kant waar is.
+
+## Predict
+
+Wat logt dit?
+
+```js
+console.log(16 >= 16);
+console.log('16' === 16);
+console.log(16 >= 12 && 16 <= 15);
+```
+
+<details>
+<summary>Drie regels — welke waarden?</summary>
+
+`true`, `false`, `false`. De eerste: 16 is groter of gelijk aan 16. De tweede: een string is nooit strikt gelijk aan een number. De derde: de linkerkant is waar, maar de rechterkant niet (16 is niet kleiner of gelijk aan 15), en `&&` eist allebei.
+
+</details>
+
+## Probeer het zelf.
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  initialJs={startJs}
+  height="480px"
+  livePreview={false}
+  stacked
+/>
+
+## Investigate
+
+Experimenteer in het veld hierboven:
+
+- Vul bij de prompt precies `18` in. En daarna `17`. Klopt de grens met wat je verwachtte?
+- Verander `leeftijd >= 18` in `leeftijd === 18`, haal `Number()` weg en vul `18` in. Wat toont de pagina nu, en waarom?
+- Log `console.log(leeftijd === '18')` erbij (mét `Number()` er weer omheen) en vul `18` in. Verklaar de uitkomst.
+
+## Opdracht 1: Brommer-check
+
+Pas de startcode aan: de check wordt "mag je brommer rijden" (dat mag vanaf 16). Toon `Brommer rijden: ` gevolgd door de boolean.
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  initialJs={startJs}
+  height="480px"
+  livePreview={false}
+  stacked
+/>
+
+<details>
+<summary>Tip</summary>
+
+Er veranderen drie dingen: de grenswaarde, de naam van de boolean-variabele en de zin op de pagina.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```js
+function check() {
+  const leeftijd = Number(prompt('Hoe oud ben je?'));
+  const magBrommerRijden = leeftijd >= 16;
+  document.getElementById('uitvoer').textContent = 'Brommer rijden: ' + magBrommerRijden;
+  console.log('leeftijd is', leeftijd, 'en de check geeft', magBrommerRijden);
+}
+
+document.getElementById('knop').addEventListener('click', check);
+```
+
+</details>
+
+## Opdracht 2: Geheime code
+
+Vraag met een prompt om de geheime code en toon of hij klopt: vergelijk de invoer met `'open sesam'` en zet de boolean op de pagina.
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  initialJs={startJs}
+  height="480px"
+  livePreview={false}
+  stacked
+/>
+
+<details>
+<summary>Tip</summary>
+
+Strings vergelijk je ook met `===`. Hier is `Number()` juist fout: de code is tekst.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```js
+function check() {
+  const invoer = prompt('Wat is de geheime code?');
+  const klopt = invoer === 'open sesam';
+  document.getElementById('uitvoer').textContent = 'Code klopt: ' + klopt;
+}
+
+document.getElementById('knop').addEventListener('click', check);
+```
+
+Let op hoofdletters: `'Open Sesam'` is een andere string dan `'open sesam'`, dus de vergelijking geeft dan `false`.
+
+</details>
+
+## Opdracht 3: Kortingschecker
+
+Bouw een kortingschecker voor een zwembad: kinderen onder 12 én 65-plussers krijgen korting. Vraag de leeftijd met een prompt en toon `Korting: ` met de boolean. Log ook de twee losse vergelijkingen in de console.
+
+<CodeEditor
+  initialHtml={makeHtml}
+  initialCss={startCss}
+  initialJs={makeJs}
+  height="480px"
+  livePreview={false}
+  stacked
+/>
+
+<details>
+<summary>Tip</summary>
+
+"Onder 12 óf 65-plus" is één boolean met `||` erin. Schrijf een functie `checkKorting` en koppel hem met `addEventListener` aan de knop.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```js
+function checkKorting() {
+  const leeftijd = Number(prompt('Hoe oud ben je?'));
+  const korting = leeftijd < 12 || leeftijd >= 65;
+  document.getElementById('uitvoer').textContent = 'Korting: ' + korting;
+  console.log('onder 12:', leeftijd < 12);
+  console.log('65-plus:', leeftijd >= 65);
+}
+
+document.getElementById('knop').addEventListener('click', checkKorting);
+```
+
+</details>
+
+## Er gaat iets mis
+
+**`==` lijkt te werken, maar verrast**
+
+```js
+console.log('5' == 5);    // true - huh?
+console.log('5' === 5);   // false
+```
+
+Naast `===` bestaat ook `==`. Die zet de waarden eerst stiekem om naar hetzelfde type, waardoor een string ineens "gelijk" is aan een number. Dat lijkt handig, maar het verstopt precies de fouten die je met `typeof` en `Number()` net hebt leren zien. Gebruik altijd **`===`** (en `!==`): die vergelijkt waarde én type, zonder verrassingen.
+
+---
+
+[← Waarden en operatoren](/docs/js-basics/operatoren-types) | [Beslissingen →](/docs/js-basics/if-else)
