@@ -1,6 +1,7 @@
 import { css } from '@codemirror/lang-css';
 import { html } from '@codemirror/lang-html';
 import { javascript } from '@codemirror/lang-javascript';
+import { EditorView } from '@codemirror/view';
 import { vscodeDark } from '@uiw/codemirror-theme-vscode';
 import CodeMirror from '@uiw/react-codemirror';
 import React from 'react';
@@ -24,7 +25,7 @@ export function EditorPane({ language, value, onChange, height }: EditorPaneProp
     <CodeMirror
       value={value}
       onChange={onChange}
-      extensions={[langExtension[language]]}
+      extensions={[langExtension[language], EditorView.lineWrapping]}
       theme={vscodeDark}
       height={height}
       className={styles.codeMirrorWrapper}

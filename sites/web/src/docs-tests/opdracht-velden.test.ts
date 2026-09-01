@@ -167,6 +167,16 @@ describe('oefenvelden per opdracht (web)', () => {
     expect(fouten).toEqual([]);
   });
 
+  it('opdracht-vorm: de TOC is uit, de editor krijgt de breedte', () => {
+    // Op werkpagina's met oefenvelden gaat de rechter inhoudsopgave uit
+    // (hide_table_of_contents), zodat het editorveld de volle contentbreedte
+    // krijgt en lange coderegels leesbaar blijven.
+    const fouten = opdrachtVorm
+      .filter((l) => !/^hide_table_of_contents: true$/m.test(l.inhoud))
+      .map((l) => l.naam);
+    expect(fouten).toEqual([]);
+  });
+
   it('de startcode-exports staan onder de H1', () => {
     // Docusaurus leidt de paginatitel (en dus het sidebar-label) af uit de
     // eerste H1, en slaat daarbij alleen import-regels over. Een export vóór
