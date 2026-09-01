@@ -37,7 +37,7 @@ Loop deze vragen na vóór je begint én vlak voor je je verslag inlevert:
 - [ ] Rapporteer ik ook de resultaten die me niet uitkomen? *(aanvaardbaar)*
 
 :::tip[Echt gebeurd]
-Bij elke spelregel vind je een kader **"Echt gebeurd"** met een beroemd onderzoek waar die spelregel het verschil maakte — van de peilingsblunder van 1936 tot de zaak-Stapel.
+Bij elke spelregel vind je een kader **"Echt gebeurd"** met een beroemd onderzoek waar die spelregel het verschil maakte — van het paard dat leek te kunnen rekenen tot de zaak-Stapel. Ook de pagina's over interne en externe validiteit hebben er een.
 :::
 
 ## Verder lezen

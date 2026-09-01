@@ -98,7 +98,7 @@ export default function TermenTrainer() {
         ) : (
           <span className={styles.voorkant}>
             {huidig.term}
-            <span className={styles.hint}>Klik om om te draaien</span>
+            <span className={styles.hint}>Klik om het kaartje om te draaien</span>
           </span>
         )}
       </button>

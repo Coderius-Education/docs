@@ -46,7 +46,7 @@ In de jaren vijftig lieten grote onderzoeken zien dat rokers veel vaker longkank
 
 ## Hangt samen met
 
-- [Valide](./valide.md) — interne validiteit is één van de twee kanten van validiteit
+- [Valide](./valide.md) — interne validiteit is een van de twee kanten van validiteit
 - [Externe validiteit](./externe-validiteit.md) — de andere kant: geldt je conclusie ook daarbuiten?
 - [Intern vs. extern](./intern-vs-extern.mdx) — waarom de twee elkaar in de weg zitten
 - [Experimenteel onderzoek](../opzet/soorten/experimenteel.md) — de soort onderzoek die het sterkst is in interne validiteit
