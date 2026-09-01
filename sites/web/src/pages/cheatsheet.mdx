@@ -664,6 +664,171 @@ Gebruik `class` voor stijlen die je hergebruikt, `id` voor één specifiek eleme
 </details>
 
 <details>
+<summary>Tag en klasse combineren — <code>tag.klasse</code></summary>
+
+Wil je dat een klasse alleen geldt op een specifiek HTML-element? Schrijf de klasse direct achter de tagnaam, **zonder spatie**:
+
+- `p.opvallend` — selecteert alleen `<p>`-elementen met klasse `opvallend`.
+- Een `<h2 class="opvallend">` wordt dan genegeerd.
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h2 class="opvallend">Kop met klasse opvallend</h2>
+  <p class="opvallend">Paragraaf met klasse opvallend.</p>
+  <p>Gewone paragraaf.</p>
+</body>
+</html>`}
+  initialCss={`p.opvallend {
+  background-color: #fff3cd;
+  color: #856404;
+  padding: 8px;
+  border-left: 4px solid orange;
+}`}
+  height="340px"
+/>
+
+</details>
+
+<details>
+<summary>Selectors groeperen — <code>selector, selector</code></summary>
+
+Hebben meerdere elementen dezelfde opmaak nodig? Zet een **komma** tussen de selectors om herhaling in je CSS te voorkomen:
+
+```css
+h1, h2, h3 {
+  font-family: sans-serif;
+  color: #2c3e50;
+}
+```
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Hoofdkop</h1>
+  <h2>Tussenkop</h2>
+  <p>Een gewone paragraaf.</p>
+</body>
+</html>`}
+  initialCss={`h1, h2 {
+  color: #2c3e50;
+  font-family: sans-serif;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 4px;
+}`}
+  height="340px"
+/>
+
+</details>
+
+<details>
+<summary>Geneste selectoren — <code>ouder kind</code> en <code>ouder &gt; kind</code></summary>
+
+Met geneste selectoren selecteer je elementen op basis van hun plek binnen andere elementen:
+
+- **Spatie (`.container img` of `.menu a`)** — nested-selector: selecteert *alle* passende elementen binnen de ouder, hoe diep ze ook genest zijn.
+- **Groter-dan-teken (`.bericht > p`)** — kind-selector: selecteert alleen elementen die een **direct kind** zijn van de ouder (één niveau diep).
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <p>Direct kind van container (rood).</p>
+    <div class="kaart">
+      <p>Dieper genest in .kaart (blauw).</p>
+    </div>
+    <img src="https://picsum.photos/id/237/120/80" alt="Hond">
+  </div>
+  <p>Buiten de container (standaard).</p>
+</body>
+</html>`}
+  initialCss={`.container > p {
+  color: #e63946;
+  font-weight: bold;
+}
+
+.kaart p {
+  color: #4a90e2;
+}
+
+.container img {
+  border: 2px solid #4a90e2;
+  border-radius: 6px;
+  margin-top: 8px;
+}`}
+  height="420px"
+/>
+
+</details>
+
+<details>
+<summary>Prioriteit en specificiteit — welke regel wint?</summary>
+
+Wanneer meerdere CSS-regels hetzelfde element stijlen, bepaalt de **specificiteit** welke regel wint:
+
+| Selector-type | Voorbeeld | Punten |
+|---|---|---|
+| **Tagnaam** | `p`, `h1`, `div` | 1 |
+| **Klasse** | `.bericht`, `.opvallend` | 10 |
+| **ID** | `#belangrijk` | 100 |
+
+De browser telt de punten bij elkaar op:
+- `p` = 1 punt
+- `.tekst` = 10 punten (wint van `p`)
+- `.kaart p` = 10 + 1 = 11 punten (wint van `.tekst`)
+- `#belangrijk` = 100 punten (wint van `.kaart p.opvallend` met 21 punten)
+
+**Cascade-volgorde:** hebben twee selectors exact dezelfde score? Dan wint de regel die **als laatste** in het CSS-bestand staat.
+
+<CodeEditor
+  initialHtml={`<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="kaart">
+    <p class="tekst" id="speciaal">Welke stijl wint?</p>
+  </div>
+</body>
+</html>`}
+  initialCss={`/* 1 punt */
+p {
+  color: blue;
+}
+
+/* 11 punten (10 + 1) */
+.kaart p {
+  color: green;
+}
+
+/* 100 punten */
+#speciaal {
+  color: #e63946;
+  font-weight: bold;
+}`}
+  height="380px"
+/>
+
+</details>
+
+<details>
 <summary>Pseudo-klassen — <code>:hover</code>, <code>:first-child</code>, <code>:last-child</code>, <code>:nth-child</code></summary>
 
 Pseudo-klassen stijlen een element op basis van zijn **toestand** of **positie**, zonder dat je een klasse in de HTML hoeft toe te voegen:

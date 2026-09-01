@@ -1,0 +1,392 @@
+---
+---
+
+import CodeEditor from '@site/src/components/CodeEditor';
+
+# CSS Selectors
+
+export const startHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>CSS Selectors</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav class="hoofdmenu">
+    <ul>
+      <li><a href="#">Home</a></li>
+      <li><a href="#">Nieuws</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <article class="bericht">
+      <h2>Mijn eerste artikel</h2>
+      <p>Dit is een directe paragraaf in het artikel.</p>
+      <blockquote>
+        <p>Dit is een citaat binnen een blockquote in het artikel.</p>
+      </blockquote>
+      <p class="opvallend" id="belangrijk">Een speciale mededeling onderaan.</p>
+    </article>
+
+    <p>Een losse paragraaf buiten het artikel met een <a href="#">gewone link</a>.</p>
+  </main>
+</body>
+</html>`;
+
+export const startCss = `/* 1. Groeperen: meerdere elementen tegelijk */
+h2, p {
+  font-family: sans-serif;
+}
+
+/* 2. Nested selector: alle links binnen het hoofdmenu */
+.hoofdmenu a {
+  color: green;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* 3. Direct kind selector: alleen directe paragrafen in het artikel */
+.bericht > p {
+  color: #333333;
+  border-left: 3px solid green;
+  padding-left: 8px;
+}
+
+/* 4. Tag en klasse combineren */
+p.opvallend {
+  background-color: #fff3cd;
+  padding: 10px;
+}
+
+/* 5. ID selector: hoge prioriteit */
+#belangrijk {
+  color: #856404;
+  border-left-color: orange;
+}`;
+
+export const makeHtml = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>CSS Selectors</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Bouw hier je menukaart of pagina -->
+</body>
+</html>`;
+
+export const makeCss = `/* Schrijf hier je stijl */
+`;
+
+<CodeOrg slug="css-selectors" />
+
+## Wat ga je leren?
+
+Je leert hoe je met geavanceerde CSS selectors heel gericht elementen kiest op basis van hun plek in de HTML-structuur. Ook ontdek je hoe de browser beslist welke stijl wint wanneer verschillende regels tegelijk gelden (specificiteit en prioriteit).
+
+## Theorie
+
+Je weet al hoe je elementen selecteert via hun tagnaam (`p`), een klasse (`.knop`) of een id (`#header`). Met geavanceerde selectors kun je nog veel preciezer stijlen toepassen.
+
+### Elementen binnen elementen (Nesting)
+
+Met een **spatie** tussen twee selectors selecteer je een element dat zich *ergens binnen* een ander element bevindt:
+
+```css
+.hoofdmenu a {
+  color: green;
+}
+```
+
+Dit stijlt alle `<a>`-elementen binnen `.hoofdmenu`. Links op de rest van de pagina veranderen niet.
+
+### Alleen directe kinderen (`>`)
+
+Soms wil je alleen elementen aanspreken die direct onder een ouder-element staan (één niveau diep), en niet in dieper geneste elementen:
+
+```css
+.bericht > p {
+  border-left: 3px solid green;
+}
+```
+
+Een `<p>` direct in `<article class="bericht">` krijgt de rand wel. Een `<p>` die binnen een `<blockquote>` in dat artikel staat, krijgt de rand niet.
+
+### Selectors groeperen (`,`)
+
+Hebben verschillende elementen dezelfde stijl nodig? Zet een **komma** tussen de selectors om herhaling te voorkomen:
+
+```css
+h1, h2, h3 {
+  font-family: sans-serif;
+  color: darkblue;
+}
+```
+
+### Tag en klasse combineren
+
+Wil je een klasse alleen laten gelden op een specifiek type HTML-element? Plak de klasse direct achter de tagnaam, **zonder spatie**:
+
+```css
+p.belangrijk {
+  background-color: yellow;
+}
+```
+
+Alleen een `<p class="belangrijk">` krijgt nu een gele achtergrond. Een `<h2 class="belangrijk">` wordt genegeerd.
+
+### Welke regel wint? (Specificiteit en prioriteit)
+
+Wanneer meerdere CSS-regels hetzelfde element proberen te stijlen met verschillende waarden, berekent de browser welke selector het meest specifiek is.
+
+De rangorde van laag naar hoog:
+
+1. **Tagnaam** (`p`, `div`, `h1`) — 1 punt
+2. **Klasse** (`.bericht`, `.opvallend`) — 10 punten
+3. **ID** (`#belangrijk`) — 100 punten
+
+Een selector met een hogere score wint altijd van een selector met een lagere score:
+
+- `p` (1 punt) verliest van `.tekst` (10 punten).
+- `.bericht p` (10 + 1 = 11 punten) wint van `.tekst` (10 punten).
+- `#belangrijk` (100 punten) wint van `.bericht p.opvallend` (10 + 1 + 10 = 21 punten).
+
+#### Wat bij een gelijke score?
+
+Als twee selectors exact dezelfde specificiteit hebben, wint de regel die **als laatste** in het CSS-bestand staat. Dit is het 'cascading' principe van CSS (Cascading Style Sheets).
+
+## Predict
+
+Bekijk deze HTML en CSS:
+
+```html
+<div class="kaart">
+  <p class="tekst">Wat voor kleur word ik?</p>
+</div>
+```
+
+```css
+p {
+  color: blue;
+}
+
+.kaart p {
+  color: green;
+}
+
+.tekst {
+  color: red;
+}
+```
+
+Welke kleur krijgt de tekst in de browser?
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+De tekst wordt **groen**.
+
+De specificiteit-scores:
+- `p` = 1 punt (alleen een tagnaam)
+- `.tekst` = 10 punten (één klasse)
+- `.kaart p` = 11 punten (één klasse + één tagnaam)
+
+Omdat `.kaart p` de hoogste score heeft (11 punten), wint de kleur groen.
+
+</details>
+
+## Probeer het zelf.
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  height="480px"
+/>
+
+## Investigate
+
+Experimenteer in het code-oefenveld hierboven:
+
+- Verander `.bericht > p` in `.bericht p` (zonder `>`). Wat gebeurt er met de tekst in het citaat (`blockquote`)?
+- Verander de volgorde van `h2, p` en `.bericht > p` in de CSS. Maakt de volgorde uit voor de uiteindelijke stijl?
+- Voeg in de CSS onderaan `#belangrijk { color: purple; }` toe. Waarom verandert de tekstkleur van de laatste paragraaf, ook al staat `.opvallend` er ook op?
+- Verwijder het hekje bij `#belangrijk` in de CSS. Wat gebeurt er nu met de mededeling?
+
+## Modify
+
+**Opdracht:**
+Pas de code aan:
+1. Zorg dat links in het hoofdmenu (`.hoofdmenu a`) een gele achtergrond (`background-color: #e8f5e9;`) en `padding: 4px 8px;` krijgen.
+2. Laat het citaat binnen het artikel (`.bericht blockquote p`) cursief worden (`font-style: italic;`) met een grijze tekstkleur (`color: #555555;`).
+3. Voeg een regel toe voor `a` in het algemeen met `color: red;`. Controleer of de links in het hoofdmenu groen blijven door de hogere specificiteit van `.hoofdmenu a`.
+
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  height="480px"
+/>
+
+<details>
+<summary>Tip</summary>
+
+Gebruik de nesting selector `.bericht blockquote p` om precies de paragraaf in het citaat te selecteren.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Voeg deze regels toe aan de CSS:
+
+```css
+/* Algemene links */
+a {
+  color: red;
+}
+
+/* Aangepaste menu-links */
+.hoofdmenu a {
+  color: green;
+  text-decoration: none;
+  font-weight: bold;
+  background-color: #e8f5e9;
+  padding: 4px 8px;
+}
+
+/* Paragrafen in het citaat */
+.bericht blockquote p {
+  font-style: italic;
+  color: #555555;
+}
+```
+
+</details>
+
+## Make
+
+**Opdracht:** Bouw een menukaart voor een lunchroom.
+- Maak een lijst met ten minste twee categorieën (`<h2>`), zoals Broodjes en Dranken.
+- Plaats onder elke categorie een aantal gerechten in een `<div>` of `<ul>`.
+- Gebruik een groeperende selector (`,`) om alle koppen (`h1, h2`) dezelfde kleur te geven.
+- Gebruik een kind- of geneste selector (bijvoorbeeld `.menu-groep > p` of `.gerecht span`) om de prijzen rechts of vetgedrukt weer te geven.
+- Geef één gerecht de klasse `dagaanbieding` en een ander gerecht het id `#favoriet`.
+- Laat met CSS zien dat `#favoriet` een speciale rand of achtergrond krijgt die sterker is dan de algemene opmaak.
+
+<CodeEditor
+  initialHtml={makeHtml}
+  initialCss={makeCss}
+  height="480px"
+/>
+
+<details>
+<summary>Tip</summary>
+
+Begin met een duidelijke HTML-structuur met klassen zoals `menu-sectie` en `gerecht`. Gebruik vervolgens in CSS combinaties zoals `.menu-sectie h2` en `#favoriet`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<!-- HTML -->
+<div class="menukaart">
+  <h1>Lunchroom De Haven</h1>
+
+  <h2>Warme broodjes</h2>
+  <div class="gerechten">
+    <p class="gerecht dagaanbieding">Broodje warm vlees <span class="prijs">€ 6,50</span></p>
+    <p class="gerecht" id="favoriet">Broodje geitenkaas <span class="prijs">€ 7,00</span></p>
+  </div>
+
+  <h2>Dranken</h2>
+  <div class="gerechten">
+    <p class="gerecht">Verse jus d'orange <span class="prijs">€ 3,50</span></p>
+    <p class="gerecht">Warme chocolademelk <span class="prijs">€ 3,00</span></p>
+  </div>
+</div>
+```
+
+```css
+/* CSS */
+h1, h2 {
+  color: #2c3e50;
+  font-family: sans-serif;
+}
+
+.menukaart {
+  max-width: 500px;
+  padding: 20px;
+  background-color: #fcfcfc;
+  border: 1px solid #ddd;
+}
+
+.gerechten > p {
+  padding: 8px;
+  margin: 4px 0;
+  border-bottom: 1px dashed #ccc;
+}
+
+.gerecht .prijs {
+  font-weight: bold;
+  color: #27ae60;
+}
+
+.dagaanbieding {
+  background-color: #fffde7;
+}
+
+#favoriet {
+  background-color: #e8f5e9;
+  border: 2px solid #2e7d32;
+  font-weight: bold;
+}
+```
+
+</details>
+
+## Er gaat iets mis
+
+**Spatie tussen tag en klasse (`p .opvallend` vs `p.opvallend`)**
+
+```css
+/* Fout: spatie tussen tag en klasse */
+p .opvallend {
+  color: red;
+}
+```
+
+```css
+/* Goed: geen spatie tussen tag en klasse */
+p.opvallend {
+  color: red;
+}
+```
+
+Met een spatie zoekt de browser naar een element met klasse `opvallend` dat *binnen* een `<p>` staat. Zonder spatie selecteer je het `<p>` element dat *zelf* die klasse heeft.
+
+**Komma vergeten bij groeperen (`h1 h2` vs `h1, h2`)**
+
+```css
+/* Fout: geen komma */
+h1 h2 {
+  color: blue;
+}
+```
+
+```css
+/* Goed: met komma */
+h1, h2 {
+  color: blue;
+}
+```
+
+Zonder komma zoekt CSS naar een `<h2>` die zich binnen een `<h1>` bevindt (wat in geldige HTML nooit voorkomt). Met een komma stijlt de browser zowel `<h1>` als `<h2>`.
+
+**Denken dat HTML-volgorde de prioriteit bepaalt**
+
+Als een element meerdere klassen heeft, zoals `<p class="blauw rood">`, maakt het niet uit welke klasse eerst in de HTML staat. De regel die **als laatste in het CSS-bestand** staat, wint bij gelijke specificiteit.

@@ -26,6 +26,7 @@ const sidebars: SidebarsConfig = {
     'html-css/flexbox',
     'html-css/border-en-dimensies',
     'html-css/position',
+    'html-css/css-selectors',
     'html-css/media-queries',
     'html-css/css-grid',
     'html-css/semantische-html',
