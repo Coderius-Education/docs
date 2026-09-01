@@ -5,7 +5,9 @@ sidebar_label: 'Begin hier'
 
 # DVWA Challenges — Begin hier
 
-Welkom. Deze tutorial leert je websecurity door zélf kwetsbaarheden uit te buiten. Geen installatie nodig — alle uitdagingen draaien direct in je browser via PHP-WebAssembly.
+<Ethiek />
+
+Deze tutorial leert je websecurity door zélf kwetsbaarheden uit te buiten. De labs draaien direct in je browser via PHP-WebAssembly, dus je kunt meteen beginnen. Een paar verdiepende opdrachten gebruiken gereedschap dat alleen op een lokale Kali/DVWA-installatie draait (Hydra, Burp Suite, exiftool); dat staat dan in een **Labbeperking**-blok, met een link naar de [installatie-uitleg](/docs/dvwa_installatie).
 
 ## Wat ga je leren?
 
@@ -20,25 +22,31 @@ Vergelijk altijd de broncode tussen niveaus (knop **Bekijk broncode** in elk lab
 
 ## Hoe is een level-pagina opgebouwd?
 
-Elke level-pagina volgt dezelfde vier stappen — de **PRIMM**-cyclus. Sla geen stap over: ze bouwen op elkaar voort.
+Elke level-pagina volgt het **PRIMM**-stramien met genummerde secties. Sla geen stap over: ze bouwen op elkaar voort.
 
 ### 1. Predict (Voorspel)
 
-Je krijgt een stukje broncode te zien en een vraag. **Bedenk eerst zelf het antwoord** voordat je het `Antwoord`-blok open klikt. Dit is geen toets — het idee is dat je je voorstellingsvermogen voor wat code dóét traint. Voortijdig kijken straft alleen jezelf.
+Je krijgt een stukje broncode te zien en een vraag. Bedenk eerst zelf het antwoord voordat je het `Antwoord`-blok open klikt. Dit is geen toets: het idee is dat je traint om te zien wat code dóét. Voortijdig kijken straft alleen jezelf.
 
-### 2. Run & Investigate
+### 2. Run
 
-Klik op **Start Lab**. De eerste keer duurt het laden van PHP-WebAssembly ~10 seconden — dit is normaal en gebeurt maar één keer per browser-sessie. Daarna voer je een onschuldige actie uit (bijv. een geldig getal invullen) om te zien wat de applicatie *normaal* doet.
+Klik op **Start Lab**. De eerste keer duurt het laden van PHP-WebAssembly ongeveer tien seconden; dat is normaal en gebeurt maar één keer per browser-sessie. Daarna voer je een onschuldige actie uit (bijvoorbeeld een geldig getal invullen) om te zien wat de applicatie normaal doet.
 
-> **Tip:** klik op **Bekijk broncode** om te zien welke PHP er onder de motorkap draait. Dit is je belangrijkste leerbron.
+### 3. Investigate
 
-### 3. Modify & Make (Aanpassen & Maken)
+Klik op **Bekijk broncode** en lees welke PHP er onder de motorkap draait. Hier zit de leerwinst: je zoekt de plek waar de code invoer vertrouwt die hij niet zou moeten vertrouwen.
 
-Tijd voor de aanval. Je krijgt een doel ("haal alle gebruikers op", "voer een `alert()` uit"…). Probeer het eerst zonder de Tip te openen. Lukt het niet? Open de Tip. Nog steeds niet? Open Antwoord.
+### 4. Modify & Make (Aanpassen & Maken)
 
-### 4. ✓ Wat moest je zien?
+Tijd voor de aanval. Je krijgt een doel ("haal alle gebruikers op", "voer een `alert()` uit"). Probeer het eerst zonder de Tip te openen. Lukt het niet? Open de Tip. Nog steeds niet? Open Antwoord.
 
-Korte controle: waar herken je succes aan? Als wat jij ziet niet overeenkomt met de criteria, ga je terug naar stap 3.
+### 5. ✓ Wat moest je zien?
+
+Korte controle: waar herken je succes aan? Komt wat jij ziet niet overeen met de criteria, dan ga je terug naar stap 4.
+
+### 6. Er gaat iets mis...
+
+Veelgemaakte fouten en verrassend gedrag, met uitleg waaróm het misgaat. Op de **Impossible**-pagina vervalt dit blok: daar staat de veilige code, zonder aanval.
 
 ## Beperkingen van het lab
 
@@ -48,9 +56,9 @@ De labs draaien in een afgeschermd `<iframe>` (sandbox). Voor de meeste uitdagin
 
 Werk de lijst hieronder van boven naar beneden af. De volgorde loopt op in moeilijkheid en bouwt op elkaar voort: Brute Force en Command Injection leggen de basis, daarna komen de injectie- en XSS-aanvallen, en je sluit af met **Word de Developer**, waarin je zelf de lekken dicht. Doe per uitdaging eerst **Low**, dan **Medium**, **High** en tot slot **Impossible** — op Impossible zie je hoe veilige code eruitziet.
 
-## Jouw Voortgang
+## Jouw voortgang
 
-Gebruik deze checklist om bij te houden welke uitdagingen je hebt voltooid. Kun jij alle vinkjes op groen krijgen?
+Houd zelf bij welke uitdagingen je af hebt — print deze pagina, of vink mee in een schrift. Het doel: elk vakje een keer gehaald.
 
 | Challenge | Low | Medium | High | Impossible |
 | :--- | :---: | :---: | :---: | :---: |
