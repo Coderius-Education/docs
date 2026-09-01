@@ -167,6 +167,22 @@ describe('oefenvelden per opdracht (web)', () => {
     expect(fouten).toEqual([]);
   });
 
+  it('opdracht-vorm: alle functies hebben een naam', () => {
+    // Anonieme en arrow-functies horen niet in het lesmateriaal: elke
+    // functie krijgt een naam. De uitzondering is de note in de events-les
+    // die de naamloze vorm alleen bespreekt (inline code, geen codeblok).
+    const fouten: string[] = [];
+    for (const les of opdrachtVorm) {
+      const code = [
+        ...[...les.inhoud.matchAll(/^export const \w+ = `([\s\S]*?)`;$/gm)].map((m) => m[1]),
+        ...[...les.inhoud.matchAll(/```\w*\n([\s\S]*?)```/g)].map((m) => m[1]),
+      ].join('\n');
+      if (/function\s*\(/.test(code)) fouten.push(`${les.naam}: anonieme functie`);
+      if (/=>/.test(code)) fouten.push(`${les.naam}: arrow-functie`);
+    }
+    expect(fouten).toEqual([]);
+  });
+
   it('opdracht-vorm: de TOC is uit, de editor krijgt de breedte', () => {
     // Op werkpagina's met oefenvelden gaat de rechter inhoudsopgave uit
     // (hide_table_of_contents), zodat het editorveld de volle contentbreedte

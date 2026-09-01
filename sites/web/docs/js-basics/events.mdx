@@ -1,6 +1,6 @@
 ---
 title: Events
-description: Met addEventListener koppel je functies aan gebeurtenissen zoals klikken en muisbewegingen, los van de HTML.
+description: Met addEventListener koppel je benoemde functies aan gebeurtenissen zoals klikken en muisbewegingen, los van de HTML.
 hide_table_of_contents: true
 ---
 
@@ -34,13 +34,16 @@ p {
   font-size: 1.2rem;
 }`;
 
-export const startJs = `document.getElementById('knop').addEventListener('mouseover', function() {
+export const startJs = `function muisErop() {
   document.getElementById('status').textContent = 'Muis erop.';
-});
+}
 
-document.getElementById('knop').addEventListener('mouseout', function() {
+function muisWeg() {
   document.getElementById('status').textContent = 'Muis weg.';
-});`;
+}
+
+document.getElementById('knop').addEventListener('mouseover', muisErop);
+document.getElementById('knop').addEventListener('mouseout', muisWeg);`;
 
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
@@ -102,17 +105,9 @@ document.getElementById('knop').addEventListener('click', zegHoi);
 
 De functie geef je mee **zonder haakjes**: je noemt zijn naam, zoals je iemand een telefoonnummer geeft. De browser "belt" hem pas bij het event.
 
-## Korte vorm: anonieme functie
-
-Gebruik je de functie maar op één plek, dan mag hij ook naamloos, direct in de listener. Dat heet een **anonieme functie**:
-
-```js
-document.getElementById('knop').addEventListener('click', function() {
-  document.getElementById('status').textContent = 'Geklikt.';
-});
-```
-
-Beide vormen doen precies hetzelfde; de anonieme versie is korter voor eenmalige acties.
+:::note[Naamloze functies in andermans code]
+Op internet zie je vaak een functie zonder naam die rechtstreeks in de listener geschreven staat (`addEventListener('click', function() { ... })`). Dat werkt, maar in deze lessen krijgt elke functie een naam: dat leest makkelijker, en je kunt dezelfde functie dan op meer plekken gebruiken.
+:::
 
 ## Welke events bestaan er?
 
@@ -135,7 +130,7 @@ Bekijk de startcode in het script.js-tabblad. Beantwoord de vraag **voordat** je
 <details>
 <summary>Wat zie je als je de muis op de knop zet, en wat als je hem weer wegbeweegt?</summary>
 
-Bij het raken van de knop zet het `mouseover`-event de tekst op "Muis erop."; zodra de muis de knop verlaat, zet het `mouseout`-event hem op "Muis weg.". Twee aparte listeners, elk voor hun eigen event.
+Bij het raken van de knop draait `muisErop` (via het `mouseover`-event) en komt er "Muis erop." te staan; zodra de muis de knop verlaat, zet `muisWeg` de tekst op "Muis weg.". Twee benoemde functies, elk gekoppeld aan hun eigen event.
 
 </details>
 
@@ -153,13 +148,13 @@ Bij het raken van de knop zet het `mouseover`-event de tekst op "Muis erop."; zo
 
 Experimenteer in het veld hierboven:
 
-- Vervang `'mouseover'` door `'click'`. Wat verandert er aan het gedrag?
-- Koppel twee `'click'`-listeners aan dezelfde knop, elk met een eigen `console.log`. Draaien ze allebei?
-- Wat gebeurt er met de status-tekst als je klikt en daarna de muis wegbeweegt?
+- Vervang `'mouseover'` door `'click'` in de onderste regels. Wat verandert er aan het gedrag?
+- Zet per ongeluk haakjes achter de functienaam in een listener (`muisErop()`). Wat gebeurt er bij het laden, en wat bij het bewegen?
+- Koppel `muisErop` óók aan het `'dblclick'`-event. Kan één functie bij twee events horen?
 
 ## Opdracht 1: Klik-listener erbij
 
-Laat de bestaande listeners staan en voeg een derde toe: bij een `'click'` op de knop verschijnt "Geklikt." in de `<p id="teller">`.
+Laat de bestaande listeners staan en voeg een derde toe: schrijf een functie `toonKlik` die "Geklikt." in de `<p id="teller">` zet, en koppel hem aan het `'click'`-event van de knop.
 
 <CodeEditor
   initialHtml={startHtml}
@@ -172,7 +167,7 @@ Laat de bestaande listeners staan en voeg een derde toe: bij een `'click'` op de
 <details>
 <summary>Tip</summary>
 
-Zelfde bouwplan als de twee listeners die er al staan, maar met `'click'` en het andere element. Zo zie je dat één knop meerdere listeners tegelijk kan hebben.
+Zelfde bouwplan als de twee functies die er al staan: eerst de functie, onderaan de koppelregel. Zo zie je dat één knop meerdere listeners tegelijk kan hebben.
 
 </details>
 
@@ -182,9 +177,11 @@ Zelfde bouwplan als de twee listeners die er al staan, maar met `'click'` en het
 Toevoeging in script.js:
 
 ```js
-document.getElementById('knop').addEventListener('click', function() {
+function toonKlik() {
   document.getElementById('teller').textContent = 'Geklikt.';
-});
+}
+
+document.getElementById('knop').addEventListener('click', toonKlik);
 ```
 
 De muis-listeners blijven ook werken: elke listener reageert op zijn eigen event.
@@ -193,7 +190,7 @@ De muis-listeners blijven ook werken: elke listener reageert op zijn eigen event
 
 ## Opdracht 2: Klik-teller
 
-Breid je klik-listener uit tot een teller: bij elke klik komt er 1 bij, en de `<p id="teller">` toont "Aantal klikken: " met het aantal.
+Breid je klik-functie uit tot een teller: bij elke klik komt er 1 bij, en de `<p id="teller">` toont "Aantal klikken: " met het aantal.
 
 <CodeEditor
   initialHtml={startHtml}
@@ -206,7 +203,7 @@ Breid je klik-listener uit tot een teller: bij elke klik komt er 1 bij, en de `<
 <details>
 <summary>Tip</summary>
 
-Net als in [Variabelen](/docs/js-basics/variabelen): declareer `let teller = 0;` **buiten** de listener, en verhoog hem binnenin.
+Net als in [Variabelen](/docs/js-basics/variabelen): declareer `let teller = 0;` **buiten** de functie, en verhoog hem binnenin.
 
 </details>
 
@@ -216,17 +213,19 @@ Net als in [Variabelen](/docs/js-basics/variabelen): declareer `let teller = 0;`
 ```js
 let teller = 0;
 
-document.getElementById('knop').addEventListener('click', function() {
+function telKlik() {
   teller = teller + 1;
   document.getElementById('teller').textContent = 'Aantal klikken: ' + teller;
-});
+}
+
+document.getElementById('knop').addEventListener('click', telKlik);
 ```
 
 </details>
 
 ## Opdracht 3: Speelkaart
 
-Bouw het gedrag van de speelkaart: bij `mouseover` krijgt de kaart de klasse `actief` (die staat al in de CSS), bij `mouseout` raakt hij hem weer kwijt, en elke `click` telt mee in de `<p id="teller">`.
+Bouw het gedrag van de speelkaart: bij `mouseover` krijgt de kaart de klasse `actief` (die staat al in de CSS), bij `mouseout` raakt hij hem weer kwijt, en elke `click` telt mee in de `<p id="teller">`. Schrijf drie benoemde functies en koppel elk aan zijn event.
 
 <CodeEditor
   initialHtml={makeHtml}
@@ -239,7 +238,7 @@ Bouw het gedrag van de speelkaart: bij `mouseover` krijgt de kaart de klasse `ac
 <details>
 <summary>Tip</summary>
 
-Drie listeners op hetzelfde element (`getElementById('kaart')`). Voor de klasse gebruik je `classList.add` en `classList.remove` uit [Modern DOM](/docs/js-basics/modern-dom).
+Drie functies, drie listeners op hetzelfde element (`getElementById('kaart')`). Voor de klasse gebruik je `classList.add` en `classList.remove` uit [Modern DOM](/docs/js-basics/modern-dom).
 
 </details>
 
@@ -249,18 +248,22 @@ Drie listeners op hetzelfde element (`getElementById('kaart')`). Voor de klasse 
 ```js
 let teller = 0;
 
-document.getElementById('kaart').addEventListener('mouseover', function() {
+function maakActief() {
   document.getElementById('kaart').classList.add('actief');
-});
+}
 
-document.getElementById('kaart').addEventListener('mouseout', function() {
+function maakGewoon() {
   document.getElementById('kaart').classList.remove('actief');
-});
+}
 
-document.getElementById('kaart').addEventListener('click', function() {
+function telKlik() {
   teller = teller + 1;
   document.getElementById('teller').textContent = 'Aantal klikken: ' + teller;
-});
+}
+
+document.getElementById('kaart').addEventListener('mouseover', maakActief);
+document.getElementById('kaart').addEventListener('mouseout', maakGewoon);
+document.getElementById('kaart').addEventListener('click', telKlik);
 ```
 
 </details>
