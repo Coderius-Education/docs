@@ -213,6 +213,22 @@
   font-style: italic;
 }
 
+/* Gestapelde vorm (js-basics): code bovenaan, uitvoer en console eronder
+   over de volle breedte. */
+.containerStacked {
+  flex-direction: column;
+}
+
+.containerStacked .editorSide,
+.containerStacked .previewColumn {
+  flex: none;
+}
+
+.containerStacked .previewColumn {
+  border-left: none;
+  border-top: 1px solid var(--ifm-color-emphasis-300);
+}
+
 @media (max-width: 768px) {
   .container {
     flex-direction: column;

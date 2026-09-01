@@ -183,13 +183,18 @@ describe('oefenvelden per opdracht (web)', () => {
     expect(fouten).toEqual([]);
   });
 
-  it('opdracht-vorm: de TOC is uit, de editor krijgt de breedte', () => {
-    // Op werkpagina's met oefenvelden gaat de rechter inhoudsopgave uit
-    // (hide_table_of_contents), zodat het editorveld de volle contentbreedte
-    // krijgt en lange coderegels leesbaar blijven.
-    const fouten = opdrachtVorm
-      .filter((l) => !/^hide_table_of_contents: true$/m.test(l.inhoud))
-      .map((l) => l.naam);
+  it('opdracht-vorm: elk veld is gestapeld', () => {
+    // In de js-lessen staan code, uitvoer en console onder elkaar (stacked),
+    // zodat de code de volle contentbreedte krijgt terwijl de TOC rechts
+    // blijft staan. De html-css-lessen houden editor en preview naast elkaar.
+    const fouten: string[] = [];
+    for (const les of opdrachtVorm) {
+      const velden = [...les.inhoud.matchAll(/<CodeEditor([\s\S]*?)\/>/g)];
+      const zonder = velden.filter((v) => !/\bstacked\b/.test(v[1])).length;
+      if (zonder > 0) fouten.push(`${les.naam}: ${zonder} veld(en) zonder stacked`);
+      if (/^hide_table_of_contents: true$/m.test(les.inhoud))
+        fouten.push(`${les.naam}: TOC staat nog uit`);
+    }
     expect(fouten).toEqual([]);
   });
 

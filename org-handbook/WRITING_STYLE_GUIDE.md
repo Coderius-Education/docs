@@ -27,7 +27,7 @@ sidebar_position: <getal>
 ```
 
 - `sidebar_position` bepaalt de volgorde in de sidebar.
-- De rechter inhoudsopgave (TOC) staat standaard aan en toont **alleen H2-koppen** (centraal ingesteld in `packages/shared/config`). Voeg dus géén `hide_table_of_contents` toe; structureer je pagina met `##`-secties zodat ze in de TOC verschijnen. **Uitzondering:** werkpagina's met oefenvelden (zoals de js-basics-lessen met `<CodeEditor>`) zetten `hide_table_of_contents: true`, zodat het editorveld de volle contentbreedte krijgt — de leerling werkt die pagina's toch van boven naar beneden.
+- De rechter inhoudsopgave (TOC) staat standaard aan en toont **alleen H2-koppen** (centraal ingesteld in `packages/shared/config`). Voeg dus géén `hide_table_of_contents` toe; structureer je pagina met `##`-secties zodat ze in de TOC verschijnen. Heeft een oefenveld meer breedte nodig, kies dan een gestapelde veldvorm (zoals `stacked` op de web-`CodeEditor`) in plaats van de TOC te verbergen.
 - Cheatsheets en losse referentiepagina's mogen `displayed_sidebar: null` en `hide_pagination: true` gebruiken.
 - Gebruik `sidebar_label` alleen als de paginatitel te lang is voor de sidebar.
 

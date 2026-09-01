@@ -22,6 +22,12 @@ interface CodeEditorProps {
   height?: string;
   livePreview?: boolean;
   debounceMs?: number;
+  /** Gestapeld: code bovenaan, uitvoer en console eronder over de volle
+   *  breedte (js-basics); zonder deze prop staan editor en preview naast
+   *  elkaar (html-css). */
+  stacked?: boolean;
+  /** Hoogte van het uitvoer+console-blok in gestapelde vorm. */
+  previewHeight?: string;
 }
 
 function CodeEditorInner({
@@ -31,6 +37,8 @@ function CodeEditorInner({
   height = '420px',
   livePreview = true,
   debounceMs = 600,
+  stacked = false,
+  previewHeight = '340px',
 }: CodeEditorProps) {
   const [activeTab, setActiveTab] = useState<Tab>('html');
   const [html, setHtml] = useState(initialHtml);
@@ -104,7 +112,7 @@ function CodeEditorInner({
   const visibleTabs: Tab[] = ['html', 'css', ...(initialJs !== '' ? ['javascript' as Tab] : [])];
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${stacked ? styles.containerStacked : ''}`}>
       <div className={styles.editorSide} style={{ height }}>
         <div className={styles.tabBar}>
           {visibleTabs.map((tab) => (
@@ -143,7 +151,7 @@ function CodeEditorInner({
           </Suspense>
         </div>
       </div>
-      <div className={styles.previewColumn} style={{ height }}>
+      <div className={styles.previewColumn} style={{ height: stacked ? previewHeight : height }}>
         <PreviewPane srcDoc={srcDoc} />
         {visibleTabs.includes('javascript') && (
           <div className={styles.consolePanel}>

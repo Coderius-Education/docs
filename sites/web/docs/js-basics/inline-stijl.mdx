@@ -1,7 +1,6 @@
 ---
 title: Inline stijl
 description: Met .style pas je CSS-eigenschappen aan vanuit JavaScript, met camelCase-namen.
-hide_table_of_contents: true
 ---
 
 import CodeEditor from '@site/src/components/CodeEditor';
@@ -92,6 +91,7 @@ De knoppen doen hetzelfde: ze passen `.style.color` aan op hetzelfde element. He
   initialCss={startCss}
   height="420px"
   livePreview={false}
+  stacked
 />
 
 ## Investigate
@@ -111,6 +111,7 @@ Voeg een knop "Groter" toe die de tekst groter maakt via `style.fontSize`.
   initialCss={startCss}
   height="420px"
   livePreview={false}
+  stacked
 />
 
 <details>
@@ -140,6 +141,7 @@ Maak een knop "Feest" die in één klik de tekst rood maakt én de achtergrond g
   initialCss={startCss}
   height="420px"
   livePreview={false}
+  stacked
 />
 
 <details>
@@ -171,6 +173,7 @@ Bouw vanaf een lege pagina een "stijl-mixer": een `<p>` met tekst en vier knoppe
   initialCss={makeCss}
   height="420px"
   livePreview={false}
+  stacked
 />
 
 <details>

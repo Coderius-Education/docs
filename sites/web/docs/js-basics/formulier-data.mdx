@@ -1,7 +1,6 @@
 ---
 title: Formulier-data ophalen
 description: Met .value lees je uit wat de gebruiker in een formulierveld typt, en met Number() reken je ermee.
-hide_table_of_contents: true
 ---
 
 import CodeEditor from '@site/src/components/CodeEditor';
@@ -135,6 +134,7 @@ const bericht = 'Welkom, ' + naam + '.';
   initialJs={startJs}
   height="540px"
   livePreview={false}
+  stacked
 />
 
 :::tip[Waarom `type="button"` op de knop?]
@@ -159,6 +159,7 @@ Voeg een derde veld "Hobby" toe en breid de zin uit: "Hoi (naam). Over 10 jaar b
   initialJs={startJs}
   height="540px"
   livePreview={false}
+  stacked
 />
 
 <details>
@@ -202,6 +203,7 @@ Voeg een `<select>` toe met de opties ochtend, middag en avond. Kies de begroeti
   initialJs={startJs}
   height="540px"
   livePreview={false}
+  stacked
 />
 
 <details>
@@ -255,6 +257,7 @@ Bouw de rekenmachine af: twee number-velden staan klaar, met een Bereken-knop. T
   initialJs={makeJs}
   height="540px"
   livePreview={false}
+  stacked
 />
 
 <details>
