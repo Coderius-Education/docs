@@ -85,3 +85,11 @@ In Linux/Kali kun je de MD5-hash van een getal berekenen met: `echo -n "3" | md5
 
 Lukt de ontcijfering niet in CrackStation? Probeer een andere online MD5-decryptor of bereken `md5(1)` zelf en vergelijk.
 :::
+
+## 6. Er gaat iets mis...
+
+Je berekent de hash met `echo "3" | md5sum` en stelt die in als cookie, maar de server herkent je sessie niet. Toch is `3` het juiste getal.
+
+Het probleem zit in een onzichtbaar teken. `echo "3"` zet niet alleen de `3` maar ook een regeleinde (`\n`) op de uitvoer. Je hasht dus in werkelijkheid `"3\n"` en dat geeft een compleet andere MD5 dan PHP's `md5("3")`, die alleen het cijfer hasht.
+
+Gebruik daarom `echo -n "3" | md5sum`: de `-n` laat het regeleinde weg. Nu krijg je `eccbc87e4b5ce2fe28308fd9f2a7baf3` — dezelfde hash die de server verwacht. Eén nietig `\n`-verschil is genoeg om alles te laten mislukken.

@@ -82,3 +82,11 @@ Je kunt via de instellingen van je browser JavaScript tijdelijk uitschakelen (of
 
 Lukt het niet? Controleer of JavaScript daadwerkelijk is uitgeschakeld in je browserinstellingen en of je de `value` correct hebt aangepast vóórdat je op Submit klikte.
 :::
+
+## 6. Er gaat iets mis...
+
+Je past met F12 de `value` van de dropdown aan naar `1`, klikt op Submit, en er springt een pop-up op: `Je mag dit account niet bekijken!` Het verzoek wordt niet verstuurd.
+
+Dit is precies de valkuil van dit level. De `value` veranderen is niet genoeg, want het `onsubmit`-script draait nog steeds en vergelijkt jouw keuze met je eigen ID vóórdat het formulier vertrekt. Zolang JavaScript aanstaat, blokkeert die controle je.
+
+De volgorde is dus andersom dan je zou denken: schakel **eerst** JavaScript uit (via je browserinstellingen of een extensie), pas **daarna** de `value` aan, en verstuur dan. Zonder actieve JavaScript is er niets meer dat de submit tegenhoudt — de server zelf controleert immers niks.

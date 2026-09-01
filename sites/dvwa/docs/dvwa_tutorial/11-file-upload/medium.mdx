@@ -89,3 +89,11 @@ In de Browser Developer Tools (F12) kun je via het tabblad **Network** een verzo
 
 Lukt het niet? In het embedded lab is header-aanpassing beperkt. Voor de volledige test heb je een lokale DVWA-installatie en Burp Suite nodig.
 :::
+
+## 6. Er gaat iets mis...
+
+Je opent F12, gaat naar het tabblad **Network**, verandert daar de `Content-Type` naar `image/jpeg`, verstuurt... en de server weigert `shell.php` alsnog. Wat ging er mis?
+
+Het Network-tabblad *laat* het verzoek alleen zien — het onderschept het niet. Op het moment dat jij de header in Network ziet staan, is het verzoek allang verzonden. Je bewerkt een kopie achteraf, niet het echte verzoek.
+
+Om de header te veranderen vóórdat hij de server bereikt, heb je een proxy nodig die het verzoek onderschept en vasthoudt: Burp Suite (of de "Edit and Resend"-functie in Firefox). Daarom staat in de controle dat je hiervoor een lokale DVWA-installatie gebruikt — het onderscheppen zit in het gereedschap, niet in het Network-tabblad.

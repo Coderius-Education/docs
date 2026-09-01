@@ -83,3 +83,11 @@ Zoek in de ge-de-obfusceerde code naar een functie die een token berekent. In ve
 
 Werkt de Console niet in het lab? Probeer het in een lokale DVWA-installatie met volledige toegang tot F12.
 :::
+
+## 6. Er gaat iets mis...
+
+Je hebt de code ge-"Pretty Print", je roept in de Console `do_something("success")` aan, en je krijgt: `Uncaught ReferenceError: do_something is not defined`.
+
+De functienaam `do_something` is een voorbeeld — na obfuscatie of minificatie heet de functie in jouw DVWA-versie misschien `a`, `_0x3f2a` of iets anders. De obfuscator hernoemt namen juist om je te misleiden. Je moet dus in de ge-de-obfusceerde broncode zélf de functie opzoeken die het token berekent en díe naam gebruiken, niet blind `do_something` overtypen.
+
+En let op het tweede deel: het token in het verborgen veld moet kloppen én in het zichtbare invoerveld moet nog steeds `success` staan. Roep je alleen de functie aan maar laat je het tekstveld leeg, dan matcht het token wel maar de invoer niet.

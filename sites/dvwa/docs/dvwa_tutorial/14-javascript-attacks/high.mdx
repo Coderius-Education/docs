@@ -82,3 +82,11 @@ Als alternatief: open de Console en typ:
 
 Werkt het niet? Zorg dat je echt het veld verlaat door buiten het invoerelement te klikken, niet direct op Submit.
 :::
+
+## 6. Er gaat iets mis...
+
+Je typt `success` in het veld, klikt meteen op Submit, en krijgt "Invalid Token." Precies zoals in het Low-level dacht je dit zo te kraken.
+
+Op dit level wordt het token niet berekend op het moment dat je op Submit klikt, maar via het `onblur`-event: het vuurt af zodra het invoerveld zijn focus **verliest**. Klik je direct van het tekstveld naar de Submit-knop, dan is dat volgens de browser nog vrijwel hetzelfde moment — het token in het verborgen veld is nog de oude, ongeldige waarde.
+
+De oplossing is een tussenstap: type `success`, klik dan eerst ergens in het lege gebied van de pagina (buiten het veld) zodat `onblur` afvuurt en de browser het token bijwerkt, en klik daarna pas op Submit. Je hoeft de cryptografie niet te snappen — je moet alleen het juiste moment raken waarop de browser het werk voor je doet.

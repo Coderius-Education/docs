@@ -82,3 +82,9 @@ Client-side beveiligingen kunnen worden uitgeschakeld. Gebruik F12 (Developer To
 
 Lukt het niet? Controleer of je het juiste HTML-element hebt aangepast (het `<input name="txtName">` veld, niet het berichtveld).
 :::
+
+## 6. Er gaat iets mis...
+
+Je hebt de `maxlength` opgerekt, typt netjes `<script>alert(1)</script>` in kleine letters, klikt Submit, en er gebeurt niets. Geen fout, geen pop-up, alsof je bericht verdween. Dat klopt bijna: het server-filter knipt exact de kleine letters `<script>` uit je invoer, dus wat overblijft is onschuldige tekst.
+
+Het filter is hoofdlettergevoelig en kijkt alleen naar `<script`. Schrijf je `<SCRIPT>` (of `<ScRiPt>`), dan herkent het filter het niet en laat het je code staan. De browser trekt zich niets aan van hoofdletters in tagnamen, dus de pop-up verschijnt alsnog.

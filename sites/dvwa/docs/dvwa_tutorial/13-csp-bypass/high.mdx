@@ -98,3 +98,11 @@ De browser laadt dit script van `self` (toegestaan door CSP), voert `alert("Hack
 
 Geen pop-up? Controleer of je direct de JSONP-URL kunt aanpassen in een lokale DVWA-installatie.
 :::
+
+## 6. Er gaat iets mis...
+
+Je zet `?callback=alert(1)` in de JSONP-URL, maar in plaats van een nette pop-up krijg je een JavaScript-fout in de Console — of er gebeurt niets.
+
+Kijk naar wat de server letterlijk teruggeeft. Achter jouw callback plakt `jsonp.php` altijd `({"answer":"15"});`. Met `callback=alert(1)` wordt de response `alert(1)({"answer":"15"});`. De browser roept `alert(1)` aan, krijgt `undefined` terug, en probeert dat vervolgens als functie aan te roepen met het object — dat geeft een TypeError, en jouw aanval loopt vast.
+
+Neutraliseer daarom de rest van de regel met een commentaar: `?callback=alert("Hacked");//`. De response wordt dan `alert("Hacked");//({"answer":"15"});` — de `//` zet alles erachter buiten werking, en alleen jouw `alert` draait.

@@ -86,3 +86,11 @@ De browser controleert de nonce, ziet dat die exact overeenkomt met de waarde in
 
 Werkt het niet? Controleer of je de nonce-waarde precies hebt overgetypt, inclusief de `=` aan het einde.
 :::
+
+## 6. Er gaat iets mis...
+
+Deze les kan een verkeerde les worden. Je ziet dat je de nonce zo kunt kopiëren en denkt: "een nonce is dus waardeloos." Dat is de verkeerde conclusie.
+
+Een nonce werkt prima — *als* de server bij elke paginaweergave een nieuwe, willekeurige waarde genereert. Dan kent de aanvaller de nonce van jouw pagina niet, en de browser blokkeert zijn geïnjecteerde script omdat het juiste attribuut ontbreekt. De fout in dit level is niet de nonce zelf, maar dat de ontwikkelaar hem **hardcoded** heeft: hij verandert nooit, dus iedereen die de broncode leest kent hem.
+
+Onthoud het onderscheid: de aanval slaagt hier door een implementatiefout (een vaste nonce), niet doordat het idee van een nonce niet deugt. Een correct wisselende nonce had je hier tegengehouden.

@@ -82,3 +82,11 @@ Maak een URL zoals: `?password_new=12345&password_conf=12345&Change=Change`. In 
 
 Werkt de URL niet? Controleer of de parameters exact overeenkomen met de veldnamen in de URL en of je ingelogd bent in DVWA.
 :::
+
+## 6. Er gaat iets mis...
+
+Je bouwt je kwaadaardige URL, klikt erop terwijl je ingelogd bent, en... het wachtwoord verandert niet. In plaats daarvan zie je "Passwords did not match."
+
+Kijk nog eens naar je twee parameters. De server verandert het wachtwoord alleen als `password_new` en `password_conf` exact aan elkaar gelijk zijn — net als bij een normaal wijzigformulier waar je het wachtwoord twee keer moet intypen. Zet je `password_new=hacked` maar `password_conf=hackd`, dan weigert de server. Zorg dus dat beide waarden identiek zijn: `?password_new=12345&password_conf=12345&Change=Change`.
+
+En vergeet `Change=Change` niet. Dat is de "knop" van het formulier. Laat je hem weg, dan denkt de server dat je alleen de pagina bekijkt en gebeurt er niets.

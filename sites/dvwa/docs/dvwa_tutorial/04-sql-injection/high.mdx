@@ -96,3 +96,11 @@ Alles na `#` (inclusief `LIMIT 1`) wordt genegeerd. Alle 5 gebruikers verschijne
 
 Zie je maar één resultaat? Controleer of je `#` aan het einde van je payload hebt en er geen extra spatie vóór het `#` staat.
 :::
+
+## 6. Er gaat iets mis...
+
+Je weet dat je `LIMIT 1` moet uitschakelen met een commentaar. Je probeert `1' OR '1'='1' --` en... er gebeurt niets, of je krijgt een SQL-fout. Terwijl je het toch net als in de uitleg doet.
+
+In MySQL is `--` alléén een commentaar als er een **spatie** achter staat: `-- ` (streepje, streepje, spatie). Zonder die spatie ziet MySQL geen commentaar maar twee minnetjes midden in de query, en loopt de parser vast. Omdat een spatie aan het einde van een invoerveld makkelijk wegvalt, kiezen veel mensen daarom liever `#`: dat werkt zonder spatie erachter.
+
+Gebruik dus `1' OR '1'='1' #` (of `1' OR '1'='1' -- ` mét de afsluitende spatie). En zet geen extra spatie vóór het `#`, want dan komt het teken op de verkeerde plek in de query terecht.

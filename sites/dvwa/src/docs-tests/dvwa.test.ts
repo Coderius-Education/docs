@@ -89,6 +89,14 @@ describe('DVWA-cursus', () => {
     expect(fouten).toEqual([]);
   });
 
+  it('elke low/medium/high-les sluit af met een "Er gaat iets mis"-blok', () => {
+    const fouten = lessen
+      .filter((l) => /\/(low|medium|high)\.mdx$/.test(l.naam))
+      .filter((l) => !/^## \d+\. Er gaat iets mis/m.test(l.inhoud))
+      .map((l) => l.naam);
+    expect(fouten).toEqual([]);
+  });
+
   it('de genummerde secties lopen op vanaf 1 zonder gaten', () => {
     const fouten: string[] = [];
     for (const les of lessen) {

@@ -77,3 +77,9 @@ Je browser stuurt nu het valse ID naar de server. Omdat er op de backend nog alt
 
 Zie je nog steeds je eigen profiel? Controleer of je de waarde van het `<option>` element correct hebt aangepast en op Enter hebt gedrukt vóórdat je op Submit klikte.
 :::
+
+## 6. Er gaat iets mis...
+
+Je verandert in de Inspector de `value` naar `1`, maar de dropdown op de pagina toont nog steeds jouw eigen naam. Het lijkt of er niets gebeurt. Toch werkt het: de zichtbare tekst van een `<option>` en zijn `value` zijn twee verschillende dingen. Jij paste alleen de verborgen `value` aan, en dát is wat de browser bij Submit naar de server stuurt. Kijk dus niet naar de dropdown-tekst, maar naar het profiel dat ná Submit verschijnt.
+
+Een tweede valkuil: als je na het aanpassen eerst de pagina ververst (F5) in plaats van op Submit te klikken, gooit de browser je wijziging weg en begin je opnieuw. Pas de `value` aan en klik meteen op Submit.

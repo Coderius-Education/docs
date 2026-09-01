@@ -79,3 +79,11 @@ Door `1' AND SLEEP(5) #` in te sturen, breek je uit de string (met de enkele quo
 
 Werkt het niet? Controleer of je de enkele aanhalingstekens correct hebt getypt en of het hekje `#` aan het einde staat zonder extra spaties erna.
 :::
+
+## 6. Er gaat iets mis...
+
+Je verandert de cookie-waarde in F12 → **Application** → **Cookies** naar `1' AND SLEEP(5) #`, wacht... en de pagina reageert nog steeds direct. Geen vertraging van vijf seconden.
+
+Het aanpassen van een cookie doet op zichzelf niets. De server leest de cookie pas als er een nieuw verzoek naar toe gaat. Zolang je alleen de waarde in het tabblad wijzigt maar de pagina niet opnieuw laadt of het formulier niet opnieuw verstuurt, blijft de server je oude verzoek gebruiken en voert hij je payload nooit uit.
+
+Wijzig dus de cookie én trigger daarna een nieuw verzoek (herlaad de pagina of druk opnieuw op Submit). Reageert de pagina dan vijf seconden trager, dan heb je bewezen dat de database jouw `SLEEP(5)` uitvoert — ook via dit indirecte kanaal.

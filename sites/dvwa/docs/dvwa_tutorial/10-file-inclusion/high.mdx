@@ -86,3 +86,11 @@ Omdat de string netjes begint met "file", gooit het beveiligingsfilter het niet 
 
 Werkt het niet? Controleer of je drie slashes gebruikt: `file:///etc/passwd` (twee na `file:` en één voor het absolute pad).
 :::
+
+## 6. Er gaat iets mis...
+
+Je wilt `/etc/passwd` uitlezen en probeert `?page=/etc/passwd`. Resultaat: `ERROR: File not found.` Terwijl je toch het volledige pad opgeeft.
+
+Het filter eist dat je invoer begint met het woord `file` (of exact `include.php` is). Een pad als `/etc/passwd` begint met een `/` en valt dus meteen af — net als `../../etc/passwd`. De whitelist doet hier zijn werk, zoals bedoeld.
+
+De truc is dat het `file://`-protocol óók met die vier letters begint. Schrijf daarom `?page=file:///etc/passwd`: de string opent met `file`, dus het filter laat hem door, en `include()` leest het pad via het file-protocol uit. Let op de drie slashes — `file://` (het protocol) plus de `/` van het absolute pad.

@@ -74,3 +74,9 @@ Selecteer deze in de webpagina en klik Submit. De browser wacht nu 5 volle secon
 
 Zie je geen vertraging? Controleer of je de waarde correct hebt aangepast in de inspector en of je op Submit hebt geklikt ná het wijzigen.
 :::
+
+## 6. Er gaat iets mis...
+
+Je verwacht een lijst met gegevens, zoals bij gewone SQL-injectie, maar die komt niet. Dat hoort zo: dit is *blinde* injectie. De pagina toont nooit data; je enige signaal is de tijd. Kijk dus naar de laadduur, niet naar de inhoud.
+
+Krijg je geen vertraging terwijl je payload klopt? Dan koos je waarschijnlijk een ID dat geen rij oplevert. `SLEEP(5)` draait per gevonden rij: `1 AND SLEEP(5)` slaapt alleen als ID 1 bestaat. Bij een niet-bestaand ID vindt de database niets, en dus slaapt er ook niets.

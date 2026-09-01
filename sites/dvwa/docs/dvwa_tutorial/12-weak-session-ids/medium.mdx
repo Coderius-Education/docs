@@ -82,3 +82,11 @@ Gebruik een Epoch Converter op internet om de huidige tijd om te zetten naar een
 
 Zie je geen grote getallen? Controleer of het security level op **medium** staat.
 :::
+
+## 6. Er gaat iets mis...
+
+Je zoekt de huidige tijd op via een Epoch Converter, plakt het getal in je cookie, en de server accepteert je sessie niet. Terwijl je toch de juiste tijd hebt gepakt.
+
+Tel de cijfers. PHP's `time()` geeft **seconden** sinds 1970 — een getal van 10 cijfers, zoals `1714571020`. Veel converters (en JavaScript's `Date.now()`) geven **milliseconden**: 13 cijfers, zoals `1714571020000`. Die drie extra nullen maken jouw cookie duizend keer te groot en hij matcht nooit.
+
+Gebruik dus de tien-cijferige (seconden) waarde. En bedenk: de kans dat je precies de seconde raakt waarop iemand inlogde is klein — daarom probeert een echte aanval een reeks timestamps rond de inlogtijd, niet één enkel getal.
