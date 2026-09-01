@@ -30,8 +30,8 @@ const sidebars = {
     {
       type: 'category',
       label: 'Onderzoek opzetten',
-      link: {type: 'doc', id: 'opzet/keuzedriehoek'},
       items: [
+        'opzet/keuzedriehoek',
         {
           type: 'category',
           label: 'Functies',
