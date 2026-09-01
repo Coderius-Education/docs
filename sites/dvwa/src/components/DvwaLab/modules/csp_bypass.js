@@ -34,7 +34,7 @@ $message = '';
 if (isset($_POST['include'])) {
     $url = $_POST['include'];
     $message = '<div style="padding:10px;background:#16213e;border-radius:4px;margin:10px 0">';
-    $message .= 'CSP header: <code>script-src \'self\' \'unsafe-inline\'</code><br>';
+    $message .= 'CSP header: <code>script-src \\'self\\' \\'unsafe-inline\\'</code><br>';
     $message .= 'Externe URL geblokkeerd, maar inline scripts werken nog: <code>&lt;script&gt;alert(1)&lt;/script&gt;</code>';
     $message .= '</div>';
 }
@@ -60,7 +60,7 @@ $nonce = base64_encode(random_bytes(16));
 $message = '';
 if (isset($_POST['include'])) {
     $message = '<div style="padding:10px;background:#16213e;border-radius:4px;margin:10px 0">';
-    $message .= 'CSP: <code>script-src \'nonce-' . $nonce . '\'</code><br>';
+    $message .= 'CSP: <code>script-src \\'nonce-' . $nonce . '\\'</code><br>';
     $message .= 'Alleen scripts met <code>nonce="' . $nonce . '"</code> worden uitgevoerd.';
     $message .= '</div>';
 }

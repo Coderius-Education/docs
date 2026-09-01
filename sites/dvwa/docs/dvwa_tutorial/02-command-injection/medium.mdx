@@ -4,6 +4,7 @@ sidebar_label: 'Medium'
 ---
 
 import LinuxTerminal from '@site/src/components/LinuxTerminal';
+import { Filters } from '@site/src/components/LinuxTerminal/commands';
 
 # Command Injection — Medium
 
@@ -30,7 +31,7 @@ Probeer je Low-payload in de terminal hieronder — de filter is actief en haalt
 
 <LinuxTerminal
   title="Command Injection — Medium (&& en ; gefilterd)"
-  filter={(input) => input.replace(/&&/g, '').replace(/;/g, '')}
+  filter={Filters.medium}
 />
 
 Wat zouden we kunnen gebruiken zodat de filter het mist, maar Linux toch doorgaat met het uitvoeren van ons tweede commando?
@@ -57,7 +58,7 @@ Probeer de `|` operator in de terminal hieronder om te bevestigen dat het werkt:
 
 <LinuxTerminal
   title="Command Injection — Medium (&& en ; gefilterd)"
-  filter={(input) => input.replace(/&&/g, '').replace(/;/g, '')}
+  filter={Filters.medium}
 />
 
 Werkt het? Probeer het nu op DVWA:

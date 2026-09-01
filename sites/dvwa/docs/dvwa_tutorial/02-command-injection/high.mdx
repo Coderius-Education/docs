@@ -4,6 +4,7 @@ sidebar_label: 'High'
 ---
 
 import LinuxTerminal from '@site/src/components/LinuxTerminal';
+import { Filters } from '@site/src/components/LinuxTerminal/commands';
 
 # Command Injection — High
 
@@ -53,14 +54,7 @@ Probeer de high-filter in de terminal hieronder. Merk op dat `| ` (met spatie) v
 
 <LinuxTerminal
   title="Command Injection — High (streng gefilterd)"
-  filter={(input) => {
-    let filtered = input;
-    filtered = filtered.replace(/&&/g, '');
-    filtered = filtered.replace(/;/g, '');
-    filtered = filtered.replace(/\|\| /g, '');
-    filtered = filtered.replace(/\| /g, '');
-    return filtered;
-  }}
+  filter={Filters.high}
 />
 
 ## 3. Modify & Make
