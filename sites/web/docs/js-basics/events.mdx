@@ -70,10 +70,6 @@ export const makeCss = `.kaart {
   cursor: pointer;
 }
 
-.kaart.actief {
-  background-color: gold;
-}
-
 p { font-size: 1.2rem; }`;
 
 export const makeJs = `// Schrijf hier je code
@@ -149,7 +145,7 @@ Bij het raken van de knop draait `muisErop` (via het `mouseover`-event) en komt 
 Experimenteer in het veld hierboven:
 
 - Vervang `'mouseover'` door `'click'` in de onderste regels. Wat verandert er aan het gedrag?
-- Zet per ongeluk haakjes achter de functienaam in een listener (`muisErop()`). Wat gebeurt er bij het laden, en wat bij het bewegen?
+- Verwijder de koppelregel van `muisWeg` (de onderste regel). Welke tekst blijft er staan als je de muis wegbeweegt?
 - Koppel `muisErop` óók aan het `'dblclick'`-event. Kan één functie bij twee events horen?
 
 ## Opdracht 1: Klik-listener erbij
@@ -225,7 +221,7 @@ document.getElementById('knop').addEventListener('click', telKlik);
 
 ## Opdracht 3: Speelkaart
 
-Bouw het gedrag van de speelkaart: bij `mouseover` krijgt de kaart de klasse `actief` (die staat al in de CSS), bij `mouseout` raakt hij hem weer kwijt, en elke `click` telt mee in de `<p id="teller">`. Schrijf drie benoemde functies en koppel elk aan zijn event.
+Bouw het gedrag van de speelkaart: bij `mouseover` kleurt de achtergrond van de kaart goud, bij `mouseout` verdwijnt die kleur weer, en elke `click` telt mee in de `<p id="teller">`. Schrijf drie benoemde functies en koppel elk aan zijn event.
 
 <CodeEditor
   initialHtml={makeHtml}
@@ -238,7 +234,7 @@ Bouw het gedrag van de speelkaart: bij `mouseover` krijgt de kaart de klasse `ac
 <details>
 <summary>Tip</summary>
 
-Drie functies, drie listeners op hetzelfde element (`getElementById('kaart')`). Voor de klasse gebruik je `classList.add` en `classList.remove` uit [Modern DOM](/docs/js-basics/modern-dom).
+Drie functies, drie listeners op hetzelfde element (`getElementById('kaart')`). De kleur zet je met `style.backgroundColor` uit [Inline stijl](/docs/js-basics/inline-stijl); een lege string (`''`) haalt hem weer weg.
 
 </details>
 
@@ -249,11 +245,11 @@ Drie functies, drie listeners op hetzelfde element (`getElementById('kaart')`). 
 let teller = 0;
 
 function maakActief() {
-  document.getElementById('kaart').classList.add('actief');
+  document.getElementById('kaart').style.backgroundColor = 'gold';
 }
 
 function maakGewoon() {
-  document.getElementById('kaart').classList.remove('actief');
+  document.getElementById('kaart').style.backgroundColor = '';
 }
 
 function telKlik() {
@@ -286,4 +282,4 @@ Geef de functie door **zonder haakjes**: `addEventListener('click', zegHoi)`.
 
 ---
 
-[← Modern DOM](/docs/js-basics/modern-dom) | [Loops →](/docs/js-basics/loops)
+[← Variabelen](/docs/js-basics/variabelen) | [prompt en alert →](/docs/js-basics/prompt-alert)

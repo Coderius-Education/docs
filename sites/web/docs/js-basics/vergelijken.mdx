@@ -18,7 +18,7 @@ export const startHtml = `<!DOCTYPE html>
 </head>
 <body>
   <p id="uitvoer">Klik op de knop.</p>
-  <button onclick="check()">Check</button>
+  <button id="knop">Check</button>
 </body>
 </html>`;
 
@@ -38,7 +38,9 @@ export const startJs = `function check() {
   const meerderjarig = leeftijd >= 18;
   document.getElementById('uitvoer').textContent = 'Meerderjarig: ' + meerderjarig;
   console.log('leeftijd is', leeftijd, 'en meerderjarig is', meerderjarig);
-}`;
+}
+
+document.getElementById('knop').addEventListener('click', check);`;
 
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
@@ -50,7 +52,7 @@ export const makeHtml = `<!DOCTYPE html>
 </head>
 <body>
   <p id="uitvoer">Klik op de knop.</p>
-  <button onclick="checkKorting()">Check korting</button>
+  <button id="knop">Check korting</button>
 </body>
 </html>`;
 
@@ -162,6 +164,8 @@ function check() {
   document.getElementById('uitvoer').textContent = 'Brommer rijden: ' + magBrommerRijden;
   console.log('leeftijd is', leeftijd, 'en de check geeft', magBrommerRijden);
 }
+
+document.getElementById('knop').addEventListener('click', check);
 ```
 
 </details>
@@ -194,6 +198,8 @@ function check() {
   const klopt = invoer === 'open sesam';
   document.getElementById('uitvoer').textContent = 'Code klopt: ' + klopt;
 }
+
+document.getElementById('knop').addEventListener('click', check);
 ```
 
 Let op hoofdletters: `'Open Sesam'` is een andere string dan `'open sesam'`, dus de vergelijking geeft dan `false`.
@@ -215,7 +221,7 @@ Bouw een kortingschecker voor een zwembad: kinderen onder 12 én 65-plussers kri
 <details>
 <summary>Tip</summary>
 
-"Onder 12 óf 65-plus" is één boolean met `||` erin. De knop roept `checkKorting()` aan.
+"Onder 12 óf 65-plus" is één boolean met `||` erin. Schrijf een functie `checkKorting` en koppel hem met `addEventListener` aan de knop.
 
 </details>
 
@@ -230,6 +236,8 @@ function checkKorting() {
   console.log('onder 12:', leeftijd < 12);
   console.log('65-plus:', leeftijd >= 65);
 }
+
+document.getElementById('knop').addEventListener('click', checkKorting);
 ```
 
 </details>

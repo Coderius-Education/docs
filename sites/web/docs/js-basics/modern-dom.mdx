@@ -21,7 +21,7 @@ export const startHtml = `<!DOCTYPE html>
     <h2>Klik om te markeren</h2>
     <p>Klik op de knop om deze kaart te markeren.</p>
   </div>
-  <button onclick="toggle()">Toggle markering</button>
+  <button id="knop">Toggle markering</button>
 </body>
 </html>`;
 
@@ -43,7 +43,9 @@ button { padding: 10px 20px; cursor: pointer; }`;
 export const startJs = `function toggle() {
   const kaart = document.querySelector('.kaart');
   kaart.classList.toggle('actief');
-}`;
+}
+
+document.getElementById('knop').addEventListener('click', toggle);`;
 
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
@@ -58,8 +60,8 @@ export const makeHtml = `<!DOCTYPE html>
     <h2>Wiskunde afmaken</h2>
     <p>Paragraaf 3.2, opgave 1 tot en met 8.</p>
   </div>
-  <button onclick="markeerKlaar()">Klaar</button>
-  <button onclick="markeerBelangrijk()">Belangrijk</button>
+  <button id="klaarKnop">Klaar</button>
+  <button id="belangrijkKnop">Belangrijk</button>
 </body>
 </html>`;
 
@@ -179,7 +181,7 @@ Voeg een tweede knop toe die de klasse `actief` **verwijdert** (alleen verwijder
 <details>
 <summary>Tip</summary>
 
-Een aparte functie met `classList.remove('actief')`, aangeroepen door een eigen knop.
+Een aparte functie met `classList.remove('actief')`, gekoppeld aan een eigen knop met een eigen `id`.
 
 </details>
 
@@ -188,7 +190,7 @@ Een aparte functie met `classList.remove('actief')`, aangeroepen door een eigen 
 
 HTML:
 ```html
-<button onclick="reset()">Reset</button>
+<button id="resetKnop">Reset</button>
 ```
 
 script.js:
@@ -196,6 +198,8 @@ script.js:
 function reset() {
   document.querySelector('.kaart').classList.remove('actief');
 }
+
+document.getElementById('resetKnop').addEventListener('click', reset);
 ```
 
 </details>
@@ -224,7 +228,7 @@ Ook `'body'` is een geldige selector. De CSS-klasse schrijf je als `body.donker 
 
 HTML:
 ```html
-<button onclick="nachtmodus()">Nachtmodus</button>
+<button id="nachtKnop">Nachtmodus</button>
 ```
 
 CSS-toevoeging:
@@ -240,6 +244,8 @@ script.js:
 function nachtmodus() {
   document.querySelector('body').classList.toggle('donker');
 }
+
+document.getElementById('nachtKnop').addEventListener('click', nachtmodus);
 ```
 
 Eén toggle, en alles wat in de klasse staat schakelt tegelijk mee — dat is de winst ten opzichte van losse `.style`-regels.
@@ -261,7 +267,7 @@ Bouw een takenkaartje af. De kaart staat al klaar, met twee knoppen: "Klaar" tog
 <details>
 <summary>Tip</summary>
 
-De knoppen roepen `markeerKlaar()` en `markeerBelangrijk()` aan. Doorstrepen doe je in CSS met `text-decoration: line-through;`. De twee klassen mogen tegelijk aan staan.
+Schrijf twee functies en koppel ze met `addEventListener` aan de knoppen (`klaarKnop` en `belangrijkKnop`). Doorstrepen doe je in CSS met `text-decoration: line-through;`. De twee klassen mogen tegelijk aan staan.
 
 </details>
 
@@ -289,6 +295,9 @@ function markeerKlaar() {
 function markeerBelangrijk() {
   document.querySelector('.kaart').classList.toggle('belangrijk');
 }
+
+document.getElementById('klaarKnop').addEventListener('click', markeerKlaar);
+document.getElementById('belangrijkKnop').addEventListener('click', markeerBelangrijk);
 ```
 
 </details>
@@ -319,4 +328,4 @@ Hetzelfde geldt voor `getElementById`: ook die geeft `null` bij een onbekend `id
 
 ---
 
-[← Beslissingen met if/else](/docs/js-basics/if-else) | [Events →](/docs/js-basics/events)
+[← Beslissingen met if/else](/docs/js-basics/if-else) | [Loops →](/docs/js-basics/loops)

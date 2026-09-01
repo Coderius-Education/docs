@@ -17,7 +17,7 @@ export const startHtml = `<!DOCTYPE html>
   <script src="script.js" defer></script>
 </head>
 <body>
-  <button onclick="vraagNaam()">Vraag mijn naam</button>
+  <button id="knop">Vraag mijn naam</button>
   <p id="uitvoer"></p>
 </body>
 </html>`;
@@ -29,7 +29,9 @@ export const startJs = `function vraagNaam() {
   const naam = prompt('Hoe heet je?');
   alert('Hallo ' + naam + '.');
   document.getElementById('uitvoer').textContent = 'Welkom, ' + naam + '.';
-}`;
+}
+
+document.getElementById('knop').addEventListener('click', vraagNaam);`;
 
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
@@ -40,7 +42,7 @@ export const makeHtml = `<!DOCTYPE html>
   <script src="script.js" defer></script>
 </head>
 <body>
-  <button onclick="maakVerhaal()">Maak mijn verhaal</button>
+  <button id="knop">Maak mijn verhaal</button>
   <p id="verhaal"></p>
 </body>
 </html>`;
@@ -134,7 +136,7 @@ Je hoeft alleen teksten aan te passen: de vraag in `prompt(...)`, de zin die je 
 
 HTML:
 ```html
-<button onclick="vraagNaam()">Vraag mijn kleur</button>
+<button id="knop">Vraag mijn kleur</button>
 ```
 
 script.js:
@@ -144,9 +146,11 @@ function vraagNaam() {
   alert('Mooie kleur.');
   document.getElementById('uitvoer').textContent = 'Mooie kleur, ' + kleur + '.';
 }
+
+document.getElementById('knop').addEventListener('click', vraagNaam);
 ```
 
-De functienaam mag blijven; je mag hem ook hernoemen naar `vraagKleur`, als je hem dan óók in de `onclick` aanpast.
+De functienaam mag blijven; je mag hem ook hernoemen naar `vraagKleur`, als je hem dan óók in de koppelregel onderaan aanpast.
 
 </details>
 
@@ -179,6 +183,8 @@ function vraagNaam() {
   document.getElementById('uitvoer').textContent =
     'Ik ben ' + naam + ' en ik hou van ' + hobby + '.';
 }
+
+document.getElementById('knop').addEventListener('click', vraagNaam);
 ```
 
 </details>
@@ -198,7 +204,7 @@ Bouw een verhaaltjesmachine: vraag met drie prompts om een naam, een dier en een
 <details>
 <summary>Tip</summary>
 
-De knop roept `maakVerhaal()` aan. Drie prompts, drie variabelen, en één lange geplakte zin naar `textContent`.
+Schrijf een functie `maakVerhaal` en koppel hem met `addEventListener` aan de knop. Drie prompts, drie variabelen, en één lange geplakte zin naar `textContent`.
 
 </details>
 
@@ -214,6 +220,8 @@ function maakVerhaal() {
     naam + ' fietste naar ' + plaats + ' en kwam daar een pratende ' + dier + ' tegen.';
   alert('Je verhaal staat klaar.');
 }
+
+document.getElementById('knop').addEventListener('click', maakVerhaal);
 ```
 
 </details>
@@ -234,4 +242,4 @@ Tussen elk stuk tekst en elke variabele hoort een `+`. Zonder die plus begrijpt 
 
 ---
 
-[← Variabelen](/docs/js-basics/variabelen) | [Waarden en operatoren →](/docs/js-basics/operatoren-types)
+[← Events](/docs/js-basics/events) | [Waarden en operatoren →](/docs/js-basics/operatoren-types)

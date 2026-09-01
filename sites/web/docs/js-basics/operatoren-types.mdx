@@ -18,7 +18,7 @@ export const startHtml = `<!DOCTYPE html>
 </head>
 <body>
   <p id="uitvoer">Klik op de knop om te rekenen.</p>
-  <button onclick="bereken()">Bereken</button>
+  <button id="knop">Bereken</button>
 </body>
 </html>`;
 
@@ -40,7 +40,9 @@ export const startJs = `function bereken() {
   document.getElementById('uitvoer').textContent = 'Totaal: ' + totaal + ' euro';
   console.log('Prijs is een', typeof prijs);
   console.log('Totaal is een', typeof totaal);
-}`;
+}
+
+document.getElementById('knop').addEventListener('click', bereken);`;
 
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
@@ -53,7 +55,7 @@ export const makeHtml = `<!DOCTYPE html>
 <body>
   <p id="regel"></p>
   <p id="totaal"></p>
-  <button onclick="maakBon()">Maak de bon</button>
+  <button id="knop">Maak de bon</button>
 </body>
 </html>`;
 
@@ -193,6 +195,8 @@ function bereken() {
   document.getElementById('uitvoer').textContent =
     'In ' + weken + ' weken spaar je ' + totaal + ' euro.';
 }
+
+document.getElementById('knop').addEventListener('click', bereken);
 ```
 
 </details>
@@ -225,6 +229,8 @@ function bereken() {
   const b = Number(prompt('Tweede getal:'));
   document.getElementById('uitvoer').textContent = 'Som: ' + (a + b);
 }
+
+document.getElementById('knop').addEventListener('click', bereken);
 ```
 
 De haakjes om `a + b` zijn nodig: anders plakt de eerste `+` het getal `a` al aan de string, en gaat de tweede `+` verder met plakken.
@@ -246,7 +252,7 @@ Bouw een kassabon-maker. Vraag met prompts om een artikelnaam, een prijs en een 
 <details>
 <summary>Tip</summary>
 
-De knop roept `maakBon()` aan. De artikelnaam blijft een string; alleen de prijs en het aantal gaan door `Number()`, want daar reken je mee.
+Schrijf een functie `maakBon` en koppel hem met `addEventListener` aan de knop. De artikelnaam blijft een string; alleen de prijs en het aantal gaan door `Number()`, want daar reken je mee.
 
 </details>
 
@@ -264,6 +270,8 @@ function maakBon() {
     aantal + ' × ' + artikel + ' voor ' + prijs + ' euro';
   document.getElementById('totaal').textContent = 'Totaal: ' + totaal + ' euro';
 }
+
+document.getElementById('knop').addEventListener('click', maakBon);
 ```
 
 </details>
