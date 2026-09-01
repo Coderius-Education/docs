@@ -72,7 +72,7 @@ export default function Quiz({vragen}) {
         <div className={styles.score}>
           <strong>
             Je hebt {goed} van de {vragen.length} goed
-            {goed === vragen.length ? ' — perfect! 🎉' : '.'}
+            {goed === vragen.length ? ' — perfect!' : '.'}
           </strong>
           <button type="button" className={styles.resetKnop} onClick={reset}>
             Opnieuw

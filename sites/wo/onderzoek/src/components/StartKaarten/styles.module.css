@@ -26,11 +26,6 @@
   border-color: var(--ifm-color-primary);
 }
 
-.icoon {
-  font-size: 1.7rem;
-  line-height: 1;
-}
-
 .titel {
   font-weight: 700;
   font-size: 1.05rem;

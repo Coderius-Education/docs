@@ -48,7 +48,7 @@ export default function TermenTrainer() {
     return (
       <div className={styles.trainer}>
         <p className={styles.klaar}>
-          🎉 Alle {alleIds.length} termen gekend! Je had {pogingen}{' '}
+          Alle {alleIds.length} termen gekend! Je had {pogingen}{' '}
           {pogingen === 1 ? 'poging' : 'pogingen'} nodig.
         </p>
         <button type="button" className={styles.primair} onClick={start}>

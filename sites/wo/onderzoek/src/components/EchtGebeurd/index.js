@@ -10,9 +10,6 @@ export default function EchtGebeurd({titel, jaar, children, linkUrl, linkTekst, 
   return (
     <div className={styles.kader}>
       <div className={styles.kop}>
-        <span className={styles.icoon} aria-hidden="true">
-          📜
-        </span>
         <span className={styles.label}>Echt gebeurd</span>
         <span className={styles.titel}>
           {titel}
@@ -22,7 +19,7 @@ export default function EchtGebeurd({titel, jaar, children, linkUrl, linkTekst, 
       <div className={styles.verhaal}>{children}</div>
       {(linkUrl || boek) && (
         <div className={styles.voet}>
-          {boek && <span className={styles.boek}>📖 {boek}</span>}
+          {boek && <span className={styles.boek}>Bron: {boek}</span>}
           {linkUrl && (
             <a href={linkUrl} target="_blank" rel="noopener noreferrer">
               {linkTekst || 'Verder lezen'} ↗
