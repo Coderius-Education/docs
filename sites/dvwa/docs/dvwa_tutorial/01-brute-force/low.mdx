@@ -11,6 +11,13 @@ import DvwaLab from '@site/src/components/DvwaLab';
 
 Welkom bij Brute Force. Zonder bescherming kan een automatische tool duizenden wachtwoorden per minuut proberen op een inlogformulier — net zo lang tot er één past.
 
+<Voorkennis
+  items={[
+    {to: '/docs/http_leren', label: 'GET-parameters en cookies in een verzoek'},
+    {to: '/docs/linux_leren', label: 'Werken in de Linux-terminal (voor Hydra)'},
+  ]}
+/>
+
 ## 1. Predict (Voorspel)
 
 Wanneer je inlogt op de DVWA Brute Force pagina, stuurt het formulier jouw gegevens via een **GET**-request. De URL ziet er na het klikken op Login zo uit:
@@ -59,7 +66,15 @@ Kijk ook via **F12** → **Elements** naar de `name`-attributen van de invoervel
 
 ## 4. Modify & Make (Aanpassen & Maken)
 
-Nu hebben we alle puzzelstukjes. Installeer Hydra en pak de woordenlijst uit in je Kali-terminal:
+Voordat je een tool inzet, doe je de aanval één keer met de hand. Ga terug naar het lab hierboven en probeer bij gebruikersnaam `admin` een paar veelgebruikte wachtwoorden: `admin`, `123456`, `password`. Let op de melding onder het formulier: bij een fout wachtwoord verschijnt de tekst `incorrect`, bij een goed wachtwoord verdwijnt die.
+
+Met de hand duizenden wachtwoorden proberen is ondoenlijk. Daarom automatiseer je het met **Hydra**: dat programma stuurt in hoog tempo verzoek na verzoek, elk met een ander wachtwoord uit een woordenlijst, en stopt zodra de melding `incorrect` wegblijft.
+
+:::caution[Labbeperking]
+Hydra draait niet in het browser-lab. Hiervoor heb je een [lokale Kali/DVWA-installatie](/docs/dvwa_installatie) nodig. Lees de stappen hieronder gerust door om te zien hoe het automatiseren werkt, ook als je ze nu nog niet uitvoert.
+:::
+
+Installeer Hydra en pak de woordenlijst uit in je Kali-terminal:
 
 ```bash
 sudo apt install hydra wordlists && sudo gunzip /usr/share/wordlists/rockyou.txt.gz

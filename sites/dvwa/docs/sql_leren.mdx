@@ -1,0 +1,102 @@
+---
+sidebar_position: 5
+---
+
+# SQL leren
+
+Twee van de uitdagingen draaien om **SQL Injection**. Om die aanval te snappen, moet je eerst weten hoe een website met een database praat. Dat gebeurt in een taal die **SQL** heet. Deze pagina laat je genoeg SQL zien om de labs te begrijpen — meer heb je niet nodig.
+
+<details>
+
+<summary>Waarom eerst SQL?</summary>
+
+Een inlogpagina, een productcatalogus, een zoekbalk: bijna elke website haalt zijn gegevens uit een database. De website stelt daarvoor een vraag in SQL. Bij SQL Injection verander je die vraag door slimme invoer. Dat kan alleen als je ziet hoe zo'n vraag is opgebouwd.
+
+</details>
+
+## Een tabel met gegevens
+
+Een database bewaart gegevens in **tabellen**: een raster met rijen en kolommen, zoals een spreadsheet. DVWA heeft bijvoorbeeld een tabel `users`:
+
+| user_id | first_name | last_name |
+|:---:|:---|:---|
+| 1 | admin | admin |
+| 2 | Gordon | Brown |
+| 3 | Hack | Me |
+
+Elke rij is één gebruiker. Elke kolom is één soort gegeven.
+
+## Een vraag stellen met `SELECT`
+
+Om gegevens op te halen, stuurt de website een **query**: een vraag in SQL. De belangrijkste ziet er zo uit:
+
+```sql
+SELECT first_name, last_name FROM users WHERE user_id = '1';
+```
+
+Lees hem van links naar rechts als een zin:
+
+- `SELECT first_name, last_name`: geef me de voornaam en de achternaam;
+- `FROM users`: uit de tabel `users`;
+- `WHERE user_id = '1'`: maar alleen voor de rij waar `user_id` gelijk is aan `1`.
+
+Het antwoord op deze query is één rij: `admin admin`.
+
+## Let op de aanhalingstekens
+
+De `1` in `user_id = '1'` staat tussen enkele aanhalingstekens (`'`). Die tekens vertellen de database: *alles hiertussen is een gewone waarde, geen commando.* De database zoekt dus naar de gebruiker met tekst `1`, en probeert die niet uit te voeren.
+
+Onthoud dit teken goed. Zodra een aanvaller zelf een `'` in de invoer kan zetten, kan hij de waarde vroegtijdig afsluiten en daarna zijn eigen SQL toevoegen. Dat is de kern van SQL Injection.
+
+## Waar het misgaat
+
+De website bouwt de query op door jouw invoer ertussen te plakken. Vereenvoudigd:
+
+```php
+$id = $_GET['id'];
+$query = "SELECT first_name, last_name FROM users WHERE user_id = '" . $id . "';";
+```
+
+Typ je `1` in, dan wordt de query `... WHERE user_id = '1';`. Netjes. Maar de database krijgt de invoer ongecontroleerd binnen. Wat er gebeurt als jij iets anders dan een braaf getal invult, onderzoek je in de opdracht hieronder — en daarna in de SQL Injection-labs zelf.
+
+## Opdracht: voorspel de uitkomst
+
+Kijk naar de tabel `users` bovenaan en de query-opbouw hierboven.
+
+### Vraag 1: welke rij geeft `WHERE user_id = '2'` terug?
+
+<details>
+
+<summary>Antwoord</summary>
+
+De rij met `user_id` 2: `Gordon Brown`. De `WHERE`-regel filtert op precies die ene waarde.
+
+</details>
+
+### Vraag 2: wat verwacht de database aan te treffen tussen de aanhalingstekens in `user_id = '...'`?
+
+<details>
+
+<summary>Tip</summary>
+
+Denk aan het verschil tussen een *waarde* en een *commando*.
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+Een gewone waarde, zoals een getal of een stuk tekst. De aanhalingstekens bakenen af waar die waarde begint en eindigt. Zet jij zelf een `'` in de invoer, dan sluit je de waarde eerder af dan de programmeur bedoelde — en staat de rest van de regel open voor jouw eigen SQL.
+
+</details>
+
+### Vraag 3: waarom is `$id` uit het codevoorbeeld gevaarlijk?
+
+<details>
+
+<summary>Antwoord</summary>
+
+Omdat de invoer rechtstreeks in de query wordt geplakt zonder controle. De database ziet geen verschil tussen wat de programmeur schreef en wat jij typte. Precies daarom kun je met de juiste invoer de vraag veranderen. Houd de [Cheatsheet](cheatsheet) erbij voor de SQL-begrippen die terugkomen.
+
+</details>

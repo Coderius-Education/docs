@@ -11,6 +11,12 @@ import DvwaLab from '@site/src/components/DvwaLab';
 
 Welkom bij Cross-Site Request Forgery (CSRF). Dit is een kwetsbaarheid waarbij een aanvaller een ingelogde gebruiker misleidt om zonder dat hij het weet ongewenste acties uit te voeren.
 
+<Voorkennis
+  items={[
+    {to: '/docs/http_leren', label: 'GET-parameters in een URL'},
+  ]}
+/>
+
 ## 1. Predict (Voorspel)
 
 Kijk naar de manier waarop een ingelogde gebruiker (zoals de admin) op het *Low* level zijn wachtwoord verandert. Wanneer hij op Opslaan klikt, ziet de URL er zo uit:
