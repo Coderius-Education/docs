@@ -98,6 +98,26 @@ const AFKORTINGEN = new Set([
   'FOUT',
   'GOED',
   'QUIT',
+  // Web-security: productnamen, protocol-methodes en aanvalsafkortingen
+  // (o.a. DVWA-cursus). Geen gewone woorden, dus veilig monorepo-breed.
+  'DVWA',
+  'CSRF',
+  'XSS',
+  'CSP',
+  'PHP',
+  'XML',
+  'GET',
+  'POST',
+  'MIME',
+  'JSONP',
+  'PHPSESSID',
+  'JPEG',
+  'IDOR',
+  'UNIX',
+  'REST',
+  'LFI',
+  'RFI',
+  'SSRF',
 ]);
 
 // ── De regels ───────────────────────────────────────────────────────────────

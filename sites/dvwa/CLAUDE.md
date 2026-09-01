@@ -8,4 +8,6 @@ Algemene schrijfstijl, didactiek en schrijfskills staan in `../CLAUDE.md` (en de
 - Interactieve labs draaien via `<DvwaLab module="..." level="..." />` (kwetsbare PHP client-side in een sandboxed iframe) of `<LinuxTerminal />` (command injection). Config per module staat in `src/components/DvwaLab/`.
 - Installatie-instructies in stappen (`## Stap 1`, `## Stap 2`, …), met screenshots in `static/img/`.
 - De low→impossible-ladder toont per level hoe de code veiliger wordt; impossible laat de veilige versie zien.
-- Benadruk dat alles in een eigen DVWA-installatie of het ingebouwde lab hoort, nooit op externe systemen.
+- Benadruk dat alles in een eigen DVWA-installatie of het ingebouwde lab hoort, nooit op externe systemen. Elke instap-pagina (de veertien low-lessen en `index.mdx`) draagt daarvoor het globaal geregistreerde `<Ethiek />`-blok.
+- `src/docs-tests/dvwa.test.ts` bewaakt de cursus: elke `<DvwaLab module level />` wijst naar een bestaande config in `src/components/DvwaLab/modules/` (een typefout rendert anders stil de "Module niet gevonden"-fallback terwijl de build groen blijft), elke low-les en de index dragen `<Ethiek />`, en de genummerde PRIMM-secties lopen op vanaf `## 1. Predict` zonder gaten.
+- Product- en aanvalsafkortingen (DVWA, CSRF, XSS, CSP, JSONP, IDOR, …) staan in de `AFKORTINGEN`-allowlist van `packages/shared/stijl.js`, zodat de stijlcheck ze niet als all-caps-fout markeert. Een letterlijke app-melding of SQL-keyword in lopende tekst hoort in `` `code` ``, niet als kale hoofdletters.
