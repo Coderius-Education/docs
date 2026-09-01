@@ -60,11 +60,19 @@ describe('DVWA-cursus', () => {
     const reg = await registry();
     const fouten: string[] = [];
     for (const les of lessen) {
-      for (const m of les.inhoud.matchAll(/<DvwaLab\s+module="([^"]+)"\s+level="([^"]+)"/g)) {
-        const [, module, level] = m;
-        if (!reg.has(module)) fouten.push(`${les.naam}: onbekende module "${module}"`);
-        else if (!reg.get(module)?.has(level))
+      // Pak de hele tag en lees de attributen los uit, zodat de vololgorde
+      // (module vóór level of andersom) de controle niet stil kan omzeilen.
+      for (const m of les.inhoud.matchAll(/<DvwaLab\b[\s\S]*?\/>/g)) {
+        const tag = m[0];
+        const module = tag.match(/\bmodule="([^"]+)"/)?.[1];
+        const level = tag.match(/\blevel="([^"]+)"/)?.[1];
+        if (!module || !level) {
+          fouten.push(`${les.naam}: <DvwaLab> mist module of level`);
+        } else if (!reg.has(module)) {
+          fouten.push(`${les.naam}: onbekende module "${module}"`);
+        } else if (!reg.get(module)?.has(level)) {
           fouten.push(`${les.naam}: module "${module}" heeft geen level "${level}"`);
+        }
       }
     }
     expect(fouten).toEqual([]);

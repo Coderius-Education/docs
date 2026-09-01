@@ -227,6 +227,30 @@ const GEVALLEN: Geval[] = [
     verwacht: { bevat: ['Jan'], bevatNiet: ['<script>'] },
   },
 
+  // --- XSS DOM (GET) — de payload komt in de inline-JS; hier asserten we de
+  //     door PHP geëchode waarde (de eigenlijke alert draait client-side). ---
+  {
+    module: 'xss_dom',
+    level: 'low',
+    naam: 'invoer belandt rauw in de inline-JS-variabele',
+    invoer: { default: '";alert(1)//' },
+    verwacht: { bevat: ['";alert(1)//'] },
+  },
+  {
+    module: 'xss_dom',
+    level: 'high',
+    naam: 'niet-gewhiteliste waarde valt terug op Nederlands',
+    invoer: { default: 'PWNED' },
+    verwacht: { bevat: ['Nederlands'], bevatNiet: ['PWNED'] },
+  },
+  {
+    module: 'xss_dom',
+    level: 'impossible',
+    naam: 'niet-gewhiteliste waarde wordt niet weerspiegeld',
+    invoer: { default: 'PWNED' },
+    verwacht: { bevatNiet: ['PWNED'] },
+  },
+
   // --- Authorization Bypass (GET) ---
   {
     module: 'authorization_bypass',

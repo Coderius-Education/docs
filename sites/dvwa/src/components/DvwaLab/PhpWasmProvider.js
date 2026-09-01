@@ -76,7 +76,6 @@ export function injectSuperglobals(code, getData, postData) {
     inject += "$_SERVER['REQUEST_METHOD'] = 'POST';\n";
   }
 
-  if (!inject) return code;
   return code.replace('<?php', `<?php\n${inject}`);
 }
 
