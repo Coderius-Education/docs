@@ -264,8 +264,9 @@ Gebruik `style.backgroundColor` voor de achtergrondkleur, en `''` om hem weer we
 <head>
   <script>
     function verander() {
-      document.getElementById('bericht').textContent = 'Hoi'; // Fout!
+      document.getElementById('bericht').textContent = 'Hoi';
     }
+    verander();   // Fout: dit draait meteen, de <p> bestaat nog niet
   </script>
 </head>
 <body>
@@ -273,7 +274,11 @@ Gebruik `style.backgroundColor` voor de achtergrondkleur, en `''` om hem weer we
 </body>
 ```
 
-Staat de `<script>`-tag in de `<head>` en roept de code een element direct aan (niet via een knop), dan bestaat de `<p>` nog niet: `getElementById` geeft `null` terug. Zet de `<script>`-tag altijd **onderaan** de `<body>`, na alle HTML-elementen. In [script.js](/docs/js-basics/scriptjs) zie je hoe je dit met `defer` ook vanuit de `<head>` oplost.
+```
+Uncaught TypeError: Cannot set properties of null (reading 'textContent')
+```
+
+De aanroep `verander();` draait zodra de browser de `<script>`-tag in de `<head>` tegenkomt — en op dat moment is de `<body>` nog niet geladen, dus `getElementById` geeft `null`. Alleen de functie *definiëren* in de `<head>` is niet erg (die draait pas later), maar code die meteen een element aanraakt wel. Zet de `<script>`-tag daarom **onderaan** de `<body>`, na alle HTML-elementen. In [script.js](/docs/js-basics/scriptjs) zie je hoe je dit met `defer` ook vanuit de `<head>` oplost.
 
 ---
 

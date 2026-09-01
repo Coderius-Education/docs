@@ -206,14 +206,17 @@ describe('oefenvelden per opdracht (web)', () => {
         const js = exportsMap.get(props.get('initialJs') ?? '') ?? '';
         const namen = [...html.matchAll(/onclick="(\w+)\(/g)].map((m) => m[1]);
         if (namen.length === 0) continue;
-        const antwoordJs = [...s.tekst.matchAll(/```js\n([\s\S]*?)```/g)]
+        // Antwoordcode mag in elk codeblok van de opdracht staan (js, of een
+        // volledige pagina in een html-blok met een <script> erin).
+        const antwoord = [...s.tekst.matchAll(/```\w*\n([\s\S]*?)```/g)]
           .map((m) => m[1])
           .join('\n');
         for (const naam of new Set(namen)) {
           // De definitie mag in de geseede JS staan, in een <script> binnen
-          // de geseede HTML (de script-tag-les), of in het antwoord.
-          const definitie = new RegExp(`function ${naam}\\s*\\(`);
-          if (!definitie.test(js) && !definitie.test(html) && !definitie.test(antwoordJs)) {
+          // de geseede HTML (de script-tag-les), of in het antwoord — als
+          // function-declaratie of als (arrow) function in een const.
+          const definitie = new RegExp(`(function ${naam}\\s*\\(|(?:const|let) ${naam}\\s*=)`);
+          if (!definitie.test(js) && !definitie.test(html) && !definitie.test(antwoord)) {
             fouten.push(`${les.naam}: ## ${s.kop} bedraadt ${naam}() maar definieert hem nergens`);
           }
         }
