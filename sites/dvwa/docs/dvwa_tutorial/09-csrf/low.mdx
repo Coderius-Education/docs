@@ -43,19 +43,19 @@ Start het lab en bekijk het wachtwoord-wijzigformulier.
 
 <DvwaLab module="csrf" level="low" />
 
-Vul een nieuw wachtwoord in en bevestig het. Klik op Submit en observeer wat er met de URL gebeurt na het verzenden.
+Vul een nieuw wachtwoord in en bevestig het. Klik op Submit en kijk of het wachtwoord verandert.
 
 ## 3. Investigate (Onderzoeken)
 
-Kijk naar de URL in de adresbalk nadat je het formulier hebt verstuurd.
+Klik in het lab op **Bekijk broncode** en let op de regel `method="GET"` van het formulier. Leg die naast de voorbeeld-URL uit stap 1. (Het ingebouwde lab heeft geen adresbalk; die URL zie je alleen in een echte DVWA-installatie.)
 
-**Vraag:** Zijn de wachtwoordwaarden zichtbaar in de URL? Wat betekent dit voor een aanvaller die jou een link stuurt?
+**Vraag:** Waar komen de wachtwoordwaarden bij een GET-formulier terecht? Wat betekent dit voor een aanvaller die jou een link stuurt?
 
 <details>
 
 <summary>Antwoord</summary>
 
-Ja, de nieuwe wachtwoordwaarden zijn volledig zichtbaar in de URL als GET-parameters. Dit betekent dat iemand die jou een speciaal geconstrueerde link stuurt, jouw wachtwoord kan wijzigen zonder dat je ooit het formulier hebt ingevuld — zolang je maar op die link klikt terwijl je ingelogd bent.
+In de URL, volledig zichtbaar als GET-parameters. Dit betekent dat iemand die jou een speciaal geconstrueerde link stuurt, jouw wachtwoord kan wijzigen zonder dat je ooit het formulier hebt ingevuld — zolang je maar op die link klikt terwijl je ingelogd bent.
 
 </details>
 
