@@ -18,17 +18,22 @@ interface EditorPaneProps {
   value: string;
   onChange: (value: string) => void;
   height: string;
+  /** Meegroeien met de code: de editor eindigt waar de code eindigt en
+   *  gebruikt `height` als maximum (daarna scrollt hij intern). */
+  autoHeight?: boolean;
 }
 
-export function EditorPane({ language, value, onChange, height }: EditorPaneProps) {
+export function EditorPane({ language, value, onChange, height, autoHeight }: EditorPaneProps) {
   return (
     <CodeMirror
       value={value}
       onChange={onChange}
       extensions={[langExtension[language], EditorView.lineWrapping]}
       theme={vscodeDark}
-      height={height}
-      className={styles.codeMirrorWrapper}
+      height={autoHeight ? 'auto' : height}
+      minHeight={autoHeight ? '120px' : undefined}
+      maxHeight={autoHeight ? height : undefined}
+      className={autoHeight ? styles.codeMirrorAuto : styles.codeMirrorWrapper}
       basicSetup={{
         lineNumbers: true,
         foldGutter: false,

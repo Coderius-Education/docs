@@ -187,6 +187,12 @@
   height: 100%;
 }
 
+/* Meegroeiende editor (gestapelde velden): geen 100%-dwang, de hoogte
+   volgt de code tot het maximum uit de height-prop. */
+.codeMirrorAuto {
+  height: auto;
+}
+
 .previewLabel {
   padding: 0.4rem 0.75rem;
   font-size: 0.75rem;

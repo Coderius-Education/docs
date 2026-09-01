@@ -24,7 +24,8 @@ interface CodeEditorProps {
   debounceMs?: number;
   /** Gestapeld: code bovenaan, uitvoer en console eronder over de volle
    *  breedte (js-basics); zonder deze prop staan editor en preview naast
-   *  elkaar (html-css). */
+   *  elkaar (html-css). Gestapeld groeit de editor mee met de code, met
+   *  `height` als maximum. */
   stacked?: boolean;
   /** Hoogte van het uitvoer+console-blok in gestapelde vorm. */
   previewHeight?: string;
@@ -113,7 +114,7 @@ function CodeEditorInner({
 
   return (
     <div className={`${styles.container} ${stacked ? styles.containerStacked : ''}`}>
-      <div className={styles.editorSide} style={{ height }}>
+      <div className={styles.editorSide} style={{ height: stacked ? 'auto' : height }}>
         <div className={styles.tabBar}>
           {visibleTabs.map((tab) => (
             <button
@@ -147,6 +148,7 @@ function CodeEditorInner({
               value={values[activeTab]}
               onChange={handlers[activeTab]}
               height={height}
+              autoHeight={stacked}
             />
           </Suspense>
         </div>
