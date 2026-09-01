@@ -72,21 +72,39 @@ echo $message;
     method: 'GET',
     php: `<?php
 $db = new SQLite3('/tmp/dvwa.db');
+$db->exec('CREATE TABLE IF NOT EXISTS csrf_tokens (token TEXT PRIMARY KEY)');
 $message = '';
-$token = substr(md5(uniqid(rand(), true)), 0, 16);
-if (isset($_GET['password_new']) && isset($_GET['password_conf']) && isset($_GET['user_token'])) {
-    $new = $_GET['password_new'];
-    $conf = $_GET['password_conf'];
-    if ($new === $conf) {
-        $hash = md5($new);
-        $stmt = $db->prepare("UPDATE users SET password = :pass WHERE user_id = 1");
-        $stmt->bindValue(':pass', $hash, SQLITE3_TEXT);
-        $stmt->execute();
-        $message = '<div style="color:#27c93f;padding:10px;border:1px solid #27c93f;border-radius:4px;margin:10px 0">Wachtwoord gewijzigd (token gevalideerd).</div>';
+if (isset($_GET['password_new']) && isset($_GET['password_conf'])) {
+    // Elk wachtwoordverzoek moet een geldig token meebrengen. Een aanvaller die
+    // een kale link stuurt (zonder token) of iets verzint, wordt geweigerd. Elk
+    // token is eenmalig: gevonden betekent geldig, daarna halen we het weg.
+    $submitted = isset($_GET['user_token']) ? $_GET['user_token'] : '';
+    $check = $db->prepare('SELECT token FROM csrf_tokens WHERE token = :t');
+    $check->bindValue(':t', $submitted, SQLITE3_TEXT);
+    if (!$check->execute()->fetchArray()) {
+        $message = '<div style="color:#ff5f56;padding:10px;border:1px solid #ff5f56;border-radius:4px;margin:10px 0">CSRF-token ongeldig of ontbreekt — verzoek geweigerd.</div>';
     } else {
-        $message = '<div style="color:#ff5f56;padding:10px;border:1px solid #ff5f56;border-radius:4px;margin:10px 0">Wachtwoorden komen niet overeen.</div>';
+        $del = $db->prepare('DELETE FROM csrf_tokens WHERE token = :t');
+        $del->bindValue(':t', $submitted, SQLITE3_TEXT);
+        $del->execute();
+        $new = $_GET['password_new'];
+        $conf = $_GET['password_conf'];
+        if ($new === $conf) {
+            $hash = md5($new);
+            $stmt = $db->prepare("UPDATE users SET password = :pass WHERE user_id = 1");
+            $stmt->bindValue(':pass', $hash, SQLITE3_TEXT);
+            $stmt->execute();
+            $message = '<div style="color:#27c93f;padding:10px;border:1px solid #27c93f;border-radius:4px;margin:10px 0">Wachtwoord gewijzigd (token gevalideerd).</div>';
+        } else {
+            $message = '<div style="color:#ff5f56;padding:10px;border:1px solid #ff5f56;border-radius:4px;margin:10px 0">Wachtwoorden komen niet overeen.</div>';
+        }
     }
 }
+// Geef een vers, eenmalig token uit voor het volgende formulier.
+$token = bin2hex(random_bytes(8));
+$ins = $db->prepare('INSERT INTO csrf_tokens (token) VALUES (:t)');
+$ins->bindValue(':t', $token, SQLITE3_TEXT);
+$ins->execute();
 $db->close();
 echo $message;
 ?>

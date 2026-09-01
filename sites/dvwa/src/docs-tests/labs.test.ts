@@ -283,15 +283,19 @@ const GEVALLEN: Geval[] = [
     invoer: { password_new: 'a', password_conf: 'b' },
     verwacht: { bevat: ['komen niet overeen'] },
   },
-  // Karakterisering van een bekende zwakte: high genereert wél een token maar
-  // vergelijkt het nooit, dus elk token wordt geaccepteerd. Valt deze test ooit
-  // om, dan is de bug (terecht) gerepareerd en mag de assertie mee veranderen.
   {
     module: 'csrf',
     level: 'high',
-    naam: 'elk willekeurig token wordt geaccepteerd (bekende bug)',
+    naam: 'een verzonnen token wordt geweigerd',
     invoer: { password_new: 'x', password_conf: 'x', user_token: 'BOGUS' },
-    verwacht: { bevat: ['token gevalideerd'] },
+    verwacht: { bevat: ['token ongeldig'] },
+  },
+  {
+    module: 'csrf',
+    level: 'high',
+    naam: 'een gekopieerde link zonder token wordt geweigerd',
+    invoer: { password_new: 'x', password_conf: 'x' },
+    verwacht: { bevat: ['token ongeldig of ontbreekt'] },
   },
   {
     module: 'csrf',
@@ -523,6 +527,32 @@ describe('DVWA-labs draaien de kwetsbare PHP echt', () => {
     for (const s of g.verwacht.bevat ?? []) expect(uit, g.naam).toContain(s);
     for (const s of g.verwacht.bevatNiet ?? []) expect(uit, g.naam).not.toContain(s);
     for (const r of g.verwacht.regex ?? []) expect(uit, g.naam).toMatch(r);
+  });
+
+  it('csrf/high accepteert het echte token uit het formulier, maar eenmalig', async () => {
+    // Het formulier rendert een vers token; dat token mag de wijziging doorvoeren.
+    const render = await draai('csrf', 'high', {});
+    verifieerSchoon(render, 'csrf/high render');
+    const m = render.match(/name="user_token" value="([0-9a-f]+)"/);
+    expect(m, 'token in het formulier').not.toBeNull();
+    const token = (m as RegExpMatchArray)[1];
+
+    const eerste = await draai('csrf', 'high', {
+      password_new: 'nieuw',
+      password_conf: 'nieuw',
+      user_token: token,
+    });
+    verifieerSchoon(eerste, 'csrf/high submit');
+    expect(eerste).toContain('token gevalideerd');
+
+    // Hetzelfde token nog eens indienen faalt: het is opgebruikt.
+    const nogmaals = await draai('csrf', 'high', {
+      password_new: 'nieuw2',
+      password_conf: 'nieuw2',
+      user_token: token,
+    });
+    verifieerSchoon(nogmaals, 'csrf/high hergebruik');
+    expect(nogmaals).toContain('token ongeldig');
   });
 
   it('weak_session_ids/low telt de sessie-IDs op: 1, dan 2', async () => {
