@@ -4,7 +4,9 @@ export const csrf = {
     description: 'Geen CSRF-bescherming: wachtwoord wijzigen via GET zonder token',
     method: 'GET',
     php: `<?php
-$db = new SQLite3('/tmp/dvwa.db');
+$db = new SQLite3('/tmp/dvwa_csrf.db');
+$db->exec('CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY, password TEXT)');
+$db->exec("INSERT OR REPLACE INTO users (user_id, password) VALUES (1, '" . md5('password') . "')");
 $message = '';
 if (isset($_GET['password_new']) && isset($_GET['password_conf'])) {
     $new = $_GET['password_new'];
@@ -35,7 +37,9 @@ echo $message;
     description: 'Referer-header controle — eenvoudig te vervalsen of te omzeilen',
     method: 'GET',
     php: `<?php
-$db = new SQLite3('/tmp/dvwa.db');
+$db = new SQLite3('/tmp/dvwa_csrf.db');
+$db->exec('CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY, password TEXT)');
+$db->exec("INSERT OR REPLACE INTO users (user_id, password) VALUES (1, '" . md5('password') . "')");
 $message = '';
 if (isset($_GET['password_new']) && isset($_GET['password_conf'])) {
     $referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
@@ -71,7 +75,9 @@ echo $message;
     description: 'Anti-CSRF token vereist — elk verzoek heeft een uniek token nodig',
     method: 'GET',
     php: `<?php
-$db = new SQLite3('/tmp/dvwa.db');
+$db = new SQLite3('/tmp/dvwa_csrf.db');
+$db->exec('CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY, password TEXT)');
+$db->exec("INSERT OR REPLACE INTO users (user_id, password) VALUES (1, '" . md5('password') . "')");
 $db->exec('CREATE TABLE IF NOT EXISTS csrf_tokens (token TEXT PRIMARY KEY)');
 $message = '';
 if (isset($_GET['password_new']) && isset($_GET['password_conf'])) {
@@ -123,7 +129,9 @@ echo $message;
       'Veilige implementatie: huidig wachtwoord vereist + anti-CSRF token + prepared statements',
     method: 'GET',
     php: `<?php
-$db = new SQLite3('/tmp/dvwa.db');
+$db = new SQLite3('/tmp/dvwa_csrf.db');
+$db->exec('CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY, password TEXT)');
+$db->exec("INSERT OR REPLACE INTO users (user_id, password) VALUES (1, '" . md5('password') . "')");
 $message = '';
 $token = bin2hex(random_bytes(16));
 if (isset($_GET['password_new']) && isset($_GET['password_conf']) && isset($_GET['password_current'])) {

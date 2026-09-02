@@ -191,4 +191,26 @@ describe('DVWA-cursus', () => {
     const wees = [...reg.keys()].filter((k) => !gebruikt.has(k));
     expect(wees).toEqual([]);
   });
+
+  it("ook de losse root-pagina's (capstone, index) verwijzen alleen naar bestaande modules", async () => {
+    // lesPaginas() daalt alleen in submappen af, dus root-.mdx (de capstone en
+    // index) vallen buiten de andere guards. Een <DvwaLab> met een typefout daar
+    // zou anders stil de "Module niet gevonden"-fallback renderen bij groene CI.
+    const reg = await registry();
+    const fouten: string[] = [];
+    for (const bestand of readdirSync(DOCS)) {
+      if (!bestand.endsWith('.mdx')) continue;
+      const inhoud = readFileSync(join(DOCS, bestand), 'utf8');
+      for (const m of inhoud.matchAll(/<DvwaLab\b[\s\S]*?\/>/g)) {
+        const tag = m[0];
+        const module = tag.match(/\bmodule="([^"]+)"/)?.[1];
+        const level = tag.match(/\blevel="([^"]+)"/)?.[1];
+        if (!module || !level) fouten.push(`${bestand}: <DvwaLab> mist module of level`);
+        else if (!reg.has(module)) fouten.push(`${bestand}: onbekende module "${module}"`);
+        else if (!reg.get(module)?.has(level))
+          fouten.push(`${bestand}: module "${module}" heeft geen level "${level}"`);
+      }
+    }
+    expect(fouten).toEqual([]);
+  });
 });

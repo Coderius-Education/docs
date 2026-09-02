@@ -96,6 +96,20 @@ const GEVALLEN: Geval[] = [
     invoer: { username: "admin' -- ", password: 'onzin' },
     verwacht: { bevat: ['onjuist'] },
   },
+  {
+    module: 'brute_force',
+    level: 'high',
+    naam: 'juiste inlog lukt (prepared statement)',
+    invoer: { username: 'admin', password: 'password' },
+    verwacht: { bevat: ['Welkom, admin'] },
+  },
+  {
+    module: 'brute_force',
+    level: 'high',
+    naam: 'SQLi wordt door het prepared statement geblokkeerd',
+    invoer: { username: "admin' -- ", password: 'onzin' },
+    verwacht: { bevat: ['onjuist'] },
+  },
 
   // --- SQL Injection (low/high/impossible GET, medium POST) ---
   {
@@ -181,6 +195,27 @@ const GEVALLEN: Geval[] = [
     module: 'sql_injection_blind',
     level: 'low',
     naam: "onwaar-conditie 1' AND '1'='2 meldt bestaat NIET",
+    invoer: { id: "1' AND '1'='2" },
+    verwacht: { bevat: ['bestaat niet'] },
+  },
+  {
+    module: 'sql_injection_blind',
+    level: 'medium',
+    naam: '(int)-cast blokkeert de injectie, bestaande id bestaat',
+    invoer: { id: '1 AND SLEEP(5)' },
+    verwacht: { bevat: ['bestaat'], bevatNiet: ['bestaat niet'] },
+  },
+  {
+    module: 'sql_injection_blind',
+    level: 'high',
+    naam: 'boolean-blind werkt via het GET-veld (waar)',
+    invoer: { id: "1' AND '1'='1" },
+    verwacht: { bevat: ['bestaat'], bevatNiet: ['bestaat niet'] },
+  },
+  {
+    module: 'sql_injection_blind',
+    level: 'high',
+    naam: 'boolean-blind onwaar meldt bestaat niet',
     invoer: { id: "1' AND '1'='2" },
     verwacht: { bevat: ['bestaat niet'] },
   },
@@ -273,6 +308,20 @@ const GEVALLEN: Geval[] = [
   },
   {
     module: 'xss_dom',
+    level: 'medium',
+    naam: 'payload zonder <script> glipt langs het filter',
+    invoer: { default: '";alert(1)//' },
+    verwacht: { bevat: ['";alert(1)//'] },
+  },
+  {
+    module: 'xss_dom',
+    level: 'medium',
+    naam: 'letterlijke <script> in de payload wordt gestript',
+    invoer: { default: '<script>alert(1)</script>' },
+    verwacht: { bevat: ['alert(1)'], bevatNiet: ['<script>alert(1)'] },
+  },
+  {
+    module: 'xss_dom',
     level: 'high',
     naam: 'niet-gewhiteliste waarde valt terug op Nederlands',
     invoer: { default: 'PWNED' },
@@ -351,6 +400,13 @@ const GEVALLEN: Geval[] = [
     naam: 'niet-overeenkomende wachtwoorden worden geweigerd',
     invoer: { password_new: 'a', password_conf: 'b' },
     verwacht: { bevat: ['komen niet overeen'] },
+  },
+  {
+    module: 'csrf',
+    level: 'medium',
+    naam: 'lege referer omzeilt de referer-controle',
+    invoer: { password_new: 'nieuw', password_conf: 'nieuw' },
+    verwacht: { bevat: ['gewijzigd'] },
   },
   {
     module: 'csrf',
