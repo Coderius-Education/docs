@@ -117,7 +117,7 @@ if ($row) {
 }
 ?>
 <h3>Profiel bekijken</h3>
-<form method="GET" onsubmit="return controleerProfiel()">
+<form method="GET" onsubmit="return controleerProfiel(event)">
   <div style="margin:8px 0"><label>Kies een profiel:</label><br>
   <select name="id" id="profiel-keuze" style="padding:6px;width:220px;background:#16213e;color:#e0e0e0;border:1px solid #0f3460;border-radius:4px">
     <option value="2">Gordon Brown (jij)</option>
@@ -128,11 +128,13 @@ if ($row) {
   <button type="submit" style="padding:8px 20px;cursor:pointer;margin-top:8px">Opvragen</button>
 </form>
 <script>
-  function controleerProfiel() {
+  function controleerProfiel(e) {
     var eigenId = "2";
     var gekozen = document.getElementById('profiel-keuze').value;
     if (gekozen !== eigenId) {
       alert('Je mag alleen je eigen profiel bekijken.');
+      e.preventDefault();
+      e.stopPropagation();
       return false;
     }
     return true;

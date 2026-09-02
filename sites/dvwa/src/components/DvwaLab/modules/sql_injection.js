@@ -43,8 +43,11 @@ echo $message;
 $db = new SQLite3('/tmp/dvwa.db');
 $message = '';
 if (isset($_POST['id'])) {
-    $id = (int)$_POST['id'];
-    $result = $db->query("SELECT first_name, last_name FROM users WHERE user_id = $id");
+    // Zoals DVWA medium: aanhalingstekens worden ge-escaped, maar de waarde
+    // staat zónder quotes in de query. Tegen quote-injectie helpt dat; tegen
+    // een numerieke "1 OR 1=1" niet, want daar zit geen aanhalingsteken in.
+    $id = SQLite3::escapeString($_POST['id']);
+    $result = @$db->query("SELECT first_name, last_name FROM users WHERE user_id = $id");
     if ($result) {
         $found = false;
         while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
@@ -57,6 +60,8 @@ if (isset($_POST['id'])) {
         if (!$found) {
             $message = '<div style="color:#ff5f56;padding:10px;border:1px solid #ff5f56;border-radius:4px;margin:10px 0">Gebruiker niet gevonden.</div>';
         }
+    } else {
+        $message = '<div style="color:#ff5f56;padding:10px;border:1px solid #ff5f56;border-radius:4px;margin:10px 0">SQL-fout: ' . $db->lastErrorMsg() . '</div>';
     }
 }
 $db->close();

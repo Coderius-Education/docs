@@ -115,9 +115,16 @@ const GEVALLEN: Geval[] = [
   {
     module: 'sql_injection',
     level: 'medium',
-    naam: '(int)-cast blokkeert de string-injectie',
+    naam: 'numerieke injectie 1 OR 1=1 lekt alle gebruikers',
     invoer: { id: '1 OR 1=1' },
-    verwacht: { bevat: ['admin'], bevatNiet: ['Gordon'] },
+    verwacht: { bevat: ['admin', 'Gordon', 'Pablo'] },
+  },
+  {
+    module: 'sql_injection',
+    level: 'medium',
+    naam: 'quote-injectie wordt ge-escaped en faalt',
+    invoer: { id: "1' OR '1'='1" },
+    verwacht: { bevat: ['SQL-fout'], bevatNiet: ['Gordon'] },
   },
   {
     module: 'sql_injection',
@@ -350,9 +357,23 @@ const GEVALLEN: Geval[] = [
   {
     module: 'file_inclusion',
     level: 'low',
-    naam: 'pad naar /etc/passwd wordt getoond',
-    invoer: { page: '../../etc/passwd' },
+    naam: 'genoeg ../ bereikt /etc/passwd',
+    invoer: { page: '../../../etc/passwd' },
     verwacht: { bevat: ['root:x:0:0'] },
+  },
+  {
+    module: 'file_inclusion',
+    level: 'low',
+    naam: 'gewoon bestand toont normale content',
+    invoer: { page: 'file1.php' },
+    verwacht: { bevat: ['Bestand 1'], bevatNiet: ['root:x:0:0'] },
+  },
+  {
+    module: 'file_inclusion',
+    level: 'medium',
+    naam: 'naïeve ../../etc/passwd wordt door het filter geblokkeerd',
+    invoer: { page: '../../../etc/passwd' },
+    verwacht: { bevat: ['niet gevonden'], bevatNiet: ['root:x:0:0'] },
   },
   {
     module: 'file_inclusion',
@@ -438,9 +459,9 @@ const GEVALLEN: Geval[] = [
   {
     module: 'weak_session_ids',
     level: 'high',
-    naam: 'sessie-ID is een 32-hex MD5',
+    naam: 'sessie-ID is md5(teller) — kraakbaar (md5("1"))',
     invoer: { generate: '1' },
-    verwacht: { regex: [/[0-9a-f]{32}/] },
+    verwacht: { bevat: ['c4ca4238a0b923820dcc509a6f75849b'], regex: [/[0-9a-f]{32}/] },
   },
   {
     module: 'weak_session_ids',
