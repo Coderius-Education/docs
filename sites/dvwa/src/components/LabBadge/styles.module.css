@@ -1,0 +1,42 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  padding: 0.1em 0.6em;
+  border-radius: 12px;
+  border: 1px solid;
+  font-size: 0.8em;
+  font-weight: 600;
+  white-space: nowrap;
+  line-height: 1.6;
+}
+
+.browser {
+  color: #1c7c34;
+  border-color: #27c93f;
+  background: rgba(39, 201, 63, 0.13);
+}
+
+.deels {
+  color: #96690a;
+  border-color: #ffbd2e;
+  background: rgba(255, 189, 46, 0.15);
+}
+
+.lokaal {
+  color: #b31547;
+  border-color: #ff5f56;
+  background: rgba(255, 95, 86, 0.13);
+}
+
+[data-theme="dark"] .browser {
+  color: #4ade80;
+}
+
+[data-theme="dark"] .deels {
+  color: #fcd34d;
+}
+
+[data-theme="dark"] .lokaal {
+  color: #ff8f88;
+}

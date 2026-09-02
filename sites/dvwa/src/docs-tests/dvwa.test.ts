@@ -85,6 +85,17 @@ describe('DVWA-cursus', () => {
     expect(fouten).toEqual([]);
   });
 
+  it('elke low-les draagt een lab-badge (browser/deels/lokaal)', () => {
+    const fouten = lessen
+      .filter(
+        (l) =>
+          l.naam.endsWith('/low.mdx') &&
+          !/<LabBadge\s+status="(browser|deels|lokaal)"/.test(l.inhoud),
+      )
+      .map((l) => l.naam);
+    expect(fouten).toEqual([]);
+  });
+
   it('de instap-pagina draagt het ethiek-blok', () => {
     const index = readFileSync(join(DOCS, 'index.mdx'), 'utf8');
     expect(index).toContain('<Ethiek');
