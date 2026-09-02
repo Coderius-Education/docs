@@ -68,6 +68,7 @@ const sidebars = {
         challenge('14-javascript-attacks', 'JavaScript Attacks'),
       ],
     },
+    'dvwa_tutorial/word-de-developer',
     'cheatsheet',
   ],
 };
