@@ -71,7 +71,7 @@ export function getPyodide(): Promise<PyodideInterface> {
  * Format a Python traceback into a student-friendly error message.
  * Example output: "Fout op regel 3\nNameError: naam 'x' is niet gedefinieerd"
  */
-function filterTraceback(raw: string): string {
+export function filterTraceback(raw: string): string {
   const lines = raw.split('\n');
 
   // Extract the last line number from a <exec> frame

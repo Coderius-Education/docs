@@ -128,7 +128,10 @@ ${escapeForInline(js, 'script')}
   console.error('JavaScript fout: ' + e.message);
 }
 <\/script>`;
-      if (/\b(defer|async)\b/i.test(scriptTag)) {
+      // Het attribuut zoeken we in de tag zónder het src-deel: anders telt
+      // een bestandsnaam als "async.js" ook als uitgesteld.
+      const attributes = scriptTag.replace(/src=["'][^"']*["']/i, '');
+      if (/\s(defer|async)(?=[\s>=/])/i.test(attributes)) {
         deferredScripts.push(inline);
         return '';
       }

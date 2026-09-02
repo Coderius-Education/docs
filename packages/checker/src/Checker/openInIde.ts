@@ -7,8 +7,11 @@ import type { ProjectFiles } from '../types';
 // window.open()-handle gebruikt. De message-source blijft
 // 'coderius-website-checker' zodat het bestaande /import-contract op
 // ide.coderius.nl blijft werken.
-const MESSAGE_SOURCE = 'coderius-website-checker';
-const ACK_SOURCE = 'coderius-editor-import';
+// Wire-waarden van het /import-contract; de ontvanger staat in
+// sites/ide/src/components/ImportProject/importContract.ts. Beide kanten pinnen
+// ze in hun tests, zodat een wijziging aan één kant niet stil blijft.
+export const MESSAGE_SOURCE = 'coderius-website-checker';
+export const ACK_SOURCE = 'coderius-editor-import';
 const POLL_INTERVAL_MS = 300;
 const TIMEOUT_MS = 15000;
 
@@ -35,6 +38,27 @@ function buildTransferFiles(files: ProjectFiles): Record<string, string> {
   return result;
 }
 
+export interface ImportPayload {
+  source: typeof MESSAGE_SOURCE;
+  type: 'import-files';
+  files: Record<string, string>;
+  entry: string;
+  name: string;
+}
+
+/** Het bericht dat naar /import gaat, of null als er geen startbestand is. */
+export function buildImportPayload(files: ProjectFiles, projectName: string): ImportPayload | null {
+  const entry = pickEntry(files);
+  if (!entry) return null;
+  return {
+    source: MESSAGE_SOURCE,
+    type: 'import-files',
+    files: buildTransferFiles(files),
+    entry,
+    name: projectName,
+  };
+}
+
 export type OpenInIdeResult = 'opened' | 'blocked' | 'timeout';
 
 export function openInIde(
@@ -43,22 +67,14 @@ export function openInIde(
   ideUrl: string,
   onResult: (result: OpenInIdeResult) => void,
 ): void {
-  const entry = pickEntry(files);
-  if (!entry) return;
+  const payload = buildImportPayload(files, projectName);
+  if (!payload) return;
 
   const win = window.open(`${ideUrl}/import`, '_blank');
   if (!win) {
     onResult('blocked');
     return;
   }
-
-  const payload = {
-    source: MESSAGE_SOURCE,
-    type: 'import-files' as const,
-    files: buildTransferFiles(files),
-    entry,
-    name: projectName,
-  };
 
   let settled = false;
   const finish = (result: OpenInIdeResult) => {

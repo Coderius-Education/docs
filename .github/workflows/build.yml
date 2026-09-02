@@ -51,7 +51,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Test (nakijker en de stap-opnemer)
+      - name: Test (nakijker, editor, DVWA-labs en de stap-opnemer)
         run: pnpm test
 
   # De godot-cursus laat leerlingen elk script zelf opbouwen, dus staan de
