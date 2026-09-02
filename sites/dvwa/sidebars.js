@@ -3,11 +3,14 @@
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 /**
- * Handmatige sidebar met drie moeilijkheidsgroepen: Beginner → Gevorderd →
- * Expert. De challenges staan in vaste mappen (01-…/), maar de sidebar-volgorde
- * komt hieruit, niet uit het mapnummer — zo staan de zwaarste (en meest
- * lokaal-afhankelijke) challenges onderaan zonder dat we mappen of URL's
- * hernoemen. Elke challenge wordt een inklapbare groep met zijn vier levels.
+ * Handmatige sidebar. De volgorde volgt de leerreis: je begint bovenaan
+ * volledig in de browser (Beginner), en werkt naar beneden naar zwaardere en
+ * lokaal-afhankelijke challenges. Installeren en naslag staan onderaan — je
+ * pakt ze erbij wanneer je ze nodig hebt, niet vooraf.
+ *
+ * De challenges houden hun mapnummer (01-…/) en URL; de volgorde komt hieruit,
+ * niet uit het mapnummer. Elke challenge wordt een inklapbare groep met zijn
+ * vier levels.
  *
  * @type {import('@docusaurus/plugin-content-docs').SidebarsConfig}
  */
@@ -27,12 +30,6 @@ const challenge = (dir, label) => ({
 const sidebars = {
   tutorialSidebar: [
     'dvwa_tutorial/index',
-    {
-      type: 'category',
-      label: 'Voorbereiding',
-      collapsed: false,
-      items: ['installatie', 'dvwa_installatie', 'linux_leren', 'http_leren', 'sql_leren'],
-    },
     {
       type: 'category',
       label: 'Beginner — volledig in de browser',
@@ -60,7 +57,7 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: 'Expert — lokale installatie nodig',
+      label: 'Expert',
       collapsed: false,
       items: [
         challenge('08-xss-dom', 'XSS (DOM)'),
@@ -69,7 +66,18 @@ const sidebars = {
       ],
     },
     'dvwa_tutorial/word-de-developer',
-    'cheatsheet',
+    {
+      type: 'category',
+      label: 'Naslag',
+      collapsed: true,
+      items: ['linux_leren', 'http_leren', 'sql_leren', 'cheatsheet'],
+    },
+    {
+      type: 'category',
+      label: 'Lokaal installeren (voor de zwaardere challenges)',
+      collapsed: true,
+      items: ['installatie', 'dvwa_installatie'],
+    },
   ],
 };
 
