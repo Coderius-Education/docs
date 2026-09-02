@@ -7,11 +7,13 @@ import DvwaLab from '@site/src/components/DvwaLab';
 
 # Authorization Bypass — Low
 
-<LabBadge status="browser" />
+<LabBadge status="deels" />
 
 <Ethiek />
 
 In deze uitdaging leren we over **Insecure Direct Object Reference (IDOR)**: mag de ingelogde gebruiker wel zien wat hij opvraagt?
+
+> **Labbeperking:** De kern van dit level doe je volledig in het ingebouwde lab — kies een ander profiel uit de dropdown en je ziet meteen andermans gegevens. De uitsmijter in stap 4 (het admin-profiel met ID `1`, dat níét in de dropdown staat) vraagt dat je de HTML via F12 aanpast. Dat lukt maar beperkt in het iframe; voor de volledige ervaring gebruik je een [lokale DVWA-installatie](/docs/dvwa_installatie).
 
 ## 1. Predict (Voorspel)
 
@@ -82,5 +84,4 @@ Zie je een foutmelding? Controleer of het lab correct is opgestart en of je een 
 
 ## 6. Er gaat iets mis...
 
-Wat als je in de dropdown de ID-waarde aanpast naar `9999` (een ID dat niet bestaat)?
-Soms crasht de hele pagina met een 500 Internal Server Error omdat de applicatie verwacht dat de opgevraagde data bestaat, en geen 'Niet Gevonden' foutafhandeling heeft geschreven. Hacken draait om grenzen opzoeken.
+Wat als je een ID opvraagt dat niet bestaat, bijvoorbeeld `9999`? De server vindt geen profiel en toont **Niet gevonden**. Deze applicatie vangt dat netjes af, maar een slordige variant crasht hier met een 500 Internal Server Error omdat de code ervan uitgaat dat het profiel altijd bestaat. Hacken draait om die grenzen opzoeken: kijk wat er gebeurt bij invoer die de ontwikkelaar niet verwachtte.

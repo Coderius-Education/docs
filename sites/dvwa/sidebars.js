@@ -3,10 +3,12 @@
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 /**
- * Handmatige sidebar. De volgorde volgt de leerreis: je begint bovenaan
- * volledig in de browser (Beginner), en werkt naar beneden naar zwaardere en
- * lokaal-afhankelijke challenges. Installeren en naslag staan onderaan — je
- * pakt ze erbij wanneer je ze nodig hebt, niet vooraf.
+ * Handmatige sidebar. De volgorde volgt de leerreis: je begint bovenaan bij de
+ * makkelijkste challenges (Beginner) en werkt naar beneden naar zwaardere en
+ * lokaal-afhankelijke challenges. De niveaus gaan over moeilijkheid; wat je per
+ * challenge nodig hebt (browser, F12 of lokaal) staat in het LabBadge-label.
+ * Installeren en naslag staan onderaan — je pakt ze erbij wanneer je ze nodig
+ * hebt, niet vooraf.
  *
  * De challenges houden hun mapnummer (01-…/) en URL; de volgorde komt hieruit,
  * niet uit het mapnummer. Elke challenge wordt een inklapbare groep met zijn
@@ -32,7 +34,7 @@ const sidebars = {
     'dvwa_tutorial/index',
     {
       type: 'category',
-      label: 'Beginner — volledig in de browser',
+      label: 'Beginner',
       collapsed: false,
       items: [
         challenge('02-command-injection', 'Command Injection'),

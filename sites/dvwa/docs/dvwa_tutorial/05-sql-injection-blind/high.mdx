@@ -9,6 +9,8 @@ import DvwaLab from '@site/src/components/DvwaLab';
 
 Op het High level probeert de applicatie je aanval af te weren door het invulveld op een aparte pagina te zetten en de data via een sessie-cookie door te sturen.
 
+> **Labbeperking:** Deze aanval draait om het aanpassen van een cookie via F12 (**Application** → **Cookies**). Dat werkt maar beperkt binnen het afgeschermde iframe van het lab. De stappen hieronder laten zien hoe de aanval werkt; om hem echt uit te voeren heb je een [lokale DVWA-installatie](/docs/dvwa_installatie) nodig.
+
 ## 1. Predict (Voorspel)
 
 De server gebruikt een aparte POST-request via een cookie (`$_COOKIE['id']`) of sessie in plaats van een directe GET-parameter in de URL:
