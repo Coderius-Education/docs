@@ -103,7 +103,3 @@ Je typt vol goede moed `127.0.0.1 | ls` in en je ziet ineens... géén ping-resu
 Dit is de werking van de pipe (`|`). Een pipe pakt de onzichtbare output van het eerste commando (de ping) en duwt die als invoer in het tweede commando (`ls`). Het `ls`-commando doet niets met die invoer; het print de huidige map. Daardoor verdwijnt de ping-tekst in het niets.
 
 En `||` dan? Dat is een valkuil. `A || B` voert `B` alleen uit als `A` mislukt. `ping 127.0.0.1` slaagt gewoon, dus `127.0.0.1 || ls` laat `ls` juist níét draaien — je ziet alleen de ping. Wil je `||` zien werken, geef dan een adres dat faalt, bijvoorbeeld `1 || ls`: nu mislukt de ping en verschijnt de bestandslijst.
-
-## Walkthrough
-
-<iframe width="920" height="517" src="https://www.youtube.com/embed/WiqRvlN_UIU?start=456" title="2 - Command Injection (low/med/high) - Damn Vulnerable Web Application (DVWA)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
