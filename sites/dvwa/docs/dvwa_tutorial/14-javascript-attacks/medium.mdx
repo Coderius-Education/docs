@@ -7,87 +7,72 @@ import DvwaLab from '@site/src/components/DvwaLab';
 
 # JavaScript Attacks — Medium
 
-De ontwikkelaar is geschrokken dat mensen zijn functies via de Console aanroepen en maakt de code onleesbaar.
+De ontwikkelaar vertrouwt niet meer op het simpel omdraaien van het woord en kiest een "echt" algoritme: ROT13. Elke letter schuift dertien plaatsen op in het alfabet. Dat klinkt als versleuteling, maar het draait nog steeds volledig in jouw browser.
 
 ## 1. Predict (Voorspel)
 
-De broncode van de pagina bevat nu een zwaar ge-obfusceerd (minified) JavaScript-bestand. Het ziet eruit als een wirwar van letters:
+Het formulier heeft weer een tekstvak (**Woord**) en een verborgen `token`-veld. Bij het verzenden roept JavaScript in de pagina een functie `rot13` aan: die codeert het woord met ROT13 en zet de uitkomst in het token-veld. De server keurt de poging goed als het woord `success` is én het token de ROT13-versie van dat woord is.
 
-```javascript
-eval(function(p,a,c,k,e,d){e=function(c){return c.toString(36)};if(!''.replace(/^/,String)){while(c--){d[c.toString(a)]=k[c]||c.toString(a)}...
-```
-
-**Vraag:** Heeft de ontwikkelaar hiermee de kwetsbaarheid uit het Low level weggenomen?
+**Vraag:** Je typt `success` in het tekstvak en klikt op Submit. Werkt de aanval nog, nu de ontwikkelaar ROT13 gebruikt in plaats van het woord omdraaien?
 
 <details>
 
 <summary>Antwoord</summary>
 
-Nee. De code is misschien moeilijk leesbaar voor een mens (Security by Obscurity), maar de **browser** moet de code uiteindelijk kunnen uitvoeren. Via de Developer Tools kun je de "Pretty Print"-knop gebruiken of een online de-obfuscator — de code komt netjes terug in leesbare inspringing. De functie om het token te maken staat er nog steeds in, alleen met een gekker naam.
+Ja, het werkt nog steeds. Het maakt niet uit welk algoritme de ontwikkelaar kiest — reversen, ROT13 of iets ingewikkelders — zolang de browser het token berekent, levert jouw browser zelf een geldig token aan. Je hoeft ROT13 niet eens te kennen. Je typt `success` en de inline JavaScript rekent `fhpprff` (ROT13 van `success`) voor je uit.
 
 </details>
 
 ## 2. Run (Uitvoeren)
 
-Start het lab en bekijk het formulier.
+Start het lab, typ `success` in het tekstvak en klik op Submit.
 
 <DvwaLab module="javascript_attacks" level="medium" />
 
-> **Labbeperking:** Deze aanval vereist toegang tot de F12 Sources en Console. Omdat het lab in een beveiligd iframe draait, is dit beperkt mogelijk. Voor de volledige ervaring heb je een [lokale DVWA-installatie](/docs/dvwa_installatie) nodig.
-
-Vul `success` in en klik op Submit. Observeer de foutmelding.
+Je ziet de melding `Correct! Token gevalideerd.` — zonder dat je ooit hoefde te weten wat ROT13 is.
 
 ## 3. Investigate (Onderzoeken)
 
-Ga in F12 naar het tabblad **Sources** (of Debugger in Firefox). Zoek het externe JavaScript-bestand van deze module (bijv. `medium.js`). Klik onderin op het `{}`-icoon (Pretty Print).
+Open F12 → **Elements** (of **Sources**) en bekijk het `<script>` onder aan het formulier.
 
-**Vraag:** Wat zie je na het uitvoeren van Pretty Print? Zijn er herkenbare functienamen? Wat onthult dit over de bescherming die obfuscatie biedt?
+**Vraag:** Hoe berekent de pagina het token uit het woord? Wat betekent dat voor de veiligheid?
 
 <details>
 
 <summary>Antwoord</summary>
 
-Na Pretty Print is de code veel beter leesbaar. Je ziet functies met namen als `do_something(e)` of vergelijkbaar. Dit onthult dat obfuscatie alleen de leesbaarheid vermindert — niet de functionaliteit. Elke browser-tool die "Pretty Print" ondersteunt of online de-obfuscators (zoals beautifier.io) kunnen de code direct terugbrengen naar leesbare broncode.
+Er staat een functie `rot13` in de pagina die elke letter dertien plaatsen opschuift. Bij het verzenden roept het script `rot13` aan op het woord en zet de uitkomst in het verborgen `token`-veld. Het "geheime" algoritme staat gewoon leesbaar in de broncode, dus iedereen kan het namaken. ROT13 is bovendien geen versleuteling maar een verschuiving die je zo terugdraait. Omdat de browser het token maakt, bepaalt de gebruiker het token — niet de server.
+
+:::note[Labbeperking]
+Diep inspecteren van de pagina in het beveiligde lab-iframe lukt niet altijd. Voor de volledige F12-ervaring gebruik je een [lokale DVWA-installatie](/docs/dvwa_installatie).
+:::
 
 </details>
 
 ## 4. Modify & Make (Aanpassen & Maken)
 
-Ontcijfer de functienaam en roep die aan via de Console met het woord `success`.
+Verander het woord in het tekstvak naar iets anders dan `success` (bijvoorbeeld `hallo`) en verzend. Verzend daarna nog eens met `success`.
 
-<details>
-
-<summary>Tip</summary>
-
-Zoek in de ge-de-obfusceerde code naar een functie die een token berekent. In veel DVWA-versies heet die `do_something`. Roep haar aan via de Console.
-
-</details>
+**Vraag:** Waarom lukt alleen `success`, ook al maakt de browser voor elk woord netjes een passend ROT13-token?
 
 <details>
 
 <summary>Antwoord</summary>
 
-1. Open F12 → **Sources** en "Pretty Print" het JavaScript-bestand.
-2. Zoek de tokengeneratiefunctie (bijv. `do_something`).
-3. Open F12 → **Console** en typ: `do_something("XXsuccessXX")` (of de exacte input die het script verwacht).
-4. Klik op Submit. De server accepteert de request.
+De server controleert náást het token ook of het woord letterlijk `success` is. Het token-veld voegt daar niets aan toe, want het wordt toch in de browser gemaakt. ROT13 is alleen een dun laagje obfuscatie: het maakt de code iets minder herkenbaar, maar verandert niets aan de kern. De echte controle blijft "is het woord success?".
 
 </details>
 
 ## 5. ✓ Wat moest je zien?
 
 :::tip[Controle]
-- Zonder de Console aanpassing geeft het formulier "Invalid Token".
-- Na het aanroepen van de ge-de-obfusceerde functie slaagt het formulier.
-- Pretty Print toont de volledige logica van het script, ongeacht de obfuscatie.
-
-Werkt de Console niet in het lab? Probeer het in een lokale DVWA-installatie met volledige toegang tot F12.
+- Het invullen van `success` slaagt meteen, net als op Low, ondanks het "sterkere" ROT13-algoritme.
+- In de paginabron zie je de functie `rot13` die het token uit het woord berekent.
+- Alleen `success` wordt goedgekeurd, omdat de server ook het woord zelf controleert — het client-side token voegt geen beveiliging toe.
 :::
 
 ## 6. Er gaat iets mis...
 
-Je hebt de code ge-"Pretty Print", je roept in de Console `do_something("success")` aan, en je krijgt: `Uncaught ReferenceError: do_something is not defined`.
+De ontwikkelaar dacht: als ik het algoritme maar ingewikkelder maak, kraakt niemand het meer. Dat is "Security by Obscurity" — beveiliging die leunt op geheimhouding van de methode in plaats van op een echt geheim.
 
-De functienaam `do_something` is een voorbeeld — na obfuscatie of minificatie heet de functie in jouw DVWA-versie misschien `a`, `_0x3f2a` of iets anders. De obfuscator hernoemt namen juist om je te misleiden. Je moet dus in de ge-de-obfusceerde broncode zélf de functie opzoeken die het token berekent en díe naam gebruiken, niet blind `do_something` overtypen.
-
-En let op het tweede deel: het token in het verborgen veld moet kloppen én in het zichtbare invoerveld moet nog steeds `success` staan. Roep je alleen de functie aan maar laat je het tekstveld leeg, dan matcht het token wel maar de invoer niet.
+Het probleem: de browser moet de code kunnen uitvoeren, dus staat de methode altijd leesbaar in de pagina. ROT13, base64 of een ge-obfusceerde functie met een onleesbare naam maken het voor een mens even lastiger te lezen, maar de browser voert het gewoon uit en berekent het token voor je. Een aanvaller hoeft de code niet eens te begrijpen — die typt `success` en laat de pagina het werk doen. **Never trust the client.**

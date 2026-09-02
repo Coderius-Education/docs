@@ -11,7 +11,7 @@ import DvwaLab from '@site/src/components/DvwaLab';
 
 <Ethiek />
 
-Websites hebben vaak een functie om afbeeldingen te uploaden. Een slecht beveiligde upload-functie is een van de snelste manieren voor een hacker om de server over te nemen.
+Websites hebben vaak een functie om afbeeldingen te uploaden. Een slecht beveiligde upload is een van de snelste manieren voor een aanvaller om de server over te nemen.
 
 <Voorkennis
   items={[
@@ -19,9 +19,11 @@ Websites hebben vaak een functie om afbeeldingen te uploaden. Een slecht beveili
   ]}
 />
 
+> **Labbeperking:** Het lab simuleert de upload met twee velden (bestandsnaam en inhoud) en vertelt je wat de server met dat bestand zou doen. Het echt uitvoeren van een geüploade web shell — naar de URL navigeren en `whoami` zien — vraagt een [lokale DVWA-installatie](/docs/dvwa_installatie).
+
 ## 1. Predict (Voorspel)
 
-Wanneer je op het Low level een bestand uploadt, doet de server dit:
+Wanneer je op het Low level uploadt, doet de server dit:
 
 ```php
 $target_path  = "../../hackable/uploads/";
@@ -30,47 +32,47 @@ $target_path .= basename( $_FILES[ 'uploaded' ][ 'name' ] );
 move_uploaded_file( $_FILES[ 'uploaded' ][ 'tmp_name' ], $target_path );
 ```
 
-**Vraag:** Dit script is ontworpen voor afbeeldingen. Wat gebeurt er als je een bestand met de naam `shell.php` uploadt met PHP-code erin? Wordt dit geweigerd?
+**Vraag:** Dit script is bedoeld voor afbeeldingen. Wat gebeurt er als je een bestand `shell.php` met PHP-code erin uploadt? Wordt dat geweigerd?
 
 <details>
 
 <summary>Antwoord</summary>
 
-Nee, de server weigert helemaal niets. Het script verplaatst elk geüpload bestand — ongeacht het type — naar een voor het publiek toegankelijke map (`/hackable/uploads/`). Als je daarna in je browser navigeert naar `http://localhost/hackable/uploads/shell.php`, voert de webserver jouw PHP-code uit. Met één bestand heb je een **Web Shell** gecreëerd.
+Nee, de server weigert niets. Het script verplaatst elk bestand — ongeacht het type — naar een publiek toegankelijke map (`/hackable/uploads/`). Op een echte server voert de webserver jouw PHP-code uit zodra je naar `http://localhost/hackable/uploads/shell.php` navigeert. Met één bestand heb je een **web shell**.
 
 </details>
 
 ## 2. Run (Uitvoeren)
 
-Start het lab en bekijk het uploadformulier.
+Start het lab. Je typt een bestandsnaam en de inhoud; het lab simuleert de upload en toont wat de server ermee doet.
 
 <DvwaLab module="file_upload" level="low" />
 
-Upload een gewone afbeelding (een .jpg of .png van je computer). Observeer het bericht dat de server teruggeeft na de upload — let op het pad waar het bestand is opgeslagen.
+Vul als bestandsnaam `foto.jpg` in met wat tekst als inhoud en klik op Uploaden. Bekijk het pad in de melding waar het bestand "opgeslagen" wordt.
 
 ## 3. Investigate (Onderzoeken)
 
-Maak een tekstbestand met de naam `test.txt` op je computer met de tekst `hallo`. Upload dit bestand via het formulier.
+Vul nu `test.txt` in als bestandsnaam en klik opnieuw op Uploaden.
 
-**Vraag:** Accepteert de server het tekstbestand? Wat onthult dit over welke controles de server uitvoert op het bestandstype?
+**Vraag:** Accepteert de server het tekstbestand? Wat zegt dat over de controles op het bestandstype?
 
 <details>
 
 <summary>Antwoord</summary>
 
-Ja, de server accepteert elk bestand zonder enige controle. Het pad in de succesboodschap (`../../hackable/uploads/test.txt`) onthult dat alle uploads naar dezelfde publiek toegankelijke map gaan — ongeacht of het een foto, tekstbestand of uitvoerbaar script is.
+Ja, de server accepteert elk bestand zonder controle. Het pad in de melding laat zien dat alle uploads in dezelfde publiek toegankelijke map belanden — of het nu een foto, tekstbestand of uitvoerbaar script is.
 
 </details>
 
 ## 4. Modify & Make (Aanpassen & Maken)
 
-Maak een kwaadaardig PHP-bestand aan en upload het naar de server.
+Bied een kwaadaardig PHP-bestand aan de server aan.
 
 <details>
 
 <summary>Tip</summary>
 
-Maak op je eigen computer (met Kladblok of een teksteditor) een bestand met de naam `shell.php` en zet de volgende code erin:
+Vul als bestandsnaam `shell.php` in en als inhoud:
 `<?php echo system('whoami'); ?>`
 
 </details>
@@ -79,23 +81,22 @@ Maak op je eigen computer (met Kladblok of een teksteditor) een bestand met de n
 
 <summary>Antwoord</summary>
 
-1. Upload `shell.php` via het DVWA-formulier.
-2. Noteer het pad dat de server teruggeeft (bijv. `../../hackable/uploads/shell.php`).
-3. Navigeer in je browser naar dat bestand: `http://localhost/DVWA/hackable/uploads/shell.php`.
-4. In plaats van een gedownload bestand zie je de accountnaam van de webserver — jouw PHP-code is uitgevoerd.
+1. Typ `shell.php` als bestandsnaam en `<?php echo system('whoami'); ?>` als inhoud.
+2. Klik op Uploaden. Het lab accepteert het bestand en waarschuwt dat dit een PHP-bestand is dat op een echte server uitvoerbaar zou zijn, met de URL erbij.
+3. Op een echte DVWA navigeer je naar die URL en zie je de accountnaam van de webserver — jouw code is dan uitgevoerd.
 
 </details>
 
 ## 5. ✓ Wat moest je zien?
 
 :::tip[Controle]
-- De server accepteert het uploaden van `shell.php` zonder foutmelding.
-- Na het navigeren naar de upload-URL zie je de output van `whoami` — de gebruikersnaam waaronder de webserver draait.
-- Er is geen beveiliging: de server voert elk geüpload bestand uit als broncode.
+- Het lab accepteert `shell.php` zonder foutmelding.
+- Bij een `.php`-bestand verschijnt een gele waarschuwing dat het op een echte server uitvoerbaar zou zijn, met de upload-URL.
+- Er is geen enkele controle op het bestandstype: alles wordt geaccepteerd.
 
-Zie je een lege pagina? Controleer of je de PHP-code correct in `shell.php` hebt staan, inclusief de `<?php`- en `?>`-tags.
+Zie je de waarschuwing niet? Controleer of je bestandsnaam echt op `.php` eindigt.
 :::
 
 ## 6. Er gaat iets mis...
 
-Wat als de DVWA-server het bestand wel opslaat maar het script niet uitvoert? Controleer of je naar de juiste URL navigeert — het pad begint met `/DVWA/hackable/uploads/`, niet met het pad dat de server in de succesboodschap toont (dat is een relatief serverpad, niet een URL).
+Je verwacht in het lab de output van `whoami` te zien, maar die komt niet. Dat klopt: het lab voert het bestand niet echt uit — het toont alleen dat de upload zou slagen en waar het bestand terecht zou komen. Het daadwerkelijk uitvoeren gebeurt pas op een echte server, wanneer je in je browser naar `/hackable/uploads/shell.php` navigeert. Let er dan op dat je de publieke URL gebruikt, niet het relatieve serverpad uit de melding.
