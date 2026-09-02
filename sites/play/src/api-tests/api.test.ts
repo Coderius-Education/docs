@@ -1,6 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
-import { join, relative } from 'node:path';
+import { createRequire } from 'node:module';
+import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
@@ -14,11 +15,19 @@ const SITE = fileURLToPath(new URL('../..', import.meta.url)).replace(/[\\/]$/, 
 const WHL_DIR = join(SITE, 'static', 'whl');
 const ENGINE = join(SITE, 'src', 'components', 'CodeRunner', 'engine.js');
 
-function playWheel(): string {
+function wheelUitEngine(constante: string): string {
   const engine = readFileSync(ENGINE, 'utf8');
-  const m = engine.match(/PLAY_WHEEL = '\/whl\/([^']+)'/);
-  if (!m) throw new Error('PLAY_WHEEL niet gevonden in engine.js');
+  const m = engine.match(new RegExp(`${constante} = '\\/whl\\/([^']+)'`));
+  if (!m) throw new Error(`${constante} niet gevonden in engine.js`);
   return m[1];
+}
+
+function playWheel(): string {
+  return wheelUitEngine('PLAY_WHEEL');
+}
+
+function pymunkWheel(): string {
+  return wheelUitEngine('PYMUNK_WHEEL');
 }
 
 /** Alle publieke play-symbolen uit de wheel: new_…, when_…, while_… enz. */
@@ -61,6 +70,34 @@ describe('de gebundelde wheel', () => {
     // ten onrechte dat hij nog meedoet.
     const playWheels = readdirSync(WHL_DIR).filter((f) => f.startsWith('coderius_play'));
     expect(playWheels).toEqual([playWheel()]);
+  });
+});
+
+describe('de gebundelde pymunk-wheel', () => {
+  // pymunk is gecompileerd tegen één CPython-ABI (cp313). Bumpt iemand
+  // Pyodide naar een nieuwe Python zonder deze wheel te vervangen, dan
+  // weigert micropip 'm stil en heeft elk spel met fysica geen pymunk. De
+  // play-wheel is py3-none-any en heeft dat probleem niet; deze wel.
+  it('bestaat op de plek waar engine.js naar wijst, zonder tweede exemplaar', () => {
+    expect(existsSync(join(WHL_DIR, pymunkWheel())), pymunkWheel()).toBe(true);
+    const pymunkWheels = readdirSync(WHL_DIR).filter((f) => f.startsWith('pymunk'));
+    expect(pymunkWheels).toEqual([pymunkWheel()]);
+  });
+
+  it('hoort bij de Python-versie van de Pyodide die play laadt', () => {
+    // play laadt Pyodide van de CDN met PYODIDE_VERSION; pyodide-kopie.test.ts
+    // houdt die constante gelijk aan de geïnstalleerde npm-package, dus de
+    // lock daarvan zegt welke Python er in de browser draait.
+    const require = createRequire(import.meta.url);
+    const lock = JSON.parse(
+      readFileSync(
+        join(dirname(require.resolve('pyodide/package.json')), 'pyodide-lock.json'),
+        'utf8',
+      ),
+    );
+    const [groot, klein] = String(lock.info.python).split('.');
+    const tag = pymunkWheel().match(/-(cp\d{2,3})-/)?.[1];
+    expect(tag).toBe(`cp${groot}${klein}`);
   });
 });
 

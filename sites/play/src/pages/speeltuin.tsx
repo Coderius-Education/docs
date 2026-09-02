@@ -1,7 +1,20 @@
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import Layout from '@theme/Layout';
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import type React from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styles from './speeltuin.module.css';
+
+// De runner-modules zijn plain JS en laden lui; hun types komen uit de bron.
+type Engine = typeof import('../components/CodeRunner/engine');
+type Shared = typeof import('../components/SharedRunner');
+type Preset = typeof import('../components/CodeRunner/presets')['presets'][number];
+type CodeEditorComponent = React.ComponentType<{
+  value: string;
+  onChange: (code: string) => void;
+  height?: string;
+}>;
+type ConsoleLine = { text: string; isError: boolean };
+type PendingRun = { code: string; mode: string; lineOffset: number };
 
 const DEFAULT_CODE_PLAY = `import play
 
@@ -32,23 +45,23 @@ pygame.quit()
 
 function PlaygroundInner() {
   const [code, setCode] = useState(DEFAULT_CODE_PLAY);
-  const [mode, setMode] = useState('play');
+  const [mode, setMode] = useState<string>('play');
   const [isRunning, setIsRunning] = useState(false);
   const [presetsOpen, setPresetsOpen] = useState(false);
-  const [consoleLines, setConsoleLines] = useState([]);
-  const presetsRef = useRef(null);
-  const slotRef = useRef(null);
-  const consoleRef = useRef(null);
-  const pendingRunRef = useRef(null);
+  const [consoleLines, setConsoleLines] = useState<ConsoleLine[]>([]);
+  const presetsRef = useRef<HTMLDivElement>(null);
+  const slotRef = useRef<HTMLDivElement>(null);
+  const consoleRef = useRef<HTMLDivElement>(null);
+  const pendingRunRef = useRef<PendingRun | null>(null);
 
   const ownerId = useMemo(() => 'speeltuin', []);
 
   // Lazy-load heavier components + the SharedRunner module (which pulls in
   // engine.js as a side-effect). Page-load stays light if the user never runs.
-  const [CodeEditor, setCodeEditor] = useState(null);
-  const [engine, setEngine] = useState(null);
-  const [shared, setShared] = useState(null);
-  const [presets, setPresets] = useState([]);
+  const [CodeEditor, setCodeEditor] = useState<CodeEditorComponent | null>(null);
+  const [engine, setEngine] = useState<Engine | null>(null);
+  const [shared, setShared] = useState<Shared | null>(null);
+  const [presets, setPresets] = useState<Preset[]>([]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: mount-only — prewarmt Pyodide met de begincode; latere bewerkingen mogen dit niet opnieuw triggeren (dat zou de dynamic imports herladen).
   useEffect(() => {
@@ -98,8 +111,8 @@ function PlaygroundInner() {
 
   // Close presets dropdown on outside click
   useEffect(() => {
-    function handleClick(e) {
-      if (presetsRef.current && !presetsRef.current.contains(e.target)) {
+    function handleClick(e: MouseEvent) {
+      if (presetsRef.current && !presetsRef.current.contains(e.target as Node)) {
         setPresetsOpen(false);
       }
     }
@@ -122,7 +135,7 @@ function PlaygroundInner() {
     };
   }, [shared, ownerId]);
 
-  const appendLine = useCallback((text, isError) => {
+  const appendLine = useCallback((text: string, isError: boolean) => {
     setConsoleLines((prev) => [...prev, { text, isError }]);
   }, []);
 
@@ -161,12 +174,12 @@ function PlaygroundInner() {
       mode: params.mode,
       lineOffset: params.lineOffset,
       listeners: {
-        onStdout: (text) => appendLine(text, false),
-        onStderr: (text) => appendLine(text, true),
+        onStdout: (text: string) => appendLine(text, false),
+        onStderr: (text: string) => appendLine(text, true),
         onDone: () => {
           /* keep canvas visible */
         },
-        onError: (msg, fatal) => {
+        onError: (msg: string, fatal: boolean) => {
           appendLine(msg, true);
           if (fatal) setIsRunning(false);
         },
@@ -176,7 +189,7 @@ function PlaygroundInner() {
     });
   }, [isRunning, ownerId, shared, appendLine]);
 
-  function loadPreset(preset) {
+  function loadPreset(preset: Preset) {
     setCode(preset.code);
     setMode(preset.mode);
     handleStop();

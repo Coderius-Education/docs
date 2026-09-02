@@ -15,7 +15,7 @@ Soms wil je controleren of een pin echt spanning geeft. Dat doe je met een **mul
 - Zwarte meetpen aan **GND**
 - Multimeter op **DC voltage** (V met een streepje)
 
-## Code: pin op HOOG
+## Code: pin hoog zetten
 
 ```python
 from machine import Pin
@@ -30,7 +30,7 @@ while True:
 
 Op je multimeter zou je nu ongeveer **3,3V** moeten zien.
 
-## Code: pin op LAAG
+## Code: pin laag zetten
 
 ```python
 from machine import Pin

@@ -28,6 +28,13 @@ describe('maskeren', () => {
     expect(namen('Gebruik `u.py` en <Component u="1" /> en [link](/docs/u).')).toEqual([]);
   });
 
+  it('laat HTML-<code> met rust, ook in een <summary>', () => {
+    // Markdown-backticks werken niet in een <summary>, dus daar staat <code>.
+    expect(
+      namen('<summary>Waarom <code>== HIGH</code> en niet <code>GPIOB</code>?</summary>'),
+    ).toEqual([]);
+  });
+
   it('laat startcode in een MDX-export met rust', () => {
     // web-docs hoist de startcode van de oefenvelden naar exports bovenin;
     // een <button>Klik Mij!</button> dáárin is code, geen lestekst.
@@ -41,6 +48,10 @@ describe('fouten', () => {
   it('vindt de u-vorm', () => {
     expect(namen('Hiermee kunt u beginnen.')).toContain('u-vorm');
     expect(namen('Dit is uw bestand.')).toContain('u-vorm');
+  });
+
+  it('ziet "jóuw" met klemtoonaccent niet aan voor "uw"', () => {
+    expect(namen('Python vindt jóuw bestand in plaats van de module.')).not.toContain('u-vorm');
   });
 
   it('ziet "juli" niet aan voor een u-vorm', () => {

@@ -17,7 +17,7 @@ var score = 0         # Kan veranderen
 const SPEED = 300.0   # Verandert nooit
 ```
 
-Gebruik `const` voor waarden die altijd hetzelfde blijven, zoals snelheid of zwaartekracht. Schrijf ze in **HOOFDLETTERS**.
+Gebruik `const` voor waarden die altijd hetzelfde blijven, zoals snelheid of zwaartekracht. Schrijf ze in hoofdletters, zoals `SNELHEID`.
 
 </details>
 

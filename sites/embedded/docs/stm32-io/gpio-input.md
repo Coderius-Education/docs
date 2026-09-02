@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # 9.2 GPIO als ingang
 
-Een pin uitlezen werkt met HAL bijna hetzelfde als een pin aansturen: je vult een `GPIO_InitTypeDef` in, maar nu met een ingangs-modus. En net als bij de Arduino gebruik je een **pull-up** om een zwevende ingang te voorkomen.
+Een pin uitlezen werkt met HAL bijna hetzelfde als een pin aansturen: je vult een `GPIO_InitTypeDef` in, maar nu met een ingangsmodus. En net als bij de Arduino gebruik je een **pull-up** om een zwevende ingang te voorkomen.
 
 ## Een knop met pull-up
 

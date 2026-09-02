@@ -15,7 +15,7 @@ De kern hier is **procedureel spawnen**: obstakels worden tijdens het spelen aan
 
 ## Wat ga je leren?
 
-- Scenes "instantieren" tijdens het spel met `preload()` + `instantiate()` — dat ken je uit [Spawnen: nodes maken in code](../08-meer-levels-en-menu/spawnen.md).
+- Scenes "instantiëren" tijdens het spel met `preload()` + `instantiate()` — dat ken je uit [Spawnen: nodes maken in code](../08-meer-levels-en-menu/spawnen.md).
 - Een `Timer` gebruiken als spawn-klok, zoals in [Automatisch spawnen met een Timer](../08-meer-levels-en-menu/spawn_timer.md).
 - Oude nodes opruimen met `queue_free()` om geheugen vrij te maken.
 - Een meescrollende achtergrond met `ParallaxBackground`.
@@ -29,7 +29,7 @@ De kern hier is **procedureel spawnen**: obstakels worden tijdens het spelen aan
 | `Node2D` (spawner) | Een onzichtbare positie waar nieuwe obstakels worden aangemaakt. |
 | `Timer` | Stuurt op vaste tijden een `timeout`-signaal → spawn een obstakel. |
 | `Area2D` (in obstakel-scene) | Raakt de speler een obstakel → game over. |
-| `ParallaxBackground` + `ParallaxLayer` | Een achtergrond die meescrolt voor diepte. |
+| `ParallaxBackground` + `ParallaxLayer` | Een achtergrond die meescrollt voor diepte. |
 | `CanvasLayer` + `Label` | Score (op basis van overleefde tijd of gepasseerde obstakels). |
 
 ## Handige GDScript-functies

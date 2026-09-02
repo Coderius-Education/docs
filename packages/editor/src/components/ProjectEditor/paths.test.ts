@@ -11,7 +11,7 @@ import {
 // onderscheidende geval is steeds een buurman met dezelfde letters: "src2"
 // mag niet meebewegen met "src".
 
-const project = {
+const project: { files: Record<string, string>; folders: string[]; entry: string } = {
   files: {
     'index.html': '<h1>',
     'src/a.py': 'A',
