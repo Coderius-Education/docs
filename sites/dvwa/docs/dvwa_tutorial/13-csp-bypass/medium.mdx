@@ -38,11 +38,11 @@ Start het lab en bekijk het formulier.
 
 > **Labbeperking:** Het inspecteren van HTTP-response headers in een iframe is beperkt. Het lab simuleert de nonce-logica, maar voor het volledig inspecteren van headers heb je een [lokale DVWA-installatie](/docs/dvwa_installatie) nodig.
 
-Probeer `<script>alert(1)</script>` in te vullen. Observeer dat het geblokkeerd wordt.
+Het lab toont de vaste nonce in de CSP en simuleert de controle. Vul `<script>alert(1)</script>` zonder nonce in en zie dat het geblokkeerd wordt.
 
 ## 3. Investigate (Onderzoeken)
 
-Open F12 → **Elements** en zoek in de HTML naar `<script nonce=`. Noteer de waarde van het nonce-attribuut op de bestaande script-tags van de pagina.
+Het lab toont de nonce-waarde in de CSP-header. In een echte DVWA vind je diezelfde waarde via F12 → **Elements** op de bestaande `<script nonce=`-tags. Noteer de waarde.
 
 **Vraag:** Verandert de nonce-waarde als je de pagina ververst (F5)? Wat onthult dit over de beveiliging?
 

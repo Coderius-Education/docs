@@ -492,27 +492,41 @@ const GEVALLEN: Geval[] = [
     verwacht: { regex: [/[0-9a-f]{64}/] },
   },
 
-  // --- CSP Bypass (POST) — smoke + escaping ---
+  // --- CSP Bypass (POST) — de whitelist/nonce/JSONP-bypass per level ---
   {
     module: 'csp_bypass',
     level: 'low',
-    naam: 'externe URL wordt zonder CSP opgenomen',
-    invoer: { include: 'https://evil.nl/x.js' },
-    verwacht: { bevat: ['Script opgenomen van', 'https://evil.nl/x.js'] },
+    naam: 'script van de whitelist (pastebin) wordt uitgevoerd',
+    invoer: { include: 'https://pastebin.com/raw/abc123' },
+    verwacht: { bevat: ['pastebin.com', 'whitelist', 'uitgevoerd'] },
+  },
+  {
+    module: 'csp_bypass',
+    level: 'low',
+    naam: 'inline script wordt door de CSP geblokkeerd',
+    invoer: { include: '<script>alert(1)</script>' },
+    verwacht: { bevat: ['Inline script geblokkeerd'] },
   },
   {
     module: 'csp_bypass',
     level: 'medium',
-    naam: 'unsafe-inline laat inline scripts toe',
-    invoer: { include: 'x' },
-    verwacht: { bevat: ['unsafe-inline'] },
+    naam: 'script met de hardcoded nonce wordt uitgevoerd',
+    invoer: { include: '<script nonce="TmV2ZXIgZ29pbmcgdG8gZ2l2ZSB5b3UgdXA=">alert(1)</script>' },
+    verwacht: { bevat: ['nonce-', 'uitgevoerd'] },
+  },
+  {
+    module: 'csp_bypass',
+    level: 'medium',
+    naam: 'script zonder nonce wordt geblokkeerd',
+    invoer: { include: '<script>alert(1)</script>' },
+    verwacht: { bevat: ['Script geblokkeerd'], bevatNiet: ['uitgevoerd'] },
   },
   {
     module: 'csp_bypass',
     level: 'high',
-    naam: 'nonce wordt willekeurig gegenereerd',
-    invoer: { include: 'x' },
-    verwacht: { bevat: ['nonce-'], regex: [/nonce-[A-Za-z0-9+/=]+/] },
+    naam: 'ongefilterde JSONP-callback echoot alert(1);//',
+    invoer: { include: 'alert(1);//' },
+    verwacht: { bevat: ['alert(1);//({"answer":"15"});'], regex: [/script-src 'self'/] },
   },
   {
     module: 'csp_bypass',

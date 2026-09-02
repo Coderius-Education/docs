@@ -48,11 +48,11 @@ Start het lab.
 
 > **Labbeperking:** Het manipuleren van de JSONP callback-parameter vereist directe URL-toegang. Het lab simuleert de CSP-logica, maar voor de volledige JSONP-bypass heb je een [lokale DVWA-installatie](/docs/dvwa_installatie) nodig.
 
-Klik op de knop op de pagina. Bekijk in F12 → **Network** welke URL het uitvoert.
+Het lab toont de strikte CSP en het JSONP-endpoint. Vul een callback in en zie welke response de server letterlijk teruggeeft.
 
 ## 3. Investigate (Onderzoeken)
 
-Bekijk in F12 → **Network** de JSONP-aanroep die de pagina doet. Kijk naar de URL en de response die terugkomt.
+Vul `alert(1);//` als callback in. Het lab echoot de response die het JSONP-endpoint teruggeeft. In een echte DVWA zie je diezelfde response in F12 → **Network**.
 
 **Vraag:** Wat staat er letterlijk in de response van `jsonp.php`? Wordt de callback-naam ongefilterd in de output gezet?
 

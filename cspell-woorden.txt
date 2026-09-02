@@ -40,13 +40,36 @@ tinytronics
 UART
 Wayback
 Wokwi
+exiftool
+Hastebin
+Laravel
+pastebin
 
 Cheatsheet
 cheatsheet
 
 # ── Vaktermen ───────────────────────────────────────────────────────────────
+aanvalspayload
+ankerlinks
 concatenatie
+decryptor
 deobfusceren
+extensiecheck
+geparametriseerde
+gepatchte
+hashalgoritme
+hashfunctie
+htmlspecialchars
+netwerksniffer
+omzeiltechniek
+onvervalsbare
+pentesters
+Referers
+sessiecookie
+tokenbeveiliging
+tokenvelden
+vercijferingen
+webroot
 figsize
 geobfusceerde
 Hitbox
@@ -78,7 +101,15 @@ ylabel
 # ── Werkwoorden die uit het Engels komen ────────────────────────────────────
 clonen
 Clonen
+commentarieert
 committen
+escapet
+forcen
+gepingd
+hasht
+leegtrekt
+reversen
+whitelisten
 gecommit
 gemerged
 geüpdate
@@ -95,8 +126,21 @@ togglen
 
 # ── Nederlandse samenstellingen die de nl-woordenlijst mist ─────────────────
 aanvinkvakje
+áchter
+afbeeldings
 afsluitzin
 basisrij
+beveiligings
+bijv
+binnenín
+cijferige
+dóét
+helpuitvoer
+padnaam
+quootje
+secondenvertraging
+tagnamen
+vastgeprogrammeerd
 bestandsextensie
 bijhouder
 bonregel
