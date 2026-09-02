@@ -8,7 +8,7 @@ $db = new SQLite3('/tmp/dvwa.db');
 $message = '';
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
-    $result = $db->query("SELECT first_name, last_name FROM users WHERE user_id = '$id'");
+    $result = @$db->query("SELECT first_name, last_name FROM users WHERE user_id = '$id'");
     if ($result) {
         $found = false;
         while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
@@ -88,7 +88,7 @@ echo $message;
 $db = new SQLite3('/tmp/dvwa.db');
 $message = '';
 $id = isset($_GET['id']) ? $_GET['id'] : '1';
-$result = $db->query("SELECT first_name, last_name FROM users WHERE user_id = '$id' LIMIT 1");
+$result = @$db->query("SELECT first_name, last_name FROM users WHERE user_id = '$id' LIMIT 1");
 if ($result) {
     $found = false;
     while ($row = $result->fetchArray(SQLITE3_ASSOC)) {

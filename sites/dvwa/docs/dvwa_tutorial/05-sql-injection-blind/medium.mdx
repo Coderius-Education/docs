@@ -7,18 +7,19 @@ import DvwaLab from '@site/src/components/DvwaLab';
 
 # SQL Injection (Blind) — Medium
 
-Op het Medium level is het formulier veranderd naar een dropdown-menu én ontbreken de aanhalingstekens in de query.
+Op het Medium level is het invulveld een dropdown geworden en zet de backend de waarde om naar een getal.
+
+> **Labbeperking:** De echte Medium-aanval is *time-based* en leunt op `SLEEP()`, een MySQL-functie. Dit browser-lab draait op SQLite (dat geen `SLEEP()` kent) en zet de dropdown-waarde bovendien om naar een geheel getal. Je ziet hier dus de verdediging, maar de timing-aanval zelf voer je uit op een [lokale DVWA-installatie](/docs/dvwa_installatie).
 
 ## 1. Predict (Voorspel)
 
-We weten nu hoe een Ja/Nee (Boolean) injectie werkt. Soms vertelt de applicatie je echter niet eens "Exists" of "Missing", maar gebeurt er in beide gevallen op de pagina *exact hetzelfde*. Hoe kunnen we dán Ja/Nee-vragen stellen aan de server?
+Soms meldt de applicatie niet eens "bestaat" of "bestaat niet" — de pagina ziet er in beide gevallen hetzelfde uit. Hoe stel je dán een ja/nee-vraag aan de server?
 
 <details>
 
 <summary>Antwoord</summary>
 
-We kunnen overstappen op **Time-Based Blind SQL Injection**.
-We commanderen de database om, *alleen* als onze bewering waar is, 5 seconden te wachten voordat hij antwoord geeft. Als we direct antwoord krijgen, was de bewering onwaar. Als het verzoek lang duurt, weten we dat de bewering waar was.
+Met **Time-Based Blind SQL Injection**. Je laat de database *alleen als je bewering waar is* een paar seconden wachten voordat ze antwoordt. Krijg je direct antwoord, dan was de bewering onwaar; duurt het lang, dan was ze waar. De laadtijd is je enige signaal.
 
 </details>
 
@@ -28,31 +29,31 @@ Start het lab en bekijk het formulier.
 
 <DvwaLab module="sql_injection_blind" level="medium" />
 
-Je ziet de vertrouwde dropdown-box (waar je niet vrij in kunt typen). Selecteer ID `1` en klik op Submit. Noteer hoe snel de pagina reageert.
+Je ziet een dropdown waarin je niet vrij kunt typen. Kies ID `1` en klik op Controleren. De backend zet je keuze om naar een getal met `(int)`.
 
 ## 3. Investigate (Onderzoeken)
 
-Open de Developer Tools (F12) en zoek het `<select>`-element. Verander de `value` van één van de opties naar `1 AND SLEEP(5)` via de inspector en klik daarna op Submit.
+Bekijk in de broncode (**Bekijk broncode**) hoe de backend de invoer verwerkt.
 
-**Vraag:** Wat valt je op aan de laadtijd van de pagina? Wat onthult dit?
+**Vraag:** Wat doet `(int)$_POST['id']` met een payload als `1 AND SLEEP(5)`? Waarom is dat hier een probleem voor de aanvaller?
 
 <details>
 
 <summary>Antwoord</summary>
 
-De pagina wacht nu 5 seconden voordat hij antwoord geeft. Dit bewijst dat de applicatie jouw invoer ongefilterd in de SQL-query plakt en dat de database het `SLEEP(5)`-commando daadwerkelijk uitvoert. De backend filtert de dropdown-waarde niet — de bescherming zat alleen in de frontend (de dropdown), niet in de backend.
+`(int)"1 AND SLEEP(5)"` levert gewoon `1` op: PHP leest het getal aan het begin en gooit de rest weg. Van jouw injectie blijft niets over. Deze cast is een echte verdediging: alleen een geheel getal komt in de query terecht. Op een echte DVWA (MySQL) ontbreekt die cast juist, en dáár slaagt de time-based aanval wel.
 
 </details>
 
 ## 4. Modify & Make (Aanpassen & Maken)
 
-Omdat de backend `user_id = $id` verwerkt (zonder aanhalingstekens), kun je een Time-Based aanval uitvoeren via de Developer Tools.
+Op een echte MySQL-DVWA zou je de aanval zo uitvoeren. Lees de stappen door; uitproberen doe je op je lokale installatie (zie de Labbeperking).
 
 <details>
 
 <summary>Tip</summary>
 
-Druk op F12. Inspecteer het formulier, en verander de `value="1"` van een van de opties naar de gewenste payload. Gebruik het SQL-commando `SLEEP(5)`.
+Als de backend de waarde niet naar een getal zou casten, kon je via F12 de `value` van een `<option>` veranderen in een payload met `SLEEP(5)`.
 
 </details>
 
@@ -60,23 +61,18 @@ Druk op F12. Inspecteer het formulier, en verander de `value="1"` van een van de
 
 <summary>Antwoord</summary>
 
-Verander de optie naar: `<option value="1 AND SLEEP(5)">`
-Selecteer deze in de webpagina en klik Submit. De browser wacht nu 5 volle seconden voordat de webpagina weer verschijnt. Je hebt succesvol de wachttijd gemanipuleerd en daarmee bewezen dat er een blind gat in de database zit.
+Verander via F12 een optie naar `<option value="1 AND SLEEP(5)">`, selecteer die en klik op Submit. Op een kwetsbare MySQL-server wacht de pagina dan 5 seconden — het bewijs dat je payload de query bereikt. In dit lab gebeurt dat niet, doordat de `(int)`-cast alleen de `1` doorlaat.
 
 </details>
 
 ## 5. ✓ Wat moest je zien?
 
 :::tip[Controle]
-- Na het invullen van `1 AND SLEEP(5)` duurt het zichtbaar **5 seconden** voordat de pagina reageert.
-- Een normaal ID (zoals `1`) geeft direct antwoord — geen vertraging.
-- Het verschil in laadtijd bewijst dat de SQL-code door de database wordt uitgevoerd.
-
-Zie je geen vertraging? Controleer of je de waarde correct hebt aangepast in de inspector en of je op Submit hebt geklikt ná het wijzigen.
+- In dit lab reageert de pagina altijd direct: de `(int)`-cast houdt je payload tegen.
+- In de broncode zie je dat alleen een geheel getal in de query komt.
+- Op een echte MySQL-DVWA (zonder die cast) zou `1 AND SLEEP(5)` de pagina juist 5 seconden laten wachten.
 :::
 
 ## 6. Er gaat iets mis...
 
-Je verwacht een lijst met gegevens, zoals bij gewone SQL-injectie, maar die komt niet. Dat hoort zo: dit is *blinde* injectie. De pagina toont nooit data; je enige signaal is de tijd. Kijk dus naar de laadduur, niet naar de inhoud.
-
-Krijg je geen vertraging terwijl je payload klopt? Dan koos je waarschijnlijk een ID dat geen rij oplevert. `SLEEP(5)` draait per gevonden rij: `1 AND SLEEP(5)` slaapt alleen als ID 1 bestaat. Bij een niet-bestaand ID vindt de database niets, en dus slaapt er ook niets.
+Je verwacht een lijst met data, zoals bij gewone SQL-injectie, maar die komt niet. Dat hoort zo: dit is *blinde* injectie. De pagina toont nooit data — je enige signaal is de reactie (bestaat/bestaat niet) of, bij de time-based variant, de laadtijd. Kijk dus naar het gedrag, niet naar de inhoud. En bedenk: in dit lab blokkeert de `(int)`-cast de injectie, dus verwacht hier geen vertraging.

@@ -7,60 +7,58 @@ import DvwaLab from '@site/src/components/DvwaLab';
 
 # SQL Injection (Blind) — High
 
-Op het High level probeert de applicatie je aanval af te weren door het invulveld op een aparte pagina te zetten en de data via een sessie-cookie door te sturen.
-
-> **Labbeperking:** Deze aanval draait om het aanpassen van een cookie via F12 (**Application** → **Cookies**). Dat werkt maar beperkt binnen het afgeschermde iframe van het lab. De stappen hieronder laten zien hoe de aanval werkt; om hem echt uit te voeren heb je een [lokale DVWA-installatie](/docs/dvwa_installatie) nodig.
+Op het High level voegt de ontwikkelaar `LIMIT 1` toe en verstopt de invoer beter — op een echte DVWA zit de ID zelfs in een cookie in plaats van een zichtbaar veld.
 
 ## 1. Predict (Voorspel)
 
-De server gebruikt een aparte POST-request via een cookie (`$_COOKIE['id']`) of sessie in plaats van een directe GET-parameter in de URL:
+De query wordt afgekapt met `LIMIT 1`, en de waarde komt (op een echte DVWA) uit een cookie:
 
 ```php
-$id = $_COOKIE['id'];
-$query  = "SELECT first_name, last_name FROM users WHERE user_id = '$id' LIMIT 1;";
+$id = $_GET['id']; // op een echte DVWA: $_COOKIE['id']
+$query = "SELECT first_name, last_name FROM users WHERE user_id = '$id' LIMIT 1";
 ```
 
-**Vraag:** Waarom maakt het de hacker helemaal niets uit of de data via een GET-parameter, POST-verzoek of via een Cookie binnenkomt?
+**Vraag:** Houdt het verplaatsen van de invoer naar een cookie, plus `LIMIT 1`, de blinde injectie tegen?
 
 <details>
 
 <summary>Antwoord</summary>
 
-Elk van deze kanalen (GET, POST, Cookies, HTTP-headers) is data die vanuit de browser van de hacker naar de server stroomt. Als de server deze stroom oppakt en direct de database infietst zonder te filteren, ontstaat er altijd SQL Injection. Met de Developer Tools kan een hacker een Cookie net zo makkelijk veranderen als een simpel woordje in de adresbalk.
+Nee. Waar de waarde vandaan komt (een veld, een cookie, een header) maakt voor de database niets uit: het is en blijft invoer die ongefilterd in de query belandt. Met de Developer Tools pas je een cookie net zo makkelijk aan als een tekstveld. En `LIMIT 1` beperkt alleen het aantal rijen — je ja/nee-kanaal ("bestaat"/"bestaat niet") blijft gewoon werken.
 
 </details>
 
 ## 2. Run (Uitvoeren)
 
-Start het lab en verken hoe het invulveld werkt.
+Start het lab. Hier typ je de waarde in een gewoon veld; op een echte DVWA zou je dezelfde waarde in de cookie zetten.
 
 <DvwaLab module="sql_injection_blind" level="high" />
 
-Vul ID `1` en `2` in via het formulier (dat mogelijk via een popup of apart venster werkt). Noteer de reactie van de server.
+Vul ID `1` in (het scherm zegt "bestaat") en `99` (het scherm zegt "bestaat niet").
 
 ## 3. Investigate (Onderzoeken)
 
-Open de Developer Tools (F12), ga naar het tabblad **Application** → **Cookies**, en bekijk de cookie-waarden die door de applicatie worden gebruikt.
+Typ `1'` en klik op Controleren.
 
-**Vraag:** Welke cookie bevat het ID dat je hebt ingevuld? Wat onthult dit over waar de kwetsbaarheid zit?
+**Vraag:** Verandert de reactie? Wat betekent dat, ondanks de `LIMIT 1`?
 
 <details>
 
 <summary>Antwoord</summary>
 
-Je ziet een cookie (zoals `dvwaSession` of een vergelijkbare naam) die de ID-waarde bevat die je in het formulier hebt getypt. De server haalt dit cookie op en plakt het direct in de SQL-query. Dat betekent: als je de cookie-waarde aanpast naar een SQL-payload, voert de server die payload uit — precies zoals bij de GET- en POST-varianten.
+Je krijgt "bestaat niet", omdat het losse aanhalingsteken de query breekt. Dat bewijst dat je invoer nog steeds ongefilterd in de query komt. De `LIMIT 1` verandert daar niets aan: voor een ja/nee-vraag heb je maar één rij nodig.
 
 </details>
 
 ## 4. Modify & Make (Aanpassen & Maken)
 
-Jouw taak: voer via de cookie of het extra formulier een Time-Based SQL Injection-aanval uit.
+Gebruik hetzelfde boolean-kanaal als op Low om ja/nee-vragen te stellen.
 
 <details>
 
 <summary>Tip</summary>
 
-Als je de Developer Tools of een Browser Extensie hebt, pauzeer of modificeer dan je HTTP-verzoek. Wijzig de cookie-waarde (of het popup-veld) naar de klassieke time-based bypass: `1' AND SLEEP(5) #`.
+Sluit je payload zo af dat de query geldig blijft. Een gebalanceerd aanhalingsteken (`'1'='1`) of een commentaar `-- ` (twee streepjes + spatie, het SQLite-commentaar) helpt daarbij.
 
 </details>
 
@@ -68,24 +66,20 @@ Als je de Developer Tools of een Browser Extensie hebt, pauzeer of modificeer da
 
 <summary>Antwoord</summary>
 
-Door `1' AND SLEEP(5) #` in te sturen, breek je uit de string (met de enkele quote) en forceer je de database om via een Time-Based aanval 5 seconden te wachten. Als de pagina daadwerkelijk 5 seconden trager reageert, heb je bewezen dat de injectie werkt.
+Vul `1' AND '1'='1` in → "bestaat". Vul `1' AND '1'='2` in → "bestaat niet". Wil je de rest van de query (inclusief `LIMIT 1`) wegknippen, gebruik dan `1' AND '1'='1' -- ` met de afsluitende spatie. Zo stel je elke ja/nee-vraag, precies als op Low — de extra bescherming van High houdt je niet tegen.
 
 </details>
 
 ## 5. ✓ Wat moest je zien?
 
 :::tip[Controle]
-- Na het invullen van `1' AND SLEEP(5) #` in het cookie of popup-veld duurt de serverrespons zichtbaar **5 seconden** langer.
-- Een normaal ID geeft direct antwoord.
-- Het verschil bewijst dat de SQL-code uitgevoerd wordt, ook via dit indirecte kanaal.
+- `1' AND '1'='1` geeft "bestaat", `1' AND '1'='2` geeft "bestaat niet".
+- De `LIMIT 1` verandert dat verschil niet — één rij is genoeg voor een ja/nee-antwoord.
+- De injectie werkt, of de invoer nu uit een veld of een cookie komt.
 
-Werkt het niet? Controleer of je de enkele aanhalingstekens correct hebt getypt en of het hekje `#` aan het einde staat zonder extra spaties erna.
+Krijg je bij beide payloads hetzelfde? Controleer je aanhalingstekens.
 :::
 
 ## 6. Er gaat iets mis...
 
-Je verandert de cookie-waarde in F12 → **Application** → **Cookies** naar `1' AND SLEEP(5) #`, wacht... en de pagina reageert nog steeds direct. Geen vertraging van vijf seconden.
-
-Het aanpassen van een cookie doet op zichzelf niets. De server leest de cookie pas als er een nieuw verzoek naar toe gaat. Zolang je alleen de waarde in het tabblad wijzigt maar de pagina niet opnieuw laadt of het formulier niet opnieuw verstuurt, blijft de server je oude verzoek gebruiken en voert hij je payload nooit uit.
-
-Wijzig dus de cookie én trigger daarna een nieuw verzoek (herlaad de pagina of druk opnieuw op Submit). Reageert de pagina dan vijf seconden trager, dan heb je bewezen dat de database jouw `SLEEP(5)` uitvoert — ook via dit indirecte kanaal.
+Je probeert je payload af te sluiten met `#` (zoals in veel MySQL-voorbeelden) en krijgt alleen "bestaat niet". Dat komt door de database: dit lab draait op **SQLite**, dat het `#`-commentaar niet kent. Gebruik hier het gebalanceerde aanhalingsteken (`1' AND '1'='1`) of `-- ` mét een afsluitende spatie. Zonder die spatie ziet SQLite geen commentaar en breekt de query.

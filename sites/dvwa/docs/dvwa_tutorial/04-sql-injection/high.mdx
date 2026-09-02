@@ -7,16 +7,15 @@ import DvwaLab from '@site/src/components/DvwaLab';
 
 # SQL Injection — High
 
-Op het hoge niveau probeert de applicatie je aanval af te weren door het invulveld op een *compleet andere pagina* te zetten.
+Op het hoge niveau probeert de applicatie de schade te beperken door de query af te kappen met `LIMIT 1`.
 
 ## 1. Predict (Voorspel)
 
-Wanneer je op "Click here to change your ID" klikt, opent een pop-up. Je vult daar je ID in. De server slaat dit op in een sessie-variabele: `$_SESSION['id'] = $id;`.
-Vervolgens keer je terug naar de originele pagina en voert de applicatie de volgende query uit:
+De ontwikkelaar plakt jouw invoer nog steeds rechtstreeks in de query, maar zet er `LIMIT 1` achter in de hoop dat een aanval hooguit één rij kan lekken:
 
 ```php
-$id = $_SESSION[ 'id' ];
-$query  = "SELECT first_name, last_name FROM users WHERE user_id = '$id' LIMIT 1;";
+$id = $_GET['id'];
+$query  = "SELECT first_name, last_name FROM users WHERE user_id = '$id' LIMIT 1";
 ```
 
 **Vraag:** Waarom dacht de ontwikkelaar dat dit veiliger was? Heeft hij gelijk?
@@ -25,52 +24,48 @@ $query  = "SELECT first_name, last_name FROM users WHERE user_id = '$id' LIMIT 1
 
 <summary>Antwoord</summary>
 
-De ontwikkelaar dacht: "Als het invulveld niet op dezelfde pagina staat als de database-query, kunnen geautomatiseerde aanvalstools de pagina moeilijker raken."
-
-Hij heeft ongelijk. De invoer uit de pop-up wordt nog steeds ongefilterd in `$id` gezet en rechtstreeks in de query geplakt. De kwetsbaarheid bestaat nog — ze is alleen één klik dieper verstopt. Dit heet **Security by Obscurity**: verstoppen in plaats van echt beveiligen.
+Nee. De invoer komt nog altijd ongefilterd in de query, dus de injectie werkt gewoon. `LIMIT 1` beperkt alleen het aantal rijen dat terugkomt — het houdt de aanval niet tegen. Zolang jij de query-syntax kunt herschrijven, kun je ook die limiet weer weghalen.
 
 </details>
 
 ## 2. Run (Uitvoeren)
 
-Start het lab en verken de interface.
+Start het lab en vul een paar geldige ID's in.
 
 <DvwaLab module="sql_injection" level="high" />
 
-Klik op de link "Click here to change your ID". Vul `1`, `2` en `3` in en observeer telkens het resultaat op de hoofdpagina.
+Vul achtereenvolgens `1`, `2` en `3` in en observeer telkens het resultaat.
 
 ## 3. Investigate (Onderzoeken)
 
-Probeer nu je payload van het Low level (`1' OR '1'='1`) in te vullen in de pop-up en klik op Submit.
+Probeer nu je payload van het Low level: `1' OR '1'='1`.
 
-**Vraag:** Hoeveel gebruikers zie je? Vergelijk dit met het Low level — wat is er anders? Wat in de SQL query uit §1 veroorzaakt dit verschil?
+**Vraag:** Hoeveel gebruikers zie je? Vergelijk dit met Low — wat is er anders, en wat in de query uit §1 veroorzaakt dat verschil?
 
 <details>
 
 <summary>Antwoord</summary>
 
-Je ziet maar **1 gebruiker** in plaats van alle 5. De `LIMIT 1` aan het eind van de query beperkt het aantal resultaten, ook al is de `OR`-conditie geldig.
+Je ziet maar **1 gebruiker** in plaats van alle 5. De `LIMIT 1` aan het eind van de query kapt het resultaat af, ook al is de `OR`-conditie geldig.
 
 De query wordt:
-`SELECT ... WHERE user_id = '1' OR '1'='1' LIMIT 1;`
+`SELECT ... WHERE user_id = '1' OR '1'='1' LIMIT 1`
 
-De database geeft braaf alle rijen terug — maar kapt dan af bij 1.
-
-De vraag is nu: hoe zorg je ervoor dat `LIMIT 1` genegeerd wordt? In SQL bestaat een manier om de rest van een regel onzichtbaar te maken voor de database-parser.
+De database vindt alle rijen, maar geeft er maar één terug. Hoe zorg je ervoor dat `LIMIT 1` genegeerd wordt? In SQL kun je de rest van een regel onzichtbaar maken voor de parser.
 
 </details>
 
 ## 4. Modify & Make (Aanpassen & Maken)
 
-Je weet dat `LIMIT 1` de output beperkt. Jouw doel: neutraliseer `LIMIT 1` zodat alle gebruikers zichtbaar worden.
+Je weet dat `LIMIT 1` de output beperkt. Jouw doel: schakel `LIMIT 1` uit zodat alle gebruikers zichtbaar worden.
 
-In SQL bestaat een mechanisme om alles na een bepaald teken te negeren — net zoals `//` een commentaar start in JavaScript.
+In SQL kun je alles na een bepaald teken laten negeren — vergelijkbaar met hoe `//` een commentaar start in JavaScript.
 
 <details>
 
 <summary>Tip</summary>
 
-In MySQL start een commentaar met `#` of met `-- ` (twee streepjes + spatie). Alles wat daarna komt op dezelfde regel, wordt door de database genegeerd. Voeg dit toe aan het einde van je payload zodat `LIMIT 1` buiten de 'actieve' query valt.
+In SQLite (de database achter dit lab) start een commentaar met `-- ` — twee streepjes gevolgd door een spatie. Alles daarna op dezelfde regel wordt genegeerd. Zet dit aan het einde van je payload, zodat `LIMIT 1` buiten de query valt.
 
 </details>
 
@@ -78,29 +73,29 @@ In MySQL start een commentaar met `#` of met `-- ` (twee streepjes + spatie). Al
 
 <summary>Antwoord</summary>
 
-Vul in de pop-up in: `1' OR '1'='1' #`
+Vul in: `1' OR '1'='1' -- ` (let op de spatie achter de streepjes).
 
 De database ziet dan:
-`SELECT ... WHERE user_id = '1' OR '1'='1' #' LIMIT 1;`
+`SELECT ... WHERE user_id = '1' OR '1'='1' -- ' LIMIT 1`
 
-Alles na `#` (inclusief `LIMIT 1`) wordt genegeerd. Alle 5 gebruikers verschijnen.
+Alles vanaf `-- ` (inclusief het afsluitende quootje én `LIMIT 1`) wordt genegeerd. Alle 5 gebruikers verschijnen.
 
 </details>
 
 ## 5. ✓ Wat moest je zien?
 
 :::tip[Controle]
-- Er verschijnt een lijst met **alle 5 gebruikers** ondanks de `LIMIT 1` beperking.
-- Alles na het `#` in jouw payload wordt door de database genegeerd — inclusief `LIMIT 1`.
-- Het invulveld zat in een pop-up, maar de kwetsbaarheid was er gewoon nog.
+- Er verschijnt een lijst met **alle 5 gebruikers**, ondanks de `LIMIT 1`.
+- Alles na `-- ` in jouw payload wordt door de database genegeerd — inclusief `LIMIT 1`.
+- De `LIMIT 1` beperkte de output, maar de injectie zelf was er gewoon nog.
 
-Zie je maar één resultaat? Controleer of je `#` aan het einde van je payload hebt en er geen extra spatie vóór het `#` staat.
+Zie je maar één resultaat? Controleer of je `-- ` mét de afsluitende spatie hebt getypt.
 :::
 
 ## 6. Er gaat iets mis...
 
-Je weet dat je `LIMIT 1` moet uitschakelen met een commentaar. Je probeert `1' OR '1'='1' --` en... er gebeurt niets, of je krijgt een SQL-fout. Terwijl je het toch net als in de uitleg doet.
+Je probeert `1' OR '1'='1' #` (met een hekje als commentaar) en krijgt geen resultaten of een SQL-fout.
 
-In MySQL is `--` alléén een commentaar als er een **spatie** achter staat: `-- ` (streepje, streepje, spatie). Zonder die spatie ziet MySQL geen commentaar maar twee minnetjes midden in de query, en loopt de parser vast. Omdat een spatie aan het einde van een invoerveld makkelijk wegvalt, kiezen veel mensen daarom liever `#`: dat werkt zonder spatie erachter.
+Dat komt door de database. In **MySQL** start een commentaar met `#` óf met `-- `, maar dit lab draait op **SQLite**, en daar bestaat het `#`-commentaar niet. SQLite kent alleen `-- ` (twee streepjes + spatie). Het hekje blijft dus gewoon in de query staan en breekt de syntax.
 
-Gebruik dus `1' OR '1'='1' #` (of `1' OR '1'='1' -- ` mét de afsluitende spatie). En zet geen extra spatie vóór het `#`, want dan komt het teken op de verkeerde plek in de query terecht.
+Gebruik hier dus `1' OR '1'='1' -- `. De afsluitende spatie is belangrijk: zonder die spatie ziet SQLite geen commentaar. Omdat een spatie aan het einde van een invoerveld makkelijk wegvalt, controleer je die het beste nog even.

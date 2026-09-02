@@ -68,9 +68,9 @@ Kijk ook via **F12** → **Elements** naar de `name`-attributen van de invoervel
 
 ## 4. Modify & Make (Aanpassen & Maken)
 
-Voordat je een tool inzet, doe je de aanval één keer met de hand. Ga terug naar het lab hierboven en probeer bij gebruikersnaam `admin` een paar veelgebruikte wachtwoorden: `admin`, `123456`, `password`. Let op de melding onder het formulier: bij een fout wachtwoord verschijnt de tekst `incorrect`, bij een goed wachtwoord verdwijnt die.
+Voordat je een tool inzet, doe je de aanval één keer met de hand. Ga terug naar het lab hierboven en probeer bij gebruikersnaam `admin` een paar veelgebruikte wachtwoorden: `admin`, `123456`, `password`. Let op de melding onder het formulier: bij een fout wachtwoord meldt de server dat gebruikersnaam of wachtwoord onjuist is; bij `password` verschijnt in plaats daarvan een welkomstmelding.
 
-Met de hand duizenden wachtwoorden proberen is ondoenlijk. Daarom automatiseer je het met **Hydra**: dat programma stuurt in hoog tempo verzoek na verzoek, elk met een ander wachtwoord uit een woordenlijst, en stopt zodra de melding `incorrect` wegblijft.
+Met de hand duizenden wachtwoorden proberen is ondoenlijk. Daarom automatiseer je het met **Hydra**: dat programma stuurt in hoog tempo verzoek na verzoek, elk met een ander wachtwoord uit een woordenlijst. Op een echte DVWA-server (Engelstalig) herkent Hydra een mislukte poging aan het woord `incorrect` in het antwoord, en stopt zodra dat wegblijft.
 
 :::caution[Labbeperking]
 Hydra draait niet in het browser-lab. Hiervoor heb je een [lokale Kali/DVWA-installatie](/docs/dvwa_installatie) nodig. Lees de stappen hieronder gerust door om te zien hoe het automatiseren werkt, ook als je ze nu nog niet uitvoert.

@@ -60,13 +60,13 @@ Typ nu `1'` (een getal gevolgd door één enkel aanhalingsteken) in het veld en 
 
 <summary>Antwoord</summary>
 
-Je ziet waarschijnlijk een rode foutmelding zoals:
-`You have an error in your SQL syntax near ''1''' at line 1`
+Je ziet een rode SQL-foutmelding, zoiets als:
+`SQL-fout: unrecognized token: "'1''"`
 
 Dit vertelt je drie dingen:
-1. De applicatie plakt jouw invoer **ongefilterd** rechtstreeks in de SQL query.
+1. De applicatie plakt jouw invoer **ongefilterd** rechtstreeks in de SQL-query.
 2. De foutmelding lekt terug naar de browser — de applicatie is slecht geconfigureerd.
-3. De database is MySQL (de foutmeldingsopmaak verraadt het systeem).
+3. De database struikelt over het losse aanhalingsteken, dus jouw invoer beïnvloedt echt de query-syntax.
 
 De applicatie is kwetsbaar. Nu weet je *waar* je in kunt breken. Wat je nodig hebt: een payload die de SQL-syntax weer geldig maakt én de query naar jouw hand zet.
 
