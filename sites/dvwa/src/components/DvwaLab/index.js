@@ -377,7 +377,7 @@ ${htmlOutput}
           ref={iframeRef}
           className={styles.iframe}
           srcDoc={iframeSrcDoc}
-          sandbox="allow-scripts allow-forms"
+          sandbox="allow-scripts allow-forms allow-modals"
           title={displayTitle}
         />
       )}

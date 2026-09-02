@@ -138,4 +138,57 @@ describe('DVWA-cursus', () => {
     }
     expect(fouten).toEqual([]);
   });
+
+  it('elke challenge-map heeft precies low/medium/high/impossible', () => {
+    const verwacht = ['high', 'impossible', 'low', 'medium'];
+    const fouten: string[] = [];
+    for (const map of readdirSync(DOCS, { withFileTypes: true })) {
+      if (!map.isDirectory()) continue;
+      const levels = readdirSync(join(DOCS, map.name))
+        .filter((b) => b.endsWith('.mdx'))
+        .map((b) => b.replace(/\.mdx$/, ''))
+        .sort();
+      if (JSON.stringify(levels) !== JSON.stringify(verwacht)) {
+        fouten.push(`${map.name}: [${levels.join(', ')}]`);
+      }
+    }
+    expect(fouten).toEqual([]);
+  });
+
+  it('de index-badge komt per challenge overeen met de badge op de low-les', () => {
+    const index = readFileSync(join(DOCS, 'index.mdx'), 'utf8');
+    // slug -> status uit de overzichtstabel (link naar /<slug>/low op dezelfde regel)
+    const indexBadges = new Map<string, string>();
+    for (const m of index.matchAll(
+      /\/docs\/dvwa_tutorial\/([a-z0-9-]+)\/low\)[^\n]*?<LabBadge\s+status="([^"]+)"/g,
+    )) {
+      indexBadges.set(m[1], m[2]);
+    }
+    const fouten: string[] = [];
+    for (const map of readdirSync(DOCS, { withFileTypes: true })) {
+      if (!map.isDirectory()) continue;
+      const slug = map.name.replace(/^\d+-/, '');
+      const low = readFileSync(join(DOCS, map.name, 'low.mdx'), 'utf8');
+      const lowStatus = low.match(/<LabBadge\s+status="([^"]+)"/)?.[1];
+      const indexStatus = indexBadges.get(slug);
+      if (!indexStatus) {
+        fouten.push(`${slug}: geen index-badge gevonden`);
+      } else if (lowStatus !== indexStatus) {
+        fouten.push(`${slug}: low=${lowStatus} vs index=${indexStatus}`);
+      }
+    }
+    expect(fouten).toEqual([]);
+  });
+
+  it('elke module wordt door minstens één les gebruikt (geen wezen)', async () => {
+    const reg = await registry();
+    const gebruikt = new Set<string>();
+    for (const les of lessen) {
+      for (const m of les.inhoud.matchAll(/<DvwaLab\b[\s\S]*?\bmodule="([^"]+)"/g)) {
+        gebruikt.add(m[1]);
+      }
+    }
+    const wees = [...reg.keys()].filter((k) => !gebruikt.has(k));
+    expect(wees).toEqual([]);
+  });
 });
