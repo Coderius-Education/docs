@@ -236,9 +236,16 @@ const GEVALLEN: Geval[] = [
   {
     module: 'xss_stored',
     level: 'medium',
-    naam: 'naamveld blijft ongefilterd',
-    invoer: { name: '<b>me</b>', mtxMessage: 'hoi' },
-    verwacht: { bevat: ['<b>me</b>'] },
+    naam: 'kleine-letter <script> in de naam wordt gestript',
+    invoer: { name: '<script>alert(1)</script>', mtxMessage: 'hoi' },
+    verwacht: { bevat: ['alert(1)'], bevatNiet: ['<script>alert(1)'] },
+  },
+  {
+    module: 'xss_stored',
+    level: 'medium',
+    naam: 'hoofdletter <SCRIPT> in de naam omzeilt het filter',
+    invoer: { name: '<SCRIPT>alert(1)</SCRIPT>', mtxMessage: 'hoi' },
+    verwacht: { bevat: ['<SCRIPT>alert(1)</SCRIPT>'] },
   },
   {
     module: 'xss_stored',
@@ -416,6 +423,13 @@ const GEVALLEN: Geval[] = [
     naam: 'toegestaan bestand werkt',
     invoer: { page: 'file1.php' },
     verwacht: { bevat: ['Bestand 1'] },
+  },
+  {
+    module: 'file_inclusion',
+    level: 'high',
+    naam: 'file://-protocol omzeilt de "file"-prefixcheck naar /etc/passwd',
+    invoer: { page: 'file:///etc/passwd' },
+    verwacht: { bevat: ['root:x:0:0'] },
   },
   {
     module: 'file_inclusion',

@@ -16,7 +16,8 @@ De ontwikkelaar stapt af van het filteren van slechte invoer (Blacklisting) en k
 ```php
 $file = $_GET['page'];
 
-if( $file != "include.php" && $file != "file1.php" && $file != "file2.php" ) {
+$allowed = ['file1.php', 'file2.php', 'file3.php'];
+if( !in_array($file, $allowed) ) {
     echo "ERROR: File not found!";
     exit;
 }
@@ -44,7 +45,7 @@ Probeer `../../etc/passwd`, `....//etc/passwd` en `file:///etc/passwd`. Observee
 
 :::tip[Controle]
 - Elke aanvalspayload levert de melding `ERROR: File not found.` op.
-- Alleen de exacte bestandsnamen `include.php`, `file1.php` en `file2.php` werken.
+- Alleen de exacte bestandsnamen `file1.php`, `file2.php` en `file3.php` werken.
 - Geen enkel omzeil-kunstje (geneste paden, protocols, null-bytes) slaagt.
 
 Lukt het je toch om bestanden op te vragen? Controleer of het security level correct op **impossible** staat.

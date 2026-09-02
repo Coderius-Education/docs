@@ -30,7 +30,7 @@ Start het lab.
 <DvwaLab module="javascript_attacks" level="high" />
 
 :::note[Labbeperking]
-Dit level rondt niet af binnen het ingebouwde lab. De pagina berekent de hash in een submit-handler die het formulier daarna programmatisch verstuurt (`this.submit()`). Zo'n programmatische submit gaat langs de afhandeling van het lab-iframe heen, dus je ziet geen uitslag verschijnen. Om deze aanval echt te draaien en te bevestigen gebruik je een [lokale DVWA-installatie](/docs/dvwa_installatie).
+Dit level rondt niet af binnen het ingebouwde lab. De pagina berekent de hash **asynchroon** (`await`) in de submit-handler. Wanneer het lab-iframe het formulier oppakt, is die berekening nog niet klaar, dus wordt er een leeg token verstuurd en krijg je `Ongeldig token`. Je ziet in het lab dus nooit "Correct". Om de aanval echt te draaien gebruik je een [lokale DVWA-installatie](/docs/dvwa_installatie).
 :::
 
 ## 3. Investigate (Onderzoeken)
@@ -78,13 +78,13 @@ De server accepteert de request, omdat de client een geldig token aanlevert. Pre
 :::tip[Controle]
 - Het recept voor het token staat leesbaar in de paginabron: `sha256("XX" + woord.toUpperCase() + "XX")`.
 - De browser berekent het token zelf in de submit-handler — je hoeft SHA-256 niet te begrijpen om een geldig token te leveren.
-- Binnen het ingebouwde lab zie je geen uitslag, omdat de programmatische submit langs het lab-iframe heen gaat. Op een lokale DVWA slaagt `success` wel.
+- In het ingebouwde lab krijg je `Ongeldig token`: de asynchrone hash is nog niet klaar wanneer het lab het formulier oppakt, dus gaat er een leeg token mee. Op een lokale DVWA slaagt `success` wel.
 :::
 
 ## 6. Er gaat iets mis...
 
-Je typt `success`, klikt op Submit en er gebeurt niets — geen "Correct", geen foutmelding.
+Je typt `success`, klikt op Submit en krijgt `Ongeldig token` — terwijl je toch niets fout deed.
 
-Dat komt door de manier waarop de pagina verstuurt. De submit-handler roept eerst `e.preventDefault()` aan om het formulier tegen te houden, berekent dan de hash, en verstuurt daarna zelf met `this.submit()`. Die programmatische submit vuurt geen nieuw submit-event af, dus de afhandeling van het lab-iframe pikt hem niet op. In een gewone browser buiten het lab werkt het wel; in het sandboxed iframe blijft de uitslag uit.
+Dat komt door de timing. De submit-handler berekent de SHA-256-hash **asynchroon** met `await`, en zet het token pas ná die berekening in het verborgen veld. Het lab-iframe leest de formuliervelden echter al uit op het moment dat je verstuurt — dan is het tokenveld nog leeg. De server krijgt dus een leeg token en weigert het. In een gewone browser buiten het lab loopt de timing anders en slaagt het wel.
 
-De les zit niet in het omzeilen van het iframe, maar in het principe: hoe sterk het algoritme ook is, zodra de client het token berekent, kan de client het ook vervalsen. Echte beveiliging hoort server-side — zie het Impossible-level.
+De les zit niet in die iframe-timing, maar in het principe: hoe sterk het algoritme ook is, zodra de client het token berekent, kan de client het ook vervalsen. Echte beveiliging hoort server-side — zie het Impossible-level.

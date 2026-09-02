@@ -38,22 +38,21 @@ Start het lab en bekijk de pagina.
 
 <DvwaLab module="file_inclusion" level="low" />
 
-Je ziet dat de URL de parameter `?page=include.php` bevat. Verander de waarde naar `file1.php`, `file2.php` en `file3.php` en observeer wat de applicatie toont.
+Je ziet een invoerveld voor een bestandsnaam. Typ achtereenvolgens `file1.php`, `file2.php` en `file3.php` en observeer wat de applicatie toont.
 
 ## 3. Investigate (Onderzoeken)
 
-Verander de URL-parameter nu naar iets dat niet bestaat: `?page=nep.php`.
+Typ nu een bestandsnaam die niet bestaat: `nep.php`.
 
-**Vraag:** Wat zie je op het scherm? Wat onthult de foutmelding over hoe de server met de invoer omgaat?
+**Vraag:** Wat zie je op het scherm? Wat onthult dat over hoe de server met de invoer omgaat?
 
 <details>
 
 <summary>Antwoord</summary>
 
-De server toont een PHP-foutmelding zoals `Warning: include(nep.php): failed to open stream`. Dit onthult drie dingen:
-1. De invoer wordt **ongefilterd** direct aan `include()` doorgegeven.
-2. De foutmelding lekt het volledige serverpad (bijv. `/var/www/html/DVWA/...`) — informatie die een hacker kan gebruiken.
-3. Het pad is relatief aan de locatie van het huidige script — vandaar dat `../` omhoog navigeert.
+De server meldt **Bestand niet gevonden: nep.php**. Dit onthult twee dingen:
+1. De invoer wordt **ongefilterd** gebruikt om een bestand op te vragen — jij bepaalt volledig welk pad de server probeert te openen.
+2. Het pad is relatief aan de locatie van het script, dus met `../` klim je naar boven. (Op een slordig geconfigureerde server lekt zo'n mislukte poging vaak óók een PHP-`Warning` met het volledige serverpad — waardevolle informatie voor een aanvaller.)
 
 </details>
 

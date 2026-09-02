@@ -38,11 +38,11 @@ Start het lab en bevestig dat de normale pagina's werken.
 
 <DvwaLab module="file_inclusion" level="high" />
 
-Probeer `?page=file1.php` en `?page=file2.php`. Observeer dat dit werkt. Probeer daarna `?page=../../etc/passwd`.
+Typ `file1.php` en `file2.php`. Observeer dat dit werkt. Typ daarna `../../etc/passwd`.
 
 ## 3. Investigate (Onderzoeken)
 
-Probeer verschillende payloads en kijk welke de `ERROR: File not found.`-melding geven en welke door het filter komen.
+Typ verschillende payloads en kijk welke een rode foutmelding geven (`Toegang geweigerd` of `Bestand niet gevonden`) en welke door het filter komen.
 
 **Vraag:** Welk patroon moet jouw payload hebben om door de `fnmatch("file*", ...)` check te komen? Welk protocol begint toevallig ook met het woord `file`?
 
@@ -81,7 +81,7 @@ Omdat de string netjes begint met "file", gooit het beveiligingsfilter het niet 
 
 :::tip[Controle]
 - De pagina toont de inhoud van `/etc/passwd` via het `file://`-protocol.
-- De aanval met `../../etc/passwd` geeft nog steeds `ERROR: File not found.` — de whitelist werkt voor dat patroon.
+- De aanval met `../../etc/passwd` geeft nog steeds `Toegang geweigerd` — de prefixcheck houdt dat patroon tegen.
 - Het `file://`-protocol is een blinde vlek in de whitelist-check.
 
 Werkt het niet? Controleer of je drie slashes gebruikt: `file:///etc/passwd` (twee na `file:` en één voor het absolute pad).
@@ -89,8 +89,8 @@ Werkt het niet? Controleer of je drie slashes gebruikt: `file:///etc/passwd` (tw
 
 ## 6. Er gaat iets mis...
 
-Je wilt `/etc/passwd` uitlezen en probeert `?page=/etc/passwd`. Resultaat: `ERROR: File not found.` Terwijl je toch het volledige pad opgeeft.
+Je wilt `/etc/passwd` uitlezen en typt `/etc/passwd`. Resultaat: `Toegang geweigerd`. Terwijl je toch het volledige pad opgeeft.
 
-Het filter eist dat je invoer begint met het woord `file` (of exact `include.php` is). Een pad als `/etc/passwd` begint met een `/` en valt dus meteen af — net als `../../etc/passwd`. De whitelist doet hier zijn werk, zoals bedoeld.
+Het filter eist dat je invoer begint met het woord `file`. Een pad als `/etc/passwd` begint met een `/` en valt dus meteen af — net als `../../etc/passwd`. De prefixcheck doet hier zijn werk, zoals bedoeld.
 
 De truc is dat het `file://`-protocol óók met die vier letters begint. Schrijf daarom `?page=file:///etc/passwd`: de string opent met `file`, dus het filter laat hem door, en `include()` leest het pad via het file-protocol uit. Let op de drie slashes — `file://` (het protocol) plus de `/` van het absolute pad.

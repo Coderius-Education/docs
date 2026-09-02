@@ -40,7 +40,10 @@ echo $entries;
 $db = new SQLite3('/tmp/dvwa_xss_medium.db');
 $db->exec('CREATE TABLE IF NOT EXISTS guestbook (name TEXT, comment TEXT)');
 if (isset($_POST['name']) && isset($_POST['mtxMessage'])) {
-    $name = $_POST['name'];
+    // Het bericht is dichtgetimmerd met strip_tags. De naam wordt alleen
+    // gefilterd op de exacte, kleine-letter tekst "<script>" — hoofdletters
+    // glippen erdoor.
+    $name = str_replace('<script>', '', $_POST['name']);
     $comment = strip_tags($_POST['mtxMessage']);
     $stmt = $db->prepare("INSERT INTO guestbook (name, comment) VALUES (:name, :comment)");
     $stmt->bindValue(':name', $name, SQLITE3_TEXT);

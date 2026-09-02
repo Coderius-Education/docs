@@ -102,11 +102,19 @@ $files = [
     'file2.php' => '<h4>Bestand 2</h4><p>Normale content van bestand 2.</p>',
     'file3.php' => '<h4>Bestand 3</h4><p>Normale content van bestand 3.</p>',
 ];
+// include() begrijpt ook het file://-protocol; die begint óók met "file",
+// dus fnmatch laat hem door. Zo lees je met een absoluut pad elk bestand.
+$gevoelig = [
+    '/etc/passwd' => '<pre>root:x:0:0:root:/root:/bin/bash\nwww-data:x:33:33::/var/www:/usr/sbin/nologin\nstudent:x:1000:1000::/home/student:/bin/bash</pre>',
+    '/var/www/passwords.txt' => '<pre>admin:password123\nuser:letmein\nroot:toor</pre>',
+];
 $message = '';
 if (isset($_GET['page'])) {
     $page = $_GET['page'];
     if (!fnmatch('file*', $page)) {
         $message = '<div style="color:#ff5f56;padding:10px;border:1px solid #ff5f56;border-radius:4px;margin:10px 0">Toegang geweigerd: bestandsnaam moet beginnen met "file".</div>';
+    } elseif (strpos($page, 'file://') === 0 && isset($gevoelig[substr($page, 7)])) {
+        $message = '<div style="padding:10px;background:#16213e;border-radius:4px;margin:10px 0"><b>' . htmlspecialchars($page) . '</b><br>' . $gevoelig[substr($page, 7)] . '</div>';
     } elseif (isset($files[$page])) {
         $message = '<div style="padding:10px;background:#16213e;border-radius:4px;margin:10px 0"><b>' . htmlspecialchars($page) . '</b><br>' . $files[$page] . '</div>';
     } else {
@@ -120,7 +128,7 @@ echo $message;
   <div style="margin:8px 0"><label>Bestand:</label><br><input type="text" name="page" placeholder="file1.php" style="padding:6px;width:250px" /></div>
   <button type="submit" style="padding:8px 20px;cursor:pointer;margin-top:8px">Openen</button>
 </form>
-<p style="font-size:0.85em;color:#888">Bestandsnaam moet beginnen met "file". Probeer <code>file1.php</code>, <code>file2.php</code>, <code>file3.php</code>.</p>`,
+<p style="font-size:0.85em;color:#888">Bestandsnaam moet beginnen met "file". Probeer <code>file1.php</code> — of het <code>file://</code>-protocol.</p>`,
   },
   impossible: {
     title: 'File Inclusion — Impossible',
@@ -146,14 +154,9 @@ echo $message;
 ?>
 <h3>Bestandsweergave</h3>
 <form method="GET">
-  <div style="margin:8px 0"><label>Bestand:</label><br>
-  <select name="page" style="padding:6px;width:200px;background:#16213e;color:#e0e0e0;border:1px solid #0f3460;border-radius:4px">
-    <option value="file1.php">file1.php</option>
-    <option value="file2.php">file2.php</option>
-    <option value="file3.php">file3.php</option>
-  </select></div>
+  <div style="margin:8px 0"><label>Bestand:</label><br><input type="text" name="page" placeholder="file1.php" style="padding:6px;width:250px" /></div>
   <button type="submit" style="padding:8px 20px;cursor:pointer;margin-top:8px">Openen</button>
 </form>
-<p style="font-size:0.85em;color:#5f9eea">&#128737; Beveiligd: strikte whitelist — alleen bekende bestanden zijn toegankelijk.</p>`,
+<p style="font-size:0.85em;color:#5f9eea">&#128737; Beveiligd: strikte whitelist — alleen <code>file1.php</code>, <code>file2.php</code> en <code>file3.php</code> zijn toegestaan. Elke andere invoer wordt geweigerd.</p>`,
   },
 };
