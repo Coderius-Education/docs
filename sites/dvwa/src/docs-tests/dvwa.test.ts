@@ -96,6 +96,14 @@ describe('DVWA-cursus', () => {
     expect(fouten).toEqual([]);
   });
 
+  it('de lab-badges op de indexpagina hebben een geldige status', () => {
+    const index = readFileSync(join(DOCS, 'index.mdx'), 'utf8');
+    const statussen = [...index.matchAll(/<LabBadge\s+status="([^"]*)"/g)].map((m) => m[1]);
+    const ongeldig = statussen.filter((st) => !['browser', 'deels', 'lokaal'].includes(st));
+    expect(statussen.length).toBeGreaterThanOrEqual(14);
+    expect(ongeldig).toEqual([]);
+  });
+
   it('de instap-pagina draagt het ethiek-blok', () => {
     const index = readFileSync(join(DOCS, 'index.mdx'), 'utf8');
     expect(index).toContain('<Ethiek');
