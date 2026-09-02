@@ -9,6 +9,8 @@ import DvwaLab from '@site/src/components/DvwaLab';
 
 De ontwikkelaar probeert ons in de weg te zitten door het tekstvak te veranderen in een vast dropdown-menu en beveiligingsfuncties toe te voegen.
 
+> **Labbeperking:** Op dit level pas je de `value` van een `<option>` aan via de F12 Developer Tools. Dat werkt maar beperkt binnen het afgeschermde iframe van het lab. De stappen hieronder laten precies zien hoe de aanval werkt; om hem echt uit te voeren gebruik je een [lokale DVWA-installatie](/docs/dvwa_installatie).
+
 ## 1. Predict (Voorspel)
 
 De code is aangepast. De input wordt nu beveiligd met `mysqli_real_escape_string()`, een functie die aanhalingstekens onschadelijk maakt. Bovendien ziet de query er nu zo uit:

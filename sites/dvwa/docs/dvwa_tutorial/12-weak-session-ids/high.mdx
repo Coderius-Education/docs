@@ -37,11 +37,13 @@ Start het lab en genereer twee sessie-IDs.
 
 <DvwaLab module="weak_session_ids" level="high" />
 
-Klik tweemaal op de knop en bewaar beide lange strings die als cookie worden ingesteld.
+> **Labbeperking:** Het lab toont de gegenereerde hash inline in plaats van in een echte `dvwaSession`-cookie. Je kunt de hash dus wél kraken en het patroon narekenen, maar voor het daadwerkelijk instellen van een gekraakte hash als sessie heb je een [lokale DVWA-installatie](/docs/dvwa_installatie) nodig.
+
+Klik tweemaal op de knop en bewaar beide lange strings die het lab toont.
 
 ## 3. Investigate (Onderzoeken)
 
-Ga naar [CrackStation](https://crackstation.net) en plak één van de cookie-waarden in het zoekveld.
+Ga naar [CrackStation](https://crackstation.net) en plak één van de getoonde waarden in het zoekveld.
 
 **Vraag:** Wat toont CrackStation als resultaat? Wat onthult dit over de waarde die in de hash verstopt zit?
 
@@ -55,13 +57,13 @@ CrackStation toont dat de hash overeenkomt met een eenvoudig getal (bijv. `1`, `
 
 ## 4. Modify & Make (Aanpassen & Maken)
 
-Bereken de MD5-hash van het volgende getal in de reeks en pas je cookie aan.
+Bereken de MD5-hash van het volgende getal in de reeks. Die hash als sessie instellen doe je op een echte DVWA.
 
 <details>
 
 <summary>Tip</summary>
 
-In Linux/Kali kun je de MD5-hash van een getal berekenen met: `echo -n "3" | md5sum`
+In Linux/Kali bereken je de MD5-hash van een getal met: `echo -n "3" | md5sum`
 
 </details>
 
@@ -71,7 +73,7 @@ In Linux/Kali kun je de MD5-hash van een getal berekenen met: `echo -n "3" | md5
 
 1. Bepaal welk getal de huidige sessie heeft (bijv. 2 als de vorige hash overeenkomt met 2).
 2. Bereken `md5(3)` → `eccbc87e4b5ce2fe28308fd9f2a7baf3`.
-3. Pas de `dvwaSession`-cookie aan naar deze hash.
+3. Op een echte DVWA: pas de `dvwaSession`-cookie aan naar deze hash.
 4. Vernieuw de pagina — de server ziet je nu als gebruiker met sessie 3.
 
 </details>
@@ -85,3 +87,11 @@ In Linux/Kali kun je de MD5-hash van een getal berekenen met: `echo -n "3" | md5
 
 Lukt de ontcijfering niet in CrackStation? Probeer een andere online MD5-decryptor of bereken `md5(1)` zelf en vergelijk.
 :::
+
+## 6. Er gaat iets mis...
+
+Je berekent de hash met `echo "3" | md5sum` en stelt die in als cookie, maar de server herkent je sessie niet. Toch is `3` het juiste getal.
+
+Het probleem zit in een onzichtbaar teken. `echo "3"` zet niet alleen de `3` maar ook een regeleinde (`\n`) op de uitvoer. Je hasht dus in werkelijkheid `"3\n"` en dat geeft een compleet andere MD5 dan PHP's `md5("3")`, die alleen het cijfer hasht.
+
+Gebruik daarom `echo -n "3" | md5sum`: de `-n` laat het regeleinde weg. Nu krijg je `eccbc87e4b5ce2fe28308fd9f2a7baf3` — dezelfde hash die de server verwacht. Eén nietig `\n`-verschil is genoeg om alles te laten mislukken.

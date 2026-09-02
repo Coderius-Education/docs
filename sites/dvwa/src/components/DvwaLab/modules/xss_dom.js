@@ -64,7 +64,7 @@ echo '  <div style="margin:8px 0"><label>Taal:</label><br>';
 echo '  <select name="default" style="padding:6px;width:200px;background:#16213e;color:#e0e0e0;border:1px solid #0f3460;border-radius:4px">';
 foreach ($allowed as $lang) {
     $sel = ($lang === $default) ? ' selected' : '';
-    echo "  <option value=\"$lang\"$sel>$lang</option>";
+    echo "  <option value=\\"$lang\\"$sel>$lang</option>";
 }
 echo '  </select></div>';
 echo '  <button type="submit" style="padding:8px 20px;cursor:pointer;margin-top:8px">Selecteren</button>';

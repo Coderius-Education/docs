@@ -49,8 +49,8 @@ Start het lab en probeer al je eerdere bypasses. Geen enkele zal nog werken.
 
 :::tip[Controle]
 - Geen van je payloads (`;`, `&&`, `|`, `||`) produceert serveruitvoer buiten de ping.
-- Een invoer als `127.0.0.1; ls` levert alleen normale ping-output op — geen bestandslijst.
-- Invoer die geen geldig IP-formaat heeft (4 getallen gescheiden door punten) wordt stilletjes genegeerd.
+- Een invoer als `127.0.0.1; ls` wordt niet uitgevoerd: de validatie ziet dat het geen geldig IP-adres is en weigert het.
+- Invoer die geen geldig IP-formaat heeft (4 getallen gescheiden door punten) levert een rode foutmelding op: `Ongeldig IP-adres`.
 
 Lukt het je tóch een tweede commando te injecteren? Controleer of security écht op **Impossible** staat.
 :::

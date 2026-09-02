@@ -14,7 +14,7 @@ if (isset($_GET['id'])) {
     if ($row) {
         $message = '<div style="color:#27c93f;padding:10px;border:1px solid #27c93f;border-radius:4px;margin:10px 0">Gebruiker ID <b>' . htmlspecialchars($id) . '</b> bestaat.</div>';
     } else {
-        $message = '<div style="color:#ff5f56;padding:10px;border:1px solid #ff5f56;border-radius:4px;margin:10px 0">Gebruiker ID <b>' . htmlspecialchars($id) . '</b> bestaat NIET.</div>';
+        $message = '<div style="color:#ff5f56;padding:10px;border:1px solid #ff5f56;border-radius:4px;margin:10px 0">Gebruiker ID <b>' . htmlspecialchars($id) . '</b> bestaat niet.</div>';
     }
 }
 $db->close();

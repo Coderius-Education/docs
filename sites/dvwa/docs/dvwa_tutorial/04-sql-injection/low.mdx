@@ -7,7 +7,17 @@ import DvwaLab from '@site/src/components/DvwaLab';
 
 # SQL Injection — Low
 
+<LabBadge status="deels" />
+
+<Ethiek />
+
 Welkom bij SQL Injection. Door slimme tekst in een invoerveld te typen kun je de database-opdracht erachter veranderen — en zo gegevens opvragen die niet voor jou bedoeld zijn.
+
+<Voorkennis
+  items={[
+    {to: '/docs/sql_leren', label: 'Hoe een SQL-query werkt'},
+  ]}
+/>
 
 ## 1. Predict (Voorspel)
 
@@ -50,13 +60,13 @@ Typ nu `1'` (een getal gevolgd door één enkel aanhalingsteken) in het veld en 
 
 <summary>Antwoord</summary>
 
-Je ziet waarschijnlijk een rode foutmelding zoals:
-`You have an error in your SQL syntax near ''1''' at line 1`
+Je ziet een rode SQL-foutmelding, zoiets als:
+`SQL-fout: unrecognized token: "'1''"`
 
 Dit vertelt je drie dingen:
-1. De applicatie plakt jouw invoer **ongefilterd** rechtstreeks in de SQL query.
+1. De applicatie plakt jouw invoer **ongefilterd** rechtstreeks in de SQL-query.
 2. De foutmelding lekt terug naar de browser — de applicatie is slecht geconfigureerd.
-3. De database is MySQL (de foutmeldingsopmaak verraadt het systeem).
+3. De database struikelt over het losse aanhalingsteken, dus jouw invoer beïnvloedt echt de query-syntax.
 
 De applicatie is kwetsbaar. Nu weet je *waar* je in kunt breken. Wat je nodig hebt: een payload die de SQL-syntax weer geldig maakt én de query naar jouw hand zet.
 
@@ -66,7 +76,7 @@ De applicatie is kwetsbaar. Nu weet je *waar* je in kunt breken. Wat je nodig he
 
 Je weet nu dat de applicatie kwetsbaar is en hoe de SQL eruitziet. Jouw doel: één payload invoeren die **alle** gebruikers in de database ophaalt in plaats van slechts één.
 
-Bedenk: welke toevoeging achter `1'` maakt de WHERE-clausule altijd waar — zonder de SQL syntax te breken?
+Bedenk: welke toevoeging achter `1'` maakt de `WHERE`-clausule altijd waar — zonder de SQL syntax te breken?
 
 <details>
 
@@ -87,7 +97,7 @@ De server voert dan uit:
 
 Omdat `'1'='1'` altijd waar is, geeft de database alle rijen terug.
 
-Als je een lege pagina krijgt, probeer dan: `1' OR '1'='1' #` — het hekje commentarieert de rest van de query weg.
+Als je een lege pagina krijgt, probeer dan: `1' OR '1'='1' -- ` (twee streepjes en een spatie) — dit lab draait op SQLite, waar `-- ` de rest van de regel wegcommentarieert. Het MySQL-hekje `#` werkt hier niet.
 
 </details>
 

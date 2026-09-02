@@ -7,6 +7,10 @@ import DvwaLab from '@site/src/components/DvwaLab';
 
 # XSS (DOM) — Low
 
+<LabBadge status="lokaal" />
+
+<Ethiek />
+
 Bij DOM-based XSS vindt de aanval *volledig* in de browser (via JavaScript) plaats. De server in de achtergrond doet er soms niet eens toe.
 
 ## 1. Predict (Voorspel)
@@ -35,7 +39,9 @@ Start de testomgeving en bekijk de taalkeuze-dropdown.
 
 <DvwaLab module="xss_dom" level="low" />
 
-Selecteer een andere taal uit de dropdown en observeer hoe de waarde in de URL verandert (bijv. `?default=French`). Bevestig dat de dropdown normaal werkt.
+> **Labbeperking:** Deze aanval vraagt dat je de `default`-parameter zelf in de URL-balk aanpast. Het ingebouwde lab toont alleen de dropdown en heeft geen adresbalk, dus de payload injecteren lukt hier niet. De stappen hieronder laten zien hoe de aanval werkt; om hem echt uit te voeren heb je een [lokale DVWA-installatie](/docs/dvwa_installatie) nodig.
+
+Selecteer een taal uit de dropdown en bevestig dat die normaal werkt.
 
 ## 3. Investigate (Onderzoeken)
 

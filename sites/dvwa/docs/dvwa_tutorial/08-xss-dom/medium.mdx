@@ -37,7 +37,9 @@ Start het lab en bekijk de dropdown.
 
 <DvwaLab module="xss_dom" level="medium" />
 
-Selecteer een taal in de dropdown en observeer het normale gedrag. Bevestig dat de pagina werkt.
+> **Labbeperking:** Net als bij het Low-level vraagt deze aanval dat je de `default`-parameter zelf in de URL-balk aanpast. Het ingebouwde lab toont alleen de dropdown en heeft geen adresbalk, dus de payload injecteren lukt hier niet. De stappen hieronder laten zien hoe de aanval werkt; om hem echt uit te voeren heb je een [lokale DVWA-installatie](/docs/dvwa_installatie) nodig.
+
+Selecteer een taal in de dropdown en bevestig dat de pagina normaal werkt.
 
 ## 3. Investigate (Onderzoeken)
 
@@ -85,3 +87,11 @@ De frontend-JavaScript plakt dit in de DOM. Omdat de tag geen `script` bevat, la
 
 Geen pop-up? Controleer of de URL correct is ingevoerd en of de browser de `onerror`-handler ondersteunt.
 :::
+
+## 6. Er gaat iets mis...
+
+Je plakt `<img src="x" onerror="alert(1)">` in de adresbalk, maar er gebeurt niets. De reden: die code belandt binnenín de `<option>` van de taal-dropdown, en de browser tekent geen afbeelding binnen een optie. Zolang je in de `<select>` gevangen zit, doet je payload niets.
+
+Daarom begint de payload met `English></select>`: dat sluit eerst de dropdown af, zodat je `<img>` daarna als een gewoon element in de pagina komt en zijn `onerror` mag afvuren. Vergeet je dat afsluiten, dan blijft de pop-up uit.
+
+Let ook op het `<script>`-filter: `?default=<script>...` stuurt je meteen terug naar `?default=English`. Dat filter kijkt alleen naar `<script`, dus een `<img>` of `<svg>` glipt er wél langs.

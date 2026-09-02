@@ -5,7 +5,9 @@ sidebar_label: 'Begin hier'
 
 # DVWA Challenges — Begin hier
 
-Welkom. Deze tutorial leert je websecurity door zélf kwetsbaarheden uit te buiten. Geen installatie nodig — alle uitdagingen draaien direct in je browser via PHP-WebAssembly.
+<Ethiek />
+
+Deze tutorial leert je websecurity door zélf kwetsbaarheden uit te buiten. De labs draaien direct in je browser via PHP-WebAssembly, dus je kunt meteen beginnen. Een paar verdiepende opdrachten gebruiken gereedschap dat alleen op een lokale Kali/DVWA-installatie draait (Hydra, Burp Suite, exiftool); dat staat dan in een **Labbeperking**-blok, met een link naar de [installatie-uitleg](/docs/dvwa_installatie).
 
 ## Wat ga je leren?
 
@@ -20,55 +22,81 @@ Vergelijk altijd de broncode tussen niveaus (knop **Bekijk broncode** in elk lab
 
 ## Hoe is een level-pagina opgebouwd?
 
-Elke level-pagina volgt dezelfde vier stappen — de **PRIMM**-cyclus. Sla geen stap over: ze bouwen op elkaar voort.
+Elke level-pagina volgt het **PRIMM**-stramien met genummerde secties. Sla geen stap over: ze bouwen op elkaar voort.
 
 ### 1. Predict (Voorspel)
 
-Je krijgt een stukje broncode te zien en een vraag. **Bedenk eerst zelf het antwoord** voordat je het `Antwoord`-blok open klikt. Dit is geen toets — het idee is dat je je voorstellingsvermogen voor wat code dóét traint. Voortijdig kijken straft alleen jezelf.
+Je krijgt een stukje broncode te zien en een vraag. Bedenk eerst zelf het antwoord voordat je het `Antwoord`-blok open klikt. Dit is geen toets: het idee is dat je traint om te zien wat code dóét. Voortijdig kijken straft alleen jezelf.
 
-### 2. Run & Investigate
+### 2. Run
 
-Klik op **Start Lab**. De eerste keer duurt het laden van PHP-WebAssembly ~10 seconden — dit is normaal en gebeurt maar één keer per browser-sessie. Daarna voer je een onschuldige actie uit (bijv. een geldig getal invullen) om te zien wat de applicatie *normaal* doet.
+Klik op **Start Lab**. De eerste keer duurt het laden van PHP-WebAssembly ongeveer tien seconden; dat is normaal en gebeurt maar één keer per browser-sessie. Daarna voer je een onschuldige actie uit (bijvoorbeeld een geldig getal invullen) om te zien wat de applicatie normaal doet.
 
-> **Tip:** klik op **Bekijk broncode** om te zien welke PHP er onder de motorkap draait. Dit is je belangrijkste leerbron.
+### 3. Investigate
 
-### 3. Modify & Make (Aanpassen & Maken)
+Klik op **Bekijk broncode** en lees welke PHP er onder de motorkap draait. Hier zit de leerwinst: je zoekt de plek waar de code invoer vertrouwt die hij niet zou moeten vertrouwen.
 
-Tijd voor de aanval. Je krijgt een doel ("haal alle gebruikers op", "voer een `alert()` uit"…). Probeer het eerst zonder de Tip te openen. Lukt het niet? Open de Tip. Nog steeds niet? Open Antwoord.
+### 4. Modify & Make (Aanpassen & Maken)
 
-### 4. ✓ Wat moest je zien?
+Tijd voor de aanval. Je krijgt een doel ("haal alle gebruikers op", "voer een `alert()` uit"). Probeer het eerst zonder de Tip te openen. Lukt het niet? Open de Tip. Nog steeds niet? Open Antwoord.
 
-Korte controle: waar herken je succes aan? Als wat jij ziet niet overeenkomt met de criteria, ga je terug naar stap 3.
+### 5. ✓ Wat moest je zien?
+
+Korte controle: waar herken je succes aan? Komt wat jij ziet niet overeen met de criteria, dan ga je terug naar stap 4.
+
+### 6. Er gaat iets mis...
+
+Veelgemaakte fouten en verrassend gedrag, met uitleg waaróm het misgaat. Op de **Impossible**-pagina vervalt dit blok: daar staat de veilige code, zonder aanval.
 
 ## Beperkingen van het lab
 
-De labs draaien in een afgeschermd `<iframe>` (sandbox). Voor de meeste uitdagingen is dat geen probleem, maar bij een paar (XSS DOM, JavaScript Attacks, CSP Bypass) heb je toegang nodig tot de F12 Developer Tools van de iframe-inhoud — wat de browser blokkeert. Op die levels staat een **Labbeperking**-vermelding, met een verwijzing naar de [lokale DVWA-installatie](/docs/dvwa_installatie) voor de volledige ervaring.
+De labs draaien in een afgeschermd `<iframe>` (sandbox). De meeste aanvallen doe je daar volledig in, maar een aantal vraagt toegang tot de F12 Developer Tools van de iframe-inhoud of tot lokaal gereedschap (Hydra, Burp Suite, exiftool). Dat lukt alleen met een [lokale DVWA-installatie](/docs/dvwa_installatie). Het label bij elke challenge hieronder zegt wat je nodig hebt, en op de betreffende levels staat een **Labbeperking**-blok.
 
 ## In welke volgorde doe ik de uitdagingen?
 
-Werk de lijst hieronder van boven naar beneden af. De volgorde loopt op in moeilijkheid en bouwt op elkaar voort: Brute Force en Command Injection leggen de basis, daarna komen de injectie- en XSS-aanvallen, en je sluit af met **Word de Developer**, waarin je zelf de lekken dicht. Doe per uitdaging eerst **Low**, dan **Medium**, **High** en tot slot **Impossible** — op Impossible zie je hoe veilige code eruitziet.
+De challenges zijn verdeeld over drie niveaus. Begin bij **Beginner** en werk naar beneden: de aanvallen worden lastiger en bouwen op elkaar voort. Doe per challenge eerst **Low**, dan **Medium**, **High** en tot slot **Impossible** — op Impossible zie je hoe veilige code eruitziet.
 
-## Jouw Voortgang
+De niveaus (Beginner, Gevorderd, Expert) zeggen hoe lastig een challenge is, niet wat je ervoor nodig hebt. Dat laatste staat in het label naast elke challenge: veel doe je volledig in het ingebouwde lab, een paar levels vragen de F12 Developer Tools of lokaal gereedschap. Begin gerust in de browser en installeer [DVWA lokaal](/docs/dvwa_installatie) zodra je bij een level komt dat erom vraagt. De labels betekenen:
 
-Gebruik deze checklist om bij te houden welke uitdagingen je hebt voltooid. Kun jij alle vinkjes op groen krijgen?
+- <LabBadge status="browser" /> — volledig in het ingebouwde lab te doen.
+- <LabBadge status="deels" /> — de meeste levels in de browser; een paar vragen een lokale installatie.
+- <LabBadge status="lokaal" /> — de aanval draait alleen met een lokale Kali/DVWA-installatie.
 
-| Challenge | Low | Medium | High | Impossible |
-| :--- | :---: | :---: | :---: | :---: |
-| 1. **[Brute Force](/docs/dvwa_tutorial/brute-force/low)** | [ ] | [ ] | [ ] | [ ] |
-| 2. **[Command Injection](/docs/dvwa_tutorial/command-injection/low)** | [ ] | [ ] | [ ] | [ ] |
-| 3. **[Authorization Bypass](/docs/dvwa_tutorial/authorization-bypass/low)** | [ ] | [ ] | [ ] | [ ] |
-| 4. **[SQL Injection](/docs/dvwa_tutorial/sql-injection/low)** | [ ] | [ ] | [ ] | [ ] |
-| 5. **[SQL Injection (Blind)](/docs/dvwa_tutorial/sql-injection-blind/low)** | [ ] | [ ] | [ ] | [ ] |
-| 6. **[XSS (Reflected)](/docs/dvwa_tutorial/xss-reflected/low)** | [ ] | [ ] | [ ] | [ ] |
-| 7. **[XSS (Stored)](/docs/dvwa_tutorial/xss-stored/low)** | [ ] | [ ] | [ ] | [ ] |
-| 8. **[XSS (DOM)](/docs/dvwa_tutorial/xss-dom/low)** | [ ] | [ ] | [ ] | [ ] |
-| 9. **[CSRF](/docs/dvwa_tutorial/csrf/low)** | [ ] | [ ] | [ ] | [ ] |
-| 10. **[File Inclusion](/docs/dvwa_tutorial/file-inclusion/low)** | [ ] | [ ] | [ ] | [ ] |
-| 11. **[File Upload](/docs/dvwa_tutorial/file-upload/low)** | [ ] | [ ] | [ ] | [ ] |
-| 12. **[Weak Session IDs](/docs/dvwa_tutorial/weak-session-ids/low)** | [ ] | [ ] | [ ] | [ ] |
-| 13. **[CSP Bypass](/docs/dvwa_tutorial/csp-bypass/low)** | [ ] | [ ] | [ ] | [ ] |
-| 14. **[JavaScript Attacks](/docs/dvwa_tutorial/javascript-attacks/low)** | [ ] | [ ] | [ ] | [ ] |
+Nieuw met de terminal, met HTTP of met databases? Lees dan eerst [Linux leren](/docs/linux_leren), [HTTP leren](/docs/http_leren) en [SQL leren](/docs/sql_leren). Op de lespagina's zelf staat bovenaan een blok **Hier bouw je op verder** dat je naar de juiste uitleg terugbrengt.
+
+## Jouw voortgang
+
+Houd zelf bij welke challenges je af hebt — print deze pagina, of vink mee in een schrift. Het doel: elk vakje een keer gehaald.
+
+### Beginner
+
+| Challenge | Lab | Low | Medium | High | Impossible |
+| :--- | :--- | :---: | :---: | :---: | :---: |
+| **[Command Injection](/docs/dvwa_tutorial/command-injection/low)** | <LabBadge status="browser" /> | [ ] | [ ] | [ ] | [ ] |
+| **[Authorization Bypass](/docs/dvwa_tutorial/authorization-bypass/low)** | <LabBadge status="deels" /> | [ ] | [ ] | [ ] | [ ] |
+| **[XSS (Reflected)](/docs/dvwa_tutorial/xss-reflected/low)** | <LabBadge status="browser" /> | [ ] | [ ] | [ ] | [ ] |
+| **[SQL Injection](/docs/dvwa_tutorial/sql-injection/low)** | <LabBadge status="deels" /> | [ ] | [ ] | [ ] | [ ] |
+| **[File Inclusion](/docs/dvwa_tutorial/file-inclusion/low)** | <LabBadge status="browser" /> | [ ] | [ ] | [ ] | [ ] |
+| **[CSRF](/docs/dvwa_tutorial/csrf/low)** | <LabBadge status="browser" /> | [ ] | [ ] | [ ] | [ ] |
+
+### Gevorderd
+
+| Challenge | Lab | Low | Medium | High | Impossible |
+| :--- | :--- | :---: | :---: | :---: | :---: |
+| **[SQL Injection (Blind)](/docs/dvwa_tutorial/sql-injection-blind/low)** | <LabBadge status="deels" /> | [ ] | [ ] | [ ] | [ ] |
+| **[XSS (Stored)](/docs/dvwa_tutorial/xss-stored/low)** | <LabBadge status="browser" /> | [ ] | [ ] | [ ] | [ ] |
+| **[Weak Session IDs](/docs/dvwa_tutorial/weak-session-ids/low)** | <LabBadge status="deels" /> | [ ] | [ ] | [ ] | [ ] |
+| **[File Upload](/docs/dvwa_tutorial/file-upload/low)** | <LabBadge status="deels" /> | [ ] | [ ] | [ ] | [ ] |
+| **[Brute Force](/docs/dvwa_tutorial/brute-force/low)** | <LabBadge status="lokaal" /> | [ ] | [ ] | [ ] | [ ] |
+
+### Expert
+
+| Challenge | Lab | Low | Medium | High | Impossible |
+| :--- | :--- | :---: | :---: | :---: | :---: |
+| **[XSS (DOM)](/docs/dvwa_tutorial/xss-dom/low)** | <LabBadge status="lokaal" /> | [ ] | [ ] | [ ] | [ ] |
+| **[CSP Bypass](/docs/dvwa_tutorial/csp-bypass/low)** | <LabBadge status="lokaal" /> | [ ] | [ ] | [ ] | [ ] |
+| **[JavaScript Attacks](/docs/dvwa_tutorial/javascript-attacks/low)** | <LabBadge status="deels" /> | [ ] | [ ] | [ ] | [ ] |
 
 ---
 
-Klaar? Begin bij **[Brute Force — Low](/docs/dvwa_tutorial/brute-force/low)**.
+Klaar? Begin bij **[Command Injection — Low](/docs/dvwa_tutorial/command-injection/low)**. Alle challenges gehad? Draai de rollen om in de capstone **[Word de Developer](/docs/dvwa_tutorial/word-de-developer)**, waar je de lekken zelf dicht.

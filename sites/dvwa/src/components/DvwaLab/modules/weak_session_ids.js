@@ -74,10 +74,10 @@ $message = '';
 if (isset($_POST['generate'])) {
     $counter++;
     $db->exec("UPDATE session_counter SET counter=$counter WHERE id=1");
-    $session_id = md5($counter . time());
+    $session_id = md5($counter);
     $message = '<div style="color:#27c93f;padding:10px;border:1px solid #27c93f;border-radius:4px;margin:10px 0">';
     $message .= 'Nieuwe sessie-ID: <b>' . $session_id . '</b><br>';
-    $message .= '<small style="color:#f0ad4e">&#9888; MD5(teller + timestamp): beperkte entropie</small>';
+    $message .= '<small style="color:#f0ad4e">&#9888; MD5 van de teller: geen echte entropie</small>';
     $message .= '</div>';
 }
 $db->close();
@@ -88,7 +88,7 @@ echo $message;
   <input type="hidden" name="generate" value="1" />
   <button type="submit" style="padding:8px 20px;cursor:pointer">Genereer sessie-ID</button>
 </form>
-<p style="font-size:0.85em;color:#888">MD5 van teller + tijd — met bruteforce en tijdsbepaling nog te achterhalen.</p>`,
+<p style="font-size:0.85em;color:#888">MD5 van een oplopende teller — een rainbow table zoals CrackStation draait dit zo terug.</p>`,
   },
   impossible: {
     title: 'Weak Session IDs — Impossible',

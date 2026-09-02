@@ -1,0 +1,112 @@
+---
+sidebar_position: 4
+---
+
+# HTTP leren
+
+Elke aanval in deze cursus draait om één ding: de browser stuurt gegevens naar een webserver, en de server vertrouwt die gegevens te veel. Voordat je gaat aanvallen, kijk je daarom eerst hoe zo'n gesprek tussen browser en server verloopt.
+
+<details>
+
+<summary>Waarom eerst HTTP?</summary>
+
+HTTP is de taal waarin je browser en een webserver met elkaar praten. Een aanvaller verandert de woorden die de browser stuurt: een getal in de URL, een header, een cookie. Als je begrijpt welke onderdelen een verzoek heeft, weet je precies waar je kunt sleutelen.
+
+</details>
+
+## Verzoek en antwoord
+
+Als je een pagina opent, stuurt je browser een **request** (verzoek) naar de server. De server stuurt een **response** (antwoord) terug: meestal HTML, soms een foutmelding.
+
+Een request bestaat uit een paar vaste onderdelen:
+
+- een **methode** (`GET` of `POST`): wat je wilt doen;
+- een **URL**: welk adres je opvraagt, eventueel met parameters erachter;
+- **headers**: extra informatie over het verzoek;
+- eventueel **cookies**: kleine stukjes tekst die de server eerder heeft gezet.
+
+Elk van die onderdelen kun je met de Developer Tools (F12) bekijken, en een aanvaller kan ze ook aanpassen.
+
+## GET en POST
+
+Er zijn twee manieren om gegevens mee te sturen.
+
+Bij een **GET**-verzoek staan de gegevens in de URL, achter een vraagteken:
+
+```
+http://localhost/DVWA/vulnerabilities/brute/?username=admin&password=test&Login=Login
+```
+
+Alles na de `?` is een lijst parameters, gescheiden door `&`. Hierboven zijn dat `username=admin`, `password=test` en `Login=Login`. Iedereen die meekijkt in de adresbalk of de serverlogboeken leest die waarden zo.
+
+Bij een **POST**-verzoek staan de gegevens in de *body* van het verzoek, niet in de URL. Ze zijn niet zichtbaar in de adresbalk, maar wel in F12 → **Network**. POST voelt daardoor veiliger, maar voor een aanvaller met F12 open maakt het weinig verschil: de gegevens zijn nog steeds aan te passen.
+
+## Headers en de Content-Type
+
+Naast de eigenlijke gegevens stuurt de browser **headers** mee: regels met informatie over het verzoek. Eén ervan kom je vaak tegen: de **Content-Type**. Die vertelt de server wat voor soort bestand je stuurt, bijvoorbeeld `image/jpeg` voor een foto of `application/x-php` voor een PHP-script.
+
+Het venijn zit hierin: de browser bepaalt die header, niet de server. Een aanvaller kan de Content-Type dus veranderen en de server voorliegen over wat hij verstuurt. Die truc gebruik je later bij **File Upload**.
+
+## Cookies
+
+Een webserver vergeet je tussen twee verzoeken. Om je toch te herkennen, zet hij bij het inloggen een **cookie** in je browser — een klein stukje tekst dat je browser bij elk volgend verzoek automatisch terugstuurt. DVWA gebruikt hiervoor de cookie `PHPSESSID`.
+
+Je vindt je cookies in F12 → **Application** → **Cookies**. Omdat je ze daar ook kunt *wijzigen*, is een cookie een geliefd doelwit: verander je hem naar de sessie van iemand anders, dan denkt de server dat jij die persoon bent. Dat onderzoek je bij **Weak Session IDs**.
+
+## Opdracht: lees een verzoek
+
+Open F12 → **Network**, laad een pagina, en klik op het bovenste verzoek in de lijst. Beantwoord daarna de vragen hieronder.
+
+### Vraag 1: welke methode gebruikt het verzoek?
+
+<details>
+
+<summary>Tip</summary>
+
+Kijk bovenaan bij de gegevens van het verzoek. Er staat `GET` of `POST`.
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+Voor een gewone pagina is dat meestal `GET`. Verstuur je een formulier, dan zie je vaak een `POST`.
+
+</details>
+
+### Vraag 2: waar staan bij een GET-verzoek de parameters?
+
+<details>
+
+<summary>Tip</summary>
+
+Denk aan het teken dat het pad van de gegevens scheidt.
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+In de URL, achter het vraagteken (`?`), gescheiden door `&`. Bijvoorbeeld `?id=1&naam=admin`.
+
+</details>
+
+### Vraag 3: welke cookie gebruikt DVWA om je sessie te onthouden?
+
+<details>
+
+<summary>Tip</summary>
+
+Kijk in F12 → **Application** → **Cookies**.
+
+</details>
+
+<details>
+
+<summary>Antwoord</summary>
+
+De cookie `PHPSESSID`. Zolang je browser die meestuurt, herkent DVWA je als ingelogde gebruiker. Vergeet niet nieuwe begrippen af en toe te controleren op de [Cheatsheet](cheatsheet).
+
+</details>

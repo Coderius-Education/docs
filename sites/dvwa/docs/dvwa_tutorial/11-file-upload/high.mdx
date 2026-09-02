@@ -87,3 +87,11 @@ De `include()`-functie laadt dan de `.jpg` als PHP-broncode en voert de verstopt
 
 Wil je dit volledig uitproberen? Je hebt `exiftool` (in Kali), een echte .jpg-afbeelding, en de File Inclusion-module op High level nodig.
 :::
+
+## 6. Er gaat iets mis...
+
+Op het vorige level was de Content-Type header aanpassen genoeg. Hier hernoem je `shell.php` naar `shell.jpg`, uploadt hem, en de server weigert: `Dit is geen geldige afbeelding!`
+
+De naam veranderen verandert de *inhoud* niet. `getimagesize()` kijkt niet naar de extensie maar naar de eerste bytes van het bestand — de zogeheten Magic Bytes die elke echte JPG of PNG als "handtekening" bovenaan heeft. Jouw hernoemde PHP-script begint met `<?php`, niet met een image-signature, dus de controle faalt.
+
+Je hebt dus een bestand nodig dat *echt* een geldige afbeelding is én jouw code bevat. Dat maak je door PHP-code in de metadata van een bestaande foto te verstoppen (bijvoorbeeld met `exiftool`). De Magic Bytes kloppen dan, de extensie is `.jpg`, en je code reist mee — al heb je daarna nog een File Inclusion-kwetsbaarheid nodig om hem uit te voeren.

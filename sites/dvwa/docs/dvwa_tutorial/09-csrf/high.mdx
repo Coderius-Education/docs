@@ -50,7 +50,7 @@ Probeer de URL van het Low-level rechtstreeks te kopiëren en aan te passen (zon
 
 <summary>Antwoord</summary>
 
-De server geeft een "CSRF token incorrect"-melding of weigert de aanvraag. Zonder het geldige, sessigebonden token wordt elk verzoek van buiten het formulier geblokkeerd. De token is uniek per sessie en per paginaweergave — je kunt hem niet raden of hergebruiken.
+De server geeft een "CSRF token incorrect"-melding of weigert de aanvraag. Zonder het geldige, sessiegebonden token wordt elk verzoek van buiten het formulier geblokkeerd. De token is uniek per sessie en per paginaweergave — je kunt hem niet raden of hergebruiken.
 
 </details>
 
@@ -86,3 +86,11 @@ Dit script laadt stiekem de "Wachtwoord Veranderen"-pagina op de achtergrond. He
 
 Werkt het normaal invullen van het formulier ook niet? Controleer of je ingelogd bent en het security level correct is ingesteld.
 :::
+
+## 6. Er gaat iets mis...
+
+Je vindt het `user_token` in de HTML, kopieert het in je aanval-URL, en toch krijg je "CSRF token incorrect." Terwijl je het token letterlijk hebt overgenomen.
+
+Een anti-CSRF-token is maar één keer geldig. De server genereert bij elke paginaweergave een nieuw token en onthoudt alleen het laatste. Zodra de pagina opnieuw laadt — of je verstuurt het formulier één keer — is het token dat jij eerder kopieerde "verbruikt" en past het niet meer bij wat de server nu verwacht.
+
+Dat is precies waarom een vast, van tevoren gekopieerd token niet werkt in een CSRF-aanval: je kunt het token niet vooraf kennen. De enige uitweg is het token *live* uitlezen op het moment van de aanval — en daarvoor heb je een tweede kwetsbaarheid zoals XSS nodig, zoals in de opdracht hierboven.

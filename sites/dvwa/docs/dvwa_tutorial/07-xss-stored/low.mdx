@@ -7,6 +7,10 @@ import DvwaLab from '@site/src/components/DvwaLab';
 
 # XSS (Stored) — Low
 
+<LabBadge status="browser" />
+
+<Ethiek />
+
 Bij **Stored XSS** wordt de kwaadaardige code daadwerkelijk op de server (in de database) opgeslagen. Dit is veel gevaarlijker dan Reflected XSS.
 
 ## 1. Predict (Voorspel)
@@ -70,7 +74,7 @@ Gebruik exact dezelfde payload als bij Reflected XSS, maar vul deze in als beric
 
 <summary>Antwoord</summary>
 
-Vul als bericht (of naam) in: `<script>alert(1);</script>`. Zodra je dit opslaat, wordt de pagina herladen en krijg je de alert. Ververs de pagina nog eens (F5). Je krijgt *weer* de alert, omdat de payload nu vast in het gastenboek staat.
+Vul als bericht (of naam) in: `<script>alert(1);</script>`. Zodra je dit opslaat, wordt het gastenboek opnieuw getoond en krijg je de alert. Stuur nu een gewoon bericht in: de alert verschijnt *weer*, want jouw payload staat nog in het gastenboek en draait bij elke weergave mee. Dat is het verschil met reflected XSS, waar de payload maar één keer terugkomt.
 
 </details>
 
@@ -78,7 +82,7 @@ Vul als bericht (of naam) in: `<script>alert(1);</script>`. Zodra je dit opslaat
 
 :::tip[Controle]
 - Direct na het opslaan verschijnt er een **pop-up** met het getal 1.
-- Na een paginaverversing (F5) verschijnt de pop-up **opnieuw** — het script zit nu permanent in de database.
+- Bij elk volgend bericht verschijnt de pop-up **opnieuw** — het script staat opgeslagen in het gastenboek en draait bij elke weergave mee.
 - Het gastenboek laat jouw payload staan in de berichtenlijst.
 
 Geen pop-up? Controleer of je de payload als bericht hebt ingevuld en of het security level op **low** staat.

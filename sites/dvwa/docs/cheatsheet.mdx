@@ -1,5 +1,5 @@
 ---
-sidebar_position: 4
+sidebar_position: 6
 displayed_sidebar: null
 hide_pagination: true
 ---
@@ -166,5 +166,61 @@ Een kwetsbaarheid waarbij een applicatie bestanden insluit op basis van gebruike
 <summary>IDOR (Insecure Direct Object Reference)</summary>
 
 Ook wel *Authorization Bypass* genoemd. Een kwetsbaarheid waarbij een gebruiker toegang krijgt tot data van anderen door simpelweg een ID in de URL of het verzoek aan te passen (bijvoorbeeld `user_id=123` veranderen in `user_id=124`).
+
+</details>
+
+<details>
+
+<summary>Blind SQL Injection</summary>
+
+SQL-injectie waarbij de applicatie geen data of foutmelding toont, alleen een indirect signaal. Bij *boolean-based* lees je een ja/nee-antwoord af (bestaat/bestaat niet); bij *time-based* laat je de database bij een waar antwoord een paar seconden wachten en meet je de laadtijd.
+
+</details>
+
+<details>
+
+<summary>Stored XSS</summary>
+
+XSS waarbij de kwaadaardige invoer wordt opgeslagen (bijvoorbeeld in een gastenboek of database) en daarna bij elke bezoeker opnieuw wordt uitgevoerd. Gevaarlijker dan reflected XSS, want de payload treft iedereen die de pagina bekijkt.
+
+</details>
+
+<details>
+
+<summary>DOM-based XSS</summary>
+
+XSS die volledig in de browser ontstaat: JavaScript op de pagina leest invoer (bijvoorbeeld uit de URL) en schrijft die ongefilterd in de DOM. De server ziet de payload soms niet eens.
+
+</details>
+
+<details>
+
+<summary>File Upload</summary>
+
+Een kwetsbaarheid waarbij een aanvaller een uitvoerbaar bestand (zoals een `.php`-web shell) uploadt omdat de server het bestandstype niet goed controleert. Wie het bestand daarna opvraagt, laat de servercode draaien.
+
+</details>
+
+<details>
+
+<summary>Weak Session IDs</summary>
+
+Sessie-identifiers die voorspelbaar zijn (een oplopende teller, een tijdstempel of een zwakke hash). Een aanvaller kan er dan een raden of narekenen en zo de sessie van een ander overnemen.
+
+</details>
+
+<details>
+
+<summary>CSP Bypass</summary>
+
+Het omzeilen van een Content-Security-Policy die te ruim of verkeerd is ingesteld — bijvoorbeeld een whitelist met een publiek platform, een vaste (hardcoded) nonce, of een JSONP-endpoint dat je callback ongefilterd teruggeeft.
+
+</details>
+
+<details>
+
+<summary>JavaScript Attacks</summary>
+
+Aanvallen die misbruiken dat beveiligingslogica (zoals het berekenen van een token) in de browser draait. Omdat de client die code volledig beheert, kan een aanvaller het token narekenen of aanpassen. Echte validatie hoort server-side.
 
 </details>

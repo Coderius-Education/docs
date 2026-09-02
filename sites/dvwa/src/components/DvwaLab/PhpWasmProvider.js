@@ -1,65 +1,63 @@
-let phpInstance = null;
-let loadingPromise = null;
+/**
+ * Seed script: creates the DVWA tables and users in SQLite.
+ * Runs once per PHP instance, in the browser lab and in the Node test-runner
+ * alike, so both see exactly the same database.
+ */
+const SEED_PHP = `<?php
+  // Zonder standaard-tijdzone gooit date() in PHP 8 een waarschuwing.
+  date_default_timezone_set('UTC');
+  $db = new SQLite3('/tmp/dvwa.db');
+  $db->exec('CREATE TABLE IF NOT EXISTS users (
+    user_id INTEGER PRIMARY KEY,
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
+    user TEXT NOT NULL,
+    password TEXT NOT NULL,
+    avatar TEXT DEFAULT "default.jpg"
+  )');
+  $db->exec('CREATE TABLE IF NOT EXISTS guestbook (
+    comment_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    comment TEXT NOT NULL,
+    name TEXT NOT NULL
+  )');
+  // Check if users already seeded
+  $count = $db->querySingle('SELECT COUNT(*) FROM users');
+  if ($count == 0) {
+    $db->exec("INSERT INTO users VALUES (1,'admin','admin','admin','" . md5('password') . "','admin.jpg')");
+    $db->exec("INSERT INTO users VALUES (2,'Gordon','Brown','gordonb','" . md5('abc123') . "','gordonb.jpg')");
+    $db->exec("INSERT INTO users VALUES (3,'Hack','Me','1337','" . md5('charley') . "','1337.jpg')");
+    $db->exec("INSERT INTO users VALUES (4,'Pablo','Picasso','pablo','" . md5('letmein') . "','pablo.jpg')");
+    $db->exec("INSERT INTO users VALUES (5,'Bob','Smith','smithy','" . md5('password') . "','smithy.jpg')");
+  }
+  $db->close();
+?>`;
 
 /**
- * Lazily initialize and return a singleton PhpWeb instance.
- * The WASM binary (~10-18 MB) is downloaded once and cached by the browser.
+ * Create a fresh PHP instance and seed the DVWA database.
+ *
+ * `createInstance` returns a php-wasm instance: `PhpWeb` in the browser,
+ * `PhpNode` in the tests. Everything after that is identical, which is what
+ * lets the tests execute the very same PHP the students run in the lab.
  */
-export async function getPhp() {
-  if (phpInstance) return phpInstance;
-  if (loadingPromise) return loadingPromise;
+export async function createPhp(createInstance) {
+  const php = await createInstance();
 
-  loadingPromise = (async () => {
-    const { PhpWeb } = await import('php-wasm/PhpWeb.mjs');
-    const php = new PhpWeb();
+  // Wait for the WASM binary to be ready
+  await php.binary;
 
-    // Wait for the WASM binary to be ready
-    await php.binary;
-
-    // Initialize the SQLite database with DVWA users
-    await php.run(`<?php
-      $db = new SQLite3('/tmp/dvwa.db');
-      $db->exec('CREATE TABLE IF NOT EXISTS users (
-        user_id INTEGER PRIMARY KEY,
-        first_name TEXT NOT NULL,
-        last_name TEXT NOT NULL,
-        user TEXT NOT NULL,
-        password TEXT NOT NULL,
-        avatar TEXT DEFAULT "default.jpg"
-      )');
-      $db->exec('CREATE TABLE IF NOT EXISTS guestbook (
-        comment_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        comment TEXT NOT NULL,
-        name TEXT NOT NULL
-      )');
-      // Check if users already seeded
-      $count = $db->querySingle('SELECT COUNT(*) FROM users');
-      if ($count == 0) {
-        $db->exec("INSERT INTO users VALUES (1,'admin','admin','admin','" . md5('password') . "','admin.jpg')");
-        $db->exec("INSERT INTO users VALUES (2,'Gordon','Brown','gordonb','" . md5('abc123') . "','gordonb.jpg')");
-        $db->exec("INSERT INTO users VALUES (3,'Hack','Me','1337','" . md5('charley') . "','1337.jpg')");
-        $db->exec("INSERT INTO users VALUES (4,'Pablo','Picasso','pablo','" . md5('letmein') . "','pablo.jpg')");
-        $db->exec("INSERT INTO users VALUES (5,'Bob','Smith','smithy','" . md5('password') . "','smithy.jpg')");
-      }
-      $db->close();
-    ?>`);
-
-    phpInstance = php;
-    return php;
-  })();
-
-  return loadingPromise;
+  await php.run(SEED_PHP);
+  return php;
 }
 
 /**
- * Run PHP code with injected $_GET and $_POST superglobals.
- * Returns the captured HTML output as a string.
+ * Splice `$_GET` / `$_POST` assignments in right after the opening PHP tag,
+ * so the module script reads the form data as if a real request arrived.
  */
-export async function runPhp(code, getData, postData) {
-  const php = await getPhp();
-
-  // Build superglobal injection
-  let inject = '';
+export function injectSuperglobals(code, getData, postData) {
+  // Start every run from a clean request. php-wasm keeps globals alive between
+  // runs on the same instance, so without this a previous $_GET could bleed into
+  // the next page load (in the browser and in the tests alike).
+  let inject = "$_GET = []; $_POST = []; $_REQUEST = [];\n$_SERVER['REQUEST_METHOD'] = 'GET';\n";
   if (getData && Object.keys(getData).length > 0) {
     for (const [k, v] of Object.entries(getData)) {
       const safeKey = k.replace(/'/g, "\\'");
@@ -78,11 +76,15 @@ export async function runPhp(code, getData, postData) {
     inject += "$_SERVER['REQUEST_METHOD'] = 'POST';\n";
   }
 
-  // Inject superglobals after the opening PHP tag
-  let injected = code;
-  if (inject) {
-    injected = code.replace('<?php', `<?php\n${inject}`);
-  }
+  return code.replace('<?php', `<?php\n${inject}`);
+}
+
+/**
+ * Run PHP code on a given instance with injected superglobals.
+ * Returns the captured HTML output as a string.
+ */
+export async function execPhp(php, code, getData, postData) {
+  const injected = injectSuperglobals(code, getData, postData);
 
   // Capture stdout output
   let output = '';
@@ -101,6 +103,42 @@ export async function runPhp(code, getData, postData) {
   }
 
   return output;
+}
+
+// ---------------------------------------------------------------------------
+// Browser singleton. The lab component only uses the three functions below;
+// their behaviour is unchanged.
+// ---------------------------------------------------------------------------
+
+let phpInstance = null;
+let loadingPromise = null;
+
+/**
+ * Lazily initialize and return a singleton PhpWeb instance.
+ * The WASM binary (~10-18 MB) is downloaded once and cached by the browser.
+ */
+export async function getPhp() {
+  if (phpInstance) return phpInstance;
+  if (loadingPromise) return loadingPromise;
+
+  loadingPromise = createPhp(async () => {
+    const { PhpWeb } = await import('php-wasm/PhpWeb.mjs');
+    return new PhpWeb();
+  }).then((php) => {
+    phpInstance = php;
+    return php;
+  });
+
+  return loadingPromise;
+}
+
+/**
+ * Run PHP code with injected $_GET and $_POST superglobals on the shared
+ * browser instance. Returns the captured HTML output as a string.
+ */
+export async function runPhp(code, getData, postData) {
+  const php = await getPhp();
+  return execPhp(php, code, getData, postData);
 }
 
 /**

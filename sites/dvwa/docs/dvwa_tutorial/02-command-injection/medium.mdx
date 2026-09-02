@@ -4,6 +4,7 @@ sidebar_label: 'Medium'
 ---
 
 import LinuxTerminal from '@site/src/components/LinuxTerminal';
+import { Filters } from '@site/src/components/LinuxTerminal/commands';
 
 # Command Injection — Medium
 
@@ -30,7 +31,7 @@ Probeer je Low-payload in de terminal hieronder — de filter is actief en haalt
 
 <LinuxTerminal
   title="Command Injection — Medium (&& en ; gefilterd)"
-  filter={(input) => input.replace(/&&/g, '').replace(/;/g, '')}
+  filter={Filters.medium}
 />
 
 Wat zouden we kunnen gebruiken zodat de filter het mist, maar Linux toch doorgaat met het uitvoeren van ons tweede commando?
@@ -47,7 +48,7 @@ De programmeur is vergeten álle mogelijke scheidingstekens in Linux te blokkere
 
 <summary>Antwoord</summary>
 
-De pipe-operator `|` wordt niet gefilterd. Je kunt ook de logische OR-operator `||` proberen.
+De pipe-operator `|` wordt niet gefilterd. De logische OR `||` glipt ook langs het filter, maar let op: `||` voert het tweede commando alléén uit als het eerste **mislukt**. Omdat `ping 127.0.0.1` gewoon slaagt, draait `ls` daar juist niet. Voor deze aanval is `|` dus de betrouwbare keuze.
 
 </details>
 
@@ -57,7 +58,7 @@ Probeer de `|` operator in de terminal hieronder om te bevestigen dat het werkt:
 
 <LinuxTerminal
   title="Command Injection — Medium (&& en ; gefilterd)"
-  filter={(input) => input.replace(/&&/g, '').replace(/;/g, '')}
+  filter={Filters.medium}
 />
 
 Werkt het? Probeer het nu op DVWA:
@@ -77,11 +78,11 @@ Probeer de pipe operator direct na het IP-adres te zetten.
 
 <summary>Antwoord</summary>
 
-Vul in: `127.0.0.1 | ls` of `127.0.0.1 || ls`
+Vul in: `127.0.0.1 | ls`
 
 Het resultaat van een succesvolle poging zie je hieronder:
 
-![Bestandslijst van de server na een geslaagde injection op medium](medium_succes.png)
+![Bestandslijst van de server na een geslaagde injection op medium](medium_success.png)
 
 </details>
 
@@ -90,7 +91,7 @@ Het resultaat van een succesvolle poging zie je hieronder:
 :::tip[Controle]
 - Na `127.0.0.1 | ls` verschijnt een **bestandslijst** — de ping-output ontbreekt, dat is normaal bij `|`.
 - Je eerdere payloads met `&&` of `;` geven géén tweede output meer.
-- De `|` en `||` operators omzeilen het filter wél.
+- De `|`-operator omzeilt het filter wél.
 
 Werkt `|` toch niet? Controleer of `DVWA Security` op **medium** staat en dat er geen typfout in je payload zit.
 :::
@@ -99,8 +100,6 @@ Werkt `|` toch niet? Controleer of `DVWA Security` op **medium** staat en dat er
 
 Je typt vol goede moed `127.0.0.1 | ls` in en je ziet ineens... géén ping-resultaat meer. Alleen de lijst met bestanden. Waarom zie je de ping-output niet?
 
-Dit is de werking van de pipe (`|`). Een pipe pakt letterlijk de onzichtbare output van het eerste commando (de ping) en duwt dit als een pakketje in de mond van het tweede commando (`ls`). Het `ls` commando doet echter helemaal niets met die invoer, het print gewoon de huidige map. Daardoor verdwijnt de ping-tekst in het niets. Wil je beide zien? Gebruik dan `||` of andere constructies als het filter dat toelaat.
+Dit is de werking van de pipe (`|`). Een pipe pakt de onzichtbare output van het eerste commando (de ping) en duwt die als invoer in het tweede commando (`ls`). Het `ls`-commando doet niets met die invoer; het print de huidige map. Daardoor verdwijnt de ping-tekst in het niets.
 
-## Walkthrough
-
-<iframe width="920" height="517" src="https://www.youtube.com/embed/WiqRvlN_UIU?start=456" title="2 - Command Injection (low/med/high) - Damn Vulnerable Web Application (DVWA)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+En `||` dan? Dat is een valkuil. `A || B` voert `B` alleen uit als `A` mislukt. `ping 127.0.0.1` slaagt gewoon, dus `127.0.0.1 || ls` laat `ls` juist níét draaien — je ziet alleen de ping. Wil je `||` zien werken, geef dan een adres dat faalt, bijvoorbeeld `1 || ls`: nu mislukt de ping en verschijnt de bestandslijst.

@@ -411,6 +411,21 @@ const COMMANDS = {
 };
 
 /**
+ * The DVWA input filters per security level, as the command-injection
+ * lessons simulate them. They run over the raw line before it is parsed.
+ * The lessons import these, and commands.test.ts pins their behaviour, so
+ * the text, the terminal and the test can never quietly disagree.
+ */
+export const Filters = {
+  // Medium strips the obvious separators; the pipe slips through.
+  medium: (input) => input.replace(/&&/g, '').replace(/;/g, ''),
+  // High also strips "|| " and "| " — but only with the trailing space,
+  // which is the whole point of that level.
+  high: (input) =>
+    input.replace(/&&/g, '').replace(/;/g, '').replace(/\|\| /g, '').replace(/\| /g, ''),
+};
+
+/**
  * Execute a single command. Returns { output, exitCode }.
  */
 export function executeCommand(cmdStr, env, stdin) {

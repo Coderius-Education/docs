@@ -7,7 +7,17 @@ import DvwaLab from '@site/src/components/DvwaLab';
 
 # CSRF — Low
 
+<LabBadge status="browser" />
+
+<Ethiek />
+
 Welkom bij Cross-Site Request Forgery (CSRF). Dit is een kwetsbaarheid waarbij een aanvaller een ingelogde gebruiker misleidt om zonder dat hij het weet ongewenste acties uit te voeren.
+
+<Voorkennis
+  items={[
+    {to: '/docs/http_leren', label: 'GET-parameters in een URL'},
+  ]}
+/>
 
 ## 1. Predict (Voorspel)
 
@@ -35,19 +45,19 @@ Start het lab en bekijk het wachtwoord-wijzigformulier.
 
 <DvwaLab module="csrf" level="low" />
 
-Vul een nieuw wachtwoord in en bevestig het. Klik op Submit en observeer wat er met de URL gebeurt na het verzenden.
+Vul een nieuw wachtwoord in en bevestig het. Klik op Submit en kijk of het wachtwoord verandert.
 
 ## 3. Investigate (Onderzoeken)
 
-Kijk naar de URL in de adresbalk nadat je het formulier hebt verstuurd.
+Klik in het lab op **Bekijk broncode** en let op de regel `method="GET"` van het formulier. Leg die naast de voorbeeld-URL uit stap 1. (Het ingebouwde lab heeft geen adresbalk; die URL zie je alleen in een echte DVWA-installatie.)
 
-**Vraag:** Zijn de wachtwoordwaarden zichtbaar in de URL? Wat betekent dit voor een aanvaller die jou een link stuurt?
+**Vraag:** Waar komen de wachtwoordwaarden bij een GET-formulier terecht? Wat betekent dit voor een aanvaller die jou een link stuurt?
 
 <details>
 
 <summary>Antwoord</summary>
 
-Ja, de nieuwe wachtwoordwaarden zijn volledig zichtbaar in de URL als GET-parameters. Dit betekent dat iemand die jou een speciaal geconstrueerde link stuurt, jouw wachtwoord kan wijzigen zonder dat je ooit het formulier hebt ingevuld — zolang je maar op die link klikt terwijl je ingelogd bent.
+In de URL, volledig zichtbaar als GET-parameters. Dit betekent dat iemand die jou een speciaal geconstrueerde link stuurt, jouw wachtwoord kan wijzigen zonder dat je ooit het formulier hebt ingevuld — zolang je maar op die link klikt terwijl je ingelogd bent.
 
 </details>
 
@@ -80,3 +90,11 @@ Maak een URL zoals: `?password_new=12345&password_conf=12345&Change=Change`. In 
 
 Werkt de URL niet? Controleer of de parameters exact overeenkomen met de veldnamen in de URL en of je ingelogd bent in DVWA.
 :::
+
+## 6. Er gaat iets mis...
+
+Je bouwt je kwaadaardige URL, klikt erop terwijl je ingelogd bent, en... het wachtwoord verandert niet. In plaats daarvan zie je "Passwords did not match."
+
+Kijk nog eens naar je twee parameters. De server verandert het wachtwoord alleen als `password_new` en `password_conf` exact aan elkaar gelijk zijn — net als bij een normaal wijzigformulier waar je het wachtwoord twee keer moet intypen. Zet je `password_new=hacked` maar `password_conf=hackd`, dan weigert de server. Zorg dus dat beide waarden identiek zijn: `?password_new=12345&password_conf=12345&Change=Change`.
+
+En vergeet `Change=Change` niet. Dat is de "knop" van het formulier. Laat je hem weg, dan denkt de server dat je alleen de pagina bekijkt en gebeurt er niets.

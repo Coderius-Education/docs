@@ -7,6 +7,10 @@ import DvwaLab from '@site/src/components/DvwaLab';
 
 # CSP Bypass — Low
 
+<LabBadge status="lokaal" />
+
+<Ethiek />
+
 Content Security Policy (CSP) is een HTTP-header die de browser vertelt welke bronnen betrouwbaar zijn. Het is bedoeld om XSS te blokkeren. Maar wat als de CSP zelf lek is geconfigureerd?
 
 ## 1. Predict (Voorspel)
@@ -35,11 +39,11 @@ Start het lab en bekijk het invoerveld.
 
 > **Labbeperking:** Het hosten van een extern script op Pastebin is vereist voor de volledige aanval. Het lab simuleert de CSP-logica, maar de daadwerkelijke externe script-injectie werkt het best met een [lokale DVWA-installatie](/docs/dvwa_installatie).
 
-Vul een gewone naam in en klik op Submit. Observeer hoe de pagina reageert.
+Het lab toont de CSP-header en simuleert de controle. Vul een pastebin-URL zoals `https://pastebin.com/raw/JOUW_ID` in en klik op Opnemen: de whitelist laat het script door.
 
 ## 3. Investigate (Onderzoeken)
 
-Vul `<script>alert(1)</script>` in het veld in en klik op Submit. Open F12 en kijk in het tabblad **Console**.
+Vul `<script>alert(1)</script>` in het veld in en klik op Opnemen. Het lab simuleert de CSP-controle en meldt dat dit inline script geblokkeerd is. In een echte DVWA zie je dezelfde weigering in F12 → **Console**.
 
 **Vraag:** Welk foutbericht zie je in de Console? Wat beschrijft dit bericht over waarom jouw inline script geblokkeerd wordt?
 

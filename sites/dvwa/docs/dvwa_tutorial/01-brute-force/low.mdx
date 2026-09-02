@@ -7,7 +7,18 @@ import DvwaLab from '@site/src/components/DvwaLab';
 
 # Brute Force — Low
 
+<LabBadge status="lokaal" />
+
+<Ethiek />
+
 Welkom bij Brute Force. Zonder bescherming kan een automatische tool duizenden wachtwoorden per minuut proberen op een inlogformulier — net zo lang tot er één past.
+
+<Voorkennis
+  items={[
+    {to: '/docs/http_leren', label: 'GET-parameters en cookies in een verzoek'},
+    {to: '/docs/linux_leren', label: 'Werken in de Linux-terminal (voor Hydra)'},
+  ]}
+/>
 
 ## 1. Predict (Voorspel)
 
@@ -35,7 +46,7 @@ Start het lab en bekijk het inlogformulier.
 
 <DvwaLab module="brute_force" level="low" />
 
-Probeer in te loggen met de gebruikersnaam `admin` en een willekeurig wachtwoord (bijv. `test`). Observeer de URL in de adresbalk na het klikken op Login.
+Probeer in te loggen met de gebruikersnaam `admin` en een willekeurig wachtwoord (bijv. `test`). Het lab meldt of de login lukte. Bij een echte DVWA-installatie zou je bovendien je gebruikersnaam en wachtwoord als GET-parameters in de adresbalk zien staan, zoals in het voorbeeld hierboven. Het ingebouwde lab heeft geen eigen adresbalk, dus die URL zie je hier niet — onthoud dat een GET-login je gegevens altijd zo blootlegt.
 
 ## 3. Investigate (Onderzoeken)
 
@@ -57,7 +68,15 @@ Kijk ook via **F12** → **Elements** naar de `name`-attributen van de invoervel
 
 ## 4. Modify & Make (Aanpassen & Maken)
 
-Nu hebben we alle puzzelstukjes. Installeer Hydra en pak de woordenlijst uit in je Kali-terminal:
+Voordat je een tool inzet, doe je de aanval één keer met de hand. Ga terug naar het lab hierboven en probeer bij gebruikersnaam `admin` een paar veelgebruikte wachtwoorden: `admin`, `123456`, `password`. Let op de melding onder het formulier: bij een fout wachtwoord meldt de server dat gebruikersnaam of wachtwoord onjuist is; bij `password` verschijnt in plaats daarvan een welkomstmelding.
+
+Met de hand duizenden wachtwoorden proberen is ondoenlijk. Daarom automatiseer je het met **Hydra**: dat programma stuurt in hoog tempo verzoek na verzoek, elk met een ander wachtwoord uit een woordenlijst. Op een echte DVWA-server (Engelstalig) herkent Hydra een mislukte poging aan het woord `incorrect` in het antwoord, en stopt zodra dat wegblijft.
+
+:::caution[Labbeperking]
+Hydra draait niet in het browser-lab. Hiervoor heb je een [lokale Kali/DVWA-installatie](/docs/dvwa_installatie) nodig. Lees de stappen hieronder gerust door om te zien hoe het automatiseren werkt, ook als je ze nu nog niet uitvoert.
+:::
+
+Installeer Hydra en pak de woordenlijst uit in je Kali-terminal:
 
 ```bash
 sudo apt install hydra wordlists && sudo gunzip /usr/share/wordlists/rockyou.txt.gz

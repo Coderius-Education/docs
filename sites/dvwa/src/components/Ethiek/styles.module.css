@@ -1,0 +1,24 @@
+.ethiek {
+  border: 1px solid var(--ifm-color-danger, #e01e5a);
+  border-left: 4px solid var(--ifm-color-danger, #e01e5a);
+  border-radius: 6px;
+  background: var(--ifm-color-danger-contrast-background, #fff5f7);
+  padding: 0.9rem 1.1rem;
+  margin: 1.5rem 0;
+}
+
+.kop {
+  margin: 0 0 0.35rem;
+  font-weight: 700;
+  color: var(--ifm-color-danger-dark, #b31547);
+}
+
+.tekst {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+[data-theme="dark"] .ethiek {
+  background: rgba(224, 30, 90, 0.12);
+}
