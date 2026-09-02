@@ -348,7 +348,9 @@ const GEVALLEN: Geval[] = [
     level: 'low',
     naam: 'ander profiel (id 3) lekt privégegevens',
     invoer: { id: '3' },
-    verwacht: { bevat: ['Hack'], bevatNiet: ['supersecret123'] },
+    // '1337' is Hack z'n gebruikersnaam, die alleen in de opgehaalde kaart
+    // staat — niet in de dropdown. "Hack" zou ook op de form-optie matchen.
+    verwacht: { bevat: ['1337'], bevatNiet: ['supersecret123'] },
   },
   {
     module: 'authorization_bypass',
@@ -603,7 +605,8 @@ const GEVALLEN: Geval[] = [
     level: 'impossible',
     naam: 'alle externe verzoeken geblokkeerd',
     invoer: { include: 'x' },
-    verwacht: { bevat: ['geblokkeerd'] },
+    // Result-specifiek: het form-label bevat óók 'geblokkeerd'.
+    verwacht: { bevat: ['externe verzoeken zijn geblokkeerd'] },
   },
 
   // --- JavaScript Attacks (POST) ---

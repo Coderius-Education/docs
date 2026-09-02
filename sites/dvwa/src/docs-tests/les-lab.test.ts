@@ -204,7 +204,9 @@ const GEVALLEN: Geval[] = [
     level: 'low',
     payloadInLes: 'pastebin.com/raw/JOUW_ID',
     invoer: { include: 'https://pastebin.com/raw/JOUW_ID' },
-    verwacht: { bevat: ['whitelist'] },
+    // 'uitgevoerd' staat alleen in de succes-tak, niet in de statische
+    // paginatekst (waar 'whitelist' óók voorkomt).
+    verwacht: { bevat: ['uitgevoerd'] },
   },
   {
     map: '13-csp-bypass',
@@ -213,7 +215,9 @@ const GEVALLEN: Geval[] = [
     level: 'high',
     payloadInLes: 'alert(1);//',
     invoer: { include: 'alert(1);//' },
-    verwacht: { bevat: ['alert(1);//'] },
+    // De volledige geëchode JSONP-uitvoer; 'alert(1);//' alleen staat óók in
+    // de form-placeholder en zou dus ook zonder aanval matchen.
+    verwacht: { bevat: ['alert(1);//({"answer":"15"});'] },
   },
 ];
 
