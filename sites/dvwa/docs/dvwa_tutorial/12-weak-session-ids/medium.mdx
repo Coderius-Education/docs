@@ -34,11 +34,13 @@ Start het lab en genereer een paar sessie-IDs.
 
 <DvwaLab module="weak_session_ids" level="medium" />
 
+> **Labbeperking:** Het lab toont de gegenereerde waarde inline in plaats van in een echte `dvwaSession`-cookie. Je kunt het patroon dus wél observeren en narekenen, maar voor het daadwerkelijk kapen van een sessie (de cookie aanpassen) heb je een [lokale DVWA-installatie](/docs/dvwa_installatie) nodig.
+
 Klik op de knop om een sessie te genereren. Noteer het grote getal dat verschijnt. Wacht een paar seconden en druk opnieuw op de knop.
 
 ## 3. Investigate (Onderzoeken)
 
-Kopieer twee opeenvolgende cookie-waarden en gebruik een online [Epoch Converter](https://www.epochconverter.com/) om ze om te zetten naar een datum/tijd.
+Kopieer twee opeenvolgende getoonde waarden en gebruik een online [Epoch Converter](https://www.epochconverter.com/) om ze om te zetten naar een datum/tijd.
 
 **Vraag:** Hoeveel seconden liggen de twee waarden uit elkaar? Wat zegt dit over hoe goed de waarden te raden zijn als je weet wanneer iemand was ingelogd?
 
@@ -52,13 +54,13 @@ De twee waarden liggen precies het aantal seconden uit elkaar dat er tussen de t
 
 ## 4. Modify & Make (Aanpassen & Maken)
 
-Beredeneer of bereken welk UNIX-timestamp overeenkomt met een recent tijdstip en pas je cookie aan.
+Beredeneer of bereken welk UNIX-timestamp overeenkomt met een recent tijdstip. Het instellen van dat timestamp als sessie doe je op een echte DVWA.
 
 <details>
 
 <summary>Tip</summary>
 
-Gebruik een Epoch Converter op internet om de huidige tijd om te zetten naar een UNIX-timestamp. Pas de cookie aan naar dat getal (of enkele seconden eerder/later).
+Gebruik een Epoch Converter op internet om de huidige tijd om te zetten naar een UNIX-timestamp (of enkele seconden eerder/later).
 
 </details>
 
@@ -67,18 +69,17 @@ Gebruik een Epoch Converter op internet om de huidige tijd om te zetten naar een
 <summary>Antwoord</summary>
 
 1. Ga naar een Epoch Converter en noteer het huidige UNIX-timestamp.
-2. Open F12 → **Application** → **Cookies**.
-3. Verander `dvwaSession` naar het berekende timestamp.
-4. In een real-life scenario schrijf je een Python-script dat in korte tijd alle timestamps voor de afgelopen 60 seconden probeert.
+2. Op een echte DVWA: open F12 → **Application** → **Cookies** en verander `dvwaSession` naar dat timestamp.
+3. In een echt scenario schrijf je een script dat in korte tijd alle timestamps voor de afgelopen 60 seconden probeert.
 
 </details>
 
 ## 5. ✓ Wat moest je zien?
 
 :::tip[Controle]
-- De cookie-waarden zijn UNIX-timestamps — ze stijgen in real-time mee met de klok.
+- De getoonde waarden zijn UNIX-timestamps — ze stijgen in real-time mee met de klok.
 - Twee opeenvolgende waarden verschillen precies het aantal wachtseconden.
-- Met een Epoch Converter kun je direct lezen wanneer een cookie is aangemaakt.
+- Met een Epoch Converter kun je direct lezen wanneer een waarde is aangemaakt.
 
 Zie je geen grote getallen? Controleer of het security level op **medium** staat.
 :::
