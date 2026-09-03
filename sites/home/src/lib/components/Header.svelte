@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from "$app/state";
 	import logo from "$lib/assets/logo.svg";
 	import { Button } from "$lib/components/ui/button";
 	import ThemeButton from "$lib/components/ui/theme-button/ThemeButton.svelte";
@@ -11,8 +12,8 @@
 			<span>Coderius</span>
 		</a>
 		<nav aria-label="Hoofdmenu" class="flex items-center">
-			<Button variant="link" href="/">Cursussen</Button>
-			<Button variant="link" href="/docent">Docenten</Button>
+			<Button variant="link" href="/" aria-current={page.url.pathname === "/" ? "page" : undefined}>Cursussen</Button>
+			<Button variant="link" href="/docent" aria-current={page.url.pathname.startsWith("/docent") ? "page" : undefined}>Docenten</Button>
 		</nav>
 		<div class="ml-auto">
 			<ThemeButton />

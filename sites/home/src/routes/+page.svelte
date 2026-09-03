@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { ExternalLink } from "@lucide/svelte";
-	import { SITES_BY_ID } from "@coderius/shared/sites";
+	import { REPO_URL, SITES_BY_ID } from "@coderius/shared/sites";
 	import {
 		THEMAS,
 		type Activity,
@@ -38,7 +38,7 @@
 	<title>Coderius: gratis, open lesmateriaal voor programmeren</title>
 	<meta
 		name="description"
-		content="Twaalf cursussen voor het voortgezet onderwijs: Python, webontwikkeling, games, robotica, security en meer. Gratis en open, direct in je browser."
+		content="Cursussen voor het voortgezet onderwijs: Python, webontwikkeling, games, robotica, security en meer. Gratis en open, direct in je browser."
 	/>
 </svelte:head>
 
@@ -111,7 +111,7 @@
 							</div>
 							<p class="text-sm text-muted-foreground">{c.description}</p>
 							{#if c.requires.length > 0}
-								<p class="mt-auto text-xs text-muted-foreground">Na: {voorkennisVan(c)}</p>
+								<p class="mt-auto text-xs text-muted-foreground">Voorkennis: {voorkennisVan(c)}</p>
 							{/if}
 						</a>
 					</li>
@@ -126,8 +126,8 @@
 			<p class="mt-1 text-sm text-muted-foreground">
 				Wij maken ons eigen lesmateriaal en geven het gratis weg. Alles is open source, dus
 				docenten mogen het gebruiken, aanpassen en delen zoals het bij hun leerlingen past.
-				Ideeën of een bijdrage? Het materiaal staat op GitHub, en elke pagina heeft een
-				bewerkknop.
+				Ideeën of een bijdrage? Het materiaal staat
+				<a href={REPO_URL} target="_blank" rel="noopener noreferrer" class="underline underline-offset-2">op GitHub</a>.
 			</p>
 		</div>
 		<div>
