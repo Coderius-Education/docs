@@ -64,16 +64,18 @@ function PygbagRunnerInner({ code, title, width, height, mode }) {
     // so the iframe can correct traceback line numbers.
     let userPythonCode = editableCode;
     let lineOffset = 0;
+    let ingevoegd = [];
     if (execMode === 'pygame') {
       const wrapped = ensureAsync(editableCode);
       userPythonCode = wrapped.code;
       lineOffset = wrapped.lineOffset;
+      ingevoegd = wrapped.ingevoegd;
     } else if (!userPythonCode.includes('start_program')) {
       userPythonCode = `${userPythonCode}\nplay.start_program()`;
     }
 
     // Park the run params until React has rendered the slot div (effect below).
-    pendingRunRef.current = { code: userPythonCode, mode: execMode, lineOffset };
+    pendingRunRef.current = { code: userPythonCode, mode: execMode, lineOffset, ingevoegd };
     setIsRunning(true);
   }
 
@@ -81,7 +83,7 @@ function PygbagRunnerInner({ code, title, width, height, mode }) {
   // is null and SharedRunner has no anchor to position over.
   useEffect(() => {
     if (!isRunning || !pendingRunRef.current || !slotRef.current) return;
-    const { code, mode, lineOffset } = pendingRunRef.current;
+    const { code, mode, lineOffset, ingevoegd } = pendingRunRef.current;
     pendingRunRef.current = null;
     requestRun({
       ownerId,
@@ -89,6 +91,7 @@ function PygbagRunnerInner({ code, title, width, height, mode }) {
       code,
       mode,
       lineOffset,
+      ingevoegd,
       listeners: {
         onStdout: (text) => appendLine(text, false),
         onStderr: (text) => appendLine(text, true),
@@ -99,7 +102,6 @@ function PygbagRunnerInner({ code, title, width, height, mode }) {
           appendLine(msg, true);
           if (fatal) setIsRunning(false);
         },
-        onStopped: () => setIsRunning(false),
         onPreempted: () => setIsRunning(false),
       },
     });

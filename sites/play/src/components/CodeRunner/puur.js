@@ -16,7 +16,7 @@
  * so the browser event loop stays responsive.
  */
 export function ensureAsync(code) {
-  if (!code) return { code: '', lineOffset: 0 };
+  if (!code) return { code: '', lineOffset: 0, ingevoegd: [] };
 
   // If the code already uses asyncio + await, assume it is ready.
   // But replace asyncio.run(main()) with await main() since
@@ -25,6 +25,7 @@ export function ensureAsync(code) {
     return {
       code: code.replace(/asyncio\.run\s*\(\s*main\s*\(\s*\)\s*\)/, 'await main()'),
       lineOffset: 0,
+      ingevoegd: [],
     };
   }
 
@@ -48,7 +49,12 @@ export function ensureAsync(code) {
   }
 
   // Indent body and inject `await asyncio.sleep(0)` after while-loop headers.
+  // Elke ingevoegde regel schuift alles eronder één regel op; hun regelnummers
+  // in de omhulde code gaan mee terug (`ingevoegd`), zodat rewriteTraceback
+  // per foutregel kan aftrekken hoeveel invoegingen erboven staan.
   const indentedBody = [];
+  const ingevoegd = [];
+  const bodyStart = importLines.length + 3; // imports, witregel, 'async def main():'
   for (let i = 0; i < bodyLines.length; i++) {
     const line = bodyLines[i];
     indentedBody.push(`    ${line}`);
@@ -58,6 +64,7 @@ export function ensureAsync(code) {
       const match = nextLine.match(/^(\s+)/);
       const loopBodyIndent = match ? match[1] : '    ';
       indentedBody.push(`    ${loopBodyIndent}await asyncio.sleep(0)`);
+      ingevoegd.push(bodyStart + indentedBody.length - 1);
     }
   }
 
@@ -65,14 +72,14 @@ export function ensureAsync(code) {
   // is toegevoegd) in de omhulde code: de eigen imports schuiven weliswaar
   // naar boven, maar dat is een verplaatsing van de gebruiker zijn eigen
   // regels, geen extra regels. Alleen de witregel, 'async def main():' en de
-  // eventuele asyncio-import tellen. Exact zolang de imports bovenaan staan;
-  // een 'await asyncio.sleep(0)' ná een while-kop verschuift de regels
-  // daaronder met één, dat vangt één offset niet.
+  // eventuele asyncio-import tellen. Exact zolang de imports bovenaan staan.
+  // De 'await asyncio.sleep(0)'-regels ná een while-kop zitten in `ingevoegd`.
   const lineOffset = 2 + (asyncioToegevoegd ? 1 : 0);
 
   return {
     code: [...importLines, '', 'async def main():', ...indentedBody, '', 'await main()'].join('\n'),
     lineOffset,
+    ingevoegd,
   };
 }
 
@@ -91,10 +98,13 @@ export function detectMode(code) {
  * regels dat ensureAsync vóór de gebruikerscode zet. Alleen regels van
  * `<jouw_code>` schuiven; regels uit `<bootstrap>` of de stdlib blijven staan.
  */
-export function rewriteTraceback(msg, lineOffset) {
+export function rewriteTraceback(msg, lineOffset, ingevoegd) {
   if (!lineOffset) return msg;
+  const extra = ingevoegd || [];
   return msg.replace(/File "<jouw_code>", line (\d+)/g, (m, n) => {
-    const corrected = Math.max(1, Number.parseInt(n, 10) - lineOffset);
+    const regel = Number.parseInt(n, 10);
+    const erboven = extra.filter((r) => r < regel).length;
+    const corrected = Math.max(1, regel - lineOffset - erboven);
     return `File "<jouw_code>", line ${corrected}`;
   });
 }
@@ -103,10 +113,13 @@ export function rewriteTraceback(msg, lineOffset) {
  * Dezelfde functie als JS-tekst voor in de srcdoc. Let op de dubbele backslash:
  * dit is een gewone string, dus `\\d` komt als `\d` in het document terecht.
  */
-export const REWRITE_TRACEBACK_SNIPPET = `function rewriteTraceback(msg, lineOffset) {
+export const REWRITE_TRACEBACK_SNIPPET = `function rewriteTraceback(msg, lineOffset, ingevoegd) {
   if (!lineOffset) return msg;
+  const extra = ingevoegd || [];
   return msg.replace(/File "<jouw_code>", line (\\d+)/g, (m, n) => {
-    const corrected = Math.max(1, Number.parseInt(n, 10) - lineOffset);
+    const regel = Number.parseInt(n, 10);
+    const erboven = extra.filter((r) => r < regel).length;
+    const corrected = Math.max(1, regel - lineOffset - erboven);
     return 'File "<jouw_code>", line ' + corrected;
   });
 }`;

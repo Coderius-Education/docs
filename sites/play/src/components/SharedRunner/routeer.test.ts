@@ -21,7 +21,8 @@ describe('routeerBericht', () => {
       tekst: 'oei\n',
     });
     expect(routeerBericht({ type: 'run-done', requestId: 7 }, 7)).toEqual({ type: 'done' });
-    expect(routeerBericht({ type: 'stopped', requestId: 7 }, 7)).toEqual({ type: 'stopped' });
+    // 'stopped' heeft nooit meer een eigenaar (stop() laat die meteen los).
+    expect(routeerBericht({ type: 'stopped', requestId: 7 }, 7)).toEqual({ negeer: true });
     expect(
       routeerBericht({ type: 'error', message: 'NameError', fatal: true, requestId: 7 }, 7),
     ).toEqual({ type: 'error', tekst: 'NameError', fataal: true });

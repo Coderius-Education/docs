@@ -82,7 +82,6 @@ function handleMessage(e) {
   else if (besluit.type === 'stderr') handlers.onStderr?.(besluit.tekst);
   else if (besluit.type === 'done') handlers.onDone?.();
   else if (besluit.type === 'error') handlers.onError?.(besluit.tekst, besluit.fataal);
-  else if (besluit.type === 'stopped') handlers.onStopped?.();
 }
 
 /**
@@ -126,7 +125,7 @@ function stopTracking() {
  * iframe, that run is stopped first and the iframe is reparented to the new
  * owner's slot.
  */
-export function requestRun({ ownerId, slotEl, code, mode, lineOffset, listeners }) {
+export function requestRun({ ownerId, slotEl, code, mode, lineOffset, ingevoegd, listeners }) {
   if (!isBrowser() || !iframe) {
     if (listeners?.onError) {
       listeners.onError('SharedRunner not initialised yet — try again in a second.', false);
@@ -151,7 +150,7 @@ export function requestRun({ ownerId, slotEl, code, mode, lineOffset, listeners 
   const requestId = nextRequestId++;
   currentRequestId = requestId;
   iframe.contentWindow.postMessage(
-    { type: 'run', requestId, code, mode, lineOffset: lineOffset || 0 },
+    { type: 'run', requestId, code, mode, lineOffset: lineOffset || 0, ingevoegd: ingevoegd || [] },
     '*',
   );
   return requestId;

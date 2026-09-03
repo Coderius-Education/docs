@@ -10,7 +10,9 @@
  * eerste run (de boot-fout van Pyodide) en heeft geen eigenaar om naartoe te
  * gaan. De engine herhaalt die fout bij de eerstvolgende 'run', mét id.
  * `iframe-ready` hoort niet bij een run en wordt door index.js vóór deze
- * functie afgehandeld.
+ * functie afgehandeld. 'stopped' wordt bewust niet doorgegeven: stop() laat
+ * de eigenaar meteen los en een preemptie geeft de iframe al aan de volgende
+ * run, dus er is nooit meer een eigenaar om het aan te melden.
  */
 
 const NEGEER = Object.freeze({ negeer: true });
@@ -29,8 +31,6 @@ export function routeerBericht(bericht, huidigeRequestId) {
       return { type: 'done' };
     case 'error':
       return { type: 'error', tekst: String(bericht.message ?? ''), fataal: !!bericht.fatal };
-    case 'stopped':
-      return { type: 'stopped' };
     default:
       return NEGEER;
   }

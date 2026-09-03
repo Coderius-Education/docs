@@ -33,11 +33,6 @@ export function herpostMomenten(interval = POLL_INTERVAL_MS, timeout = TIMEOUT_M
   }
   return momenten;
 }
-// Het bericht gaat meteen bij het openen, en daarna hooguit zo vaak opnieuw
-// (om de POLL_INTERVAL_MS) zolang het ack uitblijft. Daarna wordt alleen nog
-// gekeken of het tabblad dicht is: het hele project 50 keer over de lijn
-// sturen is zinloos als de IDE na een paar seconden nog niet luistert.
-
 /** Kies het startbestand (index.html op de kortste diepte, anders eerste .html). */
 export function pickEntry(files: ProjectFiles): string | null {
   const htmlPaths = Object.keys(files).filter((p) => files[p].kind === 'html');

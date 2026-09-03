@@ -109,21 +109,26 @@ describe('isDeletedPath', () => {
 describe('pathExists — de botsingscheck vóór hernoemen', () => {
   // Alleen bestanden werden gecontroleerd; een map hernoemen naar een
   // bestaande buurman overschreef stil src2/a.py en gaf een dubbele mapregel.
+  // En de check kijkt naar beide soorten: een map hernoemen naar de naam van
+  // een bestand (of andersom) gaf een map en een bestand met hetzelfde pad.
   it('een bestand bestaat als het in files staat', () => {
-    expect(pathExists(project, 'src/a.py', false)).toBe(true);
-    expect(pathExists(project, 'src/b.py', false)).toBe(false);
+    expect(pathExists(project, 'src/a.py')).toBe(true);
+    expect(pathExists(project, 'src/b.py')).toBe(false);
   });
 
   it('een map bestaat als hij expliciet is, of als er een bestand onder staat', () => {
-    expect(pathExists(project, 'src2', true)).toBe(true);
-    expect(pathExists(project, 'leeg', true)).toBe(true);
-    expect(pathExists({ files: { 'impliciet/x.py': '' }, folders: [] }, 'impliciet', true)).toBe(
-      true,
-    );
-    expect(pathExists(project, 'src3', true)).toBe(false);
+    expect(pathExists(project, 'src2')).toBe(true);
+    expect(pathExists(project, 'leeg')).toBe(true);
+    expect(pathExists({ files: { 'impliciet/x.py': '' }, folders: [] }, 'impliciet')).toBe(true);
+    expect(pathExists(project, 'src3')).toBe(false);
   });
 
   it('src is geen prefix van src2', () => {
-    expect(pathExists({ files: { 'src2/x.py': '' }, folders: [] }, 'src', true)).toBe(false);
+    expect(pathExists({ files: { 'src2/x.py': '' }, folders: [] }, 'src')).toBe(false);
+  });
+
+  it('een bestandsnaam is bezet voor een map, en een mapnaam voor een bestand', () => {
+    expect(pathExists(project, 'index.html')).toBe(true);
+    expect(pathExists({ files: {}, folders: ['docs'] }, 'docs')).toBe(true);
   });
 });

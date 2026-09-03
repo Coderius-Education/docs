@@ -21,12 +21,26 @@ export function zoekTekst(tip: Tip): string {
     .toLowerCase();
 }
 
-/** Alle tips die elk woord uit de zoekterm bevatten; een lege zoekterm geeft alles. */
-export function filterTips(tips: Tip[], zoekterm: string): Tip[] {
+export type TipIndex = { tip: Tip; tekst: string }[];
+
+/** De zoektekst per tip, één keer gebouwd; de component bewaart 'm in een useMemo. */
+export function maakIndex(tips: Tip[]): TipIndex {
+  return tips.map((tip) => ({ tip, tekst: zoekTekst(tip) }));
+}
+
+function isIndex(bron: Tip[] | TipIndex): bron is TipIndex {
+  return bron.length > 0 && 'tekst' in bron[0];
+}
+
+/**
+ * Alle tips die elk woord uit de zoekterm bevatten; een lege zoekterm geeft
+ * alles. Accepteert de kale tips (dan wordt de index ter plekke gebouwd) of
+ * een vooraf gebouwde index, zodat de component niet bij elke toetsaanslag
+ * alle velden opnieuw samenvoegt.
+ */
+export function filterTips(bron: Tip[] | TipIndex, zoekterm: string): Tip[] {
   const woorden = zoekterm.trim().toLowerCase().split(/\s+/).filter(Boolean);
-  if (woorden.length === 0) return tips;
-  return tips.filter((tip) => {
-    const tekst = zoekTekst(tip);
-    return woorden.every((w) => tekst.includes(w));
-  });
+  if (woorden.length === 0) return isIndex(bron) ? bron.map((r) => r.tip) : bron;
+  const index = isIndex(bron) ? bron : maakIndex(bron);
+  return index.filter((r) => woorden.every((w) => r.tekst.includes(w))).map((r) => r.tip);
 }

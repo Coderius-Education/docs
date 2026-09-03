@@ -15,7 +15,7 @@ type CodeEditorComponent = React.ComponentType<{
   height?: string;
 }>;
 type ConsoleLine = { text: string; isError: boolean };
-type PendingRun = { code: string; mode: string; lineOffset: number };
+type PendingRun = { code: string; mode: string; lineOffset: number; ingevoegd: number[] };
 
 const DEFAULT_CODE_PLAY = `import play
 
@@ -146,15 +146,17 @@ function PlaygroundInner() {
 
     let userPythonCode = code;
     let lineOffset = 0;
+    let ingevoegd: number[] = [];
     if (mode === 'pygame') {
       const wrapped = engine.ensureAsync(code);
       userPythonCode = wrapped.code;
       lineOffset = wrapped.lineOffset;
+      ingevoegd = wrapped.ingevoegd;
     } else if (!userPythonCode.includes('start_program')) {
       userPythonCode = `${userPythonCode}\nplay.start_program()`;
     }
 
-    pendingRunRef.current = { code: userPythonCode, mode, lineOffset };
+    pendingRunRef.current = { code: userPythonCode, mode, lineOffset, ingevoegd };
     setIsRunning(true);
   }, [code, mode, engine, shared]);
 
@@ -174,6 +176,7 @@ function PlaygroundInner() {
       code: params.code,
       mode: params.mode,
       lineOffset: params.lineOffset,
+      ingevoegd: params.ingevoegd,
       listeners: {
         onStdout: (text: string) => appendLine(text, false),
         onStderr: (text: string) => appendLine(text, true),
@@ -184,7 +187,6 @@ function PlaygroundInner() {
           appendLine(msg, true);
           if (fatal) setIsRunning(false);
         },
-        onStopped: () => setIsRunning(false),
         onPreempted: () => setIsRunning(false),
       },
     });

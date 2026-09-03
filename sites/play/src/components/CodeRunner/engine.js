@@ -156,6 +156,7 @@ export function buildSrcDoc({ code, mode = 'pygame', canvasWidth, canvasHeight }
   let bootstrapCode = '';
   let userPythonCode = '';
   let lineOffset = 0;
+  let ingevoegd = [];
 
   if (mode === 'play') {
     bootstrapCode = buildPlayBootstrap();
@@ -167,6 +168,7 @@ export function buildSrcDoc({ code, mode = 'pygame', canvasWidth, canvasHeight }
     const wrapped = ensureAsync(sanitized);
     userPythonCode = wrapped.code;
     lineOffset = wrapped.lineOffset;
+    ingevoegd = wrapped.ingevoegd;
   }
 
   // Escape backticks and backslashes for embedding in JS template literal
@@ -227,6 +229,7 @@ function appendConsole(text, cls) {
 // For play mode lineOffset=0 (no rewrite). For pygame mode lineOffset
 // equals the number of preamble lines added by ensureAsync.
 const LINE_OFFSET = ${lineOffset};
+const INGEVOEGD = [${ingevoegd.join(', ')}];
 ${REWRITE_TRACEBACK_SNIPPET}
 
 try {
@@ -237,7 +240,7 @@ try {
 
   // Capture print() output and show it in the visible console panel
   pyodide.setStdout({ batched: (msg) => appendConsole(msg + '\\n') });
-  pyodide.setStderr({ batched: (msg) => appendConsole(rewriteTraceback(msg, LINE_OFFSET) + '\\n', 'err') });
+  pyodide.setStderr({ batched: (msg) => appendConsole(rewriteTraceback(msg, LINE_OFFSET, INGEVOEGD) + '\\n', 'err') });
 
   // Wire canvas for SDL2/Emscripten rendering
   pyodide.canvas.setCanvas2D(canvas);
@@ -259,7 +262,7 @@ try {
   await pyodide.runPythonAsync(USER_CODE, { filename: '<jouw_code>' });
 } catch (err) {
   const rawMessage = String(err && err.message ? err.message : err);
-  appendConsole(rewriteTraceback(rawMessage, LINE_OFFSET) + '\\n', 'err');
+  appendConsole(rewriteTraceback(rawMessage, LINE_OFFSET, INGEVOEGD) + '\\n', 'err');
   if (loading.style.display !== 'none') {
     loading.textContent = 'Fout - zie console';
     loading.style.color = '#f44';
@@ -374,6 +377,7 @@ const loading = document.getElementById('loading');
 const canvas = document.getElementById('canvas');
 
 let CURRENT_OFFSET = 0;
+let CURRENT_INGEVOEGD = [];
 // Elk bericht naar de ouder draagt het requestId van de run die nu draait.
 // stdout/stderr komen via setStdout/setStderr binnen zonder context, dus die
 // krijgen het via deze variabele mee; de ouder negeert alles met een ander id
@@ -395,7 +399,7 @@ let booting = (async () => {
     pyodide = await loadPyodide({ packages: [${pyodidePackagesCode}] });
 
     pyodide.setStdout({ batched: (msg) => post('stdout', { text: msg + '\\n' }) });
-    pyodide.setStderr({ batched: (msg) => post('stderr', { text: rewriteTraceback(msg, CURRENT_OFFSET) + '\\n' }) });
+    pyodide.setStderr({ batched: (msg) => post('stderr', { text: rewriteTraceback(msg, CURRENT_OFFSET, CURRENT_INGEVOEGD) + '\\n' }) });
     pyodide.canvas.setCanvas2D(canvas);
 
     const WHEELS = [${wheelsCode}];
@@ -436,7 +440,7 @@ window.addEventListener('message', async (e) => {
   }
 
   if (type === 'run') {
-    const { code, lineOffset } = e.data;
+    const { code, lineOffset, ingevoegd } = e.data;
     try {
       // Eerst het vorige programma afbreken, dan pas het nieuwe requestId
       // aannemen: wat het oude programma tijdens het afbreken nog print
@@ -444,12 +448,13 @@ window.addEventListener('message', async (e) => {
       // de nieuwe console.
       try { await pyodide.runPythonAsync('__pygbag_reset()'); } catch (e) {}
       CURRENT_OFFSET = lineOffset || 0;
+      CURRENT_INGEVOEGD = ingevoegd || [];
       CURRENT_REQUEST = requestId;
       await pyodide.runPythonAsync(code, { filename: '<jouw_code>' });
       post('run-done', { requestId });
     } catch (err) {
       const msg = String(err && err.message ? err.message : err);
-      post('error', { requestId, message: rewriteTraceback(msg, CURRENT_OFFSET) });
+      post('error', { requestId, message: rewriteTraceback(msg, CURRENT_OFFSET, CURRENT_INGEVOEGD) });
       console.error(err);
     }
   } else if (type === 'stop') {

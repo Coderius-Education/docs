@@ -11,12 +11,11 @@ import styles from './styles.module.css';
 // wél en soms niet doorloopt breekt de hook-volgorde van React. Zelfde patroon
 // als de HighlightedEditor in @coderius/python-runner en WebMicroEditor.
 function useColorMode(): { colorMode: 'light' | 'dark' } {
-  const [colorMode, setColorMode] = useState<'light' | 'dark'>(() =>
-    typeof document !== 'undefined' &&
-    document.documentElement.getAttribute('data-theme') === 'dark'
-      ? 'dark'
-      : 'light',
-  );
+  // Bewust altijd 'light' als beginwaarde, ook in de browser: de server
+  // rendert light, en als de client met 'dark' begint komt de eerste render
+  // overeen met de state, zodat de effect-read hieronder niets verandert en
+  // de editor light blijft tot de volgende toetsaanslag. Zo flipt hij meteen.
+  const [colorMode, setColorMode] = useState<'light' | 'dark'>('light');
   useEffect(() => {
     const read = () =>
       setColorMode(

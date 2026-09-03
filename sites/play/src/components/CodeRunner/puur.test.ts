@@ -130,6 +130,7 @@ describe('ensureAsync', () => {
       'import asyncio\nasync def main():\n    await asyncio.sleep(0)\nasyncio.run(main())';
     const uit = ensureAsync(code);
     expect(uit.lineOffset).toBe(0);
+    expect(uit.ingevoegd).toEqual([]);
     expect(uit.code).toBe(code.replace('asyncio.run(main())', 'await main()'));
   });
 
@@ -140,7 +141,7 @@ describe('ensureAsync', () => {
   });
 
   it('lege code geeft lege code met offset 0', () => {
-    expect(ensureAsync('')).toEqual({ code: '', lineOffset: 0 });
+    expect(ensureAsync('')).toEqual({ code: '', lineOffset: 0, ingevoegd: [] });
   });
 });
 
@@ -187,7 +188,7 @@ describe('rewriteTraceback', () => {
     );
     const gedeeld = buildSharedRunnerSrcDoc(['import pygame']);
     expect(gedeeld).toContain(REWRITE_TRACEBACK_SNIPPET);
-    expect(gedeeld).toContain('rewriteTraceback(msg, CURRENT_OFFSET)');
+    expect(gedeeld).toContain('rewriteTraceback(msg, CURRENT_OFFSET, CURRENT_INGEVOEGD)');
   });
 });
 
@@ -229,5 +230,56 @@ describe('srcdoc-bouwers', () => {
   it('zonder play in de code blijft de play-wheel weg', () => {
     expect(buildPrewarmSrcDoc(['import pygame'])).not.toContain('/whl/coderius_play-');
     expect(buildPrewarmSrcDoc(['import pygame'])).not.toContain('/whl/pymunk-');
+  });
+});
+
+describe('regelnummers ná een while-lus', () => {
+  // Elke 'await asyncio.sleep(0)' die ensureAsync na een while-kop invoegt
+  // schuift de regels eronder één op. Eén vaste offset kon dat niet vangen:
+  // juist de fout ín de lus (waar pygame-fouten vrijwel altijd zitten) werd
+  // één regel te laag gemeld, en bij twee lussen twee.
+  const code = 'import pygame\nwhile True:\n    x = 1/0';
+
+  it('ensureAsync geeft de omhulde regelnummers van de invoegingen terug', () => {
+    const uit = ensureAsync(code);
+    // 1 import pygame, 2 import asyncio, 3 '', 4 async def, 5 while, 6 sleep, 7 x
+    expect(uit.ingevoegd).toEqual([6]);
+    expect(uit.code.split('\n')[5]).toBe('        await asyncio.sleep(0)');
+    expect(uit.code.split('\n')[6]).toBe('        x = 1/0');
+  });
+
+  it('rewriteTraceback trekt de invoegingen erboven af, niet die eronder', () => {
+    const { lineOffset, ingevoegd } = ensureAsync(code);
+    expect(rewriteTraceback('File "<jouw_code>", line 7', lineOffset, ingevoegd)).toBe(
+      'File "<jouw_code>", line 3',
+    );
+    expect(rewriteTraceback('File "<jouw_code>", line 5', lineOffset, ingevoegd)).toBe(
+      'File "<jouw_code>", line 2',
+    );
+  });
+
+  it('twee lussen: de tweede fout telt beide invoegingen', () => {
+    const twee = ensureAsync('while a:\n    pass\nwhile b:\n    y = 1/0');
+    // 1 import asyncio, 2 '', 3 async def, 4 while a, 5 sleep, 6 pass, 7 while b, 8 sleep, 9 y
+    expect(twee.ingevoegd).toEqual([5, 8]);
+    expect(rewriteTraceback('File "<jouw_code>", line 9', twee.lineOffset, twee.ingevoegd)).toBe(
+      'File "<jouw_code>", line 4',
+    );
+  });
+
+  it('de snippet voor de iframe doet hetzelfde met invoegingen', () => {
+    const vanSnippet = uitSnippet<typeof rewriteTraceback>(
+      REWRITE_TRACEBACK_SNIPPET,
+      'rewriteTraceback',
+    );
+    const bericht = 'File "<jouw_code>", line 7, in main';
+    expect(vanSnippet(bericht, 3, [6])).toBe(rewriteTraceback(bericht, 3, [6]));
+    expect(vanSnippet(bericht, 3, [6])).toBe('File "<jouw_code>", line 3, in main');
+  });
+
+  it('de losse iframe krijgt de invoegingen mee', () => {
+    const doc = buildSrcDoc({ code: 'import pygame\nwhile True:\n    x = 1', mode: 'pygame' });
+    expect(doc).toContain('const INGEVOEGD = [');
+    expect(doc).toContain('rewriteTraceback(msg, LINE_OFFSET, INGEVOEGD)');
   });
 });

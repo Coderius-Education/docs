@@ -256,7 +256,7 @@ export default function ProjectEditorImpl({
       }
       const current = projectRef.current;
       if (!current) return;
-      if (pathExists(current, next, isFolder)) {
+      if (pathExists(current, next)) {
         window.alert(
           isFolder
             ? 'Er bestaat al een map met deze naam.'

@@ -1,14 +1,16 @@
 import Link from '@docusaurus/Link';
 import { tips } from '@site/src/data/tips';
 import { type ReactNode, useMemo, useState } from 'react';
-import { filterTips } from './filterTips';
+import { filterTips, maakIndex } from './filterTips';
 import styles from './styles.module.css';
 
 export default function TipZoeker(): ReactNode {
   const [query, setQuery] = useState('');
 
   // Het filter zelf staat in filterTips.ts, los van React, met eigen tests.
-  const resultaten = useMemo(() => filterTips(tips, query), [query]);
+  // De zoektekst per tip wordt één keer gebouwd, niet bij elke toetsaanslag.
+  const index = useMemo(() => maakIndex(tips), []);
+  const resultaten = useMemo(() => filterTips(index, query), [index, query]);
 
   return (
     <section className={styles.zoeker}>

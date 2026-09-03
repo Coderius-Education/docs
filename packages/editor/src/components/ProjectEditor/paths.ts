@@ -47,17 +47,17 @@ export function renameInProject<P extends Pick<Project, 'files' | 'folders' | 'e
 }
 
 /**
- * Bestaat `path` al in het project? Een map bestaat als hij expliciet is
- * aangemaakt óf als er een bestand onder staat. Hernoemen naar een bestaand
- * pad zou anders stil bestanden overschrijven (map "src" naar "src2" terwijl
- * src2/a.py al bestaat) of een dubbele mapregel opleveren.
+ * Bestaat `path` al in het project, als bestand óf als map? Een map bestaat
+ * als hij expliciet is aangemaakt of als er een bestand onder staat. De check
+ * kijkt bewust naar beide soorten, wat er ook hernoemd wordt: een map "src"
+ * naar "index.html" zou anders een map en een bestand met hetzelfde pad
+ * opleveren, en "src" naar "src2" overschreef stil src2/a.py.
  */
 export function pathExists<P extends Pick<Project, 'files' | 'folders'>>(
   project: P,
   path: string,
-  isFolder: boolean,
 ): boolean {
-  if (!isFolder) return project.files[path] !== undefined;
+  if (project.files[path] !== undefined) return true;
   const prefix = `${path}/`;
   return (
     project.folders.includes(path) || Object.keys(project.files).some((k) => k.startsWith(prefix))

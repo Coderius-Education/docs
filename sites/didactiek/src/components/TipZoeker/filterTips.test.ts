@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { type Tip, tips } from '../../data/tips';
-import { filterTips } from './filterTips';
+import { filterTips, maakIndex } from './filterTips';
 
 // Legt het zoekgedrag van de TipZoeker vast: welke velden meedoen, dat
 // hoofdletters niet uitmaken, dat meerdere woorden allemaal moeten matchen,
@@ -91,5 +91,13 @@ describe('filterTips', () => {
     }
     expect(kapot).toEqual([]);
     expect(filterTips(tips, '')).toHaveLength(tips.length);
+  });
+});
+
+describe('maakIndex', () => {
+  it('geeft met een vooraf gebouwde index hetzelfde resultaat als met de kale tips', () => {
+    const index = maakIndex(tips);
+    expect(filterTips(index, 'cognitieve')).toEqual(filterTips(tips, 'cognitieve'));
+    expect(filterTips(index, '')).toEqual(tips);
   });
 });
