@@ -1,5 +1,6 @@
 import { type ReactNode, useState } from 'react';
 import styles from './TeacherGate.module.css';
+import { isUnlocked, sessionStorageOrNull, tryUnlock } from './teacherGate';
 
 interface TeacherGateProps {
   password: string;
@@ -9,19 +10,17 @@ interface TeacherGateProps {
 
 // Zacht wachtwoord-slot: houdt gewone leerlingen tegen, geen echte beveiliging
 // (het wachtwoord staat in de gebundelde JS). De ontgrendelde status blijft
-// binnen de sessie bewaard.
+// binnen de sessie bewaard. De regels zelf staan in teacherGate.ts.
 export function TeacherGate({ password, storageKey, children }: TeacherGateProps) {
-  const [unlocked, setUnlocked] = useState<boolean>(() => {
-    if (typeof window === 'undefined') return false;
-    return sessionStorage.getItem(storageKey) === '1';
-  });
+  const [unlocked, setUnlocked] = useState<boolean>(() =>
+    isUnlocked(sessionStorageOrNull(), storageKey),
+  );
   const [value, setValue] = useState('');
   const [wrong, setWrong] = useState(false);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (value === password) {
-      sessionStorage.setItem(storageKey, '1');
+    if (tryUnlock(sessionStorage, storageKey, value, password)) {
       setUnlocked(true);
       setWrong(false);
     } else {

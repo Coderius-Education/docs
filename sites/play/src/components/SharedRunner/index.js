@@ -10,6 +10,7 @@
  * active PygbagRunner's slot when running. When idle it hides off-screen.
  */
 import { buildSharedRunnerSrcDoc } from '../CodeRunner/engine';
+import { routeerBericht } from './routeer';
 
 // --- Module-level singleton state ---
 let iframe = null;
@@ -19,6 +20,7 @@ let pyodideReady = false;
 let messageListenerAttached = false;
 let currentOwner = null; // { id, slotEl, listeners }
 let nextRequestId = 1;
+let currentRequestId = null; // id van de run die de iframe nu bezit
 let trackingHandler = null;
 
 function isBrowser() {
@@ -69,14 +71,17 @@ function handleMessage(e) {
     return;
   }
 
-  // All other messages get routed to the current owner if any
+  // All other messages belong to a run; routeer.js drops anything that is
+  // not from the run currently owning the iframe (e.g. output of a run that
+  // was preempted by another runner).
   if (!currentOwner) return;
+  const besluit = routeerBericht(e.data, currentRequestId);
+  if (besluit.negeer) return;
   const handlers = currentOwner.listeners || {};
-  if (type === 'stdout' && handlers.onStdout) handlers.onStdout(e.data.text);
-  else if (type === 'stderr' && handlers.onStderr) handlers.onStderr(e.data.text);
-  else if (type === 'run-done' && handlers.onDone) handlers.onDone();
-  else if (type === 'error' && handlers.onError) handlers.onError(e.data.message, e.data.fatal);
-  else if (type === 'stopped' && handlers.onStopped) handlers.onStopped();
+  if (besluit.type === 'stdout') handlers.onStdout?.(besluit.tekst);
+  else if (besluit.type === 'stderr') handlers.onStderr?.(besluit.tekst);
+  else if (besluit.type === 'done') handlers.onDone?.();
+  else if (besluit.type === 'error') handlers.onError?.(besluit.tekst, besluit.fataal);
 }
 
 /**
@@ -120,7 +125,7 @@ function stopTracking() {
  * iframe, that run is stopped first and the iframe is reparented to the new
  * owner's slot.
  */
-export function requestRun({ ownerId, slotEl, code, mode, lineOffset, listeners }) {
+export function requestRun({ ownerId, slotEl, code, mode, lineOffset, ingevoegd, listeners }) {
   if (!isBrowser() || !iframe) {
     if (listeners?.onError) {
       listeners.onError('SharedRunner not initialised yet — try again in a second.', false);
@@ -128,9 +133,11 @@ export function requestRun({ ownerId, slotEl, code, mode, lineOffset, listeners 
     return null;
   }
 
-  // Switch owner
+  // Switch owner. The stop carries the old run's id, so its 'stopped' (and
+  // any trailing stdout) is dropped by routeer.js instead of landing in the
+  // new owner's console.
   if (currentOwner && currentOwner.id !== ownerId) {
-    iframe.contentWindow.postMessage({ type: 'stop' }, '*');
+    iframe.contentWindow.postMessage({ type: 'stop', requestId: currentRequestId }, '*');
     if (currentOwner.listeners?.onPreempted) {
       currentOwner.listeners.onPreempted();
     }
@@ -141,8 +148,9 @@ export function requestRun({ ownerId, slotEl, code, mode, lineOffset, listeners 
   startTracking(slotEl);
 
   const requestId = nextRequestId++;
+  currentRequestId = requestId;
   iframe.contentWindow.postMessage(
-    { type: 'run', requestId, code, mode, lineOffset: lineOffset || 0 },
+    { type: 'run', requestId, code, mode, lineOffset: lineOffset || 0, ingevoegd: ingevoegd || [] },
     '*',
   );
   return requestId;
@@ -154,7 +162,7 @@ export function requestRun({ ownerId, slotEl, code, mode, lineOffset, listeners 
  */
 export function stop(ownerId) {
   if (!iframe || !currentOwner || currentOwner.id !== ownerId) return;
-  iframe.contentWindow.postMessage({ type: 'stop' }, '*');
+  iframe.contentWindow.postMessage({ type: 'stop', requestId: currentRequestId }, '*');
   hideIframe();
   stopTracking();
   currentOwner = null;

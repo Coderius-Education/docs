@@ -16,6 +16,14 @@ branch `claude/status-ttlwfx` + site `play` →
 `https://claude-status-ttlwfx--play.preview.coderius.nl/`. Zet in elke
 PR-beschrijving de preview-links van de aangepaste sites.
 
+## Bugfixes
+
+Een bugfix gaat samen met een test die de bug vastpint, in dezelfde commit.
+Tien van de twaalf eerdere fixes kwamen zonder test en van die klasse fouten
+komt er anders altijd één terug. Kan de fout niet in node worden nagespeeld
+(puur browser-gedrag), zeg dat dan in de commit en beschrijf hoe je 'm met de
+hand hebt gecontroleerd.
+
 ## Schrijfstijl (alleen voor *-docs)
 @org-handbook/WRITING_STYLE_GUIDE.md
 

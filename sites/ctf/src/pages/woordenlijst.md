@@ -38,7 +38,7 @@ Een gratis webtool van GCHQ waarmee je data kunt coderen, decoderen, versleutele
 Een aanval waarbij een website of server wordt overspoeld met verkeer vanuit vele bronnen tegelijk, waardoor deze onbereikbaar wordt.
 
 ### Developer Tools (DevTools)
-Ingebouwde tools in je browser (F12) waarmee je webpagina's kunt inspecteren, netwerverkeer kunt bekijken, cookies kunt beheren en meer.
+Ingebouwde tools in je browser (F12) waarmee je webpagina's kunt inspecteren, netwerkverkeer kunt bekijken, cookies kunt beheren en meer.
 
 ## E
 

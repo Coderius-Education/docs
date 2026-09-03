@@ -5,6 +5,7 @@ import MonacoPane from '../../monaco/MonacoPane';
 import { RUNNER_META } from '../../runners/registry';
 import type { RunnerId } from '../../runners/types';
 import {
+  DEFAULT_STORAGE_PREFIX,
   deleteProject,
   listProjects,
   loadProject,
@@ -18,6 +19,14 @@ import RunControls from '../shared/RunControls';
 import { useRunSession } from '../shared/useRunSession';
 import FileTree from './FileTree';
 import type { ProjectEditorProps } from './index';
+import {
+  deleteFromProject,
+  isDeletedPath,
+  isValidPath,
+  pathExists,
+  renameInProject,
+  renamedPath,
+} from './paths';
 import styles from './styles.module.css';
 
 const AUTOSAVE_DEBOUNCE_MS = 500;
@@ -25,20 +34,9 @@ const AUTO_RUN_DEBOUNCE_MS = 600;
 
 const DEFAULT_RUNNERS: RunnerId[] = ['python', 'web', 'micropython'];
 
-function isValidPath(path: string): boolean {
-  return (
-    path.length > 0 &&
-    !path.startsWith('/') &&
-    !path.endsWith('/') &&
-    !path.includes('//') &&
-    !path.includes('..') &&
-    !/[\\:*?"<>|]/.test(path)
-  );
-}
-
 export default function ProjectEditorImpl({
   runners = DEFAULT_RUNNERS,
-  storagePrefix = 'coderius-editor',
+  storagePrefix = DEFAULT_STORAGE_PREFIX,
   templates,
   height = '100%',
 }: ProjectEditorProps): ReactNode {
@@ -258,41 +256,18 @@ export default function ProjectEditorImpl({
       }
       const current = projectRef.current;
       if (!current) return;
-      if (isFolder) {
-        const prefix = `${path}/`;
-        mutateProject((p) => ({
-          ...p,
-          files: Object.fromEntries(
-            Object.entries(p.files).map(([k, v]) => [
-              k.startsWith(prefix) ? `${next}/${k.slice(prefix.length)}` : k,
-              v,
-            ]),
-          ),
-          folders: p.folders.map((f) =>
-            f === path ? next : f.startsWith(prefix) ? `${next}/${f.slice(prefix.length)}` : f,
-          ),
-          entry: current.entry.startsWith(prefix)
-            ? `${next}/${current.entry.slice(prefix.length)}`
-            : current.entry,
-        }));
-        const mapTab = (t: string) =>
-          t.startsWith(prefix) ? `${next}/${t.slice(prefix.length)}` : t;
-        setOpenTabs((tabs) => tabs.map(mapTab));
-        setActivePath((p) => (p ? mapTab(p) : p));
-      } else {
-        if (current.files[next] !== undefined) {
-          window.alert('Er bestaat al een bestand met deze naam.');
-          return;
-        }
-        mutateProject((p) => {
-          const files = { ...p.files };
-          files[next] = files[path] ?? '';
-          delete files[path];
-          return { ...p, files, entry: p.entry === path ? next : p.entry };
-        });
-        setOpenTabs((tabs) => tabs.map((t) => (t === path ? next : t)));
-        setActivePath((p) => (p === path ? next : p));
+      if (pathExists(current, next)) {
+        window.alert(
+          isFolder
+            ? 'Er bestaat al een map met deze naam.'
+            : 'Er bestaat al een bestand met deze naam.',
+        );
+        return;
       }
+      mutateProject((p) => renameInProject(p, path, next, isFolder));
+      const mapTab = (t: string) => renamedPath(t, path, next, isFolder);
+      setOpenTabs((tabs) => tabs.map(mapTab));
+      setActivePath((p) => (p ? mapTab(p) : p));
     },
     [mutateProject],
   );
@@ -301,29 +276,15 @@ export default function ProjectEditorImpl({
     (path: string, isFolder: boolean) => {
       const current = projectRef.current;
       if (!current) return;
-      const prefix = `${path}/`;
-      const affectsEntry = isFolder ? current.entry.startsWith(prefix) : current.entry === path;
-      if (affectsEntry) {
+      if (isDeletedPath(current.entry, path, isFolder)) {
         window.alert(`Het startbestand (${current.entry}) kan niet verwijderd worden.`);
         return;
       }
       const label = isFolder ? `de map "${path}" en alles erin` : `"${path}"`;
       if (!window.confirm(`Weet je zeker dat je ${label} wilt verwijderen?`)) return;
-      mutateProject((p) => ({
-        ...p,
-        files: isFolder
-          ? Object.fromEntries(Object.entries(p.files).filter(([k]) => !k.startsWith(prefix)))
-          : Object.fromEntries(Object.entries(p.files).filter(([k]) => k !== path)),
-        folders: isFolder
-          ? p.folders.filter((f) => f !== path && !f.startsWith(prefix))
-          : p.folders,
-      }));
-      setOpenTabs((tabs) => tabs.filter((t) => (isFolder ? !t.startsWith(prefix) : t !== path)));
-      setActivePath((p) => {
-        if (!p) return p;
-        const gone = isFolder ? p.startsWith(prefix) : p === path;
-        return gone ? null : p;
-      });
+      mutateProject((p) => deleteFromProject(p, path, isFolder));
+      setOpenTabs((tabs) => tabs.filter((t) => !isDeletedPath(t, path, isFolder)));
+      setActivePath((p) => (p && !isDeletedPath(p, path, isFolder) ? p : null));
     },
     [mutateProject],
   );

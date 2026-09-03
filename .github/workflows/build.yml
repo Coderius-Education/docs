@@ -51,7 +51,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Test (nakijker en de stap-opnemer)
+      - name: Test (nakijker, editor, DVWA-labs en de stap-opnemer)
         run: pnpm test
 
   # De godot-cursus laat leerlingen elk script zelf opbouwen, dus staan de
@@ -272,13 +272,10 @@ jobs:
   #             er eerst uit; een uitroepteken in print("Klaar!") is geen
   #             stijlfout.
   #
-  # Bewust niet-blokkerend, en bewust geen poort voor `build`. De sites die
-  # uit losse repos zijn gemigreerd hebben nog een achterstand van 255
-  # onbekende woorden en 647 stijlmeldingen; zolang die er is zou blokkeren
-  # betekenen dat niemand nog iets kan mergen. De annotaties staan wel meteen
-  # in de diff van de pull request, dus nieuwe tekst valt op. Zodra de schuld
-  # is opgeruimd: continue-on-error weg en --streng erbij, dan tellen
-  # waarschuwingen ook mee.
+  # De achterstand uit de migratie is weggewerkt, dus deze job faalt weer op
+  # een onbekend woord of een stijlfout (--streng). Stijlwaarschuwingen tellen
+  # niet mee; die staan als annotatie in de diff. Bewust geen poort voor
+  # `build`: dit gaat over de tekst, niet over of de site bouwt.
   #
   # De regels zelf zijn getest in packages/shared/stijl.test.ts, en die test
   # loopt in de `test`-job wél blokkerend mee. Zo kan een regel niet stilletjes
@@ -302,7 +299,6 @@ jobs:
       # naar een annotatie zet de melding op de juiste regel in de diff in
       # plaats van onderin het joblog.
       - name: Spelling (cspell)
-        continue-on-error: true
         run: |
           set -uo pipefail
           pnpm run spel > "$RUNNER_TEMP/spel.txt" 2>&1 || uitkomst=$?
@@ -319,8 +315,7 @@ jobs:
 
       # Schrijft zelf al annotaties en een tabel in de job-samenvatting.
       - name: Stijl (schrijfgids)
-        continue-on-error: true
-        run: pnpm run stijl
+        run: node scripts/controleer-tekst.mjs --streng
 
   checks:
     runs-on: ubuntu-latest
@@ -337,12 +332,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # Niet-blokkerend: de uit losse repos gemigreerde sites hebben nog
-      # honderden bestaande biome-fouten. Zodra die zijn opgeschoond kan
-      # continue-on-error weg.
+      # Blokkerend: de biome-achterstand uit de migratie is opgeruimd, dus een
+      # lintfout is weer een fout. Samen met de typecheck telt deze job mee in
+      # de `build`-check hieronder.
       - name: Lint (biome)
         run: pnpm lint
-        continue-on-error: true
 
       - name: Typecheck (sites + packages)
         run: pnpm typecheck
@@ -408,9 +402,14 @@ jobs:
   # alles groen is).
   build-klaar:
     name: build
-    needs: build
+    # Ook `checks` (lint + typecheck) telt mee: een tsc-fout houdt de artifacts
+    # niet tegen (die job draait los van `build`), maar maakt deze verplichte
+    # check wel rood, zodat hij niet gemerged wordt.
+    needs: [build, checks]
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: Alle site-builds gelukt?
-        run: test "${{ needs.build.result }}" = "success"
+      - name: Alle site-builds gelukt, lint en typecheck groen?
+        run: |
+          test "${{ needs.build.result }}" = "success"
+          test "${{ needs.checks.result }}" = "success"

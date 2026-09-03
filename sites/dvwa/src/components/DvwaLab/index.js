@@ -2,6 +2,7 @@ import BrowserOnly from '@docusaurus/BrowserOnly';
 import CodeBlock from '@theme/CodeBlock';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { runPhp } from './PhpWasmProvider';
+import { isEigenLabBericht } from './berichten';
 import { authorizationBypass } from './modules/authorization_bypass';
 import { bruteForce } from './modules/brute_force';
 import { commandInjection } from './modules/command_injection';
@@ -205,24 +206,26 @@ function DvwaLabInner({ module: moduleName, level, title }) {
 
   useEffect(() => {
     function handleMessage(event) {
-      if (event.data && event.data.type === 'dvwa-form') {
-        const formData = event.data.data || {};
+      // Alleen submits uit het eigen iframe; anders reageren twee labs op één
+      // pagina op elkaars formulieren.
+      if (!isEigenLabBericht(event, iframeRef.current?.contentWindow)) return;
 
-        // For medium brute force, add a simulated delay
-        if (moduleName === 'brute_force' && level === 'medium') {
-          setIsLoading(true);
-          setLoadingMessage('Verwerken (2 sec vertraging)...');
-          setTimeout(async () => {
-            await executePhp(formData);
-            setIsLoading(false);
-          }, 2000);
-          return;
-        }
+      const formData = event.data.data || {};
 
+      // For medium brute force, add a simulated delay
+      if (moduleName === 'brute_force' && level === 'medium') {
         setIsLoading(true);
-        setLoadingMessage('Verwerken...');
-        executePhp(formData).finally(() => setIsLoading(false));
+        setLoadingMessage('Verwerken (2 sec vertraging)...');
+        setTimeout(async () => {
+          await executePhp(formData);
+          setIsLoading(false);
+        }, 2000);
+        return;
       }
+
+      setIsLoading(true);
+      setLoadingMessage('Verwerken...');
+      executePhp(formData).finally(() => setIsLoading(false));
     }
 
     window.addEventListener('message', handleMessage);

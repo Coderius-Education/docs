@@ -25,11 +25,21 @@ const SITELINK_RE = /<SiteLink\s+site="(\w+)"\s+to="([^"]*)"\s*>/g;
 
 type Vondst = { bestand: string; site: string; to: string };
 
+/** Elke map onder sites/, ook sites die (nog) niet in de registry staan. */
+function alleSiteMappen(): string[] {
+  return readdirSync(SITES_ROOT, { withFileTypes: true })
+    .filter((e) => e.isDirectory() && !OVERSLAAN.has(e.name))
+    .map((e) => e.name)
+    .sort();
+}
+
+// Bewust over alle mappen, niet over de registry: een site die daar niet in
+// staat (didactiek) verwijst óók naar andere cursussen, en juist die links
+// zouden anders stil buiten deze guard vallen.
 function alleBronbestanden(): string[] {
   const paden: string[] = [];
-  for (const site of Object.keys(SITES_BY_ID)) {
+  for (const site of alleSiteMappen()) {
     const siteMap = join(SITES_ROOT, site);
-    if (!existsSync(siteMap)) continue;
     for (const entry of readdirSync(siteMap, { withFileTypes: true })) {
       if (!entry.isDirectory() || OVERSLAAN.has(entry.name)) continue;
       for (const pad of alleLesbestanden(join(siteMap, entry.name))) {
@@ -115,6 +125,12 @@ describe('SiteLink-verwijzingen over alle sites', () => {
     // Een kapotte regex of walk zou de tests hieronder leeg en groen laten.
     expect(gebruik.length).toBeGreaterThan(10);
     expect(new Set(gebruik.map((v) => v.bestand.split('/')[0])).size).toBeGreaterThan(3);
+  });
+
+  it('elke registry-id heeft een map onder sites/', () => {
+    // Een hernoemde sitemap zou de scan van die site anders stil overslaan.
+    const zonderMap = Object.keys(SITES_BY_ID).filter((id) => !existsSync(join(SITES_ROOT, id)));
+    expect(zonderMap).toEqual([]);
   });
 
   it('elke doelsite staat in de registry', () => {

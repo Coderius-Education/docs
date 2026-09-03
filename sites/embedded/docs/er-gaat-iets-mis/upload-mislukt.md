@@ -8,7 +8,7 @@ sidebar_position: 2
 Error: libusb_open() failed / cannot connect to target / upload error
 ```
 
-**Oorzaak:** Het uploaden bereikt het bord niet. Bij de **Arduino** komt dit meestal door de poort; bij de **STM32 Blue Pill** vrijwel altijd door de programmer of de BOOT-jumpers.
+**Oorzaak:** Het uploaden bereikt het bord niet. Bij de **Arduino** komt dit meestal door de poort; bij de **STM32 Blue Pill** vrijwel altijd door de programmer of de `BOOT`-jumpers.
 
 **Oplossing — Arduino:** Controleer dat het juiste bord en de juiste poort gekozen zijn. Zie [Poort niet gevonden](poort-niet-gevonden.md).
 

@@ -6,6 +6,9 @@
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
     "skipLibCheck": true,
+    // Strict staat aan: null-checks en impliciete any's zijn precies de
+    // fouten die anders pas bij een leerling in de browser opduiken.
+    "strict": true,
     // Ambient declaraties voor @docusaurus/*, @theme/* en *.module.css.
     // Sites krijgen die normaal binnen via `import type ... from
     // '@docusaurus/preset-classic'` in hun config, maar onze configs

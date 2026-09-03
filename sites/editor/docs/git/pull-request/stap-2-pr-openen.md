@@ -22,7 +22,7 @@ Op je repository-pagina op github.com:
 Welkomsbericht onderaan hello.txt toevoegen
 ```
 
-4. In het beschrijvings-veld kun je extra uitleg geven. Voor een kleine wijziging mag het leeg, maar het is een goede gewoonte om kort uit te leggen *waarom* je het doet.
+4. In het beschrijvingsveld kun je extra uitleg geven. Voor een kleine wijziging mag het leeg, maar het is een goede gewoonte om kort uit te leggen *waarom* je het doet.
 
 5. Klik op de groene knop **Create pull request**
 

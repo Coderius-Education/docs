@@ -18,6 +18,7 @@ const MASKERS = [
   /export const \w+ = `[\s\S]*?`;/g,
   /\{`[\s\S]*?`\}/g, // <CodeExercise>{`…`}</CodeExercise>
   /`[^`\n]*`/g, // inline code
+  /<code>[\s\S]*?<\/code>/g, // HTML-code, in <summary>'s en tabellen
   /<[^>]*>/g, // losse JSX- en HTML-tags
   /\{\/\*[\s\S]*?\*\/\}/g, // MDX-commentaar
   LINKDOEL, // linkdoelen (de linktekst blijft staan)
@@ -97,6 +98,21 @@ const AFKORTINGEN = new Set([
   'TTF',
   'FOUT',
   'GOED',
+  'ASCII',
+  'FTDI',
+  'GCHQ',
+  'GIMP',
+  'GPIO',
+  'HEIC',
+  'NLTK',
+  'OLED',
+  'OSINT',
+  'PATH',
+  'RCWL',
+  'README',
+  'REPL',
+  'UART',
+  'WASD',
   'QUIT',
   // Web-security: productnamen, protocol-methodes en aanvalsafkortingen
   // (o.a. DVWA-cursus). Geen gewone woorden, dus veilig monorepo-breed.
@@ -147,7 +163,7 @@ const REGELS = [
     zoek: function* (proza) {
       const VERB =
         /^(kunt|kan|kon|heeft|hebt|had|bent|was|moet|wilt|wil|ziet|krijgt|gaat|doet|maakt|vindt|weet|mag|zult|zou)$/i;
-      for (const m of proza.matchAll(/(?<![\w-])[Uu]w(?![\w-])/g)) {
+      for (const m of proza.matchAll(/(?<![\p{L}\d_-])[Uu]w(?![\p{L}\d_-])/gu)) {
         yield { index: m.index, bericht: `"${m[0]}" — spreek de lezer aan met "jouw"` };
       }
       for (const m of proza.matchAll(/(?<![\w-])([a-zA-Z]+)?\s*\b[Uu]\b\s*([a-zA-Z]+)?/g)) {

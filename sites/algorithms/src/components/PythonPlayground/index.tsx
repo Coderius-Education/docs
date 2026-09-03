@@ -1,19 +1,35 @@
-import { useColorMode } from '@docusaurus/theme-common';
 import { Highlight, Prism, themes } from 'prism-react-renderer';
 import type React from 'react';
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import styles from './styles.module.css';
 
-// Tijdens server-side generatie (SSG) kan de ColorMode-context ontbreken — in de
-// monorepo o.a. doordat er meerdere @docusaurus/theme-common kopieën bestaan.
-// useColorMode roept onder water useContext aan (de hook draait dus altijd) en
-// gooit pas daarna als de provider ontbreekt; dat vangen we hier af.
-function useSafeColorMode(): { colorMode: 'light' | 'dark' } {
-  try {
-    return useColorMode();
-  } catch {
-    return { colorMode: 'light' };
-  }
+// Lees de kleurmodus rechtstreeks van het `data-theme`-attribuut op <html> i.p.v.
+// via useColorMode uit @docusaurus/theme-common. Met pnpm krijgt theme-common
+// anders een tweede fysieke kopie, wat een tweede React-context oplevert
+// ("Hook ... outside the <ColorModeProvider>") en de pagina tijdens SSG laat
+// crashen. Een try/catch om de hook heen was geen oplossing: een hook die soms
+// wél en soms niet doorloopt breekt de hook-volgorde van React. Zelfde patroon
+// als de HighlightedEditor in @coderius/python-runner en WebMicroEditor.
+function useColorMode(): { colorMode: 'light' | 'dark' } {
+  // Bewust altijd 'light' als beginwaarde, ook in de browser: de server
+  // rendert light, en als de client met 'dark' begint komt de eerste render
+  // overeen met de state, zodat de effect-read hieronder niets verandert en
+  // de editor light blijft tot de volgende toetsaanslag. Zo flipt hij meteen.
+  const [colorMode, setColorMode] = useState<'light' | 'dark'>('light');
+  useEffect(() => {
+    const read = () =>
+      setColorMode(
+        document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light',
+      );
+    read();
+    const observer = new MutationObserver(read);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    });
+    return () => observer.disconnect();
+  }, []);
+  return { colorMode };
 }
 
 // prism-react-renderer's bundled Prism omits Python. Register it once on the
@@ -48,7 +64,7 @@ export function HighlightedEditor({
   minHeight = 120,
   ariaLabel = 'Python code',
 }: HighlightedEditorProps): React.ReactElement {
-  const { colorMode } = useSafeColorMode();
+  const { colorMode } = useColorMode();
   const prismTheme = colorMode === 'dark' ? themes.vsDark : themes.github;
   const highlightRef = useRef<HTMLPreElement>(null);
 

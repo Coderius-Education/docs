@@ -54,6 +54,11 @@ export async function createPhp(createInstance) {
  * so the module script reads the form data as if a real request arrived.
  */
 export function injectSuperglobals(code, getData, postData) {
+  if (!code.includes('<?php')) {
+    throw new Error(
+      'De PHP-module heeft geen openingstag <?php; de formulierdata kan nergens worden ingevoegd.',
+    );
+  }
   // Start every run from a clean request. php-wasm keeps globals alive between
   // runs on the same instance, so without this a previous $_GET could bleed into
   // the next page load (in the browser and in the tests alike).
@@ -61,7 +66,7 @@ export function injectSuperglobals(code, getData, postData) {
   if (getData && Object.keys(getData).length > 0) {
     for (const [k, v] of Object.entries(getData)) {
       const safeKey = k.replace(/'/g, "\\'");
-      const safeVal = v.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+      const safeVal = String(v).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
       inject += `$_GET['${safeKey}'] = '${safeVal}';\n`;
     }
     inject += '$_REQUEST = array_merge($_REQUEST ?? [], $_GET);\n';
@@ -69,7 +74,7 @@ export function injectSuperglobals(code, getData, postData) {
   if (postData && Object.keys(postData).length > 0) {
     for (const [k, v] of Object.entries(postData)) {
       const safeKey = k.replace(/'/g, "\\'");
-      const safeVal = v.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+      const safeVal = String(v).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
       inject += `$_POST['${safeKey}'] = '${safeVal}';\n`;
     }
     inject += '$_REQUEST = array_merge($_REQUEST ?? [], $_POST);\n';
@@ -113,21 +118,36 @@ export async function execPhp(php, code, getData, postData) {
 let phpInstance = null;
 let loadingPromise = null;
 
+/** De browser-fabriek: laadt php-wasm lui, zodat de bundel klein blijft. */
+async function defaultCreateInstance() {
+  const { PhpWeb } = await import('php-wasm/PhpWeb.mjs');
+  return new PhpWeb();
+}
+
 /**
  * Lazily initialize and return a singleton PhpWeb instance.
  * The WASM binary (~10-18 MB) is downloaded once and cached by the browser.
+ *
+ * @param {() => Promise<any>} [createInstance] Fabriek voor de php-instantie.
+ *   Alleen de tests geven deze mee; de browser gebruikt de standaard.
  */
-export async function getPhp() {
+export async function getPhp(createInstance = defaultCreateInstance) {
   if (phpInstance) return phpInstance;
   if (loadingPromise) return loadingPromise;
 
-  loadingPromise = createPhp(async () => {
-    const { PhpWeb } = await import('php-wasm/PhpWeb.mjs');
-    return new PhpWeb();
-  }).then((php) => {
-    phpInstance = php;
-    return php;
-  });
+  loadingPromise = createPhp(createInstance).then(
+    (php) => {
+      phpInstance = php;
+      return php;
+    },
+    (err) => {
+      // Een mislukte init (netwerk weg, wasm-download afgebroken) mag latere
+      // submits niet vergiftigen: gooi de promise weg zodat de volgende
+      // aanroep opnieuw probeert. Vergelijk usePyodide.ts in algorithms.
+      loadingPromise = null;
+      throw err;
+    },
+  );
 
   return loadingPromise;
 }

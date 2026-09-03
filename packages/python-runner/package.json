@@ -17,5 +17,8 @@
     "prism-react-renderer": "*",
     "react": "*",
     "react-dom": "*"
+  },
+  "scripts": {
+    "typecheck": "tsc"
   }
 }

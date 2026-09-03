@@ -26,7 +26,7 @@ Welkom op mijn feature-branch!
 1. Klik linksonder op `feature/welkomsbericht` → kies **main**
 2. Open `hello.txt`
 
-De regel "Welkom op mijn feature-branch!" is **weg**. Niet verwijderd — hij staat nog op de andere branch. `main` weet niets van die commit.
+De regel `Welkom op mijn feature-branch!` is **weg**. Niet verwijderd — hij staat nog op de andere branch. `main` weet niets van die commit.
 
 3. Wissel weer naar `feature/welkomsbericht` → de regel is terug.
 

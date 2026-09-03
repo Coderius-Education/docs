@@ -16,6 +16,13 @@ const CONSOLE_INTERCEPTOR = `<script>
   ['log', 'warn', 'error', 'info'].forEach(function(m) {
     console[m] = function() { send(m, arguments); };
   });
+  window.addEventListener('error', function(e) {
+    send('error', ['JavaScript fout: ' + e.message]);
+  });
+  window.addEventListener('unhandledrejection', function(e) {
+    var r = e.reason;
+    send('error', ['JavaScript fout: ' + (r && r.message ? r.message : String(r))]);
+  });
 })();
 <\/script>`;
 

@@ -55,3 +55,9 @@ export async function deleteProject(prefix: string, id: string): Promise<void> {
 export function newProjectId(): string {
   return crypto.randomUUID();
 }
+
+// Standaard database-naam. ProjectEditor gebruikt 'm als default voor
+// storagePrefix, en de /import-pagina van de IDE slaat er een ontvangen project
+// in op. Wijken die twee af, dan komt een import in een database die de editor
+// nooit opent en lijkt er "niets te gebeuren".
+export const DEFAULT_STORAGE_PREFIX = 'coderius-editor';

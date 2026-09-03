@@ -78,7 +78,16 @@ export function useRunSession(runnerId: RunnerId): RunSessionApi {
 
       try {
         await r.init(onState);
-      } catch {
+      } catch (err) {
+        // Een run die intussen is afgebroken (autoRun: de gebruiker typte
+        // door) zwijgt, anders komt zijn fout in de console van de opvolger.
+        if (abort.signal.aborted || disposedRef.current) return;
+        // Zonder melding doet Run "niets" als de runner niet start (bijv.
+        // Pyodide niet te laden, geen WebSerial); de fout hoort in de console.
+        emit({
+          kind: 'stderr',
+          text: `Runner kon niet starten: ${err instanceof Error ? err.message : String(err)}\n`,
+        });
         return;
       }
       if (abort.signal.aborted || disposedRef.current) return;

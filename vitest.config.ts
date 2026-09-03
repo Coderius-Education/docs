@@ -5,9 +5,10 @@ import { defineConfig } from 'vitest/config';
 // overslaan terwijl `pnpm test` groen blijft — en daar hangen de site-builds
 // nu aan.
 //
-// Vandaag staan alle tests op de nakijk-checker: de gedeelde motor in
-// packages/checker en de conceptenlijsten per site. De Docusaurus-sites zelf
-// worden niet getest — die dekt `pnpm build` af.
+// De tests staan bij de code die ze bewaken: de nakijk-checker en de
+// conceptenlijsten per site, de DVWA-labs, de editor-package (preview-builder,
+// bestandsboom, paden) en de python-runner. De Docusaurus-pagina's zelf worden
+// niet getest — die dekt `pnpm build` af.
 export default defineConfig({
   test: {
     environment: 'node',

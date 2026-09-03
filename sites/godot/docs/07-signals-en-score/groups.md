@@ -112,7 +112,7 @@ Dat verschil is precies waarom de foutmelding van de lus nuttig is tijdens het b
 
 ## Opdracht 7.5.a: win als alle muntjes weg zijn
 
-Laat in **Uitvoer** "Je hebt gewonnen!" verschijnen zodra de speler het laatste muntje oppakt.
+Laat in **Uitvoer** `Je hebt gewonnen!` verschijnen zodra de speler het laatste muntje oppakt.
 
 :::caution
 `queue_free()` verwijdert een node pas aan het **einde** van het frame. Het zojuist opgepakte muntje zit dus nog even in de group. Tel daarom op `<= 1` in plaats van `== 0`.

@@ -7,11 +7,32 @@ import type { ProjectFiles } from '../types';
 // window.open()-handle gebruikt. De message-source blijft
 // 'coderius-website-checker' zodat het bestaande /import-contract op
 // ide.coderius.nl blijft werken.
-const MESSAGE_SOURCE = 'coderius-website-checker';
-const ACK_SOURCE = 'coderius-editor-import';
+// Wire-waarden van het /import-contract; de ontvanger staat in
+// sites/ide/src/components/ImportProject/importContract.ts. Beide kanten pinnen
+// ze in hun tests, zodat een wijziging aan één kant niet stil blijft.
+export const MESSAGE_SOURCE = 'coderius-website-checker';
+export const ACK_SOURCE = 'coderius-editor-import';
 const POLL_INTERVAL_MS = 300;
 const TIMEOUT_MS = 15000;
 
+/**
+ * Momenten (ms na openen) waarop het project opnieuw wordt gepost: op
+ * verdubbelende afstand vanaf het polinterval tot de timeout. Zo krijgt een
+ * tabblad dat traag laadt tot het einde een kans (de laatste herpost valt na
+ * negen seconden), zonder dat een groot project vijftig keer over de lijn
+ * gaat. Een vaste bovengrens van tien herposts dekte maar drie seconden.
+ */
+export function herpostMomenten(interval = POLL_INTERVAL_MS, timeout = TIMEOUT_MS): number[] {
+  const momenten: number[] = [];
+  let wacht = interval;
+  let t = interval;
+  while (t < timeout) {
+    momenten.push(t);
+    wacht *= 2;
+    t += wacht;
+  }
+  return momenten;
+}
 /** Kies het startbestand (index.html op de kortste diepte, anders eerste .html). */
 export function pickEntry(files: ProjectFiles): string | null {
   const htmlPaths = Object.keys(files).filter((p) => files[p].kind === 'html');
@@ -35,6 +56,27 @@ function buildTransferFiles(files: ProjectFiles): Record<string, string> {
   return result;
 }
 
+export interface ImportPayload {
+  source: typeof MESSAGE_SOURCE;
+  type: 'import-files';
+  files: Record<string, string>;
+  entry: string;
+  name: string;
+}
+
+/** Het bericht dat naar /import gaat, of null als er geen startbestand is. */
+export function buildImportPayload(files: ProjectFiles, projectName: string): ImportPayload | null {
+  const entry = pickEntry(files);
+  if (!entry) return null;
+  return {
+    source: MESSAGE_SOURCE,
+    type: 'import-files',
+    files: buildTransferFiles(files),
+    entry,
+    name: projectName,
+  };
+}
+
 export type OpenInIdeResult = 'opened' | 'blocked' | 'timeout';
 
 export function openInIde(
@@ -43,22 +85,14 @@ export function openInIde(
   ideUrl: string,
   onResult: (result: OpenInIdeResult) => void,
 ): void {
-  const entry = pickEntry(files);
-  if (!entry) return;
+  const payload = buildImportPayload(files, projectName);
+  if (!payload) return;
 
   const win = window.open(`${ideUrl}/import`, '_blank');
   if (!win) {
     onResult('blocked');
     return;
   }
-
-  const payload = {
-    source: MESSAGE_SOURCE,
-    type: 'import-files' as const,
-    files: buildTransferFiles(files),
-    entry,
-    name: projectName,
-  };
 
   let settled = false;
   const finish = (result: OpenInIdeResult) => {
@@ -76,12 +110,19 @@ export function openInIde(
     finish('opened');
   }
 
+  const momenten = herpostMomenten();
+  let verstreken = 0;
+  let volgende = 0;
   const interval = window.setInterval(() => {
     if (win.closed) {
       finish('timeout');
       return;
     }
-    win.postMessage(payload, ideUrl);
+    verstreken += POLL_INTERVAL_MS;
+    if (volgende < momenten.length && verstreken >= momenten[volgende]) {
+      volgende += 1;
+      win.postMessage(payload, ideUrl);
+    }
   }, POLL_INTERVAL_MS);
 
   const timer = window.setTimeout(() => finish('timeout'), TIMEOUT_MS);
