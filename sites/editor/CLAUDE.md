@@ -4,7 +4,7 @@ Algemene schrijfstijl, didactiek en schrijfskills staan in `../CLAUDE.md` (en de
 
 - Documentatie over de webeditor zelf: schrijf vanuit het perspectief van een leerling die de editor opent in de browser.
 - Screenshots tonen alleen de relevante UI, niet het hele browservenster.
-- **Beschrijf een knop bij zijn opschrift en zijn plek, nooit bij zijn kleur.** "De blauwe Download-knop" klopte tot de website van VS Code opnieuw werd ontworpen, en in VS Code zelf hangt de kleur van het thema af. Schrijf dus "klik op **Install**" en "de knop **Commit** bovenaan het Source Control-paneel". `src/git-tests/vscode-knoppen.test.ts` weert kleurwoorden bij knoppen op alle pagina's over VS Code zelf; de GitHub-pagina's vallen erbuiten, daar zijn groene en grijze knoppen betekenisvol (mergebaar of niet).
+- **Beschrijf een knop bij zijn opschrift en zijn plek, nooit bij zijn kleur.** "De blauwe Download-knop" klopte tot de website van VS Code opnieuw werd ontworpen, en in VS Code zelf hangt de kleur van het thema af. Schrijf dus "klik op **Install**" en "de knop **Commit** bovenaan het Source Control-paneel". `src/git-tests/vscode-knoppen.test.ts` weert kleurwoorden bij knoppen op de pagina's over VS Code zelf (installatie, python, web, git/vscode, git/branches); de GitHub-pagina's vallen erbuiten, daar zijn groene en grijze knoppen betekenisvol (mergebaar of niet), en git/basis speelt zich af in de browser-simulator.
 - Voor sneltoetsen: noem zowel Windows/Linux (Ctrl) als Mac (Cmd). **Uitzondering:** `Ctrl+Shift+G` (Source Control) houdt op macOS ook Ctrl — daar bestaat geen Cmd-variant van. `src/git-tests/sneltoetsen.test.ts` bewaakt beide kanten: elke andere Ctrl-toets moet zijn Cmd-variant noemen, en deze juist niet.
 
 ## De git-tutorials

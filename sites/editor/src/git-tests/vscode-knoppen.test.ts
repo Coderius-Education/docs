@@ -1,6 +1,7 @@
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { alleLesbestanden } from '@coderius/shared/voorkennis';
 import { describe, expect, it } from 'vitest';
 
 // "Klik op de grote blauwe Download-knop" stond in de installatietutorial tot
@@ -11,32 +12,24 @@ import { describe, expect, it } from 'vitest';
 // kleurwoorden vlak bij het woord "knop" op de pagina's over VS Code zelf.
 // De GitHub-pagina's (git/github, git/push, git/pull-clone, git/pull-request)
 // vallen erbuiten: daar is groen of grijs betekenisvol (mergebaar of niet).
+// git/basis speelt zich af in de browser-simulator, niet in VS Code, en valt
+// daarom ook buiten de lijst; git/branches gebeurt wél in VS Code en telt mee.
 
 const DOCS = fileURLToPath(new URL('../../docs', import.meta.url));
-const OVER_VSCODE = ['installatie-vscode', 'python', 'web', 'git/vscode'];
+const OVER_VSCODE = ['installatie-vscode', 'python', 'web', 'git/vscode', 'git/branches'];
 const KLEUR =
   /\b(blauwe?|groene?|rode|paarse|gele|grijze|oranje)\b[^.\n]{0,40}\bknop|\bknop\b[^.\n]{0,40}\b(blauw|groen|rood|paars|geel|grijs|oranje)\b/i;
 
-function bestanden(map: string): string[] {
-  const gevonden: string[] = [];
-  for (const item of readdirSync(map)) {
-    const pad = join(map, item);
-    if (statSync(pad).isDirectory()) gevonden.push(...bestanden(pad));
-    else if (/\.mdx?$/.test(item)) gevonden.push(pad);
-  }
-  return gevonden;
-}
-
 describe('knoppen in VS Code worden niet bij hun kleur beschreven', () => {
   it("vindt überhaupt pagina's om te controleren", () => {
-    const totaal = OVER_VSCODE.flatMap((m) => bestanden(join(DOCS, m))).length;
+    const totaal = OVER_VSCODE.flatMap((m) => alleLesbestanden(join(DOCS, m))).length;
     expect(totaal).toBeGreaterThan(20);
   });
 
   it('geen kleurwoord bij "knop" op de pagina\'s over VS Code zelf', () => {
     const fout: string[] = [];
     for (const map of OVER_VSCODE) {
-      for (const pad of bestanden(join(DOCS, map))) {
+      for (const pad of alleLesbestanden(join(DOCS, map))) {
         readFileSync(pad, 'utf8')
           .split('\n')
           .forEach((regel, i) => {

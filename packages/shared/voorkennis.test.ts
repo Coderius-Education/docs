@@ -2,7 +2,7 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SITES_BY_ID } from '@coderius/shared/sites';
-import { alleLesbestanden, lesBestaat, parseItems } from '@coderius/shared/voorkennis';
+import { alleLesbestanden, docsPrefix, lesBestaat, parseItems } from '@coderius/shared/voorkennis';
 import { describe, expect, it } from 'vitest';
 
 // Eén controle voor álle sites tegelijk. De per-site tests (fullstack, godot)
@@ -120,5 +120,16 @@ describe('Voorkennis-blokken over alle sites', () => {
     expect(lesBestaat(SITES_ROOT, 'editor', '/python/stap-1-installeren')).toBe(true);
     expect(lesBestaat(SITES_ROOT, 'python', '/basis/jij-als-variabele')).toBe(false);
     expect(lesBestaat(SITES_ROOT, 'python', '/docs/basis/jij-als-variabele')).toBe(true);
+    // didactiek serveert onder 'bronnen', niet onder 'docs'.
+    expect(lesBestaat(SITES_ROOT, 'didactiek', '/docs/cognitieve-belasting')).toBe(false);
+    expect(lesBestaat(SITES_ROOT, 'didactiek', '/bronnen/cognitieve-belasting')).toBe(true);
+  });
+
+  it('leest het docs-prefix per site uit de docusaurus-config', () => {
+    expect(docsPrefix(SITES_ROOT, 'editor')).toBe('');
+    expect(docsPrefix(SITES_ROOT, 'didactiek')).toBe('bronnen');
+    expect(docsPrefix(SITES_ROOT, 'python')).toBe('docs');
+    // robotica heeft losse docs-plugins onder `plugins`; die tellen niet mee.
+    expect(docsPrefix(SITES_ROOT, 'robotica')).toBe('docs');
   });
 });

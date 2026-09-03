@@ -11,7 +11,7 @@ title: "Stap 5: een bestand aanmaken"
 
 ## Wat je nu ziet
 
-`test.txt` staat in de Explorer onder je mapnaam. Zolang een bestand niet is opgeslagen, staat er een witte stip op zijn tabblad; na het opslaan verdwijnt die.
+`test.txt` staat in de Explorer onder je mapnaam. Zolang een bestand niet is opgeslagen, staat er op zijn tabblad een stip in plaats van het kruisje; na het opslaan komt het kruisje terug.
 
 ## Klaar. Wat nu?
 

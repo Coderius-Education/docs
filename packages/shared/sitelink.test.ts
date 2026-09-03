@@ -2,7 +2,7 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SITES_BY_ID } from '@coderius/shared/sites';
-import { alleLesbestanden, lesBestaat } from '@coderius/shared/voorkennis';
+import { alleLesbestanden, docsPrefix, lesBestaat } from '@coderius/shared/voorkennis';
 import { describe, expect, it } from 'vitest';
 
 // <SiteLink> is de vooruitwijzende tegenhanger van <Voorkennis>: een inline
@@ -83,10 +83,13 @@ function doelBestaat(site: string, to: string): boolean {
 
   if (lesBestaat(SITES_ROOT, site, zonder)) return true;
 
-  const segmenten = zonder
-    .replace(/^\/docs\/?/, '')
-    .split('/')
-    .filter(Boolean);
+  // Zelfde regel als in lesBestaat: alleen het prefix waaronder de site zijn
+  // docs echt serveert valt weg (editor op de root, didactiek onder bronnen).
+  // Een /docs/ die er niet hoort blijft staan als segment, en dan bestaat de
+  // categorie-index hieronder niet, ook al bestaat de map wel.
+  const prefix = docsPrefix(SITES_ROOT, site);
+  const alleSegmenten = zonder.split('/').filter(Boolean);
+  const segmenten = alleSegmenten[0] === prefix ? alleSegmenten.slice(1) : alleSegmenten;
 
   // Categorie-index onder docs/: elk segment een map (numeriek prefix mag
   // wegvallen, net als bij lesBestaat), de laatste met een index-pagina.
@@ -154,6 +157,9 @@ describe('SiteLink-verwijzingen over alle sites', () => {
     // En de vormen die hij juist moet toestaan:
     expect(doelBestaat('ide', '/')).toBe(true);
     expect(doelBestaat('editor', '/git/vscode/')).toBe(true);
+    // De categorie-index bestaat, maar de URL met /docs niet: de editor
+    // serveert op de root. Dit is de tweede route waarlangs het misging.
+    expect(doelBestaat('editor', '/docs/git/vscode/')).toBe(false);
   });
 });
 

@@ -36,17 +36,32 @@ function alleLesbestanden(map) {
 }
 
 /**
- * Serveert deze site zijn docs op de root (`routeBasePath: '/'`)? Dan hoort
- * er géén /docs/ in de URL; op elke andere site juist wél. Het bestand kan
- * bestaan terwijl de URL een 404 geeft, en dat is precies wat een guard die
- * alleen naar bestanden kijkt niet ziet.
+ * Onder welk URL-segment serveert deze site zijn docs? Gelezen uit de
+ * `routeBasePath` in het `docs:`-blok van de preset in docusaurus.config;
+ * zonder die regel geldt de Docusaurus-standaard 'docs'. De editor-cursus
+ * serveert op de root ('/'), didactiek onder 'bronnen'. Losse docs-plugins
+ * (robotica's lego_auto en click_golfer) staan onder `plugins` en tellen niet
+ * mee: lesBestaat kijkt alleen in de map `docs/`.
+ *
+ * Een pad naar een bestaand bestand kan zo toch een 404 zijn, en dat is
+ * precies wat een guard die alleen naar bestanden kijkt niet ziet.
+ *
+ * @returns '' voor de root, anders het segment zonder slashes ('docs', 'bronnen')
  */
-function docsOpRoot(sitesRoot, site) {
+const prefixCache = new Map();
+function docsPrefix(sitesRoot, site) {
+  const sleutel = `${sitesRoot}|${site}`;
+  if (prefixCache.has(sleutel)) return prefixCache.get(sleutel);
+  let prefix = 'docs';
   for (const naam of ['docusaurus.config.ts', 'docusaurus.config.js']) {
     const pad = join(sitesRoot, site, naam);
-    if (existsSync(pad)) return /routeBasePath:\s*['"]\/['"]/.test(readFileSync(pad, 'utf8'));
+    if (!existsSync(pad)) continue;
+    const m = readFileSync(pad, 'utf8').match(/docs:\s*\{[^}]*routeBasePath:\s*['"]([^'"]*)['"]/);
+    if (m) prefix = m[1].replace(/^\/+|\/+$/g, '');
+    break;
   }
-  return false;
+  prefixCache.set(sleutel, prefix);
+  return prefix;
 }
 
 /**
@@ -68,14 +83,13 @@ function lesBestaat(sitesRoot, site, to) {
 
   // Het pad moet passen bij hoe de doelsite zijn docs serveert. De
   // fullstack-installatiepagina wees met /docs/python/… naar de editor-cursus:
-  // het bestand bestond, de URL niet.
-  const metDocsPrefix = /^\/docs(\/|$)/.test(to);
-  if (docsOpRoot(sitesRoot, site) === metDocsPrefix) return false;
+  // het bestand bestond, de URL niet. Op de root (prefix '') mag het pad niet
+  // met /docs beginnen; elders moet het eerste segment het prefix zijn.
+  const prefix = docsPrefix(sitesRoot, site);
+  const alleSegmenten = to.split('/').filter(Boolean);
+  if (prefix === '' ? alleSegmenten[0] === 'docs' : alleSegmenten[0] !== prefix) return false;
 
-  const segmenten = to
-    .replace(/^\/docs\/?/, '')
-    .split('/')
-    .filter(Boolean);
+  const segmenten = prefix === '' ? alleSegmenten : alleSegmenten.slice(1);
   if (segmenten.length === 0) return false;
 
   // Alle segmenten op één na zijn mappen; het laatste is de pagina.
@@ -89,7 +103,7 @@ function lesBestaat(sitesRoot, site, to) {
   }
 
   const paginaSegment = segmenten[segmenten.length - 1];
-  const naDocs = to.replace(/^\/docs/, '');
+  const naDocs = `/${segmenten.join('/')}`;
   for (const bestand of readdirSync(huidig)) {
     if (!/\.mdx?$/.test(bestand)) continue;
     const inhoud = readFileSync(join(huidig, bestand), 'utf8');
@@ -104,4 +118,4 @@ function lesBestaat(sitesRoot, site, to) {
   return false;
 }
 
-module.exports = { ITEM_RE, parseItems, alleLesbestanden, lesBestaat };
+module.exports = { ITEM_RE, parseItems, alleLesbestanden, lesBestaat, docsPrefix };
