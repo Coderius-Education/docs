@@ -394,6 +394,35 @@ jobs:
           path: sites/${{ matrix.site }}/build
           if-no-files-found: error
 
+  # Links tussen cursussen zijn voor Docusaurus externe URL's: onBrokenLinks
+  # controleert alleen de eigen site, en de guard-tests in de test-job bootsen
+  # de routing van de doelsite na (een benadering die al eens uit de pas
+  # liep). Deze job kijkt naar wat de browser krijgt: elke href naar een
+  # cursusdomein in de gebouwde HTML, tegen de build van de doelsite. Telt mee
+  # in de `build`-check hieronder.
+  cross-links:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      # Het script heeft geen dependencies, maar setup-node leest `packageManager`
+      # uit package.json en wil pnpm voor zijn cache; zonder deze stap breekt hij
+      # daarop af nog vóór het script draait.
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - uses: actions/download-artifact@v6
+        with:
+          pattern: '*-static'
+          path: builds
+
+      - name: Cross-site links tegen de gebouwde sites
+        run: node scripts/controleer-cross-links.mjs builds --annotaties
+
   # De branch protection eist een check die exact "build" heet, maar een
   # matrix-job rapporteert alleen "build (site)" per site — die eis kon dus
   # nooit vervuld raken en mergen kon alleen met een bypass. Deze verzameljob
@@ -405,11 +434,12 @@ jobs:
     # Ook `checks` (lint + typecheck) telt mee: een tsc-fout houdt de artifacts
     # niet tegen (die job draait los van `build`), maar maakt deze verplichte
     # check wel rood, zodat hij niet gemerged wordt.
-    needs: [build, checks]
+    needs: [build, checks, cross-links]
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: Alle site-builds gelukt, lint en typecheck groen?
+      - name: Alle site-builds gelukt, lint, typecheck en cross-site links groen?
         run: |
           test "${{ needs.build.result }}" = "success"
           test "${{ needs.checks.result }}" = "success"
+          test "${{ needs.cross-links.result }}" = "success"

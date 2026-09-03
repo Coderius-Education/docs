@@ -5,10 +5,13 @@ title: "Stap 5: een bestand aanmaken"
 
 # Stap 5: een bestand aanmaken
 
-1. Klik met de rechtermuisknop in de Explorer (het linker paneel)
-2. Kies **New File...**
-3. Geef het bestand een naam, bijvoorbeeld `test.txt`
-4. Sla het bestand op via **File** → **Save**
+1. Beweeg met je muis over de mapnaam in de Explorer. Rechts ervan verschijnen kleine iconen; het eerste is **New File...** Klik erop. Rechtsklikken op de mapnaam en **New File...** kiezen werkt ook.
+2. Typ een naam, bijvoorbeeld `test.txt`, en druk op **Enter**. Het bestand opent meteen in de editor.
+3. Typ iets in het bestand en sla het op met **Ctrl+S** (op een Mac **Cmd+S**), of via **File** → **Save**.
+
+## Wat je nu ziet
+
+`test.txt` staat in de Explorer onder je mapnaam. Zolang een bestand niet is opgeslagen, staat er op zijn tabblad een stip in plaats van het kruisje; na het opslaan komt het kruisje terug.
 
 ## Klaar. Wat nu?
 

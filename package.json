@@ -20,7 +20,8 @@
     "stijl": "node scripts/controleer-tekst.mjs",
     "tekst": "node scripts/controleer-tekst-alles.mjs",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "cross-links": "node scripts/controleer-cross-links.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",

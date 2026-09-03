@@ -12,7 +12,7 @@ Bovenaan het Source Control-paneel zie je een tekstveld. Typ daar je commitboods
 eerste versie
 ```
 
-Klik op de blauwe knop **Commit** (of druk **Ctrl+Enter**, op macOS **Cmd+Enter**).
+Klik op de knop **Commit** bovenaan het Source Control-paneel (of druk **Ctrl+Enter**, op macOS **Cmd+Enter**).
 
 ## Wat je nu ziet
 

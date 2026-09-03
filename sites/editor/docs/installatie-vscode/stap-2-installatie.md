@@ -7,17 +7,27 @@ title: "Stap 2: installatie"
 
 ## Windows
 
-1. Open het gedownloade `.exe` bestand
-2. Accepteer de licentieovereenkomst en klik op **Volgende**
-3. Vink de volgende opties aan:
-   - **Add "Open with Code" action to Windows Explorer file context menu** — hiermee kun je rechts klikken op een bestand en het openen in VS Code
-   - **Add "Open with Code" action to Windows Explorer directory context menu** — hiermee kun je rechts klikken op een map en het openen in VS Code
-   - **Add to PATH** — hiermee kun je VS Code openen vanuit de terminal met het commando `code`
-4. Klik op **Installeren** en wacht tot de installatie klaar is
-5. Klik op **Voltooien** om VS Code te openen
+De installatie spreekt de taal van je Windows. Hieronder staan de Engelse knoppen, met de Nederlandse ernaast.
+
+1. Open het gedownloade `.exe`-bestand
+2. Accepteer de licentieovereenkomst en klik op **Next** (**Volgende**)
+3. Op de pagina **Select Additional Tasks** staan vinkjes. Zet deze drie aan:
+   - **Add "Open with Code" action to Windows Explorer file context menu** — rechtsklikken op een bestand en het openen in VS Code
+   - **Add "Open with Code" action to Windows Explorer directory context menu** — rechtsklikken op een map en die openen in VS Code
+   - **Add to PATH** — VS Code openen vanuit de terminal met het commando `code`. Dit vinkje staat meestal al aan.
+4. Klik op **Install** (**Installeren**) en wacht tot de installatie klaar is
+5. Klik op **Finish** (**Voltooien**). VS Code opent vanzelf.
 
 ## macOS
 
-1. Open het gedownloade `.dmg` bestand
-2. Sleep **Visual Studio Code** naar de **Applications** map
-3. Open VS Code vanuit Applications
+1. Dubbelklik op het gedownloade `.zip`-bestand. Er verschijnt een bestand **Visual Studio Code** (met het app-icoon) in je Downloads-map.
+2. Sleep dat bestand naar je map **Applications** (**Programma's**). Laat je het in Downloads staan, dan werken updates niet goed.
+3. Open VS Code vanuit Applications. De eerste keer vraagt macOS of je een app van internet wilt openen: klik op **Open**.
+
+## Linux
+
+Kies op de downloadpagina het pakket voor jouw distributie: `.deb` voor Ubuntu en Debian, `.rpm` voor Fedora. Dubbelklik op het gedownloade bestand en installeer het via de softwarewinkel van je systeem, of typ in een terminal (Ubuntu):
+
+```bash
+sudo apt install ./code_*.deb
+```

@@ -36,6 +36,76 @@ function alleLesbestanden(map) {
 }
 
 /**
+ * Onder welk URL-segment serveert deze site zijn docs? Gelezen uit de
+ * `routeBasePath` in het `docs:`-blok van de preset in docusaurus.config;
+ * zonder die regel geldt de Docusaurus-standaard 'docs'. De editor-cursus
+ * serveert op de root ('/'), didactiek onder 'bronnen'. Losse docs-plugins
+ * (robotica's lego_auto en click_golfer) staan onder `plugins` en tellen niet
+ * mee: lesBestaat kijkt alleen in de map `docs/`.
+ *
+ * Een pad naar een bestaand bestand kan zo toch een 404 zijn, en dat is
+ * precies wat een guard die alleen naar bestanden kijkt niet ziet.
+ *
+ * @returns '' voor de root, anders het segment zonder slashes ('docs', 'bronnen')
+ */
+/**
+ * Het `routeBasePath` uit het `docs:`-blok van de preset, met accolades
+ * geteld zodat een genest object vóór routeBasePath (`admonitions: {…}`) de
+ * lezer niet halverwege laat stoppen. Zonder blok of zonder regel: 'docs'.
+ * @param {string} configTekst
+ */
+function routeBasePathUit(configTekst) {
+  const start = configTekst.search(/\bdocs:\s*\{/);
+  if (start < 0) return 'docs';
+  const open = configTekst.indexOf('{', start);
+  let diepte = 0;
+  for (let i = open; i < configTekst.length; i++) {
+    if (configTekst[i] === '{') diepte += 1;
+    else if (configTekst[i] === '}') {
+      diepte -= 1;
+      if (diepte === 0) {
+        const m = configTekst.slice(open, i + 1).match(/routeBasePath:\s*['"]([^'"]*)['"]/);
+        return m ? m[1].replace(/^\/+|\/+$/g, '') : 'docs';
+      }
+    }
+  }
+  return 'docs';
+}
+
+const prefixCache = new Map();
+function docsPrefix(sitesRoot, site) {
+  const sleutel = `${sitesRoot}|${site}`;
+  if (prefixCache.has(sleutel)) return prefixCache.get(sleutel);
+  let prefix = 'docs';
+  for (const naam of ['docusaurus.config.ts', 'docusaurus.config.js']) {
+    const pad = join(sitesRoot, site, naam);
+    if (!existsSync(pad)) continue;
+    prefix = routeBasePathUit(readFileSync(pad, 'utf8'));
+    break;
+  }
+  prefixCache.set(sleutel, prefix);
+  return prefix;
+}
+
+/**
+ * De padsegmenten ná het docs-prefix van de doelsite, of null als het pad
+ * niet bij die site past: geen slash vooraan (de componenten plakken het pad
+ * achter de site-URL, dus zonder slash wordt de host zelf kapot), /docs op een
+ * site die op de root serveert, of een ander eerste segment dan het prefix.
+ * @param {string} sitesRoot
+ * @param {string} site
+ * @param {string} to
+ * @returns {string[] | null}
+ */
+function segmentenNaPrefix(sitesRoot, site, to) {
+  if (!to.startsWith('/')) return null;
+  const prefix = docsPrefix(sitesRoot, site);
+  const alle = to.split('/').filter(Boolean);
+  if (prefix === '') return alle[0] === 'docs' ? null : alle;
+  return alle[0] === prefix ? alle.slice(1) : null;
+}
+
+/**
  * Vertaalt een docs-URL van een andere site terug naar een bronbestand.
  *
  * Docusaurus stript alleen een puur numeriek prefix ("06-data" -> "data",
@@ -52,11 +122,12 @@ function lesBestaat(sitesRoot, site, to) {
   const docsMap = join(sitesRoot, site, 'docs');
   if (!existsSync(docsMap)) return false;
 
-  const segmenten = to
-    .replace(/^\/docs\/?/, '')
-    .split('/')
-    .filter(Boolean);
-  if (segmenten.length === 0) return false;
+  // Het pad moet passen bij hoe de doelsite zijn docs serveert. De
+  // fullstack-installatiepagina wees met /docs/python/… naar de editor-cursus:
+  // het bestand bestond, de URL niet. Op de root (prefix '') mag het pad niet
+  // met /docs beginnen; elders moet het eerste segment het prefix zijn.
+  const segmenten = segmentenNaPrefix(sitesRoot, site, to);
+  if (!segmenten || segmenten.length === 0) return false;
 
   // Alle segmenten op één na zijn mappen; het laatste is de pagina.
   let huidig = docsMap;
@@ -69,7 +140,7 @@ function lesBestaat(sitesRoot, site, to) {
   }
 
   const paginaSegment = segmenten[segmenten.length - 1];
-  const naDocs = to.replace(/^\/docs/, '');
+  const naDocs = `/${segmenten.join('/')}`;
   for (const bestand of readdirSync(huidig)) {
     if (!/\.mdx?$/.test(bestand)) continue;
     const inhoud = readFileSync(join(huidig, bestand), 'utf8');
@@ -84,4 +155,12 @@ function lesBestaat(sitesRoot, site, to) {
   return false;
 }
 
-module.exports = { ITEM_RE, parseItems, alleLesbestanden, lesBestaat };
+module.exports = {
+  ITEM_RE,
+  parseItems,
+  alleLesbestanden,
+  lesBestaat,
+  docsPrefix,
+  routeBasePathUit,
+  segmentenNaPrefix,
+};
