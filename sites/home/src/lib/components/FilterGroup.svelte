@@ -28,7 +28,7 @@
 		{#each options as option}
 			<Badge
 				variant={selected.includes(option) ? 'default' : 'secondary'}
-				class="cursor-pointer px-3 py-1 transition-opacity hover:opacity-80"
+				class="cursor-pointer whitespace-normal px-3 py-1 text-left transition-opacity hover:opacity-80"
 				onclick={() => onToggle(option)}
 				title={tooltips?.(option)}
 			>
@@ -43,7 +43,7 @@
 			{#each options as option}
 				<Badge
 					variant={selected.includes(option) ? 'default' : 'secondary'}
-					class="cursor-pointer px-3 py-1 transition-opacity hover:opacity-80"
+					class="cursor-pointer whitespace-normal px-3 py-1 text-left transition-opacity hover:opacity-80"
 					onclick={() => onToggle(option)}
 					title={tooltips?.(option)}
 				>
