@@ -1,6 +1,6 @@
 import { HOME, SITES, SITES_BY_ID } from '@coderius/shared/sites';
 import { describe, expect, it } from 'vitest';
-import { curriculum, levelColors, levelLabels, themasVan } from './Curriculum';
+import { KLASSEN, curriculum, levelColors, levelLabels, themasVan } from './Curriculum';
 import { examDomainByCode } from './ExamProgram';
 
 // Bewaakt de homepage-kaarten. Curriculum.ts is een handgeschreven mapping
@@ -90,6 +90,7 @@ describe('curriculum versus het examenprogramma', () => {
         (c) =>
           !(c.level in levelColors) ||
           !(c.level in levelLabels) ||
+          !KLASSEN.includes(c.klas) ||
           !Number.isInteger(c.order.vwo) ||
           !Number.isInteger(c.order.havo) ||
           c.order.vwo < 1 ||

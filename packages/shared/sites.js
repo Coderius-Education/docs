@@ -18,7 +18,8 @@ const SITES = [
     id: 'editor',
     label: 'VS Code & Git',
     url: 'https://editor.coderius.nl',
-    description: 'Werken met een code-editor, VS Code en Git.',
+    description:
+      'Programmeren in de editor VS Code, en je code bewaren en delen met Git en GitHub.',
     requires: [],
   },
   {

@@ -32,11 +32,12 @@ export const HULPMIDDELEN: Site[] = [
 /** De cursussen op de docentenpagina: alles uit het curriculum behalve de hulpmiddelen. */
 export const docentenCursussen: Activity[] = curriculum.filter((c) => c.id !== 'ide');
 
-/** Cursussen die zowel in klas 4 als in klas 5+ passen. */
-export const GEDEELD = ['robotica', 'godot'];
+/** Hoort de cursus bij klas 4 (basis)? Gedeelde cursussen tellen mee. */
+export function inKlas4(activity: Activity): boolean {
+  return activity.klas === '4' || activity.klas === '4 en 5+';
+}
 
-/** Klas waarin een cursus meestal valt; robotica en godot passen in beide. */
-export function klasVan(activity: Activity): string {
-  if (GEDEELD.includes(activity.id)) return '4 en 5+';
-  return activity.level === 'Beginner' ? '4' : '5+';
+/** Hoort de cursus bij klas 5+ (verdieping)? Gedeelde cursussen tellen mee. */
+export function inKlas5(activity: Activity): boolean {
+  return activity.klas === '5+' || activity.klas === '4 en 5+';
 }

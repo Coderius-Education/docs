@@ -3,12 +3,13 @@ import { fileURLToPath } from 'node:url';
 import { DOCENTEN_SITES, SITES } from '@coderius/shared/sites';
 import { describe, expect, it } from 'vitest';
 import {
-  GEDEELD,
   HULPMIDDELEN,
   NOG_VERBORGEN,
   docentenCursussen,
   docentenUrl,
   hostVan,
+  inKlas4,
+  inKlas5,
 } from './docenten';
 
 // De docentenpagina linkt per cursus naar /docenten op het subdomein. Die
@@ -60,8 +61,25 @@ describe('de tabel op de docentenpagina', () => {
     for (const id of NOG_VERBORGEN) expect(DOCENTEN_SITES.some((s) => s.id === id)).toBe(true);
   });
 
-  it('de gedeelde cursussen bestaan', () => {
-    for (const id of GEDEELD) expect(docentenCursussen.some((c) => c.id === id)).toBe(true);
+  it('de editor-cursus hoort alleen bij klas 5+, ook al is hij voor beginners', () => {
+    // Klas staat los van niveau: VS Code & Git is de verdieping in klas 5+,
+    // maar het niveau op de homepage blijft Beginner.
+    const editor = docentenCursussen.find((c) => c.id === 'editor');
+    expect(editor?.level).toBe('Beginner');
+    expect(editor && inKlas4(editor)).toBe(false);
+    expect(editor && inKlas5(editor)).toBe(true);
+  });
+
+  it('een gedeelde cursus telt in beide klassen mee', () => {
+    const robotica = docentenCursussen.find((c) => c.id === 'robotica');
+    expect(robotica?.klas).toBe('4 en 5+');
+    expect(robotica && inKlas4(robotica)).toBe(true);
+    expect(robotica && inKlas5(robotica)).toBe(true);
+  });
+
+  it('elke cursus staat in minstens één klas', () => {
+    const nergens = docentenCursussen.filter((c) => !inKlas4(c) && !inKlas5(c)).map((c) => c.id);
+    expect(nergens).toEqual([]);
   });
 
   it('hostVan geeft alleen de hostnaam', () => {

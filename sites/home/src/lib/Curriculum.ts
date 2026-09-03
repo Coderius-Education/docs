@@ -1,6 +1,9 @@
 import { SITES, SITES_BY_ID } from '@coderius/shared/sites';
 import type { ExamMapping } from './ExamProgram';
 
+export const KLASSEN = ['4', '5+', '4 en 5+'] as const;
+export type Klas = (typeof KLASSEN)[number];
+
 export type Activity = {
   /** Registry-id uit packages/shared/sites.js; bepaalt label, beschrijving, link en voorkennis. */
   id: string;
@@ -21,6 +24,11 @@ export type Activity = {
   examDomains?: ExamMapping[];
 
   level: 'Beginner' | 'Medium' | 'Advanced';
+  /**
+   * Waar de cursus in de leerlijn van de school valt. Los van het niveau: de
+   * editor-cursus is voor beginners maar hoort bij de verdieping in klas 5+.
+   */
+  klas: Klas;
   /** Afgeleid uit de gedeelde registry (SITES_BY_ID[id].url); niet hardcoden. */
   link: string;
   order: {
@@ -57,6 +65,7 @@ const entries: CurriculumEntry[] = [
       { code: 'F1', strength: 'weak' },
     ],
     level: 'Beginner',
+    klas: '4',
     order: {
       vwo: 1,
       havo: 1,
@@ -75,6 +84,7 @@ const entries: CurriculumEntry[] = [
       { code: 'D2', strength: 'strong' },
     ],
     level: 'Beginner',
+    klas: '4',
     order: {
       vwo: 2,
       havo: 2,
@@ -93,6 +103,7 @@ const entries: CurriculumEntry[] = [
       { code: 'F1', strength: 'weak' },
     ],
     level: 'Beginner',
+    klas: '4',
     order: {
       vwo: 3,
       havo: 3,
@@ -107,6 +118,7 @@ const entries: CurriculumEntry[] = [
     // Geen examDomains: het instrumentarium (editor, git, GitHub) valt onder domein A
     // dat we bewust niet meenemen in de mapping.
     level: 'Beginner',
+    klas: '5+',
     order: {
       vwo: 2,
       havo: 2,
@@ -126,6 +138,7 @@ const entries: CurriculumEntry[] = [
       { code: 'M2', strength: 'strong' },
     ],
     level: 'Medium',
+    klas: '4 en 5+',
     order: {
       vwo: 4,
       havo: 4,
@@ -146,6 +159,7 @@ const entries: CurriculumEntry[] = [
       { code: 'N2', strength: 'strong' },
     ],
     level: 'Beginner',
+    klas: '4',
     order: {
       vwo: 5,
       havo: 5,
@@ -165,6 +179,7 @@ const entries: CurriculumEntry[] = [
       { code: 'P2', strength: 'strong' },
     ],
     level: 'Medium',
+    klas: '4 en 5+',
     order: {
       vwo: 6,
       havo: 6,
@@ -183,6 +198,7 @@ const entries: CurriculumEntry[] = [
       { code: 'N2', strength: 'weak' },
     ],
     level: 'Advanced',
+    klas: '5+',
     order: {
       vwo: 5,
       havo: 5,
@@ -203,6 +219,7 @@ const entries: CurriculumEntry[] = [
       { code: 'O3', strength: 'weak' },
     ],
     level: 'Advanced',
+    klas: '5+',
     order: {
       vwo: 5,
       havo: 5,
@@ -223,6 +240,7 @@ const entries: CurriculumEntry[] = [
       { code: 'I1', strength: 'weak' },
     ],
     level: 'Medium',
+    klas: '5+',
     order: {
       vwo: 7,
       havo: 7,
@@ -237,6 +255,7 @@ const entries: CurriculumEntry[] = [
     // Gereedschap (browser-IDE), zoals de Code Editor: valt onder domein A en
     // krijgt daarom geen examDomains-mapping.
     level: 'Beginner',
+    klas: '4',
     // TODO(curriculum): juiste plek in de leerlijn bevestigen.
     order: {
       vwo: 1,
@@ -253,6 +272,7 @@ const entries: CurriculumEntry[] = [
     // curriculum-eigenaar (niet verzinnen).
     examDomains: [],
     level: 'Medium',
+    klas: '5+',
     // TODO(curriculum): juiste plek in de leerlijn bevestigen.
     order: {
       vwo: 4,

@@ -2,7 +2,7 @@
 	import { ExternalLink } from "@lucide/svelte";
 	import { type Activity, curriculum, levelColors, levelLabels } from "$lib/Curriculum";
 	import { buildCardChips } from "$lib/ExamProgram";
-	import { GEDEELD, HULPMIDDELEN, docentenCursussen, docentenUrl, hostVan, klasVan } from "$lib/docenten";
+	import { HULPMIDDELEN, docentenCursussen, docentenUrl, hostVan, inKlas4, inKlas5 } from "$lib/docenten";
 	import { Badge } from "$lib/components/ui/badge";
 	import * as Card from "$lib/components/ui/card/index.js";
 	import { cn } from "$lib/utils";
@@ -30,10 +30,10 @@
 	// mogen daar veranderen zonder dat deze pagina stil een cursus kwijtraakt.
 	const rijen = $derived(docentenCursussen.filter(matchesFilters));
 	const beginnerCourses = $derived(
-		rijen.filter((c) => c.level === "Beginner" || GEDEELD.includes(c.id))
+		rijen.filter(inKlas4)
 	);
 	const advancedCourses = $derived(
-		rijen.filter((c) => c.level !== "Beginner" || GEDEELD.includes(c.id))
+		rijen.filter(inKlas5)
 	);
 
 	function handleFilterChange(newFilters: {
@@ -105,7 +105,7 @@
 							<td class="px-3 py-2">
 								<Badge class={cn("whitespace-nowrap", levelColors[c.level])}>{levelLabels[c.level]}</Badge>
 							</td>
-							<td class="whitespace-nowrap px-3 py-2">{klasVan(c)}</td>
+							<td class="whitespace-nowrap px-3 py-2">{c.klas}</td>
 							<td class="px-3 py-2">
 								{#if chips.length}
 									<div class="flex flex-wrap gap-1">
