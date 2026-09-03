@@ -1,10 +1,15 @@
-import { SITES_BY_ID } from '@coderius/shared/sites';
+import { SITES, SITES_BY_ID } from '@coderius/shared/sites';
 import type { ExamMapping } from './ExamProgram';
 
 export type Activity = {
-  /** Registry-id uit packages/shared/sites.js; bepaalt de link. */
+  /** Registry-id uit packages/shared/sites.js; bepaalt label, beschrijving, link en voorkennis. */
   id: string;
-  title: string;
+  /** Weergavenaam uit de registry. */
+  label: string;
+  /** Korte omschrijving uit de registry. */
+  description: string;
+  /** Voorkennis (registry-ids van cursussen waarop deze voortbouwt). */
+  requires: string[];
   labels: string[]; // Keep for backward compatibility
 
   // New categorical fields
@@ -24,21 +29,23 @@ export type Activity = {
   };
 };
 
-// De cursus-URL's komen uit de gedeelde registry (packages/shared/sites.js), de
-// enige bron van waarheid. Zo blijven de homepage-kaarten en de cross-site
-// navigatie van de Docusaurus-sites automatisch in sync.
-function siteUrl(id: string): string {
+// Naam, omschrijving, URL en voorkennis komen uit de gedeelde registry
+// (packages/shared/sites.js), de enige bron van waarheid. Hier staat alleen wat
+// de registry niet weet: niveau, thema's en examendomeinen. Zo blijven de
+// homepage-kaarten en de navigatie van de cursussites automatisch in sync; de
+// eigen titels die hier eerst stonden ("Python Play", "Code Editor") waren van
+// de registry weggedreven.
+function siteVan(id: string) {
   const site = SITES_BY_ID[id];
   if (!site) throw new Error(`Onbekende cursus-id in Curriculum: ${id}`);
-  return site.url;
+  return site;
 }
 
-type CurriculumEntry = Omit<Activity, 'link'>;
+type CurriculumEntry = Omit<Activity, 'label' | 'description' | 'requires' | 'link'>;
 
 const entries: CurriculumEntry[] = [
   {
     id: 'web',
-    title: 'Web Development',
     labels: [],
     programmingLanguages: ['HTML', 'CSS'],
     projectTypes: ['Web Development'],
@@ -57,7 +64,6 @@ const entries: CurriculumEntry[] = [
   },
   {
     id: 'python',
-    title: 'Python',
     labels: [],
     programmingLanguages: ['Python'],
     projectTypes: [],
@@ -76,7 +82,6 @@ const entries: CurriculumEntry[] = [
   },
   {
     id: 'play',
-    title: 'Python Play',
     labels: [],
     programmingLanguages: ['Python'],
     projectTypes: ['Game Development'],
@@ -95,7 +100,6 @@ const entries: CurriculumEntry[] = [
   },
   {
     id: 'editor',
-    title: 'Code Editor',
     labels: [],
     programmingLanguages: [],
     projectTypes: ['VS Code web', 'VS Code Python', 'git', 'GitHub'],
@@ -110,7 +114,6 @@ const entries: CurriculumEntry[] = [
   },
   {
     id: 'robotica',
-    title: 'Robotica',
     labels: ['Robotics', 'Python'],
     programmingLanguages: ['Python'],
     projectTypes: ['Robotics'],
@@ -130,7 +133,6 @@ const entries: CurriculumEntry[] = [
   },
   {
     id: 'ctf',
-    title: 'Capture the Flag',
     labels: [],
     programmingLanguages: [],
     projectTypes: ['Cybersecurity'],
@@ -151,7 +153,6 @@ const entries: CurriculumEntry[] = [
   },
   {
     id: 'godot',
-    title: 'Godot game engine',
     labels: [],
     programmingLanguages: ['GDScript'],
     projectTypes: ['Game Development'],
@@ -171,7 +172,6 @@ const entries: CurriculumEntry[] = [
   },
   {
     id: 'dvwa',
-    title: 'Vulnerable Web Application',
     labels: ['Cybersecurity', 'Web'],
     programmingLanguages: ['Linux Shell'],
     projectTypes: ['Cybersecurity', 'Web Development'],
@@ -190,7 +190,6 @@ const entries: CurriculumEntry[] = [
   },
   {
     id: 'fullstack',
-    title: 'Full stack web development',
     labels: ['Javascript', 'Python'],
     programmingLanguages: ['HTML', 'CSS', 'JavaScript', 'Python'],
     projectTypes: ['Web Development'],
@@ -211,7 +210,6 @@ const entries: CurriculumEntry[] = [
   },
   {
     id: 'algorithms',
-    title: 'Algoritmes',
     labels: [],
     programmingLanguages: ['Python'],
     projectTypes: ['Algorithms'],
@@ -232,7 +230,6 @@ const entries: CurriculumEntry[] = [
   },
   {
     id: 'ide',
-    title: 'Online Editor',
     labels: [],
     programmingLanguages: ['Python', 'HTML', 'CSS'],
     projectTypes: ['Online Editor'],
@@ -248,7 +245,6 @@ const entries: CurriculumEntry[] = [
   },
   {
     id: 'embedded',
-    title: 'Embedded',
     labels: [],
     programmingLanguages: ['C++', 'MicroPython'],
     projectTypes: ['Embedded', 'Robotics'],
@@ -265,15 +261,62 @@ const entries: CurriculumEntry[] = [
   },
 ];
 
-export const curriculum: Activity[] = entries.map((e) => ({
-  ...e,
-  link: siteUrl(e.id),
-}));
+// In de volgorde van de registry: dat is de leerlijn, en die staat op één plek.
+const volgorde = new Map(SITES.map((s, i) => [s.id, i]));
 
-export const ownCurriculum: Activity[] = curriculum;
+export const curriculum: Activity[] = entries
+  .map((e) => {
+    const site = siteVan(e.id);
+    return {
+      ...e,
+      label: site.label,
+      description: site.description,
+      requires: site.requires,
+      link: site.url,
+    };
+  })
+  .sort((a, b) => (volgorde.get(a.id) ?? 99) - (volgorde.get(b.id) ?? 99));
 
+/** Badge-klassen per niveau, leesbaar in licht én donker thema. */
 export const levelColors: { [key in Activity['level']]: string } = {
-  Beginner: 'green',
-  Medium: 'orange',
-  Advanced: 'red',
+  Beginner:
+    'border-transparent bg-emerald-600 text-white dark:bg-emerald-500 dark:text-emerald-950',
+  Medium: 'border-transparent bg-amber-500 text-amber-950 dark:bg-amber-400',
+  Advanced: 'border-transparent bg-rose-600 text-white dark:bg-rose-500 dark:text-rose-950',
 };
+
+/** Nederlandse naam per niveau, zoals de leerling 'm op de kaart ziet. */
+export const levelLabels: { [key in Activity['level']]: string } = {
+  Beginner: 'Beginner',
+  Medium: 'Gevorderd',
+  Advanced: 'Expert',
+};
+
+export const THEMAS = ['Python', 'Web', 'Games', 'Hardware', 'Security'] as const;
+export type Thema = (typeof THEMAS)[number];
+
+// Vijf herkenbare thema's voor de filterrij op de homepage, afgeleid uit de
+// fijnmazige velden hierboven. Zo hoeft een leerling niet uit 23 opties te
+// kiezen; de examendomeinen blijven op de docentenpagina.
+export function themasVan(activity: Activity): Thema[] {
+  const talen = activity.programmingLanguages ?? [];
+  const typen = activity.projectTypes ?? [];
+  const uit: Thema[] = [];
+  if (
+    talen.some((t) => t === 'Python' || t === 'MicroPython') ||
+    typen.includes('VS Code Python')
+  ) {
+    uit.push('Python');
+  }
+  if (
+    typen.includes('Web Development') ||
+    typen.includes('VS Code web') ||
+    talen.some((t) => ['HTML', 'CSS', 'JavaScript'].includes(t))
+  ) {
+    uit.push('Web');
+  }
+  if (typen.includes('Game Development')) uit.push('Games');
+  if (typen.includes('Robotics') || typen.includes('Embedded')) uit.push('Hardware');
+  if (typen.includes('Cybersecurity')) uit.push('Security');
+  return uit;
+}

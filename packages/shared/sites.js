@@ -100,6 +100,20 @@ const SITES = [
   },
 ];
 
+// Sites voor docenten. Bewust niet in SITES: die lijst vult de navbar-dropdown,
+// de footer en /cursussen van elke cursussite, en dit zijn geen cursussen. Wel
+// in SITES_BY_ID, zodat <SiteLink site="didactiek"> vanuit een les werkt en de
+// docentenpagina van de homepage ze kan tonen.
+const DOCENTEN_SITES = [
+  {
+    id: 'didactiek',
+    label: 'Didactiek',
+    url: 'https://didactiek.coderius.nl',
+    description: 'Didactische tips en achtergrond voor docenten.',
+    requires: [],
+  },
+];
+
 // De apex-homepage. Bewust GEEN cursus: niet in SITES (anders verschijnt hij in
 // /cursussen en in elke "Cursussen"-dropdown als kaart), maar wel de centrale
 // bron voor de teruglink vanaf elke cursussite naar coderius.nl.
@@ -129,7 +143,7 @@ function repoEditUrl(siteFolder) {
   return `${REPO_URL}/tree/${REPO_BRANCH}/sites/${siteFolder}/`;
 }
 
-const SITES_BY_ID = Object.fromEntries(SITES.map((s) => [s.id, s]));
+const SITES_BY_ID = Object.fromEntries([...SITES, ...DOCENTEN_SITES].map((s) => [s.id, s]));
 
 // Normaliseer een url voor vergelijking (trailing slash weg).
 function normalizeUrl(url) {
@@ -144,6 +158,7 @@ function siteByUrl(url) {
 
 module.exports = {
   SITES,
+  DOCENTEN_SITES,
   SITES_BY_ID,
   HOME,
   REPO_URL,
