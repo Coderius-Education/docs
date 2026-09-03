@@ -18,7 +18,7 @@ Klik op **Initialize Repository**.
 
 ## Wat je nu ziet
 
-De knop verdwijnt en er verschijnt een lijst **Changes** met `hello.txt` erin. Linksonder in de blauwe balk staat nu ook een branchnaam: **main**.
+De knop verdwijnt en er verschijnt een lijst **Changes** met `hello.txt` erin. Linksonder in de statusbalk staat nu ook een branchnaam: **main**.
 
 Staat er `master` in plaats van `main`? Dan is stap 1 overgeslagen of pas daarna gedaan. Open een terminal (**Terminal** → **New Terminal**) en typ:
 

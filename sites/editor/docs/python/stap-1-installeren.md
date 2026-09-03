@@ -21,5 +21,5 @@ Zonder de Python-extensie van Microsoft werkt de **▶ Play-knop** niet en mist 
 1. Open VS Code
 2. Klik in de linkerbalk op het **blokjes-icoon** (Extensions)
 3. Typ bovenaan in het zoekveld: `Python`
-4. Zoek het resultaat van **Microsoft** (de eerste in de lijst, met een blauw vinkje)
-5. Klik op de blauwe **Install** knop
+4. Zoek het resultaat met de naam **Python** en de uitgever **Microsoft**; het staat meestal bovenaan
+5. Klik op **Install**
