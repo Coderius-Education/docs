@@ -42,7 +42,7 @@ describe('hrefsUit', () => {
 });
 
 describe('doelBestaat — wat statische hosting serveert', () => {
-  const editor = `${FIXTURE}/editor/build`;
+  const editor = `${FIXTURE}/editor`;
 
   it.each(['/python/stap-4-venv', '/python/stap-4-venv/', '/git/vscode/', '/git/vscode', '/', ''])(
     '%j bestaat',
@@ -62,7 +62,7 @@ describe('doelBestaat — wat statische hosting serveert', () => {
 describe('controleer over de fixture-builds', () => {
   const builds = buildsIn(FIXTURE);
 
-  it('vindt de builds in de sites/<site>/build-indeling', () => {
+  it('vindt de builds (hier in de kale <site>/index.html-indeling; build/ is gitignored)', () => {
     expect([...builds.keys()].sort()).toEqual(['editor', 'fullstack']);
   });
 
