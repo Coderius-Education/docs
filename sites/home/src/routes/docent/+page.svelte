@@ -167,16 +167,16 @@
 				<Badge variant="outline">Havo 4 / VWO 4</Badge>
 				<p class="text-sm text-muted-foreground">Alle leerlingen doorlopen de basiscursussen</p>
 			</div>
-			<ul class="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+			<ul class="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 				{#each beginnerCourses as c (c.id)}
 					<li>
 						<Card.Root class="gap-1 py-3">
 							<Card.Header class="px-3">
-								<div class="flex items-center justify-between gap-3">
-									<Card.Title class="text-base">
+								<div class="flex items-start justify-between gap-3">
+									<Card.Title class="min-w-0 text-base [overflow-wrap:anywhere]">
 										<a href={c.link} target="_blank" rel="noopener noreferrer" class={link}>{c.label}</a>
 									</Card.Title>
-									<Badge class={cn("whitespace-nowrap", levelColors[c.level])}>{levelLabels[c.level]}</Badge>
+									<Badge class={cn("shrink-0 whitespace-nowrap", levelColors[c.level])}>{levelLabels[c.level]}</Badge>
 								</div>
 							</Card.Header>
 						</Card.Root>
@@ -192,16 +192,16 @@
 				<Badge variant="outline">Havo 5 / VWO 5-6</Badge>
 				<p class="text-sm text-muted-foreground">Leerlingen kiezen meerdere verdiepingsmodules</p>
 			</div>
-			<ul class="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+			<ul class="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 				{#each advancedCourses as c (c.id)}
 					<li>
 						<Card.Root class="gap-1 py-3">
 							<Card.Header class="px-3">
-								<div class="flex items-center justify-between gap-3">
-									<Card.Title class="text-base">
+								<div class="flex items-start justify-between gap-3">
+									<Card.Title class="min-w-0 text-base [overflow-wrap:anywhere]">
 										<a href={c.link} target="_blank" rel="noopener noreferrer" class={link}>{c.label}</a>
 									</Card.Title>
-									<Badge class={cn("whitespace-nowrap", levelColors[c.level])}>{levelLabels[c.level]}</Badge>
+									<Badge class={cn("shrink-0 whitespace-nowrap", levelColors[c.level])}>{levelLabels[c.level]}</Badge>
 								</div>
 							</Card.Header>
 						</Card.Root>
