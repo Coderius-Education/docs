@@ -4,7 +4,7 @@ import { repoEditUrl } from '@coderius/shared/sites';
 const projectName = 'play-docs';
 
 export default createConfig({
-  title: 'Python Games — Coderius',
+  title: 'Coderius Play',
   tagline: 'Leer nog beter Python door het maken van games',
   url: 'https://play.coderius.nl',
   projectName,

@@ -37,7 +37,7 @@ const SITES = [
   },
   {
     id: 'play',
-    label: 'Python Games',
+    label: 'Coderius Play',
     url: 'https://play.coderius.nl',
     description: 'Maak games met Python en pygame.',
     requires: ['python'],
