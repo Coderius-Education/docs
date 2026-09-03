@@ -406,6 +406,11 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      # Het script heeft geen dependencies, maar setup-node leest `packageManager`
+      # uit package.json en wil pnpm voor zijn cache; zonder deze stap breekt hij
+      # daarop af nog vóór het script draait.
+      - uses: pnpm/action-setup@v6
+
       - uses: actions/setup-node@v5
         with:
           node-version: 22
