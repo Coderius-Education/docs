@@ -14,7 +14,7 @@
 	import { Badge } from "$lib/components/ui/badge";
 	import { cn } from "$lib/utils";
 
-	const NIVEAUS: Activity["level"][] = ["Beginner", "Medium", "Advanced"];
+	const NIVEAUS: Activity["level"][] = ["Beginner", "Medium"];
 
 	// Twee filterrijen in plaats van een paneel met 23 opties: één keuze per
 	// rij, "Alles" is de standaard. De examendomeinen staan op de docentenpagina.
@@ -90,6 +90,7 @@
 		{:else}
 			<ul id="cursussen" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
 				{#each zichtbaar as c (c.id)}
+					{@const woorden = c.label.split(" ")}
 					<li>
 						<a
 							href={c.link}
@@ -99,8 +100,8 @@
 						>
 							<div class="flex items-start justify-between gap-2">
 								<h2 class="text-base font-semibold leading-tight">
-									{c.label}
-									<ExternalLink class="ml-0.5 inline h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
+									{woorden.slice(0, -1).join(" ")}
+									<span class="whitespace-nowrap">{woorden.at(-1)}<ExternalLink class="ml-1 inline h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" /></span>
 								</h2>
 								<Badge class={cn("shrink-0", levelColors[c.level])}>{levelLabels[c.level]}</Badge>
 							</div>

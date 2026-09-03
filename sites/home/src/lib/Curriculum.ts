@@ -23,7 +23,8 @@ export type Activity = {
   // Examenprogramma-raakvlakken (havo/vwo informatica)
   examDomains?: ExamMapping[];
 
-  level: 'Beginner' | 'Medium' | 'Advanced';
+  /** Twee niveaus: Beginner (klas 4-instap) en Medium (Gevorderd). */
+  level: 'Beginner' | 'Medium';
   /**
    * Waar de cursus in de leerlijn van de school valt. Los van het niveau: de
    * editor-cursus is voor beginners maar hoort bij de verdieping in klas 5+.
@@ -197,7 +198,7 @@ const entries: CurriculumEntry[] = [
       { code: 'N1', strength: 'strong' },
       { code: 'N2', strength: 'weak' },
     ],
-    level: 'Advanced',
+    level: 'Medium',
     klas: '5+',
     order: {
       vwo: 5,
@@ -218,7 +219,7 @@ const entries: CurriculumEntry[] = [
       { code: 'L2', strength: 'weak' },
       { code: 'O3', strength: 'weak' },
     ],
-    level: 'Advanced',
+    level: 'Medium',
     klas: '5+',
     order: {
       vwo: 5,
@@ -301,15 +302,13 @@ export const curriculum: Activity[] = entries
 export const levelColors: { [key in Activity['level']]: string } = {
   Beginner:
     'border-transparent bg-emerald-600 text-white dark:bg-emerald-500 dark:text-emerald-950',
-  Medium: 'border-transparent bg-amber-500 text-amber-950 dark:bg-amber-400',
-  Advanced: 'border-transparent bg-rose-600 text-white dark:bg-rose-500 dark:text-rose-950',
+  Medium: 'border-transparent bg-orange-700 text-white',
 };
 
 /** Nederlandse naam per niveau, zoals de leerling 'm op de kaart ziet. */
 export const levelLabels: { [key in Activity['level']]: string } = {
   Beginner: 'Beginner',
   Medium: 'Gevorderd',
-  Advanced: 'Expert',
 };
 
 /** De voorkennis van een cursus als leesbare namen, uit de registry. */

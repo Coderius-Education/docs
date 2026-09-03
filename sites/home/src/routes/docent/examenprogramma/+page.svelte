@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { ExternalLink } from "@lucide/svelte";
-	import { type Activity, curriculum, levelColors, levelLabels } from "$lib/Curriculum";
-	import { buildCardChips } from "$lib/ExamProgram";
-	import { HULPMIDDELEN, docentenCursussen, docentenUrl, hostVan } from "$lib/docenten";
+	import { type Activity, curriculum } from "$lib/Curriculum";
+	import { type CardChip, buildCardChipGroups } from "$lib/ExamProgram";
+	import { HULPMIDDELEN, docentenCursussen, hostVan } from "$lib/docenten";
 	import { Badge } from "$lib/components/ui/badge";
 	import * as Card from "$lib/components/ui/card/index.js";
 	import { cn } from "$lib/utils";
@@ -51,13 +51,28 @@
 	/>
 </svelte:head>
 
+{#snippet chipsCel(chips: CardChip[], leeg: string)}
+	{#if chips.length}
+		<div class="flex flex-wrap gap-1">
+			{#each chips as chip (chip.display)}
+				<Badge variant={chip.strength === "strong" ? "default" : "outline"} class="text-xs" title={chip.title}>
+					{chip.display}
+				</Badge>
+			{/each}
+		</div>
+	{:else}
+		<span class="text-xs text-muted-foreground">{leeg}</span>
+	{/if}
+{/snippet}
+
 <main class="mx-auto max-w-7xl px-4">
 	<section class="pt-6 pb-4">
 		<h1 class="text-2xl font-bold tracking-tight sm:text-3xl">Examenprogramma en subdomeinen</h1>
 		<p class="mt-1 max-w-3xl text-muted-foreground">
 			Elke cursus is een eigen site op een subdomein van coderius.nl. Filter op examendomein om te
 			zien welke cursussen ergens op aansluiten; een gevuld domein is een sterk raakvlak, een open
-			domein een zijdelings.
+			domein een zijdelings. De docentenhandleiding per cursus staat bij het
+			<a href="/docent" class="underline underline-offset-2">curriculum</a>.
 		</p>
 	</section>
 
@@ -79,15 +94,14 @@
 					<tr>
 						<th scope="col" class="px-3 py-2">Cursus</th>
 						<th scope="col" class="px-3 py-2">Subdomein</th>
-						<th scope="col" class="px-3 py-2">Niveau</th>
 						<th scope="col" class="px-3 py-2">Klas</th>
-						<th scope="col" class="px-3 py-2">Examendomeinen</th>
-						<th scope="col" class="px-3 py-2">Handleiding</th>
+						<th scope="col" class="px-3 py-2">Kerndomeinen</th>
+						<th scope="col" class="px-3 py-2">Keuzedomeinen</th>
 					</tr>
 				</thead>
 				<tbody>
 					{#each rijen as c (c.id)}
-						{@const chips = buildCardChips(c.examDomains)}
+						{@const chips = buildCardChipGroups(c.examDomains)}
 						<tr class="border-t align-top">
 							<td class="px-3 py-2">
 								<a href={c.link} target="_blank" rel="noopener noreferrer" class={cn(link, "font-medium")}>
@@ -99,29 +113,9 @@
 							<td class="px-3 py-2 font-mono text-xs">
 								<a href={c.link} target="_blank" rel="noopener noreferrer" class={link}>{hostVan(c.link)}</a>
 							</td>
-							<td class="px-3 py-2">
-								<Badge class={cn("whitespace-nowrap", levelColors[c.level])}>{levelLabels[c.level]}</Badge>
-							</td>
 							<td class="whitespace-nowrap px-3 py-2">{c.klas}</td>
-							<td class="px-3 py-2">
-								{#if chips.length}
-									<div class="flex flex-wrap gap-1">
-										{#each chips as chip}
-											<Badge variant={chip.strength === "strong" ? "default" : "outline"} class="text-xs" title={chip.title}>
-												{chip.display}
-											</Badge>
-										{/each}
-									</div>
-								{:else}
-									<span class="text-xs text-muted-foreground">nog niet ingevuld</span>
-								{/if}
-							</td>
-							<td class="whitespace-nowrap px-3 py-2">
-								<a href={docentenUrl(c.link)} target="_blank" rel="noopener noreferrer" class={link}>
-									Voor de docent
-									<ExternalLink class="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
-								</a>
-							</td>
+							<td class="px-3 py-2">{@render chipsCel(chips.kern, "geen")}</td>
+							<td class="px-3 py-2">{@render chipsCel(chips.keuze, "geen")}</td>
 						</tr>
 					{/each}
 				</tbody>
