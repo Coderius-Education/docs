@@ -2,7 +2,14 @@ import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { DOCENTEN_SITES, SITES } from '@coderius/shared/sites';
 import { describe, expect, it } from 'vitest';
-import { GEDEELD, HULPMIDDELEN, docentenCursussen, docentenUrl, hostVan } from './docenten';
+import {
+  GEDEELD,
+  HULPMIDDELEN,
+  NOG_VERBORGEN,
+  docentenCursussen,
+  docentenUrl,
+  hostVan,
+} from './docenten';
 
 // De docentenpagina linkt per cursus naar /docenten op het subdomein. Die
 // pagina bestaat op elke cursussite als src/pages/docenten.mdx; verdwijnt hij
@@ -37,8 +44,20 @@ describe('de tabel op de docentenpagina', () => {
     );
   });
 
-  it('zet de online editor en de docentensites bij de hulpmiddelen', () => {
-    expect(HULPMIDDELEN.map((s) => s.id)).toEqual(['ide', ...DOCENTEN_SITES.map((s) => s.id)]);
+  it('zet de online editor bij de hulpmiddelen, en geen docentensite die nog verborgen is', () => {
+    // Didactiek staat in de registry (de map bestaat en wordt gebouwd) maar
+    // is nog niet volwassen genoeg om vanaf de homepage naartoe te linken.
+    const ids = HULPMIDDELEN.map((s) => s.id);
+    expect(ids).toEqual([
+      'ide',
+      ...DOCENTEN_SITES.map((s) => s.id).filter((id) => !NOG_VERBORGEN.includes(id)),
+    ]);
+    for (const id of NOG_VERBORGEN) expect(ids).not.toContain(id);
+  });
+
+  it('elke verborgen docentensite bestaat wel in de registry', () => {
+    // Anders blijft een id hier hangen nadat de site is hernoemd of verwijderd.
+    for (const id of NOG_VERBORGEN) expect(DOCENTEN_SITES.some((s) => s.id === id)).toBe(true);
   });
 
   it('de gedeelde cursussen bestaan', () => {

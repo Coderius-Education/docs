@@ -16,8 +16,18 @@ export function hostVan(url: string): string {
   return new URL(url).host;
 }
 
-/** Hulpmiddelen, geen cursussen: de online editor en de docentensites. */
-export const HULPMIDDELEN: Site[] = [SITES_BY_ID.ide, ...DOCENTEN_SITES].filter(Boolean);
+/**
+ * Docentensites die de homepage nog niet toont, totdat ze volwassen zijn. Ze
+ * blijven in de registry staan: die moet gelijk lopen met de mappen onder
+ * sites/, en <SiteLink site="didactiek"> vanuit een les mag blijven werken.
+ */
+export const NOG_VERBORGEN = ['didactiek'];
+
+/** Hulpmiddelen, geen cursussen: de online editor en de volwassen docentensites. */
+export const HULPMIDDELEN: Site[] = [
+  SITES_BY_ID.ide,
+  ...DOCENTEN_SITES.filter((s) => !NOG_VERBORGEN.includes(s.id)),
+].filter(Boolean);
 
 /** De cursussen op de docentenpagina: alles uit het curriculum behalve de hulpmiddelen. */
 export const docentenCursussen: Activity[] = curriculum.filter((c) => c.id !== 'ide');

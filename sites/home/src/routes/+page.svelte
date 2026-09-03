@@ -46,9 +46,8 @@
 	<section class="pt-6 pb-4">
 		<h1 class="text-2xl font-bold tracking-tight sm:text-3xl">Coderius Education</h1>
 		<p class="mt-1 max-w-3xl text-muted-foreground">
-			Gratis, open lesmateriaal om te leren programmeren: {curriculum.length} cursussen voor het
-			voortgezet onderwijs, van je eerste regel Python tot een website met een eigen back-end.
-			Kies een cursus en begin meteen in je browser.
+			{curriculum.length} cursussen voor het voortgezet onderwijs, van je eerste regel Python tot een
+			website met een eigen back-end. Kies een cursus en begin meteen in je browser.
 		</p>
 	</section>
 
