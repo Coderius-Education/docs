@@ -14,6 +14,11 @@ export const MESSAGE_SOURCE = 'coderius-website-checker';
 export const ACK_SOURCE = 'coderius-editor-import';
 const POLL_INTERVAL_MS = 300;
 const TIMEOUT_MS = 15000;
+// Het bericht gaat meteen bij het openen, en daarna hooguit zo vaak opnieuw
+// (om de POLL_INTERVAL_MS) zolang het ack uitblijft. Daarna wordt alleen nog
+// gekeken of het tabblad dicht is: het hele project 50 keer over de lijn
+// sturen is zinloos als de IDE na een paar seconden nog niet luistert.
+export const MAX_HERPOSTS = 10;
 
 /** Kies het startbestand (index.html op de kortste diepte, anders eerste .html). */
 export function pickEntry(files: ProjectFiles): string | null {
@@ -92,12 +97,16 @@ export function openInIde(
     finish('opened');
   }
 
+  let herposts = 0;
   const interval = window.setInterval(() => {
     if (win.closed) {
       finish('timeout');
       return;
     }
-    win.postMessage(payload, ideUrl);
+    if (herposts < MAX_HERPOSTS) {
+      herposts += 1;
+      win.postMessage(payload, ideUrl);
+    }
   }, POLL_INTERVAL_MS);
 
   const timer = window.setTimeout(() => finish('timeout'), TIMEOUT_MS);

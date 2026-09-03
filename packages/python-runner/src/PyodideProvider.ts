@@ -39,11 +39,25 @@ interface WindowWithPyodide extends Window {
 
 let pyodidePromise: Promise<PyodideInterface> | null = null;
 
+export type PyodideLoader = () => Promise<PyodideInterface>;
+let pyodideLoader: PyodideLoader | null = null;
+
+/**
+ * Alleen voor tests: vervang het laden via een <script>-tag door een eigen
+ * loader (bijv. het pyodide-npm-pakket in node). In de browser blijft dit
+ * ongebruikt; getPyodide() laadt dan zoals altijd vanaf pyodideBaseUrl.
+ */
+export function setPyodideLoader(loader: PyodideLoader | null): void {
+  pyodideLoader = loader;
+  pyodidePromise = null;
+}
+
 export function getPyodide(): Promise<PyodideInterface> {
   if (pyodidePromise) return pyodidePromise;
 
   pyodidePromise = (async () => {
     try {
+      if (pyodideLoader) return await pyodideLoader();
       // Only add script tag once
       if (!(window as WindowWithPyodide).loadPyodide) {
         const script = document.createElement('script');
@@ -115,6 +129,13 @@ export function filterTraceback(raw: string): string {
   return parts.join('\n');
 }
 
+// `input()` in de browser: één vraag via window.prompt. Gedeeld door alle
+// run-varianten zodat input() overal hetzelfde doet.
+function promptStdin(): string {
+  const answer = window.prompt('Invoer (input):');
+  return answer === null ? '' : answer;
+}
+
 export interface RunPythonStreamOptions {
   onStdout: (text: string) => void;
   onStderr: (text: string) => void;
@@ -142,12 +163,7 @@ export async function runPythonStream(
   // `batched` krijgt complete regels aangeleverd, zonder newline.
   pyodide.setStdout({ batched: (text: string) => onStdout(`${text}\n`) });
   pyodide.setStderr({ batched: (text: string) => onStderr(`${text}\n`) });
-  pyodide.setStdin({
-    stdin: () => {
-      const answer = window.prompt('Invoer (input):');
-      return answer === null ? '' : answer;
-    },
-  });
+  pyodide.setStdin({ stdin: promptStdin });
 
   try {
     await pyodide.runPythonAsync(code, globals ? { globals } : undefined);
@@ -201,12 +217,7 @@ export interface Opname {
 export async function tracePython(pyodide: PyodideInterface, code: string): Promise<Opname> {
   const { RECORDER } = await import('./trace/recorder');
 
-  pyodide.setStdin({
-    stdin: () => {
-      const answer = window.prompt('Invoer (input):');
-      return answer === null ? '' : answer;
-    },
-  });
+  pyodide.setStdin({ stdin: promptStdin });
 
   try {
     const ruw = (await pyodide.runPythonAsync(
@@ -235,12 +246,17 @@ from io import StringIO
 sys.stdout = StringIO()
 sys.stderr = StringIO()
 `);
+  // Zelfde input()-gedrag als runPythonStream; anders leest input() hier van
+  // de standaard-stdin van Pyodide en krijgt de leerling geen vraag te zien.
+  pyodide.setStdin({ stdin: promptStdin });
 
   let didError = false;
+  let jsError = '';
   try {
     await pyodide.runPythonAsync(code);
-  } catch {
+  } catch (err) {
     didError = true;
+    jsError = err instanceof Error ? err.message : String(err);
   }
 
   // sys.stdout.getvalue()/sys.stderr.getvalue() zijn Python str's; Pyodide
@@ -252,10 +268,14 @@ sys.stderr = StringIO()
 sys.stdout = sys.__stdout__
 sys.stderr = sys.__stderr__
 `);
+  pyodide.setStdin();
 
-  if (didError && stderr) {
-    // The traceback lands in stderr — filter out Pyodide internals
-    const filtered = filterTraceback(stderr);
+  // Een Python-fout zet Pyodide als traceback in het omgeleide stderr. Valt
+  // Pyodide zélf om, dan blijft stderr leeg en zit de melding alleen in de
+  // JS-fout; zonder die terugval zag de leerling een lege uitvoer.
+  const foutTekst = stderr || jsError;
+  if (didError && foutTekst) {
+    const filtered = filterTraceback(foutTekst);
     return (stdout ? `${stdout}\n` : '') + filtered;
   }
 
