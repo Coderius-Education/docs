@@ -26,8 +26,8 @@ export type Activity = {
   /** Twee niveaus: Beginner (klas 4-instap) en Medium (Gevorderd). */
   level: 'Beginner' | 'Medium';
   /**
-   * Waar de cursus in de leerlijn van de school valt. Los van het niveau: de
-   * editor-cursus is voor beginners maar hoort bij de verdieping in klas 5+.
+   * Waar de cursus in de leerlijn van de school valt. Een eigen veld, los van
+   * het niveau: robotica en godot passen in beide klassen.
    */
   klas: Klas;
   /** Afgeleid uit de gedeelde registry (SITES_BY_ID[id].url); niet hardcoden. */
@@ -118,7 +118,7 @@ const entries: CurriculumEntry[] = [
     operatingSystems: ['Windows', 'Linux', 'macOS'],
     // Geen examDomains: het instrumentarium (editor, git, GitHub) valt onder domein A
     // dat we bewust niet meenemen in de mapping.
-    level: 'Beginner',
+    level: 'Medium',
     klas: '5+',
     order: {
       vwo: 2,

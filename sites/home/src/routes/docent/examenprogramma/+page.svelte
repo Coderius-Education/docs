@@ -44,10 +44,10 @@
 </script>
 
 <svelte:head>
-	<title>Voor docenten: examenprogramma en subdomeinen</title>
+	<title>Voor docenten: examenprogramma</title>
 	<meta
 		name="description"
-		content="Welke cursus staat op welk subdomein, welke examendomeinen raakt hij, en waar staat de docentenhandleiding."
+		content="Welke examendomeinen van het examenprogramma informatica raakt elke cursus, en hoe sterk."
 	/>
 </svelte:head>
 
@@ -67,11 +67,11 @@
 
 <main class="mx-auto max-w-7xl px-4">
 	<section class="pt-6 pb-4">
-		<h1 class="text-2xl font-bold tracking-tight sm:text-3xl">Examenprogramma en subdomeinen</h1>
+		<h1 class="text-2xl font-bold tracking-tight sm:text-3xl">Examenprogramma</h1>
 		<p class="mt-1 max-w-3xl text-muted-foreground">
-			Elke cursus is een eigen site op een subdomein van coderius.nl. Filter op examendomein om te
-			zien welke cursussen ergens op aansluiten; een gevuld domein is een sterk raakvlak, een open
-			domein een zijdelings. De docentenhandleiding per cursus staat bij het
+			Filter op examendomein om te zien welke cursussen ergens op aansluiten; een gevuld domein is
+			een sterk raakvlak, een open domein een zijdelings. Elke cursusnaam linkt naar de cursussite;
+			de docentenhandleiding per cursus staat bij het
 			<a href="/docent" class="underline underline-offset-2">curriculum</a>.
 		</p>
 	</section>
@@ -86,15 +86,13 @@
 		showStandardFilters={false}
 	/>
 
-	<section aria-label="Cursussen en subdomeinen" class="mb-10">
-		<h2 class="mb-3 text-xl font-bold">Cursussen en subdomeinen</h2>
+	<section aria-label="Cursussen en examendomeinen" class="mb-10">
+		<h2 class="mb-3 text-xl font-bold">Cursussen en examendomeinen</h2>
 		<div class="overflow-x-auto rounded-xl border">
 			<table class="w-full text-sm">
 				<thead class="bg-muted/50 text-left text-xs uppercase tracking-wide text-muted-foreground">
 					<tr>
 						<th scope="col" class="px-3 py-2">Cursus</th>
-						<th scope="col" class="px-3 py-2">Subdomein</th>
-						<th scope="col" class="px-3 py-2">Klas</th>
 						<th scope="col" class="px-3 py-2">Kerndomeinen</th>
 						<th scope="col" class="px-3 py-2">Keuzedomeinen</th>
 					</tr>
@@ -110,10 +108,6 @@
 								</a>
 								<p class="text-xs text-muted-foreground">{c.description}</p>
 							</td>
-							<td class="px-3 py-2 font-mono text-xs">
-								<a href={c.link} target="_blank" rel="noopener noreferrer" class={link}>{hostVan(c.link)}</a>
-							</td>
-							<td class="whitespace-nowrap px-3 py-2">{c.klas}</td>
 							<td class="px-3 py-2">{@render chipsCel(chips.kern, "geen")}</td>
 							<td class="px-3 py-2">{@render chipsCel(chips.keuze, "geen")}</td>
 						</tr>

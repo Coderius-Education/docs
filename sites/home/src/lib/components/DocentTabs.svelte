@@ -7,7 +7,7 @@
 	// zichtbaar vanaf de eerste.
 	const tabs = [
 		{ href: "/docent", label: "Curriculum" },
-		{ href: "/docent/examenprogramma", label: "Examenprogramma en subdomeinen" },
+		{ href: "/docent/examenprogramma", label: "Examenprogramma" },
 	];
 
 	function actief(href: string): boolean {

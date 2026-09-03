@@ -61,11 +61,10 @@ describe('de tabel op de docentenpagina', () => {
     for (const id of NOG_VERBORGEN) expect(DOCENTEN_SITES.some((s) => s.id === id)).toBe(true);
   });
 
-  it('de editor-cursus hoort alleen bij klas 5+, ook al is hij voor beginners', () => {
-    // Klas staat los van niveau: VS Code & Git is de verdieping in klas 5+,
-    // maar het niveau op de homepage blijft Beginner.
+  it('de editor-cursus hoort alleen bij klas 5+', () => {
+    // Klas is een eigen veld, niet afgeleid uit het niveau; deze test pint
+    // de plek van VS Code & Git in de verdieping vast.
     const editor = docentenCursussen.find((c) => c.id === 'editor');
-    expect(editor?.level).toBe('Beginner');
     expect(editor && inKlas4(editor)).toBe(false);
     expect(editor && inKlas5(editor)).toBe(true);
   });
