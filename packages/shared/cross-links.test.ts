@@ -88,12 +88,13 @@ describe('controleer over de fixture-builds', () => {
     const { kapot, gecontroleerd, overgeslagen } = controleer(builds);
     expect(kapot.map((k) => k.href)).toEqual([
       'https://editor.coderius.nl/docs/python/stap-4-venv',
+      'https://editor.coderius.nlpython/stap-4-venv',
     ]);
     expect(kapot[0]).toMatchObject({ site: 'fullstack', doelSite: 'editor' });
     expect(kapot[0].bron.split('\\').join('/')).toBe('docs/FastAPI/installatie/index.html');
-    // Vier goede links plus de kapotte zijn gecontroleerd; de link naar de
-    // niet-gebouwde python-site is overgeslagen, niet kapot.
-    expect(gecontroleerd).toBe(5);
+    // Vier goede links plus de twee kapotte zijn gecontroleerd; de link naar
+    // de niet-gebouwde python-site is overgeslagen, niet kapot.
+    expect(gecontroleerd).toBe(6);
     expect(overgeslagen).toBe(1);
   });
 });
