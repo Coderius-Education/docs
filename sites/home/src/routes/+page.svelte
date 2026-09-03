@@ -74,7 +74,7 @@
 	<section aria-label="Cursussen">
 		<p class="mb-3 text-sm text-muted-foreground">
 			{#if zichtbaar.length === curriculum.length}
-				Alle {curriculum.length} cursussen, in de volgorde van de leerlijn.
+				Alle {curriculum.length} cursussen, eerst voor beginners, daarna gevorderd.
 			{:else}
 				{zichtbaar.length} van {curriculum.length} cursussen.
 			{/if}

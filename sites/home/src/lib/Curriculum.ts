@@ -282,8 +282,10 @@ const entries: CurriculumEntry[] = [
   },
 ];
 
-// In de volgorde van de registry: dat is de leerlijn, en die staat op één plek.
+// Eerst alle cursussen voor beginners, dan de gevorderde; binnen een niveau in
+// de volgorde van de registry (de leerlijn, en die staat op één plek).
 const volgorde = new Map(SITES.map((s, i) => [s.id, i]));
+const niveauVolgorde: Record<Activity['level'], number> = { Beginner: 0, Medium: 1 };
 
 export const curriculum: Activity[] = entries
   .map((e) => {
@@ -296,7 +298,11 @@ export const curriculum: Activity[] = entries
       link: site.url,
     };
   })
-  .sort((a, b) => (volgorde.get(a.id) ?? 99) - (volgorde.get(b.id) ?? 99));
+  .sort(
+    (a, b) =>
+      niveauVolgorde[a.level] - niveauVolgorde[b.level] ||
+      (volgorde.get(a.id) ?? 99) - (volgorde.get(b.id) ?? 99),
+  );
 
 /** Badge-klassen per niveau, leesbaar in licht én donker thema. */
 export const levelColors: { [key in Activity['level']]: string } = {

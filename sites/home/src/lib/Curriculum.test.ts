@@ -54,8 +54,19 @@ describe('curriculum versus de registry', () => {
     expect(kapot).toEqual([]);
   });
 
-  it('staat in de volgorde van de registry: de leerlijn', () => {
-    expect(curriculum.map((c) => c.id)).toEqual(SITES.map((s) => s.id));
+  it('staat op niveau: eerst alle beginners, dan gevorderd, elk in registry-volgorde', () => {
+    // Een leerling die begint ziet zo eerst wat voor hem is; binnen een niveau
+    // blijft de leerlijn uit de registry de volgorde.
+    const registry = SITES.map((s) => s.id);
+    const beginners = registry.filter(
+      (id) => curriculum.find((c) => c.id === id)?.level === 'Beginner',
+    );
+    const gevorderd = registry.filter(
+      (id) => curriculum.find((c) => c.id === id)?.level === 'Medium',
+    );
+    expect(curriculum.map((c) => c.id)).toEqual([...beginners, ...gevorderd]);
+    expect(beginners.length).toBeGreaterThan(0);
+    expect(gevorderd.length).toBeGreaterThan(0);
   });
 
   it('elke cursus valt onder minstens één thema van de filterrij', () => {
