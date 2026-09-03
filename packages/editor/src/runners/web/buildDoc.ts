@@ -30,6 +30,10 @@ function consoleInterceptor(token: string): string {
   window.addEventListener('error', function(e) {
     send('error', ['JavaScript fout: ' + e.message]);
   });
+  window.addEventListener('unhandledrejection', function(e) {
+    var r = e.reason;
+    send('error', ['JavaScript fout: ' + (r && r.message ? r.message : String(r))]);
+  });
 })();
 <\/script>`;
 }

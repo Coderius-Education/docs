@@ -37,6 +37,9 @@ describe('buildDoc — console-interceptor', () => {
     const interceptor = result.slice(0, result.indexOf('</script>'));
     expect(interceptor).toContain("window.addEventListener('error', function(e) {");
     expect(interceptor).toContain("send('error', ['JavaScript fout: ' + e.message]);");
+    // Een fout in een .then() of een async functie is geen ErrorEvent maar een
+    // afgewezen promise; zonder deze listener blijft de console daar leeg.
+    expect(interceptor).toContain("window.addEventListener('unhandledrejection', function(e) {");
   });
 
   it('meldt de hoogte van de inhoud aan de pagina eromheen', () => {

@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ProjectFiles } from '../types';
 import {
   ACK_SOURCE,
-  MAX_HERPOSTS,
+  herpostMomenten,
   MESSAGE_SOURCE,
   buildImportPayload,
   openInIde,
@@ -89,8 +89,9 @@ describe('buildImportPayload — wat de nakijker naar de IDE stuurt', () => {
 // openInIde herpostte het volledige project elke 300 ms, vijftien seconden
 // lang (vijftig keer), ook als de IDE allang luisterde maar het ack nog
 // onderweg was, en ook als hij nooit zou luisteren. Nu: één keer meteen,
-// daarna hooguit MAX_HERPOSTS keer tot het ack komt; daarna alleen nog
-// kijken of het tabblad dicht is. Node heeft geen window, dus hier staat een
+// daarna op verdubbelende afstand tot het ack komt (de laatste na negen
+// seconden, zodat een traag ladend tabblad tot het einde een kans houdt);
+// tussendoor alleen kijken of het tabblad dicht is. Node heeft geen window, dus hier staat een
 // minimale nep-window die zijn timers aan de (nep-)timers van vitest overlaat.
 
 interface NepTabblad {
@@ -138,7 +139,12 @@ describe('openInIde — herposten tot het ack komt', () => {
     vi.unstubAllGlobals();
   });
 
-  it('stuurt het project meteen en daarna hooguit MAX_HERPOSTS keer opnieuw', () => {
+  it('de herpost-momenten verdubbelen en dekken de hele timeout', () => {
+    expect(herpostMomenten()).toEqual([300, 900, 2100, 4500, 9300]);
+    expect(herpostMomenten(100, 1000)).toEqual([100, 300, 700]);
+  });
+
+  it('stuurt het project meteen en daarna op verdubbelende afstanden opnieuw', () => {
     nepWindow(tabblad);
     const onResult = vi.fn();
 
@@ -149,8 +155,14 @@ describe('openInIde — herposten tot het ack komt', () => {
       IDE,
     );
 
-    vi.advanceTimersByTime(14_000);
-    expect(tabblad.postMessage).toHaveBeenCalledTimes(1 + MAX_HERPOSTS);
+    vi.advanceTimersByTime(9_000);
+    expect(tabblad.postMessage).toHaveBeenCalledTimes(5);
+    // De laatste herpost valt na 9,3 s: een tabblad dat pas dan luistert
+    // krijgt het project alsnog. Met een vaste limiet van tien stopte dat na 3 s.
+    vi.advanceTimersByTime(300);
+    expect(tabblad.postMessage).toHaveBeenCalledTimes(6);
+    vi.advanceTimersByTime(4_700);
+    expect(tabblad.postMessage).toHaveBeenCalledTimes(6);
     expect(onResult).not.toHaveBeenCalled();
 
     vi.advanceTimersByTime(1_000);
@@ -163,7 +175,7 @@ describe('openInIde — herposten tot het ack komt', () => {
 
     openInIde(files('index.html'), 'Site', IDE, onResult);
     vi.advanceTimersByTime(650);
-    expect(tabblad.postMessage).toHaveBeenCalledTimes(3);
+    expect(tabblad.postMessage).toHaveBeenCalledTimes(2);
 
     w.ack();
     expect(onResult).toHaveBeenCalledTimes(1);
@@ -171,17 +183,17 @@ describe('openInIde — herposten tot het ack komt', () => {
     expect(w.aantalLuisteraars()).toBe(0);
 
     vi.advanceTimersByTime(20_000);
-    expect(tabblad.postMessage).toHaveBeenCalledTimes(3);
+    expect(tabblad.postMessage).toHaveBeenCalledTimes(2);
     expect(onResult).toHaveBeenCalledTimes(1);
   });
 
-  it('blijft na de herpost-limiet kijken of het tabblad dicht is', () => {
+  it('blijft na het laatste herpost-moment kijken of het tabblad dicht is', () => {
     nepWindow(tabblad);
     const onResult = vi.fn();
 
     openInIde(files('index.html'), 'Site', IDE, onResult);
-    vi.advanceTimersByTime(300 * (MAX_HERPOSTS + 5));
-    expect(tabblad.postMessage).toHaveBeenCalledTimes(1 + MAX_HERPOSTS);
+    vi.advanceTimersByTime(12_000);
+    expect(tabblad.postMessage).toHaveBeenCalledTimes(6);
 
     tabblad.closed = true;
     vi.advanceTimersByTime(300);

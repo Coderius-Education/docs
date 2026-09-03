@@ -38,6 +38,14 @@ describe('buildDoc — console-interceptor', () => {
     expect(result).toContain(`token: '${TOKEN}'`);
   });
 
+  it('meldt ook afgewezen promises als JavaScript-fout', () => {
+    // Een fout in een .then() of een async functie is geen ErrorEvent maar een
+    // afgewezen promise; zonder deze listener blijft de console daar leeg.
+    const result = buildDoc({ 'index.html': pagina('', '') }, 'index.html', TOKEN);
+    expect(result).toContain("window.addEventListener('error', function(e) {");
+    expect(result).toContain("window.addEventListener('unhandledrejection', function(e) {");
+  });
+
   it('komt vooraan als er geen <head> is', () => {
     const result = buildDoc({ 'index.html': '<p>hoi</p>' }, 'index.html', TOKEN);
     expect(result.startsWith('<script>')).toBe(true);

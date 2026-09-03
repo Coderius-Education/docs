@@ -19,6 +19,10 @@ const CONSOLE_INTERCEPTOR = `<script>
   window.addEventListener('error', function(e) {
     send('error', ['JavaScript fout: ' + e.message]);
   });
+  window.addEventListener('unhandledrejection', function(e) {
+    var r = e.reason;
+    send('error', ['JavaScript fout: ' + (r && r.message ? r.message : String(r))]);
+  });
 })();
 <\/script>`;
 

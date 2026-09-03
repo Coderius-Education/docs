@@ -1,7 +1,7 @@
 // Data voor de conceptenkaart (/conceptenkaart): welke python-lessen zijn
 // voorkennis voor welk algoritme. Dit spiegelt de <Voorkennis>-blokken in
-// docs/**/*.mdx — scripts/check-voorkennis.mjs bewaakt dat beide gelijk
-// blijven (npm run test:voorkennis).
+// docs/**/*.mdx — src/data/voorkennis.test.ts bewaakt dat beide gelijk
+// blijven (pnpm test).
 
 export type PythonConcept = {
   /** Korte sleutel, gebruikt in voorkennisPerAlgoritme. */

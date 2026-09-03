@@ -46,6 +46,24 @@ export function renameInProject<P extends Pick<Project, 'files' | 'folders' | 'e
   return { ...project, files, entry: project.entry === from ? to : project.entry };
 }
 
+/**
+ * Bestaat `path` al in het project? Een map bestaat als hij expliciet is
+ * aangemaakt óf als er een bestand onder staat. Hernoemen naar een bestaand
+ * pad zou anders stil bestanden overschrijven (map "src" naar "src2" terwijl
+ * src2/a.py al bestaat) of een dubbele mapregel opleveren.
+ */
+export function pathExists<P extends Pick<Project, 'files' | 'folders'>>(
+  project: P,
+  path: string,
+  isFolder: boolean,
+): boolean {
+  if (!isFolder) return project.files[path] !== undefined;
+  const prefix = `${path}/`;
+  return (
+    project.folders.includes(path) || Object.keys(project.files).some((k) => k.startsWith(prefix))
+  );
+}
+
 /** Valt `path` weg als `deleted` (bestand of map) verwijderd wordt? */
 export function isDeletedPath(path: string, deleted: string, isFolder: boolean): boolean {
   return isFolder ? path.startsWith(`${deleted}/`) : path === deleted;

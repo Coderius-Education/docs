@@ -63,6 +63,17 @@ describe('isBerichtVanOuder', () => {
     }
   });
 
+  it('de gedeelde iframe neemt het nieuwe requestId pas aan ná het afbreken van de vorige run', () => {
+    // Anders krijgt wat het oude programma tijdens __pygbag_reset() nog print
+    // het id van de nieuwe run en belandt het alsnog in de verkeerde console.
+    const doc = buildSharedRunnerSrcDoc(['import play']);
+    const runHandler = doc.slice(doc.indexOf("if (type === 'run')"));
+    const reset = runHandler.indexOf("runPythonAsync('__pygbag_reset()')");
+    const overname = runHandler.indexOf('CURRENT_REQUEST = requestId');
+    expect(reset).toBeGreaterThan(-1);
+    expect(overname).toBeGreaterThan(reset);
+  });
+
   it('de gedeelde iframe controleert de afzender vóór hij naar e.data kijkt', () => {
     const doc = buildSharedRunnerSrcDoc(['import play']);
     expect(doc).toContain(IS_BERICHT_VAN_OUDER_SNIPPET);

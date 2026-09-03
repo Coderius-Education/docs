@@ -3,6 +3,7 @@ import {
   deleteFromProject,
   isDeletedPath,
   isValidPath,
+  pathExists,
   renameInProject,
   renamedPath,
 } from './paths';
@@ -102,5 +103,27 @@ describe('isDeletedPath', () => {
     ['index.htm', 'index.html', false, false],
   ])('%s bij verwijderen van %s (map: %s) → %s', (path, deleted, isFolder, verwacht) => {
     expect(isDeletedPath(path, deleted, isFolder)).toBe(verwacht);
+  });
+});
+
+describe('pathExists — de botsingscheck vóór hernoemen', () => {
+  // Alleen bestanden werden gecontroleerd; een map hernoemen naar een
+  // bestaande buurman overschreef stil src2/a.py en gaf een dubbele mapregel.
+  it('een bestand bestaat als het in files staat', () => {
+    expect(pathExists(project, 'src/a.py', false)).toBe(true);
+    expect(pathExists(project, 'src/b.py', false)).toBe(false);
+  });
+
+  it('een map bestaat als hij expliciet is, of als er een bestand onder staat', () => {
+    expect(pathExists(project, 'src2', true)).toBe(true);
+    expect(pathExists(project, 'leeg', true)).toBe(true);
+    expect(pathExists({ files: { 'impliciet/x.py': '' }, folders: [] }, 'impliciet', true)).toBe(
+      true,
+    );
+    expect(pathExists(project, 'src3', true)).toBe(false);
+  });
+
+  it('src is geen prefix van src2', () => {
+    expect(pathExists({ files: { 'src2/x.py': '' }, folders: [] }, 'src', true)).toBe(false);
   });
 });

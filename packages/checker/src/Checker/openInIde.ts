@@ -14,11 +14,29 @@ export const MESSAGE_SOURCE = 'coderius-website-checker';
 export const ACK_SOURCE = 'coderius-editor-import';
 const POLL_INTERVAL_MS = 300;
 const TIMEOUT_MS = 15000;
+
+/**
+ * Momenten (ms na openen) waarop het project opnieuw wordt gepost: op
+ * verdubbelende afstand vanaf het polinterval tot de timeout. Zo krijgt een
+ * tabblad dat traag laadt tot het einde een kans (de laatste herpost valt na
+ * negen seconden), zonder dat een groot project vijftig keer over de lijn
+ * gaat. Een vaste bovengrens van tien herposts dekte maar drie seconden.
+ */
+export function herpostMomenten(interval = POLL_INTERVAL_MS, timeout = TIMEOUT_MS): number[] {
+  const momenten: number[] = [];
+  let wacht = interval;
+  let t = interval;
+  while (t < timeout) {
+    momenten.push(t);
+    wacht *= 2;
+    t += wacht;
+  }
+  return momenten;
+}
 // Het bericht gaat meteen bij het openen, en daarna hooguit zo vaak opnieuw
 // (om de POLL_INTERVAL_MS) zolang het ack uitblijft. Daarna wordt alleen nog
 // gekeken of het tabblad dicht is: het hele project 50 keer over de lijn
 // sturen is zinloos als de IDE na een paar seconden nog niet luistert.
-export const MAX_HERPOSTS = 10;
 
 /** Kies het startbestand (index.html op de kortste diepte, anders eerste .html). */
 export function pickEntry(files: ProjectFiles): string | null {
@@ -97,14 +115,17 @@ export function openInIde(
     finish('opened');
   }
 
-  let herposts = 0;
+  const momenten = herpostMomenten();
+  let verstreken = 0;
+  let volgende = 0;
   const interval = window.setInterval(() => {
     if (win.closed) {
       finish('timeout');
       return;
     }
-    if (herposts < MAX_HERPOSTS) {
-      herposts += 1;
+    verstreken += POLL_INTERVAL_MS;
+    if (volgende < momenten.length && verstreken >= momenten[volgende]) {
+      volgende += 1;
       win.postMessage(payload, ideUrl);
     }
   }, POLL_INTERVAL_MS);

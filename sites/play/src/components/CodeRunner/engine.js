@@ -437,10 +437,14 @@ window.addEventListener('message', async (e) => {
 
   if (type === 'run') {
     const { code, lineOffset } = e.data;
-    CURRENT_OFFSET = lineOffset || 0;
-    CURRENT_REQUEST = requestId;
     try {
+      // Eerst het vorige programma afbreken, dan pas het nieuwe requestId
+      // aannemen: wat het oude programma tijdens het afbreken nog print
+      // (een finally, een laatste frame) hoort bij de oude run, niet bij
+      // de nieuwe console.
       try { await pyodide.runPythonAsync('__pygbag_reset()'); } catch (e) {}
+      CURRENT_OFFSET = lineOffset || 0;
+      CURRENT_REQUEST = requestId;
       await pyodide.runPythonAsync(code, { filename: '<jouw_code>' });
       post('run-done', { requestId });
     } catch (err) {

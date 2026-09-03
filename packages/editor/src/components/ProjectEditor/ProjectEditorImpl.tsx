@@ -23,6 +23,7 @@ import {
   deleteFromProject,
   isDeletedPath,
   isValidPath,
+  pathExists,
   renameInProject,
   renamedPath,
 } from './paths';
@@ -255,8 +256,12 @@ export default function ProjectEditorImpl({
       }
       const current = projectRef.current;
       if (!current) return;
-      if (!isFolder && current.files[next] !== undefined) {
-        window.alert('Er bestaat al een bestand met deze naam.');
+      if (pathExists(current, next, isFolder)) {
+        window.alert(
+          isFolder
+            ? 'Er bestaat al een map met deze naam.'
+            : 'Er bestaat al een bestand met deze naam.',
+        );
         return;
       }
       mutateProject((p) => renameInProject(p, path, next, isFolder));
