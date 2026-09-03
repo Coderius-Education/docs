@@ -1,30 +1,14 @@
 import Link from '@docusaurus/Link';
-import { type Tip, tips } from '@site/src/data/tips';
+import { tips } from '@site/src/data/tips';
 import { type ReactNode, useMemo, useState } from 'react';
+import { filterTips } from './filterTips';
 import styles from './styles.module.css';
-
-// Alles waar de zoekterm tegen mag matchen, samengevoegd tot één kleine-letter string.
-function zoekTekst(tip: Tip): string {
-  return [
-    tip.term,
-    tip.categorie,
-    tip.samenvatting,
-    tip.paper.titel,
-    tip.paper.auteurs,
-    ...tip.termen,
-  ]
-    .join(' ')
-    .toLowerCase();
-}
 
 export default function TipZoeker(): ReactNode {
   const [query, setQuery] = useState('');
 
-  const index = useMemo(() => tips.map((tip) => ({ tip, tekst: zoekTekst(tip) })), []);
-  const woorden = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
-  const resultaten = woorden.length
-    ? index.filter(({ tekst }) => woorden.every((w) => tekst.includes(w))).map(({ tip }) => tip)
-    : tips;
+  // Het filter zelf staat in filterTips.ts, los van React, met eigen tests.
+  const resultaten = useMemo(() => filterTips(tips, query), [query]);
 
   return (
     <section className={styles.zoeker}>

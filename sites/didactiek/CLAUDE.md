@@ -20,3 +20,12 @@ de doelgroep: hij richt zich op **docenten en auteurs**, niet op leerlingen.
   bibliografische gegevens (auteurs, jaar, titel) gelijk tussen `tips.ts` en de
   detailpagina.
 - Geen emoji, geen "u" — net als de rest van de Coderius-docs.
+- **Het zoekfilter van de TipZoeker staat los van React in
+  `src/components/TipZoeker/filterTips.ts`** (`filterTips(tips, zoekterm)`), met
+  `filterTips.test.ts` ernaast. Vastgelegd gedrag: elk woord uit de zoekterm
+  moet ergens voorkomen (term, categorie, samenvatting, papertitel, auteurs of
+  trefwoorden), hoofdletterongevoelig, op een deel van een woord, en zonder
+  accent-normalisatie ('cognitiëve' vindt 'cognitieve' niet — bewust
+  vastgelegd als huidig gedrag, geen wens). De test controleert ook dat elke
+  tip uit `tips.ts` op zijn eigen term en trefwoorden te vinden is. Verander je
+  het zoekgedrag, pas dan filter en test samen aan.
