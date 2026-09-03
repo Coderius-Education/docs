@@ -10,82 +10,21 @@
 // 7.3.0 publiceert het project zelf een wasm-wheel voor Python 3.13, en die
 // staat hieronder. Ga je hierin bumpen, dan moet de pymunk-wheel mee: zijn
 // ABI-tag (pyemscripten_2025_0) hoort bij de abi_version van de Pyodide-versie.
-const PYODIDE_VERSION = '0.29.4';
+export const PYODIDE_VERSION = '0.29.4';
 const PYODIDE_CDN = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/pyodide.mjs`;
 const PYMUNK_WHEEL = '/whl/pymunk-7.3.0-cp313-cp313-pyemscripten_2025_0_wasm32.whl';
 const PLAY_WHEEL = '/whl/coderius_play-3.4.0-py3-none-any.whl';
 
-/**
- * Ensure code has an async main loop for Pyodide compatibility.
- * Pyodide's webloop requires async code with `await asyncio.sleep(0)` in loops
- * so the browser event loop stays responsive.
- */
-export function ensureAsync(code) {
-  if (!code) return { code: '', lineOffset: 0 };
+// De pure helpers (geen DOM, geen Pyodide) staan in puur.js zodat ze in node
+// te testen zijn; callers importeren ze nog steeds vanaf hier.
+import {
+  IS_BERICHT_VAN_OUDER_SNIPPET,
+  REWRITE_TRACEBACK_SNIPPET,
+  detectMode,
+  ensureAsync,
+} from './puur';
 
-  // If the code already uses asyncio + await, assume it is ready.
-  // But replace asyncio.run(main()) with await main() since
-  // Pyodide's runPythonAsync already runs inside an asyncio event loop.
-  if (code.includes('asyncio') && code.includes('await')) {
-    return {
-      code: code.replace(/asyncio\.run\s*\(\s*main\s*\(\s*\)\s*\)/, 'await main()'),
-      lineOffset: 0,
-    };
-  }
-
-  const lines = code.split('\n');
-  const importLines = [];
-  const bodyLines = [];
-
-  // Only hoist top-level imports (no leading whitespace) to avoid
-  // pulling imports from inside functions or conditionals.
-  for (const line of lines) {
-    if (/^(import |from )/.test(line)) {
-      importLines.push(line);
-    } else {
-      bodyLines.push(line);
-    }
-  }
-
-  if (!importLines.some((l) => /\basyncio\b/.test(l))) {
-    importLines.push('import asyncio');
-  }
-
-  // Indent body and inject `await asyncio.sleep(0)` after while-loop headers.
-  const indentedBody = [];
-  for (let i = 0; i < bodyLines.length; i++) {
-    const line = bodyLines[i];
-    indentedBody.push(`    ${line}`);
-
-    if (/^\s*while\s+.+:\s*(#.*)?$/.test(line)) {
-      const nextLine = bodyLines[i + 1] || '';
-      const match = nextLine.match(/^(\s+)/);
-      const loopBodyIndent = match ? match[1] : '    ';
-      indentedBody.push(`    ${loopBodyIndent}await asyncio.sleep(0)`);
-    }
-  }
-
-  // The first body line lands at line (importLines.length + 3) in the
-  // wrapped output (importLines + blank + 'async def main():' + body).
-  // So a traceback line N maps back to user-code line (N - lineOffset).
-  // Note: this is approximate — if the user had imports, they were hoisted
-  // and the mapping for non-import lines is offset by (importLines + 2).
-  const lineOffset = importLines.length + 2;
-
-  return {
-    code: [...importLines, '', 'async def main():', ...indentedBody, '', 'await main()'].join('\n'),
-    lineOffset,
-  };
-}
-
-/**
- * Auto-detect execution mode from code content.
- */
-export function detectMode(code) {
-  if (/\bimport\s+play\b|from\s+play\s+import\b/.test(code)) return 'play';
-  if (/\bimport\s+pygame\b|from\s+pygame\s+import\b/.test(code)) return 'pygame';
-  return 'pygame';
-}
+export { detectMode, ensureAsync, isBerichtVanOuder, rewriteTraceback } from './puur';
 
 /**
  * Detect which packages the code needs based on imports.
@@ -199,6 +138,8 @@ try {
 /**
  * Build the HTML srcdoc for the execution iframe.
  * Uses Pyodide to run Python code with pygame-ce, pymunk, etc.
+ *
+ * @param {{ code: string, mode?: string, canvasWidth?: number, canvasHeight?: number }} opties
  */
 export function buildSrcDoc({ code, mode = 'pygame', canvasWidth, canvasHeight }) {
   // Normalize line endings to LF and sanitize code.
@@ -286,13 +227,7 @@ function appendConsole(text, cls) {
 // For play mode lineOffset=0 (no rewrite). For pygame mode lineOffset
 // equals the number of preamble lines added by ensureAsync.
 const LINE_OFFSET = ${lineOffset};
-function rewriteTraceback(msg) {
-  if (!LINE_OFFSET) return msg;
-  return msg.replace(/File "<jouw_code>", line (\\d+)/g, (m, n) => {
-    const corrected = Math.max(1, parseInt(n, 10) - LINE_OFFSET);
-    return 'File "<jouw_code>", line ' + corrected;
-  });
-}
+${REWRITE_TRACEBACK_SNIPPET}
 
 try {
   loading.textContent = 'Runtime laden...';
@@ -302,7 +237,7 @@ try {
 
   // Capture print() output and show it in the visible console panel
   pyodide.setStdout({ batched: (msg) => appendConsole(msg + '\\n') });
-  pyodide.setStderr({ batched: (msg) => appendConsole(rewriteTraceback(msg) + '\\n', 'err') });
+  pyodide.setStderr({ batched: (msg) => appendConsole(rewriteTraceback(msg, LINE_OFFSET) + '\\n', 'err') });
 
   // Wire canvas for SDL2/Emscripten rendering
   pyodide.canvas.setCanvas2D(canvas);
@@ -324,7 +259,7 @@ try {
   await pyodide.runPythonAsync(USER_CODE, { filename: '<jouw_code>' });
 } catch (err) {
   const rawMessage = String(err && err.message ? err.message : err);
-  appendConsole(rewriteTraceback(rawMessage) + '\\n', 'err');
+  appendConsole(rewriteTraceback(rawMessage, LINE_OFFSET) + '\\n', 'err');
   if (loading.style.display !== 'none') {
     loading.textContent = 'Fout - zie console';
     loading.style.color = '#f44';
@@ -439,14 +374,18 @@ const loading = document.getElementById('loading');
 const canvas = document.getElementById('canvas');
 
 let CURRENT_OFFSET = 0;
-function rewriteTraceback(msg) {
-  if (!CURRENT_OFFSET) return msg;
-  return msg.replace(/File "<jouw_code>", line (\\d+)/g, (m, n) => {
-    const corrected = Math.max(1, parseInt(n, 10) - CURRENT_OFFSET);
-    return 'File "<jouw_code>", line ' + corrected;
-  });
+// Elk bericht naar de ouder draagt het requestId van de run die nu draait.
+// stdout/stderr komen via setStdout/setStderr binnen zonder context, dus die
+// krijgen het via deze variabele mee; de ouder negeert alles met een ander id
+// (zie SharedRunner/routeer.js). Zonder dit lekte output van een gestopte run
+// de console van de runner in die 'm had verdrongen.
+let CURRENT_REQUEST = null;
+let BOOT_ERROR = null;
+${REWRITE_TRACEBACK_SNIPPET}
+${IS_BERICHT_VAN_OUDER_SNIPPET}
+function post(type, extra) {
+  parent.postMessage(Object.assign({ type, requestId: CURRENT_REQUEST }, extra || {}), '*');
 }
-function post(type, extra) { parent.postMessage(Object.assign({ type }, extra || {}), '*'); }
 
 let pyodide = null;
 let booting = (async () => {
@@ -456,7 +395,7 @@ let booting = (async () => {
     pyodide = await loadPyodide({ packages: [${pyodidePackagesCode}] });
 
     pyodide.setStdout({ batched: (msg) => post('stdout', { text: msg + '\\n' }) });
-    pyodide.setStderr({ batched: (msg) => post('stderr', { text: rewriteTraceback(msg) + '\\n' }) });
+    pyodide.setStderr({ batched: (msg) => post('stderr', { text: rewriteTraceback(msg, CURRENT_OFFSET) + '\\n' }) });
     pyodide.canvas.setCanvas2D(canvas);
 
     const WHEELS = [${wheelsCode}];
@@ -475,35 +414,43 @@ let booting = (async () => {
     post('iframe-ready');
   } catch (err) {
     const msg = String(err && err.message ? err.message : err);
+    BOOT_ERROR = msg;
     loading.textContent = 'Fout - zie console';
     loading.style.color = '#f44';
+    // Nog geen run, dus geen requestId; de ouder negeert dit bericht. Elke
+    // latere 'run' krijgt de fout alsnog, mét zijn eigen id (hieronder).
     post('error', { message: msg, fatal: true });
     console.error(err);
   }
 })();
 
 window.addEventListener('message', async (e) => {
+  if (!isBerichtVanOuder(e, window.parent)) return;
   if (!e.data || !e.data.type) return;
-  const { type } = e.data;
+  const { type, requestId } = e.data;
 
   await booting;
-  if (!pyodide) return;
+  if (!pyodide) {
+    if (type === 'run') post('error', { requestId, message: BOOT_ERROR, fatal: true });
+    return;
+  }
 
   if (type === 'run') {
-    const { code, lineOffset, requestId } = e.data;
+    const { code, lineOffset } = e.data;
     CURRENT_OFFSET = lineOffset || 0;
+    CURRENT_REQUEST = requestId;
     try {
       try { await pyodide.runPythonAsync('__pygbag_reset()'); } catch (e) {}
       await pyodide.runPythonAsync(code, { filename: '<jouw_code>' });
       post('run-done', { requestId });
     } catch (err) {
       const msg = String(err && err.message ? err.message : err);
-      post('error', { requestId, message: rewriteTraceback(msg) });
+      post('error', { requestId, message: rewriteTraceback(msg, CURRENT_OFFSET) });
       console.error(err);
     }
   } else if (type === 'stop') {
     try { await pyodide.runPythonAsync('__pygbag_reset()'); } catch (e) {}
-    post('stopped', { requestId: e.data.requestId });
+    post('stopped', { requestId });
   }
 });
 </script>

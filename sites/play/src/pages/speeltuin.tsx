@@ -2,6 +2,7 @@ import BrowserOnly from '@docusaurus/BrowserOnly';
 import Layout from '@theme/Layout';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { codeerDeelLink, decodeerDeelLink } from '../lib/deellink';
 import styles from './speeltuin.module.css';
 
 // De runner-modules zijn plain JS en laden lui; hun types komen uit de bron.
@@ -80,20 +81,20 @@ function PlaygroundInner() {
     });
   }, []);
 
-  // Load from URL hash on mount
+  // Load from URL hash on mount. decodeerDeelLink leest zowel het huidige
+  // formaat als de oude btoa-links en geeft null bij rommel.
   useEffect(() => {
-    try {
-      const hash = window.location.hash.slice(1);
-      const params = new URLSearchParams(hash);
-      const encodedCode = params.get('code');
-      const hashMode = params.get('mode');
-      if (encodedCode) {
-        setCode(decodeURIComponent(atob(encodedCode)));
-      }
-      if (hashMode === 'play' || hashMode === 'pygame') {
-        setMode(hashMode);
-      }
-    } catch {}
+    const hash = window.location.hash.slice(1);
+    const params = new URLSearchParams(hash);
+    const encodedCode = params.get('code');
+    const hashMode = params.get('mode');
+    if (encodedCode) {
+      const gedeeld = decodeerDeelLink(encodedCode);
+      if (gedeeld !== null) setCode(gedeeld);
+    }
+    if (hashMode === 'play' || hashMode === 'pygame') {
+      setMode(hashMode);
+    }
   }, []);
 
   // Update URL hash on code change (debounced)
@@ -101,7 +102,7 @@ function PlaygroundInner() {
     const timeout = setTimeout(() => {
       try {
         const params = new URLSearchParams();
-        params.set('code', btoa(encodeURIComponent(code)));
+        params.set('code', codeerDeelLink(code));
         params.set('mode', mode);
         window.history.replaceState(null, '', `#${params.toString()}`);
       } catch {}
