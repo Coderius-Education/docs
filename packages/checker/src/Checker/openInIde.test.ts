@@ -2,9 +2,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ProjectFiles } from '../types';
 import {
   ACK_SOURCE,
-  herpostMomenten,
   MESSAGE_SOURCE,
   buildImportPayload,
+  herpostMomenten,
   openInIde,
   pickEntry,
 } from './openInIde';
