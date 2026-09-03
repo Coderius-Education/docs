@@ -110,4 +110,15 @@ describe('Voorkennis-blokken over alle sites', () => {
     expect(lesBestaat(SITES_ROOT, 'python', '/docs/basis/bestaat-niet')).toBe(false);
     expect(lesBestaat(SITES_ROOT, 'bestaat-niet', '/docs/x/y')).toBe(false);
   });
+
+  it('kijkt naar hoe de doelsite zijn docs serveert, niet alleen of het bestand bestaat', () => {
+    // De editor-cursus serveert zijn docs op de root (routeBasePath '/'). Een
+    // pad met /docs/ wijst daar naar een bestaand bestand maar een 404-URL; de
+    // fullstack-installatiepagina had er drie en de guard keurde ze goed.
+    // Andersom mist een pad zonder /docs/ op elke andere site.
+    expect(lesBestaat(SITES_ROOT, 'editor', '/docs/python/stap-1-installeren')).toBe(false);
+    expect(lesBestaat(SITES_ROOT, 'editor', '/python/stap-1-installeren')).toBe(true);
+    expect(lesBestaat(SITES_ROOT, 'python', '/basis/jij-als-variabele')).toBe(false);
+    expect(lesBestaat(SITES_ROOT, 'python', '/docs/basis/jij-als-variabele')).toBe(true);
+  });
 });

@@ -46,6 +46,8 @@ const ZONDER_BLOK: Record<string, string> = {
   'FastAPI/cookies.mdx': 'nieuwe stof is server-side en wordt hier zelf uitgelegd',
   'FastAPI/hoe-een-verzoek-werkt.mdx': 'samenvatting van deze cursus, geen nieuwe stof',
   'FastAPI/html_bestanden.mdx': 'HTML-bestand en pad; HTML zelf staat al bij html_tonen',
+  'FastAPI/installatie.mdx':
+    'controlelijst: elke check verwijst zelf met een SiteLink naar de editor-cursus',
   'FastAPI/jouw-project.mdx': 'eindopdracht, verwijst per stap naar de eigen lessen',
   'FastAPI/laat-het-zien.mdx': 'terminalcommando en netwerkadres, geen voorkennis uit een cursus',
   'FastAPI/projectstructuur.mdx': 'naslag over deze cursus zelf',
@@ -62,7 +64,6 @@ const MET_BLOK = [
   'FastAPI/forms.mdx',
   'FastAPI/get_vs_post.mdx',
   'FastAPI/html_tonen.mdx',
-  'FastAPI/installatie.mdx',
   'FastAPI/javascript.mdx',
   'FastAPI/lijst_tonen.mdx',
   'FastAPI/links.mdx',
@@ -145,7 +146,9 @@ describe('fullstack Voorkennis-blokken', () => {
     // suite stil groen laten.
     expect(lesBestaat(SITES_ROOT, 'python', '/docs/basis/jij-als-variabele')).toBe(true);
     expect(lesBestaat(SITES_ROOT, 'web', '/docs/html-css/intro-html')).toBe(true);
-    expect(lesBestaat(SITES_ROOT, 'editor', '/docs/python/stap-4-venv')).toBe(true);
+    // De editor-cursus serveert zijn docs op de root: zónder /docs/.
+    expect(lesBestaat(SITES_ROOT, 'editor', '/python/stap-4-venv')).toBe(true);
+    expect(lesBestaat(SITES_ROOT, 'editor', '/docs/python/stap-4-venv')).toBe(false);
     expect(lesBestaat(SITES_ROOT, 'python', '/docs/basis/bestaat-niet')).toBe(false);
     expect(lesBestaat(SITES_ROOT, 'web', '/docs/bestaat-niet/intro-html')).toBe(false);
     expect(lesBestaat(SITES_ROOT, 'bestaat-niet', '/docs/x/y')).toBe(false);

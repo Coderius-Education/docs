@@ -1,30 +1,104 @@
 # Installatie
 
-Tijd voor een back-end.
-We gaan er wel vanuit dat je:
-- een cursus Python hebt gevolgd
-- Visual Studio Code geïnstalleerd hebt op je computer
-- Python geïnstalleerd hebt op je computer
-- een virtual environment hebt aangemaakt in je project in Visual Studio Code.
+Tijd voor een back-end. Voordat je de eerste server start, loop je deze vijf checks van boven naar beneden door. Elke check zegt hoe je ziet dat het goed is. Klopt het niet, klap dan de hulp eronder open.
 
-We gaan er dus vanuit je Visual Studio Code er ongeveer zo uitziet.
+## Check 1: VS Code
 
-Let op: het is essentieel dat in je terminal het pad begint met `(.venv)`:
+Start Visual Studio Code. Je ziet het welkomstscherm of het project waar je het laatst aan werkte.
 
-<Voorkennis
-  title="Nog niet alles geïnstalleerd?"
-  items={[
-    {site: 'editor', to: '/docs/python/stap-1-installeren', label: 'Python installeren'},
-    {site: 'editor', to: '/docs/python/stap-4-venv', label: 'Een virtual environment aanmaken'},
-    {site: 'editor', to: '/docs/python/stap-6-pip', label: 'Packages installeren met pip'},
-  ]}
-/>
+<details>
+<summary>Heb je dit nog niet? Klik hier.</summary>
 
-![venv](@site/static/vs_code/venv.png)
+Visual Studio Code is de editor waarin je in deze cursus werkt. Download hem gratis en installeer hem met de standaardinstellingen. De stappen met schermafbeeldingen staan in de editor-cursus: <SiteLink site="editor" to="/installatie-vscode/">VS Code installeren</SiteLink>.
 
-## FastAPI installeren
-Kopieer het volgende commando naar de terminal in Visual Studio Code en druk op Enter:
+</details>
+
+## Check 2: Python
+
+Open in VS Code een terminal via **Terminal** → **New Terminal** en typ:
+
+```bash
+python --version
+```
+
+Het antwoord begint met `Python 3`. Controleer ook of de Python-extensie er is: linksboven in een `.py`-bestand staat een **▶ Play-knop**.
+
+<details>
+<summary>Heb je dit nog niet? Klik hier.</summary>
+
+Je hebt twee dingen nodig: Python zelf op je computer, en de Python-extensie in VS Code.
+
+1. Ga naar [python.org/downloads](https://www.python.org/downloads/) en download Python 3.
+2. Vink tijdens de installatie **Add Python to PATH** aan. Zonder dat vinkje kent de terminal het commando `python` niet.
+3. Klik op **Install Now**.
+4. Open VS Code, klik in de linkerbalk op het blokjes-icoon (Extensions), zoek `Python` en installeer de extensie van **Microsoft**.
+
+Zonder de extensie werkt de Play-knop niet en mist VS Code het commando om een virtual environment aan te maken. De volledige uitleg: <SiteLink site="editor" to="/python/stap-1-installeren">Python installeren</SiteLink>.
+
+Staat er `Python 2` of `command not found`? Sluit VS Code helemaal af en open het opnieuw, dan leest de terminal het nieuwe PATH.
+
+</details>
+
+## Check 3: een projectmap
+
+In de Explorer links staat de naam van een map bovenaan, bijvoorbeeld `FULLSTACK-PROJECT`. In die map komt straks alles van deze cursus.
+
+<details>
+<summary>Heb je dit nog niet? Klik hier.</summary>
+
+1. Maak op je computer een nieuwe map, bijvoorbeeld `fullstack-project`.
+2. Open die map in VS Code via **File** → **Open Folder...**.
+
+Werk altijd in een geopende map, niet in een los bestand: de virtual environment van de volgende check komt ín deze map te staan. Meer hierover: <SiteLink site="editor" to="/python/stap-2-projectmap">Een projectmap aanmaken</SiteLink>.
+
+</details>
+
+## Check 4: een virtual environment
+
+Kijk naar de terminal. Vóór de prompt staat `(.venv)`:
+
+![De terminal in VS Code met (.venv) voor de prompt](@site/static/vs_code/venv.png)
+
+**Let op:** dit is de check die het vaakst misgaat. Zonder `(.venv)` installeer je FastAPI straks op de verkeerde plek en zegt Python later dat het `fastapi` niet kent.
+
+<details>
+<summary>Heb je dit nog niet? Klik hier.</summary>
+
+Een virtual environment is een afgesloten omgeving voor dit project. Packages die je hier installeert, komen niet in de weg van andere projecten.
+
+1. Klik op **View** → **Command Palette...**.
+2. Typ `Python: Create Environment` en klik erop.
+3. Kies **Venv** en daarna de Python-versie die je net hebt gecontroleerd.
+4. VS Code maakt een map `.venv` aan in je project.
+5. Sluit de terminal met het prullenbak-icoon en open een nieuwe via **Terminal** → **New Terminal**.
+
+Nu staat `(.venv)` voor de prompt. Staat het er nog niet? Sluit VS Code helemaal af en open de map opnieuw. De volledige uitleg: <SiteLink site="editor" to="/python/stap-4-venv">Een virtual environment aanmaken</SiteLink>.
+
+</details>
+
+## Check 5: FastAPI
+
+Typ in de terminal (met `(.venv)` ervoor):
+
+```bash
+fastapi --version
+```
+
+Je ziet een versienummer, bijvoorbeeld `FastAPI CLI version 0.0.8`.
+
+<details>
+<summary>Heb je dit nog niet? Klik hier.</summary>
+
+FastAPI is een package: een stuk Python van iemand anders, dat je met `pip` in je virtual environment zet. Typ in de terminal:
 
 ```bash
 pip install "fastapi[standard]"
 ```
+
+De aanhalingstekens horen erbij. Het installeren duurt even; daarna geeft `fastapi --version` een versienummer. Meer over pip: <SiteLink site="editor" to="/python/stap-6-pip">Packages installeren met pip</SiteLink>.
+
+Zegt de terminal `pip: command not found` of `No module named pip`? Dan mist `(.venv)` voor de prompt. Ga terug naar check 4.
+
+</details>
+
+Alle vijf checks goed? Dan ben je klaar voor [je eerste endpoint](/docs/FastAPI/eerste_endpoint).

@@ -36,6 +36,20 @@ function alleLesbestanden(map) {
 }
 
 /**
+ * Serveert deze site zijn docs op de root (`routeBasePath: '/'`)? Dan hoort
+ * er géén /docs/ in de URL; op elke andere site juist wél. Het bestand kan
+ * bestaan terwijl de URL een 404 geeft, en dat is precies wat een guard die
+ * alleen naar bestanden kijkt niet ziet.
+ */
+function docsOpRoot(sitesRoot, site) {
+  for (const naam of ['docusaurus.config.ts', 'docusaurus.config.js']) {
+    const pad = join(sitesRoot, site, naam);
+    if (existsSync(pad)) return /routeBasePath:\s*['"]\/['"]/.test(readFileSync(pad, 'utf8'));
+  }
+  return false;
+}
+
+/**
  * Vertaalt een docs-URL van een andere site terug naar een bronbestand.
  *
  * Docusaurus stript alleen een puur numeriek prefix ("06-data" -> "data",
@@ -51,6 +65,12 @@ function alleLesbestanden(map) {
 function lesBestaat(sitesRoot, site, to) {
   const docsMap = join(sitesRoot, site, 'docs');
   if (!existsSync(docsMap)) return false;
+
+  // Het pad moet passen bij hoe de doelsite zijn docs serveert. De
+  // fullstack-installatiepagina wees met /docs/python/… naar de editor-cursus:
+  // het bestand bestond, de URL niet.
+  const metDocsPrefix = /^\/docs(\/|$)/.test(to);
+  if (docsOpRoot(sitesRoot, site) === metDocsPrefix) return false;
 
   const segmenten = to
     .replace(/^\/docs\/?/, '')
