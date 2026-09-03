@@ -42,7 +42,8 @@ export function ensureAsync(code) {
     }
   }
 
-  if (!importLines.some((l) => /\basyncio\b/.test(l))) {
+  const asyncioToegevoegd = !importLines.some((l) => /\basyncio\b/.test(l));
+  if (asyncioToegevoegd) {
     importLines.push('import asyncio');
   }
 
@@ -60,12 +61,14 @@ export function ensureAsync(code) {
     }
   }
 
-  // The first body line lands at line (importLines.length + 3) in the
-  // wrapped output (importLines + blank + 'async def main():' + body).
-  // So a traceback line N maps back to user-code line (N - lineOffset).
-  // Note: this is approximate — if the user had imports, they were hoisted
-  // and the mapping for non-import lines is offset by (importLines + 2).
-  const lineOffset = importLines.length + 2;
+  // Regel L van de gebruiker komt op regel L + 2 (+ 1 als 'import asyncio'
+  // is toegevoegd) in de omhulde code: de eigen imports schuiven weliswaar
+  // naar boven, maar dat is een verplaatsing van de gebruiker zijn eigen
+  // regels, geen extra regels. Alleen de witregel, 'async def main():' en de
+  // eventuele asyncio-import tellen. Exact zolang de imports bovenaan staan;
+  // een 'await asyncio.sleep(0)' ná een while-kop verschuift de regels
+  // daaronder met één, dat vangt één offset niet.
+  const lineOffset = 2 + (asyncioToegevoegd ? 1 : 0);
 
   return {
     code: [...importLines, '', 'async def main():', ...indentedBody, '', 'await main()'].join('\n'),

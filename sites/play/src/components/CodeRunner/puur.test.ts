@@ -97,15 +97,21 @@ describe('ensureAsync', () => {
     expect(regels[kop + 2]).toBe('        x = 1');
   });
 
-  it('lineOffset is het aantal importregels (inclusief de toegevoegde asyncio) plus twee', () => {
-    // Dit pint de huidige formule. Ze is exact voor code zonder eigen
-    // top-level imports: daar staat de gebruikersregel n op regel n + 3
-    // (import asyncio, witregel, async def) en is de offset 3.
+  it('lineOffset groeit niet mee met het aantal eigen imports', () => {
+    // De eigen imports verhuizen naar boven, maar het zijn regels van de
+    // gebruiker zelf: alleen de witregel, 'async def main():' en de
+    // toegevoegde asyncio-import schuiven de rest op. De oude formule telde
+    // de eigen imports mee, zodat een fout op regel 3 bij één import als
+    // regel 2 werd gemeld, bij twee als regel 1.
     expect(ensureAsync('x = 1\ny = 2').lineOffset).toBe(3);
     expect(ensureAsync('x = 1\ny = 2').code.split('\n')[4]).toBe('    y = 2');
-    // Met één eigen import is de offset importregels(2) + 2 = 4; met twee 5.
-    expect(ensureAsync(pygameCode).lineOffset).toBe(4);
-    expect(ensureAsync('import pygame\nimport random\nx = 1').lineOffset).toBe(5);
+    expect(ensureAsync(pygameCode).lineOffset).toBe(3);
+    const twee = ensureAsync('import pygame\nimport random\nx = 1');
+    expect(twee.lineOffset).toBe(3);
+    // Regel 3 van de gebruiker staat op omhulde regel 3 + 3 = 6.
+    expect(twee.code.split('\n')[5]).toBe('    x = 1');
+    // Staat asyncio er al, dan komt er geen import bij en is de offset 2.
+    expect(ensureAsync('import asyncio\nx = 1').lineOffset).toBe(2);
   });
 
   it('laat code die al asyncio en await gebruikt met rust, op asyncio.run na', () => {
@@ -166,7 +172,7 @@ describe('rewriteTraceback', () => {
       REWRITE_TRACEBACK_SNIPPET,
     );
     expect(buildSrcDoc({ code: 'import pygame', mode: 'pygame' })).toContain(
-      'const LINE_OFFSET = 4;',
+      'const LINE_OFFSET = 3;',
     );
     const gedeeld = buildSharedRunnerSrcDoc(['import pygame']);
     expect(gedeeld).toContain(REWRITE_TRACEBACK_SNIPPET);
