@@ -2,7 +2,7 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SITES_BY_ID } from '@coderius/shared/sites';
-import { alleLesbestanden, docsPrefix, lesBestaat } from '@coderius/shared/voorkennis';
+import { alleLesbestanden, lesBestaat, segmentenNaPrefix } from '@coderius/shared/voorkennis';
 import { describe, expect, it } from 'vitest';
 
 // <SiteLink> is de vooruitwijzende tegenhanger van <Voorkennis>: een inline
@@ -78,23 +78,23 @@ function doelBestaat(site: string, to: string): boolean {
   const siteMap = join(SITES_ROOT, site);
   if (!existsSync(siteMap)) return false;
 
+  // Zonder slash vooraan plakt de component het pad aan de host vast.
+  if (!to.startsWith('/')) return false;
   const zonder = to.replace(/\/+$/, '');
   if (zonder === '') return true; // de site-root bestaat altijd
 
   if (lesBestaat(SITES_ROOT, site, zonder)) return true;
 
-  // Zelfde regel als in lesBestaat: alleen het prefix waaronder de site zijn
-  // docs echt serveert valt weg (editor op de root, didactiek onder bronnen).
-  // Een /docs/ die er niet hoort blijft staan als segment, en dan bestaat de
-  // categorie-index hieronder niet, ook al bestaat de map wel.
-  const prefix = docsPrefix(SITES_ROOT, site);
-  const alleSegmenten = zonder.split('/').filter(Boolean);
-  const segmenten = alleSegmenten[0] === prefix ? alleSegmenten.slice(1) : alleSegmenten;
+  // Dezelfde prefix-regel als lesBestaat, uit dezelfde helper: alleen een
+  // pad dat onder het docs-prefix van de doelsite valt komt in aanmerking
+  // voor een categorie-index. Past het pad daar niet bij (null), dan blijft
+  // alleen de src/pages-route over, en die kijkt naar het ruwe pad.
+  const segmenten = segmentenNaPrefix(SITES_ROOT, site, zonder) ?? [];
 
   // Categorie-index onder docs/: elk segment een map (numeriek prefix mag
   // wegvallen, net als bij lesBestaat), de laatste met een index-pagina.
   let huidig = join(siteMap, 'docs');
-  let alleMappen = existsSync(huidig);
+  let alleMappen = segmenten.length > 0 && existsSync(huidig);
   for (const segment of segmenten) {
     if (!alleMappen) break;
     const naam = readdirSync(huidig, { withFileTypes: true }).find(
@@ -113,8 +113,10 @@ function doelBestaat(site: string, to: string): boolean {
     return true;
   }
 
-  // Losse pagina onder src/pages (docenten, jouw-website, ...).
-  const paginaBasis = join(siteMap, 'src', 'pages', ...segmenten);
+  // Losse pagina onder src/pages (docenten, jouw-website, ...): op het ruwe
+  // pad, want die pagina's staan buiten het docs-prefix. /docs/docenten op
+  // een docs-site is dus kapot, ook al bestaat src/pages/docenten.mdx.
+  const paginaBasis = join(siteMap, 'src', 'pages', ...zonder.split('/').filter(Boolean));
   for (const ext of ['.md', '.mdx', '.tsx', '/index.tsx', '/index.mdx', '/index.md']) {
     if (existsSync(paginaBasis + ext)) return true;
   }
@@ -160,6 +162,11 @@ describe('SiteLink-verwijzingen over alle sites', () => {
     // De categorie-index bestaat, maar de URL met /docs niet: de editor
     // serveert op de root. Dit is de tweede route waarlangs het misging.
     expect(doelBestaat('editor', '/docs/git/vscode/')).toBe(false);
+    // Een src/pages-pagina leeft buiten het docs-prefix.
+    expect(doelBestaat('python', '/docenten')).toBe(true);
+    expect(doelBestaat('python', '/docs/docenten')).toBe(false);
+    // Zonder slash plakt de component het pad aan de host vast.
+    expect(doelBestaat('python', 'docenten')).toBe(false);
   });
 });
 

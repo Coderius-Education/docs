@@ -41,6 +41,24 @@ describe('hrefsUit', () => {
   });
 });
 
+describe('hrefsUit — een pad zonder slash plakt aan de host vast', () => {
+  it('meldt een host die met een registry-domein begint als misvormd', () => {
+    // <Voorkennis to: 'python/stap-1'> zonder slash geeft
+    // https://editor.coderius.nlpython/stap-1: geen bekend domein, dus de
+    // guard-tests én dit script zouden hem anders stil laten passeren.
+    const html = '<a href="https://editor.coderius.nlpython/stap-1-installeren">x</a>';
+    expect(hrefsUit(html)).toEqual([
+      {
+        href: 'https://editor.coderius.nlpython/stap-1-installeren',
+        site: 'editor',
+        pad: '/stap-1-installeren',
+        misvormd: true,
+      },
+    ]);
+    expect(hrefsUit('<a href="https://editor.coderius.nl.kwaad.nl/x">y</a>')).toHaveLength(1);
+  });
+});
+
 describe('doelBestaat — wat statische hosting serveert', () => {
   const editor = `${FIXTURE}/editor`;
 

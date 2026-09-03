@@ -48,6 +48,30 @@ function alleLesbestanden(map) {
  *
  * @returns '' voor de root, anders het segment zonder slashes ('docs', 'bronnen')
  */
+/**
+ * Het `routeBasePath` uit het `docs:`-blok van de preset, met accolades
+ * geteld zodat een genest object vóór routeBasePath (`admonitions: {…}`) de
+ * lezer niet halverwege laat stoppen. Zonder blok of zonder regel: 'docs'.
+ * @param {string} configTekst
+ */
+function routeBasePathUit(configTekst) {
+  const start = configTekst.search(/\bdocs:\s*\{/);
+  if (start < 0) return 'docs';
+  const open = configTekst.indexOf('{', start);
+  let diepte = 0;
+  for (let i = open; i < configTekst.length; i++) {
+    if (configTekst[i] === '{') diepte += 1;
+    else if (configTekst[i] === '}') {
+      diepte -= 1;
+      if (diepte === 0) {
+        const m = configTekst.slice(open, i + 1).match(/routeBasePath:\s*['"]([^'"]*)['"]/);
+        return m ? m[1].replace(/^\/+|\/+$/g, '') : 'docs';
+      }
+    }
+  }
+  return 'docs';
+}
+
 const prefixCache = new Map();
 function docsPrefix(sitesRoot, site) {
   const sleutel = `${sitesRoot}|${site}`;
@@ -56,12 +80,29 @@ function docsPrefix(sitesRoot, site) {
   for (const naam of ['docusaurus.config.ts', 'docusaurus.config.js']) {
     const pad = join(sitesRoot, site, naam);
     if (!existsSync(pad)) continue;
-    const m = readFileSync(pad, 'utf8').match(/docs:\s*\{[^}]*routeBasePath:\s*['"]([^'"]*)['"]/);
-    if (m) prefix = m[1].replace(/^\/+|\/+$/g, '');
+    prefix = routeBasePathUit(readFileSync(pad, 'utf8'));
     break;
   }
   prefixCache.set(sleutel, prefix);
   return prefix;
+}
+
+/**
+ * De padsegmenten ná het docs-prefix van de doelsite, of null als het pad
+ * niet bij die site past: geen slash vooraan (de componenten plakken het pad
+ * achter de site-URL, dus zonder slash wordt de host zelf kapot), /docs op een
+ * site die op de root serveert, of een ander eerste segment dan het prefix.
+ * @param {string} sitesRoot
+ * @param {string} site
+ * @param {string} to
+ * @returns {string[] | null}
+ */
+function segmentenNaPrefix(sitesRoot, site, to) {
+  if (!to.startsWith('/')) return null;
+  const prefix = docsPrefix(sitesRoot, site);
+  const alle = to.split('/').filter(Boolean);
+  if (prefix === '') return alle[0] === 'docs' ? null : alle;
+  return alle[0] === prefix ? alle.slice(1) : null;
 }
 
 /**
@@ -85,12 +126,8 @@ function lesBestaat(sitesRoot, site, to) {
   // fullstack-installatiepagina wees met /docs/python/… naar de editor-cursus:
   // het bestand bestond, de URL niet. Op de root (prefix '') mag het pad niet
   // met /docs beginnen; elders moet het eerste segment het prefix zijn.
-  const prefix = docsPrefix(sitesRoot, site);
-  const alleSegmenten = to.split('/').filter(Boolean);
-  if (prefix === '' ? alleSegmenten[0] === 'docs' : alleSegmenten[0] !== prefix) return false;
-
-  const segmenten = prefix === '' ? alleSegmenten : alleSegmenten.slice(1);
-  if (segmenten.length === 0) return false;
+  const segmenten = segmentenNaPrefix(sitesRoot, site, to);
+  if (!segmenten || segmenten.length === 0) return false;
 
   // Alle segmenten op één na zijn mappen; het laatste is de pagina.
   let huidig = docsMap;
@@ -118,4 +155,12 @@ function lesBestaat(sitesRoot, site, to) {
   return false;
 }
 
-module.exports = { ITEM_RE, parseItems, alleLesbestanden, lesBestaat, docsPrefix };
+module.exports = {
+  ITEM_RE,
+  parseItems,
+  alleLesbestanden,
+  lesBestaat,
+  docsPrefix,
+  routeBasePathUit,
+  segmentenNaPrefix,
+};

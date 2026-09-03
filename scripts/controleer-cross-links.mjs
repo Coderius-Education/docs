@@ -20,7 +20,7 @@
  * sites en stats.coderius.nl niet. Ankers en query's worden afgeknipt.
  */
 
-import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, realpathSync, statSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { join, relative } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -38,9 +38,12 @@ export function siteVanHost(host) {
 }
 
 /**
- * Alle absolute hrefs naar een registry-domein in één HTML-bestand.
+ * Alle absolute hrefs naar een registry-domein in één HTML-bestand. Een host
+ * die met een registry-domein begínt maar er niet aan gelijk is
+ * (`editor.coderius.nlpython/...`, het gevolg van een pad zonder slash) telt
+ * als misvormd: die hoort gemeld te worden, niet stil genegeerd.
  * @param {string} html
- * @returns {{ href: string, site: string, pad: string }[]}
+ * @returns {{ href: string, site: string, pad: string, misvormd?: true }[]}
  */
 export function hrefsUit(html) {
   const uit = [];
@@ -52,8 +55,13 @@ export function hrefsUit(html) {
       continue;
     }
     const site = siteVanHost(url.host);
-    if (!site) continue;
-    uit.push({ href: m[1], site, pad: url.pathname });
+    if (site) {
+      uit.push({ href: m[1], site, pad: url.pathname });
+      continue;
+    }
+    const aangeplakt = [...HOST_NAAR_SITE].find(([host]) => url.host.startsWith(host));
+    if (aangeplakt)
+      uit.push({ href: m[1], site: aangeplakt[1], pad: url.pathname, misvormd: true });
   }
   return uit;
 }
@@ -127,7 +135,7 @@ export function controleer(builds) {
           continue;
         }
         gecontroleerd += 1;
-        if (!doelBestaat(doelBuild, link.pad)) {
+        if (link.misvormd || !doelBestaat(doelBuild, link.pad)) {
           kapot.push({
             site,
             bron: relative(buildMap, bestand),
@@ -141,7 +149,11 @@ export function controleer(builds) {
   return { kapot, gecontroleerd, overgeslagen };
 }
 
-const isHoofdscript = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
+// realpath aan beide kanten: Node lost import.meta.url op via symlinks heen,
+// process.argv[1] niet altijd. Zonder dat doet het script in een gesymlinkte
+// checkout niets en eindigt het met exitcode 0.
+const isHoofdscript =
+  process.argv[1] && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href;
 
 if (isHoofdscript) {
   const argumenten = process.argv.slice(2);

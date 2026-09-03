@@ -2,7 +2,13 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SITES_BY_ID } from '@coderius/shared/sites';
-import { alleLesbestanden, docsPrefix, lesBestaat, parseItems } from '@coderius/shared/voorkennis';
+import {
+  alleLesbestanden,
+  docsPrefix,
+  lesBestaat,
+  parseItems,
+  routeBasePathUit,
+} from '@coderius/shared/voorkennis';
 import { describe, expect, it } from 'vitest';
 
 // Eén controle voor álle sites tegelijk. De per-site tests (fullstack, godot)
@@ -131,5 +137,24 @@ describe('Voorkennis-blokken over alle sites', () => {
     expect(docsPrefix(SITES_ROOT, 'python')).toBe('docs');
     // robotica heeft losse docs-plugins onder `plugins`; die tellen niet mee.
     expect(docsPrefix(SITES_ROOT, 'robotica')).toBe('docs');
+  });
+
+  it('leest routeBasePath ook als er een genest object vóór staat', () => {
+    // Een `[^}]*`-regex stopte bij de eerste sluitaccolade en viel dan stil
+    // terug op 'docs', waarmee de editor-links weer verkeerd zouden worden
+    // beoordeeld na een onschuldige config-wijziging.
+    const config =
+      "presets: [['classic', { docs: { admonitions: { keywords: ['tip'] }, routeBasePath: '/' } }]]";
+    expect(routeBasePathUit(config)).toBe('');
+    expect(routeBasePathUit("docs: { routeBasePath: 'bronnen' }")).toBe('bronnen');
+    expect(routeBasePathUit("docs: { sidebarPath: './sidebars.ts' }")).toBe('docs');
+    expect(routeBasePathUit('themeConfig: {}')).toBe('docs');
+  });
+
+  it('eist een slash vooraan: zonder slash wordt de host zelf kapot', () => {
+    // De componenten plakken het pad achter de site-URL:
+    // 'python/stap-1' geeft https://editor.coderius.nlpython/stap-1.
+    expect(lesBestaat(SITES_ROOT, 'editor', 'python/stap-1-installeren')).toBe(false);
+    expect(lesBestaat(SITES_ROOT, 'python', 'docs/basis/jij-als-variabele')).toBe(false);
   });
 });
