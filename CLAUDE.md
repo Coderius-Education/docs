@@ -16,6 +16,15 @@ branch `claude/status-ttlwfx` + site `play` →
 `https://claude-status-ttlwfx--play.preview.coderius.nl/`. Zet in elke
 PR-beschrijving de preview-links van de aangepaste sites.
 
+## Links tussen cursussen
+
+Elke cursus is een eigen site; Docusaurus controleert alleen links binnen de
+eigen site. Links naar een andere cursus (`<SiteLink>`, `<Voorkennis>`) worden
+tweemaal bewaakt: door de guard-tests in `packages/shared` (snel, een benadering
+van de routing) en door de CI-job `cross-links`, die na de builds elke href in de
+gebouwde HTML tegen de build van de doelsite legt (de waarheid). Lokaal:
+`pnpm cross-links` na `pnpm build`.
+
 ## Bugfixes
 
 Een bugfix gaat samen met een test die de bug vastpint, in dezelfde commit.

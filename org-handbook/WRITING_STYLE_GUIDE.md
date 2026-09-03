@@ -243,6 +243,13 @@ De cursussen zijn aparte sites op losse subdomeinen. Hardcode **nooit** een
 
   `packages/shared/sitelink.test.ts` controleert monorepo-breed dat elk doelpad
   bestaat en verbiedt hardcoded cursus-URL's in lestekst.
+- **Het pad is het pad van de doelsite, niet van de bron.** De meeste cursussen
+  serveren onder `/docs/…`, maar de editor-cursus serveert op de root
+  (`/python/stap-4-venv`) en didactiek onder `/bronnen/…`. De guard-tests
+  (`packages/shared/voorkennis.test.ts`, `sitelink.test.ts`) controleren dit
+  bij `pnpm test` als benadering; de CI-job `cross-links` controleert het
+  daarna tegen de gebouwde sites en is de waarheid. Spreken ze elkaar tegen,
+  dan wint de job en moet de guard bijgewerkt worden.
 - **Footer "Andere cursussen"** en de **navbar-dropdown "Cursussen"** worden
   automatisch uit de registry gegenereerd door `createConfig` — niets per site
   toevoegen. Het volledige overzicht staat op `/cursussen`.
