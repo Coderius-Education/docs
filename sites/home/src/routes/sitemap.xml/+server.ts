@@ -1,10 +1,7 @@
+import { ROUTES } from '$lib/routes';
 import { HOME } from '@coderius/shared/sites';
 
 export const prerender = true;
-
-// Statisch: coderius.nl heeft maar een handvol routes. Nieuwe routes hier
-// toevoegen als src/routes/ groeit.
-const ROUTES = ['/', '/docent', '/privacy'];
 
 export function GET() {
   const base = HOME.url.replace(/\/+$/, '');

@@ -312,6 +312,11 @@ export const levelLabels: { [key in Activity['level']]: string } = {
   Advanced: 'Expert',
 };
 
+/** De voorkennis van een cursus als leesbare namen, uit de registry. */
+export function voorkennisVan(activity: Activity): string {
+  return activity.requires.map((id) => SITES_BY_ID[id]?.label ?? id).join(', ');
+}
+
 export const THEMAS = ['Python', 'Web', 'Games', 'Hardware', 'Security'] as const;
 export type Thema = (typeof THEMAS)[number];
 

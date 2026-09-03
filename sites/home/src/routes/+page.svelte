@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { ExternalLink } from "@lucide/svelte";
-	import { REPO_URL, SITES_BY_ID } from "@coderius/shared/sites";
+	import { REPO_URL } from "@coderius/shared/sites";
 	import {
 		THEMAS,
 		type Activity,
@@ -9,6 +9,7 @@
 		levelColors,
 		levelLabels,
 		themasVan,
+		voorkennisVan,
 	} from "$lib/Curriculum";
 	import { Badge } from "$lib/components/ui/badge";
 	import { cn } from "$lib/utils";
@@ -25,10 +26,6 @@
 			(c) => (niveau === null || c.level === niveau) && (thema === null || themasVan(c).includes(thema))
 		)
 	);
-
-	function voorkennisVan(c: Activity): string {
-		return c.requires.map((id) => SITES_BY_ID[id]?.label ?? id).join(", ");
-	}
 
 	const chip = "rounded-full border px-3 py-1 text-sm transition-colors hover:bg-accent";
 	const chipActief = "border-primary bg-primary text-primary-foreground hover:bg-primary";
