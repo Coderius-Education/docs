@@ -52,6 +52,9 @@ function siteVan(id: string) {
 
 type CurriculumEntry = Omit<Activity, 'label' | 'description' | 'requires' | 'link'>;
 
+// examDomains: 'strong' is een kern van de cursus, 'weak' een zijdelings
+// raakvlak. Beoordeeld op de inhoudsopgave van elke cursussite (PR #58);
+// de reden staat per cursus in een commentaar. Domein A blijft buiten beeld.
 const entries: CurriculumEntry[] = [
   {
     id: 'web',
@@ -59,10 +62,13 @@ const entries: CurriculumEntry[] = [
     programmingLanguages: ['HTML', 'CSS'],
     projectTypes: ['Web Development'],
     operatingSystems: ['Windows', 'Linux', 'macOS', 'ChromeOS'],
+    // O3: formulieren, layout en media queries zijn interface-ontwerp. D2: de
+    // JS-lessen laten gegeven code (DOM, events) uitleggen en aanpassen.
     examDomains: [
-      { code: 'C3', strength: 'strong' },
-      { code: 'C4', strength: 'weak' },
+      { code: 'O3', strength: 'strong' },
       { code: 'D1', strength: 'strong' },
+      { code: 'C4', strength: 'weak' },
+      { code: 'D2', strength: 'weak' },
       { code: 'F1', strength: 'weak' },
     ],
     level: 'Beginner',
@@ -78,11 +84,13 @@ const entries: CurriculumEntry[] = [
     programmingLanguages: ['Python'],
     projectTypes: [],
     operatingSystems: ['Windows', 'Linux', 'macOS', 'ChromeOS'],
+    // Hoofdstuk 6 vergelijkt lijsten, dictionaries, tuples en sets (C3, B2).
     examDomains: [
-      { code: 'B1', strength: 'weak' },
-      { code: 'C5', strength: 'weak' },
       { code: 'D1', strength: 'strong' },
       { code: 'D2', strength: 'strong' },
+      { code: 'B1', strength: 'weak' },
+      { code: 'B2', strength: 'weak' },
+      { code: 'C3', strength: 'weak' },
     ],
     level: 'Beginner',
     klas: '4',
@@ -97,11 +105,16 @@ const entries: CurriculumEntry[] = [
     programmingLanguages: ['Python'],
     projectTypes: ['Game Development'],
     operatingSystems: ['Windows', 'Linux', 'macOS'],
+    // Zie ook docs/voor-de-docent/examenprogramma.md op de play-site: D1 en D2
+    // zijn de kern, B1 pas bij een computertegenstander, B2 bij grotere spellen.
+    // C5: het database-hoofdstuk. P2: toetsen, muis, controller en startmenu.
     examDomains: [
-      { code: 'B1', strength: 'strong' },
-      { code: 'C5', strength: 'weak' },
       { code: 'D1', strength: 'strong' },
-      { code: 'F1', strength: 'weak' },
+      { code: 'D2', strength: 'strong' },
+      { code: 'B1', strength: 'weak' },
+      { code: 'B2', strength: 'weak' },
+      { code: 'C5', strength: 'weak' },
+      { code: 'P2', strength: 'weak' },
     ],
     level: 'Beginner',
     klas: '4',
@@ -151,13 +164,16 @@ const entries: CurriculumEntry[] = [
     programmingLanguages: [],
     projectTypes: ['Cybersecurity'],
     operatingSystems: ['Windows', 'Linux', 'macOS'],
+    // Privacy en maatschappelijke aspecten (F2-F4) komen in geen challenge
+    // voor. Risicoanalyse en maatregelen zitten er impliciet in (zwak). C4:
+    // encoderingen en rotaties; L2/L4: headers, cookies, robots.txt.
     examDomains: [
       { code: 'E2', strength: 'strong' },
-      { code: 'F2', strength: 'weak' },
-      { code: 'F3', strength: 'weak' },
-      { code: 'F4', strength: 'weak' },
-      { code: 'N1', strength: 'strong' },
-      { code: 'N2', strength: 'strong' },
+      { code: 'N1', strength: 'weak' },
+      { code: 'N2', strength: 'weak' },
+      { code: 'C4', strength: 'weak' },
+      { code: 'L2', strength: 'weak' },
+      { code: 'L4', strength: 'weak' },
     ],
     level: 'Beginner',
     klas: '4',
@@ -172,12 +188,15 @@ const entries: CurriculumEntry[] = [
     programmingLanguages: ['GDScript'],
     projectTypes: ['Game Development'],
     operatingSystems: ['Windows', 'Linux', 'macOS', 'ChromeOS'],
+    // D2: 'Het bewegingsscript begrijpen' laat gegeven code uitleggen en
+    // aanpassen. F1 zwak: geen usability-heuristieken.
     examDomains: [
       { code: 'B1', strength: 'weak' },
       { code: 'D1', strength: 'strong' },
-      { code: 'F1', strength: 'strong' },
-      { code: 'O3', strength: 'weak' },
+      { code: 'D2', strength: 'strong' },
       { code: 'P2', strength: 'strong' },
+      { code: 'O3', strength: 'weak' },
+      { code: 'F1', strength: 'weak' },
     ],
     level: 'Medium',
     klas: '4 en 5+',
@@ -192,11 +211,15 @@ const entries: CurriculumEntry[] = [
     programmingLanguages: ['Linux Shell'],
     projectTypes: ['Cybersecurity', 'Web Development'],
     operatingSystems: ['Windows', 'Linux'],
+    // N2 sterk: elk Impossible-niveau en 'Word de Developer' leggen de
+    // maatregel uit. D2: PHP-code aanpassen in de fix-it-challenge.
     examDomains: [
       { code: 'E2', strength: 'strong' },
-      { code: 'L4', strength: 'weak' },
       { code: 'N1', strength: 'strong' },
-      { code: 'N2', strength: 'weak' },
+      { code: 'N2', strength: 'strong' },
+      { code: 'D2', strength: 'weak' },
+      { code: 'L2', strength: 'weak' },
+      { code: 'L4', strength: 'weak' },
     ],
     level: 'Medium',
     klas: '5+',
@@ -211,13 +234,14 @@ const entries: CurriculumEntry[] = [
     programmingLanguages: ['HTML', 'CSS', 'JavaScript', 'Python'],
     projectTypes: ['Web Development'],
     operatingSystems: ['Windows', 'Linux', 'macOS'],
+    // Geen usability- of interface-lessen (F1, O3). C5: POST naar database en
+    // gegevens opvragen.
     examDomains: [
       { code: 'D1', strength: 'strong' },
       { code: 'E1', strength: 'strong' },
-      { code: 'F1', strength: 'strong' },
       { code: 'H1', strength: 'weak' },
       { code: 'L2', strength: 'weak' },
-      { code: 'O3', strength: 'weak' },
+      { code: 'C5', strength: 'weak' },
     ],
     level: 'Medium',
     klas: '5+',
@@ -232,12 +256,15 @@ const entries: CurriculumEntry[] = [
     programmingLanguages: ['Python'],
     projectTypes: ['Algorithms'],
     operatingSystems: ['Windows', 'Linux', 'macOS', 'ChromeOS'],
+    // Big O is een heel hoofdstuk (G1), context-vrije grammatica's ook (B4);
+    // elke module heeft een stap 'Aanpassen' en 'Bouw zelf' (D1, D2).
     examDomains: [
       { code: 'B1', strength: 'strong' },
       { code: 'B2', strength: 'strong' },
-      { code: 'B4', strength: 'weak' },
-      { code: 'D1', strength: 'weak' },
-      { code: 'G1', strength: 'weak' },
+      { code: 'B4', strength: 'strong' },
+      { code: 'G1', strength: 'strong' },
+      { code: 'D1', strength: 'strong' },
+      { code: 'D2', strength: 'strong' },
       { code: 'I1', strength: 'weak' },
     ],
     level: 'Medium',
@@ -257,7 +284,6 @@ const entries: CurriculumEntry[] = [
     // krijgt daarom geen examDomains-mapping.
     level: 'Beginner',
     klas: '4',
-    // TODO(curriculum): juiste plek in de leerlijn bevestigen.
     order: {
       vwo: 1,
       havo: 1,
@@ -269,12 +295,17 @@ const entries: CurriculumEntry[] = [
     programmingLanguages: ['C++', 'MicroPython'],
     projectTypes: ['Embedded', 'Robotics'],
     operatingSystems: ['Windows', 'Linux', 'macOS'],
-    // TODO(curriculum): examDomains-mapping laten invullen door de
-    // curriculum-eigenaar (niet verzinnen).
-    examDomains: [],
+    // M1/M2: sensoren, PWM, timers, actuatoren. E1: 'Onder de motorkap'
+    // (abstractielagen, GPIO met registers). K4: Arduino Uno tegenover STM32.
+    examDomains: [
+      { code: 'M1', strength: 'strong' },
+      { code: 'M2', strength: 'strong' },
+      { code: 'E1', strength: 'strong' },
+      { code: 'K4', strength: 'weak' },
+      { code: 'D1', strength: 'weak' },
+    ],
     level: 'Medium',
     klas: '5+',
-    // TODO(curriculum): juiste plek in de leerlijn bevestigen.
     order: {
       vwo: 4,
       havo: 4,

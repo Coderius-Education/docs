@@ -111,11 +111,18 @@ describe('curriculum versus het examenprogramma', () => {
     expect(kapot).toEqual([]);
   });
 
-  // De drie TODO(curriculum)-vragen uit Curriculum.ts, zodat ze in de
-  // testuitvoer zichtbaar blijven tot de curriculum-eigenaar ze beantwoordt.
-  it.todo("ide: 'juiste plek in de leerlijn bevestigen' (order vwo/havo staat nu op 1)");
-  it.todo(
-    "embedded: 'examDomains-mapping laten invullen door de curriculum-eigenaar (niet verzinnen)' (staat nu leeg)",
-  );
-  it.todo("embedded: 'juiste plek in de leerlijn bevestigen' (order vwo/havo staat nu op 4)");
+  it('elke cursus heeft minstens één sterk raakvlak; alleen gereedschap heeft er geen', () => {
+    // Gereedschap (editor, ide) valt onder domein A en heeft bewust geen
+    // mapping. Een lesreeks zonder sterk raakvlak is vergeten of half ingevuld,
+    // zoals embedded lang was.
+    const GEREEDSCHAP = ['editor', 'ide'];
+    const zonder = curriculum
+      .filter((c) => !GEREEDSCHAP.includes(c.id))
+      .filter((c) => !c.examDomains?.some((m) => m.strength === 'strong'))
+      .map((c) => c.id);
+    expect(zonder).toEqual([]);
+    for (const id of GEREEDSCHAP) {
+      expect(curriculum.find((c) => c.id === id)?.examDomains ?? []).toEqual([]);
+    }
+  });
 });
