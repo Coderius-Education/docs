@@ -32,6 +32,12 @@ import styles from './styles.module.css';
 
 type AlgorithmModelProps = {
   algorithm: AlgorithmModelId;
+  /**
+   * Alleen de visualisatie: geen tabs, geen code-oefening en geen bron-
+   * schakelaar. Voor de bekijk-pagina's, waar de leerling nog geen eigen
+   * code heeft; Pyodide wordt dan ook niet opgewarmd.
+   */
+  alleenVisualisatie?: boolean;
 };
 
 type InputDraft = {
@@ -196,15 +202,18 @@ except Exception as _coderius_exc:
 }`;
 }
 
-export default function AlgorithmModel({ algorithm }: AlgorithmModelProps): React.ReactElement {
+export default function AlgorithmModel({
+  algorithm,
+  alleenVisualisatie = false,
+}: AlgorithmModelProps): React.ReactElement {
   const model = getAlgorithmModel(algorithm);
   const pyodideIndexURL = useBaseUrl('/pyodide/');
   const pyodideRef = useRef<PyodideInterface | null>(null);
 
   // Warm Pyodide alvast op in de achtergrond (zie warmupPyodide).
   useEffect(() => {
-    warmupPyodide(pyodideIndexURL);
-  }, [pyodideIndexURL]);
+    if (!alleenVisualisatie) warmupPyodide(pyodideIndexURL);
+  }, [pyodideIndexURL, alleenVisualisatie]);
   const [activeTab, setActiveTab] = useState<'visual' | 'exercise'>('visual');
   const [draft, setDraft] = useState<InputDraft>(() => inputToDraft(model.defaultInput));
   const [stepIndex, setStepIndex] = useState(0);
@@ -403,25 +412,27 @@ export default function AlgorithmModel({ algorithm }: AlgorithmModelProps): Reac
           <h2 className={styles.title}>{model.title}</h2>
           <p className={styles.summary}>{model.summary}</p>
         </div>
-        <div className={styles.tabs} role="tablist" aria-label="Modelweergave">
-          <button
-            type="button"
-            className={clsx(styles.tab, activeTab === 'visual' && styles.tabActive)}
-            onClick={() => setActiveTab('visual')}
-          >
-            Visualisatie
-          </button>
-          <button
-            type="button"
-            className={clsx(styles.tab, activeTab === 'exercise' && styles.tabActive)}
-            onClick={() => setActiveTab('exercise')}
-          >
-            Code-oefening
-          </button>
-        </div>
+        {!alleenVisualisatie && (
+          <div className={styles.tabs} role="tablist" aria-label="Modelweergave">
+            <button
+              type="button"
+              className={clsx(styles.tab, activeTab === 'visual' && styles.tabActive)}
+              onClick={() => setActiveTab('visual')}
+            >
+              Visualisatie
+            </button>
+            <button
+              type="button"
+              className={clsx(styles.tab, activeTab === 'exercise' && styles.tabActive)}
+              onClick={() => setActiveTab('exercise')}
+            >
+              Code-oefening
+            </button>
+          </div>
+        )}
       </div>
 
-      {activeTab === 'visual' ? (
+      {alleenVisualisatie || activeTab === 'visual' ? (
         <div className={styles.visualGrid}>
           <div className={styles.controls}>
             {model.controls.map((control) => (
@@ -444,9 +455,11 @@ export default function AlgorithmModel({ algorithm }: AlgorithmModelProps): Reac
 
           <div className={styles.stage}>
             <div className={styles.metrics}>
-              <span>
-                Bron {traceMode === 'student' && studentSteps ? 'mijn code' : 'referentie'}
-              </span>
+              {!alleenVisualisatie && (
+                <span>
+                  Bron {traceMode === 'student' && studentSteps ? 'mijn code' : 'referentie'}
+                </span>
+              )}
               <span>
                 Stap {visibleSteps.length ? safeStepIndex : 0}/
                 {Math.max(visibleSteps.length - 1, 0)}
@@ -461,37 +474,39 @@ export default function AlgorithmModel({ algorithm }: AlgorithmModelProps): Reac
               <span>Resultaat {formatResult(currentStep?.result)}</span>
             </div>
 
-            <div className={styles.sourceToggle} aria-label="Trace bron">
-              <button
-                type="button"
-                className={clsx(
-                  styles.sourceButton,
-                  traceMode === 'reference' && styles.sourceButtonActive,
-                )}
-                onClick={() => {
-                  setTraceMode('reference');
-                  setStepIndex(0);
-                }}
-              >
-                Referentie
-              </button>
-              <button
-                type="button"
-                className={clsx(
-                  styles.sourceButton,
-                  traceMode === 'student' && styles.sourceButtonActive,
-                )}
-                onClick={() => {
-                  if (studentSteps) {
-                    setTraceMode('student');
+            {!alleenVisualisatie && (
+              <div className={styles.sourceToggle} aria-label="Trace bron">
+                <button
+                  type="button"
+                  className={clsx(
+                    styles.sourceButton,
+                    traceMode === 'reference' && styles.sourceButtonActive,
+                  )}
+                  onClick={() => {
+                    setTraceMode('reference');
                     setStepIndex(0);
-                  }
-                }}
-                disabled={!studentSteps}
-              >
-                Mijn code
-              </button>
-            </div>
+                  }}
+                >
+                  Referentie
+                </button>
+                <button
+                  type="button"
+                  className={clsx(
+                    styles.sourceButton,
+                    traceMode === 'student' && styles.sourceButtonActive,
+                  )}
+                  onClick={() => {
+                    if (studentSteps) {
+                      setTraceMode('student');
+                      setStepIndex(0);
+                    }
+                  }}
+                  disabled={!studentSteps}
+                >
+                  Mijn code
+                </button>
+              </div>
+            )}
 
             {studentTraceMessage && traceMode === 'student' && (
               <output className={styles.traceNotice} aria-live="polite" aria-atomic="true">
