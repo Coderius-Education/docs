@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  buildCardChipGroups,
   buildCardChips,
   examDomainByCode,
   examDomainCodes,
@@ -85,7 +86,23 @@ describe('tooltips en kaart-chips', () => {
     // Dit is het gedrag dat Curriculum.test.ts moet afvangen: hier zie je
     // waarom een onbekende code daar een harde fout hoort te zijn.
     expect(buildCardChips([{ code: 'Z9', strength: 'strong' }])).toEqual([]);
+    expect(buildCardChipGroups(undefined)).toEqual({ kern: [], keuze: [] });
     expect(buildCardChips(undefined)).toEqual([]);
     expect(buildCardChips([])).toEqual([]);
+  });
+});
+
+describe('buildCardChipGroups', () => {
+  it('scheidt kerndomeinen (B1, C3, …) van keuzedomeinen (G, H, …)', () => {
+    // De examenpagina toont ze in twee kolommen; zonder deze splitsing
+    // stond alles in één rij en moest de docent de letters zelf uit elkaar
+    // houden.
+    const { kern, keuze } = buildCardChipGroups([
+      { code: 'B1', strength: 'strong' },
+      { code: 'G1', strength: 'weak' },
+      { code: 'D1', strength: 'weak' },
+    ]);
+    expect(kern.map((c) => c.display)).toEqual(['B1', 'D1']);
+    expect(keuze.map((c) => c.display)).toEqual(['G']);
   });
 });

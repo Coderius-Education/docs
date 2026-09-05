@@ -24,6 +24,9 @@ export interface HomeSite {
 }
 
 export const SITES: Site[];
+/** Sites voor docenten (didactiek); geen cursussen, dus niet in SITES. */
+export const DOCENTEN_SITES: Site[];
+/** Cursussen én docentensites, op id. */
 export const SITES_BY_ID: Record<string, Site>;
 export const HOME: HomeSite;
 

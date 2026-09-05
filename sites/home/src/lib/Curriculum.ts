@@ -1,10 +1,18 @@
-import { SITES_BY_ID } from '@coderius/shared/sites';
+import { SITES, SITES_BY_ID } from '@coderius/shared/sites';
 import type { ExamMapping } from './ExamProgram';
 
+export const KLASSEN = ['4', '5+', '4 en 5+'] as const;
+export type Klas = (typeof KLASSEN)[number];
+
 export type Activity = {
-  /** Registry-id uit packages/shared/sites.js; bepaalt de link. */
+  /** Registry-id uit packages/shared/sites.js; bepaalt label, beschrijving, link en voorkennis. */
   id: string;
-  title: string;
+  /** Weergavenaam uit de registry. */
+  label: string;
+  /** Korte omschrijving uit de registry. */
+  description: string;
+  /** Voorkennis (registry-ids van cursussen waarop deze voortbouwt). */
+  requires: string[];
   labels: string[]; // Keep for backward compatibility
 
   // New categorical fields
@@ -15,7 +23,13 @@ export type Activity = {
   // Examenprogramma-raakvlakken (havo/vwo informatica)
   examDomains?: ExamMapping[];
 
-  level: 'Beginner' | 'Medium' | 'Advanced';
+  /** Twee niveaus: Beginner (klas 4-instap) en Medium (Gevorderd). */
+  level: 'Beginner' | 'Medium';
+  /**
+   * Waar de cursus in de leerlijn van de school valt. Een eigen veld, los van
+   * het niveau: robotica en godot passen in beide klassen.
+   */
+  klas: Klas;
   /** Afgeleid uit de gedeelde registry (SITES_BY_ID[id].url); niet hardcoden. */
   link: string;
   order: {
@@ -24,32 +38,41 @@ export type Activity = {
   };
 };
 
-// De cursus-URL's komen uit de gedeelde registry (packages/shared/sites.js), de
-// enige bron van waarheid. Zo blijven de homepage-kaarten en de cross-site
-// navigatie van de Docusaurus-sites automatisch in sync.
-function siteUrl(id: string): string {
+// Naam, omschrijving, URL en voorkennis komen uit de gedeelde registry
+// (packages/shared/sites.js), de enige bron van waarheid. Hier staat alleen wat
+// de registry niet weet: niveau, thema's en examendomeinen. Zo blijven de
+// homepage-kaarten en de navigatie van de cursussites automatisch in sync; de
+// eigen titels die hier eerst stonden ("Python Play", "Code Editor") waren van
+// de registry weggedreven.
+function siteVan(id: string) {
   const site = SITES_BY_ID[id];
   if (!site) throw new Error(`Onbekende cursus-id in Curriculum: ${id}`);
-  return site.url;
+  return site;
 }
 
-type CurriculumEntry = Omit<Activity, 'link'>;
+type CurriculumEntry = Omit<Activity, 'label' | 'description' | 'requires' | 'link'>;
 
+// examDomains: 'strong' is een kern van de cursus, 'weak' een zijdelings
+// raakvlak. Beoordeeld op de inhoudsopgave van elke cursussite (PR #58);
+// de reden staat per cursus in een commentaar. Domein A blijft buiten beeld.
 const entries: CurriculumEntry[] = [
   {
     id: 'web',
-    title: 'Web Development',
     labels: [],
     programmingLanguages: ['HTML', 'CSS'],
     projectTypes: ['Web Development'],
     operatingSystems: ['Windows', 'Linux', 'macOS', 'ChromeOS'],
+    // O3: formulieren, layout en media queries zijn interface-ontwerp. D2: de
+    // JS-lessen laten gegeven code (DOM, events) uitleggen en aanpassen.
     examDomains: [
-      { code: 'C3', strength: 'strong' },
-      { code: 'C4', strength: 'weak' },
+      { code: 'O3', strength: 'strong' },
       { code: 'D1', strength: 'strong' },
+      { code: 'C4', strength: 'weak' },
+      { code: 'D2', strength: 'weak' },
       { code: 'F1', strength: 'weak' },
     ],
     level: 'Beginner',
+    klas: '4',
     order: {
       vwo: 1,
       havo: 1,
@@ -57,18 +80,20 @@ const entries: CurriculumEntry[] = [
   },
   {
     id: 'python',
-    title: 'Python',
     labels: [],
     programmingLanguages: ['Python'],
     projectTypes: [],
     operatingSystems: ['Windows', 'Linux', 'macOS', 'ChromeOS'],
+    // Hoofdstuk 6 vergelijkt lijsten, dictionaries, tuples en sets (C3, B2).
     examDomains: [
-      { code: 'B1', strength: 'weak' },
-      { code: 'C5', strength: 'weak' },
       { code: 'D1', strength: 'strong' },
       { code: 'D2', strength: 'strong' },
+      { code: 'B1', strength: 'weak' },
+      { code: 'B2', strength: 'weak' },
+      { code: 'C3', strength: 'weak' },
     ],
     level: 'Beginner',
+    klas: '4',
     order: {
       vwo: 2,
       havo: 2,
@@ -76,18 +101,23 @@ const entries: CurriculumEntry[] = [
   },
   {
     id: 'play',
-    title: 'Python Play',
     labels: [],
     programmingLanguages: ['Python'],
     projectTypes: ['Game Development'],
     operatingSystems: ['Windows', 'Linux', 'macOS'],
+    // Zie ook docs/voor-de-docent/examenprogramma.md op de play-site: D1 en D2
+    // zijn de kern, B1 pas bij een computertegenstander, B2 bij grotere spellen.
+    // C5: het database-hoofdstuk. P2: toetsen, muis, controller en startmenu.
     examDomains: [
-      { code: 'B1', strength: 'strong' },
-      { code: 'C5', strength: 'weak' },
       { code: 'D1', strength: 'strong' },
-      { code: 'F1', strength: 'weak' },
+      { code: 'D2', strength: 'strong' },
+      { code: 'B1', strength: 'weak' },
+      { code: 'B2', strength: 'weak' },
+      { code: 'C5', strength: 'weak' },
+      { code: 'P2', strength: 'weak' },
     ],
     level: 'Beginner',
+    klas: '4',
     order: {
       vwo: 3,
       havo: 3,
@@ -95,14 +125,14 @@ const entries: CurriculumEntry[] = [
   },
   {
     id: 'editor',
-    title: 'Code Editor',
     labels: [],
     programmingLanguages: [],
     projectTypes: ['VS Code web', 'VS Code Python', 'git', 'GitHub'],
     operatingSystems: ['Windows', 'Linux', 'macOS'],
     // Geen examDomains: het instrumentarium (editor, git, GitHub) valt onder domein A
     // dat we bewust niet meenemen in de mapping.
-    level: 'Beginner',
+    level: 'Medium',
+    klas: '5+',
     order: {
       vwo: 2,
       havo: 2,
@@ -110,7 +140,6 @@ const entries: CurriculumEntry[] = [
   },
   {
     id: 'robotica',
-    title: 'Robotica',
     labels: ['Robotics', 'Python'],
     programmingLanguages: ['Python'],
     projectTypes: ['Robotics'],
@@ -123,6 +152,7 @@ const entries: CurriculumEntry[] = [
       { code: 'M2', strength: 'strong' },
     ],
     level: 'Medium',
+    klas: '4 en 5+',
     order: {
       vwo: 4,
       havo: 4,
@@ -130,20 +160,23 @@ const entries: CurriculumEntry[] = [
   },
   {
     id: 'ctf',
-    title: 'Capture the Flag',
     labels: [],
     programmingLanguages: [],
     projectTypes: ['Cybersecurity'],
     operatingSystems: ['Windows', 'Linux', 'macOS'],
+    // Privacy en maatschappelijke aspecten (F2-F4) komen in geen challenge
+    // voor. Risicoanalyse en maatregelen zitten er impliciet in (zwak). C4:
+    // encoderingen en rotaties; L2/L4: headers, cookies, robots.txt.
     examDomains: [
       { code: 'E2', strength: 'strong' },
-      { code: 'F2', strength: 'weak' },
-      { code: 'F3', strength: 'weak' },
-      { code: 'F4', strength: 'weak' },
-      { code: 'N1', strength: 'strong' },
-      { code: 'N2', strength: 'strong' },
+      { code: 'N1', strength: 'weak' },
+      { code: 'N2', strength: 'weak' },
+      { code: 'C4', strength: 'weak' },
+      { code: 'L2', strength: 'weak' },
+      { code: 'L4', strength: 'weak' },
     ],
     level: 'Beginner',
+    klas: '4',
     order: {
       vwo: 5,
       havo: 5,
@@ -151,19 +184,22 @@ const entries: CurriculumEntry[] = [
   },
   {
     id: 'godot',
-    title: 'Godot game engine',
     labels: [],
     programmingLanguages: ['GDScript'],
     projectTypes: ['Game Development'],
     operatingSystems: ['Windows', 'Linux', 'macOS', 'ChromeOS'],
+    // D2: 'Het bewegingsscript begrijpen' laat gegeven code uitleggen en
+    // aanpassen. F1 zwak: geen usability-heuristieken.
     examDomains: [
       { code: 'B1', strength: 'weak' },
       { code: 'D1', strength: 'strong' },
-      { code: 'F1', strength: 'strong' },
-      { code: 'O3', strength: 'weak' },
+      { code: 'D2', strength: 'strong' },
       { code: 'P2', strength: 'strong' },
+      { code: 'O3', strength: 'weak' },
+      { code: 'F1', strength: 'weak' },
     ],
     level: 'Medium',
+    klas: '4 en 5+',
     order: {
       vwo: 6,
       havo: 6,
@@ -171,18 +207,22 @@ const entries: CurriculumEntry[] = [
   },
   {
     id: 'dvwa',
-    title: 'Vulnerable Web Application',
     labels: ['Cybersecurity', 'Web'],
     programmingLanguages: ['Linux Shell'],
     projectTypes: ['Cybersecurity', 'Web Development'],
     operatingSystems: ['Windows', 'Linux'],
+    // N2 sterk: elk Impossible-niveau en 'Word de Developer' leggen de
+    // maatregel uit. D2: PHP-code aanpassen in de fix-it-challenge.
     examDomains: [
       { code: 'E2', strength: 'strong' },
-      { code: 'L4', strength: 'weak' },
       { code: 'N1', strength: 'strong' },
-      { code: 'N2', strength: 'weak' },
+      { code: 'N2', strength: 'strong' },
+      { code: 'D2', strength: 'weak' },
+      { code: 'L2', strength: 'weak' },
+      { code: 'L4', strength: 'weak' },
     ],
-    level: 'Advanced',
+    level: 'Medium',
+    klas: '5+',
     order: {
       vwo: 5,
       havo: 5,
@@ -190,20 +230,21 @@ const entries: CurriculumEntry[] = [
   },
   {
     id: 'fullstack',
-    title: 'Full stack web development',
     labels: ['Javascript', 'Python'],
     programmingLanguages: ['HTML', 'CSS', 'JavaScript', 'Python'],
     projectTypes: ['Web Development'],
     operatingSystems: ['Windows', 'Linux', 'macOS'],
+    // Geen usability- of interface-lessen (F1, O3). C5: POST naar database en
+    // gegevens opvragen.
     examDomains: [
       { code: 'D1', strength: 'strong' },
       { code: 'E1', strength: 'strong' },
-      { code: 'F1', strength: 'strong' },
       { code: 'H1', strength: 'weak' },
       { code: 'L2', strength: 'weak' },
-      { code: 'O3', strength: 'weak' },
+      { code: 'C5', strength: 'weak' },
     ],
-    level: 'Advanced',
+    level: 'Medium',
+    klas: '5+',
     order: {
       vwo: 5,
       havo: 5,
@@ -211,20 +252,23 @@ const entries: CurriculumEntry[] = [
   },
   {
     id: 'algorithms',
-    title: 'Algoritmes',
     labels: [],
     programmingLanguages: ['Python'],
     projectTypes: ['Algorithms'],
     operatingSystems: ['Windows', 'Linux', 'macOS', 'ChromeOS'],
+    // Big O is een heel hoofdstuk (G1), context-vrije grammatica's ook (B4);
+    // elke module heeft een stap 'Aanpassen' en 'Bouw zelf' (D1, D2).
     examDomains: [
       { code: 'B1', strength: 'strong' },
       { code: 'B2', strength: 'strong' },
-      { code: 'B4', strength: 'weak' },
-      { code: 'D1', strength: 'weak' },
-      { code: 'G1', strength: 'weak' },
+      { code: 'B4', strength: 'strong' },
+      { code: 'G1', strength: 'strong' },
+      { code: 'D1', strength: 'strong' },
+      { code: 'D2', strength: 'strong' },
       { code: 'I1', strength: 'weak' },
     ],
     level: 'Medium',
+    klas: '5+',
     order: {
       vwo: 7,
       havo: 7,
@@ -232,7 +276,6 @@ const entries: CurriculumEntry[] = [
   },
   {
     id: 'ide',
-    title: 'Online Editor',
     labels: [],
     programmingLanguages: ['Python', 'HTML', 'CSS'],
     projectTypes: ['Online Editor'],
@@ -240,7 +283,7 @@ const entries: CurriculumEntry[] = [
     // Gereedschap (browser-IDE), zoals de Code Editor: valt onder domein A en
     // krijgt daarom geen examDomains-mapping.
     level: 'Beginner',
-    // TODO(curriculum): juiste plek in de leerlijn bevestigen.
+    klas: '4',
     order: {
       vwo: 1,
       havo: 1,
@@ -248,16 +291,21 @@ const entries: CurriculumEntry[] = [
   },
   {
     id: 'embedded',
-    title: 'Embedded',
     labels: [],
     programmingLanguages: ['C++', 'MicroPython'],
     projectTypes: ['Embedded', 'Robotics'],
     operatingSystems: ['Windows', 'Linux', 'macOS'],
-    // TODO(curriculum): examDomains-mapping laten invullen door de
-    // curriculum-eigenaar (niet verzinnen).
-    examDomains: [],
+    // M1/M2: sensoren, PWM, timers, actuatoren. E1: 'Onder de motorkap'
+    // (abstractielagen, GPIO met registers). K4: Arduino Uno tegenover STM32.
+    examDomains: [
+      { code: 'M1', strength: 'strong' },
+      { code: 'M2', strength: 'strong' },
+      { code: 'E1', strength: 'strong' },
+      { code: 'K4', strength: 'weak' },
+      { code: 'D1', strength: 'weak' },
+    ],
     level: 'Medium',
-    // TODO(curriculum): juiste plek in de leerlijn bevestigen.
+    klas: '5+',
     order: {
       vwo: 4,
       havo: 4,
@@ -265,15 +313,71 @@ const entries: CurriculumEntry[] = [
   },
 ];
 
-export const curriculum: Activity[] = entries.map((e) => ({
-  ...e,
-  link: siteUrl(e.id),
-}));
+// Eerst alle cursussen voor beginners, dan de gevorderde; binnen een niveau in
+// de volgorde van de registry (de leerlijn, en die staat op één plek).
+const volgorde = new Map(SITES.map((s, i) => [s.id, i]));
+const niveauVolgorde: Record<Activity['level'], number> = { Beginner: 0, Medium: 1 };
 
-export const ownCurriculum: Activity[] = curriculum;
+export const curriculum: Activity[] = entries
+  .map((e) => {
+    const site = siteVan(e.id);
+    return {
+      ...e,
+      label: site.label,
+      description: site.description,
+      requires: site.requires,
+      link: site.url,
+    };
+  })
+  .sort(
+    (a, b) =>
+      niveauVolgorde[a.level] - niveauVolgorde[b.level] ||
+      (volgorde.get(a.id) ?? 99) - (volgorde.get(b.id) ?? 99),
+  );
 
+/** Badge-klassen per niveau, leesbaar in licht én donker thema. */
 export const levelColors: { [key in Activity['level']]: string } = {
-  Beginner: 'green',
-  Medium: 'orange',
-  Advanced: 'red',
+  Beginner:
+    'border-transparent bg-emerald-600 text-white dark:bg-emerald-500 dark:text-emerald-950',
+  Medium: 'border-transparent bg-orange-700 text-white',
 };
+
+/** Nederlandse naam per niveau, zoals de leerling 'm op de kaart ziet. */
+export const levelLabels: { [key in Activity['level']]: string } = {
+  Beginner: 'Beginner',
+  Medium: 'Gevorderd',
+};
+
+/** De voorkennis van een cursus als leesbare namen, uit de registry. */
+export function voorkennisVan(activity: Activity): string {
+  return activity.requires.map((id) => SITES_BY_ID[id]?.label ?? id).join(', ');
+}
+
+export const THEMAS = ['Python', 'Web', 'Games', 'Hardware', 'Security'] as const;
+export type Thema = (typeof THEMAS)[number];
+
+// Vijf herkenbare thema's voor de filterrij op de homepage, afgeleid uit de
+// fijnmazige velden hierboven. Zo hoeft een leerling niet uit 23 opties te
+// kiezen; de examendomeinen blijven op de docentenpagina.
+export function themasVan(activity: Activity): Thema[] {
+  const talen = activity.programmingLanguages ?? [];
+  const typen = activity.projectTypes ?? [];
+  const uit: Thema[] = [];
+  if (
+    talen.some((t) => t === 'Python' || t === 'MicroPython') ||
+    typen.includes('VS Code Python')
+  ) {
+    uit.push('Python');
+  }
+  if (
+    typen.includes('Web Development') ||
+    typen.includes('VS Code web') ||
+    talen.some((t) => ['HTML', 'CSS', 'JavaScript'].includes(t))
+  ) {
+    uit.push('Web');
+  }
+  if (typen.includes('Game Development')) uit.push('Games');
+  if (typen.includes('Robotics') || typen.includes('Embedded')) uit.push('Hardware');
+  if (typen.includes('Cybersecurity')) uit.push('Security');
+  return uit;
+}

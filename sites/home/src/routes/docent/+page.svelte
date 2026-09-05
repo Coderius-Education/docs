@@ -1,186 +1,90 @@
 <script lang="ts">
-	import { curriculum, levelColors, type Activity } from "$lib/Curriculum.ts";
-	import { buildCardChips } from "$lib/ExamProgram.ts";
 	import { ExternalLink } from "@lucide/svelte";
+	import { type Activity, levelColors, levelLabels, voorkennisVan } from "$lib/Curriculum";
+	import { docentenCursussen, docentenUrl, inKlas4, inKlas5 } from "$lib/docenten";
 	import { Badge } from "$lib/components/ui/badge";
 	import * as Card from "$lib/components/ui/card/index.js";
-	import { cn } from "$lib/utils.ts";
-	import FilterPanel from "$lib/components/FilterPanel.svelte";
+	import { cn } from "$lib/utils";
+	import DocentTabs from "$lib/components/DocentTabs.svelte";
 
-	const excluded = ["Code Editor"];
-	const sharedTitles = ["Robotica", "Godot game engine"];
+	const klas4 = docentenCursussen.filter(inKlas4);
+	const klas5 = docentenCursussen.filter(inKlas5);
 
-	let selectedFilters = $state({
-		programmingLanguages: [] as string[],
-		projectTypes: [] as string[],
-		operatingSystems: [] as string[],
-		examDomains: [] as string[],
-	});
-
-	function matchesFilters(activity: Activity) {
-		const langOk =
-			selectedFilters.programmingLanguages.length === 0 ||
-			selectedFilters.programmingLanguages.every((lang) =>
-				activity.programmingLanguages?.includes(lang)
-			);
-		const typeOk =
-			selectedFilters.projectTypes.length === 0 ||
-			selectedFilters.projectTypes.every((type) =>
-				activity.projectTypes?.includes(type)
-			);
-		const osOk =
-			selectedFilters.operatingSystems.length === 0 ||
-			selectedFilters.operatingSystems.every((os) =>
-				activity.operatingSystems?.includes(os)
-			);
-		const domainOk =
-			selectedFilters.examDomains.length === 0 ||
-			selectedFilters.examDomains.every((filter) =>
-				activity.examDomains?.some((m) =>
-					filter.length === 1 ? m.code.startsWith(filter) : m.code === filter,
-				),
-			);
-		return langOk && typeOk && osOk && domainOk;
-	}
-
-	const beginnerCourses = $derived(
-		curriculum.filter(
-			(c) =>
-				(c.level === "Beginner" || sharedTitles.includes(c.title)) &&
-				!excluded.includes(c.title) &&
-				matchesFilters(c)
-		)
-	);
-	const advancedCourses = $derived(
-		curriculum.filter(
-			(c) =>
-				(c.level !== "Beginner" || sharedTitles.includes(c.title)) &&
-				!excluded.includes(c.title) &&
-				matchesFilters(c)
-		)
-	);
-
-	function handleFilterChange(newFilters: {
-		programmingLanguages: string[];
-		projectTypes: string[];
-		operatingSystems: string[];
-		examDomains?: string[];
-	}) {
-		selectedFilters = { ...newFilters, examDomains: newFilters.examDomains ?? [] };
-	}
+	const link = "inline-flex items-center gap-1 underline-offset-2 hover:underline";
 </script>
 
-<div class="mx-auto w-[96%]">
-
-	<FilterPanel
-		activities={curriculum}
-		{selectedFilters}
-		onFilterChange={handleFilterChange}
-		showExamDomains={true}
-		showStandardFilters={false}
+<svelte:head>
+	<title>Voor docenten: curriculum</title>
+	<meta
+		name="description"
+		content="Welke cursus geef je in klas 4 en welke in klas 5 en hoger, met niveau, voorkennis en de docentenhandleiding per cursus."
 	/>
+</svelte:head>
 
-	<!-- Timeline -->
-	<div class="relative ml-4 md:ml-8">
-		<!-- Vertical line -->
+{#snippet kaart(c: Activity)}
+	<li>
+		<Card.Root class="h-full gap-2 py-3">
+			<Card.Header class="px-3">
+				<div class="flex items-start justify-between gap-3">
+					<Card.Title class="min-w-0 text-base [overflow-wrap:anywhere]">
+						<a href={c.link} target="_blank" rel="noopener noreferrer" class={link}>{c.label}</a>
+					</Card.Title>
+					<Badge class={cn("shrink-0 whitespace-nowrap", levelColors[c.level])}>{levelLabels[c.level]}</Badge>
+				</div>
+				<Card.Description>{c.description}</Card.Description>
+			</Card.Header>
+			<Card.Content class="flex flex-wrap items-center justify-between gap-2 px-3 text-xs text-muted-foreground">
+				<span>{c.requires.length > 0 ? `Voorkennis: ${voorkennisVan(c)}` : "Geen voorkennis nodig"}</span>
+				<a href={docentenUrl(c.link)} target="_blank" rel="noopener noreferrer" class={cn(link, "text-foreground")}>
+					Voor de docent
+					<ExternalLink class="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
+				</a>
+			</Card.Content>
+		</Card.Root>
+	</li>
+{/snippet}
+
+<main class="mx-auto max-w-7xl px-4">
+	<section class="pt-6 pb-4">
+		<h1 class="text-2xl font-bold tracking-tight sm:text-3xl">Voor docenten</h1>
+		<p class="mt-1 max-w-3xl text-muted-foreground">
+			Het curriculum in twee stappen: de basis in klas 4, de verdieping in klas 5 en hoger. Elke
+			cursus heeft een docentenhandleiding met wat er technisch nodig is en hoe je 'm in de klas
+			inzet.
+		</p>
+	</section>
+
+	<DocentTabs />
+
+	<section aria-label="Leerlijn" class="relative mb-8 ml-4 md:ml-8">
 		<div class="absolute top-0 bottom-0 left-2 w-0.5 bg-border"></div>
 
-		<!-- Step 1: Klas 4 -->
-		<div class="relative pb-4 pl-10">
-			<!-- Milestone dot -->
+		<div class="relative pb-6 pl-10">
 			<div class="absolute left-0 top-1 h-5 w-5 rounded-full border-4 border-primary bg-background"></div>
-
 			<div class="flex flex-wrap items-baseline gap-3">
 				<h2 class="text-xl font-bold">Klas 4: Basis</h2>
 				<Badge variant="outline">Havo 4 / VWO 4</Badge>
 				<p class="text-sm text-muted-foreground">Alle leerlingen doorlopen de basiscursussen</p>
 			</div>
-
-			<div class="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-				{#each beginnerCourses as course}
-					<Card.Root class="py-3">
-						<Card.Header class="px-3">
-							<div class="flex items-center justify-between gap-3">
-								<Card.Title class="text-lg">
-									<a href={course.link} target="_blank" class="inline-flex items-center gap-1 hover:underline">
-										{course.title}
-										<ExternalLink class="h-4 w-4 shrink-0 text-muted-foreground" />
-									</a>
-								</Card.Title>
-								<Badge
-									variant="default"
-									class={cn("text-xs whitespace-nowrap", levelColors[course.level])}
-								>
-									{course.level}
-								</Badge>
-							</div>
-							{@const chips = buildCardChips(course.examDomains)}
-							{#if chips.length}
-								<div class="mt-1 flex flex-wrap gap-1">
-									{#each chips as chip}
-										<Badge
-											variant={chip.strength === "strong" ? "default" : "outline"}
-											class="text-xs"
-											title={chip.title}
-										>
-											{chip.display}
-										</Badge>
-									{/each}
-								</div>
-							{/if}
-						</Card.Header>
-					</Card.Root>
+			<ul class="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+				{#each klas4 as c (c.id)}
+					{@render kaart(c)}
 				{/each}
-			</div>
+			</ul>
 		</div>
 
-		<!-- Step 2: Klas 5+ -->
 		<div class="relative pb-4 pl-10">
-			<!-- Milestone dot -->
 			<div class="absolute left-0 top-1 h-5 w-5 rounded-full border-4 border-primary bg-background"></div>
-
 			<div class="flex flex-wrap items-baseline gap-3">
 				<h2 class="text-xl font-bold">Klas 5+: Verdieping</h2>
 				<Badge variant="outline">Havo 5 / VWO 5-6</Badge>
 				<p class="text-sm text-muted-foreground">Leerlingen kiezen meerdere verdiepingsmodules</p>
 			</div>
-
-			<div class="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-				{#each advancedCourses as course}
-					<Card.Root class="py-3">
-						<Card.Header class="px-3">
-							<div class="flex items-center justify-between gap-3">
-								<Card.Title class="text-lg">
-									<a href={course.link} target="_blank" class="inline-flex items-center gap-1 hover:underline">
-										{course.title}
-										<ExternalLink class="h-4 w-4 shrink-0 text-muted-foreground" />
-									</a>
-								</Card.Title>
-								<Badge
-									variant="default"
-									class={cn("text-xs whitespace-nowrap", levelColors[course.level])}
-								>
-									{course.level}
-								</Badge>
-							</div>
-							{@const chips = buildCardChips(course.examDomains)}
-							{#if chips.length}
-								<div class="mt-1 flex flex-wrap gap-1">
-									{#each chips as chip}
-										<Badge
-											variant={chip.strength === "strong" ? "default" : "outline"}
-											class="text-xs"
-											title={chip.title}
-										>
-											{chip.display}
-										</Badge>
-									{/each}
-								</div>
-							{/if}
-						</Card.Header>
-					</Card.Root>
+			<ul class="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+				{#each klas5 as c (c.id)}
+					{@render kaart(c)}
 				{/each}
-			</div>
+			</ul>
 		</div>
-	</div>
-</div>
+	</section>
+</main>

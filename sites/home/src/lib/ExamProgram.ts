@@ -462,11 +462,17 @@ export type CardChip = {
   title: string;
 };
 
-// Bouw chip-data voor een tutorial-kaart: kerndomeinen worden als subdomein-code
-// getoond (B1, C3, …); keuzedomeinen worden samengevoegd tot hun hoofdletter
-// (G, H, …) en hun subdomeinen verschijnen alleen in de tooltip.
-export function buildCardChips(mappings: ExamMapping[] | undefined): CardChip[] {
-  if (!mappings?.length) return [];
+export type CardChipGroups = {
+  kern: CardChip[];
+  keuze: CardChip[];
+};
+
+// Bouw chip-data voor een cursus, gescheiden in kern- en keuzedomeinen:
+// kerndomeinen worden als subdomein-code getoond (B1, C3, …); keuzedomeinen
+// worden samengevoegd tot hun hoofdletter (G, H, …) en hun subdomeinen
+// verschijnen alleen in de tooltip.
+export function buildCardChipGroups(mappings: ExamMapping[] | undefined): CardChipGroups {
+  if (!mappings?.length) return { kern: [], keuze: [] };
 
   const kernChips: CardChip[] = [];
   const keuzeGroups = new Map<string, ExamMapping[]>();
@@ -507,5 +513,11 @@ export function buildCardChips(mappings: ExamMapping[] | undefined): CardChip[] 
     };
   });
 
-  return [...kernChips, ...keuzeChips];
+  return { kern: kernChips, keuze: keuzeChips };
+}
+
+/** Alle chips in één lijst, kern eerst. */
+export function buildCardChips(mappings: ExamMapping[] | undefined): CardChip[] {
+  const { kern, keuze } = buildCardChipGroups(mappings);
+  return [...kern, ...keuze];
 }
