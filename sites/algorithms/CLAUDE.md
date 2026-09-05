@@ -2,12 +2,14 @@
 
 Algemene schrijfstijl, didactiek en schrijfskills staan in `../CLAUDE.md` (en de daarin geïmporteerde documenten in `../org-handbook/`).
 
-- Lessen volgen een vaste opbouw per algoritme: `01-concept` → `02-stellingen` → `03+ bouwen-*` (stap-voor-stap implementatie) → `compleet` → `aanpassen` → `zelf-bouwen` → `fouten` → `cheatsheet`.
+- Lessen volgen een vaste opbouw per algoritme: `01-concept` → `02-bekijk` (alleen bij de zes zoek- en sorteeralgoritmes: het hele algoritme stap voor stap bekijken met eigen invoer, `<AlgorithmModel algorithm="…" alleenVisualisatie />`, één voorspelvraag in `<details>`, geen code van de leerling) → `stellingen` → `bouwen-*` (stap-voor-stap implementatie) → `compleet` → `aanpassen` → `zelf-bouwen` → `fouten` → `cheatsheet`. Bestandsprefix, `sidebar_position` en het nummer in de H1 lopen gelijk en zijn per hoofdstuk aaneengesloten; `src/docs-tests/nummering.test.ts` bewaakt dat, plus dat elke `./NN-`-link en elk `[stap N: …]`-label naar een bestaand bestand met dat nummer wijst. Een les ertussen schuiven betekent dus hernummeren, ook de links vanuit big-o, dijkstra en de python-cursus.
 - Voor elk algoritme: chapter-nummer in volgorde van de sidebar (bv. lineair-zoeken=1, binair-zoeken=2, vind-maximum=3, max-en-min=4, bubble-sort=5, selection-sort=6 — of houd de bestaande volgorde aan).
 - `concept`-pagina's: korte uitleg + analogie + visueel voorbeeld; geen volledige code.
 - `stellingen`-pagina's: Predict-fase — meerkeuzevragen of waar/niet-waar met antwoord in `<details>`.
-- `bouwen-*`-pagina's: één klein stukje code per pagina (≤ 10 regels), met PyRunner-component voor uitvoering, opbouwend naar de volledige oplossing.
-- `compleet`-pagina: de volledige werkende implementatie + runner.
+- `bouwen-*`-pagina's: één klein stukje code per pagina (≤ 10 regels), met PyRunner-component voor uitvoering, opbouwend naar de volledige oplossing. Geen tests of visualisaties op deze pagina's: de vroegere `SteppingStoneModel`-widgets vroegen om een functie in te vullen terwijl de les een kale loop leert, en zijn verwijderd. Tests en model staan op de compleet-pagina (`<AlgorithmModel>`), waar de functie wél in de les staat.
+- `compleet`-pagina: de volledige werkende implementatie + runner + `<AlgorithmModel>` met de tabs Visualisatie en Code-oefening.
+- **Elk python-codeblok heeft regelnummers** via de swizzle `src/theme/CodeBlock` (`metastring.ts`, getest). Blokken zonder taal blijven kaal; opt-out per blok met de meta ```python geen-regelnummers. De fences in `<CodeUitleg>` schrijven `showLineNumbers` nog steeds zelf, want `packages/shared/codeuitleg.test.ts` leest de bron.
+- **Tab springt in, Shift+Tab haalt weg**, in elke editor van de site: `HighlightedEditor` regelt het zelf met `src/lib/inspringen.ts` (puur, getest). Een eigen `onKeyDown` gaat voor en kan Tab overnemen met `preventDefault`.
 - `aanpassen`-pagina: Modify-fase met varianten van de basisoplossing.
 - `zelf-bouwen`-pagina: Make-fase met een uitdaging die de leerling vanaf nul oplost.
 - `fouten`-pagina: gebruik het "Er gaat iets mis"-format uit §8 van de schrijfgids.
