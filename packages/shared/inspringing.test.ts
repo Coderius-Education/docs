@@ -9,14 +9,16 @@ import { describe, expect, it } from 'vitest';
 // verdwaalde regel met zes spaties, en dan in de editor op Tab drukt (vier
 // spaties), krijgt een IndentationError die niets met de les te maken heeft.
 // Dit leest elke les in elke cursus: de ```python-fences en de code in
-// <PyRunner initialCode={`…`}>-achtige template-literals. Een fence in een
+// <PyRunner initialCode={`…`}>-achtige template-literals, in attribuut- en
+// kind-vorm (<CodeExercise>{`…`}</CodeExercise>). Een fence in een
 // opsomming is zelf ingesprongen; die inspringing telt niet mee. Een bewust
 // fout voorbeeld (IndentationError in "Er gaat iets mis") draagt de bestaande
 // marker {/* niet-compileren: … */} vlak erboven en wordt overgeslagen.
 
 const SITES_ROOT = fileURLToPath(new URL('../../sites/', import.meta.url));
 const MARKER = /niet-compileren/;
-const LITERAL = /(?:initialCode|code|starterCode|startCode)=\{`([\s\S]*?)`\}/g;
+// Attribuut-vorm (initialCode={`…`}) én kind-vorm (<CodeExercise>{`…`}</CodeExercise>).
+const LITERAL = /(?:(?:initialCode|code|starterCode|startCode)=|>)\{`([\s\S]*?)`\}/g;
 
 type Overtreding = { bestand: string; regel: string };
 
@@ -88,6 +90,7 @@ describe('inspringing in python-voorbeelden', () => {
     expect(controleer('```python\nif x:\n\tprint(1)\n```', 'a')).toHaveLength(1);
     expect(controleer('```python\nf(a,\n  b)\n```', 'a')).toHaveLength(1);
     expect(controleer('<PyRunner initialCode={`if x:\n  print(1)`} />', 'a')).toHaveLength(1);
+    expect(controleer('<CodeExercise>{`if x:\n  print(1)`}</CodeExercise>', 'a')).toHaveLength(1);
   });
 
   it('telt de inspringing van een fence in een opsomming niet mee', () => {

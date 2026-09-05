@@ -9,7 +9,7 @@ import { Highlight, themes } from 'prism-react-renderer';
 import type React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import styles from '../PythonPlayground/styles.module.css';
-import { enterInvoegen, tabInvoegen, tabWeghalen } from '../inspringen';
+import { enterInvoegen, tabInvoegen, tabWeghalen, voerUit } from '../inspringen';
 
 // Lees de kleurmodus rechtstreeks van het `data-theme`-attribuut op <html> i.p.v.
 // via useColorMode uit @docusaurus/theme-common. Dat vermijdt een import van
@@ -80,11 +80,7 @@ export function HighlightedEditor({
           ? tabWeghalen(code, selectionStart, selectionEnd)
           : tabInvoegen(code, selectionStart, selectionEnd);
       if (bewerking.code === code) return;
-      onChange(bewerking.code);
-      requestAnimationFrame(() => {
-        target.selectionStart = bewerking.start;
-        target.selectionEnd = bewerking.end;
-      });
+      voerUit(target, bewerking, onChange);
     },
     [code, onChange, onKeyDown, readOnly, disabled],
   );
