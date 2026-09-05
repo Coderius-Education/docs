@@ -1,6 +1,7 @@
 import { Highlight, Prism, themes } from 'prism-react-renderer';
 import type React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { tabInvoegen, tabWeghalen } from '../../lib/inspringen';
 import styles from './styles.module.css';
 
 // Lees de kleurmodus rechtstreeks van het `data-theme`-attribuut op <html> i.p.v.
@@ -74,6 +75,28 @@ export function HighlightedEditor({
 
   // Keep the highlight <pre>'s scroll position glued to the textarea's so the
   // painted tokens follow when the student scrolls a long code block.
+  // Tab springt in en Shift+Tab haalt de inspringing weg, in elke editor die
+  // dit component gebruikt. Een eigen onKeyDown (Ctrl+Enter in PyRunner) gaat
+  // voor en kan Tab overnemen door preventDefault aan te roepen.
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      onKeyDown?.(e);
+      if (e.defaultPrevented || e.key !== 'Tab' || readOnly || disabled) return;
+      e.preventDefault();
+      const target = e.currentTarget;
+      const bewerking = e.shiftKey
+        ? tabWeghalen(code, target.selectionStart, target.selectionEnd)
+        : tabInvoegen(code, target.selectionStart, target.selectionEnd);
+      if (bewerking.code === code) return;
+      onChange(bewerking.code);
+      requestAnimationFrame(() => {
+        target.selectionStart = bewerking.start;
+        target.selectionEnd = bewerking.end;
+      });
+    },
+    [code, onChange, onKeyDown, readOnly, disabled],
+  );
+
   const handleScroll = useCallback((e: React.UIEvent<HTMLTextAreaElement>) => {
     const pre = highlightRef.current;
     if (pre) {
@@ -112,7 +135,7 @@ export function HighlightedEditor({
         className={styles.textarea}
         value={code}
         onChange={(e) => onChange(e.target.value)}
-        onKeyDown={onKeyDown}
+        onKeyDown={handleKeyDown}
         onScroll={handleScroll}
         disabled={disabled}
         readOnly={readOnly}

@@ -250,24 +250,15 @@ export default function PyRunnerImpl({
     }
   }, [code, maakKlaar, needsMatplotlib]);
 
+  // Tab en Shift+Tab regelt HighlightedEditor zelf; hier alleen Ctrl+Enter.
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-      if (e.key === 'Tab') {
-        e.preventDefault();
-        const target = e.target as HTMLTextAreaElement;
-        const start = target.selectionStart;
-        const end = target.selectionEnd;
-        setCode(`${code.substring(0, start)}    ${code.substring(end)}`);
-        requestAnimationFrame(() => {
-          target.selectionStart = target.selectionEnd = start + 4;
-        });
-      }
       if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
         e.preventDefault();
         handleRun();
       }
     },
-    [code, handleRun],
+    [handleRun],
   );
 
   const handleReset = useCallback(() => {
