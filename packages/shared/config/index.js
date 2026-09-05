@@ -2,6 +2,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { themes: prismThemes } = require('prism-react-renderer');
 const transpileShared = require('../plugins/transpile-shared');
+const { plugin: mdxInspringing } = require('../plugins/mdx-inspringing');
 const cursussenRoute = require('../plugins/cursussen-route');
 const privacyRoute = require('../plugins/privacy-route');
 const matomoPlugin = require('../plugins/matomo');
@@ -185,6 +186,7 @@ function createConfig(site = {}) {
     plugins: [
       ...(plugins || []),
       [transpileShared, { packages: sharedPackages }],
+      mdxInspringing,
       cursussenRoute,
       privacyRoute,
       [matomoPlugin, { siteId: matomoSiteId }],
