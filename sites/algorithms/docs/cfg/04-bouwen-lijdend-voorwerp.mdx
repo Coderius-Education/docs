@@ -107,9 +107,9 @@ def controleer(grammatica_tekst, zinnen):
     for zin in zinnen:
         bomen = parse(grammatica, zin.lower().split())
         if bomen:
-            print(f"  OK  ({len(bomen)}x)  {zin}")
+            print(f"    OK  ({len(bomen)}x)  {zin}")
         else:
-            print(f"  FOUT (0x)  {zin}   <-- parseert nog niet!")
+            print(f"    FOUT (0x)  {zin}   <-- parseert nog niet!")
             alles_goed = False
     print()
     if alles_goed:

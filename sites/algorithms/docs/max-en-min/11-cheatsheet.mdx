@@ -92,7 +92,7 @@ Bij wederzijds uitsluitende condities: `elif` (efficiënter en duidelijker).
 <summary>Hoeveel vergelijkingen?</summary>
 
 - **Eén pass + `elif`**: tussen `n` en `2n` vergelijkingen (afhankelijk van
-  data).
+    data).
 - **Eén pass + apart `if`**: precies `2n` vergelijkingen.
 - **Twee aparte passes**: precies `2n` vergelijkingen + `2n` leesacties.
 
@@ -105,9 +105,9 @@ In alle gevallen: **O(n)** — verschil zit in de constanten.
 
 - Bij **grote** lijsten waar elke leesactie kostbaar is.
 - Als je **toch al** door de lijst loopt voor iets anders — voeg `min` en
-  `max` gewoon mee.
+    `max` gewoon mee.
 - Bij **streaming data** (lijst is te groot voor het geheugen) — je kunt
-  hem maar één keer lezen.
+    hem maar één keer lezen.
 
 </details>
 

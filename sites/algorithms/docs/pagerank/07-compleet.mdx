@@ -98,7 +98,7 @@ def pagerank(web, d=0.85, epsilon=1e-9):
 ranks = pagerank(WEB, D)
 print("PageRank (hoog naar laag):")
 for p in sorted(ranks, key=lambda x: -ranks[x]):
-    print(f"  {p}: {ranks[p]:.4f}")
+    print(f"    {p}: {ranks[p]:.4f}")
 print(f"\\nSom van alle ranks: {sum(ranks.values()):.4f}")`} />
 
 ## Wat je nu hebt

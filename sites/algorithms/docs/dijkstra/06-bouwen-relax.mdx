@@ -36,7 +36,7 @@ if nieuwe_afstand < afstanden[buur]:
 Drie regels. Eén berekening, één vergelijking, één toewijzing.
 
 - `afstanden[huidige]` = afstand vanuit start naar de node waar we nu
-  staan.
+    staan.
 - `gewicht` = de kost om naar deze buur te lopen.
 - `nieuwe_afstand` = totaal als we via *mij* gaan.
 
@@ -139,7 +139,7 @@ for buur, gewicht in graph[huidige]:
     nieuwe = afstanden[huidige] + gewicht
     if nieuwe < afstanden[buur]:
         afstanden[buur] = nieuwe
-        print(f"  update {buur} → {nieuwe}")
+        print(f"    update {buur} → {nieuwe}")
 print(f"Na:   {afstanden}")`} />
 
 <details>

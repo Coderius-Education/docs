@@ -32,10 +32,10 @@ Dat is alles. Geen lus, geen while, geen recursie. Eén ronde.
 Waarom in deze volgorde?
 
 - Als we `bezocht.add(huidige)` **vergeten** of pas later doen, kunnen
-  we hem volgende ronde opnieuw kiezen.
+    we hem volgende ronde opnieuw kiezen.
 - Sommige graphs hebben *zelf-edges* (een node verbonden met zichzelf).
-  Door eerst te markeren, voorkomen we dat de relax-stap onnodig naar
-  onszelf kijkt.
+    Door eerst te markeren, voorkomen we dat de relax-stap onnodig naar
+    onszelf kijkt.
 
 ## Voorspel
 
@@ -59,7 +59,7 @@ bezocht   = {'A'}
 - Kies = `A` (laagste afstand 0, niemand bezocht).
 - Mark `A` als bezocht.
 - Buren van `A`: `B` met gewicht 4 → update naar 4. `C` met gewicht 2 →
-  update naar 2.
+    update naar 2.
 
 Dit komt exact overeen met **ronde 1** uit je pen-en-papier-tabel.
 
@@ -100,7 +100,7 @@ for buur, gewicht in graph[huidige]:
     nieuwe = afstanden[huidige] + gewicht
     if nieuwe < afstanden[buur]:
         afstanden[buur] = nieuwe
-        print(f"  update {buur} → {nieuwe}")
+        print(f"    update {buur} → {nieuwe}")
 
 print(f"Afstanden: {afstanden}")`} />
 
@@ -152,8 +152,8 @@ def ronde():
         nieuwe = afstanden[huidige] + gewicht
         if nieuwe < afstanden[buur]:
             afstanden[buur] = nieuwe
-            print(f"  update {buur} → {nieuwe}")
-    print(f"  afstanden: {afstanden}")
+            print(f"    update {buur} → {nieuwe}")
+    print(f"    afstanden: {afstanden}")
 
 # Vier keer hetzelfde — eens kijken hoe ver we komen
 ronde()

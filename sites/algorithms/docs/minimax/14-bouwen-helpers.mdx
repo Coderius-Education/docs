@@ -52,12 +52,12 @@ Drie ingrediënten van recursie:
 ## Recursie in `max_value`
 
 - **Base case**: het bord is terminal → return `utility(bord)`. Geen
-  zetten meer, het getal is al bekend.
+    zetten meer, het getal is al bekend.
 - **Recursieve aanroep**: voor elke mogelijke zet, kijk wat O daarna zou
-  doen — dat is `min_value(result(bord, zet))`. Neem het maximum van
-  al die uitkomsten.
+    doen — dat is `min_value(result(bord, zet))`. Neem het maximum van
+    al die uitkomsten.
 - **Convergentie**: bij elke recursieve aanroep is er één extra cel
-  gevuld. Het bord nadert vanzelf de terminale toestand.
+    gevuld. Het bord nadert vanzelf de terminale toestand.
 
 ```python
 def max_value(bord):

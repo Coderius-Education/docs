@@ -45,8 +45,8 @@ def pagerank(web, d=0.85, epsilon=1e-9):
 
 ranks = pagerank(WEB, D)
 for p in sorted(ranks, key=lambda x: -ranks[x]):
-    print(f"  {p}: {ranks[p]:.4f}")
-print(f"  som: {sum(ranks.values()):.4f}")`} />
+    print(f"    {p}: {ranks[p]:.4f}")
+print(f"    som: {sum(ranks.values()):.4f}")`} />
 
 <details>
 <summary>Wat zie je bij de uitersten?</summary>

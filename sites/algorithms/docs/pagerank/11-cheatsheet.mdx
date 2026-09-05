@@ -65,11 +65,11 @@ def pagerank(web, d=0.85, epsilon=1e-9):
 <summary>Damping, convergentie, som</summary>
 
 - **Damping** (`d = 0,85`) houdt het stabiel: de surfer loopt nooit
-  definitief vast en elke pagina blijft bereikbaar.
+    definitief vast en elke pagina blijft bereikbaar.
 - **Convergentie**: elke iteratie verandert minder; stop als de grootste
-  verandering kleiner is dan een kleine `epsilon`.
+    verandering kleiner is dan een kleine `epsilon`.
 - De **som** van alle ranks blijft (ongeveer) **1** — je kunt rank lezen
-  als "kans dat de random surfer hier is".
+    als "kans dat de random surfer hier is".
 - Reken een ronde altijd uit de ranks van de **vorige** ronde.
 
 </details>

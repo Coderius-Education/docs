@@ -68,9 +68,9 @@ print(een_pass([1, 2, 3, 4, 5]))
 ```
 
 - `[3, 1, 4, 1, 5]` → de 5 borrelt naar achteren (was al achteraan); de
-  binnenste-paar-swaps gebeuren.
+    binnenste-paar-swaps gebeuren.
 - `[5, 4, 3, 2, 1]` (omgekeerd) → de 5 borrelt netjes helemaal naar
-  achteren in één pass. De rest is nog wel rommelig.
+    achteren in één pass. De rest is nog wel rommelig.
 - `[1, 2, 3, 4, 5]` (al gesorteerd) → niets verandert.
 
 </details>
@@ -94,7 +94,7 @@ print(een_pass([1, 2, 3, 4, 5]))`} />
     for i in range(len(lijst) - 1):
         if lijst[i] > lijst[i + 1]:
             lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
-            print(f"  i={i}: swap → {lijst}")
+            print(f"    i={i}: swap → {lijst}")
     print("eind:", lijst)
     return lijst
 
