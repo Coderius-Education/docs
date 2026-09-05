@@ -31,17 +31,23 @@ Geen extra variabele nodig — de telling op het bord vertelt het zelf.
 Wat denk je dat dit print?
 
 ```python
-bord_a = [[None, None, None],
-          [None, None, None],
-          [None, None, None]]
+bord_a = [
+    [None, None, None],
+    [None, None, None],
+    [None, None, None],
+]
 
-bord_b = [["X", None, None],
-          [None, None, None],
-          [None, None, None]]
+bord_b = [
+    ["X", None, None],
+    [None, None, None],
+    [None, None, None],
+]
 
-bord_c = [["X", "O", "X"],
-          ["O", "X", "O"],
-          [None, None, None]]
+bord_c = [
+    ["X", "O", "X"],
+    ["O", "X", "O"],
+    [None, None, None],
+]
 
 # Tel X'en en O's per bord
 for naam, bord in [("a", bord_a), ("b", bord_b), ("c", bord_c)]:

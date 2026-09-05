@@ -37,9 +37,11 @@ niet toe doet — alle lege cellen tellen even zwaar.
 Wat denk je dat de output is?
 
 ```python
-bord = [["X", None, "X"],
-        ["O", "X", "O"],
-        [None, None, None]]
+bord = [
+    ["X", None, "X"],
+    ["O", "X", "O"],
+    [None, None, None],
+]
 
 # Welke cellen zijn None?
 ```
@@ -71,14 +73,18 @@ assert len(actions(leeg)) == 9, "Leeg bord heeft 9 mogelijke zetten"
 assert (0, 0) in actions(leeg)
 assert (2, 2) in actions(leeg)
 
-bord = [["X", None, "X"],
-        ["O", "X", "O"],
-        [None, None, None]]
+bord = [
+    ["X", None, "X"],
+    ["O", "X", "O"],
+    [None, None, None],
+]
 assert actions(bord) == {(0, 1), (2, 0), (2, 1), (2, 2)}
 
-vol = [["X", "O", "X"],
-       ["O", "X", "O"],
-       ["X", "O", "X"]]
+vol = [
+    ["X", "O", "X"],
+    ["O", "X", "O"],
+    ["X", "O", "X"],
+]
 assert actions(vol) == set(), "Vol bord -> lege set"
 
 assert isinstance(actions(leeg), set), "Output moet een set zijn, geen lijst"

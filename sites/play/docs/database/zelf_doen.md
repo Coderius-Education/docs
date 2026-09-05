@@ -31,18 +31,26 @@ import json
 pad_mijn_db = 'database.json'
 mijn_db = None
 
-boven = play.new_text("Klik op spatie om de teller te verhogen",
-                      y=100,
-                      font_size=40)
-onder = play.new_text("Dit wordt ook opgeslagen in je database",
-                      y=0,
-                      font_size=40)
-daaronder = play.new_text("Aantal kliks:",
-                          y=-100,
-                          font_size=40)
-daarweeronder = play.new_text('0',
-                              y=-150,
-                              font_size=40)
+boven = play.new_text(
+    "Klik op spatie om de teller te verhogen",
+    y=100,
+    font_size=40,
+)
+onder = play.new_text(
+    "Dit wordt ook opgeslagen in je database",
+    y=0,
+    font_size=40,
+)
+daaronder = play.new_text(
+    "Aantal kliks:",
+    y=-100,
+    font_size=40,
+)
+daarweeronder = play.new_text(
+    '0',
+    y=-150,
+    font_size=40,
+)
 
 @play.when_program_starts  # deze functie wordt automatisch uitgevoerd bij het starten van het programma
 def start():

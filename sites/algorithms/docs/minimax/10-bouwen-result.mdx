@@ -61,9 +61,11 @@ Wat denk je dat dit print?
 ```python
 import copy
 
-origineel = [[None, None, None],
-             [None, None, None],
-             [None, None, None]]
+origineel = [
+    [None, None, None],
+    [None, None, None],
+    [None, None, None],
+]
 
 kopie = copy.deepcopy(origineel)
 kopie[0][0] = "X"

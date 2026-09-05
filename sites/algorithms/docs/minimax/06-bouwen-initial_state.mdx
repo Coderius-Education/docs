@@ -22,9 +22,11 @@ vertellen, er is gewoon één antwoord.
 - **Output**: een lijst van 3 lijsten, elk met 3× `None`.
 - **Voorbeeld**: `initial_state()` →
   ```python
-  [[None, None, None],
-   [None, None, None],
-   [None, None, None]]
+  [
+      [None, None, None],
+      [None, None, None],
+      [None, None, None],
+  ]
   ```
 
 ## Voorspel
@@ -84,9 +86,11 @@ print("Alle tests gehaald ✓")`} />
 Schrijf de drie rijen letterlijk uit:
 
 ```python
-return [[None, None, None],
-        [None, None, None],
-        [None, None, None]]
+return [
+    [None, None, None],
+    [None, None, None],
+    [None, None, None],
+]
 ```
 
 Kortere variant: `[[None] * 3 for _ in range(3)]`.

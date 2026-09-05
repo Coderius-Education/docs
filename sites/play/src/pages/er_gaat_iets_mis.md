@@ -52,6 +52,8 @@ Ergens is er een regel code waar je `te veel` of `te weinig` spaties hebt gebrui
 
 Laten we naar een paar voorbeelden kijken.
 
+{/* niet-compileren: bewuste IndentationError, het voorbeeld van deze foutmelding */}
+
 ```python
 import play
   cirkel = play.new_circle()
