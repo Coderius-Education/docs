@@ -53,6 +53,7 @@ function CodeEditorInner({ value, onChange, readOnly = false, height = '300px' }
         historyKeymap,
         indentWithTab,
         indentOnInput,
+        indentUnit,
         bracketMatching,
         syntaxHighlighting,
         defaultHighlightStyle,
@@ -72,6 +73,9 @@ function CodeEditorInner({ value, onChange, readOnly = false, height = '300px' }
         highlightActiveLineGutter(),
         history(),
         indentOnInput(),
+        // Vier spaties per niveau, zoals de lessen; CodeMirror springt anders
+        // met twee in na Enter achter een dubbele punt.
+        indentUnit.of('    '),
         bracketMatching(),
         closeBrackets(),
         python(),

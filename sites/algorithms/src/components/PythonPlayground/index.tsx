@@ -1,7 +1,7 @@
+import { enterInvoegen, tabInvoegen, tabWeghalen } from '@coderius/python-runner/inspringen';
 import { Highlight, Prism, themes } from 'prism-react-renderer';
 import type React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { tabInvoegen, tabWeghalen } from '../../lib/inspringen';
 import styles from './styles.module.css';
 
 // Lees de kleurmodus rechtstreeks van het `data-theme`-attribuut op <html> i.p.v.
@@ -75,18 +75,25 @@ export function HighlightedEditor({
 
   // Keep the highlight <pre>'s scroll position glued to the textarea's so the
   // painted tokens follow when the student scrolls a long code block.
-  // Tab springt in en Shift+Tab haalt de inspringing weg, in elke editor die
-  // dit component gebruikt. Een eigen onKeyDown (Ctrl+Enter in PyRunner) gaat
+  // Tab springt in, Shift+Tab haalt de inspringing weg en Enter houdt de
+  // inspringing vast (een niveau dieper na een dubbele punt), in elke editor
+  // die dit component gebruikt. Een eigen onKeyDown (Ctrl+Enter in PyRunner) gaat
   // voor en kan Tab overnemen door preventDefault aan te roepen.
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
       onKeyDown?.(e);
-      if (e.defaultPrevented || e.key !== 'Tab' || readOnly || disabled) return;
+      if (e.defaultPrevented || readOnly || disabled) return;
+      const isTab = e.key === 'Tab';
+      const isEnter = e.key === 'Enter' && !e.ctrlKey && !e.metaKey && !e.altKey;
+      if (!isTab && !isEnter) return;
       e.preventDefault();
       const target = e.currentTarget;
-      const bewerking = e.shiftKey
-        ? tabWeghalen(code, target.selectionStart, target.selectionEnd)
-        : tabInvoegen(code, target.selectionStart, target.selectionEnd);
+      const { selectionStart, selectionEnd } = target;
+      const bewerking = isEnter
+        ? enterInvoegen(code, selectionStart, selectionEnd)
+        : e.shiftKey
+          ? tabWeghalen(code, selectionStart, selectionEnd)
+          : tabInvoegen(code, selectionStart, selectionEnd);
       if (bewerking.code === code) return;
       onChange(bewerking.code);
       requestAnimationFrame(() => {
