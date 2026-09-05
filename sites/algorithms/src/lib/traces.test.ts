@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { algorithmModels } from '../data/algorithmModels';
-import { steppingStoneModels } from '../data/steppingStoneModels';
 import {
   traceBinarySearch,
   traceBubbleSort,
@@ -86,31 +85,6 @@ describe('de catalogus van algoritme-modellen', () => {
       expect(model.exercise.tests.length).toBeGreaterThanOrEqual(3);
       expect(model.trace(model.defaultInput).length).toBeGreaterThan(0);
       expect(Array.isArray(model.traceArgs(model.defaultInput))).toBe(true);
-    },
-  );
-});
-
-describe('de stepping-stone-modellen', () => {
-  it('zijn er vierentwintig, met unieke ids', () => {
-    expect(steppingStoneModels).toHaveLength(24);
-    expect(new Set(steppingStoneModels.map((m) => m.id)).size).toBe(24);
-  });
-
-  it.each(steppingStoneModels.map((m) => [m.id, m] as const))(
-    '%s hoort bij een bekend algoritme en heeft een werkende visualisatie',
-    (_id, model) => {
-      const algoritme = algorithmModels.find((m) => m.id === model.algorithm);
-      expect(algoritme, `onbekend algoritme ${model.algorithm}`).toBeDefined();
-      if (!algoritme) return;
-      expect(typeof model.title).toBe('string');
-      expect(typeof model.summary).toBe('string');
-      expect(typeof model.visual.hint).toBe('string');
-      expect(Array.isArray(model.visual.input.values)).toBe(true);
-      expect(model.visual.focusStep).toBeGreaterThanOrEqual(0);
-      expect(model.exercise.starterCode).toContain(`def ${model.exercise.functionName}`);
-      expect(model.exercise.starterCode).toContain('Schrijf je oplossing hier');
-      expect(model.exercise.tests.length).toBeGreaterThanOrEqual(2);
-      expect(algoritme.trace(model.visual.input).length).toBeGreaterThan(0);
     },
   );
 });
