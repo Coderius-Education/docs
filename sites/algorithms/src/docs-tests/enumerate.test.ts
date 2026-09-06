@@ -14,10 +14,7 @@ import { describe, expect, it } from 'vitest';
 const DOCS = fileURLToPath(new URL('../../docs/', import.meta.url));
 const UITLEG = '/docs/lineair-zoeken/bouwen/04-doorlopen';
 
-const ACHTERSTAND = [
-  'cfg/13-compleet.mdx',
-  'knapsack/bouwen/07-volledige-tabel.mdx',
-];
+const ACHTERSTAND = ['cfg/13-compleet.mdx', 'knapsack/bouwen/07-volledige-tabel.mdx'];
 
 function lessen(map: string): string[] {
   return readdirSync(map)
