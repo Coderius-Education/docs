@@ -1,7 +1,12 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { traceMinAndMax, traceSelectionSort } from '../lib/algorithmTraces';
+import {
+  traceBinarySearch,
+  traceMaximum,
+  traceMinAndMax,
+  traceSelectionSort,
+} from '../lib/algorithmTraces';
 
 // De tabel "Hoeveel werk doet dit?" op de compleet-pagina noemt getallen die
 // nergens uit een codeblok komen, dus het blokken-script kijkt er niet naar.
@@ -101,5 +106,67 @@ describe('de visualisatie van max en min', () => {
     const geteld = laatste?.stats.comparisons;
     if (geteld === undefined) throw new Error('de trace telt geen vergelijkingen');
     expect(Number(belofte[1])).toBe(geteld);
+  });
+});
+
+describe('de visualisatie van vind het maximum', () => {
+  const tekst = readFileSync(`${DOCS}vind-maximum/01-concept.mdx`, 'utf8');
+
+  it('telt evenveel vergelijkingen als de trace', () => {
+    const lijst = tekst.match(/^lijst:\s*\[([^\]]+)\]/m);
+    if (!lijst) throw new Error('geen voorbeeldlijst in de visualisatie');
+    const waardes = lijst[1].split(',').map((c) => Number(c.trim()));
+
+    const belofte = tekst.match(/in (\d+) vergelijkingen/);
+    if (!belofte) throw new Error('de visualisatie noemt geen aantal vergelijkingen');
+
+    const geteld = traceMaximum(waardes).at(-1)?.stats.comparisons;
+    if (geteld === undefined) throw new Error('de trace telt geen vergelijkingen');
+    expect(Number(belofte[1])).toBe(geteld);
+  });
+});
+
+// De cheatsheet van binair zoeken gaf `ceil(log2(n))` als slechtste geval.
+// Dat klopt niet bij machten van twee: voor acht elementen geeft de formule
+// drie stappen, terwijl het er vier zijn — precies de schatting waarvoor
+// stelling 4 in datzelfde hoofdstuk waarschuwt. De tabel eronder klopte wel,
+// en die leggen we hier naast de trace. De grote rijen lopen tot een miljard;
+// die traceren we niet, want elke stap bewaart een kopie van de lijst.
+const TRACEBAAR = 100_000;
+
+function stappenInHetSlechtsteGeval(n: number): number {
+  // Slechtste geval: een doel dat groter is dan alles in de lijst.
+  const waardes = Array.from({ length: n }, (_, i) => i);
+  const geteld = traceBinarySearch(waardes, n).at(-1)?.stats.comparisons;
+  if (geteld === undefined) throw new Error(`de trace van ${n} telt geen vergelijkingen`);
+  return geteld;
+}
+
+describe('de tabel van binair zoeken', () => {
+  const tekst = readFileSync(`${DOCS}binair-zoeken/13-cheatsheet.mdx`, 'utf8');
+  const rijen = tabelOnderKop(tekst, '<summary>Hoe snel?</summary>');
+
+  it('noemt minstens drie lijstgroottes', () => {
+    expect(rijen.length).toBeGreaterThanOrEqual(3);
+  });
+
+  it('de kleine rijen tellen evenveel stappen als de trace', () => {
+    const klein = rijen.filter((rij) => getal(rij[0]) <= TRACEBAAR);
+    expect(klein.length).toBeGreaterThan(0);
+    for (const rij of klein) {
+      expect(getal(rij[1])).toBe(stappenInHetSlechtsteGeval(getal(rij[0])));
+    }
+  });
+
+  it('de grote rijen volgen dezelfde formule', () => {
+    for (const rij of rijen.filter((r) => getal(r[0]) > TRACEBAAR)) {
+      const n = getal(rij[0]);
+      expect(getal(rij[1])).toBe(Math.floor(Math.log2(n)) + 1);
+    }
+  });
+
+  it('de formule in de tekst is die van de trace, niet ceil(log2)', () => {
+    expect(stappenInHetSlechtsteGeval(8)).toBe(4);
+    expect(tekst).toContain('⌊log₂(n)⌋ + 1');
   });
 });

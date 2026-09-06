@@ -23,7 +23,6 @@ const ACHTERSTAND = new Map([
     'binair-zoeken',
     'de kop zet de twee varianten naast elkaar, de cheatsheet noemt alleen de foute',
   ],
-  ['vind-maximum', 'de cheatsheet schrijft `maximum = 0`, de les `max_tot_nu_toe = 0`'],
   ['minimax', 'de kop noemt twee helperfuncties, de samenvatting het algoritme'],
 ]);
 

@@ -32,17 +32,21 @@ We zoeken het maximum in deze lijst:
 lijst:  [ 3 , 7 , 2 , 9 , 4 ]
 index:    0   1   2   3   4
 
-stap 0:  max = 3                       (we beginnen met het eerste element)
-stap 1:  vergelijk 7 met max=3 → 7 > 3 → max = 7
-stap 2:  vergelijk 2 met max=7 → 2 < 7 → max blijft 7
-stap 3:  vergelijk 9 met max=7 → 9 > 7 → max = 9
-stap 4:  vergelijk 4 met max=9 → 4 < 9 → max blijft 9
+start:  max = 3    we beginnen met het eerste element
 
-→ maximum = 9
+vergelijk 3 met max=3:  niet groter  ->  max blijft 3
+vergelijk 7 met max=3:  groter       ->  max = 7
+vergelijk 2 met max=7:  niet groter  ->  max blijft 7
+vergelijk 9 met max=7:  groter       ->  max = 9
+vergelijk 4 met max=9:  niet groter  ->  max blijft 9
+
+eind:   maximum = 9    in 5 vergelijkingen
 ```
 
-In 4 vergelijkingen weet je het antwoord — en je hebt elk element precies
-één keer bekeken.
+Je bekijkt elk element precies één keer. De eerste vergelijking is er een
+die een mens niet zou maken: het eerste element wordt met zichzelf
+vergeleken. Dat komt doordat de lus straks gewoon bij het begin van de
+lijst start, en het kost niets.
 
 ## Het accumulator-patroon
 
@@ -68,10 +72,10 @@ foutmelding. We bespreken dit later expliciet.
 <details>
 <summary>Hoe snel is dit?</summary>
 
-Voor `n` elementen doe je `n - 1` vergelijkingen (één voor elk element
-behalve het eerste). Dat heet **O(n)** — lineair in de lengte. Sneller
-kan niet: je *moet* elk element minstens één keer hebben gezien om zeker
-te weten dat het niet het maximum is.
+Voor `n` elementen doet dit algoritme `n` vergelijkingen, één per
+element. Dat heet **O(n)**: lineair in de lengte. Minder dan `n − 1` kan
+sowieso niet, want je moet elk element minstens één keer hebben gezien om
+zeker te weten dat het niet het maximum is.
 
 </details>
 
