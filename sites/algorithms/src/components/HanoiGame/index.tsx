@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import type React from 'react';
 import { useCallback, useMemo, useState } from 'react';
+import { opgelostMelding } from './melding';
 import styles from './styles.module.css';
 
 type HanoiGameProps = {
@@ -55,7 +56,7 @@ export default function HanoiGame({
       // Nog geen schijf opgepakt: pak de bovenste van deze paal.
       if (bron === null) {
         if (pegs[index].length === 0) {
-          setMelding('Die paal is leeg — kies een paal met een schijf.');
+          setMelding('Die paal is leeg. Kies een paal met een schijf.');
           return;
         }
         setBron(index);
@@ -85,13 +86,13 @@ export default function HanoiGame({
       setPegs(volgende);
       setBron(null);
       setZetten((n) => n + 1);
-      setMelding(klaar ? `Opgelost in ${zetten + 1} zetten! Kun je het in minder?` : '');
+      setMelding(klaar ? opgelostMelding(zetten + 1, aantal) : '');
     },
     [aantal, bron, opgelost, pegs, zetten],
   );
 
   return (
-    <section className={styles.game} aria-label="Torens van Hanoi — speelbaar">
+    <section className={styles.game} aria-label="Torens van Hanoi, speelbaar">
       <div className={styles.header}>
         <div>
           <p className={styles.kicker}>Speel zelf</p>
@@ -165,11 +166,11 @@ export default function HanoiGame({
 
       <output className={clsx(styles.status, opgelost && styles.statusWin)} aria-live="polite">
         {opgelost
-          ? melding || `Opgelost in ${zetten} zetten! Kun je het in minder?`
+          ? melding || opgelostMelding(zetten, aantal)
           : melding ||
             (bron === null
               ? 'Kies een paal om een schijf op te pakken.'
-              : `Schijf van paal ${PEG_NAMEN[bron]} opgepakt — kies een doelpaal.`)}
+              : `Schijf van paal ${PEG_NAMEN[bron]} opgepakt. Kies een doelpaal.`)}
       </output>
     </section>
   );
