@@ -24,7 +24,7 @@ De aanhalingstekens horen erbij: zonder die tekens leest PowerShell de blokhaken
 
 Een aantal regels die met `Collecting` en `Downloading` beginnen, en tot slot `Successfully installed` met de namen van de packages erachter.
 
-Staat er `(.venv)` níét voor de prompt, sluit de terminal dan met het prullenbak-icoon rechtsboven in het terminal-paneel en open een nieuwe. Helpt dat niet, sluit VS Code helemaal af en open je project opnieuw met `code .`.
+Staat er `(.venv)` níét voor de prompt, sluit de terminal dan met het prullenbak-icoon rechtsboven in het terminal-paneel en open een nieuwe. Helpt dat niet, sluit VS Code helemaal af en open je project opnieuw met `code .`. Andere meldingen staan bij [Er gaat iets mis](./problemen).
 
 ## Welke packages heb je al
 

@@ -1,6 +1,8 @@
 # Installatie
 
-Tijd voor een back-end. Voordat je de eerste server start, loop je deze vijf checks van boven naar beneden door. Elke check zegt hoe je ziet dat het goed is. Klopt het niet, klap dan de hulp eronder open.
+Tijd voor een back-end. Voordat je de eerste server start, loop je deze vijf checks van boven naar beneden door. Elke check zegt hoe je ziet dat het goed is. Klopt het niet, klap dan de hulp eronder open: daar staat wat er ontbreekt en waar de uitleg staat.
+
+De volledige installatie met schermafbeeldingen staat in de editor-cursus, in zeven stappen: <SiteLink site="editor" to="/python/">Python in VS Code</SiteLink>. Deze pagina herhaalt die stappen niet, zodat er maar één plek is die ze bijhoudt.
 
 ## Check 1: VS Code
 
@@ -9,7 +11,9 @@ Start Visual Studio Code. Je ziet het welkomstscherm of het project waar je het 
 <details>
 <summary>Heb je dit nog niet? Klik hier.</summary>
 
-Visual Studio Code is de editor waarin je in deze cursus werkt. Download hem gratis en installeer hem met de standaardinstellingen. Laat op Windows het vakje **Add to PATH** aangevinkt staan; zonder dat vakje mist je het commando uit check 4. De stappen met schermafbeeldingen staan in de editor-cursus: <SiteLink site="editor" to="/installatie-vscode/">VS Code installeren</SiteLink>.
+Visual Studio Code is de editor waarin je in deze cursus werkt. Hij is gratis. Laat tijdens de installatie op Windows het vakje **Add to PATH** aangevinkt staan; zonder dat vakje mist je het commando uit check 4.
+
+<SiteLink site="editor" to="/installatie-vscode/">VS Code installeren</SiteLink>
 
 </details>
 
@@ -24,12 +28,9 @@ PS C:\Users\jij\Documenten\fullstack-project>
 <details>
 <summary>Heb je dit nog niet? Klik hier.</summary>
 
-1. Maak in de Verkenner een nieuwe map, bijvoorbeeld `fullstack-project`, en open hem
-2. Klik met de rechtermuisknop in het lege deel van het venster en kies **Openen in Terminal**
+Het maakt uit vanuit welke map je de terminal opent: alles wat je typt gebeurt in díé map, en daar komen straks je virtual environment en je code te staan.
 
-Op Windows 10 heet die keuze **PowerShell-venster hier openen** en verschijnt hij pas als je Shift ingedrukt houdt bij het rechtsklikken. Staat hij er helemaal niet, klik dan in de adresbalk bovenin, typ `powershell` over het pad heen en druk op Enter.
-
-Het maakt uit vanuit welke map je de terminal opent: alles wat je typt gebeurt in díé map, en daar komen straks je virtual environment en je code te staan. Meer hierover: <SiteLink site="editor" to="/python/stap-1-projectmap">Een projectmap aanmaken</SiteLink>.
+<SiteLink site="editor" to="/python/stap-1-projectmap">Een projectmap aanmaken</SiteLink> en <SiteLink site="editor" to="/python/stap-2-powershell">PowerShell openen vanuit je map</SiteLink>
 
 </details>
 
@@ -46,11 +47,9 @@ Het antwoord begint met `Python 3`.
 <details>
 <summary>Heb je dit nog niet? Klik hier.</summary>
 
-Typ in PowerShell `python` zonder meer. Windows opent de Microsoft Store op de pagina van Python; klik daar op **Ophalen**.
+Typ `python` zonder meer, dan wijst Windows je de weg naar de Microsoft Store. Wat je doet als die Store geblokkeerd is, en hoe het op een Mac gaat, staat in de stap zelf.
 
-Sluit daarna het PowerShell-venster en open een nieuw venster vanuit je projectmap. Een venster dat al open stond kent het nieuwe commando niet, en dan blijft de Store terugkomen. De volledige uitleg, inclusief wat je doet als de Store geblokkeerd is: <SiteLink site="editor" to="/python/stap-3-installeren">Python installeren</SiteLink>.
-
-Op een Mac opent `python` geen Store. Installeer Python van [python.org](https://www.python.org/downloads/); het commando heet daar `python3`, dus je controleert met `python3 --version`.
+<SiteLink site="editor" to="/python/stap-3-installeren">Python installeren</SiteLink>
 
 </details>
 
@@ -65,24 +64,9 @@ Je project staat open in VS Code, met een map `.venv` in de Explorer links. Open
 <details>
 <summary>Heb je dit nog niet? Klik hier.</summary>
 
-Een virtual environment is een afgesloten omgeving voor dit project. Packages die je hier installeert, komen niet in de weg van andere projecten.
+Een virtual environment is een afgesloten omgeving voor dit project. Packages die je hier installeert, komen niet in de weg van andere projecten. Je maakt hem aan met `python -m venv .venv` en opent je project daarna met `code .`; VS Code zet de omgeving in zijn eigen terminal vanzelf aan.
 
-1. Maak de omgeving aan in PowerShell, in je projectmap:
-
-```bash
-python -m venv .venv
-```
-
-2. Open je project in VS Code vanuit datzelfde venster:
-
-```bash
-code .
-```
-
-3. Installeer in VS Code de Python-extensie van **Microsoft**: klik in de linkerbalk op het blokjes-icoon (Extensions), zoek `Python` en klik op **Install**
-4. Open een terminal via **Terminal** → **New Terminal**
-
-VS Code zet je virtual environment in zijn eigen terminal automatisch aan, dus daar verschijnt `(.venv)` vanzelf. Staat het er niet, sluit die terminal dan met het prullenbak-icoon en open een nieuwe. De volledige uitleg: <SiteLink site="editor" to="/python/stap-4-venv">Een virtual environment aanmaken</SiteLink>.
+<SiteLink site="editor" to="/python/stap-4-venv">Een virtual environment aanmaken</SiteLink> en <SiteLink site="editor" to="/python/stap-5-vscode">je project openen in VS Code</SiteLink>
 
 </details>
 
@@ -99,16 +83,20 @@ Je ziet een versienummer, bijvoorbeeld `FastAPI CLI version 0.0.8`.
 <details>
 <summary>Heb je dit nog niet? Klik hier.</summary>
 
-FastAPI is een package: een stuk Python van iemand anders, dat je met `pip` in je virtual environment zet. Typ in de terminal van VS Code:
+FastAPI is een package: een stuk Python van iemand anders, dat je in je virtual environment zet. Typ in de terminal van VS Code:
 
 ```bash
 python -m pip install "fastapi[standard]"
 ```
 
-De aanhalingstekens horen erbij: zonder die tekens leest PowerShell de blokhaken zelf. Het installeren duurt even; daarna geeft `fastapi --version` een versienummer. Meer over pip: <SiteLink site="editor" to="/python/stap-7-pip">Packages installeren met pip</SiteLink>.
+De aanhalingstekens horen erbij. Het installeren duurt even; daarna geeft `fastapi --version` een versienummer.
 
-Doe dit niet in het losse PowerShell-venster waarin je de omgeving aanmaakte: daar staat de virtual environment niet aan en belandt FastAPI buiten je project. Zegt de terminal `No module named pip` of `No module named fastapi`, kijk dan of `(.venv)` voor de prompt staat en ga anders terug naar check 4.
+<SiteLink site="editor" to="/python/stap-7-pip">Packages installeren met pip</SiteLink>
 
 </details>
+
+## Loopt er iets vast
+
+De foutmeldingen van deze vijf checks staan bij elkaar, met per melding de oorzaak: <SiteLink site="editor" to="/python/problemen">Er gaat iets mis</SiteLink>. Voor fouten die je later in deze cursus tegenkomt is er [Troubleshooting](/docs/troubleshooting).
 
 Alle vijf checks goed? Dan ben je klaar voor [je eerste endpoint](/docs/FastAPI/eerste_endpoint).

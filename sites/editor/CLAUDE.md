@@ -15,6 +15,8 @@ Algemene schrijfstijl, didactiek en schrijfskills staan in `../CLAUDE.md` (en de
 - **`pip` heet overal `python -m pip`**, hier én in de fullstack-cursus (dezelfde test kijkt naar beide). Kaal `pip` pakt op Windows soms de installatie buiten de virtual environment; `python -m pip` gebruikt gegarandeerd de Python die je net aanriep.
 - **De installatie loopt via de Microsoft Store, python.org is de uitwijk.** `python` typen in PowerShell opent op een schone Windows de Store-pagina. Op een beheerde schoolcomputer staat die vaak dicht; die route staat daarom in een `<details>`, niet weggehaald.
 - **Het vinkje Add to PATH bij de VS Code-installatie is load-bearing geworden**: zonder dat vinkje bestaat `code .` niet. `installatie-vscode/stap-2-installatie.md` zegt dat er nu bij.
+- **Deze tutorial is de enige plek waar de installatiestappen staan.** De fullstack-cursus heeft een controlelijst die zegt hoe je ziet dat het goed is en voor het hoe hierheen wijst; hij schrijft de stappen niet over. Verandert de route, dan verandert hij hier, en de checklist blijft kloppen omdat hij alleen waarnemingen noemt.
+- **`problemen.md` verzamelt de foutmeldingen**, in het format van §8 van de schrijfgids: de melding als kop, **Oorzaak:**, **Oplossing:**, en een `Meer uitleg:`-link naar de stap. Ze stonden verspreid over zeven stappen, en wie vastliep moest raden in welke stap zijn melding werd genoemd.
 
 ## De git-tutorials
 

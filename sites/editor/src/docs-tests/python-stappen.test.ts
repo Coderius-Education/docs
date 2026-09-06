@@ -115,3 +115,65 @@ describe('pip draait overal op dezelfde manier', () => {
     expect(fout).toEqual([]);
   });
 });
+
+describe('de uitleg staat op één plek', () => {
+  // De fullstack-installatiepagina had de stappen overgeschreven: eerst de
+  // Command Palette, later de PowerShell-route, en die twee kopieën liepen uit
+  // elkaar zonder dat iemand het zag. De checklist zegt nu wat je moet zien en
+  // wijst voor het hoe naar de editor-cursus.
+  const installatie = readFileSync(join(FULLSTACK, 'FastAPI/installatie.mdx'), 'utf8');
+  const blokken = installatie
+    .split('<details>')
+    .slice(1)
+    .map((b) => b.split('</details>')[0]);
+
+  it('vindt de vijf checks met hun hulpblok', () => {
+    expect(installatie.match(/\n## Check \d/g)).toHaveLength(5);
+    expect(blokken).toHaveLength(5);
+  });
+
+  it('elk hulpblok wijst naar de editor-cursus', () => {
+    const zonder = blokken.filter((b) => !/<SiteLink site="editor"/.test(b));
+
+    expect(zonder).toEqual([]);
+  });
+
+  it('geen hulpblok schrijft de stappen over', () => {
+    // Een genummerde lijst in het hulpblok is de tweede kopie van de tutorial.
+    const overgeschreven = blokken
+      .map((b, i) => (/^\d+\. /m.test(b) ? `Check ${i + 1}` : ''))
+      .filter(Boolean);
+
+    expect(overgeschreven).toEqual([]);
+  });
+});
+
+describe('de tutorial vangt op wat er misgaat', () => {
+  // Foutgestuurd leren staat in het didactisch kader van de organisatie, en de
+  // git-tutorials hebben er allemaal een pagina voor. Deze had de meldingen
+  // verspreid over zeven stappen staan.
+  const problemen = readFileSync(join(PYTHON, 'problemen.md'), 'utf8');
+
+  it('noemt oorzaak en oplossing bij elk probleem', () => {
+    const scheef: string[] = [];
+
+    for (const sectie of problemen.split(/\n## /).slice(1)) {
+      const kop = sectie.split('\n')[0];
+      if (!sectie.includes('**Oorzaak:**') || !sectie.includes('**Oplossing:**')) {
+        scheef.push(kop);
+      }
+    }
+
+    expect(scheef).toEqual([]);
+  });
+
+  it('stuurt je bij elk probleem terug naar de stap zelf', () => {
+    const zonder = problemen
+      .split(/\n## /)
+      .slice(1)
+      .filter((sectie) => !/Meer uitleg: /.test(sectie))
+      .map((sectie) => sectie.split('\n')[0]);
+
+    expect(zonder).toEqual([]);
+  });
+});
