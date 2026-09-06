@@ -179,7 +179,7 @@ while voorwaarde:
 <summary>Top-3 fouten</summary>
 
 1. `laag = midden` zonder `+ 1` → **oneindige lus**.
-2. `while laag < hoog` → mist het laatste element bij `laag == hoog`.
+2. `laag < hoog` in de while waar `laag <= hoog` hoort → het laatste element wordt overgeslagen.
 3. Ongesorteerde input → fout antwoord, geen exception.
 
 </details>

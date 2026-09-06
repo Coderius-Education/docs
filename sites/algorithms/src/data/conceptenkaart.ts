@@ -39,8 +39,8 @@ export const pythonConcepten: PythonConcept[] = [
 
 // Gesleuteld op Algoritme.slug (zie ./algorithms); waarden zijn concept-id's.
 export const voorkennisPerAlgoritme: Record<string, string[]> = {
-  'lineair-zoeken': ['if-else', 'for-loop', 'functies', 'lijsten'],
-  'vind-maximum': ['f-strings', 'if-else', 'for-loop', 'functies', 'lijsten'],
+  'lineair-zoeken': ['if-else', 'for-loop', 'functies', 'return', 'lijsten'],
+  'vind-maximum': ['f-strings', 'if-else', 'for-loop', 'functies', 'return', 'lijsten'],
   'max-en-min': ['f-strings', 'if-else', 'and-or-elif', 'for-loop', 'return', 'lijsten', 'tuples'],
   'binair-zoeken': [
     'if-else',
@@ -48,6 +48,7 @@ export const voorkennisPerAlgoritme: Record<string, string[]> = {
     'while-loop',
     'break',
     'functies',
+    'return',
     'lijsten',
     'tuples',
   ],

@@ -17,7 +17,6 @@ const UITLEG = '/docs/lineair-zoeken/bouwen/04-doorlopen';
 const ACHTERSTAND = [
   'cfg/13-compleet.mdx',
   'knapsack/bouwen/07-volledige-tabel.mdx',
-  'vind-maximum/11-cheatsheet.mdx',
 ];
 
 function lessen(map: string): string[] {

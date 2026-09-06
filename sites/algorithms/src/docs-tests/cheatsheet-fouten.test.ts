@@ -19,10 +19,6 @@ import { describe, expect, it } from 'vitest';
 const DOCS = fileURLToPath(new URL('../../docs/', import.meta.url));
 
 const ACHTERSTAND = new Map([
-  [
-    'binair-zoeken',
-    'de kop zet de twee varianten naast elkaar, de cheatsheet noemt alleen de foute',
-  ],
   ['minimax', 'de kop noemt twee helperfuncties, de samenvatting het algoritme'],
 ]);
 
