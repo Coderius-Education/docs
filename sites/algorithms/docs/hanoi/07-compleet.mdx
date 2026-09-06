@@ -53,9 +53,9 @@ Stap 3 — dezelfde `n - 1` schijven van de hulppaal naar het doel; nu is `bron`
 ## Probeer het zelf
 
 Verander `AANTAL` en draai opnieuw. Let op het aantal zetten: elke schijf
-erbij **verdubbelt** het werk (`2ⁿ − 1`). Bij `AANTAL = 20` zijn het al
-ruim een miljoen zetten — de cel print ze dan ook allemaal, dus houd het
-klein als je de lijst wilt lezen.
+erbij **verdubbelt** het werk (`2ⁿ − 1`). Blijf onder de 10 schijven:
+bij 20 zijn het ruim een miljoen regels uitvoer, en daar bevriest de tab
+op.
 
 <PyRunner rows={16} initialCode={`def hanoi(n, bron, doel, hulp):
     if n == 0:
