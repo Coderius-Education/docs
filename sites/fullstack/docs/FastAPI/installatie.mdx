@@ -1,6 +1,8 @@
 # Installatie
 
-Tijd voor een back-end. Voordat je de eerste server start, loop je deze vijf checks van boven naar beneden door. Elke check zegt hoe je ziet dat het goed is. Klopt het niet, klap dan de hulp eronder open.
+Tijd voor een back-end. Voordat je de eerste server start, loop je deze vijf checks van boven naar beneden door. Elke check zegt hoe je ziet dat het goed is. Klopt het niet, klap dan de hulp eronder open: daar staat wat er ontbreekt en waar de uitleg staat.
+
+De volledige installatie met schermafbeeldingen staat in de editor-cursus, in zeven stappen: <SiteLink site="editor" to="/python/">Python in VS Code</SiteLink>. Deze pagina herhaalt die stappen niet, zodat er maar één plek is die ze bijhoudt.
 
 ## Check 1: VS Code
 
@@ -9,59 +11,51 @@ Start Visual Studio Code. Je ziet het welkomstscherm of het project waar je het 
 <details>
 <summary>Heb je dit nog niet? Klik hier.</summary>
 
-Visual Studio Code is de editor waarin je in deze cursus werkt. Download hem gratis en installeer hem met de standaardinstellingen. De stappen met schermafbeeldingen staan in de editor-cursus: <SiteLink site="editor" to="/installatie-vscode/">VS Code installeren</SiteLink>.
+Visual Studio Code is de editor waarin je in deze cursus werkt. Hij is gratis. Laat tijdens de installatie op Windows het vakje **Add to PATH** aangevinkt staan; zonder dat vakje mist je het commando uit check 4.
+
+<SiteLink site="editor" to="/installatie-vscode/">VS Code installeren</SiteLink>
 
 </details>
 
-## Check 2: Python
+## Check 2: een projectmap met een terminal erin
 
-Open in VS Code een terminal via **Terminal** → **New Terminal** en typ:
+In die map komt alles van deze cursus te staan. Open PowerShell vanuit die map: klik met de rechtermuisknop in het lege deel van het Verkenner-venster en kies **Openen in Terminal**. Het prompt eindigt op het pad van je map:
+
+```
+PS C:\Users\jij\Documenten\fullstack-project>
+```
+
+<details>
+<summary>Heb je dit nog niet? Klik hier.</summary>
+
+Het maakt uit vanuit welke map je de terminal opent: alles wat je typt gebeurt in díé map, en daar komen straks je virtual environment en je code te staan.
+
+<SiteLink site="editor" to="/python/stap-1-projectmap">Een projectmap aanmaken</SiteLink> en <SiteLink site="editor" to="/python/stap-2-powershell">PowerShell openen vanuit je map</SiteLink>
+
+</details>
+
+## Check 3: Python
+
+Typ in PowerShell:
 
 ```bash
 python --version
 ```
 
-Op een Mac heet het commando `python3`:
-
-```bash
-python3 --version
-```
-
-Het antwoord begint met `Python 3`. Controleer ook of de Python-extensie er is: open een `.py`-bestand, dan staat rechtsboven in de editor een **▶ Play-knop**.
+Het antwoord begint met `Python 3`.
 
 <details>
 <summary>Heb je dit nog niet? Klik hier.</summary>
 
-Je hebt twee dingen nodig: Python zelf op je computer, en de Python-extensie in VS Code.
+Typ `python` zonder meer, dan wijst Windows je de weg naar de Microsoft Store. Wat je doet als die Store geblokkeerd is, en hoe het op een Mac gaat, staat in de stap zelf.
 
-1. Ga naar [python.org/downloads](https://www.python.org/downloads/) en download Python 3.
-2. Vink tijdens de installatie **Add Python to PATH** aan. Zonder dat vinkje kent de terminal het commando `python` niet.
-3. Klik op **Install Now**.
-4. Open VS Code, klik in de linkerbalk op het blokjes-icoon (Extensions), zoek `Python` en installeer de extensie van **Microsoft**.
-
-Zonder de extensie werkt de Play-knop niet en mist VS Code het commando om een virtual environment aan te maken. De volledige uitleg: <SiteLink site="editor" to="/python/stap-1-installeren">Python installeren</SiteLink>.
-
-Staat er `Python 2` of `command not found`? Sluit VS Code helemaal af en open het opnieuw, dan leest de terminal het nieuwe PATH. Op een Mac: probeer `python3`; zonder virtual environment bestaat `python` daar vaak niet.
-
-</details>
-
-## Check 3: een projectmap
-
-In de Explorer links staat de naam van een map bovenaan, bijvoorbeeld `FULLSTACK-PROJECT`. In die map komt straks alles van deze cursus.
-
-<details>
-<summary>Heb je dit nog niet? Klik hier.</summary>
-
-1. Maak op je computer een nieuwe map, bijvoorbeeld `fullstack-project`.
-2. Open die map in VS Code via **File** → **Open Folder...**.
-
-Werk altijd in een geopende map, niet in een los bestand: de virtual environment van de volgende check komt ín deze map te staan. Meer hierover: <SiteLink site="editor" to="/python/stap-2-projectmap">Een projectmap aanmaken</SiteLink>.
+<SiteLink site="editor" to="/python/stap-3-installeren">Python installeren</SiteLink>
 
 </details>
 
 ## Check 4: een virtual environment
 
-Kijk naar de terminal. Vóór de prompt staat `(.venv)`:
+Je project staat open in VS Code, met een map `.venv` in de Explorer links. Open een terminal via **Terminal** → **New Terminal**; vóór de prompt staat `(.venv)`:
 
 ![De terminal in VS Code met (.venv) voor de prompt](@site/static/vs_code/venv.png)
 
@@ -70,21 +64,15 @@ Kijk naar de terminal. Vóór de prompt staat `(.venv)`:
 <details>
 <summary>Heb je dit nog niet? Klik hier.</summary>
 
-Een virtual environment is een afgesloten omgeving voor dit project. Packages die je hier installeert, komen niet in de weg van andere projecten.
+Een virtual environment is een afgesloten omgeving voor dit project. Packages die je hier installeert, komen niet in de weg van andere projecten. Je maakt hem aan met `python -m venv .venv` en opent je project daarna met `code .`; VS Code zet de omgeving in zijn eigen terminal vanzelf aan.
 
-1. Klik op **View** → **Command Palette...**.
-2. Typ `Python: Create Environment` en klik erop.
-3. Kies **Venv** en daarna de Python-versie die je net hebt gecontroleerd.
-4. VS Code maakt een map `.venv` aan in je project.
-5. Sluit de terminal met het prullenbak-icoon en open een nieuwe via **Terminal** → **New Terminal**.
-
-Nu staat `(.venv)` voor de prompt. Staat het er nog niet? Sluit VS Code helemaal af en open de map opnieuw. De volledige uitleg: <SiteLink site="editor" to="/python/stap-4-venv">Een virtual environment aanmaken</SiteLink>.
+<SiteLink site="editor" to="/python/stap-4-venv">Een virtual environment aanmaken</SiteLink> en <SiteLink site="editor" to="/python/stap-5-vscode">je project openen in VS Code</SiteLink>
 
 </details>
 
 ## Check 5: FastAPI
 
-Typ in de terminal (met `(.venv)` ervoor):
+Typ in de terminal van VS Code (met `(.venv)` ervoor):
 
 ```bash
 fastapi --version
@@ -95,16 +83,20 @@ Je ziet een versienummer, bijvoorbeeld `FastAPI CLI version 0.0.8`.
 <details>
 <summary>Heb je dit nog niet? Klik hier.</summary>
 
-FastAPI is een package: een stuk Python van iemand anders, dat je met `pip` in je virtual environment zet. Typ in de terminal:
+FastAPI is een package: een stuk Python van iemand anders, dat je in je virtual environment zet. Typ in de terminal van VS Code:
 
 ```bash
-pip install "fastapi[standard]"
+python -m pip install "fastapi[standard]"
 ```
 
-De aanhalingstekens horen erbij. Het installeren duurt even; daarna geeft `fastapi --version` een versienummer. Meer over pip: <SiteLink site="editor" to="/python/stap-6-pip">Packages installeren met pip</SiteLink>.
+De aanhalingstekens horen erbij. Het installeren duurt even; daarna geeft `fastapi --version` een versienummer.
 
-Zegt de terminal `pip: command not found` of `No module named pip`? Dan mist `(.venv)` voor de prompt. Ga terug naar check 4.
+<SiteLink site="editor" to="/python/stap-7-pip">Packages installeren met pip</SiteLink>
 
 </details>
+
+## Loopt er iets vast
+
+De foutmeldingen van deze vijf checks staan bij elkaar, met per melding de oorzaak: <SiteLink site="editor" to="/python/problemen">Er gaat iets mis</SiteLink>. Voor fouten die je later in deze cursus tegenkomt is er [Troubleshooting](/docs/troubleshooting).
 
 Alle vijf checks goed? Dan ben je klaar voor [je eerste endpoint](/docs/FastAPI/eerste_endpoint).

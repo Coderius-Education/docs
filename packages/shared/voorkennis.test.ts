@@ -122,8 +122,8 @@ describe('Voorkennis-blokken over alle sites', () => {
     // pad met /docs/ wijst daar naar een bestaand bestand maar een 404-URL; de
     // fullstack-installatiepagina had er drie en de guard keurde ze goed.
     // Andersom mist een pad zonder /docs/ op elke andere site.
-    expect(lesBestaat(SITES_ROOT, 'editor', '/docs/python/stap-1-installeren')).toBe(false);
-    expect(lesBestaat(SITES_ROOT, 'editor', '/python/stap-1-installeren')).toBe(true);
+    expect(lesBestaat(SITES_ROOT, 'editor', '/docs/python/stap-4-venv')).toBe(false);
+    expect(lesBestaat(SITES_ROOT, 'editor', '/python/stap-4-venv')).toBe(true);
     expect(lesBestaat(SITES_ROOT, 'python', '/basis/jij-als-variabele')).toBe(false);
     expect(lesBestaat(SITES_ROOT, 'python', '/docs/basis/jij-als-variabele')).toBe(true);
     // didactiek serveert onder 'bronnen', niet onder 'docs'.
@@ -154,7 +154,7 @@ describe('Voorkennis-blokken over alle sites', () => {
   it('eist een slash vooraan: zonder slash wordt de host zelf kapot', () => {
     // De componenten plakken het pad achter de site-URL:
     // 'python/stap-1' geeft https://editor.coderius.nlpython/stap-1.
-    expect(lesBestaat(SITES_ROOT, 'editor', 'python/stap-1-installeren')).toBe(false);
+    expect(lesBestaat(SITES_ROOT, 'editor', 'python/stap-4-venv')).toBe(false);
     expect(lesBestaat(SITES_ROOT, 'python', 'docs/basis/jij-als-variabele')).toBe(false);
   });
 });

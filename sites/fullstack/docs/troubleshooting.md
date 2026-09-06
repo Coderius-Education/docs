@@ -12,7 +12,7 @@ Klik op je probleem om de oplossing te zien.
 **Oplossing:** check eerst of je `(.venv)` vooraan je terminalregel ziet. Installeer daarna:
 
 ```bash
-pip install "fastapi[standard]"
+python -m pip install "fastapi[standard]"
 ```
 
 Meer uitleg: [Installatie](/docs/FastAPI/installatie)
@@ -24,7 +24,7 @@ Meer uitleg: [Installatie](/docs/FastAPI/installatie)
 
 **Oorzaak:** je virtual environment is niet actief, dus Python kijkt in de verkeerde map naar geïnstalleerde pakketten.
 
-**Oplossing:** activeer de venv en check dat `(.venv)` in je terminal verschijnt:
+**Oplossing:** open je project in VS Code met `code .` vanuit je projectmap en werk in de terminal van VS Code (**Terminal** → **New Terminal**); die zet de venv zelf aan. Lukt dat niet, activeer hem dan met de hand en check dat `(.venv)` in je terminal verschijnt:
 
 ```bash
 # Windows
@@ -442,7 +442,7 @@ Meer uitleg: [Server of browser?](/docs/FastAPI/server-of-browser)
 **Oplossing:** check dat je `(.venv)` in de terminal ziet en installeer:
 
 ```bash
-pip install sqlitedict
+python -m pip install sqlitedict
 ```
 
 Meer uitleg: [Gegevens opslaan](/docs/FastAPI/database)
