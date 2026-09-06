@@ -5,16 +5,16 @@ sidebar_position: 11
 # Bouw zelf — vergelijk lineair en binair
 
 **Leerdoel:** je zet beide algoritmes naast elkaar op dezelfde data en
-visualiseert het verschil. Theorie wordt nu **zichtbaar**.
+telt het werk. Theorie wordt nu **meetbaar**.
 
 ## Opdracht
 
 Schrijf beide algoritmes zó dat ze het **aantal vergelijkingen** tellen.
-Vergelijk dan op een reeks lijstgroottes en plot een grafiek.
+De startcode laat ze los op gesorteerde lijsten van 10 tot 100.000
+getallen, in het slechtste geval: het doel komt niet voor.
 
-<PyRunner initialCode={`import matplotlib.pyplot as plt
-
-def lineair_tellen(lijst, doel):
+{/* uitvoer-varieert: startcode; de functies geven 0 terug tot de leerling ze invult */}
+<PyRunner initialCode={`def lineair_tellen(lijst, doel):
     # vul aan: doorloop de lijst, tel elke vergelijking,
     # return het totaal aantal vergelijkingen
     return 0
@@ -25,30 +25,12 @@ def binair_tellen(lijst, doel):
 
 # Slechtste geval: doel komt NIET voor
 groottes = [10, 100, 1000, 10000, 100000]
-lineair_resultaten = []
-binair_resultaten = []
 
+print("n        lineair    binair")
 for n in groottes:
     lijst = list(range(n))   # 0..n-1, gesorteerd
     doel = -1                # bestaat niet
-    lineair_resultaten.append(lineair_tellen(lijst, doel))
-    binair_resultaten.append(binair_tellen(lijst, doel))
-
-print("n        lineair    binair")
-for n, l, b in zip(groottes, lineair_resultaten, binair_resultaten):
-    print(f"{n:<8} {l:<10} {b}")
-
-fig, ax = plt.subplots()
-ax.plot(groottes, lineair_resultaten, marker='o', label='lineair')
-ax.plot(groottes, binair_resultaten, marker='o', label='binair')
-ax.set_xscale('log')
-ax.set_yscale('log')
-ax.set_xlabel('lijstgrootte n')
-ax.set_ylabel('aantal vergelijkingen (slechtste geval)')
-ax.set_title('Lineair vs. binair zoeken')
-ax.legend()
-ax.grid(True, which='both', linestyle=':')
-plt.show()`} />
+    print(f"{n:<8} {lineair_tellen(lijst, doel):<10} {binair_tellen(lijst, doel)}")`} />
 
 <details>
 <summary>Tip</summary>
@@ -88,27 +70,35 @@ def binair_tellen(lijst, doel):
         else:
             hoog = midden - 1
     return vergelijkingen
+
+print(lineair_tellen(list(range(1000)), -1))   # 1000
+print(binair_tellen(list(range(1000)), -1))    # 9
 ```
 
 </details>
 
-## Wat zie je in de grafiek?
+## Wat zie je?
 
 <details>
 <summary>Interpretatie</summary>
 
-Op **log-log**-assen (zowel x als y logaritmisch) zie je:
+```
+n        lineair    binair
+10       10         3
+100      100        6
+1000     1000       9
+10000    10000      13
+100000   100000     16
+```
 
-- **Lineair**: een rechte lijn met helling 1 → werk groeit **lineair** in n.
-- **Binair**: een rechte, veel platter lijn → werk groeit **logaritmisch**
-  in n.
+- **Lineair**: tien keer zo'n lange lijst, tien keer zoveel werk. Het werk
+  groeit even hard als `n`.
+- **Binair**: tien keer zo'n lange lijst, drie of vier vergelijkingen
+  erbij. Elke vergelijking halveert wat er over is, dus het werk groeit
+  met het aantal keer dat je `n` kunt halveren.
 
-Voor n = 100.000:
-- Lineair: 100.000 vergelijkingen
-- Binair: ~17 vergelijkingen
-
-Op een lijst van een miljard zou het verschil nog dramatischer zijn: 1
-miljard versus ~30.
+Op een lijst van een miljard zou het verschil nog groter zijn: een
+miljard vergelijkingen tegenover ongeveer 30.
 
 </details>
 
@@ -117,5 +107,46 @@ miljard versus ~30.
 Pas binair zoeken aan zodat het bij duplicaten **de eerste** voorkomende
 index returnt. Hint: stop niet bij de eerste match — blijf doorzoeken in
 de **linker** helft.
+
+- `binair_zoek_eerste([1, 2, 2, 2, 3], 2)` → `1`
+- `binair_zoek_eerste([1, 2, 2, 2, 3], 4)` → `-1`
+
+<details>
+<summary>Tip</summary>
+
+Bewaar een match in een variabele `gevonden` in plaats van meteen te
+returnen, en verklein daarna het zoekgebied naar links met
+`hoog = midden - 1`. Elke nieuwe match links van de vorige overschrijft
+`gevonden`. Als de lus stopt, staat daar de eerste.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def binair_zoek_eerste(lijst, doel):
+    laag = 0
+    hoog = len(lijst) - 1
+    gevonden = -1
+    while laag <= hoog:
+        midden = (laag + hoog) // 2
+        if lijst[midden] == doel:
+            gevonden = midden
+            hoog = midden - 1      # blijf links zoeken
+        elif lijst[midden] < doel:
+            laag = midden + 1
+        else:
+            hoog = midden - 1
+    return gevonden
+
+print(binair_zoek_eerste([1, 2, 2, 2, 3], 2))   # 1
+print(binair_zoek_eerste([1, 2, 2, 2, 3], 4))   # -1
+```
+
+De lus stopt nog steeds gegarandeerd: ook bij een match krimpt het
+zoekgebied, want `hoog` gaat omlaag.
+
+</details>
 
 Door naar [veelgemaakte fouten](./12-fouten).

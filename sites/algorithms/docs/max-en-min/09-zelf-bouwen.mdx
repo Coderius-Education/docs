@@ -17,8 +17,10 @@ element returnt.
 - `bereik([-3, -1, -7])` → `6` (want -1 − (-7))
 - `bereik([42])` → `0`
 
-Aan het eind plot je het bereik per testlijst in een staafdiagram.
+De startcode roept je functie aan op vijf lijsten en print het bereik
+naast wat het moet zijn.
 
+{/* uitvoer-varieert: startcode; de functie geeft 0 terug tot de leerling hem invult */}
 <PyRunner initialCode={`def max_en_min(lijst):
     klein = groot = lijst[0]
     for waarde in lijst:
@@ -32,31 +34,15 @@ def bereik(lijst):
     # vul aan: gebruik max_en_min en return de juiste waarde
     return 0
 
-# Tests met visualisatie
-import matplotlib.pyplot as plt
-
-testlijsten = [
-    [5, 2, 8, 1, 7, 4],
-    [-3, -1, -7],
-    [42],
-    [10, 10, 10],
-    [1, 1000],
+tests = [
+    ([5, 2, 8, 1, 7, 4], 7),
+    ([-3, -1, -7], 6),
+    ([42], 0),
+    ([10, 10, 10], 0),
+    ([1, 1000], 999),
 ]
-
-bereiken = []
-labels = []
-for lijst in testlijsten:
-    b = bereik(lijst)
-    print(f"bereik({lijst}) = {b}")
-    bereiken.append(b)
-    labels.append(str(lijst))
-
-plt.barh(range(len(testlijsten)), bereiken)
-plt.yticks(range(len(testlijsten)), labels)
-plt.xlabel("bereik (groot − klein)")
-plt.title("Bereik per testlijst")
-plt.tight_layout()
-plt.show()`} />
+for lijst, verwacht in tests:
+    print(f"bereik({lijst}) = {bereik(lijst)}   verwacht: {verwacht}")`} />
 
 <details>
 <summary>Tip</summary>
@@ -92,7 +78,7 @@ Maar dit laatste is **slechter**: je roept `max_en_min` **twee keer** aan
 <details>
 <summary>Wat gebeurt er als je `bereik([])` aanroept op een lege lijst?</summary>
 
-Probeer het maar — pas de tests-lijst aan en voeg `[]` toe.
+Probeer het maar — pas de tests-lijst aan en voeg `([], 0)` toe.
 
 {/* foutmelding-van: [][0] */}
 
@@ -118,5 +104,51 @@ genormaliseerd(x) = (x - klein) / (groot - klein)
 
 Voor `[1, 5, 9]` → `[0.0, 0.5, 1.0]`. Wat gebeurt er als alle waardes
 gelijk zijn? (Hint: deling door 0.)
+
+<details>
+<summary>Tip</summary>
+
+Bereken `klein`, `groot` en het bereik één keer, vóór de lus. Loop dan
+langs de lijst en voeg per element de omgerekende waarde toe aan een
+nieuwe lijst. Is het bereik 0, dan zijn alle waardes gelijk; kies dan
+zelf wat je teruggeeft (bijvoorbeeld overal `0.0`) in plaats van te
+delen.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def max_en_min(lijst):
+    klein = groot = lijst[0]
+    for waarde in lijst:
+        if waarde < klein:
+            klein = waarde
+        elif waarde > groot:
+            groot = waarde
+    return klein, groot
+
+def genormaliseerd(lijst):
+    klein, groot = max_en_min(lijst)
+    bereik = groot - klein
+    resultaat = []
+    for x in lijst:
+        if bereik == 0:
+            resultaat.append(0.0)
+        else:
+            resultaat.append((x - klein) / bereik)
+    return resultaat
+
+print(genormaliseerd([1, 5, 9]))   # [0.0, 0.5, 1.0]
+print(genormaliseerd([4, 4, 4]))   # [0.0, 0.0, 0.0]
+```
+
+{/* foutmelding-van: (4 - 4) / (4 - 4) */}
+
+Zonder de check op `bereik == 0` crasht `[4, 4, 4]` met een
+`ZeroDivisionError`.
+
+</details>
 
 Door naar [veelgemaakte fouten](./10-fouten).

@@ -17,35 +17,23 @@ indexen** terug geeft waar het doel voorkomt.
 - `alle_indexen([], 9)` → `[]`
 - `alle_indexen([1, 2, 3], 9)` → `[]`
 
-Aan het eind plotten we een **staafdiagram** dat per testlijst toont hoeveel
-matches er waren. Daarmee zie je in één oogopslag of je code klopt.
+De startcode roept je functie aan op die vier lijsten en print het
+resultaat naast wat het moet zijn.
 
+{/* uitvoer-varieert: startcode; de functie geeft [] terug tot de leerling hem invult */}
 <PyRunner initialCode={`def alle_indexen(lijst, doel):
     # vul aan
     return []
 
-# Tests
 tests = [
-    ([3, 1, 4, 1, 5], 1),
-    ([7, 7, 7], 7),
-    ([], 9),
-    ([1, 2, 3], 9),
+    ([3, 1, 4, 1, 5], 1, [1, 3]),
+    ([7, 7, 7], 7, [0, 1, 2]),
+    ([], 9, []),
+    ([1, 2, 3], 9, []),
 ]
-resultaten = []
-for lijst, doel in tests:
+for lijst, doel, verwacht in tests:
     r = alle_indexen(lijst, doel)
-    print(f"alle_indexen({lijst}, {doel}) = {r}")
-    resultaten.append(len(r))
-
-# Visualiseer aantal matches per test
-import matplotlib.pyplot as plt
-labels = []
-for i in range(len(tests)):
-    labels.append(f"test {i+1}")
-plt.bar(labels, resultaten)
-plt.title("Aantal matches per test")
-plt.ylabel("aantal")
-plt.show()`} />
+    print(f"alle_indexen({lijst}, {doel}) = {r}   verwacht: {verwacht}")`} />
 
 <details>
 <summary>Tip</summary>
@@ -72,6 +60,10 @@ def alle_indexen(lijst, doel):
         if waarde == doel:
             resultaat.append(i)
     return resultaat
+
+print(alle_indexen([3, 1, 4, 1, 5], 1))   # [1, 3]
+print(alle_indexen([7, 7, 7], 7))         # [0, 1, 2]
+print(alle_indexen([], 9))                # []
 ```
 
 Wat hier opvalt:
@@ -105,5 +97,33 @@ Conclusie: `alle_indexen` doet **altijd** `n` vergelijkingen. `zoek` doet
 Schrijf `eerste_groter_dan(lijst, drempel)` die de index van het **eerste**
 element returnt dat groter is dan `drempel`, of `-1` als er geen zo'n
 element is.
+
+- `eerste_groter_dan([3, 8, 2, 9], 5)` → `1`
+- `eerste_groter_dan([1, 2, 3], 5)` → `-1`
+
+<details>
+<summary>Tip</summary>
+
+Dit is `zoek` met een andere vergelijking: niet `waarde == doel`, maar
+`waarde > drempel`. Alle vier de bouwstenen blijven staan, ook de `-1`
+aan het eind.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def eerste_groter_dan(lijst, drempel):
+    for i, waarde in enumerate(lijst):
+        if waarde > drempel:
+            return i
+    return -1
+
+print(eerste_groter_dan([3, 8, 2, 9], 5))   # 1
+print(eerste_groter_dan([1, 2, 3], 5))      # -1
+```
+
+</details>
 
 Door naar [veelgemaakte fouten](./11-fouten).
