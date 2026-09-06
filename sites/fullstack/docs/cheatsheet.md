@@ -379,7 +379,7 @@ veld.addEventListener("input", function () {
 <summary>Installatie</summary>
 
 ```bash
-pip install sqlitedict
+python -m pip install sqlitedict
 ```
 
 </details>
