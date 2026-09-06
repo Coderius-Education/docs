@@ -70,16 +70,19 @@ Herhaal voor `i = 0, 1, 2, …` tot je bij het laatste element bent.
 
 Voor `n` elementen doe je:
 
-- Ronde 1: vind kleinste in `n` elementen → `n − 1` vergelijkingen.
-- Ronde 2: vind kleinste in `n − 1` elementen → `n − 2` vergelijkingen.
+- Ronde 1: zoek het kleinste in `n` elementen → `n` vergelijkingen.
+- Ronde 2: zoek het kleinste in `n − 1` elementen → `n − 1` vergelijkingen.
 - …
-- Ronde `n − 1`: vind kleinste in 2 elementen → 1 vergelijking.
+- Ronde `n`: nog één element over → 1 vergelijking.
 
-Totaal: `1 + 2 + … + (n − 1) = n(n − 1) / 2` ≈ **O(n²)**.
+Totaal: `1 + 2 + … + n = n(n + 1) / 2` ≈ **O(n²)**.
 
-Voor 1.000 elementen: ~500.000 vergelijkingen. Voor 10.000 elementen:
-~50.000.000. Selection sort is dus *langzaam* voor grote lijsten — maar
-**simpel** om te begrijpen, en daarom een mooie eerste sorteer.
+Dat elke ronde één vergelijking meer doet dan je zou verwachten, komt
+doordat de zoektocht begint bij het element dat al vooraan staat: dat
+wordt één keer met zichzelf vergeleken. Voor 1.000 elementen zijn het er
+ruim 500.000, voor 10.000 elementen ruim 50.000.000. Selection sort is
+dus *langzaam* voor grote lijsten, maar **simpel** om te begrijpen, en
+daarom een mooie eerste sorteer.
 
 </details>
 

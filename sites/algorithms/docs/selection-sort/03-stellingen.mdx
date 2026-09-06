@@ -45,9 +45,9 @@ gesorteerd is."*
 <details>
 <summary>Antwoord</summary>
 
-**Juist.** Het algoritme zoekt in elke ronde gewoon door het hele
-ongesorteerde stuk, ongeacht wat het al gevonden heeft. Op een
-al-gesorteerde lijst → nog steeds `n(n − 1)/2` vergelijkingen.
+**Juist.** Het algoritme zoekt in elke ronde door het hele ongesorteerde
+stuk, ongeacht wat het al gevonden heeft. Op een al-gesorteerde lijst zijn
+het nog steeds `n(n + 1)/2` vergelijkingen.
 
 Bubble sort, het volgende hoofdstuk, kan dat wél merken en eerder
 stoppen.
@@ -62,8 +62,11 @@ stoppen.
 <summary>Antwoord</summary>
 
 **Juist.** In elke ronde wordt het kleinste element gevonden en op zijn
-plek geruild — precies één swap. Bij `n` elementen totaal dus `n − 1`
-swaps. Veel **vergelijkingen**, weinig **swaps**.
+plek geruild: precies één swap-regel per ronde. Vaak ruilt die regel een
+element met zichzelf, want het kleinste stond al vooraan; dan verandert er
+niets. In de laatste ronde gebeurt dat altijd, want er is nog maar één
+element over. Er verhuizen dus hoogstens `n − 1` elementen echt. Veel
+**vergelijkingen**, weinig **swaps**.
 
 (**Tip:** dat is een voordeel als swappen duur is — bijvoorbeeld op een
 hard drive of als de elementen grote objecten zijn.)

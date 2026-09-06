@@ -111,18 +111,20 @@ print(selection_sort_op_cijfer(leerlingen))`} />
 
 ## Hoeveel werk doet dit?
 
-| Lijstgrootte | Vergelijkingen | Swaps |
+| Lijstgrootte | Vergelijkingen | Swaps die iets verplaatsen |
 |---:|---:|---:|
-| 5 | 10 | 4 |
-| 10 | 45 | 9 |
-| 100 | 4950 | 99 |
-| 1.000 | ~500.000 | 999 |
-| 10.000 | ~50.000.000 | 9.999 |
+| 5 | 15 | hoogstens 4 |
+| 10 | 55 | hoogstens 9 |
+| 100 | 5050 | hoogstens 99 |
+| 1.000 | 500.500 | hoogstens 999 |
+| 10.000 | 50.005.000 | hoogstens 9.999 |
 
-Vergelijkingen groeien **kwadratisch** (`n²/2`). Swaps groeien **lineair**
-(`n − 1`, één per ronde; de laatste ronde ruilt met zichzelf). Voor grote
-lijsten is dat te traag — gebruik dan een beter sorteeralgoritme (zoals
-merge sort, O(n log n)).
+Dit zijn de aantallen die de teller in de visualisatie ook laat zien.
+Vergelijkingen groeien **kwadratisch** (`n(n + 1)/2`, ongeveer `n²/2`).
+De swap-regel draait één keer per ronde, maar ruilt vaak een element met
+zichzelf; wat er echt verhuist groeit **lineair**. Voor grote lijsten is
+dat te traag: gebruik dan een beter sorteeralgoritme, zoals merge sort met
+`O(n log n)`.
 
 Maar voor educatieve doeleinden en kleine lijsten is selection sort
 prima.
