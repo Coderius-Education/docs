@@ -63,30 +63,36 @@ if waarde == doel:
 
 Onthouden: **één** `=` is toekennen, **twee** `==` is vergelijken.
 
-## IndexError: list index out of range
+## `-1` als index gebruiken zonder te controleren
 
-{/* foutmelding-van: [3, 1, 4][3] */}
-```
-IndexError: list index out of range
-```
+Geen Python-foutmelding — wél een **stille fout**. Je zoekt iets dat er
+niet is, en het programma print vrolijk een antwoord.
 
-**Oorzaak:** je vraagt om `lijst[i]` voor een `i` die niet bestaat. Vaak
-omdat een `range`-grens te ver doortelt.
+**Oorzaak:** `zoek` geeft `-1` terug bij "niet gevonden", en `lijst[-1]`
+is in Python gewoon geldig: het **laatste** element. Wie het resultaat
+meteen als index gebruikt, krijgt dus een echte waarde terug voor iets
+dat niet in de lijst staat.
 
-**Oplossing:** laat de `+ 1` weg, of gebruik `for waarde in lijst:` of
-`for i, waarde in enumerate(lijst):`. Dan loop je gegarandeerd niet te
-ver — Python regelt het zelf.
+**Oplossing:** controleer eerst op `-1` voordat je de index gebruikt.
 
 ```python
-# FOUT
+def zoek(lijst, doel):
+    for i, waarde in enumerate(lijst):
+        if waarde == doel:
+            return i
+    return -1
+
 lijst = [10, 20, 30]
-for i in range(len(lijst) + 1):   # 0, 1, 2, 3 — te ver!
-    print(lijst[i])
+
+# FOUT
+print("gevonden:", lijst[zoek(lijst, 99)])   # gevonden: 30
 
 # GOED
-lijst = [10, 20, 30]
-for waarde in lijst:
-    print(waarde)
+index = zoek(lijst, 99)
+if index == -1:
+    print("niet gevonden")                   # niet gevonden
+else:
+    print("gevonden:", lijst[index])
 ```
 
 Door naar [cheatsheet](./12-cheatsheet).

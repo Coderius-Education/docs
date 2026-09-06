@@ -14,19 +14,8 @@ Het probleem uit de vorige stap: bij een doel dat niet bestaat krijgen we
 
 ## Waar moet `return -1` staan?
 
-Dit is een **valstrik** waar veel mensen instinken. Probeer dit eerst:
-
-```python
-def zoek(lijst, doel):
-    for i, waarde in enumerate(lijst):
-        if waarde == doel:
-            return i
-        return -1   # klopt deze plek?
-```
-
-## Voorspel
-
-Wat denk je dat dit print?
+Dit is een **valstrik** waar veel mensen instinken. Hier staat hij op een
+plek die er logisch uitziet. Wat denk je dat dit print?
 
 ```python
 def zoek(lijst, doel):
@@ -66,11 +55,19 @@ controleert hij `3 == 4` → niet waar → `return -1` → de functie stopt
 print(zoek([3, 1, 4, 1, 5], 4))
 print(zoek([3, 1, 4, 1, 5], 9))`} />
 
-## De fix
+## Probeer het zelf
 
-`return -1` moet **buiten** de `for`-lus staan — op functie-niveau.
-Daardoor wordt het pas bereikt als de **hele** lus is afgelopen zonder
-match.
+Verplaats `return -1` zodat allebei de testen kloppen.
+
+{/* uitvoer-varieert: startcode; de verwacht-commentaren kloppen pas na de verplaatsing */}
+<PyRunner initialCode={`def zoek(lijst, doel):
+    for i, waarde in enumerate(lijst):
+        if waarde == doel:
+            return i
+        return -1   # pas deze regel aan (verplaats hem!)
+
+print(zoek([3, 1, 4, 1, 5], 4))   # verwacht: 2
+print(zoek([3, 1, 4, 1, 5], 9))   # verwacht: -1`} />
 
 <details>
 <summary>Tip</summary>
@@ -100,23 +97,15 @@ def zoek(lijst, doel):
         if waarde == doel:
             return i
     return -1   # buiten de for, dezelfde inspringing als 'for'
+
+print(zoek([3, 1, 4, 1, 5], 4))   # 2
+print(zoek([3, 1, 4, 1, 5], 9))   # -1
 ```
 
+`return -1` staat nu **buiten** de `for`-lus, op functie-niveau. Python
+komt er pas als de **hele** lus is afgelopen zonder match.
+
 </details>
-
-## Probeer het zelf
-
-Pas de code aan zodat allebei de testen kloppen.
-
-{/* uitvoer-varieert: startcode; de verwacht-commentaren kloppen pas na de verplaatsing */}
-<PyRunner initialCode={`def zoek(lijst, doel):
-    for i, waarde in enumerate(lijst):
-        if waarde == doel:
-            return i
-        return -1   # pas deze regel aan (verplaats hem!)
-
-print(zoek([3, 1, 4, 1, 5], 4))   # verwacht: 2
-print(zoek([3, 1, 4, 1, 5], 9))   # verwacht: -1`} />
 
 Klaar? Tijd om alle bouwstenen samen te zien.
 

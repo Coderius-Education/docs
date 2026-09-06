@@ -54,6 +54,32 @@ lijst en kijk wat er gebeurt.
 for waarde in lijst:
     print(waarde)`} />
 
+## Ook de plek weten: `enumerate`
+
+Straks willen we niet alleen de waarde, maar ook **waar** in de lijst hij
+staat: de index. Daarvoor heeft Python `enumerate`. Het geeft je elke
+ronde twee dingen tegelijk: de index `i` en de waarde.
+
+<PyRunner initialCode={`lijst = [3, 1, 4, 1, 5]
+for i, waarde in enumerate(lijst):
+    print(i, waarde)`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+```
+0 3
+1 1
+2 4
+3 1
+4 5
+```
+
+`i` telt mee vanaf 0, net als de indexen van de lijst. Daarnaast krijg je
+`waarde`: 3, 1, 4, 1, 5.
+
+</details>
+
 ## Wat nu nog mist
 
 Dit *loopt door de lijst*, maar het *zoekt* nog niets. We weten nog niet

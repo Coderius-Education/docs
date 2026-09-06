@@ -13,6 +13,8 @@ sidebar_position: 6
 **Leerdoel:** je verpakt je code in een **functie** en gebruikt `return` om
 de **index** terug te geven waar je het doel vond.
 
+<Voorkennis items={[{to: '/docs/lineair-zoeken/bouwen/04-doorlopen', label: 'enumerate (bouwsteen 1)'}]} />
+
 ## Wat we willen
 
 Twee dingen tegelijk:
@@ -22,32 +24,8 @@ Twee dingen tegelijk:
 2. Het geheel in een **functie** stoppen die we kunnen aanroepen — zo kun
    je hem op meerdere lijsten gebruiken.
 
-## Een nieuw stukje syntax: `enumerate`
-
-Om bij de **index** te kunnen, gebruiken we `enumerate`:
-
-```python
-for i, waarde in enumerate(lijst):
-    print(i, waarde)
-```
-
-Dit geeft je in elke ronde **twee** dingen: de index `i` en de bijhorende
-waarde.
-
-<details>
-<summary>Voorbeeld-output van enumerate</summary>
-
-```
-0 3
-1 1
-2 4
-3 1
-4 5
-```
-
-`i` telt mee: 0, 1, 2, 3, 4. Daarnaast krijg je `waarde`: 3, 1, 4, 1, 5.
-
-</details>
+Voor de index gebruik je `enumerate` uit [bouwsteen 1](./04-doorlopen):
+`for i, waarde in enumerate(lijst)` geeft elke ronde de index én de waarde.
 
 ## Voorspel
 

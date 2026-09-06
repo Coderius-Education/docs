@@ -7,6 +7,7 @@ sidebar_position: 7
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/herhalen/while-loop', label: 'De while-loop'},
+    {site: 'python', to: '/docs/herhalen/06d-break', label: 'break: uit een lus springen'},
   ]}
 />
 
@@ -86,7 +87,8 @@ laag=4, hoog=7, midden=5, lijst[midden]=11
 ```
 
 Twee stappen. Bij stap 1 was 7 < 11, dus `laag = 4`. Bij stap 2 vinden we
-het.
+het. De `break` springt dan meteen uit de `while`; zonder die regel zou de
+lus doorgaan tot `laag > hoog`.
 
 </details>
 

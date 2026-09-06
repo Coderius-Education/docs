@@ -12,38 +12,25 @@ zo belangrijk is, en welke keuze altijd werkt.
 Een startwaarde voor `max_tot_nu_toe` die op **elke** lijst werkt — ook
 op lijsten met alleen negatieve getallen.
 
-## Twee aanpakken
-
-### Aanpak A — het eerste element
+## Het eerste element als start
 
 ```python
 max_tot_nu_toe = lijst[0]   # gegarandeerd een echte waarde uit de lijst
 ```
 
-Daarna loop je vanaf index 1 verder (`lijst[1:]` of via `enumerate`).
-
-### Aanpak B — `float('-inf')`
-
-```python
-max_tot_nu_toe = float('-inf')   # negatieve oneindigheid: alles is groter
-```
-
-Een speciaal getal in Python dat *kleiner* is dan elk echt getal. Iedere
-echte waarde verslaat hem in de eerste vergelijking.
-
-In dit project gebruiken we **aanpak A** — dichter bij wat een mens zou
-doen ("begin met de eerste persoon en vergelijk de rest met hem/haar").
+Dat is wat een mens ook doet: begin met de eerste persoon en vergelijk de
+rest met hem of haar. Een startwaarde uit de lijst zelf kan nooit "te
+groot" zijn.
 
 ## Voorspel
 
-Wat denk je dat dit print? Let op de `lijst[1:]` — dat is *de lijst vanaf
-index 1*.
+Wat denk je dat dit print?
 
 ```python
 lijst = [-3, -1, -7]
 max_tot_nu_toe = lijst[0]
 
-for waarde in lijst[1:]:
+for waarde in lijst:
     if waarde > max_tot_nu_toe:
         max_tot_nu_toe = waarde
 
@@ -59,9 +46,13 @@ print(max_tot_nu_toe)
 
 Loop het mee:
 - start: `max_tot_nu_toe = lijst[0] = -3`
+- waarde = -3 → -3 > -3 → nee → blijft -3
 - waarde = -1 → -1 > -3 → ja → `max_tot_nu_toe = -1`
 - waarde = -7 → -7 > -1 → nee → blijft -1
 - klaar: maximum = `-1`
+
+De eerste ronde vergelijkt `lijst[0]` met zichzelf. Dat kan geen kwaad:
+een getal is nooit groter dan zichzelf, dus er verandert niets.
 
 </details>
 
@@ -70,34 +61,37 @@ Loop het mee:
 <PyRunner initialCode={`lijst = [-3, -1, -7]
 max_tot_nu_toe = lijst[0]
 
-for waarde in lijst[1:]:
+for waarde in lijst:
     if waarde > max_tot_nu_toe:
         max_tot_nu_toe = waarde
 
 print(max_tot_nu_toe)`} />
 
-## Wat is `lijst[1:]`?
-
-Dat is een **slice**: een nieuwe lijst met alles vanaf index 1 tot het
-eind. Voor `[10, 20, 30, 40]` is `lijst[1:]` gelijk aan `[20, 30, 40]`.
-
-We slaan index 0 over omdat we hem al hebben gebruikt als startwaarde.
-
 <details>
-<summary>Kan het ook zonder slice?</summary>
+<summary>Kan die ene vergelijking met zichzelf eraf?</summary>
 
-Ja, dan loop je gewoon over de hele lijst — de eerste iteratie vergelijkt
-`lijst[0]` met zichzelf, wat geen kwaad kan:
+Ja, met `lijst[1:]`: een **slice**, een nieuwe lijst met alles vanaf
+index 1. Voor `[10, 20, 30, 40]` is `lijst[1:]` gelijk aan `[20, 30, 40]`.
 
 ```python
 max_tot_nu_toe = lijst[0]
-for waarde in lijst:           # hele lijst, ook lijst[0]
+for waarde in lijst[1:]:       # vanaf index 1, want lijst[0] is de start
     if waarde > max_tot_nu_toe:
         max_tot_nu_toe = waarde
 ```
 
-Een vergelijking extra, maar simpeler om te lezen. Dat is wat we in het
-"complete algoritme" gaan gebruiken.
+Eén vergelijking minder, maar een stukje syntax extra. In dit hoofdstuk
+houden we de hele lijst: die versie is makkelijker te lezen.
+
+</details>
+
+<details>
+<summary>Een andere startwaarde: `float('-inf')`</summary>
+
+Python kent een getal dat kleiner is dan elk echt getal: `float('-inf')`,
+negatieve oneindigheid. Ook dat werkt als startwaarde, want elke echte
+waarde wint de eerste vergelijking. Het eerste element is dichter bij hoe
+een mens het doet, dus dat gebruiken we.
 
 </details>
 
@@ -108,7 +102,7 @@ Test op extreme lijsten:
 <PyRunner initialCode={`lijst = [-3, -1, -7]
 max_tot_nu_toe = lijst[0]
 
-for waarde in lijst[1:]:
+for waarde in lijst:
     if waarde > max_tot_nu_toe:
         max_tot_nu_toe = waarde
 
@@ -116,7 +110,7 @@ print("alleen negatief:", max_tot_nu_toe)
 
 lijst = [42]
 max_tot_nu_toe = lijst[0]
-for waarde in lijst[1:]:
+for waarde in lijst:
     if waarde > max_tot_nu_toe:
         max_tot_nu_toe = waarde
 print("één element:", max_tot_nu_toe)`} />
@@ -125,7 +119,7 @@ print("één element:", max_tot_nu_toe)`} />
 <summary>Wat zie je?</summary>
 
 - Negatieve lijst: `-1` — was eerst `0`, bug opgelost.
-- Eén element: `42` — `lijst[1:]` is dan leeg, de lus draait 0 keer en de
+- Eén element: `42` — de lus vergelijkt 42 één keer met zichzelf en de
   startwaarde blijft staan.
 
 </details>

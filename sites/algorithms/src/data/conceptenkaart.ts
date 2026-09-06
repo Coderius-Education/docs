@@ -20,6 +20,7 @@ export const pythonConcepten: PythonConcept[] = [
   { id: 'and-or-elif', label: 'And, or en elif', to: '/docs/beslissen/05c-and-or-elif' },
   { id: 'for-loop', label: 'De for-loop', to: '/docs/herhalen/06a-for-loop' },
   { id: 'continue', label: 'Continue', to: '/docs/herhalen/06c-continue' },
+  { id: 'break', label: 'Break', to: '/docs/herhalen/06d-break' },
   { id: 'while-loop', label: 'De while-loop', to: '/docs/herhalen/while-loop' },
   { id: 'functies', label: 'Functies en return-waarden', to: '/docs/functies/functies' },
   { id: 'parameters', label: 'Parameters', to: '/docs/functies/09a-parameters' },
@@ -41,7 +42,7 @@ export const voorkennisPerAlgoritme: Record<string, string[]> = {
   'lineair-zoeken': ['if-else', 'for-loop', 'functies', 'lijsten'],
   'vind-maximum': ['f-strings', 'if-else', 'for-loop', 'functies', 'lijsten'],
   'max-en-min': ['f-strings', 'if-else', 'and-or-elif', 'for-loop', 'return', 'lijsten', 'tuples'],
-  'binair-zoeken': ['if-else', 'and-or-elif', 'while-loop', 'functies', 'lijsten', 'tuples'],
+  'binair-zoeken': ['if-else', 'and-or-elif', 'while-loop', 'break', 'functies', 'lijsten', 'tuples'],
   'selection-sort': ['if-else', 'for-loop', 'functies', 'lijsten', 'tuples'],
   'bubble-sort': ['f-strings', 'if-else', 'for-loop', 'functies', 'lijsten', 'tuples'],
   'big-o': [

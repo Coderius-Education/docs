@@ -109,6 +109,10 @@ describe('waarschuwingen', () => {
     expect(namen('## Samenvatting\n\nDit was het.')).toContain('samenvatting');
   });
 
+  it('vindt een samenvatting die zich reflectie noemt', () => {
+    expect(namen('## Een korte reflectie\n\nWe hebben iets gebouwd dat:')).toContain('samenvatting');
+  });
+
   it('vindt "de leerling" in lestekst', () => {
     expect(namen('Zo leert de leerling variabelen kennen.')).toContain('leerling-vorm');
   });
