@@ -52,8 +52,8 @@ gewoon rechtstreeks van `bron` naar `doel` — één zet.
 
 
 # === Tests ===
-assert hanoi(1, "A", "C", "B") == [("A", "C")]
-assert hanoi(1, "A", "B", "C") == [("A", "B")]
+assert hanoi(1, "A", "C", "B") == [("A", "C")], "van A naar C: verwacht [('A', 'C')]"
+assert hanoi(1, "A", "B", "C") == [("A", "B")], "van A naar B: verwacht [('A', 'B')]"
 
 print("Alle tests gehaald ✓")`} />
 

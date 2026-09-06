@@ -77,6 +77,17 @@ Markers, direct boven het blok, net als in de play-cursus:
     {/* niet-compileren: reden */}    helemaal overslaan (bewuste syntaxfout)
     {/* uitvoer-varieert: reden */}   wel draaien, de beloofde uitvoer niet
                                       vergelijken (een set heeft geen volgorde)
+    {/* niet-draaien: startcode; … */} de startcode van een opdracht: die
+                                      draait wél, precies zoals een leerling
+                                      hem als eerste draait, en moet dan op
+                                      een AssertionError omvallen (of een
+                                      NotImplementedError met een boodschap).
+                                      Slaagt hij, dan staat de oplossing al in
+                                      de startcode; valt hij om op iets anders
+                                      (een TypeError over een `...`), dan leest
+                                      de leerling een melding die nergens
+                                      wordt uitgelegd; hangt hij, dan bevriest
+                                      de tab.
 
 Aanroep vanuit de repo-root (zonder site-naam: de python-cursus):
 
@@ -162,6 +173,21 @@ def kies_site(naam: str) -> None:
     PYTHON_VAN_DE_SITE = SITE["python_versie"]
     OORDEELT_OVER_TEKST = sys.version_info[:2] == PYTHON_VAN_DE_SITE
 NIET_DRAAIEN_RE = re.compile(r"\{/\*\s*niet-draaien:.*?\*/\}\s*$")
+# De startcode van een opdracht is een bijzonder geval van niet-draaien: de
+# asserts hóren te falen, maar de leerling drukt er wel als eerste op. Bij de
+# doorloop van Torens van Hanoi viel er een om op `zetten += ...` met een
+# TypeError over een ellipsis, in plaats van op de test die de opdracht
+# uitlegt. Zo'n blok draait dus, en wat het teruggeeft wordt beoordeeld.
+STARTCODE_RE = re.compile(r"\{/\*\s*niet-draaien:\s*startcode\b.*?\*/\}\s*$")
+# Startcodes die nog niet aan die regel voldoen, met de reden; exact, zodat een
+# opgeloste eruit moet en een nieuwe meteen opvalt (zelfde aanpak als
+# sites/algorithms/src/docs-tests/opdrachten.test.ts).
+STARTCODE_ACHTERSTAND = {
+    "sites/algorithms/docs/pagerank/bouwen/06-itereren.mdx": (
+        "de `while True` in de startcode heeft geen return, dus hij hangt tot "
+        "de leerling de lus afmaakt; in de browser bevriest de tab"
+    ),
+}
 DRAAIEN_RE = re.compile(r"\{/\*\s*draaien:.*?\*/\}\s*$")
 # Een Voorspel-blok gebruikt vaak de functie die eerder op de pagina is
 # opgebouwd; met deze marker draait het met dat blok ervoor geplakt, zodat de
@@ -248,6 +274,14 @@ def zelftest() -> None:
         " />\n\n<details>\n<summary>Wat zie je?</summary>\n\nOngeveer dit, want de lijst is elke keer anders:\n\n"
     )
     assert not hoort_bij_elkaar("\n\n## Er gaat iets mis\n\n")
+    assert STARTCODE_RE.search("{/* niet-draaien: startcode; de assert faalt tot dan */}")
+    assert not STARTCODE_RE.search("{/* niet-draaien: fragment uit de les erboven */}")
+    assert beoordeel_startcode(1, "AssertionError") is None
+    assert beoordeel_startcode(1, "AssertionError: Verwacht 7 zetten") is None
+    assert beoordeel_startcode(1, "NotImplementedError: Plak je functie hierboven.") is None
+    assert "niets te bouwen" in beoordeel_startcode(0, "")
+    assert "TypeError" in beoordeel_startcode(1, "TypeError: 'ellipsis' object is not iterable")
+    assert "in plaats van op een test" in beoordeel_startcode(1, "NotImplementedError")
 
 
 def inspring_weg(code: str) -> str:
@@ -322,7 +356,9 @@ def verzamel():
                     # Een uitvoerblok is een belofte; een fence die er een
                     # draagt draait dus altijd, ook op een site waar kale
                     # fences normaal alleen compileren.
-                    soort = "draai" if rij[3] != "compileer-marker" else "compileer"
+                    soort = (
+                        "draai" if rij[3] not in ("compileer-marker", "startcode") else rij[3]
+                    )
                     blokken[vorige[1]] = rij[:3] + (soort, inspring_weg(m.group("kaalcode")), rij[5], rij[6])
                 melding = melding_van(m.group("kaalcode"))
                 if melding and not gepaard:
@@ -366,7 +402,10 @@ def verzamel():
                     continue
                 voorplak = boven.count("\n") + 1
                 kaalcode = boven + "\n" + kaalcode
-            if NIET_DRAAIEN_RE.search(ervoor):
+            if STARTCODE_RE.search(ervoor):
+                # Draait wel, maar wordt anders beoordeeld: zie draai_startcode.
+                soort = "startcode"
+            elif NIET_DRAAIEN_RE.search(ervoor):
                 # Expliciet uitgezet; een uitvoerblok eronder mag dat niet
                 # meer terugdraaien.
                 soort = "compileer-marker"
@@ -385,7 +424,7 @@ def verzamel():
             # De keten mag alleen gevoed worden door blokken die op zichzelf
             # kunnen bestaan: een fragment dat zelf niet compileert (een losse
             # return-regel) zou elk volgend draaien-met-blok meeslepen.
-            if soort != "compileer-marker" and compileert_los(kaalcode):
+            if soort not in ("compileer-marker", "startcode") and compileert_los(kaalcode):
                 erboven_effectief = kaalcode
             vorige = (m.end(), len(blokken) - 1)
 
@@ -617,6 +656,58 @@ def draai(bron, regel, code, verwacht, varieert=False, voorplak=0) -> str | None
     return None
 
 
+STARTCODE_GOED_RE = re.compile(r"^(AssertionError\b|NotImplementedError: \S)")
+
+
+def beoordeel_startcode(returncode: int, laatste_fout: str) -> str | None:
+    """Wat een leerling ziet als hij de startcode ongewijzigd draait.
+
+    Een falende test (AssertionError, liefst met boodschap) is de bedoeling;
+    een NotImplementedError die zegt wat hij moet doen ook. Alles anders is
+    een bevinding: geen fout betekent dat de oplossing al in de startcode
+    staat, en een andere fout is een melding die de les niet uitlegt.
+    """
+    if returncode == 0:
+        return "de startcode slaagt al voor zijn tests; er valt niets te bouwen"
+    if not STARTCODE_GOED_RE.match(laatste_fout):
+        return (
+            f"de startcode valt om op {laatste_fout!r} in plaats van op een test "
+            f"(AssertionError); dat is een melding die de les niet uitlegt"
+        )
+    return None
+
+
+def draai_startcode(bron, regel, code) -> str | None:
+    fout = compileer(bron, regel, code)
+    if fout:
+        return fout
+    try:
+        r = subprocess.run(
+            [sys.executable, "-c", code],
+            capture_output=True,
+            text=True,
+            timeout=TIJDSLIMIET,
+            env={**os.environ, **SITE["env"]},
+        )
+    except subprocess.TimeoutExpired:
+        oordeel = f"de startcode draait na {TIJDSLIMIET}s nog; in de browser bevriest de tab"
+    else:
+        laatste_fout = next(
+            (x.strip() for x in reversed(r.stderr.strip().splitlines()) if x.strip()), ""
+        )
+        oordeel = beoordeel_startcode(r.returncode, laatste_fout)
+
+    sleutel = str(bron)
+    if sleutel in STARTCODE_ACHTERSTAND:
+        if oordeel is None:
+            return (
+                f"{bron}:{regel}: deze startcode voldoet inmiddels; haal hem uit "
+                f"STARTCODE_ACHTERSTAND"
+            )
+        return None
+    return f"{bron}:{regel}: {oordeel}" if oordeel else None
+
+
 def los_fragment(code: str) -> tuple[int, str]:
     """Draait een fragment in een lege map; geeft (exitcode, laatste stderr-regel).
 
@@ -788,7 +879,8 @@ def main() -> int:
 
     blokken, claims, fouten_vooraf = verzamel()
     te_draaien = [b for b in blokken if b[3] == "draai"]
-    te_compileren = [b for b in blokken if b[3] != "draai"]
+    startcodes = [b for b in blokken if b[3] == "startcode"]
+    te_compileren = [b for b in blokken if b[3] not in ("draai", "startcode")]
     met_belofte = sum(
         1
         for b in te_draaien
@@ -801,13 +893,23 @@ def main() -> int:
     with ThreadPoolExecutor(max_workers=8) as pool:
         resultaten = pool.map(lambda b: draai(b[0], b[1], b[2], b[4], b[5], b[6]), te_draaien)
         fouten += [f for f in resultaten if f]
+        fouten += [f for f in pool.map(lambda b: draai_startcode(b[0], b[1], b[2]), startcodes) if f]
         fouten += [f for f in pool.map(controleer_claim, claims) if f]
+    # De achterstand is exact: een startcode die er niet meer in hoort te
+    # staan (het bestand bestaat niet of draagt de marker niet meer) valt op.
+    aanwezig = {str(b[0]) for b in startcodes}
+    fouten += [
+        f"{pad}: staat in STARTCODE_ACHTERSTAND maar heeft geen startcode-marker meer"
+        for pad in STARTCODE_ACHTERSTAND
+        if pad not in aanwezig
+    ]
 
     for fout in fouten:
         print(fout)
     print(
         f"Uitgevoerd: {len(te_draaien)} blokken, waarvan {met_belofte} met een "
-        f"beloofde uitvoer; gecompileerd: {len(te_compileren)}; "
+        f"beloofde uitvoer; startcodes gedraaid: {len(startcodes)}; "
+        f"gecompileerd: {len(te_compileren)}; "
         f"losse foutmeldingen gereproduceerd: {len([c for c in claims if not c[4]])}"
         f"{'' if OORDEELT_OVER_TEKST else ' (tekst niet vergeleken, zie hieronder)'} "
         f"— {len(fouten)} fouten."

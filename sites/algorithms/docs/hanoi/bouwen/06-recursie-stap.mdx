@@ -33,26 +33,26 @@ Je plakt de drie stukken aan elkaar tot één lijst zetten.
 
 ## Bouw en test
 
-{/* niet-draaien: startcode; de leerling plakt de drie stukken aan elkaar */}
+{/* niet-draaien: startcode; de leerling plakt de drie stukken aan elkaar en de eerste test faalt tot dan */}
 <PyRunner initialCode={`def hanoi(n, bron, doel, hulp):
     if n == 0:
         return []
 
     zetten = []
     # 1. verplaats n-1 schijven van bron naar hulp (doel is even de hulp)
-    zetten += ...
+    #    zetten += hanoi(...)
     # 2. verplaats de grootste schijf van bron naar doel
-    zetten.append(...)
+    #    zetten.append(...)
     # 3. verplaats die n-1 schijven van hulp naar doel (bron is even de hulp)
-    zetten += ...
+    #    zetten += hanoi(...)
     return zetten
 
 
 # === Tests ===
-assert hanoi(1, "A", "C", "B") == [("A", "C")]
-assert hanoi(2, "A", "C", "B") == [("A", "B"), ("A", "C"), ("B", "C")]
-assert len(hanoi(3, "A", "C", "B")) == 7
-assert len(hanoi(10, "A", "C", "B")) == 1023   # 2**10 - 1
+assert hanoi(1, "A", "C", "B") == [("A", "C")], "1 schijf: verwacht [('A', 'C')]"
+assert hanoi(2, "A", "C", "B") == [("A", "B"), ("A", "C"), ("B", "C")], "2 schijven: verwacht A-B, A-C, B-C"
+assert len(hanoi(3, "A", "C", "B")) == 7, "3 schijven: verwacht 7 zetten"
+assert len(hanoi(10, "A", "C", "B")) == 1023, "10 schijven: verwacht 1023 zetten (2**10 - 1)"
 
 print("Alle tests gehaald ✓ — je functie werkt voor elke n!")`} />
 

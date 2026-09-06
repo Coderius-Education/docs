@@ -50,8 +50,8 @@ zijn plek: de recursie telt vanzelf af tot 0.
 
 
 # === Tests ===
-assert hanoi(0, "A", "C", "B") == []
-assert hanoi(0, "B", "A", "C") == []
+assert hanoi(0, "A", "C", "B") == [], "0 schijven: verwacht een lege lijst"
+assert hanoi(0, "B", "A", "C") == [], "0 schijven, andere palen: verwacht een lege lijst"
 
 print("Basisgeval werkt ✓")`} />
 
