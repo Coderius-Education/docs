@@ -115,6 +115,13 @@ describe('waarschuwingen', () => {
     );
   });
 
+  it('vindt een samenvatting die "Wat je nu hebt" heet, maar laat "Wat je nu ziet" staan', () => {
+    expect(namen('## Wat je nu hebt\n\nZeven regels die elke toren verplaatsen.')).toContain(
+      'samenvatting',
+    );
+    expect(namen('## Wat je nu ziet\n\nEen groene balk bovenin.')).not.toContain('samenvatting');
+  });
+
   it('vindt "de leerling" in lestekst', () => {
     expect(namen('Zo leert de leerling variabelen kennen.')).toContain('leerling-vorm');
   });

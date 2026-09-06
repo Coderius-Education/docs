@@ -329,7 +329,7 @@ const REGELS = [
     zoek: (proza) =>
       treffers(
         proza,
-        /(?<=^|\n)#{2,6}\s+(Samenvatting|Kortom|Tot slot|Samengevat|(Een korte )?Reflectie)\b/gi,
+        /(?<=^|\n)#{2,6}\s+(Samenvatting|Kortom|Tot slot|Samengevat|(Een korte )?Reflectie|Wat je nu (hebt|kunt|weet))\b/gi,
         (m) => `"${m[1]}" aan het eind; de leerling heeft het net gelezen`,
       ),
   },
