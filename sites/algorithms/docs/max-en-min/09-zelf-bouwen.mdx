@@ -68,8 +68,8 @@ def bereik(lijst):
     return max_en_min(lijst)[1] - max_en_min(lijst)[0]
 ```
 
-Maar dit laatste is **slechter**: je roept `max_en_min` **twee keer** aan
-— dubbel werk. Uitpakken is netter.
+Die laatste is slechter: hij roept `max_en_min` twee keer aan en doet dus
+dubbel werk. Uitpakken is netter.
 
 </details>
 
@@ -86,10 +86,10 @@ Je krijgt een `IndexError: list index out of range` op de regel
 `klein = groot = lijst[0]` binnen `max_en_min`. De functie gaat er
 namelijk vanuit dat er een eerste element bestaat om mee te starten.
 
-Dit is een **invoer-conventie**, geen bug: `max_en_min` is alleen
-gedefinieerd voor **niet-lege** lijsten. Wil je een lege lijst veilig
-afhandelen? Dan moet `bereik` of `max_en_min` daar eerst op checken
-(bv. `if not lijst: return 0`).
+Dat is een afspraak over de invoer en geen bug: `max_en_min` werkt alleen
+op lijsten met minstens één element. Wil je een lege lijst wél aankunnen,
+dan checkt `bereik` of `max_en_min` daar eerst op, bijvoorbeeld met
+`if not lijst: return 0`.
 
 </details>
 

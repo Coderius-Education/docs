@@ -5,15 +5,15 @@ sidebar_position: 1
 # Max én min in één pass — het idee
 
 **Leerdoel:** je begrijpt waarom je beide tegelijk wilt bijhouden, en
-waarom dat **niet** dubbel zoveel werk is als alleen het maximum.
+waarom dat niet dubbel zoveel werk kost als alleen het maximum.
 
 ## Het verhaal
 
 Stel: je hebt een lijst met dagtemperaturen van een hele maand. Je wilt
 weten:
 
-- Wat was de **warmste** dag?
-- Wat was de **koudste** dag?
+- Wat was de warmste dag?
+- Wat was de koudste dag?
 
 Je hebt al geleerd hoe je [het maximum vindt](/docs/vind-maximum/01-concept).
 Voor het minimum hetzelfde recept (één teken anders).
@@ -27,8 +27,8 @@ pass 1: doorloop alle dagen → vind het maximum
 pass 2: doorloop alle dagen → vind het minimum
 ```
 
-Werkt prima. Maar je leest **elke temperatuur twee keer**. Bij 1.000.000
-metingen zijn dat 2.000.000 leesacties.
+Dat werkt, maar je leest elke temperatuur twee keer. Bij een miljoen
+metingen zijn dat twee miljoen leesacties.
 
 ### Aanpak B — één pass, twee accumulators
 
@@ -40,9 +40,9 @@ metingen zijn dat 2.000.000 leesacties.
         update zo nodig het minimum
 ```
 
-Je leest **elke temperatuur één keer**. Bij 1.000.000 metingen zijn dat
-1.000.000 leesacties, de helft. Het aantal vergelijkingen blijft ongeveer
-gelijk: per element kijk je of het kleiner is én of het groter is.
+Nu lees je elke temperatuur één keer: een miljoen leesacties in plaats van
+twee miljoen. Het aantal vergelijkingen blijft ongeveer gelijk, want per
+element kijk je of het kleiner is én of het groter is.
 
 ## Visualisatie
 
@@ -72,8 +72,8 @@ allebei. Hoe je dat in code opschrijft zie je in bouwsteen 2.
 
 ## Twee accumulators tegelijk
 
-Het accumulator-patroon werkt voor **meerdere** dingen tegelijk. Je hebt
-gewoon meer variabelen:
+Het accumulator-patroon werkt voor meer dan één ding tegelijk. Je hebt er
+alleen meer variabelen voor nodig:
 
 ```
 accumulator_1 = startwaarde_1
@@ -96,8 +96,8 @@ Hetzelfde idee als bij vind-maximum, alleen verdubbeld.
 - de som
 - het aantal elementen
 
-…allemaal in één pass. Voor `n` elementen blijft het **O(n)** — het aantal
-extra variabelen voegt geen rondes toe aan de lus.
+En dat allemaal in één pass. Voor `n` elementen blijft het `O(n)`: extra
+variabelen kosten geen extra rondes door de lijst.
 
 </details>
 

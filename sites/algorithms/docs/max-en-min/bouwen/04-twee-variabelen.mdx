@@ -39,8 +39,8 @@ print(klein, groot)
 
 Beide variabelen krijgen dezelfde waarde — het eerste element van de
 lijst. Dat is op dit moment nog niet *het echte* min en max — we hebben
-namelijk de rest van de lijst nog niet bekeken. Het is een **veilige
-beginschatting**: een waarde die zeker in de lijst staat.
+namelijk de rest van de lijst nog niet bekeken. Het is een veilige
+beginschatting, want die waarde staat zeker in de lijst.
 
 </details>
 
@@ -53,7 +53,7 @@ print(klein, groot)`} />
 
 ## Pythonische korte notatie
 
-Python staat **meervoudige toekenning** toe. Op één regel:
+Python laat je op één regel meerdere namen dezelfde waarde geven:
 
 ```python
 klein = groot = lijst[0]
@@ -75,11 +75,11 @@ klein = 999     # hoog beginnen — wordt vanzelf vervangen door kleinere
 groot = -999    # laag beginnen — wordt vanzelf vervangen door grotere
 ```
 
-Werkt **alleen** als je weet dat alle waardes tussen `-999` en `999`
+Dat werkt alleen als je weet dat alle waardes tussen `-999` en `999`
 liggen. Bij `[1000, 2000, 3000]` krijg je dan `groot = -999` als
 antwoord — fout.
 
-**Conclusie**: `lijst[0]` is veiliger.
+`lijst[0]` is dus veiliger.
 
 ## Experimenteer
 

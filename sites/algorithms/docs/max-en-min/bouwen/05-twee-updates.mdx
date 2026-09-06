@@ -18,7 +18,7 @@ toe, zodat zowel `klein` als `groot` aangepast worden.
 ## Wat we willen
 
 Per element checken: *is het kleiner dan onze huidige `klein`? Is het
-groter dan onze huidige `groot`?* Zo ja → updaten.
+groter dan onze huidige `groot`?* Zo ja, dan updaten.
 
 ## Voorspel
 
@@ -74,17 +74,17 @@ print(klein, groot)`} />
 
 ## Waarom `elif` en niet twee aparte `if`'s?
 
-Twee aparte `if`'s zou ook werken — maar dan doe je voor **elk** element
-twee vergelijkingen, ook als de eerste al raak was. Met `elif` slaan we
-de tweede check over als de eerste al een update deed.
+Twee aparte `if`'s werken ook, maar dan doe je voor elk element twee
+vergelijkingen, ook als de eerste al raak was. Met `elif` sla je de tweede
+over zodra de eerste een update deed.
 
 <details>
 <summary>Waarom is `elif` veilig?</summary>
 
-Een waarde kan **niet tegelijk** kleiner zijn dan `klein` én groter dan
-`groot`. Want: `klein <= groot`. Dus als `waarde < klein` (kleiner dan de
-huidige ondergrens), dan zeker `waarde < groot` — en dus zeker **niet**
-`waarde > groot`. De `elif`-check kunnen we veilig overslaan.
+Een waarde kan niet tegelijk kleiner zijn dan `klein` en groter dan
+`groot`, want `klein` is nooit groter dan `groot`. Zit een waarde onder
+`klein`, dan zit hij zeker ook onder `groot`. De tweede check kan dan
+niets meer opleveren.
 
 </details>
 
@@ -109,17 +109,19 @@ max_en_min_los([3, 3, 3])`} />
 <details>
 <summary>Wat zie je?</summary>
 
-- Standaard lijst → klein=1, groot=8.
-- Eén element → klein=groot=42 (de lus doet 1 iteratie zonder updates).
-- Alleen negatief → klein=-9, groot=-1. Geen bug: we starten op `lijst[0]`.
-- Allemaal gelijk → klein=groot=3.
+- De standaardlijst geeft klein=1 en groot=8.
+- Bij één element blijven beide op 42 staan; de lus doet één ronde zonder
+  updates.
+- Bij alleen negatieve getallen komt er klein=-9 en groot=-1 uit. Geen
+  bug: je start op `lijst[0]` en niet op nul.
+- Zijn ze allemaal gelijk, dan zijn klein en groot allebei 3.
 
 </details>
 
 ## Wat nu nog mist
 
-We hebben de **logica**. Maar we **printen** alleen — we geven de waardes
-niet *terug*. In de volgende stap stoppen we het in een functie die een
-**tuple** returnt.
+De logica klopt, maar hij print alleen. De aanroeper krijgt de waardes
+niet terug. In de volgende stap stoppen we dit in een functie die er twee
+teruggeeft.
 
 Door naar [bouwsteen 3: tuple teruggeven](./06-tuple-return).

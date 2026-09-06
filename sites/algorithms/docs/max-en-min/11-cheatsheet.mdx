@@ -82,8 +82,9 @@ elif B:    # alleen gecontroleerd als A onwaar is
     ...
 ```
 
-- `if … elif …` → tweede check overgeslagen als eerste true.
-- `if … if …` → beide checks altijd gedaan.
+- Met `if … elif …` blijft de tweede check achterwege zodra de eerste
+  klopt.
+- Met `if … if …` gebeuren ze allebei, altijd.
 
 Bij wederzijds uitsluitende condities: `elif` (efficiënter en duidelijker).
 
@@ -94,12 +95,12 @@ Bij wederzijds uitsluitende condities: `elif` (efficiënter en duidelijker).
 <details>
 <summary>Hoeveel vergelijkingen?</summary>
 
-- **Eén pass + `elif`**: tussen `n` en `2n` vergelijkingen (afhankelijk van
-    data).
-- **Eén pass + apart `if`**: precies `2n` vergelijkingen.
-- **Twee aparte passes**: precies `2n` vergelijkingen + `2n` leesacties.
+- Eén pass met `elif`: tussen `n` en `2n` vergelijkingen, afhankelijk van
+    de data.
+- Eén pass met twee losse `if`'s: altijd `2n` vergelijkingen.
+- Twee aparte passes: `2n` vergelijkingen én `2n` leesacties.
 
-In alle gevallen: **O(n)** — verschil zit in de constanten.
+Alle drie zijn `O(n)`; het verschil zit in de constante ervoor.
 
 </details>
 

@@ -11,11 +11,11 @@ sidebar_position: 8
 />
 
 **Leerdoel:** je breidt de tuple uit van 2 naar 4 waardes — `klein`, de
-**index van klein**, `groot`, en de **index van groot**.
+de index van `klein`, `groot`, en de index van `groot`.
 
 ## Opdracht
 
-Pas `max_en_min` aan zodat hij **vier** waardes returnt:
+Pas `max_en_min` aan zodat hij vier waardes teruggeeft:
 
 ```
 (klein, idx_klein, groot, idx_groot)
@@ -47,10 +47,10 @@ print(max_en_min_met_index([42]))                  # verwacht: (42, 0, 42, 0)`} 
 
 Twee dingen veranderen:
 
-1. Gebruik **`enumerate`** zodat je in elke ronde de index `i` én de
-   waarde hebt.
-2. Wanneer je `klein` updatet, update je **ook** `idx_klein` naar `i`.
-   Idem voor `groot`/`idx_groot`.
+1. Loop met `enumerate` door de lijst, dan heb je in elke ronde de index
+   `i` én de waarde.
+2. Zet `idx_klein` op `i` op het moment dat je `klein` bijwerkt, en doe
+   hetzelfde voor `groot` en `idx_groot`.
 
 </details>
 
@@ -88,7 +88,7 @@ voor `groot`?
 - `idx_klein = 0` (eerste 1).
 - `idx_groot = 1` (eerste 5).
 
-Omdat we `<` en `>` (strict) gebruiken, updaten we **niet** bij gelijke
+Omdat de vergelijkingen `<` en `>` zijn, komt er geen update bij gelijke
 waardes. Dus de eerste voorkomende wint.
 
 </details>
