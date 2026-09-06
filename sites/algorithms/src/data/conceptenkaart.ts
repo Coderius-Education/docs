@@ -89,7 +89,16 @@ export const voorkennisPerAlgoritme: Record<string, string[]> = {
   ],
   knapsack: ['f-strings', 'if-else', 'for-loop', 'functies', 'lijsten', 'tuples'],
   cfg: ['if-else', 'for-loop', 'functies', 'lijsten', 'lijst-methoden', 'tuples'],
-  hanoi: ['if-else', 'functies', 'lijst-methoden', 'tuples'],
+  hanoi: [
+    'f-strings',
+    'if-else',
+    'functies',
+    'return',
+    'lijsten',
+    'lijst-methoden',
+    'dictionaries',
+    'tuples',
+  ],
   pagerank: [
     'if-else',
     'for-loop',

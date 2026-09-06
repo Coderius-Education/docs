@@ -4,6 +4,13 @@ sidebar_position: 7
 
 # De complete oplossing
 
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/tekst/04a-f-strings', label: 'F-strings'},
+    {to: '/docs/lineair-zoeken/bouwen/04-doorlopen', label: 'enumerate (lineair zoeken, bouwsteen 1)'},
+  ]}
+/>
+
 **Leerdoel:** je ziet de volledige functie werken, bekijkt de zetten, en
 speelt met het aantal schijven.
 
@@ -68,6 +75,9 @@ for i, (bron, doel) in enumerate(zetten, start=1):
     print(f"{i}. verplaats een schijf van {bron} naar {doel}")
 
 print(f"\\nTotaal: {len(zetten)} zetten   (2^{AANTAL} - 1 = {2 ** AANTAL - 1})")`} />
+
+`enumerate(zetten, start=1)` geeft elke zet een nummer, vanaf 1 in plaats
+van 0, en `(bron, doel)` pakt de tuple van die zet meteen uit.
 
 ## Wat je nu hebt
 
