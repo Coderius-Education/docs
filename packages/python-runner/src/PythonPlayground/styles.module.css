@@ -138,6 +138,8 @@
   overflow: auto;
 }
 
+/* Doorzichtig, want de tekst in het veld is dat ook: de gekleurde code ligt
+   eronder en zou onder een dekkende selectie verdwijnen. */
 .editorTextarea::selection {
   background: rgba(100, 100, 255, 0.3);
 }

@@ -59,8 +59,11 @@
   z-index: 1;
 }
 
+/* De tekst in dit veld is doorzichtig; de gekleurde code ligt eronder. Een
+   dekkende selectiekleur schildert die code dus weg en je ziet alleen nog
+   een grijs blok. Doorzichtig blijven is hier geen smaak maar een eis. */
 .textarea::selection {
-  background: var(--ifm-color-emphasis-300);
+  background: rgba(100, 100, 255, 0.3);
 }
 
 .textarea:disabled {
