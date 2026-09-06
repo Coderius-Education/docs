@@ -5,32 +5,28 @@ sidebar_position: 3
 # Stellingen — eerst voorspellen
 
 **Leerdoel:** je toetst je beeld van het probleem en van recursie vóórdat
-je gaat bouwen. Nu je het spel gespeeld en de patronen gezien hebt: denk
-eerst zelf na, klik dan open.
+je gaat bouwen. Elke stelling is waar of niet waar. Nu je het spel gespeeld
+en de patronen gezien hebt: beslis eerst zelf, klik dan open.
 
----
-
-### Stelling 1
+## Stelling 1
 
 > Voor **4 schijven** heb je 15 zetten nodig.
 
 <details>
-<summary>Waar of niet waar?</summary>
+<summary>Antwoord</summary>
 
 **Waar.** Het patroon is `2ⁿ − 1`: voor 1, 2, 3, 4 schijven →
 1, 3, 7, **15**. Elke schijf erbij verdubbelt (ongeveer) het werk.
 
 </details>
 
----
-
-### Stelling 2
+## Stelling 2
 
 > Er bestaat een slimmere aanpak die het met **minder** dan `2ⁿ − 1`
 > zetten doet.
 
 <details>
-<summary>Waar of niet waar?</summary>
+<summary>Antwoord</summary>
 
 **Niet waar.** `2ⁿ − 1` is bewijsbaar het **minimum** met drie palen. De
 grootste schijf moet een keer naar doel, en daarvóór moeten alle `n − 1`
@@ -39,15 +35,13 @@ kleinere schijven opzij — en daarna er weer bovenop. Dat geeft precies
 
 </details>
 
----
-
-### Stelling 3
+## Stelling 3
 
 > Om `n` schijven te verplaatsen los je twee keer een probleem met
 > `n − 1` schijven op.
 
 <details>
-<summary>Waar of niet waar?</summary>
+<summary>Antwoord</summary>
 
 **Waar.** Eerst verplaats je `n − 1` schijven naar de hulp-paal, dan de
 grootste schijf, dan diezelfde `n − 1` schijven naar doel. Twee keer een
@@ -55,15 +49,13 @@ kleiner Hanoi-probleem, met één losse zet ertussen.
 
 </details>
 
----
-
-### Stelling 4
+## Stelling 4
 
 > Een recursieve functie zonder **basisgeval** werkt gewoon, alleen wat
 > langzamer.
 
 <details>
-<summary>Waar of niet waar?</summary>
+<summary>Antwoord</summary>
 
 {/* foutmelding-van: def f(n):\n    return f(n - 1)\nf(3) */}
 
@@ -74,23 +66,19 @@ stoppen.
 
 </details>
 
----
-
-### Stelling 5
+## Stelling 5
 
 > Bij het verplaatsen van 3 schijven gaat de **grootste** schijf precies
 > één keer van paal.
 
 <details>
-<summary>Waar of niet waar?</summary>
+<summary>Antwoord</summary>
 
 **Waar.** De grootste schijf hoeft maar één keer te bewegen: rechtstreeks
 van bron naar doel, precies in het midden (bij 3 schijven is dat de 4ᵉ van
 de 7 zetten). Alle andere zetten gaan over de kleinere schijven.
 
 </details>
-
----
 
 Klaar met voorspellen? Tijd om te bouwen.
 
