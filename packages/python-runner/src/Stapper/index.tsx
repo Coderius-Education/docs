@@ -2,6 +2,7 @@ import type React from 'react';
 import { useState } from 'react';
 import { HighlightedEditor } from '../HighlightedEditor';
 import type { Opname, Stap } from '../PyodideProvider';
+import { afkapMelding } from './melding';
 import styles from './styles.module.css';
 
 // Bladert door een opname die tracePython() heeft gemaakt: links de code met de
@@ -121,11 +122,7 @@ export default function Stapper({
           Hier ging het mis — {opname.fout?.soort}: {opname.fout?.bericht}
         </p>
       )}
-      {opname.afgekapt && laatste && (
-        <p className={styles.melding}>
-          Alleen de eerste {totaal} stappen zijn opgenomen. Loopt je code eindeloos door?
-        </p>
-      )}
+      {opname.afgekapt && laatste && <p className={styles.melding}>{afkapMelding(totaal)}</p>}
 
       <div className={styles.knoppen}>
         <button
