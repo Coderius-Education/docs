@@ -124,7 +124,7 @@ resultaat.append(42)        # achteraan toevoegen
 
 1. `return -1` **binnen** de `for`-lus → returnt na 1 iteratie.
 2. `=` waar je `==` bedoelt → `SyntaxError` of stille bug.
-3. `range(len(lijst) + 1)` → `IndexError` op de laatste iteratie.
+3. Het resultaat als index gebruiken zonder op `-1` te checken → `lijst[-1]` geeft stil het laatste element.
 
 </details>
 

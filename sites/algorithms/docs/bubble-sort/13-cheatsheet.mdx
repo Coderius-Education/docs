@@ -182,8 +182,8 @@ Buitenste lus zet de **ronde**. Binnenste loopt door **één pass**.
 
 1. `range(len(lijst))` in binnenste lus zonder `- 1` → `IndexError`.
 2. `=` in `if` waar je `==` of `>` bedoelt → `SyntaxError`.
-3. `geswapt = False` vóór de buitenste lus → vlag wordt niet gereset →
-   early-exit werkt verkeerd.
+3. `geswapt` één keer op `False` vóór de buitenste lus → de vlag wordt niet
+   gereset → early-exit werkt verkeerd.
 
 </details>
 
@@ -194,5 +194,6 @@ Klaar met bubble sort? Je hebt nu twee sorteer-algoritmes gezien:
   weinig swaps, niet stabiel.
 - **Bubble sort** — adaptief, stabiel, simpel.
 
-Volgende stap: sneller sorteren met **merge sort** of **quicksort**
-(O(n log n)) — komt later.
+Sneller sorteren dan `O(n²)` kan met merge sort of quicksort. Die staan
+niet in deze cursus, maar [Big O](/docs/big-o/06-kwadratisch) laat zien
+hoeveel het scheelt.

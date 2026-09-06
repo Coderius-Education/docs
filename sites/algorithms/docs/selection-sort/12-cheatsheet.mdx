@@ -151,7 +151,7 @@ Bij grote `n` is dit te traag.
 
 1. Zoeken vanaf index 0 i.p.v. vanaf `i` → vernielt al-gesorteerde deel.
 2. Swap zonder tijdelijke variabele (`lijst[a] = lijst[b]; lijst[b] = lijst[a]`) → waarde gaat verloren.
-3. `range(0, n)` in binnenste lus i.p.v. `range(i, n)` → onnodig werk én potentieel fout.
+3. `range(i, n - 1)` in binnenste lus → het laatste element doet niet mee.
 
 </details>
 
