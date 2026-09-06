@@ -244,6 +244,7 @@ rechterrand
 rechtersensor
 rechterspeler
 rechtsklikmenu
+rechtsklikt
 Rechtsklikmenu
 redist
 Referers

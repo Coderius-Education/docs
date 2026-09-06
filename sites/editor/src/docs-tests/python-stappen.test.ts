@@ -82,6 +82,7 @@ describe('de stappen zijn uitvoerbaar zonder voorkennis van de interface', () =>
       if (!/```bash/.test(inhoud)) return false;
       return !(
         /adresbalk/.test(inhoud) ||
+        /Openen in Terminal/.test(inhoud) ||
         /New Terminal/.test(inhoud) ||
         /stap-2-powershell/.test(inhoud)
       );
