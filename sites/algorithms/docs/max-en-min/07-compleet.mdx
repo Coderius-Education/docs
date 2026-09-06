@@ -1,0 +1,135 @@
+---
+sidebar_position: 7
+---
+
+# Het complete algoritme
+
+**Leerdoel:** je ziet alle bouwstenen samen en onderzoekt het algoritme.
+
+## Alles samen
+
+<CodeUitleg>
+
+```python showLineNumbers
+def max_en_min(lijst):
+    klein = groot = lijst[0]
+    for waarde in lijst:
+        if waarde < klein:
+            klein = waarde
+        elif waarde > groot:
+            groot = waarde
+    return klein, groot
+```
+
+<Regel n={2}>
+Beide accumulators starten op `lijst[0]` — één regel, twee namen, allebei een echte waarde uit de lijst.
+</Regel>
+
+<Regel n={4} tot={5}>
+Kleiner dan de kleinste tot nu toe? Nieuwe kleinste.
+</Regel>
+
+<Regel n={6} tot={7}>
+De `elif` doet het spiegelbeeld, en alleen als de waarde géén nieuwe kleinste was — één waarde kan nooit allebei tegelijk zijn.
+</Regel>
+
+<Regel n={8}>
+Eén `return`, twee waardes: Python maakt er een tuple van.
+</Regel>
+
+</CodeUitleg>
+
+Acht regels, met één for-lus. Zet je vind-maximum en vind-minimum los
+naast elkaar, dan heb je er twee nodig en lees je de lijst twee keer.
+
+## Run
+
+<PyRunner editable={false} initialCode={`def max_en_min(lijst):
+    klein = groot = lijst[0]
+    for waarde in lijst:
+        if waarde < klein:
+            klein = waarde
+        elif waarde > groot:
+            groot = waarde
+    return klein, groot
+
+print(max_en_min([5, 2, 8, 1, 7, 4]))    # (1, 8)
+print(max_en_min([-3, -1, -7]))           # (-7, -1)
+print(max_en_min([42]))                   # (42, 42)
+print(max_en_min([3, 3, 3]))              # (3, 3)`} />
+
+<AlgorithmModel algorithm="min-and-max" />
+
+## Onderzoek — tel de vergelijkingen
+
+Hoeveel werk doet ons algoritme? We bouwen een teller-versie en
+vergelijken hem met twee-aparte-passes. De `else` met een `if` erin is
+hetzelfde als de `elif` uit het algoritme, alleen kun je zo de tweede
+vergelijking tellen.
+
+{/* uitvoer-varieert: de willekeurige lijst geeft elke keer andere aantallen */}
+<PyRunner initialCode={`def max_en_min_telt(lijst):
+    vergelijkingen = 0
+    klein = groot = lijst[0]
+    for waarde in lijst:
+        vergelijkingen += 1
+        if waarde < klein:
+            klein = waarde
+        else:
+            vergelijkingen += 1
+            if waarde > groot:
+                groot = waarde
+    return klein, groot, vergelijkingen
+
+def vind_max_telt(lijst):
+    vergelijkingen = 0
+    groot = lijst[0]
+    for waarde in lijst:
+        vergelijkingen += 1
+        if waarde > groot:
+            groot = waarde
+    return groot, vergelijkingen
+
+def vind_min_telt(lijst):
+    vergelijkingen = 0
+    klein = lijst[0]
+    for waarde in lijst:
+        vergelijkingen += 1
+        if waarde < klein:
+            klein = waarde
+    return klein, vergelijkingen
+
+import random
+willekeurig = []
+for _ in range(1000):
+    willekeurig.append(random.randint(0, 1000))
+aflopend = list(range(1000, 0, -1))
+
+for naam, lijst in [("willekeurig", willekeurig), ("aflopend", aflopend)]:
+    k1, g1, v_combi = max_en_min_telt(lijst)
+    g2, v_max = vind_max_telt(lijst)
+    k2, v_min = vind_min_telt(lijst)
+    print(naam)
+    print(f"    één pass:    {v_combi} vergelijkingen")
+    print(f"    twee passes: {v_max + v_min} vergelijkingen ({v_max} + {v_min})")
+    print(f"    resultaten gelijk? {(k1 == k2) and (g1 == g2)}")`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+- **Twee passes**: altijd precies `2n` vergelijkingen, 2000 hier.
+- **Eén pass, willekeurig**: bijna 2000. `klein` is na een paar elementen
+  al heel klein, dus `waarde < klein` is bijna nooit waar en de tweede
+  vergelijking is bijna altijd nodig.
+- **Eén pass, aflopend**: precies 1000. Elke waarde is kleiner dan de
+  vorige, dus de eerste vergelijking is elke keer raak en de tweede wordt
+  overgeslagen.
+
+In vergelijkingen scheelt één pass dus tussen niets en de helft, en op
+gewone data bijna niets. De echte winst zit ergens anders: elk element
+wordt één keer gelezen in plaats van twee keer. Bij grote data, of data
+die van een trage bron komt, is dat wat telt.
+
+</details>
+
+Door naar [aanpassen](./08-aanpassen).

@@ -77,8 +77,9 @@ ehthumbs.db
 Desktop.ini
 
 # ── Lokale AI-assistent bestanden ────────────────────────────────────────────
-# (CLAUDE.md wordt wél gecommit: dat zijn projectinstructies, geen scratch.)
-.claude/
+# (CLAUDE.md en .claude/skills/ worden wél gecommit: dat zijn projectinstructies, geen scratch.)
+.claude/*
+!.claude/skills/
 .gemini/
 .aider*
 

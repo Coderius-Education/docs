@@ -2,18 +2,18 @@
 sidebar_position: 1
 ---
 
-# 3.1 Max én min in één pass — het idee
+# Max én min in één pass — het idee
 
 **Leerdoel:** je begrijpt waarom je beide tegelijk wilt bijhouden, en
-waarom dat **niet** dubbel zoveel werk is als alleen het maximum.
+waarom dat niet dubbel zoveel werk kost als alleen het maximum.
 
 ## Het verhaal
 
 Stel: je hebt een lijst met dagtemperaturen van een hele maand. Je wilt
 weten:
 
-- Wat was de **warmste** dag?
-- Wat was de **koudste** dag?
+- Wat was de warmste dag?
+- Wat was de koudste dag?
 
 Je hebt al geleerd hoe je [het maximum vindt](/docs/vind-maximum/01-concept).
 Voor het minimum hetzelfde recept (één teken anders).
@@ -27,21 +27,22 @@ pass 1: doorloop alle dagen → vind het maximum
 pass 2: doorloop alle dagen → vind het minimum
 ```
 
-Werkt prima. Maar je leest **elke temperatuur twee keer**. Bij 1.000.000
-metingen zijn dat 2.000.000 leesacties.
+Dat werkt, maar je leest elke temperatuur twee keer. Bij een miljoen
+metingen zijn dat twee miljoen leesacties.
 
 ### Aanpak B — één pass, twee accumulators
 
 ```
 één pass:
-  doorloop alle dagen
-  voor elke dag:
-    update zo nodig het maximum
-    update zo nodig het minimum
+    doorloop alle dagen
+    voor elke dag:
+        update zo nodig het maximum
+        update zo nodig het minimum
 ```
 
-Je leest **elke temperatuur één keer**. Bij 1.000.000 metingen zijn dat
-1.000.000 leesacties. **De helft van het werk.**
+Nu lees je elke temperatuur één keer: een miljoen leesacties in plaats van
+twee miljoen. Het aantal vergelijkingen blijft ongeveer gelijk, want per
+element kijk je of het kleiner is én of het groter is.
 
 ## Visualisatie
 
@@ -51,23 +52,28 @@ We zoeken `klein` en `groot` in deze lijst:
 lijst:  [ 5 , 2 , 8 , 1 , 7 , 4 ]
 index:    0   1   2   3   4   5
 
-stap 0:  klein = 5, groot = 5         (start: beide op het eerste element)
-stap 1:  vergelijk 2:   2 < 5 → klein = 2;   2 > 5 → nee → groot = 5
-stap 2:  vergelijk 8:   8 < 2 → nee → klein = 2;   8 > 5 → groot = 8
-stap 3:  vergelijk 1:   1 < 2 → klein = 1;   1 > 8 → nee → groot = 8
-stap 4:  vergelijk 7:   7 < 1 → nee → klein = 1;   7 > 8 → nee → groot = 8
-stap 5:  vergelijk 4:   4 < 1 → nee → klein = 1;   4 > 8 → nee → groot = 8
+start:  klein = 5, groot = 5    beide op het eerste element
 
-→ klein = 1, groot = 8
+waarde 5:  5 < 5 nee, 5 > 5 nee  ->  niets verandert   (2 vergelijkingen)
+waarde 2:  2 < 5 ja              ->  klein = 2         (1 vergelijking)
+waarde 8:  8 < 2 nee, 8 > 5 ja   ->  groot = 8         (2 vergelijkingen)
+waarde 1:  1 < 2 ja              ->  klein = 1         (1 vergelijking)
+waarde 7:  7 < 1 nee, 7 > 8 nee  ->  niets verandert   (2 vergelijkingen)
+waarde 4:  4 < 1 nee, 4 > 8 nee  ->  niets verandert   (2 vergelijkingen)
+
+eind:   klein = 1, groot = 8    in 10 vergelijkingen
 ```
 
-Per stap: maximaal **twee** vergelijkingen. Bij elke nieuwe waarde houd je
-beide accumulators *up-to-date*.
+De eerste waarde wordt met zichzelf vergeleken, want de lus begint gewoon
+bij het begin van de lijst. Verder doe je er per waarde hoogstens twee, en
+soms maar één: is de waarde de nieuwe kleinste, dan hoeft er niet meer
+gekeken te worden of hij ook de grootste is. Dat kan namelijk niet
+allebei. Hoe je dat in code opschrijft zie je in bouwsteen 2.
 
 ## Twee accumulators tegelijk
 
-Het accumulator-patroon werkt voor **meerdere** dingen tegelijk. Je hebt
-gewoon meer variabelen:
+Het accumulator-patroon werkt voor meer dan één ding tegelijk. Je hebt er
+alleen meer variabelen voor nodig:
 
 ```
 accumulator_1 = startwaarde_1
@@ -90,9 +96,19 @@ Hetzelfde idee als bij vind-maximum, alleen verdubbeld.
 - de som
 - het aantal elementen
 
-…allemaal in één pass. Voor `n` elementen blijft het **O(n)** — het aantal
-extra variabelen voegt geen rondes toe aan de lus.
+En dat allemaal in één pass. Voor `n` elementen blijft het `O(n)`: extra
+variabelen kosten geen extra rondes door de lijst.
 
 </details>
 
-Door naar [stap 2: stellingen](./02-stellingen).
+## Zo bouw je het op
+
+De code bouw je in kleine stappen, elk op een eigen pagina in de map "Bouwen, stap voor stap":
+
+1. [Bouwsteen 1 — twee variabelen tegelijk bijhouden](./bouwen/04-twee-variabelen)
+2. [Bouwsteen 2 — beide accumulators updaten](./bouwen/05-twee-updates)
+3. [Bouwsteen 3 — twee waardes tegelijk teruggeven](./bouwen/06-tuple-return)
+
+Daarna zet je alles samen in [Het complete algoritme](./07-compleet), en ga je het aanpassen en zelf bouwen.
+
+Door naar [bekijk het algoritme](./02-bekijk).

@@ -16,6 +16,13 @@ twee manieren, en allebei zijn ze machinaal na te lopen:
     Hallo!
     ```
 
+Het uitvoerblok mag ook in een `<details><summary>Wat zie je?</summary>` staan,
+en het hoort net zo goed bij een runbaar component (`<PyRunner>`,
+`<CodeExercise>`) als bij een kale fence: de "Wat zie je?"-antwoorden onder de
+speeltuinen zijn precies de plek waar een leerling zijn eigen uitvoer naast die
+van de les legt. De wikkel telt niet als tekst ertussen; verdere tekst (een
+"Ongeveer:" boven een willekeurig resultaat) verbreekt de band wel.
+
 Dat verschil doet ertoe. Een blok dat draait maar iets anders print dan de les
 belooft, is voor een leerling verwarrender dan een blok dat omvalt: hij ziet een
 ander getal dan er staat en denkt dat híj iets fout doet. Zo stond er in de les
@@ -70,6 +77,17 @@ Markers, direct boven het blok, net als in de play-cursus:
     {/* niet-compileren: reden */}    helemaal overslaan (bewuste syntaxfout)
     {/* uitvoer-varieert: reden */}   wel draaien, de beloofde uitvoer niet
                                       vergelijken (een set heeft geen volgorde)
+    {/* niet-draaien: startcode; … */} de startcode van een opdracht: die
+                                      draait wél, precies zoals een leerling
+                                      hem als eerste draait, en moet dan op
+                                      een AssertionError omvallen (of een
+                                      NotImplementedError met een boodschap).
+                                      Slaagt hij, dan staat de oplossing al in
+                                      de startcode; valt hij om op iets anders
+                                      (een TypeError over een `...`), dan leest
+                                      de leerling een melding die nergens
+                                      wordt uitgelegd; hangt hij, dan bevriest
+                                      de tab.
 
 Aanroep vanuit de repo-root (zonder site-naam: de python-cursus):
 
@@ -155,6 +173,21 @@ def kies_site(naam: str) -> None:
     PYTHON_VAN_DE_SITE = SITE["python_versie"]
     OORDEELT_OVER_TEKST = sys.version_info[:2] == PYTHON_VAN_DE_SITE
 NIET_DRAAIEN_RE = re.compile(r"\{/\*\s*niet-draaien:.*?\*/\}\s*$")
+# De startcode van een opdracht is een bijzonder geval van niet-draaien: de
+# asserts hóren te falen, maar de leerling drukt er wel als eerste op. Bij de
+# doorloop van Torens van Hanoi viel er een om op `zetten += ...` met een
+# TypeError over een ellipsis, in plaats van op de test die de opdracht
+# uitlegt. Zo'n blok draait dus, en wat het teruggeeft wordt beoordeeld.
+STARTCODE_RE = re.compile(r"\{/\*\s*niet-draaien:\s*startcode\b.*?\*/\}\s*$")
+# Startcodes die nog niet aan die regel voldoen, met de reden; exact, zodat een
+# opgeloste eruit moet en een nieuwe meteen opvalt (zelfde aanpak als
+# sites/algorithms/src/docs-tests/opdrachten.test.ts).
+STARTCODE_ACHTERSTAND = {
+    "sites/algorithms/docs/pagerank/bouwen/06-itereren.mdx": (
+        "de `while True` in de startcode heeft geen return, dus hij hangt tot "
+        "de leerling de lus afmaakt; in de browser bevriest de tab"
+    ),
+}
 DRAAIEN_RE = re.compile(r"\{/\*\s*draaien:.*?\*/\}\s*$")
 # Een Voorspel-blok gebruikt vaak de functie die eerder op de pagina is
 # opgebouwd; met deze marker draait het met dat blok ervoor geplakt, zodat de
@@ -194,6 +227,74 @@ TIJDSLIMIET = 30
 # kies_site is de enige plek die de site-globals zet; deze aanroep maakt de
 # module direct bruikbaar (importeren + verzamel() zonder eerst kiezen).
 kies_site("python")
+
+
+# De code van een component staat in een JS-template-literal; de browser
+# vertaalt de ontsnappingen voordat Python de tekst ziet. `\\n` in de bron is
+# dus `\n` voor Python (een regeleinde), en een kale `\n` in de bron wordt een
+# echt regeleinde midden in de Python-string — precies de fout die je alleen
+# in de browser ziet. Daarom vertaalt de controle ze op dezelfde manier.
+TEMPLATE_ONTSNAPPING = {"n": "\n", "t": "\t", "r": "\r"}
+
+
+def template_ontsnap(code: str) -> str:
+    return re.sub(
+        r"\\(.)",
+        lambda m: TEMPLATE_ONTSNAPPING.get(m.group(1), m.group(1)),
+        code,
+        flags=re.S,
+    )
+
+
+def hoort_bij_elkaar(tussen: str) -> bool:
+    """Is een kale fence met alléén `tussen` ervoor de uitvoer van het blok erboven?
+
+    De sluiting van het component (`/>`) en de details-wikkel om een
+    "Wat zie je?"-antwoord zijn geen tekst ertussen. Wat overblijft moet kort
+    zijn en mag geen kopje bevatten: onder "## Er gaat iets mis" hoort de
+    foutmelding juist bij het blok dat erna komt.
+    """
+    kaal = re.sub(r"^\s*/>", "", tussen.strip())
+    kaal = re.sub(r"<details>|<summary>[^<\n]*</summary>", "", kaal)
+    return len(kaal.strip()) <= 40 and "#" not in kaal
+
+
+def achterstand_van_deze_site(paden, docsmap: str) -> list[str]:
+    """De achterstand-paden die onder de docs-map van de draaiende site vallen.
+
+    De tabel bedient beide cursussen. Zonder deze zeef zou de python-job
+    klagen dat een les van algorithms zijn marker kwijt is, terwijl hij die
+    les niet eens inleest.
+    """
+    return [pad for pad in paden if pad.startswith(docsmap)]
+
+
+def zelftest() -> None:
+    """De twee vertaalslagen die stil kunnen verslappen, hardop nagelopen.
+
+    Zonder deze regels zou de controle nog steeds groen zijn — met minder
+    blokken die meedoen. Dat is precies de regressie die je niet ziet.
+    """
+    assert template_ontsnap(r"print('a\\nb')") == r"print('a\nb')"
+    assert template_ontsnap(r"\`") == "`"
+    assert template_ontsnap(r"\${x}") == "${x}"
+    assert hoort_bij_elkaar(" />\n\n<details>\n<summary>Wat zie je?</summary>\n\n")
+    assert hoort_bij_elkaar("\n\n<details>\n<summary>Antwoord — verwacht je dit?</summary>\n\n")
+    assert not hoort_bij_elkaar(
+        " />\n\n<details>\n<summary>Wat zie je?</summary>\n\nOngeveer dit, want de lijst is elke keer anders:\n\n"
+    )
+    assert not hoort_bij_elkaar("\n\n## Er gaat iets mis\n\n")
+    paden = ["sites/algorithms/docs/pagerank/bouwen/06-itereren.mdx", "sites/python/docs/04-herhalen/06a-for-loop.mdx"]
+    assert achterstand_van_deze_site(paden, "sites/python/docs") == [paden[1]]
+    assert achterstand_van_deze_site(paden, "sites/algorithms/docs") == [paden[0]]
+    assert STARTCODE_RE.search("{/* niet-draaien: startcode; de assert faalt tot dan */}")
+    assert not STARTCODE_RE.search("{/* niet-draaien: fragment uit de les erboven */}")
+    assert beoordeel_startcode(1, "AssertionError") is None
+    assert beoordeel_startcode(1, "AssertionError: Verwacht 7 zetten") is None
+    assert beoordeel_startcode(1, "NotImplementedError: Plak je functie hierboven.") is None
+    assert "niets te bouwen" in beoordeel_startcode(0, "")
+    assert "TypeError" in beoordeel_startcode(1, "TypeError: 'ellipsis' object is not iterable")
+    assert "in plaats van op een test" in beoordeel_startcode(1, "NotImplementedError")
 
 
 def inspring_weg(code: str) -> str:
@@ -262,13 +363,15 @@ def verzamel():
                 # kopje. Onder "## Er gaat iets mis" hoort de foutmelding juist
                 # bij het blok dat erna komt.
                 tussen = tekst[vorige[0] : m.start()] if vorige is not None else ""
-                gepaard = vorige is not None and len(tussen.strip()) <= 40 and "#" not in tussen
+                gepaard = vorige is not None and hoort_bij_elkaar(tussen)
                 if gepaard:
                     rij = blokken[vorige[1]]
                     # Een uitvoerblok is een belofte; een fence die er een
                     # draagt draait dus altijd, ook op een site waar kale
                     # fences normaal alleen compileren.
-                    soort = "draai" if rij[3] != "compileer-marker" else "compileer"
+                    soort = (
+                        "draai" if rij[3] not in ("compileer-marker", "startcode") else rij[3]
+                    )
                     blokken[vorige[1]] = rij[:3] + (soort, inspring_weg(m.group("kaalcode")), rij[5], rij[6])
                 melding = melding_van(m.group("kaalcode"))
                 if melding and not gepaard:
@@ -290,7 +393,10 @@ def verzamel():
 
             if m.group("py") is None:
                 verzameld_hier += 1
-            code = m.group("pycode") if m.group("py") is not None else m.group("oefcode")
+            code = (
+                m.group("pycode") if m.group("py") is not None
+                else template_ontsnap(m.group("oefcode"))
+            )
             regel = tekst[: m.start()].count("\n") + 1
             ervoor = tekst[: m.start()].rstrip()
             if NIET_COMPILEREN_RE.search(ervoor):
@@ -309,7 +415,10 @@ def verzamel():
                     continue
                 voorplak = boven.count("\n") + 1
                 kaalcode = boven + "\n" + kaalcode
-            if NIET_DRAAIEN_RE.search(ervoor):
+            if STARTCODE_RE.search(ervoor):
+                # Draait wel, maar wordt anders beoordeeld: zie draai_startcode.
+                soort = "startcode"
+            elif NIET_DRAAIEN_RE.search(ervoor):
                 # Expliciet uitgezet; een uitvoerblok eronder mag dat niet
                 # meer terugdraaien.
                 soort = "compileer-marker"
@@ -328,9 +437,9 @@ def verzamel():
             # De keten mag alleen gevoed worden door blokken die op zichzelf
             # kunnen bestaan: een fragment dat zelf niet compileert (een losse
             # return-regel) zou elk volgend draaien-met-blok meeslepen.
-            if soort != "compileer-marker" and compileert_los(kaalcode):
+            if soort not in ("compileer-marker", "startcode") and compileert_los(kaalcode):
                 erboven_effectief = kaalcode
-            vorige = (m.end(), len(blokken) - 1) if m.group("py") is not None else None
+            vorige = (m.end(), len(blokken) - 1)
 
         claims += list(inline_claims(tekst, bron))
 
@@ -510,7 +619,9 @@ def draai(bron, regel, code, verwacht, varieert=False, voorplak=0) -> str | None
             " (draaien-met: het blok erboven draait mee)" if voorplak else ""
         )
 
-    uit = r.stdout.rstrip("\n")
+    # Een lege regel vooraan (een print("\\n…") als eerste) is in een fence
+    # niet te zien; die telt dus niet mee, net als lege regels achteraan.
+    uit = r.stdout.strip("\n")
 
     if verwacht is not None and uit != verwacht:
         return f"{bron}:{regel}: uitvoerblok belooft {verwacht!r}, geeft {uit!r}"
@@ -556,6 +667,58 @@ def draai(bron, regel, code, verwacht, varieert=False, voorplak=0) -> str | None
                 if echt != waarde_van(belofte):
                     return f"{bron}:{regel}: belooft {waarde_van(belofte)!r}, geeft {echt!r}"
     return None
+
+
+STARTCODE_GOED_RE = re.compile(r"^(AssertionError\b|NotImplementedError: \S)")
+
+
+def beoordeel_startcode(returncode: int, laatste_fout: str) -> str | None:
+    """Wat een leerling ziet als hij de startcode ongewijzigd draait.
+
+    Een falende test (AssertionError, liefst met boodschap) is de bedoeling;
+    een NotImplementedError die zegt wat hij moet doen ook. Alles anders is
+    een bevinding: geen fout betekent dat de oplossing al in de startcode
+    staat, en een andere fout is een melding die de les niet uitlegt.
+    """
+    if returncode == 0:
+        return "de startcode slaagt al voor zijn tests; er valt niets te bouwen"
+    if not STARTCODE_GOED_RE.match(laatste_fout):
+        return (
+            f"de startcode valt om op {laatste_fout!r} in plaats van op een test "
+            f"(AssertionError); dat is een melding die de les niet uitlegt"
+        )
+    return None
+
+
+def draai_startcode(bron, regel, code) -> str | None:
+    fout = compileer(bron, regel, code)
+    if fout:
+        return fout
+    try:
+        r = subprocess.run(
+            [sys.executable, "-c", code],
+            capture_output=True,
+            text=True,
+            timeout=TIJDSLIMIET,
+            env={**os.environ, **SITE["env"]},
+        )
+    except subprocess.TimeoutExpired:
+        oordeel = f"de startcode draait na {TIJDSLIMIET}s nog; in de browser bevriest de tab"
+    else:
+        laatste_fout = next(
+            (x.strip() for x in reversed(r.stderr.strip().splitlines()) if x.strip()), ""
+        )
+        oordeel = beoordeel_startcode(r.returncode, laatste_fout)
+
+    sleutel = str(bron)
+    if sleutel in STARTCODE_ACHTERSTAND:
+        if oordeel is None:
+            return (
+                f"{bron}:{regel}: deze startcode voldoet inmiddels; haal hem uit "
+                f"STARTCODE_ACHTERSTAND"
+            )
+        return None
+    return f"{bron}:{regel}: {oordeel}" if oordeel else None
 
 
 def los_fragment(code: str) -> tuple[int, str]:
@@ -690,6 +853,7 @@ def main() -> int:
         print(f"onbekende site {naam!r}; kies uit: {', '.join(SITES)}", file=sys.stderr)
         return 2
     kies_site(naam)
+    zelftest()
 
     if "--pins" in sys.argv:
         print(" ".join(f"{n}=={v}" for n, v in pins().items()))
@@ -728,7 +892,8 @@ def main() -> int:
 
     blokken, claims, fouten_vooraf = verzamel()
     te_draaien = [b for b in blokken if b[3] == "draai"]
-    te_compileren = [b for b in blokken if b[3] != "draai"]
+    startcodes = [b for b in blokken if b[3] == "startcode"]
+    te_compileren = [b for b in blokken if b[3] not in ("draai", "startcode")]
     met_belofte = sum(
         1
         for b in te_draaien
@@ -741,13 +906,26 @@ def main() -> int:
     with ThreadPoolExecutor(max_workers=8) as pool:
         resultaten = pool.map(lambda b: draai(b[0], b[1], b[2], b[4], b[5], b[6]), te_draaien)
         fouten += [f for f in resultaten if f]
+        fouten += [f for f in pool.map(lambda b: draai_startcode(b[0], b[1], b[2]), startcodes) if f]
         fouten += [f for f in pool.map(controleer_claim, claims) if f]
+    # De achterstand is exact: een startcode die er niet meer in hoort te
+    # staan (het bestand bestaat niet of draagt de marker niet meer) valt op.
+    # Alleen voor de site die nu draait: de tabel bedient beide cursussen, dus
+    # een pad van de andere site zegt hier niets — anders zou de python-job
+    # omvallen over een les van algorithms.
+    aanwezig = {str(b[0]) for b in startcodes}
+    fouten += [
+        f"{pad}: staat in STARTCODE_ACHTERSTAND maar heeft geen startcode-marker meer"
+        for pad in achterstand_van_deze_site(STARTCODE_ACHTERSTAND, str(DOCS.relative_to(ROOT)))
+        if pad not in aanwezig
+    ]
 
     for fout in fouten:
         print(fout)
     print(
         f"Uitgevoerd: {len(te_draaien)} blokken, waarvan {met_belofte} met een "
-        f"beloofde uitvoer; gecompileerd: {len(te_compileren)}; "
+        f"beloofde uitvoer; startcodes gedraaid: {len(startcodes)}; "
+        f"gecompileerd: {len(te_compileren)}; "
         f"losse foutmeldingen gereproduceerd: {len([c for c in claims if not c[4]])}"
         f"{'' if OORDEELT_OVER_TEKST else ' (tekst niet vergeleken, zie hieronder)'} "
         f"— {len(fouten)} fouten."

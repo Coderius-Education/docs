@@ -1,0 +1,20 @@
+{
+  "skill_name": "leerling-doorloop",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Loop het hoofdstuk Torens van Hanoi (sites/algorithms/docs/hanoi/) kritisch door alsof je een leerling bent die het voor het eerst doet, en geef me een bevindingenlijst. Verander niets aan de lessen; ik wil eerst de lijst zien. Schrijf het rapport naar rapport.md.",
+      "expected_output": "Eén bevindingenlijst, gegroepeerd op blokkeert/verwart/wringt, met per bevinding het bestand, wat de leerling ziet, wat er had moeten staan en hoe het is vastgesteld; de code is echt gedraaid en de beloofde uitvoer vergeleken; afgesloten met patronen en een voorstel voor tests; geen wijzigingen aan de lessen.",
+      "files": [],
+      "assertions": [
+        "Het rapport groepeert de bevindingen in de drie ernstklassen blokkeert, verwart en wringt (of duidelijk equivalente labels) en zet de klasse voorop.",
+        "Het rapport laat zien dat de code echt is gedraaid: het noemt gedraaide blokken of het controlescript en vergelijkt minstens één beloofde uitvoer met de echte uitvoer.",
+        "Elke bevinding noemt het bestand of de pagina waar hij staat.",
+        "Het rapport bevat een sectie met patronen over de pagina's heen en een voorstel voor welke patronen een test kunnen worden.",
+        "Het rapport eindigt met een voorstel voor de volgorde van oppakken of een vraag welke punten de opdrachtgever wil, niet met een uitgevoerde fix.",
+        "Geen bestand onder /home/user/docs is gewijzigd (git status is schoon).",
+        "Het rapport beoordeelt minstens één stelling of voorspelvraag op of hij te beantwoorden is met de voorkennis van de vorige pagina's, of controleert of een opdracht of uitdaging een antwoord heeft."
+      ]
+    }
+  ]
+}

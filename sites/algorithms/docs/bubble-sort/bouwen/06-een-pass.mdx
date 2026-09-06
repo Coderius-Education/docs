@@ -1,0 +1,124 @@
+---
+sidebar_position: 6
+---
+
+# Bouwsteen 3 — één pass door de lijst
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/functies/functies', label: 'Functies'},
+    {site: 'python', to: '/docs/functies/09b-return', label: 'Return-waarden'},
+  ]}
+/>
+
+**Leerdoel:** je weet precies tot welke index de binnenste lus loopt, en
+waarom er `- 1` bij hoort.
+
+## Wat we willen
+
+Eén pass = één keer door de lijst lopen, elk paar buren bekijken en
+zo nodig swappen.
+
+## De `- 1` is cruciaal
+
+Elke vergelijking pakt `lijst[i]` en `lijst[i + 1]`. De laatste `i` die
+nog kan is dus `len(lijst) - 2`, want dan wijst `i + 1` precies naar het
+laatste element.
+
+```python
+for i in range(len(lijst) - 1):     # 0, 1, ..., len-2
+    ...
+```
+
+Vergeten we de `- 1`?
+
+```python
+for i in range(len(lijst)):         # 0, 1, ..., len-1
+    if lijst[i] > lijst[i + 1]:     # crash bij i = len-1
+        ...
+```
+
+{/* foutmelding-van: lijst = [5, 2, 9]\nfor i in range(len(lijst)):\n    if lijst[i] > lijst[i + 1]:\n        pass */}
+
+→ `IndexError: list index out of range` op de laatste iteratie. Klassieke
+beginnersfout.
+
+## Voorspel
+
+Wat denk je dat dit print?
+
+```python
+def een_pass(lijst):
+    for i in range(len(lijst) - 1):
+        if lijst[i] > lijst[i + 1]:
+            lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+    return lijst
+
+print(een_pass([3, 1, 4, 1, 5]))
+print(een_pass([5, 4, 3, 2, 1]))
+print(een_pass([1, 2, 3, 4, 5]))
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+[1, 3, 1, 4, 5]
+[4, 3, 2, 1, 5]
+[1, 2, 3, 4, 5]
+```
+
+- In `[3, 1, 4, 1, 5]` gebeuren twee swaps, de 3 met de 1 en de 4 met de
+    1; de 5 stond al achteraan.
+- In de omgekeerde lijst `[5, 4, 3, 2, 1]` borrelt de 5 in één pass
+    helemaal naar achteren. De rest staat nog rommelig.
+- In `[1, 2, 3, 4, 5]` verandert niets, want die staat al goed.
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`def een_pass(lijst):
+    for i in range(len(lijst) - 1):
+        if lijst[i] > lijst[i + 1]:
+            lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+    return lijst
+
+print(een_pass([3, 1, 4, 1, 5]))
+print(een_pass([5, 4, 3, 2, 1]))
+print(een_pass([1, 2, 3, 4, 5]))`} />
+
+## Visualiseer — het grootste borrelt naar achteren
+
+<PyRunner initialCode={`def een_pass_uitleg(lijst):
+    print("start:", lijst)
+    for i in range(len(lijst) - 1):
+        if lijst[i] > lijst[i + 1]:
+            lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+            print(f"    i={i}: swap → {lijst}")
+    print("eind:", lijst)
+    return lijst
+
+een_pass_uitleg([4, 2, 7, 1, 3])`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+```
+start: [4, 2, 7, 1, 3]
+    i=0: swap → [2, 4, 7, 1, 3]
+    i=2: swap → [2, 4, 1, 7, 3]
+    i=3: swap → [2, 4, 1, 3, 7]
+eind: [2, 4, 1, 3, 7]
+```
+
+Drie swaps. De 7 (grootste) is helemaal naar achteren gegaan. Maar de 1
+moet nog twee plekken naar voren — daarvoor zijn meer passes nodig.
+
+</details>
+
+## Wat nu nog mist
+
+Eén pass is klaar. Nu nog herhalen tot de lijst gesorteerd is.
+
+Door naar [bouwsteen 4: meerdere passes](./07-meerdere-passes).

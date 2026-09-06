@@ -1,3 +1,9 @@
+import {
+  enterInvoegen,
+  tabInvoegen,
+  tabWeghalen,
+  voerUit,
+} from '@coderius/python-runner/inspringen';
 import { Highlight, Prism, themes } from 'prism-react-renderer';
 import type React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -74,6 +80,31 @@ export function HighlightedEditor({
 
   // Keep the highlight <pre>'s scroll position glued to the textarea's so the
   // painted tokens follow when the student scrolls a long code block.
+  // Tab springt in, Shift+Tab haalt de inspringing weg en Enter houdt de
+  // inspringing vast (een niveau dieper na een dubbele punt), in elke editor
+  // die dit component gebruikt. Een eigen onKeyDown (Ctrl+Enter in PyRunner) gaat
+  // voor en kan Tab overnemen door preventDefault aan te roepen.
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      onKeyDown?.(e);
+      if (e.defaultPrevented || readOnly || disabled) return;
+      const isTab = e.key === 'Tab';
+      const isEnter = e.key === 'Enter' && !e.ctrlKey && !e.metaKey && !e.altKey;
+      if (!isTab && !isEnter) return;
+      e.preventDefault();
+      const target = e.currentTarget;
+      const { selectionStart, selectionEnd } = target;
+      const bewerking = isEnter
+        ? enterInvoegen(code, selectionStart, selectionEnd)
+        : e.shiftKey
+          ? tabWeghalen(code, selectionStart, selectionEnd)
+          : tabInvoegen(code, selectionStart, selectionEnd);
+      if (bewerking.code === code) return;
+      voerUit(target, bewerking, onChange);
+    },
+    [code, onChange, onKeyDown, readOnly, disabled],
+  );
+
   const handleScroll = useCallback((e: React.UIEvent<HTMLTextAreaElement>) => {
     const pre = highlightRef.current;
     if (pre) {
@@ -112,7 +143,7 @@ export function HighlightedEditor({
         className={styles.textarea}
         value={code}
         onChange={(e) => onChange(e.target.value)}
-        onKeyDown={onKeyDown}
+        onKeyDown={handleKeyDown}
         onScroll={handleScroll}
         disabled={disabled}
         readOnly={readOnly}

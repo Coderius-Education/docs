@@ -1,0 +1,101 @@
+---
+sidebar_position: 3
+---
+
+# Stellingen — toets je begrip
+
+**Leerdoel:** je toetst of je de structuur van bubble sort snapt.
+
+## Stelling 1
+
+*"Eén pass van bubble sort sorteert de hele lijst."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Onjuist.** Eén pass zet alleen het grootste element op zijn plek,
+achteraan het ongesorteerde stuk. De rest kan nog door elkaar staan, dus
+er komen meer passes achteraan.
+
+</details>
+
+## Stelling 2
+
+*"Na pass `k` staan de laatste `k` elementen op hun juiste plek."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Juist.** Elke pass borrelt de grootste van de rest naar achteren: na
+pass 1 staat het grootste goed, na pass 2 ook het tweede grootste, en zo
+verder.
+
+Daar maak je straks gebruik van: elke volgende pass hoeft een stukje
+minder ver te kijken, want de staart staat al.
+
+</details>
+
+## Stelling 3
+
+*"Bubble sort vergelijkt alleen **buren** (`lijst[i]` met `lijst[i+1]`)."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Juist.** Dat is het kenmerk van bubble sort. Selection sort vergelijkt
+elk element met de kleinste tot nu toe, en die kan ver weg staan; bubble
+sort kijkt alleen naar wat naast elkaar ligt.
+
+Dat maakt de logica simpel, maar het kost tijd: een element dat ver van
+zijn plek staat schuift per pass maar één positie op.
+
+</details>
+
+## Stelling 4
+
+*"Op een al-gesorteerde lijst kan bubble sort na één pass stoppen."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Juist.** Die ene pass vergelijkt elk paar buren en wisselt niets. Dan
+weet je zeker dat de lijst af is, en hoef je niet verder. Dat "merken dat
+er niets gewisseld is" bouw je in bouwsteen 5; zonder die stap doet
+bubble sort ook op een gesorteerde lijst alle `n − 1` passes.
+
+</details>
+
+## Stelling 5
+
+*"De binnenste lus loopt tot `len(lijst)` (inclusief)."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Onjuist.** Hij loopt tot `len(lijst) - 1`. Je vergelijkt `lijst[i]` met
+`lijst[i+1]`, dus de laatste `i` die nog kan is `len(lijst) - 2`, en dat
+is precies wat `range(len(lijst) - 1)` je geeft.
+
+{/* foutmelding-van: lijst = [5, 2, 9]\nfor i in range(len(lijst)):\n    lijst[i + 1] */}
+
+Eén te ver → `IndexError` op `lijst[i+1]`.
+
+</details>
+
+## Stelling 6
+
+*"Bubble sort kan elementen die ver van hun juiste plek staan ook in één
+pass naar voren brengen."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Onjuist**, tenminste naar voren. Een kleine waarde schuift per pass maar
+één plek op; een grote kan in één pass helemaal naar achteren bubbelen.
+
+Die scheefheid is precies wat cocktail sort rechttrekt, door om en om naar
+rechts en naar links te lopen.
+
+</details>
+
+Door naar [de eerste bouwsteen](./bouwen/04-vergelijk-buren).

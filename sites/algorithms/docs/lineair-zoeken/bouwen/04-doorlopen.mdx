@@ -1,0 +1,90 @@
+---
+sidebar_position: 4
+---
+
+# Bouwsteen 1 — door de lijst lopen
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/herhalen/06a-for-loop', label: 'De for-loop'},
+    {site: 'python', to: '/docs/data/10a-lijsten-basis', label: 'Lijsten'},
+  ]}
+/>
+
+**Leerdoel:** je kunt **één voor één** door een lijst lopen in Python.
+Dat is de eerste bouwsteen van lineair zoeken: het *één voor één*-stuk.
+
+## Wat we willen
+
+We willen elk element van de lijst kunnen bekijken. Niets zoeken nog,
+gewoon: één voor één pakken en laten zien.
+
+## Voorspel
+
+Wat denk je dat dit print?
+
+```python
+lijst = [3, 1, 4, 1, 5]
+for waarde in lijst:
+    print(waarde)
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+3
+1
+4
+1
+5
+```
+
+De `for waarde in lijst:` betekent: *"haal achter elkaar elk element uit
+de lijst, noem het `waarde`, en doe iets met dat element."*
+
+</details>
+
+## Run
+
+Voer het uit en bevestig dat je voorspelling klopt. Verander dan eens de
+lijst en kijk wat er gebeurt.
+
+<PyRunner initialCode={`lijst = [3, 1, 4, 1, 5]
+for waarde in lijst:
+    print(waarde)`} />
+
+## Ook de plek weten: `enumerate`
+
+Straks wil je niet alleen de waarde, maar ook waar in de lijst hij
+staat: de index. Daarvoor heeft Python `enumerate`. Het geeft je elke
+ronde twee dingen tegelijk: de index `i` en de waarde.
+
+<PyRunner initialCode={`lijst = [3, 1, 4, 1, 5]
+for i, waarde in enumerate(lijst):
+    print(i, waarde)`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+```
+0 3
+1 1
+2 4
+3 1
+4 5
+```
+
+`i` telt mee vanaf 0, net als de indexen van de lijst. Daarnaast krijg je
+`waarde`: 3, 1, 4, 1, 5.
+
+</details>
+
+## Wat nu nog mist
+
+Dit *loopt door de lijst*, maar het *zoekt* nog niets. We weten nog niet
+welk element we willen vinden — alleen dat we ze allemaal langskomen.
+
+De volgende stap is vergelijken.
+
+Door naar [bouwsteen 2: vergelijken](./05-vergelijken).

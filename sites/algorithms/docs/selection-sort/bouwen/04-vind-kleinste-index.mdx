@@ -1,0 +1,113 @@
+---
+sidebar_position: 4
+---
+
+# Bouwsteen 1 — vind de index van het kleinste
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/functies/functies', label: 'Functies'},
+    {site: 'python', to: '/docs/functies/09b-return', label: 'Return-waarden'},
+    {site: 'python', to: '/docs/herhalen/06a-for-loop', label: 'De for-loop'},
+    {site: 'python', to: '/docs/beslissen/05b-if-else', label: 'If en else'},
+    {site: 'python', to: '/docs/data/10a-lijsten-basis', label: 'Lijsten'},
+    {to: '/docs/lineair-zoeken/bouwen/04-doorlopen', label: 'enumerate (lineair zoeken, bouwsteen 1)'},
+  ]}
+/>
+
+**Leerdoel:** je past het accumulator-patroon uit *vind het maximum* aan
+om de **index** van het **kleinste** element te vinden.
+
+## Wat we willen
+
+Een functie die de **index** teruggeeft van de plek waar de kleinste
+waarde staat. Niet de waarde zelf: om straks te kunnen ruilen moet je
+weten wáár het kleinste staat.
+
+## Voorspel
+
+Wat denk je dat dit print?
+
+```python
+def index_van_kleinste(lijst):
+    min_index = 0
+    for i, waarde in enumerate(lijst):
+        if waarde < lijst[min_index]:
+            min_index = i
+    return min_index
+
+print(index_van_kleinste([5, 2, 8, 1, 4]))
+print(index_van_kleinste([10, 20, 30]))
+print(index_van_kleinste([3, 3, 3]))
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+3
+0
+0
+```
+
+- In `[5, 2, 8, 1, 4]` staat de 1 op index 3, dus `3`.
+- In `[10, 20, 30]` staat de 10 vooraan, dus `0`.
+- In `[3, 3, 3]` wint de eerste, want de vergelijking is `<` en niet `<=`.
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`def index_van_kleinste(lijst):
+    min_index = 0
+    for i, waarde in enumerate(lijst):
+        if waarde < lijst[min_index]:
+            min_index = i
+    return min_index
+
+print(index_van_kleinste([5, 2, 8, 1, 4]))
+print(index_van_kleinste([10, 20, 30]))
+print(index_van_kleinste([3, 3, 3]))`} />
+
+## Vergelijking met *vind het maximum*
+
+Bijna hetzelfde:
+
+| | vind max | vind min-index |
+|---|---|---|
+| Variabele houdt bij | waarde | **index** |
+| Vergelijking | `>` | `<` |
+| Update | `maximum = waarde` | `min_index = i` |
+| Return | `maximum` | `min_index` |
+
+Twee verschillen dus: je houdt een index bij in plaats van een waarde, en
+je vergelijkt met `<` in plaats van `>`. Het patroon eronder is hetzelfde.
+
+## Experimenteer
+
+Probeer ook negatieve lijsten en lege lijsten:
+
+<PyRunner initialCode={`def index_van_kleinste(lijst):
+    min_index = 0
+    for i, waarde in enumerate(lijst):
+        if waarde < lijst[min_index]:
+            min_index = i
+    return min_index
+
+print(index_van_kleinste([-3, -1, -7]))    # verwacht: 2
+print(index_van_kleinste([42]))             # verwacht: 0
+print(index_van_kleinste([]))               # verwacht: 0  (geen crash: de lus doet niets)`} />
+
+Een lege lijst geeft ook `0`, en dat is een leugen: index 0 bestaat niet.
+De functie crasht niet, want `lijst[min_index]` wordt alleen gelezen in de
+lus, en die doet bij een lege lijst nul rondes. Voor selection sort maakt
+het niet uit, die roept de functie nooit met een lege lijst aan.
+
+## Wat nu nog mist
+
+Je kunt nu het kleinste vinden in de hele lijst. Selection sort moet ook
+kunnen zoeken vanaf een bepaalde positie, en dat is bouwsteen 3.
+
+Eerst de andere helft van het algoritme: swappen.
+
+Door naar [bouwsteen 2: swappen](./05-swap).

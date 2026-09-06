@@ -1,0 +1,98 @@
+---
+sidebar_position: 6
+---
+
+# Bouwsteen 3 — de index teruggeven
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/functies/functies', label: 'Functies'},
+    {site: 'python', to: '/docs/functies/09b-return', label: 'Return-waarden'},
+  ]}
+/>
+
+**Leerdoel:** je verpakt je code in een **functie** en gebruikt `return` om
+de index terug te geven waar je het doel vond.
+
+<Voorkennis items={[{to: '/docs/lineair-zoeken/bouwen/04-doorlopen', label: 'enumerate (bouwsteen 1)'}]} />
+
+## Wat we willen
+
+Twee dingen tegelijk:
+
+1. Niet alleen melden dát je het vond, maar teruggeven wáár het stond.
+2. Het geheel in een functie stoppen, zodat je hem op elke lijst kunt
+   aanroepen.
+
+Voor de index gebruik je `enumerate` uit [bouwsteen 1](./04-doorlopen):
+`for i, waarde in enumerate(lijst)` geeft elke ronde de index én de waarde.
+
+## Voorspel
+
+Wat denk je dat dit print?
+
+```python
+def zoek(lijst, doel):
+    for i, waarde in enumerate(lijst):
+        if waarde == doel:
+            return i
+
+print(zoek([3, 1, 4, 1, 5], 4))
+print(zoek([3, 1, 4, 1, 5], 1))
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+2
+1
+```
+
+- Bij doel 4: die staat op index 2, en `return 2` stopt de functie meteen.
+- Bij doel 1: de eerste 1 staat op index 1. Daarna stopt de functie, dus
+    de tweede 1 op index 3 komt niet meer in beeld.
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`def zoek(lijst, doel):
+    for i, waarde in enumerate(lijst):
+        if waarde == doel:
+            return i
+
+print(zoek([3, 1, 4, 1, 5], 4))
+print(zoek([3, 1, 4, 1, 5], 1))`} />
+
+## Belangrijk: `return` stopt de functie
+
+Zodra Python `return i` uitvoert, springt hij de functie uit en gaat de
+`for`-lus niet verder. Dat is precies de bedoeling: stoppen bij de eerste
+match.
+
+## Wat als we het niet vinden?
+
+Probeer dit:
+
+<PyRunner initialCode={`def zoek(lijst, doel):
+    for i, waarde in enumerate(lijst):
+        if waarde == doel:
+            return i
+
+print(zoek([3, 1, 4, 1, 5], 9))`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+```
+None
+```
+
+Voert de functie nooit een `return` uit, dan geeft Python automatisch
+`None` terug. Dat is niet wat we willen — we beloofden eerder dat we `-1`
+zouden teruggeven bij "niet gevonden". Dat lossen we in de volgende stap op.
+
+</details>
+
+Door naar [bouwsteen 4: niet gevonden](./07-niet-gevonden).

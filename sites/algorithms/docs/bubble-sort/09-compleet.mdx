@@ -1,0 +1,184 @@
+---
+sidebar_position: 9
+---
+
+# Het complete algoritme
+
+**Leerdoel:** je ziet alle bouwstenen samen en onderzoekt het algoritme.
+
+## Alles samen
+
+<CodeUitleg>
+
+```python showLineNumbers
+def bubble_sort(lijst):
+    n = len(lijst)
+    for ronde in range(n - 1):
+        geswapt = False
+        for i in range(n - 1 - ronde):
+            if lijst[i] > lijst[i + 1]:
+                lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+                geswapt = True
+        if not geswapt:
+            break
+    return lijst
+```
+
+<Regel n={3}>
+**Bouwsteen 4** — meerdere passes: hooguit `n - 1` rondes, want elke ronde legt minstens één element definitief goed.
+</Regel>
+
+<Regel n={4}>
+**Bouwsteen 5, deel één** — de vlag gaat elke ronde vers op `False`; alleen een echte swap zet hem om.
+</Regel>
+
+<Regel n={5}>
+**Bouwsteen 3** — één pass. De `- ronde` maakt hem elke ronde korter: de staart is al gesorteerd.
+</Regel>
+
+<Regel n={6}>
+**Bouwsteen 1** — vergelijk buren. De laatste geldige `i` is `n - 2`, want `i + 1` moet ook bestaan.
+</Regel>
+
+<Regel n={7} tot={8}>
+**Bouwsteen 2** — de swap, en de vlag om te onthouden dat er iets veranderde.
+</Regel>
+
+<Regel n={9} tot={10}>
+**Bouwsteen 5, deel twee** — een hele pass zonder swaps betekent: gesorteerd. Eerder stoppen mag dan.
+</Regel>
+
+</CodeUitleg>
+
+## Run
+
+<PyRunner editable={false} initialCode={`def bubble_sort(lijst):
+    n = len(lijst)
+    for ronde in range(n - 1):
+        geswapt = False
+        for i in range(n - 1 - ronde):
+            if lijst[i] > lijst[i + 1]:
+                lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+                geswapt = True
+        if not geswapt:
+            break
+    return lijst
+
+print(bubble_sort([3, 1, 4, 1, 5, 9, 2, 6]))   # [1, 1, 2, 3, 4, 5, 6, 9]
+print(bubble_sort([1, 2, 3, 4, 5]))     # [1, 2, 3, 4, 5]  (al gesorteerd: 1 pass)
+print(bubble_sort([5, 4, 3, 2, 1]))     # [1, 2, 3, 4, 5]  (omgekeerd: maximaal werk)
+print(bubble_sort([42]))                # [42]
+print(bubble_sort([]))                  # []`} />
+
+<AlgorithmModel algorithm="bubble-sort" />
+
+## Onderzoek — strings en stabiliteit
+
+<PyRunner initialCode={`def bubble_sort(lijst):
+    n = len(lijst)
+    for ronde in range(n - 1):
+        geswapt = False
+        for i in range(n - 1 - ronde):
+            if lijst[i] > lijst[i + 1]:
+                lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+                geswapt = True
+        if not geswapt:
+            break
+    return lijst
+
+# Strings
+print(bubble_sort(["banaan", "appel", "kers"]))
+
+# Stabiliteit-test: sorteer op cijfer, vergelijk alleen lijst[...][0]
+def bubble_sort_op_cijfer(lijst):
+    n = len(lijst)
+    for ronde in range(n - 1):
+        geswapt = False
+        for i in range(n - 1 - ronde):
+            if lijst[i][0] > lijst[i + 1][0]:
+                lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+                geswapt = True
+        if not geswapt:
+            break
+    return lijst
+
+leerlingen = [(7, 'Sam'), (5, 'Noor'), (7, 'Ali'), (5, 'Bo')]
+print(bubble_sort_op_cijfer(leerlingen))`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+- Strings komen alfabetisch te staan.
+- Stabiliteit: `[(5, 'Noor'), (5, 'Bo'), (7, 'Sam'), (7, 'Ali')]`. Sam
+  stond vóór Ali en staat er nog steeds vóór. **Bubble sort is stabiel**:
+  twee gelijke buren wisselen nooit, want de vergelijking is strikt `>`.
+  Vergelijk je de hele tuple in plaats van alleen het cijfer, dan sorteert
+  Python ook op naam en zie je hier niets.
+
+Dat is een verschil met selection sort, die met dezelfde lijst Sam achter
+Ali zet.
+
+</details>
+
+## Onderzoek — werk vergelijken
+
+Wat doet bubble sort op verschillende soorten input?
+
+{/* uitvoer-varieert: de willekeurige lijst geeft elke keer andere aantallen */}
+<PyRunner initialCode={`import random
+
+def bubble_sort_telt(lijst):
+    n = len(lijst)
+    swaps = 0
+    vergelijkingen = 0
+    passes = 0
+    for ronde in range(n - 1):
+        passes += 1
+        geswapt = False
+        for i in range(n - 1 - ronde):
+            vergelijkingen += 1
+            if lijst[i] > lijst[i + 1]:
+                lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+                swaps += 1
+                geswapt = True
+        if not geswapt:
+            break
+    return swaps, vergelijkingen, passes
+
+n = 50
+bijna = list(range(n))
+bijna[20], bijna[21] = bijna[21], bijna[20]   # twee buren omgewisseld
+
+soorten = {
+    'al gesorteerd':  list(range(n)),
+    'omgekeerd':      list(range(n, 0, -1)),
+    'willekeurig':    random.sample(range(n * 10), n),
+    'bijna gesorteerd': bijna,
+}
+
+for naam, lijst in soorten.items():
+    s, v, p = bubble_sort_telt(lijst.copy())
+    print(f"{naam:<20} passes={p:>2}  vergelijkingen={v:>5}  swaps={s}")`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+Ongeveer:
+
+```
+al gesorteerd        passes= 1  vergelijkingen=   49  swaps=0
+omgekeerd            passes=49  vergelijkingen= 1225  swaps=1225
+willekeurig          passes=~40 vergelijkingen=~1100  swaps=~600
+bijna gesorteerd     passes= 2  vergelijkingen=   97  swaps=1
+```
+
+- Al gesorteerd: één pass dankzij early-exit, dus `O(n)`.
+- Omgekeerd: het maximale werk, `O(n²)`.
+- Willekeurig: daartussenin, en dichter bij omgekeerd dan je zou denken.
+- Bijna gesorteerd, met één wisseling nodig: één pass om die wisseling op
+  te lossen en één om te bevestigen dat het klaar is. Zo snel dat bubble
+  sort daar soms nog echt voor gebruikt wordt.
+
+</details>
+
+Door naar [aanpassen](./10-aanpassen).

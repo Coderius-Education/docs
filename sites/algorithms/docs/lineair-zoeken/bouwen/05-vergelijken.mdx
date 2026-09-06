@@ -1,0 +1,84 @@
+---
+sidebar_position: 5
+---
+
+# Bouwsteen 2 — vergelijken met het doel
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/beslissen/05b-if-else', label: 'If en else'},
+  ]}
+/>
+
+**Leerdoel:** je voegt een `if`-vergelijking toe binnen je lus, zodat je
+*alleen iets doet* als het element gelijk is aan wat je zoekt.
+
+## Wat we willen
+
+Tijdens het doorlopen wil je weten of het huidige element gelijk is aan
+het doel. Zo ja, dan meld je iets; zo nee, dan loop je door.
+
+## Voorspel
+
+Wat denk je dat dit print? Let goed op de inspringing.
+
+```python
+lijst = [3, 1, 4, 1, 5]
+doel = 4
+for waarde in lijst:
+    if waarde == doel:
+        print("gevonden")
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+gevonden
+```
+
+Eén keer `gevonden` — namelijk wanneer `waarde` gelijk is aan 4. Voor de
+andere elementen (3, 1, 1, 5) is de `if` onwaar en wordt er niets geprint.
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`lijst = [3, 1, 4, 1, 5]
+doel = 4
+for waarde in lijst:
+    if waarde == doel:
+        print("gevonden")`} />
+
+## Experimenteer
+
+- Verander `doel` in `1`. Wat print het nu?
+- Verander `doel` in `9`. Wat print het?
+
+<details>
+<summary>Wat zie je?</summary>
+
+- Met `doel = 1` staat er twee keer `gevonden`, want de 1 komt twee keer voor.
+- `doel = 9` → **niets** (9 staat niet in de lijst). Het programma loopt
+  netjes af zonder fout, maar zonder output.
+
+</details>
+
+## `==` versus `=`
+
+**Let op** een veelgemaakte fout:
+
+- `=` is **toekenning**: `x = 5` betekent *"zet 5 in x"*.
+- `==` is **vergelijking**: `if x == 5` betekent *"klopt het dat x gelijk
+  is aan 5?"*.
+
+{/* foutmelding-van: if x = 5:\n    pass */}
+
+In een `if` moet je `==` gebruiken — anders krijg je een `SyntaxError`.
+
+## Wat nu nog mist
+
+We *melden* dat we iets vinden, maar we geven nog niets terug en we zeggen
+ook niet **waar** in de lijst we het gevonden hebben (de index).
+
+Door naar [bouwsteen 3: index teruggeven](./06-teruggeven).

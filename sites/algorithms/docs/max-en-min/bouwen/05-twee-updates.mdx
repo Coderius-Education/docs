@@ -1,0 +1,127 @@
+---
+sidebar_position: 5
+---
+
+# Bouwsteen 2 — beide accumulators updaten
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/herhalen/06a-for-loop', label: 'De for-loop'},
+    {site: 'python', to: '/docs/beslissen/05b-if-else', label: 'If en else'},
+    {site: 'python', to: '/docs/beslissen/05c-and-or-elif', label: 'And, or en elif'},
+  ]}
+/>
+
+**Leerdoel:** je voegt een for-lus met **twee** vergelijkingen per element
+toe, zodat zowel `klein` als `groot` aangepast worden.
+
+## Wat we willen
+
+Per element checken: *is het kleiner dan onze huidige `klein`? Is het
+groter dan onze huidige `groot`?* Zo ja, dan updaten.
+
+## Voorspel
+
+Wat denk je dat dit print? Volg met pen en papier mee.
+
+```python
+lijst = [5, 2, 8, 1, 7, 4]
+klein = groot = lijst[0]
+
+for waarde in lijst:
+    if waarde < klein:
+        klein = waarde
+    elif waarde > groot:
+        groot = waarde
+
+print(klein, groot)
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+1 8
+```
+
+Tabel:
+
+| waarde | klein vóór | groot vóór | actie | klein na | groot na |
+|---|---|---|---|---|---|
+| 5 | 5 | 5 | geen update | 5 | 5 |
+| 2 | 5 | 5 | 2 < 5 → klein = 2 | 2 | 5 |
+| 8 | 2 | 5 | 8 > 5 → groot = 8 | 2 | 8 |
+| 1 | 2 | 8 | 1 < 2 → klein = 1 | 1 | 8 |
+| 7 | 1 | 8 | 7 < 1? nee, 7 > 8? nee | 1 | 8 |
+| 4 | 1 | 8 | 4 < 1? nee, 4 > 8? nee | 1 | 8 |
+
+Eind: klein = 1, groot = 8.
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`lijst = [5, 2, 8, 1, 7, 4]
+klein = groot = lijst[0]
+
+for waarde in lijst:
+    if waarde < klein:
+        klein = waarde
+    elif waarde > groot:
+        groot = waarde
+
+print(klein, groot)`} />
+
+## Waarom `elif` en niet twee aparte `if`'s?
+
+Twee aparte `if`'s werken ook, maar dan doe je voor elk element twee
+vergelijkingen, ook als de eerste al raak was. Met `elif` sla je de tweede
+over zodra de eerste een update deed.
+
+<details>
+<summary>Waarom is `elif` veilig?</summary>
+
+Een waarde kan niet tegelijk kleiner zijn dan `klein` en groter dan
+`groot`, want `klein` is nooit groter dan `groot`. Zit een waarde onder
+`klein`, dan zit hij zeker ook onder `groot`. De tweede check kan dan
+niets meer opleveren.
+
+</details>
+
+## Experimenteer
+
+Test extreme inputs:
+
+<PyRunner initialCode={`def max_en_min_los(lijst):
+    klein = groot = lijst[0]
+    for waarde in lijst:
+        if waarde < klein:
+            klein = waarde
+        elif waarde > groot:
+            groot = waarde
+    print(f"lijst={lijst} → klein={klein}, groot={groot}")
+
+max_en_min_los([5, 2, 8, 1, 7, 4])
+max_en_min_los([42])
+max_en_min_los([-5, -1, -9, -2])
+max_en_min_los([3, 3, 3])`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+- De standaardlijst geeft klein=1 en groot=8.
+- Bij één element blijven beide op 42 staan; de lus doet één ronde zonder
+  updates.
+- Bij alleen negatieve getallen komt er klein=-9 en groot=-1 uit. Geen
+  bug: je start op `lijst[0]` en niet op nul.
+- Zijn ze allemaal gelijk, dan zijn klein en groot allebei 3.
+
+</details>
+
+## Wat nu nog mist
+
+De logica klopt, maar hij print alleen. De aanroeper krijgt de waardes
+niet terug. In de volgende stap stoppen we dit in een functie die er twee
+teruggeeft.
+
+Door naar [bouwsteen 3: tuple teruggeven](./06-tuple-return).

@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# 2.1 Vind het maximum — het idee
+# Vind het maximum — het idee
 
 **Leerdoel:** je begrijpt hoe je de grootste waarde uit een lijst haalt
 door er één keer doorheen te lopen. Nog geen Python — eerst snappen.
@@ -14,10 +14,10 @@ langste?"* Niemand heeft een meetlat. Wat doe je?
 
 Een logische aanpak:
 
-1. Loop op de **eerste** persoon af. Onthoud zijn/haar lengte als
-   *"langste tot nu toe"*.
-2. Loop naar de tweede. Vergelijk: is hij/zij langer? Zo ja → onthoud
-   die in plaats. Zo nee → niets doen.
+1. Loop naar de eerste persoon en onthoud die lengte als "langste tot nu
+   toe".
+2. Loop naar de tweede. Is die langer, onthoud dan die lengte; zo niet,
+   dan verandert er niets.
 3. Herhaal voor de derde, vierde, vijfde, …
 4. Aan het eind ben je langs iedereen geweest en weet je wie de langste is.
 
@@ -32,25 +32,29 @@ We zoeken het maximum in deze lijst:
 lijst:  [ 3 , 7 , 2 , 9 , 4 ]
 index:    0   1   2   3   4
 
-stap 0:  max = 3                       (we beginnen met het eerste element)
-stap 1:  vergelijk 7 met max=3 → 7 > 3 → max = 7
-stap 2:  vergelijk 2 met max=7 → 2 < 7 → max blijft 7
-stap 3:  vergelijk 9 met max=7 → 9 > 7 → max = 9
-stap 4:  vergelijk 4 met max=9 → 4 < 9 → max blijft 9
+start:  max = 3    we beginnen met het eerste element
 
-→ maximum = 9
+vergelijk 3 met max=3:  niet groter  ->  max blijft 3
+vergelijk 7 met max=3:  groter       ->  max = 7
+vergelijk 2 met max=7:  niet groter  ->  max blijft 7
+vergelijk 9 met max=7:  groter       ->  max = 9
+vergelijk 4 met max=9:  niet groter  ->  max blijft 9
+
+eind:   maximum = 9    in 5 vergelijkingen
 ```
 
-In 4 vergelijkingen weet je het antwoord — en je hebt elk element precies
-één keer bekeken.
+Je bekijkt elk element precies één keer. De eerste vergelijking is er een
+die een mens niet zou maken: het eerste element wordt met zichzelf
+vergeleken. Dat komt doordat de lus straks gewoon bij het begin van de
+lijst start, en het kost niets.
 
 ## Het accumulator-patroon
 
 Dit is een **patroon** dat je in heel veel algoritmes terugziet:
 
-1. Begin met een **startwaarde** (hier: het eerste element).
-2. **Loop** door de rest van de lijst.
-3. **Update** je waarde als de nieuwe iets bijzonders is (hier: groter).
+1. Begin met een startwaarde; hier is dat het eerste element.
+2. Loop door de rest van de lijst.
+3. Werk je waarde bij zodra de nieuwe iets bijzonders is, hier: groter.
 4. Aan het eind heb je het antwoord.
 
 Je *accumuleert* (verzamelt) informatie tijdens de doorloop. Vandaar de
@@ -59,7 +63,7 @@ naam.
 <details>
 <summary>Wat als de lijst leeg is?</summary>
 
-Dan is er **geen maximum** — geen elementen om te vergelijken. Veel
+Dan is er geen maximum, want er is niets om te vergelijken. Veel
 algoritmes geven dan een speciale waarde terug (`None`), of crashen met een
 foutmelding. We bespreken dit later expliciet.
 
@@ -68,11 +72,21 @@ foutmelding. We bespreken dit later expliciet.
 <details>
 <summary>Hoe snel is dit?</summary>
 
-Voor `n` elementen doe je `n - 1` vergelijkingen (één voor elk element
-behalve het eerste). Dat heet **O(n)** — lineair in de lengte. Sneller
-kan niet: je *moet* elk element minstens één keer hebben gezien om zeker
-te weten dat het niet het maximum is.
+Voor `n` elementen doet dit algoritme `n` vergelijkingen, één per
+element. Dat heet **O(n)**: lineair in de lengte. Minder dan `n − 1` kan
+sowieso niet, want je moet elk element minstens één keer hebben gezien om
+zeker te weten dat het niet het maximum is.
 
 </details>
 
-Door naar [stap 2: stellingen](./02-stellingen).
+## Zo bouw je het op
+
+De code bouw je in kleine stappen, elk op een eigen pagina in de map "Bouwen, stap voor stap":
+
+1. [Bouwsteen 1 — vergelijken en bijhouden](./bouwen/04-vergelijken)
+2. [Bouwsteen 2 — door de lijst lopen en updaten](./bouwen/05-doorlopen)
+3. [Bouwsteen 3 — een veilige startwaarde](./bouwen/06-initialisatie)
+
+Daarna zet je alles samen in [Het complete algoritme](./07-compleet), en ga je het aanpassen en zelf bouwen.
+
+Door naar [bekijk het algoritme](./02-bekijk).

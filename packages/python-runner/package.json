@@ -10,7 +10,8 @@
     "./CodeExercise": "./src/CodeExercise/index.tsx",
     "./package.json": "./package.json",
     "./Stapper": "./src/Stapper/index.tsx",
-    "./HighlightedEditor": "./src/HighlightedEditor/index.tsx"
+    "./HighlightedEditor": "./src/HighlightedEditor/index.tsx",
+    "./inspringen": "./src/inspringen.ts"
   },
   "peerDependencies": {
     "@docusaurus/core": "*",

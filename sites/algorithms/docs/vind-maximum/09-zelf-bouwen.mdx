@@ -1,0 +1,135 @@
+---
+sidebar_position: 9
+---
+
+# Bouw zelf — vind ook de index van het maximum
+
+**Leerdoel:** je past het patroon aan om niet alleen de **waarde**, maar
+ook de positie terug te geven.
+
+## Opdracht
+
+Schrijf `vind_index_van_maximum(lijst)` die de index teruggeeft van het
+maximum. Staat het maximum er meerdere keren, geef dan de eerste index.
+
+- `vind_index_van_maximum([3, 7, 2, 9, 4])` → `3`
+- `vind_index_van_maximum([10, 20, 20, 10])` → `1` (eerste 20)
+- `vind_index_van_maximum([42])` → `0`
+
+De startcode roept je functie aan op vier lijsten en print de gevonden
+index naast wat het moet zijn.
+
+{/* uitvoer-varieert: startcode; de functie geeft 0 terug tot de leerling hem invult */}
+<PyRunner initialCode={`def vind_index_van_maximum(lijst):
+    # vul aan: net als vind_maximum, maar bewaar de INDEX
+    return 0
+
+tests = [
+    ([3, 7, 2, 9, 4], 3),
+    ([10, 20, 20, 10], 1),
+    ([42], 0),
+    ([-5, -1, -9, -2], 1),
+]
+for lijst, verwacht in tests:
+    idx = vind_index_van_maximum(lijst)
+    print(f"lijst={lijst} → index={idx}, waarde={lijst[idx]}   verwacht: {verwacht}")`} />
+
+<details>
+<summary>Tip</summary>
+
+Zelfde patroon als `vind_maximum`, maar nu houd je een index bij in plaats
+van een waarde. Vergelijken doe je via `lijst[max_index]`.
+
+Welke startwaarde kies je voor `max_index`? Welke variabele update je bij
+een nieuwe winnaar?
+
+Loop door de lijst met `enumerate` (ken je uit
+[lineair zoeken, bouwsteen 1](/docs/lineair-zoeken/bouwen/04-doorlopen))
+zodat je in elke ronde zowel de huidige index als de huidige waarde
+hebt.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def vind_index_van_maximum(lijst):
+    max_index = 0
+    for i, waarde in enumerate(lijst):
+        if waarde > lijst[max_index]:
+            max_index = i
+    return max_index
+
+print(vind_index_van_maximum([3, 7, 2, 9, 4]))    # 3
+print(vind_index_van_maximum([10, 20, 20, 10]))   # 1
+print(vind_index_van_maximum([42]))               # 0
+```
+
+Waarom `>` en niet `>=`?
+
+- Met `>` blijft bij gelijke waardes de eerste index staan.
+- Met `>=` wordt het de laatste.
+
+Beide zijn geldige keuzes — kies bewust.
+
+</details>
+
+## Onderzoek
+
+<details>
+<summary>Wat als alle elementen gelijk zijn? Welke index krijg je terug?</summary>
+
+Bijvoorbeeld `vind_index_van_maximum([7, 7, 7, 7])`. Probeer het in de
+code-omgeving hierboven.
+
+Met de `>`-versie krijg je `0` terug — de eerste 7 wint, want geen latere
+waarde is strikt groter. Met `>=` zou je `3` krijgen, de laatste dus.
+
+Geen van beide is fout; het is een ontwerpkeuze. Bij gelijke
+waardes, welke positie tel je als de winnaar? In de praktijk kies je
+meestal de eerste, want dat is voorspelbaarder en past bij hoe lineair
+zoeken werkt.
+
+</details>
+
+## Uitdaging (optioneel)
+
+Schrijf `vind_alle_indexen_van_maximum(lijst)` die een lijst van alle
+indexen returnt waar het maximum staat. Bijv. `[5, 3, 5, 2, 5]` → `[0, 2, 4]`.
+
+<details>
+<summary>Tip</summary>
+
+Twee rondes door de lijst. In de eerste ronde vind je het maximum zelf,
+precies zoals `vind_maximum`. In de tweede ronde loop je opnieuw langs
+alle elementen en bewaar je elke index waar de waarde gelijk is aan dat
+maximum.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def vind_alle_indexen_van_maximum(lijst):
+    maximum = lijst[0]
+    for waarde in lijst:
+        if waarde > maximum:
+            maximum = waarde
+    indexen = []
+    for i, waarde in enumerate(lijst):
+        if waarde == maximum:
+            indexen.append(i)
+    return indexen
+
+print(vind_alle_indexen_van_maximum([5, 3, 5, 2, 5]))   # [0, 2, 4]
+print(vind_alle_indexen_van_maximum([1, 2, 3]))         # [2]
+```
+
+Het kan niet in één ronde: pas als je de hele lijst hebt gezien weet je
+wat het maximum is, en dus welke eerdere indexen meetellen.
+
+</details>
+
+Door naar [veelgemaakte fouten](./10-fouten).

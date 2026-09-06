@@ -2,7 +2,7 @@
 sidebar_position: 13
 ---
 
-# 11.13 Alles samen — test je complete grammatica
+# Alles samen — test je complete grammatica
 
 **Leerdoel:** je test je eigen grammatica tegen alle tien de zinnen
 tegelijk, bekijkt de echte parse-bomen, en voert zelf zinnen in.
@@ -121,9 +121,9 @@ def controleer(grammatica, zinnen):
     for zin in zinnen:
         bomen = parse(grammatica, zin.lower().split())
         if bomen:
-            print(f"  OK  ({len(bomen)}x)  {zin}")
+            print(f"    OK  ({len(bomen)}x)  {zin}")
         else:
-            print(f"  FOUT (0x)  {zin}")
+            print(f"    FOUT (0x)  {zin}")
             alles_goed = False
     if alles_goed:
         print("Alle zinnen werken!")
@@ -151,4 +151,4 @@ Met één eindige set regels ontleed je een onbeperkt aantal zinnen — ook
 zinnen die je nooit expliciet hebt opgegeven. Dát is de kracht van een
 context-vrije grammatica.
 
-Door naar [stap 14: aanpassen →](./14-aanpassen).
+Door naar [aanpassen →](./14-aanpassen).

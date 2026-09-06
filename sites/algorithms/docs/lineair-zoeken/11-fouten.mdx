@@ -1,0 +1,98 @@
+---
+sidebar_position: 11
+---
+
+# Er gaat iets mis — top-3 fouten
+
+**Leerdoel:** je herkent veelvoorkomende foutmeldingen en begrijpt **waarom**
+ze optreden. Een fout is geen tegenslag — het is informatie.
+
+## `return -1` op de verkeerde inspringing
+
+Geen foutmelding, maar wel een logische fout: de functie returnt te
+vroeg en geeft daardoor verkeerde antwoorden.
+
+**Oorzaak:** `return -1` staat binnen de `for`-lus en wordt al bij de
+eerste iteratie uitgevoerd.
+
+**Oplossing:** zorg dat `return -1` even ver ingesprongen staat als `for`,
+niet als `if`. In Python is inspringing geen versiering — het bepaalt de
+**structuur**.
+
+```python
+# FOUT
+def zoek(lijst, doel):
+    for i, waarde in enumerate(lijst):
+        if waarde == doel:
+            return i
+        return -1   # inspringing fout: dit zit IN de for
+
+# GOED
+def zoek(lijst, doel):
+    for i, waarde in enumerate(lijst):
+        if waarde == doel:
+            return i
+    return -1   # op functie-niveau, na de for
+```
+
+Meer uitleg: [Bouwsteen 4 — niet gevonden](./bouwen/07-niet-gevonden).
+
+## SyntaxError: `==` vs `=`
+
+{/* foutmelding-van: if waarde = doel:\n    pass */}
+```
+SyntaxError: invalid syntax. Maybe you meant '==' or ':=' instead of '='?
+```
+
+**Oorzaak:** `=` is **toekenning** (`x = 5` zet de waarde 5 in x);
+`==` vergelijkt: `if x == 5` vraagt of x gelijk is aan 5. In een
+`if` heb je een vergelijking nodig.
+
+**Oplossing:** gebruik `==` in vergelijkingen.
+
+{/* niet-compileren: toont bewust de = in plaats van == */}
+```python
+# FOUT
+if waarde = doel:
+    return i
+
+# GOED
+if waarde == doel:
+    return i
+```
+
+Onthouden: één `=` is toekennen, twee `==` is vergelijken.
+
+## `-1` als index gebruiken zonder te controleren
+
+Geen foutmelding, maar wel een stille fout: je zoekt iets dat er
+niet is, en het programma print vrolijk een antwoord.
+
+**Oorzaak:** `zoek` geeft `-1` terug bij "niet gevonden", en `lijst[-1]`
+is in Python gewoon geldig en betekent het laatste element. Wie het resultaat
+meteen als index gebruikt, krijgt dus een echte waarde terug voor iets
+dat niet in de lijst staat.
+
+**Oplossing:** controleer eerst op `-1` voordat je de index gebruikt.
+
+```python
+def zoek(lijst, doel):
+    for i, waarde in enumerate(lijst):
+        if waarde == doel:
+            return i
+    return -1
+
+lijst = [10, 20, 30]
+
+# FOUT
+print("gevonden:", lijst[zoek(lijst, 99)])   # gevonden: 30
+
+# GOED
+index = zoek(lijst, 99)
+if index == -1:
+    print("niet gevonden")                   # niet gevonden
+else:
+    print("gevonden:", lijst[index])
+```
+
+Door naar [cheatsheet](./12-cheatsheet).

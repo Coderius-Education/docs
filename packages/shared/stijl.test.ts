@@ -109,6 +109,19 @@ describe('waarschuwingen', () => {
     expect(namen('## Samenvatting\n\nDit was het.')).toContain('samenvatting');
   });
 
+  it('vindt een samenvatting die zich reflectie noemt', () => {
+    expect(namen('## Een korte reflectie\n\nWe hebben iets gebouwd dat:')).toContain(
+      'samenvatting',
+    );
+  });
+
+  it('vindt een samenvatting die "Wat je nu hebt" heet, maar laat "Wat je nu ziet" staan', () => {
+    expect(namen('## Wat je nu hebt\n\nZeven regels die elke toren verplaatsen.')).toContain(
+      'samenvatting',
+    );
+    expect(namen('## Wat je nu ziet\n\nEen groene balk bovenin.')).not.toContain('samenvatting');
+  });
+
   it('vindt "de leerling" in lestekst', () => {
     expect(namen('Zo leert de leerling variabelen kennen.')).toContain('leerling-vorm');
   });

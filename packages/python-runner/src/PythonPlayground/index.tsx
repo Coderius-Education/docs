@@ -82,22 +82,13 @@ export default function PythonPlayground(): React.JSX.Element {
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-      if (e.key === 'Tab') {
-        e.preventDefault();
-        const target = e.target as HTMLTextAreaElement;
-        const start = target.selectionStart;
-        const end = target.selectionEnd;
-        setCode(`${code.substring(0, start)}    ${code.substring(end)}`);
-        requestAnimationFrame(() => {
-          target.selectionStart = target.selectionEnd = start + 4;
-        });
-      }
+      // Tab, Shift+Tab en Enter regelt HighlightedEditor zelf; hier alleen Ctrl+Enter.
       if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
         e.preventDefault();
         execCode();
       }
     },
-    [code, execCode],
+    [execCode],
   );
 
   return (

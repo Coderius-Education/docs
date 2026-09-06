@@ -1,0 +1,132 @@
+---
+sidebar_position: 8
+---
+
+# Het complete algoritme
+
+**Leerdoel:** je ziet alle bouwstenen samen en onderzoekt het algoritme.
+
+## Alles samen
+
+<CodeUitleg>
+
+```python showLineNumbers
+def selection_sort(lijst):
+    n = len(lijst)
+    for i in range(n):
+        min_index = i
+        for j in range(i, n):
+            if lijst[j] < lijst[min_index]:
+                min_index = j
+        lijst[i], lijst[min_index] = lijst[min_index], lijst[i]
+    return lijst
+```
+
+<Regel n={3}>
+**Bouwsteen 4** — de buitenste lus: plek `i` krijgt deze ronde zijn definitieve waarde.
+</Regel>
+
+<Regel n={4} tot={7}>
+**Bouwstenen 1 + 3** — zoek de index van de kleinste, maar alleen vanaf positie `i`: alles daarvóór staat al goed.
+</Regel>
+
+<Regel n={8}>
+**Bouwsteen 2** — de swap zet de gevonden kleinste vooraan het ongesorteerde deel. Staat hij daar al (`min_index == i`), dan ruilt de regel hem onschuldig met zichzelf.
+</Regel>
+
+</CodeUitleg>
+
+## Run
+
+<PyRunner editable={false} initialCode={`def selection_sort(lijst):
+    n = len(lijst)
+    for i in range(n):
+        min_index = i
+        for j in range(i, n):
+            if lijst[j] < lijst[min_index]:
+                min_index = j
+        lijst[i], lijst[min_index] = lijst[min_index], lijst[i]
+    return lijst
+
+print(selection_sort([5, 2, 8, 1, 4]))          # [1, 2, 4, 5, 8]
+print(selection_sort([3, 1, 4, 1, 5, 9, 2, 6])) # [1, 1, 2, 3, 4, 5, 6, 9]
+print(selection_sort([1, 2, 3, 4, 5]))   # [1, 2, 3, 4, 5]  (al gesorteerd)
+print(selection_sort([5, 4, 3, 2, 1]))   # [1, 2, 3, 4, 5]  (omgekeerd)
+print(selection_sort([]))                # []`} />
+
+<AlgorithmModel algorithm="selection-sort" />
+
+## Onderzoek
+
+Probeer in elk geval:
+
+1. Sorteer een lijst met strings. Werkt dat?
+2. Sorteer een lijst met dubbele waardes. Wat gebeurt daarmee?
+3. Stabiliteit: sorteer leerlingen op hun cijfer. Twee leerlingen
+   met hetzelfde cijfer: blijven die in de volgorde staan waarin ze in de
+   lijst stonden?
+
+<PyRunner initialCode={`def selection_sort(lijst):
+    n = len(lijst)
+    for i in range(n):
+        min_index = i
+        for j in range(i, n):
+            if lijst[j] < lijst[min_index]:
+                min_index = j
+        lijst[i], lijst[min_index] = lijst[min_index], lijst[i]
+    return lijst
+
+# Strings
+print(selection_sort(["banaan", "appel", "kers"]))
+
+# Duplicaten
+print(selection_sort([3, 1, 3, 2, 3, 1]))
+
+# Stabiliteit-test: sorteer op cijfer, vergelijk alleen lijst[...][0]
+def selection_sort_op_cijfer(lijst):
+    n = len(lijst)
+    for i in range(n):
+        min_index = i
+        for j in range(i, n):
+            if lijst[j][0] < lijst[min_index][0]:
+                min_index = j
+        lijst[i], lijst[min_index] = lijst[min_index], lijst[i]
+    return lijst
+
+leerlingen = [(7, 'Sam'), (5, 'Noor'), (7, 'Ali'), (5, 'Bo')]
+print(selection_sort_op_cijfer(leerlingen))`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+- Strings komen alfabetisch te staan; Python kan ze met `<` vergelijken.
+- Dubbele waardes komen naast elkaar te staan.
+- Stabiliteit: `[(5, 'Noor'), (5, 'Bo'), (7, 'Ali'), (7, 'Sam')]`. Sam
+  stond vóór Ali, en staat nu erachter. Selection sort is **niet stabiel**:
+  de swap in ronde 1 gooide Sam naar achteren, over Ali heen. Daarom
+  vergelijkt de test alleen het cijfer (`lijst[j][0]`); vergelijk je de
+  hele tuple, dan sorteert Python ook op naam en zie je hier niets.
+
+</details>
+
+## Hoeveel werk doet dit?
+
+| Lijstgrootte | Vergelijkingen | Swaps die iets verplaatsen |
+|---:|---:|---:|
+| 5 | 15 | hoogstens 4 |
+| 10 | 55 | hoogstens 9 |
+| 100 | 5050 | hoogstens 99 |
+| 1.000 | 500.500 | hoogstens 999 |
+| 10.000 | 50.005.000 | hoogstens 9.999 |
+
+Dit zijn de aantallen die de teller in de visualisatie ook laat zien.
+Vergelijkingen groeien **kwadratisch** (`n(n + 1)/2`, ongeveer `n²/2`).
+De swap-regel draait één keer per ronde, maar ruilt vaak een element met
+zichzelf; wat er echt verhuist groeit **lineair**. Voor grote lijsten is
+dat te traag: gebruik dan een beter sorteeralgoritme, zoals merge sort met
+`O(n log n)`.
+
+Maar voor educatieve doeleinden en kleine lijsten is selection sort
+prima.
+
+Door naar [aanpassen](./09-aanpassen).

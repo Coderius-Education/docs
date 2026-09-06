@@ -1,0 +1,20 @@
+{
+  "skill_name": "les-opknappen",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Knap het hoofdstuk Torens van Hanoi (sites/algorithms/docs/hanoi/) op: loop het door zoals een leerling en repareer wat je vindt, en maak daarna de tekst menselijker. Je hoeft niet op mijn akkoord te wachten, pak alles op wat je kunt verantwoorden. Commit per stap. Schrijf aan het eind een rapport naar rapport.md.",
+      "expected_output": "Eerst een bevindingenlijst, dan commits met fixes en tests, dan één toon-commit, dan één rapport met vijf onderdelen; alle controles groen.",
+      "files": [],
+      "assertions": [
+        "Er is eerst een bevindingenlijst op ernst (blokkeert/verwart/wringt) gemaakt en pas daarna is er iets veranderd; het rapport bevat die lijst met per bevinding wat ermee is gebeurd.",
+        "De inhoudelijke fixes en de toonwijzigingen zitten in aparte commits: minstens één commit met fixes (en een test) en een aparte commit voor de toon.",
+        "Bij minstens één opgelost patroon is een test toegevoegd of uitgebreid (docs-test, stijlregel of blokken-script) die het patroon vastpint.",
+        "De toonpas komt ná de inhoudelijke fixes (volgorde van de commits) en raakt geen code, getallen, koppen of links aan.",
+        "Na afloop zijn pnpm test (of minstens de docs-tests van algorithms), pnpm tekst --streng op het hoofdstuk en het blokken-script groen, en het rapport zegt dat.",
+        "Het rapport heeft de vijf onderdelen: bevindingen met afloop, tests, toon ervoor/erna, gezien maar niet aangeraakt, verificatie.",
+        "De bekende Hanoi-bevindingen zijn opgepakt: de uitnodiging tot AANTAL = 20 (miljoen regels) en de foute verwijzing 'stap 1' in 12.6 zijn gerepareerd, en de extra uitdaging in 12.9 heeft een antwoord."
+      ]
+    }
+  ]
+}

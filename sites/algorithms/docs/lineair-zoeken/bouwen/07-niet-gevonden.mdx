@@ -1,0 +1,112 @@
+---
+sidebar_position: 7
+---
+
+# Bouwsteen 4 — het "niet gevonden"-geval
+
+**Leerdoel:** je voegt het laatste stukje toe: `-1` teruggeven als het
+doel niet in de lijst zit.
+
+## Wat we willen
+
+Het probleem uit de vorige stap: bij een doel dat niet bestaat krijgen we
+`None`. Liever `-1`: een duidelijk signaal voor "niet gevonden".
+
+## Waar moet `return -1` staan?
+
+Dit is een valstrik waar veel mensen intrappen. Hier staat hij op een
+plek die er logisch uitziet. Wat denk je dat dit print?
+
+```python
+def zoek(lijst, doel):
+    for i, waarde in enumerate(lijst):
+        if waarde == doel:
+            return i
+        return -1
+
+print(zoek([3, 1, 4, 1, 5], 4))   # zou 2 moeten zijn
+print(zoek([3, 1, 4, 1, 5], 9))   # zou -1 moeten zijn
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+-1
+-1
+```
+
+Allebei `-1`, terwijl er bij doel 4 een `2` had moeten staan.
+
+Dat komt doordat `return -1` binnen de `for`-lus staat. In de eerste ronde
+is `3 == 4` niet waar, dus voert Python `return -1` uit en stopt de
+functie na één ronde. De rest van de lijst komt hij nooit tegen.
+
+</details>
+
+## Run de buggy versie zelf
+
+<PyRunner initialCode={`def zoek(lijst, doel):
+    for i, waarde in enumerate(lijst):
+        if waarde == doel:
+            return i
+        return -1   # op de verkeerde plek!
+
+print(zoek([3, 1, 4, 1, 5], 4))
+print(zoek([3, 1, 4, 1, 5], 9))`} />
+
+## Probeer het zelf
+
+Verplaats `return -1` zodat allebei de testen kloppen.
+
+{/* uitvoer-varieert: startcode; de verwacht-commentaren kloppen pas na de verplaatsing */}
+<PyRunner initialCode={`def zoek(lijst, doel):
+    for i, waarde in enumerate(lijst):
+        if waarde == doel:
+            return i
+        return -1   # pas deze regel aan (verplaats hem!)
+
+print(zoek([3, 1, 4, 1, 5], 4))   # verwacht: 2
+print(zoek([3, 1, 4, 1, 5], 9))   # verwacht: -1`} />
+
+<details>
+<summary>Tip</summary>
+
+In Python bepaalt de inspringing de structuur. Staat een regel even ver
+ingesprongen als `for`, dan hoort hij bij de functie en draait hij na de
+lus. Staat hij even ver als `if`, dan zit hij ín de lus.
+
+Visueel:
+
+```python
+def zoek(lijst, doel):
+    for i, waarde in enumerate(lijst):     # 4 spaties
+        if waarde == doel:                 # 8 spaties
+            return i                       # 12 spaties (in de if)
+    return -1                              # 4 spaties (na de for-lus)
+```
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def zoek(lijst, doel):
+    for i, waarde in enumerate(lijst):
+        if waarde == doel:
+            return i
+    return -1   # buiten de for, dezelfde inspringing als 'for'
+
+print(zoek([3, 1, 4, 1, 5], 4))   # 2
+print(zoek([3, 1, 4, 1, 5], 9))   # -1
+```
+
+`return -1` staat nu buiten de `for`-lus, op functie-niveau. Python komt
+er pas als de hele lus is afgelopen zonder match.
+
+</details>
+
+Klaar? Tijd om alle bouwstenen samen te zien.
+
+Door naar [het complete algoritme](../08-compleet).

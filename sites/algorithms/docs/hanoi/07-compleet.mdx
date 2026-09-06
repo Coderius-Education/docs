@@ -2,15 +2,22 @@
 sidebar_position: 7
 ---
 
-# 12.7 De complete oplossing
+# De complete oplossing
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/tekst/04a-f-strings', label: 'F-strings'},
+    {to: '/docs/lineair-zoeken/bouwen/04-doorlopen', label: 'enumerate (lineair zoeken, bouwsteen 1)'},
+  ]}
+/>
 
 **Leerdoel:** je ziet de volledige functie werken, bekijkt de zetten, en
 speelt met het aantal schijven.
 
 ## De functie
 
-Alles wat je hebt opgebouwd, bij elkaar — zeven regels die elke toren
-verplaatsen:
+Alles wat je hebt opgebouwd bij elkaar: zeven regels die elke toren
+verplaatsen.
 
 <CodeUitleg>
 
@@ -30,15 +37,15 @@ Het basisgeval: nul schijven verplaatsen kost nul zetten. Zonder deze afslag bli
 </Regel>
 
 <Regel n={5}>
-Stap 1 — verplaats `n - 1` schijven van bron naar de hulppaal. Let op de rolwisseling: `doel` is in deze deelstap even de parkeerplek.
+Stap 1 verplaatst `n - 1` schijven van bron naar de hulppaal. Let op de rolwisseling: `doel` is in deze deelstap even de parkeerplek.
 </Regel>
 
 <Regel n={6}>
-Stap 2 — de grootste schijf, één losse zet als tuple `(bron, doel)`.
+Stap 2 is de grootste schijf, één losse zet als tuple `(bron, doel)`.
 </Regel>
 
 <Regel n={7}>
-Stap 3 — dezelfde `n - 1` schijven van de hulppaal naar het doel; nu is `bron` de parkeerplek.
+Stap 3 verplaatst dezelfde `n - 1` schijven van de hulppaal naar het doel; nu is `bron` de parkeerplek.
 </Regel>
 
 </CodeUitleg>
@@ -46,9 +53,8 @@ Stap 3 — dezelfde `n - 1` schijven van de hulppaal naar het doel; nu is `bron`
 ## Probeer het zelf
 
 Verander `AANTAL` en draai opnieuw. Let op het aantal zetten: elke schijf
-erbij **verdubbelt** het werk (`2ⁿ − 1`). Bij `AANTAL = 20` zijn het al
-ruim een miljoen zetten — de cel print ze dan ook allemaal, dus houd het
-klein als je de lijst wilt lezen.
+erbij verdubbelt het werk, `2ⁿ − 1`. Blijf onder de 10 schijven, want bij
+20 zijn het ruim een miljoen regels uitvoer en daar bevriest de tab op.
 
 <PyRunner rows={16} initialCode={`def hanoi(n, bron, doel, hulp):
     if n == 0:
@@ -69,11 +75,7 @@ for i, (bron, doel) in enumerate(zetten, start=1):
 
 print(f"\\nTotaal: {len(zetten)} zetten   (2^{AANTAL} - 1 = {2 ** AANTAL - 1})")`} />
 
-## Wat je nu hebt
+`enumerate(zetten, start=1)` geeft elke zet een nummer, vanaf 1 in plaats
+van 0, en `(bron, doel)` pakt de tuple van die zet meteen uit.
 
-Zeven regels code lossen een probleem op dat met de hand al bij een paar
-schijven lastig wordt. Dat is de kracht van recursie: je beschrijft
-*hoe een probleem in kleinere versies van zichzelf uiteenvalt*, en de rest
-volgt vanzelf.
-
-Door naar [stap 8: aanpassen →](./08-aanpassen).
+Door naar [aanpassen →](./08-aanpassen).

@@ -1,0 +1,32 @@
+---
+sidebar_position: 2
+---
+
+# Bekijk het algoritme
+
+**Leerdoel:** je ziet hoe binair zoeken de lijst elke stap halveert, en waarom dat alleen werkt op een gesorteerde lijst.
+
+## Voorspel
+
+Hoeveel vergelijkingen heeft het algoritme nodig om te weten dat 4 niet in `[1, 3, 5, 7, 9, 11, 13, 15]` zit? Bedenk je antwoord voordat je het model afspeelt.
+
+<details>
+<summary>Antwoord</summary>
+
+Drie. Het midden is 7 (te groot), dan 3 (te klein), dan 5 (te groot). Daarna kruisen laag en hoog elkaar en stopt het zoeken. Acht elementen halveren naar vier, twee, één: meer dan drie stappen kan het nooit kosten.
+
+</details>
+
+## Speel het af
+
+Kies een lijst, en druk op Volgende om binair zoeken stap voor stap te volgen. De teller bovenin houdt de vergelijkingen bij.
+
+<AlgorithmModel algorithm="binary-search" alleenVisualisatie />
+
+Probeer in elk geval:
+
+- het getal dat precies in het midden staat: hoeveel stappen?
+- het eerste en het laatste getal van de lijst
+- een lijst met zestien getallen: hoeveel stappen hoogstens?
+
+Door naar [de stellingen](./03-stellingen).

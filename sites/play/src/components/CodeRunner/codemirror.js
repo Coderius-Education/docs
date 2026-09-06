@@ -21,6 +21,7 @@ export {
 } from '@codemirror/commands';
 export {
   indentOnInput,
+  indentUnit,
   bracketMatching,
   syntaxHighlighting,
   defaultHighlightStyle,

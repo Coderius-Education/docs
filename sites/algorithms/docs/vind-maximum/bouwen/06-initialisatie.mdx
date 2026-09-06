@@ -1,0 +1,135 @@
+---
+sidebar_position: 6
+---
+
+# Bouwsteen 3 — een veilige startwaarde
+
+**Leerdoel:** je leert waarom de startwaarde van een accumulator-variabele
+zo belangrijk is, en welke keuze altijd werkt.
+
+## Wat we willen
+
+Een startwaarde voor `max_tot_nu_toe` die op **elke** lijst werkt — ook
+op lijsten met alleen negatieve getallen.
+
+## Het eerste element als start
+
+```python
+max_tot_nu_toe = lijst[0]   # gegarandeerd een echte waarde uit de lijst
+```
+
+Dat is wat een mens ook doet: begin met de eerste persoon en vergelijk de
+rest met hem of haar. Een startwaarde uit de lijst zelf kan nooit "te
+groot" zijn.
+
+## Voorspel
+
+Wat denk je dat dit print?
+
+```python
+lijst = [-3, -1, -7]
+max_tot_nu_toe = lijst[0]
+
+for waarde in lijst:
+    if waarde > max_tot_nu_toe:
+        max_tot_nu_toe = waarde
+
+print(max_tot_nu_toe)
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+-1
+```
+
+Loop het mee:
+- start: `max_tot_nu_toe = lijst[0] = -3`
+- waarde = -3 → -3 > -3 → nee → blijft -3
+- waarde = -1 → -1 > -3 → ja → `max_tot_nu_toe = -1`
+- waarde = -7 → -7 > -1 → nee → blijft -1
+- klaar: maximum = `-1`
+
+De eerste ronde vergelijkt `lijst[0]` met zichzelf. Dat kan geen kwaad:
+een getal is nooit groter dan zichzelf, dus er verandert niets.
+
+</details>
+
+## Run
+
+<PyRunner initialCode={`lijst = [-3, -1, -7]
+max_tot_nu_toe = lijst[0]
+
+for waarde in lijst:
+    if waarde > max_tot_nu_toe:
+        max_tot_nu_toe = waarde
+
+print(max_tot_nu_toe)`} />
+
+<details>
+<summary>Kan die ene vergelijking met zichzelf eraf?</summary>
+
+Ja, met `lijst[1:]`: een **slice**, een nieuwe lijst met alles vanaf
+index 1. Voor `[10, 20, 30, 40]` is `lijst[1:]` gelijk aan `[20, 30, 40]`.
+
+```python
+max_tot_nu_toe = lijst[0]
+for waarde in lijst[1:]:       # vanaf index 1, want lijst[0] is de start
+    if waarde > max_tot_nu_toe:
+        max_tot_nu_toe = waarde
+```
+
+Eén vergelijking minder, maar een stukje syntax extra. In dit hoofdstuk
+houden we de hele lijst: die versie is makkelijker te lezen.
+
+</details>
+
+<details>
+<summary>Een andere startwaarde: `float('-inf')`</summary>
+
+Python kent een getal dat kleiner is dan elk echt getal: `float('-inf')`,
+negatieve oneindigheid. Ook dat werkt als startwaarde, want elke echte
+waarde wint de eerste vergelijking. Het eerste element is dichter bij hoe
+een mens het doet, dus dat gebruiken we.
+
+</details>
+
+## Experimenteer
+
+Test op extreme lijsten:
+
+<PyRunner initialCode={`lijst = [-3, -1, -7]
+max_tot_nu_toe = lijst[0]
+
+for waarde in lijst:
+    if waarde > max_tot_nu_toe:
+        max_tot_nu_toe = waarde
+
+print("alleen negatief:", max_tot_nu_toe)
+
+lijst = [42]
+max_tot_nu_toe = lijst[0]
+for waarde in lijst:
+    if waarde > max_tot_nu_toe:
+        max_tot_nu_toe = waarde
+print("één element:", max_tot_nu_toe)`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+- Negatieve lijst: `-1` — was eerst `0`, bug opgelost.
+- Eén element: `42` — de lus vergelijkt 42 één keer met zichzelf en de
+  startwaarde blijft staan.
+
+</details>
+
+## En een lege lijst?
+
+{/* foutmelding-van: [][0] */}
+
+`lijst[0]` op `[]` geeft `IndexError`. Dat kun je opvangen met een
+`if`-check vooraan. Dat is nog niet *het algoritme zelf*, maar wel een
+keuze die je later moet maken.
+
+Door naar [het complete algoritme](../07-compleet).

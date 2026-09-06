@@ -7,8 +7,9 @@
 // font-metrics houden) en staan daar met de uitleg waarom er !important bij moet.
 import { Highlight, themes } from 'prism-react-renderer';
 import type React from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import styles from '../PythonPlayground/styles.module.css';
+import { enterInvoegen, tabInvoegen, tabWeghalen, voerUit } from '../inspringen';
 
 // Lees de kleurmodus rechtstreeks van het `data-theme`-attribuut op <html> i.p.v.
 // via useColorMode uit @docusaurus/theme-common. Dat vermijdt een import van
@@ -49,7 +50,8 @@ export function HighlightedEditor({
 }: {
   code: string;
   onChange: (value: string) => void;
-  onKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
+  /** Eigen toetsen (Ctrl+Enter); gaat voor op Tab/Enter en kan die overnemen met preventDefault. */
+  onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   disabled: boolean;
   minHeight?: number;
   /** 1-gebaseerd regelnummer om te markeren; gebruikt door de stapper. */
@@ -58,6 +60,30 @@ export function HighlightedEditor({
 }) {
   const { colorMode } = useColorMode();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Tab springt in, Shift+Tab haalt de inspringing weg en Enter houdt de
+  // inspringing vast (een niveau dieper na een dubbele punt). Een eigen
+  // onKeyDown gaat voor en kan die toetsen overnemen met preventDefault.
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      onKeyDown?.(e);
+      if (e.defaultPrevented || readOnly || disabled) return;
+      const isTab = e.key === 'Tab';
+      const isEnter = e.key === 'Enter' && !e.ctrlKey && !e.metaKey && !e.altKey;
+      if (!isTab && !isEnter) return;
+      e.preventDefault();
+      const target = e.currentTarget;
+      const { selectionStart, selectionEnd } = target;
+      const bewerking = isEnter
+        ? enterInvoegen(code, selectionStart, selectionEnd)
+        : e.shiftKey
+          ? tabWeghalen(code, selectionStart, selectionEnd)
+          : tabInvoegen(code, selectionStart, selectionEnd);
+      if (bewerking.code === code) return;
+      voerUit(target, bewerking, onChange);
+    },
+    [code, onChange, onKeyDown, readOnly, disabled],
+  );
   const preRef = useRef<HTMLPreElement>(null);
 
   const gutterRef = useRef<HTMLDivElement>(null);
@@ -126,7 +152,7 @@ export function HighlightedEditor({
         className={styles.editorTextarea}
         value={code}
         onChange={(e) => onChange(e.target.value)}
-        onKeyDown={onKeyDown}
+        onKeyDown={handleKeyDown}
         onScroll={handleScroll}
         spellCheck={false}
         placeholder="Schrijf hier je Python code..."

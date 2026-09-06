@@ -1,0 +1,149 @@
+---
+sidebar_position: 11
+---
+
+# Cheatsheet — max én min in één pass
+
+Snelle referentie. Klap open wat je nodig hebt.
+
+## Het algoritme zelf
+
+<details>
+<summary>Canonieke implementatie (max_en_min)</summary>
+
+```python
+def max_en_min(lijst):
+    klein = groot = lijst[0]
+    for waarde in lijst:
+        if waarde < klein:
+            klein = waarde
+        elif waarde > groot:
+            groot = waarde
+    return klein, groot
+```
+
+</details>
+
+<details>
+<summary>Variant: ook de indexen (max_en_min_met_index)</summary>
+
+`enumerate` geeft je de index en de waarde tegelijk; de uitleg staat in
+[lineair zoeken, bouwsteen 1](/docs/lineair-zoeken/bouwen/04-doorlopen).
+
+```python
+def max_en_min_met_index(lijst):
+    klein = groot = lijst[0]
+    idx_klein = idx_groot = 0
+    for i, waarde in enumerate(lijst):
+        if waarde < klein:
+            klein = waarde
+            idx_klein = i
+        elif waarde > groot:
+            groot = waarde
+            idx_groot = i
+    return klein, idx_klein, groot, idx_groot
+```
+
+</details>
+
+## Python-syntax
+
+<details>
+<summary>Meerdere variabelen tegelijk initialiseren</summary>
+
+```python
+klein = groot = lijst[0]      # beide krijgen dezelfde waarde
+a, b = 0, 0                   # twee verschillende waardes via tuple
+```
+
+</details>
+
+<details>
+<summary>Tuple returnen en uitpakken (return, =)</summary>
+
+{/* niet-draaien: fragment; toont de drie vormen naast elkaar */}
+```python
+return klein, groot           # of: return (klein, groot)
+
+k, g = max_en_min(lijst)      # uitpakken aan de andere kant
+r = max_en_min(lijst)         # zonder uitpakken — r is een tuple
+print(r[0], r[1])             # klein, groot via index
+```
+
+</details>
+
+<details>
+<summary>if vs. elif vs. apart if</summary>
+
+```python
+if A:
+    ...
+elif B:    # alleen gecontroleerd als A onwaar is
+    ...
+```
+
+- Met `if … elif …` blijft de tweede check achterwege zodra de eerste
+  klopt.
+- Met `if … if …` gebeuren ze allebei, altijd.
+
+Bij wederzijds uitsluitende condities: `elif` (efficiënter en duidelijker).
+
+</details>
+
+## Eigenschappen
+
+<details>
+<summary>Hoeveel vergelijkingen?</summary>
+
+- Eén pass met `elif`: tussen `n` en `2n` vergelijkingen, afhankelijk van
+    de data.
+- Eén pass met twee losse `if`'s: altijd `2n` vergelijkingen.
+- Twee aparte passes: `2n` vergelijkingen én `2n` leesacties.
+
+Alle drie zijn `O(n)`; het verschil zit in de constante ervoor.
+
+</details>
+
+<details>
+<summary>Wanneer is dit slim?</summary>
+
+- Bij **grote** lijsten waar elke leesactie kostbaar is.
+- Als je **toch al** door de lijst loopt voor iets anders — voeg `min` en
+    `max` gewoon mee.
+- Bij **streaming data** (lijst is te groot voor het geheugen) — je kunt
+    hem maar één keer lezen.
+
+</details>
+
+<details>
+<summary>Lege-lijst-keuze</summary>
+
+{/* foutmelding-van: [][0] */}
+
+`lijst[0]` op `[]` geeft `IndexError`. Voor productie-code:
+
+```python
+def max_en_min(lijst):
+    if not lijst:
+        return None, None
+    ...
+```
+
+</details>
+
+## Veelgemaakte fouten (snel)
+
+<details>
+<summary>Top-3 fouten</summary>
+
+1. Twee aparte for-lussen → dubbel werk, mist het didactische punt.
+2. `klein = 0` en `groot = 0` als startwaardes → fout bij enkel-negatief
+   of enkel-positief.
+3. `if … if …` in plaats van `if … elif …` → één extra vergelijking per
+   element.
+
+</details>
+
+---
+
+Klaar? Volgende stap: [binair zoeken](/docs/binair-zoeken/01-concept).

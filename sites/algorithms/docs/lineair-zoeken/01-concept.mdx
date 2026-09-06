@@ -2,14 +2,14 @@
 sidebar_position: 1
 ---
 
-# 1.1 Lineair zoeken — het idee
+# Lineair zoeken — het idee
 
 **Leerdoel:** je begrijpt wat lineair zoeken is, in mensentaal. Nog geen
 Python — eerst snappen, dan pas programmeren.
 
 ## Het verhaal
 
-Je hebt een **boekenkast** waarin de boeken niet op alfabet staan. Je zoekt
+Je hebt een boekenkast waarin de boeken niet op alfabet staan. Je zoekt
 *"De ontdekking van de hemel"*. Wat doe je?
 
 Je pakt het eerste boek, kijkt naar de titel — niet de juiste. Tweede boek,
@@ -21,7 +21,7 @@ tot je vindt wat je zoekt.*
 
 ## Visualisatie
 
-We zoeken het getal **5** in deze lijst:
+We zoeken het getal 5 in deze lijst:
 
 ```
 zoeken: 5
@@ -35,11 +35,11 @@ stap 4:  [ 3 , 1 , 4 ,(1), 5 , 9 , 2 , 6 ]   1 == 5?  nee
 stap 5:  [ 3 , 1 , 4 , 1 ,(5), 9 , 2 , 6 ]   5 == 5?  JA → index 4
 ```
 
-In stap 5 vinden we het: het zit op **index 4**.
+In stap 5 vinden we het, op index 4.
 
 ## En als het er niet in zit?
 
-We zoeken **7**:
+En nu zoeken we 7:
 
 ```
 zoeken: 7
@@ -54,27 +54,39 @@ stap 8:  6 == 7?  nee
 → alles gehad, niet gevonden
 ```
 
-We hebben **alle** elementen bekeken en niets gevonden. Conclusie:
+Alle elementen bekeken en niets gevonden. Dus:
 "7 zit er niet in". We spreken meestal af om dan `-1` terug te geven — een
 duidelijk "niet-gevonden"-signaal (want geldige indexen beginnen bij 0).
 
 ## Twee dingen om te onthouden
 
-1. **Eén voor één** — geen slimmigheden, gewoon door de lijst lopen.
-2. **Stop bij de eerste match**, of geef `-1` als je bij het einde bent.
+1. Eén voor één door de lijst lopen, zonder slimmigheden.
+2. Stoppen bij de eerste match, of `-1` teruggeven als je het einde haalt.
 
 <details>
 <summary>Wanneer is dit eigenlijk slim?</summary>
 
-- Bij **kleine** lijsten — verschil met snellere algoritmes merk je niet.
-- Bij **ongesorteerde** lijsten — slimmere algoritmes (zoals binair zoeken)
+- Bij kleine lijsten, want het verschil met een sneller algoritme merk je
+  toch niet.
+- Bij ongesorteerde lijsten, want slimmere algoritmes (zoals binair zoeken)
   werken daar niet.
-- Als je **toch alles** moet bekijken (bijv. *tellen* hoe vaak iets voorkomt).
+- Als je toch alles moet bekijken, bijvoorbeeld om te tellen hoe vaak iets voorkomt.
 
 </details>
 
 :::info
-Liever eerst zonder computer? Voer lineair zoeken uit met een kaartspel in [14.1 Zoeken en sorteren met kaarten](/docs/unplugged/01-zoeken-en-sorteren-met-kaarten).
+Liever eerst zonder computer? Voer lineair zoeken uit met een kaartspel in [Zoeken en sorteren met kaarten](/docs/unplugged/01-zoeken-en-sorteren-met-kaarten).
 :::
 
-Door naar [stap 2: stellingen](./02-stellingen).
+## Zo bouw je het op
+
+De code bouw je in kleine stappen, elk op een eigen pagina in de map "Bouwen, stap voor stap":
+
+1. [Bouwsteen 1 — door de lijst lopen](./bouwen/04-doorlopen)
+2. [Bouwsteen 2 — vergelijken met het doel](./bouwen/05-vergelijken)
+3. [Bouwsteen 3 — de index teruggeven](./bouwen/06-teruggeven)
+4. [Bouwsteen 4 — het "niet gevonden"-geval](./bouwen/07-niet-gevonden)
+
+Daarna zet je alles samen in [Het complete algoritme](./08-compleet), en ga je het aanpassen en zelf bouwen.
+
+Door naar [bekijk het algoritme](./02-bekijk).

@@ -2,7 +2,7 @@
 sidebar_position: 8
 ---
 
-# 10.8 Het complete algoritme
+# Het complete algoritme
 
 **Leerdoel:** je combineert de drie bouwstenen in één functie
 `knapsack(items, capaciteit)` die de tabel bouwt en de beste
@@ -93,25 +93,25 @@ Identiek aan wat je op pagina 02 met de hand uitrekende.
 items = [(1, 1), (6, 2), (18, 5), (22, 6), (28, 7)]
 
 print("Image-voorbeeld:")
-print(f"  knapsack(items, 11) = {knapsack(items, 11)}")
+print(f"    knapsack(items, 11) = {knapsack(items, 11)}")
 
 print("\\nAndere capaciteiten:")
 for W in [5, 8, 11, 15, 21]:
-    print(f"  W = {W:2}  ->  beste waarde = {knapsack(items, W)}")`} />
+    print(f"    W = {W:2}  ->  beste waarde = {knapsack(items, W)}")`} />
 
 <details>
 <summary>Verwachte uitvoer</summary>
 
 ```
 Image-voorbeeld:
-  knapsack(items, 11) = 40
+    knapsack(items, 11) = 40
 
 Andere capaciteiten:
-  W =  5  ->  beste waarde = 18
-  W =  8  ->  beste waarde = 29
-  W = 11  ->  beste waarde = 40
-  W = 15  ->  beste waarde = 51
-  W = 21  ->  beste waarde = 75
+    W =  5  ->  beste waarde = 18
+    W =  8  ->  beste waarde = 29
+    W = 11  ->  beste waarde = 40
+    W = 15  ->  beste waarde = 56
+    W = 21  ->  beste waarde = 75
 ```
 
 - W=5: één item past — item 3 (waarde 18).
@@ -194,4 +194,4 @@ W=21 zit je op het maximum (75) — alle items passen.
 
 </details>
 
-Door naar [stap 9: welke items? →](./09-aanpassen).
+Door naar [welke items? →](./09-aanpassen).

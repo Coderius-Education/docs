@@ -2,7 +2,7 @@
 sidebar_position: 7
 ---
 
-# 13.7 De complete oplossing
+# De complete oplossing
 
 **Leerdoel:** je ziet de volledige `pagerank`-functie werken en speelt met
 je eigen web.
@@ -98,7 +98,7 @@ def pagerank(web, d=0.85, epsilon=1e-9):
 ranks = pagerank(WEB, D)
 print("PageRank (hoog naar laag):")
 for p in sorted(ranks, key=lambda x: -ranks[x]):
-    print(f"  {p}: {ranks[p]:.4f}")
+    print(f"    {p}: {ranks[p]:.4f}")
 print(f"\\nSom van alle ranks: {sum(ranks.values()):.4f}")`} />
 
 ## Wat je nu hebt
@@ -108,4 +108,4 @@ web als graph, links als stemmen, en een iteratie die het kip-ei-probleem
 oplost. Het echte Google-web heeft miljarden pagina's, maar het principe
 is precies dit.
 
-Door naar [stap 8: aanpassen →](./08-aanpassen).
+Door naar [aanpassen →](./08-aanpassen).

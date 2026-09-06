@@ -1,0 +1,172 @@
+---
+sidebar_position: 10
+---
+
+# Bouw zelf — tel het aantal swaps
+
+**Leerdoel:** je past selection sort aan om het werk te **meten**, en je
+ziet hoeveel het algoritme doet bij verschillende soorten input.
+
+## Opdracht
+
+Schrijf `selection_sort_telt(lijst)` die het **aantal swaps** en het aantal
+vergelijkingen returnt tijdens het sorteren. De vergelijkingen telt de
+startcode al; de swaps zijn aan jou.
+
+Tel alleen **echte** swaps (`i ≠ min_index`). Verwacht:
+
+- Op `[3, 1, 2]` → **2** echte swaps.
+- Op `[1, 2, 3]` (al gesorteerd) → **0** echte swaps (elke ronde is
+  `i == min_index`, dus geen ruil nodig).
+- Op `[3, 2, 1]` (omgekeerd) → **1** echte swap (alleen ronde 0 ruilt
+  de 3 en de 1; daarna staat alles al goed).
+
+De startcode test daarna op drie soorten lijsten van 50 getallen:
+al gesorteerd, omgekeerd en willekeurig.
+
+{/* uitvoer-varieert: startcode; swaps blijft 0 tot de leerling hem invult, en de willekeurige lijst wisselt */}
+<PyRunner initialCode={`import random
+
+def selection_sort_telt(lijst):
+    n = len(lijst)
+    swaps = 0
+    vergelijkingen = 0
+    for i in range(n):
+        min_index = i
+        for j in range(i, n):
+            vergelijkingen += 1
+            if lijst[j] < lijst[min_index]:
+                min_index = j
+        # vul aan: alleen swappen als het nodig is, en dan swaps ophogen
+        lijst[i], lijst[min_index] = lijst[min_index], lijst[i]
+    return swaps, vergelijkingen
+
+for lijst, verwacht in [([3, 1, 2], 2), ([1, 2, 3], 0), ([3, 2, 1], 1)]:
+    s, v = selection_sort_telt(lijst.copy())
+    print(f"{lijst}: swaps={s}   verwacht: {verwacht}")
+print()
+
+n = 50
+soorten = {
+    'al gesorteerd':  list(range(n)),
+    'omgekeerd':      list(range(n, 0, -1)),
+    'willekeurig':    random.sample(range(n * 10), n),
+}
+for naam, lijst in soorten.items():
+    s, v = selection_sort_telt(lijst.copy())
+    print(f"{naam:<15} swaps={s:>3}  vergelijkingen={v}")`} />
+
+<details>
+<summary>Tip</summary>
+
+Zet een `if i != min_index:` vóór de swap. Alleen in dat geval swap je
+echt, en alleen dan doe je `swaps += 1`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def selection_sort_telt(lijst):
+    n = len(lijst)
+    swaps = 0
+    vergelijkingen = 0
+    for i in range(n):
+        min_index = i
+        for j in range(i, n):
+            vergelijkingen += 1
+            if lijst[j] < lijst[min_index]:
+                min_index = j
+        if i != min_index:
+            lijst[i], lijst[min_index] = lijst[min_index], lijst[i]
+            swaps += 1
+    return swaps, vergelijkingen
+
+print(selection_sort_telt([3, 1, 2]))   # (2, 6)
+print(selection_sort_telt([1, 2, 3]))   # (0, 6)
+print(selection_sort_telt([3, 2, 1]))   # (1, 6)
+```
+
+</details>
+
+## Wat zie je?
+
+<details>
+<summary>Interpretatie</summary>
+
+Voor 50 getallen:
+
+| Lijst | Swaps | Vergelijkingen |
+|:---|---:|---:|
+| al gesorteerd | 0 | 1275 |
+| omgekeerd | 25 | 1275 |
+| willekeurig | meestal 43 tot 49 | 1275 |
+
+- **Vergelijkingen** zijn voor alle drie precies gelijk: selection sort
+  kijkt altijd door het hele ongesorteerde stuk, wat er ook staat. De
+  binnenste lus begint bij `j = i`, dus elk element wordt ook één keer
+  met zichzelf vergeleken: 50 + 49 + … + 1 = 1275.
+- **Swaps** verschillen wel. Al gesorteerd: nul, want `i == min_index` in
+  elke ronde. Omgekeerd: 25, want elke swap zet twee getallen tegelijk
+  goed en na de helft van de rondes staat alles. Willekeurig: bijna elke
+  ronde één, want de kleinste van de rest staat zelden al vooraan.
+
+Dat is het **karakter** van selection sort: voorspelbaar veel
+vergelijkingen, maar hooguit `n − 1` swaps. Bij dure swaps (objecten
+ruilen op een trage opslag) is dat een voordeel.
+
+</details>
+
+## Uitdaging (optioneel)
+
+Pas selection sort aan zodat hij in elke ronde **tegelijk** de kleinste én
+grootste vindt. Zet de kleinste vooraan en de grootste achteraan — zo
+sorteer je in `n / 2` rondes in plaats van `n`. (Variant: *double-ended
+selection sort*.)
+
+<details>
+<summary>Tip</summary>
+
+Houd twee grenzen bij, `links` en `rechts`, en zoek in elke ronde tussen
+die twee zowel `min_index` als `max_index`. Swap eerst de kleinste naar
+`links`. Let op: stond de grootste toevallig óp `links`, dan is hij door
+die swap verhuisd naar `min_index`. Pas dan `max_index` aan voordat je de
+grootste naar `rechts` swapt.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def selection_sort_dubbel(lijst):
+    links = 0
+    rechts = len(lijst) - 1
+    while links < rechts:
+        min_index = links
+        max_index = links
+        for j in range(links, rechts + 1):
+            if lijst[j] < lijst[min_index]:
+                min_index = j
+            if lijst[j] > lijst[max_index]:
+                max_index = j
+        lijst[links], lijst[min_index] = lijst[min_index], lijst[links]
+        if max_index == links:
+            max_index = min_index    # de grootste is net verhuisd
+        lijst[rechts], lijst[max_index] = lijst[max_index], lijst[rechts]
+        links += 1
+        rechts -= 1
+    return lijst
+
+print(selection_sort_dubbel([5, 2, 8, 1, 4]))             # [1, 2, 4, 5, 8]
+print(selection_sort_dubbel([3, 1, 4, 1, 5, 9, 2, 6]))    # [1, 1, 2, 3, 4, 5, 6, 9]
+```
+
+Haal de regel met `max_index = min_index` weg en test op `[5, 2, 8, 1, 4]`:
+de 5 stond op `links`, verhuist door de eerste swap naar index 3, en zonder
+correctie swapt de tweede regel het verkeerde getal naar achteren.
+
+</details>
+
+Door naar [veelgemaakte fouten](./11-fouten).

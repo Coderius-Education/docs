@@ -1,0 +1,152 @@
+---
+sidebar_position: 9
+---
+
+# Het complete algoritme
+
+**Leerdoel:** je herkent alle bouwstenen die je hebt geleerd en ziet ze
+samen werken. Daarna onderzoek je het algoritme als geheel.
+
+## Alles samen
+
+<CodeUitleg>
+
+```python showLineNumbers
+def binair_zoek(lijst, doel):
+    laag = 0
+    hoog = len(lijst) - 1
+    while laag <= hoog:
+        midden = (laag + hoog) // 2
+        if lijst[midden] == doel:
+            return midden
+        elif lijst[midden] < doel:
+            laag = midden + 1
+        else:
+            hoog = midden - 1
+    return -1
+```
+
+<Regel n={2} tot={3}>
+**Bouwsteen 1** — de grenzen van het zoekgebied: `laag` en `hoog` wijzen naar de eerste en de laatste index die nog mee kunnen doen.
+</Regel>
+
+<Regel n={4}>
+**Bouwsteen 4** — de while-lus draait zolang het zoekgebied niet leeg is. Bij `laag == hoog` is er nog precies één kandidaat, vandaar `<=`.
+</Regel>
+
+<Regel n={5}>
+**Bouwsteen 2** — het midden berekenen, met `//` zodat er een hele index uitkomt.
+</Regel>
+
+<Regel n={6} tot={7}>
+**Bouwsteen 3, eerste tak** — raak: de index gaat direct terug.
+</Regel>
+
+<Regel n={8} tot={9}>
+Het midden is te klein, dus het doel kan alleen rechts liggen. De `+ 1` gooit het al-onderzochte midden weg — zonder die krimpt het zoekgebied niet.
+</Regel>
+
+<Regel n={10} tot={11}>
+Het spiegelbeeld: te groot, dus zoek links van het midden verder.
+</Regel>
+
+<Regel n={12}>
+**Bouwsteen 5** — hier kom je alleen als de lus stopt zonder match: het zoekgebied is leeg en `-1` betekent "niet gevonden".
+</Regel>
+
+</CodeUitleg>
+
+## Voorspel
+
+We gaan dit algoritme straks runnen met deze vier aanroepen. Wat denk
+je dat er uitkomt?
+
+{/* draaien-met: blok-erboven */}
+```python
+getallen = [1, 3, 5, 7, 9, 11, 13, 15]
+print(binair_zoek(getallen, 7))
+print(binair_zoek(getallen, 4))
+print(binair_zoek([], 5))
+print(binair_zoek([42], 42))
+```
+
+<details>
+<summary>Antwoord</summary>
+
+```
+3
+-1
+-1
+0
+```
+
+- `7` staat op index 3 — gevonden.
+- `4` staat niet in de lijst — `return -1`.
+- Bij een lege lijst draait de while-lus nul keer, want `laag=0` is al
+  groter dan `hoog=-1`; het antwoord is `-1`.
+- Bij `[42]` met doel `42` is het midden index 0 en is het meteen raak.
+
+</details>
+
+## Run
+
+<PyRunner editable={false} initialCode={`def binair_zoek(lijst, doel):
+    laag = 0
+    hoog = len(lijst) - 1
+    while laag <= hoog:
+        midden = (laag + hoog) // 2
+        if lijst[midden] == doel:
+            return midden
+        elif lijst[midden] < doel:
+            laag = midden + 1
+        else:
+            hoog = midden - 1
+    return -1
+
+getallen = [1, 3, 5, 7, 9, 11, 13, 15]
+print(binair_zoek(getallen, 7))
+print(binair_zoek(getallen, 4))
+print(binair_zoek([], 5))
+print(binair_zoek([42], 42))`} />
+
+<AlgorithmModel algorithm="binary-search" />
+
+## Onderzoek
+
+Speel met de code. Probeer in elk geval:
+
+1. Wat gebeurt er op een lege lijst?
+2. En op een lijst met één element?
+3. En op een ongesorteerde lijst?
+
+<PyRunner initialCode={`def binair_zoek(lijst, doel):
+    laag = 0
+    hoog = len(lijst) - 1
+    while laag <= hoog:
+        midden = (laag + hoog) // 2
+        if lijst[midden] == doel:
+            return midden
+        elif lijst[midden] < doel:
+            laag = midden + 1
+        else:
+            hoog = midden - 1
+    return -1
+
+# Experimenteer
+print(binair_zoek([], 5))                # -1
+print(binair_zoek([42], 42))             # 0
+print(binair_zoek([3, 1, 4, 1, 5], 4))   # 2  (ongesorteerd: toevallig raak)`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+- Bij een lege lijst is `hoog = -1`, dus `laag` is meteen groter en de
+  while draait nul keer: `return -1`. Veilig.
+- Bij één element zijn `laag` en `hoog` allebei 0, en de eerste check is
+  meteen raak.
+- Op een ongesorteerde lijst komt er een toevallig antwoord uit, meestal
+  het verkeerde. Het algoritme is daar simpelweg niet voor gemaakt.
+
+</details>
+
+Door naar [aanpassen](./10-aanpassen).

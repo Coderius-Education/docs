@@ -2,7 +2,7 @@
 sidebar_position: 8
 ---
 
-# 13.8 Aanpassen — speel met de damping
+# Aanpassen — speel met de damping
 
 **Leerdoel:** je onderzoekt wat de damping factor `d` doet en hoe een
 extra link de ranks verschuift.
@@ -45,8 +45,8 @@ def pagerank(web, d=0.85, epsilon=1e-9):
 
 ranks = pagerank(WEB, D)
 for p in sorted(ranks, key=lambda x: -ranks[x]):
-    print(f"  {p}: {ranks[p]:.4f}")
-print(f"  som: {sum(ranks.values()):.4f}")`} />
+    print(f"    {p}: {ranks[p]:.4f}")
+print(f"    som: {sum(ranks.values()):.4f}")`} />
 
 <details>
 <summary>Wat zie je bij de uitersten?</summary>
@@ -73,4 +73,4 @@ rank stijgt? Draai daarna en controleer.
 
 </details>
 
-Door naar [stap 9: zelf bouwen →](./09-zelf-bouwen).
+Door naar [zelf bouwen →](./09-zelf-bouwen).

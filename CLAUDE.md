@@ -25,6 +25,19 @@ van de routing) en door de CI-job `cross-links`, die na de builds elke href in d
 gebouwde HTML tegen de build van de doelsite legt (de waarheid). Lokaal:
 `pnpm cross-links` na `pnpm build`.
 
+## Code in MDX-expressies
+
+MDX eet van elke vervolgregel in een `{`…`}`-expressie tot twee spaties op.
+Code in `<PyRunner initialCode={`…`} />`, `<CodeExercise>{`…`}</CodeExercise>`
+of `<PygbagRunner code={`…`} />` verloor zo de helft van zijn inspringing:
+vier spaties in de les, twee in de editor. De pre-loader
+`packages/shared/plugins/mdx-inspringing.js` (via `createConfig`, dus op elke
+site) zet die twee spaties er vóór het parsen bij, zodat MDX precies de bron
+overhoudt. Schrijf code in een les dus gewoon met vier spaties;
+`packages/shared/inspringing.test.ts` eist dat ook, en
+`mdx-inspringing.test.ts` pint het MDX-gedrag vast voor als een upgrade het
+verandert.
+
 ## Bugfixes
 
 Een bugfix gaat samen met een test die de bug vastpint, in dezelfde commit.
