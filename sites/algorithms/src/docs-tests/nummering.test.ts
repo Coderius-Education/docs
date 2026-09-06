@@ -3,12 +3,12 @@ import { join, posix } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
-// De lessen van deze site hangen aan hun nummer: bestandsprefix,
-// sidebar_position, het nummer in de H1 en de "Door naar [stap N: …]"-links
-// moeten gelijklopen. Bij het invoegen van 02-bekijk schoven zestig
-// bestanden op; niets bewaakte tot dan of een H1 nog bij zijn bestand
-// hoorde of een staplabel bij zijn doel. Docusaurus vangt alleen kapotte
-// links, niet een verkeerd nummer.
+// De lessen van deze site hangen aan hun volgorde: bestandsprefix en
+// sidebar_position moeten gelijklopen en per hoofdstuk aaneengesloten zijn.
+// De H1 (tevens sidebar-label) draagt geen nummer; de sidebar is de volgorde.
+// Bij het invoegen van 02-bekijk schoven zestig bestanden op; niets bewaakte
+// tot dan of de "Door naar"-links nog klopten. Docusaurus vangt alleen
+// kapotte links, niet een verkeerde volgorde.
 //
 // De bouwstappen staan in een submap bouwen/ met een eigen _category_.json,
 // maar tellen mee in de nummering van het hoofdstuk: de nummers van de
@@ -46,10 +46,6 @@ function hoofdstukken(): string[] {
 
 function categorie(pad: string): { position: number; label: string } {
   return JSON.parse(readFileSync(join(DOCS, pad, '_category_.json'), 'utf8'));
-}
-
-function positieVan(hoofdstuk: string): number {
-  return categorie(hoofdstuk).position;
 }
 
 /** De lessen van een hoofdstuk, inclusief die in de submap bouwen/, op nummer. */
@@ -100,11 +96,11 @@ describe('de nummering van de lessen', () => {
     expect(kapot).toEqual([]);
   });
 
-  it('de H1 draagt het nummer hoofdstuk.les van zijn bestand', () => {
-    const kapot = ALLE.filter((l) => {
-      const kop = l.tekst.match(/^# (\S+) /m)?.[1];
-      return kop !== `${positieVan(l.hoofdstuk)}.${l.prefix}`;
-    }).map((l) => `${l.hoofdstuk}/${l.bestand}`);
+  it('de H1 draagt geen lesnummer: de volgorde in de sidebar is de volgorde', () => {
+    // De H1 is ook het sidebar-label. "1.4 Bouwsteen 1" las als een
+    // paragraafnummer en verschoof bij elke ingeschoven les; het bestandsprefix
+    // bepaalt de volgorde, de tekst hoeft dat niet te herhalen.
+    const kapot = ALLE.filter((l) => /^# \d+\.\d+/m.test(l.tekst)).map((l) => l.id);
     expect(kapot).toEqual([]);
   });
 
@@ -130,14 +126,13 @@ describe('de links tussen lessen', () => {
     expect(kapot).toEqual([]);
   });
 
-  it('het nummer in "Door naar [stap N: …]" is het nummer van het doelbestand', () => {
+  it('links noemen geen lesnummers in hun tekst', () => {
+    // "[stap 4: …]" en "[1.8 Het complete algoritme]" verwezen naar nummers die
+    // de H1 niet meer draagt.
     const kapot: string[] = [];
     for (const l of ALLE) {
-      // Het doel kan in de hoofdstukmap staan (./08-compleet), in de submap
-      // (./bouwen/04-doorlopen) of erbuiten vanuit de submap (../08-compleet).
-      for (const m of l.tekst.matchAll(/\[stap (\d+): [^\]]+\]\((\.\.?\/[^)\s]+)\)/g)) {
-        const doel = posix.basename(doelVan(l, m[2]));
-        if (Number(m[1]) !== Number(doel.slice(0, 2))) kapot.push(`${l.id}: ${m[0]}`);
+      for (const m of l.tekst.matchAll(/\[(?:stap \d+:|\d+\.\d+ )[^\]]*\]\(/g)) {
+        kapot.push(`${l.id}: ${m[0]}`);
       }
     }
     expect(kapot).toEqual([]);
