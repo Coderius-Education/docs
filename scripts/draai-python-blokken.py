@@ -259,6 +259,16 @@ def hoort_bij_elkaar(tussen: str) -> bool:
     return len(kaal.strip()) <= 40 and "#" not in kaal
 
 
+def achterstand_van_deze_site(paden, docsmap: str) -> list[str]:
+    """De achterstand-paden die onder de docs-map van de draaiende site vallen.
+
+    De tabel bedient beide cursussen. Zonder deze zeef zou de python-job
+    klagen dat een les van algorithms zijn marker kwijt is, terwijl hij die
+    les niet eens inleest.
+    """
+    return [pad for pad in paden if pad.startswith(docsmap)]
+
+
 def zelftest() -> None:
     """De twee vertaalslagen die stil kunnen verslappen, hardop nagelopen.
 
@@ -274,6 +284,9 @@ def zelftest() -> None:
         " />\n\n<details>\n<summary>Wat zie je?</summary>\n\nOngeveer dit, want de lijst is elke keer anders:\n\n"
     )
     assert not hoort_bij_elkaar("\n\n## Er gaat iets mis\n\n")
+    paden = ["sites/algorithms/docs/pagerank/bouwen/06-itereren.mdx", "sites/python/docs/04-herhalen/06a-for-loop.mdx"]
+    assert achterstand_van_deze_site(paden, "sites/python/docs") == [paden[1]]
+    assert achterstand_van_deze_site(paden, "sites/algorithms/docs") == [paden[0]]
     assert STARTCODE_RE.search("{/* niet-draaien: startcode; de assert faalt tot dan */}")
     assert not STARTCODE_RE.search("{/* niet-draaien: fragment uit de les erboven */}")
     assert beoordeel_startcode(1, "AssertionError") is None
@@ -897,10 +910,13 @@ def main() -> int:
         fouten += [f for f in pool.map(controleer_claim, claims) if f]
     # De achterstand is exact: een startcode die er niet meer in hoort te
     # staan (het bestand bestaat niet of draagt de marker niet meer) valt op.
+    # Alleen voor de site die nu draait: de tabel bedient beide cursussen, dus
+    # een pad van de andere site zegt hier niets — anders zou de python-job
+    # omvallen over een les van algorithms.
     aanwezig = {str(b[0]) for b in startcodes}
     fouten += [
         f"{pad}: staat in STARTCODE_ACHTERSTAND maar heeft geen startcode-marker meer"
-        for pad in STARTCODE_ACHTERSTAND
+        for pad in achterstand_van_deze_site(STARTCODE_ACHTERSTAND, str(DOCS.relative_to(ROOT)))
         if pad not in aanwezig
     ]
 

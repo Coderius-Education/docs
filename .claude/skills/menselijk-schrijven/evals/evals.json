@@ -5,9 +5,7 @@
       "id": 0,
       "prompt": "Maak de tekst van sites/algorithms/docs/knapsack/01-concept.mdx menselijker; hij leest nu alsof een AI hem schreef. Inhoud, code en structuur moeten hetzelfde blijven. Vertel me daarna wat je veranderd hebt.",
       "expected_output": "De pagina herschreven met behoud van code, tabel, getallen, koppen en links; minder vet, geen staccato of trompetjes; stijl- en spellingcontrole schoon; een rapport met ervoor/erna-zinnen en wat bewust bleef staan.",
-      "files": [
-        "sites/algorithms/docs/knapsack/01-concept.mdx"
-      ],
+      "files": ["sites/algorithms/docs/knapsack/01-concept.mdx"],
       "assertions": [
         "De codeblokken, de tabel met items en de getallen (11, 32, 72, 1024) staan ongewijzigd in de herschreven pagina.",
         "Frontmatter, H2-koppen en de links (./bouwen/…, ./02-…) zijn ongewijzigd.",
