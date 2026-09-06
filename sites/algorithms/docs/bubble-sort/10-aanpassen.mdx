@@ -83,7 +83,20 @@ stonden). Daarom is het aantal swaps gelijk aan het aantal inversies.
 <details>
 <summary>Verifieer dit zelf</summary>
 
-```python
+<PyRunner initialCode={`def bubble_sort_met_swaps(lijst):
+    n = len(lijst)
+    swaps = 0
+    for ronde in range(n - 1):
+        geswapt = False
+        for i in range(n - 1 - ronde):
+            if lijst[i] > lijst[i + 1]:
+                lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+                geswapt = True
+                swaps += 1
+        if not geswapt:
+            break
+    return lijst, swaps
+
 def aantal_inversies(lijst):
     n = len(lijst)
     inv = 0
@@ -94,11 +107,11 @@ def aantal_inversies(lijst):
     return inv
 
 lijst = [3, 1, 4, 1, 5, 9, 2, 6]
-print("inversies:", aantal_inversies(lijst.copy()))
-print("bubble sort swaps:", bubble_sort_met_swaps(lijst.copy())[1])
-```
+print("inversies:", aantal_inversies(lijst.copy()))               # inversies: 8
+print("bubble sort swaps:", bubble_sort_met_swaps(lijst.copy())[1])   # bubble sort swaps: 8`} />
 
-Beide getallen zouden gelijk moeten zijn.
+Beide getallen zijn gelijk, en dat blijft zo voor elke lijst die je
+invult.
 
 </details>
 

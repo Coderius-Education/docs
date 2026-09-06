@@ -64,36 +64,35 @@ lijst[a], lijst[b] = lijst[b], lijst[a]
 
 Meer uitleg: [Bouwsteen 2 — swappen](./bouwen/05-swap).
 
-## `range(0, n)` in plaats van `range(i, n)` in de binnenste lus
+## Eén te kort: `range(i, n - 1)`
 
-Geen Python-foutmelding — werkt **toevallig** soms, maar de logica klopt
-niet.
+Geen Python-foutmelding — de lijst komt er bijna goed uit, maar het
+laatste element doet niet mee.
 
-**Oorzaak:** in ronde `i = 2` kijken we óók nog naar `lijst[0]` en
-`lijst[1]`. Maar die zijn al gesorteerd — daar zou het kleinste element
-van het hele ongesorteerde stuk niet meer kunnen liggen. Risico: `lijst[0]`
-(de allerkleinste) wordt opnieuw als `min_index` gekozen → swap met
-`lijst[i]` → sorted-stuk vernield.
+**Oorzaak:** bij bubble sort hoort een `- 1` in de lus, omdat je daar
+`lijst[i + 1]` bekijkt. Bij selection sort niet: de binnenste lus kijkt
+alleen naar `lijst[j]`, dus `j` mag tot en met het laatste element gaan.
+Met `range(i, n - 1)` wordt het laatste element nooit als kleinste
+gevonden.
 
-**Oplossing:** `for j in range(i, n)`. Alleen het ongesorteerde stuk
-doorzoeken.
+**Oplossing:** `for j in range(i, n)`. Het laatste element hoort bij het
+ongesorteerde stuk.
 
 ```python
-# FOUT
-for i in range(n):
-    min_index = i
-    for j in range(0, n):       # begint bij 0
-        if lijst[j] < lijst[min_index]:
-            min_index = j
-    lijst[i], lijst[min_index] = lijst[min_index], lijst[i]
+def selection_sort_fout(lijst):
+    n = len(lijst)
+    for i in range(n):
+        min_index = i
+        for j in range(i, n - 1):    # FOUT: het laatste element doet niet mee
+            if lijst[j] < lijst[min_index]:
+                min_index = j
+        lijst[i], lijst[min_index] = lijst[min_index], lijst[i]
+    return lijst
 
-# GOED
-for i in range(n):
-    min_index = i
-    for j in range(i, n):       # begint bij i
-        if lijst[j] < lijst[min_index]:
-            min_index = j
-    lijst[i], lijst[min_index] = lijst[min_index], lijst[i]
+print(selection_sort_fout([5, 2, 8, 1, 4]))   # [1, 2, 5, 8, 4]
 ```
+
+De 4 achteraan is nooit bekeken en blijft staan. Met `range(i, n)` komt er
+`[1, 2, 4, 5, 8]` uit.
 
 Door naar [cheatsheet](./12-cheatsheet).
