@@ -38,8 +38,11 @@ def hanoi(n, bron, doel, hulp):
 
 ## `hulp` en `doel` verwisseld in de recursieve call
 
-Geen foutmelding — wél een **verkeerde zettenlijst** (schijven belanden op
-de verkeerde paal).
+Geen foutmelding, maar de test voor 2 schijven faalt. De lijst is even
+lang als het hoort, alleen legt de tweede zet de grootste schijf bovenop de
+kleinste: `[("A", "C"), ("A", "C"), ("B", "C")]` in plaats van
+`[("A", "B"), ("A", "C"), ("B", "C")]`. Speel je die zetten na, zoals bij
+zelf bouwen, dan wil de derde zet een schijf van een lege paal pakken.
 
 **Oorzaak:** in stap 1 moeten de `n - 1` bovenste schijven naar de
 **hulp**-paal, niet naar het uiteindelijke doel. De derde paal (`doel`)
