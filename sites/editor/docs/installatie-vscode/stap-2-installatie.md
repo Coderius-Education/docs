@@ -14,7 +14,7 @@ De installatie spreekt de taal van je Windows. Hieronder staan de Engelse knoppe
 3. Op de pagina **Select Additional Tasks** staan vinkjes. Zet deze drie aan:
    - **Add "Open with Code" action to Windows Explorer file context menu** — rechtsklikken op een bestand en het openen in VS Code
    - **Add "Open with Code" action to Windows Explorer directory context menu** — rechtsklikken op een map en die openen in VS Code
-   - **Add to PATH** — VS Code openen vanuit de terminal met het commando `code`. Dit vinkje staat meestal al aan.
+   - **Add to PATH** — VS Code openen vanuit de terminal met het commando `code`. Dit vinkje staat meestal al aan. Laat het aan staan: de Python-tutorial opent je project met `code .`, en zonder dit vinkje bestaat dat commando niet.
 4. Klik op **Install** (**Installeren**) en wacht tot de installatie klaar is
 5. Klik op **Finish** (**Voltooien**). VS Code opent vanzelf.
 
