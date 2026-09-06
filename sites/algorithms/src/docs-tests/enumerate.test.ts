@@ -17,8 +17,6 @@ const UITLEG = '/docs/lineair-zoeken/bouwen/04-doorlopen';
 const ACHTERSTAND = [
   'cfg/13-compleet.mdx',
   'knapsack/bouwen/07-volledige-tabel.mdx',
-  'max-en-min/08-aanpassen.mdx',
-  'max-en-min/11-cheatsheet.mdx',
   'vind-maximum/11-cheatsheet.mdx',
 ];
 

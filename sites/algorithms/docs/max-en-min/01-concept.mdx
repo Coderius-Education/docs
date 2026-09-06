@@ -52,18 +52,23 @@ We zoeken `klein` en `groot` in deze lijst:
 lijst:  [ 5 , 2 , 8 , 1 , 7 , 4 ]
 index:    0   1   2   3   4   5
 
-stap 0:  klein = 5, groot = 5         (start: beide op het eerste element)
-stap 1:  vergelijk 2:   2 < 5 → klein = 2;   2 > 5 → nee → groot = 5
-stap 2:  vergelijk 8:   8 < 2 → nee → klein = 2;   8 > 5 → groot = 8
-stap 3:  vergelijk 1:   1 < 2 → klein = 1;   1 > 8 → nee → groot = 8
-stap 4:  vergelijk 7:   7 < 1 → nee → klein = 1;   7 > 8 → nee → groot = 8
-stap 5:  vergelijk 4:   4 < 1 → nee → klein = 1;   4 > 8 → nee → groot = 8
+start:  klein = 5, groot = 5    beide op het eerste element
 
-→ klein = 1, groot = 8
+waarde 5:  5 < 5 nee, 5 > 5 nee  ->  niets verandert   (2 vergelijkingen)
+waarde 2:  2 < 5 ja              ->  klein = 2         (1 vergelijking)
+waarde 8:  8 < 2 nee, 8 > 5 ja   ->  groot = 8         (2 vergelijkingen)
+waarde 1:  1 < 2 ja              ->  klein = 1         (1 vergelijking)
+waarde 7:  7 < 1 nee, 7 > 8 nee  ->  niets verandert   (2 vergelijkingen)
+waarde 4:  4 < 1 nee, 4 > 8 nee  ->  niets verandert   (2 vergelijkingen)
+
+eind:   klein = 1, groot = 8    in 10 vergelijkingen
 ```
 
-Per stap: maximaal **twee** vergelijkingen. Bij elke nieuwe waarde houd je
-beide accumulators *up-to-date*.
+De eerste waarde wordt met zichzelf vergeleken, want de lus begint gewoon
+bij het begin van de lijst. Verder doe je er per waarde hoogstens twee, en
+soms maar één: is de waarde de nieuwe kleinste, dan hoeft er niet meer
+gekeken te worden of hij ook de grootste is. Dat kan namelijk niet
+allebei. Hoe je dat in code opschrijft zie je in bouwsteen 2.
 
 ## Twee accumulators tegelijk
 

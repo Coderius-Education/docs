@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { traceSelectionSort } from '../lib/algorithmTraces';
+import { traceMinAndMax, traceSelectionSort } from '../lib/algorithmTraces';
 
 // De tabel "Hoeveel werk doet dit?" op de compleet-pagina noemt getallen die
 // nergens uit een codeblok komen, dus het blokken-script kijkt er niet naar.
@@ -11,8 +11,13 @@ import { traceSelectionSort } from '../lib/algorithmTraces';
 // model op vijf getallen afspeelt ziet de teller op 15 eindigen en leest
 // daarna 10 in de tabel — en denkt dat hij iets fout deed.
 //
-// Deze test legt de tabel naast de trace die de leerling in de visualisatie
-// ziet. Verandert het algoritme of de tabel, dan moeten ze samen mee.
+// Hetzelfde gebeurde in max en min: de visualisatie op de concept-pagina
+// deed elke stap twee vergelijkingen, terwijl het algoritme met `elif` de
+// tweede overslaat zodra de eerste raak is. Acht vergelijkingen, geen tien.
+//
+// Deze tests leggen zulke met de hand getelde getallen naast de trace die de
+// leerling in de visualisatie ziet. Verandert het algoritme of de lestekst,
+// dan moeten ze samen mee.
 
 const DOCS = fileURLToPath(new URL('../../docs/', import.meta.url));
 
@@ -78,5 +83,23 @@ describe('de werk-tabel van selection sort', () => {
       const n = getal(rij[0]);
       expect(getal(rij[2])).toBe(n - 1);
     }
+  });
+});
+
+describe('de visualisatie van max en min', () => {
+  const tekst = readFileSync(`${DOCS}max-en-min/01-concept.mdx`, 'utf8');
+
+  it('telt evenveel vergelijkingen als de trace', () => {
+    const lijst = tekst.match(/^lijst:\s*\[([^\]]+)\]/m);
+    if (!lijst) throw new Error('geen voorbeeldlijst in de visualisatie');
+    const waardes = lijst[1].split(',').map((c) => Number(c.trim()));
+
+    const belofte = tekst.match(/in (\d+) vergelijkingen/);
+    if (!belofte) throw new Error('de visualisatie noemt geen aantal vergelijkingen');
+
+    const laatste = traceMinAndMax(waardes).at(-1);
+    const geteld = laatste?.stats.comparisons;
+    if (geteld === undefined) throw new Error('de trace telt geen vergelijkingen');
+    expect(Number(belofte[1])).toBe(geteld);
   });
 });
