@@ -82,8 +82,9 @@ bubble_sort([1, 2, 4, 3, 5])`} />
 <summary>Wat zie je?</summary>
 
 - **Al gesorteerd**: 1 ronde, geswapt=False → `break`. Maximaal slim.
-- **Omgekeerd**: 4 rondes, in elke ronde wel swaps. Pas bij ronde 4 is
-  alles goed.
+- **Omgekeerd**: 4 rondes (0 tot en met 3), in elke ronde wel swaps. Pas
+  na ronde 3 staat alles goed, en dat is ook de laatste ronde die
+  `range(n - 1)` toestaat.
 - **Bijna gesorteerd**: 2 rondes. Eerst de 4 en 3 swappen (ronde 0), dan
   een ronde zonder swaps om te bevestigen → klaar.
 

@@ -94,7 +94,12 @@ Probeer ook negatieve lijsten en lege lijsten:
 
 print(index_van_kleinste([-3, -1, -7]))    # verwacht: 2
 print(index_van_kleinste([42]))             # verwacht: 0
-# print(index_van_kleinste([]))             # zou crashen op lijst[0]`} />
+print(index_van_kleinste([]))               # verwacht: 0  (geen crash: de lus doet niets)`} />
+
+Een lege lijst geeft ook `0`, en dat is een leugen: index 0 bestaat niet.
+De functie crasht niet, want `lijst[min_index]` wordt alleen gelezen in de
+lus, en die doet bij een lege lijst nul rondes. Voor selection sort maakt
+het niet uit, die roept de functie nooit met een lege lijst aan.
 
 ## Wat nu nog mist
 

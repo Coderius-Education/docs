@@ -89,20 +89,34 @@ print(bubble_sort([]))                  # []`} />
 # Strings
 print(bubble_sort(["banaan", "appel", "kers"]))
 
-# Stabiliteit-test
-paren = [(2, 'a'), (1, 'b'), (2, 'c'), (1, 'd')]
-print(bubble_sort(paren))`} />
+# Stabiliteit-test: sorteer op cijfer, vergelijk alleen lijst[...][0]
+def bubble_sort_op_cijfer(lijst):
+    n = len(lijst)
+    for ronde in range(n - 1):
+        geswapt = False
+        for i in range(n - 1 - ronde):
+            if lijst[i][0] > lijst[i + 1][0]:
+                lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+                geswapt = True
+        if not geswapt:
+            break
+    return lijst
+
+leerlingen = [(7, 'Sam'), (5, 'Noor'), (7, 'Ali'), (5, 'Bo')]
+print(bubble_sort_op_cijfer(leerlingen))`} />
 
 <details>
 <summary>Wat zie je?</summary>
 
 - Strings → alfabetisch gesorteerd. Werkt.
-- Stabiliteit: `(1,b)` blijft vóór `(1,d)`; `(2,a)` blijft vóór `(2,c)`.
-    **Bubble sort is stabiel**: gelijke elementen behouden hun
-    oorspronkelijke volgorde (omdat we strict `>` gebruiken — geen swap bij
-    gelijk).
+- Stabiliteit: `[(5, 'Noor'), (5, 'Bo'), (7, 'Sam'), (7, 'Ali')]`. Sam
+  stond vóór Ali en staat er nog steeds vóór. **Bubble sort is stabiel**:
+  twee gelijke buren wisselen nooit, want de vergelijking is strikt `>`.
+  Vergelijk je de hele tuple in plaats van alleen het cijfer, dan sorteert
+  Python ook op naam en zie je hier niets.
 
-Dat is een **verschil met selection sort**, die niet stabiel is.
+Dat is een verschil met selection sort, die met dezelfde lijst Sam achter
+Ali zet.
 
 </details>
 
