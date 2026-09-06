@@ -10,32 +10,30 @@ sidebar_position: 5
   ]}
 />
 
-**Leerdoel:** je begrijpt waarom recursie een **stopconditie** nodig heeft
-en schrijft het basisgeval voor Hanoi.
+**Leerdoel:** je begrijpt waarom recursie een stopconditie nodig heeft en
+schrijft het basisgeval voor Hanoi.
 
 ## Waarom een basisgeval?
 
-Straks gaat `hanoi` zichzelf aanroepen met steeds minder schijven:
-`n`, dan `n − 1`, dan `n − 2`, ... Zonder afslag blijft dat doorgaan —
-ook onder nul — en stopt het nooit. Python grijpt dan in met:
+Straks roept `hanoi` zichzelf aan met steeds minder schijven: `n`, dan
+`n − 1`, dan `n − 2`, enzovoort. Zonder afslag gaat dat door tot onder nul
+en stopt het nooit. Python grijpt dan in met:
 
 {/* foutmelding-van: def f(n):\n    return f(n - 1)\nf(3) */}
 ```
 RecursionError: maximum recursion depth exceeded
 ```
 
-Het **basisgeval** is die afslag: het allerkleinste probleem dat je
-**direct** kunt beantwoorden, zónder jezelf nog eens aan te roepen.
+Het **basisgeval** is die afslag: het allerkleinste probleem, dat je
+direct kunt beantwoorden zonder jezelf nog eens aan te roepen.
 
 ## Wat is het kleinste geval?
 
-Nóg kleiner dan één schijf: **nul schijven**. Een lege stapel verplaatsen
-kost... geen enkele zet. Dus:
+Nog kleiner dan één schijf is nul schijven, en een lege stapel verplaatsen
+kost geen enkele zet. Bij `n == 0` geef je dus een lege lijst `[]` terug.
 
-> `n == 0`  →  geef een **lege lijst** `[]` terug.
-
-Dat is handiger dan stoppen bij `n == 1`, want straks valt alles netjes op
-zijn plek: de recursie telt vanzelf af tot 0.
+Dat is handiger dan stoppen bij `n == 1`: straks telt de recursie vanzelf
+af tot 0 en valt alles op zijn plek.
 
 ## Bouw en test
 
@@ -66,7 +64,7 @@ def hanoi(n, bron, doel, hulp):
 ```
 
 `return` stopt de functie meteen, dus bij `n == 0` komt de regel eronder
-niet meer aan bod. Op de volgende pagina vervangen we die tijdelijke regel
+niet meer aan bod. Die tijdelijke regel vervang je op de volgende pagina
 door de echte recursie.
 
 </details>

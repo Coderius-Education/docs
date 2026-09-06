@@ -15,21 +15,18 @@ volledig recursief.
 
 ## De drie stappen
 
-Herinner je het recept uit [Op zoek naar patronen](../02-patronen#het-recept).
-Om `n` schijven van `bron` naar `doel` te verplaatsen:
+Pak het recept van [Op zoek naar patronen](../02-patronen#het-recept) er
+nog eens bij. Om `n` schijven van `bron` naar `doel` te verplaatsen:
 
-1. **`n − 1` schijven naar de hulp-paal** — dat is hetzelfde probleem, met
-   `doel` even als hulp:
-   `hanoi(n - 1, bron, hulp, doel)`
-2. **de grootste schijf naar doel** — één losse zet: `(bron, doel)`
-3. **`n − 1` schijven van hulp naar doel** — weer hetzelfde probleem, nu
-   met `bron` als hulp:
-   `hanoi(n - 1, hulp, doel, bron)`
+1. `n − 1` schijven naar de hulp-paal. Dat is hetzelfde probleem, met
+   `doel` even als hulp: `hanoi(n - 1, bron, hulp, doel)`.
+2. De grootste schijf naar doel, één losse zet: `(bron, doel)`.
+3. `n − 1` schijven van hulp naar doel. Weer hetzelfde probleem, nu met
+   `bron` als hulp: `hanoi(n - 1, hulp, doel, bron)`.
 
-Let goed op hoe de palen **van rol wisselen** in stap 1 en 3. Dat is de
-kern: in elke deelstap is een andere paal de "tijdelijke parkeerplek".
-
-Je plakt de drie stukken aan elkaar tot één lijst zetten.
+Kijk goed hoe de palen in stap 1 en 3 van rol wisselen: in elke deelstap is
+een andere paal de tijdelijke parkeerplek. Die drie stukken plak je aan
+elkaar tot één lijst zetten.
 
 ## Bouw en test
 
@@ -71,10 +68,10 @@ def hanoi(n, bron, doel, hulp):
     return zetten
 ```
 
-Merk op: in stap 1 staat `hulp` op de plek van `doel` (de schijven moeten
-nu naar de hulp-paal), en `doel` doet dienst als tijdelijke hulp. In stap 3
-is het andersom. Verwissel je die twee, dan klopt de oplossing niet meer —
-zie de [fouten-pagina](../10-fouten).
+In stap 1 staat `hulp` op de plek van `doel`, want de schijven moeten nu
+naar de hulp-paal, en `doel` doet dienst als tijdelijke hulp. In stap 3 is
+het andersom. Verwissel je die twee, dan klopt de oplossing niet meer; zie
+de [fouten-pagina](../10-fouten).
 
 </details>
 

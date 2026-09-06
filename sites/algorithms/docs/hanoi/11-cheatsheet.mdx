@@ -12,7 +12,7 @@ Snelle referentie. Klap open wat je nodig hebt.
 <summary>Wat mag wel en niet?</summary>
 
 1. Eén schijf per keer verplaatsen.
-2. Alleen de **bovenste** schijf van een paal.
+2. Alleen de bovenste schijf van een paal.
 3. Nooit een grotere schijf op een kleinere.
 
 Doel: verplaats de hele stapel van de bron-paal naar de doel-paal.
@@ -22,7 +22,7 @@ Doel: verplaats de hele stapel van de bron-paal naar de doel-paal.
 ## De oplossing
 
 <details>
-<summary>De canonieke functie (lijst zetten)</summary>
+<summary>De functie die de zetten teruggeeft</summary>
 
 ```python
 def hanoi(n, bron, doel, hulp):
@@ -54,19 +54,19 @@ def tel_zetten(n):
 <details>
 <summary>Drie stappen + basisgeval</summary>
 
-Om `n` schijven van **bron** naar **doel** te verplaatsen:
+Om `n` schijven van bron naar doel te verplaatsen:
 
-1. verplaats `n − 1` schijven van **bron** naar **hulp**;
-2. verplaats de grootste schijf van **bron** naar **doel**;
-3. verplaats `n − 1` schijven van **hulp** naar **doel**.
+1. verplaats `n − 1` schijven van bron naar hulp;
+2. verplaats de grootste schijf van bron naar doel;
+3. verplaats `n − 1` schijven van hulp naar doel.
 
 {/* foutmelding-van: def f(n):\n    return f(n - 1)\nf(3) */}
 
 **Basisgeval:** bij `n == 0` is er niets te doen. Zonder basisgeval stopt
 de recursie nooit (`RecursionError`).
 
-Let op de rolwisseling: in stap 1 en 3 wisselen `hulp` en `doel` van plek
-in de recursieve aanroep.
+In stap 1 en 3 wisselen `hulp` en `doel` van plek in de recursieve
+aanroep.
 
 </details>
 
@@ -82,8 +82,8 @@ T(n) = 2 · T(n − 1) + 1      met T(0) = 0
 ```
 
 Uitgerekend: `T(n) = 2ⁿ − 1`. Voor 1, 2, 3, 4, ... schijven dus
-1, 3, 7, 15, ... Elke schijf erbij verdubbelt (ongeveer) het werk. Dit is
-het **minimum** — sneller kan niet met drie palen.
+1, 3, 7, 15, ... Elke schijf erbij verdubbelt het werk, ongeveer. Dit is
+het minimum; met drie palen kan het niet sneller.
 
 </details>
 
@@ -92,11 +92,11 @@ het **minimum** — sneller kan niet met drie palen.
 <details>
 <summary>Recursie, basisgeval, recurrence</summary>
 
-- **Recursie** — een functie die zichzelf aanroept op een kleiner stuk van
+- **Recursie**: een functie die zichzelf aanroept op een kleiner stuk van
   het probleem.
-- **Basisgeval** — het kleinste geval dat je direct beantwoordt, zonder
+- **Basisgeval**: het kleinste geval, dat je direct beantwoordt zonder
   nieuwe aanroep. Het zorgt dat de recursie stopt.
-- **Recurrence** — een formule die de kosten van `n` uitdrukt in de kosten
-  van een kleiner probleem (hier `T(n) = 2·T(n−1)+1`).
+- **Recurrence**: een formule die de kosten van `n` uitdrukt in de kosten
+  van een kleiner probleem, hier `T(n) = 2·T(n−1)+1`.
 
 </details>

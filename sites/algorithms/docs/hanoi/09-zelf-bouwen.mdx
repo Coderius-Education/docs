@@ -13,16 +13,16 @@ sidebar_position: 9
   ]}
 />
 
-**Leerdoel:** je gebruikt de zettenlijst om de **toestand van de drie
-palen** bij te houden, en controleert dat de toren echt op doel belandt.
+**Leerdoel:** je gebruikt de zettenlijst om de toestand van de drie palen
+bij te houden, en controleert dat de toren echt op doel belandt.
 
 ## De uitdaging
 
-Je `hanoi`-functie geeft een lijst zetten. Maar klopt het ook? Bewijs het
-door de zetten **na te spelen** en te kijken waar de schijven eindigen.
+Je `hanoi`-functie geeft een lijst zetten, maar klopt die ook? Speel de
+zetten na en kijk waar de schijven eindigen.
 
-We stellen elke paal voor als een **lijst van schijfgroottes**, met de
-**grootste onderaan** (index 0) en de bovenste schijf achteraan:
+Elke paal is een lijst van schijfgroottes, met de grootste onderaan (index
+0) en de bovenste schijf achteraan:
 
 ```python
 # 3 schijven, alles op paal A:
@@ -30,8 +30,8 @@ We stellen elke paal voor als een **lijst van schijfgroottes**, met de
 ```
 
 Schrijf `speel(n)`: begin met alle schijven op `A`, loop door de zetten van
-`hanoi(n, "A", "C", "B")`, en verplaats telkens de **bovenste** schijf van
-de bron-paal naar de doel-paal. Geef de eindtoestand terug.
+`hanoi(n, "A", "C", "B")`, en verplaats telkens de bovenste schijf van de
+bron-paal naar de doel-paal. Geef de eindtoestand terug.
 
 <details>
 <summary>Tip</summary>
@@ -83,14 +83,15 @@ def speel(n):
     return palen
 ```
 
-Omdat `hanoi` correct is, ligt op het eind alles op `C` in de juiste
-volgorde — en je legt nooit een grotere op een kleinere.
+Omdat `hanoi` klopt, ligt aan het eind alles op `C` in de juiste
+volgorde, en heb je onderweg nooit een grotere schijf op een kleinere
+gelegd.
 
 </details>
 
 ## Uitdaging (optioneel)
 
-Bij welke zet komt de **grootste** schijf op doel? Schrijf
+Bij welke zet komt de grootste schijf op doel? Schrijf
 `grootste_op_doel(n)` die het nummer van die zet teruggeeft, en controleer
 voor 1 tot en met 5 schijven of het steeds precies in het midden is: zet
 `2ⁿ⁻¹`.

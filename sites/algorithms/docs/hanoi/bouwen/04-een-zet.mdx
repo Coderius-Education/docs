@@ -18,9 +18,9 @@ allerkleinste geval: één schijf verplaatsen.
 
 ## Een zet voorstellen
 
-Een zet is simpel: *"van paal X naar paal Y"*. Dat slaan we op als een
-**tuple** `(bron, doel)`. De hele oplossing wordt straks een **lijst** van
-zulke tuples.
+Een zet is niet meer dan "van paal X naar paal Y". Dat sla je op als een
+**tuple** `(bron, doel)`. De hele oplossing wordt straks een lijst van zulke
+tuples.
 
 ```python
 ("A", "C")   # verplaats de bovenste schijf van paal A naar paal C
@@ -28,20 +28,20 @@ zulke tuples.
 
 ## De functie
 
-We bouwen toe naar deze functie:
+Je bouwt toe naar deze functie:
 
 ```python
 def hanoi(n, bron, doel, hulp):
     ...
 ```
 
-- `n` — aantal schijven
-- `bron` — waar de stapel nu staat
-- `doel` — waar hij heen moet
-- `hulp` — de derde paal, om tijdelijk schijven op te parkeren
+- `n` is het aantal schijven;
+- `bron` is de paal waar de stapel nu staat;
+- `doel` de paal waar hij heen moet;
+- `hulp` de derde paal, om tijdelijk schijven op te parkeren.
 
-Begin met het kleinste echte geval: **`n == 1`**. Eén schijf gaat
-gewoon rechtstreeks van `bron` naar `doel` — één zet.
+Begin met het kleinste echte geval, `n == 1`. Eén schijf gaat rechtstreeks
+van `bron` naar `doel`, in één zet.
 
 ## Bouw en test
 
@@ -67,8 +67,8 @@ def hanoi(n, bron, doel, hulp):
     return [(bron, doel)]
 ```
 
-Eén zet, in een lijst. We gebruiken `bron` en `doel` zodat het ook klopt
-als de palen anders heten (`hanoi(1, "A", "B", "C")` → `[("A", "B")]`).
+Eén zet, in een lijst. Je gebruikt `bron` en `doel`, zodat het ook klopt
+als de palen anders heten: `hanoi(1, "A", "B", "C")` geeft `[("A", "B")]`.
 
 </details>
 

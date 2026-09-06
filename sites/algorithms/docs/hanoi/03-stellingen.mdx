@@ -4,34 +4,34 @@ sidebar_position: 3
 
 # Stellingen — eerst voorspellen
 
-**Leerdoel:** je toetst je beeld van het probleem en van recursie vóórdat
-je gaat bouwen. Elke stelling is waar of niet waar. Nu je het spel gespeeld
-en de patronen gezien hebt: beslis eerst zelf, klik dan open.
+**Leerdoel:** je toetst je beeld van het probleem en van recursie voordat
+je gaat bouwen. Elke stelling is waar of niet waar. Beslis eerst zelf, klik
+dan open.
 
 ## Stelling 1
 
-> Voor **4 schijven** heb je 15 zetten nodig.
+> Voor 4 schijven heb je 15 zetten nodig.
 
 <details>
 <summary>Antwoord</summary>
 
-**Waar.** Het patroon is `2ⁿ − 1`: voor 1, 2, 3, 4 schijven →
-1, 3, 7, **15**. Elke schijf erbij verdubbelt (ongeveer) het werk.
+**Waar.** Het patroon is `2ⁿ − 1`: voor 1, 2, 3 en 4 schijven is dat 1, 3,
+7 en 15. Elke schijf erbij verdubbelt het werk, ongeveer.
 
 </details>
 
 ## Stelling 2
 
-> Er bestaat een slimmere aanpak die het met **minder** dan `2ⁿ − 1`
-> zetten doet.
+> Er bestaat een slimmere aanpak die het met minder dan `2ⁿ − 1` zetten
+> doet.
 
 <details>
 <summary>Antwoord</summary>
 
-**Niet waar.** `2ⁿ − 1` is bewijsbaar het **minimum** met drie palen. De
-grootste schijf moet een keer naar doel, en daarvóór moeten alle `n − 1`
-kleinere schijven opzij — en daarna er weer bovenop. Dat geeft precies
-`2 · (2ⁿ⁻¹ − 1) + 1 = 2ⁿ − 1`.
+**Niet waar.** Met drie palen is `2ⁿ − 1` het minimum, en dat is te
+bewijzen. De grootste schijf moet één keer naar doel; daarvóór moeten alle
+`n − 1` kleinere schijven opzij, en daarna moeten ze er weer bovenop. Dat is
+precies `2 · (2ⁿ⁻¹ − 1) + 1 = 2ⁿ − 1`.
 
 </details>
 
@@ -51,8 +51,7 @@ kleiner Hanoi-probleem, met één losse zet ertussen.
 
 ## Stelling 4
 
-> Een recursieve functie zonder **basisgeval** werkt gewoon, alleen wat
-> langzamer.
+> Een recursieve functie zonder basisgeval werkt ook, alleen wat langzamer.
 
 <details>
 <summary>Antwoord</summary>
@@ -60,16 +59,16 @@ kleiner Hanoi-probleem, met één losse zet ertussen.
 {/* foutmelding-van: def f(n):\n    return f(n - 1)\nf(3) */}
 
 **Niet waar.** Zonder basisgeval blijft de functie zichzelf aanroepen met
-steeds kleinere `n`, ook onder nul, en stopt nooit. Python kapt dat af met
-een `RecursionError`. Het basisgeval (`n == 0`) is wat de recursie laat
-stoppen.
+een steeds kleinere `n`, ook onder nul, en stopt ze nooit. Python kapt dat
+af met een `RecursionError`. Het basisgeval, `n == 0`, is wat de recursie
+laat stoppen.
 
 </details>
 
 ## Stelling 5
 
-> Bij het verplaatsen van 3 schijven gaat de **grootste** schijf precies
-> één keer van paal.
+> Bij het verplaatsen van 3 schijven gaat de grootste schijf precies één
+> keer van paal.
 
 <details>
 <summary>Antwoord</summary>

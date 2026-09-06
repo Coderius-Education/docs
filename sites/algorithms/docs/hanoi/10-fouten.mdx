@@ -4,8 +4,8 @@ sidebar_position: 10
 
 # Er gaat iets mis — top-3 fouten
 
-**Leerdoel:** je herkent de drie klassieke valkuilen bij de recursieve
-Hanoi-oplossing.
+**Leerdoel:** je herkent de drie fouten die bij de recursieve
+Hanoi-oplossing het vaakst voorkomen.
 
 ## Basisgeval vergeten
 
@@ -45,8 +45,8 @@ kleinste: `[("A", "C"), ("A", "C"), ("B", "C")]` in plaats van
 zelf bouwen, dan wil de derde zet een schijf van een lege paal pakken.
 
 **Oorzaak:** in stap 1 moeten de `n - 1` bovenste schijven naar de
-**hulp**-paal, niet naar het uiteindelijke doel. De derde paal (`doel`)
-dient daar even als tijdelijke hulp.
+hulp-paal, niet naar het uiteindelijke doel. De paal `doel` dient in die
+stap even als tijdelijke hulp.
 
 ```python
 # FOUT — n-1 schijven gaan meteen naar doel
@@ -65,8 +65,8 @@ zetten.append((bron, doel))
 zetten += hanoi(n - 1, hulp, doel, bron)
 ```
 
-Vuistregel: de schijven die je tijdelijk opzij zet, gaan altijd naar de
-paal die je in déze stap níet als bron of doel gebruikt.
+Vuistregel: de schijven die je tijdelijk opzij zet gaan naar de paal die
+je in deze stap niet als bron of doel gebruikt.
 
 ## Recursie met `n` in plaats van `n - 1`
 
@@ -89,7 +89,7 @@ zetten += hanoi(n, bron, hulp, doel)   # zelfde n → oneindig
 zetten += hanoi(n - 1, bron, hulp, doel)
 ```
 
-Vuistregel bij recursie: élke aanroep moet **dichter bij het basisgeval**
-komen — hier dus met een kleinere `n`.
+Vuistregel bij recursie: elke aanroep moet dichter bij het basisgeval
+komen, hier dus met een kleinere `n`.
 
 Door naar [cheatsheet →](./11-cheatsheet).
