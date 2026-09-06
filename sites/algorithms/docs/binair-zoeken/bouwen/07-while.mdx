@@ -127,8 +127,17 @@ voegen we het "niet-gevonden"-geval toe.
 ## Een veiligheid bij experimenteren
 
 Met `while` kun je een **oneindige lus** veroorzaken als je voorwaarde nooit
-`False` wordt. In de Pyodide-omgeving merk je dat omdat het runnen niet
-stopt. Druk gewoon op **Reset**.
+`False` wordt. Python draait hier in dezelfde browser-tab als de les, dus die
+tab bevriest dan helemaal: ook de Reset-knop reageert niet meer. De enige
+uitweg is de tab sluiten en de les opnieuw openen, en je code in de speeltuin
+ben je dan kwijt.
+
+Twee gewoontes die dat voorkomen:
+
+- Kopieer je code eerst naar een kladblok voordat je met de voorwaarde
+  experimenteert.
+- Controleer vóór het runnen dat `laag` of `hoog` in elke ronde echt
+  verandert. Krimpt het zoekgebied niet, dan stopt de lus nooit.
 
 ## Wat nu nog mist
 

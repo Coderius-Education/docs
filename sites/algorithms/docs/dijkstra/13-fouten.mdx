@@ -43,8 +43,11 @@ for u, v, w in edges:
 
 ## `bezocht.add()` vergeten — oneindige lus
 
-Geen foutmelding — Python loopt **oneindig** door. Browser-tab hangt.
-Druk op **Reset** als dit gebeurt.
+Geen foutmelding — Python loopt **oneindig** door. De browser-tab bevriest,
+en de Reset-knop reageert dan ook niet meer, want Python draait in dezelfde
+tab als de les. Sluit de tab en open de les opnieuw. Je code ben je dan
+kwijt, dus kopieer hem eerst naar een kladblok als je iets uitprobeert wat
+mis kan gaan.
 
 **Oorzaak:** zonder `bezocht.add(huidige)` blijf je dezelfde node steeds
 opnieuw kiezen. De hoofdlus eindigt nooit.
