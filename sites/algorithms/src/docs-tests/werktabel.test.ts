@@ -42,10 +42,15 @@ function getal(cel: string): number {
   return Number(m[0].replace(/\./g, ''));
 }
 
+// `comparisons` is optioneel in TraceStats, omdat niet elk algoritme telt.
+// Selection sort doet dat wel; ontbreekt de teller, dan is de trace stuk en
+// zegt deze test daar iets zinnigs over in plaats van stil te slagen.
 function telVergelijkingen(n: number): number {
   const lijst = Array.from({ length: n }, (_, i) => n - i);
-  const stappen = traceSelectionSort(lijst);
-  return stappen[stappen.length - 1].stats.comparisons;
+  const laatste = traceSelectionSort(lijst).at(-1);
+  const geteld = laatste?.stats.comparisons;
+  if (geteld === undefined) throw new Error(`de trace van ${n} elementen telt geen vergelijkingen`);
+  return geteld;
 }
 
 describe('de werk-tabel van selection sort', () => {
