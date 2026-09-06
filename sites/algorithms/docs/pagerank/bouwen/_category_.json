@@ -1,0 +1,11 @@
+{
+  "label": "Bouwen, stap voor stap",
+  "position": 3,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "title": "PageRank: bouwen, stap voor stap",
+    "description": "Eén bouwsteen per pagina, in deze volgorde. Elke stap draait in de browser."
+  }
+}
