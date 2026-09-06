@@ -42,7 +42,15 @@ export const voorkennisPerAlgoritme: Record<string, string[]> = {
   'lineair-zoeken': ['if-else', 'for-loop', 'functies', 'lijsten'],
   'vind-maximum': ['f-strings', 'if-else', 'for-loop', 'functies', 'lijsten'],
   'max-en-min': ['f-strings', 'if-else', 'and-or-elif', 'for-loop', 'return', 'lijsten', 'tuples'],
-  'binair-zoeken': ['if-else', 'and-or-elif', 'while-loop', 'break', 'functies', 'lijsten', 'tuples'],
+  'binair-zoeken': [
+    'if-else',
+    'and-or-elif',
+    'while-loop',
+    'break',
+    'functies',
+    'lijsten',
+    'tuples',
+  ],
   'selection-sort': ['if-else', 'for-loop', 'functies', 'lijsten', 'tuples'],
   'bubble-sort': ['f-strings', 'if-else', 'for-loop', 'functies', 'lijsten', 'tuples'],
   'big-o': [
