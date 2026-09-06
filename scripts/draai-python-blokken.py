@@ -16,6 +16,13 @@ twee manieren, en allebei zijn ze machinaal na te lopen:
     Hallo!
     ```
 
+Het uitvoerblok mag ook in een `<details><summary>Wat zie je?</summary>` staan,
+en het hoort net zo goed bij een runbaar component (`<PyRunner>`,
+`<CodeExercise>`) als bij een kale fence: de "Wat zie je?"-antwoorden onder de
+speeltuinen zijn precies de plek waar een leerling zijn eigen uitvoer naast die
+van de les legt. De wikkel telt niet als tekst ertussen; verdere tekst (een
+"Ongeveer:" boven een willekeurig resultaat) verbreekt de band wel.
+
 Dat verschil doet ertoe. Een blok dat draait maar iets anders print dan de les
 belooft, is voor een leerling verwarrender dan een blok dat omvalt: hij ziet een
 ander getal dan er staat en denkt dat híj iets fout doet. Zo stond er in de les
@@ -196,6 +203,53 @@ TIJDSLIMIET = 30
 kies_site("python")
 
 
+# De code van een component staat in een JS-template-literal; de browser
+# vertaalt de ontsnappingen voordat Python de tekst ziet. `\\n` in de bron is
+# dus `\n` voor Python (een regeleinde), en een kale `\n` in de bron wordt een
+# echt regeleinde midden in de Python-string — precies de fout die je alleen
+# in de browser ziet. Daarom vertaalt de controle ze op dezelfde manier.
+TEMPLATE_ONTSNAPPING = {"n": "\n", "t": "\t", "r": "\r"}
+
+
+def template_ontsnap(code: str) -> str:
+    return re.sub(
+        r"\\(.)",
+        lambda m: TEMPLATE_ONTSNAPPING.get(m.group(1), m.group(1)),
+        code,
+        flags=re.S,
+    )
+
+
+def hoort_bij_elkaar(tussen: str) -> bool:
+    """Is een kale fence met alléén `tussen` ervoor de uitvoer van het blok erboven?
+
+    De sluiting van het component (`/>`) en de details-wikkel om een
+    "Wat zie je?"-antwoord zijn geen tekst ertussen. Wat overblijft moet kort
+    zijn en mag geen kopje bevatten: onder "## Er gaat iets mis" hoort de
+    foutmelding juist bij het blok dat erna komt.
+    """
+    kaal = re.sub(r"^\s*/>", "", tussen.strip())
+    kaal = re.sub(r"<details>|<summary>[^<\n]*</summary>", "", kaal)
+    return len(kaal.strip()) <= 40 and "#" not in kaal
+
+
+def zelftest() -> None:
+    """De twee vertaalslagen die stil kunnen verslappen, hardop nagelopen.
+
+    Zonder deze regels zou de controle nog steeds groen zijn — met minder
+    blokken die meedoen. Dat is precies de regressie die je niet ziet.
+    """
+    assert template_ontsnap(r"print('a\\nb')") == r"print('a\nb')"
+    assert template_ontsnap(r"\`") == "`"
+    assert template_ontsnap(r"\${x}") == "${x}"
+    assert hoort_bij_elkaar(" />\n\n<details>\n<summary>Wat zie je?</summary>\n\n")
+    assert hoort_bij_elkaar("\n\n<details>\n<summary>Antwoord — verwacht je dit?</summary>\n\n")
+    assert not hoort_bij_elkaar(
+        " />\n\n<details>\n<summary>Wat zie je?</summary>\n\nOngeveer dit, want de lijst is elke keer anders:\n\n"
+    )
+    assert not hoort_bij_elkaar("\n\n## Er gaat iets mis\n\n")
+
+
 def inspring_weg(code: str) -> str:
     regels = code.lstrip("\n").rstrip().split("\n")
     inspringen = [len(r) - len(r.lstrip()) for r in regels if r.strip()]
@@ -262,7 +316,7 @@ def verzamel():
                 # kopje. Onder "## Er gaat iets mis" hoort de foutmelding juist
                 # bij het blok dat erna komt.
                 tussen = tekst[vorige[0] : m.start()] if vorige is not None else ""
-                gepaard = vorige is not None and len(tussen.strip()) <= 40 and "#" not in tussen
+                gepaard = vorige is not None and hoort_bij_elkaar(tussen)
                 if gepaard:
                     rij = blokken[vorige[1]]
                     # Een uitvoerblok is een belofte; een fence die er een
@@ -290,7 +344,10 @@ def verzamel():
 
             if m.group("py") is None:
                 verzameld_hier += 1
-            code = m.group("pycode") if m.group("py") is not None else m.group("oefcode")
+            code = (
+                m.group("pycode") if m.group("py") is not None
+                else template_ontsnap(m.group("oefcode"))
+            )
             regel = tekst[: m.start()].count("\n") + 1
             ervoor = tekst[: m.start()].rstrip()
             if NIET_COMPILEREN_RE.search(ervoor):
@@ -330,7 +387,7 @@ def verzamel():
             # return-regel) zou elk volgend draaien-met-blok meeslepen.
             if soort != "compileer-marker" and compileert_los(kaalcode):
                 erboven_effectief = kaalcode
-            vorige = (m.end(), len(blokken) - 1) if m.group("py") is not None else None
+            vorige = (m.end(), len(blokken) - 1)
 
         claims += list(inline_claims(tekst, bron))
 
@@ -510,7 +567,9 @@ def draai(bron, regel, code, verwacht, varieert=False, voorplak=0) -> str | None
             " (draaien-met: het blok erboven draait mee)" if voorplak else ""
         )
 
-    uit = r.stdout.rstrip("\n")
+    # Een lege regel vooraan (een print("\\n…") als eerste) is in een fence
+    # niet te zien; die telt dus niet mee, net als lege regels achteraan.
+    uit = r.stdout.strip("\n")
 
     if verwacht is not None and uit != verwacht:
         return f"{bron}:{regel}: uitvoerblok belooft {verwacht!r}, geeft {uit!r}"
@@ -690,6 +749,7 @@ def main() -> int:
         print(f"onbekende site {naam!r}; kies uit: {', '.join(SITES)}", file=sys.stderr)
         return 2
     kies_site(naam)
+    zelftest()
 
     if "--pins" in sys.argv:
         print(" ".join(f"{n}=={v}" for n, v in pins().items()))
