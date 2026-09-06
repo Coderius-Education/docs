@@ -5,12 +5,12 @@ sidebar_position: 10
 # Aanpassen — tel het aantal swaps
 
 **Leerdoel:** je past bubble sort aan zodat hij naast de gesorteerde lijst
-ook **het aantal swaps** returnt.
+ook het aantal swaps teruggeeft.
 
 ## Opdracht
 
-Schrijf `bubble_sort_met_swaps(lijst)` die een **tuple** returnt
-`(gesorteerde_lijst, aantal_swaps)`.
+Schrijf `bubble_sort_met_swaps(lijst)` die twee dingen teruggeeft: de
+gesorteerde lijst en het aantal swaps.
 
 - `bubble_sort_met_swaps([1, 2, 3])` → `([1, 2, 3], 0)`
 - `bubble_sort_met_swaps([3, 2, 1])` → `([1, 2, 3], 3)`
@@ -38,8 +38,8 @@ print(bubble_sort_met_swaps([3, 1, 4, 1, 5]))     # ([1, 1, 3, 4, 5], 3)`} />
 <details>
 <summary>Tip</summary>
 
-Initialiseer `swaps = 0` **vóór** de buitenste lus. Hoog `swaps` op met
-**1** bij elke swap. Return de lijst én `swaps` als tuple.
+Zet `swaps = 0` vóór de buitenste lus en tel er bij elke swap één bij op.
+Aan het eind geef je de lijst en `swaps` samen terug.
 
 </details>
 
@@ -66,16 +66,13 @@ def bubble_sort_met_swaps(lijst):
 
 ## Inversies — een wiskundig leuk feitje
 
-Het aantal swaps dat bubble sort doet, is **precies** gelijk aan het
-aantal **inversies** in de lijst — paren `(i, j)` met `i < j` maar
+Het aantal swaps dat bubble sort doet is precies gelijk aan het aantal
+**inversies** in de lijst: paren `(i, j)` met `i < j` waarvoor
 `lijst[i] > lijst[j]`.
 
-Voor `[3, 1, 2]`:
-- (3, 1): 3 > 1 → inversie
-- (3, 2): 3 > 2 → inversie
-- (1, 2): 1 > 2 → niet
-
-Twee inversies → twee swaps. Klopt.
+Neem `[3, 1, 2]`. Het paar (3, 1) is een inversie, want 3 is groter dan 1.
+Het paar (3, 2) ook. Het paar (1, 2) niet, want die staan goed. Twee
+inversies, en bubble sort doet er twee swaps over.
 
 Het idee: elke swap herstelt precies één inversie (twee buren die fout
 stonden). Daarom is het aantal swaps gelijk aan het aantal inversies.

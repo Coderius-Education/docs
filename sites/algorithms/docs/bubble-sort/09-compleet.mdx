@@ -108,7 +108,7 @@ print(bubble_sort_op_cijfer(leerlingen))`} />
 <details>
 <summary>Wat zie je?</summary>
 
-- Strings → alfabetisch gesorteerd. Werkt.
+- Strings komen alfabetisch te staan.
 - Stabiliteit: `[(5, 'Noor'), (5, 'Bo'), (7, 'Sam'), (7, 'Ali')]`. Sam
   stond vóór Ali en staat er nog steeds vóór. **Bubble sort is stabiel**:
   twee gelijke buren wisselen nooit, want de vergelijking is strikt `>`.
@@ -172,12 +172,12 @@ willekeurig          passes=~40 vergelijkingen=~1100  swaps=~600
 bijna gesorteerd     passes= 2  vergelijkingen=   97  swaps=1
 ```
 
-- **Al gesorteerd**: één pass dankzij early-exit — O(n).
-- **Omgekeerd**: max werk — O(n²).
-- **Willekeurig**: ergens daartussen, dichter bij omgekeerd.
-- **Bijna gesorteerd** (één swap nodig): één pass om de wisseling op te
-  lossen, één pass zonder swap om te bevestigen → klaar. Heel snel —
-  een van de redenen waarom bubble sort soms toch nog gebruikt wordt.
+- Al gesorteerd: één pass dankzij early-exit, dus `O(n)`.
+- Omgekeerd: het maximale werk, `O(n²)`.
+- Willekeurig: daartussenin, en dichter bij omgekeerd dan je zou denken.
+- Bijna gesorteerd, met één wisseling nodig: één pass om die wisseling op
+  te lossen en één om te bevestigen dat het klaar is. Zo snel dat bubble
+  sort daar soms nog echt voor gebruikt wordt.
 
 </details>
 

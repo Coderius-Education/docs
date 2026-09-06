@@ -13,9 +13,9 @@ sidebar_position: 3
 <details>
 <summary>Antwoord</summary>
 
-**Onjuist.** Eén pass garandeert alleen dat het **grootste** element op
-zijn juiste plek staat (helemaal achteraan het ongesorteerde stuk). De
-rest kan nog door elkaar staan. Je hebt typisch meerdere passes nodig.
+**Onjuist.** Eén pass zet alleen het grootste element op zijn plek,
+achteraan het ongesorteerde stuk. De rest kan nog door elkaar staan, dus
+er komen meer passes achteraan.
 
 </details>
 
@@ -26,9 +26,9 @@ rest kan nog door elkaar staan. Je hebt typisch meerdere passes nodig.
 <details>
 <summary>Antwoord</summary>
 
-**Juist.** Elke pass borrelt de grootste-van-het-rest naar achteren. Na
-pass 1 zit het grootste op de juiste plek. Na pass 2 ook het tweede
-grootste. Enzovoort.
+**Juist.** Elke pass borrelt de grootste van de rest naar achteren: na
+pass 1 staat het grootste goed, na pass 2 ook het tweede grootste, en zo
+verder.
 
 Daar maak je straks gebruik van: elke volgende pass hoeft een stukje
 minder ver te kijken, want de staart staat al.
@@ -42,12 +42,12 @@ minder ver te kijken, want de staart staat al.
 <details>
 <summary>Antwoord</summary>
 
-**Juist.** Dat is het kenmerk. Selection sort vergelijkt elk element met
-"de tot-nu-toe-kleinste" — die kan ver weg staan. Bubble sort doet alleen
-**lokale** vergelijkingen.
+**Juist.** Dat is het kenmerk van bubble sort. Selection sort vergelijkt
+elk element met de kleinste tot nu toe, en die kan ver weg staan; bubble
+sort kijkt alleen naar wat naast elkaar ligt.
 
-Voordeel: simpele logica. Nadeel: ver-uit-elkaar-staande elementen kunnen
-maar één positie per pass opschuiven richting hun juiste plek.
+Dat maakt de logica simpel, maar het kost tijd: een element dat ver van
+zijn plek staat schuift per pass maar één positie op.
 
 </details>
 
@@ -72,9 +72,9 @@ bubble sort ook op een gesorteerde lijst alle `n − 1` passes.
 <details>
 <summary>Antwoord</summary>
 
-**Onjuist.** Hij loopt tot `len(lijst) - 1`. Want je vergelijkt `lijst[i]`
-met `lijst[i+1]`, dus de **laatste** geldige `i` is `len(lijst) - 2`. Met
-`range(len(lijst) - 1)` krijg je precies dat.
+**Onjuist.** Hij loopt tot `len(lijst) - 1`. Je vergelijkt `lijst[i]` met
+`lijst[i+1]`, dus de laatste `i` die nog kan is `len(lijst) - 2`, en dat
+is precies wat `range(len(lijst) - 1)` je geeft.
 
 {/* foutmelding-van: lijst = [5, 2, 9]\nfor i in range(len(lijst)):\n    lijst[i + 1] */}
 
@@ -90,12 +90,11 @@ pass naar voren brengen."*
 <details>
 <summary>Antwoord</summary>
 
-**Onjuist** voor *naar voren*. Kleine waardes schuiven maar **één plek
-per pass** naar voren. Grote waardes kunnen wél in één pass helemaal naar
-achteren bubbelen.
+**Onjuist**, tenminste naar voren. Een kleine waarde schuift per pass maar
+één plek op; een grote kan in één pass helemaal naar achteren bubbelen.
 
-Dat is een asymmetrie van bubble sort — soms aangepakt met **cocktail
-sort** (alternerend voor- en achterwaarts).
+Die scheefheid is precies wat cocktail sort rechttrekt, door om en om naar
+rechts en naar links te lopen.
 
 </details>
 

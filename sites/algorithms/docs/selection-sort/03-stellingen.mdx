@@ -15,11 +15,11 @@ snapt, voordat je gaat programmeren.
 <details>
 <summary>Antwoord</summary>
 
-**Onjuist.** Bij oplopend sorteren (laag → hoog) zet je het **kleinste**
-vooraan. De grootste komt vanzelf achteraan terecht.
+**Onjuist.** Bij sorteren van laag naar hoog zet je het kleinste vooraan;
+de grootste komt vanzelf achteraan terecht.
 
-Je kunt het algoritme ook *afzakkend* maken — dan zet je de **grootste**
-vooraan. Daar oefen je later mee (Aanpassen).
+Andersom kan ook: zet je elke ronde de grootste vooraan, dan sorteer je
+van hoog naar laag. Daar oefen je mee bij [Aanpassen](./09-aanpassen).
 
 </details>
 
@@ -30,10 +30,9 @@ vooraan. Daar oefen je later mee (Aanpassen).
 <details>
 <summary>Antwoord</summary>
 
-**Juist.** Dat is de **invariant** van selection sort. Na elke ronde groeit
-het sorted-stuk vooraan met één element. Een handige garantie om over na
-te denken: bij ronde `k` hoef je alleen nog naar het *ongesorteerde stuk*
-(vanaf index `k`) te kijken.
+**Juist.** Dat heet de **invariant** van selection sort: het gesorteerde
+stuk vooraan groeit elke ronde met één element. Daar heb je iets aan, want
+in ronde `k` hoef je alleen nog naar de rest te kijken, vanaf index `k`.
 
 </details>
 
@@ -65,11 +64,11 @@ stoppen.
 plek geruild: precies één swap-regel per ronde. Vaak ruilt die regel een
 element met zichzelf, want het kleinste stond al vooraan; dan verandert er
 niets. In de laatste ronde gebeurt dat altijd, want er is nog maar één
-element over. Er verhuizen dus hoogstens `n − 1` elementen echt. Veel
-**vergelijkingen**, weinig **swaps**.
+element over. Er verhuizen dus hoogstens `n − 1` elementen echt: veel
+vergelijkingen, weinig verplaatsingen.
 
-(**Tip:** dat is een voordeel als swappen duur is — bijvoorbeeld op een
-hard drive of als de elementen grote objecten zijn.)
+Dat is een voordeel wanneer verplaatsen duur is, bijvoorbeeld als de
+elementen grote objecten zijn.
 
 </details>
 
@@ -81,10 +80,9 @@ ook posities 0, 1 en 2 worden verschoven."*
 <details>
 <summary>Antwoord</summary>
 
-**Onjuist.** Selection sort **swapt** alleen — het schuift niet. Het
-element op positie 3 wisselt plek met het element op positie 0. De
-elementen op positie 1 en 2 blijven onaangetast (al staan ze nu in een
-andere volgorde).
+**Onjuist.** Selection sort ruilt alleen, het schuift niet. Het element op
+positie 3 wisselt van plek met dat op positie 0; de elementen op 1 en 2
+blijven waar ze zijn.
 
 </details>
 
@@ -95,11 +93,11 @@ andere volgorde).
 <details>
 <summary>Antwoord</summary>
 
-**Juist.** Het algoritme verandert de oorspronkelijke lijst zelf
-(*in-place*). Geen kopie nodig. Voor grote data scheelt dat geheugen.
+**Juist.** Het algoritme verandert de oorspronkelijke lijst zelf, zonder
+kopie. Bij grote hoeveelheden data scheelt dat geheugen.
 
-(Als je de originele lijst wél wil bewaren, maak je eerst een kopie:
-`gesorteerd = selection_sort(lijst.copy())`.)
+Wil je de oorspronkelijke lijst houden, sorteer dan een kopie:
+`gesorteerd = selection_sort(lijst.copy())`.
 
 </details>
 

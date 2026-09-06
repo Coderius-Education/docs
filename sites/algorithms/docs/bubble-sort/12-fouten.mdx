@@ -15,8 +15,8 @@ IndexError: list index out of range
 
 {/* foutmelding-van: [3, 2, 1][3] */}
 
-**Oorzaak:** bij de laatste iteratie is `i = n - 1` → `lijst[i + 1] =
-lijst[n]` → bestaat niet → `IndexError`.
+**Oorzaak:** bij de laatste ronde is `i = n - 1`, dus `lijst[i + 1]` is
+`lijst[n]`, en die bestaat niet. Vandaar de `IndexError`.
 
 **Oplossing:** gebruik `range(n - 1)`. Bij paarsgewijze vergelijkingen
 (`lijst[i]` met `lijst[i + 1]`) is de laatste geldige `i` altijd één
@@ -51,8 +51,7 @@ heb je een vergelijking nodig: `==`, `<`, `>`, etc. Python ziet dat je aan
 `lijst[i]` probeert toe te kennen en stelt de oplossing zelf al voor.
 
 **Oplossing:** gebruik een vergelijking. Voor bubble sort gebruiken we
-trouwens niet `==` maar `>` — want we willen weten of het paar **fout**
-staat.
+trouwens niet `==` maar `>`, want je wilt weten of het paar fout staat.
 
 {/* niet-compileren: toont bewust de = in plaats van == */}
 ```python
@@ -69,8 +68,7 @@ Onthouden: één `=` is toekennen, twee `==` is vergelijken.
 
 ## `geswapt` op de verkeerde plek initialiseren
 
-Geen Python-foutmelding — wel een **logische** fout: de early-exit werkt
-niet of werkt verkeerd.
+Geen foutmelding, maar de early-exit doet niet meer wat hij moet doen.
 
 **Oorzaak:** `geswapt` wordt **één keer** geïnitialiseerd op `False`, en
 daarna **nooit meer gereset**. Zodra er één swap gebeurt, blijft

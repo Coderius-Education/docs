@@ -36,9 +36,8 @@ print(selection_sort_aflopend([1, 2, 3]))                      # [3, 2, 1]`} />
 <details>
 <summary>Tip</summary>
 
-Slechts **één** vergelijking moet anders. En misschien vind je het netter
-om de variabele `min_index` te hernoemen naar `max_index` — semantisch
-beter passend.
+Er hoeft maar één vergelijking anders. En als je toch bezig bent: de naam
+`min_index` klopt dan niet meer, `max_index` past beter.
 
 </details>
 
@@ -57,10 +56,11 @@ def selection_sort_aflopend(lijst):
     return lijst
 ```
 
-Eén teken (`<` → `>`) en de variabelenaam. Verder identiek.
+Eén teken anders, van `<` naar `>`, plus de variabelenaam. Verder is de
+code identiek.
 
-Dit is dezelfde **symmetrie** als bij vind-max → vind-min: het patroon
-blijft, alleen de richting van de vergelijking draait om.
+Het is dezelfde symmetrie als tussen vind-maximum en vind-minimum: het
+patroon blijft staan, alleen de richting van de vergelijking draait om.
 
 </details>
 

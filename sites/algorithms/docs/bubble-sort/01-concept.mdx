@@ -9,31 +9,25 @@ swappen, herhaald tot alles klopt. Nog geen Python.
 
 ## Het verhaal
 
-Je staat met een groepje vrienden op een rij en jullie willen op **lengte**
-gaan staan, van klein naar groot. Hoe doe je dat zonder dat iedereen
-tegelijk gaat schuiven?
+Je staat met een groepje vrienden op een rij en jullie willen op lengte
+gaan staan, van klein naar groot. Niemand hoeft daarvoor tegelijk te
+schuiven; je kunt het per tweetal doen.
 
-Een hele simpele aanpak:
-
-1. Kijk naar het eerste **paar** (linker twee personen). Staat de
-   linker-persoon kleiner dan de rechter? Top, niets doen. Zo niet → wissel
-   ze om.
-2. Schuif één plek op. Kijk naar het **volgende** paar. Idem: wissel als
-   ze fout staan.
-3. Ga zo door tot je het laatste paar bent gepasseerd.
-4. Begin opnieuw — wellicht moet er nog meer geruild worden.
-5. Stop als er een hele ronde voorbij komt zonder een ruil. Dan ben je
-   klaar.
+1. Kijk naar de linker twee personen. Staat de linker kleiner dan de
+   rechter, laat ze dan staan. Zo niet, wissel ze om.
+2. Schuif één plek op en doe hetzelfde met het volgende tweetal.
+3. Ga zo door tot je het laatste paar hebt gehad.
+4. Begin opnieuw, want er moet waarschijnlijk nog meer geruild worden.
+5. Komt er een hele ronde voorbij zonder ruil, dan ben je klaar.
 
 Dat is **bubble sort** in één zin: *vergelijk buren en swap, blijf
 herhalen tot er geen swap meer nodig is.*
 
 ## Waarom heet het zo?
 
-De **grote** getallen "borrelen" als bubbels naar achteren. In één pass
-schuift het grootste element gegarandeerd naar zijn juiste plek (achteraan
-het ongesorteerde stuk). Net als een luchtbel die naar de oppervlakte
-stijgt.
+De grote getallen "borrelen" naar achteren, net als een luchtbel die naar
+de oppervlakte stijgt. In één pass komt het grootste element altijd op
+zijn plek, achteraan het ongesorteerde stuk.
 
 ## Visualisatie
 
@@ -74,19 +68,19 @@ we klaar zijn — *vroege uitstap*.
 | Vergelijkingen | altijd `n²/2` | minder als al gesorteerd |
 | Vroeg klaar? | nee | ja (met early-exit) |
 
-Bubble sort is **adaptief**: op een al-gesorteerde of bijna-gesorteerde
-lijst is hij veel sneller dan op een willekeurige.
+Bubble sort is **adaptief**: op een lijst die al bijna goed staat is hij
+veel sneller dan op een willekeurige.
 
 <details>
 <summary>Hoe snel?</summary>
 
-- **Beste geval** (al gesorteerd, met early-exit): één pass, `n − 1`
-  vergelijkingen, 0 swaps → O(n).
-- **Slechtste geval** (omgekeerd gesorteerd): `n − 1` passes, ongeveer
-  `n²/2` vergelijkingen en swaps → O(n²).
-- **Gemiddeld**: O(n²).
+- Beste geval, een lijst die al gesorteerd is: één pass met `n − 1`
+  vergelijkingen en geen enkele swap. Dat is `O(n)`.
+- Slechtste geval, een omgekeerd gesorteerde lijst: `n − 1` passes met
+  ongeveer `n²/2` vergelijkingen en evenveel swaps, dus `O(n²)`.
+- Gemiddeld ook `O(n²)`.
 
-Voor grote lijsten dus traag — maar simpel.
+Voor grote lijsten is dat traag. Simpel is hij wel.
 
 </details>
 

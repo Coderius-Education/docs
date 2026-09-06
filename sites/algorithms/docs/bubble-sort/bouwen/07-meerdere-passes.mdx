@@ -10,8 +10,8 @@ genoeg keer herhaalt om de hele lijst te sorteren.
 ## Hoe vaak moet je herhalen?
 
 Per pass komt het grootste-van-de-rest naar achteren. Voor `n` elementen
-zijn dus **maximaal `n − 1` passes** genoeg om alles op zijn plek te
-krijgen. (Het laatste element komt vanzelf goed als al de rest goed staat.)
+zijn `n − 1` passes altijd genoeg: staat de rest goed, dan staat het
+laatste element vanzelf ook goed.
 
 ```python
 for ronde in range(len(lijst) - 1):
@@ -77,8 +77,8 @@ for ronde in range(n - 1):
         ...
 ```
 
-Dit doet **minder werk** zonder de logica te veranderen: de al gesorteerde
-staart laten we met rust.
+Dat scheelt werk zonder dat de logica verandert: de staart die al goed
+staat laat je met rust.
 
 <PyRunner initialCode={`def bubble_sort_geoptimaliseerd(lijst):
     n = len(lijst)
@@ -92,8 +92,8 @@ print(bubble_sort_geoptimaliseerd([3, 1, 4, 1, 5, 9, 2, 6]))`} />
 
 ## Wat nu nog mist
 
-Op een **al gesorteerde** lijst doet dit nog steeds `n − 1` passes. Dat
-is verspilling — als er in een hele ronde geen swap is gebeurd, is de
-lijst klaar. In de volgende stap voegen we die **vroege uitstap** toe.
+Op een lijst die al gesorteerd is doet dit nog steeds `n − 1` passes, en
+dat is verspild werk: zodra een ronde geen enkele swap doet, is de lijst
+klaar. Die vroege uitstap bouw je in de volgende stap.
 
 Door naar [bouwsteen 5: early-exit](./08-early-exit).

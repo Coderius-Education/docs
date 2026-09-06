@@ -21,9 +21,9 @@ zo nodig swappen.
 
 ## De `- 1` is cruciaal
 
-Bij elke vergelijking pakken we `lijst[i]` en `lijst[i + 1]`. De **laatste**
-geldige `i` is dus `len(lijst) - 2` (zodat `i + 1` precies de laatste
-index is).
+Elke vergelijking pakt `lijst[i]` en `lijst[i + 1]`. De laatste `i` die
+nog kan is dus `len(lijst) - 2`, want dan wijst `i + 1` precies naar het
+laatste element.
 
 ```python
 for i in range(len(lijst) - 1):     # 0, 1, ..., len-2
@@ -68,11 +68,11 @@ print(een_pass([1, 2, 3, 4, 5]))
 [1, 2, 3, 4, 5]
 ```
 
-- `[3, 1, 4, 1, 5]` → twee swaps (3 met 1, en 4 met 1); de 5 stond al
-    achteraan.
-- `[5, 4, 3, 2, 1]` (omgekeerd) → de 5 borrelt netjes helemaal naar
-    achteren in één pass. De rest is nog wel rommelig.
-- `[1, 2, 3, 4, 5]` (al gesorteerd) → niets verandert.
+- In `[3, 1, 4, 1, 5]` gebeuren twee swaps, de 3 met de 1 en de 4 met de
+    1; de 5 stond al achteraan.
+- In de omgekeerde lijst `[5, 4, 3, 2, 1]` borrelt de 5 in één pass
+    helemaal naar achteren. De rest staat nog rommelig.
+- In `[1, 2, 3, 4, 5]` verandert niets, want die staat al goed.
 
 </details>
 
@@ -119,7 +119,6 @@ moet nog twee plekken naar voren — daarvoor zijn meer passes nodig.
 
 ## Wat nu nog mist
 
-We hebben **één** pass. We willen het **herhalen** tot de lijst gesorteerd
-is.
+Eén pass is klaar. Nu nog herhalen tot de lijst gesorteerd is.
 
 Door naar [bouwsteen 4: meerdere passes](./07-meerdere-passes).

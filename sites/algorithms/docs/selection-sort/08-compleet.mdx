@@ -60,9 +60,9 @@ print(selection_sort([]))                # []`} />
 
 Probeer in elk geval:
 
-1. **Strings** sorteren — werkt dat?
-2. Een lijst met **duplicaten** — wat gebeurt er met gelijke waardes?
-3. **Stabiliteit**: sorteer leerlingen op hun cijfer. Twee leerlingen
+1. Sorteer een lijst met strings. Werkt dat?
+2. Sorteer een lijst met dubbele waardes. Wat gebeurt daarmee?
+3. Stabiliteit: sorteer leerlingen op hun cijfer. Twee leerlingen
    met hetzelfde cijfer: blijven die in de volgorde staan waarin ze in de
    lijst stonden?
 
@@ -99,8 +99,8 @@ print(selection_sort_op_cijfer(leerlingen))`} />
 <details>
 <summary>Wat zie je?</summary>
 
-- Strings → alfabetisch gesorteerd. Python kan strings met `<` vergelijken.
-- Duplicaten → gewoon naast elkaar in het resultaat.
+- Strings komen alfabetisch te staan; Python kan ze met `<` vergelijken.
+- Dubbele waardes komen naast elkaar te staan.
 - Stabiliteit: `[(5, 'Noor'), (5, 'Bo'), (7, 'Ali'), (7, 'Sam')]`. Sam
   stond vóór Ali, en staat nu erachter. Selection sort is **niet stabiel**:
   de swap in ronde 1 gooide Sam naar achteren, over Ali heen. Daarom

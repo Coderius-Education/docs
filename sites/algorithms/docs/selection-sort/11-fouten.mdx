@@ -8,8 +8,8 @@ sidebar_position: 11
 
 ## Zoeken vanaf index 0 in plaats van vanaf `i`
 
-Geen Python-foutmelding — wél een **stille fout**: de al-gesorteerde
-elementen vooraan worden door nieuwe swaps overschreven.
+Geen foutmelding, maar wel een stille fout: de elementen die vooraan al
+goed stonden worden door nieuwe swaps overschreven.
 
 **Oorzaak:** elke ronde zoek je nog steeds in de **hele** lijst — ook in
 het al gesorteerde stuk vooraan. En je swapt met `lijst[i]`, wat een

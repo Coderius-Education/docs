@@ -9,14 +9,15 @@ swaps had — dat betekent dat de lijst al klaar is.
 
 ## Het idee
 
-Als een hele pass voorbij komt zonder **één enkele swap**, dan stonden
-alle paren al goed → de lijst is gesorteerd. Verder gaan is dan zinloos.
+Komt een hele pass voorbij zonder één enkele swap, dan stonden alle paren
+al goed en is de lijst gesorteerd. Verder gaan heeft dan geen zin.
 
-Daarvoor introduceren we een **vlag-variabele** `geswapt`:
+Daarvoor houd je een vlag bij, `geswapt`:
 
-- Begin van elke pass: `geswapt = False`.
-- Bij elke swap: `geswapt = True`.
-- Einde van pass: als `geswapt == False` → `break` uit de buitenste lus.
+- Aan het begin van elke pass zet je hem op `False`.
+- Bij elke swap zet je hem op `True`.
+- Staat hij aan het eind van de pass nog op `False`, dan spring je met
+  `break` uit de buitenste lus.
 
 ## Voorspel
 
@@ -46,8 +47,8 @@ bubble_sort([1, 2, 3, 4, 5])
 ronde 0: lijst=[1, 2, 3, 4, 5], geswapt=False
 ```
 
-Eén ronde, geen swaps → `break`. Op een al-gesorteerde lijst klaar in één
-pass van `n − 1` vergelijkingen — dat is O(n).
+Eén ronde zonder swaps, dus `break`. Op een gesorteerde lijst is bubble
+sort klaar na één pass van `n − 1` vergelijkingen, en dat is `O(n)`.
 
 </details>
 
@@ -81,24 +82,25 @@ bubble_sort([1, 2, 4, 3, 5])`} />
 <details>
 <summary>Wat zie je?</summary>
 
-- **Al gesorteerd**: 1 ronde, geswapt=False → `break`. Maximaal slim.
-- **Omgekeerd**: 4 rondes (0 tot en met 3), in elke ronde wel swaps. Pas
-  na ronde 3 staat alles goed, en dat is ook de laatste ronde die
+- Al gesorteerd: één ronde, `geswapt` blijft `False`, en de `break` volgt
+  meteen.
+- Omgekeerd: vier rondes, 0 tot en met 3, met in elke ronde swaps. Pas na
+  ronde 3 staat alles goed, en dat is ook de laatste ronde die
   `range(n - 1)` toestaat.
-- **Bijna gesorteerd**: 2 rondes. Eerst de 4 en 3 swappen (ronde 0), dan
-  een ronde zonder swaps om te bevestigen → klaar.
+- Bijna gesorteerd: twee rondes. In ronde 0 wisselen de 4 en de 3, en de
+  ronde daarna bevestigt zonder swaps dat het klaar is.
 
 </details>
 
 ## Waarom is dit zo handig?
 
-Vooral op **bijna gesorteerde** data. In de praktijk hebben veel datasets
-al een natuurlijke ordening — bijna gesorteerd of zelfs al gesorteerd
-(bijv. een al-gesorteerde lijst waar één element bij is gekomen). Met
-early-exit is bubble sort dan O(n) in plaats van O(n²).
+Vooral bij data die al bijna op volgorde staat, en dat komt vaker voor
+dan je denkt: een gesorteerde lijst waar één element bij is gekomen,
+bijvoorbeeld. Met early-exit is bubble sort daar `O(n)` in plaats van
+`O(n²)`.
 
 ## Wat nu?
 
-Je hebt alle bouwstenen. Tijd om ze samen in **één algoritme** te zien.
+Je hebt alle bouwstenen. Tijd om ze samen te zien werken.
 
 Door naar [het complete algoritme](../09-compleet).
