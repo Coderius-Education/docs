@@ -1,10 +1,14 @@
 # Patronen uit eerdere doorlopen
 
 Elk patroon hieronder is minstens twee keer gevonden in de zoek- en
-sorteerhoofdstukken van de algoritmes-cursus (PR #64). Ze staan hier omdat
-een redacteur ze systematisch mist: de tekst klopt, en toch klopt de les
-niet. Per patroon: hoe je hem herkent als leerling, een voorbeeld, en welke
-test hem sindsdien vastpint (of zou kunnen).
+sorteerhoofdstukken van de algoritmes-cursus (PR #64) of in de doorloop van
+Torens van Hanoi. Ze staan hier omdat een redacteur ze systematisch mist:
+de tekst klopt, en toch klopt de les niet. Per patroon: hoe je hem herkent
+als leerling, een voorbeeld, en welke test hem sindsdien vastpint (of zou
+kunnen). De tests die PR #64 toevoegde (`opdrachten.test.ts`,
+`speeltuin.test.ts`, de uitvoercontrole onder speeltuinen) staan op die
+branch tot hij is gemerged; controleer met `ls` wat er in jouw checkout
+bestaat voordat je ernaar verwijst.
 
 ## Beloofde uitvoer wijkt af van echte uitvoer
 
@@ -34,6 +38,34 @@ startcode, met `# vul aan`-commentaren erboven die niets vroegen.
 **Test.** Geen automatische; de opdracht-test eist wel een antwoord-blok.
 Een script zou de startcode kunnen draaien en eisen dat de "verwacht"-
 waarden er níét uitkomen, maar dat vraagt een marker per opdracht.
+
+## De startcode valt om op iets anders dan de test
+
+**Herkennen.** Druk op Voer uit zonder iets te veranderen. Een leerling
+verwacht een falende test (`AssertionError`); krijgt hij een `TypeError:
+'ellipsis' object is not iterable` omdat de auteur `zetten += ...` als
+invulplek koos, dan leest hij een melding die nergens wordt uitgelegd.
+Kijk ook of een gefaalde test zegt wélke test faalde: een kale `assert`
+geeft alleen "AssertionError" en een regelnummer.
+
+**Test.** Het blokken-script draait startcode met `niet-draaien` niet;
+een regel die zulke startcode wél draait en alleen een `AssertionError`
+toestaat zou dit vangen. Een regex over `initialCode` kan eisen dat elke
+`assert` een boodschap draagt.
+
+## Een knop die iets anders zegt dan de les
+
+**Herkennen.** Gebruik elke knop die de pagina aanbiedt, met de grenzen
+van de browser. Stap voor stap neemt hoogstens 1000 stappen op en vraagt
+daarna "Loopt je code eindeloos door?"; een goede oplossing met een test op
+`n = 10` haalt dat ruim, precies op de pagina waar de leerling de recursie
+voor het eerst wil zien gebeuren. Een spelcomponent die "Opgelost in 7
+zetten! Kun je het in minder?" zegt terwijl 7 het minimum is, stuurt de
+leerling een kwartier de verkeerde kant op.
+
+**Test.** Het blokken-script kan de antwoordcode van elke speeltuin
+traceren en waarschuwen boven de stappenlimiet; componentteksten vragen
+een componenttest.
 
 ## Een opdracht of uitdaging zonder antwoord
 

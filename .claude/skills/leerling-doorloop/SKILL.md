@@ -24,13 +24,21 @@ verstopte. Lees per hoofdstuk alles vóór je iets opschrijft: de meeste
 fouten zijn tegenstrijdigheden tussen pagina's, en die zie je alleen als je
 de vorige nog vers hebt.
 
-**Doe wat de leerling doet: draai de code.** Vertrouw geen enkele beloofde
-uitvoer op het oog. Draai elk runbaar blok (in dit repo met de bestaande
-controle, zie hieronder, of los met `python3`) en leg de uitvoer naast wat
-het antwoord belooft, tot op de spatie. Een leerling die `    i=0` ziet waar
-de les `  i=0` beloofde, denkt dat zijn code anders is. Voer ook de
-oplossingen uit de uitklapblokken uit, en de startcode van een opdracht:
-staat de oplossing er al in, dan is er niets te bouwen.
+**Doe wat de leerling doet: druk op elke knop.** Vertrouw geen enkele
+beloofde uitvoer op het oog. Draai elk runbaar blok (in dit repo met de
+bestaande controle, zie hieronder, of los met `python3`) en leg de uitvoer
+naast wat het antwoord belooft, tot op de spatie. Een leerling die `    i=0`
+ziet waar de les `  i=0` beloofde, denkt dat zijn code anders is. Draai
+ook de startcode van een opdracht óngewijzigd, want dat is wat een leerling
+als eerste doet: hoort hij dan een falende test te zien, of krijgt hij een
+`TypeError` over een `ellipsis` die nergens wordt uitgelegd? Staat de
+oplossing al in de startcode, dan is er niets te bouwen. Voer de
+oplossingen uit de uitklapblokken uit. En heeft de speeltuin meer knoppen
+dan Voer uit (Stap voor stap, Reset, een spel), gebruik die dan ook, met
+dezelfde grenzen als in de browser: de opnemer van Stap voor stap stopt na
+1000 stappen en vraagt dan of de code eindeloos loopt, ook bij een goede
+oplossing met een grote test erin. Meet dat met `sys.settrace` als je niet
+in een browser kunt.
 
 **Controleer elke bewering over het gereedschap in de bron.** "Druk op Reset
 als het hangt", "de knop Stap voor stap toont de variabelen", "dit werkt ook
@@ -62,9 +70,12 @@ wringers als veegronde.
 
 1. **Kan ik dit hier?** Welke kennis, syntax of functie gebruikt de pagina,
    en waar heb ik die geleerd? Alles wat nieuw is zonder uitleg en zonder
-   link (een `enumerate`, een `break`, een `elif`, een tuple-return) is een
-   bevinding. Tel ook hoeveel nieuwe dingen de pagina tegelijk introduceert:
-   meer dan één is te veel voor een bouwstap.
+   link (een `enumerate`, een `break`, een `elif`, een tuple-return, een
+   `+=` op een lijst, een `assert`) is een bevinding. Volg ook elke
+   voorkennis-link: staat op de doelpagina wat het label belooft? Een label
+   "Functies en return-waarden" dat landt op een les zonder `return` laat
+   het gat precies waar het was. Tel ook hoeveel nieuwe dingen de pagina
+   tegelijk introduceert: meer dan één is te veel voor een bouwstap.
 2. **Klopt wat de pagina belooft?** Uitvoer, getallen in tabellen, "verwacht:
    …"-commentaren, linkteksten, verwijzingen naar "stap 5" of "hoofdstuk 3",
    beweringen over het gereedschap. Draai, reken na, klik door.
@@ -136,7 +147,9 @@ Sluit af met twee korte secties:
   vastpinnen? Een uitvoerblok dat niet klopt, een opdracht zonder antwoord,
   een linktekst met een oud nummer, een belofte over het gereedschap: dat
   zijn regels die een test kan afdwingen, zodat de klasse niet terugkomt.
-  Zeg welke bestaande controle uitgebreid kan worden en wat nieuw moet.
+  Kijk eerst welke tests er al zijn (`ls sites/<site>/src/docs-tests/`,
+  `packages/shared/*.test.ts`, de markers van het blokken-script) en zeg
+  dan welke bestaande controle uitgebreid kan worden en wat nieuw moet.
 
 Eindig met een voorstel voor de volgorde van oppakken en de vraag welke
 punten de opdrachtgever wil. Niet met een fix.
