@@ -5,25 +5,77 @@ sidebar_position: 11
 # Bouw zelf — vergelijk early-exit aan en uit
 
 **Leerdoel:** je meet zelf hoeveel de early-exit-optimalisatie scheelt op
-al-gesorteerde input, en visualiseert het verschil.
+verschillende soorten input.
 
 ## Opdracht
 
-Schrijf twee versies van bubble sort:
+Schrijf twee versies van bubble sort die niet de lijst teruggeven, maar het
+**aantal vergelijkingen** dat ze deden:
 
-1. `bubble_sort_zonder_exit` — zonder early-exit. Doet altijd `n − 1`
-   passes.
-2. `bubble_sort_met_exit` — met early-exit (zoals het complete algoritme).
+1. `bubble_sort_zonder_exit(lijst)` — altijd `n − 1` passes, geen vlag,
+   geen `break`.
+2. `bubble_sort_met_exit(lijst)` — met de `geswapt`-vlag uit
+   [bouwsteen 5](./bouwen/08-early-exit).
 
-Vergelijk ze op meerdere lijst-typen en plot het verschil in
-vergelijkingen.
+Verwacht op `[1, 2, 3, 4, 5]`: zonder exit 10 vergelijkingen, met exit 4.
+Op `[5, 4, 3, 2, 1]`: allebei 10.
 
+De startcode roept beide functies aan op vier soorten lijsten van 100
+getallen en print de aantallen. Alleen de twee functies hoef je te schrijven.
+
+{/* uitvoer-varieert: startcode; de functies geven 0 terug tot de leerling ze invult, en de willekeurige lijst wisselt */}
 <PyRunner initialCode={`import random
 
 def bubble_sort_zonder_exit(lijst):
     n = len(lijst)
     vergelijkingen = 0
-    # vul aan: standaard bubble sort, GEEN geswapt-vlag, GEEN break
+    # vul aan: n - 1 passes, tel elke vergelijking
+    return vergelijkingen
+
+def bubble_sort_met_exit(lijst):
+    n = len(lijst)
+    vergelijkingen = 0
+    # vul aan: zelfde, maar met de geswapt-vlag en break
+    return vergelijkingen
+
+print("zonder exit op [1, 2, 3, 4, 5]:", bubble_sort_zonder_exit([1, 2, 3, 4, 5]))
+print("met exit    op [1, 2, 3, 4, 5]:", bubble_sort_met_exit([1, 2, 3, 4, 5]))
+print()
+
+n = 100
+bijna = list(range(n))
+bijna[40], bijna[41] = bijna[41], bijna[40]   # twee buren omgewisseld
+
+soorten = {
+    'al gesorteerd':    list(range(n)),
+    'bijna gesorteerd': bijna,
+    'omgekeerd':        list(range(n, 0, -1)),
+    'willekeurig':      random.sample(range(n * 10), n),
+}
+
+for naam, lijst in soorten.items():
+    zonder = bubble_sort_zonder_exit(lijst.copy())
+    met = bubble_sort_met_exit(lijst.copy())
+    print(f"{naam:<18} zonder={zonder:>5}  met={met:>5}  besparing={zonder - met}")`} />
+
+<details>
+<summary>Tip</summary>
+
+Neem `bubble_sort_basis` uit [bouwsteen 4](./bouwen/07-meerdere-passes) als
+basis voor de versie zonder exit, en `bubble_sort` uit
+[bouwsteen 5](./bouwen/08-early-exit) voor de versie mét. Zet in allebei
+`vergelijkingen += 1` als eerste regel in de binnenste lus, vóór de `if`.
+Geef aan het eind `vergelijkingen` terug in plaats van de lijst.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def bubble_sort_zonder_exit(lijst):
+    n = len(lijst)
+    vergelijkingen = 0
     for ronde in range(n - 1):
         for i in range(n - 1 - ronde):
             vergelijkingen += 1
@@ -34,7 +86,6 @@ def bubble_sort_zonder_exit(lijst):
 def bubble_sort_met_exit(lijst):
     n = len(lijst)
     vergelijkingen = 0
-    # vul aan: zelfde maar mét early-exit
     for ronde in range(n - 1):
         geswapt = False
         for i in range(n - 1 - ronde):
@@ -45,97 +96,89 @@ def bubble_sort_met_exit(lijst):
         if not geswapt:
             break
     return vergelijkingen
-
-# Test op verschillende lijst-typen
-n = 100
-bijna = list(range(n))
-bijna[40], bijna[41] = bijna[41], bijna[40]   # twee buren omgewisseld
-
-soorten = {
-    'al gesorteerd':  list(range(n)),
-    'bijna sorted':   bijna,
-    'omgekeerd':      list(range(n, 0, -1)),
-    'willekeurig':    random.sample(range(n * 10), n),
-}
-
-zonder = {}
-met = {}
-for naam, lijst in soorten.items():
-    zonder[naam] = bubble_sort_zonder_exit(lijst.copy())
-    met[naam] = bubble_sort_met_exit(lijst.copy())
-
-import matplotlib.pyplot as plt
-import numpy as np
-
-namen = list(soorten.keys())
-zonder_vals = []
-met_vals = []
-for n in namen:
-    zonder_vals.append(zonder[n])
-    met_vals.append(met[n])
-
-x = np.arange(len(namen))
-breedte = 0.35
-fig, ax = plt.subplots(figsize=(8, 4))
-ax.bar(x - breedte/2, zonder_vals, breedte, label='zonder early-exit')
-ax.bar(x + breedte/2, met_vals, breedte, label='met early-exit')
-ax.set_xticks(x)
-ax.set_xticklabels(namen, rotation=15)
-ax.set_ylabel('vergelijkingen')
-ax.set_title(f'Bubble sort op n={n} elementen')
-ax.legend()
-plt.tight_layout()
-plt.show()
-
-for naam in namen:
-    print(f"{naam:<20} zonder={zonder[naam]:>5}  met={met[naam]:>5}  besparing={zonder[naam]-met[naam]}")`} />
-
-<details>
-<summary>Tip</summary>
-
-Beide versies hebben dezelfde **basis-structuur**. Het verschil zit in:
-
-- Bij `bubble_sort_zonder_exit`: **geen** `geswapt`-vlag, **geen** `break`.
-- Bij `bubble_sort_met_exit`: alles wat je in [bouwsteen 5](./bouwen/08-early-exit)
-  hebt geleerd.
-
-Beide moeten het aantal vergelijkingen terug geven, niet de lijst.
+```
 
 </details>
 
-<details>
-<summary>Antwoord</summary>
-
-De code zoals hierboven al gegeven werkt — de aangegeven uitwerking is
-dezelfde. Het echte werk zit in de **interpretatie** van het resultaat.
-
-</details>
-
-## Wat zie je in de grafiek?
+## Wat zie je?
 
 <details>
 <summary>Interpretatie</summary>
 
-- **Al gesorteerd**: zonder exit doet hij alle passes (~`n²/2` vergelijkingen).
-  Met exit slechts één pass (`n − 1` vergelijkingen). Enorme besparing.
-- **Bijna sorted**: één element fout staat → met early-exit nog steeds maar
-  paar passes. Zonder exit weer alle passes.
-- **Omgekeerd**: geen verschil. Geen enkele pass is zonder swaps → exit
-  helpt niet.
-- **Willekeurig**: matige besparing — typisch eindigt early-exit een paar
-  rondes voor het einde.
+Voor 100 getallen:
 
-Conclusie: early-exit is **gratis veel sneller** op bijna-gesorteerde
-data. Op willekeurige of omgekeerde data is hij ongeveer gratis (geen
-verlies), dus altijd inschakelen.
+| Lijst | Zonder exit | Met exit |
+|:---|---:|---:|
+| al gesorteerd | 4950 | 99 |
+| bijna gesorteerd | 4950 | 197 |
+| omgekeerd | 4950 | 4950 |
+| willekeurig | 4950 | meestal 4500 tot 4950 |
+
+- **Al gesorteerd**: zonder exit doet hij alle 99 passes, met exit één.
+  Vijftig keer minder werk.
+- **Bijna gesorteerd**: één pass om de wisseling te herstellen, één pass
+  om te bevestigen dat er niets meer hoeft.
+- **Omgekeerd**: geen verschil. Elke pass wisselt iets, dus de vlag staat
+  nooit op `False`.
+- **Willekeurig**: een klein verschil. De laatste paar passes hebben soms
+  niets meer te doen, meer niet.
+
+Early-exit kost dus niets op lastige input en scheelt enorm op input die
+al bijna goed staat. Daarom zet je hem altijd aan.
 
 </details>
 
 ## Uitdaging (optioneel)
 
 Implementeer **cocktail sort**: een bubble sort die afwisselend van links
-naar rechts en van rechts naar links door de lijst loopt. In één rondtrip
-bubbelt de grootste naar rechts en de kleinste naar links — minder
-overall passes voor sommige inputs.
+naar rechts en van rechts naar links door de lijst loopt. In één heen-en-
+weer bubbelt de grootste naar rechts én de kleinste naar links. Test op
+`[2, 3, 4, 5, 1]`: bubble sort heeft daar vier passes voor nodig, cocktail
+sort één heen-en-weer.
+
+<details>
+<summary>Tip</summary>
+
+Houd twee grenzen bij: `begin` en `eind`. Na een pass naar rechts staat het
+grootste getal op `eind`, dus `eind` gaat één omlaag. Na een pass naar
+links staat het kleinste op `begin`, dus `begin` gaat één omhoog. Voor de
+pass naar links loop je met `range(eind - 1, begin - 1, -1)` achteruit.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def cocktail_sort(lijst):
+    begin = 0
+    eind = len(lijst) - 1
+    geswapt = True
+    while geswapt:
+        geswapt = False
+        for i in range(begin, eind):
+            if lijst[i] > lijst[i + 1]:
+                lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+                geswapt = True
+        eind -= 1
+        if not geswapt:
+            break
+        geswapt = False
+        for i in range(eind - 1, begin - 1, -1):
+            if lijst[i] > lijst[i + 1]:
+                lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+                geswapt = True
+        begin += 1
+    return lijst
+
+print(cocktail_sort([2, 3, 4, 5, 1]))             # [1, 2, 3, 4, 5]
+print(cocktail_sort([3, 1, 4, 1, 5, 9, 2, 6]))    # [1, 1, 2, 3, 4, 5, 6, 9]
+```
+
+De 1 staat helemaal achteraan en moet naar voren. Bubble sort schuift hem
+elke pass één plek op; de pass naar links van cocktail sort brengt hem in
+één keer naar voren.
+
+</details>
 
 Door naar [veelgemaakte fouten](./12-fouten).
