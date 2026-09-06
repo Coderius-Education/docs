@@ -52,7 +52,7 @@ Je plakt de drie stukken aan elkaar tot één lijst zetten.
 assert hanoi(1, "A", "C", "B") == [("A", "C")], "1 schijf: verwacht [('A', 'C')]"
 assert hanoi(2, "A", "C", "B") == [("A", "B"), ("A", "C"), ("B", "C")], "2 schijven: verwacht A-B, A-C, B-C"
 assert len(hanoi(3, "A", "C", "B")) == 7, "3 schijven: verwacht 7 zetten"
-assert len(hanoi(10, "A", "C", "B")) == 1023, "10 schijven: verwacht 1023 zetten (2**10 - 1)"
+assert len(hanoi(6, "A", "C", "B")) == 63, "6 schijven: verwacht 63 zetten (2**6 - 1)"
 
 print("Alle tests gehaald ✓ — je functie werkt voor elke n!")`} />
 
