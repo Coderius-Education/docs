@@ -47,11 +47,15 @@ zeggen, schrijf je ook niet.
 
 Code, uitvoerblokken, getallen, tabellen met data, links, frontmatter,
 component-props, de markers in commentaar (`{/* niet-draaien: … */}`) en de
-H2-koppen (die vormen de inhoudsopgave en soms een test). Een feitelijke
-fout die je onderweg ziet los je niet stil op; die meld je apart, want een
-toonwijziging en een inhoudswijziging horen niet in dezelfde commit. Een
-geciteerde foutmelding herschrijf je nooit, ook niet als hij een
-uitroepteken heeft.
+H2-koppen (die vormen de inhoudsopgave en soms een test). Je voegt ook
+geen inhoud toe: een nieuw voorbeeldgetal ("item 4 en 5 wegen samen al
+13") of een extra uitleg maakt de zin misschien concreter, maar het is een
+inhoudswijziging die de auteur moet beoordelen. Een feitelijke fout die je
+onderweg ziet los je niet stil op; die meld je apart, want een
+toonwijziging en een inhoudswijziging horen niet in dezelfde commit.
+Hetzelfde geldt voor een kop die niet meer dekt wat eronder staat, of een
+"wij"-kop op een "je"-pagina: melden, niet veranderen. Een geciteerde
+foutmelding herschrijf je nooit, ook niet als hij een uitroepteken heeft.
 
 ## De zetten
 
@@ -69,7 +73,10 @@ te veel.
 "Belangrijk:", "Let op:" boven elke tweede alinea, "Klinkt eenvoudig,
 maar". Dit zijn trompetjes voor de zin die erna komt. Haal het trompetje
 weg en laat de zin zelf het werk doen; als de zin dat niet kan, is de zin
-het probleem.
+het probleem. Let op dat je er geen ander trompetje voor terugzet: "Het
+handige daaraan:" is "Het mooie:" in een andere jas, en "Daarom hebben we
+een slimmer algoritme nodig" is de verteller die zijn volgende paragraaf
+aankondigt.
 
 **Vet als nadruk-machine.** Vet is voor de eerste keer dat een term valt.
 Zodra elke alinea drie vette woorden heeft, leest het oog eroverheen en
