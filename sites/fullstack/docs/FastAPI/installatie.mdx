@@ -9,59 +9,52 @@ Start Visual Studio Code. Je ziet het welkomstscherm of het project waar je het 
 <details>
 <summary>Heb je dit nog niet? Klik hier.</summary>
 
-Visual Studio Code is de editor waarin je in deze cursus werkt. Download hem gratis en installeer hem met de standaardinstellingen. De stappen met schermafbeeldingen staan in de editor-cursus: <SiteLink site="editor" to="/installatie-vscode/">VS Code installeren</SiteLink>.
+Visual Studio Code is de editor waarin je in deze cursus werkt. Download hem gratis en installeer hem met de standaardinstellingen. Laat op Windows het vakje **Add to PATH** aangevinkt staan; zonder dat vakje mist je het commando uit check 4. De stappen met schermafbeeldingen staan in de editor-cursus: <SiteLink site="editor" to="/installatie-vscode/">VS Code installeren</SiteLink>.
 
 </details>
 
-## Check 2: Python
+## Check 2: een projectmap met een terminal erin
 
-Open in VS Code een terminal via **Terminal** → **New Terminal** en typ:
+In die map komt alles van deze cursus te staan. Open PowerShell vanuit die map: klik in de adresbalk van de Verkenner, typ `powershell` over het pad heen en druk op Enter. Het prompt eindigt op het pad van je map:
+
+```
+PS C:\Users\jij\Documenten\fullstack-project>
+```
+
+<details>
+<summary>Heb je dit nog niet? Klik hier.</summary>
+
+1. Maak in de Verkenner een nieuwe map, bijvoorbeeld `fullstack-project`, en open hem
+2. Klik in de adresbalk bovenin, typ `powershell` over het pad heen en druk op Enter
+
+Het maakt uit vanuit welke map je de terminal opent: alles wat je typt gebeurt in díé map, en daar komen straks je virtual environment en je code te staan. Meer hierover: <SiteLink site="editor" to="/python/stap-1-projectmap">Een projectmap aanmaken</SiteLink>.
+
+</details>
+
+## Check 3: Python
+
+Typ in PowerShell:
 
 ```bash
 python --version
 ```
 
-Op een Mac heet het commando `python3`:
-
-```bash
-python3 --version
-```
-
-Het antwoord begint met `Python 3`. Controleer ook of de Python-extensie er is: open een `.py`-bestand, dan staat rechtsboven in de editor een **▶ Play-knop**.
+Het antwoord begint met `Python 3`.
 
 <details>
 <summary>Heb je dit nog niet? Klik hier.</summary>
 
-Je hebt twee dingen nodig: Python zelf op je computer, en de Python-extensie in VS Code.
+Typ in PowerShell `python` zonder meer. Windows opent de Microsoft Store op de pagina van Python; klik daar op **Ophalen**.
 
-1. Ga naar [python.org/downloads](https://www.python.org/downloads/) en download Python 3.
-2. Vink tijdens de installatie **Add Python to PATH** aan. Zonder dat vinkje kent de terminal het commando `python` niet.
-3. Klik op **Install Now**.
-4. Open VS Code, klik in de linkerbalk op het blokjes-icoon (Extensions), zoek `Python` en installeer de extensie van **Microsoft**.
+Sluit daarna het PowerShell-venster en open een nieuw venster vanuit je projectmap. Een venster dat al open stond kent het nieuwe commando niet, en dan blijft de Store terugkomen. De volledige uitleg, inclusief wat je doet als de Store geblokkeerd is: <SiteLink site="editor" to="/python/stap-3-installeren">Python installeren</SiteLink>.
 
-Zonder de extensie werkt de Play-knop niet en mist VS Code het commando om een virtual environment aan te maken. De volledige uitleg: <SiteLink site="editor" to="/python/stap-1-installeren">Python installeren</SiteLink>.
-
-Staat er `Python 2` of `command not found`? Sluit VS Code helemaal af en open het opnieuw, dan leest de terminal het nieuwe PATH. Op een Mac: probeer `python3`; zonder virtual environment bestaat `python` daar vaak niet.
-
-</details>
-
-## Check 3: een projectmap
-
-In de Explorer links staat de naam van een map bovenaan, bijvoorbeeld `FULLSTACK-PROJECT`. In die map komt straks alles van deze cursus.
-
-<details>
-<summary>Heb je dit nog niet? Klik hier.</summary>
-
-1. Maak op je computer een nieuwe map, bijvoorbeeld `fullstack-project`.
-2. Open die map in VS Code via **File** → **Open Folder...**.
-
-Werk altijd in een geopende map, niet in een los bestand: de virtual environment van de volgende check komt ín deze map te staan. Meer hierover: <SiteLink site="editor" to="/python/stap-2-projectmap">Een projectmap aanmaken</SiteLink>.
+Op een Mac opent `python` geen Store. Installeer Python van [python.org](https://www.python.org/downloads/); het commando heet daar `python3`, dus je controleert met `python3 --version`.
 
 </details>
 
 ## Check 4: een virtual environment
 
-Kijk naar de terminal. Vóór de prompt staat `(.venv)`:
+Je project staat open in VS Code, met een map `.venv` in de Explorer links. Open een terminal via **Terminal** → **New Terminal**; vóór de prompt staat `(.venv)`:
 
 ![De terminal in VS Code met (.venv) voor de prompt](@site/static/vs_code/venv.png)
 
@@ -72,19 +65,28 @@ Kijk naar de terminal. Vóór de prompt staat `(.venv)`:
 
 Een virtual environment is een afgesloten omgeving voor dit project. Packages die je hier installeert, komen niet in de weg van andere projecten.
 
-1. Klik op **View** → **Command Palette...**.
-2. Typ `Python: Create Environment` en klik erop.
-3. Kies **Venv** en daarna de Python-versie die je net hebt gecontroleerd.
-4. VS Code maakt een map `.venv` aan in je project.
-5. Sluit de terminal met het prullenbak-icoon en open een nieuwe via **Terminal** → **New Terminal**.
+1. Maak de omgeving aan in PowerShell, in je projectmap:
 
-Nu staat `(.venv)` voor de prompt. Staat het er nog niet? Sluit VS Code helemaal af en open de map opnieuw. De volledige uitleg: <SiteLink site="editor" to="/python/stap-4-venv">Een virtual environment aanmaken</SiteLink>.
+```bash
+python -m venv .venv
+```
+
+2. Open je project in VS Code vanuit datzelfde venster:
+
+```bash
+code .
+```
+
+3. Installeer in VS Code de Python-extensie van **Microsoft**: klik in de linkerbalk op het blokjes-icoon (Extensions), zoek `Python` en klik op **Install**
+4. Open een terminal via **Terminal** → **New Terminal**
+
+VS Code zet je virtual environment in zijn eigen terminal automatisch aan, dus daar verschijnt `(.venv)` vanzelf. Staat het er niet, sluit die terminal dan met het prullenbak-icoon en open een nieuwe. De volledige uitleg: <SiteLink site="editor" to="/python/stap-4-venv">Een virtual environment aanmaken</SiteLink>.
 
 </details>
 
 ## Check 5: FastAPI
 
-Typ in de terminal (met `(.venv)` ervoor):
+Typ in de terminal van VS Code (met `(.venv)` ervoor):
 
 ```bash
 fastapi --version
@@ -95,15 +97,15 @@ Je ziet een versienummer, bijvoorbeeld `FastAPI CLI version 0.0.8`.
 <details>
 <summary>Heb je dit nog niet? Klik hier.</summary>
 
-FastAPI is een package: een stuk Python van iemand anders, dat je met `pip` in je virtual environment zet. Typ in de terminal:
+FastAPI is een package: een stuk Python van iemand anders, dat je met `pip` in je virtual environment zet. Typ in de terminal van VS Code:
 
 ```bash
-pip install "fastapi[standard]"
+python -m pip install "fastapi[standard]"
 ```
 
-De aanhalingstekens horen erbij. Het installeren duurt even; daarna geeft `fastapi --version` een versienummer. Meer over pip: <SiteLink site="editor" to="/python/stap-6-pip">Packages installeren met pip</SiteLink>.
+De aanhalingstekens horen erbij: zonder die tekens leest PowerShell de blokhaken zelf. Het installeren duurt even; daarna geeft `fastapi --version` een versienummer. Meer over pip: <SiteLink site="editor" to="/python/stap-7-pip">Packages installeren met pip</SiteLink>.
 
-Zegt de terminal `pip: command not found` of `No module named pip`? Dan mist `(.venv)` voor de prompt. Ga terug naar check 4.
+Doe dit niet in het losse PowerShell-venster waarin je de omgeving aanmaakte: daar staat de virtual environment niet aan en belandt FastAPI buiten je project. Zegt de terminal `No module named pip` of `No module named fastapi`, kijk dan of `(.venv)` voor de prompt staat en ga anders terug naar check 4.
 
 </details>
 
