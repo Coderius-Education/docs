@@ -19,7 +19,10 @@ const DOCS = fileURLToPath(new URL('../../docs/', import.meta.url));
 const OPDRACHT_KOP = /^(Opdracht|Uitdaging|Bouw zelf)\b/;
 
 const ACHTERSTAND = new Map<string, string[]>([
-  ['cfg/14-aanpassen.mdx', ['Opdracht 1 — voeg een woord toe', 'Opdracht 2 — zoek een ambigue zin']],
+  [
+    'cfg/14-aanpassen.mdx',
+    ['Opdracht 1 — voeg een woord toe', 'Opdracht 2 — zoek een ambigue zin'],
+  ],
   ['dijkstra/12-zelf-bouwen.mdx', ['Uitdaging (optioneel)']],
   ['knapsack/09-aanpassen.mdx', ['Opdracht']],
   ['knapsack/10-zelf-bouwen.mdx', ['Opdracht', 'Uitdaging (optioneel)']],

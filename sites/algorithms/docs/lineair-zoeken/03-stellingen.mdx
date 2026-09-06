@@ -30,7 +30,7 @@ lijsten.
 
 **Onjuist.** Standaard stopt het algoritme bij de **eerste** match — die
 index geef je terug. Wil je alle posities? Dan moet je het algoritme
-aanpassen (komt later — bij *Maken*).
+aanpassen. Dat doe je bij [Bouw zelf](./10-zelf-bouwen).
 
 </details>
 
@@ -45,8 +45,9 @@ aanpassen (komt later — bij *Maken*).
 helemaal niet in de lijst voorkomt. Dan moet je elke positie bezoeken voor
 je zekerheid hebt.
 
-We zeggen: het algoritme is **O(n)** — het werk groeit lineair met de
-lengte van de lijst. Vandaar de naam *lineair* zoeken.
+Twee keer zo'n lange lijst betekent in het ergste geval twee keer zoveel
+werk. Het werk groeit *lineair* mee met de lijst, en daar komt de naam
+vandaan.
 
 </details>
 
@@ -72,22 +73,22 @@ midden van de lijst."*
 
 **Juist.** Als het doel willekeurig ergens in de lijst staat, is het
 gemiddeld ongeveer halverwege. Dus voor `n` elementen kijk je gemiddeld
-naar `n/2` elementen voor je het vindt. Nog steeds O(n) — een factor 2
-verandert het grote plaatje niet.
+naar `n/2` elementen voor je het vindt. Twee keer zo'n lange lijst is nog
+steeds twee keer zoveel werk; die factor 2 verandert daar niets aan.
 
 </details>
 
 ## Stelling 6
 
-*"Lineair zoeken is sneller dan binair zoeken op een lijst van 10 elementen."*
+*"Als het doel niet in de lijst staat, weet je dat pas na het laatste
+element."*
 
 <details>
 <summary>Antwoord</summary>
 
-**Onjuist** in theorie, maar **in de praktijk** vaak waar. Op 10 elementen
-is het verschil tussen `n` en `log₂(n)` zo klein, en de constante factor
-van binair zoeken (meer logica per stap) zo groot, dat lineair zoeken
-soms wint. Bij grote lijsten verliest lineair altijd.
+**Juist.** Zolang er nog een element over is, kan het doel daar staan.
+Pas als je alles hebt gezien zonder match, mag je "niet gevonden" zeggen.
+Daarom is "niet gevonden" straks een eigen bouwsteen, ná de lus.
 
 </details>
 

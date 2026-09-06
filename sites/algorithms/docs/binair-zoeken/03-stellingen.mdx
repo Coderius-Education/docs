@@ -28,12 +28,9 @@ stappen nodig."*
 <details>
 <summary>Antwoord</summary>
 
-**Juist.** 2¹⁰ = 1024, dus na 10 halveringen is er van 1000 elementen nog
-maximaal 1 over.
-
-Algemeen: voor `n` elementen heb je ongeveer `log₂(n)` stappen — preciezer:
-`⌊log₂(n)⌋ + 1` in het ergste geval (als het doel niet bestaat). We zeggen:
-het algoritme is **O(log n)**.
+**Juist.** Elke stap halveert het zoekgebied. Hoe vaak kun je 1000
+halveren voor er 1 over is? Tien keer, want 2¹⁰ = 1024. Tien stappen dus,
+ook als het doel niet bestaat.
 
 </details>
 
@@ -47,7 +44,8 @@ het algoritme is **O(log n)**.
 
 **Onjuist.** Welke index je krijgt, hangt af van waar het `midden` toevallig
 landt. Het kan **elk** van de gelijke waarden zijn. Wil je per se de
-*eerste*? Dan moet je het algoritme aanpassen — komt later.
+*eerste*? Dan moet je het algoritme aanpassen. Dat is de uitdaging bij
+[Bouw zelf](./11-zelf-bouwen).
 
 </details>
 
@@ -66,9 +64,8 @@ lijst van 8:
 - stap 3 → 1 over
 - stap 4 → het laatst overgebleven element vergelijken → klaar
 
-(De formule `⌊log₂(8)⌋ + 1 = 4`. Veel mensen schatten 3 omdat `2³ = 8` —
-maar je hebt na 3 halveringen nog **één** element over dat je nog moet
-checken. Vandaar de `+ 1`.)
+Veel mensen schatten 3 omdat `2³ = 8`, maar na 3 halveringen ligt er nog
+**één** element dat je moet bekijken. Vandaar de vierde stap.
 
 Het zou *lineair* zoeken zijn dat tot 8 stappen nodig heeft.
 
@@ -76,15 +73,14 @@ Het zou *lineair* zoeken zijn dat tot 8 stappen nodig heeft.
 
 ## Stelling 5
 
-*"Bij elke stap wordt het zoekgebied precies gehalveerd."*
+*"Bij elke stap valt ongeveer de helft van het zoekgebied af."*
 
 <details>
 <summary>Antwoord</summary>
 
-**Bijna juist.** Het wordt **ongeveer** gehalveerd. Door de
-afronding-bij-deling kan de ene helft 1 groter zijn dan de andere. Maar het
-*idee* van halveren klopt, en de **groeisnelheid** (log n) wordt er niet
-door veranderd.
+**Juist.** Ongeveer, niet precies: bij een oneven aantal elementen is de
+ene helft één groter dan de andere, en het midden zelf valt ook af. Voor
+het idee maakt dat niet uit: elke stap laat ongeveer de helft over.
 
 </details>
 
@@ -103,6 +99,4 @@ kiezen, met pen en papier de stappen volgen. Snap je hoe `laag`, `hoog` en
 
 </details>
 
-Snap je het idee? Tijd om het te bouwen — stukje voor stukje.
-
-Door naar [bouwsteen 1](./bouwen/04-grenzen).
+Door naar [de eerste bouwsteen](./bouwen/04-grenzen).

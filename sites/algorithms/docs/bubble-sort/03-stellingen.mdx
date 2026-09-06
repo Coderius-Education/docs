@@ -30,8 +30,8 @@ rest kan nog door elkaar staan. Je hebt typisch meerdere passes nodig.
 pass 1 zit het grootste op de juiste plek. Na pass 2 ook het tweede
 grootste. Enzovoort.
 
-Dat heeft een fijn gevolg: in pass `k` hoef je alleen tot positie
-`n − k − 1` te kijken — alles daarna staat al.
+Daar maak je straks gebruik van: elke volgende pass hoeft een stukje
+minder ver te kijken, want de staart staat al.
 
 </details>
 
@@ -53,16 +53,15 @@ maar één positie per pass opschuiven richting hun juiste plek.
 
 ## Stelling 4
 
-*"Op een al-gesorteerde lijst doet bubble sort precies één pass."*
+*"Op een al-gesorteerde lijst kan bubble sort na één pass stoppen."*
 
 <details>
 <summary>Antwoord</summary>
 
-**Juist** — als je het slimme algoritme met *early-exit* gebruikt. Eén
-pass doet `n − 1` vergelijkingen, vindt geen swaps, en concludeert: lijst
-is af. Stoppen.
-
-Zonder early-exit zou bubble sort onnodig `n − 1` passes doen.
+**Juist.** Die ene pass vergelijkt elk paar buren en wisselt niets. Dan
+weet je zeker dat de lijst af is, en hoef je niet verder. Dat "merken dat
+er niets gewisseld is" bouw je in bouwsteen 5; zonder die stap doet
+bubble sort ook op een gesorteerde lijst alle `n − 1` passes.
 
 </details>
 

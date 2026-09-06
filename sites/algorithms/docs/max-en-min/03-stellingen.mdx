@@ -15,12 +15,10 @@ tegelijk."*
 <details>
 <summary>Antwoord</summary>
 
-**Onjuist.** Twee aparte passes lezen elk element **twee keer** — dat is
-*meer* werk. Eén pass leest elk element één keer, met twee vergelijkingen
-per element. In totaal minder werk.
-
-(Je doet wel ongeveer hetzelfde aantal *vergelijkingen* — `2n` in beide
-gevallen. Het winstpunt zit in de *leestijd* — bij grote data scheelt dat.)
+**Onjuist.** Twee aparte passes lezen elk element **twee keer**. Eén pass
+leest elk element één keer en doet meteen beide vergelijkingen. Het aantal
+vergelijkingen is in beide gevallen ongeveer `2n`; de winst zit in het
+lezen, en bij grote data scheelt dat.
 
 </details>
 
@@ -66,40 +64,30 @@ update. Resultaat: `klein == groot == lijst[0]`.
 
 ## Stelling 5
 
-*"Als je `if … elif …` gebruikt in plaats van twee aparte `if`'s, kun je
-soms een waarde missen die kleiner én groter is."*
+*"Als een getal kleiner is dan `klein`, hoef je niet meer te kijken of
+het groter is dan `groot`."*
 
 <details>
 <summary>Antwoord</summary>
 
-**Onjuist.** Eén getal kan **niet tegelijk** groter zijn dan de huidige
-`groot` én kleiner dan de huidige `klein`. Want: `groot >= klein` (na
-initialisatie), dus als `x > groot` dan zeker `x > klein` (en dus niet
-`x < klein`). De `elif` is dus veilig.
-
-Het scheelt zelfs een vergelijking per element: na een geslaagde
-update-`groot` slaan we de check-`klein` over.
+**Juist.** `klein` is nooit groter dan `groot`. Een getal dat onder
+`klein` zit, zit dus zeker ook onder `groot`, en die tweede vergelijking
+kan niets meer opleveren. Dat scheelt een vergelijking per element; hoe je
+dat in code opschrijft zie je in de bouwstenen.
 
 </details>
 
 ## Stelling 6
 
-*"Tuples zoals `(klein, groot)` kun je niet uit een functie returnen."*
+*"Een functie kan maar één antwoord teruggeven, dus voor het minimum én
+het maximum heb je twee functies nodig."*
 
 <details>
 <summary>Antwoord</summary>
 
-**Onjuist.** Python ondersteunt **meerdere return-waarden** als tuple:
-
-```python
-return klein, groot          # of: return (klein, groot)
-```
-
-Aan de andere kant uitpakken:
-
-```python
-k, g = max_en_min(lijst)
-```
+**Onjuist.** Eén functie kan allebei teruggeven, als één pakketje van
+twee waarden. Hoe dat eruitziet in Python is bouwsteen 3 van dit
+hoofdstuk.
 
 </details>
 
