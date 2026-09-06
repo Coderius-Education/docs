@@ -13,10 +13,14 @@ import { describe, expect, it } from 'vitest';
 // De hoofdstukken die nog niet zijn doorgelopen staan in ACHTERSTAND met
 // hun openstaande koppen. Die lijst is exact: een nieuwe opdracht zonder
 // antwoord valt meteen op, en een opgeloste hoort hier weg.
+//
+// Ook een H3 telt, en "Extra uitdaging" ook: bij de doorloop van Torens van
+// Hanoi stond een "### Extra uitdaging" zonder antwoord onder de opdracht,
+// en die ontsnapte aan een test die alleen H2's las.
 
 const DOCS = fileURLToPath(new URL('../../docs/', import.meta.url));
 
-const OPDRACHT_KOP = /^(Opdracht|Uitdaging|Bouw zelf)\b/;
+const OPDRACHT_KOP = /^(Extra )?(Opdracht|Uitdaging|Bouw zelf)\b/i;
 
 const ACHTERSTAND = new Map<string, string[]>([
   [
@@ -60,9 +64,10 @@ function zonderCode(tekst: string): string {
 
 type Sectie = { kop: string; inhoud: string };
 
-function h2Secties(tekst: string): Sectie[] {
+/** De secties per H2 of H3; een sectie loopt tot de volgende kop van niveau 2 of 3. */
+function secties(tekst: string): Sectie[] {
   const proza = zonderCode(tekst);
-  const koppen = [...proza.matchAll(/^## (.*)$/gm)];
+  const koppen = [...proza.matchAll(/^##{1,2} (.*)$/gm)];
   return koppen.map((m, i) => {
     const eind = i + 1 < koppen.length ? koppen[i + 1].index : proza.length;
     return { kop: m[1].trim(), inhoud: proza.slice(m.index, eind) };
@@ -70,7 +75,7 @@ function h2Secties(tekst: string): Sectie[] {
 }
 
 function zonderAntwoord(pad: string): string[] {
-  return h2Secties(readFileSync(pad, 'utf8'))
+  return secties(readFileSync(pad, 'utf8'))
     .filter((s) => OPDRACHT_KOP.test(s.kop) && !/<summary>Antwoord<\/summary>/.test(s.inhoud))
     .map((s) => s.kop);
 }

@@ -32,8 +32,13 @@ Schrijf `speel(n)`: begin met alle schijven op `A`, loop door de zetten van
 `hanoi(n, "A", "C", "B")`, en verplaats telkens de **bovenste** schijf van
 de bron-paal naar de doel-paal. Geef de eindtoestand terug.
 
-> **Hint** — "bovenste schijf van een lijst pakken en op een andere leggen"
-> is precies wat `.pop()` en `.append(...)` doen.
+<details>
+<summary>Tip</summary>
+
+"De bovenste schijf van een lijst pakken en op een andere leggen" is
+precies wat `.pop()` en `.append(...)` doen.
+
+</details>
 
 ## Bouw en test
 
@@ -82,10 +87,60 @@ volgorde — en je legt nooit een grotere op een kleinere.
 
 </details>
 
-### Extra uitdaging
+## Uitdaging (optioneel)
 
-Kun je ook bepalen bij welke zet de **grootste** schijf voor het eerst op
-doel komt? (Tip: het is precies in het midden van de zettenlijst —
-zet `2ⁿ⁻¹`.)
+Bij welke zet komt de **grootste** schijf op doel? Schrijf
+`grootste_op_doel(n)` die het nummer van die zet teruggeeft, en controleer
+voor 1 tot en met 5 schijven of het steeds precies in het midden is: zet
+`2ⁿ⁻¹`.
+
+<details>
+<summary>Tip</summary>
+
+De grootste schijf is schijf `n`. In de lus van `speel` weet je na de
+`.pop()` welke schijf je net hebt opgepakt. Een nummer voor elke zet krijg
+je van `enumerate(..., start=1)`, zoals op de compleet-pagina.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def hanoi(n, bron, doel, hulp):
+    if n == 0:
+        return []
+    zetten = []
+    zetten += hanoi(n - 1, bron, hulp, doel)
+    zetten.append((bron, doel))
+    zetten += hanoi(n - 1, hulp, doel, bron)
+    return zetten
+
+
+def grootste_op_doel(n):
+    palen = {"A": list(range(n, 0, -1)), "B": [], "C": []}
+    for nummer, (bron, doel) in enumerate(hanoi(n, "A", "C", "B"), start=1):
+        schijf = palen[bron].pop()
+        palen[doel].append(schijf)
+        if schijf == n:
+            return nummer
+
+
+for n in range(1, 6):
+    print(n, "schijven: zet", grootste_op_doel(n), "van de", 2 ** n - 1)
+```
+
+```
+1 schijven: zet 1 van de 1
+2 schijven: zet 2 van de 3
+3 schijven: zet 4 van de 7
+4 schijven: zet 8 van de 15
+5 schijven: zet 16 van de 31
+```
+
+Zodra je schijf `n` oppakt, is dat de zet die hem op doel legt; de
+functie stopt daar met `return`.
+
+</details>
 
 Door naar [fouten →](./10-fouten).
