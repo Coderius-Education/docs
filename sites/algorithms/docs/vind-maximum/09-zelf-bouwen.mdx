@@ -5,12 +5,12 @@ sidebar_position: 9
 # Bouw zelf — vind ook de index van het maximum
 
 **Leerdoel:** je past het patroon aan om niet alleen de **waarde**, maar
-ook de **positie** (index) terug te geven.
+ook de positie terug te geven.
 
 ## Opdracht
 
-Schrijf `vind_index_van_maximum(lijst)` die de **index** terug geeft van
-het maximum. Bij meerdere voorkomende → de **eerste** index.
+Schrijf `vind_index_van_maximum(lijst)` die de index teruggeeft van het
+maximum. Staat het maximum er meerdere keren, geef dan de eerste index.
 
 - `vind_index_van_maximum([3, 7, 2, 9, 4])` → `3`
 - `vind_index_van_maximum([10, 20, 20, 10])` → `1` (eerste 20)
@@ -37,15 +37,15 @@ for lijst, verwacht in tests:
 <details>
 <summary>Tip</summary>
 
-Zelfde patroon als `vind_maximum`, maar nu houd je een **index** bij in
-plaats van een waarde. Vergelijken doe je via `lijst[max_index]`.
+Zelfde patroon als `vind_maximum`, maar nu houd je een index bij in plaats
+van een waarde. Vergelijken doe je via `lijst[max_index]`.
 
 Welke startwaarde kies je voor `max_index`? Welke variabele update je bij
 een nieuwe winnaar?
 
 Loop door de lijst met `enumerate` (ken je uit
 [lineair zoeken, bouwsteen 1](/docs/lineair-zoeken/bouwen/04-doorlopen))
-zodat je in elke ronde **zowel** de huidige index als de huidige waarde
+zodat je in elke ronde zowel de huidige index als de huidige waarde
 hebt.
 
 </details>
@@ -68,8 +68,8 @@ print(vind_index_van_maximum([42]))               # 0
 
 Waarom `>` en niet `>=`?
 
-- `>` → bij gelijke waardes blijft de **eerste** index staan.
-- `>=` → bij gelijke waardes wordt de **laatste** index gepakt.
+- Met `>` blijft bij gelijke waardes de eerste index staan.
+- Met `>=` wordt het de laatste.
 
 Beide zijn geldige keuzes — kies bewust.
 
@@ -84,9 +84,9 @@ Bijvoorbeeld `vind_index_van_maximum([7, 7, 7, 7])`. Probeer het in de
 code-omgeving hierboven.
 
 Met de `>`-versie krijg je `0` terug — de eerste 7 wint, want geen latere
-waarde is **strict groter**. Met `>=` zou je `3` krijgen — de laatste.
+waarde is strikt groter. Met `>=` zou je `3` krijgen, de laatste dus.
 
-Geen van beide is "fout". Het is een **ontwerpkeuze**: bij gelijke
+Geen van beide is fout; het is een ontwerpkeuze. Bij gelijke
 waardes, welke positie tel je als de winnaar? In de praktijk kies je
 meestal de eerste, want dat is voorspelbaarder en past bij hoe lineair
 zoeken werkt.
@@ -95,7 +95,7 @@ zoeken werkt.
 
 ## Uitdaging (optioneel)
 
-Schrijf `vind_alle_indexen_van_maximum(lijst)` die een **lijst** van alle
+Schrijf `vind_alle_indexen_van_maximum(lijst)` die een lijst van alle
 indexen returnt waar het maximum staat. Bijv. `[5, 3, 5, 2, 5]` → `[0, 2, 4]`.
 
 <details>

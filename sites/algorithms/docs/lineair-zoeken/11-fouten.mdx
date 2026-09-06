@@ -9,7 +9,7 @@ ze optreden. Een fout is geen tegenslag — het is informatie.
 
 ## `return -1` op de verkeerde inspringing
 
-Geen Python-foutmelding — wél een **logische fout**. De functie returnt te
+Geen foutmelding, maar wel een logische fout: de functie returnt te
 vroeg en geeft daardoor verkeerde antwoorden.
 
 **Oorzaak:** `return -1` staat binnen de `for`-lus en wordt al bij de
@@ -45,7 +45,7 @@ SyntaxError: invalid syntax. Maybe you meant '==' or ':=' instead of '='?
 ```
 
 **Oorzaak:** `=` is **toekenning** (`x = 5` zet de waarde 5 in x);
-`==` is **vergelijking** (`if x == 5` vraagt of x gelijk is aan 5). In een
+`==` vergelijkt: `if x == 5` vraagt of x gelijk is aan 5. In een
 `if` heb je een vergelijking nodig.
 
 **Oplossing:** gebruik `==` in vergelijkingen.
@@ -61,15 +61,15 @@ if waarde == doel:
     return i
 ```
 
-Onthouden: **één** `=` is toekennen, **twee** `==` is vergelijken.
+Onthouden: één `=` is toekennen, twee `==` is vergelijken.
 
 ## `-1` als index gebruiken zonder te controleren
 
-Geen Python-foutmelding — wél een **stille fout**. Je zoekt iets dat er
+Geen foutmelding, maar wel een stille fout: je zoekt iets dat er
 niet is, en het programma print vrolijk een antwoord.
 
 **Oorzaak:** `zoek` geeft `-1` terug bij "niet gevonden", en `lijst[-1]`
-is in Python gewoon geldig: het **laatste** element. Wie het resultaat
+is in Python gewoon geldig en betekent het laatste element. Wie het resultaat
 meteen als index gebruikt, krijgt dus een echte waarde terug voor iets
 dat niet in de lijst staat.
 

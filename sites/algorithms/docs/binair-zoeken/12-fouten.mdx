@@ -19,8 +19,8 @@ wat mis kan gaan.
 keer — het zoekgebied krimpt nooit.
 
 **Oplossing:** schrijf `laag = midden + 1`. Door het al-onderzochte midden
-weg te gooien, **moet** het zoekgebied krimpen met minstens 1 element per
-stap → de lus stopt altijd.
+weg te gooien krimpt het zoekgebied elke stap met minstens één element, en
+dan stopt de lus altijd.
 
 {/* niet-compileren: fragment; alleen de elif-tak van de vergelijking */}
 ```python
@@ -37,7 +37,7 @@ Meer uitleg: [Bouwsteen 3 — vergelijken](./bouwen/06-vergelijken).
 
 ## `laag <= hoog` vs `laag < hoog`
 
-Geen Python-foutmelding — wél een **logische fout** bij sommige inputs.
+Geen foutmelding, maar bij sommige lijsten wel een fout antwoord.
 
 **Oorzaak:** met `while laag < hoog` slaat de lus de laatste ronde over
 zodra `laag == hoog`. Dan blijft één element ongecontroleerd.
@@ -59,7 +59,7 @@ while laag <= hoog:
 
 ## Ongesorteerde lijst meegeven
 
-Geen foutmelding — gewoon **fout antwoord**. Dit is de gevaarlijkste soort
+Geen foutmelding, alleen een fout antwoord. Dit is de gevaarlijkste soort
 bug, omdat hij stilletjes verkeerde dingen doet.
 
 **Oorzaak:** het algoritme veronderstelt *als `lijst[midden] < doel`, dan
@@ -78,7 +78,7 @@ lijst = sorted(jouw_lijst)
 binair_zoek(lijst, doel)
 ```
 
-Als je vaak zoekt, sorteer dan **één keer** en bewaar de gesorteerde
+Zoek je vaak, sorteer dan één keer en bewaar de gesorteerde
 versie. Het sorteren kost O(n log n), maar daarna is elk zoeken O(log n) —
 bij veel zoekopdrachten loont dat.
 

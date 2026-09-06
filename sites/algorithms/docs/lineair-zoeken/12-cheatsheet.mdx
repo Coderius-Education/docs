@@ -70,7 +70,7 @@ def naam(parameter1, parameter2):
     return iets         # stopt de functie en geeft 'iets' terug
 ```
 
-`return` stopt de functie **direct** — code erna wordt niet meer
+`return` stopt de functie meteen; code erna wordt niet meer
 uitgevoerd.
 
 </details>
@@ -90,7 +90,7 @@ resultaat.append(42)        # achteraan toevoegen
 <details>
 <summary>Wanneer werkt het?</summary>
 
-- Op **elke** lijst — gesorteerd of niet.
+- Op elke lijst, gesorteerd of niet.
 - Op lijsten van strings, getallen, of wat dan ook, zolang `==` betekenis
   heeft.
 
@@ -99,10 +99,10 @@ resultaat.append(42)        # achteraan toevoegen
 <details>
 <summary>Hoe snel is het?</summary>
 
-- **Beste geval**: doel staat vooraan → 1 vergelijking.
-- **Slechtste geval**: doel staat achteraan of bestaat niet → `n`
+- Beste geval: het doel staat vooraan, dus één vergelijking.
+- Slechtste geval: het doel staat achteraan of komt niet voor, dus `n`
   vergelijkingen.
-- We zeggen: **O(n)** (lineair in de lengte).
+- Dat noemen we `O(n)`: lineair in de lengte.
 
 </details>
 

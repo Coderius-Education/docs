@@ -5,11 +5,11 @@ sidebar_position: 11
 # Bouw zelf — vergelijk lineair en binair
 
 **Leerdoel:** je zet beide algoritmes naast elkaar op dezelfde data en
-telt het werk. Theorie wordt nu **meetbaar**.
+telt het werk. De theorie wordt nu meetbaar.
 
 ## Opdracht
 
-Schrijf beide algoritmes zó dat ze het **aantal vergelijkingen** tellen.
+Schrijf beide algoritmes zo dat ze het aantal vergelijkingen tellen.
 De startcode laat ze los op gesorteerde lijsten van 10 tot 100.000
 getallen, in het slechtste geval: het doel komt niet voor.
 
@@ -40,7 +40,7 @@ returnt aan het eind die teller — ook als je niets vond.
 
 Voor `binair_tellen`: kopieer `binair_zoek` en vervang de `return midden`
 en `return -1` door `return vergelijkingen`. Hoog `vergelijkingen` op
-**binnen** de while-lus.
+binnen de while-lus.
 
 </details>
 
@@ -91,11 +91,11 @@ n        lineair    binair
 100000   100000     16
 ```
 
-- **Lineair**: tien keer zo'n lange lijst, tien keer zoveel werk. Het werk
+- Lineair: tien keer zo'n lange lijst kost tien keer zoveel werk. Het
   groeit even hard als `n`.
-- **Binair**: tien keer zo'n lange lijst, drie of vier vergelijkingen
-  erbij. Elke vergelijking halveert wat er over is, dus het werk groeit
-  met het aantal keer dat je `n` kunt halveren.
+- Binair: tien keer zo'n lange lijst kost drie of vier vergelijkingen
+  extra. Elke vergelijking halveert wat er nog over is, dus het werk
+  groeit met het aantal keer dat je `n` kunt halveren.
 
 Op een lijst van een miljard zou het verschil nog groter zijn: een
 miljard vergelijkingen tegenover ongeveer 30.
@@ -104,9 +104,9 @@ miljard vergelijkingen tegenover ongeveer 30.
 
 ## Uitdaging (optioneel)
 
-Pas binair zoeken aan zodat het bij duplicaten **de eerste** voorkomende
+Pas binair zoeken aan zodat het bij duplicaten de eerste voorkomende
 index returnt. Hint: stop niet bij de eerste match — blijf doorzoeken in
-de **linker** helft.
+de linker helft.
 
 - `binair_zoek_eerste([1, 2, 2, 2, 3], 2)` → `1`
 - `binair_zoek_eerste([1, 2, 2, 2, 3], 4)` → `-1`

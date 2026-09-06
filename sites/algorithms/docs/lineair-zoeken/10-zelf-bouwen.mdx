@@ -9,8 +9,8 @@ probleem op te lossen, zonder dat je het algoritme letterlijk kopieert.
 
 ## Opdracht
 
-Bouw een functie `alle_indexen(lijst, doel)` die een **lijst van alle
-indexen** terug geeft waar het doel voorkomt.
+Bouw een functie `alle_indexen(lijst, doel)` die een lijst teruggeeft met
+alle indexen waar het doel voorkomt.
 
 - `alle_indexen([3, 1, 4, 1, 5], 1)` → `[1, 3]`
 - `alle_indexen([7, 7, 7], 7)` → `[0, 1, 2]`
@@ -40,9 +40,9 @@ for lijst, doel, verwacht in tests:
 
 Twee dingen veranderen ten opzichte van `zoek`:
 
-1. Je hebt een **lijst** nodig om resultaten in op te slaan
+1. Je hebt een lijst nodig om de resultaten in te bewaren
    (`resultaat = []`).
-2. Je mag **niet** stoppen bij de eerste match — loop door tot het eind.
+2. Stop niet bij de eerste match, maar loop door tot het eind.
 
 Aan het eind van de functie return je de lijst.
 
@@ -82,19 +82,18 @@ Wat hier opvalt:
 <summary>Kun je `alle_indexen` eerder laten stoppen als het doel nergens voorkomt?</summary>
 
 Nee — en dat is precies het verschil met `zoek`. Bij `zoek` mocht je
-stoppen zodra je het doel **één keer** had gezien. Bij `alle_indexen`
-weet je pas aan het **einde** van de lijst zeker dat er geen extra match
-meer komt. Je **moet** dus altijd de hele lijst doorlopen, ongeacht
-input.
+stoppen zodra je het doel één keer had gezien. Bij `alle_indexen` weet je
+pas aan het einde van de lijst zeker dat er geen match meer komt, dus je
+loopt hem altijd helemaal door.
 
-Conclusie: `alle_indexen` doet **altijd** `n` vergelijkingen. `zoek` doet
-*in het beste geval* maar 1.
+`alle_indexen` doet dus altijd `n` vergelijkingen, waar `zoek` er in het
+beste geval maar één doet.
 
 </details>
 
 ## Uitdaging (optioneel)
 
-Schrijf `eerste_groter_dan(lijst, drempel)` die de index van het **eerste**
+Schrijf `eerste_groter_dan(lijst, drempel)` die de index van het eerste
 element returnt dat groter is dan `drempel`, of `-1` als er geen zo'n
 element is.
 

@@ -5,16 +5,16 @@ sidebar_position: 7
 # Bouwsteen 4 — het "niet gevonden"-geval
 
 **Leerdoel:** je voegt het laatste stukje toe: `-1` teruggeven als het
-doel **niet** in de lijst zit.
+doel niet in de lijst zit.
 
 ## Wat we willen
 
 Het probleem uit de vorige stap: bij een doel dat niet bestaat krijgen we
-`None`. We willen liever **`-1`** — een duidelijk signaal "niet gevonden".
+`None`. Liever `-1`: een duidelijk signaal voor "niet gevonden".
 
 ## Waar moet `return -1` staan?
 
-Dit is een **valstrik** waar veel mensen instinken. Hier staat hij op een
+Dit is een valstrik waar veel mensen intrappen. Hier staat hij op een
 plek die er logisch uitziet. Wat denk je dat dit print?
 
 ```python
@@ -36,11 +36,11 @@ print(zoek([3, 1, 4, 1, 5], 9))   # zou -1 moeten zijn
 -1
 ```
 
-**Allebei `-1`.** Dat klopt niet — bij 4 verwachten we `2`.
+Allebei `-1`, terwijl er bij doel 4 een `2` had moeten staan.
 
-Waarom? `return -1` zit **binnen** de `for`-lus. Bij de eerste iteratie
-controleert hij `3 == 4` → niet waar → `return -1` → de functie stopt
-**direct**, na maar één iteratie. De rest van de lijst zie je nooit.
+Dat komt doordat `return -1` binnen de `for`-lus staat. In de eerste ronde
+is `3 == 4` niet waar, dus voert Python `return -1` uit en stopt de
+functie na één ronde. De rest van de lijst komt hij nooit tegen.
 
 </details>
 
@@ -72,9 +72,9 @@ print(zoek([3, 1, 4, 1, 5], 9))   # verwacht: -1`} />
 <details>
 <summary>Tip</summary>
 
-In Python bepaalt de **inspringing** de structuur:
-- Dezelfde inspringing als `for` → op functie-niveau (na de lus).
-- Dezelfde inspringing als `if` → in de lus.
+In Python bepaalt de inspringing de structuur. Staat een regel even ver
+ingesprongen als `for`, dan hoort hij bij de functie en draait hij na de
+lus. Staat hij even ver als `if`, dan zit hij ín de lus.
 
 Visueel:
 
@@ -102,8 +102,8 @@ print(zoek([3, 1, 4, 1, 5], 4))   # 2
 print(zoek([3, 1, 4, 1, 5], 9))   # -1
 ```
 
-`return -1` staat nu **buiten** de `for`-lus, op functie-niveau. Python
-komt er pas als de **hele** lus is afgelopen zonder match.
+`return -1` staat nu buiten de `for`-lus, op functie-niveau. Python komt
+er pas als de hele lus is afgelopen zonder match.
 
 </details>
 

@@ -69,9 +69,9 @@ print(vind_maximum([5, 5, 5, 5]))             # verwacht: 5`} />
 
 Speel met de code. Probeer in elk geval:
 
-1. Wat gebeurt er op een **lege** lijst `[]`?
-2. Wat gebeurt er op een lijst van **strings**: `["banaan", "appel", "kers"]`?
-3. Wat gebeurt er op een **gemengde** lijst: `[1, "twee", 3]`?
+1. Wat gebeurt er op een lege lijst `[]`?
+2. En op een lijst met strings, `["banaan", "appel", "kers"]`?
+3. En op een gemengde lijst, `[1, "twee", 3]`?
 
 <PyRunner initialCode={`def vind_maximum(lijst):
     maximum = lijst[0]
@@ -107,9 +107,9 @@ Gemengd → `TypeError: '>' not supported between instances of 'str' and
 
 ## Hoeveel werk doet dit?
 
-Voor `n` elementen doet ons algoritme **`n` vergelijkingen** (we
-vergelijken óók `lijst[0]` met zichzelf, één extra). Dat is **O(n)** —
-lineair in de lijstgrootte.
+Voor `n` elementen doet dit algoritme `n` vergelijkingen; `lijst[0]` wordt
+ook één keer met zichzelf vergeleken. Dat is `O(n)`: lineair in de
+lijstgrootte.
 
 Wil je écht minimaal werk? Sla het eerste element over met `lijst[1:]`
 (zie [bouwsteen 3](./bouwen/06-initialisatie)). Dan zijn het `n − 1`

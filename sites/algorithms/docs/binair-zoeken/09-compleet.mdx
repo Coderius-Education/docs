@@ -82,8 +82,9 @@ print(binair_zoek([42], 42))
 
 - `7` staat op index 3 — gevonden.
 - `4` staat niet in de lijst — `return -1`.
-- Lege lijst → de while-lus draait 0 keer (`laag=0 > hoog=-1`) → `-1`.
-- Lijst met één element `[42]`, doel `42` → midden = 0, direct raak → `0`.
+- Bij een lege lijst draait de while-lus nul keer, want `laag=0` is al
+  groter dan `hoog=-1`; het antwoord is `-1`.
+- Bij `[42]` met doel `42` is het midden index 0 en is het meteen raak.
 
 </details>
 
@@ -114,9 +115,9 @@ print(binair_zoek([42], 42))`} />
 
 Speel met de code. Probeer in elk geval:
 
-1. Wat gebeurt er op een **lege** lijst?
-2. Wat gebeurt er op een lijst van **één** element?
-3. Wat gebeurt er op een **ongesorteerde** lijst?
+1. Wat gebeurt er op een lege lijst?
+2. En op een lijst met één element?
+3. En op een ongesorteerde lijst?
 
 <PyRunner initialCode={`def binair_zoek(lijst, doel):
     laag = 0
@@ -139,11 +140,12 @@ print(binair_zoek([3, 1, 4, 1, 5], 4))   # 2  (ongesorteerd: toevallig raak)`} /
 <details>
 <summary>Wat zie je?</summary>
 
-- Lege lijst → `hoog = -1`, dus `laag (0) > hoog (-1)` → while draait 0
-  keer → `return -1`. Veilig.
-- Eén element → `laag = hoog = 0`, midden = 0. Check direct.
-- Ongesorteerd → een *toevallig* antwoord, vaak verkeerd. Het algoritme is
-  niet **correct** op ongesorteerde input.
+- Bij een lege lijst is `hoog = -1`, dus `laag` is meteen groter en de
+  while draait nul keer: `return -1`. Veilig.
+- Bij één element zijn `laag` en `hoog` allebei 0, en de eerste check is
+  meteen raak.
+- Op een ongesorteerde lijst komt er een toevallig antwoord uit, meestal
+  het verkeerde. Het algoritme is daar simpelweg niet voor gemaakt.
 
 </details>
 

@@ -15,7 +15,7 @@ zonder de logica te veranderen.
 
 ## Opdracht
 
-Pas `binair_zoek` aan zodat de functie een **tuple** returnt
+Pas `binair_zoek` aan zodat de functie twee dingen teruggeeft
 `(index, aantal_stappen)`:
 
 - `index` zoals voorheen (de gevonden index, of `-1`).
@@ -49,12 +49,12 @@ print(binair_zoek_met_stappen(getallen, 999))  # verwacht: (-1, ?)`} />
 <details>
 <summary>Tip</summary>
 
-Welke bouwsteen verandert er **niet**? (alles in de while-lus rondom het
+Welke bouwsteen blijft hetzelfde? (alles in de while-lus rondom het
 vergelijken/verschuiven blijft gelijk)
 
-Welke wel? Je hebt een **teller** nodig die je:
-- **vóór** de while-lus op 0 zet
-- **binnen** de while-lus met 1 ophoogt
+Wat je erbij nodig hebt is een teller, die je:
+- vóór de while-lus op 0 zet
+- binnen de while-lus met 1 ophoogt
 - bij elke `return` meegeeft
 
 </details>
@@ -79,7 +79,7 @@ def binair_zoek_met_stappen(lijst, doel):
     return (-1, stappen)
 ```
 
-Voor een lijst van 100 elementen zijn er **maximaal 7** stappen
+Voor een lijst van 100 elementen zijn er hooguit 7 stappen
 (`2⁷ = 128`). Dat sluit aan op de theorie: O(log₂ n).
 
 </details>

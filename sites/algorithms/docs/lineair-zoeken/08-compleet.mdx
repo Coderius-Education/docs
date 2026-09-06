@@ -58,10 +58,10 @@ print(zoek([], 5))           # verwacht: -1`} />
 
 Speel met de code. Probeer in elk geval:
 
-1. Zoek een waarde die **meerdere keren** voorkomt. Welke index krijg je?
+1. Zoek een waarde die meerdere keren voorkomt. Welke index krijg je?
 2. Vervang de lijst door strings: `["appel", "peer", "kers"]`, doel
    `"peer"`. Werkt het?
-3. Wat gebeurt er als de lijst **leeg** is?
+3. Wat gebeurt er als de lijst leeg is?
 
 <PyRunner initialCode={`def zoek(lijst, doel):
     for i, waarde in enumerate(lijst):
@@ -83,9 +83,9 @@ print(zoek([], "iets"))`} />
 -1
 ```
 
-- Bij meerdere voorkomende waarden krijg je de **eerste** (index 0).
+- Staat een waarde meerdere keren in de lijst, dan krijg je de eerste.
 - Strings werken precies hetzelfde — `==` vergelijkt ook strings.
-- Lege lijst → de `for`-lus draait 0 keer → meteen `return -1`.
+- Bij een lege lijst draait de `for`-lus nul keer en volgt meteen `return -1`.
 
 Lineair zoeken is *type-onafhankelijk*: het werkt op alles waar `==`
 betekenis heeft.

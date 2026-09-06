@@ -14,10 +14,10 @@ langste?"* Niemand heeft een meetlat. Wat doe je?
 
 Een logische aanpak:
 
-1. Loop op de **eerste** persoon af. Onthoud zijn/haar lengte als
-   *"langste tot nu toe"*.
-2. Loop naar de tweede. Vergelijk: is hij/zij langer? Zo ja → onthoud
-   die in plaats. Zo nee → niets doen.
+1. Loop naar de eerste persoon en onthoud die lengte als "langste tot nu
+   toe".
+2. Loop naar de tweede. Is die langer, onthoud dan die lengte; zo niet,
+   dan verandert er niets.
 3. Herhaal voor de derde, vierde, vijfde, …
 4. Aan het eind ben je langs iedereen geweest en weet je wie de langste is.
 
@@ -52,9 +52,9 @@ lijst start, en het kost niets.
 
 Dit is een **patroon** dat je in heel veel algoritmes terugziet:
 
-1. Begin met een **startwaarde** (hier: het eerste element).
-2. **Loop** door de rest van de lijst.
-3. **Update** je waarde als de nieuwe iets bijzonders is (hier: groter).
+1. Begin met een startwaarde; hier is dat het eerste element.
+2. Loop door de rest van de lijst.
+3. Werk je waarde bij zodra de nieuwe iets bijzonders is, hier: groter.
 4. Aan het eind heb je het antwoord.
 
 Je *accumuleert* (verzamelt) informatie tijdens de doorloop. Vandaar de
@@ -63,7 +63,7 @@ naam.
 <details>
 <summary>Wat als de lijst leeg is?</summary>
 
-Dan is er **geen maximum** — geen elementen om te vergelijken. Veel
+Dan is er geen maximum, want er is niets om te vergelijken. Veel
 algoritmes geven dan een speciale waarde terug (`None`), of crashen met een
 foutmelding. We bespreken dit later expliciet.
 

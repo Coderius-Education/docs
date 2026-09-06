@@ -5,7 +5,7 @@ sidebar_position: 3
 # Stellingen — toets je begrip
 
 **Leerdoel:** je toetst of je het *idee* van binair zoeken (halveren) snapt,
-**voordat** je gaat programmeren.
+voordat je gaat programmeren.
 
 ## Stelling 1
 
@@ -15,7 +15,7 @@ sidebar_position: 3
 <summary>Antwoord</summary>
 
 **Onjuist.** Het algoritme gaat ervan uit: *"als het midden te hoog is,
-moet het doel links liggen"*. Die aanname klopt **alleen** als de lijst
+moet het doel links liggen"*. Die aanname klopt alleen als de lijst
 gesorteerd is. Op een rommelige lijst krijg je willekeurige antwoorden.
 
 </details>
@@ -43,7 +43,7 @@ ook als het doel niet bestaat.
 <summary>Antwoord</summary>
 
 **Onjuist.** Welke index je krijgt, hangt af van waar het `midden` toevallig
-landt. Het kan **elk** van de gelijke waarden zijn. Wil je per se de
+landt. Het kan elk van de gelijke waardes zijn. Wil je per se de
 *eerste*? Dan moet je het algoritme aanpassen. Dat is de uitdaging bij
 [Bouw zelf](./11-zelf-bouwen).
 
@@ -59,13 +59,13 @@ landt. Het kan **elk** van de gelijke waarden zijn. Wil je per se de
 **Onjuist.** Voor 8 elementen zijn er maximaal **4** stappen nodig. Bij een
 lijst van 8:
 
-- stap 1 → 4 elementen over
-- stap 2 → 2 over
-- stap 3 → 1 over
-- stap 4 → het laatst overgebleven element vergelijken → klaar
+- Na stap 1 blijven er 4 elementen over.
+- Na stap 2 nog 2.
+- Na stap 3 nog 1.
+- Stap 4 vergelijkt dat laatste element, en dan ben je klaar.
 
 Veel mensen schatten 3 omdat `2³ = 8`, maar na 3 halveringen ligt er nog
-**één** element dat je moet bekijken. Vandaar de vierde stap.
+één element dat je nog moet bekijken. Vandaar de vierde stap.
 
 Het zou *lineair* zoeken zijn dat tot 8 stappen nodig heeft.
 
