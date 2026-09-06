@@ -62,8 +62,8 @@ describe('de cheatsheet vat de fouten-pagina samen', () => {
     expect(met.length).toBeGreaterThan(5);
   });
 
-  it.each(met.map(([h]) => h))('%s', (hoofdstuk) => {
-    const { samenvatting, koppen } = met.find(([h]) => h === hoofdstuk)![1];
+  it.each(met)('%s', (hoofdstuk, paar) => {
+    const { samenvatting, koppen } = paar;
     const aanwezig = new Set(spans(samenvatting));
     const ontbreekt = koppen.flatMap((kop) => spans(kop).filter((s) => !aanwezig.has(s)));
     if (ACHTERSTAND.has(hoofdstuk)) {
