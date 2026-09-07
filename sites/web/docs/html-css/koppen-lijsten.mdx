@@ -45,7 +45,7 @@ export const makeHtml = `<!DOCTYPE html>
 
 ## Wat ga je leren?
 
-Je leert hoe je koppen van verschillende grootte maakt en hoe je informatie in een lijst zet.
+Koppen van verschillende grootte, en informatie netjes in een lijst.
 
 ## Theorie
 
@@ -57,9 +57,12 @@ HTML heeft zes niveaus van koppen, van `<h1>` (de grootste) tot `<h6>` (de klein
 <h1>Hoofdtitel</h1>
 <h2>Ondertitel</h2>
 <h3>Nog kleiner</h3>
+<h4>Nog kleiner</h4>
+<h5>Bijna de kleinste</h5>
+<h6>De kleinste</h6>
 ```
 
-Gebruik `<h1>` maar één keer per pagina — voor de hoofdtitel. Gebruik `<h2>` voor secties.
+Gebruik `<h1>` maar één keer per pagina — voor de hoofdtitel. Gebruik `<h2>` voor secties. Onder `<h3>` kom je zelden; `<h4>` tot `<h6>` gebruik je alleen op pagina's met veel lagen.
 
 ### Lijsten
 
@@ -108,7 +111,7 @@ De volgorde van items in een `<ul>` maakt niet uit. In een `<ol>` wel.
 Experimenteer met de code:
 
 - Wat gebeurt er als je `<ul>` verandert in `<ol>`?
-- Wat zie je als je een `<h4>` toevoegt? Is die groter of kleiner dan `<h2>`?
+- Voeg een `<h4>` toe tussen twee `<h2>`-secties. Zie je aan de grootte alleen al welke bij welke sectie hoort?
 - Kun je een lijst maken binnen een lijst? Probeer het.
 
 ## Modify
@@ -143,7 +146,7 @@ Maak een `<h2>` voor de kop en een `<ul>` met `<li>` items eronder. Zet dit gehe
 
 ## Make
 
-**Opdracht:** Maak een gestructureerde paklijst in HTML voor je volgende vakantie. Begin met een overkoepelende kop (`<h2>`), en gebruik daaronder een ongeordende lijst (`<ul>`) voor kleding en een geordende lijst (`<ol>`) voor je top 3 kleding met de hoogste prioriteit.
+**Opdracht:** Maak een gestructureerde paklijst in HTML voor je volgende vakantie. Begin met een `<h1>` als paginatitel, en gebruik daaronder een ongeordende lijst (`<ul>`) voor kleding en een geordende lijst (`<ol>`) voor je top 3 met de hoogste prioriteit. Zet boven elke lijst een `<h2>`.
 
 <CodeEditor
   initialHtml={makeHtml}
@@ -161,14 +164,16 @@ Zorg ervoor dat elk item (zowel in de `<ol>` als de `<ul>`) in een `<li>` tag st
 <summary>Antwoord</summary>
 
 ```html
-<h2>Paklijst Vakantie</h2>
+<h1>Paklijst vakantie</h1>
+
+<h2>Kleding</h2>
 <ul>
   <li>Zwembroek</li>
   <li>Zonnebril</li>
   <li>Zonnebrand</li>
 </ul>
 
-<h3>Top 3 prioriteit</h3>
+<h2>Top 3 prioriteit</h2>
 <ol>
   <li>Paspoort</li>
   <li>Telefoonoplader</li>
@@ -186,4 +191,4 @@ Zorg ervoor dat elk item (zowel in de `<ol>` als de `<ul>`) in een `<li>` tag st
 <li>Dit item staat nergens in</li>
 ```
 
-Een `<li>` item moet altijd binnen een `<ul>` of `<ol>` staan. Zonder die "container" weet de browser niet wat hij ermee moet en ziet het er vreemd uit.
+Een `<li>` moet binnen een `<ul>` of `<ol>` staan. Verraderlijk is dat het er goed uitziet: de browser tekent er een bolletje bij, alleen zonder de inspringing die de lijst eromheen geeft. Screenreaders en zoekmachines zien dan geen lijst, en zodra je de lijst later opmaakt met CSS valt dat ene item buiten de boot.

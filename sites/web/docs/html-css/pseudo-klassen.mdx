@@ -19,8 +19,6 @@ export const startHtml = `<!DOCTYPE html>
 
   <button>Klik mij en houd vast</button>
 
-  <p><input type="text" placeholder="Klik in dit veld"></p>
-
   <ul>
     <li>Eerste item</li>
     <li>Tweede item</li>
@@ -42,7 +40,6 @@ a:hover {
 button {
   padding: 8px 16px;
   background-color: lightgray;
-  border: 2px solid gray;
   cursor: pointer;
 }
 
@@ -50,7 +47,7 @@ button:active {
   background-color: orange;
 }
 
-input:focus {
+button:focus {
   outline: 3px solid dodgerblue;
 }
 
@@ -78,9 +75,13 @@ export const makeCss = `/* Schrijf hier je stijl */
 
 ## Wat ga je leren?
 
-Je leert hoe je elementen anders kunt stijlen op basis van hun **toestand** of **positie** — bijvoorbeeld als de muis eroverheen beweegt of als het het eerste item in een lijst is.
+Een element kan er anders uitzien afhankelijk van zijn **toestand** of zijn **plek**: als de muis eroverheen gaat, of als het het eerste item in een lijst is.
 
 ## Theorie
+
+:::info[Wat is `rem`?]
+In de voorbeelden hieronder staan groottes als `1.5rem`. Dat betekent "anderhalf keer de basisgrootte van de pagina". Je hoeft er nu niets mee te doen; het hele verhaal over `px`, `rem`, `em` en `%` staat in [Eenheden in CSS](/docs/html-css/eenheden).
+:::
 
 Een **pseudo-klasse** is een selector die een speciale toestand of positie beschrijft. Je schrijft ze met een dubbele punt direct na de selector:
 
@@ -112,14 +113,14 @@ a:hover {
 Bekijk de CSS hieronder. Wat denk je dat er gebeurt als je:
 1. Je muis over de link beweegt?
 2. Op de knop klikt en de muisknop **ingedrukt houdt**?
-3. In het invoerveld klikt om te typen?
+3. Met Tab naar de knop springt zonder te klikken?
 
 <details>
 <summary>Klik hier voor het antwoord</summary>
 
 1. **Hover**: de kleur van de link wordt rood en de onderstreping verdwijnt. Zodra je de muis wegbeweegt komt de blauwe link terug.
 2. **Active**: zolang je de muisknop ingedrukt houdt, krijgt de knop een andere kleur. Laat je los, dan gaat hij terug.
-3. **Focus**: het invoerveld krijgt een opvallende rand zodra je erin klikt of er met Tab naartoe navigeert.
+3. **Focus**: de knop krijgt een opvallende rand zodra hij aan de beurt is. Dat is hoe iemand die met het toetsenbord navigeert ziet waar hij is.
 
 </details>
 
@@ -141,7 +142,7 @@ Experimenteer:
 - Probeer `li:nth-child(2)` — welk item krijgt dan de stijl?
 - Voeg `:hover` toe aan de `<li>` items — wat zie je als je eroverheen beweegt?
 - Vervang `button:active` door `button:hover` — wat verandert er aan wanneer de oranje kleur verschijnt?
-- Verwijder `input:focus` — klik in het veld. Hoe weet je nu nog dat het veld actief is?
+- Verwijder `button:focus` en druk op Tab tot de knop aan de beurt is. Hoe weet je nu nog waar je staat?
 
 ## Modify
 
@@ -196,18 +197,15 @@ Je hebt drie stukjes CSS nodig:
 <summary>Antwoord</summary>
 
 ```html
-<!-- HTML -->
 <button>Bestel nu</button>
 ```
 
 ```css
-/* CSS */
 button {
   background-color: blue;
   color: white;
   padding: 15px 30px;
   font-size: 1.2rem;
-  border: none;
   cursor: pointer;
 }
 

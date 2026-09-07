@@ -48,9 +48,13 @@ export const makeCss = `/* Schrijf hier je stijl */
 
 ## Wat ga je leren?
 
-Je leert hoe je met CSS **klassen** specifieke elementen een eigen stijl geeft, en hoe je meerdere klassen op één element kunt zetten.
+Met een **klasse** geef je één specifiek element een eigen stijl in plaats van alle elementen met dezelfde tag. Je ziet ook hoe je er meerdere op één element zet.
 
 ## Theorie
+
+:::info[Wat is `rem`?]
+In de voorbeelden hieronder staan groottes als `1.5rem`. Dat betekent "anderhalf keer de basisgrootte van de pagina". Je hoeft er nu niets mee te doen; het hele verhaal over `px`, `rem`, `em` en `%` staat in [Eenheden in CSS](/docs/html-css/eenheden).
+:::
 
 Tot nu toe heb je elementen gestijld via hun tagnaam (`h1`, `p`). Dat geldt dan voor **alle** `<h1>` of `<p>` elementen. Met een **klasse** kun je één specifiek element een stijl geven.
 
@@ -188,7 +192,6 @@ Dingen die je voor de hele lijst wil, kun je toepassen op `div`. De opvallende s
 <summary>Antwoord</summary>
 
 ```html
-<!-- HTML -->
 <div>
   <h3>Basis</h3>
   <p>Gratis</p>
@@ -206,16 +209,14 @@ Dingen die je voor de hele lijst wil, kun je toepassen op `div`. De opvallende s
 ```
 
 ```css
-/* CSS */
 div {
-  border: 1px solid gray;
+  background-color: whitesmoke;
   padding: 10px;
   margin-bottom: 10px;
 }
 
 .premium {
   background-color: gold;
-  border: 2px solid orange;
   font-weight: bold;
 }
 ```

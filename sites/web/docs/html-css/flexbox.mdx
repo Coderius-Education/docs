@@ -55,9 +55,13 @@ export const makeCss = `/* Schrijf hier je stijl */
 
 ## Wat ga je leren?
 
-Je leert hoe je elementen naast elkaar zet en uitlijnt met **Flexbox** — het meest gebruikte hulpmiddel voor lay-out in CSS.
+**Flexbox** zet elementen naast elkaar en lijnt ze uit. Het is het gereedschap waar je in CSS het vaakst naar grijpt voor lay-out.
 
 ## Theorie
+
+:::info[Wat is `rem`?]
+In de voorbeelden hieronder staan groottes als `1.5rem`. Dat betekent "anderhalf keer de basisgrootte van de pagina". Je hoeft er nu niets mee te doen; het hele verhaal over `px`, `rem`, `em` en `%` staat in [Eenheden in CSS](/docs/html-css/eenheden).
+:::
 
 Standaard staan HTML-elementen als blokken **onder elkaar**. Met `display: flex` op een container zet je de elementen **naast elkaar**:
 
@@ -165,19 +169,17 @@ Geef `.topbar` de eigenschappen `display: flex;`, `justify-content: space-betwee
 <summary>Antwoord</summary>
 
 ```html
-<!-- HTML -->
 <div class="topbar">
   <h1>MijnSite</h1>
   <div class="menu">
-    <a href="#">Home</a>
-    <a href="#">Over Ons</a>
-    <a href="#">Contact</a>
+    <a href="#" class="menulink">Home</a>
+    <a href="#" class="menulink">Over Ons</a>
+    <a href="#" class="menulink">Contact</a>
   </div>
 </div>
 ```
 
 ```css
-/* CSS */
 .topbar {
   display: flex;
   justify-content: space-between;
@@ -186,7 +188,7 @@ Geef `.topbar` de eigenschappen `display: flex;`, `justify-content: space-betwee
   padding: 10px 20px;
 }
 
-.menu a {
+.menulink {
   margin-left: 15px;
   text-decoration: none;
   color: black;

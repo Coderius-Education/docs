@@ -14,8 +14,8 @@ export const startHtml = `<!DOCTYPE html>
 </head>
 <body>
   <div class="kaart">
-    <h2>Sleep de preview-rand om het effect te zien</h2>
-    <p>Maak het preview-venster smaller of breder en kijk wat er verandert.</p>
+    <h2>Kies een breedte boven het voorbeeld</h2>
+    <p>Klik op Telefoon, Tablet of Breed en kijk wat er verandert.</p>
   </div>
 </body>
 </html>`;
@@ -60,7 +60,7 @@ export const makeCss = `/* Schrijf hier je stijl */
 
 ## Wat ga je leren?
 
-Je leert hoe je je CSS laat reageren op de **schermbreedte** met een **media query** — zo ziet je pagina er goed uit op zowel een mobiel als een laptop.
+Een **media query** laat je CSS reageren op de **schermbreedte**, zodat dezelfde pagina er op een telefoon net zo goed uitziet als op een laptop.
 
 ## Theorie
 
@@ -105,7 +105,7 @@ Veel ontwikkelaars schrijven hun CSS eerst voor **kleine schermen** (geen media 
 
 ## Predict
 
-Wat denk je dat er gebeurt met dit blok als je het browservenster smaller maakt dan 600px?
+Wat denk je dat er gebeurt met dit blok als je het voorbeeld op een breedte onder 600px bekijkt?
 
 ```css
 .titel { font-size: 3rem; }
@@ -117,7 +117,7 @@ Wat denk je dat er gebeurt met dit blok als je het browservenster smaller maakt 
 <details>
 <summary>Klik hier voor het antwoord</summary>
 
-Op brede schermen is `.titel` 3rem groot (zo'n 48px). Zodra je het venster onder 600px duwt, schakelt de browser over naar de media-query-regel en wordt `.titel` 1,5rem (24px) — half zo groot. Sleep je het venster weer breder, dan keert het terug.
+Op brede schermen is `.titel` 3rem groot (zo'n 48px). Zodra de breedte onder 600px komt, schakelt de browser over naar de media-query-regel en wordt `.titel` 1,5rem (24px) — half zo groot. Kies je weer een bredere stand, dan keert het terug.
 
 </details>
 
@@ -130,15 +130,15 @@ Op brede schermen is `.titel` 3rem groot (zo'n 48px). Zodra je het venster onder
 />
 
 :::tip[Test je media query]
-Sleep de preview-paneel-grens (of het hele browservenster) versmaller om de breekpunten te triggeren.
+Boven het voorbeeld staan de knoppen **Telefoon** (320px), **Tablet** (768px) en **Breed** (1100px). Het voorbeeld wordt dan echt zo breed gerekend, ook al is het paneel smaller; de melding eronder zegt op welke breedte je kijkt. Zo zie je de breekpunten omschakelen zonder je browservenster aan te raken.
 :::
 
 ## Investigate
 
 Experimenteer:
 
-- Verander `max-width: 500px` naar `max-width: 800px` — bij welke breedte switcht het nu?
-- Voeg een tweede media query toe voor `max-width: 300px` met `background-color: lightgreen` — wat gebeurt er bij een heel smal scherm?
+- Verander `max-width: 500px` naar `max-width: 800px` — schakelt Tablet (768px) nu ook om?
+- Voeg een tweede media query toe voor `max-width: 300px` met `background-color: lightgreen`. Waarom zie je die kleur niet als je op Telefoon klikt, terwijl die knop toch de smalste is?
 - Wat doet `min-width: 800px` als alternatief?
 
 ## Modify
@@ -228,25 +228,22 @@ Begin met de mobiele versie als basis (`flex-direction: column`). Voeg een `@med
 
 ## Er gaat iets mis
 
-**Media query in HTML zetten in plaats van CSS**
+**De viewport-meta-tag vergeten**
 
 ```html
-<!-- Werkt niet -->
-<style>
-  @media (max-width: 600px) {
-    ...
-  }
-</style>
-```
-
-Werkt op zich, maar wel in **CSS** — niet in HTML zoals een `<meta>`. Wat je vaak vergeet voor mobiel:
-
-```html
+<!-- Deze regel ontbreekt in de <head> -->
 <meta name="viewport" content="width=device-width, initial-scale=1">
 ```
 
-Zonder dit meta-tag rendert de browser de pagina alsof het scherm 980px breed is — dan worden je media queries nooit getriggerd op een telefoon. Zet hem altijd in `<head>`.
+Zonder die regel doet een telefoon alsof zijn scherm 980px breed is en krimpt hij de hele pagina. Je `max-width: 600px`-regel wordt dan nooit gebruikt, hoe smal het toestel ook is. Op je laptop zie je daar niets van: daar klopt de breedte wel. Zet hem altijd in de `<head>`.
 
----
+**Een breekpunt kiezen dat je nooit haalt**
 
-[← Position](/docs/html-css/position) | [CSS Grid →](/docs/html-css/css-grid)
+```css
+/* Deze regel gaat nooit aan op een telefoon */
+@media (min-width: 1200px) {
+  .kaart { background-color: lightgreen; }
+}
+```
+
+Een `min-width` die hoger ligt dan het scherm waarop je test, doet niets — en dat lijkt op een fout in je CSS. Controleer met de knoppen boven het voorbeeld op welke breedte je kijkt voordat je je regel gaat aanpassen.

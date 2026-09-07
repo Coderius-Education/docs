@@ -67,7 +67,7 @@ export const makeCss = `/* Schrijf hier je stijl */
 
 ## Wat ga je leren?
 
-Je leert hoe HTML-elementen standaard ofwel onder elkaar staan (**block**) ofwel naast elkaar (**inline**), hoe je dat met `display` aanpast, en hoe je `<span>` gebruikt om kleine stukjes tekst te stijlen.
+Sommige elementen staan onder elkaar (**block**), andere blijven in de tekstregel staan (**inline**). Je verandert dat met `display`, en gebruikt `<span>` om een klein stukje tekst apart op te maken.
 
 ## Theorie
 
@@ -84,7 +84,7 @@ Elk HTML-element heeft een standaard **display-type**. Dat bepaalt hoe het eleme
 Je verandert dit met de CSS-eigenschap `display`:
 
 ```css
-.menu a {
+.menulink {
   display: inline-block;  /* a normaal inline, maar nu mét padding/breedte */
   padding: 8px 16px;
 }
@@ -186,7 +186,7 @@ Drie `<span>`'s met drie verschillende klassen. In CSS drie aparte regels (`.roo
 <details>
 <summary>Tip</summary>
 
-`<a>` is standaard inline, maar dan werkt `padding`/`width` niet goed. Zet `display: inline-block` op de links zodat ze beide eigenschappen krijgen.
+`<a>` is standaard inline, maar dan werkt `padding`/`width` niet goed. Geef de links een eigen klasse en zet daar `display: inline-block` op, zodat ze beide eigenschappen krijgen.
 
 </details>
 
@@ -194,25 +194,21 @@ Drie `<span>`'s met drie verschillende klassen. In CSS drie aparte regels (`.roo
 <summary>Antwoord</summary>
 
 ```html
-<div class="nav">
-  <a href="#">Home</a>
-  <a href="#">Over</a>
-  <a href="#">Contact</a>
+<div>
+  <a href="#" class="navlink">Home</a>
+  <a href="#" class="navlink">Over</a>
+  <a href="#" class="navlink">Contact</a>
 </div>
 ```
 
 ```css
-.nav a {
+.navlink {
   display: inline-block;
   padding: 10px 20px;
   background-color: #4a90e2;
   color: white;
   text-decoration: none;
   margin-right: 4px;
-}
-
-.nav a:hover {
-  background-color: #357ab8;
 }
 ```
 
@@ -222,20 +218,20 @@ Drie `<span>`'s met drie verschillende klassen. In CSS drie aparte regels (`.roo
 
 **Padding op een inline-element werkt half**
 
-```html
-<a href="#" style="padding: 20px; background: yellow;">Klik</a>
-<a href="#" style="padding: 20px; background: yellow;">Klik</a>
-```
-
-Een gewone `<a>` is `inline`. `padding` lijkt te werken (er komt ruimte rond de tekst), maar de elementen overlappen elkaar verticaal — `padding-top` duwt andere regels niet weg. Ook werkt `width`/`height` niet. Oplossing: zet `display: inline-block` op de links.
-
 ```css
-a {
-  display: inline-block;
+.knop {
   padding: 20px;
+  background-color: yellow;
 }
 ```
 
----
+Een gewone `<a>` is `inline`. `padding` lijkt te werken, want er komt ruimte rond de tekst, maar die ruimte duwt de regels erboven en eronder niet weg. Twee van zulke links op opeenvolgende regels gaan daardoor over elkaar heen. Ook `width` en `height` doen niets. De oplossing staat in deze les:
 
-[← Eenheden in CSS](/docs/html-css/eenheden) | [Position →](/docs/html-css/position)
+```css
+.knop {
+  display: inline-block;
+  padding: 20px;
+  background-color: yellow;
+}
+```
+

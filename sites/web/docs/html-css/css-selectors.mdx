@@ -13,26 +13,24 @@ export const startHtml = `<!DOCTYPE html>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <nav class="hoofdmenu">
+  <div class="hoofdmenu">
     <ul>
       <li><a href="#">Home</a></li>
       <li><a href="#">Nieuws</a></li>
       <li><a href="#">Contact</a></li>
     </ul>
-  </nav>
+  </div>
 
-  <main>
-    <article class="bericht">
-      <h2>Mijn eerste artikel</h2>
-      <p>Dit is een directe paragraaf in het artikel.</p>
-      <blockquote>
-        <p>Dit is een citaat binnen een blockquote in het artikel.</p>
-      </blockquote>
-      <p class="opvallend" id="belangrijk">Een speciale mededeling onderaan.</p>
-    </article>
+  <div class="bericht">
+    <h2>Mijn eerste artikel</h2>
+    <p>Dit is een directe paragraaf in het artikel.</p>
+    <blockquote>
+      <p>Dit is een citaat binnen een blockquote in het artikel.</p>
+    </blockquote>
+    <p class="opvallend" id="belangrijk">Een speciale mededeling onderaan.</p>
+  </div>
 
-    <p>Een losse paragraaf buiten het artikel met een <a href="#">gewone link</a>.</p>
-  </main>
+  <p>Een losse paragraaf buiten het artikel met een <a href="#">gewone link</a>.</p>
 </body>
 </html>`;
 
@@ -114,7 +112,7 @@ Soms wil je alleen elementen aanspreken die direct onder een ouder-element staan
 }
 ```
 
-Een `<p>` direct in `<article class="bericht">` krijgt de rand wel. Een `<p>` die binnen een `<blockquote>` in dat artikel staat, krijgt de rand niet.
+Een `<p>` direct in `<div class="bericht">` krijgt de rand wel. Een `<p>` die binnen een `<blockquote>` in dat artikel staat, krijgt de rand niet.
 
 ### Selectors groeperen (`,`)
 
@@ -137,7 +135,7 @@ p.belangrijk {
 }
 ```
 
-Alleen een `<p class="belangrijk">` krijgt nu een gele achtergrond. Een `<h2 class="belangrijk">` wordt genegeerd.
+Alleen een `<p class="belangrijk">` krijgt nu een gele achtergrond. Een `<h2 class="belangrijk">` slaat de browser over.
 
 ### Welke regel wint? (Specificiteit en prioriteit)
 
@@ -293,7 +291,6 @@ Begin met een duidelijke HTML-structuur met klassen zoals `menu-sectie` en `gere
 <summary>Antwoord</summary>
 
 ```html
-<!-- HTML -->
 <div class="menukaart">
   <h1>Lunchroom De Haven</h1>
 
@@ -312,7 +309,6 @@ Begin met een duidelijke HTML-structuur met klassen zoals `menu-sectie` en `gere
 ```
 
 ```css
-/* CSS */
 h1, h2 {
   color: #2c3e50;
   font-family: sans-serif;
