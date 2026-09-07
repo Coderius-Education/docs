@@ -192,7 +192,7 @@ button {
 <details>
 <summary>Tip</summary>
 
-Gebruik een `<div class="kaart">` als omhulsel. Mix bewust: `px` voor de border, `rem` voor lettergroottes, `em` voor de knop-padding, `%` voor de breedte.
+Gebruik een `<div class="kaart">` als omhulsel en geef de titel, de tekst en de knop elk een eigen klasse. Mix bewust: `px` voor de border, `rem` voor lettergroottes, `em` voor de knop-padding, `%` voor de breedte.
 
 </details>
 
@@ -201,9 +201,9 @@ Gebruik een `<div class="kaart">` als omhulsel. Mix bewust: `px` voor de border,
 
 ```html
 <div class="kaart">
-  <h2>Mijn kaart</h2>
-  <p>Een korte beschrijving.</p>
-  <button>Meer info</button>
+  <h2 class="kaart-titel">Mijn kaart</h2>
+  <p class="kaart-tekst">Een korte beschrijving.</p>
+  <button class="kaart-knop">Meer info</button>
 </div>
 ```
 
@@ -214,15 +214,15 @@ Gebruik een `<div class="kaart">` als omhulsel. Mix bewust: `px` voor de border,
   padding: 1.5rem;
 }
 
-.kaart h2 {
+.kaart-titel {
   font-size: 1.5rem;
 }
 
-.kaart p {
+.kaart-tekst {
   font-size: 1rem;
 }
 
-.kaart button {
+.kaart-knop {
   font-size: 1rem;
   padding: 0.5em 1em;
 }
@@ -235,13 +235,10 @@ Gebruik een `<div class="kaart">` als omhulsel. Mix bewust: `px` voor de border,
 **`rem` en `em` door elkaar halen**
 
 ```css
-html { font-size: 16px; }      /* basis */
-.kaart { font-size: 2em; }     /* nu 32px */
-.kaart .knop { padding: 1em; } /* 32px padding, niet 16px! */
+html { font-size: 16px; }       /* basis */
+.kaart { font-size: 2em; }      /* nu 32px */
+.kaart-tekst { padding: 1em; }  /* 32px padding, niet 16px */
 ```
 
 `em` is relatief aan het **eigen** element. Als je `em` binnen een element met groter `font-size` gebruikt, schaalt alles mee — soms onverwacht groot. Gebruik `rem` als je een vaste verhouding tot de pagina wilt, en `em` alleen als bewuste keuze.
 
----
-
-[← Formulieren](/docs/html-css/formulieren) | [Display & `<span>` →](/docs/html-css/display-en-span)

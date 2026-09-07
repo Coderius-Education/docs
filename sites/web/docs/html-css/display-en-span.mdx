@@ -84,7 +84,7 @@ Elk HTML-element heeft een standaard **display-type**. Dat bepaalt hoe het eleme
 Je verandert dit met de CSS-eigenschap `display`:
 
 ```css
-.menu a {
+.menulink {
   display: inline-block;  /* a normaal inline, maar nu mét padding/breedte */
   padding: 8px 16px;
 }
@@ -186,7 +186,7 @@ Drie `<span>`'s met drie verschillende klassen. In CSS drie aparte regels (`.roo
 <details>
 <summary>Tip</summary>
 
-`<a>` is standaard inline, maar dan werkt `padding`/`width` niet goed. Zet `display: inline-block` op de links zodat ze beide eigenschappen krijgen.
+`<a>` is standaard inline, maar dan werkt `padding`/`width` niet goed. Geef de links een eigen klasse en zet daar `display: inline-block` op, zodat ze beide eigenschappen krijgen.
 
 </details>
 
@@ -194,25 +194,21 @@ Drie `<span>`'s met drie verschillende klassen. In CSS drie aparte regels (`.roo
 <summary>Antwoord</summary>
 
 ```html
-<div class="nav">
-  <a href="#">Home</a>
-  <a href="#">Over</a>
-  <a href="#">Contact</a>
+<div>
+  <a href="#" class="navlink">Home</a>
+  <a href="#" class="navlink">Over</a>
+  <a href="#" class="navlink">Contact</a>
 </div>
 ```
 
 ```css
-.nav a {
+.navlink {
   display: inline-block;
   padding: 10px 20px;
   background-color: #4a90e2;
   color: white;
   text-decoration: none;
   margin-right: 4px;
-}
-
-.nav a:hover {
-  background-color: #357ab8;
 }
 ```
 
@@ -236,6 +232,3 @@ a {
 }
 ```
 
----
-
-[← Eenheden in CSS](/docs/html-css/eenheden) | [Position →](/docs/html-css/position)

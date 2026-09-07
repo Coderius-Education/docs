@@ -19,8 +19,6 @@ export const startHtml = `<!DOCTYPE html>
 
   <button>Klik mij en houd vast</button>
 
-  <p><input type="text" placeholder="Klik in dit veld"></p>
-
   <ul>
     <li>Eerste item</li>
     <li>Tweede item</li>
@@ -42,7 +40,6 @@ a:hover {
 button {
   padding: 8px 16px;
   background-color: lightgray;
-  border: 2px solid gray;
   cursor: pointer;
 }
 
@@ -50,7 +47,7 @@ button:active {
   background-color: orange;
 }
 
-input:focus {
+button:focus {
   outline: 3px solid dodgerblue;
 }
 
@@ -81,6 +78,10 @@ export const makeCss = `/* Schrijf hier je stijl */
 Je leert hoe je elementen anders kunt stijlen op basis van hun **toestand** of **positie** — bijvoorbeeld als de muis eroverheen beweegt of als het het eerste item in een lijst is.
 
 ## Theorie
+
+:::info[Wat is `rem`?]
+In de voorbeelden hieronder staan groottes als `1.5rem`. Dat betekent "anderhalf keer de basisgrootte van de pagina". Je hoeft er nu niets mee te doen; het hele verhaal over `px`, `rem`, `em` en `%` staat in [Eenheden in CSS](/docs/html-css/eenheden).
+:::
 
 Een **pseudo-klasse** is een selector die een speciale toestand of positie beschrijft. Je schrijft ze met een dubbele punt direct na de selector:
 
@@ -141,7 +142,7 @@ Experimenteer:
 - Probeer `li:nth-child(2)` — welk item krijgt dan de stijl?
 - Voeg `:hover` toe aan de `<li>` items — wat zie je als je eroverheen beweegt?
 - Vervang `button:active` door `button:hover` — wat verandert er aan wanneer de oranje kleur verschijnt?
-- Verwijder `input:focus` — klik in het veld. Hoe weet je nu nog dat het veld actief is?
+- Verwijder `button:focus` en druk op Tab tot de knop aan de beurt is. Hoe weet je nu nog waar je staat?
 
 ## Modify
 
@@ -207,7 +208,6 @@ button {
   color: white;
   padding: 15px 30px;
   font-size: 1.2rem;
-  border: none;
   cursor: pointer;
 }
 
