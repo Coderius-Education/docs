@@ -218,17 +218,20 @@ Drie `<span>`'s met drie verschillende klassen. In CSS drie aparte regels (`.roo
 
 **Padding op een inline-element werkt half**
 
-```html
-<a href="#" style="padding: 20px; background: yellow;">Klik</a>
-<a href="#" style="padding: 20px; background: yellow;">Klik</a>
+```css
+.knop {
+  padding: 20px;
+  background-color: yellow;
+}
 ```
 
-Een gewone `<a>` is `inline`. `padding` lijkt te werken (er komt ruimte rond de tekst), maar de elementen overlappen elkaar verticaal — `padding-top` duwt andere regels niet weg. Ook werkt `width`/`height` niet. Oplossing: zet `display: inline-block` op de links.
+Een gewone `<a>` is `inline`. `padding` lijkt te werken — er komt ruimte rond de tekst — maar die ruimte duwt de regels erboven en eronder niet weg, dus twee van zulke links op opeenvolgende regels overlappen elkaar. Ook `width` en `height` doen niets. De oplossing staat in deze les:
 
 ```css
-a {
+.knop {
   display: inline-block;
   padding: 20px;
+  background-color: yellow;
 }
 ```
 

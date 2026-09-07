@@ -113,6 +113,7 @@ helpuitvoer
 Hergebruikbare
 hitbox
 Hitbox
+hoekronding
 hoofdkop
 hoofdlus
 hoofdnode
