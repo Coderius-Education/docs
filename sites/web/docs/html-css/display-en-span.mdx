@@ -67,7 +67,7 @@ export const makeCss = `/* Schrijf hier je stijl */
 
 ## Wat ga je leren?
 
-Je leert hoe HTML-elementen standaard ofwel onder elkaar staan (**block**) ofwel naast elkaar (**inline**), hoe je dat met `display` aanpast, en hoe je `<span>` gebruikt om kleine stukjes tekst te stijlen.
+Sommige elementen staan onder elkaar (**block**), andere blijven in de tekstregel staan (**inline**). Je verandert dat met `display`, en gebruikt `<span>` om een klein stukje tekst apart op te maken.
 
 ## Theorie
 
@@ -225,7 +225,7 @@ Drie `<span>`'s met drie verschillende klassen. In CSS drie aparte regels (`.roo
 }
 ```
 
-Een gewone `<a>` is `inline`. `padding` lijkt te werken — er komt ruimte rond de tekst — maar die ruimte duwt de regels erboven en eronder niet weg, dus twee van zulke links op opeenvolgende regels overlappen elkaar. Ook `width` en `height` doen niets. De oplossing staat in deze les:
+Een gewone `<a>` is `inline`. `padding` lijkt te werken, want er komt ruimte rond de tekst, maar die ruimte duwt de regels erboven en eronder niet weg. Twee van zulke links op opeenvolgende regels gaan daardoor over elkaar heen. Ook `width` en `height` doen niets. De oplossing staat in deze les:
 
 ```css
 .knop {
