@@ -194,6 +194,10 @@
 }
 
 .previewLabel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
   padding: 0.4rem 0.75rem;
   font-size: 0.75rem;
   font-weight: 600;
@@ -205,9 +209,56 @@
   flex-shrink: 0;
 }
 
+.viewportKnoppen {
+  display: flex;
+  gap: 0.15rem;
+}
+
+.viewportKnop {
+  border: 1px solid var(--ifm-color-emphasis-300);
+  background: var(--ifm-background-color);
+  color: var(--ifm-color-emphasis-700);
+  border-radius: 3px;
+  padding: 0.1rem 0.4rem;
+  font: inherit;
+  font-size: 0.68rem;
+  letter-spacing: 0;
+  text-transform: none;
+  cursor: pointer;
+}
+
+.viewportKnop:hover {
+  border-color: var(--ifm-color-emphasis-500);
+}
+
+.viewportKnopActief {
+  background: var(--ifm-color-primary);
+  border-color: var(--ifm-color-primary);
+  color: #ffffff;
+}
+
+/* De iframe krijgt de gekozen breedte en wordt verkleind om te passen; het
+   vak eromheen knipt af wat er buiten valt. */
+.previewVak {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: white;
+  position: relative;
+}
+
+.viewportMelding {
+  flex-shrink: 0;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.7rem;
+  color: var(--ifm-color-emphasis-600);
+  background: var(--ifm-color-emphasis-100);
+  border-top: 1px solid var(--ifm-color-emphasis-300);
+}
+
 .preview {
   width: 100%;
-  flex: 1;
+  height: 100%;
   border: none;
   background: white;
   display: block;

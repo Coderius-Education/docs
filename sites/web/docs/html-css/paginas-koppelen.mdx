@@ -63,7 +63,7 @@ Voeg `target="_blank"` toe om de link in een nieuw tabblad te openen:
 ```
 
 :::info
-In de preview hieronder werken links — je kunt ze aanklikken. Let op: de editor is beveiligd, dus sommige sites blokkeren het laden in een klein venster.
+In de preview hieronder werken links: een link zonder `target` opent in het voorbeeldvenster zelf, een link mét `target="_blank"` opent een echt nieuw tabblad. Sommige sites weigeren zich in een klein venster te laten tonen; dan blijft het voorbeeld leeg en helpt `target="_blank"` juist.
 :::
 
 ### En knoppen?
@@ -170,4 +170,4 @@ Zet in elke `<li>` een `<a>` tag met een correcte `href` en `target="_blank"`.
 <a>Klik hier</a>
 ```
 
-Zonder `href` is de tekst niet klikbaar — de browser weet niet waar naartoe te navigeren. Je ziet misschien nog wel de blauwe kleur, maar klikken doet niets. Vergeet `href` nooit.
+Zonder `href` is de tekst niet klikbaar, en je ziet het meteen: de browser laat hem zwart en zonder streepje, precies als gewone tekst. Blauw en onderstreept is dus geen opmaak die bij de `<a>`-tag hoort, maar bij een `<a>` die ergens naartoe wijst. Zie je je link niet oplichten, dan ontbreekt `href`.
