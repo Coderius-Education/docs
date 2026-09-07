@@ -1,10 +1,10 @@
+import { HighlightedEditor } from '@coderius/python-runner/HighlightedEditor';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import {
   type PyodideInterface,
   loadPyodideOnce,
   warmupPyodide,
 } from '@site/src/components/PyRunner/usePyodide';
-import { HighlightedEditor } from '@site/src/components/PythonPlayground';
 import {
   type AlgorithmInput,
   type AlgorithmModelId,

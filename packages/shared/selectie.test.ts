@@ -61,7 +61,11 @@ describe('de selectie in een overlay-editor', () => {
   );
 
   it('vindt de editors met doorzichtige tekst', () => {
-    expect(bestanden.length).toBeGreaterThan(1);
+    // Een ondergrens, geen exact aantal: de test moet omvallen als de scan
+    // niets meer vindt (hernoemde class, verplaatste CSS), niet als er een
+    // kopie van de editor verdwijnt. Dat laatste gebeurde toen de
+    // algoritmes-site zijn eigen editor inruilde voor de gedeelde.
+    expect(bestanden.length).toBeGreaterThan(0);
   });
 
   it.each(bestanden.map((pad) => pad.slice(ROOT.length)))(

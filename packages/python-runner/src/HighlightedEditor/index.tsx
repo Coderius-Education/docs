@@ -47,6 +47,7 @@ export function HighlightedEditor({
   minHeight = 250,
   highlightLine,
   readOnly,
+  ariaLabel,
 }: {
   code: string;
   onChange: (value: string) => void;
@@ -57,6 +58,8 @@ export function HighlightedEditor({
   /** 1-gebaseerd regelnummer om te markeren; gebruikt door de stapper. */
   highlightLine?: number;
   readOnly?: boolean;
+  /** Naam van dit veld voor schermlezers, als er meerdere op een pagina staan. */
+  ariaLabel?: string;
 }) {
   const { colorMode } = useColorMode();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -158,6 +161,10 @@ export function HighlightedEditor({
         placeholder="Schrijf hier je Python code..."
         disabled={disabled}
         readOnly={readOnly}
+        aria-label={ariaLabel}
+        autoCapitalize="off"
+        autoCorrect="off"
+        autoComplete="off"
       />
     </div>
   );

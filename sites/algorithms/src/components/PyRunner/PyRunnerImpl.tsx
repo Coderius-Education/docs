@@ -1,3 +1,4 @@
+import { HighlightedEditor } from '@coderius/python-runner/HighlightedEditor';
 import type {
   Opname,
   PyodideInterface as StapPyodide,
@@ -5,7 +6,6 @@ import type {
 import { tracePython } from '@coderius/python-runner/PyodideProvider';
 import Stapper from '@coderius/python-runner/Stapper';
 import useBaseUrl from '@docusaurus/useBaseUrl';
-import { HighlightedEditor } from '@site/src/components/PythonPlayground';
 import clsx from 'clsx';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
