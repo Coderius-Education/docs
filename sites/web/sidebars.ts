@@ -5,9 +5,22 @@ import type { SidebarsConfig } from '@docusaurus/plugin-content-docs';
 /**
  * Handmatige sidebar-volgorde — onafhankelijk van het bestandsnummer.
  *
- * Reden: lessen 13 (Eenheden) en 14 (Display & <span>) zijn later toegevoegd
- * met hogere nummers, maar horen didactisch eerder in de leerlijn:
- * eenheden vóór CSS-properties die ze gebruiken, display-types vóór Flexbox.
+ * Deze volgorde is de leerlijn: `src/data/leerlijn.ts` legt per les vast welke
+ * concepten hij introduceert, en `src/docs-tests/leerlijn.test.ts` weert code
+ * die vooruitloopt op een latere les. Verschuif je hier iets, dan valt die
+ * test om zodra de nieuwe plek een concept te vroeg maakt.
+ *
+ * Display & <span> hoort vóór Flexbox — je kunt geen flex-container
+ * uitleggen zonder block en inline — maar ná CSS-klassen: een `<span>` is
+ * alleen nuttig als je hem kunt aanwijzen, en dat doe je met een klasse.
+ *
+ * Eenheden stond eerder op plek 4, "vóór de properties die ze gebruiken".
+ * Dat werkte averechts: op die plek kende de leerling alleen font-size, dus
+ * de les demonstreerde `%` en `em` op padding, width en een `<div class>` die
+ * pas veel later worden uitgelegd. Nu staat hij ná border-en-dimensies, waar
+ * al die properties er zijn. Dat een eerdere les al `2rem` gebruikt is geen
+ * probleem zolang hij het aankondigt — tekst-opmaken-css doet dat met een
+ * `:::info` die hierheen wijst.
  *
  * Doc-IDs gebruiken de slug (zonder nummerprefiks) — Docusaurus strip die automatisch.
  */
@@ -16,15 +29,15 @@ const sidebars: SidebarsConfig = {
     'html-css/intro-html',
     'html-css/koppen-lijsten',
     'html-css/tekst-opmaken-css',
-    'html-css/eenheden',
     'html-css/afbeeldingen',
     'html-css/paginas-koppelen',
     'html-css/elementen-opmaken',
-    'html-css/display-en-span',
     'html-css/css-klassen',
+    'html-css/display-en-span',
     'html-css/pseudo-klassen',
     'html-css/flexbox',
     'html-css/border-en-dimensies',
+    'html-css/eenheden',
     'html-css/position',
     'html-css/css-selectors',
     'html-css/media-queries',
