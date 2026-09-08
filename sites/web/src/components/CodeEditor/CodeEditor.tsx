@@ -9,6 +9,27 @@ const EditorPane = lazy(() => import('./EditorPane').then((mod) => ({ default: m
 
 type Tab = 'html' | 'css' | 'javascript';
 
+// Het scrollslot telt hoe vaak het gezet is. Er staan vier oefenvelden op een
+// js-basics-pagina; zou elk exemplaar zijn eigen vorige waarde bewaren en
+// terugzetten, dan kan een tweede veld `hidden` opslaan als "de vorige stand"
+// en dat bij het sluiten terugzetten. De pagina blijft dan onscrollbaar tot je
+// ververst.
+let scrollSloten = 0;
+let overflowVoorSlot = '';
+
+function zetScrollSlot(aan: boolean): void {
+  if (aan) {
+    if (scrollSloten === 0) {
+      overflowVoorSlot = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+    }
+    scrollSloten += 1;
+    return;
+  }
+  scrollSloten = Math.max(0, scrollSloten - 1);
+  if (scrollSloten === 0) document.body.style.overflow = overflowVoorSlot;
+}
+
 const TAB_LABELS: Record<Tab, string> = {
   html: 'index.html',
   css: 'style.css',
@@ -51,6 +72,11 @@ function CodeEditorInner({
   );
   const [consoleLogs, setConsoleLogs] = useState<{ level: string; text: string }[]>([]);
   const [previewInhoud, setPreviewInhoud] = useState<number | null>(null);
+  // Het oefenveld staat in de contentkolom van Docusaurus, en die is
+  // begrensd: op een laptop van 1440px is de editor ~490px en het voorbeeld
+  // 327px, smaller dan een telefoon. Voor een Make-opdracht is dat te krap.
+  const [uitgeklapt, setUitgeklapt] = useState(false);
+  const knopRef = useRef<HTMLButtonElement>(null);
   const consoleBodyRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
@@ -85,6 +111,42 @@ function CodeEditorInner({
     }
   }, [initialHtml, initialCss, initialJs, livePreview]);
 
+  // Escape sluit, en de pagina eronder mag niet meescrollen zolang het veld
+  // het scherm vult.
+  useEffect(() => {
+    if (!uitgeklapt) return;
+    const opToets = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      // CodeMirror gebruikt Escape zelf: het sluit de suggestielijst
+      // (completionKeymap) en het schrapt een meervoudige of niet-lege
+      // selectie (simplifySelection). Beide roepen preventDefault aan maar
+      // geen stopPropagation, dus het event komt hier ook langs. Zonder deze
+      // regel klapte het hele veld dicht zodra je een lijst wegdrukte of een
+      // selectie ophief, midden in het typen. Een tweede druk sluit wel.
+      if (e.defaultPrevented) return;
+      setUitgeklapt(false);
+    };
+    zetScrollSlot(true);
+    window.addEventListener('keydown', opToets);
+    return () => {
+      window.removeEventListener('keydown', opToets);
+      zetScrollSlot(false);
+    };
+  }, [uitgeklapt]);
+
+  // De focus terug naar de knop waarmee je uitklapte, anders staat hij na het
+  // sluiten bovenaan de pagina en moet je met Tab terugzoeken. Alleen ná een
+  // keer uitklappen: bij het laden van de pagina mag een oefenveld de focus
+  // niet naar zich toe trekken.
+  const isUitgeklaptGeweest = useRef(false);
+  useEffect(() => {
+    if (uitgeklapt) {
+      isUitgeklaptGeweest.current = true;
+    } else if (isUitgeklaptGeweest.current) {
+      knopRef.current?.focus({ preventScroll: true });
+    }
+  }, [uitgeklapt]);
+
   useEffect(() => {
     function handler(e: MessageEvent) {
       // Alleen berichten van het eigen voorbeeld: er staan meerdere velden
@@ -95,6 +157,8 @@ function CodeEditorInner({
         setConsoleLogs((prev) => [...prev, { level: e.data.level, text: e.data.text }]);
       } else if (e.data.type === 'height' && typeof e.data.height === 'number') {
         setPreviewInhoud(e.data.height);
+      } else if (e.data.type === 'escape') {
+        setUitgeklapt(false);
       }
     }
     window.addEventListener('message', handler);
@@ -122,8 +186,16 @@ function CodeEditorInner({
 
   const visibleTabs: Tab[] = ['html', 'css', ...(initialJs !== '' ? ['javascript' as Tab] : [])];
 
-  return (
-    <div className={`${styles.container} ${stacked ? styles.containerStacked : ''}`}>
+  const veld = (
+    <div
+      className={[
+        styles.container,
+        stacked ? styles.containerStacked : '',
+        uitgeklapt ? styles.containerUitgeklapt : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+    >
       <div className={styles.editorSide} style={{ height: stacked ? 'auto' : height }}>
         <div className={styles.tabBar}>
           {visibleTabs.map((tab) => (
@@ -136,19 +208,38 @@ function CodeEditorInner({
               {TAB_LABELS[tab]}
             </button>
           ))}
-          {!livePreview && (
-            <button type="button" className={styles.runButton} onClick={handleRun}>
-              ▶ Run
+          <span className={styles.tabBarKnoppen}>
+            {!livePreview && (
+              <button type="button" className={styles.runButton} onClick={handleRun}>
+                ▶ Run
+              </button>
+            )}
+            <button
+              type="button"
+              ref={knopRef}
+              className={styles.groterButton}
+              onClick={() => setUitgeklapt((aan) => !aan)}
+              title={
+                uitgeklapt
+                  ? 'Terug naar de les (of druk op Escape)'
+                  : 'Gebruik het hele scherm voor dit oefenveld'
+              }
+              aria-pressed={uitgeklapt}
+            >
+              <span className={styles.groterIcoon} aria-hidden="true">
+                {uitgeklapt ? '\u2715' : '\u21F1\u21F2'}
+              </span>
+              {uitgeklapt ? 'Sluiten (Esc)' : 'Groter'}
             </button>
-          )}
-          <button
-            type="button"
-            className={styles.resetButton}
-            onClick={handleReset}
-            title="Terug naar startcode"
-          >
-            ↺ Reset
-          </button>
+            <button
+              type="button"
+              className={styles.resetButton}
+              onClick={handleReset}
+              title="Terug naar startcode"
+            >
+              ↺ Reset
+            </button>
+          </span>
         </div>
         <div className={styles.paneWrapper}>
           <Suspense fallback={<div className={styles.loading}>Editor laden...</div>}>
@@ -157,8 +248,12 @@ function CodeEditorInner({
               language={activeTab}
               value={values[activeTab]}
               onChange={handlers[activeTab]}
-              height={height}
-              autoHeight={stacked}
+              // Uitgeklapt vult de editor zijn helft van het scherm. In de
+              // gestapelde vorm meet hij zich normaal naar de code, met de
+              // height-prop als maximum; dat maximum is de lespagina-hoogte en
+              // liet uitgeklapt 150px van de editorkant leeg staan.
+              height={uitgeklapt ? '100%' : height}
+              autoHeight={stacked && !uitgeklapt}
             />
           </Suspense>
         </div>
@@ -167,8 +262,12 @@ function CodeEditorInner({
         <PreviewPane
           srcDoc={srcDoc}
           innerRef={iframeRef}
+          // Gestapeld eindigt het voorbeeld waar zijn inhoud eindigt, zodat een
+          // veld met twee regels uitvoer geen half scherm beslaat. Uitgeklapt
+          // is dat juist verkeerd: dan bleef het voorbeeld 160px hoog terwijl
+          // er 450px voor hem klaarstond.
           hoogte={
-            stacked
+            stacked && !uitgeklapt
               ? `${Math.min(Math.max(previewInhoud ?? 160, 100), Number.parseInt(previewHeight, 10))}px`
               : undefined
           }
@@ -208,6 +307,12 @@ function CodeEditorInner({
       </div>
     </div>
   );
+
+  // Bewust geen portal en geen remount: het veld blijft op dezelfde plek in de
+  // React-boom staan en wordt alleen anders gepositioneerd. Zou het verhuizen,
+  // dan koppelt de editor opnieuw aan en is de leerling zijn undo-geschiedenis
+  // kwijt op het moment dat hij juist meer ruimte vroeg.
+  return veld;
 }
 
 export function CodeEditor(props: CodeEditorProps) {

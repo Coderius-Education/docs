@@ -111,8 +111,24 @@
 .tabBar {
   display: flex;
   flex-direction: row;
+  /* Op een telefoon van 375px is de balk 341px breed en zijn inhoud 502px:
+     zonder afbreken schoof de Groter-knop naar x=458, buiten de `overflow:
+     hidden` van de container. De knop om meer ruimte te krijgen was dus
+     onbereikbaar op precies de schermen waar je hem het hardst nodig hebt. */
+  flex-wrap: wrap;
   background: var(--ifm-color-emphasis-200);
   border-bottom: 1px solid var(--ifm-color-emphasis-300);
+}
+
+/* Breekt de balk af, dan krijgt de knopgroep zijn eigen regel over de volle
+   breedte in plaats van een restje rechts. */
+@media (max-width: 640px) {
+  .tabBarKnoppen {
+    width: 100%;
+    justify-content: flex-end;
+    padding: 0.25rem 0.35rem;
+    border-top: 1px solid var(--ifm-color-emphasis-300);
+  }
 }
 
 .tab {
@@ -138,7 +154,6 @@
 }
 
 .runButton {
-  margin-left: auto;
   padding: 0.35rem 0.9rem;
   background: var(--ifm-color-primary);
   color: white;
@@ -153,7 +168,6 @@
 }
 
 .resetButton {
-  margin-left: auto;
   padding: 0.35rem 0.7rem;
   background: transparent;
   color: var(--ifm-color-emphasis-700);
@@ -161,10 +175,6 @@
   cursor: pointer;
   font-size: 0.75rem;
   font-weight: 600;
-}
-
-.runButton + .resetButton {
-  margin-left: 0.4rem;
 }
 
 .resetButton:hover {
@@ -294,4 +304,96 @@
     border-right: none;
     border-bottom: 1px solid var(--ifm-color-emphasis-300);
   }
+}
+
+/* Uitgeklapt: het veld vult het scherm. De knop zit in de tab-balk, Escape
+   sluit ook. Alleen positionering, geen verhuizing in de DOM — zie de
+   toelichting in CodeEditor.tsx. */
+.containerUitgeklapt {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  min-height: 0;
+  font-size: 1rem;
+  background: var(--ifm-background-color);
+}
+
+/* De vaste hoogtes uit de lespagina gelden hier niet: beide kolommen vullen
+   het scherm, en dan is het voorbeeld eindelijk breder dan een telefoon. */
+.containerUitgeklapt .editorSide,
+.containerUitgeklapt .previewColumn {
+  height: auto !important;
+  flex: 1 1 50%;
+}
+
+.containerUitgeklapt.containerStacked {
+  flex-direction: column;
+}
+
+.containerUitgeklapt.containerStacked .editorSide,
+.containerUitgeklapt.containerStacked .previewColumn {
+  flex: 1 1 50%;
+  min-height: 0;
+}
+
+/* Deze knop is de nuttigste in de balk — het oefenveld is in de contentkolom
+   maar 327px breed voor het voorbeeld — maar hij zag eruit als een voetnoot
+   naast Reset, die wél een rand had. Nu andersom: Groter valt op, Reset blijft
+   ingetogen, want dat is de knop die je werk weggooit. */
+.groterButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.8rem;
+  border: 1px solid var(--ifm-color-primary);
+  border-radius: var(--ifm-global-radius);
+  /* De tint is versiering; kent een browser color-mix niet, dan blijft de
+     omlijnde knop gewoon leesbaar. */
+  background: transparent;
+  background: color-mix(in srgb, var(--ifm-color-primary) 10%, transparent);
+  color: var(--ifm-color-primary);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.groterButton:hover {
+  background: var(--ifm-color-primary);
+  color: #ffffff;
+}
+
+.groterButton:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+}
+
+/* Het pictogram groeit mee met de nadruk zonder de tekst te verdringen. */
+.groterIcoon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+/* Uitgeklapt is dit de weg terug, en dan mag hij dicht zijn. */
+.containerUitgeklapt .groterButton {
+  background: var(--ifm-color-primary);
+  color: #ffffff;
+}
+
+.containerUitgeklapt .groterButton:hover {
+  background: var(--ifm-color-primary-dark);
+}
+
+/* Run, Groter en Reset hadden elk hun eigen `margin-left: auto`; drie daarvan
+   naast elkaar duwt niet één keer maar drie keer en zet er gaten tussen. Nu
+   staan ze in één groep die als geheel naar rechts schuift. */
+.tabBarKnoppen {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }
