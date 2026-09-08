@@ -327,18 +327,53 @@
   min-height: 0;
 }
 
+/* Deze knop is de nuttigste in de balk — het oefenveld is in de contentkolom
+   maar 327px breed voor het voorbeeld — maar hij zag eruit als een voetnoot
+   naast Reset, die wél een rand had. Nu andersom: Groter valt op, Reset blijft
+   ingetogen, want dat is de knop die je werk weggooit. */
 .groterButton {
-  background: none;
-  border: none;
-  padding: 0.4rem 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.8rem;
+  border: 1px solid var(--ifm-color-primary);
+  border-radius: var(--ifm-global-radius);
+  /* De tint is versiering; kent een browser color-mix niet, dan blijft de
+     omlijnde knop gewoon leesbaar. */
+  background: transparent;
+  background: color-mix(in srgb, var(--ifm-color-primary) 10%, transparent);
+  color: var(--ifm-color-primary);
   font: inherit;
   font-size: 0.78rem;
-  color: var(--ifm-color-emphasis-700);
+  font-weight: 600;
   cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
 .groterButton:hover {
-  color: var(--ifm-color-primary);
+  background: var(--ifm-color-primary);
+  color: #ffffff;
+}
+
+.groterButton:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+}
+
+/* Het pictogram groeit mee met de nadruk zonder de tekst te verdringen. */
+.groterIcoon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+/* Uitgeklapt is dit de weg terug, en dan mag hij dicht zijn. */
+.containerUitgeklapt .groterButton {
+  background: var(--ifm-color-primary);
+  color: #ffffff;
+}
+
+.containerUitgeklapt .groterButton:hover {
+  background: var(--ifm-color-primary-dark);
 }
 
 /* Run, Groter en Reset hadden elk hun eigen `margin-left: auto`; drie daarvan

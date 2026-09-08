@@ -189,10 +189,17 @@ function CodeEditorInner({
               ref={knopRef}
               className={styles.groterButton}
               onClick={() => setUitgeklapt((aan) => !aan)}
-              title={uitgeklapt ? 'Terug naar de les (Escape)' : 'Gebruik het hele scherm'}
+              title={
+                uitgeklapt
+                  ? 'Terug naar de les (of druk op Escape)'
+                  : 'Gebruik het hele scherm voor dit oefenveld'
+              }
               aria-pressed={uitgeklapt}
             >
-              {uitgeklapt ? '✕ Sluiten' : '⤢ Groter'}
+              <span className={styles.groterIcoon} aria-hidden="true">
+                {uitgeklapt ? '\u2715' : '\u21F1\u21F2'}
+              </span>
+              {uitgeklapt ? 'Sluiten (Esc)' : 'Groter'}
             </button>
             <button
               type="button"
@@ -211,8 +218,12 @@ function CodeEditorInner({
               language={activeTab}
               value={values[activeTab]}
               onChange={handlers[activeTab]}
-              height={height}
-              autoHeight={stacked}
+              // Uitgeklapt vult de editor zijn helft van het scherm. In de
+              // gestapelde vorm meet hij zich normaal naar de code, met de
+              // height-prop als maximum; dat maximum is de lespagina-hoogte en
+              // liet uitgeklapt 150px van de editorkant leeg staan.
+              height={uitgeklapt ? '100%' : height}
+              autoHeight={stacked && !uitgeklapt}
             />
           </Suspense>
         </div>
@@ -221,8 +232,12 @@ function CodeEditorInner({
         <PreviewPane
           srcDoc={srcDoc}
           innerRef={iframeRef}
+          // Gestapeld eindigt het voorbeeld waar zijn inhoud eindigt, zodat een
+          // veld met twee regels uitvoer geen half scherm beslaat. Uitgeklapt
+          // is dat juist verkeerd: dan bleef het voorbeeld 160px hoog terwijl
+          // er 450px voor hem klaarstond.
           hoogte={
-            stacked
+            stacked && !uitgeklapt
               ? `${Math.min(Math.max(previewInhoud ?? 160, 100), Number.parseInt(previewHeight, 10))}px`
               : undefined
           }

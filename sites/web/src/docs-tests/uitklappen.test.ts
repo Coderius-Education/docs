@@ -61,3 +61,20 @@ describe('het oefenveld kan het scherm vullen', () => {
     expect(losseAuto).toBe(false);
   });
 });
+
+describe('uitgeklapt vullen beide helften hun ruimte', () => {
+  // Eerst deed alleen de omlijsting mee. In de gestapelde vorm (js-basics)
+  // meet de editor zich naar de code met de height-prop als maximum, en het
+  // voorbeeld naar zijn gemeten inhoud. Uitgeklapt bleef daardoor de helft
+  // leeg: bij een scherm van 900px was de editorkant 450 hoog maar de code
+  // maar 299, en het voorbeeld 160 terwijl er 450 klaarstond.
+
+  it('de editor vult uitgeklapt zijn helft in plaats van de code te volgen', () => {
+    expect(bron).toMatch(/height=\{uitgeklapt \? '100%' : height\}/);
+    expect(bron).toMatch(/autoHeight=\{stacked && !uitgeklapt\}/);
+  });
+
+  it('het voorbeeld laat uitgeklapt zijn vaste hoogte los', () => {
+    expect(bron).toMatch(/stacked && !uitgeklapt\s*\?[\s\S]*?previewInhoud/);
+  });
+});
