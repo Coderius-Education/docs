@@ -51,6 +51,11 @@ function CodeEditorInner({
   );
   const [consoleLogs, setConsoleLogs] = useState<{ level: string; text: string }[]>([]);
   const [previewInhoud, setPreviewInhoud] = useState<number | null>(null);
+  // Het oefenveld staat in de contentkolom van Docusaurus, en die is
+  // begrensd: op een laptop van 1440px is de editor ~490px en het voorbeeld
+  // 327px, smaller dan een telefoon. Voor een Make-opdracht is dat te krap.
+  const [uitgeklapt, setUitgeklapt] = useState(false);
+  const knopRef = useRef<HTMLButtonElement>(null);
   const consoleBodyRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
@@ -84,6 +89,35 @@ function CodeEditorInner({
       setSrcDoc(livePreview ? buildDoc(initialHtml, initialCss, initialJs) : '');
     }
   }, [initialHtml, initialCss, initialJs, livePreview]);
+
+  // Escape sluit, en de pagina eronder mag niet meescrollen zolang het veld
+  // het scherm vult.
+  useEffect(() => {
+    if (!uitgeklapt) return;
+    const opToets = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setUitgeklapt(false);
+    };
+    const vorigeOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', opToets);
+    return () => {
+      window.removeEventListener('keydown', opToets);
+      document.body.style.overflow = vorigeOverflow;
+    };
+  }, [uitgeklapt]);
+
+  // De focus terug naar de knop waarmee je uitklapte, anders staat hij na het
+  // sluiten bovenaan de pagina en moet je met Tab terugzoeken. Alleen ná een
+  // keer uitklappen: bij het laden van de pagina mag een oefenveld de focus
+  // niet naar zich toe trekken.
+  const isUitgeklaptGeweest = useRef(false);
+  useEffect(() => {
+    if (uitgeklapt) {
+      isUitgeklaptGeweest.current = true;
+    } else if (isUitgeklaptGeweest.current) {
+      knopRef.current?.focus({ preventScroll: true });
+    }
+  }, [uitgeklapt]);
 
   useEffect(() => {
     function handler(e: MessageEvent) {
@@ -122,8 +156,16 @@ function CodeEditorInner({
 
   const visibleTabs: Tab[] = ['html', 'css', ...(initialJs !== '' ? ['javascript' as Tab] : [])];
 
-  return (
-    <div className={`${styles.container} ${stacked ? styles.containerStacked : ''}`}>
+  const veld = (
+    <div
+      className={[
+        styles.container,
+        stacked ? styles.containerStacked : '',
+        uitgeklapt ? styles.containerUitgeklapt : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+    >
       <div className={styles.editorSide} style={{ height: stacked ? 'auto' : height }}>
         <div className={styles.tabBar}>
           {visibleTabs.map((tab) => (
@@ -136,19 +178,31 @@ function CodeEditorInner({
               {TAB_LABELS[tab]}
             </button>
           ))}
-          {!livePreview && (
-            <button type="button" className={styles.runButton} onClick={handleRun}>
-              ▶ Run
+          <span className={styles.tabBarKnoppen}>
+            {!livePreview && (
+              <button type="button" className={styles.runButton} onClick={handleRun}>
+                ▶ Run
+              </button>
+            )}
+            <button
+              type="button"
+              ref={knopRef}
+              className={styles.groterButton}
+              onClick={() => setUitgeklapt((aan) => !aan)}
+              title={uitgeklapt ? 'Terug naar de les (Escape)' : 'Gebruik het hele scherm'}
+              aria-pressed={uitgeklapt}
+            >
+              {uitgeklapt ? '✕ Sluiten' : '⤢ Groter'}
             </button>
-          )}
-          <button
-            type="button"
-            className={styles.resetButton}
-            onClick={handleReset}
-            title="Terug naar startcode"
-          >
-            ↺ Reset
-          </button>
+            <button
+              type="button"
+              className={styles.resetButton}
+              onClick={handleReset}
+              title="Terug naar startcode"
+            >
+              ↺ Reset
+            </button>
+          </span>
         </div>
         <div className={styles.paneWrapper}>
           <Suspense fallback={<div className={styles.loading}>Editor laden...</div>}>
@@ -208,6 +262,12 @@ function CodeEditorInner({
       </div>
     </div>
   );
+
+  // Bewust geen portal en geen remount: het veld blijft op dezelfde plek in de
+  // React-boom staan en wordt alleen anders gepositioneerd. Zou het verhuizen,
+  // dan koppelt de editor opnieuw aan en is de leerling zijn undo-geschiedenis
+  // kwijt op het moment dat hij juist meer ruimte vroeg.
+  return veld;
 }
 
 export function CodeEditor(props: CodeEditorProps) {

@@ -138,7 +138,6 @@
 }
 
 .runButton {
-  margin-left: auto;
   padding: 0.35rem 0.9rem;
   background: var(--ifm-color-primary);
   color: white;
@@ -153,7 +152,6 @@
 }
 
 .resetButton {
-  margin-left: auto;
   padding: 0.35rem 0.7rem;
   background: transparent;
   color: var(--ifm-color-emphasis-700);
@@ -294,4 +292,61 @@
     border-right: none;
     border-bottom: 1px solid var(--ifm-color-emphasis-300);
   }
+}
+
+/* Uitgeklapt: het veld vult het scherm. De knop zit in de tab-balk, Escape
+   sluit ook. Alleen positionering, geen verhuizing in de DOM — zie de
+   toelichting in CodeEditor.tsx. */
+.containerUitgeklapt {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  min-height: 0;
+  font-size: 1rem;
+  background: var(--ifm-background-color);
+}
+
+/* De vaste hoogtes uit de lespagina gelden hier niet: beide kolommen vullen
+   het scherm, en dan is het voorbeeld eindelijk breder dan een telefoon. */
+.containerUitgeklapt .editorSide,
+.containerUitgeklapt .previewColumn {
+  height: auto !important;
+  flex: 1 1 50%;
+}
+
+.containerUitgeklapt.containerStacked {
+  flex-direction: column;
+}
+
+.containerUitgeklapt.containerStacked .editorSide,
+.containerUitgeklapt.containerStacked .previewColumn {
+  flex: 1 1 50%;
+  min-height: 0;
+}
+
+.groterButton {
+  background: none;
+  border: none;
+  padding: 0.4rem 0.75rem;
+  font: inherit;
+  font-size: 0.78rem;
+  color: var(--ifm-color-emphasis-700);
+  cursor: pointer;
+}
+
+.groterButton:hover {
+  color: var(--ifm-color-primary);
+}
+
+/* Run, Groter en Reset hadden elk hun eigen `margin-left: auto`; drie daarvan
+   naast elkaar duwt niet één keer maar drie keer en zet er gaten tussen. Nu
+   staan ze in één groep die als geheel naar rechts schuift. */
+.tabBarKnoppen {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }
