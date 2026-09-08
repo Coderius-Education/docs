@@ -51,7 +51,7 @@ Twijfel je hoe een onderdeel eruitziet of waar het komt? Bekijk het [3D-model op
 
 <figure>
   <img src="/click_golfer/hout/hout-6.jpg" width="600" alt="De infraroodsensor met een blauw stelschroefje, vastgezet op de houten baan." />
-  <figcaption>De sensor heeft een blauw stelschroefje. Daarmee stel je in hoe gevoelig hij is.</figcaption>
+  <figcaption>De sensor vastgezet op de baan. Het blauwe schroefje laat je met rust: in dit project lees je de sensor uit als een getal, en dat getal verandert er niet van. Hoe gevoelig je robot is, stel je straks in je programma in.</figcaption>
 </figure>
 
 Staat de baan in elkaar? Dan **[sluit je de motor en de sensor aan](aansluiten)**.
