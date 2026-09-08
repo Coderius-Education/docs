@@ -23,6 +23,14 @@ const CONSOLE_INTERCEPTOR = `<script>
     var r = e.reason;
     send('error', ['JavaScript fout: ' + (r && r.message ? r.message : String(r))]);
   });
+  // Het voorbeeld is een gesandboxte iframe met een eigen origin: een toets
+  // hierbinnen bereikt het window van de les nooit. Klikt de leerling in zijn
+  // eigen pagina en drukt hij dan op Escape, dan gebeurde er niets terwijl de
+  // knop "Sluiten (Esc)" beloofde. Daarom melden we die toets zelf.
+  window.addEventListener('keydown', function(e) {
+    if (e.key !== 'Escape' || e.defaultPrevented) return;
+    window.parent.postMessage({ source: 'code-editor', type: 'escape' }, '*');
+  });
 })();
 <\/script>`;
 

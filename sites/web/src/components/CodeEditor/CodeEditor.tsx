@@ -117,10 +117,12 @@ function CodeEditorInner({
     if (!uitgeklapt) return;
     const opToets = (e: KeyboardEvent) => {
       if (e.key !== 'Escape') return;
-      // CodeMirror bindt Escape aan het sluiten van de autocomplete en roept
-      // daarvoor preventDefault aan, maar geen stopPropagation — het event
-      // komt dus hier ook langs. Zonder deze regel klapte het hele veld dicht
-      // zodra je een suggestielijst wegdrukte, midden in het typen.
+      // CodeMirror gebruikt Escape zelf: het sluit de suggestielijst
+      // (completionKeymap) en het schrapt een meervoudige of niet-lege
+      // selectie (simplifySelection). Beide roepen preventDefault aan maar
+      // geen stopPropagation, dus het event komt hier ook langs. Zonder deze
+      // regel klapte het hele veld dicht zodra je een lijst wegdrukte of een
+      // selectie ophief, midden in het typen. Een tweede druk sluit wel.
       if (e.defaultPrevented) return;
       setUitgeklapt(false);
     };
@@ -155,6 +157,8 @@ function CodeEditorInner({
         setConsoleLogs((prev) => [...prev, { level: e.data.level, text: e.data.text }]);
       } else if (e.data.type === 'height' && typeof e.data.height === 'number') {
         setPreviewInhoud(e.data.height);
+      } else if (e.data.type === 'escape') {
+        setUitgeklapt(false);
       }
     }
     window.addEventListener('message', handler);

@@ -177,10 +177,6 @@
   font-weight: 600;
 }
 
-.runButton + .resetButton {
-  margin-left: 0.4rem;
-}
-
 .resetButton:hover {
   background: var(--ifm-color-emphasis-200);
   color: var(--ifm-color-emphasis-900);

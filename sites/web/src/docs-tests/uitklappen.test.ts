@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import { buildDoc } from '../components/CodeEditor/buildDoc';
 
 // Het oefenveld staat in de contentkolom van Docusaurus, en die is begrensd:
 // gemeten op de gebouwde site is de editor ~490px en het voorbeeld 327px bij
@@ -104,5 +105,33 @@ describe('het uitklappen komt niet in de weg te staan', () => {
     // knop om meer ruimte te krijgen was onbereikbaar op precies de schermen
     // waar je hem het hardst nodig hebt.
     expect(css).toMatch(/\.tabBar\s*\{[^}]*flex-wrap:\s*wrap/);
+  });
+});
+
+describe('Escape werkt ook vanuit het voorbeeld', () => {
+  // Het voorbeeld is een gesandboxte iframe zonder allow-same-origin, dus met
+  // een eigen origin: een toets daarbinnen bereikt het window van de les
+  // nooit. Gemeten: na een klik in het voorbeeld is document.activeElement in
+  // de les de IFRAME zelf, en contentDocument is niet eens benaderbaar. Wie
+  // in zijn eigen pagina klikte en dan op Escape drukte, zag niets gebeuren
+  // terwijl de knop "Sluiten (Esc)" beloofde.
+
+  it('het voorbeeld meldt de toets aan de les', () => {
+    const doc = buildDoc('<html><body></body></html>', '', '');
+
+    expect(doc).toMatch(/type: 'escape'/);
+    expect(doc).toMatch(/e\.key !== 'Escape'/);
+  });
+
+  it('de les luistert naar die melding', () => {
+    expect(bron).toMatch(/e\.data\.type === 'escape'/);
+  });
+
+  it('een voorbeeld dat de toets zelf gebruikt houdt hem', () => {
+    // Dezelfde afspraak als in de editor: schrijft de leerling zelf een
+    // Escape-handler met preventDefault, dan is de toets van hem.
+    const doc = buildDoc('<html><body></body></html>', '', '');
+
+    expect(doc).toMatch(/e\.key !== 'Escape' \|\| e\.defaultPrevented/);
   });
 });
