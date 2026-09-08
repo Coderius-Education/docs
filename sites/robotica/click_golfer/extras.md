@@ -4,7 +4,7 @@ sidebar_position: 8
 
 # Extra's
 
-Je Golfer werkt. Wil je meer? Hier zijn drie extra's voor de golfrobot. Ze zijn wat lastiger, dus pak ze een voor een aan.
+Je Golfer werkt. Hieronder staan drie dingen die je er nog bij kunt maken. Ze zijn lastiger dan wat je tot nu toe deed, dus pak ze een voor een aan.
 
 ## Een lampje dat meekleurt
 
@@ -27,10 +27,10 @@ Gebruik een **als … dan … anders**-blok. Ziet de sensor een balletje: maak h
 
 Je bouwt hetzelfde **als**-blok als bij [Een bal detecteren](bal-detecteren), maar nu met een **anders**-tak erbij:
 
-- **als** `Read anapin A0` groter is dan jouw grens → zet het lampje op groen en laat de arm slaan;
-- **anders** → zet het lampje op rood.
+- als `Read anapin A0` groter is dan jouw grens: zet het lampje op groen en laat de arm slaan;
+- anders: zet het lampje op rood.
 
-Het slaan zat al in je programma van [Hole in one](hole-in-one); dat blok sleep je in de **dan**-tak. De kleur zet je met het RGB-blok uit de video: groen is rood 0, groen 255, blauw 0, en rood is rood 255, groen 0, blauw 0.
+Het slaan zat al in je programma van [Hole in one](hole-in-one); dat blok sleep je in de dan-tak. De kleur zet je met het RGB-blok uit de video: groen is rood 0, groen 255, blauw 0, en rood is rood 255, groen 0, blauw 0.
 
 </details>
 
@@ -48,7 +48,7 @@ Er bestaat een blok dat een **willekeurig getal** tussen twee waardes geeft. Zet
 <details>
 <summary>Klik hier voor het antwoord!</summary>
 
-Open het subprogramma **Mikken**. Daar staat het getal 50 ingevuld. Trek dat getal eruit en zet er het blok **willekeurig getal tussen … en …** voor in de plaats, met 40 in het eerste vakje en 70 in het tweede.
+Open het subprogramma Mikken. Daar staat het getal 50 ingevuld. Trek dat getal eruit en zet er het blok willekeurig getal tussen … en … voor in de plaats, met 40 in het eerste vakje en 70 in het tweede.
 
 Laat je robot nu een paar keer slaan. Elke slag is net iets anders, want het blok kiest telkens een nieuw getal.
 

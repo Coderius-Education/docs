@@ -6,7 +6,7 @@ sidebar_position: 3
 
 Naast het robotje maak je ook een **houten baan**. Die is gemaakt van dunne, laser-gesneden plankjes. In de baan zit een plek voor de **servo** (dat is de tikker die de bal wegslaat) en voor de **sensor** (die voelt of er een bal ligt).
 
-Op de foto's hieronder zie je de houten onderdelen en hoe je de baan stap voor stap in elkaar zet.
+Werk de foto's van boven naar beneden af; zo groeit de baan onder je handen in elkaar.
 
 :::tip
 Twijfel je hoe een onderdeel eruitziet of waar het komt? Bekijk het [3D-model op de intropagina](intro), of kijk in het [werkboek](bouwen). Je kunt het 3D-model draaien en zoomen.
