@@ -9,6 +9,27 @@ const EditorPane = lazy(() => import('./EditorPane').then((mod) => ({ default: m
 
 type Tab = 'html' | 'css' | 'javascript';
 
+// Het scrollslot telt hoe vaak het gezet is. Er staan vier oefenvelden op een
+// js-basics-pagina; zou elk exemplaar zijn eigen vorige waarde bewaren en
+// terugzetten, dan kan een tweede veld `hidden` opslaan als "de vorige stand"
+// en dat bij het sluiten terugzetten. De pagina blijft dan onscrollbaar tot je
+// ververst.
+let scrollSloten = 0;
+let overflowVoorSlot = '';
+
+function zetScrollSlot(aan: boolean): void {
+  if (aan) {
+    if (scrollSloten === 0) {
+      overflowVoorSlot = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+    }
+    scrollSloten += 1;
+    return;
+  }
+  scrollSloten = Math.max(0, scrollSloten - 1);
+  if (scrollSloten === 0) document.body.style.overflow = overflowVoorSlot;
+}
+
 const TAB_LABELS: Record<Tab, string> = {
   html: 'index.html',
   css: 'style.css',
@@ -95,14 +116,19 @@ function CodeEditorInner({
   useEffect(() => {
     if (!uitgeklapt) return;
     const opToets = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setUitgeklapt(false);
+      if (e.key !== 'Escape') return;
+      // CodeMirror bindt Escape aan het sluiten van de autocomplete en roept
+      // daarvoor preventDefault aan, maar geen stopPropagation — het event
+      // komt dus hier ook langs. Zonder deze regel klapte het hele veld dicht
+      // zodra je een suggestielijst wegdrukte, midden in het typen.
+      if (e.defaultPrevented) return;
+      setUitgeklapt(false);
     };
-    const vorigeOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
+    zetScrollSlot(true);
     window.addEventListener('keydown', opToets);
     return () => {
       window.removeEventListener('keydown', opToets);
-      document.body.style.overflow = vorigeOverflow;
+      zetScrollSlot(false);
     };
   }, [uitgeklapt]);
 

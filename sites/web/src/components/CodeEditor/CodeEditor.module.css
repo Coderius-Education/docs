@@ -111,8 +111,24 @@
 .tabBar {
   display: flex;
   flex-direction: row;
+  /* Op een telefoon van 375px is de balk 341px breed en zijn inhoud 502px:
+     zonder afbreken schoof de Groter-knop naar x=458, buiten de `overflow:
+     hidden` van de container. De knop om meer ruimte te krijgen was dus
+     onbereikbaar op precies de schermen waar je hem het hardst nodig hebt. */
+  flex-wrap: wrap;
   background: var(--ifm-color-emphasis-200);
   border-bottom: 1px solid var(--ifm-color-emphasis-300);
+}
+
+/* Breekt de balk af, dan krijgt de knopgroep zijn eigen regel over de volle
+   breedte in plaats van een restje rechts. */
+@media (max-width: 640px) {
+  .tabBarKnoppen {
+    width: 100%;
+    justify-content: flex-end;
+    padding: 0.25rem 0.35rem;
+    border-top: 1px solid var(--ifm-color-emphasis-300);
+  }
 }
 
 .tab {

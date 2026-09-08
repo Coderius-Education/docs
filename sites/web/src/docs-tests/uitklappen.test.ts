@@ -40,7 +40,7 @@ describe('het oefenveld kan het scherm vullen', () => {
   });
 
   it('sluit met Escape en zet de scroll van de pagina vast', () => {
-    expect(bron).toMatch(/e\.key === 'Escape'/);
+    expect(bron).toMatch(/e\.key !== 'Escape'/);
     expect(bron).toMatch(/document\.body\.style\.overflow/);
   });
 
@@ -76,5 +76,33 @@ describe('uitgeklapt vullen beide helften hun ruimte', () => {
 
   it('het voorbeeld laat uitgeklapt zijn vaste hoogte los', () => {
     expect(bron).toMatch(/stacked && !uitgeklapt\s*\?[\s\S]*?previewInhoud/);
+  });
+});
+
+describe('het uitklappen komt niet in de weg te staan', () => {
+  it('Escape van de autocomplete sluit niet ook het veld', () => {
+    // CodeMirror bindt Escape aan het sluiten van de suggestielijst en roept
+    // daarvoor preventDefault aan, maar geen stopPropagation. Zonder deze
+    // controle klapte het hele veld dicht zodra je een lijst wegdrukte,
+    // midden in het typen. Gemeten: eerste Escape sluit de popup, tweede het
+    // veld.
+    expect(bron).toMatch(/if \(e\.defaultPrevented\) return;/);
+  });
+
+  it('het scrollslot telt hoe vaak het gezet is', () => {
+    // Er staan vier oefenvelden op een js-basics-pagina. Bewaart elk exemplaar
+    // zijn eigen "vorige" waarde, dan kan een tweede veld `hidden` opslaan als
+    // die vorige stand en dat bij het sluiten terugzetten; de pagina blijft
+    // dan onscrollbaar tot je ververst.
+    expect(bron).toMatch(/scrollSloten/);
+    expect(bron).not.toMatch(/const vorigeOverflow/);
+  });
+
+  it('de knoppenbalk breekt af in plaats van buiten beeld te schuiven', () => {
+    // Op 375px was de balk 341px breed en zijn inhoud 502px: de Groter-knop
+    // eindigde op x=458, buiten de `overflow: hidden` van de container. De
+    // knop om meer ruimte te krijgen was onbereikbaar op precies de schermen
+    // waar je hem het hardst nodig hebt.
+    expect(css).toMatch(/\.tabBar\s*\{[^}]*flex-wrap:\s*wrap/);
   });
 });
