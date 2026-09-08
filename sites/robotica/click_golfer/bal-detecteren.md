@@ -19,7 +19,7 @@ Leg nu een bal voor de sensor en kijk hoe het getal verandert. Zonder bal is het
 
 ## Stap 2: Reageren op de bal
 
-Nu laat je de robot zelf reageren. Met een **if** (als …) kijk je of de waarde groter is dan een grens. In het voorbeeld is die grens **300**. Is de waarde groter, dan ligt er een bal en verschijnt **klaar om te golfen!** op het scherm.
+Nu laat je de robot zelf reageren. Met een **if** (als …) kijk je of de waarde groter is dan een grens. In het voorbeeld is die grens **300**. Is de waarde groter, dan ligt er een bal en verschijnt "klaar om te golfen!" op het scherm.
 
 <figure>
   <img src="/click_golfer/analoog_ir/klaar_om_te_golfen.png" width="600" alt="Leaphy-blok: als Read anapin A0 groter is dan 300, dan Show on screen 'klaar om te golfen!'." />
@@ -27,7 +27,7 @@ Nu laat je de robot zelf reageren. Met een **if** (als …) kijk je of de waarde
 </figure>
 
 :::tip
-Het getal **300** is maar een voorbeeld. Gebruik het getal dat jij in stap 1 hebt gemeten. Kies een grens die netjes tussen "geen bal" en "wel bal" ligt.
+Het getal 300 is maar een voorbeeld. Gebruik het getal dat jij in stap 1 hebt gemeten. Kies een grens die netjes tussen "geen bal" en "wel bal" ligt.
 :::
 
 Weet je robot nu of er een bal ligt? Dan kun je dit combineren met het wegtikken van de bal.

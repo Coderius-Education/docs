@@ -7,11 +7,11 @@ import ObjViewer from '@site/src/components/ObjViewer';
 
 Leuk dat je er bent. Je gaat je eigen **Click Golfer** bouwen: een robotje van Lego dat een balletje wegtikt, net als bij minigolf. Eerst bouw je het robotje, daarna sluit je de motor en de sensor aan, en tot slot laat je het bewegen door met **blokken** te programmeren.
 
-Je hebt hiervoor geen voorkennis nodig. Iedereen kan dit, ook als je nog nooit hebt geprogrammeerd.
+Je hoeft hier niets voor te kunnen. Ook als je nog nooit hebt geprogrammeerd, kom je er helemaal doorheen.
 
 ## Bekijk het robotje
 
-Hieronder zie je de Click Golfer in 3D. Sleep met je muis om hem te **draaien** en scroll om in en uit te **zoomen**.
+Hieronder zie je de Click Golfer in 3D. Sleep met je muis om hem te draaien, en scroll om in en uit te zoomen.
 
 <ObjViewer src="/models/golfer.obj" mtl="/models/golfer.mtl" />
 
@@ -23,8 +23,8 @@ Een robot is een **programmeerbare machine** die zelf taken uitvoert en kan reag
 
 ## Wat ga je doen?
 
-1. Verzamel de Lego-onderdelen en **[bouw het robotje](bouwen)**. De onderdelenlijst staat op de bouwpagina en alle bouwstappen in het werkboek.
-2. Daarna **[sluit je de motor en de sensor aan](aansluiten)**. Het programmeren met blokken volgt later.
+1. Verzamel de Lego-onderdelen en [bouw het robotje](bouwen). De onderdelenlijst staat op de bouwpagina, de bouwstappen in het werkboek.
+2. Maak daarna de [houten baan](hout), en [sluit de motor en de sensor aan](aansluiten). Het programmeren met blokken komt daarna.
 
 <details>
 <summary>Controlevraag</summary>

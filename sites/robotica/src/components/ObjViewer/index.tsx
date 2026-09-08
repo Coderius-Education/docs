@@ -1,5 +1,5 @@
 import type React from 'react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
@@ -19,8 +19,15 @@ export default function ObjViewer({
   height = '500px',
 }: ObjViewerProps): React.JSX.Element {
   const containerRef = useRef<HTMLDivElement>(null);
+  // Het golfer-model is 30 MB. Zonder deze melding kijkt een leerling op een
+  // schoollaptop een halve minuut naar een leeg vlak, op de eerste pagina van
+  // de sectie, zonder te weten of er iets gebeurt.
+  const [percentage, setPercentage] = useState<number | null>(null);
+  const [mislukt, setMislukt] = useState(false);
 
   useEffect(() => {
+    setPercentage(0);
+    setMislukt(false);
     const container = containerRef.current;
     if (!container) return;
 
@@ -69,19 +76,35 @@ export default function ObjViewer({
       controls.update();
 
       scene.add(obj);
+      setPercentage(null);
+    };
+
+    // De server stuurt bij een gz-gecodeerd bestand geen betrouwbare totale
+    // lengte mee; dan tonen we alleen dat er geladen wordt.
+    const volgLaden = (e: ProgressEvent) => {
+      setPercentage(e.lengthComputable ? Math.round((e.loaded / e.total) * 100) : 0);
+    };
+    const meldMislukt = () => {
+      setPercentage(null);
+      setMislukt(true);
     };
 
     if (mtl) {
       const mtlLoader = new MTLLoader();
-      mtlLoader.load(mtl, (materials) => {
-        materials.preload();
-        const objLoader = new OBJLoader();
-        objLoader.setMaterials(materials);
-        objLoader.load(src, addObjectToScene);
-      });
+      mtlLoader.load(
+        mtl,
+        (materials) => {
+          materials.preload();
+          const objLoader = new OBJLoader();
+          objLoader.setMaterials(materials);
+          objLoader.load(src, addObjectToScene, volgLaden, meldMislukt);
+        },
+        undefined,
+        meldMislukt,
+      );
     } else {
       const objLoader = new OBJLoader();
-      objLoader.load(src, addObjectToScene);
+      objLoader.load(src, addObjectToScene, volgLaden, meldMislukt);
     }
 
     const animate = () => {
@@ -107,15 +130,39 @@ export default function ObjViewer({
   }, [src, mtl]);
 
   return (
-    <div
-      ref={containerRef}
-      style={{
-        width,
-        height,
-        border: '1px solid #ddd',
-        borderRadius: '8px',
-        overflow: 'hidden',
-      }}
-    />
+    <div style={{ position: 'relative', width }}>
+      <div
+        ref={containerRef}
+        style={{
+          width: '100%',
+          height,
+          border: '1px solid #ddd',
+          borderRadius: '8px',
+          overflow: 'hidden',
+        }}
+      />
+      {(percentage !== null || mislukt) && (
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            pointerEvents: 'none',
+            color: '#555',
+            font: '0.95rem/1.4 var(--ifm-font-family-base)',
+            textAlign: 'center',
+            padding: '1rem',
+          }}
+        >
+          {mislukt
+            ? 'Het 3D-model kon niet geladen worden. Ververs de pagina, of ga gewoon verder — je hebt het model niet nodig om te bouwen.'
+            : percentage
+              ? `Het 3D-model laadt… ${percentage}%`
+              : 'Het 3D-model laadt… Dit is een groot bestand, dus het kan even duren.'}
+        </div>
+      )}
+    </div>
   );
 }

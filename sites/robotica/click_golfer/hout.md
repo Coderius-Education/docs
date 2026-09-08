@@ -6,7 +6,7 @@ sidebar_position: 3
 
 Naast het robotje maak je ook een **houten baan**. Die is gemaakt van dunne, laser-gesneden plankjes. In de baan zit een plek voor de **servo** (dat is de tikker die de bal wegslaat) en voor de **sensor** (die voelt of er een bal ligt).
 
-Op de foto's hieronder zie je de houten onderdelen en hoe je de baan stap voor stap in elkaar zet.
+Werk de foto's van boven naar beneden af; zo groeit de baan onder je handen in elkaar.
 
 :::tip
 Twijfel je hoe een onderdeel eruitziet of waar het komt? Bekijk het [3D-model op de intropagina](intro), of kijk in het [werkboek](bouwen). Je kunt het 3D-model draaien en zoomen.
@@ -51,7 +51,7 @@ Twijfel je hoe een onderdeel eruitziet of waar het komt? Bekijk het [3D-model op
 
 <figure>
   <img src="/click_golfer/hout/hout-6.jpg" width="600" alt="De infraroodsensor met een blauw stelschroefje, vastgezet op de houten baan." />
-  <figcaption>De sensor heeft een blauw stelschroefje. Daarmee stel je in hoe gevoelig hij is.</figcaption>
+  <figcaption>De sensor vastgezet op de baan. Het blauwe schroefje laat je met rust: in dit project lees je de sensor uit als een getal, en dat getal verandert er niet van. Hoe gevoelig je robot is, stel je straks in je programma in.</figcaption>
 </figure>
 
 Staat de baan in elkaar? Dan **[sluit je de motor en de sensor aan](aansluiten)**.
