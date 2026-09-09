@@ -51,13 +51,18 @@ function regelEindVan(code: string, positie: number): number {
 }
 
 /**
- * Het blok hele regels dat een selectie raakt, of null als de selectie binnen
- * één regel valt. Eindigt de selectie precies op een regelovergang, dan telt
- * de regel erna niet mee: wie tot het begin van regel 4 selecteert, verwacht
- * niet dat regel 4 mee verschuift.
+ * Het blok hele regels dat een selectie raakt, of null als er niets is
+ * geselecteerd. Eindigt de selectie precies op een regelovergang, dan telt de
+ * regel erna niet mee: wie tot het begin van regel 4 selecteert, verwacht niet
+ * dat regel 4 mee verschuift.
+ *
+ * Elke selectie telt, ook één binnen dezelfde regel. Eerder gold dat alleen
+ * voor selecties over meerdere regels, en werd een selectie bínnen een regel
+ * vervangen door vier spaties. Wie een hele regel selecteerde (Home,
+ * Shift+End) en Tab drukte, zag die regel dus verdwijnen.
  */
 function regelBlok(code: string, start: number, end: number): { van: number; tot: number } | null {
-  if (!code.slice(start, end).includes('\n')) return null;
+  if (end <= start) return null;
   const laatste = code[end - 1] === '\n' ? end - 1 : end;
   return { van: regelBeginVan(code, start), tot: regelEindVan(code, laatste) };
 }
@@ -73,13 +78,14 @@ function blokBewerking(
 }
 
 /**
- * Tab: springt elke regel van de selectie een niveau in. Valt de selectie
- * binnen één regel (of staat er alleen een cursor), dan komen er vier spaties
- * op die plek — een selectie binnen een regel wordt dus vervangen, net als in
- * een gewoon tekstveld.
+ * Tab: springt elke regel die de selectie raakt een niveau in. Staat er alleen
+ * een cursor, dan komen er vier spaties op die plek.
  *
- * Zonder de blok-tak verving Tab een selectie van drie regels door vier
- * spaties: de code van de leerling was met één toets weg.
+ * Tab verving eerst de selectie door vier spaties. Dat wist een selectie van
+ * drie regels, maar ook een enkele geselecteerde regel: Home, Shift+End, Tab
+ * en de regel was leeg. Inspringen is hier het enige veilige antwoord —
+ * vervangen kost een leerling zijn werk, en het levert nooit iets op wat hij
+ * niet ook met Delete had gekregen.
  *
  * Lege regels blijven leeg; die inspringen levert alleen spaties aan het eind
  * op, en in Python is dat de klassieke onzichtbare fout.

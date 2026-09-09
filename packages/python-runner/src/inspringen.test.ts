@@ -10,8 +10,19 @@ describe('tabInvoegen', () => {
     expect(tabInvoegen('ab', 1, 1)).toMatchObject({ code: 'a    b', start: 5, end: 5 });
   });
 
-  it('vervangt een selectie binnen één regel door de inspringing', () => {
-    expect(tabInvoegen('abcdef', 1, 4)).toMatchObject({ code: 'a    ef', start: 5, end: 5 });
+  // Tab verving eerst élke selectie door vier spaties. Dat wiste niet alleen
+  // een blok van drie regels, maar ook één geselecteerde regel: Home,
+  // Shift+End, Tab, en `    a = 1` was `    `. Elke selectie springt nu in.
+  it('springt de regel in bij een selectie binnen die regel, zonder tekst te wissen', () => {
+    expect(tabInvoegen('abcdef', 1, 4)).toMatchObject({ code: '    abcdef' });
+  });
+
+  it('wist een regel niet als je hem helemaal selecteert', () => {
+    const code = 'def f():\n    a = 1\n    b = 2';
+    const van = code.indexOf('    a = 1');
+    expect(tabInvoegen(code, van, van + '    a = 1'.length).code).toBe(
+      'def f():\n        a = 1\n    b = 2',
+    );
   });
 
   // Hiervóór verving Tab een selectie van meerdere regels door vier spaties:
@@ -43,6 +54,12 @@ describe('tabInvoegen', () => {
 });
 
 describe('tabWeghalen', () => {
+  it('haalt de inspringing weg bij een selectie binnen één regel', () => {
+    const code = 'def f():\n        a = 1';
+    const van = code.indexOf('        a = 1');
+    expect(tabWeghalen(code, van, van + 8).code).toBe('def f():\n    a = 1');
+  });
+
   it('haalt vier spaties van het begin van de regel en schuift de cursor mee', () => {
     expect(tabWeghalen('x\n    print(1)', 10, 10)).toMatchObject({
       code: 'x\nprint(1)',
