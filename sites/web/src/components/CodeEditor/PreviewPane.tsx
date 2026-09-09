@@ -84,7 +84,11 @@ export function PreviewPane({ srcDoc, hoogte, innerRef }: PreviewPaneProps) {
               : undefined
           }
           srcDoc={srcDoc}
-          sandbox="allow-scripts allow-modals allow-popups"
+          // Zonder allow-popups-to-escape-sandbox erft een nieuw tabblad de
+          // sandbox: het krijgt een opaque origin, cookies en localStorage
+          // gooien een SecurityError, en de meeste echte sites doen het dan
+          // niet. De les Pagina's koppelen belooft een écht nieuw tabblad.
+          sandbox="allow-scripts allow-modals allow-popups allow-popups-to-escape-sandbox"
           title="Code voorbeeld"
         />
       </div>
