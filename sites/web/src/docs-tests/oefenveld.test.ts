@@ -42,8 +42,11 @@ describe('de preview doet wat de lessen beloven', () => {
     // tabblad zelf gesandboxt, dus een kreupele versie van de site.
     const belooft = lessen().filter((f) => /target="_blank"/.test(tekst(f)));
     expect(belooft.length).toBeGreaterThan(0);
-    expect(preview).toMatch(/sandbox="[^"]*\ballow-popups\b/);
-    expect(preview).toMatch(/sandbox="[^"]*allow-popups-to-escape-sandbox/);
+    // Per token, niet met een regex: `\ballow-popups\b` matcht ook bínnen
+    // allow-popups-to-escape-sandbox, en die vlag doet niets zonder de losse.
+    const vlaggen = preview.match(/sandbox="([^"]*)"/)?.[1].split(/\s+/) ?? [];
+    expect(vlaggen).toContain('allow-popups');
+    expect(vlaggen).toContain('allow-popups-to-escape-sandbox');
   });
 
   it('geen les vraagt de leerling aan de preview te slepen', () => {
