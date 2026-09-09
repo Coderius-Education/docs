@@ -45,17 +45,64 @@ function regelBeginVan(code: string, positie: number): number {
   return code.lastIndexOf('\n', positie - 1) + 1;
 }
 
-/** Tab: vervangt de selectie [start, end) door vier spaties, cursor erachter. */
-export function tabInvoegen(code: string, start: number, end: number): Bewerking {
-  return bewerking(code, start, end, INSPRINGING, start + INSPRINGING.length);
+function regelEindVan(code: string, positie: number): number {
+  const nieuweRegel = code.indexOf('\n', positie);
+  return nieuweRegel === -1 ? code.length : nieuweRegel;
 }
 
 /**
- * Shift+Tab: haalt hoogstens vier spaties weg aan het begin van de regel
- * waar de cursor staat. De cursor schuift mee, maar nooit voor het begin van
- * de regel.
+ * Het blok hele regels dat een selectie raakt, of null als de selectie binnen
+ * één regel valt. Eindigt de selectie precies op een regelovergang, dan telt
+ * de regel erna niet mee: wie tot het begin van regel 4 selecteert, verwacht
+ * niet dat regel 4 mee verschuift.
+ */
+function regelBlok(code: string, start: number, end: number): { van: number; tot: number } | null {
+  if (!code.slice(start, end).includes('\n')) return null;
+  const laatste = code[end - 1] === '\n' ? end - 1 : end;
+  return { van: regelBeginVan(code, start), tot: regelEindVan(code, laatste) };
+}
+
+/** Past `perRegel` toe op elke regel van het blok en levert één bewerking op. */
+function blokBewerking(
+  code: string,
+  blok: { van: number; tot: number },
+  perRegel: (regel: string) => string,
+): Bewerking {
+  const tekst = code.slice(blok.van, blok.tot).split('\n').map(perRegel).join('\n');
+  return bewerking(code, blok.van, blok.tot, tekst, blok.van, blok.van + tekst.length);
+}
+
+/**
+ * Tab: springt elke regel van de selectie een niveau in. Valt de selectie
+ * binnen één regel (of staat er alleen een cursor), dan komen er vier spaties
+ * op die plek — een selectie binnen een regel wordt dus vervangen, net als in
+ * een gewoon tekstveld.
+ *
+ * Zonder de blok-tak verving Tab een selectie van drie regels door vier
+ * spaties: de code van de leerling was met één toets weg.
+ *
+ * Lege regels blijven leeg; die inspringen levert alleen spaties aan het eind
+ * op, en in Python is dat de klassieke onzichtbare fout.
+ */
+export function tabInvoegen(code: string, start: number, end: number): Bewerking {
+  const blok = regelBlok(code, start, end);
+  if (!blok) return bewerking(code, start, end, INSPRINGING, start + INSPRINGING.length);
+  return blokBewerking(code, blok, (regel) => (regel === '' ? regel : INSPRINGING + regel));
+}
+
+/**
+ * Shift+Tab: haalt hoogstens vier spaties weg aan het begin van elke regel die
+ * de selectie raakt. Bij een cursor zonder selectie is dat de regel waar hij
+ * staat, en dan schuift de cursor mee, maar nooit voor het begin van de regel.
+ *
+ * Eerder keek deze functie alleen naar de regel waar de selectie begón, dus
+ * van een blok van drie regels verschoof er één.
  */
 export function tabWeghalen(code: string, start: number, end: number): Bewerking {
+  const blok = regelBlok(code, start, end);
+  if (blok) {
+    return blokBewerking(code, blok, (regel) => regel.replace(/^ {1,4}/, ''));
+  }
   const regelBegin = regelBeginVan(code, start);
   const spaties = code.slice(regelBegin).match(/^ {1,4}/)?.[0].length ?? 0;
   if (spaties === 0) return bewerking(code, start, start, '', start, end);

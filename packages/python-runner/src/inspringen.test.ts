@@ -10,8 +10,35 @@ describe('tabInvoegen', () => {
     expect(tabInvoegen('ab', 1, 1)).toMatchObject({ code: 'a    b', start: 5, end: 5 });
   });
 
-  it('vervangt een selectie door de inspringing', () => {
+  it('vervangt een selectie binnen één regel door de inspringing', () => {
     expect(tabInvoegen('abcdef', 1, 4)).toMatchObject({ code: 'a    ef', start: 5, end: 5 });
+  });
+
+  // Hiervóór verving Tab een selectie van meerdere regels door vier spaties:
+  // `def f():\n    a = 1\n    b = 2` werd `def f():\n    `. De code van de
+  // leerling was met één toets weg, zonder waarschuwing.
+  it('springt elke regel van een selectie over meerdere regels in', () => {
+    const code = 'a = 1\nb = 2\nc = 3';
+    expect(tabInvoegen(code, 0, code.length).code).toBe('    a = 1\n    b = 2\n    c = 3');
+  });
+
+  it('laat lege regels leeg, zodat er geen spaties aan het eind blijven staan', () => {
+    const code = 'a = 1\n\nc = 3';
+    expect(tabInvoegen(code, 0, code.length).code).toBe('    a = 1\n\n    c = 3');
+  });
+
+  it('selecteert na afloop het hele blok dat verschoven is', () => {
+    const code = 'a\nb';
+    expect(tabInvoegen(code, 0, code.length)).toMatchObject({
+      start: 0,
+      end: '    a\n    b'.length,
+    });
+  });
+
+  it('neemt de regel erna niet mee als de selectie op de regelovergang eindigt', () => {
+    const code = 'a\nb\nc';
+    // tot en met de nieuwe regel achter `b`, dus regel `c` blijft staan.
+    expect(tabInvoegen(code, 0, 4).code).toBe('    a\n    b\nc');
   });
 });
 
@@ -39,6 +66,24 @@ describe('tabWeghalen', () => {
   it('zet de cursor nooit voor het begin van de regel', () => {
     // Cursor midden in de leidende spaties: na weghalen staat hij op regelbegin.
     expect(tabWeghalen('x\n    y', 3, 3)).toMatchObject({ code: 'x\ny', start: 2, end: 2 });
+  });
+
+  // Dit was de melding: van een blok van drie regels verschoof alleen de
+  // eerste, omdat de functie enkel naar de regel keek waar de selectie begon.
+  it('haalt de inspringing van elke regel van een selectie over meerdere regels', () => {
+    const code = '    a = 1\n    b = 2\n    c = 3';
+    expect(tabWeghalen(code, 0, code.length).code).toBe('a = 1\nb = 2\nc = 3');
+  });
+
+  it('haalt per regel weg wat er staat, niet overal evenveel', () => {
+    const code = '  a = 1\n      b = 2\nc = 3';
+    expect(tabWeghalen(code, 0, code.length).code).toBe('a = 1\n  b = 2\nc = 3');
+  });
+
+  it('neemt de regel erna niet mee als de selectie op de regelovergang eindigt', () => {
+    const code = '    a\n    b\n    c';
+    // (0, 6) dekt regel 1 plus de regelovergang; regel 2 begint pas op 6.
+    expect(tabWeghalen(code, 0, 6).code).toBe('a\n    b\n    c');
   });
 
   it('werkt op de regel van de cursor, niet op een eerdere regel', () => {
