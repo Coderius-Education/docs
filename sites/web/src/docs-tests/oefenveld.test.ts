@@ -11,7 +11,10 @@ import { VIEWPORTS } from '../components/CodeEditor/PreviewPane';
 //   panelen staan op `flex: 1 1 60%` en `flex: 1 1 40%`.
 // - "In de preview werken links". De iframe stond op
 //   `sandbox="allow-scripts allow-modals"`, en Chromium blokkeerde
-//   `target="_blank"` met zoveel woorden.
+//   `target="_blank"` met zoveel woorden. Met alleen `allow-popups` erbij
+//   opende er wel een tabblad, maar dat erfde de sandbox: opaque origin,
+//   SecurityError op localStorage — en een site die daarop leunt doet het
+//   dan niet.
 // - De media-queries-les gebruikte breekpunten van 500 tot 700px terwijl het
 //   voorbeeldpaneel op een laptop 327px breed is, dus er schakelde nooit iets
 //   om. Daarvoor zijn de breedteknoppen er.
@@ -35,10 +38,12 @@ describe('de preview doet wat de lessen beloven', () => {
   it('links met target="_blank" openen echt een tabblad', () => {
     // Zonder allow-popups blokkeert de browser het openen, en dan klopt de
     // hele les Pagina\'s koppelen niet meer: zijn Predict, Modify én Make
-    // hangen aan dat effect.
+    // hangen aan dat effect. En zonder allow-popups-to-escape-sandbox is het
+    // tabblad zelf gesandboxt, dus een kreupele versie van de site.
     const belooft = lessen().filter((f) => /target="_blank"/.test(tekst(f)));
     expect(belooft.length).toBeGreaterThan(0);
-    expect(preview).toMatch(/sandbox="[^"]*allow-popups/);
+    expect(preview).toMatch(/sandbox="[^"]*\ballow-popups\b/);
+    expect(preview).toMatch(/sandbox="[^"]*allow-popups-to-escape-sandbox/);
   });
 
   it('geen les vraagt de leerling aan de preview te slepen', () => {
