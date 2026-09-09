@@ -10,7 +10,12 @@ function PreviewComponent({ session }: RunnerHostProps): ReactNode {
       className={styles.preview}
       title="Voorbeeld van je website"
       // allow-modals zodat alert() en prompt() uit de les gewoon werken.
-      sandbox="allow-scripts allow-modals"
+      // allow-popups zodat target="_blank" een tabblad opent, en
+      // allow-popups-to-escape-sandbox zodat dat tabblad niet de sandbox
+      // erft (opaque origin, SecurityError op localStorage: de meeste sites
+      // doen het dan niet). Géén allow-same-origin: de code van de leerling
+      // blijft van de editor af.
+      sandbox="allow-scripts allow-modals allow-popups allow-popups-to-escape-sandbox"
       srcDoc={srcdoc}
     />
   );
