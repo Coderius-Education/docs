@@ -54,12 +54,29 @@ describe('tabInvoegen', () => {
     expect(tabInvoegen(code, 0, code.length).code).toBe('    a = 1\n\n    c = 3');
   });
 
-  it('selecteert na afloop het hele blok dat verschoven is', () => {
+  it('houdt hele regels heel geselecteerd', () => {
     const code = 'a\nb';
     expect(tabInvoegen(code, 0, code.length)).toMatchObject({
       start: 0,
       end: '    a\n    b'.length,
     });
+  });
+
+  // Ook over meerdere regels houdt de selectie haar tekens: het begin schuift
+  // met de eerste regel mee, het eind met het totaal. Anders wist het volgende
+  // teken dat je typt tekst die je nooit geselecteerd had.
+  it('houdt over meerdere regels dezelfde tekens geselecteerd', () => {
+    const code = '    a = b\n    c = d';
+    const van = code.indexOf('b');
+    const tot = code.indexOf('c') + 1;
+    const na = tabInvoegen(code, van, tot);
+    expect(na.code.slice(na.start, na.end)).toBe('b\n        c');
+    const terug = tabWeghalen(na.code, na.start, na.end);
+    expect(terug).toMatchObject({ code, start: van, end: tot });
+  });
+
+  it('houdt een selectie van alleen de regelovergang als selectie', () => {
+    expect(tabInvoegen('a\nb', 1, 2)).toMatchObject({ code: '    a\nb', start: 5, end: 6 });
   });
 
   it('neemt de regel erna niet mee als de selectie op de regelovergang eindigt', () => {
@@ -106,6 +123,10 @@ describe('tabWeghalen', () => {
   it('haalt de inspringing van elke regel van een selectie over meerdere regels', () => {
     const code = '    a = 1\n    b = 2\n    c = 3';
     expect(tabWeghalen(code, 0, code.length).code).toBe('a = 1\nb = 2\nc = 3');
+  });
+
+  it('haalt de spaties van een regel met alleen spaties weg, anders dan Tab', () => {
+    expect(tabWeghalen('    a\n    \n    b', 0, 16).code).toBe('a\n\nb');
   });
 
   it('haalt per regel weg wat er staat, niet overal evenveel', () => {
@@ -193,6 +214,12 @@ describe('het editbereik van een bewerking', () => {
     ['tab over selectie', () => tabInvoegen('abcdef', 1, 4), 'abcdef'],
     ['shift+tab', () => tabWeghalen('x\n    print(1)', 10, 10), 'x\n    print(1)'],
     ['shift+tab zonder spaties', () => tabWeghalen('a\nb', 3, 3), 'a\nb'],
+    ['tab over regels', () => tabInvoegen('a = 1\nb = 2\nc = 3', 0, 17), 'a = 1\nb = 2\nc = 3'],
+    [
+      'shift+tab over regels',
+      () => tabWeghalen('  a = 1\n      b = 2\nc = 3', 0, 25),
+      '  a = 1\n      b = 2\nc = 3',
+    ],
     ['enter', () => enterInvoegen('    a = 1; b = 2', 10, 10), '    a = 1; b = 2'],
     ['enter na dubbele punt', () => enterInvoegen('if x:', 5, 5), 'if x:'],
     ['enter op kolom 0', () => enterInvoegen('if x:\n    y = 1', 6, 6), 'if x:\n    y = 1'],

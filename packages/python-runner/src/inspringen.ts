@@ -70,13 +70,12 @@ function regelBlok(code: string, start: number, end: number): { van: number; tot
 /**
  * Past `perRegel` toe op elke regel van het blok en levert één bewerking op.
  *
- * Gaat het om één regel, dan houdt de selectie de tekens die ze had: ze schuift
- * mee met wat er vóór de regel bij komt of af gaat. Wie midden in een regel drie
- * tekens selecteert en Shift+Tab drukt, heeft die drie tekens daarna nog steeds
- * vast, en niet de hele regel — het volgende teken dat hij typt wist dan geen
- * werk. Begon de selectie op kolom 0, dan blijft ze daar beginnen. Over meerdere
- * regels blijft het hele blok geselecteerd; een schuivend beginpunt is daar niet
- * te volgen.
+ * De selectie houdt de tekens die ze had. Het begin schuift mee met wat er
+ * vóór de eerste regel bij komt of af gaat, het eind met het totaal over alle
+ * regels. Wie midden in een regel drie tekens selecteert en Shift+Tab drukt,
+ * heeft die drie tekens daarna nog steeds vast, en niet de hele regel — het
+ * volgende teken dat hij typt wist dan geen werk. Begon de selectie op kolom
+ * 0, dan blijft ze daar beginnen: hele regels blijven zo hele regels.
  */
 function blokBewerking(
   code: string,
@@ -86,13 +85,16 @@ function blokBewerking(
   perRegel: (regel: string) => string,
 ): Bewerking {
   const regels = code.slice(blok.van, blok.tot).split('\n');
-  const tekst = regels.map(perRegel).join('\n');
-  const eind = blok.van + tekst.length;
-  if (regels.length > 1) return bewerking(code, blok.van, blok.tot, tekst, blok.van, eind);
+  const nieuweRegels = regels.map(perRegel);
+  const tekst = nieuweRegels.join('\n');
+  const eersteVerschil = (nieuweRegels[0]?.length ?? 0) - (regels[0]?.length ?? 0);
   const verschil = tekst.length - (blok.tot - blok.van);
-  const schuif = (positie: number) =>
-    positie === blok.van ? blok.van : Math.min(Math.max(positie + verschil, blok.van), eind);
-  return bewerking(code, blok.van, blok.tot, tekst, schuif(start), schuif(end));
+  // Een selectie kan één teken voorbij het blok eindigen, op de regelovergang;
+  // dat teken blijft van haar, dus het eind wordt niet op het blok afgekapt.
+  const laatsteRegelBegin = blok.van + tekst.length - (nieuweRegels.at(-1)?.length ?? 0);
+  const nieuwStart = start === blok.van ? blok.van : Math.max(blok.van, start + eersteVerschil);
+  const nieuwEind = Math.max(laatsteRegelBegin, end + verschil);
+  return bewerking(code, blok.van, blok.tot, tekst, nieuwStart, nieuwEind);
 }
 
 /**
@@ -124,6 +126,10 @@ export function tabInvoegen(code: string, start: number, end: number): Bewerking
  *
  * Eerder keek deze functie alleen naar de regel waar de selectie begón, dus
  * van een blok van drie regels verschoof er één.
+ *
+ * Een regel met alleen spaties raakt die spaties hier wél kwijt, terwijl Tab
+ * hem overslaat. Dat is bewust: Shift+Tab en dan Tab levert dan een schone
+ * lege regel op in plaats van de stille spaties die er stonden.
  */
 export function tabWeghalen(code: string, start: number, end: number): Bewerking {
   const blok = regelBlok(code, start, end);
