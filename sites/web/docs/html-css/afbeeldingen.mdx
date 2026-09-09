@@ -60,6 +60,18 @@ De belangrijkste attributen:
 Als je alleen `width` instelt, past de hoogte automatisch mee zodat de afbeelding niet scheef staat.
 :::
 
+### Het adres van een afbeelding vinden
+
+De `src` moet naar het plaatje zelf wijzen, niet naar de pagina waar het op staat. Zo kom je aan dat adres:
+
+1. Zoek een afbeelding op een website.
+2. Klik er met de rechtermuisknop op en kies **Afbeeldingsadres kopiëren**. Elke browser noemt het net iets anders: afbeeldingslink, afbeeldingslocatie, maar er staat altijd "afbeelding" in.
+3. Plak het adres tussen de aanhalingstekens van `src`.
+
+Een goed adres begint met `https://` en eindigt meestal op `.jpg`, `.png`, `.gif` of `.webp`. Plak je het in de adresbalk van een nieuw tabblad, dan zie je alleen het plaatje, zonder website eromheen.
+
+**Let op:** bij Google Afbeeldingen zie je eerst een verkleind plaatje. Klik dat aan en ga naar de website waar het vandaan komt; daar klik je met de rechtermuisknop op het grote plaatje. Het adres van de kleine versie is wazig en werkt vaak maar even.
+
 ## Predict
 
 Wat denk je dat er te zien is als je een verkeerde `src` invult?
@@ -131,7 +143,7 @@ Vervang de waarde van het `src` attribuut door de nieuwe URL. Vergeet de `alt` t
 <details>
 <summary>Tip</summary>
 
-Je mag plaatjes zoeken op internet of sites zoals *picsum.photos* gebruiken. Zorg dat je 3 verschillende `<img>` tags onder elkaar plaatst in je HTML.
+Zoek plaatjes op internet en kopieer het adres zoals hierboven staat, of gebruik *picsum.photos* met een ander getal achter `/id/`. Zorg dat je 3 verschillende `<img>` tags onder elkaar plaatst in je HTML.
 
 </details>
 
@@ -148,6 +160,14 @@ Je mag plaatjes zoeken op internet of sites zoals *picsum.photos* gebruiken. Zor
 </details>
 
 ## Er gaat iets mis
+
+**De afbeelding laadt niet**
+
+Je ziet de `alt` tekst en een gebroken icoontje, terwijl het adres er goed uitziet. Drie oorzaken, in deze volgorde:
+
+1. Het adres wijst naar een webpagina, niet naar het plaatje. Plak het in een nieuw tabblad: zie je een hele website, dan heb je het verkeerde adres. Ga terug en klik met de rechtermuisknop op het plaatje zelf.
+2. Het adres begint met `http://` in plaats van `https://`. Op een beveiligde pagina probeert de browser dan zelf `https://`, en lukt dat niet, dan laat hij het plaatje weg. Zoek een ander plaatje of een andere bron.
+3. De website staat niet toe dat anderen haar plaatjes gebruiken. Dat zie je niet aan het adres; het plaatje blijft leeg. Kies dan een andere bron. Wikimedia Commons en picsum.photos staan het altijd toe.
 
 **`alt` weglaten**
 
