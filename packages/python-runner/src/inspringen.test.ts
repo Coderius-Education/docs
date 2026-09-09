@@ -17,6 +17,22 @@ describe('tabInvoegen', () => {
     expect(tabInvoegen('abcdef', 1, 4)).toMatchObject({ code: '    abcdef' });
   });
 
+  it('houdt een selectie binnen één regel vast, zodat het volgende teken niets wist', () => {
+    const code = 'def f():\n        naam = 1';
+    const van = code.indexOf('naam');
+    expect(tabWeghalen(code, van, van + 4)).toMatchObject({ start: van - 4, end: van });
+    expect(tabInvoegen(code, van, van + 4)).toMatchObject({ start: van + 4, end: van + 8 });
+  });
+
+  it('laat een selectie die op kolom 0 begint daar beginnen', () => {
+    const code = 'a = 1';
+    expect(tabInvoegen(code, 0, 5)).toMatchObject({ code: '    a = 1', start: 0, end: 9 });
+  });
+
+  it('springt een regel met alleen spaties niet in', () => {
+    expect(tabInvoegen('a = 1\n    \nc = 3', 0, 16).code).toBe('    a = 1\n    \n    c = 3');
+  });
+
   it('wist een regel niet als je hem helemaal selecteert', () => {
     const code = 'def f():\n    a = 1\n    b = 2';
     const van = code.indexOf('    a = 1');

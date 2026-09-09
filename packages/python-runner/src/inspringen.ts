@@ -67,14 +67,32 @@ function regelBlok(code: string, start: number, end: number): { van: number; tot
   return { van: regelBeginVan(code, start), tot: regelEindVan(code, laatste) };
 }
 
-/** Past `perRegel` toe op elke regel van het blok en levert één bewerking op. */
+/**
+ * Past `perRegel` toe op elke regel van het blok en levert één bewerking op.
+ *
+ * Gaat het om één regel, dan houdt de selectie de tekens die ze had: ze schuift
+ * mee met wat er vóór de regel bij komt of af gaat. Wie midden in een regel drie
+ * tekens selecteert en Shift+Tab drukt, heeft die drie tekens daarna nog steeds
+ * vast, en niet de hele regel — het volgende teken dat hij typt wist dan geen
+ * werk. Begon de selectie op kolom 0, dan blijft ze daar beginnen. Over meerdere
+ * regels blijft het hele blok geselecteerd; een schuivend beginpunt is daar niet
+ * te volgen.
+ */
 function blokBewerking(
   code: string,
   blok: { van: number; tot: number },
+  start: number,
+  end: number,
   perRegel: (regel: string) => string,
 ): Bewerking {
-  const tekst = code.slice(blok.van, blok.tot).split('\n').map(perRegel).join('\n');
-  return bewerking(code, blok.van, blok.tot, tekst, blok.van, blok.van + tekst.length);
+  const regels = code.slice(blok.van, blok.tot).split('\n');
+  const tekst = regels.map(perRegel).join('\n');
+  const eind = blok.van + tekst.length;
+  if (regels.length > 1) return bewerking(code, blok.van, blok.tot, tekst, blok.van, eind);
+  const verschil = tekst.length - (blok.tot - blok.van);
+  const schuif = (positie: number) =>
+    positie === blok.van ? blok.van : Math.min(Math.max(positie + verschil, blok.van), eind);
+  return bewerking(code, blok.van, blok.tot, tekst, schuif(start), schuif(end));
 }
 
 /**
@@ -87,13 +105,16 @@ function blokBewerking(
  * vervangen kost een leerling zijn werk, en het levert nooit iets op wat hij
  * niet ook met Delete had gekregen.
  *
- * Lege regels blijven leeg; die inspringen levert alleen spaties aan het eind
- * op, en in Python is dat de klassieke onzichtbare fout.
+ * Een regel zonder tekst blijft zoals hij is, ook als er al spaties op staan.
+ * Hem inspringen levert alleen spaties aan het eind op, en in Python is dat de
+ * klassieke onzichtbare fout.
  */
 export function tabInvoegen(code: string, start: number, end: number): Bewerking {
   const blok = regelBlok(code, start, end);
   if (!blok) return bewerking(code, start, end, INSPRINGING, start + INSPRINGING.length);
-  return blokBewerking(code, blok, (regel) => (regel === '' ? regel : INSPRINGING + regel));
+  return blokBewerking(code, blok, start, end, (regel) =>
+    regel.trim() === '' ? regel : INSPRINGING + regel,
+  );
 }
 
 /**
@@ -107,7 +128,7 @@ export function tabInvoegen(code: string, start: number, end: number): Bewerking
 export function tabWeghalen(code: string, start: number, end: number): Bewerking {
   const blok = regelBlok(code, start, end);
   if (blok) {
-    return blokBewerking(code, blok, (regel) => regel.replace(/^ {1,4}/, ''));
+    return blokBewerking(code, blok, start, end, (regel) => regel.replace(/^ {1,4}/, ''));
   }
   const regelBegin = regelBeginVan(code, start);
   const spaties = code.slice(regelBegin).match(/^ {1,4}/)?.[0].length ?? 0;
