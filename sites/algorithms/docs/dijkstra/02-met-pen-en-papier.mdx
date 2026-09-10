@@ -4,10 +4,9 @@ sidebar_position: 2
 
 # Doe het met pen en papier
 
-**Leerdoel:** je begrijpt **hoe** Dijkstra werkt door hem zelf stap voor
-stap uit te voeren — geen code, alleen een tabel die je bijwerkt. Je
-zult zien hoe afstanden **steeds opnieuw** verbeterd worden naarmate je
-verder zoekt.
+**Leerdoel:** je begrijpt hoe Dijkstra werkt door hem zelf stap voor
+stap uit te voeren. Geen code, alleen een tabel die je bijwerkt, en je
+ziet een afstand meer dan eens beter worden terwijl je verder zoekt.
 
 ## Onze mini-graph
 
@@ -22,8 +21,8 @@ verder zoekt.
               2
 ```
 
-Vijf nodes (`A` t/m `E`) en zeven verbindingen. We willen: **vanuit `A`,
-wat is de kortste afstand naar elke andere node?**
+Vijf nodes, `A` tot en met `E`, en zeven verbindingen. De vraag: vanuit
+`A`, wat is de kortste afstand naar elke andere node?
 
 Lees het plaatje:
 
@@ -47,11 +46,11 @@ Dijkstra houdt drie dingen bij. Pak een vel papier en teken deze tabel:
 | D | nee | ? |
 | E | nee | ? |
 
-- **Bekend?**: of we al **definitief** weten wat de kortste afstand is.
-  We beginnen allemaal op **nee**.
-- **Huidige beste afstand**: ons beste *vermoeden* tot nu toe. Alles
-  begint op **?** — nog onbekend — behalve de start: die staat op **0**,
-  want daar zijn we al.
+- **Bekend?** zegt of we de kortste afstand al definitief weten. Aan het
+  begin is dat nergens zo.
+- **Huidige beste afstand** is ons beste vermoeden tot nu toe. Alles
+  begint op `?`, nog onbekend, behalve de start: die staat op 0, want
+  daar zijn we al.
 
 Dit is stap 0, en die doe je één keer. Zonder die 0 bij de start is er
 in ronde 1 niets te kiezen: alles zou `?` zijn.
@@ -132,10 +131,9 @@ bekend:
 | D | nee | **4** |
 | E | nee | **6** |
 
-> **Belangrijk moment:** `B` is **opeens veel korter** geworden. Eerst
-> dachten we 6 (directe weg `A→B`), maar nu we via `C` kijken vinden we
-> 3 (`A→C→B`). Dat is precies waar Dijkstra om gaat — **niet stoppen
-> bij je eerste schatting**.
+> `B` is opeens een stuk korter. Eerst dachten we 6, de directe weg
+> `A→B`, maar via `C` blijkt het 3 te zijn (`A→C→B`). Daar draait
+> Dijkstra om: niet stoppen bij je eerste schatting.
 
 ## Ronde 3 — kies B, niets verbetert
 
@@ -169,8 +167,8 @@ Tabel **niet** veranderd:
 | D | nee | 4 |
 | E | nee | 6 |
 
-> Een ronde zonder updates is ook normaal. Dijkstra doet altijd
-> *iedere* buur checken, ook al levert het niks op.
+> Een ronde zonder updates is ook normaal. Dijkstra kijkt naar iedere
+> buur, ook als het niks oplevert.
 
 ## Ronde 4 — kies D, en weer een verbetering
 
@@ -202,9 +200,9 @@ Tabel **niet** veranderd:
 | D | ja ✓ | 4 |
 | E | nee | **5** ⬇ |
 
-> **Tweede inzicht:** `E` was 6 (route `A→C→E`). Maar via `D` is het
-> `A→C→D→E` = 1 + 3 + 1 = **5**. Drie kortere stappen kunnen één lange
-> verslaan. Goed dat we niet stopten na ronde 2.
+> `E` was 6, via `A→C→E`. Maar via `D` is het `A→C→D→E` = 1 + 3 + 1 =
+> 5. Drie korte stappen verslaan hier één lange. Goed dat we na ronde 2
+> niet gestopt zijn.
 
 ## Ronde 5 — kies E, klaar
 
@@ -240,24 +238,23 @@ in code doet, zie je bij [pas aan](./11-aanpassen).
 
 ## Wat is hier opvallend?
 
-- **`B` werd één keer bijgewerkt** (6 → 3). De omweg via `C` is meer dan
-  twee keer zo kort als de directe weg.
-- **`E` werd één keer bijgewerkt** (6 → 5). En dat gebeurde pas **drie
-  rondes** nadat we hem voor het eerst hadden gezien.
-- **Alle kortste routes lopen via `C`**. Dat zou je op het oog moeilijk
-  kunnen raden.
-- **Geen route is direct** voor `B`, `D` of `E`. De directe `A→B`
-  bestaat (6), maar is langer dan de omweg.
+- `B` werd één keer bijgewerkt, van 6 naar 3. De omweg via `C` is de
+  helft van de directe weg.
+- `E` werd ook één keer bijgewerkt, van 6 naar 5, en dat gebeurde pas
+  drie rondes nadat we hem voor het eerst zagen.
+- Alle kortste routes lopen via `C`. Dat raad je op het oog niet.
+- Geen enkele route is direct. De directe `A→B` bestaat wel (6), maar
+  de omweg is korter.
 
 ## Waarom werkt dit?
 
-> **Sleutelidee:** elke keer dat we "laagste onder nog-niet-bekend" als
-> bekend markeren, **kan** zijn afstand niet meer verbeteren. Want elke
-> nieuwe route zou via een andere nog-niet-bekende node moeten lopen —
-> en die hebben per definitie een afstand die **niet lager** is. Dus de
-> totale nieuwe route wordt nooit korter.
+> Elke keer dat we de laagste onder de nog-niet-bekende nodes als bekend
+> markeren, kan zijn afstand niet meer beter worden. Een nieuwe route
+> zou via een andere nog-niet-bekende node moeten lopen, en die heeft
+> een afstand die niet lager is. Zo'n route wordt dus nooit korter.
 
-Daarom mogen we hem "klaar" verklaren zonder later spijt te krijgen.
+Daarom mogen we hem klaar verklaren zonder er later spijt van te
+krijgen.
 
 :::info
 Wil je dit klassikaal doen op een grotere kaart, zonder scherm? Print de
@@ -266,10 +263,10 @@ werkvorm [De kortste route — Dijkstra op papier](/docs/unplugged/03-dijkstra-o
 
 ## Nu jij — de kleine graph uit de code-pagina's
 
-In de bouwstenen gebruiken we een kleinere graph, zodat de code
-overzichtelijk blijft. Doe Dijkstra er eerst op papier op, vanuit `A`,
-met dezelfde drie stappen. Houd je tabel daarna bij de hand: elke
-bouwsteen legt zijn uitvoer ernaast.
+De bouwstenen gebruiken een kleinere graph, zodat de code kort blijft.
+Doe Dijkstra er eerst op papier op, vanuit `A`, met dezelfde drie
+stappen, en houd je tabel daarna bij de hand: elke bouwsteen legt zijn
+uitvoer ernaast.
 
 ```
        4
@@ -321,16 +318,16 @@ afstanden krijg je naar `A`, `B`, `C`, `D`?
 | D | 1 (direct) |
 | E | 0 |
 
-Let op: vanaf `E` is de directe `E─C` (gewicht 5) **niet** de kortste
-route naar `C`. Je gaat via `D` (1 + 3 = 4). Weer twee updates onderweg.
+Vanaf `E` is de directe `E─C` (gewicht 5) niet de kortste route naar
+`C`; via `D` is het 1 + 3 = 4. Weer twee updates onderweg.
 
 </details>
 
 ## Tijd om dit in Python te bouwen
 
-Je weet nu **wat** Dijkstra doet en **waarom** het werkt. In de volgende
-stappen vertalen we elke kolom van je tabel en elke regel van de gouden
-regel naar Python. Eén klein stukje per pagina.
+Je weet nu wat Dijkstra doet en waarom het werkt. Elke kolom van je
+tabel en elke stap van de gouden regel wordt nu een stukje Python, één
+per pagina.
 
 > De code-pagina's gebruiken de kleine graph die je net op papier deed.
 > Het algoritme is hetzelfde; het voorbeeld is kleiner.

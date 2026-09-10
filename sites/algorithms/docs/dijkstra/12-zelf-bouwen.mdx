@@ -4,8 +4,8 @@ sidebar_position: 12
 
 # Bouw zelf — kortste reis tussen steden
 
-**Leerdoel:** je past Dijkstra toe op een **groter** voorbeeld: zes
-Nederlandse steden met benaderde reistijden.
+**Leerdoel:** je past Dijkstra toe op een groter voorbeeld: zes
+Nederlandse steden met reistijden die ongeveer kloppen.
 
 ## Opdracht
 
@@ -37,7 +37,7 @@ steden = {
 ```
 
 Schrijf een functie `kortste_reis(graph, start, doel)` die de afstand
-**én** het pad teruggeeft. Gebruik je code van vorige pagina's.
+én het pad teruggeeft. Je code van de vorige pagina's mag je gebruiken.
 
 {/* niet-draaien: startcode; de asserts falen tot kortste_reis is ingevuld */}
 <PyRunner initialCode={`def kies_volgende(afstanden, bezocht):
@@ -186,9 +186,9 @@ Alle tests geslaagd.
 
 Kijk naar Amsterdam → Maastricht. Via Utrecht en Arnhem zijn het twee
 overstappen en 170 minuten; via Den Haag, Rotterdam en Eindhoven vier
-overstappen en 140. Meer wegen, minder tijd — hetzelfde wat je op de
-kleine graph zag met `B`. En Den Haag → Arnhem gaat niet via Rotterdam
-(130) maar via Amsterdam (115).
+overstappen en 140. Meer wegen, minder tijd, net als `B` op de kleine
+graph. En Den Haag → Arnhem gaat niet via Rotterdam (130) maar via
+Amsterdam (115).
 
 </details>
 
@@ -236,8 +236,8 @@ Arnhem: 90 min via Amsterdam → Utrecht → Arnhem
 Eindhoven: 90 min via Amsterdam → Den Haag → Rotterdam → Eindhoven
 ```
 
-Eén run, drie antwoorden: `afstanden` en `voorgangers` bevatten na één
-keer `dijkstra` alles wat je voor elke bestemming nodig hebt.
+Na één keer `dijkstra` staat in `afstanden` en `voorgangers` alles wat
+je voor elke bestemming nodig hebt.
 
 </details>
 

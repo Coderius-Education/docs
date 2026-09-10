@@ -4,7 +4,7 @@ sidebar_position: 14
 
 # Cheatsheet — Dijkstra
 
-Snelle referentie. Klap open wat je nodig hebt.
+Klap open wat je nodig hebt.
 
 ## Het algoritme zelf
 
@@ -99,8 +99,8 @@ afstanden[start] = 0
 bezocht = set()
 ```
 
-`float('inf')` = "nog niet gevonden". Zo werkt elke gevonden route
-automatisch als een verbetering.
+`float('inf')` betekent "nog niet gevonden"; elke route die je vindt is
+er vanzelf een verbetering op.
 
 </details>
 
@@ -114,7 +114,7 @@ for buur, gewicht in graph[huidige]:
         afstanden[buur] = nieuwe
 ```
 
-"Is de route via mij korter? Update."
+Is de route via mij korter, dan bijwerken.
 
 </details>
 
@@ -182,8 +182,8 @@ Voor negatieve gewichten → **Bellman-Ford**.
 | Onze versie (lineair `kies_volgende`) | O(V) | **O(V²)** |
 | Met priority queue (heap) | O(log V) | **O((V + E) log V)** |
 
-Voor kleine graphs is `O(V²)` prima en duidelijker te lezen. Zie
-[Big O notatie](../big-o/01-concept) voor een uitleg van die termen.
+Voor kleine graphs is `O(V²)` goed genoeg en makkelijker te lezen. Wat
+die termen betekenen staat bij [Big O notatie](../big-o/01-concept).
 
 </details>
 
@@ -202,10 +202,9 @@ Volledig overzicht: [er gaat iets mis](./13-fouten).
 
 ## Verder lezen
 
-- [wat is een graph?](./01-concept) — opnieuw door het concept.
-- [met pen en papier](./02-met-pen-en-papier) — hand-trace
-  voor wie het algoritme nog niet "ziet".
-- [het complete algoritme](./10-compleet) — alles samen met
-  visualisatie.
-- [Big O — logaritmisch](../big-o/05-logaritmisch) — waarom een
-  priority queue helpt.
+- [wat is een graph?](./01-concept), voor wie de woorden nog eens wil.
+- [met pen en papier](./02-met-pen-en-papier), voor wie het algoritme
+  nog niet ziet.
+- [het complete algoritme](./10-compleet), alles samen met de tekening.
+- [Big O — logaritmisch](../big-o/05-logaritmisch), waarom een priority
+  queue helpt.

@@ -4,22 +4,20 @@ sidebar_position: 11
 
 # Pas aan — reconstrueer het pad
 
-**Leerdoel:** je breidt Dijkstra uit zodat hij niet alleen de
-**afstand** teruggeeft, maar ook **welk pad** dat is — bijv.
-`A → B → D`.
+**Leerdoel:** je breidt Dijkstra uit zodat hij niet alleen de afstand
+teruggeeft, maar ook het pad, zoals `A → B → D`.
 
 ## Wat we willen
 
-Tot nu toe weten we: *"D is 5 minuten van A."* Maar **welke route**?
-Via `B` of via `C`?
-
-Antwoord moet zijn: `['A', 'B', 'D']` — de stappen op de kortste route.
+Tot nu toe weten we dat `D` 5 minuten van `A` ligt, maar niet
+waarlangs: via `B` of via `C`? Het antwoord moet `['A', 'B', 'D']`
+worden, de stappen van de kortste route.
 
 ## Het idee — voorgangers bijhouden
 
-Op het moment dat we tijdens de relax-stap de afstand voor een buur
-*verbeteren*, onthouden we **vanaf welke node** die verbetering kwam.
-Die node noemen we de **voorganger**.
+Op het moment dat de relax-stap de afstand van een buur verbetert,
+onthouden we vanaf welke node die verbetering kwam. Die node is de
+**voorganger**.
 
 ```python
 voorgangers = {}
@@ -35,19 +33,14 @@ Voor onze mini-graph, met start `A`, krijg je aan het eind:
 voorgangers = {'B': 'A', 'C': 'A', 'D': 'B'}
 ```
 
-Lees: *"voorganger van B is A, voorganger van C is A, voorganger van D
-is B."*
+De voorganger van `B` is `A`, die van `C` ook, en die van `D` is `B`.
 
 ## Het pad terugvinden
 
-Om het pad van `A` naar `D` te krijgen, beginnen we bij **`D`** en lopen
-de voorgangers **terug**:
-
-- `D` → `voorgangers['D'] = 'B'`
-- `B` → `voorgangers['B'] = 'A'`
-- `A` is de start → klaar.
-
-Verzameld: `[D, B, A]`. Draai om: `[A, B, D]`. Dat is het pad.
+Het pad van `A` naar `D` vind je door bij `D` te beginnen en de
+voorgangers terug te lopen: `voorgangers['D']` is `B`, `voorgangers['B']`
+is `A`, en `A` is de start. Dat geeft `[D, B, A]`; omgedraaid is het
+pad `[A, B, D]`.
 
 ## Opdracht
 
@@ -208,11 +201,9 @@ Pad A→D:     ['A', 'B', 'D']
 Alle tests geslaagd.
 ```
 
-`voorgangers.get(huidige)` returnt `None` als de node niet in de dict
-zit — dat is hoe we ontdekken dat we klaar zijn met terug-lopen.
-
-De extra check `pad[0] == start` vangt het geval af dat `doel`
-onbereikbaar is.
+`voorgangers.get(huidige)` geeft `None` als de node niet in de dict
+zit; zo merk je dat het teruglopen klaar is. De check `pad[0] == start`
+vangt het geval dat `doel` onbereikbaar is.
 
 </details>
 
@@ -318,9 +309,8 @@ plt.show()`} />
 <details>
 <summary>Wat zie je?</summary>
 
-Het pad `A → B → D` is **rood** met dikkere lijnen. De edge
-`A → C → D` blijft grijs — die route bestaat wel, maar is langer
-(10 > 5).
+Het pad `A → B → D` is rood en dikker. De route `A → C → D` blijft
+grijs: die bestaat wel, maar is langer (10 tegenover 5).
 
 Niet altijd intuïtief: `B` ligt verder van `A` dan `C` (4 tegenover 2),
 maar heeft een korte stap naar `D` (gewicht 1). Daardoor wint de

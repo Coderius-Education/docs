@@ -4,8 +4,8 @@ sidebar_position: 1
 
 # Wat is een graph?
 
-**Leerdoel:** je weet wat een **graph**, een **pad** en een **gewicht**
-zijn. Nog geen code — eerst tekeningen en woorden.
+**Leerdoel:** je weet wat een graph, een pad en een gewicht zijn. Nog
+geen code; eerst tekeningen en woorden.
 
 ## Het verhaal
 
@@ -13,9 +13,9 @@ Je hebt een navigatie-app. Je tikt in waar je heen wilt. Wat doet hij?
 
 > *Hij berekent welke route de **kortste totale tijd** kost.*
 
-Niet zomaar *een* route — de **bewijsbaar snelste**. Dat is precies wat
-het algoritme van **Dijkstra** doet. Voordat we het bouwen, moeten we
-weten hoe wegen-netwerken eruitzien in de informatica.
+Niet zomaar een route, maar de snelste, en dat kan hij bewijzen. Dat is
+wat het algoritme van **Dijkstra** doet. Om het te bouwen moet je eerst
+weten hoe een wegennet eruitziet als je het in een computer stopt.
 
 ## Drie nieuwe woorden
 
@@ -31,22 +31,22 @@ weten hoe wegen-netwerken eruitzien in de informatica.
 
 Wat zie je?
 
-- **Nodes**: de letters `A`, `B`, `C`, `D`. Ook wel *knopen* of in een
-  routekaart: *plaatsen*.
-- **Edges**: de strepen tussen nodes. De *verbindingen*. In een
-  routekaart: *wegen*.
-- **Gewichten**: de getallen op de strepen. Hoeveel het *kost* om die
-  verbinding te gebruiken — afstand, tijd, geld. Hier kun je het lezen
-  als minuten.
+- De letters `A`, `B`, `C` en `D` zijn **nodes**: knopen, of op een
+  routekaart plaatsen.
+- De strepen ertussen zijn **edges**, de verbindingen. Op een routekaart
+  zijn dat wegen.
+- De getallen op de strepen zijn **gewichten**: wat het kost om die
+  verbinding te gebruiken. Dat kan afstand zijn, tijd of geld; hier lees
+  je het als minuten.
 
-Samen heet zo'n plaatje een **graph** (Nederlands: *graaf*, maar we
-houden het op "graph"). Een graph met gewichten heet een **gewogen
-graph**.
+Samen heet zo'n plaatje een **graph**. In het Nederlands is dat een
+graaf, maar iedereen zegt graph, dus wij ook. Een graph met gewichten
+heet een gewogen graph.
 
 ## Wat is een pad?
 
 Een **pad** is een rijtje nodes waar je achter elkaar doorheen loopt,
-en elke opeenvolgende paar moet **via een edge** verbonden zijn.
+en elk paar dat na elkaar komt moet met een edge verbonden zijn.
 
 Drie mogelijke paden van `A` naar `D`:
 
@@ -63,7 +63,8 @@ omdat `B` vlak bij `D` ligt (1).
 
 ## Gewichten zijn niet altijd letterlijk afstanden
 
-Gewichten zijn een **kost**. Wat dat is, hangt af van je probleem:
+Een gewicht is wat een stap je kost, en wat dat is hangt af van je
+probleem:
 
 | Wat is je graph? | Wat is een gewicht? |
 |---|---|
@@ -72,23 +73,21 @@ Gewichten zijn een **kost**. Wat dat is, hangt af van je probleem:
 | Computernetwerk | Vertraging in milliseconden |
 | Eiland-vleksprongen | Energie die het kost |
 
-Dijkstra geeft niets om wat de gewichten betekenen — hij wil alleen het
-**totaal** zo laag mogelijk maken.
+Dijkstra geeft niets om wat de gewichten betekenen. Hij wil alleen het
+totaal zo laag mogelijk hebben.
 
 ## Eén belangrijke aanname
 
-Dijkstra werkt **alleen met positieve gewichten**. Geen negatieven, geen
-"sneller gaan dan stilstaan" trucs. Voor negatieve gewichten bestaat
-een ander algoritme (*Bellman-Ford*), maar dat doen we hier niet.
+Dijkstra werkt alleen met **positieve gewichten**. Geen negatieve, geen
+weg die je tijd oplevert in plaats van kost. Voor negatieve gewichten
+bestaat een ander algoritme, Bellman-Ford, en dat doen we hier niet.
 
 ## Wat we gaan leren
 
-Dijkstra beantwoordt: *"Vanaf één startnode, wat zijn de kortste
-afstanden naar **alle** andere nodes?"*
-
-In één keer dus — niet één bestemming per keer. Daarvoor heeft hij een
-slimme strategie. Die strategie ga je eerst **met pen en papier** zelf
-uitvoeren, voordat je een letter Python schrijft.
+Dijkstra beantwoordt één vraag: vanaf deze startnode, wat is de kortste
+afstand naar elke andere node? Alle bestemmingen in één keer, niet één
+per keer. Hoe hij dat doet, voer je eerst zelf uit met pen en papier,
+voordat je een letter Python schrijft.
 
 ## Video
 

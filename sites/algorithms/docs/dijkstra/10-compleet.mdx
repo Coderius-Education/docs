@@ -4,8 +4,8 @@ sidebar_position: 10
 
 # Het complete algoritme
 
-**Leerdoel:** je ziet alle bouwstenen in één functie samenkomen en
-visualiseert het eindresultaat op de graph.
+**Leerdoel:** je ziet alle bouwstenen samenkomen in één functie, en je
+tekent het resultaat op de graph.
 
 ## Alles samen
 
@@ -80,8 +80,7 @@ De lege set voor knopen die definitief af zijn.
 
 ## Voorspel
 
-We runnen `dijkstra(graph, 'A')` op de mini-graph. Wat denk je dat er
-als resultaat uit komt?
+We draaien `dijkstra(graph, 'A')` op de kleine graph. Wat komt eruit?
 
 <details>
 <summary>Antwoord</summary>
@@ -90,7 +89,7 @@ als resultaat uit komt?
 {'A': 0, 'B': 4, 'C': 2, 'D': 5}
 ```
 
-Exact wat je op papier en in de losse rondes ook kreeg.
+Wat je op papier en in de losse rondes ook kreeg.
 
 </details>
 
@@ -140,7 +139,7 @@ print(dijkstra(graph, 'D'))`} />
 
 ## Visualiseer de afstanden
 
-Onze graph met op elke node zijn kortste afstand vanaf `A`:
+De graph, met op elke node zijn kortste afstand vanaf `A`:
 
 <PyRunner initialCode={`import matplotlib.pyplot as plt
 
@@ -213,18 +212,15 @@ plt.show()`} />
 <details>
 <summary>Wat zie je?</summary>
 
-Elke node toont zijn kortste afstand vanaf `A` (groen = startnode):
-
-- `A`: 0
-- `B`: 4 (direct)
-- `C`: 2 (direct)
-- `D`: 5 (via `B`, niet via `C`!)
+Elke node toont zijn kortste afstand vanaf `A`; de startnode is groen.
+`B` en `C` liggen direct aan `A`, op 4 en 2. `D` staat op 5, via `B` en
+niet via `C`.
 
 </details>
 
 ## Onderzoek
 
-Speel met de code. Probeer:
+Speel met de code:
 
 1. Een andere startnode: `dijkstra(graph, 'D')`.
 2. Maak `A → B` veel duurder (bv. gewicht 100). Hoe verandert de

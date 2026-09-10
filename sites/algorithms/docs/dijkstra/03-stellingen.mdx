@@ -4,10 +4,10 @@ sidebar_position: 3
 
 # Voorspel — waar of niet waar?
 
-**Leerdoel:** je test je intuïtie over Dijkstra op concept-niveau,
-voordat je begint met programmeren.
+**Leerdoel:** je test wat je van Dijkstra begrijpt, voordat je gaat
+programmeren.
 
-Lees elke stelling. Bedenk eerst je antwoord. Klap dan pas open.
+Lees elke stelling en bedenk je antwoord; klap dan pas open.
 
 ## Stelling 1
 
@@ -49,11 +49,11 @@ nog steeds korter geweest. Een "omweg" kan totaal goedkoper zijn.
 <details>
 <summary>Antwoord</summary>
 
-**Waar — dat is een van de mooie eigenschappen.**
+**Waar.**
 
-Aan het eind van Dijkstra heb je voor élke bereikbare node de kortste
-afstand. Eén pen-en-papier-sessie geeft je dus alle antwoorden tegelijk:
-vijf op de grote graph, vier op de kleine.
+Aan het eind van Dijkstra heb je voor elke bereikbare node de kortste
+afstand. Eén keer op papier geeft je dus alle antwoorden tegelijk: vijf
+op de grote graph, vier op de kleine.
 
 </details>
 
@@ -101,15 +101,13 @@ Voor negatieve gewichten gebruik je *Bellman-Ford*.
 <details>
 <summary>Antwoord</summary>
 
-**Waar — sterker nog, dat is precies wat er met `D` gebeurde op de
-kleine graph, ronde 3.**
+**Waar.** Dat is precies wat er met `D` gebeurde op de kleine graph, in
+ronde 3.
 
-`D` had eerst afstand 10 (via `C`). Later vond Dijkstra een korter
-alternatief (via `B`, afstand 5). Pas dáárna werd `D` als bekend
-gemarkeerd.
-
-Dat is het hele punt: meerdere kandidaten testen voordat je iets
-"klaar" verklaart.
+`D` had eerst afstand 10, via `C`. Daarna vond Dijkstra een kortere
+route via `B`, afstand 5, en pas daarna werd `D` bekend. Meerdere
+kandidaten bekijken voordat je iets klaar verklaart: dat is het hele
+punt.
 
 </details>
 
@@ -130,6 +128,6 @@ naar **alle** nodes hebt.
 
 </details>
 
-Klaar met voorspellen? Tijd om te programmeren — heel kleine stapjes.
+Nu de code, in kleine stapjes.
 
 Door naar [de graph in Python →](./bouwen/04-graph).

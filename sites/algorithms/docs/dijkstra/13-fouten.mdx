@@ -4,17 +4,17 @@ sidebar_position: 13
 
 # Er gaat iets mis — top-3 fouten
 
-**Leerdoel:** je herkent de drie klassieke valkuilen bij het bouwen van
-Dijkstra.
+**Leerdoel:** je herkent de drie fouten die iedereen bij Dijkstra een
+keer maakt.
 
 ## Edge maar één kant op zetten
 
-Geen foutmelding — wél een **fout antwoord**. Sommige nodes blijven op
-`inf` staan terwijl ze wel bereikbaar zijn.
+Geen foutmelding, wel een fout antwoord: sommige nodes blijven op `inf`
+staan terwijl ze bereikbaar zijn.
 
-**Oorzaak:** in een niet-gerichte graph moet elke verbinding **twee
-keer** in de dict staan. Mis je er één, dan denkt het algoritme dat die
-kant niet bestaat.
+**Oorzaak:** in een graph waar je elke weg beide kanten op mag, staat
+elke verbinding twee keer in de dict. Mis je er één, dan bestaat die
+kant voor het algoritme niet.
 
 ```python
 # FOUT — A → B staat alleen onder A
@@ -30,8 +30,8 @@ graph = {
 }
 ```
 
-**Tip:** bouw de dict programmatisch op uit een **lijst van edges**, dan
-kun je geen kant vergeten:
+**Tip:** bouw de dict op uit een lijst van edges, dan kun je geen kant
+vergeten:
 
 ```python
 edges = [('A', 'B', 4), ('A', 'C', 2), ('B', 'D', 1), ('C', 'D', 8)]
@@ -47,11 +47,11 @@ for u, v, w in edges:
 
 ## `bezocht.add()` vergeten — oneindige lus
 
-Geen foutmelding — Python loopt **oneindig** door. De browser-tab bevriest,
-en de Reset-knop reageert dan ook niet meer, want Python draait in dezelfde
-tab als de les. Sluit de tab en open de les opnieuw. Je code ben je dan
-kwijt, dus kopieer hem eerst naar een kladblok als je iets uitprobeert wat
-mis kan gaan.
+Geen foutmelding, Python loopt door zonder einde. De browser-tab
+bevriest, en de Reset-knop reageert dan ook niet meer, want Python
+draait in dezelfde tab als de les. Sluit de tab en open de les opnieuw.
+Je code ben je dan kwijt, dus kopieer hem eerst naar een kladblok als je
+iets uitprobeert wat mis kan gaan.
 
 **Oorzaak:** zonder `bezocht.add(huidige)` blijf je dezelfde node steeds
 opnieuw kiezen. De hoofdlus eindigt nooit.
@@ -83,7 +83,7 @@ niet naar `bezocht`. Dat hij er staat wel.
 
 ## Negatieve gewichten gebruiken
 
-Geen foutmelding — wél een **stilletjes verkeerd antwoord**.
+Geen foutmelding, wel een antwoord dat stilletjes niet klopt.
 
 **Oorzaak:** Dijkstra gaat ervan uit dat een node die "klaar" is zijn
 afstand niet meer kan verbeteren. Een negatieve edge kan dat omgooien:
@@ -148,10 +148,8 @@ Wat er gebeurde: `B` werd klaar verklaard op afstand 1 en `D` kreeg
 
 </details>
 
-**Oplossing:** voor negatieve gewichten gebruik je *Bellman-Ford*. Dat
-is een ander algoritme, niet Dijkstra.
-
-Voor typische routekaarten, vluchtkosten, of netwerkvertragingen zijn
-alle gewichten positief — daar is Dijkstra perfect voor.
+**Oplossing:** voor negatieve gewichten gebruik je Bellman-Ford, een
+ander algoritme. Routekaarten, vluchtprijzen en netwerkvertragingen
+hebben alleen positieve gewichten, en daar is Dijkstra voor.
 
 Door naar [cheatsheet →](./14-cheatsheet).
