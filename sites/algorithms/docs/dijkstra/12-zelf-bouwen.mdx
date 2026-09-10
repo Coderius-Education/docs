@@ -12,11 +12,11 @@ Nederlandse steden met benaderde reistijden.
 Hier een mini-routekaart:
 
 ```
-Amsterdam ── 30 ── Utrecht ── 60 ── Arnhem ── 80 ── Maastricht
-    │                │                              ╲
-   25               45                              90
-    │                │                                ╲
-Den Haag ── 25 ── Rotterdam ──── 40 ─── Eindhoven ── 50 ── Maastricht
+Amsterdam ── 30 ── Utrecht ── 60 ── Arnhem
+    │                │               │   ╲
+   25               45              90     80
+    │                │               │       ╲
+Den Haag ── 25 ── Rotterdam ── 40 ── Eindhoven ── 50 ── Maastricht
 ```
 
 (Gewichten zijn benaderingen in minuten — gebruik dit niet om je
@@ -97,6 +97,18 @@ return afstanden[doel], pad
 <summary>Antwoord</summary>
 
 ```python
+def kies_volgende(afstanden, bezocht):
+    beste_node = None
+    kleinste = float('inf')
+    for node, d in afstanden.items():
+        if node in bezocht:
+            continue
+        if d < kleinste:
+            kleinste = d
+            beste_node = node
+    return beste_node
+
+
 def dijkstra(graph, start):
     afstanden = {}
     for node in graph:
@@ -135,20 +147,40 @@ def kortste_reis(graph, start, doel):
     afstanden, voorgangers = dijkstra(graph, start)
     pad = reconstrueer_pad(voorgangers, start, doel)
     return afstanden[doel], pad
+
+
+steden = {
+    'Amsterdam':  [('Utrecht', 30), ('Den Haag', 25)],
+    'Utrecht':    [('Amsterdam', 30), ('Arnhem', 60), ('Rotterdam', 45)],
+    'Arnhem':     [('Utrecht', 60), ('Maastricht', 80), ('Eindhoven', 90)],
+    'Den Haag':   [('Amsterdam', 25), ('Rotterdam', 25)],
+    'Rotterdam':  [('Utrecht', 45), ('Den Haag', 25), ('Eindhoven', 40)],
+    'Eindhoven':  [('Rotterdam', 40), ('Arnhem', 90), ('Maastricht', 50)],
+    'Maastricht': [('Arnhem', 80), ('Eindhoven', 50)],
+}
+
+reizen = [
+    ('Amsterdam', 'Maastricht'),
+    ('Den Haag', 'Arnhem'),
+    ('Rotterdam', 'Maastricht'),
+]
+
+for start, doel in reizen:
+    afstand, pad = kortste_reis(steden, start, doel)
+    print(f"{start} → {doel}: {afstand} min  via {' → '.join(pad)}")
 ```
 
-Verwacht (gewichten kunnen iets afwijken):
-
 ```
-Amsterdam → Maastricht: 145 min  via Amsterdam → Utrecht → Arnhem → Maastricht
-Den Haag → Arnhem: 130 min  via Den Haag → Rotterdam → Utrecht → Arnhem
+Amsterdam → Maastricht: 140 min  via Amsterdam → Den Haag → Rotterdam → Eindhoven → Maastricht
+Den Haag → Arnhem: 115 min  via Den Haag → Amsterdam → Utrecht → Arnhem
 Rotterdam → Maastricht: 90 min  via Rotterdam → Eindhoven → Maastricht
 ```
 
-Mooi voorbeeld om over na te denken: Amsterdam → Maastricht gaat
-*niet* via Rotterdam-Eindhoven (totaal 145 min via die route), maar via
-Utrecht-Arnhem (ook 145 min). Beide zijn de korste route — Dijkstra
-kiest er één.
+Kijk naar Amsterdam → Maastricht. Via Utrecht en Arnhem zijn het twee
+overstappen en 170 minuten; via Den Haag, Rotterdam en Eindhoven vier
+overstappen en 140. Meer wegen, minder tijd — hetzelfde wat je op de
+kleine graph zag met `B`. En Den Haag → Arnhem gaat niet via Rotterdam
+(130) maar via Amsterdam (115).
 
 </details>
 
