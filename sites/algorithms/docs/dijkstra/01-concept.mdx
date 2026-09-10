@@ -52,13 +52,14 @@ Drie mogelijke paden van `A` naar `D`:
 
 - `A → B → D` met gewichten 4 + 1 = **5**.
 - `A → C → D` met gewichten 2 + 8 = **10**.
-- `A → B → D` (zelfde als hierboven) of `A → C → B → D` met 2 + 1 + 1 = **4**.
+- `A → C → A → B → D` mag ook, maar heen en terug over dezelfde weg maakt
+  een pad alleen langer: 2 + 2 + 4 + 1 = **9**.
 
-De *kortste* (laagste totaal-gewicht) is **`A → C → B → D = 4`**.
+De *kortste* (laagste totaal-gewicht) is **`A → B → D = 5`**.
 
-Niet altijd intuïtief: in dit voorbeeld is de directe `A → B = 4` even
-duur als de "omweg" `A → C → B → ... `. En de omweg via `C` slim
-combineren met `B → D` geeft je **4** — even goed of beter.
+Niet altijd intuïtief: `C` ligt het dichtst bij `A` (2), maar vanaf `C`
+is de weg naar `D` lang (8). De duurdere eerste stap naar `B` (4) wint,
+omdat `B` vlak bij `D` ligt (1).
 
 ## Gewichten zijn niet altijd letterlijk afstanden
 
