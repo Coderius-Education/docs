@@ -7,23 +7,22 @@ sidebar_position: 9
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/herhalen/while-loop', label: 'De while-loop'},
+    {site: 'python', to: '/docs/herhalen/06d-break', label: 'Break'},
   ]}
 />
 
-**Leerdoel:** je zet één enkele regel rondom je ronde-blok zodat hij
-zichzelf herhaalt tot alle nodes bezocht zijn.
+**Leerdoel:** je zet een lus om je ronde, zodat hij zichzelf herhaalt
+tot alle nodes bezocht zijn.
 
 ## Wat we willen
 
-We willen zeggen: *"blijf rondes doen, tot er geen nog-niet-bezochte
-node meer is."*
-
-In Python: een `while`-lus met een **stop-conditie**.
+Blijf rondes doen tot er geen onbezochte node meer over is. In Python
+is dat een `while`-lus met een stopvoorwaarde.
 
 ## Wanneer stoppen?
 
-Onze `kies_volgende` returnt `None` als alles bezocht is. Dat is dus
-ons stop-signaal:
+`kies_volgende` geeft `None` terug als alles bezocht is. Dat is het
+stopsignaal:
 
 ```python
 while True:
@@ -37,12 +36,14 @@ while True:
             afstanden[buur] = nieuwe
 ```
 
-`while True` zegt: *"blijf maar bezig"*. De `if ... break` is de
-uitgang.
+`while True` is een lus zonder eigen stopvoorwaarde: hij draait tot
+iets erin `break` zegt, en dat is hier de enige uitgang. `huidige is
+None` vraagt of `kies_volgende` niemand teruggaf — `None` is wat die
+functie geeft als alles bezocht is, zoals je in bouwsteen 4 zag.
 
 ## Waarom geen "for node in graph"?
 
-Op het eerste gezicht lijkt het verleidelijk:
+Dit lijkt op het eerste gezicht ook te kunnen:
 
 {/* niet-compileren: vormfragment; het lijf is een commentaar */}
 ```python
@@ -50,19 +51,18 @@ for node in graph:
     # doe een ronde voor node
 ```
 
-Maar dat klopt **niet**. We willen elke ronde de node met de **laagste
-afstand** kiezen — niet gewoon in alfabetische volgorde. `kies_volgende`
-doet die slimme keuze.
+Maar dan kies je de nodes in de volgorde van de dict, en Dijkstra wil
+elke ronde de node met de laagste afstand. Die keuze maakt
+`kies_volgende`.
 
 ## Stopt deze lus altijd?
 
-Ja — gegarandeerd. Elke ronde voegen we precies **één** node aan
-`bezocht` toe. Na maximaal `len(graph)` rondes is iedereen erin.
-`kies_volgende` returnt dan `None`, en `break` springt eruit.
+Ja. Elke ronde komt er precies één node bij in `bezocht`, dus na
+hoogstens `len(graph)` rondes zit iedereen erin. `kies_volgende` geeft
+dan `None`, en `break` springt eruit.
 
-Geen risico op een oneindige lus. Belangrijk: vergeet `bezocht.add()`
-niet — anders blijf je dezelfde node steeds opnieuw kiezen. Daarom
-zetten we dat altijd direct na de kies-stap.
+Elke ronde maakt `bezocht` één groter, en `kies_volgende` kijkt daar
+elke ronde naar. Dat is de hele garantie.
 
 ## Voorspel
 
@@ -75,7 +75,7 @@ Wat denk je dat de eindafstanden zijn voor onze mini-graph, start `A`?
 {'A': 0, 'B': 4, 'C': 2, 'D': 5}
 ```
 
-Exact wat je op papier kreeg.
+Wat je op papier ook kreeg.
 
 </details>
 
@@ -100,10 +100,11 @@ graph = {
     'D': [('B', 1), ('C', 8)],
 }
 
+start = 'A'
 afstanden = {}
 for node in graph:
     afstanden[node] = float('inf')
-afstanden['A'] = 0
+afstanden[start] = 0
 bezocht = set()
 
 while True:
@@ -131,14 +132,13 @@ Ronde — bezoek D (afstand 5)
 Klaar! Afstanden vanaf A: {'A': 0, 'B': 4, 'C': 2, 'D': 5}
 ```
 
-Vier rondes, één per node. Vergelijk met je pen-en-papier — exact
-dezelfde volgorde van "klaar" verklaren.
+Vier rondes, één per node, en dezelfde volgorde als op papier.
 
 </details>
 
 ## Wat nu nog mist
 
-Niks — we hebben Dijkstra werkend. In de volgende stap zetten we alles
-netjes in **één** functie en zien we het hele algoritme tegelijk.
+Niets meer: dit is Dijkstra. Op de volgende pagina staat alles in één
+functie, zodat je het hele algoritme in één keer ziet.
 
 Door naar [het complete algoritme →](../10-compleet).

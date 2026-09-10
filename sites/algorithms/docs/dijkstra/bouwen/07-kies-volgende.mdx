@@ -12,21 +12,19 @@ sidebar_position: 7
   ]}
 />
 
-**Leerdoel:** je vertaalt **stap A** uit de pen-en-papier-aanpak naar
-Python: vind de node met de laagste afstand die nog niet bezocht is.
+**Leerdoel:** je vertaalt stap A van het papier naar Python: vind de
+node met de laagste afstand die nog niet bezocht is.
 
 ## Wat we willen
 
-Op papier zei je: *"Pak de laagste afstand onder de nog-niet-bekende
-rijen."*
-
-In Python: loop over `afstanden`, sla degenen die al in `bezocht` zitten
-over, en onthoud wie de laagste heeft.
+Op papier pakte je de laagste afstand onder de rijen die nog niet
+bekend waren. In Python loop je over `afstanden`, slaat over wie al in
+`bezocht` zit, en onthoudt wie de laagste heeft.
 
 ## Het patroon — lineair zoeken naar minimum
 
-Dit lijkt op [vind-maximum](../../vind-maximum/bouwen/05-doorlopen), maar
-dan **minimum**, en met een filter.
+Dit is [vind-maximum](../../vind-maximum/bouwen/05-doorlopen), maar dan
+het minimum, en met een filter.
 
 ```python
 beste_node = None
@@ -40,14 +38,11 @@ for node, d in afstanden.items():
         beste_node = node
 ```
 
-Drie cruciale dingen:
-
-1. **`if node in bezocht: continue`** — als deze node al klaar is, kijk
-   verder.
-2. **`d < kleinste_afstand`** — strict kleiner; alleen vervangen bij
-   *echt* beter.
-3. **`beste_node = None`** als alles bezocht is → niemand passeert het
-   filter → blijft `None`. Dat is ons "klaar"-signaal.
+Drie regels doen het werk. `if node in bezocht: continue` slaat een
+node over die al klaar is. `d < kleinste_afstand` vervangt alleen bij
+echt kleiner. En `beste_node` begint op `None`: is alles bezocht, dan
+komt niemand door het filter en blijft het `None`. Dat is ons signaal
+dat we klaar zijn.
 
 ## Voorspel
 
@@ -76,12 +71,10 @@ print(beste_node)
 C
 ```
 
-- `A` wordt overgeslagen (al bezocht).
-- `B`: 4 < inf → beste = `B`, kleinste = 4.
-- `C`: 2 < 4 → beste = `C`, kleinste = 2.
-- `D`: inf < 2 → onwaar, niets veranderen.
-
-Eind: `C`.
+`A` wordt overgeslagen, die is al bezocht. Bij `B` is 4 kleiner dan
+oneindig, dus `B` wordt de beste met 4. Bij `C` is 2 kleiner dan 4, dus
+`C` neemt het over. Bij `D` is oneindig niet kleiner dan 2, dus er
+verandert niets. Het eind is `C`.
 
 </details>
 
@@ -103,7 +96,7 @@ print("Volgende node:", beste_node)`} />
 
 ## In een functie
 
-Omdat we dit elke ronde opnieuw doen, stoppen we het in een functie:
+Dit gebeurt elke ronde opnieuw, dus het wordt een functie:
 
 <PyRunner initialCode={`def kies_volgende(afstanden, bezocht):
     beste_node = None
@@ -134,23 +127,16 @@ B
 None
 ```
 
-- Zonder bezocht: `A` (afstand 0) wint.
-- Met `{A}` bezocht: `C` (2) is de laagste resterende.
-- Met `{A, C}` bezocht: `B` (4) wint.
-- Met alles bezocht: niemand passeert het filter → `None`. Dat is ons
-  stop-signaal.
+Zonder bezochte nodes wint `A` met 0. Met `A` bezocht is `C` de laagste
+die overblijft, met `A` en `C` bezocht wint `B`, en met alles bezocht
+komt niemand door het filter: `None`, ons stopsignaal.
 
 </details>
 
 ## Wat nu nog mist
 
-We hebben **alle** bouwstenen apart:
-- Graph in een dict (bouwsteen 1)
-- Afstanden + bezocht (bouwsteen 2)
-- Relax (bouwsteen 3)
-- Kies volgende (bouwsteen 4)
-
-Nu combineren we ze: doe **één hele ronde** van Dijkstra in Python — zoals
-één rij van je pen-en-papier-tabel.
+De graph (bouwsteen 1), de tabel (2), relax (3) en kies volgende (4)
+staan er nu elk apart. Samen vormen ze één ronde van Dijkstra, één rij
+van je papieren tabel.
 
 Door naar [bouwsteen 5: doe één ronde →](./08-een-ronde).

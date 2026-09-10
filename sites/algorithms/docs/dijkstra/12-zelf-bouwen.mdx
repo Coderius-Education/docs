@@ -4,19 +4,19 @@ sidebar_position: 12
 
 # Bouw zelf — kortste reis tussen steden
 
-**Leerdoel:** je past Dijkstra toe op een **groter** voorbeeld: zes
-Nederlandse steden met benaderde reistijden.
+**Leerdoel:** je past Dijkstra toe op een groter voorbeeld: zeven
+Nederlandse steden met reistijden die ongeveer kloppen.
 
 ## Opdracht
 
 Hier een mini-routekaart:
 
 ```
-Amsterdam ── 30 ── Utrecht ── 60 ── Arnhem ── 80 ── Maastricht
-    │                │                              ╲
-   25               45                              90
-    │                │                                ╲
-Den Haag ── 25 ── Rotterdam ──── 40 ─── Eindhoven ── 50 ── Maastricht
+Amsterdam ── 30 ── Utrecht ── 60 ── Arnhem
+    │                │               │   ╲
+   25               45              90     80
+    │                │               │       ╲
+Den Haag ── 25 ── Rotterdam ── 40 ── Eindhoven ── 50 ── Maastricht
 ```
 
 (Gewichten zijn benaderingen in minuten — gebruik dit niet om je
@@ -37,8 +37,9 @@ steden = {
 ```
 
 Schrijf een functie `kortste_reis(graph, start, doel)` die de afstand
-**én** het pad teruggeeft. Gebruik je code van vorige pagina's.
+én het pad teruggeeft. Je code van de vorige pagina's mag je gebruiken.
 
+{/* niet-draaien: startcode; de asserts falen tot kortste_reis is ingevuld */}
 <PyRunner initialCode={`def kies_volgende(afstanden, bezocht):
     beste_node = None
     kleinste = float('inf')
@@ -69,15 +70,18 @@ steden = {
     'Maastricht': [('Arnhem', 80), ('Eindhoven', 50)],
 }
 
-reizen = [
-    ('Amsterdam', 'Maastricht'),
-    ('Den Haag', 'Arnhem'),
-    ('Rotterdam', 'Maastricht'),
-]
+reizen = {
+    ('Amsterdam', 'Maastricht'): (140, ['Amsterdam', 'Den Haag', 'Rotterdam', 'Eindhoven', 'Maastricht']),
+    ('Den Haag', 'Arnhem'): (115, ['Den Haag', 'Amsterdam', 'Utrecht', 'Arnhem']),
+    ('Rotterdam', 'Maastricht'): (90, ['Rotterdam', 'Eindhoven', 'Maastricht']),
+}
 
-for start, doel in reizen:
+for (start, doel), (verwachte_afstand, verwacht_pad) in reizen.items():
     afstand, pad = kortste_reis(steden, start, doel)
-    print(f"{start} → {doel}: {afstand} min  via {' → '.join(pad)}")`} />
+    print(f"{start} → {doel}: {afstand} min  via {' → '.join(pad)}")
+    assert afstand == verwachte_afstand, f"{start} → {doel} hoort {verwachte_afstand} min te zijn, is {afstand}"
+    assert pad == verwacht_pad, f"{start} → {doel} hoort via {' → '.join(verwacht_pad)} te gaan"
+print("Alle tests geslaagd.")`} />
 
 <details>
 <summary>Tip</summary>
@@ -97,6 +101,18 @@ return afstanden[doel], pad
 <summary>Antwoord</summary>
 
 ```python
+def kies_volgende(afstanden, bezocht):
+    beste_node = None
+    kleinste = float('inf')
+    for node, d in afstanden.items():
+        if node in bezocht:
+            continue
+        if d < kleinste:
+            kleinste = d
+            beste_node = node
+    return beste_node
+
+
 def dijkstra(graph, start):
     afstanden = {}
     for node in graph:
@@ -135,27 +151,94 @@ def kortste_reis(graph, start, doel):
     afstanden, voorgangers = dijkstra(graph, start)
     pad = reconstrueer_pad(voorgangers, start, doel)
     return afstanden[doel], pad
+
+
+steden = {
+    'Amsterdam':  [('Utrecht', 30), ('Den Haag', 25)],
+    'Utrecht':    [('Amsterdam', 30), ('Arnhem', 60), ('Rotterdam', 45)],
+    'Arnhem':     [('Utrecht', 60), ('Maastricht', 80), ('Eindhoven', 90)],
+    'Den Haag':   [('Amsterdam', 25), ('Rotterdam', 25)],
+    'Rotterdam':  [('Utrecht', 45), ('Den Haag', 25), ('Eindhoven', 40)],
+    'Eindhoven':  [('Rotterdam', 40), ('Arnhem', 90), ('Maastricht', 50)],
+    'Maastricht': [('Arnhem', 80), ('Eindhoven', 50)],
+}
+
+reizen = {
+    ('Amsterdam', 'Maastricht'): (140, ['Amsterdam', 'Den Haag', 'Rotterdam', 'Eindhoven', 'Maastricht']),
+    ('Den Haag', 'Arnhem'): (115, ['Den Haag', 'Amsterdam', 'Utrecht', 'Arnhem']),
+    ('Rotterdam', 'Maastricht'): (90, ['Rotterdam', 'Eindhoven', 'Maastricht']),
+}
+
+for (start, doel), (verwachte_afstand, verwacht_pad) in reizen.items():
+    afstand, pad = kortste_reis(steden, start, doel)
+    print(f"{start} → {doel}: {afstand} min  via {' → '.join(pad)}")
+    assert afstand == verwachte_afstand, f"{start} → {doel} hoort {verwachte_afstand} min te zijn, is {afstand}"
+    assert pad == verwacht_pad, f"{start} → {doel} hoort via {' → '.join(verwacht_pad)} te gaan"
+print("Alle tests geslaagd.")
 ```
 
-Verwacht (gewichten kunnen iets afwijken):
-
 ```
-Amsterdam → Maastricht: 145 min  via Amsterdam → Utrecht → Arnhem → Maastricht
-Den Haag → Arnhem: 130 min  via Den Haag → Rotterdam → Utrecht → Arnhem
+Amsterdam → Maastricht: 140 min  via Amsterdam → Den Haag → Rotterdam → Eindhoven → Maastricht
+Den Haag → Arnhem: 115 min  via Den Haag → Amsterdam → Utrecht → Arnhem
 Rotterdam → Maastricht: 90 min  via Rotterdam → Eindhoven → Maastricht
+Alle tests geslaagd.
 ```
 
-Mooi voorbeeld om over na te denken: Amsterdam → Maastricht gaat
-*niet* via Rotterdam-Eindhoven (totaal 145 min via die route), maar via
-Utrecht-Arnhem (ook 145 min). Beide zijn de korste route — Dijkstra
-kiest er één.
+Kijk naar Amsterdam → Maastricht. Via Utrecht en Arnhem zijn het twee
+overstappen en 170 minuten; via Den Haag, Rotterdam en Eindhoven drie
+overstappen en 140. Meer wegen, minder tijd, net als `B` op de kleine
+graph. En Den Haag → Arnhem gaat niet via Rotterdam (130) maar via
+Amsterdam (115).
 
 </details>
 
 ## Uitdaging (optioneel)
 
-Pas `kortste_reis` aan zodat het ook werkt voor **meerdere bestemmingen
-tegelijk**. Je hoeft maar **één** Dijkstra-run te doen vanaf `start` —
-de afstanden naar alle steden zijn dan al berekend.
+Schrijf `kortste_reizen(graph, start, doelen)` die voor een **lijst
+bestemmingen** tegelijk de afstand en het pad geeft, als dict van
+bestemming naar `(afstand, pad)`. Je hoeft maar **één** Dijkstra-run te
+doen vanaf `start` — de afstanden naar alle steden zijn dan al berekend.
+
+<details>
+<summary>Tip</summary>
+
+`kortste_reis` roept `dijkstra` één keer aan en `reconstrueer_pad` één
+keer. Voor meerdere bestemmingen blijft het één keer `dijkstra`, en
+daarna één keer `reconstrueer_pad` per bestemming, in een lus over
+`doelen`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Met de functies uit het antwoord hierboven:
+
+{/* draaien-met: blok-erboven */}
+```python
+def kortste_reizen(graph, start, doelen):
+    afstanden, voorgangers = dijkstra(graph, start)
+    uitkomst = {}
+    for doel in doelen:
+        pad = reconstrueer_pad(voorgangers, start, doel)
+        uitkomst[doel] = (afstanden[doel], pad)
+    return uitkomst
+
+
+reizen_vanuit_amsterdam = kortste_reizen(steden, 'Amsterdam', ['Maastricht', 'Arnhem', 'Eindhoven'])
+for doel, (afstand, pad) in reizen_vanuit_amsterdam.items():
+    print(f"{doel}: {afstand} min via {' → '.join(pad)}")
+```
+
+```
+Maastricht: 140 min via Amsterdam → Den Haag → Rotterdam → Eindhoven → Maastricht
+Arnhem: 90 min via Amsterdam → Utrecht → Arnhem
+Eindhoven: 90 min via Amsterdam → Den Haag → Rotterdam → Eindhoven
+```
+
+Na één keer `dijkstra` staat in `afstanden` en `voorgangers` alles wat
+je voor elke bestemming nodig hebt.
+
+</details>
 
 Door naar [veelgemaakte fouten →](./13-fouten).

@@ -69,6 +69,7 @@ export const voorkennisPerAlgoritme: Record<string, string[]> = {
     'for-loop',
     'continue',
     'while-loop',
+    'break',
     'functies',
     'lijsten',
     'dictionaries',

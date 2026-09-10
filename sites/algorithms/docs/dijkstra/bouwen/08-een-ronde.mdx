@@ -4,17 +4,14 @@ sidebar_position: 8
 
 # Bouwsteen 5 — doe één ronde
 
-**Leerdoel:** je combineert *kies volgende* en *relax* tot precies één
-ronde van Dijkstra — zonder herhaling, zonder lus. Eén rij van je
-pen-en-papier-tabel.
+**Leerdoel:** je combineert kies volgende en relax tot precies één ronde
+van Dijkstra, zonder lus. Eén rij van je papieren tabel.
 
 ## Wat we willen
 
-Eén ronde doet drie dingen, in volgorde:
-
-1. **Kies** de volgende node (laagste afstand onder niet-bezocht).
-2. **Markeer** hem als bezocht.
-3. **Relax** al zijn buren.
+Eén ronde doet drie dingen, in deze volgorde: kies de volgende node
+(de laagste afstand onder de niet-bezochte), markeer hem als bezocht,
+en relax al zijn buren.
 
 ```python
 huidige = kies_volgende(afstanden, bezocht)   # stap 1
@@ -25,25 +22,22 @@ for buur, gewicht in graph[huidige]:           # stap 3
         afstanden[buur] = nieuwe
 ```
 
-Dat is alles. Geen lus, geen while, geen recursie. Eén ronde.
+Meer is een ronde niet. De herhaling komt pas in bouwsteen 6.
 
-## Belangrijk: eerst markeren, dan relaxen
+## Waarom markeren?
 
-Waarom in deze volgorde?
-
-- Als we `bezocht.add(huidige)` **vergeten** of pas later doen, kunnen
-    we hem volgende ronde opnieuw kiezen.
-- Sommige graphs hebben *zelf-edges* (een node verbonden met zichzelf).
-    Door eerst te markeren, voorkomen we dat de relax-stap onnodig naar
-    onszelf kijkt.
+Stap 2 is de kortste regel van de drie, en de enige die `kies_volgende`
+ziet. Die functie slaat alles over wat in `bezocht` zit; wat er niet in
+zit kan volgende ronde opnieuw gekozen worden. Met het markeren zegt
+een ronde tegen de volgende: deze is af.
 
 ## Voorspel
 
-We starten met:
+We starten met stap 0:
 
-```
-afstanden = {'A': 0, 'B': inf, 'C': inf, 'D': inf}
-bezocht   = {}
+```python
+afstanden = {'A': 0, 'B': float('inf'), 'C': float('inf'), 'D': float('inf')}
+bezocht = set()
 ```
 
 Wat denk je dat afstanden en bezocht zijn **na één ronde**?
@@ -53,15 +47,12 @@ Wat denk je dat afstanden en bezocht zijn **na één ronde**?
 
 ```
 afstanden = {'A': 0, 'B': 4, 'C': 2, 'D': inf}
-bezocht   = {'A'}
+bezocht = {'A'}
 ```
 
-- Kies = `A` (laagste afstand 0, niemand bezocht).
-- Mark `A` als bezocht.
-- Buren van `A`: `B` met gewicht 4 → update naar 4. `C` met gewicht 2 →
-    update naar 2.
-
-Dit komt exact overeen met **ronde 1** uit je pen-en-papier-tabel.
+De keuze valt op `A`: afstand 0, en niemand is bezocht. `A` gaat in
+`bezocht`, en zijn buren krijgen hun afstand: `B` 4 en `C` 2. Dat is
+ronde 1 van je papieren tabel.
 
 </details>
 
@@ -119,8 +110,8 @@ Afstanden: {'A': 0, 'B': 4, 'C': 2, 'D': inf}
 
 ## Doe een tweede ronde
 
-Plak hetzelfde blok nog een keer onder de vorige. Bekijk hoe de tabel
-verder evolueert:
+Hieronder staat de ronde in een functie, en die roepen we vier keer
+aan. Kijk hoe de tabel verder verandert:
 
 <PyRunner initialCode={`def kies_volgende(afstanden, bezocht):
     beste_node = None
@@ -182,15 +173,14 @@ Ronde — kies D
     afstanden: {'A': 0, 'B': 4, 'C': 2, 'D': 5}
 ```
 
-Vergelijk met je pen-en-papier-tabel — exact dezelfde rondes. Let op
-ronde 3: `D` zakt van 10 naar 5 omdat de route via `B` korter is dan
-via `C`.
+Dezelfde rondes als op je papieren tabel. In ronde 3 zakt `D` van 10
+naar 5, omdat de route via `B` korter is dan die via `C`.
 
 </details>
 
 ## Wat nu nog mist
 
-Vier keer dezelfde regels herhalen is omslachtig. Volgende stap: zet er
-een `while`-lus omheen. Eén regel — meer niet.
+Vier keer `ronde()` typen is nog met de hand tellen. Een `while`-lus
+eromheen laat het algoritme zelf stoppen.
 
 Door naar [bouwsteen 6: de lus →](./09-de-lus).

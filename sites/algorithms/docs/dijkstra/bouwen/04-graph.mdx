@@ -31,14 +31,13 @@ We hebben dit plaatje:
        8
 ```
 
-We moeten dit in Python zetten zodat we straks kunnen vragen: *"Wie zijn
-de buren van `A`?"* met antwoord *"`B` met gewicht 4, en `C` met gewicht
-2."*
+Dit moet in Python, zó dat we straks kunnen vragen wie de buren van `A`
+zijn, en als antwoord krijgen: `B` met gewicht 4, en `C` met gewicht 2.
 
 ## Eén node, één lijstje
 
-Voor elke node hebben we een **lijstje van buren** nodig — met hun
-gewicht. Dat schrijven we als een lijst van tuples:
+Voor elke node hebben we een lijstje van buren nodig, met hun gewicht.
+Dat wordt een lijst van tuples:
 
 ```python
 buren_van_A = [('B', 4), ('C', 2)]
@@ -46,13 +45,12 @@ buren_van_A = [('B', 4), ('C', 2)]
 
 Lees: *"de buren van `A` zijn: `B` met gewicht 4, en `C` met gewicht 2."*
 
-Tuples met `()` haakjes houden twee dingen netjes samen: de
-naam-van-de-buur en het gewicht. Een **lijst** met meerdere tuples want
-een node kan meerdere buren hebben.
+Een tuple houdt de naam van de buur en het gewicht bij elkaar. Het is
+een lijst van tuples, want een node kan meer dan één buur hebben.
 
 ## Alle nodes in één dict
 
-Voor alle vier nodes maken we één **dict**:
+Voor alle vier de nodes samen maken we één **dict**:
 
 ```python
 graph = {
@@ -63,12 +61,11 @@ graph = {
 }
 ```
 
-Sleutel = node-naam. Waarde = lijstje van buren.
+De sleutel is de naam van de node, de waarde zijn buren.
 
-Let op: elke edge staat **twee keer** in deze dict. De edge `A─B` met
-gewicht 4 zie je bij `'A': [..., ('B', 4), ...]` én bij
-`'B': [('A', 4), ...]`. Niet-gerichte edges sla je dus altijd aan
-**beide kanten** op.
+Elke edge staat twee keer in deze dict. De edge `A─B` met gewicht 4 zie
+je bij `'A': [..., ('B', 4), ...]` én bij `'B': [('A', 4), ...]`. Een
+weg die je beide kanten op mag, sla je aan beide kanten op.
 
 ## Voorspel
 
@@ -109,7 +106,7 @@ print(graph['A'])`} />
 
 ## Door de buren lopen
 
-Met `for buur, gewicht in graph['A']:` pakken we elke tuple in twee
+Met `for buur, gewicht in graph['A']:` pak je elke tuple uit in twee
 losse variabelen:
 
 <PyRunner initialCode={`graph = {
@@ -134,8 +131,7 @@ A → C (gewicht 2)
 
 ## Wat nu nog mist
 
-We weten **hoe** we de graph opslaan en hoe we buren ophalen. We hebben
-nog geen plek om de **afstanden** en **bekend-status** bij te houden.
-Dat is bouwsteen 2.
+De graph staat erin en de buren komen eruit. Er is nog geen plek voor
+de afstanden en voor wie al bekend is; dat is bouwsteen 2.
 
 Door naar [bouwsteen 2: de tabel →](./05-tabel).

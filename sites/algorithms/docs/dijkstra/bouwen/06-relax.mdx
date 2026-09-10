@@ -10,20 +10,18 @@ sidebar_position: 6
   ]}
 />
 
-**Leerdoel:** je vertaalt **stap B** uit de pen-en-papier-aanpak naar
-Python: één buur bekijken en zijn afstand updaten als de route via mij
-korter is.
+**Leerdoel:** je vertaalt stap B van het papier naar Python: één buur
+bekijken en zijn afstand bijwerken als de route via mij korter is.
 
 ## Wat we willen
 
 Op papier deed je dit voor elke buur:
 
-> *"Kijk: vanuit mij + de stap naar buur, geeft dat een kortere afstand
-> dan wat buur nu heeft? Zo ja, update."*
+> Mijn afstand plus de stap naar de buur: is dat korter dan wat de buur
+> nu heeft? Dan bijwerken.
 
-In ons mini-graph-voorbeeld, ronde 3: vanuit `B` (afstand 4) keken we
-naar buur `D` (gewicht 1). Kandidaat = `4 + 1 = 5`. `D` had 10 →
-update naar 5.
+Op de kleine graph, ronde 3: vanuit `B` (afstand 4) keek je naar buur
+`D` (gewicht 1). De kandidaat is 4 + 1 = 5, `D` had 10, dus `D` werd 5.
 
 ## De formule
 
@@ -33,12 +31,10 @@ if nieuwe_afstand < afstanden[buur]:
     afstanden[buur] = nieuwe_afstand
 ```
 
-Drie regels. Eén berekening, één vergelijking, één toewijzing.
-
-- `afstanden[huidige]` = afstand vanuit start naar de node waar we nu
-    staan.
-- `gewicht` = de kost om naar deze buur te lopen.
-- `nieuwe_afstand` = totaal als we via *mij* gaan.
+Drie regels: een berekening, een vergelijking en een toewijzing.
+`afstanden[huidige]` is de afstand van de start tot waar we nu staan,
+`gewicht` is de stap naar deze buur, en `nieuwe_afstand` is wat de buur
+zou kosten als je via ons gaat.
 
 ## Voorspel
 
@@ -64,7 +60,7 @@ print(afstanden)
 {'A': 0, 'B': 4, 'C': 2, 'D': 5}
 ```
 
-`nieuwe_afstand` is `4 + 1 = 5`. Dat is **kleiner** dan 10, dus
+`nieuwe_afstand` is 4 + 1 = 5. Dat is kleiner dan 10, dus
 `afstanden['D']` wordt 5.
 
 </details>
@@ -90,9 +86,8 @@ print(f"Eind: {afstanden}")`} />
 
 ## Wat als de buur al beter is?
 
-Run hetzelfde, maar nu kijken we vanuit `C` (afstand 2) naar buur `A`
-(gewicht 2). Kandidaat = `2 + 2 = 4`. Maar `A` heeft al **0**. Dus geen
-update.
+Hetzelfde, maar nu vanuit `C` (afstand 2) naar buur `A` (gewicht 2). De
+kandidaat is 2 + 2 = 4, en `A` heeft al 0. Dus niets.
 
 <PyRunner initialCode={`afstanden = {'A': 0, 'B': 4, 'C': 2, 'D': 10}
 huidige = 'C'
@@ -112,7 +107,8 @@ print(f"Eind: {afstanden}")`} />
 
 ## Voor **alle** buren van een node
 
-Dit is wat we straks per ronde willen doen. Eén `for`-lus over `graph[huidige]`:
+Straks doe je dit per ronde voor alle buren tegelijk, met één `for`-lus
+over `graph[huidige]`:
 
 ```python
 huidige = 'A'
@@ -122,7 +118,7 @@ for buur, gewicht in graph[huidige]:
         afstanden[buur] = nieuwe
 ```
 
-Vanaf `A` (afstand 0) updaten we tegelijk `B` en `C` in één lusje.
+Vanaf `A` (afstand 0) krijgen `B` en `C` zo in één lus hun afstand.
 
 <PyRunner initialCode={`graph = {
     'A': [('B', 4), ('C', 2)],
@@ -152,13 +148,12 @@ Voor: {'A': 0, 'B': inf, 'C': inf, 'D': inf}
 Na:   {'A': 0, 'B': 4, 'C': 2, 'D': inf}
 ```
 
-Dit komt precies overeen met ronde 1 uit je pen-en-papier-tabel.
+Dat is ronde 1 van je papieren tabel.
 
 </details>
 
 ## Wat nu nog mist
 
-We kunnen één node uitwerken. Maar **welke** node nemen we als
-volgende? Dat is bouwsteen 4: kiezen wie aan de beurt is.
+Eén node uitwerken lukt. Welke node de volgende is, dat is bouwsteen 4.
 
 Door naar [bouwsteen 4: kies de volgende →](./07-kies-volgende).

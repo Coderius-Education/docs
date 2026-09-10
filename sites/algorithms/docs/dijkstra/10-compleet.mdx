@@ -4,8 +4,8 @@ sidebar_position: 10
 
 # Het complete algoritme
 
-**Leerdoel:** je ziet alle bouwstenen in één functie samenkomen en
-visualiseert het eindresultaat op de graph.
+**Leerdoel:** je ziet alle bouwstenen samenkomen in één functie, en je
+tekent het resultaat op de graph.
 
 ## Alles samen
 
@@ -48,8 +48,12 @@ def dijkstra(graph, start):
 **Bouwsteen 4** — de helper `kies_volgende`: van alle onbezochte knopen die met de laagste afstand tot nu toe. Zijn ze allemaal bezocht, dan blijft `beste_node` op `None` staan.
 </Regel>
 
+<Regel n={13}>
+**Bouwsteen 1** komt binnen als `graph`: de dict met per knoop zijn buren.
+</Regel>
+
 <Regel n={14} tot={16}>
-**Bouwsteen 2** — elke knoop begint op oneindig: nog geen route bekend.
+**Bouwsteen 2**, stap 0 — elke knoop begint op oneindig: nog geen route bekend.
 </Regel>
 
 <Regel n={17}>
@@ -64,6 +68,10 @@ De lege set voor knopen die definitief af zijn.
 **Bouwsteen 6** — de hoofdlus: kies de volgende knoop, en stop zodra er geen onbezochte meer over is.
 </Regel>
 
+<Regel n={24}>
+**Bouwsteen 5** — markeer de gekozen knoop als af, vóór de volgende ronde kiest.
+</Regel>
+
 <Regel n={25} tot={28}>
 **Bouwsteen 3** — relax de buren: is de route via `huidige` korter dan wat we voor de buur hadden, dan overschrijven we die afstand.
 </Regel>
@@ -72,8 +80,7 @@ De lege set voor knopen die definitief af zijn.
 
 ## Voorspel
 
-We runnen `dijkstra(graph, 'A')` op de mini-graph. Wat denk je dat er
-als resultaat uit komt?
+We draaien `dijkstra(graph, 'A')` op de kleine graph. Wat komt eruit?
 
 <details>
 <summary>Antwoord</summary>
@@ -82,7 +89,7 @@ als resultaat uit komt?
 {'A': 0, 'B': 4, 'C': 2, 'D': 5}
 ```
 
-Exact wat je op papier en in de losse rondes ook kreeg.
+Wat je op papier en in de losse rondes ook kreeg.
 
 </details>
 
@@ -132,7 +139,7 @@ print(dijkstra(graph, 'D'))`} />
 
 ## Visualiseer de afstanden
 
-Onze graph met op elke node zijn kortste afstand vanaf `A`:
+De graph, met op elke node zijn kortste afstand vanaf `A`:
 
 <PyRunner initialCode={`import matplotlib.pyplot as plt
 
@@ -205,24 +212,22 @@ plt.show()`} />
 <details>
 <summary>Wat zie je?</summary>
 
-Elke node toont zijn kortste afstand vanaf `A` (groen = startnode):
-
-- `A`: 0
-- `B`: 4 (direct)
-- `C`: 2 (direct)
-- `D`: 5 (via `B`, niet via `C`!)
+Elke node toont zijn kortste afstand vanaf `A`; de startnode is groen.
+`B` en `C` liggen direct aan `A`, op 4 en 2. `D` staat op 5, via `B` en
+niet via `C`.
 
 </details>
 
 ## Onderzoek
 
-Speel met de code. Probeer:
+Speel met de code:
 
 1. Een andere startnode: `dijkstra(graph, 'D')`.
 2. Maak `A → B` veel duurder (bv. gewicht 100). Hoe verandert de
    afstand naar `B`?
 3. Voeg een extra node `E` toe met een verbinding naar `B`. Welk gewicht
-   moet hij hebben om binnen 6 te vallen?
+   mag die edge hoogstens hebben als `E` op afstand 6 of minder moet
+   liggen?
 
 <PyRunner initialCode={`def kies_volgende(afstanden, bezocht):
     beste_node = None

@@ -18,9 +18,9 @@ kortste route er heel anders uitziet dan je zou gokken.
 
 ## Gok eerst
 
-Kijk 30 seconden naar de kaart hieronder. Schrijf op — zonder te
-rekenen — welke route van `A` naar `F` volgens jou het kortst is, en
-hoe lang die is:
+Kijk 30 seconden naar de kaart hieronder en schrijf op, zonder te
+rekenen, welke route van `A` naar `F` volgens jou het kortst is en hoe
+lang die is:
 
 Mijn gok: A → ____________________ → F, totale lengte: ______
 
@@ -53,9 +53,11 @@ Tien wegen, elk met een lengte:
 
 ## De spelregels
 
-Start is `A` (afstand 0). Alle andere plekken beginnen op `?`. Herhaal
-deze twee stappen tot elke plek is afgevinkt:
+Drie stappen. De eerste doe je één keer, de andere twee herhaal je tot
+elke plek is afgevinkt:
 
+0. **Begin**: schrijf in de kolom "start" bij `A` een 0 en bij elke
+   andere plek een `?`. Niets is afgevinkt.
 1. **Kies**: pak van de nog níet afgevinkte plekken die met de laagste
    afstand. Vink hem af — deze afstand staat nu vast.
 2. **Reken**: bekijk elke buur van de gekozen plek. Reken uit: afstand
@@ -68,18 +70,22 @@ de buren door. Wissel elke ronde van rol.
 
 ## De tabel
 
+<div className="handout-teltabel">
+
 Vul per ronde de nieuwe stand in. Zet een vinkje bij de plek die je in
 die ronde afvinkt; een afgevinkte plek verandert daarna nooit meer.
 
-| plek | ronde 1 | ronde 2 | ronde 3 | ronde 4 | ronde 5 | ronde 6 | ronde 7 |
-|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| A |   |   |   |   |   |   |   |
-| B |   |   |   |   |   |   |   |
-| C |   |   |   |   |   |   |   |
-| D |   |   |   |   |   |   |   |
-| E |   |   |   |   |   |   |   |
-| F |   |   |   |   |   |   |   |
-| G |   |   |   |   |   |   |   |
+| plek | start | ronde 1 | ronde 2 | ronde 3 | ronde 4 | ronde 5 | ronde 6 | ronde 7 |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| A |   |   |   |   |   |   |   |   |
+| B |   |   |   |   |   |   |   |   |
+| C |   |   |   |   |   |   |   |   |
+| D |   |   |   |   |   |   |   |   |
+| E |   |   |   |   |   |   |   |   |
+| F |   |   |   |   |   |   |   |   |
+| G |   |   |   |   |   |   |   |   |
+
+</div>
 
 ## Bespreek na
 
@@ -95,18 +101,18 @@ die ronde afvinkt; een afgevinkte plek verandert daarna nooit meer.
 Deze pagina print als losse laatste pagina — houd hem achter de hand of
 knip hem eraf.
 
-Stand aan het eind van elke ronde (✓ = afgevinkt, daarna verandert de
-rij niet meer):
+Stand na het begin en aan het eind van elke ronde (✓ = afgevinkt,
+daarna verandert de rij niet meer):
 
-| plek | ronde 1 | ronde 2 | ronde 3 | ronde 4 | ronde 5 | ronde 6 | ronde 7 |
-|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| A | 0 ✓ | — | — | — | — | — | — |
-| B | 2 | 2 ✓ | — | — | — | — | — |
-| C | 6 | 4 | 4 ✓ | — | — | — | — |
-| D | ? | 10 | 10 | 9 | 9 ✓ | — | — |
-| E | ? | ? | 7 | 7 ✓ | — | — | — |
-| F | ? | ? | ? | 14 | 13 | 12 | 12 ✓ |
-| G | ? | ? | ? | 11 | 11 ✓ | — | — |
+| plek | start | ronde 1 | ronde 2 | ronde 3 | ronde 4 | ronde 5 | ronde 6 | ronde 7 |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| A | 0 | 0 ✓ | — | — | — | — | — | — |
+| B | ? | 2 | 2 ✓ | — | — | — | — | — |
+| C | ? | 6 | 4 | 4 ✓ | — | — | — | — |
+| D | ? | ? | 10 | 10 | 9 | 9 ✓ | — | — |
+| E | ? | ? | ? | 7 | 7 ✓ | — | — | — |
+| F | ? | ? | ? | ? | 14 | 13 | 12 | 12 ✓ |
+| G | ? | ? | ? | ? | 11 | 11 | 11 ✓ | — |
 
 Let op: in ronde 5 en 6 hebben `D` en `G` allebei nog niet-afgevinkte
 buren, dus de volgorde kiezen gaat op afstand: `D` (9) vóór `G` (11).
@@ -122,9 +128,10 @@ De kortste routes vanuit `A`:
 | F | 12 | A → B → C → E → G → F |
 | G | 11 | A → B → C → E → G |
 
-De route naar `F` gebruikt vijf wegen en komt tóch op 12 uit — korter
-dan de "logisch ogende" `A → B → D → F` (14) of `A → C → E → F` (16).
-`F` werd onderweg twee keer verbeterd: 14 → 13 → 12.
+De route naar `F` gebruikt vijf wegen en komt toch op 12 uit, korter
+dan de routes die er logisch uitzien: `A → B → D → F` (14) of
+`A → C → E → F` (16). `F` werd onderweg twee keer verbeterd, van 14
+naar 13 naar 12.
 
 </div>
 

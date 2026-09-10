@@ -95,6 +95,22 @@
     height: 1.5em;
   }
 
+  /* Een invul- of antwoordtabel hoort op één pagina; een tabel die over
+     de paginagrens breekt is op papier twee halve tabellen. Dit gold
+     alleen voor compacte hand-outs, en de Dijkstra-hand-out (niet
+     compact) brak precies daar. */
+  body.handout-page table {
+    break-inside: avoid;
+  }
+
+  /* De uitleg boven een invultabel en de tabel zelf horen bij elkaar; de
+     kop blijft er al bij (break-after: avoid op h2), maar de alinea
+     ertussen niet. Op de Dijkstra-hand-out stond "De tabel" met zijn
+     uitleg onderaan pagina 2 en de lege tabel bovenaan pagina 3. */
+  body.handout-page .handout-teltabel {
+    break-inside: avoid;
+  }
+
   body.handout-page .handout-paginawissel {
     break-before: page;
   }
@@ -168,10 +184,6 @@
   body.handout-compact .handout-blad {
     column-count: 2;
     column-gap: 8mm;
-  }
-
-  body.handout-compact .handout-blad table {
-    break-inside: avoid;
   }
 
   body.handout-compact .handout-vragen ol > li {

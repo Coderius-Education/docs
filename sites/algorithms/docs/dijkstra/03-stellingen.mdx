@@ -4,12 +4,28 @@ sidebar_position: 3
 
 # Voorspel — waar of niet waar?
 
-**Leerdoel:** je test je intuïtie over Dijkstra op concept-niveau,
-voordat je begint met programmeren.
+**Leerdoel:** je test wat je van Dijkstra begrijpt, voordat je gaat
+programmeren.
 
-Lees elke stelling. Bedenk eerst je antwoord. Klap dan pas open.
+Lees elke stelling en bedenk je antwoord; klap dan pas open.
 
 ## Stelling 1
+
+> *"Aan het begin van Dijkstra staat elke afstand op `?`, ook die van
+> de startnode."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Niet waar.**
+
+Stap 0 zet alles op `?` behalve de start: die krijgt 0, want daar sta
+je al. Die ene 0 is wat ronde 1 op gang brengt. Zonder die 0 is er niets
+te kiezen, want alles is even onbekend.
+
+</details>
+
+## Stelling 2
 
 > *"De kortste route tussen twee nodes is altijd de directe verbinding,
 > als die bestaat."*
@@ -25,7 +41,7 @@ nog steeds korter geweest. Een "omweg" kan totaal goedkoper zijn.
 
 </details>
 
-## Stelling 2
+## Stelling 3
 
 > *"Als je Dijkstra runt vanuit A, weet je tegelijk de kortste afstand
 > naar alle andere bereikbare nodes."*
@@ -33,35 +49,34 @@ nog steeds korter geweest. Een "omweg" kan totaal goedkoper zijn.
 <details>
 <summary>Antwoord</summary>
 
-**Waar — dat is een van de mooie eigenschappen.**
+**Waar.**
 
-Aan het eind van Dijkstra heb je voor élke bereikbare node de kortste
-afstand. Eén pen-en-papier-sessie geeft je dus 4 antwoorden tegelijk
-(in onze 4-node graph).
-
-</details>
-
-## Stelling 3
-
-> *"Een edge tussen `A` en `B` met gewicht 4 betekent: vanaf `A` kun je
-> naar `B` met kost 4, én vanaf `B` kun je naar `A` met kost 4."*
-
-<details>
-<summary>Antwoord</summary>
-
-**Waar — in een niet-gerichte graph.**
-
-In een **niet-gerichte** graph (zoals onze voorbeeldgraph) zijn alle
-edges tweerichtingsverkeer met hetzelfde gewicht.
-
-In een **gerichte** graph (eenrichtingsverkeer) zou dat anders kunnen
-zijn — je kunt zelfs verschillende gewichten heen en terug hebben
-(spitsuur op één route.). Dijkstra werkt voor beide soorten, je moet
-alleen je representatie kloppend houden.
+Aan het eind van Dijkstra heb je voor elke bereikbare node de kortste
+afstand. Eén keer op papier geeft je dus alle antwoorden tegelijk: vijf
+op de grote graph, vier op de kleine.
 
 </details>
 
 ## Stelling 4
+
+> *"In een graph waar je elke weg beide kanten op mag, betekent een
+> edge tussen `A` en `B` met gewicht 4: van `A` naar `B` kost 4, én van
+> `B` naar `A` kost 4."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Waar.**
+
+Zo'n graph heet **niet-gericht**, en dat zijn alle graphs in dit
+hoofdstuk op één na. Er bestaan ook eenrichtingswegen, met desnoods een
+ander gewicht heen dan terug (spitsuur op één route); bij
+[de fouten](./13-fouten) zie je zo'n graph, met elke weg apart in de
+dict.
+
+</details>
+
+## Stelling 5
 
 > *"Dijkstra werkt ook met negatieve gewichten."*
 
@@ -78,45 +93,41 @@ Voor negatieve gewichten gebruik je *Bellman-Ford*.
 
 </details>
 
-## Stelling 5
-
-> *"Het is mogelijk dat een node tijdens Dijkstra wordt geüpdate naar
-> een **kortere** afstand, vóór hij als 'bekend' wordt gemarkeerd."*
-
-<details>
-<summary>Antwoord</summary>
-
-**Waar — sterker nog, dat is precies wat er met `D` gebeurde in onze
-pen-en-papier ronde 3.**
-
-`D` had eerst afstand 10 (via `C`). Later vond Dijkstra een korter
-alternatief (via `B`, afstand 5). Pas dáárna werd `D` als bekend
-gemarkeerd.
-
-Dat is het hele punt: meerdere kandidaten testen voordat je iets
-"klaar" verklaart.
-
-</details>
-
 ## Stelling 6
 
-> *"Zodra de bestemming-node als 'bekend' is gemarkeerd, kun je stoppen
-> met Dijkstra."*
+> *"Het is mogelijk dat een node tijdens Dijkstra een **kortere**
+> afstand krijgt, vóór hij als 'bekend' wordt gemarkeerd."*
 
 <details>
 <summary>Antwoord</summary>
 
-**Waar — als je alleen die ene bestemming nodig hebt.**
+**Waar.** Dat is precies wat er met `D` gebeurde op de kleine graph, in
+ronde 3.
 
-Zodra een node als "bekend" wordt aangewezen, is zijn afstand
-definitief. Verder zoeken voegt voor díe ene node niets toe.
-
-In onze educatieve versie laten we Dijkstra altijd uitlopen, omdat je
-dan ook de afstanden naar **alle** andere nodes hebt. Voor één
-specifieke bestemming kun je eerder stoppen.
+`D` had eerst afstand 10, via `C`. Daarna vond Dijkstra een kortere
+route via `B`, afstand 5, en pas daarna werd `D` bekend. Meerdere
+kandidaten bekijken voordat je iets klaar verklaart: dat is het hele
+punt.
 
 </details>
 
-Klaar met voorspellen? Tijd om te programmeren — heel kleine stapjes.
+## Stelling 7
+
+> *"Zodra de bestemming als 'bekend' is gemarkeerd, staat haar afstand
+> vast — ook al zijn andere nodes nog niet klaar."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Waar.**
+
+Bekend is definitief; dat is het sleutelidee van de pen-en-papier-pagina.
+Wie alleen die ene bestemming nodig heeft, mag daar dus stoppen. In dit
+hoofdstuk laten we Dijkstra uitlopen, omdat je dan meteen de afstanden
+naar **alle** nodes hebt.
+
+</details>
+
+Nu de code, in kleine stapjes.
 
 Door naar [de graph in Python →](./bouwen/04-graph).
