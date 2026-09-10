@@ -60,9 +60,8 @@ Ja — gegarandeerd. Elke ronde voegen we precies **één** node aan
 `bezocht` toe. Na maximaal `len(graph)` rondes is iedereen erin.
 `kies_volgende` returnt dan `None`, en `break` springt eruit.
 
-Geen risico op een oneindige lus. Belangrijk: vergeet `bezocht.add()`
-niet — anders blijf je dezelfde node steeds opnieuw kiezen. Daarom
-zetten we dat altijd direct na de kies-stap.
+Elke ronde maakt `bezocht` één groter, en `kies_volgende` kijkt daar
+elke ronde naar. Dat is de hele garantie.
 
 ## Voorspel
 

@@ -27,15 +27,12 @@ for buur, gewicht in graph[huidige]:           # stap 3
 
 Dat is alles. Geen lus, geen while, geen recursie. Eén ronde.
 
-## Belangrijk: eerst markeren, dan relaxen
+## Waarom markeren?
 
-Waarom in deze volgorde?
-
-- Als we `bezocht.add(huidige)` **vergeten** of pas later doen, kunnen
-    we hem volgende ronde opnieuw kiezen.
-- Sommige graphs hebben *zelf-edges* (een node verbonden met zichzelf).
-    Door eerst te markeren, voorkomen we dat de relax-stap onnodig naar
-    onszelf kijkt.
+Stap 2 is de kortste regel van de drie, en de enige die `kies_volgende`
+ziet. Die functie slaat alles over wat in `bezocht` zit; wat er niet in
+zit kan volgende ronde opnieuw gekozen worden. Markeren is dus hoe een
+ronde tegen de volgende zegt: deze is af.
 
 ## Voorspel
 
