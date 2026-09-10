@@ -54,6 +54,7 @@ Verzameld: `[D, B, A]`. Draai om: `[A, B, D]`. Dat is het pad.
 Pas `dijkstra` aan om `voorgangers` mee te houden. Schrijf een
 hulpfunctie `reconstrueer_pad` die het pad teruggeeft.
 
+{/* niet-draaien: startcode; de asserts falen tot voorgangers en het pad zijn ingevuld */}
 <PyRunner initialCode={`def kies_volgende(afstanden, bezocht):
     beste_node = None
     kleinste = float('inf')
@@ -106,9 +107,14 @@ graph = {
 }
 
 afstanden, voorgangers = dijkstra(graph, 'A')
+pad = reconstrueer_pad(voorgangers, 'A', 'D')
 print("Afstanden:  ", afstanden)
 print("Voorgangers:", voorgangers)
-print("Pad A→D:    ", reconstrueer_pad(voorgangers, 'A', 'D'))`} />
+print("Pad A→D:    ", pad)
+
+assert voorgangers == {'B': 'A', 'C': 'A', 'D': 'B'}, f"voorgangers hoort {{'B': 'A', 'C': 'A', 'D': 'B'}} te zijn, is {voorgangers}"
+assert pad == ['A', 'B', 'D'], f"het pad hoort ['A', 'B', 'D'] te zijn, is {pad}"
+print("Alle tests geslaagd.")`} />
 
 <details>
 <summary>Tip</summary>
@@ -128,8 +134,19 @@ Aan het eind: `pad.reverse()` of `pad[::-1]`.
 <details>
 <summary>Antwoord</summary>
 
-{/* niet-draaien: antwoord-fragment; kies_volgende en de testaanroepen staan in de runner hierboven */}
 ```python
+def kies_volgende(afstanden, bezocht):
+    beste_node = None
+    kleinste = float('inf')
+    for node, d in afstanden.items():
+        if node in bezocht:
+            continue
+        if d < kleinste:
+            kleinste = d
+            beste_node = node
+    return beste_node
+
+
 def dijkstra(graph, start):
     afstanden = {}
     for node in graph:
@@ -164,14 +181,31 @@ def reconstrueer_pad(voorgangers, start, doel):
     if pad and pad[0] == start:
         return pad
     return []
-```
 
-Verwacht:
+
+graph = {
+    'A': [('B', 4), ('C', 2)],
+    'B': [('A', 4), ('D', 1)],
+    'C': [('A', 2), ('D', 8)],
+    'D': [('B', 1), ('C', 8)],
+}
+
+afstanden, voorgangers = dijkstra(graph, 'A')
+pad = reconstrueer_pad(voorgangers, 'A', 'D')
+print("Afstanden:  ", afstanden)
+print("Voorgangers:", voorgangers)
+print("Pad A→D:    ", pad)
+
+assert voorgangers == {'B': 'A', 'C': 'A', 'D': 'B'}, f"voorgangers hoort {{'B': 'A', 'C': 'A', 'D': 'B'}} te zijn, is {voorgangers}"
+assert pad == ['A', 'B', 'D'], f"het pad hoort ['A', 'B', 'D'] te zijn, is {pad}"
+print("Alle tests geslaagd.")
+```
 
 ```
 Afstanden:   {'A': 0, 'B': 4, 'C': 2, 'D': 5}
 Voorgangers: {'B': 'A', 'C': 'A', 'D': 'B'}
 Pad A→D:     ['A', 'B', 'D']
+Alle tests geslaagd.
 ```
 
 `voorgangers.get(huidige)` returnt `None` als de node niet in de dict

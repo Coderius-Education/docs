@@ -36,11 +36,11 @@ ronde tegen de volgende zegt: deze is af.
 
 ## Voorspel
 
-We starten met:
+We starten met stap 0:
 
-```
-afstanden = {'A': 0, 'B': inf, 'C': inf, 'D': inf}
-bezocht   = {}
+```python
+afstanden = {'A': 0, 'B': float('inf'), 'C': float('inf'), 'D': float('inf')}
+bezocht = set()
 ```
 
 Wat denk je dat afstanden en bezocht zijn **na één ronde**?
@@ -50,7 +50,7 @@ Wat denk je dat afstanden en bezocht zijn **na één ronde**?
 
 ```
 afstanden = {'A': 0, 'B': 4, 'C': 2, 'D': inf}
-bezocht   = {'A'}
+bezocht = {'A'}
 ```
 
 - Kies = `A` (laagste afstand 0, niemand bezocht).
