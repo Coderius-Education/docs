@@ -7,6 +7,7 @@ sidebar_position: 9
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/herhalen/while-loop', label: 'De while-loop'},
+    {site: 'python', to: '/docs/herhalen/06d-break', label: 'Break'},
   ]}
 />
 
@@ -37,8 +38,10 @@ while True:
             afstanden[buur] = nieuwe
 ```
 
-`while True` zegt: *"blijf maar bezig"*. De `if ... break` is de
-uitgang.
+`while True` is een lus zonder eigen stopvoorwaarde: hij draait tot
+iets erin `break` zegt, en dat is hier de enige uitgang. `huidige is
+None` vraagt of `kies_volgende` niemand teruggaf — `None` is wat die
+functie geeft als alles bezocht is, zoals je in bouwsteen 4 zag.
 
 ## Waarom geen "for node in graph"?
 

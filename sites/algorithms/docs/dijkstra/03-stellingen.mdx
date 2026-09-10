@@ -59,21 +59,20 @@ vijf op de grote graph, vier op de kleine.
 
 ## Stelling 4
 
-> *"Een edge tussen `A` en `B` met gewicht 4 betekent: vanaf `A` kun je
-> naar `B` met kost 4, én vanaf `B` kun je naar `A` met kost 4."*
+> *"In een graph waar je elke weg beide kanten op mag, betekent een
+> edge tussen `A` en `B` met gewicht 4: van `A` naar `B` kost 4, én van
+> `B` naar `A` kost 4."*
 
 <details>
 <summary>Antwoord</summary>
 
-**Waar — in een niet-gerichte graph.**
+**Waar.**
 
-In een **niet-gerichte** graph (zoals onze voorbeeldgraph) zijn alle
-edges tweerichtingsverkeer met hetzelfde gewicht.
-
-In een **gerichte** graph (eenrichtingsverkeer) zou dat anders kunnen
-zijn — je kunt zelfs verschillende gewichten heen en terug hebben
-(spitsuur op één route.). Dijkstra werkt voor beide soorten, je moet
-alleen je representatie kloppend houden.
+Zo'n graph heet **niet-gericht**, en dat zijn alle graphs in dit
+hoofdstuk op één na. Er bestaan ook eenrichtingswegen, met desnoods een
+ander gewicht heen dan terug (spitsuur op één route); bij
+[de fouten](./13-fouten) zie je zo'n graph, met elke weg apart in de
+dict.
 
 </details>
 
@@ -116,20 +115,18 @@ Dat is het hele punt: meerdere kandidaten testen voordat je iets
 
 ## Stelling 7
 
-> *"Zodra de bestemming-node als 'bekend' is gemarkeerd, kun je stoppen
-> met Dijkstra."*
+> *"Zodra de bestemming als 'bekend' is gemarkeerd, staat haar afstand
+> vast — ook al zijn andere nodes nog niet klaar."*
 
 <details>
 <summary>Antwoord</summary>
 
-**Waar — als je alleen die ene bestemming nodig hebt.**
+**Waar.**
 
-Zodra een node als "bekend" wordt aangewezen, is zijn afstand
-definitief. Verder zoeken voegt voor díe ene node niets toe.
-
-In onze educatieve versie laten we Dijkstra altijd uitlopen, omdat je
-dan ook de afstanden naar **alle** andere nodes hebt. Voor één
-specifieke bestemming kun je eerder stoppen.
+Bekend is definitief; dat is het sleutelidee van de pen-en-papier-pagina.
+Wie alleen die ene bestemming nodig heeft, mag daar dus stoppen. In dit
+hoofdstuk laten we Dijkstra uitlopen, omdat je dan meteen de afstanden
+naar **alle** nodes hebt.
 
 </details>
 

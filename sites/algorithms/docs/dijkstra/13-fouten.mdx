@@ -37,8 +37,12 @@ kun je geen kant vergeten:
 edges = [('A', 'B', 4), ('A', 'C', 2), ('B', 'D', 1), ('C', 'D', 8)]
 graph = {}
 for u, v, w in edges:
-    graph.setdefault(u, []).append((v, w))
-    graph.setdefault(v, []).append((u, w))
+    if u not in graph:
+        graph[u] = []
+    if v not in graph:
+        graph[v] = []
+    graph[u].append((v, w))
+    graph[v].append((u, w))
 ```
 
 ## `bezocht.add()` vergeten — oneindige lus
