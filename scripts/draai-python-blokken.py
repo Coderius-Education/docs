@@ -192,11 +192,17 @@ DRAAIEN_RE = re.compile(r"\{/\*\s*draaien:.*?\*/\}\s*$")
 # Een Voorspel-blok gebruikt vaak de functie die eerder op de pagina is
 # opgebouwd; met deze marker draait het met dat blok ervoor geplakt, zodat de
 # beloofde uitvoer tóch te controleren is. De beloftes komen uit het blok zélf
-# — commentaren achter prints, of een uitvoerblok eronder — en worden tegen de
-# staart van de uitvoer gelegd (het eigen blok draait als laatste); regelnummers in een foutmelding zijn teruggerekend naar dit blok en
+# — commentaren achter prints, of een uitvoerblok eronder — en worden gelegd
+# tegen wat het eigen blok print (zie STAART_MARKER hieronder); regelnummers in een foutmelding zijn teruggerekend naar dit blok en
 # de melding zegt erbij dat het blok erboven meedraait. Alleen blokken die
 # zelfstandig compileren mogen de keten voeden.
 MET_RE = re.compile(r"\{/\*\s*draaien-met:\s*blok-erboven\s*\*/\}\s*$")
+# Tussen het voorgeplakte blok en het eigen blok print de keten deze regel,
+# zodat de uitvoer van het eigen blok exact af te splitsen is. Zonder die
+# scheiding was het gokken: een uitvoerblok dat toevallig gelijk is aan de
+# staart van wat het blok erboven print, zou slagen zonder dat het eigen
+# blok iets print.
+STAART_MARKER = "<<eigen-blok>>"
 NIET_COMPILEREN_RE = re.compile(r"\{/\*\s*niet-compileren:.*?\*/\}\s*$")
 # Sommige uitvoer ligt niet vast: een set heeft geen volgorde, dus het getoonde
 # resultaat is een voorbeeld en geen belofte. Zo'n blok draait wel gewoon.
@@ -413,8 +419,9 @@ def verzamel():
                     )
                     vorige = None
                     continue
-                voorplak = boven.count("\n") + 1
-                kaalcode = boven + "\n" + kaalcode
+                # Eén regel extra: de markeerregel, zie STAART_MARKER.
+                voorplak = boven.count("\n") + 2
+                kaalcode = boven + "\n" + f"print({STAART_MARKER!r})" + "\n" + kaalcode
             if STARTCODE_RE.search(ervoor):
                 # Draait wel, maar wordt anders beoordeeld: zie draai_startcode.
                 soort = "startcode"
@@ -622,19 +629,12 @@ def draai(bron, regel, code, verwacht, varieert=False, voorplak=0) -> str | None
     # Een lege regel vooraan (een print("\\n…") als eerste) is in een fence
     # niet te zien; die telt dus niet mee, net als lege regels achteraan.
     uit = r.stdout.strip("\n")
+    if voorplak:
+        # Alleen wat het eigen blok print; het blok erboven heeft zijn eigen
+        # uitvoer al waargemaakt toen het los draaide.
+        _, _, uit = uit.partition(STAART_MARKER)
+        uit = uit.strip("\n")
 
-    if verwacht is not None and voorplak:
-        # Bij draaien-met is het uitvoerblok de staart van de uitvoer: het
-        # blok erboven heeft zijn eigen uitvoer al waargemaakt toen het los
-        # draaide, en een antwoord dat die regels moet herhalen leest niet.
-        n = len(verwacht.split("\n"))
-        staart = "\n".join(uit.split("\n")[-n:]) if uit else ""
-        if staart != verwacht:
-            return (
-                f"{bron}:{regel}: uitvoerblok belooft als staart {verwacht!r}, "
-                f"de uitvoer eindigt op {staart!r}"
-            )
-        return None
     if verwacht is not None and uit != verwacht:
         return f"{bron}:{regel}: uitvoerblok belooft {verwacht!r}, geeft {uit!r}"
 
@@ -651,11 +651,10 @@ def draai(bron, regel, code, verwacht, varieert=False, voorplak=0) -> str | None
     if beloftes and not varieert:
         regels = uit.split("\n") if uit else []
         if voorplak:
-            # Het eigen blok draait als laatste, dus zíjn prints zijn de staart
-            # van de uitvoer — maar dat klopt alleen als élke eigen print een
-            # belofte draagt. Eén kale print erachter zou de staart stil
-            # verschuiven en een belofte tegen de verkeerde regel leggen; dat
-            # eisen we dus hardop af in plaats van het te laten gebeuren.
+            # `uit` is hier alleen de uitvoer van het eigen blok. Dat klopt
+            # als vergelijking alleen als élke eigen print een belofte draagt:
+            # één kale print ertussen zou een belofte tegen de verkeerde regel
+            # leggen. Dat eisen we dus hardop af.
             prints = sum(1 for x in eigen if re.match(r"\s*print\(", x))
             if prints != len(beloftes):
                 return (

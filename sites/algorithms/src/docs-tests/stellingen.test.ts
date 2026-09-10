@@ -49,27 +49,26 @@ function antwoorden(tekst: string): { kop: string; eerste: string }[] {
 }
 
 describe('stellingen hebben een antwoord zonder voorwaarde', () => {
+  const perPagina = new Map(
+    stellingenPaginas().map((pagina) => [
+      pagina,
+      antwoorden(readFileSync(join(DOCS, pagina), 'utf8')),
+    ]),
+  );
   const metVoorwaarde = new Map<string, string[]>();
-  for (const pagina of stellingenPaginas()) {
-    const koppen = antwoorden(readFileSync(join(DOCS, pagina), 'utf8'))
-      .filter((a) => VOORWAARDE.test(a.eerste))
-      .map((a) => a.kop);
+  for (const [pagina, lijst] of perPagina) {
+    const koppen = lijst.filter((a) => VOORWAARDE.test(a.eerste)).map((a) => a.kop);
     if (koppen.length > 0) metVoorwaarde.set(pagina, koppen);
   }
 
   it('elke stellingen-pagina heeft antwoorden', () => {
-    for (const pagina of stellingenPaginas()) {
-      expect(antwoorden(readFileSync(join(DOCS, pagina), 'utf8')).length, pagina).toBeGreaterThan(
-        0,
-      );
+    for (const [pagina, lijst] of perPagina) {
+      expect(lijst.length, pagina).toBeGreaterThan(0);
     }
   });
 
-  it('geen nieuwe "Waar — als …"-antwoorden buiten de achterstand', () => {
-    const nieuw = [...metVoorwaarde].filter(([pagina]) => !ACHTERSTAND.has(pagina));
-    expect(nieuw).toEqual([]);
-  });
-
+  // Eén vergelijking dekt beide richtingen: een nieuwe "Waar — als …" is
+  // een sleutel te veel, een opgeloste is een sleutel te weinig.
   it('de achterstand is exact', () => {
     expect(Object.fromEntries(metVoorwaarde)).toEqual(Object.fromEntries(ACHTERSTAND));
   });
