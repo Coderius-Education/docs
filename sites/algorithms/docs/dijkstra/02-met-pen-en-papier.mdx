@@ -261,6 +261,27 @@ Wil je dit klassikaal doen op een grotere kaart, zonder scherm? Print de
 werkvorm [De kortste route — Dijkstra op papier](/docs/unplugged/03-dijkstra-op-papier).
 :::
 
+## Probeer het zelf — een andere startnode
+
+Doe Dijkstra op dezelfde graph, maar nu vanuit `E` als start. Welke
+afstanden krijg je naar `A`, `B`, `C`, `D`?
+
+<details>
+<summary>Antwoord</summary>
+
+| node | afstand vanuit E |
+|---|---|
+| A | 5 (via D, C) |
+| B | 3 (via D) |
+| C | 4 (via D) |
+| D | 1 (direct) |
+| E | 0 |
+
+Vanaf `E` is de directe `E─C` (gewicht 5) niet de kortste route naar
+`C`; via `D` is het 1 + 3 = 4. Weer twee updates onderweg.
+
+</details>
+
 ## Nu jij — de kleine graph uit de code-pagina's
 
 De bouwstenen gebruiken een kleinere graph, zodat de code kort blijft.
@@ -299,27 +320,6 @@ lager dan 4) en geeft `D` 2 + 8 = 10. Ronde 3 kiest `B`: via `B` is
 bekend.
 
 Eindstand: `A` 0, `B` 4, `C` 2, `D` 5.
-
-</details>
-
-## Probeer het zelf — een andere startnode
-
-Doe Dijkstra op dezelfde graph, maar nu vanuit `E` als start. Welke
-afstanden krijg je naar `A`, `B`, `C`, `D`?
-
-<details>
-<summary>Antwoord</summary>
-
-| node | afstand vanuit E |
-|---|---|
-| A | 5 (via D, C) |
-| B | 3 (via D) |
-| C | 4 (via D) |
-| D | 1 (direct) |
-| E | 0 |
-
-Vanaf `E` is de directe `E─C` (gewicht 5) niet de kortste route naar
-`C`; via `D` is het 1 + 3 = 4. Weer twee updates onderweg.
 
 </details>
 
