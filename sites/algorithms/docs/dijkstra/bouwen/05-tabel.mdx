@@ -134,12 +134,14 @@ print("bezocht:  ", bezocht)`} />
 
 ## Iets aan bezocht toevoegen
 
-Een set heeft maar twee handelingen die we nodig hebben:
+Een set heeft maar twee handelingen die we nodig hebben: iets erin
+zetten, en vragen of iets erin zit.
 
 ```python
-bezocht.add('A')       # 'A' is nu in de set
-'A' in bezocht          # True
-'B' in bezocht          # False
+bezocht = set()
+bezocht.add('A')
+print('A' in bezocht)   # True
+print('B' in bezocht)   # False
 ```
 
 Klaar — we hebben de boekhouding op orde.

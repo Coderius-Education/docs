@@ -100,7 +100,7 @@ Dat is `A` met afstand 0. Markeer `A` als bekend:
 | D | nee | ? |
 | E | nee | ? |
 
-## Ronde 2 — kies C, en pas op.
+## Ronde 2 — kies C, en pas op
 
 **Stap A — Laagste onder nog-niet-bekend?**
 
@@ -240,9 +240,9 @@ in code doet, zie je bij [pas aan](./11-aanpassen).
 
 ## Wat is hier opvallend?
 
-- **`B` werd één keer geüpdate** (6 → 3). De omweg via `C` is meer dan
+- **`B` werd één keer bijgewerkt** (6 → 3). De omweg via `C` is meer dan
   twee keer zo kort als de directe weg.
-- **`E` werd één keer geüpdate** (6 → 5). En dat gebeurde pas **drie
+- **`E` werd één keer bijgewerkt** (6 → 5). En dat gebeurde pas **drie
   rondes** nadat we hem voor het eerst hadden gezien.
 - **Alle kortste routes lopen via `C`**. Dat zou je op het oog moeilijk
   kunnen raden.
@@ -254,8 +254,8 @@ in code doet, zie je bij [pas aan](./11-aanpassen).
 > **Sleutelidee:** elke keer dat we "laagste onder nog-niet-bekend" als
 > bekend markeren, **kan** zijn afstand niet meer verbeteren. Want elke
 > nieuwe route zou via een andere nog-niet-bekende node moeten lopen —
-> en die hebben per definitie een **hogere** afstand. Dus de totale
-> nieuwe route zou langer worden.
+> en die hebben per definitie een afstand die **niet lager** is. Dus de
+> totale nieuwe route wordt nooit korter.
 
 Daarom mogen we hem "klaar" verklaren zonder later spijt te krijgen.
 
