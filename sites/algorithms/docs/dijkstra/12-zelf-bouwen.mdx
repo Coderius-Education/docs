@@ -194,8 +194,51 @@ kleine graph zag met `B`. En Den Haag → Arnhem gaat niet via Rotterdam
 
 ## Uitdaging (optioneel)
 
-Pas `kortste_reis` aan zodat het ook werkt voor **meerdere bestemmingen
-tegelijk**. Je hoeft maar **één** Dijkstra-run te doen vanaf `start` —
-de afstanden naar alle steden zijn dan al berekend.
+Schrijf `kortste_reizen(graph, start, doelen)` die voor een **lijst
+bestemmingen** tegelijk de afstand en het pad geeft, als dict van
+bestemming naar `(afstand, pad)`. Je hoeft maar **één** Dijkstra-run te
+doen vanaf `start` — de afstanden naar alle steden zijn dan al berekend.
+
+<details>
+<summary>Tip</summary>
+
+`kortste_reis` roept `dijkstra` één keer aan en `reconstrueer_pad` één
+keer. Voor meerdere bestemmingen blijft het één keer `dijkstra`, en
+daarna één keer `reconstrueer_pad` per bestemming, in een lus over
+`doelen`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Met de functies uit het antwoord hierboven:
+
+{/* draaien-met: blok-erboven */}
+```python
+def kortste_reizen(graph, start, doelen):
+    afstanden, voorgangers = dijkstra(graph, start)
+    uitkomst = {}
+    for doel in doelen:
+        pad = reconstrueer_pad(voorgangers, start, doel)
+        uitkomst[doel] = (afstanden[doel], pad)
+    return uitkomst
+
+
+reizen_vanuit_amsterdam = kortste_reizen(steden, 'Amsterdam', ['Maastricht', 'Arnhem', 'Eindhoven'])
+for doel, (afstand, pad) in reizen_vanuit_amsterdam.items():
+    print(f"{doel}: {afstand} min via {' → '.join(pad)}")
+```
+
+```
+Maastricht: 140 min via Amsterdam → Den Haag → Rotterdam → Eindhoven → Maastricht
+Arnhem: 90 min via Amsterdam → Utrecht → Arnhem
+Eindhoven: 90 min via Amsterdam → Den Haag → Rotterdam → Eindhoven
+```
+
+Eén run, drie antwoorden: `afstanden` en `voorgangers` bevatten na één
+keer `dijkstra` alles wat je voor elke bestemming nodig hebt.
+
+</details>
 
 Door naar [veelgemaakte fouten →](./13-fouten).

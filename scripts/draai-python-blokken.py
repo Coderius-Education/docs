@@ -192,8 +192,8 @@ DRAAIEN_RE = re.compile(r"\{/\*\s*draaien:.*?\*/\}\s*$")
 # Een Voorspel-blok gebruikt vaak de functie die eerder op de pagina is
 # opgebouwd; met deze marker draait het met dat blok ervoor geplakt, zodat de
 # beloofde uitvoer tóch te controleren is. De beloftes komen uit het blok zélf
-# en worden tegen de staart van de uitvoer gelegd (het eigen blok draait als
-# laatste); regelnummers in een foutmelding zijn teruggerekend naar dit blok en
+# — commentaren achter prints, of een uitvoerblok eronder — en worden tegen de
+# staart van de uitvoer gelegd (het eigen blok draait als laatste); regelnummers in een foutmelding zijn teruggerekend naar dit blok en
 # de melding zegt erbij dat het blok erboven meedraait. Alleen blokken die
 # zelfstandig compileren mogen de keten voeden.
 MET_RE = re.compile(r"\{/\*\s*draaien-met:\s*blok-erboven\s*\*/\}\s*$")
@@ -623,6 +623,18 @@ def draai(bron, regel, code, verwacht, varieert=False, voorplak=0) -> str | None
     # niet te zien; die telt dus niet mee, net als lege regels achteraan.
     uit = r.stdout.strip("\n")
 
+    if verwacht is not None and voorplak:
+        # Bij draaien-met is het uitvoerblok de staart van de uitvoer: het
+        # blok erboven heeft zijn eigen uitvoer al waargemaakt toen het los
+        # draaide, en een antwoord dat die regels moet herhalen leest niet.
+        n = len(verwacht.split("\n"))
+        staart = "\n".join(uit.split("\n")[-n:]) if uit else ""
+        if staart != verwacht:
+            return (
+                f"{bron}:{regel}: uitvoerblok belooft als staart {verwacht!r}, "
+                f"de uitvoer eindigt op {staart!r}"
+            )
+        return None
     if verwacht is not None and uit != verwacht:
         return f"{bron}:{regel}: uitvoerblok belooft {verwacht!r}, geeft {uit!r}"
 
