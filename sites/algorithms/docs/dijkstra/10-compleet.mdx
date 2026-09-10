@@ -48,8 +48,12 @@ def dijkstra(graph, start):
 **Bouwsteen 4** — de helper `kies_volgende`: van alle onbezochte knopen die met de laagste afstand tot nu toe. Zijn ze allemaal bezocht, dan blijft `beste_node` op `None` staan.
 </Regel>
 
+<Regel n={13}>
+**Bouwsteen 1** komt binnen als `graph`: de dict met per knoop zijn buren.
+</Regel>
+
 <Regel n={14} tot={16}>
-**Bouwsteen 2** — elke knoop begint op oneindig: nog geen route bekend.
+**Bouwsteen 2**, stap 0 — elke knoop begint op oneindig: nog geen route bekend.
 </Regel>
 
 <Regel n={17}>
@@ -62,6 +66,10 @@ De lege set voor knopen die definitief af zijn.
 
 <Regel n={20} tot={23}>
 **Bouwsteen 6** — de hoofdlus: kies de volgende knoop, en stop zodra er geen onbezochte meer over is.
+</Regel>
+
+<Regel n={24}>
+**Bouwsteen 5** — markeer de gekozen knoop als af, vóór de volgende ronde kiest.
 </Regel>
 
 <Regel n={25} tot={28}>

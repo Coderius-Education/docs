@@ -11,6 +11,22 @@ Lees elke stelling. Bedenk eerst je antwoord. Klap dan pas open.
 
 ## Stelling 1
 
+> *"Aan het begin van Dijkstra staat elke afstand op `?`, ook die van
+> de startnode."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Niet waar.**
+
+Stap 0 zet alles op `?` behalve de start: die krijgt 0, want daar sta
+je al. Die ene 0 is wat ronde 1 op gang brengt. Zonder die 0 is er niets
+te kiezen, want alles is even onbekend.
+
+</details>
+
+## Stelling 2
+
 > *"De kortste route tussen twee nodes is altijd de directe verbinding,
 > als die bestaat."*
 
@@ -25,7 +41,7 @@ nog steeds korter geweest. Een "omweg" kan totaal goedkoper zijn.
 
 </details>
 
-## Stelling 2
+## Stelling 3
 
 > *"Als je Dijkstra runt vanuit A, weet je tegelijk de kortste afstand
 > naar alle andere bereikbare nodes."*
@@ -36,12 +52,12 @@ nog steeds korter geweest. Een "omweg" kan totaal goedkoper zijn.
 **Waar — dat is een van de mooie eigenschappen.**
 
 Aan het eind van Dijkstra heb je voor élke bereikbare node de kortste
-afstand. Eén pen-en-papier-sessie geeft je dus 4 antwoorden tegelijk
-(in onze 4-node graph).
+afstand. Eén pen-en-papier-sessie geeft je dus alle antwoorden tegelijk:
+vijf op de grote graph, vier op de kleine.
 
 </details>
 
-## Stelling 3
+## Stelling 4
 
 > *"Een edge tussen `A` en `B` met gewicht 4 betekent: vanaf `A` kun je
 > naar `B` met kost 4, én vanaf `B` kun je naar `A` met kost 4."*
@@ -61,7 +77,7 @@ alleen je representatie kloppend houden.
 
 </details>
 
-## Stelling 4
+## Stelling 5
 
 > *"Dijkstra werkt ook met negatieve gewichten."*
 
@@ -78,7 +94,7 @@ Voor negatieve gewichten gebruik je *Bellman-Ford*.
 
 </details>
 
-## Stelling 5
+## Stelling 6
 
 > *"Het is mogelijk dat een node tijdens Dijkstra wordt geüpdate naar
 > een **kortere** afstand, vóór hij als 'bekend' wordt gemarkeerd."*
@@ -86,8 +102,8 @@ Voor negatieve gewichten gebruik je *Bellman-Ford*.
 <details>
 <summary>Antwoord</summary>
 
-**Waar — sterker nog, dat is precies wat er met `D` gebeurde in onze
-pen-en-papier ronde 3.**
+**Waar — sterker nog, dat is precies wat er met `D` gebeurde op de
+kleine graph, ronde 3.**
 
 `D` had eerst afstand 10 (via `C`). Later vond Dijkstra een korter
 alternatief (via `B`, afstand 5). Pas dáárna werd `D` als bekend
@@ -98,7 +114,7 @@ Dat is het hele punt: meerdere kandidaten testen voordat je iets
 
 </details>
 
-## Stelling 6
+## Stelling 7
 
 > *"Zodra de bestemming-node als 'bekend' is gemarkeerd, kun je stoppen
 > met Dijkstra."*

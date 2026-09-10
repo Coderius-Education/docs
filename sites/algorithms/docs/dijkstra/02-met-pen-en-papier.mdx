@@ -35,7 +35,7 @@ Lees het plaatje:
 - `C─E` heeft gewicht **5** (de rechter-diagonaal).
 - `D─E` heeft gewicht **1** (rechtsonder).
 
-## De drie kolommen
+## Stap 0 — de tabel klaarzetten
 
 Dijkstra houdt drie dingen bij. Pak een vel papier en teken deze tabel:
 
@@ -49,11 +49,18 @@ Dijkstra houdt drie dingen bij. Pak een vel papier en teken deze tabel:
 
 - **Bekend?**: of we al **definitief** weten wat de kortste afstand is.
   We beginnen allemaal op **nee**.
-- **Huidige beste afstand**: ons beste *vermoeden* tot nu toe. De start
-  staat op **0** (daar zijn we al). De rest is **?** — nog onbekend.
+- **Huidige beste afstand**: ons beste *vermoeden* tot nu toe. Alles
+  begint op **?** — nog onbekend — behalve de start: die staat op **0**,
+  want daar zijn we al.
 
-## De gouden regel — twee stappen herhalen
+Dit is stap 0, en die doe je één keer. Zonder die 0 bij de start is er
+in ronde 1 niets te kiezen: alles zou `?` zijn.
 
+## De gouden regel
+
+> **Stap 0**: zet elke afstand op **?**, behalve de start: die krijgt
+> **0**. Niemand is bekend.
+>
 > **Stap A**: pak onder de "nog niet bekend" rijen die met de
 > **laagste afstand**. Markeer hem als **bekend**.
 >
@@ -61,7 +68,8 @@ Dijkstra houdt drie dingen bij. Pak een vel papier en teken deze tabel:
 > *"afstand van mij + gewicht naar buur"*. Is dat **kleiner** dan wat
 > de buur nu heeft? Update.
 
-Dat is alles. Herhaal tot er geen "nog niet bekend" rijen meer zijn.
+Stap 0 doe je één keer. Stap A en B herhaal je tot er geen "nog niet
+bekend" rijen meer zijn.
 
 ## Ronde 1 — start vanaf A
 
@@ -226,6 +234,10 @@ Alle nodes zijn bekend. Onze tabel:
 | D | 4 | A → C → D |
 | E | 5 | A → C → D → E |
 
+De kolom "bereikt via" staat niet in je tabel; die heb ik afgelezen
+door bij elke update te onthouden vanaf welke node hij kwam. Hoe je dat
+in code doet, zie je bij [pas aan](./11-aanpassen).
+
 ## Wat is hier opvallend?
 
 - **`B` werd één keer geüpdate** (6 → 3). De omweg via `C` is meer dan
@@ -251,6 +263,47 @@ Daarom mogen we hem "klaar" verklaren zonder later spijt te krijgen.
 Wil je dit klassikaal doen op een grotere kaart, zonder scherm? Print de
 werkvorm [De kortste route — Dijkstra op papier](/docs/unplugged/03-dijkstra-op-papier).
 :::
+
+## Nu jij — de kleine graph uit de code-pagina's
+
+In de bouwstenen gebruiken we een kleinere graph, zodat de code
+overzichtelijk blijft. Doe Dijkstra er eerst op papier op, vanuit `A`,
+met dezelfde drie stappen. Houd je tabel daarna bij de hand: elke
+bouwsteen legt zijn uitvoer ernaast.
+
+```
+       4
+   A ─────── B
+   │         │
+   2         1
+   │         │
+   C ─────── D
+       8
+```
+
+Vier nodes, vier edges: `A─B` 4, `A─C` 2, `B─D` 1, `C─D` 8.
+
+<details>
+<summary>Antwoord</summary>
+
+De stand na stap 0 en na elke ronde (✓ = in die ronde bekend
+gemarkeerd, daarna verandert de rij niet meer):
+
+| node | stap 0 | ronde 1 | ronde 2 | ronde 3 | ronde 4 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| A | 0 | 0 ✓ | — | — | — |
+| B | ? | 4 | 4 | 4 ✓ | — |
+| C | ? | 2 | 2 ✓ | — | — |
+| D | ? | ? | 10 | 5 | 5 ✓ |
+
+Ronde 1 kiest `A` en geeft `B` 4 en `C` 2. Ronde 2 kiest `C` (2 is
+lager dan 4) en geeft `D` 2 + 8 = 10. Ronde 3 kiest `B`: via `B` is
+`D` 4 + 1 = 5, dus die zakt van 10 naar 5. Ronde 4 kiest `D`; alles is
+bekend.
+
+Eindstand: `A` 0, `B` 4, `C` 2, `D` 5.
+
+</details>
 
 ## Probeer het zelf — een andere startnode
 
@@ -279,8 +332,7 @@ Je weet nu **wat** Dijkstra doet en **waarom** het werkt. In de volgende
 stappen vertalen we elke kolom van je tabel en elke regel van de gouden
 regel naar Python. Eén klein stukje per pagina.
 
-> In de code-pagina's gebruiken we een **simpelere graph** (4 nodes)
-> zodat de code overzichtelijk blijft. Het algoritme is hetzelfde —
-> alleen het voorbeeld is kleiner.
+> De code-pagina's gebruiken de kleine graph die je net op papier deed.
+> Het algoritme is hetzelfde; het voorbeeld is kleiner.
 
 Door naar [de stellingen →](./03-stellingen).

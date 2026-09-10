@@ -16,7 +16,7 @@ naar Python: een `afstanden`-dict en een `bezocht`-set.
 
 ## Wat we willen
 
-Op papier zag je tabel er zo uit:
+Op papier zag je tabel er na ronde 1 van de kleine graph zo uit:
 
 | node | bekend? | afstand |
 |---|---|---|
@@ -48,9 +48,10 @@ print(oneindig > 999999)
 en **mee vergelijken**. Perfect voor "afstand nog onbekend, dus elke
 gevonden route is in elk geval beter".
 
-## Initialiseren
+## Stap 0: initialiseren
 
-Vóór de eerste ronde:
+Dit is stap 0 van je tabel, in code. `?` op papier is `float('inf')`
+hier; de 0 bij de start is dezelfde 0:
 
 ```python
 afstanden = {'A': 0, 'B': float('inf'), 'C': float('inf'), 'D': float('inf')}
