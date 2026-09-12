@@ -378,6 +378,60 @@ func _on_body_entered(body: Node2D) -> void:
 
 </details>
 
+<details>
+<summary>Hoe wacht ik een paar seconden? (<code>await</code>)</summary>
+
+Met `await` zet je een functie op pauze tot er een signal binnenkomt. Om
+gewoon even te wachten laat je Godot ter plekke een stopwatch maken:
+
+```gdscript
+func speler_dood() -> void:
+    $AnimatedSprite2D.play("dood")
+    await get_tree().create_timer(1.5).timeout
+    get_tree().reload_current_scene()
+```
+
+`get_tree().create_timer(1.5)` maakt een stopwatch van anderhalve
+seconde, en die stuurt net als een `Timer`-node het signal `timeout`. De
+regel met `await` houdt de functie tegen tot dat signal komt; daarna
+gaat hij verder met de regel eronder. De rest van je spel loopt
+ondertussen door — je bevriest alleen deze functie.
+
+Dit is bedoeld voor één keer wachten. Moet er telkens opnieuw iets
+gebeuren, neem dan een echte `Timer`-node, zoals bij
+[Automatisch spawnen met een Timer](/docs/spawn_timer).
+
+</details>
+
+<details>
+<summary>Hoe wacht ik tot een animatie klaar is? (<code>await</code>)</summary>
+
+Elk signal is af te wachten, niet alleen dat van een stopwatch:
+
+```gdscript
+func pak_op() -> void:
+    $AnimatedSprite2D.play("oppakken")
+    await $AnimatedSprite2D.animation_finished
+    queue_free()
+```
+
+Het muntje speelt zijn animatie af en verdwijnt pas als die klaar is. In
+plaats van te gokken hoe lang de animatie duurt, laat je de animatie het
+zelf zeggen.
+
+**Let op:** een functie met `await` erin geeft de besturing tussendoor
+terug aan Godot. Wat je eronder schrijft, draait dus meteen:
+
+```gdscript
+pak_op()
+print("weg")   # verschijnt direct, niet na de animatie
+```
+
+Wil je daar wél op wachten, zet er dan zelf ook `await` voor:
+`await pak_op()`.
+
+</details>
+
 ---
 
 ## Debuggen \{#debuggen}
