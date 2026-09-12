@@ -29,7 +29,22 @@
   }
 }
 
-.boom {
+/* Met de extra selector, want het thema geeft elke ul in de lestekst een
+   linkermarge en elke li een bovenmarge; die schoven de takken 32px naar
+   rechts per laag. De variabelen hierboven halen de waarde weg, deze
+   selector houdt de rest van de regel van ons. */
+.omhulsel ul.kinderen {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  margin: 0;
+  padding: 1.25rem 0 0;
+  position: relative;
+}
+
+/* Na de kinderen-regel, want die heeft dezelfde specificiteit en anders
+   wint hij op volgorde: de wortel hoort zonder bovenruimte bovenaan. */
+.omhulsel ul.boom {
   display: flex;
   width: max-content;
   min-width: 100%;
@@ -43,21 +58,9 @@
   display: none;
 }
 
-.boom > .tak {
+.omhulsel .boom > li.tak {
   margin: 0 auto;
-}
-
-/* Met de extra selector, want het thema geeft elke ul in de lestekst een
-   linkermarge en elke li een bovenmarge; die schoven de takken 32px naar
-   rechts per laag. De variabelen hierboven halen de waarde weg, deze
-   selector houdt de rest van de regel van ons. */
-.omhulsel ul.kinderen {
-  display: flex;
-  justify-content: center;
-  list-style: none;
-  margin: 0;
-  padding: 1.25rem 0 0;
-  position: relative;
+  padding-top: 0;
 }
 
 .kinderen::before {
@@ -105,14 +108,6 @@
 
 .tak:last-child::after {
   border-top: none;
-}
-
-.tak:only-child {
-  padding-top: 1.25rem;
-}
-
-.boom > .tak {
-  padding-top: 0;
 }
 
 .boom > .tak::before,

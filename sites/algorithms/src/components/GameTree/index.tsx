@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import type React from 'react';
 import { useMemo } from 'react';
-import { type Knoop, bouwBoom, parseBord } from './boom';
+import { type Knoop, bouwBoom, naarTekst, parseBord } from './boom';
 import styles from './styles.module.css';
 
 type GameTreeProps = {
@@ -26,10 +26,6 @@ function MiniBord({ bord }: { bord: Knoop['bord'] }): React.ReactElement {
   );
 }
 
-function tekst(bord: Knoop['bord']): string {
-  return bord.map((rij) => rij.map((c) => c ?? '.').join('')).join('/');
-}
-
 function KnoopWeergave({ knoop, waardes }: { knoop: Knoop; waardes: boolean }): React.ReactElement {
   // ▲ is MAX, ▼ is MIN; dat legt de eerste les uit, en zo blijft een knoop
   // smal genoeg om zes bladeren naast elkaar in de tekstkolom te krijgen.
@@ -45,7 +41,7 @@ function KnoopWeergave({ knoop, waardes }: { knoop: Knoop; waardes: boolean }): 
         {zetLabel && <span className={styles.zet}>{zetLabel}</span>}
         <span className={styles.kop}>{kop}</span>
         <MiniBord bord={knoop.bord} />
-        <span className={styles.srOnly}>{tekst(knoop.bord)}</span>
+        <span className={styles.srOnly}>{naarTekst(knoop.bord)}</span>
         {waardes ? (
           <span className={styles.waarde}>{knoop.waarde}</span>
         ) : (
@@ -55,7 +51,7 @@ function KnoopWeergave({ knoop, waardes }: { knoop: Knoop; waardes: boolean }): 
       {knoop.kinderen.length > 0 && (
         <ul className={styles.kinderen}>
           {knoop.kinderen.map((kind) => (
-            <KnoopWeergave key={tekst(kind.bord)} knoop={kind} waardes={waardes} />
+            <KnoopWeergave key={naarTekst(kind.bord)} knoop={kind} waardes={waardes} />
           ))}
         </ul>
       )}

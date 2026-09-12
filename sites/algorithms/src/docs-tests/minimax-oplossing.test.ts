@@ -32,9 +32,26 @@ function lees(naam: string): string {
   return readFileSync(`${DOCS}${naam}`, 'utf8');
 }
 
-/** De inhoud van een JS-template-literal, met de ontsnappingen teruggedraaid. */
+/**
+ * De inhoud van een JS-template-literal, met de ontsnappingen teruggedraaid
+ * zoals de browser dat doet vóór Python de code ziet: \n, \t, \r, \\ en \`.
+ * Andere ontsnappingen komen in de startcodes niet voor; komen ze er wel,
+ * dan valt dit om in plaats van stil andere code te draaien.
+ */
 function ontsnap(code: string): string {
-  return code.replace(/\\(.)/g, (_, c: string) => (c === 'n' ? '\n' : c));
+  const bekend: Record<string, string> = {
+    n: '\n',
+    t: '\t',
+    r: '\r',
+    '\\': '\\',
+    '`': '`',
+    $: '$',
+  };
+  return code.replace(/\\(.)/g, (heel, c: string) => {
+    const uit = bekend[c];
+    if (uit === undefined) throw new Error(`onbekende ontsnapping ${heel} in startcode`);
+    return uit;
+  });
 }
 
 /** Het codeblok in het `<details><summary>Antwoord</summary>` van de pagina. */
@@ -43,11 +60,16 @@ function antwoord(tekst: string): string | null {
   return m ? m[1] : null;
 }
 
-/** De laatste PyRunner van de pagina: de startcode met de tests eronder. */
-function tests(tekst: string): string {
+/** De laatste PyRunner van de pagina, ontsnapt: de startcode met de tests eronder. */
+function startcode(tekst: string): string {
   const runners = [...tekst.matchAll(/<PyRunner initialCode=\{`([\s\S]*?)`\} \/>/g)];
   expect(runners.length, 'de pagina heeft een PyRunner met startcode').toBeGreaterThan(0);
-  const code = ontsnap(runners[runners.length - 1][1]);
+  return ontsnap(runners[runners.length - 1][1]);
+}
+
+/** Alleen het testblok onder de startcode. */
+function tests(tekst: string): string {
+  const code = startcode(tekst);
   const i = code.indexOf('# === Tests ===');
   expect(i, 'de startcode heeft een blok # === Tests ===').toBeGreaterThan(-1);
   return code.slice(i);
@@ -115,9 +137,7 @@ describe('minimax — een goede oplossing haalt de tests van elke bouwsteen', ()
     // positieve kant, zodat beide helften van "de tests kloppen" bij elkaar
     // staan.
     for (const naam of BOUWSTENEN) {
-      const tekst = lees(naam);
-      const runners = [...tekst.matchAll(/<PyRunner initialCode=\{`([\s\S]*?)`\} \/>/g)];
-      const r = draai(ontsnap(runners[runners.length - 1][1]));
+      const r = draai(startcode(lees(naam)));
       expect(r.uit, `${naam}: ${r.uit}`).toContain('AssertionError');
       expect(r.uit, `${naam} hoort nog niet te slagen`).not.toContain('Alle tests gehaald');
     }

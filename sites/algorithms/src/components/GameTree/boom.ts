@@ -72,6 +72,11 @@ export function parseBord(tekst: string): Bord {
   return rijen.map((r) => r.split('').map((c) => (c === '.' ? null : (c as Cel))));
 }
 
+/** De omgekeerde van parseBord: `"XXO/OOX/..."`. */
+export function naarTekst(bord: Bord): string {
+  return bord.map((rij) => rij.map((c) => c ?? '.').join('')).join('/');
+}
+
 export function winnaar(bord: Bord): Cel {
   for (const lijn of LIJNEN) {
     const [a, b, c] = lijn.map(([i, j]) => bord[i][j]);
