@@ -1,31 +1,38 @@
 # Hoe start ik?
 
 Je project staat er nog, maar je computer is uit geweest. Elke les begin
-je daarom met dezelfde vier stappen, en daarna werk je verder waar je
+je daarom met dezelfde drie stappen, en daarna werk je verder waar je
 gebleven was.
 
-## Stap 1: Open PowerShell in je projectmap
+## Stap 1: Open VS Code
 
-Ga in de Verkenner naar de map van je project. Klik met de
-rechtermuisknop in het lege deel van het venster en kies **Open in
-Terminal** (Windows 10: **Open PowerShell window here**).
+VS Code onthoudt waar je het laatst werkte en opent die map vanzelf.
+Kijk links in de Explorer: zie je `main.py` en de map `.venv` staan, dan
+is je project er nog en ben je klaar met deze stap.
 
-Je ziet het pad van je map vooraan de regel staan.
+Staat er een ander project? Ga naar **File** → **Open Recent** en kies
+je projectmap uit de lijst.
 
-Lukt dat niet? <SiteLink site="editor" to="/python/stap-2-powershell">PowerShell openen vanuit je map</SiteLink>.
+<details>
+<summary>Mijn project staat er niet bij</summary>
 
-## Stap 2: Open je project in VS Code
-
-Typ in dat venster:
+Dan open je hem vanuit de map zelf. Ga in de Verkenner naar de map van
+je project, klik met de rechtermuisknop in het lege deel van het venster
+en kies **Open in Terminal** (Windows 10: **Open PowerShell window
+here**). Typ daar:
 
 ```bash
 code .
 ```
 
-VS Code opent met je projectmap in de Explorer links, inclusief `.venv`
-en `main.py`.
+VS Code opent met je projectmap in de Explorer links. Vanaf nu staat hij
+weer in **Open Recent**.
 
-## Stap 3: Open een terminal in VS Code
+Lukt het openen van die terminal niet? <SiteLink site="editor" to="/python/stap-2-powershell">PowerShell openen vanuit je map</SiteLink>.
+
+</details>
+
+## Stap 2: Open een terminal in VS Code
 
 Ga naar **Terminal** → **New Terminal**. Vooraan de regel hoort
 `(.venv)` te staan.
@@ -34,7 +41,7 @@ Die `(.venv)` is het hele punt van deze stap: hij zegt dat je in de
 virtual environment van dít project werkt, waar FastAPI geïnstalleerd
 staat. Staat hij er niet, dan vindt Python straks je packages niet.
 
-## Stap 4: Start de server
+## Stap 3: Start de server
 
 ```bash
 fastapi dev main.py
@@ -51,12 +58,12 @@ verversen.
 ## Klaar met werken?
 
 Druk in de terminal op **Ctrl+C**. De server stopt, en je map blijft
-staan zoals hij was. Morgen begin je weer bij stap 1.
+staan zoals hij was. Morgen open je VS Code en staat alles er weer.
 
 ## Er gaat iets mis
 
 - **`fastapi: command not found`** of **`ModuleNotFoundError`** — je
-  zit niet in de virtual environment. Terug naar stap 3 en kijk naar
+  zit niet in de virtual environment. Terug naar stap 2 en kijk naar
   die `(.venv)`.
 - **`Address already in use`** — er draait nog een server van een
   vorige keer.
