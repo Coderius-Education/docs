@@ -13,6 +13,15 @@ import niveaus from './niveaus.json';
 // als gevorderd staan, en het onderscheid zei niets meer. De niveaus komen nu
 // uit de tabel, en verschillen per route: wat in Start nog gevorderd is, is in
 // Verdieping gewoon basis.
+//
+// Naast basis/gevorderd heeft elk concept een denkvaardigheid van Bloom. Dat
+// is een tweede as, geen derde niveau: basis/gevorderd zegt wélke concepten
+// tellen, Bloom zegt hoe diep een leerling ze beheerst. Dezelfde SPEED is op
+// 300.0 "nadoen" (onthouden) en op 450.0 "manipuleren" (toepassen) — en dat
+// tweede is precies wat het concept "snelheid veranderen" meet. Wat de
+// bestanden niet kunnen bewijzen (voorspellen, betogen, doceren) staat als
+// gespreksvraag in de tabel: een handmatig concept dat de docent tijdens het
+// mondeling aanvinkt.
 
 const IMAGE_EXT = new Set(['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.ico', '.bmp']);
 
@@ -78,6 +87,8 @@ const CURSUS_ANIMATIES = ['idle', 'run', 'jump'];
 // waarde ten onrechte als cursuswaarde zou tellen. Vandaar `(?![\d.])`.
 const alt = (waardes: string[]) => waardes.map((w) => w.replace(/[.\-]/g, '\\$&')).join('|');
 
+const HANDMATIG: ConceptDetect = { type: 'handmatig' };
+
 const DETECTIE: Record<string, ConceptDetect> = {
   // --- 2D: nodes uit de scene-bestanden ---
   '2d-tilemaplayer': node('TileMapLayer'),
@@ -136,6 +147,11 @@ const DETECTIE: Record<string, ConceptDetect> = {
   'gd-lijsten': gd(/\.append\s*\(|\.size\s*\(\)|\bArray\b|=\s*\[/g, 2),
   'gd-dictionaries': gd(/\.keys\s*\(\)|\.values\s*\(\)|\.has\s*\(|=\s*\{/g, 2),
   'gd-json': gd(/\bJSON\.\w+|\bFileAccess\./g),
+  // Begrijpen — toelichten. De tabel zegt zelf hoe je dat aantoont: "via
+  // comments in code". Niet elke comment is een toelichting; `# beweging`
+  // benoemt alleen. Een reden herken je aan een redengevend woord. Twee keer,
+  // want één zo'n comment kan uit de les zijn overgetypt.
+  'gd-toelichting': gd(/#[^\n]*\b(?:omdat|zodat|want|daarom|hierdoor|anders)\b/gi, 2),
   'gd-loops': gd(/^[ \t]*(?:for|while)\s/gm, 2),
   'gd-tweens': gd(/\bcreate_tween\s*\(|\bTween\b/g),
   // Een Timer is er in twee smaken: de node in je scène, en de stopwatch die
@@ -145,6 +161,29 @@ const DETECTIE: Record<string, ConceptDetect> = {
     pattern: /\bcreate_timer\s*\(|\[node [^\]]*type="Timer"/g,
     in: ['gd', 'tscn'],
   },
+
+  // --- Project: analyseren — ordenen ---
+  // "Inrichting van project, bestanden" uit de tabel. Een `assets`-map en een
+  // `scripts`-map schrijft de cursus zelf voor (hoofdstuk 2), dus die bewijzen
+  // nadoen, geen ordenen. Scènes in een eigen map noemt de cursus alleen als
+  // mogelijkheid; wie dat doet heeft zelf over de indeling nagedacht. De
+  // uploader haalt de gedeelde bovenmap er al af, dus `mijn-game/wereld.tscn`
+  // telt niet als submap.
+  'project-inrichting': { type: 'path', pattern: /\/[^/]+\.tscn$/i },
+
+  // --- Gesprek: wat alleen in het mondeling zichtbaar is ---
+  // analyze() laat deze op used: false; de docentweergave maakt er een
+  // vinkvakje van dat mee de PDF in gaat. De vraag staat in het label.
+  'gesprek-voordragen': HANDMATIG,
+  'gesprek-voorspellen': HANDMATIG,
+  'gesprek-vragen': HANDMATIG,
+  'gesprek-uitleggen': HANDMATIG,
+  'gesprek-integreren': HANDMATIG,
+  'gesprek-beredeneren': HANDMATIG,
+  'gesprek-betogen': HANDMATIG,
+  'gesprek-doceren': HANDMATIG,
+  'gesprek-creëren': HANDMATIG,
+  'gesprek-optimaliseren': HANDMATIG,
 };
 
 const NIVEAUS: Record<string, Level> = { basis: 'basis', gevorderd: 'gevorderd' };
@@ -155,14 +194,20 @@ function niveau(waarde: string, waar: string): Level {
   return n;
 }
 
+const BLOOM = new Set(niveaus.bloom.map((b) => b.id));
+
 const concepts: Concept[] = niveaus.concepten.map((c) => {
   const detect = DETECTIE[c.id];
   if (!detect) throw new Error(`niveaus.json: geen detectie voor concept '${c.id}'`);
+  if (!BLOOM.has(c.bloom)) {
+    throw new Error(`niveaus.json: onbekende denkvaardigheid '${c.bloom}' bij ${c.id}`);
+  }
   return {
     id: c.id,
     subject: c.onderwerp,
     group: c.groep,
     label: c.concept,
+    bloom: c.bloom,
     level: {
       start: niveau(c.start, `${c.id}.start`),
       verdieping: niveau(c.verdieping, `${c.id}.verdieping`),

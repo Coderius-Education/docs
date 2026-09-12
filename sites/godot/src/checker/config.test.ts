@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { levelVoor } from '@coderius/checker/conceptLevel';
 import { computeLevelSummary } from '@coderius/checker/levelSummary';
 import { analyze } from '@coderius/checker/matchConcepts';
-import type { ProjectFiles } from '@coderius/checker/types';
+import type { CheckReport, ConceptMatch, ProjectFiles } from '@coderius/checker/types';
 import { validateCheckerConfig } from '@coderius/checker/validateConfig';
 import { describe, expect, it } from 'vitest';
 import { godotConfig } from './config';
@@ -56,6 +56,12 @@ function leesFixture(naam: string): ProjectFiles {
 
   loop(wortel);
   return result;
+}
+
+function score(report: CheckReport, id: string): ConceptMatch {
+  const match = report.concepts.find((c) => c.id === id);
+  if (!match) throw new Error(`concept '${id}' bestaat niet in godotConfig`);
+  return match;
 }
 
 function verwacht(naam: string, gebruikt: string[], ongebruikt: string[]): void {
@@ -120,6 +126,10 @@ describe('godotConfig — voorbeeldprojecten scoren', () => {
         'gd-json',
         'gd-loops',
         'gd-tweens',
+        // Geen comment legt uit waaróm iets zo is, en elke scène staat in de
+        // hoofdmap: overgetypt uit de les, niet zelf ingericht.
+        'gd-toelichting',
+        'project-inrichting',
       ],
     );
   });
@@ -146,6 +156,10 @@ describe('godotConfig — voorbeeldprojecten scoren', () => {
         'gd-tweens',
         'gd-timers',
         'gd-globals',
+        // Drie comments met een reden erin (omdat, want, zodat), en de scène
+        // staat in een eigen scenes-map.
+        'gd-toelichting',
+        'project-inrichting',
       ],
       [
         // `var levens = ["hart", "hart", "hart"]` staat er wel, maar wordt
@@ -203,6 +217,79 @@ describe('godotConfig — de tabel uit niveaus.json', () => {
   });
 });
 
+describe('godotConfig — Bloom als tweede as', () => {
+  const bloomIds = niveaus.bloom.map((b) => b.id);
+
+  it('geeft elk concept een denkvaardigheid uit de lijst', () => {
+    // config.ts gooit al bij het laden op een onbekende waarde; hier staat
+    // vast dat de waarde ook echt meekomt op het concept, want daar hangt de
+    // Bloom-ladder straks aan.
+    expect(bloomIds).toEqual([
+      'onthouden',
+      'begrijpen',
+      'toepassen',
+      'analyseren',
+      'evalueren',
+      'creëren',
+    ]);
+    for (const concept of godotConfig.concepts) {
+      expect(bloomIds, `${concept.id} heeft geen geldige bloom`).toContain(concept.bloom);
+    }
+  });
+
+  it('heeft op elke trede van de ladder minstens één concept', () => {
+    for (const bloom of bloomIds) {
+      expect(
+        godotConfig.concepts.filter((c) => c.bloom === bloom).length,
+        `geen enkel concept op '${bloom}'`,
+      ).toBeGreaterThan(0);
+    }
+  });
+
+  it('meet nadoen en manipuleren aan hetzelfde stuk code', () => {
+    // De cursus-nodes zijn onthouden (nagedaan); de vier "veranderen"-
+    // concepten zijn toepassen. Dat onderscheid is de reden dat Bloom geen
+    // derde niveau is maar een eigen kolom.
+    const bloomVan = new Map(godotConfig.concepts.map((c) => [c.id, c.bloom]));
+    expect(bloomVan.get('2d-characterbody2d')).toBe('onthouden');
+    expect(bloomVan.get('gd-snelheid')).toBe('toepassen');
+    expect(bloomVan.get('gd-toelichting')).toBe('begrijpen');
+    expect(bloomVan.get('project-inrichting')).toBe('analyseren');
+    expect(bloomVan.get('2d-nieuwe-nodes')).toBe('creëren');
+  });
+
+  it('zet alles wat alleen in het gesprek zichtbaar is op handmatig, gegroepeerd per trede', () => {
+    const labelVan = new Map(niveaus.bloom.map((b) => [b.id, b.label]));
+    const gesprek = godotConfig.concepts.filter((c) => c.subject === 'gesprek');
+    expect(gesprek.length).toBeGreaterThan(0);
+    for (const c of gesprek) {
+      expect(c.detect.type, `${c.id} is een gespreksvraag en hoort handmatig te zijn`).toBe(
+        'handmatig',
+      );
+      // De groepskop is de trede, zodat de docent de ladder ziet zonder dat
+      // het rapport Bloom al apart toont.
+      expect(c.group, `${c.id} staat onder een andere kop dan zijn trede`).toBe(
+        labelVan.get(c.bloom ?? ''),
+      );
+    }
+    // En andersom: buiten het gesprek stelt niets de docent handmatig vast;
+    // alles daar komt uit de bestanden.
+    for (const c of godotConfig.concepts.filter((c) => c.subject !== 'gesprek')) {
+      expect(c.detect.type, `${c.id} hoort uit de bestanden te komen`).not.toBe('handmatig');
+    }
+  });
+
+  it('laat de gespreksvragen open, ook bij het meest complete project', () => {
+    const report = analyze(leesFixture('eigen'), godotConfig);
+    const gesprek = new Set(
+      godotConfig.concepts.filter((c) => c.subject === 'gesprek').map((c) => c.id),
+    );
+    const open = report.concepts.filter((m) => gesprek.has(m.id));
+    expect(open.length).toBe(gesprek.size);
+    expect(open.every((m) => !m.used)).toBe(true);
+  });
+});
+
 describe('godotConfig — patronen die er net naast zitten', () => {
   it('bevat geen fouten die stil verkeerd zouden scoren', () => {
     expect(validateCheckerConfig(godotConfig)).toEqual([]);
@@ -245,6 +332,47 @@ describe('godotConfig — patronen die er net naast zitten', () => {
     expect(perId.get('gd-snelheid')).toBe(true);
     expect(perId.get('gd-sprongkracht')).toBe(true);
     expect(perId.get('gd-animatie')).toBe(true);
+  });
+
+  it('telt alleen comments met een reden erin, en pas vanaf twee', () => {
+    const toelichting = (gd: string) =>
+      score(analyze(files({ 'speler.gd': gd }), godotConfig), 'gd-toelichting');
+
+    // Benoemen is geen toelichten: dit zegt wát, niet waarom.
+    expect(toelichting('# beweging\nvelocity.x = 300 # snelheid\n# sprong').used).toBe(false);
+    // Eén reden kan uit de les komen; de tweede is van de leerling zelf.
+    const een = toelichting('# omdat de speler anders door de vloer zakt\nmove_and_slide()');
+    expect(een.count).toBe(1);
+    expect(een.used).toBe(false);
+    // Een comment achter code telt net zo goed als een regel erboven, en een
+    // hoofdletter maakt niet uit.
+    const twee = toelichting(
+      ['velocity.y = 0  # Want anders blijft hij vallen', '# zodat de camera meebeweegt'].join(
+        '\n',
+      ),
+    );
+    expect(twee.used).toBe(true);
+    // Een reden in een string is tekst voor de speler, geen toelichting.
+    expect(toelichting('print("Je verliest, want je viel")\nprint("omdat")').used).toBe(false);
+  });
+
+  it('ziet een scènes-map als eigen inrichting, een scripts-map niet', () => {
+    const inrichting = (paden: string[]) =>
+      score(
+        analyze(files(Object.fromEntries(paden.map((p) => [p, '']))), godotConfig),
+        'project-inrichting',
+      );
+
+    // Precies wat de cursus voorschrijft: scripts en assets in een map, de
+    // scènes in de hoofdmap.
+    expect(
+      inrichting(['project.godot', 'wereld.tscn', 'scripts/speler.gd', 'assets/idle.png']).used,
+    ).toBe(false);
+    expect(inrichting(['project.godot', 'scenes/wereld.tscn', 'scripts/speler.gd']).used).toBe(
+      true,
+    );
+    // Ook een andere mapnaam telt; het gaat om het ordenen, niet om de naam.
+    expect(inrichting(['project.godot', 'levels/level2.TSCN']).used).toBe(true);
   });
 
   it('telt node-types in GDScript-tekst niet mee als scene-node', () => {

@@ -1,5 +1,6 @@
 extends CharacterBody2D
 
+# Sneller dan in de les, omdat de duikboot anders traag voelt in het water.
 const SPEED = 450.0
 var sprongkracht = -1100.0
 
@@ -12,7 +13,7 @@ func _physics_process(delta: float) -> void:
 		velocity += get_gravity() * delta
 
 	if Input.is_action_just_pressed("duiken") and is_on_floor():
-		velocity.y = sprongkracht
+		velocity.y = sprongkracht  # negatief, want omhoog is in Godot min y
 
 	var richting := Input.get_axis("ui_left", "ui_right")
 	velocity.x = richting * SPEED
@@ -45,6 +46,7 @@ func tel_op() -> void:
 
 
 func knipper() -> void:
+	# Een tween in plaats van een Timer, zodat het knipperen vloeiend gaat.
 	var tween = create_tween()
 	tween.tween_property($AnimatedSprite2D, "modulate:a", 0.2, 0.2)
 	tween.tween_property($AnimatedSprite2D, "modulate:a", 1.0, 0.2)
