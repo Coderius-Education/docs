@@ -98,7 +98,7 @@ assert terminal(remise) is True, "Vol bord, geen winnaar -> terminal"
 bezig = [["X","O", None], ["O","X", None], [None, None, None]]
 assert terminal(bezig) is False, "Spel loopt nog -> niet terminal"
 
-bijna_vol = [["X","O","X"], ["O","X","O"], ["O", None, "X"]]
+bijna_vol = [["X","O","X"], ["O","O","X"], ["X","X", None]]
 assert terminal(bijna_vol) is False, "8 cellen, geen winnaar -> niet terminal"
 
 print("Alle tests gehaald ✓")`} />
