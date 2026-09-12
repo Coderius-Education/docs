@@ -358,3 +358,7 @@ ylabel
 zakgeldrekenaar
 zettenlijst
 áchter
+
+damprogramma
+Stockfish
+schaakengine

@@ -15,6 +15,20 @@
   --ifm-list-item-margin: 0;
 }
 
+/* Op papier is er geen scrollbalk. De boom past op de breedte van een
+   A4-bladspiegel en hoort in zijn geheel op één pagina; de hand-out van
+   minimax print hem twee keer. */
+@media print {
+  .omhulsel {
+    overflow: visible;
+    break-inside: avoid;
+    /* Op ware grootte is de boom 700px breed en 680px hoog; dan staat hij
+       alleen op een bladzijde en blijft de rest van de bladzijde leeg. */
+    zoom: 0.9;
+    margin: 0.5rem 0 1rem;
+  }
+}
+
 .boom {
   display: flex;
   width: max-content;

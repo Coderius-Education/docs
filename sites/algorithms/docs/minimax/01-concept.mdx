@@ -102,6 +102,34 @@ Voor schaken (meer dan 10⁴⁰ posities) is de hele tree te groot. Daar gebruik
 slimmere varianten zoals *alpha-beta pruning* of *Monte Carlo Tree
 Search*. Maar het **fundament** blijft minimax.
 
+## Waar minimax echt is gebruikt
+
+- [Claude Shannon](https://en.wikipedia.org/wiki/Programming_a_Computer_for_Playing_Chess)
+  beschreef in 1950 hoe een computer zou kunnen schaken: een game tree
+  doorrekenen met precies het minimax-idee van deze pagina. Er bestond
+  nog geen computer die het kon.
+- [Arthur Samuel](https://en.wikipedia.org/wiki/Arthur_Samuel_(computer_scientist))
+  bouwde in de jaren vijftig een damprogramma op minimax dat van zijn
+  eigen partijen leerde, en versloeg er in 1962 een sterke speler mee.
+- [Deep Blue](https://en.wikipedia.org/wiki/Deep_Blue_(chess_computer))
+  van IBM won in 1997 een match van wereldkampioen Garry Kasparov.
+  Binnenin: minimax met alpha-beta pruning, op speciale chips die zo'n
+  200 miljoen posities per seconde bekeken.
+- [Chinook](https://en.wikipedia.org/wiki/Chinook_(computer_program))
+  rekende in 2007 dammen (op het 8×8-bord) helemaal uit: bij perfect
+  spel is het remise, net als tic-tac-toe. Dezelfde game tree, alleen
+  achttien jaar rekenwerk.
+- [Stockfish](https://stockfishchess.org/), de sterkste open-source
+  schaakengine van nu, zoekt nog steeds met alpha-beta. Je kunt de code
+  gewoon lezen.
+
+Go is de uitzondering: daar is de tree zó groot dat
+[AlphaGo](https://en.wikipedia.org/wiki/AlphaGo) in 2016 met een andere
+zoekmethode won, Monte Carlo Tree Search, gestuurd door een neuraal
+netwerk. De uitleg in dit hoofdstuk volgt
+[lecture 0 van CS50 AI](https://cs50.harvard.edu/ai/notes/0/), waar
+minimax voor het eerst wordt voorgedaan.
+
 ## Wat we gaan bouwen
 
 Aan het eind van dit hoofdstuk heb je tien Python-functies die samen
