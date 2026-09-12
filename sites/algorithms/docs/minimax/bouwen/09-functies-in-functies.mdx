@@ -76,19 +76,14 @@ print(begroet_drie_keer("Yusuf"))`} />
 
 ## Waarom is dit handig?
 
-Drie redenen:
+De logica staat één keer, in `begroet`. Wil je "Hallo" veranderen in
+"Hoi", dan pas je `begroet` aan en elke functie die hem aanroept doet
+meteen mee. Programmeurs noemen dat DRY, *don't repeat yourself*.
 
-1. **DRY** — *Don't Repeat Yourself*. Schrijf de logica één keer in
-   `begroet`. Verandert "Hallo" in "Hoi"? Pas je `begroet` aan, en alle
-   functies die hem aanroepen krijgen automatisch de nieuwe versie.
-
-2. **Lezen wordt makkelijker.** `begroet_drie_keer(naam)` zegt direct
-   wat hij doet. De details zitten in `begroet`. Je gedachten
-   organiseren zich in **lagen**.
-
-3. **Bouwen-op-bouwen.** Grote programma's bestaan uit lagen van
-   functies die elkaar gebruiken. Tic-tac-toe AI is precies zo'n
-   gelaagde constructie.
+Het leest ook makkelijker: `begroet_drie_keer(naam)` zegt wat hij doet,
+en de details zitten in `begroet`. Zo bouw je in lagen, en grote
+programma's zijn niets anders dan lagen van functies die elkaar
+gebruiken. Je tic-tac-toe-AI straks ook.
 
 ## Wat we hierna gaan doen
 
@@ -105,8 +100,8 @@ def result(bord, zet):
     ...
 ```
 
-Geen nieuwe telling, geen kopie van de logica. Gewoon `player(bord)`
-aanroepen en het antwoord gebruiken. Dat is het patroon voor de rest
-van deze track.
+Geen nieuwe telling, geen kopie van de logica: je roept `player(bord)`
+aan en gebruikt het antwoord. Dat is het patroon voor de rest van dit
+hoofdstuk.
 
 Door naar [bouwsteen 4: result →](./10-result).

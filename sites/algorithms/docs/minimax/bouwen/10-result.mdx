@@ -14,10 +14,9 @@ bord te veranderen. Eerste functie die een eerder geschreven functie
 toegepast. Welke speler de zet doet, bepaal je met `player(bord)` uit
 [bouwsteen 2](./07-player).
 
-> **Belangrijk**: het originele `bord` mag je **niet** veranderen.
-> Minimax moet straks honderden zetten "proberen" zonder het echte spel
-> te beïnvloeden. Dat lukt alleen als elke `result`-aanroep een vers
-> bord teruggeeft.
+Het originele `bord` mag je niet veranderen. Minimax moet straks
+honderden zetten "proberen" zonder het echte spel te beïnvloeden, en
+dat lukt alleen als elke `result`-aanroep een vers bord teruggeeft.
 
 ## Waarom is dit subtiel?
 

@@ -27,8 +27,8 @@ zet is. Niet het *getal* — dat is wat `max_value`/`min_value` doen.
 - **X-beurt**: kies de zet met de **hoogste** `min_value(result(bord, zet))`.
 - **O-beurt**: kies de zet met de **laagste** `max_value(result(bord, zet))`.
 
-Waarom kruislings? Omdat na X's zet, **O** aan zet is, dus we
-evalueren met `min_value`. Spiegelbeeld voor O.
+Kruislings, want na X's zet is O aan zet, dus je rekent met
+`min_value`. Voor O andersom.
 
 ## Het patroon
 
@@ -45,8 +45,8 @@ voor elke zet in actions(bord):
 return beste_zet
 ```
 
-Dezelfde lus-en-vergelijk-structuur als in `max_value`, alleen
-**onthoud je ook welke zet** het optimum opleverde.
+Dezelfde lus als in `max_value`, alleen onthoud je nu ook welke zet
+het beste was.
 
 ## Speciaal geval
 

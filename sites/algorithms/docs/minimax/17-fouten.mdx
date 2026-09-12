@@ -9,7 +9,7 @@ een minimax-AI, en je weet bij elk symptoom waar je moet kijken.
 
 ## Bord muteren in `result`
 
-Geen foutmelding — wél een **onverklaarbaar verkeerd antwoord**. Minimax
+Geen foutmelding, wel een onverklaarbaar verkeerd antwoord. Minimax
 "probeert" zetten en gaat ervan uit dat het origineel niet meegaat; als
 dat wel zo is, raakt het hele algoritme van slag.
 
@@ -81,8 +81,8 @@ def max_value(bord):
 
 {/* foutmelding-los: hier blijft de melding juist uit; de reproductie staat bij de vorige fout */}
 
-Geen foutmelding — wél een AI die **gewonnen borden niet ziet** en
-waardes van `inf` of `-inf` teruggeeft. Geen `RecursionError`: het bord
+Geen foutmelding, wel een AI die gewonnen borden niet ziet en waardes
+van `inf` of `-inf` teruggeeft. Geen `RecursionError`: het bord
 raakt na negen zetten vol, dus de recursie stopt wel, alleen op de
 verkeerde plek.
 
@@ -120,7 +120,7 @@ return None`.
 
 ## Min en max omdraaien per laag
 
-Geen foutmelding — wél een AI die **verliest** of zwak speelt.
+Geen foutmelding, wel een AI die verliest of zwak speelt.
 
 **Oorzaak:** `max_value` roept per ongeluk `max_value` aan (zichzelf) in
 plaats van `min_value`. Of je verwart wie maximaliseert (X) en wie

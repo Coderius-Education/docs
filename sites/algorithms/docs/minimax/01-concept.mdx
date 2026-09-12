@@ -4,25 +4,25 @@ sidebar_position: 1
 
 # Minimax — het idee
 
-> **Bronvermelding** — deze track is een afgeleide bewerking van
+> **Bronvermelding** — dit hoofdstuk is een afgeleide bewerking van
 > [CS50 AI Project 0: Tic-Tac-Toe](https://cs50.harvard.edu/ai/projects/0/tictactoe/)
 > van Harvard University, gelicenseerd onder
 > [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 > Wij hebben het vertaald naar het Nederlands, opgeknipt in PRIMM-stappen
-> en aangevuld met conceptuele uitleg. Deze hele track wordt onder
+> en aangevuld met conceptuele uitleg. Het hele hoofdstuk wordt onder
 > dezelfde licentie verspreid.
 
 **Leerdoel:** je begrijpt het kernidee van minimax: als jij je beste zet
-doet en je tegenstander óók zijn beste zet doet, wat is dan voor jou
-het beste startpunt? Geen code nog — eerst snappen.
+doet en je tegenstander óók zijn beste zet doet, welke zet is dan voor
+jou de beste? Nog geen code.
 
 ## Het verhaal
 
 Je speelt boter-kaas-en-eieren (tic-tac-toe) tegen iemand die **net zo
 goed nadenkt als jij**. Geen blunders, geen mazzel. Welke zet doe je?
 
-Een veelgehoorde fout: *"Ik kies de zet die mij het snelst kan laten
-winnen."* Maar dat klopt niet — je tegenstander kan jouw plan blokkeren.
+Veel mensen denken: *"Ik kies de zet die mij het snelst kan laten
+winnen."* Maar je tegenstander kan jouw plan blokkeren.
 
 Wat je écht wilt weten:
 
@@ -51,8 +51,7 @@ de huidige positie. Elke "tak" is een mogelijke zet. Aan de bladeren
 (blaadjes) staan eindposities (winst, verlies, of remise) met hun
 *utility*: `+1`, `-1`, of `0`.
 
-Heel kleine illustratie (niet een echt tic-tac-toe spel, maar even ter
-visualisatie):
+Een kleine boom, nog geen echt spel:
 
 ```
                ▲ MAX (wij kiezen)
@@ -64,9 +63,9 @@ visualisatie):
          +1   -1         0    +1
 ```
 
-Een MAX-knoop tekenen we als een driehoek omhoog (▲): die wil omhoog.
-Een MIN-knoop als een driehoek omlaag (▼). Zo tekent CS50 ze ook, en zo
-staan ze in de rest van deze track.
+Een MAX-knoop tekenen we als een driehoek omhoog (▲), want die wil
+omhoog. Een MIN-knoop als een driehoek omlaag (▼). Zo tekent CS50 ze
+ook, en zo staan ze in de rest van dit hoofdstuk.
 
 Wij (MAX) kunnen kiezen tussen tak `A` en tak `B`. Daarna kiest de
 tegenstander (MIN) tussen zijn twee opties.
@@ -87,8 +86,8 @@ gegarandeerd verlies.
 ## Het sleutelwoord: *gegarandeerd*
 
 Minimax denkt **van het einde naar het begin**. Pas als de uitkomst van
-een bladeren-positie bekend is, kun je terugrekenen wat de niveau daar-
-boven waard is. En zo verder, helemaal terug naar de huidige zet.
+een blad bekend is, kun je terugrekenen wat het niveau erboven waard
+is. En zo verder, helemaal terug naar de huidige zet.
 
 Dat heet **terug-redeneren** (Engels: *backwards induction*). Het werkt
 omdat we aannemen: **beide spelers spelen optimaal**.
@@ -105,12 +104,11 @@ Search*. Maar het **fundament** blijft minimax.
 
 ## Wat we gaan bouwen
 
-Na deze track schrijf je tien Python-functies die samen een tic-tac-toe-AI
-vormen die **nooit verliest**. Dat is geen overdrijving — als beide
-spelers optimaal spelen, eindigt tic-tac-toe altijd in remise.
+Aan het eind van dit hoofdstuk heb je tien Python-functies die samen
+een tic-tac-toe-AI vormen die nooit verliest. Dat is geen overdrijving:
+als beide spelers optimaal spelen, eindigt tic-tac-toe altijd in remise.
 
-Maar eerst: doe het zelf met pen en papier, zodat je ziet hoe minimax
-werkt voordat je het programmeert.
+Eerst met pen en papier.
 
 ## Zo bouw je het op
 
