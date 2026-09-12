@@ -246,8 +246,12 @@ MAX geeft 0
 
 </details>
 
-Lees de uitvoer naast de boom van de pen-en-papier-pagina. Het is
-dezelfde wandeling, in dezelfde volgorde: eerst de linkertak helemaal
+Lees de uitvoer naast de boom, met bij elke knoop het bord:
+
+<GameTree bord="XXO/OOX/..." waardes />
+
+Het is dezelfde wandeling als op de pen-en-papier-pagina, in dezelfde
+volgorde: eerst de linkertak helemaal
 naar beneden tot een `klaar`, dan de waarde weer omhoog, dan de
 volgende tak. Elke regel `MAX` of `MIN` is één aanroep van `max_value`
 of `min_value`; elke inspringing is een laag dieper in de boom. Pas

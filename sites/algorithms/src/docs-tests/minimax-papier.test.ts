@@ -123,6 +123,15 @@ describe('minimax op papier', () => {
     expect(waardes.size).toBeGreaterThan(1);
   });
 
+  it('elke getekende boom op de pagina begint bij dezelfde positie', () => {
+    // De <GameTree> rekent zijn waardes zelf uit; wat hij niet kan weten is
+    // of hij dezelfde positie tekent als de tekst uitwerkt.
+    const bomen = [...tekst.matchAll(/<GameTree bord="([^"]+)"/g)].map((m) => m[1]);
+    expect(bomen.length).toBeGreaterThan(0);
+    const notatie = bord.map((rij) => rij.map((c) => c ?? '.').join('')).join('/');
+    for (const b of bomen) expect(b).toBe(notatie);
+  });
+
   it('de uitkomst bij de wortel staat als max van de tabel op de pagina', () => {
     const beste = Math.max(...zetten(bord).map((z) => waarde(na(bord, z))));
     expect(tekst).toMatch(new RegExp(`de uitkomst bij perfect spel is \\*\\*${beste}\\*\\*`));

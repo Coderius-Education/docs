@@ -86,23 +86,15 @@ winnaar is `0`.
 ### Stap 1 — teken de boom
 
 Bovenaan staat het bord van nu, met X aan zet: een MAX-knoop. Elke tak
-eronder is een zet van X. Onder elke zet komt O aan zet: een MIN-knoop
-met twee takken. Daaronder is nog één vakje over, dus X's laatste zet
-ligt vast. Zo ziet de lege boom eruit, nog zonder waardes:
+eronder is een zet van X, en bij elke tak hoort het bord ná die zet.
+Daaronder komt O aan zet: een MIN-knoop met twee takken. Nog een laag
+lager is er één vakje over, dus X's laatste zet ligt vast. Zo ziet de
+boom eruit, met bij elke knoop het bord maar nog zonder waardes:
 
-```
-                        ▲ MAX   X aan zet
-             ╱             │             ╲
-        X→(2,0)         X→(2,1)         X→(2,2)
-          ▼MIN            ▼MIN            ▼MIN
-         ╱    ╲          ╱    ╲          ╱    ╲
-     O→(2,1) O→(2,2) O→(2,0) O→(2,2) O→(2,0) O→(2,1)
-        │       │       │       │       │       │
-       ...     ...     ...     ...     ...     ...
-```
+<GameTree bord="XXO/OOX/..." />
 
-Elke `...` is een bord waar het spel klaar is, of waar X nog precies
-één vakje kan vullen. Die borden werk je zo uit.
+Elk vraagteken is een waarde die je zo uitrekent. De borden met een
+stippellijn zijn klaar: daar staat drie op een rij, of het bord is vol.
 
 ### Stap 2 — loop de linkertak af: X speelt `(2,0)`
 
@@ -193,16 +185,10 @@ MIN kiest `min(-1, 0)` = **-1**.
 
 ### Stap 5 — terug naar de wortel
 
-Nu staan er waardes onder alle drie de takken. Vul ze in de boom in:
+Nu staan er waardes onder alle drie de takken. Dit is dezelfde boom, nu
+ingevuld van de bladeren naar boven:
 
-```
-                        ▲ MAX   max(0, -1, -1) = 0
-             ╱             │             ╲
-        X→(2,0)         X→(2,1)         X→(2,2)
-          ▼ 0            ▼ -1            ▼ -1
-         ╱    ╲          ╱    ╲          ╱    ╲
-        0      0       -1      0       -1      0
-```
+<GameTree bord="XXO/OOX/..." waardes />
 
 X kiest het hoogste:
 

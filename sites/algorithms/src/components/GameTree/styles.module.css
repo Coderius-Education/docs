@@ -1,0 +1,193 @@
+/* Een boom als geneste lijsten: elke <li> is een knoop met daaronder een
+   <ul> met zijn kinderen. De lijnen komen uit ::before en ::after, de
+   klassieke CSS-boom. De hele boom scrollt horizontaal als hij niet past;
+   de pagina zelf nooit. */
+
+.omhulsel {
+  overflow-x: auto;
+  padding: 0.5rem 0 1rem;
+  margin: 1rem 0 1.5rem;
+  /* Het thema zet de marges van ul en li met `ul:not(#\#):not(#\#)`, een
+     selector met twee keer id-gewicht die een gewone regel niet verslaat;
+     de variabelen wel (zie ook de hand-out-tabellen in custom.css). */
+  --ifm-list-left-padding: 0;
+  --ifm-list-margin: 0;
+  --ifm-list-item-margin: 0;
+}
+
+.boom {
+  display: flex;
+  width: max-content;
+  min-width: 100%;
+  padding-top: 0;
+}
+
+/* Geen lijn boven de wortel, en de wortel in het midden zolang de boom past.
+   Bij overloop schuift hij naar links, zodat de scrollbalk alles bereikt;
+   met justify-content: center zou de linkerhelft onbereikbaar zijn. */
+.boom::before {
+  display: none;
+}
+
+.boom > .tak {
+  margin: 0 auto;
+}
+
+/* Met de extra selector, want het thema geeft elke ul in de lestekst een
+   linkermarge en elke li een bovenmarge; die schoven de takken 32px naar
+   rechts per laag. De variabelen hierboven halen de waarde weg, deze
+   selector houdt de rest van de regel van ons. */
+.omhulsel ul.kinderen {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  margin: 0;
+  padding: 1.25rem 0 0;
+  position: relative;
+}
+
+.kinderen::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  border-left: 2px solid var(--ifm-color-emphasis-400);
+  height: 1.25rem;
+}
+
+.omhulsel li.tak {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  padding: 1.25rem 0.15rem 0;
+  position: relative;
+}
+
+/* De horizontale lijn boven een kind, van het midden van het ene kind tot
+   het midden van het volgende. Eén kind: alleen het verticale stukje. */
+.tak::before,
+.tak::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 1.25rem;
+  border-top: 2px solid var(--ifm-color-emphasis-400);
+}
+
+.tak::before {
+  right: 50%;
+  border-right: 2px solid var(--ifm-color-emphasis-400);
+}
+
+.tak::after {
+  left: 50%;
+}
+
+.tak:first-child::before {
+  border-top: none;
+}
+
+.tak:last-child::after {
+  border-top: none;
+}
+
+.tak:only-child {
+  padding-top: 1.25rem;
+}
+
+.boom > .tak {
+  padding-top: 0;
+}
+
+.boom > .tak::before,
+.boom > .tak::after {
+  display: none;
+}
+
+.knoop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.35rem 0.4rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  background: var(--ifm-background-surface-color);
+  font-size: 0.7rem;
+  line-height: 1.2;
+}
+
+.max {
+  border-color: var(--ifm-color-success-dark);
+}
+
+.min {
+  border-color: var(--ifm-color-danger-dark);
+}
+
+.klaar {
+  border-style: dashed;
+}
+
+.zet {
+  font-family: var(--ifm-font-family-monospace);
+  color: var(--ifm-color-emphasis-700);
+}
+
+.kop {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.max .kop {
+  color: var(--ifm-color-success-darkest);
+}
+
+.min .kop {
+  color: var(--ifm-color-danger-darkest);
+}
+
+.bord {
+  display: grid;
+  grid-template-columns: repeat(3, 1.15rem);
+  grid-template-rows: repeat(3, 1.15rem);
+  gap: 1px;
+  background: var(--ifm-color-emphasis-400);
+  border: 1px solid var(--ifm-color-emphasis-400);
+}
+
+.cel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ifm-background-color);
+  font-family: var(--ifm-font-family-monospace);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.leeg {
+  background: var(--ifm-color-emphasis-100);
+}
+
+.waarde {
+  font-family: var(--ifm-font-family-monospace);
+  font-weight: 700;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.open {
+  color: var(--ifm-color-emphasis-500);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
