@@ -95,6 +95,21 @@
     height: 1.5em;
   }
 
+  /* Op papier is er geen scrollbalk: een tabel die te breed is verliest
+     stilletjes zijn rechterkolom. Met 12px ruimte links en rechts liep de
+     Dijkstra-tabel bij tien kolommen 25px buiten de bladspiegel — precies
+     de kolom "via". Alleen de ruimte naast de tekst gaat eraf; verticaal
+     blijft het 0.75rem, want in die rijen moet nog geschreven worden.
+
+     Dit gaat via de variabele, niet via een eigen regel op de cel: het
+     thema zet de celruimte met `table:not(#\#):not(#\#) td`, een selector
+     die twee keer id-gewicht leent en dus met geen enkele gewone selector
+     te verslaan is. Die regel leest `padding: var(--ifm-table-cell-padding)`,
+     dus een andere waarde van de variabele wint zonder gevecht. */
+  body.handout-page {
+    --ifm-table-cell-padding: 0.75rem 6px;
+  }
+
   /* Een invul- of antwoordtabel hoort op één pagina; een tabel die over
      de paginagrens breekt is op papier twee halve tabellen. Dit gold
      alleen voor compacte hand-outs, en de Dijkstra-hand-out (niet

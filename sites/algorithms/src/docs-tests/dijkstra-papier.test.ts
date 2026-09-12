@@ -50,17 +50,22 @@ function graph(edges: [string, string, number][]): Graph {
   return g;
 }
 
-/** Na stap 0 en na elke ronde: de gekozen knoop en de stand van alle afstanden. */
-function rondes(
-  g: Graph,
-  start: string,
-): { gekozen: string | null; afstanden: Record<string, number> }[] {
+type Ronde = { gekozen: string | null; afstanden: Record<string, number> };
+
+/**
+ * Na stap 0 en na elke ronde: de gekozen knoop en de stand van alle afstanden,
+ * plus aan het eind per knoop vanaf welke knoop zijn kortste route kwam — de
+ * kolom "via" op de hand-out. Die verandert onderweg mee met de afstand: `F`
+ * gaat van E naar D naar G, net als 14 → 13 → 12.
+ */
+function rondes(g: Graph, start: string): { stand: Ronde[]; voorgangers: Record<string, string> } {
   const afstanden: Record<string, number> = Object.fromEntries(
     Object.keys(g).map((n) => [n, Number.POSITIVE_INFINITY]),
   );
   afstanden[start] = 0;
   const bezocht = new Set<string>();
-  const stand = [{ gekozen: null as string | null, afstanden: { ...afstanden } }];
+  const voorgangers: Record<string, string> = {};
+  const stand: Ronde[] = [{ gekozen: null, afstanden: { ...afstanden } }];
   for (;;) {
     let beste: string | null = null;
     let kleinste = Number.POSITIVE_INFINITY;
@@ -74,11 +79,14 @@ function rondes(
     if (beste === null) break;
     bezocht.add(beste);
     for (const [buur, w] of g[beste]) {
-      if (afstanden[beste] + w < afstanden[buur]) afstanden[buur] = afstanden[beste] + w;
+      if (afstanden[beste] + w < afstanden[buur]) {
+        afstanden[buur] = afstanden[beste] + w;
+        voorgangers[buur] = beste;
+      }
     }
     stand.push({ gekozen: beste, afstanden: { ...afstanden } });
   }
-  return stand;
+  return { stand, voorgangers };
 }
 
 /** De eerste markdown-tabel onder een kop, als cellen per rij (zonder kop en scheidingsregel). */
@@ -105,9 +113,15 @@ function tabelOnderKop(tekst: string, kop: string): string[][] {
  * (oneindig), een getal met ✓ (in deze ronde gekozen) of — (al eerder
  * gekozen, verandert niet meer).
  */
-function controleer(rijen: string[][], stand: ReturnType<typeof rondes>): void {
+function controleer(
+  rijen: string[][],
+  { stand, voorgangers }: ReturnType<typeof rondes>,
+  metVia = false,
+): void {
   expect(rijen.map((r) => r[0])).toEqual(Object.keys(stand[0].afstanden));
-  expect(rijen[0].length, 'kolommen: knoop, stap 0, één per ronde').toBe(1 + stand.length);
+  expect(rijen[0].length, 'kolommen: knoop, stap 0, één per ronde, eventueel via').toBe(
+    1 + stand.length + (metVia ? 1 : 0),
+  );
   for (const rij of rijen) {
     const node = rij[0];
     let gekozenIn = -1;
@@ -125,6 +139,10 @@ function controleer(rijen: string[][], stand: ReturnType<typeof rondes>): void {
       }
     }
     expect(gekozenIn, `${node} wordt nooit gekozen`).toBeGreaterThan(0);
+    if (metVia) {
+      // De startknoop kwam nergens vandaan en houdt een streepje.
+      expect(rij.at(-1), `${node}, kolom via`).toBe(voorgangers[node] ?? '—');
+    }
   }
 }
 
@@ -140,7 +158,8 @@ describe('de rondetabellen op papier kloppen met het algoritme', () => {
     const tekst = lees('unplugged/03-dijkstra-op-papier.mdx');
     const edges = tabelOnderKop(tekst, '## De kaart').flatMap((rij) => edgesUit(rij.join(' | ')));
     expect(edges.length, 'de wegentabel: tien wegen').toBe(10);
-    controleer(tabelOnderKop(tekst, '## Antwoorden'), rondes(graph(edges), 'A'));
+    // De hand-out heeft een kolom "via" achteraan, waar de les die niet heeft.
+    controleer(tabelOnderKop(tekst, '## Antwoorden'), rondes(graph(edges), 'A'), true);
   });
 
   it('de invultabel van de hand-out heeft dezelfde kolommen als de antwoordtabel', () => {
@@ -187,8 +206,8 @@ describe('de paden op de concept-pagina bestaan en tellen op', () => {
   it('de kortste die de pagina aanwijst is de kortste', () => {
     const m = tekst.match(/is \*\*`((?:[A-D] → )+[A-D]) = (\d+)`\*\*/);
     expect(m, 'de zin "De kortste … is **`A → … = n`**"').not.toBeNull();
-    const stand = rondes(g, 'A').at(-1);
-    expect(Number(m?.[2])).toBe(stand?.afstanden[m?.[1].split(' → ').at(-1) ?? '']);
+    const eind = rondes(g, 'A').stand.at(-1);
+    expect(Number(m?.[2])).toBe(eind?.afstanden[m?.[1].split(' → ').at(-1) ?? '']);
     expect(paden.map((p) => p.totaal)).toContain(Number(m?.[2]));
   });
 });
