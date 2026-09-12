@@ -63,7 +63,9 @@ elke plek is afgevinkt:
 2. **Reken**: bekijk elke buur van de gekozen plek. Reken uit: afstand
    van de gekozen plek + lengte van de weg naar die buur. Is dat lager
    dan wat de buur nu heeft (of heeft de buur nog `?`)? Streep door en
-   schrijf het nieuwe getal op.
+   schrijf het nieuwe getal op. Zet in de laatste kolom, **via**, de
+   plek waar je vandaan kwam — die streep je dus ook door als je het
+   getal verbetert.
 
 Werk in tweetallen: één van jullie kiest en vinkt af, de ander rekent
 de buren door. Wissel elke ronde van rol.
@@ -73,24 +75,28 @@ de buren door. Wissel elke ronde van rol.
 <div className="handout-teltabel">
 
 Vul per ronde de nieuwe stand in. Zet een vinkje bij de plek die je in
-die ronde afvinkt; een afgevinkte plek verandert daarna nooit meer.
+die ronde afvinkt; een afgevinkte plek verandert daarna nooit meer. In
+de laatste kolom houd je bij vanaf welke plek die afstand kwam.
 
-| plek | start | ronde 1 | ronde 2 | ronde 3 | ronde 4 | ronde 5 | ronde 6 | ronde 7 |
-|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| A |   |   |   |   |   |   |   |   |
-| B |   |   |   |   |   |   |   |   |
-| C |   |   |   |   |   |   |   |   |
-| D |   |   |   |   |   |   |   |   |
-| E |   |   |   |   |   |   |   |   |
-| F |   |   |   |   |   |   |   |   |
-| G |   |   |   |   |   |   |   |   |
+| plek | start | ronde 1 | ronde 2 | ronde 3 | ronde 4 | ronde 5 | ronde 6 | ronde 7 | via |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| A |   |   |   |   |   |   |   |   |   |
+| B |   |   |   |   |   |   |   |   |   |
+| C |   |   |   |   |   |   |   |   |   |
+| D |   |   |   |   |   |   |   |   |   |
+| E |   |   |   |   |   |   |   |   |   |
+| F |   |   |   |   |   |   |   |   |   |
+| G |   |   |   |   |   |   |   |   |   |
 
 </div>
 
 ## Bespreek na
 
 - Klopte je gok voor de route naar `F`? De meeste mensen zitten ernaast.
-- Hoe vaak is de afstand van `F` doorgestreept en verbeterd?
+- Hoe vaak is de afstand van `F` doorgestreept en verbeterd? En hoe vaak
+  zijn "via" van `F`?
+- Lees de route naar `F` terug: kijk bij `F` wie zijn "via" is, ga naar
+  die rij, en zo door tot je bij `A` bent. Welke route komt eruit?
 - Waarom mag een afgevinkte plek nooit meer veranderen? (Hint: kan een
   route via een plek met een hógere afstand ooit korter uitpakken?)
 
@@ -104,18 +110,27 @@ knip hem eraf.
 Stand na het begin en aan het eind van elke ronde (✓ = afgevinkt,
 daarna verandert de rij niet meer):
 
-| plek | start | ronde 1 | ronde 2 | ronde 3 | ronde 4 | ronde 5 | ronde 6 | ronde 7 |
-|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| A | 0 | 0 ✓ | — | — | — | — | — | — |
-| B | ? | 2 | 2 ✓ | — | — | — | — | — |
-| C | ? | 6 | 4 | 4 ✓ | — | — | — | — |
-| D | ? | ? | 10 | 10 | 9 | 9 ✓ | — | — |
-| E | ? | ? | ? | 7 | 7 ✓ | — | — | — |
-| F | ? | ? | ? | ? | 14 | 13 | 12 | 12 ✓ |
-| G | ? | ? | ? | ? | 11 | 11 | 11 ✓ | — |
+| plek | start | ronde 1 | ronde 2 | ronde 3 | ronde 4 | ronde 5 | ronde 6 | ronde 7 | via |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| A | 0 | 0 ✓ | — | — | — | — | — | — | — |
+| B | ? | 2 | 2 ✓ | — | — | — | — | — | A |
+| C | ? | 6 | 4 | 4 ✓ | — | — | — | — | B |
+| D | ? | ? | 10 | 10 | 9 | 9 ✓ | — | — | E |
+| E | ? | ? | ? | 7 | 7 ✓ | — | — | — | C |
+| F | ? | ? | ? | ? | 14 | 13 | 12 | 12 ✓ | G |
+| G | ? | ? | ? | ? | 11 | 11 | 11 ✓ | — | E |
 
 Let op: in ronde 5 en 6 hebben `D` en `G` allebei nog niet-afgevinkte
 buren, dus de volgorde kiezen gaat op afstand: `D` (9) vóór `G` (11).
+
+De kolom "via" staat er zoals hij aan het eind hoort te zijn. Bij `F`
+is hij onderweg twee keer doorgestreept, net als zijn afstand: eerst
+`E` (14), toen `D` (13), uiteindelijk `G` (12). Wie zijn tabel netjes
+bijhield, heeft daar drie namen boven elkaar staan.
+
+Die laatste kolom is de hele route, achterstevoren. `F` kwam via `G`,
+`G` via `E`, `E` via `C`, `C` via `B`, `B` via `A`: lees terug en je
+hebt `A → B → C → E → G → F`.
 
 De kortste routes vanuit `A`:
 

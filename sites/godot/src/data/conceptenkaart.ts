@@ -166,6 +166,12 @@ export const godotConcepten: GodotConcept[] = [
     to: '/docs/movement-krachten#const',
   },
   {
+    id: 'await',
+    label: 'await (wachten op een signal)',
+    leerlijn: 'gdscript',
+    to: '/docs/power_up#await',
+  },
+  {
     id: 'func-ready',
     label: 'func en _ready()',
     leerlijn: 'gdscript',
@@ -290,6 +296,7 @@ export const lessen: Les[] = [
   { slug: 'global_variables', titel: 'Global variables', hoofdstuk: 7 },
   { slug: 'score_op_scherm', titel: 'Score op het scherm', hoofdstuk: 7 },
   { slug: 'groups', titel: 'Groups', hoofdstuk: 7 },
+  { slug: 'power_up', titel: 'Een power-up: tijdelijk hoger springen', hoofdstuk: 7 },
   { slug: 'tweede_level', titel: 'Een tweede level', hoofdstuk: 8 },
   { slug: 'start_menu', titel: 'Een startmenu', hoofdstuk: 8 },
   { slug: 'spawnen', titel: 'Spawnen: nodes maken in code', hoofdstuk: 8 },
@@ -361,6 +368,7 @@ export const conceptenPerLes: Record<string, string[]> = {
   global_variables: ['autoload-instellen', 'global-autoload', 'var'],
   score_op_scherm: ['canvaslayer-label', 'global-autoload'],
   groups: ['groups'],
+  power_up: ['await', 'var', 'const', 'area2d', 'signal-functie', 'queue-free'],
   tweede_level: ['change-scene', 'area2d', 'signal-koppelen', 'signal-functie', 'scene-opslaan'],
   start_menu: [
     'control-button',
