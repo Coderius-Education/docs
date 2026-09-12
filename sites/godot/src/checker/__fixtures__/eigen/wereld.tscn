@@ -1,0 +1,24 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/speler.gd" id="1"]
+
+[node name="Wereld" type="Node2D"]
+
+[node name="Speler" type="CharacterBody2D" parent="."]
+script = ExtResource("1")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Speler"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Speler"]
+
+[node name="Camera2D" type="Camera2D" parent="Speler"]
+
+[node name="Borrel" type="AudioStreamPlayer2D" parent="Speler"]
+
+[node name="Stroming" type="PathFollow2D" parent="."]
+
+[node name="TileMapLayer" type="TileMapLayer" parent="."]
+
+[node name="Schelp" type="Area2D" parent="."]
+
+[node name="Klok" type="Timer" parent="."]

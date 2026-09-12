@@ -1,0 +1,26 @@
+config_version=5
+
+[application]
+
+config/name="duikboot"
+run/main_scene="res://menu.tscn"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+
+[autoload]
+
+Global="*res://scripts/global.gd"
+
+[input]
+
+duiken={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"keycode":32)]
+}
+boost={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"keycode":4194325)]
+}
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0

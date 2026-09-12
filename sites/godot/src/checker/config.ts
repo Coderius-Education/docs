@@ -1,9 +1,18 @@
-import type { CheckerConfig } from '@coderius/checker/types';
+import type { CheckerConfig, Concept, ConceptDetect, Level } from '@coderius/checker/types';
+import niveaus from './niveaus.json';
 
-// Conceptenlijst voor de godot-nakijker, afgeleid van src/pages/gdscript-tips.md
-// (GDScript-concepten) en de node-cheatsheet. GDScript-keywords/methoden zijn
-// Engels, dus regex-detectie is betrouwbaar. Scene- en projectbestanden worden
-// via hun pad herkend.
+// De nakijker voor Godot-projecten. Wélke concepten er zijn en op welk niveau
+// ze per leerroute tellen staat in `niveaus.json` — dat bestand is de tabel
+// van de docent, in dezelfde volgorde en met dezelfde woorden. Hier staat
+// alleen hóé je elk concept in de bestanden terugvindt.
+//
+// De tweedeling basis/gevorderd hing eerder los van de cursus: het hele
+// bewegingsscript van hoofdstuk 5 (velocity, move_and_slide, is_on_floor,
+// get_gravity, _physics_process) stond op "gevorderd", net als _process. Een
+// leerling die de cursus afmaakte zag daardoor de helft van zijn eigen werk
+// als gevorderd staan, en het onderscheid zei niets meer. De niveaus komen nu
+// uit de tabel, en verschillen per route: wat in Start nog gevorderd is, is in
+// Verdieping gewoon basis.
 
 const IMAGE_EXT = new Set(['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.ico', '.bmp']);
 
@@ -23,14 +32,149 @@ function todayStamp(d: Date): string {
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
 }
 
+/** Een node in een .tscn staat als `[node name="X" type="Speler" parent="."]`. */
+function node(type: string): ConceptDetect {
+  return { type: 'regex', pattern: new RegExp(`\\[node [^\\]]*type="${type}"`, 'g'), in: ['tscn'] };
+}
+
+function gd(pattern: RegExp, minCount?: number): ConceptDetect {
+  return { type: 'regex', pattern, in: ['gd'], ...(minCount ? { minCount } : {}) };
+}
+
+// De nodes die de cursus zelf aanleert, geteld uit de lessen en de
+// nodes-cheatsheet. Alles daarbuiten telt als "zelf ontdekt" — dat is het
+// enige concept dat niet naar iets bekends zoekt maar naar iets onbekends.
+const BEKENDE_NODES = [
+  'Node',
+  'Node2D',
+  'CharacterBody2D',
+  'StaticBody2D',
+  'Sprite2D',
+  'AnimatedSprite2D',
+  'CollisionShape2D',
+  'Camera2D',
+  'Area2D',
+  'TileMapLayer',
+  'CanvasLayer',
+  'Label',
+  'Control',
+  'VBoxContainer',
+  'HBoxContainer',
+  'Button',
+  'TextureRect',
+  'Timer',
+];
+
+// De waardes die in de cursus staan. Wie ze laat staan heeft overgetypt; wie
+// er iets anders neerzet heeft zijn spel van zichzelf gemaakt, en dát is wat
+// "snelheid veranderen" en "sprongkracht veranderen" in de tabel betekenen.
+// Hetzelfde geldt voor de drie animatienamen uit hoofdstuk 6.
+const CURSUS_SNELHEID = ['300.0', '300'];
+const CURSUS_SPRONG = ['-800.0', '-800', '-400.0', '-400'];
+const CURSUS_ANIMATIES = ['idle', 'run', 'jump'];
+
+// De waardes worden in een negatieve lookahead gezet. `\b` volstaat daar niet:
+// achter de `300` in `300.5` staat óók een woordgrens, waardoor een eigen
+// waarde ten onrechte als cursuswaarde zou tellen. Vandaar `(?![\d.])`.
+const alt = (waardes: string[]) => waardes.map((w) => w.replace(/[.\-]/g, '\\$&')).join('|');
+
+const DETECTIE: Record<string, ConceptDetect> = {
+  // --- 2D: nodes uit de scene-bestanden ---
+  '2d-tilemaplayer': node('TileMapLayer'),
+  '2d-texturerect': node('TextureRect'),
+  '2d-characterbody2d': node('CharacterBody2D'),
+  '2d-animatedsprite2d': node('AnimatedSprite2D'),
+  '2d-collisionshape2d': node('CollisionShape2D'),
+  '2d-camera2d': node('Camera2D'),
+  '2d-area2d': node('Area2D'),
+  '2d-canvaslayer': node('CanvasLayer'),
+  '2d-label': node('Label'),
+  '2d-control': node('Control'),
+  '2d-vboxcontainer': node('VBoxContainer'),
+  '2d-button': node('Button'),
+  '2d-nieuwe-nodes': {
+    type: 'regex',
+    pattern: new RegExp(`\\[node [^\\]]*type="(?!(?:${BEKENDE_NODES.join('|')})")\\w+"`, 'g'),
+    in: ['tscn'],
+  },
+
+  // --- GDScript: je game eigen maken ---
+  // De negatieve lookahead is het hele punt: `SPEED = 300.0` telt niet mee,
+  // `SPEED = 450.0` wel.
+  'gd-snelheid': gd(
+    new RegExp(
+      `\\b(?:SPEED|snelheid)\\s*(?::=|=)\\s*(?!(?:${alt(CURSUS_SNELHEID)})(?![\\d.]))-?\\d`,
+      'g',
+    ),
+  ),
+  'gd-sprongkracht': gd(
+    new RegExp(
+      `\\b(?:JUMP_VELOCITY|sprongkracht)\\s*(?::=|=)\\s*(?!(?:${alt(CURSUS_SPRONG)})(?![\\d.]))-?\\d`,
+      'g',
+    ),
+  ),
+  // Eigen toetsen staan als [input]-sectie in project.godot; zonder die
+  // sectie gebruikt het project alleen de ingebouwde ui_*-acties.
+  'gd-keybindings': { type: 'regex', pattern: /^\[input\]/gm, in: ['godot'] },
+  'gd-animatie': gd(
+    new RegExp(`play\\s*\\(\\s*["'](?!(?:${CURSUS_ANIMATIES.join('|')})["'])[^"']+["']`, 'g'),
+  ),
+  'gd-signal': gd(/\bfunc\s+_on_\w+/g),
+  'gd-volgend-level': gd(/change_scene_to_file/g),
+
+  // --- GDScript: verder met code ---
+  // "Nuttig gebruik" is een oordeel dat een regex niet kan vellen. Wat hij
+  // wél kan: het verschil tussen één keer toevallig en er echt mee werken.
+  // Daarom een drempel van twee op de concepten waar de tabel "nuttig" zegt.
+  'gd-globals': gd(/\bGlobal\.\w+/g, 2),
+  'gd-instantiate': gd(/\.instantiate\s*\(/g),
+  'gd-groups': gd(/\b(?:add_to_group|get_nodes_in_group|call_group|is_in_group)\s*\(/g),
+  // Eigen functies, dus niet de functies die Godot zelf aanroept (_ready,
+  // _process, _physics_process, _input) en niet de signal-handlers (_on_…),
+  // want die staan al als eigen concept in de tabel.
+  'gd-modulaire-functies': gd(/^[ \t]*func\s+(?!_)\w+/gm, 2),
+  'gd-lijsten': gd(/\.append\s*\(|\.size\s*\(\)|\bArray\b|=\s*\[/g, 2),
+  'gd-dictionaries': gd(/\.keys\s*\(\)|\.values\s*\(\)|\.has\s*\(|=\s*\{/g, 2),
+  'gd-json': gd(/\bJSON\.\w+|\bFileAccess\./g),
+  'gd-loops': gd(/^[ \t]*(?:for|while)\s/gm, 2),
+  'gd-tweens': gd(/\bcreate_tween\s*\(|\bTween\b/g),
+  // Een Timer is er in twee smaken: de node in je scène, en de stopwatch die
+  // je in code maakt met create_timer. Allebei tellen.
+  'gd-timers': {
+    type: 'regex',
+    pattern: /\bcreate_timer\s*\(|\[node [^\]]*type="Timer"/g,
+    in: ['gd', 'tscn'],
+  },
+};
+
+const NIVEAUS: Record<string, Level> = { basis: 'basis', gevorderd: 'gevorderd' };
+
+function niveau(waarde: string, waar: string): Level {
+  const n = NIVEAUS[waarde];
+  if (!n) throw new Error(`niveaus.json: onbekend niveau '${waarde}' bij ${waar}`);
+  return n;
+}
+
+const concepts: Concept[] = niveaus.concepten.map((c) => {
+  const detect = DETECTIE[c.id];
+  if (!detect) throw new Error(`niveaus.json: geen detectie voor concept '${c.id}'`);
+  return {
+    id: c.id,
+    subject: c.onderwerp,
+    group: c.groep,
+    label: c.concept,
+    level: {
+      start: niveau(c.start, `${c.id}.start`),
+      verdieping: niveau(c.verdieping, `${c.id}.verdieping`),
+    },
+    detect,
+  };
+});
+
 export const godotConfig: CheckerConfig = {
-  subjects: [
-    { id: 'gdscript', label: 'GDScript' },
-    { id: 'beweging', label: 'Beweging & fysica' },
-    { id: 'input', label: 'Input' },
-    { id: 'nodes', label: 'Nodes & signals' },
-    { id: 'scene', label: 'Scene-nodes' },
-  ],
+  subjects: niveaus.onderwerpen,
+  tracks: niveaus.tracks,
+  concepts,
 
   fileKinds: [
     { id: 'gd', label: 'GDScript' },
@@ -41,319 +185,13 @@ export const godotConfig: CheckerConfig = {
   ],
 
   classify,
-  textKinds: ['gd', 'tscn'],
+  // project.godot wordt nu als tekst gelezen, want daar staan de eigen
+  // keybindings in.
+  textKinds: ['gd', 'tscn', 'godot'],
   accept: '.zip,.gd,.tscn,.godot,.tres,.import,.png,.jpg,.jpeg,.gif,.svg,.webp',
 
   teacher: { password: 'coderius-docent', storageKey: 'godotChecker.docentUnlocked' },
   pdfFilename: (d) => `Beoordeling Godot Project - ${todayStamp(d)}.pdf`,
   privacyNote:
     'Let op: je bestanden gaan nooit naar een server. Alles gebeurt in je eigen browser.',
-
-  concepts: [
-    // --- GDScript ---
-    {
-      id: 'gd-extends',
-      subject: 'gdscript',
-      group: 'Basis',
-      label: 'extends',
-      level: 'basis',
-      detect: { type: 'regex', pattern: /\bextends\s+\w+/g, in: ['gd'] },
-    },
-    {
-      id: 'gd-var',
-      subject: 'gdscript',
-      group: 'Basis',
-      label: 'var',
-      level: 'basis',
-      detect: { type: 'regex', pattern: /\bvar\s+\w+/g, in: ['gd'] },
-    },
-    {
-      id: 'gd-const',
-      subject: 'gdscript',
-      group: 'Basis',
-      label: 'const',
-      level: 'basis',
-      detect: { type: 'regex', pattern: /\bconst\s+\w+/g, in: ['gd'] },
-    },
-    {
-      id: 'gd-func',
-      subject: 'gdscript',
-      group: 'Basis',
-      label: 'eigen functie (func)',
-      level: 'basis',
-      detect: { type: 'regex', pattern: /\bfunc\s+\w+/g, in: ['gd'] },
-    },
-    {
-      id: 'gd-if',
-      subject: 'gdscript',
-      group: 'Basis',
-      label: 'if / elif / else',
-      level: 'basis',
-      detect: { type: 'regex', pattern: /\bif\b/g, in: ['gd'] },
-    },
-    {
-      id: 'gd-print',
-      subject: 'gdscript',
-      group: 'Basis',
-      label: 'print()',
-      level: 'basis',
-      detect: { type: 'regex', pattern: /\bprint\s*\(/g, in: ['gd'] },
-    },
-    {
-      id: 'gd-ready',
-      subject: 'gdscript',
-      group: 'Functies',
-      label: '_ready()',
-      level: 'basis',
-      detect: { type: 'regex', pattern: /\b_ready\s*\(/g, in: ['gd'] },
-    },
-    {
-      id: 'gd-process',
-      subject: 'gdscript',
-      group: 'Functies',
-      label: '_process(delta)',
-      level: 'gevorderd',
-      detect: { type: 'regex', pattern: /\b_process\s*\(/g, in: ['gd'] },
-    },
-    {
-      id: 'gd-physics-process',
-      subject: 'gdscript',
-      group: 'Functies',
-      label: '_physics_process(delta)',
-      level: 'gevorderd',
-      detect: { type: 'regex', pattern: /\b_physics_process\s*\(/g, in: ['gd'] },
-    },
-
-    // --- Beweging & fysica ---
-    {
-      id: 'mv-velocity',
-      subject: 'beweging',
-      group: 'Beweging',
-      label: 'velocity',
-      level: 'gevorderd',
-      detect: { type: 'regex', pattern: /\bvelocity\b/g, in: ['gd'] },
-    },
-    {
-      id: 'mv-move-and-slide',
-      subject: 'beweging',
-      group: 'Beweging',
-      label: 'move_and_slide()',
-      level: 'gevorderd',
-      detect: { type: 'regex', pattern: /\bmove_and_slide\s*\(/g, in: ['gd'] },
-    },
-    {
-      id: 'mv-is-on-floor',
-      subject: 'beweging',
-      group: 'Beweging',
-      label: 'is_on_floor()',
-      level: 'gevorderd',
-      detect: { type: 'regex', pattern: /\bis_on_floor\s*\(/g, in: ['gd'] },
-    },
-    {
-      id: 'mv-gravity',
-      subject: 'beweging',
-      group: 'Beweging',
-      label: 'get_gravity()',
-      level: 'gevorderd',
-      detect: { type: 'regex', pattern: /\bget_gravity\s*\(/g, in: ['gd'] },
-    },
-    {
-      id: 'mv-move-toward',
-      subject: 'beweging',
-      group: 'Beweging',
-      label: 'move_toward()',
-      level: 'gevorderd',
-      detect: { type: 'regex', pattern: /\bmove_toward\s*\(/g, in: ['gd'] },
-    },
-
-    // --- Input ---
-    {
-      id: 'in-pressed',
-      subject: 'input',
-      group: 'Input',
-      label: 'is_action_pressed()',
-      level: 'basis',
-      detect: { type: 'regex', pattern: /is_action_pressed\s*\(/g, in: ['gd'] },
-    },
-    {
-      id: 'in-just-pressed',
-      subject: 'input',
-      group: 'Input',
-      label: 'is_action_just_pressed()',
-      level: 'gevorderd',
-      detect: { type: 'regex', pattern: /is_action_just_pressed\s*\(/g, in: ['gd'] },
-    },
-    {
-      id: 'in-get-axis',
-      subject: 'input',
-      group: 'Input',
-      label: 'Input.get_axis()',
-      level: 'gevorderd',
-      detect: { type: 'regex', pattern: /get_axis\s*\(/g, in: ['gd'] },
-    },
-
-    // --- Nodes & signals ---
-    {
-      id: 'nd-node-access',
-      subject: 'nodes',
-      group: 'Nodes',
-      label: 'node opzoeken ($ of get_node)',
-      level: 'basis',
-      detect: { type: 'regex', pattern: /\$\w+|get_node\s*\(/g, in: ['gd'] },
-    },
-    {
-      id: 'nd-queue-free',
-      subject: 'nodes',
-      group: 'Nodes',
-      label: 'queue_free()',
-      level: 'basis',
-      detect: { type: 'regex', pattern: /\bqueue_free\s*\(/g, in: ['gd'] },
-    },
-    {
-      id: 'nd-preload',
-      subject: 'nodes',
-      group: 'Nodes',
-      label: 'preload()',
-      level: 'gevorderd',
-      detect: { type: 'regex', pattern: /\bpreload\s*\(/g, in: ['gd'] },
-    },
-    {
-      id: 'nd-change-scene',
-      subject: 'nodes',
-      group: 'Nodes',
-      label: 'scene wisselen (change_scene_to_file)',
-      level: 'gevorderd',
-      detect: { type: 'regex', pattern: /change_scene_to_file/g, in: ['gd'] },
-    },
-    {
-      id: 'nd-signal-connect',
-      subject: 'nodes',
-      group: 'Signals',
-      label: 'signal koppelen (.connect())',
-      level: 'gevorderd',
-      detect: { type: 'regex', pattern: /\.connect\s*\(/g, in: ['gd'] },
-    },
-    {
-      id: 'nd-signal-handler',
-      subject: 'nodes',
-      group: 'Signals',
-      label: 'signal-functie (_on_…)',
-      level: 'gevorderd',
-      detect: { type: 'regex', pattern: /\bfunc\s+_on_\w+/g, in: ['gd'] },
-    },
-    {
-      id: 'nd-global',
-      subject: 'nodes',
-      group: 'Signals',
-      label: 'Autoload/global (Global.…)',
-      level: 'gevorderd',
-      detect: { type: 'regex', pattern: /\bGlobal\.\w+/g, in: ['gd'] },
-    },
-    {
-      id: 'nd-scene-file',
-      subject: 'nodes',
-      group: 'Scene-bestanden',
-      label: 'scene-bestand (.tscn)',
-      level: 'basis',
-      detect: { type: 'path', pattern: /(^|\/)[^/]+\.tscn$/ },
-    },
-    {
-      id: 'nd-project-file',
-      subject: 'nodes',
-      group: 'Scene-bestanden',
-      label: 'project.godot',
-      level: 'basis',
-      detect: { type: 'path', pattern: /(^|\/)project\.godot$/ },
-    },
-
-    // --- Scene-nodes ---
-    // Het tekstuele .tscn-formaat schrijft elke node als
-    // [node name="Speler" type="CharacterBody2D" parent="."]. Het patroon eist
-    // "[node " plus de sluitquote na de typenaam, zodat "RichTextLabel" niet
-    // als Label telt en [ext_resource ...]-regels niets triggeren.
-    {
-      id: 'sc-characterbody2d',
-      subject: 'scene',
-      group: 'Speler',
-      label: 'CharacterBody2D',
-      level: 'basis',
-      detect: { type: 'regex', pattern: /\[node [^\]]*type="CharacterBody2D"/g, in: ['tscn'] },
-    },
-    {
-      id: 'sc-sprite',
-      subject: 'scene',
-      group: 'Speler',
-      label: 'Sprite2D / AnimatedSprite2D',
-      level: 'basis',
-      detect: {
-        type: 'regex',
-        pattern: /\[node [^\]]*type="(?:Sprite2D|AnimatedSprite2D)"/g,
-        in: ['tscn'],
-      },
-    },
-    {
-      id: 'sc-collisionshape2d',
-      subject: 'scene',
-      group: 'Speler',
-      label: 'CollisionShape2D',
-      level: 'basis',
-      detect: { type: 'regex', pattern: /\[node [^\]]*type="CollisionShape2D"/g, in: ['tscn'] },
-    },
-    {
-      id: 'sc-camera2d',
-      subject: 'scene',
-      group: 'Speler',
-      label: 'Camera2D',
-      level: 'basis',
-      detect: { type: 'regex', pattern: /\[node [^\]]*type="Camera2D"/g, in: ['tscn'] },
-    },
-    {
-      id: 'sc-tilemaplayer',
-      subject: 'scene',
-      group: 'Wereld',
-      label: 'TileMapLayer',
-      level: 'basis',
-      detect: { type: 'regex', pattern: /\[node [^\]]*type="TileMapLayer"/g, in: ['tscn'] },
-    },
-    {
-      id: 'sc-area2d',
-      subject: 'scene',
-      group: 'Gameplay',
-      label: 'Area2D',
-      level: 'gevorderd',
-      detect: { type: 'regex', pattern: /\[node [^\]]*type="Area2D"/g, in: ['tscn'] },
-    },
-    {
-      id: 'sc-timer',
-      subject: 'scene',
-      group: 'Gameplay',
-      label: 'Timer',
-      level: 'gevorderd',
-      detect: { type: 'regex', pattern: /\[node [^\]]*type="Timer"/g, in: ['tscn'] },
-    },
-    {
-      id: 'sc-canvaslayer',
-      subject: 'scene',
-      group: 'UI',
-      label: 'CanvasLayer',
-      level: 'gevorderd',
-      detect: { type: 'regex', pattern: /\[node [^\]]*type="CanvasLayer"/g, in: ['tscn'] },
-    },
-    {
-      id: 'sc-label',
-      subject: 'scene',
-      group: 'UI',
-      label: 'Label',
-      level: 'gevorderd',
-      detect: { type: 'regex', pattern: /\[node [^\]]*type="Label"/g, in: ['tscn'] },
-    },
-    {
-      id: 'sc-button',
-      subject: 'scene',
-      group: 'UI',
-      label: 'Button',
-      level: 'gevorderd',
-      detect: { type: 'regex', pattern: /\[node [^\]]*type="Button"/g, in: ['tscn'] },
-    },
-  ],
 };

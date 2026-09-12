@@ -1,0 +1,239 @@
+{
+  "tracks": [{ "id": "start", "label": "Start" }, { "id": "verdieping", "label": "Verdieping" }],
+  "onderwerpen": [{ "id": "2d", "label": "2D" }, { "id": "gdscript", "label": "GDScript" }],
+  "concepten": [
+    {
+      "id": "2d-tilemaplayer",
+      "onderwerp": "2d",
+      "groep": "Nodes",
+      "concept": "TileMapLayer",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "2d-texturerect",
+      "onderwerp": "2d",
+      "groep": "Nodes",
+      "concept": "TextureRect",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "2d-characterbody2d",
+      "onderwerp": "2d",
+      "groep": "Nodes",
+      "concept": "CharacterBody2D",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "2d-animatedsprite2d",
+      "onderwerp": "2d",
+      "groep": "Nodes",
+      "concept": "AnimatedSprite2D",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "2d-collisionshape2d",
+      "onderwerp": "2d",
+      "groep": "Nodes",
+      "concept": "CollisionShape2D",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "2d-camera2d",
+      "onderwerp": "2d",
+      "groep": "Nodes",
+      "concept": "Camera2D",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "2d-area2d",
+      "onderwerp": "2d",
+      "groep": "Nodes",
+      "concept": "Area2D",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "2d-canvaslayer",
+      "onderwerp": "2d",
+      "groep": "Nodes",
+      "concept": "CanvasLayer",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "2d-label",
+      "onderwerp": "2d",
+      "groep": "Nodes",
+      "concept": "Label",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "2d-control",
+      "onderwerp": "2d",
+      "groep": "Nodes",
+      "concept": "Control",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "2d-vboxcontainer",
+      "onderwerp": "2d",
+      "groep": "Nodes",
+      "concept": "VBoxContainer",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "2d-button",
+      "onderwerp": "2d",
+      "groep": "Nodes",
+      "concept": "Button",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "2d-nieuwe-nodes",
+      "onderwerp": "2d",
+      "groep": "Zelf ontdekken",
+      "concept": "zelf ontdekken en toepassen van nieuwe nodes",
+      "start": "gevorderd",
+      "verdieping": "basis"
+    },
+
+    {
+      "id": "gd-snelheid",
+      "onderwerp": "gdscript",
+      "groep": "Je game eigen maken",
+      "concept": "snelheid veranderen",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "gd-sprongkracht",
+      "onderwerp": "gdscript",
+      "groep": "Je game eigen maken",
+      "concept": "sprongkracht veranderen",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "gd-keybindings",
+      "onderwerp": "gdscript",
+      "groep": "Je game eigen maken",
+      "concept": "keybindings hernoemen",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "gd-animatie",
+      "onderwerp": "gdscript",
+      "groep": "Je game eigen maken",
+      "concept": "animatie veranderen",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "gd-signal",
+      "onderwerp": "gdscript",
+      "groep": "Je game eigen maken",
+      "concept": "signal toepassen",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "gd-volgend-level",
+      "onderwerp": "gdscript",
+      "groep": "Je game eigen maken",
+      "concept": "naar volgend level",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "gd-globals",
+      "onderwerp": "gdscript",
+      "groep": "Verder met code",
+      "concept": "nuttig gebruik globals",
+      "start": "gevorderd",
+      "verdieping": "basis"
+    },
+    {
+      "id": "gd-instantiate",
+      "onderwerp": "gdscript",
+      "groep": "Verder met code",
+      "concept": "nuttig gebruik instantiate",
+      "start": "gevorderd",
+      "verdieping": "gevorderd"
+    },
+    {
+      "id": "gd-groups",
+      "onderwerp": "gdscript",
+      "groep": "Verder met code",
+      "concept": "groups",
+      "start": "gevorderd",
+      "verdieping": "gevorderd"
+    },
+    {
+      "id": "gd-modulaire-functies",
+      "onderwerp": "gdscript",
+      "groep": "Verder met code",
+      "concept": "modulaire eigen functies",
+      "start": "gevorderd",
+      "verdieping": "gevorderd"
+    },
+    {
+      "id": "gd-lijsten",
+      "onderwerp": "gdscript",
+      "groep": "Verder met code",
+      "concept": "nuttig gebruik lijsten",
+      "start": "gevorderd",
+      "verdieping": "basis"
+    },
+    {
+      "id": "gd-dictionaries",
+      "onderwerp": "gdscript",
+      "groep": "Verder met code",
+      "concept": "nuttig gebruik dictionaries",
+      "start": "gevorderd",
+      "verdieping": "basis"
+    },
+    {
+      "id": "gd-json",
+      "onderwerp": "gdscript",
+      "groep": "Verder met code",
+      "concept": "lezen en schrijven JSON",
+      "start": "gevorderd",
+      "verdieping": "gevorderd"
+    },
+    {
+      "id": "gd-loops",
+      "onderwerp": "gdscript",
+      "groep": "Verder met code",
+      "concept": "nuttige gebruik loops",
+      "start": "gevorderd",
+      "verdieping": "basis"
+    },
+    {
+      "id": "gd-tweens",
+      "onderwerp": "gdscript",
+      "groep": "Verder met code",
+      "concept": "tweens",
+      "start": "gevorderd",
+      "verdieping": "gevorderd"
+    },
+    {
+      "id": "gd-timers",
+      "onderwerp": "gdscript",
+      "groep": "Verder met code",
+      "concept": "nuttig gebruik timers",
+      "start": "gevorderd",
+      "verdieping": "gevorderd"
+    }
+  ]
+}
