@@ -2,16 +2,16 @@
 sidebar_position: 17
 ---
 
-# Er gaat iets mis — top-3 fouten
+# Er gaat iets mis — vier valkuilen
 
-**Leerdoel:** je herkent de drie klassieke valkuilen bij het bouwen van
-een minimax-AI.
+**Leerdoel:** je herkent de vier klassieke valkuilen bij het bouwen van
+een minimax-AI, en je weet bij elk symptoom waar je moet kijken.
 
 ## Bord muteren in `result`
 
 Geen foutmelding — wél een **onverklaarbaar verkeerd antwoord**. Minimax
-"probeert" zetten en denkt dat het origineel niet meegaat — als dat
-wel zo is, raakt het hele algoritme van slag.
+"probeert" zetten en gaat ervan uit dat het origineel niet meegaat; als
+dat wel zo is, raakt het hele algoritme van slag.
 
 **Oorzaak:** zonder `copy.deepcopy` werkt Python met **referenties**.
 Een wijziging in `nieuw_bord` is ook zichtbaar in `bord`:
@@ -19,7 +19,7 @@ Een wijziging in `nieuw_bord` is ook zichtbaar in `bord`:
 ```python
 # FOUT
 def result(bord, zet):
-    nieuw = bord            # ← nieuw is GEEN kopie, het is hetzelfde object!
+    nieuw = bord            # ← nieuw is GEEN kopie, het is hetzelfde object
     i, j = zet
     nieuw[i][j] = player(bord)
     return nieuw
@@ -40,15 +40,56 @@ def result(bord, zet):
     return nieuw
 ```
 
-## Base case vergeten in `max_value` / `min_value` / `minimax`
+## `result` vergeten in de recursie
 
-{/* foutmelding-van: def f(n):\n    return f(n - 1)\nf(3) */}
+{/* foutmelding-van: def max_value(bord):\n    return max_value(bord)\nmax_value([]) */}
 
-Foutmelding: `RecursionError: maximum recursion depth exceeded`. Browser
-hangt soms even.
+Foutmelding: `RecursionError: maximum recursion depth exceeded`. De
+browser hangt soms even voordat hij komt.
 
-**Oorzaak:** een recursieve functie **moet** een **stop-conditie**
-hebben. Zonder roept hij zichzelf eeuwig aan op steeds nieuwere borden.
+**Oorzaak:** een recursieve aanroep moet een **kleiner** probleem
+krijgen. Geef je hetzelfde bord door in plaats van het bord ná de zet,
+dan roept de functie zichzelf eindeloos aan op precies dezelfde positie:
+
+```python
+# FOUT — hetzelfde bord gaat de recursie in
+def max_value(bord):
+    if terminal(bord):
+        return utility(bord)
+    v = -math.inf
+    for zet in actions(bord):
+        v = max(v, min_value(bord))            # ← zet wordt nergens gebruikt
+    return v
+```
+
+**Oplossing:** de recursie krijgt altijd `result(bord, zet)`, het bord
+met één cel meer gevuld. Na hoogstens negen stappen is het bord vol en
+stopt het vanzelf:
+
+```python
+# GOED
+def max_value(bord):
+    if terminal(bord):
+        return utility(bord)
+    v = -math.inf
+    for zet in actions(bord):
+        v = max(v, min_value(result(bord, zet)))
+    return v
+```
+
+## Base case vergeten in `max_value` of `min_value`
+
+{/* foutmelding-los: hier blijft de melding juist uit; de reproductie staat bij de vorige fout */}
+
+Geen foutmelding — wél een AI die **gewonnen borden niet ziet** en
+waardes van `inf` of `-inf` teruggeeft. Geen `RecursionError`: het bord
+raakt na negen zetten vol, dus de recursie stopt wel, alleen op de
+verkeerde plek.
+
+**Oorzaak:** zonder base case speelt de functie door op een bord waar
+al drie op een rij staat. Pas op een vol bord is `actions(bord)` leeg;
+dan draait de lus niet, blijft `v` op `-math.inf` staan en is dát wat
+er terugkomt:
 
 ```python
 # FOUT — geen base case
@@ -59,13 +100,9 @@ def max_value(bord):
     return v
 ```
 
-Op een terminaal bord doet `actions(bord)` niks (lege set) → de lus
-draait niet → `v` blijft `-math.inf` → return `-math.inf`. Dat is fout.
-En in de stap daarboven roept iets `max_value` aan op een bord dat
-geen recursie-einde heeft.
-
-**Oplossing:** check **eerst** of het bord terminal is. Zo ja, return
-de utility (`+1`, `-1`, `0`). Dat is de bodem van de recursie:
+**Oplossing:** check **eerst** of het bord terminal is. Zo ja, geef de
+utility terug (`1`, `-1`, `0`). Dat is de bodem van de recursie, en de
+enige plek waar een echt getal de boom in komt:
 
 ```python
 # GOED
@@ -78,15 +115,16 @@ def max_value(bord):
     return v
 ```
 
-Idem in `min_value` en in `minimax` zelf.
+Idem in `min_value`, en `minimax` zelf begint met `if terminal(bord):
+return None`.
 
 ## Min en max omdraaien per laag
 
-Geen foutmelding — wél een AI die **verliest** of suboptimaal speelt.
+Geen foutmelding — wél een AI die **verliest** of zwak speelt.
 
-**Oorzaak:** je hebt `max_value` per ongeluk `max_value` laten aanroepen
-(zichzelf), in plaats van afwisselend `min_value`. Of je verwart wie
-maximaliseert (X) en wie minimaliseert (O).
+**Oorzaak:** `max_value` roept per ongeluk `max_value` aan (zichzelf) in
+plaats van `min_value`. Of je verwart wie maximaliseert (X) en wie
+minimaliseert (O).
 
 ```python
 # FOUT — max_value roept max_value aan in plaats van min_value
@@ -95,12 +133,12 @@ def max_value(bord):
         return utility(bord)
     v = -math.inf
     for zet in actions(bord):
-        v = max(v, max_value(result(bord, zet)))   # ← moet min_value zijn!
+        v = max(v, max_value(result(bord, zet)))   # ← moet min_value zijn
     return v
 ```
 
 **Oplossing:** onthoud het ritme — **wisselbeurten**. `max_value` zoekt
-naar X's beste keuze; de **volgende** beurt is O, dus
+X's beste keuze; de **volgende** beurt is O, dus
 `min_value(result(...))`. Andersom geldt hetzelfde.
 
 ```python
@@ -110,7 +148,7 @@ def max_value(bord):
         return utility(bord)
     v = -math.inf
     for zet in actions(bord):
-        v = max(v, min_value(result(bord, zet)))    # ← afwisselend!
+        v = max(v, min_value(result(bord, zet)))    # ← afwisselend
     return v
 
 
@@ -119,7 +157,7 @@ def min_value(bord):
         return utility(bord)
     v = math.inf
     for zet in actions(bord):
-        v = min(v, max_value(result(bord, zet)))    # ← afwisselend!
+        v = min(v, max_value(result(bord, zet)))    # ← afwisselend
     return v
 ```
 

@@ -18,9 +18,7 @@ import { describe, expect, it } from 'vitest';
 
 const DOCS = fileURLToPath(new URL('../../docs/', import.meta.url));
 
-const ACHTERSTAND = new Map([
-  ['minimax', 'de kop noemt twee helperfuncties, de samenvatting het algoritme'],
-]);
+const ACHTERSTAND = new Map<string, string>([]);
 
 function spans(tekst: string): string[] {
   return [...tekst.matchAll(/`([^`]+)`/g)].map((m) => m[1]);

@@ -9,7 +9,7 @@ Snelle referentie. Klap open wat je nodig hebt.
 ## Het complete tic-tac-toe project
 
 <details>
-<summary>Alle 9 functies bij elkaar</summary>
+<summary>Alle tien functies bij elkaar</summary>
 
 ```python
 import copy
@@ -195,17 +195,20 @@ Drie cruciale elementen:
 
 </details>
 
-## Top-3 valkuilen
+## Valkuilen
 
 <details>
 <summary>Veelgemaakte fouten</summary>
 
-{/* foutmelding-los: samenvatting van stap 17, waar de melding gereproduceerd wordt */}
+{/* foutmelding-los: samenvatting van de fouten-pagina, waar de melding gereproduceerd wordt */}
 
 1. **Bord muteren in `result`** → gebruik `copy.deepcopy`.
-2. **Base case vergeten** → `RecursionError`. Check **eerst** of bord
-   terminal is.
-3. **`max_value` roept zichzelf aan** in plaats van `min_value` → AI
+2. **`result` vergeten in de recursie** → `RecursionError`. De recursie
+   krijgt altijd `result(bord, zet)`, nooit `bord` zelf.
+3. **Base case vergeten in `max_value` of `min_value`** → waardes van
+   `inf` en `-inf`, gewonnen borden worden niet gezien. Check **eerst** of
+   het bord terminal is.
+4. **`max_value` roept zichzelf aan** in plaats van `min_value` → AI
    verliest. Wisselbeurten zijn cruciaal.
 
 Volledig overzicht: [er gaat iets mis](./17-fouten).
@@ -239,7 +242,7 @@ Niet vereist voor onze tic-tac-toe AI, maar wel het noemen waard.
   het algoritme nog niet "ziet".
 - [helpers](./bouwen/14-helpers) — `max_value` en `min_value`
   als recursie-helpers.
-- [draai het zelf](./bouwen/15-zelf-draaien) — verzamel je 8
+- [draai het zelf](./bouwen/15-zelf-draaien) — verzamel je negen
   functies in één lokaal `tictactoe.py` (of in een verzamel-PyRunner
   als noodoplossing).
 - [minimax](./bouwen/16-minimax) — de AI zelf, geschreven in
