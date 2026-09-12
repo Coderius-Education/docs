@@ -4,25 +4,25 @@ sidebar_position: 1
 
 # Minimax — het idee
 
-> **Bronvermelding** — deze track is een afgeleide bewerking van
+> **Bronvermelding** — dit hoofdstuk is een afgeleide bewerking van
 > [CS50 AI Project 0: Tic-Tac-Toe](https://cs50.harvard.edu/ai/projects/0/tictactoe/)
 > van Harvard University, gelicenseerd onder
 > [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 > Wij hebben het vertaald naar het Nederlands, opgeknipt in PRIMM-stappen
-> en aangevuld met conceptuele uitleg. Deze hele track wordt onder
+> en aangevuld met conceptuele uitleg. Het hele hoofdstuk wordt onder
 > dezelfde licentie verspreid.
 
 **Leerdoel:** je begrijpt het kernidee van minimax: als jij je beste zet
-doet en je tegenstander óók zijn beste zet doet, wat is dan voor jou
-het beste startpunt? Geen code nog — eerst snappen.
+doet en je tegenstander óók zijn beste zet doet, welke zet is dan voor
+jou de beste? Nog geen code.
 
 ## Het verhaal
 
 Je speelt boter-kaas-en-eieren (tic-tac-toe) tegen iemand die **net zo
 goed nadenkt als jij**. Geen blunders, geen mazzel. Welke zet doe je?
 
-Een veelgehoorde fout: *"Ik kies de zet die mij het snelst kan laten
-winnen."* Maar dat klopt niet — je tegenstander kan jouw plan blokkeren.
+Veel mensen denken: *"Ik kies de zet die mij het snelst kan laten
+winnen."* Maar je tegenstander kan jouw plan blokkeren.
 
 Wat je écht wilt weten:
 
@@ -51,18 +51,21 @@ de huidige positie. Elke "tak" is een mogelijke zet. Aan de bladeren
 (blaadjes) staan eindposities (winst, verlies, of remise) met hun
 *utility*: `+1`, `-1`, of `0`.
 
-Heel kleine illustratie (niet een echt tic-tac-toe spel, maar even ter
-visualisatie):
+Een kleine boom, nog geen echt spel:
 
 ```
-                MAX (wij kiezen)
+               ▲ MAX (wij kiezen)
               ╱            ╲
              A              B
              │              │
-            MIN            MIN
+           ▼ MIN          ▼ MIN
            ╱ ╲             ╱ ╲
          +1   -1         0    +1
 ```
+
+Een MAX-knoop tekenen we als een driehoek omhoog (▲), want die wil
+omhoog. Een MIN-knoop als een driehoek omlaag (▼). Zo tekent CS50 ze
+ook, en zo staan ze in de rest van dit hoofdstuk.
 
 Wij (MAX) kunnen kiezen tussen tak `A` en tak `B`. Daarna kiest de
 tegenstander (MIN) tussen zijn twee opties.
@@ -83,8 +86,8 @@ gegarandeerd verlies.
 ## Het sleutelwoord: *gegarandeerd*
 
 Minimax denkt **van het einde naar het begin**. Pas als de uitkomst van
-een bladeren-positie bekend is, kun je terugrekenen wat de niveau daar-
-boven waard is. En zo verder, helemaal terug naar de huidige zet.
+een blad bekend is, kun je terugrekenen wat het niveau erboven waard
+is. En zo verder, helemaal terug naar de huidige zet.
 
 Dat heet **terug-redeneren** (Engels: *backwards induction*). Het werkt
 omdat we aannemen: **beide spelers spelen optimaal**.
@@ -95,18 +98,45 @@ Tic-tac-toe heeft een **klein** aantal mogelijke spellen (~250.000 als
 je alles meerekent). Een computer kan de hele game tree in een seconde
 doorrekenen. Een mens niet — wij gebruiken patronen en intuïtie.
 
-Voor schaken (~10⁴⁰ posities) is de hele tree te groot. Daar gebruik je
+Voor schaken (meer dan 10⁴⁰ posities) is de hele tree te groot. Daar gebruik je
 slimmere varianten zoals *alpha-beta pruning* of *Monte Carlo Tree
 Search*. Maar het **fundament** blijft minimax.
 
+## Waar minimax echt is gebruikt
+
+- [Claude Shannon](https://en.wikipedia.org/wiki/Programming_a_Computer_for_Playing_Chess)
+  beschreef in 1950 hoe een computer zou kunnen schaken: een game tree
+  doorrekenen met precies het minimax-idee van deze pagina. Er bestond
+  nog geen computer die het kon.
+- [Arthur Samuel](https://en.wikipedia.org/wiki/Arthur_Samuel_(computer_scientist))
+  bouwde in de jaren vijftig een damprogramma op minimax dat van zijn
+  eigen partijen leerde, en versloeg er in 1962 een sterke speler mee.
+- [Deep Blue](https://en.wikipedia.org/wiki/Deep_Blue_(chess_computer))
+  van IBM won in 1997 een match van wereldkampioen Garry Kasparov.
+  Binnenin: minimax met alpha-beta pruning, op speciale chips die zo'n
+  200 miljoen posities per seconde bekeken.
+- [Chinook](https://en.wikipedia.org/wiki/Chinook_(computer_program))
+  rekende in 2007 dammen (op het 8×8-bord) helemaal uit: bij perfect
+  spel is het remise, net als tic-tac-toe. Dezelfde game tree, alleen
+  achttien jaar rekenwerk.
+- [Stockfish](https://stockfishchess.org/), de sterkste open-source
+  schaakengine van nu, zoekt nog steeds met alpha-beta. De code is
+  openbaar.
+
+Go is de uitzondering: daar is de tree zó groot dat
+[AlphaGo](https://en.wikipedia.org/wiki/AlphaGo) in 2016 met een andere
+zoekmethode won, Monte Carlo Tree Search, gestuurd door een neuraal
+netwerk. De uitleg in dit hoofdstuk volgt
+[lecture 0 van CS50 AI](https://cs50.harvard.edu/ai/notes/0/), die
+minimax voor het eerst voordoet.
+
 ## Wat we gaan bouwen
 
-Na deze track schrijf je 8 Python-functies die samen een tic-tac-toe-AI
-vormen die **nooit verliest**. Dat is geen overdrijving — als beide
-spelers optimaal spelen, eindigt tic-tac-toe altijd in remise.
+Aan het eind van dit hoofdstuk heb je tien Python-functies die samen
+een tic-tac-toe-AI vormen die nooit verliest. Dat is geen overdrijving:
+als beide spelers optimaal spelen, eindigt tic-tac-toe altijd in remise.
 
-Maar eerst: doe het zelf met pen en papier, zodat je ziet hoe minimax
-werkt voordat je het programmeert.
+Eerst met pen en papier.
 
 ## Zo bouw je het op
 

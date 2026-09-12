@@ -17,7 +17,6 @@ const VOORWAARDE = /^\*\*(Waar|Niet waar|Juist|Onjuist) — (als|in|voor|niet vo
 
 const ACHTERSTAND = new Map<string, string[]>([
   ['big-o/02-stellingen.mdx', ['Stelling 1', 'Stelling 4']],
-  ['minimax/03-stellingen.mdx', ['Stelling 4']],
 ]);
 
 function stellingenPaginas(): string[] {

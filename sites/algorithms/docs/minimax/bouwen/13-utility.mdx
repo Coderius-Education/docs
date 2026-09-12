@@ -24,8 +24,8 @@ direct correct.
 
 ## Hergebruik `winner`
 
-Net als `terminal` leunt deze functie op `winner` — drie cases, één
-enkele oproep. Heel kort.
+Net als `terminal` leunt deze functie op `winner`: één aanroep, drie
+gevallen.
 
 ## Specificatie
 
@@ -96,16 +96,22 @@ print("Alle tests gehaald ✓")`} />
 <details>
 <summary>Tip</summary>
 
-Drie `if`'s achter elkaar, of een `if`/`elif`/`else`. Het patroon dat
-veel mensen gebruiken:
+Sla `winner(bord)` op in een variabele en vergelijk die met `"X"` en
+met `"O"`. Blijft er niets over, dan is het remise.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
 
 ```python
-w = winner(bord)
-if w == "X":
-    return 1
-if w == "O":
-    return -1
-return 0
+def utility(bord):
+    w = winner(bord)
+    if w == "X":
+        return 1
+    if w == "O":
+        return -1
+    return 0
 ```
 
 </details>

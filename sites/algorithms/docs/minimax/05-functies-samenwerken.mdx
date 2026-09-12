@@ -14,7 +14,7 @@ sidebar_position: 5
 
 **Leerdoel:** je weet wat een functie doet (input → output), en je ziet
 hoe de output van één functie de input van een andere kan zijn. Dit
-patroon gebruiken we straks **achtmaal**.
+patroon gebruik je straks in elke bouwsteen.
 
 ## Wat is een functie ook al weer?
 
@@ -101,8 +101,8 @@ print(verdubbel(plus_drie(5)))
 `verdubbel(plus_drie(5))`: eerst `plus_drie(5)` = `8`, dan
 `verdubbel(8)` = `16`.
 
-**De volgorde maakt uit.** Functies stapelen heen-en-weer wisselen
-geeft een ander antwoord.
+De volgorde maakt uit: wissel je de twee functies om, dan krijg je een
+ander antwoord.
 
 </details>
 
@@ -144,7 +144,7 @@ print(som_van_kwadraten(3, 4))      # 25  (9 + 16)`} />
 
 ## Waarom dit relevant is
 
-In de komende 8 pagina's bouw je 8 functies, en ze gaan **elkaar
+In de bouwstenen hierna bouw je tien functies, en die gaan **elkaar
 aanroepen**:
 
 - `terminal(bord)` roept `winner(bord)` aan.
@@ -152,8 +152,7 @@ aanroepen**:
   output direct doorgegeven aan `winner` of `terminal`.
 - `minimax(bord)` roept `actions`, `result`, `player`, en zichzelf aan.
 
-Elke functie is op zichzelf klein. Pas door **slim samenwerken** wordt
-het een AI.
+Elke functie is op zichzelf klein. Samen worden ze een AI.
 
 ## Eén gouden regel: één functie, één taak
 

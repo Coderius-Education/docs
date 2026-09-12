@@ -57,13 +57,22 @@ links, midden en rechts (de onderste rij).
 
 Uitkomsten: X wint = +1, O wint = −1, vol bord zonder winnaar = 0.
 
+De boom onder de vragen tekent alle vervolgen. Bovenaan staat het bord
+van nu; elke tak is een zet, geschreven als (rij, kolom) geteld vanaf 0
+linksboven: links is (2,0), midden (2,1), rechts (2,2). Een bord met
+een stippellijn is klaar. Bij elke knoop staat een vraagteken: dat is
+de waarde die jullie invullen.
+
 1. Kijk eerst goed naar het bord: welke dreiging heeft O?
-2. Werk voor **elk** van de drie X-zetten uit hoe het spel verder gaat.
-   Na X's zet kiest O (MIN kiest de laagste uitkomst), daarna is het
-   laatste vakje gedwongen. Schrijf per X-zet de eind-uitkomst op:
-   links = ____, midden = ____, rechts = ____.
+2. Schrijf in de boom bij elk bord dat klaar is de uitkomst (+1, −1 of
+   0). Werk dan van onder naar boven: bij een MIN-knoop (▼, O aan zet)
+   neem je het laagste kind, bij een MAX-knoop (▲, X aan zet) het
+   hoogste. Schrijf per X-zet de waarde op: links = ____,
+   midden = ____, rechts = ____.
 3. X kiest het hoogste. Welke zet is dat, en wat is de uitkomst bij
    perfect spel van beide kanten?
+
+<GameTree bord="OXX/XOO/..." />
 
 ## Deel 3 — speel het na
 
@@ -83,8 +92,8 @@ berekening houdt?
 
 ## Antwoorden
 
-Deze pagina print als losse laatste pagina — houd hem achter de hand of
-knip hem eraf.
+De antwoorden printen als losse laatste pagina's — houd ze achter de
+hand of knip ze eraf.
 
 **Deel 1**: MIN kiest A = 4, B = 1, C = 5. MAX kiest tak **C** met
 uitkomst **5**. Tak B is een valstrik: de 8 staat er wel, maar MIN
@@ -101,13 +110,17 @@ te halen valt.
 | rechts | O's dreiging is geblokt; beide vervolgen eindigen vol zonder winnaar | **0** |
 
 X speelt **rechts** (de blokkade) en de uitkomst bij perfect spel is
-**0** (remise). Het mooie: X hoeft "blokken" niet als regel te kennen —
-de berekening wijst de blokkade vanzelf aan.
+**0** (remise). X hoeft "blokken" niet als regel te kennen: de
+berekening wijst de blokkade vanzelf aan. Dit is de ingevulde boom:
+
+<GameTree bord="OXX/XOO/..." waardes />
 
 **Deel 3**: nee — vanaf deze positie kan O bij perfect X-spel nooit
 meer winnen.
 
 </div>
+
+<div className="handout-alleen-scherm">
 
 ## Verder op de site
 
@@ -116,5 +129,7 @@ meer winnen.
   dezelfde methode, voorgedaan op een andere positie
 - [Het bord in Python](/docs/minimax/04-bord-in-python) — hierna
   bouw je de speler in Python
+
+</div>
 
 </Handout>

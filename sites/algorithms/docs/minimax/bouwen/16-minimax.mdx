@@ -14,8 +14,9 @@ sidebar_position: 16
 bouwstenen gebruikt om de **beste zet** terug te geven — direct in je
 lokale `tictactoe.py`.
 
-Je hebt op pagina 15 je 8 functies in één lokaal bestand gezet (of in
-de fallback-PyRunner). Tijd voor de 9e.
+Je hebt bij [draai het zelf](./15-zelf-draaien) je negen functies in
+één lokaal bestand gezet (of in de verzamel-PyRunner). Tijd voor de
+tiende.
 
 ## Wat doet deze functie?
 
@@ -26,8 +27,8 @@ zet is. Niet het *getal* — dat is wat `max_value`/`min_value` doen.
 - **X-beurt**: kies de zet met de **hoogste** `min_value(result(bord, zet))`.
 - **O-beurt**: kies de zet met de **laagste** `max_value(result(bord, zet))`.
 
-Waarom kruislings? Omdat na X's zet, **O** aan zet is, dus we
-evalueren met `min_value`. Spiegelbeeld voor O.
+Kruislings, want na X's zet is O aan zet, dus je rekent met
+`min_value`. Voor O andersom.
 
 ## Het patroon
 
@@ -44,8 +45,8 @@ voor elke zet in actions(bord):
 return beste_zet
 ```
 
-Dezelfde lus-en-vergelijk-structuur als in `max_value`, alleen
-**onthoud je ook welke zet** het optimum opleverde.
+Dezelfde lus als in `max_value`, alleen onthoud je nu ook welke zet
+het beste was.
 
 ## Speciaal geval
 
@@ -78,8 +79,8 @@ Welke van de twee terugkomt hangt af van de **volgorde** waarin
 
 ## Bouw zelf in `tictactoe.py`
 
-Open je lokale `tictactoe.py` (gemaakt op pagina 15). Plak deze
-**starter** onderaan, ná je 8 functies:
+Open je lokale `tictactoe.py` (gemaakt bij draai het zelf). Plak deze
+**starter** onderaan, ná je negen functies:
 
 ```python
 def minimax(bord):
@@ -98,25 +99,44 @@ def minimax(bord):
 <details>
 <summary>Tip</summary>
 
-Het patroon is bijna identiek aan `max_value` / `min_value`, met één
+Het patroon is bijna identiek aan `max_value` en `min_value`, met één
 extra ding: **onthoud welke zet** het optimum opleverde, niet alleen
-de score.
+de score. Je hebt dus twee variabelen bij te houden, `beste_score` en
+`beste_zet`, en een `if` per speler: voor X vergelijk je met `>` en
+begin je op `-math.inf`, voor O met `<` en `math.inf`.
+
+Vergeet je `beste_zet` bij te werken? Dan geeft minimax `None` terug.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
 
 ```python
-if player(bord) == "X":
-    beste_score = -math.inf
-    for zet in actions(bord):
-        score = min_value(result(bord, zet))
-        if score > beste_score:
-            beste_score = score
-            beste_zet = zet
-else:
-    # spiegelbeeld voor O: math.inf, max_value, <
-    ...
+def minimax(bord):
+    if terminal(bord):
+        return None
+
+    beste_zet = None
+    if player(bord) == "X":
+        beste_score = -math.inf
+        for zet in actions(bord):
+            score = min_value(result(bord, zet))
+            if score > beste_score:
+                beste_score = score
+                beste_zet = zet
+    else:
+        beste_score = math.inf
+        for zet in actions(bord):
+            score = max_value(result(bord, zet))
+            if score < beste_score:
+                beste_score = score
+                beste_zet = zet
+    return beste_zet
 ```
 
-Let op de twee toewijzingen onder de if: zowel `beste_score` als
-`beste_zet`. Vergeet je `beste_zet`? Dan returnt minimax `None`.
+Het is `max_value` met een geheugen: dezelfde lus, alleen onthoud je
+naast de beste score ook bij welke zet die hoorde.
 
 </details>
 
@@ -216,6 +236,14 @@ Zo werkt het:
    daar staat `runner.py` in (Engelse versie van wat jij in het
    Nederlands hebt gebouwd).
 2. Vervang het bijgeleverde lege `tictactoe.py` door **jouw** versie.
+   Zet bovenaan, onder de imports, drie regels die `runner.py` verwacht:
+   ```python
+   X = "X"
+   O = "O"
+   EMPTY = None
+   ```
+   Het CS50-project spreekt jouw bestand aan met die drie namen; jouw
+   functies gebruiken de waardes zelf, dus verder verandert er niets.
 3. Installeer eenmalig `pygame`:
    ```
    pip install pygame
@@ -225,15 +253,15 @@ Zo werkt het:
    python runner.py
    ```
 
-Een venster opent. Je klikt op een vakje, je AI antwoordt. Boterkaas-
-en-eieren tegen een ondoorzichtbare tegenstander.
+Een venster opent. Je klikt op een vakje, je AI antwoordt. Boter-kaas-
+en-eieren tegen een tegenstander die nooit blundert.
 
 ## Geen lokale Python? Noodoplossing met PyRunner
 
 <details>
 <summary>Open dit alleen als je echt niet lokaal kan draaien</summary>
 
-Plak je eigen `minimax` op de aangegeven plek. De andere 8 functies
+Plak je eigen `minimax` op de aangegeven plek. De andere negen functies
 staan al klaar. **Let op**: de AI-vs-AI demo kan in de browser zo'n
 **30 seconden** duren — minimax rekent honderdduizenden posities door.
 
@@ -333,16 +361,8 @@ else:
 
 </details>
 
-## Wat heb je nu?
-
-Een **werkende AI op je eigen laptop**. Niet in een tutorial — gewoon
-een Python-bestand dat je kunt kopiëren, mailen, of doorontwikkelen.
-
-Je hebt 9 functies geschreven, ze door elkaar laten roepen met de
-patronen uit [functies in functies](./09-functies-in-functies),
-en bovenop alles recursie ingezet
-([helpers](./14-helpers)). Dit is precies hoe
-AI-projecten in het echt worden gemaakt: kleine functies die elkaar
-oproepen, getest, geassembleerd in een lokaal project.
+Je hebt nu een werkende AI op je eigen laptop: een Python-bestand dat
+je kunt kopiëren, mailen of doorontwikkelen. Tien kleine functies die
+elkaar aanroepen, elk apart getest.
 
 Door naar [veelgemaakte fouten →](../17-fouten).

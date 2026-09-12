@@ -5,20 +5,20 @@ sidebar_position: 2
 # Doe het met pen en papier
 
 **Leerdoel:** je voert minimax zelf uit op twee voorbeelden — een
-abstracte tree met cijfers, en dan een echt tic-tac-toe eindspel. Geen
-Python.
+abstracte boom met cijfers, en dan een echt tic-tac-toe eindspel waarvan
+je de hele boom tekent en doorloopt. Geen Python.
 
-## Deel 1 — een abstracte tree
+## Deel 1 — een abstracte boom
 
-We beginnen makkelijk: een tree waar de bladeren al cijfers hebben (de
-uitkomst is gegeven). Wij rekenen alleen min/max-niveaus uit.
+We beginnen makkelijk: een boom waar de bladeren al cijfers hebben (de
+uitkomst is gegeven). Wij rekenen alleen de MIN- en MAX-knopen uit.
 
 ```
-                  MAX
+                 ▲ MAX
               ╱    │    ╲
              A     B     C
              │     │     │
-            MIN   MIN   MIN
+            ▼MIN  ▼MIN  ▼MIN
             ╱╲    ╱╲    ╱╲
            3  5  2  9  6  0
 ```
@@ -35,10 +35,10 @@ Een MIN-knoop kiest het **laagste** kind:
 - Tak `B`: `min(2, 9)` = **2**
 - Tak `C`: `min(6, 0)` = **0**
 
-Tree wordt:
+De boom wordt:
 
 ```
-                  MAX
+                 ▲ MAX
               ╱    │    ╲
               3    2    0
 ```
@@ -52,139 +52,179 @@ spel: **3**.
 
 ### Wat had je verwacht?
 
-> Op het eerste gezicht lijkt tak `C` aantrekkelijk: hij heeft de **9**
-> aan zijn kant. Maar MIN zou daar nooit voor kiezen — die pakt de
-> **0**. Tak `B` heeft de hoogste blaadje (9), maar MIN minimaliseert
-> daar naar 2. Alleen tak `A` garandeert MAX een uitkomst van 3.
+> Op het eerste gezicht lijkt tak `B` aantrekkelijk: daar staat de
+> **9**, het hoogste blad van de hele boom. Maar MIN zou daar nooit voor
+> kiezen — die pakt de **2**. Alleen tak `A` garandeert MAX een uitkomst
+> van 3.
 
-Pas op: het kindje dat MIN kiest, is niet de "hoge" maar de "lage".
-Daarom is het hoogste blaadje misleidend.
+Pas op: het kind dat MIN kiest, is niet het "hoge" maar het "lage".
+Daarom is het hoogste blad misleidend.
 
-## Deel 2 — tic-tac-toe near-end
+## Deel 2 — de boom van een echt eindspel
 
 Nu echt. Een positie waar nog drie vakjes leeg zijn. **X is aan zet.**
 
 ```
- X | O | X
+ X | X | O
 -----------
- O | X | O
+ O | O | X
 -----------
  . | . | .          (. = leeg)
 ```
 
 Posities op het bord — we gebruiken `(rij, kolom)`-coördinaten met (0,0)
-linksboven:
+linksboven. De drie lege vakjes zijn `(2,0)`, `(2,1)` en `(2,2)`.
 
-- `(2,0)`, `(2,1)`, `(2,2)` zijn leeg.
+Kijk eerst goed. O heeft twee stenen op de diagonaal van
+rechtsboven naar linksonder: `(0,2)` en `(1,1)`. Eén O op `(2,0)` en O
+wint. Onthoud dat, maar reken het níét als regel mee: minimax kent geen
+"blokkeren". Het rekent alleen.
 
-X heeft als doel `+1` (X-win). De drie mogelijke X-zetten:
+X heeft als doel `+1` (X-win), O-win is `-1`, een vol bord zonder
+winnaar is `0`.
 
-### Zet 1: X speelt `(2,0)`
+### Stap 1 — teken de boom
+
+Bovenaan staat het bord van nu, met X aan zet: een MAX-knoop. Elke tak
+eronder is een zet van X, en bij elke tak hoort het bord ná die zet.
+Daaronder komt O aan zet: een MIN-knoop met twee takken. Nog een laag
+lager is er één vakje over, dus X's laatste zet ligt vast. Zo ziet de
+boom eruit, met bij elke knoop het bord maar nog zonder waardes:
+
+<GameTree bord="XXO/OOX/..." />
+
+Elk vraagteken is een waarde die je zo uitrekent. De borden met een
+stippellijn zijn klaar: daar staat drie op een rij, of het bord is vol.
+
+### Stap 2 — loop de linkertak af: X speelt `(2,0)`
 
 ```
- X | O | X
- O | X | O
+ X | X | O
+ O | O | X
  X | . | .
 ```
 
-Check de diagonalen: `(0,2)X`, `(1,1)X`, `(2,0)X` — **drie op een rij.**
-X wint direct. Utility: **+1**. Geen verdere zetten nodig — terminal.
+Geen drie op een rij. **O is aan zet** (MIN). O heeft twee opties.
 
-### Zet 2: X speelt `(2,1)`
+O speelt `(2,1)`. Dan blijft alleen `(2,2)` over, en X moet daar spelen:
 
 ```
+ X | X | O
+ O | O | X
  X | O | X
- O | X | O
- . | X | .
 ```
 
-Geen drie op een rij. Spel gaat door. **O is aan zet** (MIN-speler).
-O heeft twee opties: `(2,0)` of `(2,2)`.
+Geen drie op een rij, bord vol → **remise**, utility **0**.
 
-#### Onder zet 2 — O speelt `(2,0)`
-
-```
- X | O | X
- O | X | O
- O | X | .
-```
-
-Geen win voor O. X is weer aan zet, maar er is maar één vakje over:
-`(2,2)`. X speelt `(2,2)`:
+O speelt `(2,2)`. X vult `(2,1)`:
 
 ```
- X | O | X
- O | X | O
- O | X | X
-```
-
-Check diagonaal `(0,0)X (1,1)X (2,2)X` — **drie op een rij.** X wint.
-Utility: **+1**.
-
-#### Onder zet 2 — O speelt `(2,2)`
-
-```
- X | O | X
- O | X | O
- . | X | O
-```
-
-Bord vol bijna; controleer O-lijnen: nergens drie op een rij. X speelt
-het laatste vakje `(2,0)`:
-
-```
- X | O | X
- O | X | O
+ X | X | O
+ O | O | X
  X | X | O
 ```
 
-Check: geen drie op een rij. Bord vol → **remise**. Utility: **0**.
+Weer geen drie op een rij, bord vol → utility **0**.
 
-#### Terug naar O's keuze onder zet 2
+MIN kiest het laagste van `0` en `0`: **0**. De tak `X→(2,0)` is dus
+**0** waard.
 
-O kiest tussen `+1` (na O→(2,0)) en `0` (na O→(2,2)). O minimaliseert
-voor X → kies **0**. Utility van zet 2 is dus **0**.
-
-### Zet 3: X speelt `(2,2)`
+### Stap 3 — de middentak: X speelt `(2,1)`
 
 ```
- X | O | X
- O | X | O
+ X | X | O
+ O | O | X
+ . | X | .
+```
+
+O is aan zet. O speelt `(2,0)`:
+
+```
+ X | X | O
+ O | O | X
+ O | X | .
+```
+
+Diagonaal `(0,2) (1,1) (2,0)` is `O O O` — **O wint**. Terminal,
+utility **-1**. Geen verdere zetten.
+
+O speelt `(2,2)`. X vult `(2,0)`:
+
+```
+ X | X | O
+ O | O | X
+ X | X | O
+```
+
+Vol, geen winnaar → utility **0**.
+
+MIN kiest `min(-1, 0)` = **-1**. De tak `X→(2,1)` is **-1** waard: als
+X daar speelt, wint O.
+
+### Stap 4 — de rechtertak: X speelt `(2,2)`
+
+```
+ X | X | O
+ O | O | X
  . | . | X
 ```
 
-Diagonaal `(0,0)X (1,1)X (2,2)X` — **drie op een rij.** X wint direct.
-Utility: **+1**.
+O speelt `(2,0)`: diagonaal `O O O`, **O wint**, utility **-1**.
 
-### X's keuze
+O speelt `(2,1)`. X vult `(2,0)`:
 
-X kiest tussen:
-- Zet 1 `(2,0)`: utility **+1**
-- Zet 2 `(2,1)`: utility **0**
-- Zet 3 `(2,2)`: utility **+1**
+```
+ X | X | O
+ O | O | X
+ X | O | X
+```
 
-X maximaliseert → kiest `(2,0)` of `(2,2)`. Beide geven `+1`. Minimax
-mag óf de eerste die hij vindt teruggeven, óf willekeurig kiezen — beide
-zijn correct.
+Vol, geen winnaar → utility **0**.
 
-## Samenvatting van het rekenpatroon
+MIN kiest `min(-1, 0)` = **-1**.
+
+### Stap 5 — terug naar de wortel
+
+Nu staan er waardes onder alle drie de takken. Dit is dezelfde boom, nu
+ingevuld van de bladeren naar boven:
+
+<GameTree bord="XXO/OOX/..." waardes />
+
+X kiest het hoogste:
+
+| X-zet | MIN kiest daaronder | waarde van de tak |
+|:---:|:---:|:---:|
+| `(2,0)` | `min(0, 0)` | **0** |
+| `(2,1)` | `min(-1, 0)` | **-1** |
+| `(2,2)` | `min(-1, 0)` | **-1** |
+
+X speelt **`(2,0)`** en de uitkomst bij perfect spel is **0**: remise.
+
+Zie je wat er gebeurde? X "blokkeert" O's diagonaal, maar niet omdat
+iemand die regel heeft geprogrammeerd. De boom wijst de blokkade
+vanzelf aan: de twee andere zetten hebben een `-1` eronder hangen, en
+MIN pakt die.
+
+## Het recept in woorden
 
 ```
 1. Begin onderaan met posities die "klaar" zijn (terminal).
 2. Bereken voor elke terminal de utility: +1 / -1 / 0.
 3. Ga één niveau omhoog:
-   - Was MAX aan zet? → return het hoogste kind.
-   - Was MIN aan zet? → return het laagste kind.
-4. Herhaal tot je bij de start bent.
-5. De zet die de start-utility opleverde, is de beste zet.
+   - Was MAX aan zet? → neem het hoogste kind.
+   - Was MIN aan zet? → neem het laagste kind.
+4. Herhaal tot je bij de wortel bent.
+5. De zet die de waarde van de wortel opleverde, is de beste zet.
 ```
 
 ## Wat dit oplevert voor het coderen
 
-In Python wordt dit een **recursieve** functie: `minimax(board)` roept
-zichzelf aan op kindposities, en gebruikt `max(...)` of `min(...)`
-afhankelijk van wie aan zet is. Maar dat doen we later — eerst nog twee
-brug-pagina's.
+In Python wordt dit een **recursieve** functie: `max_value(bord)` roept
+`min_value` aan op elk kind, en die roept weer `max_value` aan, tot een
+terminal bord. Dezelfde boom, in dezelfde volgorde: eerst de linkertak
+helemaal naar beneden, dan de middentak, dan de rechter. Bij
+[bouwsteen 8](./bouwen/14-helpers) loop je precies deze boom nog een
+keer, maar dan met de code.
 
 :::info
 Deze berekening bestaat ook als printbare werkvorm in tweetallen, op een andere positie: [De perfecte speler — minimax op papier](/docs/unplugged/04-minimax-op-papier).

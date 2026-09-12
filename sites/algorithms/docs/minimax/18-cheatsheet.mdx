@@ -9,7 +9,7 @@ Snelle referentie. Klap open wat je nodig hebt.
 ## Het complete tic-tac-toe project
 
 <details>
-<summary>Alle 9 functies bij elkaar</summary>
+<summary>Alle tien functies bij elkaar</summary>
 
 ```python
 import copy
@@ -107,13 +107,15 @@ def minimax(bord):
         for zet in actions(bord):
             score = min_value(result(bord, zet))
             if score > beste_score:
-                beste_score, beste_zet = score, zet
+                beste_score = score
+                beste_zet = zet
     else:
         beste_score = math.inf
         for zet in actions(bord):
             score = max_value(result(bord, zet))
             if score < beste_score:
-                beste_score, beste_zet = score, zet
+                beste_score = score
+                beste_zet = zet
     return beste_zet
 ```
 
@@ -195,17 +197,20 @@ Drie cruciale elementen:
 
 </details>
 
-## Top-3 valkuilen
+## Valkuilen
 
 <details>
 <summary>Veelgemaakte fouten</summary>
 
-{/* foutmelding-los: samenvatting van stap 17, waar de melding gereproduceerd wordt */}
+{/* foutmelding-los: samenvatting van de fouten-pagina, waar de melding gereproduceerd wordt */}
 
 1. **Bord muteren in `result`** → gebruik `copy.deepcopy`.
-2. **Base case vergeten** → `RecursionError`. Check **eerst** of bord
-   terminal is.
-3. **`max_value` roept zichzelf aan** in plaats van `min_value` → AI
+2. **`result` vergeten in de recursie** → `RecursionError`. De recursie
+   krijgt altijd `result(bord, zet)`, nooit `bord` zelf.
+3. **Base case vergeten in `max_value` of `min_value`** → waardes van
+   `inf` en `-inf`, gewonnen borden worden niet gezien. Check **eerst** of
+   het bord terminal is.
+4. **`max_value` roept zichzelf aan** in plaats van `min_value` → AI
    verliest. Wisselbeurten zijn cruciaal.
 
 Volledig overzicht: [er gaat iets mis](./17-fouten).
@@ -239,17 +244,19 @@ Niet vereist voor onze tic-tac-toe AI, maar wel het noemen waard.
   het algoritme nog niet "ziet".
 - [helpers](./bouwen/14-helpers) — `max_value` en `min_value`
   als recursie-helpers.
-- [draai het zelf](./bouwen/15-zelf-draaien) — verzamel je 8
+- [draai het zelf](./bouwen/15-zelf-draaien) — verzamel je negen
   functies in één lokaal `tictactoe.py` (of in een verzamel-PyRunner
   als noodoplossing).
 - [minimax](./bouwen/16-minimax) — de AI zelf, geschreven in
-  je lokale file, met AI-vs-AI demo als climax.
+  je lokale bestand, en daarna speelt hij tegen zichzelf.
 - [Big O notatie](../big-o/06-kwadratisch) — waarom minimax bij grotere
   spellen onhoudbaar wordt zonder optimalisaties.
+- [Waar minimax echt is gebruikt](./01-concept#waar-minimax-echt-is-gebruikt)
+  — Deep Blue, Chinook, Stockfish.
 
 ## Licentie en bronvermelding
 
-Deze track is een afgeleide bewerking van
+Dit hoofdstuk is een afgeleide bewerking van
 [CS50 AI Project 0: Tic-Tac-Toe](https://cs50.harvard.edu/ai/projects/0/tictactoe/)
 van Harvard University. Het origineel is gelicenseerd onder
 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
@@ -257,8 +264,8 @@ van Harvard University. Het origineel is gelicenseerd onder
 **Wijzigingen ten opzichte van het origineel:**
 
 - Volledig vertaald naar het Nederlands.
-- Opgeknipt in 18 PRIMM-stappen (concept → pen-en-papier → bouwstenen →
-  tests → fouten → cheatsheet).
+- Opgeknipt in 18 PRIMM-stappen: concept, pen en papier, bouwstenen met
+  tests, fouten, cheatsheet.
 - Conceptuele uitleg over game trees, MIN/MAX-spelers en recursie
   toegevoegd.
 - Per functie inline assertion-tests toegevoegd, ingebed in dezelfde
@@ -268,7 +275,7 @@ van Harvard University. Het origineel is gelicenseerd onder
 - Geen wijzigingen aan de **specificaties** van de 8 functies — die
   zijn één-op-één overgenomen uit het CS50-project.
 
-Conform de share-alike-eis wordt deze track onder dezelfde licentie
+Conform de share-alike-eis wordt dit hoofdstuk onder dezelfde licentie
 verspreid:
 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 

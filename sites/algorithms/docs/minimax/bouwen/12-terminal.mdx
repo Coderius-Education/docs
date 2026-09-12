@@ -5,7 +5,8 @@ sidebar_position: 12
 # Bouwsteen 6 — `terminal(bord)`
 
 **Leerdoel:** je bepaalt of een spel afgelopen is. Deze functie gebruikt
-jouw `winner` uit pagina 11 — precies het patroon van pagina 9.
+jouw `winner` uit [bouwsteen 5](./11-winner) — precies het patroon van
+[functies in functies](./09-functies-in-functies).
 
 ## Wat doet deze functie?
 
@@ -21,7 +22,7 @@ cellen → het spel gaat door.
 
 ## Functies stapelen
 
-Deze functie gebruikt `winner(bord)` uit pagina 11. We *hergebruiken*
+Deze functie gebruikt `winner(bord)` uit bouwsteen 5. We *hergebruiken*
 hem in plaats van de check opnieuw te schrijven:
 
 ```python
@@ -33,7 +34,7 @@ def terminal(bord):
 ```
 
 Zie hoe `terminal` zelf weinig nieuw werk doet. Hij delegeert aan
-`winner`. Dat is precies waar [pagina 9: functies in functies](./09-functies-in-functies)
+`winner`. Dat is precies waar [functies in functies](./09-functies-in-functies)
 over ging.
 
 ## Specificatie
@@ -98,7 +99,7 @@ assert terminal(remise) is True, "Vol bord, geen winnaar -> terminal"
 bezig = [["X","O", None], ["O","X", None], [None, None, None]]
 assert terminal(bezig) is False, "Spel loopt nog -> niet terminal"
 
-bijna_vol = [["X","O","X"], ["O","X","O"], ["O", None, "X"]]
+bijna_vol = [["X","O","X"], ["X","O","O"], ["O","X", None]]
 assert terminal(bijna_vol) is False, "8 cellen, geen winnaar -> niet terminal"
 
 print("Alle tests gehaald ✓")`} />
@@ -106,12 +107,30 @@ print("Alle tests gehaald ✓")`} />
 <details>
 <summary>Tip</summary>
 
-Stap 1: `if winner(bord) is not None: return True`.
+Eerst `winner(bord)`: is die niet `None`, dan is het klaar. Daarna loop
+je door alle cellen. Vind je een `None`, dan is er nog een zet mogelijk
+en ben je meteen klaar met `False`. Kom je de lus uit zonder een `None`
+te vinden, dan is het bord vol.
 
-Stap 2: loop door alle cellen. Vind je een `None`, dan is er nog een
-zet mogelijk → `return False`.
+</details>
 
-Stap 3: lus klaar zonder `None` te vinden → bord vol → `return True`.
+<details>
+<summary>Antwoord</summary>
+
+```python
+def terminal(bord):
+    if winner(bord) is not None:
+        return True
+    for rij in bord:
+        for cel in rij:
+            if cel is None:
+                return False
+    return True
+```
+
+De `return False` staat ín de lus: bij de eerste lege cel weet je
+genoeg. De `return True` erna wordt alleen bereikt als de lus geen
+enkele lege cel vond.
 
 </details>
 

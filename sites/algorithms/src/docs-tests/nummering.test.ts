@@ -126,6 +126,36 @@ describe('de links tussen lessen', () => {
     expect(kapot).toEqual([]);
   });
 
+  it('proza noemt geen paginanummers: de sidebar toont er geen', () => {
+    // "je hebt player al geschreven op pagina 7" — dat nummer is het
+    // bestandsprefix, en dat ziet een leerling nergens. Bij de doorloop van
+    // minimax stonden er negen. Verwijs met een link en de titel van de les.
+    // Knapsack doet het nog op de oude manier; die staan hier als exacte
+    // achterstand, zodat een nieuwe meteen opvalt en een opgeloste weg moet.
+    const achterstand = [
+      'knapsack/bouwen/06-een-rij: pagina 02',
+      'knapsack/bouwen/06-een-rij: pagina 02',
+      'knapsack/bouwen/07-volledige-tabel: pagina 5',
+      'knapsack/bouwen/07-volledige-tabel: pagina 5',
+      'knapsack/bouwen/07-volledige-tabel: pagina 6',
+      'knapsack/bouwen/07-volledige-tabel: pagina 02',
+      'knapsack/bouwen/07-volledige-tabel: pagina 02',
+      'knapsack/08-compleet: pagina 02',
+      'knapsack/08-compleet: pagina 02',
+      'knapsack/09-aanpassen: pagina 02',
+      'knapsack/09-aanpassen: pagina 02',
+      'knapsack/09-aanpassen: pagina 02',
+    ];
+    const kapot: string[] = [];
+    for (const l of ALLE) {
+      const proza = l.tekst.replace(/```[\s\S]*?```/g, '').replace(/<PyRunner[\s\S]*?\/>/g, '');
+      for (const m of proza.matchAll(/\bpagina(?:'s)? \d+/g)) {
+        kapot.push(`${l.id}: ${m[0]}`);
+      }
+    }
+    expect(kapot).toEqual(achterstand);
+  });
+
   it('links noemen geen lesnummers in hun tekst', () => {
     // "[stap 4: …]" en "[1.8 Het complete algoritme]" verwezen naar nummers die
     // de H1 niet meer draagt.

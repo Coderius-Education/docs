@@ -33,15 +33,6 @@ const ACHTERSTAND = new Map<string, string[]>([
   ['knapsack/bouwen/05-tabel-leeg.mdx', ['Bouw zelf en test']],
   ['knapsack/bouwen/06-een-rij.mdx', ['Bouw zelf en test']],
   ['knapsack/bouwen/07-volledige-tabel.mdx', ['Bouw zelf en test']],
-  ['minimax/bouwen/06-initial_state.mdx', ['Bouw zelf en test']],
-  ['minimax/bouwen/07-player.mdx', ['Bouw zelf en test']],
-  ['minimax/bouwen/08-actions.mdx', ['Bouw zelf en test']],
-  ['minimax/bouwen/10-result.mdx', ['Bouw zelf en test']],
-  ['minimax/bouwen/11-winner.mdx', ['Bouw zelf en test']],
-  ['minimax/bouwen/12-terminal.mdx', ['Bouw zelf en test']],
-  ['minimax/bouwen/13-utility.mdx', ['Bouw zelf en test']],
-  ['minimax/bouwen/14-helpers.mdx', ['Bouw zelf en test']],
-  ['minimax/bouwen/16-minimax.mdx', ['Bouw zelf in `tictactoe.py`']],
   ['pagerank/08-aanpassen.mdx', ['Opdracht 1 — draai aan `d`', 'Opdracht 2 — voeg een link toe']],
 ]);
 

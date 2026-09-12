@@ -38,7 +38,7 @@ X wint **als de tegenstander een fout maakt**. Maar als beide spelers
 optimaal spelen — bv. allebei Minimax gebruiken — eindigt het altijd in
 **remise**. Tic-tac-toe is een opgelost spel.
 
-Dat is precies wat we straks zelf zullen zien met de AI-vs-AI demo.
+Straks zie je dat zelf, als je AI tegen zichzelf speelt.
 
 </details>
 
@@ -64,21 +64,24 @@ opleverde, beter dan de `min(2,9)=2` onder tak B.
 ## Stelling 4
 
 > *"Minimax werkt voor elk spel waar beide spelers om de beurt zetten
-> doen."*
+> doen, ook als er dobbelstenen of verborgen kaarten in het spel zijn."*
 
 <details>
 <summary>Antwoord</summary>
 
-**Waar — voor *deterministische* spellen met *perfecte informatie*.**
+**Niet waar.**
 
-Dat betekent:
+Minimax rekent elke tak van de boom door alsof de uitkomst van een zet
+vaststaat en beide spelers alles zien. Dat vraagt twee dingen van het
+spel:
+
 - **Deterministisch**: geen dobbelstenen, kaarten of toeval. Een zet
   heeft een vaste uitkomst.
 - **Perfecte informatie**: beide spelers zien het hele bord. Geen
   verborgen kaarten of mist-of-war.
 
-Minimax werkt dus voor schaken, dammen, tic-tac-toe. Niet voor poker
-(verborgen kaarten) of backgammon (dobbelstenen) — daar zijn aanpassingen
+Minimax werkt dus voor schaken, dammen en tic-tac-toe. Voor poker
+(verborgen kaarten) of backgammon (dobbelstenen) zijn aanpassingen
 nodig.
 
 </details>
@@ -115,14 +118,14 @@ eigen body aanroept.
 Om te wéten welke tak de beste is, moet je **alle** takken vergelijken.
 Je kunt pas een keuze maken nadat alle alternatieven zijn doorgerekend.
 
-Voor zeer grote spellen (schaken.) bestaan optimalisaties zoals
+Voor zeer grote spellen (schaken) bestaan optimalisaties zoals
 **alpha-beta pruning** die sommige takken kunnen overslaan zonder de
 uitkomst te beïnvloeden. Maar dat is een **truc bovenop** Minimax. De
 kale Minimax doet alles.
 
 </details>
 
-Klaar met voorspellen? Eerst nog twee brug-pagina's: hoe het bord eruit
-ziet in Python, en hoe functies elkaar aanroepen.
+Hierna twee korte pagina's: hoe het bord eruitziet in Python, en hoe
+functies elkaar aanroepen.
 
 Door naar [het bord in Python →](./04-bord-in-python).

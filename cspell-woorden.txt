@@ -155,6 +155,7 @@ lijnvolgen
 Lijnvolgen
 linestyle
 linkerbatje
+linkertak
 linkset
 Loopen
 loopen
@@ -174,6 +175,7 @@ mergesort
 mergt
 micropython
 middencel
+middentak
 middenverticaal
 millis
 móet
@@ -245,6 +247,7 @@ rechterpaneel
 rechterrand
 rechtersensor
 rechterspeler
+rechtertak
 rechtsklikmenu
 rechtsklikt
 Rechtsklikmenu
@@ -355,3 +358,7 @@ ylabel
 zakgeldrekenaar
 zettenlijst
 áchter
+
+damprogramma
+Stockfish
+schaakengine
