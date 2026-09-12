@@ -53,6 +53,7 @@ const ZONDER_BLOK: Record<string, string> = {
   'FastAPI/projectstructuur.mdx': 'naslag over deze cursus zelf',
   'FastAPI/redirect.mdx': 'bouwt op forms en database, allebei in deze cursus',
   'cheatsheet.md': 'naslag',
+  'starten.md': 'naslag: de vier stappen om te beginnen, verwijst per stap naar de editor-cursus',
   'troubleshooting.md': 'naslag',
 };
 

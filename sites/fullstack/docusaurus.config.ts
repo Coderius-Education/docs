@@ -35,6 +35,7 @@ export default createConfig({
       logo: { alt: 'My Site Logo', src: 'img/logo.svg' },
       items: [
         { type: 'docSidebar', sidebarId: 'apiSidebar', position: 'left', label: 'FastAPI' },
+        { type: 'doc', docId: 'starten', position: 'left', label: 'Hoe start ik?' },
         { type: 'doc', docId: 'cheatsheet', position: 'left', label: 'Cheatsheet' },
         { type: 'doc', docId: 'troubleshooting', position: 'left', label: 'Er gaat iets mis' },
         { to: '/project-checken', label: 'Project checken', position: 'left' },
