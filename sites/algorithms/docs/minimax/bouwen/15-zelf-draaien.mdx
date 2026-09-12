@@ -4,33 +4,32 @@ sidebar_position: 15
 
 # Draai het zelf — buiten de browser
 
-**Leerdoel:** je verzamelt je 8 functies in één lokaal Python-bestand
+**Leerdoel:** je verzamelt je negen functies in één lokaal Python-bestand
 zodat je daar straks de laatste functie (`minimax`) bij kan schrijven —
 in een echte editor, niet in een PyRunner.
 
 ## Wat heb je nu?
 
-Acht werkende functies, verspreid over 8 pagina's:
+Negen werkende functies, verspreid over acht bouwstenen:
 
 ```
 initial_state, player, actions, result,
 winner, terminal, utility, max_value, min_value
 ```
 
-(De helpers `max_value` en `min_value` zijn samen één bouwsteen, dus
-**8 functies, 9 bouwstenen** — let goed op, want je hebt ze straks
-allemaal nodig.)
+(`max_value` en `min_value` zijn samen één bouwsteen, vandaar negen
+functies in acht bouwstenen. Je hebt ze straks allemaal nodig.)
 
 De laatste bouwsteen, `minimax`, komt op de volgende pagina. Maar
-voordat we die schrijven, brengen we je 8 functies eerst **bij elkaar**.
+voordat we die schrijven, brengen we je negen functies eerst **bij elkaar**.
 
 ## Waarom uit de PyRunner stappen?
 
 Tot nu toe woonden je functies op losse pagina's. Werkt prima om te
-leren — maar nu wil je `minimax` schrijven en die heeft alle 8 nodig.
+leren — maar nu wil je `minimax` schrijven en die heeft alle negen nodig.
 Drie nadelen van in de PyRunner blijven:
 
-- Je moet je 8 functies elke keer opnieuw plakken om iets te kunnen
+- Je moet je negen functies elke keer opnieuw plakken om iets te kunnen
   draaien.
 - De browser kan een lange minimax-run niet onderbreken.
 - Je hebt geen **echte file** met je werk; copy-pasten vanuit de
@@ -41,7 +40,7 @@ Twee opties hieronder lossen dat op — kies wat bij jou past.
 ## Optie A — verzamel-PyRunner (alleen als noodoplossing)
 
 Voor wie écht geen Python lokaal kan installeren (bv. op een
-Chromebook waar je geen software mag installeren). Plak je 8 functies
+Chromebook waar je geen software mag installeren). Plak je negen functies
 in de PyRunner hieronder en print een sanity-check. De volgende pagina
 laat je dan ook minimax in dezelfde PyRunner schrijven (in een
 `<details>` blok onderaan).
@@ -50,7 +49,7 @@ laat je dan ook minimax in dezelfde PyRunner schrijven (in een
 import math
 
 
-# Plak hier je 8 functies (initial_state t/m min_value) uit pagina 06-14:
+# Plak hier je negen functies (initial_state t/m min_value) uit de bouwstenen:
 
 def initial_state():
     # vul aan
@@ -95,7 +94,7 @@ print("Leeg bord:", bord)
 print("Wie is aan zet?", player(bord))
 print("Aantal mogelijke zetten:", len(actions(bord)))`} />
 
-Als die output klopt (3×3 None, "X" aan zet, 9 zetten), zijn je 8
+Als die output klopt (3×3 None, "X" aan zet, 9 zetten), zijn je negen
 functies klaar voor minimax.
 
 ## Optie B — lokaal in VS Code (aanbevolen)
@@ -127,9 +126,9 @@ minimax-tictactoe/
 
 `tictactoe.py` is een leeg bestand voor je code.
 
-### Stap 3 — je 8 functies in `tictactoe.py` plakken
+### Stap 3 — je negen functies in `tictactoe.py` plakken
 
-Open elke bouwsteen-pagina (06 t/m 14) van deze site, kopieer **jouw
+Open elke bouwsteen-pagina van deze site, kopieer **jouw
 oplossing** uit elke PyRunner, en plak ze onder elkaar in
 `tictactoe.py`. Volgorde:
 
@@ -157,8 +156,8 @@ print("Wie is aan zet?", player(bord))
 print("Aantal mogelijke zetten:", len(actions(bord)))
 ```
 
-Open een **terminal** in VS Code (`Ctrl + ~` of via menu *Terminal →
-New Terminal*) en typ:
+Open een **terminal** in VS Code via het menu **Terminal** → **New
+Terminal** en typ:
 
 ```
 python tictactoe.py

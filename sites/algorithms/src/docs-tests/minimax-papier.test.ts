@@ -103,9 +103,15 @@ describe('minimax op papier', () => {
 
   it('de tabel geeft per X-zet de waarde die minimax uitrekent', () => {
     const tabel = tabelUit(tekst);
-    expect([...tabel.keys()].sort()).toEqual(zetten(bord).map(([i, j]) => `${i},${j}`).sort());
+    expect([...tabel.keys()].sort()).toEqual(
+      zetten(bord)
+        .map(([i, j]) => `${i},${j}`)
+        .sort(),
+    );
     for (const z of zetten(bord)) {
-      expect(tabel.get(`${z[0]},${z[1]}`), `waarde van X→(${z[0]},${z[1]})`).toBe(waarde(na(bord, z)));
+      expect(tabel.get(`${z[0]},${z[1]}`), `waarde van X→(${z[0]},${z[1]})`).toBe(
+        waarde(na(bord, z)),
+      );
     }
   });
 

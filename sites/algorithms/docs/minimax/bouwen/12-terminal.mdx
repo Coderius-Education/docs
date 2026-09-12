@@ -5,7 +5,8 @@ sidebar_position: 12
 # Bouwsteen 6 — `terminal(bord)`
 
 **Leerdoel:** je bepaalt of een spel afgelopen is. Deze functie gebruikt
-jouw `winner` uit pagina 11 — precies het patroon van pagina 9.
+jouw `winner` uit [bouwsteen 5](./11-winner) — precies het patroon van
+[functies in functies](./09-functies-in-functies).
 
 ## Wat doet deze functie?
 
@@ -21,7 +22,7 @@ cellen → het spel gaat door.
 
 ## Functies stapelen
 
-Deze functie gebruikt `winner(bord)` uit pagina 11. We *hergebruiken*
+Deze functie gebruikt `winner(bord)` uit bouwsteen 5. We *hergebruiken*
 hem in plaats van de check opnieuw te schrijven:
 
 ```python
@@ -33,7 +34,7 @@ def terminal(bord):
 ```
 
 Zie hoe `terminal` zelf weinig nieuw werk doet. Hij delegeert aan
-`winner`. Dat is precies waar [pagina 9: functies in functies](./09-functies-in-functies)
+`winner`. Dat is precies waar [functies in functies](./09-functies-in-functies)
 over ging.
 
 ## Specificatie

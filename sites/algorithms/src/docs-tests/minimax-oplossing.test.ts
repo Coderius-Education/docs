@@ -54,7 +54,9 @@ function tests(tekst: string): string {
 }
 
 function cheatsheet(): string {
-  const m = lees('18-cheatsheet.mdx').match(/<summary>Alle .*? bij elkaar<\/summary>\s*```python\n([\s\S]*?)```/);
+  const m = lees('18-cheatsheet.mdx').match(
+    /<summary>Alle .*? bij elkaar<\/summary>\s*```python\n([\s\S]*?)```/,
+  );
   expect(m, 'de cheatsheet heeft een blok met de complete code').not.toBeNull();
   return m?.[1] ?? '';
 }

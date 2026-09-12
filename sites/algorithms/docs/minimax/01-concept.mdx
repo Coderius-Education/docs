@@ -55,14 +55,18 @@ Heel kleine illustratie (niet een echt tic-tac-toe spel, maar even ter
 visualisatie):
 
 ```
-                MAX (wij kiezen)
+               ▲ MAX (wij kiezen)
               ╱            ╲
              A              B
              │              │
-            MIN            MIN
+           ▼ MIN          ▼ MIN
            ╱ ╲             ╱ ╲
          +1   -1         0    +1
 ```
+
+Een MAX-knoop tekenen we als een driehoek omhoog (▲): die wil omhoog.
+Een MIN-knoop als een driehoek omlaag (▼). Zo tekent CS50 ze ook, en zo
+staan ze in de rest van deze track.
 
 Wij (MAX) kunnen kiezen tussen tak `A` en tak `B`. Daarna kiest de
 tegenstander (MIN) tussen zijn twee opties.
@@ -95,13 +99,13 @@ Tic-tac-toe heeft een **klein** aantal mogelijke spellen (~250.000 als
 je alles meerekent). Een computer kan de hele game tree in een seconde
 doorrekenen. Een mens niet — wij gebruiken patronen en intuïtie.
 
-Voor schaken (~10⁴⁰ posities) is de hele tree te groot. Daar gebruik je
+Voor schaken (meer dan 10⁴⁰ posities) is de hele tree te groot. Daar gebruik je
 slimmere varianten zoals *alpha-beta pruning* of *Monte Carlo Tree
 Search*. Maar het **fundament** blijft minimax.
 
 ## Wat we gaan bouwen
 
-Na deze track schrijf je 8 Python-functies die samen een tic-tac-toe-AI
+Na deze track schrijf je tien Python-functies die samen een tic-tac-toe-AI
 vormen die **nooit verliest**. Dat is geen overdrijving — als beide
 spelers optimaal spelen, eindigt tic-tac-toe altijd in remise.
 
