@@ -401,6 +401,9 @@ Dit is bedoeld voor één keer wachten. Moet er telkens opnieuw iets
 gebeuren, neem dan een echte `Timer`-node, zoals bij
 [Automatisch spawnen met een Timer](/docs/spawn_timer).
 
+Uitgebreid, met een power-up die vijf seconden duurt:
+[Een power-up: tijdelijk hoger springen](/docs/power_up).
+
 </details>
 
 <details>

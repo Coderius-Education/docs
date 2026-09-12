@@ -77,6 +77,7 @@ const ZONDER_BLOK: { reden: string; lessen: string[] }[] = [
       '05-bewegingsscript/krachten.md',
       '05-bewegingsscript/motor.md',
       '05-bewegingsscript/remmen.md',
+      '07-signals-en-score/power_up.md',
       '07-signals-en-score/score_in_karakter.md',
       '07-signals-en-score/score_op_scherm.md',
       '07-signals-en-score/signals_muntje.md',
