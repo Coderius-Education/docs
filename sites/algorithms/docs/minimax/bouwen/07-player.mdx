@@ -105,16 +105,30 @@ print("Alle tests gehaald ✓")`} />
 <details>
 <summary>Tip</summary>
 
-Gebruik `rij.count("X")` om in één rij te tellen, en tel de rijen
-bij elkaar op met een loop:
+`rij.count("X")` telt hoe vaak `"X"` in één rij staat. Begin een
+teller op 0, loop over de drie rijen en tel er per rij het aantal bij
+op. Doe hetzelfde voor `"O"`, en vergelijk daarna de twee tellers met
+een `if`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
 
 ```python
-x_count = 0
-for rij in bord:
-    x_count += rij.count("X")
+def player(bord):
+    x_count = 0
+    o_count = 0
+    for rij in bord:
+        x_count += rij.count("X")
+        o_count += rij.count("O")
+    if x_count == o_count:
+        return "X"
+    return "O"
 ```
 
-Daarna een `if`-vergelijking met de twee tellingen.
+Zijn de tellingen gelijk, dan is X aan zet (X begint). Anders heeft X
+er één meer en is O aan zet.
 
 </details>
 

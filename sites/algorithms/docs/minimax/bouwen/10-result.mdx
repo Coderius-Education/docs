@@ -152,20 +152,28 @@ print("Alle tests gehaald ✓")`} />
 <details>
 <summary>Tip</summary>
 
-Drie regels werk:
+Vier regels werk: een `deepcopy` maken, rij en kolom uit de tuple
+halen, de cel in de kopie vullen, de kopie teruggeven. Rij en kolom
+haal je uit de tuple met `i, j = zet` — dat heet tuple-unpacking.
+
+Vraag aan `player` wie aan zet is op het **originele** `bord`, niet op
+de kopie nadat je de cel hebt gevuld: dan telt de kopie één zet extra
+en geeft `player` de verkeerde speler.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
 
 ```python
-nieuw = copy.deepcopy(bord)
-i, j = zet
-nieuw[i][j] = player(bord)
-return nieuw
+def result(bord, zet):
+    nieuw = copy.deepcopy(bord)
+    i, j = zet
+    nieuw[i][j] = player(bord)
+    return nieuw
 ```
 
-`i, j = zet` is tuple-unpacking: pak rij en kolom los uit de tuple.
-
-Belangrijk: roep `player(bord)` aan **vóór** je de cel invult — want
-**ná** de wijziging telt het bord er één extra zet, en zou `player`
-het verkeerde antwoord geven.
+`bord` blijft onaangeraakt; alleen `nieuw` krijgt de zet.
 
 </details>
 

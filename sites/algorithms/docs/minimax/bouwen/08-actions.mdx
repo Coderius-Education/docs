@@ -94,20 +94,28 @@ print("Alle tests gehaald ✓")`} />
 <details>
 <summary>Tip</summary>
 
-Twee genestelde lussen en een `set.add`:
-
-```python
-mogelijk = set()
-for i in range(3):
-    for j in range(3):
-        if bord[i][j] is None:
-            mogelijk.add((i, j))
-return mogelijk
-```
+Dezelfde twee geneste lussen als op [het bord in Python](../04-bord-in-python),
+met daarin een `if` op `bord[i][j] is None`. Een set maak je met
+`set()`, en je voegt er iets aan toe met `.add(...)`.
 
 Let op de **dubbele haakjes**: `mogelijk.add((i, j))` voegt één tuple
-toe. `mogelijk.add(i, j)` zou Python verwarren — `add` accepteert maar
+toe. `mogelijk.add(i, j)` geeft een foutmelding — `add` accepteert maar
 één argument.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def actions(bord):
+    mogelijk = set()
+    for i in range(3):
+        for j in range(3):
+            if bord[i][j] is None:
+                mogelijk.add((i, j))
+    return mogelijk
+```
 
 </details>
 

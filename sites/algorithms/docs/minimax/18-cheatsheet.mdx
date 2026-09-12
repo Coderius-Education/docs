@@ -107,13 +107,15 @@ def minimax(bord):
         for zet in actions(bord):
             score = min_value(result(bord, zet))
             if score > beste_score:
-                beste_score, beste_zet = score, zet
+                beste_score = score
+                beste_zet = zet
     else:
         beste_score = math.inf
         for zet in actions(bord):
             score = max_value(result(bord, zet))
             if score < beste_score:
-                beste_score, beste_zet = score, zet
+                beste_score = score
+                beste_zet = zet
     return beste_zet
 ```
 

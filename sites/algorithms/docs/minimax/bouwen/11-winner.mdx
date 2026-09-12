@@ -51,7 +51,7 @@ Welke lijn is winnend op dit bord?
 bord = [
     ["X", "O", "X"],
     ["O", "X", "O"],
-    ["O", "O", "X"],
+    ["O", "X", "X"],
 ]
 ```
 
@@ -107,24 +107,35 @@ print("Alle tests gehaald ✓")`} />
 <details>
 <summary>Tip</summary>
 
-Kolom-check:
-
-```python
-for j in range(3):
-    if bord[0][j] == bord[1][j] == bord[2][j] and bord[0][j] is not None:
-        return bord[0][j]
-```
-
-Diagonalen — twee aparte if's:
-
-```python
-if bord[0][0] == bord[1][1] == bord[2][2] and bord[0][0] is not None:
-    return bord[0][0]
-if bord[0][2] == bord[1][1] == bord[2][0] and bord[0][2] is not None:
-    return bord[0][2]
-```
+De rij-check staat er al. Een kolom `j` bestaat uit `bord[0][j]`,
+`bord[1][j]` en `bord[2][j]`: dezelfde vergelijking, in een lus over
+`j`. De twee diagonalen zijn elk één `if` met de drie cellen uit het
+commentaar.
 
 Helemaal aan het eind blijft `return None` staan: geen winnaar gevonden.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def winner(bord):
+    for rij in bord:
+        if rij[0] == rij[1] == rij[2] and rij[0] is not None:
+            return rij[0]
+    for j in range(3):
+        if bord[0][j] == bord[1][j] == bord[2][j] and bord[0][j] is not None:
+            return bord[0][j]
+    if bord[0][0] == bord[1][1] == bord[2][2] and bord[0][0] is not None:
+        return bord[0][0]
+    if bord[0][2] == bord[1][1] == bord[2][0] and bord[0][2] is not None:
+        return bord[0][2]
+    return None
+```
+
+Acht lijnen, vier checks: drie rijen in één lus, drie kolommen in één
+lus, en de twee diagonalen los.
 
 </details>
 

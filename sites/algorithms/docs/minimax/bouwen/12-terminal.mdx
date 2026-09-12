@@ -106,12 +106,30 @@ print("Alle tests gehaald ✓")`} />
 <details>
 <summary>Tip</summary>
 
-Stap 1: `if winner(bord) is not None: return True`.
+Eerst `winner(bord)`: is die niet `None`, dan is het klaar. Daarna loop
+je door alle cellen. Vind je een `None`, dan is er nog een zet mogelijk
+en ben je meteen klaar met `False`. Kom je de lus uit zonder een `None`
+te vinden, dan is het bord vol.
 
-Stap 2: loop door alle cellen. Vind je een `None`, dan is er nog een
-zet mogelijk → `return False`.
+</details>
 
-Stap 3: lus klaar zonder `None` te vinden → bord vol → `return True`.
+<details>
+<summary>Antwoord</summary>
+
+```python
+def terminal(bord):
+    if winner(bord) is not None:
+        return True
+    for rij in bord:
+        for cel in rij:
+            if cel is None:
+                return False
+    return True
+```
+
+De `return False` staat ín de lus: bij de eerste lege cel weet je
+genoeg. De `return True` erna wordt alleen bereikt als de lus geen
+enkele lege cel vond.
 
 </details>
 

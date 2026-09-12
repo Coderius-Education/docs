@@ -55,8 +55,14 @@ die hoort leeg te zijn (`None`).
 
 ## Bouw zelf en test
 
-Vul de functie in. Onder de functie staan tests die controleren of het
-klopt — runt zonder fouten als alles goed is.
+{/* foutmelding-van: assert 1 == 2, "Bord moet 3 rijen hebben" */}
+
+Vul de functie in. Onder de functie staan tests: regels die met
+`assert` beginnen. Een `assert` controleert of wat erachter staat waar
+is. Is dat niet zo, dan stopt het programma met een `AssertionError` en
+de boodschap achter de komma, zodat je ziet wélke test faalde. Halen
+alle tests het, dan zie je onderaan "Alle tests gehaald ✓". Zo werkt
+het op elke bouwsteen-pagina.
 
 {/* niet-draaien: startcode; de asserts falen tot de leerling de opdracht afmaakt */}
 <PyRunner initialCode={`def initial_state():
@@ -83,21 +89,31 @@ print("Alle tests gehaald ✓")`} />
 <details>
 <summary>Tip</summary>
 
-Schrijf de drie rijen letterlijk uit:
+Schrijf de drie rijen letterlijk uit, als een lijst met daarin drie
+lijsten van drie keer `None`. Precies zoals het bord op
+[het bord in Python](../04-bord-in-python) eruitzag, maar dan leeg.
+
+⚠ Pas op met `[[None] * 3] * 3` — dat lijkt handig, maar geeft drie
+keer dezélfde rij (alias). De laatste test hierboven vangt dat: een
+wijziging in rij 0 zou anders ook rij 1 raken.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
 
 ```python
-return [
-    [None, None, None],
-    [None, None, None],
-    [None, None, None],
-]
+def initial_state():
+    return [
+        [None, None, None],
+        [None, None, None],
+        [None, None, None],
+    ]
 ```
 
-Kortere variant: `[[None] * 3 for _ in range(3)]`.
-
-⚠ Pas op met `[[None] * 3] * 3` — dat lijkt korter, maar geeft drie
-keer dezélfde rij (alias). De laatste test hierboven vangt dat:
-update aan rij 0 zou anders ook rij 1 raken.
+In de startcode van latere bouwstenen staat de kortere schrijfwijze
+`[[None] * 3 for _ in range(3)]`: die maakt óók drie losse rijen. Je
+hoeft hem niet zelf te schrijven.
 
 </details>
 

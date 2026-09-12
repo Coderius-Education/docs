@@ -98,25 +98,44 @@ def minimax(bord):
 <details>
 <summary>Tip</summary>
 
-Het patroon is bijna identiek aan `max_value` / `min_value`, met één
+Het patroon is bijna identiek aan `max_value` en `min_value`, met één
 extra ding: **onthoud welke zet** het optimum opleverde, niet alleen
-de score.
+de score. Je hebt dus twee variabelen bij te houden, `beste_score` en
+`beste_zet`, en een `if` per speler: voor X vergelijk je met `>` en
+begin je op `-math.inf`, voor O met `<` en `math.inf`.
+
+Vergeet je `beste_zet` bij te werken? Dan geeft minimax `None` terug.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
 
 ```python
-if player(bord) == "X":
-    beste_score = -math.inf
-    for zet in actions(bord):
-        score = min_value(result(bord, zet))
-        if score > beste_score:
-            beste_score = score
-            beste_zet = zet
-else:
-    # spiegelbeeld voor O: math.inf, max_value, <
-    ...
+def minimax(bord):
+    if terminal(bord):
+        return None
+
+    beste_zet = None
+    if player(bord) == "X":
+        beste_score = -math.inf
+        for zet in actions(bord):
+            score = min_value(result(bord, zet))
+            if score > beste_score:
+                beste_score = score
+                beste_zet = zet
+    else:
+        beste_score = math.inf
+        for zet in actions(bord):
+            score = max_value(result(bord, zet))
+            if score < beste_score:
+                beste_score = score
+                beste_zet = zet
+    return beste_zet
 ```
 
-Let op de twee toewijzingen onder de if: zowel `beste_score` als
-`beste_zet`. Vergeet je `beste_zet`? Dan returnt minimax `None`.
+Het is `max_value` met een geheugen: dezelfde lus, alleen onthoud je
+naast de beste score ook bij welke zet die hoorde.
 
 </details>
 

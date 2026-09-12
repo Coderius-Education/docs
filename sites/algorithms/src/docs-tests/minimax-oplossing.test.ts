@@ -92,7 +92,8 @@ describe('minimax — een goede oplossing haalt de tests van elke bouwsteen', ()
     it(`${naam}: cheatsheet-code + antwoord van de pagina haalt de tests`, () => {
       const tekst = lees(naam);
       const eigen = antwoord(tekst);
-      const r = draai(`${compleet}\n\n${eigen ?? ''}\n\n${tests(tekst)}`);
+      expect(eigen, 'de pagina heeft een Antwoord-blok met de functie').not.toBeNull();
+      const r = draai(`${compleet}\n\n${eigen}\n\n${tests(tekst)}`);
       expect(r.uit, r.uit).toContain('Alle tests gehaald ✓');
       expect(r.status).toBe(0);
     });
