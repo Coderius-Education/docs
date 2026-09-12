@@ -64,6 +64,12 @@ export interface Concept {
   /** Nederlandstalig label voor de checklist. */
   label: string;
   level: ConceptLevel;
+  /**
+   * Optioneel: de denkvaardigheid van Bloom (onthouden, begrijpen, toepassen,
+   * analyseren, evalueren, creëren) als tweede as naast het niveau. De
+   * rapportage doet er nog niets mee; de tabel van een site legt hem vast.
+   */
+  bloom?: string;
   detect: ConceptDetect;
 }
 

@@ -9,6 +9,7 @@
     "./types": "./src/types.ts",
     "./matchConcepts": "./src/matchConcepts.ts",
     "./levelSummary": "./src/levelSummary.ts",
+    "./conceptLevel": "./src/conceptLevel.ts",
     "./validateConfig": "./src/validateConfig.ts",
     "./package.json": "./package.json"
   },

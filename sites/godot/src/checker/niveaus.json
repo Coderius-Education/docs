@@ -1,0 +1,427 @@
+{
+  "tracks": [
+    {
+      "id": "start",
+      "label": "Start"
+    },
+    {
+      "id": "verdieping",
+      "label": "Verdieping"
+    }
+  ],
+  "onderwerpen": [
+    {
+      "id": "2d",
+      "label": "2D"
+    },
+    {
+      "id": "gdscript",
+      "label": "GDScript"
+    },
+    {
+      "id": "project",
+      "label": "Project"
+    },
+    {
+      "id": "gesprek",
+      "label": "Gesprek"
+    }
+  ],
+  "bloom": [
+    {
+      "id": "onthouden",
+      "label": "Onthouden"
+    },
+    {
+      "id": "begrijpen",
+      "label": "Begrijpen"
+    },
+    {
+      "id": "toepassen",
+      "label": "Toepassen"
+    },
+    {
+      "id": "analyseren",
+      "label": "Analyseren"
+    },
+    {
+      "id": "evalueren",
+      "label": "Evalueren"
+    },
+    {
+      "id": "creëren",
+      "label": "Creëren"
+    }
+  ],
+  "concepten": [
+    {
+      "id": "2d-tilemaplayer",
+      "onderwerp": "2d",
+      "groep": "Nodes",
+      "concept": "TileMapLayer",
+      "bloom": "onthouden",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "2d-texturerect",
+      "onderwerp": "2d",
+      "groep": "Nodes",
+      "concept": "TextureRect",
+      "bloom": "onthouden",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "2d-characterbody2d",
+      "onderwerp": "2d",
+      "groep": "Nodes",
+      "concept": "CharacterBody2D",
+      "bloom": "onthouden",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "2d-animatedsprite2d",
+      "onderwerp": "2d",
+      "groep": "Nodes",
+      "concept": "AnimatedSprite2D",
+      "bloom": "onthouden",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "2d-collisionshape2d",
+      "onderwerp": "2d",
+      "groep": "Nodes",
+      "concept": "CollisionShape2D",
+      "bloom": "onthouden",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "2d-camera2d",
+      "onderwerp": "2d",
+      "groep": "Nodes",
+      "concept": "Camera2D",
+      "bloom": "onthouden",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "2d-area2d",
+      "onderwerp": "2d",
+      "groep": "Nodes",
+      "concept": "Area2D",
+      "bloom": "onthouden",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "2d-canvaslayer",
+      "onderwerp": "2d",
+      "groep": "Nodes",
+      "concept": "CanvasLayer",
+      "bloom": "onthouden",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "2d-label",
+      "onderwerp": "2d",
+      "groep": "Nodes",
+      "concept": "Label",
+      "bloom": "onthouden",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "2d-control",
+      "onderwerp": "2d",
+      "groep": "Nodes",
+      "concept": "Control",
+      "bloom": "onthouden",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "2d-vboxcontainer",
+      "onderwerp": "2d",
+      "groep": "Nodes",
+      "concept": "VBoxContainer",
+      "bloom": "onthouden",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "2d-button",
+      "onderwerp": "2d",
+      "groep": "Nodes",
+      "concept": "Button",
+      "bloom": "onthouden",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "2d-nieuwe-nodes",
+      "onderwerp": "2d",
+      "groep": "Zelf ontdekken",
+      "concept": "zelf ontdekken en toepassen van nieuwe nodes",
+      "bloom": "creëren",
+      "start": "gevorderd",
+      "verdieping": "basis"
+    },
+    {
+      "id": "gd-snelheid",
+      "onderwerp": "gdscript",
+      "groep": "Je game eigen maken",
+      "concept": "snelheid veranderen",
+      "bloom": "toepassen",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "gd-sprongkracht",
+      "onderwerp": "gdscript",
+      "groep": "Je game eigen maken",
+      "concept": "sprongkracht veranderen",
+      "bloom": "toepassen",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "gd-keybindings",
+      "onderwerp": "gdscript",
+      "groep": "Je game eigen maken",
+      "concept": "keybindings hernoemen",
+      "bloom": "toepassen",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "gd-animatie",
+      "onderwerp": "gdscript",
+      "groep": "Je game eigen maken",
+      "concept": "animatie veranderen",
+      "bloom": "toepassen",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "gd-signal",
+      "onderwerp": "gdscript",
+      "groep": "Je game eigen maken",
+      "concept": "signal toepassen",
+      "bloom": "onthouden",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "gd-volgend-level",
+      "onderwerp": "gdscript",
+      "groep": "Je game eigen maken",
+      "concept": "naar volgend level",
+      "bloom": "onthouden",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "gd-globals",
+      "onderwerp": "gdscript",
+      "groep": "Verder met code",
+      "concept": "nuttig gebruik globals",
+      "bloom": "toepassen",
+      "start": "gevorderd",
+      "verdieping": "basis"
+    },
+    {
+      "id": "gd-instantiate",
+      "onderwerp": "gdscript",
+      "groep": "Verder met code",
+      "concept": "nuttig gebruik instantiate",
+      "bloom": "toepassen",
+      "start": "gevorderd",
+      "verdieping": "gevorderd"
+    },
+    {
+      "id": "gd-groups",
+      "onderwerp": "gdscript",
+      "groep": "Verder met code",
+      "concept": "groups",
+      "bloom": "toepassen",
+      "start": "gevorderd",
+      "verdieping": "gevorderd"
+    },
+    {
+      "id": "gd-toelichting",
+      "onderwerp": "gdscript",
+      "groep": "Verder met code",
+      "concept": "toelichting in comments (omdat, zodat, want)",
+      "bloom": "begrijpen",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "gd-modulaire-functies",
+      "onderwerp": "gdscript",
+      "groep": "Verder met code",
+      "concept": "modulaire eigen functies",
+      "bloom": "analyseren",
+      "start": "gevorderd",
+      "verdieping": "gevorderd"
+    },
+    {
+      "id": "gd-lijsten",
+      "onderwerp": "gdscript",
+      "groep": "Verder met code",
+      "concept": "nuttig gebruik lijsten",
+      "bloom": "toepassen",
+      "start": "gevorderd",
+      "verdieping": "basis"
+    },
+    {
+      "id": "gd-dictionaries",
+      "onderwerp": "gdscript",
+      "groep": "Verder met code",
+      "concept": "nuttig gebruik dictionaries",
+      "bloom": "toepassen",
+      "start": "gevorderd",
+      "verdieping": "basis"
+    },
+    {
+      "id": "gd-json",
+      "onderwerp": "gdscript",
+      "groep": "Verder met code",
+      "concept": "lezen en schrijven JSON",
+      "bloom": "creëren",
+      "start": "gevorderd",
+      "verdieping": "gevorderd"
+    },
+    {
+      "id": "gd-loops",
+      "onderwerp": "gdscript",
+      "groep": "Verder met code",
+      "concept": "nuttige gebruik loops",
+      "bloom": "toepassen",
+      "start": "gevorderd",
+      "verdieping": "basis"
+    },
+    {
+      "id": "gd-tweens",
+      "onderwerp": "gdscript",
+      "groep": "Verder met code",
+      "concept": "tweens",
+      "bloom": "creëren",
+      "start": "gevorderd",
+      "verdieping": "gevorderd"
+    },
+    {
+      "id": "gd-timers",
+      "onderwerp": "gdscript",
+      "groep": "Verder met code",
+      "concept": "nuttig gebruik timers",
+      "bloom": "toepassen",
+      "start": "gevorderd",
+      "verdieping": "gevorderd"
+    },
+    {
+      "id": "project-inrichting",
+      "onderwerp": "project",
+      "groep": "Inrichting",
+      "concept": "scènes in eigen mappen",
+      "bloom": "analyseren",
+      "start": "gevorderd",
+      "verdieping": "basis"
+    },
+    {
+      "id": "gesprek-voordragen",
+      "onderwerp": "gesprek",
+      "groep": "Onthouden",
+      "concept": "Voordragen: vertel wat je project doet",
+      "bloom": "onthouden",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "gesprek-voorspellen",
+      "onderwerp": "gesprek",
+      "groep": "Begrijpen",
+      "concept": "Voorspellen: wat gebeurt er als … verandert?",
+      "bloom": "begrijpen",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "gesprek-vragen",
+      "onderwerp": "gesprek",
+      "groep": "Begrijpen",
+      "concept": "Vragen: stelde vragen tijdens de les",
+      "bloom": "begrijpen",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "gesprek-uitleggen",
+      "onderwerp": "gesprek",
+      "groep": "Toepassen",
+      "concept": "Uitleggen: leg uit wat je code doet",
+      "bloom": "toepassen",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "gesprek-integreren",
+      "onderwerp": "gesprek",
+      "groep": "Analyseren",
+      "concept": "Integreren: concepten samengevoegd tot iets nieuws",
+      "bloom": "analyseren",
+      "start": "gevorderd",
+      "verdieping": "basis"
+    },
+    {
+      "id": "gesprek-beredeneren",
+      "onderwerp": "gesprek",
+      "groep": "Evalueren",
+      "concept": "Beredeneren: waarom werkt je oplossing?",
+      "bloom": "evalueren",
+      "start": "basis",
+      "verdieping": "basis"
+    },
+    {
+      "id": "gesprek-betogen",
+      "onderwerp": "gesprek",
+      "groep": "Evalueren",
+      "concept": "Betogen: hoe kwam je tot deze keuze?",
+      "bloom": "evalueren",
+      "start": "gevorderd",
+      "verdieping": "basis"
+    },
+    {
+      "id": "gesprek-doceren",
+      "onderwerp": "gesprek",
+      "groep": "Evalueren",
+      "concept": "Doceren: leg het uit voor een beginner",
+      "bloom": "evalueren",
+      "start": "gevorderd",
+      "verdieping": "gevorderd"
+    },
+    {
+      "id": "gesprek-creëren",
+      "onderwerp": "gesprek",
+      "groep": "Creëren",
+      "concept": "Creëren: iets nieuws bedacht met wat je leerde",
+      "bloom": "creëren",
+      "start": "gevorderd",
+      "verdieping": "gevorderd"
+    },
+    {
+      "id": "gesprek-optimaliseren",
+      "onderwerp": "gesprek",
+      "groep": "Creëren",
+      "concept": "Optimaliseren: een bestaande oplossing verbeterd",
+      "bloom": "creëren",
+      "start": "gevorderd",
+      "verdieping": "gevorderd"
+    }
+  ]
+}
