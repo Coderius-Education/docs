@@ -28,9 +28,10 @@ naar `main` deployt automatisch (`.github/workflows/deploy.yml`).
   `.alleen-print`-regel voor naam en klas, dan een uitklapbaar `<details className="docentblok">`
   (duur, groepsvorm, benodigdheden, beoordeling). De rest staat in de je-vorm, in genummerde
   stappen, met invulschema's in `<div className="invulschema">`. Print-hulpklassen staan in
-  `src/css/custom.css`: `geen-print` (weg op papier, bijvoorbeeld de quiz), `alleen-print`
-  (alleen op papier) en `invulschema` (schrijfruimte in de laatste kolom). Een dichtgeklapt
-  docentenblok print niet mee, dus de afdruk is vanzelf de leerlingversie.
+  `src/css/custom.css`: `printbaar` (het enige blok dat op papier komt — staat er zo'n blok op
+  een pagina, dan printen alleen dat blok, de titel en de `alleen-print`-regel), `alleen-print`
+  (alleen op papier), `geen-print` (nooit op papier) en `invulschema` (schrijfruimte in de
+  laatste kolom). Een pagina zonder `printbaar`-blok print gewoon helemaal.
 - `src/data/begrippen.js` is de enige bron voor definities: tooltips (`<B t="…"/>`),
   de termen-trainer en de termenlijst worden eruit gegenereerd. Nieuwe begrippen dáár toevoegen.
 - Componenten zijn globaal geregistreerd in `src/theme/MDXComponents.js`; geen imports nodig in docs.

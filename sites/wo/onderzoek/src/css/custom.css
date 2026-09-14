@@ -162,6 +162,18 @@
     display: block !important;
   }
 
+  /* Alleen de blokken met de klasse `printbaar` gaan mee naar het papier,
+     plus de paginatitel en de naam/klas-regel. De rest van de werkvorm
+     blijft op het scherm staan. Staat er geen printbaar blok op een
+     pagina, dan print die pagina gewoon helemaal. */
+  .markdown:has(> .printbaar) > *:not(header):not(.alleen-print):not(.printbaar) {
+    display: none !important;
+  }
+
+  .printbaar > h2:first-child {
+    margin-top: 0;
+  }
+
   .invulschema tbody td:last-child {
     height: 3cm;
   }
