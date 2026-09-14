@@ -26,8 +26,8 @@ per tweetal, ongeveer 25 minuten.
 
 </div>
 
-De rugzak draagt maximaal **8 kg**. Elk item is er maar één keer:
-meenemen of laten liggen, vandaar "0/1".
+De rugzak draagt maximaal **8 kg**. Elk item één keer: meenemen of
+niet, vandaar "0/1".
 
 **Sorteer eerst.** Pak de items van waardevol naar minder waardevol,
 zolang ze passen: items ______, waarde ______. Dan in volgorde van
@@ -48,12 +48,12 @@ heb?"* Drie regels bepalen elke cel:
    gewicht van het item aan kolommen naar links). Schrijf de hoogste op.
 
 ```
-beste(rij, kg) =
-  0                             rij 0
-  beste(rij−1, kg)              past niet
-  max( beste(rij−1, kg),
-       waarde + beste(rij−1, kg−gewicht) )
-                                past wel
+OPT(i, w): rij i, kolom w.  vᵢ, wᵢ: item i
+OPT(i, w) =
+  0                        als i = 0
+  OPT(i−1, w)              als wᵢ > w
+  max( OPT(i−1, w),
+       vᵢ + OPT(i−1, w − wᵢ) )   anders
 ```
 
 </div>
@@ -64,7 +64,7 @@ beste(rij, kg) =
 
 Vul de tabel rij voor rij in, van links naar rechts.
 
-| beste waarde | 0 kg | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+| `OPT(i, w)` | w=0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | **geen items** | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | **t/m item 1** (2, 1 kg) | 0 |  |  |  |  |  |  |  |  |
@@ -99,7 +99,7 @@ De tabel weet meer dan de cel rechtsonder. Draagt de rugzak maar
 - Sorteren op waarde en sorteren op waarde per kilo gaven allebei
   minder dan de tabel. Welk item lieten ze liggen, en waarom?
 - Bij 5 kg pakte de tabel wél de items met de beste waarde per kilo.
-  Wanneer werkt sorteren dus wel, en wanneer niet?
+  Wanneer werkt sorteren wel, en wanneer niet?
 
 </div>
 
