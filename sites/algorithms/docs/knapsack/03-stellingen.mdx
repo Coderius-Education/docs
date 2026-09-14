@@ -11,8 +11,7 @@ Lees elke stelling. Bedenk eerst je antwoord. Klap dan pas open.
 
 ## Stelling 1
 
-> *"De optimale strategie is: pak items in volgorde van **waarde**, te
-> beginnen met de hoogste, tot je rugzak vol is."*
+> *"Het item met de hoogste waarde zit altijd in de beste rugzak."*
 
 <details>
 <summary>Antwoord</summary>
@@ -20,37 +19,34 @@ Lees elke stelling. Bedenk eerst je antwoord. Klap dan pas open.
 **Niet waar.**
 
 Voorbeeld: rugzak 5 kg, item X = (waarde 10, gewicht 5), items Y en Z
-= elk (waarde 6, gewicht 2).
+= elk (waarde 6, gewicht 2). X is het waardevolst, maar de beste rugzak
+is Y + Z: waarde **12** tegen **10**.
 
-- "Waarde-eerst"-strategie: pak X → totaal **10**.
-- Slimmer: pak Y + Z → totaal **12**.
-
-De hoogste waarde kan zoveel ruimte pakken dat hij de rest blokkeert.
+Het waardevolste item kan zoveel ruimte pakken dat het de rest
+blokkeert. In het voorbeeld van de les zag je hetzelfde: item 5 is het
+meest waard en zit niet in de beste rugzak.
 
 </details>
 
 ## Stelling 2
 
-> *"De optimale strategie is: pak items in volgorde van **waarde per
-> kg**, te beginnen met de hoogste."*
+> *"Rugzak 50 kg, items (waarde 60, gewicht 10), (100, 20) en
+> (120, 30). Het item met de beste waarde per kilo zit in de beste
+> rugzak."*
 
 <details>
 <summary>Antwoord</summary>
 
 **Niet waar.**
 
-Die strategie heet **greedy**: steeds het item met de beste waarde per
-kilo. Soms komt daar de beste rugzak uit, maar niet altijd, en dat is
-genoeg om hem als strategie af te keuren.
+Waarde per kilo: 6, 5 en 4. Het eerste item is per kilo het beste,
+maar de beste rugzak is het tweede en het derde item samen: precies
+50 kg en **220** waard. Met het eerste item erbij past hoogstens nog
+het tweede: **160**.
 
-Voorbeeld: rugzak 50 kg, items (waarde 60, gewicht 10), (100, 20) en
-(120, 30). Waarde per kilo: 6, 5 en 4. Greedy pakt de eerste twee:
-waarde **160**, gewicht 30, en het derde item past er niet meer bij.
-Maar het tweede en derde item samen wegen precies 50 en zijn **220**
-waard.
-
-Greedy kijkt per item; het beste antwoord hangt af van de
-**combinatie**. Daarom vult dit hoofdstuk een tabel in die elke
+Steeds het item met de beste waarde per kilo pakken heet **greedy**.
+Het gaat mis omdat het per item kijkt, terwijl het antwoord van de
+combinatie afhangt. Daarom vult dit hoofdstuk een tabel in die elke
 combinatie meeweegt. Bij de *fractionele* knapsack, waar je een halve
 item mag pakken, werkt greedy wél.
 
