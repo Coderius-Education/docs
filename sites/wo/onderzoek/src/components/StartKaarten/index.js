@@ -29,6 +29,11 @@ const kaarten = [
     to: '/gegevens/kwal-vs-kwant',
   },
   {
+    titel: 'Werkvormen',
+    tekst: 'Opdrachten om de stof te gebruiken, zoals elke methode langs de kennisleer-bril leggen.',
+    to: '/werkvormen/overzicht',
+  },
+  {
     titel: 'Termen',
     tekst: 'Alle begrippen op een rij — en een trainer om jezelf te overhoren.',
     to: '/termen',

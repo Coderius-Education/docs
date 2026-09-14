@@ -58,14 +58,14 @@
 .optieGoed {
   border-color: var(--ifm-color-success-dark);
   background: var(--ifm-color-success-contrast-background);
-  color: var(--ifm-color-success-darkest);
+  color: var(--ifm-color-success-contrast-foreground);
   font-weight: 600;
 }
 
 .optieFout {
   border-color: var(--ifm-color-danger-dark);
   background: var(--ifm-color-danger-contrast-background);
-  color: var(--ifm-color-danger-darkest);
+  color: var(--ifm-color-danger-contrast-foreground);
 }
 
 .optieUit {
@@ -82,12 +82,12 @@
 
 .uitlegGoed {
   background: var(--ifm-color-success-contrast-background);
-  color: var(--ifm-color-success-darkest);
+  color: var(--ifm-color-success-contrast-foreground);
 }
 
 .uitlegFout {
   background: var(--ifm-color-danger-contrast-background);
-  color: var(--ifm-color-danger-darkest);
+  color: var(--ifm-color-danger-contrast-foreground);
 }
 
 .score {

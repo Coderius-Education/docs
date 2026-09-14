@@ -125,6 +125,11 @@ const sidebars = {
         },
       ],
     },
+    {
+      type: 'category',
+      label: 'Werkvormen',
+      items: ['werkvormen/overzicht', 'werkvormen/methoden-kennisleer'],
+    },
     'termen',
   ],
 };
