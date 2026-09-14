@@ -4,72 +4,63 @@ sidebar_position: 5
 
 # Pak de rugzak in
 
-<Handout>
+<Handout compact>
+
+<div className="handout-blad">
 
 Vier items, een rugzak die 8 kilo draagt. Welke combinatie is het meeste
 waard? Je gokt eerst op gevoel, en rekent het daarna exact uit met de
-tabel-methode van het knapsack-algoritme.
-
-## Wat je nodig hebt
-
-- Een geprinte hand-out, een schaar en een potlood per tweetal.
-- Ongeveer 25 minuten.
+tabel van het knapsack-algoritme. Een potlood per tweetal, ongeveer 25
+minuten.
 
 ## De items
 
-Knip de vier kaartjes uit:
+<div className="handout-overzicht">
 
-**Item 1**
+| Item | Waarde | Gewicht |
+|:---:|:---:|:---:|
+| 1 | 3 | 2 kg |
+| 2 | 7 | 3 kg |
+| 3 | 9 | 4 kg |
+| 4 | 12 | 6 kg |
+
+</div>
+
+De rugzak draagt maximaal **8 kg**. Elk item is er maar één keer:
+meenemen of laten liggen, vandaar "0/1".
+
+**Gok eerst**, zonder te rekenen: items ______, totale waarde ______,
+totaal gewicht ______ kg. Onthoud je gok; straks zie je of dat slim was.
+
+## De regels
+
+Elke cel van de tabel beantwoordt: *"wat is de beste waarde als ik
+alleen de items t/m deze rij mag gebruiken en zóveel kilo draagkracht
+heb?"* Drie regels bepalen elke cel:
+
+1. **Geen items** (rij 0): altijd 0, al ingevuld.
+2. **Past het item van deze rij niet** (zwaarder dan de kolom)? Kopieer
+   de cel er recht boven.
+3. **Past hij wel?** Vergelijk **overslaan** (de cel recht boven) met
+   **meenemen** (de waarde van het item + de cel één rij hoger en het
+   gewicht van het item aan kolommen naar links). Schrijf de hoogste op.
 
 ```
-waarde:  3
-gewicht: 2 kg
+beste(rij, kg) =
+  0                             rij 0
+  beste(rij−1, kg)              past niet
+  max( beste(rij−1, kg),
+       waarde + beste(rij−1, kg−gewicht) )
+                                past wel
 ```
 
-**Item 2**
+</div>
 
-```
-waarde:  7
-gewicht: 3 kg
-```
-
-**Item 3**
-
-```
-waarde:  9
-gewicht: 4 kg
-```
-
-**Item 4**
-
-```
-waarde: 12
-gewicht: 6 kg
-```
-
-De rugzak draagt maximaal **8 kg**. Elk item is er maar één keer
-(meenemen of laten liggen — vandaar "0/1").
-
-## Gok eerst
-
-Leg zonder te rekenen de kaartjes die jij zou meenemen bij elkaar.
-Schrijf op: items ____, totale waarde ____, totaal gewicht ____ kg.
-
-De meeste mensen pakken eerst het waardevolste item. Onthoud je gok —
-straks zie je of dat slim was.
+<div className="handout-teltabel handout-laag">
 
 ## De tabel
 
-Vul de tabel rij voor rij in. Elke cel beantwoordt: *"wat is de beste
-waarde als ik alleen de items t/m deze rij mag gebruiken en zóveel kilo
-draagkracht heb?"* Per cel zijn er drie mogelijkheden:
-
-1. Rij 0 (geen items): altijd 0 — al ingevuld.
-2. Past het item van deze rij niet (te zwaar voor deze kolom)? Kopieer
-   de cel er recht boven.
-3. Past hij wel? Vergelijk **overslaan** (cel recht boven) met
-   **meenemen** (waarde van het item + de cel één rij hoger en het
-   gewicht van het item aan kolommen naar links). Schrijf de hoogste op.
+Vul de tabel rij voor rij in, van links naar rechts.
 
 | beste waarde | 0 kg | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
@@ -79,7 +70,11 @@ draagkracht heb?"* Per cel zijn er drie mogelijkheden:
 | **t/m item 3** (9, 4 kg) | 0 |  |  |  |  |  |  |  |  |
 | **t/m item 4** (12, 6 kg) | 0 |  |  |  |  |  |  |  |  |
 
-De cel rechtsonder is de beste totaalwaarde. Beter dan je gok?
+</div>
+
+De cel rechtsonder is de beste totaalwaarde: ______. Beter dan je gok?
+
+<div className="handout-blad">
 
 ## Teruglopen — welke items?
 
@@ -88,11 +83,11 @@ rij voor rij omhoog:
 
 - Is de cel **gelijk** aan de cel erboven? Dan is het item van deze rij
   niet meegenomen. Ga een rij omhoog, zelfde kolom.
-- Is hij **hoger**? Dan zit het item erin. Leg dat kaartje bij je
-  rugzak en ga een rij omhoog én het gewicht van het item aan kolommen
-  naar links.
+- Is hij **hoger**? Dan zit het item erin. Omcirkel het in de
+  items-tabel en ga een rij omhoog én het gewicht van het item aan
+  kolommen naar links.
 
-Schrijf op: items ____, waarde ____, gewicht ____ kg.
+Beste rugzak: items ______, waarde ______, gewicht ______ kg.
 
 ## Bespreek na
 
@@ -101,7 +96,9 @@ Schrijf op: items ____, waarde ____, gewicht ____ kg.
 - Hoeveel kilo bleef er ongebruikt? Mag een optimale rugzak ruimte
   overhouden?
 
-<div style={{breakBefore: 'page'}}>
+</div>
+
+<div className="handout-paginawissel">
 
 ## Antwoorden
 
@@ -129,6 +126,8 @@ toe", en dat is precies hoe het teruglopen ziet dat item 4 niet mee is.
 
 </div>
 
+<div className="handout-alleen-scherm">
+
 ## Verder op de site
 
 - [Knapsack — het idee](/docs/knapsack/01-concept)
@@ -136,5 +135,7 @@ toe", en dat is precies hoe het teruglopen ziet dat item 4 niet mee is.
   methode op een groter voorbeeld, stap voor stap voorgedaan
 - [Bouwen](/docs/knapsack/bouwen/04-items) — daarna bouw je de
   tabel in Python
+
+</div>
 
 </Handout>
