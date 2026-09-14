@@ -49,19 +49,45 @@
   color: var(--ifm-color-primary);
 }
 
+.invulschema {
+  --schrijfruimte: 4rem;
+}
+
 .invulschema table {
   width: 100%;
   table-layout: fixed;
 }
 
 .invulschema tbody td:last-child {
-  height: 4rem;
+  height: var(--schrijfruimte);
   vertical-align: top;
 }
 
+/* Twee blokken op één blad: smallere vraagkolom en minder schrijfruimte. */
+.invulschema-kort {
+  --schrijfruimte: 2.5rem;
+}
+
+.invulschema-kort tbody td:first-child,
+.invulschema-kort thead th:first-child {
+  width: 42%;
+}
+
+.invulschema-kort th,
+.invulschema-kort td {
+  padding: 0.3rem 0.6rem;
+}
+
+.hint {
+  display: block;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.82em;
+  font-weight: 400;
+}
+
 .handout-regel {
-  margin: 0 0 1.5rem;
-  padding-bottom: 0.4rem;
+  margin: 0 0 0.6rem;
+  padding-bottom: 0.3rem;
   border-bottom: 1px solid #999;
   font-size: 0.95rem;
 }
@@ -174,7 +200,24 @@
     margin-top: 0;
   }
 
-  .invulschema tbody td:last-child {
-    height: 3cm;
+  .invulschema {
+    --schrijfruimte: 3cm;
+  }
+
+  .invulschema-kort {
+    --schrijfruimte: 1.4cm;
+  }
+
+  .invulschema-kort table {
+    margin-bottom: 0.6rem;
+  }
+
+  .invulschema-kort th,
+  .invulschema-kort td {
+    padding: 0.18rem 0.5rem;
+  }
+
+  .invulschema-kort .hint {
+    font-size: 0.78em;
   }
 }

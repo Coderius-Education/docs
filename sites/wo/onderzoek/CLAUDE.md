@@ -30,8 +30,10 @@ naar `main` deployt automatisch (`.github/workflows/deploy.yml`).
   stappen, met invulschema's in `<div className="invulschema">`. Print-hulpklassen staan in
   `src/css/custom.css`: `printbaar` (het enige blok dat op papier komt — staat er zo'n blok op
   een pagina, dan printen alleen dat blok, de titel en de `alleen-print`-regel), `alleen-print`
-  (alleen op papier), `geen-print` (nooit op papier) en `invulschema` (schrijfruimte in de
-  laatste kolom). Een pagina zonder `printbaar`-blok print gewoon helemaal.
+  (alleen op papier), `geen-print` (nooit op papier), `invulschema` (schrijfruimte in de
+  laatste kolom) en `invulschema-kort` (compacte variant: twee blokken passen op één A4).
+  De schrijfruimte staat in `--schrijfruimte`. Een pagina zonder `printbaar`-blok print
+  gewoon helemaal.
 - `src/data/begrippen.js` is de enige bron voor definities: tooltips (`<B t="…"/>`),
   de termen-trainer en de termenlijst worden eruit gegenereerd. Nieuwe begrippen dáár toevoegen.
 - Componenten zijn globaal geregistreerd in `src/theme/MDXComponents.js`; geen imports nodig in docs.
