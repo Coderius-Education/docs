@@ -69,7 +69,7 @@ for i in range(1, n + 1):    # start bij 1
     ...
 ```
 
-Vergeet `range(1, n + 1)` niet — die `1` is essentieel.
+Die `1` in `range(1, n + 1)` is het hele punt.
 
 ## Backtrack vergeet capaciteit te verminderen
 
@@ -98,7 +98,7 @@ for i in range(n, 0, -1):
         w -= items[i - 1][1]    # cruciaal!
 ```
 
-De cel waarop je nu zit verschuift naar links omdat je dit item al hebt
-"verzilverd" — de resterende capaciteit is verminderd met het gewicht.
+Je schuift naar links omdat dit item zijn gewicht al heeft ingenomen:
+er is minder capaciteit over voor de rest.
 
 Door naar [cheatsheet →](./12-cheatsheet).

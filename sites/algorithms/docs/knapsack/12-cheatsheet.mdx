@@ -216,9 +216,8 @@ def knapsack_recursief(items, capaciteit, n):
     return max(skip, meenemen)
 ```
 
-Mooi compact, maar zonder cache loopt het tijd op tot **O(2ⁿ)** —
-subproblemen worden vele keren herhaald. Voor grote inputs is de
-tabel-aanpak dus veel sneller.
+Compact, maar zonder cache rekent hij dezelfde deelproblemen keer op
+keer uit: O(2ⁿ). Voor grote invoer is de tabel dus veel sneller.
 
 </details>
 

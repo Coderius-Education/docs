@@ -10,22 +10,21 @@ zitten, en snapt **het algoritme** voordat je het codeert.
 
 ## De aanpak
 
-We bouwen een **tabel** op van **klein naar groot**. We beginnen met
-"0 items in de rugzak" (rij 0) en vullen rij voor rij omhoog tot
-"alle 5 items beschikbaar".
+Je bouwt een tabel op van klein naar groot. Je begint met "0 items in
+de rugzak" (rij 0) en vult rij voor rij door tot "alle 5 items
+beschikbaar".
 
 Voor elke cel `(i, w)` beantwoorden we dezelfde vraag: *"als ik items
 1 t/m `i` mag gebruiken en mijn rugzak is `w`, wat is dan de beste
 totale waarde?"*
 
-Het mooie: bij het invullen van een cel hoef je alleen maar te kijken
-naar **cellen die je al hebt ingevuld** (in de rij erboven). Geen
-recursie, geen herhaald rekenwerk — gewoon één tabel die zichzelf
-opbouwt.
+Bij het invullen van een cel kijk je alleen naar cellen die al ingevuld
+zijn, in de rij erboven. Geen recursie en geen dubbel rekenwerk: één
+tabel die zichzelf opbouwt.
 
 ## Het algoritme in drie regels
 
-Elke cel `OPT(i, w)` is "het beste totaalwaarde als je items 1 t/m i
+Elke cel `OPT(i, w)` is "de beste totaalwaarde als je items 1 t/m i
 mag gebruiken en je rugzakcapaciteit `w` is".
 
 Drie regels bepalen elke cel:
@@ -214,9 +213,9 @@ Voor elke rij `i` (van 5 naar 1):
 
 Stop bij `i = 0`.
 
-Let op: in de tabel kun je dit visueel volgen. "Kopieer-cellen" (regel
-2 of skip-wint in regel 3) wijzen naar **boven**; "meenemen-cellen"
-wijzen **diagonaal naar links-boven**.
+In de tabel kun je dat volgen: een kopieer-cel (regel 2, of skip wint
+in regel 3) wijst naar boven, een meenemen-cel wijst schuin naar
+linksboven.
 
 ## Backtrack — stap voor stap
 
@@ -268,7 +267,7 @@ def knapsack(items, capaciteit):
     return tabel[n][capaciteit]
 ```
 
-Geen recursie. Geen kopieën. Eén tabel — die je zelf al hebt
+Geen recursie en geen kopieën: één tabel, die je zelf al hebt
 uitgerekend.
 
 :::info
