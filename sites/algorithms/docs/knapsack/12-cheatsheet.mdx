@@ -9,7 +9,7 @@ Snelle referentie. Klap open wat je nodig hebt.
 ## Het algoritme zelf
 
 <details>
-<summary>De canonieke implementatie (bottom-up DP-tabel)</summary>
+<summary>De implementatie: de tabel van dit hoofdstuk</summary>
 
 ```python
 def knapsack(items, capaciteit):
@@ -59,10 +59,10 @@ def knapsack_items(items, capaciteit):
 
 </details>
 
-## De recurrence
+## De formule
 
 <details>
-<summary>De wiskundige formule (zoals in de docent's slides)</summary>
+<summary>De wiskundige formule</summary>
 
 ```
             ⎧ 0                                       als i = 0
@@ -70,8 +70,8 @@ OPT(i, w) = ⎨ OPT(i-1, w)                              als wᵢ > w
             ⎩ max{ OPT(i-1, w), vᵢ + OPT(i-1, w - wᵢ) } anders
 ```
 
-Onze Python-functie vult deze drie regels in van linksboven naar
-rechtsonder in de tabel.
+De drie regels van vul de tabel in, als één formule. De Python-functie
+vult ze in van linksboven naar rechtsonder in de tabel.
 
 </details>
 
@@ -115,7 +115,7 @@ for w in range(capaciteit + 1):
         tabel[i][w] = max(tabel[i - 1][w], waarde + tabel[i - 1][w - gewicht])
 ```
 
-Twee regels uit de recurrence: te zwaar of max.
+Regel 2 en 3 van de formule: te zwaar, of het maximum.
 
 </details>
 
@@ -168,9 +168,9 @@ item `i` meegenomen — index opslaan **én** `w` verminderen.
 
 | Versie | Tijd | Ruimte |
 |---|---|---|
-| Bottom-up DP-tabel (deze track) | **O(n × W)** | **O(n × W)** |
+| De tabel van dit hoofdstuk | **O(n × W)** | **O(n × W)** |
 | Naïeve recursie (zonder cache) | O(2ⁿ) | O(n) |
-| Recursie + memoization | O(n × W) | O(n × W) |
+| Recursie met een cache (memoization) | O(n × W) | O(n × W) |
 
 `n × W` is voor 100 items en W=1000 zo'n 100.000 cellen — fracties
 van een seconde op een laptop. Het algoritme schaalt prima voor de
@@ -200,9 +200,9 @@ Volledig overzicht: [er gaat iets mis](./11-fouten).
 <details>
 <summary>Hetzelfde probleem, top-down</summary>
 
-Je kunt knapsack ook recursief schrijven (top-down) in plaats van met
-een tabel (bottom-up). De recurrence is identiek; het verschil zit in
-de richting:
+Je kunt knapsack ook recursief schrijven: van het hele probleem naar de
+kleinere deelproblemen, in plaats van de tabel van klein naar groot. De
+drie regels zijn dezelfde; het verschil zit in de richting:
 
 ```python
 def knapsack_recursief(items, capaciteit, n):
@@ -216,9 +216,8 @@ def knapsack_recursief(items, capaciteit, n):
     return max(skip, meenemen)
 ```
 
-Mooi compact, maar zonder cache loopt het tijd op tot **O(2ⁿ)** —
-subproblemen worden vele keren herhaald. Voor grote inputs is de
-tabel-aanpak dus veel sneller.
+Compact, maar zonder cache rekent hij dezelfde deelproblemen keer op
+keer uit: O(2ⁿ). Voor grote invoer is de tabel dus veel sneller.
 
 </details>
 

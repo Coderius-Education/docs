@@ -27,12 +27,6 @@ const ACHTERSTAND = new Map<string, string[]>([
     'cfg/14-aanpassen.mdx',
     ['Opdracht 1 — voeg een woord toe', 'Opdracht 2 — zoek een ambigue zin'],
   ],
-  ['knapsack/09-aanpassen.mdx', ['Opdracht']],
-  ['knapsack/10-zelf-bouwen.mdx', ['Opdracht', 'Uitdaging (optioneel)']],
-  ['knapsack/bouwen/04-items.mdx', ['Bouw zelf en test']],
-  ['knapsack/bouwen/05-tabel-leeg.mdx', ['Bouw zelf en test']],
-  ['knapsack/bouwen/06-een-rij.mdx', ['Bouw zelf en test']],
-  ['knapsack/bouwen/07-volledige-tabel.mdx', ['Bouw zelf en test']],
   ['pagerank/08-aanpassen.mdx', ['Opdracht 1 — draai aan `d`', 'Opdracht 2 — voeg een link toe']],
 ]);
 

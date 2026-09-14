@@ -147,7 +147,10 @@
   }
 
   body.handout-compact .markdown h2 {
-    font-size: 11.5pt;
+    /* Net als de H1: het thema zet de grootte via een variabele met
+       hogere specificiteit; zonder !important printte de rugzak-hand-out
+       zijn tussenkoppen op 24pt. */
+    font-size: 11.5pt !important;
     margin-top: 0.5em;
     margin-bottom: 0.4em;
   }
@@ -194,6 +197,26 @@
 
   body.handout-compact .handout-teltabel th:first-child {
     width: 5em;
+  }
+
+  /* Een overzichtstabel (de items met waarde en gewicht) hoort smal en
+     laag: geen schrijfruimte, niet over de volle breedte. Ná de twee
+     regels hierboven, want die hebben dezelfde specificiteit. */
+  body.handout-compact .handout-overzicht table {
+    width: auto;
+    margin-left: 0;
+  }
+
+  body.handout-compact .handout-overzicht table td {
+    height: auto;
+  }
+
+  /* De invultabel van de rugzak-hand-out: de rijkoppen ("t/m item 2
+     (7, 3 kg)") passen niet in de 5em van de telrijen hierboven; ze
+     braken over drie regels en maakten elke rij 54px hoog, waardoor de
+     tabel niet meer op het blad paste. */
+  body.handout-compact .handout-laag th:first-child {
+    width: 12em;
   }
 
   body.handout-compact .handout-blad {

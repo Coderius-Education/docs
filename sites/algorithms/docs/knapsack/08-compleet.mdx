@@ -4,7 +4,7 @@ sidebar_position: 8
 
 # Het complete algoritme
 
-**Leerdoel:** je combineert de drie bouwstenen in één functie
+**Leerdoel:** je combineert de bouwstenen in één functie
 `knapsack(items, capaciteit)` die de tabel bouwt en de beste
 totaalwaarde returnt.
 
@@ -54,12 +54,12 @@ De eindcel: de beste totaalwaarde voor alle items binnen de volle capaciteit.
 
 </CodeUitleg>
 
-Vergelijk met de hand-uitgevulde tabel uit pagina 02: ze zouden
-**identiek** moeten zijn.
+Vergelijk met de tabel die je bij [vul de tabel in](./02-vul-de-tabel-in)
+met de hand invulde: ze horen identiek te zijn.
 
 ## Voorspel
 
-We runnen `knapsack` op het image-voorbeeld (5 items, W=11). Wat denk
+We runnen `knapsack` op het voorbeeld van de les (5 items, W=11). Wat denk
 je dat eruit komt?
 
 <details>
@@ -67,7 +67,7 @@ je dat eruit komt?
 
 **40** — items 3 + 4 (waardes 18 + 22), gewicht 5 + 6 = 11.
 
-Identiek aan wat je op pagina 02 met de hand uitrekende.
+Identiek aan wat je met de hand uitrekende.
 
 </details>
 
@@ -92,7 +92,7 @@ Identiek aan wat je op pagina 02 met de hand uitrekende.
 
 items = [(1, 1), (6, 2), (18, 5), (22, 6), (28, 7)]
 
-print("Image-voorbeeld:")
+print("Voorbeeld van de les:")
 print(f"    knapsack(items, 11) = {knapsack(items, 11)}")
 
 print("\\nAndere capaciteiten:")
@@ -103,7 +103,7 @@ for W in [5, 8, 11, 15, 21]:
 <summary>Verwachte uitvoer</summary>
 
 ```
-Image-voorbeeld:
+Voorbeeld van de les:
     knapsack(items, 11) = 40
 
 Andere capaciteiten:
@@ -127,6 +127,20 @@ Speel met de code. Probeer:
 1. Verwijder een item: wat gebeurt er met de beste totaalwaarde?
 2. Voeg een item toe met waarde 100 en gewicht 1000: heeft die invloed?
 3. Hoe groot wordt de tabel als `n = 30` en `W = 100`? (Hint: `(n+1) × (W+1)`.)
+
+<details>
+<summary>Antwoord</summary>
+
+1. Dat hangt van het item af. Haal je item 3 (18, 5) weg, dan zakt de
+   beste waarde naar 35: items 1, 2 en 5 (1 + 6 + 28, gewicht 10). Haal
+   je item 5 weg, dan blijft het 40, want die zat er toch niet in.
+2. Nee: een item van 1000 kg past in geen enkele kolom, dus elke cel in
+   zijn rij kopieert de cel erboven. De tabel wordt er wel een stuk
+   breder van: `capaciteit + 1` kolommen blijft 12, maar had je
+   `knapsack(items, 1000)` gevraagd, dan waren het er 1001.
+3. `31 × 101 = 3131` cellen.
+
+</details>
 
 <PyRunner initialCode={`def knapsack(items, capaciteit):
     n = len(items)
@@ -188,9 +202,9 @@ plt.show()`} />
 <details>
 <summary>Wat zie je?</summary>
 
-Een **trap-vorm**: de beste waarde stijgt in sprongen telkens als de
-capaciteit groot genoeg wordt om een nieuw item toe te voegen. Bij
-W=21 zit je op het maximum (75) — alle items passen.
+Een trap: de beste waarde stijgt in sprongen, telkens als de capaciteit
+groot genoeg wordt voor een nieuw item. Bij W=21 zit je op het maximum
+(75), want dan passen alle items.
 
 </details>
 

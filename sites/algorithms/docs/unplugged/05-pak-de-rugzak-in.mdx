@@ -4,104 +4,106 @@ sidebar_position: 5
 
 # Pak de rugzak in
 
-<Handout>
+<Handout compact>
+
+<div className="handout-blad">
 
 Vier items, een rugzak die 8 kilo draagt. Welke combinatie is het meeste
-waard? Je gokt eerst op gevoel, en rekent het daarna exact uit met de
-tabel-methode van het knapsack-algoritme.
-
-## Wat je nodig hebt
-
-- Een geprinte hand-out, een schaar en een potlood per tweetal.
-- Ongeveer 25 minuten.
+waard? Je probeert eerst twee manieren van sorteren, en rekent het
+daarna exact uit met de tabel van het knapsack-algoritme. Een potlood
+per tweetal, ongeveer 25 minuten.
 
 ## De items
 
-Knip de vier kaartjes uit:
+<div className="handout-overzicht">
 
-**Item 1**
+| Item | Waarde | Gewicht | Waarde per kg |
+|:---:|:---:|:---:|:---:|
+| 1 | 2 | 1 kg | 2 |
+| 2 | 6 | 2 kg | 3 |
+| 3 | 7 | 3 kg | 2,3 |
+| 4 | 8 | 5 kg | 1,6 |
+
+</div>
+
+De rugzak draagt maximaal **8 kg**. Elk item één keer: meenemen of
+niet, vandaar "0/1".
+
+**Sorteer eerst.** Pak de items van waardevol naar minder waardevol,
+zolang ze passen: items ______, waarde ______. Dan in volgorde van
+waarde per kilo: items ______, waarde ______. Straks zie je of sorteren
+genoeg was.
+
+## De regels
+
+Elke cel van de tabel beantwoordt: *"wat is de beste waarde als ik
+alleen de items t/m deze rij mag gebruiken en zóveel kilo draagkracht
+heb?"* Drie regels bepalen elke cel:
+
+1. **Geen items** (rij 0): altijd 0, al ingevuld.
+2. **Past het item van deze rij niet** (zwaarder dan de kolom)? Kopieer
+   de cel er recht boven.
+3. **Past hij wel?** Vergelijk **overslaan** (de cel recht boven) met
+   **meenemen** (de waarde van het item + de cel één rij hoger en het
+   gewicht van het item aan kolommen naar links). Schrijf de hoogste op.
 
 ```
-waarde:  3
-gewicht: 2 kg
+OPT(i, w): rij i, kolom w.  vᵢ, wᵢ: item i
+OPT(i, w) =
+  0                        als i = 0
+  OPT(i−1, w)              als wᵢ > w
+  max( OPT(i−1, w),
+       vᵢ + OPT(i−1, w − wᵢ) )   anders
 ```
 
-**Item 2**
+</div>
 
-```
-waarde:  7
-gewicht: 3 kg
-```
-
-**Item 3**
-
-```
-waarde:  9
-gewicht: 4 kg
-```
-
-**Item 4**
-
-```
-waarde: 12
-gewicht: 6 kg
-```
-
-De rugzak draagt maximaal **8 kg**. Elk item is er maar één keer
-(meenemen of laten liggen — vandaar "0/1").
-
-## Gok eerst
-
-Leg zonder te rekenen de kaartjes die jij zou meenemen bij elkaar.
-Schrijf op: items ____, totale waarde ____, totaal gewicht ____ kg.
-
-De meeste mensen pakken eerst het waardevolste item. Onthoud je gok —
-straks zie je of dat slim was.
+<div className="handout-teltabel handout-laag">
 
 ## De tabel
 
-Vul de tabel rij voor rij in. Elke cel beantwoordt: *"wat is de beste
-waarde als ik alleen de items t/m deze rij mag gebruiken en zóveel kilo
-draagkracht heb?"* Per cel zijn er drie mogelijkheden:
+Vul de tabel rij voor rij in, van links naar rechts.
 
-1. Rij 0 (geen items): altijd 0 — al ingevuld.
-2. Past het item van deze rij niet (te zwaar voor deze kolom)? Kopieer
-   de cel er recht boven.
-3. Past hij wel? Vergelijk **overslaan** (cel recht boven) met
-   **meenemen** (waarde van het item + de cel één rij hoger en het
-   gewicht van het item aan kolommen naar links). Schrijf de hoogste op.
-
-| beste waarde | 0 kg | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+| `OPT(i, w)` | w=0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | **geen items** | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| **t/m item 1** (3, 2 kg) | 0 |  |  |  |  |  |  |  |  |
-| **t/m item 2** (7, 3 kg) | 0 |  |  |  |  |  |  |  |  |
-| **t/m item 3** (9, 4 kg) | 0 |  |  |  |  |  |  |  |  |
-| **t/m item 4** (12, 6 kg) | 0 |  |  |  |  |  |  |  |  |
+| **t/m item 1** (2, 1 kg) | 0 |  |  |  |  |  |  |  |  |
+| **t/m item 2** (6, 2 kg) | 0 |  |  |  |  |  |  |  |  |
+| **t/m item 3** (7, 3 kg) | 0 |  |  |  |  |  |  |  |  |
+| **t/m item 4** (8, 5 kg) | 0 |  |  |  |  |  |  |  |  |
 
-De cel rechtsonder is de beste totaalwaarde. Beter dan je gok?
+</div>
+
+De cel rechtsonder is de beste totaalwaarde: ______. Beter dan je twee
+sorteringen?
+
+<div className="handout-blad">
 
 ## Teruglopen — welke items?
 
 De tabel geeft het getal, niet de items. Loop terug vanaf rechtsonder,
 rij voor rij omhoog:
 
-- Is de cel **gelijk** aan de cel erboven? Dan is het item van deze rij
-  niet meegenomen. Ga een rij omhoog, zelfde kolom.
-- Is hij **hoger**? Dan zit het item erin. Leg dat kaartje bij je
-  rugzak en ga een rij omhoog én het gewicht van het item aan kolommen
-  naar links.
+- Is de cel **gelijk** aan de cel erboven? Item niet meegenomen; ga een
+  rij omhoog, zelfde kolom.
+- Is hij **hoger**? Item zit erin: omcirkel het, ga een rij omhoog én
+  zijn gewicht aan kolommen naar links.
 
-Schrijf op: items ____, waarde ____, gewicht ____ kg.
+Beste rugzak: items ______, waarde ______, gewicht ______ kg.
+
+De tabel weet meer dan de cel rechtsonder. Draagt de rugzak maar
+**5 kg**? Lees af, zonder te rekenen: waarde ______, items ______.
 
 ## Bespreek na
 
-- Zat het waardevolste item (item 4) in de beste rugzak? Waarom kan
-  "pak steeds het waardevolste" verliezen van de tabel?
-- Hoeveel kilo bleef er ongebruikt? Mag een optimale rugzak ruimte
-  overhouden?
+- Sorteren op waarde en sorteren op waarde per kilo gaven allebei
+  minder dan de tabel. Welk item lieten ze liggen, en waarom?
+- Bij 5 kg pakte de tabel wél de items met de beste waarde per kilo.
+  Wanneer werkt sorteren wel, en wanneer niet?
 
-<div style={{breakBefore: 'page'}}>
+</div>
+
+<div className="handout-paginawissel">
 
 ## Antwoorden
 
@@ -111,23 +113,31 @@ knip hem eraf.
 | beste waarde | 0 kg | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | **geen items** | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| **t/m item 1** | 0 | 0 | 3 | 3 | 3 | 3 | 3 | 3 | 3 |
-| **t/m item 2** | 0 | 0 | 3 | 7 | 7 | 10 | 10 | 10 | 10 |
-| **t/m item 3** | 0 | 0 | 3 | 7 | 9 | 10 | 12 | 16 | 16 |
-| **t/m item 4** | 0 | 0 | 3 | 7 | 9 | 10 | 12 | 16 | 16 |
+| **t/m item 1** | 0 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 |
+| **t/m item 2** | 0 | 2 | 6 | 8 | 8 | 8 | 8 | 8 | 8 |
+| **t/m item 3** | 0 | 2 | 6 | 8 | 9 | 13 | 15 | 15 | 15 |
+| **t/m item 4** | 0 | 2 | 6 | 8 | 9 | 13 | 15 | 15 | 16 |
 
-Beste rugzak: **items 2 en 3**, waarde **16**, gewicht **7 kg** (1 kg
-blijft over — dat mag).
+**Sorteren.** Op waarde: item 4 (5 kg), dan item 3 (3 kg), vol: waarde
+15. Op waarde per kilo (item 2, dan 3, dan 1, dan 4): item 2, item 3,
+item 1, samen 6 kg, en item 4 past er niet meer bij: ook 15.
 
-Wie gretig het waardevolste item pakt komt op items 4 en 1 uit: waarde
-15. Item 4 is in zijn eentje veel waard, maar bezet zóveel ruimte dat de
-sterkere combinatie 2 + 3 niet meer past. Daarom rekent het algoritme
-alle deelproblemen door in plaats van hebberig te kiezen.
+**De tabel.** Beste rugzak: **items 1, 2 en 4**, waarde **16**, gewicht
+**8 kg**. Allebei de sorteringen lieten item 4 liggen of pakten hem
+zonder de kleine items erbij. Alleen de combinatie van het zware item
+met de twee lichtste vult de rugzak precies, en die combinatie vind je
+niet door items één voor één te beoordelen. Daarom rekent het
+algoritme alle deelproblemen door.
 
-De onderste twee rijen zijn identiek: dat betekent "item 4 voegt niets
-toe", en dat is precies hoe het teruglopen ziet dat item 4 niet mee is.
+**Bij 5 kg** staat in de kolom van 5 kg onderaan **13**: items 2 en 3.
+Dat is precies wat sorteren per kilo koos. Sorteren gaat goed zolang de
+beste items toevallig samen passen; het gaat mis zodra een goede
+combinatie een minder "efficiënt" item nodig heeft om de ruimte vol te
+maken. Welk van de twee je hebt, weet je pas als je het uitrekent.
 
 </div>
+
+<div className="handout-alleen-scherm">
 
 ## Verder op de site
 
@@ -136,5 +146,7 @@ toe", en dat is precies hoe het teruglopen ziet dat item 4 niet mee is.
   methode op een groter voorbeeld, stap voor stap voorgedaan
 - [Bouwen](/docs/knapsack/bouwen/04-items) — daarna bouw je de
   tabel in Python
+
+</div>
 
 </Handout>

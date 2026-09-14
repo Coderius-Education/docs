@@ -11,7 +11,7 @@ sidebar_position: 6
 />
 
 **Leerdoel:** je schrijft de logica die voor **één** rij `i` alle cellen
-`OPT(i, w)` invult, volgens de drie regels uit pagina 02.
+`OPT(i, w)` invult, volgens de drie regels van [vul de tabel in](../02-vul-de-tabel-in).
 
 ## Wat we willen
 
@@ -37,13 +37,13 @@ gebruiken vult onze code dat ook netjes in via dezelfde regels.
 ## Specificatie
 
 - **Input**: `tabel`, `items`, `i` (huidige rij), `capaciteit`.
-- **Output**: niets. We **muteren** `tabel` ter plekke — rij `i` is na
-  de aanroep ingevuld.
+- **Output**: niets. De functie verandert `tabel` zelf; na de aanroep
+  is rij `i` ingevuld.
 
 ## Voorspel
 
 We hebben rij 0 al klaar (allemaal 0). Wat moet er in rij 1 staan
-voor het image-voorbeeld (item 1 = waarde 1, gewicht 1)?
+voor het voorbeeld van de les (item 1 = waarde 1, gewicht 1)?
 
 <details>
 <summary>Antwoord</summary>
@@ -54,7 +54,7 @@ voor het image-voorbeeld (item 1 = waarde 1, gewicht 1)?
 - `w=1` t/m `w=11`: item past. Skip = `tabel[0][w]` = 0. Meenemen =
   `1 + tabel[0][w-1]` = 1. → max = 1.
 
-Klopt met pagina 02.
+Klopt met de tabel van [vul de tabel in](../02-vul-de-tabel-in).
 
 </details>
 
@@ -102,6 +102,21 @@ print("Alle tests gehaald ✓")`} />
 <details>
 <summary>Tip</summary>
 
+Het commentaar in de starter is bijna de code. Drie dingen om op te
+letten:
+
+- `items[i - 1]` — `i` is het rijnummer in de tabel (vanaf 1), maar
+  Python-lijsten tellen vanaf 0, dus `-1`.
+- `range(capaciteit + 1)` — vergeet `+1` niet, anders mis je kolom
+  `w = capaciteit`.
+- `meenemen` kijkt in de **vorige** rij, `gewicht` kolommen naar
+  links: `tabel[i - 1][w - gewicht]`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
 ```python
 def vul_rij(tabel, items, i, capaciteit):
     waarde, gewicht = items[i - 1]
@@ -114,20 +129,14 @@ def vul_rij(tabel, items, i, capaciteit):
             tabel[i][w] = max(skip, meenemen)
 ```
 
-Let op:
-
-- `items[i - 1]` — `i` is 1-gebaseerd (rij-nummer in de tabel), maar
-  Python-lijsten zijn 0-gebaseerd, dus `-1`.
-- `range(capaciteit + 1)` — vergeet `+1` niet, anders mis je kolom
-  `w = capaciteit`.
-- `meenemen` gebruikt `tabel[i - 1][w - gewicht]` — terugkijken in de
-  vorige rij, `gewicht` kolommen naar links.
+Regel 2 is de `if`, regel 3 de `else`. Regel 1 (rij 0) hoeft niet: die
+staat al vol nullen.
 
 </details>
 
 ## Wat nu nog mist
 
-Eén rij invullen werkt. Voor het complete algoritme moeten we dat
-voor **alle** rijen herhalen — dat is een extra for-lus eromheen.
+Eén rij invullen werkt. Voor het complete algoritme herhaal je dat
+voor alle rijen: een extra for-lus eromheen.
 
 Door naar [vul de hele tabel →](./07-volledige-tabel).

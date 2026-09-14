@@ -5,19 +5,20 @@ sidebar_position: 7
 # Bouwsteen 4 — vul de hele tabel
 
 **Leerdoel:** je voegt een buitenste lus toe die alle rijen invult.
-Met de bouwstenen van pagina 5 en 6 wordt dit één regel werk extra.
+Met [bouwsteen 2](./05-tabel-leeg) en [bouwsteen 3](./06-een-rij)
+wordt dit één regel werk extra.
 
 ## Wat we willen
 
-De tabel volledig invullen. Rij 0 is al `0`-vector (vanaf pagina 5),
-rij 1 t/m `n` vullen we via `vul_rij` uit pagina 6.
+De tabel volledig invullen. Rij 0 staat al vol nullen (bouwsteen 2),
+rij 1 t/m `n` vullen we via `vul_rij` uit bouwsteen 3.
 
 ```python
 for i in range(1, n + 1):
     vul_rij(tabel, items, i, capaciteit)
 ```
 
-Vier woorden meer dan vorige stap.
+Eén lus meer dan de vorige stap.
 
 ## Waarom `range(1, n + 1)`?
 
@@ -28,11 +29,11 @@ Vier woorden meer dan vorige stap.
 ## Specificatie
 
 - **Input**: `tabel`, `items`, `capaciteit`.
-- **Output**: niets. We muteren `tabel` ter plekke.
+- **Output**: niets. De functie verandert `tabel` zelf.
 
 ## Voorspel
 
-We runnen `vul_volledige_tabel` op het image-voorbeeld. Wat staat er
+We runnen `vul_volledige_tabel` op het voorbeeld van de les. Wat staat er
 straks in `tabel[5][11]`?
 
 <details>
@@ -40,7 +41,7 @@ straks in `tabel[5][11]`?
 
 **40** — de beste totaalwaarde voor 5 items binnen W=11.
 
-Dat is de eindcel die je op pagina 02 met de hand uitrekende.
+Dat is de eindcel die je bij [vul de tabel in](../02-vul-de-tabel-in) met de hand uitrekende.
 
 </details>
 
@@ -79,7 +80,7 @@ capaciteit = 11
 tabel = lege_tabel(len(items), capaciteit)
 vul_volledige_tabel(tabel, items, capaciteit)
 
-# Verwachte tabel uit pagina 02
+# De tabel die je met de hand invulde
 verwacht = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],          # i=0
     [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],          # i=1
@@ -99,6 +100,15 @@ print("Beste totaalwaarde:", tabel[5][11])`} />
 <details>
 <summary>Tip</summary>
 
+Bepaal `n` met `len(items)` en roep `vul_rij` aan in een lus over
+`range(1, n + 1)`, in stijgende volgorde: elke rij leunt op de rij
+erboven.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
 ```python
 def vul_volledige_tabel(tabel, items, capaciteit):
     n = len(items)
@@ -106,15 +116,15 @@ def vul_volledige_tabel(tabel, items, capaciteit):
         vul_rij(tabel, items, i, capaciteit)
 ```
 
-Drie regels. Geen subtiliteiten — gewoon `vul_rij` aanroepen voor elke
-rij in stijgende volgorde.
-
 </details>
 
 ## Onderzoek
 
-Print de tabel rij voor rij om hem visueel te controleren met pagina
-02:
+Print de tabel rij voor rij om hem naast de tabel van
+[vul de tabel in](../02-vul-de-tabel-in) te leggen. Twee nieuwe dingen
+in de print: `f"{c:2}"` maakt elk getal twee tekens breed, en
+`"  ".join(lijst)` plakt de teksten in een lijst aan elkaar met twee
+spaties ertussen:
 
 <PyRunner initialCode={`def lege_tabel(n, capaciteit):
     tabel = []
@@ -149,9 +159,9 @@ kolom_labels = []
 for w in range(capaciteit + 1):
     kolom_labels.append(f"{w:2}")
 print("       " + "  ".join(kolom_labels))
-for i, rij in enumerate(tabel):
+for i in range(len(tabel)):
     cel_teksten = []
-    for c in rij:
+    for c in tabel[i]:
         cel_teksten.append(f"{c:2}")
     print(f"i={i}:   " + "  ".join(cel_teksten))`} />
 
@@ -168,7 +178,7 @@ i=4:    0   1   6   7   7  18  22  24  28  29  29  40
 i=5:    0   1   6   7   7  18  22  28  29  34  35  40
 ```
 
-Identiek aan de hand-uitgevulde tabel uit pagina 02. ✓
+Identiek aan de tabel die je met de hand invulde. ✓
 
 </details>
 

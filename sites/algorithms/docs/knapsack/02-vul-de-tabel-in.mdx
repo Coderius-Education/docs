@@ -4,28 +4,27 @@ sidebar_position: 2
 
 # Vul de tabel in
 
-**Leerdoel:** je vult zelf de OPT-tabel in voor het image-voorbeeld
-(5 items, W=11), leest eruit af welke items in de optimale rugzak
+**Leerdoel:** je vult zelf de OPT-tabel in voor het voorbeeld van de
+les (5 items, W=11), leest eruit af welke items in de optimale rugzak
 zitten, en snapt **het algoritme** voordat je het codeert.
 
 ## De aanpak
 
-We bouwen een **tabel** op van **klein naar groot**. We beginnen met
-"0 items in de rugzak" (rij 0) en vullen rij voor rij omhoog tot
-"alle 5 items beschikbaar".
+Je bouwt een tabel op van klein naar groot. Je begint met "0 items in
+de rugzak" (rij 0) en vult rij voor rij door tot "alle 5 items
+beschikbaar".
 
-Voor elke cel `(i, w)` beantwoorden we dezelfde vraag: *"als ik items
+Voor elke cel `(i, w)` beantwoord je dezelfde vraag: *"als ik items
 1 t/m `i` mag gebruiken en mijn rugzak is `w`, wat is dan de beste
 totale waarde?"*
 
-Het mooie: bij het invullen van een cel hoef je alleen maar te kijken
-naar **cellen die je al hebt ingevuld** (in de rij erboven). Geen
-recursie, geen herhaald rekenwerk — gewoon één tabel die zichzelf
-opbouwt.
+Bij het invullen van een cel kijk je alleen naar cellen die al ingevuld
+zijn, in de rij erboven. Geen recursie en geen dubbel rekenwerk: één
+tabel die zichzelf opbouwt.
 
 ## Het algoritme in drie regels
 
-Elke cel `OPT(i, w)` is "het beste totaalwaarde als je items 1 t/m i
+Elke cel `OPT(i, w)` is "de beste totaalwaarde als je items 1 t/m i
 mag gebruiken en je rugzakcapaciteit `w` is".
 
 Drie regels bepalen elke cel:
@@ -47,18 +46,15 @@ Neem de hoogste: `OPT(i, w) = max(skip, meenemen)`.
 
 ## De items
 
-Voor dit voorbeeld gebruiken we het 5-item, W=11 voorbeeld uit de
-docent's afbeelding:
+Dit zijn de vijf items van het idee, met een rugzak van 11 kg:
 
-| Item | Waarde | Gewicht |
-|---|---|---|
-| 1 | 1 | 1 |
-| 2 | 6 | 2 |
-| 3 | 18 | 5 |
-| 4 | 22 | 6 |
-| 5 | 28 | 7 |
-
-W = 11.
+| Item | Waarde | Gewicht | Waarde per kg |
+|:---:|:---:|:---:|:---:|
+| 1 | 1 | 1 | 1 |
+| 2 | 6 | 2 | 3 |
+| 3 | 18 | 5 | 3,6 |
+| 4 | 22 | 6 | 3,7 |
+| 5 | 28 | 7 | 4 |
 
 ## Sjabloon — vul zelf in
 
@@ -74,7 +70,8 @@ volgens regel 1 en omdat een rugzak van 0 sowieso leeg is):
 | **i=4** (v=22, w=6) | 0 | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |
 | **i=5** (v=28, w=7) | 0 | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |
 
-Print deze tabel of teken hem op papier. We vullen hem rij voor rij.
+Teken hem op papier, of print de [hand-out](/docs/unplugged/05-pak-de-rugzak-in)
+met een kleinere tabel om in te vullen. We vullen hem hier rij voor rij.
 
 ## Rij 1 — item 1 (v=1, w=1)
 
@@ -203,8 +200,8 @@ De beste totale waarde is **40**. Maar... welke items zijn dat?
 
 ## Welke items meegenomen?
 
-De tabel zegt **wat** de beste waarde is, maar niet meteen **welke** items.
-Daarvoor lopen we de tabel **terug** vanaf rechtsonder.
+De tabel zegt wat de beste waarde is, maar niet meteen welke items.
+Daarvoor loop je de tabel terug vanaf rechtsonder.
 
 Voor elke rij `i` (van 5 naar 1):
 
@@ -214,9 +211,9 @@ Voor elke rij `i` (van 5 naar 1):
 
 Stop bij `i = 0`.
 
-Let op: in de tabel kun je dit visueel volgen. "Kopieer-cellen" (regel
-2 of skip-wint in regel 3) wijzen naar **boven**; "meenemen-cellen"
-wijzen **diagonaal naar links-boven**.
+In de tabel kun je dat volgen: een kopieer-cel (regel 2, of skip wint
+in regel 3) wijst naar boven, een meenemen-cel wijst schuin naar
+linksboven.
 
 ## Backtrack — stap voor stap
 
@@ -252,21 +249,11 @@ voegen niets toe). **Klaar**.
 
 Dit klopt met cel `(5, 11) = 40` in de tabel.
 
-## Wat hebben we nu gedaan?
-
-Je hebt het knapsack-algoritme **zelf uitgevoerd** zonder een regel
-Python te schrijven. De drie regels (basisrij, te zwaar, max van skip
-en meenemen) zijn de **hele** beslissingsregel — meer is er niet aan.
-
-De backtrack-procedure laat zien dat de tabel niet alleen het *getal*
-40 onthoudt, maar via vergelijking met de cel erboven ook **welke
-keuzes** tot dat getal hebben geleid.
-
 ## Brug naar code
 
-In de volgende stappen schrijven we **exact deze tabel** in Python.
-Eerst de items, dan de lege tabel, dan rij voor rij invullen — precies
-zoals jij het hier met de hand deed.
+In de volgende stappen schrijf je precies deze tabel in Python: eerst
+de items, dan de lege tabel, dan rij voor rij invullen, zoals je het
+hier met de hand deed.
 
 ```python
 def knapsack(items, capaciteit):
@@ -278,11 +265,11 @@ def knapsack(items, capaciteit):
     return tabel[n][capaciteit]
 ```
 
-Geen recursie. Geen kopieën. Eén tabel — die je zelf al hebt
+Geen recursie en geen kopieën: één tabel, die je zelf al hebt
 uitgerekend.
 
 :::info
-Een kleinere tabel klassikaal invullen, met knipkaartjes en een gok-vooraf? Print [Pak de rugzak in](/docs/unplugged/05-pak-de-rugzak-in).
+Een kleinere tabel klassikaal invullen, met een gok vooraf? Print [Pak de rugzak in](/docs/unplugged/05-pak-de-rugzak-in): items, regels en tabel op één blad.
 :::
 
 Door naar [de stellingen →](./03-stellingen).

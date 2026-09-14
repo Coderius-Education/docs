@@ -5,7 +5,7 @@ sidebar_position: 11
 # Er gaat iets mis — top-3 fouten
 
 **Leerdoel:** je herkent de drie klassieke valkuilen bij de
-DP-tabel-aanpak van knapsack.
+tabel-aanpak van knapsack.
 
 ## Off-by-one in tabel-grootte
 
@@ -21,7 +21,9 @@ rugzak".
 
 ```python
 # FOUT
-tabel = [[0] * capaciteit for _ in range(n)]
+tabel = []
+for _ in range(n):
+    tabel.append([0] * capaciteit)
 
 # Probleem: tabel[n][capaciteit] bestaat niet → crash bij return.
 ```
@@ -40,13 +42,16 @@ Vuistregel: als je naar een cel `[i][w]` wilt kunnen met `i = n` én
 
 ## `i`-loop start bij 0
 
-Geen Python-foutmelding — wél **stille verkeerde antwoorden** of
-crashes diep in de logica.
+Geen foutmelding, wel een rij 0 die niet meer 0 is, en soms een
+totaalwaarde die te hoog is.
 
 **Oorzaak:** rij 0 in de tabel is al ingevuld (basisgeval: allemaal 0).
 Je werkelijke "vul-rij"-werk start bij `i = 1`. Begin je bij `i = 0`,
-dan probeer je `items[-1]` op te halen — Python's negatieve indexing
-geeft je het **laatste** item. Soms werkt het toevallig, vaak niet.
+dan haal je `items[-1]` op, en Python's negatieve index geeft je het
+**laatste** item. Dat item komt zo in rij 0 terecht en kan daarna nog
+een keer meetellen: één item van waarde 10 en gewicht 1 in een rugzak
+van 2 geeft dan 20. Op het voorbeeld van de les komt er toevallig nog
+40 uit, met een rij 0 vol 28'en.
 
 ```python
 # FOUT
@@ -64,11 +69,11 @@ for i in range(1, n + 1):    # start bij 1
     ...
 ```
 
-Vergeet `range(1, n + 1)` niet — die `1` is essentieel.
+Die `1` in `range(1, n + 1)` is het hele punt.
 
 ## Backtrack vergeet capaciteit te verminderen
 
-Geen Python-foutmelding — wél **een verkeerde lijst van items**.
+Geen foutmelding, wel een verkeerde lijst van items.
 
 **Oorzaak:** bij elke "item meegenomen"-stap moet je niet alleen de
 index opslaan, maar **ook** de capaciteit verminderen met het gewicht
@@ -93,7 +98,7 @@ for i in range(n, 0, -1):
         w -= items[i - 1][1]    # cruciaal!
 ```
 
-De cel waarop je nu zit verschuift naar links omdat je dit item al hebt
-"verzilverd" — de resterende capaciteit is verminderd met het gewicht.
+Je schuift naar links omdat dit item zijn gewicht al heeft ingenomen:
+er is minder capaciteit over voor de rest.
 
 Door naar [cheatsheet →](./12-cheatsheet).
