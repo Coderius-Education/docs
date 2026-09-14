@@ -9,7 +9,7 @@ Snelle referentie. Klap open wat je nodig hebt.
 ## Het algoritme zelf
 
 <details>
-<summary>De canonieke implementatie (bottom-up DP-tabel)</summary>
+<summary>De implementatie: de tabel van dit hoofdstuk</summary>
 
 ```python
 def knapsack(items, capaciteit):
@@ -168,9 +168,9 @@ item `i` meegenomen — index opslaan **én** `w` verminderen.
 
 | Versie | Tijd | Ruimte |
 |---|---|---|
-| Bottom-up DP-tabel (deze track) | **O(n × W)** | **O(n × W)** |
+| De tabel van dit hoofdstuk | **O(n × W)** | **O(n × W)** |
 | Naïeve recursie (zonder cache) | O(2ⁿ) | O(n) |
-| Recursie + memoization | O(n × W) | O(n × W) |
+| Recursie met een cache (memoization) | O(n × W) | O(n × W) |
 
 `n × W` is voor 100 items en W=1000 zo'n 100.000 cellen — fracties
 van een seconde op een laptop. Het algoritme schaalt prima voor de
@@ -200,9 +200,9 @@ Volledig overzicht: [er gaat iets mis](./11-fouten).
 <details>
 <summary>Hetzelfde probleem, top-down</summary>
 
-Je kunt knapsack ook recursief schrijven (top-down) in plaats van met
-een tabel (bottom-up). De recurrence is identiek; het verschil zit in
-de richting:
+Je kunt knapsack ook recursief schrijven: van het hele probleem naar de
+kleinere deelproblemen, in plaats van de tabel van klein naar groot. De
+drie regels zijn dezelfde; het verschil zit in de richting:
 
 ```python
 def knapsack_recursief(items, capaciteit, n):

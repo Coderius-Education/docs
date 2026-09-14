@@ -5,7 +5,7 @@ sidebar_position: 11
 # Er gaat iets mis — top-3 fouten
 
 **Leerdoel:** je herkent de drie klassieke valkuilen bij de
-DP-tabel-aanpak van knapsack.
+tabel-aanpak van knapsack.
 
 ## Off-by-one in tabel-grootte
 
@@ -21,7 +21,9 @@ rugzak".
 
 ```python
 # FOUT
-tabel = [[0] * capaciteit for _ in range(n)]
+tabel = []
+for _ in range(n):
+    tabel.append([0] * capaciteit)
 
 # Probleem: tabel[n][capaciteit] bestaat niet → crash bij return.
 ```
