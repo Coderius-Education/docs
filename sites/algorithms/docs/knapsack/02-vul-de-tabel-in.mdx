@@ -14,7 +14,7 @@ Je bouwt een tabel op van klein naar groot. Je begint met "0 items in
 de rugzak" (rij 0) en vult rij voor rij door tot "alle 5 items
 beschikbaar".
 
-Voor elke cel `(i, w)` beantwoorden we dezelfde vraag: *"als ik items
+Voor elke cel `(i, w)` beantwoord je dezelfde vraag: *"als ik items
 1 t/m `i` mag gebruiken en mijn rugzak is `w`, wat is dan de beste
 totale waarde?"*
 
@@ -200,8 +200,8 @@ De beste totale waarde is **40**. Maar... welke items zijn dat?
 
 ## Welke items meegenomen?
 
-De tabel zegt **wat** de beste waarde is, maar niet meteen **welke** items.
-Daarvoor lopen we de tabel **terug** vanaf rechtsonder.
+De tabel zegt wat de beste waarde is, maar niet meteen welke items.
+Daarvoor loop je de tabel terug vanaf rechtsonder.
 
 Voor elke rij `i` (van 5 naar 1):
 
@@ -251,9 +251,9 @@ Dit klopt met cel `(5, 11) = 40` in de tabel.
 
 ## Brug naar code
 
-In de volgende stappen schrijven we **exact deze tabel** in Python.
-Eerst de items, dan de lege tabel, dan rij voor rij invullen — precies
-zoals jij het hier met de hand deed.
+In de volgende stappen schrijf je precies deze tabel in Python: eerst
+de items, dan de lege tabel, dan rij voor rij invullen, zoals je het
+hier met de hand deed.
 
 ```python
 def knapsack(items, capaciteit):

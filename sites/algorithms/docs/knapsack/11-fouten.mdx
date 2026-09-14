@@ -42,8 +42,8 @@ Vuistregel: als je naar een cel `[i][w]` wilt kunnen met `i = n` én
 
 ## `i`-loop start bij 0
 
-Geen Python-foutmelding — wél een **rij 0 die niet meer 0 is**, en
-soms een totaalwaarde die te hoog is.
+Geen foutmelding, wel een rij 0 die niet meer 0 is, en soms een
+totaalwaarde die te hoog is.
 
 **Oorzaak:** rij 0 in de tabel is al ingevuld (basisgeval: allemaal 0).
 Je werkelijke "vul-rij"-werk start bij `i = 1`. Begin je bij `i = 0`,
@@ -73,7 +73,7 @@ Die `1` in `range(1, n + 1)` is het hele punt.
 
 ## Backtrack vergeet capaciteit te verminderen
 
-Geen Python-foutmelding — wél **een verkeerde lijst van items**.
+Geen foutmelding, wel een verkeerde lijst van items.
 
 **Oorzaak:** bij elke "item meegenomen"-stap moet je niet alleen de
 index opslaan, maar **ook** de capaciteit verminderen met het gewicht
