@@ -14,6 +14,11 @@ const kaarten = [
     to: '/spelregels/de-vier-spelregels',
   },
   {
+    titel: 'Kennisleer',
+    tekst: 'Hoe weet je eigenlijk iets? Scepticisme, rationalisme en empirisme — en wat dat met onderzoek te maken heeft.',
+    to: '/kennisleer/hoe-weet-je-iets',
+  },
+  {
     titel: 'Onderzoek opzetten',
     tekst: 'Kies per deelvraag een functie, soort en methode met de keuzedriehoek.',
     to: '/opzet/keuzedriehoek',

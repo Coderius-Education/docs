@@ -16,10 +16,12 @@ naar `main` deployt automatisch (`.github/workflows/deploy.yml`).
 ## Structuur
 
 - Conceptpagina's (één kernbegrip per pagina): definitiekader (`<Definitie>`), voorbeelden,
-  valkuil-admonition, eventueel `<WelNiet>` en `<EchtGebeurd>`, afgesloten met "Hangt samen met".
+  valkuil-admonition, eventueel `<WelNiet>`, `<EchtGebeurd>` (beroemde casus) en `<Denker>`
+  (filosoof bij het begrip), afgesloten met "Hangt samen met".
 - Verbandpagina's (titels als "… vs. …", "… samen", "… combineren"): openen met "Het verband
-  in één zin", bevatten de vergelijkingstabellen en `<Quiz>`-oefeningen, en zijn de landing
-  van hun sidebar-mapje (`link` in `sidebars.js`).
+  in één zin" en bevatten de vergelijkingstabellen en `<Quiz>`-oefeningen. Een overzichtspagina
+  van een heel mapje staat als eerste zichtbare item ín dat mapje (zie Onderzoek opzetten en
+  Kennisleer), niet als onzichtbare `link` op de categorie.
 - `src/data/begrippen.js` is de enige bron voor definities: tooltips (`<B t="…"/>`),
   de termen-trainer en de termenlijst worden eruit gegenereerd. Nieuwe begrippen dáár toevoegen.
 - Componenten zijn globaal geregistreerd in `src/theme/MDXComponents.js`; geen imports nodig in docs.

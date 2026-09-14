@@ -4,6 +4,18 @@
 // lang (uitgebreidere tekst voor de termenpagina; optioneel) en url.
 
 const begrippen = {
+  'a-posteriori': {
+    term: 'A posteriori',
+    kort: 'Kennis die pas ná en dankzij waarneming vaststaat.',
+    lang: 'Kennis is a posteriori als zij pas ná en dankzij de waarneming vaststaat: je moet de wereld in om haar te bevestigen of te verwerpen.',
+    url: '/kennisleer/a-posteriori',
+  },
+  'a-priori': {
+    term: 'A priori',
+    kort: 'Kennis die je zonder waarneming kunt hebben, puur door te redeneren.',
+    lang: 'Kennis is a priori als je haar kunt hebben vóór en zonder waarneming: je stelt haar vast door te redeneren, niet door te meten.',
+    url: '/kennisleer/a-priori',
+  },
   aanvaardbaar: {
     term: 'Aanvaardbaar',
     kort: 'Ethisch verantwoord onderzoek: eerlijk uitgevoerd, met toestemming, met respect voor privacy en zonder iemand te schaden.',
@@ -15,6 +27,18 @@ const begrippen = {
     kort: 'Bestaand materiaal (artikelen, posts, reclames, video’s) systematisch bestuderen met een analyseschema.',
     lang: 'Een methode van gegevensverzameling waarbij je bestaand materiaal (artikelen, posts, reclames, foto’s, video’s) systematisch bestudeert met een analyseschema.',
     url: '/opzet/methoden/analyse-materiaal',
+  },
+  'analytische-uitspraak': {
+    term: 'Analytische uitspraak',
+    kort: 'Waar op grond van de betekenis van de woorden; de ontkenning levert een tegenspraak op.',
+    lang: 'Een uitspraak die waar is op grond van de betekenis van de woorden zelf, zoals "alle vrijgezellen zijn ongetrouwd". Een van de twee tanden van de vork van Hume.',
+    url: '/kennisleer/vork-van-hume',
+  },
+  begripsrealisme: {
+    term: 'Begripsrealisme',
+    kort: 'Algemene begrippen bestaan echt en los van de afzonderlijke dingen (Plato).',
+    lang: 'De opvatting van Plato dat algemene begrippen — de volmaakte Ideeën — echt bestaan en los staan van de afzonderlijke dingen die je waarneemt.',
+    url: '/kennisleer/rationalisme',
   },
   'beschrijvend-onderzoek': {
     term: 'Beschrijvend onderzoek',
@@ -34,6 +58,12 @@ const begrippen = {
     lang: 'Het vermelden waar informatie vandaan komt, bij alles wat je van een ander overneemt. Hoort bij de spelregel transparant.',
     url: '/spelregels/transparant',
   },
+  cogito: {
+    term: 'Cogito ergo sum',
+    kort: '"Ik denk, dus ik ben": het enige dat Descartes’ twijfel overleefde.',
+    lang: '"Ik denk, dus ik ben" — de enige zekerheid die overbleef toen Descartes aan alles twijfelde: wie twijfelt, moet bestaan om te kunnen twijfelen.',
+    url: '/kennisleer/rationalisme',
+  },
   conclusie: {
     term: 'Conclusie',
     kort: 'Het onderbouwde antwoord op je hoofdvraag; het eindresultaat van theoriegericht onderzoek.',
@@ -50,6 +80,12 @@ const begrippen = {
     kort: 'Een kleinere vraag die helpt om de hoofdvraag te beantwoorden; per deelvraag kies je functie, soort en methode.',
     lang: 'Een kleinere vraag die helpt om de hoofdvraag te beantwoorden. Per deelvraag kies je een functie, soort en methode — zie de keuzedriehoek.',
     url: '/opzet/keuzedriehoek',
+  },
+  empirisme: {
+    term: 'Empirisme',
+    kort: 'Alle kennis komt uiteindelijk uit zintuiglijke waarneming.',
+    lang: 'De opvatting dat alle kennis uiteindelijk uit zintuiglijke waarneming komt: zonder ervaring is er geen kennis.',
+    url: '/kennisleer/empirisme',
   },
   enquete: {
     term: 'Enquête',
@@ -69,6 +105,12 @@ const begrippen = {
     lang: 'De mate waarin je conclusie ook geldt buiten je onderzoek: voor andere mensen, situaties en momenten (ook wel generaliseerbaarheid).',
     url: '/spelregels/externe-validiteit',
   },
+  grotallegorie: {
+    term: 'Grotallegorie',
+    kort: 'Plato’s beeld van geketende mensen die alleen schaduwen op een wand zien.',
+    lang: 'Plato’s beeld van mensen die vastgeketend in een grot alleen schaduwen zien en die voor de werkelijkheid houden — zoals wij onze waarneming voor de werkelijkheid houden.',
+    url: '/kennisleer/rationalisme',
+  },
   hoofdvraag: {
     term: 'Hoofdvraag',
     kort: 'De centrale vraag van je onderzoek: een kennisvraag (theoriegericht) of een ontwerpvraag (ontwerpgericht).',
@@ -81,17 +123,41 @@ const begrippen = {
     lang: 'Je verwachte antwoord op de hoofdvraag, opgesteld vóórdat je gegevens verzamelt. Centraal in verklarend-toetsend onderzoek — en een hypothese die niet klopt is óók een geldig resultaat.',
     url: '/opzet/functies/verklarend-toetsend',
   },
+  idealisme: {
+    term: 'Idealisme',
+    kort: 'Er bestaat geen stoffelijke wereld buiten de waarneming: zijn is waargenomen worden.',
+    lang: 'De opvatting van Berkeley dat er geen stoffelijke wereld bestaat buiten de waarneming om: zijn is waargenomen worden.',
+    url: '/kennisleer/empirisme',
+  },
+  inductieprobleem: {
+    term: 'Inductieprobleem',
+    kort: 'Uit nog zoveel losse waarnemingen volgt nooit met zekerheid een algemene regel.',
+    lang: 'De vaststelling dat je uit nog zoveel losse waarnemingen nooit met zekerheid een algemene regel kunt afleiden. De filosofische kern van externe validiteit.',
+    url: '/kennisleer/inductieprobleem',
+  },
   'interne-validiteit': {
     term: 'Interne validiteit',
     kort: 'De uitkomst komt echt door wat je onderzocht, en niet door een storende variabele.',
     lang: 'De mate waarin de uitkomst van je onderzoek echt komt door wat je onderzocht, en niet door een storende variabele.',
     url: '/spelregels/interne-validiteit',
   },
+  intersubjectief: {
+    term: 'Intersubjectieve kennis',
+    kort: 'Wat onafhankelijke waarnemers los van elkaar vaststellen en waarover ze het eens worden.',
+    lang: 'Kennis die voor een grote groep gemeenschappelijk is doordat onafhankelijke waarnemers tot hetzelfde komen. Het doel van wetenschappelijk onderzoek.',
+    url: '/kennisleer/intersubjectief',
+  },
   interview: {
     term: 'Interview',
     kort: 'Met één of enkele personen dieper doorpraten en doorvragen naar het waarom.',
     lang: 'Een methode van gegevensverzameling waarbij je met één of enkele personen dieper doorpraat over een onderwerp en kunt doorvragen naar het waarom.',
     url: '/opzet/methoden/interview',
+  },
+  kennisleer: {
+    term: 'Kennisleer',
+    kort: 'Het deel van de filosofie dat onderzoekt waar kennis vandaan komt en wanneer je iets mag weten.',
+    lang: 'Kennisleer of epistemologie: het deel van de filosofie dat onderzoekt waar kennis vandaan komt en wanneer je iets écht mag weten.',
+    url: '/kennisleer/hoe-weet-je-iets',
   },
   kennisvraag: {
     term: 'Kennisvraag',
@@ -123,6 +189,24 @@ const begrippen = {
     lang: 'Een soort onderzoek (ook wel bronnenonderzoek) waarbij je bestaande bronnen zoekt, op betrouwbaarheid beoordeelt en met elkaar vergelijkt. Bijna elk onderzoek begint ermee.',
     url: '/opzet/soorten/literatuuronderzoek',
   },
+  monisme: {
+    term: 'Monisme',
+    kort: 'Alles wat bestaat is een verschijningsvorm van één en dezelfde substantie (Spinoza).',
+    lang: 'Spinoza’s opvatting dat er niet een god én een wereld én losse geesten bestaan, maar één enkele substantie waarvan alles een verschijningsvorm is.',
+    url: '/kennisleer/rationalisme',
+  },
+  nominalisme: {
+    term: 'Nominalisme',
+    kort: 'De essentie bestaat niet los van de dingen; algemene begrippen zijn slechts namen.',
+    lang: 'De opvatting dat de essentie niet los van de dingen bestaat: er zijn alleen afzonderlijke dingen, en algemene begrippen zijn de namen die wij daaraan geven.',
+    url: '/kennisleer/empirisme',
+  },
+  objectief: {
+    term: 'Objectieve kennis',
+    kort: 'Kennis over het object zelf, onafhankelijk van wie ernaar kijkt.',
+    lang: 'Kennis over het object zelf: over hoe iets is, los van wie ernaar kijkt. Let op: cijfers maken iets nog niet objectief.',
+    url: '/kennisleer/objectief',
+  },
   observatieschema: {
     term: 'Observatieschema',
     kort: 'Een vooraf gemaakt schema met wát je gaat turven of noteren (wie, wat, waar, wanneer).',
@@ -153,11 +237,23 @@ const begrippen = {
     lang: 'Werk of ideeën van een ander presenteren alsof ze van jou zijn, zonder bronvermelding. Schendt de spelregels transparant en aanvaardbaar.',
     url: '/spelregels/transparant',
   },
+  'primaire-secundaire-eigenschappen': {
+    term: 'Primaire en secundaire eigenschappen',
+    kort: 'Primaire zitten in het voorwerp (vorm, omvang), secundaire ontstaan in de waarnemer (kleur, smaak).',
+    lang: 'Locke’s onderscheid: primaire eigenschappen zitten in het voorwerp zelf (omvang, vorm, aantal, beweging), secundaire ontstaan pas in de waarnemer (kleur, geur, smaak, geluid).',
+    url: '/kennisleer/empirisme',
+  },
   prototype: {
     term: 'Prototype',
     kort: 'Een eerste, testbare versie van je ontwerp — om te testen of je oplossing werkt.',
     lang: 'Een eerste, testbare versie van je ontwerp. Hoeft nog niet af of mooi te zijn — het gaat erom dat je ermee kunt testen of je oplossing werkt.',
     url: '/typen/ontwerpgericht',
+  },
+  rationalisme: {
+    term: 'Rationalisme',
+    kort: 'Ervaringskennis is onbetrouwbaar; alleen het denken levert betrouwbare kennis.',
+    lang: 'De opvatting dat kennis uit ervaring onbetrouwbaar is en dat alleen het denken — de rede, zonder waarneming — betrouwbare kennis oplevert.',
+    url: '/kennisleer/rationalisme',
   },
   representatief: {
     term: 'Representatief',
@@ -165,11 +261,41 @@ const begrippen = {
     lang: 'Een groep deelnemers is representatief als die lijkt op de hele groep waarover je iets wilt zeggen. Belangrijk voor valide onderzoek en externe validiteit.',
     url: '/spelregels/externe-validiteit',
   },
+  scepticisme: {
+    term: 'Scepticisme',
+    kort: 'Je kunt niets voor honderd procent zeker weten.',
+    lang: 'De opvatting dat je niets voor 100% zeker kunt weten: elke bron van kennis kan je in principe bedriegen. Geen vrijbrief om alle onderzoek weg te wuiven.',
+    url: '/kennisleer/scepticisme',
+  },
   'storende-variabele': {
     term: 'Storende variabele',
     kort: 'Een factor die je níét onderzoekt maar wel de uitkomst beïnvloedt — bedreigt de interne validiteit.',
     lang: 'Een factor die je níét onderzoekt maar wel de uitkomst beïnvloedt, waardoor je niet weet waar het resultaat door komt. Bedreigt de interne validiteit.',
     url: '/spelregels/interne-validiteit',
+  },
+  subjectief: {
+    term: 'Subjectieve kennis',
+    kort: 'Kennis die bepaald wordt door het oordeel van het subject: de persoon die oordeelt.',
+    lang: 'Kennis die bepaald wordt door het oordeel van het subject. Niet waardeloos: kwalitatief onderzoek verzamelt juist doelbewust subjectieve gegevens.',
+    url: '/kennisleer/subjectief',
+  },
+  syllogistiek: {
+    term: 'Syllogistiek',
+    kort: 'Aristoteles’ sluitredenering in drie stappen.',
+    lang: 'De sluitredenering in drie stappen die Aristoteles ontwierp: alle mensen zijn sterfelijk; Socrates is een mens; dus Socrates is sterfelijk.',
+    url: '/kennisleer/empirisme',
+  },
+  'synthetische-uitspraak': {
+    term: 'Synthetische uitspraak',
+    kort: 'Waar op grond van de waarneming; de ontkenning is voorstelbaar.',
+    lang: 'Een uitspraak die pas waar of onwaar blijkt door waarneming, zoals "het regent vandaag". De tweede tand van de vork van Hume.',
+    url: '/kennisleer/vork-van-hume',
+  },
+  'tabula-rasa': {
+    term: 'Tabula rasa',
+    kort: 'De geest begint bij de geboorte als onbeschreven blad (Locke).',
+    lang: 'Locke’s beeld van de pasgeboren geest als onbeschreven blad: er zijn geen aangeboren ideeën, alles komt via de zintuigen binnen.',
+    url: '/kennisleer/empirisme',
   },
   theoriegericht: {
     term: 'Theoriegericht onderzoek',
@@ -212,6 +338,12 @@ const begrippen = {
     kort: 'De lijst eisen waaraan je ontwerp moet voldoen, opgesteld vóórdat je gaat ontwerpen.',
     lang: 'De lijst met eisen waaraan je ontwerp moet voldoen, opgesteld vóórdat je gaat ontwerpen. Aan het einde test je je ontwerp tegen deze eisen.',
     url: '/typen/ontwerpgericht',
+  },
+  'vork-van-hume': {
+    term: 'Vork van Hume',
+    kort: 'Elke zinvolle uitspraak is analytisch of synthetisch; wat in geen van beide past, is onzin.',
+    lang: 'Hume’s indeling van alle zinvolle uitspraken in analytische (a priori) en synthetische (a posteriori). Wat in geen van beide vakken past, noemde hij onzin.',
+    url: '/kennisleer/vork-van-hume',
   },
 };
 

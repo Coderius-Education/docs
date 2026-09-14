@@ -29,6 +29,25 @@ const sidebars = {
     },
     {
       type: 'category',
+      label: 'Kennisleer',
+      items: [
+        'kennisleer/hoe-weet-je-iets',
+        'kennisleer/scepticisme',
+        'kennisleer/rationalisme',
+        'kennisleer/empirisme',
+        'kennisleer/objectief',
+        'kennisleer/subjectief',
+        'kennisleer/intersubjectief',
+        'kennisleer/soorten-kennis',
+        'kennisleer/a-priori',
+        'kennisleer/a-posteriori',
+        'kennisleer/vork-van-hume',
+        'kennisleer/inductieprobleem',
+        'kennisleer/denkers',
+      ],
+    },
+    {
+      type: 'category',
       label: 'Onderzoek opzetten',
       items: [
         'opzet/keuzedriehoek',
