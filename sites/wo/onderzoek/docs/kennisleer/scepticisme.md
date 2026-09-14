@@ -1,6 +1,5 @@
 ---
 title: Scepticisme
-sidebar_position: 2
 ---
 
 # Scepticisme

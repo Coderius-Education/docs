@@ -1,6 +1,5 @@
 ---
 title: Subjectieve kennis
-sidebar_position: 6
 ---
 
 # Subjectieve kennis

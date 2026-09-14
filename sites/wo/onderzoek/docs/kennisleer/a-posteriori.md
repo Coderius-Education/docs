@@ -1,6 +1,5 @@
 ---
 title: A posteriori
-sidebar_position: 10
 ---
 
 # A posteriori

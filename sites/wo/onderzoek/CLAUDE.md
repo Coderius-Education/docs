@@ -17,7 +17,9 @@ naar `main` deployt automatisch (`.github/workflows/deploy.yml`).
 
 - Conceptpagina's (één kernbegrip per pagina): definitiekader (`<Definitie>`), voorbeelden,
   valkuil-admonition, eventueel `<WelNiet>`, `<EchtGebeurd>` (beroemde casus) en `<Denker>`
-  (filosoof bij het begrip), afgesloten met "Hangt samen met".
+  (kort kader van twee zinnen dat doorlinkt naar de eigen pagina van die denker; `linkUrl`
+  is een absolute route zoals `/kennisleer/plato`, want relatieve .md-paden werken niet in
+  component-props), afgesloten met "Hangt samen met".
 - Verbandpagina's (titels als "… vs. …", "… samen", "… combineren"): openen met "Het verband
   in één zin" en bevatten de vergelijkingstabellen en `<Quiz>`-oefeningen. Een overzichtspagina
   van een heel mapje staat als eerste zichtbare item ín dat mapje (zie Onderzoek opzetten en

@@ -1,6 +1,5 @@
 ---
 title: Rationalisme
-sidebar_position: 3
 ---
 
 # Rationalisme
@@ -17,35 +16,27 @@ Rationalisten wijzen op de wiskunde. Dat 7 + 5 = 12, hoef je niet te controleren
 
 Metingen daarentegen zijn altijd een beetje onnauwkeurig, en je meetlint is nooit precies. De rationalist concludeert: wat je waarneemt is troebel, wat je bewijst is helder.
 
-<Denker naam="Plato" jaartal="ca. 427–347 v.Chr." stroming="begripsrealisme" linkUrl="https://www.youtube.com/watch?v=1RWOpQXTltA" linkTekst="De grotallegorie (video)">
+<Denker naam="Plato" jaartal="ca. 427–347 v.Chr." stroming="begripsrealisme" linkUrl="/kennisleer/plato" linkTekst="Lees verder over Plato">
 
-In zijn beroemde **grotallegorie** zitten mensen hun leven lang vastgeketend in een grot, met hun gezicht naar de wand. Achter hen brandt een vuur; alles wat zij ooit zien zijn schaduwen op die wand. Voor hen zijn de schaduwen de werkelijkheid. Ontsnapt er één en ziet hij buiten de echte voorwerpen en de zon, dan wordt hij bij terugkomst niet geloofd.
-
-Zo, zegt Plato, verhoudt onze waarneming zich tot de echte werkelijkheid. Wat je ziet is een schaduw; de volmaakte "Ideeën" erachter — de perfecte cirkel, de rechtvaardigheid zelf — bestaan echt en los van de dingen, en je bereikt ze alleen met je verstand. Die opvatting heet **begripsrealisme**: algemene begrippen bestaan zelfstandig.
+Wat je waarneemt zijn slechts schaduwen van de volmaakte **Ideeën**, die alleen je verstand bereikt. Zijn **grotallegorie** is het bekendste beeld uit de hele filosofie.
 
 </Denker>
 
-<Denker naam="René Descartes" jaartal="1596–1650" stroming="methodische twijfel">
+<Denker naam="René Descartes" jaartal="1596–1650" stroming="methodische twijfel" linkUrl="/kennisleer/descartes" linkTekst="Lees verder over Descartes">
 
-Descartes twijfelde bewust aan álles: aan zijn zintuigen, aan de buitenwereld, zelfs aan de wiskunde (misschien misleidt een boosaardige demon hem wel). Eén ding bleef overeind: terwijl hij twijfelde, moest hij wel bestaan om te kunnen twijfelen. **"Cogito ergo sum"** — ik denk, dus ik ben.
-
-Let op de volgorde: niet zijn ogen maar zijn denken leverde hem het eerste zekere weten op. Vanaf dat ene punt probeerde hij de rest van zijn kennis weer op te bouwen.
+Twijfelde bewust aan alles — zijn zintuigen, de buitenwereld, zelfs de wiskunde — en hield één zekerheid over: wie twijfelt, denkt, en wie denkt, bestaat. **Cogito ergo sum.**
 
 </Denker>
 
-<Denker naam="Baruch Spinoza" jaartal="1632–1677" stroming="monisme">
+<Denker naam="Baruch Spinoza" jaartal="1632–1677" stroming="monisme" linkUrl="/kennisleer/spinoza" linkTekst="Lees verder over Spinoza">
 
-De Nederlandse filosoof Spinoza schreef zijn hoofdwerk als een wiskundeboek: met definities, axioma's en stellingen die hij stap voor stap bewees. Redeneren was voor hem letterlijk de methode om de werkelijkheid te leren kennen.
-
-Zijn conclusie is het **monisme**: er bestaat niet een god én een wereld én losse geesten, maar één enkele substantie, die je "God" of "de natuur" kunt noemen — alles wat bestaat is daar een verschijningsvorm van.
+Schreef zijn filosofie als een wiskundeboek, met definities, axioma’s en bewijzen. Zijn conclusie is het **monisme**: alles wat bestaat is een verschijningsvorm van één substantie.
 
 </Denker>
 
-<Denker naam="Noam Chomsky" jaartal="1928" stroming="modern rationalisme" linkUrl="https://www.youtube.com/watch?v=7Cgpfw4z8cw" linkTekst="Chomsky over taal (video)">
+<Denker naam="Noam Chomsky" jaartal="1928" stroming="modern rationalisme" linkUrl="/kennisleer/chomsky" linkTekst="Lees verder over Chomsky">
 
-Het rationalisme is geen afgesloten hoofdstuk. Taalkundige Chomsky stelde vast dat peuters in razend tempo grammaticaal correcte zinnen maken die ze nooit eerder hoorden — terwijl de taal die ze om zich heen horen daarvoor veel te rommelig en te beperkt is.
-
-Zijn verklaring: een deel van de taalstructuur is **aangeboren**. Daarmee keert hij zich rechtstreeks tegen het idee dat een kind als onbeschreven blad begint, en staat hij in de rationalistische traditie.
+Peuters maken te snel grammaticaal correcte zinnen om alles uit ervaring te kunnen halen. Een deel van de taalstructuur moet **aangeboren** zijn — het rationalisme in modern onderzoek.
 
 </Denker>
 

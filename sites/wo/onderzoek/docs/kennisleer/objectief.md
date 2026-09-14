@@ -1,6 +1,5 @@
 ---
 title: Objectieve kennis
-sidebar_position: 5
 ---
 
 # Objectieve kennis

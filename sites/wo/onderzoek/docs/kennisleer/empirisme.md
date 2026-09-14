@@ -1,6 +1,5 @@
 ---
 title: Empirisme
-sidebar_position: 4
 ---
 
 # Empirisme
@@ -17,27 +16,21 @@ Empiristen draaien de rationalistische volgorde om. Niet het denken maar de were
 
 Bijna al het onderzoek dat je op deze site leert opzetten is in die zin empirisch: je [observeert](../opzet/methoden/observatie.md), [enquêteert](../opzet/methoden/enquete.md), [interviewt](../opzet/methoden/interview.md) of meet. Je gaat kijken in plaats van te bedenken hoe het zal zitten.
 
-<Denker naam="Aristoteles" jaartal="384–322 v.Chr." stroming="nominalisme">
+<Denker naam="Aristoteles" jaartal="384–322 v.Chr." stroming="nominalisme" linkUrl="/kennisleer/aristoteles" linkTekst="Lees verder over Aristoteles">
 
-Aristoteles, leerling van Plato, keerde zich tegen zijn leermeester: de **essentie bestaat niet los van de dingen**. Er zweeft geen volmaakt "Paard" in een aparte wereld — er zijn alleen echte paarden, en het begrip "paard" is de naam die wij aan die groep geven. Daarom heet deze positie **nominalisme** (van *nomen*, naam), tegenover Plato's begripsrealisme.
-
-Wie de wereld wil kennen, moet dus naar de dingen zélf kijken. Aristoteles verzamelde en ordende alles wat hij tegenkwam, van diersoorten tot staatsvormen. Voor het redeneren met wat hij vond, ontwierp hij de **syllogistiek**: een sluitredenering in drie stappen — *alle mensen zijn sterfelijk; Socrates is een mens; dus Socrates is sterfelijk.*
+De essentie bestaat niet los van de dingen: er zijn alleen echte paarden, en "paard" is de naam die wij die groep geven (**nominalisme**). Voor het redeneren met wat je waarneemt ontwierp hij de **syllogistiek**.
 
 </Denker>
 
-<Denker naam="John Locke" jaartal="1632–1704" stroming="tabula rasa">
+<Denker naam="John Locke" jaartal="1632–1704" stroming="tabula rasa" linkUrl="/kennisleer/locke" linkTekst="Lees verder over Locke">
 
-Locke bestreed het bestaan van aangeboren ideeën: **no innate ideas**. De geest van een pasgeborene is een **tabula rasa**, een onbeschreven blad; alles wat er later op staat, is via de zintuigen binnengekomen.
-
-Wel maakte hij een belangrijk onderscheid in wat je waarneemt. **Primaire eigenschappen** zitten in het voorwerp zelf: omvang, vorm, aantal, beweging. **Secundaire eigenschappen** ontstaan pas in jou: kleur, geur, smaak, geluid. Een appel is echt rond, maar "rood" bestaat alleen in de waarnemer — buiten jou is er slechts licht van een bepaalde golflengte.
+Geen aangeboren ideeën: de geest begint als onbeschreven blad, een **tabula rasa**. Wel onderscheidde hij **primaire eigenschappen** (vorm, omvang) van **secundaire** (kleur, smaak), die pas in de waarnemer ontstaan.
 
 </Denker>
 
-<Denker naam="George Berkeley" jaartal="1685–1753" stroming="idealisme">
+<Denker naam="George Berkeley" jaartal="1685–1753" stroming="idealisme" linkUrl="/kennisleer/berkeley" linkTekst="Lees verder over Berkeley">
 
-Berkeley nam Locke's onderscheid en trok het radicaal door: ook de **primaire eigenschappen bestaan niet** buiten de waarneming. Want hoe zou je ooit een vorm of omvang kunnen vaststellen, anders dan door hem te zien of te voelen? Alles wat je over een voorwerp kunt zeggen, is iets wat je waarneemt.
-
-Zijn conclusie: **"zijn is waargenomen worden"** (*esse est percipi*). Er bestaat geen stoffelijke wereld achter onze ervaringen — alleen geesten en hun waarnemingen. Die opvatting heet **idealisme**. Opmerkelijk genoeg komt Berkeley daarmee via een streng empiristisch uitgangspunt uit bij een conclusie die niets van de tastbare wereld overlaat.
+Trok Locke’s redenering door: ook vorm en omvang ken je uitsluitend via waarneming, dus bestaat er geen stoffelijke wereld daarbuiten. **Zijn is waargenomen worden** — het **idealisme**.
 
 </Denker>
 

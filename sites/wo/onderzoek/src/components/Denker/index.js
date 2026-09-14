@@ -1,11 +1,14 @@
 import React from 'react';
+import Link from '@docusaurus/Link';
 import styles from './styles.module.css';
 
 /**
- * Kader met een denker die bij het begrip op deze pagina hoort.
+ * Kader met een denker die bij het begrip op deze pagina hoort. Kort houden:
+ * het volledige verhaal staat op de pagina van de denker zelf.
  * Gebruik: <Denker naam="…" jaartal="…" stroming="…" linkUrl="…" linkTekst="…">uitleg</Denker>
  */
 export default function Denker({naam, jaartal, stroming, children, linkUrl, linkTekst}) {
+  const extern = /^https?:/.test(linkUrl || '');
   return (
     <div className={styles.kader}>
       <div className={styles.kop}>
@@ -19,9 +22,11 @@ export default function Denker({naam, jaartal, stroming, children, linkUrl, link
       <div className={styles.uitleg}>{children}</div>
       {linkUrl && (
         <div className={styles.voet}>
-          <a href={linkUrl} target="_blank" rel="noopener noreferrer">
-            {linkTekst || 'Verder kijken'} ↗
-          </a>
+          <Link
+            to={linkUrl}
+            {...(extern ? {target: '_blank', rel: 'noopener noreferrer'} : {})}>
+            {linkTekst || (extern ? 'Verder kijken' : 'Lees verder')} {extern ? '↗' : '→'}
+          </Link>
         </div>
       )}
     </div>

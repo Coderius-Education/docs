@@ -1,6 +1,5 @@
 ---
 title: A priori
-sidebar_position: 9
 ---
 
 # A priori

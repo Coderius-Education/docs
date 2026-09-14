@@ -1,6 +1,5 @@
 ---
 title: Intersubjectieve kennis
-sidebar_position: 7
 ---
 
 # Intersubjectieve kennis

@@ -1,6 +1,5 @@
 ---
 title: Het inductieprobleem
-sidebar_position: 12
 ---
 
 # Het inductieprobleem
@@ -17,11 +16,9 @@ Eeuwenlang gold in Europa als vaststaand feit: alle zwanen zijn wit. Niemand had
 
 De miljoenen witte zwanen waren geen van alle onjuist waargenomen. Het probleem zat in de sprong: van "alle zwanen die ík zag waren wit" naar "alle zwanen zijn wit". Die sprong is nooit waterdicht, hoe groot je aantal waarnemingen ook is.
 
-<Denker naam="David Hume" jaartal="1711–1776" stroming="empirisme">
+<Denker naam="David Hume" jaartal="1711–1776" stroming="empirisme" linkUrl="/kennisleer/hume" linkTekst="Lees verder over Hume">
 
-Hume liet zien dat de sprong op een stilzwijgende aanname rust: dat de toekomst zich zal gedragen zoals het verleden. Waarom zou de zon morgen opkomen? Omdat hij dat altijd deed. Maar waarom zou "het ging altijd zo" iets zeggen over morgen?
-
-Daarvoor heb je precies die aanname weer nodig — en die kun je alleen onderbouwen met… ervaring uit het verleden. De redenering bijt in haar eigen staart. Hume concludeerde dat inductie geen logische rechtvaardiging heeft: we doen het uit gewoonte, omdat ons brein nu eenmaal verwachtingen vormt.
+Liet zien dat de sprong van "tot nu toe altijd" naar "dus altijd" rust op de aanname dat de toekomst op het verleden lijkt — en die aanname kun je alleen met ervaring uit het verleden onderbouwen. De redenering bijt in haar eigen staart.
 
 </Denker>
 

@@ -38,7 +38,7 @@ const begrippen = {
     term: 'Begripsrealisme',
     kort: 'Algemene begrippen bestaan echt en los van de afzonderlijke dingen (Plato).',
     lang: 'De opvatting van Plato dat algemene begrippen — de volmaakte Ideeën — echt bestaan en los staan van de afzonderlijke dingen die je waarneemt.',
-    url: '/kennisleer/rationalisme',
+    url: '/kennisleer/plato',
   },
   'beschrijvend-onderzoek': {
     term: 'Beschrijvend onderzoek',
@@ -62,7 +62,7 @@ const begrippen = {
     term: 'Cogito ergo sum',
     kort: '"Ik denk, dus ik ben": het enige dat Descartes’ twijfel overleefde.',
     lang: '"Ik denk, dus ik ben" — de enige zekerheid die overbleef toen Descartes aan alles twijfelde: wie twijfelt, moet bestaan om te kunnen twijfelen.',
-    url: '/kennisleer/rationalisme',
+    url: '/kennisleer/descartes',
   },
   conclusie: {
     term: 'Conclusie',
@@ -109,7 +109,7 @@ const begrippen = {
     term: 'Grotallegorie',
     kort: 'Plato’s beeld van geketende mensen die alleen schaduwen op een wand zien.',
     lang: 'Plato’s beeld van mensen die vastgeketend in een grot alleen schaduwen zien en die voor de werkelijkheid houden — zoals wij onze waarneming voor de werkelijkheid houden.',
-    url: '/kennisleer/rationalisme',
+    url: '/kennisleer/plato',
   },
   hoofdvraag: {
     term: 'Hoofdvraag',
@@ -127,7 +127,7 @@ const begrippen = {
     term: 'Idealisme',
     kort: 'Er bestaat geen stoffelijke wereld buiten de waarneming: zijn is waargenomen worden.',
     lang: 'De opvatting van Berkeley dat er geen stoffelijke wereld bestaat buiten de waarneming om: zijn is waargenomen worden.',
-    url: '/kennisleer/empirisme',
+    url: '/kennisleer/berkeley',
   },
   inductieprobleem: {
     term: 'Inductieprobleem',
@@ -193,13 +193,13 @@ const begrippen = {
     term: 'Monisme',
     kort: 'Alles wat bestaat is een verschijningsvorm van één en dezelfde substantie (Spinoza).',
     lang: 'Spinoza’s opvatting dat er niet een god én een wereld én losse geesten bestaan, maar één enkele substantie waarvan alles een verschijningsvorm is.',
-    url: '/kennisleer/rationalisme',
+    url: '/kennisleer/spinoza',
   },
   nominalisme: {
     term: 'Nominalisme',
     kort: 'De essentie bestaat niet los van de dingen; algemene begrippen zijn slechts namen.',
     lang: 'De opvatting dat de essentie niet los van de dingen bestaat: er zijn alleen afzonderlijke dingen, en algemene begrippen zijn de namen die wij daaraan geven.',
-    url: '/kennisleer/empirisme',
+    url: '/kennisleer/aristoteles',
   },
   objectief: {
     term: 'Objectieve kennis',
@@ -241,7 +241,7 @@ const begrippen = {
     term: 'Primaire en secundaire eigenschappen',
     kort: 'Primaire zitten in het voorwerp (vorm, omvang), secundaire ontstaan in de waarnemer (kleur, smaak).',
     lang: 'Locke’s onderscheid: primaire eigenschappen zitten in het voorwerp zelf (omvang, vorm, aantal, beweging), secundaire ontstaan pas in de waarnemer (kleur, geur, smaak, geluid).',
-    url: '/kennisleer/empirisme',
+    url: '/kennisleer/locke',
   },
   prototype: {
     term: 'Prototype',
@@ -283,7 +283,7 @@ const begrippen = {
     term: 'Syllogistiek',
     kort: 'Aristoteles’ sluitredenering in drie stappen.',
     lang: 'De sluitredenering in drie stappen die Aristoteles ontwierp: alle mensen zijn sterfelijk; Socrates is een mens; dus Socrates is sterfelijk.',
-    url: '/kennisleer/empirisme',
+    url: '/kennisleer/aristoteles',
   },
   'synthetische-uitspraak': {
     term: 'Synthetische uitspraak',
@@ -295,7 +295,7 @@ const begrippen = {
     term: 'Tabula rasa',
     kort: 'De geest begint bij de geboorte als onbeschreven blad (Locke).',
     lang: 'Locke’s beeld van de pasgeboren geest als onbeschreven blad: er zijn geen aangeboren ideeën, alles komt via de zintuigen binnen.',
-    url: '/kennisleer/empirisme',
+    url: '/kennisleer/locke',
   },
   theoriegericht: {
     term: 'Theoriegericht onderzoek',
