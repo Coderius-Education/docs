@@ -129,23 +129,9 @@ describe('de links tussen lessen', () => {
   it('proza noemt geen paginanummers: de sidebar toont er geen', () => {
     // "je hebt player al geschreven op pagina 7" — dat nummer is het
     // bestandsprefix, en dat ziet een leerling nergens. Bij de doorloop van
-    // minimax stonden er negen. Verwijs met een link en de titel van de les.
-    // Knapsack doet het nog op de oude manier; die staan hier als exacte
-    // achterstand, zodat een nieuwe meteen opvalt en een opgeloste weg moet.
-    const achterstand = [
-      'knapsack/bouwen/06-een-rij: pagina 02',
-      'knapsack/bouwen/06-een-rij: pagina 02',
-      'knapsack/bouwen/07-volledige-tabel: pagina 5',
-      'knapsack/bouwen/07-volledige-tabel: pagina 5',
-      'knapsack/bouwen/07-volledige-tabel: pagina 6',
-      'knapsack/bouwen/07-volledige-tabel: pagina 02',
-      'knapsack/bouwen/07-volledige-tabel: pagina 02',
-      'knapsack/08-compleet: pagina 02',
-      'knapsack/08-compleet: pagina 02',
-      'knapsack/09-aanpassen: pagina 02',
-      'knapsack/09-aanpassen: pagina 02',
-      'knapsack/09-aanpassen: pagina 02',
-    ];
+    // minimax stonden er negen, bij knapsack twaalf. Verwijs met een link en
+    // de titel van de les.
+    const achterstand: string[] = [];
     const kapot: string[] = [];
     for (const l of ALLE) {
       const proza = l.tekst.replace(/```[\s\S]*?```/g, '').replace(/<PyRunner[\s\S]*?\/>/g, '');

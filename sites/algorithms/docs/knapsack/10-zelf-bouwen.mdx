@@ -29,9 +29,9 @@ Bouw een functie `kies_rugzak(items, capaciteit)` die teruggeeft:
 {/* niet-draaien: startcode; de leerling bouwt de hele functie */}
 <PyRunner initialCode={`def kies_rugzak(items, capaciteit):
     # Vul aan:
-    # 1. bouw de tabel met de aanpak van pagina 07
+    # 1. bouw de tabel zoals in het complete algoritme
     # 2. lees tabel[n][capaciteit] = de beste totale waarde
-    # 3. backtrack (pagina 09) voor de lijst van indexen
+    # 3. backtrack zoals bij welke-items voor de lijst van indexen
     # Return (totale_waarde, lijst_van_indexen).
     return 0, []
 
@@ -75,7 +75,16 @@ print("Alle tests gehaald ✓")`} />
 <details>
 <summary>Tip</summary>
 
-Bouw de tabel inline en backtrack erover:
+Twee stukken die je al hebt: de tabel van
+[het complete algoritme](./08-compleet) en de backtrack van
+[welke items](./09-aanpassen). Zet ze achter elkaar in één functie en
+geef aan het eind twee dingen terug, gescheiden door een komma:
+`return tabel[n][capaciteit], keuze`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
 
 ```python
 def kies_rugzak(items, capaciteit):
@@ -102,11 +111,6 @@ def kies_rugzak(items, capaciteit):
     return tabel[n][capaciteit], keuze
 ```
 
-</details>
-
-<details>
-<summary>Verwacht antwoord</summary>
-
 Beste combinatie: **items 1, 3, 4, 5, 6** (alles behalve de tent).
 
 - Waarde: 12 + 8 + 10 + 14 + 6 = **50**
@@ -123,11 +127,27 @@ items kwijt — dat geeft maximum 48.
 Voeg een 7e item toe — een verrekijker met waarde 4 en gewicht 1.
 Verandert de optimale keuze?
 
-## Wat heb je nu geleerd?
+<details>
+<summary>Tip</summary>
 
-Je hebt het **klassieke knapsack-probleem** in zijn DP-tabel-vorm
-gebouwd, getest, en toegepast op een echt scenario. De tabel-aanpak
-schaalt naar veel grotere problemen dan met de hand zou kunnen — en
-de backtrack-procedure haalt er de items uit.
+Voeg `(4, 1)` toe aan de lijst en draai `kies_rugzak` opnieuw. Kijk
+naar de totale waarde én naar de lijst. Reken daarna met de hand na of
+er nóg een combinatie is die dezelfde waarde haalt.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+De beste waarde blijft **50**, en de functie geeft dezelfde vijf items
+terug. Toch is er nu een tweede rugzak van 50: slaapzak, tent,
+waterfilter, powerbank en verrekijker (12 + 18 + 10 + 6 + 4 = 50,
+gewicht 4 + 7 + 2 + 1 + 1 = 15).
+
+Dat de functie de eerste kiest komt door de backtrack: bij een
+gelijkspel is de cel gelijk aan de cel erboven, en dat leest hij als
+"niet meegenomen". De verrekijker valt zo af, en de tent met hem.
+
+</details>
 
 Door naar [veelgemaakte fouten →](./11-fouten).

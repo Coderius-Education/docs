@@ -124,15 +124,20 @@ print("Alle tests gehaald ✓")`} />
 <details>
 <summary>Tip</summary>
 
-Eén regel werk:
+Twee regels werk: eerst tuple-unpacking op `items[i]`, dan een f-string
+teruggeven. In een f-string (`f"..."`) zet je een variabele in de tekst
+met `{...}`, en `{i + 1}` mag daar ook.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
 
 ```python
-waarde, gewicht = items[i]
-return f"item {i + 1}: waarde={waarde}, gewicht={gewicht}"
+def item_info(items, i):
+    waarde, gewicht = items[i]
+    return f"item {i + 1}: waarde={waarde}, gewicht={gewicht}"
 ```
-
-Een f-string (`f"..."`) staat Python toe om variabelen direct in een
-tekst te zetten met `{...}`.
 
 </details>
 
