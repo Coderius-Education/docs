@@ -34,15 +34,6 @@ const sidebars = {
         'kennisleer/hoe-weet-je-iets',
         {
           type: 'category',
-          label: 'Drie posities',
-          items: [
-            'kennisleer/scepticisme',
-            'kennisleer/rationalisme',
-            'kennisleer/empirisme',
-          ],
-        },
-        {
-          type: 'category',
           label: 'Kennis vooraf en achteraf',
           items: [
             'kennisleer/a-priori',
@@ -50,7 +41,6 @@ const sidebars = {
             'kennisleer/vork-van-hume',
           ],
         },
-        'kennisleer/inductieprobleem',
         {
           type: 'category',
           label: 'Soorten kennis',
@@ -61,6 +51,16 @@ const sidebars = {
             'kennisleer/soorten-kennis',
           ],
         },
+        {
+          type: 'category',
+          label: 'Drie posities',
+          items: [
+            'kennisleer/scepticisme',
+            'kennisleer/rationalisme',
+            'kennisleer/empirisme',
+          ],
+        },
+        'kennisleer/inductieprobleem',
         {
           type: 'category',
           label: 'Denkers',
