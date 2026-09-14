@@ -56,8 +56,18 @@ function itemsUit(tekst: string, kop: string): Item[] {
   const start = tekst.indexOf(kop);
   expect(start, `kop '${kop}' staat op de pagina`).toBeGreaterThan(-1);
   const items: Item[] = [];
-  for (const m of tekst.slice(start).matchAll(/^\| (\d) \| (\d+) \| (\d+)(?: kg)? \|$/gm)) {
+  for (const m of tekst
+    .slice(start)
+    .matchAll(/^\| (\d) \| (\d+) \| (\d+)(?: kg)? \| ([\d,]+) \|$/gm)) {
     items.push({ waarde: Number(m[2]), gewicht: Number(m[3]) });
+    // De kolom waarde per kilo, afgerond op één decimaal met een komma.
+    const perKilo = Number(m[2]) / Number(m[3]);
+    const getoond = Number(m[4].replace(',', '.'));
+    if (Math.abs(getoond - perKilo) > 0.05) {
+      throw new Error(
+        `item ${m[1]}: waarde per kg is ${perKilo.toFixed(2)}, de tabel zegt ${m[4]}`,
+      );
+    }
     if (items.length && Number(m[1]) !== items.length) throw new Error('items niet op volgorde');
   }
   return items;
