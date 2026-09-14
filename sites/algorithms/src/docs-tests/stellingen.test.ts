@@ -13,7 +13,11 @@ import { describe, expect, it } from 'vitest';
 
 const DOCS = fileURLToPath(new URL('../../docs/', import.meta.url));
 
-const VOORWAARDE = /^\*\*(Waar|Niet waar|Juist|Onjuist) — (als|in|voor|niet voor|alleen)\b/;
+// Ook "Half waar", "Deels waar" en "Niet waar — niet altijd" zijn geen
+// antwoord maar een stelling die anders geformuleerd moet (knapsack had er
+// twee).
+const VOORWAARDE =
+  /^\*\*(?:(?:Waar|Niet waar|Juist|Onjuist) — (?:als|in|voor|niet voor|alleen|niet altijd|meestal)\b|(?:Half|Deels|Bijna|Soms) )/;
 
 const ACHTERSTAND = new Map<string, string[]>([
   ['big-o/02-stellingen.mdx', ['Stelling 1', 'Stelling 4']],

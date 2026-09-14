@@ -40,13 +40,16 @@ Vuistregel: als je naar een cel `[i][w]` wilt kunnen met `i = n` én
 
 ## `i`-loop start bij 0
 
-Geen Python-foutmelding — wél **stille verkeerde antwoorden** of
-crashes diep in de logica.
+Geen Python-foutmelding — wél een **rij 0 die niet meer 0 is**, en
+soms een totaalwaarde die te hoog is.
 
 **Oorzaak:** rij 0 in de tabel is al ingevuld (basisgeval: allemaal 0).
 Je werkelijke "vul-rij"-werk start bij `i = 1`. Begin je bij `i = 0`,
-dan probeer je `items[-1]` op te halen — Python's negatieve indexing
-geeft je het **laatste** item. Soms werkt het toevallig, vaak niet.
+dan haal je `items[-1]` op, en Python's negatieve index geeft je het
+**laatste** item. Dat item komt zo in rij 0 terecht en kan daarna nog
+een keer meetellen: één item van waarde 10 en gewicht 1 in een rugzak
+van 2 geeft dan 20. Op het voorbeeld van de les komt er toevallig nog
+40 uit, met een rij 0 vol 28'en.
 
 ```python
 # FOUT

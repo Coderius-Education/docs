@@ -37,27 +37,22 @@ De hoogste waarde kan zoveel ruimte pakken dat hij de rest blokkeert.
 <details>
 <summary>Antwoord</summary>
 
-**Niet waar — niet altijd.**
+**Niet waar.**
 
-Die strategie heet **greedy**. Voor de *fractionele* knapsack (waar
-je een halve item mag pakken) werkt het wél optimaal. Voor **0/1**
-knapsack kan greedy een verkeerd antwoord geven, omdat je items niet
-kunt halveren.
+Die strategie heet **greedy**: steeds het item met de beste waarde per
+kilo. Soms komt daar de beste rugzak uit, maar niet altijd, en dat is
+genoeg om hem als strategie af te keuren.
 
-Voorbeeld: rugzak 10 kg, items A = (60, 5), B = (60, 5), C = (90, 8).
+Voorbeeld: rugzak 50 kg, items (waarde 60, gewicht 10), (100, 20) en
+(120, 30). Waarde per kilo: 6, 5 en 4. Greedy pakt de eerste twee:
+waarde **160**, gewicht 30, en het derde item past er niet meer bij.
+Maar het tweede en derde item samen wegen precies 50 en zijn **220**
+waard.
 
-- Waarde/kg: A=12, B=12, C=11.25 → greedy pakt A en B → totaal **120**.
-- Maar: A + B = gewicht 10, dat past. ✓
-- Of: C + ? — alleen C past in zijn eentje binnen 10 (kan A of B niet
-  meer aanpakken want 8 + 5 = 13 > 10) → totaal **90**.
-
-Hier wint greedy toevallig. Maar bij andere getallen kan het misgaan
-— bv. rugzak 50, items (60, 10), (100, 20), (120, 30). Greedy ordent
-60/10=6, 100/20=5, 120/30=4 → pakt eerste twee → 160. Maar tweede +
-derde = 220.
-
-Voor 0/1 knapsack: gebruik **recursie** (deze track) of **dynamic
-programming**. Niet greedy.
+Greedy kijkt per item; het beste antwoord hangt af van de
+**combinatie**. Daarom vult dit hoofdstuk een tabel in die elke
+combinatie meeweegt. Bij de *fractionele* knapsack, waar je een halve
+item mag pakken, werkt greedy wél.
 
 </details>
 
@@ -92,51 +87,51 @@ Eén extra rij (voor `i = 0` = geen items, allemaal 0) en één extra
 kolom (voor `w = 0` = lege rugzak, allemaal 0). Die "0-rij" en
 "0-kolom" zijn de basisgevallen waaruit we de tabel opbouwen.
 
-Bij 5 items en W=11 (het image-voorbeeld) is dat dus `6 × 12 = 72`
+Bij 5 items en W=11 (het voorbeeld van de les) is dat dus `6 × 12 = 72`
 cellen. Ongeacht wat de waardes of gewichten van de items zijn.
 
 </details>
 
 ## Stelling 5
 
-> *"Als een item zwaarder is dan de resterende capaciteit, kunnen we
-> hem niet meenemen, maar moeten we hem nog wel **overwegen**."*
-
-<details>
-<summary>Antwoord</summary>
-
-**Half waar.**
-
-We moeten doorrekenen wat we **zonder** dit item kunnen halen (skip-
-tak). Maar de meenemen-tak slaan we over — dat zou de capaciteit
-**negatief** maken, en dat is niet zinvol.
-
-Praktisch: een `if gewicht > capaciteit:` brengt je direct naar de
-skip-tak, zonder de meenemen-tak te proberen.
-
-</details>
-
-## Stelling 6
-
-> *"Met de tabel-aanpak (`O(n × W)`) kun je ook 100 items aan, zolang
-> de capaciteit niet onmenselijk groot wordt."*
+> *"Als een item zwaarder is dan de capaciteit van een cel, krijgt die
+> cel de waarde van de cel erboven: de beste rugzak zonder dit item."*
 
 <details>
 <summary>Antwoord</summary>
 
 **Waar.**
 
-Bij 100 items en W = 1.000 is de tabel `101 × 1001 ≈ 100.000` cellen.
-Elke cel kost één lookup → in een fractie van een seconde klaar.
+Meenemen kan niet: dan zou de capaciteit negatief worden. Wat overblijft
+is wat je **zonder** dit item kunt halen, en dat staat al in de cel
+erboven. Daarom kopieer je hem.
 
-Vergelijk met de **naïeve recursie** die per item zichzelf twee keer
-aanroept: bij 30 items al 2³⁰ ≈ een miljard oproepen. De tabel is
-miljoenen keren sneller omdat hij elke subvraag exact **één** keer
-uitrekent in plaats van eindeloos te herhalen.
+In code is dat de `if gewicht > w:` die je meteen naar de kopie brengt,
+zonder de meenemen-tak te proberen.
 
-De tabel-aanpak schaalt prima totdat `W` zelf gigantisch wordt (bv.
-een miljoen). Dan zijn er nog snellere varianten, maar voor de meeste
-echte problemen is `O(n × W)` ruim voldoende.
+</details>
+
+## Stelling 6
+
+> *"Met de tabel kun je ook 100 items aan, zolang de capaciteit niet
+> gigantisch wordt."*
+
+<details>
+<summary>Antwoord</summary>
+
+**Waar.**
+
+Bij 100 items en een capaciteit van 1000 heeft de tabel `101 × 1001`,
+ruim 100.000 cellen. Elke cel is één vergelijking, dus dat is in een
+fractie van een seconde klaar.
+
+Vergelijk dat met alle combinaties afgaan: bij 30 items zijn dat er al
+een miljard (stelling 3). De tabel rekent elke deelvraag precies één
+keer uit; daar zit de winst.
+
+Wordt de capaciteit zelf gigantisch, een miljoen bijvoorbeeld, dan
+wordt de tabel ook zo breed. Dan zijn er andere trucs nodig, maar voor
+de meeste echte problemen is de tabel ruim genoeg.
 
 </details>
 
