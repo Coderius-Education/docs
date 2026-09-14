@@ -24,9 +24,13 @@ naar `main` deployt automatisch (`.github/workflows/deploy.yml`).
   in één zin" en bevatten de vergelijkingstabellen en `<Quiz>`-oefeningen. Een overzichtspagina
   van een heel mapje staat als eerste zichtbare item ín dat mapje (zie Onderzoek opzetten en
   Kennisleer), niet als onzichtbare `link` op de categorie.
-- Werkvormen (`docs/werkvormen/`) zijn klasopdrachten: ze openen met een `:::info[Voor de docent]`-blok
-  (duur, groepsvorm, benodigdheden, beoordeling) en gaan daarna verder in de je-vorm, zodat een
-  leerling ze ook zelfstandig kan doorlopen.
+- Werkvormen (`docs/werkvormen/`) zijn handouts: `<PrintKnop />` bovenaan, daaronder een
+  `.alleen-print`-regel voor naam en klas, dan een uitklapbaar `<details className="docentblok">`
+  (duur, groepsvorm, benodigdheden, beoordeling). De rest staat in de je-vorm, in genummerde
+  stappen, met invulschema's in `<div className="invulschema">`. Print-hulpklassen staan in
+  `src/css/custom.css`: `geen-print` (weg op papier, bijvoorbeeld de quiz), `alleen-print`
+  (alleen op papier) en `invulschema` (schrijfruimte in de laatste kolom). Een dichtgeklapt
+  docentenblok print niet mee, dus de afdruk is vanzelf de leerlingversie.
 - `src/data/begrippen.js` is de enige bron voor definities: tooltips (`<B t="…"/>`),
   de termen-trainer en de termenlijst worden eruit gegenereerd. Nieuwe begrippen dáár toevoegen.
 - Componenten zijn globaal geregistreerd in `src/theme/MDXComponents.js`; geen imports nodig in docs.

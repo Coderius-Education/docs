@@ -25,3 +25,144 @@
   --ifm-color-primary-lightest: #c7dbf6;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+/**
+ * Handout-onderdelen
+ * ------------------
+ * Gebruikt door de werkvormen: een docentenblok dat je uitklapt, een
+ * invulschema met schrijfruimte en regels die alleen op papier verschijnen.
+ */
+
+/* Docusaurus rendert <details> al als uitklapbaar kader met eigen pijltje;
+   hier alleen de kleuren, zodat het docentenblok zich onderscheidt van de
+   andere uitklappers op een werkvorm. */
+.docentblok.alert {
+  --ifm-alert-background-color: var(--ifm-color-emphasis-100);
+  --ifm-alert-background-color-highlight: rgba(29, 95, 168, 0.07);
+  --ifm-alert-foreground-color: var(--ifm-font-color-base);
+  --ifm-alert-border-color: var(--ifm-color-primary);
+  margin: 1.5rem 0;
+}
+
+.docentblok.alert > summary {
+  font-weight: 600;
+  color: var(--ifm-color-primary);
+}
+
+.invulschema table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.invulschema tbody td:last-child {
+  height: 4rem;
+  vertical-align: top;
+}
+
+.handout-regel {
+  margin: 0 0 1.5rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid #999;
+  font-size: 0.95rem;
+}
+
+/* Standaard verborgen; verschijnt alleen in de afdruk. */
+.alleen-print {
+  display: none;
+}
+
+/**
+ * Printen
+ * -------
+ * Op papier valt alle site-navigatie weg, zodat een werkvorm als handout
+ * uit de printer komt. Een dichtgeklapt <details> print zijn inhoud niet —
+ * zo blijft het docentenblok vanzelf buiten de leerlingversie.
+ */
+@media print {
+  .theme-layout-navbar,
+  .theme-doc-sidebar-container,
+  .theme-doc-toc-desktop,
+  .theme-doc-toc-mobile,
+  .theme-doc-breadcrumbs,
+  .theme-doc-footer,
+  .theme-layout-footer,
+  .theme-back-to-top-button,
+  .pagination-nav,
+  .geen-print {
+    display: none !important;
+  }
+
+  html,
+  body {
+    background: #fff;
+    font-size: 11pt;
+  }
+
+  .main-wrapper,
+  [class*='docRoot'],
+  [class*='docMainContainer'],
+  [class*='docItemCol'],
+  [class*='docItemContainer'],
+  .container,
+  .row,
+  .col {
+    display: block !important;
+    width: auto !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .markdown a {
+    color: inherit;
+    text-decoration: underline;
+  }
+
+  /* Een dichtgeklapt docentenblok verdwijnt helemaal van de leerlingversie;
+     staat het open, dan print het voluit. */
+  details.docentblok:not([open]) {
+    display: none !important;
+  }
+
+  .markdown h1,
+  .markdown h2,
+  .markdown h3 {
+    break-after: avoid;
+  }
+
+  .markdown h1 {
+    margin-bottom: 0.4rem;
+    font-size: 19pt;
+  }
+
+  .markdown h2 {
+    margin-top: 1.1rem;
+    font-size: 14pt;
+  }
+
+  .markdown h3 {
+    font-size: 12pt;
+  }
+
+  .markdown table,
+  .markdown blockquote,
+  .theme-admonition,
+  details {
+    break-inside: avoid;
+  }
+
+  /* Tabellen scrollen niet op papier: laten uitvullen en afbreken. */
+  .markdown table {
+    display: table !important;
+    width: 100% !important;
+    overflow: visible !important;
+  }
+
+  .alleen-print {
+    display: block !important;
+  }
+
+  .invulschema tbody td:last-child {
+    height: 3cm;
+  }
+}

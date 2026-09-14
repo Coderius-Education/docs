@@ -8,6 +8,7 @@ import TermenLijst from '@site/src/components/TermenLijst';
 import StartKaarten from '@site/src/components/StartKaarten';
 import EchtGebeurd from '@site/src/components/EchtGebeurd';
 import Denker from '@site/src/components/Denker';
+import PrintKnop from '@site/src/components/PrintKnop';
 
 // Globaal beschikbaar in alle .md/.mdx-pagina's, zonder import.
 export default {
@@ -21,4 +22,5 @@ export default {
   StartKaarten,
   EchtGebeurd,
   Denker,
+  PrintKnop,
 };
