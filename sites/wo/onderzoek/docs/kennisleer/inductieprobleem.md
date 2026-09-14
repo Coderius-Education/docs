@@ -38,8 +38,8 @@ Het inductieprobleem is geen excuus om maar niets meer te meten. Alle natuurwete
 :::
 
 <WelNiet
-  wel="'Binnen de onderzochte groep van tachtig bovenbouwleerlingen kwam 62% met de fiets; of dit ook voor onderbouw of andere scholen geldt, is niet onderzocht.'"
-  niet="'Uit mijn onderzoek blijkt dat 62% van de scholieren met de fiets komt.'"
+  wel="‘Binnen de onderzochte groep van tachtig bovenbouwleerlingen kwam 62% met de fiets; of dit ook voor onderbouw of andere scholen geldt, is niet onderzocht.’"
+  niet="‘Uit mijn onderzoek blijkt dat 62% van de scholieren met de fiets komt.’"
 />
 
 ## Hangt samen met

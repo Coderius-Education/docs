@@ -30,11 +30,11 @@ Geen aangeboren ideeën: de geest begint als onbeschreven blad, een **tabula ras
 
 <Denker naam="George Berkeley" jaartal="1685–1753" stroming="idealisme" linkUrl="/kennisleer/berkeley" linkTekst="Lees verder over Berkeley">
 
-Trok Locke’s redenering door: ook vorm en omvang ken je uitsluitend via waarneming, dus bestaat er geen stoffelijke wereld daarbuiten. **Zijn is waargenomen worden** — het **idealisme**.
+Trok de redenering van Locke door: ook vorm en omvang ken je uitsluitend via waarneming, dus bestaat er geen stoffelijke wereld daarbuiten. **Zijn is waargenomen worden** — het **idealisme**.
 
 </Denker>
 
-De vierde grote empirist, [David Hume](./vork-van-hume.mdx), ging nog een stap verder: hij onderzocht wat er van onze kennis overblijft als je het empirisme werkelijk consequent toepast. Zijn antwoord staat bij [de vork van Hume](./vork-van-hume.mdx) en [het inductieprobleem](./inductieprobleem.md).
+De vierde grote empirist, [David Hume](./hume.md), ging nog een stap verder: hij onderzocht wat er van onze kennis overblijft als je het empirisme werkelijk consequent toepast. Zijn antwoord staat bij [de vork van Hume](./vork-van-hume.mdx) en [het inductieprobleem](./inductieprobleem.md).
 
 :::caution[De zwakke plek van het empirisme]
 Uit nog zoveel waarnemingen volgt nooit met zekerheid een algemene regel. Je kunt duizend witte zwanen zien en toch ongelijk krijgen. Dat is [het inductieprobleem](./inductieprobleem.md) — en het is precies de reden dat je bij [generaliseren](../spelregels/externe-validiteit.md) voorzichtig moet zijn.
@@ -42,7 +42,7 @@ Uit nog zoveel waarnemingen volgt nooit met zekerheid een algemene regel. Je kun
 
 <WelNiet
   wel="Je turft een week lang hoeveel leerlingen de trap nemen, en baseert je conclusie op die tellingen."
-  niet="Je leidt uit de definitie van 'trap' af hoe vaak hij gebruikt wordt — dat kan niet: dit is geen kennis die je zonder waarneming krijgt."
+  niet="Je leidt uit de definitie van ‘trap’ af hoe vaak hij gebruikt wordt — dat kan niet: dit is geen kennis die je zonder waarneming krijgt."
 />
 
 ## Hangt samen met

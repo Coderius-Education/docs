@@ -25,8 +25,8 @@ Omdat a posteriori-kennis op waarneming steunt, is zij nooit absoluut zeker: je 
 :::
 
 <WelNiet
-  wel="'Op de vijf geobserveerde dagen nam gemiddeld 38% van de leerlingen de trap' — vastgesteld door te turven."
-  niet="'Een trap is korter dan een lift' — dat is geen waarneming maar een bewering over begrippen."
+  wel="‘Op de vijf geobserveerde dagen nam gemiddeld 38% van de leerlingen de trap’ — vastgesteld door te turven."
+  niet="‘Wie de trap neemt, neemt op dat moment niet de lift’ — dat volgt al uit de begrippen; daar hoef je niemand voor te observeren."
 />
 
 ## Hangt samen met

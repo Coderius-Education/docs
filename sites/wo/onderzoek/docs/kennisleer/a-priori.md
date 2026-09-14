@@ -19,15 +19,15 @@ Kennis is **a priori** als je haar kunt hebben vóór en zonder waarneming: je s
 
 Om deze uitspraken te controleren hoef je de deur niet uit. Je hoeft geen vrijgezellen te ondervragen en geen driehoeken op te meten: wie de begrippen begrijpt, ziet meteen dat het klopt — en dat het overal en altijd klopt.
 
-Dit is het soort kennis waar [rationalisten](./rationalisme.md) hun vertrouwen op bouwen. Voor [Plato](./rationalisme.md) was het zelfs de enige echte kennis.
+Dit is het soort kennis waar [rationalisten](./rationalisme.md) hun vertrouwen op bouwen. Voor [Plato](./plato.md) was het zelfs de enige echte kennis.
 
 :::caution[A priori is niet hetzelfde als "vooraf bedacht"]
 Een [hypothese](../opzet/functies/verklarend-toetsend.md) bedenk je ook vooraf, maar die is niet a priori: je moet hem juist toetsen aan de werkelijkheid, en hij kan sneuvelen. A priori-kennis kán niet sneuvelen op een meting, omdat er geen meting aan te pas komt.
 :::
 
 <WelNiet
-  wel="'Een gesloten vraag met twee onderwerpen tegelijk levert geen eenduidig antwoord op' — dat zie je in aan de vorm van de vraag."
-  niet="'Leerlingen vinden de kantine te duur' — dat klinkt misschien logisch, maar het valt of staat met wat de leerlingen antwoorden."
+  wel="‘Een gesloten vraag met twee onderwerpen tegelijk levert geen eenduidig antwoord op’ — dat zie je in aan de vorm van de vraag."
+  niet="‘Leerlingen vinden de kantine te duur’ — dat klinkt misschien logisch, maar het valt of staat met wat de leerlingen antwoorden."
 />
 
 ## Hangt samen met

@@ -34,3 +34,4 @@ Definiërend onderzoek doe je vaak als **eerste deelvraag**: voordat je nepnieuw
 - [Functies van onderzoek](./functies-overzicht.mdx) — alle zes functies naast elkaar
 - [Literatuuronderzoek](../soorten/literatuuronderzoek.md) — de soort onderzoek die hier meestal bij hoort
 - [De keuzedriehoek](../keuzedriehoek.mdx) — functie combineren met soort en methode
+- [De vork van Hume](../../kennisleer/vork-van-hume.mdx) — waarom een definiërende deelvraag denkwerk is en geen meting vraagt

@@ -24,7 +24,7 @@ Twee leerlingen kunnen hier eerlijk van mening verschillen. Er is geen meetlint 
 
 <WelNiet
   wel="Uit vijf interviews blijkt dat leerlingen de aula vooral te rumoerig vinden — een beleving die je als beleving rapporteert."
-  niet="'De aula is te rumoerig' als feit in je conclusie zetten, zonder erbij te vermelden dat dit het oordeel van vijf leerlingen is."
+  niet="‘De aula is te rumoerig’ als feit in je conclusie zetten, zonder erbij te vermelden dat dit het oordeel van vijf leerlingen is."
 />
 
 ## Hangt samen met

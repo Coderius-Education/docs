@@ -47,3 +47,4 @@ In de Hawthorne-fabriek van Western Electric bij Chicago onderzochten wetenschap
 - [Welke methode kies je?](./methode-kiezen.mdx) — observatie naast interview, enquête en analyse
 - [Veldonderzoek](../soorten/veldonderzoek.md) — de soort onderzoek waar observatie meestal bij hoort
 - [Betrouwbaar](../../spelregels/betrouwbaar.md) — meerdere momenten, vast schema
+- [Intersubjectieve kennis](../../kennisleer/intersubjectief.md) — waarom een observatieschema jouw waarneming controleerbaar maakt voor anderen

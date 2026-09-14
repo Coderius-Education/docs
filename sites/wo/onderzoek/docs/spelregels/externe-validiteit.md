@@ -18,7 +18,7 @@ Je muziekonderzoek is perfect uitgevoerd, maar alle deelnemers waren 5-vwo-leerl
 ## Zo verhoog je de externe validiteit
 
 - **Zorg voor een representatieve groep.** Verschillende leeftijden, niveaus en achtergronden — niet alleen je eigen vriendengroep.
-- **Gebruik genoeg deelnemers.** Hoe kleiner de groep, hoe groter de kans dat toeval je beeld bepaalt.
+- **Gebruik genoeg deelnemers — maar begin bij de juiste.** In een kleine groep bepaalt toeval al snel je beeld. Let op: méér mensen uit diezelfde eenzijdige hoek maken je conclusie niet breder. Eerst representatief, dan pas groot.
 - **Test in een realistische situatie.** Werkt je app in een stil lokaal onder toezicht, dan wil dat nog niet zeggen dat hij ook werkt in een drukke aula.
 - **Wees bescheiden in je conclusie.** Heb je alleen 5-vwo onderzocht? Schrijf dan op dat je conclusie over 5-vwo gaat — en noem het uitbreiden naar andere groepen als vervolgonderzoek.
 

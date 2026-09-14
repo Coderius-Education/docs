@@ -20,7 +20,7 @@ Zijn twijfel is dus geen [scepticisme](./scepticisme.md) dat blijft hangen in "w
 
 ## Wat je hieraan hebt bij je eigen onderzoek
 
-Descartes' methode is bruikbaar als checklist. Loop je onderzoeksopzet langs en vraag bij elke stap: wat neem ik hier eigenlijk aan zonder het gecontroleerd te hebben? Dat je enquête eerlijk is ingevuld. Dat je meetinstrument klopt. Dat de groep die je ondervroeg lijkt op de groep waarover je iets wilt zeggen.
+De methode van Descartes is bruikbaar als checklist. Loop je onderzoeksopzet langs en vraag bij elke stap: wat neem ik hier eigenlijk aan zonder het gecontroleerd te hebben? Dat je enquête eerlijk is ingevuld. Dat je meetinstrument klopt. Dat de groep die je ondervroeg lijkt op de groep waarover je iets wilt zeggen.
 
 Die aannames hoef je niet allemaal te bewijzen, maar je moet ze wel kénnen — en benoemen in je verslag. Dat is de [transparantie](../spelregels/transparant.md) die je onderzoek controleerbaar maakt.
 

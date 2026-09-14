@@ -15,7 +15,7 @@ De kennisleer is voor een groot deel één lang gesprek tussen twee kampen: komt
 | [**Locke**](./locke.md) | 1632–1704 | Geen aangeboren ideeën; de geest begint als onbeschreven blad | [Empirisme](./empirisme.md) |
 | [**Berkeley**](./berkeley.md) | 1685–1753 | Ook vorm en omvang bestaan niet buiten de waarneming: zijn is waargenomen worden | [Empirisme](./empirisme.md) |
 | [**Hume**](./hume.md) | 1711–1776 | Elke zinvolle uitspraak is analytisch of synthetisch; inductie is niet te rechtvaardigen | [Empirisme](./empirisme.md) |
-| [**Chomsky**](./chomsky.md) | 1928 | Kinderen leren te snel taal om alles uit ervaring te halen: een deel is aangeboren | [Rationalisme](./rationalisme.md) |
+| [**Chomsky**](./chomsky.md) | geb. 1928 | Kinderen leren te snel taal om alles uit ervaring te halen: een deel is aangeboren | [Rationalisme](./rationalisme.md) |
 
 ## De slinger
 

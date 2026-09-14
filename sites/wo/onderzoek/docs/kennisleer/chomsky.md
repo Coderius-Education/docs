@@ -4,9 +4,9 @@ title: Noam Chomsky
 
 # Noam Chomsky
 
-**1928 · modern [rationalisme](./rationalisme.md)**
+**geb. 1928 · modern [rationalisme](./rationalisme.md)**
 
-Chomsky is taalkundige aan het MIT en de bekendste levende vertegenwoordiger van een idee dat eeuwenoud leek: dat een deel van onze kennis aangeboren is. Hij onderbouwde dat niet met filosofische argumenten maar met taalonderzoek.
+Chomsky is taalkundige en emeritus hoogleraar aan het MIT, en de bekendste moderne vertegenwoordiger van een idee dat eeuwenoud leek: dat een deel van onze kennis aangeboren is. Hij onderbouwde dat niet met filosofische argumenten maar met taalonderzoek.
 
 ## Kernidee: de armoede van de stimulus
 
@@ -14,7 +14,7 @@ Kijk naar hoe een peuter taal leert. Binnen een paar jaar maakt een kind zinnen 
 
 Uit zó weinig en zulke rommelige input zo'n ingewikkeld systeem afleiden, kan volgens Chomsky niet. Dat noemt hij de **armoede van de stimulus**. Zijn conclusie: een deel van de taalstructuur moet al aanwezig zijn — een aangeboren aanleg die hij de **universele grammatica** noemt. Ervaring vult die aanleg verder in, maar legt hem niet aan.
 
-Daarmee keert hij zich rechtstreeks tegen [Locke's](./locke.md) onbeschreven blad, en staat hij in de traditie van [Plato](./plato.md) en [Descartes](./descartes.md).
+Daarmee keert hij zich rechtstreeks tegen het onbeschreven blad van [Locke](./locke.md), en staat hij in de traditie van [Plato](./plato.md) en [Descartes](./descartes.md).
 
 ## Wat je hieraan hebt bij je eigen onderzoek
 

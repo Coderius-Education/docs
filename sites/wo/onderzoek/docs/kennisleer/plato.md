@@ -20,7 +20,7 @@ Een cirkel die je op papier tekent is nooit helemaal rond; toch weet je precies 
 
 ## Wat je hieraan hebt bij je eigen onderzoek
 
-Plato's grot is een blijvende waarschuwing: wat je waarneemt is altijd al een interpretatie. Je meet nooit "de werkelijkheid", maar iets wat je met een instrument, een schema of een vragenlijst zichtbaar hebt gemaakt.
+De grot van Plato is een blijvende waarschuwing: wat je waarneemt is altijd al een interpretatie. Je meet nooit "de werkelijkheid", maar iets wat je met een instrument, een schema of een vragenlijst zichtbaar hebt gemaakt.
 
 Praktisch levert dat twee dingen op. Ten eerste: neem de tijd om je begrippen scherp te definiëren vóór je gaat meten — dat is precies wat [definiërend onderzoek](../opzet/functies/beschrijvend-definierend.md) doet. Ten tweede: beschrijf hoe je gemeten hebt, zodat een ander kan zien welke schaduw jij hebt bekeken.
 

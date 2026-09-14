@@ -18,7 +18,7 @@ Om betrouwbaar te redeneren met wat hij vond, ontwierp hij de **syllogistiek**: 
 
 > Alle mensen zijn sterfelijk. · Socrates is een mens. · Dus Socrates is sterfelijk.
 
-Klopt de vorm, dan is de conclusie gegarandeerd waar als de premissen waar zijn. Daarmee schreef hij de eerste logica ooit.
+Klopt die vorm, dan is de conclusie onvermijdelijk waar zodra de twee uitspraken waarmee je begint waar zijn. Daarmee schreef hij de eerste logica ooit.
 
 ## Wat je hieraan hebt bij je eigen onderzoek
 

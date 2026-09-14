@@ -14,7 +14,7 @@ Onderzoek is **betrouwbaar** als het resultaat niet van toeval afhangt: wie het 
 ## Zo maak je je onderzoek betrouwbaar
 
 - **Herhaal je metingen.** Eén meting is geen meting. Meet je de kiemtijd van tuinkers, gebruik dan niet één bakje maar tien.
-- **Vraag genoeg mensen.** Een enquête onder drie mensen zegt niets — toeval bepaalt dan de uitkomst; onder tachtig een stuk meer. (Wíé je vraagt, is een kwestie van [validiteit](./valide.md).)
+- **Vraag genoeg mensen.** Een enquête onder drie mensen zegt niets: toeval bepaalt dan de uitkomst. Onder tachtig mensen zegt dezelfde enquête een stuk meer. (Wíé je vraagt, is een kwestie van [validiteit](./valide.md).)
 - **Meet nauwkeurig en steeds op dezelfde manier.** Zelfde meetinstrument, zelfde omstandigheden, zelfde vraagstelling.
 - **Houd alles gelijk behalve wat je onderzoekt.** Test je het effect van licht op plantengroei, geef dan alle plantjes dezelfde aarde, hetzelfde water en dezelfde temperatuur.
 

@@ -18,15 +18,15 @@ Het **scepticisme** is de opvatting dat je niets voor 100% zeker kunt weten. Elk
 
 ## Twijfel als gereedschap
 
-Niet elke scepticus wil eindigen bij "niemand weet iets". [Descartes](./rationalisme.md) gebruikte de twijfel juist als **methode**: hij zette alles wat ook maar een klein beetje wankelde opzij, om te zien of er iets overbleef dat de twijfel overleefde. Dat noemen we methodische twijfel — twijfelen om een steviger fundament te vinden, niet om alles af te breken.
+Niet elke scepticus wil eindigen bij "niemand weet iets". [Descartes](./descartes.md) gebruikte de twijfel juist als **methode**: hij zette alles wat ook maar een klein beetje wankelde opzij, om te zien of er iets overbleef dat de twijfel overleefde. Dat noemen we methodische twijfel — twijfelen om een steviger fundament te vinden, niet om alles af te breken.
 
 :::caution[Scepticisme is geen vrijbrief]
 "Je kunt niets zeker weten" betekent niet dat alle beweringen even veel waard zijn. Een conclusie uit tachtig zorgvuldige metingen is nog steeds veel sterker dan een onderbuikgevoel. Wie het scepticisme gebruikt om elk onderzoek weg te wuiven ("het is toch maar een mening"), begrijpt het verkeerd: de onzekerheid is juist de reden om zo zorgvuldig mogelijk te werk te gaan.
 :::
 
 <WelNiet
-  wel="Je schrijft op: 'binnen deze groep van tachtig leerlingen gold X — of dit ook voor andere scholen geldt, heb ik niet onderzocht.'"
-  niet="Je schrijft: 'niemand weet toch iets zeker', en laat daarom je meetresultaten maar weg."
+  wel="Je schrijft op: ‘binnen deze groep van tachtig leerlingen gold X — of dit ook voor andere scholen geldt, heb ik niet onderzocht.’"
+  niet="Je schrijft: ‘niemand weet toch iets zeker’, en laat daarom je meetresultaten maar weg."
 />
 
 ## Hangt samen met

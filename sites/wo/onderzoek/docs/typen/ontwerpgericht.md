@@ -22,14 +22,14 @@ Ontwerpgerichte hoofdvragen zijn **ontwerpvragen**. Ze beginnen bijna altijd met
 
 ## Wat lever je op?
 
-Een **ontwerp of prototype**, plus een verslag waarin je laat zien dat (en hoe goed) het werkt. Daarvoor stel je vooraf **eisen** op waaraan je ontwerp moet voldoen, en test je je ontwerp daar aan het einde tegen — dat testen is de [evaluerende functie](../opzet/functies/beschrijvend-evaluerend.md) van onderzoek.
+Een **ontwerp of prototype**, plus een verslag waarin je laat zien dat (en hoe goed) het werkt. Daarvoor stel je vooraf **eisen** op waaraan je ontwerp moet voldoen, en toets je je ontwerp daar aan het einde aan — dat toetsen is de [evaluerende functie](../opzet/functies/beschrijvend-evaluerend.md) van onderzoek.
 
 :::caution[Let op]
 Alleen iets maken is nog geen onderzoek. Het verschil zit in het **testen van je ontwerp aan vooraf opgestelde eisen** en het **onderbouwen van je keuzes**. Zonder eisen en tests heb je een knutselproject, geen ontwerponderzoek.
 :::
 
 <WelNiet
-  wel="Je ontwerpt een rooster-app voor brugklassers en test die met tien brugklassers tegen je vooraf opgestelde eisen."
+  wel="Je ontwerpt een rooster-app voor brugklassers en toetst die met tien brugklassers aan je vooraf opgestelde eisen."
   niet="Je knutselt een app in elkaar zonder eisenlijst of tests — maken zonder toetsen is geen ontwerponderzoek."
 />
 
@@ -37,4 +37,4 @@ Alleen iets maken is nog geen onderzoek. Het verschil zit in het **testen van je
 
 - [Theoriegericht onderzoek](./theoriegericht.md) — de tegenhanger: iets *weten* in plaats van iets *maken*
 - [Theoriegericht vs. ontwerpgericht](./theorie-vs-ontwerp.mdx) — het verband tussen beide typen
-- [Beschrijvend-evaluerend onderzoek](../opzet/functies/beschrijvend-evaluerend.md) — de functie achter het testen tegen eisen
+- [Beschrijvend-evaluerend onderzoek](../opzet/functies/beschrijvend-evaluerend.md) — de functie achter het toetsen aan eisen

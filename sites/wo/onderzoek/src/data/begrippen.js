@@ -107,8 +107,8 @@ const begrippen = {
   },
   grotallegorie: {
     term: 'Grotallegorie',
-    kort: 'Plato’s beeld van geketende mensen die alleen schaduwen op een wand zien.',
-    lang: 'Plato’s beeld van mensen die vastgeketend in een grot alleen schaduwen zien en die voor de werkelijkheid houden — zoals wij onze waarneming voor de werkelijkheid houden.',
+    kort: 'Het beeld waarin geketende mensen alleen schaduwen op een wand zien.',
+    lang: 'Het beeld waarmee Plato laat zien hoe mensen, vastgeketend in een grot, alleen schaduwen zien en die voor de werkelijkheid houden — zoals wij onze waarneming voor de werkelijkheid houden.',
     url: '/kennisleer/plato',
   },
   hoofdvraag: {

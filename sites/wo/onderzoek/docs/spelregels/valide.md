@@ -22,7 +22,7 @@ Onderzoek is **valide** als je gegevens echt gaan over de vraag die je wilt bean
 Je wilt weten of leerlingen je nieuwe school-app handig vinden en telt hoe vaak de app gedownload is. Dat kun je perfect herhaalbaar meten — maar downloads zeggen niets over *handig vinden*. Misschien was de download verplicht. Je meet het verkeerde: niet valide.
 :::
 
-**Bij [ontwerpgericht onderzoek](../typen/ontwerpgericht.md)** betekent valide: test je prototype tegen de eisen die je vooraf hebt opgesteld, en met de echte doelgroep. Is je spel bedoeld voor groep 8, dan bewijst een test met je klasgenoten van 16 weinig.
+**Bij [ontwerpgericht onderzoek](../typen/ontwerpgericht.md)** betekent valide: toets je je prototype aan de eisen die je vooraf hebt opgesteld, en met de echte doelgroep. Is je spel bedoeld voor groep 8, dan bewijst een test met je klasgenoten van 16 weinig.
 
 <WelNiet
   wel="Je leest de schermtijd af uit de telefooninstellingen als je schermtijd wilt weten."

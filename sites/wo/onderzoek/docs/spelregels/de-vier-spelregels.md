@@ -5,7 +5,7 @@ sidebar_position: 7
 
 # De vier spelregels samen
 
-**Het verband in één zin:** of je nu [theoriegericht of ontwerpgericht](../typen/theorie-vs-ontwerp.mdx) onderzoek doet, goed onderzoek voldoet altijd aan vier spelregels tegelijk — <B t="betrouwbaar" tekst="betrouwbaar"/>, <B t="valide" tekst="valide"/>, <B t="transparant" tekst="transparant"/> en <B t="aanvaardbaar" tekst="aanvaardbaar"/> — en een onderzoek dat er één schendt, verliest vrijwel al zijn waarde — hoeveel werk het ook was.
+**Het verband in één zin:** of je nu [theoriegericht of ontwerpgericht](../typen/theorie-vs-ontwerp.mdx) onderzoek doet, goed onderzoek voldoet altijd aan vier spelregels tegelijk — <B t="betrouwbaar" tekst="betrouwbaar"/>, <B t="valide" tekst="valide"/>, <B t="transparant" tekst="transparant"/> en <B t="aanvaardbaar" tekst="aanvaardbaar"/>. Schend je er één, dan verliest je onderzoek vrijwel al zijn waarde, hoeveel werk je er ook in stak.
 
 ## De vier op een rij
 
@@ -30,14 +30,14 @@ Loop deze vragen na vóór je begint én vlak voor je je verslag inlevert:
 - [ ] Herhaal ik mijn metingen of tests vaak genoeg? *(betrouwbaar)*
 - [ ] Houd ik alle omstandigheden gelijk, behalve wat ik onderzoek? *(betrouwbaar)*
 - [ ] Past mijn methode echt bij mijn hoofdvraag? *(valide)*
-- [ ] Is mijn groep deelnemers representatief voor de groep waarover ik iets wil zeggen? *(valide)*
+- [ ] Is mijn groep deelnemers <B t="representatief" tekst="representatief"/> voor de groep waarover ik iets wil zeggen? *(valide)*
 - [ ] Kan iemand anders mijn onderzoek herhalen met alleen mijn verslag in de hand? *(transparant)*
 - [ ] Staat bij alles wat ik heb overgenomen een bronvermelding? *(transparant)*
 - [ ] Hebben mijn deelnemers vrijwillig en geïnformeerd meegedaan, en blijven ze anoniem? *(aanvaardbaar)*
 - [ ] Rapporteer ik ook de resultaten die me niet uitkomen? *(aanvaardbaar)*
 
 :::tip[Echt gebeurd]
-Bij elke spelregel vind je een kader **"Echt gebeurd"** met een beroemd onderzoek waar die spelregel het verschil maakte — van het paard dat leek te kunnen rekenen tot de zaak-Stapel. Ook de pagina's over interne en externe validiteit hebben er een.
+Bij elke spelregel vind je een kader **"Echt gebeurd"** met een beroemd onderzoek waar die spelregel het verschil maakte — van het paard dat leek te kunnen rekenen tot de zaak-Stapel. Ook de pagina’s over interne en externe validiteit hebben er een.
 :::
 
 ## Verder lezen

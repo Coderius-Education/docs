@@ -7,7 +7,7 @@ sidebar_position: 1
 
 <Definitie gewoneTaal="jij verandert zelf precies één ding en kijkt wat er dan gebeurt.">
 
-Bij een **experiment** verander je zelf één ding (de **variabele** die je onderzoekt) en houd je al het andere gelijk. Daarna meet je wat het effect is. Meestal vergelijk je met een **controlegroep** die de verandering niet krijgt.
+Bij een **experiment** verander je zelf één ding (de **variabele** die je onderzoekt) en houd je al het andere gelijk. Daarna meet je wat het effect is. Meestal vergelijk je met een <B t="controlegroep" tekst="controlegroep"/> die de verandering niet krijgt.
 
 </Definitie>
 

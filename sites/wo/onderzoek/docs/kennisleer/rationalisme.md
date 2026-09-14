@@ -34,7 +34,7 @@ Schreef zijn filosofie als een wiskundeboek, met definities, axioma’s en bewij
 
 </Denker>
 
-<Denker naam="Noam Chomsky" jaartal="1928" stroming="modern rationalisme" linkUrl="/kennisleer/chomsky" linkTekst="Lees verder over Chomsky">
+<Denker naam="Noam Chomsky" jaartal="geb. 1928" stroming="modern rationalisme" linkUrl="/kennisleer/chomsky" linkTekst="Lees verder over Chomsky">
 
 Peuters maken te snel grammaticaal correcte zinnen om alles uit ervaring te kunnen halen. Een deel van de taalstructuur moet **aangeboren** zijn — het rationalisme in modern onderzoek.
 
@@ -45,7 +45,7 @@ Het gaat om wat je met een sluitende redenering kunt afleiden, niet om wat je zo
 :::
 
 <WelNiet
-  wel="Je leidt af dat een vragenlijst met 'vind je de kantine gezellig én betaalbaar?' geen bruikbaar antwoord kán opleveren — dat zie je zonder hem af te nemen."
+  wel="Je leidt af dat een vragenlijst met ‘vind je de kantine gezellig én betaalbaar?’ geen bruikbaar antwoord kán opleveren — dat zie je zonder hem af te nemen."
   niet="Je bedenkt aan je bureau hoeveel leerlingen met de fiets komen; dat is geen redenering maar een gok, daar heb je een telling voor nodig."
 />
 

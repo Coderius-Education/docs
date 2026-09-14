@@ -18,12 +18,12 @@ Wat blijft er dan over van de tafel als niemand kijkt? Niets, zegt Berkeley: **"
 
 ## Wat je hieraan hebt bij je eigen onderzoek
 
-Je hoeft Berkeley's conclusie niet te geloven om zijn punt bruikbaar te vinden: je hebt nooit rechtstreeks toegang tot "de werkelijkheid zelf", alleen tot je waarnemingen ervan. Dat is precies waarom [intersubjectiviteit](./intersubjectief.md) het haalbare doel van onderzoek is en volledige objectiviteit niet.
+Je hoeft de conclusie van Berkeley niet te geloven om zijn punt bruikbaar te vinden: je hebt nooit rechtstreeks toegang tot "de werkelijkheid zelf", alleen tot je waarnemingen ervan. Dat is precies waarom [intersubjectiviteit](./intersubjectief.md) het haalbare doel van onderzoek is en volledige objectiviteit niet.
 
 Je kunt je eigen waarneming niet buiten jezelf controleren — maar je kunt hem wel zo vastleggen dat anderen hem kunnen overdoen. Een [observatieschema](../opzet/methoden/observatie.md) is niets anders dan dat: een manier om jouw waarneming toetsbaar te maken voor iemand anders.
 
 ## Hangt samen met
 
 - [Empirisme](./empirisme.md) — de stroming die Berkeley tot het uiterste doorvoerde
-- [Locke](./locke.md) — wiens onderscheid hij overnam en omver duwde
+- [Locke](./locke.md) — wiens onderscheid hij overnam en vervolgens omverwierp
 - [Intersubjectieve kennis](./intersubjectief.md) — het antwoord van de wetenschap op dit probleem
