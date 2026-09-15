@@ -13,7 +13,7 @@ const sidebars: SidebarsConfig = {
     {
       type: 'category',
       label: 'Starten',
-      items: ['FastAPI/installatie', 'FastAPI/eerste_endpoint'],
+      items: ['FastAPI/installatie', 'FastAPI/eerste_endpoint', 'FastAPI/verzoek-eerste'],
     },
     {
       type: 'category',
@@ -24,6 +24,7 @@ const sidebars: SidebarsConfig = {
         'FastAPI/html_bestanden',
         'FastAPI/links',
         'FastAPI/afbeeldingen',
+        'FastAPI/verzoek-static',
       ],
     },
     {

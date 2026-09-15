@@ -3,12 +3,15 @@ import clsx from 'clsx';
 import type { ReactElement } from 'react';
 import styles from './styles.module.css';
 
-// Twee verhalen die de cursus van begin tot eind vertellen: een pagina
-// opvragen (GET) en een formulier versturen (POST). De stappen staan hier en
-// niet in een los datamodel, zodat er niets uit de pas kan lopen: het is één
-// bestand met de tekst én de links erin. Elke `to` wijst naar een bestaande
-// lespagina; onBrokenLinks staat op 'throw', dus een hernoemde les breekt de
-// build in plaats van stilletjes een dode link op te leveren.
+// Vijf keer hetzelfde verhaal, elke keer met meer ertussen: het eerste
+// verzoek (één functie, JSON terug), een pagina met CSS en een afbeelding
+// (drie verzoeken), een pagina uit de database (GET), een formulier (POST) en
+// een sessie. De stappen staan hier en niet in een los datamodel, zodat er
+// niets uit de pas kan lopen: het is één bestand met de tekst én de links
+// erin. Elke `to` wijst naar een bestaande lespagina; onBrokenLinks staat op
+// 'throw', dus een hernoemde les breekt de build in plaats van stilletjes een
+// dode link op te leveren. De twee vroege varianten linken alleen naar lessen
+// die de leerling dan al heeft gehad.
 
 type Kant = 'browser' | 'server';
 
@@ -23,6 +26,89 @@ type Stap = {
   /** Linktekst; alleen nodig als `to` gezet is. */
   les?: string;
 };
+
+const EERSTE_STAPPEN: Stap[] = [
+  {
+    kant: 'browser',
+    titel: 'Je typt een adres',
+    tekst: '127.0.0.1:8000 is jouw eigen computer, met daarop de server die je net startte.',
+    to: '/docs/FastAPI/eerste_endpoint',
+    les: 'Je eerste endpoint',
+  },
+  {
+    kant: 'browser',
+    titel: 'De browser stuurt een GET',
+    tekst: 'Een verzoek over het netwerk: geef me wat er op / staat. Dat is de get uit @app.get.',
+  },
+  {
+    kant: 'server',
+    titel: 'FastAPI zoekt het endpoint',
+    tekst: 'Welke functie hoort bij dit pad? Die met @app.get("/").',
+    to: '/docs/FastAPI/eerste_endpoint',
+    les: 'Je eerste endpoint',
+  },
+  {
+    kant: 'server',
+    titel: 'Jouw functie draait',
+    tekst: 'root() geeft een dictionary terug. Dit is de enige stap met code van jou.',
+    to: '/docs/FastAPI/eerste_endpoint',
+    les: 'Je eerste endpoint',
+  },
+  {
+    kant: 'server',
+    titel: 'Het antwoord gaat terug',
+    tekst: 'FastAPI maakt van de dictionary JSON en stuurt die over het netwerk.',
+  },
+  {
+    kant: 'browser',
+    titel: 'De browser toont het',
+    tekst: 'Wat er binnenkomt, komt op het scherm. Meer doet de browser nu nog niet.',
+  },
+];
+
+const STATIC_STAPPEN: Stap[] = [
+  {
+    kant: 'browser',
+    titel: 'De browser stuurt een GET naar /',
+    tekst: 'Je typt het adres of klikt op een link; de pagina wordt opgevraagd.',
+    to: '/docs/FastAPI/links',
+    les: 'Links tussen pagina’s',
+  },
+  {
+    kant: 'server',
+    titel: 'Jouw functie stuurt het bestand',
+    tekst: 'home() geeft een FileResponse: de inhoud van static/pages/home.html, ongewijzigd.',
+    to: '/docs/FastAPI/html_bestanden',
+    les: 'HTML in bestanden',
+  },
+  {
+    kant: 'browser',
+    titel: 'De browser leest de HTML',
+    tekst: 'Daarin staan een <link> naar CSS en een <img>. Die bestanden heeft hij nog niet.',
+    to: '/docs/FastAPI/static_files',
+    les: 'Static files',
+  },
+  {
+    kant: 'browser',
+    titel: 'Nog twee verzoeken',
+    tekst: 'Een GET naar /static/css/style.css en een naar /static/kat.jpg, allebei apart.',
+    to: '/docs/FastAPI/afbeeldingen',
+    les: 'Afbeeldingen tonen',
+  },
+  {
+    kant: 'server',
+    titel: 'StaticFiles antwoordt',
+    tekst:
+      'Zonder een functie van jou: app.mount geeft het bestand door zoals het op schijf staat.',
+    to: '/docs/FastAPI/static_files',
+    les: 'Static files',
+  },
+  {
+    kant: 'browser',
+    titel: 'De browser tekent alles',
+    tekst: 'Pas als de CSS en de afbeelding binnen zijn, ziet de pagina eruit zoals bedoeld.',
+  },
+];
 
 const GET_STAPPEN: Stap[] = [
   {
@@ -161,6 +247,8 @@ const SESSIE_STAPPEN: Stap[] = [
 ];
 
 const VARIANTEN = {
+  eerste: { stappen: EERSTE_STAPPEN, titel: 'Je eerste verzoek' },
+  static: { stappen: STATIC_STAPPEN, titel: 'Eén pagina, drie verzoeken' },
   get: { stappen: GET_STAPPEN, titel: 'Een pagina opvragen' },
   post: { stappen: POST_STAPPEN, titel: 'Een formulier versturen' },
   sessie: { stappen: SESSIE_STAPPEN, titel: 'Herkend worden met een sessie' },
