@@ -18,6 +18,8 @@ interface SerialPortFilter {
 interface NavigatorWithSerial extends Navigator {
   serial: {
     requestPort(options?: { filters: SerialPortFilter[] }): Promise<SerialPort>;
+    /** Poorten waarvoor deze site al eerder toestemming kreeg. */
+    getPorts(): Promise<SerialPort[]>;
   };
 }
 
@@ -96,11 +98,35 @@ export class SerialClient {
     return this.port?.getInfo?.() ?? null;
   }
 
-  async connect(): Promise<void> {
-    if (!SerialClient.isSupported()) throw new Error('WebSerial niet ondersteund in deze browser.');
-    const port = await (navigator as NavigatorWithSerial).serial.requestPort({
-      filters: RP2040_PORT_FILTERS,
+  /**
+   * Poorten waarvoor de gebruiker deze site al eerder toestemming gaf, beperkt
+   * tot de RP2040-filters. Daarmee kan de editor na een herlaad opnieuw
+   * verbinden zonder de poortkiezer nog een keer te tonen.
+   */
+  static async bekendePoorten(): Promise<SerialPort[]> {
+    if (!SerialClient.isSupported()) return [];
+    const poorten = await (navigator as NavigatorWithSerial).serial.getPorts();
+    return poorten.filter((p) => {
+      const vendor = p.getInfo?.().usbVendorId;
+      return vendor === undefined || RP2040_PORT_FILTERS.some((f) => f.usbVendorId === vendor);
     });
+  }
+
+  /**
+   * Opent de poortkiezer, of — met een poort erbij — die poort direct. Alleen
+   * de kiezer heeft WebSerial nodig; een meegegeven poort (uit getPorts, of
+   * een nagemaakte in een test) niet.
+   */
+  async connect(poort?: SerialPort): Promise<void> {
+    let port = poort;
+    if (!port) {
+      if (!SerialClient.isSupported()) {
+        throw new Error('WebSerial niet ondersteund in deze browser.');
+      }
+      port = await (navigator as NavigatorWithSerial).serial.requestPort({
+        filters: RP2040_PORT_FILTERS,
+      });
+    }
     await port.open({ baudRate: 115200 });
     this.attach(port);
   }
