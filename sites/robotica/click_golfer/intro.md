@@ -11,7 +11,7 @@ Je hoeft hier niets voor te kunnen. Ook als je nog nooit hebt geprogrammeerd, ko
 
 ## Bekijk het robotje
 
-Hieronder zie je de Click Golfer in 3D. Sleep met je muis om hem te draaien, en scroll om in en uit te zoomen.
+Hieronder zie je de Click Golfer in 3D. Sleep met je muis om hem te draaien, en scroll om in en uit te zoomen. Met de knop **Volledig scherm** rechtsboven in het model maak je hem zo groot als je scherm; met Esc of **Sluiten** kom je terug.
 
 <ObjViewer src="/models/golfer.obj" mtl="/models/golfer.mtl" />
 

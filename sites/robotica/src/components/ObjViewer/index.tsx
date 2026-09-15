@@ -1,9 +1,11 @@
+import clsx from 'clsx';
 import type React from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
+import styles from './styles.module.css';
 
 interface ObjViewerProps {
   src: string;
@@ -18,12 +20,18 @@ export default function ObjViewer({
   width = '100%',
   height = '500px',
 }: ObjViewerProps): React.JSX.Element {
+  const wrapRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   // Het golfer-model is 30 MB. Zonder deze melding kijkt een leerling op een
   // schoollaptop een halve minuut naar een leeg vlak, op de eerste pagina van
   // de sectie, zonder te weten of er iets gebeurt.
   const [percentage, setPercentage] = useState<number | null>(null);
   const [mislukt, setMislukt] = useState(false);
+  // Volledig scherm: via de Fullscreen API als de browser die op een <div>
+  // heeft, anders (iOS Safari) als vaste laag over de pagina. `vast` zegt
+  // welke van de twee actief is, zodat sluiten de juiste weg terug neemt.
+  const [volledig, setVolledig] = useState(false);
+  const [vast, setVast] = useState(false);
 
   useEffect(() => {
     setPercentage(0);
@@ -114,55 +122,101 @@ export default function ObjViewer({
     };
     animate();
 
+    // Op de maat van de container zelf, niet van het venster: bij volledig
+    // scherm verandert de container terwijl het venster hetzelfde blijft.
     const handleResize = () => {
+      if (container.clientWidth === 0 || container.clientHeight === 0) return;
       camera.aspect = container.clientWidth / container.clientHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(container.clientWidth, container.clientHeight);
     };
+    const observer =
+      typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(handleResize);
+    observer?.observe(container);
     window.addEventListener('resize', handleResize);
 
     return () => {
       window.removeEventListener('resize', handleResize);
+      observer?.disconnect();
       controls.dispose();
       renderer.dispose();
       container.removeChild(renderer.domElement);
     };
   }, [src, mtl]);
 
+  // De Fullscreen API meldt zelf wanneer het scherm weer normaal is (Esc, of
+  // de knop van de browser); de vaste laag heeft daar een eigen Esc voor.
+  useEffect(() => {
+    const wrap = wrapRef.current;
+    if (!wrap) return;
+    const bijWissel = () => setVolledig(document.fullscreenElement === wrap);
+    document.addEventListener('fullscreenchange', bijWissel);
+    return () => document.removeEventListener('fullscreenchange', bijWissel);
+  }, []);
+
+  useEffect(() => {
+    if (!vast) return;
+    const bijToets = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setVast(false);
+    };
+    document.addEventListener('keydown', bijToets);
+    // Geen scrollende pagina achter de vaste laag.
+    const vorige = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', bijToets);
+      document.body.style.overflow = vorige;
+    };
+  }, [vast]);
+
+  const wisselVolledig = useCallback(() => {
+    const wrap = wrapRef.current;
+    if (!wrap) return;
+    if (vast) {
+      setVast(false);
+      return;
+    }
+    if (document.fullscreenElement === wrap) {
+      void document.exitFullscreen();
+      return;
+    }
+    if (typeof wrap.requestFullscreen === 'function') {
+      wrap.requestFullscreen().catch(() => setVast(true));
+    } else {
+      setVast(true);
+    }
+  }, [vast]);
+
+  const schermVol = volledig || vast;
+
   return (
-    <div style={{ position: 'relative', width }}>
+    <div
+      ref={wrapRef}
+      className={clsx(styles.wrap, vast && styles.wrapVast)}
+      style={schermVol ? undefined : { width }}
+    >
       <div
         ref={containerRef}
-        style={{
-          width: '100%',
-          height,
-          border: '1px solid #ddd',
-          borderRadius: '8px',
-          overflow: 'hidden',
-        }}
+        className={clsx(styles.canvas, schermVol && styles.canvasVolledig)}
+        style={schermVol ? undefined : { height }}
       />
       {(percentage !== null || mislukt) && (
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            pointerEvents: 'none',
-            color: '#555',
-            font: '0.95rem/1.4 var(--ifm-font-family-base)',
-            textAlign: 'center',
-            padding: '1rem',
-          }}
-        >
+        <div className={styles.melding}>
           {mislukt
-            ? 'Het 3D-model kon niet geladen worden. Ververs de pagina, of ga gewoon verder — je hebt het model niet nodig om te bouwen.'
+            ? 'Het 3D-model kon niet geladen worden. Ververs de pagina, of ga verder — je hebt het model niet nodig om te bouwen.'
             : percentage
               ? `Het 3D-model laadt… ${percentage}%`
               : 'Het 3D-model laadt… Dit is een groot bestand, dus het kan even duren.'}
         </div>
       )}
+      <button
+        type="button"
+        className={styles.knop}
+        onClick={wisselVolledig}
+        title={schermVol ? 'Terug naar de pagina (Esc)' : 'Het model op het hele scherm'}
+      >
+        {schermVol ? 'Sluiten' : 'Volledig scherm'}
+      </button>
     </div>
   );
 }
