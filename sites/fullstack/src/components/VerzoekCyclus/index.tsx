@@ -273,34 +273,38 @@ export default function VerzoekCyclus({
       <ol className={styles.stappen}>
         {stappen.map((stap, i) => {
           const vorige = stappen[i - 1];
+          // Een stap die van kant wisselt is het moment dat er iets over het
+          // netwerk gaat; de pijl tussen de banen wijst die kant op.
           const wisselt = !!vorige && vorige.kant !== stap.kant;
+          const pijl = !wisselt ? '' : stap.kant === 'server' ? '→' : '←';
 
           return (
-            <li
-              key={stap.titel + stap.kant}
-              className={clsx(styles.stap, styles[stap.kant], wisselt && styles.wisselt)}
-              // Eén stap per rij. Zonder dit vult de grid de eerste vrije cel,
-              // en komen stap 2 (browser) en 3 (server) naast elkaar te staan —
-              // dat leest als "tegelijk" terwijl het "daarna" is.
-              style={{ gridRow: i + 1 }}
-            >
+            <li key={stap.titel + stap.kant} className={clsx(styles.stap, styles[stap.kant])}>
               <span className={styles.nummer} aria-hidden="true">
                 {i + 1}
               </span>
-              <div className={styles.inhoud}>
+              <span className={styles.baan} aria-hidden="true">
+                <span className={clsx(styles.stip, stap.kant === 'browser' && styles.actief)} />
+                <span className={styles.pijl}>{pijl}</span>
+                <span className={clsx(styles.stip, stap.kant === 'server' && styles.actief)} />
+              </span>
+              <p className={styles.inhoud}>
                 <strong className={styles.stapTitel}>
                   <span className={styles.srOnly}>
                     {stap.kant === 'browser' ? 'Browser: ' : 'Server: '}
                   </span>
-                  {stap.titel}
-                </strong>
-                <p className={styles.stapTekst}>{stap.tekst}</p>
+                  {stap.titel}.
+                </strong>{' '}
+                {stap.tekst}
                 {stap.to && stap.les && (
-                  <Link className={styles.les} to={stap.to}>
-                    {stap.les}
-                  </Link>
+                  <>
+                    <span className={styles.scheiding}> · </span>
+                    <Link className={styles.les} to={stap.to}>
+                      {stap.les}
+                    </Link>
+                  </>
                 )}
-              </div>
+              </p>
             </li>
           );
         })}
