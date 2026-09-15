@@ -14,7 +14,9 @@ In deze les maak je je eerste FastAPI endpoint. Een endpoint is een URL waarop j
 
 Maak een bestand `main.py` in je project:
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 from fastapi import FastAPI
 
 app = FastAPI()
@@ -24,11 +26,23 @@ async def root():
     return {"bericht": "Hallo wereld!"}
 ```
 
-### Wat doet deze code?
+<Regel n={3}>
+`FastAPI()` maakt een nieuwe app. Alles wat je server kan, hang je aan deze `app`.
+</Regel>
 
-- `FastAPI()` - Maakt een nieuwe app
-- `@app.get("/")` - Reageert op de URL `/`
-- `return {"bericht": "..."}` - Stuurt JSON data terug
+<Regel n={5}>
+De decorator `@app.get("/")` koppelt de functie eronder aan de URL `/`. Vraagt een browser die URL op, dan draait FastAPI deze functie.
+</Regel>
+
+<Regel n={6}>
+De functie heet `root`, maar de naam doet er niet toe; de URL in de regel erboven bepaalt wanneer hij draait. Het `async` hoort bij FastAPI en mag je gewoon overnemen.
+</Regel>
+
+<Regel n={7}>
+Wat de functie teruggeeft, krijgt de browser. Een dictionary zet FastAPI zelf om in JSON.
+</Regel>
+
+</CodeUitleg>
 
 ## Server starten
 

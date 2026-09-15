@@ -22,7 +22,9 @@ app = FastAPI()
 
 ## Een HTML pagina tonen
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 @app.get("/pagina", response_class=HTMLResponse)
 async def pagina():
     return """
@@ -39,11 +41,15 @@ async def pagina():
     """
 ```
 
-### Wat is nieuw?
+<Regel n={1}>
+`response_class=HTMLResponse` vertelt FastAPI dat je HTML terugstuurt en geen JSON. Zonder dit ziet de browser de tags als platte tekst.
+</Regel>
 
-- `response_class=HTMLResponse` - Vertelt FastAPI dat je HTML terugstuurt (niet JSON)
-- De functie returnt een string met HTML code
-- `"""..."""` is een multi-line string
+<Regel n={3} tot={14}>
+De functie geeft één lange string terug. De drie aanhalingstekens `"""` openen een string die over meerdere regels doorloopt, zodat je de HTML kunt schrijven zoals hij is.
+</Regel>
+
+</CodeUitleg>
 
 ## Testen
 

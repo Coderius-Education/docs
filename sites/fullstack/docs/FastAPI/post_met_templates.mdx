@@ -20,7 +20,9 @@ je-project/
     └── resultaat.html
 ```
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 from fastapi import FastAPI, Form, Request
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -30,6 +32,16 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 ```
+
+<Regel n={1}>
+`Request` is nieuw in de import: een template heeft straks het verzoek zelf nodig.
+</Regel>
+
+<Regel n={8}>
+`Jinja2Templates` krijgt de map waarin je templates staan. Vanaf nu vraag je een template op bij `templates`, met alleen de bestandsnaam.
+</Regel>
+
+</CodeUitleg>
 
 ## Voorbeeld
 
@@ -64,7 +76,9 @@ templates = Jinja2Templates(directory="templates")
 
 ### Endpoints (`main.py`):
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 @app.get("/groet")
 async def groet_form():
     return FileResponse("static/pages/groet_form.html")
@@ -78,12 +92,19 @@ async def groet_verwerk(request: Request, naam: str = Form(...)):
     )
 ```
 
-### Wat is nieuw?
+<Regel n={5}>
+Dezelfde URL als de GET erboven, maar met `@app.post`: dat mag, want een GET en een POST op `/groet` zijn twee verschillende endpoints.
+</Regel>
 
-- `TemplateResponse` — Rendert een HTML template met variabelen
-- `request` — Gaat als eerste mee, altijd
-- `{"naam": naam}` — De data die de template invult
-- `{{ naam }}` — Wordt in de template vervangen door de waarde
+<Regel n={6}>
+`request: Request` is een extra parameter die FastAPI zelf invult met het verzoek. Je geeft hem door aan de template.
+</Regel>
+
+<Regel n={7} tot={11}>
+`TemplateResponse` rendert een template: eerst het verzoek, dan de bestandsnaam in de `templates`-map, dan een dictionary met de waardes. Elke sleutel wordt in de template een naam: `{"naam": naam}` vult `{{ naam }}` in.
+</Regel>
+
+</CodeUitleg>
 
 <details>
 <summary>Waarom moet "request" altijd mee?</summary>

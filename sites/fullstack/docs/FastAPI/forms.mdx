@@ -35,7 +35,9 @@ Maak `static/pages/naam_form.html`:
 
 In `main.py`:
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 from fastapi import FastAPI, Form
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -53,10 +55,23 @@ async def ontvang_naam(naam: str = Form(...)):
     return {"bericht": f"Hallo {naam}!"}
 ```
 
-### Wat is nieuw?
+<Regel n={8} tot={10}>
+Een gewone GET die het formulier toont. Het formulier is een HTML-bestand, dus `FileResponse`.
+</Regel>
 
-- `Form(...)` — Haalt het veld `naam` uit het formulier
-- De `name` in HTML moet **matchen** met de parameter in Python
+<Regel n={12}>
+Het pad `/verstuur` is de `action` van het formulier, en `@app.post` de `method`. Die twee moeten kloppen met de HTML, anders komt het verzoek nergens aan.
+</Regel>
+
+<Regel n={13}>
+`Form(...)` haalt het veld `naam` uit het verstuurde formulier. De parameter heet `naam` omdat het veld in de HTML `name="naam"` heeft; die twee namen moeten gelijk zijn.
+</Regel>
+
+<Regel n={14}>
+De print komt in je terminal terecht, niet in de browser. Handig om te zien wat er binnenkomt.
+</Regel>
+
+</CodeUitleg>
 
 <details>
 <summary>Waarom moet de naam matchen?</summary>

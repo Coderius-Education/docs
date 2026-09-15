@@ -47,7 +47,9 @@ Iemand kan een URL intypen die nergens op slaat, of een bericht dat net verwijde
 
 Zeg liever expliciet dat het niet bestaat, met `HTTPException`:
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 from fastapi import HTTPException
 
 @app.get("/bericht/{sleutel}")
@@ -65,9 +67,19 @@ async def bericht_detail(request: Request, sleutel: str):
     )
 ```
 
-Let op `raise` in plaats van `return`. Je geeft geen antwoord terug, je onderbreekt de functie — de regels eronder worden niet meer uitgevoerd.
+<Regel n={3} tot={4}>
+`{sleutel}` in het pad komt binnen als de parameter `sleutel`; de twee namen moeten gelijk zijn.
+</Regel>
 
-**404** is de code die "niet gevonden" betekent. Diezelfde code kreeg je eerder als je een verkeerd pad in `FileResponse` had staan; nu stuur je hem zelf.
+<Regel n={6}>
+`db.get(sleutel)` geeft `None` als de sleutel niet bestaat, in plaats van een `KeyError`.
+</Regel>
+
+<Regel n={8} tot={9}>
+Let op `raise` in plaats van `return`. Je geeft geen antwoord terug, je onderbreekt de functie: de regels eronder worden niet meer uitgevoerd. **404** is de code die "niet gevonden" betekent. Diezelfde code kreeg je eerder als je een verkeerd pad in `FileResponse` had staan; nu stuur je hem zelf.
+</Regel>
+
+</CodeUitleg>
 
 ## Linken vanuit de lijst
 
