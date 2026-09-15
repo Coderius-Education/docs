@@ -3,6 +3,10 @@
   flex-direction: column;
   gap: 12px;
   padding: 16px;
+  /* De main-wrapper van het thema is een kolom-flexbox; met alleen `margin:
+     0 auto` krimpt de editor daarin tot de breedte van zijn inhoud zodra de
+     hint-tekst verdwijnt. Vandaar de expliciete breedte. */
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -12,6 +16,21 @@
   flex-wrap: wrap;
   gap: 8px;
   align-items: center;
+}
+
+/* Tweede rij: bestandsbeheer en instellingen, kleiner dan de hoofdknoppen
+   zodat Verbind, Run en Stop eruit springen. */
+.toolbarSecundair {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.toolbarSecundair .btn,
+.toolbarSecundair .select {
+  padding: 4px 10px;
+  font-size: 13px;
 }
 
 .btn {
@@ -44,6 +63,14 @@
 
 .btnPrimary:hover:not(:disabled) {
   background: var(--ifm-color-primary-dark);
+}
+
+/* De knop waar het om draait: groter en vetter dan de rest. */
+.btnRun {
+  padding: 8px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
 }
 
 .btnDanger {
@@ -453,60 +480,43 @@
   margin: 6px 0 0;
 }
 
-.startHulp {
-  padding: 12px 16px;
-  border: 1px solid var(--ifm-color-emphasis-300);
-  border-radius: 8px;
-  background: var(--ifm-background-surface-color);
+.hint {
+  margin: 0;
   font-size: 14px;
-}
-
-.startHulp ol {
-  margin: 6px 0;
-  padding-left: 20px;
-}
-
-.startHulp li {
-  margin: 3px 0;
-}
-
-.startHulp p {
-  margin: 6px 0 0;
-  font-size: 13px;
   color: var(--ifm-color-emphasis-700);
 }
 
-.startHulp code {
+.hint code {
   background: var(--ifm-color-emphasis-100);
   padding: 1px 6px;
   border-radius: 4px;
   font-family: Consolas, "Courier New", monospace;
 }
 
-.setup {
-  font-size: 14px;
-}
-
-.setup > summary {
-  cursor: pointer;
-  font-weight: 500;
-  color: var(--ifm-color-emphasis-700);
-}
-
-.setupBody {
-  margin-top: 8px;
-  padding: 10px 12px;
-  border: 1px solid var(--ifm-color-emphasis-300);
+/* Alleen zichtbaar na een klik op "Board instellen": de eenmalige stappen
+   horen niet in beeld bij wie alleen wil runnen. */
+.setupPaneel {
+  padding: 12px 16px;
+  border: 1px solid var(--ifm-color-primary);
   border-radius: 8px;
+  background: var(--ifm-background-surface-color);
   display: flex;
   flex-direction: column;
   gap: 8px;
+  font-size: 14px;
 }
 
-.setupBody p {
+.setupPaneel p {
   margin: 0;
   font-size: 13px;
   color: var(--ifm-color-emphasis-700);
+}
+
+.setupHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
 }
 
 .setupActies {

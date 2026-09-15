@@ -1,3 +1,4 @@
+import Link from '@docusaurus/Link';
 import OriginalCodeBlock from '@theme-original/CodeBlock';
 import type { ComponentProps, ReactNode } from 'react';
 import { maakEditorLink, verdientEditorLink } from '../../components/WebMicroEditor/codeLink';
@@ -8,6 +9,10 @@ import styles from './styles.module.css';
 // een leerling niet meer te kopiëren en plakken. Uitzonderingen (REPL-
 // transcripten, ingesprongen fragmenten, expliciete opt-out via de meta
 // ```python geen-editor-link) beslist verdientEditorLink.
+//
+// Een <Link>, geen <a>: een gewone anker herlaadt de hele site en daarmee
+// gaat de verbinding met het board verloren. Met de router-navigatie blijft
+// de sessie (zie WebMicroEditor/sessie.ts) in leven.
 
 type Props = ComponentProps<typeof OriginalCodeBlock> & {
   children?: ReactNode;
@@ -25,7 +30,7 @@ export default function CodeBlock(props: Props): ReactNode {
     <>
       <OriginalCodeBlock {...props} />
       <div className={styles.editorLink}>
-        <a href={maakEditorLink(code.replace(/\s+$/, ''))}>Open in de editor →</a>
+        <Link to={maakEditorLink(code.replace(/\s+$/, ''))}>Open in de editor →</Link>
       </div>
     </>
   );

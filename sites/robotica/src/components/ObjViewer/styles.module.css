@@ -1,0 +1,59 @@
+.wrap {
+  position: relative;
+}
+
+/* Browsers zonder Fullscreen API op een <div> (iOS Safari): dan doet een
+   vaste laag over de hele pagina hetzelfde werk. Boven de navbar
+   (--ifm-z-index-fixed is 200). */
+.wrapVast {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: #f5f5f5;
+}
+
+.canvas {
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* In volledig scherm vult het canvas de wrapper, zonder rand. */
+.canvasVolledig {
+  height: 100%;
+  border: none;
+  border-radius: 0;
+}
+
+.knop {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 4px 10px;
+  border: 1px solid var(--ifm-color-emphasis-400);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+  font: 600 13px / 1.4 var(--ifm-font-family-base);
+  cursor: pointer;
+}
+
+.knop:hover {
+  background: #fff;
+  border-color: var(--ifm-color-primary);
+  color: var(--ifm-color-primary);
+}
+
+.melding {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  color: #555;
+  font: 0.95rem / 1.4 var(--ifm-font-family-base);
+  text-align: center;
+  padding: 1rem;
+}

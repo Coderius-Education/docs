@@ -43,7 +43,6 @@ import { BoardFS } from './filesystem';
 import {
   DEFAULT_LEAPHY_BRANCH,
   DEFAULT_LEAPHY_REPO,
-  type InstallProgress,
   LEAPHY_META_PATH,
   type LeaphyMeta,
   installLeaphyLibrary,
@@ -51,6 +50,7 @@ import {
 import { MAX_REEKSEN, voegSample } from './plotter';
 import { type PythonFout, splitsFoutSegmenten, vindLaatsteFout } from './pythonErrors';
 import { SerialClient } from './serial';
+import { type SessieStatus, type Stand, sessie } from './sessie';
 import styles from './styles.module.css';
 import { TEMPLATES } from './templates';
 
@@ -146,8 +146,6 @@ const pythonTabExtensions = [
   ),
 ];
 
-const STORAGE_KEY = 'webMicroEditor.code';
-const FILE_STORAGE_KEY = 'webMicroEditor.currentFile';
 const LEAPHY_REPO_STORAGE_KEY = 'webMicroEditor.leaphyRepo';
 const LEAPHY_BRANCH_STORAGE_KEY = 'webMicroEditor.leaphyBranch';
 const FONT_STORAGE_KEY = 'webMicroEditor.fontSize';
@@ -160,35 +158,33 @@ const MICROPYTHON_UF2_URL =
 const MICROPYTHON_VERSION = 'v1.28.0';
 const MICROPYTHON_DOWNLOAD_PAGE = 'https://micropython.org/download/ARDUINO_NANO_RP2040_CONNECT/';
 
-type Status = 'disconnected' | 'connected' | 'busy';
+type Status = SessieStatus;
+
+/** Korte naam van het board op de statuspil (browsers geven geen vriendelijke naam). */
+function labelVan(client: SerialClient | null): string | null {
+  const info = client?.portInfo;
+  if (info?.usbVendorId === 0x2341) return 'Arduino';
+  if (info?.usbVendorId === 0x2e8a) return 'RP2040';
+  return null;
+}
 
 export default function WebMicroEditor(): React.JSX.Element {
   const supported = useMemo(() => SerialClient.isSupported(), []);
   const { colorMode } = useColorMode();
-  const clientRef = useRef<SerialClient | null>(null);
   const replRef = useRef<HTMLDivElement | null>(null);
 
-  const [code, setCode] = useState<string>(() => {
-    if (typeof window === 'undefined') return TEMPLATES[0].code;
-    return localStorage.getItem(STORAGE_KEY) ?? TEMPLATES[0].code;
-  });
-  const [currentFile, setCurrentFile] = useState<string | null>(() => {
-    if (typeof window === 'undefined') return null;
-    return localStorage.getItem(FILE_STORAGE_KEY);
-  });
-  // Baseline copy of code as last loaded/saved — used to detect unsaved changes.
-  const [loadedCode, setLoadedCode] = useState<string>(() => {
-    if (typeof window === 'undefined') return '';
-    return localStorage.getItem(STORAGE_KEY) ?? TEMPLATES[0].code;
-  });
-  const [status, setStatus] = useState<Status>('disconnected');
-  const [replText, setReplText] = useState<string>('');
-  const [progress, setProgress] = useState<InstallProgress | null>(null);
+  // Code, geopend bestand en installer-voortgang leven in de sessie; deze
+  // component toont ze alleen. Zie sessie.ts voor waarom.
+  const [stand, setStand] = useState<Stand>(() => sessie.stand);
+  const { code, loadedCode, currentFile, progress } = stand;
+  const [status, setStatus] = useState<Status>(() => sessie.status);
+  const [replText, setReplText] = useState<string>(() => sessie.replText);
   const [files, setFiles] = useState<Array<{ name: string; isDir: boolean; path: string }> | null>(
     null,
   );
   const [currentDir, setCurrentDir] = useState<string>('/');
   const [showFlashHelp, setShowFlashHelp] = useState<boolean>(false);
+  const [setupOpen, setSetupOpen] = useState<boolean>(false);
   const [leaphyRepo, setLeaphyRepo] = useState<string>(() => {
     if (typeof window === 'undefined') return DEFAULT_LEAPHY_REPO;
     return localStorage.getItem(LEAPHY_REPO_STORAGE_KEY) ?? DEFAULT_LEAPHY_REPO;
@@ -205,7 +201,7 @@ export default function WebMicroEditor(): React.JSX.Element {
   // los getypte REPL-regel? Alleen in het eerste geval mag een <stdin>-fout
   // een regel in de editor markeren.
   const [stdinVanTest, setStdinVanTest] = useState<boolean>(false);
-  const [portLabel, setPortLabel] = useState<string | null>(null);
+  const [portLabel, setPortLabel] = useState<string | null>(() => labelVan(sessie.client));
   const [plotterAan, setPlotterAan] = useState<boolean>(false);
   const [fontSize, setFontSize] = useState<number>(() => {
     if (typeof window === 'undefined') return 14;
@@ -230,18 +226,6 @@ export default function WebMicroEditor(): React.JSX.Element {
   // regelmarkering. Wissen van de REPL (bij elke Run) reset dit vanzelf.
   const fout = useMemo(() => vindLaatsteFout(replText), [replText]);
   const foutZichtbaar = fout !== null && foutSignatuur(fout) !== foutWeggedrukt;
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(STORAGE_KEY, code);
-    }
-  }, [code]);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    if (currentFile === null) localStorage.removeItem(FILE_STORAGE_KEY);
-    else localStorage.setItem(FILE_STORAGE_KEY, currentFile);
-  }, [currentFile]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -272,17 +256,20 @@ export default function WebMicroEditor(): React.JSX.Element {
       if (voegSample(samplesRef.current, regel)) plotVersieRef.current += 1;
     }
 
-    setReplText((prev) => {
-      const next = (prev + text).slice(-20000); // cap at ~20KB
-      return next;
-    });
+    // De sessie houdt de tekst (en het plafond) bij; hier alleen weergeven.
+    setReplText(sessie.replText);
   }, []);
+
+  // Alles wat de editor zelf in de shell zet gaat via de sessie: die geeft het
+  // door aan de component die er nú is, of spaart het op tot de volgende.
+  const schrijf = useCallback((text: string) => sessie.schrijf(text), []);
 
   const clearRepl = useCallback(() => {
     samplesRef.current = [];
     lineBufRef.current = '';
     plotVersieRef.current += 1;
     setFoutWeggedrukt(null);
+    sessie.wis();
     setReplText('');
   }, []);
 
@@ -301,9 +288,7 @@ export default function WebMicroEditor(): React.JSX.Element {
       return;
     }
     window.history.replaceState(null, '', window.location.pathname);
-    setCode(geladen);
-    setLoadedCode(geladen);
-    setCurrentFile(null);
+    sessie.zet({ code: geladen, loadedCode: geladen, currentFile: null });
   }, []);
 
   useEffect(() => {
@@ -330,50 +315,44 @@ export default function WebMicroEditor(): React.JSX.Element {
     return () => cancelAnimationFrame(raf);
   }, [plotterAan]);
 
-  const setBusy = useCallback(() => setStatus('busy'), []);
-  // Valt de verbinding weg tijdens een operatie, dan mag de afronding daarvan
-  // de door onDisconnect gezette status niet terug op 'connected' zetten.
-  const setIdle = useCallback(
-    () => setStatus(clientRef.current ? 'connected' : 'disconnected'),
-    [],
-  );
+  // Bezig/klaar loopt via de sessie, zodat het einde van een operatie die vóór
+  // een paginawissel begon bij de huidige component aankomt en niet bij de
+  // oude. Valt de verbinding intussen weg, dan meldt de sessie 'disconnected'.
+  const setBusy = useCallback(() => sessie.beginOperatie(), []);
+  const setIdle = useCallback((operatie: number) => sessie.eindOperatie(operatie), []);
+
+  // De verbinding zelf leeft in `sessie`, buiten React: zo overleeft hij een
+  // paginawissel. Deze component meldt zich alleen aan als luisteraar, en
+  // probeert na een herlaad stil opnieuw te verbinden met de bekende poort.
+  useEffect(() => {
+    const afmelden = sessie.luister({
+      onData: appendRepl,
+      onStatus: (nieuw) => {
+        setStatus(nieuw);
+        setPortLabel(labelVan(sessie.client));
+      },
+      onStand: setStand,
+    });
+    setStatus(sessie.status);
+    setPortLabel(labelVan(sessie.client));
+    setStand(sessie.stand);
+    setReplText(sessie.replText);
+    if (!sessie.client) void sessie.herverbind();
+    return afmelden;
+  }, [appendRepl]);
 
   const connect = useCallback(async () => {
     if (!supported) return;
-    if (clientRef.current) return;
-    const client = new SerialClient();
-    client.onData = appendRepl;
-    client.onDisconnect = () => {
-      clientRef.current = null;
-      setStatus('disconnected');
-      setPortLabel(null);
-      appendRepl('\n[verbinding verbroken]\n');
-    };
-    try {
-      await client.connect();
-      clientRef.current = client;
-      setStatus('connected');
-      const info = client.portInfo;
-      setPortLabel(
-        info?.usbVendorId === 0x2341 ? 'Arduino' : info?.usbVendorId === 0x2e8a ? 'RP2040' : null,
-      );
-      appendRepl('[verbonden]\n');
-    } catch (err) {
-      appendRepl(`[verbinden mislukt: ${friendlyError(err)}]\n`);
-    }
-  }, [supported, appendRepl]);
+    await sessie.verbind();
+  }, [supported]);
 
   const disconnect = useCallback(async () => {
-    const c = clientRef.current;
-    if (!c) return;
-    await c.disconnect();
-    clientRef.current = null;
-    setStatus('disconnected');
-    setPortLabel(null);
+    if (!sessie.client) return;
+    await sessie.verbreek();
   }, []);
 
   const runOnBoard = useCallback(async () => {
-    const c = clientRef.current;
+    const c = sessie.client;
     if (!c || statusRef.current === 'busy') return;
     if (
       currentFile &&
@@ -384,101 +363,96 @@ export default function WebMicroEditor(): React.JSX.Element {
     ) {
       return;
     }
-    setBusy();
+    const operatie = setBusy();
     clearRepl();
-    appendRepl('[uploaden naar main.py...]\n');
+    schrijf('[uploaden naar main.py...]\n');
     try {
       const fs = new BoardFS(c);
       await fs.writeFile('/main.py', code);
-      setCurrentFile('/main.py');
-      setLoadedCode(code);
-      appendRepl('[main.py opgeslagen, soft reboot]\n');
+      sessie.zet({ currentFile: '/main.py', loadedCode: code });
+      schrijf('[main.py opgeslagen, soft reboot]\n');
       await c.softReboot();
-      setIdle();
+      setIdle(operatie);
     } catch (err) {
-      appendRepl(`\n[fout: ${friendlyError(err)}]\n`);
-      setIdle();
+      schrijf(`\n[fout: ${friendlyError(err)}]\n`);
+      setIdle(operatie);
     }
-  }, [code, currentFile, appendRepl, clearRepl, setBusy, setIdle]);
+  }, [code, currentFile, schrijf, clearRepl, setBusy, setIdle]);
 
   const saveCurrent = useCallback(async () => {
-    const c = clientRef.current;
+    const c = sessie.client;
     if (!c || !currentFile || statusRef.current === 'busy') return;
-    setBusy();
+    const operatie = setBusy();
     try {
       const fs = new BoardFS(c);
       await fs.writeFile(currentFile, code);
-      setLoadedCode(code);
-      appendRepl(`[opgeslagen: ${currentFile}]\n`);
-      setIdle();
+      sessie.zet({ loadedCode: code });
+      schrijf(`[opgeslagen: ${currentFile}]\n`);
+      setIdle(operatie);
     } catch (err) {
-      appendRepl(`\n[opslaan mislukt: ${friendlyError(err)}]\n`);
-      setIdle();
+      schrijf(`\n[opslaan mislukt: ${friendlyError(err)}]\n`);
+      setIdle(operatie);
     }
-  }, [code, currentFile, appendRepl, setBusy, setIdle]);
+  }, [code, currentFile, schrijf, setBusy, setIdle]);
 
   /** Draait de editor-code eenmalig via de raw REPL, zonder main.py aan te raken. */
   const testDirect = useCallback(async () => {
-    const c = clientRef.current;
+    const c = sessie.client;
     if (!c || statusRef.current === 'busy') return;
-    setBusy();
+    const operatie = setBusy();
     clearRepl();
     setStdinVanTest(true);
-    appendRepl('[test zonder opslaan — Stop onderbreekt]\n');
+    schrijf('[test zonder opslaan — Stop onderbreekt]\n');
     try {
-      await c.runCode(code, 0, appendRepl);
+      await c.runCode(code, 0, schrijf);
     } catch (err) {
-      appendRepl(`\n[test mislukt: ${friendlyError(err)}]\n`);
+      schrijf(`\n[test mislukt: ${friendlyError(err)}]\n`);
     }
-    setIdle();
-  }, [code, appendRepl, clearRepl, setBusy, setIdle]);
+    setIdle(operatie);
+  }, [code, schrijf, clearRepl, setBusy, setIdle]);
 
   const openFile = useCallback(
     async (path: string) => {
-      const c = clientRef.current;
+      const c = sessie.client;
       if (!c) return;
       if (isDirty && !confirm('Niet-opgeslagen wijzigingen worden overschreven. Doorgaan?')) return;
-      setBusy();
+      const operatie = setBusy();
       try {
         const fs = new BoardFS(c);
         const bytes = await fs.readFile(path);
         const text = new TextDecoder('utf-8', { fatal: false }).decode(bytes);
-        setCode(text);
-        setLoadedCode(text);
-        setCurrentFile(path);
-        appendRepl(`[geopend: ${path}]\n`);
-        setIdle();
+        sessie.zet({ code: text, loadedCode: text, currentFile: path });
+        schrijf(`[geopend: ${path}]\n`);
+        setIdle(operatie);
       } catch (err) {
-        appendRepl(`\n[openen mislukt: ${friendlyError(err)}]\n`);
-        setIdle();
+        schrijf(`\n[openen mislukt: ${friendlyError(err)}]\n`);
+        setIdle(operatie);
       }
     },
-    [isDirty, appendRepl, setBusy, setIdle],
+    [isDirty, schrijf, setBusy, setIdle],
   );
 
   const newFile = useCallback(() => {
     if (isDirty && !confirm('Niet-opgeslagen wijzigingen worden overschreven. Doorgaan?')) return;
-    setCode('');
-    setLoadedCode('');
-    setCurrentFile(null);
+    sessie.zet({ code: '', loadedCode: '', currentFile: null });
   }, [isDirty]);
 
   const stop = useCallback(async () => {
-    const c = clientRef.current;
+    const c = sessie.client;
     if (!c) return;
     try {
       await c.interrupt();
-      appendRepl('\n[KeyboardInterrupt verstuurd]\n');
+      schrijf('\n[KeyboardInterrupt verstuurd]\n');
     } catch (err) {
-      appendRepl(`\n[stop mislukt: ${friendlyError(err)}]\n`);
+      schrijf(`\n[stop mislukt: ${friendlyError(err)}]\n`);
     }
-  }, [appendRepl]);
+  }, [schrijf]);
 
   const herstart = useCallback(async () => {
-    const c = clientRef.current;
+    const c = sessie.client;
     if (!c || statusRef.current === 'busy') return;
     clearRepl();
-    appendRepl('[herstart: main.py draait opnieuw]\n');
+    schrijf('[herstart: main.py draait opnieuw]\n');
     try {
       // Eerst onderbreken: Ctrl-D werkt alleen vanuit de REPL-prompt. Tijdens
       // een draaiende while True-loop zou hij anders genegeerd worden
@@ -487,20 +461,20 @@ export default function WebMicroEditor(): React.JSX.Element {
       await new Promise((r) => setTimeout(r, 100));
       await c.softReboot();
     } catch (err) {
-      appendRepl(`\n[herstart mislukt: ${friendlyError(err)}]\n`);
+      schrijf(`\n[herstart mislukt: ${friendlyError(err)}]\n`);
     }
-  }, [appendRepl, clearRepl]);
+  }, [schrijf, clearRepl]);
 
   // Ctrl+S hoort niet de browser-opslaan-dialoog te openen. Is er een los
   // bestand open, dan slaat hij dat op; anders volstaat de melding dat de
   // browser al automatisch bewaart (Run schrijft naar het board).
   const saveShortcut = useCallback(() => {
-    if (currentFile && currentFile !== '/main.py' && clientRef.current) {
+    if (currentFile && currentFile !== '/main.py' && sessie.client) {
       saveCurrent();
     } else {
-      appendRepl('[je code staat automatisch bewaard in de browser]\n');
+      schrijf('[je code staat automatisch bewaard in de browser]\n');
     }
-  }, [currentFile, saveCurrent, appendRepl]);
+  }, [currentFile, saveCurrent, schrijf]);
 
   // Sneltoetsen via een ref, zodat de CodeMirror-extensies stabiel blijven
   // terwijl de callbacks per toetsaanslag veranderen (ze hangen aan `code`).
@@ -566,44 +540,44 @@ export default function WebMicroEditor(): React.JSX.Element {
   }, [sneltoetsen, fout, foutZichtbaar, foutRegelInEditor]);
 
   const installLib = useCallback(async () => {
-    const c = clientRef.current;
+    const c = sessie.client;
     if (!c) return;
-    setBusy();
-    setProgress({ done: 0, total: 0, current: 'lijst ophalen...' });
+    const operatie = setBusy();
+    sessie.zet({ progress: { done: 0, total: 0, current: 'lijst ophalen...' } });
     try {
       const fs = new BoardFS(c);
-      await installLeaphyLibrary(fs, (p) => setProgress(p), {
+      await installLeaphyLibrary(fs, (p) => sessie.zet({ progress: p }), {
         repo: leaphyRepo,
         branch: leaphyBranch,
       });
-      setProgress(null);
+      sessie.zet({ progress: null });
       const isDefault =
         leaphyRepo === DEFAULT_LEAPHY_REPO && leaphyBranch === DEFAULT_LEAPHY_BRANCH;
-      appendRepl(
+      schrijf(
         isDefault
           ? '\n[Leaphy-library geïnstalleerd]\n'
           : `\n[Leaphy-library geïnstalleerd vanaf ${leaphyRepo}@${leaphyBranch}]\n`,
       );
-      setIdle();
+      setIdle(operatie);
     } catch (err) {
-      setProgress(null);
-      appendRepl(`\n[installer mislukt: ${friendlyError(err)}]\n`);
-      setIdle();
+      sessie.zet({ progress: null });
+      schrijf(`\n[installer mislukt: ${friendlyError(err)}]\n`);
+      setIdle(operatie);
     }
-  }, [appendRepl, setBusy, setIdle, leaphyRepo, leaphyBranch]);
+  }, [schrijf, setBusy, setIdle, leaphyRepo, leaphyBranch]);
 
   const sendReplLine = useCallback(() => {
-    const c = clientRef.current;
+    const c = sessie.client;
     if (!c || status !== 'connected') return;
     const line = replInput;
     setStdinVanTest(false);
     c.typeLine(line).catch((err) => {
-      appendRepl(`\n[typen mislukt: ${friendlyError(err)}]\n`);
+      schrijf(`\n[typen mislukt: ${friendlyError(err)}]\n`);
     });
     setReplHistory((prev) => [...prev, line]);
     setReplHistoryIndex(-1);
     setReplInput('');
-  }, [status, replInput, appendRepl]);
+  }, [status, replInput, schrijf]);
 
   const handleReplKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -637,9 +611,9 @@ export default function WebMicroEditor(): React.JSX.Element {
 
   const refreshFiles = useCallback(
     async (dir = currentDir) => {
-      const c = clientRef.current;
+      const c = sessie.client;
       if (!c) return;
-      setBusy();
+      const operatie = setBusy();
       try {
         const fs = new BoardFS(c);
         const items = await fs.listdir(dir);
@@ -654,71 +628,70 @@ export default function WebMicroEditor(): React.JSX.Element {
         );
         setFiles(visible);
         setCurrentDir(dir);
-        setIdle();
+        setIdle(operatie);
       } catch (err) {
-        appendRepl(`\n[bestandslijst mislukt: ${friendlyError(err)}]\n`);
-        setIdle();
+        schrijf(`\n[bestandslijst mislukt: ${friendlyError(err)}]\n`);
+        setIdle(operatie);
       }
     },
-    [currentDir, appendRepl, setBusy, setIdle],
+    [currentDir, schrijf, setBusy, setIdle],
   );
 
   const deleteFile = useCallback(
     async (path: string) => {
-      const c = clientRef.current;
+      const c = sessie.client;
       if (!c) return;
       if (!confirm(`'${path}' verwijderen van het board?`)) return;
-      setBusy();
+      const operatie = setBusy();
       try {
         const fs = new BoardFS(c);
         await fs.remove(path);
-        appendRepl(`[verwijderd: ${path}]\n`);
+        schrijf(`[verwijderd: ${path}]\n`);
         if (currentFile === path) {
-          setCurrentFile(null);
+          sessie.zet({ currentFile: null });
         }
         await refreshFiles();
       } catch (err) {
-        appendRepl(`\n[verwijderen mislukt: ${friendlyError(err)}]\n`);
-        setIdle();
+        schrijf(`\n[verwijderen mislukt: ${friendlyError(err)}]\n`);
+        setIdle(operatie);
       }
     },
-    [appendRepl, refreshFiles, setBusy, setIdle, currentFile],
+    [schrijf, refreshFiles, setBusy, setIdle, currentFile],
   );
 
   const saveAs = useCallback(async () => {
-    const c = clientRef.current;
+    const c = sessie.client;
     if (!c || statusRef.current === 'busy') return;
     const invoer = prompt('Bestandsnaam op het board:', currentFile ?? '/mijn_script.py');
     if (!invoer || !invoer.trim()) return;
     let pad = invoer.trim();
     if (!pad.startsWith('/')) pad = `/${pad}`;
     if (!pad.includes('.')) pad = `${pad}.py`;
-    setBusy();
+    const operatie = setBusy();
     try {
       const fs = new BoardFS(c);
       await fs.writeFile(pad, code);
-      setCurrentFile(pad);
-      setLoadedCode(code);
-      appendRepl(`[opgeslagen: ${pad}]\n`);
+      sessie.zet({ currentFile: pad, loadedCode: code });
+      schrijf(`[opgeslagen: ${pad}]\n`);
       if (files !== null) await refreshFiles();
-      setIdle();
+      setIdle(operatie);
     } catch (err) {
-      appendRepl(`\n[opslaan mislukt: ${friendlyError(err)}]\n`);
-      setIdle();
+      schrijf(`\n[opslaan mislukt: ${friendlyError(err)}]\n`);
+      setIdle(operatie);
     }
-  }, [code, currentFile, files, refreshFiles, appendRepl, setBusy, setIdle]);
+  }, [code, currentFile, files, refreshFiles, schrijf, setBusy, setIdle]);
 
   /** Toont welke Leaphy-library op het board staat (herkomst-stempel van de installer). */
   const checkLibrary = useCallback(async () => {
-    const c = clientRef.current;
+    const c = sessie.client;
     if (!c) return;
-    setBusy();
+    const operatie = setBusy();
     const fs = new BoardFS(c);
     try {
       const meta: LeaphyMeta = JSON.parse(
         new TextDecoder().decode(await fs.readFile(LEAPHY_META_PATH)),
       );
-      appendRepl(
+      schrijf(
         `[library op board: ${meta.repo}@${meta.branch}, geïnstalleerd op ${meta.installedAt.slice(0, 10)}]\n`,
       );
     } catch {
@@ -726,17 +699,17 @@ export default function WebMicroEditor(): React.JSX.Element {
       // dan is het een verbindingsprobleem — niet "geen library" melden.
       try {
         const lib = await fs.listdir('/lib');
-        appendRepl(
+        schrijf(
           lib.some((i) => i.name === 'leaphymicropython')
             ? '[library aanwezig; herkomst onbekend (niet via deze editor geïnstalleerd)]\n'
             : '[geen leaphymicropython-library op het board gevonden]\n',
         );
       } catch (err) {
-        appendRepl(`\n[check mislukt: ${friendlyError(err)}]\n`);
+        schrijf(`\n[check mislukt: ${friendlyError(err)}]\n`);
       }
     }
-    setIdle();
-  }, [appendRepl, setBusy, setIdle]);
+    setIdle(operatie);
+  }, [schrijf, setBusy, setIdle]);
 
   const applyTemplate = useCallback(
     (id: string) => {
@@ -744,9 +717,7 @@ export default function WebMicroEditor(): React.JSX.Element {
       const t = TEMPLATES.find((x) => x.id === id);
       if (!t) return;
       if (isDirty && !confirm('Niet-opgeslagen wijzigingen worden overschreven. Doorgaan?')) return;
-      setCode(t.code);
-      setLoadedCode(t.code);
-      setCurrentFile(null);
+      sessie.zet({ code: t.code, loadedCode: t.code, currentFile: null });
     },
     [isDirty],
   );
@@ -781,7 +752,7 @@ export default function WebMicroEditor(): React.JSX.Element {
     );
   }
 
-  const connected = status !== 'disconnected';
+  const connected = status === 'connected' || status === 'busy';
 
   return (
     <div className={styles.root}>
@@ -791,17 +762,23 @@ export default function WebMicroEditor(): React.JSX.Element {
             styles.status,
             status === 'disconnected' && styles.statusDisconnected,
             status === 'connected' && styles.statusConnected,
-            status === 'busy' && styles.statusBusy,
+            (status === 'busy' || status === 'verbindt') && styles.statusBusy,
           )}
         >
           <span className={styles.statusDot} />
           {status === 'disconnected' && 'Niet verbonden'}
+          {status === 'verbindt' && 'Opnieuw verbinden...'}
           {status === 'connected' && `Verbonden${portLabel ? ` — ${portLabel}` : ''}`}
           {status === 'busy' && 'Bezig...'}
         </span>
 
         {!connected && (
-          <button type="button" className={clsx(styles.btn, styles.btnPrimary)} onClick={connect}>
+          <button
+            type="button"
+            className={clsx(styles.btn, styles.btnPrimary)}
+            onClick={connect}
+            disabled={status === 'verbindt'}
+          >
             Verbind met board
           </button>
         )}
@@ -818,12 +795,21 @@ export default function WebMicroEditor(): React.JSX.Element {
 
         <button
           type="button"
-          className={clsx(styles.btn, styles.btnPrimary)}
+          className={clsx(styles.btn, styles.btnPrimary, styles.btnRun)}
           onClick={runOnBoard}
           disabled={!connected || status === 'busy'}
-          title="Schrijft de code naar /main.py en herstart het board"
+          title="Schrijft de code naar /main.py en herstart het board (Ctrl+Enter)"
         >
-          Run op board
+          <span aria-hidden="true">▶</span> Run op board
+        </button>
+        <button
+          type="button"
+          className={clsx(styles.btn, styles.btnDanger)}
+          onClick={stop}
+          disabled={!connected}
+          title="Onderbreek het draaiende programma (KeyboardInterrupt)"
+        >
+          Stop
         </button>
         <button
           type="button"
@@ -833,6 +819,29 @@ export default function WebMicroEditor(): React.JSX.Element {
           title="Draait de code eenmalig, zonder main.py te veranderen"
         >
           Test direct
+        </button>
+
+        <span className={styles.spacer} />
+
+        <button
+          type="button"
+          className={clsx(styles.btn, setupOpen && styles.btnActief)}
+          onClick={() => setSetupOpen((v) => !v)}
+          aria-expanded={setupOpen}
+          title="Eenmalig per board: MicroPython en de Leaphy-library erop zetten"
+        >
+          Board instellen
+        </button>
+      </div>
+
+      <div className={styles.toolbarSecundair}>
+        <button
+          type="button"
+          className={styles.btn}
+          onClick={newFile}
+          title="Leeg de editor (begin een nieuw bestand)"
+        >
+          Nieuw
         </button>
         {currentFile && currentFile !== '/main.py' && (
           <button
@@ -856,15 +865,6 @@ export default function WebMicroEditor(): React.JSX.Element {
         </button>
         <button
           type="button"
-          className={clsx(styles.btn, styles.btnDanger)}
-          onClick={stop}
-          disabled={!connected}
-          title="Onderbreek het draaiende programma (KeyboardInterrupt)"
-        >
-          Stop
-        </button>
-        <button
-          type="button"
           className={styles.btn}
           onClick={herstart}
           disabled={!connected || status === 'busy'}
@@ -875,42 +875,11 @@ export default function WebMicroEditor(): React.JSX.Element {
         <button
           type="button"
           className={styles.btn}
-          onClick={newFile}
-          title="Leeg de editor (begin een nieuw bestand)"
-        >
-          Nieuw
-        </button>
-
-        <span className={styles.spacer} />
-
-        <button
-          type="button"
-          className={clsx(styles.btn, styles.btnKlein)}
-          onClick={() => setFontSize((v) => Math.max(12, v - 2))}
-          disabled={fontSize <= 12}
-          title="Kleinere letters"
-        >
-          A−
-        </button>
-        <button
-          type="button"
-          className={clsx(styles.btn, styles.btnKlein)}
-          onClick={() => setFontSize((v) => Math.min(24, v + 2))}
-          disabled={fontSize >= 24}
-          title="Grotere letters (handig op de beamer)"
-        >
-          A+
-        </button>
-
-        <button
-          type="button"
-          className={styles.btn}
           onClick={() => (files === null ? refreshFiles('/') : setFiles(null))}
           disabled={!connected || status === 'busy'}
         >
           {files === null ? 'Bestanden op board' : 'Verberg bestanden'}
         </button>
-
         <select
           className={styles.select}
           aria-label="Voorbeeld laden"
@@ -929,33 +898,54 @@ export default function WebMicroEditor(): React.JSX.Element {
             </option>
           ))}
         </select>
+
+        <span className={styles.spacer} />
+
+        <button
+          type="button"
+          className={styles.btn}
+          onClick={() => setFontSize((v) => Math.max(12, v - 2))}
+          disabled={fontSize <= 12}
+          title="Kleinere letters"
+        >
+          A−
+        </button>
+        <button
+          type="button"
+          className={styles.btn}
+          onClick={() => setFontSize((v) => Math.min(24, v + 2))}
+          disabled={fontSize >= 24}
+          title="Grotere letters (handig op de beamer)"
+        >
+          A+
+        </button>
       </div>
 
-      {!connected && (
-        <div className={styles.startHulp}>
-          <strong>Zo werkt het</strong>
-          <ol>
-            <li>Sluit het board met een USB-kabel aan op je computer.</li>
-            <li>
-              Klik op <strong>Verbind met board</strong> en kies je board in de lijst.
-            </li>
-            <li>
-              Klik op <strong>Run op board</strong> om de code uit de editor te draaien.
-            </li>
-          </ol>
-          <p>
-            Splinternieuw board, of werkt <code>import leaphymicropython</code> niet? Doe dan eerst
-            de eenmalige stappen onder <strong>Board instellen</strong> hieronder.
-          </p>
-        </div>
+      {!connected && !setupOpen && (
+        <p className={styles.hint}>
+          Sluit het board met een USB-kabel aan, klik op <strong>Verbind met board</strong> en kies
+          je board in de lijst. Daarna zet <strong>Run op board</strong> je code op het board.
+          Splinternieuw board, of werkt <code>import leaphymicropython</code> niet? Klik dan op{' '}
+          <strong>Board instellen</strong>.
+        </p>
       )}
 
-      <details className={styles.setup}>
-        <summary>Board instellen (eenmalig)</summary>
-        <div className={styles.setupBody}>
+      {setupOpen && (
+        <div className={styles.setupPaneel}>
+          <div className={styles.setupHead}>
+            <strong>Board instellen (eenmalig per board)</strong>
+            <button
+              type="button"
+              className={styles.fileDelete}
+              onClick={() => setSetupOpen(false)}
+              title="Sluiten"
+            >
+              ✕
+            </button>
+          </div>
           <p>
             Twee stappen die je per board maar één keer doet: MicroPython op het board zetten, en
-            daarna de Leaphy-library installeren.
+            daarna de Leaphy-library installeren. Stap 2 kan pas als het board verbonden is.
           </p>
           <div className={styles.setupActies}>
             <button
@@ -989,6 +979,45 @@ export default function WebMicroEditor(): React.JSX.Element {
               Check library op board
             </button>
           </div>
+
+          {showFlashHelp && (
+            <div className={styles.flashHelp}>
+              <div className={styles.flashHelpHead}>
+                <strong>MicroPython flashen ({MICROPYTHON_VERSION})</strong>
+                <button
+                  type="button"
+                  className={styles.fileDelete}
+                  onClick={() => setShowFlashHelp(false)}
+                  title="Sluiten"
+                >
+                  ✕
+                </button>
+              </div>
+              <ol>
+                <li>
+                  De download van het <code>.uf2</code>-bestand start automatisch. Komt hij niet?{' '}
+                  <a href={MICROPYTHON_UF2_URL}>Download hem dan hier</a>.
+                </li>
+                <li>
+                  Druk <strong>twee keer snel achter elkaar</strong> op de reset-knop van het board.
+                  Er verschijnt nu een nieuwe schijf met de naam <code>RPI-RP2</code>.
+                </li>
+                <li>
+                  Sleep het gedownloade <code>.uf2</code>-bestand op die <code>RPI-RP2</code>
+                  -schijf.
+                </li>
+                <li>
+                  Het board herstart vanzelf met MicroPython. Klik daarna op{' '}
+                  <strong>Verbind met board</strong>.
+                </li>
+              </ol>
+              <p className={styles.flashHelpFoot}>
+                Andere versie nodig? Kies hem op de{' '}
+                <a href={MICROPYTHON_DOWNLOAD_PAGE}>officiële MicroPython-pagina</a>.
+              </p>
+            </div>
+          )}
+
           <details className={styles.leaphyAdvanced}>
             <summary>Geavanceerd: andere Leaphy-bron</summary>
             <div className={styles.leaphyAdvancedFields}>
@@ -1025,7 +1054,7 @@ export default function WebMicroEditor(): React.JSX.Element {
             </div>
           </details>
         </div>
-      </details>
+      )}
 
       {progress && (
         <div className={styles.progress}>
@@ -1062,43 +1091,6 @@ export default function WebMicroEditor(): React.JSX.Element {
               Debuggen-pagina
             </a>
             .
-          </p>
-        </div>
-      )}
-
-      {showFlashHelp && (
-        <div className={styles.flashHelp}>
-          <div className={styles.flashHelpHead}>
-            <strong>MicroPython flashen ({MICROPYTHON_VERSION})</strong>
-            <button
-              type="button"
-              className={styles.fileDelete}
-              onClick={() => setShowFlashHelp(false)}
-              title="Sluiten"
-            >
-              ✕
-            </button>
-          </div>
-          <ol>
-            <li>
-              De download van het <code>.uf2</code>-bestand start automatisch. Komt hij niet?{' '}
-              <a href={MICROPYTHON_UF2_URL}>Download hem dan hier</a>.
-            </li>
-            <li>
-              Druk <strong>twee keer snel achter elkaar</strong> op de reset-knop van het board. Er
-              verschijnt nu een nieuwe schijf met de naam <code>RPI-RP2</code>.
-            </li>
-            <li>
-              Sleep het gedownloade <code>.uf2</code>-bestand op die <code>RPI-RP2</code>-schijf.
-            </li>
-            <li>
-              Het board herstart vanzelf met MicroPython. Klik daarna op{' '}
-              <strong>Verbind met board</strong>.
-            </li>
-          </ol>
-          <p className={styles.flashHelpFoot}>
-            Andere versie nodig? Kies hem op de{' '}
-            <a href={MICROPYTHON_DOWNLOAD_PAGE}>officiële MicroPython-pagina</a>.
           </p>
         </div>
       )}
@@ -1168,7 +1160,7 @@ export default function WebMicroEditor(): React.JSX.Element {
           <div className={styles.editorWrap} style={{ fontSize }}>
             <CodeMirror
               value={code}
-              onChange={setCode}
+              onChange={(nieuw) => sessie.zet({ code: nieuw })}
               extensions={editorExtensions}
               theme={colorMode === 'dark' ? 'dark' : 'light'}
               height="380px"

@@ -23,7 +23,7 @@ Verzamel de volgende stukken Lego. De volledige stuklijst staat in de PDF hieron
 
 ## 3D-model
 
-Bekijk het model in 3D — draaien en zoomen met je muis.
+Bekijk het model in 3D: draaien en zoomen met je muis. Wil je de details goed zien, klik dan op **Volledig scherm** rechtsboven in een model; met Esc of **Sluiten** kom je terug.
 
 ### Linkerkant
 <ObjViewer src="/models/linkerkant.obj" mtl="/models/linkerkant.mtl" />
