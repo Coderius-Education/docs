@@ -1,0 +1,15 @@
+import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
+
+# Wat er gebeurt bij één klik
+
+Je hebt nu endpoints, templates en een database, en ze werken samen zonder dat je daar iets voor hoefde te doen. Hier zie je wat er in die samenwerking gebeurt tussen het moment dat een bezoeker op een link klikt en het moment dat de lijst op het scherm staat.
+
+Links staat wat er in de browser gebeurt, rechts wat er op de server gebeurt. Een blauwe rand betekent dat er iets over het netwerk gaat. Elke stap linkt naar de les waar je hem bouwde.
+
+<VerzoekCyclus variant="get" />
+
+Tussen stap 6 en 7 gebeurt het belangrijkste van de hele cursus: er gaat **alleen HTML** over de lijn. Je database blijft op de server, je Python-code ook. De browser krijgt het resultaat, niet de weg ernaartoe. Wie de broncode van je pagina bekijkt ziet de berichten, maar niet hoe je ze hebt opgehaald.
+
+Stap 7 komt pas in [JavaScript erbij](/docs/FastAPI/javascript) aan bod. Tot die tijd tekent de browser de pagina en is hij klaar; wat er daarna nog in de browser kan gebeuren, is het onderwerp van het volgende blok.
+
+Kom je bij een nieuwe functie vast te zitten, zoek dan eerst de stap op waar hij thuishoort. Die tabel staat bij [Hoe een verzoek werkt](/docs/FastAPI/hoe-een-verzoek-werkt).

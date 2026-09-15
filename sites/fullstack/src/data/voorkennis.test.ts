@@ -45,6 +45,9 @@ const ZONDER_BLOK: Record<string, string> = {
   'FastAPI/cookie-of-sessie.mdx': 'bouwt alleen op de twee lessen ervoor, in dezelfde cursus',
   'FastAPI/cookies.mdx': 'nieuwe stof is server-side en wordt hier zelf uitgelegd',
   'FastAPI/hoe-een-verzoek-werkt.mdx': 'samenvatting van deze cursus, geen nieuwe stof',
+  'FastAPI/verzoek-get.mdx': 'diagram van de lessen ervoor, geen nieuwe stof',
+  'FastAPI/verzoek-post.mdx': 'diagram van de lessen ervoor, geen nieuwe stof',
+  'FastAPI/verzoek-sessie.mdx': 'diagram van de lessen ervoor, geen nieuwe stof',
   'FastAPI/html_bestanden.mdx': 'HTML-bestand en pad; HTML zelf staat al bij html_tonen',
   'FastAPI/installatie.mdx':
     'controlelijst: elke check verwijst zelf met een SiteLink naar de editor-cursus',

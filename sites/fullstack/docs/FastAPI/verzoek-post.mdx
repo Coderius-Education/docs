@@ -1,0 +1,11 @@
+import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
+
+# Wat er gebeurt bij één formulier
+
+Een formulier volgt hetzelfde patroon als [één klik](/docs/FastAPI/verzoek-get), maar eindigt anders: niet met een pagina, maar met een omleiding.
+
+<VerzoekCyclus variant="post" />
+
+De laatste stap start het diagram van [één klik](/docs/FastAPI/verzoek-get) opnieuw. Dat is het post/redirect/get-patroon uit [Terug naar de lijst](/docs/FastAPI/redirect): versturen en tonen zijn twee losse verzoeken, zodat F5 de pagina herlaadt in plaats van je bericht nog een keer op te sturen.
+
+Stap 1 gebeurt in de browser, en die is van de bezoeker. Wat een bezoeker instuurt controleer je daarom in stap 4, in je endpoint, en nooit alleen in de HTML. Waarom dat zo is, komt in [Server of browser?](/docs/FastAPI/server-of-browser).

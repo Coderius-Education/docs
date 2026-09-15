@@ -40,6 +40,8 @@ const sidebars: SidebarsConfig = {
         'FastAPI/lijst_tonen',
         'FastAPI/redirect',
         'FastAPI/detailpagina',
+        'FastAPI/verzoek-get',
+        'FastAPI/verzoek-post',
       ],
     },
     {
@@ -50,7 +52,12 @@ const sidebars: SidebarsConfig = {
     {
       type: 'category',
       label: 'Onthouden',
-      items: ['FastAPI/cookies', 'FastAPI/sessies', 'FastAPI/cookie-of-sessie'],
+      items: [
+        'FastAPI/cookies',
+        'FastAPI/sessies',
+        'FastAPI/cookie-of-sessie',
+        'FastAPI/verzoek-sessie',
+      ],
     },
     {
       type: 'category',
