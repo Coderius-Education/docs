@@ -6,7 +6,9 @@ Je gastenboek werkt, maar na het versturen van een bericht sta je op een doodlop
 
 Met `RedirectResponse` stuur je de browser door naar een andere URL:
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 from fastapi.responses import RedirectResponse
 
 @app.post("/gastenboek")
@@ -17,7 +19,15 @@ async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
     return RedirectResponse(url="/berichten", status_code=303)
 ```
 
-Je endpoint slaat op en geeft daarna geen pagina terug, maar een opdracht: ga naar `/berichten`. De browser doet dat meteen, en de bezoeker ziet zijn eigen bericht bovenaan de lijst verschijnen.
+<Regel n={6}>
+Elk bericht krijgt een eigen sleutel met de tijd erin (met `import time` bovenaan je bestand), zodat een nieuw bericht het vorige niet overschrijft. De waarde is een dictionary met beide velden.
+</Regel>
+
+<Regel n={8}>
+Hier zit het verschil met de vorige les. Het endpoint geeft geen pagina terug, maar een opdracht aan de browser: ga naar `/berichten`. De browser doet dat meteen, en de bezoeker ziet zijn eigen bericht bovenaan de lijst verschijnen. Waarom er `status_code=303` bij moet, staat hieronder.
+</Regel>
+
+</CodeUitleg>
 
 ## Waarom 303
 

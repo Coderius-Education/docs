@@ -32,7 +32,11 @@ Dat geeft 32 tekens, bijvoorbeeld `9f2c4a7e10b8d3f5a6c1e0b4d7928f3a`. Een bezoek
 
 Sessies bewaar je in een eigen database, los van je gastenboek:
 
-```python
+Drie dingen gebeuren hier. Is er nog geen sessie-id, dan maak je er een. Het bericht gaat zoals altijd in `gastenboek.db`. En in `sessies.db` groeit onder dat ene sessie-id een lijst met de sleutels van de berichten die deze bezoeker heeft geplaatst.
+
+<CodeUitleg>
+
+```python showLineNumbers
 @app.post("/gastenboek")
 async def gastenboek_opslaan(
     naam: str = Form(...),
@@ -59,21 +63,55 @@ async def gastenboek_opslaan(
     return antwoord
 ```
 
-Drie dingen gebeuren hier. Is er nog geen sessie-id, dan maak je er een. Het bericht gaat zoals altijd in `gastenboek.db`. En in `sessies.db` groeit onder dat ene sessie-id een lijst met de sleutels van de berichten die deze bezoeker heeft geplaatst.
+<Regel n={5}>
+De cookie heet nu `sessie_id` en bevat alleen het nummer; bij een eerste bezoek is hij leeg.
+</Regel>
 
-`sessies.get(sessie_id, {"naam": naam, "berichten": []})` doet het werk bij een eerste bezoek: bestaat de sessie nog niet, dan krijg je een verse dictionary in plaats van een foutmelding.
+<Regel n={7} tot={8}>
+Geen sessie-id? Dan maak je er een, en verderop gaat het als cookie mee terug.
+</Regel>
+
+<Regel n={10}>
+De sleutel van het bericht staat nu in een variabele, want je hebt hem straks een tweede keer nodig.
+</Regel>
+
+<Regel n={15} tot={16}>
+Een tweede database, alleen voor sessies. `sessies.get(sessie_id, {"naam": naam, "berichten": []})` doet het werk bij een eerste bezoek: bestaat de sessie nog niet, dan krijg je een verse dictionary in plaats van een foutmelding.
+</Regel>
+
+<Regel n={17} tot={20}>
+De naam bijwerken, de sleutel van dit bericht aan de lijst toevoegen, en de dictionary terugzetten onder het sessie-id. Dat terugzetten is nodig: een gewijzigde dictionary die je uit `sessies` haalde, schrijft zich niet vanzelf terug.
+</Regel>
+
+<Regel n={23}>
+Dezelfde `set_cookie` als in de vorige les, maar met het sessie-id als waarde in plaats van de naam.
+</Regel>
+
+</CodeUitleg>
 
 ## De sessie uitlezen
 
 Ophalen gaat omgekeerd: sessie-id uit de cookie, gegevens uit de database.
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 @app.get("/gastenboek")
 async def gastenboek_form(request: Request, sessie_id: str = Cookie(default="")):
     with SqliteDict("sessies.db") as sessies:
         mijn = sessies.get(sessie_id, {})
     return templates.TemplateResponse(request, "gastenboek.html", {"naam": mijn.get("naam", "")})
 ```
+
+<Regel n={4}>
+Het sessie-id uit de cookie is de sleutel in `sessies.db`. Een onbekend of leeg id geeft een lege dictionary, geen `KeyError`.
+</Regel>
+
+<Regel n={5}>
+Ook `mijn.get("naam", "")` heeft een standaardwaarde, zodat een eerste bezoek een leeg veld toont in plaats van een foutmelding.
+</Regel>
+
+</CodeUitleg>
 
 Voor de bezoeker verandert er niets: de naam staat nog steeds voorgevuld. Het verschil zit erin dat die naam nu van jouw server komt en niet van een computer waar je niets over te zeggen hebt.
 

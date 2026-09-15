@@ -18,7 +18,9 @@ python -m pip install sqlitedict
 
 Maak `test_db.py`:
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 from sqlitedict import SqliteDict
 
 with SqliteDict("mijn_data.db") as db:
@@ -28,6 +30,20 @@ with SqliteDict("mijn_data.db") as db:
 
 print("Data opgeslagen!")
 ```
+
+<Regel n={3}>
+`with` opent de database uit het bestand `mijn_data.db` en sluit hem vanzelf weer na het ingesprongen blok. Bestaat het bestand nog niet, dan maakt SqliteDict het aan.
+</Regel>
+
+<Regel n={4} tot={5}>
+Binnen het blok gedraagt `db` zich als een dictionary: een sleutel, een waarde.
+</Regel>
+
+<Regel n={6}>
+`db.commit()` schrijft de wijzigingen echt naar het bestand. Zonder deze regel staan ze alleen in het geheugen en zijn ze weg als het programma stopt.
+</Regel>
+
+</CodeUitleg>
 
 Run: `python test_db.py` — Er wordt een bestand `mijn_data.db` aangemaakt.
 

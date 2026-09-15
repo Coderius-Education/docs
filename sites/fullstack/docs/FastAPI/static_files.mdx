@@ -24,7 +24,9 @@ je-project/
 
 Pas je `main.py` aan:
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -34,10 +36,15 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 ```
 
-### Wat doet `app.mount`?
+<Regel n={3}>
+`StaticFiles` is het stuk van FastAPI dat bestanden ongewijzigd doorgeeft, zonder dat er een functie van jou aan te pas komt.
+</Regel>
 
-Alle bestanden in de `static` folder worden bereikbaar via `/static/...` in de browser. Bijvoorbeeld:
-- `static/css/style.css` → `/static/css/style.css`
+<Regel n={7}>
+`app.mount` hangt de map `static` aan de URL `/static`. Alles in die map is daarmee bereikbaar in de browser: `static/css/style.css` staat op `/static/css/style.css`. De `name` is verplicht en mag zo blijven staan.
+</Regel>
+
+</CodeUitleg>
 
 ## CSS in apart bestand
 
@@ -55,7 +62,9 @@ p {
 
 ## CSS koppelen aan HTML
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 @app.get("/mooi", response_class=HTMLResponse)
 async def mooi():
     return """
@@ -73,11 +82,11 @@ async def mooi():
     """
 ```
 
-### Wat is nieuw?
+<Regel n={8}>
+De `<link>` laadt de CSS uit het aparte bestand, via de URL die `app.mount` net heeft aangemaakt. De browser vraagt dat bestand zelf op, als tweede verzoek na de pagina. Dezelfde regel kun je op elke pagina zetten; dan delen ze één stylesheet.
+</Regel>
 
-- `<link rel="stylesheet" href="/static/css/style.css">` - Laadt CSS uit het aparte bestand
-- De CSS geldt nu voor deze hele pagina
-- Je kunt dezelfde CSS gebruiken op meerdere pagina's
+</CodeUitleg>
 
 ## Testen
 

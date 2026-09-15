@@ -28,7 +28,9 @@ Dit werkt net als een for-lus in Python. Het verschil: er staat `{% endfor %}` i
 
 In je endpoint haal je alle berichten op en stuurt ze mee onder de naam die de template gebruikt:
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 @app.get("/berichten")
 async def berichten(request: Request):
     with SqliteDict("gastenboek.db") as db:
@@ -40,7 +42,15 @@ async def berichten(request: Request):
     )
 ```
 
-**Let op de `list()`.** `db.values()` haalt de rijen pas op als je erdoorheen loopt, en dat gebeurt in de template — als de database allang weer dicht is. `list()` haalt ze binnen het `with`-blok op. Vergeet je dat, dan krijg je `AttributeError: 'NoneType' object has no attribute 'select'`.
+<Regel n={4}>
+`db.values()` geeft alle opgeslagen berichten, zonder hun sleutels. De `list()` eromheen is het belangrijkste van deze les: `db.values()` haalt de rijen pas op als je erdoorheen loopt, en dat gebeurt in de template, als de database allang weer dicht is. `list()` haalt ze binnen het `with`-blok op. Vergeet je dat, dan krijg je `AttributeError: 'NoneType' object has no attribute 'select'`.
+</Regel>
+
+<Regel n={8}>
+De lijst gaat mee onder de naam `berichten`, en dat is precies de naam die de template in `{% for bericht in berichten %}` gebruikt.
+</Regel>
+
+</CodeUitleg>
 
 ## Het lege geval
 

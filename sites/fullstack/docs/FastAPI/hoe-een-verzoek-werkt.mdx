@@ -1,30 +1,12 @@
-import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
-
 # Hoe een verzoek werkt
 
-Je hebt alle stukken gebouwd: endpoints, templates, een database, een formulier, JavaScript en een sessie. Hier zie je ze een keer achter elkaar, zoals ze bij één klik samenwerken.
+Je hebt alle stukken gebouwd: endpoints, templates, een database, een formulier, JavaScript en een sessie. Onderweg zag je vijf keer wat er bij één handeling achter elkaar gebeurt, browser links en server rechts, elke keer met meer ertussen:
 
-Links staat wat er in de browser gebeurt, rechts wat er op de server gebeurt. Een blauwe rand betekent dat er iets over het netwerk gaat.
-
-<VerzoekCyclus variant="get" />
-
-Tussen stap 6 en 7 gebeurt het belangrijkste van de hele cursus: er gaat **alleen HTML** over de lijn. Je database blijft op de server, je Python-code ook. De browser krijgt het resultaat, niet de weg ernaartoe. Wie de broncode van je pagina bekijkt ziet de berichten, maar niet hoe je ze hebt opgehaald.
-
-## En als je iets verstuurt
-
-Een formulier volgt hetzelfde patroon, maar eindigt anders: niet met een pagina, maar met een omleiding.
-
-<VerzoekCyclus variant="post" />
-
-De laatste stap start het eerste diagram opnieuw. Dat is het post/redirect/get-patroon uit [Terug naar de lijst](/docs/FastAPI/redirect): versturen en tonen zijn twee losse verzoeken, zodat F5 de pagina herlaadt in plaats van je bericht nog een keer op te sturen.
-
-## En als de server je moet herkennen
-
-Beide diagrammen hierboven gaan uit van een verzoek dat op zichzelf staat. Dat is ook wat er gebeurt: je server weet niet dat je er net ook al was. Een sessie is het rondje dat dat gat dicht.
-
-<VerzoekCyclus variant="sessie" />
-
-Stap 3 is het hele verschil met een gewone cookie. De server leest niet wat de browser stuurde, maar zoekt het op in zijn eigen database — zie [Cookie of sessie?](/docs/FastAPI/cookie-of-sessie).
+- [Wat er gebeurt bij je eerste verzoek](/docs/FastAPI/verzoek-eerste): één functie, JSON terug.
+- [Wat er gebeurt bij één pagina](/docs/FastAPI/verzoek-static): de browser haalt CSS en afbeeldingen apart op, zonder functie van jou.
+- [Wat er gebeurt bij één klik](/docs/FastAPI/verzoek-get): van link tot pagina, met alleen HTML over de lijn.
+- [Wat er gebeurt bij één formulier](/docs/FastAPI/verzoek-post): van versturen tot omleiding.
+- [Wat er gebeurt bij een sessie](/docs/FastAPI/verzoek-sessie): hoe de server je herkent zonder dat de browser iets weet.
 
 ## Waar hoort jouw code
 
@@ -32,11 +14,11 @@ Kom je vast te zitten bij een nieuwe functie, zoek dan eerst de stap op waar hij
 
 | Wat je wilt | Welke stap | Waar het staat |
 |---|---|---|
-| Een nieuwe pagina bereikbaar maken | 3 | `@app.get(...)` in `main.py` |
-| Iets uit de database halen | 4 | in je endpoint-functie |
-| Bepalen hoe het eruitziet | 5 | je template in `templates/` |
-| Reageren op klikken en typen | 7 | `static/js/app.js` |
-| Controleren wat een bezoeker instuurt | POST, stap 4 | in je endpoint-functie, nooit alleen in de HTML |
+| Een nieuwe pagina bereikbaar maken | klik, stap 3 | `@app.get(...)` in `main.py` |
+| Iets uit de database halen | klik, stap 4 | in je endpoint-functie |
+| Bepalen hoe het eruitziet | klik, stap 5 | je template in `templates/` |
+| Reageren op klikken en typen | klik, stap 7 | `static/js/app.js` |
+| Controleren wat een bezoeker instuurt | formulier, stap 4 | in je endpoint-functie, nooit alleen in de HTML |
 | Onthouden wie er terugkomt | sessie, stap 3 | `sessies.db`, met alleen het id in de cookie |
 
-De laatste regel is de valkuil. Stap 1 van het formulier gebeurt in de browser, en die is van de bezoeker — zie [Server of browser?](/docs/FastAPI/server-of-browser).
+De regel over controleren is de valkuil. Stap 1 van het formulier gebeurt in de browser, en die is van de bezoeker — zie [Server of browser?](/docs/FastAPI/server-of-browser).

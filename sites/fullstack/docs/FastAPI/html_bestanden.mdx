@@ -38,7 +38,9 @@ Maak `static/pages/home.html`:
 
 Pas je `main.py` aan:
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -51,11 +53,15 @@ async def home():
     return FileResponse("static/pages/home.html")
 ```
 
-### Wat is nieuw?
+<Regel n={2}>
+`FileResponse` vervangt `HTMLResponse`: je stuurt geen string meer terug, maar een bestand.
+</Regel>
 
-- `FileResponse("static/pages/home.html")` - Stuurt een bestand terug in plaats van een string
-- De HTML staat nu in een apart `.html` bestand
-- Je krijgt syntax highlighting in je editor
+<Regel n={10}>
+Het pad is dat van het bestand op je schijf, vanaf de map waarin `main.py` staat. FastAPI leest het bestand en stuurt de inhoud naar de browser. De HTML staat zo in een echt `.html`-bestand, met kleurtjes in je editor.
+</Regel>
+
+</CodeUitleg>
 
 ## Testen
 

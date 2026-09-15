@@ -1,0 +1,11 @@
+import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
+
+# Wat er gebeurt bij je eerste verzoek
+
+Je typte een adres in, en er kwam iets terug uit een functie die jij schreef. Daartussen gebeuren zes dingen, deels in de browser en deels op de server. De stip zegt waar een stap gebeurt; een pijl betekent dat er iets over het netwerk gaat.
+
+<VerzoekCyclus variant="eerste" />
+
+Stap 4 is de enige stap met code van jou. Alles ervoor en erna doen de browser en FastAPI. Dat blijft de hele cursus zo: jij schrijft functies, de rest van het rondje is er al.
+
+Elk verzoek begint in de browser en eindigt in de browser. De server begint nooit uit zichzelf; hij wacht tot er een verzoek binnenkomt, antwoordt, en wacht weer. Dit diagram komt nog vier keer terug, elke keer met meer ertussen, te beginnen bij [één pagina met CSS en een afbeelding](/docs/FastAPI/verzoek-static).

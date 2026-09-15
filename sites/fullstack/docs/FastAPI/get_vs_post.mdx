@@ -24,17 +24,27 @@ Data kan meegestuurd worden in de URL:
 http://127.0.0.1:8000/zoek?term=python
 ```
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 @app.get("/zoek")
 async def zoek(term: str):
     return {"je_zocht": term}
 ```
 
+<Regel n={2}>
+Een parameter met een type, `term: str`, haalt FastAPI uit de URL: het stuk na het vraagteken, `?term=python`. De naam van de parameter moet gelijk zijn aan de naam in de URL.
+</Regel>
+
+</CodeUitleg>
+
 ## POST = Data versturen
 
 POST gebruik je als een gebruiker data naar de server stuurt, bijvoorbeeld via een formulier.
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 from fastapi import Form
 
 @app.post("/verstuur")
@@ -42,7 +52,15 @@ async def verstuur(naam: str = Form(...)):
     return {"ontvangen": naam}
 ```
 
-De data zit in de request body — niet zichtbaar in de URL.
+<Regel n={3}>
+`@app.post` in plaats van `@app.get`: dit endpoint reageert alleen op een POST. Een browser die de URL opvraagt met een GET krijgt een 405.
+</Regel>
+
+<Regel n={4}>
+`Form(...)` zegt dat `naam` uit een verstuurd formulier komt, niet uit de URL. De data zit in de body van het verzoek en is niet zichtbaar in de adresbalk.
+</Regel>
+
+</CodeUitleg>
 
 ## Wanneer gebruik je wat?
 

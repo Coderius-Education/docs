@@ -13,7 +13,7 @@ const sidebars: SidebarsConfig = {
     {
       type: 'category',
       label: 'Starten',
-      items: ['FastAPI/installatie', 'FastAPI/eerste_endpoint'],
+      items: ['FastAPI/installatie', 'FastAPI/eerste_endpoint', 'FastAPI/verzoek-eerste'],
     },
     {
       type: 'category',
@@ -24,6 +24,7 @@ const sidebars: SidebarsConfig = {
         'FastAPI/html_bestanden',
         'FastAPI/links',
         'FastAPI/afbeeldingen',
+        'FastAPI/verzoek-static',
       ],
     },
     {
@@ -40,6 +41,8 @@ const sidebars: SidebarsConfig = {
         'FastAPI/lijst_tonen',
         'FastAPI/redirect',
         'FastAPI/detailpagina',
+        'FastAPI/verzoek-get',
+        'FastAPI/verzoek-post',
       ],
     },
     {
@@ -50,7 +53,12 @@ const sidebars: SidebarsConfig = {
     {
       type: 'category',
       label: 'Onthouden',
-      items: ['FastAPI/cookies', 'FastAPI/sessies', 'FastAPI/cookie-of-sessie'],
+      items: [
+        'FastAPI/cookies',
+        'FastAPI/sessies',
+        'FastAPI/cookie-of-sessie',
+        'FastAPI/verzoek-sessie',
+      ],
     },
     {
       type: 'category',

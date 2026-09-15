@@ -1,0 +1,11 @@
+import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
+
+# Wat er gebeurt bij één pagina
+
+Bij [je eerste verzoek](/docs/FastAPI/verzoek-eerste) was één verzoek één antwoord. Met een stylesheet en een afbeelding erbij klopt dat niet meer: de browser krijgt eerst de HTML, leest daarin wat er nog ontbreekt, en haalt dat apart op.
+
+<VerzoekCyclus variant="static" />
+
+Stap 5 is de stap om te onthouden. Voor de CSS en de afbeelding draait er geen functie van jou; `app.mount` uit [Static files](/docs/FastAPI/static_files) beantwoordt die verzoeken zelf. Daarom heb je die ene regel nodig, en daarom heeft een fout in het pad van `<link>` of `<img>` niets met je Python-code te maken: het bestand wordt in stap 4 opgevraagd op een adres waar niets staat.
+
+De pagina zelf staat op stap 2 wel achter een functie van jou. Zo kun je later per verzoek iets anders terugsturen, wat in [Het gastenboek](/docs/FastAPI/database) begint. Het volgende diagram, [bij één klik](/docs/FastAPI/verzoek-get), laat zien wat er dan tussen stap 2 en 3 bijkomt.

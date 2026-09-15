@@ -12,7 +12,9 @@ Wil je toch iets onthouden tussen twee verzoeken, dan moet die informatie ergens
 
 Tot nu toe gaf je endpoint alleen inhoud terug. Een antwoord kan ook opdrachten voor de browser bevatten, en `set_cookie` is er daar een van:
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 @app.post("/gastenboek")
 async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
     with SqliteDict("gastenboek.db") as db:
@@ -24,15 +26,27 @@ async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
     return antwoord
 ```
 
-Het verschil met eerder: je maakt het antwoord eerst als variabele, zet er een cookie op, en geeft het daarna pas terug. Zolang je het antwoord meteen returnt, heb je geen plek om er iets aan toe te voegen.
+<Regel n={7}>
+Het verschil met eerder: je maakt het antwoord eerst als variabele in plaats van het meteen terug te geven. Zolang je het antwoord meteen returnt, heb je geen plek om er iets aan toe te voegen.
+</Regel>
 
-`max_age` is de houdbaarheid in seconden. Hier is dat 30 dagen: `60 * 60 * 24 * 30`. Laat je `max_age` weg, dan verdwijnt de cookie zodra de bezoeker de browser afsluit.
+<Regel n={8}>
+`set_cookie` zet een cookie op het antwoord: een naam, een waarde, en met `max_age` de houdbaarheid in seconden. Hier is dat 30 dagen: `60 * 60 * 24 * 30`. Laat je `max_age` weg, dan verdwijnt de cookie zodra de bezoeker de browser afsluit.
+</Regel>
+
+<Regel n={9}>
+Pas nu gaat het antwoord terug, mét de cookie erop.
+</Regel>
+
+</CodeUitleg>
 
 ## De cookie terugkrijgen
 
 Vanaf nu stuurt de browser die cookie mee bij elk verzoek aan jouw server. Je vraagt hem op met `Cookie`, net zoals je formuliervelden met `Form` opvraagt:
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 from fastapi import Cookie
 
 @app.get("/gastenboek")
@@ -40,7 +54,11 @@ async def gastenboek_form(request: Request, naam: str = Cookie(default="")):
     return templates.TemplateResponse(request, "gastenboek.html", {"naam": naam})
 ```
 
-`default=""` bepaalt wat je krijgt als er nog geen cookie is — bij een eerste bezoek dus een lege tekst.
+<Regel n={4}>
+`Cookie(default="")` haalt de cookie `naam` uit het verzoek, zoals `Form(...)` een formulierveld haalt. `default=""` bepaalt wat je krijgt als er nog geen cookie is: bij een eerste bezoek een lege tekst.
+</Regel>
+
+</CodeUitleg>
 
 Je formulier was tot nu toe een vast bestand in `static/pages/`. Om er een naam in te kunnen zetten moet het een **template** worden: verplaats het naar `templates/gastenboek.html` en zet de waarde in het naamveld:
 

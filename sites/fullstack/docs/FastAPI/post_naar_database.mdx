@@ -28,7 +28,9 @@ Nu combineren we formulieren met een database: data van een gebruiker permanent 
 
 ### Endpoints (`main.py`):
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 from fastapi import FastAPI, Form
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -50,6 +52,20 @@ async def naam_opslaan(naam: str = Form(...)):
     return {"bericht": f"'{naam}' opgeslagen!"}
 ```
 
+<Regel n={13} tot={14}>
+Het POST-endpoint uit [Eigen POST request](/docs/FastAPI/forms): `naam` komt uit het formulier.
+</Regel>
+
+<Regel n={15} tot={17}>
+Nieuw is wat je ermee doet. Binnen het `with`-blok open je de database, zet je de naam onder de sleutel `laatste_naam` en schrijf je hem weg met `commit()`. Elke nieuwe naam overschrijft de vorige, want de sleutel is steeds dezelfde.
+</Regel>
+
+<Regel n={19}>
+Het antwoord komt ná het `with`-blok: de database is dan al netjes gesloten.
+</Regel>
+
+</CodeUitleg>
+
 ## Testen
 
 1. Ga naar `http://127.0.0.1:8000/naam`
@@ -59,13 +75,21 @@ async def naam_opslaan(naam: str = Form(...)):
 
 ## Data terug lezen
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 @app.get("/toon_naam")
 async def toon_naam():
     with SqliteDict("namen.db") as db:
         naam = db.get("laatste_naam", "Nog niets opgeslagen")
     return {"naam": naam}
 ```
+
+<Regel n={4}>
+`db.get(sleutel, standaard)` geeft de standaardwaarde terug als de sleutel nog niet bestaat, in plaats van te crashen. Zo werkt de pagina ook vóór de eerste keer opslaan.
+</Regel>
+
+</CodeUitleg>
 
 :::danger[Gaat er iets mis?]
 Data niet opgeslagen? Check of je `db.commit()` niet vergeet. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
