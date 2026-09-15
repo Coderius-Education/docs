@@ -43,7 +43,6 @@ import { BoardFS } from './filesystem';
 import {
   DEFAULT_LEAPHY_BRANCH,
   DEFAULT_LEAPHY_REPO,
-  type InstallProgress,
   LEAPHY_META_PATH,
   type LeaphyMeta,
   installLeaphyLibrary,
@@ -51,7 +50,7 @@ import {
 import { MAX_REEKSEN, voegSample } from './plotter';
 import { type PythonFout, splitsFoutSegmenten, vindLaatsteFout } from './pythonErrors';
 import { SerialClient } from './serial';
-import { sessie } from './sessie';
+import { type SessieStatus, type Stand, sessie } from './sessie';
 import styles from './styles.module.css';
 import { TEMPLATES } from './templates';
 
@@ -147,8 +146,6 @@ const pythonTabExtensions = [
   ),
 ];
 
-const STORAGE_KEY = 'webMicroEditor.code';
-const FILE_STORAGE_KEY = 'webMicroEditor.currentFile';
 const LEAPHY_REPO_STORAGE_KEY = 'webMicroEditor.leaphyRepo';
 const LEAPHY_BRANCH_STORAGE_KEY = 'webMicroEditor.leaphyBranch';
 const FONT_STORAGE_KEY = 'webMicroEditor.fontSize';
@@ -161,7 +158,7 @@ const MICROPYTHON_UF2_URL =
 const MICROPYTHON_VERSION = 'v1.28.0';
 const MICROPYTHON_DOWNLOAD_PAGE = 'https://micropython.org/download/ARDUINO_NANO_RP2040_CONNECT/';
 
-type Status = 'disconnected' | 'connected' | 'busy';
+type Status = SessieStatus;
 
 /** Korte naam van het board op de statuspil (browsers geven geen vriendelijke naam). */
 function labelVan(client: SerialClient | null): string | null {
@@ -176,22 +173,12 @@ export default function WebMicroEditor(): React.JSX.Element {
   const { colorMode } = useColorMode();
   const replRef = useRef<HTMLDivElement | null>(null);
 
-  const [code, setCode] = useState<string>(() => {
-    if (typeof window === 'undefined') return TEMPLATES[0].code;
-    return localStorage.getItem(STORAGE_KEY) ?? TEMPLATES[0].code;
-  });
-  const [currentFile, setCurrentFile] = useState<string | null>(() => {
-    if (typeof window === 'undefined') return null;
-    return localStorage.getItem(FILE_STORAGE_KEY);
-  });
-  // Baseline copy of code as last loaded/saved — used to detect unsaved changes.
-  const [loadedCode, setLoadedCode] = useState<string>(() => {
-    if (typeof window === 'undefined') return '';
-    return localStorage.getItem(STORAGE_KEY) ?? TEMPLATES[0].code;
-  });
+  // Code, geopend bestand en installer-voortgang leven in de sessie; deze
+  // component toont ze alleen. Zie sessie.ts voor waarom.
+  const [stand, setStand] = useState<Stand>(() => sessie.stand);
+  const { code, loadedCode, currentFile, progress } = stand;
   const [status, setStatus] = useState<Status>(() => sessie.status);
   const [replText, setReplText] = useState<string>(() => sessie.replText);
-  const [progress, setProgress] = useState<InstallProgress | null>(null);
   const [files, setFiles] = useState<Array<{ name: string; isDir: boolean; path: string }> | null>(
     null,
   );
@@ -242,22 +229,6 @@ export default function WebMicroEditor(): React.JSX.Element {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem(STORAGE_KEY, code);
-    }
-  }, [code]);
-
-  useEffect(() => {
-    sessie.replText = replText;
-  }, [replText]);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    if (currentFile === null) localStorage.removeItem(FILE_STORAGE_KEY);
-    else localStorage.setItem(FILE_STORAGE_KEY, currentFile);
-  }, [currentFile]);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
       localStorage.setItem(LEAPHY_REPO_STORAGE_KEY, leaphyRepo);
     }
   }, [leaphyRepo]);
@@ -285,10 +256,8 @@ export default function WebMicroEditor(): React.JSX.Element {
       if (voegSample(samplesRef.current, regel)) plotVersieRef.current += 1;
     }
 
-    setReplText((prev) => {
-      const next = (prev + text).slice(-20000); // cap at ~20KB
-      return next;
-    });
+    // De sessie houdt de tekst (en het plafond) bij; hier alleen weergeven.
+    setReplText(sessie.replText);
   }, []);
 
   // Alles wat de editor zelf in de shell zet gaat via de sessie: die geeft het
@@ -300,6 +269,7 @@ export default function WebMicroEditor(): React.JSX.Element {
     lineBufRef.current = '';
     plotVersieRef.current += 1;
     setFoutWeggedrukt(null);
+    sessie.wis();
     setReplText('');
   }, []);
 
@@ -318,9 +288,7 @@ export default function WebMicroEditor(): React.JSX.Element {
       return;
     }
     window.history.replaceState(null, '', window.location.pathname);
-    setCode(geladen);
-    setLoadedCode(geladen);
-    setCurrentFile(null);
+    sessie.zet({ code: geladen, loadedCode: geladen, currentFile: null });
   }, []);
 
   useEffect(() => {
@@ -350,8 +318,8 @@ export default function WebMicroEditor(): React.JSX.Element {
   // Bezig/klaar loopt via de sessie, zodat het einde van een operatie die vóór
   // een paginawissel begon bij de huidige component aankomt en niet bij de
   // oude. Valt de verbinding intussen weg, dan meldt de sessie 'disconnected'.
-  const setBusy = useCallback(() => sessie.zetBezig(true), []);
-  const setIdle = useCallback(() => sessie.zetBezig(false), []);
+  const setBusy = useCallback(() => sessie.beginOperatie(), []);
+  const setIdle = useCallback((operatie: number) => sessie.eindOperatie(operatie), []);
 
   // De verbinding zelf leeft in `sessie`, buiten React: zo overleeft hij een
   // paginawissel. Deze component meldt zich alleen aan als luisteraar, en
@@ -363,25 +331,20 @@ export default function WebMicroEditor(): React.JSX.Element {
         setStatus(nieuw);
         setPortLabel(labelVan(sessie.client));
       },
+      onStand: setStand,
     });
     setStatus(sessie.status);
     setPortLabel(labelVan(sessie.client));
+    setStand(sessie.stand);
+    setReplText(sessie.replText);
     if (!sessie.client) void sessie.herverbind();
     return afmelden;
   }, [appendRepl]);
 
   const connect = useCallback(async () => {
     if (!supported) return;
-    if (sessie.client || sessie.verbindt) return;
-    const client = new SerialClient();
-    try {
-      await client.connect();
-      sessie.neemOver(client);
-      schrijf('[verbonden]\n');
-    } catch (err) {
-      schrijf(`[verbinden mislukt: ${friendlyError(err)}]\n`);
-    }
-  }, [supported, schrijf]);
+    await sessie.verbind();
+  }, [supported]);
 
   const disconnect = useCallback(async () => {
     if (!sessie.client) return;
@@ -400,36 +363,35 @@ export default function WebMicroEditor(): React.JSX.Element {
     ) {
       return;
     }
-    setBusy();
+    const operatie = setBusy();
     clearRepl();
     schrijf('[uploaden naar main.py...]\n');
     try {
       const fs = new BoardFS(c);
       await fs.writeFile('/main.py', code);
-      setCurrentFile('/main.py');
-      setLoadedCode(code);
+      sessie.zet({ currentFile: '/main.py', loadedCode: code });
       schrijf('[main.py opgeslagen, soft reboot]\n');
       await c.softReboot();
-      setIdle();
+      setIdle(operatie);
     } catch (err) {
       schrijf(`\n[fout: ${friendlyError(err)}]\n`);
-      setIdle();
+      setIdle(operatie);
     }
   }, [code, currentFile, schrijf, clearRepl, setBusy, setIdle]);
 
   const saveCurrent = useCallback(async () => {
     const c = sessie.client;
     if (!c || !currentFile || statusRef.current === 'busy') return;
-    setBusy();
+    const operatie = setBusy();
     try {
       const fs = new BoardFS(c);
       await fs.writeFile(currentFile, code);
-      setLoadedCode(code);
+      sessie.zet({ loadedCode: code });
       schrijf(`[opgeslagen: ${currentFile}]\n`);
-      setIdle();
+      setIdle(operatie);
     } catch (err) {
       schrijf(`\n[opslaan mislukt: ${friendlyError(err)}]\n`);
-      setIdle();
+      setIdle(operatie);
     }
   }, [code, currentFile, schrijf, setBusy, setIdle]);
 
@@ -437,7 +399,7 @@ export default function WebMicroEditor(): React.JSX.Element {
   const testDirect = useCallback(async () => {
     const c = sessie.client;
     if (!c || statusRef.current === 'busy') return;
-    setBusy();
+    const operatie = setBusy();
     clearRepl();
     setStdinVanTest(true);
     schrijf('[test zonder opslaan — Stop onderbreekt]\n');
@@ -446,7 +408,7 @@ export default function WebMicroEditor(): React.JSX.Element {
     } catch (err) {
       schrijf(`\n[test mislukt: ${friendlyError(err)}]\n`);
     }
-    setIdle();
+    setIdle(operatie);
   }, [code, schrijf, clearRepl, setBusy, setIdle]);
 
   const openFile = useCallback(
@@ -454,19 +416,17 @@ export default function WebMicroEditor(): React.JSX.Element {
       const c = sessie.client;
       if (!c) return;
       if (isDirty && !confirm('Niet-opgeslagen wijzigingen worden overschreven. Doorgaan?')) return;
-      setBusy();
+      const operatie = setBusy();
       try {
         const fs = new BoardFS(c);
         const bytes = await fs.readFile(path);
         const text = new TextDecoder('utf-8', { fatal: false }).decode(bytes);
-        setCode(text);
-        setLoadedCode(text);
-        setCurrentFile(path);
+        sessie.zet({ code: text, loadedCode: text, currentFile: path });
         schrijf(`[geopend: ${path}]\n`);
-        setIdle();
+        setIdle(operatie);
       } catch (err) {
         schrijf(`\n[openen mislukt: ${friendlyError(err)}]\n`);
-        setIdle();
+        setIdle(operatie);
       }
     },
     [isDirty, schrijf, setBusy, setIdle],
@@ -474,9 +434,7 @@ export default function WebMicroEditor(): React.JSX.Element {
 
   const newFile = useCallback(() => {
     if (isDirty && !confirm('Niet-opgeslagen wijzigingen worden overschreven. Doorgaan?')) return;
-    setCode('');
-    setLoadedCode('');
-    setCurrentFile(null);
+    sessie.zet({ code: '', loadedCode: '', currentFile: null });
   }, [isDirty]);
 
   const stop = useCallback(async () => {
@@ -584,15 +542,15 @@ export default function WebMicroEditor(): React.JSX.Element {
   const installLib = useCallback(async () => {
     const c = sessie.client;
     if (!c) return;
-    setBusy();
-    setProgress({ done: 0, total: 0, current: 'lijst ophalen...' });
+    const operatie = setBusy();
+    sessie.zet({ progress: { done: 0, total: 0, current: 'lijst ophalen...' } });
     try {
       const fs = new BoardFS(c);
-      await installLeaphyLibrary(fs, (p) => setProgress(p), {
+      await installLeaphyLibrary(fs, (p) => sessie.zet({ progress: p }), {
         repo: leaphyRepo,
         branch: leaphyBranch,
       });
-      setProgress(null);
+      sessie.zet({ progress: null });
       const isDefault =
         leaphyRepo === DEFAULT_LEAPHY_REPO && leaphyBranch === DEFAULT_LEAPHY_BRANCH;
       schrijf(
@@ -600,11 +558,11 @@ export default function WebMicroEditor(): React.JSX.Element {
           ? '\n[Leaphy-library geïnstalleerd]\n'
           : `\n[Leaphy-library geïnstalleerd vanaf ${leaphyRepo}@${leaphyBranch}]\n`,
       );
-      setIdle();
+      setIdle(operatie);
     } catch (err) {
-      setProgress(null);
+      sessie.zet({ progress: null });
       schrijf(`\n[installer mislukt: ${friendlyError(err)}]\n`);
-      setIdle();
+      setIdle(operatie);
     }
   }, [schrijf, setBusy, setIdle, leaphyRepo, leaphyBranch]);
 
@@ -655,7 +613,7 @@ export default function WebMicroEditor(): React.JSX.Element {
     async (dir = currentDir) => {
       const c = sessie.client;
       if (!c) return;
-      setBusy();
+      const operatie = setBusy();
       try {
         const fs = new BoardFS(c);
         const items = await fs.listdir(dir);
@@ -670,10 +628,10 @@ export default function WebMicroEditor(): React.JSX.Element {
         );
         setFiles(visible);
         setCurrentDir(dir);
-        setIdle();
+        setIdle(operatie);
       } catch (err) {
         schrijf(`\n[bestandslijst mislukt: ${friendlyError(err)}]\n`);
-        setIdle();
+        setIdle(operatie);
       }
     },
     [currentDir, schrijf, setBusy, setIdle],
@@ -684,18 +642,18 @@ export default function WebMicroEditor(): React.JSX.Element {
       const c = sessie.client;
       if (!c) return;
       if (!confirm(`'${path}' verwijderen van het board?`)) return;
-      setBusy();
+      const operatie = setBusy();
       try {
         const fs = new BoardFS(c);
         await fs.remove(path);
         schrijf(`[verwijderd: ${path}]\n`);
         if (currentFile === path) {
-          setCurrentFile(null);
+          sessie.zet({ currentFile: null });
         }
         await refreshFiles();
       } catch (err) {
         schrijf(`\n[verwijderen mislukt: ${friendlyError(err)}]\n`);
-        setIdle();
+        setIdle(operatie);
       }
     },
     [schrijf, refreshFiles, setBusy, setIdle, currentFile],
@@ -709,18 +667,17 @@ export default function WebMicroEditor(): React.JSX.Element {
     let pad = invoer.trim();
     if (!pad.startsWith('/')) pad = `/${pad}`;
     if (!pad.includes('.')) pad = `${pad}.py`;
-    setBusy();
+    const operatie = setBusy();
     try {
       const fs = new BoardFS(c);
       await fs.writeFile(pad, code);
-      setCurrentFile(pad);
-      setLoadedCode(code);
+      sessie.zet({ currentFile: pad, loadedCode: code });
       schrijf(`[opgeslagen: ${pad}]\n`);
       if (files !== null) await refreshFiles();
-      setIdle();
+      setIdle(operatie);
     } catch (err) {
       schrijf(`\n[opslaan mislukt: ${friendlyError(err)}]\n`);
-      setIdle();
+      setIdle(operatie);
     }
   }, [code, currentFile, files, refreshFiles, schrijf, setBusy, setIdle]);
 
@@ -728,7 +685,7 @@ export default function WebMicroEditor(): React.JSX.Element {
   const checkLibrary = useCallback(async () => {
     const c = sessie.client;
     if (!c) return;
-    setBusy();
+    const operatie = setBusy();
     const fs = new BoardFS(c);
     try {
       const meta: LeaphyMeta = JSON.parse(
@@ -751,7 +708,7 @@ export default function WebMicroEditor(): React.JSX.Element {
         schrijf(`\n[check mislukt: ${friendlyError(err)}]\n`);
       }
     }
-    setIdle();
+    setIdle(operatie);
   }, [schrijf, setBusy, setIdle]);
 
   const applyTemplate = useCallback(
@@ -760,9 +717,7 @@ export default function WebMicroEditor(): React.JSX.Element {
       const t = TEMPLATES.find((x) => x.id === id);
       if (!t) return;
       if (isDirty && !confirm('Niet-opgeslagen wijzigingen worden overschreven. Doorgaan?')) return;
-      setCode(t.code);
-      setLoadedCode(t.code);
-      setCurrentFile(null);
+      sessie.zet({ code: t.code, loadedCode: t.code, currentFile: null });
     },
     [isDirty],
   );
@@ -797,7 +752,7 @@ export default function WebMicroEditor(): React.JSX.Element {
     );
   }
 
-  const connected = status !== 'disconnected';
+  const connected = status === 'connected' || status === 'busy';
 
   return (
     <div className={styles.root}>
@@ -807,17 +762,23 @@ export default function WebMicroEditor(): React.JSX.Element {
             styles.status,
             status === 'disconnected' && styles.statusDisconnected,
             status === 'connected' && styles.statusConnected,
-            status === 'busy' && styles.statusBusy,
+            (status === 'busy' || status === 'verbindt') && styles.statusBusy,
           )}
         >
           <span className={styles.statusDot} />
           {status === 'disconnected' && 'Niet verbonden'}
+          {status === 'verbindt' && 'Opnieuw verbinden...'}
           {status === 'connected' && `Verbonden${portLabel ? ` — ${portLabel}` : ''}`}
           {status === 'busy' && 'Bezig...'}
         </span>
 
         {!connected && (
-          <button type="button" className={clsx(styles.btn, styles.btnPrimary)} onClick={connect}>
+          <button
+            type="button"
+            className={clsx(styles.btn, styles.btnPrimary)}
+            onClick={connect}
+            disabled={status === 'verbindt'}
+          >
             Verbind met board
           </button>
         )}
@@ -1199,7 +1160,7 @@ export default function WebMicroEditor(): React.JSX.Element {
           <div className={styles.editorWrap} style={{ fontSize }}>
             <CodeMirror
               value={code}
-              onChange={setCode}
+              onChange={(nieuw) => sessie.zet({ code: nieuw })}
               extensions={editorExtensions}
               theme={colorMode === 'dark' ? 'dark' : 'light'}
               height="380px"
