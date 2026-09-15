@@ -23,7 +23,13 @@ export const WAS_VERBONDEN_KEY = 'webMicroEditor.wasVerbonden';
 
 export type Luisteraar = {
   onData: (tekst: string) => void;
-  onDisconnect: () => void;
+  /**
+   * Elke statuswissel, ook van een operatie die een vorige component begon.
+   * Zonder dit bleef een component die tijdens "Test direct" mountte voor
+   * altijd op 'busy' staan: het einde van de test meldde zich bij de oude,
+   * al ge-unmounte component.
+   */
+  onStatus: (status: SerialStatus) => void;
 };
 
 type HerverbindOpties = {
@@ -40,30 +46,55 @@ export class EditorSessie {
 
   private luisteraar: Luisteraar | null = null;
   private opgespaard = '';
+  /** Een operatie (Run, Opslaan, installer) loopt; los van de raw-modus van de client. */
+  private bezig = false;
 
   constructor(private opslag: Storage | null) {}
 
   get status(): SerialStatus {
-    return this.client?.status ?? 'disconnected';
+    if (!this.client) return 'disconnected';
+    return this.bezig || this.client.status === 'busy' ? 'busy' : 'connected';
+  }
+
+  /** Markeer het begin en einde van een operatie; de luisteraar hoort het meteen. */
+  zetBezig(bezig: boolean): void {
+    this.bezig = bezig;
+    this.meldStatus();
+  }
+
+  /** Schrijf een regel naar de shell: direct als er een component is, anders opgespaard. */
+  schrijf(tekst: string): void {
+    if (this.luisteraar) {
+      this.luisteraar.onData(tekst);
+    } else {
+      this.opgespaard = (this.opgespaard + tekst).slice(-MAX_OPGESPAARD);
+    }
   }
 
   /** Neemt een net geopende client in beheer en hangt de callbacks eraan. */
   neemOver(client: SerialClient): void {
     this.client = client;
-    client.onData = (tekst) => this.ontvang(tekst);
+    this.bezig = false;
+    client.onData = (tekst) => this.schrijf(tekst);
     client.onDisconnect = () => {
-      if (this.client === client) this.client = null;
-      this.ontvang('\n[verbinding verbroken]\n');
-      this.luisteraar?.onDisconnect();
+      if (this.client === client) {
+        this.client = null;
+        this.bezig = false;
+      }
+      this.schrijf('\n[verbinding verbroken]\n');
+      this.meldStatus();
     };
     this.opslag?.setItem(WAS_VERBONDEN_KEY, '1');
+    this.meldStatus();
   }
 
   /** Bewust verbreken: dan ook na een herlaad niet meer vanzelf verbinden. */
   async verbreek(): Promise<void> {
     const client = this.client;
     this.client = null;
+    this.bezig = false;
     this.opslag?.removeItem(WAS_VERBONDEN_KEY);
+    this.meldStatus();
     await client?.disconnect();
   }
 
@@ -93,27 +124,26 @@ export class EditorSessie {
     if (this.opslag?.getItem(WAS_VERBONDEN_KEY) !== '1') return false;
     this.verbindt = true;
     try {
+      // Alles in één try: ook getPorts kan weigeren (Permissions-Policy,
+      // cross-origin iframe), en dan hoort dit stil niets te doen.
       const poorten = await (opties.poorten ?? SerialClient.bekendePoorten)();
       if (poorten.length !== 1) return false;
       const client = (opties.maakClient ?? (() => new SerialClient()))();
-      try {
-        await client.connect(poorten[0]);
-      } catch {
-        return false;
-      }
+      await client.connect(poorten[0]);
+      // neemOver meldt de status aan wie er nú luistert — ook als dat een
+      // andere component is dan die de poging startte.
       this.neemOver(client);
+      this.schrijf('[opnieuw verbonden]\n');
       return true;
+    } catch {
+      return false;
     } finally {
       this.verbindt = false;
     }
   }
 
-  private ontvang(tekst: string): void {
-    if (this.luisteraar) {
-      this.luisteraar.onData(tekst);
-    } else {
-      this.opgespaard = (this.opgespaard + tekst).slice(-MAX_OPGESPAARD);
-    }
+  private meldStatus(): void {
+    this.luisteraar?.onStatus(this.status);
   }
 }
 
