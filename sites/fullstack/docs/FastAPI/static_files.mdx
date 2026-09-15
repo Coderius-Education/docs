@@ -41,7 +41,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 </Regel>
 
 <Regel n={7}>
-`app.mount` hangt de map `static` aan de URL `/static`. Alles in die map is daarmee bereikbaar in de browser: `static/css/style.css` staat op `/static/css/style.css`. De `name` heb je later nodig als je vanuit een template naar een bestand wilt verwijzen.
+`app.mount` hangt de map `static` aan de URL `/static`. Alles in die map is daarmee bereikbaar in de browser: `static/css/style.css` staat op `/static/css/style.css`. De `name` is verplicht en mag zo blijven staan.
 </Regel>
 
 </CodeUitleg>
