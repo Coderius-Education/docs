@@ -123,18 +123,38 @@ describe('de antwoordgrammatica van de hand-out werkt in de parser van de site',
   // leest tot een #, dus hier wordt hij een commentaar.
   const grammatica = blok[1].replace(/\((zin \d+)\)/g, '# $1');
 
-  it('geeft na elke zin minstens zoveel lijntjes als het antwoord dan regels heeft', () => {
+  it('geeft na zin 2 tot en met 10 minstens zoveel lijntjes als het antwoord dan regels heeft', () => {
+    // Zin 1 is voorgedaan en heeft geen lijntjes; de andere negen wel.
     const lijntjes = [...HANDOUT.matchAll(/<Schrijflijnen n=\{(\d+)\} \/>/g)].map((m) =>
       Number(m[1]),
     );
-    expect(lijntjes).toHaveLength(10);
+    expect(lijntjes).toHaveLength(9);
     // Per zin: hoeveel regels van het antwoord horen bij zin 1 tot en met deze.
     const perRegel = [...grammatica.matchAll(/# zin (\d+)/g)].map((m) => Number(m[1]));
-    const totDanToe = lijntjes.map((_, i) => perRegel.filter((z) => z <= i + 1).length);
+    const totDanToe = lijntjes.map((_, i) => perRegel.filter((z) => z <= i + 2).length);
     const teKrap = lijntjes
-      .map((l, i) => (l < totDanToe[i] ? `zin ${i + 1}: ${l} < ${totDanToe[i]}` : null))
+      .map((l, i) => (l < totDanToe[i] ? `zin ${i + 2}: ${l} < ${totDanToe[i]}` : null))
       .filter(Boolean);
     expect(teKrap).toEqual([]);
+  });
+
+  it('het voorbeeld bij zin 1 bouwt zin 1 met de parser van de site', () => {
+    const blok = HANDOUT.slice(HANDOUT.indexOf('**Zin 1.**'), HANDOUT.indexOf('**Zin 2.**'));
+    const code = blok.match(/```\n([\s\S]*?)```/);
+    if (!code) throw new Error('geen voorbeeldblok bij zin 1');
+    // Links de regels, rechts de boom, gescheiden door drie of meer spaties.
+    const regels = code[1]
+      .split('\n')
+      .map((r) => r.split(/\s{3,}/)[0].trim())
+      .filter((r) => r.includes('->'))
+      .join('\n');
+    expect(regels.split('\n')).toHaveLength(3);
+    const py = `${parserCode(regels)}
+grammatica = lees_grammatica(GRAMMATICA + LEXICON)
+print("OK" if parse(grammatica, "holmes sat".split()) else "FOUT")
+print("FOUT" if parse(grammatica, "sat holmes".split()) else "OK")
+`;
+    expect(draai(py).trim().split('\n')).toEqual(['OK', 'OK']);
   });
 
   it('bouwt de tien zinnen van de hand-out', () => {
