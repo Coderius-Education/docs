@@ -224,22 +224,6 @@
     column-gap: 8mm;
   }
 
-  /* Het knipvel van de kaartjes-hand-out: elke cel is een kaartje om uit
-     te knippen en op te schrijven, dus hoog, groot en met een stippellijn
-     als kniplijn. De lege kopregel van de markdown-tabel hoort niet op
-     papier. */
-  body.handout-page .handout-kaartjes table thead {
-    display: none;
-  }
-
-  body.handout-page .handout-kaartjes table td {
-    height: 2.2cm !important;
-    font-size: 13pt;
-    text-align: center;
-    vertical-align: middle;
-    border: 1px dashed #666;
-  }
-
   body.handout-compact .handout-vragen ol > li {
     break-inside: avoid;
   }

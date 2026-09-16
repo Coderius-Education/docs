@@ -3,14 +3,14 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
-// De hand-out "Zinnen bouwen met kaartjes" doet dezelfde zinnen als de
+// De hand-out "Een grammatica op papier" doet dezelfde tien zinnen als de
 // bouwstenen op de site, met achter elk woord zijn woordsoort, zodat een
 // leerling niets hoeft op te zoeken. Dat houdt alleen stand als papier en
 // site aan elkaar vast zitten: dezelfde zin in dezelfde bouwsteen, elke
-// woordsoort precies zoals het lexicon in de parser hem kent, elk woord van
-// de zinnen als kaartje op het knipvel, en een antwoordgrammatica die de
-// parser van de site ook echt op groen zet. Bij een verzonnen mini-
-// grammatica kon niets uit de pas lopen; nu wel, dus dit is de guard.
+// woordsoort precies zoals het lexicon in de parser hem kent, en een
+// antwoordgrammatica die de parser van de site ook echt op groen zet. Bij
+// een verzonnen mini-grammatica kon niets uit de pas lopen; nu wel, dus dit
+// is de guard.
 
 const DOCS = fileURLToPath(new URL('../../docs/', import.meta.url));
 const lees = (naam: string) => readFileSync(`${DOCS}${naam}`, 'utf8');
@@ -22,6 +22,11 @@ const BOUWSTENEN = [
   'cfg/bouwen/05-bijvoeglijk-nw.mdx',
   'cfg/bouwen/06-bijwoord-en-nevenschikking.mdx',
   'cfg/bouwen/07-voorzetselgroep.mdx',
+  'cfg/bouwen/08-pp-en-zinnen-koppelen.mdx',
+  'cfg/bouwen/09-past-al.mdx',
+  'cfg/bouwen/10-bijwoord-vooraan.mdx',
+  'cfg/bouwen/11-past-al-2.mdx',
+  'cfg/bouwen/12-recursie.mdx',
 ];
 const WOORDSOORTEN = ['N', 'V', 'Det', 'Adj', 'Adv', 'Conj', 'P'];
 
@@ -72,8 +77,8 @@ function kaalWoorden(zin: string): string[] {
 describe('de kaartjes-hand-out doet dezelfde zinnen als de site', () => {
   const zinnen = handoutZinnen();
 
-  it('vijf zinnen, letterlijk de citaten van bouwsteen 1 tot en met 5', () => {
-    expect(zinnen).toHaveLength(5);
+  it('tien zinnen, letterlijk de citaten van bouwsteen 1 tot en met 10', () => {
+    expect(zinnen).toHaveLength(10);
     expect(zinnen).toEqual(BOUWSTENEN.map(bouwsteenZin));
   });
 
@@ -85,12 +90,11 @@ describe('de kaartjes-hand-out doet dezelfde zinnen als de site', () => {
     expect(scheef).toEqual([]);
   });
 
-  it('het knipvel heeft een kaartje voor elk woord van de vijf zinnen', () => {
-    const knipvel = HANDOUT.slice(HANDOUT.indexOf('## Knipvel'), HANDOUT.indexOf('## Antwoorden'));
-    const kaartjes = new Set(getagdeWoorden(knipvel).map(([woord]) => woord));
-    const nodig = new Set(zinnen.flatMap(kaalWoorden));
-    expect([...nodig].filter((w) => !kaartjes.has(w))).toEqual([]);
-    expect([...kaartjes].filter((w) => !nodig.has(w))).toEqual([]);
+  it('elk woord van de zinnen draagt zijn woordsoort', () => {
+    // Anders moet een leerling toch iets opzoeken. Getagd: `woord (Soort)`.
+    const kaal = zinnen.flatMap(kaalWoorden).length;
+    const getagd = zinnen.flatMap((z) => getagdeWoorden(z)).length;
+    expect(getagd).toBe(kaal);
   });
 });
 
@@ -115,32 +119,34 @@ describe('de antwoordgrammatica van de hand-out werkt in de parser van de site',
   if (!blok) throw new Error('geen grammatica-blok onder Antwoorden');
   // De toelichting "(zin 1)" achter elke regel is voor de lezer; de parser
   // leest tot een #, dus hier wordt hij een commentaar.
-  const grammatica = blok[1].replace(/\((zin \d)\)/g, '# $1');
+  const grammatica = blok[1].replace(/\((zin \d+)\)/g, '# $1');
 
-  it('bouwt de vijf zinnen van de hand-out', () => {
+  it('bouwt de tien zinnen van de hand-out', () => {
     const code = `${parserCode(grammatica)}
 grammatica = lees_grammatica(GRAMMATICA + LEXICON)
 for zin in ${JSON.stringify(handoutZinnen().map((z) => kaalWoorden(z).join(' ')))}:
     print("OK" if parse(grammatica, zin.split()) else "FOUT", zin)
 `;
     const uitvoer = draai(code).trim().split('\n');
-    expect(uitvoer).toHaveLength(5);
+    expect(uitvoer).toHaveLength(10);
     expect(uitvoer.filter((r) => !r.startsWith('OK'))).toEqual([]);
   });
 
-  it('keurt de rijtjes van werkvorm 6 zoals het antwoordblad zegt', () => {
+  it('keurt de rijtjes van "Keur de zinnen" zoals het antwoordblad zegt', () => {
     const werkvorm = HANDOUT.slice(
-      HANDOUT.indexOf('## Werkvorm 6'),
+      HANDOUT.indexOf('## Keur de zinnen'),
       HANDOUT.indexOf('## Bespreek na'),
     );
     const rijtjes = [...werkvorm.matchAll(/^\d+\. (.+?): ____$/gm)].map((m) =>
       kaalWoorden(m[1]).join(' '),
     );
     const oordelen = [
-      ...antwoorden.slice(antwoorden.indexOf('**Werkvorm 6.**')).matchAll(/^\d+\. (goed|fout)/gm),
+      ...antwoorden
+        .slice(antwoorden.indexOf('**Keur de zinnen.**'))
+        .matchAll(/^\d+\. (goed|fout)/gm),
     ].map((m) => m[1]);
-    expect(rijtjes).toHaveLength(5);
-    expect(oordelen).toHaveLength(5);
+    expect(rijtjes).toHaveLength(4);
+    expect(oordelen).toHaveLength(4);
 
     const code = `${parserCode(grammatica)}
 grammatica = lees_grammatica(GRAMMATICA + LEXICON)
