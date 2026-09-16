@@ -27,9 +27,30 @@ export default function Handout({
   useEffect(() => {
     document.body.classList.add('handout-page');
     if (compact) document.body.classList.add('handout-compact');
+    // Een antwoordblad (<details className="handout-antwoorden">) staat op
+    // het scherm dicht, zodat een leerling die de hand-out opent de
+    // oplossing niet ziet, maar print open als losse laatste pagina.
+    // CSS kan een dichte <details> niet openen; dat moet hier.
+    const antwoorden = () =>
+      Array.from(document.querySelectorAll<HTMLDetailsElement>('details.handout-antwoorden'));
+    const openen = () => {
+      for (const d of antwoorden()) {
+        d.dataset.stondOpen = d.open ? '1' : '';
+        d.open = true;
+      }
+    };
+    const sluiten = () => {
+      for (const d of antwoorden()) {
+        if (!d.dataset.stondOpen) d.open = false;
+      }
+    };
+    window.addEventListener('beforeprint', openen);
+    window.addEventListener('afterprint', sluiten);
     return () => {
       document.body.classList.remove('handout-page');
       document.body.classList.remove('handout-compact');
+      window.removeEventListener('beforeprint', openen);
+      window.removeEventListener('afterprint', sluiten);
     };
   }, [compact]);
 

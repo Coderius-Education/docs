@@ -130,6 +130,21 @@
     break-before: page;
   }
 
+  /* Het antwoordblad: op papier ziet de summary eruit als een kop, zonder
+     het uitklap-driehoekje. Openen doet de Handout-component bij
+     beforeprint. */
+  body.handout-page details.handout-antwoorden > summary {
+    list-style: none;
+    font-weight: 700;
+    font-size: 11.5pt;
+    margin-bottom: 0.4em;
+  }
+
+  body.handout-page details.handout-antwoorden > summary::marker,
+  body.handout-page details.handout-antwoorden > summary::-webkit-details-marker {
+    display: none;
+  }
+
   /* Compacte hand-out (Handout met compact): kleinere letter, twee
      kolommen per bladzijde en een vaste paginawissel, zodat hij op
      één dubbelzijdig vel past — voorkant zoeken, achterkant
@@ -222,6 +237,18 @@
   body.handout-compact .handout-blad {
     column-count: 2;
     column-gap: 8mm;
+  }
+
+  /* De grammatica-hand-out: per zin een blok met de zin, wat er nieuw is
+     en lijntjes om de grammatica tot dan toe te schrijven. De zin zelf
+     blijft bij zijn eerste lijntjes (anders staat hij onderaan een kolom
+     en de schrijfruimte bovenaan de volgende), maar de lijntjes mogen
+     doorlopen in de volgende kolom: met hele blokken die niet mochten
+     breken bleef onderaan elke kolom een kwart leeg, en paste zin 10
+     niet meer op de achterkant. */
+  body.handout-page .handout-zin > p {
+    break-inside: avoid;
+    break-after: avoid;
   }
 
   body.handout-compact .handout-vragen ol > li {

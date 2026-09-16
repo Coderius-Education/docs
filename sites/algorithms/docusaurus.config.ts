@@ -31,6 +31,7 @@ export default createConfig({
       items: [
         { type: 'docSidebar', sidebarId: 'tutorialSidebar', position: 'left', label: 'Algoritmes' },
         { to: '/conceptenkaart', label: 'Conceptenkaart', position: 'left' },
+        { to: '/docs/unplugged', label: 'Unplugged', position: 'left' },
       ],
     },
     footer: {
