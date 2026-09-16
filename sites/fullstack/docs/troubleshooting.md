@@ -62,7 +62,7 @@ Meer uitleg: [Je eerste endpoint](/docs/FastAPI/eerste_endpoint)
 
 1. Check of je naar `http://127.0.0.1:8000` gaat (niet `https`)
 2. Check of de server nog draait in de terminal
-3. Herlaad zonder cache (Ctrl+Shift+R)
+3. Herlaad zonder cache (Ctrl+Shift+R, zie [Wijzigingen zijn niet zichtbaar](#algemeen))
 
 Meer uitleg: [Je eerste endpoint](/docs/FastAPI/eerste_endpoint)
 
@@ -96,7 +96,7 @@ Meer uitleg: [Laat het aan anderen zien](/docs/FastAPI/laat-het-zien)
 1. Staat `app.mount("/static", StaticFiles(directory="static"), name="static")` in je code?
 2. Staat je CSS-bestand in `static/css/style.css`?
 3. Staat in je HTML: `<link rel="stylesheet" href="/static/css/style.css">`?
-4. Herstart de server en herlaad zonder cache (Ctrl+Shift+R)
+4. Herstart de server en herlaad zonder cache (Ctrl+Shift+R, zie [Wijzigingen zijn niet zichtbaar](#algemeen))
 
 Open `http://127.0.0.1:8000/static/css/style.css` rechtstreeks: zie je je CSS, dan ligt het aan de `<link>`; een 404, dan aan het pad of de mount.
 
@@ -616,15 +616,18 @@ Meer uitleg: [Sessies](/docs/FastAPI/sessies)
 <details>
 <summary>Wijzigingen zijn niet zichtbaar</summary>
 
-**Oorzaak:** de browser toont een bewaarde versie van de pagina, of de server draait nog met je oude code.
+**Oorzaak:** de browser toont zijn eigen bewaarde kopie van de pagina (de cache), of de server draait nog met je oude code.
+
+**Zelf vinden:** druk op F12, kies het tabblad **Netwerk** en herlaad. Staat bij het bestand **(uit schijfcache)**, dan heeft de browser de server niet eens gevraagd. Staat er `200` en is het bestand toch oud, dan draait de server met oude code.
 
 **Oplossing:**
 
-1. Herstart de server (Ctrl+C, dan opnieuw `fastapi dev main.py`)
-2. Herlaad zonder cache (Ctrl+Shift+R)
-3. Check of je het juiste bestand hebt aangepast
+1. Herlaad zonder cache: met de ontwikkelaarstools open, rechtermuisknop op de herlaadknop en **Cache legen en hard vernieuwen**, of Ctrl+Shift+R
+2. Zet in het tabblad Netwerk het vinkje **Cache uitschakelen** aan zolang je werkt
+3. Herstart de server (Ctrl+C, dan opnieuw `fastapi dev main.py`)
+4. Check of je het juiste bestand hebt aangepast
 
-Meer uitleg: [Je eerste endpoint](/docs/FastAPI/eerste_endpoint)
+Meer uitleg: [Zie het zelf](/docs/FastAPI/verzoek-static#zie-het-zelf)
 
 </details>
 

@@ -9,3 +9,14 @@ Bij [je eerste verzoek](/docs/FastAPI/verzoek-eerste) was één verzoek één an
 Stap 5 is de stap om te onthouden. Voor de CSS en de afbeelding draait er geen functie van jou; `app.mount` uit [Static files](/docs/FastAPI/static_files) beantwoordt die verzoeken zelf. Daarom heb je die ene regel nodig, en daarom heeft een fout in het pad van `<link>` of `<img>` niets met je Python-code te maken: het bestand wordt in stap 4 opgevraagd op een adres waar niets staat.
 
 De pagina zelf staat op stap 2 wel achter een functie van jou. Zo kun je later per verzoek iets anders terugsturen, wat in [Het gastenboek](/docs/FastAPI/database) begint. Het volgende diagram, [bij één klik](/docs/FastAPI/verzoek-get), laat zien wat er dan tussen stap 2 en 3 bijkomt.
+
+## Zie het zelf
+
+De drie verzoeken kun je in je browser bekijken. Druk op **F12** en kies het tabblad **Netwerk** (in het Engels **Network**). Herlaad de pagina. Er verschijnt een lijst met één regel per verzoek: bovenaan de pagina zelf, daaronder `style.css` en `kat.jpg`.
+
+Twee kolommen zijn de moeite waard:
+
+- **Status** zegt of de server het bestand had. `200` is goed. Staat er `404` bij je CSS, dan klopt het pad in `<link>` niet of ontbreekt `app.mount`, precies stap 4 en 5 hierboven.
+- **Grootte** zegt waar het bestand vandaan kwam. Staat er **(uit schijfcache)** of **(disk cache)**, dan heeft de browser de server niet eens gevraagd en toont hij zijn eigen kopie. Dat is de oorzaak van [wijzigingen die niet zichtbaar zijn](/docs/FastAPI/eerste_endpoint#server-starten).
+
+Bovenin het tabblad staat het vinkje **Cache uitschakelen** (**Disable cache**). Zet het aan zolang je aan je site werkt: dan haalt de browser alles opnieuw op, maar alleen zolang de ontwikkelaarstools open staan.

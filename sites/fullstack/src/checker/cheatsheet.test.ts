@@ -22,6 +22,7 @@ const SUBJECT_PER_KOP: Record<string, string> = {
   HTML: 'html',
   JavaScript: 'js',
   'Database (sqlitedict)': 'database',
+  Browser: 'browser',
   Mappenstructuur: 'structuur',
 };
 
@@ -99,6 +100,25 @@ const KOPPELING: Item[] = [
   { summary: 'Data veilig uitlezen (met default)', concepten: ['db-get'] },
   { summary: 'Data verwijderen', concepten: ['db-del'] },
   { summary: 'Alles bekijken', concepten: ['db-items'] },
+
+  // --- Browser ---
+  // Handelingen in de browser van de leerling; daar staat niets van in het
+  // ingeleverde project.
+  {
+    summary: 'Ontwikkelaarstools openen',
+    concepten: [],
+    geenConcept: 'een handeling in de browser, niet terug te zien in een bestand',
+  },
+  {
+    summary: 'Herladen zonder cache',
+    concepten: [],
+    geenConcept: 'een handeling in de browser, niet terug te zien in een bestand',
+  },
+  {
+    summary: 'Verzoeken bekijken',
+    concepten: [],
+    geenConcept: 'een handeling in de browser, niet terug te zien in een bestand',
+  },
 
   // --- Mappenstructuur ---
   { summary: 'Compleet project', concepten: ['struct-main', 'struct-static', 'struct-templates'] },
