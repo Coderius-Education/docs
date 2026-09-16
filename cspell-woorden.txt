@@ -136,7 +136,6 @@ kliks
 kloktje
 kloonbord
 Kloonleger
-knipvel
 knoppenrij
 knopstand
 Kortingschecker

@@ -116,7 +116,7 @@ function draai(code: string): string {
 }
 
 describe('de antwoordgrammatica van de hand-out werkt in de parser van de site', () => {
-  const antwoorden = HANDOUT.slice(HANDOUT.indexOf('## Antwoorden'));
+  const antwoorden = HANDOUT.slice(HANDOUT.indexOf('<Antwoordblad'));
   const blok = antwoorden.match(/```\n([\s\S]*?)```/);
   if (!blok) throw new Error('geen grammatica-blok onder Antwoorden');
   // De toelichting "(zin 1)" achter elke regel is voor de lezer; de parser
