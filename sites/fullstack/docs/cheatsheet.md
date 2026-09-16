@@ -451,16 +451,16 @@ De tabbladen die je in deze cursus gebruikt:
 
 - **Console**: fouten uit je JavaScript, met bestand en regelnummer
 - **Netwerk**: elk verzoek van de pagina, met statuscode en herkomst
-- **Toepassing** (Application): de cookies van de site
+- **App** (Application; in Firefox Opslag): de cookies van de site
 
 </details>
 
 <details>
 <summary>Herladen zonder cache</summary>
 
-Met de ontwikkelaarstools open: rechtermuisknop op de herlaadknop, dan **Cache legen en hard vernieuwen**. Sneltoets: **Ctrl+Shift+R**.
+Met de ontwikkelaarstools open: rechtermuisknop op de herlaadknop, dan **Cache wissen en geforceerd opnieuw laden**. Sneltoets: **Ctrl+Shift+R**.
 
-Zolang je aan je site werkt: tabblad **Netwerk**, vinkje **Cache uitschakelen** aan.
+Zolang je aan je site werkt: tabblad **Netwerk**, vinkje **Cache uitzetten** aan.
 
 </details>
 
@@ -470,7 +470,7 @@ Zolang je aan je site werkt: tabblad **Netwerk**, vinkje **Cache uitschakelen** 
 Tabblad **Netwerk**, herlaad de pagina. Eén regel per verzoek.
 
 - **Status** `200`: gevonden. `404`: het pad klopt niet, of `app.mount` ontbreekt.
-- **Grootte** met **(uit schijfcache)**: de browser heeft de server niet gevraagd.
+- **Grootte** met **(schijfcache)**: de browser heeft de server niet gevraagd.
 - Klik een regel aan voor de headers, zoals `Cookie:` bij een sessie.
 
 </details>

@@ -618,12 +618,12 @@ Meer uitleg: [Sessies](/docs/FastAPI/sessies)
 
 **Oorzaak:** de browser toont zijn eigen bewaarde kopie van de pagina (de cache), of de server draait nog met je oude code.
 
-**Zelf vinden:** druk op F12, kies het tabblad **Netwerk** en herlaad. Staat bij het bestand **(uit schijfcache)**, dan heeft de browser de server niet eens gevraagd. Staat er `200` en is het bestand toch oud, dan draait de server met oude code.
+**Zelf vinden:** druk op F12, kies het tabblad **Netwerk** en herlaad. Staat bij het bestand **(schijfcache)**, dan heeft de browser de server niet eens gevraagd. Staat er `200` en is het bestand toch oud, dan draait de server met oude code.
 
 **Oplossing:**
 
-1. Herlaad zonder cache: met de ontwikkelaarstools open, rechtermuisknop op de herlaadknop en **Cache legen en hard vernieuwen**, of Ctrl+Shift+R
-2. Zet in het tabblad Netwerk het vinkje **Cache uitschakelen** aan zolang je werkt
+1. Herlaad zonder cache: met de ontwikkelaarstools open, rechtermuisknop op de herlaadknop en **Cache wissen en geforceerd opnieuw laden**, of Ctrl+Shift+R
+2. Zet in het tabblad Netwerk het vinkje **Cache uitzetten** aan zolang je werkt
 3. Herstart de server (Ctrl+C, dan opnieuw `fastapi dev main.py`)
 4. Check of je het juiste bestand hebt aangepast
 

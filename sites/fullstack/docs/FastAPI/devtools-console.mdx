@@ -6,9 +6,12 @@ De tekenteller uit de vorige les draait in de browser. De terminal ziet er niets
 
 ## De Console
 
-Druk op F12 en kies **Console**. Zet in `static/js/app.js` een regel in de functie van de teller:
+Druk op F12 en kies **Console**. Zet in `static/js/app.js` een regel in de functie van de teller, zodat het hele bestand er zo uitziet:
 
-```javascript
+```javascript showLineNumbers
+const veld = document.querySelector("#bericht-veld");
+const teller = document.querySelector("#teller");
+
 veld.addEventListener("input", function () {
     const over = 80 - veld.value.length;
     console.log("nog", over, "tekens");
@@ -21,14 +24,24 @@ Herlaad en typ een paar letters. Bij elke toetsaanslag komt er een regel bij, me
 <DevtoolsPaneel tab="Console">
   <ConsoleRegels
     regels={[
-      { tekst: 'nog 79 tekens', bron: 'app.js:3' },
-      { tekst: 'nog 78 tekens', bron: 'app.js:3' },
+      { tekst: 'nog 79 tekens', bron: 'app.js:6' },
+      { tekst: 'nog 78 tekens', bron: 'app.js:6' },
+      { tekst: 'nog 77 tekens', bron: 'app.js:6' },
+    ]}
+  />
+</DevtoolsPaneel>
+
+Fouten staan er in het rood, met dezelfde verwijzing. Dit is wat je ziet als `defer` ontbreekt in je script-tag: het script draait voordat het formulier bestaat, `veld` is dan `null`, en de teller doet niets meer.
+
+<DevtoolsPaneel tab="Console">
+  <ConsoleRegels
+    regels={[
       { tekst: 'Uncaught TypeError: Cannot read properties of null (reading \'addEventListener\')', bron: 'app.js:4', fout: true },
     ]}
   />
 </DevtoolsPaneel>
 
-Fouten staan er in het rood, met dezelfde verwijzing. Klik op `app.js:4` en de browser opent het bestand op die regel. De derde regel hierboven is wat je ziet als `defer` ontbreekt: het script draait voordat het formulier bestaat, en `veld` is dan `null`.
+Klik op `app.js:4` en de browser opent het bestand op die regel: de regel met `addEventListener`, want daar ging het mis.
 
 Je kunt in de Console ook zelf typen. Onderin staat een prompt. Typ dit en druk op Enter:
 

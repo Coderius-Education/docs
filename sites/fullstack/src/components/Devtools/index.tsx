@@ -11,10 +11,10 @@ const TABBLADEN: Array<{ nl: string; en: string }> = [
   { nl: 'Elementen', en: 'Elements' },
   { nl: 'Console', en: 'Console' },
   { nl: 'Netwerk', en: 'Network' },
-  { nl: 'Toepassing', en: 'Application' },
+  { nl: 'App', en: 'Application' },
 ];
 
-export type Tabblad = 'Elementen' | 'Console' | 'Netwerk' | 'Toepassing';
+export type Tabblad = 'Elementen' | 'Console' | 'Netwerk' | 'App';
 
 export function DevtoolsPaneel({
   tab,
@@ -25,9 +25,11 @@ export function DevtoolsPaneel({
 }): ReactElement {
   return (
     <figure className={styles.paneel}>
+      <figcaption className={styles.srOnly}>Ontwikkelaarstools, tabblad {tab} geopend</figcaption>
       {/* Een plaatje van de tabbladrij, niet iets om op te klikken; daarom
-          geen tab-rollen. Het geopende tabblad staat vet. */}
-      <div className={styles.tabbladen} aria-label={`Ontwikkelaarstools, tabblad ${tab}`}>
+          geen tab-rollen. Het geopende tabblad staat vet, en voor wie dat
+          niet ziet staat er "geopend" bij. */}
+      <div className={styles.tabbladen} aria-hidden="true">
         {TABBLADEN.map((t) => (
           <span key={t.nl} className={clsx(styles.tabblad, t.nl === tab && styles.actief)}>
             {t.nl}
@@ -42,9 +44,12 @@ export function DevtoolsPaneel({
 
 export type NetwerkRij = {
   naam: string;
+  /** Een statuscode, of de tekst die Chrome toont als er geen antwoord kwam, zoals '(mislukt)'. */
   status: number | string;
   type: string;
   grootte: string;
+  /** Rood, zoals Chrome een mislukt verzoek toont. Standaard: een status van 400 of hoger. */
+  fout?: boolean;
 };
 
 /** De lijst van het tabblad Netwerk: één regel per verzoek. */
@@ -60,10 +65,13 @@ export function NetwerkTabel({ rijen }: { rijen: NetwerkRij[] }): ReactElement {
         </tr>
       </thead>
       <tbody>
-        {rijen.map((rij) => {
-          const fout = typeof rij.status === 'number' ? rij.status >= 400 : true;
+        {rijen.map((rij, i) => {
+          const fout = rij.fout ?? (typeof rij.status === 'number' && rij.status >= 400);
           return (
-            <tr key={rij.naam} className={clsx(fout && styles.fout)}>
+            // Index als key: de lijst is statisch, en dezelfde naam kan twee
+            // keer voorkomen (een 304 en daarna een 200).
+            // biome-ignore lint/suspicious/noArrayIndexKey: zie hierboven
+            <tr key={i} className={clsx(fout && styles.fout)}>
               <td>{rij.naam}</td>
               <td>{rij.status}</td>
               <td>{rij.type}</td>
@@ -87,11 +95,10 @@ export type ConsoleRegel = {
 export function ConsoleRegels({ regels }: { regels: ConsoleRegel[] }): ReactElement {
   return (
     <div className={styles.console}>
-      {regels.map((regel) => (
-        <div
-          key={regel.tekst + regel.bron}
-          className={clsx(styles.regel, regel.fout && styles.fout)}
-        >
+      {regels.map((regel, i) => (
+        // Index als key: dezelfde regel komt vaak twee keer voor (typ, wis, typ).
+        // biome-ignore lint/suspicious/noArrayIndexKey: zie hierboven
+        <div key={i} className={clsx(styles.regel, regel.fout && styles.fout)}>
           <span>{regel.tekst}</span>
           {regel.bron && <span className={styles.bron}>{regel.bron}</span>}
         </div>

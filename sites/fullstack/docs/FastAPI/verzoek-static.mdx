@@ -19,13 +19,13 @@ Open het tabblad **Netwerk** uit [Kijken wat de browser doet](/docs/FastAPI/devt
   <NetwerkTabel
     rijen={[
       { naam: '127.0.0.1', status: 200, type: 'document', grootte: '1,2 kB' },
-      { naam: 'style.css', status: 200, type: 'stylesheet', grootte: '(uit schijfcache)' },
-      { naam: 'kat.jpg', status: 404, type: 'jpeg', grootte: '22 B' },
+      { naam: 'style.css', status: 200, type: 'stylesheet', grootte: '(schijfcache)' },
+      { naam: 'kat.jpg', status: 404, type: 'json', grootte: '214 B' },
     ]}
   />
 </DevtoolsPaneel>
 
-Deze lijst laat twee dingen zien die je in de les ook tegenkomt:
+De groottes verschillen per computer; de statuscode is wat telt. Deze lijst laat twee dingen zien die je in de les ook tegenkomt:
 
-- `kat.jpg` heeft status **404**. De browser vroeg het bestand in stap 4, maar op dat adres stond niets: het pad in `<img>` klopt niet, of `app.mount` ontbreekt. Je Python-code heeft er niets mee te maken, en de terminal logt het als `GET /static/kat.jpg 404`.
-- `style.css` kwam **uit de schijfcache**. De browser heeft de server niet eens gevraagd en toonde zijn eigen kopie. Pas je de CSS aan en verandert er niets, dan is dit de reden. Zet het vinkje **Cache uitschakelen** aan zolang je werkt, of herlaad zonder cache.
+- `kat.jpg` heeft status **404**. De browser vroeg het bestand in stap 4, maar op dat adres stond niets: het pad in `<img>` klopt niet, of `app.mount` ontbreekt. Het type is `json`, want de foutmelding van FastAPI is JSON, geen plaatje. Je Python-code heeft er niets mee te maken, en de terminal logt het als `GET /static/kat.jpg 404`.
+- `style.css` kwam uit de **schijfcache**. De browser heeft de server niet eens gevraagd en toonde zijn eigen kopie. Pas je de CSS aan en verandert er niets, dan is dit de reden. Zet het vinkje **Cache uitzetten** aan zolang je werkt, of herlaad zonder cache.

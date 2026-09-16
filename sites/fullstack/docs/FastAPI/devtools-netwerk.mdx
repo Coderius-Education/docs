@@ -15,9 +15,9 @@ Druk op **F12**. Werkt dat niet, klik dan met de rechtermuisknop ergens op de pa
 - **Elementen**: de HTML zoals de browser hem nu heeft.
 - **Console**: uitvoer en fouten van JavaScript.
 - **Netwerk**: elk verzoek dat de browser stuurt, met het antwoord.
-- **Toepassing**: wat de browser voor deze site bewaart, zoals cookies.
+- **App**: wat de browser voor deze site bewaart, zoals cookies. Firefox noemt dit tabblad Opslag.
 
-De namen staan hier in het Nederlands met het Engels erachter, want Chrome en Edge wisselen daarin. Deze les gaat over Netwerk; Console en Elementen komen bij [JavaScript erbij](/docs/FastAPI/javascript), Toepassing bij [cookies](/docs/FastAPI/cookies).
+De namen staan hier in het Nederlands met het Engels erachter, want Chrome en Edge wisselen daarin. Deze les gaat over Netwerk. Console en Elementen krijgen een eigen les, [Console en Elementen](/docs/FastAPI/devtools-console), en App komt bij [cookies](/docs/FastAPI/cookies).
 
 ## Het tabblad Netwerk
 
@@ -52,22 +52,22 @@ Request Method:  GET
 Status Code:     200 OK
 ```
 
-De methode is de `get` uit `@app.get("/")`. Bij **Antwoord** (Response) staat wat de server terugstuurde: de JSON van je functie, letter voor letter zoals `return` hem maakte.
+De methode is de `get` uit `@app.get("/")`. Bij **Reactie** (Response) staat wat de server terugstuurde: de JSON van je functie, letter voor letter zoals `return` hem maakte.
 
 ## Als je wijziging niet doorkomt
 
-De browser bewaart van sommige antwoorden een kopie, de **cache**. Vraagt hij hetzelfde adres nog eens, dan pakt hij soms die kopie in plaats van de server te vragen. Dat zie je in Netwerk aan de kolom Grootte: daar staat dan **(uit schijfcache)** of **(disk cache)** in plaats van een aantal bytes.
+De browser bewaart van sommige antwoorden een kopie, de **cache**. Vraagt hij hetzelfde adres nog eens, dan pakt hij soms die kopie in plaats van de server te vragen. Dat zie je in Netwerk aan de kolom Grootte: daar staat dan **(schijfcache)** of **(disk cache)** in plaats van een aantal bytes.
 
 Bij de JSON van je endpoint gebeurt dat zelden. Bij bestanden wel, en die komen vanaf [Static files](/docs/FastAPI/static_files). Twee manieren om het te voorkomen:
 
-- Bovenin het tabblad Netwerk staat het vinkje **Cache uitschakelen** (Disable cache). Zet het aan; het werkt zolang de ontwikkelaarstools open staan.
-- Klik met de rechtermuisknop op de herlaadknop van je browser en kies **Cache legen en hard vernieuwen**. Die keuze bestaat alleen als de ontwikkelaarstools open staan. Sneller is **Ctrl+Shift+R**.
+- Bovenin het tabblad Netwerk staat het vinkje **Cache uitzetten** (Disable cache). Zet het aan; het werkt zolang de ontwikkelaarstools open staan.
+- Klik met de rechtermuisknop op de herlaadknop van je browser en kies **Cache wissen en geforceerd opnieuw laden**. Die keuze bestaat alleen als de ontwikkelaarstools open staan. Sneller is **Ctrl+Shift+R**.
 
 ## Testen
 
 1. Open de ontwikkelaarstools met F12 en kies Netwerk
 2. Herlaad `http://127.0.0.1:8000` en klik op de regel die verschijnt
-3. Vind de methode en de statuscode bij Headers, en je JSON bij Antwoord
+3. Vind de methode en de statuscode bij Headers, en je JSON bij Reactie
 
 :::danger[Gaat er iets mis?]
 Blijft de lijst leeg? Je opende de tools nadat de pagina al geladen was. Herlaad met het tabblad open. Zie je geen tabblad Netwerk? Het paneel is te smal en verbergt tabbladen achter `»` rechts in de rij. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
@@ -106,7 +106,7 @@ Ga naar `http://127.0.0.1:8000/bestaat-niet`. Kijk in Netwerk én in de terminal
 <details>
 <summary>Antwoord</summary>
 
-De regel is rood en heeft status `404`. Bij Antwoord staat `{"detail":"Not Found"}`: FastAPI vond geen functie voor dit pad. De terminal logt dezelfde regel, met `404 Not Found` aan het eind. Het verzoek is dus wel aangekomen; de server had er alleen geen antwoord op.
+De regel is rood en heeft status `404`. Bij Reactie staat `{"detail":"Not Found"}`: FastAPI vond geen functie voor dit pad. De terminal logt dezelfde regel, met `404 Not Found` aan het eind. Het verzoek is dus wel aangekomen; de server had er alleen geen antwoord op.
 
 </details>
 
@@ -117,6 +117,6 @@ Stop je server met Ctrl+C in de terminal. Herlaad de pagina met Netwerk open.
 <details>
 <summary>Antwoord</summary>
 
-De regel is rood en er staat geen statuscode, maar iets als `(failed)` of `ERR_CONNECTION_REFUSED`. Er was geen server om te antwoorden, dus er is ook geen status. In de terminal staat niets: het verzoek is er nooit aangekomen. Dat is het verschil met de 404 van hiervoor.
+De regel is rood en er staat geen statuscode, maar `(mislukt)` of `(failed)`, met bij Naam iets als `ERR_CONNECTION_REFUSED`. Er was geen server om te antwoorden, dus er is ook geen status. In de terminal staat niets: het verzoek is er nooit aangekomen. Dat is het verschil met de 404 van hiervoor. Start je server daarna weer met `fastapi dev main.py`.
 
 </details>
