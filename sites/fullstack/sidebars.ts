@@ -13,7 +13,12 @@ const sidebars: SidebarsConfig = {
     {
       type: 'category',
       label: 'Starten',
-      items: ['FastAPI/installatie', 'FastAPI/eerste_endpoint', 'FastAPI/verzoek-eerste'],
+      items: [
+        'FastAPI/installatie',
+        'FastAPI/eerste_endpoint',
+        'FastAPI/verzoek-eerste',
+        'FastAPI/devtools-netwerk',
+      ],
     },
     {
       type: 'category',
@@ -48,7 +53,7 @@ const sidebars: SidebarsConfig = {
     {
       type: 'category',
       label: 'In de browser',
-      items: ['FastAPI/javascript', 'FastAPI/server-of-browser'],
+      items: ['FastAPI/javascript', 'FastAPI/devtools-console', 'FastAPI/server-of-browser'],
     },
     {
       type: 'category',

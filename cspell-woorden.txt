@@ -112,6 +112,7 @@ hasht
 Hastebin
 helpuitvoer
 Hergebruikbare
+herlaadknop
 hitbox
 Hitbox
 hoekronding
@@ -332,6 +333,7 @@ valregel
 vastgeprogrammeerd
 vercijferingen
 versmaller
+Verzoekheaders
 Vigenere
 voedingspin
 voorbeeldgraph

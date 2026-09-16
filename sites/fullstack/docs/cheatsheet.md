@@ -440,6 +440,41 @@ with SqliteDict("data.db") as db:
 
 </details>
 
+## Browser
+
+<details>
+<summary>Ontwikkelaarstools openen</summary>
+
+Druk op **F12**, of klik met de rechtermuisknop op de pagina en kies **Inspecteren**. Dat laatste opent meteen het tabblad **Elementen** op het element waar je op klikte.
+
+De tabbladen die je in deze cursus gebruikt:
+
+- **Console**: fouten uit je JavaScript, met bestand en regelnummer
+- **Netwerk**: elk verzoek van de pagina, met statuscode en herkomst
+- **App** (Application; in Firefox Opslag): de cookies van de site
+
+</details>
+
+<details>
+<summary>Herladen zonder cache</summary>
+
+Met de ontwikkelaarstools open: rechtermuisknop op de herlaadknop, dan **Cache wissen en geforceerd opnieuw laden**. Sneltoets: **Ctrl+Shift+R**.
+
+Zolang je aan je site werkt: tabblad **Netwerk**, vinkje **Cache uitzetten** aan.
+
+</details>
+
+<details>
+<summary>Verzoeken bekijken</summary>
+
+Tabblad **Netwerk**, herlaad de pagina. Eén regel per verzoek.
+
+- **Status** `200`: gevonden. `404`: het pad klopt niet, of `app.mount` ontbreekt.
+- **Grootte** met **(schijfcache)**: de browser heeft de server niet gevraagd.
+- Klik een regel aan voor de headers, zoals `Cookie:` bij een sessie.
+
+</details>
+
 ## Mappenstructuur
 
 <details>
