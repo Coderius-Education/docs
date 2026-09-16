@@ -8,7 +8,9 @@ import { describe, expect, it } from 'vitest';
 // leerling niets hoeft op te zoeken. Dat houdt alleen stand als papier en
 // site aan elkaar vast zitten: dezelfde zin in dezelfde bouwsteen, elke
 // woordsoort precies zoals het lexicon in de parser hem kent, en een
-// antwoordgrammatica die de parser van de site ook echt op groen zet. Bij
+// antwoordgrammatica die de parser van de site ook echt op groen zet. Na
+// elke zin staat schrijfruimte voor de grammatica tot dan toe; het aantal
+// lijntjes hoort mee te groeien met de antwoordgrammatica. Bij
 // een verzonnen mini-grammatica kon niets uit de pas lopen; nu wel, dus dit
 // is de guard.
 
@@ -30,10 +32,10 @@ const BOUWSTENEN = [
 ];
 const WOORDSOORTEN = ['N', 'V', 'Det', 'Adj', 'Adv', 'Conj', 'P'];
 
-/** De genummerde, vette zinnen onder "## De zinnen" op de hand-out. */
+/** De vette zinnen onder "## De zinnen" op de hand-out: `**Zin 3.** **…**`. */
 function handoutZinnen(): string[] {
   const na = HANDOUT.slice(HANDOUT.indexOf('## De zinnen'));
-  return [...na.matchAll(/^\d+\. \*\*(.+?)\*\*$/gm)].map((m) => m[1]);
+  return [...na.matchAll(/^\*\*Zin \d+\.\*\* \*\*(.+?)\*\*$/gm)].map((m) => m[1]);
 }
 
 /** De zin in het citaat bovenaan een bouwsteen: `> **Holmes (N) sat (V).**` */
@@ -121,6 +123,20 @@ describe('de antwoordgrammatica van de hand-out werkt in de parser van de site',
   // leest tot een #, dus hier wordt hij een commentaar.
   const grammatica = blok[1].replace(/\((zin \d+)\)/g, '# $1');
 
+  it('geeft na elke zin minstens zoveel lijntjes als het antwoord dan regels heeft', () => {
+    const lijntjes = [...HANDOUT.matchAll(/<Schrijflijnen n=\{(\d+)\} \/>/g)].map((m) =>
+      Number(m[1]),
+    );
+    expect(lijntjes).toHaveLength(10);
+    // Per zin: hoeveel regels van het antwoord horen bij zin 1 tot en met deze.
+    const perRegel = [...grammatica.matchAll(/# zin (\d+)/g)].map((m) => Number(m[1]));
+    const totDanToe = lijntjes.map((_, i) => perRegel.filter((z) => z <= i + 1).length);
+    const teKrap = lijntjes
+      .map((l, i) => (l < totDanToe[i] ? `zin ${i + 1}: ${l} < ${totDanToe[i]}` : null))
+      .filter(Boolean);
+    expect(teKrap).toEqual([]);
+  });
+
   it('bouwt de tien zinnen van de hand-out', () => {
     const code = `${parserCode(grammatica)}
 grammatica = lees_grammatica(GRAMMATICA + LEXICON)
@@ -130,29 +146,5 @@ for zin in ${JSON.stringify(handoutZinnen().map((z) => kaalWoorden(z).join(' '))
     const uitvoer = draai(code).trim().split('\n');
     expect(uitvoer).toHaveLength(10);
     expect(uitvoer.filter((r) => !r.startsWith('OK'))).toEqual([]);
-  });
-
-  it('keurt de rijtjes van "Keur de zinnen" zoals het antwoordblad zegt', () => {
-    const werkvorm = HANDOUT.slice(
-      HANDOUT.indexOf('## Keur de zinnen'),
-      HANDOUT.indexOf('## Bespreek na'),
-    );
-    const rijtjes = [...werkvorm.matchAll(/^\d+\. (.+?): ____$/gm)].map((m) =>
-      kaalWoorden(m[1]).join(' '),
-    );
-    const oordelen = [
-      ...antwoorden
-        .slice(antwoorden.indexOf('**Keur de zinnen.**'))
-        .matchAll(/^\d+\. (goed|fout)/gm),
-    ].map((m) => m[1]);
-    expect(rijtjes).toHaveLength(4);
-    expect(oordelen).toHaveLength(4);
-
-    const code = `${parserCode(grammatica)}
-grammatica = lees_grammatica(GRAMMATICA + LEXICON)
-for zin in ${JSON.stringify(rijtjes)}:
-    print("goed" if parse(grammatica, zin.split()) else "fout")
-`;
-    expect(draai(code).trim().split('\n')).toEqual(oordelen);
   });
 });

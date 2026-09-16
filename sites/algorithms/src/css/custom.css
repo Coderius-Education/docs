@@ -224,6 +224,18 @@
     column-gap: 8mm;
   }
 
+  /* De grammatica-hand-out: per zin een blok met de zin, wat er nieuw is
+     en lijntjes om de grammatica tot dan toe te schrijven. De zin zelf
+     blijft bij zijn eerste lijntjes (anders staat hij onderaan een kolom
+     en de schrijfruimte bovenaan de volgende), maar de lijntjes mogen
+     doorlopen in de volgende kolom: met hele blokken die niet mochten
+     breken bleef onderaan elke kolom een kwart leeg, en paste zin 10
+     niet meer op de achterkant. */
+  body.handout-page .handout-zin > p {
+    break-inside: avoid;
+    break-after: avoid;
+  }
+
   body.handout-compact .handout-vragen ol > li {
     break-inside: avoid;
   }

@@ -6,6 +6,7 @@ import GameTree from '@site/src/components/GameTree';
 import Handout from '@site/src/components/Handout';
 import HanoiGame from '@site/src/components/HanoiGame';
 import PyRunner from '@site/src/components/PyRunner';
+import Schrijflijnen from '@site/src/components/Schrijflijnen';
 import MDXComponents from '@theme-original/MDXComponents';
 
 export default {
@@ -17,6 +18,7 @@ export default {
   AlgorithmModel,
   GameTree,
   Handout,
+  Schrijflijnen,
   HanoiGame,
   PyRunner,
 };

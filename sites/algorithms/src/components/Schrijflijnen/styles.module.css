@@ -1,0 +1,14 @@
+.lijnen {
+  margin: 0.2em 0 0.8em;
+}
+
+.lijn {
+  height: 0.45cm;
+  border-bottom: 1px solid var(--ifm-color-emphasis-400);
+}
+
+@media print {
+  .lijn {
+    border-bottom-color: #888;
+  }
+}
