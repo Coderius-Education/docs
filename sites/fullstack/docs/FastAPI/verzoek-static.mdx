@@ -1,3 +1,4 @@
+import { DevtoolsPaneel, NetwerkTabel } from '@site/src/components/Devtools';
 import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
 
 # Wat er gebeurt bij één pagina
@@ -12,11 +13,19 @@ De pagina zelf staat op stap 2 wel achter een functie van jou. Zo kun je later p
 
 ## Zie het zelf
 
-De drie verzoeken kun je in je browser bekijken. Druk op **F12** en kies het tabblad **Netwerk** (in het Engels **Network**). Herlaad de pagina. Er verschijnt een lijst met één regel per verzoek: bovenaan de pagina zelf, daaronder `style.css` en `kat.jpg`.
+Open het tabblad **Netwerk** uit [Kijken wat de browser doet](/docs/FastAPI/devtools-netwerk) en herlaad. Bij je eerste verzoek stond er één regel; nu staan er drie, in de volgorde van het diagram:
 
-Twee kolommen zijn de moeite waard:
+<DevtoolsPaneel tab="Netwerk">
+  <NetwerkTabel
+    rijen={[
+      { naam: '127.0.0.1', status: 200, type: 'document', grootte: '1,2 kB' },
+      { naam: 'style.css', status: 200, type: 'stylesheet', grootte: '(uit schijfcache)' },
+      { naam: 'kat.jpg', status: 404, type: 'jpeg', grootte: '22 B' },
+    ]}
+  />
+</DevtoolsPaneel>
 
-- **Status** zegt of de server het bestand had. `200` is goed. Staat er `404` bij je CSS, dan klopt het pad in `<link>` niet of ontbreekt `app.mount`, precies stap 4 en 5 hierboven.
-- **Grootte** zegt waar het bestand vandaan kwam. Staat er **(uit schijfcache)** of **(disk cache)**, dan heeft de browser de server niet eens gevraagd en toont hij zijn eigen kopie. Dat is de oorzaak van [wijzigingen die niet zichtbaar zijn](/docs/FastAPI/eerste_endpoint#server-starten).
+Deze lijst laat twee dingen zien die je in de les ook tegenkomt:
 
-Bovenin het tabblad staat het vinkje **Cache uitschakelen** (**Disable cache**). Zet het aan zolang je aan je site werkt: dan haalt de browser alles opnieuw op, maar alleen zolang de ontwikkelaarstools open staan.
+- `kat.jpg` heeft status **404**. De browser vroeg het bestand in stap 4, maar op dat adres stond niets: het pad in `<img>` klopt niet, of `app.mount` ontbreekt. Je Python-code heeft er niets mee te maken, en de terminal logt het als `GET /static/kat.jpg 404`.
+- `style.css` kwam **uit de schijfcache**. De browser heeft de server niet eens gevraagd en toonde zijn eigen kopie. Pas je de CSS aan en verandert er niets, dan is dit de reden. Zet het vinkje **Cache uitschakelen** aan zolang je werkt, of herlaad zonder cache.

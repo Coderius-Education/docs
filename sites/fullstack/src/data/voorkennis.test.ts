@@ -44,6 +44,9 @@ function voorkennisPerLes(): Map<string, Item[]> {
 const ZONDER_BLOK: Record<string, string> = {
   'FastAPI/cookie-of-sessie.mdx': 'bouwt alleen op de twee lessen ervoor, in dezelfde cursus',
   'FastAPI/cookies.mdx': 'nieuwe stof is server-side en wordt hier zelf uitgelegd',
+  'FastAPI/devtools-netwerk.mdx': 'de ontwikkelaarstools zelf, nergens anders behandeld',
+  'FastAPI/devtools-console.mdx':
+    'console.log en de DOM staan al bij javascript.mdx, de les ervoor; niet herhalen',
   'FastAPI/hoe-een-verzoek-werkt.mdx': 'samenvatting van deze cursus, geen nieuwe stof',
   'FastAPI/verzoek-eerste.mdx': 'diagram van de les ervoor, geen nieuwe stof',
   'FastAPI/verzoek-static.mdx': 'diagram van de lessen ervoor, geen nieuwe stof',

@@ -1,0 +1,92 @@
+.paneel {
+  margin: 1.25rem 0;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 0.85rem;
+  background: var(--ifm-background-surface-color);
+}
+
+.tabbladen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+  background: var(--ifm-color-emphasis-100);
+}
+
+.tabblad {
+  padding: 0.35rem 0.75rem;
+  color: var(--ifm-color-emphasis-700);
+  border-bottom: 2px solid transparent;
+}
+
+.actief {
+  color: var(--ifm-font-color-base);
+  font-weight: 600;
+  border-bottom-color: var(--ifm-color-primary);
+  background: var(--ifm-background-surface-color);
+}
+
+.engels {
+  font-weight: 400;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.inhoud {
+  padding: 0.5rem 0.75rem;
+  font-family: var(--ifm-font-family-monospace);
+  overflow-x: auto;
+}
+
+/* Het thema geeft tabellen marges en een rand per cel; hier is het een lijst. */
+.tabel {
+  --ifm-table-cell-padding: 0.25rem 0.75rem;
+  margin: 0;
+  display: table;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabel th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--ifm-color-emphasis-700);
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.tabel td,
+.tabel th {
+  border: none;
+  padding: var(--ifm-table-cell-padding);
+}
+
+.tabel tbody tr:nth-child(even) {
+  background: var(--ifm-color-emphasis-100);
+}
+
+.fout {
+  color: #c0392b;
+}
+
+[data-theme="dark"] .fout {
+  color: #ff8a80;
+}
+
+.console .regel {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.15rem 0;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.console .regel:last-child {
+  border-bottom: none;
+}
+
+.bron {
+  color: var(--ifm-color-emphasis-600);
+  white-space: nowrap;
+  text-decoration: underline;
+}

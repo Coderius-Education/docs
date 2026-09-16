@@ -1,0 +1,96 @@
+import { ConsoleRegels, DevtoolsPaneel } from '@site/src/components/Devtools';
+
+# Console en Elementen
+
+De tekenteller uit de vorige les draait in de browser. De terminal ziet er niets van, dus als hij hapert heb je een andere plek nodig om te kijken. Die zit in de ontwikkelaarstools die je bij [Kijken wat de browser doet](/docs/FastAPI/devtools-netwerk) opende: het tabblad **Console** voor je JavaScript, en het tabblad **Elementen** voor de pagina zoals de browser hem nu heeft.
+
+## De Console
+
+Druk op F12 en kies **Console**. Zet in `static/js/app.js` een regel in de functie van de teller:
+
+```javascript
+veld.addEventListener("input", function () {
+    const over = 80 - veld.value.length;
+    console.log("nog", over, "tekens");
+    teller.textContent = over + " tekens over";
+});
+```
+
+Herlaad en typ een paar letters. Bij elke toetsaanslag komt er een regel bij, met rechts het bestand en het regelnummer waar de `console.log` staat:
+
+<DevtoolsPaneel tab="Console">
+  <ConsoleRegels
+    regels={[
+      { tekst: 'nog 79 tekens', bron: 'app.js:3' },
+      { tekst: 'nog 78 tekens', bron: 'app.js:3' },
+      { tekst: 'Uncaught TypeError: Cannot read properties of null (reading \'addEventListener\')', bron: 'app.js:4', fout: true },
+    ]}
+  />
+</DevtoolsPaneel>
+
+Fouten staan er in het rood, met dezelfde verwijzing. Klik op `app.js:4` en de browser opent het bestand op die regel. De derde regel hierboven is wat je ziet als `defer` ontbreekt: het script draait voordat het formulier bestaat, en `veld` is dan `null`.
+
+Je kunt in de Console ook zelf typen. Onderin staat een prompt. Typ dit en druk op Enter:
+
+```javascript
+document.querySelector("#teller").textContent = "Hoi"
+```
+
+De tekst op de pagina verandert meteen. De Console is een plek waar je JavaScript regel voor regel kunt proberen, op de pagina die open staat.
+
+## Elementen
+
+Klik met de rechtermuisknop op de teller en kies **Inspecteren**. De ontwikkelaarstools openen nu op **Elementen**, met `<p id="teller">` geselecteerd. Wat je daar ziet is de HTML zoals de browser hem op dit moment heeft, dus mét de tekst die je JavaScript erin zette. Typ een paar letters en kijk mee: de tekst in Elementen verandert live.
+
+Dubbelklik op een tekst of een attribuut en je kunt hem aanpassen. Verander `80 tekens over` in iets anders: de pagina volgt direct. Herlaad daarna. Alles is terug zoals de server het stuurde. Elementen verandert alleen wat er in jouw browser staat, nooit iets op de server.
+
+## Testen
+
+1. Zet de `console.log` in je teller en zie de regels verschijnen bij het typen
+2. Typ de `textContent`-regel in de Console en zie de pagina veranderen
+3. Open Elementen op de teller, pas de tekst aan, en herlaad
+
+:::danger[Gaat er iets mis?]
+Blijft de Console leeg terwijl je typt? Kijk of je het bestand hebt opgeslagen en herlaad zonder cache (zie [Kijken wat de browser doet](/docs/FastAPI/devtools-netwerk)). Staat er een rode regel, klik dan op de bestandsnaam rechts: die brengt je naar de regel die de fout maakt. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
+:::
+
+## Opdrachten
+
+### Opdracht 1: Predict - Blijft het staan?
+
+Je verandert in Elementen de kop van je gastenboek in "Mijn gastenboek" en herlaadt de pagina.
+
+**Vraag:** wat staat er na het herladen?
+
+<details>
+<summary>Antwoord</summary>
+
+De oude kop. Elementen past alleen de kopie in jouw browser aan. Bij het herladen vraagt de browser de pagina opnieuw aan de server, en die stuurt zijn template zoals hij altijd doet.
+
+</details>
+
+### Opdracht 2: Run
+
+Zet de `console.log` in je teller en typ een woord. Controleer dat er per letter één regel bijkomt, en klik op de verwijzing rechts.
+
+### Opdracht 3: Investigate - Broncode of Elementen
+
+Druk op Ctrl+U: je ziet de broncode van de pagina, precies zoals de server hem stuurde. Vergelijk de regel met `id="teller"` daar met dezelfde regel in Elementen nadat je iets hebt getypt.
+
+<details>
+<summary>Antwoord</summary>
+
+In de broncode staat `80 tekens over`, want dat stuurde je template. In Elementen staat het aantal dat je JavaScript erin zette. De server heeft die tekst nooit gezien. Elementen toont de pagina van nu, de broncode de pagina van het moment van laden.
+
+</details>
+
+### Opdracht 4: Modify - De limiet
+
+Zoek in Elementen het `<input>` van het bericht op. Daar staat `maxlength="80"`. Verander het in `800` en typ een lang bericht.
+
+<details>
+<summary>Antwoord</summary>
+
+Het veld laat nu 800 tekens toe. Wat er gebeurt als je dat bericht verstuurt, en waarom dat een probleem is, is de vraag van de volgende les: [Server of browser?](/docs/FastAPI/server-of-browser).
+
+</details>

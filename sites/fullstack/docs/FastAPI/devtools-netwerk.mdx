@@ -1,0 +1,122 @@
+import { DevtoolsPaneel, NetwerkTabel } from '@site/src/components/Devtools';
+
+# Kijken wat de browser doet
+
+Het diagram van [je eerste verzoek](/docs/FastAPI/verzoek-eerste) tekende zes stappen. Je browser kan ze laten zien. Elke browser heeft daarvoor een paneel dat bezoekers nooit openen, maar dat jij vanaf nu elke les gebruikt: de **ontwikkelaarstools**.
+
+## De ontwikkelaarstools openen
+
+Druk op **F12**. Werkt dat niet, klik dan met de rechtermuisknop ergens op de pagina en kies **Inspecteren**. Er schuift een paneel naast of onder de pagina, met bovenin een rij tabbladen. Vier daarvan gebruik je in deze cursus:
+
+<DevtoolsPaneel tab="Netwerk">
+  <NetwerkTabel rijen={[]} />
+</DevtoolsPaneel>
+
+- **Elementen**: de HTML zoals de browser hem nu heeft.
+- **Console**: uitvoer en fouten van JavaScript.
+- **Netwerk**: elk verzoek dat de browser stuurt, met het antwoord.
+- **Toepassing**: wat de browser voor deze site bewaart, zoals cookies.
+
+De namen staan hier in het Nederlands met het Engels erachter, want Chrome en Edge wisselen daarin. Deze les gaat over Netwerk; Console en Elementen komen bij [JavaScript erbij](/docs/FastAPI/javascript), Toepassing bij [cookies](/docs/FastAPI/cookies).
+
+## Het tabblad Netwerk
+
+Kies **Netwerk**. De lijst is leeg: het tabblad ziet alleen wat er gebeurt terwijl het open staat. Herlaad de pagina en er verschijnt één regel:
+
+<DevtoolsPaneel tab="Netwerk">
+  <NetwerkTabel rijen={[{ naam: '127.0.0.1', status: 200, type: 'document', grootte: '312 B' }]} />
+</DevtoolsPaneel>
+
+Die regel is stap 2 en stap 5 uit het diagram in één: het verzoek dat de browser stuurde, en het antwoord dat terugkwam.
+
+- **Naam** is het adres dat de browser vroeg. Voor `/` staat er de naam van de server.
+- **Status** is het cijfer waarmee de server antwoordde. `200` betekent: gevonden, hier is het.
+- **Type** zegt wat voor antwoord het was. `document` is een pagina.
+- **Grootte** is hoeveel bytes er over het netwerk gingen.
+
+Kijk nu naar de terminal waar `fastapi dev` draait. Daar staat dezelfde gebeurtenis, van de andere kant:
+
+```
+INFO:     127.0.0.1:52344 - "GET / HTTP/1.1" 200 OK
+```
+
+Netwerk laat zien wat de browser stuurde en kreeg. De terminal laat zien wat de server ontving en antwoordde. Het is één verzoek, twee keer gelogd. Zie je iets in de terminal en niet in Netwerk, of andersom, dan weet je aan welke kant het misgaat.
+
+## Eén verzoek van dichtbij
+
+Klik op de regel. Rechts opent een venster met tabbladen. Bij **Headers** staat wat er over de lijn ging, in drie regels die je herkent:
+
+```
+Request URL:     http://127.0.0.1:8000/
+Request Method:  GET
+Status Code:     200 OK
+```
+
+De methode is de `get` uit `@app.get("/")`. Bij **Antwoord** (Response) staat wat de server terugstuurde: de JSON van je functie, letter voor letter zoals `return` hem maakte.
+
+## Als je wijziging niet doorkomt
+
+De browser bewaart van sommige antwoorden een kopie, de **cache**. Vraagt hij hetzelfde adres nog eens, dan pakt hij soms die kopie in plaats van de server te vragen. Dat zie je in Netwerk aan de kolom Grootte: daar staat dan **(uit schijfcache)** of **(disk cache)** in plaats van een aantal bytes.
+
+Bij de JSON van je endpoint gebeurt dat zelden. Bij bestanden wel, en die komen vanaf [Static files](/docs/FastAPI/static_files). Twee manieren om het te voorkomen:
+
+- Bovenin het tabblad Netwerk staat het vinkje **Cache uitschakelen** (Disable cache). Zet het aan; het werkt zolang de ontwikkelaarstools open staan.
+- Klik met de rechtermuisknop op de herlaadknop van je browser en kies **Cache legen en hard vernieuwen**. Die keuze bestaat alleen als de ontwikkelaarstools open staan. Sneller is **Ctrl+Shift+R**.
+
+## Testen
+
+1. Open de ontwikkelaarstools met F12 en kies Netwerk
+2. Herlaad `http://127.0.0.1:8000` en klik op de regel die verschijnt
+3. Vind de methode en de statuscode bij Headers, en je JSON bij Antwoord
+
+:::danger[Gaat er iets mis?]
+Blijft de lijst leeg? Je opende de tools nadat de pagina al geladen was. Herlaad met het tabblad open. Zie je geen tabblad Netwerk? Het paneel is te smal en verbergt tabbladen achter `»` rechts in de rij. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
+:::
+
+## Opdrachten
+
+### Opdracht 1: Predict - Hoeveel regels?
+
+Je typt `http://127.0.0.1:8000/info` in de adresbalk en drukt op Enter, met Netwerk open.
+
+**Vraag:** hoeveel regels komen erbij in de lijst?
+
+<details>
+<summary>Tip</summary>
+
+Wat stuurt je endpoint terug: een pagina met bestanden erin, of alleen tekst?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Eén. Je endpoint stuurt JSON, en daar staat niets in dat de browser nog apart moet ophalen. Bij een HTML-pagina met CSS en een afbeelding wordt dat anders; dat zie je bij [Wat er gebeurt bij één pagina](/docs/FastAPI/verzoek-static).
+
+</details>
+
+### Opdracht 2: Run
+
+Open Netwerk, herlaad je pagina en klik op de regel. Zoek de methode, de statuscode en je JSON.
+
+### Opdracht 3: Investigate - Een adres dat niet bestaat
+
+Ga naar `http://127.0.0.1:8000/bestaat-niet`. Kijk in Netwerk én in de terminal.
+
+<details>
+<summary>Antwoord</summary>
+
+De regel is rood en heeft status `404`. Bij Antwoord staat `{"detail":"Not Found"}`: FastAPI vond geen functie voor dit pad. De terminal logt dezelfde regel, met `404 Not Found` aan het eind. Het verzoek is dus wel aangekomen; de server had er alleen geen antwoord op.
+
+</details>
+
+### Opdracht 4: Investigate - De server staat uit
+
+Stop je server met Ctrl+C in de terminal. Herlaad de pagina met Netwerk open.
+
+<details>
+<summary>Antwoord</summary>
+
+De regel is rood en er staat geen statuscode, maar iets als `(failed)` of `ERR_CONNECTION_REFUSED`. Er was geen server om te antwoorden, dus er is ook geen status. In de terminal staat niets: het verzoek is er nooit aangekomen. Dat is het verschil met de 404 van hiervoor.
+
+</details>

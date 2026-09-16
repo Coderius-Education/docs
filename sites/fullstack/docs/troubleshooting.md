@@ -627,7 +627,7 @@ Meer uitleg: [Sessies](/docs/FastAPI/sessies)
 3. Herstart de server (Ctrl+C, dan opnieuw `fastapi dev main.py`)
 4. Check of je het juiste bestand hebt aangepast
 
-Meer uitleg: [Zie het zelf](/docs/FastAPI/verzoek-static#zie-het-zelf)
+Meer uitleg: [Kijken wat de browser doet](/docs/FastAPI/devtools-netwerk)
 
 </details>
 
