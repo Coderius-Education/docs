@@ -96,6 +96,57 @@ om mee te rekenen.
 En let op: een grammatica controleert alleen de **structuur**, niet de
 **betekenis**. *hoi kim* is grammaticaal prima, ook al ken je geen Kim.
 
+## Waar grammatica's het werk doen
+
+Grammatica's zijn niet alleen iets voor Engelse zinnen. Overal waar een
+computer tekst met een vaste vorm moet begrijpen, staat er een.
+
+- **Python zelf.** Druk je op Voer uit, dan ontleedt Python eerst je code
+  met een grammatica in bijna dezelfde notatie als hierboven (de pijl heet
+  daar een dubbele punt). Hij staat in de
+  [taalbeschrijving van Python](https://docs.python.org/3/reference/grammar.html),
+  honderden regels lang. Hieronder zie je de boom die Python van een som maakt.
+- **JSON.** Het formaat waarin een server data terugstuurt, zoals in
+  <SiteLink site="fullstack" to="/docs/FastAPI/eerste_endpoint">je eerste endpoint</SiteLink>,
+  past in een handvol regels. Op [json.org](https://www.json.org/json-nl.html)
+  staan ze getekend als spoordiagrammen: een andere manier om dezelfde regels
+  op te schrijven.
+- **Mensentaal.** Het CS50-project waar deze track van afstamt gebruikte
+  NLTK, een Python-bibliotheek voor taal. Hoofdstuk 8 van het
+  [NLTK-boek](https://www.nltk.org/book/ch08.html) (Engels) doet met
+  `S -> NP VP` precies wat jij straks doet.
+- **Meer.** Programmeertalen, rekenmachines, zoekopdrachten in een database:
+  [Wikipedia](https://nl.wikipedia.org/wiki/Contextvrije_grammatica) noemt
+  de rest.
+
+Zo laat Python zijn eigen boom zien. Kijk of `2 * 3` bij elkaar staat:
+
+<PyRunner initialCode={`import ast
+
+boom = ast.parse("1 + 2 * 3", mode="eval")
+print(ast.dump(boom, indent=2))
+`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+```
+Expression(
+  body=BinOp(
+    left=Constant(value=1),
+    op=Add(),
+    right=BinOp(
+      left=Constant(value=2),
+      op=Mult(),
+      right=Constant(value=3))))
+```
+
+`2 * 3` zit als één tak (`BinOp` met `Mult`) rechts van de `Add`. De
+grammatica van Python legt zo de rekenvolgorde vast, nog voor hij iets
+uitrekent.
+
+</details>
+
 ## Wat je gaat doen
 
 In deze track ontwerp je **zelf**, **zin voor zin**, een grammatica die
