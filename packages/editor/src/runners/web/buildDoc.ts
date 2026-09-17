@@ -34,6 +34,30 @@ function consoleInterceptor(token: string): string {
     var r = e.reason;
     send('error', ['JavaScript fout: ' + (r && r.message ? r.message : String(r))]);
   });
+  // Een link naar een ander bestand in het project (<a href="over.html">):
+  // de iframe heeft geen bestandslocatie, dus zo'n klik liep dood op een
+  // lege pagina. De editor bouwt dan dát bestand als voorbeeld. Een anker
+  // (href="#boven") of een lege href zou de hele editor-site in de iframe
+  // laden, want een srcdoc-document erft de basis-URL van de pagina
+  // eromheen; een anker scrolt daarom hier, een lege href herlaadt de eigen
+  // pagina. Externe links en target="_blank" blijven aan de browser; een
+  // handler van de leerling die preventDefault doet, gaat voor.
+  document.addEventListener('click', function(e) {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+    if (!a) return;
+    var href = a.getAttribute('href');
+    if (href === null || /^[a-z][a-z0-9+.-]*:/i.test(href) || href.indexOf('//') === 0) return;
+    var target = a.getAttribute('target');
+    if (target && target !== '_self') return;
+    e.preventDefault();
+    if (href.charAt(0) === '#') {
+      var doel = href.length > 1 ? document.getElementById(href.slice(1)) : null;
+      if (doel) { doel.scrollIntoView(); } else if (href.length === 1) { window.scrollTo(0, 0); }
+      return;
+    }
+    window.parent.postMessage({ source: '${MESSAGE_SOURCE}', token: '${token}', type: 'navigate', href: href }, '*');
+  });
 })();
 <\/script>`;
 }
