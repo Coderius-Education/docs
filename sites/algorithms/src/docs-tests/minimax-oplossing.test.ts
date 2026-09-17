@@ -186,7 +186,10 @@ print(sorted({${goedgekeurd}} if isinstance(${goedgekeurd}, tuple) else ${goedge
     expect(r.uit, r.uit).toContain('Alle tests gehaald ✓');
     expect(r.uit).toContain('Remise');
     expect(r.status).toBe(0);
-  });
+    // De demo speelt een hele partij vanaf een leeg bord zonder alpha-beta,
+    // ruim een half miljoen posities voor de eerste zet: 4 s hier, 9 s op de
+    // CI-runner. De standaardlimiet van 5 s is dus te krap.
+  }, 60_000);
 
   it('de startcode van elke bouwsteen valt op zijn eigen tests om, niet op iets anders', () => {
     // Het blokken-script controleert dit ook; hier staat het naast de
