@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { RUNNER_META } from '../runners/registry';
 import { buildDoc } from '../runners/web/buildDoc';
+import { linkDoel } from '../runners/web/navigatie';
 import { BUILTIN_TEMPLATES } from './templates';
 
 // De startprojecten zijn het eerste wat een leerling in de editor ziet. Een
@@ -30,5 +31,16 @@ describe('BUILTIN_TEMPLATES', () => {
     expect(doc).not.toContain('src="script.js"');
     expect(doc).toContain('<style>');
     expect(doc).toContain('try {');
+  });
+
+  it('het web-startproject heeft een tweede pagina waar de link heen en terug werkt', () => {
+    // Zo ziet een leerling meteen dat links tussen eigen pagina's werken in
+    // het voorbeeld (issue #92), en dat de tweede pagina dezelfde stylesheet
+    // gebruikt.
+    const web = BUILTIN_TEMPLATES.find((t) => t.runnerId === 'web');
+    if (!web) return;
+    expect(linkDoel(web.entry, 'over.html', web.files)).toEqual({ pad: 'over.html' });
+    expect(linkDoel('over.html', 'index.html', web.files)).toEqual({ pad: web.entry });
+    expect(web.files['over.html']).toContain('href="style.css"');
   });
 });

@@ -29,8 +29,23 @@ export const BUILTIN_TEMPLATES: ProjectTemplate[] = [
   <h1>Mijn eerste website</h1>
   <p>Verander deze tekst en kijk wat er gebeurt.</p>
   <button id="knop">Klik op mij</button>
+  <p><a href="over.html">Over deze website</a></p>
 
   <script src="script.js"></script>
+</body>
+</html>
+`,
+      'over.html': `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Over deze website</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Over deze website</h1>
+  <p>Een tweede pagina. Links tussen je eigen pagina's werken in het voorbeeld.</p>
+  <p><a href="index.html">Terug naar de startpagina</a></p>
 </body>
 </html>
 `,

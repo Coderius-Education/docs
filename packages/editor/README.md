@@ -14,7 +14,7 @@ Code wordt uitgevoerd door een **runner** (zie `src/runners/types.ts`):
 | Runner | Uitvoering | Bijzonderheden |
 |---|---|---|
 | `python` | Pyodide (in de browser) | gestreamde output, NL-foutmeldingen, multi-file `import`, `input()` via prompt |
-| `web` | sandboxed iframe | live preview tijdens het typen, `console.*` naar de editor-console |
+| `web` | sandboxed iframe | live preview tijdens het typen, `console.*` naar de editor-console, links tussen de eigen HTML-bestanden werken in het voorbeeld (met een Terug-knop) |
 | `micropython` | WebSerial (Chrome/Edge) | upload naar board + soft reboot, REPL-invoer, Stop = Ctrl-C |
 
 Runners laden lazy: een pagina met alleen een Python-editor krijgt geen serial- of webcode in de bundle. Een nieuwe runtime (bijv. PHP-wasm) implementeert het `Runner`-contract en wordt aan `src/runners/registry.ts` toegevoegd — de UI hoeft er niets voor te weten.
