@@ -12,7 +12,7 @@ tegelijk, bekijkt de echte parse-bomen, en voert zelf zinnen in.
 Hieronder plak je de **complete** grammatica die je zin voor zin hebt
 opgebouwd. De cel doet twee dingen:
 
-1. **Controleert alle 10 zinnen** in één keer — staan ze allemaal op groen?
+1. **Controleert alle 10 zinnen** in één keer — staan ze allemaal op OK?
 2. **Toont de boom (of bomen)** van de zin in `ZIN`. Verander die zin en
    draai opnieuw. Probeer eens:
    - `Holmes lit a pipe` — één duidelijke boom
@@ -144,11 +144,5 @@ def ontleed(grammatica, zin):
 grammatica = lees_grammatica(GRAMMATICA + LEXICON)
 controleer(grammatica, ZINNEN)
 ontleed(grammatica, ZIN)`} />
-
-## Wat je nu kunt
-
-Met één eindige set regels ontleed je een onbeperkt aantal zinnen — ook
-zinnen die je nooit expliciet hebt opgegeven. Dát is de kracht van een
-context-vrije grammatica.
 
 Door naar [aanpassen →](./14-aanpassen).

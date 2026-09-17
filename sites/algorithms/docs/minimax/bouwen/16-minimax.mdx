@@ -219,8 +219,8 @@ python tictactoe.py
 Je AI speelt nu tegen zichzelf. **Eindigt altijd in remise** — dat is
 een wiskundige eigenschap van tic-tac-toe bij optimaal spel.
 
-Op je laptop is dit een **paar seconden**, niet 30. Da's het verschil
-tussen browser-Python en native Python.
+Op je laptop is dit een **paar seconden**, niet 30. Dat is het verschil
+tussen Python in de browser en Python op je eigen computer.
 
 ## Bonus — CS50's `runner.py` met clickable GUI
 
@@ -246,7 +246,7 @@ Zo werkt het:
    functies gebruiken de waardes zelf, dus verder verandert er niets.
 3. Installeer eenmalig `pygame`:
    ```
-   pip install pygame
+   python -m pip install pygame
    ```
 4. Draai:
    ```
@@ -268,10 +268,12 @@ in de browser zo'n **30 seconden** duren — minimax rekent
 honderdduizenden posities door.
 
 {/* niet-draaien: startcode; de leerling plakt hier zijn eigen minimax in */}
-<PyRunner initialCode={`import copy, math
+<PyRunner initialCode={`import copy
+import math
 
 
-def initial_state(): return [[None]*3 for _ in range(3)]
+def initial_state():
+    return [[None]*3 for _ in range(3)]
 def player(bord):
     x = 0
     o = 0
@@ -289,14 +291,21 @@ def actions(bord):
                 mogelijk.add((i, j))
     return mogelijk
 def result(bord, zet):
-    n = copy.deepcopy(bord); i, j = zet; n[i][j] = player(bord); return n
+    n = copy.deepcopy(bord)
+    i, j = zet
+    n[i][j] = player(bord)
+    return n
 def winner(bord):
     for rij in bord:
-        if rij[0] == rij[1] == rij[2] and rij[0] is not None: return rij[0]
+        if rij[0] == rij[1] == rij[2] and rij[0] is not None:
+            return rij[0]
     for j in range(3):
-        if bord[0][j] == bord[1][j] == bord[2][j] and bord[0][j] is not None: return bord[0][j]
-    if bord[0][0] == bord[1][1] == bord[2][2] and bord[0][0] is not None: return bord[0][0]
-    if bord[0][2] == bord[1][1] == bord[2][0] and bord[0][2] is not None: return bord[0][2]
+        if bord[0][j] == bord[1][j] == bord[2][j] and bord[0][j] is not None:
+            return bord[0][j]
+    if bord[0][0] == bord[1][1] == bord[2][2] and bord[0][0] is not None:
+        return bord[0][0]
+    if bord[0][2] == bord[1][1] == bord[2][0] and bord[0][2] is not None:
+        return bord[0][2]
     return None
 def terminal(bord):
     if winner(bord) is not None:
@@ -314,14 +323,18 @@ def utility(bord):
         return -1
     return 0
 def max_value(bord):
-    if terminal(bord): return utility(bord)
+    if terminal(bord):
+        return utility(bord)
     v = -math.inf
-    for z in actions(bord): v = max(v, min_value(result(bord, z)))
+    for zet in actions(bord):
+        v = max(v, min_value(result(bord, zet)))
     return v
 def min_value(bord):
-    if terminal(bord): return utility(bord)
+    if terminal(bord):
+        return utility(bord)
     v = math.inf
-    for z in actions(bord): v = min(v, max_value(result(bord, z)))
+    for zet in actions(bord):
+        v = min(v, max_value(result(bord, zet)))
     return v
 
 

@@ -90,7 +90,9 @@ export const voorkennisPerAlgoritme: Record<string, string[]> = {
     'sets',
   ],
   knapsack: ['f-strings', 'if-else', 'for-loop', 'functies', 'lijsten', 'tuples'],
-  cfg: ['if-else', 'for-loop', 'functies', 'lijsten', 'lijst-methoden', 'tuples'],
+  // De leerling schrijft hier geen Python: hij vult een tekstblok met regels
+  // en leest de lijst ZINNEN. De parser-motor zelf is 'niet aanpassen'.
+  cfg: ['lijsten'],
   hanoi: [
     'f-strings',
     'if-else',

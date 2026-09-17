@@ -28,6 +28,19 @@ describe('beloften over de speeltuin', () => {
     expect(fout).toEqual([]);
   });
 
+  it('geen les zegt dat de uitvoer van de speeltuin groen wordt', () => {
+    // De cfg-lessen zeiden vijf keer dat een zin "groen" wordt of blijft;
+    // de runner print "OK (1x)" en "FOUT (0x)" in gewone tekst, niets kleurt
+    // (PyRunnerImpl.tsx kent geen kleur per regel). Een kleur in een
+    // visualisatie ("de startnode is groen") is iets anders en mag.
+    const fout = lessen(DOCS).filter((pad) =>
+      /\b(op|niet) groen\b|\bgroen (blijven|blijft|worden|wordt)\b/i.test(
+        readFileSync(pad, 'utf8'),
+      ),
+    );
+    expect(fout).toEqual([]);
+  });
+
   it('elke les die een oneindige lus noemt, zegt dat de tab bevriest', () => {
     const fout = lessen(DOCS).filter((pad) => {
       const tekst = readFileSync(pad, 'utf8');

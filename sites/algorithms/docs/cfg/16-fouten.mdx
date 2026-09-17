@@ -22,10 +22,11 @@ Naam  -> "sam" | "kim"
 
 Symptoom: geen `FOUT (0x)`, maar een rode Python-foutmelding die eindigt
 op `ValueError: not enough values to unpack (expected 2, got 1)`, en
-geen enkele zin wordt gecontroleerd.
+de motor komt aan geen enkele zin toe.
 
 **Oorzaak:** een regel in `GRAMMATICA` zonder `->`. Een typfout zoals
-`=>`, een los woord op een eigen regel, of een kopje dat je meeplakte.
+`=>`, een los woord op een eigen regel, of een kopje dat per ongeluk mee
+is gekopieerd.
 De motor splitst elke regel op `->` en verwacht links een kop en rechts
 de onderdelen; staat er geen pijl, dan valt hij daar om, nog voordat hij
 naar een zin kijkt.
@@ -77,7 +78,7 @@ namen die jij verzint, en woordsoorten als `N`, `V`, `Det`, ...) niet.
 
 ## Een regel vergeten
 
-Symptoom: één bepaalde zin blijft `FOUT (0x)`, terwijl de rest groen is.
+Symptoom: één bepaalde zin blijft `FOUT (0x)`, terwijl de rest op OK staat.
 
 **Oorzaak:** er is geen regel voor de constructie die in die zin
 voorkomt. Een grammatica accepteert *alleen* wat de regels toelaten — is
