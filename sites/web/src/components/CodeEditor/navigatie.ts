@@ -1,25 +1,26 @@
 // Het voorbeeld is een gesandboxte iframe met een eigen origin, dus de les
 // kan niet zien waar hij naartoe is gegaan als de leerling een link volgt.
-// Wat de les wél ziet is elk load-event van de iframe: de eerste load na een
-// nieuwe srcDoc is de eigen pagina, een tweede load bij dezelfde srcDoc
-// betekent dat de leerling ergens anders is beland. Dan hoort er een knop te
-// staan om terug te komen, want de editor staat nog vol met zijn eigen code
-// en de browser-knop Terug werkt niet in een srcdoc-iframe.
+// Wat de les wél krijgt zijn de berichten van het script dat buildDoc in de
+// eigen pagina zet: 'eigen' zodra die pagina laadt, 'verlaten' zodra hij
+// verlaten wordt (pagehide). Een gevolgde link draagt dat script niet.
+//
+// 'verlaten' komt ook als de les zelf een nieuwe srcDoc zet (de leerling
+// typte): dan gaat de oude eigen pagina weg. Het verschil zit in de srcDoc
+// die op dat moment geldt: is die nog dezelfde als waarvoor 'eigen' kwam, dan
+// heeft de leerling een link gevolgd; is hij al vernieuwd, dan is het de les.
 
-export type Laadstand = 'eigen' | 'weg';
+export type Bericht = 'eigen' | 'verlaten';
+export type Laadstand = 'eigen' | 'weg' | 'ongewijzigd';
 
 export class VoorbeeldNavigatie {
-  private geladen: string | null = null;
+  private eigenVan: string | null = null;
 
-  /** Meld een load-event van de iframe; zegt of het voorbeeld nog de eigen pagina toont. */
-  geladenMet(srcDoc: string): Laadstand {
-    if (this.geladen === srcDoc) return 'weg';
-    this.geladen = srcDoc;
-    return 'eigen';
-  }
-
-  /** Vóór het opnieuw laden van de eigen pagina: de volgende load is dan weer de eigen. */
-  reset(): void {
-    this.geladen = null;
+  /** Verwerk een bericht uit de iframe, met de srcDoc die de les op dat moment toont. */
+  bericht(type: Bericht, srcDoc: string): Laadstand {
+    if (type === 'eigen') {
+      this.eigenVan = srcDoc;
+      return 'eigen';
+    }
+    return this.eigenVan === srcDoc ? 'weg' : 'ongewijzigd';
   }
 }

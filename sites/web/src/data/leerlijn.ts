@@ -165,23 +165,25 @@ export const EXTRA_TECHNIEKEN: Technique[] = [
  * en de leerling moet dan iets maken wat pas vier lessen verder wordt
  * uitgelegd: css-klassen vroeg om een rand, border komt in
  * border-en-dimensies. Alleen woorden die in een opdracht maar één ding
- * kunnen betekenen; "lijst" staat er niet in, want "prijzenlijst" is geen <ul>.
+ * kunnen betekenen; "lijst" staat er niet in, want een prijzenlijst is geen
+ * <ul>, en "links" niet, want dat is meestal de kant. Een woord dat ook in
+ * een samenstelling zit, krijgt een grens: "achtergrondinformatie" is geen
+ * achtergrondkleur, "op de hoogte" geen height.
  */
 export const PROZA_TERMEN: Record<string, RegExp> = {
   'css-border': /\brand(en|je|jes)?\b/i,
   'css-border-radius': /afgeronde? hoek/i,
   'css-width': /\bbreedte\b/i,
-  'css-height': /\bhoogte\b/i,
+  'css-height': /(?<!op de )\bhoogte\b/i,
   'css-hover': /\b(hover|zweeft|eroverheen)\b/i,
   'css-display-flex': /\bflex(box)?\b/i,
   'css-display-grid': /\bgrid\b/i,
   'css-media-query': /media ?quer/i,
   'css-position': /\bposition\b/i,
-  'css-background-color': /achtergrond/i,
+  'css-background-color': /\bachtergrond(kleur)?\b/i,
   'css-padding': /\bpadding\b/i,
   'css-margin': /\b(marge|margin)\b/i,
   'html-img': /\b(afbeelding|plaatje)/i,
-  'html-a': /\blinks?\b/i,
   'html-button': /\bknop(pen)?\b/i,
   'html-form': /formulier/i,
   'html-input': /invoerveld/i,

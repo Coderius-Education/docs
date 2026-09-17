@@ -42,6 +42,28 @@ describe('buildDoc — console-interceptor', () => {
     expect(interceptor).toContain("window.addEventListener('unhandledrejection', function(e) {");
   });
 
+  it('meldt zich als de eigen pagina, en meldt het als die verlaten wordt', () => {
+    // Issue #88: na een klik op een link in het voorbeeld kwam de leerling
+    // niet meer terug. Een gevolgde link draagt dit script niet, dus "eigen"
+    // komt alleen van de eigen pagina en "verlaten" alleen bij het weggaan.
+    const result = buildDoc(pagina('', ''), '', '');
+    const interceptor = result.slice(0, result.indexOf('</script>'));
+    expect(interceptor).toContain("type: 'eigen'");
+    expect(interceptor).toContain("window.addEventListener('pagehide', function() {");
+    expect(interceptor).toContain("type: 'verlaten'");
+  });
+
+  it('zet de id van het veld in elk bericht', () => {
+    // De les herkent zijn eigen voorbeeld aan deze id, niet aan e.source:
+    // na een navigatie naar een andere site wisselt Chromium de iframe van
+    // proces en komt het bericht van pagehide van een "ander" window.
+    const result = buildDoc(pagina('', ''), '', 'console.log(1)', 'veld-7');
+    expect(result).toContain(`var veld = "veld-7";`);
+    const berichten = result.match(/postMessage\(\{[^}]*\}/g) ?? [];
+    expect(berichten.length).toBeGreaterThanOrEqual(5);
+    expect(berichten.filter((b) => !b.includes('veld'))).toEqual([]);
+  });
+
   it('meldt de hoogte van de inhoud aan de pagina eromheen', () => {
     const result = buildDoc(pagina('', ''), '', '');
     expect(result).toContain("type: 'height'");
@@ -94,7 +116,7 @@ describe('buildDoc — script', () => {
     const result = buildDoc(pagina('', ''), '', JS);
     expect(result).toContain("pre.textContent = 'JavaScript fout: ' + e.message;");
     expect(result).toContain(
-      "window.parent.postMessage({ source: 'code-editor', type: 'console', level: 'error', text: 'JavaScript fout: ' + e.message }, '*');",
+      "window.parent.postMessage({ source: 'code-editor', veld: \"\", type: 'console', level: 'error', text: 'JavaScript fout: ' + e.message }, '*');",
     );
   });
 

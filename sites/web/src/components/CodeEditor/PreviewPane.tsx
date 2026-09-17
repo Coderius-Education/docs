@@ -1,7 +1,6 @@
 import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import styles from './CodeEditor.module.css';
-import { VoorbeeldNavigatie } from './navigatie';
 
 /** Breedtes waarop je het voorbeeld kunt bekijken; `null` is de volle kolom. */
 export const VIEWPORTS = [
@@ -16,28 +15,27 @@ interface PreviewPaneProps {
    *  zonder deze prop vult de iframe de kolom (flex). */
   hoogte?: string;
   innerRef?: React.Ref<HTMLIFrameElement>;
+  /** De leerling volgde een link in zijn voorbeeld; toon de knop om terug te komen. */
+  weg?: boolean;
+  onTerug?: () => void;
+  /** Loopt op bij elke herlaad van de eigen pagina: de iframe wordt dan vervangen. */
+  versie?: number;
 }
 
-export function PreviewPane({ srcDoc, hoogte, innerRef }: PreviewPaneProps) {
+export function PreviewPane({
+  srcDoc,
+  hoogte,
+  innerRef,
+  weg = false,
+  onTerug,
+  versie = 0,
+}: PreviewPaneProps) {
   // De preview-kolom is zo'n 330px breed op een laptop, en dat is smaller dan
   // elk breekpunt dat de media-queries-les gebruikt. Zonder deze knoppen ziet
   // de leerling altijd de smalle variant en verandert er nooit iets.
   const [viewport, setViewport] = useState<number | null>(null);
   const [beschikbaar, setBeschikbaar] = useState(0);
   const vakRef = useRef<HTMLDivElement>(null);
-
-  // Volgt de leerling een link in zijn voorbeeld, dan is zijn pagina weg en
-  // werkt de Terug-knop van de browser niet in een srcdoc-iframe. Elke load
-  // bij een ongewijzigde srcDoc is zo'n navigatie (zie navigatie.ts); de knop
-  // hieronder laadt de eigen pagina opnieuw door de iframe te vervangen.
-  const navigatie = useRef(new VoorbeeldNavigatie());
-  const [weg, setWeg] = useState(false);
-  const [herlaad, setHerlaad] = useState(0);
-  const terugNaarEigenPagina = () => {
-    navigatie.current.reset();
-    setWeg(false);
-    setHerlaad((n) => n + 1);
-  };
 
   useEffect(() => {
     const vak = vakRef.current;
@@ -80,9 +78,11 @@ export function PreviewPane({ srcDoc, hoogte, innerRef }: PreviewPaneProps) {
         </span>
       </div>
       {weg && (
+        // Volgt de leerling een link in zijn voorbeeld, dan is zijn pagina weg
+        // en werkt de Terug-knop van de browser niet in een srcdoc-iframe.
         <div className={styles.terugBalk}>
           <span>Je volgde een link. Je eigen code staat nog in de editor.</span>
-          <button type="button" className={styles.viewportKnop} onClick={terugNaarEigenPagina}>
+          <button type="button" className={styles.viewportKnop} onClick={onTerug}>
             ← Terug naar je pagina
           </button>
         </div>
@@ -93,9 +93,8 @@ export function PreviewPane({ srcDoc, hoogte, innerRef }: PreviewPaneProps) {
         style={hoogte ? { height: hoogte, flex: 'none' } : undefined}
       >
         <iframe
-          key={herlaad}
+          key={versie}
           ref={innerRef}
-          onLoad={() => setWeg(navigatie.current.geladenMet(srcDoc) === 'weg')}
           className={styles.preview}
           style={
             viewport

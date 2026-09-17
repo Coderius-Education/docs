@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import sidebars from '../../sidebars';
 import {
   INTRODUCEERT,
+  PROZA_TERMEN,
   VOORUITWIJZINGEN,
   alleConcepten,
   conceptenInProza,
@@ -55,11 +56,13 @@ function codeUit(bron: string): string {
 /**
  * Wat een opdracht van de leerling vraagt: de alinea's die met `**Opdracht:**`
  * beginnen (html-css) en de alinea direct onder een `## Opdracht n:`-kop
- * (js-basics). Tips en antwoorden tellen niet mee; die staan in <details>.
+ * (js-basics), plus een lijst van eisen die er na een witregel op volgt.
+ * Tips en antwoorden tellen niet mee; die staan in <details>.
  */
 function opdrachtTekst(bron: string): string {
   const regels = bron.split('\n');
   const alineas: string[] = [];
+  const volgende = (vanaf: number) => regels.slice(vanaf).find((r) => r.trim() !== '') ?? '';
   for (let i = 0; i < regels.length; i++) {
     const kop = /^## Opdracht \d+:/.test(regels[i]);
     if (!kop && !/^\*\*Opdracht/.test(regels[i])) continue;
@@ -67,8 +70,11 @@ function opdrachtTekst(bron: string): string {
     for (let j = i + 1; j < regels.length; j++) {
       const r = regels[j];
       if (r.trim() === '') {
-        if (!kop || alinea.length > 1) break;
-        continue;
+        // Direct onder een kop mag een witregel; verder alleen als er een
+        // lijst van eisen volgt ("Bouw een kaart met:" en dan "1. een rand").
+        const lijst = /^\s*(-|\d+\.)\s/.test(volgende(j + 1));
+        if (lijst || (kop && alinea.length === 1)) continue;
+        break;
       }
       if (/^(<|```|#|:::)/.test(r)) break;
       alinea.push(r);
@@ -77,6 +83,34 @@ function opdrachtTekst(bron: string): string {
   }
   return alineas.join('\n');
 }
+
+describe('opdrachtTekst leest wat een opdracht vraagt', () => {
+  it('neemt een lijst van eisen na een witregel mee, maar geen tip of veld', () => {
+    const bron = [
+      '**Opdracht:** Bouw een kaart met:',
+      '',
+      '1. een rand',
+      '2. afgeronde hoeken',
+      '',
+      '<CodeEditor />',
+      '',
+      '<details>',
+      '<summary>Tip</summary>',
+      'Gebruik border.',
+      '</details>',
+    ].join('\n');
+    expect(opdrachtTekst(bron)).toBe(
+      '**Opdracht:** Bouw een kaart met: 1. een rand 2. afgeronde hoeken',
+    );
+  });
+
+  it('neemt onder een opdracht-kop de eerste alinea', () => {
+    const bron = ['## Opdracht 2: Kaart', '', 'Maak een kaart met een rand.', '', 'Los.'].join(
+      '\n',
+    );
+    expect(opdrachtTekst(bron)).toBe('## Opdracht 2: Kaart Maak een kaart met een rand.');
+  });
+});
 
 function lesTekst(les: string): string {
   return readFileSync(`${DOCS}/${les}.mdx`, 'utf8');
@@ -112,7 +146,13 @@ describe('de leerlijn is compleet', () => {
   it('elk herkenbaar concept heeft een les die het uitlegt', () => {
     // Een nieuw concept in curriculum.ts dwingt zo een keuze af: waar hoort
     // het thuis in de leerlijn? Zonder deze test glipt het er stil in.
-    const ids = [...alleConcepten().map((t) => t.id), ...htmlConcepten()];
+    // De proza-termen tellen mee: een verkeerd gespelde of hernoemde sleutel
+    // zou anders stil overgeslagen worden en die ene check uitzetten.
+    const ids = [
+      ...alleConcepten().map((t) => t.id),
+      ...htmlConcepten(),
+      ...Object.keys(PROZA_TERMEN),
+    ];
     const wees = [...new Set(ids)].filter((id) => !INTRO_VAN.has(id)).sort();
 
     expect(wees).toEqual([]);
