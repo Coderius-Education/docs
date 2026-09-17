@@ -2,10 +2,10 @@ import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
 
 # Wat er gebeurt zonder herladen
 
-Hetzelfde formulier als bij [één formulier](/docs/FastAPI/verzoek-post), maar nu met `hx-post`. Aan de serverkant verandert er bijna niets; het verschil zit aan het begin en aan het eind.
+Dezelfde stappen als bij [één klik](/docs/FastAPI/verzoek-get) en [één formulier](/docs/FastAPI/verzoek-post), maar nu stuurt htmx het verzoek. Aan de serverkant verandert er bijna niets; het verschil zit aan het begin en aan het eind.
 
 <VerzoekCyclus variant="htmx" />
 
-Vergelijk stap 6 en 7 met het formulier zonder htmx. Daar was het antwoord een omleiding en begon de browser opnieuw met een GET, de hele pagina over de lijn. Hier is het antwoord een stuk HTML en blijft de pagina staan. Het post/redirect/get-patroon uit [Terug naar de lijst](/docs/FastAPI/redirect) is niet nodig, want de browser heeft nooit een pagina verlaten.
+Vergelijk stap 6 en 7 met het formulier zonder htmx. Daar was het antwoord een omleiding en begon de browser opnieuw met een GET, de hele pagina over de lijn. Hier is het antwoord een stukje HTML en blijft de pagina staan. Het post/redirect/get-patroon uit [Terug naar de lijst](/docs/FastAPI/redirect) is niet nodig, want de browser heeft nooit een pagina verlaten.
 
-Stap 3 en 4 zijn dezelfde als altijd, en dat geldt ook voor de blokken hierna. Ook een verzoek van htmx komt van de bezoeker, dus wat je in stap 4 controleert, controleer je nog steeds daar en niet in de HTML.
+Stap 3 en 4 zijn dezelfde als altijd. Ook een verzoek van htmx komt van de bezoeker, dus wat je in stap 4 controleert, controleer je nog steeds daar en niet in de HTML.

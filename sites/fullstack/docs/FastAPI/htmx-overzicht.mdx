@@ -1,0 +1,240 @@
+# Wat kan htmx allemaal
+
+Met `hx-get` en `hx-target` haalde je een zin op zonder herladen. Hetzelfde idee werkt voor alles wat je tot nu toe via een herlaad deed. Dit is een overzicht van de mogelijkheden, elk met de HTML en het endpoint dat erbij hoort. Kies wat je gastenboek nodig heeft; je hoeft ze niet allemaal te bouwen.
+
+Twee regels gelden overal. Het endpoint geeft een **stukje HTML** terug: een zin in een `HTMLResponse`, of een template zonder `<html>` eromheen. En het geeft **nooit een omleiding**: htmx volgt die en zet dan de hele pagina in het doel.
+
+## Een formulier versturen
+
+Het gastenboekformulier zonder herladen. Vervang `method` en `action` door `hx-post`:
+
+```html
+<form hx-post="/gastenboek" hx-target="#antwoord">
+    <input type="text" name="naam" placeholder="Je naam" required>
+    <input type="text" name="bericht" placeholder="Je bericht" required>
+    <button type="submit">Verstuur</button>
+</form>
+<p id="antwoord"></p>
+```
+
+In het endpoint uit [Terug naar de lijst](/docs/FastAPI/redirect) verandert één regel: de `return`.
+
+```python
+@app.post("/gastenboek")
+async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    return HTMLResponse(f"Bedankt, {naam}. Je bericht staat in het gastenboek.")
+```
+
+De `Form`-parameters blijven hetzelfde; voor je endpoint is er geen verschil met een formulier zonder htmx. De omleiding met 303 is niet meer nodig, want de browser is nooit weggegaan.
+
+**Handig:** met `hx-on::after-request="this.reset()"` op de `<form>` maakt htmx de velden leeg zodra het antwoord binnen is.
+
+## Een stuk van de pagina verversen
+
+Een knop die de lijst met berichten opnieuw ophaalt. Het antwoord is nu geen zin maar een lijst, dus die krijgt een eigen template, `templates/berichten_lijst.html`, zonder `<html>` of `<head>`:
+
+```html
+<ul>
+    {% for sleutel, bericht in berichten %}
+        <li>{{ bericht.naam }}: {{ bericht.bericht }}</li>
+    {% endfor %}
+</ul>
+```
+
+```python
+@app.get("/berichten/lijst")
+async def berichten_lijst(request: Request):
+    with SqliteDict("gastenboek.db") as db:
+        alle_berichten = list(db.items())
+    return templates.TemplateResponse(
+        request,
+        "berichten_lijst.html",
+        {"berichten": alle_berichten}
+    )
+```
+
+In `berichten.html` wijst de knop naar dat endpoint, en de lijst krijgt een id:
+
+```html
+<button hx-get="/berichten/lijst" hx-target="#berichten-lijst">Ververs</button>
+
+<div id="berichten-lijst">
+    {% include "berichten_lijst.html" %}
+</div>
+```
+
+**`{% include %}`** plakt de lijst-template in de pagina, zodat de lijst maar één keer in je project staat: de pagina en het antwoord na een klik gebruiken dezelfde HTML.
+
+## Vanzelf verversen
+
+Zet je server open voor de klas, dan wil je berichten van anderen zien verschijnen zonder F5. Met **`hx-trigger`** kies je wanneer het verzoek gaat:
+
+```html
+<div id="berichten-lijst" hx-get="/berichten/lijst" hx-trigger="every 10s">
+    {% include "berichten_lijst.html" %}
+</div>
+```
+
+Zonder `hx-target` komt het antwoord in het element zelf. Elke tien seconden komt er een regel in de terminal bij, ook als er niets veranderd is. Kies het interval naar wat de bezoeker nodig heeft: elke tien seconden is te doen, elke seconde met dertig bezoekers niet.
+
+## Verwijderen
+
+GET haalt op, POST stuurt in. HTTP kent meer werkwoorden, en **DELETE** zegt precies wat het doet. Een formulier zonder htmx kan alleen GET en POST; htmx kan ze allemaal.
+
+```python
+@app.delete("/bericht/{sleutel}")
+async def bericht_verwijderen(sleutel: str):
+    with SqliteDict("gastenboek.db") as db:
+        if sleutel not in db:
+            raise HTTPException(status_code=404, detail="Dit bericht bestaat niet")
+        del db[sleutel]
+        db.commit()
+    return HTMLResponse("")
+```
+
+In `berichten_lijst.html` krijgt elk bericht een id en een knop:
+
+```html
+<li id="bericht-{{ sleutel }}">
+    {{ bericht.naam }}: {{ bericht.bericht }}
+    <button hx-delete="/bericht/{{ sleutel }}"
+            hx-target="#bericht-{{ sleutel }}"
+            hx-swap="outerHTML"
+            hx-confirm="Dit bericht verwijderen?">Verwijderen</button>
+</li>
+```
+
+Het antwoord is leeg, en dat is de bedoeling. **`hx-swap`** zegt hoe het antwoord in het doel komt: standaard `innerHTML`, alles bínnen het doel vervangen; `outerHTML` vervangt het doel zelf, dus met een leeg antwoord verdwijnt het hele `<li>`. **`hx-confirm`** laat de browser eerst de vraag stellen; bij Annuleren gaat er geen verzoek.
+
+## Zoeken terwijl je typt
+
+Een zoekveld dat de server vraagt om berichten met een woord erin:
+
+```html
+<input type="search" name="term" placeholder="Zoek een woord"
+       hx-get="/berichten/lijst" hx-target="#berichten-lijst"
+       hx-trigger="keyup changed delay:300ms">
+```
+
+Een `<input>` met `hx-get` stuurt zijn eigen waarde mee als query-parameter, dus `/berichten/lijst?term=hoi`. Het endpoint van hierboven krijgt er een parameter bij:
+
+```python
+@app.get("/berichten/lijst")
+async def berichten_lijst(request: Request, term: str = ""):
+    with SqliteDict("gastenboek.db") as db:
+        alle_berichten = list(db.items())
+    gevonden = [
+        (sleutel, bericht) for sleutel, bericht in alle_berichten
+        if term.lower() in bericht["bericht"].lower()
+    ]
+    return templates.TemplateResponse(
+        request,
+        "berichten_lijst.html",
+        {"berichten": gevonden}
+    )
+```
+
+`delay:300ms` wacht tot je even stopt met typen, anders gaat er bij elke letter een verzoek. En `changed` slaat toetsen over die de tekst niet veranderen, zoals de pijltjes.
+
+## Waar het antwoord komt
+
+| Attribuut | Betekenis | Zonder |
+|:---:|---|---|
+| `hx-target="#id"` | het element dat het antwoord krijgt | het element met het attribuut zelf |
+| `hx-swap="innerHTML"` | vervang wat er in het doel staat | dit is de standaard |
+| `hx-swap="outerHTML"` | vervang het doel zelf | |
+| `hx-swap="beforeend"` | zet het antwoord achter wat er al staat | |
+
+## Er gaat iets mis
+
+Bij htmx zie je fouten niet op de pagina. Een 404, een 500 of een server die uit staat: htmx laat het doel dan met rust, en op het scherm gebeurt niets. Kijk daarom bij elk probleem eerst in het tabblad **Netwerk**. Een rode regel zegt wat er mis is: 404 is een verkeerd pad in `hx-get` of `hx-post`, 500 een fout in je endpoint (kijk in de terminal), `(mislukt)` een server die niet draait, 405 een `@app.post` waar `hx-delete` op wijst.
+
+## Opdrachten
+
+### Opdracht 1: Predict - De omleiding
+
+Je zet het gastenboekformulier om naar `hx-post`, maar laat in het endpoint `return RedirectResponse(url="/berichten", status_code=303)` staan.
+
+**Vraag:** wat komt er in `#antwoord`?
+
+<details>
+<summary>Tip</summary>
+
+htmx doet met een omleiding wat de browser ermee doet, en zet daarna alles wat binnenkomt in het doel.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Je hele berichtenpagina, met kop en al, in de `<p>` onder het formulier. htmx volgt de omleiding, krijgt de complete pagina van `/berichten` terug en zet die in het doel. Een endpoint voor htmx geeft een stukje terug, nooit een omleiding.
+
+</details>
+
+### Opdracht 2: Run - Het formulier
+
+Zet je gastenboekformulier om naar `hx-post`, zoals in het eerste recept. Verstuur een bericht en kijk in de terminal: één regel, geen omleiding en geen tweede GET.
+
+### Opdracht 3: Investigate - Twee keer verwijderen
+
+Bouw het recept Verwijderen. Open `/berichten` in twee tabbladen, verwijder hetzelfde bericht in het ene, en daarna in het andere.
+
+<details>
+<summary>Antwoord</summary>
+
+In het tweede tabblad gebeurt niets: het bericht blijft staan. In Netwerk staat een rode regel met 404, want je endpoint zei "Dit bericht bestaat niet". htmx laat de pagina met rust bij een fout, dus de bezoeker ziet een bericht dat er niet meer is, tot hij op F5 drukt. Dat is de keerzijde van niet herladen: de pagina kan achterlopen op de server.
+
+</details>
+
+### Opdracht 4: Make - Kies er twee
+
+Kies twee recepten uit dit overzicht en bouw ze in je gastenboek. Schrijf bij allebei in één zin waarom je die koos.
+
+<details>
+<summary>Tip</summary>
+
+Verversen en verwijderen horen bij elkaar: als je kunt verwijderen wil je ook dat de lijst klopt. Het formulier en zoeken staan los van de rest.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Er is geen fout antwoord, wel een valkuil: elk recept dat de lijst verandert (versturen, verwijderen) moet de lijst ook op de pagina bijwerken. Laat het endpoint dan `berichten_lijst.html` teruggeven en richt de knop op `#berichten-lijst`, in plaats van één zin of één `<li>`. Een groter stuk terugsturen kost iets meer, maar houdt alles wat erin staat kloppend.
+
+</details>
+
+### Opdracht 5: Make - Alles wissen
+
+Maak een knop "Alles wissen" die het hele gastenboek leegt, na een bevestiging, en de lege lijst toont.
+
+<details>
+<summary>Tip</summary>
+
+Een DELETE-endpoint op `/berichten` dat alle sleutels weghaalt. Het doel is de hele lijst, en het antwoord is de lijst-template met een lege lijst.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+@app.delete("/berichten")
+async def alles_wissen(request: Request):
+    with SqliteDict("gastenboek.db") as db:
+        for sleutel in list(db.keys()):
+            del db[sleutel]
+        db.commit()
+    return templates.TemplateResponse(request, "berichten_lijst.html", {"berichten": []})
+```
+
+```html
+<button hx-delete="/berichten" hx-target="#berichten-lijst" hx-confirm="Alle berichten verwijderen?">Alles wissen</button>
+```
+
+De `list()` om `db.keys()` is nodig: je mag niet uit een database verwijderen terwijl je er nog doorheen loopt.
+
+</details>

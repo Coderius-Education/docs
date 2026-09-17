@@ -8,7 +8,7 @@ import { DevtoolsPaneel, NetwerkTabel } from '@site/src/components/Devtools';
   ]}
 />
 
-Na het versturen van een bericht verspringt de pagina: de browser gaat naar `/gastenboek`, krijgt een omleiding, en laadt `/berichten` helemaal opnieuw. In deze les blijft de pagina staan. De browser stuurt het formulier op de achtergrond, en de server stuurt één zin terug die onder het formulier verschijnt. Daar gebruik je **htmx** voor: een bestand dat je HTML twee nieuwe attributen geeft. Je schrijft er zelf geen JavaScript voor.
+Tot nu toe betekent "iets aan de server vragen" dat de hele pagina opnieuw laadt: je klikt op een link of verstuurt een formulier, en alles verspringt. In deze les vraagt een knop iets aan de server terwijl de pagina blijft staan. Daar gebruik je **htmx** voor: een bestand dat je HTML twee nieuwe attributen geeft. Je schrijft er zelf geen JavaScript voor.
 
 ## Waar het bestand komt
 
@@ -18,19 +18,18 @@ Maak een map `static/js/` en zet daar <a href="/htmx/htmx.min.js" download>htmx.
 je-project/
 ├── main.py
 ├── static/
-│   ├── css/
 │   ├── js/
 │   │   └── htmx.min.js
 │   └── pages/
-│       └── gastenboek_form.html
+│       └── home.html
 └── templates/
 ```
 
 Het is dezelfde versie als op [htmx.org](https://htmx.org/docs/#installing). Door het bestand in je eigen project te zetten werkt je site ook op een netwerk dat externe scripts blokkeert, zoals op school. Aan `main.py` verandert niets: `app.mount` serveert de map `static` al.
 
-## Twee attributen op je formulier
+## Een knop en een lege alinea
 
-Open `static/pages/gastenboek_form.html`. Koppel htmx in de `<head>`, en vervang `method` en `action` door `hx-post`:
+Open `static/pages/home.html` uit [HTML in bestanden](/docs/FastAPI/html_bestanden). Koppel htmx in de `<head>` en zet een knop met een lege `<p>` erbij:
 
 ```html
 <!DOCTYPE html>
@@ -39,134 +38,104 @@ Open `static/pages/gastenboek_form.html`. Koppel htmx in de `<head>`, en vervang
         <script src="/static/js/htmx.min.js"></script>
     </head>
     <body>
-        <h1>Gastenboek</h1>
-        <form hx-post="/gastenboek" hx-target="#antwoord">
-            <input type="text" name="naam" placeholder="Je naam" required>
-            <input type="text" name="bericht" placeholder="Je bericht" required>
-            <button type="submit">Verstuur</button>
-        </form>
-        <p id="antwoord"></p>
+        <h1>Welkom</h1>
+        <button hx-get="/tijd" hx-target="#uitkomst">Hoe laat is het?</button>
+        <p id="uitkomst"></p>
     </body>
 </html>
 ```
 
-**`hx-post`** doet wat `method="post"` en `action` samen deden, met één verschil: htmx stuurt het verzoek, en de browser blijft op de pagina. **`hx-target`** zegt waar het antwoord van de server komt: in het element met id `antwoord`, de lege `<p>` onder het formulier.
+**`hx-get`** doet wat een link doet, een GET naar `/tijd`, met één verschil: htmx stuurt het verzoek, en de browser blijft op de pagina. **`hx-target`** zegt waar het antwoord van de server komt: in het element met id `uitkomst`.
 
-## Eén regel anders in het endpoint
+## Het endpoint
 
 <CodeUitleg>
 
 ```python showLineNumbers
+from datetime import datetime
 from fastapi.responses import HTMLResponse
 
-@app.post("/gastenboek")
-async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
-    with SqliteDict("gastenboek.db") as db:
-        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
-        db.commit()
-    return HTMLResponse(f"Bedankt, {naam}. Je bericht staat in het gastenboek.")
+@app.get("/tijd")
+async def tijd():
+    return HTMLResponse(f"Het is nu {datetime.now().strftime('%H:%M:%S')}")
 ```
 
-<Regel n={4} tot={7}>
-Dit is je endpoint uit [Terug naar de lijst](/docs/FastAPI/redirect), ongewijzigd. Voor je Python-code maakt het niet uit of htmx het formulier stuurde of de browser zelf.
+<Regel n={4} tot={5}>
+Een endpoint zoals je eerste, uit [Je eerste endpoint](/docs/FastAPI/eerste_endpoint). Voor je Python-code maakt het niet uit of htmx het verzoek stuurde of de browser zelf.
 </Regel>
 
-<Regel n={8}>
-Hier zat `return RedirectResponse(url="/berichten", status_code=303)`. Dat hoeft niet meer: de browser is nooit weggegaan. Het antwoord is één zin HTML, en htmx zet die in `#antwoord`.
+<Regel n={6}>
+Het antwoord is één zin, geen hele pagina. `datetime.now()` is de tijd van de server, en `strftime` maakt er "14:32:07" van. htmx zet de zin in `#uitkomst`.
 </Regel>
 
 </CodeUitleg>
 
 ## Kijk wat er over de lijn gaat
 
-Open het tabblad **Netwerk** zoals in [Kijken wat de browser doet](/docs/FastAPI/devtools-netwerk) en verstuur een bericht. Er komt één regel bij, en de pagina wordt niet opnieuw geladen:
+Open het tabblad **Netwerk** zoals in [Kijken wat de browser doet](/docs/FastAPI/devtools-netwerk) en klik op de knop. Er komt één regel bij, en de pagina wordt niet opnieuw geladen:
 
 <DevtoolsPaneel tab="Netwerk">
-  <NetwerkTabel rijen={[{ naam: 'gastenboek', status: 200, type: 'xhr', grootte: '61 B' }]} />
+  <NetwerkTabel rijen={[{ naam: 'tijd', status: 200, type: 'xhr', grootte: '21 B' }]} />
 </DevtoolsPaneel>
 
-Het type is `xhr`: een verzoek dat een script stuurde, geen pagina die de browser opvroeg. Klik de regel aan. Bij **Reactie** staat alleen je zin, geen `<html>` en geen `<head>`. Bij **Headers** stuurde htmx `HX-Request: true` mee, zodat een server kan zien dat het verzoek van htmx komt.
-
-In de terminal staat één regel, `POST /gastenboek 200 OK`. Geen omleiding, geen tweede GET.
+Het type is `xhr`: een verzoek dat een script stuurde, geen pagina die de browser opvroeg. Klik de regel aan. Bij **Reactie** staat alleen je zin, geen `<html>` en geen `<head>`. In de terminal staat één regel, `GET /tijd 200 OK`.
 
 ## Testen
 
-1. Download `htmx.min.js` naar `static/js/` en pas `gastenboek_form.html` aan
-2. Verander de `return` in je POST-endpoint
-3. Verstuur een bericht: de zin verschijnt onder het formulier, de pagina verspringt niet en de adresbalk blijft `/gastenboek`
-4. Ga naar `/berichten`: het bericht staat in de lijst
+1. Download `htmx.min.js` naar `static/js/` en pas `home.html` aan
+2. Voeg het endpoint `/tijd` toe
+3. Klik op de knop: de tijd verschijnt onder de knop, de pagina verspringt niet en de adresbalk verandert niet
+4. Klik nog een keer: de tijd is bijgewerkt
 
 :::danger[Gaat er iets mis?]
-Verschijnt na het versturen een hele pagina onder je formulier, met een kop erin? Dan geeft je endpoint nog een omleiding terug; htmx zet alles wat binnenkomt in het doel. Verspringt de pagina en komt er `?naam=` in de adresbalk? Dan is htmx niet geladen: kijk in Netwerk of `htmx.min.js` een 200 kreeg. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
+Gebeurt er niets bij een klik? Dan is htmx niet geladen: kijk in Netwerk of `htmx.min.js` een 200 kreeg, en of de script-tag in de `<head>` staat. Verschijnt er een hele pagina onder de knop? Dan geeft je endpoint een pagina of een omleiding terug in plaats van een stukje. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
 :::
 
 ## Opdrachten
 
-### Opdracht 1: Predict - Zonder doel
+### Opdracht 1: Predict - Twee keer klikken
 
-Je haalt `hx-target` van het formulier af, zodat er alleen `hx-post="/gastenboek"` staat, en verstuurt een bericht.
+Je klikt twee keer op de knop, met een paar seconden ertussen.
 
-**Vraag:** waar komt de zin terecht?
+**Vraag:** hoeveel regels staan er in de terminal, en hoeveel tijden staan er op de pagina?
 
 <details>
 <summary>Tip</summary>
 
-htmx moet het antwoord ergens kwijt. Als jij geen plek aanwijst, kiest het de plek die het al kent.
+Elke klik is een verzoek. En `hx-target` zegt niet "zet erbij", maar "zet erin".
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-In het formulier zelf. Zonder `hx-target` zet htmx het antwoord in het element waar het attribuut op staat, en dat is de `<form>`. De invoervelden en de knop zijn weg; er staat een zin voor in de plaats. Het endpoint deed niets fout, de HTML kwam alleen op de verkeerde plek.
+Twee regels in de terminal, één tijd op de pagina. Elke klik stuurt een nieuw verzoek, en elk antwoord vervangt wat er in `#uitkomst` stond. De tweede tijd staat er dus in plaats van de eerste, niet eronder.
 
 </details>
 
 ### Opdracht 2: Run
 
-Bouw het voorbeeld na en verstuur drie berichten achter elkaar. Kijk bij elk bericht in de terminal en in Netwerk.
+Bouw het voorbeeld na. Kijk bij elke klik in de terminal en in Netwerk.
 
-### Opdracht 3: Investigate - De omleiding terugzetten
+### Opdracht 3: Investigate - Zonder htmx
 
-Zet in het POST-endpoint de oude regel terug, `return RedirectResponse(url="/berichten", status_code=303)`, en verstuur een bericht.
-
-<details>
-<summary>Antwoord</summary>
-
-Je hele berichtenpagina verschijnt in de `<p>` onder het formulier, met kop en al. htmx volgt de omleiding net als de browser, krijgt daardoor de complete pagina van `/berichten` terug, en zet die netjes in het doel. Een endpoint dat voor htmx werkt geeft een stukje terug, nooit een omleiding.
-
-</details>
-
-### Opdracht 4: Make - Leeg formulier
-
-Na het versturen blijft je tekst in de velden staan. Zorg dat het formulier leeg is zodra het antwoord binnen is.
-
-<details>
-<summary>Tip</summary>
-
-htmx stuurt na elk verzoek een gebeurtenis `after-request`. Met `hx-on::after-request="..."` koppel je daar één regel aan, en een formulier maak je leeg met `reset()`.
-
-</details>
+Haal de script-tag uit de `<head>` en klik op de knop.
 
 <details>
 <summary>Antwoord</summary>
 
-```html
-<form hx-post="/gastenboek" hx-target="#antwoord" hx-on::after-request="this.reset()">
-```
-
-`this` is het formulier zelf, en `reset()` zet alle velden terug naar hun beginwaarde. Dit is de enige regel JavaScript in deze les, en hij staat in de HTML.
+Er gebeurt niets. `hx-get` en `hx-target` zijn voor de browser onbekende attributen, en een `<button>` buiten een formulier doet uit zichzelf niets. Het is htmx dat die attributen leest en het verzoek stuurt. Zonder het bestand staan er alleen woorden in je HTML.
 
 </details>
 
-### Opdracht 5: Make - Tel mee
+### Opdracht 4: Make - Hoeveel berichten?
 
-Laat de zin ook zeggen hoeveel berichten er nu in het gastenboek staan: "Bedankt, Sam. Er staan nu 4 berichten in het gastenboek."
+Zet een tweede knop op de pagina: "Hoeveel berichten staan er in het gastenboek?". Het antwoord komt uit de database.
 
 <details>
 <summary>Tip</summary>
 
-Binnen het `with`-blok weet je hoeveel sleutels de database heeft: `len(db)`. Bewaar dat in een variabele voordat het blok sluit.
+Een nieuw endpoint, bijvoorbeeld `/aantal`. Binnen het `with`-blok geeft `len(db)` het aantal sleutels. De knop wijst met `hx-get` naar dat endpoint, en mag hetzelfde doel gebruiken.
 
 </details>
 
@@ -174,15 +143,39 @@ Binnen het `with`-blok weet je hoeveel sleutels de database heeft: `len(db)`. Be
 <summary>Antwoord</summary>
 
 ```python
-@app.post("/gastenboek")
-async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
+@app.get("/aantal")
+async def aantal():
     with SqliteDict("gastenboek.db") as db:
-        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
-        db.commit()
         aantal = len(db)
-    return HTMLResponse(f"Bedankt, {naam}. Er staan nu {aantal} berichten in het gastenboek.")
+    return HTMLResponse(f"Er staan {aantal} berichten in het gastenboek.")
 ```
 
-Het getal komt van de server, dus het klopt ook als iemand anders intussen een bericht stuurde.
+```html
+<button hx-get="/aantal" hx-target="#uitkomst">Hoeveel berichten?</button>
+```
+
+Twee knoppen, één doel: het antwoord van de laatste klik staat in de `<p>`.
+
+</details>
+
+### Opdracht 5: Make - Een klok
+
+Laat de tijd elke seconde vanzelf bijwerken, zonder knop.
+
+<details>
+<summary>Tip</summary>
+
+Zet `hx-get` op de `<p>` zelf, en zeg met `hx-trigger="every 1s"` wanneer het verzoek moet gaan. Zonder `hx-target` komt het antwoord in het element zelf.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<p hx-get="/tijd" hx-trigger="every 1s">Even geduld</p>
+```
+
+Kijk in de terminal: elke seconde een regel, ook als niemand kijkt. Voor een klok is dat de bedoeling, maar het laat zien dat vanzelf verversen de server werk kost. In [Wat kan htmx allemaal](/docs/FastAPI/htmx-overzicht) staat wanneer dat de moeite waard is.
 
 </details>

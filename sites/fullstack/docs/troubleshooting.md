@@ -435,11 +435,11 @@ Meer uitleg: [Server of browser?](/docs/FastAPI/server-of-browser)
 ## htmx
 
 <details>
-<summary>Na het versturen staat de hele pagina in de lijst (twee keer de kop)</summary>
+<summary>Na een klik staat de hele pagina in het doel (twee keer de kop)</summary>
 
 **Oorzaak:** je endpoint geeft de hele pagina terug, of een omleiding. htmx volgt een omleiding net als de browser en zet alles wat binnenkomt in het doel van `hx-target`.
 
-**Oplossing:** laat het endpoint alleen het stuk teruggeven dat in het doel hoort:
+**Oplossing:** laat het endpoint alleen het stukje teruggeven dat in het doel hoort:
 
 {/* niet-compileren: twee losse return-regels uit een handler */}
 ```python
@@ -455,9 +455,9 @@ Meer uitleg: [Zonder herladen met htmx](/docs/FastAPI/htmx)
 </details>
 
 <details>
-<summary>Het formulier verspringt en er komt ?naam= in de adresbalk</summary>
+<summary>Een knop doet niets, of het formulier verspringt met ?naam= in de adresbalk</summary>
 
-**Oorzaak:** htmx is niet geladen. Zonder htmx is `hx-post` een attribuut dat de browser niet kent, en een formulier zonder `method` verstuurt hij als GET naar dezelfde pagina.
+**Oorzaak:** htmx is niet geladen. Zonder htmx zijn `hx-get` en `hx-post` attributen die de browser niet kent: een knop doet dan niets, en een formulier zonder `method` verstuurt hij als GET naar dezelfde pagina.
 
 **Oplossing:** kijk in het tabblad Netwerk of `htmx.min.js` een 200 kreeg. Een 404 betekent dat het bestand niet op `static/js/htmx.min.js` staat, of dat de script-tag een ander pad noemt:
 
@@ -476,7 +476,7 @@ Meer uitleg: [Zonder herladen met htmx](/docs/FastAPI/htmx)
 
 **Oplossing:** open Netwerk en klik nog een keer. De rode regel zegt wat er mis is: 404 is een verkeerd pad in `hx-get` of `hx-post`, 500 een fout in je endpoint (kijk in de terminal), `(mislukt)` een server die niet draait.
 
-Meer uitleg: [Ophalen zonder herladen](/docs/FastAPI/htmx-ophalen)
+Meer uitleg: [Wat kan htmx allemaal](/docs/FastAPI/htmx-overzicht)
 
 </details>
 
@@ -496,7 +496,7 @@ Meer uitleg: [Ophalen zonder herladen](/docs/FastAPI/htmx-ophalen)
 @app.delete("/bericht/{sleutel}")
 ```
 
-Meer uitleg: [Verwijderen zonder herladen](/docs/FastAPI/htmx-verwijderen)
+Meer uitleg: [Wat kan htmx allemaal](/docs/FastAPI/htmx-overzicht)
 
 </details>
 

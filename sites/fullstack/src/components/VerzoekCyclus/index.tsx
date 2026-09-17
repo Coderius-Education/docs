@@ -206,44 +206,44 @@ const POST_STAPPEN: Stap[] = [
 const HTMX_STAPPEN: Stap[] = [
   {
     kant: 'browser',
-    titel: 'Je klikt op Verstuur',
-    tekst: 'htmx ziet hx-post op het formulier en houdt de browser tegen: geen nieuwe pagina.',
+    titel: 'Je klikt op een knop',
+    tekst:
+      'htmx ziet hx-get of hx-post op het element en houdt de browser tegen: geen nieuwe pagina.',
     to: '/docs/FastAPI/htmx',
     les: 'Zonder herladen met htmx',
   },
   {
     kant: 'browser',
-    titel: 'htmx stuurt de POST',
-    tekst:
-      'Dezelfde velden als anders, plus een header HX-Request: true. In Netwerk staat hij als xhr.',
+    titel: 'htmx stuurt het verzoek',
+    tekst: 'Een GET of een POST, met dezelfde velden als anders. In Netwerk staat hij als xhr.',
     to: '/docs/FastAPI/devtools-netwerk',
     les: 'Kijken wat de browser doet',
   },
   {
     kant: 'server',
-    titel: 'FastAPI pakt de velden uit',
-    tekst: 'Voor je endpoint is er geen verschil met een formulier zonder htmx.',
-    to: '/docs/FastAPI/forms',
-    les: 'Eigen POST request',
+    titel: 'FastAPI zoekt het endpoint',
+    tekst: 'Voor je endpoint is er geen verschil met een verzoek zonder htmx.',
+    to: '/docs/FastAPI/eerste_endpoint',
+    les: 'Je eerste endpoint',
   },
   {
     kant: 'server',
-    titel: 'Jouw Python slaat op',
+    titel: 'Jouw Python draait',
     tekst:
-      'Controleer hier wat je hebt gekregen, en bewaar het. Ook dit verzoek komt van de bezoeker.',
-    to: '/docs/FastAPI/post_naar_database',
-    les: 'POST naar database',
+      'Leest de tijd, of slaat een bericht op. Ook dit verzoek komt van de bezoeker, dus controleer hier.',
+    to: '/docs/FastAPI/server-of-browser',
+    les: 'Server of browser?',
   },
   {
     kant: 'server',
     titel: 'Jouw functie maakt een stukje HTML',
     tekst: 'Eén zin in een HTMLResponse, of een template zonder <html> eromheen.',
-    to: '/docs/FastAPI/htmx',
-    les: 'Zonder herladen met htmx',
+    to: '/docs/FastAPI/htmx-overzicht',
+    les: 'Wat kan htmx allemaal',
   },
   {
     kant: 'server',
-    titel: 'Het antwoord is een stuk HTML',
+    titel: 'Het antwoord is een stukje HTML',
     tekst:
       'Geen omleiding: de browser is nooit weggegaan, dus er is niets om naar terug te sturen.',
     to: '/docs/FastAPI/redirect',
@@ -251,7 +251,7 @@ const HTMX_STAPPEN: Stap[] = [
   },
   {
     kant: 'browser',
-    titel: 'htmx zet het stuk op zijn plek',
+    titel: 'htmx zet het stukje op zijn plek',
     tekst: 'In het element van hx-target. De rest van de pagina blijft staan, de adresbalk ook.',
     to: '/docs/FastAPI/htmx',
     les: 'Zonder herladen met htmx',
@@ -306,7 +306,7 @@ const VARIANTEN = {
   static: { stappen: STATIC_STAPPEN, titel: 'Eén pagina, drie verzoeken' },
   get: { stappen: GET_STAPPEN, titel: 'Een pagina opvragen' },
   post: { stappen: POST_STAPPEN, titel: 'Een formulier versturen' },
-  htmx: { stappen: HTMX_STAPPEN, titel: 'Een formulier versturen zonder herladen' },
+  htmx: { stappen: HTMX_STAPPEN, titel: 'Een verzoek zonder herladen' },
   sessie: { stappen: SESSIE_STAPPEN, titel: 'Herkend worden met een sessie' },
 } as const;
 
