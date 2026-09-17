@@ -428,7 +428,7 @@ Download `htmx.min.js` (de link staat bij [Zonder herladen met htmx](/docs/FastA
 <button hx-delete="/bericht/{{ sleutel }}" hx-target="#bericht-{{ sleutel }}" hx-swap="outerHTML">Verwijderen</button>
 ```
 
-Het endpoint geeft een stuk HTML terug (een `TemplateResponse` van een fragment), nooit een omleiding.
+Het endpoint geeft een stukje HTML terug (`HTMLResponse("Bedankt")` of een template zonder `<html>` eromheen), nooit een omleiding.
 
 </details>
 

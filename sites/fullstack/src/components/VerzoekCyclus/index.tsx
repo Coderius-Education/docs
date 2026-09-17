@@ -236,8 +236,8 @@ const HTMX_STAPPEN: Stap[] = [
   },
   {
     kant: 'server',
-    titel: 'Jinja2 vult alleen het stuk',
-    tekst: 'berichten_lijst.html, zonder <html> of <head> eromheen.',
+    titel: 'Jouw functie maakt een stukje HTML',
+    tekst: 'Eén zin in een HTMLResponse, of een template zonder <html> eromheen.',
     to: '/docs/FastAPI/htmx',
     les: 'Zonder herladen met htmx',
   },

@@ -37,7 +37,7 @@ Het antwoord is leeg, en dat is de bedoeling: htmx zet "niets" op de plek van he
 
 ## De knop
 
-In `templates/berichten_lijst.html` krijgt elk bericht een id en een knop:
+In `templates/berichten_lijst.html` uit [Ophalen zonder herladen](/docs/FastAPI/htmx-ophalen) krijgt elk bericht een id en een knop:
 
 ```html
 <li id="bericht-{{ sleutel }}">
@@ -131,14 +131,14 @@ De `list()` om `db.keys()` is nodig: je mag niet uit een database verwijderen te
 
 </details>
 
-### Opdracht 5: Make - Het aantal klopt weer
+### Opdracht 5: Make - De hele lijst terug
 
-Heb je in [Zonder herladen met htmx](/docs/FastAPI/htmx) het aantal berichten boven de lijst gezet? Verwijder dan een bericht en kijk naar dat getal.
+Zet in `berichten_lijst.html` boven de `<ul>` een regel met het aantal berichten, `{{ berichten|length }} berichten`. Verwijder dan een bericht en kijk naar dat getal.
 
 <details>
 <summary>Tip</summary>
 
-Het getal staat in `berichten_lijst.html`, maar verwijderen vervangt alleen één `<li>`. Laat het endpoint de hele lijst teruggeven en richt de knop op `#berichten-lijst`.
+Het getal loopt achter, want verwijderen vervangt alleen één `<li>`. Laat het endpoint de hele lijst teruggeven en richt de knop op `#berichten-lijst`.
 
 </details>
 

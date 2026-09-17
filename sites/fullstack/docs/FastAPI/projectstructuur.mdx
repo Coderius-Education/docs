@@ -112,7 +112,7 @@ je-project/
 
 Er komen geen mappen bij: een lijstpagina en een detailpagina zijn gewoon twee templates naast elkaar.
 
-## Bij [JavaScript erbij](/docs/FastAPI/javascript)
+## Bij [Zonder herladen met htmx](/docs/FastAPI/htmx)
 
 ```
 je-project/
@@ -122,17 +122,18 @@ je-project/
 │   ├── css/
 │   │   └── style.css
 │   ├── js/
-│   │   └── app.js
+│   │   └── htmx.min.js
 │   └── pages/
 │       └── gastenboek_form.html
 └── templates/
     ├── berichten.html
+    ├── berichten_lijst.html
     └── bericht.html
 ```
 
-Je JavaScript komt naast je CSS te staan, in dezelfde `static`-map. Aan `main.py` verandert niets: `app.mount` serveert die map al.
+htmx is één bestand in een nieuwe map `static/js/`. In [Ophalen zonder herladen](/docs/FastAPI/htmx-ophalen) komt `berichten_lijst.html` erbij: een stuk pagina zonder `<html>` eromheen, dat een endpoint als antwoord teruggeeft.
 
-## Bij [Zonder herladen met htmx](/docs/FastAPI/htmx)
+## Bij [JavaScript erbij](/docs/FastAPI/javascript)
 
 ```
 je-project/
@@ -152,7 +153,7 @@ je-project/
     └── bericht.html
 ```
 
-htmx is een bestand naast je eigen JavaScript. De lijst krijgt een eigen template zonder `<html>` eromheen: een stuk pagina dat `berichten.html` met `{% include %}` gebruikt, en dat het POST-endpoint als antwoord teruggeeft.
+Je JavaScript komt naast htmx te staan, in dezelfde `static`-map. Aan `main.py` verandert niets: `app.mount` serveert die map al.
 
 ## Compleet overzicht
 

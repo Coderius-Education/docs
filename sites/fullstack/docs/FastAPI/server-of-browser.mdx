@@ -60,9 +60,7 @@ async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
 
 De vuistregel blijft: moet iets bewaard blijven of zichtbaar zijn voor anderen, dan hoort het op de server. Gaat het om reageren op wat de bezoeker doet met data die al op de pagina staat, dan is het de browser.
 
-## Een derde weg
-
-De middelste kolom ken je nog niet. Tot nu toe betekende "naar de server" ook "de pagina verspringt": versturen, omleiding, alles opnieuw. Dat hoeft niet. In het volgende blok, [Zonder herladen met htmx](/docs/FastAPI/htmx), doet de server het werk terwijl de pagina blijft staan. De hoofdvraag verandert er niet door: moet iets bewaard blijven, dan gaat het naar de server, met of zonder herladen.
+De middelste kolom is wat je in [Zonder herladen met htmx](/docs/FastAPI/htmx) deed. Het is nog steeds de server: dezelfde endpoints, dezelfde database, dezelfde controles. Alleen de pagina blijft staan. Voor de hoofdvraag maakt dat niets uit.
 
 ## Opdrachten
 
