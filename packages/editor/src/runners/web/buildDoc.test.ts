@@ -46,6 +46,23 @@ describe('buildDoc — console-interceptor', () => {
     expect(result).toContain("window.addEventListener('unhandledrejection', function(e) {");
   });
 
+  it('meldt een klik op een link naar een projectbestand aan de editor', () => {
+    // Issue #92: een klik op <a href="over.html"> liep dood, want de iframe
+    // heeft geen bestandslocatie. De editor bouwt dat bestand dan zelf.
+    const doc = buildDoc({ 'index.html': '<head></head>' }, 'index.html', 'tok');
+    const interceptor = doc.slice(0, doc.indexOf('</script>'));
+    expect(interceptor).toContain("document.addEventListener('click', function(e) {");
+    expect(interceptor).toContain("closest('a[href]')");
+    expect(interceptor).toContain("type: 'navigate'");
+    // Externe adressen en target="_blank" blijven aan de browser.
+    expect(interceptor).toContain('/^[a-z][a-z0-9+.-]*:/i.test(href)');
+    expect(interceptor).toContain("target !== '_self'");
+    // Een anker scrolt in de pagina zelf; anders laadt about:srcdoc#x de
+    // hele editor-site in de iframe, want srcdoc erft de basis-URL.
+    expect(interceptor).toContain("if (href.charAt(0) === '#') {");
+    expect(interceptor).toContain('scrollIntoView()');
+  });
+
   it('komt vooraan als er geen <head> is', () => {
     const result = buildDoc({ 'index.html': '<p>hoi</p>' }, 'index.html', TOKEN);
     expect(result.startsWith('<script>')).toBe(true);

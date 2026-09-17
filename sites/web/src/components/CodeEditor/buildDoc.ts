@@ -16,6 +16,21 @@ const CONSOLE_INTERCEPTOR = (veld: string) => `<script>
   window.addEventListener('pagehide', function() {
     window.parent.postMessage({ source: 'code-editor', veld: veld, type: 'verlaten' }, '*');
   });
+  // Een anker (href="#" of "#boven") of een lege href zou de hele lessite in
+  // het voorbeeld laden, want een srcdoc-document erft de basis-URL van de
+  // pagina eromheen. Een anker scrolt daarom hier, een lege href herlaadt
+  // het voorbeeld: precies wat een browser op een echte pagina doet.
+  document.addEventListener('click', function(e) {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+    if (!a) return;
+    var href = a.getAttribute('href');
+    if (href === '') { e.preventDefault(); window.location.reload(); return; }
+    if (href === null || href.charAt(0) !== '#') return;
+    e.preventDefault();
+    var doel = href.length > 1 ? document.getElementById(href.slice(1)) : null;
+    if (doel) { doel.scrollIntoView(); } else if (href.length === 1) { window.scrollTo(0, 0); }
+  });
   var send = function(level, args) {
     window.parent.postMessage({
       source: 'code-editor',

@@ -53,6 +53,19 @@ describe('buildDoc — console-interceptor', () => {
     expect(interceptor).toContain("type: 'verlaten'");
   });
 
+  it('houdt een anker en een lege href binnen het voorbeeld', () => {
+    // about:srcdoc erft de basis-URL van de les, dus href="#" laadde de hele
+    // lessite in het voorbeeld (css-selectors gebruikt href="#" in zijn
+    // menu) en href="" ook, terwijl de les zegt dat die de pagina herlaadt.
+    const result = buildDoc(pagina('', ''), '', '');
+    const interceptor = result.slice(0, result.indexOf('</script>'));
+    expect(interceptor).toContain("closest('a[href]')");
+    expect(interceptor).toContain(
+      "if (href === '') { e.preventDefault(); window.location.reload(); return; }",
+    );
+    expect(interceptor).toContain('scrollIntoView()');
+  });
+
   it('zet de id van het veld in elk bericht', () => {
     // De les herkent zijn eigen voorbeeld aan deze id, niet aan e.source:
     // na een navigatie naar een andere site wisselt Chromium de iframe van
