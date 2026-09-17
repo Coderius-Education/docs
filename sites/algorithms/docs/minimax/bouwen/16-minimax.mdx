@@ -60,20 +60,20 @@ Als `terminal(bord)`, is er geen zet meer mogelijk. Return `None`.
 
 ## Voorspel
 
-Wat moet `minimax` teruggeven op deze positie? X is aan zet en kan
-direct winnen via `(2, 0)` of `(2, 2)`.
+Wat moet `minimax` teruggeven op deze positie? X is aan zet.
 
 ```python
-bord = [["X","O","X"], ["O","X","O"], [None, None, None]]
+bord = [["X","O","O"], ["O","X","X"], [None, None, None]]
 ```
 
 <details>
 <summary>Antwoord</summary>
 
-`(2, 0)` of `(2, 2)` — beide leveren een directe winst op (diagonaal).
+`(2, 2)`: dat maakt de diagonaal `X X X` vol, directe winst.
 
-Welke van de twee terugkomt hangt af van de **volgorde** waarin
-`actions(bord)` ze opsomt. Beide zijn correct.
+De twee andere zetten winnen niet. Na `(2, 0)` of `(2, 1)` blokkeert O
+op `(2, 2)` en eindigt het in remise. Van de drie zetten heeft er dus
+precies één de waarde `1`, en die geeft `minimax` terug.
 
 </details>
 
@@ -152,10 +152,10 @@ Plak deze tests **onderaan** je lokale bestand (na minimax):
 vol = [["X","O","X"],["X","O","O"],["O","X","X"]]
 assert minimax(vol) is None, "Terminal bord -> None"
 
-# X kan direct winnen via (2,0) of (2,2) — beide is correct
-bord = [["X","O","X"], ["O","X","O"], [None, None, None]]
+# X kan direct winnen op (2,2); de andere twee zetten geven hoogstens remise
+bord = [["X","O","O"], ["O","X","X"], [None, None, None]]
 zet = minimax(bord)
-assert zet in {(2, 0), (2, 2)}, f"Verwacht (2,0) of (2,2), kreeg {zet}"
+assert zet == (2, 2), f"Verwacht (2,2), kreeg {zet}"
 
 # O moet X-winst blokkeren
 # X heeft (0,0) en (1,1) -> dreigt op (2,2). O is aan zet.

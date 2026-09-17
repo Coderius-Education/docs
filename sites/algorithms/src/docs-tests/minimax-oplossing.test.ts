@@ -132,6 +132,40 @@ describe('minimax — een goede oplossing haalt de tests van elke bouwsteen', ()
     expect(r.status).toBe(0);
   });
 
+  it('bouwen/16-minimax.mdx: elke test keurt precies de optimale zetten goed', () => {
+    // Bij de doorloop eiste een test "(2,0) of (2,2)" op een bord waar ook
+    // (2,1) de waarde 1 had: een correcte minimax die de zetten in een andere
+    // volgorde afloopt (of met >= vergelijkt) gaf (2,1) en viel om. De
+    // verzameling zetten die een test goedkeurt moet precies de verzameling
+    // optimale zetten zijn, uitgerekend met de cheatsheet-code.
+    const tekst = lees('bouwen/16-minimax.mdx');
+    const blok = tekst.match(/```python\n(# === Tests ===[\s\S]*?)```/)?.[1] ?? '';
+    const gevallen = [
+      ...blok.matchAll(
+        /bord = (\[.*\])\nzet = minimax\(bord\)\nassert zet (==|in) (\(.*?\)|\{.*?\}),/g,
+      ),
+    ];
+    expect(gevallen.length, 'de tests op de pagina kiezen minstens twee zetten').toBeGreaterThan(1);
+    for (const [, bord, , goedgekeurd] of gevallen) {
+      const py = `${compleet}
+import math
+bord = ${bord}
+wie = player(bord)
+waarde = min_value if wie == "X" else max_value
+scores = {zet: waarde(result(bord, zet)) for zet in actions(bord)}
+beste = max(scores.values()) if wie == "X" else min(scores.values())
+print(sorted(zet for zet, s in scores.items() if s == beste))
+print(sorted({${goedgekeurd}} if isinstance(${goedgekeurd}, tuple) else ${goedgekeurd}))
+`;
+      const r = draai(py);
+      const [optimaal, geaccepteerd] = r.uit.trim().split('\n');
+      expect(
+        geaccepteerd,
+        `${bord}: de test keurt ${geaccepteerd} goed, optimaal is ${optimaal}`,
+      ).toBe(optimaal);
+    }
+  });
+
   it('de startcode van elke bouwsteen valt op zijn eigen tests om, niet op iets anders', () => {
     // Het blokken-script controleert dit ook; hier staat het naast de
     // positieve kant, zodat beide helften van "de tests kloppen" bij elkaar
