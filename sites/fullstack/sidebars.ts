@@ -52,6 +52,11 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
+      label: 'Zonder herladen',
+      items: ['FastAPI/htmx', 'FastAPI/htmx-overzicht', 'FastAPI/verzoek-htmx'],
+    },
+    {
+      type: 'category',
       label: 'In de browser',
       items: ['FastAPI/javascript', 'FastAPI/devtools-console', 'FastAPI/server-of-browser'],
     },

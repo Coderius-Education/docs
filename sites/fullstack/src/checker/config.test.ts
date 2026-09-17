@@ -120,7 +120,17 @@ describe('fullstackConfig — voorbeeldprojecten scoren', () => {
       // Even belangrijk: de nakijker vinkt niet zomaar alles aan. Deze fixture
       // gebruikt geen HTMLResponse, verwijdert niets en onthoudt de bezoeker
       // niet, dus die blijven uit.
-      ['fastapi-html-response', 'db-del', 'fastapi-cookie', 'fastapi-sessie'],
+      // De fixture is van vóór het htmx-blok en doet niets zonder herladen.
+      [
+        'fastapi-html-response',
+        'db-del',
+        'fastapi-cookie',
+        'fastapi-sessie',
+        'fastapi-delete',
+        'html-jinja-include',
+        'htmx-koppelen',
+        'htmx-verzoek',
+      ],
     );
   });
 
@@ -335,15 +345,59 @@ describe('fullstackConfig', () => {
       .map((c) => c.id)
       .sort();
 
+    // Het htmx-blok is een uitbreiding op het gastenboek, geen basisstof:
+    // een leerling zonder htmx heeft een compleet werkende site.
     expect(gevorderd).toEqual([
       'db-del',
       'fastapi-cookie',
+      'fastapi-delete',
       'fastapi-httpexception',
       'fastapi-path-param',
       'fastapi-redirect',
       'fastapi-sessie',
       'html-jinja-if',
+      'html-jinja-include',
       'html-jinja-loop',
+      'htmx-koppelen',
+      'htmx-target',
+      'htmx-trigger',
+      'htmx-verzoek',
     ]);
+  });
+
+  // De htmx-concepten en include staan in geen enkele fixture; zonder deze
+  // test zou een kapotte regex ze stil op nul houden.
+  it('herkent htmx, DELETE en include', () => {
+    const report = analyze(
+      files({
+        'main.py': [
+          '@app.delete("/bericht/{sleutel}")',
+          'async def weg(sleutel: str):',
+          '    pass',
+        ].join('\n'),
+        'templates/berichten.html': [
+          '<script src="/static/js/htmx.min.js" defer></script>',
+          '<script src="/static/js/app.js" defer></script>',
+          '<form hx-post="/gastenboek" hx-target="#berichten-lijst">',
+          '<div id="berichten-lijst" hx-get="/berichten/lijst" hx-trigger="every 10s">',
+          '{% include "berichten_lijst.html" %}',
+        ].join('\n'),
+      }),
+      fullstackConfig,
+    );
+    const perId = new Map(report.concepts.map((c) => [c.id, c.used]));
+
+    expect(perId.get('fastapi-delete')).toBe(true);
+    expect(perId.get('htmx-koppelen')).toBe(true);
+    expect(perId.get('htmx-verzoek')).toBe(true);
+    expect(perId.get('htmx-target')).toBe(true);
+    expect(perId.get('htmx-trigger')).toBe(true);
+    expect(perId.get('html-jinja-include')).toBe(true);
+    // app.js alleen is geen htmx.
+    const zonder = analyze(
+      files({ 'templates/a.html': '<script src="/static/js/app.js" defer></script>' }),
+      fullstackConfig,
+    );
+    expect(new Map(zonder.concepts.map((c) => [c.id, c.used])).get('htmx-koppelen')).toBe(false);
   });
 });

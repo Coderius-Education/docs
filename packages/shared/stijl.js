@@ -124,6 +124,7 @@ const AFKORTINGEN = new Set([
   'XML',
   'GET',
   'POST',
+  'DELETE',
   'MIME',
   'JSONP',
   'PHPSESSID',

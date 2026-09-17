@@ -38,6 +38,7 @@ export const fullstackConfig: CheckerConfig = {
     { id: 'fastapi', label: 'FastAPI' },
     { id: 'html', label: 'HTML' },
     { id: 'js', label: 'JavaScript' },
+    { id: 'htmx', label: 'htmx' },
     { id: 'database', label: 'Database' },
     { id: 'structuur', label: 'Structuur' },
   ],
@@ -163,6 +164,14 @@ export const fullstackConfig: CheckerConfig = {
       level: 'gevorderd',
       detect: { type: 'regex', pattern: /HTTPException/g, in: ['py'] },
     },
+    {
+      id: 'fastapi-delete',
+      subject: 'fastapi',
+      group: 'Doorsturen & fouten',
+      label: 'DELETE endpoint (@app.delete)',
+      level: 'gevorderd',
+      detect: { type: 'regex', pattern: /@app\.delete\s*\(/g, in: ['py'] },
+    },
 
     {
       id: 'fastapi-cookie',
@@ -246,6 +255,14 @@ export const fullstackConfig: CheckerConfig = {
       level: 'gevorderd',
       detect: { type: 'regex', pattern: /\{%\s*if\b/g, in: ['html'] },
     },
+    {
+      id: 'html-jinja-include',
+      subject: 'html',
+      group: 'Lijsten',
+      label: 'Stuk template hergebruiken ({% include %})',
+      level: 'gevorderd',
+      detect: { type: 'regex', pattern: /\{%\s*include\b/g, in: ['html'] },
+    },
 
     // --- JavaScript ---
     // Alleen het koppelen, en dat is een bewuste grens. `querySelector` en
@@ -262,6 +279,47 @@ export const fullstackConfig: CheckerConfig = {
       label: 'JavaScript koppelen (<script src>)',
       level: 'basis',
       detect: { type: 'regex', pattern: /<script\b[^>]*\bsrc\s*=/gi, in: ['html'] },
+    },
+
+    // --- htmx ---
+    // De attributen staan in de templates, dus de detectie kijkt in de HTML.
+    // Het koppelen herkennen we aan de bestandsnaam in de script-tag, anders
+    // telt app.js twee keer.
+    {
+      id: 'htmx-koppelen',
+      subject: 'htmx',
+      group: 'Zonder herladen',
+      label: 'htmx koppelen (htmx.min.js)',
+      level: 'gevorderd',
+      detect: {
+        type: 'regex',
+        pattern: /<script\b[^>]*\bsrc\s*=\s*["'][^"']*htmx[^"']*\.js/gi,
+        in: ['html'],
+      },
+    },
+    {
+      id: 'htmx-verzoek',
+      subject: 'htmx',
+      group: 'Zonder herladen',
+      label: 'Verzoek zonder herladen (hx-get, hx-post, hx-delete)',
+      level: 'gevorderd',
+      detect: { type: 'regex', pattern: /\bhx-(get|post|delete|put|patch)\s*=/gi, in: ['html'] },
+    },
+    {
+      id: 'htmx-target',
+      subject: 'htmx',
+      group: 'Zonder herladen',
+      label: 'Doel van het antwoord (hx-target, hx-swap)',
+      level: 'gevorderd',
+      detect: { type: 'regex', pattern: /\bhx-(target|swap)\s*=/gi, in: ['html'] },
+    },
+    {
+      id: 'htmx-trigger',
+      subject: 'htmx',
+      group: 'Zonder herladen',
+      label: 'Moment van het verzoek (hx-trigger)',
+      level: 'gevorderd',
+      detect: { type: 'regex', pattern: /\bhx-trigger\s*=/gi, in: ['html'] },
     },
 
     // --- Database (sqlitedict) ---

@@ -112,6 +112,28 @@ je-project/
 
 Er komen geen mappen bij: een lijstpagina en een detailpagina zijn gewoon twee templates naast elkaar.
 
+## Bij [Zonder herladen met htmx](/docs/FastAPI/htmx)
+
+```
+je-project/
+├── main.py
+├── gastenboek.db
+├── static/
+│   ├── css/
+│   │   └── style.css
+│   ├── js/
+│   │   └── htmx.min.js
+│   └── pages/
+│       ├── home.html
+│       └── gastenboek_form.html
+└── templates/
+    ├── berichten.html
+    ├── berichten_lijst.html
+    └── bericht.html
+```
+
+htmx is één bestand in een nieuwe map `static/js/`. Bij de recepten in [Wat kan htmx allemaal](/docs/FastAPI/htmx-overzicht) komt `berichten_lijst.html` erbij: een stuk pagina zonder `<html>` eromheen, dat een endpoint als antwoord teruggeeft.
+
 ## Bij [JavaScript erbij](/docs/FastAPI/javascript)
 
 ```
@@ -122,15 +144,17 @@ je-project/
 │   ├── css/
 │   │   └── style.css
 │   ├── js/
-│   │   └── app.js
+│   │   ├── app.js
+│   │   └── htmx.min.js
 │   └── pages/
 │       └── gastenboek_form.html
 └── templates/
     ├── berichten.html
+    ├── berichten_lijst.html
     └── bericht.html
 ```
 
-Je JavaScript komt naast je CSS te staan, in dezelfde `static`-map. Aan `main.py` verandert niets: `app.mount` serveert die map al.
+Je JavaScript komt naast htmx te staan, in dezelfde `static`-map. Aan `main.py` verandert niets: `app.mount` serveert die map al.
 
 ## Compleet overzicht
 
@@ -138,10 +162,10 @@ Je JavaScript komt naast je CSS te staan, in dezelfde `static`-map. Aan `main.py
 |-----|---------------|-----------|
 | `/` | Python code en database | `main.py`, `mijn_data.db` |
 | `static/css/` | CSS bestanden | `style.css` |
-| `static/js/` | JavaScript | `app.js` |
+| `static/js/` | JavaScript en htmx | `app.js`, `htmx.min.js` |
 | `static/pages/` | Vaste HTML pagina's | `home.html`, `form.html` |
 | `static/` | Afbeeldingen | `foto.jpg`, `logo.png` |
-| `templates/` | Jinja2 templates | `resultaat.html` |
+| `templates/` | Jinja2 templates, ook stukken voor htmx | `resultaat.html`, `berichten_lijst.html` |
 
 **Tip:** een project met zoveel bestanden is precies waar git voor bestaat. Eén commit per werkende versie, en je durft te verbouwen omdat je altijd terug kunt. Hoe je dat in VS Code doet staat in <SiteLink site="editor" to="/git/vscode/">Git in VS Code</SiteLink>.
 

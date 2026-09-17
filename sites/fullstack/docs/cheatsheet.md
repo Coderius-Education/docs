@@ -177,6 +177,24 @@ async def bericht_detail(sleutel: str):
 </details>
 
 <details>
+<summary>DELETE endpoint (verwijderen zonder herladen)</summary>
+
+```python
+from fastapi.responses import HTMLResponse
+
+@app.delete("/bericht/{sleutel}")
+async def bericht_verwijderen(sleutel: str):
+    with SqliteDict("gastenboek.db") as db:
+        del db[sleutel]
+        db.commit()
+    return HTMLResponse("")
+```
+
+Een formulier zonder htmx kan alleen GET en POST; `hx-delete` stuurt een DELETE. Een leeg antwoord haalt het doel van de pagina.
+
+</details>
+
+<details>
 <summary>Een cookie meegeven</summary>
 
 ```python
@@ -342,6 +360,21 @@ Binnen de lus telt `{{ loop.index }}` vanaf 1.
 
 </details>
 
+<details>
+<summary>Een stuk template hergebruiken (include)</summary>
+
+`templates/berichten_lijst.html` is een stuk pagina zonder `<html>` eromheen. In de pagina:
+
+```html
+<div id="berichten-lijst">
+    {% include "berichten_lijst.html" %}
+</div>
+```
+
+Hetzelfde bestand geeft je endpoint terug als antwoord op een htmx-verzoek.
+
+</details>
+
 ## JavaScript
 
 <details>
@@ -369,6 +402,61 @@ const teller = document.querySelector("#teller");
 veld.addEventListener("input", function () {
     teller.textContent = 80 - veld.value.length + " tekens over";
 });
+```
+
+</details>
+
+## htmx
+
+<details>
+<summary>htmx koppelen aan je pagina</summary>
+
+Download `htmx.min.js` (de link staat bij [Zonder herladen met htmx](/docs/FastAPI/htmx)) naar `static/js/`, en in de `<head>`:
+
+```html
+<script src="/static/js/htmx.min.js" defer></script>
+```
+
+</details>
+
+<details>
+<summary>Een verzoek zonder herladen (hx-post, hx-get, hx-delete)</summary>
+
+```html
+<form hx-post="/gastenboek" hx-target="#berichten-lijst">
+<button hx-get="/berichten/lijst" hx-target="#berichten-lijst">Ververs</button>
+<button hx-delete="/bericht/{{ sleutel }}" hx-target="#bericht-{{ sleutel }}" hx-swap="outerHTML">Verwijderen</button>
+```
+
+Het endpoint geeft een stukje HTML terug (`HTMLResponse("Bedankt")` of een template zonder `<html>` eromheen), nooit een omleiding.
+
+</details>
+
+<details>
+<summary>Waar het antwoord komt (hx-target en hx-swap)</summary>
+
+- `hx-target="#id"`: het element dat het antwoord krijgt. Zonder `hx-target` is dat het element met het attribuut zelf.
+- `hx-swap="innerHTML"` (standaard): vervangt wat er in het doel staat.
+- `hx-swap="outerHTML"`: vervangt het doel zelf. Met een leeg antwoord verdwijnt het.
+
+</details>
+
+<details>
+<summary>Wanneer het verzoek gaat (hx-trigger)</summary>
+
+```html
+<div id="berichten-lijst" hx-get="/berichten/lijst" hx-trigger="every 10s">
+```
+
+Standaard: bij een klik op een knop of het versturen van een formulier.
+
+</details>
+
+<details>
+<summary>Bevestiging vooraf (hx-confirm)</summary>
+
+```html
+<button hx-delete="/bericht/{{ sleutel }}" hx-confirm="Dit bericht verwijderen?">Verwijderen</button>
 ```
 
 </details>

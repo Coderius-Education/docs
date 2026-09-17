@@ -1,0 +1,181 @@
+import { DevtoolsPaneel, NetwerkTabel } from '@site/src/components/Devtools';
+
+# Zonder herladen met htmx
+
+<Voorkennis
+  items={[
+    {site: 'web', to: '/docs/js-basics/scriptjs', label: 'Een script koppelen met script src'},
+  ]}
+/>
+
+Tot nu toe betekent "iets aan de server vragen" dat de hele pagina opnieuw laadt: je klikt op een link of verstuurt een formulier, en alles verspringt. In deze les vraagt een knop iets aan de server terwijl de pagina blijft staan. Daar gebruik je **htmx** voor: een bestand dat je HTML twee nieuwe attributen geeft. Je schrijft er zelf geen JavaScript voor.
+
+## Waar het bestand komt
+
+Maak een map `static/js/` en zet daar <a href="/htmx/htmx.min.js" download>htmx.min.js</a> in (versie 2.0.10):
+
+```
+je-project/
+├── main.py
+├── static/
+│   ├── js/
+│   │   └── htmx.min.js
+│   └── pages/
+│       └── home.html
+└── templates/
+```
+
+Het is dezelfde versie als op [htmx.org](https://htmx.org/docs/#installing). Door het bestand in je eigen project te zetten werkt je site ook op een netwerk dat externe scripts blokkeert, zoals op school. Aan `main.py` verandert niets: `app.mount` serveert de map `static` al.
+
+## Een knop en een lege alinea
+
+Open `static/pages/home.html` uit [HTML in bestanden](/docs/FastAPI/html_bestanden). Koppel htmx in de `<head>` en zet een knop met een lege `<p>` erbij:
+
+```html
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="/static/js/htmx.min.js"></script>
+    </head>
+    <body>
+        <h1>Welkom</h1>
+        <button hx-get="/tijd" hx-target="#uitkomst">Hoe laat is het?</button>
+        <p id="uitkomst"></p>
+    </body>
+</html>
+```
+
+**`hx-get`** doet wat een link doet, een GET naar `/tijd`, met één verschil: htmx stuurt het verzoek, en de browser blijft op de pagina. **`hx-target`** zegt waar het antwoord van de server komt: in het element met id `uitkomst`.
+
+## Het endpoint
+
+<CodeUitleg>
+
+```python showLineNumbers
+from datetime import datetime
+from fastapi.responses import HTMLResponse
+
+@app.get("/tijd")
+async def tijd():
+    return HTMLResponse(f"Het is nu {datetime.now().strftime('%H:%M:%S')}")
+```
+
+<Regel n={4} tot={5}>
+Een endpoint zoals je eerste, uit [Je eerste endpoint](/docs/FastAPI/eerste_endpoint). Voor je Python-code maakt het niet uit of htmx het verzoek stuurde of de browser zelf.
+</Regel>
+
+<Regel n={6}>
+Het antwoord is één zin, geen hele pagina. `datetime.now()` is de tijd van de server, en `strftime` maakt er "14:32:07" van. htmx zet de zin in `#uitkomst`.
+</Regel>
+
+</CodeUitleg>
+
+## Kijk wat er over de lijn gaat
+
+Open het tabblad **Netwerk** zoals in [Kijken wat de browser doet](/docs/FastAPI/devtools-netwerk) en klik op de knop. Er komt één regel bij, en de pagina wordt niet opnieuw geladen:
+
+<DevtoolsPaneel tab="Netwerk">
+  <NetwerkTabel rijen={[{ naam: 'tijd', status: 200, type: 'xhr', grootte: '21 B' }]} />
+</DevtoolsPaneel>
+
+Het type is `xhr`: een verzoek dat een script stuurde, geen pagina die de browser opvroeg. Klik de regel aan. Bij **Reactie** staat alleen je zin, geen `<html>` en geen `<head>`. In de terminal staat één regel, `GET /tijd 200 OK`.
+
+## Testen
+
+1. Download `htmx.min.js` naar `static/js/` en pas `home.html` aan
+2. Voeg het endpoint `/tijd` toe
+3. Klik op de knop: de tijd verschijnt onder de knop, de pagina verspringt niet en de adresbalk verandert niet
+4. Klik nog een keer: de tijd is bijgewerkt
+
+:::danger[Gaat er iets mis?]
+Gebeurt er niets bij een klik? Dan is htmx niet geladen: kijk in Netwerk of `htmx.min.js` een 200 kreeg, en of de script-tag in de `<head>` staat. Verschijnt er een hele pagina onder de knop? Dan geeft je endpoint een pagina of een omleiding terug in plaats van een stukje. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
+:::
+
+## Opdrachten
+
+### Opdracht 1: Predict - Twee keer klikken
+
+Je klikt twee keer op de knop, met een paar seconden ertussen.
+
+**Vraag:** hoeveel regels staan er in de terminal, en hoeveel tijden staan er op de pagina?
+
+<details>
+<summary>Tip</summary>
+
+Elke klik is een verzoek. En `hx-target` zegt niet "zet erbij", maar "zet erin".
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Twee regels in de terminal, één tijd op de pagina. Elke klik stuurt een nieuw verzoek, en elk antwoord vervangt wat er in `#uitkomst` stond. De tweede tijd staat er dus in plaats van de eerste, niet eronder.
+
+</details>
+
+### Opdracht 2: Run
+
+Bouw het voorbeeld na. Kijk bij elke klik in de terminal en in Netwerk.
+
+### Opdracht 3: Investigate - Zonder htmx
+
+Haal de script-tag uit de `<head>` en klik op de knop.
+
+<details>
+<summary>Antwoord</summary>
+
+Er gebeurt niets. `hx-get` en `hx-target` zijn voor de browser onbekende attributen, en een `<button>` buiten een formulier doet uit zichzelf niets. Het is htmx dat die attributen leest en het verzoek stuurt. Zonder het bestand staan er alleen woorden in je HTML.
+
+</details>
+
+### Opdracht 4: Make - Hoeveel berichten?
+
+Zet een tweede knop op de pagina: "Hoeveel berichten staan er in het gastenboek?". Het antwoord komt uit de database.
+
+<details>
+<summary>Tip</summary>
+
+Een nieuw endpoint, bijvoorbeeld `/aantal`. Binnen het `with`-blok geeft `len(db)` het aantal sleutels. De knop wijst met `hx-get` naar dat endpoint, en mag hetzelfde doel gebruiken.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+@app.get("/aantal")
+async def aantal():
+    with SqliteDict("gastenboek.db") as db:
+        aantal = len(db)
+    return HTMLResponse(f"Er staan {aantal} berichten in het gastenboek.")
+```
+
+```html
+<button hx-get="/aantal" hx-target="#uitkomst">Hoeveel berichten?</button>
+```
+
+Twee knoppen, één doel: het antwoord van de laatste klik staat in de `<p>`.
+
+</details>
+
+### Opdracht 5: Make - Een klok
+
+Laat de tijd elke seconde vanzelf bijwerken, zonder knop.
+
+<details>
+<summary>Tip</summary>
+
+Zet `hx-get` op de `<p>` zelf, en zeg met `hx-trigger="every 1s"` wanneer het verzoek moet gaan. Zonder `hx-target` komt het antwoord in het element zelf.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<p hx-get="/tijd" hx-trigger="every 1s">Even geduld</p>
+```
+
+Kijk in de terminal: elke seconde een regel, ook als niemand kijkt. Voor een klok is dat de bedoeling, maar het laat zien dat vanzelf verversen de server werk kost. In [Wat kan htmx allemaal](/docs/FastAPI/htmx-overzicht) staat wanneer dat de moeite waard is.
+
+</details>

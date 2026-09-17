@@ -1,11 +1,12 @@
 # Hoe een verzoek werkt
 
-Je hebt alle stukken gebouwd: endpoints, templates, een database, een formulier, JavaScript en een sessie. Onderweg zag je vijf keer wat er bij één handeling achter elkaar gebeurt, browser links en server rechts, elke keer met meer ertussen:
+Je hebt alle stukken gebouwd: endpoints, templates, een database, een formulier, JavaScript, htmx en een sessie. Onderweg zag je zes keer wat er bij één handeling achter elkaar gebeurt, browser links en server rechts, elke keer met meer ertussen:
 
 - [Wat er gebeurt bij je eerste verzoek](/docs/FastAPI/verzoek-eerste): één functie, JSON terug.
 - [Wat er gebeurt bij één pagina](/docs/FastAPI/verzoek-static): de browser haalt CSS en afbeeldingen apart op, zonder functie van jou.
 - [Wat er gebeurt bij één klik](/docs/FastAPI/verzoek-get): van link tot pagina, met alleen HTML over de lijn.
 - [Wat er gebeurt bij één formulier](/docs/FastAPI/verzoek-post): van versturen tot omleiding.
+- [Wat er gebeurt zonder herladen](/docs/FastAPI/verzoek-htmx): hetzelfde formulier met htmx, en een stuk HTML als antwoord.
 - [Wat er gebeurt bij een sessie](/docs/FastAPI/verzoek-sessie): hoe de server je herkent zonder dat de browser iets weet.
 
 ## Waar hoort jouw code
@@ -19,6 +20,7 @@ Kom je vast te zitten bij een nieuwe functie, zoek dan eerst de stap op waar hij
 | Bepalen hoe het eruitziet | klik, stap 5 | je template in `templates/` |
 | Reageren op klikken en typen | klik, stap 7 | `static/js/app.js` |
 | Controleren wat een bezoeker instuurt | formulier, stap 4 | in je endpoint-functie, nooit alleen in de HTML |
+| Iets aan de server vragen zonder dat de pagina verspringt | zonder herladen, stap 1 | `hx-get` of `hx-post` in je HTML, en een endpoint dat een stukje teruggeeft |
 | Onthouden wie er terugkomt | sessie, stap 3 | `sessies.db`, met alleen het id in de cookie |
 
 De regel over controleren is de valkuil. Stap 1 van het formulier gebeurt in de browser, en die is van de bezoeker — zie [Server of browser?](/docs/FastAPI/server-of-browser).
