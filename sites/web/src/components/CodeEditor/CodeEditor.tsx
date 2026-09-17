@@ -1,8 +1,17 @@
 import BrowserOnly from '@docusaurus/BrowserOnly';
-import React, { lazy, Suspense, useState, useEffect, useCallback, useRef } from 'react';
+import React, {
+  lazy,
+  Suspense,
+  useState,
+  useEffect,
+  useCallback,
+  useLayoutEffect,
+  useRef,
+} from 'react';
 import styles from './CodeEditor.module.css';
 import { PreviewPane } from './PreviewPane';
 import { buildDoc } from './buildDoc';
+import { VoorbeeldNavigatie } from './navigatie';
 import { useDebounce } from './useDebounce';
 
 const EditorPane = lazy(() => import('./EditorPane').then((mod) => ({ default: mod.EditorPane })));
@@ -67,8 +76,11 @@ function CodeEditorInner({
   const [html, setHtml] = useState(initialHtml);
   const [css, setCss] = useState(initialCss);
   const [js, setJs] = useState(initialJs);
+  // De id waaraan dit veld de berichten van zijn eigen voorbeeld herkent; zie
+  // buildDoc waarom dat niet met e.source kan.
+  const [veldId] = useState(() => Math.random().toString(36).slice(2));
   const [srcDoc, setSrcDoc] = useState(() =>
-    livePreview ? buildDoc(initialHtml, initialCss, initialJs) : '',
+    livePreview ? buildDoc(initialHtml, initialCss, initialJs, veldId) : '',
   );
   const [consoleLogs, setConsoleLogs] = useState<{ level: string; text: string }[]>([]);
   const [previewInhoud, setPreviewInhoud] = useState<number | null>(null);
@@ -80,6 +92,25 @@ function CodeEditorInner({
   const consoleBodyRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
+  // Volgt de leerling een link in zijn voorbeeld, dan is zijn pagina weg en
+  // werkt de Terug-knop van de browser niet in een srcdoc-iframe. De eigen
+  // pagina meldt zich en meldt het als hij verlaten wordt (buildDoc);
+  // navigatie.ts maakt daar "weg" of niet van. De knop, en Reset, laden de
+  // eigen pagina opnieuw door de iframe te vervangen (`versie` is zijn key).
+  const [navigatie] = useState(() => new VoorbeeldNavigatie());
+  const [weg, setWeg] = useState(false);
+  const [versie, setVersie] = useState(0);
+  // De berichten komen als losse taken binnen; de handler leest dan de srcDoc
+  // die op dat moment in de iframe staat, niet die van zijn eigen render.
+  const srcDocRef = useRef(srcDoc);
+  useLayoutEffect(() => {
+    srcDocRef.current = srcDoc;
+  }, [srcDoc]);
+  const herlaadEigenPagina = useCallback(() => {
+    setWeg(false);
+    setVersie((n) => n + 1);
+  }, []);
+
   const debouncedHtml = useDebounce(html, debounceMs);
   const debouncedCss = useDebounce(css, debounceMs);
   const debouncedJs = useDebounce(js, debounceMs);
@@ -87,14 +118,14 @@ function CodeEditorInner({
   useEffect(() => {
     if (livePreview) {
       setConsoleLogs([]);
-      setSrcDoc(buildDoc(debouncedHtml, debouncedCss, debouncedJs));
+      setSrcDoc(buildDoc(debouncedHtml, debouncedCss, debouncedJs, veldId));
     }
-  }, [debouncedHtml, debouncedCss, debouncedJs, livePreview]);
+  }, [debouncedHtml, debouncedCss, debouncedJs, livePreview, veldId]);
 
   const handleRun = useCallback(() => {
     setConsoleLogs([]);
-    setSrcDoc(buildDoc(html, css, js));
-  }, [html, css, js]);
+    setSrcDoc(buildDoc(html, css, js, veldId));
+  }, [html, css, js, veldId]);
 
   const handleReset = useCallback(() => {
     if (
@@ -107,9 +138,12 @@ function CodeEditorInner({
       setJs(initialJs);
       setConsoleLogs([]);
       setPreviewInhoud(null);
-      setSrcDoc(livePreview ? buildDoc(initialHtml, initialCss, initialJs) : '');
+      setSrcDoc(livePreview ? buildDoc(initialHtml, initialCss, initialJs, veldId) : '');
+      // Ongewijzigde code geeft dezelfde srcDoc en dus geen herlaad; na een
+      // gevolgde link bleef het voorbeeld dan op de vreemde pagina staan.
+      herlaadEigenPagina();
     }
-  }, [initialHtml, initialCss, initialJs, livePreview]);
+  }, [initialHtml, initialCss, initialJs, livePreview, herlaadEigenPagina, veldId]);
 
   // Escape sluit, en de pagina eronder mag niet meescrollen zolang het veld
   // het scherm vult.
@@ -151,19 +185,23 @@ function CodeEditorInner({
     function handler(e: MessageEvent) {
       // Alleen berichten van het eigen voorbeeld: er staan meerdere velden
       // op een lespagina, en die mogen elkaars console en hoogte niet zien.
-      if (e.source !== iframeRef.current?.contentWindow) return;
-      if (e.data?.source !== 'code-editor') return;
+      // Aan de id, niet aan e.source: na een navigatie naar een andere site
+      // komt het bericht van pagehide al van een ander window.
+      if (e.data?.source !== 'code-editor' || e.data.veld !== veldId) return;
       if (e.data.type === 'console') {
         setConsoleLogs((prev) => [...prev, { level: e.data.level, text: e.data.text }]);
       } else if (e.data.type === 'height' && typeof e.data.height === 'number') {
         setPreviewInhoud(e.data.height);
       } else if (e.data.type === 'escape') {
         setUitgeklapt(false);
+      } else if (e.data.type === 'eigen' || e.data.type === 'verlaten') {
+        const stand = navigatie.bericht(e.data.type, srcDocRef.current);
+        if (stand !== 'ongewijzigd') setWeg(stand === 'weg');
       }
     }
     window.addEventListener('message', handler);
     return () => window.removeEventListener('message', handler);
-  }, []);
+  }, [navigatie, veldId]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: consoleLogs triggert bewust een her-scroll bij nieuwe regels; de body zelf leest alleen de ref.
   useEffect(() => {
@@ -262,6 +300,9 @@ function CodeEditorInner({
         <PreviewPane
           srcDoc={srcDoc}
           innerRef={iframeRef}
+          weg={weg}
+          onTerug={herlaadEigenPagina}
+          versie={versie}
           // Gestapeld eindigt het voorbeeld waar zijn inhoud eindigt, zodat een
           // veld met twee regels uitvoer geen half scherm beslaat. Uitgeklapt
           // is dat juist verkeerd: dan bleef het voorbeeld 160px hoog terwijl

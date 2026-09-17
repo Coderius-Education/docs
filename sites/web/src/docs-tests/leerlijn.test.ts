@@ -4,8 +4,10 @@ import { describe, expect, it } from 'vitest';
 import sidebars from '../../sidebars';
 import {
   INTRODUCEERT,
+  PROZA_TERMEN,
   VOORUITWIJZINGEN,
   alleConcepten,
+  conceptenInProza,
   htmlConcepten,
   noemtConcept,
 } from '../data/leerlijn';
@@ -51,6 +53,65 @@ function codeUit(bron: string): string {
   return stukken.join('\n');
 }
 
+/**
+ * Wat een opdracht van de leerling vraagt: de alinea's die met `**Opdracht:**`
+ * beginnen (html-css) en de alinea direct onder een `## Opdracht n:`-kop
+ * (js-basics), plus een lijst van eisen die er na een witregel op volgt.
+ * Tips en antwoorden tellen niet mee; die staan in <details>.
+ */
+function opdrachtTekst(bron: string): string {
+  const regels = bron.split('\n');
+  const alineas: string[] = [];
+  const volgende = (vanaf: number) => regels.slice(vanaf).find((r) => r.trim() !== '') ?? '';
+  for (let i = 0; i < regels.length; i++) {
+    const kop = /^## Opdracht \d+:/.test(regels[i]);
+    if (!kop && !/^\*\*Opdracht/.test(regels[i])) continue;
+    const alinea = [regels[i]];
+    for (let j = i + 1; j < regels.length; j++) {
+      const r = regels[j];
+      if (r.trim() === '') {
+        // Direct onder een kop mag een witregel; verder alleen als er een
+        // lijst van eisen volgt ("Bouw een kaart met:" en dan "1. een rand").
+        const lijst = /^\s*(-|\d+\.)\s/.test(volgende(j + 1));
+        if (lijst || (kop && alinea.length === 1)) continue;
+        break;
+      }
+      if (/^(<|```|#|:::)/.test(r)) break;
+      alinea.push(r);
+    }
+    alineas.push(alinea.join(' '));
+  }
+  return alineas.join('\n');
+}
+
+describe('opdrachtTekst leest wat een opdracht vraagt', () => {
+  it('neemt een lijst van eisen na een witregel mee, maar geen tip of veld', () => {
+    const bron = [
+      '**Opdracht:** Bouw een kaart met:',
+      '',
+      '1. een rand',
+      '2. afgeronde hoeken',
+      '',
+      '<CodeEditor />',
+      '',
+      '<details>',
+      '<summary>Tip</summary>',
+      'Gebruik border.',
+      '</details>',
+    ].join('\n');
+    expect(opdrachtTekst(bron)).toBe(
+      '**Opdracht:** Bouw een kaart met: 1. een rand 2. afgeronde hoeken',
+    );
+  });
+
+  it('neemt onder een opdracht-kop de eerste alinea', () => {
+    const bron = ['## Opdracht 2: Kaart', '', 'Maak een kaart met een rand.', '', 'Los.'].join(
+      '\n',
+    );
+    expect(opdrachtTekst(bron)).toBe('## Opdracht 2: Kaart Maak een kaart met een rand.');
+  });
+});
+
 function lesTekst(les: string): string {
   return readFileSync(`${DOCS}/${les}.mdx`, 'utf8');
 }
@@ -85,7 +146,13 @@ describe('de leerlijn is compleet', () => {
   it('elk herkenbaar concept heeft een les die het uitlegt', () => {
     // Een nieuw concept in curriculum.ts dwingt zo een keuze af: waar hoort
     // het thuis in de leerlijn? Zonder deze test glipt het er stil in.
-    const ids = [...alleConcepten().map((t) => t.id), ...htmlConcepten()];
+    // De proza-termen tellen mee: een verkeerd gespelde of hernoemde sleutel
+    // zou anders stil overgeslagen worden en die ene check uitzetten.
+    const ids = [
+      ...alleConcepten().map((t) => t.id),
+      ...htmlConcepten(),
+      ...Object.keys(PROZA_TERMEN),
+    ];
     const wees = [...new Set(ids)].filter((id) => !INTRO_VAN.has(id)).sort();
 
     expect(wees).toEqual([]);
@@ -114,6 +181,28 @@ describe('geen les loopt op de leerlijn vooruit', () => {
         const daar = PLEK.get(bron) ?? 0;
         if (daar > hier && !AANGEKONDIGD.has(`${les}|${id}`)) {
           tevroeg.push(`${les} (${hier}) gebruikt ${id}, uitgelegd in ${bron} (${daar})`);
+        }
+      }
+    }
+
+    expect(tevroeg.sort()).toEqual([]);
+  });
+
+  it('vraagt in een opdracht niets wat pas later wordt uitgelegd', () => {
+    // De code-check hierboven zag dit niet: de Make van css-klassen vroeg om
+    // "een opvallende achtergrondkleur en rand", in proza, terwijl border vier
+    // lessen verderop pas komt. Het antwoord had zelf geen border, dus de
+    // leerling moest iets maken wat nergens stond.
+    const tevroeg: string[] = [];
+
+    for (const les of VOLGORDE) {
+      const hier = PLEK.get(les) ?? 0;
+      for (const id of conceptenInProza(opdrachtTekst(lesTekst(les)))) {
+        const bron = INTRO_VAN.get(id);
+        if (!bron) continue;
+        const daar = PLEK.get(bron) ?? 0;
+        if (daar > hier && !AANGEKONDIGD.has(`${les}|${id}`)) {
+          tevroeg.push(`${les} (${hier}) vraagt om ${id}, uitgelegd in ${bron} (${daar})`);
         }
       }
     }
@@ -182,7 +271,11 @@ describe('een vooruitwijzing wijst de leerling verder', () => {
     const overbodig: string[] = [];
 
     for (const { les, concept } of VOORUITWIJZINGEN) {
-      if (!conceptenIn(codeUit(lesTekst(les))).has(concept)) {
+      const tekst = lesTekst(les);
+      if (
+        !conceptenIn(codeUit(tekst)).has(concept) &&
+        !conceptenInProza(opdrachtTekst(tekst)).has(concept)
+      ) {
         overbodig.push(`${les} heeft ${concept} niet meer nodig`);
       }
     }

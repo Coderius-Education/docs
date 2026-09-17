@@ -15,9 +15,21 @@ interface PreviewPaneProps {
    *  zonder deze prop vult de iframe de kolom (flex). */
   hoogte?: string;
   innerRef?: React.Ref<HTMLIFrameElement>;
+  /** De leerling volgde een link in zijn voorbeeld; toon de knop om terug te komen. */
+  weg?: boolean;
+  onTerug?: () => void;
+  /** Loopt op bij elke herlaad van de eigen pagina: de iframe wordt dan vervangen. */
+  versie?: number;
 }
 
-export function PreviewPane({ srcDoc, hoogte, innerRef }: PreviewPaneProps) {
+export function PreviewPane({
+  srcDoc,
+  hoogte,
+  innerRef,
+  weg = false,
+  onTerug,
+  versie = 0,
+}: PreviewPaneProps) {
   // De preview-kolom is zo'n 330px breed op een laptop, en dat is smaller dan
   // elk breekpunt dat de media-queries-les gebruikt. Zonder deze knoppen ziet
   // de leerling altijd de smalle variant en verandert er nooit iets.
@@ -65,12 +77,23 @@ export function PreviewPane({ srcDoc, hoogte, innerRef }: PreviewPaneProps) {
           ))}
         </span>
       </div>
+      {weg && (
+        // Volgt de leerling een link in zijn voorbeeld, dan is zijn pagina weg
+        // en werkt de Terug-knop van de browser niet in een srcdoc-iframe.
+        <div className={styles.terugBalk}>
+          <span>Je volgde een link. Je eigen code staat nog in de editor.</span>
+          <button type="button" className={styles.viewportKnop} onClick={onTerug}>
+            ← Terug naar je pagina
+          </button>
+        </div>
+      )}
       <div
         className={styles.previewVak}
         ref={vakRef}
         style={hoogte ? { height: hoogte, flex: 'none' } : undefined}
       >
         <iframe
+          key={versie}
           ref={innerRef}
           className={styles.preview}
           style={

@@ -159,6 +159,47 @@ export const EXTRA_TECHNIEKEN: Technique[] = [
   },
 ];
 
+/**
+ * Hoe een opdrachttekst een concept in het Nederlands noemt. De code-check
+ * ziet alleen code, maar "zorg dat het item een rand krijgt" staat in proza,
+ * en de leerling moet dan iets maken wat pas vier lessen verder wordt
+ * uitgelegd: css-klassen vroeg om een rand, border komt in
+ * border-en-dimensies. Alleen woorden die in een opdracht maar één ding
+ * kunnen betekenen; "lijst" staat er niet in, want een prijzenlijst is geen
+ * <ul>, en "links" niet, want dat is meestal de kant. Een woord dat ook in
+ * een samenstelling zit, krijgt een grens: "achtergrondinformatie" is geen
+ * achtergrondkleur, "op de hoogte" geen height.
+ */
+export const PROZA_TERMEN: Record<string, RegExp> = {
+  'css-border': /\brand(en|je|jes)?\b/i,
+  'css-border-radius': /afgeronde? hoek/i,
+  'css-width': /\bbreedte\b/i,
+  'css-height': /(?<!op de )\bhoogte\b/i,
+  'css-hover': /\b(hover|zweeft|eroverheen)\b/i,
+  'css-display-flex': /\bflex(box)?\b/i,
+  'css-display-grid': /\bgrid\b/i,
+  'css-media-query': /media ?quer/i,
+  'css-position': /\bposition\b/i,
+  'css-background-color': /\bachtergrond(kleur)?\b/i,
+  'css-padding': /\bpadding\b/i,
+  'css-margin': /\b(marge|margin)\b/i,
+  'html-img': /\b(afbeelding|plaatje)/i,
+  'html-button': /\bknop(pen)?\b/i,
+  'html-form': /formulier/i,
+  'html-input': /invoerveld/i,
+  'html-span': /\bspan\b/i,
+  'html-div': /\bdiv\b/i,
+};
+
+/** De concept-ids die een opdrachttekst in het Nederlands noemt. */
+export function conceptenInProza(tekst: string): Set<string> {
+  const gevonden = new Set<string>();
+  for (const [id, patroon] of Object.entries(PROZA_TERMEN)) {
+    if (patroon.test(tekst)) gevonden.add(id);
+  }
+  return gevonden;
+}
+
 /** Elk concept-id dat we kunnen herkennen, met zijn patroon. */
 export function alleConcepten(): Technique[] {
   const eigen = new Set(EXTRA_TECHNIEKEN.map((t) => t.id));

@@ -257,6 +257,20 @@
   position: relative;
 }
 
+/* Verschijnt zodra de leerling in het voorbeeld een link heeft gevolgd. */
+.terugBalk {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-800);
+  background: var(--ifm-color-warning-contrast-background);
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+}
+
 .viewportMelding {
   flex-shrink: 0;
   padding: 0.25rem 0.75rem;
