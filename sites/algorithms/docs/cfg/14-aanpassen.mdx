@@ -110,6 +110,29 @@ ontleed(ZIN)`} />
 > **Let op** — voor opdracht 1 heb je je eigen grammatica nodig (anders
 > kent de cel `S`, je woordgroepen enzovoort niet). Plak die dus eerst.
 
+<details>
+<summary>Tip</summary>
+
+Een lexicon-regel ziet er precies zo uit als de regels in `LEXICON`: de
+woordsoort, een pijl, en het woord tussen aanhalingstekens, in kleine
+letters.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```
+N -> "watson"
+```
+
+De motor zet elke zin eerst om naar kleine letters, dus `"watson"` en
+niet `"Watson"`. Aan je regels verandert niets: `Watson chuckled` heeft
+dezelfde vorm als `Holmes chuckled`, alleen kende het lexicon het woord
+nog niet.
+
+</details>
+
 ## Opdracht 2 — zoek een ambigue zin
 
 Verander `ZIN` in een zin die je grammatica op **meer dan één** manier
@@ -118,5 +141,29 @@ voorzetselgroepen achter elkaar in één groep — dan kan de tweede bij
 verschillende stukken horen. Alle woorden van het voorbeeld
 `Holmes had a pipe in the armchair in the day` staan al in het lexicon;
 probeer maar of je er meer dan één boom voor krijgt, en bedenk waarom.
+
+<details>
+<summary>Tip</summary>
+
+Kijk naar de laatste voorzetselgroep, "in the day". Bij welke groep
+ervoor kan die horen? Elke plek waar je grammatica hem laat aanhaken,
+is een boom.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`Holmes had a pipe in the armchair in the day` geeft met de meeste
+grammatica's meer dan één boom. "in the day" kan bij "the armchair"
+horen (de stoel van die dag), bij "a pipe in the armchair" als geheel,
+of bij "had" (wanneer Holmes hem had). Hoeveel bomen jij ziet, hangt
+af van waar je regels een voorzetselgroep toestaan.
+
+Zie je (1x)? Dan laat je grammatica een voorzetselgroep maar op één
+plek aanhaken. Voeg toe dat ook een werkwoordgroep gevolgd mag worden
+door een voorzetselgroep, en tel opnieuw.
+
+</details>
 
 Door naar [zelf bouwen →](./15-zelf-bouwen).

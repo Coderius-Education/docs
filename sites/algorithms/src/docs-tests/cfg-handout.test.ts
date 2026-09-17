@@ -186,6 +186,21 @@ for zin in ["I had a little moist red paint in the palm of my hand", "Holmes had
     ).toBe(true);
   });
 
+  it('het antwoord van zelf-bouwen laat de nieuwe zin en de oude zinnen werken', () => {
+    const tekst = lees('cfg/15-zelf-bouwen.mdx');
+    const regel = tekst.match(/<summary>Antwoord<\/summary>[\s\S]*?```\n([\s\S]*?)```/)?.[1] ?? '';
+    expect(regel.trim()).not.toBe('');
+    const zinnen = [...tekst.matchAll(/^ {4}"(.+)",$/gm)].map((m) => m[1]);
+    expect(zinnen).toContain('She said Holmes sat');
+    const code = `${parserCode(`${grammatica}\n${regel}`)}
+grammatica = lees_grammatica(GRAMMATICA + LEXICON)
+for zin in ${JSON.stringify(zinnen)}:
+    print("OK" if parse(grammatica, zin.lower().split()) else "FOUT", zin)
+`;
+    const uit = draai(code).trim().split('\n');
+    expect(uit.filter((r) => !r.startsWith('OK'))).toEqual([]);
+  });
+
   it('bouwt de tien zinnen van de hand-out', () => {
     const code = `${parserCode(grammatica)}
 grammatica = lees_grammatica(GRAMMATICA + LEXICON)

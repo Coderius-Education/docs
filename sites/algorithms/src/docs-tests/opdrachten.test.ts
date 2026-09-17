@@ -20,13 +20,11 @@ import { describe, expect, it } from 'vitest';
 
 const DOCS = fileURLToPath(new URL('../../docs/', import.meta.url));
 
-const OPDRACHT_KOP = /^(Extra )?(Opdracht|Uitdaging|Bouw zelf)\b/i;
+// "De uitdaging" telt ook: zo heette de kop van cfg/15-zelf-bouwen, en die
+// ontsnapte aan een regex die alleen aan het begin van de kop keek.
+const OPDRACHT_KOP = /^(De |Extra )?(Opdracht|Uitdaging|Bouw zelf)\b/i;
 
 const ACHTERSTAND = new Map<string, string[]>([
-  [
-    'cfg/14-aanpassen.mdx',
-    ['Opdracht 1 — voeg een woord toe', 'Opdracht 2 — zoek een ambigue zin'],
-  ],
   ['pagerank/08-aanpassen.mdx', ['Opdracht 1 — draai aan `d`', 'Opdracht 2 — voeg een link toe']],
 ]);
 
@@ -58,10 +56,26 @@ function secties(tekst: string): Sectie[] {
   });
 }
 
+/**
+ * De koppen die een opdracht aankondigen en geen antwoord hebben. Het
+ * antwoord mag ook in de secties erna staan, tot de volgende opdracht-kop:
+ * de zelf-bouwen-pagina's van hanoi en cfg zetten de opdracht onder "De
+ * uitdaging" en het antwoord onder "Bouw en test", en dat is één opdracht.
+ */
 function zonderAntwoord(pad: string): string[] {
-  return secties(readFileSync(pad, 'utf8'))
-    .filter((s) => OPDRACHT_KOP.test(s.kop) && !/<summary>Antwoord<\/summary>/.test(s.inhoud))
-    .map((s) => s.kop);
+  const alle = secties(readFileSync(pad, 'utf8'));
+  const open: string[] = [];
+  alle.forEach((s, i) => {
+    if (!OPDRACHT_KOP.test(s.kop)) return;
+    let einde = i + 1;
+    while (einde < alle.length && !OPDRACHT_KOP.test(alle[einde].kop)) einde += 1;
+    const inhoud = alle
+      .slice(i, einde)
+      .map((x) => x.inhoud)
+      .join('\n');
+    if (!/<summary>Antwoord<\/summary>/.test(inhoud)) open.push(s.kop);
+  });
+  return open;
 }
 
 describe('opdrachten en uitdagingen', () => {

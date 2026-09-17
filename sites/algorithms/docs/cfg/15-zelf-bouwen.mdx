@@ -121,7 +121,31 @@ def controleer(grammatica_tekst, zinnen):
 
 controleer(GRAMMATICA, ZINNEN)`} />
 
-Lukt het? Dan heb je laten zien dat je het patroon zélf kunt uitbreiden —
-precies wat een grammatica zo krachtig maakt.
+<details>
+<summary>Tip</summary>
+
+Achter "said" staat een hele zin, en voor een hele zin heb je al een
+groep: het startsymbool `S`. Een werkwoordgroep mag dus ook bestaan uit
+een werkwoord gevolgd door een `S`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Eén regel erbij, met de naam die jij voor je werkwoordgroep gebruikt:
+
+```
+VP -> V S
+```
+
+"said Holmes sat" is dan een werkwoord met een complete zin als
+aanvulling, en "She said Holmes sat" gewoon een `S` uit een
+naamwoordgroep en een werkwoordgroep, zoals elke andere zin. De oude
+zinnen blijven werken, want je hebt alleen een regel toegevoegd.
+
+</details>
+
+Lukt het? Dan heb je laten zien dat je het patroon zélf kunt uitbreiden.
 
 Door naar [fouten →](./16-fouten).
