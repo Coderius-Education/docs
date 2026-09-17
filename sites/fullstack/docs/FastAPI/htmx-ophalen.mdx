@@ -1,0 +1,170 @@
+# Ophalen zonder herladen
+
+Versturen gaat nu zonder dat de pagina verspringt. Ophalen kan op dezelfde manier: een knop die de lijst ververst, en daarna een lijst die zichzelf ververst. Zet je server open voor de klas, dan zie je de berichten van anderen verschijnen zonder dat iemand op F5 drukt.
+
+## Een endpoint voor alleen de lijst
+
+Je hebt al een template voor het stuk lijst. Maak er een endpoint bij dat alleen dat stuk teruggeeft:
+
+```python
+@app.get("/berichten/lijst")
+async def berichten_lijst(request: Request):
+    with SqliteDict("gastenboek.db") as db:
+        alle_berichten = list(db.items())
+    return templates.TemplateResponse(
+        request,
+        "berichten_lijst.html",
+        {"berichten": alle_berichten}
+    )
+```
+
+Ga in je browser naar `/berichten/lijst`. Je ziet een kale lijst zonder kop of opmaak: dit endpoint is niet bedoeld om zelf te bezoeken, maar om een stuk van een pagina te vervangen.
+
+## Een knop die ververst
+
+```html
+<button hx-get="/berichten/lijst" hx-target="#berichten-lijst">Ververs</button>
+```
+
+**`hx-get`** doet wat een link doet, een GET naar dat pad, maar de pagina blijft staan. Het antwoord gaat in `#berichten-lijst`, net als bij het formulier.
+
+## Vanzelf verversen
+
+Een knop vraagt om een klik. Met **`hx-trigger`** kies je een ander moment:
+
+```html
+<div id="berichten-lijst" hx-get="/berichten/lijst" hx-trigger="every 10s">
+    {% include "berichten_lijst.html" %}
+</div>
+```
+
+Elke tien seconden haalt htmx de lijst op en zet hem op zijn plek. Een `hx-target` is hier niet nodig: zonder doel komt het antwoord in het element zelf, en dat is precies de bedoeling.
+
+Kijk in de terminal. Elke tien seconden komt er een regel bij, ook als er niets veranderd is. Dat is de tweede vraag uit [Server of browser?](/docs/FastAPI/server-of-browser): hoe vaak gebeurt het? Elke tien seconden is te doen. Bij elke toetsaanslag niet.
+
+## Testen
+
+1. Maak het endpoint en zet de knop Ververs op je berichtenpagina
+2. Open `/berichten` in twee tabbladen. Verstuur een bericht in het ene en klik in het andere op Ververs: het bericht staat er
+3. Zet `hx-trigger="every 10s"` op de lijst en herhaal stap 2 zonder te klikken
+
+:::danger[Gaat er iets mis?]
+Gebeurt er niets bij een klik? Kijk in Netwerk. Een rode regel met 404 betekent dat het pad in `hx-get` niet bestaat als endpoint. htmx zet een foutantwoord nooit in de pagina, dus je ziet het alleen daar. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
+:::
+
+## Opdrachten
+
+### Opdracht 1: Predict - Elke seconde
+
+Je zet `hx-trigger="every 1s"` op de lijst en laat de pagina een minuut open staan zonder iets te doen.
+
+**Vraag:** hoeveel regels komen er in de terminal bij?
+
+<details>
+<summary>Tip</summary>
+
+htmx weet niet of er iets veranderd is. Het vraagt, en de server antwoordt.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Zestig. Eén per seconde, ook al is de lijst al die tijd hetzelfde. Met tien bezoekers zijn dat 600 verzoeken per minuut voor niets. Kies het interval dus naar wat de bezoeker nodig heeft, niet naar wat kan.
+
+</details>
+
+### Opdracht 2: Run
+
+Bouw de knop en de automatische verversing. Zet je server open voor iemand naast je, zoals in [Laat het aan anderen zien](/docs/FastAPI/laat-het-zien), en laat die een bericht sturen.
+
+### Opdracht 3: Investigate - De server staat uit
+
+Stop je server met Ctrl+C en klik op Ververs. Kijk daarna in Netwerk.
+
+<details>
+<summary>Antwoord</summary>
+
+Op de pagina gebeurt niets: de oude lijst blijft staan. In Netwerk staat een rode regel met `(mislukt)`, zonder statuscode, want er was geen server om te antwoorden. htmx laat de pagina met rust als een verzoek mislukt. Dat is prettig voor de bezoeker, maar het betekent ook dat jij fouten alleen in Netwerk ziet.
+
+</details>
+
+### Opdracht 4: Make - Bericht openklappen
+
+Elke naam in de lijst is een link naar de detailpagina. Maak er een knop bij die het hele bericht ter plekke laat zien, zonder de lijst te verlaten.
+
+<details>
+<summary>Tip</summary>
+
+Je hebt een endpoint nodig dat alleen het bericht teruggeeft als stuk HTML, en per bericht een leeg element met een eigen id waar dat stuk in komt. De sleutel zit al in je lus.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`templates/bericht_kort.html`:
+
+```html
+<p>{{ bericht.naam }} schreef: {{ bericht.bericht }}</p>
+```
+
+```python
+@app.get("/bericht/{sleutel}/kort")
+async def bericht_kort(request: Request, sleutel: str):
+    with SqliteDict("gastenboek.db") as db:
+        bericht = db.get(sleutel)
+    if bericht is None:
+        raise HTTPException(status_code=404, detail="Dit bericht bestaat niet")
+    return templates.TemplateResponse(request, "bericht_kort.html", {"bericht": bericht})
+```
+
+In `templates/berichten_lijst.html`:
+
+```html
+<li>
+    <a href="/bericht/{{ sleutel }}">{{ bericht.naam }}</a>
+    <button hx-get="/bericht/{{ sleutel }}/kort" hx-target="#detail-{{ sleutel }}">Lees</button>
+    <div id="detail-{{ sleutel }}"></div>
+</li>
+```
+
+Elk bericht krijgt zijn eigen doel, met de sleutel in de id. Zonder die sleutel zouden alle knoppen naar hetzelfde element wijzen.
+
+</details>
+
+### Opdracht 5: Make - Nieuwste eerst
+
+Maak een knop "Nieuwste eerst" die de lijst omgekeerd ophaalt. Het omdraaien gebeurt op de server.
+
+<details>
+<summary>Tip</summary>
+
+Een query-parameter uit [GET vs POST](/docs/FastAPI/get_vs_post): `hx-get="/berichten/lijst?volgorde=nieuw"`. In je endpoint een parameter `volgorde: str = "oud"`, en `alle_berichten.reverse()` als hij op `"nieuw"` staat.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+@app.get("/berichten/lijst")
+async def berichten_lijst(request: Request, volgorde: str = "oud"):
+    with SqliteDict("gastenboek.db") as db:
+        alle_berichten = list(db.items())
+    if volgorde == "nieuw":
+        alle_berichten.reverse()
+    return templates.TemplateResponse(
+        request,
+        "berichten_lijst.html",
+        {"berichten": alle_berichten}
+    )
+```
+
+```html
+<button hx-get="/berichten/lijst?volgorde=nieuw" hx-target="#berichten-lijst">Nieuwste eerst</button>
+```
+
+In [Server of browser?](/docs/FastAPI/server-of-browser) draaide je de lijst om in JavaScript, met wat er al op de pagina stond. Dit is de andere weg: de server bepaalt de volgorde en stuurt het stuk opnieuw. Allebei goed; de JavaScript-versie kost geen verzoek, deze versie werkt ook als de lijst te lang is om helemaal op de pagina te zetten.
+
+</details>

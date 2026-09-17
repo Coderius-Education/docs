@@ -57,6 +57,16 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
+      label: 'Zonder herladen',
+      items: [
+        'FastAPI/htmx',
+        'FastAPI/htmx-ophalen',
+        'FastAPI/htmx-verwijderen',
+        'FastAPI/verzoek-htmx',
+      ],
+    },
+    {
+      type: 'category',
       label: 'Onthouden',
       items: [
         'FastAPI/cookies',

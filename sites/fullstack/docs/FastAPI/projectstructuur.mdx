@@ -132,16 +132,38 @@ je-project/
 
 Je JavaScript komt naast je CSS te staan, in dezelfde `static`-map. Aan `main.py` verandert niets: `app.mount` serveert die map al.
 
+## Bij [Zonder herladen met htmx](/docs/FastAPI/htmx)
+
+```
+je-project/
+├── main.py
+├── gastenboek.db
+├── static/
+│   ├── css/
+│   │   └── style.css
+│   ├── js/
+│   │   ├── app.js
+│   │   └── htmx.min.js
+│   └── pages/
+│       └── gastenboek_form.html
+└── templates/
+    ├── berichten.html
+    ├── berichten_lijst.html
+    └── bericht.html
+```
+
+htmx is een bestand naast je eigen JavaScript. De lijst krijgt een eigen template zonder `<html>` eromheen: een stuk pagina dat `berichten.html` met `{% include %}` gebruikt, en dat het POST-endpoint als antwoord teruggeeft.
+
 ## Compleet overzicht
 
 | Map | Wat staat er? | Voorbeeld |
 |-----|---------------|-----------|
 | `/` | Python code en database | `main.py`, `mijn_data.db` |
 | `static/css/` | CSS bestanden | `style.css` |
-| `static/js/` | JavaScript | `app.js` |
+| `static/js/` | JavaScript en htmx | `app.js`, `htmx.min.js` |
 | `static/pages/` | Vaste HTML pagina's | `home.html`, `form.html` |
 | `static/` | Afbeeldingen | `foto.jpg`, `logo.png` |
-| `templates/` | Jinja2 templates | `resultaat.html` |
+| `templates/` | Jinja2 templates, ook stukken voor htmx | `resultaat.html`, `berichten_lijst.html` |
 
 **Tip:** een project met zoveel bestanden is precies waar git voor bestaat. Eén commit per werkende versie, en je durft te verbouwen omdat je altijd terug kunt. Hoe je dat in VS Code doet staat in <SiteLink site="editor" to="/git/vscode/">Git in VS Code</SiteLink>.
 

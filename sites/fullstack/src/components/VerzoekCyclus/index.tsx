@@ -3,10 +3,10 @@ import clsx from 'clsx';
 import type { ReactElement } from 'react';
 import styles from './styles.module.css';
 
-// Vijf keer hetzelfde verhaal, elke keer met meer ertussen: het eerste
+// Zes keer hetzelfde verhaal, elke keer met meer ertussen: het eerste
 // verzoek (één functie, JSON terug), een pagina met CSS en een afbeelding
-// (drie verzoeken), een pagina uit de database (GET), een formulier (POST) en
-// een sessie. De stappen staan hier en niet in een los datamodel, zodat er
+// (drie verzoeken), een pagina uit de database (GET), een formulier (POST),
+// hetzelfde formulier zonder herladen (htmx) en een sessie. De stappen staan hier en niet in een los datamodel, zodat er
 // niets uit de pas kan lopen: het is één bestand met de tekst én de links
 // erin. Elke `to` wijst naar een bestaande lespagina; onBrokenLinks staat op
 // 'throw', dus een hernoemde les breekt de build in plaats van stilletjes een
@@ -203,6 +203,61 @@ const POST_STAPPEN: Stap[] = [
   },
 ];
 
+const HTMX_STAPPEN: Stap[] = [
+  {
+    kant: 'browser',
+    titel: 'Je klikt op Verstuur',
+    tekst: 'htmx ziet hx-post op het formulier en houdt de browser tegen: geen nieuwe pagina.',
+    to: '/docs/FastAPI/htmx',
+    les: 'Zonder herladen met htmx',
+  },
+  {
+    kant: 'browser',
+    titel: 'htmx stuurt de POST',
+    tekst:
+      'Dezelfde velden als anders, plus een header HX-Request: true. In Netwerk staat hij als xhr.',
+    to: '/docs/FastAPI/devtools-netwerk',
+    les: 'Kijken wat de browser doet',
+  },
+  {
+    kant: 'server',
+    titel: 'FastAPI pakt de velden uit',
+    tekst: 'Voor je endpoint is er geen verschil met een formulier zonder htmx.',
+    to: '/docs/FastAPI/forms',
+    les: 'Eigen POST request',
+  },
+  {
+    kant: 'server',
+    titel: 'Jouw Python slaat op',
+    tekst:
+      'Controleer hier wat je hebt gekregen, en bewaar het. Ook dit verzoek komt van de bezoeker.',
+    to: '/docs/FastAPI/post_naar_database',
+    les: 'POST naar database',
+  },
+  {
+    kant: 'server',
+    titel: 'Jinja2 vult alleen het stuk',
+    tekst: 'berichten_lijst.html, zonder <html> of <head> eromheen.',
+    to: '/docs/FastAPI/htmx',
+    les: 'Zonder herladen met htmx',
+  },
+  {
+    kant: 'server',
+    titel: 'Het antwoord is een stuk HTML',
+    tekst:
+      'Geen omleiding: de browser is nooit weggegaan, dus er is niets om naar terug te sturen.',
+    to: '/docs/FastAPI/redirect',
+    les: 'Terug naar de lijst',
+  },
+  {
+    kant: 'browser',
+    titel: 'htmx zet het stuk op zijn plek',
+    tekst: 'In het element van hx-target. De rest van de pagina blijft staan, de adresbalk ook.',
+    to: '/docs/FastAPI/htmx',
+    les: 'Zonder herladen met htmx',
+  },
+];
+
 const SESSIE_STAPPEN: Stap[] = [
   {
     kant: 'browser',
@@ -251,6 +306,7 @@ const VARIANTEN = {
   static: { stappen: STATIC_STAPPEN, titel: 'Eén pagina, drie verzoeken' },
   get: { stappen: GET_STAPPEN, titel: 'Een pagina opvragen' },
   post: { stappen: POST_STAPPEN, titel: 'Een formulier versturen' },
+  htmx: { stappen: HTMX_STAPPEN, titel: 'Een formulier versturen zonder herladen' },
   sessie: { stappen: SESSIE_STAPPEN, titel: 'Herkend worden met een sessie' },
 } as const;
 

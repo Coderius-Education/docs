@@ -21,6 +21,7 @@ const SUBJECT_PER_KOP: Record<string, string> = {
   FastAPI: 'fastapi',
   HTML: 'html',
   JavaScript: 'js',
+  htmx: 'htmx',
   'Database (sqlitedict)': 'database',
   Browser: 'browser',
   Mappenstructuur: 'structuur',
@@ -59,6 +60,7 @@ const KOPPELING: Item[] = [
   { summary: 'Redirect na een POST', concepten: ['fastapi-redirect'] },
   { summary: 'Path-parameter in de URL', concepten: ['fastapi-path-param'] },
   { summary: '404 sturen als iets niet bestaat', concepten: ['fastapi-httpexception'] },
+  { summary: 'DELETE endpoint (verwijderen zonder herladen)', concepten: ['fastapi-delete'] },
   { summary: 'Een cookie meegeven', concepten: ['fastapi-cookie'] },
   // Zetten en uitlezen zijn twee cheatsheet-items maar één concept: de regex
   // vangt set_cookie én Cookie(, en een project dat maar de helft doet werkt
@@ -75,6 +77,7 @@ const KOPPELING: Item[] = [
   { summary: 'Template variabele (Jinja2)', concepten: ['html-jinja-var'] },
   { summary: 'Lijst herhalen in een template (for-lus)', concepten: ['html-jinja-loop'] },
   { summary: 'Lege lijst opvangen (if en else)', concepten: ['html-jinja-if'] },
+  { summary: 'Een stuk template hergebruiken (include)', concepten: ['html-jinja-include'] },
 
   // --- JavaScript ---
   { summary: 'JavaScript koppelen aan je pagina', concepten: ['js-bestand-koppelen'] },
@@ -83,6 +86,20 @@ const KOPPELING: Item[] = [
     concepten: [],
     geenConcept:
       'querySelector en addEventListener horen bij de web-cursus en worden daar nagekeken',
+  },
+
+  // --- htmx ---
+  { summary: 'htmx koppelen aan je pagina', concepten: ['htmx-koppelen'] },
+  {
+    summary: 'Een verzoek zonder herladen (hx-post, hx-get, hx-delete)',
+    concepten: ['htmx-verzoek'],
+  },
+  { summary: 'Waar het antwoord komt (hx-target en hx-swap)', concepten: ['htmx-target'] },
+  { summary: 'Wanneer het verzoek gaat (hx-trigger)', concepten: ['htmx-trigger'] },
+  {
+    summary: 'Bevestiging vooraf (hx-confirm)',
+    concepten: [],
+    geenConcept: 'een tekst in een attribuut; het verzoek zelf wordt al nagekeken via hx-delete',
   },
 
   // --- Database (sqlitedict) ---

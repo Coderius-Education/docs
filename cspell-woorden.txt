@@ -120,6 +120,7 @@ hoofdkop
 hoofdlus
 hoofdnode
 htmlspecialchars
+htmx
 hulpvak
 hógere
 IDOR
@@ -250,8 +251,8 @@ rechtersensor
 rechterspeler
 rechtertak
 rechtsklikmenu
-rechtsklikt
 Rechtsklikmenu
+rechtsklikt
 redist
 Referers
 remstap

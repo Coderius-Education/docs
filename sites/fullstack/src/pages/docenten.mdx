@@ -53,7 +53,7 @@ Tips en antwoorden staan in `<details>`-blokken. Laat je leerlingen eerst zelf p
 
 De lessen staan in de **FastAPI**-sidebar en bouwen op elkaar voort. Begin bij [Installatie](/docs/FastAPI/installatie); de [Cheatsheet](/docs/cheatsheet) en [Er gaat iets mis](/docs/troubleshooting) zijn naslag.
 
-Vijf keer onderweg staat een diagram van de hele keten, browser links en server rechts, met per stap een link naar de les. Het begint kaal [bij het eerste verzoek](/docs/FastAPI/verzoek-eerste), direct na het eerste endpoint, en groeit mee. [Bij één pagina](/docs/FastAPI/verzoek-static), aan het eind van Pagina's tonen, komen de losse verzoeken voor CSS en afbeeldingen erbij. [Bij één klik](/docs/FastAPI/verzoek-get), aan het eind van het gastenboek, de database en de template; [bij één formulier](/docs/FastAPI/verzoek-post) direct daarna de omleiding; [bij een sessie](/docs/FastAPI/verzoek-sessie), aan het eind van Onthouden, de cookie. [Hoe een verzoek werkt](/docs/FastAPI/hoe-een-verzoek-werkt) bundelt ze bij het afronden met een tabel "waar hoort jouw code", handig bij het eigen project.
+Zes keer onderweg staat een diagram van de hele keten, browser links en server rechts, met per stap een link naar de les. Het begint kaal [bij het eerste verzoek](/docs/FastAPI/verzoek-eerste), direct na het eerste endpoint, en groeit mee. [Bij één pagina](/docs/FastAPI/verzoek-static), aan het eind van Pagina's tonen, komen de losse verzoeken voor CSS en afbeeldingen erbij. [Bij één klik](/docs/FastAPI/verzoek-get), aan het eind van het gastenboek, de database en de template; [bij één formulier](/docs/FastAPI/verzoek-post) direct daarna de omleiding. [Zonder herladen](/docs/FastAPI/verzoek-htmx), aan het eind van het htmx-blok, wordt die omleiding een stuk HTML als antwoord; [bij een sessie](/docs/FastAPI/verzoek-sessie), aan het eind van Onthouden, komt de cookie erbij. [Hoe een verzoek werkt](/docs/FastAPI/hoe-een-verzoek-werkt) bundelt ze bij het afronden met een tabel "waar hoort jouw code", handig bij het eigen project.
 
 | Onderwerp | Leerdoel |
 |---|---|
@@ -69,6 +69,9 @@ Vijf keer onderweg staat een diagram van de hele keten, browser links en server 
 | JavaScript erbij | Code die in de browser draait in plaats van op de server |
 | Console en Elementen | Uitvoer en fouten van JavaScript zien, en de pagina zoals de browser hem nu heeft |
 | Server of browser? | Kiezen waar iets hoort, en waarom controles op de server moeten |
+| Zonder herladen met htmx | Een formulier versturen zonder dat de pagina verspringt: het endpoint geeft een stuk HTML terug |
+| Ophalen zonder herladen | hx-get en hx-trigger, en wat elk verzoek de server kost |
+| Verwijderen zonder herladen | DELETE als werkwoord, hx-swap en hx-confirm |
 | Onthouden met een cookie | De browser iets laten onthouden tussen twee verzoeken |
 | Sessies | Alleen een sessie-id bij de bezoeker, de gegevens op de server |
 | Cookie of sessie? | Kiezen tussen de twee, en waarom je niet alles kunt geloven |
@@ -81,13 +84,15 @@ De ontwikkelaarstools van de browser krijgen twee eigen lessen, zonder schermafb
 
 Vanaf "JavaScript erbij" komt de browserkant in beeld. Je leerlingen kennen JavaScript al uit de web-cursus; nieuw is de vraag wáár code hoort. Die vraag krijgt een eigen les ("Server of browser?") nadat ze het verschil hebben gevoeld: een formulier versturen gaat via de server en de pagina verspringt, een tekenteller draait in de browser en de server ziet er niets van.
 
+Na "Server of browser?" komt het blok "Zonder herladen": de derde weg uit de tabel van die les. De server doet het werk, maar de pagina blijft staan, omdat htmx het verzoek stuurt en het antwoord op zijn plek zet. Je leerlingen schrijven er geen JavaScript voor; ze hergebruiken alles wat ze al hebben. Elk endpoint geeft een stuk template terug in plaats van een omleiding, en dat is ook de fout die je het meest zult zien: een hele pagina binnen in de lijst. De tweede valkuil is dat htmx een mislukt verzoek stil negeert; de lessen sturen daarom steeds naar het tabblad Netwerk. Het bestand `htmx.min.js` staat op deze site om te downloaden, zodat het ook werkt op een netwerk dat externe scripts blokkeert.
+
 Daarop volgt "Onthouden", drie lessen die het sterkst zijn als je ze achter elkaar plant. In de eerste veranderen je leerlingen hun eigen cookie in een andere naam en zien ze de server dat klakkeloos overnemen. In de tweede lossen ze dat op door alleen een sessie-id bij de bezoeker te laten en de gegevens op de server te zetten. Het is voor veel leerlingen het eerste moment waarop beveiliging concreet wordt: de verwijderknop verbergen is niet hetzelfde als verwijderen onmogelijk maken.
 
 "Cookie of sessie?" sluit dat blok af zoals "Server of browser?" het vorige afsluit — niet met nieuwe techniek, maar met de vraag wanneer je wat kiest. De kern is dat een sessie ook gewoon een cookie is; het verschil zit in wát erin staat. Leerlingen die alles voor de zekerheid een sessie willen maken, vinden daar het tegenargument: een voorkeur die niemand kan schaden hoort in een gewone cookie.
 
 Daarna sluit de cursus af met de server openzetten voor het netwerk en de eindopdracht.
 
-Wat hier bewust níét in zit, is `fetch`: JavaScript dat zelf data ophaalt bij een endpoint. Dat vraagt `async`/`await`, JSON verwerken en objecten — stof die de web-cursus nog niet behandelt. Leerlingen die erom vragen kun je die kant op sturen; de cursus bouwt er niet op.
+Wat hier bewust níét in zit, is `fetch`: JavaScript dat zelf data ophaalt bij een endpoint. Dat vraagt `async`/`await`, JSON verwerken en objecten — stof die de web-cursus nog niet behandelt. Het blok "Zonder herladen" vult dat gat met htmx: de server stuurt HTML, niet JSON. Leerlingen die toch `fetch` willen kun je die kant op sturen; de cursus bouwt er niet op.
 
 ## Feedback & bijdragen
 

@@ -49,16 +49,20 @@ async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
 
 ## Naast elkaar
 
-| | Server (FastAPI) | Browser (JavaScript) |
-|:---:|:---:|:---:|
-| **Waar draait het** | Op jouw computer | Op die van de bezoeker |
-| **Blijft het bewaard** | Ja, in je database | Nee, weg bij het sluiten |
-| **Zien anderen het** | Ja | Nee |
-| **Kost een verzoek** | Elke keer | Alleen bij het laden |
-| **Mag je het vertrouwen** | Ja | Nee |
-| **Typisch voor** | Opslaan, ophalen, controleren | Reageren op klikken en typen |
+| | Server (FastAPI) | Server zonder herladen (htmx) | Browser (JavaScript) |
+|:---:|:---:|:---:|:---:|
+| **Waar draait het** | Op jouw computer | Op jouw computer | Op die van de bezoeker |
+| **Blijft het bewaard** | Ja, in je database | Ja, in je database | Nee, weg bij het sluiten |
+| **Zien anderen het** | Ja | Ja | Nee |
+| **Kost een verzoek** | Elke keer, en de pagina verspringt | Elke keer, de pagina blijft staan | Alleen bij het laden |
+| **Mag je het vertrouwen** | Ja | Ja | Nee |
+| **Typisch voor** | Opslaan, ophalen, controleren | Hetzelfde, midden op een pagina | Reageren op klikken en typen |
 
 De vuistregel blijft: moet iets bewaard blijven of zichtbaar zijn voor anderen, dan hoort het op de server. Gaat het om reageren op wat de bezoeker doet met data die al op de pagina staat, dan is het de browser.
+
+## Een derde weg
+
+De middelste kolom ken je nog niet. Tot nu toe betekende "naar de server" ook "de pagina verspringt": versturen, omleiding, alles opnieuw. Dat hoeft niet. In het volgende blok, [Zonder herladen met htmx](/docs/FastAPI/htmx), doet de server het werk terwijl de pagina blijft staan. De hoofdvraag verandert er niet door: moet iets bewaard blijven, dan gaat het naar de server, met of zonder herladen.
 
 ## Opdrachten
 

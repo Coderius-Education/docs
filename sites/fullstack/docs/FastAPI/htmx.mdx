@@ -1,0 +1,206 @@
+import { DevtoolsPaneel, NetwerkTabel } from '@site/src/components/Devtools';
+
+# Zonder herladen met htmx
+
+Alles wat je gastenboek doet gaat via de server, en bij elke stap verspringt de pagina: versturen, omleiding, de hele lijst opnieuw. Bij één formulier merk je dat nauwelijks. Bij een lange pagina waar het formulier onderaan staat, sta je na elk bericht weer bovenaan. In deze les stuurt de browser het verzoek zonder de pagina te verlaten, en zet hij het antwoord van de server op de plek die jij aanwijst. Daar gebruik je **htmx** voor: een klein JavaScript-bestand dat je HTML een paar nieuwe attributen geeft. Je schrijft er zelf geen JavaScript voor.
+
+## Waar het bestand komt
+
+htmx is één bestand. Zet het naast je eigen JavaScript in `static/js/`:
+
+```
+je-project/
+├── main.py
+├── static/
+│   └── js/
+│       ├── app.js
+│       └── htmx.min.js
+└── templates/
+```
+
+Download <a href="/htmx/htmx.min.js" download>htmx.min.js</a> (versie 2.0.10) en sla het daar op. Het is dezelfde versie als op [htmx.org](https://htmx.org/docs/#installing); door het bestand in je eigen project te zetten werkt je site ook op een netwerk dat externe scripts blokkeert, zoals op school.
+
+Koppelen doe je in de `<head>` van je template, net als `app.js`:
+
+```html
+<script src="/static/js/htmx.min.js" defer></script>
+```
+
+Aan `main.py` verandert niets: `app.mount` serveert de map al.
+
+## Het formulier
+
+Zet het formulier op je berichtenpagina, boven de lijst, en geef de lijst een eigen plek:
+
+```html
+<form hx-post="/gastenboek" hx-target="#berichten-lijst">
+    <input type="text" name="naam" placeholder="Je naam" required>
+    <input type="text" name="bericht" placeholder="Je bericht" maxlength="80" required>
+    <button type="submit">Verstuur</button>
+</form>
+
+<div id="berichten-lijst">
+    {% include "berichten_lijst.html" %}
+</div>
+```
+
+Twee dingen zijn anders dan bij [Eigen POST request](/docs/FastAPI/forms). Er staat geen `method` en geen `action` meer, maar **`hx-post`**: htmx stuurt de POST zelf, en de browser blijft op de pagina. En **`hx-target`** zegt waar het antwoord van de server komt: in het element met id `berichten-lijst`. Wat daar stond wordt vervangen door wat de server terugstuurt.
+
+## Eén template voor de lijst
+
+De lijst zelf verhuist naar een eigen bestand, `templates/berichten_lijst.html`, zonder `<html>` of `<head>` eromheen. Het is een stuk pagina, geen hele pagina:
+
+```html
+{% if berichten %}
+    <ul>
+        {% for sleutel, bericht in berichten %}
+            <li><a href="/bericht/{{ sleutel }}">{{ bericht.naam }}</a>: {{ bericht.bericht }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Nog geen berichten. Wees de eerste.</p>
+{% endif %}
+```
+
+Met **`{% include %}`** plakt Jinja2 dat bestand in je berichtenpagina, op de plek waar de regel staat. Zo staat de lijst maar één keer in je project, en gebruiken de pagina en het antwoord na het versturen precies dezelfde HTML.
+
+## Het endpoint geeft het stuk terug
+
+<CodeUitleg>
+
+```python showLineNumbers
+@app.post("/gastenboek")
+async def gastenboek_opslaan(request: Request, naam: str = Form(...), bericht: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
+        db.commit()
+        alle_berichten = list(db.items())
+    return templates.TemplateResponse(
+        request,
+        "berichten_lijst.html",
+        {"berichten": alle_berichten}
+    )
+```
+
+<Regel n={2}>
+`request` komt erbij, want een `TemplateResponse` heeft hem nodig. De twee `Form`-parameters zijn dezelfde als bij een formulier zonder htmx: voor je endpoint maakt het niet uit of htmx het verzoek stuurde of de browser zelf.
+</Regel>
+
+<Regel n={6}>
+Na het opslaan lees je meteen de hele lijst, binnen het `with`-blok, net als in [Een lijst tonen](/docs/FastAPI/lijst_tonen).
+</Regel>
+
+<Regel n={7} tot={11}>
+In [Terug naar de lijst](/docs/FastAPI/redirect) stuurde je hier een omleiding met 303. Dat hoeft nu niet: de browser is nooit weggegaan. Het antwoord is alleen het stuk HTML van de lijst, en htmx zet het in `#berichten-lijst`.
+</Regel>
+
+</CodeUitleg>
+
+Je `/berichten`-endpoint verandert niet, alleen zijn template heeft nu de `{% include %}`.
+
+## Kijk wat er over de lijn gaat
+
+Open het tabblad **Netwerk** zoals in [Kijken wat de browser doet](/docs/FastAPI/devtools-netwerk) en verstuur een bericht. Er komt één regel bij, en de lijst wordt niet opnieuw geladen:
+
+<DevtoolsPaneel tab="Netwerk">
+  <NetwerkTabel rijen={[{ naam: 'gastenboek', status: 200, type: 'xhr', grootte: '412 B' }]} />
+</DevtoolsPaneel>
+
+Het type is `xhr`: een verzoek dat een script stuurde, geen pagina die de browser opvroeg. Klik de regel aan. Bij **Reactie** staat alleen de `<ul>` met je berichten, geen `<html>` en geen `<head>`. Bij **Headers** stuurde htmx `HX-Request: true` mee, zodat je server kan zien dat het verzoek van htmx komt.
+
+In de terminal staat wat je verwacht: één regel, `POST /gastenboek 200 OK`. Geen omleiding, geen tweede GET.
+
+## Testen
+
+1. Download `htmx.min.js` naar `static/js/` en koppel het in de `<head>` van `berichten.html`
+2. Zet het formulier en `<div id="berichten-lijst">` op de pagina, en maak `berichten_lijst.html`
+3. Pas het POST-endpoint aan zodat het de lijst-template teruggeeft
+4. Verstuur een bericht: de lijst groeit, de pagina verspringt niet en de adresbalk blijft `/berichten`
+5. Druk op F5: de pagina herlaadt zonder vraag over opnieuw versturen, want je laatste echte paginabezoek was een GET
+
+:::danger[Gaat er iets mis?]
+Verschijnt na het versturen een hele pagina ín je lijst, met een tweede kop? Dan geeft je endpoint nog de hele pagina of een omleiding terug; htmx zet alles wat binnenkomt in het doel. Verspringt de pagina en komt er `?naam=` in de adresbalk? Dan is htmx niet geladen: kijk in Netwerk of `htmx.min.js` een 200 kreeg. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
+:::
+
+## Opdrachten
+
+### Opdracht 1: Predict - Zonder doel
+
+Je haalt `hx-target` van het formulier af, zodat er alleen `hx-post="/gastenboek"` staat, en verstuurt een bericht.
+
+**Vraag:** waar komt de lijst terecht?
+
+<details>
+<summary>Tip</summary>
+
+htmx moet het antwoord ergens kwijt. Als jij geen plek aanwijst, kiest het de plek die het al kent.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+In het formulier zelf. Zonder `hx-target` zet htmx het antwoord in het element waar het attribuut op staat, en dat is de `<form>`. De invoervelden en de knop zijn weg; er staat een lijst voor in de plaats. Het endpoint deed niets fout, de HTML kwam alleen op de verkeerde plek.
+
+</details>
+
+### Opdracht 2: Run
+
+Bouw het voorbeeld na en verstuur drie berichten achter elkaar. Kijk bij elk bericht in de terminal en in Netwerk.
+
+### Opdracht 3: Investigate - De omleiding terugzetten
+
+Zet in het POST-endpoint de oude regel terug, `return RedirectResponse(url="/berichten", status_code=303)`, en verstuur een bericht.
+
+<details>
+<summary>Antwoord</summary>
+
+Je hele berichtenpagina verschijnt binnen in `#berichten-lijst`: twee keer de kop, twee keer het formulier. htmx volgt de omleiding net als de browser, krijgt daardoor de complete pagina van `/berichten` terug, en zet die netjes in het doel. Een endpoint dat voor htmx werkt geeft een stuk terug, nooit een omleiding.
+
+</details>
+
+### Opdracht 4: Make - Leeg formulier
+
+Na het versturen blijft je tekst in de velden staan. Zorg dat het formulier leeg is zodra het antwoord binnen is.
+
+<details>
+<summary>Tip</summary>
+
+htmx stuurt na elk verzoek een gebeurtenis `after-request`. Met `hx-on::after-request="..."` koppel je daar één regel aan, en een formulier maak je leeg met `reset()`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<form hx-post="/gastenboek" hx-target="#berichten-lijst" hx-on::after-request="this.reset()">
+```
+
+`this` is het formulier zelf, en `reset()` zet alle velden terug naar hun beginwaarde. Dit is de enige regel JavaScript in deze les, en hij staat in de HTML.
+
+</details>
+
+### Opdracht 5: Make - Aantal berichten
+
+Zet boven de lijst hoeveel berichten er zijn, en zorg dat dat getal meeloopt als je een bericht verstuurt.
+
+<details>
+<summary>Tip</summary>
+
+Alles wat na het versturen moet veranderen, hoort in `berichten_lijst.html`, want alleen dat stuk wordt vervangen. Jinja2 telt een lijst met `{{ berichten|length }}`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Bovenaan `templates/berichten_lijst.html`:
+
+```html
+<p>{{ berichten|length }} berichten</p>
+```
+
+Zet je die regel in `berichten.html`, buiten `#berichten-lijst`, dan klopt hij na het versturen niet meer: dat deel van de pagina komt niet opnieuw van de server.
+
+</details>
