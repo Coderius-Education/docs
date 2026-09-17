@@ -18,7 +18,7 @@ patroon gebruik je straks in elke bouwsteen.
 
 ## Wat is een functie ook al weer?
 
-Een functie is een **mini-machine**: je stopt er iets in, je krijgt er
+Een functie is een kleine machine: je stopt er iets in en je krijgt er
 iets uit.
 
 ```python
@@ -26,9 +26,8 @@ def kwadraat(x):
     return x * x
 ```
 
-- `def kwadraat(x):` — declaratie. `x` is de input (parameter).
-- `return x * x` — wat eruit komt.
-- Aanroepen: `kwadraat(5)` → `25`.
+`def kwadraat(x):` is de kop, met `x` als parameter. `return x * x` is
+wat eruit komt. De aanroep `kwadraat(5)` geeft `25`.
 
 In ons minimax-project:
 
@@ -38,8 +37,7 @@ def player(bord):
     return "X"          # of "O"
 ```
 
-- **Input**: een bord (3×3 lijst).
-- **Output**: `"X"` of `"O"`.
+De input is een bord (een 3×3-lijst), de output `"X"` of `"O"`.
 
 ## Functies kun je **stapelen**
 
@@ -50,8 +48,8 @@ De output van de ene functie kan direct de input van een andere zijn.
 print(kwadraat(kwadraat(2)))     # (2²)² = 16
 ```
 
-Werkt van **binnen naar buiten**: `kwadraat(2)` is `4`, dan
-`kwadraat(4)` is `16`, dan print.
+Dat werkt van binnen naar buiten: `kwadraat(2)` is `4`, dan
+`kwadraat(4)` is `16`, en dat wordt geprint.
 
 ## Een minimax-voorbeeld vooruit
 
@@ -62,8 +60,8 @@ nieuw_bord = result(bord, (0, 0))     # past zet toe
 wie_won = winner(nieuw_bord)          # checkt of er een winnaar is
 ```
 
-`result` geeft een **nieuw bord** terug. Dat bord stoppen we direct in
-`winner`. Of korter, gestapeld:
+`result` geeft een nieuw bord terug, en dat bord stoppen we direct in
+`winner`. Korter, gestapeld:
 
 ```python
 wie_won = winner(result(bord, (0, 0)))
@@ -130,9 +128,8 @@ def som_van_kwadraten(a, b):
     return kwadraat(a) + kwadraat(b)
 ```
 
-`som_van_kwadraten` doet zelf niks bijzonders — hij delegeert aan
-`kwadraat`. Dat heet **compositie**: een functie bouwen door anderen
-te combineren.
+`som_van_kwadraten` doet zelf weinig: hij laat `kwadraat` het werk doen.
+Dat heet **compositie**, een functie bouwen uit andere functies.
 
 <PyRunner initialCode={`def kwadraat(x):
     return x * x
@@ -144,30 +141,32 @@ print(som_van_kwadraten(3, 4))      # 25  (9 + 16)`} />
 
 ## Waarom dit relevant is
 
-In de bouwstenen hierna bouw je tien functies, en die gaan **elkaar
-aanroepen**:
+In de bouwstenen hierna bouw je tien functies, en die roepen elkaar
+aan:
 
 - `terminal(bord)` roept `winner(bord)` aan.
-- `result(bord, zet)` wordt door `minimax` aangeroepen, vaak met de
-  output direct doorgegeven aan `winner` of `terminal`.
-- `minimax(bord)` roept `actions`, `result`, `player`, en zichzelf aan.
+- `result(bord, zet)` wordt door `max_value`, `min_value` en `minimax`
+  aangeroepen; het nieuwe bord gaat meteen door naar `min_value` of
+  `max_value`.
+- `max_value(bord)` en `min_value(bord)` roepen elkaar aan.
+- `minimax(bord)` roept `actions`, `result`, `player` en die twee aan.
 
-Elke functie is op zichzelf klein. Samen worden ze een AI.
+Elke functie is op zichzelf klein; samen zijn ze een AI.
 
 ## Eén gouden regel: één functie, één taak
 
-Een goede functie doet **één** ding. `winner` zegt wie heeft gewonnen —
-hij print niks, hij verandert het bord niet, hij speelt zelf geen zet.
-Hij geeft alleen `"X"`, `"O"` of `None` terug.
+Een goede functie doet één ding. `winner` zegt wie heeft gewonnen: hij
+print niets, verandert het bord niet en speelt zelf geen zet. Hij geeft
+alleen `"X"`, `"O"` of `None` terug.
 
-Door je code in zulke kleine functies te splitsen, kun je ze los testen.
-Werkt `winner` op een vol bord? Werkt hij op een leeg bord? Werkt hij
-als alleen de diagonaal vol is? Je test elk geval **zonder** dat je de
-hele AI hoeft te draaien.
+Door je code in zulke kleine functies te splitsen kun je ze los testen:
+`winner` op een vol bord, op een leeg bord, op een bord waar alleen de
+diagonaal vol is. Elk geval apart, zonder dat de hele AI hoeft te
+draaien.
 
 ## Wat nu?
 
-Tijd voor de eerste functie. We beginnen met de makkelijkste:
-`initial_state()` — een leeg bord teruggeven.
+De eerste functie is de makkelijkste: `initial_state()`, een leeg bord
+teruggeven.
 
 Door naar [bouwsteen 1: initial_state →](./bouwen/06-initial_state).

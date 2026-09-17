@@ -10,25 +10,20 @@ sidebar_position: 16
   ]}
 />
 
-**Leerdoel:** je schrijft de top-level AI-functie die alle vorige
-bouwstenen gebruikt om de **beste zet** terug te geven — direct in je
-lokale `tictactoe.py`.
+**Leerdoel:** je schrijft de functie die alle vorige bouwstenen gebruikt
+om de beste zet terug te geven, direct in je lokale `tictactoe.py`.
 
-Je hebt bij [draai het zelf](./15-zelf-draaien) je negen functies in
-één lokaal bestand gezet (of in de verzamel-PyRunner). Tijd voor de
-tiende.
+Bij [draai het zelf](./15-zelf-draaien) heb je je negen functies in één
+lokaal bestand gezet, of in de verzamel-PyRunner. Nu de tiende.
 
 ## Wat doet deze functie?
 
-`minimax(bord)` geeft de **beste zet** terug voor de speler die nu aan
-zet is. Niet het *getal* — dat is wat `max_value`/`min_value` doen.
-`minimax` geeft de tuple `(i, j)`.
-
-- **X-beurt**: kies de zet met de **hoogste** `min_value(result(bord, zet))`.
-- **O-beurt**: kies de zet met de **laagste** `max_value(result(bord, zet))`.
-
-Kruislings, want na X's zet is O aan zet, dus je rekent met
-`min_value`. Voor O andersom.
+`minimax(bord)` geeft de beste zet terug voor de speler die nu aan zet
+is: niet het getal, dat doen `max_value` en `min_value`, maar de tuple
+`(i, j)`. Is X aan zet, dan kies je de zet met de hoogste
+`min_value(result(bord, zet))`; is O aan zet, de zet met de laagste
+`max_value(result(bord, zet))`. Kruislings, want na een zet van X is O
+aan zet, dus je rekent met `min_value`. Voor O andersom.
 
 ## Het patroon
 
@@ -45,12 +40,13 @@ voor elke zet in actions(bord):
 return beste_zet
 ```
 
-Dezelfde lus als in `max_value`, alleen onthoud je nu ook welke zet
-het beste was.
+Dezelfde lus als in `max_value`, alleen onthoud je nu ook welke zet de
+beste was.
 
 ## Speciaal geval
 
-Als `terminal(bord)`, is er geen zet meer mogelijk. Return `None`.
+Is het bord terminal, dan is er geen zet meer mogelijk en geef je `None`
+terug.
 
 ## Specificatie
 
@@ -60,20 +56,20 @@ Als `terminal(bord)`, is er geen zet meer mogelijk. Return `None`.
 
 ## Voorspel
 
-Wat moet `minimax` teruggeven op deze positie? X is aan zet en kan
-direct winnen via `(2, 0)` of `(2, 2)`.
+Wat moet `minimax` teruggeven op deze positie? X is aan zet.
 
 ```python
-bord = [["X","O","X"], ["O","X","O"], [None, None, None]]
+bord = [["X","O","O"], ["O","X","X"], [None, None, None]]
 ```
 
 <details>
 <summary>Antwoord</summary>
 
-`(2, 0)` of `(2, 2)` — beide leveren een directe winst op (diagonaal).
+`(2, 2)`: dat maakt de diagonaal `X X X` vol, directe winst.
 
-Welke van de twee terugkomt hangt af van de **volgorde** waarin
-`actions(bord)` ze opsomt. Beide zijn correct.
+De twee andere zetten winnen niet. Na `(2, 0)` of `(2, 1)` blokkeert O
+op `(2, 2)` en eindigt het in remise. Van de drie zetten heeft er dus
+precies één de waarde `1`, en die geeft `minimax` terug.
 
 </details>
 
@@ -99,10 +95,10 @@ def minimax(bord):
 <details>
 <summary>Tip</summary>
 
-Het patroon is bijna identiek aan `max_value` en `min_value`, met één
-extra ding: **onthoud welke zet** het optimum opleverde, niet alleen
-de score. Je hebt dus twee variabelen bij te houden, `beste_score` en
-`beste_zet`, en een `if` per speler: voor X vergelijk je met `>` en
+Het patroon is bijna hetzelfde als in `max_value` en `min_value`, met
+één verschil: je onthoudt welke zet het beste getal opleverde, niet
+alleen het getal. Je houdt dus twee variabelen bij, `beste_score` en
+`beste_zet`, en per speler een `if`: voor X vergelijk je met `>` en
 begin je op `-math.inf`, voor O met `<` en `math.inf`.
 
 Vergeet je `beste_zet` bij te werken? Dan geeft minimax `None` terug.
@@ -152,10 +148,10 @@ Plak deze tests **onderaan** je lokale bestand (na minimax):
 vol = [["X","O","X"],["X","O","O"],["O","X","X"]]
 assert minimax(vol) is None, "Terminal bord -> None"
 
-# X kan direct winnen via (2,0) of (2,2) — beide is correct
-bord = [["X","O","X"], ["O","X","O"], [None, None, None]]
+# X kan direct winnen op (2,2); de andere twee zetten geven hoogstens remise
+bord = [["X","O","O"], ["O","X","X"], [None, None, None]]
 zet = minimax(bord)
-assert zet in {(2, 0), (2, 2)}, f"Verwacht (2,0) of (2,2), kreeg {zet}"
+assert zet == (2, 2), f"Verwacht (2,2), kreeg {zet}"
 
 # O moet X-winst blokkeren
 # X heeft (0,0) en (1,1) -> dreigt op (2,2). O is aan zet.
@@ -216,20 +212,17 @@ Run opnieuw:
 python tictactoe.py
 ```
 
-Je AI speelt nu tegen zichzelf. **Eindigt altijd in remise** — dat is
-een wiskundige eigenschap van tic-tac-toe bij optimaal spel.
+Je AI speelt nu tegen zichzelf, en dat eindigt altijd in remise: zo zit
+tic-tac-toe in elkaar bij optimaal spel.
 
-Op je laptop is dit een **paar seconden**, niet 30. Da's het verschil
-tussen browser-Python en native Python.
+Op je laptop is dit een **paar seconden**, niet 30. Dat is het verschil
+tussen Python in de browser en Python op je eigen computer.
 
 ## Bonus — CS50's `runner.py` met clickable GUI
 
-CS50 levert bij dit project een tweede bestand, **`runner.py`**, dat
-een grafische tic-tac-toe-window opent waarin jij tegen je eigen AI
-kunt spelen. Hetzelfde `tictactoe.py` dat jij hebt gebouwd is wat
-`runner.py` gebruikt.
-
-Zo werkt het:
+CS50 levert bij dit project een tweede bestand, `runner.py`, dat een
+venster opent waarin jij tegen je eigen AI speelt. Het gebruikt het
+`tictactoe.py` dat jij net hebt gebouwd. Zo werkt het:
 
 1. Download het project-zip via
    [cs50.harvard.edu/ai/projects/0/tictactoe/](https://cs50.harvard.edu/ai/projects/0/tictactoe/) —
@@ -246,30 +239,35 @@ Zo werkt het:
    functies gebruiken de waardes zelf, dus verder verandert er niets.
 3. Installeer eenmalig `pygame`:
    ```
-   pip install pygame
+   python -m pip install pygame
    ```
 4. Draai:
    ```
    python runner.py
    ```
 
-Een venster opent. Je klikt op een vakje, je AI antwoordt. Boter-kaas-
-en-eieren tegen een tegenstander die nooit blundert.
+Er opent een venster. Je klikt op een vakje en je AI antwoordt:
+boter-kaas-en-eieren tegen een tegenstander die nooit blundert.
 
 ## Geen lokale Python? Noodoplossing met PyRunner
 
 <details>
 <summary>Open dit alleen als je echt niet lokaal kan draaien</summary>
 
-Plak je eigen `minimax` op de aangegeven plek. De andere negen functies
-staan al klaar. **Let op**: de AI-vs-AI demo kan in de browser zo'n
-**30 seconden** duren — minimax rekent honderdduizenden posities door.
+Vervang de lege `minimax` op de aangegeven plek door je eigen versie,
+inclusief de regel `def`. De andere negen functies staan al klaar, en
+onder `minimax` staan dezelfde tests als hierboven.
+Halen die het, dan speelt de AI tegen zichzelf. **Let op**: die demo kan
+in de browser zo'n **30 seconden** duren — minimax rekent
+honderdduizenden posities door.
 
 {/* niet-draaien: startcode; de leerling plakt hier zijn eigen minimax in */}
-<PyRunner initialCode={`import copy, math
+<PyRunner initialCode={`import copy
+import math
 
 
-def initial_state(): return [[None]*3 for _ in range(3)]
+def initial_state():
+    return [[None]*3 for _ in range(3)]
 def player(bord):
     x = 0
     o = 0
@@ -287,14 +285,21 @@ def actions(bord):
                 mogelijk.add((i, j))
     return mogelijk
 def result(bord, zet):
-    n = copy.deepcopy(bord); i, j = zet; n[i][j] = player(bord); return n
+    n = copy.deepcopy(bord)
+    i, j = zet
+    n[i][j] = player(bord)
+    return n
 def winner(bord):
     for rij in bord:
-        if rij[0] == rij[1] == rij[2] and rij[0] is not None: return rij[0]
+        if rij[0] == rij[1] == rij[2] and rij[0] is not None:
+            return rij[0]
     for j in range(3):
-        if bord[0][j] == bord[1][j] == bord[2][j] and bord[0][j] is not None: return bord[0][j]
-    if bord[0][0] == bord[1][1] == bord[2][2] and bord[0][0] is not None: return bord[0][0]
-    if bord[0][2] == bord[1][1] == bord[2][0] and bord[0][2] is not None: return bord[0][2]
+        if bord[0][j] == bord[1][j] == bord[2][j] and bord[0][j] is not None:
+            return bord[0][j]
+    if bord[0][0] == bord[1][1] == bord[2][2] and bord[0][0] is not None:
+        return bord[0][0]
+    if bord[0][2] == bord[1][1] == bord[2][0] and bord[0][2] is not None:
+        return bord[0][2]
     return None
 def terminal(bord):
     if winner(bord) is not None:
@@ -312,22 +317,44 @@ def utility(bord):
         return -1
     return 0
 def max_value(bord):
-    if terminal(bord): return utility(bord)
+    if terminal(bord):
+        return utility(bord)
     v = -math.inf
-    for z in actions(bord): v = max(v, min_value(result(bord, z)))
+    for zet in actions(bord):
+        v = max(v, min_value(result(bord, zet)))
     return v
 def min_value(bord):
-    if terminal(bord): return utility(bord)
+    if terminal(bord):
+        return utility(bord)
     v = math.inf
-    for z in actions(bord): v = min(v, max_value(result(bord, z)))
+    for zet in actions(bord):
+        v = min(v, max_value(result(bord, zet)))
     return v
 
 
 def minimax(bord):
-    # === Plak HIER je eigen minimax ===
-    raise NotImplementedError(
-        "Plak je eigen minimax-functie hierboven, in plaats van deze regel."
-    )
+    # === Vervang deze functie door je eigen minimax ===
+    raise NotImplementedError("Vervang deze functie door je eigen minimax.")
+
+
+# === Tests ===
+
+# Terminal -> None
+vol = [["X","O","X"],["X","O","O"],["O","X","X"]]
+assert minimax(vol) is None, "Terminal bord -> None"
+
+# X kan direct winnen op (2,2); de andere twee zetten geven hoogstens remise
+bord = [["X","O","O"], ["O","X","X"], [None, None, None]]
+zet = minimax(bord)
+assert zet == (2, 2), f"Verwacht (2,2), kreeg {zet}"
+
+# O moet X-winst blokkeren
+# X heeft (0,0) en (1,1) -> dreigt op (2,2). O is aan zet.
+bord = [["X", None, "O"], [None, "X", None], [None, None, None]]
+zet = minimax(bord)
+assert zet == (2, 2), f"O moet blokkeren op (2,2), kreeg {zet}"
+
+print("Alle tests gehaald ✓")
 
 
 def print_bord(bord):
@@ -361,8 +388,8 @@ else:
 
 </details>
 
-Je hebt nu een werkende AI op je eigen laptop: een Python-bestand dat
-je kunt kopiëren, mailen of doorontwikkelen. Tien kleine functies die
+Je hebt nu een werkende AI op je eigen laptop, in een Python-bestand dat
+je kunt kopiëren, mailen of verder uitbouwen: tien kleine functies die
 elkaar aanroepen, elk apart getest.
 
 Door naar [veelgemaakte fouten →](../17-fouten).

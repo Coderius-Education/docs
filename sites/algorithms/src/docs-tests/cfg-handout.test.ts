@@ -157,6 +157,74 @@ print("FOUT" if parse(grammatica, "sat holmes".split()) else "OK")
     expect(draai(py).trim().split('\n')).toEqual(['OK', 'OK']);
   });
 
+  it('de lessen beloven geen exact aantal bomen voor een ambigue zin', () => {
+    // Bij de doorloop zeiden drie pagina's dat zin 10 "op (2x)" komt en dat
+    // het voorbeeld van opdracht 2 "twee bomen" geeft. Met de grammatica van
+    // het antwoordblad, en met elke grammatica die een voorzetselgroep aan
+    // een naamwoord- én een werkwoordgroep laat hangen, zijn het er vijf. Het
+    // aantal hangt van de regels van de leerling af, dus de tekst zegt
+    // "meer dan één"; hier staat vast dat dat met het antwoord ook zo is.
+    const cfgDocs = ['bouwen/12-recursie.mdx', '13-compleet.mdx', '14-aanpassen.mdx'].map((n) =>
+      lees(`cfg/${n}`),
+    );
+    for (const tekst of cfgDocs) {
+      const proza = tekst.replace(/<PyRunner[\s\S]*?\/>/g, '');
+      // Elke "(2x)" is een belofte van een exact aantal, behalve "(2x) of
+      // meer" en "zag je al een (2x)": die twee vormen gaan er eerst uit.
+      const zonderToegestaan = proza
+        .replace(/\(2x\)\*{0,2} of\s+meer/g, '')
+        .replace(/een \(2x\)/g, '');
+      expect(zonderToegestaan).not.toMatch(/\(2x\)|twee bomen|twee geldige bomen|precies twee/i);
+    }
+    const code = `${parserCode(grammatica)}
+grammatica = lees_grammatica(GRAMMATICA + LEXICON)
+for zin in ["I had a little moist red paint in the palm of my hand", "Holmes had a pipe in the armchair in the day"]:
+    print(len(parse(grammatica, zin.lower().split())), zin)
+`;
+    const aantallen = draai(code)
+      .trim()
+      .split('\n')
+      .map((r) => Number(r.split(' ')[0]));
+    expect(
+      aantallen.every((n) => n > 1),
+      'beide zinnen zijn ambigu',
+    ).toBe(true);
+  });
+
+  it('de motor slaat een kopje met # over en valt om op een regel zonder of met twee pijlen', () => {
+    // cfg/16 zegt dat een geplakte zin zonder pijl de ValueError geeft, dat
+    // twee pijlen de spiegelbeeldige melding geven en dat een kopje met #
+    // niets doet; hier staat vast dat de motor dat ook echt zo doet.
+    const code = `${parserCode(grammatica)}
+print(len(lees_grammatica("## Zin 1\\nS -> NP VP")))
+for regel in ["Holmes lit a pipe", "S -> NP VP -> V"]:
+    try:
+        lees_grammatica(regel)
+    except ValueError as e:
+        print("ValueError:", e)
+`;
+    expect(draai(code).trim().split('\n')).toEqual([
+      '1',
+      'ValueError: not enough values to unpack (expected 2, got 1)',
+      'ValueError: too many values to unpack (expected 2)',
+    ]);
+  });
+
+  it('het antwoord van zelf-bouwen laat de nieuwe zin en de oude zinnen werken', () => {
+    const tekst = lees('cfg/15-zelf-bouwen.mdx');
+    const regel = tekst.match(/<summary>Antwoord<\/summary>[\s\S]*?```\n([\s\S]*?)```/)?.[1] ?? '';
+    expect(regel.trim()).not.toBe('');
+    const zinnen = [...tekst.matchAll(/^ {4}"(.+)",$/gm)].map((m) => m[1]);
+    expect(zinnen).toContain('She said Holmes sat');
+    const code = `${parserCode(`${grammatica}\n${regel}`)}
+grammatica = lees_grammatica(GRAMMATICA + LEXICON)
+for zin in ${JSON.stringify(zinnen)}:
+    print("OK" if parse(grammatica, zin.lower().split()) else "FOUT", zin)
+`;
+    const uit = draai(code).trim().split('\n');
+    expect(uit.filter((r) => !r.startsWith('OK'))).toEqual([]);
+  });
+
   it('bouwt de tien zinnen van de hand-out', () => {
     const code = `${parserCode(grammatica)}
 grammatica = lees_grammatica(GRAMMATICA + LEXICON)

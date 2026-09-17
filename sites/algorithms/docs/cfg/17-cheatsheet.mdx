@@ -16,9 +16,9 @@ een neutraal mini-grammaticaatje, geen oplossing van de opdracht.
 Zin -> Groet Naam
 ```
 
-Lees als: *"een `Zin` mag bestaan uit een `Groet` gevolgd door een
-`Naam`."* Links altijd **één** groep (non-terminal), rechts de onderdelen
-op een rij.
+Lees als "een `Zin` mag bestaan uit een `Groet` gevolgd door een
+`Naam`". Links altijd één groep (non-terminal), rechts de onderdelen op
+een rij.
 
 - Meerdere mogelijkheden voor dezelfde groep schrijf je als aparte
   regels, óf op één regel met `|`:
@@ -66,10 +66,10 @@ Reeks -> "ja" Reeks
 Reeks -> "ja"
 ```
 
-Dit dekt "ja", "ja ja", "ja ja ja", ... De ketting eindigt altijd via de
-tweede regel. Hetzelfde idee gebruik je als je een groep wilt laten
-herhalen of een staart wilt laten aangroeien. De parser-motor kan dit
-veilig aan, omdat elk recursief stuk een **korter** stuk van de zin
+Dit dekt "ja", "ja ja", "ja ja ja", en zo verder. De ketting eindigt
+altijd via de tweede regel. Hetzelfde idee gebruik je als je een groep
+wilt laten herhalen of een staart wilt laten aangroeien. De parser-motor
+kan dit veilig aan, omdat elk recursief stuk een korter stuk van de zin
 beslaat.
 
 </details>
@@ -83,8 +83,8 @@ beslaat.
 2. Maak van de zin een lijst kleine-letter-woorden: `zin.lower().split()`.
    Géén leestekens.
 3. Vraag de parser naar alle bomen voor het startsymbool `S`.
-4. Geen bomen → zin afgekeurd. Eén of meer bomen → geaccepteerd; het
-   **aantal** bomen is het aantal interpretaties (ambiguïteit).
+4. Geen bomen: de zin is afgekeurd. Eén of meer bomen: geaccepteerd, en
+   het aantal bomen is het aantal interpretaties.
 
 </details>
 
@@ -93,11 +93,10 @@ beslaat.
 <details>
 <summary>Vorm versus betekenis</summary>
 
-Een CFG controleert alleen de **structuur** van een zin, niet of hij
-*klopt* qua betekenis. Een zin die grammaticaal de juiste vorm heeft,
-wordt geaccepteerd — ook als hij inhoudelijk nergens op slaat. Dat een
-grammatica de betekenis negeert, is juist wat hem zo simpel en algemeen
-maakt.
+Een CFG controleert alleen de vorm van een zin, niet of hij klopt qua
+betekenis. Een zin met de juiste vorm komt erdoor, ook als hij nergens
+op slaat. Dat een grammatica de betekenis negeert, is precies wat hem zo
+simpel en algemeen maakt.
 
 </details>
 
@@ -105,9 +104,9 @@ maakt.
 <summary>"Echte" tools gebruiken hetzelfde idee</summary>
 
 De parser-motor in deze track is met opzet klein, zodat hij in je browser
-draait zonder installatie. Professionele tools (zoals de Python-bibliotheek
-**NLTK**) gebruiken precies dezelfde bouwstenen — terminals, non-terminals
-en regels met `->` — maar met meer features.
+draait zonder installatie. Professionele tools zoals de Python-bibliotheek
+**NLTK** gebruiken dezelfde bouwstenen, terminals, non-terminals en regels
+met `->`, met meer mogelijkheden eromheen.
 
 </details>
 
@@ -125,8 +124,9 @@ van Harvard University. Het origineel is gelicenseerd onder
   → compleet → aanpassen → zelf-bouwen → fouten → cheatsheet).
 - De NLTK-parser is vervangen door een eigen, compacte pure-Python
   parser-motor die zonder installatie in de browser draait (Pyodide).
-- Bewust **geen oplossingsgrammatica gepubliceerd**: je ontwerpt de
-  regels zelf. Dit respecteert CS50's academic-honesty-beleid.
+- De regels ontwerp je zelf. Een antwoord om na te kijken staat alleen
+  achter een uitklapbaar blok bij de opdrachten, zoals overal op deze
+  site; je docent heeft een antwoordblad bij de hand-out.
 
 Conform de share-alike-eis wordt deze track onder dezelfde licentie
 verspreid:

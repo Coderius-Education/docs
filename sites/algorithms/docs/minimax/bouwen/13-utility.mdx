@@ -4,12 +4,12 @@ sidebar_position: 13
 
 # Bouwsteen 7 — `utility(bord)`
 
-**Leerdoel:** je vertaalt een terminale positie naar een getal: `+1` /
-`-1` / `0`. Dat getal is waar minimax straks op rekent.
+**Leerdoel:** je vertaalt een terminale positie naar een getal, `+1`,
+`-1` of `0`. Dat getal is waar minimax straks mee rekent.
 
 ## Wat doet deze functie?
 
-Minimax wil de uitkomst in een **getal** uitdrukken:
+Minimax wil de uitkomst als een getal:
 
 | Wat gebeurt er | `utility` |
 |---|---|
@@ -17,10 +17,10 @@ Minimax wil de uitkomst in een **getal** uitdrukken:
 | O wint | **−1** |
 | Remise (vol bord, geen winnaar) | **0** |
 
-Waarom deze keuze? Omdat X = MAX wil maximaliseren → een hoger getal is
-beter voor X. O = MIN wil minimaliseren → een lager getal is beter voor O.
-Met `+1` / `−1` / `0` werken `max(...)` en `min(...)` van Python
-direct correct.
+Waarom zo? X is MAX en wil maximaliseren, dus een hoger getal is beter
+voor X. O is MIN en wil minimaliseren, dus een lager getal is beter voor
+O. Met `+1`, `−1` en `0` werken `max(...)` en `min(...)` van Python
+meteen goed.
 
 ## Hergebruik `winner`
 
@@ -46,9 +46,7 @@ c = [["X","O","X"], ["X","O","O"], ["O","X","X"]]          # remise
 <details>
 <summary>Antwoord</summary>
 
-- `a`: X wint → `+1`.
-- `b`: O wint → `-1`.
-- `c`: remise → `0`.
+Bij `a` wint X, dus `+1`. Bij `b` wint O, dus `-1`. `c` is remise, `0`.
 
 </details>
 

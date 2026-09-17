@@ -172,11 +172,10 @@ def max_value(bord):
     return v
 ```
 
-Drie cruciale elementen:
-
-1. **Base case** = `if terminal(bord): return utility(bord)`.
-2. **Initialiseer** `v` op `-inf` (max) of `+inf` (min).
-3. **Alternerend** `max_value` ↔ `min_value` aanroepen.
+Drie dingen die erin moeten zitten: de base case
+`if terminal(bord): return utility(bord)`, een startwaarde `-inf` voor
+max en `+inf` voor min, en de afwisseling waarin `max_value` steeds
+`min_value` aanroept en andersom.
 
 </details>
 
@@ -204,14 +203,14 @@ Drie cruciale elementen:
 
 {/* foutmelding-los: samenvatting van de fouten-pagina, waar de melding gereproduceerd wordt */}
 
-1. **Bord muteren in `result`** → gebruik `copy.deepcopy`.
-2. **`result` vergeten in de recursie** → `RecursionError`. De recursie
+1. **Bord muteren in `result`**: gebruik `copy.deepcopy`.
+2. **`result` vergeten in de recursie**: `RecursionError`. De recursie
    krijgt altijd `result(bord, zet)`, nooit `bord` zelf.
-3. **Base case vergeten in `max_value` of `min_value`** → waardes van
-   `inf` en `-inf`, gewonnen borden worden niet gezien. Check **eerst** of
+3. **Base case vergeten in `max_value` of `min_value`**: waardes van
+   `inf` en `-inf`, en gewonnen borden blijven ongezien. Check eerst of
    het bord terminal is.
-4. **`max_value` roept zichzelf aan** in plaats van `min_value` → AI
-   verliest. Wisselbeurten zijn cruciaal.
+4. **`max_value` roept zichzelf aan** in plaats van `min_value`: de AI
+   verliest. De beurten moeten wisselen.
 
 Volledig overzicht: [er gaat iets mis](./17-fouten).
 
@@ -226,33 +225,29 @@ Voor tic-tac-toe is de basis-versie snel genoeg. Voor schaken is `O(b^d)`
 (b = aantal opties per beurt, d = aantal beurten) onbruikbaar.
 
 **Alpha-beta pruning** snijdt takken weg die de uitkomst toch niet
-kunnen beïnvloeden. Het idee: tijdens recursie houd je een `alpha`
-(beste-score-voor-MAX-tot-nu) en `beta` (beste-score-voor-MIN-tot-nu)
-bij. Zodra `beta <= alpha`, weet je dat de tegenstander deze tak nooit
-kiest — sla hem over.
-
-Resultaat: bij optimale ordening `O(b^(d/2))` — kwadratisch sneller.
-
-Niet vereist voor onze tic-tac-toe AI, maar wel het noemen waard.
+kunnen veranderen. Tijdens de recursie houd je een `alpha` (de beste
+score voor MAX tot nu toe) en een `beta` (de beste score voor MIN tot nu
+toe) bij. Zodra `beta <= alpha` weet je dat de tegenstander deze tak
+nooit kiest, en sla je hem over. Bij een gunstige volgorde van de zetten
+wordt het `O(b^(d/2))`, kwadratisch sneller. Voor onze tic-tac-toe-AI
+niet nodig, maar wel goed om te kennen.
 
 </details>
 
 ## Verder lezen
 
-- [het idee](./01-concept) — opnieuw door het concept.
-- [met pen en papier](./02-pen-en-papier) — hand-trace voor wie
-  het algoritme nog niet "ziet".
-- [helpers](./bouwen/14-helpers) — `max_value` en `min_value`
-  als recursie-helpers.
-- [draai het zelf](./bouwen/15-zelf-draaien) — verzamel je negen
-  functies in één lokaal `tictactoe.py` (of in een verzamel-PyRunner
-  als noodoplossing).
-- [minimax](./bouwen/16-minimax) — de AI zelf, geschreven in
-  je lokale bestand, en daarna speelt hij tegen zichzelf.
-- [Big O notatie](../big-o/06-kwadratisch) — waarom minimax bij grotere
+- [het idee](./01-concept): nog een keer door het concept.
+- [met pen en papier](./02-pen-en-papier): de boom met de hand, voor
+  wie het algoritme nog niet ziet.
+- [helpers](./bouwen/14-helpers): `max_value` en `min_value`.
+- [draai het zelf](./bouwen/15-zelf-draaien): je negen functies in één
+  lokaal `tictactoe.py`, of in een verzamel-PyRunner als noodoplossing.
+- [minimax](./bouwen/16-minimax): de AI zelf, in je lokale bestand, en
+  daarna speelt hij tegen zichzelf.
+- [Big O notatie](../big-o/06-kwadratisch): waarom minimax bij grotere
   spellen onhoudbaar wordt zonder optimalisaties.
-- [Waar minimax echt is gebruikt](./01-concept#waar-minimax-echt-is-gebruikt)
-  — Deep Blue, Chinook, Stockfish.
+- [Waar minimax echt is gebruikt](./01-concept#waar-minimax-echt-is-gebruikt):
+  Deep Blue, Chinook, Stockfish.
 
 ## Licentie en bronvermelding
 

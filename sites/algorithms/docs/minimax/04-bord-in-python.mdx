@@ -18,8 +18,8 @@ afspraken lezen die we straks in elke functie gebruiken.
 
 ## Het bord = drie rijen
 
-Een tic-tac-toe-bord is 3 bij 3. In Python: een **lijst van drie
-lijsten**. Elke binnenste lijst is één rij.
+Een tic-tac-toe-bord is 3 bij 3. In Python wordt dat een lijst van
+drie lijsten, waarbij elke binnenste lijst één rij is.
 
 ```python
 bord = [
@@ -56,20 +56,21 @@ We gebruiken drie waarden:
 | `"O"` | O heeft hier gespeeld |
 | `None` | leeg (`None` is Python's "niets") |
 
-CS50 noemt deze `X`, `O` en `EMPTY` (constanten). Wij gebruiken de
-strings `"X"`, `"O"` en de waarde `None` direct — dat is precies
-hetzelfde, alleen zonder de constanten.
+CS50 noemt deze `X`, `O` en `EMPTY`, als constanten. Wij gebruiken de
+strings `"X"`, `"O"` en de waarde `None` direct; dat is hetzelfde,
+alleen zonder de constanten.
 
 ## Een zet = een tuple
 
-Een **zet** is een coördinaat: *"speel op rij i, kolom j"*. We schrijven
-dat als een tuple:
+Een **zet** is een coördinaat: speel op rij i, kolom j. Dat schrijven we
+als een tuple:
 
 ```python
 zet = (2, 1)        # rij 2, kolom 1 (midden-onder)
 ```
 
-Een tuple is een **vast** rijtje. `zet[0]` is `2`, `zet[1]` is `1`.
+Een tuple is een rijtje dat niet meer verandert. `zet[0]` is `2`,
+`zet[1]` is `1`.
 
 ## Voorspel
 
@@ -119,8 +120,8 @@ print(bord[2][1] is None)`} />
 
 ## Door alle cellen lopen
 
-We doen dit in elke functie. Twee genestelde lussen, één voor rijen en
-één voor kolommen:
+Dit doe je straks in bijna elke functie: twee geneste lussen, één voor
+de rijen en één voor de kolommen.
 
 <PyRunner initialCode={`bord = [
     ["X", "O", "X"],

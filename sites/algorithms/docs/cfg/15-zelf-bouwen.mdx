@@ -4,25 +4,25 @@ sidebar_position: 15
 
 # Zelf bouwen — een nieuwe constructie
 
-**Leerdoel:** je breidt je grammatica zelf uit met een regel die er nog
-niet is, en bewaakt dat de oude zinnen blijven werken.
+**Leerdoel:** je breidt je grammatica uit met een regel die er nog niet
+is, en zorgt dat de oude zinnen blijven werken.
 
 ## De uitdaging
 
 > **She (N) said (V) Holmes (N) sat (V).**
 
-Dit is een nieuw soort zin: "She said **[dat] Holmes sat**". Achter het
-werkwoord "said" staat geen object of voorzetselgroep, maar een **hele
-zin** ("Holmes sat"). Werkwoorden als *say*, *think* en *know* kunnen zo'n
-bijzin als aanvulling nemen.
+Dit is een nieuw soort zin: "She said [dat] Holmes sat". Achter het
+werkwoord "said" staat geen object of voorzetselgroep, maar een hele zin,
+"Holmes sat". Werkwoorden als *say*, *think* en *know* nemen zo'n bijzin
+als aanvulling.
 
-Je huidige grammatica kan dit nog niet. Bedenk **zelf** welke regel je
-nodig hebt, voeg hem toe, en zorg dat **alle** zinnen groen blijven.
+Je huidige grammatica kan dit nog niet. Bedenk zelf welke regel je nodig
+hebt, voeg hem toe, en zorg dat alle zinnen op OK blijven.
 
 ## Denk na
 
-- Welke groep staat er achter "said"? (Hint: het is geen woordgroep maar
-  een **complete zin**.)
+- Welke groep staat er achter "said"? Het is geen woordgroep maar een
+  complete zin.
 - Welke groep gebruik je in je grammatica voor "een hele zin"?
 
 ## Bouw en test
@@ -121,7 +121,32 @@ def controleer(grammatica_tekst, zinnen):
 
 controleer(GRAMMATICA, ZINNEN)`} />
 
-Lukt het? Dan heb je laten zien dat je het patroon zélf kunt uitbreiden —
-precies wat een grammatica zo krachtig maakt.
+<details>
+<summary>Tip</summary>
+
+Achter "said" staat een hele zin, en voor een hele zin heb je al een
+groep: het startsymbool `S`. Een werkwoordgroep mag dus ook bestaan uit
+een werkwoord gevolgd door een `S`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Eén regel erbij, met de naam die jij voor je werkwoordgroep gebruikt:
+
+```
+VP -> V S
+```
+
+"said Holmes sat" is dan een werkwoord met een complete zin als
+aanvulling, en "She said Holmes sat" een `S` uit een naamwoordgroep
+en een werkwoordgroep, zoals elke andere zin. De oude
+zinnen blijven werken, want je hebt alleen een regel toegevoegd.
+
+</details>
+
+Lukt het? Dan kun je het patroon zelf uitbreiden, en dat is waar deze
+track om draait.
 
 Door naar [fouten →](./16-fouten).

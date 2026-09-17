@@ -7,8 +7,12 @@ import { describe, expect, it } from 'vitest';
 // zodat een leerling zichzelf kan controleren. Bij de doorloop van de zoek-
 // en sorteerhoofdstukken bleek dat alle zes uitdagingen zonder oplossing
 // stonden: "Uitdaging (optioneel)" las als "hier hoeft niets bij". Deze test
-// legt het formaat vast: elke H2 die een opdracht, uitdaging of bouw-zelf
-// aankondigt heeft vóór de volgende H2 een <summary>Antwoord</summary>.
+// legt het formaat vast: elke H2 of H3 die een opdracht, uitdaging of
+// bouw-zelf aankondigt heeft in zijn eigen sectie een
+// <summary>Antwoord</summary>. Alleen een kop die de hele pagina tot één
+// opdracht maakt ("De uitdaging", "Bouw zelf") mag het antwoord in een
+// latere sectie hebben, tot de volgende opdracht-kop; zo staan de
+// zelf-bouwen-pagina's van hanoi en cfg in elkaar.
 //
 // De hoofdstukken die nog niet zijn doorgelopen staan in ACHTERSTAND met
 // hun openstaande koppen. Die lijst is exact: een nieuwe opdracht zonder
@@ -20,13 +24,11 @@ import { describe, expect, it } from 'vitest';
 
 const DOCS = fileURLToPath(new URL('../../docs/', import.meta.url));
 
-const OPDRACHT_KOP = /^(Extra )?(Opdracht|Uitdaging|Bouw zelf)\b/i;
+// "De uitdaging" telt ook: zo heette de kop van cfg/15-zelf-bouwen, en die
+// ontsnapte aan een regex die alleen aan het begin van de kop keek.
+const OPDRACHT_KOP = /^(De |Extra )?(Opdracht|Uitdaging|Bouw zelf)\b/i;
 
 const ACHTERSTAND = new Map<string, string[]>([
-  [
-    'cfg/14-aanpassen.mdx',
-    ['Opdracht 1 — voeg een woord toe', 'Opdracht 2 — zoek een ambigue zin'],
-  ],
   ['pagerank/08-aanpassen.mdx', ['Opdracht 1 — draai aan `d`', 'Opdracht 2 — voeg een link toe']],
 ]);
 
@@ -58,16 +60,83 @@ function secties(tekst: string): Sectie[] {
   });
 }
 
-function zonderAntwoord(pad: string): string[] {
-  return secties(readFileSync(pad, 'utf8'))
-    .filter((s) => OPDRACHT_KOP.test(s.kop) && !/<summary>Antwoord<\/summary>/.test(s.inhoud))
-    .map((s) => s.kop);
+// Een kop die de hele pagina tot één opdracht maakt: de zelf-bouwen-pagina's
+// van hanoi en cfg zetten de opdracht onder "De uitdaging" en het antwoord
+// onder "Bouw en test". Precies die kop, want "Bouw zelf en test" is de
+// opdracht van elke bouwsteen en die heeft zijn antwoord in zijn eigen sectie.
+const HELE_PAGINA_KOP = /^(De uitdaging|Bouw zelf)$/i;
+
+/**
+ * De koppen die een opdracht aankondigen en geen antwoord hebben. Een
+ * genummerde opdracht heeft het antwoord in zijn eigen sectie; alleen een
+ * hele-pagina-kop mag het in de secties erna hebben, tot de volgende
+ * opdracht-kop. Anders zou het antwoord van een voorspelling verderop op
+ * de pagina een ontbrekend antwoord maskeren.
+ */
+function zonderAntwoord(tekst: string): string[] {
+  const alle = secties(tekst);
+  const open: string[] = [];
+  alle.forEach((s, i) => {
+    if (!OPDRACHT_KOP.test(s.kop)) return;
+    let einde = i + 1;
+    if (HELE_PAGINA_KOP.test(s.kop)) {
+      while (einde < alle.length && !OPDRACHT_KOP.test(alle[einde].kop)) einde += 1;
+    }
+    const inhoud = alle
+      .slice(i, einde)
+      .map((x) => x.inhoud)
+      .join('\n');
+    if (!/<summary>Antwoord<\/summary>/.test(inhoud)) open.push(s.kop);
+  });
+  return open;
 }
+
+describe('zonderAntwoord', () => {
+  it('een antwoord van een voorspelling verderop telt niet voor een genummerde opdracht', () => {
+    const pagina = `## Opdracht 1
+Maak iets.
+
+## Voorspel
+<details>
+<summary>Antwoord</summary>
+Dit hoort bij de voorspelling.
+</details>
+`;
+    expect(zonderAntwoord(pagina)).toEqual(['Opdracht 1']);
+  });
+
+  it('een hele-pagina-kop mag het antwoord onder "Bouw en test" hebben', () => {
+    const pagina = `## De uitdaging
+Bouw iets.
+
+## Bouw en test
+<details>
+<summary>Antwoord</summary>
+</details>
+
+## Uitdaging (optioneel)
+Zonder antwoord.
+`;
+    expect(zonderAntwoord(pagina)).toEqual(['Uitdaging (optioneel)']);
+  });
+
+  it('"Bouw zelf en test" van een bouwsteen heeft het antwoord in zijn eigen sectie', () => {
+    const pagina = `## Bouw zelf en test
+Vul de functie aan.
+
+## Voorspel
+<details>
+<summary>Antwoord</summary>
+</details>
+`;
+    expect(zonderAntwoord(pagina)).toEqual(['Bouw zelf en test']);
+  });
+});
 
 describe('opdrachten en uitdagingen', () => {
   const gevonden = new Map<string, string[]>();
   for (const pad of lessen(DOCS)) {
-    const open = zonderAntwoord(pad);
+    const open = zonderAntwoord(readFileSync(pad, 'utf8'));
     if (open.length) gevonden.set(relative(DOCS, pad), open);
   }
 

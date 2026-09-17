@@ -18,9 +18,9 @@ Lees elke stelling. Bedenk eerst je antwoord. Klap dan pas open.
 
 **Niet waar.**
 
-Minimax kiest de zet die het beste **eindresultaat** garandeert tegen
-een optimale tegenstander. Soms is dat een lange, voorzichtige route
-naar remise in plaats van een gokje op winst dat de tegenstander kan
+Minimax kiest de zet die het beste eindresultaat garandeert tegen een
+optimale tegenstander. Soms is dat een lange, voorzichtige route naar
+remise in plaats van een gokje op winst dat de tegenstander kan
 blokkeren.
 
 </details>
@@ -34,11 +34,10 @@ blokkeren.
 
 **Niet waar.**
 
-X wint **als de tegenstander een fout maakt**. Maar als beide spelers
-optimaal spelen — bv. allebei Minimax gebruiken — eindigt het altijd in
-**remise**. Tic-tac-toe is een opgelost spel.
-
-Straks zie je dat zelf, als je AI tegen zichzelf speelt.
+X wint als de tegenstander een fout maakt. Spelen beide spelers
+optimaal, bijvoorbeeld omdat ze allebei minimax gebruiken, dan eindigt
+het altijd in remise. Tic-tac-toe is een opgelost spel. Straks zie je
+dat zelf, als je AI tegen zichzelf speelt.
 
 </details>
 
@@ -51,9 +50,9 @@ Straks zie je dat zelf, als je AI tegen zichzelf speelt.
 
 **Niet waar.**
 
-MAX kijkt naar zijn directe **kinderen**, en daar zit een MIN-laag
-tussen — de tegenstander. MAX kiest het kind met de hoogste **MIN-
-uitkomst**, niet het hoogste blaadje.
+MAX kijkt naar zijn directe kinderen, en daar zit een MIN-laag tussen:
+de tegenstander. MAX kiest het kind met de hoogste MIN-uitkomst, niet
+het hoogste blaadje.
 
 In het deel-1 voorbeeld op de pen-en-papier-pagina was het hoogste
 blaadje 9 (onder tak B), maar MAX koos tak A omdat MIN daar `min(3,5)=3`
@@ -73,22 +72,21 @@ opleverde, beter dan de `min(2,9)=2` onder tak B.
 
 Minimax rekent elke tak van de boom door alsof de uitkomst van een zet
 vaststaat en beide spelers alles zien. Dat vraagt twee dingen van het
-spel:
+spel. Het moet **deterministisch** zijn: geen dobbelstenen, kaarten of
+toeval, een zet heeft een vaste uitkomst. En het moet **volledige
+informatie** hebben: beide spelers zien het hele bord, niets ligt
+verborgen.
 
-- **Deterministisch**: geen dobbelstenen, kaarten of toeval. Een zet
-  heeft een vaste uitkomst.
-- **Perfecte informatie**: beide spelers zien het hele bord. Geen
-  verborgen kaarten of mist-of-war.
-
-Minimax werkt dus voor schaken, dammen en tic-tac-toe. Voor poker
-(verborgen kaarten) of backgammon (dobbelstenen) zijn aanpassingen
+Schaken, dammen en tic-tac-toe voldoen daaraan. Poker (verborgen
+kaarten) en backgammon (dobbelstenen) niet; daar zijn aanpassingen
 nodig.
 
 </details>
 
 ## Stelling 5
 
-> *"Een Minimax-functie roept zichzelf aan."*
+> *"Om de waarde van een positie uit te rekenen, doet minimax dezelfde
+> berekening nog eens op het bord ná elke mogelijke zet."*
 
 <details>
 <summary>Antwoord</summary>
@@ -96,12 +94,14 @@ nodig.
 **Waar — Minimax is recursief.**
 
 Om uit te rekenen wat zet X waard is, moet je weten wat de tegenstander
-daarna zou kiezen. Dat is een mini-Minimax-vraag voor het bord-na-X.
-Die op zijn beurt vraagt "wat doet X dan?" — enzovoort, tot je een
-terminale positie raakt.
+daarna zou kiezen. Dat is dezelfde vraag voor het bord-na-X, alleen met
+de tegenstander aan zet. Die vraagt op zijn beurt "wat doet X dan?", en
+zo verder tot een terminale positie.
 
-Dat heet **recursie**. In Python: een functie die zichzelf binnen zijn
-eigen body aanroept.
+Dat heet **recursie**: een functie die zichzelf aanroept, of twee
+functies die elkaar aanroepen. Hier wordt het dat laatste, één functie
+voor "X aan zet" en één voor "O aan zet"; je bouwt ze in
+[bouwsteen 8](./bouwen/14-helpers).
 
 </details>
 
@@ -115,13 +115,12 @@ eigen body aanroept.
 
 **Niet waar.**
 
-Om te wéten welke tak de beste is, moet je **alle** takken vergelijken.
-Je kunt pas een keuze maken nadat alle alternatieven zijn doorgerekend.
+Om te weten welke tak de beste is, moet je alle takken vergelijken; je
+kunt pas kiezen als je alle alternatieven hebt doorgerekend.
 
-Voor zeer grote spellen (schaken) bestaan optimalisaties zoals
-**alpha-beta pruning** die sommige takken kunnen overslaan zonder de
-uitkomst te beïnvloeden. Maar dat is een **truc bovenop** Minimax. De
-kale Minimax doet alles.
+Voor grote spellen als schaken bestaan optimalisaties zoals
+**alpha-beta pruning**, die takken overslaan zonder dat de uitkomst
+verandert. Dat is een truc bovenop minimax. De kale minimax doet alles.
 
 </details>
 

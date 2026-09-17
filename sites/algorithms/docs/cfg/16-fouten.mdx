@@ -2,13 +2,13 @@
 sidebar_position: 16
 ---
 
-# Er gaat iets mis — top-3 fouten
+# Er gaat iets mis — vier valkuilen
 
-**Leerdoel:** je herkent de drie klassieke valkuilen bij het schrijven
+**Leerdoel:** je herkent de vier klassieke valkuilen bij het schrijven
 van een context-vrije grammatica.
 
-We gebruiken weer het mini-voorbeeld, zodat de voorbeelden niets van de
-opdracht weggeven:
+De voorbeelden gebruiken weer het mini-grammaticaatje, zodat ze niets
+van de opdracht weggeven:
 
 ```
 Zin   -> Groet Naam
@@ -16,14 +16,50 @@ Groet -> "hallo" | "hoi"
 Naam  -> "sam" | "kim"
 ```
 
+## Een regel zonder pijl
+
+{/* foutmelding-van: kop, rest = "Naam => sam".split("->") */}
+
+Symptoom: geen `FOUT (0x)`, maar een rode Python-foutmelding die eindigt
+op `ValueError: not enough values to unpack (expected 2, got 1)`, en
+de motor komt aan geen enkele zin toe.
+
+**Oorzaak:** een regel in `GRAMMATICA` zonder `->`. Een typfout zoals
+`=>`, een los woord op een eigen regel, of een zin uit de les die per
+ongeluk mee is gekopieerd. Een kopje met `#` ervoor is het niet: alles
+achter een `#` slaat de motor over, net als in Python. Twee pijlen op
+één regel geven de spiegelbeeldige melding, `too many values to unpack
+(expected 2)`.
+De motor splitst elke regel op `->` en verwacht links een kop en rechts
+de onderdelen; staat er geen pijl, dan valt hij daar om, nog voordat hij
+naar een zin kijkt.
+
+```
+# FOUT
+Naam => "sam"
+
+# De motor zoekt de pijl -> en vindt hem niet: ValueError.
+```
+
+**Oplossing:**
+
+```
+# GOED
+Naam -> "sam"
+```
+
+Vuistregel: elke regel in `GRAMMATICA` die niet leeg is, heeft precies
+één `->`. Kijk bij deze melding dus niet naar je zinnen, maar naar de
+regel die je het laatst hebt getypt of geplakt.
+
 ## Aanhalingstekens vergeten bij een terminal
 
 Symptoom: een zin die zou moeten werken, geeft toch `Kon de zin niet
 ontleden` of `FOUT (0x)`.
 
-**Oorzaak:** een echt woord (terminal) hoort **tussen aanhalingstekens**.
-Laat je ze weg, dan denkt de motor dat `sam` een *groep* (non-terminal)
-is — en die groep heeft geen regels, dus matcht hij nooit een woord.
+**Oorzaak:** een echt woord (een terminal) hoort tussen aanhalingstekens.
+Laat je ze weg, dan denkt de motor dat `sam` een groep is, en die groep
+heeft geen regels, dus hij matcht nooit een woord.
 
 ```
 # FOUT
@@ -40,16 +76,17 @@ Naam -> sam
 Naam -> "sam"
 ```
 
-Vuistregel: **echte woorden** krijgen aanhalingstekens, **groepen** (de
-namen die jij verzint, en woordsoorten als `N`, `V`, `Det`, ...) niet.
+Vuistregel: echte woorden krijgen aanhalingstekens, groepen niet. Dat
+geldt voor de namen die jij verzint en voor woordsoorten als `N`, `V`
+en `Det`.
 
 ## Een regel vergeten
 
-Symptoom: één bepaalde zin blijft `FOUT (0x)`, terwijl de rest groen is.
+Symptoom: één bepaalde zin blijft `FOUT (0x)`, terwijl de rest op OK staat.
 
 **Oorzaak:** er is geen regel voor de constructie die in die zin
-voorkomt. Een grammatica accepteert *alleen* wat de regels toelaten — is
-er geen pad van het startsymbool naar de woorden, dan is de zin ongeldig.
+voorkomt. Een grammatica accepteert alleen wat de regels toelaten; is er
+geen pad van het startsymbool naar de woorden, dan is de zin ongeldig.
 
 ```
 # FOUT — wel een Groet, maar geen regel die 'Zin' definieert
@@ -65,7 +102,7 @@ Naam  -> "sam" | "kim"
 Zin -> Groet Naam
 ```
 
-Aanpak: kijk wélke zin faalt, ontleed hem met de hand in groepen, en
+Aanpak: kijk welke zin faalt, ontleed hem met de hand in groepen, en
 zoek de groep waarvoor je nog geen regel hebt.
 
 ## Woord staat niet in het lexicon (of hoofdletters/leestekens)
@@ -74,8 +111,8 @@ Symptoom: `Kon de zin niet ontleden`, ook al lijkt je grammatica
 compleet.
 
 **Oorzaak:** het woord staat niet in het lexicon. De motor zet alles
-eerst om naar **kleine letters** en splitst op spaties. Een woord dat niet
-exact (in kleine letters) in het lexicon staat, wordt nooit herkend.
+eerst om naar kleine letters en splitst op spaties. Een woord dat niet
+precies zo, in kleine letters, in het lexicon staat, herkent hij nooit.
 
 ```
 # Lexicon kent 'sam', maar niet 'alex'
@@ -85,7 +122,7 @@ exact (in kleine letters) in het lexicon staat, wordt nooit herkend.
 **Oplossing:** voeg het woord toe bij de juiste woordsoort, bv.
 `Naam -> "alex"`.
 
-Leestekens horen er niet bij: typ `hallo sam`, niet `hallo sam.` — het
-woord `sam.` (mét punt) staat niet in het lexicon.
+Leestekens horen er niet bij: typ `hallo sam`, niet `hallo sam.`, want
+het woord `sam.` met punt staat niet in het lexicon.
 
 Door naar [cheatsheet →](./17-cheatsheet).

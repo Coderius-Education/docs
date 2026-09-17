@@ -16,11 +16,10 @@ lege cellen als `(rij, kolom)` tuples.
 
 ## Wat doet deze functie?
 
-Voor minimax moet je weten welke zetten er mogelijk zijn op een bord.
-Dat zijn precies de cellen die nog leeg (`None`) zijn.
-
-Je geeft die terug als een **set** van tuples. Een set, omdat de
-volgorde er niet toe doet: alle lege cellen tellen even zwaar.
+Voor minimax moet je weten welke zetten er mogelijk zijn op een bord,
+en dat zijn de cellen die nog leeg (`None`) zijn. Je geeft ze terug als
+een **set** van tuples. Een set, omdat de volgorde er niet toe doet:
+alle lege cellen tellen even zwaar.
 
 ## Specificatie
 
@@ -49,9 +48,8 @@ bord = [
 <details>
 <summary>Antwoord</summary>
 
-`{(0, 1), (2, 0), (2, 1), (2, 2)}` — vier lege cellen.
-
-Volgorde maakt niet uit; een set is ongeordend.
+`{(0, 1), (2, 0), (2, 1), (2, 2)}`, vier lege cellen. In welke volgorde
+je ze ziet maakt niet uit, een set is ongeordend.
 
 </details>
 
@@ -98,8 +96,8 @@ Dezelfde twee geneste lussen als op [het bord in Python](../04-bord-in-python),
 met daarin een `if` op `bord[i][j] is None`. Een set maak je met
 `set()`, en je voegt er iets aan toe met `.add(...)`.
 
-Let op de **dubbele haakjes**: `mogelijk.add((i, j))` voegt één tuple
-toe. `mogelijk.add(i, j)` geeft een foutmelding — `add` accepteert maar
+Let op de dubbele haakjes: `mogelijk.add((i, j))` voegt één tuple toe.
+`mogelijk.add(i, j)` geeft een foutmelding, want `add` accepteert maar
 één argument.
 
 </details>

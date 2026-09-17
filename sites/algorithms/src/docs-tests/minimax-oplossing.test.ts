@@ -75,6 +75,13 @@ function tests(tekst: string): string {
   return code.slice(i);
 }
 
+/** Het testblok dat de leerling onderaan zijn lokale tictactoe.py plakt. */
+function lokaleTests(tekst: string): string {
+  const m = tekst.match(/```python\n(# === Tests ===[\s\S]*?)```/);
+  expect(m, 'de pagina heeft een testblok voor tictactoe.py').not.toBeNull();
+  return m?.[1] ?? '';
+}
+
 function cheatsheet(): string {
   const m = lees('18-cheatsheet.mdx').match(
     /<summary>Alle .*? bij elkaar<\/summary>\s*```python\n([\s\S]*?)```/,
@@ -125,11 +132,118 @@ describe('minimax — een goede oplossing haalt de tests van elke bouwsteen', ()
 
   it('bouwen/16-minimax.mdx: de lokale tests halen het met de cheatsheet-code', () => {
     const tekst = lees('bouwen/16-minimax.mdx');
-    const m = tekst.match(/```python\n(# === Tests ===[\s\S]*?)```/);
-    expect(m, 'de pagina heeft een testblok voor tictactoe.py').not.toBeNull();
-    const r = draai(`${compleet}\n\n${m?.[1] ?? ''}`);
+    const r = draai(`${compleet}\n\n${lokaleTests(tekst)}`);
     expect(r.uit, r.uit).toContain('Alle tests gehaald ✓');
     expect(r.status).toBe(0);
+  });
+
+  it('bouwen/16-minimax.mdx: elke test keurt precies de optimale zetten goed', () => {
+    // Bij de doorloop eiste een test "(2,0) of (2,2)" op een bord waar ook
+    // (2,1) de waarde 1 had: een correcte minimax die de zetten in een andere
+    // volgorde afloopt (of met >= vergelijkt) gaf (2,1) en viel om. De
+    // verzameling zetten die een test goedkeurt moet precies de verzameling
+    // optimale zetten zijn, uitgerekend met de cheatsheet-code.
+    const tekst = lees('bouwen/16-minimax.mdx');
+    const blok = lokaleTests(tekst);
+    const gevallen = [
+      ...blok.matchAll(
+        /bord = (\[.*\])\nzet = minimax\(bord\)\nassert zet (==|in) (\(.*?\)|\{.*?\}),/g,
+      ),
+    ];
+    expect(gevallen.length, 'de tests op de pagina kiezen minstens twee zetten').toBeGreaterThan(1);
+    for (const [, bord, , goedgekeurd] of gevallen) {
+      const py = `${compleet}
+import math
+bord = ${bord}
+wie = player(bord)
+waarde = min_value if wie == "X" else max_value
+scores = {zet: waarde(result(bord, zet)) for zet in actions(bord)}
+beste = max(scores.values()) if wie == "X" else min(scores.values())
+print(sorted(zet for zet, s in scores.items() if s == beste))
+print(sorted({${goedgekeurd}} if isinstance(${goedgekeurd}, tuple) else ${goedgekeurd}))
+`;
+      const r = draai(py);
+      const [optimaal, geaccepteerd] = r.uit.trim().split('\n');
+      expect(
+        geaccepteerd,
+        `${bord}: de test keurt ${geaccepteerd} goed, optimaal is ${optimaal}`,
+      ).toBe(optimaal);
+    }
+  });
+
+  it('bouwen/16-minimax.mdx: de noodoplossing-PyRunner heeft dezelfde tests en haalt ze', () => {
+    // Optie A van "draai het zelf" beloofde dezelfde route in de browser,
+    // maar de noodoplossing had geen tests: wie geen lokale Python had kon
+    // zijn minimax nergens controleren. Nu staan de tests van de pagina ook
+    // in die PyRunner, letterlijk, en met de cheatsheet-minimax erin haalt
+    // hij ze en eindigt de demo in remise.
+    const tekst = lees('bouwen/16-minimax.mdx');
+    const lokaal = lokaleTests(tekst);
+    const runner = startcode(tekst);
+    const inRunner = runner.slice(
+      runner.indexOf('# === Tests ==='),
+      runner.indexOf('\n\n\ndef print_bord'),
+    );
+    expect(inRunner.trim()).toBe(lokaal.trim());
+    // Ongewijzigd zegt de runner wat je moet doen, in plaats van stil None
+    // terug te geven en op de tweede test te struikelen.
+    const leeg = draai(runner);
+    expect(leeg.uit).toContain('NotImplementedError: Vervang deze functie door je eigen minimax');
+    const eigen = compleet.slice(compleet.indexOf('def minimax(bord):'));
+    const met = runner.replace(
+      /def minimax\(bord\):[\s\S]*?(?=\n\n\n# === Tests ===)/,
+      eigen.trimEnd(),
+    );
+    const r = draai(met);
+    expect(r.uit, r.uit).toContain('Alle tests gehaald ✓');
+    expect(r.uit).toContain('Remise');
+    expect(r.status).toBe(0);
+    // De demo speelt een hele partij vanaf een leeg bord zonder alpha-beta,
+    // ruim een half miljoen posities voor de eerste zet: 4 s hier, 9 s op de
+    // CI-runner. De standaardlimiet van 5 s is dus te krap.
+  }, 60_000);
+
+  it('bouwen/14-helpers.mdx: de wandeling door de boom heeft meer stappen dan de Stapper opneemt', () => {
+    // De les zegt "gebruik Voer uit en niet Stap voor stap: die neemt
+    // hoogstens duizend stappen op, en deze wandeling heeft er meer". Dat
+    // hangt aan MAX_STAPPEN van de recorder én aan de code van de runner;
+    // hier wordt de runner geteld zoals de recorder telt (line- en
+    // return-gebeurtenissen in de leerlingcode).
+    const recorder = readFileSync(
+      fileURLToPath(
+        new URL('../../../../packages/python-runner/src/trace/recorder.ts', import.meta.url),
+      ),
+      'utf8',
+    );
+    const max = Number(recorder.match(/MAX_STAPPEN = (\d+)/)?.[1]);
+    expect(max).toBe(1000);
+    const tekst = lees('bouwen/14-helpers.mdx');
+    expect(tekst).toContain('hoogstens duizend stappen');
+    const runners = [...tekst.matchAll(/<PyRunner initialCode=\{`([\s\S]*?)`\} \/>/g)].map((m) =>
+      ontsnap(m[1]),
+    );
+    const wandeling = runners.find((code) => code.includes('diepte'));
+    expect(wandeling, 'de runner met de parameter diepte').toBeDefined();
+    const r = draai(`import sys, io, contextlib
+code = compile(${JSON.stringify(wandeling)}, "<stapper>", "exec")
+n = 0
+def tracer(frame, gebeurtenis, arg):
+    global n
+    if frame.f_code.co_filename != "<stapper>":
+        return None
+    if gebeurtenis in ("line", "return"):
+        n += 1
+    return tracer
+sys.settrace(tracer)
+try:
+    with contextlib.redirect_stdout(io.StringIO()):
+        exec(code, {"__name__": "__main__"})
+finally:
+    sys.settrace(None)
+print(n)
+`);
+    expect(r.status, r.uit).toBe(0);
+    expect(Number(r.uit.trim())).toBeGreaterThan(max);
   });
 
   it('de startcode van elke bouwsteen valt op zijn eigen tests om, niet op iets anders', () => {

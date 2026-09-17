@@ -10,12 +10,14 @@ sidebar_position: 1
 > [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 > Wij hebben het vertaald naar het Nederlands, opgeknipt in PRIMM-stappen
 > en de NLTK-parser vervangen door een eigen browser-parser. De
-> grammatica ontwerp je zélf — we geven geen oplossing. Deze hele track
-> wordt onder dezelfde licentie verspreid.
+> grammatica ontwerp je zélf; een antwoord om na te kijken staat alleen
+> achter een uitklapbaar blok bij de opdrachten, en je docent heeft een
+> antwoordblad bij de hand-out. Deze hele track wordt onder dezelfde
+> licentie verspreid.
 
 **Leerdoel:** je begrijpt wat een context-vrije grammatica (CFG) is, en
 het verschil tussen een **terminal** en een **non-terminal**. Nog geen
-opdracht — eerst snappen.
+opdracht, eerst snappen.
 
 ## Het probleem
 
@@ -28,29 +30,23 @@ Hoe "weet" een programma dat dit een *correcte* zin is, terwijl
 > pipe a Holmes lit
 
 dat niet is? De woorden zijn precies hetzelfde. Het verschil zit in de
-**volgorde** en in de **structuur**: welke woorden horen bij elkaar, en
-welke rol spelen ze?
-
-Daar gebruiken we een **grammatica** voor: een verzameling **regels**
+volgorde en in de structuur: welke woorden horen bij elkaar, en welke
+rol spelen ze? Daar is een **grammatica** voor: een verzameling regels
 die beschrijven hoe je een geldige zin opbouwt.
 
 ## De bouwsteen-analogie
 
-Denk aan LEGO. Je hebt:
-
-- **Losse blokjes** — dat zijn de woorden zelf: `holmes`, `lit`, `a`,
-  `pipe`. Je kunt ze niet verder uit elkaar halen. We noemen ze
-  **terminals** (eindpunten).
-- **Bouwplaten** waar je blokjes op vastklikt tot een groter geheel. Die
-  grotere gehelen bestaan uit andere bouwstenen; we noemen ze
-  **non-terminals**.
-
-Een grammatica zegt: *hoe* klik je de blokjes en platen aan elkaar.
+Denk aan LEGO. De losse blokjes zijn de woorden zelf: `holmes`, `lit`,
+`a`, `pipe`. Je kunt ze niet verder uit elkaar halen, en daarom heten ze
+**terminals**, eindpunten. Daarnaast heb je bouwplaten waar je blokjes
+op vastklikt tot een groter geheel, en die gehelen bestaan weer uit
+andere bouwstenen: dat zijn de **non-terminals**. Een grammatica zegt
+hoe je blokjes en platen aan elkaar klikt.
 
 ## De notatie: regels met een pijl
 
-We oefenen de notatie eerst met een **mini-voorbeeld** dat niets met de
-opdracht te maken heeft — een grammaticaatje voor begroetingen:
+De notatie oefen je eerst met een mini-voorbeeld dat niets met de
+opdracht te maken heeft, een grammaticaatje voor begroetingen:
 
 ```
 Zin   -> Groet Naam
@@ -58,20 +54,17 @@ Groet -> "hallo" | "hoi"
 Naam  -> "sam" | "kim"
 ```
 
-Lees de eerste regel als: *"een `Zin` bestaat uit een `Groet` gevolgd
-door een `Naam`."* Links staat één non-terminal, rechts staat waaruit
-hij mag bestaan.
-
-- De pijl `->` betekent "bestaat uit".
-- Het streepje `|` betekent "of": `Groet -> "hallo" | "hoi"` zegt dat een
-  groet *hallo* óf *hoi* is.
-- Een **terminal** (een echt woord) staat tussen **aanhalingstekens**:
-  `"hallo"`, `"sam"`.
+Lees de eerste regel als "een `Zin` bestaat uit een `Groet` gevolgd
+door een `Naam`". Links staat één non-terminal, rechts staat waaruit hij
+mag bestaan. De pijl `->` betekent "bestaat uit", en het streepje `|`
+betekent "of": `Groet -> "hallo" | "hoi"` zegt dat een groet *hallo* of
+*hoi* is. Een terminal, een echt woord, staat tussen aanhalingstekens:
+`"hallo"`, `"sam"`.
 
 ## Een zin als boom
 
 Met dit grammaticaatje kun je de zin *hallo sam* helemaal ontleden. Dat
-ziet er als een **boom** uit:
+ziet eruit als een **boom**:
 
 ```
 Zin
@@ -88,13 +81,12 @@ non-terminal heet het **startsymbool** — daar begint elke geldige zin.
 
 ## Waarom "context-vrij"?
 
-Een regel zoals `Naam -> "sam"` mag je toepassen **overal** waar een
-`Naam` nodig is — het maakt niet uit wát er omheen staat (de *context*).
-De regel staat op zichzelf. Dat maakt grammatica's krachtig én eenvoudig
-om mee te rekenen.
+Een regel zoals `Naam -> "sam"` mag je toepassen overal waar een `Naam`
+nodig is. Het maakt niet uit wat er omheen staat, de *context*; de regel
+staat op zichzelf. Daardoor kun je er zo makkelijk mee rekenen.
 
-En let op: een grammatica controleert alleen de **structuur**, niet de
-**betekenis**. *hoi kim* is grammaticaal prima, ook al ken je geen Kim.
+Een grammatica controleert alleen de structuur, niet de betekenis. *hoi
+kim* is grammaticaal prima, ook al ken je geen Kim.
 
 ## Waar grammatica's het werk doen
 
@@ -149,20 +141,17 @@ uitrekent.
 
 ## Wat je gaat doen
 
-In deze track ontwerp je **zelf**, **zin voor zin**, een grammatica die
-tien Engelse zinnen uit een Sherlock Holmes-verhaal kan ontleden. Je
-krijgt:
+In deze track ontwerp je zelf, zin voor zin, een grammatica die tien
+Engelse zinnen uit een Sherlock Holmes-verhaal kan ontleden. Je krijgt
+het **lexicon**, dat zegt welk woord welke woordsoort is (`N`, `V`,
+`Det`, `Adj`, `Adv`, `P`, `Conj`), en een kant-en-klare parser-motor die
+het ontleden doet.
 
-- het **lexicon** (welke woorden welke woordsoort zijn — `N`, `V`, `Det`,
-  `Adj`, `Adv`, `P`, `Conj`);
-- een kant-en-klare **parser-motor** die het ontleden doet.
-
-Wat je **zelf** bedenkt zijn de **regels**: welke woordgroepen je nodig
-hebt (zoals een zelfstandig-naamwoordgroep of een werkwoordgroep) en hoe
-die samen een zin `S` vormen. Bij elke nieuwe zin breid je je grammatica
-uit — en de truc is: **alle eerdere zinnen moeten geldig blijven.**
-
-Je draait alles in de browser, zonder iets te installeren.
+Wat je zelf bedenkt zijn de regels: welke woordgroepen je nodig hebt,
+zoals een zelfstandig-naamwoordgroep of een werkwoordgroep, en hoe die
+samen een zin `S` vormen. Bij elke nieuwe zin breid je je grammatica
+uit, en alle eerdere zinnen moeten geldig blijven. Alles draait in de
+browser, zonder iets te installeren.
 
 :::info
 Liever eerst op papier? Print [Een grammatica op papier](/docs/unplugged/06-zinnen-bouwen-met-kaartjes): dezelfde tien zinnen, met achter elk woord zijn woordsoort, zin 1 voorgedaan, en na elke zin ruimte om je regels tot dan toe te schrijven. Wat je daar bedenkt, typ je in de bouwstenen over.

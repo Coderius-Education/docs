@@ -6,12 +6,7 @@ sidebar_position: 3
 
 <Voorkennis
   items={[
-    {site: 'python', to: '/docs/functies/functies', label: 'Functies'},
-    {site: 'python', to: '/docs/herhalen/06a-for-loop', label: 'De for-loop'},
     {site: 'python', to: '/docs/data/10a-lijsten-basis', label: 'Lijsten'},
-    {site: 'python', to: '/docs/data/10b-lijst-methoden', label: 'Lijst-methoden'},
-    {site: 'python', to: '/docs/beslissen/05b-if-else', label: 'If en else'},
-    {site: 'python', to: '/docs/data/tuples', label: 'Tuples'},
   ]}
 />
 
@@ -23,26 +18,25 @@ parsen.
 > **Holmes (N) sat (V).**
 
 Twee woorden: een zelfstandig naamwoord (`N`) en een werkwoord (`V`). Dit
-is het kleinste skelet van een Engelse zin: een **onderwerp** dat
-**iets doet**.
+is het kleinste skelet van een Engelse zin, een onderwerp dat iets doet.
 
 ## Denk na
 
-Je begint met een lege grammatica. Het **startsymbool** is `S` — daar
-moet elke geldige zin uit voortkomen. Bedenk zelf:
+Je begint met een lege grammatica. Het startsymbool is `S`; daar moet
+elke geldige zin uit voortkomen. Bedenk zelf:
 
 - Uit welke twee delen valt deze zin uiteen (een onderwerp-deel en een
   werkwoord-deel)?
 - Welke woordsoort vormt elk deel hier?
 
 Verzin namen voor je woordgroepen en schrijf de regels. Draai daarna de
-cel: zolang de zin niet groen is, klopt er nog iets niet.
+cel: zolang de zin niet op OK staat, klopt er nog iets niet.
 
 ## Bouw en test
 
 <PyRunner rows={16} initialCode={`# ===== JOUW WERK: schrijf hier je grammaticaregels =====
 # Begin bij het startsymbool S. Een regel schrijf je als:  Kop -> onderdeel(en)
-# Zie stap 1 voor de notatie. (N en V staan al in het lexicon hieronder.)
+# De notatie staat op de pagina "het idee". (N en V staan al in het lexicon hieronder.)
 GRAMMATICA = """
 
 """
@@ -133,7 +127,7 @@ def controleer(grammatica_tekst, zinnen):
 
 controleer(GRAMMATICA, ZINNEN)`} />
 
-> **Bewaar je werk** — je hebt je grammatica van deze stap straks weer
+> **Bewaar je werk.** Je hebt je grammatica van deze stap straks weer
 > nodig. Kopieer je regels voordat je naar de volgende pagina gaat; daar
 > bouw je erop verder.
 

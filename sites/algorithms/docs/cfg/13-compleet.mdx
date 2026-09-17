@@ -9,17 +9,16 @@ tegelijk, bekijkt de echte parse-bomen, en voert zelf zinnen in.
 
 ## Plak je grammatica
 
-Hieronder plak je de **complete** grammatica die je zin voor zin hebt
-opgebouwd. De cel doet twee dingen:
+Hieronder plak je de complete grammatica die je zin voor zin hebt
+opgebouwd. De cel controleert alle tien zinnen in één keer, en toont
+daarna de boom of bomen van de zin in `ZIN`. Verander die zin en draai
+opnieuw. Probeer eens:
 
-1. **Controleert alle 10 zinnen** in één keer — staan ze allemaal op groen?
-2. **Toont de boom (of bomen)** van de zin in `ZIN`. Verander die zin en
-   draai opnieuw. Probeer eens:
-   - `Holmes lit a pipe` — één duidelijke boom
-   - `I had a little moist red paint in the palm of my hand` — **twee**
-     bomen (ambigu.)
-   - een zin met een woord dat niet in het lexicon staat — "Kon de zin
-     niet ontleden."
+- `Holmes lit a pipe`: één duidelijke boom.
+- `I had a little moist red paint in the palm of my hand`: meer dan één
+  boom, want hij is ambigu. Hoeveel precies hangt van je regels af.
+- een zin met een woord dat niet in het lexicon staat: "Kon de zin niet
+  ontleden."
 
 <PyRunner rows={20} initialCode={`# ===== JOUW WERK: plak hier je complete grammatica =====
 GRAMMATICA = """
@@ -144,11 +143,5 @@ def ontleed(grammatica, zin):
 grammatica = lees_grammatica(GRAMMATICA + LEXICON)
 controleer(grammatica, ZINNEN)
 ontleed(grammatica, ZIN)`} />
-
-## Wat je nu kunt
-
-Met één eindige set regels ontleed je een onbeperkt aantal zinnen — ook
-zinnen die je nooit expliciet hebt opgegeven. Dát is de kracht van een
-context-vrije grammatica.
 
 Door naar [aanpassen →](./14-aanpassen).

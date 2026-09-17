@@ -4,19 +4,19 @@ sidebar_position: 10
 
 # Bouwsteen 4 — `result(bord, zet)`
 
-**Leerdoel:** je past een zet toe op een bord — zonder het oorspronkelijke
-bord te veranderen. Eerste functie die een eerder geschreven functie
-(`player`) hergebruikt.
+**Leerdoel:** je past een zet toe op een bord zonder het
+oorspronkelijke bord te veranderen. Dit is de eerste functie die een
+eerder geschreven functie (`player`) hergebruikt.
 
 ## Wat doet deze functie?
 
-`result(bord, zet)` geeft een **nieuw** bord terug waarop de zet is
+`result(bord, zet)` geeft een nieuw bord terug waarop de zet is
 toegepast. Welke speler de zet doet, bepaal je met `player(bord)` uit
 [bouwsteen 2](./07-player).
 
-Het originele `bord` mag je niet veranderen. Minimax moet straks
-honderden zetten "proberen" zonder het echte spel te beïnvloeden, en
-dat lukt alleen als elke `result`-aanroep een vers bord teruggeeft.
+Het originele `bord` mag je niet veranderen. Minimax gaat straks
+honderden zetten proberen zonder het echte spel aan te raken, en dat
+lukt alleen als elke `result`-aanroep een vers bord teruggeeft.
 
 ## Waarom is dit subtiel?
 
@@ -27,10 +27,9 @@ nieuw_bord = bord
 nieuw_bord[0][0] = "X"
 ```
 
-dan verander je **ook** het originele `bord`. `nieuw_bord` is geen kopie
-— het is een tweede naam voor hetzelfde object.
-
-Oplossing: **diepe kopie** maken met de standaardbibliotheek `copy`:
+dan verander je ook het originele `bord`. `nieuw_bord` is geen kopie,
+het is een tweede naam voor hetzelfde object. Wat je nodig hebt is een
+diepe kopie, uit de standaardbibliotheek `copy`:
 
 ```python
 import copy
@@ -38,7 +37,7 @@ nieuw_bord = copy.deepcopy(bord)
 ```
 
 `deepcopy` maakt een volledig onafhankelijke kopie, ook van de rijen
-binnenin. Dan kun je `nieuw_bord[0][0] = "X"` doen zonder dat `bord`
+binnenin. Daarna kun je `nieuw_bord[0][0] = "X"` doen zonder dat `bord`
 verandert.
 
 ## Specificatie
@@ -81,15 +80,15 @@ origineel: [[None, None, None], [None, None, None], [None, None, None]]
 kopie:     [['X', None, None], [None, None, None], [None, None, None]]
 ```
 
-`deepcopy` heeft een onafhankelijke kopie gemaakt. Het origineel blijft
-onaangeraakt.
+`deepcopy` heeft een onafhankelijke kopie gemaakt; het origineel blijft
+zoals het was.
 
 </details>
 
 ## Bouw zelf en test
 
-Boven de starter staan je twee al-werkende functies van vorige pagina's
-(`initial_state` en `player`). Vul `result` aan.
+Boven de starter staan twee functies die je al hebt, `initial_state` en
+`player`. Vul `result` aan.
 
 {/* niet-draaien: startcode; de asserts falen tot de leerling de opdracht afmaakt */}
 <PyRunner initialCode={`import copy
@@ -153,7 +152,7 @@ print("Alle tests gehaald ✓")`} />
 
 Vier regels werk: een `deepcopy` maken, rij en kolom uit de tuple
 halen, de cel in de kopie vullen, de kopie teruggeven. Rij en kolom
-haal je uit de tuple met `i, j = zet` — dat heet tuple-unpacking.
+haal je uit de tuple met `i, j = zet`; dat heet tuple-unpacking.
 
 Vraag aan `player` wie aan zet is op het **originele** `bord`, niet op
 de kopie nadat je de cel hebt gevuld: dan telt de kopie één zet extra

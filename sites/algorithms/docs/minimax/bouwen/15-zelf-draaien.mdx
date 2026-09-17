@@ -4,9 +4,9 @@ sidebar_position: 15
 
 # Draai het zelf — buiten de browser
 
-**Leerdoel:** je verzamelt je negen functies in één lokaal Python-bestand
-zodat je daar straks de laatste functie (`minimax`) bij kan schrijven —
-in een echte editor, niet in een PyRunner.
+**Leerdoel:** je verzamelt je negen functies in één lokaal
+Python-bestand, zodat je daar straks de laatste functie (`minimax`) bij
+kunt schrijven in een echte editor in plaats van in een PyRunner.
 
 ## Wat heb je nu?
 
@@ -17,33 +17,27 @@ initial_state, player, actions, result,
 winner, terminal, utility, max_value, min_value
 ```
 
-(`max_value` en `min_value` zijn samen één bouwsteen, vandaar negen
-functies in acht bouwstenen. Je hebt ze straks allemaal nodig.)
-
-De laatste bouwsteen, `minimax`, komt op de volgende pagina. Maar
-voordat we die schrijven, brengen we je negen functies eerst **bij elkaar**.
+`max_value` en `min_value` zijn samen één bouwsteen, vandaar negen
+functies in acht bouwstenen. De laatste bouwsteen, `minimax`, komt op de
+volgende pagina; eerst breng je die negen bij elkaar.
 
 ## Waarom uit de PyRunner stappen?
 
-Tot nu toe woonden je functies op losse pagina's. Om te leren werkt dat
-prima, maar nu wil je `minimax` schrijven en die heeft alle negen nodig.
-In de PyRunner blijven heeft dan drie nadelen:
-
-- Je moet je negen functies elke keer opnieuw plakken om iets te kunnen
-  draaien.
-- De browser kan een lange minimax-run niet onderbreken.
-- Je hebt geen **echte file** met je werk; copy-pasten vanuit de
-  Coderius-site is geen project.
-
-Twee opties hieronder lossen dat op — kies wat bij jou past.
+Tot nu toe stonden je functies op losse pagina's. Om te leren werkt dat
+prima, maar `minimax` heeft alle negen nodig, en in de PyRunner betekent
+dat elke keer opnieuw plakken. De browser kan een lange minimax-run
+bovendien niet onderbreken, en je hebt geen echt bestand met je werk.
+Twee opties lossen dat op; kies wat bij jou past.
 
 ## Optie A — verzamel-PyRunner (alleen als noodoplossing)
 
 Voor wie écht geen Python lokaal kan installeren (bv. op een
 Chromebook waar je geen software mag installeren). Plak je negen functies
-in de PyRunner hieronder en print een sanity-check. De volgende pagina
-laat je dan ook minimax in dezelfde PyRunner schrijven (in een
-`<details>` blok onderaan).
+in de PyRunner hieronder en print een sanity-check: zo zie je dat ze
+samen werken. Op de volgende pagina staat voor deze route een eigen
+PyRunner (in een `<details>` blok onderaan) waarin de negen functies al
+klaarstaan; daar plak je alleen `minimax` in, met dezelfde tests als de
+lokale route.
 
 <PyRunner initialCode={`import copy
 import math
@@ -112,7 +106,7 @@ Daar wordt stap voor stap uitgelegd hoe je:
 - de **Python-extensie** in VS Code zet, en
 - je eerste script draait.
 
-Eenmalig werk; daarna heb je het altijd.
+Dat is eenmalig werk.
 
 ### Stap 2 — een project-map maken
 
@@ -170,13 +164,12 @@ Wie is aan zet? X
 Aantal mogelijke zetten: 9
 ```
 
-Werkt het? Mooi. Verwijder de sanity-check straks weer — `minimax`
-komt op die plek.
+Werkt het? Haal de sanity-check straks weer weg, want `minimax` komt op
+die plek.
 
 ## Tijd voor de laatste bouwsteen
 
-Je hebt nu alles bij elkaar. Op de volgende pagina schrijf je
-`minimax` — direct in je lokale `tictactoe.py` (of in de PyRunner-
-fallback van Optie A).
+Je hebt nu alles bij elkaar. Op de volgende pagina schrijf je `minimax`,
+direct in je lokale `tictactoe.py` of in de noodoplossing van optie A.
 
 Door naar [bouwsteen 9: minimax →](./16-minimax).

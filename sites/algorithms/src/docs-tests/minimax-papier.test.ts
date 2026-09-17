@@ -84,6 +84,8 @@ describe('minimax op papier', () => {
 
   it('de uitkomst bij de wortel staat als max van de tabel op de pagina', () => {
     const beste = waarde(bord);
-    expect(tekst).toMatch(new RegExp(`de uitkomst bij perfect spel is \\*\\*${beste}\\*\\*`));
+    expect(tekst).toMatch(
+      new RegExp(`de uitkomst bij (perfect|optimaal) spel is \\*{0,2}${beste}\\*{0,2}`),
+    );
   });
 });
