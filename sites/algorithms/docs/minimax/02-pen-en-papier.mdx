@@ -4,14 +4,14 @@ sidebar_position: 2
 
 # Doe het met pen en papier
 
-**Leerdoel:** je voert minimax zelf uit op twee voorbeelden — een
-abstracte boom met cijfers, en dan een echt tic-tac-toe eindspel waarvan
+**Leerdoel:** je voert minimax zelf uit op twee voorbeelden: een
+abstracte boom met cijfers, en dan een echt tic-tac-toe-eindspel waarvan
 je de hele boom tekent en doorloopt. Geen Python.
 
 ## Deel 1 — een abstracte boom
 
-We beginnen makkelijk: een boom waar de bladeren al cijfers hebben (de
-uitkomst is gegeven). Wij rekenen alleen de MIN- en MAX-knopen uit.
+Eerst een boom waar de bladeren al cijfers hebben; de uitkomst is
+gegeven, en jij rekent alleen de MIN- en MAX-knopen uit.
 
 ```
                  ▲ MAX
@@ -29,11 +29,9 @@ lager = beter voor MIN).
 
 ### Stap 1 — reken **van onderop** elk MIN-niveau uit
 
-Een MIN-knoop kiest het **laagste** kind:
-
-- Tak `A`: `min(3, 5)` = **3**
-- Tak `B`: `min(2, 9)` = **2**
-- Tak `C`: `min(6, 0)` = **0**
+Een MIN-knoop kiest het laagste kind. Onder tak `A` is dat `min(3, 5)`,
+dus **3**; onder `B` `min(2, 9)`, dus **2**; onder `C` `min(6, 0)`, dus
+**0**.
 
 De boom wordt:
 
@@ -45,24 +43,20 @@ De boom wordt:
 
 ### Stap 2 — MAX kiest het **hoogste** kind
 
-`max(3, 2, 0)` = **3**.
-
-Beste zet voor MAX: **tak `A`**. Eindwaarde van het spel bij optimaal
-spel: **3**.
+`max(3, 2, 0)` = **3**. De beste zet voor MAX is tak `A`, en de waarde
+van het spel bij optimaal spel is 3.
 
 ### Wat had je verwacht?
 
-> Op het eerste gezicht lijkt tak `B` aantrekkelijk: daar staat de
-> **9**, het hoogste blad van de hele boom. Maar MIN zou daar nooit voor
-> kiezen — die pakt de **2**. Alleen tak `A` garandeert MAX een uitkomst
-> van 3.
-
-Pas op: het kind dat MIN kiest, is niet het "hoge" maar het "lage".
-Daarom is het hoogste blad misleidend.
+Op het eerste gezicht lijkt tak `B` aantrekkelijk: daar staat de 9, het
+hoogste blad van de hele boom. Maar MIN kiest daar nooit voor, die pakt
+de 2. Alleen tak `A` garandeert MAX een 3. Het hoogste blad is dus
+misleidend, want het kind dat MIN kiest is niet het hoge maar het lage.
 
 ## Deel 2 — de boom van een echt eindspel
 
-Nu echt. Een positie waar nog drie vakjes leeg zijn. **X is aan zet.**
+Nu een echt spel. Een positie waar nog drie vakjes leeg zijn, en X is
+aan zet.
 
 ```
  X | X | O
@@ -72,15 +66,15 @@ Nu echt. Een positie waar nog drie vakjes leeg zijn. **X is aan zet.**
  . | . | .          (. = leeg)
 ```
 
-Posities op het bord — we gebruiken `(rij, kolom)`-coördinaten met (0,0)
-linksboven. De drie lege vakjes zijn `(2,0)`, `(2,1)` en `(2,2)`.
+Een vakje noemen we bij `(rij, kolom)`, met `(0,0)` linksboven. De drie
+lege vakjes zijn `(2,0)`, `(2,1)` en `(2,2)`.
 
-Kijk eerst goed. O heeft twee stenen op de diagonaal van
-rechtsboven naar linksonder: `(0,2)` en `(1,1)`. Eén O op `(2,0)` en O
-wint. Onthoud dat, maar reken het níét als regel mee: minimax kent geen
-"blokkeren". Het rekent alleen.
+Kijk eerst even naar het bord. O heeft twee stenen op de diagonaal van
+rechtsboven naar linksonder, `(0,2)` en `(1,1)`; nog één O op `(2,0)` en
+O wint. Onthoud dat, maar reken het niet als regel mee. Minimax kent
+geen "blokkeren", het rekent alleen.
 
-X heeft als doel `+1` (X-win), O-win is `-1`, een vol bord zonder
+Winst voor X is `+1`, winst voor O is `-1`, en een vol bord zonder
 winnaar is `0`.
 
 ### Stap 1 — teken de boom
@@ -104,7 +98,7 @@ stippellijn zijn klaar: daar staat drie op een rij, of het bord is vol.
  X | . | .
 ```
 
-Geen drie op een rij. **O is aan zet** (MIN). O heeft twee opties.
+Geen drie op een rij, dus O is aan zet (MIN), met twee opties.
 
 O speelt `(2,1)`. Dan blijft alleen `(2,2)` over, en X moet daar spelen:
 
@@ -114,7 +108,7 @@ O speelt `(2,1)`. Dan blijft alleen `(2,2)` over, en X moet daar spelen:
  X | O | X
 ```
 
-Geen drie op een rij, bord vol → **remise**, utility **0**.
+Geen drie op een rij en het bord is vol: remise, utility **0**.
 
 O speelt `(2,2)`. X vult `(2,1)`:
 
@@ -124,10 +118,10 @@ O speelt `(2,2)`. X vult `(2,1)`:
  X | X | O
 ```
 
-Weer geen drie op een rij, bord vol → utility **0**.
+Weer geen drie op een rij en een vol bord, utility **0**.
 
-MIN kiest het laagste van `0` en `0`: **0**. De tak `X→(2,0)` is dus
-**0** waard.
+MIN kiest het laagste van `0` en `0`: **0**. De tak waarin X `(2,0)`
+speelt is dus **0** waard.
 
 ### Stap 3 — de middentak: X speelt `(2,1)`
 
@@ -145,8 +139,8 @@ O is aan zet. O speelt `(2,0)`:
  O | X | .
 ```
 
-Diagonaal `(0,2) (1,1) (2,0)` is `O O O` — **O wint**. Terminal,
-utility **-1**. Geen verdere zetten.
+De diagonaal `(0,2) (1,1) (2,0)` is `O O O`: O wint. Terminal, utility
+**-1**, geen verdere zetten.
 
 O speelt `(2,2)`. X vult `(2,0)`:
 
@@ -156,10 +150,10 @@ O speelt `(2,2)`. X vult `(2,0)`:
  X | X | O
 ```
 
-Vol, geen winnaar → utility **0**.
+Vol, geen winnaar, utility **0**.
 
-MIN kiest `min(-1, 0)` = **-1**. De tak `X→(2,1)` is **-1** waard: als
-X daar speelt, wint O.
+MIN kiest `min(-1, 0)` = **-1**. De tak waarin X `(2,1)` speelt is
+**-1** waard: als X daar speelt, wint O.
 
 ### Stap 4 — de rechtertak: X speelt `(2,2)`
 
@@ -169,7 +163,7 @@ X daar speelt, wint O.
  . | . | X
 ```
 
-O speelt `(2,0)`: diagonaal `O O O`, **O wint**, utility **-1**.
+O speelt `(2,0)`: diagonaal `O O O`, O wint, utility **-1**.
 
 O speelt `(2,1)`. X vult `(2,0)`:
 
@@ -179,7 +173,7 @@ O speelt `(2,1)`. X vult `(2,0)`:
  X | O | X
 ```
 
-Vol, geen winnaar → utility **0**.
+Vol, geen winnaar, utility **0**.
 
 MIN kiest `min(-1, 0)` = **-1**.
 
@@ -198,12 +192,11 @@ X kiest het hoogste:
 | `(2,1)` | `min(-1, 0)` | **-1** |
 | `(2,2)` | `min(-1, 0)` | **-1** |
 
-X speelt **`(2,0)`** en de uitkomst bij perfect spel is **0**: remise.
+X speelt `(2,0)` en de uitkomst bij optimaal spel is 0: remise.
 
-Zie je wat er gebeurde? X "blokkeert" O's diagonaal, maar niet omdat
-iemand die regel heeft geprogrammeerd. De boom wijst de blokkade
-vanzelf aan: de twee andere zetten hebben een `-1` eronder hangen, en
-MIN pakt die.
+X blokkeert de diagonaal van O, maar niet omdat iemand die regel heeft
+geprogrammeerd. De boom wijst de blokkade vanzelf aan: onder de twee
+andere zetten hangt een `-1`, en MIN pakt die.
 
 ## Het recept in woorden
 
@@ -219,7 +212,7 @@ MIN pakt die.
 
 ## Wat dit oplevert voor het coderen
 
-In Python wordt dit een **recursieve** functie: `max_value(bord)` roept
+In Python wordt dit een recursieve functie: `max_value(bord)` roept
 `min_value` aan op elk kind, en die roept weer `max_value` aan, tot een
 terminal bord. Dezelfde boom, in dezelfde volgorde: eerst de linkertak
 helemaal naar beneden, dan de middentak, dan de rechter. Bij

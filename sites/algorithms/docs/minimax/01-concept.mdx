@@ -13,23 +13,19 @@ sidebar_position: 1
 > dezelfde licentie verspreid.
 
 **Leerdoel:** je begrijpt het kernidee van minimax: als jij je beste zet
-doet en je tegenstander óók zijn beste zet doet, welke zet is dan voor
+doet en je tegenstander ook zijn beste zet doet, welke zet is dan voor
 jou de beste? Nog geen code.
 
 ## Het verhaal
 
-Je speelt boter-kaas-en-eieren (tic-tac-toe) tegen iemand die **net zo
-goed nadenkt als jij**. Geen blunders, geen mazzel. Welke zet doe je?
+Je speelt boter-kaas-en-eieren (tic-tac-toe) tegen iemand die net zo
+goed nadenkt als jij, zonder blunders en zonder mazzel. Welke zet doe je?
 
-Veel mensen denken: *"Ik kies de zet die mij het snelst kan laten
-winnen."* Maar je tegenstander kan jouw plan blokkeren.
-
-Wat je écht wilt weten:
-
-> *"Welke zet zorgt dat ik **niet verlies**, ook als mijn tegenstander
-> daarna zijn allerbeste tegenzet kiest?"*
-
-Dat is Minimax in één zin.
+De eerste gedachte van de meeste mensen is: de zet die mij het snelst
+laat winnen. Maar je tegenstander ziet dat plan ook, en blokkeert het.
+De vraag die je wilt beantwoorden is een andere: welke zet zorgt dat ik
+**niet verlies**, ook als mijn tegenstander daarna zijn allerbeste
+tegenzet kiest? Dat is minimax in één zin.
 
 ## Twee spelers, twee doelen
 
@@ -40,9 +36,8 @@ In een spel zijn er twee perspectieven:
 - **Min-speler** (de tegenstander, `O`) wil dezelfde uitkomst
   **minimeren**: hij wil dat wij verliezen.
 
-Beide spelers spelen om beurten. Beiden kiezen telkens de zet die voor
-*hen* het best is. Minimax rekent uit wat er gebeurt als allebei
-optimaal spelen.
+De spelers zijn om de beurt, en allebei kiezen ze telkens de zet die
+voor hén het best is. Minimax rekent uit waar dat op uitkomt.
 
 ## Een game tree
 
@@ -64,43 +59,37 @@ Een kleine boom, nog geen echt spel:
 ```
 
 Een MAX-knoop tekenen we als een driehoek omhoog (▲), want die wil
-omhoog. Een MIN-knoop als een driehoek omlaag (▼). Zo tekent CS50 ze
+omhoog, en een MIN-knoop als een driehoek omlaag (▼). Zo tekent CS50 ze
 ook, en zo staan ze in de rest van dit hoofdstuk.
 
-Wij (MAX) kunnen kiezen tussen tak `A` en tak `B`. Daarna kiest de
+Wij (MAX) kiezen tussen tak `A` en tak `B`. Daarna kiest de
 tegenstander (MIN) tussen zijn twee opties.
 
-**Tegenstander redeneert:**
+Redeneer eerst als de tegenstander. Onder tak `A` kiest MIN uit `+1` en
+`-1`, en hij pakt het laagste: `-1`. Onder tak `B` kiest hij uit `0` en
+`+1`, dus `0`.
 
-- Tak `A`: MIN kiest uit `+1` en `-1`. Hij minimaliseert → `-1`.
-- Tak `B`: MIN kiest uit `0` en `+1`. Hij minimaliseert → `0`.
-
-**Wij redeneren:**
-
-- Tak `A` leidt tot uitkomst `-1` (omdat MIN daar `-1` pakt).
-- Tak `B` leidt tot uitkomst `0`.
-
-Wij maximaliseren → kies `B`. Beter een gegarandeerde remise dan een
-gegarandeerd verlies.
+Nu wij. Tak `A` levert `-1` op, want daar pakt MIN de `-1`. Tak `B`
+levert `0` op. Wij nemen het hoogste, dus `B`. Beter een gegarandeerde
+remise dan een gegarandeerd verlies.
 
 ## Het sleutelwoord: *gegarandeerd*
 
-Minimax denkt **van het einde naar het begin**. Pas als de uitkomst van
+Minimax denkt van het einde naar het begin. Pas als de uitkomst van
 een blad bekend is, kun je terugrekenen wat het niveau erboven waard
-is. En zo verder, helemaal terug naar de huidige zet.
-
-Dat heet **terug-redeneren** (Engels: *backwards induction*). Het werkt
-omdat we aannemen: **beide spelers spelen optimaal**.
+is, en zo verder, helemaal terug naar de zet van nu. Dat heet
+**terug-redeneren** (in het Engels *backwards induction*), en het werkt
+omdat we aannemen dat beide spelers optimaal spelen.
 
 ## Waarom tic-tac-toe?
 
-Tic-tac-toe heeft een **klein** aantal mogelijke spellen (~250.000 als
-je alles meerekent). Een computer kan de hele game tree in een seconde
-doorrekenen. Een mens niet — wij gebruiken patronen en intuïtie.
+Tic-tac-toe heeft een klein aantal mogelijke spellen, zo'n 250.000 als
+je alles meerekent. Een computer rekent die hele game tree in een
+seconde door; een mens niet, wij spelen op patronen en gevoel.
 
-Voor schaken (meer dan 10⁴⁰ posities) is de hele tree te groot. Daar gebruik je
-slimmere varianten zoals *alpha-beta pruning* of *Monte Carlo Tree
-Search*. Maar het **fundament** blijft minimax.
+Voor schaken, met meer dan 10⁴⁰ posities, is de hele tree te groot.
+Daar gebruik je slimmere varianten zoals *alpha-beta pruning* of *Monte
+Carlo Tree Search*, maar het fundament blijft minimax.
 
 ## Waar minimax echt is gebruikt
 
@@ -116,7 +105,7 @@ Search*. Maar het **fundament** blijft minimax.
   Binnenin: minimax met alpha-beta pruning, op speciale chips die zo'n
   200 miljoen posities per seconde bekeken.
 - [Chinook](https://en.wikipedia.org/wiki/Chinook_(computer_program))
-  rekende in 2007 dammen (op het 8×8-bord) helemaal uit: bij perfect
+  rekende in 2007 dammen (op het 8×8-bord) helemaal uit: bij optimaal
   spel is het remise, net als tic-tac-toe. Dezelfde game tree, alleen
   achttien jaar rekenwerk.
 - [Stockfish](https://stockfishchess.org/), de sterkste open-source
@@ -133,10 +122,9 @@ minimax voor het eerst voordoet.
 ## Wat we gaan bouwen
 
 Aan het eind van dit hoofdstuk heb je tien Python-functies die samen
-een tic-tac-toe-AI vormen die nooit verliest. Dat is geen overdrijving:
-als beide spelers optimaal spelen, eindigt tic-tac-toe altijd in remise.
-
-Eerst met pen en papier.
+een tic-tac-toe-AI vormen die nooit verliest. Als beide spelers
+optimaal spelen, eindigt tic-tac-toe altijd in remise, en jouw AI
+speelt optimaal. Eerst met pen en papier.
 
 ## Zo bouw je het op
 

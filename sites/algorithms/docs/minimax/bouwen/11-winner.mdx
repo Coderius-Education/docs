@@ -9,14 +9,10 @@ te bepalen of iemand heeft gewonnen.
 
 ## Wat doet deze functie?
 
-`winner(bord)` geeft terug **wie** drie op een rij heeft. Acht
-mogelijke winnende lijnen in tic-tac-toe:
-
-- 3 rijen (horizontaal)
-- 3 kolommen (verticaal)
-- 2 diagonalen
-
-Als geen enkele lijn vol is met dezelfde speler, return `None`.
+`winner(bord)` geeft terug wie drie op een rij heeft. Tic-tac-toe heeft
+acht lijnen waarop dat kan: drie rijen, drie kolommen en twee
+diagonalen. Is geen enkele lijn gevuld met dezelfde speler, dan geef je
+`None` terug.
 
 ## Specificatie
 
@@ -30,18 +26,16 @@ Als geen enkele lijn vol is met dezelfde speler, return `None`.
 
 ## Hoe controleer je een lijn?
 
-Een lijn is een rij van drie cellen. Hij is "gewonnen door X" als alle
-drie `"X"` zijn. Idem voor O.
-
-Compacte check:
+Een lijn is een rij van drie cellen, en X heeft hem gewonnen als alle
+drie `"X"` zijn. Voor O hetzelfde. De check in één regel:
 
 ```python
 if rij[0] == rij[1] == rij[2] and rij[0] is not None:
     return rij[0]    # de winnaar
 ```
 
-De `and rij[0] is not None` is belangrijk: drie keer `None` mag niet
-tellen als "winnaar".
+De `and rij[0] is not None` hoort erbij: drie keer `None` is ook drie
+keer hetzelfde, en dat mag niet tellen als winnaar.
 
 ## Voorspel
 
@@ -58,13 +52,9 @@ bord = [
 <details>
 <summary>Antwoord</summary>
 
-De **anti-diagonaal** `(0,2) (1,1) (2,0)` is `X X O` — niet winnend.
-
-De **hoofd-diagonaal** `(0,0) (1,1) (2,2)` is `X X X` — X wint.
-
-Kolommen, rijen: geen drie op een rij.
-
-Dus `winner(bord)` → `"X"`.
+De anti-diagonaal `(0,2) (1,1) (2,0)` is `X X O`, niet winnend. De
+hoofddiagonaal `(0,0) (1,1) (2,2)` is `X X X`: X wint. In de rijen en
+kolommen staat nergens drie op een rij. Dus `winner(bord)` geeft `"X"`.
 
 </details>
 

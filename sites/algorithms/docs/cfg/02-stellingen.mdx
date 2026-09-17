@@ -5,9 +5,8 @@ sidebar_position: 2
 # Stellingen — eerst voorspellen
 
 **Leerdoel:** je toetst je beeld van een context-vrije grammatica
-vóórdat je gaat bouwen. Denk eerst zelf na, klik dan open.
-
-We gebruiken weer het mini-voorbeeld uit de vorige pagina:
+voordat je gaat bouwen. Denk eerst zelf na, klik dan open. De stellingen
+gaan over het mini-voorbeeld van de vorige pagina:
 
 ```
 Zin   -> Groet Naam
@@ -19,13 +18,13 @@ Naam  -> "sam" | "kim"
 
 ### Stelling 1
 
-> De zin **hallo sam** wordt door deze grammatica geaccepteerd.
+> Deze grammatica accepteert de zin **hallo sam**.
 
 <details>
 <summary>Waar of niet waar?</summary>
 
 **Waar.** `hallo` is een geldige `Groet` en `sam` een geldige `Naam`,
-dus samen vormen ze een `Zin`. ✓
+dus samen vormen ze een `Zin`.
 
 </details>
 
@@ -33,13 +32,13 @@ dus samen vormen ze een `Zin`. ✓
 
 ### Stelling 2
 
-> De zin **sam hallo** wordt geaccepteerd.
+> De grammatica accepteert ook **sam hallo**.
 
 <details>
 <summary>Waar of niet waar?</summary>
 
-**Niet waar.** De regel `Zin -> Groet Naam` zegt: eerst een groet, dán
-een naam. De **volgorde** klopt hier niet. Afgekeurd.
+**Niet waar.** De regel `Zin -> Groet Naam` zegt: eerst een groet, dan
+een naam. Hier staat het andersom, dus de zin is afgekeurd.
 
 </details>
 
@@ -52,9 +51,9 @@ een naam. De **volgorde** klopt hier niet. Afgekeurd.
 <details>
 <summary>Waar of niet waar?</summary>
 
-**Niet waar.** `Groet` en `Naam` zijn **non-terminals** — groepen die uit
-andere bouwstenen bestaan. De **terminals** zijn de echte woorden tussen
-aanhalingstekens: `"hallo"`, `"hoi"`, `"sam"`, `"kim"`.
+**Niet waar.** `Groet` en `Naam` zijn non-terminals: groepen die uit
+andere bouwstenen bestaan. De terminals zijn de echte woorden tussen
+aanhalingstekens, `"hallo"`, `"hoi"`, `"sam"` en `"kim"`.
 
 </details>
 
@@ -67,9 +66,9 @@ aanhalingstekens: `"hallo"`, `"hoi"`, `"sam"`, `"kim"`.
 <details>
 <summary>Waar of niet waar?</summary>
 
-**Niet waar.** Een CFG kijkt alleen naar de **structuur** (de vorm). Of
-de zin ergens op slaat, boeit de grammatica niet. *hoi kim* wordt
-geaccepteerd, ook al weet de computer niet wie Kim is.
+**Niet waar.** Een CFG kijkt alleen naar de vorm. Of de zin ergens op
+slaat, kan de grammatica niets schelen: *hoi kim* komt erdoor, ook al
+weet de computer niet wie Kim is.
 
 </details>
 
@@ -83,10 +82,10 @@ geaccepteerd, ook al weet de computer niet wie Kim is.
 <summary>Waar of niet waar?</summary>
 
 **Niet waar.** Sommige zinnen zijn **ambigu**: er zijn meerdere geldige
-manieren om ze te ontleden. Denk aan *"Ik zag de man met de
-verrekijker"* — wie heeft de verrekijker? Een grammatica kan voor zo'n
-zin meerdere bomen vinden. Later tel je het **aantal interpretaties** van
-een zin, en kom je dit zelf tegen.
+manieren om ze te ontleden. Denk aan "Ik zag de man met de verrekijker":
+wie heeft de verrekijker? Een grammatica vindt voor zo'n zin meerdere
+bomen. Later tel je het aantal interpretaties van een zin, en kom je dit
+zelf tegen.
 
 </details>
 
@@ -100,7 +99,7 @@ een zin, en kom je dit zelf tegen.
 <details>
 <summary>Waar of niet waar?</summary>
 
-**Waar** — een regel *toevoegen* maakt de grammatica alleen maar ruimer;
+**Waar.** Een regel toevoegen maakt de grammatica alleen maar ruimer;
 elke boom die er was, is er nog. Daarom kun je in deze track zin voor
 zin uitbreiden.
 
@@ -111,7 +110,5 @@ Zolang je alleen toevoegt, is alles wat werkte veilig.
 </details>
 
 ---
-
-Klaar met voorspellen? Tijd om je eigen grammatica te bouwen.
 
 Door naar [de eerste zin →](./bouwen/03-simpele-zin).

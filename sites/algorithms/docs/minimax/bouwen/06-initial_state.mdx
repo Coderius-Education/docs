@@ -10,10 +10,9 @@ leeg bord teruggeven.
 ## Wat doet deze functie?
 
 `initial_state()` geeft het bord terug zoals het er aan het begin van
-het spel uitziet: een 3×3 grid waar nog niets is gespeeld. Alle negen
-cellen staan op `None`.
-
-Deze functie heeft geen input: er is maar één antwoord.
+het spel uitziet: een 3×3-bord waar nog niets is gespeeld, alle negen
+cellen op `None`. De functie heeft geen input, want er is maar één
+antwoord.
 
 ## Specificatie
 
@@ -59,9 +58,9 @@ die hoort leeg te zijn (`None`).
 Vul de functie in. Onder de functie staan tests: regels die met
 `assert` beginnen. Een `assert` controleert of wat erachter staat waar
 is. Is dat niet zo, dan stopt het programma met een `AssertionError` en
-de boodschap achter de komma, zodat je ziet wélke test faalde. Halen
-alle tests het, dan zie je onderaan "Alle tests gehaald ✓". Zo werkt
-het op elke bouwsteen-pagina.
+de boodschap achter de komma, zodat je ziet welke test faalde. Halen
+alle tests het, dan zie je onderaan "Alle tests gehaald ✓". Zo werkt het
+op elke bouwsteen-pagina.
 
 {/* niet-draaien: startcode; de asserts falen tot de leerling de opdracht afmaakt */}
 <PyRunner initialCode={`def initial_state():
@@ -92,9 +91,9 @@ Schrijf de drie rijen letterlijk uit, als een lijst met daarin drie
 lijsten van drie keer `None`. Precies zoals het bord op
 [het bord in Python](../04-bord-in-python) eruitzag, maar dan leeg.
 
-⚠ Pas op met `[[None] * 3] * 3` — dat lijkt handig, maar geeft drie
-keer dezélfde rij (alias). De laatste test hierboven vangt dat: een
-wijziging in rij 0 zou anders ook rij 1 raken.
+⚠ Pas op met `[[None] * 3] * 3`. Dat lijkt handig, maar het geeft drie
+keer dezelfde rij; de laatste test hierboven vangt dat, want een
+wijziging in rij 0 zou dan ook rij 1 raken.
 
 </details>
 

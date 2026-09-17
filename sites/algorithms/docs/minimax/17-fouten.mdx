@@ -4,17 +4,17 @@ sidebar_position: 17
 
 # Er gaat iets mis — vier valkuilen
 
-**Leerdoel:** je herkent de vier klassieke valkuilen bij het bouwen van
-een minimax-AI, en je weet bij elk symptoom waar je moet kijken.
+**Leerdoel:** je herkent de vier valkuilen bij het bouwen van een
+minimax-AI, en je weet bij elk symptoom waar je moet kijken.
 
 ## Bord muteren in `result`
 
 Geen foutmelding, wel een onverklaarbaar verkeerd antwoord. Minimax
-"probeert" zetten en gaat ervan uit dat het origineel niet meegaat; als
-dat wel zo is, raakt het hele algoritme van slag.
+probeert zetten en gaat ervan uit dat het origineel niet mee verandert;
+doet het dat wel, dan raakt het hele algoritme van slag.
 
-**Oorzaak:** zonder `copy.deepcopy` werkt Python met **referenties**.
-Een wijziging in `nieuw_bord` is ook zichtbaar in `bord`:
+**Oorzaak:** zonder `copy.deepcopy` werkt Python met referenties. Een
+wijziging in `nieuw_bord` is ook zichtbaar in `bord`:
 
 ```python
 # FOUT
@@ -25,8 +25,8 @@ def result(bord, zet):
     return nieuw
 ```
 
-Ook `bord.copy()` of `list(bord)` is **niet genoeg** — die maken alleen
-de buitenste lijst nieuw, de rijen daaronder blijven gedeeld.
+Ook `bord.copy()` of `list(bord)` is niet genoeg: die maken alleen de
+buitenste lijst nieuw, de rijen daaronder blijven gedeeld.
 
 **Oplossing:** gebruik `copy.deepcopy(bord)` voor een echte, diepe
 kopie:
@@ -47,9 +47,9 @@ def result(bord, zet):
 Foutmelding: `RecursionError: maximum recursion depth exceeded`. De
 browser hangt soms een paar seconden voordat hij komt.
 
-**Oorzaak:** een recursieve aanroep moet een **kleiner** probleem
-krijgen. Geef je hetzelfde bord door in plaats van het bord ná de zet,
-dan roept de functie zichzelf eindeloos aan op precies dezelfde positie:
+**Oorzaak:** een recursieve aanroep moet een kleiner probleem krijgen.
+Geef je hetzelfde bord door in plaats van het bord na de zet, dan roept
+de functie zichzelf eindeloos aan op precies dezelfde positie:
 
 ```python
 # FOUT — hetzelfde bord gaat de recursie in
@@ -100,8 +100,8 @@ def max_value(bord):
     return v
 ```
 
-**Oplossing:** check **eerst** of het bord terminal is. Zo ja, geef de
-utility terug (`1`, `-1`, `0`). Dat is de bodem van de recursie, en de
+**Oplossing:** check eerst of het bord terminal is. Zo ja, geef de
+utility terug (`1`, `-1` of `0`). Dat is de bodem van de recursie, en de
 enige plek waar een echt getal de boom in komt:
 
 ```python
@@ -137,8 +137,8 @@ def max_value(bord):
     return v
 ```
 
-**Oplossing:** onthoud het ritme — **wisselbeurten**. `max_value` zoekt
-X's beste keuze; de **volgende** beurt is O, dus
+**Oplossing:** onthoud het ritme van de beurten. `max_value` zoekt de
+beste keuze van X; de volgende beurt is van O, dus daar hoort
 `min_value(result(...))`. Andersom geldt hetzelfde.
 
 ```python
@@ -161,8 +161,7 @@ def min_value(bord):
     return v
 ```
 
-Vuistregel: in `max_value` zie je het woord `min` voorkomen, en in
-`min_value` zie je het woord `max`. Zit dat omgekeerd? Dan klopt het
-niet.
+Vuistregel: in `max_value` komt het woord `min` voor, en in `min_value`
+het woord `max`. Staat het andersom, dan klopt het niet.
 
 Door naar [cheatsheet →](./18-cheatsheet).

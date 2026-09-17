@@ -4,7 +4,7 @@ sidebar_position: 14
 
 # Bouwsteen 8 — `max_value` en `min_value`
 
-**Leerdoel:** je schrijft twee **recursieve** functies die voor elke
+**Leerdoel:** je schrijft twee recursieve functies die voor elke
 positie uitrekenen wat de beste haalbare utility is voor X (`max_value`)
 of voor O (`min_value`). Het zijn de boom-doorlopers van de
 pen-en-papier-pagina, maar dan in code.
@@ -12,22 +12,20 @@ pen-en-papier-pagina, maar dan in code.
 ## Wat doen deze functies?
 
 Op de [pen-en-papier-pagina](../02-pen-en-papier) rekende je de waarde
-van elke knoop van onderop terug naar boven. Die vraag — "wat is deze
-positie waard?" — is precies wat `max_value` en `min_value`
-beantwoorden.
+van elke knoop van onderop terug naar boven. Die vraag, wat is deze
+positie waard, is precies wat `max_value` en `min_value` beantwoorden.
+**`max_value(bord)`** neemt aan dat X aan zet is en zegt hoe goed het
+maximaal voor X kan uitpakken. **`min_value(bord)`** neemt aan dat O
+aan zet is en zegt hoe laag O de uitkomst voor X kan drukken. Allebei
+geven ze `1`, `-1` of `0` terug.
 
-- **`max_value(bord)`**: X is aan zet. Hoe goed kan het maximaal voor X
-  uitpakken? Geeft `1`, `-1` of `0`.
-- **`min_value(bord)`**: O is aan zet. Hoe laag kan O de uitkomst voor
-  X drukken? Geeft `1`, `-1` of `0`.
-
-> Let op: `max_value` geeft **niet de zet** terug — alleen het **getal**
-> dat de positie waard is. De zet zelf bepaal je straks in `minimax`.
+Ze geven dus niet de zet terug, alleen het getal dat de positie waard
+is. De zet zelf bepaal je straks in `minimax`.
 
 ## Wat is recursie?
 
-Een functie die zichzelf aanroept. Een klein voorbeeld dat **geen**
-tic-tac-toe is:
+Een functie die zichzelf aanroept. Een klein voorbeeld dat niets met
+tic-tac-toe te maken heeft:
 
 ```python
 def aftellen(n):
@@ -47,17 +45,12 @@ aftellen(3)
 Klaar
 ```
 
-De functie roept zichzelf aan met een **kleinere** input, tot de
-**stopconditie** `n == 0` geraakt wordt.
-
-Drie ingrediënten van recursie:
-
-1. **Base case** — een conditie waarbij het antwoord meteen bekend is,
-   zonder nieuwe aanroep.
-2. **Recursieve aanroep** — de functie roept zichzelf aan op een
-   kleinere input.
-3. **Zekerheid dat je er komt** — die kleinere input moet uiteindelijk
-   bij de base case uitkomen.
+De functie roept zichzelf aan met een kleinere input, tot de
+stopconditie `n == 0` bereikt is. Recursie heeft drie ingrediënten: een
+**base case**, een geval waarin het antwoord meteen bekend is zonder
+nieuwe aanroep; een **recursieve aanroep**, waarin de functie zichzelf
+aanroept op een kleinere input; en de zekerheid dat die kleinere input
+uiteindelijk bij de base case uitkomt.
 
 ## Het recept, in woorden
 
@@ -79,22 +72,19 @@ min_value(bord):
     geef v terug
 ```
 
-Leg dat naast het recept van de pen-en-papier-pagina:
-
-- **Base case** = een terminal bord. Daar is de utility al bekend, dus
-  daar stopt de recursie: `terminal(bord)` en `utility(bord)` uit
-  bouwsteen 6 en 7.
-- **Recursieve aanroep** = "kijk wat de tegenstander daarna doet". Na een
-  zet van X is O aan de beurt, dus `max_value` vraagt het aan
-  `min_value`. En andersom. Dat is de afwisseling van MAX- en MIN-lagen
-  in de boom.
-- **Je komt er** omdat elke aanroep één cel meer gevuld heeft. Na
-  hoogstens negen stappen is het bord vol.
+Leg dat naast het recept van de pen-en-papier-pagina. De base case is
+een terminal bord: daar is de utility al bekend, dus daar stopt de
+recursie, met `terminal(bord)` en `utility(bord)` uit bouwsteen 6 en 7.
+De recursieve aanroep is "kijk wat de tegenstander daarna doet": na een
+zet van X is O aan de beurt, dus `max_value` vraagt het aan `min_value`,
+en andersom. Dat is de afwisseling van MAX- en MIN-lagen in de boom. En
+je komt er, omdat elke aanroep één cel meer gevuld heeft; na hoogstens
+negen stappen is het bord vol.
 
 De twee functies zijn elkaars spiegelbeeld: `max_value` begint op min
 oneindig en houdt het hoogste bij, `min_value` begint op plus oneindig
 en houdt het laagste bij. Voor "oneindig" heeft Python `math.inf`, na
-`import math`. Je begint zo laag dat élke echte uitkomst hoger is.
+`import math`. Je begint zo laag dat elke echte uitkomst hoger is.
 
 ## Kijk hoe de recursie de boom doorloopt
 
@@ -253,12 +243,11 @@ Lees de uitvoer naast de boom, met bij elke knoop het bord:
 <GameTree bord="XXO/OOX/..." waardes />
 
 Het is dezelfde wandeling als op de pen-en-papier-pagina, in dezelfde
-volgorde: eerst de linkertak helemaal
-naar beneden tot een `klaar`, dan de waarde weer omhoog, dan de
-volgende tak. Elke regel `MAX` of `MIN` is één aanroep van `max_value`
-of `min_value`; elke inspringing is een laag dieper in de boom. Pas
-helemaal onderaan, als alle drie de takken terug zijn, kent de wortel
-zijn waarde: `MAX geeft 0`.
+volgorde: eerst de linkertak helemaal naar beneden tot een `klaar`, dan
+de waarde weer omhoog, dan de volgende tak. Elke regel `MAX` of `MIN` is
+één aanroep van `max_value` of `min_value`, en elke inspringing is een
+laag dieper in de boom. Pas helemaal onderaan, als alle drie de takken
+terug zijn, kent de wortel zijn waarde: `MAX geeft 0`.
 
 ## Specificatie
 
@@ -276,11 +265,11 @@ bord = [["X","X","X"], ["O","O",None], [None]*3]
 <details>
 <summary>Antwoord</summary>
 
-**`1`** (de utility van X-wint).
+`1`, de utility van een bord waar X wint.
 
-Het bord is **terminal**, dus de functie gaat meteen de base case in:
-`return utility(bord)` → `1`. Geen recursie, geen min of max. Op een
-terminal bord is `min_value(bord) == max_value(bord) == utility(bord)`.
+Het bord is terminal, dus de functie gaat meteen de base case in en geeft
+`utility(bord)` terug, en dat is `1`. Geen recursie, geen min of max. Op
+een terminal bord is `min_value(bord) == max_value(bord) == utility(bord)`.
 
 </details>
 
@@ -398,7 +387,7 @@ print("Alle tests gehaald ✓")`} />
 <details>
 <summary>Tip</summary>
 
-Begin **altijd** met de base case:
+Begin met de base case:
 
 ```python
 if terminal(bord):
@@ -406,12 +395,10 @@ if terminal(bord):
 ```
 
 Daarna een lus over `actions(bord)` die `v` bijwerkt. Twee dingen om
-dubbel te checken:
-
-1. In `max_value` roep je `min_value` aan, niet `max_value`. Zie ook
-   [er gaat iets mis](../17-fouten).
-2. De startwaarde moet zó zijn dat **élke** echte uitkomst beter is: voor
-   `max` begin je op `-math.inf`, voor `min` op `math.inf`.
+dubbel te checken: in `max_value` roep je `min_value` aan, niet
+`max_value` (zie ook [er gaat iets mis](../17-fouten)), en de startwaarde
+moet zo zijn dat elke echte uitkomst beter is, dus `-math.inf` voor
+`max` en `math.inf` voor `min`.
 
 </details>
 
@@ -437,8 +424,8 @@ def min_value(bord):
     return v
 ```
 
-Precies het recept, regel voor regel. `max_value` roept `min_value`
-aan en andersom: die afwisseling ís de boom.
+Precies het recept, regel voor regel. `max_value` roept `min_value` aan
+en andersom; die afwisseling is de boom.
 
 </details>
 

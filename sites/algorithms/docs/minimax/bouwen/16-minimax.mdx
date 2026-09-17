@@ -10,25 +10,20 @@ sidebar_position: 16
   ]}
 />
 
-**Leerdoel:** je schrijft de top-level AI-functie die alle vorige
-bouwstenen gebruikt om de **beste zet** terug te geven — direct in je
-lokale `tictactoe.py`.
+**Leerdoel:** je schrijft de functie die alle vorige bouwstenen gebruikt
+om de beste zet terug te geven, direct in je lokale `tictactoe.py`.
 
-Je hebt bij [draai het zelf](./15-zelf-draaien) je negen functies in
-één lokaal bestand gezet (of in de verzamel-PyRunner). Tijd voor de
-tiende.
+Bij [draai het zelf](./15-zelf-draaien) heb je je negen functies in één
+lokaal bestand gezet, of in de verzamel-PyRunner. Nu de tiende.
 
 ## Wat doet deze functie?
 
-`minimax(bord)` geeft de **beste zet** terug voor de speler die nu aan
-zet is. Niet het *getal* — dat is wat `max_value`/`min_value` doen.
-`minimax` geeft de tuple `(i, j)`.
-
-- **X-beurt**: kies de zet met de **hoogste** `min_value(result(bord, zet))`.
-- **O-beurt**: kies de zet met de **laagste** `max_value(result(bord, zet))`.
-
-Kruislings, want na X's zet is O aan zet, dus je rekent met
-`min_value`. Voor O andersom.
+`minimax(bord)` geeft de beste zet terug voor de speler die nu aan zet
+is: niet het getal, dat doen `max_value` en `min_value`, maar de tuple
+`(i, j)`. Is X aan zet, dan kies je de zet met de hoogste
+`min_value(result(bord, zet))`; is O aan zet, de zet met de laagste
+`max_value(result(bord, zet))`. Kruislings, want na een zet van X is O
+aan zet, dus je rekent met `min_value`. Voor O andersom.
 
 ## Het patroon
 
@@ -45,12 +40,13 @@ voor elke zet in actions(bord):
 return beste_zet
 ```
 
-Dezelfde lus als in `max_value`, alleen onthoud je nu ook welke zet
-het beste was.
+Dezelfde lus als in `max_value`, alleen onthoud je nu ook welke zet de
+beste was.
 
 ## Speciaal geval
 
-Als `terminal(bord)`, is er geen zet meer mogelijk. Return `None`.
+Is het bord terminal, dan is er geen zet meer mogelijk en geef je `None`
+terug.
 
 ## Specificatie
 
@@ -99,10 +95,10 @@ def minimax(bord):
 <details>
 <summary>Tip</summary>
 
-Het patroon is bijna identiek aan `max_value` en `min_value`, met één
-extra ding: **onthoud welke zet** het optimum opleverde, niet alleen
-de score. Je hebt dus twee variabelen bij te houden, `beste_score` en
-`beste_zet`, en een `if` per speler: voor X vergelijk je met `>` en
+Het patroon is bijna hetzelfde als in `max_value` en `min_value`, met
+één verschil: je onthoudt welke zet het beste getal opleverde, niet
+alleen het getal. Je houdt dus twee variabelen bij, `beste_score` en
+`beste_zet`, en per speler een `if`: voor X vergelijk je met `>` en
 begin je op `-math.inf`, voor O met `<` en `math.inf`.
 
 Vergeet je `beste_zet` bij te werken? Dan geeft minimax `None` terug.
@@ -216,20 +212,17 @@ Run opnieuw:
 python tictactoe.py
 ```
 
-Je AI speelt nu tegen zichzelf. **Eindigt altijd in remise** — dat is
-een wiskundige eigenschap van tic-tac-toe bij optimaal spel.
+Je AI speelt nu tegen zichzelf, en dat eindigt altijd in remise: zo zit
+tic-tac-toe in elkaar bij optimaal spel.
 
 Op je laptop is dit een **paar seconden**, niet 30. Dat is het verschil
 tussen Python in de browser en Python op je eigen computer.
 
 ## Bonus — CS50's `runner.py` met clickable GUI
 
-CS50 levert bij dit project een tweede bestand, **`runner.py`**, dat
-een grafische tic-tac-toe-window opent waarin jij tegen je eigen AI
-kunt spelen. Hetzelfde `tictactoe.py` dat jij hebt gebouwd is wat
-`runner.py` gebruikt.
-
-Zo werkt het:
+CS50 levert bij dit project een tweede bestand, `runner.py`, dat een
+venster opent waarin jij tegen je eigen AI speelt. Het gebruikt het
+`tictactoe.py` dat jij net hebt gebouwd. Zo werkt het:
 
 1. Download het project-zip via
    [cs50.harvard.edu/ai/projects/0/tictactoe/](https://cs50.harvard.edu/ai/projects/0/tictactoe/) —
@@ -253,8 +246,8 @@ Zo werkt het:
    python runner.py
    ```
 
-Een venster opent. Je klikt op een vakje, je AI antwoordt. Boter-kaas-
-en-eieren tegen een tegenstander die nooit blundert.
+Er opent een venster. Je klikt op een vakje en je AI antwoordt:
+boter-kaas-en-eieren tegen een tegenstander die nooit blundert.
 
 ## Geen lokale Python? Noodoplossing met PyRunner
 
@@ -394,8 +387,8 @@ else:
 
 </details>
 
-Je hebt nu een werkende AI op je eigen laptop: een Python-bestand dat
-je kunt kopiëren, mailen of doorontwikkelen. Tien kleine functies die
+Je hebt nu een werkende AI op je eigen laptop, in een Python-bestand dat
+je kunt kopiëren, mailen of verder uitbouwen: tien kleine functies die
 elkaar aanroepen, elk apart getest.
 
 Door naar [veelgemaakte fouten →](../17-fouten).
