@@ -6,6 +6,7 @@ import {
   INTRODUCEERT,
   VOORUITWIJZINGEN,
   alleConcepten,
+  conceptenInProza,
   htmlConcepten,
   noemtConcept,
 } from '../data/leerlijn';
@@ -49,6 +50,32 @@ function codeUit(bron: string): string {
     stukken.push(m[1]);
   }
   return stukken.join('\n');
+}
+
+/**
+ * Wat een opdracht van de leerling vraagt: de alinea's die met `**Opdracht:**`
+ * beginnen (html-css) en de alinea direct onder een `## Opdracht n:`-kop
+ * (js-basics). Tips en antwoorden tellen niet mee; die staan in <details>.
+ */
+function opdrachtTekst(bron: string): string {
+  const regels = bron.split('\n');
+  const alineas: string[] = [];
+  for (let i = 0; i < regels.length; i++) {
+    const kop = /^## Opdracht \d+:/.test(regels[i]);
+    if (!kop && !/^\*\*Opdracht/.test(regels[i])) continue;
+    const alinea = [regels[i]];
+    for (let j = i + 1; j < regels.length; j++) {
+      const r = regels[j];
+      if (r.trim() === '') {
+        if (!kop || alinea.length > 1) break;
+        continue;
+      }
+      if (/^(<|```|#|:::)/.test(r)) break;
+      alinea.push(r);
+    }
+    alineas.push(alinea.join(' '));
+  }
+  return alineas.join('\n');
 }
 
 function lesTekst(les: string): string {
@@ -121,6 +148,28 @@ describe('geen les loopt op de leerlijn vooruit', () => {
     expect(tevroeg.sort()).toEqual([]);
   });
 
+  it('vraagt in een opdracht niets wat pas later wordt uitgelegd', () => {
+    // De code-check hierboven zag dit niet: de Make van css-klassen vroeg om
+    // "een opvallende achtergrondkleur en rand", in proza, terwijl border vier
+    // lessen verderop pas komt. Het antwoord had zelf geen border, dus de
+    // leerling moest iets maken wat nergens stond.
+    const tevroeg: string[] = [];
+
+    for (const les of VOLGORDE) {
+      const hier = PLEK.get(les) ?? 0;
+      for (const id of conceptenInProza(opdrachtTekst(lesTekst(les)))) {
+        const bron = INTRO_VAN.get(id);
+        if (!bron) continue;
+        const daar = PLEK.get(bron) ?? 0;
+        if (daar > hier && !AANGEKONDIGD.has(`${les}|${id}`)) {
+          tevroeg.push(`${les} (${hier}) vraagt om ${id}, uitgelegd in ${bron} (${daar})`);
+        }
+      }
+    }
+
+    expect(tevroeg.sort()).toEqual([]);
+  });
+
   it('elke les noemt de concepten die hij zelf introduceert', () => {
     // Andersom: staat een concept in de tabel bij een les die het nergens
     // noemt, dan klopt de tabel niet of mist de les zijn eigen voorbeeld.
@@ -182,7 +231,11 @@ describe('een vooruitwijzing wijst de leerling verder', () => {
     const overbodig: string[] = [];
 
     for (const { les, concept } of VOORUITWIJZINGEN) {
-      if (!conceptenIn(codeUit(lesTekst(les))).has(concept)) {
+      const tekst = lesTekst(les);
+      if (
+        !conceptenIn(codeUit(tekst)).has(concept) &&
+        !conceptenInProza(opdrachtTekst(tekst)).has(concept)
+      ) {
         overbodig.push(`${les} heeft ${concept} niet meer nodig`);
       }
     }
