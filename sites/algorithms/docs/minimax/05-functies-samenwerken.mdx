@@ -146,7 +146,8 @@ aan:
 
 - `terminal(bord)` roept `winner(bord)` aan.
 - `result(bord, zet)` wordt door `max_value`, `min_value` en `minimax`
-  aangeroepen, vaak met de output direct doorgegeven aan `terminal`.
+  aangeroepen; het nieuwe bord gaat meteen door naar `min_value` of
+  `max_value`.
 - `max_value(bord)` en `min_value(bord)` roepen elkaar aan.
 - `minimax(bord)` roept `actions`, `result`, `player` en die twee aan.
 

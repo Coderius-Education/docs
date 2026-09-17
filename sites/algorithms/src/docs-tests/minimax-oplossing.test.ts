@@ -180,8 +180,15 @@ print(sorted({${goedgekeurd}} if isinstance(${goedgekeurd}, tuple) else ${goedge
       runner.indexOf('\n\n\ndef print_bord'),
     );
     expect(inRunner.trim()).toBe(lokaal.trim());
+    // Ongewijzigd zegt de runner wat je moet doen, in plaats van stil None
+    // terug te geven en op de tweede test te struikelen.
+    const leeg = draai(runner);
+    expect(leeg.uit).toContain('NotImplementedError: Vervang deze functie door je eigen minimax');
     const eigen = compleet.slice(compleet.indexOf('def minimax(bord):'));
-    const met = runner.replace(/def minimax\(bord\):[\s\S]*?return None\n/, `${eigen}\n`);
+    const met = runner.replace(
+      /def minimax\(bord\):[\s\S]*?(?=\n\n\n# === Tests ===)/,
+      eigen.trimEnd(),
+    );
     const r = draai(met);
     expect(r.uit, r.uit).toContain('Alle tests gehaald ✓');
     expect(r.uit).toContain('Remise');

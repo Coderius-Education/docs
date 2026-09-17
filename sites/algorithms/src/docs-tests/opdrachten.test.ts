@@ -7,8 +7,12 @@ import { describe, expect, it } from 'vitest';
 // zodat een leerling zichzelf kan controleren. Bij de doorloop van de zoek-
 // en sorteerhoofdstukken bleek dat alle zes uitdagingen zonder oplossing
 // stonden: "Uitdaging (optioneel)" las als "hier hoeft niets bij". Deze test
-// legt het formaat vast: elke H2 die een opdracht, uitdaging of bouw-zelf
-// aankondigt heeft vóór de volgende H2 een <summary>Antwoord</summary>.
+// legt het formaat vast: elke H2 of H3 die een opdracht, uitdaging of
+// bouw-zelf aankondigt heeft in zijn eigen sectie een
+// <summary>Antwoord</summary>. Alleen een kop die de hele pagina tot één
+// opdracht maakt ("De uitdaging", "Bouw zelf") mag het antwoord in een
+// latere sectie hebben, tot de volgende opdracht-kop; zo staan de
+// zelf-bouwen-pagina's van hanoi en cfg in elkaar.
 //
 // De hoofdstukken die nog niet zijn doorgelopen staan in ACHTERSTAND met
 // hun openstaande koppen. Die lijst is exact: een nieuwe opdracht zonder
@@ -56,19 +60,27 @@ function secties(tekst: string): Sectie[] {
   });
 }
 
+// Een kop die de hele pagina tot één opdracht maakt: de zelf-bouwen-pagina's
+// van hanoi en cfg zetten de opdracht onder "De uitdaging" en het antwoord
+// onder "Bouw en test".
+const HELE_PAGINA_KOP = /^(De uitdaging|Bouw zelf)\b/i;
+
 /**
- * De koppen die een opdracht aankondigen en geen antwoord hebben. Het
- * antwoord mag ook in de secties erna staan, tot de volgende opdracht-kop:
- * de zelf-bouwen-pagina's van hanoi en cfg zetten de opdracht onder "De
- * uitdaging" en het antwoord onder "Bouw en test", en dat is één opdracht.
+ * De koppen die een opdracht aankondigen en geen antwoord hebben. Een
+ * genummerde opdracht heeft het antwoord in zijn eigen sectie; alleen een
+ * hele-pagina-kop mag het in de secties erna hebben, tot de volgende
+ * opdracht-kop. Anders zou het antwoord van een voorspelling verderop op
+ * de pagina een ontbrekend antwoord maskeren.
  */
-function zonderAntwoord(pad: string): string[] {
-  const alle = secties(readFileSync(pad, 'utf8'));
+function zonderAntwoord(tekst: string): string[] {
+  const alle = secties(tekst);
   const open: string[] = [];
   alle.forEach((s, i) => {
     if (!OPDRACHT_KOP.test(s.kop)) return;
     let einde = i + 1;
-    while (einde < alle.length && !OPDRACHT_KOP.test(alle[einde].kop)) einde += 1;
+    if (HELE_PAGINA_KOP.test(s.kop)) {
+      while (einde < alle.length && !OPDRACHT_KOP.test(alle[einde].kop)) einde += 1;
+    }
     const inhoud = alle
       .slice(i, einde)
       .map((x) => x.inhoud)
@@ -78,10 +90,40 @@ function zonderAntwoord(pad: string): string[] {
   return open;
 }
 
+describe('zonderAntwoord', () => {
+  it('een antwoord van een voorspelling verderop telt niet voor een genummerde opdracht', () => {
+    const pagina = `## Opdracht 1
+Maak iets.
+
+## Voorspel
+<details>
+<summary>Antwoord</summary>
+Dit hoort bij de voorspelling.
+</details>
+`;
+    expect(zonderAntwoord(pagina)).toEqual(['Opdracht 1']);
+  });
+
+  it('een hele-pagina-kop mag het antwoord onder "Bouw en test" hebben', () => {
+    const pagina = `## De uitdaging
+Bouw iets.
+
+## Bouw en test
+<details>
+<summary>Antwoord</summary>
+</details>
+
+## Uitdaging (optioneel)
+Zonder antwoord.
+`;
+    expect(zonderAntwoord(pagina)).toEqual(['Uitdaging (optioneel)']);
+  });
+});
+
 describe('opdrachten en uitdagingen', () => {
   const gevonden = new Map<string, string[]>();
   for (const pad of lessen(DOCS)) {
-    const open = zonderAntwoord(pad);
+    const open = zonderAntwoord(readFileSync(pad, 'utf8'));
     if (open.length) gevonden.set(relative(DOCS, pad), open);
   }
 

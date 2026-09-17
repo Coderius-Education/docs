@@ -169,7 +169,11 @@ print("FOUT" if parse(grammatica, "sat holmes".split()) else "OK")
     );
     for (const tekst of cfgDocs) {
       const proza = tekst.replace(/<PyRunner[\s\S]*?\/>/g, '');
-      expect(proza).not.toMatch(/\(2x\)\s*—|twee bomen|twee geldige bomen|precies twee/i);
+      // "(2x)" als slot van een bewering ("staat op (2x).") is een belofte;
+      // "(2x) of meer" en "zag je al een (2x)?" niet.
+      expect(proza).not.toMatch(
+        /\(2x\)\*{0,2}\s*[—.,:;]|twee bomen|twee geldige bomen|precies twee/i,
+      );
     }
     const code = `${parserCode(grammatica)}
 grammatica = lees_grammatica(GRAMMATICA + LEXICON)
@@ -184,6 +188,23 @@ for zin in ["I had a little moist red paint in the palm of my hand", "Holmes had
       aantallen.every((n) => n > 1),
       'beide zinnen zijn ambigu',
     ).toBe(true);
+  });
+
+  it('de motor slaat een kopje met # over en valt om op een regel zonder pijl', () => {
+    // cfg/16 zegt dat een geplakte zin zonder pijl de ValueError geeft en
+    // dat een kopje met # dat niet doet; hier staat vast dat de motor dat
+    // ook echt zo doet.
+    const code = `${parserCode(grammatica)}
+print(len(lees_grammatica("## Zin 1\\nS -> NP VP")))
+try:
+    lees_grammatica("Holmes lit a pipe")
+except ValueError as e:
+    print("ValueError:", e)
+`;
+    expect(draai(code).trim().split('\n')).toEqual([
+      '1',
+      'ValueError: not enough values to unpack (expected 2, got 1)',
+    ]);
   });
 
   it('het antwoord van zelf-bouwen laat de nieuwe zin en de oude zinnen werken', () => {
