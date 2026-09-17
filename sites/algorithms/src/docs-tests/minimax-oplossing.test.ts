@@ -166,6 +166,28 @@ print(sorted({${goedgekeurd}} if isinstance(${goedgekeurd}, tuple) else ${goedge
     }
   });
 
+  it('bouwen/16-minimax.mdx: de noodoplossing-PyRunner heeft dezelfde tests en haalt ze', () => {
+    // Optie A van "draai het zelf" beloofde dezelfde route in de browser,
+    // maar de noodoplossing had geen tests: wie geen lokale Python had kon
+    // zijn minimax nergens controleren. Nu staan de tests van de pagina ook
+    // in die PyRunner, letterlijk, en met de cheatsheet-minimax erin haalt
+    // hij ze en eindigt de demo in remise.
+    const tekst = lees('bouwen/16-minimax.mdx');
+    const lokaal = tekst.match(/```python\n(# === Tests ===[\s\S]*?)```/)?.[1] ?? '';
+    const runner = startcode(tekst);
+    const inRunner = runner.slice(
+      runner.indexOf('# === Tests ==='),
+      runner.indexOf('\n\n\ndef print_bord'),
+    );
+    expect(inRunner.trim()).toBe(lokaal.trim());
+    const eigen = compleet.slice(compleet.indexOf('def minimax(bord):'));
+    const met = runner.replace(/def minimax\(bord\):[\s\S]*?return None\n/, `${eigen}\n`);
+    const r = draai(met);
+    expect(r.uit, r.uit).toContain('Alle tests gehaald ✓');
+    expect(r.uit).toContain('Remise');
+    expect(r.status).toBe(0);
+  });
+
   it('de startcode van elke bouwsteen valt op zijn eigen tests om, niet op iets anders', () => {
     // Het blokken-script controleert dit ook; hier staat het naast de
     // positieve kant, zodat beide helften van "de tests kloppen" bij elkaar

@@ -262,8 +262,10 @@ en-eieren tegen een tegenstander die nooit blundert.
 <summary>Open dit alleen als je echt niet lokaal kan draaien</summary>
 
 Plak je eigen `minimax` op de aangegeven plek. De andere negen functies
-staan al klaar. **Let op**: de AI-vs-AI demo kan in de browser zo'n
-**30 seconden** duren — minimax rekent honderdduizenden posities door.
+staan al klaar, en onder `minimax` staan dezelfde tests als hierboven.
+Halen die het, dan speelt de AI tegen zichzelf. **Let op**: die demo kan
+in de browser zo'n **30 seconden** duren — minimax rekent
+honderdduizenden posities door.
 
 {/* niet-draaien: startcode; de leerling plakt hier zijn eigen minimax in */}
 <PyRunner initialCode={`import copy, math
@@ -324,10 +326,28 @@ def min_value(bord):
 
 
 def minimax(bord):
-    # === Plak HIER je eigen minimax ===
-    raise NotImplementedError(
-        "Plak je eigen minimax-functie hierboven, in plaats van deze regel."
-    )
+    # === Vervang deze functie door je eigen minimax ===
+    return None
+
+
+# === Tests ===
+
+# Terminal -> None
+vol = [["X","O","X"],["X","O","O"],["O","X","X"]]
+assert minimax(vol) is None, "Terminal bord -> None"
+
+# X kan direct winnen op (2,2); de andere twee zetten geven hoogstens remise
+bord = [["X","O","O"], ["O","X","X"], [None, None, None]]
+zet = minimax(bord)
+assert zet == (2, 2), f"Verwacht (2,2), kreeg {zet}"
+
+# O moet X-winst blokkeren
+# X heeft (0,0) en (1,1) -> dreigt op (2,2). O is aan zet.
+bord = [["X", None, "O"], [None, "X", None], [None, None, None]]
+zet = minimax(bord)
+assert zet == (2, 2), f"O moet blokkeren op (2,2), kreeg {zet}"
+
+print("Alle tests gehaald ✓")
 
 
 def print_bord(bord):

@@ -148,9 +148,10 @@ In de bouwstenen hierna bouw je tien functies, en die gaan **elkaar
 aanroepen**:
 
 - `terminal(bord)` roept `winner(bord)` aan.
-- `result(bord, zet)` wordt door `minimax` aangeroepen, vaak met de
-  output direct doorgegeven aan `winner` of `terminal`.
-- `minimax(bord)` roept `actions`, `result`, `player`, en zichzelf aan.
+- `result(bord, zet)` wordt door `max_value`, `min_value` en `minimax`
+  aangeroepen, vaak met de output direct doorgegeven aan `terminal`.
+- `max_value(bord)` en `min_value(bord)` roepen elkaar aan.
+- `minimax(bord)` roept `actions`, `result`, `player` en die twee aan.
 
 Elke functie is op zichzelf klein. Samen worden ze een AI.
 

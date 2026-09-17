@@ -88,7 +88,8 @@ nodig.
 
 ## Stelling 5
 
-> *"Een Minimax-functie roept zichzelf aan."*
+> *"Om de waarde van een positie uit te rekenen, doet minimax dezelfde
+> berekening nog eens op het bord ná elke mogelijke zet."*
 
 <details>
 <summary>Antwoord</summary>
@@ -96,12 +97,14 @@ nodig.
 **Waar — Minimax is recursief.**
 
 Om uit te rekenen wat zet X waard is, moet je weten wat de tegenstander
-daarna zou kiezen. Dat is een mini-Minimax-vraag voor het bord-na-X.
-Die op zijn beurt vraagt "wat doet X dan?" — enzovoort, tot je een
-terminale positie raakt.
+daarna zou kiezen. Dat is dezelfde vraag voor het bord-na-X, alleen met
+de tegenstander aan zet. Die vraagt op zijn beurt "wat doet X dan?", en
+zo verder tot een terminale positie.
 
-Dat heet **recursie**. In Python: een functie die zichzelf binnen zijn
-eigen body aanroept.
+Dat heet **recursie**: een functie die zichzelf aanroept, of twee
+functies die elkaar aanroepen. In dit hoofdstuk wordt het dat laatste:
+`max_value` (X aan zet) roept `min_value` (O aan zet) aan en andersom.
+De functie `minimax` zelf roept die twee aan en niet zichzelf.
 
 </details>
 
