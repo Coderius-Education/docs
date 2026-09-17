@@ -1,6 +1,7 @@
 import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import styles from './CodeEditor.module.css';
+import { VoorbeeldNavigatie } from './navigatie';
 
 /** Breedtes waarop je het voorbeeld kunt bekijken; `null` is de volle kolom. */
 export const VIEWPORTS = [
@@ -24,6 +25,19 @@ export function PreviewPane({ srcDoc, hoogte, innerRef }: PreviewPaneProps) {
   const [viewport, setViewport] = useState<number | null>(null);
   const [beschikbaar, setBeschikbaar] = useState(0);
   const vakRef = useRef<HTMLDivElement>(null);
+
+  // Volgt de leerling een link in zijn voorbeeld, dan is zijn pagina weg en
+  // werkt de Terug-knop van de browser niet in een srcdoc-iframe. Elke load
+  // bij een ongewijzigde srcDoc is zo'n navigatie (zie navigatie.ts); de knop
+  // hieronder laadt de eigen pagina opnieuw door de iframe te vervangen.
+  const navigatie = useRef(new VoorbeeldNavigatie());
+  const [weg, setWeg] = useState(false);
+  const [herlaad, setHerlaad] = useState(0);
+  const terugNaarEigenPagina = () => {
+    navigatie.current.reset();
+    setWeg(false);
+    setHerlaad((n) => n + 1);
+  };
 
   useEffect(() => {
     const vak = vakRef.current;
@@ -65,13 +79,23 @@ export function PreviewPane({ srcDoc, hoogte, innerRef }: PreviewPaneProps) {
           ))}
         </span>
       </div>
+      {weg && (
+        <div className={styles.terugBalk}>
+          <span>Je volgde een link. Je eigen code staat nog in de editor.</span>
+          <button type="button" className={styles.viewportKnop} onClick={terugNaarEigenPagina}>
+            ← Terug naar je pagina
+          </button>
+        </div>
+      )}
       <div
         className={styles.previewVak}
         ref={vakRef}
         style={hoogte ? { height: hoogte, flex: 'none' } : undefined}
       >
         <iframe
+          key={herlaad}
           ref={innerRef}
+          onLoad={() => setWeg(navigatie.current.geladenMet(srcDoc) === 'weg')}
           className={styles.preview}
           style={
             viewport
