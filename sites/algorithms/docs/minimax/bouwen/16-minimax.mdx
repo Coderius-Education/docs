@@ -254,8 +254,9 @@ boter-kaas-en-eieren tegen een tegenstander die nooit blundert.
 <details>
 <summary>Open dit alleen als je echt niet lokaal kan draaien</summary>
 
-Plak je eigen `minimax` op de aangegeven plek. De andere negen functies
-staan al klaar, en onder `minimax` staan dezelfde tests als hierboven.
+Vervang de lege `minimax` op de aangegeven plek door je eigen versie,
+inclusief de regel `def`. De andere negen functies staan al klaar, en
+onder `minimax` staan dezelfde tests als hierboven.
 Halen die het, dan speelt de AI tegen zichzelf. **Let op**: die demo kan
 in de browser zo'n **30 seconden** duren — minimax rekent
 honderdduizenden posities door.
@@ -333,9 +334,7 @@ def min_value(bord):
 
 def minimax(bord):
     # === Vervang deze functie door je eigen minimax ===
-    raise NotImplementedError(
-        "Vervang deze functie door je eigen minimax, in plaats van deze regel."
-    )
+    raise NotImplementedError("Vervang deze functie door je eigen minimax.")
 
 
 # === Tests ===

@@ -62,8 +62,9 @@ function secties(tekst: string): Sectie[] {
 
 // Een kop die de hele pagina tot één opdracht maakt: de zelf-bouwen-pagina's
 // van hanoi en cfg zetten de opdracht onder "De uitdaging" en het antwoord
-// onder "Bouw en test".
-const HELE_PAGINA_KOP = /^(De uitdaging|Bouw zelf)\b/i;
+// onder "Bouw en test". Precies die kop, want "Bouw zelf en test" is de
+// opdracht van elke bouwsteen en die heeft zijn antwoord in zijn eigen sectie.
+const HELE_PAGINA_KOP = /^(De uitdaging|Bouw zelf)$/i;
 
 /**
  * De koppen die een opdracht aankondigen en geen antwoord hebben. Een
@@ -117,6 +118,18 @@ Bouw iets.
 Zonder antwoord.
 `;
     expect(zonderAntwoord(pagina)).toEqual(['Uitdaging (optioneel)']);
+  });
+
+  it('"Bouw zelf en test" van een bouwsteen heeft het antwoord in zijn eigen sectie', () => {
+    const pagina = `## Bouw zelf en test
+Vul de functie aan.
+
+## Voorspel
+<details>
+<summary>Antwoord</summary>
+</details>
+`;
+    expect(zonderAntwoord(pagina)).toEqual(['Bouw zelf en test']);
   });
 });
 

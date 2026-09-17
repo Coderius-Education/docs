@@ -75,6 +75,13 @@ function tests(tekst: string): string {
   return code.slice(i);
 }
 
+/** Het testblok dat de leerling onderaan zijn lokale tictactoe.py plakt. */
+function lokaleTests(tekst: string): string {
+  const m = tekst.match(/```python\n(# === Tests ===[\s\S]*?)```/);
+  expect(m, 'de pagina heeft een testblok voor tictactoe.py').not.toBeNull();
+  return m?.[1] ?? '';
+}
+
 function cheatsheet(): string {
   const m = lees('18-cheatsheet.mdx').match(
     /<summary>Alle .*? bij elkaar<\/summary>\s*```python\n([\s\S]*?)```/,
@@ -125,9 +132,7 @@ describe('minimax — een goede oplossing haalt de tests van elke bouwsteen', ()
 
   it('bouwen/16-minimax.mdx: de lokale tests halen het met de cheatsheet-code', () => {
     const tekst = lees('bouwen/16-minimax.mdx');
-    const m = tekst.match(/```python\n(# === Tests ===[\s\S]*?)```/);
-    expect(m, 'de pagina heeft een testblok voor tictactoe.py').not.toBeNull();
-    const r = draai(`${compleet}\n\n${m?.[1] ?? ''}`);
+    const r = draai(`${compleet}\n\n${lokaleTests(tekst)}`);
     expect(r.uit, r.uit).toContain('Alle tests gehaald ✓');
     expect(r.status).toBe(0);
   });
@@ -139,7 +144,7 @@ describe('minimax — een goede oplossing haalt de tests van elke bouwsteen', ()
     // verzameling zetten die een test goedkeurt moet precies de verzameling
     // optimale zetten zijn, uitgerekend met de cheatsheet-code.
     const tekst = lees('bouwen/16-minimax.mdx');
-    const blok = tekst.match(/```python\n(# === Tests ===[\s\S]*?)```/)?.[1] ?? '';
+    const blok = lokaleTests(tekst);
     const gevallen = [
       ...blok.matchAll(
         /bord = (\[.*\])\nzet = minimax\(bord\)\nassert zet (==|in) (\(.*?\)|\{.*?\}),/g,
@@ -173,7 +178,7 @@ print(sorted({${goedgekeurd}} if isinstance(${goedgekeurd}, tuple) else ${goedge
     // in die PyRunner, letterlijk, en met de cheatsheet-minimax erin haalt
     // hij ze en eindigt de demo in remise.
     const tekst = lees('bouwen/16-minimax.mdx');
-    const lokaal = tekst.match(/```python\n(# === Tests ===[\s\S]*?)```/)?.[1] ?? '';
+    const lokaal = lokaleTests(tekst);
     const runner = startcode(tekst);
     const inRunner = runner.slice(
       runner.indexOf('# === Tests ==='),
@@ -197,6 +202,49 @@ print(sorted({${goedgekeurd}} if isinstance(${goedgekeurd}, tuple) else ${goedge
     // ruim een half miljoen posities voor de eerste zet: 4 s hier, 9 s op de
     // CI-runner. De standaardlimiet van 5 s is dus te krap.
   }, 60_000);
+
+  it('bouwen/14-helpers.mdx: de wandeling door de boom heeft meer stappen dan de Stapper opneemt', () => {
+    // De les zegt "gebruik Voer uit en niet Stap voor stap: die neemt
+    // hoogstens duizend stappen op, en deze wandeling heeft er meer". Dat
+    // hangt aan MAX_STAPPEN van de recorder én aan de code van de runner;
+    // hier wordt de runner geteld zoals de recorder telt (line- en
+    // return-gebeurtenissen in de leerlingcode).
+    const recorder = readFileSync(
+      fileURLToPath(
+        new URL('../../../../packages/python-runner/src/trace/recorder.ts', import.meta.url),
+      ),
+      'utf8',
+    );
+    const max = Number(recorder.match(/MAX_STAPPEN = (\d+)/)?.[1]);
+    expect(max).toBe(1000);
+    const tekst = lees('bouwen/14-helpers.mdx');
+    expect(tekst).toContain('hoogstens duizend stappen');
+    const runners = [...tekst.matchAll(/<PyRunner initialCode=\{`([\s\S]*?)`\} \/>/g)].map((m) =>
+      ontsnap(m[1]),
+    );
+    const wandeling = runners.find((code) => code.includes('diepte'));
+    expect(wandeling, 'de runner met de parameter diepte').toBeDefined();
+    const r = draai(`import sys, io, contextlib
+code = compile(${JSON.stringify(wandeling)}, "<stapper>", "exec")
+n = 0
+def tracer(frame, gebeurtenis, arg):
+    global n
+    if frame.f_code.co_filename != "<stapper>":
+        return None
+    if gebeurtenis in ("line", "return"):
+        n += 1
+    return tracer
+sys.settrace(tracer)
+try:
+    with contextlib.redirect_stdout(io.StringIO()):
+        exec(code, {"__name__": "__main__"})
+finally:
+    sys.settrace(None)
+print(n)
+`);
+    expect(r.status, r.uit).toBe(0);
+    expect(Number(r.uit.trim())).toBeGreaterThan(max);
+  });
 
   it('de startcode van elke bouwsteen valt op zijn eigen tests om, niet op iets anders', () => {
     // Het blokken-script controleert dit ook; hier staat het naast de
