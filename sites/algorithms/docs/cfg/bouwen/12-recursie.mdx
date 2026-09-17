@@ -125,12 +125,19 @@ def controleer(grammatica_tekst, zinnen):
 
 controleer(GRAMMATICA, ZINNEN)`} />
 
-## Twee interpretaties.
+## Meer dan één boom
 
-Viel het je op? De laatste zin staat waarschijnlijk op **(2x)** — de
-parser vindt er **twee** geldige bomen voor. Dat komt door "in the palm
-of my hand": hoort "of my hand" bij "the palm", of bij de hele groep?
-Grammaticaal kan het allebei. Zo'n zin heet **ambigu**. Op de volgende
-pagina kun je die twee bomen zelf bekijken.
+Viel het je op? De laatste zin staat niet op (1x) maar op **(2x)** of
+meer: de parser vindt er meerdere geldige bomen voor. Dat komt door "in
+the palm of my hand": hoort "of my hand" bij "the palm", of bij de hele
+groep ervoor? En hangt "in the palm …" aan "paint" of aan "had"?
+Grammaticaal kan het allebei. Zo'n zin heet **ambigu**.
+
+Hoeveel bomen je precies ziet, hangt af van je regels. Een grammatica
+die een voorzetselgroep zowel aan een naamwoordgroep als aan een
+werkwoordgroep laat hangen, vindt er meer dan een grammatica die maar
+één van de twee toestaat. Twee is niet beter dan vijf: het gaat erom
+dat de zin past. Zag je bij zin 6, 8 of 9 al een (2x)? Dat is hetzelfde
+verschijnsel. Op de volgende pagina bekijk je de bomen zelf.
 
 Door naar [alles samen →](../13-compleet).

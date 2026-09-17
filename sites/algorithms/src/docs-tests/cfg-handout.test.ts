@@ -157,6 +157,35 @@ print("FOUT" if parse(grammatica, "sat holmes".split()) else "OK")
     expect(draai(py).trim().split('\n')).toEqual(['OK', 'OK']);
   });
 
+  it('de lessen beloven geen exact aantal bomen voor een ambigue zin', () => {
+    // Bij de doorloop zeiden drie pagina's dat zin 10 "op (2x)" komt en dat
+    // het voorbeeld van opdracht 2 "twee bomen" geeft. Met de grammatica van
+    // het antwoordblad, en met elke grammatica die een voorzetselgroep aan
+    // een naamwoord- én een werkwoordgroep laat hangen, zijn het er vijf. Het
+    // aantal hangt van de regels van de leerling af, dus de tekst zegt
+    // "meer dan één"; hier staat vast dat dat met het antwoord ook zo is.
+    const cfgDocs = ['bouwen/12-recursie.mdx', '13-compleet.mdx', '14-aanpassen.mdx'].map((n) =>
+      lees(`cfg/${n}`),
+    );
+    for (const tekst of cfgDocs) {
+      const proza = tekst.replace(/<PyRunner[\s\S]*?\/>/g, '');
+      expect(proza).not.toMatch(/\(2x\)\s*—|twee bomen|twee geldige bomen|precies twee/i);
+    }
+    const code = `${parserCode(grammatica)}
+grammatica = lees_grammatica(GRAMMATICA + LEXICON)
+for zin in ["I had a little moist red paint in the palm of my hand", "Holmes had a pipe in the armchair in the day"]:
+    print(len(parse(grammatica, zin.lower().split())), zin)
+`;
+    const aantallen = draai(code)
+      .trim()
+      .split('\n')
+      .map((r) => Number(r.split(' ')[0]));
+    expect(
+      aantallen.every((n) => n > 1),
+      'beide zinnen zijn ambigu',
+    ).toBe(true);
+  });
+
   it('bouwt de tien zinnen van de hand-out', () => {
     const code = `${parserCode(grammatica)}
 grammatica = lees_grammatica(GRAMMATICA + LEXICON)

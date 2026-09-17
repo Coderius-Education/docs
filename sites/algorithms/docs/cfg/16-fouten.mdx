@@ -2,9 +2,9 @@
 sidebar_position: 16
 ---
 
-# Er gaat iets mis — top-3 fouten
+# Er gaat iets mis — vier valkuilen
 
-**Leerdoel:** je herkent de drie klassieke valkuilen bij het schrijven
+**Leerdoel:** je herkent de vier klassieke valkuilen bij het schrijven
 van een context-vrije grammatica.
 
 We gebruiken weer het mini-voorbeeld, zodat de voorbeelden niets van de
@@ -15,6 +15,38 @@ Zin   -> Groet Naam
 Groet -> "hallo" | "hoi"
 Naam  -> "sam" | "kim"
 ```
+
+## Een regel zonder pijl
+
+{/* foutmelding-van: kop, rest = "Naam => sam".split("->") */}
+
+Symptoom: geen `FOUT (0x)`, maar een rode Python-foutmelding die eindigt
+op `ValueError: not enough values to unpack (expected 2, got 1)`, en
+geen enkele zin wordt gecontroleerd.
+
+**Oorzaak:** een regel in `GRAMMATICA` zonder `->`. Een typfout zoals
+`=>`, een los woord op een eigen regel, of een kopje dat je meeplakte.
+De motor splitst elke regel op `->` en verwacht links een kop en rechts
+de onderdelen; staat er geen pijl, dan valt hij daar om, nog voordat hij
+naar een zin kijkt.
+
+```
+# FOUT
+Naam => "sam"
+
+# De motor zoekt de pijl -> en vindt hem niet: ValueError.
+```
+
+**Oplossing:**
+
+```
+# GOED
+Naam -> "sam"
+```
+
+Vuistregel: elke regel in `GRAMMATICA` die niet leeg is, heeft precies
+één `->`. Kijk bij deze melding dus niet naar je zinnen, maar naar de
+regel die je het laatst hebt getypt of geplakt.
 
 ## Aanhalingstekens vergeten bij een terminal
 
