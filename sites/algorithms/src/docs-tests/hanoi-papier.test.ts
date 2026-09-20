@@ -22,7 +22,7 @@ describe('de Hanoi-hand-out zegt hetzelfde als de lessen', () => {
   it('de rij zetten op de hand-out en in de les is 2ⁿ − 1', () => {
     const rij = [1, 2, 3, 4, 5].map((n) => 2 ** n - 1);
     expect(rij).toEqual([1, 3, 7, 15, 31]);
-    expect(ANTWOORDEN).toMatch(/\*\*Werkvorm 1\*\*: 1, 3, 7, 15 .* 5 schijven kost 31 zetten/);
+    expect(ANTWOORDEN).toMatch(/\*\*Werkvorm 1\*\*: 1, 3, 7, 15.* 5 schijven kost 31 zetten/);
     const les = lees('hanoi/02-patronen.mdx');
     for (const [n, t] of rij.entries()) expect(les).toContain(`| ${n + 1} | ${t} |`);
   });
