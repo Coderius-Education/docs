@@ -160,3 +160,23 @@ describe('de regels zelf', () => {
     ).toEqual([]);
   });
 });
+
+describe('alinea-posities', () => {
+  // Een weggehaald stuk JSX laat een regel spaties achter. De scheiding
+  // tussen alinea's is dan langer dan twee tekens, en een positie die per
+  // alinea "+ 2" optelde wees daarna te vroeg: de linklijst onderaan de
+  // Hanoi-hand-out werd op regel 112 gemeld terwijl hij op 130 stond, en
+  // viel zo buiten zijn eigen stijl-uitzondering.
+  const lijst = '- [a](/a) — b\n- [c](/c) — d\n- [e](/e) — f\n';
+
+  it('meldt een alinea op zijn eigen regel, ook na een regel spaties', () => {
+    const tekst = `Eerste alinea.\n\n<div className="x">\n\n${lijst}`;
+    const m = controleer(tekst).find((x) => x.naam === 'em-dash');
+    expect(m?.regel).toBe(5);
+  });
+
+  it("een stijl-uitzondering vóór zo'n alinea dekt hem", () => {
+    const tekst = `Eerste alinea.\n\n<div className="x">\n\n{/* stijl-uitzondering: em-dash linklijst */}\n\n${lijst}`;
+    expect(namen(tekst)).toEqual([]);
+  });
+});

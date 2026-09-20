@@ -51,12 +51,20 @@ function regelVan(tekst, index) {
 
 /** Alinea's als [tekst, startindex]; een alinea is gescheiden door een lege regel. */
 function alineas(proza) {
+  // De positie van elke alinea komt uit de echte lengte van de scheiding,
+  // niet uit "+ 2": een weggehaald stuk JSX of een marker laat een regel
+  // spaties achter, en `\n   \n` is langer dan twee tekens. Met "+ 2" wees
+  // een melding over de linklijst onderaan de Hanoi-hand-out achttien
+  // regels te vroeg, en viel hij daardoor buiten zijn eigen
+  // stijl-uitzondering-marker.
   const uit = [];
+  const scheiding = /\n\s*\n/g;
   let start = 0;
-  for (const stuk of proza.split(/\n\s*\n/)) {
-    uit.push([stuk, start]);
-    start += stuk.length + 2;
+  for (const m of proza.matchAll(scheiding)) {
+    uit.push([proza.slice(start, m.index), start]);
+    start = m.index + m[0].length;
   }
+  uit.push([proza.slice(start), start]);
   return uit;
 }
 
