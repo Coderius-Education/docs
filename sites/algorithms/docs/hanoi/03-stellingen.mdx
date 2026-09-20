@@ -60,8 +60,8 @@ kleiner Hanoi-probleem, met één losse zet ertussen.
 
 **Niet waar.** Zonder basisgeval blijft de functie zichzelf aanroepen met
 een steeds kleinere `n`, ook onder nul, en stopt ze nooit. Python kapt dat
-af met een `RecursionError`. Het basisgeval, `n == 0`, is wat de recursie
-laat stoppen.
+af met een `RecursionError`. Het basisgeval, het kleinste probleem dat je
+direct kunt beantwoorden, is wat de recursie laat stoppen.
 
 </details>
 
@@ -74,8 +74,9 @@ laat stoppen.
 <summary>Antwoord</summary>
 
 **Waar.** De grootste schijf hoeft maar één keer te bewegen: rechtstreeks
-van bron naar doel, precies in het midden (bij 3 schijven is dat de 4ᵉ van
-de 7 zetten). Alle andere zetten gaan over de kleinere schijven.
+van bron naar doel. Alle andere zetten gaan over de kleinere schijven.
+Wanneer die ene zet precies valt, zoek je uit bij
+[zelf bouwen](./09-zelf-bouwen).
 
 </details>
 

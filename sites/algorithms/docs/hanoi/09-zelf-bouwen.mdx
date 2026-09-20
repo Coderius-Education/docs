@@ -92,9 +92,9 @@ gelegd.
 ## Uitdaging (optioneel)
 
 Bij welke zet komt de grootste schijf op doel? Schrijf
-`grootste_op_doel(n)` die het nummer van die zet teruggeeft, en controleer
-voor 1 tot en met 5 schijven of het steeds precies in het midden is: zet
-`2ⁿ⁻¹`.
+`grootste_op_doel(n)` die het nummer van die zet teruggeeft, en print het
+voor 1 tot en met 5 schijven naast het totale aantal zetten. Zie je een
+patroon?
 
 <details>
 <summary>Tip</summary>
@@ -129,19 +129,21 @@ def grootste_op_doel(n):
 
 
 for n in range(1, 6):
-    print(n, "schijven: zet", grootste_op_doel(n), "van de", 2 ** n - 1)
+    print(f"n={n}: zet {grootste_op_doel(n)} van de {2 ** n - 1}")
 ```
 
 ```
-1 schijven: zet 1 van de 1
-2 schijven: zet 2 van de 3
-3 schijven: zet 4 van de 7
-4 schijven: zet 8 van de 15
-5 schijven: zet 16 van de 31
+n=1: zet 1 van de 1
+n=2: zet 2 van de 3
+n=3: zet 4 van de 7
+n=4: zet 8 van de 15
+n=5: zet 16 van de 31
 ```
 
 Zodra je schijf `n` oppakt, is dat de zet die hem op doel legt; de
-functie stopt daar met `return`.
+functie stopt daar met `return`. Het patroon: de grootste schijf gaat
+steeds precies in het midden, bij zet `2ⁿ⁻¹` van de `2ⁿ − 1`. Dat is het
+recept: eerst `2ⁿ⁻¹ − 1` zetten voor de toren erboven, dan de grootste.
 
 </details>
 
