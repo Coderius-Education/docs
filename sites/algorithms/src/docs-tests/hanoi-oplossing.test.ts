@@ -113,6 +113,39 @@ describe('hanoi — het antwoord van elke pagina haalt de tests van die pagina',
   });
 });
 
+describe('hanoi — de fouten-pagina laat zien wat de foute code echt doet', () => {
+  // Fout 2 en 3 geven geen foutmelding maar een verkeerde lijst, en de pagina
+  // noemt die lijst letterlijk. Hier wordt het fragment uit het FOUT-blok in
+  // de functie gezet en voor 2 schijven gedraaid.
+  const ROMP =
+    'def hanoi(n, bron, doel, hulp):\n    if n == 0:\n        return []\n    zetten = []\n';
+  const tekst = lees('10-fouten.mdx');
+  const secties = tekst.split(/^## /m).slice(1);
+  const stil = secties.filter((s) => /Geen foutmelding/.test(s));
+
+  it('er zijn twee fouten zonder foutmelding', () => {
+    expect(stil).toHaveLength(2);
+  });
+
+  for (const sectie of stil) {
+    const kop = sectie.split('\n')[0];
+    it(kop, () => {
+      const fragment = sectie.match(/```python\n# FOUT[^\n]*\n([\s\S]*?)```/)?.[1] ?? '';
+      expect(fragment).not.toBe('');
+      const beloofd = sectie.match(/`(\[\[?[\s\S]*?\]\]?)`/)?.[1] ?? '';
+      expect(beloofd, 'de sectie noemt de verkeerde lijst').not.toBe('');
+      const romp = fragment
+        .split('\n')
+        .filter((r) => r.trim())
+        .map((r) => `    ${r.replace(/\s+#.*$/, '')}`)
+        .join('\n');
+      const r = draai(`${ROMP}${romp}\n    return zetten\nprint(hanoi(2, "A", "C", "B"))`);
+      expect(r.status, r.uit).toBe(0);
+      expect(r.uit.trim().replace(/'/g, '"')).toBe(beloofd);
+    });
+  }
+});
+
 describe('hanoi — een latere ontdekking wordt niet eerder verklapt', () => {
   it('de uitdaging van zelf bouwen geeft in de opdracht niet weg bij welke zet de grootste schijf valt', () => {
     const tekst = lees('09-zelf-bouwen.mdx');
