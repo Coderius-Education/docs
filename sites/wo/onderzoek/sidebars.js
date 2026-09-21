@@ -145,8 +145,10 @@ const sidebars = {
           label: 'Beoordelen',
           items: [
             'literatuurstudie/peer-review',
+            'literatuurstudie/auteurvolgorde',
             'literatuurstudie/citaties',
             'literatuurstudie/h-index',
+            'literatuurstudie/onderzoeker-onderzoeken',
           ],
         },
         {

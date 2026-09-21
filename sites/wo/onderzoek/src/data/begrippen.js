@@ -40,11 +40,23 @@ const begrippen = {
     lang: 'Een uitspraak die waar is op grond van de betekenis van de woorden zelf, zoals "alle vrijgezellen zijn ongetrouwd". Een van de twee tanden van de vork van Hume.',
     url: '/kennisleer/vork-van-hume',
   },
+  auteurvolgorde: {
+    term: 'Auteurvolgorde',
+    kort: 'De plek van een naam in de auteurslijst: eerste auteur deed het werk, laatste auteur leidde het — behalve waar alfabetisch geldt.',
+    lang: 'De volgorde van de namen boven een artikel. In de meeste vakgebieden deed de eerste auteur het meeste werk en is de laatste auteur de groepsleider; in economie en wiskunde staan namen vaak gewoon alfabetisch.',
+    url: '/literatuurstudie/auteurvolgorde',
+  },
   begripsrealisme: {
     term: 'Begripsrealisme',
     kort: 'Algemene begrippen bestaan echt en los van de afzonderlijke dingen (Plato).',
     lang: 'De opvatting van Plato dat algemene begrippen — de volmaakte Ideeën — echt bestaan en los staan van de afzonderlijke dingen die je waarneemt.',
     url: '/kennisleer/plato',
+  },
+  belangenverstrengeling: {
+    term: 'Belangenverstrengeling',
+    kort: 'Als een onderzoeker of zijn financier baat heeft bij een bepaalde uitkomst.',
+    lang: 'De situatie waarin een onderzoeker, of wie zijn onderzoek betaalt, belang heeft bij een bepaalde uitkomst. Het maakt onderzoek niet vanzelf fout, maar is een reden om de methode extra kritisch te lezen en onafhankelijke bevestiging te zoeken.',
+    url: '/literatuurstudie/onderzoeker-onderzoeken',
   },
   'beschrijvend-onderzoek': {
     term: 'Beschrijvend onderzoek',
@@ -86,6 +98,12 @@ const begrippen = {
     kort: 'Een groep die de "behandeling" níét krijgt, zodat je kunt vergelijken.',
     lang: 'Een groep deelnemers die de "behandeling" die je onderzoekt níét krijgt, zodat je kunt vergelijken. Belangrijk hulpmiddel voor interne validiteit.',
     url: '/spelregels/interne-validiteit',
+  },
+  'corresponderende-auteur': {
+    term: 'Corresponderende auteur',
+    kort: 'De auteur die als aanspreekpunt voor het artikel dient, herkenbaar aan een sterretje of envelopje.',
+    lang: 'De auteur die de communicatie over een artikel verzorgt en vragen beantwoordt; meestal de eerste of de laatste auteur, gemarkeerd met een sterretje of envelopje.',
+    url: '/literatuurstudie/auteurvolgorde',
   },
   deelvraag: {
     term: 'Deelvraag',
@@ -308,6 +326,12 @@ const begrippen = {
     kort: 'Je groep deelnemers lijkt op de hele groep waarover je iets wilt zeggen.',
     lang: 'Een groep deelnemers is representatief als die lijkt op de hele groep waarover je iets wilt zeggen. Belangrijk voor valide onderzoek en externe validiteit.',
     url: '/spelregels/externe-validiteit',
+  },
+  retractie: {
+    term: 'Retractie',
+    kort: 'Het officieel intrekken van een gepubliceerd artikel wegens fouten of fraude.',
+    lang: 'Het officieel terugtrekken van een al gepubliceerd artikel door het tijdschrift, omdat het ernstige fouten bevat of op fraude berust. Ingetrokken artikelen staan in de Retraction Watch Database; één retractie is geen patroon, meerdere wel.',
+    url: '/literatuurstudie/onderzoeker-onderzoeken',
   },
   scepticisme: {
     term: 'Scepticisme',
