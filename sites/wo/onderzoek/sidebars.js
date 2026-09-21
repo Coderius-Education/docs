@@ -127,6 +127,43 @@ const sidebars = {
     },
     {
       type: 'category',
+      label: 'Literatuurstudie',
+      items: [
+        'literatuurstudie/van-zoeken-tot-lezen',
+        {
+          type: 'category',
+          label: 'Zoeken',
+          items: [
+            'literatuurstudie/zoektermen',
+            'literatuurstudie/google-scholar',
+            'literatuurstudie/semantic-scholar',
+            'literatuurstudie/sneeuwbalmethode',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Beoordelen',
+          items: [
+            'literatuurstudie/peer-review',
+            'literatuurstudie/citaties',
+            'literatuurstudie/h-index',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Lezen',
+          items: [
+            'literatuurstudie/abstract-scannen',
+            'literatuurstudie/skimmen',
+            'literatuurstudie/deep-reading',
+            'literatuurstudie/literatuurmatrix',
+          ],
+        },
+        'literatuurstudie/welke-strategie',
+      ],
+    },
+    {
+      type: 'category',
       label: 'Werkvormen',
       items: ['werkvormen/overzicht', 'werkvormen/methoden-kennisleer'],
     },

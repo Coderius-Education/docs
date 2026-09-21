@@ -29,6 +29,11 @@ const kaarten = [
     to: '/gegevens/kwal-vs-kwant',
   },
   {
+    titel: 'Literatuurstudie',
+    tekst: 'Zoeken met Google Scholar, beoordelen op citaties en peer review, en lezen op het juiste niveau.',
+    to: '/literatuurstudie/van-zoeken-tot-lezen',
+  },
+  {
     titel: 'Werkvormen',
     tekst: 'Opdrachten om de stof te gebruiken, zoals elke methode langs de kennisleer-bril leggen.',
     to: '/werkvormen/overzicht',

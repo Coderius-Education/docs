@@ -22,6 +22,12 @@ const begrippen = {
     lang: 'Een van de vier spelregels: onderzoek is aanvaardbaar als het ethisch verantwoord is — eerlijk uitgevoerd, met toestemming, met respect voor privacy en zonder iemand te schaden.',
     url: '/spelregels/aanvaardbaar',
   },
+  abstract: {
+    term: 'Abstract',
+    kort: 'De samenvatting bovenaan een wetenschappelijk artikel: doel, methode, resultaten en conclusie in een paar honderd woorden.',
+    lang: 'De samenvatting van hooguit een paar honderd woorden waarmee elk wetenschappelijk artikel begint, bijna altijd in de vaste volgorde doel, methode, resultaten, conclusie. Je gebruikt het om te kiezen welke artikelen je verder leest, niet als bron voor wat je beweert.',
+    url: '/literatuurstudie/abstract-scannen',
+  },
   'analyse-materiaal': {
     term: 'Analyse van tekst- of beeldmateriaal',
     kort: 'Bestaand materiaal (artikelen, posts, reclames, video’s) systematisch bestuderen met een analyseschema.',
@@ -58,6 +64,12 @@ const begrippen = {
     lang: 'Het vermelden waar informatie vandaan komt, bij alles wat je van een ander overneemt. Hoort bij de spelregel transparant.',
     url: '/spelregels/transparant',
   },
+  citatie: {
+    term: 'Citatie',
+    kort: 'Een verwijzing van het ene artikel naar het andere; het aantal citaties meet gebruik, niet juistheid.',
+    lang: 'Een verwijzing van het ene wetenschappelijke artikel naar het andere. Het aantal citaties van een artikel laat zien hoeveel latere onderzoekers het hebben gebruikt, aangevuld of bekritiseerd — het zegt niet of het klopt.',
+    url: '/literatuurstudie/citaties',
+  },
   cogito: {
     term: 'Cogito ergo sum',
     kort: '"Ik denk, dus ik ben": het enige dat Descartes’ twijfel overleefde.',
@@ -80,6 +92,12 @@ const begrippen = {
     kort: 'Een kleinere vraag die helpt om de hoofdvraag te beantwoorden; per deelvraag kies je functie, soort en methode.',
     lang: 'Een kleinere vraag die helpt om de hoofdvraag te beantwoorden. Per deelvraag kies je een functie, soort en methode — zie de keuzedriehoek.',
     url: '/opzet/keuzedriehoek',
+  },
+  'deep-reading': {
+    term: 'Deep reading',
+    kort: 'Een artikel volledig, actief en kritisch lezen, met de tabellen en de methode erbij.',
+    lang: 'Het volledig, actief en kritisch lezen van een artikel: elke sectie, met aantekeningen en met de tabellen erbij, zodat je de methode kunt beoordelen en de conclusie zelf kunt controleren. Alleen voor de bronnen waar je een bewering op bouwt.',
+    url: '/literatuurstudie/deep-reading',
   },
   empirisme: {
     term: 'Empirisme',
@@ -110,6 +128,12 @@ const begrippen = {
     kort: 'Het beeld waarin geketende mensen alleen schaduwen op een wand zien.',
     lang: 'Het beeld waarmee Plato laat zien hoe mensen, vastgeketend in een grot, alleen schaduwen zien en die voor de werkelijkheid houden — zoals wij onze waarneming voor de werkelijkheid houden.',
     url: '/kennisleer/plato',
+  },
+  'h-index': {
+    term: 'H-index',
+    kort: 'Het grootste getal h waarvoor een onderzoeker h artikelen heeft met elk minstens h citaties.',
+    lang: 'Maat voor de invloed van een onderzoeker: het grootste getal h waarvoor geldt dat minstens h van zijn artikelen elk minstens h keer geciteerd zijn. Groeit met de lengte van een loopbaan en verschilt sterk per vakgebied.',
+    url: '/literatuurstudie/h-index',
   },
   hoofdvraag: {
     term: 'Hoofdvraag',
@@ -183,6 +207,12 @@ const begrippen = {
     lang: 'Onderzoek dat gegevens in cijfers oplevert: aantallen, percentages en gemiddelden van een grote groep. Sterk in vergelijken en generaliseren.',
     url: '/gegevens/kwantitatief',
   },
+  literatuurmatrix: {
+    term: 'Literatuurmatrix',
+    kort: 'Tabel met per bron dezelfde kolommen: vraag, methode, uitkomst, sterk/zwak en voor welke deelvraag.',
+    lang: 'Een tabel waarin elke bron een rij krijgt met dezelfde kolommen: wat de bron onderzocht, hoe, wat eruit kwam, hoe sterk het bewijs is en voor welke deelvraag jij hem gebruikt. Het geheugen van je literatuurstudie.',
+    url: '/literatuurstudie/literatuurmatrix',
+  },
   literatuuronderzoek: {
     term: 'Literatuuronderzoek',
     kort: 'Bestaande bronnen zoeken, op betrouwbaarheid beoordelen en met elkaar vergelijken.',
@@ -231,11 +261,29 @@ const begrippen = {
     lang: 'Een hoofdvraag waarmee je iets wilt maken: "Hoe kan ik … ontwerpen/maken/ontwikkelen dat …?". Hoort bij ontwerpgericht onderzoek.',
     url: '/typen/ontwerpgericht',
   },
+  overzichtsartikel: {
+    term: 'Overzichtsartikel',
+    kort: 'Artikel dat de stand van zaken in een vakgebied samenvat (Engels: review); het beste startpunt.',
+    lang: 'Een artikel dat geen eigen meting doet, maar het bestaande onderzoek over een onderwerp samenvat en ordent (Engels: review). Het beste startpunt als je nog niets van een onderwerp weet, en een goede bron om vanuit te sneeuwballen.',
+    url: '/literatuurstudie/google-scholar',
+  },
+  'peer-review': {
+    term: 'Peer review',
+    kort: 'Controle van een artikel door onafhankelijke vakgenoten vóór publicatie.',
+    lang: 'De controle van een artikel door onafhankelijke vakgenoten vóór publicatie: zij beoordelen of de methode deugt en of de conclusie uit de gegevens volgt. Geen garantie, wel de minimale drempel voor een betrouwbare bron.',
+    url: '/literatuurstudie/peer-review',
+  },
   plagiaat: {
     term: 'Plagiaat',
     kort: 'Werk of ideeën van een ander presenteren alsof ze van jou zijn, zonder bronvermelding.',
     lang: 'Werk of ideeën van een ander presenteren alsof ze van jou zijn, zonder bronvermelding. Schendt de spelregels transparant en aanvaardbaar.',
     url: '/spelregels/transparant',
+  },
+  preprint: {
+    term: 'Preprint',
+    kort: 'Een artikel dat al online staat maar nog niet door vakgenoten is beoordeeld.',
+    lang: 'Een versie van een artikel die de auteurs online zetten (bijvoorbeeld op arXiv of bioRxiv) voordat het door vakgenoten is beoordeeld. Actueel maar ongecontroleerd: vermeld dat erbij en lees de methode extra kritisch.',
+    url: '/literatuurstudie/peer-review',
   },
   'primaire-secundaire-eigenschappen': {
     term: 'Primaire en secundaire eigenschappen',
@@ -266,6 +314,18 @@ const begrippen = {
     kort: 'Je kunt niets voor honderd procent zeker weten.',
     lang: 'De opvatting dat je niets voor 100% zeker kunt weten: elke bron van kennis kan je in principe bedriegen. Geen vrijbrief om alle onderzoek weg te wuiven.',
     url: '/kennisleer/scepticisme',
+  },
+  skimmen: {
+    term: 'Skimmen',
+    kort: 'Een artikel snel doorlopen via inleiding, kopjes, figuren en conclusie om het te plaatsen.',
+    lang: 'Het snel doorlopen van een heel artikel zonder alles te lezen: de laatste alinea van de inleiding, de kopjes, de figuren en tabellen, de conclusie en de literatuurlijst. Doel is plaatsen, niet begrijpen: verdient dit artikel een grondige lezing?',
+    url: '/literatuurstudie/skimmen',
+  },
+  sneeuwbalmethode: {
+    term: 'Sneeuwbalmethode',
+    kort: 'Vanuit één goed artikel verder zoeken: achteruit via de literatuurlijst, vooruit via wie het citeert.',
+    lang: 'Zoekmethode waarbij je niet met zoektermen werkt maar vanuit één goed artikel: achteruit door zijn literatuurlijst na te lopen, vooruit door te kijken wie het sindsdien heeft geciteerd.',
+    url: '/literatuurstudie/sneeuwbalmethode',
   },
   'storende-variabele': {
     term: 'Storende variabele',
