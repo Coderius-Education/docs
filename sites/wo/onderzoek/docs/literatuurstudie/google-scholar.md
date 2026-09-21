@@ -17,14 +17,14 @@ Elk resultaat bestaat uit een titel, de auteurs, het tijdschrift en het jaar, en
 - **Geciteerd door 213** — hoe vaak andere artikelen naar dit stuk verwijzen. Klik erop en je krijgt al die artikelen: de snelste manier om vooruit te [sneeuwballen](./sneeuwbalmethode.md).
 - **Gerelateerde artikelen** — stukken over hetzelfde onderwerp; handig als je één goede treffer hebt.
 - **Alle 6 versies** — dezelfde tekst op verschillende plekken; soms zit daar een gratis pdf tussen.
-- **Citeren** (het aanhalingsteken) — geeft je de bronvermelding in APA-stijl, klaar om te plakken.
+- **Citeren** (het aanhalingsteken) — geeft je de bronvermelding in APA-stijl en een paar andere stijlen, klaar om te plakken.
 - Rechts staat, als die er is, een directe **[PDF]**-link.
 
-Links op de pagina kun je filteren op jaar (*Sinds 2022*, of een eigen bereik), sorteren op datum, en — heel nuttig — het vinkje **Overzichtsartikelen** aanzetten om alleen artikelen te krijgen die de stand van zaken samenvatten.
+Links op de pagina kun je filteren op jaar (*Sinds …*, of een eigen bereik), sorteren op datum, en — heel nuttig — het vinkje **Overzichtsartikelen** aanzetten om alleen artikelen te krijgen die de stand van zaken samenvatten.
 
 ## Zo gebruik je het slim
 
-- **Begin met een overzichtsartikel.** Zet het filter aan, kies het meest geciteerde recente overzichtsartikel, en je hebt in één keer een kaart van het vakgebied — inclusief literatuurlijst.
+- **Begin met een <B t="overzichtsartikel" tekst="overzichtsartikel"/>.** Zet het filter aan, kies het meest geciteerde recente overzichtsartikel, en je hebt in één keer een kaart van het vakgebied — inclusief literatuurlijst.
 - **Gebruik de [zoekoperatoren](./zoektermen.md).** Aanhalingstekens voor een exacte woordgroep, `intitle:` om alleen in titels te zoeken.
 - **Zet een melding aan.** Via het envelop-icoon krijg je een mail zodra er iets nieuws verschijnt over je zoekterm.
 

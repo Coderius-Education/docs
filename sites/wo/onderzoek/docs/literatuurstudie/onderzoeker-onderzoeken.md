@@ -6,7 +6,7 @@ title: Een onderzoeker onderzoeken
 
 <Definitie gewoneTaal="voordat je iemand als autoriteit aanhaalt, zoek je in vijf minuten uit wie het is, waarover die persoon publiceert en of dat werk overeind staat.">
 
-**Een onderzoeker onderzoeken** is nagaan wat de status en reputatie van een auteur zijn: waar die persoon werkt en in welke functie, over welk onderwerp ze publiceert, hoe het vakgebied dat werk gebruikt, of er werk is ingetrokken en wie het onderzoek betaalt. Niet om iemand af te wijzen, maar om te weten hoeveel gewicht je een bron mag geven.
+**Een onderzoeker onderzoeken** is nagaan wat de status en reputatie van een auteur zijn: waar die persoon werkt en in welke functie, waarover diegene publiceert, hoe het vakgebied dat werk gebruikt, of er werk is ingetrokken en wie het onderzoek betaalt. Niet om iemand af te wijzen, maar om te weten hoeveel gewicht je een bron mag geven.
 
 </Definitie>
 

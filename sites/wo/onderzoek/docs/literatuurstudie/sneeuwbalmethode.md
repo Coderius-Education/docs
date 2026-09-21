@@ -4,7 +4,7 @@ title: Sneeuwbalmethode
 
 # Sneeuwbalmethode
 
-<Definitie gewoneTaal="heb je één goed artikel, dan gebruik je dat als startpunt: achteruit via zijn literatuurlijst, vooruit via wie hem citeert.">
+<Definitie gewoneTaal="heb je één goed artikel, dan gebruik je dat als startpunt: achteruit via de literatuurlijst, vooruit via wie het citeert.">
 
 Bij de **sneeuwbalmethode** zoek je niet met zoektermen maar vanuit één goed artikel. **Achteruit** sneeuwballen is de literatuurlijst van dat artikel nalopen: welke oudere bronnen bouwde het op? **Vooruit** sneeuwballen is kijken wie het artikel sindsdien heeft geciteerd: wat is er daarna mee gedaan?
 
@@ -12,7 +12,7 @@ Bij de **sneeuwbalmethode** zoek je niet met zoektermen maar vanuit één goed a
 
 ## Waarom het zo goed werkt
 
-Zoektermen missen altijd iets: een auteur die een ander woord gebruikt, een artikel met een vage titel. De sneeuwbal heeft daar geen last van, want je volgt de verwijzingen die de onderzoekers zélf hebben gelegd. Een goed [overzichtsartikel](./google-scholar.md) als startpunt levert je zo in een half uur de vijftien belangrijkste bronnen van een vakgebied.
+Zoektermen missen altijd iets: een auteur die een ander woord gebruikt, een artikel met een vage titel. De sneeuwbal heeft daar geen last van, want je volgt de verwijzingen die de onderzoekers zélf hebben gelegd. Een goed <B t="overzichtsartikel" tekst="overzichtsartikel"/> als startpunt levert je zo in een half uur de vijftien belangrijkste bronnen van een vakgebied.
 
 ## Zo doe je het
 

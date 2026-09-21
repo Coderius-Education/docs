@@ -21,7 +21,7 @@ Peer review is geen garantie dat een artikel klopt — beoordelaars missen foute
 | Artikel in een wetenschappelijk tijdschrift | Ja | Standaardbron voor je theoretisch kader |
 | Bijdrage aan een wetenschappelijke conferentie | Meestal, soms lichter | Gangbaar in informatica en techniek |
 | **Preprint** (arXiv, bioRxiv, SSRN) | Nog niet | Nieuwste onderzoek, maar ongecontroleerd — vermeld dat erbij |
-| Proefschrift of scriptie | Beoordeeld door een commissie | Bruikbaar, vooral de literatuurlijst |
+| Proefschrift of scriptie | Proefschrift: door een commissie; scriptie: door docenten | Bruikbaar, vooral de literatuurlijst |
 | Rapport van een instituut (CBS, RIVM, SCP) | Intern gecontroleerd | Betrouwbaar voor cijfers en feiten |
 | Nep-tijdschrift (*predatory journal*) | Beweert van wel, doet het niet | Vermijden |
 

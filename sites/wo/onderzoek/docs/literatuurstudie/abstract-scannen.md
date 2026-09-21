@@ -27,7 +27,7 @@ Omdat de volgorde vast is, hoef je niet van voor naar achter te lezen. Spring na
 - **Bij wie en hoe?** Ratten, studenten of scholieren? Enquête of experiment? Dat bepaalt hoeveel je er straks mee kunt.
 - **Wat is de uitkomst in één zin?** Kun je die niet uit het abstract halen, dan is het artikel onduidelijk of jouw onderwerp niet.
 
-Twee keer ja en een duidelijk antwoord op de derde vraag: door naar [skimmen](./skimmen.md). Anders: weg ermee, zonder schuldgevoel.
+Gaat het over jouw vraag, passen groep en methode bij wat jij nodig hebt, en kun je de uitkomst in één zin noemen? Dan door naar [skimmen](./skimmen.md). Anders: weg ermee, zonder schuldgevoel.
 
 :::caution[Abstracts verkopen]
 Auteurs schrijven het abstract om gelezen te worden. Kleine effecten heten er "significant", een voorzichtig resultaat "veelbelovend". Wat in het abstract als conclusie staat, blijkt in het artikel zelf nogal eens een stuk voorzichtiger geformuleerd. Daarom gebruik je het abstract om te *kiezen*, nooit als bron voor wat je in je verslag beweert.

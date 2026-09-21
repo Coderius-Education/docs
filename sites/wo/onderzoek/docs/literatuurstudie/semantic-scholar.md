@@ -23,7 +23,7 @@ title: Semantic Scholar
 Semantic Scholar is het sterkst in de exacte vakken, informatica en de biomedische wetenschappen. Voor Nederlandstalige bronnen, geschiedenis of literatuurwetenschap vind je in [Google Scholar](./google-scholar.md) meer. Veel onderzoekers gebruiken ze naast elkaar: Scholar om breed te zoeken, Semantic Scholar om te wegen welke treffer ertoe doet.
 
 :::caution[De samenvatting is niet het artikel]
-Een TLDR en zelfs een [abstract](./abstract-scannen.md) zijn hulpmiddelen om te *kiezen*, niet om te *citeren*. Wie in zijn verslag schrijft wat een artikel concludeert, moet dat artikel gelezen hebben — zie [deep reading](./deep-reading.md).
+Een TLDR en zelfs een [abstract](./abstract-scannen.md) zijn hulpmiddelen om te *kiezen*, niet om te *citeren*. Wie in een verslag schrijft wat een artikel concludeert, moet dat artikel gelezen hebben — zie [deep reading](./deep-reading.md).
 :::
 
 <WelNiet
