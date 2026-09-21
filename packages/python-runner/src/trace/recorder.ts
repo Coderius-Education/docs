@@ -28,6 +28,9 @@ _STAPPER_MAX_TEKENS = 200
 # Een import of een def is geen waarde die de leerling volgt; zonder dit filter
 # staat de tabel vol met math, print en de functies die hij net zelf schreef.
 _STAPPER_VERBORGEN = ('module', 'function', 'builtin_function_or_method', 'type', 'method')
+# De namen die het voorwerk (de verborgen code van een runner) definieerde;
+# die zijn niet van de leerling en blijven uit de tabel.
+_STAPPER_VERBORGEN_NAMEN = set()
 
 
 class _StapperGenoeg(BaseException):
@@ -50,7 +53,7 @@ def _stapper_waarde(waarde):
 
 
 def _stapper_toonbaar(naam, waarde):
-    if naam.startswith('_'):
+    if naam.startswith('_') or naam in _STAPPER_VERBORGEN_NAMEN:
         return False
     try:
         return type(waarde).__name__ not in _STAPPER_VERBORGEN
@@ -87,7 +90,8 @@ def _stapper_frames(frame):
     return uit
 
 
-def _stapper_neem_op(bron):
+def _stapper_neem_op(bron, voorwerk=None):
+    global _STAPPER_VERBORGEN_NAMEN
     stappen = []
     afgekapt = [False]
     uitvoer = _stapper_StringIO()
@@ -127,6 +131,13 @@ def _stapper_neem_op(bron):
         })
 
     globalen = {'__name__': '__main__', '__builtins__': __builtins__}
+    _STAPPER_VERBORGEN_NAMEN = set()
+    if voorwerk:
+        # Vooraf, onder een eigen bestandsnaam: de tracer volgt alleen
+        # _STAPPER_BESTAND, dus de regels hiervan komen niet in de opname,
+        # en wat het definieert blijft uit de variabelenlijst.
+        exec(compile(voorwerk, '<voorwerk>', 'exec'), globalen)
+        _STAPPER_VERBORGEN_NAMEN = set(globalen) - {'__name__', '__builtins__'}
     echte_stdout = _stapper_sys.stdout
     _stapper_sys.stdout = uitvoer
     _stapper_sys.settrace(tracer)

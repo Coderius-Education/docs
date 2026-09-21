@@ -2,6 +2,7 @@ import { spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import minimaxHelpers from '../components/PyRunner/verborgen/minimax-helpers';
 
 // Elke bouwsteen van minimax eindigt met een blok asserts onder de startcode.
 // Het blokken-script draait die startcode ongewijzigd en eist dat hij op een
@@ -62,7 +63,7 @@ function antwoord(tekst: string): string | null {
 
 /** De laatste PyRunner van de pagina, ontsnapt: de startcode met de tests eronder. */
 function startcode(tekst: string): string {
-  const runners = [...tekst.matchAll(/<PyRunner initialCode=\{`([\s\S]*?)`\} \/>/g)];
+  const runners = [...tekst.matchAll(/<PyRunner\b[^`]*?initialCode=\{`([\s\S]*?)`\} \/>/g)];
   expect(runners.length, 'de pagina heeft een PyRunner met startcode').toBeGreaterThan(0);
   return ontsnap(runners[runners.length - 1][1]);
 }
@@ -187,14 +188,15 @@ print(sorted({${goedgekeurd}} if isinstance(${goedgekeurd}, tuple) else ${goedge
     expect(inRunner.trim()).toBe(lokaal.trim());
     // Ongewijzigd zegt de runner wat je moet doen, in plaats van stil None
     // terug te geven en op de tweede test te struikelen.
-    const leeg = draai(runner);
+    // De negen functies staan in de verborgen code van de runner.
+    const leeg = draai(`${minimaxHelpers}\n${runner}`);
     expect(leeg.uit).toContain('NotImplementedError: Vervang deze functie door je eigen minimax');
     const eigen = compleet.slice(compleet.indexOf('def minimax(bord):'));
     const met = runner.replace(
       /def minimax\(bord\):[\s\S]*?(?=\n\n\n# === Tests ===)/,
       eigen.trimEnd(),
     );
-    const r = draai(met);
+    const r = draai(`${minimaxHelpers}\n${met}`);
     expect(r.uit, r.uit).toContain('Alle tests gehaald ✓');
     expect(r.uit).toContain('Remise');
     expect(r.status).toBe(0);

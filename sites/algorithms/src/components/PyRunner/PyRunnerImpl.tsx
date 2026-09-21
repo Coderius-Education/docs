@@ -9,6 +9,8 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 import clsx from 'clsx';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import ParseTree from '../ParseTree';
+import { type Getiteld, leesBomen } from '../ParseTree/boom';
 import styles from './styles.module.css';
 import {
   type PyodideInterface,
@@ -16,6 +18,7 @@ import {
   loadPyodideOnce,
   warmupPyodide,
 } from './usePyodide';
+import { verborgenCode as haalVerborgen } from './verborgen';
 
 // Approximate textarea-rows → pixel-height mapping. Matches the editor's
 // line-height (1.5) × font-size (0.9rem ≈ 14.4px) plus vertical padding
@@ -29,7 +32,22 @@ export type PyRunnerProps = {
   editable?: boolean;
   packages?: string[];
   rows?: number;
+  /**
+   * Naam van code die vóór de zichtbare code draait maar niet in de editor
+   * staat (zie ./verborgen/index.ts): een parser-motor, negen kant-en-klare
+   * functies. Onder de editor uitklapbaar en alleen-lezen. Zet de prop vóór
+   * initialCode, want zo leest scripts/draai-python-blokken.py hem.
+   */
+  verborgen?: string;
 };
+
+// Na een run haalt de runner de bomen op die de verborgen code (of de les
+// zelf) in _coderius_bomen heeft gezet, als JSON; de knop "Teken de bomen"
+// tekent ze dan. Voor de run gaat de variabele leeg, want de Pyodide is
+// gedeeld met de andere runners op de pagina.
+const BOMEN_LEEG = '_coderius_bomen = []';
+const BOMEN_OPHALEN =
+  "import json as _coderius_json; _coderius_json.dumps(globals().get('_coderius_bomen') or [])";
 
 const MATPLOTLIB_SETUP = `
 import matplotlib
@@ -101,8 +119,13 @@ export default function PyRunnerImpl({
   editable = true,
   packages,
   rows = 10,
+  verborgen,
 }: PyRunnerProps): React.ReactElement {
   const source = useMemo(() => dedent(initialCode ?? children ?? ''), [initialCode, children]);
+  const verborgenCode = useMemo(
+    () => (verborgen ? haalVerborgen(verborgen).trim() : null),
+    [verborgen],
+  );
   const [code, setCode] = useState(source);
   const [status, setStatus] = useState<'idle' | 'loading' | 'running' | 'done' | 'error'>('idle');
   const [statusMsg, setStatusMsg] = useState<string>('');
@@ -110,6 +133,8 @@ export default function PyRunnerImpl({
   const [stderr, setStderr] = useState<string>('');
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [plots, setPlots] = useState<string[]>([]);
+  const [bomen, setBomen] = useState<Getiteld[]>([]);
+  const [toonBomen, setToonBomen] = useState(false);
   const [opname, setOpname] = useState<Opname | null>(null);
   // De code van het moment van opnemen: de leerling mag intussen doortypen,
   // en dan zouden de regelnummers uit de opname naar de verkeerde regels wijzen.
@@ -167,9 +192,12 @@ export default function PyRunnerImpl({
     setStderr('');
     setErrorMsg('');
     setPlots([]);
+    setBomen([]);
     setOpname(null);
     try {
       const py = await maakKlaar();
+      await py.runPythonAsync(BOMEN_LEEG);
+      if (verborgenCode) await py.runPythonAsync(verborgenCode);
 
       let out = '';
       let err = '';
@@ -198,6 +226,8 @@ export default function PyRunnerImpl({
           typeof result?.toJs === 'function' ? result.toJs() : (result as string[]);
         if (Array.isArray(arr) && arr.length > 0) setPlots(arr as string[]);
       }
+      const gevonden = leesBomen(JSON.parse((await py.runPythonAsync(BOMEN_OPHALEN)) as string));
+      setBomen(gevonden);
 
       setStdout(out);
       setStderr(err);
@@ -209,7 +239,7 @@ export default function PyRunnerImpl({
       setStatus('error');
       setStatusMsg('Er ging iets mis');
     }
-  }, [code, maakKlaar, needsMatplotlib]);
+  }, [code, maakKlaar, needsMatplotlib, verborgenCode]);
 
   // Zelfde voorbereiding als handleRun (maakKlaar), maar dan opnemen met
   // tracePython in plaats van draaien: de leerling bladert daarna per regel
@@ -221,6 +251,7 @@ export default function PyRunnerImpl({
     setStderr('');
     setErrorMsg('');
     setPlots([]);
+    setBomen([]);
     setOpname(null);
     try {
       const py = await maakKlaar();
@@ -230,7 +261,9 @@ export default function PyRunnerImpl({
       setOpnameCode(code);
       try {
         // Het echte pyodide-object heeft ook setStdin; het smalle type niet.
-        setOpname(await tracePython(py as unknown as StapPyodide, code));
+        setOpname(
+          await tracePython(py as unknown as StapPyodide, code, verborgenCode ?? undefined),
+        );
       } finally {
         // De opname toont geen plots, maar de code heeft ze wel geregistreerd
         // — in de gedeelde Pyodide. Zonder opruimen zou de eerstvolgende
@@ -248,7 +281,7 @@ export default function PyRunnerImpl({
       setStatus('error');
       setStatusMsg('Er ging iets mis');
     }
-  }, [code, maakKlaar, needsMatplotlib]);
+  }, [code, maakKlaar, needsMatplotlib, verborgenCode]);
 
   // Tab en Shift+Tab regelt HighlightedEditor zelf; hier alleen Ctrl+Enter.
   const handleKeyDown = useCallback(
@@ -267,6 +300,8 @@ export default function PyRunnerImpl({
     setStderr('');
     setErrorMsg('');
     setPlots([]);
+    setBomen([]);
+    setToonBomen(false);
     setOpname(null);
     setStatus('idle');
     setStatusMsg('');
@@ -274,7 +309,11 @@ export default function PyRunnerImpl({
 
   const busy = status === 'loading' || status === 'running';
   const hasOutput =
-    stdout.length > 0 || stderr.length > 0 || errorMsg.length > 0 || plots.length > 0;
+    stdout.length > 0 ||
+    stderr.length > 0 ||
+    errorMsg.length > 0 ||
+    plots.length > 0 ||
+    bomen.length > 0;
 
   return (
     <div className={styles.runner}>
@@ -318,6 +357,21 @@ export default function PyRunnerImpl({
         disabled={busy}
         minHeight={rows * LINE_HEIGHT_PX + EDITOR_PADDING_PX}
       />
+      {verborgenCode && (
+        <details className={styles.verborgen}>
+          <summary>
+            Toon de code die al klaarstaat ({verborgenCode.split('\n').length} regels)
+          </summary>
+          <HighlightedEditor
+            code={verborgenCode}
+            onChange={() => undefined}
+            readOnly
+            disabled={false}
+            minHeight={0}
+            ariaLabel="Code die al klaarstaat, alleen-lezen"
+          />
+        </details>
+      )}
       {statusMsg && (
         <div
           className={clsx(styles.status, {
@@ -331,6 +385,36 @@ export default function PyRunnerImpl({
       {opname && <Stapper code={opnameCode} opname={opname} onSluiten={() => setOpname(null)} />}
       {hasOutput && (
         <div className={styles.output}>
+          {bomen.length > 0 && (
+            <div className={styles.bomen}>
+              <div className={styles.bomenBalk}>
+                <button
+                  type="button"
+                  onClick={() => setToonBomen((v) => !v)}
+                  className={clsx('button', toonBomen ? 'button--secondary' : 'button--primary')}
+                >
+                  {toonBomen
+                    ? 'Verberg de tekening'
+                    : `Teken ${bomen.length === 1 ? 'de boom' : `de ${bomen.length} bomen`}`}
+                </button>
+                <span className={styles.bomenUitleg}>
+                  {bomen.length === 1 ? 'Eén boom gevonden.' : `${bomen.length} bomen gevonden.`}
+                </span>
+              </div>
+              {toonBomen && (
+                <div className={styles.bomenRij}>
+                  {bomen.map(({ titel, boom }, i) => (
+                    <ParseTree
+                      // biome-ignore lint/suspicious/noArrayIndexKey: de bomen van één run zijn alleen op volgorde uit elkaar te houden
+                      key={i}
+                      boom={boom}
+                      titel={titel ?? (bomen.length > 1 ? `boom ${i + 1}` : undefined)}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
           {stdout && <pre className={styles.stdout}>{stdout}</pre>}
           {stderr && <pre className={clsx(styles.stdout, styles.stderr)}>{stderr}</pre>}
           {errorMsg && <pre className={clsx(styles.stdout, styles.error)}>{errorMsg}</pre>}
