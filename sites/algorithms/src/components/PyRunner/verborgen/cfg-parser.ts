@@ -4,7 +4,10 @@ export default String.raw`# De parser-motor van de track over context-vrije gram
 # runner in de cfg-lessen krijgt dit als verborgen code (prop
 # verborgen="cfg-parser"): het lexicon en de functies staan klaar, de
 # leerling schrijft alleen de grammatica en de zinnen. De bomen die
-# ontleed() vindt komen in _coderius_bomen, zodat de runner ze kan tekenen.
+# controleer() en ontleed() vinden komen in _coderius_bomen, zodat de
+# runner ze kan tekenen; controleer_symbolen() meldt een symbool dat
+# nergens een regel heeft (een vergeten aanhalingsteken, conj naast Conj),
+# want zonder die melding blijft zo'n zin stil op FOUT staan.
 
 LEXICON = """
 Adj -> "country" | "dreadful" | "enigmatical" | "little" | "moist" | "red"
@@ -76,13 +79,38 @@ def toon_boom(boom, inspring=0):
         for kind in boom[1:]:
             toon_boom(kind, inspring + 1)
 
+def controleer_symbolen(grammatica):
+    koppen = {kop for kop, _ in grammatica}
+    gemeld = set()
+    for kop, rhs in grammatica:
+        for sym in rhs:
+            if sym.startswith('"') or sym in koppen or sym in gemeld:
+                continue
+            gemeld.add(sym)
+            regel = f'{kop} -> {" ".join(rhs)}'
+            zelfde = [k for k in sorted(koppen) if k.lower() == sym.lower()]
+            if zelfde:
+                print(f'LET OP: "{sym}" in de regel "{regel}" bestaat niet; bedoel je "{zelfde[0]}"? Hoofdletters tellen mee.')
+            else:
+                print(f'LET OP: "{sym}" in de regel "{regel}" heeft nergens een regel. Is het een woord? Zet het dan tussen aanhalingstekens.')
+    if "S" not in koppen:
+        print("LET OP: er is nog geen regel voor S, en daar begint de motor.")
+    if gemeld or "S" not in koppen:
+        print()
+    return not gemeld
+
 def controleer(grammatica_tekst, zinnen, lexicon_extra=""):
+    global _coderius_bomen
     grammatica = lees_grammatica(grammatica_tekst + LEXICON + lexicon_extra)
+    controleer_symbolen(grammatica)
+    _coderius_bomen = []
     alles_goed = True
     for zin in zinnen:
         bomen = parse(grammatica, zin.lower().split())
         if bomen:
             print(f"    OK  ({len(bomen)}x)  {zin}")
+            titel = zin if len(bomen) == 1 else f"{zin} ({len(bomen)} bomen, dit is de eerste)"
+            _coderius_bomen.append({"titel": titel, "boom": bomen[0]})
         else:
             print(f"    FOUT (0x)  {zin}   <-- parseert nog niet!")
             alles_goed = False
@@ -98,6 +126,7 @@ def ontleed(grammatica_tekst, zin, lexicon_extra=""):
     global _coderius_bomen
     grammatica = lees_grammatica(grammatica_tekst + LEXICON + lexicon_extra)
     print(f"\n=== Boom van: {zin} ===")
+    controleer_symbolen(grammatica)
     bomen = parse(grammatica, zin.lower().split())
     if not bomen:
         print("Kon de zin niet ontleden.")
@@ -106,5 +135,5 @@ def ontleed(grammatica_tekst, zin, lexicon_extra=""):
         print(f"--- boom {i} ---")
         toon_boom(boom)
     print(f"aantal interpretaties: {len(bomen)}")
-    _coderius_bomen = bomen
+    _coderius_bomen = [{"titel": f"boom {i}", "boom": boom} for i, boom in enumerate(bomen, start=1)]
 `;

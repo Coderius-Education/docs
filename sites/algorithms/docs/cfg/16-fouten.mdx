@@ -54,12 +54,15 @@ regel die je het laatst hebt getypt of geplakt.
 
 ## Aanhalingstekens vergeten bij een terminal
 
-Symptoom: een zin die zou moeten werken, geeft toch `Kon de zin niet
-ontleden` of `FOUT (0x)`.
+Symptoom: bovenaan de uitvoer staat `LET OP: "sam" in de regel
+"Naam -> sam" heeft nergens een regel`, en de zin blijft op `FOUT (0x)` of
+`Kon de zin niet ontleden`.
 
 **Oorzaak:** een echt woord (een terminal) hoort tussen aanhalingstekens.
 Laat je ze weg, dan denkt de motor dat `sam` een groep is, en die groep
-heeft geen regels, dus hij matcht nooit een woord.
+heeft geen regels, dus hij matcht nooit een woord. Dezelfde melding
+krijg je bij `conj` waar het lexicon `Conj` heet: hoofdletters tellen
+mee, en de motor zegt er dan bij welke naam hij wél kent.
 
 ```
 # FOUT

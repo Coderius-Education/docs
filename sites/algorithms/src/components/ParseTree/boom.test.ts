@@ -57,16 +57,26 @@ describe('tekenBoom', () => {
 });
 
 describe('leesBomen', () => {
-  it('leest wat json.dumps van de parser-bomen maakt', () => {
-    const uit = leesBomen(JSON.parse(JSON.stringify([HOLMES, ['N', 'x']])));
-    expect(uit).toHaveLength(2);
-    expect(bladeren(uit[0])).toEqual(['holmes', 'lit', 'a', 'pipe']);
+  it('leest wat json.dumps van de parser-bomen maakt, kaal of met titel', () => {
+    const uit = leesBomen(
+      JSON.parse(
+        JSON.stringify([
+          HOLMES,
+          { titel: 'Holmes lit a pipe', boom: HOLMES },
+          { boom: ['N', 'x'] },
+        ]),
+      ),
+    );
+    expect(uit.map((g) => g.titel)).toEqual([null, 'Holmes lit a pipe', null]);
+    expect(bladeren(uit[1].boom)).toEqual(['holmes', 'lit', 'a', 'pipe']);
   });
 
   it('laat alles vallen wat geen boom is, en valt daar niet op om', () => {
     expect(leesBomen(null)).toEqual([]);
     expect(leesBomen('S')).toEqual([]);
-    expect(leesBomen([['S'], ['S', 3], ['S', ['N', 'x'], 'los'], 7])).toEqual([]);
+    expect(
+      leesBomen([['S'], ['S', 3], ['S', ['N', 'x'], 'los'], 7, { titel: 'x' }, { boom: 3 }]),
+    ).toEqual([]);
     expect(isBoom(['S', ['N', 'x']])).toBe(true);
   });
 });

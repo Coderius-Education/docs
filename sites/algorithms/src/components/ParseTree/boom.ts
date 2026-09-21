@@ -39,14 +39,31 @@ export function kolomBreedte(woord: string): number {
   return Math.max(MIN_KOLOM, Math.ceil(woord.length * PX_PER_TEKEN) + KOLOM_MARGE);
 }
 
+export interface Getiteld {
+  titel: string | null;
+  boom: Boom;
+}
+
 /**
- * Leest wat de runner uit Python krijgt (json.dumps van de bomen) en houdt
- * alleen over wat de vorm van een boom heeft. Iets anders in die variabele
- * mag de uitvoer nooit laten omvallen: dan tekenen we gewoon niets.
+ * Leest wat de runner uit Python krijgt (json.dumps van _coderius_bomen):
+ * per element een kale boom, of {"titel": …, "boom": …} met de zin of het
+ * volgnummer erbij. Alles wat niet de vorm van een boom heeft valt af;
+ * iets vreemds in die variabele mag de uitvoer nooit laten omvallen.
  */
-export function leesBomen(data: unknown): Boom[] {
+export function leesBomen(data: unknown): Getiteld[] {
   if (!Array.isArray(data)) return [];
-  return data.filter(isBoom);
+  const uit: Getiteld[] = [];
+  for (const x of data) {
+    if (isBoom(x)) uit.push({ titel: null, boom: x });
+    else if (x && typeof x === 'object' && isBoom((x as { boom?: unknown }).boom)) {
+      const titel = (x as { titel?: unknown }).titel;
+      uit.push({
+        titel: typeof titel === 'string' ? titel : null,
+        boom: (x as { boom: Boom }).boom,
+      });
+    }
+  }
+  return uit;
 }
 
 export function isBoom(x: unknown): x is Boom {

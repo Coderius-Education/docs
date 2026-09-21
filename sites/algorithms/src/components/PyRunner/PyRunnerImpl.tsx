@@ -10,7 +10,7 @@ import clsx from 'clsx';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ParseTree from '../ParseTree';
-import { type Boom, leesBomen } from '../ParseTree/boom';
+import { type Getiteld, leesBomen } from '../ParseTree/boom';
 import styles from './styles.module.css';
 import {
   type PyodideInterface,
@@ -133,7 +133,7 @@ export default function PyRunnerImpl({
   const [stderr, setStderr] = useState<string>('');
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [plots, setPlots] = useState<string[]>([]);
-  const [bomen, setBomen] = useState<Boom[]>([]);
+  const [bomen, setBomen] = useState<Getiteld[]>([]);
   const [toonBomen, setToonBomen] = useState(false);
   const [opname, setOpname] = useState<Opname | null>(null);
   // De code van het moment van opnemen: de leerling mag intussen doortypen,
@@ -409,12 +409,12 @@ export default function PyRunnerImpl({
               </button>
               {toonBomen && (
                 <div className={styles.bomenRij}>
-                  {bomen.map((boom, i) => (
+                  {bomen.map(({ titel, boom }, i) => (
                     <ParseTree
-                      // biome-ignore lint/suspicious/noArrayIndexKey: de bomen van één zin zijn alleen op volgorde uit elkaar te houden
+                      // biome-ignore lint/suspicious/noArrayIndexKey: de bomen van één run zijn alleen op volgorde uit elkaar te houden
                       key={i}
                       boom={boom}
-                      titel={bomen.length > 1 ? `boom ${i + 1}` : undefined}
+                      titel={titel ?? (bomen.length > 1 ? `boom ${i + 1}` : undefined)}
                     />
                   ))}
                 </div>

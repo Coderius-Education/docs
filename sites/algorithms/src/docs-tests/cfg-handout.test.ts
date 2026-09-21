@@ -232,3 +232,53 @@ for zin in ${JSON.stringify(handoutZinnen().map((z) => kaalWoorden(z).join(' '))
     expect(uitvoer.filter((r) => !r.startsWith('OK'))).toEqual([]);
   });
 });
+
+describe('de parser-motor meldt wat anders stil op FOUT blijft', () => {
+  it('een symbool dat alleen in hoofdletters verschilt van een bekend symbool', () => {
+    const uit = draai(
+      `${parserCode('S -> NP VP\nNP -> N\nVP -> V\nVP -> VP conj VP')}\ncontroleer(GRAMMATICA, ["Holmes sat"])`,
+    );
+    expect(uit).toContain(
+      'LET OP: "conj" in de regel "VP -> VP conj VP" bestaat niet; bedoel je "Conj"?',
+    );
+    expect(uit).toContain('OK  (1x)  Holmes sat');
+  });
+
+  it('een woord zonder aanhalingstekens, en een grammatica zonder S', () => {
+    expect(
+      draai(`${parserCode('S -> NP VP\nNP -> sam')}\ncontroleer(GRAMMATICA, ["Holmes sat"])`),
+    ).toContain('LET OP: "sam" in de regel "NP -> sam" heeft nergens een regel. Is het een woord?');
+    expect(draai(`${parserCode('NP -> N')}\ncontroleer(GRAMMATICA, ["Holmes sat"])`)).toContain(
+      'LET OP: er is nog geen regel voor S',
+    );
+  });
+
+  it('de antwoordgrammatica geeft geen enkele melding', () => {
+    const grammatica = lees('unplugged/06-zinnen-bouwen-met-kaartjes.mdx');
+    const blok = grammatica.slice(grammatica.indexOf('<Antwoordblad')).match(/```\n([\s\S]*?)```/);
+    const regels = (blok?.[1] ?? '').replace(/\((zin \d+)\)/g, '');
+    expect(draai(`${parserCode(regels)}\ncontroleer(GRAMMATICA, ["Holmes sat"])`)).not.toContain(
+      'LET OP',
+    );
+  });
+
+  it('controleer bewaart per zin die past de eerste boom, met de zin als titel', () => {
+    const uit = draai(`${parserCode('S -> NP VP\nNP -> N\nVP -> V\nVP -> V NP\nNP -> Det N')}
+controleer(GRAMMATICA, ["Holmes sat", "Holmes lit a pipe", "Holmes chuckled to himself"])
+import json
+print(json.dumps([(b["titel"], b["boom"][0]) for b in _coderius_bomen]))`);
+    expect(JSON.parse(uit.trim().split('\n').pop() ?? '')).toEqual([
+      ['Holmes sat', 'S'],
+      ['Holmes lit a pipe', 'S'],
+    ]);
+  });
+
+  it('ontleed bewaart elke boom van de zin, genummerd', () => {
+    const uit =
+      draai(`${parserCode('S -> NP VP\nNP -> N\nVP -> V\nVP -> V NP\nNP -> Det N\nPP -> P NP\nNP -> NP PP\nVP -> VP PP')}
+ontleed(GRAMMATICA, "Holmes lit a pipe in the armchair")
+import json
+print(json.dumps([b["titel"] for b in _coderius_bomen]))`);
+    expect(JSON.parse(uit.trim().split('\n').pop() ?? '')).toEqual(['boom 1', 'boom 2']);
+  });
+});
