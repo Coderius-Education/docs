@@ -89,6 +89,16 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       image: 'img/social-card.png',
+      // Mermaid meet de tekstbreedte met zijn eigen lettertype (Trebuchet);
+      // wijkt dat af van wat de browser toont, dan worden labels afgekapt.
+      // Zelfde letter als de site plus extra ruimte in de vakjes voorkomt dat.
+      mermaid: {
+        options: {
+          fontFamily:
+            'system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+          flowchart: {padding: 24, nodeSpacing: 40, rankSpacing: 40, wrappingWidth: 300},
+        },
+      },
       colorMode: {
         respectPrefersColorScheme: true,
       },
