@@ -1,0 +1,37 @@
+/* De tekening van een parse-boom. De boom scrollt horizontaal als hij
+   breder is dan de runner; de pagina zelf nooit. */
+
+.figuur {
+  margin: 0.75rem 0 0;
+}
+
+.titel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.omhulsel {
+  overflow-x: auto;
+}
+
+.boom {
+  display: block;
+  font-family: var(--ifm-font-family-base);
+  font-size: 13px;
+}
+
+.lijn {
+  stroke: var(--ifm-color-emphasis-500);
+  stroke-width: 1.2;
+}
+
+.label {
+  fill: var(--ifm-color-primary);
+  font-weight: 600;
+}
+
+.woord {
+  fill: var(--ifm-font-color-base);
+  font-style: italic;
+}
