@@ -398,8 +398,7 @@ export default function PyRunnerImpl({
                     : `Teken ${bomen.length === 1 ? 'de boom' : `de ${bomen.length} bomen`}`}
                 </button>
                 <span className={styles.bomenUitleg}>
-                  {bomen.length === 1 ? 'Eén boom gevonden' : `${bomen.length} bomen gevonden`}, als
-                  tekening naast de tekst hieronder.
+                  {bomen.length === 1 ? 'Eén boom gevonden.' : `${bomen.length} bomen gevonden.`}
                 </span>
               </div>
               {toonBomen && (
