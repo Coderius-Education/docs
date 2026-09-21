@@ -6,7 +6,7 @@ title: H-index
 
 <Definitie gewoneTaal="één getal voor een hele onderzoeker: hoeveel van je artikelen zijn minstens zó vaak geciteerd?">
 
-De **h-index** van een onderzoeker is het grootste getal *h* waarvoor geldt: minstens *h* van zijn artikelen zijn elk minstens *h* keer geciteerd. Een h-index van 20 betekent dus: twintig artikelen met elk twintig of meer citaties. De maat werd in 2005 bedacht door de natuurkundige Jorge Hirsch.
+De **h-index** van een onderzoeker is het grootste getal *h* waarvoor geldt: minstens *h* artikelen van die onderzoeker zijn elk minstens *h* keer geciteerd. Een h-index van 20 betekent dus: twintig artikelen met elk twintig of meer citaties. De maat werd in 2005 bedacht door de natuurkundige Jorge Hirsch.
 
 </Definitie>
 

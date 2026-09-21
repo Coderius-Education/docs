@@ -78,6 +78,12 @@
   padding: 0.3rem 0.6rem;
 }
 
+/* Gelijke kolommen, voor schema's met meer dan twee kolommen. */
+.invulschema-gelijk tbody td:first-child,
+.invulschema-gelijk thead th:first-child {
+  width: auto;
+}
+
 .hint {
   display: block;
   color: var(--ifm-color-emphasis-700);
@@ -186,6 +192,11 @@
 
   .alleen-print {
     display: block !important;
+  }
+
+  /* Begin dit blok op een nieuw vel. */
+  .nieuwe-pagina {
+    break-before: page;
   }
 
   /* Alleen de blokken met de klasse `printbaar` gaan mee naar het papier,

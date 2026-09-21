@@ -167,7 +167,11 @@ const sidebars = {
     {
       type: 'category',
       label: 'Werkvormen',
-      items: ['werkvormen/overzicht', 'werkvormen/methoden-kennisleer'],
+      items: [
+        'werkvormen/overzicht',
+        'werkvormen/methoden-kennisleer',
+        'werkvormen/van-vijftig-naar-drie',
+      ],
     },
     'termen',
   ],
