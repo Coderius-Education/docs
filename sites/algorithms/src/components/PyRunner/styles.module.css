@@ -108,8 +108,27 @@
   color: var(--ifm-color-emphasis-700);
 }
 
+/* De bomen staan bovenaan de uitvoer, in een balk die opvalt: de knop is
+   het eerste wat de leerling na Voer uit ziet, de tekstboom staat eronder. */
 .bomen {
-  margin-top: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.bomenBalk {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--ifm-color-primary-lighter);
+  border-left: 4px solid var(--ifm-color-primary);
+  border-radius: 6px;
+  background: var(--ifm-color-primary-contrast-background, var(--ifm-color-emphasis-100));
+}
+
+.bomenUitleg {
+  font-size: 0.9rem;
+  color: var(--ifm-color-emphasis-800);
 }
 
 .bomenRij {

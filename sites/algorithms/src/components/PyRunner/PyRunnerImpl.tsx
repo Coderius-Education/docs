@@ -385,28 +385,23 @@ export default function PyRunnerImpl({
       {opname && <Stapper code={opnameCode} opname={opname} onSluiten={() => setOpname(null)} />}
       {hasOutput && (
         <div className={styles.output}>
-          {stdout && <pre className={styles.stdout}>{stdout}</pre>}
-          {stderr && <pre className={clsx(styles.stdout, styles.stderr)}>{stderr}</pre>}
-          {errorMsg && <pre className={clsx(styles.stdout, styles.error)}>{errorMsg}</pre>}
-          {plots.map((b64, i) => (
-            <img
-              key={b64}
-              src={`data:image/png;base64,${b64}`}
-              alt={`Plot ${i + 1}`}
-              className={styles.plot}
-            />
-          ))}
           {bomen.length > 0 && (
             <div className={styles.bomen}>
-              <button
-                type="button"
-                onClick={() => setToonBomen((v) => !v)}
-                className={clsx('button button--sm button--secondary')}
-              >
-                {toonBomen
-                  ? 'Verberg de tekening'
-                  : `Teken ${bomen.length === 1 ? 'de boom' : `de ${bomen.length} bomen`}`}
-              </button>
+              <div className={styles.bomenBalk}>
+                <button
+                  type="button"
+                  onClick={() => setToonBomen((v) => !v)}
+                  className={clsx('button', toonBomen ? 'button--secondary' : 'button--primary')}
+                >
+                  {toonBomen
+                    ? 'Verberg de tekening'
+                    : `Teken ${bomen.length === 1 ? 'de boom' : `de ${bomen.length} bomen`}`}
+                </button>
+                <span className={styles.bomenUitleg}>
+                  {bomen.length === 1 ? 'Eén boom gevonden' : `${bomen.length} bomen gevonden`}, als
+                  tekening naast de tekst hieronder.
+                </span>
+              </div>
               {toonBomen && (
                 <div className={styles.bomenRij}>
                   {bomen.map(({ titel, boom }, i) => (
@@ -421,6 +416,17 @@ export default function PyRunnerImpl({
               )}
             </div>
           )}
+          {stdout && <pre className={styles.stdout}>{stdout}</pre>}
+          {stderr && <pre className={clsx(styles.stdout, styles.stderr)}>{stderr}</pre>}
+          {errorMsg && <pre className={clsx(styles.stdout, styles.error)}>{errorMsg}</pre>}
+          {plots.map((b64, i) => (
+            <img
+              key={b64}
+              src={`data:image/png;base64,${b64}`}
+              alt={`Plot ${i + 1}`}
+              className={styles.plot}
+            />
+          ))}
         </div>
       )}
     </div>
