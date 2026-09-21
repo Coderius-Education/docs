@@ -255,84 +255,15 @@ boter-kaas-en-eieren tegen een tegenstander die nooit blundert.
 <summary>Open dit alleen als je echt niet lokaal kan draaien</summary>
 
 Vervang de lege `minimax` op de aangegeven plek door je eigen versie,
-inclusief de regel `def`. De andere negen functies staan al klaar, en
-onder `minimax` staan dezelfde tests als hierboven.
+inclusief de regel `def`. De andere negen functies staan al klaar: ze
+draaien mee, en je leest ze onder de editor via "Toon de code die al
+klaarstaat". Onder `minimax` staan dezelfde tests als hierboven.
 Halen die het, dan speelt de AI tegen zichzelf. **Let op**: die demo kan
 in de browser zo'n **30 seconden** duren — minimax rekent
 honderdduizenden posities door.
 
 {/* niet-draaien: startcode; de leerling plakt hier zijn eigen minimax in */}
-<PyRunner initialCode={`import copy
-import math
-
-
-def initial_state():
-    return [[None]*3 for _ in range(3)]
-def player(bord):
-    x = 0
-    o = 0
-    for rij in bord:
-        x += rij.count("X")
-        o += rij.count("O")
-    if x == o:
-        return "X"
-    return "O"
-def actions(bord):
-    mogelijk = set()
-    for i in range(3):
-        for j in range(3):
-            if bord[i][j] is None:
-                mogelijk.add((i, j))
-    return mogelijk
-def result(bord, zet):
-    n = copy.deepcopy(bord)
-    i, j = zet
-    n[i][j] = player(bord)
-    return n
-def winner(bord):
-    for rij in bord:
-        if rij[0] == rij[1] == rij[2] and rij[0] is not None:
-            return rij[0]
-    for j in range(3):
-        if bord[0][j] == bord[1][j] == bord[2][j] and bord[0][j] is not None:
-            return bord[0][j]
-    if bord[0][0] == bord[1][1] == bord[2][2] and bord[0][0] is not None:
-        return bord[0][0]
-    if bord[0][2] == bord[1][1] == bord[2][0] and bord[0][2] is not None:
-        return bord[0][2]
-    return None
-def terminal(bord):
-    if winner(bord) is not None:
-        return True
-    for rij in bord:
-        for cel in rij:
-            if cel is None:
-                return False
-    return True
-def utility(bord):
-    w = winner(bord)
-    if w == "X":
-        return 1
-    if w == "O":
-        return -1
-    return 0
-def max_value(bord):
-    if terminal(bord):
-        return utility(bord)
-    v = -math.inf
-    for zet in actions(bord):
-        v = max(v, min_value(result(bord, zet)))
-    return v
-def min_value(bord):
-    if terminal(bord):
-        return utility(bord)
-    v = math.inf
-    for zet in actions(bord):
-        v = min(v, max_value(result(bord, zet)))
-    return v
-
-
-def minimax(bord):
+<PyRunner rows={24} verborgen="minimax-helpers" initialCode={`def minimax(bord):
     # === Vervang deze functie door je eigen minimax ===
     raise NotImplementedError("Vervang deze functie door je eigen minimax.")
 

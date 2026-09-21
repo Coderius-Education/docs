@@ -33,6 +33,16 @@ sys.stdout.write(_stapper_neem_op(sys.stdin.read()))
   return JSON.parse(uit);
 }
 
+/** Als neemOp, met voorwerk: de verborgen code van een runner, die vooraf draait. */
+function neemOpMet(bron: string, voorwerk: string): Opname {
+  const script = `${RECORDER}
+import sys
+sys.stdout.write(_stapper_neem_op(sys.stdin.read(), ${JSON.stringify(voorwerk)}))
+`;
+  const uit = execFileSync('python3', ['-c', script], { input: bron, encoding: 'utf8' });
+  return JSON.parse(uit);
+}
+
 /** Alle variabelen van alle frames van één stap, plat. */
 function variabelen(stap: Stap): Record<string, string> {
   const uit: Record<string, string> = {};
@@ -196,5 +206,36 @@ describe('de opnemer valt om als je hem sloopt', () => {
     const gemuteerd = neemOp(bron, kapot);
     const waarde = gemuteerd.stappen[gemuteerd.stappen.length - 1].frames[0].variabelen[0].waarde;
     expect(waarde.length).toBeGreaterThan(1000);
+  });
+});
+
+describe('voorwerk: de verborgen code van een runner', () => {
+  const VOORWERK = 'LEXICON = "a b c"\n\ndef verdubbel(n):\n    x = n * 2\n    return x\n';
+  const BRON = 'y = verdubbel(4)\nprint(y)\n';
+
+  it('draait mee, maar zijn regels komen niet in de opname', () => {
+    const o = neemOpMet(BRON, VOORWERK);
+    expect(o.fout).toBeNull();
+    expect(o.uitvoer).toBe('8\n');
+    // Zonder voorwerk zou de aanroep van verdubbel drie regels van de
+    // functie opnemen; nu alleen de twee regels van de leerling.
+    expect(o.stappen.every((s) => s.regel <= 2)).toBe(true);
+    expect(o.stappen.map((s) => s.frames.map((f) => f.naam))).not.toContainEqual(
+      expect.arrayContaining(['verdubbel()']),
+    );
+  });
+
+  it('zijn namen blijven uit de variabelenlijst, die van de leerling niet', () => {
+    const o = neemOpMet(BRON, VOORWERK);
+    const laatste = variabelen(o.stappen[o.stappen.length - 1]);
+    expect(laatste).toHaveProperty('y', '8');
+    expect(laatste).not.toHaveProperty('LEXICON');
+    expect(laatste).not.toHaveProperty('verdubbel');
+  });
+
+  it('een fout in de leerlingcode wijst nog steeds naar de regel in de editor', () => {
+    const o = neemOpMet('y = verdubbel(4)\nprint(z)\n', VOORWERK);
+    expect(o.fout?.soort).toBe('NameError');
+    expect(o.fout?.regel).toBe(2);
   });
 });

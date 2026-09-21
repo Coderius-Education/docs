@@ -94,3 +94,27 @@
   border-radius: 6px;
   background: white;
 }
+
+/* De verborgen code (parser-motor, kant-en-klare functies): uitklapbaar
+   onder de editor, alleen-lezen. */
+.verborgen {
+  margin: 0.25rem 0 0;
+  font-size: 0.85rem;
+}
+
+.verborgen > summary {
+  cursor: pointer;
+  padding: 0.35rem 0.5rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.bomen {
+  margin-top: 0.5rem;
+}
+
+.bomenRij {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+  align-items: flex-start;
+}

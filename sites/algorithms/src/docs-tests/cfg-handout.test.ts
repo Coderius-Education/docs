@@ -2,6 +2,7 @@ import { spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import cfgParser from '../components/PyRunner/verborgen/cfg-parser';
 
 // De hand-out "Een grammatica op papier" doet dezelfde tien zinnen als de
 // bouwstenen op de site, met achter elk woord zijn woordsoort, zodat een
@@ -53,11 +54,10 @@ function getagdeWoorden(tekst: string): Array<[string, string]> {
   );
 }
 
-/** Het lexicon zoals de parser-motor het in de eerste bouwsteen meekrijgt. */
+/** Het lexicon zoals de parser-motor (de verborgen code van elke cfg-runner) het meekrijgt. */
 function lexicon(): Map<string, string> {
-  const bron = lees('cfg/bouwen/03-simpele-zin.mdx');
-  const blok = bron.match(/LEXICON = """([\s\S]*?)"""/);
-  if (!blok) throw new Error('geen LEXICON in de eerste bouwsteen');
+  const blok = cfgParser.match(/LEXICON = """([\s\S]*?)"""/);
+  if (!blok) throw new Error('geen LEXICON in de parser-motor');
   const soortPerWoord = new Map<string, string>();
   for (const regel of blok[1].split('\n')) {
     const m = regel.match(/^(\w+) -> (.+)$/);
@@ -100,13 +100,9 @@ describe('de kaartjes-hand-out doet dezelfde zinnen als de site', () => {
   });
 });
 
-/** De parser-motor uit de compleet-pagina, met de grammatica ervoor. */
+/** De parser-motor (de verborgen code van elke cfg-runner), met de grammatica ervoor. */
 function parserCode(grammatica: string): string {
-  const bron = lees('cfg/13-compleet.mdx');
-  const start = bron.indexOf('LEXICON = """');
-  const einde = bron.indexOf('def toon_boom');
-  const motor = bron.slice(start, einde).replace(/\\\\n/g, '\\n');
-  return `GRAMMATICA = """\n${grammatica}\n"""\n${motor}\n`;
+  return `GRAMMATICA = """\n${grammatica}\n"""\n${cfgParser}\n`;
 }
 
 function draai(code: string): string {

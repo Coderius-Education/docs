@@ -139,6 +139,11 @@ SITES = {
         # een backtick, dus daar loopt de match op af.
         "component": r"<PyRunner\s[^`]*?initialCode=\{`(?P<oefcode>.*?)`\}",
         "component_tag": r"<PyRunner\b",
+        # <PyRunner verborgen="naam" …>: code die de runner vóór de zichtbare
+        # code draait maar niet in de editor zet. Eén bestand per naam, met
+        # `export default String.raw\`…\``; het stuk tussen de eerste en de
+        # laatste backtick is de Python. De prop staat vóór initialCode.
+        "verborgen_map": ROOT / "sites" / "algorithms" / "src" / "components" / "PyRunner" / "verborgen",
         "python_versie": (3, 12),
         # numpy en matplotlib bepalen wat een blok print; de rest van de
         # matplotlib-keten reist als dependency mee.
@@ -173,6 +178,19 @@ def kies_site(naam: str) -> None:
     PYTHON_VAN_DE_SITE = SITE["python_versie"]
     OORDEELT_OVER_TEKST = sys.version_info[:2] == PYTHON_VAN_DE_SITE
 NIET_DRAAIEN_RE = re.compile(r"\{/\*\s*niet-draaien:.*?\*/\}\s*$")
+VERBORGEN_RE = re.compile(r'\bverborgen="([\w-]+)"')
+_VERBORGEN_CACHE: dict[str, str] = {}
+
+
+def lees_verborgen(naam: str) -> str:
+    """De verborgen code met deze naam, uit de map van de site (zie SITES)."""
+    if naam not in _VERBORGEN_CACHE:
+        pad = SITE["verborgen_map"] / f"{naam}.ts"
+        tekst = pad.read_text()
+        begin = tekst.index("String.raw`") + len("String.raw`")
+        einde = tekst.rindex("`")
+        _VERBORGEN_CACHE[naam] = tekst[begin:einde].strip("\n")
+    return _VERBORGEN_CACHE[naam]
 # De startcode van een opdracht is een bijzonder geval van niet-draaien: de
 # asserts hóren te falen, maar de leerling drukt er wel als eerste op. Bij de
 # doorloop van Torens van Hanoi viel er een om op `zetten += ...` met een
@@ -410,6 +428,21 @@ def verzamel():
                 continue
             kaalcode = inspring_weg(code)
             voorplak = 0
+            vb = VERBORGEN_RE.search(m.group(0)) if m.group("py") is None else None
+            if vb:
+                # Precies zoals draaien-met: de verborgen code ervoor, een
+                # markeerregel ertussen, en de regelnummers rekenen terug.
+                try:
+                    stuk = lees_verborgen(vb.group(1))
+                except (FileNotFoundError, ValueError, KeyError):
+                    fouten.append(
+                        f"{bron}:{regel}: verborgen=\"{vb.group(1)}\" bestaat niet in "
+                        f"{SITE.get('verborgen_map', '?')}"
+                    )
+                    vorige = None
+                    continue
+                voorplak = stuk.count("\n") + 2
+                kaalcode = stuk + "\n" + f"print({STAART_MARKER!r})" + "\n" + kaalcode
             if MET_RE.search(ervoor):
                 boven = erboven_effectief
                 if boven is None:
@@ -592,7 +625,7 @@ def draai(bron, regel, code, verwacht, varieert=False, voorplak=0) -> str | None
     # is voorgeplakt (een fout kan immers ook dáár vandaan komen).
     fout = compileer(bron, regel - voorplak, code) if voorplak else compileer(bron, regel, code)
     if fout:
-        return fout + (" (draaien-met: het blok erboven draait mee)" if voorplak else "")
+        return fout + (" (er draait code vóór dit blok mee: draaien-met of verborgen)" if voorplak else "")
 
     try:
         r = subprocess.run(
@@ -623,7 +656,7 @@ def draai(bron, regel, code, verwacht, varieert=False, voorplak=0) -> str | None
 
     if r.returncode != 0:
         return f"{bron}:{regel}: {laatste_fout or f'exitcode {r.returncode}'}" + (
-            " (draaien-met: het blok erboven draait mee)" if voorplak else ""
+            " (er draait code vóór dit blok mee: draaien-met of verborgen)" if voorplak else ""
         )
 
     # Een lege regel vooraan (een print("\\n…") als eerste) is in een fence

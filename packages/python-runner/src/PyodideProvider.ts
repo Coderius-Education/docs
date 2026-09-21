@@ -214,14 +214,24 @@ export interface Opname {
  * De leerlingcode gaat als Python-stringliteral mee. JSON.stringify levert een
  * literal die Python net zo leest als JavaScript, dus er valt niets te escapen.
  */
-export async function tracePython(pyodide: PyodideInterface, code: string): Promise<Opname> {
+/**
+ * Neemt de uitvoering van `code` op. `voorwerk` is code die de les al
+ * klaarzet (de verborgen code van een runner): die draait vooraf, onder een
+ * eigen bestandsnaam zodat de opnemer hem niet volgt, en zijn namen blijven
+ * uit de variabelenlijst van de leerling.
+ */
+export async function tracePython(
+  pyodide: PyodideInterface,
+  code: string,
+  voorwerk?: string,
+): Promise<Opname> {
   const { RECORDER } = await import('./trace/recorder');
 
   pyodide.setStdin({ stdin: promptStdin });
 
   try {
     const ruw = (await pyodide.runPythonAsync(
-      `${RECORDER}\n_stapper_neem_op(${JSON.stringify(code)})`,
+      `${RECORDER}\n_stapper_neem_op(${JSON.stringify(code)}, ${voorwerk ? JSON.stringify(voorwerk) : 'None'})`,
     )) as string;
     return JSON.parse(ruw) as Opname;
   } catch (err) {
