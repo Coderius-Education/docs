@@ -16,7 +16,7 @@ Waar hij op uitkwam, was even radicaal als de methode. Er bestaat niet een God �
 
 ## Wat je hieraan hebt bij je eigen onderzoek
 
-Spinoza laat de kracht én de grens van zuiver redeneren zien. De kracht: als je definities scherp zijn en elke stap klopt, staat je conclusie onwrikbaar vast. De grens: het hele bouwwerk rust op de definities en axioma’s waarmee je begon. Kiest iemand andere uitgangspunten, dan komt hij ergens anders uit — zonder één rekenfout te maken.
+Spinoza laat de kracht én de grens van zuiver redeneren zien. De kracht: als je definities scherp zijn en elke stap klopt, staat je conclusie onwrikbaar vast. De grens: het hele bouwwerk rust op de definities en axioma’s waarmee je begon. Kiest iemand andere uitgangspunten, dan komt die ergens anders uit — zonder één rekenfout te maken.
 
 Dat geldt ook voor jouw onderzoek. Een sluitende redenering van deelvragen naar conclusie is prachtig, maar hij is nooit sterker dan de aannames en definities aan het begin. Daarom is de [definiërende deelvraag](../opzet/functies/beschrijvend-definierend.md) geen formaliteit maar de fundering.
 

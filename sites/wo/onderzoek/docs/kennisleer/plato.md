@@ -6,13 +6,13 @@ title: Plato
 
 **ca. 427–347 v.Chr. · [rationalisme](./rationalisme.md)**
 
-Plato was een leerling van Socrates en stichtte in Athene de Akademia, de eerste filosofieschool van Europa. Hij is de eerste denker die systematisch uitwerkt waaróm je je zintuigen niet zomaar mag vertrouwen.
+Plato was een leerling van Socrates en stichtte in Athene de Akademia, een van de eerste filosofiescholen van Europa. Hij is een van de eerste denkers die systematisch uitwerken waaróm je je zintuigen niet zomaar mag vertrouwen.
 
 ## Kernidee: de grot
 
 In zijn beroemde **grotallegorie** zitten mensen hun leven lang vastgeketend in een grot, met hun gezicht naar de wand. Achter hen brandt een vuur waarlangs voorwerpen worden gedragen. Alles wat de gevangenen ooit zien zijn de schaduwen daarvan op de wand — en voor hen zíjn die schaduwen de werkelijkheid.
 
-Ontsnapt er één, dan is hij eerst verblind door het daglicht. Langzaam ziet hij de echte voorwerpen en uiteindelijk de zon. Keert hij terug om het te vertellen, dan wordt hij uitgelachen: de anderen kennen niets anders dan hun schaduwen.
+Ontsnapt er één, dan is hij eerst verblind door het daglicht. Langzaam ziet hij de echte voorwerpen en uiteindelijk de zon. Keert hij terug om het te vertellen, dan wordt hij uitgelachen: de anderen kennen niets anders dan hun schaduwen. Als ze de kans kregen, zouden ze hem zelfs ombrengen, schrijft Plato — een verwijzing naar zijn leraar Socrates, die in Athene ter dood werd veroordeeld.
 
 Zo verhoudt onze waarneming zich volgens Plato tot de werkelijkheid. Wat je ziet is een afschaduwing van iets volmaakters: de **Ideeën**. De perfecte cirkel, de rechtvaardigheid zelf, het goede — die bestaan echt, los van de dingen die je tegenkomt, en je bereikt ze alleen met je verstand. Die opvatting heet **begripsrealisme**.
 

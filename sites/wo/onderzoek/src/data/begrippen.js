@@ -84,7 +84,7 @@ const begrippen = {
   },
   cogito: {
     term: 'Cogito ergo sum',
-    kort: '"Ik denk, dus ik ben": het enige dat Descartes’ twijfel overleefde.',
+    kort: '"Ik denk, dus ik ben": het enige dat de twijfel van Descartes overleefde.',
     lang: '"Ik denk, dus ik ben" — de enige zekerheid die overbleef toen Descartes aan alles twijfelde: wie twijfelt, moet bestaan om te kunnen twijfelen.',
     url: '/kennisleer/descartes',
   },
@@ -240,7 +240,7 @@ const begrippen = {
   monisme: {
     term: 'Monisme',
     kort: 'Alles wat bestaat is een verschijningsvorm van één en dezelfde substantie (Spinoza).',
-    lang: 'Spinoza’s opvatting dat er niet een god én een wereld én losse geesten bestaan, maar één enkele substantie waarvan alles een verschijningsvorm is.',
+    lang: 'De opvatting van Spinoza dat er niet een god én een wereld én losse geesten bestaan, maar één enkele substantie waarvan alles een verschijningsvorm is.',
     url: '/kennisleer/spinoza',
   },
   nominalisme: {
@@ -306,7 +306,7 @@ const begrippen = {
   'primaire-secundaire-eigenschappen': {
     term: 'Primaire en secundaire eigenschappen',
     kort: 'Primaire zitten in het voorwerp (vorm, omvang), secundaire ontstaan in de waarnemer (kleur, smaak).',
-    lang: 'Locke’s onderscheid: primaire eigenschappen zitten in het voorwerp zelf (omvang, vorm, aantal, beweging), secundaire ontstaan pas in de waarnemer (kleur, geur, smaak, geluid).',
+    lang: 'Het onderscheid van Locke: primaire eigenschappen zitten in het voorwerp zelf (omvang, vorm, aantal, beweging), secundaire ontstaan pas in de waarnemer (kleur, geur, smaak, geluid).',
     url: '/kennisleer/locke',
   },
   prototype: {
@@ -365,7 +365,7 @@ const begrippen = {
   },
   syllogistiek: {
     term: 'Syllogistiek',
-    kort: 'Aristoteles’ sluitredenering in drie stappen.',
+    kort: 'De sluitredenering in drie stappen die Aristoteles ontwierp.',
     lang: 'De sluitredenering in drie stappen die Aristoteles ontwierp: alle mensen zijn sterfelijk; Socrates is een mens; dus Socrates is sterfelijk.',
     url: '/kennisleer/aristoteles',
   },
@@ -378,7 +378,7 @@ const begrippen = {
   'tabula-rasa': {
     term: 'Tabula rasa',
     kort: 'De geest begint bij de geboorte als onbeschreven blad (Locke).',
-    lang: 'Locke’s beeld van de pasgeboren geest als onbeschreven blad: er zijn geen aangeboren ideeën, alles komt via de zintuigen binnen.',
+    lang: 'Het beeld dat Locke gebruikte voor de pasgeboren geest: een onbeschreven blad, want er zijn geen aangeboren ideeën, alles komt via de zintuigen binnen.',
     url: '/kennisleer/locke',
   },
   theoriegericht: {
@@ -426,7 +426,7 @@ const begrippen = {
   'vork-van-hume': {
     term: 'Vork van Hume',
     kort: 'Elke zinvolle uitspraak is analytisch of synthetisch; wat in geen van beide past, is onzin.',
-    lang: 'Hume’s indeling van alle zinvolle uitspraken in analytische (a priori) en synthetische (a posteriori). Wat in geen van beide vakken past, noemde hij onzin.',
+    lang: 'De indeling van Hume van alle zinvolle uitspraken in analytische (a priori) en synthetische (a posteriori); de namen zelf zijn later door Kant bedacht. Wat in geen van beide vakken past, noemde Hume onzin.',
     url: '/kennisleer/vork-van-hume',
   },
 };

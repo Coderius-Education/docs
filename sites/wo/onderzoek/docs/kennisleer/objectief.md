@@ -14,7 +14,7 @@ title: Objectieve kennis
 
 - De tafel in lokaal 12 is 180 centimeter lang.
 - Er staan op dit moment 214 fietsen in de stalling.
-- Water kookt op zeeniveau bij 100 graden Celsius.
+- IJzer smelt bij 1538 graden Celsius.
 
 Je herkent het patroon: een ander kan hetzelfde vaststellen met hetzelfde meetlint, dezelfde telling of dezelfde thermometer, en komt dan op hetzelfde uit.
 

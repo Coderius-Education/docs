@@ -18,7 +18,7 @@ Het **scepticisme** is de opvatting dat je niets voor 100% zeker kunt weten. Elk
 
 ## Twijfel als gereedschap
 
-Niet elke scepticus wil eindigen bij "niemand weet iets". [Descartes](./descartes.md) gebruikte de twijfel juist als **methode**: hij zette alles wat ook maar een klein beetje wankelde opzij, om te zien of er iets overbleef dat de twijfel overleefde. Dat noemen we methodische twijfel — twijfelen om een steviger fundament te vinden, niet om alles af te breken.
+De Griekse filosoof Pyrrho (ca. 360–270 v.Chr.) trok de radicaalste conclusie: omdat je niets zeker weet, kun je over alles beter je oordeel opschorten. Maar niet elke scepticus wil eindigen bij "niemand weet iets". [Descartes](./descartes.md) gebruikte de twijfel juist als **methode**: hij zette alles wat ook maar een klein beetje wankelde opzij, om te zien of er iets overbleef dat de twijfel overleefde. Dat noemen we methodische twijfel — twijfelen om een steviger fundament te vinden, niet om alles af te breken.
 
 :::caution[Scepticisme is geen vrijbrief]
 "Je kunt niets zeker weten" betekent niet dat alle beweringen even veel waard zijn. Een conclusie uit tachtig zorgvuldige metingen is nog steeds veel sterker dan een onderbuikgevoel. Wie het scepticisme gebruikt om elk onderzoek weg te wuiven ("het is toch maar een mening"), begrijpt het verkeerd: de onzekerheid is juist de reden om zo zorgvuldig mogelijk te werk te gaan.

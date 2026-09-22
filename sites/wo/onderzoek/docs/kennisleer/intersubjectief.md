@@ -12,7 +12,7 @@ title: Intersubjectieve kennis
 
 ## Waarom dit het doel van wetenschap is
 
-Volmaakte objectiviteit is onbereikbaar: niemand kan buiten zijn eigen waarneming stappen om te controleren of die klopt. Dat is de les van het [scepticisme](./scepticisme.md). Wat wél kan, is je werk zó inrichten dat anderen het kunnen controleren en overdoen — en dat ze dan op hetzelfde uitkomen.
+Volmaakte objectiviteit is onbereikbaar: niemand kan buiten de eigen waarneming stappen om te controleren of die klopt. Dat is de les van het [scepticisme](./scepticisme.md). Wat wél kan, is je werk zó inrichten dat anderen het kunnen controleren en overdoen — en dat ze dan op hetzelfde uitkomen.
 
 Daarom draaien twee van [de vier spelregels](../spelregels/de-vier-spelregels.md) hier rechtstreeks om:
 

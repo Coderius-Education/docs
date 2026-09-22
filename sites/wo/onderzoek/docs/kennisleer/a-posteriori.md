@@ -12,11 +12,11 @@ Kennis is **a posteriori** als zij pas ná en dankzij de waarneming vaststaat: j
 
 ## Voorbeelden
 
-- Water kookt op zeeniveau bij 100 graden Celsius.
+- Water zet uit als het bevriest.
 - 62% van de leerlingen komt met de fiets naar school.
 - Deze klas telt achtentwintig leerlingen.
 
-Geen van deze uitspraken kun je vanuit je stoel bewijzen. Er is niets tegenstrijdigs aan de gedachte dat water bij 90 graden zou koken of dat er 31 leerlingen in de klas zitten — het is gewoon niet zo, en dat weet je doordat iemand gekeken heeft.
+Geen van deze uitspraken kun je vanuit je stoel bewijzen. Er is niets tegenstrijdigs aan de gedachte dat water bij bevriezen zou krimpen, zoals de meeste stoffen doen, of dat er 31 leerlingen in de klas zitten — het is gewoon niet zo, en dat weet je doordat iemand gekeken heeft.
 
 Vrijwel alles wat je met je eigen onderzoek oplevert, is a posteriori: het is de opbrengst van [tellen](../gegevens/kwantitatief.md), [observeren](../opzet/methoden/observatie.md), [vragen](../opzet/methoden/enquete.md) en meten. Dit is het domein van de [empiristen](./empirisme.md).
 

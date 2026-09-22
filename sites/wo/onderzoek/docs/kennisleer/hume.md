@@ -10,7 +10,7 @@ Hume was een van de hoofdrolspelers van de Schotse Verlichting: historicus, essa
 
 ## Kernidee 1: de vork
 
-Volgens Hume zijn er precies twee bronnen van kennis, en dus twee soorten zinvolle uitspraken. **Analytische** uitspraken volgen uit de betekenis van de woorden ("alle vrijgezellen zijn ongetrouwd"); **synthetische** uitspraken komen uit de waarneming ("het regent vandaag"). Een derde mogelijkheid is er niet.
+Volgens Hume zijn er precies twee bronnen van kennis, en dus twee soorten zinvolle uitspraken. De ene soort volgt uit de betekenis van de woorden ("alle vrijgezellen zijn ongetrouwd"); de andere komt uit de waarneming ("het regent vandaag"). Een derde mogelijkheid is er niet. Hume noemde ze *relations of ideas* en *matters of fact*; wij kennen ze nu als **analytische** en **synthetische** uitspraken, de namen die Kant er later aan gaf.
 
 Wat in geen van beide vakken past, is volgens hem geen kennis maar onzin — hoe verheven het ook klinkt. Zijn beroemde advies: pak een willekeurig boek, kijk of het redeneringen over getallen of over feiten bevat, en zo niet, "geef het dan aan de vlammen". Dit onderscheid heet [de vork van Hume](./vork-van-hume.mdx).
 

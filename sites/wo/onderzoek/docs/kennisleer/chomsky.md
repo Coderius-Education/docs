@@ -16,6 +16,8 @@ Uit zó weinig en zulke rommelige input zo'n ingewikkeld systeem afleiden, kan v
 
 Daarmee keert hij zich rechtstreeks tegen het onbeschreven blad van [Locke](./locke.md), en staat hij in de traditie van [Plato](./plato.md) en [Descartes](./descartes.md).
 
+Onomstreden is dat niet. Veel taalkundigen denken dat kinderen veel meer uit hun omgeving halen dan Chomsky aannam — ze horen miljoenen zinnen en pikken daar razendsnel patronen uit op. Hoeveel er aangeboren is, is nog altijd een open vraag.
+
 ## Wat je hieraan hebt bij je eigen onderzoek
 
 Chomsky laat iets zien wat verder gaat dan taal: een filosofisch meningsverschil van tweeduizend jaar oud werd hier een **onderzoekbare vraag**. Niet "wat vind jij van aangeboren kennis?", maar: hoeveel taal hoort een kind precies, en hoeveel grammatica beheerst het op welke leeftijd?

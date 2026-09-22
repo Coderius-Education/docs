@@ -12,13 +12,13 @@ Aristoteles studeerde twintig jaar bij [Plato](./plato.md) — en keerde zich ve
 
 Waar Plato de Ideeën in een aparte werkelijkheid plaatst, houdt Aristoteles vol dat **de essentie niet los van de dingen bestaat**. Er zweeft geen volmaakt "Paard" ergens buiten de wereld; er zijn alleen echte paarden, en "paard" is de naam die wij aan die groep geven. Deze positie heet **nominalisme** (van *nomen*, naam).
 
-Het gevolg is een heel ander onderzoeksprogramma. Wie de wereld wil kennen, moet niet in zichzelf keren maar naar buiten: waarnemen, verzamelen, vergelijken en ordenen. Aristoteles deed dat op grote schaal — hij beschreef honderden diersoorten en tientallen staatsvormen.
+Het gevolg is een heel ander onderzoeksprogramma. Wie de wereld wil kennen, moet niet in zichzelf keren maar naar buiten: waarnemen, verzamelen, vergelijken en ordenen. Aristoteles deed dat op grote schaal — hij beschreef honderden diersoorten en verzamelde de grondwetten van ruim 150 Griekse stadstaten.
 
 Om betrouwbaar te redeneren met wat hij vond, ontwierp hij de **syllogistiek**: de sluitrede in drie stappen.
 
 > Alle mensen zijn sterfelijk. · Socrates is een mens. · Dus Socrates is sterfelijk.
 
-Klopt die vorm, dan is de conclusie onvermijdelijk waar zodra de twee uitspraken waarmee je begint waar zijn. Daarmee schreef hij de eerste logica ooit.
+Klopt die vorm, dan is de conclusie onvermijdelijk waar zodra de twee uitspraken waarmee je begint waar zijn. Daarmee schreef hij de eerste systematische logica van het Westen.
 
 ## Wat je hieraan hebt bij je eigen onderzoek
 

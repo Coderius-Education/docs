@@ -6,7 +6,7 @@ title: John Locke
 
 **1632–1704 · [empirisme](./empirisme.md)**
 
-Locke was arts, filosoof en politiek denker; zijn ideeën over vrijheid en bestuur werkten door tot in de Amerikaanse grondwet. In de kennisleer is hij de man die het aangeboren weten de deur wees.
+Locke was arts, filosoof en politiek denker; zijn ideeën over vrijheid en bestuur werkten door tot in de Amerikaanse Onafhankelijkheidsverklaring. In de kennisleer is hij de man die het aangeboren weten de deur wees.
 
 ## Kernidee: een onbeschreven blad
 

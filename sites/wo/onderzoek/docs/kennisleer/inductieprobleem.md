@@ -12,7 +12,7 @@ Het **inductieprobleem** is de vaststelling dat je uit nog zoveel losse waarnemi
 
 ## De zwaan die roet in het eten gooide
 
-Eeuwenlang gold in Europa als vaststaand feit: alle zwanen zijn wit. Niemand had ooit iets anders gezien, en het aantal waarnemingen liep in de miljoenen. Tot Europese zeelieden eind zeventiende eeuw in Australië aan land gingen en zwarte zwanen aantroffen.
+Eeuwenlang gold in Europa als vaststaand feit: alle zwanen zijn wit. Niemand had ooit iets anders gezien, en het aantal waarnemingen liep in de miljoenen. Tot de Nederlandse zeevaarder Willem de Vlamingh in 1697 aan de westkust van Australië zwarte zwanen aantrof — de rivier waar hij ze zag, heet nog altijd de Swan River.
 
 De miljoenen witte zwanen waren geen van alle onjuist waargenomen. Het probleem zat in de sprong: van "alle zwanen die ík zag waren wit" naar "alle zwanen zijn wit". Die sprong is nooit waterdicht, hoe groot je aantal waarnemingen ook is.
 
