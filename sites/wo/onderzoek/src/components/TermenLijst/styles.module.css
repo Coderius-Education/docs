@@ -18,3 +18,24 @@
   white-space: nowrap;
   font-size: 0.88rem;
 }
+
+.zoek {
+  width: 100%;
+  margin: 0.5rem 0 1rem;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-global-radius);
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  font-size: 0.95rem;
+}
+
+.zoek:focus {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 1px;
+}
+
+.leeg {
+  color: var(--ifm-color-emphasis-700);
+  font-style: italic;
+}

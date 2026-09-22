@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import Link from '@docusaurus/Link';
 import begrippen from '@site/src/data/begrippen';
+import {hoofdstukken, hoofdstukVan} from '@site/src/data/hoofdstukken';
 import styles from './styles.module.css';
 
 function schud(lijst) {
@@ -18,28 +19,46 @@ function schud(lijst) {
  */
 export default function TermenTrainer() {
   const alleIds = Object.keys(begrippen);
+  const [ids, setIds] = useState(alleIds); // de gekozen set
   const [stapel, setStapel] = useState(null); // null = nog niet gestart
   const [omgedraaid, setOmgedraaid] = useState(false);
   const [gekend, setGekend] = useState(0);
   const [pogingen, setPogingen] = useState(0);
 
-  const start = () => {
-    setStapel(schud(alleIds));
+  const start = (keuze) => {
+    setIds(keuze);
+    setStapel(schud(keuze));
     setOmgedraaid(false);
     setGekend(0);
     setPogingen(0);
   };
 
+  const idsVan = (hid) => alleIds.filter((id) => hoofdstukVan(begrippen[id]) === hid);
+
   if (stapel === null) {
     return (
       <div className={styles.trainer}>
         <p className={styles.introTekst}>
-          Test jezelf: {alleIds.length} kaartjes, telkens een term — weet jij
-          wat hij betekent voordat je het kaartje omdraait?
+          Test jezelf: telkens een term — weet jij wat die betekent voordat je
+          het kaartje omdraait? Kies alles of één hoofdstuk.
         </p>
-        <button type="button" className={styles.primair} onClick={start}>
-          Start de trainer ({alleIds.length} termen)
+        <button type="button" className={styles.primair} onClick={() => start(alleIds)}>
+          Alle termen ({alleIds.length})
         </button>
+        <div className={styles.hoofdstukken}>
+          {hoofdstukken.map((h) => {
+            const n = idsVan(h.id).length;
+            return (
+              <button
+                key={h.id}
+                type="button"
+                className={styles.hoofdstukKnop}
+                onClick={() => start(idsVan(h.id))}>
+                {h.naam} ({n})
+              </button>
+            );
+          })}
+        </div>
       </div>
     );
   }
@@ -48,12 +67,17 @@ export default function TermenTrainer() {
     return (
       <div className={styles.trainer}>
         <p className={styles.klaar}>
-          Alle {alleIds.length} termen gekend! Je had {pogingen}{' '}
+          Alle {ids.length} termen gekend! Je had {pogingen}{' '}
           {pogingen === 1 ? 'poging' : 'pogingen'} nodig.
         </p>
-        <button type="button" className={styles.primair} onClick={start}>
-          Nog een keer
-        </button>
+        <div className={styles.knoppen}>
+          <button type="button" className={styles.primair} onClick={() => start(ids)}>
+            Nog een keer
+          </button>
+          <button type="button" className={styles.oefen} onClick={() => setStapel(null)}>
+            Ander hoofdstuk
+          </button>
+        </div>
       </div>
     );
   }
@@ -76,7 +100,10 @@ export default function TermenTrainer() {
   return (
     <div className={styles.trainer}>
       <div className={styles.voortgang}>
-        {gekend} van {alleIds.length} gekend · nog {stapel.length} in de stapel
+        {gekend} van {ids.length} gekend · nog {stapel.length} in de stapel ·{' '}
+        <button type="button" className={styles.stopKnop} onClick={() => setStapel(null)}>
+          stoppen
+        </button>
       </div>
       <button
         type="button"

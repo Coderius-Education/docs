@@ -35,7 +35,7 @@ const kaarten = [
   },
   {
     titel: 'Werkvormen',
-    tekst: 'Opdrachten om de stof te gebruiken, zoals elke methode langs de kennisleer-bril leggen.',
+    tekst: 'Klasopdrachten met een printbaar werkblad: methoden langs de kennisleer-bril, en van vijftig bronnen naar drie.',
     to: '/werkvormen/overzicht',
   },
   {

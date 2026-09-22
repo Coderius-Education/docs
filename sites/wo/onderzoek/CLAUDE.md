@@ -36,6 +36,10 @@ naar `main` deployt automatisch (`.github/workflows/deploy.yml`).
   gewoon helemaal.
 - `src/data/begrippen.js` is de enige bron voor definities: tooltips (`<B t="…"/>`),
   de termen-trainer en de termenlijst worden eruit gegenereerd. Nieuwe begrippen dáár toevoegen.
+  Het hoofdstuk van een begrip volgt uit het eerste deel van zijn `url`; een nieuw hoofdstuk
+  (nieuwe map in `docs/`) krijgt een regel in `src/data/hoofdstukken.js`, anders ontbreekt
+  het in de trainer.
+- Teksten van de zoekplugin staan in het Nederlands in `i18n/nl/code.json`.
 - Componenten zijn globaal geregistreerd in `src/theme/MDXComponents.js`; geen imports nodig in docs.
 - Verplaatste of hernoemde pagina's krijgen een redirect in `docusaurus.config.js`
   (plugin-client-redirects).

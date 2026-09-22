@@ -58,11 +58,29 @@ const begrippen = {
     lang: 'De situatie waarin een onderzoeker, of wie zijn onderzoek betaalt, belang heeft bij een bepaalde uitkomst. Het maakt onderzoek niet vanzelf fout, maar is een reden om de methode extra kritisch te lezen en onafhankelijke bevestiging te zoeken.',
     url: '/literatuurstudie/onderzoeker-onderzoeken',
   },
+  'beschrijvend-definierend': {
+    term: 'Beschrijvend-definiërend onderzoek',
+    kort: 'Vastleggen wat een begrip precies betekent en waar de grens ligt.',
+    lang: 'De functie van onderzoek waarbij je vastlegt wat een begrip betekent: welke kenmerken horen erbij en wat valt er wel en niet onder? Kernvraag: wat is het precies?',
+    url: '/opzet/functies/beschrijvend-definierend',
+  },
+  'beschrijvend-evaluerend': {
+    term: 'Beschrijvend-evaluerend onderzoek',
+    kort: 'Beoordelen hoe goed iets is, aan de hand van criteria die je vooraf vastlegt.',
+    lang: 'De functie van onderzoek waarbij je iets beoordeelt aan de hand van vooraf vastgelegde criteria. Kernvraag: hoe goed is het, en waar wel en niet?',
+    url: '/opzet/functies/beschrijvend-evaluerend',
+  },
   'beschrijvend-onderzoek': {
     term: 'Beschrijvend onderzoek',
     kort: 'Onderzoek dat beschrijft hoe iets is: puur beschrijvend, vergelijkend, definiërend of evaluerend.',
     lang: 'Onderzoek met als functie te beschrijven hoe iets is. Kan puur beschrijvend, vergelijkend, definiërend of evaluerend zijn.',
     url: '/opzet/functies/functies-overzicht',
+  },
+  'beschrijvend-vergelijkend': {
+    term: 'Beschrijvend-vergelijkend onderzoek',
+    kort: 'Twee of meer gevallen op dezelfde manier beschrijven en naast elkaar zetten.',
+    lang: 'De functie van onderzoek waarbij je twee of meer gevallen op dezelfde manier beschrijft en vergelijkt. Kernvraag: wat zijn de overeenkomsten en verschillen?',
+    url: '/opzet/functies/beschrijvend-vergelijkend',
   },
   betrouwbaar: {
     term: 'Betrouwbaar',
@@ -153,6 +171,12 @@ const begrippen = {
     lang: 'Maat voor de invloed van een onderzoeker: het grootste getal h waarvoor geldt dat minstens h van zijn artikelen elk minstens h keer geciteerd zijn. Groeit met de lengte van een loopbaan en verschilt sterk per vakgebied.',
     url: '/literatuurstudie/h-index',
   },
+  'hawthorne-effect': {
+    term: 'Hawthorne-effect',
+    kort: 'Mensen gedragen zich anders zodra ze weten dat ze bekeken worden.',
+    lang: 'Het verschijnsel dat mensen hun gedrag aanpassen zodra ze weten dat ze onderzocht worden. Genoemd naar onderzoek in de Hawthorne-fabriek in de jaren twintig; hoe groot het effect is, staat ter discussie.',
+    url: '/opzet/methoden/observatie',
+  },
   hoofdvraag: {
     term: 'Hoofdvraag',
     kort: 'De centrale vraag van je onderzoek: een kennisvraag (theoriegericht) of een ontwerpvraag (ontwerpgericht).',
@@ -237,6 +261,12 @@ const begrippen = {
     lang: 'Een soort onderzoek (ook wel bronnenonderzoek) waarbij je bestaande bronnen zoekt, op betrouwbaarheid beoordeelt en met elkaar vergelijkt. Bijna elk onderzoek begint ermee.',
     url: '/opzet/soorten/literatuuronderzoek',
   },
+  'methodische-twijfel': {
+    term: 'Methodische twijfel',
+    kort: 'Bewust aan alles twijfelen om te zien wat overeind blijft (Descartes).',
+    lang: 'De methode van Descartes: bewust alles verwerpen wat ook maar een beetje wankelt, niet om te eindigen bij niets, maar om een zeker fundament te vinden.',
+    url: '/kennisleer/descartes',
+  },
   monisme: {
     term: 'Monisme',
     kort: 'Alles wat bestaat is een verschijningsvorm van één en dezelfde substantie (Spinoza).',
@@ -314,6 +344,12 @@ const begrippen = {
     kort: 'Een eerste, testbare versie van je ontwerp — om te testen of je oplossing werkt.',
     lang: 'Een eerste, testbare versie van je ontwerp. Hoeft nog niet af of mooi te zijn — het gaat erom dat je ermee kunt testen of je oplossing werkt.',
     url: '/typen/ontwerpgericht',
+  },
+  'puur-beschrijvend': {
+    term: 'Puur beschrijvend onderzoek',
+    kort: 'In kaart brengen hoe iets is, zonder te vergelijken, beoordelen of verklaren.',
+    lang: 'De functie van onderzoek waarbij je een situatie in kaart brengt zoals die is, zonder te vergelijken, te beoordelen of te verklaren. Kernvraag: hoe is het?',
+    url: '/opzet/functies/puur-beschrijvend',
   },
   rationalisme: {
     term: 'Rationalisme',
@@ -393,6 +429,12 @@ const begrippen = {
     lang: 'Een van de vier spelregels: onderzoek is transparant als een ander precies kan nagaan wat je hebt gedaan — methode beschreven, bronnen vermeld, gegevens zichtbaar.',
     url: '/spelregels/transparant',
   },
+  'universele-grammatica': {
+    term: 'Universele grammatica',
+    kort: 'De aangeboren aanleg voor taalstructuur die volgens Chomsky ieder kind meebrengt.',
+    lang: 'De aangeboren aanleg voor taalstructuur die volgens Chomsky verklaart hoe kinderen uit weinig en rommelige input razendsnel een taal leren. Omstreden, en daarom een onderzoekbare vraag.',
+    url: '/kennisleer/chomsky',
+  },
   valide: {
     term: 'Valide',
     kort: 'Je meet echt wat je wilt weten: passende methode, juiste groep, neutrale vragen.',
@@ -411,11 +453,23 @@ const begrippen = {
     lang: 'Een soort onderzoek waarbij je gegevens verzamelt in de echte situatie, bijvoorbeeld door te observeren, enquêteren, interviewen of meten op locatie.',
     url: '/opzet/soorten/veldonderzoek',
   },
+  'verklarend-explorerend': {
+    term: 'Verklarend-explorerend onderzoek',
+    kort: 'Open op zoek naar mogelijke verklaringen, zonder vaste verwachting vooraf.',
+    lang: 'De functie van onderzoek waarbij je weet dát iets zo is, maar open zoekt naar mogelijke verklaringen. De opbrengst is vaak een hypothese voor vervolgonderzoek.',
+    url: '/opzet/functies/verklarend-explorerend',
+  },
   'verklarend-onderzoek': {
     term: 'Verklarend onderzoek',
     kort: 'Onderzoek dat verklaart waaróm iets zo is: explorerend (verklaringen zoeken) of toetsend (één hypothese toetsen).',
     lang: 'Onderzoek met als functie te verklaren waaróm iets zo is. Kan explorerend zijn (mogelijke verklaringen opsporen) of toetsend (één hypothese gericht toetsen).',
     url: '/opzet/functies/functies-overzicht',
+  },
+  'verklarend-toetsend': {
+    term: 'Verklarend-toetsend onderzoek',
+    kort: 'Eén verwachte verklaring (een hypothese) gericht toetsen.',
+    lang: 'De functie van onderzoek waarbij je al een verwachte verklaring hebt, een hypothese, en gericht onderzoekt of die klopt. Kernvraag: klopt deze verklaring?',
+    url: '/opzet/functies/verklarend-toetsend',
   },
   'vooraf-opgestelde-eisen': {
     term: 'Vooraf opgestelde eisen',

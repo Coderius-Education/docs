@@ -105,3 +105,36 @@
   font-size: 1.05rem;
   margin-bottom: 0.75rem;
 }
+
+.hoofdstukken {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.9rem;
+}
+
+.hoofdstukKnop {
+  padding: 0.35rem 0.8rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ifm-color-primary);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.hoofdstukKnop:hover {
+  border-color: var(--ifm-color-primary);
+  background: var(--ifm-color-emphasis-100);
+}
+
+.stopKnop {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--ifm-color-primary);
+  font-size: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
