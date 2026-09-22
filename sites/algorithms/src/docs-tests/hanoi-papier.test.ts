@@ -65,3 +65,43 @@ describe('de Hanoi-hand-out zegt hetzelfde als de lessen', () => {
     ]);
   });
 });
+
+describe('werkvorm 4 en "voor wie klaar is" op de hand-out kloppen met het spel', () => {
+  const T = (n: number): number => 2 ** n - 1;
+
+  it('het recept natellen geeft dezelfde rij als werkvorm 1', () => {
+    expect(HANDOUT).toContain('| 2 | 1 + 1 + 1 | 3 |');
+    for (const n of [3, 4, 5]) {
+      expect(ANTWOORDEN).toContain(`${T(n - 1)} + 1 + ${T(n - 1)} = ${T(n)}`);
+    }
+  });
+
+  it('de grootste schijf gaat bij zet 2ⁿ⁻¹ van de 2ⁿ − 1', () => {
+    const zetten = [2, 3, 4].map((n) => 2 ** (n - 1));
+    const totaal = [2, 3, 4].map(T);
+    expect(ANTWOORDEN).toContain(
+      `zet ${zetten.join(', ').replace(/, (\d+)$/, ' en $1')} van de ${totaal.join(', ').replace(/, (\d+)$/, ' en $1')}`,
+    );
+  });
+
+  it('de kleinste schijf beweegt om de andere zet', () => {
+    // Speel de zetten van het recept na en tel wanneer schijf 1 beweegt.
+    const hanoi = (n: number, a: string, c: string, b: string): [string, string][] =>
+      n === 0 ? [] : [...hanoi(n - 1, a, b, c), [a, c], ...hanoi(n - 1, b, c, a)];
+    for (const n of [3, 4]) {
+      const palen: Record<string, number[]> = {
+        A: Array.from({ length: n }, (_, i) => n - i),
+        B: [],
+        C: [],
+      };
+      const kleinste: number[] = [];
+      hanoi(n, 'A', 'C', 'B').forEach(([van, naar], i) => {
+        const schijf = palen[van].pop() as number;
+        palen[naar].push(schijf);
+        if (schijf === 1) kleinste.push(i + 1);
+      });
+      expect(kleinste).toEqual(kleinste.map((_, i) => 2 * i + 1));
+    }
+    expect(ANTWOORDEN).toContain('de kleinste schijf beweegt om de andere zet');
+  });
+});
