@@ -123,6 +123,20 @@
 }
 
 @layer base {
+  /* De homepage is bedoeld om in één scherm te passen: alle cursussen zonder
+     scrollen. Tailwind rekent in rem, dus schaalt de hele pagina mee met de
+     wortelmaat. Die hangt aan de hoogte van het venster: op een laag
+     schoolscherm krimpt de pagina, vanaf ongeveer 950px hoog staat hij op de
+     volle 16px. Onder de 12,5px zakt hij niet, anders wordt de tekst te klein;
+     dan mag de pagina scrollen. */
+  html {
+    font-size: clamp(12.5px, calc(1.4px + 1.54vh), 16px);
+  }
+  @media (max-width: 640px) {
+    html {
+      font-size: 16px;
+    }
+  }
   * {
     @apply border-border outline-ring/50;
   }

@@ -49,7 +49,7 @@
 </svelte:head>
 
 <main class="mx-auto max-w-7xl px-4">
-	<section class="pt-6 pb-4">
+	<section class="pt-4 pb-3">
 		<h1 class="text-2xl font-bold tracking-tight sm:text-3xl">Coderius Education</h1>
 		<p class="mt-1 text-muted-foreground">
 			{curriculum.length} cursussen voor het voortgezet onderwijs, van je eerste regel Python tot een
@@ -57,7 +57,7 @@
 		</p>
 	</section>
 
-	<section aria-label="Filters" class="flex flex-wrap items-center gap-x-6 gap-y-2 pb-4">
+	<section aria-label="Filters" class="flex flex-wrap items-center gap-x-6 gap-y-2 pb-3">
 		<div class="flex flex-wrap items-center gap-2" role="group" aria-label="Niveau">
 			<button type="button" class={cn(chip, niveau === null && chipActief)} aria-pressed={niveau === null} onclick={() => (niveau = null)}>
 				Alle niveaus
@@ -97,7 +97,7 @@
 				</button>
 			</div>
 		{:else}
-			<ul id="cursussen" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+			<ul id="cursussen" class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
 				{#each zichtbaar as c (c.id)}
 					{@const woorden = c.label.split(" ")}
 					<li>
@@ -105,14 +105,14 @@
 							href={c.link}
 							target="_blank"
 							rel="noopener noreferrer"
-							class="flex h-full flex-col gap-2 rounded-xl border bg-card p-4 text-card-foreground shadow-sm transition-colors hover:border-primary focus-visible:border-primary focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+							class="flex h-full flex-col gap-1.5 rounded-xl border bg-card p-3.5 text-card-foreground shadow-sm transition-colors hover:border-primary focus-visible:border-primary focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
 						>
-							<div class="flex items-start justify-between gap-2">
+							<div class="flex items-center gap-2">
 								{#if merk(c.id)}
-									<img src={merk(c.id)} alt="" width="48" height="48" class="-my-1.5 -ml-1.5 dark:hidden" />
-									<img src={merk(c.id, true)} alt="" width="48" height="48" class="-my-1.5 -ml-1.5 hidden dark:block" />
+									<img src={merk(c.id)} alt="" class="-my-1 -ml-1 size-9 shrink-0 dark:hidden" />
+									<img src={merk(c.id, true)} alt="" class="-my-1 -ml-1 hidden size-9 shrink-0 dark:block" />
 								{/if}
-								<Badge class={cn("shrink-0", levelColors[c.level])}>{levelLabels[c.level]}</Badge>
+								<Badge class={cn("ml-auto shrink-0", levelColors[c.level])}>{levelLabels[c.level]}</Badge>
 							</div>
 							<div>
 								<h2 class="text-base font-semibold leading-tight">
@@ -131,7 +131,7 @@
 		{/if}
 	</section>
 
-	<section aria-label="Over Coderius" class="mt-10 mb-6 grid gap-6 md:grid-cols-2">
+	<section aria-label="Over Coderius" class="mt-5 mb-4 grid gap-5 md:grid-cols-2">
 		<div>
 			<h2 class="text-lg font-semibold">Lesmateriaal</h2>
 			<p class="mt-1 text-sm text-muted-foreground">
