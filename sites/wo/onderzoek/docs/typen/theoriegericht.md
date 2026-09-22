@@ -24,6 +24,10 @@ Theoriegerichte hoofdvragen zijn **kennisvragen**. Ze beginnen vaak met *hoe, wa
 
 Een **antwoord**: een conclusie die je onderbouwt met de gegevens die je hebt verzameld. Je verzamelt die gegevens systematisch — welke aanpak daarbij past, kies je met de [keuzedriehoek](../opzet/keuzedriehoek.mdx).
 
+:::caution[Valkuil: een vraag die je niet kunt onderzoeken]
+Een goede kennisvraag is **open**, **afgebakend** en **onderzoekbaar**. *"Is slaap belangrijk?"* is geen van drieën: het antwoord is ja of nee, het gaat over iedereen, en je weet niet wat je zou moeten meten. *"In hoeverre hangt de slaapduur van 4-havoleerlingen samen met hun concentratie in het eerste uur?"* is alle drie.
+:::
+
 :::tip[Goed om te weten]
 Een conclusie als *"mijn hypothese klopt niet"* is óók een geldig resultaat! Het gaat erom dat je **eerlijk** antwoord geeft op je vraag, niet dat de uitkomst is wat je hoopte.
 :::

@@ -7,7 +7,7 @@ sidebar_position: 2
 
 <Definitie gewoneTaal="je bouwt iets dat een probleem oplost, en je toont met tests aan dat het werkt.">
 
-Bij **ontwerpgericht onderzoek** wil je een **product maken** dat een probleem oplost: een app, een website, een machine, een lesprogramma, een spel of een prototype. Het eindresultaat is geen conclusie, maar een **werkend ontwerp**.
+Bij **ontwerpgericht onderzoek** wil je een **product maken** dat een probleem oplost: een app, een website, een machine, een lesprogramma of een spel. Het eindresultaat is geen conclusie, maar een **werkend ontwerp** — vaak nog geen af product, maar een <B t="prototype" tekst="prototype"/>: een eerste versie waarmee je kunt testen of je oplossing werkt.
 
 </Definitie>
 
@@ -25,7 +25,7 @@ Ontwerpgerichte hoofdvragen zijn **ontwerpvragen**. Ze beginnen bijna altijd met
 Een **ontwerp of prototype**, plus een verslag waarin je laat zien dat (en hoe goed) het werkt. Daarvoor stel je vooraf **eisen** op waaraan je ontwerp moet voldoen, en toets je je ontwerp daar aan het einde aan — dat toetsen is de [evaluerende functie](../opzet/functies/beschrijvend-evaluerend.md) van onderzoek.
 
 :::caution[Let op]
-Alleen iets maken is nog geen onderzoek. Het verschil zit in het **testen van je ontwerp aan vooraf opgestelde eisen** en het **onderbouwen van je keuzes**. Zonder eisen en tests heb je een knutselproject, geen ontwerponderzoek.
+Alleen iets maken is nog geen onderzoek. Het verschil zit in het **toetsen van je ontwerp aan vooraf opgestelde eisen** en het **onderbouwen van je keuzes**. Zonder eisen en tests heb je een knutselproject, geen ontwerponderzoek.
 :::
 
 <WelNiet

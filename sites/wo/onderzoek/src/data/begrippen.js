@@ -420,7 +420,7 @@ const begrippen = {
   'vooraf-opgestelde-eisen': {
     term: 'Vooraf opgestelde eisen',
     kort: 'De lijst eisen waaraan je ontwerp moet voldoen, opgesteld vóórdat je gaat ontwerpen.',
-    lang: 'De lijst met eisen waaraan je ontwerp moet voldoen, opgesteld vóórdat je gaat ontwerpen. Aan het einde test je je ontwerp tegen deze eisen.',
+    lang: 'De lijst met eisen waaraan je ontwerp moet voldoen, opgesteld vóórdat je gaat ontwerpen. Aan het einde toets je je ontwerp aan deze eisen.',
     url: '/typen/ontwerpgericht',
   },
   'vork-van-hume': {

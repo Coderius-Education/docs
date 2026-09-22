@@ -10,8 +10,11 @@ const sidebars = {
     {
       type: 'category',
       label: 'Typen onderzoek',
-      link: {type: 'doc', id: 'typen/theorie-vs-ontwerp'},
-      items: ['typen/theoriegericht', 'typen/ontwerpgericht'],
+      items: [
+        'typen/theorie-vs-ontwerp',
+        'typen/theoriegericht',
+        'typen/ontwerpgericht',
+      ],
     },
     {
       type: 'category',
