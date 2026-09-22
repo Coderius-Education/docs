@@ -35,7 +35,7 @@ Je wilt weten of leerlingen je nieuwe school-app handig vinden en telt hoe vaak 
   linkUrl="https://en.wikipedia.org/wiki/Clever_Hans"
   linkTekst="Clever Hans (Wikipedia)">
 
-Rond 1900 veroverde het Duitse paard Kluge Hans ("Slimme Hans") de wereldpers: hij leek sommen te kunnen oplossen door het antwoord met zijn hoef te tikken. Een commissie van deskundigen onderzocht het paard en vond geen bedrog. Pas de psycholoog Oskar Pfungst ontdekte in 1907 wat er écht gemeten werd: zodra de vragensteller het antwoord zelf niet wist, of achter een scherm stond, kon Hans het opeens ook niet meer. Het paard rekende niet — het las de onbewuste lichaamstaal van de mensen om hem heen, die zich net iets ontspanden zodra hij bij het juiste aantal tikken kwam.
+Rond 1904 veroverde het Duitse paard Kluge Hans ("Slimme Hans") de wereldpers: hij leek sommen te kunnen oplossen door het antwoord met zijn hoef te tikken. Een commissie van deskundigen onderzocht het paard en vond geen bedrog. Pas de psycholoog Oskar Pfungst ontdekte in 1907 wat er écht gemeten werd: zodra de vragensteller het antwoord zelf niet wist, of achter een scherm stond, kon Hans het opeens ook niet meer. Het paard rekende niet — het las de onbewuste lichaamstaal van de mensen om hem heen, die zich net iets ontspanden zodra hij bij het juiste aantal tikken kwam.
 
 **Wat je hiervan leert:** de tests leken rekenvermogen te meten, maar maten iets heel anders. Vraag je bij elke meting af: meet ik echt wat ik dénk te meten?
 

@@ -1,7 +1,7 @@
 // @ts-check
 // Zie https://docusaurus.io/docs/sidebar voor alle opties.
-// Elke categorie linkt naar zijn verbandpagina: klikken op het mapje
-// opent de pagina die de samenhang tussen de concepten uitlegt.
+// Een hoofdstuk begint met zijn overzichtspagina als eerste zichtbare
+// item; kleinere mapjes linken via `link` naar hun verbandpagina.
 
 /** @type {import('@docusaurus/plugin-content-docs').SidebarsConfig} */
 const sidebars = {
@@ -16,8 +16,8 @@ const sidebars = {
     {
       type: 'category',
       label: 'De spelregels',
-      link: {type: 'doc', id: 'spelregels/de-vier-spelregels'},
       items: [
+        'spelregels/de-vier-spelregels',
         'spelregels/betrouwbaar',
         'spelregels/valide',
         'spelregels/transparant',

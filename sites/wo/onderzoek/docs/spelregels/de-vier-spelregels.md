@@ -28,8 +28,9 @@ sidebar_position: 7
 Loop deze vragen na vóór je begint én vlak voor je je verslag inlevert:
 
 - [ ] Herhaal ik mijn metingen of tests vaak genoeg? *(betrouwbaar)*
-- [ ] Houd ik alle omstandigheden gelijk, behalve wat ik onderzoek? *(betrouwbaar)*
-- [ ] Past mijn methode echt bij mijn hoofdvraag? *(valide)*
+- [ ] Meet ik steeds op dezelfde manier, zodat een ander het kan herhalen? *(betrouwbaar)*
+- [ ] Past mijn methode echt bij mijn (deel)vragen? *(valide)*
+- [ ] Houd ik alle omstandigheden gelijk, behalve wat ik onderzoek? *(valide — [intern](./interne-validiteit.md))*
 - [ ] Is mijn groep deelnemers <B t="representatief" tekst="representatief"/> voor de groep waarover ik iets wil zeggen? *(valide)*
 - [ ] Kan iemand anders mijn onderzoek herhalen met alleen mijn verslag in de hand? *(transparant)*
 - [ ] Staat bij alles wat ik heb overgenomen een bronvermelding? *(transparant)*
