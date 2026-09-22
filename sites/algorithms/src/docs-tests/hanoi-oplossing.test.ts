@@ -19,6 +19,7 @@ const BOUWSTENEN = [
   'bouwen/05-basisgeval.mdx',
   'bouwen/06-recursie-stap.mdx',
   '08-aanpassen.mdx',
+  '09-uitrollen.mdx',
 ];
 
 function lees(naam: string): string {
@@ -80,8 +81,8 @@ describe('hanoi — het antwoord van elke pagina haalt de tests van die pagina',
     });
   }
 
-  it('09-zelf-bouwen.mdx: speel(n) uit het antwoord haalt de tests, met de hanoi uit de startcode', () => {
-    const tekst = lees('09-zelf-bouwen.mdx');
+  it('10-zelf-bouwen.mdx: speel(n) uit het antwoord haalt de tests, met de hanoi uit de startcode', () => {
+    const tekst = lees('10-zelf-bouwen.mdx');
     const start = startcode(tekst);
     const hanoi = start.slice(0, start.indexOf('def speel'));
     const [speel] = antwoorden(tekst);
@@ -90,8 +91,8 @@ describe('hanoi — het antwoord van elke pagina haalt de tests van die pagina',
     expect(r.status).toBe(0);
   });
 
-  it('09-zelf-bouwen.mdx: het antwoord van de uitdaging legt de grootste schijf bij zet 2ⁿ⁻¹', () => {
-    const tekst = lees('09-zelf-bouwen.mdx');
+  it('10-zelf-bouwen.mdx: het antwoord van de uitdaging legt de grootste schijf bij zet 2ⁿ⁻¹', () => {
+    const tekst = lees('10-zelf-bouwen.mdx');
     const [, uitdaging] = antwoorden(tekst);
     expect(uitdaging, 'de uitdaging heeft een antwoord').toBeDefined();
     const r = draai(uitdaging);
@@ -105,7 +106,7 @@ describe('hanoi — het antwoord van elke pagina haalt de tests van die pagina',
   });
 
   it('de startcode van elke pagina valt op zijn eigen tests om', () => {
-    for (const naam of [...BOUWSTENEN, '09-zelf-bouwen.mdx']) {
+    for (const naam of [...BOUWSTENEN, '10-zelf-bouwen.mdx']) {
       const r = draai(startcode(lees(naam)));
       expect(r.uit, `${naam}: ${r.uit}`).toContain('AssertionError');
       expect(r.uit, `${naam} hoort nog niet te slagen`).not.toMatch(/✓/);
@@ -119,7 +120,7 @@ describe('hanoi — de fouten-pagina laat zien wat de foute code echt doet', () 
   // de functie gezet en voor 2 schijven gedraaid.
   const ROMP =
     'def hanoi(n, bron, doel, hulp):\n    if n == 0:\n        return []\n    zetten = []\n';
-  const tekst = lees('10-fouten.mdx');
+  const tekst = lees('11-fouten.mdx');
   const secties = tekst.split(/^## /m).slice(1);
   const stil = secties.filter((s) => /Geen foutmelding/.test(s));
 
@@ -148,7 +149,7 @@ describe('hanoi — de fouten-pagina laat zien wat de foute code echt doet', () 
 
 describe('hanoi — een latere ontdekking wordt niet eerder verklapt', () => {
   it('de uitdaging van zelf bouwen geeft in de opdracht niet weg bij welke zet de grootste schijf valt', () => {
-    const tekst = lees('09-zelf-bouwen.mdx');
+    const tekst = lees('10-zelf-bouwen.mdx');
     const opdracht = tekst.slice(
       tekst.indexOf('## Uitdaging'),
       tekst.indexOf('<details', tekst.indexOf('## Uitdaging')),
@@ -160,5 +161,25 @@ describe('hanoi — een latere ontdekking wordt niet eerder verklapt', () => {
     const tekst = lees('03-stellingen.mdx');
     expect(tekst).not.toMatch(/midden|4ᵉ van de 7/);
     expect(tekst).not.toContain('n == 0');
+  });
+});
+
+describe('hanoi — uitrollen tot het basisgeval', () => {
+  it('de runner rolt voor elke n uit tot precies 2ⁿ − 1', () => {
+    // Het blokken-script vergelijkt alleen de beloofde uitvoer bij N = 4;
+    // hier draait dezelfde code voor 0 tot en met 8.
+    const tekst = lees('09-uitrollen.mdx');
+    const runner = [...tekst.matchAll(/<PyRunner\b[^`]*?initialCode=\{`([\s\S]*?)`\} \/>/g)].map(
+      (m) => ontsnap(m[1]),
+    )[0];
+    for (let n = 0; n <= 8; n += 1) {
+      const r = draai(runner.replace('N = 4', `N = ${n}`));
+      expect(r.status, r.uit).toBe(0);
+      const laatste = r.uit.trim().split('\n').pop() ?? '';
+      expect(Number(laatste.split(/[=\s]+/).pop()), `n=${n}: ${laatste}`).toBe(2 ** n - 1);
+      expect((r.uit.match(/T\(/g) ?? []).length, `n=${n}: één T per stap`).toBe(
+        n === 0 ? 1 : 2 * n,
+      );
+    }
   });
 });
