@@ -1,0 +1,142 @@
+---
+sidebar_position: 9
+---
+
+# Uitrollen tot het basisgeval
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/tekst/04a-f-strings', label: 'F-strings'},
+    {site: 'python', to: '/docs/data/tuples', label: 'Tuples'},
+  ]}
+/>
+
+**Leerdoel:** je rekent zelf na waarom uit `T(n) = 2 · T(n − 1) + 1`
+precies `2ⁿ − 1` komt, door de formule stap voor stap uit te rollen tot
+het basisgeval.
+
+## Van recept naar getal
+
+Het recept van [op zoek naar patronen](./02-patronen#het-recept) zegt
+wat een toren van 4 kost: eerst een toren van 3 naar de hulp-paal, dan
+één zet, dan die toren van 3 naar doel. In zetten:
+
+```
+T(4) = T(3) + 1 + T(3) = 2 · T(3) + 1
+```
+
+Dat is de formule. Maar `T(3)` is zelf ook zo'n som, en `T(2)` ook.
+Vul je die telkens in, dan kom je uiteindelijk bij `T(0)` uit, en dat is
+0: een lege toren verplaatsen kost niets. Dat invullen heet **uitrollen**.
+
+## Voorspel
+
+Rol `T(4)` op papier twee stappen uit: vervang `T(3)` door
+`2 · T(2) + 1`, en werk de haakjes weg. Wat staat er dan voor `T(2)`, en
+welk getal staat er los achter?
+
+<details>
+<summary>Antwoord</summary>
+
+`2 · (2 · T(2) + 1) + 1 = 4 · T(2) + 3`. Voor `T(2)` staat 4, en los
+erachter staat 3.
+
+</details>
+
+## Rol uit tot het basisgeval
+
+De code hieronder doet het uitrollen voor je, stap voor stap, tot er
+geen `T` meer over is. Verander `N` en draai opnieuw.
+
+<PyRunner rows={16} initialCode={`# Verander dit getal:
+N = 4
+
+
+def rol_uit(n):
+    if n == 0:
+        print("T(0) = 0")
+        return
+    coef, const = 2, 1
+    print(f"T({n}) = {coef}·T({n - 1}) + {const}")
+    for k in range(2, n + 1):
+        print(f"     = {coef}·(2·T({n - k}) + 1) + {const}", end="")
+        coef, const = 2 * coef, 2 * const + 1
+        print(f"  =  {coef}·T({n - k}) + {const}")
+    print(f"     = {coef}·0 + {const}  =  {const}")
+
+
+rol_uit(N)`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+```
+T(4) = 2·T(3) + 1
+     = 2·(2·T(2) + 1) + 1  =  4·T(2) + 3
+     = 4·(2·T(1) + 1) + 3  =  8·T(1) + 7
+     = 8·(2·T(0) + 1) + 7  =  16·T(0) + 15
+     = 16·0 + 15  =  15
+```
+
+</details>
+
+## Het patroon
+
+Kijk naar de twee getallen op elke regel. Het getal voor `T` verdubbelt
+elke stap: 2, 4, 8, 16. Het losse getal erachter loopt 1, 3, 7, 15, en
+dat is dezelfde rij als het aantal zetten. Dat is geen toeval: elke stap
+verdubbelt dat getal en telt er één bij, precies de formule zelf.
+
+Na `k` stappen staat er dus `2ᵏ · T(n − k) + (2ᵏ − 1)`. Na `n` stappen
+ben je bij het basisgeval: `2ⁿ · T(0) + (2ⁿ − 1)`. En omdat `T(0) = 0`
+is, blijft er `2ⁿ − 1` over. Het basisgeval is de constante waar alle
+stappen op landen; daarom hoort hij bij de formule, niet erbuiten.
+
+<details>
+<summary>Onderzoek: wat als het basisgeval anders was?</summary>
+
+Stel dat een lege toren één zet zou kosten, `T(0) = 1`. Dan blijft er
+`2ⁿ · 1 + 2ⁿ − 1 = 2ⁿ⁺¹ − 1` over: elke toren zou precies twee keer zo
+duur zijn. Probeer het in de code: vervang de `0` in de laatste regel
+van `rol_uit` door `1` en kijk wat er bij `N = 3` uitkomt.
+
+</details>
+
+## Opdracht 1 — één stap uitrollen
+
+Elke stap doet hetzelfde met de twee getallen: het getal voor `T`
+verdubbelt, het losse getal verdubbelt en krijgt er één bij. Schrijf
+`stap(coef, const)` die die twee nieuwe getallen als tuple teruggeeft.
+
+{/* niet-draaien: startcode; de leerling vult de stap in en de assert faalt tot dan */}
+<PyRunner rows={14} initialCode={`def stap(coef, const):
+    # Geef (nieuwe coef, nieuwe const) terug: coef verdubbelt,
+    # const verdubbelt en krijgt er 1 bij.
+    return ...
+
+
+# === Tests ===
+assert stap(2, 1) == (4, 3), "na 2·T(3) + 1 komt 4·T(2) + 3"
+assert stap(4, 3) == (8, 7), "na 4·T(2) + 3 komt 8·T(1) + 7"
+assert stap(16, 15) == (32, 31), "verdubbelen en 1 erbij"
+
+print("Stap werkt ✓")
+coef, const = 2, 1
+for k in range(2, 6):
+    coef, const = stap(coef, const)
+    print(f"na {k} stappen: {coef}·T(n - {k}) + {const}")`} />
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def stap(coef, const):
+    return 2 * coef, 2 * const + 1
+```
+
+Twee waarden na `return`, gescheiden door een komma, zijn samen één
+tuple. De tests pakken hem uit met `== (4, 3)`.
+
+</details>
+
+Door naar [zelf bouwen →](./10-zelf-bouwen).
