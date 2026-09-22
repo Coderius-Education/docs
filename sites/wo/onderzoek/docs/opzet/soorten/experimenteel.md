@@ -19,14 +19,14 @@ Bij een **experiment** verander je zelf één ding (de **variabele** die je onde
 
 ## Sterk en zwak
 
-**Sterk in:** oorzaak en gevolg aantonen. Omdat je alles gelijk houdt behalve één ding, weet je waar een verschil door komt — een hoge [interne validiteit](../../spelregels/interne-validiteit.md).
+**Sterk in:** oorzaak en gevolg aantonen. Omdat je alles gelijk houdt behalve één ding, weet je waar een verschil door komt — een hoge [interne validiteit](../../spelregels/interne-validiteit.md). Voorwaarde: je verdeelt de deelnemers **door loting** over de groepen. Laat je ze zelf kiezen, dan verschillen de groepen al vóór het experiment, en weet je niet meer waar het verschil door komt.
 
 :::caution[Let op]
 Een experiment is een kunstmatige situatie. Wat in een stil lokaal werkt, werkt niet automatisch in het echte leven — de [externe validiteit](../../spelregels/externe-validiteit.md) is vaak lager. En [betrouwbaarheid](../../spelregels/betrouwbaar.md) vraagt om herhalen: één meting is geen meting.
 :::
 
 <WelNiet
-  wel="Jij bepaalt welke helft van de klas mét en welke zónder muziek leert; verder is alles gelijk."
+  wel="Je loot welke helft van de klas mét en welke zónder muziek leert; verder is alles gelijk."
   niet="Vragen wie thuis met muziek leert en dan cijfers vergelijken — je verandert zelf niets, dat is veldonderzoek."
 />
 

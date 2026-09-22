@@ -11,7 +11,7 @@ Bij **beschrijvend-definiërend** onderzoek zoek je uit wat een begrip betekent 
 
 </Definitie>
 
-## Herken het aan de hoofdvraag
+## Herken het aan de vraag
 
 - *Wat is nepnieuws — en waarin verschilt het van een gekleurde mening of satire?*
 - *Wanneer noemen we gedrag online "pesten"?*

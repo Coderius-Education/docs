@@ -11,7 +11,7 @@ Bij **beschrijvend-vergelijkend** onderzoek beschrijf je twee of meer gevallen e
 
 </Definitie>
 
-## Herken het aan de hoofdvraag
+## Herken het aan de vraag
 
 - *Wat zijn de verschillen in schermtijd tussen brugklassers en bovenbouwleerlingen?*
 - *In hoeverre verschilt het aanbod van de schoolkantine van dat van de school in het dorp ernaast?*

@@ -21,7 +21,7 @@ In het echte leven spelen veel <B t="storende-variabele" tekst="storende variabe
 
 ## Voorbeeld
 
-Je turft per pauze hoeveel leerlingen de fietsenstalling verkeerd gebruiken, op verschillende dagen en tijdstippen, en vraagt de conciërge in een interview wat hij dagelijks ziet.
+Je turft per pauze hoeveel leerlingen de fietsenstalling verkeerd gebruiken, op verschillende dagen en tijdstippen, en vraagt de conciërge in een interview wat die dagelijks ziet.
 
 <WelNiet
   wel="In de aula turven hoeveel leerlingen hun afval laten slingeren."

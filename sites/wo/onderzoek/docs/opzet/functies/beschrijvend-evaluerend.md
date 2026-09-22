@@ -11,7 +11,7 @@ Bij **beschrijvend-evaluerend** onderzoek beoordeel je iets aan de hand van **cr
 
 </Definitie>
 
-## Herken het aan de hoofdvraag
+## Herken het aan de vraag
 
 - *Hoe gebruiksvriendelijk is de website van onze school voor nieuwe brugklassers?*
 - *In hoeverre voldoet het schoolplein aan de eisen voor een beweegvriendelijke omgeving?*

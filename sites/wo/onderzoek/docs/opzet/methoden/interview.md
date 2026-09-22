@@ -13,7 +13,7 @@ Een **interview** is een gesprek met één persoon (of een klein groepje) waarin
 
 ## Zo pak je het aan
 
-- Bereid een **vragenlijst** voor met open hoofdvragen, maar durf af te wijken als het gesprek iets interessants oplevert.
+- Bereid een **interviewleidraad** voor: een lijstje open vragen of onderwerpen die je in elk geval wilt bespreken. Durf ervan af te wijken als het gesprek iets interessants oplevert.
 - Kies je gesprekspartners bewust: mensen die er echt iets over kunnen zeggen (de conciërge over de fietsenstalling, niet je buurman).
 - Neem het gesprek op (mét toestemming) of werk je aantekeningen direct na afloop uit — en vat eerlijk samen, ook wat je niet uitkomt.
 
@@ -26,7 +26,7 @@ Met vijf interviews kun je niet zeggen dat "de meeste leerlingen" iets vinden �
 Je interviewt drie leerlingen die vaak te laat komen over hoe hun ochtend eruitziet — en ontdekt een verklaring waar je zelf nooit aan gedacht had.
 
 <WelNiet
-  wel="Een half uur doorpraten met de conciërge over wat hij dagelijks bij de fietsenstalling ziet."
+  wel="Een half uur doorpraten met de conciërge over wat die dagelijks bij de fietsenstalling ziet."
   niet="Twintig leerlingen dezelfde vijf gesloten vragen stellen — dat is een enquête."
 />
 

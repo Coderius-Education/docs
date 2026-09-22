@@ -162,7 +162,7 @@ const begrippen = {
   hypothese: {
     term: 'Hypothese',
     kort: 'Je verwachte antwoord, opgesteld vóórdat je gegevens verzamelt; een hypothese die niet klopt is óók een geldig resultaat.',
-    lang: 'Je verwachte antwoord op de hoofdvraag, opgesteld vóórdat je gegevens verzamelt. Centraal in verklarend-toetsend onderzoek — en een hypothese die niet klopt is óók een geldig resultaat.',
+    lang: 'Je verwachte antwoord op je (deel)vraag, opgesteld vóórdat je gegevens verzamelt. Centraal in verklarend-toetsend onderzoek — en een hypothese die niet klopt is óók een geldig resultaat.',
     url: '/opzet/functies/verklarend-toetsend',
   },
   idealisme: {

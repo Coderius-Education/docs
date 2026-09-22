@@ -11,7 +11,7 @@ Bij **puur beschrijvend** onderzoek breng je een situatie in kaart zoals die is,
 
 </Definitie>
 
-## Herken het aan de hoofdvraag
+## Herken het aan de vraag
 
 - *Hoeveel tijd besteden bovenbouwleerlingen per dag aan sociale media?*
 - *Welke vervoersmiddelen gebruiken leerlingen om op school te komen?*

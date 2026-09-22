@@ -11,7 +11,7 @@ Bij **verklarend-explorerend** onderzoek weet je dát iets zo is, maar nog niet 
 
 </Definitie>
 
-## Herken het aan de hoofdvraag
+## Herken het aan de vraag
 
 - *Welke factoren spelen een rol bij te laat komen in het eerste uur?*
 - *Waarom haken leerlingen af bij het online huiswerkplatform?*

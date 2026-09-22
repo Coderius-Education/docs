@@ -11,7 +11,7 @@ Bij **verklarend-toetsend** onderzoek heb je al een verwachte verklaring — een
 
 </Definitie>
 
-## Herken het aan de hoofdvraag
+## Herken het aan de vraag
 
 - *Klopt het dat leerlingen vooral te laat komen doordat de bus vol zit?* (hypothese: busdrukte is de belangrijkste oorzaak)
 - *Leidt het wegleggen van de telefoon tot betere scores op een concentratietaak?*
@@ -25,7 +25,7 @@ Toetsend onderzoek vraagt om een gerichte meting: je houdt alles gelijk behalve 
 :::
 
 <WelNiet
-  wel="Hypothese: zonder telefoon betere concentratie — je test het met twee groepen en dezelfde taak."
+  wel="Hypothese: zonder telefoon betere concentratie — je test het met twee door loting ingedeelde groepen en dezelfde taak."
   niet="Zomaar rondvragen wat mensen dénken dat helpt — zonder hypothese en gerichte meting toets je niets."
 />
 
