@@ -34,7 +34,6 @@ export default createConfig({
   themeConfig: {
     image: 'img/docusaurus-social-card.jpg',
     navbar: {
-      title: 'Coderius-DVWA',
       items: [
         { to: '/docs/linux_leren', label: 'Linux leren', position: 'left' },
         { to: '/docs/installatie', label: 'WSL installeren', position: 'left' },

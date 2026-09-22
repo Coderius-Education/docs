@@ -31,8 +31,6 @@ export default createConfig({
   themeConfig: {
     image: 'img/docusaurus-social-card.jpg',
     navbar: {
-      title: 'coderius-web',
-      logo: { alt: 'My Site Logo', src: 'img/logo.svg' },
       items: [
         { to: '/html_css', label: 'Met Code.org', position: 'left' },
         { type: 'docSidebar', sidebarId: 'htmlCssSidebar', label: 'HTML & CSS', position: 'left' },

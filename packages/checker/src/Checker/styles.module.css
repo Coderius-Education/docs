@@ -230,5 +230,5 @@
 .trackButtonActief {
   border-color: var(--ifm-color-primary);
   background: var(--ifm-color-primary);
-  color: #fff;
+  color: var(--coderius-on-primary);
 }

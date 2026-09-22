@@ -32,8 +32,6 @@ export default createConfig({
   themeConfig: {
     image: 'img/logo.svg',
     navbar: {
-      title: 'Embedded',
-      logo: { alt: 'Coderius Embedded', src: 'img/logo.svg' },
       items: [
         {
           type: 'docSidebar',

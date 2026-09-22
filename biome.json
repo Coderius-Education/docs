@@ -7,6 +7,8 @@
       "**/.docusaurus/**",
       "**/node_modules/**",
       "**/static/**",
+      "packages/shared/css/huisstijl.css",
+      "packages/shared/css/cursus/**",
       "**/*.svelte",
       "**/__fixtures__/**"
     ]

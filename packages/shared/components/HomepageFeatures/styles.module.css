@@ -25,15 +25,13 @@
      :not(#\#)-regel die geen class kan overschrijven. Daarom hier de variabelen
      zelf op wit zetten, zodat titel (h3) en link-tekst op de gekleurde kaart
      leesbaar blijven i.p.v. de primary-kleur te erven. */
-  --ifm-heading-color: #fff;
-  --ifm-link-color: #fff;
-  --ifm-link-hover-color: #fff;
-  /* Merkkleur van de site, niet hardgecodeerd: elke site krijgt zijn eigen tint. */
-  background: linear-gradient(
-    135deg,
-    var(--ifm-color-primary) 0%,
-    var(--ifm-color-primary-dark) 100%
-  );
+  --ifm-heading-color: var(--coderius-on-primary);
+  --ifm-link-color: var(--coderius-on-primary);
+  --ifm-link-hover-color: var(--coderius-on-primary);
+  /* Merkkleur van de site, niet hardgecodeerd: elke site krijgt zijn eigen
+     tint. Vlak, zonder verloop: de huisstijl werkt met effen kleurvlakken. */
+  background: var(--ifm-color-primary);
+  color: var(--coderius-on-primary);
   border-radius: 16px;
   padding: 2rem;
   margin: 1rem;
@@ -51,7 +49,7 @@
 
 .featureLink {
   text-decoration: none;
-  color: white;
+  color: var(--coderius-on-primary);
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -59,13 +57,13 @@
 
 .featureLink:hover {
   text-decoration: none;
-  color: white;
+  color: var(--coderius-on-primary);
 }
 
 .featureCard h3 {
   font-size: 2rem;
   margin-bottom: 1rem;
-  color: white;
+  color: var(--coderius-on-primary);
   text-align: center;
   font-weight: 700;
 }
@@ -73,7 +71,7 @@
 .featureCard p {
   font-size: 1.1rem;
   line-height: 1.6;
-  color: rgba(255, 255, 255, 0.95);
+  color: var(--coderius-on-primary);
   text-align: center;
   margin: 0;
 }
@@ -110,7 +108,7 @@
   position: absolute;
   bottom: 50px;
   right: 0;
-  background: white;
+  background: var(--ifm-background-surface-color);
   color: var(--ifm-font-color-base);
   padding: 1rem 1.2rem;
   border-radius: 12px;
@@ -130,7 +128,7 @@
   height: 0;
   border-left: 8px solid transparent;
   border-right: 8px solid transparent;
-  border-top: 8px solid white;
+  border-top: 8px solid var(--ifm-background-surface-color);
 }
 
 @keyframes fadeIn {

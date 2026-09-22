@@ -25,6 +25,17 @@ van de routing) en door de CI-job `cross-links`, die na de builds elke href in d
 gebouwde HTML tegen de build van de doelsite legt (de waarheid). Lokaal:
 `pnpm cross-links` na `pnpm build`.
 
+## Huisstijl
+
+Kleuren, letters en de logo's van elke cursus komen uit
+`packages/shared/huisstijl/` en worden gegenereerd met
+`node scripts/genereer-huisstijl.mjs`; `createConfig` zet merk, naam, favicon en
+cursuskleur per site. Stel die niet per site in, pas nooit de gegenereerde
+bestanden aan, en zet tekst op een primary-vlak in `var(--coderius-on-primary)`,
+niet in `#fff`. Een Infima-variabele overschrijven kan alleen op
+`:root:not(#\#):not(#\#)`: een kale `:root` verliest van Infima's
+layer-polyfill. Zie `packages/shared/huisstijl/README.md`.
+
 ## Code in MDX-expressies
 
 MDX eet van elke vervolgregel in een `{`…`}`-expressie tot twee spaties op.

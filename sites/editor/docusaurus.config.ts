@@ -24,8 +24,6 @@ export default createConfig({
   themeConfig: {
     image: 'img/docusaurus-social-card.jpg',
     navbar: {
-      title: 'coderius-editor',
-      logo: { alt: 'coderius-editor', src: 'img/logo.svg' },
       items: [
         {
           type: 'docSidebar',

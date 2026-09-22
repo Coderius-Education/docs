@@ -6,7 +6,8 @@ const { plugin: mdxInspringing } = require('../plugins/mdx-inspringing');
 const cursussenRoute = require('../plugins/cursussen-route');
 const privacyRoute = require('../plugins/privacy-route');
 const matomoPlugin = require('../plugins/matomo');
-const { SITES, HOME, normalizeUrl } = require('../sites');
+const { SITES, DOCENTEN_SITES, HOME, normalizeUrl } = require('../sites');
+const { CURSUSSEN } = require('../huisstijl');
 const { resolvePackageDir } = transpileShared;
 
 // Alle cursussen behalve de huidige (op url gematcht). Voedt de footerkolom en
@@ -19,6 +20,23 @@ function otherSites(currentUrl) {
 // Absolute paths into deze package — robuust ongeacht waar de site staat.
 const SHARED_STATIC = path.join(__dirname, '..', 'static');
 const SHARED_CSS = path.join(__dirname, '..', 'css', 'custom.css');
+const HUISSTIJL_CSS = path.join(__dirname, '..', 'css', 'huisstijl.css');
+const cursusCss = (id) => path.join(__dirname, '..', 'css', 'cursus', `${id}.css`);
+
+// Letters van de huisstijl, zelf gehost via fontsource: geen verzoek naar
+// Google vanaf een schoolnetwerk, en ze werken ook offline in de PWA van play.
+const LETTER_CSS = [
+  require.resolve('@fontsource-variable/atkinson-hyperlegible-next'),
+  require.resolve('@fontsource-variable/atkinson-hyperlegible-mono'),
+  require.resolve('@fontsource-variable/literata'),
+];
+
+/** Het huisstijl-merk van de cursus op deze url (cursussen én docentensites). */
+function merkVoorUrl(url) {
+  const norm = normalizeUrl(url);
+  const site = [...SITES, ...DOCENTEN_SITES].find((s) => normalizeUrl(s.url) === norm);
+  return site ? CURSUSSEN.find((c) => c.id === site.id) : undefined;
+}
 
 // Coderius gebruikt overal dezelfde licentie (zie org-handbook).
 const CC_BY_NC =
@@ -60,8 +78,9 @@ function uniqueDirs(dirs) {
   return result;
 }
 
-// Zet de gedeelde merk-CSS vóór de eventuele site-eigen customCss in het classic preset.
-function withSharedCustomCss(presets) {
+// Zet de gedeelde merk-CSS vóór de eventuele site-eigen customCss in het classic
+// preset: eerst de huisstijl, dan de gedeelde regels, dan de kleur van de cursus.
+function withSharedCustomCss(presets, merk) {
   return (presets || []).map((entry) => {
     if (!Array.isArray(entry)) return entry;
     const [name, opts] = entry;
@@ -69,7 +88,7 @@ function withSharedCustomCss(presets) {
     const theme = { ...opts.theme };
     const existing = theme.customCss;
     const local = existing == null ? [] : Array.isArray(existing) ? existing : [existing];
-    theme.customCss = [SHARED_CSS, ...local];
+    theme.customCss = [HUISSTIJL_CSS, SHARED_CSS, ...(merk ? [cursusCss(merk.id)] : []), ...local];
     return [name, { ...opts, theme }];
   });
 }
@@ -77,7 +96,9 @@ function withSharedCustomCss(presets) {
 /**
  * Bouwt een volledige Docusaurus-config uit de site-specifieke onderdelen plus
  * de gedeelde standaarden. Wat een site meegeeft wint; de factory zorgt voor:
- *  - gedeelde brand-assets via staticDirectories (img/favicon.ico, img/logo.svg)
+ *  - gedeelde brand-assets via staticDirectories (img/merk/: merk, tegel en
+ *    woordmerk per cursus, gegenereerd uit huisstijl/)
+ *  - navbar-merk, naam en favicon van de cursus uit de huisstijl
  *  - gedeelde merk-CSS vóór de site-CSS
  *  - de CC BY-NC 4.0 copyright als de footer er geen heeft
  *  - transpilatie van @coderius/* workspace-componenten
@@ -117,6 +138,7 @@ function createConfig(site = {}) {
     ...siteThemeConfig,
   };
   const others = otherSites(rest.url);
+  const merk = merkVoorUrl(rest.url);
 
   // Footer: zorg voor de CC-BY-NC copyright en één teruglink naar de homepage.
   // Cross-site navigatie tussen cursussen zit in de navbar-dropdown "Cursussen"
@@ -147,6 +169,20 @@ function createConfig(site = {}) {
   // Navbar: één "Cursussen"-dropdown (rechts) om naar een andere cursus te
   // springen, plus een link naar het volledige overzicht op /cursussen.
   const navbar = themeConfig.navbar ? { ...themeConfig.navbar } : {};
+  // Merk en naam uit de huisstijl, tenzij de site (of docs-management) er
+  // bewust een eigen zet.
+  if (merk) {
+    if (!navbar.logo) {
+      navbar.logo = {
+        alt: `Coderius ${merk.label}`,
+        src: `img/merk/${merk.id}.svg`,
+        srcDark: `img/merk/${merk.id}-donker.svg`,
+        width: 32,
+        height: 32,
+      };
+    }
+    if (navbar.title === undefined) navbar.title = merk.label;
+  }
   navbar.items = [
     ...(navbar.items || []),
     // Elke site heeft een docentenhandleiding op /docenten (zie stijlgids §15).
@@ -166,7 +202,7 @@ function createConfig(site = {}) {
 
   return {
     // ---- gedeelde standaarden (site mag overschrijven via ...rest) ----
-    favicon: 'img/favicon.ico',
+    favicon: merk ? `img/merk/${merk.id}-tegel.svg` : 'img/favicon.ico',
     baseUrl: '/',
     organizationName: 'Coderius-Education',
     onBrokenLinks: 'throw',
@@ -182,7 +218,8 @@ function createConfig(site = {}) {
     staticDirectories:
       staticDirectories ||
       uniqueDirs(['static', SHARED_STATIC, ...packageStaticDirs(sharedPackages)]),
-    presets: withSharedCustomCss(presets),
+    presets: withSharedCustomCss(presets, merk),
+    clientModules: [...LETTER_CSS, ...(rest.clientModules || [])],
     plugins: [
       ...(plugins || []),
       [transpileShared, { packages: sharedPackages }],

@@ -57,7 +57,6 @@ export default createConfig({
   themeConfig: {
     image: 'img/docusaurus-social-card.jpg',
     navbar: {
-      title: 'Home',
       items: [
         {
           type: 'docSidebar',

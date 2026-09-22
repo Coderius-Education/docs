@@ -65,7 +65,7 @@
   border: 0;
   border-radius: 999px;
   background: var(--ifm-color-primary);
-  color: #fff;
+  color: var(--coderius-on-primary);
   font-family: var(--ifm-font-family-monospace);
   font-size: 0.8rem;
   font-weight: 700;

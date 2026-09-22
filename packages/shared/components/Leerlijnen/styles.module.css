@@ -41,7 +41,7 @@
   padding: 0.1rem 0.5rem;
   border-radius: 999px;
   background: var(--ifm-color-primary);
-  color: #fff;
+  color: var(--coderius-on-primary);
 }
 
 .desc {

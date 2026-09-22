@@ -2,80 +2,89 @@
 
 @import "tw-animate-css";
 
+@import "@fontsource-variable/atkinson-hyperlegible-next";
+@import "@fontsource-variable/atkinson-hyperlegible-mono";
+@import "@fontsource-variable/literata";
+
 @custom-variant dark (&:is(.dark *));
 
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
+  --foreground: oklch(0.129 0.02 165);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.129 0.042 264.695);
+  --card-foreground: oklch(0.129 0.02 165);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.129 0.042 264.695);
-  /* Coderius-groen, hetzelfde als --ifm-color-primary van de cursussites. */
-  --primary: #2e8555;
+  --popover-foreground: oklch(0.129 0.02 165);
+  /* Coderius-groen uit de huisstijl (packages/shared/huisstijl), gelijk aan de
+     primary van de cursussites. De neutralen hebben dezelfde zweem bordgroen. */
+  --primary: #007e57;
   --primary-foreground: #ffffff;
-  --secondary: oklch(0.968 0.007 247.896);
-  --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896);
-  --accent-foreground: oklch(0.208 0.042 265.755);
+  --secondary: oklch(0.968 0.007 165);
+  --secondary-foreground: oklch(0.208 0.02 165);
+  --muted: oklch(0.968 0.007 165);
+  --muted-foreground: oklch(0.554 0.02 165);
+  --accent: oklch(0.968 0.007 165);
+  --accent-foreground: oklch(0.208 0.02 165);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.929 0.013 255.508);
-  --input: oklch(0.929 0.013 255.508);
-  --ring: #2e8555;
+  --border: oklch(0.929 0.013 165);
+  --input: oklch(0.929 0.013 165);
+  --ring: #007e57;
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.984 0.003 247.858);
-  --sidebar-foreground: oklch(0.129 0.042 264.695);
-  --sidebar-primary: oklch(0.208 0.042 265.755);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.968 0.007 247.896);
-  --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
-  --sidebar-border: oklch(0.929 0.013 255.508);
-  --sidebar-ring: oklch(0.704 0.04 256.788);
+  --sidebar: oklch(0.984 0.003 165);
+  --sidebar-foreground: oklch(0.129 0.02 165);
+  --sidebar-primary: oklch(0.208 0.02 165);
+  --sidebar-primary-foreground: oklch(0.984 0.003 165);
+  --sidebar-accent: oklch(0.968 0.007 165);
+  --sidebar-accent-foreground: oklch(0.208 0.02 165);
+  --sidebar-border: oklch(0.929 0.013 165);
+  --sidebar-ring: oklch(0.704 0.02 165);
 }
 
 .dark {
-  --background: oklch(0.129 0.042 264.695);
-  --foreground: oklch(0.984 0.003 247.858);
-  --card: oklch(0.208 0.042 265.755);
-  --card-foreground: oklch(0.984 0.003 247.858);
-  --popover: oklch(0.208 0.042 265.755);
-  --popover-foreground: oklch(0.984 0.003 247.858);
-  /* De lichtere variant die de cursussites in donker thema gebruiken. */
-  --primary: #25c2a0;
-  --primary-foreground: oklch(0.15 0.03 170);
-  --secondary: oklch(0.279 0.041 260.031);
-  --secondary-foreground: oklch(0.984 0.003 247.858);
-  --muted: oklch(0.279 0.041 260.031);
-  --muted-foreground: oklch(0.704 0.04 256.788);
-  --accent: oklch(0.279 0.041 260.031);
-  --accent-foreground: oklch(0.984 0.003 247.858);
+  --background: oklch(0.129 0.02 165);
+  --foreground: oklch(0.984 0.003 165);
+  --card: oklch(0.208 0.02 165);
+  --card-foreground: oklch(0.984 0.003 165);
+  --popover: oklch(0.208 0.02 165);
+  --popover-foreground: oklch(0.984 0.003 165);
+  /* De lichtere variant die de cursussites in donker thema gebruiken; tekst erop
+     is donker, want wit haalt daar geen 4.5:1. */
+  --primary: #3ec691;
+  --primary-foreground: #111815;
+  --secondary: oklch(0.279 0.02 165);
+  --secondary-foreground: oklch(0.984 0.003 165);
+  --muted: oklch(0.279 0.02 165);
+  --muted-foreground: oklch(0.704 0.02 165);
+  --accent: oklch(0.279 0.02 165);
+  --accent-foreground: oklch(0.984 0.003 165);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: #25c2a0;
+  --ring: #3ec691;
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.208 0.042 265.755);
-  --sidebar-foreground: oklch(0.984 0.003 247.858);
+  --sidebar: oklch(0.208 0.02 165);
+  --sidebar-foreground: oklch(0.984 0.003 165);
   --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.279 0.041 260.031);
-  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-primary-foreground: oklch(0.984 0.003 165);
+  --sidebar-accent: oklch(0.279 0.02 165);
+  --sidebar-accent-foreground: oklch(0.984 0.003 165);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.551 0.027 264.364);
+  --sidebar-ring: oklch(0.551 0.02 165);
 }
 
 @theme inline {
+  --font-sans: "Atkinson Hyperlegible Next Variable", system-ui, sans-serif;
+  --font-serif: "Literata Variable", Georgia, serif;
+  --font-mono: "Atkinson Hyperlegible Mono Variable", ui-monospace, monospace;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -119,5 +128,10 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-serif;
   }
 }

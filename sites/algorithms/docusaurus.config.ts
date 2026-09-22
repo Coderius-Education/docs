@@ -26,8 +26,6 @@ export default createConfig({
 
   themeConfig: {
     navbar: {
-      title: 'Coderius Algoritmes',
-      logo: { alt: 'Coderius Algoritmes logo', src: 'img/logo.svg' },
       items: [
         { type: 'docSidebar', sidebarId: 'tutorialSidebar', position: 'left', label: 'Algoritmes' },
         { to: '/conceptenkaart', label: 'Conceptenkaart', position: 'left' },

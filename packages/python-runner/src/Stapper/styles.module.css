@@ -160,7 +160,7 @@
 
 .stapKnop {
   background: var(--ifm-color-primary);
-  color: #fff;
+  color: var(--coderius-on-primary);
   border: none;
   padding: 0.35rem 0.9rem;
   border-radius: var(--ifm-global-radius);

@@ -32,8 +32,6 @@ export default createConfig({
 
   themeConfig: {
     navbar: {
-      title: 'Coderius Didactiek',
-      logo: { alt: 'Coderius Didactiek logo', src: 'img/logo.svg' },
       items: [
         { to: '/', label: 'Tips', position: 'left' },
         { type: 'docSidebar', sidebarId: 'bronnenSidebar', position: 'left', label: 'Bronnen' },

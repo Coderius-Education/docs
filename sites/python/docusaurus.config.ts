@@ -35,8 +35,6 @@ export default createConfig({
       { name: 'og:locale', content: 'nl_NL' },
     ],
     navbar: {
-      title: 'coderius-python',
-      logo: { alt: 'coderius-python', src: 'img/logo.svg' },
       items: [
         { type: 'docSidebar', sidebarId: 'tutorialSidebar', position: 'left', label: 'Tutorial' },
         { to: '/playground', label: 'Playground', position: 'left' },
