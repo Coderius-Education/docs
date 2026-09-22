@@ -82,16 +82,19 @@ describe('compacte hand-outs volgen de opbouw voor één dubbelzijdig vel', () =
     });
   }
 
-  it('bij Torens van Hanoi staan de vragen van werkvorm 2 en 3 in handout-vragen', () => {
-    // Daar komt op papier de schrijfruimte per vraag vandaan; zonder die
-    // omhulling staan de regels ____ strak op elkaar.
+  it('bij Torens van Hanoi staan de vragen in handout-vragen en de invultabellen in handout-teltabel', () => {
+    // Daar komt op papier de schrijfruimte per vraag vandaan, en de tabel
+    // blijft bij zijn uitleg; zonder die omhulling staan de regels ____
+    // strak op elkaar of staat een tabel los van zijn werkvorm.
     const hanoi = compact.find((h) => h.naam === '07-hanoi-op-tafel.mdx');
     const alle = regels(hanoi?.tekst ?? '');
-    for (const werkvorm of ['## Werkvorm 2', '## Werkvorm 3']) {
+    for (const werkvorm of ['## Werkvorm 2', '## Werkvorm 4', '## Werkvorm 5']) {
       const kop = alle.find((r) => r.tekst.startsWith(werkvorm));
       expect(kop && heeft(kop, 'handout-vragen'), werkvorm).toBe(true);
     }
-    const tabel = alle.find((r) => r.tekst.startsWith('## Werkvorm 1'));
-    expect(tabel && heeft(tabel, 'handout-teltabel'), 'werkvorm 1 mét zijn tabel').toBe(true);
+    for (const werkvorm of ['## Werkvorm 1', '## Werkvorm 3']) {
+      const kop = alle.find((r) => r.tekst.startsWith(werkvorm));
+      expect(kop && heeft(kop, 'handout-teltabel'), `${werkvorm} mét zijn tabel`).toBe(true);
+    }
   });
 });

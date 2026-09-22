@@ -10,7 +10,8 @@ sidebar_position: 7
 
 Verplaats een toren van schijven met één beperking, en ontdek al spelend
 de formule en het recept dat je later in code giet. Een potlood per
-tweetal, 25 minuten.
+tweetal, 35 minuten: de voorkant vindt het patroon, de achterkant maakt
+er een recept van dat je zo in Python overtypt.
 
 ## Wat je nodig hebt
 
@@ -53,112 +54,168 @@ opnieuw beginnen mag.
    volgende? Regel: ____________________
 2. Voorspel met die regel het aantal voor 5 schijven en controleer door
    te spelen. Klopte het?
-3. Volgens een legende verplaatsen monniken 64 schijven, één zet per
-   seconde. Schat: duurt dat minuten, jaren, of langer dan het heelal
-   oud is?
-
-</div>
-
-<div className="handout-vragen">
-
-## Werkvorm 3 — het recept
-
-Speel met 4 schijven (nummer 5 doet niet mee) en let alleen op de
-**grootste**, nummer 4.
-
-{/* stijl-uitzondering: herhaalde-opening invulrecept, de drie regels beginnen bewust met "Verplaats" */}
-
-1. Wat moet er met de drie schijven erbóven gebeuren voordat de
-   grootste van A naar C kan? En op welk vak staan ze op dat moment?
-2. De grootste staat op C. Wat is nu nog de opdracht, en waarom is dat
-   precies dezelfde puzzel, maar dan kleiner?
-3. Schrijf het recept in drie regels op:
-   - Verplaats eerst ____________________ naar ____.
-   - Verplaats dan ____________________ naar ____.
-   - Verplaats tot slot ____________________ naar ____.
 
 </div>
 
 <div className="handout-teltabel">
 
-## Werkvorm 4 — tel het recept na
+## Werkvorm 3 — de zeven zetten bij 3 schijven
 
-Het recept kost: de toren-op-één-na, één zet, en die toren nog eens.
-Vul in zonder te spelen en vergelijk met werkvorm 1.
+Speel de kortste oplossing met 3 schijven nog eens, langzaam, en schrijf
+elke zet op: welke schijf, van welk vak, naar welk vak.
 
-| Schijven | Recept | Zetten |
-|:---:|:---:|:---:|
-| 2 | 1 + 1 + 1 | 3 |
-| 3 | 3 + 1 + 3 |  |
-| 4 | ___ + 1 + ___ |  |
-| 5 | ___ + 1 + ___ |  |
+| Zet | Schijf | Van | Naar |
+|:---:|:---:|:---:|:---:|
+| 1 |  |  |  |
+| 2 |  |  |  |
+| 3 |  |  |  |
+| 4 |  |  |  |
+| 5 |  |  |  |
+| 6 |  |  |  |
+| 7 |  |  |  |
 
 </div>
+
+<div className="handout-vragen">
+
+1. Bij welke zet verhuist de grootste schijf, nummer 3? Omcirkel die
+   rij.
+2. Waar liggen schijf 1 en 2 op dat moment? Wat hebben de zetten vóór de
+   omcirkelde rij dus samen gedaan, en via welk vak?
+3. Wat doen de zetten ná de omcirkelde rij samen, en via welk vak?
+
+</div>
+
+</div>
+
+<div className="handout-blad handout-paginawissel">
+
+<div className="handout-vragen">
+
+## Werkvorm 4 — 4 schijven in drie fasen
+
+Bij 3 schijven zag je drie fasen: een toren van 2 opzij, de grootste
+over, de toren van 2 er weer bovenop. Speel met 4 schijven en vul de
+fasen in. Let op de vakken: ze wisselen van rol.
+
+1. Fase 1: een toren van ___ schijven van vak ___ naar vak ___, via
+   vak ___. Dat kost ___ zetten.
+2. Fase 2: schijf ___ van vak ___ naar vak ___. Dat kost ___ zet.
+3. Fase 3: een toren van ___ schijven van vak ___ naar vak ___, via
+   vak ___. Dat kost ___ zetten.
+4. Samen: ___ + ___ + ___ = ___ zetten. Klopt dat met werkvorm 1?
+
+</div>
+
+<div className="handout-vragen">
+
+## Werkvorm 5 — schrijf het als aanroep
+
+In de les heet de functie `hanoi(n, bron, doel, hulp)`: verplaats `n`
+schijven van `bron` naar `doel`, met `hulp` als parkeerplek. Schrijf de
+drie fasen zo op.
+
+1. `hanoi(4, A, C, B)` = `hanoi(___, ___, ___, ___)` + schijf 4 van ___
+   naar ___ + `hanoi(___, ___, ___, ___)`
+2. Hetzelfde voor 3 schijven, met de fasen uit werkvorm 3:
+   `hanoi(3, A, C, B)` = `hanoi(___, ___, ___, ___)` + schijf 3 van ___
+   naar ___ + `hanoi(___, ___, ___, ___)`
+3. Nu voor elke `n`, met de namen in plaats van de letters:
+   `hanoi(n, bron, doel, hulp)` = `hanoi(n − 1, ______, ______, ______)`
+   + schijf `n` van ______ naar ______ + `hanoi(n − 1, ______, ______,
+   ______)`
+
+</div>
+
+## Bespreek na
+
+- De regel van werkvorm 5 roept zichzelf aan, met een toren van één
+  schijf minder. Waar houdt dat op?
+- Elke schijf erbij verdubbelt het werk. Volgens een legende verplaatsen
+  monniken 64 schijven, één zet per seconde. Schat: duurt dat minuten,
+  jaren, of langer dan het heelal oud is?
 
 ## Voor wie klaar is
 
 - De kleinste schijf: om de hoeveel zetten beweegt hij, en welke kant op?
 - Bij welke zet gaat de grootste schijf naar C? Tel bij 2, 3 en 4 schijven.
 
-## Bespreek na
-
-- Elke schijf erbij verdubbelt het werk. Bij welk algoritme uit deze
-  cursus kost een verdubbeling van de invoer maar één stap extra?
-- Het recept uit werkvorm 3 gebruikt zichzelf voor een kleinere toren.
-  Waar houdt dat op?
-
 </div>
 
-<div className="handout-paginawissel">
+<Antwoordblad titel="Antwoorden (voor de docent; print als losse laatste pagina)">
 
-## Antwoorden
-
-Deze pagina print als losse laatste pagina — houd hem achter de hand of
-knip hem eraf.
+Op het scherm staat dit dicht, zodat een leerling die deze pagina opent
+de oplossing niet ziet; op papier is het de losse laatste pagina.
 
 **Werkvorm 1**: 1, 3, 7, 15, en 5 schijven kost 31 zetten.
 
 **Werkvorm 2**: elk getal is het dubbele van het vorige plus 1
-(`3 = 2·1 + 1`, `7 = 2·3 + 1`, …). Dat is de rij `2ⁿ − 1`. Voor de
-monniken: `2⁶⁴ − 1` zetten is ruim 18 triljoen. Met één zet per seconde
-is dat zo'n 580 miljard jaar, ruim veertig keer de leeftijd van het heelal.
+(`3 = 2·1 + 1`, `7 = 2·3 + 1`, …). Dat is de rij `2ⁿ − 1`.
 
-**Werkvorm 3**: de drie bovenste schijven moeten éérst compleet naar
-hulpvak **B**, dan pas kan de grootste van A naar C, en daarna is de
-opdracht "verplaats een toren van drie van B naar C", dezelfde puzzel
-met één schijf minder. Het recept:
+**Werkvorm 3**: de zeven zetten, met de grootste schijf in het midden.
 
-1. Verplaats de toren-op-één-na (bovenste n − 1) naar het hulpvak.
-2. Verplaats de grootste schijf naar het doelvak.
-3. Verplaats de toren-op-één-na van het hulpvak naar het doelvak.
+<div className="handout-overzicht">
 
-**Werkvorm 4**: 3 + 1 + 3 = 7, 7 + 1 + 7 = 15, 15 + 1 + 15 = 31, dezelfde
-rij als werkvorm 1. Het recept en de telling zeggen hetzelfde: elke
-schijf erbij is twee keer de vorige toren plus één zet.
+| Zet | Schijf | Van | Naar |
+|:---:|:---:|:---:|:---:|
+| 1 | 1 | A | C |
+| 2 | 2 | A | B |
+| 3 | 1 | C | B |
+| 4 | 3 | A | C |
+| 5 | 1 | B | A |
+| 6 | 2 | B | C |
+| 7 | 1 | A | C |
+
+</div>
+
+Bij zet 4 liggen schijf 1 en 2 samen op B: de zetten 1 tot en met 3
+hebben een toren van 2 van A naar B gebracht, via C. De zetten 5 tot en
+met 7 brengen die toren van B naar C, via A.
+
+**Werkvorm 4**: fase 1 is een toren van 3 van A naar B via C, 7 zetten;
+fase 2 is schijf 4 van A naar C, 1 zet; fase 3 is een toren van 3 van B
+naar C via A, 7 zetten. Samen 7 + 1 + 7 = 15. Zo telt het door:
+3 + 1 + 3 = 7, 7 + 1 + 7 = 15, 15 + 1 + 15 = 31, dezelfde rij als
+werkvorm 1.
+
+**Werkvorm 5**:
+
+1. `hanoi(4, A, C, B)` = `hanoi(3, A, B, C)` + schijf 4 van A naar C +
+   `hanoi(3, B, C, A)`
+2. `hanoi(3, A, C, B)` = `hanoi(2, A, B, C)` + schijf 3 van A naar C +
+   `hanoi(2, B, C, A)`
+3. `hanoi(n, bron, doel, hulp)` = `hanoi(n − 1, bron, hulp, doel)` +
+   schijf `n` van bron naar doel + `hanoi(n − 1, hulp, doel, bron)`
+
+In fase 1 is `doel` even de parkeerplek, in fase 3 is `bron` dat. Dit
+zijn precies de drie regels van bouwsteen 3 in de les.
+
+**Bespreek na**: het houdt op bij een toren van nul schijven: die
+verplaats je met nul zetten. Stoppen bij één schijf kan ook, maar in de
+les kies je nul: dan telt de recursie vanzelf af tot er niets meer te
+doen is. Voor de monniken: `2⁶⁴ − 1` zetten is ruim 18 triljoen. Met één
+zet per seconde is dat zo'n 580 miljard jaar,
+ruim veertig keer de leeftijd van het heelal.
 
 **Voor wie klaar is**: de kleinste schijf beweegt om de andere zet, en
 altijd dezelfde kant op (bij een even aantal schijven met de klok mee,
 bij een oneven aantal ertegenin). De grootste schijf gaat precies in het
 midden: bij 2, 3 en 4 schijven is dat zet 2, 4 en 8 van de 3, 7 en 15.
 
-Het houdt op bij een toren van nul schijven: die verplaats je met nul
-zetten. Stoppen bij één schijf kan ook, maar in de les kies je nul: dan
-telt de recursie vanzelf af tot er niets meer te doen is. Dat
-recept-in-zichzelf is recursie, en precies dat recept schrijf je in de les
-in Python.
-
-</div>
+</Antwoordblad>
 
 <div className="handout-alleen-scherm">
 
 ## Voor de docent
 
 Doel: je leerlingen vinden de rij 2ⁿ − 1 en het recursieve recept zelf,
-voordat de les ze in code zet. Reken op 25 minuten; werkvorm 4 en "voor
-wie klaar is" zijn voor tweetallen die eerder klaar zijn. De fout die het
-vaakst voorkomt: een tweetal telt een reeks die niet de kortste is en
-schrijft 9 op bij 3 schijven. Laat ze opnieuw beginnen, met de vraag waar
-de grootste schijf naartoe moet en wat daarvoor eerst weg moet.
+en schrijven op de achterkant de aanroep op die ze in bouwsteen 3 in
+Python zetten. Reken op 35 minuten; de voorkant is het patroon, de
+achterkant het recept. De fout die het vaakst voorkomt: een tweetal telt
+een reeks die niet de kortste is en schrijft 9 op bij 3 schijven. Laat ze
+opnieuw beginnen, met de vraag waar de grootste schijf naartoe moet en
+wat daarvoor eerst weg moet. Bij werkvorm 4 en 5 is de valkuil het
+hulpvak: in fase 1 is dat C, in fase 3 is dat A.
 
 ## Verder op de site
 
@@ -166,8 +223,9 @@ de grootste schijf naartoe moet en wat daarvoor eerst weg moet.
 
 - [Speel het spel](/docs/hanoi/01-spel) — dezelfde puzzel digitaal
 - [Op zoek naar patronen](/docs/hanoi/02-patronen) — de patronen
-  uit werkvorm 2 en 3, met uitleg
-- [Bouwen](/docs/hanoi/bouwen/04-een-zet) — het recept in Python
+  uit werkvorm 1 en 2, met uitleg
+- [Bouwsteen 3](/docs/hanoi/bouwen/06-recursie-stap) — de aanroep van
+  werkvorm 5 in Python
 
 </div>
 
