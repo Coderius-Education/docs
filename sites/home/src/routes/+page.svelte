@@ -105,7 +105,7 @@
 							href={c.link}
 							target="_blank"
 							rel="noopener noreferrer"
-							class="flex h-full flex-col gap-1.5 rounded-xl border bg-card p-3.5 text-card-foreground shadow-sm transition-colors hover:border-primary focus-visible:border-primary focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+							class="flex h-full flex-col gap-1 rounded-xl border bg-card p-3.5 text-card-foreground shadow-sm transition-colors hover:border-primary focus-visible:border-primary focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
 						>
 							<div class="flex items-center gap-2">
 								{#if merk(c.id)}
@@ -120,7 +120,7 @@
 									<span class="whitespace-nowrap">{woorden.at(-1)}<ExternalLink class="ml-1 inline h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" /></span>
 								</h2>
 							</div>
-							<p class="text-base leading-snug text-muted-foreground">{c.description}</p>
+							<p class="text-lg leading-snug text-muted-foreground">{c.description}</p>
 							{#if c.requires.length > 0}
 								<p class="mt-auto text-xs text-muted-foreground">Voorkennis: {voorkennisVan(c)}</p>
 							{/if}
@@ -131,7 +131,7 @@
 		{/if}
 	</section>
 
-	<section aria-label="Over Coderius" class="mt-5 mb-4 grid gap-5 md:grid-cols-2">
+	<section aria-label="Over Coderius" class="mt-4 mb-4 grid gap-5 md:grid-cols-2">
 		<div>
 			<h2 class="text-lg font-semibold">Lesmateriaal</h2>
 			<p class="mt-1 text-sm text-muted-foreground">
