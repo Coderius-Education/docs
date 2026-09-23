@@ -88,12 +88,14 @@ De tekst in de `<p>` verandert van "Nog niet geklikt." naar "Je hebt geklikt.". 
   stacked
 />
 
+Onder het voorbeeld staat de **console**. Loopt je code vast, dan zet de browser daar een rode regel die begint met `JavaScript fout:`. Gebeurt er niets als je klikt, kijk dan eerst daar.
+
 ## Investigate
 
 Experimenteer in het veld hierboven:
 
 - Verander de tekst `'Je hebt geklikt.'` in iets anders. Wat zie je na een klik?
-- Verander `id="bericht"` in de `<p>` naar `id="tekst"`, maar laat de `onclick` staan. Wat gebeurt er nu bij een klik?
+- Verander `id="bericht"` in de `<p>` naar `id="tekst"`, maar laat de `onclick` staan. Wat gebeurt er nu bij een klik, en wat staat er in de console?
 - Geef twee `<p>`-elementen hetzelfde `id` en klik. Welke van de twee verandert er?
 
 ## Opdracht 1: Eigen teksten
@@ -196,6 +198,8 @@ Alleen de antwoord-`<p>` heeft een `id` nodig: dat is het enige element dat de k
 
 ## Er gaat iets mis
 
+Je klikt en er gebeurt niets. De console onder het voorbeeld vertelt je waarom. Dit zijn de meldingen die je in deze les het vaakst ziet.
+
 **ID verkeerd gespeld**
 
 ```html
@@ -203,5 +207,45 @@ Alleen de antwoord-`<p>` heeft een `id` nodig: dat is het enige element dat de k
 <button onclick="document.getElementById('bericht').textContent = 'Hoi'">Klik</button>
 ```
 
-`getElementById` is hoofdlettergevoelig: `'Bericht'` en `'bericht'` zijn twee verschillende id's. De browser vindt dan geen element, en er gebeurt niets — of je ziet een foutmelding in de browser-console (F12). Zorg dat het `id` in de HTML en in de `onclick` precies hetzelfde gespeld is.
+```
+JavaScript fout: Uncaught TypeError: Cannot set properties of null (setting 'textContent')
+```
+
+`getElementById` is hoofdlettergevoelig: `'Bericht'` en `'bericht'` zijn twee verschillende id's. De browser vindt geen element en geeft `null` terug, "niets". Van niets kun je de tekst niet veranderen. Zorg dat het `id` in de HTML en in de `onclick` precies hetzelfde gespeld is.
+
+**`getElementByID` met een hoofdletter D**
+
+```html
+<button onclick="document.getElementByID('bericht').textContent = 'Hoi'">Klik</button>
+```
+
+```
+JavaScript fout: Uncaught TypeError: document.getElementByID is not a function
+```
+
+De functie heet `getElementById`, met een kleine `d` aan het eind. JavaScript kent `getElementByID` niet en zegt dat het geen functie is.
+
+**Dubbele aanhalingstekens binnen de `onclick`**
+
+```html
+<button onclick="document.getElementById("bericht").textContent = 'Hoi'">Klik</button>
+```
+
+```
+JavaScript fout: Uncaught SyntaxError: Unexpected end of input
+```
+
+De `onclick` staat al tussen dubbele aanhalingstekens. Het tweede `"` sluit het attribuut af, dus de browser ziet als code alleen `document.getElementById(`. Die zin houdt halverwege op, en dat betekent "Unexpected end of input". Gebruik binnen de `onclick` enkele aanhalingstekens: `'bericht'`.
+
+**Haakje vergeten**
+
+```html
+<button onclick="document.getElementById('bericht'.textContent = 'Hoi'">Klik</button>
+```
+
+```
+JavaScript fout: Uncaught SyntaxError: missing ) after argument list
+```
+
+Na `'bericht'` moet het haakje dicht. Een `SyntaxError` betekent dat de browser je code niet eens kan lezen: er klopt iets aan de schrijfwijze, niet aan wat de code doet.
 

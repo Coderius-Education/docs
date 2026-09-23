@@ -84,7 +84,7 @@ Bekijk de startcode: twee knoppen, allebei met `getElementById('zin')`.
 Experimenteer in het veld hierboven:
 
 - Klik drie keer achter elkaar op "Zin 1". Verandert er na de eerste klik nog iets?
-- Haal de aanhalingstekens rond `'Het regent.'` weg en klik op "Zin 2". Wat zie je (kijk ook in de console met F12)?
+- Haal de aanhalingstekens rond `'Het regent.'` weg en klik op "Zin 2". Wat zie je in de console onder het voorbeeld?
 - Kun je een knop maken die de `<p>` leegmaakt?
 
 ## Opdracht 1: Derde knop
@@ -187,8 +187,20 @@ Twee elementen, twee id's, twee knoppen. Controleer per knop of het `id` in de `
 ```
 
 ```
-Uncaught ReferenceError: Hallo is not defined
+JavaScript fout: Uncaught ReferenceError: Hallo is not defined
 ```
 
-Zonder aanhalingstekens denkt de browser dat `Hallo` een stukje code is (een naam die ergens gedefinieerd moet zijn), niet een tekst. De foutmelding zie je in de browser-console (F12). Zet letterlijke tekst altijd tussen aanhalingstekens: `'Hallo'`.
+Zonder aanhalingstekens denkt de browser dat `Hallo` een stukje code is (een naam die ergens gedefinieerd moet zijn), niet een tekst. Zet letterlijke tekst altijd tussen aanhalingstekens: `'Hallo'`.
+
+**Aanhalingsteken niet gesloten**
+
+```html
+<button onclick="document.getElementById('zin').textContent = 'Hallo">Klik</button>
+```
+
+```
+JavaScript fout: Uncaught SyntaxError: Invalid or unexpected token
+```
+
+De tekst begint met `'` maar houdt nooit op, dus de browser leest door tot het eind van de `onclick` en snapt er niets meer van. Een "token" is een los stukje code, zoals een woord of een leesteken. Tel je aanhalingstekens: elk stukje tekst heeft er twee.
 

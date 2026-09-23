@@ -145,7 +145,7 @@ In deze les staat de JavaScript-code in een `<script>`-tag **binnenin** de HTML.
 Experimenteer in het veld hierboven:
 
 - Klik twee keer op de knop. Verandert er na de eerste klik nog iets? Waarom (niet)?
-- Hernoem de functie in de `<script>`-tag naar `veranderTekst`, maar laat de `onclick` staan. Welke foutmelding zie je in de console (F12)?
+- Hernoem de functie in de `<script>`-tag naar `veranderTekst`, maar laat de `onclick` staan. Welke foutmelding zie je in de console onder het voorbeeld?
 - Roep de functie een tweede keer aan door onderaan de `<script>`-tag los `verander();` toe te voegen. Wat zie je al vóórdat je klikt?
 
 ## Opdracht 1: Derde regel
@@ -278,8 +278,25 @@ Gebruik `style.backgroundColor` voor de achtergrondkleur, en `''` om hem weer we
 ```
 
 ```
-Uncaught TypeError: Cannot set properties of null (reading 'textContent')
+JavaScript fout: Uncaught TypeError: Cannot set properties of null (setting 'textContent')
 ```
 
 De aanroep `verander();` draait zodra de browser de `<script>`-tag in de `<head>` tegenkomt — en op dat moment is de `<body>` nog niet geladen, dus `getElementById` geeft `null`. Alleen de functie *definiëren* in de `<head>` is niet erg (die draait pas later), maar code die meteen een element aanraakt wel. Zet de `<script>`-tag daarom **onderaan** de `<body>`, na alle HTML-elementen. In [script.js](/docs/js-basics/scriptjs) zie je hoe je dit met `defer` ook vanuit de `<head>` oplost.
 
+**Functienaam verschilt tussen `onclick` en `<script>`**
+
+```html
+<button onclick="veranderTekst()">Klik</button>
+
+<script>
+  function verander() {
+    document.getElementById('bericht').textContent = 'Hoi';
+  }
+</script>
+```
+
+```
+JavaScript fout: Uncaught ReferenceError: veranderTekst is not defined
+```
+
+De knop roept `veranderTekst` aan, maar de functie heet `verander`. "Is not defined" betekent: deze naam ken ik niet. Kijk bij deze melding of de naam in de `onclick` letter voor letter gelijk is aan de naam achter `function`, hoofdletters meegeteld.

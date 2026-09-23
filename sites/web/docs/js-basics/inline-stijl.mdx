@@ -100,7 +100,7 @@ Experimenteer in het veld hierboven:
 
 - Voeg een derde knop toe die de kleur terugzet naar zwart: `style.color = 'black'`
 - Probeer `style.backgroundColor = 'yellow'` — wat zie je?
-- Wat gebeurt er als je `style.color = 'blauw'` schrijft in plaats van `'blue'`?
+- Wat gebeurt er als je `style.color = 'blauw'` schrijft in plaats van `'blue'`? Staat er iets in de console?
 
 ## Opdracht 1: Groter
 
@@ -210,5 +210,20 @@ Voor terugzetten: een lege string verwijdert de inline stijl. `style.color = ''`
 <button onclick="document.getElementById('tekst').style.backgroundColor = 'yellow'">
 ```
 
-JavaScript leest het koppelteken als een min-teken en geeft een fout. Schrijf CSS-eigenschappen altijd in camelCase als je ze via `.style` instelt.
+In de console zie je:
+
+```
+JavaScript fout: Uncaught SyntaxError: Invalid left-hand side in assignment
+```
+
+JavaScript leest het koppelteken als een min-teken: `style.background` min `color`. Aan een min-som kun je niets toekennen, en dat bedoelt de melding. Schrijf CSS-eigenschappen altijd in camelCase als je ze via `.style` instelt.
+
+**Een waarde die CSS niet kent**
+
+```html
+<button onclick="document.getElementById('tekst').style.color = 'blauw'">Blauw</button>
+<button onclick="document.getElementById('tekst').style.fontSize = '30'">Groter</button>
+```
+
+Hier blijft de console leeg, en toch verandert er niets. JavaScript geeft de waarde door aan CSS, en CSS negeert wat het niet kent. `'blauw'` is geen kleurnaam (`'blue'` wel) en bij `fontSize` hoort een eenheid: `'30px'`. Een lege console betekent dus niet altijd dat je code klopt.
 
