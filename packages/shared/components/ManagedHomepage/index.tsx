@@ -5,6 +5,7 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import MDXContent from '@theme/MDXContent';
+import clsx from 'clsx';
 import type { ComponentType, ReactNode } from 'react';
 import styles from './styles.module.css';
 
@@ -41,7 +42,15 @@ export default function ManagedHomepage({
         {frontMatter.image && <meta name="twitter:image" content={image} />}
         {frontMatter.keywords && <meta name="keywords" content={frontMatter.keywords.join(', ')} />}
       </Head>
-      <div className={frontMatter.fullscreen ? styles.fullscreen : undefined}>
+      {/* coderius-homepage: op deze pagina staat de footer compact, zodat alles
+          in één scherm past (packages/shared/css/custom.css). */}
+      <div
+        className={clsx(
+          'coderius-homepage',
+          styles.homepage,
+          frontMatter.fullscreen && styles.fullscreen,
+        )}
+      >
         <MDXContent>
           <Content />
         </MDXContent>

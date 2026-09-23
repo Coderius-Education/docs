@@ -15,7 +15,7 @@
   align-items: center;
   padding: 0.4rem 0.75rem;
   background: var(--ifm-color-primary);
-  color: #fff;
+  color: var(--coderius-on-primary);
 }
 
 .label {

@@ -1,0 +1,46 @@
+/* Gegenereerd door scripts/genereer-huisstijl.mjs uit packages/shared/huisstijl/. Niet met de hand aanpassen. */
+:root:not(#\#):not(#\#) {
+  --ifm-font-family-base: "Atkinson Hyperlegible Next Variable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --ifm-heading-font-family: "Literata Variable", Georgia, "Times New Roman", serif;
+  --ifm-font-family-monospace: "Atkinson Hyperlegible Mono Variable", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --coderius-font-koppen: "Literata Variable", Georgia, "Times New Roman", serif;
+  --ifm-background-color: #f9fdfb;
+  --ifm-background-surface-color: #ffffff;
+  --ifm-color-content: #19251f;
+  --ifm-heading-color: #19251f;
+  --ifm-color-gray-100: #eef8f3;
+  --ifm-color-gray-200: #e1ebe6;
+  --ifm-color-gray-300: #d1dad5;
+  --ifm-color-gray-400: #c1cac5;
+  --ifm-color-gray-500: #aeb7b2;
+  --ifm-color-gray-600: #808984;
+  --ifm-color-gray-700: #5d6561;
+  --ifm-color-gray-800: #3d4441;
+  --ifm-color-gray-900: #1c2420;
+  --coderius-markeer: #f9df5c;
+  --docusaurus-highlighted-code-line-bg: color-mix(in srgb, #f9df5c 38%, transparent);
+  --ifm-color-primary: #007e57;
+  --ifm-color-primary-dark: #00734f;
+  --ifm-color-primary-darker: #006a49;
+  --ifm-color-primary-darkest: #00573b;
+  --ifm-color-primary-light: #008a60;
+  --ifm-color-primary-lighter: #009266;
+  --ifm-color-primary-lightest: #00a775;
+  --coderius-on-primary: #ffffff;
+}
+
+html[data-theme="dark"]:not(#\#):not(#\#) {
+  --ifm-background-color: #111815;
+  --ifm-background-surface-color: #19211e;
+  --ifm-color-content: #e2eae6;
+  --ifm-heading-color: #e2eae6;
+  --docusaurus-highlighted-code-line-bg: color-mix(in srgb, #f9df5c 20%, transparent);
+  --ifm-color-primary: #3ec691;
+  --ifm-color-primary-dark: #2ebb86;
+  --ifm-color-primary-darker: #20b27f;
+  --ifm-color-primary-darkest: #009f6e;
+  --ifm-color-primary-light: #4cd19c;
+  --ifm-color-primary-lighter: #56daa4;
+  --ifm-color-primary-lightest: #6ceeb6;
+  --coderius-on-primary: #111815;
+}

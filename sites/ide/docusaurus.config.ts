@@ -29,8 +29,6 @@ export default createConfig({
 
   themeConfig: {
     navbar: {
-      title: 'Coderius IDE',
-      logo: { alt: 'Coderius IDE', src: 'img/logo.svg' },
       items: [{ to: '/', label: 'Editor', position: 'left' }],
     },
   },

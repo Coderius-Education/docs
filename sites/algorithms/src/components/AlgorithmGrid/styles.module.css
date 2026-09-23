@@ -1,11 +1,15 @@
+/* Dertien kaarten in twee rijen, zodat de homepage met footer in één scherm
+   past (vanaf 1280×720). De titel en de samenvatting krijgen de opgehoogde
+   selector: Infima's h3 en p staan op :not(#\#):not(#\#) en wonnen, de
+   titels stonden op 1.25rem in plaats van 0.95. */
 .grid {
-  padding: 1rem 0 1.5rem;
+  padding: 0.75rem 0 1rem;
 }
 
 .cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.6rem;
 }
 
 .card {
@@ -40,7 +44,7 @@
   width: 100%;
 }
 
-.cardTitle {
+.card:not(#\#):not(#\#) .cardTitle {
   margin: 0;
   font-size: 0.95rem;
   font-weight: 600;
@@ -57,15 +61,15 @@
   margin-top: 0.15rem;
 }
 
-.cardSummary {
+.card:not(#\#):not(#\#) .cardSummary {
   margin: 0.4rem 0 0;
   color: var(--ifm-color-emphasis-700);
   font-size: 0.78rem;
   line-height: 1.35;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
-  line-clamp: 2;
+  line-clamp: 3;
   overflow: hidden;
 }
 
@@ -80,10 +84,10 @@
   .cardEmoji {
     font-size: 1.5rem;
   }
-  .cardTitle {
+  .card:not(#\#):not(#\#) .cardTitle {
     font-size: 0.85rem;
   }
-  .cardSummary {
+  .card:not(#\#):not(#\#) .cardSummary {
     font-size: 0.72rem;
   }
 }

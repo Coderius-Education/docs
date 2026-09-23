@@ -156,7 +156,7 @@
 .runButton {
   padding: 0.35rem 0.9rem;
   background: var(--ifm-color-primary);
-  color: white;
+  color: var(--coderius-on-primary);
   border: none;
   cursor: pointer;
   font-size: 0.8rem;
@@ -244,7 +244,7 @@
 .viewportKnopActief {
   background: var(--ifm-color-primary);
   border-color: var(--ifm-color-primary);
-  color: #ffffff;
+  color: var(--coderius-on-primary);
 }
 
 /* De iframe krijgt de gekozen breedte en wordt verkleind om te passen; het
@@ -378,7 +378,7 @@
 
 .groterButton:hover {
   background: var(--ifm-color-primary);
-  color: #ffffff;
+  color: var(--coderius-on-primary);
 }
 
 .groterButton:focus-visible {
@@ -395,7 +395,7 @@
 /* Uitgeklapt is dit de weg terug, en dan mag hij dicht zijn. */
 .containerUitgeklapt .groterButton {
   background: var(--ifm-color-primary);
-  color: #ffffff;
+  color: var(--coderius-on-primary);
 }
 
 .containerUitgeklapt .groterButton:hover {

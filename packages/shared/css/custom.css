@@ -1,30 +1,69 @@
-/**
- * Any CSS included here will be global. The classic template
- * bundles Infima by default. Infima is a CSS framework designed to
- * work well for content-centric websites.
+/*
+ * Gedeelde regels van de Coderius-huisstijl. De waarden (kleuren, letters)
+ * staan in huisstijl.css en cursus/<id>.css, gegenereerd uit
+ * packages/shared/huisstijl/. Hier alleen wat die waarden toepast.
  */
 
-/* You can override the default Infima variables here. */
-:root {
-  --ifm-color-primary: #2e8555;
-  --ifm-color-primary-dark: #29784c;
-  --ifm-color-primary-darker: #277148;
-  --ifm-color-primary-darkest: #205d3b;
-  --ifm-color-primary-light: #33925d;
-  --ifm-color-primary-lighter: #359962;
-  --ifm-color-primary-lightest: #3cad6e;
-  --ifm-code-font-size: 95%;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+/* Opgehoogd zoals Infima zelf, anders wint Infima's cascade-layer-polyfill
+   (zie scripts/genereer-huisstijl.mjs). */
+:root:not(#\#):not(#\#) {
+  --ifm-code-font-size: 92%;
+  --ifm-heading-font-weight: 650;
+  --ifm-font-weight-semibold: 600;
+  --ifm-global-radius: 0.5rem;
 }
 
-/* For readability concerns, you should choose a lighter palette in dark mode. */
-[data-theme="dark"] {
-  --ifm-color-primary: #25c2a0;
-  --ifm-color-primary-dark: #21af90;
-  --ifm-color-primary-darker: #1fa588;
-  --ifm-color-primary-darkest: #1a8870;
-  --ifm-color-primary-light: #29d5b0;
-  --ifm-color-primary-lighter: #32d8b4;
-  --ifm-color-primary-lightest: #4fddbf;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+/* De sitenaam in de navbar in de serif, net als het woordmerk. */
+.navbar__title {
+  font-family: var(--coderius-font-koppen);
+  font-weight: 650;
+}
+
+/* Selecteren met de markeerstift. */
+::selection {
+  background: color-mix(in srgb, var(--coderius-markeer) 55%, transparent);
+  color: var(--ifm-color-content);
+}
+
+/* Donkere footer in het bordgroen van de huisstijl, niet Infima's leisteen. */
+.footer--dark:not(#\#):not(#\#) {
+  --ifm-footer-background-color: var(--ifm-color-gray-900);
+}
+
+/* Op de homepage van een cursus past alles in één scherm, footer
+   meegerekend (vanaf 1280×720). Daar staat de footer compact: elke kolom op
+   één regel, titel en links naast elkaar. De homepage herken je aan de
+   klasse coderius-homepage, die HomepageHero (en de eigen homepages van
+   algorithms en didactiek) zetten. Opgehoogd zoals de rest van dit bestand,
+   anders wint Infima. */
+@media screen and (min-width: 997px) {
+  html:has(.coderius-homepage) .footer:not(#\#):not(#\#) {
+    --ifm-footer-padding-vertical: 0.9rem;
+  }
+
+  html:has(.coderius-homepage) .footer__links:not(#\#):not(#\#) {
+    margin-bottom: 0.4rem;
+  }
+
+  html:has(.coderius-homepage) .footer__col:not(#\#):not(#\#) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.1rem 1rem;
+  }
+
+  html:has(.coderius-homepage) .footer__title:not(#\#):not(#\#) {
+    margin: 0;
+  }
+
+  html:has(.coderius-homepage) .footer__items:not(#\#):not(#\#) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.1rem 1rem;
+    margin: 0;
+  }
+
+  html:has(.coderius-homepage) .footer__item:not(#\#):not(#\#) {
+    margin: 0;
+  }
 }

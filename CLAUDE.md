@@ -25,6 +25,32 @@ van de routing) en door de CI-job `cross-links`, die na de builds elke href in d
 gebouwde HTML tegen de build van de doelsite legt (de waarheid). Lokaal:
 `pnpm cross-links` na `pnpm build`.
 
+## Huisstijl
+
+Kleuren, letters en de logo's van elke cursus komen uit
+`packages/shared/huisstijl/` en worden gegenereerd met
+`node scripts/genereer-huisstijl.mjs`; `createConfig` zet merk, naam, favicon en
+cursuskleur per site. Stel die niet per site in, pas nooit de gegenereerde
+bestanden aan, en zet tekst op een primary-vlak in `var(--coderius-on-primary)`,
+niet in `#fff`. Een Infima-variabele overschrijven kan alleen op
+`:root:not(#\#):not(#\#)`: een kale `:root` verliest van Infima's
+layer-polyfill. Zie `packages/shared/huisstijl/README.md`.
+
+De homepage van elke cursus past in één scherm, footer meegerekend, vanaf
+1280×720: de hero en de kaarten (stijlen van `HomepageHero` en
+`HomepageFeatures`, gebruikt door `HomepageSections`) zijn compact, en
+`ManagedHomepage` zet de klasse `coderius-homepage`, waardoor de footer daar op
+één regel per kolom staat (`packages/shared/css/custom.css`). De homepage vult het scherm
+tot de footer: een hero gevolgd door een sectie of `main` vangt het grootste
+deel van de extra ruimte op, en de kaarten staan gecentreerd in de rest
+(`ManagedHomepage/styles.module.css`); zo staat er op een groot scherm geen
+leeg vlak onder de kaarten. Wie iets aan een homepage toevoegt, bouwt
+de site en meet in headless Chromium dat
+`document.documentElement.scrollHeight <= window.innerHeight` op 1280×720 en
+1366×768, in licht en donker. Een module-klasse die een maat van Infima wil
+overschrijven (`.hero`, `h2`, `h3`, `p`) staat op dezelfde opgehoogde selector,
+anders wint Infima stil; `huisstijl.test.ts` bewaakt dat voor de homepages.
+
 ## Code in MDX-expressies
 
 MDX eet van elke vervolgregel in een `{`…`}`-expressie tot twee spaties op.

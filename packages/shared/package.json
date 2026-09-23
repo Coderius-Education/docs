@@ -51,6 +51,9 @@
     "./components/HomepageSections": "./components/HomepageSections/index.tsx"
   },
   "dependencies": {
+    "@fontsource-variable/atkinson-hyperlegible-mono": "5.3.0",
+    "@fontsource-variable/atkinson-hyperlegible-next": "5.3.0",
+    "@fontsource-variable/literata": "5.3.0",
     "prism-react-renderer": "catalog:"
   },
   "peerDependencies": {
@@ -62,5 +65,10 @@
   },
   "scripts": {
     "typecheck": "tsc"
+  },
+  "devDependencies": {
+    "@fontsource/atkinson-hyperlegible-mono": "5.3.0",
+    "@fontsource/literata": "5.3.0",
+    "opentype.js": "2.0.0"
   }
 }

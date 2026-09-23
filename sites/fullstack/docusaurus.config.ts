@@ -31,8 +31,6 @@ export default createConfig({
   themeConfig: {
     image: 'img/docusaurus-social-card.jpg',
     navbar: {
-      title: 'coderius-fullstack',
-      logo: { alt: 'My Site Logo', src: 'img/logo.svg' },
       items: [
         { type: 'docSidebar', sidebarId: 'apiSidebar', position: 'left', label: 'FastAPI' },
         { type: 'doc', docId: 'starten', position: 'left', label: 'Hoe start ik?' },

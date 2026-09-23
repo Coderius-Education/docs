@@ -1,0 +1,22 @@
+/* Gegenereerd door scripts/genereer-huisstijl.mjs uit packages/shared/huisstijl/. Niet met de hand aanpassen. */
+:root:not(#\#):not(#\#) {
+  --ifm-color-primary: #8a59b1;
+  --ifm-color-primary-dark: #7f4fa6;
+  --ifm-color-primary-darker: #78479e;
+  --ifm-color-primary-darkest: #67368b;
+  --ifm-color-primary-light: #9463bd;
+  --ifm-color-primary-lighter: #9c6bc5;
+  --ifm-color-primary-lightest: #af7dd9;
+  --coderius-on-primary: #ffffff;
+}
+
+html[data-theme="dark"]:not(#\#):not(#\#) {
+  --ifm-color-primary: #c391ee;
+  --ifm-color-primary-dark: #b886e3;
+  --ifm-color-primary-darker: #b07fda;
+  --ifm-color-primary-darkest: #9e6cc6;
+  --ifm-color-primary-light: #cf9cfa;
+  --ifm-color-primary-lighter: #d5a6ff;
+  --ifm-color-primary-lightest: #e1c2ff;
+  --coderius-on-primary: #111815;
+}

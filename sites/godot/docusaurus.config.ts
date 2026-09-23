@@ -41,8 +41,6 @@ export default createConfig({
       { property: 'og:type', content: 'website' },
     ],
     navbar: {
-      title: 'Coderius Godot',
-      logo: { alt: 'Coderius Godot logo', src: 'img/logo.svg' },
       items: [
         { type: 'docSidebar', sidebarId: 'tutorialSidebar', position: 'left', label: '1e 2D game' },
         { to: '/conceptenkaart', label: 'Conceptenkaart', position: 'left' },

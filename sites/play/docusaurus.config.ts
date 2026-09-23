@@ -42,7 +42,7 @@ export default createConfig({
         offlineModeActivationStrategies: ['appInstalled', 'standalone', 'queryString'],
         swCustom: require.resolve('./src/sw.js'),
         pwaHead: [
-          { tagName: 'link', rel: 'icon', href: '/img/logo.png' },
+          { tagName: 'link', rel: 'icon', href: '/img/merk/play-tegel.svg' },
           { tagName: 'meta', name: 'theme-color', content: '#1a1a2e' },
         ],
       },
@@ -51,8 +51,6 @@ export default createConfig({
 
   themeConfig: {
     navbar: {
-      title: ' ',
-      logo: { alt: 'Coderius Play Logo', src: 'img/logo.png' },
       items: [
         { type: 'doc', docId: 'eerste-keer-python/IA', position: 'left', label: 'Begin hier!' },
         { href: '/docs/cheatsheet', label: 'Cheatsheet', position: 'left' },

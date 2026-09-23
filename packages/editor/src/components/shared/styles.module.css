@@ -59,7 +59,7 @@
 .buttonRun {
   background: var(--ifm-color-primary);
   border-color: var(--ifm-color-primary);
-  color: #fff;
+  color: var(--coderius-on-primary);
 }
 
 .buttonRun:hover:not(:disabled) {

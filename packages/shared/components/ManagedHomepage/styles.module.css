@@ -4,3 +4,30 @@
   flex-direction: column;
   overflow: hidden;
 }
+
+/* De homepage vult het scherm tot aan de footer. Op een homepage met een
+   hero en daaronder een sectie kaarten (de drie-blokken-homepages) vangt de
+   hero het grootste deel van de ruimte op die over is, en staan de kaarten
+   gecentreerd in de rest. Zonder dit rekte Docusaurus alleen de main-wrapper
+   op, en bleef er onder de kaarten een leeg vlak staan: ongeveer 140 px op
+   1366×768 en ruim 400 px op 1920×1080. Een hoge gekleurde band oogt als
+   bedoeld, een wit vlak niet. Algorithms (hero met een eigen main en het
+   raster erin) krijgt dezelfde verdeling. Didactiek niet: daar staat geen
+   .hero maar een kale kop boven een zoekvak, en een zoekvak dat verschuift
+   als de resultatenlijst groeit werkt niet. */
+.homepage {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.homepage > :global(header.hero):has(+ :is(section, main)) {
+  flex: 2 0 auto;
+}
+
+.homepage > :global(header.hero) + :is(section, main) {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}

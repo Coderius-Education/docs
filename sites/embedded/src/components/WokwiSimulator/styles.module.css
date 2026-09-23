@@ -10,7 +10,7 @@
   padding: 0.5rem 1rem;
   font-weight: 600;
   background: var(--ifm-color-primary);
-  color: white;
+  color: var(--coderius-on-primary);
   font-size: 0.95rem;
 }
 
@@ -84,7 +84,7 @@
   border: none;
   border-radius: 8px;
   background: var(--ifm-color-primary);
-  color: white;
+  color: var(--coderius-on-primary);
   font-weight: 600;
   font-size: 1.05rem;
   cursor: pointer;

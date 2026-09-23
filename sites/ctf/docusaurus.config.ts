@@ -31,7 +31,6 @@ export default createConfig({
 
   themeConfig: {
     navbar: {
-      title: 'coderius-ctf',
       items: [
         { type: 'docSidebar', sidebarId: 'tutorialSidebar', position: 'left', label: 'Challenges' },
         { to: '/presentatie', label: 'Presentatie', position: 'left' },

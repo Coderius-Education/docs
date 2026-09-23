@@ -55,14 +55,17 @@
   background: var(--ifm-color-primary);
   color: var(--ifm-font-color-base-inverse);
 }
-.compact {
+/* De compacte hero staat samen met heroBanner op het element; die staat op
+   :not(#\#):not(#\#) om van Infima's .hero te winnen, dus deze regels hebben
+   een klasse meer nodig om daar weer van te winnen. */
+.compact.compact:not(#\#):not(#\#) {
   padding: 1.25rem 0 1rem;
 }
-.compact h1 {
+.compact.compact:not(#\#):not(#\#) :global(.hero__title) {
   font-size: 1.75rem;
   margin: 0;
 }
-.compact p {
+.compact.compact:not(#\#):not(#\#) :global(.hero__subtitle) {
   font-size: 1rem;
   margin: .25rem 0 0;
   opacity: 0.92;
@@ -84,13 +87,13 @@
   .columns {
     grid-template-columns: 1fr;
   }
-  .compact {
+  .compact.compact:not(#\#):not(#\#) {
     padding: 1rem 1rem .75rem;
   }
-  .compact h1 {
+  .compact.compact:not(#\#):not(#\#) :global(.hero__title) {
     font-size: 1.5rem;
   }
-  .compact p {
+  .compact.compact:not(#\#):not(#\#) :global(.hero__subtitle) {
     font-size: .95rem;
   }
 }

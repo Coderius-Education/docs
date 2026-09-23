@@ -59,7 +59,7 @@
 .sourceButtonActive {
   border-color: var(--ifm-color-primary);
   background: var(--ifm-color-primary);
-  color: white;
+  color: var(--coderius-on-primary);
 }
 
 .tab:disabled,
