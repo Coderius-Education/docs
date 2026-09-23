@@ -208,6 +208,18 @@ describe('de homepage van elke cursus past in één scherm', () => {
       'utf8',
     );
     expect(managed).toContain("'coderius-homepage'");
+    // De homepage vult het scherm tot de footer; de hero vangt de extra ruimte
+    // op en de kaarten staan gecentreerd in de rest, anders staat er onder de
+    // kaarten een leeg vlak (ruim 400 px op 1920×1080).
+    expect(managed).toContain('styles.homepage');
+    const managedCss = fs.readFileSync(
+      path.join(__dirname, 'components', 'ManagedHomepage', 'styles.module.css'),
+      'utf8',
+    );
+    expect(managedCss).toMatch(
+      /header\.hero\):has\(\+ :is\(section, main\)\)\s*\{\s*flex: 2 0 auto;/,
+    );
+    expect(managedCss).toMatch(/\+ :is\(section, main\)\s*\{[^}]*justify-content: center;/);
     const fout: string[] = [];
     for (const site of fs.readdirSync(path.join(ROOT, 'sites'))) {
       const pages = path.join(ROOT, 'sites', site, 'src', 'pages');

@@ -44,7 +44,13 @@ export default function ManagedHomepage({
       </Head>
       {/* coderius-homepage: op deze pagina staat de footer compact, zodat alles
           in één scherm past (packages/shared/css/custom.css). */}
-      <div className={clsx('coderius-homepage', frontMatter.fullscreen && styles.fullscreen)}>
+      <div
+        className={clsx(
+          'coderius-homepage',
+          styles.homepage,
+          frontMatter.fullscreen && styles.fullscreen,
+        )}
+      >
         <MDXContent>
           <Content />
         </MDXContent>
