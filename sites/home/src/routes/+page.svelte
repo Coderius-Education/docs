@@ -120,7 +120,7 @@
 									<span class="whitespace-nowrap">{woorden.at(-1)}<ExternalLink class="ml-1 inline h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" /></span>
 								</h2>
 							</div>
-							<p class="text-sm text-muted-foreground">{c.description}</p>
+							<p class="text-base leading-snug text-muted-foreground">{c.description}</p>
 							{#if c.requires.length > 0}
 								<p class="mt-auto text-xs text-muted-foreground">Voorkennis: {voorkennisVan(c)}</p>
 							{/if}
