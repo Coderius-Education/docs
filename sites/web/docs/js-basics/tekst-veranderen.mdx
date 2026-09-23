@@ -87,6 +87,19 @@ Experimenteer in het veld hierboven:
 - Haal de aanhalingstekens rond `'Het regent.'` weg en klik op "Zin 2". Wat zie je in de console onder het voorbeeld?
 - Kun je een knop maken die de `<p>` leegmaakt?
 
+<details>
+<summary>Voorspel: je schrijft `Document` met een hoofdletter D. Welke soort fout geeft de console?</summary>
+
+Een `TypeError`:
+
+```
+JavaScript fout: Uncaught TypeError: Document.getElementById is not a function
+```
+
+`Document` bestaat wel in JavaScript, maar het is iets anders dan de pagina `document`, en het kent geen `getElementById`. Daarom geen `ReferenceError` (de naam is bekend) maar een `TypeError` (dit ding kan dat niet).
+
+</details>
+
 ## Opdracht 1: Derde knop
 
 Voeg een derde knop "Zin 3" toe die een eigen zin in dezelfde `<p>` zet.
@@ -203,4 +216,12 @@ JavaScript fout: Uncaught SyntaxError: Invalid or unexpected token
 ```
 
 De tekst begint met `'` maar houdt nooit op, dus de browser leest door tot het eind van de `onclick` en snapt er niets meer van. Een "token" is een los stukje code, zoals een woord of een leesteken. Tel je aanhalingstekens: elk stukje tekst heeft er twee.
+
+**`==` in plaats van `=`: geen melding**
+
+```html
+<button onclick="document.getElementById('zin').textContent == 'Hallo'">Klik</button>
+```
+
+De console blijft leeg en de tekst verandert niet. Met `=` geef je iets een nieuwe waarde. Met `==` vraag je of twee dingen gelijk zijn: de browser vergelijkt de tekst met `'Hallo'` en doet verder niets met het antwoord. Daar is niets fout aan, dus er komt geen melding.
 

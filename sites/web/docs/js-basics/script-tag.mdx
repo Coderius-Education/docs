@@ -148,6 +148,25 @@ Experimenteer in het veld hierboven:
 - Hernoem de functie in de `<script>`-tag naar `veranderTekst`, maar laat de `onclick` staan. Welke foutmelding zie je in de console onder het voorbeeld?
 - Roep de functie een tweede keer aan door onderaan de `<script>`-tag los `verander();` toe te voegen. Wat zie je al vóórdat je klikt?
 
+<details>
+<summary>Voorspel: je vergeet de sluitende `}` van de functie. Wat staat er in de console, vóór en na een klik?</summary>
+
+Al vóór de klik, zodra de pagina laadt:
+
+```
+JavaScript fout: Uncaught SyntaxError: Unexpected end of input
+```
+
+Na een klik komt er een tweede regel bij:
+
+```
+JavaScript fout: Uncaught ReferenceError: verander is not defined
+```
+
+Omdat de browser de `<script>` niet kon lezen, heeft hij de functie nooit gemaakt. De tweede melding is een gevolg van de eerste. Los bij meer meldingen altijd de bovenste eerst op.
+
+</details>
+
 ## Opdracht 1: Derde regel
 
 Breid de functie `verander()` uit: na een klik worden de letters ook groter (`style.fontSize`).

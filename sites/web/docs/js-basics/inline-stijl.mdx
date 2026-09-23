@@ -102,6 +102,19 @@ Experimenteer in het veld hierboven:
 - Probeer `style.backgroundColor = 'yellow'` — wat zie je?
 - Wat gebeurt er als je `style.color = 'blauw'` schrijft in plaats van `'blue'`? Staat er iets in de console?
 
+<details>
+<summary>Voorspel: je schrijft `Style.color` met een hoofdletter S. Welke soort fout geeft de console?</summary>
+
+Een `TypeError`:
+
+```
+JavaScript fout: Uncaught TypeError: Cannot set properties of undefined (setting 'color')
+```
+
+Het element heeft geen eigenschap `Style`, dus `Style` is `undefined`: niets. Van niets kun je geen kleur instellen. Het lijkt op de `null`-melding uit [de vorige les](/docs/js-basics/inline-onclick): daar vond `getElementById` niets, hier vindt het element de eigenschap niet.
+
+</details>
+
 ## Opdracht 1: Groter
 
 Voeg een knop "Groter" toe die de tekst groter maakt via `style.fontSize`.
