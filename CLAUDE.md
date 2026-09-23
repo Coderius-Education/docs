@@ -36,6 +36,16 @@ niet in `#fff`. Een Infima-variabele overschrijven kan alleen op
 `:root:not(#\#):not(#\#)`: een kale `:root` verliest van Infima's
 layer-polyfill. Zie `packages/shared/huisstijl/README.md`.
 
+De homepage van elke cursus past in één scherm, footer meegerekend, vanaf
+1280×720: `HomepageHero` en `HomepageFeatures` zijn compact, en op een pagina
+met de klasse `coderius-homepage` staat de footer op één regel per kolom
+(`packages/shared/css/custom.css`). Wie iets aan een homepage toevoegt, bouwt
+de site en meet in headless Chromium dat
+`document.documentElement.scrollHeight <= window.innerHeight` op 1280×720 en
+1366×768, in licht en donker. Een module-klasse die een maat van Infima wil
+overschrijven (`.hero`, `h2`, `h3`, `p`) staat op dezelfde opgehoogde selector,
+anders wint Infima stil; `huisstijl.test.ts` bewaakt dat voor de homepages.
+
 ## Code in MDX-expressies
 
 MDX eet van elke vervolgregel in een `{`…`}`-expressie tot twee spaties op.

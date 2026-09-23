@@ -1,14 +1,23 @@
-.heroBanner {
-  padding: 2.5rem 0;
+/* De homepage van elke cursus past in één scherm, footer meegerekend, vanaf
+   1280×720. Infima's hero-regels staan door de layer-polyfill van future.v4
+   op `.hero:not(#\#):not(#\#)`; een kale module-klasse verliest daarvan (de
+   2,5rem die hier eerst stond, kwam nooit op het scherm: de hero had
+   Infima's 4rem). Daarom dezelfde ophoging als in huisstijl.css. */
+.heroBanner:not(#\#):not(#\#) {
+  padding: 1.75rem 1rem;
   text-align: center;
   position: relative;
   overflow: hidden;
 }
 
-@media screen and (max-width: 996px) {
-  .heroBanner {
-    padding: 2rem;
-  }
+.heroBanner:not(#\#):not(#\#) :global(.hero__title) {
+  font-size: 2.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.heroBanner:not(#\#):not(#\#) :global(.hero__subtitle) {
+  font-size: 1.25rem;
+  margin: 0;
 }
 
 .buttons {
@@ -18,4 +27,10 @@
   justify-content: center;
   gap: 1rem;
   margin-top: 1rem;
+}
+
+@media screen and (max-width: 996px) {
+  .heroBanner:not(#\#):not(#\#) :global(.hero__title) {
+    font-size: 2rem;
+  }
 }

@@ -10,7 +10,7 @@ export default function Home(): ReactNode {
       title="Didactiek"
       description="De didactische tips achter het Coderius-lesmateriaal en het onderzoek waarop ze rusten."
     >
-      <header className={styles.hero}>
+      <header className={`${styles.hero} coderius-homepage`}>
         <div className="container">
           <div className={styles.heroInner}>
             <Heading as="h1">Tips uit onderzoek</Heading>

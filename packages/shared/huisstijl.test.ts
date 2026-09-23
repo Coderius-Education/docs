@@ -154,3 +154,71 @@ describe('tekst op een primary-vlak', () => {
     expect(fout).toEqual([]);
   });
 });
+
+describe('de homepage van elke cursus past in één scherm', () => {
+  // Of hij echt past hangt aan layout en valt alleen in een browser te meten
+  // (zie sites/home/CLAUDE.md en de commit die dit invoerde). Wat hier wel kan:
+  // de twee dingen vastpinnen waar dat van afhangt.
+  const regels = (f: string) =>
+    [
+      ...fs
+        .readFileSync(f, 'utf8')
+        .replace(/\/\*[\s\S]*?\*\//g, '')
+        .matchAll(/([^{}]+)\{([^{}]*)\}/g),
+    ].map(([, sel, body]) => ({ sel: sel.trim().split('\n').pop() ?? '', body }));
+
+  it('de maten van hero en kaarten winnen van Infima: ze staan op de opgehoogde selector', () => {
+    // Infima's .hero, h2, h3 en p staan door de layer-polyfill op
+    // :not(#\#):not(#\#). Een kale module-klasse verloor: de hero van elke
+    // cursus had Infima's 4rem padding in plaats van de 2,5rem uit deze CSS,
+    // en de kaarttitels van algorithms stonden op 1.25rem in plaats van 0.95.
+    const bestanden = [
+      path.join(__dirname, 'components', 'HomepageHero', 'styles.module.css'),
+      path.join(__dirname, 'components', 'HomepageFeatures', 'styles.module.css'),
+      path.join(ROOT, 'sites', 'algorithms', 'src', 'pages', 'index.module.css'),
+      path.join(
+        ROOT,
+        'sites',
+        'algorithms',
+        'src',
+        'components',
+        'AlgorithmGrid',
+        'styles.module.css',
+      ),
+    ];
+    const fout: string[] = [];
+    for (const f of bestanden) {
+      for (const { sel } of regels(f)) {
+        const raaktInfima =
+          /\.heroBanner|\.heroTitle|\.heroSubtitle|\.cardTitle|\.cardSummary/.test(sel) ||
+          /\.(featuresHeader|featureCard)\b.*\b(h2|h3|p)\b/.test(sel);
+        if (raaktInfima && !/:not\(#\\#\):not\(#\\#\)/.test(sel))
+          fout.push(`${path.relative(ROOT, f)}: ${sel}`);
+      }
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('elke homepage met een footer draagt coderius-homepage, zodat de footer daar compact staat', () => {
+    const custom = fs.readFileSync(path.join(__dirname, 'css', 'custom.css'), 'utf8');
+    expect(custom).toMatch(/html:has\(\.coderius-homepage\) \.footer__items/);
+    const hero = fs.readFileSync(
+      path.join(__dirname, 'components', 'HomepageHero', 'index.tsx'),
+      'utf8',
+    );
+    expect(hero).toContain('coderius-homepage');
+    // ide heeft geen footer op zijn homepage (een volledige editor) en past al.
+    const ZONDER_FOOTER = new Set(['ide']);
+    const fout: string[] = [];
+    for (const site of fs.readdirSync(path.join(ROOT, 'sites'))) {
+      const pages = path.join(ROOT, 'sites', site, 'src', 'pages');
+      const index =
+        fs.existsSync(pages) &&
+        fs.readdirSync(pages).find((n) => /^index\.(tsx|jsx?|mdx)$/.test(n));
+      if (!index || ZONDER_FOOTER.has(site)) continue;
+      const src = fs.readFileSync(path.join(pages, index), 'utf8');
+      if (!src.includes('HomepageHero') && !src.includes('coderius-homepage')) fout.push(site);
+    }
+    expect(fout).toEqual([]);
+  });
+});

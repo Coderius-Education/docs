@@ -27,7 +27,7 @@ export default function HomepageHero({
 }): ReactNode {
   const { siteConfig } = useDocusaurusContext();
   return (
-    <header className={clsx('hero hero--primary', styles.heroBanner)}>
+    <header className={clsx('hero hero--primary coderius-homepage', styles.heroBanner)}>
       <div className="container">
         <Heading as="h1" className="hero__title">
           {title ?? siteConfig.title}

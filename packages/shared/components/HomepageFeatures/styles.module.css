@@ -1,21 +1,26 @@
+/* Compact genoeg om met hero en footer in één scherm te passen (zie
+   HomepageHero). Koppen en alinea's krijgen de opgehoogde selector, anders
+   winnen Infima's `h2:not(#\#):not(#\#)` en `p` en is de maat hier alleen
+   tekst. */
 .features {
-  padding: 2rem 0;
+  padding: 1rem 0 1.25rem;
   width: 100%;
 }
 
 .featuresHeader {
   text-align: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
 }
 
-.featuresHeader h2 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
+.featuresHeader:not(#\#):not(#\#) h2 {
+  font-size: 1.75rem;
+  margin-bottom: 0.25rem;
   color: var(--ifm-heading-color);
 }
 
-.featuresHeader p {
-  font-size: 1.2rem;
+.featuresHeader:not(#\#):not(#\#) p {
+  font-size: 1.1rem;
+  margin: 0;
   color: var(--ifm-color-emphasis-700);
 }
 
@@ -33,11 +38,10 @@
   background: var(--ifm-color-primary);
   color: var(--coderius-on-primary);
   border-radius: 16px;
-  padding: 2rem;
-  margin: 1rem;
+  padding: 1.25rem 1.5rem;
+  margin: 0.5rem;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  min-height: 200px;
   display: flex;
   flex-direction: column;
 }
@@ -60,17 +64,17 @@
   color: var(--coderius-on-primary);
 }
 
-.featureCard h3 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
+.featureCard:not(#\#):not(#\#) h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
   color: var(--coderius-on-primary);
   text-align: center;
   font-weight: 700;
 }
 
-.featureCard p {
+.featureCard:not(#\#):not(#\#) p {
   font-size: 1.1rem;
-  line-height: 1.6;
+  line-height: 1.5;
   color: var(--coderius-on-primary);
   text-align: center;
   margin: 0;
@@ -80,7 +84,7 @@
   position: relative;
   display: flex;
   justify-content: flex-end;
-  margin-top: 1rem;
+  margin-top: 0.25rem;
 }
 
 .infoButton {
@@ -144,11 +148,7 @@
 
 @media screen and (max-width: 996px) {
   .featureCard {
-    margin: 1rem 0;
-  }
-
-  .featuresHeader h2 {
-    font-size: 2rem;
+    margin: 0.5rem 0;
   }
 
   .infoTooltip {
@@ -162,15 +162,11 @@
     padding: 2rem 0;
   }
 
-  .featureCard {
-    min-height: 200px;
+  .featureCard:not(#\#):not(#\#) h3 {
+    font-size: 1.4rem;
   }
 
-  .featureCard h3 {
-    font-size: 1.6rem;
-  }
-
-  .featureCard p {
+  .featureCard:not(#\#):not(#\#) p {
     font-size: 1rem;
   }
 }

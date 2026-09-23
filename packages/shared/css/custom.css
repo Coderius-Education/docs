@@ -29,3 +29,41 @@
 .footer--dark:not(#\#):not(#\#) {
   --ifm-footer-background-color: var(--ifm-color-gray-900);
 }
+
+/* Op de homepage van een cursus past alles in één scherm, footer
+   meegerekend (vanaf 1280×720). Daar staat de footer compact: elke kolom op
+   één regel, titel en links naast elkaar. De homepage herken je aan de
+   klasse coderius-homepage, die HomepageHero (en de eigen homepages van
+   algorithms en didactiek) zetten. Opgehoogd zoals de rest van dit bestand,
+   anders wint Infima. */
+@media screen and (min-width: 997px) {
+  html:has(.coderius-homepage) .footer:not(#\#):not(#\#) {
+    --ifm-footer-padding-vertical: 0.9rem;
+  }
+
+  html:has(.coderius-homepage) .footer__links:not(#\#):not(#\#) {
+    margin-bottom: 0.4rem;
+  }
+
+  html:has(.coderius-homepage) .footer__col:not(#\#):not(#\#) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.1rem 1rem;
+  }
+
+  html:has(.coderius-homepage) .footer__title:not(#\#):not(#\#) {
+    margin: 0;
+  }
+
+  html:has(.coderius-homepage) .footer__items:not(#\#):not(#\#) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.1rem 1rem;
+    margin: 0;
+  }
+
+  html:has(.coderius-homepage) .footer__item:not(#\#):not(#\#) {
+    margin: 0;
+  }
+}
