@@ -9,6 +9,8 @@ const matomoPlugin = require('../plugins/matomo');
 const { SITES, DOCENTEN_SITES, HOME, normalizeUrl } = require('../sites');
 const { CURSUSSEN } = require('../huisstijl');
 const { resolvePackageDir } = transpileShared;
+const { loadSettings, applySettings, deepMerge } = require('./managed-settings');
+const managedManifest = require('../plugins/managed-manifest');
 
 // Alle cursussen behalve de huidige (op url gematcht). Voedt de footerkolom en
 // de navbar-dropdown, zodat cross-site links uit één registry komen.
@@ -108,7 +110,9 @@ function withSharedCustomCss(presets, merk) {
  * Handige extra's: geef `description`/`keywords` mee i.p.v. zelf headTags te
  * schrijven.
  */
-function createConfig(site = {}) {
+function createConfig(course = {}) {
+  const managed = loadSettings(process.cwd());
+  const site = managed ? applySettings(course, managed, process.cwd()) : course;
   const {
     sharedPackages = ['@coderius/shared'],
     description,
@@ -129,14 +133,40 @@ function createConfig(site = {}) {
   if (keywords)
     seoTags.push({ tagName: 'meta', attributes: { name: 'keywords', content: keywords } });
 
-  const themeConfig = {
-    colorMode: { respectPrefersColorScheme: true },
-    prism: { theme: prismThemes.github, darkTheme: prismThemes.dracula },
-    // Rechter inhoudsopgave toont standaard alleen H2-koppen. Een site mag dit
-    // overschrijven via themeConfig.tableOfContents.
-    tableOfContents: { minHeadingLevel: 2, maxHeadingLevel: 2 },
-    ...siteThemeConfig,
-  };
+  const themeConfig = deepMerge(
+    {
+      colorMode: { respectPrefersColorScheme: true },
+      prism: { theme: prismThemes.github, darkTheme: prismThemes.dracula },
+      // Rechter inhoudsopgave toont standaard alleen H2-koppen. Een site mag dit
+      // overschrijven via themeConfig.tableOfContents.
+      tableOfContents: { minHeadingLevel: 2, maxHeadingLevel: 2 },
+    },
+    siteThemeConfig || {},
+  );
+  // Validate only after shared defaults, course settings and managed overrides
+  // have merged: a partial override must use the actual inherited other bound.
+  const { minHeadingLevel, maxHeadingLevel } = themeConfig.tableOfContents || {};
+  if (
+    ![minHeadingLevel, maxHeadingLevel].every(
+      (value) => Number.isInteger(value) && value >= 2 && value <= 6,
+    )
+  ) {
+    throw new Error(
+      'themeConfig.tableOfContents: minHeadingLevel and maxHeadingLevel must be integers between 2 and 6',
+    );
+  }
+  if (minHeadingLevel > maxHeadingLevel) {
+    throw new Error(
+      `themeConfig.tableOfContents: effective minHeadingLevel (${minHeadingLevel}) must not exceed effective maxHeadingLevel (${maxHeadingLevel})`,
+    );
+  }
+  for (const key of ['theme', 'darkTheme']) {
+    const value = themeConfig.prism?.[key];
+    if (typeof value === 'string') {
+      if (!prismThemes[value]) throw new Error(`Unknown Prism theme ${value}`);
+      themeConfig.prism[key] = prismThemes[value];
+    }
+  }
   const others = otherSites(rest.url);
   const merk = merkVoorUrl(rest.url);
 
@@ -184,7 +214,10 @@ function createConfig(site = {}) {
     if (navbar.title === undefined) navbar.title = merk.label;
   }
   navbar.items = [
-    ...(navbar.items || []),
+    ...(navbar.items || []).filter(
+      (item) =>
+        item.to !== '/docenten' && !(item.type === 'dropdown' && item.label === 'Cursussen'),
+    ),
     // Elke site heeft een docentenhandleiding op /docenten (zie stijlgids §15).
     { to: '/docenten', label: 'Docenten', position: 'right' },
     {
@@ -222,6 +255,7 @@ function createConfig(site = {}) {
     clientModules: [...LETTER_CSS, ...(rest.clientModules || [])],
     plugins: [
       ...(plugins || []),
+      ...(managed ? [[managedManifest, { settings: managed }]] : []),
       [transpileShared, { packages: sharedPackages }],
       mdxInspringing,
       cursussenRoute,

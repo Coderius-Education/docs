@@ -37,9 +37,10 @@ niet in `#fff`. Een Infima-variabele overschrijven kan alleen op
 layer-polyfill. Zie `packages/shared/huisstijl/README.md`.
 
 De homepage van elke cursus past in één scherm, footer meegerekend, vanaf
-1280×720: `HomepageHero` en `HomepageFeatures` zijn compact, en op een pagina
-met de klasse `coderius-homepage` staat de footer op één regel per kolom
-(`packages/shared/css/custom.css`). Wie iets aan een homepage toevoegt, bouwt
+1280×720: de hero en de kaarten (stijlen van `HomepageHero` en
+`HomepageFeatures`, gebruikt door `HomepageSections`) zijn compact, en
+`ManagedHomepage` zet de klasse `coderius-homepage`, waardoor de footer daar op
+één regel per kolom staat (`packages/shared/css/custom.css`). Wie iets aan een homepage toevoegt, bouwt
 de site en meet in headless Chromium dat
 `document.documentElement.scrollHeight <= window.innerHeight` op 1280×720 en
 1366×768, in licht en donker. Een module-klasse die een maat van Infima wil

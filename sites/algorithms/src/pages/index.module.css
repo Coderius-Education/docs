@@ -1,31 +1,29 @@
-/* Opgehoogd: Infima's .hero staat op :not(#\#):not(#\#) en won van deze
-   maten, de hero was 264px hoog in plaats van ongeveer 90. */
-.heroBanner:not(#\#):not(#\#) {
+.heroBanner {
   padding: 1.25rem 0 1rem;
   text-align: center;
   position: relative;
   overflow: hidden;
 }
 
-.heroBanner:not(#\#):not(#\#) .heroTitle {
+.heroTitle {
   font-size: 1.75rem;
   margin: 0;
 }
 
-.heroBanner:not(#\#):not(#\#) .heroSubtitle {
+.heroSubtitle {
   font-size: 1rem;
   margin: 0.25rem 0 0;
   opacity: 0.92;
 }
 
 @media screen and (max-width: 996px) {
-  .heroBanner:not(#\#):not(#\#) {
+  .heroBanner {
     padding: 1rem 1rem 0.75rem;
   }
-  .heroBanner:not(#\#):not(#\#) .heroTitle {
+  .heroTitle {
     font-size: 1.5rem;
   }
-  .heroBanner:not(#\#):not(#\#) .heroSubtitle {
+  .heroSubtitle {
     font-size: 0.95rem;
   }
 }

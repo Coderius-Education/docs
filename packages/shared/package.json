@@ -46,7 +46,9 @@
     "./components/Leerlijnen/CursussenPage": "./components/Leerlijnen/CursussenPage.tsx",
     "./components/Privacy/PrivacyPage": "./components/Privacy/PrivacyPage.tsx",
     "./components/Privacy/MatomoOptOut": "./components/Privacy/MatomoOptOut.tsx",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./components/ManagedHomepage": "./components/ManagedHomepage/index.tsx",
+    "./components/HomepageSections": "./components/HomepageSections/index.tsx"
   },
   "dependencies": {
     "@fontsource-variable/atkinson-hyperlegible-mono": "5.3.0",
