@@ -682,6 +682,22 @@ Meer uitleg: [Sessies](/docs/FastAPI/sessies)
 ## Algemeen
 
 <details>
+<summary>Het tabblad Netwerk is leeg, of mist het verzoek dat je zoekt</summary>
+
+**Oorzaak:** Netwerk laat alleen zien wat het heeft opgenomen, en alleen wat door het filter komt. Dat verschilt per keer, en daarom is de lijst soms leeg en soms niet.
+
+**Oplossing:** loop deze vier langs.
+
+1. Open het tabblad vóór je de pagina laadt, of herlaad met het tabblad open
+2. Zet **Logboek behouden** (Preserve log) aan als je een formulier verstuurt of naar een andere pagina gaat: anders wist elke nieuwe pagina de lijst
+3. Klik op **Alle** (All) in de rij soorten en maak het zoekvak leeg: een filter als **Fetch/XHR** blijft staan tot je hem uitzet
+4. Kijk of het rondje linksboven rood is; grijs betekent dat opnemen uit staat (Ctrl+E zet het aan en uit)
+
+Meer uitleg: [Kijken wat de browser doet](/docs/FastAPI/devtools-netwerk#als-de-lijst-leeg-is)
+
+</details>
+
+<details>
 <summary>Wijzigingen zijn niet zichtbaar</summary>
 
 **Oorzaak:** de browser toont zijn eigen bewaarde kopie van de pagina (de cache), of de server draait nog met je oude code.

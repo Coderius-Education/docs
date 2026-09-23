@@ -11,6 +11,7 @@ import React, {
 import styles from './CodeEditor.module.css';
 import { PreviewPane } from './PreviewPane';
 import { buildDoc } from './buildDoc';
+import { heeftJavaScript } from './heeftJs';
 import { VoorbeeldNavigatie } from './navigatie';
 import { useDebounce } from './useDebounce';
 
@@ -224,6 +225,12 @@ function CodeEditorInner({
 
   const visibleTabs: Tab[] = ['html', 'css', ...(initialJs !== '' ? ['javascript' as Tab] : [])];
 
+  // De console blijft staan zodra er JavaScript in het veld zit, ook als die
+  // alleen in een onclick staat. Hij verdwijnt niet meer als je de handler even
+  // wegtypt, anders springt het voorbeeld eronder op en neer.
+  const [toonConsole, setToonConsole] = useState(() => heeftJavaScript(initialHtml, initialJs));
+  if (!toonConsole && heeftJavaScript(html, js)) setToonConsole(true);
+
   const veld = (
     <div
       className={[
@@ -313,7 +320,7 @@ function CodeEditorInner({
               : undefined
           }
         />
-        {visibleTabs.includes('javascript') && (
+        {toonConsole && (
           <div className={styles.consolePanel}>
             <div className={styles.consolePanelHeader}>
               <span>Console</span>

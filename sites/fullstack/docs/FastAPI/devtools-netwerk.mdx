@@ -54,6 +54,15 @@ Status Code:     200 OK
 
 De methode is de `get` uit `@app.get("/")`. Bij **Reactie** (Response) staat wat de server terugstuurde: de JSON van je functie, letter voor letter zoals `return` hem maakte.
 
+## Als de lijst leeg is
+
+Soms staat er in Netwerk niets, en de volgende keer wel. Dat ligt bijna altijd aan een van deze vier dingen:
+
+- Je opende het tabblad na het laden. Netwerk ziet alleen wat er gebeurt terwijl het open staat. Herlaad met het tabblad open.
+- Je ging naar een andere pagina. Bij elke nieuwe pagina, ook na een formulier dat je doorstuurt, begint de lijst opnieuw. Wil je zien wat er vóór de overstap gebeurde, zet dan bovenin het vinkje **Logboek behouden** (Preserve log) aan.
+- Er staat nog een filter aan. Onder de knoppen staat een rij soorten: Alle (All), Fetch/XHR, Doc, CSS, JS en meer. Chrome onthoudt welke je het laatst koos, ook de volgende dag. Staat Fetch/XHR aan, dan zie je geen pagina's. Klik op Alle, en maak het zoekvak links ernaast leeg.
+- Opnemen staat uit. Helemaal links staat een rondje. Is het rood, dan neemt Netwerk op. Is het grijs, dan heb je erop geklikt of per ongeluk Ctrl+E gedrukt. Klik erop en herlaad.
+
 ## Als je wijziging niet doorkomt
 
 De browser bewaart van sommige antwoorden een kopie, de **cache**. Vraagt hij hetzelfde adres nog eens, dan pakt hij soms die kopie in plaats van de server te vragen. Dat zie je in Netwerk aan de kolom Grootte: daar staat dan **(schijfcache)** of **(disk cache)** in plaats van een aantal bytes.
@@ -70,7 +79,7 @@ Bij de JSON van je endpoint gebeurt dat zelden. Bij bestanden wel, en die komen 
 3. Vind de methode en de statuscode bij Headers, en je JSON bij Reactie
 
 :::danger[Gaat er iets mis?]
-Blijft de lijst leeg? Je opende de tools nadat de pagina al geladen was. Herlaad met het tabblad open. Zie je geen tabblad Netwerk? Het paneel is te smal en verbergt tabbladen achter `»` rechts in de rij. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
+Blijft de lijst leeg? Loop de vier oorzaken bij [Als de lijst leeg is](#als-de-lijst-leeg-is) langs. Zie je geen tabblad Netwerk? Het paneel is te smal en verbergt tabbladen achter `»` rechts in de rij. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
 :::
 
 ## Opdrachten
