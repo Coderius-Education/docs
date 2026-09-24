@@ -21,12 +21,12 @@ ronde** uit (alle pagina's, op basis van de waarden uit de **vorige**
 ronde), en herhaal. Na elke ronde veranderen de waarden minder; je stopt
 als de grootste verandering kleiner is dan een kleine `epsilon`.
 
-Let op: bereken een ronde altijd uit de ranks van de **vorige** ronde,
-niet uit ranks die je deze ronde al hebt aangepast.
+Let op: maak elke ronde een **nieuwe** dict en laat `rank` staan tot de
+ronde af is. De oude waarden heb je nog nodig om het verschil te meten.
 
 ## Bouw en test
 
-{/* niet-draaien: startcode; zonder de stopconditie van de leerling loopt de lus eindeloos */}
+{/* niet-draaien: startcode; de return stopt de lus meteen, dus de test faalt op de startverdeling */}
 <PyRunner rows={16} initialCode={`WEB = {
     "A": {"B", "C"},
     "B": {"C"},
@@ -59,8 +59,9 @@ def pagerank(web, d=0.85, epsilon=1e-9):
         #    op basis van de huidige 'rank'
         # 2. bepaal de grootste verandering t.o.v. 'rank'
         # 3. zet rank = nieuw
-        # 4. stop (return rank) zodra die verandering < epsilon is
-        ...
+        # 4. stop zodra die verandering < epsilon is: zet de return
+        #    hieronder in een if. Nu stopt de lus al na de start.
+        return rank
 
 
 # === Tests ===
@@ -74,6 +75,11 @@ assert round(sum(r.values()), 6) == 1.0
 print("PageRank werkt ✓")
 for p in sorted(r, key=lambda x: -r[x]):
     print(f"    {p}: {r[p]:.4f}")`} />
+
+Haal je de `return` weg zonder er een `if` omheen te zetten, dan loopt de
+lus **oneindig** door en de tab bevriest: Python draait in dezelfde tab als
+de pagina. Kopieer je code daarom eerst naar een kladblok voordat je op Voer
+uit drukt.
 
 <details>
 <summary>Antwoord</summary>

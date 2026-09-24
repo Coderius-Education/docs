@@ -67,16 +67,16 @@ willekeurig óók naar `D`.
 
 ### Stelling 4
 
-> Je moet de nieuwe ranks berekenen op basis van de ranks uit de
-> **vorige** ronde, niet op basis van ranks die je deze ronde al hebt
-> bijgewerkt.
+> Na één ronde rekenen heb je de PageRank van het mini-web al.
 
 <details>
 <summary>Waar of niet waar?</summary>
 
-**Waar.** In één iteratie reken je álle nieuwe ranks uit met de waarden
-van de vórige iteratie. Meng je dat door elkaar, dan reken je iets anders
-uit en kan het resultaat scheef of instabiel worden.
+**Niet waar.** In de eerste ronde stemt elke pagina alsof ze allemaal even
+belangrijk zijn, want zo begin je. Dat zijn ze niet: C krijgt na die ronde
+meer dan de anderen, en stemt in de volgende ronde dus zwaarder op A. Elke
+ronde schuift het belang zo een stukje verder. In het mini-web staan de
+waarden pas na zo'n veertig rondes stil.
 
 </details>
 
