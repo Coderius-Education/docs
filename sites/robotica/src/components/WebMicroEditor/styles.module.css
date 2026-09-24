@@ -29,29 +29,67 @@
 
 .toolbarSecundair .btn,
 .toolbarSecundair .select {
-  padding: 4px 10px;
+  height: 32px;
+  padding: 0 10px;
   font-size: 13px;
+}
+
+/* Knoppen die bij elkaar horen (bestand, board, lettergrootte) als één
+   blok met lijnen ertussen, in plaats van losse omlijnde knoppen. */
+.knopGroep {
+  display: inline-flex;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.knopGroep .btn {
+  border: none;
+  border-radius: 0;
+}
+
+.knopGroep .btn + .btn {
+  border-left: 1px solid var(--ifm-color-emphasis-300);
 }
 
 .btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
+  height: 36px;
+  padding: 0 12px;
   border: 1px solid var(--ifm-color-emphasis-300);
-  border-radius: 6px;
-  background: var(--ifm-background-surface-color);
-  color: var(--ifm-font-color-base);
+  border-radius: 8px;
+  background: var(--ifm-background-color);
+  color: var(--ifm-color-emphasis-800);
   cursor: pointer;
+  font: inherit;
   font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
 }
 
 .btn:hover:not(:disabled) {
   background: var(--ifm-color-emphasis-100);
+  color: var(--ifm-font-color-base);
 }
 
-.btn:disabled {
-  opacity: 0.5;
+.btn:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+}
+
+/* Uitgeschakeld: een lege omtrek met vage tekst, ook bij Run en Stop. Een
+   gekleurd blok dat niets doet lijkt kapot. Opgehoogd met .btn.btn, anders
+   wint de kleur van Stop in het donkere thema. */
+.btn.btn:disabled {
+  background: transparent;
+  border-color: var(--ifm-color-emphasis-200);
+  color: var(--ifm-color-emphasis-400);
   cursor: not-allowed;
 }
 
@@ -67,30 +105,57 @@
 
 /* De knop waar het om draait: groter en vetter dan de rest. */
 .btnRun {
-  padding: 8px 20px;
+  height: 40px;
+  padding: 0 18px;
   font-size: 16px;
   font-weight: 600;
-  border-radius: 8px;
+  border-radius: 10px;
 }
 
-.btnDanger {
-  background: #d33;
-  color: white;
-  border-color: #d33;
+/* De sneltoets op Run, zacht, zodat "Run op board" het woord blijft. */
+.sneltoets {
+  padding: 1px 6px;
+  border: 1px solid color-mix(in srgb, currentColor 35%, transparent);
+  border-radius: 5px;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+  box-shadow: none;
+  color: inherit;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 11px;
+  font-weight: 500;
+  opacity: 0.85;
 }
 
-.btnDanger:hover:not(:disabled) {
-  background: #b22;
+.btn:disabled .sneltoets {
+  display: none;
+}
+
+/* Stop is een rode omtrek; pas bij aanwijzen vol rood. Zo trekt hij in rust
+   geen aandacht weg van Run. */
+.btnStop {
+  border-color: color-mix(in srgb, var(--ifm-color-danger) 55%, transparent);
+  color: var(--ifm-color-danger-dark);
+}
+
+[data-theme="dark"] .btnStop {
+  color: var(--ifm-color-danger-light);
+}
+
+.btnStop:hover:not(:disabled) {
+  background: var(--ifm-color-danger);
+  border-color: var(--ifm-color-danger);
+  color: #fff;
 }
 
 .status {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
+  gap: 7px;
+  height: 30px;
+  padding: 0 12px;
   border-radius: 999px;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .statusDot {
@@ -100,26 +165,37 @@
   display: inline-block;
 }
 
+/* De kleuren van het thema in plaats van vaste lichte tinten, zodat het
+   label ook op een donkere pagina leesbaar blijft. */
 .statusDisconnected {
-  background: #f5d5d5;
-  color: #7a1f1f;
+  background: color-mix(in srgb, var(--ifm-color-danger) 14%, transparent);
+  color: var(--ifm-color-danger-darkest);
 }
 .statusDisconnected .statusDot {
-  background: #c33;
+  background: var(--ifm-color-danger);
 }
 .statusConnected {
-  background: #d6f0d6;
-  color: #1f5b1f;
+  background: color-mix(in srgb, var(--ifm-color-success) 16%, transparent);
+  color: var(--ifm-color-success-darkest);
 }
 .statusConnected .statusDot {
-  background: #2a8a2a;
+  background: var(--ifm-color-success);
 }
 .statusBusy {
-  background: #fff2cc;
-  color: #6b5300;
+  background: color-mix(in srgb, var(--ifm-color-warning) 18%, transparent);
+  color: var(--ifm-color-warning-darkest);
 }
 .statusBusy .statusDot {
-  background: #c89500;
+  background: var(--ifm-color-warning-dark);
+}
+[data-theme="dark"] .statusDisconnected {
+  color: var(--ifm-color-danger-lightest);
+}
+[data-theme="dark"] .statusConnected {
+  color: var(--ifm-color-success-lightest);
+}
+[data-theme="dark"] .statusBusy {
+  color: var(--ifm-color-warning-lightest);
 }
 
 .spacer {
@@ -127,12 +203,18 @@
 }
 
 .select {
-  padding: 6px 8px;
+  height: 36px;
+  padding: 0 10px;
   border: 1px solid var(--ifm-color-emphasis-300);
-  border-radius: 6px;
-  background: var(--ifm-background-surface-color);
-  color: var(--ifm-font-color-base);
+  border-radius: 8px;
+  background: var(--ifm-background-color);
+  color: var(--ifm-color-emphasis-800);
   font-size: 14px;
+}
+
+.selectIcoon {
+  flex-shrink: 0;
+  color: var(--ifm-color-emphasis-600);
 }
 
 .workArea {
@@ -423,7 +505,7 @@
 
 .btnActief {
   background: var(--ifm-color-emphasis-200);
-  border-color: var(--ifm-color-emphasis-500);
+  color: var(--ifm-font-color-base);
 }
 
 .plot {

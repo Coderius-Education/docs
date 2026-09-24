@@ -6,6 +6,22 @@ import { type Extension, Prec } from '@codemirror/state';
 import { Decoration, EditorView, keymap } from '@codemirror/view';
 import CodeMirror from '@uiw/react-codemirror';
 import clsx from 'clsx';
+import {
+  AArrowDown,
+  AArrowUp,
+  BookOpen,
+  FilePlus,
+  FlaskConical,
+  FolderOpen,
+  Play,
+  RotateCcw,
+  Save,
+  SaveAll,
+  Square,
+  Unplug,
+  Usb,
+  Wrench,
+} from 'lucide-react';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -803,6 +819,9 @@ export default function WebMicroEditor(): React.JSX.Element {
           {status === 'busy' && 'Bezig...'}
         </span>
 
+        {/* De volgende stap is gevuld, de rest rustig: niet verbonden is dat
+            Verbind, daarna Run. Een uitgeschakelde knop is een lege omtrek,
+            geen groot gekleurd blok dat klikbaar lijkt. */}
         {!connected && (
           <button
             type="button"
@@ -810,6 +829,7 @@ export default function WebMicroEditor(): React.JSX.Element {
             onClick={connect}
             disabled={status === 'verbindt'}
           >
+            <Usb aria-hidden="true" size={16} />
             Verbind met board
           </button>
         )}
@@ -820,26 +840,30 @@ export default function WebMicroEditor(): React.JSX.Element {
             onClick={disconnect}
             disabled={status === 'busy'}
           >
+            <Unplug aria-hidden="true" size={16} />
             Verbreek
           </button>
         )}
 
         <button
           type="button"
-          className={clsx(styles.btn, styles.btnPrimary, styles.btnRun)}
+          className={clsx(styles.btn, styles.btnRun, connected && styles.btnPrimary)}
           onClick={runOnBoard}
           disabled={!connected || status === 'busy'}
           title="Schrijft de code naar /main.py en herstart het board (Ctrl+Enter)"
         >
-          <span aria-hidden="true">▶</span> Run op board
+          <Play aria-hidden="true" size={17} fill="currentColor" strokeWidth={1.5} />
+          Run op board
+          <kbd className={styles.sneltoets}>Ctrl ↵</kbd>
         </button>
         <button
           type="button"
-          className={clsx(styles.btn, styles.btnDanger)}
+          className={clsx(styles.btn, styles.btnStop)}
           onClick={stop}
           disabled={!connected}
           title="Onderbreek het draaiende programma (KeyboardInterrupt)"
         >
+          <Square aria-hidden="true" size={13} fill="currentColor" strokeWidth={1.5} />
           Stop
         </button>
         <button
@@ -849,6 +873,7 @@ export default function WebMicroEditor(): React.JSX.Element {
           disabled={!connected || status === 'busy'}
           title="Draait de code eenmalig, zonder main.py te veranderen"
         >
+          <FlaskConical aria-hidden="true" size={16} />
           Test direct
         </button>
 
@@ -861,56 +886,67 @@ export default function WebMicroEditor(): React.JSX.Element {
           aria-expanded={setupOpen}
           title="Eenmalig per board: MicroPython en de Leaphy-library erop zetten"
         >
+          <Wrench aria-hidden="true" size={16} />
           Board instellen
         </button>
       </div>
 
       <div className={styles.toolbarSecundair}>
-        <button
-          type="button"
-          className={styles.btn}
-          onClick={() => void newFile()}
-          title="Leeg de editor (begin een nieuw bestand)"
-        >
-          Nieuw
-        </button>
-        {currentFile && currentFile !== '/main.py' && (
+        <fieldset className={styles.knopGroep} aria-label="Bestand">
           <button
             type="button"
             className={styles.btn}
-            onClick={saveCurrent}
-            disabled={!connected || status === 'busy' || !isDirty}
-            title={`Schrijft de code naar ${currentFile} (geen reboot)`}
+            onClick={() => void newFile()}
+            title="Leeg de editor (begin een nieuw bestand)"
           >
-            Opslaan
+            <FilePlus aria-hidden="true" size={15} />
+            Nieuw
           </button>
-        )}
-        <button
-          type="button"
-          className={styles.btn}
-          onClick={saveAs}
-          disabled={!connected || status === 'busy'}
-          title="Sla de code onder een zelfgekozen naam op het board op"
-        >
-          Opslaan als...
-        </button>
-        <button
-          type="button"
-          className={styles.btn}
-          onClick={herstart}
-          disabled={!connected || status === 'busy'}
-          title="Herstart het board; main.py draait dan opnieuw"
-        >
-          Herstart
-        </button>
-        <button
-          type="button"
-          className={styles.btn}
-          onClick={() => (files === null ? refreshFiles('/') : setFiles(null))}
-          disabled={!connected || status === 'busy'}
-        >
-          {files === null ? 'Bestanden op board' : 'Verberg bestanden'}
-        </button>
+          {currentFile && currentFile !== '/main.py' && (
+            <button
+              type="button"
+              className={styles.btn}
+              onClick={saveCurrent}
+              disabled={!connected || status === 'busy' || !isDirty}
+              title={`Schrijft de code naar ${currentFile} (geen reboot)`}
+            >
+              <Save aria-hidden="true" size={15} />
+              Opslaan
+            </button>
+          )}
+          <button
+            type="button"
+            className={styles.btn}
+            onClick={saveAs}
+            disabled={!connected || status === 'busy'}
+            title="Sla de code onder een zelfgekozen naam op het board op"
+          >
+            <SaveAll aria-hidden="true" size={15} />
+            Opslaan als...
+          </button>
+        </fieldset>
+        <fieldset className={styles.knopGroep} aria-label="Board">
+          <button
+            type="button"
+            className={styles.btn}
+            onClick={herstart}
+            disabled={!connected || status === 'busy'}
+            title="Herstart het board; main.py draait dan opnieuw"
+          >
+            <RotateCcw aria-hidden="true" size={15} />
+            Herstart
+          </button>
+          <button
+            type="button"
+            className={clsx(styles.btn, files !== null && styles.btnActief)}
+            onClick={() => (files === null ? refreshFiles('/') : setFiles(null))}
+            disabled={!connected || status === 'busy'}
+            aria-pressed={files !== null}
+          >
+            <FolderOpen aria-hidden="true" size={15} />
+            {files === null ? 'Bestanden op board' : 'Verberg bestanden'}
+          </button>
+        </fieldset>
         <Keuzelijst
           className={styles.select}
           label="Voorbeeld laden"
@@ -920,28 +956,33 @@ export default function WebMicroEditor(): React.JSX.Element {
           waarde={null}
           opties={TEMPLATES.map((t) => ({ waarde: t.id, label: t.label }))}
           onKies={(id) => void applyTemplate(id)}
+          voor={<BookOpen aria-hidden="true" size={15} className={styles.selectIcoon} />}
         />
 
         <span className={styles.spacer} />
 
-        <button
-          type="button"
-          className={styles.btn}
-          onClick={() => setFontSize((v) => Math.max(12, v - 2))}
-          disabled={fontSize <= 12}
-          title="Kleinere letters"
-        >
-          A−
-        </button>
-        <button
-          type="button"
-          className={styles.btn}
-          onClick={() => setFontSize((v) => Math.min(24, v + 2))}
-          disabled={fontSize >= 24}
-          title="Grotere letters (handig op de beamer)"
-        >
-          A+
-        </button>
+        <fieldset className={styles.knopGroep} aria-label="Lettergrootte">
+          <button
+            type="button"
+            className={styles.btn}
+            onClick={() => setFontSize((v) => Math.max(12, v - 2))}
+            disabled={fontSize <= 12}
+            aria-label="Kleinere letters"
+            title="Kleinere letters"
+          >
+            <AArrowDown aria-hidden="true" size={17} />
+          </button>
+          <button
+            type="button"
+            className={styles.btn}
+            onClick={() => setFontSize((v) => Math.min(24, v + 2))}
+            disabled={fontSize >= 24}
+            aria-label="Grotere letters"
+            title="Grotere letters (handig op de beamer)"
+          >
+            <AArrowUp aria-hidden="true" size={17} />
+          </button>
+        </fieldset>
       </div>
 
       {!connected && !setupOpen && (
