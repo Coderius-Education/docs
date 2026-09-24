@@ -51,9 +51,9 @@ def pagerank(web, d=0.85, epsilon=1e-9):
         verschil = 0.0
         for p in web:
             verschil = max(verschil, abs(nieuw[p] - rank[p]))
-        if verschil < epsilon:
-            return nieuw
         rank = nieuw
+        if verschil < epsilon:
+            return rank
 
 
 def random_surfer(web, d=0.85, n=50000, seed=42):

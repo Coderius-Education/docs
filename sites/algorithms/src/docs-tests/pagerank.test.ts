@@ -280,4 +280,16 @@ describe('PageRank: één versie van de functie', () => {
     expect(compleet).toContain('def pagerank');
     expect(functie(lees('pagerank/11-cheatsheet.mdx'))).toBe(compleet);
   });
+
+  it('de speeltuinen van compleet, aanpassen en zelf bouwen hebben die functie ook', () => {
+    // Aanpassen en zelf bouwen gaven `return nieuw` vóór `rank = nieuw`:
+    // hetzelfde antwoord, maar een andere functie dan de les uitlegt.
+    const compleet = lees('pagerank/07-compleet.mdx').match(
+      /```python[^\n]*\n(def pagerank[\s\S]*?)```/,
+    )?.[1];
+    for (const pad of ['07-compleet.mdx', '08-aanpassen.mdx', '09-zelf-bouwen.mdx']) {
+      const code = lees(`pagerank/${pad}`).match(/initialCode=\{`([\s\S]*?)`\}/)?.[1] ?? '';
+      expect(code, pad).toContain(compleet);
+    }
+  });
 });
