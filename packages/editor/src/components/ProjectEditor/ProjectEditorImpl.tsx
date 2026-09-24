@@ -1,3 +1,4 @@
+import Keuzelijst from '@coderius/shared/components/Keuzelijst';
 import { bevestig, meld, vraag } from '@coderius/shared/dialoog';
 import clsx from 'clsx';
 import {
@@ -12,6 +13,7 @@ import {
   Pencil,
   Plus,
   Trash2,
+  X,
 } from 'lucide-react';
 import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { downloadBestand } from '../../lib/download';
@@ -44,7 +46,6 @@ import {
   renameInProject,
   renamedPath,
 } from './paths';
-import { projectenPerTaal } from './projectenPerTaal';
 import styles from './styles.module.css';
 
 const AUTOSAVE_DEBOUNCE_MS = 500;
@@ -401,30 +402,26 @@ export default function ProjectEditorImpl({
       <div className={styles.projectBar}>
         <div className={styles.barGroep}>
           {project && (
-            <label className={styles.projectKiezer} title="Ander project openen">
-              <FolderOpen aria-hidden="true" size={16} className={styles.projectIcoon} />
-              <select
-                className={styles.projectSelect}
-                value={project.id}
-                onChange={(e) => void openProject(e.target.value)}
-                aria-label="Project"
-              >
-                {/* Per taal gegroepeerd; de taal van het open project staat
-                    al in het label ernaast, dus niet ook in de naam. */}
-                {projectenPerTaal(summaries ?? []).map(([taal, lijst]) => (
-                  <optgroup key={taal} label={taal}>
-                    {lijst.map((s) => (
-                      <option key={s.id} value={s.id}>
-                        {s.name}
-                      </option>
-                    ))}
-                  </optgroup>
-                ))}
-              </select>
-              <span className={styles.taalBadge}>
-                {RUNNER_META[project.runnerId]?.label ?? project.runnerId}
-              </span>
-            </label>
+            <Keuzelijst
+              className={styles.projectKiezer}
+              label="Project"
+              title="Ander project openen"
+              waarde={project.id}
+              // Per taal gegroepeerd; de taal van het open project staat al
+              // in het label op de knop, dus niet ook in de naam.
+              opties={(summaries ?? []).map((s) => ({
+                waarde: s.id,
+                label: s.name,
+                groep: RUNNER_META[s.runnerId]?.label ?? s.runnerId,
+              }))}
+              onKies={(id) => void openProject(id)}
+              voor={<FolderOpen aria-hidden="true" size={16} className={styles.projectIcoon} />}
+              na={
+                <span className={styles.taalBadge}>
+                  {RUNNER_META[project.runnerId]?.label ?? project.runnerId}
+                </span>
+              }
+            />
           )}
           <BalkKnop icoon={Plus} label="Nieuw project" onClick={() => setShowTemplates(true)} />
           {project && (
@@ -505,13 +502,12 @@ export default function ProjectEditorImpl({
             ))}
           </div>
           {project && (
-            <button
-              type="button"
-              className={styles.barButton}
+            <BalkKnop
+              icoon={X}
+              label="Annuleren"
+              title="Terug naar je project"
               onClick={() => setShowTemplates(false)}
-            >
-              Annuleren
-            </button>
+            />
           )}
         </div>
       )}

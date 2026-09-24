@@ -37,6 +37,7 @@ function useColorMode(): { colorMode: 'light' | 'dark' } {
   return { colorMode };
 }
 
+import Keuzelijst from '@coderius/shared/components/Keuzelijst';
 import { bevestig, vraag } from '@coderius/shared/dialoog';
 import { leesEditorHash } from './codeLink';
 import { friendlyError } from './errorMessages';
@@ -910,24 +911,16 @@ export default function WebMicroEditor(): React.JSX.Element {
         >
           {files === null ? 'Bestanden op board' : 'Verberg bestanden'}
         </button>
-        <select
+        <Keuzelijst
           className={styles.select}
-          aria-label="Voorbeeld laden"
-          defaultValue=""
-          onChange={(e) => {
-            void applyTemplate(e.target.value);
-            e.target.value = '';
-          }}
-        >
-          <option value="" disabled>
-            Voorbeeld laden...
-          </option>
-          {TEMPLATES.map((t) => (
-            <option key={t.id} value={t.id}>
-              {t.label}
-            </option>
-          ))}
-        </select>
+          label="Voorbeeld laden"
+          placeholder="Voorbeeld laden..."
+          // Geen vaste keuze: na het laden staat er weer "Voorbeeld laden...",
+          // zodat je hetzelfde voorbeeld nog eens kunt kiezen.
+          waarde={null}
+          opties={TEMPLATES.map((t) => ({ waarde: t.id, label: t.label }))}
+          onKies={(id) => void applyTemplate(id)}
+        />
 
         <span className={styles.spacer} />
 

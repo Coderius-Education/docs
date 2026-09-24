@@ -33,51 +33,27 @@
   min-width: 0;
 }
 
-/* De projectkiezer: een gewone <select> (toegankelijk, werkt met het
-   toetsenbord), met een map ervoor en de taal als label erachter. */
+/* De projectkiezer (Keuzelijst uit @coderius/shared): een map ervoor, de
+   naam vet, de taal als label erachter. */
 .projectKiezer {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
   height: 2.1rem;
-  padding: 0 0.35rem 0 0.6rem;
+  max-width: 22rem;
+  padding: 0 0.5rem 0 0.6rem;
   border: 1px solid var(--ifm-color-emphasis-300);
   border-radius: 0.5rem;
   background: var(--ifm-background-color);
-  min-width: 0;
+  color: var(--ifm-font-color-base);
+  font-size: 0.88rem;
+  font-weight: 600;
 }
 
-.projectKiezer:focus-within {
-  border-color: var(--ifm-color-primary);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--ifm-color-primary) 25%, transparent);
+.projectKiezer:hover {
+  border-color: var(--ifm-color-emphasis-500);
 }
 
 .projectIcoon {
   flex-shrink: 0;
   color: var(--ifm-color-emphasis-600);
-}
-
-.projectSelect {
-  font: inherit;
-  font-size: 0.88rem;
-  font-weight: 600;
-  padding: 0.2rem 0.2rem;
-  border: none;
-  background: transparent;
-  color: var(--ifm-font-color-base);
-  max-width: 14rem;
-  min-width: 0;
-  cursor: pointer;
-  text-overflow: ellipsis;
-}
-
-.projectSelect:focus {
-  outline: none;
-}
-
-.projectSelect option {
-  background: var(--ifm-background-color);
-  color: var(--ifm-font-color-base);
 }
 
 .taalBadge {

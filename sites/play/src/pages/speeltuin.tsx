@@ -1,3 +1,4 @@
+import Keuzelijst from '@coderius/shared/components/Keuzelijst';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import Layout from '@theme/Layout';
 import type React from 'react';
@@ -227,17 +228,19 @@ function PlaygroundInner() {
               &#x23F9; Stop
             </button>
           )}
-          <select
-            value={mode}
-            onChange={(e) => {
-              setMode(e.target.value);
+          <Keuzelijst
+            label="Bibliotheek"
+            waarde={mode}
+            opties={[
+              { waarde: 'play', label: 'play' },
+              { waarde: 'pygame', label: 'pygame-ce' },
+            ]}
+            onKies={(nieuw) => {
+              setMode(nieuw);
               handleStop();
             }}
             className={styles.modeSelect}
-          >
-            <option value="play">play</option>
-            <option value="pygame">pygame-ce</option>
-          </select>
+          />
         </div>
         <div className={styles.toolbarRight}>
           <div className={styles.presetsWrapper} ref={presetsRef}>
