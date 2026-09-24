@@ -175,3 +175,20 @@ describe('PageRank: wat bouwsteen 4 nieuw gebruikt, legt hij ook uit', () => {
       expect(tekst).toContain(nieuw);
   });
 });
+
+describe('PageRank: wat een bouwsteen je laat schrijven, komt later terug', () => {
+  it('elke functie met "Vul aan" wordt op een latere pagina genoemd', () => {
+    // Bouwsteen 1 noemde wie_linkt_naar "straks de kern van de formule",
+    // en daarna kwam hij nergens meer voor.
+    // De sidebar-volgorde is het nummer van het bestand, ook in bouwen/.
+    const nummer = (pad: string) => Number(pad.match(/(\d+)-[^/]*$/)?.[1]);
+    const volgorde = lessen(MAP).sort((a, b) => nummer(a) - nummer(b));
+    for (const [i, pad] of volgorde.entries()) {
+      const tekst = readFileSync(pad, 'utf8');
+      for (const m of tekst.matchAll(/def (\w+)\([^)]*\):\n\s*# Vul aan/g)) {
+        const later = volgorde.slice(i + 1).some((p) => readFileSync(p, 'utf8').includes(m[1]));
+        expect(later, `${pad}: ${m[1]}`).toBe(true);
+      }
+    }
+  });
+});

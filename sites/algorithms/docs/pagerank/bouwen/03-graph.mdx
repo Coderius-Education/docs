@@ -12,8 +12,9 @@ sidebar_position: 3
   ]}
 />
 
-**Leerdoel:** je slaat het web op als een graph en schrijft de helper die
-straks de kern van de formule is: *wie linkt naar deze pagina?*
+**Leerdoel:** je slaat het web op als een graph en beantwoordt de vraag
+achter de formule: *wie linkt naar deze pagina?* De controle die je
+daarvoor schrijft, `p in web[i]`, komt in bouwsteen 3 terug in de formule.
 
 ## Het web in Python
 
@@ -46,12 +47,6 @@ Voor de formule moet je straks weten **welke pagina's naar `p` linken**
     "D": {"C"},
 }
 
-def paginas(web):
-    return sorted(web)
-
-def uitgaande(web, p):
-    return web[p]
-
 def wie_linkt_naar(web, p):
     # Vul aan: geef de set van alle pagina's i die naar p linken.
     # (i linkt naar p als p in web[i] zit.)
@@ -59,8 +54,6 @@ def wie_linkt_naar(web, p):
 
 
 # === Tests ===
-assert set(paginas(WEB)) == {"A", "B", "C", "D"}
-assert uitgaande(WEB, "A") == {"B", "C"}
 assert wie_linkt_naar(WEB, "C") == {"A", "B", "D"}
 assert wie_linkt_naar(WEB, "D") == set()
 
