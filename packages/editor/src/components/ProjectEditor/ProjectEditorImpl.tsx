@@ -1,5 +1,18 @@
 import { bevestig, meld, vraag } from '@coderius/shared/dialoog';
 import clsx from 'clsx';
+import {
+  Check,
+  Download,
+  FilePlus,
+  FolderOpen,
+  FolderPlus,
+  LoaderCircle,
+  Maximize2,
+  Minimize2,
+  Pencil,
+  Plus,
+  Trash2,
+} from 'lucide-react';
 import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { downloadBestand } from '../../lib/download';
 import { languageForPath } from '../../lib/languages';
@@ -20,6 +33,7 @@ import type { Project, ProjectSummary, ProjectTemplate } from '../../vfs/types';
 import Console from '../shared/Console';
 import RunControls from '../shared/RunControls';
 import { useRunSession } from '../shared/useRunSession';
+import BalkKnop from './BalkKnop';
 import FileTree from './FileTree';
 import type { ProjectEditorProps } from './index';
 import {
@@ -30,6 +44,7 @@ import {
   renameInProject,
   renamedPath,
 } from './paths';
+import { projectenPerTaal } from './projectenPerTaal';
 import styles from './styles.module.css';
 
 const AUTOSAVE_DEBOUNCE_MS = 500;
@@ -64,6 +79,12 @@ export default function ProjectEditorImpl({
   // meer regels code te zien.
   const rootRef = useRef<HTMLDivElement>(null);
   const volledig = useVolledigScherm(rootRef);
+  // Of alleen één paneel: de code om rustig te lezen, of het voorbeeld van
+  // een website op de volle breedte van het scherm.
+  const editorRef = useRef<HTMLElement>(null);
+  const editorVol = useVolledigScherm(editorRef);
+  const uitvoerRef = useRef<HTMLElement>(null);
+  const uitvoerVol = useVolledigScherm(uitvoerRef);
   const projectRef = useRef(project);
   projectRef.current = project;
 
@@ -378,72 +399,90 @@ export default function ProjectEditorImpl({
   return (
     <div ref={rootRef} className={styles.root} style={{ height }}>
       <div className={styles.projectBar}>
-        <div className={styles.projectControls}>
+        <div className={styles.barGroep}>
           {project && (
-            <select
-              className={styles.projectSelect}
-              value={project.id}
-              onChange={(e) => void openProject(e.target.value)}
-              title="Project openen"
-            >
-              {(summaries ?? []).map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name} ({RUNNER_META[s.runnerId]?.label ?? s.runnerId})
-                </option>
-              ))}
-            </select>
+            <label className={styles.projectKiezer} title="Ander project openen">
+              <FolderOpen aria-hidden="true" size={16} className={styles.projectIcoon} />
+              <select
+                className={styles.projectSelect}
+                value={project.id}
+                onChange={(e) => void openProject(e.target.value)}
+                aria-label="Project"
+              >
+                {/* Per taal gegroepeerd; de taal van het open project staat
+                    al in het label ernaast, dus niet ook in de naam. */}
+                {projectenPerTaal(summaries ?? []).map(([taal, lijst]) => (
+                  <optgroup key={taal} label={taal}>
+                    {lijst.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
+              <span className={styles.taalBadge}>
+                {RUNNER_META[project.runnerId]?.label ?? project.runnerId}
+              </span>
+            </label>
           )}
-          <button type="button" className={styles.barButton} onClick={() => setShowTemplates(true)}>
-            Nieuw project
-          </button>
+          <BalkKnop icoon={Plus} label="Nieuw project" onClick={() => setShowTemplates(true)} />
           {project && (
             <>
-              <button
-                type="button"
-                className={styles.barButton}
-                onClick={() => void renameProject()}
-              >
-                Hernoemen
-              </button>
-              <button
-                type="button"
-                className={styles.barButton}
-                onClick={() => void removeProject()}
-              >
-                Verwijderen
-              </button>
-              <button
-                type="button"
-                className={styles.barButton}
-                onClick={() => void downloadProject()}
-                title="Het hele project als .zip-bestand, als reservekopie of om in te leveren"
-              >
-                Downloaden (.zip)
-              </button>
-              <span className={styles.saveState}>
-                {saveState === 'saving' && 'Opslaan…'}
-                {saveState === 'saved' && 'Opgeslagen ✓'}
-              </span>
+              <fieldset className={styles.knopGroep} aria-label="Dit project">
+                <BalkKnop
+                  icoon={Pencil}
+                  label="Hernoemen"
+                  title="Dit project een andere naam geven"
+                  onClick={() => void renameProject()}
+                />
+                <BalkKnop
+                  icoon={Download}
+                  label="Downloaden (.zip)"
+                  title="Het hele project als .zip-bestand, als reservekopie of om in te leveren"
+                  onClick={() => void downloadProject()}
+                />
+                <BalkKnop
+                  icoon={Trash2}
+                  label="Verwijderen"
+                  title="Dit project uit deze browser verwijderen"
+                  gevaarlijk
+                  onClick={() => void removeProject()}
+                />
+              </fieldset>
+              <output className={styles.saveState}>
+                {saveState === 'saving' && (
+                  <>
+                    <LoaderCircle aria-hidden="true" size={14} className={styles.draait} />
+                    Opslaan…
+                  </>
+                )}
+                {saveState === 'saved' && (
+                  <>
+                    <Check aria-hidden="true" size={14} />
+                    Opgeslagen
+                  </>
+                )}
+              </output>
             </>
           )}
         </div>
-        <div className={styles.projectControls}>
+        <div className={styles.barGroep}>
           {volledig.kan && (
-            <button
-              type="button"
-              className={styles.barButton}
-              onClick={volledig.wissel}
-              aria-pressed={volledig.aan}
+            <BalkKnop
+              icoon={volledig.aan ? Minimize2 : Maximize2}
+              label={volledig.aan ? 'Sluiten (Esc)' : 'Volledig scherm'}
               title={
                 volledig.aan
                   ? 'Terug (of druk op Escape)'
-                  : 'De editor op het hele beeldscherm, zonder de balken van de site en de browser'
+                  : 'De hele editor op het beeldscherm, zonder de balken van de site en de browser'
               }
-            >
-              {volledig.aan ? 'Sluiten (Esc)' : 'Volledig scherm'}
-            </button>
+              alleenIcoon
+              ingedrukt={volledig.aan}
+              onClick={volledig.wissel}
+            />
           )}
-          {project && <RunControls session={session} onRun={handleRun} />}
+          {project && <RunControls session={session} onRun={handleRun} sneltoets="Ctrl ↵" />}
         </div>
       </div>
 
@@ -487,17 +526,19 @@ export default function ProjectEditorImpl({
                   type="button"
                   className={styles.treeAction}
                   title="Nieuw bestand"
+                  aria-label="Nieuw bestand"
                   onClick={() => void newFile()}
                 >
-                  ＋
+                  <FilePlus aria-hidden="true" size={15} />
                 </button>
                 <button
                   type="button"
                   className={styles.treeAction}
                   title="Nieuwe map"
+                  aria-label="Nieuwe map"
                   onClick={() => void newFolder()}
                 >
-                  ▸＋
+                  <FolderPlus aria-hidden="true" size={15} />
                 </button>
               </span>
             </div>
@@ -512,8 +553,8 @@ export default function ProjectEditorImpl({
             />
           </aside>
 
-          <section className={styles.editorArea}>
-            {openTabs.length > 0 && (
+          <section ref={editorRef} className={styles.editorArea} aria-label="Code">
+            <div className={styles.paneelKop}>
               <div className={styles.tabs} role="tablist">
                 {openTabs.map((tab) => (
                   <span
@@ -540,7 +581,16 @@ export default function ProjectEditorImpl({
                   </span>
                 ))}
               </div>
-            )}
+              {editorVol.kan && (
+                <BalkKnop
+                  icoon={editorVol.aan ? Minimize2 : Maximize2}
+                  label={editorVol.aan ? 'Sluiten (Esc)' : 'Code op volledig scherm'}
+                  alleenIcoon
+                  ingedrukt={editorVol.aan}
+                  onClick={editorVol.wissel}
+                />
+              )}
+            </div>
             <div className={styles.editorPane}>
               {activePath !== null ? (
                 <MonacoPane
@@ -565,7 +615,25 @@ export default function ProjectEditorImpl({
             </div>
           </section>
 
-          <section className={styles.outputArea}>
+          <section ref={uitvoerRef} className={styles.outputArea} aria-label="Uitvoer">
+            <div className={clsx(styles.paneelKop, styles.uitvoerKop)}>
+              <span className={styles.paneelTitel}>{Preview ? 'Voorbeeld' : 'Uitvoer'}</span>
+              {uitvoerVol.kan && (
+                <BalkKnop
+                  icoon={uitvoerVol.aan ? Minimize2 : Maximize2}
+                  label={
+                    uitvoerVol.aan
+                      ? 'Sluiten (Esc)'
+                      : Preview
+                        ? 'Voorbeeld op volledig scherm'
+                        : 'Uitvoer op volledig scherm'
+                  }
+                  alleenIcoon
+                  ingedrukt={uitvoerVol.aan}
+                  onClick={uitvoerVol.wissel}
+                />
+              )}
+            </div>
             {Preview && (
               <div className={styles.previewPane}>
                 <Preview session={session} />

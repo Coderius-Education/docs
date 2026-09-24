@@ -24,7 +24,8 @@
     "@coderius/shared": "workspace:*",
     "@monaco-editor/react": "catalog:",
     "fflate": "^0.8.3",
-    "idb-keyval": "catalog:"
+    "idb-keyval": "catalog:",
+    "lucide-react": "^1.48.0"
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "catalog:",
