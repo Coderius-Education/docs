@@ -59,6 +59,37 @@
   flex-shrink: 0;
 }
 
+/* Dicht is de console alleen zijn kopbalk: in de html-css-velden staan editor
+   en voorbeeld naast elkaar met een vaste hoogte, en elke pixel console gaat
+   van het voorbeeld af. */
+.consolePanelDicht {
+  height: auto;
+}
+
+.consolePanelDicht .consolePanelHeader {
+  border-bottom: none;
+}
+
+.consoleToggle {
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+}
+
+.consoleToggle:hover {
+  color: #fff;
+}
+
+.consoleToggle:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+}
+
 .consoleClear {
   background: none;
   border: 1px solid #555;

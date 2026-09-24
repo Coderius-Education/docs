@@ -245,6 +245,9 @@ function CodeEditorInner({
       // komt het bericht van pagehide al van een ander window.
       if (e.data?.source !== 'code-editor' || e.data.veld !== veldId) return;
       if (e.data.type === 'console') {
+        // Uitvoer klapt de console open, ook in een html-css-veld: wie daar
+        // een console.log typt, moet het resultaat niet hoeven zoeken.
+        setConsoleOpen(true);
         setConsoleLogs((prev) => [...prev, { level: e.data.level, text: e.data.text }]);
       } else if (e.data.type === 'height' && typeof e.data.height === 'number') {
         setPreviewInhoud(e.data.height);
@@ -280,11 +283,18 @@ function CodeEditorInner({
 
   const visibleTabs: Tab[] = ['html', 'css', ...(initialJs !== '' ? ['javascript' as Tab] : [])];
 
-  // De console blijft staan zodra er JavaScript in het veld zit, ook als die
-  // alleen in een onclick staat. Hij verdwijnt niet meer als je de handler even
-  // wegtypt, anders springt het voorbeeld eronder op en neer.
-  const [toonConsole, setToonConsole] = useState(() => heeftJavaScript(initialHtml, initialJs));
-  if (!toonConsole && heeftJavaScript(html, js)) setToonConsole(true);
+  // De console staat er altijd, als balk onder het voorbeeld. In een veld
+  // zonder JavaScript (de html-css-lessen) is hij dicht, zodat het voorbeeld
+  // zijn ruimte houdt; een klik of uitvoer klapt hem open. Komt er JavaScript
+  // in het veld, ook alleen in een onclick, dan gaat hij één keer vanzelf
+  // open en blijft dan open: wegtypen en terugtypen van een handler liet het
+  // voorbeeld eronder anders op en neer springen.
+  const [consoleOpen, setConsoleOpen] = useState(() => heeftJavaScript(initialHtml, initialJs));
+  const [jsGezien, setJsGezien] = useState(consoleOpen);
+  if (!jsGezien && heeftJavaScript(html, js)) {
+    setJsGezien(true);
+    setConsoleOpen(true);
+  }
 
   const veld = (
     <div
@@ -394,24 +404,35 @@ function CodeEditorInner({
               : undefined
           }
         />
-        {toonConsole && (
-          <div className={styles.consolePanel}>
-            <div className={styles.consolePanelHeader}>
-              <span>Console</span>
-              {consoleLogs.length > 0 && (
-                <button
-                  type="button"
-                  className={styles.consoleClear}
-                  onClick={() => setConsoleLogs([])}
-                >
-                  wissen
-                </button>
-              )}
-            </div>
+        <div className={`${styles.consolePanel} ${consoleOpen ? '' : styles.consolePanelDicht}`}>
+          <div className={styles.consolePanelHeader}>
+            <button
+              type="button"
+              className={styles.consoleToggle}
+              onClick={() => setConsoleOpen((open) => !open)}
+              aria-expanded={consoleOpen}
+              title={consoleOpen ? 'Console inklappen' : 'Console openklappen'}
+            >
+              <span aria-hidden="true">{consoleOpen ? '\u25BE' : '\u25B8'}</span> Console
+              {!consoleOpen && consoleLogs.length > 0 && ` (${consoleLogs.length})`}
+            </button>
+            {consoleOpen && consoleLogs.length > 0 && (
+              <button
+                type="button"
+                className={styles.consoleClear}
+                onClick={() => setConsoleLogs([])}
+              >
+                wissen
+              </button>
+            )}
+          </div>
+          {consoleOpen && (
             <div className={styles.consolePanelBody} ref={consoleBodyRef}>
               {consoleLogs.length === 0 ? (
                 <span className={styles.consolePlaceholder}>
-                  Nog geen uitvoer. Gebruik console.log() om hier iets te tonen.
+                  {jsGezien
+                    ? 'Nog geen uitvoer. Gebruik console.log() om hier iets te tonen.'
+                    : 'Nog geen JavaScript in deze pagina. Gebruik je console.log(), dan verschijnt de uitvoer hier.'}
                 </span>
               ) : (
                 consoleLogs.map((log, i) => (
@@ -424,8 +445,8 @@ function CodeEditorInner({
                 ))
               )}
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
