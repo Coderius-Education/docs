@@ -4,41 +4,51 @@ sidebar_position: 10
 
 # Er gaat iets mis — top-3 fouten
 
-**Leerdoel:** je herkent de drie klassieke valkuilen bij het bouwen van
-PageRank.
+**Leerdoel:** je herkent de drie fouten die je bij het bouwen van
+PageRank het makkelijkst maakt.
 
-## Ranks uit dezelfde ronde hergebruiken
+## Het verschil is meteen nul
 
-Symptoom: de ranks kloppen *bijna*, maar net niet — en ze hangen af van de
-volgorde van je pagina's.
+Symptoom: de test van [bouwsteen 4](./bouwen/06-itereren) faalt, en de
+ranks zien eruit alsof er maar één ronde is gerekend:
 
-**Oorzaak:** je werkt `rank` ter plekke bij, zodat latere pagina's in
-dezelfde ronde al de nieuwe waarde van eerdere pagina's gebruiken. Eén
-iteratie moet volledig op de waarden van de **vorige** ronde gebaseerd
-zijn.
+{/* foutmelding-los: de fout zit in de pagerank van de leerling; src/docs-tests/pagerank.test.ts rekent deze melding na */}
 
-```python
-# FOUT — overschrijft rank tijdens de ronde
-for p in web:
-    rank[p] = (1 - d) / n + d * som_voor(p, rank)   # rank verandert al
+```
+AssertionError: {'A': 0.25, 'B': 0.1437, 'C': 0.4784, 'D': 0.0375}
 ```
 
-**Oplossing:** bouw eerst een nieuwe dict, vervang `rank` pas daarna.
+**Oorzaak:** `nieuw` en `rank` zijn dezelfde dict. `nieuw = rank` maakt
+geen kopie, maar geeft dezelfde dict een tweede naam. Alles wat je in
+`nieuw` zet, staat dus meteen ook in `rank`. Het verschil tussen de twee is
+daardoor altijd 0, en de lus stopt na de eerste ronde.
+
+**Oplossing:** begin elke ronde met een lege dict.
 
 ```python
+# FOUT
+nieuw = rank          # geen nieuwe dict, maar een tweede naam
+for p in web:
+    nieuw[p] = nieuwe_rank(web, rank, p, d)
+
 # GOED
 nieuw = {}
 for p in web:
-    nieuw[p] = (1 - d) / n + d * som_voor(p, rank)
-rank = nieuw
+    nieuw[p] = nieuwe_rank(web, rank, p, d)
 ```
+
+Hetzelfde gebeurt als je `rank = nieuw` vóór het meten van het verschil
+zet: dan vergelijk je `nieuw` met zichzelf. De test toont dan
+`'C': 0.5687`.
+
+Meer uitleg: [Bouwsteen 4](./bouwen/06-itereren)
 
 ## Het basisdeel `(1 − d)/N` vergeten
 
-Symptoom: de som van de ranks zakt onder de 1 en pagina's lopen leeg.
+Symptoom: de som van de ranks zakt onder de 1, en de pagina's lopen leeg.
 
 **Oorzaak:** je rekent alleen `d · Σ ...` en laat de willekeurige sprong
-weg. Dan "lekt" er belang weg en klopt de verdeling niet meer.
+weg. Elke ronde gaat er dan een deel van het belang verloren.
 
 ```python
 # FOUT
@@ -53,12 +63,13 @@ nieuw[p] = (1 - d) / n + d * som
 Symptoom: zodra een pagina nergens naartoe linkt, telt de som niet meer op
 tot 1.
 
-**Oorzaak:** het belang van zo'n "doodlopende" pagina wordt nergens
-heen verdeeld en verdwijnt. In onze voorbeelden linkt elke pagina ergens
-naartoe, dus dit speelt niet — maar in een echt web wel.
+**Oorzaak:** een doodlopende pagina geeft haar belang aan niemand door,
+dus het verdwijnt. In het mini-web linkt elke pagina ergens naartoe. Voeg je op [de compleet-pagina](./07-compleet) een pagina zonder
+links toe, dan zie je het meteen aan de som.
 
-**Oplossing:** behandel een pagina zónder uitgaande links alsof hij naar
-**alle** pagina's linkt (de surfer springt dan willekeurig verder):
+**Oplossing:** doe alsof een pagina zonder uitgaande links naar alle
+pagina's linkt. De surfer springt dan vanaf die pagina willekeurig
+verder.
 
 ```python
 def uitgaande_links(web, i, paginas):

@@ -28,9 +28,7 @@ const DOCS = fileURLToPath(new URL('../../docs/', import.meta.url));
 // ontsnapte aan een regex die alleen aan het begin van de kop keek.
 const OPDRACHT_KOP = /^(De |Extra )?(Opdracht|Uitdaging|Bouw zelf)\b/i;
 
-const ACHTERSTAND = new Map<string, string[]>([
-  ['pagerank/08-aanpassen.mdx', ['Opdracht 1 — draai aan `d`', 'Opdracht 2 — voeg een link toe']],
-]);
+const ACHTERSTAND = new Map<string, string[]>([]);
 
 function lessen(map: string): string[] {
   return readdirSync(map)

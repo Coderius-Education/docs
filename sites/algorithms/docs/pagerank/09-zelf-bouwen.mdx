@@ -4,23 +4,24 @@ sidebar_position: 9
 
 # Zelf bouwen — de random surfer
 
-**Leerdoel:** je bouwt de **andere** kijk op PageRank — een random surfer
-die eindeloos doorklikt — en ziet dat die dezelfde ranks oplevert als de
-iteratieve formule.
+**Leerdoel:** je bouwt de random surfer na, die eindeloos doorklikt, en
+ziet dat hij op dezelfde ranks uitkomt als de formule.
 
 ## Het idee
 
-Tot nu toe rekende je PageRank *exact* uit met een formule. Maar het begon
-als een **verhaal**: een surfer die willekeurig klikt. Simuleer dat:
+Tot nu toe rekende je PageRank uit met een formule. Maar het idee begon
+met een surfer die willekeurig klikt, en die kun je nabootsen:
 
-- Begin op een willekeurige pagina.
-- Herhaal heel vaak: tel de huidige pagina, en ga dan verder. Met kans `d`
-  volg je een **willekeurige uitgaande link**; met kans `1 − d` (of als de
-  pagina geen links heeft) **spring** je naar een willekeurige pagina.
-- De PageRank is de **fractie van de tijd** die je op elke pagina was.
+1. Begin op een willekeurige pagina.
+2. Tel de pagina waar je bent, en ga verder. Met kans `d` volg je een
+   willekeurige uitgaande link. Met kans `1 − d`, of als de pagina geen
+   links heeft, spring je naar een willekeurige pagina.
+3. Herhaal stap 2 heel vaak.
 
-Met genoeg klikken benadert dit de exacte ranks. We vergelijken jouw
-simulatie met de iteratieve `pagerank` (hieronder al gegeven).
+De PageRank van een pagina is het deel van de tijd dat je er was. Met
+genoeg klikken kom je dicht bij de ranks van de formule. De test legt jouw
+simulatie naast de `pagerank` van de vorige pagina's; die staat al in de
+code.
 
 ## Bouw en test
 
@@ -51,9 +52,9 @@ def pagerank(web, d=0.85, epsilon=1e-9):
         verschil = 0.0
         for p in web:
             verschil = max(verschil, abs(nieuw[p] - rank[p]))
-        if verschil < epsilon:
-            return nieuw
         rank = nieuw
+        if verschil < epsilon:
+            return rank
 
 
 def random_surfer(web, d=0.85, n=50000, seed=42):
@@ -97,9 +98,8 @@ else:
     huidig = random.choice(paginas)
 ```
 
-De simulatie en de formule zijn twee kanten van dezelfde medaille: de
-formule rekent precies uit waar de random surfer op de lange termijn
-terechtkomt.
+De formule rekent uit waar de random surfer op de lange duur terechtkomt;
+de simulatie laat hem lopen en telt waar hij komt.
 
 </details>
 

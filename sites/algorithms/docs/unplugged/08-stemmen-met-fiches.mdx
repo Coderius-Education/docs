@@ -6,9 +6,9 @@ sidebar_position: 8
 
 <Handout>
 
-Hoe bepaalt een zoekmachine welke pagina belangrijk is? Links zijn
-stemmen. Jullie spelen een mini-web na met fiches en zien het antwoord
-letterlijk op tafel ontstaan.
+Hoe bepaalt een zoekmachine welke pagina belangrijk is? Door links als
+stemmen te tellen. Jullie spelen een mini-web van vier pagina's na met
+fiches, en zien op tafel welke pagina bovenaan komt.
 
 ## Wat je nodig hebt
 
@@ -64,15 +64,16 @@ Speel **vier rondes** en vul na elke ronde de stand in:
 - Welke pagina's staan bovenaan, en welke is helemaal leeggebloed?
   Waarom krijgt D nooit meer een fiche terug?
 - D heeft evenveel uitgaande links als B. Waarom eindigt B toch hoger?
-- De aantallen van A en C wiebelen per ronde. Het echte PageRank lost
-  dat op door elke pagina elke ronde ook een klein vast basisbedrag te
-  geven (damping) — waarom helpt dat ook tegen het leegbloeden van D?
+- De aantallen van A en C wiebelen per ronde. Blijft dat zo als je
+  doorspeelt?
+- Het echte PageRank geeft elke pagina elke ronde ook een klein vast
+  basisbedrag (damping). Wat verandert daardoor voor D?
 
 <div style={{breakBefore: 'page'}}>
 
 ## Antwoorden
 
-Deze pagina print als losse laatste pagina — houd hem achter de hand of
+Deze pagina print als losse laatste pagina. Houd hem achter de hand, of
 knip hem eraf.
 
 | | A | B | C | D |
@@ -83,24 +84,24 @@ knip hem eraf.
 | ronde 3 | 12 | 15 | 21 | 0 |
 | ronde 4 | 21 | 6 | 21 | 0 |
 
-- **A en C** delen de top: iedereen stemt (direct of indirect) op C, en
-  C geeft alles weer aan A door.
-- **D** ontvangt niets omdat niemand naar D linkt — na één ronde is D
-  definitief leeg. Belang moet je *krijgen*, uitdelen alleen is niet
-  genoeg.
-- B ontvangt de helft van A's fiches, D ontvangt niets — uitgaande
-  links zeggen niets over je eigen belang, inkomende alles.
-- Met damping krijgt óók D elke ronde een klein basisbedrag en dempen
-  de schommelingen van A en C uit tot vaste waarden. Dat is precies de
-  berekening die je in de les in Python bouwt.
+- A en C delen de top. Iedereen stemt direct of via een omweg op C, en C
+  geeft alles weer door aan A.
+- Naar D linkt niemand, dus D ontvangt niets: na één ronde is D voorgoed
+  leeg. Belang moet je *krijgen*, uitdelen alleen is niet genoeg.
+- B ontvangt de helft van A's fiches, en D ontvangt niets. Je uitgaande
+  links zeggen niets over je eigen belang; je inkomende links alles.
+- Het wiebelen dooft uit als je doorspeelt, al moet je dan fiches gaan
+  halveren: A en C naderen allebei 19,2 fiches en B 9,6.
+- Met damping krijgt óók D elke ronde een klein basisbedrag, dus D komt
+  nooit meer op nul. Het wiebelen dooft dan ook sneller uit. Dat is
+  precies de berekening die je in de les in Python bouwt.
 
 </div>
 
 ## Verder op de site
 
-- [PageRank — het idee](/docs/pagerank/01-concept) — het verhaal
-  achter links-als-stemmen en damping
-- [Bouwen](/docs/pagerank/bouwen/03-graph) — ditzelfde mini-web
-  in Python
+- [PageRank — het idee](/docs/pagerank/01-concept): het verhaal achter
+  links als stemmen, en damping
+- [Bouwen](/docs/pagerank/bouwen/03-graph): ditzelfde mini-web in Python
 
 </Handout>

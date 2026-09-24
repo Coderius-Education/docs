@@ -200,12 +200,7 @@ STARTCODE_RE = re.compile(r"\{/\*\s*niet-draaien:\s*startcode\b.*?\*/\}\s*$")
 # Startcodes die nog niet aan die regel voldoen, met de reden; exact, zodat een
 # opgeloste eruit moet en een nieuwe meteen opvalt (zelfde aanpak als
 # sites/algorithms/src/docs-tests/opdrachten.test.ts).
-STARTCODE_ACHTERSTAND = {
-    "sites/algorithms/docs/pagerank/bouwen/06-itereren.mdx": (
-        "de `while True` in de startcode heeft geen return, dus hij hangt tot "
-        "de leerling de lus afmaakt; in de browser bevriest de tab"
-    ),
-}
+STARTCODE_ACHTERSTAND: dict[str, str] = {}
 DRAAIEN_RE = re.compile(r"\{/\*\s*draaien:.*?\*/\}\s*$")
 # Een Voorspel-blok gebruikt vaak de functie die eerder op de pagina is
 # opgebouwd; met deze marker draait het met dat blok ervoor geplakt, zodat de

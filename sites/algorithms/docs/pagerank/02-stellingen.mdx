@@ -4,8 +4,10 @@ sidebar_position: 2
 
 # Stellingen — eerst voorspellen
 
-**Leerdoel:** je toetst je beeld van PageRank vóórdat je gaat bouwen.
-Denk eerst zelf na, klik dan open. We gebruiken het mini-web van stap 1:
+**Leerdoel:** je controleert of je beeld van PageRank klopt voordat je
+gaat bouwen. Bedenk bij elke stelling eerst zelf je antwoord, en klik dan
+pas open. Alle stellingen gaan over het mini-web van
+[het idee](./01-concept):
 
 ```
 A → B,  A → C
@@ -18,14 +20,17 @@ D → C
 
 ### Stelling 1
 
-> Als je de PageRank van alle pagina's optelt, kom je op 1 uit.
+> Als je de PageRank van alle pagina's in het mini-web optelt, kom je op 1
+> uit.
 
 <details>
 <summary>Waar of niet waar?</summary>
 
 **Waar.** Je kunt PageRank zien als "kans dat de random surfer hier is".
-Alle kansen samen zijn 1. Een goede implementatie houdt de som elke
-iteratie op (ongeveer) 1.
+Alle kansen samen zijn 1. Dat lukt omdat in het mini-web elke pagina
+ergens naartoe linkt, zodat elke stem ergens terechtkomt. Wat er gebeurt
+als een pagina nergens naartoe linkt, zie je bij
+[de fouten](./10-fouten#dangling-nodes--paginas-zonder-uitgaande-links).
 
 </details>
 
@@ -33,17 +38,17 @@ iteratie op (ongeveer) 1.
 
 ### Stelling 2
 
-> De pagina met de **meeste inkomende links** heeft altijd de hoogste
+> De pagina met de meeste inkomende links heeft altijd de hoogste
 > PageRank.
 
 <details>
 <summary>Waar of niet waar?</summary>
 
-**Niet waar.** Niet het *aantal* links telt, maar *wie* er linkt en
+**Niet waar.** Het gaat niet om het aantal links, maar om wie er linkt en
 hoeveel die zelf te verdelen heeft. Eén link van een heel belangrijke
-pagina kan zwaarder wegen dan tien links van onbekende pagina's. (In ons
-mini-web heeft `C` toevallig wél de meeste links én de hoogste rank, maar
-dat hoeft niet zo te zijn.)
+pagina kan zwaarder wegen dan tien links van pagina's die niemand kent. In
+het mini-web heeft `C` toevallig wél de meeste links én de hoogste rank,
+maar dat hoeft niet.
 
 </details>
 
@@ -56,10 +61,10 @@ dat hoeft niet zo te zijn.)
 <details>
 <summary>Waar of niet waar?</summary>
 
-**Niet waar.** Door de **damping** krijgt elke pagina een basisdeel
+**Niet waar.** Door de damping krijgt elke pagina een basisdeel
 `(1 − d)/N`. Met `d = 0,85` en `N = 4` is dat `0,15/4 = 0,0375`. `D`
-eindigt dus laag, maar niet op nul — de random surfer springt af en toe
-willekeurig óók naar `D`.
+eindigt dus laag, maar niet op nul: de random surfer springt af en toe
+ook op `D`.
 
 </details>
 
@@ -67,16 +72,16 @@ willekeurig óók naar `D`.
 
 ### Stelling 4
 
-> Je moet de nieuwe ranks berekenen op basis van de ranks uit de
-> **vorige** ronde, niet op basis van ranks die je deze ronde al hebt
-> bijgewerkt.
+> Na één ronde rekenen heb je de PageRank van het mini-web al.
 
 <details>
 <summary>Waar of niet waar?</summary>
 
-**Waar.** In één iteratie reken je álle nieuwe ranks uit met de waarden
-van de vórige iteratie. Meng je dat door elkaar, dan reken je iets anders
-uit en kan het resultaat scheef of instabiel worden.
+**Niet waar.** In de eerste ronde stemt elke pagina alsof ze allemaal even
+belangrijk zijn, want zo begin je. Dat zijn ze niet: C krijgt na die ronde
+meer dan de anderen, en stemt in de volgende ronde dus zwaarder op A. Elke
+ronde schuift het belang zo een stukje verder. In het mini-web staan de
+waarden pas na zo'n veertig rondes stil.
 
 </details>
 
@@ -89,16 +94,18 @@ uit en kan het resultaat scheef of instabiel worden.
 <details>
 <summary>Waar of niet waar?</summary>
 
-**Niet waar.** Zonder damping kan alle "belang" zich ophopen in een
-groepje pagina's dat alleen naar elkaar linkt (een val waar de surfer
-niet meer uit komt), en kunnen pagina's zonder inkomende links helemaal
-leeglopen. Damping (`d = 0,85`) houdt het stabiel en zorgt dat elke
-pagina bereikbaar blijft.
+**Niet waar.** Zonder damping kan al het belang zich ophopen in een
+groepje pagina's dat alleen naar elkaar linkt: de surfer komt er niet meer
+uit. Pagina's zonder inkomende links lopen dan helemaal leeg. Met
+`d = 0,85` springt de surfer af en toe weg, en blijft elke pagina
+bereikbaar.
 
 </details>
 
 ---
 
-Klaar met voorspellen? Tijd om te bouwen.
+:::info
+Zestien stellingen op papier, voor in de klas: [PageRank: waar of niet waar?](/docs/unplugged/09-waar-of-niet-waar).
+:::
 
 Door naar [het web als graph →](./bouwen/03-graph).

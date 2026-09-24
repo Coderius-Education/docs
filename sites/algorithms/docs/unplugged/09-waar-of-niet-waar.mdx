@@ -1,0 +1,169 @@
+---
+sidebar_position: 9
+---
+
+# PageRank: waar of niet waar?
+
+<Handout compact>
+
+<div className="handout-blad">
+
+Zestien stellingen over PageRank, allemaal over hetzelfde mini-web van vier
+pagina's. Omcirkel per stelling **W** (waar) of **N** (niet waar) en schrijf
+in één zin waarom. Werk in tweetallen: eerst allebei zelf, dan vergelijken.
+Ongeveer 25 minuten.
+
+## Het mini-web
+
+Een pijl betekent "linkt naar":
+
+```
+   A ──────▶ B
+   ▲ ╲       │
+   │   ╲     │
+   │     ▼   ▼
+   └────── C ◀────── D
+```
+
+- A linkt naar B en C
+- B linkt naar C
+- C linkt naar A
+- D linkt naar C
+
+Zo speel je een ronde: elke pagina verdeelt al haar fiches **gelijk** over
+de pagina's waar ze naar linkt, en alle pagina's doen dat tegelijk. A geeft
+dus de helft aan B en de helft aan C. Je begint met 12 fiches op elke
+pagina, tenzij de stelling iets anders zegt. De **eindstand** is waar de
+aantallen op uitkomen als je heel lang doorspeelt.
+
+<div className="handout-vragen handout-waarom">
+
+## Links en stemmen
+
+{/* stijl-uitzondering: vet-overdaad W / N is het vakje dat de leerling per stelling omcirkelt */}
+
+1. **W / N** Twee pagina's met evenveel inkomende links hebben in de
+   eindstand evenveel fiches.
+2. **W / N** Een link van een pagina die naar vijf pagina's linkt, is
+   minder waard dan een link van een pagina met evenveel fiches die maar
+   naar één pagina linkt.
+3. **W / N** Hoe meer links een pagina zelf uitdeelt, hoe meer fiches ze
+   zelf overhoudt.
+4. **W / N** C krijgt de meeste links, dus C heeft in de eindstand meer
+   fiches dan elke andere pagina.
+5. **W / N** Een pagina waar niemand naar linkt, eindigt met nul fiches.
+
+</div>
+
+<div className="handout-vragen handout-waarom">
+
+## Ronde voor ronde
+
+{/* stijl-uitzondering: vet-overdaad W / N is het vakje dat de leerling per stelling omcirkelt */}
+
+6. **W / N** Na één ronde heeft C de meeste fiches.
+7. **W / N** Na één ronde heeft B meer fiches dan aan het begin.
+8. **W / N** Na twee rondes heeft A meer fiches dan C.
+9. **W / N** Alles wat C na een ronde heeft, ligt na de volgende ronde
+   bij A.
+10. **W / N** B heeft na elke ronde precies de helft van wat A de ronde
+    ervoor had.
+11. **W / N** Er liggen na elke ronde samen 48 fiches op tafel.
+12. **W / N** Na één ronde weet je de eindstand al.
+
+</div>
+
+<div className="handout-vragen handout-waarom">
+
+## Lang doorspelen
+
+{/* stijl-uitzondering: vet-overdaad W / N is het vakje dat de leerling per stelling omcirkelt */}
+
+13. **W / N** Speel je lang genoeg door, dan blijven de aantallen van A en
+    C wiebelen.
+14. **W / N** Begin je met alle 48 fiches op D, dan is de eindstand anders
+    dan wanneer je met 12 op elke pagina begint.
+15. **W / N** Als D ook naar A gaat linken, heeft A na één ronde meer
+    fiches dan aan het begin.
+16. **W / N** Als D ook naar A gaat linken, krijgt D er zelf fiches bij.
+
+</div>
+
+<div className="handout-alleen-scherm">
+
+## Verder op de site
+
+- [PageRank: het idee](/docs/pagerank/01-concept): links als stemmen
+- [Stemmen met fiches](/docs/unplugged/08-stemmen-met-fiches): hetzelfde
+  mini-web, vier rondes op tafel
+
+</div>
+
+</div>
+
+<Antwoordblad titel="Antwoorden (voor de docent; print als losse laatste pagina)">
+
+Op het scherm staat dit dicht; op papier is het de losse laatste pagina.
+De eindstand is A 19,2, B 9,6, C 19,2 en D 0 fiches. Als deel van het
+geheel is dat 0,4, 0,2, 0,4 en 0: de PageRank van het mini-web zonder
+willekeurige sprongen.
+
+<div className="handout-overzicht">
+
+| | A | B | C | D |
+|:---:|:---:|:---:|:---:|:---:|
+| start | 12 | 12 | 12 | 12 |
+| ronde 1 | 12 | 6 | 30 | 0 |
+| ronde 2 | 30 | 6 | 12 | 0 |
+
+</div>
+
+**1. Niet waar.** A en B krijgen allebei precies één link, maar A eindigt
+op 19,2 en B op 9,6. A krijgt alles van C, dat zelf veel krijgt; B krijgt
+de helft van A.
+
+**2. Waar.** Een pagina verdeelt haar fiches gelijk over haar links. Bij
+vijf links gaat er per link een vijfde, bij één link alles.
+
+**3. Niet waar.** A deelt twee links uit en C maar één, en toch eindigen
+ze allebei op 19,2. Wat je overhoudt, hangt af van wie naar jóú linkt.
+
+**4. Niet waar.** C geeft elke ronde alles door aan A. In de eindstand
+hebben A en C allebei 19,2.
+
+**5. Waar.** Niemand geeft D iets, en D deelt na de eerste ronde zijn 12
+fiches uit. Daarna blijft D leeg.
+
+**6. Waar.** C krijgt 6 van A, 12 van B en 12 van D: samen 30.
+
+**7. Niet waar.** B krijgt alleen de helft van A: 6 fiches, de helft van
+de 12 waarmee B begon.
+
+**8. Waar.** Na ronde 2 heeft A er 30 (alles wat C had) en C maar 12.
+
+**9. Waar.** Alleen C linkt naar A, en C linkt alleen naar A. Wat C heeft,
+gaat dus in zijn geheel naar A.
+
+**10. Waar.** Alleen A linkt naar B, en A geeft B de helft.
+
+**11. Waar.** Elke pagina linkt ergens naartoe, dus elk fiche komt ergens
+terecht en er gaat er geen verloren.
+
+**12. Niet waar.** Na ronde 1 heeft C er 30, na ronde 2 A. Het schuift
+elke ronde verder, en pas na veel rondes staan de aantallen stil.
+
+**13. Niet waar.** Het wiebelen dooft uit als je doorspeelt, al moet je
+dan fiches gaan halveren. A en C komen allebei uit op 19,2.
+
+**14. Niet waar.** Na één ronde liggen alle 48 bij C, na twee bij A, en
+daarna spreidt het zich. De eindstand is dezelfde: 19,2, 9,6, 19,2 en 0.
+Waar je begint, maakt voor de eindstand niet uit.
+
+**15. Waar.** A krijgt dan 12 van C en 6 van D: samen 18.
+
+**16. Niet waar.** Hoeveel D krijgt, hangt af van wie naar D linkt, en dat
+is nog steeds niemand.
+
+</Antwoordblad>
+
+</Handout>
