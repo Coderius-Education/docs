@@ -9,7 +9,7 @@ extra link de ranks verschuift.
 
 ## Opdracht 1 — draai aan `d`
 
-Verander `D` en kijk wat er gebeurt. Probeer `0.85` (normaal), `0.5`,
+Verander `DEMPING` en kijk wat er gebeurt. Probeer `0.85` (normaal), `0.5`,
 `1.0` en `0.0`.
 
 <PyRunner rows={16} initialCode={`WEB = {
@@ -19,7 +19,7 @@ Verander `D` en kijk wat er gebeurt. Probeer `0.85` (normaal), `0.5`,
     "D": {"C"},
 }
 
-D = 0.85   # <-- verander dit
+DEMPING = 0.85   # <-- verander dit
 
 
 def pagerank(web, d=0.85, epsilon=1e-9):
@@ -43,7 +43,7 @@ def pagerank(web, d=0.85, epsilon=1e-9):
         rank = nieuw
 
 
-ranks = pagerank(WEB, D)
+ranks = pagerank(WEB, DEMPING)
 for p in sorted(ranks, key=lambda x: -ranks[x]):
     print(f"    {p}: {ranks[p]:.4f}")
 print(f"    som: {sum(ranks.values()):.4f}")`} />

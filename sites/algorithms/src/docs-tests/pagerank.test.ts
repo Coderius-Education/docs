@@ -144,3 +144,22 @@ describe('PageRank: wat de lessen over het algoritme zeggen', () => {
     expect(rondes).toBeLessThanOrEqual(45);
   });
 });
+
+describe('PageRank: de code in de speeltuinen', () => {
+  const speeltuinen = lessen(MAP).flatMap((pad) =>
+    [...readFileSync(pad, 'utf8').matchAll(/initialCode=\{`([\s\S]*?)`\}/g)].map(
+      (m) => [pad, m[1]] as const,
+    ),
+  );
+
+  it('geen variabele heet als een pagina van het web', () => {
+    // `D = 0.85` stond als dempingsfactor onder een web met pagina "D", en de
+    // opdracht erna vroeg "laat D ook naar A linken".
+    expect(speeltuinen.length).toBeGreaterThan(0);
+    for (const [pad, code] of speeltuinen) {
+      for (const m of code.matchAll(/^([A-Za-z_]\w*)\s*=/gm)) {
+        expect(Object.keys(WEB), `${pad}: ${m[1]}`).not.toContain(m[1]);
+      }
+    }
+  });
+});

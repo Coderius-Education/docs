@@ -61,7 +61,7 @@ Verandert er minder dan `epsilon`, dan is het stabiel en zijn de ranks klaar.
 
 ## Probeer het zelf
 
-Pas `WEB` aan (voeg pagina's of links toe) of verander `D` en draai
+Pas `WEB` aan (voeg pagina's of links toe) of verander `DEMPING` en draai
 opnieuw. De ranks komen gesorteerd van hoog naar laag.
 
 <PyRunner rows={18} initialCode={`WEB = {
@@ -71,7 +71,7 @@ opnieuw. De ranks komen gesorteerd van hoog naar laag.
     "D": {"C"},
 }
 
-D = 0.85   # damping factor
+DEMPING = 0.85   # de damping factor d
 
 
 def pagerank(web, d=0.85, epsilon=1e-9):
@@ -95,7 +95,7 @@ def pagerank(web, d=0.85, epsilon=1e-9):
             return rank
 
 
-ranks = pagerank(WEB, D)
+ranks = pagerank(WEB, DEMPING)
 print("PageRank (hoog naar laag):")
 for p in sorted(ranks, key=lambda x: -ranks[x]):
     print(f"    {p}: {ranks[p]:.4f}")
