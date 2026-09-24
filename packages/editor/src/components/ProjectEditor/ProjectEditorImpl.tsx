@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { downloadBestand } from '../../lib/download';
 import { languageForPath } from '../../lib/languages';
 import MonacoPane from '../../monaco/MonacoPane';
 import { RUNNER_META } from '../../runners/registry';
@@ -197,6 +198,19 @@ export default function ProjectEditorImpl({
     setShowTemplates(true);
   }, [storagePrefix, switchToProject]);
 
+  // fflate laadt pas bij de klik: de meeste leerlingen downloaden nooit, en
+  // dan hoort het niet in de bundel van de editor.
+  const downloadProject = useCallback(async () => {
+    const current = projectRef.current;
+    if (!current) return;
+    try {
+      const { projectNaarZip, zipBestandsnaam } = await import('./zip');
+      downloadBestand(projectNaarZip(current), zipBestandsnaam(current.name), 'application/zip');
+    } catch {
+      window.alert('Downloaden is niet gelukt. Probeer het nog een keer, of ververs de pagina.');
+    }
+  }, []);
+
   // ---- bestandsbeheer ----
 
   const openFile = useCallback((path: string) => {
@@ -361,6 +375,14 @@ export default function ProjectEditorImpl({
                 onClick={() => void removeProject()}
               >
                 Verwijderen
+              </button>
+              <button
+                type="button"
+                className={styles.barButton}
+                onClick={() => void downloadProject()}
+                title="Het hele project als .zip-bestand, als reservekopie of om in te leveren"
+              >
+                Downloaden (.zip)
               </button>
               <span className={styles.saveState}>
                 {saveState === 'saving' && 'Opslaan…'}
