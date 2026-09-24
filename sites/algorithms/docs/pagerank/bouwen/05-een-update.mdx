@@ -11,8 +11,8 @@ sidebar_position: 5
   ]}
 />
 
-**Leerdoel:** je giet de PageRank-formule in code voor **één** pagina,
-gegeven de huidige ranks.
+**Leerdoel:** je zet de PageRank-formule om in code, voor één pagina en
+met de ranks die je op dat moment hebt.
 
 ## De formule
 
@@ -21,18 +21,18 @@ rank(p) = (1 − d)/N  +  d · Σ  rank(i) / aantal_links(i)
                               i → p
 ```
 
-In woorden: een basisdeel `(1 − d)/N` (de willekeurige sprong van de
-surfer), plus `d` keer de opgetelde stemmen van elke pagina `i` die naar
-`p` linkt — en elke stem is `rank(i)` gedeeld door het aantal links dat
-`i` uitdeelt.
+In woorden: een basisdeel `(1 − d)/N` voor de willekeurige sprong van de
+surfer, plus `d` keer de stemmen van alle pagina's `i` die naar `p`
+linken. Elke stem is `rank(i)` gedeeld door het aantal links dat `i`
+uitdeelt.
 
 Welke pagina's naar `p` linken, zoek je uit zoals in `wie_linkt_naar` uit
 [bouwsteen 1](./03-graph): `p in web[i]`. Nu tel je bij elke treffer meteen
 de stem op, dus je hebt de verzameling zelf niet meer nodig.
 
-We testen met de startverdeling (alles `0.25`) en `d = 0.85`. Reken zelf
-even mee voor `C`: A, B en D linken naar C. A deelt 2 links uit
-(`0.25/2`), B en D elk 1 (`0.25/1`). Dat geeft
+De test gebruikt de startverdeling (alles `0.25`) en `d = 0.85`. Reken
+voor `C` mee: A, B en D linken naar C. A deelt 2 links uit (`0.25/2`), B en
+D elk 1 (`0.25/1`). Dat geeft
 `0.15/4 + 0.85 · (0.125 + 0.25 + 0.25) = 0.56875`.
 
 ## Bouw en test
@@ -74,8 +74,8 @@ for i in web:
         som += rank[i] / len(web[i])
 ```
 
-`D` krijgt van niemand een link, dus `som = 0` en blijft op het basisdeel
-`(1 − 0.85)/4 = 0.0375`.
+Naar `D` linkt niemand, dus `som` blijft 0 en `D` houdt alleen het
+basisdeel: `(1 − 0.85)/4 = 0.0375`.
 
 </details>
 

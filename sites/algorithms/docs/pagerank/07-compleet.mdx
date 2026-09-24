@@ -4,8 +4,8 @@ sidebar_position: 7
 
 # De complete oplossing
 
-**Leerdoel:** je ziet de volledige `pagerank`-functie werken en speelt met
-je eigen web.
+**Leerdoel:** je ziet de hele `pagerank`-functie werken en probeert hem
+uit op een web dat je zelf maakt.
 
 ## De functie
 
@@ -38,30 +38,30 @@ De startverdeling: elke pagina begint met een gelijk deel, samen precies 1.
 </Regel>
 
 <Regel n={6} tot={7}>
-Herhaal tot de waardes stil komen te staan; elke ronde bouwt een verse dictionary op uit de vórige ronde.
+Herhaal tot de waarden stilstaan. Elke ronde bouwt een nieuwe dict op uit de waarden van de vorige ronde.
 </Regel>
 
 <Regel n={10} tot={12}>
-Wie linkt er naar `p`? Elke linker `i` geeft zijn rank gelijk verdeeld door over zijn uitgaande links.
+Wie linkt er naar `p`? Elke pagina `i` die dat doet, verdeelt haar rank gelijk over haar uitgaande links.
 </Regel>
 
 <Regel n={13}>
-De formule: een klein vast deel voor de willekeurige springer (`1 - d`), plus `d` keer wat er via links binnenkomt.
+De formule: een klein vast deel voor de willekeurige sprong (`1 - d`), plus `d` keer wat er via links binnenkomt.
 </Regel>
 
 <Regel n={14} tot={16}>
-De grootste verandering van deze ronde — dat is de maat voor "zijn we er al?".
+De grootste verandering van deze ronde. Daaraan zie je of je klaar bent.
 </Regel>
 
 <Regel n={18} tot={19}>
-Verandert er minder dan `epsilon`, dan is het stabiel en zijn de ranks klaar.
+Verandert er minder dan `epsilon`, dan staan de waarden stil en zijn de ranks klaar.
 </Regel>
 
 </CodeUitleg>
 
 ## Probeer het zelf
 
-Pas `WEB` aan (voeg pagina's of links toe) of verander `DEMPING` en draai
+Voeg pagina's of links toe aan `WEB`, of verander `DEMPING`, en draai
 opnieuw. De ranks komen gesorteerd van hoog naar laag.
 
 Geef je een nieuwe pagina geen enkele link, dan komt de som onder de 1

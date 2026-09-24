@@ -9,8 +9,8 @@ extra link de ranks verschuift.
 
 ## Opdracht 1 — draai aan `d`
 
-Verander `DEMPING` en kijk wat er gebeurt. Probeer `0.85` (normaal), `0.5`,
-`1.0` en `0.0`.
+Verander `DEMPING` en kijk wat er gebeurt. Probeer `0.85`, de gewone
+waarde, en daarna `0.5`, `1.0` en `0.0`.
 
 <PyRunner rows={16} initialCode={`WEB = {
     "A": {"B", "C"},
@@ -59,21 +59,22 @@ print(f"    som: {sum(ranks.values()):.4f}")`} />
 | 0.0 | 0.2500 | 0.2500 | 0.2500 | 0.2500 |
 
 Hoe kleiner `d`, hoe vaker de surfer willekeurig springt, en hoe dichter
-de ranks bij elkaar komen. Bij `0.5` krijgt D al ruim drie keer zoveel als bij
-`0.85`.
+de ranks bij elkaar komen. Bij `0.5` krijgt D al ruim drie keer zoveel als
+bij `0.85`.
 
-- **`d = 0`**: er is geen "links volgen" meer, alleen willekeurig
-  springen. Elke pagina krijgt `1/N` — allemaal gelijk (`0.25`).
-- **`d = 1`**: geen willekeurige sprong meer. Pagina `D` (geen inkomende
-  links) loopt leeg naar `0`, en alle "belang" verzamelt zich in de
-  A–B–C-kring. Daarom kiest men in de praktijk iets ertussenin: `0.85`.
+Bij `d = 0` volgt de surfer geen enkele link meer en springt hij alleen
+nog. Elke pagina krijgt dan `1/N`, dus allemaal `0.25`.
+
+Bij `d = 1` springt hij nooit. Naar `D` linkt niemand, dus D loopt leeg
+tot `0`, en al het belang blijft in de kring van A, B en C hangen. Daarom
+kies je in de praktijk iets ertussenin, zoals `0.85`.
 
 </details>
 
 ## Opdracht 2 — voeg een link toe
 
-Laat `D` ook naar `A` linken (`"D": {"C", "A"}`). Voorspel eerst: wiens
-rank stijgt? Draai daarna en controleer.
+Laat `D` ook naar `A` linken: `"D": {"C", "A"}`. Voorspel eerst welke
+rank stijgt, en draai daarna.
 
 <details>
 <summary>Antwoord</summary>
@@ -83,11 +84,12 @@ rank stijgt? Draai daarna en controleer.
 | zonder `D → A` | 0.3725 | 0.1958 | 0.3941 | 0.0375 |
 | met `D → A` | 0.3797 | 0.1989 | 0.3839 | 0.0375 |
 
-`A` krijgt er een stem bij (van `D`), dus de rank van `A` stijgt. Omdat
-`D` nu zijn belang over twee pagina's verdeelt, daalt de stem die naar
-`C` ging iets. `B` stijgt ook een beetje: B krijgt de helft van wat A
+`A` krijgt er een stem van `D` bij, dus de rank van `A` stijgt. `D`
+verdeelt zijn belang nu over twee pagina's, dus de stem die naar `C` ging,
+wordt kleiner. `B` stijgt ook een beetje: B krijgt de helft van wat A
 uitdeelt, en A heeft nu meer. `D` zelf verandert niet, want naar D linkt
-nog steeds niemand. De som blijft 1 — belang wordt alleen anders verdeeld.
+nog steeds niemand. De som blijft 1; het belang is alleen anders
+verdeeld.
 
 </details>
 

@@ -4,8 +4,8 @@ sidebar_position: 10
 
 # Er gaat iets mis — top-3 fouten
 
-**Leerdoel:** je herkent de drie klassieke valkuilen bij het bouwen van
-PageRank.
+**Leerdoel:** je herkent de drie fouten die je bij het bouwen van
+PageRank het makkelijkst maakt.
 
 ## Het verschil is meteen nul
 
@@ -45,10 +45,10 @@ Meer uitleg: [Bouwsteen 4](./bouwen/06-itereren)
 
 ## Het basisdeel `(1 − d)/N` vergeten
 
-Symptoom: de som van de ranks zakt onder de 1 en pagina's lopen leeg.
+Symptoom: de som van de ranks zakt onder de 1, en de pagina's lopen leeg.
 
 **Oorzaak:** je rekent alleen `d · Σ ...` en laat de willekeurige sprong
-weg. Dan "lekt" er belang weg en klopt de verdeling niet meer.
+weg. Elke ronde gaat er dan een deel van het belang verloren.
 
 ```python
 # FOUT
@@ -63,13 +63,13 @@ nieuw[p] = (1 - d) / n + d * som
 Symptoom: zodra een pagina nergens naartoe linkt, telt de som niet meer op
 tot 1.
 
-**Oorzaak:** het belang van zo'n "doodlopende" pagina wordt nergens
-heen verdeeld en verdwijnt. In het mini-web linkt elke pagina ergens
-naartoe. Voeg je op [de compleet-pagina](./07-compleet) een pagina zonder
+**Oorzaak:** een doodlopende pagina geeft haar belang aan niemand door,
+dus het verdwijnt. In het mini-web linkt elke pagina ergens naartoe. Voeg je op [de compleet-pagina](./07-compleet) een pagina zonder
 links toe, dan zie je het meteen aan de som.
 
-**Oplossing:** behandel een pagina zónder uitgaande links alsof hij naar
-**alle** pagina's linkt (de surfer springt dan willekeurig verder):
+**Oplossing:** doe alsof een pagina zonder uitgaande links naar alle
+pagina's linkt. De surfer springt dan vanaf die pagina willekeurig
+verder.
 
 ```python
 def uitgaande_links(web, i, paginas):

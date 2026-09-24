@@ -18,8 +18,8 @@ daarvoor schrijft, `p in web[i]`, komt in bouwsteen 3 terug in de formule.
 
 ## Het web in Python
 
-Een **dict** waarbij elke pagina wijst naar de **set** pagina's waar hij
-naar linkt:
+Je slaat het web op als een **dict**. Elke pagina wijst naar de **set**
+pagina's waar ze naar linkt:
 
 ```python
 WEB = {
@@ -30,12 +30,13 @@ WEB = {
 }
 ```
 
-`WEB["A"]` is `{"B", "C"}` — de uitgaande links van A.
+`WEB["A"]` is `{"B", "C"}`: de uitgaande links van A.
 
 ## Wat we nodig hebben
 
-Voor de formule moet je straks weten **welke pagina's naar `p` linken**
-(en hoeveel links die elk uitdelen). Schrijf de helper `wie_linkt_naar`.
+Voor de formule moet je weten welke pagina's naar `p` linken, en hoeveel
+links die elk uitdelen. Het eerste zoek je uit met de helper
+`wie_linkt_naar`; die schrijf je nu.
 
 ## Bouw en test
 

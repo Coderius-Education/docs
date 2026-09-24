@@ -10,19 +10,19 @@ sidebar_position: 6
   ]}
 />
 
-**Leerdoel:** je herhaalt de update voor álle pagina's tot de ranks
-nauwelijks meer veranderen — dán heb je de PageRank.
+**Leerdoel:** je herhaalt de update voor alle pagina's tot de ranks
+nauwelijks nog veranderen. Dan heb je de PageRank.
 
 ## Het kip-ei-probleem oplossen
 
 Je kunt de rank van een pagina pas goed berekenen als je de ranks van de
-anderen kent. De truc: begin met de startverdeling, reken **één volledige
-ronde** uit (alle pagina's, op basis van de waarden uit de **vorige**
-ronde), en herhaal. Na elke ronde veranderen de waarden minder; je stopt
-als de grootste verandering kleiner is dan een kleine `epsilon`.
+anderen kent. Dus begin je met de startverdeling en reken je een hele
+ronde uit: alle pagina's, met de waarden uit de vorige ronde. Dat herhaal
+je. Elke ronde veranderen de waarden minder, en zodra de grootste
+verandering kleiner is dan een klein getal `epsilon`, stop je.
 
-Let op: maak elke ronde een **nieuwe** dict en laat `rank` staan tot de
-ronde af is. De oude waarden heb je nog nodig om het verschil te meten.
+Maak elke ronde een nieuwe dict en laat `rank` staan tot de ronde af is.
+De oude waarden heb je nog nodig om het verschil te meten.
 
 ## Een lus die stopt met return
 
@@ -129,8 +129,8 @@ def pagerank(web, d=0.85, epsilon=1e-9):
             return rank
 ```
 
-De eerste loop bouwt álle nieuwe ranks uit de oude `rank` voordat je
-`rank` overschrijft — precies wat je nodig hebt.
+De eerste loop bouwt alle nieuwe ranks uit de oude `rank`, en pas daarna
+overschrijf je `rank`. Zo kun je het verschil nog meten.
 
 </details>
 

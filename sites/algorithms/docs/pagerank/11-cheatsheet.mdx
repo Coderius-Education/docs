@@ -12,9 +12,9 @@ staan bij [het idee](./01-concept).
 <details>
 <summary>In één zin</summary>
 
-Een pagina is belangrijk als er **belangrijke** pagina's naar linken;
-links zijn stemmen, en je lost het circulaire karakter op door te
-**itereren** tot de waarden stabiel zijn.
+Een pagina is belangrijk als er belangrijke pagina's naar linken. Links
+zijn stemmen, en omdat dat rondjes draait, reken je in rondes tot de
+waarden niet meer veranderen.
 
 </details>
 
@@ -28,7 +28,7 @@ rank(p) = (1 − d)/N  +  d · Σ  rank(i) / aantal_links(i)
                               i → p
 ```
 
-- `d` = damping factor (meestal **0,85**)
+- `d` = damping factor, gewoonlijk 0,85
 - `N` = aantal pagina's
 - `(1 − d)/N` = basisdeel: de surfer springt soms willekeurig
 - de som loopt over alle pagina's `i` die naar `p` linken
@@ -69,21 +69,21 @@ def pagerank(web, d=0.85, epsilon=1e-9):
 <details>
 <summary>Damping, convergentie, som</summary>
 
-- **Damping** (`d = 0,85`) houdt het stabiel: de surfer loopt nooit
-    definitief vast en elke pagina blijft bereikbaar.
-- **Convergentie**: elke iteratie verandert minder; stop als de grootste
-    verandering kleiner is dan een kleine `epsilon`.
-- De **som** van alle ranks blijft (ongeveer) **1** — je kunt rank lezen
-    als "kans dat de random surfer hier is".
-- Reken een ronde altijd uit de ranks van de **vorige** ronde.
+- Damping (`d = 0,85`): de surfer loopt nooit voorgoed vast, en elke
+    pagina blijft bereikbaar.
+- Stoppen: elke ronde veranderen de waarden minder. Stop zodra de
+    grootste verandering kleiner is dan `epsilon`.
+- De som van alle ranks blijft (ongeveer) 1. Lees een rank als de kans
+    dat de random surfer op die pagina is.
+- Reken een ronde altijd uit de ranks van de vorige ronde.
 
 </details>
 
 <details>
 <summary>Dangling nodes</summary>
 
-Een pagina zonder uitgaande links laat anders belang "weglekken".
-Oplossing: behandel hem alsof hij naar **alle** pagina's linkt.
+Een pagina zonder uitgaande links laat belang weglekken. Doe daarom
+alsof zo'n pagina naar alle pagina's linkt.
 
 ```python
 if web[i]:
@@ -99,9 +99,8 @@ else:
 <details>
 <summary>Formule ↔ random surfer</summary>
 
-De **iteratieve formule** rekent PageRank exact uit. De **random
-surfer-simulatie** (veel klikken tellen) benadert dezelfde waarden. Het
-zijn twee kanten van hetzelfde idee: waar komt een eindeloze surfer op de
-lange termijn terecht?
+De formule rekent uit waar een eindeloze surfer op de lange duur
+terechtkomt. De simulatie laat de surfer heel vaak klikken, telt waar hij
+was, en komt op bijna dezelfde waarden uit.
 
 </details>

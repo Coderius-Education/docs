@@ -6,14 +6,14 @@ import slides from './slides/pagerank.pdf';
 
 # PageRank — het idee
 
-**Leerdoel:** je begrijpt het kernidee van PageRank: links zijn stemmen,
-belangrijke pagina's geven zwaardere stemmen, en daarom moet je het
-*iteratief* uitrekenen. Nog geen code — eerst snappen.
+**Leerdoel:** je begrijpt waarom PageRank links als stemmen telt, waarom
+een stem van een belangrijke pagina zwaarder weegt, en waarom je het
+daarom in rondes uitrekent. Code komt pas daarna.
 
 ## Het college
 
-Bekijk eerst de slides van je docent. Daarna vatten we het idee hieronder
-samen.
+Bekijk eerst de slides van je docent. Onder de slides staat het idee
+nog een keer op een rij.
 
 <iframe
   src={slides}
@@ -25,48 +25,46 @@ samen.
 
 ## Het probleem
 
-Typ iets in Google en je krijgt miljoenen pagina's terug — maar in een
-handige **volgorde**. Hoe bepaalt een computer welke pagina het
+Typ iets in Google en je krijgt miljoenen pagina's terug, in een
+volgorde die meestal klopt. Hoe bepaalt een computer welke pagina het
 belangrijkst is?
 
-Een eerste idee: **tel de links**. Een pagina waar veel andere pagina's
-naar linken, zal wel belangrijk zijn. Maar dat is te makkelijk te
-misbruiken (maak duizend nep-pagina's die naar je eigen site linken) en
-het mist iets: een link van een **belangrijke** pagina zou zwaarder
-moeten tellen dan een link van een onbekende.
+Je zou de links kunnen tellen: een pagina waar veel andere pagina's naar
+linken, zal wel belangrijk zijn. Maar dan maak je duizend nep-pagina's die
+naar je eigen site linken, en je staat bovenaan. En een link van een
+belangrijke pagina hoort zwaarder te tellen dan een link van een pagina
+die niemand kent.
 
 ## Links zijn stemmen
 
-PageRank (1998, van **Larry Page** en **Sergey Brin** — de oprichters van
-Google) ziet elke link als een **stem**:
+Larry Page en Sergey Brin, die later Google oprichtten, bedachten in 1998
+**PageRank**. Daarin is elke link een **stem**. Een pagina verdeelt haar
+"belang" over de pagina's waar ze naar linkt, en een stem van een
+belangrijke pagina is dus meer waard. Een pagina is belangrijk als er
+belangrijke pagina's naar linken.
 
-- Een pagina verdeelt zijn "belang" over de pagina's waar hij naar linkt.
-- Een stem van een belangrijke pagina is meer waard.
-- Dus: een pagina is belangrijk als er belangrijke pagina's naar linken.
-
-Zie je de cirkel? Om te weten hoe belangrijk A is, moet je weten hoe
-belangrijk de pagina's zijn die naar A linken — en om díe te weten... Dit
-**kip-ei-probleem** lossen we op door te **herhalen** tot de waarden niet
-meer veranderen.
+Daar zit een cirkel in. Om te weten hoe belangrijk A is, moet je weten hoe
+belangrijk de pagina's zijn die naar A linken, en om dat te weten moet je
+weer verder terug. Dat **kip-ei-probleem** los je op door de berekening te
+herhalen tot de waarden niet meer veranderen.
 
 ## De random surfer
 
-Een handige manier om erover te denken: stel je een **willekeurige
-surfer** voor die eindeloos doorklikt. Op elke pagina klikt hij op een
-willekeurige link naar de volgende. De **PageRank** van een pagina is dan
-de fractie van de tijd dat de surfer daar is. Belangrijke pagina's
-(waar veel naartoe leidt) bezoekt hij vaker.
+Stel je een **random surfer** voor: iemand die eindeloos doorklikt en op
+elke pagina een willekeurige link kiest. De PageRank van een pagina is het
+deel van de tijd dat de surfer daar is. Op een pagina waar veel naartoe
+leidt, komt hij vaker langs.
 
-Eén probleem: wat als de surfer vastloopt in een groepje pagina's dat
-alleen naar elkaar linkt? Daarom voegen we **damping** toe: met kans
-`d` (meestal **0,85**) volgt de surfer een link, en met kans `1 − d`
-springt hij naar een **willekeurige** pagina ergens op het web. Zo komt
-hij overal en loopt hij nooit definitief vast.
+Maar wat als de surfer vastloopt in een groepje pagina's dat alleen naar
+elkaar linkt? Daarvoor is **damping**: met kans `d` volgt de surfer een
+link, en met kans `1 − d` springt hij naar een willekeurige pagina ergens
+op het web. De gebruikelijke waarde is `d = 0,85`. Zo komt de surfer
+overal, en loopt hij nooit voorgoed vast.
 
 ## Een klein web
 
-We gebruiken in deze track dit mini-web van vier pagina's (een pijl
-`A → B` betekent "A linkt naar B"):
+Je werkt steeds met dit mini-web van vier pagina's. Een pijl `A → B`
+betekent "A linkt naar B".
 
 ```
 A → B,  A → C
@@ -75,23 +73,23 @@ C → A
 D → C
 ```
 
-- `C` krijgt links van A, B én D — waarschijnlijk de populairste.
-- `D` krijgt van niemand een link — die zal laag eindigen.
+`C` krijgt links van A, B én D, en wordt waarschijnlijk de populairste.
+Naar `D` linkt niemand; die zal laag eindigen.
 
 ## Wat we gaan bouwen
 
-In deze track schrijf je stap voor stap een functie die voor zo'n web de
-PageRank van elke pagina uitrekent met de **iteratieve formule**:
+Je schrijft stap voor stap een functie die voor zo'n web de PageRank van
+elke pagina uitrekent, met deze formule:
 
 ```
 rank(p) = (1 − d)/N  +  d · Σ  rank(i) / aantal_links(i)
                               i → p
 ```
 
-Lees: het belang van pagina `p` is een klein basisdeel `(1−d)/N` plus de
-opgetelde stemmen van alle pagina's `i` die naar `p` linken — elk gedeeld
-door hoeveel links die pagina uitdeelt. Je herhaalt dit tot de waarden
-nauwelijks meer veranderen.
+Het belang van pagina `p` is een klein basisdeel `(1−d)/N`, plus de
+stemmen van alle pagina's `i` die naar `p` linken. Elke stem is het belang
+van `i` gedeeld door het aantal links dat `i` uitdeelt. Die berekening
+herhaal je tot de waarden nauwelijks nog veranderen.
 
 :::info
 Het stemmen kun je klassikaal naspelen met fiches op ditzelfde mini-web: print [Stemmen met fiches](/docs/unplugged/08-stemmen-met-fiches).
