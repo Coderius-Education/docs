@@ -163,3 +163,15 @@ describe('PageRank: de code in de speeltuinen', () => {
     }
   });
 });
+
+describe('PageRank: wat bouwsteen 4 nieuw gebruikt, legt hij ook uit', () => {
+  it('while True, abs en max staan in de lopende tekst, niet alleen in de code', () => {
+    // De python-cursus behandelt `while True` en `abs` niet; bouwsteen 4
+    // gebruikte ze zonder een woord uitleg.
+    const tekst = lees('pagerank/bouwen/06-itereren.mdx')
+      .replace(/```[\s\S]*?```/g, '')
+      .replace(/initialCode=\{`[\s\S]*?`\}/g, '');
+    for (const nieuw of ['`while True`', '`abs`', '`max`', '`return`'])
+      expect(tekst).toContain(nieuw);
+  });
+});

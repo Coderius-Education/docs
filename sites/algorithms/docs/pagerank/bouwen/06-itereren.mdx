@@ -24,6 +24,36 @@ als de grootste verandering kleiner is dan een kleine `epsilon`.
 Let op: maak elke ronde een **nieuwe** dict en laat `rank` staan tot de
 ronde af is. De oude waarden heb je nog nodig om het verschil te meten.
 
+## Een lus die stopt met return
+
+Je weet niet vooraf hoeveel rondes nodig zijn. Daarom gebruik je een lus
+zonder eigen einde:
+
+```python
+def eerste_boven(grens):
+    getal = 1
+    while True:
+        getal = getal * 2
+        if getal > grens:
+            return getal
+
+print(eerste_boven(100))   # 128
+```
+
+`True` is altijd waar, dus `while True` stopt nooit uit zichzelf. De enige
+uitgang is de `return`: die beëindigt de functie, en de lus meteen mee.
+
+Voor het verschil heb je nog twee ingebouwde functies nodig:
+
+```python
+print(abs(-0.2))       # 0.2
+print(max(0.1, 0.3))   # 0.3
+```
+
+`abs` geeft de afstand tot nul, zonder min-teken. Of een rank stijgt of
+daalt, maakt voor het verschil niet uit. `max` met twee getallen geeft de
+grootste van de twee; zo houd je de grootste verandering bij.
+
 ## Bouw en test
 
 {/* niet-draaien: startcode; de return stopt de lus meteen, dus de test faalt op de startverdeling */}
