@@ -6,6 +6,7 @@ import React, {
   useEffect,
   useCallback,
   useLayoutEffect,
+  useMemo,
   useRef,
 } from 'react';
 import styles from './CodeEditor.module.css';
@@ -14,6 +15,7 @@ import { buildDoc } from './buildDoc';
 import { heeftJavaScript } from './heeftJs';
 import { VoorbeeldNavigatie } from './navigatie';
 import { useDebounce } from './useDebounce';
+import { type OpslagStand, useOpslag } from './useOpslag';
 import { kanVolledigScherm, schermStand } from './volledigScherm';
 
 const EditorPane = lazy(() => import('./EditorPane').then((mod) => ({ default: mod.EditorPane })));
@@ -122,6 +124,20 @@ function CodeEditorInner({
     setVersie((n) => n + 1);
   }, []);
 
+  // Het werk van de leerling blijft bewaard in deze browser (opslag.ts).
+  const huidig = useMemo(() => ({ html, css, js }), [html, css, js]);
+  const opslag = useOpslag({
+    start: { html: initialHtml, css: initialCss, js: initialJs },
+    huidig,
+    containerRef,
+    onHerstel: (code) => {
+      setHtml(code.html);
+      setCss(code.css);
+      setJs(code.js);
+      if (livePreview) setSrcDoc(buildDoc(code.html, code.css, code.js, veldId));
+    },
+  });
+
   const debouncedHtml = useDebounce(html, debounceMs);
   const debouncedCss = useDebounce(css, debounceMs);
   const debouncedJs = useDebounce(js, debounceMs);
@@ -141,9 +157,10 @@ function CodeEditorInner({
   const handleReset = useCallback(() => {
     if (
       window.confirm(
-        'Weet je zeker dat je terug wilt naar de startcode? Je huidige wijzigingen gaan verloren.',
+        'Weet je zeker dat je terug wilt naar de startcode? Je huidige wijzigingen gaan verloren, ook de versie die in deze browser bewaard is.',
       )
     ) {
+      opslag.wis();
       setHtml(initialHtml);
       setCss(initialCss);
       setJs(initialJs);
@@ -154,7 +171,7 @@ function CodeEditorInner({
       // gevolgde link bleef het voorbeeld dan op de vreemde pagina staan.
       herlaadEigenPagina();
     }
-  }, [initialHtml, initialCss, initialJs, livePreview, herlaadEigenPagina, veldId]);
+  }, [initialHtml, initialCss, initialJs, livePreview, herlaadEigenPagina, veldId, opslag.wis]);
 
   // Escape sluit, en de pagina eronder mag niet meescrollen zolang het veld
   // het scherm vult.
@@ -299,6 +316,7 @@ function CodeEditorInner({
   const veld = (
     <div
       ref={containerRef}
+      data-zaad={opslag.zaad}
       className={[
         styles.container,
         stacked ? styles.containerStacked : '',
@@ -320,6 +338,7 @@ function CodeEditorInner({
             </button>
           ))}
           <span className={styles.tabBarKnoppen}>
+            <OpslagMelding stand={opslag.stand} />
             {!livePreview && (
               <button type="button" className={styles.runButton} onClick={handleRun}>
                 ▶ Run
@@ -371,20 +390,24 @@ function CodeEditorInner({
           </span>
         </div>
         <div className={styles.paneWrapper}>
-          <Suspense fallback={<div className={styles.loading}>Editor laden...</div>}>
-            <EditorPane
-              key={activeTab}
-              language={activeTab}
-              value={values[activeTab]}
-              onChange={handlers[activeTab]}
-              // Uitgeklapt vult de editor zijn helft van het scherm. In de
-              // gestapelde vorm meet hij zich normaal naar de code, met de
-              // height-prop als maximum; dat maximum is de lespagina-hoogte en
-              // liet uitgeklapt 150px van de editorkant leeg staan.
-              height={groot ? '100%' : height}
-              autoHeight={stacked && !groot}
-            />
-          </Suspense>
+          {!opslag.geladen ? (
+            <div className={styles.loading}>Editor laden...</div>
+          ) : (
+            <Suspense fallback={<div className={styles.loading}>Editor laden...</div>}>
+              <EditorPane
+                key={activeTab}
+                language={activeTab}
+                value={values[activeTab]}
+                onChange={handlers[activeTab]}
+                // Uitgeklapt vult de editor zijn helft van het scherm. In de
+                // gestapelde vorm meet hij zich normaal naar de code, met de
+                // height-prop als maximum; dat maximum is de lespagina-hoogte en
+                // liet uitgeklapt 150px van de editorkant leeg staan.
+                height={groot ? '100%' : height}
+                autoHeight={stacked && !groot}
+              />
+            </Suspense>
+          )}
         </div>
       </div>
       <div className={styles.previewColumn} style={stacked ? undefined : { height }}>
@@ -456,6 +479,29 @@ function CodeEditorInner({
   // dan koppelt de editor opnieuw aan en is de leerling zijn undo-geschiedenis
   // kwijt op het moment dat hij juist meer ruimte vroeg.
   return veld;
+}
+
+// Alleen iets te zeggen als er iets bewaard is, of juist niet kan worden.
+// Een veld dat de leerling nog niet aanraakte, blijft stil.
+function OpslagMelding({ stand }: { stand: OpslagStand }) {
+  if (stand === 'leeg') return null;
+  if (stand === 'bewaard') {
+    return (
+      <output
+        className={styles.opslagMelding}
+        title="Je code staat in deze browser op dit apparaat. Op een andere computer, in een privévenster of na het wissen van je browsergegevens is hij er niet."
+      >
+        Bewaard in deze browser
+      </output>
+    );
+  }
+  return (
+    <output className={`${styles.opslagMelding} ${styles.opslagFout}`}>
+      {stand === 'vol'
+        ? 'Niet bewaard: de opslag van je browser is vol. Kopieer je code als je hem wilt houden.'
+        : 'Niet bewaard: deze browser slaat hier niets op (privévenster?). Kopieer je code als je hem wilt houden.'}
+    </output>
+  );
 }
 
 export function CodeEditor(props: CodeEditorProps) {

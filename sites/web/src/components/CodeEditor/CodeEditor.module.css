@@ -469,3 +469,27 @@
   width: 100%;
   height: 100%;
 }
+
+/* Een zachte bevestiging dat het werk bewaard is; bij een fout juist goed
+   zichtbaar, want dan verdwijnt het werk bij verversen. */
+.opslagMelding {
+  font-size: 0.7rem;
+  color: var(--ifm-color-emphasis-600);
+  margin-right: 0.35rem;
+}
+
+.opslagFout {
+  color: var(--ifm-color-danger-darkest);
+  background: var(--ifm-color-danger-contrast-background);
+  border-radius: var(--ifm-global-radius);
+  padding: 0.15rem 0.4rem;
+  font-weight: 600;
+}
+
+/* Op een telefoon is de knoppenbalk al vol; de bevestiging mag weg, de
+   foutmelding niet. */
+@media (max-width: 640px) {
+  .opslagMelding:not(.opslagFout) {
+    display: none;
+  }
+}
