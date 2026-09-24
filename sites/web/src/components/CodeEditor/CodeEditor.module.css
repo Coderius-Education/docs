@@ -411,3 +411,30 @@
   align-items: center;
   gap: 0.25rem;
 }
+
+/* Volledig scherm is een extra stap na Groter, en oogt daarom ingetogen,
+   net als Reset: Groter blijft de knop die opvalt. In volledig scherm krijgt
+   hij de stijl van Groter, want dan is hij de weg terug. */
+.volledigButton {
+  padding: 0.35rem 0.7rem;
+  background: transparent;
+  color: var(--ifm-color-emphasis-700);
+  border: 1px solid var(--ifm-color-emphasis-400);
+  border-radius: var(--ifm-global-radius);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.volledigButton:hover {
+  background: var(--ifm-color-emphasis-200);
+  color: var(--ifm-color-emphasis-900);
+}
+
+/* De browser zet achter een element op volledig scherm een zwarte
+   ::backdrop; de container dekt die met de achtergrond van het thema. */
+.containerUitgeklapt:fullscreen {
+  width: 100%;
+  height: 100%;
+}

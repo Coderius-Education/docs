@@ -14,6 +14,7 @@ import { buildDoc } from './buildDoc';
 import { heeftJavaScript } from './heeftJs';
 import { VoorbeeldNavigatie } from './navigatie';
 import { useDebounce } from './useDebounce';
+import { kanVolledigScherm, schermStand } from './volledigScherm';
 
 const EditorPane = lazy(() => import('./EditorPane').then((mod) => ({ default: mod.EditorPane })));
 
@@ -89,7 +90,16 @@ function CodeEditorInner({
   // begrensd: op een laptop van 1440px is de editor ~490px en het voorbeeld
   // 327px, smaller dan een telefoon. Voor een Make-opdracht is dat te krap.
   const [uitgeklapt, setUitgeklapt] = useState(false);
+  // Echt volledig scherm naast Groter: ook de adresbalk en de tabs weg. De
+  // stand volgt alleen `fullscreenchange`, want de browser beslist zelf
+  // wanneer hij eindigt (Esc, F11, de melding bovenin).
+  const [volledig, setVolledig] = useState(false);
+  const [kanVolledig] = useState(() => kanVolledigScherm(document, document.documentElement));
+  const groot = uitgeklapt || volledig;
+  const stand = schermStand(uitgeklapt, volledig);
+  const containerRef = useRef<HTMLDivElement>(null);
   const knopRef = useRef<HTMLButtonElement>(null);
+  const volledigKnopRef = useRef<HTMLButtonElement>(null);
   const consoleBodyRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
@@ -182,6 +192,51 @@ function CodeEditorInner({
     }
   }, [uitgeklapt]);
 
+  // Volledig scherm zet dezelfde container in de bovenste laag van de
+  // browser. Niets verhuist in de React-boom, dus ook hier blijft de
+  // undo-geschiedenis staan. Escape hoeven we niet af te vangen: die pakt de
+  // browser zelf, en hij meldt het einde met fullscreenchange.
+  const uitgeklaptRef = useRef(uitgeklapt);
+  uitgeklaptRef.current = uitgeklapt;
+  const isVolledigGeweest = useRef(false);
+  useEffect(() => {
+    const bijWissel = () => {
+      const aan = document.fullscreenElement === containerRef.current;
+      setVolledig(aan);
+      if (aan) {
+        isVolledigGeweest.current = true;
+      } else if (isVolledigGeweest.current) {
+        isVolledigGeweest.current = false;
+        // Kwam je uit Groter, dan sta je daar weer en is de Groter-knop
+        // ("Sluiten") de logische volgende; anders de knop waarmee je begon.
+        (uitgeklaptRef.current ? knopRef : volledigKnopRef).current?.focus({
+          preventScroll: true,
+        });
+      }
+    };
+    document.addEventListener('fullscreenchange', bijWissel);
+    return () => {
+      document.removeEventListener('fullscreenchange', bijWissel);
+      // Verdwijnt het veld terwijl het het scherm vult (de leerling navigeert
+      // weg), dan zou de browser op een leeg volledig scherm blijven staan.
+      if (document.fullscreenElement && document.fullscreenElement === containerRef.current) {
+        void document.exitFullscreen();
+      }
+    };
+  }, []);
+
+  const wisselVolledig = useCallback(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    if (document.fullscreenElement === container) {
+      void document.exitFullscreen();
+      return;
+    }
+    // Weigert de browser toch (geen klik meer als gebruikersactie, een
+    // beleid op een beheerd apparaat), dan is Groter het beste wat er is.
+    container.requestFullscreen().catch(() => setUitgeklapt(true));
+  }, []);
+
   useEffect(() => {
     function handler(e: MessageEvent) {
       // Alleen berichten van het eigen voorbeeld: er staan meerdere velden
@@ -233,10 +288,11 @@ function CodeEditorInner({
 
   const veld = (
     <div
+      ref={containerRef}
       className={[
         styles.container,
         stacked ? styles.containerStacked : '',
-        uitgeklapt ? styles.containerUitgeklapt : '',
+        groot ? styles.containerUitgeklapt : '',
       ]
         .filter(Boolean)
         .join(' ')}
@@ -259,23 +315,41 @@ function CodeEditorInner({
                 ▶ Run
               </button>
             )}
-            <button
-              type="button"
-              ref={knopRef}
-              className={styles.groterButton}
-              onClick={() => setUitgeklapt((aan) => !aan)}
-              title={
-                uitgeklapt
-                  ? 'Terug naar de les (of druk op Escape)'
-                  : 'Gebruik het hele scherm voor dit oefenveld'
-              }
-              aria-pressed={uitgeklapt}
-            >
-              <span className={styles.groterIcoon} aria-hidden="true">
-                {uitgeklapt ? '\u2715' : '\u21F1\u21F2'}
-              </span>
-              {uitgeklapt ? 'Sluiten (Esc)' : 'Groter'}
-            </button>
+            {stand !== 'volledig' && (
+              <button
+                type="button"
+                ref={knopRef}
+                className={styles.groterButton}
+                onClick={() => setUitgeklapt((aan) => !aan)}
+                title={
+                  uitgeklapt
+                    ? 'Terug naar de les (of druk op Escape)'
+                    : 'Gebruik het hele scherm voor dit oefenveld'
+                }
+                aria-pressed={uitgeklapt}
+              >
+                <span className={styles.groterIcoon} aria-hidden="true">
+                  {uitgeklapt ? '\u2715' : '\u21F1\u21F2'}
+                </span>
+                {uitgeklapt ? 'Sluiten (Esc)' : 'Groter'}
+              </button>
+            )}
+            {kanVolledig && (
+              <button
+                type="button"
+                ref={volledigKnopRef}
+                className={stand === 'volledig' ? styles.groterButton : styles.volledigButton}
+                onClick={wisselVolledig}
+                title={
+                  stand === 'volledig'
+                    ? 'Terug (of druk op Escape)'
+                    : 'Ook de balken van de browser weg: het oefenveld op het hele beeldscherm'
+                }
+                aria-pressed={stand === 'volledig'}
+              >
+                {stand === 'volledig' ? 'Sluiten (Esc)' : 'Volledig scherm'}
+              </button>
+            )}
             <button
               type="button"
               className={styles.resetButton}
@@ -297,8 +371,8 @@ function CodeEditorInner({
               // gestapelde vorm meet hij zich normaal naar de code, met de
               // height-prop als maximum; dat maximum is de lespagina-hoogte en
               // liet uitgeklapt 150px van de editorkant leeg staan.
-              height={uitgeklapt ? '100%' : height}
-              autoHeight={stacked && !uitgeklapt}
+              height={groot ? '100%' : height}
+              autoHeight={stacked && !groot}
             />
           </Suspense>
         </div>
@@ -315,7 +389,7 @@ function CodeEditorInner({
           // is dat juist verkeerd: dan bleef het voorbeeld 160px hoog terwijl
           // er 450px voor hem klaarstond.
           hoogte={
-            stacked && !uitgeklapt
+            stacked && !groot
               ? `${Math.min(Math.max(previewInhoud ?? 160, 100), Number.parseInt(previewHeight, 10))}px`
               : undefined
           }
