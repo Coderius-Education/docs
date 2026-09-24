@@ -64,6 +64,10 @@ Verandert er minder dan `epsilon`, dan is het stabiel en zijn de ranks klaar.
 Pas `WEB` aan (voeg pagina's of links toe) of verander `DEMPING` en draai
 opnieuw. De ranks komen gesorteerd van hoog naar laag.
 
+Geef je een nieuwe pagina geen enkele link, dan komt de som onder de 1
+uit. Waarom, lees je bij
+[de fouten](./10-fouten#dangling-nodes--paginas-zonder-uitgaande-links).
+
 <PyRunner rows={18} initialCode={`WEB = {
     "A": {"B", "C"},
     "B": {"C"},

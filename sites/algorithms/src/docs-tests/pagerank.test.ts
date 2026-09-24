@@ -192,3 +192,15 @@ describe('PageRank: wat een bouwsteen je laat schrijven, komt later terug', () =
     }
   });
 });
+
+describe('PageRank: de som van de ranks', () => {
+  it('is 1 in het mini-web, en niet meer zodra een pagina nergens naartoe linkt', () => {
+    // Stelling 1 zei zonder voorbehoud dat de som 1 is, terwijl de
+    // compleet-pagina uitnodigt om pagina's toe te voegen.
+    const som = (r: Rank) => Object.values(r).reduce((a, b) => a + b, 0);
+    expect(som(pagerank(WEB).rank)).toBeCloseTo(1, 9);
+    expect(som(pagerank({ ...WEB, E: [] }).rank)).toBeLessThan(0.9);
+    expect(lees('pagerank/02-stellingen.mdx')).toMatch(/alle pagina's in het mini-web optelt/);
+    expect(lees('pagerank/10-fouten.mdx')).not.toMatch(/dit speelt niet/);
+  });
+});

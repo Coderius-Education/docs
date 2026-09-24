@@ -18,14 +18,17 @@ D → C
 
 ### Stelling 1
 
-> Als je de PageRank van alle pagina's optelt, kom je op 1 uit.
+> Als je de PageRank van alle pagina's in het mini-web optelt, kom je op 1
+> uit.
 
 <details>
 <summary>Waar of niet waar?</summary>
 
 **Waar.** Je kunt PageRank zien als "kans dat de random surfer hier is".
-Alle kansen samen zijn 1. Een goede implementatie houdt de som elke
-iteratie op (ongeveer) 1.
+Alle kansen samen zijn 1. Dat lukt omdat in het mini-web elke pagina
+ergens naartoe linkt, zodat elke stem ergens terechtkomt. Wat er gebeurt
+als een pagina nergens naartoe linkt, zie je bij
+[de fouten](./10-fouten#dangling-nodes--paginas-zonder-uitgaande-links).
 
 </details>
 
