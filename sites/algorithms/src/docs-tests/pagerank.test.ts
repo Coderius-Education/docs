@@ -269,3 +269,15 @@ describe('PageRank: stemmen met fiches (unplugged 8)', () => {
     expect(handout).not.toMatch(/dempen\s+de schommelingen/);
   });
 });
+
+describe('PageRank: één versie van de functie', () => {
+  it('de cheatsheet heeft dezelfde pagerank als de compleet-pagina', () => {
+    // De cheatsheet had sum(… for … if …) en max(… for …): syntax die de
+    // les en de python-cursus niet behandelen.
+    const functie = (tekst: string) =>
+      tekst.match(/```python[^\n]*\n(def pagerank[\s\S]*?)```/)?.[1] ?? '';
+    const compleet = functie(lees('pagerank/07-compleet.mdx'));
+    expect(compleet).toContain('def pagerank');
+    expect(functie(lees('pagerank/11-cheatsheet.mdx'))).toBe(compleet);
+  });
+});
