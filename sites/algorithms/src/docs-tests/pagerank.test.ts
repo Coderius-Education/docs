@@ -204,3 +204,29 @@ describe('PageRank: de som van de ranks', () => {
     expect(lees('pagerank/10-fouten.mdx')).not.toMatch(/dit speelt niet/);
   });
 });
+
+describe('PageRank: de antwoordtabellen van aanpassen', () => {
+  const aanpassen = lees('pagerank/08-aanpassen.mdx');
+  /** De rijen `| label | A | B | C | D |` uit een sectie, als label → ranks. */
+  const rijen = (kop: string) => {
+    const tekst = aanpassen.slice(aanpassen.indexOf(kop)).split(/\n## /)[0];
+    return [
+      ...tekst.matchAll(/^\| ([^|]+?) \| ([\d.]+) \| ([\d.]+) \| ([\d.]+) \| ([\d.]+) \|$/gm),
+    ].map((m) => [m[1], { A: +m[2], B: +m[3], C: +m[4], D: +m[5] }] as const);
+  };
+  const afgerond = (r: Rank) => Object.fromEntries(Object.entries(r).map(([p, x]) => [p, vier(x)]));
+
+  it('opdracht 1: de ranks per waarde van DEMPING', () => {
+    const tabel = rijen('## Opdracht 1');
+    expect(tabel.map(([d]) => d)).toEqual(['0.85', '0.5', '1.0', '0.0']);
+    for (const [d, ranks] of tabel)
+      expect(ranks, `d = ${d}`).toEqual(afgerond(pagerank(WEB, +d).rank));
+  });
+
+  it('opdracht 2: de ranks met en zonder de link van D naar A', () => {
+    const tabel = rijen('## Opdracht 2');
+    expect(tabel).toHaveLength(2);
+    expect(tabel[0][1]).toEqual(afgerond(pagerank(WEB).rank));
+    expect(tabel[1][1]).toEqual(afgerond(pagerank({ ...WEB, D: ['C', 'A'] }).rank));
+  });
+});
