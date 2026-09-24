@@ -30,6 +30,7 @@
       "types": "./privacy-content.d.ts",
       "default": "./privacy-content.js"
     },
+    "./dialoog": "./dialoog.ts",
     "./plugins/transpile-shared": "./plugins/transpile-shared.js",
     "./plugins/cursussen-route": "./plugins/cursussen-route.js",
     "./plugins/privacy-route": "./plugins/privacy-route.js",

@@ -1,3 +1,4 @@
+import { bevestig } from '@coderius/shared/dialoog';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import React, {
   lazy,
@@ -154,12 +155,12 @@ function CodeEditorInner({
     setSrcDoc(buildDoc(html, css, js, veldId));
   }, [html, css, js, veldId]);
 
-  const handleReset = useCallback(() => {
-    if (
-      window.confirm(
-        'Weet je zeker dat je terug wilt naar de startcode? Je huidige wijzigingen gaan verloren, ook de versie die in deze browser bewaard is.',
-      )
-    ) {
+  const handleReset = useCallback(async () => {
+    const zeker = await bevestig(
+      'Je huidige wijzigingen gaan verloren, ook de versie die in deze browser bewaard is.',
+      { titel: 'Terug naar de startcode?', bevestigLabel: 'Reset', gevaarlijk: true },
+    );
+    if (zeker) {
       opslag.wis();
       setHtml(initialHtml);
       setCss(initialCss);
@@ -382,7 +383,7 @@ function CodeEditorInner({
             <button
               type="button"
               className={styles.resetButton}
-              onClick={handleReset}
+              onClick={() => void handleReset()}
               title="Terug naar startcode"
             >
               ↺ Reset

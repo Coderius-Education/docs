@@ -1,3 +1,4 @@
+import { bevestig, meld, vraag } from '@coderius/shared/dialoog';
 import clsx from 'clsx';
 import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { downloadBestand } from '../../lib/download';
@@ -145,15 +146,19 @@ export default function ProjectEditorImpl({
   // ---- projectbeheer ----
 
   const createFromTemplate = useCallback(
-    (template: ProjectTemplate) => {
-      const name = window.prompt('Hoe heet je project?', template.name);
+    async (template: ProjectTemplate) => {
+      const name = await vraag('Hoe heet je project?', {
+        titel: 'Nieuw project',
+        standaard: template.name,
+        bevestigLabel: 'Maken',
+      });
       if (name === null) return;
       // Openstaande wijzigingen van het huidige project niet kwijtraken.
       if (projectRef.current) void persist(projectRef.current);
       const now = Date.now();
       const next: Project = {
         id: newProjectId(),
-        name: name.trim() || template.name,
+        name: name || template.name,
         runnerId: template.runnerId,
         entry: template.entry,
         files: { ...template.files },
@@ -177,17 +182,26 @@ export default function ProjectEditorImpl({
     [persist, storagePrefix, switchToProject],
   );
 
-  const renameProject = useCallback(() => {
+  const renameProject = useCallback(async () => {
     if (!projectRef.current) return;
-    const name = window.prompt('Nieuwe naam voor dit project:', projectRef.current.name);
-    if (name === null || !name.trim()) return;
-    mutateProject((p) => ({ ...p, name: name.trim() }));
+    const name = await vraag('Nieuwe naam voor dit project:', {
+      titel: 'Project hernoemen',
+      standaard: projectRef.current.name,
+      bevestigLabel: 'Hernoemen',
+      valideer: (w) => (w ? null : 'Geef het project een naam.'),
+    });
+    if (!name) return;
+    mutateProject((p) => ({ ...p, name }));
   }, [mutateProject]);
 
   const removeProject = useCallback(async () => {
     const current = projectRef.current;
     if (!current) return;
-    if (!window.confirm(`Weet je zeker dat je "${current.name}" wilt verwijderen?`)) return;
+    const zeker = await bevestig(
+      `"${current.name}" en alle bestanden erin verdwijnen uit deze browser. Download het eerst als je het wilt bewaren.`,
+      { titel: 'Project verwijderen?', bevestigLabel: 'Verwijderen', gevaarlijk: true },
+    );
+    if (!zeker) return;
     await deleteProject(storagePrefix, current.id);
     const list = await listProjects(storagePrefix);
     setSummaries(list);
@@ -213,7 +227,9 @@ export default function ProjectEditorImpl({
       const { projectNaarZip, zipBestandsnaam } = await import('./zip');
       downloadBestand(projectNaarZip(current), zipBestandsnaam(current.name), 'application/zip');
     } catch {
-      window.alert('Downloaden is niet gelukt. Probeer het nog een keer, of ververs de pagina.');
+      void meld('Probeer het nog een keer, of ververs de pagina.', {
+        titel: 'Downloaden is niet gelukt',
+      });
     }
   }, []);
 
@@ -234,56 +250,58 @@ export default function ProjectEditorImpl({
     });
   }, []);
 
-  const newFile = useCallback(() => {
+  const newFile = useCallback(async () => {
     const current = projectRef.current;
     if (!current) return;
-    const path = window
-      .prompt('Naam van het nieuwe bestand (bijv. utils.py of map/data.txt):')
-      ?.trim();
+    const path = await vraag('Naam van het nieuwe bestand:', {
+      titel: 'Nieuw bestand',
+      placeholder: 'utils.py of map/data.txt',
+      bevestigLabel: 'Maken',
+      valideer: (w) => {
+        if (!isValidPath(w)) return 'Dat is geen geldige bestandsnaam.';
+        if (current.files[w] !== undefined) return 'Er bestaat al een bestand met deze naam.';
+        return null;
+      },
+    });
     if (!path) return;
-    if (!isValidPath(path)) {
-      window.alert('Dat is geen geldige bestandsnaam.');
-      return;
-    }
-    if (current.files[path] !== undefined) {
-      window.alert('Er bestaat al een bestand met deze naam.');
-      return;
-    }
     mutateProject((p) => ({ ...p, files: { ...p.files, [path]: '' } }));
     openFile(path);
   }, [mutateProject, openFile]);
 
-  const newFolder = useCallback(() => {
+  const newFolder = useCallback(async () => {
     const current = projectRef.current;
     if (!current) return;
-    const path = window.prompt('Naam van de nieuwe map (bijv. afbeeldingen):')?.trim();
+    const path = await vraag('Naam van de nieuwe map:', {
+      titel: 'Nieuwe map',
+      placeholder: 'afbeeldingen',
+      bevestigLabel: 'Maken',
+      valideer: (w) => (isValidPath(w) ? null : 'Dat is geen geldige mapnaam.'),
+    });
     if (!path) return;
-    if (!isValidPath(path)) {
-      window.alert('Dat is geen geldige mapnaam.');
-      return;
-    }
     if (current.folders.includes(path)) return;
     mutateProject((p) => ({ ...p, folders: [...p.folders, path] }));
   }, [mutateProject]);
 
   const renamePath = useCallback(
-    (path: string, isFolder: boolean) => {
-      const next = window.prompt('Nieuwe naam (inclusief map):', path)?.trim();
-      if (!next || next === path) return;
-      if (!isValidPath(next)) {
-        window.alert('Dat is geen geldige naam.');
-        return;
-      }
+    async (path: string, isFolder: boolean) => {
       const current = projectRef.current;
       if (!current) return;
-      if (pathExists(current, next)) {
-        window.alert(
-          isFolder
-            ? 'Er bestaat al een map met deze naam.'
-            : 'Er bestaat al een bestand met deze naam.',
-        );
-        return;
-      }
+      const next = await vraag('Nieuwe naam, inclusief de map waar het in staat:', {
+        titel: isFolder ? 'Map hernoemen' : 'Bestand hernoemen',
+        standaard: path,
+        bevestigLabel: 'Hernoemen',
+        valideer: (w) => {
+          if (w === path) return null;
+          if (!isValidPath(w)) return 'Dat is geen geldige naam.';
+          if (pathExists(current, w)) {
+            return isFolder
+              ? 'Er bestaat al een map met deze naam.'
+              : 'Er bestaat al een bestand met deze naam.';
+          }
+          return null;
+        },
+      });
+      if (!next || next === path) return;
       mutateProject((p) => renameInProject(p, path, next, isFolder));
       const mapTab = (t: string) => renamedPath(t, path, next, isFolder);
       setOpenTabs((tabs) => tabs.map(mapTab));
@@ -293,15 +311,23 @@ export default function ProjectEditorImpl({
   );
 
   const deletePath = useCallback(
-    (path: string, isFolder: boolean) => {
+    async (path: string, isFolder: boolean) => {
       const current = projectRef.current;
       if (!current) return;
       if (isDeletedPath(current.entry, path, isFolder)) {
-        window.alert(`Het startbestand (${current.entry}) kan niet verwijderd worden.`);
+        await meld(
+          `${current.entry} is het bestand dat Uitvoeren start. Zonder dat bestand draait je project niet.`,
+          { titel: 'Dit bestand kan niet weg' },
+        );
         return;
       }
-      const label = isFolder ? `de map "${path}" en alles erin` : `"${path}"`;
-      if (!window.confirm(`Weet je zeker dat je ${label} wilt verwijderen?`)) return;
+      const label = isFolder ? `De map "${path}" en alles erin` : `"${path}"`;
+      const zeker = await bevestig(`${label} verdwijnt uit je project.`, {
+        titel: isFolder ? 'Map verwijderen?' : 'Bestand verwijderen?',
+        bevestigLabel: 'Verwijderen',
+        gevaarlijk: true,
+      });
+      if (!zeker) return;
       mutateProject((p) => deleteFromProject(p, path, isFolder));
       setOpenTabs((tabs) => tabs.filter((t) => !isDeletedPath(t, path, isFolder)));
       setActivePath((p) => (p && !isDeletedPath(p, path, isFolder) ? p : null));
@@ -372,7 +398,11 @@ export default function ProjectEditorImpl({
           </button>
           {project && (
             <>
-              <button type="button" className={styles.barButton} onClick={renameProject}>
+              <button
+                type="button"
+                className={styles.barButton}
+                onClick={() => void renameProject()}
+              >
                 Hernoemen
               </button>
               <button
@@ -428,7 +458,7 @@ export default function ProjectEditorImpl({
                 key={t.id}
                 type="button"
                 className={styles.templateCard}
-                onClick={() => createFromTemplate(t)}
+                onClick={() => void createFromTemplate(t)}
               >
                 <span className={styles.templateName}>{t.name}</span>
                 <span className={styles.templateDescription}>{t.description}</span>
@@ -457,7 +487,7 @@ export default function ProjectEditorImpl({
                   type="button"
                   className={styles.treeAction}
                   title="Nieuw bestand"
-                  onClick={newFile}
+                  onClick={() => void newFile()}
                 >
                   ＋
                 </button>
@@ -465,7 +495,7 @@ export default function ProjectEditorImpl({
                   type="button"
                   className={styles.treeAction}
                   title="Nieuwe map"
-                  onClick={newFolder}
+                  onClick={() => void newFolder()}
                 >
                   ▸＋
                 </button>

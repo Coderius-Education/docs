@@ -37,6 +37,7 @@ function useColorMode(): { colorMode: 'light' | 'dark' } {
   return { colorMode };
 }
 
+import { bevestig, vraag } from '@coderius/shared/dialoog';
 import { leesEditorHash } from './codeLink';
 import { friendlyError } from './errorMessages';
 import { BoardFS } from './filesystem';
@@ -53,6 +54,23 @@ import { SerialClient } from './serial';
 import { type SessieStatus, type Stand, sessie } from './sessie';
 import styles from './styles.module.css';
 import { TEMPLATES } from './templates';
+
+// Opnieuw kijken na een dialoog: terwijl de leerling nadacht kan er een
+// andere actie begonnen zijn. Als functie, want TypeScript houdt de stand van
+// vóór het wachten anders vast.
+function nuBezig(ref: { current: string }): boolean {
+  return ref.current === 'busy';
+}
+
+// Eén vraag voor alle plekken waar nieuwe code over niet-opgeslagen werk heen
+// komt: een bestand openen, een nieuw bestand, een sjabloon.
+function overschrijvenGoed(): Promise<boolean> {
+  return bevestig('Je niet-opgeslagen wijzigingen in de editor gaan verloren.', {
+    titel: 'Wijzigingen overschrijven?',
+    bevestigLabel: 'Doorgaan',
+    gevaarlijk: true,
+  });
+}
 
 const DEBUG_DOCS_URL =
   '/docs/Microcontrollers/Arduino Nano RP2040 Connect/Tutorial-debuggen/debuggen';
@@ -280,15 +298,19 @@ export default function WebMicroEditor(): React.JSX.Element {
     if (geladen === null) return;
     // Pas ná de keuze de hash strippen: wie annuleert (bv. om eerst eigen
     // code te kopiëren) houdt zo een URL die de lescode opnieuw aanbiedt.
-    if (
-      code.trim() !== '' &&
-      code !== geladen &&
-      !confirm('De code uit de les vervangt je huidige code in de editor. Doorgaan?')
-    ) {
-      return;
-    }
-    window.history.replaceState(null, '', window.location.pathname);
-    sessie.zet({ code: geladen, loadedCode: geladen, currentFile: null });
+    const laad = async () => {
+      if (code.trim() !== '' && code !== geladen) {
+        const zeker = await bevestig('De code uit de les vervangt je huidige code in de editor.', {
+          titel: 'Code uit de les laden?',
+          bevestigLabel: 'Vervangen',
+          gevaarlijk: true,
+        });
+        if (!zeker) return;
+      }
+      window.history.replaceState(null, '', window.location.pathname);
+      sessie.zet({ code: geladen, loadedCode: geladen, currentFile: null });
+    };
+    void laad();
   }, []);
 
   useEffect(() => {
@@ -354,14 +376,12 @@ export default function WebMicroEditor(): React.JSX.Element {
   const runOnBoard = useCallback(async () => {
     const c = sessie.client;
     if (!c || statusRef.current === 'busy') return;
-    if (
-      currentFile &&
-      currentFile !== '/main.py' &&
-      !confirm(
-        `Run schrijft je code naar /main.py, niet naar het geopende ${currentFile}. Doorgaan?`,
-      )
-    ) {
-      return;
+    if (currentFile && currentFile !== '/main.py') {
+      const zeker = await bevestig(
+        `Run schrijft je code naar /main.py, niet naar het geopende ${currentFile}.`,
+        { titel: 'Naar main.py schrijven?', bevestigLabel: 'Run' },
+      );
+      if (!zeker || nuBezig(statusRef)) return;
     }
     const operatie = setBusy();
     clearRepl();
@@ -415,7 +435,7 @@ export default function WebMicroEditor(): React.JSX.Element {
     async (path: string) => {
       const c = sessie.client;
       if (!c) return;
-      if (isDirty && !confirm('Niet-opgeslagen wijzigingen worden overschreven. Doorgaan?')) return;
+      if (isDirty && !(await overschrijvenGoed())) return;
       const operatie = setBusy();
       try {
         const fs = new BoardFS(c);
@@ -432,8 +452,8 @@ export default function WebMicroEditor(): React.JSX.Element {
     [isDirty, schrijf, setBusy, setIdle],
   );
 
-  const newFile = useCallback(() => {
-    if (isDirty && !confirm('Niet-opgeslagen wijzigingen worden overschreven. Doorgaan?')) return;
+  const newFile = useCallback(async () => {
+    if (isDirty && !(await overschrijvenGoed())) return;
     sessie.zet({ code: '', loadedCode: '', currentFile: null });
   }, [isDirty]);
 
@@ -641,7 +661,12 @@ export default function WebMicroEditor(): React.JSX.Element {
     async (path: string) => {
       const c = sessie.client;
       if (!c) return;
-      if (!confirm(`'${path}' verwijderen van het board?`)) return;
+      const zeker = await bevestig(`${path} verdwijnt van het board.`, {
+        titel: 'Bestand verwijderen?',
+        bevestigLabel: 'Verwijderen',
+        gevaarlijk: true,
+      });
+      if (!zeker) return;
       const operatie = setBusy();
       try {
         const fs = new BoardFS(c);
@@ -662,9 +687,14 @@ export default function WebMicroEditor(): React.JSX.Element {
   const saveAs = useCallback(async () => {
     const c = sessie.client;
     if (!c || statusRef.current === 'busy') return;
-    const invoer = prompt('Bestandsnaam op het board:', currentFile ?? '/mijn_script.py');
-    if (!invoer || !invoer.trim()) return;
-    let pad = invoer.trim();
+    const invoer = await vraag('Bestandsnaam op het board:', {
+      titel: 'Opslaan als',
+      standaard: currentFile ?? '/mijn_script.py',
+      bevestigLabel: 'Opslaan',
+      valideer: (w) => (w ? null : 'Geef het bestand een naam.'),
+    });
+    if (!invoer || nuBezig(statusRef)) return;
+    let pad = invoer;
     if (!pad.startsWith('/')) pad = `/${pad}`;
     if (!pad.includes('.')) pad = `${pad}.py`;
     const operatie = setBusy();
@@ -712,11 +742,11 @@ export default function WebMicroEditor(): React.JSX.Element {
   }, [schrijf, setBusy, setIdle]);
 
   const applyTemplate = useCallback(
-    (id: string) => {
+    async (id: string) => {
       if (!id) return;
       const t = TEMPLATES.find((x) => x.id === id);
       if (!t) return;
-      if (isDirty && !confirm('Niet-opgeslagen wijzigingen worden overschreven. Doorgaan?')) return;
+      if (isDirty && !(await overschrijvenGoed())) return;
       sessie.zet({ code: t.code, loadedCode: t.code, currentFile: null });
     },
     [isDirty],
@@ -838,7 +868,7 @@ export default function WebMicroEditor(): React.JSX.Element {
         <button
           type="button"
           className={styles.btn}
-          onClick={newFile}
+          onClick={() => void newFile()}
           title="Leeg de editor (begin een nieuw bestand)"
         >
           Nieuw
@@ -885,7 +915,7 @@ export default function WebMicroEditor(): React.JSX.Element {
           aria-label="Voorbeeld laden"
           defaultValue=""
           onChange={(e) => {
-            applyTemplate(e.target.value);
+            void applyTemplate(e.target.value);
             e.target.value = '';
           }}
         >

@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@coderius/python-runner": "workspace:*",
+    "@coderius/shared": "workspace:*",
     "@monaco-editor/react": "catalog:",
     "fflate": "^0.8.3",
     "idb-keyval": "catalog:"

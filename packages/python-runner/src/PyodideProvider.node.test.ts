@@ -1,8 +1,10 @@
+import { execFileSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import {
+  INVOER_PY,
   type PyodideInterface,
   getPyodide,
   runPython,
@@ -120,6 +122,13 @@ describe('runPython en runPythonStream met echte Pyodide in node', () => {
     expect(stdout.join('')).toBe('Hoi Sam\n');
   });
 
+  it('vervangt input() door de versie met het eigen venster', async () => {
+    // Zonder JSPI (node zonder vlag, Safari) valt die terug op stdin; de twee
+    // tests hierboven draaien al door die terugval.
+    await runPython(pyodide, 'pass');
+    expect(pyodide.runPython('import builtins\nbuiltins.input.__name__')).toBe('_coderius_input');
+  });
+
   it('een run na een mislukte run werkt gewoon weer', async () => {
     await runPython(pyodide, 'x = 1/0');
     expect(await runPython(pyodide, 'print(2)')).toBe('2\n');
@@ -181,4 +190,36 @@ describe('runPython als Pyodide zelf omvalt (nagemaakte Pyodide)', () => {
       vi.unstubAllGlobals();
     }
   });
+});
+
+// De weg mét JSPI: input() wacht met run_sync op een asynchroon venster.
+// Vitest draait node zonder --experimental-wasm-jspi, dus deze test start een
+// los node-proces met die vlag, laadt Pyodide, en zet INVOER_PY neer met een
+// nagemaakt venster dat na een tik antwoordt. Zo is het de echte Python-kant,
+// en niet alleen de terugval.
+describe('input() met JSPI wacht op het eigen venster', () => {
+  it('geeft het antwoord terug en zet vraag en antwoord in de uitvoer', () => {
+    const script = `
+      const { loadPyodide } = await import(${JSON.stringify(pathToFileURL(join(PYODIDE_DIR, 'pyodide.mjs')).href)});
+      const py = await loadPyodide({ indexURL: ${JSON.stringify(PYODIDE_DIR)} });
+      const uit = [];
+      py.setStdout({ batched: (t) => uit.push(t) });
+      const vragen = [];
+      py.registerJsModule('coderius_invoer', {
+        vraag: (tekst) => { vragen.push(tekst); return new Promise((r) => setTimeout(() => r('Sam'), 10)); },
+      });
+      py.runPython(process.env.INVOER_PY, { filename: '<coderius-invoer>' });
+      await py.runPythonAsync('naam = input("Naam: ")\\nprint("Hoi " + naam)');
+      console.log(JSON.stringify({ uit, vragen }));
+    `;
+    const ruw = execFileSync(
+      process.execPath,
+      ['--experimental-wasm-jspi', '--input-type=module', '-e', script],
+      { env: { ...process.env, INVOER_PY }, encoding: 'utf8', timeout: 90_000 },
+    );
+    const { uit, vragen } = JSON.parse(ruw.trim().split('\n').pop() ?? '{}');
+
+    expect(vragen).toEqual(['Naam: ']);
+    expect(uit).toEqual(['Naam: Sam', 'Hoi Sam']);
+  }, 90_000);
 });

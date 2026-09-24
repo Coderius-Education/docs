@@ -12,6 +12,8 @@
 // play heeft een eigen constante in sites/play/src/components/CodeRunner/engine.js,
 // omdat die site zijn Pyodide in een iframe laadt en niet via deze provider.
 // Hij hoort dezelfde versie te noemen; pyodide-kopie.test.ts controleert dat.
+import { vraag } from '@coderius/shared/dialoog';
+
 export const PYODIDE_VERSION = '0.29.4';
 const DEFAULT_PYODIDE_BASE_URL = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/`;
 let pyodideBaseUrl = DEFAULT_PYODIDE_BASE_URL;
@@ -25,12 +27,14 @@ export function setPyodideBaseUrl(url: string): void {
 // @types/pyodide-pakket hier; dit dekt precies wat runPython/runPythonStream
 // en de componenten die pyodide doorgeven daadwerkelijk aanroepen.
 export interface PyodideInterface {
-  runPython(code: string): unknown;
+  runPython(code: string, options?: { filename?: string }): unknown;
   runPythonAsync(code: string, options?: { globals?: unknown }): Promise<unknown>;
   loadPackage(packages: string[]): Promise<void>;
   setStdout(options?: { batched: (text: string) => void }): void;
   setStderr(options?: { batched: (text: string) => void }): void;
   setStdin(options?: { stdin: () => string }): void;
+  // Optioneel: de nagemaakte Pyodides in de tests hebben het niet.
+  registerJsModule?(name: string, module: object): void;
 }
 
 interface WindowWithPyodide extends Window {
@@ -129,11 +133,58 @@ export function filterTraceback(raw: string): string {
   return parts.join('\n');
 }
 
-// `input()` in de browser: één vraag via window.prompt. Gedeeld door alle
-// run-varianten zodat input() overal hetzelfde doet.
+// `input()` in de browser. Pyodide draait op de hoofdthread en input() is
+// synchroon: Python wacht op het antwoord. Een eigen venster (dialoog.ts) is
+// asynchroon, en daar kan Python alleen op wachten met JSPI (stack switching,
+// run_sync). Chrome en Edge hebben dat sinds versie 137. Waar het ontbreekt
+// (Safari, oudere browsers), vraagt input() via stdin en window.prompt; iets
+// anders kan de browser dan niet.
 function promptStdin(): string {
   const answer = window.prompt('Invoer (input):');
   return answer === null ? '' : answer;
+}
+
+// Vervangt builtins.input door een versie die het eigen venster gebruikt als
+// run_sync kan. Onder een eigen bestandsnaam, zodat de Stapper deze functie
+// niet als leerlingcode opneemt. Het antwoord komt, zoals in een terminal,
+// achter de vraag in de uitvoer te staan.
+export const INVOER_PY = `
+import builtins
+from pyodide.ffi import can_run_sync, run_sync
+from coderius_invoer import vraag as _coderius_vraag
+
+_coderius_oude_input = builtins.input
+
+def _coderius_input(prompt=""):
+    if not can_run_sync():
+        return _coderius_oude_input(prompt)
+    tekst = str(prompt)
+    antwoord = run_sync(_coderius_vraag(tekst))
+    print(tekst + antwoord)
+    return antwoord
+
+builtins.input = _coderius_input
+`;
+
+function vraagInvoer(tekst: string): Promise<string> {
+  return vraag(tekst || 'Je programma wacht op invoer.', {
+    titel: 'Invoer voor je programma',
+    bevestigLabel: 'Invoeren',
+    annuleerLabel: 'Leeg laten',
+    ruw: true,
+  }).then((antwoord) => antwoord ?? '');
+}
+
+const metEigenInvoer = new WeakSet<PyodideInterface>();
+
+// Zet input() klaar voor een run: het eigen venster waar dat kan, stdin als
+// terugval. Het vervangen van builtins.input gebeurt één keer per Pyodide.
+function zetInvoer(pyodide: PyodideInterface): void {
+  pyodide.setStdin({ stdin: promptStdin });
+  if (metEigenInvoer.has(pyodide) || !pyodide.registerJsModule) return;
+  pyodide.registerJsModule('coderius_invoer', { vraag: vraagInvoer });
+  pyodide.runPython(INVOER_PY, { filename: '<coderius-invoer>' });
+  metEigenInvoer.add(pyodide);
 }
 
 export interface RunPythonStreamOptions {
@@ -153,7 +204,7 @@ export interface RunPythonStreamResult {
 /**
  * Voert Python uit met live gestreamde output: onStdout/onStderr worden per
  * regel aangeroepen terwijl het programma draait (in plaats van één gebufferde
- * string achteraf, zoals runPython). `input()` werkt via window.prompt.
+ * string achteraf, zoals runPython). Voor `input()`, zie zetInvoer.
  */
 export async function runPythonStream(
   pyodide: PyodideInterface,
@@ -163,7 +214,7 @@ export async function runPythonStream(
   // `batched` krijgt complete regels aangeleverd, zonder newline.
   pyodide.setStdout({ batched: (text: string) => onStdout(`${text}\n`) });
   pyodide.setStderr({ batched: (text: string) => onStderr(`${text}\n`) });
-  pyodide.setStdin({ stdin: promptStdin });
+  zetInvoer(pyodide);
 
   try {
     await pyodide.runPythonAsync(code, globals ? { globals } : undefined);
@@ -227,7 +278,7 @@ export async function tracePython(
 ): Promise<Opname> {
   const { RECORDER } = await import('./trace/recorder');
 
-  pyodide.setStdin({ stdin: promptStdin });
+  zetInvoer(pyodide);
 
   try {
     const ruw = (await pyodide.runPythonAsync(
@@ -258,7 +309,7 @@ sys.stderr = StringIO()
 `);
   // Zelfde input()-gedrag als runPythonStream; anders leest input() hier van
   // de standaard-stdin van Pyodide en krijgt de leerling geen vraag te zien.
-  pyodide.setStdin({ stdin: promptStdin });
+  zetInvoer(pyodide);
 
   let didError = false;
   let jsError = '';

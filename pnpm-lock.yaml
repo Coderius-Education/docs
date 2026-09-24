@@ -120,6 +120,9 @@ importers:
       '@coderius/python-runner':
         specifier: workspace:*
         version: link:../python-runner
+      '@coderius/shared':
+        specifier: workspace:*
+        version: link:../shared
       '@docusaurus/core':
         specifier: '*'
         version: 3.10.1(@docusaurus/faster@3.10.1(@docusaurus/types@3.10.1(lightningcss@1.32.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@swc/helpers@0.5.23))(@mdx-js/react@3.1.1(@types/react@19.2.17)(react@19.2.7))(@rspack/core@1.7.11(@swc/helpers@0.5.23))(lightningcss@1.32.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@5.6.3)
@@ -157,6 +160,9 @@ importers:
 
   packages/python-runner:
     dependencies:
+      '@coderius/shared':
+        specifier: workspace:*
+        version: link:../shared
       '@docusaurus/core':
         specifier: '*'
         version: 3.10.1(@docusaurus/faster@3.10.1(@docusaurus/types@3.10.1(lightningcss@1.32.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@swc/helpers@0.5.23))(@mdx-js/react@3.1.1(@types/react@19.2.17)(react@19.2.7))(@rspack/core@1.7.11(@swc/helpers@0.5.23))(lightningcss@1.32.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
