@@ -331,6 +331,16 @@ describe('PageRank: waar of niet waar (unplugged 9)', () => {
     12: metDA.D > goed.D + 1e-12,
   };
 
+  it('past op één kant: één blad, geen paginawissel, elke groep met schrijfruimte', () => {
+    // Of het echt op één A4 past, meet alleen een browser (Playwright, zie
+    // CLAUDE.md); dit pint de opbouw vast waar dat van afhangt.
+    expect(blad.match(/className="handout-blad/g)).toHaveLength(1);
+    expect(blad).not.toContain('handout-paginawissel');
+    const groepen = blad.match(/className="handout-vragen[^"]*"/g) ?? [];
+    expect(groepen.length).toBeGreaterThan(0);
+    for (const g of groepen) expect(g).toContain('handout-waarom');
+  });
+
   it('twaalf stellingen, elk met een antwoord in dezelfde volgorde', () => {
     expect(stellingen).toEqual(Array.from({ length: 12 }, (_, i) => i + 1));
     expect(antwoorden.map(([n]) => n)).toEqual(stellingen);

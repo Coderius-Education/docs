@@ -64,6 +64,14 @@
     margin-bottom: 1.4em;
   }
 
+  /* De stellingen-hand-out vraagt bij elke stelling een zin "waarom";
+     daar is 1.4em te krap voor. Met twaalf stellingen past dit nog op
+     één kant. */
+  body.handout-compact .handout-waarom ol > li,
+  body.handout-compact .handout-waarom ol > li:last-child {
+    margin-bottom: 3.2em;
+  }
+
   body.handout-page .handout-vragen ol > li:last-child {
     margin-bottom: 0.6em;
   }
