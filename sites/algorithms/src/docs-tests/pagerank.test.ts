@@ -293,3 +293,61 @@ describe('PageRank: één versie van de functie', () => {
     }
   });
 });
+
+describe('PageRank: waar of niet waar (unplugged 9)', () => {
+  // De hand-out bestaat alleen uit stellingen over het mini-web. Elk
+  // antwoord moet waar of niet waar zijn zonder voorwaarde, en klopt met
+  // een uitvoering van het algoritme; de getallen in de antwoorden ook.
+  const handout = lees('unplugged/09-waar-of-niet-waar.mdx');
+  const blad = handout.slice(0, handout.indexOf('<Antwoordblad'));
+  const antwoordblad = handout.slice(handout.indexOf('<Antwoordblad'));
+
+  const stellingen = [...blad.matchAll(/^(\d+)\. \*\*W \/ N\*\* /gm)].map((m) => +m[1]);
+  const antwoorden = [...antwoordblad.matchAll(/^\*\*(\d+)\. (Waar|Niet waar)\.\*\* /gm)].map(
+    (m) => [+m[1], m[2] === 'Waar'] as const,
+  );
+
+  const goed = pagerank(WEB).rank;
+  const zonder = pagerank(WEB, 1).rank;
+  const fiches: Rank = { A: 0, B: 0, C: 0, D: 0 };
+  for (const [i, links] of Object.entries(WEB))
+    for (const p of links) fiches[p] += 12 / links.length;
+  const som = Object.values(goed).reduce((a, b) => a + b, 0);
+  const metDA = pagerank({ ...WEB, D: ['C', 'A'] }).rank;
+
+  // Per stelling: is hij waar, uitgerekend op het mini-web.
+  const waarheid: Record<number, boolean> = {
+    1: vier(goed.A) === vier(goed.B), // A en B krijgen elk één link
+    2: true, // een stem is rank / aantal links, dus 1/5 < 1/1
+    3: goed.A > goed.C, // A deelt twee links uit, C één
+    4: goed.D > Math.min(goed.A, goed.B, goed.C), // D krijgt geen enkele link
+    5: Object.entries(fiches).every(([p, n]) => p === 'C' || n < fiches.C),
+    6: fiches.B > 12,
+    7: fiches.D === 0 && zonder.D < 1e-9,
+    8: pagerank(WEB).rondes === 1,
+    9: Math.abs(som - 1) < 1e-9,
+    10: Object.values(goed).every((r) => r > 0),
+    11: zonder.C > 0.99,
+    12: metDA.D > goed.D + 1e-12,
+  };
+
+  it('twaalf stellingen, elk met een antwoord in dezelfde volgorde', () => {
+    expect(stellingen).toEqual(Array.from({ length: 12 }, (_, i) => i + 1));
+    expect(antwoorden.map(([n]) => n)).toEqual(stellingen);
+  });
+
+  it('elk antwoord klopt met het algoritme', () => {
+    for (const [n, waar] of antwoorden) expect(waar, `stelling ${n}`).toBe(waarheid[n]);
+  });
+
+  it('de getallen in de antwoorden komen uit het algoritme en het fichespel', () => {
+    const komma = (x: number) => vier(x).toFixed(4).replace('.', ',');
+    for (const p of ['A', 'B', 'C', 'D']) expect(antwoordblad).toContain(`${p} ${komma(goed[p])}`);
+    expect(antwoordblad).toContain(`A eindigt\nop ${komma(goed.A)} en B op ${komma(goed.B)}`);
+    expect(antwoordblad).toContain(`samen ${fiches.C}`);
+    expect(antwoordblad).toContain(`naar ${komma(metDA.A)}`);
+    expect(zonder.A).toBeCloseTo(0.4, 6);
+    expect(zonder.B).toBeCloseTo(0.2, 6);
+    expect(antwoordblad).toContain('A en C allebei op 0,4 uit en B op 0,2');
+  });
+});

@@ -1,0 +1,149 @@
+---
+sidebar_position: 9
+---
+
+# PageRank: waar of niet waar?
+
+<Handout compact>
+
+<div className="handout-blad">
+
+Twaalf stellingen over PageRank, allemaal over hetzelfde mini-web van vier
+pagina's. Omcirkel per stelling **W** (waar) of **N** (niet waar) en schrijf
+in één zin waarom. Werk in tweetallen: eerst allebei zelf, dan vergelijken.
+Ongeveer 20 minuten.
+
+## Het mini-web
+
+Een pijl betekent "linkt naar":
+
+```
+   A ──────▶ B
+   ▲ ╲       │
+   │   ╲     │
+   │     ▼   ▼
+   └────── C ◀────── D
+```
+
+- A linkt naar B en C
+- B linkt naar C
+- C linkt naar A
+- D linkt naar C
+
+Zo reken je een ronde: elke pagina verdeelt haar belang **gelijk** over de
+pagina's waar ze naar linkt. A geeft dus de helft aan B en de helft aan C.
+Met **damping** springt de surfer bij 15 van de 100 klikken naar een
+willekeurige pagina, in plaats van een link te volgen.
+
+<div className="handout-vragen">
+
+## Links en stemmen
+
+1. **W / N** Twee pagina's met evenveel inkomende links hebben dezelfde
+   PageRank.
+2. **W / N** Een link van een pagina die naar vijf pagina's linkt, is
+   minder waard dan een link van een even belangrijke pagina die maar naar
+   één pagina linkt.
+3. **W / N** Hoe meer links een pagina zelf uitdeelt, hoe hoger haar eigen
+   PageRank.
+4. **W / N** Een pagina waar niemand naar linkt, kan toch hoger eindigen
+   dan een pagina waar wel iemand naar linkt.
+
+</div>
+
+</div>
+
+<div className="handout-blad handout-paginawissel">
+
+<div className="handout-vragen">
+
+## Eén ronde met fiches
+
+Begin met 12 fiches op elke pagina en speel één ronde, zonder damping.
+
+5. **W / N** Na één ronde heeft C de meeste fiches.
+6. **W / N** Na één ronde heeft B meer fiches dan aan het begin.
+7. **W / N** Na één ronde heeft D geen fiches meer, en zonder damping
+   krijgt D er ook nooit meer een terug.
+8. **W / N** Na één ronde weet je de PageRank al.
+
+</div>
+
+<div className="handout-vragen">
+
+## Damping en de som
+
+9. **W / N** Als je de PageRanks van alle vier de pagina's optelt, kom je
+   op 1 uit.
+10. **W / N** Met damping komt geen enkele pagina op nul uit.
+11. **W / N** Zonder damping komt uiteindelijk al het belang bij C terecht,
+    want iedereen linkt naar C.
+12. **W / N** Als D ook naar A gaat linken, stijgt de PageRank van D.
+
+</div>
+
+<div className="handout-alleen-scherm">
+
+## Verder op de site
+
+- [PageRank: het idee](/docs/pagerank/01-concept): links als stemmen en
+  damping
+- [Stemmen met fiches](/docs/unplugged/08-stemmen-met-fiches): hetzelfde
+  mini-web, vier rondes op tafel
+- [Aanpassen](/docs/pagerank/08-aanpassen): de ranks voor elke waarde van
+  de damping, in Python
+
+</div>
+
+</div>
+
+<Antwoordblad titel="Antwoorden (voor de docent; print als losse laatste pagina)">
+
+Op het scherm staat dit dicht; op papier is het de losse laatste pagina.
+De ranks zijn die van de les, met damping 0,85: A 0,3725, B 0,1958,
+C 0,3941 en D 0,0375.
+
+**1. Niet waar.** A en B krijgen allebei precies één link, maar A eindigt
+op 0,3725 en B op 0,1958. A krijgt zijn stem van C, de belangrijkste
+pagina, die al zijn belang aan A geeft. B krijgt de halve stem van A.
+
+**2. Waar.** Een pagina deelt haar belang gelijk over haar links. Bij vijf
+links krijgt elke link een vijfde, bij één link alles.
+
+**3. Niet waar.** A deelt twee links uit en C maar één, en toch eindigt C
+hoger dan A. Je eigen PageRank hangt af van wie naar jóú linkt.
+
+**4. Niet waar.** Zonder inkomende links krijgt een pagina alleen het
+basisdeel van de damping: D eindigt op 0,0375. Elke pagina met een
+inkomende link krijgt dat basisdeel plus een stem, en eindigt dus hoger.
+
+**5. Waar.** C krijgt 6 fiches van A, 12 van B en 12 van D: samen 30.
+
+**6. Niet waar.** B krijgt alleen de helft van A: 6 fiches, de helft van
+de 12 waarmee B begon.
+
+**7. Waar.** Niemand linkt naar D, dus D ontvangt nooit iets. Alleen
+damping geeft D elke ronde een klein basisbedrag.
+
+**8. Niet waar.** Na die ene ronde heeft C meer dan de anderen, en stemt
+C in de volgende ronde dus zwaarder op A. Elke ronde schuift het belang
+zo een stukje verder. Met damping staan de waarden pas na zo'n veertig
+rondes stil.
+
+**9. Waar.** Elke pagina in het mini-web linkt ergens naartoe, dus elke
+stem komt ergens terecht en er gaat niets verloren. PageRank is de kans
+dat de surfer op een pagina is, en alle kansen samen zijn 1.
+
+**10. Waar.** Elke pagina krijgt elke ronde het basisdeel van de
+willekeurige sprong, wat er verder ook binnenkomt.
+
+**11. Niet waar.** C geeft alles wat binnenkomt door aan A. Zonder damping
+komen A en C allebei op 0,4 uit en B op 0,2; met de fiches is dat 19,2,
+19,2 en 9,6. Alleen D loopt leeg.
+
+**12. Niet waar.** De PageRank van D hangt af van wie naar D linkt, en dat
+is nog steeds niemand: D blijft op 0,0375. A stijgt wel, naar 0,3797.
+
+</Antwoordblad>
+
+</Handout>
