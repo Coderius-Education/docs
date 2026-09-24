@@ -64,9 +64,10 @@ Speel **vier rondes** en vul na elke ronde de stand in:
 - Welke pagina's staan bovenaan, en welke is helemaal leeggebloed?
   Waarom krijgt D nooit meer een fiche terug?
 - D heeft evenveel uitgaande links als B. Waarom eindigt B toch hoger?
-- De aantallen van A en C wiebelen per ronde. Het echte PageRank lost
-  dat op door elke pagina elke ronde ook een klein vast basisbedrag te
-  geven (damping) — waarom helpt dat ook tegen het leegbloeden van D?
+- De aantallen van A en C wiebelen per ronde. Blijft dat zo als je
+  doorspeelt?
+- Het echte PageRank geeft elke pagina elke ronde ook een klein vast
+  basisbedrag (damping). Wat verandert daardoor voor D?
 
 <div style={{breakBefore: 'page'}}>
 
@@ -90,9 +91,11 @@ knip hem eraf.
   genoeg.
 - B ontvangt de helft van A's fiches, D ontvangt niets — uitgaande
   links zeggen niets over je eigen belang, inkomende alles.
-- Met damping krijgt óók D elke ronde een klein basisbedrag en dempen
-  de schommelingen van A en C uit tot vaste waarden. Dat is precies de
-  berekening die je in de les in Python bouwt.
+- Het wiebelen dooft uit als je doorspeelt, al moet je dan fiches gaan
+  halveren: A en C naderen allebei 19,2 fiches en B 9,6.
+- Met damping krijgt óók D elke ronde een klein basisbedrag, dus D komt
+  nooit meer op nul. Het wiebelen dooft dan ook sneller uit. Dat is
+  precies de berekening die je in de les in Python bouwt.
 
 </div>
 

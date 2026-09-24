@@ -230,3 +230,42 @@ describe('PageRank: de antwoordtabellen van aanpassen', () => {
     expect(tabel[1][1]).toEqual(afgerond(pagerank({ ...WEB, D: ['C', 'A'] }).rank));
   });
 });
+
+describe('PageRank: stemmen met fiches (unplugged 8)', () => {
+  const handout = lees('unplugged/08-stemmen-met-fiches.mdx');
+
+  /** Het fichespel: elke ronde deelt elke pagina al zijn fiches gelijk uit, zonder damping. */
+  function fiches(rondes: number): Rank[] {
+    let stand: Rank = { A: 12, B: 12, C: 12, D: 12 };
+    const verloop = [stand];
+    for (let r = 0; r < rondes; r++) {
+      const nieuw: Rank = { A: 0, B: 0, C: 0, D: 0 };
+      for (const [i, links] of Object.entries(WEB)) {
+        for (const p of links) nieuw[p] += stand[i] / links.length;
+      }
+      stand = nieuw;
+      verloop.push(stand);
+    }
+    return verloop;
+  }
+
+  it('de antwoordtabel is het spel van vier rondes', () => {
+    const antwoorden = handout.slice(handout.indexOf('## Antwoorden'));
+    const rijen = [
+      ...antwoorden.matchAll(/^\| (start|ronde \d) \| (\d+) \| (\d+) \| (\d+) \| (\d+) \|$/gm),
+    ];
+    expect(rijen.map((m) => ({ A: +m[2], B: +m[3], C: +m[4], D: +m[5] }))).toEqual(fiches(4));
+  });
+
+  it('zonder damping dooft het wiebelen ook uit, met damping sneller', () => {
+    // De hand-out zei dat damping het wiebelen van A en C oplost, alsof het
+    // zonder damping bleef wiebelen.
+    const eind = fiches(400).at(-1) as Rank;
+    expect(eind.A).toBeCloseTo(19.2, 6);
+    expect(eind.B).toBeCloseTo(9.6, 6);
+    expect(eind.C).toBeCloseTo(19.2, 6);
+    expect(handout).toContain('A en C naderen allebei 19,2 fiches en B 9,6');
+    expect(pagerank(WEB, 0.85).rondes).toBeLessThan(pagerank(WEB, 1).rondes);
+    expect(handout).not.toMatch(/dempen\s+de schommelingen/);
+  });
+});
