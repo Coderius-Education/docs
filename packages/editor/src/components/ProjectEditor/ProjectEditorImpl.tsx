@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { downloadBestand } from '../../lib/download';
 import { languageForPath } from '../../lib/languages';
+import { useVolledigScherm } from '../../lib/volledigScherm';
 import MonacoPane from '../../monaco/MonacoPane';
 import { RUNNER_META } from '../../runners/registry';
 import type { RunnerId } from '../../runners/types';
@@ -57,6 +58,11 @@ export default function ProjectEditorImpl({
   const session = useRunSession(project?.runnerId ?? 'python');
   sessionClearRef.current = session.clear;
 
+  // Het hele project (bestanden, editor, uitvoer) op volledig scherm; zonder
+  // navbar en browserbalken is er op een schoollaptop van 1366x768 merkbaar
+  // meer regels code te zien.
+  const rootRef = useRef<HTMLDivElement>(null);
+  const volledig = useVolledigScherm(rootRef);
   const projectRef = useRef(project);
   projectRef.current = project;
 
@@ -344,7 +350,7 @@ export default function ProjectEditorImpl({
   const Input = runner?.InputComponent;
 
   return (
-    <div className={styles.root} style={{ height }}>
+    <div ref={rootRef} className={styles.root} style={{ height }}>
       <div className={styles.projectBar}>
         <div className={styles.projectControls}>
           {project && (
@@ -391,7 +397,24 @@ export default function ProjectEditorImpl({
             </>
           )}
         </div>
-        {project && <RunControls session={session} onRun={handleRun} />}
+        <div className={styles.projectControls}>
+          {volledig.kan && (
+            <button
+              type="button"
+              className={styles.barButton}
+              onClick={volledig.wissel}
+              aria-pressed={volledig.aan}
+              title={
+                volledig.aan
+                  ? 'Terug (of druk op Escape)'
+                  : 'De editor op het hele beeldscherm, zonder de balken van de site en de browser'
+              }
+            >
+              {volledig.aan ? 'Sluiten (Esc)' : 'Volledig scherm'}
+            </button>
+          )}
+          {project && <RunControls session={session} onRun={handleRun} />}
+        </div>
       </div>
 
       {showTemplates && (
