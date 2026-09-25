@@ -63,7 +63,7 @@ De Autoload-instelling staat ook in de [Nodes cheatsheet](/cheatsheet#autoload).
 <details>
 <summary>Antwoord</summary>
 
-Godot crasht zodra die regel wordt uitgevoerd, met een melding als `Identifier "Global" not declared in the current scope`. Het script `global.gd` bestaat wel op schijf — maar Godot kent de **naam** `Global` pas nadat je hem in Autoload hebt geregistreerd. Een script zonder Autoload is als een boek in een gesloten kast: het bestaat, maar niemand kan erbij.
+Je krijgt de melding `Identifier "Global" not declared in the current scope`, en niet pas als je een munt raakt. Godot controleert de namen in een script al bij het inlezen. De script-editor kleurt de regel meteen rood, en druk je toch op Play, dan stopt Godot bij het laden van het muntje-script, nog voordat het spel draait. Het script `global.gd` bestaat wel op schijf, maar Godot kent de **naam** `Global` pas nadat je hem in Autoload hebt geregistreerd. Een script zonder Autoload is als een boek in een gesloten kast: het bestaat, maar niemand kan erbij.
 
 </details>
 
