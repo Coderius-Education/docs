@@ -28,7 +28,7 @@ echo "Hello " . $name;
 
 <summary>Antwoord</summary>
 
-Omdat de tekst direct en ongefilterd door `echo` op de webpagina wordt uitgeprint, denkt jouw webbrowser dat de `<script>`-tag daadwerkelijk een stukje bijbehorende broncode van de website is. De browser voert het script direct uit en toont een pop-up (alert) met de tekst "Hacked.".
+Omdat de tekst direct en ongefilterd door `echo` op de webpagina wordt uitgeprint, denkt jouw webbrowser dat de `<script>`-tag daadwerkelijk een stukje bijbehorende broncode van de website is. De browser voert het script direct uit en toont een pop-up (alert) met de tekst `Hacked!`.
 
 </details>
 
@@ -87,4 +87,6 @@ Zie je de letterlijke tekst `<script>alert(1);</script>` op het scherm in plaats
 ## 6. Er gaat iets mis...
 
 Wat als je probeert een geavanceerd script te injecteren, maar de webpagina toont simpelweg letterlijk de tekst `<script>...` op het scherm in plaats van het uit te voeren?
-Dit is eigenlijk precies wat we *willen* (als beveiliger). Dit gebeurt wanneer de input wordt weergegeven in een veld dat al sterk beveiligd is, of wanneer een moderne browser *Content Security Policy (CSP)* heeft ingeschakeld. Zorg ervoor dat je DVWA gebruikt zoals bedoeld om te leren hoe de basisaanval werkt.
+Als beveiliger wil je precies dat. De applicatie *escapet* dan je invoer: ze zet `<` en `>` om in tekens die de browser als tekst toont, niet als HTML. Zo komt je `<script>`-tag nooit bij de browser aan als code. In DVWA gebeurt dat op het niveau **impossible**; controleer dus of het security level op **low** staat.
+
+*Content Security Policy (CSP)* doet iets anders. Die laat de tag in de pagina staan, maar verbiedt de browser om het script uit te voeren: je ziet dan geen pop-up, en ook geen tekst. Hoe dat werkt, en hoe je er soms toch omheen komt, zie je in [CSP bypass](/docs/dvwa_tutorial/csp-bypass/low).

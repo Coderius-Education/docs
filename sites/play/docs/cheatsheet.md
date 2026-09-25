@@ -1498,9 +1498,10 @@ for controller in play.controllers.get_all_controllers():
 In de console zie je vervolgens voor elke controller een `index` en een `naam`, bijvoorbeeld als er één SNES-controller verbonden is:
 
 ```
-pygame-ce 2.5.5 (SDL 2.32.6, Python 3.12.10)
 0 usb gamepad
 ```
+
+Daarboven staat misschien eerst een regel van `pygame-ce` met versienummers; die verschilt per computer.
 
 De `0` geeft de **index** van de controller aan (welke controller het is) en `usb gamepad` geeft de naam van de controller aan. 
 </details>

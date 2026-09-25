@@ -82,7 +82,7 @@ Bekijk de ruwe bytes van een bestand. Handig om bestandstypen te identificeren a
 
 Handige JavaScript-commando's die je kunt uitvoeren in de browserconsole (F12 > Console):
 
-```javascript
+```js
 // Base64 decoderen
 atob("SGVsbG8gV29ybGQ=")
 

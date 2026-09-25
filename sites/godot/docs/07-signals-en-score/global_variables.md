@@ -63,7 +63,7 @@ De Autoload-instelling staat ook in de [Nodes cheatsheet](/cheatsheet#autoload).
 <details>
 <summary>Antwoord</summary>
 
-Godot crasht zodra die regel wordt uitgevoerd, met een melding als `Identifier "Global" not declared in the current scope`. Het script `global.gd` bestaat wel op schijf — maar Godot kent de **naam** `Global` pas nadat je hem in Autoload hebt geregistreerd. Een script zonder Autoload is als een boek in een gesloten kast: het bestaat, maar niemand kan erbij.
+Je krijgt de melding `Identifier "Global" not declared in the current scope`, en niet pas als je een munt raakt. Godot controleert de namen in een script al bij het inlezen. De script-editor kleurt de regel meteen rood, en druk je toch op Play, dan stopt Godot bij het laden van het muntje-script, nog voordat het spel draait. Het script `global.gd` bestaat wel op schijf, maar Godot kent de **naam** `Global` pas nadat je hem in Autoload hebt geregistreerd. Een script zonder Autoload is als een boek in een gesloten kast: het bestaat, maar niemand kan erbij.
 
 </details>
 
@@ -155,15 +155,6 @@ Omdat je dan één plek hebt waar staat wat "game over" betekent. Wil je later d
 De naam helpt bovendien mee: `if Global.is_game_over():` lees je als een zin, `if Global.levens <= 0:` moet je ontcijferen.
 
 </details>
-
-## Samenvatting
-
-| Begrip                | Uitleg                                                         |
-| :-------------------: | :------------------------------------------------------------- |
-| **Global variable**   | Een variabele die overal in je project beschikbaar is          |
-| **Autoload**          | Instelling waarmee Godot een script automatisch laadt bij start |
-| **`Global.score`**    | Zo lees of schrijf je een globale variabele                    |
-| **`extends Node`**    | Het global script extends `Node` omdat het geen specifiek type nodig heeft |
 
 :::tip
 Gebruik global variables voor dingen die je in meerdere scènes nodig hebt: score, levens, instellingen. Gebruik gewone `var` voor dingen die alleen in één node leven.

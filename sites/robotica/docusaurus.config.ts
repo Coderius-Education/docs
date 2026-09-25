@@ -15,6 +15,11 @@ export default createConfig({
   // Robotica is (nog) Engelstalig.
   i18n: { defaultLocale: 'en', locales: ['en'] },
   markdown: { hooks: { onBrokenMarkdownLinks: 'warn' } },
+  // De "Open in de editor"-links zetten de code in #code=…, en dat is geen
+  // anker; ze slaan de controle over (theme/CodeBlock). Daarna bleef er niets
+  // over, dus een echt kapot anker breekt de build in plaats van te
+  // verdwijnen tussen negentig meldingen.
+  onBrokenAnchors: 'throw',
 
   presets: [
     [

@@ -18,7 +18,7 @@ Bij DOM-based XSS vindt de aanval *volledig* in de browser (via JavaScript) plaa
 Bij het openen van deze pagina staat er een parameter in de URL: `?default=English`.
 De broncode van de webpagina bevat dit stukje JavaScript:
 
-```javascript
+```js
 var lang = document.location.href.substring(document.location.href.indexOf("default=") + 8);
 document.write("<option value='" + lang + "'>" + lang + "</option>");
 ```

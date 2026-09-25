@@ -10,7 +10,7 @@ Met JavaScript kun je je website interactief maken.
 1. Maak een nieuw bestand aan: klik rechts in de Explorer → **New File...** → noem het `script.js`
 2. Typ het volgende:
 
-```javascript
+```js
 let knop = document.getElementById("mijnKnop");
 
 knop.addEventListener("click", function() {

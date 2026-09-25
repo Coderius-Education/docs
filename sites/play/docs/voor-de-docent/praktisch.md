@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# Als docent aan de slag met dit materiaal.
+# Als docent aan de slag met dit materiaal
 Wat leuk dat je als docent aan de slag wilt met dit lesmateriaal.
 Hierbij geven we je een paar tips.
 

@@ -36,12 +36,7 @@ function progressPrefix(tutorial: string): string | undefined {
 // Lessen die (nog) geen rij in progress.js hebben, met de reden. Zonder deze
 // lijst dekt de test alleen wat er is; nu valt elke nieuwe les op tot iemand
 // hem hier of in progress.js zet.
-const ZONDER_VOORTGANG: Record<string, string> = {
-  '06d': 'break: later toegevoegd, niveau per concept nog niet toegekend',
-  '09c': 'scope: later toegevoegd, niveau per concept nog niet toegekend',
-  '09d': 'modules: later toegevoegd, niveau per concept nog niet toegekend',
-  '09e': 'eigen module: later toegevoegd, niveau per concept nog niet toegekend',
-};
+const ZONDER_VOORTGANG: Record<string, string> = {};
 
 describe('knowledgeGraph.js', () => {
   it('concept-ids en tutorial-ids zijn uniek', () => {

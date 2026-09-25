@@ -132,6 +132,17 @@ export const progressData = [
     },
   },
   {
+    tutorial: '06d. Break',
+    levels: {
+      Basis: 7,
+      Variabelen: 6,
+      Logica: 6,
+      Herhaling: 6,
+      Functies: 0,
+      Data: 0,
+    },
+  },
+  {
     tutorial: '07. While-loop',
     levels: {
       Basis: 7,
@@ -166,6 +177,39 @@ export const progressData = [
   },
   {
     tutorial: '09b. Return',
+    levels: {
+      Basis: 8,
+      Variabelen: 7,
+      Logica: 7,
+      Herhaling: 7,
+      Functies: 7,
+      Data: 0,
+    },
+  },
+  {
+    tutorial: '09c. Scope',
+    levels: {
+      Basis: 8,
+      Variabelen: 7,
+      Logica: 7,
+      Herhaling: 7,
+      Functies: 8,
+      Data: 0,
+    },
+  },
+  {
+    tutorial: '09d. Modules importeren',
+    levels: {
+      Basis: 8,
+      Variabelen: 7,
+      Logica: 7,
+      Herhaling: 7,
+      Functies: 8,
+      Data: 0,
+    },
+  },
+  {
+    tutorial: '09e. Je eigen module',
     levels: {
       Basis: 8,
       Variabelen: 7,
