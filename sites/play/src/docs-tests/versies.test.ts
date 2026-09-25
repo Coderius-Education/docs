@@ -44,6 +44,11 @@ function lessen(map: string): string[] {
 }
 const DOCS = lessen(join(SITE, 'docs'));
 
+// 'Python 3.10' of 'Python 3.10 of nieuwer', maar niet 'Python 3.12.10' uit
+// een banner: zonder de ? viel het patroon daar een cijfer terug en las het
+// 'Python 3.1'.
+const PYTHON_EIS = /Python (3\.\d+)(?!\.?\d)( of nieuwer)?/g;
+
 describe('versies in de lessen', () => {
   it('de wheel pint pygame-ce en noemt een minimale Python', () => {
     expect(METADATA).toMatch(/^Requires-Dist: pygame-ce==/m);
@@ -60,10 +65,16 @@ describe('versies in de lessen', () => {
     expect(fout).toEqual([]);
   });
 
+  it('een volledige versie als 3.12.10 telt niet als eis', () => {
+    const eisen = (t: string) => [...t.matchAll(PYTHON_EIS)].map((m) => m[0]);
+    expect(eisen('(SDL 2.32.6, Python 3.12.10)')).toEqual([]);
+    expect(eisen('Python 3.10 of nieuwer')).toEqual(['Python 3.10 of nieuwer']);
+  });
+
   it('een Python-eis in de lessen is de minimale versie "of nieuwer"', () => {
     const minimaal = METADATA.match(/^Requires-Python: >=(3\.\d+)/m)?.[1];
     const fout = DOCS.flatMap((pad) =>
-      [...readFileSync(pad, 'utf8').matchAll(/Python (3\.\d+)(?!\.\d)( of nieuwer)?/g)]
+      [...readFileSync(pad, 'utf8').matchAll(PYTHON_EIS)]
         .filter((m) => m[1] !== minimaal || !m[2])
         .map((m) => `${pad}: ${m[0]}`),
     );
