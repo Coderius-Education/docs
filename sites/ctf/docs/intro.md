@@ -43,23 +43,22 @@ Begin met de makkelijke challenges om de basis te leren, en werk daarna door naa
 11. [Hacking - Koekjes 1](/docs/hacking/koekjes-1) - Cookies bekijken
 12. [Hacking - Headers](/docs/hacking/headers) - HTTP-headers
 13. [Code - Obfuscated](/docs/code/obfuscated) - Geobfusceerde code
-14. Code - Base64 - Base64 decodering
 
 ### Moeilijk - Voor de doorzetters
-15. [Hacking - Koekjes 2](/docs/hacking/koekjes-2) - Cookies wijzigen
-16. [Hacking - Hallo](/docs/hacking/hallo) - Input validatie & XSS
-17. [Code - Rotate](/docs/code/rotate) - Caesar cipher
-18. [Code - Encrypted](/docs/code/encrypted) - Versleuteling kraken
-19. [Forensics - Niet gevonden](/docs/forensics/niet-gevonden) - Bestandstypes
-20. [Forensics - Plaats delict](/docs/forensics/plaats-delict) - Metadata & verborgen data
+14. [Hacking - Koekjes 2](/docs/hacking/koekjes-2) - Cookies wijzigen
+15. [Hacking - Hallo](/docs/hacking/hallo) - Input validatie & XSS
+16. [Code - Rotate](/docs/code/rotate) - Caesar cipher
+17. [Code - Encrypted](/docs/code/encrypted) - Versleuteling kraken
+18. [Forensics - Niet gevonden](/docs/forensics/niet-gevonden) - Bestandstypes
+19. [Forensics - Plaats delict](/docs/forensics/plaats-delict) - Metadata & verborgen data
 
 ### Expert - Nog nooit opgelost
-21. [Forensics - Logfile](/docs/forensics/logfile) - HTTP-statuscodes
-22. [Hacking - Dubbel](/docs/hacking/dubbel) - De ultieme uitdaging
+20. [Forensics - Logfile](/docs/forensics/logfile) - HTTP-statuscodes
+21. [Hacking - Dubbel](/docs/hacking/dubbel) - De ultieme uitdaging
 
 ## Tips
 
-- Lees de hints als je vastloopt (elke challenge heeft er drie)
+- Lees de hints als je vastloopt (de meeste challenges hebben er drie)
 - Gebruik de **Developer Tools** van je browser (F12)
 - Google is je vriend - zoek naar termen die je niet kent
 - Werk samen en deel kennis met je klasgenoten
