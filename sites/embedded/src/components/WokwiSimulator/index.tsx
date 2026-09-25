@@ -1,5 +1,6 @@
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import React, { useState } from 'react';
+import { beschrijving } from './beschrijving';
 import styles from './styles.module.css';
 
 interface WokwiSimulatorProps {
@@ -25,10 +26,7 @@ function WokwiSimulatorInner({ projectUrl, height = 500, title }: WokwiSimulator
       <div className={styles.placeholder}>
         <div className={styles.placeholderContent}>
           <h3>{title || 'Wokwi Simulator'}</h3>
-          <p>
-            Simuleer het circuit direct in je browser. Je kunt de code aanpassen en het resultaat
-            live zien — zonder hardware.
-          </p>
+          <p>{beschrijving(url)}</p>
           <button
             type="button"
             className={styles.launchButton}
