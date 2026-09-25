@@ -18,7 +18,7 @@ Volg <SiteLink site="editor" to="/python/">Python in VS Code</SiteLink> om VS Co
 **Let op:** Zorg ervoor dat Python 3.10 of nieuwer geïnstalleerd is op je computer. Dit is nodig om `coderius-play` te kunnen gebruiken.
 :::
 
-## coderius-play installeren.
+## coderius-play installeren
 - Klik bovenaan op `Terminal`
 - Klik op `New terminal`
 

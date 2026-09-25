@@ -395,7 +395,7 @@ Bestand in `static/js/app.js`, en in de `<head>` van je template:
 <details>
 <summary>Reageren op typen of klikken</summary>
 
-```javascript
+```js
 const veld = document.querySelector("#bericht-veld");
 const teller = document.querySelector("#teller");
 

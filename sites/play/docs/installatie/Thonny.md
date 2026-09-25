@@ -50,5 +50,5 @@ Klik op de groene knop (`Run current script`) om de code te draaien
 
 Als er een zwarte bal verschijnt, dan is de installatie gelukt.
 
-## Stap 3: En beginnen maar.
+## Stap 3: En beginnen maar
 Je kan nu beginnen [met het lesmateriaal](../vormen/je_eerste_programma.mdx).
