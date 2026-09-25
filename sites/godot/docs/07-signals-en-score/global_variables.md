@@ -156,15 +156,6 @@ De naam helpt bovendien mee: `if Global.is_game_over():` lees je als een zin, `i
 
 </details>
 
-## Samenvatting
-
-| Begrip                | Uitleg                                                         |
-| :-------------------: | :------------------------------------------------------------- |
-| **Global variable**   | Een variabele die overal in je project beschikbaar is          |
-| **Autoload**          | Instelling waarmee Godot een script automatisch laadt bij start |
-| **`Global.score`**    | Zo lees of schrijf je een globale variabele                    |
-| **`extends Node`**    | Het global script extends `Node` omdat het geen specifiek type nodig heeft |
-
 :::tip
 Gebruik global variables voor dingen die je in meerdere scènes nodig hebt: score, levens, instellingen. Gebruik gewone `var` voor dingen die alleen in één node leven.
 

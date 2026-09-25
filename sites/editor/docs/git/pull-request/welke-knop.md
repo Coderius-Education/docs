@@ -22,14 +22,3 @@ title: "Welke knop is welk commando?"
 | **Pull requests** tab → **New pull request** | Hetzelfde, maar je kiest zelf bron- en doel-branch |
 | **Merge pull request** + **Confirm merge** | Voegt de feature-branch samen met `main` op de server |
 | **Delete branch** (na merge) | Verwijdert de feature-branch op GitHub |
-
-## Wat je nu kunt
-
-Je beheerst nu de volledige feature-branch + pull-request workflow:
-
-- Branches lokaal maken, wisselen, mergen en verwijderen
-- Een branch pushen naar GitHub
-- Een PR openen, bekijken en mergen
-- Lokaal weer up-to-date raken met `main` en je oude branch opruimen
-
-Dit is exact hoe professionele teams werken — alleen met meer mensen die op de PR-pagina meekijken.
