@@ -1,9 +1,36 @@
+import Keuzelijst from '@coderius/shared/components/Keuzelijst';
+import { bevestig, meld, vraag } from '@coderius/shared/dialoog';
 import clsx from 'clsx';
+import {
+  Check,
+  Download,
+  FilePlus,
+  FolderOpen,
+  FolderPlus,
+  LoaderCircle,
+  Maximize2,
+  Minimize2,
+  Pencil,
+  Plus,
+  Trash2,
+  Upload,
+  X,
+} from 'lucide-react';
 import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { downloadBestand } from '../../lib/download';
 import { languageForPath } from '../../lib/languages';
+import { leesBestand } from '../../lib/upload';
+import { useVolledigScherm } from '../../lib/volledigScherm';
 import MonacoPane from '../../monaco/MonacoPane';
 import { RUNNER_META } from '../../runners/registry';
 import type { RunnerId } from '../../runners/types';
+import {
+  MAX_UPLOAD_BYTES,
+  isDataUrl,
+  leesbareGrootte,
+  uploadPad,
+  veiligeBestandsnaam,
+} from '../../vfs/bestanden';
 import {
   DEFAULT_STORAGE_PREFIX,
   deleteProject,
@@ -17,6 +44,8 @@ import type { Project, ProjectSummary, ProjectTemplate } from '../../vfs/types';
 import Console from '../shared/Console';
 import RunControls from '../shared/RunControls';
 import { useRunSession } from '../shared/useRunSession';
+import BalkKnop from './BalkKnop';
+import BestandVoorbeeld from './BestandVoorbeeld';
 import FileTree from './FileTree';
 import type { ProjectEditorProps } from './index';
 import {
@@ -56,6 +85,17 @@ export default function ProjectEditorImpl({
   const session = useRunSession(project?.runnerId ?? 'python');
   sessionClearRef.current = session.clear;
 
+  // Het hele project (bestanden, editor, uitvoer) op volledig scherm; zonder
+  // navbar en browserbalken is er op een schoollaptop van 1366x768 merkbaar
+  // meer regels code te zien.
+  const rootRef = useRef<HTMLDivElement>(null);
+  const volledig = useVolledigScherm(rootRef);
+  // Of alleen één paneel: de code om rustig te lezen, of het voorbeeld van
+  // een website op de volle breedte van het scherm.
+  const editorRef = useRef<HTMLElement>(null);
+  const editorVol = useVolledigScherm(editorRef);
+  const uitvoerRef = useRef<HTMLElement>(null);
+  const uitvoerVol = useVolledigScherm(uitvoerRef);
   const projectRef = useRef(project);
   projectRef.current = project;
 
@@ -138,15 +178,19 @@ export default function ProjectEditorImpl({
   // ---- projectbeheer ----
 
   const createFromTemplate = useCallback(
-    (template: ProjectTemplate) => {
-      const name = window.prompt('Hoe heet je project?', template.name);
+    async (template: ProjectTemplate) => {
+      const name = await vraag('Hoe heet je project?', {
+        titel: 'Nieuw project',
+        standaard: template.name,
+        bevestigLabel: 'Maken',
+      });
       if (name === null) return;
       // Openstaande wijzigingen van het huidige project niet kwijtraken.
       if (projectRef.current) void persist(projectRef.current);
       const now = Date.now();
       const next: Project = {
         id: newProjectId(),
-        name: name.trim() || template.name,
+        name: name || template.name,
         runnerId: template.runnerId,
         entry: template.entry,
         files: { ...template.files },
@@ -170,17 +214,26 @@ export default function ProjectEditorImpl({
     [persist, storagePrefix, switchToProject],
   );
 
-  const renameProject = useCallback(() => {
+  const renameProject = useCallback(async () => {
     if (!projectRef.current) return;
-    const name = window.prompt('Nieuwe naam voor dit project:', projectRef.current.name);
-    if (name === null || !name.trim()) return;
-    mutateProject((p) => ({ ...p, name: name.trim() }));
+    const name = await vraag('Nieuwe naam voor dit project:', {
+      titel: 'Project hernoemen',
+      standaard: projectRef.current.name,
+      bevestigLabel: 'Hernoemen',
+      valideer: (w) => (w ? null : 'Geef het project een naam.'),
+    });
+    if (!name) return;
+    mutateProject((p) => ({ ...p, name }));
   }, [mutateProject]);
 
   const removeProject = useCallback(async () => {
     const current = projectRef.current;
     if (!current) return;
-    if (!window.confirm(`Weet je zeker dat je "${current.name}" wilt verwijderen?`)) return;
+    const zeker = await bevestig(
+      `"${current.name}" en alle bestanden erin verdwijnen uit deze browser. Download het eerst als je het wilt bewaren.`,
+      { titel: 'Project verwijderen?', bevestigLabel: 'Verwijderen', gevaarlijk: true },
+    );
+    if (!zeker) return;
     await deleteProject(storagePrefix, current.id);
     const list = await listProjects(storagePrefix);
     setSummaries(list);
@@ -196,6 +249,21 @@ export default function ProjectEditorImpl({
     setActivePath(null);
     setShowTemplates(true);
   }, [storagePrefix, switchToProject]);
+
+  // fflate laadt pas bij de klik: de meeste leerlingen downloaden nooit, en
+  // dan hoort het niet in de bundel van de editor.
+  const downloadProject = useCallback(async () => {
+    const current = projectRef.current;
+    if (!current) return;
+    try {
+      const { projectNaarZip, zipBestandsnaam } = await import('./zip');
+      downloadBestand(projectNaarZip(current), zipBestandsnaam(current.name), 'application/zip');
+    } catch {
+      void meld('Probeer het nog een keer, of ververs de pagina.', {
+        titel: 'Downloaden is niet gelukt',
+      });
+    }
+  }, []);
 
   // ---- bestandsbeheer ----
 
@@ -214,56 +282,128 @@ export default function ProjectEditorImpl({
     });
   }, []);
 
-  const newFile = useCallback(() => {
+  const newFile = useCallback(async () => {
     const current = projectRef.current;
     if (!current) return;
-    const path = window
-      .prompt('Naam van het nieuwe bestand (bijv. utils.py of map/data.txt):')
-      ?.trim();
+    const path = await vraag('Naam van het nieuwe bestand:', {
+      titel: 'Nieuw bestand',
+      placeholder: 'utils.py of map/data.txt',
+      bevestigLabel: 'Maken',
+      valideer: (w) => {
+        if (!isValidPath(w)) return 'Dat is geen geldige bestandsnaam.';
+        if (current.files[w] !== undefined) return 'Er bestaat al een bestand met deze naam.';
+        return null;
+      },
+    });
     if (!path) return;
-    if (!isValidPath(path)) {
-      window.alert('Dat is geen geldige bestandsnaam.');
-      return;
-    }
-    if (current.files[path] !== undefined) {
-      window.alert('Er bestaat al een bestand met deze naam.');
-      return;
-    }
     mutateProject((p) => ({ ...p, files: { ...p.files, [path]: '' } }));
     openFile(path);
   }, [mutateProject, openFile]);
 
-  const newFolder = useCallback(() => {
+  const newFolder = useCallback(async () => {
     const current = projectRef.current;
     if (!current) return;
-    const path = window.prompt('Naam van de nieuwe map (bijv. afbeeldingen):')?.trim();
+    const path = await vraag('Naam van de nieuwe map:', {
+      titel: 'Nieuwe map',
+      placeholder: 'afbeeldingen',
+      bevestigLabel: 'Maken',
+      valideer: (w) => (isValidPath(w) ? null : 'Dat is geen geldige mapnaam.'),
+    });
     if (!path) return;
-    if (!isValidPath(path)) {
-      window.alert('Dat is geen geldige mapnaam.');
-      return;
-    }
     if (current.folders.includes(path)) return;
     mutateProject((p) => ({ ...p, folders: [...p.folders, path] }));
   }, [mutateProject]);
 
-  const renamePath = useCallback(
-    (path: string, isFolder: boolean) => {
-      const next = window.prompt('Nieuwe naam (inclusief map):', path)?.trim();
-      if (!next || next === path) return;
-      if (!isValidPath(next)) {
-        window.alert('Dat is geen geldige naam.');
-        return;
+  // ---- uploaden ----
+
+  // Eén verborgen <input type="file"> voor alle uploadknoppen; uploadMapRef
+  // onthoudt in welke map de gekozen bestanden moeten landen.
+  const uploadInvoerRef = useRef<HTMLInputElement>(null);
+  const uploadMapRef = useRef('');
+  const [sleepDoel, setSleepDoelState] = useState<string | null>(null);
+  // Ook als ref: drop leest het doel in hetzelfde moment dat dragover het
+  // zette, vóór React opnieuw rendert.
+  const sleepDoelRef = useRef<string | null>(null);
+  const setSleepDoel = useCallback((doel: string | null) => {
+    sleepDoelRef.current = doel;
+    setSleepDoelState(doel);
+  }, []);
+
+  const uploadNaar = useCallback((map: string) => {
+    uploadMapRef.current = map;
+    uploadInvoerRef.current?.click();
+  }, []);
+
+  const voegBestandenToe = useCallback(
+    async (map: string, lijst: FileList | File[]) => {
+      const bestanden = Array.from(lijst);
+      if (!projectRef.current || bestanden.length === 0) return;
+      const nieuw: Record<string, string> = {};
+      const teGroot: string[] = [];
+      const mislukt: string[] = [];
+      for (const bestand of bestanden) {
+        if (bestand.size > MAX_UPLOAD_BYTES) {
+          teGroot.push(bestand.name);
+          continue;
+        }
+        const pad = uploadPad(map, veiligeBestandsnaam(bestand.name));
+        const huidig = projectRef.current;
+        if (!huidig) return;
+        if (huidig.files[pad] !== undefined || nieuw[pad] !== undefined) {
+          const vervangen = await bevestig(`${pad} staat al in je project.`, {
+            titel: 'Bestand vervangen?',
+            bevestigLabel: 'Vervangen',
+            annuleerLabel: 'Overslaan',
+          });
+          if (!vervangen) continue;
+        }
+        try {
+          nieuw[pad] = await leesBestand(bestand);
+        } catch {
+          mislukt.push(bestand.name);
+        }
       }
+      const paden = Object.keys(nieuw);
+      if (paden.length > 0) {
+        mutateProject((p) => ({ ...p, files: { ...p.files, ...nieuw } }));
+        openFile(paden[0]);
+      }
+      if (teGroot.length > 0) {
+        const een = teGroot.length === 1;
+        await meld(
+          `${teGroot.join(', ')} ${een ? 'is' : 'zijn'} groter dan ${leesbareGrootte(MAX_UPLOAD_BYTES)}. Maak ${een ? 'hem' : 'ze'} kleiner, bijvoorbeeld een foto met minder pixels, en probeer het opnieuw.`,
+          { titel: een ? 'Bestand te groot' : 'Bestanden te groot' },
+        );
+      }
+      if (mislukt.length > 0) {
+        await meld(`${mislukt.join(', ')} kon niet gelezen worden. Probeer het nog een keer.`, {
+          titel: 'Uploaden niet gelukt',
+        });
+      }
+    },
+    [mutateProject, openFile],
+  );
+
+  const renamePath = useCallback(
+    async (path: string, isFolder: boolean) => {
       const current = projectRef.current;
       if (!current) return;
-      if (pathExists(current, next)) {
-        window.alert(
-          isFolder
-            ? 'Er bestaat al een map met deze naam.'
-            : 'Er bestaat al een bestand met deze naam.',
-        );
-        return;
-      }
+      const next = await vraag('Nieuwe naam, inclusief de map waar het in staat:', {
+        titel: isFolder ? 'Map hernoemen' : 'Bestand hernoemen',
+        standaard: path,
+        bevestigLabel: 'Hernoemen',
+        valideer: (w) => {
+          if (w === path) return null;
+          if (!isValidPath(w)) return 'Dat is geen geldige naam.';
+          if (pathExists(current, w)) {
+            return isFolder
+              ? 'Er bestaat al een map met deze naam.'
+              : 'Er bestaat al een bestand met deze naam.';
+          }
+          return null;
+        },
+      });
+      if (!next || next === path) return;
       mutateProject((p) => renameInProject(p, path, next, isFolder));
       const mapTab = (t: string) => renamedPath(t, path, next, isFolder);
       setOpenTabs((tabs) => tabs.map(mapTab));
@@ -273,15 +413,23 @@ export default function ProjectEditorImpl({
   );
 
   const deletePath = useCallback(
-    (path: string, isFolder: boolean) => {
+    async (path: string, isFolder: boolean) => {
       const current = projectRef.current;
       if (!current) return;
       if (isDeletedPath(current.entry, path, isFolder)) {
-        window.alert(`Het startbestand (${current.entry}) kan niet verwijderd worden.`);
+        await meld(
+          `${current.entry} is het bestand dat Uitvoeren start. Zonder dat bestand draait je project niet.`,
+          { titel: 'Dit bestand kan niet weg' },
+        );
         return;
       }
-      const label = isFolder ? `de map "${path}" en alles erin` : `"${path}"`;
-      if (!window.confirm(`Weet je zeker dat je ${label} wilt verwijderen?`)) return;
+      const label = isFolder ? `De map "${path}" en alles erin` : `"${path}"`;
+      const zeker = await bevestig(`${label} verdwijnt uit je project.`, {
+        titel: isFolder ? 'Map verwijderen?' : 'Bestand verwijderen?',
+        bevestigLabel: 'Verwijderen',
+        gevaarlijk: true,
+      });
+      if (!zeker) return;
       mutateProject((p) => deleteFromProject(p, path, isFolder));
       setOpenTabs((tabs) => tabs.filter((t) => !isDeletedPath(t, path, isFolder)));
       setActivePath((p) => (p && !isDeletedPath(p, path, isFolder) ? p : null));
@@ -330,46 +478,89 @@ export default function ProjectEditorImpl({
   const Input = runner?.InputComponent;
 
   return (
-    <div className={styles.root} style={{ height }}>
+    <div ref={rootRef} className={styles.root} style={{ height }}>
       <div className={styles.projectBar}>
-        <div className={styles.projectControls}>
+        <div className={styles.barGroep}>
           {project && (
-            <select
-              className={styles.projectSelect}
-              value={project.id}
-              onChange={(e) => void openProject(e.target.value)}
-              title="Project openen"
-            >
-              {(summaries ?? []).map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name} ({RUNNER_META[s.runnerId]?.label ?? s.runnerId})
-                </option>
-              ))}
-            </select>
+            <Keuzelijst
+              className={styles.projectKiezer}
+              label="Project"
+              title="Ander project openen"
+              waarde={project.id}
+              // Per taal gegroepeerd; de taal van het open project staat al
+              // in het label op de knop, dus niet ook in de naam.
+              opties={(summaries ?? []).map((s) => ({
+                waarde: s.id,
+                label: s.name,
+                groep: RUNNER_META[s.runnerId]?.label ?? s.runnerId,
+              }))}
+              onKies={(id) => void openProject(id)}
+              voor={<FolderOpen aria-hidden="true" size={16} className={styles.projectIcoon} />}
+              na={
+                <span className={styles.taalBadge}>
+                  {RUNNER_META[project.runnerId]?.label ?? project.runnerId}
+                </span>
+              }
+            />
           )}
-          <button type="button" className={styles.barButton} onClick={() => setShowTemplates(true)}>
-            Nieuw project
-          </button>
+          <BalkKnop icoon={Plus} label="Nieuw project" onClick={() => setShowTemplates(true)} />
           {project && (
             <>
-              <button type="button" className={styles.barButton} onClick={renameProject}>
-                Hernoemen
-              </button>
-              <button
-                type="button"
-                className={styles.barButton}
-                onClick={() => void removeProject()}
-              >
-                Verwijderen
-              </button>
-              <span className={styles.saveState}>
-                {saveState === 'saving' && 'Opslaan…'}
-                {saveState === 'saved' && 'Opgeslagen ✓'}
-              </span>
+              <fieldset className={styles.knopGroep} aria-label="Dit project">
+                <BalkKnop
+                  icoon={Pencil}
+                  label="Hernoemen"
+                  title="Dit project een andere naam geven"
+                  onClick={() => void renameProject()}
+                />
+                <BalkKnop
+                  icoon={Download}
+                  label="Downloaden (.zip)"
+                  title="Het hele project als .zip-bestand, als reservekopie of om in te leveren"
+                  onClick={() => void downloadProject()}
+                />
+                <BalkKnop
+                  icoon={Trash2}
+                  label="Verwijderen"
+                  title="Dit project uit deze browser verwijderen"
+                  gevaarlijk
+                  onClick={() => void removeProject()}
+                />
+              </fieldset>
+              <output className={styles.saveState}>
+                {saveState === 'saving' && (
+                  <>
+                    <LoaderCircle aria-hidden="true" size={14} className={styles.draait} />
+                    Opslaan…
+                  </>
+                )}
+                {saveState === 'saved' && (
+                  <>
+                    <Check aria-hidden="true" size={14} />
+                    Opgeslagen
+                  </>
+                )}
+              </output>
             </>
           )}
         </div>
-        {project && <RunControls session={session} onRun={handleRun} />}
+        <div className={styles.barGroep}>
+          {volledig.kan && (
+            <BalkKnop
+              icoon={volledig.aan ? Minimize2 : Maximize2}
+              label={volledig.aan ? 'Sluiten (Esc)' : 'Volledig scherm'}
+              title={
+                volledig.aan
+                  ? 'Terug (of druk op Escape)'
+                  : 'De hele editor op het beeldscherm, zonder de balken van de site en de browser'
+              }
+              alleenIcoon
+              ingedrukt={volledig.aan}
+              onClick={volledig.wissel}
+            />
+          )}
+          {project && <RunControls session={session} onRun={handleRun} sneltoets="Ctrl ↵" />}
+        </div>
       </div>
 
       {showTemplates && (
@@ -383,7 +574,7 @@ export default function ProjectEditorImpl({
                 key={t.id}
                 type="button"
                 className={styles.templateCard}
-                onClick={() => createFromTemplate(t)}
+                onClick={() => void createFromTemplate(t)}
               >
                 <span className={styles.templateName}>{t.name}</span>
                 <span className={styles.templateDescription}>{t.description}</span>
@@ -391,20 +582,53 @@ export default function ProjectEditorImpl({
             ))}
           </div>
           {project && (
-            <button
-              type="button"
-              className={styles.barButton}
+            <BalkKnop
+              icoon={X}
+              label="Annuleren"
+              title="Terug naar je project"
               onClick={() => setShowTemplates(false)}
-            >
-              Annuleren
-            </button>
+            />
           )}
         </div>
       )}
 
       {project && !showTemplates && (
         <div className={styles.main}>
-          <aside className={styles.sidebar}>
+          <aside
+            className={clsx(styles.sidebar, sleepDoel === '' && styles.sidebarSleep)}
+            // Bestanden slepen: over de zijbalk gaan ze naar de hoofdmap, over
+            // een map (FileTree) daarin. Een rij heeft het doel dan al gekozen
+            // en preventDefault aangeroepen.
+            onDragOver={(e) => {
+              if (!e.dataTransfer.types.includes('Files')) return;
+              // isDefaultPrevented(), niet e.defaultPrevented: dat veld van
+              // React's event blijft staan op de waarde van vóór de rij hem
+              // afhandelde, en dan belandde alles in de hoofdmap.
+              if (!e.isDefaultPrevented()) setSleepDoel('');
+              e.preventDefault();
+            }}
+            onDragLeave={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setSleepDoel(null);
+            }}
+            onDrop={(e) => {
+              e.preventDefault();
+              const map = sleepDoelRef.current ?? '';
+              setSleepDoel(null);
+              void voegBestandenToe(map, e.dataTransfer.files);
+            }}
+          >
+            <input
+              ref={uploadInvoerRef}
+              type="file"
+              multiple
+              hidden
+              onChange={(e) => {
+                const gekozen = e.target.files;
+                if (gekozen) void voegBestandenToe(uploadMapRef.current, gekozen);
+                // Leeg, zodat hetzelfde bestand nog eens kiezen ook werkt.
+                e.target.value = '';
+              }}
+            />
             <div className={styles.sidebarHeader}>
               <span>Bestanden</span>
               <span>
@@ -412,17 +636,28 @@ export default function ProjectEditorImpl({
                   type="button"
                   className={styles.treeAction}
                   title="Nieuw bestand"
-                  onClick={newFile}
+                  aria-label="Nieuw bestand"
+                  onClick={() => void newFile()}
                 >
-                  ＋
+                  <FilePlus aria-hidden="true" size={15} />
                 </button>
                 <button
                   type="button"
                   className={styles.treeAction}
                   title="Nieuwe map"
-                  onClick={newFolder}
+                  aria-label="Nieuwe map"
+                  onClick={() => void newFolder()}
                 >
-                  ▸＋
+                  <FolderPlus aria-hidden="true" size={15} />
+                </button>
+                <button
+                  type="button"
+                  className={styles.treeAction}
+                  title="Bestanden uploaden, zoals afbeeldingen (of sleep ze hierheen)"
+                  aria-label="Bestanden uploaden"
+                  onClick={() => uploadNaar('')}
+                >
+                  <Upload aria-hidden="true" size={15} />
                 </button>
               </span>
             </div>
@@ -434,11 +669,14 @@ export default function ProjectEditorImpl({
               onOpen={openFile}
               onRename={renamePath}
               onDelete={deletePath}
+              onUpload={uploadNaar}
+              sleepDoel={sleepDoel}
+              onSleepOver={setSleepDoel}
             />
           </aside>
 
-          <section className={styles.editorArea}>
-            {openTabs.length > 0 && (
+          <section ref={editorRef} className={styles.editorArea} aria-label="Code">
+            <div className={styles.paneelKop}>
               <div className={styles.tabs} role="tablist">
                 {openTabs.map((tab) => (
                   <span
@@ -465,9 +703,25 @@ export default function ProjectEditorImpl({
                   </span>
                 ))}
               </div>
-            )}
+              {editorVol.kan && (
+                <BalkKnop
+                  icoon={editorVol.aan ? Minimize2 : Maximize2}
+                  label={editorVol.aan ? 'Sluiten (Esc)' : 'Code op volledig scherm'}
+                  alleenIcoon
+                  ingedrukt={editorVol.aan}
+                  onClick={editorVol.wissel}
+                />
+              )}
+            </div>
             <div className={styles.editorPane}>
-              {activePath !== null ? (
+              {activePath !== null && isDataUrl(project.files[activePath] ?? '') ? (
+                <BestandVoorbeeld
+                  // Een nieuwe per bestand, anders blijft de maat van het vorige plaatje staan.
+                  key={activePath}
+                  pad={activePath}
+                  inhoud={project.files[activePath]}
+                />
+              ) : activePath !== null ? (
                 <MonacoPane
                   value={project.files[activePath] ?? ''}
                   onChange={handleChange}
@@ -490,7 +744,25 @@ export default function ProjectEditorImpl({
             </div>
           </section>
 
-          <section className={styles.outputArea}>
+          <section ref={uitvoerRef} className={styles.outputArea} aria-label="Uitvoer">
+            <div className={clsx(styles.paneelKop, styles.uitvoerKop)}>
+              <span className={styles.paneelTitel}>{Preview ? 'Voorbeeld' : 'Uitvoer'}</span>
+              {uitvoerVol.kan && (
+                <BalkKnop
+                  icoon={uitvoerVol.aan ? Minimize2 : Maximize2}
+                  label={
+                    uitvoerVol.aan
+                      ? 'Sluiten (Esc)'
+                      : Preview
+                        ? 'Voorbeeld op volledig scherm'
+                        : 'Uitvoer op volledig scherm'
+                  }
+                  alleenIcoon
+                  ingedrukt={uitvoerVol.aan}
+                  onClick={uitvoerVol.wissel}
+                />
+              )}
+            </div>
             {Preview && (
               <div className={styles.previewPane}>
                 <Preview session={session} />

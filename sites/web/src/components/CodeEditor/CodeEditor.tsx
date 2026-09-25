@@ -1,3 +1,4 @@
+import { bevestig } from '@coderius/shared/dialoog';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import React, {
   lazy,
@@ -6,6 +7,7 @@ import React, {
   useEffect,
   useCallback,
   useLayoutEffect,
+  useMemo,
   useRef,
 } from 'react';
 import styles from './CodeEditor.module.css';
@@ -14,6 +16,8 @@ import { buildDoc } from './buildDoc';
 import { heeftJavaScript } from './heeftJs';
 import { VoorbeeldNavigatie } from './navigatie';
 import { useDebounce } from './useDebounce';
+import { type OpslagStand, useOpslag } from './useOpslag';
+import { kanVolledigScherm, schermStand } from './volledigScherm';
 
 const EditorPane = lazy(() => import('./EditorPane').then((mod) => ({ default: mod.EditorPane })));
 
@@ -89,7 +93,16 @@ function CodeEditorInner({
   // begrensd: op een laptop van 1440px is de editor ~490px en het voorbeeld
   // 327px, smaller dan een telefoon. Voor een Make-opdracht is dat te krap.
   const [uitgeklapt, setUitgeklapt] = useState(false);
+  // Echt volledig scherm naast Groter: ook de adresbalk en de tabs weg. De
+  // stand volgt alleen `fullscreenchange`, want de browser beslist zelf
+  // wanneer hij eindigt (Esc, F11, de melding bovenin).
+  const [volledig, setVolledig] = useState(false);
+  const [kanVolledig] = useState(() => kanVolledigScherm(document, document.documentElement));
+  const groot = uitgeklapt || volledig;
+  const stand = schermStand(uitgeklapt, volledig);
+  const containerRef = useRef<HTMLDivElement>(null);
   const knopRef = useRef<HTMLButtonElement>(null);
+  const volledigKnopRef = useRef<HTMLButtonElement>(null);
   const consoleBodyRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
@@ -112,6 +125,20 @@ function CodeEditorInner({
     setVersie((n) => n + 1);
   }, []);
 
+  // Het werk van de leerling blijft bewaard in deze browser (opslag.ts).
+  const huidig = useMemo(() => ({ html, css, js }), [html, css, js]);
+  const opslag = useOpslag({
+    start: { html: initialHtml, css: initialCss, js: initialJs },
+    huidig,
+    containerRef,
+    onHerstel: (code) => {
+      setHtml(code.html);
+      setCss(code.css);
+      setJs(code.js);
+      if (livePreview) setSrcDoc(buildDoc(code.html, code.css, code.js, veldId));
+    },
+  });
+
   const debouncedHtml = useDebounce(html, debounceMs);
   const debouncedCss = useDebounce(css, debounceMs);
   const debouncedJs = useDebounce(js, debounceMs);
@@ -128,12 +155,13 @@ function CodeEditorInner({
     setSrcDoc(buildDoc(html, css, js, veldId));
   }, [html, css, js, veldId]);
 
-  const handleReset = useCallback(() => {
-    if (
-      window.confirm(
-        'Weet je zeker dat je terug wilt naar de startcode? Je huidige wijzigingen gaan verloren.',
-      )
-    ) {
+  const handleReset = useCallback(async () => {
+    const zeker = await bevestig(
+      'Je huidige wijzigingen gaan verloren, ook de versie die in deze browser bewaard is.',
+      { titel: 'Terug naar de startcode?', bevestigLabel: 'Reset', gevaarlijk: true },
+    );
+    if (zeker) {
+      opslag.wis();
       setHtml(initialHtml);
       setCss(initialCss);
       setJs(initialJs);
@@ -144,7 +172,7 @@ function CodeEditorInner({
       // gevolgde link bleef het voorbeeld dan op de vreemde pagina staan.
       herlaadEigenPagina();
     }
-  }, [initialHtml, initialCss, initialJs, livePreview, herlaadEigenPagina, veldId]);
+  }, [initialHtml, initialCss, initialJs, livePreview, herlaadEigenPagina, veldId, opslag.wis]);
 
   // Escape sluit, en de pagina eronder mag niet meescrollen zolang het veld
   // het scherm vult.
@@ -182,6 +210,51 @@ function CodeEditorInner({
     }
   }, [uitgeklapt]);
 
+  // Volledig scherm zet dezelfde container in de bovenste laag van de
+  // browser. Niets verhuist in de React-boom, dus ook hier blijft de
+  // undo-geschiedenis staan. Escape hoeven we niet af te vangen: die pakt de
+  // browser zelf, en hij meldt het einde met fullscreenchange.
+  const uitgeklaptRef = useRef(uitgeklapt);
+  uitgeklaptRef.current = uitgeklapt;
+  const isVolledigGeweest = useRef(false);
+  useEffect(() => {
+    const bijWissel = () => {
+      const aan = document.fullscreenElement === containerRef.current;
+      setVolledig(aan);
+      if (aan) {
+        isVolledigGeweest.current = true;
+      } else if (isVolledigGeweest.current) {
+        isVolledigGeweest.current = false;
+        // Kwam je uit Groter, dan sta je daar weer en is de Groter-knop
+        // ("Sluiten") de logische volgende; anders de knop waarmee je begon.
+        (uitgeklaptRef.current ? knopRef : volledigKnopRef).current?.focus({
+          preventScroll: true,
+        });
+      }
+    };
+    document.addEventListener('fullscreenchange', bijWissel);
+    return () => {
+      document.removeEventListener('fullscreenchange', bijWissel);
+      // Verdwijnt het veld terwijl het het scherm vult (de leerling navigeert
+      // weg), dan zou de browser op een leeg volledig scherm blijven staan.
+      if (document.fullscreenElement && document.fullscreenElement === containerRef.current) {
+        void document.exitFullscreen();
+      }
+    };
+  }, []);
+
+  const wisselVolledig = useCallback(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    if (document.fullscreenElement === container) {
+      void document.exitFullscreen();
+      return;
+    }
+    // Weigert de browser toch (geen klik meer als gebruikersactie, een
+    // beleid op een beheerd apparaat), dan is Groter het beste wat er is.
+    container.requestFullscreen().catch(() => setUitgeklapt(true));
+  }, []);
+
   useEffect(() => {
     function handler(e: MessageEvent) {
       // Alleen berichten van het eigen voorbeeld: er staan meerdere velden
@@ -190,6 +263,9 @@ function CodeEditorInner({
       // komt het bericht van pagehide al van een ander window.
       if (e.data?.source !== 'code-editor' || e.data.veld !== veldId) return;
       if (e.data.type === 'console') {
+        // Uitvoer klapt de console open, ook in een html-css-veld: wie daar
+        // een console.log typt, moet het resultaat niet hoeven zoeken.
+        setConsoleOpen(true);
         setConsoleLogs((prev) => [...prev, { level: e.data.level, text: e.data.text }]);
       } else if (e.data.type === 'height' && typeof e.data.height === 'number') {
         setPreviewInhoud(e.data.height);
@@ -225,18 +301,27 @@ function CodeEditorInner({
 
   const visibleTabs: Tab[] = ['html', 'css', ...(initialJs !== '' ? ['javascript' as Tab] : [])];
 
-  // De console blijft staan zodra er JavaScript in het veld zit, ook als die
-  // alleen in een onclick staat. Hij verdwijnt niet meer als je de handler even
-  // wegtypt, anders springt het voorbeeld eronder op en neer.
-  const [toonConsole, setToonConsole] = useState(() => heeftJavaScript(initialHtml, initialJs));
-  if (!toonConsole && heeftJavaScript(html, js)) setToonConsole(true);
+  // De console staat er altijd, als balk onder het voorbeeld. In een veld
+  // zonder JavaScript (de html-css-lessen) is hij dicht, zodat het voorbeeld
+  // zijn ruimte houdt; een klik of uitvoer klapt hem open. Komt er JavaScript
+  // in het veld, ook alleen in een onclick, dan gaat hij één keer vanzelf
+  // open en blijft dan open: wegtypen en terugtypen van een handler liet het
+  // voorbeeld eronder anders op en neer springen.
+  const [consoleOpen, setConsoleOpen] = useState(() => heeftJavaScript(initialHtml, initialJs));
+  const [jsGezien, setJsGezien] = useState(consoleOpen);
+  if (!jsGezien && heeftJavaScript(html, js)) {
+    setJsGezien(true);
+    setConsoleOpen(true);
+  }
 
   const veld = (
     <div
+      ref={containerRef}
+      data-zaad={opslag.zaad}
       className={[
         styles.container,
         stacked ? styles.containerStacked : '',
-        uitgeklapt ? styles.containerUitgeklapt : '',
+        groot ? styles.containerUitgeklapt : '',
       ]
         .filter(Boolean)
         .join(' ')}
@@ -254,32 +339,51 @@ function CodeEditorInner({
             </button>
           ))}
           <span className={styles.tabBarKnoppen}>
+            <OpslagMelding stand={opslag.stand} />
             {!livePreview && (
               <button type="button" className={styles.runButton} onClick={handleRun}>
                 ▶ Run
               </button>
             )}
-            <button
-              type="button"
-              ref={knopRef}
-              className={styles.groterButton}
-              onClick={() => setUitgeklapt((aan) => !aan)}
-              title={
-                uitgeklapt
-                  ? 'Terug naar de les (of druk op Escape)'
-                  : 'Gebruik het hele scherm voor dit oefenveld'
-              }
-              aria-pressed={uitgeklapt}
-            >
-              <span className={styles.groterIcoon} aria-hidden="true">
-                {uitgeklapt ? '\u2715' : '\u21F1\u21F2'}
-              </span>
-              {uitgeklapt ? 'Sluiten (Esc)' : 'Groter'}
-            </button>
+            {stand !== 'volledig' && (
+              <button
+                type="button"
+                ref={knopRef}
+                className={styles.groterButton}
+                onClick={() => setUitgeklapt((aan) => !aan)}
+                title={
+                  uitgeklapt
+                    ? 'Terug naar de les (of druk op Escape)'
+                    : 'Gebruik het hele scherm voor dit oefenveld'
+                }
+                aria-pressed={uitgeklapt}
+              >
+                <span className={styles.groterIcoon} aria-hidden="true">
+                  {uitgeklapt ? '\u2715' : '\u21F1\u21F2'}
+                </span>
+                {uitgeklapt ? 'Sluiten (Esc)' : 'Groter'}
+              </button>
+            )}
+            {kanVolledig && (
+              <button
+                type="button"
+                ref={volledigKnopRef}
+                className={stand === 'volledig' ? styles.groterButton : styles.volledigButton}
+                onClick={wisselVolledig}
+                title={
+                  stand === 'volledig'
+                    ? 'Terug (of druk op Escape)'
+                    : 'Ook de balken van de browser weg: het oefenveld op het hele beeldscherm'
+                }
+                aria-pressed={stand === 'volledig'}
+              >
+                {stand === 'volledig' ? 'Sluiten (Esc)' : 'Volledig scherm'}
+              </button>
+            )}
             <button
               type="button"
               className={styles.resetButton}
-              onClick={handleReset}
+              onClick={() => void handleReset()}
               title="Terug naar startcode"
             >
               ↺ Reset
@@ -287,20 +391,24 @@ function CodeEditorInner({
           </span>
         </div>
         <div className={styles.paneWrapper}>
-          <Suspense fallback={<div className={styles.loading}>Editor laden...</div>}>
-            <EditorPane
-              key={activeTab}
-              language={activeTab}
-              value={values[activeTab]}
-              onChange={handlers[activeTab]}
-              // Uitgeklapt vult de editor zijn helft van het scherm. In de
-              // gestapelde vorm meet hij zich normaal naar de code, met de
-              // height-prop als maximum; dat maximum is de lespagina-hoogte en
-              // liet uitgeklapt 150px van de editorkant leeg staan.
-              height={uitgeklapt ? '100%' : height}
-              autoHeight={stacked && !uitgeklapt}
-            />
-          </Suspense>
+          {!opslag.geladen ? (
+            <div className={styles.loading}>Editor laden...</div>
+          ) : (
+            <Suspense fallback={<div className={styles.loading}>Editor laden...</div>}>
+              <EditorPane
+                key={activeTab}
+                language={activeTab}
+                value={values[activeTab]}
+                onChange={handlers[activeTab]}
+                // Uitgeklapt vult de editor zijn helft van het scherm. In de
+                // gestapelde vorm meet hij zich normaal naar de code, met de
+                // height-prop als maximum; dat maximum is de lespagina-hoogte en
+                // liet uitgeklapt 150px van de editorkant leeg staan.
+                height={groot ? '100%' : height}
+                autoHeight={stacked && !groot}
+              />
+            </Suspense>
+          )}
         </div>
       </div>
       <div className={styles.previewColumn} style={stacked ? undefined : { height }}>
@@ -315,29 +423,40 @@ function CodeEditorInner({
           // is dat juist verkeerd: dan bleef het voorbeeld 160px hoog terwijl
           // er 450px voor hem klaarstond.
           hoogte={
-            stacked && !uitgeklapt
+            stacked && !groot
               ? `${Math.min(Math.max(previewInhoud ?? 160, 100), Number.parseInt(previewHeight, 10))}px`
               : undefined
           }
         />
-        {toonConsole && (
-          <div className={styles.consolePanel}>
-            <div className={styles.consolePanelHeader}>
-              <span>Console</span>
-              {consoleLogs.length > 0 && (
-                <button
-                  type="button"
-                  className={styles.consoleClear}
-                  onClick={() => setConsoleLogs([])}
-                >
-                  wissen
-                </button>
-              )}
-            </div>
+        <div className={`${styles.consolePanel} ${consoleOpen ? '' : styles.consolePanelDicht}`}>
+          <div className={styles.consolePanelHeader}>
+            <button
+              type="button"
+              className={styles.consoleToggle}
+              onClick={() => setConsoleOpen((open) => !open)}
+              aria-expanded={consoleOpen}
+              title={consoleOpen ? 'Console inklappen' : 'Console openklappen'}
+            >
+              <span aria-hidden="true">{consoleOpen ? '\u25BE' : '\u25B8'}</span> Console
+              {!consoleOpen && consoleLogs.length > 0 && ` (${consoleLogs.length})`}
+            </button>
+            {consoleOpen && consoleLogs.length > 0 && (
+              <button
+                type="button"
+                className={styles.consoleClear}
+                onClick={() => setConsoleLogs([])}
+              >
+                wissen
+              </button>
+            )}
+          </div>
+          {consoleOpen && (
             <div className={styles.consolePanelBody} ref={consoleBodyRef}>
               {consoleLogs.length === 0 ? (
                 <span className={styles.consolePlaceholder}>
-                  Nog geen uitvoer. Gebruik console.log() om hier iets te tonen.
+                  {jsGezien
+                    ? 'Nog geen uitvoer. Gebruik console.log() om hier iets te tonen.'
+                    : 'Nog geen JavaScript in deze pagina. Gebruik je console.log(), dan verschijnt de uitvoer hier.'}
                 </span>
               ) : (
                 consoleLogs.map((log, i) => (
@@ -350,8 +469,8 @@ function CodeEditorInner({
                 ))
               )}
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
@@ -361,6 +480,29 @@ function CodeEditorInner({
   // dan koppelt de editor opnieuw aan en is de leerling zijn undo-geschiedenis
   // kwijt op het moment dat hij juist meer ruimte vroeg.
   return veld;
+}
+
+// Alleen iets te zeggen als er iets bewaard is, of juist niet kan worden.
+// Een veld dat de leerling nog niet aanraakte, blijft stil.
+function OpslagMelding({ stand }: { stand: OpslagStand }) {
+  if (stand === 'leeg') return null;
+  if (stand === 'bewaard') {
+    return (
+      <output
+        className={styles.opslagMelding}
+        title="Je code staat in deze browser op dit apparaat. Op een andere computer, in een privévenster of na het wissen van je browsergegevens is hij er niet."
+      >
+        Bewaard in deze browser
+      </output>
+    );
+  }
+  return (
+    <output className={`${styles.opslagMelding} ${styles.opslagFout}`}>
+      {stand === 'vol'
+        ? 'Niet bewaard: de opslag van je browser is vol. Kopieer je code als je hem wilt houden.'
+        : 'Niet bewaard: deze browser slaat hier niets op (privévenster?). Kopieer je code als je hem wilt houden.'}
+    </output>
+  );
 }
 
 export function CodeEditor(props: CodeEditorProps) {

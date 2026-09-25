@@ -1,0 +1,153 @@
+/* De knop: een veld zoals de andere invoer op de sites. Een component kan hem
+   met className aanpassen (in de werkbalk van de editor zonder rand). Binnen
+   :where() tellen deze regels niet mee in de specificiteit, zodat de klasse
+   van de component altijd wint, welke CSS de bundel ook eerst laadt. */
+:where(.knop) {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  max-width: 100%;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 0.5rem;
+  background: var(--ifm-background-color);
+  color: var(--ifm-font-color-base);
+  font: inherit;
+  font-size: 0.9rem;
+  line-height: 1.3;
+  text-align: left;
+  cursor: pointer;
+}
+
+:where(.knop:hover) {
+  border-color: var(--ifm-color-emphasis-500);
+}
+
+:where(.knop:focus-visible) {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 1px;
+}
+
+:where(.knop[aria-expanded="true"]) {
+  border-color: var(--ifm-color-primary);
+}
+
+.tekst {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.placeholder {
+  color: var(--ifm-color-emphasis-600);
+}
+
+.pijl {
+  flex-shrink: 0;
+  color: var(--ifm-color-emphasis-600);
+  transition: rotate 0.15s ease;
+}
+
+.pijlOpen {
+  rotate: 180deg;
+}
+
+/* De lijst. Een popover krijgt van de browser `inset: 0; margin: auto`
+   (midden in het scherm); de plek rekent de component zelf uit. */
+.lijst {
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  box-sizing: border-box;
+  max-width: min(28rem, calc(100vw - 8px));
+  max-height: min(22rem, 70vh);
+  overflow-y: auto;
+  padding: 0.3rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 0.6rem;
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.08), 0 12px 32px -8px rgb(0 0 0 / 0.3);
+  font-family: var(--ifm-font-family-base);
+  font-size: 0.9rem;
+  animation: lijst-in 110ms ease-out;
+}
+
+/* Zonder Popover API (oude browsers): gewoon boven de rest. */
+.lijstZonderPopover {
+  z-index: 1000;
+}
+
+@keyframes lijst-in {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lijst {
+    animation: none;
+  }
+
+  .pijl {
+    transition: none;
+  }
+}
+
+.groep + .groep {
+  margin-top: 0.25rem;
+  padding-top: 0.25rem;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.groepKop {
+  padding: 0.35rem 0.6rem 0.2rem;
+  color: var(--ifm-color-emphasis-600);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.optie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.42rem 0.6rem;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.optieLabel {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Aangewezen, met de muis of de pijltjes. */
+.optieActief {
+  background: var(--ifm-color-emphasis-200);
+}
+
+.optieGekozen {
+  font-weight: 600;
+}
+
+.optieGekozen:not(.optieActief) {
+  background: color-mix(in srgb, var(--ifm-color-primary) 12%, transparent);
+}
+
+.vink {
+  flex-shrink: 0;
+  color: var(--ifm-color-primary);
+}
+
+.optieUit {
+  color: var(--ifm-color-emphasis-500);
+  cursor: default;
+}

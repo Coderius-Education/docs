@@ -1,3 +1,4 @@
+import Keuzelijst from '@coderius/shared/components/Keuzelijst';
 import { progressData } from '@site/src/data/progress';
 import React, { useState } from 'react';
 
@@ -82,24 +83,12 @@ const SkillRadar = () => {
         <label htmlFor="tutorial-select" style={{ marginRight: '10px' }}>
           Bekijk niveau na:
         </label>
-        <select
+        <Keuzelijst
           id="tutorial-select"
-          value={currentIndex}
-          onChange={(e) => setCurrentIndex(Number.parseInt(e.target.value))}
-          style={{
-            padding: '8px',
-            borderRadius: '4px',
-            border: '1px solid var(--ifm-color-primary)',
-            backgroundColor: 'var(--ifm-background-color)',
-            color: 'var(--ifm-color-content)',
-          }}
-        >
-          {progressData.map((d, i) => (
-            <option key={d.tutorial} value={i}>
-              {d.tutorial}
-            </option>
-          ))}
-        </select>
+          waarde={currentIndex}
+          onKies={setCurrentIndex}
+          opties={progressData.map((d, i) => ({ waarde: i, label: d.tutorial }))}
+        />
       </div>
 
       <svg width="100%" height={size} viewBox={`0 0 ${size} ${size}`}>

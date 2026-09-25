@@ -15,27 +15,28 @@
     "lego:extract": "tsx src/lego-tests/schrijf.ts"
   },
   "dependencies": {
+    "@codemirror/lang-python": "^6.2.1",
     "@coderius/checker": "workspace:*",
     "@coderius/shared": "workspace:*",
     "@docusaurus/core": "catalog:",
     "@docusaurus/preset-classic": "catalog:",
     "@mdx-js/react": "catalog:",
+    "@uiw/react-codemirror": "^4.25.10",
     "clsx": "catalog:",
+    "lucide-react": "^1.48.0",
     "prism-react-renderer": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "@uiw/react-codemirror": "^4.25.10",
-    "@codemirror/lang-python": "^6.2.1",
     "three": "^0.182.0"
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "catalog:",
     "@docusaurus/tsconfig": "catalog:",
     "@docusaurus/types": "catalog:",
-    "typescript": "catalog:",
     "@types/three": "^0.182.0",
     "sharp": "^0.34.5",
     "tsx": "^4.23.12",
+    "typescript": "catalog:",
     "vitest": "catalog:"
   }
 }

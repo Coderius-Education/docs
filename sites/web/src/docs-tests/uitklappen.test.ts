@@ -71,12 +71,12 @@ describe('uitgeklapt vullen beide helften hun ruimte', () => {
   // maar 299, en het voorbeeld 160 terwijl er 450 klaarstond.
 
   it('de editor vult uitgeklapt zijn helft in plaats van de code te volgen', () => {
-    expect(bron).toMatch(/height=\{uitgeklapt \? '100%' : height\}/);
-    expect(bron).toMatch(/autoHeight=\{stacked && !uitgeklapt\}/);
+    expect(bron).toMatch(/height=\{groot \? '100%' : height\}/);
+    expect(bron).toMatch(/autoHeight=\{stacked && !groot\}/);
   });
 
   it('het voorbeeld laat uitgeklapt zijn vaste hoogte los', () => {
-    expect(bron).toMatch(/stacked && !uitgeklapt\s*\?[\s\S]*?previewInhoud/);
+    expect(bron).toMatch(/stacked && !groot\s*\?[\s\S]*?previewInhoud/);
   });
 });
 
@@ -133,5 +133,39 @@ describe('Escape werkt ook vanuit het voorbeeld', () => {
     const doc = buildDoc('<html><body></body></html>', '', '');
 
     expect(doc).toMatch(/e\.key !== 'Escape' \|\| e\.defaultPrevented/);
+  });
+});
+
+describe('echt volledig scherm, naast Groter', () => {
+  // Groter vult het venster, maar de adresbalk en de tabs van de browser
+  // blijven staan; op een schoollaptop van 1366x768 is dat een flink deel van
+  // het scherm. Volledig scherm haalt die ook weg, met dezelfde opmaak als
+  // Groter (`groot`).
+
+  it('zet het veld zelf op volledig scherm, niet de hele lespagina', () => {
+    expect(bron).toMatch(/container\.requestFullscreen\(\)/);
+    expect(bron).toMatch(/containerRef\.current/);
+    expect(bron).not.toMatch(/documentElement\.requestFullscreen/);
+  });
+
+  it('volgt de browser, die zelf beslist wanneer volledig scherm eindigt', () => {
+    expect(bron).toMatch(/addEventListener\('fullscreenchange'/);
+    expect(bron).toMatch(/removeEventListener\('fullscreenchange'/);
+    expect(bron).toMatch(/exitFullscreen/);
+  });
+
+  it('valt terug op Groter als de browser weigert', () => {
+    expect(bron).toMatch(/requestFullscreen\(\)\.catch\(\(\) => setUitgeklapt\(true\)\)/);
+  });
+
+  it('toont de knop alleen waar de browser het kan', () => {
+    // Op een iPhone ontbreekt de API voor een gewone <div>; een knop die niets
+    // doet is erger dan geen knop.
+    expect(bron).toMatch(/kanVolledig &&/);
+  });
+
+  it('gebruikt de uitgeklapte opmaak ook in volledig scherm', () => {
+    expect(bron).toMatch(/const groot = uitgeklapt \|\| volledig/);
+    expect(bron).toMatch(/groot \? styles\.containerUitgeklapt/);
   });
 });

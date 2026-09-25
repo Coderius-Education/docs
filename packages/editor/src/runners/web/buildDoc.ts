@@ -177,16 +177,27 @@ ${escapeForInline(js, 'script')}
   // <img src="..."> -> data-URL van het bekende bestand, want de
   // preview-iframe heeft geen echte bestandslocatie (alleen srcDoc) waar een
   // relatief pad ooit naar zou kunnen wijzen.
+  // Hetzelfde voor geluid en video (<audio>, <video>, <source>), die
+  // leerlingen sinds de uploadknop ook in hun project zetten.
   result = result.replace(
-    /<img\b([^>]*)\ssrc=["']([^"']+)["']([^>]*)>/gi,
-    (imgTag, before: string, src: string, after: string) => {
-      if (isExternalRef(src)) return imgTag;
+    /<(img|audio|video|source)\b([^>]*)\ssrc=["']([^"']+)["']([^>]*)>/gi,
+    (tag, naam: string, before: string, src: string, after: string) => {
+      if (isExternalRef(src)) return tag;
       const path = resolvePath(baseDir, src);
       const asset = files[path];
-      if (asset === undefined || !isAssetDataUrl(asset)) return imgTag;
-      return `<img${before} src="${asset}"${after}>`;
+      if (asset === undefined || !isAssetDataUrl(asset)) return tag;
+      return `<${naam}${before} src="${asset}"${after}>`;
     },
   );
+
+  // <link rel="icon" href="..."> -> het icoon uit het project.
+  result = result.replace(/<link\b[^>]*rel=["'](?:shortcut )?icon["'][^>]*>/gi, (linkTag) => {
+    const href = linkTag.match(/href=["']([^"']+)["']/i)?.[1];
+    if (!href || isExternalRef(href)) return linkTag;
+    const asset = files[resolvePath(baseDir, href)];
+    if (asset === undefined || !isAssetDataUrl(asset)) return linkTag;
+    return linkTag.replace(/href=["'][^"']+["']/i, `href="${asset}"`);
+  });
 
   // Console-interceptor als allereerste script, zodat ook inline <script>-tags
   // en laadfouten in de console van de editor terechtkomen.

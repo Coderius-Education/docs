@@ -56,7 +56,15 @@
   cursor: not-allowed;
 }
 
+.buttonRun,
+.buttonStop {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
 .buttonRun {
+  font-weight: 600;
   background: var(--ifm-color-primary);
   border-color: var(--ifm-color-primary);
   color: var(--coderius-on-primary);
@@ -83,4 +91,25 @@
 
 .statusError {
   color: var(--ifm-color-danger);
+}
+
+/* De sneltoets op de Uitvoeren-knop: zo leer je Ctrl+Enter zonder de tooltip
+   te hoeven vinden. Zacht, zodat "Uitvoeren" het woord blijft dat je leest. */
+.sneltoets {
+  padding: 0.05rem 0.35rem;
+  border: 1px solid color-mix(in srgb, currentColor 35%, transparent);
+  border-radius: 0.3rem;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+  box-shadow: none;
+  color: inherit;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.7rem;
+  font-weight: 500;
+  opacity: 0.85;
+}
+
+@media (max-width: 1200px) {
+  .sneltoets {
+    display: none;
+  }
 }

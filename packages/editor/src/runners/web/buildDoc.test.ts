@@ -251,4 +251,26 @@ describe('buildDoc — afbeeldingen', () => {
     );
     expect(result).toContain(tag);
   });
+
+  // Sinds leerlingen zelf bestanden uploaden, staan er ook geluid, video en
+  // een favicon in een project. Een src die niet naar een data-URL wordt
+  // herschreven, wijst in de srcdoc-iframe naar niets.
+  it('vult ook audio, video, source en een favicon in', () => {
+    const MP3 = 'data:audio/mpeg;base64,BBB';
+    const result = buildDoc(
+      {
+        'index.html': pagina(
+          '<link rel="icon" href="img/logo.png">',
+          '<audio controls src="geluid/piep.mp3"></audio><video><source src="geluid/piep.mp3" type="audio/mpeg"></video>',
+        ),
+        'img/logo.png': PNG,
+        'geluid/piep.mp3': MP3,
+      },
+      'index.html',
+      TOKEN,
+    );
+    expect(result).toContain(`<link rel="icon" href="${PNG}">`);
+    expect(result).toContain(`<audio controls src="${MP3}">`);
+    expect(result).toContain(`<source src="${MP3}" type="audio/mpeg">`);
+  });
 });

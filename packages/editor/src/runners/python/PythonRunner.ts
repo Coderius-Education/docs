@@ -1,4 +1,5 @@
 import { getPyodide, runPythonStream } from '@coderius/python-runner/PyodideProvider';
+import { inhoudNaarBytes, isDataUrl } from '../../vfs/bestanden';
 import type { RunContext, Runner, RunnerState } from '../types';
 
 // Vóór elke run: eerder geïmporteerde gebruikersmodules vergeten, zodat een
@@ -62,7 +63,12 @@ export function createPythonRunner(): Runner {
             // map bestaat al
           }
         }
-        pyodide.FS.writeFile(`/home/pyodide/${path}`, content);
+        // Geüploade bestanden (afbeeldingen, data) staan als data:-URL in het
+        // project; open() in Python moet de echte bytes lezen.
+        pyodide.FS.writeFile(
+          `/home/pyodide/${path}`,
+          isDataUrl(content) ? inhoudNaarBytes(content) : content,
+        );
       }
       pyodide.runPython(RESET_USER_MODULES);
 

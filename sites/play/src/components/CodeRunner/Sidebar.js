@@ -1,3 +1,4 @@
+import Keuzelijst from '@coderius/shared/components/Keuzelijst';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import React, { useEffect } from 'react';
 import CodeEditor from './CodeEditor';
@@ -55,14 +56,16 @@ function SidebarInner() {
         <div className={styles.header}>
           <span className={styles.headerTitle}>Code Runner</span>
           <div className={styles.headerActions}>
-            <select
-              value={mode}
-              onChange={(e) => setMode(e.target.value)}
+            <Keuzelijst
+              label="Bibliotheek"
+              waarde={mode}
+              opties={[
+                { waarde: 'play', label: 'play' },
+                { waarde: 'pygame', label: 'pygame-ce' },
+              ]}
+              onKies={setMode}
               className={styles.modeSelect}
-            >
-              <option value="play">play</option>
-              <option value="pygame">pygame-ce</option>
-            </select>
+            />
             <button
               type="button"
               onClick={close}

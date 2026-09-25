@@ -1,3 +1,4 @@
+import Keuzelijst from '@coderius/shared/components/Keuzelijst';
 import { knowledgeGraph } from '@site/src/data/knowledgeGraph';
 import React, { useState } from 'react';
 
@@ -54,24 +55,12 @@ const KnowledgeGraph = () => {
           <label htmlFor="tutorial-select" style={{ fontWeight: 'bold', marginRight: '10px' }}>
             Voortgang na:
           </label>
-          <select
+          <Keuzelijst
             id="tutorial-select"
-            value={selectedTutorialIndex}
-            onChange={(e) => setSelectedTutorialIndex(Number.parseInt(e.target.value))}
-            style={{
-              padding: '8px',
-              borderRadius: '4px',
-              border: '1px solid var(--ifm-color-primary)',
-              backgroundColor: 'var(--ifm-background-color)',
-              color: 'var(--ifm-color-content)',
-            }}
-          >
-            {knowledgeGraph.tutorials.map((t, i) => (
-              <option key={t.id} value={i}>
-                {t.title}
-              </option>
-            ))}
-          </select>
+            waarde={selectedTutorialIndex}
+            onKies={setSelectedTutorialIndex}
+            opties={knowledgeGraph.tutorials.map((t, i) => ({ waarde: i, label: t.title }))}
+          />
         </div>
 
         <div

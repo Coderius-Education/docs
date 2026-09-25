@@ -24,7 +24,7 @@ describe('heeftJavaScript', () => {
     expect(heeftJavaScript('<input oninput = "tel()">', '')).toBe(true);
   });
 
-  it('laat een pagina met alleen HTML en CSS zonder console', () => {
+  it('laat een pagina met alleen HTML en CSS met de console dicht', () => {
     expect(heeftJavaScript('<p class="online">Wat is een button?</p>', '  ')).toBe(false);
     expect(heeftJavaScript('<a href="onderwerp.html">Link</a>', '')).toBe(false);
     expect(heeftJavaScript('<p>Zet de lamp on = aan</p>', '')).toBe(false);

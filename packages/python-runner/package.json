@@ -13,6 +13,9 @@
     "./HighlightedEditor": "./src/HighlightedEditor/index.tsx",
     "./inspringen": "./src/inspringen.ts"
   },
+  "dependencies": {
+    "@coderius/shared": "workspace:*"
+  },
   "peerDependencies": {
     "@docusaurus/core": "*",
     "prism-react-renderer": "*",

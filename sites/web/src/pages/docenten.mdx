@@ -33,6 +33,19 @@ Elke les is een korte pagina met theorie, een live-editor om te oefenen, en opdr
 
 Er is **geen** server-side onderdeel, geen login en geen registratie voor de lessen zelf. Een leerling kan de site openen, een les beginnen, en direct typen.
 
+### Waar blijft het werk van je leerlingen?
+
+Wat een leerling in een oefenveld typt, bewaart de browser zelf, in IndexedDB. Er gaat niets naar een server. Ververst de leerling de pagina of komt hij morgen terug, dan staat zijn code er nog. Naast de knoppen van het veld staat dan "Bewaard in deze browser".
+
+Dat werk hoort bij één browser op één apparaat. Op een andere computer, in een andere browser of in een privévenster ziet de leerling de startcode. Het blijft bewaard tot iemand de sitegegevens wist, of tot de browser ruimte nodig heeft en de sites opruimt die het langst niet gebruikt zijn. Twee situaties waarin het sneller weg is:
+
+- Safari wist opgeslagen sitegegevens van een site die je zeven dagen niet hebt bezocht, terwijl je Safari wel gebruikte.
+- Schoolcomputers en Chromebooks die bij afmelden worden leeggemaakt, zijn na uitloggen alles kwijt. Dat is op school de meest voorkomende oorzaak.
+
+Aan de opslagruimte ligt het niet. Een oefenveld is een paar kB. localStorage heeft een plafond van ongeveer 5 MB per site, en daarom gebruiken we het niet. IndexedDB krijgt een deel van de vrije schijfruimte. In Chrome en Edge is dat tot ruim de helft van de schijf per site, in recente versies van Safari ongeveer evenveel. Firefox geeft tot 10% van de schijf, met een maximum van 10 GB. Kan de browser toch niets bewaren, dan ziet de leerling in het veld de melding "Niet bewaard".
+
+Voor werk dat echt niet weg mag, zoals een eindproject, is de <SiteLink site="ide" to="/">Online Editor</SiteLink> de betere plek. Daar kan een leerling zijn project met "Downloaden (.zip)" als bestand opslaan en inleveren.
+
 ## De editor in elke les
 
 Bij elke les staat een interactieve **CodeEditor** met drie tabs:
@@ -49,7 +62,8 @@ Twee modi voor de preview:
 Andere knoppen:
 
 - **Reset** — terug naar de startcode. Handig als een leerling vastloopt.
-- **Console-paneel** (alleen bij JS-lessen) — toont uitvoer van `console.log()` en eventuele fouten.
+- **Groter** en **Volledig scherm**: Groter laat het oefenveld het browservenster vullen, Volledig scherm haalt ook de adresbalk en tabs weg. Escape gaat terug naar de les. Op een iPhone is alleen Groter er, omdat Safari daar geen volledig scherm voor een pagina-onderdeel kent.
+- **Console-paneel** — toont uitvoer van `console.log()` en eventuele fouten. In de HTML- en CSS-lessen staat hij dicht als balk onder het voorbeeld; hij klapt open met een klik of zodra er uitvoer is.
 
 :::tip[F12 voor de echte browser-console]
 De ingebouwde console toont alleen wat de code uitprint. Voor het opsporen van syntaxfouten kunnen leerlingen ook **F12** indrukken om de browser-developer-tools te openen.

@@ -1,4 +1,5 @@
 import { type FormEvent, type ReactNode, useState, useSyncExternalStore } from 'react';
+import { inhoudNaarBytes } from '../../vfs/bestanden';
 import type { OutputEvent, RunContext, Runner, RunnerHostProps } from '../types';
 import { writeBoardFile } from './protocol';
 import { SerialClient } from './serial';
@@ -135,7 +136,8 @@ export function createMicroPythonRunner(): Runner {
           // Het entry-bestand wordt als /main.py geüpload zodat het ook na een
           // reset of losse voeding automatisch start.
           const target = path === ctx.entry ? '/main.py' : `/${path}`;
-          await writeBoardFile(client, target, content);
+          // Een geüpload bestand (data:-URL) gaat als de echte bytes mee.
+          await writeBoardFile(client, target, inhoudNaarBytes(content));
         }
       } catch (err) {
         ctx.emit({

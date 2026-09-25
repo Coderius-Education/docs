@@ -6,6 +6,22 @@ import { type Extension, Prec } from '@codemirror/state';
 import { Decoration, EditorView, keymap } from '@codemirror/view';
 import CodeMirror from '@uiw/react-codemirror';
 import clsx from 'clsx';
+import {
+  AArrowDown,
+  AArrowUp,
+  BookOpen,
+  FilePlus,
+  FlaskConical,
+  FolderOpen,
+  Play,
+  RotateCcw,
+  Save,
+  SaveAll,
+  Square,
+  Unplug,
+  Usb,
+  Wrench,
+} from 'lucide-react';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -37,6 +53,8 @@ function useColorMode(): { colorMode: 'light' | 'dark' } {
   return { colorMode };
 }
 
+import Keuzelijst from '@coderius/shared/components/Keuzelijst';
+import { bevestig, vraag } from '@coderius/shared/dialoog';
 import { leesEditorHash } from './codeLink';
 import { friendlyError } from './errorMessages';
 import { BoardFS } from './filesystem';
@@ -53,6 +71,23 @@ import { SerialClient } from './serial';
 import { type SessieStatus, type Stand, sessie } from './sessie';
 import styles from './styles.module.css';
 import { TEMPLATES } from './templates';
+
+// Opnieuw kijken na een dialoog: terwijl de leerling nadacht kan er een
+// andere actie begonnen zijn. Als functie, want TypeScript houdt de stand van
+// vóór het wachten anders vast.
+function nuBezig(ref: { current: string }): boolean {
+  return ref.current === 'busy';
+}
+
+// Eén vraag voor alle plekken waar nieuwe code over niet-opgeslagen werk heen
+// komt: een bestand openen, een nieuw bestand, een sjabloon.
+function overschrijvenGoed(): Promise<boolean> {
+  return bevestig('Je niet-opgeslagen wijzigingen in de editor gaan verloren.', {
+    titel: 'Wijzigingen overschrijven?',
+    bevestigLabel: 'Doorgaan',
+    gevaarlijk: true,
+  });
+}
 
 const DEBUG_DOCS_URL =
   '/docs/Microcontrollers/Arduino Nano RP2040 Connect/Tutorial-debuggen/debuggen';
@@ -280,15 +315,19 @@ export default function WebMicroEditor(): React.JSX.Element {
     if (geladen === null) return;
     // Pas ná de keuze de hash strippen: wie annuleert (bv. om eerst eigen
     // code te kopiëren) houdt zo een URL die de lescode opnieuw aanbiedt.
-    if (
-      code.trim() !== '' &&
-      code !== geladen &&
-      !confirm('De code uit de les vervangt je huidige code in de editor. Doorgaan?')
-    ) {
-      return;
-    }
-    window.history.replaceState(null, '', window.location.pathname);
-    sessie.zet({ code: geladen, loadedCode: geladen, currentFile: null });
+    const laad = async () => {
+      if (code.trim() !== '' && code !== geladen) {
+        const zeker = await bevestig('De code uit de les vervangt je huidige code in de editor.', {
+          titel: 'Code uit de les laden?',
+          bevestigLabel: 'Vervangen',
+          gevaarlijk: true,
+        });
+        if (!zeker) return;
+      }
+      window.history.replaceState(null, '', window.location.pathname);
+      sessie.zet({ code: geladen, loadedCode: geladen, currentFile: null });
+    };
+    void laad();
   }, []);
 
   useEffect(() => {
@@ -354,14 +393,12 @@ export default function WebMicroEditor(): React.JSX.Element {
   const runOnBoard = useCallback(async () => {
     const c = sessie.client;
     if (!c || statusRef.current === 'busy') return;
-    if (
-      currentFile &&
-      currentFile !== '/main.py' &&
-      !confirm(
-        `Run schrijft je code naar /main.py, niet naar het geopende ${currentFile}. Doorgaan?`,
-      )
-    ) {
-      return;
+    if (currentFile && currentFile !== '/main.py') {
+      const zeker = await bevestig(
+        `Run schrijft je code naar /main.py, niet naar het geopende ${currentFile}.`,
+        { titel: 'Naar main.py schrijven?', bevestigLabel: 'Run' },
+      );
+      if (!zeker || nuBezig(statusRef)) return;
     }
     const operatie = setBusy();
     clearRepl();
@@ -415,7 +452,7 @@ export default function WebMicroEditor(): React.JSX.Element {
     async (path: string) => {
       const c = sessie.client;
       if (!c) return;
-      if (isDirty && !confirm('Niet-opgeslagen wijzigingen worden overschreven. Doorgaan?')) return;
+      if (isDirty && !(await overschrijvenGoed())) return;
       const operatie = setBusy();
       try {
         const fs = new BoardFS(c);
@@ -432,8 +469,8 @@ export default function WebMicroEditor(): React.JSX.Element {
     [isDirty, schrijf, setBusy, setIdle],
   );
 
-  const newFile = useCallback(() => {
-    if (isDirty && !confirm('Niet-opgeslagen wijzigingen worden overschreven. Doorgaan?')) return;
+  const newFile = useCallback(async () => {
+    if (isDirty && !(await overschrijvenGoed())) return;
     sessie.zet({ code: '', loadedCode: '', currentFile: null });
   }, [isDirty]);
 
@@ -641,7 +678,12 @@ export default function WebMicroEditor(): React.JSX.Element {
     async (path: string) => {
       const c = sessie.client;
       if (!c) return;
-      if (!confirm(`'${path}' verwijderen van het board?`)) return;
+      const zeker = await bevestig(`${path} verdwijnt van het board.`, {
+        titel: 'Bestand verwijderen?',
+        bevestigLabel: 'Verwijderen',
+        gevaarlijk: true,
+      });
+      if (!zeker) return;
       const operatie = setBusy();
       try {
         const fs = new BoardFS(c);
@@ -662,9 +704,14 @@ export default function WebMicroEditor(): React.JSX.Element {
   const saveAs = useCallback(async () => {
     const c = sessie.client;
     if (!c || statusRef.current === 'busy') return;
-    const invoer = prompt('Bestandsnaam op het board:', currentFile ?? '/mijn_script.py');
-    if (!invoer || !invoer.trim()) return;
-    let pad = invoer.trim();
+    const invoer = await vraag('Bestandsnaam op het board:', {
+      titel: 'Opslaan als',
+      standaard: currentFile ?? '/mijn_script.py',
+      bevestigLabel: 'Opslaan',
+      valideer: (w) => (w ? null : 'Geef het bestand een naam.'),
+    });
+    if (!invoer || nuBezig(statusRef)) return;
+    let pad = invoer;
     if (!pad.startsWith('/')) pad = `/${pad}`;
     if (!pad.includes('.')) pad = `${pad}.py`;
     const operatie = setBusy();
@@ -712,11 +759,11 @@ export default function WebMicroEditor(): React.JSX.Element {
   }, [schrijf, setBusy, setIdle]);
 
   const applyTemplate = useCallback(
-    (id: string) => {
+    async (id: string) => {
       if (!id) return;
       const t = TEMPLATES.find((x) => x.id === id);
       if (!t) return;
-      if (isDirty && !confirm('Niet-opgeslagen wijzigingen worden overschreven. Doorgaan?')) return;
+      if (isDirty && !(await overschrijvenGoed())) return;
       sessie.zet({ code: t.code, loadedCode: t.code, currentFile: null });
     },
     [isDirty],
@@ -772,6 +819,9 @@ export default function WebMicroEditor(): React.JSX.Element {
           {status === 'busy' && 'Bezig...'}
         </span>
 
+        {/* De volgende stap is gevuld, de rest rustig: niet verbonden is dat
+            Verbind, daarna Run. Een uitgeschakelde knop is een lege omtrek,
+            geen groot gekleurd blok dat klikbaar lijkt. */}
         {!connected && (
           <button
             type="button"
@@ -779,6 +829,7 @@ export default function WebMicroEditor(): React.JSX.Element {
             onClick={connect}
             disabled={status === 'verbindt'}
           >
+            <Usb aria-hidden="true" size={16} />
             Verbind met board
           </button>
         )}
@@ -789,26 +840,30 @@ export default function WebMicroEditor(): React.JSX.Element {
             onClick={disconnect}
             disabled={status === 'busy'}
           >
+            <Unplug aria-hidden="true" size={16} />
             Verbreek
           </button>
         )}
 
         <button
           type="button"
-          className={clsx(styles.btn, styles.btnPrimary, styles.btnRun)}
+          className={clsx(styles.btn, styles.btnRun, connected && styles.btnPrimary)}
           onClick={runOnBoard}
           disabled={!connected || status === 'busy'}
           title="Schrijft de code naar /main.py en herstart het board (Ctrl+Enter)"
         >
-          <span aria-hidden="true">▶</span> Run op board
+          <Play aria-hidden="true" size={17} fill="currentColor" strokeWidth={1.5} />
+          Run op board
+          <kbd className={styles.sneltoets}>Ctrl ↵</kbd>
         </button>
         <button
           type="button"
-          className={clsx(styles.btn, styles.btnDanger)}
+          className={clsx(styles.btn, styles.btnStop)}
           onClick={stop}
           disabled={!connected}
           title="Onderbreek het draaiende programma (KeyboardInterrupt)"
         >
+          <Square aria-hidden="true" size={13} fill="currentColor" strokeWidth={1.5} />
           Stop
         </button>
         <button
@@ -818,6 +873,7 @@ export default function WebMicroEditor(): React.JSX.Element {
           disabled={!connected || status === 'busy'}
           title="Draait de code eenmalig, zonder main.py te veranderen"
         >
+          <FlaskConical aria-hidden="true" size={16} />
           Test direct
         </button>
 
@@ -830,95 +886,103 @@ export default function WebMicroEditor(): React.JSX.Element {
           aria-expanded={setupOpen}
           title="Eenmalig per board: MicroPython en de Leaphy-library erop zetten"
         >
+          <Wrench aria-hidden="true" size={16} />
           Board instellen
         </button>
       </div>
 
       <div className={styles.toolbarSecundair}>
-        <button
-          type="button"
-          className={styles.btn}
-          onClick={newFile}
-          title="Leeg de editor (begin een nieuw bestand)"
-        >
-          Nieuw
-        </button>
-        {currentFile && currentFile !== '/main.py' && (
+        <fieldset className={styles.knopGroep} aria-label="Bestand">
           <button
             type="button"
             className={styles.btn}
-            onClick={saveCurrent}
-            disabled={!connected || status === 'busy' || !isDirty}
-            title={`Schrijft de code naar ${currentFile} (geen reboot)`}
+            onClick={() => void newFile()}
+            title="Leeg de editor (begin een nieuw bestand)"
           >
-            Opslaan
+            <FilePlus aria-hidden="true" size={15} />
+            Nieuw
           </button>
-        )}
-        <button
-          type="button"
-          className={styles.btn}
-          onClick={saveAs}
-          disabled={!connected || status === 'busy'}
-          title="Sla de code onder een zelfgekozen naam op het board op"
-        >
-          Opslaan als...
-        </button>
-        <button
-          type="button"
-          className={styles.btn}
-          onClick={herstart}
-          disabled={!connected || status === 'busy'}
-          title="Herstart het board; main.py draait dan opnieuw"
-        >
-          Herstart
-        </button>
-        <button
-          type="button"
-          className={styles.btn}
-          onClick={() => (files === null ? refreshFiles('/') : setFiles(null))}
-          disabled={!connected || status === 'busy'}
-        >
-          {files === null ? 'Bestanden op board' : 'Verberg bestanden'}
-        </button>
-        <select
+          {currentFile && currentFile !== '/main.py' && (
+            <button
+              type="button"
+              className={styles.btn}
+              onClick={saveCurrent}
+              disabled={!connected || status === 'busy' || !isDirty}
+              title={`Schrijft de code naar ${currentFile} (geen reboot)`}
+            >
+              <Save aria-hidden="true" size={15} />
+              Opslaan
+            </button>
+          )}
+          <button
+            type="button"
+            className={styles.btn}
+            onClick={saveAs}
+            disabled={!connected || status === 'busy'}
+            title="Sla de code onder een zelfgekozen naam op het board op"
+          >
+            <SaveAll aria-hidden="true" size={15} />
+            Opslaan als...
+          </button>
+        </fieldset>
+        <fieldset className={styles.knopGroep} aria-label="Board">
+          <button
+            type="button"
+            className={styles.btn}
+            onClick={herstart}
+            disabled={!connected || status === 'busy'}
+            title="Herstart het board; main.py draait dan opnieuw"
+          >
+            <RotateCcw aria-hidden="true" size={15} />
+            Herstart
+          </button>
+          <button
+            type="button"
+            className={clsx(styles.btn, files !== null && styles.btnActief)}
+            onClick={() => (files === null ? refreshFiles('/') : setFiles(null))}
+            disabled={!connected || status === 'busy'}
+            aria-pressed={files !== null}
+          >
+            <FolderOpen aria-hidden="true" size={15} />
+            {files === null ? 'Bestanden op board' : 'Verberg bestanden'}
+          </button>
+        </fieldset>
+        <Keuzelijst
           className={styles.select}
-          aria-label="Voorbeeld laden"
-          defaultValue=""
-          onChange={(e) => {
-            applyTemplate(e.target.value);
-            e.target.value = '';
-          }}
-        >
-          <option value="" disabled>
-            Voorbeeld laden...
-          </option>
-          {TEMPLATES.map((t) => (
-            <option key={t.id} value={t.id}>
-              {t.label}
-            </option>
-          ))}
-        </select>
+          label="Voorbeeld laden"
+          placeholder="Voorbeeld laden..."
+          // Geen vaste keuze: na het laden staat er weer "Voorbeeld laden...",
+          // zodat je hetzelfde voorbeeld nog eens kunt kiezen.
+          waarde={null}
+          opties={TEMPLATES.map((t) => ({ waarde: t.id, label: t.label }))}
+          onKies={(id) => void applyTemplate(id)}
+          voor={<BookOpen aria-hidden="true" size={15} className={styles.selectIcoon} />}
+        />
 
         <span className={styles.spacer} />
 
-        <button
-          type="button"
-          className={styles.btn}
-          onClick={() => setFontSize((v) => Math.max(12, v - 2))}
-          disabled={fontSize <= 12}
-          title="Kleinere letters"
-        >
-          A−
-        </button>
-        <button
-          type="button"
-          className={styles.btn}
-          onClick={() => setFontSize((v) => Math.min(24, v + 2))}
-          disabled={fontSize >= 24}
-          title="Grotere letters (handig op de beamer)"
-        >
-          A+
-        </button>
+        <fieldset className={styles.knopGroep} aria-label="Lettergrootte">
+          <button
+            type="button"
+            className={styles.btn}
+            onClick={() => setFontSize((v) => Math.max(12, v - 2))}
+            disabled={fontSize <= 12}
+            aria-label="Kleinere letters"
+            title="Kleinere letters"
+          >
+            <AArrowDown aria-hidden="true" size={17} />
+          </button>
+          <button
+            type="button"
+            className={styles.btn}
+            onClick={() => setFontSize((v) => Math.min(24, v + 2))}
+            disabled={fontSize >= 24}
+            aria-label="Grotere letters"
+            title="Grotere letters (handig op de beamer)"
+          >
+            <AArrowUp aria-hidden="true" size={17} />
+          </button>
+        </fieldset>
       </div>
 
       {!connected && !setupOpen && (
