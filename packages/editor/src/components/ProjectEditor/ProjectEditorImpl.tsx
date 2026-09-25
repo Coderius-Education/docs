@@ -13,15 +13,24 @@ import {
   Pencil,
   Plus,
   Trash2,
+  Upload,
   X,
 } from 'lucide-react';
 import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { downloadBestand } from '../../lib/download';
 import { languageForPath } from '../../lib/languages';
+import { leesBestand } from '../../lib/upload';
 import { useVolledigScherm } from '../../lib/volledigScherm';
 import MonacoPane from '../../monaco/MonacoPane';
 import { RUNNER_META } from '../../runners/registry';
 import type { RunnerId } from '../../runners/types';
+import {
+  MAX_UPLOAD_BYTES,
+  isDataUrl,
+  leesbareGrootte,
+  uploadPad,
+  veiligeBestandsnaam,
+} from '../../vfs/bestanden';
 import {
   DEFAULT_STORAGE_PREFIX,
   deleteProject,
@@ -36,6 +45,7 @@ import Console from '../shared/Console';
 import RunControls from '../shared/RunControls';
 import { useRunSession } from '../shared/useRunSession';
 import BalkKnop from './BalkKnop';
+import BestandVoorbeeld from './BestandVoorbeeld';
 import FileTree from './FileTree';
 import type { ProjectEditorProps } from './index';
 import {
@@ -304,6 +314,76 @@ export default function ProjectEditorImpl({
     mutateProject((p) => ({ ...p, folders: [...p.folders, path] }));
   }, [mutateProject]);
 
+  // ---- uploaden ----
+
+  // Eén verborgen <input type="file"> voor alle uploadknoppen; uploadMapRef
+  // onthoudt in welke map de gekozen bestanden moeten landen.
+  const uploadInvoerRef = useRef<HTMLInputElement>(null);
+  const uploadMapRef = useRef('');
+  const [sleepDoel, setSleepDoelState] = useState<string | null>(null);
+  // Ook als ref: drop leest het doel in hetzelfde moment dat dragover het
+  // zette, vóór React opnieuw rendert.
+  const sleepDoelRef = useRef<string | null>(null);
+  const setSleepDoel = useCallback((doel: string | null) => {
+    sleepDoelRef.current = doel;
+    setSleepDoelState(doel);
+  }, []);
+
+  const uploadNaar = useCallback((map: string) => {
+    uploadMapRef.current = map;
+    uploadInvoerRef.current?.click();
+  }, []);
+
+  const voegBestandenToe = useCallback(
+    async (map: string, lijst: FileList | File[]) => {
+      const bestanden = Array.from(lijst);
+      if (!projectRef.current || bestanden.length === 0) return;
+      const nieuw: Record<string, string> = {};
+      const teGroot: string[] = [];
+      const mislukt: string[] = [];
+      for (const bestand of bestanden) {
+        if (bestand.size > MAX_UPLOAD_BYTES) {
+          teGroot.push(bestand.name);
+          continue;
+        }
+        const pad = uploadPad(map, veiligeBestandsnaam(bestand.name));
+        const huidig = projectRef.current;
+        if (!huidig) return;
+        if (huidig.files[pad] !== undefined || nieuw[pad] !== undefined) {
+          const vervangen = await bevestig(`${pad} staat al in je project.`, {
+            titel: 'Bestand vervangen?',
+            bevestigLabel: 'Vervangen',
+            annuleerLabel: 'Overslaan',
+          });
+          if (!vervangen) continue;
+        }
+        try {
+          nieuw[pad] = await leesBestand(bestand);
+        } catch {
+          mislukt.push(bestand.name);
+        }
+      }
+      const paden = Object.keys(nieuw);
+      if (paden.length > 0) {
+        mutateProject((p) => ({ ...p, files: { ...p.files, ...nieuw } }));
+        openFile(paden[0]);
+      }
+      if (teGroot.length > 0) {
+        const een = teGroot.length === 1;
+        await meld(
+          `${teGroot.join(', ')} ${een ? 'is' : 'zijn'} groter dan ${leesbareGrootte(MAX_UPLOAD_BYTES)}. Maak ${een ? 'hem' : 'ze'} kleiner, bijvoorbeeld een foto met minder pixels, en probeer het opnieuw.`,
+          { titel: een ? 'Bestand te groot' : 'Bestanden te groot' },
+        );
+      }
+      if (mislukt.length > 0) {
+        await meld(`${mislukt.join(', ')} kon niet gelezen worden. Probeer het nog een keer.`, {
+          titel: 'Uploaden niet gelukt',
+        });
+      }
+    },
+    [mutateProject, openFile],
+  );
+
   const renamePath = useCallback(
     async (path: string, isFolder: boolean) => {
       const current = projectRef.current;
@@ -514,7 +594,41 @@ export default function ProjectEditorImpl({
 
       {project && !showTemplates && (
         <div className={styles.main}>
-          <aside className={styles.sidebar}>
+          <aside
+            className={clsx(styles.sidebar, sleepDoel === '' && styles.sidebarSleep)}
+            // Bestanden slepen: over de zijbalk gaan ze naar de hoofdmap, over
+            // een map (FileTree) daarin. Een rij heeft het doel dan al gekozen
+            // en preventDefault aangeroepen.
+            onDragOver={(e) => {
+              if (!e.dataTransfer.types.includes('Files')) return;
+              // isDefaultPrevented(), niet e.defaultPrevented: dat veld van
+              // React's event blijft staan op de waarde van vóór de rij hem
+              // afhandelde, en dan belandde alles in de hoofdmap.
+              if (!e.isDefaultPrevented()) setSleepDoel('');
+              e.preventDefault();
+            }}
+            onDragLeave={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setSleepDoel(null);
+            }}
+            onDrop={(e) => {
+              e.preventDefault();
+              const map = sleepDoelRef.current ?? '';
+              setSleepDoel(null);
+              void voegBestandenToe(map, e.dataTransfer.files);
+            }}
+          >
+            <input
+              ref={uploadInvoerRef}
+              type="file"
+              multiple
+              hidden
+              onChange={(e) => {
+                const gekozen = e.target.files;
+                if (gekozen) void voegBestandenToe(uploadMapRef.current, gekozen);
+                // Leeg, zodat hetzelfde bestand nog eens kiezen ook werkt.
+                e.target.value = '';
+              }}
+            />
             <div className={styles.sidebarHeader}>
               <span>Bestanden</span>
               <span>
@@ -536,6 +650,15 @@ export default function ProjectEditorImpl({
                 >
                   <FolderPlus aria-hidden="true" size={15} />
                 </button>
+                <button
+                  type="button"
+                  className={styles.treeAction}
+                  title="Bestanden uploaden, zoals afbeeldingen (of sleep ze hierheen)"
+                  aria-label="Bestanden uploaden"
+                  onClick={() => uploadNaar('')}
+                >
+                  <Upload aria-hidden="true" size={15} />
+                </button>
               </span>
             </div>
             <FileTree
@@ -546,6 +669,9 @@ export default function ProjectEditorImpl({
               onOpen={openFile}
               onRename={renamePath}
               onDelete={deletePath}
+              onUpload={uploadNaar}
+              sleepDoel={sleepDoel}
+              onSleepOver={setSleepDoel}
             />
           </aside>
 
@@ -588,7 +714,14 @@ export default function ProjectEditorImpl({
               )}
             </div>
             <div className={styles.editorPane}>
-              {activePath !== null ? (
+              {activePath !== null && isDataUrl(project.files[activePath] ?? '') ? (
+                <BestandVoorbeeld
+                  // Een nieuwe per bestand, anders blijft de maat van het vorige plaatje staan.
+                  key={activePath}
+                  pad={activePath}
+                  inhoud={project.files[activePath]}
+                />
+              ) : activePath !== null ? (
                 <MonacoPane
                   value={project.files[activePath] ?? ''}
                   onChange={handleChange}

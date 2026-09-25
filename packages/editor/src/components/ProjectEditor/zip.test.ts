@@ -28,6 +28,16 @@ describe('projectNaarZip', () => {
     expect(zip['main.py']).toEqual(new Uint8Array(0));
   });
 
+  it('schrijft een geüploade afbeelding als het echte bestand', () => {
+    // In het project staat hij als data-URL; in de zip moet een PNG staan
+    // die een beeldviewer opent, niet de tekst "data:image/png;base64,...".
+    const zip = uitpakken(
+      projectNaarZip({ files: { 'foto.png': 'data:image/png;base64,iVBORw==' }, folders: [] }),
+    );
+
+    expect(Array.from(zip['foto.png'])).toEqual([0x89, 0x50, 0x4e, 0x47]);
+  });
+
   it('laat paden weg die buiten de uitpakmap zouden schrijven', () => {
     const zip = uitpakken(
       projectNaarZip({

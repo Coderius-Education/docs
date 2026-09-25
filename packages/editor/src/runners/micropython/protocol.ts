@@ -47,10 +47,10 @@ print('OK')
 export async function writeBoardFile(
   serial: SerialClient,
   path: string,
-  content: string,
+  content: string | Uint8Array,
 ): Promise<void> {
   await ensureParents(serial, path);
-  const bytes = new TextEncoder().encode(content);
+  const bytes = typeof content === 'string' ? new TextEncoder().encode(content) : content;
   const b64 = b64encode(bytes);
   // In stukken, anders struikelt MicroPython's parser over enorme literals.
   const CHUNK = 1024;

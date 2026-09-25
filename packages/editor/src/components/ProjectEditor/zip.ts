@@ -1,4 +1,5 @@
-import { type Zippable, strToU8, zipSync } from 'fflate';
+import { type Zippable, zipSync } from 'fflate';
+import { inhoudNaarBytes } from '../../vfs/bestanden';
 import type { Project } from '../../vfs/types';
 import { isValidPath } from './paths';
 
@@ -16,7 +17,9 @@ export function projectNaarZip(project: Pick<Project, 'files' | 'folders'>): Uin
   // Een project dat via /import binnenkwam kan paden hebben die de editor zelf
   // nooit zou maken; `../` in een zip schrijft bij uitpakken buiten de map.
   for (const [pad, inhoud] of Object.entries(project.files)) {
-    if (isValidPath(pad)) invoer[pad] = strToU8(inhoud);
+    // Een geüploade afbeelding staat als data:-URL in het project; in de zip
+    // hoort het echte bestand.
+    if (isValidPath(pad)) invoer[pad] = inhoudNaarBytes(inhoud);
   }
   return zipSync(invoer);
 }
