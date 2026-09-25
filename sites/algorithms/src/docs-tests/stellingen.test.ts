@@ -19,9 +19,7 @@ const DOCS = fileURLToPath(new URL('../../docs/', import.meta.url));
 const VOORWAARDE =
   /^\*\*(?:(?:Waar|Niet waar|Juist|Onjuist) — (?:als|in|voor|niet voor|alleen|niet altijd|meestal)\b|(?:Half|Deels|Bijna|Soms) )/;
 
-const ACHTERSTAND = new Map<string, string[]>([
-  ['big-o/02-stellingen.mdx', ['Stelling 1', 'Stelling 4']],
-]);
+const ACHTERSTAND = new Map<string, string[]>([]);
 
 function stellingenPaginas(): string[] {
   return readdirSync(DOCS, { withFileTypes: true })
