@@ -153,6 +153,7 @@ lespagina
 Lesplanning
 levelshifter
 levelwissel
+lightbot
 lijnvolgen
 Lijnvolgen
 linestyle
