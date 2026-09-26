@@ -61,6 +61,17 @@ describe('projecten in de python-cursus', () => {
         });
       });
 
+      it('elke stap noemt zijn concept in de sidebar, en het overzicht zet ze op een rij', () => {
+        const overzicht = readFileSync(join(PROJECTEN, 'index.mdx'), 'utf8');
+        for (const s of stappen) {
+          const label = s.tekst.match(/^sidebar_label: 'Stap \d+: (.+)'$/m)?.[1];
+          expect(label, s.naam).toBeDefined();
+          expect(overzicht, `${s.naam} in de tabel van het overzicht`).toMatch(
+            new RegExp(`^\\| ${s.nr} \\|`, 'm'),
+          );
+        }
+      });
+
       it('het overzicht wijst naar de eerste stap', () => {
         const overzicht = readFileSync(join(PROJECTEN, 'index.mdx'), 'utf8');
         expect(overzicht).toContain(
