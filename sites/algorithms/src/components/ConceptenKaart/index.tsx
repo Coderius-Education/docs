@@ -2,7 +2,7 @@
 import { SITES_BY_ID, normalizeUrl } from '@coderius/shared/sites';
 import Link from '@docusaurus/Link';
 import { algoritmes } from '@site/src/data/algorithms';
-import { pythonConcepten, voorkennisPerAlgoritme } from '@site/src/data/conceptenkaart';
+import { kernConcepten, kernPerAlgoritme } from '@site/src/data/conceptenkaart';
 import clsx from 'clsx';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -28,12 +28,12 @@ export default function ConceptenKaart(): React.ReactElement {
   const [gepind, setGepind] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const conceptIndex = useMemo(() => new Map(pythonConcepten.map((c, i) => [c.id, i])), []);
+  const conceptIndex = useMemo(() => new Map(kernConcepten.map((c, i) => [c.id, i])), []);
 
   const edges = useMemo(
     () =>
       algoritmes.flatMap((algoritme, algoIdx) =>
-        (voorkennisPerAlgoritme[algoritme.slug] ?? []).map((conceptId) => ({
+        (kernPerAlgoritme[algoritme.slug] ?? []).map((conceptId) => ({
           key: `${conceptId}:${algoritme.slug}`,
           conceptId,
           slug: algoritme.slug,
@@ -44,7 +44,7 @@ export default function ConceptenKaart(): React.ReactElement {
     [conceptIndex],
   );
 
-  const hoogte = rijMidden(Math.max(pythonConcepten.length, algoritmes.length) - 1) + NODE_H / 2;
+  const hoogte = rijMidden(Math.max(kernConcepten.length, algoritmes.length) - 1) + NODE_H / 2;
 
   // Welke nodes horen bij de actieve selectie?
   const verbonden = useMemo(() => {
@@ -113,7 +113,7 @@ export default function ConceptenKaart(): React.ReactElement {
   );
 
   const actiefConcept =
-    actief?.kind === 'concept' ? pythonConcepten.find((c) => c.id === actief.id) : undefined;
+    actief?.kind === 'concept' ? kernConcepten.find((c) => c.id === actief.id) : undefined;
   const actiefAlgoritme =
     actief?.kind === 'algoritme' ? algoritmes.find((a) => a.slug === actief.id) : undefined;
 
@@ -127,7 +127,7 @@ export default function ConceptenKaart(): React.ReactElement {
         </div>
         <div className={styles.kaart} style={{ ['--kaart-hoogte' as string]: `${hoogte}px` }}>
           <div className={styles.kolom}>
-            {pythonConcepten.map((concept) => (
+            {kernConcepten.map((concept) => (
               <button
                 key={concept.id}
                 type="button"
@@ -205,14 +205,14 @@ export default function ConceptenKaart(): React.ReactElement {
         {actiefConcept && (
           <>
             <p className={styles.paneelKop}>
-              <strong>{actiefConcept.label}</strong> gebruik je bij deze algoritmes.{' '}
+              Deze algoritmes draaien op <strong>{actiefConcept.label}</strong>.{' '}
               <a href={pythonBase + actiefConcept.to} target="_blank" rel="noopener noreferrer">
                 Naar de les op de Python-site
               </a>
             </p>
             <ul className={styles.paneelLinks}>
               {algoritmes
-                .filter((a) => (voorkennisPerAlgoritme[a.slug] ?? []).includes(actiefConcept.id))
+                .filter((a) => (kernPerAlgoritme[a.slug] ?? []).includes(actiefConcept.id))
                 .map((a) => (
                   <li key={a.slug}>
                     <Link to={a.startPad}>{a.titel}</Link>
@@ -224,12 +224,12 @@ export default function ConceptenKaart(): React.ReactElement {
         {actiefAlgoritme && (
           <>
             <p className={styles.paneelKop}>
-              <strong>{actiefAlgoritme.titel}</strong> bouwt voort op deze Python-lessen.{' '}
+              <strong>{actiefAlgoritme.titel}</strong> draait op deze Python-concepten.{' '}
               <Link to={actiefAlgoritme.startPad}>Naar dit algoritme</Link>
             </p>
             <ul className={styles.paneelLinks}>
-              {pythonConcepten
-                .filter((c) => (voorkennisPerAlgoritme[actiefAlgoritme.slug] ?? []).includes(c.id))
+              {kernConcepten
+                .filter((c) => (kernPerAlgoritme[actiefAlgoritme.slug] ?? []).includes(c.id))
                 .map((c) => (
                   <li key={c.id}>
                     <a href={pythonBase + c.to} target="_blank" rel="noopener noreferrer">
