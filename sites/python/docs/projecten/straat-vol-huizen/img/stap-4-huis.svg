@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-250 -206.6 500 406.6" role="img">
+<title>Hetzelfde huis als in stap 3: gele muren en een rood dak, met de schildpad weer linksonder</title>
+<rect x="-250" y="-206.6" width="500" height="406.6" fill="white"/>
+<polygon points="0,0 100,0 100,-100 0,-100 0,0" fill="yellow" fill-rule="evenodd"/>
+<line x1="0" y1="0" x2="100" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="100" y1="0" x2="100" y2="-100" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="100" y1="-100" x2="0" y2="-100" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="0" y1="-100" x2="0" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="0" y1="0" x2="0" y2="-100" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="0,-100 100,-100 50,-186.6 0,-100" fill="red" fill-rule="evenodd"/>
+<line x1="0" y1="-100" x2="100" y2="-100" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="100" y1="-100" x2="50" y2="-186.6" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="50" y1="-186.6" x2="0" y2="-100" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="0" y1="-100" x2="0" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="0,0 -9,-5 -7,0 -9,5" fill="black" stroke="black" stroke-width="1"/>
+</svg>

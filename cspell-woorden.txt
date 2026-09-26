@@ -271,6 +271,7 @@ rondstuitert
 rondtrip
 rvspaleis
 schermvullende
+schildpadstraat
 screenreader
 Screenreaders
 screenreaders
@@ -341,6 +342,7 @@ voedingspin
 voorbeeldgraph
 voorgevuld
 vooruitrekenen
+vulkleur
 vórige
 WASD
 Wayback

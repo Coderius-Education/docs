@@ -13,6 +13,10 @@ const PROJECTEN = join(SITE, 'docs', 'projecten');
 
 const projecten = readdirSync(PROJECTEN).filter((n) => statSync(join(PROJECTEN, n)).isDirectory());
 
+function positie(map: string): number {
+  return JSON.parse(readFileSync(join(map, '_category_.json'), 'utf8')).position;
+}
+
 describe('projecten in de python-cursus', () => {
   it('er is minstens één project, en de navbar heeft een link Projecten', () => {
     expect(projecten.length).toBeGreaterThan(0);
@@ -108,14 +112,22 @@ describe('projecten: de tabel op het overzicht', async () => {
     ].map((m) => [m[1], { wat: m[2], concepten: m[3], nog: m[4] }]),
   );
 
-  it('het overzicht is één tabel, met het project, Pydle en Play bovenaan', () => {
+  it('het overzicht is één tabel, met de projecten, Pydle en Play bovenaan', () => {
     expect(tabellen).toHaveLength(1);
-    const eersten = [...overzicht.matchAll(/^\| (\[[^\]]+\]|<SiteLink[^>]*>[^<]+<\/SiteLink>)/gm)]
-      .slice(0, 3)
+    const eersten = [
+      ...overzicht.matchAll(/^\| (\[[^\]]+\]\([^)]*\)|<SiteLink[^>]*>[^<]+<\/SiteLink>)/gm),
+    ]
+      .slice(0, projecten.length + 2)
       .map((m) => m[1]);
-    expect(eersten[0]).toContain('Tien groene flessen');
-    expect(eersten[1]).toContain('pydle.net');
-    expect(eersten[2]).toMatch(/<SiteLink site="play"/);
+    // Elk project een rij, in de volgorde van de sidebar; daarna Pydle en Play.
+    const volgorde = [...projecten].sort(
+      (a, b) => positie(join(PROJECTEN, a)) - positie(join(PROJECTEN, b)),
+    );
+    volgorde.forEach((project, i) => {
+      expect(eersten[i]).toContain(`/docs/projecten/${project}/`);
+    });
+    expect(eersten[projecten.length]).toContain('pydle.net');
+    expect(eersten[projecten.length + 1]).toMatch(/<SiteLink site="play"/);
   });
 
   it('elk algoritme staat erin, met de link naar zijn eerste les en zijn samenvatting', () => {
