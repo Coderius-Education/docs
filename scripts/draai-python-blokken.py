@@ -622,14 +622,18 @@ def draai(bron, regel, code, verwacht, varieert=False, voorplak=0) -> str | None
     if fout:
         return fout + (" (er draait code vóór dit blok mee: draaien-met of verborgen)" if voorplak else "")
 
+    # Elk blok in een eigen lege map: de les over JSON schrijft bestanden
+    # (scores.json), en die horen niet in de repo of in het volgende blok.
     try:
-        r = subprocess.run(
-            [sys.executable, "-c", code],
-            capture_output=True,
-            text=True,
-            timeout=TIJDSLIMIET,
-            env={**os.environ, **SITE["env"]},
-        )
+        with tempfile.TemporaryDirectory() as werkmap:
+            r = subprocess.run(
+                [sys.executable, "-c", code],
+                capture_output=True,
+                text=True,
+                timeout=TIJDSLIMIET,
+                cwd=werkmap,
+                env={**os.environ, **SITE["env"]},
+            )
     except subprocess.TimeoutExpired:
         return f"{bron}:{regel}: blok draait na {TIJDSLIMIET}s nog — een lus zonder eind?"
 
@@ -734,13 +738,15 @@ def draai_startcode(bron, regel, code) -> str | None:
     if fout:
         return fout
     try:
-        r = subprocess.run(
-            [sys.executable, "-c", code],
-            capture_output=True,
-            text=True,
-            timeout=TIJDSLIMIET,
-            env={**os.environ, **SITE["env"]},
-        )
+        with tempfile.TemporaryDirectory() as werkmap:
+            r = subprocess.run(
+                [sys.executable, "-c", code],
+                capture_output=True,
+                text=True,
+                timeout=TIJDSLIMIET,
+                cwd=werkmap,
+                env={**os.environ, **SITE["env"]},
+            )
     except subprocess.TimeoutExpired:
         oordeel = f"de startcode draait na {TIJDSLIMIET}s nog; in de browser bevriest de tab"
     else:
