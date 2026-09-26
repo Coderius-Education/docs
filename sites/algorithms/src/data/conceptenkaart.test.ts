@@ -132,10 +132,19 @@ describe('kernPerAlgoritme', () => {
     expect(voorkennisPerAlgoritme['max-en-min']).toContain('tuples');
   });
 
-  it('de kaart toont precies de concepten die in een kern zitten, in lesvolgorde', () => {
-    const inKern = new Set(Object.values(kernPerAlgoritme).flat());
-    expect(kernConcepten.map((c) => c.id)).toEqual(
-      pythonConcepten.filter((c) => inKern.has(c.id)).map((c) => c.id),
-    );
+  it('de kaart laat voorkennis zonder kern weg, en elk getoond concept heeft een algoritme', () => {
+    // Een vaste lijst in plaats van de definitie van kernConcepten nog eens:
+    // f-strings of break staan in de voorkennis van een algoritme, maar geen
+    // algoritme draait erom, dus ze horen niet op de kaart.
+    const getoond = kernConcepten.map((c) => c.id);
+    for (const id of ['f-strings', 'break', 'continue', 'lijst-methoden', 'parameters']) {
+      expect(getoond, id).not.toContain(id);
+      expect(Object.values(voorkennisPerAlgoritme).flat(), id).toContain(id);
+    }
+    for (const id of getoond) {
+      const algoritmes = slugs.filter((slug) => kernPerAlgoritme[slug]?.includes(id));
+      expect(algoritmes.length, id).toBeGreaterThan(0);
+    }
+    expect(getoond).toEqual(pythonConcepten.map((c) => c.id).filter((id) => getoond.includes(id)));
   });
 });

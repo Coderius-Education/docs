@@ -68,8 +68,10 @@ describe('projecten in de python-cursus', () => {
           if (volgende) {
             expect(s.tekst, s.naam).toContain(`](./${volgende.naam.replace(/\.mdx$/, '')})`);
           } else {
-            // Door naar het volgende project, of terug naar een overzicht.
-            expect(s.tekst, s.naam).toMatch(/\]\(\/docs\/projecten\//);
+            // Door naar het volgende project, of terug naar een overzicht: de
+            // laatste link van de pagina, niet een verwijzing ergens halverwege.
+            const links = [...s.tekst.matchAll(/\]\(([^)\s]+)\)/g)].map((m) => m[1]);
+            expect(links.at(-1), s.naam).toMatch(/^\/docs\/projecten\//);
           }
         });
       });
@@ -89,4 +91,23 @@ describe('projecten in de python-cursus', () => {
       });
     });
   }
+
+  it('elke link in de projectkiezer naar deze cursus bestaat als pagina', () => {
+    const DOCS = join(SITE, 'docs');
+    const bestaat = (pad: string) => {
+      const rest = pad.replace(/^\/docs\//, '').replace(/\/$/, '');
+      const kandidaten = [`${rest}.mdx`, `${rest}.md`, `${rest}/index.mdx`, `${rest}/index.md`];
+      return kandidaten.some((k) => {
+        try {
+          return statSync(join(DOCS, k)).isFile();
+        } catch {
+          return false;
+        }
+      });
+    };
+    for (const a of activiteiten) {
+      if (!('to' in a.link) || 'site' in a.link) continue;
+      expect(bestaat(a.link.to), `${a.id}: ${a.link.to}`).toBe(true);
+    }
+  });
 });
