@@ -1,19 +1,20 @@
 ---
-sidebar_position: 2
-sidebar_label: 'Stap 2: for-loop'
-description: Teken het vierkant met een for-loop, en daarna een driehoek.
+sidebar_position: 1
+sidebar_label: 'Stap 1: for-loop'
+description: Teken een vierkant met een for-loop, en daarna een driehoek.
 ---
 
 import CodeExercise from '@site/src/components/CodeExercise';
 
-# Stap 2: Herhalen (for-loop)
+# Stap 1: Herhalen (for-loop)
 
 :::info
 Deze stap gebruikt de for-loop, uit [De for-loop](/docs/herhalen/06a-for-loop).
 :::
 
-Je vierkant uit stap 1 is vier keer hetzelfde: `forward(100)` en `left(90)`.
-Een for-loop doet dat herhalen voor je.
+Het vierkant uit [Een huis](/docs/projecten/turtle/een-huis/stap-1-vierkant)
+is vier keer hetzelfde: `forward(100)` en `left(90)`. Een for-loop doet dat
+herhalen voor je.
 
 ```python
 import turtle
@@ -30,7 +31,7 @@ Beide regels springen in, dus ze horen allebei bij de loop.
 
 Teken met een for-loop een driehoek met drie gelijke zijden van 100.
 
-![Een zwarte driehoek met drie gelijke zijden, met de punt naar boven](./img/stap-2-driehoek.svg)
+![Een zwarte driehoek met drie gelijke zijden, met de punt naar boven](./img/stap-1-driehoek.svg)
 
 <CodeExercise>{`import turtle
 
@@ -41,16 +42,15 @@ for zijde in range(4):
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Een driehoek heeft drie zijden, dus de loop gaat drie keer rond. De hoek is
-even puzzelen: na drie keer draaien kijkt de schildpad weer naar rechts, dus
-samen draait hij 360 graden.
+Een driehoek heeft drie zijden, dus de loop gaat drie keer rond. De hoek ken
+je van het dak in Een huis: 120 graden.
 
 </details>
 
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
-{/* turtle-plaatje: img/stap-2-driehoek.svg */}
+{/* turtle-plaatje: img/stap-1-driehoek.svg */}
 
 ```python
 import turtle
@@ -60,9 +60,8 @@ for zijde in range(3):
     turtle.left(120)
 ```
 
-Drie keer 120 graden is 360. Dat de schildpad 120 graden draait en niet 60,
-komt doordat hij de buitenkant van de hoek draait: binnenin is de hoek 60
-graden, en 180 min 60 is 120.
+Drie keer 120 graden is 360: na de laatste hoek kijkt de schildpad weer
+naar rechts, net als aan het begin.
 
 </details>
 
@@ -85,4 +84,4 @@ is.
 **Oplossing:** laat alles wat herhaald moet worden, even ver inspringen onder
 de `for`.
 
-Door naar [stap 3: een huis met kleur](./stap-3-huis).
+Door naar [stap 2: elke veelhoek](./stap-2-veelhoek).

@@ -1,5 +1,5 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
@@ -11,7 +11,19 @@ import { describe, expect, it } from 'vitest';
 const SITE = fileURLToPath(new URL('../../', import.meta.url));
 const PROJECTEN = join(SITE, 'docs', 'projecten');
 
-const projecten = readdirSync(PROJECTEN).filter((n) => statSync(join(PROJECTEN, n)).isDirectory());
+// Een project is een map met stap-bestanden; een map zonder stappen (zoals
+// turtle) groepeert kleinere projecten, met een eigen overzicht (index.mdx).
+function projectmappen(map: string): string[] {
+  return readdirSync(map)
+    .map((n) => join(map, n))
+    .filter((pad) => statSync(pad).isDirectory())
+    .flatMap((pad) =>
+      readdirSync(pad).some((n) => /^stap-\d+-.*\.mdx$/.test(n)) ? [pad] : projectmappen(pad),
+    );
+}
+
+const projecten = projectmappen(PROJECTEN).map((pad) => relative(PROJECTEN, pad));
+const bovenaan = readdirSync(PROJECTEN).filter((n) => statSync(join(PROJECTEN, n)).isDirectory());
 
 function positie(map: string): number {
   return JSON.parse(readFileSync(join(map, '_category_.json'), 'utf8')).position;
@@ -60,7 +72,8 @@ describe('projecten in de python-cursus', () => {
           if (volgende) {
             expect(s.tekst, s.naam).toContain(`](./${volgende.naam.replace(/\.mdx$/, '')})`);
           } else {
-            expect(s.tekst, s.naam).toContain('](/docs/projecten/)');
+            // Door naar het volgende project, of terug naar een overzicht.
+            expect(s.tekst, s.naam).toMatch(/\]\(\/docs\/projecten\//);
           }
         });
       });
@@ -71,8 +84,8 @@ describe('projecten in de python-cursus', () => {
         }
       });
 
-      it('het overzicht wijst naar de eerste stap', () => {
-        const overzicht = readFileSync(join(PROJECTEN, 'index.mdx'), 'utf8');
+      it('het overzicht erboven wijst naar de eerste stap', () => {
+        const overzicht = readFileSync(join(PROJECTEN, dirname(project), 'index.mdx'), 'utf8');
         expect(overzicht).toContain(
           `/docs/projecten/${project}/${stappen[0].naam.replace(/\.mdx$/, '')}`,
         );
@@ -117,17 +130,17 @@ describe('projecten: de tabel op het overzicht', async () => {
     const eersten = [
       ...overzicht.matchAll(/^\| (\[[^\]]+\]\([^)]*\)|<SiteLink[^>]*>[^<]+<\/SiteLink>)/gm),
     ]
-      .slice(0, projecten.length + 2)
+      .slice(0, bovenaan.length + 2)
       .map((m) => m[1]);
-    // Elk project een rij, in de volgorde van de sidebar; daarna Pydle en Play.
-    const volgorde = [...projecten].sort(
+    // Elke map een rij, in de volgorde van de sidebar; daarna Pydle en Play.
+    const volgorde = [...bovenaan].sort(
       (a, b) => positie(join(PROJECTEN, a)) - positie(join(PROJECTEN, b)),
     );
-    volgorde.forEach((project, i) => {
-      expect(eersten[i]).toContain(`/docs/projecten/${project}/`);
+    volgorde.forEach((map, i) => {
+      expect(eersten[i]).toContain(`/docs/projecten/${map}/`);
     });
-    expect(eersten[projecten.length]).toContain('pydle.net');
-    expect(eersten[projecten.length + 1]).toMatch(/<SiteLink site="play"/);
+    expect(eersten[bovenaan.length]).toContain('pydle.net');
+    expect(eersten[bovenaan.length + 1]).toMatch(/<SiteLink site="play"/);
   });
 
   it('elk algoritme staat erin, met de link naar zijn eerste les en zijn samenvatting', () => {

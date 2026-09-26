@@ -1,20 +1,22 @@
 ---
-sidebar_position: 4
-sidebar_label: 'Stap 4: def'
+sidebar_position: 1
+sidebar_label: 'Stap 1: def'
 description: Zet de muren, het dak en het hele huis elk in een eigen functie.
 ---
 
 import CodeExercise from '@site/src/components/CodeExercise';
 
-# Stap 4: Het huis in functies (def)
+# Stap 1: Het huis in functies (def)
 
 :::info
 Deze stap gebruikt functies, uit [Functies](/docs/functies/functies).
 :::
 
-Je huis is nu een lange lap code. Straks wil je er een hele straat van
-maken, en dan wil je niet voor elk huis alles opnieuw typen. Zet het
-daarom in functies, met een naam die zegt wat ze tekenen:
+Het huis uit [Een huis](/docs/projecten/turtle/een-huis/stap-2-huis) is een
+lange lap code. Straks wil je er een hele straat van maken, en dan wil je
+niet voor elk huis alles opnieuw typen. Zet het daarom in functies, met een
+naam die zegt wat ze tekenen. De muren gaan met de for-loop uit
+[Veelhoeken en sterren](/docs/projecten/turtle/veelhoeken/stap-1-vierkant):
 
 ```python
 import turtle
@@ -36,14 +38,14 @@ vier. Er gebeurt pas iets als je de functie aanroept, op de laatste regel.
 ## Opdracht: `dak()` en `huis()`
 
 Maak ook een functie `dak()` die het rode dak tekent, en een functie
-`huis()` die eerst `muren()` aanroept, dan naar linksboven loopt, en dan
+`huis()` die eerst `muren()` aanroept, dan naar linksboven loopt zoals in Een huis, en dan
 `dak()` aanroept. Roep aan het eind alleen `huis()` aan.
 
 Laat `huis()` de schildpad daarna terugbrengen naar waar hij begon:
-linksonder, kijkend naar rechts. Dat lijkt nu overbodig, maar in stap 6
+linksonder, kijkend naar rechts. Dat lijkt nu overbodig, maar in stap 3
 teken je huis na huis, en dan moet elk huis op dezelfde manier beginnen.
 
-![Hetzelfde huis als in stap 3: gele muren en een rood dak, met de schildpad weer linksonder](./img/stap-4-huis.svg)
+![Hetzelfde huis als in Een huis: gele muren en een rood dak, met de schildpad weer linksonder](./img/stap-1-huis.svg)
 
 <CodeExercise>{`import turtle
 
@@ -61,7 +63,7 @@ muren()`}</CodeExercise>
 <summary>Klik hier voor een tip.</summary>
 
 Na het dak staat de schildpad linksboven en kijkt hij naar rechts. Terug
-naar linksonder is hetzelfde als omhoog in stap 3, maar dan andersom:
+naar linksonder is hetzelfde als omhoog, maar dan andersom:
 `right(90)`, `forward(100)`, `left(90)`.
 
 </details>
@@ -69,7 +71,7 @@ naar linksonder is hetzelfde als omhoog in stap 3, maar dan andersom:
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
-{/* turtle-plaatje: img/stap-4-huis.svg */}
+{/* turtle-plaatje: img/stap-1-huis.svg */}
 
 ```python
 import turtle
@@ -103,9 +105,9 @@ def huis():
 huis()
 ```
 
-Het plaatje is hetzelfde als in stap 3. Het verschil zit in de code: `huis()`
+Het plaatje is hetzelfde als in Een huis. Het verschil zit in de code: `huis()`
 is nu één regel, en die kun je zo vaak aanroepen als je wilt.
 
 </details>
 
-Door naar [stap 5: huizen in elke maat](./stap-5-parameters).
+Door naar [stap 2: huizen in elke maat](./stap-2-parameters).

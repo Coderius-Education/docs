@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-250 -200 500 400" role="img">
+<title>Zes stippen op een rij: rood, oranje, geel, groen, blauw en paars</title>
+<rect x="-250" y="-200" width="500" height="400" fill="white"/>
+<circle cx="-125" cy="0" r="20" fill="red"/>
+<circle cx="-75" cy="0" r="20" fill="orange"/>
+<circle cx="-25" cy="0" r="20" fill="yellow"/>
+<circle cx="25" cy="0" r="20" fill="#00ff00"/>
+<circle cx="75" cy="0" r="20" fill="blue"/>
+<circle cx="125" cy="0" r="20" fill="#a020f0"/>
+</svg>
