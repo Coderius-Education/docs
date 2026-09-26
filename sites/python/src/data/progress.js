@@ -52,6 +52,19 @@ export const progressData = [
     },
   },
   {
+    tutorial: '03b. Tekst naar getal',
+    levels: {
+      Basis: 6,
+      Variabelen: 5,
+      Logica: 0,
+      Herhaling: 0,
+      Functies: 0,
+      Data: 0,
+      Klassen: 0,
+      Fouten: 0,
+    },
+  },
+  {
     tutorial: '04a. f-strings',
     levels: {
       Basis: 6,
@@ -326,6 +339,19 @@ export const progressData = [
   },
   {
     tutorial: '11d. JSON',
+    levels: {
+      Basis: 9,
+      Variabelen: 8,
+      Logica: 7,
+      Herhaling: 9,
+      Functies: 8,
+      Data: 9,
+      Klassen: 0,
+      Fouten: 0,
+    },
+  },
+  {
+    tutorial: '11e. JSON in een bestand',
     levels: {
       Basis: 9,
       Variabelen: 8,

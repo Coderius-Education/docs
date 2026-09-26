@@ -1,6 +1,6 @@
 ---
 sidebar_position: 2
-description: Vang verschillende fouten apart af met meer except-blokken, en zie waarom een kale except gevaarlijk is.
+description: Vang verschillende fouten af met meer except-blokken of samen in één, en zie waarom een kale except gevaarlijk is.
 ---
 
 import CodeExercise from '@site/src/components/CodeExercise';
@@ -31,6 +31,28 @@ Er zijn nog geen spelers.
 
 Elke fout krijgt zijn eigen `except`-blok, met zijn eigen melding. Python
 kijkt van boven naar beneden welk blok past, en doet alleen dat ene.
+
+## Twee fouten, één blok
+
+Moet er bij twee fouten hetzelfde gebeuren, dan zet je ze samen tussen haakjes
+achter één `except`:
+
+```python
+totaal = "honderd"
+aantal = 4
+
+try:
+    gemiddelde = int(totaal) / aantal
+    print(f"Gemiddeld {gemiddelde} punten.")
+except (ValueError, ZeroDivisionError):
+    print("Dit gemiddelde kan ik niet uitrekenen.")
+```
+
+Uitvoer:
+
+```
+Dit gemiddelde kan ik niet uitrekenen.
+```
 
 ## Geen kale except
 
@@ -174,3 +196,62 @@ De tijd kan geen 0 zijn.
 ```
 
 </details>
+
+---
+
+## Opdracht 15b.3: Eén melding voor twee fouten
+
+{/* foutmelding-los: de namen staan hier als wat je achter except schrijft, geen melding van Python */}
+
+Vang in één `except` zowel een `KeyError` als een `ZeroDivisionError` af, en
+print dan `Dat kan ik niet uitrekenen.`
+
+Verwachte uitvoer:
+
+```
+Dat kan ik niet uitrekenen.
+```
+
+{/* niet-draaien: de startcode valt expres om, met de fout die de opdracht afvangt */}
+
+<CodeExercise>{`punten = {"Sara": 30, "Noor": 45}
+naam = "Alex"
+rondes = 3
+
+print(punten[naam] / rondes)`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+{/* foutmelding-los: de namen staan hier als wat je achter except schrijft, geen melding van Python */}
+
+Zet de `print` in een `try`, en de twee namen tussen haakjes achter
+`except`, met een komma ertussen.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+punten = {"Sara": 30, "Noor": 45}
+naam = "Alex"
+rondes = 3
+
+try:
+    print(punten[naam] / rondes)
+except (KeyError, ZeroDivisionError):
+    print("Dat kan ik niet uitrekenen.")
+```
+
+Uitvoer:
+
+```
+Dat kan ik niet uitrekenen.
+```
+
+Met `naam = "Sara"` en `rondes = 0` krijg je dezelfde melding, nu door de
+andere fout.
+
+</details>
+

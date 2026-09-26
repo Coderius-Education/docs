@@ -50,9 +50,16 @@ Uitvoer:
 3
 ```
 
-Het verschil zie je als je een tikfout maakt. `rex["lefetijd"] = 4` maakt
-stil een nieuwe sleutel bij. Bij een object zegt Python het meteen, zoals je
-hieronder ziet.
+{/* foutmelding-van: rex = {"naam": "Rex", "leeftijd": 3}\nrex["lefetijd"] */}
+
+Het verschil zie je als je een naam verkeerd leest. Bij de dictionary krijg je
+`KeyError: 'lefetijd'`. Bij een object zegt Python er ook bij wat je
+waarschijnlijk bedoelde, zoals je hieronder ziet. En de klasse legt in
+`__init__` vast welke attributen elke hond heeft, zodat geen enkele hond er
+een mist.
+
+Bij het toewijzen helpt Python je niet: `rex.lefetijd = 4` maakt stil een
+nieuw attribuut, net zoals `rex["lefetijd"] = 4` stil een nieuwe sleutel maakt.
 
 ---
 

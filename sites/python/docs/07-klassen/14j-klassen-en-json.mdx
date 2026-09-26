@@ -9,10 +9,11 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 <Voorkennis items={[
   {to: '/docs/data/11c-geneste-dictionaries', label: '11c Geneste dictionaries'},
-  {to: '/docs/data/11d-json', label: '11d JSON: opslaan en inlezen'},
+  {to: '/docs/data/11d-json', label: '11d JSON'},
+  {to: '/docs/data/11e-json-bestand', label: '11e JSON in een bestand'},
 ]} />
 
-In [11d](/docs/data/11d-json) schreef je dictionaries en lijsten naar een
+In [11e](/docs/data/11e-json-bestand) schreef je dictionaries en lijsten naar een
 bestand. Een object van je eigen klasse lukt zo niet:
 
 ```python
@@ -72,7 +73,7 @@ Dat is de hele truc: de klasse zet zichzelf om naar iets wat JSON wél kent.
 ## Een lijst objecten opslaan
 
 Heb je meer objecten, dan maak je in een loop een lijst dictionaries, en
-schrijf je die naar een bestand zoals in 11d:
+schrijf je die naar een bestand zoals in 11e:
 
 ```python
 import json
@@ -111,8 +112,6 @@ opent, ziet niets van je klasse; die bestaat alleen in je programma.
 ---
 
 ## Er gaat iets mis
-
-{/* foutmelding-van: blok-erboven */}
 
 ```python
 import json
@@ -235,7 +234,8 @@ print(json.dumps(lijst))`}</CodeExercise>
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Loop met `for boek in boeken:` en doe `lijst.append(boek.naar_dict())`.
+Kijk hoe de honden hierboven in een lijst kwamen. Bij de boeken gaat het
+precies zo.
 
 </details>
 

@@ -8,10 +8,10 @@ import CodeExercise from '@site/src/components/CodeExercise';
 # 15e Een bestand dat er niet is
 
 :::info
-Deze les gebruikt JSON-bestanden, uit [JSON: opslaan en inlezen](/docs/data/11d-json).
+Deze les gebruikt JSON-bestanden, uit [JSON in een bestand](/docs/data/11e-json-bestand).
 :::
 
-In les 11d las je scores in uit een bestand. De allereerste keer dat iemand je
+In les 11e las je scores in uit een bestand. De allereerste keer dat iemand je
 spel speelt, bestaat dat bestand nog niet:
 
 ```python
@@ -48,12 +48,15 @@ Uitvoer:
 []
 ```
 
-Na het spel schrijf je `scores` weg zoals in 11d. De volgende keer bestaat
+Na het spel schrijf je `scores` weg zoals in 11e. De volgende keer bestaat
 het bestand wel, en slaat Python het `except`-blok over.
 
 ---
 
 ## Er gaat iets mis
+
+Het programma hieronder maakt eerst een kapot bestand: `bestand.write()`
+schrijft gewone tekst in het bestand, geen JSON.
 
 ```python
 import json
@@ -175,7 +178,7 @@ print(scores)`}</CodeExercise>
 {/* foutmelding-los: de namen staan hier als wat je achter except schrijft, geen melding van Python */}
 
 De fout heet in het `except`-blok `json.JSONDecodeError`. Zet hem samen met
-`FileNotFoundError` tussen haakjes, zoals in 15c.
+`FileNotFoundError` tussen haakjes, zoals in 15b.
 
 </details>
 

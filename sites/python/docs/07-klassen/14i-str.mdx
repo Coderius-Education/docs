@@ -111,10 +111,12 @@ print(Hond("Rex"))
 Uitvoer:
 
 ```
+Rex
 TypeError: __str__ returned non-string (type NoneType)
 ```
 
-`__str__` moet de tekst teruggeven, niet zelf printen. Zonder `return`
+Eerst print `__str__` zelf de naam. Daarna gaat het mis: `__str__` moet de
+tekst teruggeven, niet zelf printen. Zonder `return`
 geeft een functie `None` terug, en daar kan `print` niets mee. Schrijf
 `return self.naam`.
 
@@ -250,7 +252,8 @@ Sara: 35 euro
 
 De klasse `Datum` heeft `dag`, `maand` en `jaar`. Maak zijn
 `__str__` af, die de datum schrijft zoals in Nederland gebruikelijk, met twee
-cijfers voor dag en maand.
+cijfers voor dag en maand. Met `:02` in een f-string krijg je altijd twee
+cijfers: `f"{7:02}"` wordt `07`, net als bij de seconden in 14h.2.
 
 Verwachte uitvoer:
 
@@ -275,8 +278,8 @@ print(Datum(25, 12, 2026))`}</CodeExercise>
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Met `:02` in een f-string krijg je altijd twee cijfers: `f"{7:02}"` wordt
-`07`.
+Zet `:02` achter `self.dag` en `self.maand` in de f-string, en streepjes
+ertussen.
 
 </details>
 

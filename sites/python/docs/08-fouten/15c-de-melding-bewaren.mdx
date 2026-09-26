@@ -31,26 +31,6 @@ Dat lukte niet: invalid literal for int() with base 10: 'twaalf'
 anders onderaan de foutmelding had gezet, zonder de naam `ValueError`
 ervoor. De naam van de variabele kies je zelf; `fout` is gebruikelijk.
 
-## Welke fout was het?
-
-Met `type(fout).__name__` krijg je ook de naam van de fout. Dat is handig
-als één `except` meer soorten fouten afvangt, tussen haakjes:
-
-```python
-getallen = [10, 0]
-
-try:
-    print(getallen[0] / getallen[1])
-except (ZeroDivisionError, IndexError) as fout:
-    print(f"Het ging mis met een {type(fout).__name__}: {fout}")
-```
-
-Uitvoer:
-
-```
-Het ging mis met een ZeroDivisionError: division by zero
-```
-
 ---
 
 ## Opdracht 15c.1: Een logboek
@@ -106,34 +86,30 @@ Overgeslagen: invalid literal for int() with base 10: 'vier'
 
 ---
 
-## Opdracht 15c.2: Wat ging er mis?
+## Opdracht 15c.2: Een prijs die niet klopt
 
-{/* foutmelding-los: de namen staan hier als wat je achter except schrijft, geen melding van Python */}
-
-Vang in één `except` zowel een `KeyError` als een `ZeroDivisionError` af, en
-print de naam van de fout.
+Zet de prijs om met `float()`. Lukt dat niet, print dan welke tekst er stond
+én wat Python ervan vond.
 
 Verwachte uitvoer:
 
 ```
-Fout: KeyError
+Kon '12,50' niet lezen: could not convert string to float: '12,50'
 ```
 
 {/* niet-draaien: de startcode valt expres om, met de fout die de opdracht afvangt */}
 
-<CodeExercise>{`punten = {"Sara": 30, "Noor": 45}
-naam = "Alex"
-rondes = 3
+<CodeExercise>{`prijs = "12,50"
 
-print(punten[naam] / rondes)`}</CodeExercise>
+bedrag = float(prijs)
+print(bedrag)`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-{/* foutmelding-los: de namen staan hier als wat je achter except schrijft, geen melding van Python */}
-
-Zet de twee fouten tussen haakjes achter `except`, met `as fout` erachter.
-De naam krijg je met `type(fout).__name__`.
+Na `except ValueError as fout:` heb je in de f-string zowel `prijs` als
+`fout` tot je beschikking. Zet `prijs` tussen enkele aanhalingstekens in de
+tekst.
 
 </details>
 
@@ -141,20 +117,19 @@ De naam krijg je met `type(fout).__name__`.
 <summary>Klik hier voor de oplossing.</summary>
 
 ```python
-punten = {"Sara": 30, "Noor": 45}
-naam = "Alex"
-rondes = 3
+prijs = "12,50"
 
 try:
-    print(punten[naam] / rondes)
-except (KeyError, ZeroDivisionError) as fout:
-    print(f"Fout: {type(fout).__name__}")
+    bedrag = float(prijs)
+    print(bedrag)
+except ValueError as fout:
+    print(f"Kon '{prijs}' niet lezen: {fout}")
 ```
 
 Uitvoer:
 
 ```
-Fout: KeyError
+Kon '12,50' niet lezen: could not convert string to float: '12,50'
 ```
 
 </details>

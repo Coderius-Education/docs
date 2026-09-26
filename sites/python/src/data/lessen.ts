@@ -1,8 +1,8 @@
 // Alle lessen van de python-cursus, in de volgorde van de cursus. De
-// projectkiezer (src/components/ProjectKiezer) gebruikt dit voor "Ik ben bij
-// les …": een activiteit past als elke les die hij nodig heeft, hier op of
-// vóór de gekozen les staat. projectkiezer.test.ts bewaakt dat deze lijst
-// precies de lessen in docs/ is, met hun kop en pad.
+// projectkiezer (src/components/ProjectKiezer) haalt hieruit de volgorde van
+// de concept-chips, de naam van elk concept, en "vanaf les …" op een kaart:
+// de laatste les die een activiteit nodig heeft. projectkiezer.test.ts
+// bewaakt dat deze lijst precies de lessen in docs/ is, met hun kop en pad.
 
 export type Les = {
   /** Het nummerprefix van het bestand, bv. '06a'. */
@@ -30,6 +30,12 @@ export const lessen: Les[] = [
     pad: '/docs/basis/jij-als-variabele',
   },
   { id: '03', label: '3 De rekenmachine', hoofdstuk: 'Basis', pad: '/docs/basis/rekenmachine' },
+  {
+    id: '03b',
+    label: '3b Tekst naar getal',
+    hoofdstuk: 'Basis',
+    pad: '/docs/basis/03b-tekst-naar-getal',
+  },
   {
     id: '04a',
     label: '4a Slimme berichten met f-strings',
@@ -123,9 +129,15 @@ export const lessen: Les[] = [
   },
   {
     id: '11d',
-    label: '11d JSON: opslaan en inlezen',
+    label: '11d JSON',
     hoofdstuk: 'Data',
     pad: '/docs/data/11d-json',
+  },
+  {
+    id: '11e',
+    label: '11e JSON in een bestand',
+    hoofdstuk: 'Data',
+    pad: '/docs/data/11e-json-bestand',
   },
   { id: '12', label: '12 Tuples', hoofdstuk: 'Data', pad: '/docs/data/tuples' },
   { id: '13', label: '13 Sets', hoofdstuk: 'Data', pad: '/docs/data/sets' },

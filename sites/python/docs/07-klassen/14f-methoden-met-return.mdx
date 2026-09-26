@@ -100,7 +100,8 @@ Python `None`, en dat komt in je zin terecht. Schrijf `return` in plaats van
 
 Geef de `Stappenteller` uit 14e een methode `kilometers()`. Die geeft terug
 hoeveel kilometer de stappen zijn, bij 1300 stappen per kilometer, afgerond
-op één decimaal.
+op één decimaal. Afronden doe je met `round()`: `round(2.0008, 1)` is `2.0`,
+het getal met één cijfer achter de punt.
 
 Verwachte uitvoer:
 
@@ -130,7 +131,8 @@ print(f"{teller.stappen} stappen is {teller.kilometers()} km")`}</CodeExercise>
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Deel `self.stappen` door 1300. Afronden doe je met `round(getal, 1)`.
+Deel `self.stappen` door 1300, en geef de uitkomst aan `round()` met een
+1 erachter.
 
 </details>
 
