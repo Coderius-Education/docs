@@ -2,13 +2,15 @@ import { type Les, lessen } from './lessen';
 
 // Alles wat een leerling naast de lessen kan doen: de projecten van deze
 // cursus, de turtle-projecten, Pydle, Coderius Play en de algoritmes. De
-// projectkiezer toont het als kaarten, en deelt ze in naar "past nu" en
-// "straks" op basis van de les waar de leerling is.
+// projectkiezer toont het als kaarten; je kiest een concept dat je wilt
+// oefenen, en ziet waar het in voorkomt.
 //
-// `lessen` zijn de lessen die een activiteit nodig heeft (id's uit
-// lessen.ts). projectkiezer.test.ts bewaakt dat elk project in docs/projecten
+// `concepten` is wat je met een activiteit oefent, `lessen` alles wat hij
+// nodig heeft (weglaten = gelijk aan concepten); beide zijn id's uit
+// lessen.ts. projectkiezer.test.ts bewaakt dat elk project in docs/projecten
 // hier staat met het juiste aantal stappen, en dat de algoritmes gelijk zijn
-// aan algorithms.ts en de conceptenkaart van de algoritmes-cursus.
+// aan algorithms.ts en de conceptenkaart van de algoritmes-cursus: concepten
+// is de kern van de kaart, lessen de volledige voorkennis.
 
 export type Soort = 'project' | 'turtle' | 'puzzel' | 'spel' | 'algoritme';
 
@@ -30,8 +32,32 @@ export type Activiteit = {
   wat: string;
   /** Aantal stappen, bij een project in deze cursus. */
   stappen?: number;
-  lessen: string[];
+  /** Wat je ermee oefent: de chips op de kaart, en waarop je filtert. */
+  concepten: string[];
+  /** Alles wat hij nodig heeft; weglaten betekent: alleen de concepten. */
+  lessen?: string[];
   link: Link;
+};
+
+/** Korte namen voor de concepten, zoals ze op de chips staan. */
+export const CONCEPTNAMEN: Record<string, string> = {
+  '01': 'Commando’s na elkaar',
+  '02': 'Variabelen',
+  '03': 'Rekenen',
+  '04a': 'F-strings',
+  '05b': 'If en else',
+  '05c': 'Elif, and en or',
+  '06a': 'For-loop',
+  '06b': 'Range met stappen',
+  '07': 'While-loop',
+  '08': 'Functies',
+  '09a': 'Parameters',
+  '09b': 'Return',
+  '10a': 'Lijsten',
+  '11a': 'Dictionaries',
+  '11b': 'Door een dictionary loopen',
+  '12': 'Tuples',
+  '13': 'Sets',
 };
 
 export const activiteiten: Activiteit[] = [
@@ -41,7 +67,7 @@ export const activiteiten: Activiteit[] = [
     soort: 'project',
     wat: 'Van vijftig losse print-regels naar één aanroep lied(10).',
     stappen: 8,
-    lessen: ['01', '02', '04a', '05b', '05c', '06b', '08', '09a', '09b'],
+    concepten: ['01', '02', '04a', '05b', '05c', '06b', '08', '09a', '09b'],
     link: { to: '/docs/projecten/tien-groene-flessen/stap-1-print' },
   },
   {
@@ -50,7 +76,7 @@ export const activiteiten: Activiteit[] = [
     soort: 'turtle',
     wat: 'Een vierkant en een huis in kleur, met alleen losse commando’s.',
     stappen: 2,
-    lessen: ['01'],
+    concepten: ['01'],
     link: { to: '/docs/projecten/turtle/een-huis/stap-1-vierkant' },
   },
   {
@@ -59,7 +85,7 @@ export const activiteiten: Activiteit[] = [
     soort: 'turtle',
     wat: 'Een hoofd met ogen die meegroeien als je één variabele verandert.',
     stappen: 2,
-    lessen: ['02', '03'],
+    concepten: ['02', '03'],
     link: { to: '/docs/projecten/turtle/robotkop/stap-1-maat' },
   },
   {
@@ -68,6 +94,7 @@ export const activiteiten: Activiteit[] = [
     soort: 'turtle',
     wat: 'Drie lampen, waarvan er precies één brandt.',
     stappen: 2,
+    concepten: ['05b', '05c'],
     lessen: ['02', '05b', '05c'],
     link: { to: '/docs/projecten/turtle/verkeerslicht/stap-1-if-else' },
   },
@@ -77,6 +104,7 @@ export const activiteiten: Activiteit[] = [
     soort: 'turtle',
     wat: 'Een driehoek, een achthoek en een ster, elk met één loop.',
     stappen: 3,
+    concepten: ['06a'],
     lessen: ['02', '06a'],
     link: { to: '/docs/projecten/turtle/veelhoeken/stap-1-vierkant' },
   },
@@ -86,6 +114,7 @@ export const activiteiten: Activiteit[] = [
     soort: 'turtle',
     wat: 'Een spiraal en een trap die doorgaan tot ze groot genoeg zijn.',
     stappen: 2,
+    concepten: ['07'],
     lessen: ['02', '07'],
     link: { to: '/docs/projecten/turtle/spiraal/stap-1-spiraal' },
   },
@@ -95,6 +124,7 @@ export const activiteiten: Activiteit[] = [
     soort: 'turtle',
     wat: 'Huizen in elke maat, met een functie, en een hele straat op een rij.',
     stappen: 3,
+    concepten: ['06b', '08', '09a'],
     lessen: ['06a', '06b', '08', '09a'],
     link: { to: '/docs/projecten/turtle/straat-vol-huizen/stap-1-functies' },
   },
@@ -104,6 +134,7 @@ export const activiteiten: Activiteit[] = [
     soort: 'turtle',
     wat: 'Een rij stippen en een regenboog, met de kleuren uit een lijst.',
     stappen: 2,
+    concepten: ['10a'],
     lessen: ['06a', '10a'],
     link: { to: '/docs/projecten/turtle/regenboog/stap-1-stippen' },
   },
@@ -112,7 +143,7 @@ export const activiteiten: Activiteit[] = [
     titel: 'Pydle',
     soort: 'puzzel',
     wat: 'Elke dag een puzzel: maak een raster met gekleurde vakjes na.',
-    lessen: ['05b', '05c', '06a'],
+    concepten: ['05b', '05c', '06a'],
     link: { href: 'https://pydle.net' },
   },
   {
@@ -120,7 +151,7 @@ export const activiteiten: Activiteit[] = [
     titel: 'Coderius Play',
     soort: 'spel',
     wat: 'Je eigen spelletjes bouwen, met vormen die bewegen en reageren.',
-    lessen: ['02', '05b', '08', '10a'],
+    concepten: ['02', '05b', '08', '10a'],
     link: { site: 'play', to: '/docs/eerste-keer-python/wanneer_beginnen' },
   },
   {
@@ -128,6 +159,7 @@ export const activiteiten: Activiteit[] = [
     titel: 'Lineair zoeken',
     soort: 'algoritme',
     wat: 'Loop één voor één door de lijst tot je het doel vindt.',
+    concepten: ['05b', '06a', '09b', '10a'],
     lessen: ['05b', '06a', '08', '09b', '10a'],
     link: { site: 'algorithms', to: '/docs/lineair-zoeken/01-concept' },
   },
@@ -136,6 +168,7 @@ export const activiteiten: Activiteit[] = [
     titel: 'Vind het maximum',
     soort: 'algoritme',
     wat: 'Onthoud de grootste tot nu toe en update onderweg.',
+    concepten: ['05b', '06a', '10a'],
     lessen: ['04a', '05b', '06a', '08', '09b', '10a'],
     link: { site: 'algorithms', to: '/docs/vind-maximum/01-concept' },
   },
@@ -144,6 +177,7 @@ export const activiteiten: Activiteit[] = [
     titel: 'Max én min in één pass',
     soort: 'algoritme',
     wat: 'Twee accumulators tegelijk — minder werk dan twee losse passes.',
+    concepten: ['05b', '05c', '06a', '10a'],
     lessen: ['04a', '05b', '05c', '06a', '09b', '10a', '12'],
     link: { site: 'algorithms', to: '/docs/max-en-min/01-concept' },
   },
@@ -152,6 +186,7 @@ export const activiteiten: Activiteit[] = [
     titel: 'Binair zoeken',
     soort: 'algoritme',
     wat: 'Halveer steeds een gesorteerde lijst — sneller dan lineair.',
+    concepten: ['05b', '05c', '07', '10a'],
     lessen: ['05b', '05c', '06d', '07', '08', '09b', '10a', '12'],
     link: { site: 'algorithms', to: '/docs/binair-zoeken/01-concept' },
   },
@@ -160,6 +195,7 @@ export const activiteiten: Activiteit[] = [
     titel: 'Selection sort',
     soort: 'algoritme',
     wat: 'Vind steeds het kleinste van de rest en zet het vooraan.',
+    concepten: ['05b', '06a', '10a', '12'],
     lessen: ['05b', '06a', '08', '09b', '10a', '12'],
     link: { site: 'algorithms', to: '/docs/selection-sort/01-concept' },
   },
@@ -168,6 +204,7 @@ export const activiteiten: Activiteit[] = [
     titel: 'Bubble sort',
     soort: 'algoritme',
     wat: 'Vergelijk buren en swap — tot de lijst klopt.',
+    concepten: ['05b', '06a', '10a', '12'],
     lessen: ['04a', '05b', '06a', '08', '09b', '10a', '12'],
     link: { site: 'algorithms', to: '/docs/bubble-sort/01-concept' },
   },
@@ -176,6 +213,7 @@ export const activiteiten: Activiteit[] = [
     titel: 'Big O notatie',
     soort: 'algoritme',
     wat: 'Hoe schaalt een algoritme als de invoer groeit?',
+    concepten: ['06a', '07'],
     lessen: ['05b', '05c', '06a', '07', '08', '10b', '12'],
     link: { site: 'algorithms', to: '/docs/big-o/01-concept' },
   },
@@ -184,6 +222,7 @@ export const activiteiten: Activiteit[] = [
     titel: 'Dijkstra',
     soort: 'algoritme',
     wat: 'Vind de kortste route in een gewogen graph.',
+    concepten: ['06a', '07', '11a', '11b', '13'],
     lessen: ['04a', '05b', '06a', '06c', '06d', '07', '08', '10a', '11a', '11b', '12', '13'],
     link: { site: 'algorithms', to: '/docs/dijkstra/01-concept' },
   },
@@ -192,6 +231,7 @@ export const activiteiten: Activiteit[] = [
     titel: 'Minimax',
     soort: 'algoritme',
     wat: 'Bouw een tic-tac-toe-AI die nooit verliest.',
+    concepten: ['06a', '08', '09b', '10a'],
     lessen: ['04a', '05b', '06a', '07', '08', '09a', '09b', '10a', '12', '13'],
     link: { site: 'algorithms', to: '/docs/minimax/01-concept' },
   },
@@ -200,6 +240,7 @@ export const activiteiten: Activiteit[] = [
     titel: 'Knapsack 0/1',
     soort: 'algoritme',
     wat: 'Pak de meest waardevolle rugzak binnen je gewichtslimiet.',
+    concepten: ['05b', '06a', '10a'],
     lessen: ['04a', '05b', '06a', '08', '10a', '12'],
     link: { site: 'algorithms', to: '/docs/knapsack/01-concept' },
   },
@@ -208,6 +249,7 @@ export const activiteiten: Activiteit[] = [
     titel: 'Context-vrije grammatica',
     soort: 'algoritme',
     wat: 'Ontwerp regels die Engelse zinnen ontleden — zin voor zin.',
+    concepten: ['10a'],
     lessen: ['10a'],
     link: { site: 'algorithms', to: '/docs/cfg/01-concept' },
   },
@@ -216,6 +258,7 @@ export const activiteiten: Activiteit[] = [
     titel: 'Torens van Hanoi',
     soort: 'algoritme',
     wat: 'Speel het spel, ontdek het patroon (2ⁿ−1) en los het op met recursie.',
+    concepten: ['05b', '08', '09b', '10a'],
     lessen: ['04a', '05b', '08', '09b', '10a', '10b', '11a', '12'],
     link: { site: 'algorithms', to: '/docs/hanoi/01-spel' },
   },
@@ -224,6 +267,7 @@ export const activiteiten: Activiteit[] = [
     titel: 'PageRank',
     soort: 'algoritme',
     wat: 'Hoe rangschikt Google pagina’s? Links als stemmen, iteratief uitgerekend.',
+    concepten: ['06a', '07', '11a', '11b'],
     lessen: ['05b', '06a', '07', '08', '11a', '11b', '13'],
     link: { site: 'algorithms', to: '/docs/pagerank/01-concept' },
   },
@@ -231,39 +275,37 @@ export const activiteiten: Activiteit[] = [
 
 const volgorde = new Map(lessen.map((les, i) => [les.id, i]));
 
-/** De laatste les die een activiteit nodig heeft: daarna past hij. */
-export function pastNa(activiteit: Activiteit): Les {
-  let hoogste = 0;
-  for (const id of activiteit.lessen) {
-    const plek = volgorde.get(id);
-    if (plek === undefined) throw new Error(`${activiteit.id}: onbekende les ${id}`);
-    hoogste = Math.max(hoogste, plek);
-  }
-  return lessen[hoogste];
+function plek(id: string, waar: string): number {
+  const p = volgorde.get(id);
+  if (p === undefined) throw new Error(`${waar}: onbekende les ${id}`);
+  return p;
 }
 
-/** De lessen die een activiteit nodig heeft, in de volgorde van de cursus. */
-export function lessenVan(activiteit: Activiteit): Les[] {
-  return lessen.filter((les) => activiteit.lessen.includes(les.id));
+/** De laatste les die een activiteit nodig heeft: vanaf daar kun je hem doen. */
+export function vanafLes(activiteit: Activiteit): Les {
+  const nodig = activiteit.lessen ?? activiteit.concepten;
+  return lessen[Math.max(...nodig.map((id) => plek(id, activiteit.id)))];
+}
+
+/** De concepten die in de lijst voorkomen, in de volgorde van de cursus. */
+export function conceptenIn(lijst: Activiteit[]): string[] {
+  const gebruikt = new Set(lijst.flatMap((a) => a.concepten));
+  return lessen.map((l) => l.id).filter((id) => gebruikt.has(id));
 }
 
 /**
- * Deelt de activiteiten in. Zonder gekozen les past alles; met een les past
- * een activiteit als hij op of vóór die les past. Beide lijsten staan in de
- * volgorde van de cursus, en bij gelijke les in de volgorde van de data.
+ * De activiteiten met dit concept (of alle, bij null) en deze soort (of alle),
+ * in de volgorde waarin je ze in de cursus kunt doen.
  */
-export function indelen(
+export function filter(
   lijst: Activiteit[],
-  lesId: string | null,
+  concept: string | null,
   soort: Soort | null,
-): { nu: Activiteit[]; straks: Activiteit[] } {
-  const grens = lesId === null ? lessen.length : (volgorde.get(lesId) ?? lessen.length);
-  const gefilterd = lijst
-    .filter((a) => soort === null || a.soort === soort)
-    .map((a, i) => ({ a, i, na: volgorde.get(pastNa(a).id) ?? 0 }))
-    .sort((x, y) => x.na - y.na || x.i - y.i);
-  return {
-    nu: gefilterd.filter((x) => x.na <= grens).map((x) => x.a),
-    straks: gefilterd.filter((x) => x.na > grens).map((x) => x.a),
-  };
+): Activiteit[] {
+  return lijst
+    .map((a, i) => ({ a, i, vanaf: plek(vanafLes(a).id, a.id) }))
+    .filter(({ a }) => concept === null || a.concepten.includes(concept))
+    .filter(({ a }) => soort === null || a.soort === soort)
+    .sort((x, y) => x.vanaf - y.vanaf || x.i - y.i)
+    .map(({ a }) => a);
 }

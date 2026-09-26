@@ -1,45 +1,24 @@
-import Keuzelijst from '@coderius/shared/components/Keuzelijst';
 import { SITES_BY_ID, normalizeUrl } from '@coderius/shared/sites';
 import Link from '@docusaurus/Link';
 import type React from 'react';
-import { useEffect, useState } from 'react';
-import { lessen } from '../../data/lessen';
+import { useState } from 'react';
 import {
   type Activiteit,
   type Link as ActiviteitLink,
+  CONCEPTNAMEN,
   SOORTEN,
   type Soort,
   activiteiten,
-  indelen,
-  lessenVan,
-  pastNa,
+  conceptenIn,
+  filter,
+  vanafLes,
 } from '../../data/projecten';
 import styles from './styles.module.css';
 
-// De projecten als kaarten, met één keuze: "Ik ben bij les …". Daarmee delen
-// de kaarten zich in naar wat nu past en wat straks komt. De keuze wordt in
-// de browser onthouden. Zonder keuze (en in de HTML van de build, dus ook
-// zonder JavaScript) staan alle kaarten er, in de volgorde van de cursus.
-
-const OPSLAG = 'coderius-python-bij-les';
-
-function leesKeuze(): string | null {
-  try {
-    const waarde = window.localStorage.getItem(OPSLAG);
-    return waarde && lessen.some((les) => les.id === waarde) ? waarde : null;
-  } catch {
-    return null;
-  }
-}
-
-function bewaarKeuze(waarde: string | null): void {
-  try {
-    if (waarde === null) window.localStorage.removeItem(OPSLAG);
-    else window.localStorage.setItem(OPSLAG, waarde);
-  } catch {
-    // Geen opslag (privévenster, geblokkeerd): dan geldt de keuze alleen nu.
-  }
-}
+// De projecten als kaarten. Je kiest een concept dat je wilt oefenen, en ziet
+// in welke projecten het voorkomt; chips voor de soort filteren verder. Zonder
+// keuze (en in de HTML van de build, dus ook zonder JavaScript) staan alle
+// kaarten er, in de volgorde waarin je ze in de cursus kunt doen.
 
 function KaartLink({
   link,
@@ -72,17 +51,14 @@ const SOORT_LABEL = Object.fromEntries(SOORTEN.map((s) => [s.id, s.label])) as R
 
 function Kaart({
   activiteit,
-  straks,
-  toonVoet,
+  gekozen,
 }: {
   activiteit: Activiteit;
-  straks: boolean;
-  /** Onder "Past nu" is "past na les …" dubbel; daar staat hij niet. */
-  toonVoet: boolean;
+  gekozen: string | null;
 }): React.JSX.Element {
   const extern = !('to' in activiteit.link) || 'site' in activiteit.link;
   return (
-    <KaartLink link={activiteit.link} className={`${styles.kaart} ${straks ? styles.straks : ''}`}>
+    <KaartLink link={activiteit.link} className={styles.kaart}>
       <span className={styles.kop}>
         <span className={`${styles.soort} ${styles[activiteit.soort]}`}>
           {SOORT_LABEL[activiteit.soort]}
@@ -95,14 +71,30 @@ function Kaart({
       <span className={styles.titel}>{activiteit.titel}</span>
       <span className={styles.wat}>{activiteit.wat}</span>
       <span className={styles.lessen}>
-        {lessenVan(activiteit).map((les) => (
-          <span key={les.id} className={styles.les}>
-            {les.label}
+        {activiteit.concepten.map((id) => (
+          <span key={id} className={`${styles.les} ${id === gekozen ? styles.lesGekozen : ''}`}>
+            {CONCEPTNAMEN[id]}
           </span>
         ))}
       </span>
-      {toonVoet && <span className={styles.voet}>Past na les {pastNa(activiteit).label}</span>}
+      <span className={styles.voet}>Vanaf les {vanafLes(activiteit).label}</span>
     </KaartLink>
+  );
+}
+
+function Chip({
+  actief,
+  onClick,
+  children,
+}: {
+  actief: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}): React.JSX.Element {
+  return (
+    <button type="button" className={styles.chip} aria-pressed={actief} onClick={onClick}>
+      {children}
+    </button>
   );
 }
 
@@ -112,86 +104,64 @@ export default function ProjectKiezer({
   /** Alleen deze soorten tonen, zonder soortfilter (bv. ['turtle']). */
   soorten?: Soort[];
 }): React.JSX.Element {
-  const [les, setLes] = useState<string | null>(null);
+  const [concept, setConcept] = useState<string | null>(null);
   const [soort, setSoort] = useState<Soort | null>(null);
 
-  useEffect(() => {
-    setLes(leesKeuze());
-  }, []);
-
-  const kies = (waarde: string) => {
-    const nieuw = waarde === '' ? null : waarde;
-    setLes(nieuw);
-    bewaarKeuze(nieuw);
-  };
-
   const lijst = soorten ? activiteiten.filter((a) => soorten.includes(a.soort)) : activiteiten;
-  const { nu, straks } = indelen(lijst, les, soort);
+  const concepten = conceptenIn(lijst);
   const zichtbareSoorten = SOORTEN.filter((s) => lijst.some((a) => a.soort === s.id));
+  const getoond = filter(lijst, concept, soort);
+  const aantal = (id: string) => filter(lijst, id, soort).length;
 
   return (
     <div className={styles.kiezer}>
-      <div className={styles.filters}>
-        <div className={styles.keuze}>
-          <label htmlFor="bij-les">Ik ben bij les</label>
-          <Keuzelijst
-            id="bij-les"
-            waarde={les ?? ''}
-            onKies={kies}
-            opties={[
-              { waarde: '', label: 'Laat alles zien' },
-              ...lessen.map((l) => ({ waarde: l.id, label: l.label, groep: l.hoofdstuk })),
-            ]}
-          />
-        </div>
-        {zichtbareSoorten.length > 1 && (
-          <fieldset className={styles.chips}>
-            <legend className={styles.verborgen}>Soort</legend>
-            <button
-              type="button"
-              className={styles.chip}
-              aria-pressed={soort === null}
-              onClick={() => setSoort(null)}
-            >
-              Alles
-            </button>
-            {zichtbareSoorten.map((s) => (
-              <button
-                key={s.id}
-                type="button"
-                className={styles.chip}
-                aria-pressed={soort === s.id}
-                onClick={() => setSoort(soort === s.id ? null : s.id)}
-              >
-                {s.label}
-              </button>
-            ))}
-          </fieldset>
-        )}
-      </div>
+      <fieldset className={styles.chips}>
+        <legend className={styles.legenda}>Wat wil je oefenen?</legend>
+        <Chip actief={concept === null} onClick={() => setConcept(null)}>
+          Alles
+        </Chip>
+        {concepten.map((id) => (
+          <Chip
+            key={id}
+            actief={concept === id}
+            onClick={() => setConcept(concept === id ? null : id)}
+          >
+            {CONCEPTNAMEN[id]} <span className={styles.aantal}>{aantal(id)}</span>
+          </Chip>
+        ))}
+      </fieldset>
 
-      {les !== null && <div className={styles.sectie}>Past nu ({nu.length})</div>}
-      {nu.length > 0 ? (
+      {zichtbareSoorten.length > 1 && (
+        <fieldset className={styles.chips}>
+          <legend className={styles.legenda}>Soort</legend>
+          <Chip actief={soort === null} onClick={() => setSoort(null)}>
+            Alles
+          </Chip>
+          {zichtbareSoorten.map((s) => (
+            <Chip
+              key={s.id}
+              actief={soort === s.id}
+              onClick={() => setSoort(soort === s.id ? null : s.id)}
+            >
+              {s.label}
+            </Chip>
+          ))}
+        </fieldset>
+      )}
+
+      <div className={styles.sectie} aria-live="polite">
+        {concept === null
+          ? `Alles (${getoond.length})`
+          : `${getoond.length} met ${CONCEPTNAMEN[concept]}`}
+      </div>
+      {getoond.length > 0 ? (
         <div className={styles.raster}>
-          {nu.map((a) => (
-            <Kaart key={a.id} activiteit={a} straks={false} toonVoet={les === null} />
+          {getoond.map((a) => (
+            <Kaart key={a.id} activiteit={a} gekozen={concept} />
           ))}
         </div>
       ) : (
-        <p className={styles.leeg}>
-          Nog niets bij deze les. Kijk hieronder wat er na de volgende lessen komt.
-        </p>
-      )}
-
-      {straks.length > 0 && (
-        <>
-          <div className={styles.sectie}>Straks ({straks.length})</div>
-          <div className={styles.raster}>
-            {straks.map((a) => (
-              <Kaart key={a.id} activiteit={a} straks toonVoet />
-            ))}
-          </div>
-        </>
+        <p className={styles.leeg}>Hier is nog niets van deze soort met dit concept.</p>
       )}
     </div>
   );
