@@ -1,0 +1,143 @@
+---
+sidebar_position: 8
+sidebar_label: 'Stap 8: meerdere parameters'
+description: Maak van het lied een eigen versie door de woorden als parameters mee te geven, zoals dikke boeken op de plank.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Stap 8: Maak je eigen lied (meerdere parameters)
+
+Je programma kent maar één lied: groene flessen aan de muur. Maar de opbouw
+werkt voor elk ding dat ergens staat en omvalt. Met drie extra parameters
+wordt het:
+
+```
+3 dikke boeken staan op de plank,
+3 dikke boeken staan op de plank,
+en als er één dik boek valt,
+dan staan er 2 dikke boeken op de plank.
+```
+
+## Opdracht: `lied(start, enkelvoud, meervoud, plek)`
+
+Hieronder staat je programma uit stap 7. Pas het aan, en vervang de
+aanroep onderaan door deze, die het lied hierboven moet zingen:
+
+{/* niet-draaien: de aanroep leunt op het programma in de oefening eronder */}
+
+```python
+lied(3, "dik boek", "dikke boeken", "op de plank")
+```
+
+Het woord `enkelvoud` gebruik je bij één ding ("1 dik boek", "één dik boek
+valt"), `meervoud` bij de rest ("3 dikke boeken", "geen dikke boeken meer").
+Bedenk daarna een eigen versie, en laat hem zingen.
+
+<CodeExercise>{`def aantal(flessen):
+    if flessen == 0:
+        return "geen groene flessen meer"
+    elif flessen == 1:
+        return "1 groene fles"
+    else:
+        return f"{flessen} groene flessen"
+
+
+def staan(flessen):
+    if flessen == 1:
+        return "staat"
+    else:
+        return "staan"
+
+
+def couplet(flessen):
+    print(f"{aantal(flessen)} {staan(flessen)} aan de muur,")
+    print(f"{aantal(flessen)} {staan(flessen)} aan de muur,")
+    print("en als er één groene fles valt,")
+    print(f"dan {staan(flessen - 1)} er {aantal(flessen - 1)} aan de muur.")
+
+
+def lied(start):
+    for flessen in range(start, 0, -1):
+        couplet(flessen)
+        print()
+
+
+lied(3)`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Begin bij `aantal`: die moet `enkelvoud` en `meervoud` krijgen om de goede
+woorden terug te geven. Kijk daarna welke functies `aantal` aanroepen. Die
+hebben de woorden ook nodig, dus ook zij krijgen de parameters erbij, tot
+en met `lied`. `plek` heeft alleen `couplet` nodig, maar ook die moet via
+`lied` binnenkomen.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+def aantal(flessen, enkelvoud, meervoud):
+    if flessen == 0:
+        return f"geen {meervoud} meer"
+    elif flessen == 1:
+        return f"1 {enkelvoud}"
+    else:
+        return f"{flessen} {meervoud}"
+
+
+def staan(flessen):
+    if flessen == 1:
+        return "staat"
+    else:
+        return "staan"
+
+
+def couplet(flessen, enkelvoud, meervoud, plek):
+    nu = aantal(flessen, enkelvoud, meervoud)
+    straks = aantal(flessen - 1, enkelvoud, meervoud)
+    print(f"{nu} {staan(flessen)} {plek},")
+    print(f"{nu} {staan(flessen)} {plek},")
+    print(f"en als er één {enkelvoud} valt,")
+    print(f"dan {staan(flessen - 1)} er {straks} {plek}.")
+
+
+def lied(start, enkelvoud, meervoud, plek):
+    for flessen in range(start, 0, -1):
+        couplet(flessen, enkelvoud, meervoud, plek)
+        print()
+
+
+lied(3, "dik boek", "dikke boeken", "op de plank")
+```
+
+Uitvoer:
+
+```
+3 dikke boeken staan op de plank,
+3 dikke boeken staan op de plank,
+en als er één dik boek valt,
+dan staan er 2 dikke boeken op de plank.
+
+2 dikke boeken staan op de plank,
+2 dikke boeken staan op de plank,
+en als er één dik boek valt,
+dan staat er 1 dik boek op de plank.
+
+1 dik boek staat op de plank,
+1 dik boek staat op de plank,
+en als er één dik boek valt,
+dan staan er geen dikke boeken meer op de plank.
+```
+
+De groene flessen krijg je terug met
+`lied(10, "groene fles", "groene flessen", "aan de muur")`. In `couplet`
+staan `nu` en `straks` weer als variabele, zodat de `print`-regels niet te
+lang worden.
+
+</details>
+
+Terug naar [het overzicht van de projecten](/docs/projecten/).

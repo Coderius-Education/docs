@@ -1,0 +1,176 @@
+.kiezer {
+  margin: 1.5rem 0 2rem;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.keuze {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  font-weight: 600;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.verborgen {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.chip {
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--ifm-color-emphasis-400);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ifm-font-color-base);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.chip[aria-pressed="true"] {
+  border-color: var(--ifm-color-primary);
+  background: var(--ifm-color-primary);
+  color: var(--coderius-on-primary);
+}
+
+.sectie {
+  margin: 1.25rem 0 0.6rem;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.raster {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: 0.9rem;
+}
+
+/* Opgehoogd: de linkkleur van Infima wint anders van deze klasse, en dan
+   wordt de hele kaart blauw. */
+.kaart:not(#\#):not(#\#) {
+  color: var(--ifm-font-color-base);
+  text-decoration: none;
+}
+
+.kaart:not(#\#):not(#\#):hover {
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 2px 10px rgb(0 0 0 / 8%);
+}
+
+.kaart {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-card-border-radius, 8px);
+  background: var(--ifm-background-surface-color);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.straks {
+  opacity: 0.6;
+}
+
+.straks:hover {
+  opacity: 1;
+}
+
+.kop {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  font-size: 0.75rem;
+}
+
+.soort {
+  padding: 0.05rem 0.5rem;
+  border-radius: 999px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  background: var(--ifm-color-emphasis-200);
+}
+
+/* De soort als accent, zacht genoeg voor licht en donker. */
+.project {
+  background: rgb(53 120 229 / 16%);
+}
+
+.turtle {
+  background: rgb(76 175 80 / 18%);
+}
+
+.puzzel {
+  background: rgb(255 152 0 / 20%);
+}
+
+.spel {
+  background: rgb(233 30 99 / 16%);
+}
+
+.algoritme {
+  background: rgb(156 39 176 / 16%);
+}
+
+.stappen {
+  color: var(--ifm-color-emphasis-700);
+}
+
+.titel {
+  color: var(--ifm-color-primary);
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.wat {
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.lessen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: auto;
+  padding-top: 0.3rem;
+}
+
+.les {
+  padding: 0.05rem 0.45rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 4px;
+  font-size: 0.72rem;
+  color: var(--ifm-color-emphasis-800);
+}
+
+.voet {
+  font-size: 0.78rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.leeg {
+  color: var(--ifm-color-emphasis-700);
+}

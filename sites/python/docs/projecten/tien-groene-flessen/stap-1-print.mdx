@@ -1,0 +1,89 @@
+---
+sidebar_position: 1
+sidebar_label: 'Stap 1: print'
+description: Typ de eerste twee coupletten van Tien groene flessen uit met alleen print.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Stap 1: Alleen print
+
+:::info
+Deze stap gebruikt `print`, uit [Jouw naam op het scherm](/docs/basis/jouw-naam-op-het-scherm).
+:::
+
+Dit is het begin van het lied. Het telt af van tien flessen naar nul:
+
+```
+10 groene flessen staan aan de muur,
+10 groene flessen staan aan de muur,
+en als er één groene fles valt,
+dan staan er 9 groene flessen aan de muur.
+
+9 groene flessen staan aan de muur,
+9 groene flessen staan aan de muur,
+en als er één groene fles valt,
+dan staan er 8 groene flessen aan de muur.
+```
+
+Zo gaat het door, tot er geen flessen meer staan.
+
+## Opdracht: de eerste twee coupletten
+
+Print de twee coupletten hierboven, precies zoals ze er staan, met een lege
+regel ertussen. De eerste regel staat er al.
+
+<CodeExercise>{`print("10 groene flessen staan aan de muur,")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Elke regel van het lied is één `print`. Een lege regel maak je met `print()`
+zonder iets tussen de haakjes.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+print("10 groene flessen staan aan de muur,")
+print("10 groene flessen staan aan de muur,")
+print("en als er één groene fles valt,")
+print("dan staan er 9 groene flessen aan de muur.")
+print()
+print("9 groene flessen staan aan de muur,")
+print("9 groene flessen staan aan de muur,")
+print("en als er één groene fles valt,")
+print("dan staan er 8 groene flessen aan de muur.")
+```
+
+Uitvoer:
+
+```
+10 groene flessen staan aan de muur,
+10 groene flessen staan aan de muur,
+en als er één groene fles valt,
+dan staan er 9 groene flessen aan de muur.
+
+9 groene flessen staan aan de muur,
+9 groene flessen staan aan de muur,
+en als er één groene fles valt,
+dan staan er 8 groene flessen aan de muur.
+```
+
+</details>
+
+## Voorspel
+
+<details>
+<summary>Hoeveel print-regels heb je nodig voor het hele lied, van 10 tot 0?</summary>
+
+Vijftig: tien coupletten van vier regels, en na elk couplet een lege regel.
+En wil iemand het lied vanaf 20 horen, dan begin je opnieuw. De twee
+coupletten die je nu hebt, lijken bijna helemaal op elkaar: alleen de
+getallen verschillen. Daar begin je in de volgende stap mee.
+
+</details>
+
+Door naar [stap 2: één variabele](./stap-2-variabele).

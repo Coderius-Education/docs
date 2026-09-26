@@ -1,0 +1,231 @@
+---
+sidebar_position: 5
+description: Schrijf methoden die de attributen van hun eigen object veranderen, met en zonder extra parameter.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 14e Methoden die het object veranderen
+
+In 14c veranderde je een attribuut van buitenaf: `rex.leeftijd = 4`. Een
+methode kan dat ook, via `self`:
+
+```python
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+    def verjaar(self):
+        self.leeftijd += 1
+        print(f"Hoera, {self.naam} is nu {self.leeftijd}.")
+
+
+rex = Hond("Rex", 3)
+rex.verjaar()
+rex.verjaar()
+```
+
+Uitvoer:
+
+```
+Hoera, Rex is nu 4.
+Hoera, Rex is nu 5.
+```
+
+Het voordeel: wie de hond gebruikt, hoeft niet te weten hoe een verjaardag
+werkt. Hij roept `verjaar()` aan en de hond regelt het.
+
+## Een methode met een parameter
+
+Na `self` mag een methode meer parameters hebben, net als een gewone functie.
+Die geef je wél zelf mee:
+
+```python
+class Hond:
+    def __init__(self, naam):
+        self.naam = naam
+        self.trucjes = []
+
+    def leer(self, trucje):
+        self.trucjes.append(trucje)
+
+
+rex = Hond("Rex")
+rex.leer("zitten")
+rex.leer("rollen")
+print(rex.trucjes)
+```
+
+Uitvoer:
+
+```
+['zitten', 'rollen']
+```
+
+Bij `rex.leer("zitten")` wordt `self` het object `rex` en `trucje` de tekst
+`"zitten"`.
+
+---
+
+## Er gaat iets mis
+
+```python
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+    def verjaar(self):
+        leeftijd += 1
+
+
+rex = Hond("Rex", 3)
+rex.verjaar()
+```
+
+Uitvoer:
+
+```
+UnboundLocalError: cannot access local variable 'leeftijd' where it is not associated with a value
+```
+
+Zonder `self.` zoekt Python een gewone variabele `leeftijd` in de methode, en
+die bestaat daar niet. De leeftijd van de hond heet in de methode
+`self.leeftijd`.
+
+---
+
+## Opdracht 14e.1: Bankrekening
+
+Maak een klasse `Rekening` met een `eigenaar` en een `saldo` dat op 0
+begint. Geef hem een methode `stort(bedrag)` die het saldo verhoogt, en een
+methode `toon()` die het saldo print.
+
+Verwachte uitvoer:
+
+```
+Saldo van Sara: 35 euro
+```
+
+<CodeExercise>{`class Rekening:
+    def __init__(self, eigenaar):
+        self.eigenaar = eigenaar
+        self.saldo = 0
+
+    def stort(self, bedrag):
+        print(f"Nog te doen: {bedrag} euro storten")
+
+    def toon(self):
+        print("Nog te doen: het saldo printen")
+
+
+rekening = Rekening("Sara")
+rekening.stort(20)
+rekening.stort(15)
+rekening.toon()`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+`stort` krijgt twee parameters, `self` en `bedrag`, en doet
+`self.saldo += bedrag`. `toon` heeft alleen `self` nodig.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+class Rekening:
+    def __init__(self, eigenaar):
+        self.eigenaar = eigenaar
+        self.saldo = 0
+
+    def stort(self, bedrag):
+        self.saldo += bedrag
+
+    def toon(self):
+        print(f"Saldo van {self.eigenaar}: {self.saldo} euro")
+
+
+rekening = Rekening("Sara")
+rekening.stort(20)
+rekening.stort(15)
+rekening.toon()
+```
+
+Uitvoer:
+
+```
+Saldo van Sara: 35 euro
+```
+
+</details>
+
+---
+
+## Opdracht 14e.2: Een stappenteller
+
+Maak een klasse `Stappenteller` met een attribuut `stappen` dat op 0 begint,
+en twee methoden: `stap()` telt er één stap bij, en `loop(aantal)` telt er
+`aantal` bij.
+
+Verwachte uitvoer:
+
+```
+2601 stappen
+```
+
+<CodeExercise>{`class Stappenteller:
+    def __init__(self):
+        self.stappen = 0
+
+    def stap(self):
+        print("Nog te doen: één stap tellen")
+
+    def loop(self, aantal):
+        print(f"Nog te doen: {aantal} stappen tellen")
+
+
+teller = Stappenteller()
+teller.stap()
+teller.loop(2600)
+print(f"{teller.stappen} stappen")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+`__init__` heeft hier alleen `self` nodig, want een nieuwe teller staat
+altijd op 0. `stap` doet `self.stappen += 1`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+class Stappenteller:
+    def __init__(self):
+        self.stappen = 0
+
+    def stap(self):
+        self.stappen += 1
+
+    def loop(self, aantal):
+        self.stappen += aantal
+
+
+teller = Stappenteller()
+teller.stap()
+teller.loop(2600)
+print(f"{teller.stappen} stappen")
+```
+
+Uitvoer:
+
+```
+2601 stappen
+```
+
+</details>

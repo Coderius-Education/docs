@@ -90,11 +90,19 @@ def _stapper_frames(frame):
     return uit
 
 
+def _stapper_turtle():
+    # De turtle van de speeltuin (turtle/module.ts), als de code hem gebruikt.
+    module = _stapper_sys.modules.get('turtle')
+    return module if hasattr(module, '_coderius_aantal') else None
+
+
 def _stapper_neem_op(bron, voorwerk=None):
     global _STAPPER_VERBORGEN_NAMEN
     stappen = []
     afgekapt = [False]
     uitvoer = _stapper_StringIO()
+    # De speeltuin zet een verse turtle klaar vóór de opname (zetTurtle).
+    turtle = _stapper_turtle()
 
     def noteer(frame, gebeurtenis):
         if len(stappen) >= _STAPPER_MAX_STAPPEN:
@@ -105,6 +113,7 @@ def _stapper_neem_op(bron, voorwerk=None):
             'gebeurtenis': gebeurtenis,
             'frames': _stapper_frames(frame),
             'uitvoerTot': len(uitvoer.getvalue()),
+            'tekenTot': turtle._coderius_aantal() if turtle else 0,
         })
 
     def tracer(frame, gebeurtenis, arg):
@@ -163,5 +172,6 @@ def _stapper_neem_op(bron, voorwerk=None):
         'uitvoer': uitvoer.getvalue(),
         'afgekapt': afgekapt[0],
         'fout': fout,
+        'tekening': _stapper_json.loads(turtle._coderius_tekening()) if turtle else None,
     })
 `;

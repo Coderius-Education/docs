@@ -1,0 +1,129 @@
+---
+sidebar_position: 5
+sidebar_label: 'Stap 5: def en parameters'
+description: Zet één couplet in een functie met het aantal flessen als parameter, en roep hem aan vanuit de loop.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Stap 5: Een functie voor één couplet (def en parameters)
+
+:::info
+Deze stap gebruikt functies met een parameter, uit [Functies](/docs/functies/functies) en [Parameters](/docs/functies/09a-parameters).
+:::
+
+Je loop doet nu twee dingen tegelijk: hij telt af, en hij weet hoe een
+couplet eruitziet. Dat tweede kan in een eigen functie. Dan zegt de loop
+alleen nog: zing het couplet van 3, dan van 2, dan van 1.
+
+```python
+def couplet(flessen):
+    print(f"Hier komt het couplet van {flessen}.")
+
+for flessen in range(3, 0, -1):
+    couplet(flessen)
+```
+
+Uitvoer:
+
+```
+Hier komt het couplet van 3.
+Hier komt het couplet van 2.
+Hier komt het couplet van 1.
+```
+
+## Opdracht: `couplet(flessen)`
+
+Verhuis alles uit je loop van stap 4, behalve `print()`, naar de functie
+`couplet`. De loop roept daarna alleen nog `couplet(flessen)` aan en print
+de lege regel.
+
+<CodeExercise>{`def couplet(flessen):
+    # zet hier je couplet uit stap 4
+    print(f"Hier komt het couplet van {flessen}.")
+
+for flessen in range(3, 0, -1):
+    couplet(flessen)
+    print()`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Alles wat nu in de functie staat, moet vier spaties inspringen onder
+`def`. De `if`-regels en de `print`-regels uit stap 4 stonden al vier
+spaties in onder `for`; in de functie blijven ze op dezelfde plek.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+def couplet(flessen):
+    nu = f"{flessen} groene flessen staan"
+    straks = f"staan er {flessen - 1} groene flessen"
+    if flessen == 1:
+        nu = "1 groene fles staat"
+    if flessen - 1 == 1:
+        straks = "staat er 1 groene fles"
+    elif flessen - 1 == 0:
+        straks = "staan er geen groene flessen meer"
+
+    print(f"{nu} aan de muur,")
+    print(f"{nu} aan de muur,")
+    print("en als er één groene fles valt,")
+    print(f"dan {straks} aan de muur.")
+
+for flessen in range(3, 0, -1):
+    couplet(flessen)
+    print()
+```
+
+Uitvoer:
+
+```
+3 groene flessen staan aan de muur,
+3 groene flessen staan aan de muur,
+en als er één groene fles valt,
+dan staan er 2 groene flessen aan de muur.
+
+2 groene flessen staan aan de muur,
+2 groene flessen staan aan de muur,
+en als er één groene fles valt,
+dan staat er 1 groene fles aan de muur.
+
+1 groene fles staat aan de muur,
+1 groene fles staat aan de muur,
+en als er één groene fles valt,
+dan staan er geen groene flessen meer aan de muur.
+```
+
+De uitvoer is precies die van stap 4. Aan wat het programma doet, is niets
+veranderd; alleen de code is anders verdeeld. Nu kun je ook los
+`couplet(7)` schrijven en krijg je alleen dat ene couplet.
+
+</details>
+
+## Er gaat iets mis
+
+```python
+couplet(3)
+
+def couplet(flessen):
+    print(f"Couplet {flessen}")
+```
+
+{/* foutmelding-van: blok-erboven */}
+
+```
+NameError: name 'couplet' is not defined. Did you mean: 'complex'?
+```
+
+**Oorzaak:** Python leest je programma van boven naar beneden. Op de eerste
+regel bestaat `couplet` nog niet: de `def` komt pas daarna. Python raadt
+erbij welke bekende naam je misschien bedoelde, maar hier zit hij ernaast:
+`complex` heeft niets met je lied te maken.
+
+**Oplossing:** zet de `def` bovenaan, en de aanroepen eronder.
+
+Door naar [stap 6: een functie die tekst teruggeeft](./stap-6-return).

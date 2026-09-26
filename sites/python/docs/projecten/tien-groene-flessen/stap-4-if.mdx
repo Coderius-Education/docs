@@ -1,0 +1,102 @@
+---
+sidebar_position: 4
+sidebar_label: 'Stap 4: if en elif'
+description: Laat het lied kloppen bij één fles en bij nul flessen, met if, elif en else.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Stap 4: Eén fles is anders (if en elif)
+
+:::info
+Deze stap gebruikt `if`, `elif` en `else`, uit [If en else](/docs/beslissen/05b-if-else) en [And, or en elif](/docs/beslissen/05c-and-or-elif).
+:::
+
+Het lied moet op twee plekken anders:
+
+- bij één fles: "1 groene fles staat" in plaats van "1 groene flessen staan";
+- als de laatste fles valt: "dan staan er geen groene flessen meer".
+
+Een handige truc om te testen: laat de loop bij 3 beginnen in plaats van
+bij 10. Dan zie je de lastige coupletten meteen, zonder eerst zeven
+gewone te lezen.
+
+## Opdracht: een kloppend lied
+
+Maak twee variabelen die per ronde de goede tekst krijgen:
+
+1. `nu`: wat er aan het begin van het couplet aan de muur staat, zoals
+   `"3 groene flessen staan"` of `"1 groene fles staat"`.
+2. `straks`: wat er na de val overblijft, zoals `"staan er 2 groene flessen"`,
+   `"staat er 1 groene fles"` of `"staan er geen groene flessen meer"`.
+
+Het couplet print ze al. Jij schrijft de `if`-regels die ze vullen.
+
+<CodeExercise>{`for flessen in range(3, 0, -1):
+    nu = f"{flessen} groene flessen staan"
+    straks = f"staan er {flessen - 1} groene flessen"
+    # schrijf hier je if-regels
+
+    print(f"{nu} aan de muur,")
+    print(f"{nu} aan de muur,")
+    print("en als er één groene fles valt,")
+    print(f"dan {straks} aan de muur.")
+    print()`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+De gewone tekst staat er al. Je hoeft alleen de uitzonderingen te
+schrijven: een `if` die `nu` of `straks` een andere waarde geeft,
+overschrijft de gewone. Voor `nu` is er één uitzondering: `flessen == 1`.
+Voor `straks` zijn er twee: er blijft er één over (`flessen - 1 == 1`) of
+er blijft niets over (`flessen - 1 == 0`). Twee uitzonderingen op dezelfde
+variabele schrijf je met `if` en `elif`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+for flessen in range(3, 0, -1):
+    nu = f"{flessen} groene flessen staan"
+    straks = f"staan er {flessen - 1} groene flessen"
+    if flessen == 1:
+        nu = "1 groene fles staat"
+    if flessen - 1 == 1:
+        straks = "staat er 1 groene fles"
+    elif flessen - 1 == 0:
+        straks = "staan er geen groene flessen meer"
+
+    print(f"{nu} aan de muur,")
+    print(f"{nu} aan de muur,")
+    print("en als er één groene fles valt,")
+    print(f"dan {straks} aan de muur.")
+    print()
+```
+
+Uitvoer:
+
+```
+3 groene flessen staan aan de muur,
+3 groene flessen staan aan de muur,
+en als er één groene fles valt,
+dan staan er 2 groene flessen aan de muur.
+
+2 groene flessen staan aan de muur,
+2 groene flessen staan aan de muur,
+en als er één groene fles valt,
+dan staat er 1 groene fles aan de muur.
+
+1 groene fles staat aan de muur,
+1 groene fles staat aan de muur,
+en als er één groene fles valt,
+dan staan er geen groene flessen meer aan de muur.
+```
+
+Klopt het? Zet de 3 dan terug op 10.
+
+</details>
+
+Door naar [stap 5: een functie voor één couplet](./stap-5-functie).

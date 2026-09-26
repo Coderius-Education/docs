@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-250 -200 500 400" role="img">
+<title>Een zwarte trap met gelijke treden die van linksonder naar rechtsboven loopt</title>
+<rect x="-250" y="-200" width="500" height="400" fill="white"/>
+<line x1="-150" y1="150" x2="-150" y2="120" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-150" y1="120" x2="-120" y2="120" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-120" y1="120" x2="-120" y2="90" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-120" y1="90" x2="-90" y2="90" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-90" y1="90" x2="-90" y2="60" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-90" y1="60" x2="-60" y2="60" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-60" y1="60" x2="-60" y2="30" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-60" y1="30" x2="-30" y2="30" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-30" y1="30" x2="-30" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-30" y1="0" x2="0" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="0" y1="0" x2="0" y2="-30" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="0" y1="-30" x2="30" y2="-30" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="30" y1="-30" x2="30" y2="-60" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="30" y1="-60" x2="60" y2="-60" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="60" y1="-60" x2="60" y2="-90" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="60" y1="-90" x2="90" y2="-90" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="90" y1="-90" x2="90" y2="-120" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="90" y1="-120" x2="120" y2="-120" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="120" y1="-120" x2="120" y2="-150" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="120" y1="-150" x2="150" y2="-150" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="150,-150 141,-155 143,-150 141,-145" fill="black" stroke="black" stroke-width="1"/>
+</svg>

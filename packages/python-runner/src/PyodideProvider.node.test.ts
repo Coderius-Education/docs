@@ -7,9 +7,11 @@ import {
   INVOER_PY,
   type PyodideInterface,
   getPyodide,
+  haalTekening,
   runPython,
   runPythonStream,
   setPyodideLoader,
+  tracePython,
 } from './PyodideProvider';
 
 // runPython (de gebufferde variant voor CodeExercise) liep uit de pas met
@@ -127,6 +129,60 @@ describe('runPython en runPythonStream met echte Pyodide in node', () => {
     // tests hierboven draaien al door die terugval.
     await runPython(pyodide, 'pass');
     expect(pyodide.runPython('import builtins\nbuiltins.input.__name__')).toBe('_coderius_input');
+  });
+
+  it('import turtle werkt, en de tekening komt na afloop mee', async () => {
+    const uit = await runPython(
+      pyodide,
+      'import turtle\nfor _ in range(4):\n    turtle.forward(100)\n    turtle.left(90)\nprint(turtle.pos())\nturtle.done()',
+    );
+    // Ook de echte turtle komt na vier keer 90 graden op -0.00 uit.
+    expect(uit).toBe('(-0.00,0.00)\n');
+    const tekening = haalTekening(pyodide);
+    expect(tekening?.gebeurtenissen.filter((g) => g.t === 'ga')).toHaveLength(4);
+  });
+
+  it('een run zonder turtle heeft geen tekening, ook niet die van de run ervoor', async () => {
+    await runPython(pyodide, 'import turtle\nturtle.forward(10)');
+    expect(haalTekening(pyodide)).not.toBeNull();
+    await runPython(pyodide, 'print(1)');
+    expect(haalTekening(pyodide)).toBeNull();
+  });
+
+  it('elke run begint met een leeg doek', async () => {
+    await runPython(pyodide, 'import turtle\nturtle.forward(10)');
+    await runPython(pyodide, 'import turtle\nturtle.forward(20)');
+    const ga = haalTekening(pyodide)?.gebeurtenissen.filter((g) => g.t === 'ga');
+    expect(ga).toEqual([expect.objectContaining({ x: 20 })]);
+  });
+
+  it('een turtle-fout wijst naar de regel van de leerling', async () => {
+    const uit = await runPython(pyodide, 'import turtle\nturtle.forward(10)\nturtle.color((1, 2))');
+    expect(uit).toContain('Fout op regel 3');
+    expect(uit).toContain('TurtleGraphicsError: bad color arguments: (1, 2)');
+    // Wat er vóór de fout getekend was, blijft zichtbaar.
+    expect(haalTekening(pyodide)?.gebeurtenissen.filter((g) => g.t === 'ga')).toHaveLength(1);
+  });
+
+  it('een tikfout in een turtle-commando geeft de melding die de les citeert', async () => {
+    // De les (straat-vol-huizen, stap 1) citeert deze melding; het blokkenscript
+    // controleert hem in CPython, dit in de Pyodide van de speeltuin zelf.
+    const uit = await runPython(pyodide, 'import turtle\nturtle.Forward(100)');
+    expect(uit).toBe(
+      "Fout op regel 2\nAttributeError: module 'turtle' has no attribute 'Forward'. Did you mean: 'forward'?",
+    );
+  });
+
+  it('stap voor stap: per stap hoeveel er getekend was, en de hele tekening', async () => {
+    const opname = await tracePython(
+      pyodide,
+      'import turtle\nturtle.forward(10)\nturtle.left(90)\nturtle.forward(10)',
+    );
+    const tot = opname.stappen.map((s) => s.tekenTot);
+    expect(tot).toEqual([...tot].sort((a, b) => (a ?? 0) - (b ?? 0)));
+    expect(tot[0]).toBe(0);
+    expect(tot.at(-1)).toBe(opname.tekening?.gebeurtenissen.length);
+    expect(opname.fout).toBeNull();
   });
 
   it('een run na een mislukte run werkt gewoon weer', async () => {

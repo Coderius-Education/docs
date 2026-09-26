@@ -1,0 +1,73 @@
+---
+sidebar_position: 2
+sidebar_label: 'Stap 2: variabelen en f-strings'
+description: Schrijf één couplet met een variabele en f-strings, zodat hetzelfde couplet voor elk aantal flessen werkt.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Stap 2: Eén variabele (variabelen en f-strings)
+
+:::info
+Deze stap gebruikt variabelen en f-strings, uit [Jij als variabele](/docs/basis/jij-als-variabele) en [f-strings](/docs/tekst/04a-f-strings).
+:::
+
+Het enige dat tussen twee coupletten verandert, is het aantal flessen. Zet
+dat aantal in een variabele, dan kan de rest hetzelfde blijven:
+
+```python
+flessen = 10
+print(f"{flessen} groene flessen staan aan de muur,")
+```
+
+Uitvoer:
+
+```
+10 groene flessen staan aan de muur,
+```
+
+Tussen de accolades mag je ook rekenen. `{flessen - 1}` wordt `9` als
+`flessen` 10 is.
+
+## Opdracht: één couplet voor elk aantal
+
+Schrijf het hele couplet met `flessen`, zonder één getal in je `print`-regels.
+Werkt het? Verander dan `10` in `7` en draai opnieuw: je krijgt het couplet
+van zeven flessen, zonder dat je verder iets aanpast.
+
+<CodeExercise>{`flessen = 10
+print(f"{flessen} groene flessen staan aan de muur,")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+De laatste regel noemt het aantal dat overblijft: één minder dan
+`flessen`. Reken dat uit tussen de accolades.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+flessen = 10
+print(f"{flessen} groene flessen staan aan de muur,")
+print(f"{flessen} groene flessen staan aan de muur,")
+print("en als er één groene fles valt,")
+print(f"dan staan er {flessen - 1} groene flessen aan de muur.")
+```
+
+Uitvoer:
+
+```
+10 groene flessen staan aan de muur,
+10 groene flessen staan aan de muur,
+en als er één groene fles valt,
+dan staan er 9 groene flessen aan de muur.
+```
+
+De derde regel verandert nooit, dus die heeft geen f-string nodig.
+
+</details>
+
+Door naar [stap 3: het hele lied](./stap-3-for-loop).

@@ -1,0 +1,304 @@
+---
+sidebar_position: 8
+description: Maak een klasse die zelf een lijst objecten bijhoudt, met methoden die met die lijst werken.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 14h Een klasse vol objecten
+
+In 14g stond de lijst honden los in je programma. Een asiel kan zelf ook een
+klasse zijn, met de lijst honden als attribuut:
+
+```python
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+
+class Asiel:
+    def __init__(self, naam):
+        self.naam = naam
+        self.honden = []
+
+    def neem_op(self, hond):
+        self.honden.append(hond)
+
+    def aantal(self):
+        return len(self.honden)
+
+
+asiel = Asiel("De Blije Staart")
+asiel.neem_op(Hond("Rex", 3))
+asiel.neem_op(Hond("Bello", 7))
+
+print(f"{asiel.naam} heeft {asiel.aantal()} honden.")
+```
+
+Uitvoer:
+
+```
+De Blije Staart heeft 2 honden.
+```
+
+Niets hiervan is nieuw: `self.honden = []` kent je uit 14c, `neem_op` is een
+methode met een parameter uit 14e, en `aantal` geeft iets terug zoals in 14f.
+Nieuw is alleen dat de lijst nu objecten bevat, en dat het asiel die zelf
+bijhoudt.
+
+## Een methode die door de lijst loopt
+
+Een methode van het asiel kan door zijn eigen lijst lopen, zoals je in 14g
+door een losse lijst liep:
+
+```python
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+
+class Asiel:
+    def __init__(self, naam):
+        self.naam = naam
+        self.honden = []
+
+    def neem_op(self, hond):
+        self.honden.append(hond)
+
+    def jonger_dan(self, jaar):
+        namen = []
+        for hond in self.honden:
+            if hond.leeftijd < jaar:
+                namen.append(hond.naam)
+        return namen
+
+
+asiel = Asiel("De Blije Staart")
+asiel.neem_op(Hond("Rex", 3))
+asiel.neem_op(Hond("Bello", 7))
+asiel.neem_op(Hond("Max", 1))
+
+print(asiel.jonger_dan(5))
+```
+
+Uitvoer:
+
+```
+['Rex', 'Max']
+```
+
+Wie `asiel` gebruikt, hoeft niet te weten hoe de honden bewaard worden. Hij
+roept `neem_op` en `jonger_dan` aan, en het asiel regelt de rest.
+
+---
+
+## Er gaat iets mis
+
+```python
+class Asiel:
+    def __init__(self):
+        self.honden = []
+
+    def neem_op(self, hond):
+        honden.append(hond)
+
+
+asiel = Asiel()
+asiel.neem_op("Rex")
+```
+
+Uitvoer:
+
+```
+NameError: name 'honden' is not defined. Did you mean: 'self.honden'?
+```
+
+De lijst hoort bij het asiel, dus in een methode heet hij `self.honden`.
+Zonder `self.` zoekt Python een losse variabele `honden`, en die is er niet.
+Python raadt het zelf al.
+
+---
+
+## Opdracht 14h.1: Een afspeellijst
+
+Maak een klasse `Afspeellijst` met een `naam` en een lege lijst `nummers`.
+Geef hem een methode `voeg_toe(nummer)` en een methode `totale_duur()` die
+teruggeeft hoeveel seconden alle nummers samen duren.
+
+Verwachte uitvoer:
+
+```
+Onderweg duurt 612 seconden
+```
+
+<CodeExercise>{`class Nummer:
+    def __init__(self, titel, seconden):
+        self.titel = titel
+        self.seconden = seconden
+
+
+class Afspeellijst:
+    def __init__(self, naam):
+        self.naam = naam
+        self.nummers = []
+
+    def voeg_toe(self, nummer):
+        print(f"Nog te doen: {nummer.titel} toevoegen")
+
+    def totale_duur(self):
+        return 0
+
+
+lijst = Afspeellijst("Onderweg")
+lijst.voeg_toe(Nummer("Zonnig", 201))
+lijst.voeg_toe(Nummer("Snelweg", 187))
+lijst.voeg_toe(Nummer("Thuis", 224))
+print(f"{lijst.naam} duurt {lijst.totale_duur()} seconden")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+`voeg_toe` doet `self.nummers.append(nummer)`. In `totale_duur` tel je in
+een loop `nummer.seconden` op bij een totaal dat op 0 begint.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+class Nummer:
+    def __init__(self, titel, seconden):
+        self.titel = titel
+        self.seconden = seconden
+
+
+class Afspeellijst:
+    def __init__(self, naam):
+        self.naam = naam
+        self.nummers = []
+
+    def voeg_toe(self, nummer):
+        self.nummers.append(nummer)
+
+    def totale_duur(self):
+        totaal = 0
+        for nummer in self.nummers:
+            totaal += nummer.seconden
+        return totaal
+
+
+lijst = Afspeellijst("Onderweg")
+lijst.voeg_toe(Nummer("Zonnig", 201))
+lijst.voeg_toe(Nummer("Snelweg", 187))
+lijst.voeg_toe(Nummer("Thuis", 224))
+print(f"{lijst.naam} duurt {lijst.totale_duur()} seconden")
+```
+
+Uitvoer:
+
+```
+Onderweg duurt 612 seconden
+```
+
+</details>
+
+---
+
+## Opdracht 14h.2: Minuten en seconden
+
+Geef `Afspeellijst` nog een methode `langste()` die het `Nummer`-object
+teruggeeft dat het langst duurt. Print daarna de titel en de duur in
+minuten en seconden.
+
+Daarvoor heb je twee rekentekens nodig die je nog niet kent. `//` deelt en
+gooit de rest weg: `224 // 60` is `3`. `%` geeft juist die rest: `224 % 60`
+is `44`.
+
+Verwachte uitvoer:
+
+```
+Langste nummer: Thuis (3:44)
+```
+
+<CodeExercise>{`class Nummer:
+    def __init__(self, titel, seconden):
+        self.titel = titel
+        self.seconden = seconden
+
+
+class Afspeellijst:
+    def __init__(self, naam):
+        self.naam = naam
+        self.nummers = []
+
+    def voeg_toe(self, nummer):
+        self.nummers.append(nummer)
+
+    def langste(self):
+        return self.nummers[0]
+
+
+lijst = Afspeellijst("Onderweg")
+lijst.voeg_toe(Nummer("Zonnig", 201))
+lijst.voeg_toe(Nummer("Snelweg", 187))
+lijst.voeg_toe(Nummer("Thuis", 224))
+
+nummer = lijst.langste()
+print(f"Langste nummer: {nummer.titel} ({nummer.seconden} s)")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Zoek het langste nummer zoals je in 14g.1 het dikste boek zocht. Voor
+de seconden gebruik je `:02` in de f-string, zodat je altijd twee cijfers
+krijgt: `f"{4:02}"` wordt `04`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+class Nummer:
+    def __init__(self, titel, seconden):
+        self.titel = titel
+        self.seconden = seconden
+
+
+class Afspeellijst:
+    def __init__(self, naam):
+        self.naam = naam
+        self.nummers = []
+
+    def voeg_toe(self, nummer):
+        self.nummers.append(nummer)
+
+    def langste(self):
+        langste = self.nummers[0]
+        for nummer in self.nummers:
+            if nummer.seconden > langste.seconden:
+                langste = nummer
+        return langste
+
+
+lijst = Afspeellijst("Onderweg")
+lijst.voeg_toe(Nummer("Zonnig", 201))
+lijst.voeg_toe(Nummer("Snelweg", 187))
+lijst.voeg_toe(Nummer("Thuis", 224))
+
+nummer = lijst.langste()
+minuten = nummer.seconden // 60
+seconden = nummer.seconden % 60
+print(f"Langste nummer: {nummer.titel} ({minuten}:{seconden:02})")
+```
+
+Uitvoer:
+
+```
+Langste nummer: Thuis (3:44)
+```
+
+</details>

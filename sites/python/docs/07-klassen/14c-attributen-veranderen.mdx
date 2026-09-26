@@ -1,0 +1,199 @@
+---
+sidebar_position: 3
+description: Verander een attribuut van een object, en geef een attribuut een vaste beginwaarde.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 14c Attributen veranderen
+
+Een attribuut lees je met een punt. Met dezelfde punt en een `=` geef je het
+een nieuwe waarde, net als bij een variabele:
+
+```python
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+
+rex = Hond("Rex", 3)
+bello = Hond("Bello", 7)
+
+rex.leeftijd = 4
+
+print(rex.leeftijd)
+print(bello.leeftijd)
+```
+
+Uitvoer:
+
+```
+4
+7
+```
+
+Alleen `rex` is ouder geworden. Elk object heeft zijn eigen attributen, dus
+`bello` blijft 7.
+
+## Een attribuut met een beginwaarde
+
+Niet elk attribuut hoeft een parameter te zijn. Een nieuwe hond heeft nog
+geen trucjes geleerd, dus die lijst begint voor elke hond leeg:
+
+```python
+class Hond:
+    def __init__(self, naam):
+        self.naam = naam
+        self.trucjes = []
+
+
+rex = Hond("Rex")
+rex.trucjes.append("zitten")
+rex.trucjes.append("pootje geven")
+
+print(rex.trucjes)
+```
+
+Uitvoer:
+
+```
+['zitten', 'pootje geven']
+```
+
+`trucjes` staat niet tussen de haakjes van `__init__`, dus je geeft hem niet
+mee bij `Hond("Rex")`. Hetzelfde kan met een getal, zoals een score die
+op 0 begint.
+
+---
+
+## Er gaat iets mis
+
+```python
+class Hond:
+    def __init__(self, naam):
+        self.naam = naam
+        trucjes = []
+
+
+rex = Hond("Rex")
+rex.trucjes.append("zitten")
+```
+
+Uitvoer:
+
+```
+AttributeError: 'Hond' object has no attribute 'trucjes'
+```
+
+{/* foutmelding-van: blok-erboven */}
+
+Zonder `self.` is `trucjes` een gewone variabele binnen `__init__`. Die is
+weg zodra `__init__` klaar is, en de hond heeft hem nooit gekregen. Schrijf
+`self.trucjes = []`.
+
+---
+
+## Opdracht 14c.1: Een speler met punten
+
+Maak een klasse `Speler` met een `naam` en een attribuut `punten` dat op 0
+begint. Geef de speler twee keer punten erbij en print de stand.
+
+Verwachte uitvoer:
+
+```
+Noor heeft 25 punten.
+```
+
+<CodeExercise>{`class Speler:
+    def __init__(self, naam):
+        self.naam = naam
+
+
+noor = Speler("Noor")
+print(f"{noor.naam} heeft nog geen punten.")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Zet `self.punten = 0` in `__init__`. Punten erbij geven doe je buiten de
+klasse met `noor.punten += 10`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+class Speler:
+    def __init__(self, naam):
+        self.naam = naam
+        self.punten = 0
+
+
+noor = Speler("Noor")
+noor.punten += 10
+noor.punten += 15
+print(f"{noor.naam} heeft {noor.punten} punten.")
+```
+
+Uitvoer:
+
+```
+Noor heeft 25 punten.
+```
+
+</details>
+
+---
+
+## Opdracht 14c.2: Een leerling met cijfers
+
+Maak een klasse `Leerling` met een `naam` en een lijst `cijfers` die leeg
+begint. Maak een leerling, voeg drie cijfers toe en print het gemiddelde.
+
+Verwachte uitvoer:
+
+```
+Sara heeft gemiddeld een 7.0
+```
+
+<CodeExercise>{`# Schrijf hier de klasse Leerling
+
+
+print("Nog te doen")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+`self.cijfers = []` in `__init__`, net als de trucjes van de hond. Het
+gemiddelde is `sum(sara.cijfers) / len(sara.cijfers)`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+class Leerling:
+    def __init__(self, naam):
+        self.naam = naam
+        self.cijfers = []
+
+
+sara = Leerling("Sara")
+sara.cijfers.append(7)
+sara.cijfers.append(8)
+sara.cijfers.append(6)
+
+gemiddelde = sum(sara.cijfers) / len(sara.cijfers)
+print(f"{sara.naam} heeft gemiddeld een {gemiddelde:.1f}")
+```
+
+Uitvoer:
+
+```
+Sara heeft gemiddeld een 7.0
+```
+
+</details>

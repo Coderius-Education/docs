@@ -1,0 +1,272 @@
+---
+sidebar_position: 10
+description: Sla objecten op als JSON, met een methode naar_dict die het object omzet naar een dictionary.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 14j Objecten opslaan als JSON
+
+<Voorkennis items={[
+  {to: '/docs/data/11c-geneste-dictionaries', label: '11c Geneste dictionaries'},
+  {to: '/docs/data/11d-json', label: '11d JSON: opslaan en inlezen'},
+]} />
+
+In [11d](/docs/data/11d-json) schreef je dictionaries en lijsten naar een
+bestand. Een object van je eigen klasse lukt zo niet:
+
+```python
+import json
+
+
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+
+rex = Hond("Rex", 3)
+print(json.dumps(rex))
+```
+
+Uitvoer:
+
+```
+TypeError: Object of type Hond is not JSON serializable
+```
+
+JSON kent tekst, getallen, `true`/`false`, `null`, lijsten en
+dictionaries. Een `Hond` kent hij niet. Je zet het object dus eerst zelf om
+naar een dictionary.
+
+## Van object naar dictionary
+
+Geef de klasse een methode `naar_dict()` die een dictionary teruggeeft met
+één sleutel per attribuut:
+
+```python
+import json
+
+
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+    def naar_dict(self):
+        return {"naam": self.naam, "leeftijd": self.leeftijd}
+
+
+rex = Hond("Rex", 3)
+print(json.dumps(rex.naar_dict()))
+```
+
+Uitvoer:
+
+```
+{"naam": "Rex", "leeftijd": 3}
+```
+
+Dat is de hele truc: de klasse zet zichzelf om naar iets wat JSON wél kent.
+
+## Een lijst objecten opslaan
+
+Heb je meer objecten, dan maak je in een loop een lijst dictionaries, en
+schrijf je die naar een bestand zoals in 11d:
+
+```python
+import json
+
+
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+    def naar_dict(self):
+        return {"naam": self.naam, "leeftijd": self.leeftijd}
+
+
+honden = [Hond("Rex", 3), Hond("Bello", 7)]
+
+lijst = []
+for hond in honden:
+    lijst.append(hond.naar_dict())
+
+with open("honden.json", "w") as bestand:
+    json.dump(lijst, bestand, indent=2)
+
+print(json.dumps(lijst))
+```
+
+Uitvoer:
+
+```
+[{"naam": "Rex", "leeftijd": 3}, {"naam": "Bello", "leeftijd": 7}]
+```
+
+In het bestand staat een gewone JSON-lijst met twee dictionaries. Wie het
+opent, ziet niets van je klasse; die bestaat alleen in je programma.
+
+---
+
+## Er gaat iets mis
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+import json
+
+
+class Hond:
+    def __init__(self, naam):
+        self.naam = naam
+
+    def naar_dict(self):
+        return {"naam": self.naam}
+
+
+print(json.dumps(Hond("Rex").naar_dict))
+```
+
+Uitvoer:
+
+```
+TypeError: Object of type method is not JSON serializable
+```
+
+Zonder haakjes geef je de methode zelf door, niet wat hij teruggeeft.
+Schrijf `naar_dict()`.
+
+---
+
+## Opdracht 14j.1: Een boek als dictionary
+
+Geef `Boek` een methode `naar_dict()`, zodat het programma de regel
+hieronder print.
+
+Verwachte uitvoer:
+
+```
+{"titel": "De Hobbit", "bladzijden": 320}
+```
+
+<CodeExercise>{`import json
+
+
+class Boek:
+    def __init__(self, titel, bladzijden):
+        self.titel = titel
+        self.bladzijden = bladzijden
+
+    def naar_dict(self):
+        return {}
+
+
+hobbit = Boek("De Hobbit", 320)
+print(json.dumps(hobbit.naar_dict()))`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+De sleutels zijn tekst (`"titel"`), de waarden de attributen
+(`self.titel`).
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+import json
+
+
+class Boek:
+    def __init__(self, titel, bladzijden):
+        self.titel = titel
+        self.bladzijden = bladzijden
+
+    def naar_dict(self):
+        return {"titel": self.titel, "bladzijden": self.bladzijden}
+
+
+hobbit = Boek("De Hobbit", 320)
+print(json.dumps(hobbit.naar_dict()))
+```
+
+Uitvoer:
+
+```
+{"titel": "De Hobbit", "bladzijden": 320}
+```
+
+</details>
+
+---
+
+## Opdracht 14j.2: De hele boekenkast
+
+Zet een lijst boeken om naar JSON, met `naar_dict()` uit 14j.1 en een loop.
+
+Verwachte uitvoer:
+
+```
+[{"titel": "De Hobbit", "bladzijden": 320}, {"titel": "Matilda", "bladzijden": 240}]
+```
+
+<CodeExercise>{`import json
+
+
+class Boek:
+    def __init__(self, titel, bladzijden):
+        self.titel = titel
+        self.bladzijden = bladzijden
+
+    def naar_dict(self):
+        return {"titel": self.titel, "bladzijden": self.bladzijden}
+
+
+boeken = [Boek("De Hobbit", 320), Boek("Matilda", 240)]
+
+lijst = []
+# Schrijf hier je loop
+print(json.dumps(lijst))`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Loop met `for boek in boeken:` en doe `lijst.append(boek.naar_dict())`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+import json
+
+
+class Boek:
+    def __init__(self, titel, bladzijden):
+        self.titel = titel
+        self.bladzijden = bladzijden
+
+    def naar_dict(self):
+        return {"titel": self.titel, "bladzijden": self.bladzijden}
+
+
+boeken = [Boek("De Hobbit", 320), Boek("Matilda", 240)]
+
+lijst = []
+for boek in boeken:
+    lijst.append(boek.naar_dict())
+print(json.dumps(lijst))
+```
+
+Uitvoer:
+
+```
+[{"titel": "De Hobbit", "bladzijden": 320}, {"titel": "Matilda", "bladzijden": 240}]
+```
+
+</details>

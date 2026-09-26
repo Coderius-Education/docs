@@ -104,9 +104,11 @@ controle tegen een andere numpy, dan zegt groen niets over wat een leerling ziet
 Afsluitcode 0 als alles slaagt, 1 zodra er iets misgaat.
 """
 
+import atexit
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -182,6 +184,39 @@ VERBORGEN_RE = re.compile(r'\bverborgen="([\w-]+)"')
 _VERBORGEN_CACHE: dict[str, str] = {}
 
 
+# De speeltuin heeft een eigen turtle (Pyodide heeft geen Tk); die staat in
+# packages/python-runner/src/turtle/module.ts. In de browser zit hij alleen in
+# sys.modules, zonder bestand. Hier net zo: een sitecustomize zet hem bij het
+# opstarten klaar. Een turtle.py in de werkmap zou Python 3.13 laten opmerken
+# dat hij de standaardmodule overschaduwt, en die opmerking komt dan in elke
+# foutmelding te staan, anders dan in de browser.
+TURTLE_TS = ROOT / "packages" / "python-runner" / "src" / "turtle" / "module.ts"
+_TURTLE_MAP: list[str] = []
+
+
+def turtle_py() -> str:
+    tekst = TURTLE_TS.read_text()
+    begin = tekst.index("String.raw`") + len("String.raw`")
+    return tekst[begin : tekst.rindex("`")]
+
+
+def omgeving() -> dict[str, str]:
+    """De omgeving van elk blok: die van de site, plus de turtle van de speeltuin."""
+    if not _TURTLE_MAP:
+        map_ = tempfile.mkdtemp(prefix="coderius-turtle-")
+        atexit.register(shutil.rmtree, map_, True)
+        (Path(map_) / "sitecustomize.py").write_text(
+            "import sys, types\n"
+            "_m = types.ModuleType('turtle')\n"
+            f"exec(compile({turtle_py()!r}, '<turtle>', 'exec'), _m.__dict__)\n"
+            "sys.modules['turtle'] = _m\n"
+        )
+        _TURTLE_MAP.append(map_)
+    env = {**os.environ, **SITE["env"]}
+    env["PYTHONPATH"] = os.pathsep.join(p for p in (_TURTLE_MAP[0], env.get("PYTHONPATH", "")) if p)
+    return env
+
+
 def lees_verborgen(naam: str) -> str:
     """De verborgen code met deze naam, uit de map van de site (zie SITES)."""
     if naam not in _VERBORGEN_CACHE:
@@ -224,7 +259,8 @@ VARIEERT_RE = re.compile(r"\{/\*\s*uitvoer-varieert:.*?\*/\}\s*$")
 # Alleen een commentaar achter een print() op dezelfde regel telt als belofte.
 BELOFTE_RE = re.compile(r"^\s*print\(.*\)\s+#\s*(.+?)\s*$")
 # Een uitvoerblok dat hierop eindigt hoort bij code die moet omvallen.
-FOUT_RE = re.compile(r"^[A-Z]\w*(Error|Exception):")
+# Een melding kan een module voor zijn naam hebben: json.decoder.JSONDecodeError.
+FOUT_RE = re.compile(r"^(?:[a-z_]\w*\.)*[A-Z]\w*(Error|Exception):")
 # Een losse foutmelding wijst aan waaruit hij te reproduceren is; zonder zo'n
 # marker staat er een belofte over Python die niemand nakijkt.
 # Zonder re.S: `.` mag geen regels overspringen, anders rekt `(.+?)` zich uit tot
@@ -303,6 +339,9 @@ def zelftest() -> None:
         " />\n\n<details>\n<summary>Wat zie je?</summary>\n\nOngeveer dit, want de lijst is elke keer anders:\n\n"
     )
     assert not hoort_bij_elkaar("\n\n## Er gaat iets mis\n\n")
+    assert FOUT_RE.match("KeyError: 'leeftijd'")
+    assert FOUT_RE.match("json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)")
+    assert not FOUT_RE.match("Sara: 120")
     paden = ["sites/algorithms/docs/pagerank/bouwen/06-itereren.mdx", "sites/python/docs/04-herhalen/06a-for-loop.mdx"]
     assert achterstand_van_deze_site(paden, "sites/python/docs") == [paden[1]]
     assert achterstand_van_deze_site(paden, "sites/algorithms/docs") == [paden[0]]
@@ -314,6 +353,14 @@ def zelftest() -> None:
     assert "niets te bouwen" in beoordeel_startcode(0, "")
     assert "TypeError" in beoordeel_startcode(1, "TypeError: 'ellipsis' object is not iterable")
     assert "in plaats van op een test" in beoordeel_startcode(1, "NotImplementedError")
+    # De turtle van de speeltuin staat klaar, en draait zonder venster.
+    r = subprocess.run(
+        [sys.executable, "-c", "import turtle; turtle.forward(10); print(turtle.pos())"],
+        capture_output=True,
+        text=True,
+        env=omgeving(),
+    )
+    assert r.stdout == "(10.00,0.00)\n", r.stderr
 
 
 def inspring_weg(code: str) -> str:
@@ -622,14 +669,18 @@ def draai(bron, regel, code, verwacht, varieert=False, voorplak=0) -> str | None
     if fout:
         return fout + (" (er draait code vóór dit blok mee: draaien-met of verborgen)" if voorplak else "")
 
+    # Elk blok in een eigen lege map: de les over JSON schrijft bestanden
+    # (scores.json), en die horen niet in de repo of in het volgende blok.
     try:
-        r = subprocess.run(
-            [sys.executable, "-c", code],
-            capture_output=True,
-            text=True,
-            timeout=TIJDSLIMIET,
-            env={**os.environ, **SITE["env"]},
-        )
+        with tempfile.TemporaryDirectory() as werkmap:
+            r = subprocess.run(
+                [sys.executable, "-c", code],
+                capture_output=True,
+                text=True,
+                timeout=TIJDSLIMIET,
+                cwd=werkmap,
+                env=omgeving(),
+            )
     except subprocess.TimeoutExpired:
         return f"{bron}:{regel}: blok draait na {TIJDSLIMIET}s nog — een lus zonder eind?"
 
@@ -734,13 +785,15 @@ def draai_startcode(bron, regel, code) -> str | None:
     if fout:
         return fout
     try:
-        r = subprocess.run(
-            [sys.executable, "-c", code],
-            capture_output=True,
-            text=True,
-            timeout=TIJDSLIMIET,
-            env={**os.environ, **SITE["env"]},
-        )
+        with tempfile.TemporaryDirectory() as werkmap:
+            r = subprocess.run(
+                [sys.executable, "-c", code],
+                capture_output=True,
+                text=True,
+                timeout=TIJDSLIMIET,
+                cwd=werkmap,
+                env=omgeving(),
+            )
     except subprocess.TimeoutExpired:
         oordeel = f"de startcode draait na {TIJDSLIMIET}s nog; in de browser bevriest de tab"
     else:
@@ -775,7 +828,7 @@ def los_fragment(code: str) -> tuple[int, str]:
                 text=True,
                 timeout=TIJDSLIMIET,
                 cwd=werkmap,
-                env={**os.environ, **SITE["env"]},
+                env=omgeving(),
             )
         except subprocess.TimeoutExpired:
             return -1, f"draait na {TIJDSLIMIET}s nog"

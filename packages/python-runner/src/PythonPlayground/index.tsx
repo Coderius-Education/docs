@@ -5,10 +5,13 @@ import {
   type Opname,
   type PyodideInterface,
   getPyodide,
+  haalTekening,
   runPython,
   tracePython,
 } from '../PyodideProvider';
 import Stapper from '../Stapper';
+import Tekening from '../Tekening';
+import type { Tekening as TekeningData } from '../Tekening/tekening';
 const DEFAULT_CODE = `# Schrijf hier je Python code
 print("Hallo, wereld!")
 
@@ -26,6 +29,7 @@ export default function PythonPlayground(): React.JSX.Element {
   const [isLoading, setIsLoading] = useState(true);
   const [isRunning, setIsRunning] = useState(false);
   const [opname, setOpname] = useState<Opname | null>(null);
+  const [tekening, setTekening] = useState<TekeningData | null>(null);
   // De code van het moment van opnemen: de leerling mag intussen doortypen, en
   // dan zouden de regelnummers uit de opname naar de verkeerde regels wijzen.
   const [opnameCode, setOpnameCode] = useState('');
@@ -56,9 +60,11 @@ export default function PythonPlayground(): React.JSX.Element {
     setIsRunning(true);
     setOutput('');
     setOpname(null);
+    setTekening(null);
     try {
       const result = await runPython(pyodideRef.current, code);
       setOutput(result);
+      setTekening(haalTekening(pyodideRef.current));
     } catch (err) {
       setOutput(`Fout:\n${err instanceof Error ? err.message : String(err)}`);
     } finally {
@@ -70,6 +76,7 @@ export default function PythonPlayground(): React.JSX.Element {
     if (!pyodideRef.current || isRunning) return;
     setIsRunning(true);
     setOutput('');
+    setTekening(null);
     try {
       setOpnameCode(code);
       setOpname(await tracePython(pyodideRef.current, code));
@@ -125,6 +132,7 @@ export default function PythonPlayground(): React.JSX.Element {
         <div className={styles.hint}>Tip: Ctrl+Enter om uit te voeren, Tab voor inspringen</div>
       </div>
       {opname && <Stapper code={opnameCode} opname={opname} onSluiten={() => setOpname(null)} />}
+      {tekening && <Tekening tekening={tekening} />}
       <div className={styles.outputSection}>
         <div className={styles.toolbar}>
           <span className={styles.label}>Output</span>

@@ -1,0 +1,223 @@
+---
+sidebar_position: 7
+description: Bewaar objecten in een lijst, loop erdoorheen en zoek er een uit.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 14g Objecten in een lijst
+
+Eén hond is leuk, maar een asiel heeft er tientallen. Objecten kun je net
+als getallen en teksten in een lijst stoppen, en er met een for-loop
+doorheen lopen.
+
+## Een lijst met objecten
+
+```python
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+    def blaf(self):
+        print(f"{self.naam} zegt: Woef!")
+
+
+honden = [Hond("Rex", 3), Hond("Bello", 7), Hond("Max", 1)]
+
+for hond in honden:
+    hond.blaf()
+```
+
+Uitvoer:
+
+```
+Rex zegt: Woef!
+Bello zegt: Woef!
+Max zegt: Woef!
+```
+
+Elke ronde is `hond` één object uit de lijst, met zijn eigen attributen en
+methoden.
+
+## Zoeken in een lijst objecten
+
+Zoeken gaat zoals je in les 11c zocht naar het hoogste gemiddelde: houd de
+beste tot nu toe bij, en vergelijk via de attributen.
+
+```python
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+
+honden = [Hond("Rex", 3), Hond("Bello", 7), Hond("Max", 1)]
+
+oudste = honden[0]
+for hond in honden:
+    if hond.leeftijd > oudste.leeftijd:
+        oudste = hond
+
+print(f"De oudste hond is {oudste.naam}.")
+```
+
+Uitvoer:
+
+```
+De oudste hond is Bello.
+```
+
+`oudste` is geen kopie, maar hetzelfde object als in de lijst. Verander je
+`oudste.naam`, dan verandert de hond in de lijst mee.
+
+---
+
+## Er gaat iets mis
+
+**Een attribuut van de lijst vragen in plaats van van een object**
+
+```python
+class Hond:
+    def __init__(self, naam):
+        self.naam = naam
+
+
+honden = [Hond("Rex"), Hond("Bello")]
+print(honden.naam)
+```
+
+Uitvoer:
+
+```
+AttributeError: 'list' object has no attribute 'naam'
+```
+
+`honden` is een lijst, en een lijst heeft geen naam. Neem eerst één hond,
+`honden[0].naam`, of loop erdoorheen.
+
+---
+
+## Opdracht 14g.1: Het dikste boek
+
+Gegeven is een lijst met boeken. Print de titel van het boek met de meeste
+bladzijden.
+
+Verwachte uitvoer:
+
+```
+Het dikste boek is Koning van Katoren (440 blz.)
+```
+
+<CodeExercise>{`class Boek:
+    def __init__(self, titel, bladzijden):
+        self.titel = titel
+        self.bladzijden = bladzijden
+
+
+boeken = [
+    Boek("De Hobbit", 320),
+    Boek("Koning van Katoren", 440),
+    Boek("Matilda", 240),
+]
+
+# Schrijf hier je code`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Begin met `dikste = boeken[0]` en vergelijk in de loop
+`boek.bladzijden` met `dikste.bladzijden`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+class Boek:
+    def __init__(self, titel, bladzijden):
+        self.titel = titel
+        self.bladzijden = bladzijden
+
+
+boeken = [
+    Boek("De Hobbit", 320),
+    Boek("Koning van Katoren", 440),
+    Boek("Matilda", 240),
+]
+
+dikste = boeken[0]
+for boek in boeken:
+    if boek.bladzijden > dikste.bladzijden:
+        dikste = boek
+
+print(f"Het dikste boek is {dikste.titel} ({dikste.bladzijden} blz.)")
+```
+
+Uitvoer:
+
+```
+Het dikste boek is Koning van Katoren (440 blz.)
+```
+
+</details>
+
+---
+
+## Opdracht 14g.2: Jonge honden tellen
+
+Tel hoeveel honden in de lijst jonger zijn dan 5 jaar.
+
+Verwachte uitvoer:
+
+```
+2 honden zijn jonger dan 5.
+```
+
+<CodeExercise>{`class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+
+honden = [Hond("Rex", 3), Hond("Bello", 7), Hond("Max", 1)]
+
+aantal = 0
+# Schrijf hier je loop
+print(f"{aantal} honden zijn jonger dan 5.")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Loop met `for hond in honden:` en tel er één bij `aantal` op als
+`hond.leeftijd < 5`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+
+honden = [Hond("Rex", 3), Hond("Bello", 7), Hond("Max", 1)]
+
+aantal = 0
+for hond in honden:
+    if hond.leeftijd < 5:
+        aantal += 1
+print(f"{aantal} honden zijn jonger dan 5.")
+```
+
+Uitvoer:
+
+```
+2 honden zijn jonger dan 5.
+```
+
+</details>

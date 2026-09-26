@@ -4,6 +4,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { HighlightedEditor } from '../HighlightedEditor';
 import type { Opname, PyodideInterface } from '../PyodideProvider';
 import Stapper from '../Stapper';
+import Tekening from '../Tekening';
+import type { Tekening as TekeningData } from '../Tekening/tekening';
 import styles from './styles.module.css';
 
 function CodeExerciseInner({ starterCode }: { starterCode: string }) {
@@ -12,6 +14,7 @@ function CodeExerciseInner({ starterCode }: { starterCode: string }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isRunning, setIsRunning] = useState(false);
   const [opname, setOpname] = useState<Opname | null>(null);
+  const [tekening, setTekening] = useState<TekeningData | null>(null);
   // De code zoals hij was toen de opname werd gemaakt: de leerling mag intussen
   // doortypen, en dan zouden de regelnummers uit de opname naar de verkeerde
   // regels wijzen.
@@ -46,10 +49,12 @@ function CodeExerciseInner({ starterCode }: { starterCode: string }) {
     setIsRunning(true);
     setOutput('');
     setOpname(null);
+    setTekening(null);
     try {
-      const { runPython } = await import('../PyodideProvider');
+      const { haalTekening, runPython } = await import('../PyodideProvider');
       const result = await runPython(pyodideRef.current, code);
       setOutput(result);
+      setTekening(haalTekening(pyodideRef.current));
     } catch (err) {
       setOutput(err instanceof Error ? err.message : String(err));
     } finally {
@@ -61,6 +66,7 @@ function CodeExerciseInner({ starterCode }: { starterCode: string }) {
     if (!pyodideRef.current || isRunning) return;
     setIsRunning(true);
     setOutput('');
+    setTekening(null);
     try {
       const { tracePython } = await import('../PyodideProvider');
       setOpnameCode(code);
@@ -125,6 +131,7 @@ function CodeExerciseInner({ starterCode }: { starterCode: string }) {
         />
       </div>
       {opname && <Stapper code={opnameCode} opname={opname} onSluiten={() => setOpname(null)} />}
+      {tekening && <Tekening tekening={tekening} />}
       {output && <pre className={styles.output}>{output}</pre>}
       {isLoading && <div className={styles.loading}>Python wordt geladen...</div>}
     </div>

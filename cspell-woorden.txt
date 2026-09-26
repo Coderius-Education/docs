@@ -29,6 +29,7 @@ binnenín
 bitsandparts
 bonregel
 branchnaam
+browsertab
 browsertabblad
 bént
 canvaslayer
@@ -153,6 +154,7 @@ lespagina
 Lesplanning
 levelshifter
 levelwissel
+lightbot
 lijnvolgen
 Lijnvolgen
 linestyle
@@ -164,6 +166,7 @@ loopen
 mapnaam
 mapnamen
 mapstructuur
+meekrimpen
 meerregelig
 meeschaalt
 meeschalen
@@ -265,11 +268,13 @@ Returnt
 reversen
 richtingsbit
 Ritwick
+robotkop
 rondklikt
 rondstuitert
 rondtrip
 rvspaleis
 schermvullende
+schildpadstraat
 screenreader
 Screenreaders
 screenreaders
@@ -325,6 +330,7 @@ tokenvelden
 tscn
 Tussenwaarden
 tutorialpagina
+twaalfhoek
 tússen
 UART
 uitgeremd
@@ -340,6 +346,7 @@ voedingspin
 voorbeeldgraph
 voorgevuld
 vooruitrekenen
+vulkleur
 vórige
 WASD
 Wayback

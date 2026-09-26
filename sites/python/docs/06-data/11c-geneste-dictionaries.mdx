@@ -1,0 +1,323 @@
+---
+sidebar_position: 5
+description: Stop een dictionary of een lijst in een dictionary, zoek waardes op met twee sleutels en loop door geneste gegevens.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 11c Geneste dictionaries
+
+Een dictionary koppelt een sleutel aan een waarde. Tot nu toe was die
+waarde een getal of een tekst. Maar een waarde mag alles zijn: ook een
+lijst, of weer een dictionary. Zo bewaar je per leerling meerdere
+gegevens in één variabele:
+
+```python
+klas = {
+    "Sara": {"leeftijd": 15, "cijfers": [7, 8, 6]},
+    "Alex": {"leeftijd": 14, "cijfers": [9, 5, 8]},
+}
+
+print(klas["Sara"])
+```
+
+Uitvoer:
+
+```
+{'leeftijd': 15, 'cijfers': [7, 8, 6]}
+```
+
+`klas["Sara"]` is zelf een dictionary. Zo'n dictionary in een dictionary
+heet **genest**.
+
+## Opzoeken met twee sleutels
+
+Wil je alleen de leeftijd van Sara, dan zet je de tweede sleutel er
+direct achter:
+
+{/* draaien-met: blok-erboven */}
+
+```python
+print(klas["Sara"]["leeftijd"])   # 15
+print(klas["Alex"]["cijfers"])    # [9, 5, 8]
+print(klas["Alex"]["cijfers"][0]) # 9
+```
+
+Lees het van links naar rechts: eerst zoek je `"Alex"` op in `klas`, in wat
+daaruit komt zoek je `"cijfers"` op, en van die lijst neem je plek `0`.
+
+## Aanpassen en toevoegen
+
+Aanpassen gaat op dezelfde manier. Aan de lijst met cijfers voeg je met
+`.append()` een cijfer toe, en een nieuwe leerling is een nieuwe sleutel
+met een eigen dictionary:
+
+```python
+klas = {
+    "Sara": {"leeftijd": 15, "cijfers": [7, 8, 6]},
+    "Alex": {"leeftijd": 14, "cijfers": [9, 5, 8]},
+}
+
+klas["Sara"]["leeftijd"] = 16
+klas["Sara"]["cijfers"].append(9)
+klas["Noor"] = {"leeftijd": 15, "cijfers": []}
+
+print(klas["Sara"])
+print(len(klas))
+```
+
+Uitvoer:
+
+```
+{'leeftijd': 16, 'cijfers': [7, 8, 6, 9]}
+3
+```
+
+## Door geneste gegevens loopen
+
+Met `.items()` krijg je per ronde de naam én de dictionary met gegevens.
+Daaruit haal je met een tweede sleutel wat je nodig hebt:
+
+```python
+klas = {
+    "Sara": {"leeftijd": 15, "cijfers": [7, 8, 6]},
+    "Alex": {"leeftijd": 14, "cijfers": [9, 5, 8]},
+}
+
+for naam, gegevens in klas.items():
+    gemiddelde = sum(gegevens["cijfers"]) / len(gegevens["cijfers"])
+    print(f"{naam} ({gegevens['leeftijd']}): gemiddeld {gemiddelde:.1f}")
+```
+
+Uitvoer:
+
+```
+Sara (15): gemiddeld 7.0
+Alex (14): gemiddeld 7.3
+```
+
+Binnen de f-string staat `'leeftijd'` tussen enkele aanhalingstekens,
+omdat de f-string zelf al tussen dubbele staat. `:.1f` rondt af op één
+decimaal.
+
+## Een lijst van dictionaries
+
+Andersom kan ook: een lijst waarin elk element een dictionary is. Dat zie
+je veel, bijvoorbeeld bij een lijst met scores:
+
+```python
+scores = [
+    {"naam": "Sara", "punten": 120},
+    {"naam": "Alex", "punten": 95},
+]
+
+for score in scores:
+    print(f"{score['naam']}: {score['punten']}")
+```
+
+Uitvoer:
+
+```
+Sara: 120
+Alex: 95
+```
+
+Een dictionary gebruik je als je iets opzoekt met een naam, een lijst als
+de volgorde telt of je alles langsloopt. Geneste gegevens mengen die twee
+zo dat het bij je gegevens past.
+
+---
+
+## Er gaat iets mis
+
+**Een sleutel op de verkeerde laag**
+
+```python
+klas = {"Sara": {"leeftijd": 15}}
+print(klas["leeftijd"])
+```
+
+Uitvoer:
+
+```
+KeyError: 'leeftijd'
+```
+
+`"leeftijd"` is geen sleutel van `klas`, maar van de dictionary in
+`klas["Sara"]`. Schrijf eerst de naam, dan de leeftijd:
+`klas["Sara"]["leeftijd"]`.
+
+**Een lijst opzoeken met een tekst**
+
+```python
+scores = [{"naam": "Sara", "punten": 120}]
+print(scores["naam"])
+```
+
+Uitvoer:
+
+```
+TypeError: list indices must be integers or slices, not str
+```
+
+`scores` is een lijst, en een lijst heeft plekken (0, 1, 2), geen
+sleutels. Neem eerst een element met `scores[0]` en zoek daarin
+`["naam"]` op.
+
+---
+
+## Opdracht 11c.1: Boekenkast
+
+Gegeven is de boekenkast hieronder. Print de schrijver van "De Hobbit" en
+het aantal bladzijden van "Matilda".
+
+Verwachte uitvoer:
+
+```
+J.R.R. Tolkien
+240
+```
+
+<CodeExercise>{`boekenkast = {
+    "De Hobbit": {"schrijver": "J.R.R. Tolkien", "bladzijden": 320},
+    "Matilda": {"schrijver": "Roald Dahl", "bladzijden": 240},
+}
+
+# Schrijf hier je code`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Eerst de titel van het boek, dan de sleutel binnen dat boek:
+`boekenkast["De Hobbit"]["..."]`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+boekenkast = {
+    "De Hobbit": {"schrijver": "J.R.R. Tolkien", "bladzijden": 320},
+    "Matilda": {"schrijver": "Roald Dahl", "bladzijden": 240},
+}
+
+print(boekenkast["De Hobbit"]["schrijver"])
+print(boekenkast["Matilda"]["bladzijden"])
+```
+
+Uitvoer:
+
+```
+J.R.R. Tolkien
+240
+```
+
+</details>
+
+---
+
+## Opdracht 11c.2: Een boek erbij
+
+Voeg aan dezelfde boekenkast een boek naar keuze toe, met schrijver en
+aantal bladzijden. Print daarna van elk boek een regel zoals
+`De Hobbit, door J.R.R. Tolkien (320 blz.)`.
+
+<CodeExercise>{`boekenkast = {
+    "De Hobbit": {"schrijver": "J.R.R. Tolkien", "bladzijden": 320},
+    "Matilda": {"schrijver": "Roald Dahl", "bladzijden": 240},
+}
+
+# Schrijf hier je code`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Een nieuw boek is een nieuwe sleutel: `boekenkast["Titel"] = {...}`. Loop
+daarna met `for titel, boek in boekenkast.items():`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+boekenkast = {
+    "De Hobbit": {"schrijver": "J.R.R. Tolkien", "bladzijden": 320},
+    "Matilda": {"schrijver": "Roald Dahl", "bladzijden": 240},
+}
+
+boekenkast["Koning van Katoren"] = {"schrijver": "Jan Terlouw", "bladzijden": 224}
+
+for titel, boek in boekenkast.items():
+    print(f"{titel}, door {boek['schrijver']} ({boek['bladzijden']} blz.)")
+```
+
+Uitvoer:
+
+```
+De Hobbit, door J.R.R. Tolkien (320 blz.)
+Matilda, door Roald Dahl (240 blz.)
+Koning van Katoren, door Jan Terlouw (224 blz.)
+```
+
+</details>
+
+---
+
+## Opdracht 11c.3: Wie heeft het hoogste gemiddelde?
+
+Loop door `klas` en print de naam van wie het hoogste
+gemiddelde cijfer heeft.
+
+Verwachte uitvoer:
+
+```
+Noor heeft het hoogste gemiddelde: 8.0
+```
+
+<CodeExercise>{`klas = {
+    "Sara": {"leeftijd": 15, "cijfers": [7, 8, 6]},
+    "Alex": {"leeftijd": 14, "cijfers": [9, 5, 8]},
+    "Noor": {"leeftijd": 15, "cijfers": [8, 8, 8]},
+}
+
+# Schrijf hier je code`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Houd twee variabelen bij: de beste naam tot nu toe en het beste
+gemiddelde tot nu toe. Begin met het gemiddelde op `0` en vervang beide
+als je een hoger gemiddelde tegenkomt.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+klas = {
+    "Sara": {"leeftijd": 15, "cijfers": [7, 8, 6]},
+    "Alex": {"leeftijd": 14, "cijfers": [9, 5, 8]},
+    "Noor": {"leeftijd": 15, "cijfers": [8, 8, 8]},
+}
+
+beste_naam = ""
+beste_gemiddelde = 0
+for naam, gegevens in klas.items():
+    gemiddelde = sum(gegevens["cijfers"]) / len(gegevens["cijfers"])
+    if gemiddelde > beste_gemiddelde:
+        beste_naam = naam
+        beste_gemiddelde = gemiddelde
+
+print(f"{beste_naam} heeft het hoogste gemiddelde: {beste_gemiddelde:.1f}")
+```
+
+Uitvoer:
+
+```
+Noor heeft het hoogste gemiddelde: 8.0
+```
+
+</details>
