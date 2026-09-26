@@ -81,3 +81,54 @@ describe('projecten in de python-cursus', () => {
     });
   }
 });
+
+// Het overzicht zegt per algoritme wat je na Tien groene flessen al kent en
+// wat je nog nodig hebt. Die tabel is afgeleid van de conceptenkaart van de
+// algoritmes-cursus; verandert daar de voorkennis, dan moet de tabel mee.
+describe('projecten: de tabel met algoritmes', async () => {
+  const { pythonConcepten, voorkennisPerAlgoritme } = await import(
+    '../../../algorithms/src/data/conceptenkaart'
+  );
+  const { algoritmes } = await import('../../../algorithms/src/data/algorithms');
+  const overzicht = readFileSync(join(PROJECTEN, 'index.mdx'), 'utf8');
+  const sectie = overzicht.slice(overzicht.indexOf('## En daarna: algoritmes'));
+
+  // De concepten die Tien groene flessen gebruikt, als id's van de kaart.
+  const UIT_HET_PROJECT = new Set([
+    'f-strings',
+    'if-else',
+    'and-or-elif',
+    'for-loop',
+    'functies',
+    'parameters',
+    'return',
+  ]);
+
+  const rijen = new Map(
+    [
+      ...sectie.matchAll(
+        /^\| <SiteLink site="algorithms" to="([^"]+)">[^<]+<\/SiteLink> \| (.*) \| (.*) \|$/gm,
+      ),
+    ].map((m) => [m[1], { al: m[2], nog: m[3] }]),
+  );
+
+  it('elk algoritme staat erin, met de link naar zijn eerste les', () => {
+    expect([...rijen.keys()]).toEqual(algoritmes.map((a: { startPad: string }) => a.startPad));
+  });
+
+  it('per algoritme kloppen "ken je al" en "nog nodig" met de conceptenkaart', () => {
+    for (const a of algoritmes as { slug: string; startPad: string }[]) {
+      const nodig = new Set(voorkennisPerAlgoritme[a.slug]);
+      const volgorde = (pythonConcepten as { id: string; label: string; to: string }[]).filter(
+        (c) => nodig.has(c.id),
+      );
+      const al = volgorde.filter((c) => UIT_HET_PROJECT.has(c.id)).map((c) => c.label);
+      const nog = volgorde
+        .filter((c) => !UIT_HET_PROJECT.has(c.id))
+        .map((c) => `[${c.label}](${c.to})`);
+      const rij = rijen.get(a.startPad);
+      expect(rij?.al, a.slug).toBe(al.length ? al.join(', ') : '–');
+      expect(rij?.nog, a.slug).toBe(nog.length ? nog.join(', ') : 'niets');
+    }
+  });
+});
