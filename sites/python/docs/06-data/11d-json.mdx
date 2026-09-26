@@ -1,0 +1,386 @@
+---
+sidebar_position: 6
+description: Sla dictionaries en lijsten op als JSON in een bestand, en lees ze later weer in met de module json.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 11d JSON: opslaan en inlezen
+
+Alles wat je programma in variabelen bewaart, is weg zodra het stopt. Een
+highscore, een lijst met taken of de gegevens van een klas wil je vaak
+bewaren voor de volgende keer. Daarvoor schrijf je ze naar een bestand, in
+een vorm die **JSON** heet.
+
+## Van dictionary naar JSON
+
+JSON is tekst die er bijna precies zo uitziet als een Python-dictionary of
+-lijst. De module `json` zet je gegevens om naar die tekst met
+`json.dumps()`:
+
+```python
+import json
+
+leerling = {"naam": "Sara", "klas": "3B", "actief": True, "hobby": None}
+
+tekst = json.dumps(leerling, indent=2)
+print(tekst)
+```
+
+Uitvoer:
+
+```
+{
+  "naam": "Sara",
+  "klas": "3B",
+  "actief": true,
+  "hobby": null
+}
+```
+
+Met `indent=2` krijg je elke sleutel op een eigen regel, twee spaties
+ingesprongen. Kijk ook naar de kleine verschillen met Python: JSON schrijft
+`true` en `false` met een kleine letter, `None` heet `null`, en tekst staat
+altijd tussen dubbele aanhalingstekens.
+
+## Van JSON terug naar een dictionary
+
+Andersom doet `json.loads()` het: van tekst naar een dictionary of lijst
+waar je mee verder kunt.
+
+```python
+import json
+
+tekst = '{"naam": "Alex", "punten": [8, 9, 7]}'
+gegevens = json.loads(tekst)
+
+print(gegevens["naam"])
+print(sum(gegevens["punten"]))
+```
+
+Uitvoer:
+
+```
+Alex
+24
+```
+
+De `s` aan het eind van `dumps` en `loads` staat voor *string*: ze werken
+met tekst. Voor bestanden zijn er `json.dump()` en `json.load()`, zonder
+`s`.
+
+## Opslaan in een bestand
+
+Een bestand open je met `open()`. De `"w"` betekent *write*: schrijven. Als
+het bestand nog niet bestaat, maakt Python het aan; bestaat het wel, dan
+wordt het overschreven.
+
+```python
+import json
+
+scores = [
+    {"naam": "Sara", "punten": 120},
+    {"naam": "Alex", "punten": 95},
+]
+
+with open("scores.json", "w") as bestand:
+    json.dump(scores, bestand, indent=2)
+
+print("Opgeslagen.")
+```
+
+Uitvoer:
+
+```
+Opgeslagen.
+```
+
+`with` zorgt dat het bestand netjes wordt gesloten zodra het ingesprongen
+blok klaar is. Binnen dat blok heet het open bestand `bestand`.
+
+## Inlezen uit een bestand
+
+Zonder `"w"` opent `open()` een bestand om te lezen. `json.load()` maakt er
+weer Python-gegevens van:
+
+```python
+import json
+
+scores = [{"naam": "Sara", "punten": 120}, {"naam": "Alex", "punten": 95}]
+with open("scores.json", "w") as bestand:
+    json.dump(scores, bestand)
+
+with open("scores.json") as bestand:
+    ingelezen = json.load(bestand)
+
+for score in ingelezen:
+    print(f"{score['naam']}: {score['punten']}")
+```
+
+Uitvoer:
+
+```
+Sara: 120
+Alex: 95
+```
+
+:::info[Waar staat het bestand?]
+Op je eigen computer komt `scores.json` in dezelfde map als je
+Python-bestand, en daar blijft het staan. Hier in de browser bestaat het
+bestand alleen zolang deze pagina open is: na herladen is het weg.
+:::
+
+---
+
+## Er gaat iets mis
+
+**Een bestand inlezen dat er nog niet is**
+
+```python
+open("bestaat_niet.json")
+```
+
+Uitvoer:
+
+```
+FileNotFoundError: [Errno 2] No such file or directory: 'bestaat_niet.json'
+```
+
+Lezen kan alleen als het bestand al bestaat. Sla het eerst op, of
+controleer de naam: een typefout geeft dezelfde melding.
+
+**Enkele aanhalingstekens in JSON**
+
+```python
+import json
+json.loads("{'naam': 'Sara'}")
+```
+
+Uitvoer:
+
+```
+json.decoder.JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)
+```
+
+Python accepteert enkele aanhalingstekens, JSON niet. Zet in JSON-tekst
+altijd dubbele aanhalingstekens om sleutels en tekst.
+
+**Een getal als sleutel komt terug als tekst**
+
+```python
+import json
+
+kamers = {1: "keuken", 2: "zolder"}
+terug = json.loads(json.dumps(kamers))
+
+print(terug)
+```
+
+Uitvoer:
+
+```
+{'1': 'keuken', '2': 'zolder'}
+```
+
+{/* foutmelding-van: import json\nterug = json.loads(json.dumps({1: "keuken"}))\nterug[1] */}
+
+In JSON is elke sleutel tekst. Na het inlezen zoek je dus op met
+`terug["1"]`; `terug[1]` geeft een `KeyError`.
+
+---
+
+## Opdracht 11d.1: Jij in JSON
+
+Maak een dictionary over jezelf met minstens vier sleutels, waarvan één een
+lijst is (bijvoorbeeld je hobby's). Print hem als JSON met `indent=2`.
+
+<CodeExercise>{`import json
+
+# Schrijf hier je code`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+`print(json.dumps(ik, indent=2))`. Een lijst als waarde schrijf je
+tussen blokhaken: `"hobby's": ["tekenen", "voetbal"]`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+import json
+
+ik = {
+    "naam": "Alex",
+    "leeftijd": 15,
+    "klas": "3B",
+    "hobby's": ["tekenen", "voetbal"],
+}
+
+print(json.dumps(ik, indent=2))
+```
+
+Uitvoer:
+
+```
+{
+  "naam": "Alex",
+  "leeftijd": 15,
+  "klas": "3B",
+  "hobby's": [
+    "tekenen",
+    "voetbal"
+  ]
+}
+```
+
+</details>
+
+---
+
+## Opdracht 11d.2: Highscores bewaren
+
+Sla de lijst `highscores` op in `highscores.json`. Lees het bestand daarna
+in, in een nieuwe variabele, en print de naam van wie de meeste punten
+heeft.
+
+Verwachte uitvoer:
+
+```
+Winnaar: Noor met 150 punten
+```
+
+<CodeExercise>{`import json
+
+highscores = [
+    {"naam": "Sara", "punten": 120},
+    {"naam": "Noor", "punten": 150},
+    {"naam": "Alex", "punten": 95},
+]
+
+# Schrijf hier je code`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Opslaan met `with open("highscores.json", "w") as bestand:` en
+`json.dump(...)`, inlezen met `with open("highscores.json") as bestand:` en
+`json.load(bestand)`. Zoek daarna de hoogste met een loop, zoals in les
+11c.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+import json
+
+highscores = [
+    {"naam": "Sara", "punten": 120},
+    {"naam": "Noor", "punten": 150},
+    {"naam": "Alex", "punten": 95},
+]
+
+with open("highscores.json", "w") as bestand:
+    json.dump(highscores, bestand)
+
+with open("highscores.json") as bestand:
+    ingelezen = json.load(bestand)
+
+beste = ingelezen[0]
+for score in ingelezen:
+    if score["punten"] > beste["punten"]:
+        beste = score
+
+print(f"Winnaar: {beste['naam']} met {beste['punten']} punten")
+```
+
+Uitvoer:
+
+```
+Winnaar: Noor met 150 punten
+```
+
+</details>
+
+---
+
+## Opdracht 11d.3: Een score erbij
+
+Een echt spel slaat na elk potje de nieuwe score op, zonder de oude kwijt
+te raken. Schrijf de functie `voeg_score_toe(naam, punten)`: die leest
+`scores.json` in, voegt de nieuwe score toe aan de lijst en slaat de lijst
+weer op. Het bestand begint met een lege lijst.
+
+Verwachte uitvoer:
+
+```
+[{'naam': 'Sara', 'punten': 120}, {'naam': 'Alex', 'punten': 95}]
+```
+
+<CodeExercise>{`import json
+
+with open("scores.json", "w") as bestand:
+    json.dump([], bestand)
+
+
+def voeg_score_toe(naam, punten):
+    # lees in, voeg toe, sla op
+    print(f"Nog te doen: {naam} met {punten} punten")
+
+
+voeg_score_toe("Sara", 120)
+voeg_score_toe("Alex", 95)
+
+with open("scores.json") as bestand:
+    print(json.load(bestand))`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Drie stappen in de functie: `json.load` om de lijst in te lezen,
+`.append({"naam": naam, "punten": punten})` om de score toe te voegen, en
+`json.dump` in een bestand dat je met `"w"` opent om alles weer op te
+slaan.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+import json
+
+with open("scores.json", "w") as bestand:
+    json.dump([], bestand)
+
+
+def voeg_score_toe(naam, punten):
+    with open("scores.json") as bestand:
+        scores = json.load(bestand)
+    scores.append({"naam": naam, "punten": punten})
+    with open("scores.json", "w") as bestand:
+        json.dump(scores, bestand)
+
+
+voeg_score_toe("Sara", 120)
+voeg_score_toe("Alex", 95)
+
+with open("scores.json") as bestand:
+    print(json.load(bestand))
+```
+
+Uitvoer:
+
+```
+[{'naam': 'Sara', 'punten': 120}, {'naam': 'Alex', 'punten': 95}]
+```
+
+Het bestand opent twee keer: eerst om te lezen, dan om te schrijven. Open
+je het meteen met `"w"`, dan is de oude inhoud al weg voordat je hem hebt
+ingelezen.
+
+</details>
