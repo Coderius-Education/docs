@@ -9,6 +9,9 @@ Hier vind je een alfabetisch overzicht van de belangrijkste begrippen uit de Pyt
 ### Argument
 Een waarde die je meegeeft aan een functie wanneer je deze aanroept. Bijvoorbeeld in `print("Hallo")` is de tekst `"Hallo"` het argument dat je aan de print-functie doorgeeft.
 
+### Attribuut
+Een variabele die bij een object hoort. Je maakt hem in `__init__` met `self.` ervoor en leest hem met een punt: `rex.naam`.
+
 ### Boolean (`bool`)
 Een datatype dat maar twee mogelijke waarden kan hebben: `True` (Waar) of `False` (Niet Waar). Dit wordt vaak gebruikt in if-statements om voorwaarden te controleren.
 
@@ -20,15 +23,15 @@ Een verzameling gegevens waarbij elke waarde gekoppeld is aan een unieke sleutel
 leerling = {"naam": "Sara", "leeftijd": 15}
 ```
 
-### Float (`float`)
-Een 'floating point number', oftewel: een kommagetal. Let op dat je in Python altijd een **punt** gebruikt in plaats van een komma, bijvoorbeeld `3.14` in plaats van `3,14`.
-
 ### f-string
 De modernste manier in Python om tekst (`String`) en variabelen met elkaar te mixen. Je zet een `f` voor het aanhalingsteken, en variabelen zet je direct in de tekst tussen `{ }` accolades.
 
 ```python
 print(f"Hallo {naam}, jij bent {leeftijd} jaar oud.")
 ```
+
+### Float (`float`)
+Een 'floating point number', oftewel: een kommagetal. Let op dat je in Python altijd een **punt** gebruikt in plaats van een komma, bijvoorbeeld `3.14` in plaats van `3,14`.
 
 ### Functie (`def`)
 Een benoemd stukje code dat een specifieke taak uitvoert. Je schrijft het één keer en kunt het (door de naan van de functie te typen, inclusief haakjes) zo vaak hergebruiken als je wilt.
@@ -38,14 +41,37 @@ def zeg_hallo():
     print("Hallo Wereld!")
 ```
 
+### Geneste dictionary
+Een dictionary waarvan de waarden zelf weer dictionaries zijn. Je zoekt op met twee sleutels achter elkaar.
+
+```python
+klas = {"Sara": {"leeftijd": 15, "cijfer": 8.1}}
+print(klas["Sara"]["cijfer"])  # 8.1
+```
+
 ### Indentation (Inspringing)
 De spaties aan het begin van een regel code. In Python is inspringen verplicht om aan te geven dat een stuk code *binnen* een `if`, `for`, `while` of `def` blok hoort. De standaard in Python is 4 spaties per inspringing.
 
 ### Index
 De numerieke positie van een element in een lijst of string. In Python (en in vrijwel alle andere programmeertalen) beginnen we altijd met tellen bij **0**. Het eerste element staat dus op index 0.
 
+### `__init__`
+De methode die Python aanroept als je een nieuw object maakt. Hier geef je het object zijn attributen.
+
 ### Integer (`int`)
 Een geheel getal (positief of negatief) zonder cijfers achter de komma, zoals `42`, `0` of `-5`.
+
+### JSON
+Een tekstvorm voor dictionaries en lijsten, waarmee je gegevens in een bestand bewaart. Met de module `json` schrijf je ze weg (`json.dump`) en lees je ze weer in (`json.load`).
+
+### Klasse (`class`)
+Een bouwtekening voor je eigen soort object. De klasse zegt welke attributen en methoden elk object krijgt.
+
+```python
+class Hond:
+    def __init__(self, naam):
+        self.naam = naam
+```
 
 ### List (Lijst / `list`)
 De lijst is een variabele waarin je meerdere waardes tegelijk op volgorde kunt opslaan. Deze waarden staan altijd binnen blokhaken `[ ]`.
@@ -66,6 +92,11 @@ tekst = "hallo"
 tekst_groot = tekst.upper() 
 ```
 
+In je eigen klasse schrijf je een methode als een `def` binnen de `class`, met `self` als eerste parameter.
+
+### Object
+Een ding dat je met een klasse maakt, zoals `rex = Hond("Rex")`. Elk object heeft zijn eigen waarden voor de attributen.
+
 ### Parameter
 Een variabele die je definieert in de haakjes van een functie. Het fungeert als een "lege bak" die later gevuld wordt met een Argument als de functie wordt aangeroepen.
 
@@ -80,6 +111,9 @@ Het sleutelwoord dat je gebruikt aan het einde van een functie, waarmee je het r
 ### Scope
 De "geldigheid" van een variabele. Variabelen die binnenin een functie worden aangemaakt hebben een *lokale scope*, wat betekent dat ze niet bestaan buiten het ingesprongen blok van die functie.
 
+### `self`
+De eerste parameter van elke methode in een klasse. Hij staat voor het object waarop je de methode aanroept: bij `rex.blaf()` is `self` het object `rex`.
+
 ### Set (`set`)
 Een verzameling waarin elk element maar één keer voorkomt en die geen volgorde heeft. Handig om bij te houden wat je al gehad hebt: toevoegen met `.add()`, checken met `in`.
 
@@ -88,6 +122,9 @@ bezocht = set()
 bezocht.add("A")
 print("A" in bezocht)  # True
 ```
+
+### `__str__`
+Een methode die met `return` de tekst teruggeeft die `print` van een object laat zien.
 
 ### String (`str`)
 Het datatype voor tekst. Strings staan altijd tussen enkele of dubbele aanhalingstekens (quotes) om ze te onderscheiden van code of wiskunde.
