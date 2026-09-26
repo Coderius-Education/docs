@@ -61,14 +61,9 @@ describe('projecten in de python-cursus', () => {
         });
       });
 
-      it('elke stap noemt zijn concept in de sidebar, en het overzicht zet ze op een rij', () => {
-        const overzicht = readFileSync(join(PROJECTEN, 'index.mdx'), 'utf8');
+      it('elke stap noemt zijn concept in de sidebar', () => {
         for (const s of stappen) {
-          const label = s.tekst.match(/^sidebar_label: 'Stap \d+: (.+)'$/m)?.[1];
-          expect(label, s.naam).toBeDefined();
-          expect(overzicht, `${s.naam} in de tabel van het overzicht`).toMatch(
-            new RegExp(`^\\| ${s.nr} \\|`, 'm'),
-          );
+          expect(s.tekst, s.naam).toMatch(/^sidebar_label: 'Stap \d+: .+'$/m);
         }
       });
 
@@ -82,16 +77,16 @@ describe('projecten in de python-cursus', () => {
   }
 });
 
-// Het overzicht zegt per algoritme wat je na Tien groene flessen al kent en
-// wat je nog nodig hebt. Die tabel is afgeleid van de conceptenkaart van de
-// algoritmes-cursus; verandert daar de voorkennis, dan moet de tabel mee.
-describe('projecten: de tabel met algoritmes', async () => {
+// Het overzicht is één tabel: per activiteit wat je doet, welke concepten
+// erin zitten en wat je na Tien groene flessen nog nodig hebt. De rijen van
+// de algoritmes zijn afgeleid van de algoritmes-cursus (algorithms.ts en de
+// conceptenkaart); verandert daar iets, dan moet de tabel mee.
+describe('projecten: de tabel op het overzicht', async () => {
   const { pythonConcepten, voorkennisPerAlgoritme } = await import(
     '../../../algorithms/src/data/conceptenkaart'
   );
   const { algoritmes } = await import('../../../algorithms/src/data/algorithms');
   const overzicht = readFileSync(join(PROJECTEN, 'index.mdx'), 'utf8');
-  const sectie = overzicht.slice(overzicht.indexOf('## En daarna: algoritmes'));
 
   // De concepten die Tien groene flessen gebruikt, als id's van de kaart.
   const UIT_HET_PROJECT = new Set([
@@ -104,30 +99,42 @@ describe('projecten: de tabel met algoritmes', async () => {
     'return',
   ]);
 
+  const tabellen = overzicht.match(/^\|:?-+/gm) ?? [];
   const rijen = new Map(
     [
-      ...sectie.matchAll(
-        /^\| <SiteLink site="algorithms" to="([^"]+)">[^<]+<\/SiteLink> \| (.*) \| (.*) \|$/gm,
+      ...overzicht.matchAll(
+        /^\| <SiteLink site="algorithms" to="([^"]+)">[^<]+<\/SiteLink> \| (.*) \| (.*) \| (.*) \|$/gm,
       ),
-    ].map((m) => [m[1], { al: m[2], nog: m[3] }]),
+    ].map((m) => [m[1], { wat: m[2], concepten: m[3], nog: m[4] }]),
   );
 
-  it('elk algoritme staat erin, met de link naar zijn eerste les', () => {
-    expect([...rijen.keys()]).toEqual(algoritmes.map((a: { startPad: string }) => a.startPad));
+  it('het overzicht is één tabel, met het project, Pydle en Play bovenaan', () => {
+    expect(tabellen).toHaveLength(1);
+    const eersten = [...overzicht.matchAll(/^\| (\[[^\]]+\]|<SiteLink[^>]*>[^<]+<\/SiteLink>)/gm)]
+      .slice(0, 3)
+      .map((m) => m[1]);
+    expect(eersten[0]).toContain('Tien groene flessen');
+    expect(eersten[1]).toContain('pydle.net');
+    expect(eersten[2]).toMatch(/<SiteLink site="play"/);
   });
 
-  it('per algoritme kloppen "ken je al" en "nog nodig" met de conceptenkaart', () => {
+  it('elk algoritme staat erin, met de link naar zijn eerste les en zijn samenvatting', () => {
+    const lijst = algoritmes as { startPad: string; samenvatting: string }[];
+    expect([...rijen.keys()]).toEqual(lijst.map((a) => a.startPad));
+    for (const a of lijst) expect(rijen.get(a.startPad)?.wat).toBe(a.samenvatting);
+  });
+
+  it('per algoritme kloppen de concepten en wat je nog nodig hebt met de conceptenkaart', () => {
     for (const a of algoritmes as { slug: string; startPad: string }[]) {
       const nodig = new Set(voorkennisPerAlgoritme[a.slug]);
       const volgorde = (pythonConcepten as { id: string; label: string; to: string }[]).filter(
         (c) => nodig.has(c.id),
       );
-      const al = volgorde.filter((c) => UIT_HET_PROJECT.has(c.id)).map((c) => c.label);
       const nog = volgorde
         .filter((c) => !UIT_HET_PROJECT.has(c.id))
         .map((c) => `[${c.label}](${c.to})`);
       const rij = rijen.get(a.startPad);
-      expect(rij?.al, a.slug).toBe(al.length ? al.join(', ') : '–');
+      expect(rij?.concepten, a.slug).toBe(volgorde.map((c) => c.label).join(', '));
       expect(rij?.nog, a.slug).toBe(nog.length ? nog.join(', ') : 'niets');
     }
   });
