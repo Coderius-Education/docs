@@ -7,14 +7,16 @@ export default function ConceptenKaartPagina(): ReactNode {
   return (
     <Layout
       title="Conceptenkaart"
-      description="Zie welke Python-voorkennis je bij elk algoritme gebruikt."
+      description="Zie op welke Python-concepten elk algoritme draait."
     >
       <main className="container margin-vert--lg">
         <Heading as="h1">Conceptenkaart</Heading>
         <p>
-          Links staan de lessen uit de Python-cursus, rechts de algoritmes op deze site. Beweeg over
-          een blok of klik erop om te zien welke voorkennis bij welk algoritme hoort. Onder de kaart
-          verschijnen links naar de les of het algoritme.
+          Links staan de lessen uit de Python-cursus, rechts de algoritmes op deze site. Een lijn
+          betekent: dit algoritme draait op dit concept. Beweeg over een blok of klik erop om te
+          zien welke concepten bij welk algoritme horen. Onder de kaart verschijnen links naar de
+          les of het algoritme. Alle voorkennis van een les, ook wat er zijdelings in voorkomt,
+          staat bovenaan die les.
         </p>
         <p>
           De kaart werkt twee kanten op: elke Python-les hiernaast sluit af met een blok "Waar kom

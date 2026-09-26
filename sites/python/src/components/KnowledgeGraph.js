@@ -18,6 +18,8 @@ const KnowledgeGraph = () => {
     herhaling: { x: 450, y: 400 },
     data: { x: 150, y: 400 },
     functies: { x: 50, y: 250 },
+    klassen: { x: 300, y: 310 },
+    fouten: { x: 650, y: 420 },
   };
 
   const getImpactForConcept = (conceptId) => {

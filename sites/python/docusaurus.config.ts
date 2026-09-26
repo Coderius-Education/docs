@@ -1,5 +1,17 @@
 import { createConfig } from '@coderius/shared/config';
 import { REPO_URL } from '@coderius/shared/sites';
+import type { PluginOptions } from '@docusaurus/plugin-content-docs';
+import { zonderProjecten } from './src/sidebar/zonderProjecten';
+
+// De Tutorial-sidebar wordt uit heel docs/ gegenereerd; de projecten staan in
+// hun eigen sidebar (zie sidebars.ts) en gaan hier uit de Tutorial.
+const sidebarItemsGenerator: PluginOptions['sidebarItemsGenerator'] = async ({
+  defaultSidebarItemsGenerator,
+  ...args
+}) => {
+  const items = await defaultSidebarItemsGenerator(args);
+  return args.item.dirName === '.' ? zonderProjecten(items) : items;
+};
 
 export default createConfig({
   title: 'Python Leren — Coderius',
@@ -21,7 +33,10 @@ export default createConfig({
     [
       'classic',
       {
-        docs: { sidebarPath: './sidebars.ts' },
+        docs: {
+          sidebarPath: './sidebars.ts',
+          sidebarItemsGenerator,
+        },
         blog: false,
         theme: { customCss: './src/css/custom.css' },
       },
@@ -37,6 +52,7 @@ export default createConfig({
     navbar: {
       items: [
         { type: 'docSidebar', sidebarId: 'tutorialSidebar', position: 'left', label: 'Tutorial' },
+        { type: 'docSidebar', sidebarId: 'projectenSidebar', position: 'left', label: 'Projecten' },
         { to: '/playground', label: 'Playground', position: 'left' },
         { to: '/cheatsheet', label: 'Cheatsheet', position: 'left' },
         { to: '/begrippenlijst', label: 'Begrippenlijst', position: 'left' },

@@ -1,0 +1,163 @@
+---
+sidebar_position: 2
+sidebar_label: 'Stap 2: kleur en vullen'
+description: Zet een dak op het vierkant en kleur de muren en het dak in.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Stap 2: Een huis in kleur (kleur en vullen)
+
+Een vierkant met een driehoek erop is een huis. Eerst de kleur. Met
+`turtle.fillcolor()` kies je een vulkleur. Alles wat de schildpad tekent
+tussen `turtle.begin_fill()` en `turtle.end_fill()`, kleurt hij daarna in:
+
+```python
+import turtle
+
+turtle.fillcolor("yellow")
+turtle.begin_fill()
+turtle.forward(100)
+turtle.left(90)
+turtle.forward(100)
+turtle.left(90)
+turtle.forward(100)
+turtle.left(90)
+turtle.forward(100)
+turtle.left(90)
+turtle.end_fill()
+```
+
+De kleur is een Engels woord tussen aanhalingstekens, zoals `"red"`,
+`"yellow"`, `"lightblue"` of `"brown"`. Met `turtle.pencolor()` kies je de
+kleur van de lijn.
+
+## Van muur naar dak
+
+Na het vierkant staat de schildpad weer linksonder en kijkt hij naar rechts.
+Het dak begint linksboven. Daar komt hij zo:
+
+```python
+import turtle
+
+turtle.left(90)
+turtle.forward(100)
+turtle.right(90)
+```
+
+Hij loopt langs de linkermuur omhoog, en draait terug naar rechts.
+
+## Het dak
+
+Het dak is een driehoek met drie gelijke zijden. Na elke zijde draait de
+schildpad 120 graden:
+
+```python
+import turtle
+
+turtle.forward(100)
+turtle.left(120)
+turtle.forward(100)
+turtle.left(120)
+turtle.forward(100)
+turtle.left(120)
+```
+
+Waarom 120 en niet 60? De schildpad draait om de buitenkant van de hoek.
+Binnenin is een hoek van deze driehoek 60 graden, en 180 min 60 is 120.
+
+## Opdracht: een huis
+
+Teken een huis met gele muren en een rood dak. Zet de drie stukken code
+hierboven onder elkaar, en geef het dak zijn eigen `fillcolor`,
+`begin_fill` en `end_fill`.
+
+![Een huis met een geel vierkant als muren en een rode driehoek als dak](./img/stap-2-huis.svg)
+
+<CodeExercise>{`import turtle
+
+turtle.fillcolor("yellow")
+turtle.begin_fill()
+turtle.forward(100)
+turtle.left(90)
+turtle.forward(100)
+turtle.left(90)
+turtle.forward(100)
+turtle.left(90)
+turtle.forward(100)
+turtle.left(90)
+turtle.end_fill()`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Eerst de muren, dan de drie regels die naar linksboven lopen, dan
+`fillcolor("red")` en `begin_fill()`, de driehoek, en `end_fill()`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+{/* turtle-plaatje: img/stap-2-huis.svg */}
+
+```python
+import turtle
+
+turtle.fillcolor("yellow")
+turtle.begin_fill()
+turtle.forward(100)
+turtle.left(90)
+turtle.forward(100)
+turtle.left(90)
+turtle.forward(100)
+turtle.left(90)
+turtle.forward(100)
+turtle.left(90)
+turtle.end_fill()
+
+turtle.left(90)
+turtle.forward(100)
+turtle.right(90)
+
+turtle.fillcolor("red")
+turtle.begin_fill()
+turtle.forward(100)
+turtle.left(120)
+turtle.forward(100)
+turtle.left(120)
+turtle.forward(100)
+turtle.left(120)
+turtle.end_fill()
+```
+
+Dat zijn veel regels die op elkaar lijken. In
+[Veelhoeken en sterren](/docs/projecten/turtle/veelhoeken/stap-1-vierkant)
+maak je dat korter met een for-loop.
+
+</details>
+
+## Er gaat iets mis
+
+```python
+import turtle
+
+turtle.fillcolor("yellow")
+turtle.begin_fill()
+turtle.forward(100)
+turtle.left(90)
+turtle.forward(100)
+turtle.left(90)
+turtle.forward(100)
+turtle.left(90)
+turtle.forward(100)
+```
+
+Het vierkant blijft wit.
+
+**Oorzaak:** `turtle.end_fill()` ontbreekt. De schildpad kleurt pas in als
+hij weet dat de vorm af is, en dat zeg je met `end_fill()`.
+
+**Oplossing:** zet na de laatste lijn van de vorm `turtle.end_fill()`.
+
+Door naar het volgende project: [Een robotkop](/docs/projecten/turtle/robotkop/stap-1-maat).

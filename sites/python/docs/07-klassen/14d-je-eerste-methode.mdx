@@ -1,0 +1,217 @@
+---
+sidebar_position: 4
+description: Geef een klasse een methode, een functie die bij het object hoort, en leer wat self is.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 14d Je eerste methode
+
+Attributen zeggen wat een hond ís: een naam, een leeftijd. Een **methode**
+zegt wat een hond kan. Het is een functie die je binnen de klasse schrijft:
+
+```python
+class Hond:
+    def __init__(self, naam):
+        self.naam = naam
+
+    def blaf(self):
+        print(f"{self.naam} zegt: Woef!")
+
+
+rex = Hond("Rex")
+bello = Hond("Bello")
+
+rex.blaf()
+bello.blaf()
+```
+
+Uitvoer:
+
+```
+Rex zegt: Woef!
+Bello zegt: Woef!
+```
+
+De methode springt in onder `class`, net als `__init__`. Je roept hem aan met
+een punt, net als een attribuut, maar met haakjes erachter: `rex.blaf()`.
+
+## Wat is `self`?
+
+Bij `rex.blaf()` vult Python `self` zelf in met het object vóór de punt:
+`rex`. Daarom print dezelfde methode één keer "Rex" en één keer "Bello".
+
+Elke methode heeft `self` als eerste parameter. Bij het aanroepen schrijf je
+hem nooit zelf: `rex.blaf()`, niet `rex.blaf(rex)`.
+
+---
+
+## Er gaat iets mis
+
+**`self` vergeten**
+
+```python
+class Hond:
+    def blaf():
+        print("Woef!")
+
+
+rex = Hond()
+rex.blaf()
+```
+
+Uitvoer:
+
+```
+TypeError: Hond.blaf() takes 0 positional arguments but 1 was given
+```
+
+Jij geeft geen argument mee, en toch zegt Python dat er één binnenkomt. Dat
+is `rex`: Python geeft het object altijd mee als eerste argument. Zet `self`
+bovenaan de parameters: `def blaf(self):`.
+
+**De haakjes vergeten**
+
+{/* uitvoer-varieert: het adres van het object verschilt per keer */}
+
+```python
+class Hond:
+    def blaf(self):
+        print("Woef!")
+
+
+rex = Hond()
+print(rex.blaf)
+```
+
+Uitvoer:
+
+```
+<bound method Hond.blaf of <__main__.Hond object at 0x7f3a2c1b8d10>>
+```
+
+Zonder haakjes roep je de methode niet aan, maar vraag je de methode zelf
+op. Python print dan wat het is, met een geheugenadres dat bij jou anders
+is. Schrijf `rex.blaf()`.
+
+---
+
+## Opdracht 14d.1: Miauw
+
+Geef de klasse `Kat` een methode `miauw()`.
+
+Verwachte uitvoer:
+
+```
+Minoes zegt: Miauw.
+Garfield zegt: Miauw.
+```
+
+<CodeExercise>{`class Kat:
+    def __init__(self, naam):
+        self.naam = naam
+
+
+minoes = Kat("Minoes")
+garfield = Kat("Garfield")
+print("Nog te doen")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+`def miauw(self):` onder `__init__`, op dezelfde inspringing. Aanroepen doe
+je met `minoes.miauw()`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+class Kat:
+    def __init__(self, naam):
+        self.naam = naam
+
+    def miauw(self):
+        print(f"{self.naam} zegt: Miauw.")
+
+
+minoes = Kat("Minoes")
+garfield = Kat("Garfield")
+minoes.miauw()
+garfield.miauw()
+```
+
+Uitvoer:
+
+```
+Minoes zegt: Miauw.
+Garfield zegt: Miauw.
+```
+
+</details>
+
+---
+
+## Opdracht 14d.2: Een boek beschrijven
+
+In 14b schreef je voor elk boek dezelfde lange f-string. Zet die in een
+methode `beschrijf()`, zodat elke regel korter wordt.
+
+Verwachte uitvoer:
+
+```
+De Hobbit door J.R.R. Tolkien, 320 bladzijden
+Matilda door Roald Dahl, 240 bladzijden
+```
+
+<CodeExercise>{`class Boek:
+    def __init__(self, titel, schrijver, bladzijden):
+        self.titel = titel
+        self.schrijver = schrijver
+        self.bladzijden = bladzijden
+
+
+hobbit = Boek("De Hobbit", "J.R.R. Tolkien", 320)
+matilda = Boek("Matilda", "Roald Dahl", 240)
+
+print(f"{hobbit.titel} door {hobbit.schrijver}, {hobbit.bladzijden} bladzijden")
+print(f"{matilda.titel} door {matilda.schrijver}, {matilda.bladzijden} bladzijden")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+In de methode heet het boek `self`. Waar nu `hobbit.titel` staat, schrijf je
+in de methode `self.titel`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+class Boek:
+    def __init__(self, titel, schrijver, bladzijden):
+        self.titel = titel
+        self.schrijver = schrijver
+        self.bladzijden = bladzijden
+
+    def beschrijf(self):
+        print(f"{self.titel} door {self.schrijver}, {self.bladzijden} bladzijden")
+
+
+hobbit = Boek("De Hobbit", "J.R.R. Tolkien", 320)
+matilda = Boek("Matilda", "Roald Dahl", 240)
+
+hobbit.beschrijf()
+matilda.beschrijf()
+```
+
+Uitvoer:
+
+```
+De Hobbit door J.R.R. Tolkien, 320 bladzijden
+Matilda door Roald Dahl, 240 bladzijden
+```
+
+</details>

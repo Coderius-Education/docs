@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-250 -200 500 400" role="img">
+<title>Een lichtgrijs vierkant hoofd met twee zwarte stippen als ogen en een streep als mond</title>
+<rect x="-250" y="-200" width="500" height="400" fill="white"/>
+<polygon points="0,0 150,0 150,-150 0,-150 0,0" fill="lightgray" fill-rule="evenodd"/>
+<line x1="0" y1="0" x2="150" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="150" y1="0" x2="150" y2="-150" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="150" y1="-150" x2="0" y2="-150" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="0" y1="-150" x2="0" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<circle cx="37.5" cy="-112.5" r="15" fill="black"/>
+<circle cx="112.5" cy="-112.5" r="15" fill="black"/>
+<line x1="37.5" y1="-37.5" x2="112.5" y2="-37.5" stroke="black" stroke-width="1" stroke-linecap="round"/>
+</svg>

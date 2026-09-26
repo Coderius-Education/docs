@@ -4,7 +4,12 @@ import { fileURLToPath } from 'node:url';
 import { lesBestaat } from '@coderius/shared/voorkennis';
 import { describe, expect, it } from 'vitest';
 import { algoritmes } from './algorithms';
-import { pythonConcepten, voorkennisPerAlgoritme } from './conceptenkaart';
+import {
+  kernConcepten,
+  kernPerAlgoritme,
+  pythonConcepten,
+  voorkennisPerAlgoritme,
+} from './conceptenkaart';
 
 // Bewaakt de interne consistentie van de kaartdata en of alles waar ze naar
 // wijst op schijf bestaat. voorkennis.test.ts hiernaast vergelijkt de kaart
@@ -107,5 +112,39 @@ describe('algoritmes', () => {
     expect(lesBestaat(SITES_ROOT, 'python', '/docs/data/bestaat-niet')).toBe(false);
     expect(lesBestaat(SITES_ROOT, 'algorithms', '/docs/hanoi/01-concept')).toBe(false);
     expect(lesPositie('/docs/data/bestaat-niet')).toBeUndefined();
+  });
+});
+
+describe('kernPerAlgoritme', () => {
+  it('elk algoritme heeft een kern, en de kern is een deel van de voorkennis', () => {
+    expect(Object.keys(kernPerAlgoritme).sort()).toEqual([...slugs].sort());
+    for (const slug of slugs) {
+      const kern = kernPerAlgoritme[slug] ?? [];
+      expect(kern.length, slug).toBeGreaterThan(0);
+      expect(new Set(kern).size, slug).toBe(kern.length);
+      const voorkennis = new Set(voorkennisPerAlgoritme[slug]);
+      for (const id of kern) expect(voorkennis.has(id), `${slug}: ${id}`).toBe(true);
+    }
+  });
+
+  it('max én min draait niet op tuples: zijn tuple is alleen de manier van teruggeven', () => {
+    expect(kernPerAlgoritme['max-en-min']).not.toContain('tuples');
+    expect(voorkennisPerAlgoritme['max-en-min']).toContain('tuples');
+  });
+
+  it('de kaart laat voorkennis zonder kern weg, en elk getoond concept heeft een algoritme', () => {
+    // Een vaste lijst in plaats van de definitie van kernConcepten nog eens:
+    // f-strings of break staan in de voorkennis van een algoritme, maar geen
+    // algoritme draait erom, dus ze horen niet op de kaart.
+    const getoond = kernConcepten.map((c) => c.id);
+    for (const id of ['f-strings', 'break', 'continue', 'lijst-methoden', 'parameters']) {
+      expect(getoond, id).not.toContain(id);
+      expect(Object.values(voorkennisPerAlgoritme).flat(), id).toContain(id);
+    }
+    for (const id of getoond) {
+      const algoritmes = slugs.filter((slug) => kernPerAlgoritme[slug]?.includes(id));
+      expect(algoritmes.length, id).toBeGreaterThan(0);
+    }
+    expect(getoond).toEqual(pythonConcepten.map((c) => c.id).filter((id) => getoond.includes(id)));
   });
 });

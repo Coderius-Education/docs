@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-250 -200 500 400" role="img">
+<title>Een lichtgrijs gevuld vierkant van 150 bij 150</title>
+<rect x="-250" y="-200" width="500" height="400" fill="white"/>
+<polygon points="0,0 150,0 150,-150 0,-150 0,0" fill="lightgray" fill-rule="evenodd"/>
+<line x1="0" y1="0" x2="150" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="150" y1="0" x2="150" y2="-150" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="150" y1="-150" x2="0" y2="-150" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="0" y1="-150" x2="0" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="0,0 -9,-5 -7,0 -9,5" fill="black" stroke="black" stroke-width="1"/>
+</svg>

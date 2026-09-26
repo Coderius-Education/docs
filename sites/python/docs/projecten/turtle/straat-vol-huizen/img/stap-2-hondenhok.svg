@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-250 -299.9 500 499.9" role="img">
+<title>Een groot geel huis met rood dak, met linksonder ervoor een klein huisje met rood dak</title>
+<rect x="-250" y="-299.9" width="500" height="499.9" fill="white"/>
+<polygon points="0,0 150,0 150,-150 0,-150 0,0" fill="yellow" fill-rule="evenodd"/>
+<line x1="0" y1="0" x2="150" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="150" y1="0" x2="150" y2="-150" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="150" y1="-150" x2="0" y2="-150" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="0" y1="-150" x2="0" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="0" y1="0" x2="0" y2="-150" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="0,-150 150,-150 75,-279.9 0,-150" fill="red" fill-rule="evenodd"/>
+<line x1="0" y1="-150" x2="150" y2="-150" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="150" y1="-150" x2="75" y2="-279.9" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="75" y1="-279.9" x2="0" y2="-150" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="0" y1="-150" x2="0" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="0,0 50,0 50,-50 0,-50 0,0" fill="yellow" fill-rule="evenodd"/>
+<line x1="0" y1="0" x2="50" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="50" y1="0" x2="50" y2="-50" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="50" y1="-50" x2="0" y2="-50" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="0" y1="-50" x2="0" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="0" y1="0" x2="0" y2="-50" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="0,-50 50,-50 25,-93.3 0,-50" fill="red" fill-rule="evenodd"/>
+<line x1="0" y1="-50" x2="50" y2="-50" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="50" y1="-50" x2="25" y2="-93.3" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="25" y1="-93.3" x2="0" y2="-50" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="0" y1="-50" x2="0" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="0,0 -9,-5 -7,0 -9,5" fill="black" stroke="black" stroke-width="1"/>
+</svg>

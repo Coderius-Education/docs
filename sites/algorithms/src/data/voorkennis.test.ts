@@ -96,3 +96,32 @@ describe('de omgekeerde richting: python-lessen wijzen terug naar deze cursus', 
     },
   );
 });
+
+// Een python-les die de kaart noemt, zei "alle dertien algoritmes bouwen
+// hierop", terwijl de kaart er twee of acht toonde: sinds de kaart alleen de
+// kern tekent, loopt zo'n getal in de tekst stil uit de pas. Noem daar dus
+// geen aantal.
+describe('python-lessen noemen geen aantal algoritmes van de kaart', () => {
+  const AANTAL =
+    /\b(alle|van de)\s+(\d+|twee|drie|vier|vijf|zes|zeven|acht|negen|tien|elf|twaalf|dertien|veertien|vijftien)\b/i;
+  const bestanden = mdxBestanden(PYTHON_DOCS).filter((b) =>
+    readFileSync(b, 'utf8').includes('/conceptenkaart'),
+  );
+
+  it('vindt lessen die naar de kaart linken', () => {
+    expect(bestanden.length).toBeGreaterThan(2);
+  });
+
+  it.each(bestanden.map((b) => [relative(PYTHON_DOCS, b), b]))('%s', (_naam, bestand) => {
+    const alineas = readFileSync(bestand, 'utf8')
+      .split(/\n\s*\n/)
+      .filter((a) => a.includes('/conceptenkaart'));
+    for (const alinea of alineas) expect(alinea).not.toMatch(AANTAL);
+  });
+
+  it('de controle herkent de zin die misging', () => {
+    expect('laat zien dat alle dertien hierop bouwen').toMatch(AANTAL);
+    expect('tien van de dertien algoritmes').toMatch(AANTAL);
+    expect('zie je welke algoritmes op deze les draaien').not.toMatch(AANTAL);
+  });
+});

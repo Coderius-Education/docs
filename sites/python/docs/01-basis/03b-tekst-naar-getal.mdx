@@ -1,0 +1,218 @@
+---
+sidebar_position: 5
+description: Vraag iets aan de gebruiker met input, en maak van tekst een getal met int en float.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 3b Tekst naar getal
+
+Met `input()` vraag je de gebruiker om iets te typen. Wat hij typt, komt in
+een variabele:
+
+{/* niet-draaien: vraagt om invoer */}
+
+```python
+naam = input("Hoe heet je? ")
+print("Hoi", naam)
+```
+
+{/* niet-draaien: vraagt om invoer */}
+
+<CodeExercise>{`naam = input("Hoe heet je? ")
+print("Hoi", naam)`}</CodeExercise>
+
+Wat `input()` teruggeeft, is altijd tekst. Ook als iemand `15` typt, krijg je
+de tekst `"15"`, met aanhalingstekens, zoals in les 2.
+
+## Van tekst naar getal
+
+Met tekst kun je niet rekenen. `int()` maakt van tekst een geheel getal, en
+`float()` een kommagetal:
+
+```python
+tekst = "15"
+leeftijd = int(tekst)
+print(leeftijd + 1)
+
+prijs = float("2.50")
+print(prijs * 3)
+```
+
+Uitvoer:
+
+```
+16
+7.5
+```
+
+Met een echte vraag ziet dat er zo uit:
+
+{/* niet-draaien: vraagt om invoer */}
+
+```python
+leeftijd = int(input("Hoe oud ben je? "))
+print("Volgend jaar ben je", leeftijd + 1)
+```
+
+`input()` levert de tekst, en `int()` maakt er meteen een getal van.
+
+---
+
+## Er gaat iets mis
+
+**Rekenen met tekst**
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+leeftijd = "15"
+print(leeftijd + 1)
+```
+
+Uitvoer:
+
+```
+TypeError: can only concatenate str (not "int") to str
+```
+
+`leeftijd` is nog tekst. Python kan tekst en een getal niet optellen. Maak er
+eerst een getal van: `int(leeftijd) + 1`.
+
+**Een kommagetal met int()**
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+getal = int("12.5")
+```
+
+Uitvoer:
+
+```
+ValueError: invalid literal for int() with base 10: '12.5'
+```
+
+`int()` kan alleen hele getallen lezen. Gebruik `float()` voor een getal met
+een punt erin. Hoe je zo'n fout opvangt, zodat je programma niet stopt, leer
+je in [Try en except](/docs/fouten/15a-try-en-except).
+
+---
+
+## Opdracht 3b.1: Dubbel zo oud
+
+In `tekst` staat een leeftijd als tekst. Print hoe oud de persoon is als hij
+twee keer zo oud is.
+
+Verwachte uitvoer:
+
+```
+28
+```
+
+<CodeExercise>{`tekst = "14"
+
+print(tekst * 2)`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Druk eerst op Uitvoeren: `tekst * 2` plakt de tekst twee keer achter elkaar.
+Maak er met `int()` eerst een getal van.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+tekst = "14"
+
+print(int(tekst) * 2)
+```
+
+Uitvoer:
+
+```
+28
+```
+
+</details>
+
+---
+
+## Opdracht 3b.2: De rekening delen
+
+Drie vrienden delen een rekening. Het bedrag staat als tekst in `bedrag`.
+Print hoeveel ieder moet betalen.
+
+Verwachte uitvoer:
+
+```
+8.5
+```
+
+<CodeExercise>{`bedrag = "25.50"
+`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Het bedrag heeft een punt, dus `int()` werkt niet. Deel door 3 met `/`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+bedrag = "25.50"
+
+print(float(bedrag) / 3)
+```
+
+Uitvoer:
+
+```
+8.5
+```
+
+</details>
+
+---
+
+## Opdracht 3b.3: Een echte vraag
+
+Vraag met `input()` hoeveel stukjes pizza iemand wil, en print hoeveel pizza's
+van 8 stukjes dat zijn. Typ 12 als het programma erom vraagt.
+
+Verwachte uitvoer bij 12:
+
+```
+Dat is 1.5 pizza.
+```
+
+{/* niet-draaien: vraagt om invoer */}
+
+<CodeExercise>{`stukjes = input("Hoeveel stukjes wil je? ")
+print("Dat is", stukjes, "pizza.")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Druk eerst op Uitvoeren: je ziet 12 staan, niet 1.5. Zet `int()` om de
+`input(…)`, en deel door 8.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+{/* niet-draaien: vraagt om invoer */}
+
+```python
+stukjes = int(input("Hoeveel stukjes wil je? "))
+print("Dat is", stukjes / 8, "pizza.")
+```
+
+</details>

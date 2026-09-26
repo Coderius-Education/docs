@@ -1,0 +1,260 @@
+.kiezer {
+  margin: 1rem 0 2rem;
+}
+
+/* De filters: concepten links, soort rechts, samen hooguit een paar regels. */
+.balk {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 0.5rem;
+}
+
+.chips {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.chipRij {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.legenda {
+  margin-bottom: 0.3rem;
+  padding: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.chip {
+  padding: 0.12rem 0.55rem;
+  border: 1px solid var(--ifm-color-emphasis-400);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ifm-font-color-base);
+  /* Een button erft de letter niet uit zichzelf; wel de maat hieronder. */
+  font: inherit;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.chip[aria-pressed="true"] {
+  border-color: var(--ifm-color-primary);
+  background: var(--ifm-color-primary);
+  color: var(--coderius-on-primary);
+}
+
+.aantal {
+  margin-left: 0.15rem;
+  opacity: 0.7;
+  font-size: 0.72rem;
+}
+
+.telling:not(#\#):not(#\#) {
+  margin: 0.25rem 0 0.5rem;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.85rem;
+}
+
+.groep {
+  margin-top: 1rem;
+}
+
+/* Opgehoogd: anders wint de maat van Infima voor h2. */
+.groepTitel:not(#\#):not(#\#) {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+}
+
+.raster {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+  gap: 0.7rem;
+}
+
+/* Opgehoogd: de linkkleur van Infima wint anders van deze klasse, en dan
+   wordt de hele kaart blauw. */
+.kaart:not(#\#):not(#\#),
+.rij:not(#\#):not(#\#) {
+  color: var(--ifm-font-color-base);
+  text-decoration: none;
+}
+
+.kaart:not(#\#):not(#\#):hover,
+.rij:not(#\#):not(#\#):hover {
+  color: var(--ifm-font-color-base);
+  text-decoration: none;
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 2px 10px rgb(0 0 0 / 8%);
+}
+
+.kaart {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-card-border-radius, 8px);
+  background: var(--ifm-background-surface-color);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.kop {
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+}
+
+.soort {
+  flex: none;
+  padding: 0 0.45rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  background: var(--ifm-color-emphasis-200);
+}
+
+/* De soort als accent, zacht genoeg voor licht en donker. */
+.project {
+  background: rgb(53 120 229 / 16%);
+}
+
+.turtle {
+  background: rgb(76 175 80 / 18%);
+}
+
+.puzzel {
+  background: rgb(255 152 0 / 20%);
+}
+
+.spel {
+  background: rgb(233 30 99 / 16%);
+}
+
+.algoritme {
+  background: rgb(156 39 176 / 16%);
+}
+
+.titel {
+  flex: 1;
+  min-width: 0;
+  color: var(--ifm-color-primary);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.vanaf {
+  flex: none;
+  margin-left: auto;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.75rem;
+}
+
+.wat {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.voet {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.5rem;
+  align-items: flex-end;
+  margin-top: auto;
+}
+
+.lessen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.les {
+  padding: 0 0.4rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 4px;
+  font-size: 0.7rem;
+  line-height: 1.5;
+  color: var(--ifm-color-emphasis-800);
+}
+
+.les.lesGekozen {
+  border-color: var(--ifm-color-primary);
+  background: var(--ifm-color-primary);
+  color: var(--coderius-on-primary);
+}
+
+/* De algoritmes: één rij per algoritme. */
+.lijst {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-card-border-radius, 8px);
+  overflow: hidden;
+}
+
+.rij {
+  display: grid;
+  grid-template-columns: 13rem 1fr auto auto;
+  gap: 0.25rem 1rem;
+  align-items: center;
+  padding: 0.45rem 0.8rem;
+  border: 1px solid transparent;
+  border-bottom-color: var(--ifm-color-emphasis-200);
+  background: var(--ifm-background-surface-color);
+}
+
+.rij:last-child {
+  border-bottom-color: transparent;
+}
+
+.rijTitel {
+  color: var(--ifm-color-primary);
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+
+.rijWat {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  color: var(--ifm-color-emphasis-800);
+  font-size: 0.85rem;
+}
+
+.leeg {
+  color: var(--ifm-color-emphasis-700);
+}
+
+/* Op een telefoon: de chips in één rij die je opzij veegt, en de rijen van
+   de algoritmes onder elkaar in plaats van naast elkaar. */
+@media (max-width: 600px) {
+  .chipRij {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 0.2rem;
+    scrollbar-width: thin;
+  }
+
+  .rij {
+    grid-template-columns: 1fr;
+  }
+}
+
+.rij .vanaf {
+  white-space: nowrap;
+}

@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-260 -200 510 400" role="img">
+<title>Vier gele huizen met rode daken naast elkaar, met gelijke ruimte ertussen</title>
+<rect x="-260" y="-200" width="510" height="400" fill="white"/>
+<polygon points="-240,0 -160,0 -160,-80 -240,-80 -240,0" fill="yellow" fill-rule="evenodd"/>
+<line x1="-240" y1="0" x2="-160" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-160" y1="0" x2="-160" y2="-80" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-160" y1="-80" x2="-240" y2="-80" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-240" y1="-80" x2="-240" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-240" y1="0" x2="-240" y2="-80" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="-240,-80 -160,-80 -200,-149.28 -240,-80" fill="red" fill-rule="evenodd"/>
+<line x1="-240" y1="-80" x2="-160" y2="-80" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-160" y1="-80" x2="-200" y2="-149.28" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-200" y1="-149.28" x2="-240" y2="-80" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-240" y1="-80" x2="-240" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="-120,0 -40,0 -40,-80 -120,-80 -120,0" fill="yellow" fill-rule="evenodd"/>
+<line x1="-120" y1="0" x2="-40" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-40" y1="0" x2="-40" y2="-80" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-40" y1="-80" x2="-120" y2="-80" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-120" y1="-80" x2="-120" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-120" y1="0" x2="-120" y2="-80" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="-120,-80 -40,-80 -80,-149.28 -120,-80" fill="red" fill-rule="evenodd"/>
+<line x1="-120" y1="-80" x2="-40" y2="-80" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-40" y1="-80" x2="-80" y2="-149.28" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-80" y1="-149.28" x2="-120" y2="-80" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-120" y1="-80" x2="-120" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="0,0 80,0 80,-80 0,-80 0,0" fill="yellow" fill-rule="evenodd"/>
+<line x1="0" y1="0" x2="80" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="80" y1="0" x2="80" y2="-80" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="80" y1="-80" x2="0" y2="-80" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="0" y1="-80" x2="0" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="0" y1="0" x2="0" y2="-80" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="0,-80 80,-80 40,-149.28 0,-80" fill="red" fill-rule="evenodd"/>
+<line x1="0" y1="-80" x2="80" y2="-80" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="80" y1="-80" x2="40" y2="-149.28" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="40" y1="-149.28" x2="0" y2="-80" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="0" y1="-80" x2="0" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="120,0 200,0 200,-80 120,-80 120,0" fill="yellow" fill-rule="evenodd"/>
+<line x1="120" y1="0" x2="200" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="200" y1="0" x2="200" y2="-80" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="200" y1="-80" x2="120" y2="-80" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="120" y1="-80" x2="120" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="120" y1="0" x2="120" y2="-80" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="120,-80 200,-80 160,-149.28 120,-80" fill="red" fill-rule="evenodd"/>
+<line x1="120" y1="-80" x2="200" y2="-80" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="200" y1="-80" x2="160" y2="-149.28" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="160" y1="-149.28" x2="120" y2="-80" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="120" y1="-80" x2="120" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="120,0 111,-5 113,0 111,5" fill="black" stroke="black" stroke-width="1"/>
+</svg>

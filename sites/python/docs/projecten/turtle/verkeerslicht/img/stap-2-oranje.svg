@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-250 -200 500 400" role="img">
+<title>Een zwart verkeerslicht met bovenaan en onderaan een grijze lamp, en in het midden een oranje</title>
+<rect x="-250" y="-200" width="500" height="400" fill="white"/>
+<line x1="0" y1="-50" x2="0" y2="-150" stroke="black" stroke-width="70" stroke-linecap="round"/>
+<circle cx="0" cy="-150" r="20" fill="#bebebe"/>
+<circle cx="0" cy="-100" r="20" fill="orange"/>
+<circle cx="0" cy="-50" r="20" fill="#bebebe"/>
+</svg>

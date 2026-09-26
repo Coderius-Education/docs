@@ -1,0 +1,209 @@
+---
+sidebar_position: 5
+description: Vang af dat een bestand nog niet bestaat of kapot is, en begin dan met een standaardwaarde.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 15e Een bestand dat er niet is
+
+:::info
+Deze les gebruikt JSON-bestanden, uit [JSON in een bestand](/docs/data/11e-json-bestand).
+:::
+
+In les 11e las je scores in uit een bestand. De allereerste keer dat iemand je
+spel speelt, bestaat dat bestand nog niet:
+
+```python
+import json
+
+with open("scores.json") as bestand:
+    scores = json.load(bestand)
+```
+
+Uitvoer:
+
+```
+FileNotFoundError: [Errno 2] No such file or directory: 'scores.json'
+```
+
+Dat is geen fout van de speler: er zijn nog geen scores. Vang hem af
+en begin met een lege lijst:
+
+```python
+import json
+
+try:
+    with open("scores.json") as bestand:
+        scores = json.load(bestand)
+except FileNotFoundError:
+    scores = []
+
+print(scores)
+```
+
+Uitvoer:
+
+```
+[]
+```
+
+Na het spel schrijf je `scores` weg zoals in 11e. De volgende keer bestaat
+het bestand wel, en slaat Python het `except`-blok over.
+
+---
+
+## Er gaat iets mis
+
+Het programma hieronder maakt eerst een kapot bestand: `bestand.write()`
+schrijft gewone tekst in het bestand, geen JSON.
+
+```python
+import json
+
+with open("scores.json", "w") as bestand:
+    bestand.write("hier ging iets mis")
+
+try:
+    with open("scores.json") as bestand:
+        scores = json.load(bestand)
+except FileNotFoundError:
+    scores = []
+```
+
+Uitvoer:
+
+```
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+```
+
+Het bestand bestaat wel, maar er staat geen JSON in. Dat is een andere fout,
+en die vangt `except FileNotFoundError` niet af. In de opdracht hieronder
+vang je hem ook af.
+
+---
+
+## Opdracht 15e.1: Een highscore
+
+Lees de highscore uit `highscore.json`. Bestaat het bestand niet, dan is de
+highscore 0. Zet er daarna een nieuwe score tegenover.
+
+Verwachte uitvoer:
+
+```
+Highscore: 0
+Nieuwe highscore: 120
+```
+
+{/* niet-draaien: de startcode valt expres om, met de fout die de opdracht afvangt */}
+
+<CodeExercise>{`import json
+
+with open("highscore.json") as bestand:
+    highscore = json.load(bestand)
+print(f"Highscore: {highscore}")
+
+score = 120
+if score > highscore:
+    print(f"Nieuwe highscore: {score}")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+{/* foutmelding-los: de namen staan hier als wat je achter except schrijft, geen melding van Python */}
+
+Zet de `with open(…)` met `json.load` in een `try`, en geef `highscore` in
+het `except FileNotFoundError:`-blok de waarde 0.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+import json
+
+try:
+    with open("highscore.json") as bestand:
+        highscore = json.load(bestand)
+except FileNotFoundError:
+    highscore = 0
+print(f"Highscore: {highscore}")
+
+score = 120
+if score > highscore:
+    print(f"Nieuwe highscore: {score}")
+```
+
+Uitvoer:
+
+```
+Highscore: 0
+Nieuwe highscore: 120
+```
+
+</details>
+
+---
+
+## Opdracht 15e.2: Een kapot bestand
+
+Maak het programma uit "Er gaat iets mis" af, zodat ook een kapot bestand
+een lege lijst geeft.
+
+Verwachte uitvoer:
+
+```
+[]
+```
+
+{/* niet-draaien: de startcode valt expres om, met de fout die de opdracht afvangt */}
+
+<CodeExercise>{`import json
+
+with open("scores.json", "w") as bestand:
+    bestand.write("hier ging iets mis")
+
+try:
+    with open("scores.json") as bestand:
+        scores = json.load(bestand)
+except FileNotFoundError:
+    scores = []
+
+print(scores)`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+{/* foutmelding-los: de namen staan hier als wat je achter except schrijft, geen melding van Python */}
+
+De fout heet in het `except`-blok `json.JSONDecodeError`. Zet hem samen met
+`FileNotFoundError` tussen haakjes, zoals in 15b.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+import json
+
+with open("scores.json", "w") as bestand:
+    bestand.write("hier ging iets mis")
+
+try:
+    with open("scores.json") as bestand:
+        scores = json.load(bestand)
+except (FileNotFoundError, json.JSONDecodeError):
+    scores = []
+
+print(scores)
+```
+
+Uitvoer:
+
+```
+[]
+```
+
+</details>

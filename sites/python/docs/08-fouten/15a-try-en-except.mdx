@@ -1,0 +1,201 @@
+---
+sidebar_position: 1
+description: Vang een fout af met try en except, zodat je programma niet stopt maar zelf iets zinnigs doet.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 15a Try en except
+
+:::info
+Deze les gebruikt `int()` en `float()`, uit [Tekst naar getal](/docs/basis/03b-tekst-naar-getal).
+:::
+
+Een programma dat om een getal vraagt, krijgt soms tekst. Dan stopt het met
+een foutmelding:
+
+```python
+tekst = "twaalf"
+getal = int(tekst)
+print(getal * 2)
+```
+
+Uitvoer:
+
+```
+ValueError: invalid literal for int() with base 10: 'twaalf'
+```
+
+Met `try` en `except` vang je zo'n fout af. Je zegt tegen Python: probeer
+dit, en als het misgaat, doe dan dat.
+
+```python
+tekst = "twaalf"
+
+try:
+    getal = int(tekst)
+    print(getal * 2)
+except ValueError:
+    print("Dat is geen getal.")
+
+print("Klaar.")
+```
+
+Uitvoer:
+
+```
+Dat is geen getal.
+Klaar.
+```
+
+## Wat er gebeurt
+
+{/* foutmelding-van: int("twaalf") */}
+
+- Python voert de regels onder `try:` uit, één voor één.
+- Gaat er een regel mis met een `ValueError`, dan springt Python meteen naar
+  het blok onder `except ValueError:`. De rest van het `try`-blok slaat hij
+  over: `print(getal * 2)` gebeurt dus niet.
+- Na het `except`-blok gaat het programma verder, met `print("Klaar.")`.
+
+Gaat er niets mis, dan slaat Python het `except`-blok juist over. Verander
+`"twaalf"` in `"12"` en kijk wat er dan gebeurt:
+
+<CodeExercise>{`tekst = "twaalf"
+
+try:
+    getal = int(tekst)
+    print(getal * 2)
+except ValueError:
+    print("Dat is geen getal.")
+
+print("Klaar.")`}</CodeExercise>
+
+---
+
+## Er gaat iets mis
+
+```python
+tekst = "twaalf"
+
+try:
+    getal = int(tekst)
+except ZeroDivisionError:
+    print("Dat is geen getal.")
+```
+
+Uitvoer:
+
+```
+ValueError: invalid literal for int() with base 10: 'twaalf'
+```
+
+{/* foutmelding-los: de namen staan hier als wat je achter except schrijft, geen melding van Python */}
+
+Het `except`-blok vangt alleen de fout die erachter staat. Hier is dat een
+`ZeroDivisionError`, maar er ging iets anders mis. Dan stopt het programma
+alsnog. Schrijf achter `except` de naam uit de foutmelding: `ValueError`.
+
+---
+
+## Opdracht 15a.1: Een leeftijd
+
+In `tekst` staat een leeftijd, maar iemand heeft hem in letters getypt. Zet
+hem om met `int()`. Lukt dat, print dan hoe oud de persoon volgend jaar is.
+Lukt het niet, print dan `Typ je leeftijd als getal.`
+
+Verwachte uitvoer:
+
+```
+Typ je leeftijd als getal.
+```
+
+{/* niet-draaien: de startcode valt expres om, met de fout die de opdracht afvangt */}
+
+<CodeExercise>{`tekst = "vijftien"
+
+leeftijd = int(tekst)
+print(f"Volgend jaar ben je {leeftijd + 1}.")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Zet de twee regels onder `try:`, allebei ingesprongen. Daaronder komt
+`except ValueError:` met de `print` van de melding.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+tekst = "vijftien"
+
+try:
+    leeftijd = int(tekst)
+    print(f"Volgend jaar ben je {leeftijd + 1}.")
+except ValueError:
+    print("Typ je leeftijd als getal.")
+```
+
+Uitvoer:
+
+```
+Typ je leeftijd als getal.
+```
+
+Met `tekst = "15"` print hetzelfde programma `Volgend jaar ben je 16.`
+
+</details>
+
+---
+
+## Opdracht 15a.2: Een komma in de prijs
+
+In Nederland schrijf je een prijs met een komma, maar `float()` wil een punt.
+Vang de fout af en print dan een tip. In de startcode zorgt `:.2f` voor twee
+cijfers achter de punt, zoals `:.1f` in les 11c voor één cijfer zorgde.
+
+Verwachte uitvoer:
+
+```
+Gebruik een punt in plaats van een komma, bijvoorbeeld 12.50
+```
+
+{/* niet-draaien: de startcode valt expres om, met de fout die de opdracht afvangt */}
+
+<CodeExercise>{`prijs = "12,50"
+
+bedrag = float(prijs)
+print(f"Met btw: {bedrag * 1.21:.2f}")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+{/* foutmelding-van: float("12,50") */}
+
+`float("12,50")` geeft ook een `ValueError`. De opbouw is dezelfde als in
+15a.1.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+prijs = "12,50"
+
+try:
+    bedrag = float(prijs)
+    print(f"Met btw: {bedrag * 1.21:.2f}")
+except ValueError:
+    print("Gebruik een punt in plaats van een komma, bijvoorbeeld 12.50")
+```
+
+Uitvoer:
+
+```
+Gebruik een punt in plaats van een komma, bijvoorbeeld 12.50
+```
+
+</details>

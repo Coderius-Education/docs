@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-250 -200 500 400" role="img">
+<title>Een blauw gevulde achthoek</title>
+<rect x="-250" y="-200" width="500" height="400" fill="white"/>
+<polygon points="0,0 60,0 102.43,-42.43 102.43,-102.43 60,-144.85 0,-144.85 -42.43,-102.43 -42.43,-42.43 0,0" fill="royalblue" fill-rule="evenodd"/>
+<line x1="0" y1="0" x2="60" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="60" y1="0" x2="102.43" y2="-42.43" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="102.43" y1="-42.43" x2="102.43" y2="-102.43" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="102.43" y1="-102.43" x2="60" y2="-144.85" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="60" y1="-144.85" x2="0" y2="-144.85" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="0" y1="-144.85" x2="-42.43" y2="-102.43" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-42.43" y1="-102.43" x2="-42.43" y2="-42.43" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-42.43" y1="-42.43" x2="0" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="0,0 -9,-5 -7,0 -9,5" fill="black" stroke="black" stroke-width="1"/>
+</svg>
