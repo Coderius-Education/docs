@@ -4,31 +4,16 @@ sidebar_label: Over de projecten
 description: Grotere opdrachten waarin je de losse Python-lessen samen gebruikt, en waar je daarna mee verder kunt.
 ---
 
+import ProjectKiezer from '@site/src/components/ProjectKiezer';
+
 # Projecten
 
-In de lessen leer je steeds één ding tegelijk. Hieronder staat waar je ze
-samen gebruikt: eerst in de projecten van deze cursus, daarna in een
-dagelijkse puzzel, in spelletjes en in de algoritmes. Per rij zie je welke
-concepten erin zitten, en welke lessen je na Tien groene flessen nog nodig
-hebt. Het hele plaatje van de algoritmes staat op de
-<SiteLink site="algorithms" to="/conceptenkaart">conceptenkaart</SiteLink>.
+In de lessen leer je steeds één ding tegelijk. Hier gebruik je ze samen: in
+projecten van deze cursus, in tekenprojecten met turtle, in een dagelijkse
+puzzel, in spelletjes en in de algoritmes. Kies bij welke les je bent, dan
+zie je wat nu al past en wat straks komt.
 
-| Wat | Wat je doet | Concepten | Nog nodig na Tien groene flessen |
-|:---|:---|:---|:---|
-| [Tien groene flessen](/docs/projecten/tien-groene-flessen/stap-1-print) | In acht stappen van vijftig `print`-regels naar één aanroep `lied(10)`. | Print, Variabelen, F-strings, De for-loop, If en else, And, or en elif, Functies, Parameters, Return-waarden | niets |
-| [Tekenen met turtle](/docs/projecten/turtle/) | Zeven kleine tekenprojecten, van een huis met losse commando's tot een regenboog; elk project voegt één concept toe. | Variabelen, If en else, And, or en elif, De for-loop, De while-loop, Functies, Parameters, Lijsten | [De while-loop](/docs/herhalen/while-loop), [Lijsten](/docs/data/10a-lijsten-basis) |
-| [pydle.net](https://pydle.net) | Elke dag een puzzel: namaken van een raster met gekleurde vakjes. | De for-loop, If en else, And, or en elif | niets |
-| <SiteLink site="play" to="/docs/eerste-keer-python/wanneer_beginnen">Coderius Play</SiteLink> | Je eigen spelletjes bouwen, met vormen die bewegen en reageren. | Variabelen, If en else, Functies, Lijsten | [Lijsten](/docs/data/10a-lijsten-basis), pas vanaf hoofdstuk 7 |
-| <SiteLink site="algorithms" to="/docs/lineair-zoeken/01-concept">Lineair zoeken</SiteLink> | Loop één voor één door de lijst tot je het doel vindt. | If en else, De for-loop, Functies, Return-waarden, Lijsten | [Lijsten](/docs/data/10a-lijsten-basis) |
-| <SiteLink site="algorithms" to="/docs/vind-maximum/01-concept">Vind het maximum</SiteLink> | Onthoud de grootste tot nu toe en update onderweg. | F-strings, If en else, De for-loop, Functies, Return-waarden, Lijsten | [Lijsten](/docs/data/10a-lijsten-basis) |
-| <SiteLink site="algorithms" to="/docs/max-en-min/01-concept">Max én min in één pass</SiteLink> | Twee accumulators tegelijk — minder werk dan twee losse passes. | F-strings, If en else, And, or en elif, De for-loop, Return-waarden, Lijsten, Tuples | [Lijsten](/docs/data/10a-lijsten-basis), [Tuples](/docs/data/tuples) |
-| <SiteLink site="algorithms" to="/docs/binair-zoeken/01-concept">Binair zoeken</SiteLink> | Halveer steeds een gesorteerde lijst — sneller dan lineair. | If en else, And, or en elif, Break, De while-loop, Functies, Return-waarden, Lijsten, Tuples | [Break](/docs/herhalen/06d-break), [De while-loop](/docs/herhalen/while-loop), [Lijsten](/docs/data/10a-lijsten-basis), [Tuples](/docs/data/tuples) |
-| <SiteLink site="algorithms" to="/docs/selection-sort/01-concept">Selection sort</SiteLink> | Vind steeds het kleinste van de rest en zet het vooraan. | If en else, De for-loop, Functies, Return-waarden, Lijsten, Tuples | [Lijsten](/docs/data/10a-lijsten-basis), [Tuples](/docs/data/tuples) |
-| <SiteLink site="algorithms" to="/docs/bubble-sort/01-concept">Bubble sort</SiteLink> | Vergelijk buren en swap — tot de lijst klopt. | F-strings, If en else, De for-loop, Functies, Return-waarden, Lijsten, Tuples | [Lijsten](/docs/data/10a-lijsten-basis), [Tuples](/docs/data/tuples) |
-| <SiteLink site="algorithms" to="/docs/big-o/01-concept">Big O notatie</SiteLink> | Hoe schaalt een algoritme als de invoer groeit? | If en else, And, or en elif, De for-loop, De while-loop, Functies, Lijst-methoden, Tuples | [De while-loop](/docs/herhalen/while-loop), [Lijst-methoden](/docs/data/10b-lijst-methoden), [Tuples](/docs/data/tuples) |
-| <SiteLink site="algorithms" to="/docs/dijkstra/01-concept">Dijkstra</SiteLink> | Vind de kortste route in een gewogen graph. | F-strings, If en else, De for-loop, Continue, Break, De while-loop, Functies, Lijsten, Dictionaries, Itereren over dictionaries, Tuples, Sets | [Continue](/docs/herhalen/06c-continue), [Break](/docs/herhalen/06d-break), [De while-loop](/docs/herhalen/while-loop), [Lijsten](/docs/data/10a-lijsten-basis), [Dictionaries](/docs/data/11a-dictionaries-basis), [Itereren over dictionaries](/docs/data/11b-itereren-dictionaries), [Tuples](/docs/data/tuples), [Sets](/docs/data/sets) |
-| <SiteLink site="algorithms" to="/docs/minimax/01-concept">Minimax</SiteLink> | Bouw een tic-tac-toe-AI die nooit verliest. | F-strings, If en else, De for-loop, De while-loop, Functies, Parameters, Return-waarden, Lijsten, Tuples, Sets | [De while-loop](/docs/herhalen/while-loop), [Lijsten](/docs/data/10a-lijsten-basis), [Tuples](/docs/data/tuples), [Sets](/docs/data/sets) |
-| <SiteLink site="algorithms" to="/docs/knapsack/01-concept">Knapsack 0/1</SiteLink> | Pak de meest waardevolle rugzak binnen je gewichtslimiet. | F-strings, If en else, De for-loop, Functies, Lijsten, Tuples | [Lijsten](/docs/data/10a-lijsten-basis), [Tuples](/docs/data/tuples) |
-| <SiteLink site="algorithms" to="/docs/cfg/01-concept">Context-vrije grammatica</SiteLink> | Ontwerp regels die Engelse zinnen ontleden — zin voor zin. | Lijsten | [Lijsten](/docs/data/10a-lijsten-basis) |
-| <SiteLink site="algorithms" to="/docs/hanoi/01-spel">Torens van Hanoi</SiteLink> | Speel het spel, ontdek het patroon (2ⁿ−1) en los het op met recursie. | F-strings, If en else, Functies, Return-waarden, Lijsten, Lijst-methoden, Dictionaries, Tuples | [Lijsten](/docs/data/10a-lijsten-basis), [Lijst-methoden](/docs/data/10b-lijst-methoden), [Dictionaries](/docs/data/11a-dictionaries-basis), [Tuples](/docs/data/tuples) |
-| <SiteLink site="algorithms" to="/docs/pagerank/01-concept">PageRank</SiteLink> | Hoe rangschikt Google pagina’s? Links als stemmen, iteratief uitgerekend. | If en else, De for-loop, De while-loop, Functies, Dictionaries, Itereren over dictionaries, Sets | [De while-loop](/docs/herhalen/while-loop), [Dictionaries](/docs/data/11a-dictionaries-basis), [Itereren over dictionaries](/docs/data/11b-itereren-dictionaries), [Sets](/docs/data/sets) |
+<ProjectKiezer />
+
+Hoe de algoritmes op de lessen voortbouwen, zie je op de
+<SiteLink site="algorithms" to="/conceptenkaart">conceptenkaart</SiteLink>.

@@ -1,7 +1,8 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
-import { dirname, join, relative } from 'node:path';
+import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import { activiteiten } from '../data/projecten';
 
 // Een project is een reeks stappen die op elkaar voortbouwen. Deze test
 // bewaakt de opbouw die een leerling nodig heeft om de reeks te volgen:
@@ -23,11 +24,6 @@ function projectmappen(map: string): string[] {
 }
 
 const projecten = projectmappen(PROJECTEN).map((pad) => relative(PROJECTEN, pad));
-const bovenaan = readdirSync(PROJECTEN).filter((n) => statSync(join(PROJECTEN, n)).isDirectory());
-
-function positie(map: string): number {
-  return JSON.parse(readFileSync(join(map, '_category_.json'), 'utf8')).position;
-}
 
 describe('projecten in de python-cursus', () => {
   it('er is minstens één project, en de navbar heeft een link Projecten', () => {
@@ -84,83 +80,13 @@ describe('projecten in de python-cursus', () => {
         }
       });
 
-      it('het overzicht erboven wijst naar de eerste stap', () => {
-        const overzicht = readFileSync(join(PROJECTEN, dirname(project), 'index.mdx'), 'utf8');
-        expect(overzicht).toContain(
-          `/docs/projecten/${project}/${stappen[0].naam.replace(/\.mdx$/, '')}`,
-        );
+      it('de projectkiezer kent het project, met de eerste stap en het aantal stappen', () => {
+        const eerste = `/docs/projecten/${project}/${stappen[0].naam.replace(/\.mdx$/, '')}`;
+        const kaart = activiteiten.find((a) => 'to' in a.link && a.link.to === eerste);
+        expect(kaart, `geen activiteit in src/data/projecten.ts met link ${eerste}`).toBeDefined();
+        expect(kaart?.stappen).toBe(stappen.length);
+        expect(kaart?.soort).toBe(project.startsWith('turtle/') ? 'turtle' : 'project');
       });
     });
   }
-});
-
-// Het overzicht is één tabel: per activiteit wat je doet, welke concepten
-// erin zitten en wat je na Tien groene flessen nog nodig hebt. De rijen van
-// de algoritmes zijn afgeleid van de algoritmes-cursus (algorithms.ts en de
-// conceptenkaart); verandert daar iets, dan moet de tabel mee.
-describe('projecten: de tabel op het overzicht', async () => {
-  const { pythonConcepten, voorkennisPerAlgoritme } = await import(
-    '../../../algorithms/src/data/conceptenkaart'
-  );
-  const { algoritmes } = await import('../../../algorithms/src/data/algorithms');
-  const overzicht = readFileSync(join(PROJECTEN, 'index.mdx'), 'utf8');
-
-  // De concepten die Tien groene flessen gebruikt, als id's van de kaart.
-  const UIT_HET_PROJECT = new Set([
-    'f-strings',
-    'if-else',
-    'and-or-elif',
-    'for-loop',
-    'functies',
-    'parameters',
-    'return',
-  ]);
-
-  const tabellen = overzicht.match(/^\|:?-+/gm) ?? [];
-  const rijen = new Map(
-    [
-      ...overzicht.matchAll(
-        /^\| <SiteLink site="algorithms" to="([^"]+)">[^<]+<\/SiteLink> \| (.*) \| (.*) \| (.*) \|$/gm,
-      ),
-    ].map((m) => [m[1], { wat: m[2], concepten: m[3], nog: m[4] }]),
-  );
-
-  it('het overzicht is één tabel, met de projecten, Pydle en Play bovenaan', () => {
-    expect(tabellen).toHaveLength(1);
-    const eersten = [
-      ...overzicht.matchAll(/^\| (\[[^\]]+\]\([^)]*\)|<SiteLink[^>]*>[^<]+<\/SiteLink>)/gm),
-    ]
-      .slice(0, bovenaan.length + 2)
-      .map((m) => m[1]);
-    // Elke map een rij, in de volgorde van de sidebar; daarna Pydle en Play.
-    const volgorde = [...bovenaan].sort(
-      (a, b) => positie(join(PROJECTEN, a)) - positie(join(PROJECTEN, b)),
-    );
-    volgorde.forEach((map, i) => {
-      expect(eersten[i]).toContain(`/docs/projecten/${map}/`);
-    });
-    expect(eersten[bovenaan.length]).toContain('pydle.net');
-    expect(eersten[bovenaan.length + 1]).toMatch(/<SiteLink site="play"/);
-  });
-
-  it('elk algoritme staat erin, met de link naar zijn eerste les en zijn samenvatting', () => {
-    const lijst = algoritmes as { startPad: string; samenvatting: string }[];
-    expect([...rijen.keys()]).toEqual(lijst.map((a) => a.startPad));
-    for (const a of lijst) expect(rijen.get(a.startPad)?.wat).toBe(a.samenvatting);
-  });
-
-  it('per algoritme kloppen de concepten en wat je nog nodig hebt met de conceptenkaart', () => {
-    for (const a of algoritmes as { slug: string; startPad: string }[]) {
-      const nodig = new Set(voorkennisPerAlgoritme[a.slug]);
-      const volgorde = (pythonConcepten as { id: string; label: string; to: string }[]).filter(
-        (c) => nodig.has(c.id),
-      );
-      const nog = volgorde
-        .filter((c) => !UIT_HET_PROJECT.has(c.id))
-        .map((c) => `[${c.label}](${c.to})`);
-      const rij = rijen.get(a.startPad);
-      expect(rij?.concepten, a.slug).toBe(volgorde.map((c) => c.label).join(', '));
-      expect(rij?.nog, a.slug).toBe(nog.length ? nog.join(', ') : 'niets');
-    }
-  });
 });
