@@ -1,0 +1,105 @@
+---
+sidebar_position: 3
+description: Zet het couplet in een for-loop die terugtelt van 10, en zoek de twee plekken waar het lied nog niet klopt.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Stap 3: Het hele lied
+
+:::info
+Deze stap gebruikt een for-loop die aftelt, uit [Range met stappen](/docs/herhalen/06b-range-stappen).
+:::
+
+Je couplet werkt voor elk aantal flessen. Nu moet `flessen` alleen nog zelf
+aftellen: 10, 9, 8, … tot en met 1. Dat doet `range` met een negatieve stap:
+
+```python
+for flessen in range(10, 0, -1):
+    print(flessen)
+```
+
+`range(10, 0, -1)` begint bij 10, telt telkens 1 af en stopt vóór de 0.
+
+## Opdracht: tien coupletten
+
+Zet je couplet uit stap 2 in de loop, zodat Python het hele lied print, met
+een lege regel na elk couplet. De regel `flessen = 10` heb je dan niet meer
+nodig: de loop geeft `flessen` elke ronde zelf een waarde.
+
+<CodeExercise>{`for flessen in range(10, 0, -1):
+    # zet hier je couplet
+    print()`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Kopieer de vier `print`-regels uit stap 2 in de loop, boven `print()`, en
+laat ze vier spaties inspringen. Dan horen ze bij de loop.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+for flessen in range(10, 0, -1):
+    print(f"{flessen} groene flessen staan aan de muur,")
+    print(f"{flessen} groene flessen staan aan de muur,")
+    print("en als er één groene fles valt,")
+    print(f"dan staan er {flessen - 1} groene flessen aan de muur.")
+    print()
+```
+
+Tien coupletten, met vijf regels code.
+
+</details>
+
+## Onderzoek
+
+Lees de laatste twee coupletten van je uitvoer hardop. Klinkt dat goed?
+
+<details>
+<summary>Wat klopt er niet?</summary>
+
+Onderaan de uitvoer staan de laatste twee coupletten zo:
+
+```
+2 groene flessen staan aan de muur,
+2 groene flessen staan aan de muur,
+en als er één groene fles valt,
+dan staan er 1 groene flessen aan de muur.
+
+1 groene flessen staan aan de muur,
+1 groene flessen staan aan de muur,
+en als er één groene fles valt,
+dan staan er 0 groene flessen aan de muur.
+```
+
+Het zijn er twee: bij één fles zeg je "1 groene fles staat", niet "1 groene
+flessen staan", en aan het eind staan er "geen groene flessen meer". Python
+weet dat niet; dat moet jij hem vertellen. Dat doe je in de volgende stap.
+
+</details>
+
+## Er gaat iets mis
+
+```python
+for flessen in range(10, 0):
+    print(flessen)
+print("klaar")
+```
+
+Uitvoer:
+
+```
+klaar
+```
+
+**Oorzaak:** zonder stap telt `range` op, met stappen van 1. Van 10 optellen
+tot vóór 0 levert geen enkel getal op, dus de loop draait nul keer. Er komt
+geen foutmelding: Python vindt een lege loop prima.
+
+**Oplossing:** geef de stap mee, `range(10, 0, -1)`.
+
+Door naar [stap 4: één fles is anders](./stap-4-if).

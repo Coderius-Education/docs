@@ -1,0 +1,132 @@
+---
+sidebar_position: 7
+description: Zet de loop in een functie lied(start), zodat je het lied vanaf elk aantal flessen kunt laten zingen met één aanroep.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Stap 7: Het hele lied als functie
+
+:::info
+Deze stap gebruikt een functie met een parameter, uit [Parameters](/docs/functies/09a-parameters).
+:::
+
+Onderaan je programma staat nog een losse loop die bij 3 begint. Wil je het
+lied vanaf 10, dan pas je die loop aan. Beter: maak er een functie van met
+het begingetal als parameter. Dan is het hele lied één aanroep.
+
+## Opdracht: `lied(start)`
+
+Maak de functie `lied` af, zodat hij het lied zingt vanaf `start` flessen.
+Onder de functies staan dan alleen nog aanroepen. Laat het lied eerst vanaf 3
+zingen, en probeer daarna `lied(10)`.
+
+<CodeExercise>{`def aantal(flessen):
+    if flessen == 0:
+        return "geen groene flessen meer"
+    elif flessen == 1:
+        return "1 groene fles"
+    else:
+        return f"{flessen} groene flessen"
+
+
+def staan(flessen):
+    if flessen == 1:
+        return "staat"
+    else:
+        return "staan"
+
+
+def couplet(flessen):
+    print(f"{aantal(flessen)} {staan(flessen)} aan de muur,")
+    print(f"{aantal(flessen)} {staan(flessen)} aan de muur,")
+    print("en als er één groene fles valt,")
+    print(f"dan {staan(flessen - 1)} er {aantal(flessen - 1)} aan de muur.")
+
+
+def lied(start):
+    # zet hier de loop
+    print(f"Hier komt het lied vanaf {start}.")
+
+
+lied(3)`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+De loop uit stap 6 past bijna letterlijk in de functie. Alleen de 3 in
+`range(3, 0, -1)` wordt `start`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+def aantal(flessen):
+    if flessen == 0:
+        return "geen groene flessen meer"
+    elif flessen == 1:
+        return "1 groene fles"
+    else:
+        return f"{flessen} groene flessen"
+
+
+def staan(flessen):
+    if flessen == 1:
+        return "staat"
+    else:
+        return "staan"
+
+
+def couplet(flessen):
+    print(f"{aantal(flessen)} {staan(flessen)} aan de muur,")
+    print(f"{aantal(flessen)} {staan(flessen)} aan de muur,")
+    print("en als er één groene fles valt,")
+    print(f"dan {staan(flessen - 1)} er {aantal(flessen - 1)} aan de muur.")
+
+
+def lied(start):
+    for flessen in range(start, 0, -1):
+        couplet(flessen)
+        print()
+
+
+lied(3)
+```
+
+Uitvoer:
+
+```
+3 groene flessen staan aan de muur,
+3 groene flessen staan aan de muur,
+en als er één groene fles valt,
+dan staan er 2 groene flessen aan de muur.
+
+2 groene flessen staan aan de muur,
+2 groene flessen staan aan de muur,
+en als er één groene fles valt,
+dan staat er 1 groene fles aan de muur.
+
+1 groene fles staat aan de muur,
+1 groene fles staat aan de muur,
+en als er één groene fles valt,
+dan staan er geen groene flessen meer aan de muur.
+```
+
+Vergelijk dit met stap 1. Daar had je vijftig `print`-regels nodig voor het
+hele lied. Nu is `lied(10)` genoeg, en `lied(99)` kost je geen regel meer.
+
+</details>
+
+## Voorspel
+
+<details>
+<summary>Wat print <code>lied(0)</code>?</summary>
+
+Niets. `range(0, 0, -1)` is leeg, dus de loop draait nul keer. Er staan
+geen flessen aan de muur, dus er valt ook niets te zingen.
+
+</details>
+
+Door naar [stap 8: maak je eigen lied](./stap-8-zelf).
