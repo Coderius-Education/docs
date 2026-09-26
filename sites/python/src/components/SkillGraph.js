@@ -11,6 +11,7 @@ const SkillGraph = () => {
     '#9c27b0', // Purple
     '#00bcd4', // Cyan
     '#795548', // Brown
+    '#607d8b', // Blue grey
   ];
 
   const width = 800;

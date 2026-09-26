@@ -195,4 +195,40 @@ export const lessen: Les[] = [
     hoofdstuk: 'Klassen',
     pad: '/docs/klassen/14k-objecten-inlezen',
   },
+  {
+    id: '15a',
+    label: '15a Try en except',
+    hoofdstuk: 'Fouten afvangen',
+    pad: '/docs/fouten/15a-try-en-except',
+  },
+  {
+    id: '15b',
+    label: '15b Welke fout?',
+    hoofdstuk: 'Fouten afvangen',
+    pad: '/docs/fouten/15b-welke-fout',
+  },
+  {
+    id: '15c',
+    label: '15c De melding bewaren',
+    hoofdstuk: 'Fouten afvangen',
+    pad: '/docs/fouten/15c-de-melding-bewaren',
+  },
+  {
+    id: '15d',
+    label: '15d Proberen tot het lukt',
+    hoofdstuk: 'Fouten afvangen',
+    pad: '/docs/fouten/15d-proberen-tot-het-lukt',
+  },
+  {
+    id: '15e',
+    label: '15e Een bestand dat er niet is',
+    hoofdstuk: 'Fouten afvangen',
+    pad: '/docs/fouten/15e-een-bestand-dat-er-niet-is',
+  },
+  {
+    id: '15f',
+    label: '15f Zelf een fout opwerpen',
+    hoofdstuk: 'Fouten afvangen',
+    pad: '/docs/fouten/15f-zelf-een-fout-opwerpen',
+  },
 ];

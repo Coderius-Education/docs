@@ -9,6 +9,7 @@ export const progressData = [
       Functies: 0,
       Data: 0,
       Klassen: 0,
+      Fouten: 0,
     },
   },
   {
@@ -21,6 +22,7 @@ export const progressData = [
       Functies: 0,
       Data: 0,
       Klassen: 0,
+      Fouten: 0,
     },
   },
   {
@@ -33,6 +35,7 @@ export const progressData = [
       Functies: 0,
       Data: 0,
       Klassen: 0,
+      Fouten: 0,
     },
   },
   {
@@ -45,6 +48,7 @@ export const progressData = [
       Functies: 0,
       Data: 0,
       Klassen: 0,
+      Fouten: 0,
     },
   },
   {
@@ -57,6 +61,7 @@ export const progressData = [
       Functies: 0,
       Data: 0,
       Klassen: 0,
+      Fouten: 0,
     },
   },
   {
@@ -69,6 +74,7 @@ export const progressData = [
       Functies: 0,
       Data: 0,
       Klassen: 0,
+      Fouten: 0,
     },
   },
   {
@@ -81,6 +87,7 @@ export const progressData = [
       Functies: 0,
       Data: 0,
       Klassen: 0,
+      Fouten: 0,
     },
   },
   {
@@ -93,6 +100,7 @@ export const progressData = [
       Functies: 0,
       Data: 0,
       Klassen: 0,
+      Fouten: 0,
     },
   },
   {
@@ -105,6 +113,7 @@ export const progressData = [
       Functies: 0,
       Data: 0,
       Klassen: 0,
+      Fouten: 0,
     },
   },
   {
@@ -117,6 +126,7 @@ export const progressData = [
       Functies: 0,
       Data: 0,
       Klassen: 0,
+      Fouten: 0,
     },
   },
   {
@@ -129,6 +139,7 @@ export const progressData = [
       Functies: 0,
       Data: 0,
       Klassen: 0,
+      Fouten: 0,
     },
   },
   {
@@ -141,6 +152,7 @@ export const progressData = [
       Functies: 0,
       Data: 0,
       Klassen: 0,
+      Fouten: 0,
     },
   },
   {
@@ -153,6 +165,7 @@ export const progressData = [
       Functies: 0,
       Data: 0,
       Klassen: 0,
+      Fouten: 0,
     },
   },
   {
@@ -165,6 +178,7 @@ export const progressData = [
       Functies: 0,
       Data: 0,
       Klassen: 0,
+      Fouten: 0,
     },
   },
   {
@@ -177,6 +191,7 @@ export const progressData = [
       Functies: 4,
       Data: 0,
       Klassen: 0,
+      Fouten: 0,
     },
   },
   {
@@ -189,6 +204,7 @@ export const progressData = [
       Functies: 6,
       Data: 0,
       Klassen: 0,
+      Fouten: 0,
     },
   },
   {
@@ -201,6 +217,7 @@ export const progressData = [
       Functies: 7,
       Data: 0,
       Klassen: 0,
+      Fouten: 0,
     },
   },
   {
@@ -213,6 +230,7 @@ export const progressData = [
       Functies: 8,
       Data: 0,
       Klassen: 0,
+      Fouten: 0,
     },
   },
   {
@@ -225,6 +243,7 @@ export const progressData = [
       Functies: 8,
       Data: 0,
       Klassen: 0,
+      Fouten: 0,
     },
   },
   {
@@ -237,6 +256,7 @@ export const progressData = [
       Functies: 8,
       Data: 0,
       Klassen: 0,
+      Fouten: 0,
     },
   },
   {
@@ -249,6 +269,7 @@ export const progressData = [
       Functies: 8,
       Data: 4,
       Klassen: 0,
+      Fouten: 0,
     },
   },
   {
@@ -261,6 +282,7 @@ export const progressData = [
       Functies: 8,
       Data: 5,
       Klassen: 0,
+      Fouten: 0,
     },
   },
   {
@@ -273,6 +295,7 @@ export const progressData = [
       Functies: 8,
       Data: 7,
       Klassen: 0,
+      Fouten: 0,
     },
   },
   {
@@ -285,6 +308,7 @@ export const progressData = [
       Functies: 8,
       Data: 8,
       Klassen: 0,
+      Fouten: 0,
     },
   },
   {
@@ -297,6 +321,7 @@ export const progressData = [
       Functies: 8,
       Data: 9,
       Klassen: 0,
+      Fouten: 0,
     },
   },
   {
@@ -309,6 +334,7 @@ export const progressData = [
       Functies: 8,
       Data: 9,
       Klassen: 0,
+      Fouten: 0,
     },
   },
   {
@@ -321,6 +347,7 @@ export const progressData = [
       Functies: 8,
       Data: 9,
       Klassen: 0,
+      Fouten: 0,
     },
   },
   {
@@ -333,6 +360,7 @@ export const progressData = [
       Functies: 8,
       Data: 10,
       Klassen: 0,
+      Fouten: 0,
     },
   },
   {
@@ -345,6 +373,7 @@ export const progressData = [
       Functies: 8,
       Data: 10,
       Klassen: 1,
+      Fouten: 0,
     },
   },
   {
@@ -357,6 +386,7 @@ export const progressData = [
       Functies: 8,
       Data: 10,
       Klassen: 2,
+      Fouten: 0,
     },
   },
   {
@@ -369,6 +399,7 @@ export const progressData = [
       Functies: 8,
       Data: 10,
       Klassen: 3,
+      Fouten: 0,
     },
   },
   {
@@ -381,6 +412,7 @@ export const progressData = [
       Functies: 9,
       Data: 10,
       Klassen: 4,
+      Fouten: 0,
     },
   },
   {
@@ -393,6 +425,7 @@ export const progressData = [
       Functies: 9,
       Data: 10,
       Klassen: 5,
+      Fouten: 0,
     },
   },
   {
@@ -405,6 +438,7 @@ export const progressData = [
       Functies: 10,
       Data: 10,
       Klassen: 6,
+      Fouten: 0,
     },
   },
   {
@@ -417,6 +451,7 @@ export const progressData = [
       Functies: 10,
       Data: 10,
       Klassen: 7,
+      Fouten: 0,
     },
   },
   {
@@ -429,6 +464,7 @@ export const progressData = [
       Functies: 10,
       Data: 10,
       Klassen: 8,
+      Fouten: 0,
     },
   },
   {
@@ -441,6 +477,7 @@ export const progressData = [
       Functies: 10,
       Data: 10,
       Klassen: 9,
+      Fouten: 0,
     },
   },
   {
@@ -453,6 +490,7 @@ export const progressData = [
       Functies: 10,
       Data: 10,
       Klassen: 10,
+      Fouten: 0,
     },
   },
   {
@@ -465,6 +503,85 @@ export const progressData = [
       Functies: 10,
       Data: 10,
       Klassen: 10,
+      Fouten: 0,
+    },
+  },
+  {
+    tutorial: '15a. Try en except',
+    levels: {
+      Basis: 10,
+      Variabelen: 10,
+      Logica: 8,
+      Herhaling: 10,
+      Functies: 10,
+      Data: 10,
+      Klassen: 10,
+      Fouten: 2,
+    },
+  },
+  {
+    tutorial: '15b. Welke fout',
+    levels: {
+      Basis: 10,
+      Variabelen: 10,
+      Logica: 9,
+      Herhaling: 10,
+      Functies: 10,
+      Data: 10,
+      Klassen: 10,
+      Fouten: 4,
+    },
+  },
+  {
+    tutorial: '15c. De melding bewaren',
+    levels: {
+      Basis: 10,
+      Variabelen: 10,
+      Logica: 9,
+      Herhaling: 10,
+      Functies: 10,
+      Data: 10,
+      Klassen: 10,
+      Fouten: 5,
+    },
+  },
+  {
+    tutorial: '15d. Proberen tot het lukt',
+    levels: {
+      Basis: 10,
+      Variabelen: 10,
+      Logica: 9,
+      Herhaling: 10,
+      Functies: 10,
+      Data: 10,
+      Klassen: 10,
+      Fouten: 7,
+    },
+  },
+  {
+    tutorial: '15e. Een bestand dat er niet is',
+    levels: {
+      Basis: 10,
+      Variabelen: 10,
+      Logica: 10,
+      Herhaling: 10,
+      Functies: 10,
+      Data: 10,
+      Klassen: 10,
+      Fouten: 8,
+    },
+  },
+  {
+    tutorial: '15f. Zelf een fout opwerpen',
+    levels: {
+      Basis: 10,
+      Variabelen: 10,
+      Logica: 10,
+      Herhaling: 10,
+      Functies: 10,
+      Data: 10,
+      Klassen: 10,
+      Fouten: 10,
     },
   },
 ];

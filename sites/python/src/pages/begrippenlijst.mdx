@@ -23,6 +23,9 @@ Een verzameling gegevens waarbij elke waarde gekoppeld is aan een unieke sleutel
 leerling = {"naam": "Sara", "leeftijd": 15}
 ```
 
+### Exception (fout)
+Een fout die Python tijdens het draaien opwerpt, zoals een `ValueError` of een `KeyError`. Zonder `try` stopt je programma erop; met `try` en `except` vang je hem af.
+
 ### f-string
 De modernste manier in Python om tekst (`String`) en variabelen met elkaar te mixen. Je zet een `f` voor het aanhalingsteken, en variabelen zet je direct in de tekst tussen `{ }` accolades.
 
@@ -105,6 +108,9 @@ def begroet(naam):    # 'naam' is hier de parameter
     print(f"Hallo {naam}!")
 ```
 
+### Raise
+Zelf een fout opwerpen, bijvoorbeeld `raise ValueError("Te weinig saldo")`. Handig in een functie of methode die iets krijgt waar hij niets mee kan.
+
 ### Return
 Het sleutelwoord dat je gebruikt aan het einde van een functie, waarmee je het resultaat "teruggeeft" aan de plek in je code waar de functie werd aangeroepen. Op deze manier kun je met het antwoord verder rekenen, in plaats van dat het alleen maar op je scherm wordt geprint.
 
@@ -132,6 +138,16 @@ Het datatype voor tekst. Strings staan altijd tussen enkele of dubbele aanhaling
 ```python
 tekst1 = "Dit is tekst."
 tekst2 = 'Dit mag ook.'
+```
+
+### Try en except
+Probeer de code onder `try`, en doe de code onder `except` als er een fout optreedt die je daar noemt.
+
+```python
+try:
+    getal = int("twaalf")
+except ValueError:
+    print("Dat is geen getal.")
 ```
 
 ### Tuple (`tuple`)

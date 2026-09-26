@@ -1,0 +1,245 @@
+---
+sidebar_position: 6
+description: Werp zelf een fout op met raise als je functie of klasse iets krijgt waar hij niets mee kan.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 15f Zelf een fout opwerpen
+
+Tot nu toe kwamen de fouten van Python zelf. Je kunt er ook zelf een opwerpen,
+met `raise`. Dat doe je als je functie iets krijgt waar hij niets mee kan:
+
+```python
+def zet_leeftijd(leeftijd):
+    if leeftijd < 0:
+        raise ValueError("Een leeftijd kan niet negatief zijn.")
+    return leeftijd
+
+
+print(zet_leeftijd(15))
+print(zet_leeftijd(-3))
+```
+
+Uitvoer:
+
+```
+15
+ValueError: Een leeftijd kan niet negatief zijn.
+```
+
+{/* foutmelding-los: hier kies je de fout zelf, met raise; Python meldt niets */}
+
+`raise` stopt de functie meteen, net als een fout van Python zelf. De tekst
+tussen de haakjes is de melding die wie de functie gebruikt, te zien krijgt.
+`ValueError` past hier: de waarde klopt niet.
+
+## Afvangen wat je zelf opwerpt
+
+Wie de functie aanroept, vangt jouw fout af zoals elke andere:
+
+```python
+def zet_leeftijd(leeftijd):
+    if leeftijd < 0:
+        raise ValueError("Een leeftijd kan niet negatief zijn.")
+    return leeftijd
+
+
+try:
+    zet_leeftijd(-3)
+except ValueError as fout:
+    print(f"Niet gelukt: {fout}")
+```
+
+Uitvoer:
+
+```
+Niet gelukt: Een leeftijd kan niet negatief zijn.
+```
+
+Zo kiest de functie wát er mis is, en kiest wie hem aanroept wat er dan
+gebeurt.
+
+## In een klasse
+
+In les 14f gaf `neem_op` van de rekening `False` terug als het saldo te laag
+was. Wie dat vergat te controleren, merkte niets. Met `raise` kan dat niet
+ongemerkt:
+
+```python
+class Rekening:
+    def __init__(self, eigenaar):
+        self.eigenaar = eigenaar
+        self.saldo = 0
+
+    def neem_op(self, bedrag):
+        if bedrag > self.saldo:
+            raise ValueError(f"Te weinig saldo: {self.saldo} euro")
+        self.saldo -= bedrag
+
+
+rekening = Rekening("Sara")
+try:
+    rekening.neem_op(50)
+except ValueError as fout:
+    print(fout)
+```
+
+Uitvoer:
+
+```
+Te weinig saldo: 0 euro
+```
+
+---
+
+## Opdracht 15f.1: Een geldige maand
+
+{/* foutmelding-los: hier kies je de fout zelf, met raise; Python meldt niets */}
+
+Laat `maandnaam` een `ValueError` opwerpen als het nummer niet tussen 1 en 12
+ligt, met de melding `Een maand gaat van 1 tot en met 12.` Vang de fout af
+bij de aanroep.
+
+Verwachte uitvoer:
+
+```
+maart
+Een maand gaat van 1 tot en met 12.
+```
+
+{/* niet-draaien: de startcode valt expres om, op maand 13 die de opdracht afvangt */}
+
+<CodeExercise>{`namen = [
+    "januari", "februari", "maart", "april", "mei", "juni",
+    "juli", "augustus", "september", "oktober", "november", "december",
+]
+
+
+def maandnaam(nummer):
+    return namen[nummer - 1]
+
+
+print(maandnaam(3))
+print(maandnaam(13))`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Controleer in de functie met `if nummer < 1 or nummer > 12:` en werp dan de
+fout op. Zet de tweede `print` in een `try` met `except ValueError as fout:`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+namen = [
+    "januari", "februari", "maart", "april", "mei", "juni",
+    "juli", "augustus", "september", "oktober", "november", "december",
+]
+
+
+def maandnaam(nummer):
+    if nummer < 1 or nummer > 12:
+        raise ValueError("Een maand gaat van 1 tot en met 12.")
+    return namen[nummer - 1]
+
+
+print(maandnaam(3))
+try:
+    print(maandnaam(13))
+except ValueError as fout:
+    print(fout)
+```
+
+Uitvoer:
+
+```
+maart
+Een maand gaat van 1 tot en met 12.
+```
+
+</details>
+
+---
+
+## Opdracht 15f.2: Niet storten wat negatief is
+
+{/* foutmelding-los: hier kies je de fout zelf, met raise; Python meldt niets */}
+
+Geef `Rekening` een methode `stort(bedrag)` die een `ValueError` opwerpt als
+het bedrag 0 of kleiner is, met de melding `Storten kan alleen met een
+positief bedrag.`
+
+Verwachte uitvoer:
+
+```
+Saldo: 20 euro
+Storten kan alleen met een positief bedrag.
+Saldo: 20 euro
+```
+
+<CodeExercise>{`class Rekening:
+    def __init__(self, eigenaar):
+        self.eigenaar = eigenaar
+        self.saldo = 0
+
+    def stort(self, bedrag):
+        self.saldo += bedrag
+
+
+rekening = Rekening("Sara")
+rekening.stort(20)
+print(f"Saldo: {rekening.saldo} euro")
+try:
+    rekening.stort(-5)
+except ValueError as fout:
+    print(fout)
+print(f"Saldo: {rekening.saldo} euro")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Zet de `if` met `raise` bovenaan de methode, vóór `self.saldo += bedrag`. Zo
+verandert het saldo niet als het bedrag niet klopt.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+class Rekening:
+    def __init__(self, eigenaar):
+        self.eigenaar = eigenaar
+        self.saldo = 0
+
+    def stort(self, bedrag):
+        if bedrag <= 0:
+            raise ValueError("Storten kan alleen met een positief bedrag.")
+        self.saldo += bedrag
+
+
+rekening = Rekening("Sara")
+rekening.stort(20)
+print(f"Saldo: {rekening.saldo} euro")
+try:
+    rekening.stort(-5)
+except ValueError as fout:
+    print(fout)
+print(f"Saldo: {rekening.saldo} euro")
+```
+
+Uitvoer:
+
+```
+Saldo: 20 euro
+Storten kan alleen met een positief bedrag.
+Saldo: 20 euro
+```
+
+Zonder de controle had de startcode het saldo stil op 15 gezet.
+
+</details>

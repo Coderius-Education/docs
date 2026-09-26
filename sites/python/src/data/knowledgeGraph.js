@@ -42,6 +42,12 @@ export const knowledgeGraph = {
       description: 'Je eigen soorten objecten maken, met attributen en methoden.',
       maxLevel: 5,
     },
+    {
+      id: 'fouten',
+      label: 'Fouten afvangen',
+      description: 'Fouten opvangen met try en except, en zelf opwerpen met raise.',
+      maxLevel: 3,
+    },
   ],
   tutorials: [
     {
@@ -193,6 +199,17 @@ export const knowledgeGraph = {
         },
       ],
     },
+    {
+      id: 't15',
+      title: '15. Fouten afvangen',
+      impact: [
+        {
+          concept: 'fouten',
+          depth: 'Je leert fouten afvangen met `try` en `except`, en zelf opwerpen met `raise`.',
+          level: 3,
+        },
+      ],
+    },
   ],
   connections: [
     { from: 'basis', to: 'variabelen' },
@@ -203,5 +220,6 @@ export const knowledgeGraph = {
     { from: 'functies', to: 'logica' },
     { from: 'data', to: 'klassen' },
     { from: 'functies', to: 'klassen' },
+    { from: 'logica', to: 'fouten' },
   ],
 };

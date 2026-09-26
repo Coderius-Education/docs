@@ -416,6 +416,40 @@ print(rex)               # Hond Rex
 
 ---
 
+## Fouten afvangen
+
+### Try en except
+
+```python
+tekst = "twaalf"
+try:
+    getal = int(tekst)
+except ValueError:
+    print("Dat is geen getal.")
+```
+
+### Meer fouten, en de melding bewaren
+
+```python
+try:
+    uitkomst = int("12") / 0
+except ValueError:
+    print("Geen getal.")
+except ZeroDivisionError as fout:
+    print(f"Mis: {fout}")   # Mis: division by zero
+```
+
+### Zelf een fout opwerpen
+
+```python
+def zet_leeftijd(leeftijd):
+    if leeftijd < 0:
+        raise ValueError("Een leeftijd kan niet negatief zijn.")
+    return leeftijd
+```
+
+---
+
 ## Veelvoorkomende fouten
 
 ```python
