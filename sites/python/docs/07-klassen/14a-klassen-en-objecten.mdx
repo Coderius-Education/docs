@@ -1,0 +1,302 @@
+---
+sidebar_position: 1
+description: Maak je eigen soort gegevens met een klasse, en maak er objecten van met eigen attributen.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 14a Klassen en objecten
+
+In les 11c bewaarde je per leerling een dictionary met gegevens. Dat werkt,
+maar niets houdt je tegen om bij de ene leerling `"leeftijd"` te schrijven
+en bij de andere `"lefetijd"`. Met een **klasse** leg je één keer vast hoe
+iets eruitziet, en maak je daarna zoveel exemplaren als je wilt.
+
+## Je eerste klasse
+
+```python
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+
+rex = Hond("Rex", 3)
+bello = Hond("Bello", 7)
+
+print(rex.naam)
+print(bello.leeftijd)
+```
+
+Uitvoer:
+
+```
+Rex
+7
+```
+
+- `class Hond:` maakt een nieuwe klasse. De naam van een klasse begint met een
+  hoofdletter, zodat je hem niet verwart met een variabele.
+- `Hond("Rex", 3)` maakt een **object**: één hond. `rex` en `bello` zijn
+  twee objecten van dezelfde klasse. Een klasse is het ontwerp, een object
+  is een ding dat volgens dat ontwerp gemaakt is.
+- `__init__` is de functie die Python aanroept op het moment dat je een
+  object maakt. De argumenten `"Rex"` en `3` komen binnen als `naam` en
+  `leeftijd`.
+- `self` is het object dat op dat moment gemaakt wordt. `self.naam = naam`
+  bewaart de naam in dat object.
+
+## Attributen
+
+`naam` en `leeftijd` heten de **attributen** van een hond. Je leest ze met
+een punt: `rex.naam`. Met dezelfde punt verander je ze:
+
+```python
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+
+rex = Hond("Rex", 3)
+rex.leeftijd = 4
+
+print(f"{rex.naam} is nu {rex.leeftijd} jaar.")
+```
+
+Uitvoer:
+
+```
+Rex is nu 4 jaar.
+```
+
+Elk object heeft zijn eigen attributen. Verander je de leeftijd van `rex`,
+dan blijft die van `bello` 7.
+
+## Een attribuut dat altijd hetzelfde begint
+
+Niet elk attribuut hoeft een parameter te zijn. Een nieuwe hond heeft nog
+geen trucjes geleerd, dus die lijst begint leeg:
+
+```python
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+        self.trucjes = []
+
+
+rex = Hond("Rex", 3)
+rex.trucjes.append("zitten")
+rex.trucjes.append("pootje geven")
+
+print(rex.trucjes)
+```
+
+Uitvoer:
+
+```
+['zitten', 'pootje geven']
+```
+
+---
+
+## Er gaat iets mis
+
+**Een argument vergeten**
+
+```python
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+
+rex = Hond("Rex")
+```
+
+Uitvoer:
+
+```
+TypeError: Hond.__init__() missing 1 required positional argument: 'leeftijd'
+```
+
+`__init__` vraagt om een naam én een leeftijd. `self` vult Python zelf in,
+de andere twee moet jij meegeven: `Hond("Rex", 3)`.
+
+**Een attribuut dat niet bestaat**
+
+```python
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+
+rex = Hond("Rex", 3)
+print(rex.leefijd)
+```
+
+Uitvoer:
+
+```
+AttributeError: 'Hond' object has no attribute 'leefijd'. Did you mean: 'leeftijd'?
+```
+
+{/* foutmelding-van: blok-erboven */}
+
+Een typefout in een attribuutnaam geeft een `AttributeError`. Python raadt
+er vaak bij wat je bedoelde.
+
+---
+
+## Opdracht 14a.1: Boeken
+
+Maak een klasse `Boek` met de attributen `titel`, `schrijver` en
+`bladzijden`. Maak twee boeken en print van allebei een regel.
+
+Verwachte uitvoer:
+
+```
+De Hobbit door J.R.R. Tolkien, 320 bladzijden
+Matilda door Roald Dahl, 240 bladzijden
+```
+
+<CodeExercise>{`# Schrijf hier je code`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+`__init__` krijgt vier parameters: `self`, `titel`, `schrijver` en
+`bladzijden`. Bewaar elk als `self.titel = titel`, enzovoort.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+class Boek:
+    def __init__(self, titel, schrijver, bladzijden):
+        self.titel = titel
+        self.schrijver = schrijver
+        self.bladzijden = bladzijden
+
+
+hobbit = Boek("De Hobbit", "J.R.R. Tolkien", 320)
+matilda = Boek("Matilda", "Roald Dahl", 240)
+
+print(f"{hobbit.titel} door {hobbit.schrijver}, {hobbit.bladzijden} bladzijden")
+print(f"{matilda.titel} door {matilda.schrijver}, {matilda.bladzijden} bladzijden")
+```
+
+Uitvoer:
+
+```
+De Hobbit door J.R.R. Tolkien, 320 bladzijden
+Matilda door Roald Dahl, 240 bladzijden
+```
+
+</details>
+
+---
+
+## Opdracht 14a.2: Een leerling met cijfers
+
+Maak een klasse `Leerling` met een `naam` en een lijst `cijfers` die leeg
+begint. Maak een leerling, voeg drie cijfers toe en print het gemiddelde.
+
+Verwachte uitvoer:
+
+```
+Sara heeft gemiddeld een 7.0
+```
+
+<CodeExercise>{`# Schrijf hier je code`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+`self.cijfers = []` in `__init__`, net als de trucjes van de hond. Het
+gemiddelde is `sum(sara.cijfers) / len(sara.cijfers)`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+class Leerling:
+    def __init__(self, naam):
+        self.naam = naam
+        self.cijfers = []
+
+
+sara = Leerling("Sara")
+sara.cijfers.append(7)
+sara.cijfers.append(8)
+sara.cijfers.append(6)
+
+gemiddelde = sum(sara.cijfers) / len(sara.cijfers)
+print(f"{sara.naam} heeft gemiddeld een {gemiddelde:.1f}")
+```
+
+Uitvoer:
+
+```
+Sara heeft gemiddeld een 7.0
+```
+
+</details>
+
+---
+
+## Opdracht 14a.3: Dictionary of klasse?
+
+Zet de dictionary hieronder om naar een object van een klasse `Film`. Print
+daarna de titel en het jaar via de attributen.
+
+<CodeExercise>{`film = {"titel": "Up", "jaar": 2009, "minuten": 96}
+
+# Schrijf hier de klasse Film en maak er een object van`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Elke sleutel van de dictionary wordt een attribuut. Maak het object met
+`Film(film["titel"], film["jaar"], film["minuten"])`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+film = {"titel": "Up", "jaar": 2009, "minuten": 96}
+
+
+class Film:
+    def __init__(self, titel, jaar, minuten):
+        self.titel = titel
+        self.jaar = jaar
+        self.minuten = minuten
+
+
+up = Film(film["titel"], film["jaar"], film["minuten"])
+print(f"{up.titel} ({up.jaar})")
+```
+
+Uitvoer:
+
+```
+Up (2009)
+```
+
+{/* foutmelding-van: class Film:\n    def __init__(self, titel):\n        self.titel = titel\nFilm("Up").titl */}
+
+Waar je eerst `film["titel"]` schreef, schrijf je nu `up.titel`. Een
+typefout in `up.titl` geeft meteen een `AttributeError`, terwijl een
+typefout in een nieuwe sleutel van een dictionary stil een extra sleutel
+maakt.
+
+</details>

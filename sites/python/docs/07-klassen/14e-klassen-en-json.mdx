@@ -1,0 +1,466 @@
+---
+sidebar_position: 5
+description: Sla objecten op als JSON met een methode naar_dict, en maak ze na het inlezen weer terug.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 14e Objecten opslaan als JSON
+
+<Voorkennis items={[
+  {to: '/docs/data/11c-geneste-dictionaries', label: '11c Geneste dictionaries'},
+  {to: '/docs/data/11d-json', label: '11d JSON: opslaan en inlezen'},
+]} />
+
+In [11d](/docs/data/11d-json) schreef je dictionaries en lijsten naar een
+bestand. Een object van je eigen klasse lukt zo niet:
+
+```python
+import json
+
+
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+
+rex = Hond("Rex", 3)
+print(json.dumps(rex))
+```
+
+Uitvoer:
+
+```
+TypeError: Object of type Hond is not JSON serializable
+```
+
+JSON kent tekst, getallen, `true`/`false`, `null`, lijsten en
+dictionaries. Een `Hond` kent hij niet. Je zet het object dus eerst zelf om
+naar een dictionary.
+
+## Van object naar dictionary
+
+Geef de klasse een methode `naar_dict()` die een dictionary teruggeeft met
+één sleutel per attribuut:
+
+```python
+import json
+
+
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+    def naar_dict(self):
+        return {"naam": self.naam, "leeftijd": self.leeftijd}
+
+
+rex = Hond("Rex", 3)
+print(json.dumps(rex.naar_dict()))
+```
+
+Uitvoer:
+
+```
+{"naam": "Rex", "leeftijd": 3}
+```
+
+## Van dictionary naar object
+
+Na het inlezen heb je weer een dictionary. Een losse functie maakt daar een
+`Hond` van:
+
+```python
+import json
+
+
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+
+def hond_uit_dict(gegevens):
+    return Hond(gegevens["naam"], gegevens["leeftijd"])
+
+
+tekst = '{"naam": "Bello", "leeftijd": 7}'
+bello = hond_uit_dict(json.loads(tekst))
+print(bello.naam, bello.leeftijd)
+```
+
+Uitvoer:
+
+```
+Bello 7
+```
+
+## Een hele lijst opslaan en inlezen
+
+Met een lijst objecten doe je hetzelfde per object, in een loop. Eerst naar
+een lijst dictionaries en het bestand in, daarna het bestand uit en weer
+terug naar objecten:
+
+```python
+import json
+
+
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+    def naar_dict(self):
+        return {"naam": self.naam, "leeftijd": self.leeftijd}
+
+
+def hond_uit_dict(gegevens):
+    return Hond(gegevens["naam"], gegevens["leeftijd"])
+
+
+honden = [Hond("Rex", 3), Hond("Bello", 7)]
+
+lijst = []
+for hond in honden:
+    lijst.append(hond.naar_dict())
+
+with open("honden.json", "w") as bestand:
+    json.dump(lijst, bestand, indent=2)
+
+with open("honden.json") as bestand:
+    ingelezen = json.load(bestand)
+
+terug = []
+for gegevens in ingelezen:
+    terug.append(hond_uit_dict(gegevens))
+
+for hond in terug:
+    print(hond.naam, "is", hond.leeftijd)
+```
+
+Uitvoer:
+
+```
+Rex is 3
+Bello is 7
+```
+
+In het bestand staat een gewone JSON-lijst met twee dictionaries. Wie het
+opent, ziet niets van je klasse; die bestaat alleen in je programma.
+
+## Dictionary of klasse?
+
+Beide bewaren gegevens onder een naam. Een vuistregel:
+
+- Een **dictionary** is handig voor gegevens die je alleen opslaat en
+  opzoekt, en waarvan de sleutels kunnen verschillen: een telling van
+  woorden, de instellingen uit een JSON-bestand.
+- Een **klasse** is handig als elk ding dezelfde attributen heeft en je er
+  iets mee doet: een hond die blaft, een rekening waarvan je geld opneemt.
+
+Veel programma's gebruiken allebei: klassen terwijl het programma draait,
+dictionaries en JSON om op te slaan.
+
+---
+
+## Er gaat iets mis
+
+**Je vergeet de haakjes achter `naar_dict`**
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+import json
+
+
+class Hond:
+    def __init__(self, naam):
+        self.naam = naam
+
+    def naar_dict(self):
+        return {"naam": self.naam}
+
+
+print(json.dumps(Hond("Rex").naar_dict))
+```
+
+Uitvoer:
+
+```
+TypeError: Object of type method is not JSON serializable
+```
+
+Zonder haakjes geef je de methode zelf door, niet wat hij teruggeeft.
+Schrijf `naar_dict()`.
+
+**Een sleutel heet anders dan je verwacht**
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+
+def hond_uit_dict(gegevens):
+    return Hond(gegevens["naam"], gegevens["leeftijd"])
+
+
+hond_uit_dict({"naam": "Rex", "jaren": 3})
+```
+
+Uitvoer:
+
+```
+KeyError: 'leeftijd'
+```
+
+De sleutels in `hond_uit_dict` moeten precies dezelfde zijn als die in
+`naar_dict`. Pas je de ene aan, pas dan ook de andere aan.
+
+---
+
+## Opdracht 14e.1: Een boek als dictionary
+
+Geef `Boek` een methode `naar_dict()`, zodat het programma de regel
+hieronder print.
+
+Verwachte uitvoer:
+
+```
+{"titel": "De Hobbit", "bladzijden": 320}
+```
+
+<CodeExercise>{`import json
+
+
+class Boek:
+    def __init__(self, titel, bladzijden):
+        self.titel = titel
+        self.bladzijden = bladzijden
+
+    def naar_dict(self):
+        return {}
+
+
+hobbit = Boek("De Hobbit", 320)
+print(json.dumps(hobbit.naar_dict()))`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+De sleutels zijn tekst (`"titel"`), de waarden de attributen
+(`self.titel`).
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+import json
+
+
+class Boek:
+    def __init__(self, titel, bladzijden):
+        self.titel = titel
+        self.bladzijden = bladzijden
+
+    def naar_dict(self):
+        return {"titel": self.titel, "bladzijden": self.bladzijden}
+
+
+hobbit = Boek("De Hobbit", 320)
+print(json.dumps(hobbit.naar_dict()))
+```
+
+Uitvoer:
+
+```
+{"titel": "De Hobbit", "bladzijden": 320}
+```
+
+</details>
+
+---
+
+## Opdracht 14e.2: Boeken inlezen
+
+In `tekst` staan twee boeken als JSON. Schrijf de functie
+`boek_uit_dict()` en maak van elk boek een `Boek`-object. Print daarna van
+elk boek de titel en het aantal bladzijden.
+
+Verwachte uitvoer:
+
+```
+De Hobbit 320
+Koning van Katoren 440
+```
+
+<CodeExercise>{`import json
+
+
+class Boek:
+    def __init__(self, titel, bladzijden):
+        self.titel = titel
+        self.bladzijden = bladzijden
+
+
+def boek_uit_dict(gegevens):
+    return Boek("?", 0)
+
+
+tekst = '[{"titel": "De Hobbit", "bladzijden": 320}, {"titel": "Koning van Katoren", "bladzijden": 440}]'
+
+boeken = []
+for gegevens in json.loads(tekst):
+    boeken.append(boek_uit_dict(gegevens))
+
+for boek in boeken:
+    print(boek.titel, boek.bladzijden)`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Haal de titel en de bladzijden uit `gegevens` met hun sleutel, en geef ze
+door aan `Boek(…)`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+import json
+
+
+class Boek:
+    def __init__(self, titel, bladzijden):
+        self.titel = titel
+        self.bladzijden = bladzijden
+
+
+def boek_uit_dict(gegevens):
+    return Boek(gegevens["titel"], gegevens["bladzijden"])
+
+
+tekst = '[{"titel": "De Hobbit", "bladzijden": 320}, {"titel": "Koning van Katoren", "bladzijden": 440}]'
+
+boeken = []
+for gegevens in json.loads(tekst):
+    boeken.append(boek_uit_dict(gegevens))
+
+for boek in boeken:
+    print(boek.titel, boek.bladzijden)
+```
+
+Uitvoer:
+
+```
+De Hobbit 320
+Koning van Katoren 440
+```
+
+</details>
+
+---
+
+## Opdracht 14e.3: De stappenteller bewaren
+
+De `Stappenteller` uit [14b](/docs/klassen/14b-methoden) vergeet alles als
+je programma stopt. Schrijf twee functies:
+
+1. `bewaar(teller)` schrijft de teller naar `teller.json`.
+2. `laad()` leest `teller.json` in en geeft een nieuwe `Stappenteller`
+   terug met hetzelfde aantal stappen.
+
+De teller is hier ingekort tot wat je nodig hebt.
+
+Verwachte uitvoer:
+
+```
+Na het inlezen: 2601 stappen
+```
+
+<CodeExercise>{`import json
+
+
+class Stappenteller:
+    def __init__(self):
+        self.stappen = 0
+
+    def loop(self, aantal):
+        self.stappen += aantal
+
+
+def bewaar(teller):
+    print("Nog te doen")
+
+
+def laad():
+    return Stappenteller()
+
+
+teller = Stappenteller()
+teller.loop(2601)
+bewaar(teller)
+
+terug = laad()
+print("Na het inlezen:", terug.stappen, "stappen")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Bewaar een dictionary als `{"stappen": 2601}` met `json.dump`. In `laad()`
+lees je hem met `json.load`, maak je een nieuwe `Stappenteller()` en zet
+je zijn `stappen` op `gegevens["stappen"]`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+import json
+
+
+class Stappenteller:
+    def __init__(self):
+        self.stappen = 0
+
+    def loop(self, aantal):
+        self.stappen += aantal
+
+
+def bewaar(teller):
+    with open("teller.json", "w") as bestand:
+        json.dump({"stappen": teller.stappen}, bestand)
+
+
+def laad():
+    with open("teller.json") as bestand:
+        gegevens = json.load(bestand)
+    teller = Stappenteller()
+    teller.stappen = gegevens["stappen"]
+    return teller
+
+
+teller = Stappenteller()
+teller.loop(2601)
+bewaar(teller)
+
+terug = laad()
+print("Na het inlezen:", terug.stappen, "stappen")
+```
+
+Uitvoer:
+
+```
+Na het inlezen: 2601 stappen
+```
+
+</details>

@@ -1,0 +1,308 @@
+---
+sidebar_position: 4
+description: Bepaal met __str__ wat er verschijnt als je een object print.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 14d Je object printen met __str__
+
+Print je een getal of een lijst, dan zie je wat erin zit. Print je een
+object van je eigen klasse, dan weet Python niet wat hij moet laten zien:
+
+{/* uitvoer-varieert: het geheugenadres verschilt per keer */}
+
+```python
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+
+rex = Hond("Rex", 3)
+print(rex)
+```
+
+Uitvoer:
+
+```
+<__main__.Hond object at 0x7f3a2c1b8d10>
+```
+
+Je ziet alleen van welke klasse het object is, en een geheugenadres dat bij
+jou anders is.
+
+## `__str__`
+
+Geef je klasse een methode `__str__`, dan gebruikt `print` die. Hij geeft
+met `return` de tekst terug die je wilt zien:
+
+```python
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+    def __str__(self):
+        return f"{self.naam} ({self.leeftijd} jaar)"
+
+
+rex = Hond("Rex", 3)
+print(rex)
+print(f"Vandaag komt {rex} logeren.")
+```
+
+Uitvoer:
+
+```
+Rex (3 jaar)
+Vandaag komt Rex (3 jaar) logeren.
+```
+
+Ook in een f-string gebruikt Python `__str__`. De twee lage streepjes voor
+en na de naam zeggen dat Python deze methode zelf aanroept, net als
+`__init__`. Jij roept hem nooit direct aan.
+
+## In een loop
+
+Heeft een klasse een `__str__`, dan wordt een loop over een lijst objecten
+kort:
+
+```python
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+    def __str__(self):
+        return f"{self.naam} ({self.leeftijd} jaar)"
+
+
+honden = [Hond("Rex", 3), Hond("Bello", 7)]
+for hond in honden:
+    print(hond)
+```
+
+Uitvoer:
+
+```
+Rex (3 jaar)
+Bello (7 jaar)
+```
+
+---
+
+## Er gaat iets mis
+
+**`print` in plaats van `return`**
+
+```python
+class Hond:
+    def __init__(self, naam):
+        self.naam = naam
+
+    def __str__(self):
+        print(self.naam)
+
+
+print(Hond("Rex"))
+```
+
+Uitvoer:
+
+```
+TypeError: __str__ returned non-string (type NoneType)
+```
+
+`__str__` moet de tekst teruggeven, niet zelf printen. Zonder `return`
+geeft een functie `None` terug, en daar kan `print` niets mee. Schrijf
+`return self.naam`.
+
+---
+
+## Opdracht 14d.1: Een boek printen
+
+Geef de klasse `Boek` een `__str__`, zodat `print(hobbit)` de regel
+hieronder geeft.
+
+Verwachte uitvoer:
+
+```
+De Hobbit door J.R.R. Tolkien (320 blz.)
+```
+
+<CodeExercise>{`class Boek:
+    def __init__(self, titel, schrijver, bladzijden):
+        self.titel = titel
+        self.schrijver = schrijver
+        self.bladzijden = bladzijden
+
+
+hobbit = Boek("De Hobbit", "J.R.R. Tolkien", 320)
+print(hobbit)`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+`def __str__(self):` met een `return` van een f-string met drie
+attributen.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+class Boek:
+    def __init__(self, titel, schrijver, bladzijden):
+        self.titel = titel
+        self.schrijver = schrijver
+        self.bladzijden = bladzijden
+
+    def __str__(self):
+        return f"{self.titel} door {self.schrijver} ({self.bladzijden} blz.)"
+
+
+hobbit = Boek("De Hobbit", "J.R.R. Tolkien", 320)
+print(hobbit)
+```
+
+Uitvoer:
+
+```
+De Hobbit door J.R.R. Tolkien (320 blz.)
+```
+
+</details>
+
+---
+
+## Opdracht 14d.2: Een rekening printen
+
+Geef `Rekening` een `__str__`. Staat er meer dan 0 euro op, dan is de
+tekst `Sara: 35 euro`; staat er niets op, dan `Sara: leeg`.
+
+Verwachte uitvoer:
+
+```
+Sara: leeg
+Sara: 35 euro
+```
+
+<CodeExercise>{`class Rekening:
+    def __init__(self, eigenaar):
+        self.eigenaar = eigenaar
+        self.saldo = 0
+
+    def stort(self, bedrag):
+        self.saldo += bedrag
+
+
+rekening = Rekening("Sara")
+print(rekening)
+rekening.stort(35)
+print(rekening)`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+In `__str__` mag een `if` staan, met in elk geval een eigen `return`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+class Rekening:
+    def __init__(self, eigenaar):
+        self.eigenaar = eigenaar
+        self.saldo = 0
+
+    def stort(self, bedrag):
+        self.saldo += bedrag
+
+    def __str__(self):
+        if self.saldo > 0:
+            return f"{self.eigenaar}: {self.saldo} euro"
+        else:
+            return f"{self.eigenaar}: leeg"
+
+
+rekening = Rekening("Sara")
+print(rekening)
+rekening.stort(35)
+print(rekening)
+```
+
+Uitvoer:
+
+```
+Sara: leeg
+Sara: 35 euro
+```
+
+</details>
+
+---
+
+## Opdracht 14d.3: Een datum
+
+De klasse `Datum` heeft `dag`, `maand` en `jaar`. Maak zijn
+`__str__` af, die de datum schrijft zoals in Nederland gebruikelijk, met twee
+cijfers voor dag en maand.
+
+Verwachte uitvoer:
+
+```
+07-03-2026
+25-12-2026
+```
+
+<CodeExercise>{`class Datum:
+    def __init__(self, dag, maand, jaar):
+        self.dag = dag
+        self.maand = maand
+        self.jaar = jaar
+
+    def __str__(self):
+        return "Nog te doen"
+
+
+print(Datum(7, 3, 2026))
+print(Datum(25, 12, 2026))`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Met `:02` in een f-string krijg je altijd twee cijfers: `f"{7:02}"` wordt
+`07`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+class Datum:
+    def __init__(self, dag, maand, jaar):
+        self.dag = dag
+        self.maand = maand
+        self.jaar = jaar
+
+    def __str__(self):
+        return f"{self.dag:02}-{self.maand:02}-{self.jaar}"
+
+
+print(Datum(7, 3, 2026))
+print(Datum(25, 12, 2026))
+```
+
+Uitvoer:
+
+```
+07-03-2026
+25-12-2026
+```
+
+</details>
