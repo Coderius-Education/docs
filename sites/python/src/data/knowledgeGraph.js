@@ -36,6 +36,12 @@ export const knowledgeGraph = {
       description: 'Lijsten en collecties van gegevens.',
       maxLevel: 5,
     },
+    {
+      id: 'klassen',
+      label: 'Klassen & Objecten',
+      description: 'Je eigen soorten objecten maken, met attributen en methoden.',
+      maxLevel: 5,
+    },
   ],
   tutorials: [
     {
@@ -140,7 +146,12 @@ export const knowledgeGraph = {
       id: 't11',
       title: '11. Dictionaries',
       impact: [
-        { concept: 'data', depth: 'Je leert sleutel-waarde paren in een `dict`.', level: 3 },
+        {
+          concept: 'data',
+          depth:
+            'Je leert sleutel-waarde paren in een `dict`, geneste dictionaries en opslaan als JSON.',
+          level: 3,
+        },
         { concept: 'herhaling', depth: 'Je leert complexe herhalingen.', level: 4 },
       ],
     },
@@ -166,6 +177,22 @@ export const knowledgeGraph = {
         },
       ],
     },
+    {
+      id: 't14',
+      title: '14. Klassen',
+      impact: [
+        {
+          concept: 'klassen',
+          depth: 'Je leert klassen maken met `__init__`, attributen, methoden en `__str__`.',
+          level: 5,
+        },
+        {
+          concept: 'functies',
+          depth: 'Je leert dat een methode een functie in een klasse is.',
+          level: 4,
+        },
+      ],
+    },
   ],
   connections: [
     { from: 'basis', to: 'variabelen' },
@@ -174,5 +201,7 @@ export const knowledgeGraph = {
     { from: 'herhaling', to: 'data' },
     { from: 'basis', to: 'functies' },
     { from: 'functies', to: 'logica' },
+    { from: 'data', to: 'klassen' },
+    { from: 'functies', to: 'klassen' },
   ],
 };

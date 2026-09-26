@@ -8,6 +8,7 @@ export const progressData = [
       Herhaling: 0,
       Functies: 0,
       Data: 0,
+      Klassen: 0,
     },
   },
   {
@@ -19,6 +20,7 @@ export const progressData = [
       Herhaling: 0,
       Functies: 0,
       Data: 0,
+      Klassen: 0,
     },
   },
   {
@@ -30,6 +32,7 @@ export const progressData = [
       Herhaling: 0,
       Functies: 0,
       Data: 0,
+      Klassen: 0,
     },
   },
   {
@@ -41,6 +44,7 @@ export const progressData = [
       Herhaling: 0,
       Functies: 0,
       Data: 0,
+      Klassen: 0,
     },
   },
   {
@@ -52,6 +56,7 @@ export const progressData = [
       Herhaling: 0,
       Functies: 0,
       Data: 0,
+      Klassen: 0,
     },
   },
   {
@@ -63,6 +68,7 @@ export const progressData = [
       Herhaling: 0,
       Functies: 0,
       Data: 0,
+      Klassen: 0,
     },
   },
   {
@@ -74,6 +80,7 @@ export const progressData = [
       Herhaling: 0,
       Functies: 0,
       Data: 0,
+      Klassen: 0,
     },
   },
   {
@@ -85,6 +92,7 @@ export const progressData = [
       Herhaling: 0,
       Functies: 0,
       Data: 0,
+      Klassen: 0,
     },
   },
   {
@@ -96,6 +104,7 @@ export const progressData = [
       Herhaling: 0,
       Functies: 0,
       Data: 0,
+      Klassen: 0,
     },
   },
   {
@@ -107,6 +116,7 @@ export const progressData = [
       Herhaling: 3,
       Functies: 0,
       Data: 0,
+      Klassen: 0,
     },
   },
   {
@@ -118,6 +128,7 @@ export const progressData = [
       Herhaling: 4,
       Functies: 0,
       Data: 0,
+      Klassen: 0,
     },
   },
   {
@@ -129,6 +140,7 @@ export const progressData = [
       Herhaling: 5,
       Functies: 0,
       Data: 0,
+      Klassen: 0,
     },
   },
   {
@@ -140,6 +152,7 @@ export const progressData = [
       Herhaling: 6,
       Functies: 0,
       Data: 0,
+      Klassen: 0,
     },
   },
   {
@@ -151,6 +164,7 @@ export const progressData = [
       Herhaling: 7,
       Functies: 0,
       Data: 0,
+      Klassen: 0,
     },
   },
   {
@@ -162,6 +176,7 @@ export const progressData = [
       Herhaling: 7,
       Functies: 4,
       Data: 0,
+      Klassen: 0,
     },
   },
   {
@@ -173,6 +188,7 @@ export const progressData = [
       Herhaling: 7,
       Functies: 6,
       Data: 0,
+      Klassen: 0,
     },
   },
   {
@@ -184,6 +200,7 @@ export const progressData = [
       Herhaling: 7,
       Functies: 7,
       Data: 0,
+      Klassen: 0,
     },
   },
   {
@@ -195,6 +212,7 @@ export const progressData = [
       Herhaling: 7,
       Functies: 8,
       Data: 0,
+      Klassen: 0,
     },
   },
   {
@@ -206,6 +224,7 @@ export const progressData = [
       Herhaling: 7,
       Functies: 8,
       Data: 0,
+      Klassen: 0,
     },
   },
   {
@@ -217,6 +236,7 @@ export const progressData = [
       Herhaling: 7,
       Functies: 8,
       Data: 0,
+      Klassen: 0,
     },
   },
   {
@@ -228,6 +248,7 @@ export const progressData = [
       Herhaling: 8,
       Functies: 8,
       Data: 4,
+      Klassen: 0,
     },
   },
   {
@@ -239,6 +260,7 @@ export const progressData = [
       Herhaling: 8,
       Functies: 8,
       Data: 5,
+      Klassen: 0,
     },
   },
   {
@@ -250,6 +272,7 @@ export const progressData = [
       Herhaling: 8,
       Functies: 8,
       Data: 7,
+      Klassen: 0,
     },
   },
   {
@@ -261,28 +284,115 @@ export const progressData = [
       Herhaling: 8,
       Functies: 8,
       Data: 8,
+      Klassen: 0,
+    },
+  },
+  {
+    tutorial: '11c. Geneste dictionaries',
+    levels: {
+      Basis: 8,
+      Variabelen: 8,
+      Logica: 7,
+      Herhaling: 9,
+      Functies: 8,
+      Data: 9,
+      Klassen: 0,
+    },
+  },
+  {
+    tutorial: '11d. JSON',
+    levels: {
+      Basis: 9,
+      Variabelen: 8,
+      Logica: 7,
+      Herhaling: 9,
+      Functies: 8,
+      Data: 9,
+      Klassen: 0,
     },
   },
   {
     tutorial: '12. Tuples',
     levels: {
-      Basis: 8,
+      Basis: 9,
       Variabelen: 8,
       Logica: 7,
-      Herhaling: 8,
+      Herhaling: 9,
       Functies: 8,
       Data: 9,
+      Klassen: 0,
     },
   },
   {
     tutorial: '13. Sets',
     levels: {
-      Basis: 8,
+      Basis: 9,
       Variabelen: 8,
       Logica: 7,
-      Herhaling: 8,
+      Herhaling: 9,
       Functies: 8,
       Data: 10,
+      Klassen: 0,
+    },
+  },
+  {
+    tutorial: '14a. Klassen en objecten',
+    levels: {
+      Basis: 9,
+      Variabelen: 9,
+      Logica: 7,
+      Herhaling: 9,
+      Functies: 8,
+      Data: 10,
+      Klassen: 2,
+    },
+  },
+  {
+    tutorial: '14b. Methoden',
+    levels: {
+      Basis: 9,
+      Variabelen: 9,
+      Logica: 7,
+      Herhaling: 9,
+      Functies: 9,
+      Data: 10,
+      Klassen: 4,
+    },
+  },
+  {
+    tutorial: '14c. Objecten in een lijst',
+    levels: {
+      Basis: 9,
+      Variabelen: 9,
+      Logica: 8,
+      Herhaling: 10,
+      Functies: 9,
+      Data: 10,
+      Klassen: 6,
+    },
+  },
+  {
+    tutorial: '14d. Je object printen',
+    levels: {
+      Basis: 9,
+      Variabelen: 10,
+      Logica: 8,
+      Herhaling: 10,
+      Functies: 9,
+      Data: 10,
+      Klassen: 8,
+    },
+  },
+  {
+    tutorial: '14e. Objecten als JSON',
+    levels: {
+      Basis: 10,
+      Variabelen: 10,
+      Logica: 8,
+      Herhaling: 10,
+      Functies: 10,
+      Data: 10,
+      Klassen: 10,
     },
   },
 ];

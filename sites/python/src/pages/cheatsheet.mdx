@@ -309,6 +309,30 @@ else:
 
 Een niet-bestaande sleutel opvragen geeft een `KeyError`.
 
+### Geneste dictionary
+
+```python
+klas = {
+    "Sara": {"leeftijd": 15, "cijfer": 8.1},
+    "Alex": {"leeftijd": 16, "cijfer": 6.9},
+}
+
+print(klas["Sara"]["cijfer"])     # 8.1
+klas["Alex"]["cijfer"] = 7.2      # Veranderen
+```
+
+### Opslaan en inlezen als JSON
+
+```python
+import json
+
+with open("klas.json", "w") as bestand:
+    json.dump(klas, bestand, indent=2)
+
+with open("klas.json") as bestand:
+    klas = json.load(bestand)
+```
+
 ---
 
 ## Tuples
@@ -358,6 +382,40 @@ Een set heeft geen volgorde: `bezocht[0]` bestaat niet.
 
 ---
 
+## Klassen
+
+### Klasse maken met attributen
+
+```python
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+rex = Hond("Rex", 3)
+print(rex.naam)          # Rex
+```
+
+### Methoden en `__str__`
+
+```python
+class Hond:
+    def __init__(self, naam):
+        self.naam = naam
+
+    def blaf(self):
+        print(f"{self.naam}: Woef!")
+
+    def __str__(self):
+        return f"Hond {self.naam}"
+
+rex = Hond("Rex")
+rex.blaf()               # Rex: Woef!
+print(rex)               # Hond Rex
+```
+
+---
+
 ## Veelvoorkomende fouten
 
 ```python
@@ -369,5 +427,6 @@ ZeroDivisionError              # delen door 0
 IndexError: list index ...     # lijst-positie bestaat niet
 KeyError                       # dictionary-sleutel bestaat niet
 ValueError: ... not in list    # .remove() op iets dat niet bestaat
+AttributeError                 # object heeft dat attribuut of die methode niet
 ```
 
