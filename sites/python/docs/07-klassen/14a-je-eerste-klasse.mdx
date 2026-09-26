@@ -1,0 +1,192 @@
+---
+sidebar_position: 1
+description: Maak je eerste klasse met één attribuut, en maak er objecten van.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 14a Je eerste klasse
+
+In les 11c bewaarde je per leerling een dictionary. Niets hield je tegen om
+bij de ene leerling `"leeftijd"` te schrijven en bij de andere
+`"lefetijd"`. Met een **klasse** leg je één keer vast hoe iets eruitziet, en
+maak je daarna zoveel exemplaren als je wilt.
+
+```python
+class Hond:
+    def __init__(self, naam):
+        self.naam = naam
+
+
+rex = Hond("Rex")
+print(rex.naam)
+```
+
+Uitvoer:
+
+```
+Rex
+```
+
+Vijf regels voor één naam: dat lijkt veel. Kijk eerst wat elke regel doet;
+in de volgende lessen groeit de hond.
+
+## Regel voor regel
+
+- `class Hond:` maakt een nieuwe klasse. De naam begint met een hoofdletter,
+  zodat je hem niet verwart met een variabele.
+- `def __init__(self, naam):` zegt wat er gebeurt als je een nieuwe hond
+  maakt. De twee lage streepjes voor en na `init` horen erbij.
+- `self.naam = naam` bewaart de naam in de nieuwe hond. `self` is de hond die
+  op dat moment gemaakt wordt.
+- `rex = Hond("Rex")` maakt een hond met de naam Rex. `rex` heet een
+  **object**: één ding dat volgens de klasse gemaakt is.
+- `rex.naam` leest de naam weer uit het object, met een punt.
+
+## Meer dan één object
+
+Uit één klasse maak je zoveel objecten als je wilt. Elk object onthoudt zijn
+eigen naam:
+
+```python
+class Hond:
+    def __init__(self, naam):
+        self.naam = naam
+
+
+rex = Hond("Rex")
+bello = Hond("Bello")
+
+print(rex.naam)
+print(bello.naam)
+```
+
+Uitvoer:
+
+```
+Rex
+Bello
+```
+
+De klasse is de bouwtekening, de objecten zijn de honden die je ermee bouwt.
+
+---
+
+## Er gaat iets mis
+
+```python
+class Hond:
+    def __init__(self, naam):
+        self.naam = naam
+
+
+rex = Hond()
+```
+
+Uitvoer:
+
+```
+TypeError: Hond.__init__() missing 1 required positional argument: 'naam'
+```
+
+`__init__` vraagt om een naam. `self` vult Python zelf in, maar de naam moet
+jij meegeven: `Hond("Rex")`.
+
+---
+
+## Opdracht 14a.1: Katten
+
+Maak een klasse `Kat` met één attribuut, `naam`. Maak twee katten en print
+hun namen.
+
+Verwachte uitvoer:
+
+```
+Minoes
+Garfield
+```
+
+<CodeExercise>{`# Schrijf hier de klasse Kat
+
+
+print("Nog te doen")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Neem de klasse `Hond` over en verander alleen de naam van de klasse. Een kat
+maak je met `Kat("Minoes")`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+class Kat:
+    def __init__(self, naam):
+        self.naam = naam
+
+
+minoes = Kat("Minoes")
+garfield = Kat("Garfield")
+
+print(minoes.naam)
+print(garfield.naam)
+```
+
+Uitvoer:
+
+```
+Minoes
+Garfield
+```
+
+</details>
+
+---
+
+## Opdracht 14a.2: Een boek lezen
+
+Maak een klasse `Boek` met het attribuut `titel`. Maak een boek en gebruik
+de titel in een f-string.
+
+Verwachte uitvoer:
+
+```
+Ik lees De Hobbit.
+```
+
+<CodeExercise>{`# Schrijf hier de klasse Boek
+
+
+print("Nog te doen")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+In `__init__` heet de parameter nu `titel`, en je bewaart hem als
+`self.titel`. In de f-string schrijf je `{boek.titel}`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+class Boek:
+    def __init__(self, titel):
+        self.titel = titel
+
+
+boek = Boek("De Hobbit")
+print(f"Ik lees {boek.titel}.")
+```
+
+Uitvoer:
+
+```
+Ik lees De Hobbit.
+```
+
+</details>

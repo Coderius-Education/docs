@@ -1,0 +1,192 @@
+---
+sidebar_position: 2
+description: Geef een klasse meer attributen, en lees ze uit met een punt.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 14b Meer attributen
+
+Een hond heeft meer dan een naam. Elk gegeven dat een object onthoudt, heet
+een **attribuut**. Wil je er meer, dan krijgt `__init__` meer parameters:
+
+```python
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+
+rex = Hond("Rex", 3)
+bello = Hond("Bello", 7)
+
+print(f"{rex.naam} is {rex.leeftijd} jaar.")
+print(f"{bello.naam} is {bello.leeftijd} jaar.")
+```
+
+Uitvoer:
+
+```
+Rex is 3 jaar.
+Bello is 7 jaar.
+```
+
+De waarden gaan in dezelfde volgorde mee als de parameters: `"Rex"` wordt
+`naam`, `3` wordt `leeftijd`. Elke parameter krijgt in `__init__` een eigen
+regel met `self.` ervoor.
+
+## Klasse of dictionary?
+
+Met een dictionary kon je hetzelfde bewaren:
+
+```python
+rex = {"naam": "Rex", "leeftijd": 3}
+print(rex["leeftijd"])
+```
+
+Uitvoer:
+
+```
+3
+```
+
+Het verschil zie je als je een tikfout maakt. `rex["lefetijd"] = 4` maakt
+stil een nieuwe sleutel bij. Bij een object zegt Python het meteen, zoals je
+hieronder ziet.
+
+---
+
+## Er gaat iets mis
+
+```python
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+
+rex = Hond("Rex", 3)
+print(rex.leefijd)
+```
+
+Uitvoer:
+
+```
+AttributeError: 'Hond' object has no attribute 'leefijd'. Did you mean: 'leeftijd'?
+```
+
+{/* foutmelding-van: blok-erboven */}
+
+Een tikfout in de naam van een attribuut geeft een `AttributeError`. Python
+raadt er vaak bij wat je bedoelde.
+
+---
+
+## Opdracht 14b.1: Boeken
+
+Maak een klasse `Boek` met de attributen `titel`, `schrijver` en
+`bladzijden`. Maak twee boeken en print van allebei een regel.
+
+Verwachte uitvoer:
+
+```
+De Hobbit door J.R.R. Tolkien, 320 bladzijden
+Matilda door Roald Dahl, 240 bladzijden
+```
+
+<CodeExercise>{`class Boek:
+    def __init__(self, titel):
+        self.titel = titel
+
+
+hobbit = Boek("De Hobbit")
+print(hobbit.titel)`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+`__init__` krijgt vier parameters: `self`, `titel`, `schrijver` en
+`bladzijden`. Bewaar elk als `self.titel = titel`, enzovoort.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+class Boek:
+    def __init__(self, titel, schrijver, bladzijden):
+        self.titel = titel
+        self.schrijver = schrijver
+        self.bladzijden = bladzijden
+
+
+hobbit = Boek("De Hobbit", "J.R.R. Tolkien", 320)
+matilda = Boek("Matilda", "Roald Dahl", 240)
+
+print(f"{hobbit.titel} door {hobbit.schrijver}, {hobbit.bladzijden} bladzijden")
+print(f"{matilda.titel} door {matilda.schrijver}, {matilda.bladzijden} bladzijden")
+```
+
+Uitvoer:
+
+```
+De Hobbit door J.R.R. Tolkien, 320 bladzijden
+Matilda door Roald Dahl, 240 bladzijden
+```
+
+</details>
+
+---
+
+## Opdracht 14b.2: Van dictionary naar klasse
+
+Zet de dictionary hieronder om naar een object van een klasse `Film`. Print
+daarna de titel en het jaar via de attributen.
+
+Verwachte uitvoer:
+
+```
+Up (2009)
+```
+
+<CodeExercise>{`film = {"titel": "Up", "jaar": 2009, "minuten": 96}
+
+# Schrijf hier de klasse Film en maak er een object van
+print(f"{film['titel']} ({film['jaar']})")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Elke sleutel van de dictionary wordt een attribuut. Maak het object met
+`Film(film["titel"], film["jaar"], film["minuten"])`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+film = {"titel": "Up", "jaar": 2009, "minuten": 96}
+
+
+class Film:
+    def __init__(self, titel, jaar, minuten):
+        self.titel = titel
+        self.jaar = jaar
+        self.minuten = minuten
+
+
+up = Film(film["titel"], film["jaar"], film["minuten"])
+print(f"{up.titel} ({up.jaar})")
+```
+
+Uitvoer:
+
+```
+Up (2009)
+```
+
+Waar je eerst `film["titel"]` schreef, schrijf je nu `up.titel`.
+
+</details>

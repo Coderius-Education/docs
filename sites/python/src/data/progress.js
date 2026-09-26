@@ -336,7 +336,19 @@ export const progressData = [
     },
   },
   {
-    tutorial: '14a. Klassen en objecten',
+    tutorial: '14a. Je eerste klasse',
+    levels: {
+      Basis: 9,
+      Variabelen: 9,
+      Logica: 7,
+      Herhaling: 9,
+      Functies: 8,
+      Data: 10,
+      Klassen: 1,
+    },
+  },
+  {
+    tutorial: '14b. Meer attributen',
     levels: {
       Basis: 9,
       Variabelen: 9,
@@ -348,7 +360,19 @@ export const progressData = [
     },
   },
   {
-    tutorial: '14b. Methoden',
+    tutorial: '14c. Attributen veranderen',
+    levels: {
+      Basis: 9,
+      Variabelen: 9,
+      Logica: 7,
+      Herhaling: 9,
+      Functies: 8,
+      Data: 10,
+      Klassen: 3,
+    },
+  },
+  {
+    tutorial: '14d. Je eerste methode',
     levels: {
       Basis: 9,
       Variabelen: 9,
@@ -360,31 +384,79 @@ export const progressData = [
     },
   },
   {
-    tutorial: '14c. Objecten in een lijst',
+    tutorial: '14e. Methoden die veranderen',
+    levels: {
+      Basis: 9,
+      Variabelen: 9,
+      Logica: 7,
+      Herhaling: 9,
+      Functies: 9,
+      Data: 10,
+      Klassen: 5,
+    },
+  },
+  {
+    tutorial: '14f. Methoden met return',
     levels: {
       Basis: 9,
       Variabelen: 9,
       Logica: 8,
-      Herhaling: 10,
-      Functies: 9,
+      Herhaling: 9,
+      Functies: 10,
       Data: 10,
       Klassen: 6,
     },
   },
   {
-    tutorial: '14d. Je object printen',
+    tutorial: '14g. Objecten in een lijst',
     levels: {
       Basis: 9,
-      Variabelen: 10,
+      Variabelen: 9,
       Logica: 8,
       Herhaling: 10,
-      Functies: 9,
+      Functies: 10,
+      Data: 10,
+      Klassen: 7,
+    },
+  },
+  {
+    tutorial: '14h. Een klasse vol objecten',
+    levels: {
+      Basis: 9,
+      Variabelen: 9,
+      Logica: 8,
+      Herhaling: 10,
+      Functies: 10,
       Data: 10,
       Klassen: 8,
     },
   },
   {
-    tutorial: '14e. Objecten als JSON',
+    tutorial: '14i. Je object printen',
+    levels: {
+      Basis: 9,
+      Variabelen: 10,
+      Logica: 8,
+      Herhaling: 10,
+      Functies: 10,
+      Data: 10,
+      Klassen: 9,
+    },
+  },
+  {
+    tutorial: '14j. Objecten als JSON',
+    levels: {
+      Basis: 10,
+      Variabelen: 10,
+      Logica: 8,
+      Herhaling: 10,
+      Functies: 10,
+      Data: 10,
+      Klassen: 10,
+    },
+  },
+  {
+    tutorial: '14k. Objecten inlezen',
     levels: {
       Basis: 10,
       Variabelen: 10,

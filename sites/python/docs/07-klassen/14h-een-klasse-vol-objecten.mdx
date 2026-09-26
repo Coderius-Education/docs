@@ -1,80 +1,14 @@
 ---
-sidebar_position: 3
-description: Bewaar objecten in een lijst, loop erdoorheen, en maak een klasse die zelf een lijst objecten beheert.
+sidebar_position: 8
+description: Maak een klasse die zelf een lijst objecten bijhoudt, met methoden die met die lijst werken.
 ---
 
 import CodeExercise from '@site/src/components/CodeExercise';
 
-# 14c Objecten in een lijst
+# 14h Een klasse vol objecten
 
-Eén hond is leuk, maar een asiel heeft er tientallen. Objecten kun je net
-als getallen en teksten in een lijst stoppen, en er met een for-loop
-doorheen lopen.
-
-## Een lijst met objecten
-
-```python
-class Hond:
-    def __init__(self, naam, leeftijd):
-        self.naam = naam
-        self.leeftijd = leeftijd
-
-    def blaf(self):
-        print(f"{self.naam} zegt: Woef!")
-
-
-honden = [Hond("Rex", 3), Hond("Bello", 7), Hond("Max", 1)]
-
-for hond in honden:
-    hond.blaf()
-```
-
-Uitvoer:
-
-```
-Rex zegt: Woef!
-Bello zegt: Woef!
-Max zegt: Woef!
-```
-
-Elke ronde is `hond` één object uit de lijst, met zijn eigen attributen en
-methoden.
-
-## Zoeken in een lijst objecten
-
-Zoeken gaat zoals je in les 11c zocht naar het hoogste gemiddelde: houd de
-beste tot nu toe bij, en vergelijk via de attributen.
-
-```python
-class Hond:
-    def __init__(self, naam, leeftijd):
-        self.naam = naam
-        self.leeftijd = leeftijd
-
-
-honden = [Hond("Rex", 3), Hond("Bello", 7), Hond("Max", 1)]
-
-oudste = honden[0]
-for hond in honden:
-    if hond.leeftijd > oudste.leeftijd:
-        oudste = hond
-
-print(f"De oudste hond is {oudste.naam}.")
-```
-
-Uitvoer:
-
-```
-De oudste hond is Bello.
-```
-
-`oudste` is geen kopie, maar hetzelfde object als in de lijst. Verander je
-`oudste.naam`, dan verandert de hond in de lijst mee.
-
-## Een klasse die andere objecten bewaart
-
-Het asiel zelf kan ook een klasse zijn. Het heeft een lijst honden als
-attribuut, en methoden die met die lijst werken:
+In 14g stond de lijst honden los in je programma. Een asiel kan zelf ook een
+klasse zijn, met de lijst honden als attribuut:
 
 ```python
 class Hond:
@@ -94,6 +28,45 @@ class Asiel:
     def aantal(self):
         return len(self.honden)
 
+
+asiel = Asiel("De Blije Staart")
+asiel.neem_op(Hond("Rex", 3))
+asiel.neem_op(Hond("Bello", 7))
+
+print(f"{asiel.naam} heeft {asiel.aantal()} honden.")
+```
+
+Uitvoer:
+
+```
+De Blije Staart heeft 2 honden.
+```
+
+Niets hiervan is nieuw: `self.honden = []` kent je uit 14c, `neem_op` is een
+methode met een parameter uit 14e, en `aantal` geeft iets terug zoals in 14f.
+Nieuw is alleen dat de lijst nu objecten bevat, en dat het asiel die zelf
+bijhoudt.
+
+## Een methode die door de lijst loopt
+
+Een methode van het asiel kan door zijn eigen lijst lopen, zoals je in 14g
+door een losse lijst liep:
+
+```python
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+
+class Asiel:
+    def __init__(self, naam):
+        self.naam = naam
+        self.honden = []
+
+    def neem_op(self, hond):
+        self.honden.append(hond)
+
     def jonger_dan(self, jaar):
         namen = []
         for hond in self.honden:
@@ -107,14 +80,12 @@ asiel.neem_op(Hond("Rex", 3))
 asiel.neem_op(Hond("Bello", 7))
 asiel.neem_op(Hond("Max", 1))
 
-print(f"{asiel.naam} heeft {asiel.aantal()} honden.")
 print(asiel.jonger_dan(5))
 ```
 
 Uitvoer:
 
 ```
-De Blije Staart heeft 3 honden.
 ['Rex', 'Max']
 ```
 
@@ -125,97 +96,32 @@ roept `neem_op` en `jonger_dan` aan, en het asiel regelt de rest.
 
 ## Er gaat iets mis
 
-**Een attribuut van de lijst vragen in plaats van van een object**
-
 ```python
-class Hond:
-    def __init__(self, naam):
-        self.naam = naam
+class Asiel:
+    def __init__(self):
+        self.honden = []
+
+    def neem_op(self, hond):
+        honden.append(hond)
 
 
-honden = [Hond("Rex"), Hond("Bello")]
-print(honden.naam)
+asiel = Asiel()
+asiel.neem_op("Rex")
 ```
 
 Uitvoer:
 
 ```
-AttributeError: 'list' object has no attribute 'naam'
+NameError: name 'honden' is not defined. Did you mean: 'self.honden'?
 ```
 
-`honden` is een lijst, en een lijst heeft geen naam. Neem eerst één hond,
-`honden[0].naam`, of loop erdoorheen.
+De lijst hoort bij het asiel, dus in een methode heet hij `self.honden`.
+Zonder `self.` zoekt Python een losse variabele `honden`, en die is er niet.
+Python raadt het zelf al.
 
 ---
 
-## Opdracht 14c.1: Het dikste boek
-
-Gegeven is een lijst met boeken. Print de titel van het boek met de meeste
-bladzijden.
-
-Verwachte uitvoer:
-
-```
-Het dikste boek is Koning van Katoren (440 blz.)
-```
-
-<CodeExercise>{`class Boek:
-    def __init__(self, titel, bladzijden):
-        self.titel = titel
-        self.bladzijden = bladzijden
-
-
-boeken = [
-    Boek("De Hobbit", 320),
-    Boek("Koning van Katoren", 440),
-    Boek("Matilda", 240),
-]
-
-# Schrijf hier je code`}</CodeExercise>
-
-<details>
-<summary>Klik hier voor een tip.</summary>
-
-Begin met `dikste = boeken[0]` en vergelijk in de loop
-`boek.bladzijden` met `dikste.bladzijden`.
-
-</details>
-
-<details>
-<summary>Klik hier voor de oplossing.</summary>
-
-```python
-class Boek:
-    def __init__(self, titel, bladzijden):
-        self.titel = titel
-        self.bladzijden = bladzijden
-
-
-boeken = [
-    Boek("De Hobbit", 320),
-    Boek("Koning van Katoren", 440),
-    Boek("Matilda", 240),
-]
-
-dikste = boeken[0]
-for boek in boeken:
-    if boek.bladzijden > dikste.bladzijden:
-        dikste = boek
-
-print(f"Het dikste boek is {dikste.titel} ({dikste.bladzijden} blz.)")
-```
-
-Uitvoer:
-
-```
-Het dikste boek is Koning van Katoren (440 blz.)
-```
-
-</details>
-
----
-
-## Opdracht 14c.2: Een afspeellijst
+## Opdracht 14h.1: Een afspeellijst
 
 Maak een klasse `Afspeellijst` met een `naam` en een lege lijst `nummers`.
 Geef hem een methode `voeg_toe(nummer)` en een methode `totale_duur()` die
@@ -301,7 +207,7 @@ Onderweg duurt 612 seconden
 
 ---
 
-## Opdracht 14c.3: Minuten en seconden
+## Opdracht 14h.2: Minuten en seconden
 
 Geef `Afspeellijst` nog een methode `langste()` die het `Nummer`-object
 teruggeeft dat het langst duurt. Print daarna de titel en de duur in
@@ -346,7 +252,7 @@ print(f"Langste nummer: {nummer.titel} ({nummer.seconden} s)")`}</CodeExercise>
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Zoek het langste nummer zoals je in 14c.1 het dikste boek zocht. Voor
+Zoek het langste nummer zoals je in 14g.1 het dikste boek zocht. Voor
 de seconden gebruik je `:02` in de f-string, zodat je altijd twee cijfers
 krijgt: `f"{4:02}"` wordt `04`.
 

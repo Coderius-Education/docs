@@ -1,0 +1,255 @@
+---
+sidebar_position: 6
+description: Laat een methode met return een waarde teruggeven die je daarna gebruikt.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 14f Methoden met return
+
+:::info
+Deze les gebruikt `return`, uit [Return](/docs/functies/09b-return).
+:::
+
+Een methode kan iets uitrekenen en het antwoord teruggeven met `return`, net
+als een gewone functie:
+
+```python
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+    def hondenjaren(self):
+        return self.leeftijd * 7
+
+
+rex = Hond("Rex", 3)
+jaren = rex.hondenjaren()
+print(f"In hondenjaren is {rex.naam} {jaren}.")
+```
+
+Uitvoer:
+
+```
+In hondenjaren is Rex 21.
+```
+
+`blaf()` uit 14d print zelf iets. `hondenjaren()` print niets: hij geeft een
+getal terug, en jij kiest wat je ermee doet. Je kunt het printen, maar ook
+vergelijken of verder mee rekenen.
+
+## Een methode die ja of nee zegt
+
+Vaak geeft een methode `True` of `False` terug. Dan past hij mooi in een
+`if`:
+
+```python
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+    def is_puppy(self):
+        return self.leeftijd < 1
+
+
+pup = Hond("Max", 0)
+if pup.is_puppy():
+    print(f"{pup.naam} is nog een puppy.")
+```
+
+Uitvoer:
+
+```
+Max is nog een puppy.
+```
+
+---
+
+## Er gaat iets mis
+
+```python
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+    def hondenjaren(self):
+        print(self.leeftijd * 7)
+
+
+rex = Hond("Rex", 3)
+print(f"In hondenjaren is {rex.naam} {rex.hondenjaren()}.")
+```
+
+Uitvoer:
+
+```
+21
+In hondenjaren is Rex None.
+```
+
+De methode print het getal zelf, en geeft daarna niets terug. Niets heet in
+Python `None`, en dat komt in je zin terecht. Schrijf `return` in plaats van
+`print`.
+
+---
+
+## Opdracht 14f.1: Kilometers
+
+Geef de `Stappenteller` uit 14e een methode `kilometers()`. Die geeft terug
+hoeveel kilometer de stappen zijn, bij 1300 stappen per kilometer, afgerond
+op één decimaal.
+
+Verwachte uitvoer:
+
+```
+2601 stappen is 2.0 km
+```
+
+<CodeExercise>{`class Stappenteller:
+    def __init__(self):
+        self.stappen = 0
+
+    def stap(self):
+        self.stappen += 1
+
+    def loop(self, aantal):
+        self.stappen += aantal
+
+    def kilometers(self):
+        return 0
+
+
+teller = Stappenteller()
+teller.stap()
+teller.loop(2600)
+print(f"{teller.stappen} stappen is {teller.kilometers()} km")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Deel `self.stappen` door 1300. Afronden doe je met `round(getal, 1)`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+class Stappenteller:
+    def __init__(self):
+        self.stappen = 0
+
+    def stap(self):
+        self.stappen += 1
+
+    def loop(self, aantal):
+        self.stappen += aantal
+
+    def kilometers(self):
+        return round(self.stappen / 1300, 1)
+
+
+teller = Stappenteller()
+teller.stap()
+teller.loop(2600)
+print(f"{teller.stappen} stappen is {teller.kilometers()} km")
+```
+
+Uitvoer:
+
+```
+2601 stappen is 2.0 km
+```
+
+</details>
+
+---
+
+## Opdracht 14f.2: Niet rood staan
+
+Geef de `Rekening` uit 14e een methode `neem_op(bedrag)`. Is er genoeg
+saldo, dan gaat het bedrag eraf en geeft de methode `True` terug. Is er te
+weinig, dan blijft het saldo gelijk en geeft hij `False` terug.
+
+Verwachte uitvoer:
+
+```
+True
+False
+Saldo van Sara: 5 euro
+```
+
+<CodeExercise>{`class Rekening:
+    def __init__(self, eigenaar):
+        self.eigenaar = eigenaar
+        self.saldo = 0
+
+    def stort(self, bedrag):
+        self.saldo += bedrag
+
+    def toon(self):
+        print(f"Saldo van {self.eigenaar}: {self.saldo} euro")
+
+    def neem_op(self, bedrag):
+        return "nog te doen"
+
+
+rekening = Rekening("Sara")
+rekening.stort(35)
+print(rekening.neem_op(30))
+print(rekening.neem_op(10))
+rekening.toon()`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Vergelijk `bedrag` met `self.saldo` in een `if`. In het ene geval verlaag je
+het saldo en `return True`, anders `return False`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+class Rekening:
+    def __init__(self, eigenaar):
+        self.eigenaar = eigenaar
+        self.saldo = 0
+
+    def stort(self, bedrag):
+        self.saldo += bedrag
+
+    def toon(self):
+        print(f"Saldo van {self.eigenaar}: {self.saldo} euro")
+
+    def neem_op(self, bedrag):
+        if bedrag <= self.saldo:
+            self.saldo -= bedrag
+            return True
+        else:
+            return False
+
+
+rekening = Rekening("Sara")
+rekening.stort(35)
+print(rekening.neem_op(30))
+print(rekening.neem_op(10))
+rekening.toon()
+```
+
+Uitvoer:
+
+```
+True
+False
+Saldo van Sara: 5 euro
+```
+
+De tweede keer staat er nog 5 euro op de rekening, dus 10 opnemen lukt niet
+en het saldo blijft staan.
+
+</details>
