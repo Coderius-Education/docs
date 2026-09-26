@@ -224,7 +224,8 @@ VARIEERT_RE = re.compile(r"\{/\*\s*uitvoer-varieert:.*?\*/\}\s*$")
 # Alleen een commentaar achter een print() op dezelfde regel telt als belofte.
 BELOFTE_RE = re.compile(r"^\s*print\(.*\)\s+#\s*(.+?)\s*$")
 # Een uitvoerblok dat hierop eindigt hoort bij code die moet omvallen.
-FOUT_RE = re.compile(r"^[A-Z]\w*(Error|Exception):")
+# Een melding kan een module voor zijn naam hebben: json.decoder.JSONDecodeError.
+FOUT_RE = re.compile(r"^(?:[a-z_]\w*\.)*[A-Z]\w*(Error|Exception):")
 # Een losse foutmelding wijst aan waaruit hij te reproduceren is; zonder zo'n
 # marker staat er een belofte over Python die niemand nakijkt.
 # Zonder re.S: `.` mag geen regels overspringen, anders rekt `(.+?)` zich uit tot
@@ -303,6 +304,9 @@ def zelftest() -> None:
         " />\n\n<details>\n<summary>Wat zie je?</summary>\n\nOngeveer dit, want de lijst is elke keer anders:\n\n"
     )
     assert not hoort_bij_elkaar("\n\n## Er gaat iets mis\n\n")
+    assert FOUT_RE.match("KeyError: 'leeftijd'")
+    assert FOUT_RE.match("json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)")
+    assert not FOUT_RE.match("Sara: 120")
     paden = ["sites/algorithms/docs/pagerank/bouwen/06-itereren.mdx", "sites/python/docs/04-herhalen/06a-for-loop.mdx"]
     assert achterstand_van_deze_site(paden, "sites/python/docs") == [paden[1]]
     assert achterstand_van_deze_site(paden, "sites/algorithms/docs") == [paden[0]]
