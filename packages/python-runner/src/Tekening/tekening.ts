@@ -26,6 +26,7 @@ export type Gebeurtenis =
       kleur: string;
     }
   | { t: 'zichtbaar'; id: number; aan: boolean }
+  | { t: 'kleur'; id: number; kleur: string }
   | { t: 'vorm'; id: number; vorm: string }
   | { t: 'achtergrond'; kleur: string }
   | { t: 'wis'; id?: number };
@@ -156,6 +157,11 @@ export function speelAf(gebeurtenissen: Gebeurtenis[], tot = gebeurtenissen.leng
         if (s) s.zichtbaar = g.aan;
         break;
       }
+      case 'kleur': {
+        const s = schildpadden.get(g.id);
+        if (s) s.kleur = g.kleur;
+        break;
+      }
       case 'vorm': {
         const s = schildpadden.get(g.id);
         if (s) s.vorm = g.vorm;
@@ -278,6 +284,20 @@ function round(n: number): number {
 
 const ANKER: Record<string, string> = { left: 'start', center: 'middle', right: 'end' };
 
+function anker(uitlijning: string): string {
+  return Object.hasOwn(ANKER, uitlijning) ? ANKER[uitlijning] : 'start';
+}
+
+/**
+ * Een getal voor in de SVG. De gebeurtenissen komen uit Python van de
+ * leerling; wie ze zelf in elkaar zet, kan er tekst in stoppen. Die komt zo
+ * nooit als markup in de pagina.
+ */
+function n(waarde: unknown): number {
+  const getal = Number(waarde);
+  return Number.isFinite(getal) ? round(getal) : 0;
+}
+
 function attr(waarde: string | number): string {
   return String(waarde)
     .replace(/&/g, '&amp;')
@@ -300,34 +320,34 @@ export function naarSvg(
   const stand = speelAf(tekening.gebeurtenissen, tot);
   const k = kader(tekening.gebeurtenissen);
   const delen: string[] = [
-    `<rect x="${k.x}" y="${k.y}" width="${k.breedte}" height="${k.hoogte}" fill="${attr(stand.achtergrond)}"/>`,
+    `<rect x="${n(k.x)}" y="${n(k.y)}" width="${n(k.breedte)}" height="${n(k.hoogte)}" fill="${attr(stand.achtergrond)}"/>`,
   ];
   for (const v of stand.vormen) {
     if (v.soort === 'lijn') {
       delen.push(
-        `<line x1="${v.x1}" y1="${round(-v.y1)}" x2="${v.x2}" y2="${round(-v.y2)}" stroke="${attr(v.kleur)}" stroke-width="${v.dikte}" stroke-linecap="round"/>`,
+        `<line x1="${n(v.x1)}" y1="${n(-v.y1)}" x2="${n(v.x2)}" y2="${n(-v.y2)}" stroke="${attr(v.kleur)}" stroke-width="${n(v.dikte)}" stroke-linecap="round"/>`,
       );
     } else if (v.soort === 'vul') {
-      const punten = v.punten.map(([x, y]) => `${x},${round(-y)}`).join(' ');
+      const punten = v.punten.map(([x, y]) => `${n(x)},${n(-y)}`).join(' ');
       delen.push(`<polygon points="${punten}" fill="${attr(v.kleur)}" fill-rule="evenodd"/>`);
     } else if (v.soort === 'stip') {
       delen.push(
-        `<circle cx="${v.x}" cy="${round(-v.y)}" r="${v.grootte / 2}" fill="${attr(v.kleur)}"/>`,
+        `<circle cx="${n(v.x)}" cy="${n(-v.y)}" r="${n(v.grootte / 2)}" fill="${attr(v.kleur)}"/>`,
       );
     } else {
       delen.push(
-        `<text x="${v.x}" y="${round(-v.y)}" fill="${attr(v.kleur)}" font-size="${round(v.grootte * 1.33)}" font-family="Arial, sans-serif" text-anchor="${ANKER[v.uitlijning] ?? 'start'}">${attr(v.tekst)}</text>`,
+        `<text x="${n(v.x)}" y="${n(-v.y)}" fill="${attr(v.kleur)}" font-size="${n(v.grootte * 1.33)}" font-family="Arial, sans-serif" text-anchor="${anker(v.uitlijning)}">${attr(v.tekst)}</text>`,
       );
     }
   }
   for (const s of stand.schildpadden) {
     if (!s.zichtbaar) continue;
     delen.push(
-      `<polygon points="${schildpadPunten(s)}" fill="${attr(s.kleur)}" stroke="${attr(s.kleur)}" stroke-width="1"/>`,
+      `<polygon points="${attr(schildpadPunten(s))}" fill="${attr(s.kleur)}" stroke="${attr(s.kleur)}" stroke-width="1"/>`,
     );
   }
   return [
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${k.x} ${k.y} ${k.breedte} ${k.hoogte}" role="img">`,
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${n(k.x)} ${n(k.y)} ${n(k.breedte)} ${n(k.hoogte)}" role="img">`,
     `<title>${attr(titel)}</title>`,
     ...delen,
     '</svg>',

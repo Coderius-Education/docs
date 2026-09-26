@@ -62,7 +62,7 @@ export default function PythonPlayground(): React.JSX.Element {
     setOpname(null);
     setTekening(null);
     try {
-      const result = await runPython(pyodideRef.current, code);
+      const result = await runPython(pyodideRef.current, code, { turtle: true });
       setOutput(result);
       setTekening(haalTekening(pyodideRef.current));
     } catch (err) {
@@ -79,7 +79,7 @@ export default function PythonPlayground(): React.JSX.Element {
     setTekening(null);
     try {
       setOpnameCode(code);
-      setOpname(await tracePython(pyodideRef.current, code));
+      setOpname(await tracePython(pyodideRef.current, code, undefined, { turtle: true }));
     } catch (err) {
       setOutput(`Fout:\n${err instanceof Error ? err.message : String(err)}`);
     } finally {

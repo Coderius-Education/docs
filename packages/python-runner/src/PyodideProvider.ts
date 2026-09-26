@@ -192,11 +192,13 @@ function zetInvoer(pyodide: PyodideInterface): void {
 // `import turtle` in de speeltuin: Pyodide heeft geen Tk, dus zetten we vóór
 // elke run onze eigen module klaar (zie turtle/module.ts). Elke run krijgt een
 // verse module, zodat een tekening niet doorloopt in de volgende run of de
-// volgende oefening. Code zonder het woord turtle krijgt hem niet: dat scheelt
-// werk bij elke gewone oefening, en er blijft geen oude tekening hangen.
-export function zetTurtle(pyodide: PyodideInterface, code: string): void {
+// volgende oefening. Alleen wie erom vraagt (`turtle: true`, de speeltuin van
+// de python-cursus) krijgt hem: de editor en de algoritmes tekenen niets, en
+// daar blijft `import turtle` een ModuleNotFoundError. Code zonder het woord
+// turtle krijgt hem ook niet: dat scheelt werk bij elke gewone oefening.
+export function zetTurtle(pyodide: PyodideInterface, code: string, aan = false): void {
   pyodide.runPython("import sys as _coderius_sys\n_coderius_sys.modules.pop('turtle', None)");
-  if (!/\bturtle\b/.test(code)) return;
+  if (!aan || !/\bturtle\b/.test(code)) return;
   pyodide.runPython(`
 import sys as _coderius_sys, types as _coderius_types
 _coderius_turtle = _coderius_types.ModuleType('turtle')
@@ -206,16 +208,32 @@ del _coderius_turtle
 `);
 }
 
-/** De tekening van de laatste run, of null als die niets met turtle deed. */
+/**
+ * De tekening van de laatste run, of null als die niets met turtle deed. Kan
+ * de tekening niet gelezen worden (de leerling heeft de module overschreven,
+ * of er zit iets in dat geen JSON is), dan ook null: de uitvoer van de run
+ * mag daar niet onder lijden.
+ */
 export function haalTekening(pyodide: PyodideInterface): Tekening | null {
-  const ruw = pyodide.runPython(`
+  try {
+    const ruw = pyodide.runPython(`
 import sys as _coderius_sys
 _coderius_t = _coderius_sys.modules.get('turtle')
 _coderius_t._coderius_tekening() if hasattr(_coderius_t, '_coderius_tekening') else ''
 `);
-  if (typeof ruw !== 'string' || ruw === '') return null;
-  const tekening = JSON.parse(ruw) as Tekening;
-  return tekening.gebeurtenissen.length > 0 ? tekening : null;
+    if (typeof ruw !== 'string' || ruw === '') return null;
+    const tekening = JSON.parse(ruw) as Tekening;
+    return Array.isArray(tekening?.gebeurtenissen) && tekening.gebeurtenissen.length > 0
+      ? tekening
+      : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Voor elke run: zet `turtle` op true om `import turtle` te laten werken. */
+export interface RunOpties {
+  turtle?: boolean;
 }
 
 export interface RunPythonStreamOptions {
@@ -224,6 +242,7 @@ export interface RunPythonStreamOptions {
   // Optionele namespace (PyProxy van een dict) zodat een aanroeper elke run
   // met schone globals kan starten.
   globals?: unknown;
+  turtle?: boolean;
 }
 
 export interface RunPythonStreamResult {
@@ -240,13 +259,13 @@ export interface RunPythonStreamResult {
 export async function runPythonStream(
   pyodide: PyodideInterface,
   code: string,
-  { onStdout, onStderr, globals }: RunPythonStreamOptions,
+  { onStdout, onStderr, globals, turtle }: RunPythonStreamOptions,
 ): Promise<RunPythonStreamResult> {
   // `batched` krijgt complete regels aangeleverd, zonder newline.
   pyodide.setStdout({ batched: (text: string) => onStdout(`${text}\n`) });
   pyodide.setStderr({ batched: (text: string) => onStderr(`${text}\n`) });
   zetInvoer(pyodide);
-  zetTurtle(pyodide, code);
+  zetTurtle(pyodide, code, turtle);
 
   try {
     await pyodide.runPythonAsync(code, globals ? { globals } : undefined);
@@ -311,11 +330,12 @@ export async function tracePython(
   pyodide: PyodideInterface,
   code: string,
   voorwerk?: string,
+  { turtle }: RunOpties = {},
 ): Promise<Opname> {
   const { RECORDER } = await import('./trace/recorder');
 
   zetInvoer(pyodide);
-  zetTurtle(pyodide, `${voorwerk ?? ''}\n${code}`);
+  zetTurtle(pyodide, `${voorwerk ?? ''}\n${code}`, turtle);
 
   try {
     const ruw = (await pyodide.runPythonAsync(
@@ -337,7 +357,11 @@ export async function tracePython(
   }
 }
 
-export async function runPython(pyodide: PyodideInterface, code: string): Promise<string> {
+export async function runPython(
+  pyodide: PyodideInterface,
+  code: string,
+  { turtle }: RunOpties = {},
+): Promise<string> {
   pyodide.runPython(`
 import sys
 from io import StringIO
@@ -347,7 +371,7 @@ sys.stderr = StringIO()
   // Zelfde input()-gedrag als runPythonStream; anders leest input() hier van
   // de standaard-stdin van Pyodide en krijgt de leerling geen vraag te zien.
   zetInvoer(pyodide);
-  zetTurtle(pyodide, code);
+  zetTurtle(pyodide, code, turtle);
 
   let didError = false;
   let jsError = '';

@@ -12,8 +12,9 @@
 // (vensters, klikken, toetsen) doet hier niets.
 //
 // scripts/draai-python-blokken.py leest deze module ook, tussen de eerste
-// String.raw-backtick en de laatste backtick, en zet hem als turtle.py in de
-// werkmap van elk blok. Dus: geen backtick en geen dollar-accolade in de Python.
+// String.raw-backtick en de laatste backtick, en zet hem met een sitecustomize
+// in sys.modules, zoals de speeltuin doet. Dus: geen backtick en geen
+// dollar-accolade in de Python.
 
 export const TURTLE_PY = String.raw`
 import json as _json
@@ -171,6 +172,8 @@ class _Scherm:
 
     def clear(self):
         self._voeg_toe({"t": "wis"})
+        self._achtergrond = "white"
+        self._voeg_toe({"t": "achtergrond", "kleur": "white"})
 
     def clearscreen(self):
         self.clear()
@@ -178,6 +181,37 @@ class _Scherm:
     def resetscreen(self):
         for schildpad in self._schildpadden:
             schildpad.reset()
+
+    reset = resetscreen
+
+    def textinput(self, title, prompt):
+        # Een venster kan hier niet; input() vraagt het in de speeltuin.
+        return input(str(prompt) + " ")
+
+    def numinput(self, title, prompt, default=None, minval=None, maxval=None):
+        while True:
+            tekst = input(str(prompt) + " ").strip()
+            if tekst == "" and default is not None:
+                return float(default)
+            try:
+                getal = float(tekst)
+            except ValueError:
+                print("Typ een getal.")
+                continue
+            if (minval is not None and getal < minval) or (maxval is not None and getal > maxval):
+                print("Dat getal ligt buiten de grenzen.")
+                continue
+            return getal
+
+    def mode(self, mode=None):
+        if mode is None or mode == "standard":
+            return "standard"
+        raise NotImplementedError("In de speeltuin werkt alleen mode('standard').")
+
+    def _kan_niet(self, *args, **kwargs):
+        raise NotImplementedError("Dit kan de turtle van de speeltuin niet.")
+
+    setworldcoordinates = bgpic = _kan_niet
 
     def _niets(self, *args, **kwargs):
         return None
@@ -205,7 +239,7 @@ class Turtle:
         self._id = len(_scherm._schildpadden)
         _scherm._schildpadden.append(self)
         self._vorm = shape
-        self._voeg_toe({"t": "nieuw", "vorm": shape, "zichtbaar": bool(visible)})
+        self._voeg_toe({"t": "nieuw", "vorm": str(shape), "zichtbaar": bool(visible)})
         self._zichtbaar = bool(visible)
         self._start()
 
@@ -215,6 +249,9 @@ class Turtle:
         self._pen = True
         self._penkleur = "black"
         self._vulkleur = "black"
+        # Wat de leerling meegaf, voor pencolor() en color() zonder argument.
+        self._penkleur_invoer = "black"
+        self._vulkleur_invoer = "black"
         self._dikte = 1
         self._vulling = None
         self._snelheid = 3
@@ -227,7 +264,8 @@ class Turtle:
 
     def _goto(self, eind):
         begin = self._position
-        self._position = Vec2D(float(eind[0]), float(eind[1]))
+        # Geen float(): goto(100, 50) geeft daarna xcor() == 100, net als CPython.
+        self._position = Vec2D(eind[0], eind[1])
         self._voeg_toe({
             "t": "ga",
             "x": _getal(self._position[0]),
@@ -378,26 +416,34 @@ class Turtle:
 
     width = pensize
 
+    def _zet_penkleur(self, args):
+        self._penkleur = _scherm._kleur(args)
+        self._penkleur_invoer = args[0] if len(args) == 1 else tuple(args)
+        self._voeg_toe({"t": "kleur", "kleur": self._penkleur})
+
+    def _zet_vulkleur(self, args):
+        self._vulkleur = _scherm._kleur(args)
+        self._vulkleur_invoer = args[0] if len(args) == 1 else tuple(args)
+
     def pencolor(self, *args):
         if not args:
-            return self._penkleur
-        self._penkleur = _scherm._kleur(args)
+            return self._penkleur_invoer
+        self._zet_penkleur(args)
 
     def fillcolor(self, *args):
         if not args:
-            return self._vulkleur
-        self._vulkleur = _scherm._kleur(args)
+            return self._vulkleur_invoer
+        self._zet_vulkleur(args)
 
     def color(self, *args):
         if not args:
-            return self._penkleur, self._vulkleur
-        if len(args) == 1:
-            self._penkleur = self._vulkleur = _scherm._kleur(args)
-        elif len(args) == 2:
-            self._penkleur = _scherm._kleur((args[0],))
-            self._vulkleur = _scherm._kleur((args[1],))
+            return self._penkleur_invoer, self._vulkleur_invoer
+        if len(args) == 2:
+            self._zet_penkleur((args[0],))
+            self._zet_vulkleur((args[1],))
         else:
-            self._penkleur = self._vulkleur = _scherm._kleur(args)
+            self._zet_penkleur(args)
+            self._zet_vulkleur(args)
 
     def begin_fill(self):
         # De vulling komt ónder de lijnen die ná begin_fill getekend worden,
@@ -434,15 +480,28 @@ class Turtle:
         })
 
     def write(self, arg, move=False, align="left", font=("Arial", 8, "normal")):
+        align = str(align).lower()
+        if align not in ("left", "center", "right"):
+            raise KeyError(align)
+        grootte = font[1] if len(font) > 1 and isinstance(font[1], (int, float)) else 8
+        tekst = str(arg)
         self._voeg_toe({
             "t": "tekst",
             "x": _getal(self._position[0]),
             "y": _getal(self._position[1]),
-            "tekst": str(arg),
+            "tekst": tekst,
             "uitlijning": align,
-            "grootte": _getal(font[1]) if len(font) > 1 else 8,
+            "grootte": _getal(grootte),
             "kleur": self._penkleur,
         })
+        if move:
+            # Tk meet de echte breedte; dit is een schatting van ongeveer
+            # 0,6 letterhoogte per teken, genoeg om verder te schrijven.
+            breedte = len(tekst) * grootte * 0.6 * 1.33
+            if align == "left":
+                self.setx(self._position[0] + breedte)
+            elif align == "center":
+                self.setx(self._position[0] + breedte / 2)
 
     def clear(self):
         self._voeg_toe({"t": "wis"})
@@ -452,6 +511,7 @@ class Turtle:
         self._start()
         self._voeg_toe({"t": "ga", "x": 0, "y": 0, "pen": False, "kleur": "black", "dikte": 1})
         self._voeg_toe({"t": "draai", "hoek": 0})
+        self.showturtle()
 
     # De schildpad zelf
 
@@ -473,7 +533,37 @@ class Turtle:
         if name is None:
             return self._vorm
         self._vorm = name
-        self._voeg_toe({"t": "vorm", "vorm": name})
+        self._voeg_toe({"t": "vorm", "vorm": str(name)})
+
+    def pen(self, pen=None, **pendict):
+        if pen is None and not pendict:
+            return {
+                "shown": self._zichtbaar,
+                "pendown": self._pen,
+                "pencolor": self._penkleur_invoer,
+                "fillcolor": self._vulkleur_invoer,
+                "pensize": self._dikte,
+                "speed": self._snelheid,
+            }
+        instellingen = dict(pen or {}, **pendict)
+        if "pendown" in instellingen:
+            self._pen = bool(instellingen["pendown"])
+        if "pencolor" in instellingen:
+            self.pencolor(instellingen["pencolor"])
+        if "fillcolor" in instellingen:
+            self.fillcolor(instellingen["fillcolor"])
+        if "pensize" in instellingen:
+            self.pensize(instellingen["pensize"])
+        if "speed" in instellingen:
+            self.speed(instellingen["speed"])
+        if "shown" in instellingen:
+            if instellingen["shown"]:
+                self.showturtle()
+            else:
+                self.hideturtle()
+
+    def undo(self):
+        raise NotImplementedError("undo() kan de turtle van de speeltuin niet.")
 
     def getscreen(self):
         return _scherm
@@ -481,10 +571,18 @@ class Turtle:
     def _niets(self, *args, **kwargs):
         return None
 
-    shapesize = turtlesize = stamp = onclick = onrelease = ondrag = _niets
+    shapesize = turtlesize = stamp = clearstamp = clearstamps = _niets
+    onclick = onrelease = ondrag = _niets
 
 
-Pen = RawTurtle = Turtle
+class RawTurtle(Turtle):
+    # In CPython krijgt RawTurtle eerst een scherm of canvas mee. Hier is er
+    # maar één scherm, dus dat argument doet niets.
+    def __init__(self, canvas=None, shape="classic", undobuffersize=1000, visible=True):
+        Turtle.__init__(self, shape, undobuffersize, visible)
+
+
+Pen = Turtle
 
 _standaard = []
 
@@ -515,7 +613,7 @@ for _naam in (
     "setheading seth circle speed penup pu up pendown pd down isdown pensize "
     "width pencolor fillcolor color begin_fill end_fill filling dot write "
     "clear reset hideturtle ht showturtle st isvisible shape shapesize "
-    "turtlesize stamp"
+    "turtlesize stamp clearstamp clearstamps pen undo onclick onrelease ondrag"
 ).split():
     globals()[_naam] = _maak_functie(_naam)
 
@@ -531,11 +629,12 @@ for _naam in (
     "bgcolor colormode tracer delay setup title update mainloop done "
     "exitonclick bye listen onkey onkeypress onkeyrelease onscreenclick "
     "ontimer register_shape addshape screensize window_width window_height "
-    "clearscreen resetscreen turtles"
+    "clearscreen resetscreen turtles textinput numinput mode setworldcoordinates "
+    "bgpic"
 ).split():
     globals()[_naam] = _scherm_functie(_naam)
 
-__all__ = [n for n in globals() if not n.startswith("_") and n not in ("Vec2D",)]
+__all__ = [n for n in globals() if not n.startswith("_")]
 
 
 def _coderius_aantal():
@@ -548,5 +647,5 @@ def _coderius_tekening():
     return _json.dumps({
         "gebeurtenissen": _scherm._gebeurtenissen,
         "direct": _scherm._direct,
-    })
+    }, default=str)
 `;

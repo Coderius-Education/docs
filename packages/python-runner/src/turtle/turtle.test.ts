@@ -164,7 +164,8 @@ describe('de tekening', () => {
     );
     const plek = tekening.gebeurtenissen.findIndex((g) => g.t === 'vul');
     const vul = tekening.gebeurtenissen[plek];
-    expect(plek).toBe(1); // meteen na 'nieuw', dus vóór de lijnen
+    const eersteLijn = tekening.gebeurtenissen.findIndex((g) => g.t === 'ga');
+    expect(plek).toBeLessThan(eersteLijn); // onder de lijnen die daarna komen
     expect(vul).toMatchObject({ kleur: 'yellow', zichtbaarVanaf: tekening.gebeurtenissen.length });
     expect(vul.t === 'vul' && vul.punten).toEqual([
       [0, 0],
@@ -251,5 +252,78 @@ describe('de tekening', () => {
 
   it('een onbekende kleurvorm geeft een TurtleGraphicsError, net als de echte turtle', () => {
     expect(() => draai('import turtle\nturtle.color((1, 2))\n')).toThrow(/TurtleGraphicsError/);
+  });
+
+  it('RawTurtle(scherm) werkt zoals in CPython, en de tekening blijft JSON', () => {
+    const { uitvoer, tekening } = draai(
+      'import turtle\ns = turtle.Screen()\nt = turtle.RawTurtle(s)\nt.forward(50)\nprint("klaar")\n',
+    );
+    expect(uitvoer).toBe('klaar\n');
+    expect(soorten(tekening.gebeurtenissen, 'ga')).toHaveLength(1);
+  });
+
+  it('een vreemde waarde in een gebeurtenis maakt de tekening niet kapot', () => {
+    const { tekening } = draai('import turtle\nturtle.shape(object())\nturtle.forward(1)\n');
+    expect(soorten(tekening.gebeurtenissen, 'vorm')).toHaveLength(1);
+  });
+
+  it('na goto blijven hele getallen heel, zoals in CPython', () => {
+    const { uitvoer } = draai(
+      'import turtle\nturtle.goto(100, 50)\nprint(turtle.xcor(), turtle.ycor())\nturtle.setx(7)\nprint(turtle.xcor())\n',
+    );
+    expect(uitvoer).toBe('100 50\n7\n');
+  });
+
+  it('pencolor() en color() geven terug wat je meegaf', () => {
+    const { uitvoer } = draai(
+      'import turtle\nturtle.color("green")\nprint(turtle.color())\nturtle.pencolor((1, 0, 0))\nprint(turtle.pencolor())\n',
+    );
+    expect(uitvoer).toBe("('green', 'green')\n(1, 0, 0)\n");
+  });
+
+  it('een kleurwissel zonder beweging kleurt de schildpad meteen', () => {
+    const { tekening } = draai('import turtle\nturtle.color("red")\n');
+    expect(soorten(tekening.gebeurtenissen, 'kleur')).toMatchObject([{ kleur: 'red' }]);
+  });
+
+  it('reset() maakt een verborgen schildpad weer zichtbaar, clearscreen() het doek weer wit', () => {
+    const { uitvoer, tekening } = draai(
+      'import turtle\nturtle.hideturtle()\nturtle.reset()\nprint(turtle.isvisible())\nturtle.bgcolor("black")\nturtle.clearscreen()\nprint(turtle.bgcolor())\n',
+    );
+    expect(uitvoer).toBe('True\nwhite\n');
+    expect(soorten(tekening.gebeurtenissen, 'achtergrond').at(-1)).toMatchObject({
+      kleur: 'white',
+    });
+  });
+
+  it('write(move=True) schuift de schildpad op, een onbekende uitlijning is een KeyError', () => {
+    const { uitvoer } = draai(
+      'import turtle\nturtle.write("Hoi", move=True)\nprint(turtle.xcor() > 0)\n',
+    );
+    expect(uitvoer).toBe('True\n');
+    expect(() => draai('import turtle\nturtle.write("Hoi", align="midden")\n')).toThrow(/KeyError/);
+  });
+
+  it('textinput en numinput vragen via input()', () => {
+    const { uitvoer } = draai(
+      [
+        'import builtins, turtle',
+        'antwoorden = iter(["Sara", "", "twaalf", "12"])',
+        'builtins.input = lambda vraag="": next(antwoorden)',
+        'print(turtle.textinput("Naam", "Hoe heet je?"))',
+        'print(turtle.numinput("Getal", "Hoeveel?", default=5))',
+        'print(turtle.numinput("Getal", "Hoeveel?"))',
+      ].join('\n'),
+    );
+    expect(uitvoer).toBe('Sara\n5.0\nTyp een getal.\n12.0\n');
+  });
+
+  it('from turtle import * geeft ook Vec2D, en wat de speeltuin niet kan, zegt dat', () => {
+    const { uitvoer } = draai('from turtle import *\nprint(Vec2D(1, 2))\n');
+    expect(uitvoer).toBe('(1.00,2.00)\n');
+    expect(() => draai('import turtle\nturtle.setworldcoordinates(0, 0, 10, 10)\n')).toThrow(
+      /NotImplementedError: Dit kan de turtle van de speeltuin niet/,
+    );
+    expect(() => draai('import turtle\nturtle.undo()\n')).toThrow(/NotImplementedError/);
   });
 });

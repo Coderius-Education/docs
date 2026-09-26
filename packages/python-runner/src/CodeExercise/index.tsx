@@ -52,7 +52,7 @@ function CodeExerciseInner({ starterCode }: { starterCode: string }) {
     setTekening(null);
     try {
       const { haalTekening, runPython } = await import('../PyodideProvider');
-      const result = await runPython(pyodideRef.current, code);
+      const result = await runPython(pyodideRef.current, code, { turtle: true });
       setOutput(result);
       setTekening(haalTekening(pyodideRef.current));
     } catch (err) {
@@ -70,7 +70,7 @@ function CodeExerciseInner({ starterCode }: { starterCode: string }) {
     try {
       const { tracePython } = await import('../PyodideProvider');
       setOpnameCode(code);
-      setOpname(await tracePython(pyodideRef.current, code));
+      setOpname(await tracePython(pyodideRef.current, code, undefined, { turtle: true }));
     } catch (err) {
       setOutput(err instanceof Error ? err.message : String(err));
     } finally {

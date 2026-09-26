@@ -146,4 +146,41 @@ describe('naarSvg', () => {
     expect(svg).not.toContain('<script>');
     expect(svg).toContain('&lt;script&gt;x&lt;/script&gt;');
   });
+
+  it('zet geen tekst uit een getalveld in de SVG, en een vreemde uitlijning wordt start', () => {
+    const svg = naarSvg({
+      gebeurtenissen: [
+        NIEUW,
+        {
+          t: 'ga',
+          id: 0,
+          x: '1"/><script>x</script>' as unknown as number,
+          y: 0,
+          pen: true,
+          kleur: 'black',
+          dikte: 1,
+        },
+        {
+          t: 'tekst',
+          id: 0,
+          x: 0,
+          y: 0,
+          tekst: 'a',
+          uitlijning: 'constructor',
+          grootte: 8,
+          kleur: 'black',
+        },
+      ],
+      direct: false,
+    });
+    expect(svg).not.toContain('<script>');
+    expect(svg).toContain('text-anchor="start"');
+  });
+});
+
+describe('speelAf: de kleur van de schildpad', () => {
+  it('volgt een kleurwissel ook zonder beweging', () => {
+    const stand = speelAf([NIEUW, { t: 'kleur', id: 0, kleur: 'red' }]);
+    expect(stand.schildpadden[0].kleur).toBe('red');
+  });
 });

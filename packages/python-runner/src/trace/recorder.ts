@@ -172,6 +172,21 @@ def _stapper_neem_op(bron, voorwerk=None):
         'uitvoer': uitvoer.getvalue(),
         'afgekapt': afgekapt[0],
         'fout': fout,
-        'tekening': _stapper_json.loads(turtle._coderius_tekening()) if turtle else None,
+        'tekening': _stapper_tekening(turtle),
     })
+
+
+def _stapper_tekening(turtle):
+    # Geen tekening als er niets getekend is (anders een leeg doek onder elke
+    # stap), en ook niet als de leerling de module zo heeft verbouwd dat er
+    # geen JSON meer uitkomt: de opname zelf mag daar niet onder lijden.
+    if turtle is None:
+        return None
+    try:
+        tekening = _stapper_json.loads(turtle._coderius_tekening())
+    except Exception:
+        return None
+    if not isinstance(tekening, dict) or not tekening.get('gebeurtenissen'):
+        return None
+    return tekening
 `;
