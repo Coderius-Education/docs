@@ -11,7 +11,9 @@ import {
   activiteiten,
   conceptenIn,
   filter,
+  telling,
   vanafLes,
+  zichtbareConcepten,
 } from '../../data/projecten';
 import styles from './styles.module.css';
 
@@ -67,6 +69,11 @@ function Concepten({
   );
 }
 
+function Vanaf({ activiteit }: { activiteit: Activiteit }): React.JSX.Element {
+  const les = vanafLes(activiteit);
+  return <span title={`Vanaf les ${les.label}`}>vanaf les {les.id.replace(/^0/, '')}</span>;
+}
+
 function Kaart({
   activiteit,
   gekozen,
@@ -89,9 +96,9 @@ function Kaart({
       <span className={styles.wat}>{activiteit.wat}</span>
       <span className={styles.voet}>
         <Concepten activiteit={activiteit} gekozen={gekozen} />
-        <span className={styles.vanaf} title={`Vanaf les ${vanafLes(activiteit).label}`}>
+        <span className={styles.vanaf}>
           {activiteit.stappen !== undefined ? `${activiteit.stappen} stappen · ` : ''}
-          vanaf les {vanafLes(activiteit).id.replace(/^0/, '')}
+          <Vanaf activiteit={activiteit} />
         </span>
       </span>
     </KaartLink>
@@ -112,6 +119,9 @@ function Rij({
       <span className={styles.rijTitel}>{activiteit.titel} ↗</span>
       <span className={styles.rijWat}>{activiteit.wat}</span>
       <Concepten activiteit={activiteit} gekozen={gekozen} />
+      <span className={styles.vanaf}>
+        <Vanaf activiteit={activiteit} />
+      </span>
     </KaartLink>
   );
 }
@@ -186,7 +196,7 @@ export default function ProjectKiezer({
             <Chip actief={concept === null} onClick={() => setConcept(null)}>
               Alles
             </Chip>
-            {concepten.map((id) => (
+            {zichtbareConcepten(concepten, aantal, concept).map((id) => (
               <Chip
                 key={id}
                 actief={concept === id}
@@ -200,9 +210,7 @@ export default function ProjectKiezer({
       </div>
 
       <p className={styles.telling} aria-live="polite">
-        {concept === null
-          ? `${getoond.length} activiteiten`
-          : `${getoond.length} met ${CONCEPTNAMEN[concept]}`}
+        {telling(getoond.length, concept)}
       </p>
 
       {getoond.length === 0 && (

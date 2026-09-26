@@ -15,7 +15,9 @@ import {
   activiteiten,
   conceptenIn,
   filter,
+  telling,
   vanafLes,
+  zichtbareConcepten,
 } from '../data/projecten';
 
 // De projectkiezer op /docs/projecten leunt op twee handgeschreven lijsten:
@@ -143,6 +145,38 @@ describe('filter en conceptenIn', () => {
     const ids = conceptenIn(activiteiten);
     expect(ids).toEqual(lessen.map((l) => l.id).filter((id) => ids.includes(id)));
     expect(conceptenIn([vind('turtle-robotkop')])).toEqual(['02', '03']);
+  });
+
+  it('wie range met start en stap oefent, oefent ook de for-loop zelf', () => {
+    // Tien groene flessen en de straat vol huizen draaien een for-loop, maar
+    // vielen weg onder de chip For-loop.
+    for (const a of activiteiten) {
+      if (a.concepten.includes('06b')) expect(a.concepten, a.id).toContain('06a');
+    }
+    const forLoop = filter(activiteiten, '06a', null).map((a) => a.id);
+    expect(forLoop).toContain('tien-groene-flessen');
+    expect(forLoop).toContain('turtle-straat-vol-huizen');
+  });
+
+  it('een chip met nul valt weg, behalve de gekozen chip', () => {
+    const aantal = (id: string) => ({ a: 2, b: 0, c: 1 })[id] ?? 0;
+    expect(zichtbareConcepten(['a', 'b', 'c'], aantal, null)).toEqual(['a', 'c']);
+    expect(zichtbareConcepten(['a', 'b', 'c'], aantal, 'b')).toEqual(['a', 'b', 'c']);
+    // Op de echte data: met soort turtle geen chip voor een concept zonder turtle-project.
+    const turtle = activiteiten.filter((a) => a.soort === 'turtle');
+    const zicht = zichtbareConcepten(
+      conceptenIn(activiteiten),
+      (id) => filter(activiteiten, id, 'turtle').length,
+      null,
+    );
+    expect(zicht).toEqual(conceptenIn(turtle));
+  });
+
+  it('de telling zegt 1 activiteit, niet 1 activiteiten', () => {
+    expect(telling(1, null)).toBe('1 activiteit');
+    expect(telling(3, null)).toBe('3 activiteiten');
+    expect(telling(0, null)).toBe('0 activiteiten');
+    expect(telling(2, '07')).toBe('2 met While-loop');
   });
 
   it('vanafLes is de laatste les die nodig is', () => {

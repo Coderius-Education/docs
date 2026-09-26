@@ -67,7 +67,7 @@ export const activiteiten: Activiteit[] = [
     soort: 'project',
     wat: 'Van vijftig losse print-regels naar één aanroep lied(10).',
     stappen: 8,
-    concepten: ['01', '02', '04a', '05b', '05c', '06b', '08', '09a', '09b'],
+    concepten: ['01', '02', '04a', '05b', '05c', '06a', '06b', '08', '09a', '09b'],
     link: { to: '/docs/projecten/tien-groene-flessen/stap-1-print' },
   },
   {
@@ -124,8 +124,7 @@ export const activiteiten: Activiteit[] = [
     soort: 'turtle',
     wat: 'Huizen in elke maat, met een functie, en een hele straat op een rij.',
     stappen: 3,
-    concepten: ['06b', '08', '09a'],
-    lessen: ['06a', '06b', '08', '09a'],
+    concepten: ['06a', '06b', '08', '09a'],
     link: { to: '/docs/projecten/turtle/straat-vol-huizen/stap-1-functies' },
   },
   {
@@ -308,4 +307,23 @@ export function filter(
     .filter(({ a }) => soort === null || a.soort === soort)
     .sort((x, y) => x.vanaf - y.vanaf || x.i - y.i)
     .map(({ a }) => a);
+}
+
+/**
+ * De concepten waar een chip voor komt: alleen die met iets om te laten zien.
+ * Een soortfilter kan een concept op nul zetten; dan valt de chip weg, behalve
+ * als hij gekozen is, want anders kun je hem niet meer uitzetten.
+ */
+export function zichtbareConcepten(
+  concepten: string[],
+  aantal: (id: string) => number,
+  gekozen: string | null,
+): string[] {
+  return concepten.filter((id) => id === gekozen || aantal(id) > 0);
+}
+
+/** De regel boven de kaarten: hoeveel er staan, en met welk concept. */
+export function telling(aantal: number, concept: string | null): string {
+  if (concept !== null) return `${aantal} met ${CONCEPTNAMEN[concept]}`;
+  return aantal === 1 ? '1 activiteit' : `${aantal} activiteiten`;
 }
