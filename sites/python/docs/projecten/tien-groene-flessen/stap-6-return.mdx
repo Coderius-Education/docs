@@ -1,0 +1,132 @@
+---
+sidebar_position: 6
+description: Schrijf functies die een stukje tekst teruggeven met return, zodat het couplet zelf geen if meer nodig heeft.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Stap 6: Een functie die tekst teruggeeft
+
+:::info
+Deze stap gebruikt `return`, uit [Return](/docs/functies/09b-return).
+:::
+
+In je couplet staan nu twee variabelen met vier `if`-regels ervoor. Kijk
+wat die regels doen: ze zoeken de goede woorden bij een aantal
+flessen. "3 groene flessen", "1 groene fles", "geen groene flessen meer".
+Dat kan een functie doen die de tekst teruggeeft in plaats van hem te
+printen:
+
+```python
+def staan(flessen):
+    if flessen == 1:
+        return "staat"
+    else:
+        return "staan"
+
+print(staan(1))   # staat
+print(staan(4))   # staan
+```
+
+Een functie met `return` kun je gebruiken waar je anders een stukje tekst
+zou schrijven, ook tussen de accolades van een f-string.
+
+## Opdracht: `aantal(flessen)`
+
+`staan` en het couplet staan al klaar. Schrijf de functie `aantal`, die
+voor elk aantal flessen de goede woorden teruggeeft:
+
+| `aantal(3)` | `aantal(1)` | `aantal(0)` |
+|:---:|:---:|:---:|
+| `"3 groene flessen"` | `"1 groene fles"` | `"geen groene flessen meer"` |
+
+Nu geeft hij altijd de gewone vorm terug, dus de laatste twee coupletten
+kloppen nog niet.
+
+<CodeExercise>{`def aantal(flessen):
+    return f"{flessen} groene flessen"
+
+
+def staan(flessen):
+    if flessen == 1:
+        return "staat"
+    else:
+        return "staan"
+
+
+def couplet(flessen):
+    print(f"{aantal(flessen)} {staan(flessen)} aan de muur,")
+    print(f"{aantal(flessen)} {staan(flessen)} aan de muur,")
+    print("en als er één groene fles valt,")
+    print(f"dan {staan(flessen - 1)} er {aantal(flessen - 1)} aan de muur.")
+
+
+for flessen in range(3, 0, -1):
+    couplet(flessen)
+    print()`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Er zijn drie gevallen: 0, 1 en al het andere. Schrijf ze als `if`, `elif`
+en `else`, met in elk geval een eigen `return`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+def aantal(flessen):
+    if flessen == 0:
+        return "geen groene flessen meer"
+    elif flessen == 1:
+        return "1 groene fles"
+    else:
+        return f"{flessen} groene flessen"
+
+
+def staan(flessen):
+    if flessen == 1:
+        return "staat"
+    else:
+        return "staan"
+
+
+def couplet(flessen):
+    print(f"{aantal(flessen)} {staan(flessen)} aan de muur,")
+    print(f"{aantal(flessen)} {staan(flessen)} aan de muur,")
+    print("en als er één groene fles valt,")
+    print(f"dan {staan(flessen - 1)} er {aantal(flessen - 1)} aan de muur.")
+
+
+for flessen in range(3, 0, -1):
+    couplet(flessen)
+    print()
+```
+
+Uitvoer:
+
+```
+3 groene flessen staan aan de muur,
+3 groene flessen staan aan de muur,
+en als er één groene fles valt,
+dan staan er 2 groene flessen aan de muur.
+
+2 groene flessen staan aan de muur,
+2 groene flessen staan aan de muur,
+en als er één groene fles valt,
+dan staat er 1 groene fles aan de muur.
+
+1 groene fles staat aan de muur,
+1 groene fles staat aan de muur,
+en als er één groene fles valt,
+dan staan er geen groene flessen meer aan de muur.
+```
+
+Het couplet is nu vier regels zonder één `if`. Alles wat met enkelvoud en
+meervoud te maken heeft, zit in `aantal` en `staan`.
+
+</details>
+
+Door naar [stap 7: het hele lied als functie](./stap-7-lied).
