@@ -1,0 +1,36 @@
+.tekening {
+  padding: 0.75rem;
+  border-top: 1px solid var(--ifm-color-emphasis-300);
+  background: var(--ifm-background-surface-color);
+}
+
+/* Het doek blijft wit in donker thema, net als het venster van de echte
+   turtle: de kleuren die een leerling kiest, zijn voor een wit vlak bedoeld. */
+.doek {
+  line-height: 0;
+}
+
+.doek svg {
+  display: block;
+  width: 100%;
+  max-height: 420px;
+  margin: 0 auto;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-global-radius);
+}
+
+.opnieuw {
+  margin-top: 0.5rem;
+  background: transparent;
+  color: var(--ifm-color-primary);
+  border: 1px solid var(--ifm-color-primary);
+  padding: 0.2rem 0.75rem;
+  border-radius: var(--ifm-global-radius);
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.opnieuw:disabled {
+  opacity: 0.5;
+  cursor: default;
+}

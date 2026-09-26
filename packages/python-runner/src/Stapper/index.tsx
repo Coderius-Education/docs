@@ -2,6 +2,7 @@ import type React from 'react';
 import { useState } from 'react';
 import { HighlightedEditor } from '../HighlightedEditor';
 import type { Opname, Stap } from '../PyodideProvider';
+import Tekening from '../Tekening';
 import { afkapMelding } from './melding';
 import styles from './styles.module.css';
 
@@ -116,6 +117,8 @@ export default function Stapper({
           </div>
         </div>
       </div>
+
+      {opname.tekening && <Tekening tekening={opname.tekening} tot={stap.tekenTot ?? 0} />}
 
       {foutHier && (
         <p className={styles.fout}>
