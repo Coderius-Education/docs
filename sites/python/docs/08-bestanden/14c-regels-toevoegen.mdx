@@ -62,8 +62,20 @@ woensdag: 4 km gelopen
 donderdag: rustdag
 ```
 
-Draai je dit twee keer, dan staan er vier regels in `training.txt`: elke keer
-komen er twee bij.
+Druk hieronder twee keer op Uitvoeren. De tweede keer staan er vier regels in
+`training.txt`: het bestand bestaat nog van de eerste keer, en er komen er
+twee bij.
+
+<CodeExercise>{`def noteer(tekst):
+    with open("training.txt", "a") as bestand:
+        bestand.write(f"{tekst}\\n")
+
+
+noteer("woensdag: 4 km gelopen")
+noteer("donderdag: rustdag")
+
+with open("training.txt") as bestand:
+    print(bestand.read())`}</CodeExercise>
 
 ---
 

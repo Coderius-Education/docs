@@ -38,11 +38,15 @@ kaas
 - `open("boodschappen.txt", "w")` opent het bestand. De `"w"` staat voor
   *write*, schrijven. Bestaat het bestand nog niet, dan maakt Python het
   aan.
-- `with … as bestand:` geeft het open bestand de naam `bestand`. Zodra het
-  ingesprongen blok klaar is, sluit Python het bestand weer.
+- `with … as bestand:` geeft het open bestand de naam `bestand`.
 - `bestand.write()` schrijft tekst in het bestand, precies wat je meegeeft.
 
-Dat laatste is anders dan bij `print`. Die begint na elke regel zelf aan een
+Zodra het ingesprongen blok onder `with` klaar is, sluit Python het bestand.
+Dat sluiten doet ertoe: Python bewaart wat je schrijft soms eerst even, en
+zet het pas bij het sluiten echt in het bestand. Met `with` kun je dat niet
+vergeten.
+
+`write` werkt anders dan `print`. Die begint na elke regel zelf aan een
 nieuwe; `write` niet. Daarom staat achter elke boodschap `\n`: dat is het
 teken voor een nieuwe regel.
 
@@ -109,6 +113,13 @@ op één regel.
 Schrijf drie spellen die je leuk vindt in `spellen.txt`, elk op een eigen
 regel. De laatste twee regels van de startcode laten zien wat er in het
 bestand staat; hoe dat werkt, zie je in les 14b.
+
+{/* foutmelding-van: open("spellen.txt") */}
+
+Druk je meteen op Uitvoeren, dan krijg je een `FileNotFoundError`: het
+bestand bestaat nog niet. Die melding verdwijnt zodra jouw code het bestand
+schrijft. Onder het laatste spel staat dan nog een lege regel; waar die
+vandaan komt, zie je ook in 14b.
 
 Verwachte uitvoer (met jouw spellen):
 

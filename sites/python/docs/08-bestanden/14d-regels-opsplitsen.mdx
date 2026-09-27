@@ -233,9 +233,9 @@ Gemiddelde: 7.2
 <summary>Klik hier voor een tip.</summary>
 
 Hier staat een komma tussen de stukken. Begin met een lege dictionary
-`cijfers = {}`, en zet in de loop `cijfers[vak] = float(cijfer)`. Het
-gemiddelde is de som van de waarden gedeeld door het aantal, met `:.1f` voor
-één cijfer achter de punt.
+`cijfers = {}` en `totaal = 0`. Zet in de loop `cijfers[vak] = float(cijfer)`
+en tel het cijfer bij `totaal` op. Het gemiddelde is `totaal` gedeeld door
+`len(cijfers)`, met `:.1f` voor één cijfer achter de punt.
 
 </details>
 
@@ -247,13 +247,15 @@ with open("cijfers.txt", "w") as bestand:
     bestand.write("wiskunde,7.5\nengels,6.0\nbiologie,8.1\n")
 
 cijfers = {}
+totaal = 0
 with open("cijfers.txt") as bestand:
     for regel in bestand:
         vak, cijfer = regel.strip().split(",")
         cijfers[vak] = float(cijfer)
+        totaal += float(cijfer)
 
 print(cijfers)
-gemiddelde = sum(cijfers.values()) / len(cijfers)
+gemiddelde = totaal / len(cijfers)
 print(f"Gemiddelde: {gemiddelde:.1f}")
 ```
 
