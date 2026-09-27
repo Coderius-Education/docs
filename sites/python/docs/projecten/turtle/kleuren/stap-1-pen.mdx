@@ -1,0 +1,101 @@
+---
+sidebar_position: 1
+sidebar_label: 'Stap 1: pencolor en pensize'
+description: Geef de lijn van de schildpad een kleur en een dikte.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Stap 1: Een gekleurde pen (pencolor en pensize)
+
+Tot nu toe tekende de schildpad dunne zwarte lijnen. Met twee nieuwe
+commando's kies je een andere pen:
+
+```python
+import turtle
+
+turtle.pencolor("red")
+turtle.pensize(5)
+turtle.forward(100)
+```
+
+- `turtle.pencolor("red")` maakt de lijn rood. De kleur is een Engels woord
+  tussen aanhalingstekens, zoals `"red"`, `"blue"`, `"green"`, `"orange"`
+  of `"purple"`.
+- `turtle.pensize(5)` maakt de lijn 5 breed. Zonder dit commando is hij 1
+  breed.
+
+Beide gelden vanaf de regel waar ze staan, tot je een andere kleur of dikte
+kiest.
+
+## Opdracht: een blauw vierkant
+
+Teken het vierkant uit [Een vierkant](/docs/projecten/turtle/vierkant/stap-1-vierkant)
+met een blauwe lijn van 8 breed.
+
+![Een vierkant met een dikke blauwe lijn](./img/stap-1-blauw.svg)
+
+<CodeExercise>{`import turtle
+
+turtle.forward(100)
+turtle.left(90)
+turtle.forward(100)
+turtle.left(90)
+turtle.forward(100)
+turtle.left(90)
+turtle.forward(100)
+turtle.left(90)`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Zet `pencolor` en `pensize` bovenaan, vóór de eerste `forward`. Dan tekent
+de schildpad het hele vierkant met die pen.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+{/* turtle-plaatje: img/stap-1-blauw.svg */}
+
+```python
+import turtle
+
+turtle.pencolor("blue")
+turtle.pensize(8)
+turtle.forward(100)
+turtle.left(90)
+turtle.forward(100)
+turtle.left(90)
+turtle.forward(100)
+turtle.left(90)
+turtle.forward(100)
+turtle.left(90)
+```
+
+Probeer ook eens een andere kleur voor elke zijde: zet een `pencolor` vóór
+elke `forward`.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+import turtle
+
+turtle.pencolor(red)
+```
+
+```
+NameError: name 'red' is not defined
+```
+
+**Oorzaak:** zonder aanhalingstekens denkt Python dat `red` de naam van iets
+is dat je zelf hebt gemaakt. Dat is niet zo, dus kent hij die naam niet.
+
+**Oplossing:** zet de kleur tussen aanhalingstekens: `turtle.pencolor("red")`.
+
+Door naar [stap 2: inkleuren](./stap-2-vullen).

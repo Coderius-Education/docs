@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-250 -200 500 400" role="img">
+<title>Een zwarte lijn van 150 naar rechts, met aan het eind een lijn van 100 omhoog</title>
+<rect x="-250" y="-200" width="500" height="400" fill="white"/>
+<line x1="0" y1="0" x2="150" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="150" y1="0" x2="150" y2="-100" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="150,-100 145,-91 150,-93 155,-91" fill="black" stroke="black" stroke-width="1"/>
+</svg>

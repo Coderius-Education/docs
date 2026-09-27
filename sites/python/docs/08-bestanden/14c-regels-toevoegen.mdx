@@ -1,0 +1,236 @@
+---
+sidebar_position: 3
+description: Voeg regels toe aan het eind van een bestand met "a", zonder de oude inhoud kwijt te raken.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 14c Regels toevoegen
+
+:::info
+Deze les gebruikt schrijven en lezen, uit [Een tekstbestand schrijven](/docs/bestanden/14a-tekstbestand-schrijven) en [Een tekstbestand lezen](/docs/bestanden/14b-tekstbestand-lezen).
+:::
+
+Een logboek houd je elke dag bij. Wat er gisteren in stond, moet blijven
+staan. Met `"a"` in plaats van `"w"` schrijft Python achter wat er al staat:
+
+```python
+with open("logboek.txt", "w") as bestand:
+    bestand.write("maandag: 3 km gelopen\n")
+
+with open("logboek.txt", "a") as bestand:
+    bestand.write("dinsdag: 5 km gelopen\n")
+
+with open("logboek.txt") as bestand:
+    for regel in bestand:
+        print(regel.strip())
+```
+
+Uitvoer:
+
+```
+maandag: 3 km gelopen
+dinsdag: 5 km gelopen
+```
+
+De `"a"` staat voor *append*, toevoegen. Net als `.append()` bij een lijst
+komt het nieuwe achteraan. Bestaat het bestand nog niet, dan maakt `"a"` het
+aan, net als `"w"`.
+
+## In een functie
+
+Voeg je vaak een regel toe, dan zet je dat in een functie. Elke aanroep opent
+het bestand, schrijft één regel en sluit het weer:
+
+```python
+def noteer(tekst):
+    with open("training.txt", "a") as bestand:
+        bestand.write(f"{tekst}\n")
+
+
+noteer("woensdag: 4 km gelopen")
+noteer("donderdag: rustdag")
+
+with open("training.txt") as bestand:
+    print(bestand.read())
+```
+
+Uitvoer:
+
+```
+woensdag: 4 km gelopen
+donderdag: rustdag
+```
+
+Druk hieronder twee keer op Uitvoeren. De tweede keer staan er vier regels in
+`training.txt`: het bestand bestaat nog van de eerste keer, en er komen er
+twee bij.
+
+<CodeExercise>{`def noteer(tekst):
+    with open("training.txt", "a") as bestand:
+        bestand.write(f"{tekst}\\n")
+
+
+noteer("woensdag: 4 km gelopen")
+noteer("donderdag: rustdag")
+
+with open("training.txt") as bestand:
+    print(bestand.read())`}</CodeExercise>
+
+---
+
+## Er gaat iets mis
+
+**Toevoegen met `"w"`**
+
+```python
+def noteer(tekst):
+    with open("logboek.txt", "w") as bestand:
+        bestand.write(f"{tekst}\n")
+
+
+noteer("woensdag: 4 km gelopen")
+noteer("donderdag: rustdag")
+
+with open("logboek.txt") as bestand:
+    print(bestand.read())
+```
+
+Uitvoer:
+
+```
+donderdag: rustdag
+```
+
+Geen foutmelding, maar woensdag is weg. Elke `open` met `"w"` begint met een
+leeg bestand, dus de tweede aanroep gooit de eerste regel weg. Om iets toe te
+voegen gebruik je `"a"`.
+
+---
+
+## Opdracht 14c.1: Nog meer boodschappen
+
+De startcode maakt een boodschappenlijst. Voeg `eieren` en `tomaten` toe,
+zonder de regel die het bestand maakt te veranderen.
+
+Verwachte uitvoer:
+
+```
+melk
+brood
+eieren
+tomaten
+```
+
+<CodeExercise>{`with open("boodschappen.txt", "w") as bestand:
+    bestand.write("melk\\nbrood\\n")
+
+# Schrijf hier je code
+
+with open("boodschappen.txt") as bestand:
+    print(bestand.read())`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Open het bestand een tweede keer, nu met `"a"`, en schrijf daar de twee
+nieuwe regels.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+with open("boodschappen.txt", "w") as bestand:
+    bestand.write("melk\nbrood\n")
+
+with open("boodschappen.txt", "a") as bestand:
+    bestand.write("eieren\n")
+    bestand.write("tomaten\n")
+
+with open("boodschappen.txt") as bestand:
+    print(bestand.read())
+```
+
+Uitvoer:
+
+```
+melk
+brood
+eieren
+tomaten
+```
+
+</details>
+
+---
+
+## Opdracht 14c.2: Scores bijhouden
+
+Schrijf de functie `bewaar_score(naam, punten)`. Die voegt een regel als
+`Sara: 120` toe aan `scores.txt`. De startcode maakt eerst een leeg bestand,
+zodat je bij elke keer Uitvoeren opnieuw begint. Daarna roept hij de functie
+drie keer aan en print hij het bestand.
+
+Verwachte uitvoer:
+
+```
+Sara: 120
+Alex: 95
+Noor: 150
+```
+
+<CodeExercise>{`with open("scores.txt", "w") as bestand:
+    bestand.write("")
+
+
+def bewaar_score(naam, punten):
+    print(f"Nog te doen: {naam}")
+
+
+bewaar_score("Sara", 120)
+bewaar_score("Alex", 95)
+bewaar_score("Noor", 150)
+
+with open("scores.txt") as bestand:
+    print(bestand.read())`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Kijk naar de functie `noteer` hierboven. Het verschil zit in de f-string:
+daar komen nu twee waarden in.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+with open("scores.txt", "w") as bestand:
+    bestand.write("")
+
+
+def bewaar_score(naam, punten):
+    with open("scores.txt", "a") as bestand:
+        bestand.write(f"{naam}: {punten}\n")
+
+
+bewaar_score("Sara", 120)
+bewaar_score("Alex", 95)
+bewaar_score("Noor", 150)
+
+with open("scores.txt") as bestand:
+    print(bestand.read())
+```
+
+Uitvoer:
+
+```
+Sara: 120
+Alex: 95
+Noor: 150
+```
+
+</details>

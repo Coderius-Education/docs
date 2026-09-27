@@ -1,0 +1,165 @@
+---
+sidebar_position: 5
+description: Zet dictionaries en lijsten om naar JSON-tekst en weer terug, met de module json.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 14e JSON
+
+In les 14d haalde je met `split` een naam en een score uit elke regel. Voor
+een lijst met dictionaries, met in elke dictionary vier of vijf sleutels,
+wordt dat veel knippen en plakken. Daarvoor bestaat **JSON**: een vorm van
+tekst waarin Python je gegevens in één keer opschrijft, en ook in één keer
+weer inleest. In les 14f schrijf je die tekst in een bestand.
+
+## Van dictionary naar JSON
+
+JSON is tekst die er bijna precies zo uitziet als een Python-dictionary of
+-lijst. De module `json` zet je gegevens om naar die tekst met
+`json.dumps()`:
+
+```python
+import json
+
+leerling = {"naam": "Sara", "klas": "3B", "actief": True, "hobby": None}
+
+tekst = json.dumps(leerling, indent=2)
+print(tekst)
+```
+
+Uitvoer:
+
+```
+{
+  "naam": "Sara",
+  "klas": "3B",
+  "actief": true,
+  "hobby": null
+}
+```
+
+Met `indent=2` krijg je elke sleutel op een eigen regel, twee spaties
+ingesprongen. Kijk ook naar de kleine verschillen met Python: JSON schrijft
+`true` en `false` met een kleine letter, `None` heet `null`, en tekst staat
+altijd tussen dubbele aanhalingstekens.
+
+## Van JSON terug naar een dictionary
+
+Andersom doet `json.loads()` het: van tekst naar een dictionary of lijst
+waar je mee verder kunt.
+
+```python
+import json
+
+tekst = '{"naam": "Alex", "punten": [8, 9, 7]}'
+gegevens = json.loads(tekst)
+
+print(gegevens["naam"])
+print(sum(gegevens["punten"]))
+```
+
+Uitvoer:
+
+```
+Alex
+24
+```
+
+De `s` aan het eind van `dumps` en `loads` staat voor *string*: ze werken
+met tekst. Voor bestanden zijn er `json.dump()` en `json.load()`, zonder
+`s`.
+
+---
+
+## Er gaat iets mis
+
+**Enkele aanhalingstekens in JSON**
+
+```python
+import json
+json.loads("{'naam': 'Sara'}")
+```
+
+Uitvoer:
+
+```
+json.decoder.JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)
+```
+
+Python accepteert enkele aanhalingstekens, JSON niet. Zet in JSON-tekst
+altijd dubbele aanhalingstekens om sleutels en tekst.
+
+**Een getal als sleutel komt terug als tekst**
+
+```python
+import json
+
+kamers = {1: "keuken", 2: "zolder"}
+terug = json.loads(json.dumps(kamers))
+
+print(terug)
+```
+
+Uitvoer:
+
+```
+{'1': 'keuken', '2': 'zolder'}
+```
+
+{/* foutmelding-van: import json\nterug = json.loads(json.dumps({1: "keuken"}))\nterug[1] */}
+
+In JSON is elke sleutel tekst. Na het inlezen zoek je dus op met
+`terug["1"]`; `terug[1]` geeft een `KeyError`.
+
+---
+
+## Opdracht 14e.1: Jij in JSON
+
+Maak een dictionary over jezelf met minstens vier sleutels, waarvan één een
+lijst is (bijvoorbeeld je hobby's). Print hem als JSON met `indent=2`.
+
+<CodeExercise>{`import json
+
+# Schrijf hier je code`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+`print(json.dumps(ik, indent=2))`. Een lijst als waarde schrijf je
+tussen blokhaken: `"hobby's": ["tekenen", "voetbal"]`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+import json
+
+ik = {
+    "naam": "Alex",
+    "leeftijd": 15,
+    "klas": "3B",
+    "hobby's": ["tekenen", "voetbal"],
+}
+
+print(json.dumps(ik, indent=2))
+```
+
+Uitvoer:
+
+```
+{
+  "naam": "Alex",
+  "leeftijd": 15,
+  "klas": "3B",
+  "hobby's": [
+    "tekenen",
+    "voetbal"
+  ]
+}
+```
+
+</details>
+

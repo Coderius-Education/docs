@@ -1,0 +1,291 @@
+---
+sidebar_position: 1
+description: Schrijf tekst in een bestand met open, with en write, zodat hij bewaard blijft als je programma stopt.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 14a Een tekstbestand schrijven
+
+Alles wat je programma in variabelen bewaart, is weg zodra het stopt. Wil je
+iets bewaren tot de volgende keer, dan schrijf je het in een bestand:
+
+```python
+with open("boodschappen.txt", "w") as bestand:
+    bestand.write("melk\n")
+    bestand.write("brood\n")
+    bestand.write("kaas\n")
+
+print("Opgeslagen.")
+```
+
+Uitvoer:
+
+```
+Opgeslagen.
+```
+
+In `boodschappen.txt` staat nu:
+
+```
+melk
+brood
+kaas
+```
+
+## Wat er gebeurt
+
+- `open("boodschappen.txt", "w")` opent het bestand. De `"w"` staat voor
+  *write*, schrijven. Bestaat het bestand nog niet, dan maakt Python het
+  aan.
+- `with … as bestand:` geeft het open bestand de naam `bestand`.
+- `bestand.write()` schrijft tekst in het bestand, precies wat je meegeeft.
+
+Zodra het ingesprongen blok onder `with` klaar is, sluit Python het bestand.
+Dat sluiten doet ertoe: Python bewaart wat je schrijft soms eerst even, en
+zet het pas bij het sluiten echt in het bestand. Met `with` kun je dat niet
+vergeten.
+
+`write` werkt anders dan `print`. Die begint na elke regel zelf aan een
+nieuwe; `write` niet. Daarom staat achter elke boodschap `\n`: dat is het
+teken voor een nieuwe regel.
+
+:::info[Waar staat het bestand?]
+Op je eigen computer komt `boodschappen.txt` in dezelfde map als je
+Python-bestand, en daar blijft het staan. Hier in de browser bestaat het
+bestand tot je de pagina herlaadt: daarna is het weg.
+:::
+
+## `"w"` begint opnieuw
+
+Open je een bestand dat al bestaat met `"w"`, dan gooit Python de oude inhoud
+weg:
+
+```python
+with open("boodschappen.txt", "w") as bestand:
+    bestand.write("melk\n")
+    bestand.write("brood\n")
+
+with open("boodschappen.txt", "w") as bestand:
+    bestand.write("appels\n")
+```
+
+Nu staat er alleen nog `appels` in. Hoe je iets onderaan toevoegt, zie je in
+les 14c.
+
+---
+
+## Er gaat iets mis
+
+**Een getal schrijven**
+
+```python
+score = 120
+
+with open("score.txt", "w") as bestand:
+    bestand.write(score)
+```
+
+Uitvoer:
+
+```
+TypeError: write() argument must be str, not int
+```
+
+`write` schrijft alleen tekst. Een getal maak je eerst tekst, met `str(score)`
+of in een f-string: `bestand.write(f"{score}\n")`.
+
+**De `\n` vergeten**
+
+```python
+with open("boodschappen.txt", "w") as bestand:
+    bestand.write("melk")
+    bestand.write("brood")
+```
+
+Dit geeft geen foutmelding, maar in het bestand staat `melkbrood`, aan elkaar
+op één regel.
+
+---
+
+## Opdracht 14a.1: Je favoriete spellen
+
+Schrijf drie spellen die je leuk vindt in `spellen.txt`, elk op een eigen
+regel. De laatste twee regels van de startcode laten zien wat er in het
+bestand staat; hoe dat werkt, zie je in les 14b.
+
+{/* foutmelding-van: open("spellen.txt") */}
+
+Druk je meteen op Uitvoeren, dan krijg je een `FileNotFoundError`: het
+bestand bestaat nog niet. Die melding verdwijnt zodra jouw code het bestand
+schrijft. Onder het laatste spel staat dan nog een lege regel; waar die
+vandaan komt, zie je ook in 14b.
+
+Verwachte uitvoer (met jouw spellen):
+
+```
+Minecraft
+Mario Kart
+Tetris
+```
+
+{/* niet-draaien: de startcode leest een bestand dat de leerling nog moet schrijven */}
+
+<CodeExercise>{`# Schrijf hier je code
+
+with open("spellen.txt") as bestand:
+    print(bestand.read())`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Open het bestand met `"w"`, en roep daarbinnen drie keer `bestand.write()`
+aan. Vergeet de `\n` niet.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+with open("spellen.txt", "w") as bestand:
+    bestand.write("Minecraft\n")
+    bestand.write("Mario Kart\n")
+    bestand.write("Tetris\n")
+
+with open("spellen.txt") as bestand:
+    print(bestand.read())
+```
+
+Uitvoer:
+
+```
+Minecraft
+Mario Kart
+Tetris
+```
+
+</details>
+
+---
+
+## Opdracht 14a.2: Een lijst opslaan
+
+Schrijf elke naam uit de lijst `deelnemers` op een eigen regel in
+`deelnemers.txt`. Gebruik een for-loop, zodat het ook werkt als de lijst
+langer wordt.
+
+Verwachte uitvoer:
+
+```
+Sara
+Alex
+Noor
+```
+
+{/* niet-draaien: de startcode leest een bestand dat de leerling nog moet schrijven */}
+
+<CodeExercise>{`deelnemers = ["Sara", "Alex", "Noor"]
+
+# Schrijf hier je code
+
+with open("deelnemers.txt") as bestand:
+    print(bestand.read())`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+De for-loop staat ingesprongen binnen de `with`. In de loop schrijf je
+`f"{naam}\n"`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+deelnemers = ["Sara", "Alex", "Noor"]
+
+with open("deelnemers.txt", "w") as bestand:
+    for naam in deelnemers:
+        bestand.write(f"{naam}\n")
+
+with open("deelnemers.txt") as bestand:
+    print(bestand.read())
+```
+
+Uitvoer:
+
+```
+Sara
+Alex
+Noor
+```
+
+</details>
+
+---
+
+## Opdracht 14a.3: De tafel van 7 (uitdaging)
+
+Schrijf de tafel van 7 in `tafel.txt`, van `1 x 7 = 7` tot en met
+`10 x 7 = 70`.
+
+Verwachte uitvoer:
+
+```
+1 x 7 = 7
+2 x 7 = 14
+3 x 7 = 21
+4 x 7 = 28
+5 x 7 = 35
+6 x 7 = 42
+7 x 7 = 49
+8 x 7 = 56
+9 x 7 = 63
+10 x 7 = 70
+```
+
+{/* niet-draaien: de startcode leest een bestand dat de leerling nog moet schrijven */}
+
+<CodeExercise>{`# Schrijf hier je code
+
+with open("tafel.txt") as bestand:
+    print(bestand.read())`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+`range(1, 11)` geeft de getallen 1 tot en met 10. Het getal en de uitkomst
+zet je in een f-string, dan hoef je zelf niets om te zetten naar tekst.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+with open("tafel.txt", "w") as bestand:
+    for getal in range(1, 11):
+        bestand.write(f"{getal} x 7 = {getal * 7}\n")
+
+with open("tafel.txt") as bestand:
+    print(bestand.read())
+```
+
+Uitvoer:
+
+```
+1 x 7 = 7
+2 x 7 = 14
+3 x 7 = 21
+4 x 7 = 28
+5 x 7 = 35
+6 x 7 = 42
+7 x 7 = 49
+8 x 7 = 56
+9 x 7 = 63
+10 x 7 = 70
+```
+
+</details>

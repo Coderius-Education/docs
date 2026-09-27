@@ -1,6 +1,7 @@
 import { createConfig } from '@coderius/shared/config';
 import { REPO_URL } from '@coderius/shared/sites';
 import type { PluginOptions } from '@docusaurus/plugin-content-docs';
+import { omleidingen } from './src/data/omleidingen';
 import { zonderProjecten } from './src/sidebar/zonderProjecten';
 
 // De Tutorial-sidebar wordt uit heel docs/ gegenereerd; de projecten staan in
@@ -19,6 +20,7 @@ export default createConfig({
   url: 'https://python.coderius.nl',
   projectName: 'python-docs',
   matomoSiteId: 4,
+  omleidingen,
 
   description:
     'Leer stap voor stap programmeren in Python. Gratis cursus met interactieve oefeningen direct in je browser.',

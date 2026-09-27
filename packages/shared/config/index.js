@@ -5,6 +5,7 @@ const transpileShared = require('../plugins/transpile-shared');
 const { plugin: mdxInspringing } = require('../plugins/mdx-inspringing');
 const cursussenRoute = require('../plugins/cursussen-route');
 const privacyRoute = require('../plugins/privacy-route');
+const omleidingenPlugin = require('../plugins/omleidingen');
 const matomoPlugin = require('../plugins/matomo');
 const { SITES, DOCENTEN_SITES, HOME, normalizeUrl } = require('../sites');
 const { CURSUSSEN } = require('../huisstijl');
@@ -108,7 +109,8 @@ function withSharedCustomCss(presets, merk) {
  *  - sensible defaults (i18n nl, onBrokenLinks throw, future.v4, prism-thema)
  *
  * Handige extra's: geef `description`/`keywords` mee i.p.v. zelf headTags te
- * schrijven.
+ * schrijven, en `omleidingen` ([{ van, naar }]) als een les verhuist: op elk
+ * oud adres komt dan na de build een pagina die doorstuurt.
  */
 function createConfig(course = {}) {
   const managed = loadSettings(process.cwd());
@@ -124,6 +126,7 @@ function createConfig(course = {}) {
     staticDirectories,
     future,
     matomoSiteId,
+    omleidingen,
     ...rest
   } = site;
 
@@ -261,6 +264,7 @@ function createConfig(course = {}) {
       cursussenRoute,
       privacyRoute,
       [matomoPlugin, { siteId: matomoSiteId }],
+      ...(omleidingen?.length ? [[omleidingenPlugin, { omleidingen }]] : []),
     ],
     themeConfig,
   };

@@ -1,0 +1,211 @@
+---
+sidebar_position: 3
+description: Een module draait helemaal mee als je hem importeert. Met if __name__ == "__main__" houd je testcode erbuiten.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 9f Testcode in je module
+
+:::info
+Deze les bouwt voort op [Je eigen module](/docs/modules/09e-eigen-module).
+:::
+
+Terwijl je een module schrijft, wil je weten of je functies kloppen. Dus zet
+je er onderaan een `print` bij en draai je het bestand:
+
+**`rekenen.py`**
+
+```python
+def verdubbel(getal):
+    return getal * 2
+
+
+print(verdubbel(4))
+```
+
+Uitvoer:
+
+```
+8
+```
+
+Werkt. Nu importeer je de module in je programma:
+
+**`main.py`**
+
+{/* niet-draaien: rekenen.py maakt de leerling zelf */}
+```python
+import rekenen
+
+print(rekenen.verdubbel(10))
+```
+
+Uitvoer:
+
+```
+8
+20
+```
+
+Waar komt die `8` vandaan? Bij `import rekenen` voert Python het hele
+bestand `rekenen.py` uit, van boven naar beneden. De `def` maakt de functie,
+en de `print` onderaan draait ook: niets houdt hem tegen.
+
+## `if __name__ == "__main__":`
+
+Zet de testcode onder deze `if`, dan draait hij alleen als je het bestand
+zelf start:
+
+**`rekenen.py`**
+
+```python
+def verdubbel(getal):
+    return getal * 2
+
+
+if __name__ == "__main__":
+    print(verdubbel(4))
+```
+
+Start je `rekenen.py`, dan zie je `8`. Start je `main.py`, dan zie je alleen
+`20`.
+
+Dat komt door `__name__`, een variabele die Python in elk bestand klaarzet.
+Probeer het:
+
+<CodeExercise>{`print(__name__)`}</CodeExercise>
+
+Uitvoer:
+
+```
+__main__
+```
+
+Het bestand dat je zelf start, heet voor Python `"__main__"`. Een bestand
+dat geïmporteerd wordt, krijgt zijn modulenaam: in `rekenen.py` is
+`__name__` dan `"rekenen"`, en de `if` is niet waar.
+
+---
+
+## Er gaat iets mis
+
+Om `name` en `main` staan aan elke kant twee lage streepjes. Met één
+streepje bestaat de variabele niet:
+
+```python
+def verdubbel(getal):
+    return getal * 2
+
+
+if _name_ == "__main__":
+    print(verdubbel(4))
+```
+
+Uitvoer:
+
+```
+NameError: name '_name_' is not defined. Did you mean: '__name__'?
+```
+
+Python raadt zelf al wat je bedoelde. Vergeet je de streepjes in
+`"__main__"`, dan krijg je geen melding: `"main"` is nooit de naam van een
+bestand, dus de testcode draait nooit. Zie je je test niet meer
+verschijnen, kijk dan eerst naar die streepjes.
+
+---
+
+## Opdracht 9f.1: Voorspel de uitvoer
+
+Hieronder staan een module en een programma dat hem gebruikt. Wat print
+`main.py`? Schrijf het op voordat je de oplossing opent.
+
+**`groet.py`**
+
+```python
+def groet(naam):
+    return f"Hoi {naam}"
+
+
+print("groet.py is geladen")
+
+if __name__ == "__main__":
+    print(groet("test"))
+```
+
+**`main.py`**
+
+{/* niet-draaien: groet.py maakt de leerling zelf */}
+```python
+import groet
+
+print(groet.groet("Sara"))
+```
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Loop `groet.py` van boven naar beneden door, met `__name__` gelijk aan
+`"groet"`. Welke regels voert Python uit?
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```
+groet.py is geladen
+Hoi Sara
+```
+
+De eerste `print` in `groet.py` staat niet onder de `if`, dus die draait
+bij het importeren. `groet("test")` staat er wel onder, en draait dus
+niet.
+
+</details>
+
+---
+
+## Opdracht 9f.2: Een module met een test
+
+Doe dit in je eigen editor. Maak `vormen.py` uit opdracht 9e.2 opnieuw, en
+zet er testcode onder die `oppervlakte(4, 3)` en `omtrek(4, 3)` print, maar
+alleen als je `vormen.py` zelf start. Controleer het twee keer: start
+`vormen.py` (je ziet `12` en `14`), en start je `main.py` uit 9e.2 (je ziet
+die twee getallen één keer, niet twee keer).
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+De twee `print`-regels komen onderaan, ingesprongen onder
+`if __name__ == "__main__":`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+**`vormen.py`**
+
+```python
+def oppervlakte(lengte, breedte):
+    return lengte * breedte
+
+
+def omtrek(lengte, breedte):
+    return 2 * (lengte + breedte)
+
+
+if __name__ == "__main__":
+    print(oppervlakte(4, 3))
+    print(omtrek(4, 3))
+```
+
+Uitvoer (als je `vormen.py` zelf start):
+
+```
+12
+14
+```
+
+</details>

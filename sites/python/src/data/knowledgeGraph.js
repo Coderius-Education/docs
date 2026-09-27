@@ -33,7 +33,7 @@ export const knowledgeGraph = {
     {
       id: 'data',
       label: 'Data Structuren',
-      description: 'Lijsten en collecties van gegevens.',
+      description: 'Lijsten en collecties van gegevens, en die bewaren in een bestand.',
       maxLevel: 5,
     },
     {
@@ -154,9 +154,8 @@ export const knowledgeGraph = {
       impact: [
         {
           concept: 'data',
-          depth:
-            'Je leert sleutel-waarde paren in een `dict`, geneste dictionaries en opslaan als JSON.',
-          level: 3,
+          depth: 'Je leert sleutel-waarde paren in een `dict`, en geneste dictionaries.',
+          level: 2,
         },
         { concept: 'herhaling', depth: 'Je leert complexe herhalingen.', level: 4 },
       ],
@@ -168,7 +167,7 @@ export const knowledgeGraph = {
         {
           concept: 'data',
           depth: 'Je leert vaste rijtjes waardes in een `tuple`, en unpacking.',
-          level: 4,
+          level: 3,
         },
       ],
     },
@@ -179,13 +178,24 @@ export const knowledgeGraph = {
         {
           concept: 'data',
           depth: 'Je leert verzamelingen zonder dubbelen in een `set`.',
-          level: 5,
+          level: 4,
         },
       ],
     },
     {
       id: 't14',
-      title: '14. Klassen',
+      title: '14. Bestanden',
+      impact: [
+        {
+          concept: 'data',
+          depth: 'Je leert tekst en JSON opslaan in een bestand, en weer inlezen.',
+          level: 5,
+        },
+      ],
+    },
+    {
+      id: 't15',
+      title: '15. Klassen',
       impact: [
         {
           concept: 'klassen',
@@ -200,8 +210,8 @@ export const knowledgeGraph = {
       ],
     },
     {
-      id: 't15',
-      title: '15. Fouten afvangen',
+      id: 't16',
+      title: '16. Fouten afvangen',
       impact: [
         {
           concept: 'fouten',

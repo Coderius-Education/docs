@@ -25,6 +25,16 @@ van de routing) en door de CI-job `cross-links`, die na de builds elke href in d
 gebouwde HTML tegen de build van de doelsite legt (de waarheid). Lokaal:
 `pnpm cross-links` na `pnpm build`.
 
+## Een les verhuizen
+
+Een les die een ander adres krijgt (nieuwe map, nieuw nummer) laat oude links
+van buiten de site (werkbladen, bladwijzers, zoekresultaten) op een 404
+uitkomen. Geef de oude adressen mee als `omleidingen: [{ van, naar }]` aan
+`createConfig`; `packages/shared/plugins/omleidingen.js` zet na de build op elk
+oud adres een pagina die doorstuurt, en weigert een oud adres waar weer een
+echte pagina staat. De python-cursus houdt de lijst bij in
+`src/data/omleidingen.ts`, met een test die eist dat elk doel een les is.
+
 ## Huisstijl
 
 Kleuren, letters en de logo's van elke cursus komen uit
