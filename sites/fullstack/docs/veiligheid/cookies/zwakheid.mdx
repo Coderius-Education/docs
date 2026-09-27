@@ -62,8 +62,8 @@ document.cookie
 De Console antwoordt met je sessie-id, iets als
 `'sessie_id=bb4b18ca1efc4877c990fdadd8a6f593'`.
 
-Dat is de zwakheid. `document.cookie` is niet alleen voor jou in de Console:
-elk script dat op deze pagina draait, kan het ook. Staat er ergens een gat
+`document.cookie` is niet alleen voor jou in de Console. Elk script dat op deze
+pagina draait, kan het ook, en daar zit de zwakheid. Staat er ergens een gat
 zoals in [HTML van een bezoeker](../xss/zwakheid), dan draait er misschien een
 script van een ander op je pagina, en dat leest je sessie-id net zo makkelijk.
 

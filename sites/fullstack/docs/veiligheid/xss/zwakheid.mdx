@@ -78,7 +78,7 @@ Het antwoord na het versturen, zoals in het htmx-recept stond voordat er `escape
 </Regel>
 
 <Regel n={20} tot={24}>
-Elk bericht wordt een `<li>`, met een f-string. De naam en het bericht komen er precies in zoals de bezoeker ze typte.
+Elk bericht wordt een `<li>`, met een f-string. De naam en het bericht komen erin zoals de bezoeker ze typte.
 </Regel>
 
 </CodeUitleg>
@@ -103,7 +103,7 @@ vetgedrukt. Open dezelfde pagina in een
 privévenster, als een tweede bezoeker: ook daar is het vet. De browser las wat
 Sara typte niet als tekst, maar als HTML.
 
-Wat de server precies terugstuurt, zie je met een scriptje `lijst.py`:
+Wat de server terugstuurt, zie je met een scriptje `lijst.py`:
 
 ```python
 import httpx
@@ -173,8 +173,8 @@ maakt de lijst met een template, `berichten_lijst.html`. Stel dat Sara daar
 
 Nee. Je ziet `<b>vet</b>` staan, met de haakjes erbij. Jinja zet in een
 template van elke `<` een `&lt;` en van elke `>` een `&gt;`, en die tekens toont
-de browser als tekst. Dat is precies wat de f-string niet doet, en daar zit de
-oplossing in de volgende stap.
+de browser als tekst. De f-string doet dat niet, en in de volgende stap los je
+het zo op.
 
 </details>
 

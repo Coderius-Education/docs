@@ -129,7 +129,7 @@ Een `httpx.Client` werkt als een browser: hij onthoudt de cookies die hij terugk
 </Regel>
 
 <Regel n={11} tot={14}>
-Alex vraagt de berichten op, zoals elke bezoeker kan, en stuurt voor het bericht van Sara een `DELETE`. Dat is precies het verzoek dat de knop in de browser ook verstuurt.
+Alex vraagt de berichten op, zoals elke bezoeker kan, en stuurt voor het bericht van Sara een `DELETE`. De knop in de browser verstuurt hetzelfde verzoek.
 </Regel>
 
 <Regel n={16} tot={17}>
@@ -148,8 +148,8 @@ Nog in het gastenboek: ['Alex']
 Het bericht van Sara is weg. Alex hoefde niets te raden of te kraken: de sleutel
 stond in het antwoord van `/berichten`. Het endpoint deed wat hem gevraagd werd.
 
-Dat is de zwakheid: de server controleert niet **wie** iets vraagt. De verborgen
-knop maakt het alleen iets minder zichtbaar.
+De server controleert niet wie iets vraagt. De verborgen knop maakt dat alleen
+minder zichtbaar.
 
 ## Er gaat iets mis
 
