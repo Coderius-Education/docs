@@ -81,6 +81,13 @@ const sidebars: SidebarsConfig = {
       ],
     },
   ],
+  veiligheidSidebar: [
+    {
+      type: 'category',
+      label: 'Veiligheid',
+      items: ['veiligheid/dos'],
+    },
+  ],
 };
 
 export default sidebars;

@@ -1,4 +1,5 @@
 # Woorden die cspell niet kent maar die hier gewoon goed zijn.
+
 aanvalspayload
 aanvinkvakje
 achtig
@@ -50,6 +51,7 @@ committen
 concatenatie
 cruijff
 dagstart
+damprogramma
 debugpinnen
 decryptor
 deelstap
@@ -273,6 +275,7 @@ rondklikt
 rondstuitert
 rondtrip
 rvspaleis
+schaakengine
 schermvullende
 schildpadstraat
 screenreader
@@ -299,6 +302,7 @@ Stardew
 startnode
 stijlt
 stippelrand
+Stockfish
 stuitering
 subproblemen
 sweepende
@@ -311,6 +315,7 @@ tagnamen
 TCRT
 Tekenpad
 tellus
+terugklikt
 terugtijd
 texturerect
 Thonny
@@ -331,6 +336,7 @@ tscn
 Tussenwaarden
 tutorialpagina
 twaalfhoek
+twintigduizend
 tússen
 UART
 uitgeremd
@@ -368,7 +374,3 @@ ylabel
 zakgeldrekenaar
 zettenlijst
 áchter
-
-damprogramma
-Stockfish
-schaakengine

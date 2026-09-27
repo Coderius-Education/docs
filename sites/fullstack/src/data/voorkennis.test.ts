@@ -85,6 +85,7 @@ const MET_BLOK = [
   'FastAPI/server-of-browser.mdx',
   'FastAPI/sessies.mdx',
   'FastAPI/static_files.mdx',
+  'veiligheid/dos.mdx',
 ];
 
 function relatievePaden(): string[] {
