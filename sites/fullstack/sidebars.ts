@@ -90,6 +90,16 @@ const sidebars: SidebarsConfig = {
       collapsed: false,
       items: ['veiligheid/dos/zwakheid', 'veiligheid/dos/oplossing', 'veiligheid/dos/praktijk'],
     },
+    {
+      type: 'category',
+      label: 'Wachtwoorden veilig opslaan',
+      collapsed: false,
+      items: [
+        'veiligheid/wachtwoorden/zwakheid',
+        'veiligheid/wachtwoorden/oplossing',
+        'veiligheid/wachtwoorden/praktijk',
+      ],
+    },
   ],
 };
 

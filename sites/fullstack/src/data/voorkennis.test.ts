@@ -68,6 +68,8 @@ const ZONDER_BLOK: Record<string, string> = {
   'troubleshooting.md': 'naslag',
   'veiligheid/dos/oplossing.mdx': 'bouwt op de zwakheid-stap ervoor, in dezelfde map',
   'veiligheid/dos/praktijk.mdx': 'achtergrond bij de twee stappen ervoor, geen nieuwe voorkennis',
+  'veiligheid/wachtwoorden/praktijk.mdx':
+    'achtergrond bij de twee stappen ervoor, geen nieuwe voorkennis',
 };
 
 const MET_BLOK = [
@@ -88,6 +90,8 @@ const MET_BLOK = [
   'FastAPI/sessies.mdx',
   'FastAPI/static_files.mdx',
   'veiligheid/dos/zwakheid.mdx',
+  'veiligheid/wachtwoorden/oplossing.mdx',
+  'veiligheid/wachtwoorden/zwakheid.mdx',
 ];
 
 function relatievePaden(): string[] {

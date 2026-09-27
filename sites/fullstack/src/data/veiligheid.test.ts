@@ -59,7 +59,9 @@ describe('de reeks Veiligheid', () => {
         }
         const zwakheid = lees(map, 'zwakheid');
         if (/127\.0\.0\.1/.test(zwakheid)) {
-          expect(zwakheid).toContain(':::danger[Alleen je eigen server]');
+          // "Alleen je eigen server", "Alleen je eigen database": wat er
+          // eigen moet zijn, hangt af van de zwakheid.
+          expect(zwakheid).toMatch(/:::danger\[Alleen je eigen [a-z]+\]/);
         }
       });
     });

@@ -120,6 +120,7 @@ herlaadknop
 hitbox
 Hitbox
 hoekronding
+honderdduizend
 hoofdkop
 hoofdlus
 hoofdnode
@@ -190,6 +191,7 @@ móet
 nakijker
 nameerror
 navigatiemesh
+nepsite
 netwerksniffer
 netwerkverkeer
 nginx
@@ -319,6 +321,7 @@ TCRT
 Tekenpad
 tellus
 terugklikt
+terugmailt
 terugtijd
 texturerect
 Thonny
@@ -339,6 +342,8 @@ tscn
 Tussenwaarden
 tutorialpagina
 twaalfhoek
+tweestapsverificatie
+Tweestapsverificatie
 twintigduizend
 tússen
 UART
