@@ -1,0 +1,136 @@
+---
+sidebar_label: '3. Zout'
+description: Met een zout krijgt hetzelfde wachtwoord toch een andere hash, zodat je in de database niet ziet wie hetzelfde wachtwoord heeft.
+---
+
+# Wachtwoorden: zout
+
+In [les 2](./hash) hadden Sara en Noor dezelfde hash, omdat ze hetzelfde
+wachtwoord kozen. De oplossing is een **zout** (Engels: *salt*): een stukje
+willekeurige tekst dat je vóór het wachtwoord zet voordat je hasht. Elke
+gebruiker krijgt een eigen zout.
+
+```python
+import hashlib
+
+wachtwoord = "welkom123"
+
+zout_sara = "a1b2c3"
+zout_noor = "x9y8z7"
+
+print(hashlib.sha256((zout_sara + wachtwoord).encode()).hexdigest())
+print(hashlib.sha256((zout_noor + wachtwoord).encode()).hexdigest())
+```
+
+Uitvoer:
+
+```
+02c84638cc526f509a1e50b8de1c12a120a1f9f3a441521c81d767942596b42f
+5e83ee3a35dabb618662f2b8e13037c42d3bdf9858f1ff7dec0f365237516053
+```
+
+Hetzelfde wachtwoord, twee totaal verschillende hashes. In de database zie je
+niet meer dat Sara en Noor hetzelfde kozen.
+
+## Het zout is geen geheim
+
+Om bij het inloggen te controleren, moet je de hash opnieuw uitrekenen, en
+daarvoor heb je hetzelfde zout nodig. Het zout staat daarom naast de
+hash in de database. Dat is geen probleem: het zout hoeft niet geheim te zijn,
+alleen per gebruiker anders.
+
+Wat het zout wél doet: vooraf uitgerekende lijsten onbruikbaar maken. Er
+bestaan grote lijsten met de `sha256` van miljoenen bekende wachtwoorden, die
+**rainbow tables** heten. Zonder zout zoek je een hash daarin op, zoals je een
+woord opzoekt in een woordenboek. Met een zout per gebruiker zou zo'n lijst voor
+elk zout opnieuw gemaakt moeten worden, en dat is niet te doen.
+
+## Een echt zout
+
+`"a1b2c3"` is een voorbeeld om te laten zien wat er gebeurt. Een echt zout is
+lang en echt willekeurig. Dat hoef je niet zelf te regelen: in
+[les 5](./registreren) gebruik je Argon2, dat bij elke hash vanzelf een nieuw
+zout maakt en het in de hash zelf bewaart.
+
+## Er gaat iets mis
+
+Je geeft iedereen hetzelfde zout, bijvoorbeeld `"a1b2c3"` voor alle
+gebruikers:
+
+```python
+import hashlib
+
+zout = "a1b2c3"
+print(hashlib.sha256((zout + "welkom123").encode()).hexdigest())
+print(hashlib.sha256((zout + "welkom123").encode()).hexdigest())
+```
+
+Uitvoer:
+
+```
+02c84638cc526f509a1e50b8de1c12a120a1f9f3a441521c81d767942596b42f
+02c84638cc526f509a1e50b8de1c12a120a1f9f3a441521c81d767942596b42f
+```
+
+Geen foutmelding, maar Sara en Noor hebben weer dezelfde hash.
+
+**Oorzaak:** met hetzelfde zout gaat er voor hetzelfde wachtwoord weer precies
+hetzelfde de `sha256` in.
+
+**Oplossing:** geef elke gebruiker een eigen, willekeurig zout. Argon2 in
+les 5 doet dat vanzelf, bij elke hash opnieuw.
+
+## Opdrachten
+
+### Opdracht 1: Run - Met en zonder zout
+
+Bereken de `sha256` van `welkom123` zonder zout, en daarna met het zout
+`"a1b2c3"` ervoor. Vergelijk ze. Waarom helpt dat tegen een rainbow table met
+de hashes van veelgebruikte wachtwoorden?
+
+<details>
+<summary>Tip</summary>
+
+De hash zonder zout ken je uit [les 2](./hash).
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+import hashlib
+
+print(hashlib.sha256("welkom123".encode()).hexdigest())
+print(hashlib.sha256(("a1b2c3" + "welkom123").encode()).hexdigest())
+```
+
+Uitvoer:
+
+```
+2a5c5f2623024ce3de6fe7dc8f5e13ca55b7aadc13174254b40af574e37018c1
+02c84638cc526f509a1e50b8de1c12a120a1f9f3a441521c81d767942596b42f
+```
+
+Een rainbow table bevat de eerste code, want die hoort bij `welkom123`. De
+tweede staat er niet in: die hoort bij `a1b2c3welkom123`, en dat wachtwoord
+kiest niemand. Zoek je de gezouten hash op in de lijst, dan vind je niets.
+
+</details>
+
+### Opdracht 2: Investigate - Waarom niet geheim?
+
+Een klasgenoot zegt: "Als het zout in de database staat, kan een aanvaller het
+toch lezen? Dan heeft het geen zin." Klopt dat?
+
+<details>
+<summary>Antwoord</summary>
+
+Nee. Het zout is er niet om geheim te zijn, maar om elke hash uniek te maken.
+Daardoor zie je niet wie hetzelfde wachtwoord heeft, en werken vooraf
+uitgerekende lijsten niet meer. Een aanvaller die het zout kent, moet nog
+steeds voor elke gebruiker apart gaan rekenen.
+
+</details>
+
+Door naar [les 4: traag is goed](./traag).

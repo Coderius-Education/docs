@@ -1,0 +1,207 @@
+---
+sidebar_label: '1. Waarom geen gewone tekst'
+description: Wat er gebeurt als je wachtwoorden bewaart zoals de gebruiker ze intypt, en waarom dat gevaarlijk is als een database lekt.
+---
+
+# Wachtwoorden: waarom geen gewone tekst
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/data/tuples', label: 'Tuples uitpakken'},
+  ]}
+/>
+
+Een site met accounts moet wachtwoorden bewaren, anders kan niemand inloggen.
+De eerste versie die bijna iedereen schrijft, bewaart het wachtwoord precies
+zoals de gebruiker het intypt. Met een [formulier](/docs/FastAPI/forms) en de
+[database](/docs/FastAPI/database) uit de FastAPI-lessen ziet dat er zo uit:
+
+<CodeUitleg>
+
+```python showLineNumbers
+from fastapi import FastAPI, Form
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+
+@app.post("/registreer")
+async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        db[naam] = wachtwoord
+        db.commit()
+    return {"bericht": f"Welkom, {naam}"}
+
+@app.post("/inloggen")
+async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        if db.get(naam) == wachtwoord:
+            return {"bericht": "Ingelogd"}
+    return {"bericht": "Naam of wachtwoord klopt niet"}
+```
+
+<Regel n={9}>
+Het wachtwoord gaat letterlijk de database in, onder de naam van de gebruiker.
+</Regel>
+
+<Regel n={16}>
+Inloggen vergelijkt wat de gebruiker intypt met wat er in de database staat. Staat de naam er niet in, dan geeft `db.get` `None`, en dat is nooit gelijk aan een wachtwoord.
+</Regel>
+
+</CodeUitleg>
+
+Dat werkt. Het probleem zie je pas als iemand anders dan je server de database
+in handen krijgt.
+
+## Databases lekken
+
+Een fout in de code, een kwijtgeraakte back-up, een beheerder die meekijkt, een
+laptop in de trein: vroeg of laat ligt de inhoud van een database ergens waar
+hij niet hoort. Staan de wachtwoorden er als gewone tekst in, dan heeft wie het
+bestand opent meteen alle wachtwoorden.
+
+En dat raakt niet alleen jouw site. Veel mensen gebruiken hetzelfde wachtwoord
+voor hun mail, hun games en hun bank. Wie het wachtwoord van jouw gastenboek
+heeft, kan het daarna overal proberen.
+
+## Kijk zelf in je database
+
+:::danger[Alleen je eigen database]
+Doe dit **uitsluitend** met je eigen server op `127.0.0.1` en je eigen
+database. De wachtwoorden van een ander bekijken of gebruiken is strafbaar.
+:::
+
+Start je server met de code hierboven. Maak daarnaast een los scriptje
+`registreer.py` dat drie gebruikers aanmaakt, net zoals een formulier dat zou
+doen. Het gebruikt `httpx`, een module om verzoeken te versturen. Installeer
+hem met `python -m pip install httpx` als je dat nog niet had gedaan.
+
+<CodeUitleg>
+
+```python showLineNumbers
+import httpx
+
+adres = "http://127.0.0.1:8000/registreer"
+
+gebruikers = [("sara", "welkom123"), ("alex", "Zonnebloem-Fiets-42"), ("noor", "welkom123")]
+for naam, wachtwoord in gebruikers:
+    antwoord = httpx.post(adres, data={"naam": naam, "wachtwoord": wachtwoord})
+    print(antwoord.json())
+```
+
+<Regel n={5}>
+Drie gebruikers, elk een tuple van naam en wachtwoord. Sara en Noor kozen hetzelfde wachtwoord.
+</Regel>
+
+<Regel n={7}>
+`httpx.post` stuurt een formulier: `data` zijn de velden, net als `name="naam"` en `name="wachtwoord"` in een HTML-formulier.
+</Regel>
+
+</CodeUitleg>
+
+Draai het in een tweede terminal. Je ziet drie keer een welkom. Bekijk daarna
+wat er in het bestand staat, met `lees_database.py`:
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("gebruikers.db") as db:
+    for naam, wachtwoord in db.items():
+        print(f"{naam}: {wachtwoord}")
+```
+
+Uitvoer:
+
+```
+sara: welkom123
+alex: Zonnebloem-Fiets-42
+noor: welkom123
+```
+
+Alles staat er, leesbaar. Er is geen inbraak in je server voor nodig: wie het
+bestand heeft, heeft de wachtwoorden. Dat is de zwakheid waar de volgende
+lessen iets aan doen.
+
+## Er gaat iets mis
+
+Je draait `lees_database.py`, en er verschijnt niets. Geen foutmelding, maar
+ook geen gebruikers.
+
+**Oorzaak:** het script draait in een andere map dan je server.
+`SqliteDict("gebruikers.db")` zoekt het bestand in de map waarin je het script
+start, en bestaat het daar niet, dan maakt hij stil een nieuwe, lege database
+aan. Die heeft geen gebruikers. Kijk maar: in die map staat nu een tweede
+`gebruikers.db`.
+
+**Oplossing:** zet de scriptjes in dezelfde map als `main.py`, start ze vanuit
+de terminal in die map, en gooi de lege `gebruikers.db` in de andere map weg.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Wie heeft wat?
+
+Een vierde gebruiker, Tim, registreert met het wachtwoord `geheim`.
+
+**Vraag:** welke regel komt er bij in de uitvoer van `lees_database.py`?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+tim: geheim
+```
+
+De server bewaart wat Tim intypt, dus dat is ook wat je terugziet.
+
+</details>
+
+### Opdracht 2: Investigate - Wie heeft er iets aan?
+
+Stel dat `gebruikers.db` van jouw gastenboek uitlekt. Noem twee dingen die
+iemand met dit bestand kan doen, buiten jouw site.
+
+<details>
+<summary>Tip</summary>
+
+Denk aan mensen die voor meer sites hetzelfde wachtwoord gebruiken.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Bijvoorbeeld: met de naam en het wachtwoord van Sara inloggen op andere sites
+waar zij hetzelfde wachtwoord gebruikt, zoals haar mail of een game. En zien
+dat Sara en Noor hetzelfde wachtwoord hebben, en dat dus ook bij Noor proberen.
+Daarom bewaart een site een wachtwoord nooit als gewone tekst.
+
+</details>
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+```python
+from fastapi import FastAPI, Form
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+
+@app.post("/registreer")
+async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        db[naam] = wachtwoord
+        db.commit()
+    return {"bericht": f"Welkom, {naam}"}
+
+@app.post("/inloggen")
+async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        if db.get(naam) == wachtwoord:
+            return {"bericht": "Ingelogd"}
+    return {"bericht": "Naam of wachtwoord klopt niet"}
+```
+
+Dit is de beginstand. In de volgende lessen verandert steeds één stuk.
+
+</details>
+
+Door naar [les 2: wat een hash is](./hash).

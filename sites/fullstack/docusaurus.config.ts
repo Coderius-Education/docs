@@ -33,6 +33,12 @@ export default createConfig({
     navbar: {
       items: [
         { type: 'docSidebar', sidebarId: 'apiSidebar', position: 'left', label: 'FastAPI' },
+        {
+          type: 'docSidebar',
+          sidebarId: 'veiligheidSidebar',
+          position: 'left',
+          label: 'Veiligheid',
+        },
         { type: 'doc', docId: 'starten', position: 'left', label: 'Hoe start ik?' },
         { type: 'doc', docId: 'cheatsheet', position: 'left', label: 'Cheatsheet' },
         { type: 'doc', docId: 'troubleshooting', position: 'left', label: 'Er gaat iets mis' },

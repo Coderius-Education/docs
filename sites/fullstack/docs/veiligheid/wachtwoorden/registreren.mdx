@@ -1,0 +1,157 @@
+---
+sidebar_label: '5. Registreren met Argon2'
+description: Bewaar bij het registreren een Argon2-hash in plaats van het wachtwoord, en lees wat er in zo'n hash staat.
+---
+
+# Wachtwoorden: registreren met Argon2
+
+Argon2 uit [les 4](./traag) doet alles wat je in de lessen hiervoor nodig had:
+een hash die je niet kunt terugrekenen, een eigen zout per wachtwoord, en
+expres traag. In je server verandert alleen `/registreer`.
+
+## Argon2 in `/registreer`
+
+<CodeUitleg>
+
+```python showLineNumbers
+from argon2 import PasswordHasher
+from fastapi import FastAPI, Form
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+ph = PasswordHasher()
+
+@app.post("/registreer")
+async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        db[naam] = ph.hash(wachtwoord)
+        db.commit()
+    return {"bericht": f"Welkom, {naam}"}
+```
+
+<Regel n={6}>
+Eén `PasswordHasher` voor de hele server, met instellingen die veilig zijn voor nu.
+</Regel>
+
+<Regel n={11}>
+`ph.hash` maakt de hash, met een nieuw zout erin. Die gaat de database in, het wachtwoord zelf niet.
+</Regel>
+
+</CodeUitleg>
+
+Zet de import en `ph = PasswordHasher()` bovenaan je `main.py`, en vervang je
+`/registreer` door deze. `/inloggen` laat je nog even staan: die zet je in
+[les 6](./inloggen) om.
+
+:::caution[Inloggen werkt tot les 6 niet]
+`/inloggen` vergelijkt nog met een `sha256`-hash, en in de database staan nu
+Argon2-hashes. Tot je `/inloggen` in les 6 omzet, lukt inloggen niet, ook niet
+met het goede wachtwoord.
+:::
+
+Gooi `gebruikers.db` weg: daar staan nog wachtwoorden of `sha256`-hashes in uit
+de lessen hiervoor. Start je server en draai `registreer.py` en
+`lees_database.py` uit [les 1](./gewone-tekst) opnieuw:
+
+```
+sara: $argon2id$v=19$m=65536,t=3,p=4$X9osXpPM7r/H8fRMyPCE+Q$etV1GLXtmN/ukJB8evD8IraZPm5jt9WONzagikgkl+Y
+alex: $argon2id$v=19$m=65536,t=3,p=4$rUMs0YcTR/e1avCX01vrOg$W5Flt1JoAhellSR9YETx3ZUDa6GbtisQrZIkWsRXIVs
+noor: $argon2id$v=19$m=65536,t=3,p=4$l6Q0IpvVuX7N4fBZ5PP8nw$sxddUqdV6fZMCPkJwMIlVqfwTAmuvgOQYSZjhAH2H5Q
+```
+
+Jouw codes zijn anders, want het zout is elke keer nieuw. Sara en Noor hebben
+nog steeds hetzelfde wachtwoord, maar dat zie je nergens meer aan.
+
+## Wat er in de hash staat
+
+Een Argon2-hash bestaat uit stukken, gescheiden door een `$`:
+
+| Stuk | Betekent |
+|:---:|:---:|
+| `argon2id` | welk algoritme |
+| `m=65536,t=3,p=4` | hoeveel geheugen en rekenwerk het kost |
+| `X9osXpPM7r/H8fRMyPCE+Q` | het zout |
+| `etV1GLXt…` | de hash zelf |
+
+Het zout staat er dus in, zoals [les 3](./zout) al zei: het hoeft niet
+geheim te zijn. En omdat ook de instellingen erin staan, heb je later bij het
+inloggen aan de opgeslagen code genoeg.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Twee keer hashen
+
+```python
+from argon2 import PasswordHasher
+
+ph = PasswordHasher()
+print(ph.hash("welkom123") == ph.hash("welkom123"))
+```
+
+**Vraag:** print dit `True` of `False`?
+
+<details>
+<summary>Tip</summary>
+
+Wat doet `ph.hash` elke keer anders dan `sha256`?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`False`. Elke `ph.hash` krijgt een nieuw zout, dus twee hashes van hetzelfde
+wachtwoord verschillen. Hoe je dan controleert of een wachtwoord klopt, zie je
+in les 6.
+
+</details>
+
+### Opdracht 2: Run
+
+Zet Argon2 in je `/registreer`, gooi `gebruikers.db` weg, en draai
+`registreer.py` en `lees_database.py`. Begint elke code met `$argon2id$`, en
+verschillen de codes van Sara en Noor?
+
+<details>
+<summary>Antwoord</summary>
+
+Ja: elke code begint met iets als `$argon2id$v=19$m=65536,t=3,p=4$`. De
+getallen na `m=`, `t=` en `p=` kunnen bij jou anders zijn, want een nieuwere
+versie van `argon2-cffi` kan strengere instellingen hebben. Daarna verschillen
+de codes allemaal, ook die van Sara en Noor. Dat komt door het zout.
+
+</details>
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+```python
+import hashlib
+
+from argon2 import PasswordHasher
+from fastapi import FastAPI, Form
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+ph = PasswordHasher()
+
+@app.post("/registreer")
+async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        db[naam] = ph.hash(wachtwoord)
+        db.commit()
+    return {"bericht": f"Welkom, {naam}"}
+
+@app.post("/inloggen")
+async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        if db.get(naam) == hashlib.sha256(wachtwoord.encode()).hexdigest():
+            return {"bericht": "Ingelogd"}
+    return {"bericht": "Naam of wachtwoord klopt niet"}
+```
+
+`/inloggen` rekent hier nog met `sha256`; dat verandert in les 6.
+
+</details>
+
+Door naar [les 6: inloggen met verify](./inloggen).

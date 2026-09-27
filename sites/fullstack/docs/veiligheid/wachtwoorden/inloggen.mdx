@@ -1,0 +1,191 @@
+---
+sidebar_label: '6. Inloggen met verify'
+description: Controleer bij het inloggen een wachtwoord tegen de Argon2-hash met ph.verify, en vang een fout wachtwoord af.
+---
+
+# Wachtwoorden: inloggen met verify
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/fouten/16a-try-en-except', label: 'Try en except'},
+  ]}
+/>
+
+Na [les 5](./registreren) staan er alleen nog Argon2-hashes in je database. Bij
+het inloggen kun je niet meer vergelijken met `==`: de hash van hetzelfde
+wachtwoord is elke keer anders. Daarvoor is `ph.verify`. Die haalt het zout en
+de instellingen uit de opgeslagen hash, rekent de hash van het ingetypte
+wachtwoord uit, en vergelijkt.
+
+## `/inloggen` met `ph.verify`
+
+<CodeUitleg>
+
+```python showLineNumbers
+from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError
+from fastapi import FastAPI, Form
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+ph = PasswordHasher()
+
+@app.post("/inloggen")
+async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        opgeslagen = db.get(naam)
+    if opgeslagen is None:
+        return {"bericht": "Naam of wachtwoord klopt niet"}
+    try:
+        ph.verify(opgeslagen, wachtwoord)
+    except VerifyMismatchError:
+        return {"bericht": "Naam of wachtwoord klopt niet"}
+    return {"bericht": "Ingelogd"}
+```
+
+<Regel n={2}>
+`VerifyMismatchError` is de fout die `ph.verify` gooit als het wachtwoord niet klopt.
+</Regel>
+
+<Regel n={13} tot={14}>
+Bestaat de naam niet, dan zeg je hetzelfde als bij een fout wachtwoord. Zo verraad je niet welke namen er wél een account hebben.
+</Regel>
+
+<Regel n={15} tot={18}>
+Klopt het wachtwoord, dan gaat `ph.verify` zonder fout verder. Klopt het niet, dan vang je de fout af en meld je dat inloggen niet lukt.
+</Regel>
+
+</CodeUitleg>
+
+Vervang je oude `/inloggen` door deze, in hetzelfde `main.py` als je
+`/registreer` uit les 5. De imports en `ph` staan maar één keer bovenaan, en
+`import hashlib` mag weg: niets gebruikt hem meer.
+
+## Doe de test
+
+Probeer in te loggen met een scriptje `inloggen.py`:
+
+```python
+import httpx
+
+adres = "http://127.0.0.1:8000/inloggen"
+
+pogingen = [("sara", "welkom123"), ("sara", "welkom124"), ("bob", "welkom123")]
+for naam, wachtwoord in pogingen:
+    antwoord = httpx.post(adres, data={"naam": naam, "wachtwoord": wachtwoord})
+    print(f"{naam}, {wachtwoord}: {antwoord.json()['bericht']}")
+```
+
+Uitvoer:
+
+```
+sara, welkom123: Ingelogd
+sara, welkom124: Naam of wachtwoord klopt niet
+bob, welkom123: Naam of wachtwoord klopt niet
+```
+
+Sara komt binnen met haar eigen wachtwoord, en niet met een wachtwoord dat er
+één letter naast zit. Bob heeft geen account en krijgt dezelfde melding.
+
+## Er gaat iets mis
+
+Je vergelijkt zelf, in plaats van `ph.verify` te gebruiken:
+
+{/* niet-compileren: fragment uit de functie inloggen, met return buiten een functie */}
+
+```python
+# FOUT
+if ph.hash(wachtwoord) == opgeslagen:
+    return {"bericht": "Ingelogd"}
+
+# GOED
+try:
+    ph.verify(opgeslagen, wachtwoord)
+except VerifyMismatchError:
+    return {"bericht": "Naam of wachtwoord klopt niet"}
+return {"bericht": "Ingelogd"}
+```
+
+Er komt geen foutmelding, maar niemand kan meer inloggen, ook niet met het
+goede wachtwoord.
+
+**Oorzaak:** `ph.hash` maakt elke keer een nieuw zout, dus elke keer een andere
+hash. Twee hashes van hetzelfde wachtwoord zijn nooit gelijk.
+
+**Oplossing:** vergelijk nooit zelf. `ph.verify` haalt het zout uit de
+opgeslagen hash en rekent daarmee.
+
+Staat er nog een oude `sha256`-hash of een wachtwoord als gewone tekst in de
+database, dan krijgt `inloggen.py` `500 Internal Server Error` terug, en
+eindigt de foutmelding in de terminal van je server met
+`argon2.exceptions.InvalidHashError`: `ph.verify` herkent die code niet als
+Argon2-hash. Gooi `gebruikers.db` weg en registreer opnieuw.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Wat zie je?
+
+Noor heeft `welkom123`. Je stuurt een inlogpoging met naam `noor` en wachtwoord
+`Welkom123`, met een hoofdletter.
+
+**Vraag:** wat antwoordt de server?
+
+<details>
+<summary>Antwoord</summary>
+
+`Naam of wachtwoord klopt niet`. Een hoofdletter is een ander teken, dus een
+ander wachtwoord, en `ph.verify` gooit een `VerifyMismatchError`.
+
+</details>
+
+### Opdracht 2: Investigate - Waarom dezelfde melding?
+
+Je zou bij Bob ook "Deze naam bestaat niet" kunnen antwoorden. Dat is
+duidelijker voor de gebruiker. Waarom doe je dat hier toch niet?
+
+<details>
+<summary>Antwoord</summary>
+
+Dan kan iedereen uitzoeken welke namen een account hebben: probeer een naam,
+en de melding verraadt of hij bestaat. Met dezelfde melding voor een foute naam
+en een fout wachtwoord leert iemand die raadt niets.
+
+</details>
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+```python
+from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError
+from fastapi import FastAPI, Form
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+ph = PasswordHasher()
+
+@app.post("/registreer")
+async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        db[naam] = ph.hash(wachtwoord)
+        db.commit()
+    return {"bericht": f"Welkom, {naam}"}
+
+@app.post("/inloggen")
+async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        opgeslagen = db.get(naam)
+    if opgeslagen is None:
+        return {"bericht": "Naam of wachtwoord klopt niet"}
+    try:
+        ph.verify(opgeslagen, wachtwoord)
+    except VerifyMismatchError:
+        return {"bericht": "Naam of wachtwoord klopt niet"}
+    return {"bericht": "Ingelogd"}
+```
+
+Registreren en inloggen werken nu allebei met Argon2.
+
+</details>
+
+Door naar [les 7: wachtwoord wijzigen](./wijzigen).

@@ -1,0 +1,119 @@
+---
+sidebar_label: '8. In de praktijk'
+description: Wat echte sites nog meer doen om wachtwoorden en accounts te beschermen, van instellingen die meegroeien tot tweestapsverificatie, en wat de AVG zegt over een datalek.
+---
+
+# Wachtwoorden: in de praktijk
+
+Met Argon2 uit [les 5 tot en met 7](./registreren) bewaar je wachtwoorden zoals het
+hoort. Een echte site doet nog meer, omdat een aanvaller niet alleen op de
+database uit is: hij kan ook heel vaak proberen in te loggen, of een
+wachtwoord gebruiken dat hij bij een andere site heeft buitgemaakt.
+
+## Peper
+
+Het zout uit [les 3](./zout) staat naast de hash in de database. Sommige sites
+doen er nog een **peper** bij: een geheim dat voor alle wachtwoorden hetzelfde
+is, maar níét in de database staat, bijvoorbeeld in een instelling op de
+server. Lekt alleen de database, dan mist wie hem heeft dat stukje, en kan hij
+met de hashes niets beginnen.
+
+## Goede wachtwoorden toestaan
+
+Veel sites eisen een hoofdletter, een cijfer en een leesteken, en een nieuw
+wachtwoord elke drie maanden. Dat levert wachtwoorden op als `Welkom123.` en
+`Welkom124.`: precies wat in elke woordenlijst staat. Het Nationaal Cyber
+Security Centrum en het Amerikaanse instituut voor standaarden raden daarom
+iets anders aan:
+
+- **Lengte boven rare tekens.** Een wachtzin van een paar woorden, zoals
+  `zonnebloem fiets regen zolder`, is sterker en makkelijker te onthouden.
+  Laat lange wachtwoorden en spaties dus toe.
+- **Niet verplicht vervangen**, alleen als er reden voor is, zoals een lek.
+- **Controleren tegen gelekte wachtwoorden.** De dienst Have I Been Pwned houdt
+  een lijst bij van honderden miljoenen wachtwoorden uit eerdere lekken. Een
+  site kan bij het registreren nagaan of een nieuw wachtwoord daarin staat,
+  zonder het wachtwoord zelf te versturen: hij stuurt alleen de eerste vijf
+  tekens van een hash, en vergelijkt de rest zelf.
+
+## Inloggen beperken
+
+Een aanvaller zonder database kan nog steeds proberen in te loggen, keer op
+keer, met een woordenlijst. Daar helpt de verzoeklimiet uit
+[Te veel verzoeken](/docs/veiligheid/dos/limiet): zet op `/inloggen` een
+strenge grens, bijvoorbeeld vijf pogingen per minuut. Veel sites blokkeren een
+account ook even na een reeks foute pogingen, of vragen dan om een puzzel die
+een mens kan oplossen en een script niet.
+
+## Tweestapsverificatie
+
+Hoe goed je een wachtwoord ook bewaart, de gebruiker kan het zelf lekken:
+hergebruikt, afgekeken of ingetypt op een nepsite. Daarom vragen veel sites
+na het wachtwoord nog iets tweeds, dat de gebruiker heeft: een code uit een
+app op zijn telefoon, of een beveiligingssleutel. Dat heet
+**tweestapsverificatie**. Een gestolen wachtwoord alleen is dan niet genoeg.
+
+## Wachtwoord vergeten
+
+Een site die je je wachtwoord terugmailt, bewaart het als gewone tekst: met
+Argon2 kun je dat niet eens, want je hebt het wachtwoord niet. Een goede site
+stuurt een link met een eenmalige, geheime code die na een korte tijd
+verloopt. Via die link kies je een nieuw wachtwoord. Zie je ooit je eigen
+wachtwoord in een mail terug, dan weet je hoe die site het bewaart.
+
+## Het wiel niet zelf uitvinden
+
+Inloggen, tweestapsverificatie en wachtwoord vergeten: het is veel werk, en elk
+foutje is een gat. Grote sites gebruiken daarom vaak een bestaande oplossing,
+een bibliotheek die inloggen voor ze regelt, of een dienst waarmee je inlogt
+met een account dat je al hebt, zoals bij "Inloggen met Google". Zelf bouwen is
+goed om te leren hoe het werkt. Voor een echte site met echte gebruikers is een
+beproefde oplossing meestal de betere keus.
+
+## De wet
+
+Een wachtwoord hoort bij een persoon, dus in Europa valt het onder de
+**AVG**, de privacywet. Die eist dat je persoonsgegevens passend beveiligt, en
+wachtwoorden als gewone tekst bewaren is dat niet. Lekt er toch iets, dan is
+dat een **datalek**. Dat moet de organisatie binnen 72 uur melden bij de
+Autoriteit Persoonsgegevens, en als het een groot risico is ook bij de mensen
+van wie de gegevens zijn gelekt.
+
+Andermans wachtwoorden achterhalen of gebruiken is bovendien strafbaar, ook
+als je "alleen even kijkt". Daarom deed je de test in
+[les 1](./gewone-tekst) alleen met je eigen database.
+
+## Opdracht: welke maatregel helpt waartegen?
+
+Kies bij elke situatie de maatregel uit deze les die het meest helpt.
+
+1. Iemand probeert met een script duizend wachtwoorden per minuut uit op je
+   inlogpagina.
+2. Sara gebruikt voor jouw site hetzelfde wachtwoord als voor een game die
+   vorig jaar is gelekt.
+3. Je site bestaat al zes jaar, en de oudste hashes zijn gemaakt met lichtere
+   instellingen dan nu.
+4. Iemand heeft het wachtwoord van Noor afgekeken, en probeert in te loggen.
+
+<details>
+<summary>Tip</summary>
+
+Vraag je bij elke situatie af: gaat het om de database, om het inloggen, om
+het wachtwoord zelf, of om wie er inlogt?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+1. **Een verzoeklimiet op `/inloggen`**, eventueel met een tijdelijke blokkade
+   na veel foute pogingen.
+2. **Controleren tegen gelekte wachtwoorden** bij het registreren, zodat Sara
+   een ander wachtwoord moet kiezen.
+3. **`check_needs_rehash`** bij het inloggen, uit [les 7](./wijzigen), zodat oude hashes vanzelf worden
+   bijgewerkt.
+4. **Tweestapsverificatie**: het wachtwoord alleen is dan niet genoeg.
+
+</details>
+
+Terug naar [les 1](./gewone-tekst), het begin van deze reeks over wachtwoorden.

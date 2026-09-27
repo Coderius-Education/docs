@@ -66,6 +66,31 @@ const ZONDER_BLOK: Record<string, string> = {
   'cheatsheet.md': 'naslag',
   'starten.md': 'naslag: de vier stappen om te beginnen, verwijst per stap naar de editor-cursus',
   'troubleshooting.md': 'naslag',
+  'veiligheid/dos/dos-en-ddos.mdx': 'begrippen, uitgelegd in de les zelf',
+  'veiligheid/dos/limiet.mdx': 'slowapi wordt in de les zelf uitgelegd',
+  'veiligheid/dos/praktijk.mdx': 'achtergrond bij de lessen ervoor, geen nieuwe voorkennis',
+  'veiligheid/cookies/oplossing.mdx': 'bouwt op de zwakheid-stap ervoor, in dezelfde map',
+  'veiligheid/cookies/praktijk.mdx':
+    'achtergrond bij de twee stappen ervoor, geen nieuwe voorkennis',
+  'veiligheid/cookies/zwakheid.mdx': 'bouwt op sessies en de toegang-reeks, geen nieuwe voorkennis',
+  'veiligheid/invoer/getallen.mdx': 'int, ge en le worden in de les zelf uitgelegd',
+  'veiligheid/invoer/grenzen.mdx': 'bouwt op de maxlength-les ervoor, in dezelfde map',
+  'veiligheid/invoer/inhoud.mdx': 'strip() wordt in de les zelf uitgelegd',
+  'veiligheid/invoer/maxlength.mdx':
+    'maxlength is fullstack-stof uit server-of-browser, geen nieuwe voorkennis',
+  'veiligheid/invoer/praktijk.mdx':
+    'achtergrond bij de twee stappen ervoor, geen nieuwe voorkennis',
+  'veiligheid/toegang/oplossing.mdx': 'bouwt op de zwakheid-stap ervoor, in dezelfde map',
+  'veiligheid/toegang/praktijk.mdx':
+    'achtergrond bij de twee stappen ervoor, geen nieuwe voorkennis',
+  'veiligheid/xss/oplossing.mdx': 'bouwt op de zwakheid-stap ervoor, in dezelfde map',
+  'veiligheid/xss/praktijk.mdx': 'achtergrond bij de twee stappen ervoor, geen nieuwe voorkennis',
+  'veiligheid/wachtwoorden/hash.mdx': 'hashlib en encode worden in de les zelf uitgelegd',
+  'veiligheid/wachtwoorden/praktijk.mdx':
+    'achtergrond bij de lessen ervoor, geen nieuwe voorkennis',
+  'veiligheid/wachtwoorden/registreren.mdx': 'bouwt op de lessen ervoor, in dezelfde map',
+  'veiligheid/wachtwoorden/wijzigen.mdx': 'bouwt op registreren en inloggen, in dezelfde map',
+  'veiligheid/wachtwoorden/zout.mdx': 'bouwt op de hash-les ervoor, in dezelfde map',
 };
 
 const MET_BLOK = [
@@ -85,6 +110,15 @@ const MET_BLOK = [
   'FastAPI/server-of-browser.mdx',
   'FastAPI/sessies.mdx',
   'FastAPI/static_files.mdx',
+  'veiligheid/dos/te-veel.mdx',
+  'veiligheid/dos/verzoek.mdx',
+  'veiligheid/dos/zelf-meten.mdx',
+  'veiligheid/invoer/fouten-lezen.mdx',
+  'veiligheid/toegang/zwakheid.mdx',
+  'veiligheid/wachtwoorden/gewone-tekst.mdx',
+  'veiligheid/wachtwoorden/inloggen.mdx',
+  'veiligheid/wachtwoorden/traag.mdx',
+  'veiligheid/xss/zwakheid.mdx',
 ];
 
 function relatievePaden(): string[] {

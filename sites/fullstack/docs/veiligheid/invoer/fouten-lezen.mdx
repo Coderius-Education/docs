@@ -1,0 +1,119 @@
+---
+sidebar_label: '3. Een 422 lezen'
+description: Wat er in het antwoord van een 422 staat, per veld, en waarom een leeg veld al een 422 geeft zonder dat je er iets voor hoeft te doen.
+---
+
+# Invoer controleren: een 422 lezen
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/data/11c-geneste-dictionaries', label: 'Geneste dictionaries'},
+  ]}
+/>
+
+In [les 2](./grenzen) printte je alleen de melding. Het antwoord van een `422`
+zegt meer: welk veld het was, wat voor fout, en wat er binnenkwam. Met die
+gegevens kan een script, of later een nette pagina, zeggen wat er mis
+is.
+
+## Twee fouten tegelijk
+
+Maak een script `fouten.py` dat een te lange naam en een leeg bericht stuurt:
+
+<CodeUitleg>
+
+```python showLineNumbers
+import httpx
+
+adres = "http://127.0.0.1:8000/bericht"
+
+antwoord = httpx.post(adres, data={"naam": "a" * 31, "bericht": ""})
+print(antwoord.status_code)
+for fout in antwoord.json()["detail"]:
+    print(fout["loc"][1], fout["type"], fout["msg"])
+```
+
+<Regel n={7}>
+`detail` is een lijst, met één dictionary per fout. Een for-loop loopt ze langs.
+</Regel>
+
+<Regel n={8}>
+Uit elke fout drie stukken: het veld, het soort fout, en de melding.
+</Regel>
+
+</CodeUitleg>
+
+Draai het, met de server uit les 2:
+
+```
+422
+naam string_too_long String should have at most 30 characters
+bericht missing Field required
+```
+
+FastAPI controleert alle velden, en meldt alle fouten in één keer.
+
+## Wat er in één fout staat
+
+Elke fout is een dictionary. Voor de te lange naam ziet hij er zo uit:
+
+```
+{'type': 'string_too_long', 'loc': ['body', 'naam'], 'msg': 'String should have at most 30 characters', 'input': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'ctx': {'max_length': 30}}
+```
+
+| Sleutel | Betekent |
+|:---:|:---:|
+| `type` | het soort fout, als vast woord |
+| `loc` | waar: `body` is het formulier, daarna het veld |
+| `msg` | de melding in het Engels |
+| `input` | wat er binnenkwam |
+| `ctx` | de grens die gold, als die er is |
+
+Daarom pak je in het script `fout["loc"][1]`: het tweede stuk van `loc` is de
+naam van het veld.
+
+## Een leeg veld is al een fout
+
+Het lege bericht gaf `missing`, en dat zonder dat je er iets voor schreef.
+`Form(...)` maakt een veld verplicht, en voor FastAPI telt een leeg veld als
+niet ingevuld. Een `min_length=1` erbij is dus niet nodig.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Alleen een leeg bericht
+
+Je stuurt de naam `Sara` en een leeg bericht.
+
+**Vraag:** wat print `fouten.py`, na de regel met `422`?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+bericht missing Field required
+```
+
+Eén fout: de naam is goed, het bericht ontbreekt.
+
+</details>
+
+### Opdracht 2: Investigate - Waarom niet `input` printen?
+
+Waarom print `fouten.py` wel `type` en `msg`, maar niet `input`?
+
+<details>
+<summary>Tip</summary>
+
+Denk aan `groot.py` uit les 2.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Omdat `input` alles bevat wat er binnenkwam. Bij een bericht van een miljoen
+tekens print je dan een miljoen letters. `type` en `msg` zijn altijd kort.
+
+</details>
+
+Door naar [les 4: de inhoud controleren](./inhoud).

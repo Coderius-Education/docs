@@ -1,0 +1,194 @@
+---
+sidebar_label: '4. De inhoud controleren'
+description: Een naam van alleen spaties komt langs max_length. Controleer de inhoud zelf met strip() en stuur een eigen 400.
+---
+
+# Invoer controleren: de inhoud controleren
+
+`max_length` uit [les 2](./grenzen) bewaakt de lengte, en een leeg veld weigert
+FastAPI al, zoals je in [les 3](./fouten-lezen) zag. Maar een naam van drie
+spaties is niet leeg en niet te lang. Hij komt erdoor:
+
+```python
+import httpx
+
+antwoord = httpx.post("http://127.0.0.1:8000/bericht", data={"naam": "   ", "bericht": "hoi"})
+print(antwoord.status_code, antwoord.json())
+```
+
+Uitvoer:
+
+```
+200 {'lengte': 3}
+```
+
+In je gastenboek staat nu een bericht zonder zichtbare naam. Zo'n regel over de
+inhoud controleer je zelf.
+
+## `strip()`
+
+`strip()` haalt de spaties aan het begin en het eind van een tekst weg:
+
+```python
+print(repr("   ".strip()))
+print(repr(" Sara ".strip()))
+```
+
+Uitvoer:
+
+```
+''
+'Sara'
+```
+
+`repr` laat de aanhalingstekens zien, zodat je de spaties ziet. Blijft er na
+`strip()` niets over, dan bestond de naam alleen uit spaties.
+
+## De controle in het endpoint
+
+<CodeUitleg>
+
+```python showLineNumbers
+@app.post("/bericht")
+async def bericht_plaatsen(
+    naam: str = Form(..., max_length=30),
+    bericht: str = Form(..., max_length=280),
+):
+    if not naam.strip():
+        raise HTTPException(status_code=400, detail="Vul een naam in")
+    with SqliteDict("gastenboek.db") as db:
+        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    return {"lengte": len(bericht)}
+```
+
+<Regel n={6}>
+Een lege tekst telt in een `if` als niet waar, dus `not naam.strip()` is waar als er niets overblijft.
+</Regel>
+
+<Regel n={7}>
+`raise HTTPException` stopt de functie en stuurt een foutmelding, zoals in [Jouw project](/docs/FastAPI/jouw-project). Voeg `HTTPException` toe aan de import uit `fastapi`.
+</Regel>
+
+</CodeUitleg>
+
+Draai het script opnieuw:
+
+```
+400 {'detail': 'Vul een naam in'}
+```
+
+Het is een **400** en geen 422. Een 422 komt van FastAPI zelf, als een veld niet
+past bij wat er in `Form` staat. Een 400 stuur jij, voor een regel die je zelf
+bedacht.
+
+## Er gaat iets mis
+
+De server geeft `400`, maar het bericht met de lege naam staat toch in de
+database.
+
+**Oorzaak:** de controle staat ná het opslaan:
+
+{/* niet-compileren: een stuk uit de functie bericht_plaatsen */}
+
+```python
+# FOUT
+with SqliteDict("gastenboek.db") as db:
+    db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
+    db.commit()
+if not naam.strip():
+    raise HTTPException(status_code=400, detail="Vul een naam in")
+
+# GOED
+if not naam.strip():
+    raise HTTPException(status_code=400, detail="Vul een naam in")
+with SqliteDict("gastenboek.db") as db:
+    db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
+    db.commit()
+```
+
+**Oplossing:** controleer eerst, en sla pas op als alles klopt.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Spaties eromheen
+
+Je stuurt de naam `" Sara "`, met een spatie ervoor en erachter.
+
+**Vraag:** geeft de server `200` of `400`? En wat komt er in de database?
+
+<details>
+<summary>Antwoord</summary>
+
+`200`: na `strip()` blijft `Sara` over, dus de controle laat hem door. Maar in
+de database staat `" Sara "`, met de spaties, want de controle verandert `naam`
+niet. Wil je ze kwijt, zet dan `naam = naam.strip()` bovenaan de functie.
+
+</details>
+
+### Opdracht 2: Modify - Ook het bericht
+
+Zorg dat een bericht van alleen spaties ook een `400` geeft, met de melding
+`Schrijf een bericht`.
+
+<details>
+<summary>Tip</summary>
+
+Dezelfde twee regels als voor de naam, met `bericht` in plaats van `naam`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+@app.post("/bericht")
+async def bericht_plaatsen(
+    naam: str = Form(..., max_length=30),
+    bericht: str = Form(..., max_length=280),
+):
+    if not naam.strip():
+        raise HTTPException(status_code=400, detail="Vul een naam in")
+    if not bericht.strip():
+        raise HTTPException(status_code=400, detail="Schrijf een bericht")
+    with SqliteDict("gastenboek.db") as db:
+        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    return {"lengte": len(bericht)}
+```
+
+Een bericht van drie spaties geeft nu `400 {'detail': 'Schrijf een bericht'}`.
+
+</details>
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+```python
+import time
+
+from fastapi import FastAPI, Form, HTTPException
+from fastapi.staticfiles import StaticFiles
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.post("/bericht")
+async def bericht_plaatsen(
+    naam: str = Form(..., max_length=30),
+    bericht: str = Form(..., max_length=280),
+):
+    if not naam.strip():
+        raise HTTPException(status_code=400, detail="Vul een naam in")
+    with SqliteDict("gastenboek.db") as db:
+        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    return {"lengte": len(bericht)}
+```
+
+De lengte bewaakt FastAPI, de inhoud jij.
+
+</details>
+
+Door naar [les 5: getallen en keuzes](./getallen).

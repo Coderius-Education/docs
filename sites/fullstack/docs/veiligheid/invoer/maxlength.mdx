@@ -1,0 +1,195 @@
+---
+sidebar_label: '1. maxlength is geen controle'
+description: maxlength in de HTML houdt een script niet tegen. Stuur op je eigen server een veel te lang bericht rechtstreeks naar je endpoint.
+---
+
+# Invoer controleren: maxlength is geen controle
+
+In [Server of browser?](/docs/FastAPI/server-of-browser) zag je het al voor de
+lengte van één bericht: `maxlength` in de HTML is een hulp voor wie zich
+vergist, geen controle. Hier doe je het na met een script, en zie je hoe ver het
+gaat.
+
+## Een gastenboek met een formulier
+
+Het formulier staat als los bestand in `static/formulier.html`, met een grens
+op beide velden:
+
+```html
+<!doctype html>
+<html>
+<body>
+    <form method="post" action="/bericht">
+        <input type="text" name="naam" maxlength="30" required>
+        <input type="text" name="bericht" maxlength="280" required>
+        <button type="submit">Verstuur</button>
+    </form>
+</body>
+</html>
+```
+
+De server slaat op wat binnenkomt, en geeft terug hoe lang het bericht was:
+
+<CodeUitleg>
+
+```python showLineNumbers
+import time
+
+from fastapi import FastAPI, Form
+from fastapi.staticfiles import StaticFiles
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.post("/bericht")
+async def bericht_plaatsen(naam: str = Form(...), bericht: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    return {"lengte": len(bericht)}
+```
+
+<Regel n={8}>
+De map `static` met het formulier, zoals in [Static files](/docs/FastAPI/static_files).
+</Regel>
+
+<Regel n={15}>
+De lengte van het bericht, zodat je in de test ziet wat er binnenkwam.
+</Regel>
+
+</CodeUitleg>
+
+## Doe het na, op je eigen server
+
+:::danger[Alleen je eigen server]
+Stuur zulke verzoeken **uitsluitend** naar je eigen server op `127.0.0.1`. Een
+server van een ander volstoppen met grote of veel verzoeken is een aanval, en
+strafbaar.
+:::
+
+Start je server en open `http://127.0.0.1:8000/static/formulier.html`. Typ een
+lang bericht: na 280 tekens gaat er niets meer bij, want `maxlength` houdt je
+tegen.
+
+Nu een scriptje `groot.py` dat níét via het formulier gaat, maar rechtstreeks
+naar het endpoint:
+
+<CodeUitleg>
+
+```python showLineNumbers
+import httpx
+
+adres = "http://127.0.0.1:8000/bericht"
+
+bericht = "a" * 1_000_000
+antwoord = httpx.post(adres, data={"naam": "Sara", "bericht": bericht})
+print(antwoord.json())
+```
+
+<Regel n={5}>
+Een bericht van een miljoen keer de letter `a`. In het formulier kreeg je dit er nooit in. `1_000_000` is hetzelfde getal als `1000000`; het liggende streepje maakt het leesbaar.
+</Regel>
+
+<Regel n={6}>
+Hetzelfde verzoek dat de browser zou sturen, maar zonder de grens uit de HTML.
+</Regel>
+
+</CodeUitleg>
+
+Uitvoer:
+
+```
+{'lengte': 1000000}
+```
+
+Alle miljoen tekens staan in je database. `maxlength` zat in de HTML, en die
+HTML draaide in de browser die je nu hebt overgeslagen. Het endpoint zag alleen
+het verzoek, en dat had geen grens.
+
+Eén bericht van een miljoen tekens is al vervelend, en een script dat dat
+duizend keer doet, vult je schijf.
+
+## Er gaat iets mis
+
+`groot.py` geeft een `422` terug in plaats van de lengte.
+
+**Oorzaak:** je stuurt geen `naam` of `bericht` mee, of de namen in `data`
+komen niet overeen met de `Form`-parameters. FastAPI mist dan een verplicht
+veld.
+
+**Oplossing:** stuur beide velden mee, met precies de namen `naam` en `bericht`,
+net als het formulier.
+
+## Opdrachten
+
+### Opdracht 1: Predict - 300 tekens
+
+In het formulier kom je niet verder dan 280 tekens. Je stuurt met een script een
+bericht van 300 tekens.
+
+**Vraag:** wat antwoordt de server?
+
+<details>
+<summary>Antwoord</summary>
+
+`{'lengte': 300}`. De server kent de grens van 280 niet: die staat alleen in
+de HTML.
+
+</details>
+
+### Opdracht 2: Investigate - Tien miljoen
+
+Maak van het bericht in `groot.py` tien miljoen tekens, `10_000_000`, en print
+ook de statuscode met `print(antwoord.status_code)`. Wat komt er terug?
+
+<details>
+<summary>Tip</summary>
+
+Starlette, het deel van FastAPI dat formulieren leest, heeft zelf één ruwe
+grens.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```
+400
+{'detail': 'Field exceeded maximum size of 1024KB.'}
+```
+
+Starlette weigert een veld dat groter is dan een megabyte, ongeveer een miljoen
+tekens. Daarom kwam het bericht van een miljoen tekens er nog net door. Die
+grens beschermt je tegen het ergste, maar een bericht in een gastenboek hoort
+geen megabyte te zijn. De echte grens zet je zelf, in [les 2](./grenzen).
+
+</details>
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+```python
+import time
+
+from fastapi import FastAPI, Form
+from fastapi.staticfiles import StaticFiles
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.post("/bericht")
+async def bericht_plaatsen(naam: str = Form(...), bericht: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    return {"lengte": len(bericht)}
+```
+
+Naast `main.py` staat `static/formulier.html`. In de volgende lessen verandert
+alleen de functie `bericht_plaatsen`.
+
+</details>
+
+Door naar [les 2: grenzen in Form](./grenzen).

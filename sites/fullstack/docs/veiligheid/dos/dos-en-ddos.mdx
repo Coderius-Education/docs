@@ -1,0 +1,87 @@
+---
+sidebar_label: '2. DoS en DDoS'
+description: Een DoS-aanval maakt een server zo druk dat echte bezoekers geen antwoord meer krijgen. Het verschil tussen DoS en DDoS, en wat een botnet is.
+---
+
+# Te veel verzoeken: DoS en DDoS
+
+In [les 1](./verzoek) zag je dat je server per seconde een beperkt aantal
+verzoeken kan beantwoorden. Stuurt iemand er expres meer dan dat, dan raakt de
+server achter. Hij is dan bezig met alleen nog die verzoeken, en een echte
+bezoeker krijgt geen antwoord meer. De site ligt plat.
+
+Dat is een **DoS**-aanval: *Denial of Service*, oftewel "dienst weigeren". Niet
+door in te breken, maar door de server zo druk te maken dat hij niets nuttigs
+meer doet.
+
+## Verzoeken na elkaar zijn niet genoeg
+
+Een laptop die verzoeken na elkaar stuurt, wacht bij elk verzoek op het
+antwoord. Hij stuurt ze dus nooit sneller dan de server ze beantwoordt. Zo houd
+je een server niet plat: hij loopt nooit achter.
+
+Daarom komen echte aanvallen van heel veel computers tegelijk. Dat heet
+**DDoS**: *Distributed Denial of Service*. De verzoeken zijn "verspreid" over
+duizenden machines, en samen sturen ze er veel meer dan de server aankan.
+
+Eén computer kan een server wel te druk maken als hij niet netjes wacht: als hij
+veel verzoeken tegelijk stuurt, of steeds een endpoint kiest dat veel werk kost.
+Daarom telt de limiet in [les 4](./limiet) per computer.
+
+## Een botnet
+
+De computers in een DDoS zijn meestal niet van de aanvaller zelf. Het zijn
+gekaapte computers, camera's en routers, samen een **botnet**. Er draait
+ongemerkt een programmaatje op dat op een teken van de aanvaller verzoeken
+begint te sturen. De eigenaren weten vaak niet eens dat hun apparaat meedoet.
+
+| | DoS | DDoS |
+|:---:|:---:|:---:|
+| Waar komen de verzoeken vandaan | één computer | heel veel computers |
+| De eerste D staat voor | Denial | Distributed |
+| Tegen te houden met een blokkade per computer | ja | veel lastiger |
+
+Allebei overspoelen ze de server met werk. Een DDoS is alleen groter en moeilijker te stoppen, want je kunt niet één boosdoener
+blokkeren.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Een rekensom
+
+Je server beantwoordt 500 verzoeken per seconde. Een botnet van 2000 camera's
+stuurt elk één verzoek per seconde.
+
+**Vraag:** kan je server het bijhouden?
+
+<details>
+<summary>Tip</summary>
+
+Reken uit hoeveel verzoeken er samen per seconde binnenkomen.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Nee. Samen zijn het 2000 verzoeken per seconde, vier keer zoveel als de server
+aankan. Elke camera stuurt maar één verzoek per seconde, dat valt nergens op.
+Pas samen zijn ze te veel.
+
+</details>
+
+### Opdracht 2: Investigate - Waarom is DDoS lastiger?
+
+Een DoS van één computer kun je tegenhouden door die ene computer te weigeren.
+Waarom werkt dat bij een DDoS niet?
+
+<details>
+<summary>Antwoord</summary>
+
+Omdat er geen ene computer is. Elke camera uit het botnet stuurt zo weinig
+verzoeken dat hij eruitziet als een gewone bezoeker. Weiger je ze allemaal, dan
+weiger je ook je echte bezoekers, want je kunt ze niet uit elkaar houden. In
+[les 6](./praktijk) zie je wat grote sites daar wel tegen doen.
+
+</details>
+
+Door naar [les 3: zelf twintig verzoeken](./zelf-meten).

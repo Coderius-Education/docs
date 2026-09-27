@@ -1,0 +1,233 @@
+---
+sidebar_label: '5. Wat de 429 vertelt'
+description: Wat een bezoeker terugkrijgt als hij over de limiet gaat, en hoe je met headers_enabled meegeeft hoeveel verzoeken er nog over zijn en wanneer het weer mag.
+---
+
+# Te veel verzoeken: wat de 429 vertelt
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/herhalen/06d-break', label: 'Stoppen met break'},
+  ]}
+/>
+
+Een bezoeker die over je limiet uit [les 4](./limiet) gaat, krijgt `429`. In dat
+antwoord staat nog iets meer, en je server kan ook al eerder laten weten hoeveel
+verzoeken er nog over zijn. Een eerlijk script, zoals een app die je
+gastenboek uitleest, kan daar rekening mee houden.
+
+## Het antwoord bij een 429
+
+Zet deze regel onderaan `test_verzoeken.py` uit [les 3](./zelf-meten):
+
+```python
+print(antwoord.json())
+```
+
+Draai het script. De laatste regel is het antwoord op verzoek 20:
+
+```
+{'error': 'Rate limit exceeded: 5 per 1 minute'}
+```
+
+`slowapi` zegt welke grens het was: vijf per minuut. Wanneer het weer mag, staat
+er niet bij.
+
+## Meer vertellen met `headers_enabled`
+
+`slowapi` kan bij elk antwoord een paar **headers** meesturen: regels boven het
+antwoord, die je in het tabblad Netwerk van je browser ook ziet. Zet ze aan met
+`headers_enabled=True`:
+
+<CodeUitleg>
+
+```python showLineNumbers
+from fastapi import FastAPI, Request, Response
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
+
+limiter = Limiter(key_func=get_remote_address, headers_enabled=True)
+
+app = FastAPI()
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+@app.get("/")
+@limiter.limit("5/minute")
+async def root(request: Request, response: Response):
+    return {"bericht": "Hallo wereld!"}
+```
+
+<Regel n={1}>
+`Response` komt erbij in de import.
+</Regel>
+
+<Regel n={6}>
+`headers_enabled=True`: stuur bij elk antwoord mee hoe het met de limiet staat.
+</Regel>
+
+<Regel n={14}>
+Het endpoint krijgt een parameter `response: Response`. Op dat antwoord zet `slowapi` de headers.
+</Regel>
+
+</CodeUitleg>
+
+## Kijk wat er meekomt
+
+Maak een script `headers.py` dat zes verzoeken stuurt en bij elk twee headers
+laat zien:
+
+<CodeUitleg>
+
+```python showLineNumbers
+import httpx
+
+adres = "http://127.0.0.1:8000/"
+
+for nummer in range(6):
+    antwoord = httpx.get(adres)
+    over = antwoord.headers.get("x-ratelimit-remaining")
+    wacht = antwoord.headers.get("retry-after")
+    print(f"Verzoek {nummer + 1}: {antwoord.status_code}, nog {over} over, wacht {wacht} seconden")
+```
+
+<Regel n={7}>
+`x-ratelimit-remaining`: hoeveel verzoeken er deze minuut nog over zijn.
+</Regel>
+
+<Regel n={8}>
+`retry-after`: hoeveel seconden een bezoeker moet wachten tot de telling weer begint.
+</Regel>
+
+</CodeUitleg>
+
+Start je server opnieuw, zodat de telling bij nul begint, en draai het script:
+
+```
+Verzoek 1: 200, nog 4 over, wacht 60 seconden
+Verzoek 2: 200, nog 3 over, wacht 60 seconden
+Verzoek 3: 200, nog 2 over, wacht 60 seconden
+Verzoek 4: 200, nog 1 over, wacht 60 seconden
+Verzoek 5: 200, nog 0 over, wacht 60 seconden
+Verzoek 6: 429, nog 0 over, wacht 60 seconden
+```
+
+Bij een `200` hoef je niet te wachten: `retry-after` zegt dan alleen wanneer de
+telling opnieuw begint. Pas bij een `429` moet je die tijd afwachten. Een
+eerlijk script kijkt dus naar `x-ratelimit-remaining` en stopt bij nul, of wacht
+na een `429` zo lang als `retry-after` zegt.
+
+Draai je het script binnen dezelfde minuut nog een keer, dan krijg je al bij
+verzoek 1 een `429`, met `nog 0 over` en een wachttijd van hoogstens 60 seconden: de
+telling van de vorige keer loopt nog.
+
+## Er gaat iets mis
+
+Het script print bij elk verzoek `nog None over, wacht None seconden`.
+
+**Oorzaak:** je server heeft `headers_enabled=True` nog niet, bijvoorbeeld omdat
+hij nog de code uit les 4 draait. Dan stuurt hij de headers niet mee, en
+`headers.get` geeft `None` als een header ontbreekt.
+
+**Oplossing:** zet `headers_enabled=True` in de `Limiter` en `response: Response`
+in je endpoint, en sla `main.py` op.
+
+Na `headers_enabled=True` geeft elk verzoek ineens `500 Internal Server Error`,
+ook het eerste. In de terminal van je server eindigt de foutmelding met:
+
+```
+Exception: parameter `response` must be an instance of starlette.responses.Response
+```
+
+**Oorzaak:** je endpoint heeft geen parameter `response: Response`. `slowapi`
+wil de headers op het antwoord zetten, maar heeft er dan geen.
+
+**Oplossing:** zet `response: Response` bij de parameters van elk endpoint met
+een limiet, en `Response` in de import:
+
+{/* niet-compileren: alleen de kop van de functie, zonder inhoud */}
+
+```python
+# FOUT
+async def root(request: Request):
+
+# GOED
+async def root(request: Request, response: Response):
+```
+
+## Opdrachten
+
+### Opdracht 1: Predict - Na drie verzoeken
+
+De limiet is `5/minute`, met `headers_enabled=True`. Je stuurt drie verzoeken.
+
+**Vraag:** wat staat er bij het derde antwoord in `x-ratelimit-remaining`?
+
+<details>
+<summary>Antwoord</summary>
+
+`2`. Na drie van de vijf verzoeken zijn er nog twee over.
+
+</details>
+
+### Opdracht 2: Make - Een script dat op tijd stopt
+
+Pas `headers.py` aan zodat het uit zichzelf stopt zodra er nog 0 verzoeken over
+zijn, in plaats van door te gaan tot een `429`.
+
+<details>
+<summary>Tip</summary>
+
+Met `break` stop je een for-loop halverwege.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+import httpx
+
+adres = "http://127.0.0.1:8000/"
+
+for nummer in range(6):
+    antwoord = httpx.get(adres)
+    over = antwoord.headers.get("x-ratelimit-remaining")
+    print(f"Verzoek {nummer + 1}: {antwoord.status_code}, nog {over} over")
+    if over == "0":
+        print("Limiet bereikt, ik stop")
+        break
+```
+
+De header is tekst, dus je vergelijkt met `"0"` en niet met `0`. Het script
+stopt na het vijfde verzoek, en krijgt geen `429`.
+
+</details>
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+```python
+from fastapi import FastAPI, Request, Response
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
+
+limiter = Limiter(key_func=get_remote_address, headers_enabled=True)
+
+app = FastAPI()
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+@app.get("/")
+@limiter.limit("5/minute")
+async def root(request: Request, response: Response):
+    return {"bericht": "Hallo wereld!"}
+```
+
+De limiet vertelt nu bij elk antwoord hoeveel er nog over is.
+
+</details>
+
+Door naar [les 6: in de praktijk](./praktijk).

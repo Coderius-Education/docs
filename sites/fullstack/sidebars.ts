@@ -81,6 +81,78 @@ const sidebars: SidebarsConfig = {
       ],
     },
   ],
+  // Per zwakheid een categorie met kleine lessen, één idee per les: de zwakheid
+  // (zelf nadoen, op je eigen server), de oplossing, en als laatste wat er in de
+  // praktijk nog gebeurt.
+  veiligheidSidebar: [
+    {
+      type: 'category',
+      label: 'Te veel verzoeken (DoS)',
+      collapsed: false,
+      items: [
+        'veiligheid/dos/verzoek',
+        'veiligheid/dos/dos-en-ddos',
+        'veiligheid/dos/zelf-meten',
+        'veiligheid/dos/limiet',
+        'veiligheid/dos/te-veel',
+        'veiligheid/dos/praktijk',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Wachtwoorden veilig opslaan',
+      collapsed: false,
+      items: [
+        'veiligheid/wachtwoorden/gewone-tekst',
+        'veiligheid/wachtwoorden/hash',
+        'veiligheid/wachtwoorden/zout',
+        'veiligheid/wachtwoorden/traag',
+        'veiligheid/wachtwoorden/registreren',
+        'veiligheid/wachtwoorden/inloggen',
+        'veiligheid/wachtwoorden/wijzigen',
+        'veiligheid/wachtwoorden/praktijk',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Wie mag wat',
+      collapsed: false,
+      items: [
+        'veiligheid/toegang/zwakheid',
+        'veiligheid/toegang/oplossing',
+        'veiligheid/toegang/praktijk',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'HTML van een bezoeker (XSS)',
+      collapsed: false,
+      items: ['veiligheid/xss/zwakheid', 'veiligheid/xss/oplossing', 'veiligheid/xss/praktijk'],
+    },
+    {
+      type: 'category',
+      label: 'Cookies afschermen',
+      collapsed: false,
+      items: [
+        'veiligheid/cookies/zwakheid',
+        'veiligheid/cookies/oplossing',
+        'veiligheid/cookies/praktijk',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Invoer controleren',
+      collapsed: false,
+      items: [
+        'veiligheid/invoer/maxlength',
+        'veiligheid/invoer/grenzen',
+        'veiligheid/invoer/fouten-lezen',
+        'veiligheid/invoer/inhoud',
+        'veiligheid/invoer/getallen',
+        'veiligheid/invoer/praktijk',
+      ],
+    },
+  ],
 };
 
 export default sidebars;

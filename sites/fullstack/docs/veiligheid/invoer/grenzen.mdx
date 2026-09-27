@@ -1,0 +1,169 @@
+---
+sidebar_label: '2. Grenzen in Form'
+description: Zet de grens in Form met max_length, zodat FastAPI een te lang bericht met 422 weigert voordat je code draait.
+---
+
+# Invoer controleren: grenzen in Form
+
+De grens hoort op de server, waar de bezoeker er niet bij kan. In
+[Server of browser?](/docs/FastAPI/server-of-browser) schreef je daarvoor zelf
+een `if` met `len`. FastAPI kan het ook voor je doen: je zet de grens in `Form`,
+en een verzoek dat eroverheen gaat, komt niet eens in je functie.
+
+## `max_length` in `Form`
+
+<CodeUitleg>
+
+```python showLineNumbers
+@app.post("/bericht")
+async def bericht_plaatsen(
+    naam: str = Form(..., max_length=30),
+    bericht: str = Form(..., max_length=280),
+):
+    with SqliteDict("gastenboek.db") as db:
+        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    return {"lengte": len(bericht)}
+```
+
+<Regel n={2} tot={5}>
+De parameters staan nu onder elkaar, want ze zijn te lang voor één regel.
+</Regel>
+
+<Regel n={3} tot={4}>
+`max_length` zet de grens: hoogstens 30 tekens voor de naam, 280 voor het bericht. Dezelfde getallen als de `maxlength` in de HTML, maar nu telt hij.
+</Regel>
+
+</CodeUitleg>
+
+Vervang `bericht_plaatsen` in je `main.py` door deze. De rest blijft gelijk.
+
+## Doe de test opnieuw
+
+Het antwoord op een te lang bericht bevat de hele invoer nog een keer, dus ook
+de miljoen letters `a`. Laat `groot.py` daarom alleen de statuscode en de
+melding printen:
+
+<CodeUitleg>
+
+```python showLineNumbers
+import httpx
+
+adres = "http://127.0.0.1:8000/bericht"
+
+bericht = "a" * 1_000_000
+antwoord = httpx.post(adres, data={"naam": "Sara", "bericht": bericht})
+print(antwoord.status_code)
+print(antwoord.json()["detail"][0]["msg"])
+```
+
+<Regel n={8}>
+Het antwoord heeft een lijst `detail` met een foutmelding per veld. Wat daar precies in staat, zie je in [les 3](./fouten-lezen).
+</Regel>
+
+</CodeUitleg>
+
+Uitvoer:
+
+```
+422
+String should have at most 280 characters
+```
+
+Een **422** betekent: het verzoek klopt niet met wat het endpoint verwacht. Het
+bericht komt niet in de database, en je eigen code draait niet eens. De
+`maxlength` in de HTML laat je staan: die helpt nog steeds wie zich in de
+browser vergist.
+
+## Er gaat iets mis
+
+Je draait het oude `groot.py`, met `print(antwoord.json())`, en je terminal
+loopt vol met letters `a`.
+
+**Oorzaak:** bij een `422` stuurt FastAPI in `input` terug wat er binnenkwam.
+Bij een miljoen tekens zijn dat een miljoen letters `a`.
+
+**Oplossing:** print alleen wat je nodig hebt, zoals de statuscode en
+`antwoord.json()["detail"][0]["msg"]`. Stop een script dat blijft printen
+met Ctrl+C.
+
+## Opdrachten
+
+### Opdracht 1: Run - Precies op de grens
+
+Stuur een bericht van 280 tekens en een van 281. Welke statuscodes krijg je?
+
+<details>
+<summary>Tip</summary>
+
+`"a" * 280` maakt 280 letters.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+import httpx
+
+adres = "http://127.0.0.1:8000/bericht"
+
+for lengte in [280, 281]:
+    antwoord = httpx.post(adres, data={"naam": "Sara", "bericht": "a" * lengte})
+    print(lengte, antwoord.status_code)
+```
+
+Uitvoer:
+
+```
+280 200
+281 422
+```
+
+`max_length=280` betekent: 280 mag nog, 281 niet.
+
+</details>
+
+### Opdracht 2: Predict - Een lange naam
+
+Je stuurt een naam van 31 tekens en het bericht `hoi`.
+
+**Vraag:** welke statuscode en welke melding krijg je?
+
+<details>
+<summary>Antwoord</summary>
+
+`422`, met de melding `String should have at most 30 characters`. De grens op
+de naam werkt net zo als die op het bericht.
+
+</details>
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+```python
+import time
+
+from fastapi import FastAPI, Form
+from fastapi.staticfiles import StaticFiles
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.post("/bericht")
+async def bericht_plaatsen(
+    naam: str = Form(..., max_length=30),
+    bericht: str = Form(..., max_length=280),
+):
+    with SqliteDict("gastenboek.db") as db:
+        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    return {"lengte": len(bericht)}
+```
+
+Beide velden hebben nu een grens op de server.
+
+</details>
+
+Door naar [les 3: een 422 lezen](./fouten-lezen).
