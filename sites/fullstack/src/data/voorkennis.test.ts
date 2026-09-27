@@ -68,6 +68,9 @@ const ZONDER_BLOK: Record<string, string> = {
   'troubleshooting.md': 'naslag',
   'veiligheid/dos/oplossing.mdx': 'bouwt op de zwakheid-stap ervoor, in dezelfde map',
   'veiligheid/dos/praktijk.mdx': 'achtergrond bij de twee stappen ervoor, geen nieuwe voorkennis',
+  'veiligheid/toegang/oplossing.mdx': 'bouwt op de zwakheid-stap ervoor, in dezelfde map',
+  'veiligheid/toegang/praktijk.mdx':
+    'achtergrond bij de twee stappen ervoor, geen nieuwe voorkennis',
   'veiligheid/wachtwoorden/hash.mdx': 'hashlib en encode worden in de les zelf uitgelegd',
   'veiligheid/wachtwoorden/praktijk.mdx':
     'achtergrond bij de lessen ervoor, geen nieuwe voorkennis',
@@ -94,6 +97,7 @@ const MET_BLOK = [
   'FastAPI/sessies.mdx',
   'FastAPI/static_files.mdx',
   'veiligheid/dos/zwakheid.mdx',
+  'veiligheid/toegang/zwakheid.mdx',
   'veiligheid/wachtwoorden/gewone-tekst.mdx',
   'veiligheid/wachtwoorden/inloggen.mdx',
   'veiligheid/wachtwoorden/traag.mdx',

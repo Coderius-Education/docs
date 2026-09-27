@@ -105,6 +105,16 @@ const sidebars: SidebarsConfig = {
         'veiligheid/wachtwoorden/praktijk',
       ],
     },
+    {
+      type: 'category',
+      label: 'Wie mag wat',
+      collapsed: false,
+      items: [
+        'veiligheid/toegang/zwakheid',
+        'veiligheid/toegang/oplossing',
+        'veiligheid/toegang/praktijk',
+      ],
+    },
   ],
 };
 

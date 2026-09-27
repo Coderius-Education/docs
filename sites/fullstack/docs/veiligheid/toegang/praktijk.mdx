@@ -1,0 +1,128 @@
+---
+sidebar_label: '3. In de praktijk'
+description: Hoe echte sites bepalen wie wat mag, van accounts en beheerders tot een test per endpoint, en wat de wet zegt over bij gegevens van een ander komen.
+---
+
+# Wie mag wat: in de praktijk
+
+Je controle uit [de oplossing](./oplossing) koppelt een bericht aan een browser.
+Een echte site koppelt het aan een account, heeft mensen die meer mogen dan
+anderen, en heeft honderden endpoints in plaats van vier. Het idee blijft
+hetzelfde: elk endpoint vraagt zelf wie dit mag.
+
+## Een naam voor deze zwakheid
+
+Wat Alex deed, heet **broken access control**: de toegang is niet goed geregeld.
+Het geval waarin je met een andere sleutel of een ander nummer bij iets van een
+ander komt, heeft een eigen naam: **IDOR**, *Insecure Direct Object Reference*.
+Broken access control staat bovenaan de bekendste lijst van zwakheden die in
+webapplicaties het vaakst gevonden worden.
+
+Dat het zo vaak voorkomt, komt doordat alles werkt zolang iedereen de knoppen
+gebruikt. Het valt pas op als iemand een verzoek zelf verstuurt.
+
+## Een account in plaats van een browser
+
+In [opdracht 2 van de oplossing](./oplossing) kon Sara in een privévenster niet
+bij haar eigen bericht. Met een account kan dat wel. Na het inloggen uit de
+[wachtwoordenreeks](../wachtwoorden/inloggen) zet de server de naam van het
+account in de sessie, en bij elk bericht de naam van wie het plaatste:
+
+```python
+if bericht["eigenaar"] != ingelogd:
+    raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
+```
+
+Dat lijkt op de foute controle uit de oplossing, maar het verschil zit in waar
+`ingelogd` vandaan komt: uit de sessie, en daar heeft de server hem zelf in
+gezet, pas nadat `ph.verify` het wachtwoord goedkeurde. Een naam die de bezoeker
+in een formulier typt, blijft onbetrouwbaar.
+
+## Beheerders
+
+Op de meeste sites mag iemand meer dan de rest: een moderator verwijdert
+berichten van anderen, een docent ziet alle inleveringen. Dat heet een **rol**.
+In de controle wordt dat één voorwaarde erbij:
+
+```python
+BEHEERDERS = {"sara"}
+
+if bericht["eigenaar"] != ingelogd and ingelogd not in BEHEERDERS:
+    raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
+```
+
+Grote sites bewaren rollen in de database en geven ze per onderdeel: iemand kan
+beheerder zijn van één forum en gewone bezoeker van de rest.
+
+## Standaard: nee
+
+Een endpoint zonder controle staat open. Daarom begin je bij elk nieuw endpoint
+met de vraag wie het mag, en schrijf je die controle als eerste, vóór de rest.
+Dat heet *deny by default*: wat je niet uitdrukkelijk toestaat, mag niet.
+
+In een groter project schrijf je de controle niet in elk endpoint opnieuw.
+FastAPI heeft daar `Depends` voor: één functie die de ingelogde gebruiker
+ophaalt, en die je aan elk endpoint koppelt dat hem nodig heeft. Vergeet je hem
+bij één endpoint, dan staat dat endpoint open, dus ook dan loop je ze langs.
+
+## Test het als de ander
+
+Je script uit [stap 1](./zwakheid) is een test: het doet alsof het
+Alex is en kijkt of de server weigert. Echte projecten draaien zulke tests
+automatisch, bij elke wijziging in de code. Per endpoint zijn er dan twee: de
+eigenaar krijgt `200`, een ander krijgt `403`. Breekt iemand later per ongeluk
+de controle, dan valt de tweede test om voordat het op de site staat.
+
+## Een lange sleutel is geen slot
+
+In [Detailpagina](/docs/FastAPI/detailpagina) vraag je berichten op met een
+nummer. Nummers zijn makkelijk te raden: wie bericht 12 ziet, probeert 13.
+Lange, willekeurige sleutels maken dat moeilijker, en daarom gebruiken veel
+sites ze. Maar zoals je in stap 1 zag, staat een sleutel vaak in de
+pagina. Een sleutel die niemand raadt is een extra drempel, geen vervanging van
+de controle.
+
+## De wet
+
+Bij gegevens van een ander komen via een gat in een site is in Nederland
+strafbaar. Het Wetboek van Strafrecht noemt het **computervredebreuk**
+(artikel 138ab): opzettelijk en zonder recht binnendringen in een computer of
+website. Een ander nummer in de adresbalk typen om bij andermans gegevens te
+komen, kan daar al onder vallen. Iets van een ander wissen of veranderen is
+bovendien apart strafbaar (artikel 350a). Daarom deed je de test alleen op je
+eigen server, met je eigen Sara en Alex.
+
+Kom je per ongeluk een gat tegen op een site van een ander, meld het dan. Veel
+organisaties hebben een pagina om een kwetsbaarheid te melden; dat heet
+**CVD**, *Coordinated Vulnerability Disclosure*. Kijk niet verder dan nodig om
+het gat te zien, verander of verwijder niets, en vertel het niemand anders
+voordat het dicht is. Het Openbaar Ministerie houdt er rekening mee als iemand
+zich zo aan de regels van de organisatie houdt.
+
+## Opdracht: welke maatregel helpt?
+
+Hieronder staan vier situaties. Kies bij elke situatie de maatregel uit deze les
+die het meest helpt.
+
+1. Een leerling ziet de cijfers van een klasgenoot door in de adresbalk
+   `/cijfers/1043` te veranderen in `/cijfers/1044`.
+2. Een moderator moet scheldberichten van iedereen kunnen weghalen.
+3. Een nieuw endpoint `/profiel/wijzig` werkt, maar niemand heeft gecontroleerd
+   wie het mag gebruiken.
+4. Iemand verwijdert bij een ander een bericht door in het formulier diens naam
+   in te vullen.
+
+<details>
+<summary>Antwoord</summary>
+
+1. Een controle in het endpoint: horen deze cijfers bij de ingelogde leerling?
+   Een lange sleutel in plaats van `1044` maakt het moeilijker, maar is geen
+   slot.
+2. Een rol: moderators staan in de lijst met beheerders, en de controle laat
+   hen ook door.
+3. Standaard nee, en een test als de ander: begin met de controle, en laat een
+   test als een andere gebruiker `403` verwachten.
+4. Controleer op wat de server zelf weet, zoals de ingelogde naam uit de sessie,
+   niet op een naam uit het formulier.
+
+</details>

@@ -1,0 +1,315 @@
+---
+sidebar_label: '2. De oplossing'
+description: Controleer in het endpoint zelf of het bericht van deze bezoeker is, antwoord anders met 403, en doe dat bij elk endpoint dat iets verandert.
+---
+
+# Wie mag wat: de oplossing
+
+De controle hoort op de plek waar het verzoek binnenkomt: in het endpoint. De
+server weet welke berichten deze bezoeker heeft geplaatst, want ze staan in zijn
+sessie. Staat de sleutel daar niet in, dan verwijdert het endpoint niets.
+
+## De controle in het endpoint
+
+Vervang `bericht_verwijderen` in je `main.py` door deze:
+
+<CodeUitleg>
+
+```python showLineNumbers
+@app.delete("/bericht/{sleutel}")
+async def bericht_verwijderen(sleutel: str, sessie_id: str = Cookie(default="")):
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {})
+    if sleutel not in mijn.get("berichten", []):
+        raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
+
+    with SqliteDict("gastenboek.db") as db:
+        if sleutel in db:
+            del db[sleutel]
+            db.commit()
+    return {"bericht": "Verwijderd"}
+```
+
+<Regel n={2}>
+Het endpoint vraagt nu ook de cookie op, net als `bericht_plaatsen`.
+</Regel>
+
+<Regel n={3} tot={4}>
+De sessie van deze bezoeker. Geen cookie of een onbekend sessie-id geeft een lege dictionary.
+</Regel>
+
+<Regel n={5} tot={6}>
+Eerst de controle, vóór er iets verandert. Is de sleutel niet van deze bezoeker, dan stopt de functie met **403 Forbidden**: de server begrijpt wat je vraagt, maar jij mag het niet.
+</Regel>
+
+<Regel n={8} tot={11}>
+Pas nu gaat het bericht weg. `if sleutel in db` vangt een bericht op dat al weg is, bijvoorbeeld omdat je het in een ander tabblad al had verwijderd.
+</Regel>
+
+</CodeUitleg>
+
+Heb je in Sessies [opdracht 5](/docs/FastAPI/sessies#opdracht-5-make---echt-afschermen)
+gemaakt, dan herken je deze controle: het is dezelfde, nu op het
+`DELETE`-endpoint.
+
+## Doe de test opnieuw
+
+Gooi `gastenboek.db` en `sessies.db` weg, start de server opnieuw, en draai
+`test_verwijderen.py` uit [stap 1](./zwakheid):
+
+```
+Alex verwijdert het bericht van Sara: 403
+Nog in het gastenboek: ['Sara', 'Alex']
+```
+
+Alex stuurt nog steeds hetzelfde verzoek, maar de server weigert. Het bericht
+van Sara staat er nog.
+
+## Elk endpoint apart
+
+Een controle beschermt alleen het endpoint waar hij in staat. Het htmx-overzicht
+heeft ook een knop [Alles wissen](/docs/FastAPI/htmx-overzicht), met een eigen
+endpoint `DELETE /berichten`. Staat daar geen controle in, dan wist Alex daarmee
+alsnog het bericht van Sara, en alle andere berichten erbij.
+
+Loop daarom elk endpoint langs dat iets verandert of verwijdert, en stel bij elk
+dezelfde vraag: wie mag dit? In opdracht 4 doe je dat voor Alles wissen.
+
+## Er gaat iets mis
+
+Je controleert op de naam bij het bericht, in plaats van op de sleutels in de
+sessie:
+
+```python
+# FOUT
+if db[sleutel]["naam"] != mijn.get("naam"):
+    raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
+
+# GOED
+if sleutel not in mijn.get("berichten", []):
+    raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
+```
+
+De test uit stap 1 geeft nog netjes `403`. Maar laat Alex in het script bij zijn
+eigen bericht `"naam": "Sara"` invullen, en je krijgt:
+
+```
+Alex verwijdert het bericht van Sara: 200
+Alex verwijdert het bericht van Sara: 200
+Nog in het gastenboek: []
+```
+
+**Oorzaak:** de naam komt uit het formulier, en dat vult de bezoeker zelf in.
+Alex noemt zich Sara, en zijn sessie heeft daarna de naam Sara. De controle
+laat hem door, bij haar bericht en bij zijn eigen.
+
+**Oplossing:** controleer op iets dat alleen de server kan geven. De sleutels in
+de sessie heeft de server er zelf in gezet, bij het plaatsen van het bericht.
+
+Meer uitleg over wat je van een bezoeker kunt geloven: [Server of browser?](/docs/FastAPI/server-of-browser)
+
+## Opdrachten
+
+### Opdracht 1: Run - Sara mag wel
+
+Zet onderaan `test_verwijderen.py` een stuk erbij waarin Sara haar eigen bericht
+verwijdert. Lukt dat, en wat staat er daarna nog in het gastenboek?
+
+<details>
+<summary>Tip</summary>
+
+Het is dezelfde lus als voor Alex, maar dan met `sara.get` en `sara.delete`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+for sleutel, bericht in sara.get("/berichten").json().items():
+    if bericht["naam"] == "Sara":
+        antwoord = sara.delete(f"/bericht/{sleutel}")
+        print(f"Sara verwijdert haar eigen bericht: {antwoord.status_code}")
+
+namen = [bericht["naam"] for bericht in sara.get("/berichten").json().values()]
+print(f"Nog in het gastenboek: {namen}")
+```
+
+Uitvoer, na de twee regels van Alex:
+
+```
+Sara verwijdert haar eigen bericht: 200
+Nog in het gastenboek: ['Alex']
+```
+
+De `Client` van Sara stuurt haar cookie mee, en de sleutel staat in haar sessie.
+
+</details>
+
+### Opdracht 2: Predict - Een nieuw venster
+
+Sara opent het gastenboek in een privévenster en klikt daar op Verwijderen bij
+haar eigen bericht. In het script is dat een derde `httpx.Client`, zonder
+cookie.
+
+**Vraag:** krijgt ze `200` of `403`?
+
+<details>
+<summary>Antwoord</summary>
+
+`403`. De server herkent een bezoeker aan zijn sessie-id, en een privévenster
+heeft een ander, of nog geen. Voor de server is dat een nieuwe bezoeker, ook al
+typt die "Sara". Wil je dat iemand overal bij zijn eigen berichten kan, dan
+heb je een account nodig met een wachtwoord: zie [de praktijk](./praktijk).
+
+</details>
+
+### Opdracht 3: Investigate - Een sleutel die niet bestaat
+
+Alex stuurt `alex.delete("/bericht/bestaat_niet")`. Welke statuscode krijgt hij,
+en waarom is het goed dat het geen `404` is?
+
+<details>
+<summary>Antwoord</summary>
+
+`403`, met `{'detail': 'Dit is niet jouw bericht'}`: de sleutel staat niet in
+zijn sessie, en de controle komt vóór de vraag of het bericht bestaat. Zo leert
+Alex niets over sleutels van anderen: een bestaand bericht van Sara en een
+verzonnen sleutel geven hetzelfde antwoord. Dat is hetzelfde idee als de ene
+melding bij [inloggen](../wachtwoorden/inloggen).
+
+</details>
+
+### Opdracht 4: Make - Alles wissen, maar alleen van jou
+
+Voeg een endpoint `DELETE /berichten` toe dat alleen de berichten van de
+bezoeker zelf wist. Test het met een scriptje waarin Alex alles wist, en kijk
+of het bericht van Sara blijft staan.
+
+<details>
+<summary>Tip</summary>
+
+Loop niet over alle sleutels in `gastenboek.db`, maar over de sleutels in de
+sessie.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+@app.delete("/berichten")
+async def alles_wissen(sessie_id: str = Cookie(default="")):
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {})
+    with SqliteDict("gastenboek.db") as db:
+        for sleutel in mijn.get("berichten", []):
+            if sleutel in db:
+                del db[sleutel]
+        db.commit()
+    return {"bericht": "Jouw berichten zijn gewist"}
+```
+
+Het testscript:
+
+```python
+import httpx
+
+adres = "http://127.0.0.1:8000"
+
+sara = httpx.Client(base_url=adres)
+alex = httpx.Client(base_url=adres)
+
+sara.post("/bericht", data={"naam": "Sara", "bericht": "Hoi allemaal"})
+alex.post("/bericht", data={"naam": "Alex", "bericht": "Leuk gastenboek"})
+
+print(alex.delete("/berichten").json())
+namen = [bericht["naam"] for bericht in alex.get("/berichten").json().values()]
+print(f"Nog in het gastenboek: {namen}")
+```
+
+Uitvoer, met een lege database:
+
+```
+{'bericht': 'Jouw berichten zijn gewist'}
+Nog in het gastenboek: ['Sara']
+```
+
+Hier is er geen `403` nodig: wie Alles wissen kiest, wist wat van hem is, en de
+rest blijft staan.
+
+</details>
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+```python
+import secrets
+import time
+
+from fastapi import Cookie, FastAPI, Form, HTTPException
+from fastapi.responses import JSONResponse
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+
+@app.post("/bericht")
+async def bericht_plaatsen(
+    naam: str = Form(...),
+    bericht: str = Form(...),
+    sessie_id: str = Cookie(default=""),
+):
+    if not sessie_id:
+        sessie_id = secrets.token_hex(16)
+
+    sleutel = f"bericht_{time.time_ns()}"
+    with SqliteDict("gastenboek.db") as db:
+        db[sleutel] = {"naam": naam, "bericht": bericht}
+        db.commit()
+
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {"naam": naam, "berichten": []})
+        mijn["naam"] = naam
+        mijn["berichten"].append(sleutel)
+        sessies[sessie_id] = mijn
+        sessies.commit()
+
+    antwoord = JSONResponse({"sleutel": sleutel})
+    antwoord.set_cookie(key="sessie_id", value=sessie_id, max_age=60 * 60 * 24 * 30)
+    return antwoord
+
+@app.get("/berichten")
+async def berichten():
+    with SqliteDict("gastenboek.db") as db:
+        return dict(db)
+
+@app.delete("/bericht/{sleutel}")
+async def bericht_verwijderen(sleutel: str, sessie_id: str = Cookie(default="")):
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {})
+    if sleutel not in mijn.get("berichten", []):
+        raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
+
+    with SqliteDict("gastenboek.db") as db:
+        if sleutel in db:
+            del db[sleutel]
+            db.commit()
+    return {"bericht": "Verwijderd"}
+
+@app.delete("/berichten")
+async def alles_wissen(sessie_id: str = Cookie(default="")):
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {})
+    with SqliteDict("gastenboek.db") as db:
+        for sleutel in mijn.get("berichten", []):
+            if sleutel in db:
+                del db[sleutel]
+        db.commit()
+    return {"bericht": "Jouw berichten zijn gewist"}
+```
+
+Elk endpoint dat iets verwijdert, controleert nu zelf.
+
+</details>
+
+Door naar [stap 3: in de praktijk](./praktijk).
