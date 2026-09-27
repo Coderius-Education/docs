@@ -25,6 +25,7 @@ const SUBJECT_PER_KOP: Record<string, string> = {
   'Database (sqlitedict)': 'database',
   Browser: 'browser',
   Mappenstructuur: 'structuur',
+  Veiligheid: 'veiligheid',
 };
 
 type Item = {
@@ -139,6 +140,40 @@ const KOPPELING: Item[] = [
 
   // --- Mappenstructuur ---
   { summary: 'Compleet project', concepten: ['struct-main', 'struct-static', 'struct-templates'] },
+
+  // --- Veiligheid ---
+  // Een eigen reeks in de navbar, los van het nagekeken eindproject. De
+  // nakijker toetst deze syntax daarom niet.
+  {
+    summary: 'Wachtwoord hashen en controleren (Argon2)',
+    concepten: [],
+    geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
+  },
+  {
+    summary: 'Een verzoeklimiet (slowapi)',
+    concepten: [],
+    geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
+  },
+  {
+    summary: 'Controleren wie iets mag (403)',
+    concepten: [],
+    geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
+  },
+  {
+    summary: 'HTML van een bezoeker onschadelijk maken (escape)',
+    concepten: [],
+    geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
+  },
+  {
+    summary: 'Een cookie buiten bereik van scripts (httponly)',
+    concepten: [],
+    geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
+  },
+  {
+    summary: 'Invoer begrenzen op de server (Form)',
+    concepten: [],
+    geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
+  },
 ];
 
 /** Leest de cheatsheet als een lijst van (H2-kop, summary-tekst). */

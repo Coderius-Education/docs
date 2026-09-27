@@ -1,0 +1,62 @@
+---
+sidebar_label: '3. In de praktijk'
+description: Controleer op wat mag in plaats van te weren wat niet mag, zet een grens op de grootte van verzoeken, en waarom een 422 genoeg zegt.
+---
+
+# Invoer controleren: in de praktijk
+
+Met `max_length` en een eigen controle uit [de oplossing](./oplossing) bewaak je
+één formulier. Een echte site doet dat overal, en op een vaste manier.
+
+## Toestaan wat mag, niet weren wat niet mag
+
+Er zijn twee manieren om invoer te controleren. Je kunt opsommen wat níét mag,
+of opsommen wat wél mag. Het tweede is veiliger.
+
+Neem een gebruikersnaam. Weren wat niet mag ("geen `<`, geen spaties, geen
+`;`…") laat altijd iets door dat je niet bedacht had. Toestaan wat mag ("alleen
+letters en cijfers, 3 tot 20 tekens") laat precies dat door en de rest niet.
+Wat je vergeet te noemen, is dan geweigerd in plaats van toegestaan. Dat is
+hetzelfde idee als *deny by default* uit
+[Wie mag wat](../toegang/praktijk).
+
+## Een grens op de grootte van een verzoek
+
+`max_length` bewaakt één veld. Een verzoek kan ook groot zijn op andere
+manieren: een enorm geüpload bestand, of duizend velden tegelijk. Daar zet je een
+grens omheen die vóór je code komt. Dat regel je meestal niet in FastAPI zelf,
+maar in de server ervoor, zoals nginx uit
+[Te veel verzoeken](../dos/praktijk):
+
+```
+client_max_body_size 1m;
+```
+
+Alles groter dan een megabyte weigert nginx dan, voordat het je server bereikt.
+
+## Een 422 zegt genoeg
+
+FastAPI stuurt bij een te lang of ontbrekend veld een `422` met daarin welk veld
+het was en waarom. Dat is genoeg: de afzender weet wat hij moet aanpassen, en je
+verraadt niets gevoeligs. Bouw zelf geen uitgebreide foutmeldingen die
+bijvoorbeeld tonen wat er wél in de database staat.
+
+## Opdracht: welke aanpak past?
+
+Kies bij elke situatie de aanpak uit deze reeks die past.
+
+1. Een veld voor een leeftijd krijgt de tekst `honderd` binnen.
+2. Iemand uploadt een bestand van 2 gigabyte naar je server.
+3. Je wilt een gebruikersnaam toestaan, maar geen rare tekens.
+
+<details>
+<summary>Antwoord</summary>
+
+1. Type in de parameter: `leeftijd: int = Form(...)`. FastAPI weigert `honderd`
+   dan met een `422`, net als bij het nummer in
+   [Detailpagina](/docs/FastAPI/detailpagina).
+2. Een grens op de grootte van het verzoek, in de server vóór FastAPI.
+3. Toestaan wat mag: alleen letters en cijfers, met een minimum- en
+   maximumlengte.
+
+</details>

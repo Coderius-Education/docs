@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
@@ -30,7 +30,7 @@ function pythonBlokken(bestand: string): Blok[] {
     blokken.push({
       bestand: relative(DOCS, bestand),
       code: m[1],
-      gemarkeerd: /\{\/\* onveilig-voorbeeld: \S[^*]*\*\/\}\s*$/.test(ervoor),
+      gemarkeerd: /\{\/\* onveilig-voorbeeld: \S[^*]*\*\/\}\s*(<CodeUitleg>\s*)?$/.test(ervoor),
     });
   }
   return blokken;
@@ -38,7 +38,7 @@ function pythonBlokken(bestand: string): Blok[] {
 
 // Geeft per HTMLResponse(f"…") de placeholders terug die een parameter van
 // het omliggende endpoint gebruiken zonder escape().
-export function onveiligePlaatsen(code: string): string[] {
+function onveiligePlaatsen(code: string): string[] {
   const fouten: string[] = [];
   const functies = code.split(/^(?=\s*async def |\s*def )/m);
   for (const functie of functies) {

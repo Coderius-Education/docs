@@ -1,0 +1,130 @@
+---
+sidebar_label: '1. De zwakheid'
+description: Het sessie-id staat in een cookie die elk script op de pagina kan lezen. Bekijk je eigen cookie in de ontwikkelaarstools en in de Console.
+---
+
+# Cookies afschermen: de zwakheid
+
+Het sessie-id uit [Sessies](/docs/FastAPI/sessies) is de sleutel tot een
+sessie: wie het heeft, is voor je server die bezoeker. Daarom is het een lang,
+willekeurig getal dat niemand raadt. Maar raden hoeft niet als een script het
+kan lezen, en standaard kan dat.
+
+## Een formulier bij de server
+
+Neem de server uit [Wie mag wat: de oplossing](../toegang/oplossing) en zet er
+een formulier bij, als los bestand `static/formulier.html`:
+
+```html
+<!doctype html>
+<html>
+<body>
+    <form method="post" action="/bericht">
+        <input type="text" name="naam" placeholder="Je naam" required>
+        <input type="text" name="bericht" placeholder="Je bericht" required>
+        <button type="submit">Verstuur</button>
+    </form>
+</body>
+</html>
+```
+
+In `main.py` komen er twee regels bij, zodat de server de map `static` laat
+zien:
+
+```python
+from fastapi.staticfiles import StaticFiles
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+```
+
+Zet de import bovenaan bij de andere, en `app.mount` direct onder
+`app = FastAPI()`.
+
+## Bekijk je eigen cookie
+
+:::danger[Alleen je eigen server]
+Kijk alleen naar de cookies van je eigen server op `127.0.0.1`, in je eigen
+browser. Het sessie-id van een ander gebruiken om als die persoon binnen te
+komen, is strafbaar.
+:::
+
+1. Open `http://127.0.0.1:8000/static/formulier.html` en verstuur een bericht.
+   Je ziet de sleutel van je bericht als JSON.
+2. Ga terug naar het formulier en open de ontwikkelaarstools. Kijk in het
+   tabblad **App** (Firefox: Opslag) onder Cookies bij `http://127.0.0.1:8000`.
+   Daar staat `sessie_id`, met in de kolom **HttpOnly** niets.
+3. Typ in de **Console**:
+
+```js
+document.cookie
+```
+
+De Console antwoordt met je sessie-id, iets als
+`'sessie_id=bb4b18ca1efc4877c990fdadd8a6f593'`.
+
+Dat is de zwakheid. `document.cookie` is niet alleen voor jou in de Console:
+elk script dat op deze pagina draait, kan het ook. Staat er ergens een gat
+zoals in [HTML van een bezoeker](../xss/zwakheid), dan draait er misschien een
+script van een ander op je pagina, en dat leest je sessie-id net zo makkelijk.
+
+## Er gaat iets mis
+
+`document.cookie` geeft `''`, een lege tekst, terwijl je wel een bericht hebt
+verstuurd.
+
+**Oorzaak:** je hebt de pagina geopend via `localhost:8000` in plaats van
+`127.0.0.1:8000`, of andersom. Het is dezelfde server, maar voor de browser zijn
+het twee verschillende sites, elk met eigen cookies.
+
+**Oplossing:** gebruik overal hetzelfde adres. Verstuur het bericht en open de
+Console op `127.0.0.1:8000`.
+
+## Opdrachten
+
+### Opdracht 1: Investigate - Wat stuurt de server mee?
+
+Open het tabblad **Netwerk**, verstuur nog een bericht, en klik op het verzoek
+`bericht`. Zoek bij de antwoordkoppen de regel `set-cookie`. Welke instellingen
+zie je achter het sessie-id staan?
+
+<details>
+<summary>Tip</summary>
+
+De instellingen staan achter de waarde, gescheiden door puntkomma's.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Iets als:
+
+```
+sessie_id=bb4b18ca1efc4877c990fdadd8a6f593; Max-Age=2592000; Path=/; SameSite=lax
+```
+
+plus een datum bij `expires`. `Max-Age` is de 30 dagen uit `max_age` in
+seconden, `Path=/` betekent: voor de hele site. `SameSite=lax` zet FastAPI er
+vanzelf bij; wat dat doet, staat in [de praktijk](./praktijk). `HttpOnly`
+staat er niet bij, en daarom mag een script de cookie lezen.
+
+</details>
+
+### Opdracht 2: Predict - Een ander tabblad
+
+Je opent in hetzelfde browservenster een tweede tabblad met
+`http://127.0.0.1:8000/berichten`, en typt daar in de Console
+`document.cookie`.
+
+**Vraag:** zie je daar ook je sessie-id?
+
+<details>
+<summary>Antwoord</summary>
+
+Ja. Een cookie hoort bij de site, niet bij één pagina of tabblad. Met `Path=/`
+geldt hij voor elke pagina op `127.0.0.1:8000`, en een script op elk van die
+pagina's kan hem lezen.
+
+</details>
+
+Door naar [stap 2: de oplossing](./oplossing).

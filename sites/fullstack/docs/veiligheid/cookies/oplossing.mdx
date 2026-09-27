@@ -1,0 +1,182 @@
+---
+sidebar_label: '2. De oplossing'
+description: Met httponly kan een script de sessie-cookie niet meer lezen. Zet de instelling in set_cookie en zie document.cookie leeg worden.
+---
+
+# Cookies afschermen: de oplossing
+
+De browser kan een cookie voor scripts afschermen. Dan stuurt hij hem nog wel
+bij elk verzoek mee, zodat je server de sessie herkent, maar `document.cookie`
+laat hem niet meer zien. Je zet het aan met één instelling in `set_cookie`:
+**`httponly`**.
+
+## `httponly` in `set_cookie`
+
+In `bericht_plaatsen` staat de regel die de cookie zet. Voeg `httponly=True`
+toe:
+
+{/* niet-compileren: de laatste regels van bericht_plaatsen, ingesprongen fragment */}
+
+<CodeUitleg>
+
+```python showLineNumbers
+    antwoord = JSONResponse({"sleutel": sleutel})
+    antwoord.set_cookie(
+        key="sessie_id",
+        value=sessie_id,
+        max_age=60 * 60 * 24 * 30,
+        httponly=True,
+    )
+    return antwoord
+```
+
+<Regel n={2} tot={7}>
+Dezelfde `set_cookie` als in Sessies, nu met `httponly=True` erbij. De naam, de waarde en de houdbaarheid blijven gelijk.
+</Regel>
+
+</CodeUitleg>
+
+De naam `httponly` betekent: alleen voor HTTP-verzoeken, niet voor JavaScript.
+De cookie gaat dus wel over het netwerk mee, maar een script op de pagina kan
+hem niet lezen.
+
+## Doe de test opnieuw
+
+Verstuur een nieuw bericht, zodat je een verse cookie krijgt. Open de Console op
+`127.0.0.1:8000` en typ weer:
+
+```js
+document.cookie
+```
+
+Nu antwoordt de Console met `''`, een lege tekst. In het tabblad **App** staat
+`sessie_id` er nog, en in de kolom **HttpOnly** staat nu een vinkje. De server
+herkent je nog steeds: de berichten die je verwijdert, gaan weg. Alleen
+een script komt niet meer bij de cookie.
+
+## Er gaat iets mis
+
+`document.cookie` toont je oude sessie-id nog, ook al heb je `httponly=True`
+gezet.
+
+**Oorzaak:** dit is nog de cookie van vóór de wijziging. `httponly` geldt vanaf
+het moment dat de server de cookie zet, en de oude staat al in je browser.
+
+**Oplossing:** verstuur een nieuw bericht, zodat de server een nieuwe
+`set_cookie` stuurt, of verwijder de cookie in het tabblad **App** en laad de
+pagina opnieuw.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Verwijderen na httponly
+
+Je hebt `httponly=True` gezet en een nieuw bericht verstuurd. In de Console typ
+je:
+
+```js
+document.cookie = "sessie_id=hallo"
+```
+
+**Vraag:** kun je je eigen sessie-cookie zo overschrijven?
+
+<details>
+<summary>Tip</summary>
+
+`httponly` gaat over wat een script met de cookie mag.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Nee. Een script mag een `httponly`-cookie niet lezen en niet overschrijven. Je
+regel lijkt te lukken, maar de echte `sessie_id` blijft staan, en die stuurt de
+browser mee. Wil je uitloggen, dan moet de server de cookie weghalen met
+`delete_cookie`.
+
+</details>
+
+### Opdracht 2: Investigate - Waarom stuurt de browser hem nog mee?
+
+Met `httponly` kan een script de cookie niet lezen. Toch weet je server na een
+verwijderverzoek nog wie je bent. Hoe kan dat?
+
+<details>
+<summary>Antwoord</summary>
+
+`httponly` schermt de cookie alleen af voor scripts. De browser zelf stuurt hem
+bij elk verzoek naar `127.0.0.1:8000` mee, in de kop `Cookie`. Je server leest
+hem daaruit met `sessie_id: str = Cookie(default="")`, precies als eerst. Alleen
+JavaScript is buitengesloten.
+
+</details>
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+```python
+import secrets
+import time
+
+from fastapi import Cookie, FastAPI, Form, HTTPException
+from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.post("/bericht")
+async def bericht_plaatsen(
+    naam: str = Form(...),
+    bericht: str = Form(...),
+    sessie_id: str = Cookie(default=""),
+):
+    if not sessie_id:
+        sessie_id = secrets.token_hex(16)
+
+    sleutel = f"bericht_{time.time_ns()}"
+    with SqliteDict("gastenboek.db") as db:
+        db[sleutel] = {"naam": naam, "bericht": bericht}
+        db.commit()
+
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {"naam": naam, "berichten": []})
+        mijn["naam"] = naam
+        mijn["berichten"].append(sleutel)
+        sessies[sessie_id] = mijn
+        sessies.commit()
+
+    antwoord = JSONResponse({"sleutel": sleutel})
+    antwoord.set_cookie(
+        key="sessie_id",
+        value=sessie_id,
+        max_age=60 * 60 * 24 * 30,
+        httponly=True,
+    )
+    return antwoord
+
+@app.get("/berichten")
+async def berichten():
+    with SqliteDict("gastenboek.db") as db:
+        return dict(db)
+
+@app.delete("/bericht/{sleutel}")
+async def bericht_verwijderen(sleutel: str, sessie_id: str = Cookie(default="")):
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {})
+    if sleutel not in mijn.get("berichten", []):
+        raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
+
+    with SqliteDict("gastenboek.db") as db:
+        if sleutel in db:
+            del db[sleutel]
+            db.commit()
+    return {"bericht": "Verwijderd"}
+```
+
+De sessie-cookie staat nu buiten bereik van scripts.
+
+</details>
+
+Door naar [stap 3: in de praktijk](./praktijk).

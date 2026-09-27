@@ -68,9 +68,20 @@ const ZONDER_BLOK: Record<string, string> = {
   'troubleshooting.md': 'naslag',
   'veiligheid/dos/oplossing.mdx': 'bouwt op de zwakheid-stap ervoor, in dezelfde map',
   'veiligheid/dos/praktijk.mdx': 'achtergrond bij de twee stappen ervoor, geen nieuwe voorkennis',
+  'veiligheid/cookies/oplossing.mdx': 'bouwt op de zwakheid-stap ervoor, in dezelfde map',
+  'veiligheid/cookies/praktijk.mdx':
+    'achtergrond bij de twee stappen ervoor, geen nieuwe voorkennis',
+  'veiligheid/cookies/zwakheid.mdx': 'bouwt op sessies en de toegang-reeks, geen nieuwe voorkennis',
+  'veiligheid/invoer/oplossing.mdx': 'bouwt op de zwakheid-stap ervoor, in dezelfde map',
+  'veiligheid/invoer/praktijk.mdx':
+    'achtergrond bij de twee stappen ervoor, geen nieuwe voorkennis',
+  'veiligheid/invoer/zwakheid.mdx':
+    'maxlength is fullstack-stof uit server-of-browser, geen nieuwe voorkennis',
   'veiligheid/toegang/oplossing.mdx': 'bouwt op de zwakheid-stap ervoor, in dezelfde map',
   'veiligheid/toegang/praktijk.mdx':
     'achtergrond bij de twee stappen ervoor, geen nieuwe voorkennis',
+  'veiligheid/xss/oplossing.mdx': 'bouwt op de zwakheid-stap ervoor, in dezelfde map',
+  'veiligheid/xss/praktijk.mdx': 'achtergrond bij de twee stappen ervoor, geen nieuwe voorkennis',
   'veiligheid/wachtwoorden/hash.mdx': 'hashlib en encode worden in de les zelf uitgelegd',
   'veiligheid/wachtwoorden/praktijk.mdx':
     'achtergrond bij de lessen ervoor, geen nieuwe voorkennis',
@@ -101,6 +112,7 @@ const MET_BLOK = [
   'veiligheid/wachtwoorden/gewone-tekst.mdx',
   'veiligheid/wachtwoorden/inloggen.mdx',
   'veiligheid/wachtwoorden/traag.mdx',
+  'veiligheid/xss/zwakheid.mdx',
 ];
 
 function relatievePaden(): string[] {

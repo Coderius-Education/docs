@@ -1,0 +1,92 @@
+---
+sidebar_label: '3. In de praktijk'
+description: Waarom XSS gevaarlijk is, waarom je bij de uitvoer escapet en niet bij de invoer filtert, en wat een Content-Security-Policy toevoegt.
+---
+
+# HTML van een bezoeker: in de praktijk
+
+Met templates en `escape` uit [de oplossing](./oplossing) heb je het
+belangrijkste gedaan. Echte sites doen er nog wat bij, omdat één vergeten plek
+genoeg is.
+
+## Waarom XSS zo gevaarlijk is
+
+Een script dat via je gastenboek in de pagina komt, draait in de browser van
+elke bezoeker, alsof het van jouw site is. Het kan dus alles wat die bezoeker
+op jouw site kan: verzoeken sturen met zijn sessie, de pagina veranderen, of
+een nep-inlogformulier tonen. De bezoeker ziet het adres van jouw site en heeft
+geen reden om te twijfelen.
+
+Daarom staat XSS al twintig jaar in elke lijst van de meest gevonden zwakheden
+in webapplicaties.
+
+## Escapen bij de uitvoer, niet filteren bij de invoer
+
+Een idee dat vaak opkomt: haal bij het opslaan alle `<script>` uit de tekst. Dat
+werkt niet goed. HTML kent veel meer manieren om code te laten draaien dan
+`<script>`, en een filter mist er altijd een. Bovendien kan een bezoeker niet
+meer schrijven over `<b>` zelf, terwijl dat in een gastenboek over HTML heel
+normaal is.
+
+Escapen werkt andersom. Je laat de tekst zoals hij is, en zorgt op de plek waar
+hij in de HTML komt dat hij tekst blijft. Dan maakt het niet uit wat erin
+staat.
+
+## Een tweede slot: Content-Security-Policy
+
+Een site kan de browser vertellen welke scripts hij mag uitvoeren. Dat heet een
+**Content-Security-Policy**, en het is een regel in de kop van elk antwoord.
+Met een kleine functie die FastAPI bij elk antwoord aanroept, zet je hem op al
+je pagina's:
+
+```python
+@app.middleware("http")
+async def veiligheidskoppen(request, call_next):
+    antwoord = await call_next(request)
+    antwoord.headers["Content-Security-Policy"] = "script-src 'self'"
+    return antwoord
+```
+
+`script-src 'self'` betekent: alleen scripts uit bestanden van deze site, zoals
+`/static/js/htmx.min.js`. Een script dat midden in de HTML staat, voert de
+browser dan niet uit, ook niet als het door een vergeten f-string binnenkwam.
+In de Console zie je een melding dat de Content-Security-Policy het
+tegenhield.
+
+Het is een tweede slot, geen vervanging: escapen blijft nodig. En eigen
+JavaScript moet dan in een `.js`-bestand staan, niet in een `<script>` in je
+HTML.
+
+## Cookies buiten bereik van scripts
+
+Een script in de pagina kan met `document.cookie` de cookies van die pagina
+lezen, ook het sessie-id. Met één instelling in `set_cookie` houd je de
+sessie-cookie daarbuiten. Dat staat in de reeks
+[Cookies afschermen](../cookies/zwakheid).
+
+## Op een site van een ander
+
+Of een site van een ander escapet, test je niet door er HTML in te vullen. Dat
+is een aanval op die site en op de bezoekers ervan. Zie je per ongeluk dat
+tekst als HTML verschijnt, meld het dan bij de eigenaar, zoals staat in
+[Wie mag wat: in de praktijk](../toegang/praktijk).
+
+## Opdracht: waar moet de bescherming?
+
+Hieronder staan vier stukken code. Welke zijn veilig voor tekst van een
+bezoeker, en wat moet er anders bij de rest?
+
+1. `<p>{{ bericht.bericht }}</p>` in `berichten.html`
+2. `HTMLResponse(f"<p>{bericht}</p>")`
+3. `<p>{{ bericht.bericht|safe }}</p>` in `berichten.html`
+4. `HTMLResponse(f"Er staan {len(berichten)} berichten in het gastenboek.")`
+
+<details>
+<summary>Antwoord</summary>
+
+1. Veilig: Jinja escapet in een `.html`-template.
+2. Niet veilig: maak er `{escape(bericht)}` van, of gebruik een template.
+3. Niet veilig: haal `|safe` weg.
+4. Veilig: het getal komt van je eigen code, niet van de bezoeker.
+
+</details>

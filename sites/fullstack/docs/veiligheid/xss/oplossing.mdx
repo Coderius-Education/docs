@@ -1,0 +1,197 @@
+---
+sidebar_label: '2. De oplossing'
+description: Laat een template de tekst van een bezoeker escapen, gebruik escape() in een f-string, en zie waarom |safe de bescherming weer uitzet.
+---
+
+# HTML van een bezoeker: de oplossing
+
+De oplossing heet **escapen**: van elke `<` een `&lt;` maken, van elke `>` een
+`&gt;`, en zo verder. De browser toont die tekens als tekst en leest ze niet als
+HTML. Je hoeft dat niet zelf te doen: een template doet het vanzelf, en voor
+een f-string is er `escape`.
+
+## De lijst met een template
+
+Maak `templates/berichten_lijst.html`, zoals in het recept Verversen van het
+[htmx-overzicht](/docs/FastAPI/htmx-overzicht):
+
+```html
+<ul>
+    {% for bericht in berichten %}
+        <li>{{ bericht.naam }}: {{ bericht.bericht }}</li>
+    {% endfor %}
+</ul>
+```
+
+Alles tussen `{{ }}` escapet Jinja. Het endpoint geeft nu het template terug:
+
+<CodeUitleg>
+
+```python showLineNumbers
+@app.get("/berichten/lijst")
+async def berichten_lijst(request: Request):
+    with SqliteDict("gastenboek.db") as db:
+        alle_berichten = list(db.values())
+    return templates.TemplateResponse(request, "berichten_lijst.html", {"berichten": alle_berichten})
+```
+
+<Regel n={2}>
+Een `TemplateResponse` heeft de `request` nodig, net als in de andere lessen met templates.
+</Regel>
+
+<Regel n={5}>
+Geen f-string meer: de berichten gaan naar het template, en Jinja zet ze erin.
+</Regel>
+
+</CodeUitleg>
+
+Zet bovenaan `main.py` wat daarvoor nodig is:
+
+```python
+from fastapi import Request
+from fastapi.templating import Jinja2Templates
+
+templates = Jinja2Templates(directory="templates")
+```
+
+## Het antwoord met `escape`
+
+Voor één zin is een template wat veel. Daar gebruik je `escape` uit de module
+`html`, die bij Python hoort:
+
+```python
+from html import escape
+
+print(escape("<b>vet</b>"))
+```
+
+Uitvoer:
+
+```
+&lt;b&gt;vet&lt;/b&gt;
+```
+
+In `gastenboek_opslaan` wordt de laatste regel:
+
+{/* niet-compileren: losse regel uit de handler gastenboek_opslaan */}
+
+```python
+return HTMLResponse(f"Bedankt, {escape(naam)}. Je bericht staat in het gastenboek.")
+```
+
+## Doe de test opnieuw
+
+Gooi `gastenboek.db` weg, start de server opnieuw, en vul als Sara weer
+`<b>vet</b>` in. In de lijst staat nu `<b>vet</b>`, met de haakjes erbij, en
+niets is vet. `lijst.py` uit [stap 1](./zwakheid) laat zien waarom:
+
+```
+<ul>
+        <li>Sara: &lt;b&gt;vet&lt;/b&gt;</li>
+</ul>
+```
+
+De witruimte komt uit het template. Wat Sara typte staat er, maar als tekst.
+
+## Er gaat iets mis
+
+Je wilde dat bezoekers vet konden schrijven, en zette `|safe` achter het
+bericht in het template:
+
+```html
+<!-- FOUT -->
+<li>{{ bericht.naam }}: {{ bericht.bericht|safe }}</li>
+
+<!-- GOED -->
+<li>{{ bericht.naam }}: {{ bericht.bericht }}</li>
+```
+
+Er komt geen foutmelding, en `<b>vet</b>` is weer vet.
+
+**Oorzaak:** `|safe` zegt tegen Jinja: deze tekst is veilig, escape hem niet.
+Dan is alles wat een bezoeker invult weer HTML, net als met de f-string.
+
+**Oplossing:** gebruik `|safe` nooit voor tekst van een bezoeker. Alleen voor
+HTML die je zelf hebt geschreven.
+
+Hetzelfde gebeurt stil als je het template een andere extensie geeft, zoals
+`berichten_lijst.jinja`: Jinja escapet in FastAPI alleen templates die op
+`.html`, `.htm` of `.xml` eindigen. Houd je templates op `.html`.
+
+## Opdrachten
+
+### Opdracht 1: Run - Beide plekken
+
+Zet het template en `escape` in je server. Vul als naam `<i>Noor</i>` in en als
+bericht `<b>vet</b>`. Wat zie je onder het formulier, en wat in de lijst?
+
+<details>
+<summary>Antwoord</summary>
+
+Onder het formulier: `Bedankt, <i>Noor</i>. Je bericht staat in het gastenboek.`
+In de lijst: `<i>Noor</i>: <b>vet</b>`. Alles staat er als tekst, niets is
+schuin of vet. Beide plekken escapen nu.
+
+</details>
+
+### Opdracht 2: Predict - `escape` twee keer
+
+Wat print dit?
+
+```python
+from html import escape
+
+print(escape(escape("<b>")))
+```
+
+<details>
+<summary>Tip</summary>
+
+De eerste `escape` maakt van `<` een `&lt;`. Welk teken in `&lt;` escapet de
+tweede?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```
+&amp;lt;b&amp;gt;
+```
+
+De tweede keer wordt de `&` van `&lt;` zelf ge-escapet, tot `&amp;`. In de
+browser zie je dan `&lt;b&gt;` staan in plaats van `<b>`. Escape daarom één
+keer, op de plek waar de tekst de HTML in gaat, en niet ook al bij het
+opslaan.
+
+</details>
+
+### Opdracht 3: Modify - Namen vet, veilig
+
+Maak in de lijst de naam van elke schrijver vet, zonder dat een bezoeker zelf
+HTML kan invullen.
+
+<details>
+<summary>Tip</summary>
+
+De `<b>` mag in het template staan. Het is jouw HTML, niet die van de bezoeker.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<ul>
+    {% for bericht in berichten %}
+        <li><b>{{ bericht.naam }}</b>: {{ bericht.bericht }}</li>
+    {% endfor %}
+</ul>
+```
+
+De tags komen van jou, de inhoud van de bezoeker. Jinja escapet alleen wat
+tussen `{{ }}` staat, dus de naam blijft tekst en jouw `<b>` blijft HTML.
+
+</details>
+
+Door naar [stap 3: in de praktijk](./praktijk).

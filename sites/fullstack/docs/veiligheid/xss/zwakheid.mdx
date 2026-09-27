@@ -1,0 +1,180 @@
+---
+sidebar_label: '1. De zwakheid'
+description: Wat een bezoeker invult, komt met een f-string letterlijk in je HTML, en de browser leest het als HTML. Zelf gezien met een vet woord, op je eigen server.
+---
+
+# HTML van een bezoeker: de zwakheid
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/tekst/04a-f-strings', label: 'F-strings'},
+  ]}
+/>
+
+In een gastenboek komt tekst van bezoekers in jouw HTML. Met een
+[template](/docs/FastAPI/post_met_templates) blijft die tekst tekst. Maar een endpoint
+voor htmx geeft vaak een klein stukje HTML terug, en dat bouw je snel met een
+f-string. Dan gaat het mis.
+
+## Een gastenboek met een f-string
+
+Dit gastenboek zet de berichten niet in een template, maar in een f-string.
+De pagina zelf is een los bestand `static/gastenboek.html`:
+
+```html
+<!doctype html>
+<html>
+<head>
+    <script src="/static/js/htmx.min.js" defer></script>
+</head>
+<body>
+    <form hx-post="/gastenboek" hx-target="#antwoord">
+        <input type="text" name="naam" placeholder="Je naam" required>
+        <input type="text" name="bericht" placeholder="Je bericht" required>
+        <button type="submit">Verstuur</button>
+    </form>
+    <p id="antwoord"></p>
+    <div id="lijst" hx-get="/berichten/lijst" hx-trigger="load, every 5s"></div>
+</body>
+</html>
+```
+
+Zet `htmx.min.js` uit [Zonder herladen](/docs/FastAPI/htmx) in `static/js/`.
+Het endpoint staat in `main.py`:
+
+{/* onveilig-voorbeeld: de zwakheid die deze les laat zien */}
+
+<CodeUitleg>
+
+```python showLineNumbers
+import time
+
+from fastapi import FastAPI, Form
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.post("/gastenboek")
+async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    return HTMLResponse(f"Bedankt, {naam}. Je bericht staat in het gastenboek.")
+
+@app.get("/berichten/lijst")
+async def berichten_lijst():
+    regels = ""
+    with SqliteDict("gastenboek.db") as db:
+        for bericht in db.values():
+            regels += f"<li>{bericht['naam']}: {bericht['bericht']}</li>"
+    return HTMLResponse(f"<ul>{regels}</ul>")
+```
+
+<Regel n={16}>
+Het antwoord na het versturen, zoals in het htmx-recept stond voordat er `escape` in kwam.
+</Regel>
+
+<Regel n={20} tot={24}>
+Elk bericht wordt een `<li>`, met een f-string. De naam en het bericht komen er precies in zoals de bezoeker ze typte.
+</Regel>
+
+</CodeUitleg>
+
+## Doe het na, op je eigen server
+
+:::danger[Alleen je eigen server]
+Doe dit **uitsluitend** op je eigen server op `127.0.0.1`. HTML invullen op de
+site van een ander om te kijken wat er gebeurt, is een aanval op die site en op
+de bezoekers ervan, en strafbaar.
+:::
+
+Start je server en open `http://127.0.0.1:8000/static/gastenboek.html`. Vul als
+naam `Sara` in en als bericht:
+
+```html
+<b>vet</b>
+```
+
+In de lijst staat nu **vet**, vetgedrukt. Open dezelfde pagina in een
+privévenster, als een tweede bezoeker: ook daar is het vet. De browser las wat
+Sara typte niet als tekst, maar als HTML.
+
+Wat de server precies terugstuurt, zie je met een scriptje `lijst.py`:
+
+```python
+import httpx
+
+antwoord = httpx.get("http://127.0.0.1:8000/berichten/lijst")
+print(antwoord.text)
+```
+
+Uitvoer, met alleen het bericht van Sara in de database:
+
+```
+<ul><li>Sara: <b>vet</b></li></ul>
+```
+
+De `<b>` staat er letterlijk in. Een vet woord is onschuldig, maar de browser
+maakt geen onderscheid: ook een `<script>` dat een bezoeker invult, komt zo in
+de pagina van iedereen die hem daarna opent, en de browser voert het uit. Dat
+heet **XSS**, *cross-site scripting*: code van een bezoeker die draait in de
+browser van een ander.
+
+## Er gaat iets mis
+
+Het formulier verstuurt niets, of er staat `?naam=` in de adresbalk en de lijst
+blijft leeg.
+
+**Oorzaak:** htmx is niet geladen. Zonder htmx kent de browser `hx-post` en
+`hx-get` niet, en verstuurt hij het formulier als gewone `GET` naar dezelfde
+pagina.
+
+**Oplossing:** kijk in het tabblad **Netwerk** of `htmx.min.js` een 200
+kreeg. Een 404 betekent dat het bestand niet in `static/js/` staat.
+
+Meer uitleg: [Zonder herladen met htmx](/docs/FastAPI/htmx)
+
+## Opdrachten
+
+### Opdracht 1: Predict - Een schuine naam
+
+Een nieuwe bezoeker vult als naam `<i>Noor</i>` in en als bericht `hoi`.
+
+**Vraag:** wat ziet Noor onder het formulier, direct na het versturen?
+
+<details>
+<summary>Tip</summary>
+
+Kijk naar regel 16: wat staat er in de f-string?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+"Bedankt, *Noor*. Je bericht staat in het gastenboek.", met Noor schuin. Het
+antwoord na het versturen gebruikt dezelfde f-string, dus ook daar leest de
+browser de naam als HTML. Dat raakt alleen Noor zelf; de lijst raakt iedereen.
+
+</details>
+
+### Opdracht 2: Investigate - En met een template?
+
+Het recept Verversen in het [htmx-overzicht](/docs/FastAPI/htmx-overzicht)
+maakt de lijst met een template, `berichten_lijst.html`. Stel dat Sara daar
+`<b>vet</b>` invult. Wordt het dan vet?
+
+<details>
+<summary>Antwoord</summary>
+
+Nee. Je ziet `<b>vet</b>` staan, met de haakjes erbij. Jinja zet in een
+template van elke `<` een `&lt;` en van elke `>` een `&gt;`, en die tekens toont
+de browser als tekst. Dat is precies wat de f-string niet doet, en daar zit de
+oplossing in de volgende stap.
+
+</details>
+
+Door naar [stap 2: de oplossing](./oplossing).

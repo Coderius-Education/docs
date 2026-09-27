@@ -1,0 +1,136 @@
+---
+sidebar_label: '1. De zwakheid'
+description: maxlength in de HTML houdt een script niet tegen. Stuur op je eigen server een veel te lang bericht rechtstreeks naar je endpoint.
+---
+
+# Invoer controleren: de zwakheid
+
+In [Server of browser?](/docs/FastAPI/server-of-browser) zag je het al voor de
+lengte van één bericht: `maxlength` in de HTML is een hulp voor wie zich
+vergist, geen controle. Wie het formulier omzeilt, komt er langs. Hier doe je
+dat na, en zie je hoe ver het gaat.
+
+## Een formulier met een grens die niet telt
+
+Het gastenboekformulier zet een grens op het bericht:
+
+```html
+<form method="post" action="/bericht">
+    <input type="text" name="naam" maxlength="30" required>
+    <input type="text" name="bericht" maxlength="280" required>
+    <button type="submit">Verstuur</button>
+</form>
+```
+
+Het endpoint slaat op wat binnenkomt, zonder zelf te kijken:
+
+```python
+@app.post("/bericht")
+async def bericht_plaatsen(naam: str = Form(...), bericht: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    return {"lengte": len(bericht)}
+```
+
+Het endpoint geeft de lengte van het bericht terug, zodat je in de test ziet wat
+er binnenkwam.
+
+## Doe het na, op je eigen server
+
+:::danger[Alleen je eigen server]
+Stuur zulke verzoeken **uitsluitend** naar je eigen server op `127.0.0.1`. Een
+server van een ander volstoppen met grote of veel verzoeken is een aanval, en
+strafbaar.
+:::
+
+Vul in de browser een bericht in: langer dan 280 tekens lukt niet, want
+`maxlength` houdt je tegen. Nu een scriptje `groot.py` dat níét via het
+formulier gaat, maar rechtstreeks naar het endpoint:
+
+<CodeUitleg>
+
+```python showLineNumbers
+import httpx
+
+adres = "http://127.0.0.1:8000/bericht"
+
+bericht = "a" * 1_000_000
+antwoord = httpx.post(adres, data={"naam": "Sara", "bericht": bericht})
+print(antwoord.json())
+```
+
+<Regel n={5}>
+Een bericht van een miljoen tekens. In het formulier kreeg je dit er nooit in; `httpx` trekt zich van `maxlength` niets aan.
+</Regel>
+
+<Regel n={6} tot={7}>
+Hetzelfde verzoek dat de browser zou sturen, maar zonder de grens uit de HTML.
+</Regel>
+
+</CodeUitleg>
+
+Uitvoer:
+
+```
+{'lengte': 1000000}
+```
+
+Alle miljoen tekens staan in je database. `maxlength` zat in de HTML, en die
+HTML draaide in de browser die je nu hebt overgeslagen. Het endpoint zag alleen
+het verzoek, en dat had geen grens.
+
+Dat is de zwakheid. Eén bericht van een miljoen tekens is al vervelend; een
+script dat dat duizend keer doet, vult je schijf.
+
+## Er gaat iets mis
+
+`groot.py` geeft een `422` terug in plaats van de lengte.
+
+**Oorzaak:** je stuurt geen `naam` of `bericht` mee, of de namen in `data`
+komen niet overeen met de `Form`-parameters. FastAPI mist dan een verplicht
+veld.
+
+**Oplossing:** stuur beide velden mee, met precies de namen `naam` en `bericht`,
+net als het formulier.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Spaties als naam
+
+Je stuurt `data={"naam": "   ", "bericht": "hoi"}`: een naam van drie spaties.
+
+**Vraag:** komt dit bericht in de database, of houdt `Form(...)` het tegen?
+
+<details>
+<summary>Tip</summary>
+
+`Form(...)` eist dat het veld er is. Kijkt het ook naar wat erin staat?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Het komt binnen. `Form(...)` eist alleen dat het veld bestaat en niet leeg is;
+drie spaties zijn tekst, dus voor FastAPI is het veld gevuld. Een naam die
+alleen uit spaties bestaat, is iets dat je zelf moet controleren. Dat doe je in
+de volgende stap.
+
+</details>
+
+### Opdracht 2: Investigate - Waar is de grens?
+
+Je las in `groot.py` een bericht van een miljoen tekens weg. Verhoog het naar
+tien miljoen. Blijft het lukken?
+
+<details>
+<summary>Antwoord</summary>
+
+Ja, ook tien miljoen tekens komen binnen. Er is geen grens in je code, dus de
+enige grens is het geheugen van je computer. Juist daarom moet je hem zelf
+zetten.
+
+</details>
+
+Door naar [stap 2: de oplossing](./oplossing).

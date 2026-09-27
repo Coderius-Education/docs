@@ -115,6 +115,32 @@ const sidebars: SidebarsConfig = {
         'veiligheid/toegang/praktijk',
       ],
     },
+    {
+      type: 'category',
+      label: 'HTML van een bezoeker (XSS)',
+      collapsed: false,
+      items: ['veiligheid/xss/zwakheid', 'veiligheid/xss/oplossing', 'veiligheid/xss/praktijk'],
+    },
+    {
+      type: 'category',
+      label: 'Cookies afschermen',
+      collapsed: false,
+      items: [
+        'veiligheid/cookies/zwakheid',
+        'veiligheid/cookies/oplossing',
+        'veiligheid/cookies/praktijk',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Invoer controleren',
+      collapsed: false,
+      items: [
+        'veiligheid/invoer/zwakheid',
+        'veiligheid/invoer/oplossing',
+        'veiligheid/invoer/praktijk',
+      ],
+    },
   ],
 };
 
