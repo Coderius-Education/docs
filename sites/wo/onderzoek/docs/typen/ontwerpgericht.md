@@ -38,3 +38,4 @@ Alleen iets maken is nog geen onderzoek. Het verschil zit in het **toetsen van j
 - [Theoriegericht onderzoek](./theoriegericht.md) — de tegenhanger: iets *weten* in plaats van iets *maken*
 - [Theoriegericht vs. ontwerpgericht](./theorie-vs-ontwerp.mdx) — het verband tussen beide typen
 - [Beschrijvend-evaluerend onderzoek](../opzet/functies/beschrijvend-evaluerend.md) — de functie achter het toetsen aan eisen
+- [Deelvragen](../vragen/deelvragen.md) — het vaste patroon van deelvragen bij een ontwerpvraag

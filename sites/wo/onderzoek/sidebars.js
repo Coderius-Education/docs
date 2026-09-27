@@ -18,6 +18,15 @@ const sidebars = {
     },
     {
       type: 'category',
+      label: 'Onderzoeksvragen',
+      items: [
+        'vragen/hoofd-en-deelvragen',
+        'vragen/hoofdvraag',
+        'vragen/deelvragen',
+      ],
+    },
+    {
+      type: 'category',
       label: 'De spelregels',
       items: [
         'spelregels/de-vier-spelregels',

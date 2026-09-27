@@ -9,6 +9,11 @@ const kaarten = [
     to: '/typen/theorie-vs-ontwerp',
   },
   {
+    titel: 'Onderzoeksvragen',
+    tekst: 'Van onderwerp naar een scherpe hoofdvraag, en deelvragen die samen het antwoord geven.',
+    to: '/vragen/hoofd-en-deelvragen',
+  },
+  {
     titel: 'De spelregels',
     tekst: 'Betrouwbaar, valide, transparant en aanvaardbaar — waar elk onderzoek aan moet voldoen.',
     to: '/spelregels/de-vier-spelregels',

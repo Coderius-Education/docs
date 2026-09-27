@@ -28,6 +28,12 @@ const begrippen = {
     lang: 'De samenvatting van hooguit een paar honderd woorden waarmee elk wetenschappelijk artikel begint, bijna altijd in de vaste volgorde doel, methode, resultaten, conclusie. Je gebruikt het om te kiezen welke artikelen je verder leest, niet als bron voor wat je beweert.',
     url: '/literatuurstudie/abstract-scannen',
   },
+  afbakening: {
+    term: 'Afbakening',
+    kort: 'Vastleggen over wie, wat, waar en wanneer je onderzoek gaat, zodat je vraag onderzoekbaar wordt.',
+    lang: 'Het smaller maken van je onderzoek door vast te leggen over wie, wat, waar en wanneer het gaat. Hoe beter afgebakend, hoe dieper je antwoord kan gaan.',
+    url: '/vragen/hoofdvraag',
+  },
   'analyse-materiaal': {
     term: 'Analyse van tekst- of beeldmateriaal',
     kort: 'Bestaand materiaal (artikelen, posts, reclames, video’s) systematisch bestuderen met een analyseschema.',
@@ -127,7 +133,7 @@ const begrippen = {
     term: 'Deelvraag',
     kort: 'Een kleinere vraag die helpt om de hoofdvraag te beantwoorden; per deelvraag kies je functie, soort en methode.',
     lang: 'Een kleinere vraag die helpt om de hoofdvraag te beantwoorden. Per deelvraag kies je een functie, soort en methode — zie de keuzedriehoek.',
-    url: '/opzet/keuzedriehoek',
+    url: '/vragen/deelvragen',
   },
   'deep-reading': {
     term: 'Deep reading',
@@ -181,7 +187,7 @@ const begrippen = {
     term: 'Hoofdvraag',
     kort: 'De centrale vraag van je onderzoek: een kennisvraag (theoriegericht) of een ontwerpvraag (ontwerpgericht).',
     lang: 'De centrale vraag van je onderzoek. Bij theoriegericht onderzoek is het een kennisvraag, bij ontwerpgericht onderzoek een ontwerpvraag.',
-    url: '/typen/theorie-vs-ontwerp',
+    url: '/vragen/hoofdvraag',
   },
   hypothese: {
     term: 'Hypothese',
@@ -392,6 +398,12 @@ const begrippen = {
     kort: 'Een factor die je níét onderzoekt maar wel de uitkomst beïnvloedt — bedreigt de interne validiteit.',
     lang: 'Een factor die je níét onderzoekt maar wel de uitkomst beïnvloedt, waardoor je niet weet waar het resultaat door komt. Bedreigt de interne validiteit.',
     url: '/spelregels/interne-validiteit',
+  },
+  'sturende-vraag': {
+    term: 'Sturende vraag',
+    kort: 'Een vraag waarin het gewenste antwoord al verstopt zit.',
+    lang: 'Een vraag die het antwoord al voorzegt, zoals “Waarom is het nieuwe rooster slecht?” of “Vind je ook niet dat…?”. Maakt zowel een hoofdvraag als een enquêtevraag onbruikbaar.',
+    url: '/vragen/hoofdvraag',
   },
   subjectief: {
     term: 'Subjectieve kennis',

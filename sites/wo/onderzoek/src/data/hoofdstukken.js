@@ -3,6 +3,7 @@
 
 export const hoofdstukken = [
   {id: 'typen', naam: 'Typen onderzoek', mappen: ['typen']},
+  {id: 'vragen', naam: 'Onderzoeksvragen', mappen: ['vragen']},
   {id: 'spelregels', naam: 'De spelregels', mappen: ['spelregels']},
   {id: 'kennisleer', naam: 'Kennisleer', mappen: ['kennisleer']},
   {id: 'opzet', naam: 'Onderzoek opzetten', mappen: ['opzet', 'gegevens']},
