@@ -144,8 +144,11 @@ const sidebars: SidebarsConfig = {
       label: 'Invoer controleren',
       collapsed: false,
       items: [
-        'veiligheid/invoer/zwakheid',
-        'veiligheid/invoer/oplossing',
+        'veiligheid/invoer/maxlength',
+        'veiligheid/invoer/grenzen',
+        'veiligheid/invoer/fouten-lezen',
+        'veiligheid/invoer/inhoud',
+        'veiligheid/invoer/getallen',
         'veiligheid/invoer/praktijk',
       ],
     },

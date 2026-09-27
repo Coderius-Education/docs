@@ -680,6 +680,6 @@ async def bericht_plaatsen(bericht: str = Form(..., min_length=1, max_length=280
     ...
 ```
 
-`maxlength` in de HTML helpt alleen wie zich vergist; de echte grens staat in `Form`. Zie [Invoer controleren](/docs/veiligheid/invoer/zwakheid).
+`maxlength` in de HTML helpt alleen wie zich vergist; de echte grens staat in `Form`. Zie [Invoer controleren](/docs/veiligheid/invoer/grenzen).
 
 </details>

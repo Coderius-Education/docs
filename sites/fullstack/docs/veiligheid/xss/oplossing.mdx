@@ -87,11 +87,14 @@ niets is vet. `lijst.py` uit [stap 1](./zwakheid) laat zien waarom:
 
 ```
 <ul>
+    
         <li>Sara: &lt;b&gt;vet&lt;/b&gt;</li>
+    
 </ul>
 ```
 
-De witruimte komt uit het template. Wat Sara typte staat er, maar als tekst.
+De witruimte komt uit het template: de regels met `{% for %}` en `{% endfor %}`
+worden elk een regel met alleen vier spaties. Wat Sara typte staat er, maar als tekst.
 
 ## Er gaat iets mis
 
@@ -191,6 +194,42 @@ De `<b>` mag in het template staan. Het is jouw HTML, niet die van de bezoeker.
 
 De tags komen van jou, de inhoud van de bezoeker. Jinja escapet alleen wat
 tussen `{{ }}` staat, dus de naam blijft tekst en jouw `<b>` blijft HTML.
+
+</details>
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+```python
+import time
+from html import escape
+
+from fastapi import FastAPI, Form, Request
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
+
+@app.post("/gastenboek")
+async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    return HTMLResponse(f"Bedankt, {escape(naam)}. Je bericht staat in het gastenboek.")
+
+@app.get("/berichten/lijst")
+async def berichten_lijst(request: Request):
+    with SqliteDict("gastenboek.db") as db:
+        alle_berichten = list(db.values())
+    return templates.TemplateResponse(request, "berichten_lijst.html", {"berichten": alle_berichten})
+```
+
+Naast `main.py` staan `static/gastenboek.html`, `static/js/htmx.min.js` en
+`templates/berichten_lijst.html`.
 
 </details>
 

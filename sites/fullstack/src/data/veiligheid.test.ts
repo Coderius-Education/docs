@@ -37,7 +37,9 @@ describe('de reeks Veiligheid', () => {
 
   it('elke zwakheid is opgesplitst in kleine lessen, met in elke les één idee', () => {
     // Drie stappen per zwakheid ging te snel: elke les behandelde te veel.
-    for (const map of ['dos', 'wachtwoorden']) {
+    // Wie mag wat, XSS en Cookies houden voorlopig drie stappen; zie de
+    // beschrijving van PR #111.
+    for (const map of ['dos', 'wachtwoorden', 'invoer']) {
       expect(stappenVan(map).length, `veiligheid/${map}`).toBeGreaterThanOrEqual(6);
     }
   });
@@ -98,6 +100,21 @@ describe('de reeks Veiligheid', () => {
           }
         });
       }
+
+      it('elke les met een endpoint heeft ergens het hele main.py', () => {
+        // Losse stukken (een endpoint hier, een import daar) laten de leerling
+        // zelf een server in elkaar zetten, en daar ging het mis: in XSS en
+        // Invoer ontbraken de imports.
+        for (const stap of stappen.filter((s) => s !== 'praktijk')) {
+          const tekst = lees(map, stap);
+          if (!tekst.includes('@app.')) continue;
+          const blokken = [...tekst.matchAll(/```python[^\n]*\n([\s\S]*?)```/g)].map((m) => m[1]);
+          expect(
+            blokken.some((b) => b.includes('app = FastAPI()') && b.includes('@app.')),
+            `${map}/${stap}`,
+          ).toBe(true);
+        }
+      });
 
       it('een zelftest richt zich alleen op de eigen computer', () => {
         for (const stap of stappen) {

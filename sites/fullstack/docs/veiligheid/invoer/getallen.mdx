@@ -1,0 +1,187 @@
+---
+sidebar_label: '5. Getallen en keuzes'
+description: Laat FastAPI een getal controleren met int, ge en le, en sta bij een keuze alleen de waarden toe die je kent.
+---
+
+# Invoer controleren: getallen en keuzes
+
+Een gastenboek met een cijfer voor de site, van 1 tot en met 10. In de HTML
+staat dat netjes:
+
+```html
+<input type="number" name="cijfer" min="1" max="10" required>
+```
+
+Maar `min` en `max` zijn net als `maxlength` uit [les 1](./maxlength): de
+browser houdt je tegen, een script niet. Op de server kan een cijfer dan
+`honderd` zijn, of `11`, of `0`.
+
+## Een getal met een grens
+
+<CodeUitleg>
+
+```python showLineNumbers
+@app.post("/bericht")
+async def bericht_plaatsen(
+    naam: str = Form(..., max_length=30),
+    bericht: str = Form(..., max_length=280),
+    cijfer: int = Form(..., ge=1, le=10),
+):
+    if not naam.strip():
+        raise HTTPException(status_code=400, detail="Vul een naam in")
+    with SqliteDict("gastenboek.db") as db:
+        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht, "cijfer": cijfer}
+        db.commit()
+    return {"lengte": len(bericht), "cijfer": cijfer}
+```
+
+<Regel n={5}>
+`int` zegt: dit moet een geheel getal zijn. `ge=1` betekent groter dan of gelijk aan 1, `le=10` kleiner dan of gelijk aan 10.
+</Regel>
+
+<Regel n={10}>
+Het cijfer gaat mee de database in.
+</Regel>
+
+</CodeUitleg>
+
+Zet het `<input>` met `name="cijfer"` in `static/formulier.html`, zodat ook het
+formulier een cijfer meestuurt.
+
+## Doe de test
+
+Een script `cijfer.py` probeert vier cijfers:
+
+```python
+import httpx
+
+adres = "http://127.0.0.1:8000/bericht"
+
+for cijfer in ["8", "honderd", "11", "0"]:
+    antwoord = httpx.post(adres, data={"naam": "Sara", "bericht": "hoi", "cijfer": cijfer})
+    if antwoord.status_code == 200:
+        print(cijfer, "->", antwoord.json())
+    else:
+        print(cijfer, "->", antwoord.status_code, antwoord.json()["detail"][0]["msg"])
+```
+
+Uitvoer:
+
+```
+8 -> {'lengte': 3, 'cijfer': 8}
+honderd -> 422 Input should be a valid integer, unable to parse string as an integer
+11 -> 422 Input should be less than or equal to 10
+0 -> 422 Input should be greater than or equal to 1
+```
+
+Een formulier stuurt alles als tekst, ook `"8"`. FastAPI maakt er een getal van,
+en weigert wat geen getal is of buiten de grens valt. In je functie is `cijfer`
+dus altijd een getal van 1 tot en met 10.
+
+## Toestaan wat mag
+
+Bij een getal zet je een onder- en een bovengrens. Bij een keuze uit een paar
+woorden, zoals een stemming, maak je een lijst met wat mag, en weiger je de
+rest. Dat doe je in opdracht 2.
+
+## Er gaat iets mis
+
+Elk verzoek geeft `422` met `cijfer` en `Field required`, ook vanuit het
+formulier.
+
+**Oorzaak:** er komt geen `cijfer` mee. In het formulier heet het veld anders
+dan de parameter, of het `<input>` staat buiten het `<form>`. Een script uit een
+eerdere les, zoals `fouten.py`, stuurt helemaal geen cijfer.
+
+**Oplossing:** controleer dat er `name="cijfer"` staat, binnen het `<form>`. Zet
+in een script `"cijfer": "8"` bij de `data`.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Een half cijfer
+
+Je stuurt als cijfer `7.5`.
+
+**Vraag:** wat antwoordt de server?
+
+<details>
+<summary>Antwoord</summary>
+
+`422`, met `Input should be a valid integer, unable to parse string as an
+integer`. Een `int` is een geheel getal; `7.5` is dat niet.
+
+</details>
+
+### Opdracht 2: Make - Een stemming
+
+Voeg een veld `stemming` toe. Alleen `blij`, `neutraal` en `boos` mogen; al het
+andere geeft `400` met de melding `Kies blij, neutraal of boos`.
+
+<details>
+<summary>Tip</summary>
+
+Maak een lijst `STEMMINGEN` bovenaan `main.py`, en controleer met `not in`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+STEMMINGEN = ["blij", "neutraal", "boos"]
+
+@app.post("/bericht")
+async def bericht_plaatsen(
+    naam: str = Form(..., max_length=30),
+    bericht: str = Form(..., max_length=280),
+    cijfer: int = Form(..., ge=1, le=10),
+    stemming: str = Form(...),
+):
+    if not naam.strip():
+        raise HTTPException(status_code=400, detail="Vul een naam in")
+    if stemming not in STEMMINGEN:
+        raise HTTPException(status_code=400, detail="Kies blij, neutraal of boos")
+    with SqliteDict("gastenboek.db") as db:
+        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht, "cijfer": cijfer}
+        db.commit()
+    return {"lengte": len(bericht), "cijfer": cijfer}
+```
+
+Met `stemming` `blij` krijg je `200`, met `vrolijk` een `400`. Je noemt op wat
+mag, dus alles wat je niet noemde, is geweigerd. In het formulier past daar een
+`<select>` bij met dezelfde drie woorden.
+
+</details>
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+```python
+import time
+
+from fastapi import FastAPI, Form, HTTPException
+from fastapi.staticfiles import StaticFiles
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.post("/bericht")
+async def bericht_plaatsen(
+    naam: str = Form(..., max_length=30),
+    bericht: str = Form(..., max_length=280),
+    cijfer: int = Form(..., ge=1, le=10),
+):
+    if not naam.strip():
+        raise HTTPException(status_code=400, detail="Vul een naam in")
+    with SqliteDict("gastenboek.db") as db:
+        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht, "cijfer": cijfer}
+        db.commit()
+    return {"lengte": len(bericht), "cijfer": cijfer}
+```
+
+Elk veld heeft nu een controle op de server.
+
+</details>
+
+Door naar [les 6: in de praktijk](./praktijk).
