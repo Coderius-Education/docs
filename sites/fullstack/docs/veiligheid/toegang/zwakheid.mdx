@@ -197,10 +197,12 @@ stuurt, met of zonder cookie, maakt voor deze server niets uit.
 
 ### Opdracht 2: Investigate - Waar staat de sleutel?
 
-Open je gastenboek met het recept Verwijderen in de browser, en kijk in het
-tabblad **Elementen** naar een bericht van een ander. Kun je de sleutel vinden?
-Wat betekent dat voor een idee als "maak de sleutels heel lang, dan raadt
-niemand ze"?
+Kijk naar de HTML van het recept Verwijderen in het
+[htmx-overzicht](/docs/FastAPI/htmx-overzicht#verwijderen): het stukje met
+`<li id="bericht-{{ sleutel }}">`. Heb je dat recept gebouwd, open dan ook je
+gastenboek en kijk in het tabblad **Elementen** naar een bericht. Waar staat de
+sleutel? Wat betekent dat voor een idee als "maak de sleutels heel lang, dan
+raadt niemand ze"?
 
 <details>
 <summary>Antwoord</summary>

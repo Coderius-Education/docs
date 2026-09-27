@@ -103,7 +103,7 @@ Iets als:
 sessie_id=bb4b18ca1efc4877c990fdadd8a6f593; Max-Age=2592000; Path=/; SameSite=lax
 ```
 
-plus een datum bij `expires`. `Max-Age` is de 30 dagen uit `max_age` in
+`Max-Age` is de 30 dagen uit `max_age` in
 seconden, `Path=/` betekent: voor de hele site. `SameSite=lax` zet FastAPI er
 vanzelf bij; wat dat doet, staat in [de praktijk](./praktijk). `HttpOnly`
 staat er niet bij, en daarom mag een script de cookie lezen.

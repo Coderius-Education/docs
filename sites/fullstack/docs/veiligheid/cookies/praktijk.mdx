@@ -10,22 +10,17 @@ zijn nog drie dingen die echte sites met hun cookies doen.
 
 ## `samesite`: niet meesturen vanaf een andere site
 
-De browser stuurt een cookie standaard mee bij elk verzoek naar jouw site, ook
-als dat verzoek van een andere site komt. Stel dat je bent ingelogd op je
-gastenboek, en je opent een andere pagina met daarin verstopt:
-
-```html
-<img src="http://127.0.0.1:8000/bericht/verwijder-alles">
-```
-
-De browser haalt dat "plaatje" op, en stuurt je sessie-cookie mee. Voor je
-server lijkt het een verzoek van jou. Dat heet **CSRF**, *cross-site request
+De browser stuurt een cookie mee bij verzoeken naar jouw site, ook als dat
+verzoek begint op een andere site. Stel dat je bent ingelogd op je gastenboek,
+en een andere pagina laat je browser op de achtergrond een verzoek naar je
+gastenboek sturen. Dan gaat je sessie-cookie mee, en voor je server lijkt het
+een verzoek van jou. Dat heet **CSRF**, *cross-site request
 forgery*: een andere site laat jouw browser iets doen op een site waar jij bent
 ingelogd.
 
 `samesite` is het antwoord. FastAPI zet `samesite="lax"` vanzelf, en dat betekent:
-stuur de cookie niet mee bij een verzoek dat vanaf een andere site wordt gestart,
-zoals dat plaatje. Bij een gewone klik op een link naar jouw site gaat hij wel
+stuur de cookie niet mee bij een verzoek dat een andere site op de achtergrond
+start. Bij een gewone klik op een link naar jouw site gaat hij wel
 mee. Met `samesite="strict"` gaat hij zelfs bij zo'n klik niet mee. Voor de
 meeste sites is `lax` de goede keuze, en dus hoef je er niets voor te doen.
 
@@ -41,7 +36,7 @@ antwoord.set_cookie(
     value=sessie_id,
     max_age=60 * 60 * 24 * 30,
     httponly=True,
-    samesite="strict",
+    samesite="lax",
     secure=True,
 )
 ```

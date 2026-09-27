@@ -68,31 +68,33 @@ pagina opnieuw.
 
 ## Opdrachten
 
-### Opdracht 1: Predict - Verwijderen na httponly
+### Opdracht 1: Predict - Twee cookies
 
-Je hebt `httponly=True` gezet en een nieuw bericht verstuurd. In de Console typ
-je:
+Je hebt `httponly=True` gezet en een nieuw bericht verstuurd. Op de pagina met
+het formulier typ je in de Console eerst:
 
 ```js
-document.cookie = "sessie_id=hallo"
+document.cookie = "thema=donker"
 ```
 
-**Vraag:** kun je je eigen sessie-cookie zo overschrijven?
+Die regel maakt een tweede cookie, zonder `httponly`. Daarna typ je weer
+`document.cookie`.
+
+**Vraag:** wat antwoordt de Console nu?
 
 <details>
 <summary>Tip</summary>
 
-`httponly` gaat over wat een script met de cookie mag.
+`httponly` geldt per cookie, niet voor alle cookies van de site.
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-Nee. Een script mag een `httponly`-cookie niet lezen en niet overschrijven. Je
-regel lijkt te lukken, maar de echte `sessie_id` blijft staan, en die stuurt de
-browser mee. Wil je uitloggen, dan moet de server de cookie weghalen met
-`delete_cookie`.
+`'thema=donker'`. Het script ziet de cookie zonder `httponly`, en de
+sessie-cookie niet. In het tabblad **App** staan ze allebei, `sessie_id` met
+een vinkje bij **HttpOnly** en `thema` zonder.
 
 </details>
 
