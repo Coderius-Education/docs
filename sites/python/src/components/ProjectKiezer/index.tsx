@@ -1,5 +1,8 @@
+import SiteLink from '@coderius/shared/components/SiteLink';
 import { SITES_BY_ID, normalizeUrl } from '@coderius/shared/sites';
 import Link from '@docusaurus/Link';
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
 import type React from 'react';
 import { useState } from 'react';
 import {
@@ -17,10 +20,31 @@ import {
 } from '../../data/projecten';
 import styles from './styles.module.css';
 
-// De projecten als kaarten. Je kiest een concept dat je wilt oefenen, en ziet
-// in welke projecten het voorkomt; chips voor de soort filteren verder. Zonder
-// keuze (en in de HTML van de build, dus ook zonder JavaScript) staan alle
-// kaarten er, in de volgorde waarin je ze in de cursus kunt doen.
+// De projecten per soort, elk in een eigen tabblad: zo ziet een leerling
+// meteen wat er is (de tabbladen met hun aantal) en hoeft hij niet langs
+// dertig activiteiten te scrollen. Binnen een tabblad kiest hij een concept
+// dat hij wil oefenen; de chips tonen alleen de concepten van dat tabblad.
+// De turtle-projecten zijn een lijn die je van boven naar beneden doet, dus
+// die staan genummerd. Tabs rendert alle panelen in de HTML van de build;
+// het tabblad staat in de URL (?soort=turtle).
+
+type Vorm = 'kaarten' | 'lijn' | 'lijst';
+
+const GROEPEN: { id: string; titel: string; soorten: Soort[]; vorm: Vorm }[] = [
+  {
+    id: 'projecten',
+    titel: 'Projecten',
+    soorten: ['project', 'puzzel', 'spel'],
+    vorm: 'kaarten',
+  },
+  { id: 'turtle', titel: 'Turtle', soorten: ['turtle'], vorm: 'lijn' },
+  { id: 'algoritmes', titel: 'Algoritmes', soorten: ['algoritme'], vorm: 'lijst' },
+];
+
+const SOORT_LABEL = Object.fromEntries(SOORTEN.map((s) => [s.id, s.label])) as Record<
+  Soort,
+  string
+>;
 
 function KaartLink({
   link,
@@ -45,11 +69,6 @@ function KaartLink({
     </Link>
   );
 }
-
-const SOORT_LABEL = Object.fromEntries(SOORTEN.map((s) => [s.id, s.label])) as Record<
-  Soort,
-  string
->;
 
 function Concepten({
   activiteit,
@@ -105,18 +124,28 @@ function Kaart({
   );
 }
 
-// De algoritmes staan allemaal op een andere site en zijn met veel: als
-// compacte rij in een lijst in plaats van als kaart.
+// Eén rij per activiteit: voor de algoritmes, en genummerd voor de lijn van
+// de turtle-projecten.
 function Rij({
   activiteit,
   gekozen,
+  nummer,
 }: {
   activiteit: Activiteit;
   gekozen: string | null;
+  nummer?: number;
 }): React.JSX.Element {
+  const extern = !('to' in activiteit.link) || 'site' in activiteit.link;
   return (
-    <KaartLink link={activiteit.link} className={styles.rij}>
-      <span className={styles.rijTitel}>{activiteit.titel} ↗</span>
+    <KaartLink
+      link={activiteit.link}
+      className={`${styles.rij} ${nummer !== undefined ? styles.rijGenummerd : ''}`}
+    >
+      {nummer !== undefined && <span className={styles.nummer}>{nummer}</span>}
+      <span className={styles.rijTitel}>
+        {activiteit.titel}
+        {extern ? ' ↗' : ''}
+      </span>
       <span className={styles.rijWat}>{activiteit.wat}</span>
       <Concepten activiteit={activiteit} gekozen={gekozen} />
       <span className={styles.vanaf}>
@@ -125,12 +154,6 @@ function Rij({
     </KaartLink>
   );
 }
-
-const GROEPEN: { titel: string; soorten: Soort[]; alsLijst?: boolean }[] = [
-  { titel: 'Projecten, puzzel en spel', soorten: ['project', 'puzzel', 'spel'] },
-  { titel: 'Tekenen met turtle', soorten: ['turtle'] },
-  { titel: 'Algoritmes', soorten: ['algoritme'], alsLijst: true },
-];
 
 function Chip({
   actief,
@@ -148,92 +171,124 @@ function Chip({
   );
 }
 
-export default function ProjectKiezer({
-  soorten,
+function Groep({
+  vorm,
+  items,
+  concept,
+  setConcept,
 }: {
-  /** Alleen deze soorten tonen, zonder soortfilter (bv. ['turtle']). */
-  soorten?: Soort[];
+  vorm: Vorm;
+  items: Activiteit[];
+  concept: string | null;
+  setConcept: (c: string | null) => void;
 }): React.JSX.Element {
-  const [concept, setConcept] = useState<string | null>(null);
-  const [soort, setSoort] = useState<Soort | null>(null);
-
-  const lijst = soorten ? activiteiten.filter((a) => soorten.includes(a.soort)) : activiteiten;
-  const concepten = conceptenIn(lijst);
-  const zichtbareSoorten = SOORTEN.filter((s) => lijst.some((a) => a.soort === s.id));
-  const getoond = filter(lijst, concept, soort);
-  const aantal = (id: string) => filter(lijst, id, soort).length;
-
-  const groepen = GROEPEN.map((g) => ({
-    ...g,
-    items: getoond.filter((a) => g.soorten.includes(a.soort)),
-  })).filter((g) => g.items.length > 0);
+  const getoond = filter(items, concept, null);
+  const aantal = (id: string) => filter(items, id, null).length;
+  // Nummers horen bij de plek in de lijn, ook als een concept er een paar
+  // wegfiltert: project 9 blijft 9.
+  const nummer = new Map(filter(items, null, null).map((a, i) => [a.id, i + 1]));
 
   return (
-    <div className={styles.kiezer}>
-      <div className={styles.balk}>
-        {zichtbareSoorten.length > 1 && (
-          <fieldset className={styles.chips}>
-            <legend className={styles.legenda}>Soort</legend>
-            <div className={styles.chipRij}>
-              <Chip actief={soort === null} onClick={() => setSoort(null)}>
-                Alles
-              </Chip>
-              {zichtbareSoorten.map((s) => (
-                <Chip
-                  key={s.id}
-                  actief={soort === s.id}
-                  onClick={() => setSoort(soort === s.id ? null : s.id)}
-                >
-                  {s.label}
-                </Chip>
-              ))}
-            </div>
-          </fieldset>
-        )}
-        <fieldset className={styles.chips}>
-          <legend className={styles.legenda}>Wat wil je oefenen?</legend>
-          <div className={styles.chipRij}>
-            <Chip actief={concept === null} onClick={() => setConcept(null)}>
-              Alles
+    <>
+      <fieldset className={styles.chips}>
+        <legend className={styles.onzichtbaar}>Wat wil je oefenen?</legend>
+        <div className={styles.chipRij}>
+          <span className={styles.legenda} aria-hidden="true">
+            Oefen:
+          </span>
+          <Chip actief={concept === null} onClick={() => setConcept(null)}>
+            Alles
+          </Chip>
+          {zichtbareConcepten(conceptenIn(items), aantal, concept).map((id) => (
+            <Chip
+              key={id}
+              actief={concept === id}
+              onClick={() => setConcept(concept === id ? null : id)}
+            >
+              {CONCEPTNAMEN[id]} <span className={styles.aantal}>{aantal(id)}</span>
             </Chip>
-            {zichtbareConcepten(concepten, aantal, concept).map((id) => (
-              <Chip
-                key={id}
-                actief={concept === id}
-                onClick={() => setConcept(concept === id ? null : id)}
-              >
-                {CONCEPTNAMEN[id]} <span className={styles.aantal}>{aantal(id)}</span>
-              </Chip>
-            ))}
-          </div>
-        </fieldset>
-      </div>
+          ))}
+        </div>
+      </fieldset>
 
-      <p className={styles.telling} aria-live="polite">
+      {/* Het tabblad toont het aantal al; voorlezen doet deze regel. */}
+      <p className={styles.onzichtbaar} aria-live="polite">
         {telling(getoond.length, concept)}
       </p>
 
-      {getoond.length === 0 && (
-        <p className={styles.leeg}>Hier is nog niets van deze soort met dit concept.</p>
+      {getoond.length === 0 && <p className={styles.leeg}>Hier oefen je dit concept niet.</p>}
+      {vorm === 'kaarten' && (
+        <div className={styles.raster}>
+          {getoond.map((a) => (
+            <Kaart key={a.id} activiteit={a} gekozen={concept} />
+          ))}
+        </div>
       )}
-      {groepen.map((g) => (
-        <section key={g.titel} className={styles.groep}>
-          {groepen.length > 1 || !soorten ? <h2 className={styles.groepTitel}>{g.titel}</h2> : null}
-          {g.alsLijst ? (
-            <div className={styles.lijst}>
-              {g.items.map((a) => (
-                <Rij key={a.id} activiteit={a} gekozen={concept} />
-              ))}
-            </div>
-          ) : (
-            <div className={styles.raster}>
-              {g.items.map((a) => (
-                <Kaart key={a.id} activiteit={a} gekozen={concept} />
-              ))}
-            </div>
-          )}
-        </section>
-      ))}
+      {vorm !== 'kaarten' && getoond.length > 0 && (
+        <div className={styles.lijst}>
+          {getoond.map((a) => (
+            <Rij
+              key={a.id}
+              activiteit={a}
+              gekozen={concept}
+              nummer={vorm === 'lijn' ? nummer.get(a.id) : undefined}
+            />
+          ))}
+        </div>
+      )}
+      {vorm === 'lijst' && (
+        <p className={styles.onder}>
+          Hoe de algoritmes op de lessen voortbouwen, zie je op de{' '}
+          <SiteLink site="algorithms" to="/conceptenkaart">
+            conceptenkaart
+          </SiteLink>
+          .
+        </p>
+      )}
+    </>
+  );
+}
+
+export default function ProjectKiezer({
+  soorten,
+}: {
+  /** Alleen deze soorten tonen, zonder tabbladen (bv. ['turtle']). */
+  soorten?: Soort[];
+}): React.JSX.Element {
+  const [concept, setConcept] = useState<string | null>(null);
+
+  if (soorten) {
+    const groep = GROEPEN.find((g) => g.soorten.every((s) => soorten.includes(s)));
+    return (
+      <div className={styles.kiezer}>
+        <Groep
+          vorm={groep?.vorm ?? 'kaarten'}
+          items={activiteiten.filter((a) => soorten.includes(a.soort))}
+          concept={concept}
+          setConcept={setConcept}
+        />
+      </div>
+    );
+  }
+
+  const perGroep = GROEPEN.map((g) => ({
+    ...g,
+    items: activiteiten.filter((a) => g.soorten.includes(a.soort)),
+  }));
+
+  return (
+    <div className={styles.kiezer}>
+      <Tabs queryString="soort" defaultValue={GROEPEN[0].id} className={styles.tabs}>
+        {perGroep.map((g) => (
+          <TabItem
+            key={g.id}
+            value={g.id}
+            label={`${g.titel} (${filter(g.items, concept, null).length})`}
+          >
+            <Groep vorm={g.vorm} items={g.items} concept={concept} setConcept={setConcept} />
+          </TabItem>
+        ))}
+      </Tabs>
     </div>
   );
 }
