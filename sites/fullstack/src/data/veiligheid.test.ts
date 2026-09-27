@@ -65,6 +65,37 @@ describe('de reeks Veiligheid', () => {
         });
       });
 
+      it('elke opdracht heeft een antwoord', () => {
+        for (const stap of stappen.filter((s) => s !== 'praktijk')) {
+          const opdrachten = lees(map, stap)
+            .split(/^### /m)
+            .slice(1)
+            .filter((d) => d.startsWith('Opdracht'));
+          expect(opdrachten.length, `${map}/${stap} heeft geen opdracht`).toBeGreaterThan(0);
+          for (const opdracht of opdrachten) {
+            const deel = opdracht.split(/^## /m)[0];
+            expect(deel, `${map}/${stap}: ${opdracht.split('\n')[0]}`).toContain(
+              '<summary>Antwoord',
+            );
+          }
+        }
+      });
+
+      // In een lange reeks verandert elke les één stuk van main.py. Onderaan
+      // staat dan het hele bestand, zodat een leerling die de draad kwijt is
+      // weer bij kan komen.
+      if (stappen.length > 3) {
+        it('elke les die main.py verandert, toont het hele bestand', () => {
+          for (const stap of stappen.filter((s) => s !== 'praktijk')) {
+            const tekst = lees(map, stap);
+            if (!tekst.includes('@app.')) continue;
+            expect(tekst, `${map}/${stap}`).toContain(
+              '<summary>Zo ziet je `main.py` er nu uit</summary>',
+            );
+          }
+        });
+      }
+
       it('een zelftest richt zich alleen op de eigen computer', () => {
         for (const stap of stappen) {
           const tekst = lees(map, stap);

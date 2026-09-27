@@ -176,4 +176,32 @@ Daarom bewaart een site een wachtwoord nooit als gewone tekst.
 
 </details>
 
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+```python
+from fastapi import FastAPI, Form
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+
+@app.post("/registreer")
+async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        db[naam] = wachtwoord
+        db.commit()
+    return {"bericht": f"Welkom, {naam}"}
+
+@app.post("/inloggen")
+async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        if db.get(naam) == wachtwoord:
+            return {"bericht": "Ingelogd"}
+    return {"bericht": "Naam of wachtwoord klopt niet"}
+```
+
+Dit is de beginstand. In de volgende lessen verandert steeds één stuk.
+
+</details>
+
 Door naar [les 2: wat een hash is](./hash).

@@ -78,17 +78,41 @@ True
 ```
 
 `PasswordHasher(time_cost=1)` doet hier alsof hij een hash van jaren geleden
-maakt, met lichtere instellingen. In `/inloggen` zet je na een geslaagde
-`ph.verify`:
+maakt, met lichtere instellingen: `time_cost` is de `t=` uit de tabel in
+[les 5](./registreren).
 
-{/* niet-compileren: fragment uit de functie inloggen */}
+In `/inloggen` komt het bijwerken ná het `try`/`except`-blok en vóór de laatste
+`return`. Daar weet je zeker dat het wachtwoord klopt:
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
+@app.post("/inloggen")
+async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        opgeslagen = db.get(naam)
+    if opgeslagen is None:
+        return {"bericht": "Naam of wachtwoord klopt niet"}
+    try:
+        ph.verify(opgeslagen, wachtwoord)
+    except VerifyMismatchError:
+        return {"bericht": "Naam of wachtwoord klopt niet"}
     if ph.check_needs_rehash(opgeslagen):
         with SqliteDict("gebruikers.db") as db:
             db[naam] = ph.hash(wachtwoord)
             db.commit()
+    return {"bericht": "Ingelogd"}
 ```
+
+<Regel n={7} tot={10}>
+Dit ken je uit les 6. Klopt het wachtwoord niet, dan stopt de functie hier.
+</Regel>
+
+<Regel n={11} tot={14}>
+Nieuw: is de opgeslagen hash met oude instellingen gemaakt, dan maak je een nieuwe van het wachtwoord dat je nu even in handen hebt, en bewaar je die.
+</Regel>
+
+</CodeUitleg>
 
 Zo worden de hashes vanzelf bijgewerkt, zonder dat iemand zijn wachtwoord hoeft
 te veranderen.
@@ -152,6 +176,111 @@ apart script dat alle hashes in de database in één keer bijwerkt?
 Voor een nieuwe hash heb je het wachtwoord nodig, en dat staat nergens: in de
 database staat alleen de oude hash. Het enige moment waarop je het wachtwoord
 even hebt, is als iemand inlogt.
+
+</details>
+
+### Opdracht 3: Run - Zie het bijwerken gebeuren
+
+Zet het bijwerken in je `/inloggen`. Dit script zet voor een nieuwe gebruiker
+Tim een hash met oude instellingen in de database, logt in als Tim, en laat de
+hash ervoor en erna zien. Voorspel eerst: verandert er iets aan de `t=`?
+
+```python
+import httpx
+from argon2 import PasswordHasher
+from sqlitedict import SqliteDict
+
+oud = PasswordHasher(time_cost=1).hash("zolder-regen-7")
+with SqliteDict("gebruikers.db") as db:
+    db["tim"] = oud
+    db.commit()
+    print(db["tim"][:31])
+
+antwoord = httpx.post("http://127.0.0.1:8000/inloggen", data={"naam": "tim", "wachtwoord": "zolder-regen-7"})
+print(antwoord.json())
+
+with SqliteDict("gebruikers.db") as db:
+    print(db["tim"][:31])
+```
+
+<details>
+<summary>Tip</summary>
+
+`[:31]` laat alleen het begin van de hash zien: het algoritme en de
+instellingen, zonder het zout. Let op het getal achter `t=`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Uitvoer:
+
+```
+$argon2id$v=19$m=65536,t=1,p=4$
+{'bericht': 'Ingelogd'}
+$argon2id$v=19$m=65536,t=3,p=4$
+```
+
+Tim komt binnen met de oude hash, want de instellingen staan erin. Daarna ziet
+`/inloggen` dat die hash lichter is dan de instellingen van nu, en bewaart hij
+een nieuwe: `t=1` is `t=3` geworden. Staat er bij jou een ander getal dan 3,
+dan heeft jouw versie van `argon2-cffi` strengere instellingen.
+
+</details>
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+```python
+from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError
+from fastapi import FastAPI, Form
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+ph = PasswordHasher()
+
+@app.post("/registreer")
+async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        db[naam] = ph.hash(wachtwoord)
+        db.commit()
+    return {"bericht": f"Welkom, {naam}"}
+
+@app.post("/inloggen")
+async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        opgeslagen = db.get(naam)
+    if opgeslagen is None:
+        return {"bericht": "Naam of wachtwoord klopt niet"}
+    try:
+        ph.verify(opgeslagen, wachtwoord)
+    except VerifyMismatchError:
+        return {"bericht": "Naam of wachtwoord klopt niet"}
+    if ph.check_needs_rehash(opgeslagen):
+        with SqliteDict("gebruikers.db") as db:
+            db[naam] = ph.hash(wachtwoord)
+            db.commit()
+    return {"bericht": "Ingelogd"}
+
+@app.post("/wijzig")
+async def wijzig(naam: str = Form(...), oud: str = Form(...), nieuw: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        opgeslagen = db.get(naam)
+    if opgeslagen is None:
+        return {"bericht": "Naam of wachtwoord klopt niet"}
+    try:
+        ph.verify(opgeslagen, oud)
+    except VerifyMismatchError:
+        return {"bericht": "Naam of wachtwoord klopt niet"}
+    with SqliteDict("gebruikers.db") as db:
+        db[naam] = ph.hash(nieuw)
+        db.commit()
+    return {"bericht": "Wachtwoord gewijzigd"}
+```
+
+Registreren, inloggen met bijwerken, en wijzigen: de hele reeks in één server.
 
 </details>
 

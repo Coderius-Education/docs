@@ -57,8 +57,9 @@ Klopt het wachtwoord, dan gaat `ph.verify` zonder fout verder. Klopt het niet, d
 
 </CodeUitleg>
 
-Zet dit endpoint naast je `/registreer` uit les 5, in hetzelfde `main.py`: de
-imports en `ph` staan dan maar één keer bovenaan.
+Vervang je oude `/inloggen` door deze, in hetzelfde `main.py` als je
+`/registreer` uit les 5. De imports en `ph` staan maar één keer bovenaan, en
+`import hashlib` mag weg: niets gebruikt hem meer.
 
 ## Doe de test
 
@@ -148,6 +149,42 @@ duidelijker voor de gebruiker. Waarom doe je dat hier toch niet?
 Dan kan iedereen uitzoeken welke namen een account hebben: probeer een naam,
 en de melding verraadt of hij bestaat. Met dezelfde melding voor een foute naam
 en een fout wachtwoord leert iemand die raadt niets.
+
+</details>
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+```python
+from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError
+from fastapi import FastAPI, Form
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+ph = PasswordHasher()
+
+@app.post("/registreer")
+async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        db[naam] = ph.hash(wachtwoord)
+        db.commit()
+    return {"bericht": f"Welkom, {naam}"}
+
+@app.post("/inloggen")
+async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        opgeslagen = db.get(naam)
+    if opgeslagen is None:
+        return {"bericht": "Naam of wachtwoord klopt niet"}
+    try:
+        ph.verify(opgeslagen, wachtwoord)
+    except VerifyMismatchError:
+        return {"bericht": "Naam of wachtwoord klopt niet"}
+    return {"bericht": "Ingelogd"}
+```
+
+Registreren en inloggen werken nu allebei met Argon2.
 
 </details>
 

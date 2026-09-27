@@ -52,27 +52,69 @@ lang en echt willekeurig. Dat hoef je niet zelf te regelen: in
 [les 5](./registreren) gebruik je Argon2, dat bij elke hash vanzelf een nieuw
 zout maakt en het in de hash zelf bewaart.
 
+## Er gaat iets mis
+
+Je geeft iedereen hetzelfde zout, bijvoorbeeld `"a1b2c3"` voor alle
+gebruikers:
+
+```python
+import hashlib
+
+zout = "a1b2c3"
+print(hashlib.sha256((zout + "welkom123").encode()).hexdigest())
+print(hashlib.sha256((zout + "welkom123").encode()).hexdigest())
+```
+
+Uitvoer:
+
+```
+02c84638cc526f509a1e50b8de1c12a120a1f9f3a441521c81d767942596b42f
+02c84638cc526f509a1e50b8de1c12a120a1f9f3a441521c81d767942596b42f
+```
+
+Geen foutmelding, maar Sara en Noor hebben weer dezelfde hash.
+
+**Oorzaak:** met hetzelfde zout gaat er voor hetzelfde wachtwoord weer precies
+hetzelfde de `sha256` in.
+
+**Oplossing:** geef elke gebruiker een eigen, willekeurig zout. Argon2 in
+les 5 doet dat vanzelf, bij elke hash opnieuw.
+
 ## Opdrachten
 
-### Opdracht 1: Predict - Zelfde zout, zelfde wachtwoord
+### Opdracht 1: Run - Met en zonder zout
 
-Tim en Sara hebben allebei `welkom123`. Door een fout krijgt Tim hetzelfde
-zout als Sara: `"a1b2c3"`.
-
-**Vraag:** zijn hun hashes gelijk of verschillend?
+Bereken de `sha256` van `welkom123` zonder zout, en daarna met het zout
+`"a1b2c3"` ervoor. Vergelijk ze. Waarom helpt dat tegen een rainbow table met
+de hashes van veelgebruikte wachtwoorden?
 
 <details>
 <summary>Tip</summary>
 
-Wat gaat er precies de `sha256` in?
+De hash zonder zout ken je uit [les 2](./hash).
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-Gelijk. In beide gevallen gaat `"a1b2c3welkom123"` de `sha256` in, en
-hetzelfde erin geeft hetzelfde eruit. Daarom moet elk zout anders zijn.
+```python
+import hashlib
+
+print(hashlib.sha256("welkom123".encode()).hexdigest())
+print(hashlib.sha256(("a1b2c3" + "welkom123").encode()).hexdigest())
+```
+
+Uitvoer:
+
+```
+2a5c5f2623024ce3de6fe7dc8f5e13ca55b7aadc13174254b40af574e37018c1
+02c84638cc526f509a1e50b8de1c12a120a1f9f3a441521c81d767942596b42f
+```
+
+Een rainbow table bevat de eerste code, want die hoort bij `welkom123`. De
+tweede staat er niet in: die hoort bij `a1b2c3welkom123`, en dat wachtwoord
+kiest niemand. Zoek je de gezouten hash op in de lijst, dan vind je niets.
 
 </details>
 

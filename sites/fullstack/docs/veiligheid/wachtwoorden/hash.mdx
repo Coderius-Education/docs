@@ -73,6 +73,12 @@ De wachtwoorden zijn niet meer te lezen. Maar kijk naar Sara en Noor: dezelfde
 code. Hetzelfde erin, hetzelfde eruit, en dus zie je in de database wie
 hetzelfde wachtwoord heeft. Daar gaat [les 3](./zout) over.
 
+:::caution[Inloggen werkt nu niet meer]
+`/inloggen` uit les 1 vergelijkt het ingetypte wachtwoord nog met wat er in de
+database staat. Daar staat nu een hash, dus die twee zijn nooit gelijk. In
+opdracht 3 hieronder zet je `/inloggen` om.
+:::
+
 ## Er gaat iets mis
 
 ```python
@@ -124,6 +130,87 @@ bereken hem opnieuw. Hoeveel tekens van de twee hashes zijn gelijk?
 
 Bijna geen: hooguit een paar tekens komen toevallig overeen, op willekeurige
 plekken. Eén letter verschil in de invoer geeft een heel andere hash.
+
+</details>
+
+### Opdracht 3: Modify - Inloggen met een hash
+
+Pas `/inloggen` aan, zodat Sara weer kan inloggen. Test het met een scriptje
+`inloggen.py` dat drie pogingen doet: Sara met `welkom123`, Sara met
+`welkom124`, en Bob (die geen account heeft) met `welkom123`.
+
+<details>
+<summary>Tip</summary>
+
+In de database staat de hash, dus vergelijk met de hash van wat er ingetypt
+wordt: dezelfde berekening als in `/registreer`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+In `/inloggen` wordt de regel met de `if`:
+
+{/* niet-compileren: één regel uit de functie inloggen */}
+
+```python
+        if db.get(naam) == hashlib.sha256(wachtwoord.encode()).hexdigest():
+```
+
+En `inloggen.py`:
+
+```python
+import httpx
+
+adres = "http://127.0.0.1:8000/inloggen"
+
+pogingen = [("sara", "welkom123"), ("sara", "welkom124"), ("bob", "welkom123")]
+for naam, wachtwoord in pogingen:
+    antwoord = httpx.post(adres, data={"naam": naam, "wachtwoord": wachtwoord})
+    print(f"{naam}, {wachtwoord}: {antwoord.json()['bericht']}")
+```
+
+Uitvoer:
+
+```
+sara, welkom123: Ingelogd
+sara, welkom124: Naam of wachtwoord klopt niet
+bob, welkom123: Naam of wachtwoord klopt niet
+```
+
+Dit werkt omdat dezelfde invoer altijd dezelfde `sha256`-hash geeft. In les 6
+zie je dat dat met zout anders moet.
+
+</details>
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+```python
+import hashlib
+
+from fastapi import FastAPI, Form
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+
+@app.post("/registreer")
+async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        db[naam] = hashlib.sha256(wachtwoord.encode()).hexdigest()
+        db.commit()
+    return {"bericht": f"Welkom, {naam}"}
+
+@app.post("/inloggen")
+async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        if db.get(naam) == hashlib.sha256(wachtwoord.encode()).hexdigest():
+            return {"bericht": "Ingelogd"}
+    return {"bericht": "Naam of wachtwoord klopt niet"}
+```
+
+Les 3 en 4 veranderen niets aan je server; in les 5 gaat `/registreer` weer om.
 
 </details>
 
