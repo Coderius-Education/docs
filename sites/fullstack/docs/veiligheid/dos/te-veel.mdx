@@ -5,6 +5,12 @@ description: Wat een bezoeker terugkrijgt als hij over de limiet gaat, en hoe je
 
 # Te veel verzoeken: wat de 429 vertelt
 
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/herhalen/06d-break', label: 'Stoppen met break'},
+  ]}
+/>
+
 Een bezoeker die over je limiet uit [les 4](./limiet) gaat, krijgt `429`. Maar
 wat staat er verder in dat antwoord? En kan je server al eerder laten weten
 hoeveel verzoeken er nog over zijn? Een eerlijk script, zoals een app die je
@@ -107,11 +113,25 @@ Verzoek 5: 200, nog 0 over, wacht 60 seconden
 Verzoek 6: 429, nog 0 over, wacht 60 seconden
 ```
 
-Een eerlijk script kijkt naar `x-ratelimit-remaining` en stopt bij nul, of wacht
-zo lang als `retry-after` zegt. Het getal `60` kan bij jou lager zijn als je
-het script een tweede keer binnen dezelfde minuut draait.
+Bij een `200` hoef je niet te wachten: `retry-after` zegt dan alleen wanneer de
+telling opnieuw begint. Pas bij een `429` moet je die tijd afwachten. Een
+eerlijk script kijkt dus naar `x-ratelimit-remaining` en stopt bij nul, of wacht
+na een `429` zo lang als `retry-after` zegt.
+
+Draai je het script binnen dezelfde minuut nog een keer, dan krijg je al bij
+verzoek 1 een `429`, met `nog 0 over` en een wachttijd van hoogstens 60 seconden: de
+telling van de vorige keer loopt nog.
 
 ## Er gaat iets mis
+
+Het script print bij elk verzoek `nog None over, wacht None seconden`.
+
+**Oorzaak:** je server heeft `headers_enabled=True` nog niet, bijvoorbeeld omdat
+hij nog de code uit les 4 draait. Dan stuurt hij de headers niet mee, en
+`headers.get` geeft `None` als een header ontbreekt.
+
+**Oplossing:** zet `headers_enabled=True` in de `Limiter` en `response: Response`
+in je endpoint, en sla `main.py` op.
 
 Na `headers_enabled=True` geeft elk verzoek ineens `500 Internal Server Error`,
 ook het eerste. In de terminal van je server eindigt de foutmelding met:

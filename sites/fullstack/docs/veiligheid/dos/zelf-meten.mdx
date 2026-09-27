@@ -102,10 +102,15 @@ elkaar stuurt, is niet sneller dan de server die ze beantwoordt.
 <details>
 <summary>Antwoord</summary>
 
-Alle vijftig lukken, maar het script zegt nog steeds `van de 20`: dat getal
-staat vast in de laatste regel. Pas je dat aan naar 50, dan staat er
-`Gelukt: 50 van de 50`. Je server ligt niet plat, want één computer is niet
-genoeg, zoals in [les 2](./dos-en-ddos).
+Alle vijftig lukken. De laatste regel is:
+
+```
+Gelukt: 50 van de 20
+```
+
+Het getal 20 staat vast in de laatste `print`. Pas je dat aan naar 50, dan
+staat er `Gelukt: 50 van de 50`. Je server ligt niet plat, want verzoeken na elkaar
+van één computer zijn niet genoeg, zoals in [les 2](./dos-en-ddos).
 
 </details>
 
@@ -119,7 +124,8 @@ browser. Krijg je hem te zien?
 
 Ja. Je browser is één verzoek extra tussen de vijfhonderd, en je server
 beantwoordt ze allemaal. Om een echte bezoeker buiten te sluiten, moet de
-server zó druk zijn dat hij achterloopt, en dat lukt niet vanaf één laptop. Dat
+server zó druk zijn dat hij achterloopt, en dat lukt niet met verzoeken na
+elkaar vanaf één laptop. Dat
 is geruststellend, maar het betekent ook dat je server niet uit zichzelf
 ingrijpt.
 

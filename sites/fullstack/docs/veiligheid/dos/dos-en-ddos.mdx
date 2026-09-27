@@ -14,7 +14,7 @@ Dat is een **DoS**-aanval: *Denial of Service*, oftewel "dienst weigeren". Niet
 door in te breken, maar door de server zo druk te maken dat hij niets nuttigs
 meer doet.
 
-## Eén computer is niet genoeg
+## Verzoeken na elkaar zijn niet genoeg
 
 Een laptop die verzoeken na elkaar stuurt, wacht bij elk verzoek op het
 antwoord. Hij stuurt ze dus nooit sneller dan de server ze beantwoordt. Zo houd
@@ -23,6 +23,10 @@ je een server niet plat: hij loopt nooit achter.
 Daarom komen echte aanvallen van heel veel computers tegelijk. Dat heet
 **DDoS**: *Distributed Denial of Service*. De verzoeken zijn "verspreid" over
 duizenden machines, en samen sturen ze er veel meer dan de server aankan.
+
+Eén computer kan een server wel te druk maken als hij niet netjes wacht: als hij
+veel verzoeken tegelijk stuurt, of steeds een endpoint kiest dat veel werk kost.
+Daarom telt de limiet in [les 4](./limiet) per computer.
 
 ## Een botnet
 

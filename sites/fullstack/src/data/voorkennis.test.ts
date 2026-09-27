@@ -69,7 +69,6 @@ const ZONDER_BLOK: Record<string, string> = {
   'veiligheid/dos/dos-en-ddos.mdx': 'begrippen, uitgelegd in de les zelf',
   'veiligheid/dos/limiet.mdx': 'slowapi wordt in de les zelf uitgelegd',
   'veiligheid/dos/praktijk.mdx': 'achtergrond bij de lessen ervoor, geen nieuwe voorkennis',
-  'veiligheid/dos/te-veel.mdx': 'bouwt op de limiet-les ervoor, in dezelfde map',
   'veiligheid/cookies/oplossing.mdx': 'bouwt op de zwakheid-stap ervoor, in dezelfde map',
   'veiligheid/cookies/praktijk.mdx':
     'achtergrond bij de twee stappen ervoor, geen nieuwe voorkennis',
@@ -109,6 +108,7 @@ const MET_BLOK = [
   'FastAPI/server-of-browser.mdx',
   'FastAPI/sessies.mdx',
   'FastAPI/static_files.mdx',
+  'veiligheid/dos/te-veel.mdx',
   'veiligheid/dos/verzoek.mdx',
   'veiligheid/dos/zelf-meten.mdx',
   'veiligheid/toegang/zwakheid.mdx',
