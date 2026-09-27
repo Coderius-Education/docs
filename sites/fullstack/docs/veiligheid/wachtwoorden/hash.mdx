@@ -1,0 +1,130 @@
+---
+sidebar_label: '2. Wat een hash is'
+description: Een hash maakt van een wachtwoord een code die je niet kunt terugrekenen, en die altijd hetzelfde is voor hetzelfde wachtwoord.
+---
+
+# Wachtwoorden: wat een hash is
+
+In [les 1](./gewone-tekst) stond elk wachtwoord leesbaar in de database. Het
+idee om dat op te lossen: bewaar niet het wachtwoord zelf, maar een **hash**
+ervan. Een hash is een berekening die van tekst een lange code maakt. Python
+heeft er een ingebouwd, `sha256`:
+
+```python
+import hashlib
+
+wachtwoord = "welkom123"
+print(hashlib.sha256(wachtwoord.encode()).hexdigest())
+```
+
+Uitvoer:
+
+```
+2a5c5f2623024ce3de6fe7dc8f5e13ca55b7aadc13174254b40af574e37018c1
+```
+
+`.encode()` maakt van de tekst bytes, want daar rekent `sha256` mee, en
+`.hexdigest()` schrijft de uitkomst als tekst van cijfers en de letters a tot
+en met f.
+
+## Drie eigenschappen
+
+**Eenrichtingsverkeer.** Van een wachtwoord naar een hash is één regel code.
+Van een hash terug naar het wachtwoord bestaat geen berekening. Daarom kun je
+een hash bewaren: wie hem ziet, kan hem niet omrekenen.
+
+**Hetzelfde erin, hetzelfde eruit.** `welkom123` geeft elke keer precies
+dezelfde hash. Zo kun je bij het inloggen controleren of iemand het goede
+wachtwoord typt: bereken de hash van wat hij intypt, en vergelijk die met de
+opgeslagen hash.
+
+**Een klein verschil, een heel andere hash.** Eén letter anders is een
+compleet andere code:
+
+| Wachtwoord | `sha256` |
+|:---:|:---:|
+| `welkom123` | `2a5c5f2623024ce3…` |
+| `welkom124` | `b4514acd68f0dc54…` |
+| `Welkom123` | `7bca025eff4fb877…` |
+
+Aan de hash zie je dus niet of twee wachtwoorden op elkaar lijken.
+
+## Een hash in je server
+
+In `/registreer` uit les 1 bewaar je nu de hash in plaats van het wachtwoord.
+Regel 9 wordt:
+
+{/* niet-compileren: één regel uit de functie registreer */}
+
+```python
+        db[naam] = hashlib.sha256(wachtwoord.encode()).hexdigest()
+```
+
+Zet ook `import hashlib` bovenaan `main.py`. Gooi `gebruikers.db` weg, start je
+server en draai `registreer.py` en `lees_database.py` opnieuw:
+
+```
+sara: 2a5c5f2623024ce3de6fe7dc8f5e13ca55b7aadc13174254b40af574e37018c1
+alex: 9c6514b2297031c14bc3968b0dc45fc0ca22d6795a835f5abc8c08a9eb6d250d
+noor: 2a5c5f2623024ce3de6fe7dc8f5e13ca55b7aadc13174254b40af574e37018c1
+```
+
+De wachtwoorden zijn niet meer te lezen. Maar kijk naar Sara en Noor: dezelfde
+code. Hetzelfde erin, hetzelfde eruit, en dus zie je in de database wie
+hetzelfde wachtwoord heeft. Daar gaat [les 3](./zout) over.
+
+## Er gaat iets mis
+
+```python
+import hashlib
+
+hashlib.sha256("welkom123").hexdigest()
+```
+
+Uitvoer:
+
+```
+TypeError: Strings must be encoded before hashing
+```
+
+**Oorzaak:** `sha256` rekent met bytes, niet met tekst.
+
+**Oplossing:** zet `.encode()` achter de tekst: `"welkom123".encode()`.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Twee keer hetzelfde
+
+Een vierde gebruiker, Tim, registreert met het wachtwoord `welkom123`.
+
+**Vraag:** welke code staat er in de database bij Tim?
+
+<details>
+<summary>Tip</summary>
+
+Een `sha256`-hash hangt alleen af van wat je erin stopt.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Precies dezelfde als bij Sara en Noor:
+`2a5c5f2623024ce3de6fe7dc8f5e13ca55b7aadc13174254b40af574e37018c1`.
+
+</details>
+
+### Opdracht 2: Run - Je eigen hash
+
+Bereken de `sha256`-hash van je eigen naam. Verander daarna één letter en
+bereken hem opnieuw. Hoeveel tekens van de twee hashes zijn gelijk?
+
+<details>
+<summary>Antwoord</summary>
+
+Bijna geen: hooguit een paar tekens komen toevallig overeen, op willekeurige
+plekken. Eén letter verschil in de invoer geeft een heel andere hash.
+
+</details>
+
+Door naar [les 3: zout](./zout).

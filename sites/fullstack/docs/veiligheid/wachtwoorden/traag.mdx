@@ -1,0 +1,139 @@
+---
+sidebar_label: '4. Traag is goed'
+description: Een hash voor wachtwoorden is expres traag. Meet zelf het verschil tussen sha256 en Argon2.
+---
+
+# Wachtwoorden: traag is goed
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/modules/09d-modules', label: 'Modules importeren'},
+  ]}
+/>
+
+Met een hash en een zout kan niemand het wachtwoord meer terugrekenen. Maar een
+aanvaller met de database kan nog wel proberen: een veelgebruikt wachtwoord
+nemen, de hash uitrekenen met het zout van een gebruiker, en kijken of die
+klopt. Hoe sneller de hash, hoe meer pogingen per seconde.
+
+`sha256` is gemaakt om snel te zijn: handig voor het controleren van bestanden,
+maar voor wachtwoorden juist een nadeel. Voor wachtwoorden bestaan hashes die
+expres traag zijn, zoals **Argon2**. Installeer hem met
+`python -m pip install argon2-cffi`.
+
+## Meet het zelf
+
+Dit script rekent eerst honderdduizend `sha256`-hashes uit, en daarna twintig
+Argon2-hashes, en zegt hoeveel er per seconde lukken:
+
+<CodeUitleg>
+
+```python showLineNumbers
+import hashlib
+import time
+
+from argon2 import PasswordHasher
+
+ph = PasswordHasher()
+
+begin = time.perf_counter()
+for i in range(100000):
+    hashlib.sha256(f"poging{i}".encode()).hexdigest()
+duur = time.perf_counter() - begin
+print(f"sha256: {100000 / duur:.0f} per seconde")
+
+begin = time.perf_counter()
+for i in range(20):
+    ph.hash(f"poging{i}")
+duur = time.perf_counter() - begin
+print(f"argon2: {20 / duur:.0f} per seconde")
+```
+
+<Regel n={6}>
+Een `PasswordHasher` rekent Argon2-hashes uit. In les 5 gebruik je hem in je server.
+</Regel>
+
+<Regel n={8}>
+`time.perf_counter()` geeft een tijd in seconden. Het verschil tussen begin en eind is hoe lang de loop duurde.
+</Regel>
+
+<Regel n={12}>
+`:.0f` schrijft het getal zonder cijfers achter de komma.
+</Regel>
+
+</CodeUitleg>
+
+Op de computer waarop deze les is getest, gaf dat:
+
+```
+sha256: 2194629 per seconde
+argon2: 19 per seconde
+```
+
+Jouw getallen zijn anders, want elke computer is anders snel. Maar het verschil
+is steeds ongeveer honderdduizend keer.
+
+## Waarom dat jou niet hindert
+
+Je server rekent één hash uit als iemand inlogt. Of dat een miljoenste of een
+twintigste seconde duurt, merkt de gebruiker niet. Wie de database heeft
+gestolen en per gebruiker duizenden wachtwoorden wil proberen, merkt het wel:
+wat met `sha256` een fractie van een seconde kost, duurt met Argon2 uren.
+
+Een trage hash beschermt niet tegen alles. Een wachtwoord als `welkom123` staat
+in elke lijst met veelgebruikte wachtwoorden en blijft zwak, hoe traag de hash
+ook is. Hoe sites daar mee omgaan, zie je in [les 8](./praktijk).
+
+## Er gaat iets mis
+
+```
+ModuleNotFoundError: No module named 'argon2'
+```
+
+**Oorzaak:** Argon2 is niet geïnstalleerd, of in een andere omgeving dan de
+Python waarmee je het script draait.
+
+**Oplossing:** installeer hem in de terminal van VS Code met
+`python -m pip install argon2-cffi`. Let op: je installeert `argon2-cffi`,
+maar je importeert `argon2`.
+
+## Opdrachten
+
+### Opdracht 1: Run
+
+Draai het script. Deel het getal van `sha256` door dat van Argon2. Hoeveel
+keer trager is Argon2 op jouw computer?
+
+<details>
+<summary>Antwoord</summary>
+
+Op de testcomputer is dat 2194629 gedeeld door 19, ongeveer 115 000 keer. Bij
+jou komt er een ander getal uit, maar in dezelfde orde: tienduizenden tot
+honderdduizenden keren.
+
+</details>
+
+### Opdracht 2: Investigate - Een miljoen pogingen
+
+Hoe lang duren een miljoen hashes met jouw getallen, met `sha256` en met
+Argon2?
+
+<details>
+<summary>Tip</summary>
+
+Deel een miljoen door het aantal per seconde. Voor Argon2 kun je de seconden
+daarna delen door 3600 om uren te krijgen.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Met de getallen van de testcomputer: `sha256` een miljoen gedeeld door
+2194629, bijna een halve seconde. Argon2 een miljoen gedeeld door 19, ruim
+52 000 seconden: meer dan veertien uur. En dat is voor één gebruiker, want
+door het zout begint het rekenen bij elke gebruiker opnieuw.
+
+</details>
+
+Door naar [les 5: registreren met Argon2](./registreren).

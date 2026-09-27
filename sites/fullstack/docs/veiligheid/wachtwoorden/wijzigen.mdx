@@ -1,0 +1,158 @@
+---
+sidebar_label: '7. Wachtwoord wijzigen'
+description: Laat een gebruiker zijn wachtwoord wijzigen na controle van het oude, en werk oude hashes bij met check_needs_rehash.
+---
+
+# Wachtwoorden: wachtwoord wijzigen
+
+Met [registreren](./registreren) en [inloggen](./inloggen) heb je de basis.
+Twee dingen horen er nog bij: een gebruiker moet zijn wachtwoord kunnen
+veranderen, en een hash met oude instellingen moet je kunnen bijwerken.
+
+## Het oude wachtwoord eerst
+
+Een nieuw wachtwoord zet je pas in de database als het oude klopt. Anders kan
+iemand die jouw laptop even gebruikt, je wachtwoord veranderen en je buitensluiten.
+Het begin is daarom hetzelfde als bij `/inloggen`:
+
+<CodeUitleg>
+
+```python showLineNumbers
+@app.post("/wijzig")
+async def wijzig(naam: str = Form(...), oud: str = Form(...), nieuw: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        opgeslagen = db.get(naam)
+    if opgeslagen is None:
+        return {"bericht": "Naam of wachtwoord klopt niet"}
+    try:
+        ph.verify(opgeslagen, oud)
+    except VerifyMismatchError:
+        return {"bericht": "Naam of wachtwoord klopt niet"}
+    with SqliteDict("gebruikers.db") as db:
+        db[naam] = ph.hash(nieuw)
+        db.commit()
+    return {"bericht": "Wachtwoord gewijzigd"}
+```
+
+<Regel n={3} tot={10}>
+Precies zoals bij inloggen: opzoeken, en `ph.verify` met het oude wachtwoord.
+</Regel>
+
+<Regel n={11} tot={13}>
+Pas als het oude wachtwoord klopt, open je de database opnieuw en bewaar je de hash van het nieuwe.
+</Regel>
+
+</CodeUitleg>
+
+Zet dit endpoint in hetzelfde `main.py` als `/registreer` en `/inloggen`: het
+gebruikt dezelfde imports en dezelfde `ph`.
+
+## Oude hashes bijwerken
+
+Computers worden elk jaar sneller, dus wat vandaag traag genoeg is, is dat over
+een paar jaar niet meer. Daarom worden de standaardinstellingen van Argon2 af en
+toe strenger. De oude hashes in je database blijven werken, want hun
+instellingen staan erin. Maar je wilt ze wel bijwerken.
+
+Dat kan alleen als iemand inlogt: dan heb je het wachtwoord even in handen.
+`ph.check_needs_rehash` zegt of een hash met andere instellingen is gemaakt dan
+je `PasswordHasher` nu gebruikt:
+
+```python
+from argon2 import PasswordHasher
+
+ph = PasswordHasher()
+
+nieuw = ph.hash("welkom123")
+oud = PasswordHasher(time_cost=1).hash("welkom123")
+
+print(ph.check_needs_rehash(nieuw))
+print(ph.check_needs_rehash(oud))
+```
+
+Uitvoer:
+
+```
+False
+True
+```
+
+`PasswordHasher(time_cost=1)` doet hier alsof hij een hash van jaren geleden
+maakt, met lichtere instellingen. In `/inloggen` zet je na een geslaagde
+`ph.verify`:
+
+{/* niet-compileren: fragment uit de functie inloggen */}
+
+```python
+    if ph.check_needs_rehash(opgeslagen):
+        with SqliteDict("gebruikers.db") as db:
+            db[naam] = ph.hash(wachtwoord)
+            db.commit()
+```
+
+Zo worden de hashes vanzelf bijgewerkt, zonder dat iemand zijn wachtwoord hoeft
+te veranderen.
+
+## Opdrachten
+
+### Opdracht 1: Run - Wijzigen
+
+Zet `/wijzig` in je server. Schrijf een scriptje dat eerst probeert het
+wachtwoord van Sara te wijzigen met een fout oud wachtwoord, en daarna met het
+goede. Probeer daarna in te loggen met het oude en met het nieuwe wachtwoord.
+
+<details>
+<summary>Tip</summary>
+
+Het lijkt op `inloggen.py`, maar met drie velden in `data`: `naam`, `oud` en
+`nieuw`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+import httpx
+
+adres = "http://127.0.0.1:8000"
+
+wijzig = {"naam": "sara", "oud": "fout", "nieuw": "Lange-Nieuwe-Zin-7"}
+print(httpx.post(adres + "/wijzig", data=wijzig).json())
+wijzig["oud"] = "welkom123"
+print(httpx.post(adres + "/wijzig", data=wijzig).json())
+
+for wachtwoord in ["welkom123", "Lange-Nieuwe-Zin-7"]:
+    inloggen = {"naam": "sara", "wachtwoord": wachtwoord}
+    print(httpx.post(adres + "/inloggen", data=inloggen).json())
+```
+
+Uitvoer:
+
+```
+{'bericht': 'Naam of wachtwoord klopt niet'}
+{'bericht': 'Wachtwoord gewijzigd'}
+{'bericht': 'Naam of wachtwoord klopt niet'}
+{'bericht': 'Ingelogd'}
+```
+
+Met het foute oude wachtwoord verandert er niets. Na de wijziging werkt alleen
+het nieuwe wachtwoord nog.
+
+</details>
+
+### Opdracht 2: Investigate - Wanneer bijwerken?
+
+Waarom werk je een oude hash bij in `/inloggen`, en niet bijvoorbeeld in een
+apart script dat alle hashes in de database in één keer bijwerkt?
+
+<details>
+<summary>Antwoord</summary>
+
+Voor een nieuwe hash heb je het wachtwoord nodig, en dat staat nergens: in de
+database staat alleen de oude hash. Het enige moment waarop je het wachtwoord
+even hebt, is als iemand inlogt.
+
+</details>
+
+Door naar [les 8: in de praktijk](./praktijk).

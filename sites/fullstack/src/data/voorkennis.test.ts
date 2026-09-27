@@ -68,8 +68,12 @@ const ZONDER_BLOK: Record<string, string> = {
   'troubleshooting.md': 'naslag',
   'veiligheid/dos/oplossing.mdx': 'bouwt op de zwakheid-stap ervoor, in dezelfde map',
   'veiligheid/dos/praktijk.mdx': 'achtergrond bij de twee stappen ervoor, geen nieuwe voorkennis',
+  'veiligheid/wachtwoorden/hash.mdx': 'hashlib en encode worden in de les zelf uitgelegd',
   'veiligheid/wachtwoorden/praktijk.mdx':
-    'achtergrond bij de twee stappen ervoor, geen nieuwe voorkennis',
+    'achtergrond bij de lessen ervoor, geen nieuwe voorkennis',
+  'veiligheid/wachtwoorden/registreren.mdx': 'bouwt op de lessen ervoor, in dezelfde map',
+  'veiligheid/wachtwoorden/wijzigen.mdx': 'bouwt op registreren en inloggen, in dezelfde map',
+  'veiligheid/wachtwoorden/zout.mdx': 'bouwt op de hash-les ervoor, in dezelfde map',
 };
 
 const MET_BLOK = [
@@ -90,8 +94,9 @@ const MET_BLOK = [
   'FastAPI/sessies.mdx',
   'FastAPI/static_files.mdx',
   'veiligheid/dos/zwakheid.mdx',
-  'veiligheid/wachtwoorden/oplossing.mdx',
-  'veiligheid/wachtwoorden/zwakheid.mdx',
+  'veiligheid/wachtwoorden/gewone-tekst.mdx',
+  'veiligheid/wachtwoorden/inloggen.mdx',
+  'veiligheid/wachtwoorden/traag.mdx',
 ];
 
 function relatievePaden(): string[] {

@@ -1,52 +1,23 @@
 ---
-sidebar_label: '3. In de praktijk'
+sidebar_label: '8. In de praktijk'
 description: Wat echte sites nog meer doen om wachtwoorden en accounts te beschermen, van instellingen die meegroeien tot tweestapsverificatie, en wat de AVG zegt over een datalek.
 ---
 
 # Wachtwoorden: in de praktijk
 
-Met Argon2 uit [de oplossing](./oplossing) bewaar je wachtwoorden zoals het
+Met Argon2 uit [les 5 tot en met 7](./registreren) bewaar je wachtwoorden zoals het
 hoort. Een echte site doet nog meer, omdat een aanvaller niet alleen op de
 database uit is: hij kan ook heel vaak proberen in te loggen, of een
 wachtwoord gebruiken dat hij bij een andere site heeft buitgemaakt. Hieronder
 staat wat er in de praktijk nog gebeurt.
 
-## De instellingen groeien mee
+## Peper
 
-Computers worden elk jaar sneller, dus wat vandaag traag genoeg is, is dat over
-een paar jaar niet meer. Daarom worden de standaardinstellingen van Argon2 af
-en toe strenger. De oude hashes in je database blijven werken, want hun
-instellingen staan erin. Maar je wilt ze wel bijwerken.
-
-Dat kan alleen op het moment dat iemand inlogt: dan heb je het wachtwoord even
-in handen. `ph.check_needs_rehash` zegt of een hash met oude instellingen is
-gemaakt:
-
-```python
-from argon2 import PasswordHasher
-
-ph = PasswordHasher()
-
-opgeslagen = ph.hash("welkom123")
-if ph.check_needs_rehash(opgeslagen):
-    opgeslagen = ph.hash("welkom123")
-```
-
-Na een geslaagde `ph.verify` zet je die nieuwe hash in de database. Zo worden
-de hashes vanzelf bijgewerkt, zonder dat iemand zijn wachtwoord hoeft te
-veranderen.
-
-## Zout en peper
-
-Het zout uit de oplossing maakt elke hash uniek. Daardoor werken ook
-**rainbow tables** niet meer: grote, vooraf uitgerekende lijsten met de hash
-van miljoenen wachtwoorden, waarin een aanvaller een gestolen hash alleen hoeft
-op te zoeken. Met een zout zou hij voor elk zout een eigen lijst nodig hebben.
-
-Sommige sites doen er nog een **peper** bij: een geheim dat voor alle
-wachtwoorden hetzelfde is, maar níét in de database staat, bijvoorbeeld in een
-instelling op de server. Lekt alleen de database, dan mist de aanvaller dat
-stukje, en helpt raden hem niets.
+Het zout uit [les 3](./zout) staat naast de hash in de database. Sommige sites
+doen er nog een **peper** bij: een geheim dat voor alle wachtwoorden hetzelfde
+is, maar níét in de database staat, bijvoorbeeld in een instelling op de
+server. Lekt alleen de database, dan mist wie hem heeft dat stukje, en kan hij
+met de hashes niets beginnen.
 
 ## Goede wachtwoorden toestaan
 
@@ -111,7 +82,7 @@ van wie de gegevens zijn gelekt.
 
 Andermans wachtwoorden achterhalen of gebruiken is bovendien strafbaar, ook
 als je "alleen even kijkt". Daarom deed je de test in
-[stap 1](./zwakheid) alleen met je eigen database.
+[les 1](./gewone-tekst) alleen met je eigen database.
 
 ## Opdracht: welke maatregel helpt waartegen?
 
@@ -140,11 +111,10 @@ het wachtwoord zelf, of om wie er inlogt?
    na veel foute pogingen.
 2. **Controleren tegen gelekte wachtwoorden** bij het registreren, zodat Sara
    een ander wachtwoord moet kiezen.
-3. **`check_needs_rehash`** bij het inloggen, zodat oude hashes vanzelf worden
+3. **`check_needs_rehash`** bij het inloggen, uit [les 7](./wijzigen), zodat oude hashes vanzelf worden
    bijgewerkt.
 4. **Tweestapsverificatie**: het wachtwoord alleen is dan niet genoeg.
 
 </details>
 
-Terug naar [de zwakheid](./zwakheid), het begin van deze reeks over
-wachtwoorden.
+Terug naar [les 1](./gewone-tekst), het begin van deze reeks over wachtwoorden.
