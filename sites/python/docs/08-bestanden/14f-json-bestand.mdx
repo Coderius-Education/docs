@@ -1,0 +1,240 @@
+---
+sidebar_position: 6
+description: Schrijf JSON naar een bestand met json.dump, en lees het later weer in met json.load.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 14f JSON in een bestand
+
+:::info
+Deze les gebruikt `json.dumps` en `json.loads`, uit [JSON](/docs/bestanden/14e-json), en bestanden openen, uit [Een tekstbestand schrijven](/docs/bestanden/14a-tekstbestand-schrijven).
+:::
+
+In 14e zette je gegevens om naar JSON-tekst. Om ze te bewaren tot de volgende
+keer, schrijf je die tekst in een bestand.
+
+## Opslaan in een bestand
+
+Het bestand open je met `"w"`, zoals in 14a. In plaats van `bestand.write()`
+gebruik je `json.dump()`: die zet je gegevens om naar JSON en schrijft ze
+meteen in het bestand.
+
+```python
+import json
+
+scores = [
+    {"naam": "Sara", "punten": 120},
+    {"naam": "Alex", "punten": 95},
+]
+
+with open("scores.json", "w") as bestand:
+    json.dump(scores, bestand, indent=2)
+
+print("Opgeslagen.")
+```
+
+Uitvoer:
+
+```
+Opgeslagen.
+```
+
+## Inlezen uit een bestand
+
+Lezen gaat zoals in 14b, maar in plaats van `bestand.read()` gebruik je
+`json.load()`. Die leest het bestand en maakt er meteen weer Python-gegevens
+van:
+
+```python
+import json
+
+scores = [{"naam": "Sara", "punten": 120}, {"naam": "Alex", "punten": 95}]
+with open("scores.json", "w") as bestand:
+    json.dump(scores, bestand)
+
+with open("scores.json") as bestand:
+    ingelezen = json.load(bestand)
+
+for score in ingelezen:
+    print(f"{score['naam']}: {score['punten']}")
+```
+
+Uitvoer:
+
+```
+Sara: 120
+Alex: 95
+```
+
+---
+
+## Er gaat iets mis
+
+**De bestandsnaam in plaats van het bestand**
+
+```python
+import json
+
+scores = [{"naam": "Sara", "punten": 120}]
+
+with open("scores.json", "w") as bestand:
+    json.dump(scores, "scores.json")
+```
+
+Uitvoer:
+
+```
+AttributeError: 'str' object has no attribute 'write'
+```
+
+`json.dump` wil het open bestand hebben, niet de naam ervan. De naam heb je
+al aan `open()` gegeven; aan `json.dump` geef je `bestand`. Python zegt het
+op zijn eigen manier: in de string `"scores.json"` kan hij niet schrijven.
+
+---
+
+## Opdracht 14f.1: Highscores bewaren
+
+Sla de lijst `highscores` op in `highscores.json`. Lees het bestand daarna
+in, in een nieuwe variabele, en print de naam van wie de meeste punten
+heeft.
+
+Verwachte uitvoer:
+
+```
+Winnaar: Noor met 150 punten
+```
+
+<CodeExercise>{`import json
+
+highscores = [
+    {"naam": "Sara", "punten": 120},
+    {"naam": "Noor", "punten": 150},
+    {"naam": "Alex", "punten": 95},
+]
+
+# Schrijf hier je code`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Opslaan met `with open("highscores.json", "w") as bestand:` en
+`json.dump(...)`, inlezen met `with open("highscores.json") as bestand:` en
+`json.load(bestand)`. Zoek daarna de hoogste met een loop, zoals in les
+11c.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+import json
+
+highscores = [
+    {"naam": "Sara", "punten": 120},
+    {"naam": "Noor", "punten": 150},
+    {"naam": "Alex", "punten": 95},
+]
+
+with open("highscores.json", "w") as bestand:
+    json.dump(highscores, bestand)
+
+with open("highscores.json") as bestand:
+    ingelezen = json.load(bestand)
+
+beste = ingelezen[0]
+for score in ingelezen:
+    if score["punten"] > beste["punten"]:
+        beste = score
+
+print(f"Winnaar: {beste['naam']} met {beste['punten']} punten")
+```
+
+Uitvoer:
+
+```
+Winnaar: Noor met 150 punten
+```
+
+</details>
+
+---
+
+## Opdracht 14f.2: Een score erbij
+
+Een echt spel slaat na elk potje de nieuwe score op, zonder de oude kwijt
+te raken. Schrijf de functie `voeg_score_toe(naam, punten)`: die leest
+`scores.json` in, voegt de nieuwe score toe aan de lijst en slaat de lijst
+weer op. Het bestand begint met een lege lijst.
+
+Verwachte uitvoer:
+
+```
+[{'naam': 'Sara', 'punten': 120}, {'naam': 'Alex', 'punten': 95}]
+```
+
+<CodeExercise>{`import json
+
+with open("scores.json", "w") as bestand:
+    json.dump([], bestand)
+
+
+def voeg_score_toe(naam, punten):
+    # lees in, voeg toe, sla op
+    print(f"Nog te doen: {naam} met {punten} punten")
+
+
+voeg_score_toe("Sara", 120)
+voeg_score_toe("Alex", 95)
+
+with open("scores.json") as bestand:
+    print(json.load(bestand))`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Drie stappen in de functie: `json.load` om de lijst in te lezen,
+`.append({"naam": naam, "punten": punten})` om de score toe te voegen, en
+`json.dump` in een bestand dat je met `"w"` opent om alles weer op te
+slaan.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+import json
+
+with open("scores.json", "w") as bestand:
+    json.dump([], bestand)
+
+
+def voeg_score_toe(naam, punten):
+    with open("scores.json") as bestand:
+        scores = json.load(bestand)
+    scores.append({"naam": naam, "punten": punten})
+    with open("scores.json", "w") as bestand:
+        json.dump(scores, bestand)
+
+
+voeg_score_toe("Sara", 120)
+voeg_score_toe("Alex", 95)
+
+with open("scores.json") as bestand:
+    print(json.load(bestand))
+```
+
+Uitvoer:
+
+```
+[{'naam': 'Sara', 'punten': 120}, {'naam': 'Alex', 'punten': 95}]
+```
+
+Het bestand opent twee keer: eerst om te lezen, dan om te schrijven. Open
+je het meteen met `"w"`, dan is de oude inhoud al weg voordat je hem hebt
+ingelezen.
+
+</details>

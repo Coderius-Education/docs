@@ -33,8 +33,8 @@ export const knowledgeGraph = {
     {
       id: 'data',
       label: 'Data Structuren',
-      description: 'Lijsten en collecties van gegevens.',
-      maxLevel: 5,
+      description: 'Lijsten en collecties van gegevens, en die bewaren in een bestand.',
+      maxLevel: 6,
     },
     {
       id: 'klassen',
@@ -154,8 +154,7 @@ export const knowledgeGraph = {
       impact: [
         {
           concept: 'data',
-          depth:
-            'Je leert sleutel-waarde paren in een `dict`, geneste dictionaries en opslaan als JSON.',
+          depth: 'Je leert sleutel-waarde paren in een `dict`, en geneste dictionaries.',
           level: 3,
         },
         { concept: 'herhaling', depth: 'Je leert complexe herhalingen.', level: 4 },
@@ -185,7 +184,18 @@ export const knowledgeGraph = {
     },
     {
       id: 't14',
-      title: '14. Klassen',
+      title: '14. Bestanden',
+      impact: [
+        {
+          concept: 'data',
+          depth: 'Je leert tekst en JSON opslaan in een bestand, en weer inlezen.',
+          level: 6,
+        },
+      ],
+    },
+    {
+      id: 't15',
+      title: '15. Klassen',
       impact: [
         {
           concept: 'klassen',
@@ -200,8 +210,8 @@ export const knowledgeGraph = {
       ],
     },
     {
-      id: 't15',
-      title: '15. Fouten afvangen',
+      id: 't16',
+      title: '16. Fouten afvangen',
       impact: [
         {
           concept: 'fouten',

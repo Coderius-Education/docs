@@ -1,0 +1,267 @@
+---
+sidebar_position: 4
+description: Knip een regel uit een bestand in stukken met split, zodat je er een naam en een getal uit haalt.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 14d Regels opsplitsen
+
+:::info
+Deze les gebruikt regels lezen met `strip()`, uit [Een tekstbestand lezen](/docs/bestanden/14b-tekstbestand-lezen), en uitpakken, uit [Tuples](/docs/data/tuples).
+:::
+
+Een regel in een bestand bevat vaak meer dan één ding: een naam en een
+score, gescheiden door een puntkomma. Met `split()` knip je zo'n regel in
+stukken:
+
+```python
+regel = "Sara;120"
+delen = regel.split(";")
+
+print(delen)
+print(delen[0])
+print(int(delen[1]) + 10)
+```
+
+Uitvoer:
+
+```
+['Sara', '120']
+Sara
+130
+```
+
+`split(";")` knipt de tekst op elke `;` en geeft een lijst met de stukken.
+Die stukken zijn allemaal tekst, ook `'120'`. Om ermee te rekenen maak je er
+eerst een getal van met `int()`.
+
+## Een heel bestand
+
+Zo lees je een bestand met een score op elke regel:
+
+```python
+with open("scores.txt", "w") as bestand:
+    bestand.write("Sara;120\nAlex;95\nNoor;150\n")
+
+with open("scores.txt") as bestand:
+    for regel in bestand:
+        naam, punten = regel.strip().split(";")
+        print(f"{naam} heeft {punten} punten")
+```
+
+Uitvoer:
+
+```
+Sara heeft 120 punten
+Alex heeft 95 punten
+Noor heeft 150 punten
+```
+
+Eerst haalt `strip()` de enter eraf, dan knipt `split(";")` de regel in twee.
+Omdat er precies twee stukken uitkomen, kun je ze meteen uitpakken in `naam`
+en `punten`, net als een tuple in les 12.
+
+:::note
+Een bestand met een komma tussen de stukken heet een CSV-bestand. Excel en
+Google Sheets kunnen zo'n bestand openen en opslaan. Je leest het op dezelfde
+manier, met `split(",")`.
+:::
+
+---
+
+## Er gaat iets mis
+
+**Rekenen met tekst**
+
+```python
+punten = ["120", "95", "150"]
+
+print(max(punten))
+```
+
+Uitvoer:
+
+```
+95
+```
+
+Geen foutmelding, maar wel het verkeerde antwoord. `"95"` is tekst, en tekst
+vergelijkt Python letter voor letter, zoals in een woordenboek. `"9"` komt na
+`"1"`, dus `"95"` is de grootste. Uit een bestand komt altijd tekst: maak er
+met `int()` een getal van voordat je gaat vergelijken of rekenen.
+
+**Een regel zonder puntkomma**
+
+```python
+regel = "Sara 120"
+naam, punten = regel.split(";")
+```
+
+Uitvoer:
+
+```
+ValueError: not enough values to unpack (expected 2, got 1)
+```
+
+Er staat geen `;` in de regel, dus `split` geeft een lijst met één stuk:
+`['Sara 120']`. Dat past niet in twee variabelen. Kijk of het teken tussen de
+haakjes van `split` hetzelfde is als het teken in het bestand.
+
+---
+
+## Opdracht 14d.1: Alle punten bij elkaar
+
+Lees `scores.txt` en tel alle punten bij elkaar op.
+
+Verwachte uitvoer:
+
+```
+Samen: 365 punten
+```
+
+<CodeExercise>{`with open("scores.txt", "w") as bestand:
+    bestand.write("Sara;120\\nAlex;95\\nNoor;150\\n")
+
+# Schrijf hier je code`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Begin met `totaal = 0`. Knip in de loop elke regel op, en tel
+`int(punten)` bij het totaal op.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+with open("scores.txt", "w") as bestand:
+    bestand.write("Sara;120\nAlex;95\nNoor;150\n")
+
+totaal = 0
+with open("scores.txt") as bestand:
+    for regel in bestand:
+        naam, punten = regel.strip().split(";")
+        totaal += int(punten)
+
+print(f"Samen: {totaal} punten")
+```
+
+Uitvoer:
+
+```
+Samen: 365 punten
+```
+
+</details>
+
+---
+
+## Opdracht 14d.2: De winnaar
+
+Zoek in `scores.txt` wie de meeste punten heeft.
+
+Verwachte uitvoer:
+
+```
+Winnaar: Noor met 150 punten
+```
+
+<CodeExercise>{`with open("scores.txt", "w") as bestand:
+    bestand.write("Sara;120\\nAlex;95\\nNoor;150\\n")
+
+# Schrijf hier je code`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Houd twee variabelen bij: `beste_naam` en `beste_punten`, met als
+beginwaarde `""` en `0`. Is een score hoger dan `beste_punten`, dan vervang
+je ze allebei. Vergeet `int()` niet, anders wint Alex.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+with open("scores.txt", "w") as bestand:
+    bestand.write("Sara;120\nAlex;95\nNoor;150\n")
+
+beste_naam = ""
+beste_punten = 0
+with open("scores.txt") as bestand:
+    for regel in bestand:
+        naam, punten = regel.strip().split(";")
+        if int(punten) > beste_punten:
+            beste_naam = naam
+            beste_punten = int(punten)
+
+print(f"Winnaar: {beste_naam} met {beste_punten} punten")
+```
+
+Uitvoer:
+
+```
+Winnaar: Noor met 150 punten
+```
+
+</details>
+
+---
+
+## Opdracht 14d.3: Van bestand naar dictionary (uitdaging)
+
+Lees `cijfers.txt` in een dictionary, met het vak als sleutel en het cijfer
+als kommagetal. Print de dictionary en het gemiddelde.
+
+Verwachte uitvoer:
+
+```
+{'wiskunde': 7.5, 'engels': 6.0, 'biologie': 8.1}
+Gemiddelde: 7.2
+```
+
+<CodeExercise>{`with open("cijfers.txt", "w") as bestand:
+    bestand.write("wiskunde,7.5\\nengels,6.0\\nbiologie,8.1\\n")
+
+# Schrijf hier je code`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Hier staat een komma tussen de stukken. Begin met een lege dictionary
+`cijfers = {}`, en zet in de loop `cijfers[vak] = float(cijfer)`. Het
+gemiddelde is de som van de waarden gedeeld door het aantal, met `:.1f` voor
+één cijfer achter de punt.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+with open("cijfers.txt", "w") as bestand:
+    bestand.write("wiskunde,7.5\nengels,6.0\nbiologie,8.1\n")
+
+cijfers = {}
+with open("cijfers.txt") as bestand:
+    for regel in bestand:
+        vak, cijfer = regel.strip().split(",")
+        cijfers[vak] = float(cijfer)
+
+print(cijfers)
+gemiddelde = sum(cijfers.values()) / len(cijfers)
+print(f"Gemiddelde: {gemiddelde:.1f}")
+```
+
+Uitvoer:
+
+```
+{'wiskunde': 7.5, 'engels': 6.0, 'biologie': 8.1}
+Gemiddelde: 7.2
+```
+
+</details>

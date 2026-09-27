@@ -1,0 +1,257 @@
+---
+sidebar_position: 2
+description: Vang verschillende fouten af met meer except-blokken of samen in één, en zie waarom een kale except gevaarlijk is.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 16b Welke fout?
+
+In één `try`-blok kan meer dan één ding misgaan. Hier kan de tekst geen getal
+zijn, maar het aantal kan ook 0 zijn:
+
+```python
+totaal = "120"
+aantal = 0
+
+try:
+    gemiddelde = int(totaal) / aantal
+    print(f"Gemiddeld {gemiddelde} punten.")
+except ValueError:
+    print("Het totaal is geen getal.")
+except ZeroDivisionError:
+    print("Er zijn nog geen spelers.")
+```
+
+Uitvoer:
+
+```
+Er zijn nog geen spelers.
+```
+
+Elke fout krijgt zijn eigen `except`-blok, met zijn eigen melding. Python
+kijkt van boven naar beneden welk blok past, en doet alleen dat ene.
+
+## Twee fouten, één blok
+
+Moet er bij twee fouten hetzelfde gebeuren, dan zet je ze samen tussen haakjes
+achter één `except`:
+
+```python
+totaal = "honderd"
+aantal = 4
+
+try:
+    gemiddelde = int(totaal) / aantal
+    print(f"Gemiddeld {gemiddelde} punten.")
+except (ValueError, ZeroDivisionError):
+    print("Dit gemiddelde kan ik niet uitrekenen.")
+```
+
+Uitvoer:
+
+```
+Dit gemiddelde kan ik niet uitrekenen.
+```
+
+## Geen kale except
+
+Je kunt `except:` ook zonder naam schrijven. Dan vangt hij alles af. Dat lijkt
+handig, maar het verstopt ook fouten die jij zelf maakt:
+
+```python
+tekst = "12"
+
+try:
+    getal = int(tkst)
+    print(getal * 2)
+except:
+    print("Dat is geen getal.")
+```
+
+Uitvoer:
+
+```
+Dat is geen getal.
+```
+
+{/* foutmelding-van: tekst = "12"\nint(tkst) */}
+
+"12" is wel een getal. Het echte probleem is een tikfout: `tkst` in plaats
+van `tekst`. Zonder de kale `except` had Python dat gezegd, met een
+`NameError`. Nu zoek je op de verkeerde plek. Noem daarom altijd de fout die
+je verwacht.
+
+---
+
+## Opdracht 16b.1: Op de kaart
+
+Zoek de prijs op in de dictionary en reken uit wat drie stuks kosten. Staat
+het niet op de kaart, print dan `Dat staat niet op de kaart.` Is het aantal
+geen getal, print dan `Typ het aantal als getal.`
+
+Verwachte uitvoer:
+
+```
+Dat staat niet op de kaart.
+```
+
+{/* niet-draaien: de startcode valt expres om, met de fout die de opdracht afvangt */}
+
+<CodeExercise>{`prijzen = {"cola": 2.50, "water": 1.75}
+drankje = "fanta"
+aantal = "3"
+
+totaal = prijzen[drankje] * int(aantal)
+print(f"Dat is {totaal:.2f} euro.")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+{/* foutmelding-los: de namen staan hier als wat je achter except schrijft, geen melding van Python */}
+
+Een sleutel die niet bestaat geeft een `KeyError`, uit les 11a. Schrijf twee
+`except`-blokken: één voor `KeyError` en één voor `ValueError`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+prijzen = {"cola": 2.50, "water": 1.75}
+drankje = "fanta"
+aantal = "3"
+
+try:
+    totaal = prijzen[drankje] * int(aantal)
+    print(f"Dat is {totaal:.2f} euro.")
+except KeyError:
+    print("Dat staat niet op de kaart.")
+except ValueError:
+    print("Typ het aantal als getal.")
+```
+
+Uitvoer:
+
+```
+Dat staat niet op de kaart.
+```
+
+Probeer ook `drankje = "cola"` met `aantal = "drie"`, en met `aantal = "3"`.
+
+</details>
+
+---
+
+## Opdracht 16b.2: Snelheid
+
+Reken de snelheid uit: afstand gedeeld door tijd. Vang allebei de fouten af
+die hier kunnen gebeuren.
+
+Verwachte uitvoer:
+
+```
+De tijd kan geen 0 zijn.
+```
+
+{/* niet-draaien: de startcode valt expres om, met de fout die de opdracht afvangt */}
+
+<CodeExercise>{`afstand = "100"
+tijd = "0"
+
+snelheid = int(afstand) / int(tijd)
+print(f"{snelheid} meter per seconde")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+{/* foutmelding-los: de namen staan hier als wat je achter except schrijft, geen melding van Python */}
+
+Delen door 0 geeft een `ZeroDivisionError`, tekst die geen getal is een
+`ValueError`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+afstand = "100"
+tijd = "0"
+
+try:
+    snelheid = int(afstand) / int(tijd)
+    print(f"{snelheid} meter per seconde")
+except ValueError:
+    print("Typ afstand en tijd als getal.")
+except ZeroDivisionError:
+    print("De tijd kan geen 0 zijn.")
+```
+
+Uitvoer:
+
+```
+De tijd kan geen 0 zijn.
+```
+
+</details>
+
+---
+
+## Opdracht 16b.3: Eén melding voor twee fouten
+
+{/* foutmelding-los: de namen staan hier als wat je achter except schrijft, geen melding van Python */}
+
+Vang in één `except` zowel een `KeyError` als een `ZeroDivisionError` af, en
+print dan `Dat kan ik niet uitrekenen.`
+
+Verwachte uitvoer:
+
+```
+Dat kan ik niet uitrekenen.
+```
+
+{/* niet-draaien: de startcode valt expres om, met de fout die de opdracht afvangt */}
+
+<CodeExercise>{`punten = {"Sara": 30, "Noor": 45}
+naam = "Alex"
+rondes = 3
+
+print(punten[naam] / rondes)`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+{/* foutmelding-los: de namen staan hier als wat je achter except schrijft, geen melding van Python */}
+
+Zet de `print` in een `try`, en de twee namen tussen haakjes achter
+`except`, met een komma ertussen.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+punten = {"Sara": 30, "Noor": 45}
+naam = "Alex"
+rondes = 3
+
+try:
+    print(punten[naam] / rondes)
+except (KeyError, ZeroDivisionError):
+    print("Dat kan ik niet uitrekenen.")
+```
+
+Uitvoer:
+
+```
+Dat kan ik niet uitrekenen.
+```
+
+Met `naam = "Sara"` en `rondes = 0` krijg je dezelfde melding, nu door de
+andere fout.
+
+</details>
+

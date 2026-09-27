@@ -230,6 +230,37 @@ Een functie zonder `return` geeft automatisch `None` terug.
 
 ---
 
+## Modules
+
+### Een module importeren
+
+```python
+import time
+time.sleep(2)            # met de modulenaam ervoor
+
+from time import sleep
+sleep(2)                 # zonder de modulenaam
+```
+
+### Je eigen module
+
+```python
+# rekenen.py
+def verdubbel(getal):
+    return getal * 2
+
+if __name__ == "__main__":
+    print(verdubbel(4))  # draait alleen als je rekenen.py zelf start
+```
+
+```python
+# main.py, in dezelfde map
+import rekenen
+print(rekenen.verdubbel(10))   # 20
+```
+
+---
+
 ## Lijsten
 
 ### Lijst maken en opvragen
@@ -321,18 +352,6 @@ print(klas["Sara"]["cijfer"])     # 8.1
 klas["Alex"]["cijfer"] = 7.2      # Veranderen
 ```
 
-### Opslaan en inlezen als JSON
-
-```python
-import json
-
-with open("klas.json", "w") as bestand:
-    json.dump(klas, bestand, indent=2)
-
-with open("klas.json") as bestand:
-    klas = json.load(bestand)
-```
-
 ---
 
 ## Tuples
@@ -379,6 +398,46 @@ bezocht.remove("A")      # verwijderen
 ```
 
 Een set heeft geen volgorde: `bezocht[0]` bestaat niet.
+
+---
+
+## Bestanden
+
+### Tekst schrijven, toevoegen en lezen
+
+```python
+with open("taken.txt", "w") as bestand:   # "w": opnieuw beginnen
+    bestand.write("huiswerk\n")
+
+with open("taken.txt", "a") as bestand:   # "a": achteraan toevoegen
+    bestand.write("afwassen\n")
+
+with open("taken.txt") as bestand:        # lezen
+    for regel in bestand:
+        print(regel.strip())               # strip() haalt de enter weg
+```
+
+### Een regel opsplitsen
+
+```python
+regel = "Sara;120"
+naam, punten = regel.split(";")   # 'Sara' en '120', allebei tekst
+punten = int(punten)
+```
+
+### Opslaan en inlezen als JSON
+
+```python
+import json
+
+klas = {"Sara": {"cijfer": 8.1}}
+
+with open("klas.json", "w") as bestand:
+    json.dump(klas, bestand, indent=2)
+
+with open("klas.json") as bestand:
+    klas = json.load(bestand)
+```
 
 ---
 

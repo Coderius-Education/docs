@@ -1,0 +1,256 @@
+---
+sidebar_position: 2
+description: Lees een tekstbestand in, in één keer met read of regel voor regel met een for-loop, en haal de enter weg met strip.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# 14b Een tekstbestand lezen
+
+:::info
+Deze les gebruikt `open`, `with` en `write`, uit [Een tekstbestand schrijven](/docs/bestanden/14a-tekstbestand-schrijven).
+:::
+
+Open je een bestand zonder `"w"`, dan kun je het lezen. `bestand.read()`
+geeft de hele inhoud als één string. Het voorbeeld schrijft het bestand eerst,
+zoals in 14a, zodat er iets te lezen is:
+
+```python
+with open("boodschappen.txt", "w") as bestand:
+    bestand.write("melk\nbrood\nkaas\n")
+
+with open("boodschappen.txt") as bestand:
+    inhoud = bestand.read()
+
+print(inhoud)
+```
+
+Uitvoer:
+
+```
+melk
+brood
+kaas
+```
+
+## Regel voor regel
+
+Vaak wil je met elke regel iets doen. Een for-loop over het bestand geeft je
+de regels één voor één:
+
+```python
+with open("boodschappen.txt", "w") as bestand:
+    bestand.write("melk\nbrood\nkaas\n")
+
+with open("boodschappen.txt") as bestand:
+    for regel in bestand:
+        print(regel)
+```
+
+Uitvoer:
+
+```
+melk
+
+brood
+
+kaas
+```
+
+Er staat steeds een lege regel tussen. Elke regel uit het bestand eindigt nog
+op de `\n` die je erin schreef, en `print` zet er zelf nog een achter.
+
+## De enter eraf met `strip()`
+
+`regel.strip()` geeft de regel terug zonder spaties en enters aan het begin
+en het eind:
+
+```python
+with open("boodschappen.txt", "w") as bestand:
+    bestand.write("melk\nbrood\nkaas\n")
+
+with open("boodschappen.txt") as bestand:
+    for regel in bestand:
+        print(f"- {regel.strip()}")
+```
+
+Uitvoer:
+
+```
+- melk
+- brood
+- kaas
+```
+
+Zonder `strip()` kwam het streepje wel goed, maar stond er weer een lege
+regel onder elke boodschap.
+
+---
+
+## Er gaat iets mis
+
+**Een bestand lezen dat er niet is**
+
+```python
+with open("boodschapen.txt") as bestand:
+    print(bestand.read())
+```
+
+Uitvoer:
+
+```
+FileNotFoundError: [Errno 2] No such file or directory: 'boodschapen.txt'
+```
+
+Lezen kan alleen als het bestand al bestaat. Hier zit een typefout in de naam:
+`boodschapen` met één `p`. Klopt de naam wel, dan is het bestand nog niet
+gemaakt. Hoe je dat netjes opvangt, zie je in les 16e.
+
+---
+
+## Opdracht 14b.1: Taken tellen
+
+De startcode schrijft een takenlijst in `taken.txt`. Lees het bestand regel
+voor regel en tel hoeveel taken erin staan.
+
+Verwachte uitvoer:
+
+```
+Er staan 4 taken in de lijst.
+```
+
+<CodeExercise>{`with open("taken.txt", "w") as bestand:
+    bestand.write("huiswerk\\nkamer opruimen\\nhond uitlaten\\nafwassen\\n")
+
+# Schrijf hier je code`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Begin met `aantal = 0` en tel er in de for-loop steeds 1 bij, net als bij
+een teller in les 6a.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+with open("taken.txt", "w") as bestand:
+    bestand.write("huiswerk\nkamer opruimen\nhond uitlaten\nafwassen\n")
+
+aantal = 0
+with open("taken.txt") as bestand:
+    for regel in bestand:
+        aantal += 1
+
+print(f"Er staan {aantal} taken in de lijst.")
+```
+
+Uitvoer:
+
+```
+Er staan 4 taken in de lijst.
+```
+
+</details>
+
+---
+
+## Opdracht 14b.2: Iedereen begroeten
+
+In `namen.txt` staat op elke regel een naam. Print voor elke naam een groet,
+zonder lege regels ertussen.
+
+Verwachte uitvoer:
+
+```
+Hoi Sara, welkom.
+Hoi Alex, welkom.
+Hoi Noor, welkom.
+```
+
+<CodeExercise>{`with open("namen.txt", "w") as bestand:
+    bestand.write("Sara\\nAlex\\nNoor\\n")
+
+with open("namen.txt") as bestand:
+    for regel in bestand:
+        print(f"Hoi {regel}, welkom.")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Draai de startcode eerst. De komma staat op een nieuwe regel: de enter zit
+nog in `regel`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+with open("namen.txt", "w") as bestand:
+    bestand.write("Sara\nAlex\nNoor\n")
+
+with open("namen.txt") as bestand:
+    for regel in bestand:
+        print(f"Hoi {regel.strip()}, welkom.")
+```
+
+Uitvoer:
+
+```
+Hoi Sara, welkom.
+Hoi Alex, welkom.
+Hoi Noor, welkom.
+```
+
+</details>
+
+---
+
+## Opdracht 14b.3: Alles bij elkaar opgeteld (uitdaging)
+
+In `stappen.txt` staat per dag hoeveel stappen iemand zette. Tel ze op.
+
+Verwachte uitvoer:
+
+```
+Totaal: 23500 stappen
+```
+
+<CodeExercise>{`with open("stappen.txt", "w") as bestand:
+    bestand.write("8000\\n4500\\n11000\\n")
+
+# Schrijf hier je code`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Elke regel is tekst. Met `int(regel.strip())` maak je er een getal van, zoals
+in les 3b.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+with open("stappen.txt", "w") as bestand:
+    bestand.write("8000\n4500\n11000\n")
+
+totaal = 0
+with open("stappen.txt") as bestand:
+    for regel in bestand:
+        totaal += int(regel.strip())
+
+print(f"Totaal: {totaal} stappen")
+```
+
+Uitvoer:
+
+```
+Totaal: 23500 stappen
+```
+
+</details>

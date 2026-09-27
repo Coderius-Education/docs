@@ -273,6 +273,19 @@ export const progressData = [
     },
   },
   {
+    tutorial: '09f. Testcode in je module',
+    levels: {
+      Basis: 8,
+      Variabelen: 7,
+      Logica: 7,
+      Herhaling: 7,
+      Functies: 8,
+      Data: 0,
+      Klassen: 0,
+      Fouten: 0,
+    },
+  },
+  {
     tutorial: '10a. Lijsten',
     levels: {
       Basis: 8,
@@ -338,32 +351,6 @@ export const progressData = [
     },
   },
   {
-    tutorial: '11d. JSON',
-    levels: {
-      Basis: 9,
-      Variabelen: 8,
-      Logica: 7,
-      Herhaling: 9,
-      Functies: 8,
-      Data: 9,
-      Klassen: 0,
-      Fouten: 0,
-    },
-  },
-  {
-    tutorial: '11e. JSON in een bestand',
-    levels: {
-      Basis: 9,
-      Variabelen: 8,
-      Logica: 7,
-      Herhaling: 9,
-      Functies: 8,
-      Data: 9,
-      Klassen: 0,
-      Fouten: 0,
-    },
-  },
-  {
     tutorial: '12. Tuples',
     levels: {
       Basis: 9,
@@ -390,7 +377,85 @@ export const progressData = [
     },
   },
   {
-    tutorial: '14a. Je eerste klasse',
+    tutorial: '14a. Een tekstbestand schrijven',
+    levels: {
+      Basis: 9,
+      Variabelen: 8,
+      Logica: 7,
+      Herhaling: 9,
+      Functies: 8,
+      Data: 10,
+      Klassen: 0,
+      Fouten: 0,
+    },
+  },
+  {
+    tutorial: '14b. Een tekstbestand lezen',
+    levels: {
+      Basis: 9,
+      Variabelen: 8,
+      Logica: 7,
+      Herhaling: 9,
+      Functies: 8,
+      Data: 10,
+      Klassen: 0,
+      Fouten: 0,
+    },
+  },
+  {
+    tutorial: '14c. Regels toevoegen',
+    levels: {
+      Basis: 9,
+      Variabelen: 8,
+      Logica: 7,
+      Herhaling: 9,
+      Functies: 8,
+      Data: 10,
+      Klassen: 0,
+      Fouten: 0,
+    },
+  },
+  {
+    tutorial: '14d. Regels opsplitsen',
+    levels: {
+      Basis: 9,
+      Variabelen: 8,
+      Logica: 7,
+      Herhaling: 9,
+      Functies: 8,
+      Data: 10,
+      Klassen: 0,
+      Fouten: 0,
+    },
+  },
+  {
+    tutorial: '14e. JSON',
+    levels: {
+      Basis: 9,
+      Variabelen: 8,
+      Logica: 7,
+      Herhaling: 9,
+      Functies: 8,
+      Data: 10,
+      Klassen: 0,
+      Fouten: 0,
+    },
+  },
+  {
+    tutorial: '14f. JSON in een bestand',
+    levels: {
+      Basis: 9,
+      Variabelen: 8,
+      Logica: 7,
+      Herhaling: 9,
+      Functies: 8,
+      Data: 10,
+      Klassen: 0,
+      Fouten: 0,
+    },
+  },
+  {
+    tutorial: '15a. Je eerste klasse',
     levels: {
       Basis: 9,
       Variabelen: 9,
@@ -403,7 +468,7 @@ export const progressData = [
     },
   },
   {
-    tutorial: '14b. Meer attributen',
+    tutorial: '15b. Meer attributen',
     levels: {
       Basis: 9,
       Variabelen: 9,
@@ -416,7 +481,7 @@ export const progressData = [
     },
   },
   {
-    tutorial: '14c. Attributen veranderen',
+    tutorial: '15c. Attributen veranderen',
     levels: {
       Basis: 9,
       Variabelen: 9,
@@ -429,7 +494,7 @@ export const progressData = [
     },
   },
   {
-    tutorial: '14d. Je eerste methode',
+    tutorial: '15d. Je eerste methode',
     levels: {
       Basis: 9,
       Variabelen: 9,
@@ -442,7 +507,7 @@ export const progressData = [
     },
   },
   {
-    tutorial: '14e. Methoden die veranderen',
+    tutorial: '15e. Methoden die veranderen',
     levels: {
       Basis: 9,
       Variabelen: 9,
@@ -455,7 +520,7 @@ export const progressData = [
     },
   },
   {
-    tutorial: '14f. Methoden met return',
+    tutorial: '15f. Methoden met return',
     levels: {
       Basis: 9,
       Variabelen: 9,
@@ -468,7 +533,7 @@ export const progressData = [
     },
   },
   {
-    tutorial: '14g. Objecten in een lijst',
+    tutorial: '15g. Objecten in een lijst',
     levels: {
       Basis: 9,
       Variabelen: 9,
@@ -481,7 +546,7 @@ export const progressData = [
     },
   },
   {
-    tutorial: '14h. Een klasse vol objecten',
+    tutorial: '15h. Een klasse vol objecten',
     levels: {
       Basis: 9,
       Variabelen: 9,
@@ -494,7 +559,7 @@ export const progressData = [
     },
   },
   {
-    tutorial: '14i. Je object printen',
+    tutorial: '15i. Je object printen',
     levels: {
       Basis: 9,
       Variabelen: 10,
@@ -507,7 +572,7 @@ export const progressData = [
     },
   },
   {
-    tutorial: '14j. Objecten als JSON',
+    tutorial: '15j. Objecten als JSON',
     levels: {
       Basis: 10,
       Variabelen: 10,
@@ -520,7 +585,7 @@ export const progressData = [
     },
   },
   {
-    tutorial: '14k. Objecten inlezen',
+    tutorial: '15k. Objecten inlezen',
     levels: {
       Basis: 10,
       Variabelen: 10,
@@ -533,7 +598,7 @@ export const progressData = [
     },
   },
   {
-    tutorial: '15a. Try en except',
+    tutorial: '16a. Try en except',
     levels: {
       Basis: 10,
       Variabelen: 10,
@@ -546,7 +611,7 @@ export const progressData = [
     },
   },
   {
-    tutorial: '15b. Welke fout',
+    tutorial: '16b. Welke fout',
     levels: {
       Basis: 10,
       Variabelen: 10,
@@ -559,7 +624,7 @@ export const progressData = [
     },
   },
   {
-    tutorial: '15c. De melding bewaren',
+    tutorial: '16c. De melding bewaren',
     levels: {
       Basis: 10,
       Variabelen: 10,
@@ -572,7 +637,7 @@ export const progressData = [
     },
   },
   {
-    tutorial: '15d. Proberen tot het lukt',
+    tutorial: '16d. Proberen tot het lukt',
     levels: {
       Basis: 10,
       Variabelen: 10,
@@ -585,7 +650,7 @@ export const progressData = [
     },
   },
   {
-    tutorial: '15e. Een bestand dat er niet is',
+    tutorial: '16e. Een bestand dat er niet is',
     levels: {
       Basis: 10,
       Variabelen: 10,
@@ -598,7 +663,7 @@ export const progressData = [
     },
   },
   {
-    tutorial: '15f. Zelf een fout opwerpen',
+    tutorial: '16f. Zelf een fout opwerpen',
     levels: {
       Basis: 10,
       Variabelen: 10,
