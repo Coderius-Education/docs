@@ -379,7 +379,7 @@ export const progressData = [
   {
     tutorial: '14a. Een tekstbestand schrijven',
     levels: {
-      Basis: 9,
+      Basis: 10,
       Variabelen: 8,
       Logica: 7,
       Herhaling: 9,
@@ -392,10 +392,10 @@ export const progressData = [
   {
     tutorial: '14b. Een tekstbestand lezen',
     levels: {
-      Basis: 9,
+      Basis: 10,
       Variabelen: 8,
       Logica: 7,
-      Herhaling: 9,
+      Herhaling: 10,
       Functies: 8,
       Data: 10,
       Klassen: 0,
@@ -405,11 +405,11 @@ export const progressData = [
   {
     tutorial: '14c. Regels toevoegen',
     levels: {
-      Basis: 9,
+      Basis: 10,
       Variabelen: 8,
       Logica: 7,
-      Herhaling: 9,
-      Functies: 8,
+      Herhaling: 10,
+      Functies: 9,
       Data: 10,
       Klassen: 0,
       Fouten: 0,
@@ -418,11 +418,11 @@ export const progressData = [
   {
     tutorial: '14d. Regels opsplitsen',
     levels: {
-      Basis: 9,
-      Variabelen: 8,
+      Basis: 10,
+      Variabelen: 9,
       Logica: 7,
-      Herhaling: 9,
-      Functies: 8,
+      Herhaling: 10,
+      Functies: 9,
       Data: 10,
       Klassen: 0,
       Fouten: 0,
@@ -431,11 +431,11 @@ export const progressData = [
   {
     tutorial: '14e. JSON',
     levels: {
-      Basis: 9,
-      Variabelen: 8,
+      Basis: 10,
+      Variabelen: 9,
       Logica: 7,
-      Herhaling: 9,
-      Functies: 8,
+      Herhaling: 10,
+      Functies: 9,
       Data: 10,
       Klassen: 0,
       Fouten: 0,
@@ -444,11 +444,11 @@ export const progressData = [
   {
     tutorial: '14f. JSON in een bestand',
     levels: {
-      Basis: 9,
-      Variabelen: 8,
+      Basis: 10,
+      Variabelen: 9,
       Logica: 7,
-      Herhaling: 9,
-      Functies: 8,
+      Herhaling: 10,
+      Functies: 9,
       Data: 10,
       Klassen: 0,
       Fouten: 0,
@@ -457,11 +457,11 @@ export const progressData = [
   {
     tutorial: '15a. Je eerste klasse',
     levels: {
-      Basis: 9,
+      Basis: 10,
       Variabelen: 9,
       Logica: 7,
-      Herhaling: 9,
-      Functies: 8,
+      Herhaling: 10,
+      Functies: 9,
       Data: 10,
       Klassen: 1,
       Fouten: 0,
@@ -470,11 +470,11 @@ export const progressData = [
   {
     tutorial: '15b. Meer attributen',
     levels: {
-      Basis: 9,
+      Basis: 10,
       Variabelen: 9,
       Logica: 7,
-      Herhaling: 9,
-      Functies: 8,
+      Herhaling: 10,
+      Functies: 9,
       Data: 10,
       Klassen: 2,
       Fouten: 0,
@@ -483,11 +483,11 @@ export const progressData = [
   {
     tutorial: '15c. Attributen veranderen',
     levels: {
-      Basis: 9,
+      Basis: 10,
       Variabelen: 9,
       Logica: 7,
-      Herhaling: 9,
-      Functies: 8,
+      Herhaling: 10,
+      Functies: 9,
       Data: 10,
       Klassen: 3,
       Fouten: 0,
@@ -496,10 +496,10 @@ export const progressData = [
   {
     tutorial: '15d. Je eerste methode',
     levels: {
-      Basis: 9,
+      Basis: 10,
       Variabelen: 9,
       Logica: 7,
-      Herhaling: 9,
+      Herhaling: 10,
       Functies: 9,
       Data: 10,
       Klassen: 4,
@@ -509,10 +509,10 @@ export const progressData = [
   {
     tutorial: '15e. Methoden die veranderen',
     levels: {
-      Basis: 9,
+      Basis: 10,
       Variabelen: 9,
       Logica: 7,
-      Herhaling: 9,
+      Herhaling: 10,
       Functies: 9,
       Data: 10,
       Klassen: 5,
@@ -522,10 +522,10 @@ export const progressData = [
   {
     tutorial: '15f. Methoden met return',
     levels: {
-      Basis: 9,
+      Basis: 10,
       Variabelen: 9,
       Logica: 8,
-      Herhaling: 9,
+      Herhaling: 10,
       Functies: 10,
       Data: 10,
       Klassen: 6,
@@ -535,7 +535,7 @@ export const progressData = [
   {
     tutorial: '15g. Objecten in een lijst',
     levels: {
-      Basis: 9,
+      Basis: 10,
       Variabelen: 9,
       Logica: 8,
       Herhaling: 10,
@@ -548,7 +548,7 @@ export const progressData = [
   {
     tutorial: '15h. Een klasse vol objecten',
     levels: {
-      Basis: 9,
+      Basis: 10,
       Variabelen: 9,
       Logica: 8,
       Herhaling: 10,
@@ -561,7 +561,7 @@ export const progressData = [
   {
     tutorial: '15i. Je object printen',
     levels: {
-      Basis: 9,
+      Basis: 10,
       Variabelen: 10,
       Logica: 8,
       Herhaling: 10,
