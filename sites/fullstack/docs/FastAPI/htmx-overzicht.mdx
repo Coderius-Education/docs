@@ -25,8 +25,10 @@ async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
     with SqliteDict("gastenboek.db") as db:
         db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
         db.commit()
-    return HTMLResponse(f"Bedankt, {naam}. Je bericht staat in het gastenboek.")
+    return HTMLResponse(f"Bedankt, {escape(naam)}. Je bericht staat in het gastenboek.")
 ```
+
+Zet `from html import escape` bovenaan je `main.py`. De naam komt van de bezoeker, en in een f-string komt hij letterlijk in je HTML: typt iemand `<b>Sara</b>`, dan staat er een vette naam. `escape` maakt er gewone tekst van. Een template doet dat vanzelf; een f-string niet. Meer hierover in [HTML van een bezoeker](/docs/veiligheid/xss/zwakheid).
 
 De `Form`-parameters blijven hetzelfde; voor je endpoint is er geen verschil met een formulier zonder htmx. De omleiding met 303 is niet meer nodig, want de browser is nooit weggegaan.
 

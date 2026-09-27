@@ -447,7 +447,7 @@ Meer uitleg: [Server of browser?](/docs/FastAPI/server-of-browser)
 return RedirectResponse(url="/berichten", status_code=303)
 
 # GOED
-return HTMLResponse(f"Bedankt, {naam}. Je bericht staat in het gastenboek.")
+return HTMLResponse(f"Bedankt, {escape(naam)}. Je bericht staat in het gastenboek.")
 ```
 
 Meer uitleg: [Zonder herladen met htmx](/docs/FastAPI/htmx)
