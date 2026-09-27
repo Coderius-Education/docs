@@ -34,6 +34,7 @@
     "./plugins/transpile-shared": "./plugins/transpile-shared.js",
     "./plugins/cursussen-route": "./plugins/cursussen-route.js",
     "./plugins/privacy-route": "./plugins/privacy-route.js",
+    "./plugins/omleidingen": "./plugins/omleidingen.js",
     "./plugins/matomo": "./plugins/matomo.js",
     "./css/custom.css": "./css/custom.css",
     "./components/HomepageHero": "./components/HomepageHero/index.tsx",
