@@ -88,6 +88,12 @@ const begrippen = {
     lang: 'De functie van onderzoek waarbij je twee of meer gevallen op dezelfde manier beschrijft en vergelijkt. Kernvraag: wat zijn de overeenkomsten en verschillen?',
     url: '/opzet/functies/beschrijvend-vergelijkend',
   },
+  betaalmuur: {
+    term: 'Betaalmuur',
+    kort: 'Je kunt een artikel pas lezen als je (of je school of universiteit) ervoor betaalt.',
+    lang: 'Een artikel achter een betaalmuur (paywall) kun je alleen lezen na betaling, per artikel of via een abonnement. Van veel van deze artikelen bestaat ergens een gratis en legale versie.',
+    url: '/literatuurstudie/betaalmuur',
+  },
   betrouwbaar: {
     term: 'Betrouwbaar',
     kort: 'Het resultaat hangt niet van toeval af: wie het onderzoek herhaalt, krijgt (ongeveer) hetzelfde resultaat.',
@@ -314,6 +320,12 @@ const begrippen = {
     kort: 'Een hoofdvraag waarmee je iets wilt maken: "Hoe kan ik … ontwerpen/maken dat …?".',
     lang: 'Een hoofdvraag waarmee je iets wilt maken: "Hoe kan ik … ontwerpen/maken/ontwikkelen dat …?". Hoort bij ontwerpgericht onderzoek.',
     url: '/typen/ontwerpgericht',
+  },
+  'open-access': {
+    term: 'Open access',
+    kort: 'Een artikel dat gratis en legaal voor iedereen online staat.',
+    lang: 'Wetenschappelijke artikelen die gratis en legaal voor iedereen te lezen zijn, vaak met een Creative Commons-licentie. Herkenbaar aan een open slotje of het label Open Access.',
+    url: '/literatuurstudie/betaalmuur',
   },
   overzichtsartikel: {
     term: 'Overzichtsartikel',

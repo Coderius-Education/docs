@@ -30,7 +30,7 @@ Omdat de volgorde vast is, hoef je niet van voor naar achter te lezen. Spring na
 Gaat het over jouw vraag, passen groep en methode bij wat jij nodig hebt, en kun je de uitkomst in één zin noemen? Dan door naar [skimmen](./skimmen.md). Anders: weg ermee, zonder schuldgevoel.
 
 :::caution[Abstracts verkopen]
-Auteurs schrijven het abstract om gelezen te worden. Kleine effecten heten er "significant", een voorzichtig resultaat "veelbelovend". Wat in het abstract als conclusie staat, blijkt in het artikel zelf nogal eens een stuk voorzichtiger geformuleerd. Daarom gebruik je het abstract om te *kiezen*, nooit als bron voor wat je in je verslag beweert.
+Auteurs schrijven het abstract om gelezen te worden. Kleine effecten heten er "significant", een voorzichtig resultaat "veelbelovend". Wat in het abstract als conclusie staat, blijkt in het artikel zelf nogal eens een stuk voorzichtiger geformuleerd. Daarom gebruik je het abstract om te *kiezen*, nooit als bron voor wat je in je verslag beweert. Zit de rest van het artikel achter een betaalmuur, lees dan eerst [hoe je aan een gratis versie komt](./betaalmuur.md).
 :::
 
 <WelNiet

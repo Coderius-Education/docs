@@ -150,6 +150,7 @@ const sidebars = {
             'literatuurstudie/google-scholar',
             'literatuurstudie/semantic-scholar',
             'literatuurstudie/sneeuwbalmethode',
+            'literatuurstudie/betaalmuur',
           ],
         },
         {

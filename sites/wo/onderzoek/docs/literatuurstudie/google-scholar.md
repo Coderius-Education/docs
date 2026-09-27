@@ -18,7 +18,7 @@ Elk resultaat bestaat uit een titel, de auteurs, het tijdschrift en het jaar, en
 - **Gerelateerde artikelen** — stukken over hetzelfde onderwerp; handig als je één goede treffer hebt.
 - **Alle 6 versies** — dezelfde tekst op verschillende plekken; soms zit daar een gratis pdf tussen.
 - **Citeren** (het aanhalingsteken) — geeft je de bronvermelding in APA-stijl en een paar andere stijlen, klaar om te plakken.
-- Rechts staat, als die er is, een directe **[PDF]**-link.
+- Rechts staat, als die er is, een directe **[PDF]**- of **[HTML]**-link: dan is het artikel gratis te lezen. Staat er niets, dan zit het waarschijnlijk achter een [betaalmuur](./betaalmuur.md).
 
 Links op de pagina kun je filteren op jaar (*Sinds …*, of een eigen bereik), sorteren op datum, en — heel nuttig — het vinkje **Overzichtsartikelen** aanzetten om alleen artikelen te krijgen die de stand van zaken samenvatten.
 
@@ -42,3 +42,4 @@ Google Scholar zet een geplaatst artikel uit een toptijdschrift, een bachelorscr
 - [Semantic Scholar](./semantic-scholar.md) — het alternatief dat wél iets over invloed en inhoud zegt
 - [Citaties](./citaties.md) — wat het getal achter ‘Geciteerd door’ betekent
 - [Sneeuwbalmethode](./sneeuwbalmethode.md) — waar ‘Geciteerd door’ en ‘Gerelateerde artikelen’ voor bedoeld zijn
+- [Betaalmuren en open access](./betaalmuur.md) — wat je doet als je niet bij de tekst kunt
