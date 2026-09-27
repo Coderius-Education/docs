@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-250 -200 500 400" role="img">
+<title>Een zwarte trap met drie gelijke treden die van linksonder naar rechtsboven loopt</title>
+<rect x="-250" y="-200" width="500" height="400" fill="white"/>
+<line x1="0" y1="0" x2="0" y2="-40" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="0" y1="-40" x2="40" y2="-40" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="40" y1="-40" x2="40" y2="-80" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="40" y1="-80" x2="80" y2="-80" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="80" y1="-80" x2="80" y2="-120" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="80" y1="-120" x2="120" y2="-120" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="120,-120 111,-125 113,-120 111,-115" fill="black" stroke="black" stroke-width="1"/>
+</svg>

@@ -1,3 +1,6 @@
+import { readdirSync, statSync } from 'node:fs';
+import { join, relative } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { lessen } from '../data/lessen';
 import { omleidingen } from '../data/omleidingen';
@@ -7,14 +10,24 @@ import { omleidingen } from '../data/omleidingen';
 // weer een les, dan klopt de lijst niet meer.
 
 describe('omleidingen van de python-cursus', () => {
-  const paden = new Set(lessen.map((l) => l.pad));
+  // Een doel is een les of een stap van een project.
+  const PROJECTEN = fileURLToPath(new URL('../../docs/projecten', import.meta.url));
+  const stappen = (map: string): string[] =>
+    readdirSync(map).flatMap((n) => {
+      const pad = join(map, n);
+      if (statSync(pad).isDirectory()) return stappen(pad);
+      return n.endsWith('.mdx')
+        ? [`/docs/projecten/${relative(PROJECTEN, pad).replace(/\.mdx$/, '')}`]
+        : [];
+    });
+  const paden = new Set([...lessen.map((l) => l.pad), ...stappen(PROJECTEN)]);
 
-  it('elk doel is een les die bestaat', () => {
+  it('elk doel is een les of een projectstap die bestaat', () => {
     for (const { van, naar } of omleidingen)
       expect(paden.has(naar), `${van} -> ${naar}`).toBe(true);
   });
 
-  it('op geen enkel oud adres staat nog een les', () => {
+  it('op geen enkel oud adres staat nog een les of een projectstap', () => {
     for (const { van } of omleidingen) expect(paden.has(van), van).toBe(false);
   });
 

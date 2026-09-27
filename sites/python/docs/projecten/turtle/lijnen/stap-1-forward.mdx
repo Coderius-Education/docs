@@ -1,16 +1,16 @@
 ---
 sidebar_position: 1
 sidebar_label: 'Stap 1: forward en left'
-description: Laat een schildpad lijnen trekken met forward en left, en teken een vierkant.
+description: Laat een schildpad een lijn trekken met forward, en draai hem met left.
 ---
 
 import CodeExercise from '@site/src/components/CodeExercise';
 
 # Stap 1: Een schildpad die tekent (forward en left)
 
-In dit project teken je een huis. Dat doe je met **turtle**: een schildpad
-met een pen, die over het scherm loopt en een lijn trekt waar hij langskomt.
-Jij geeft de commando's, één voor één, van boven naar beneden.
+Met **turtle** laat je een schildpad met een pen over het scherm lopen. Waar
+hij langskomt, trekt hij een lijn. Jij geeft de commando's, één voor één,
+van boven naar beneden.
 
 ```python
 import turtle
@@ -20,7 +20,7 @@ turtle.left(90)
 turtle.forward(50)
 ```
 
-Druk hieronder op Uitvoeren en kijk wat er gebeurt.
+Druk op Uitvoeren en kijk wat er gebeurt.
 
 <CodeExercise>{`import turtle
 
@@ -33,51 +33,43 @@ turtle.forward(50)`}</CodeExercise>
 - `turtle.forward(100)` loopt 100 stappen vooruit, in de richting waarin de
   schildpad kijkt. Aan het begin is dat naar rechts.
 - `turtle.left(90)` draait 90 graden naar links, op de plek waar hij staat.
-  Er is ook `turtle.right()`.
+  Draaien tekent niets.
 
-De pijl aan het eind van de lijn is de schildpad. Hij kijkt nu omhoog.
+De pijl aan het eind van de lijn is de schildpad. Na `left(90)` kijkt hij
+omhoog, dus de tweede lijn gaat naar boven.
 
-## Opdracht: een vierkant
+## Opdracht: een hoek
 
-Maak van de lijn en het stukje omhoog een vierkant met zijden van 100.
+Teken een lijn van 150 naar rechts, en daarna een lijn van 100 omhoog.
 
-![Een zwart vierkant met zijden van 100 stappen](./img/stap-1-vierkant.svg)
+![Een zwarte lijn van 150 naar rechts, met aan het eind een lijn van 100 omhoog](./img/stap-1-hoek.svg)
 
 <CodeExercise>{`import turtle
 
 turtle.forward(100)
 turtle.left(90)
-turtle.forward(100)`}</CodeExercise>
+turtle.forward(50)`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Elke zijde is een `forward(100)` en elke hoek een `left(90)`. Tel hoeveel
-zijden en hoeken een vierkant heeft.
+Je hebt dezelfde drie commando's nodig als hierboven. Alleen de getallen in
+de twee `forward`-regels veranderen.
 
 </details>
 
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
-{/* turtle-plaatje: img/stap-1-vierkant.svg */}
+{/* turtle-plaatje: img/stap-1-hoek.svg */}
 
 ```python
 import turtle
 
-turtle.forward(100)
+turtle.forward(150)
 turtle.left(90)
 turtle.forward(100)
-turtle.left(90)
-turtle.forward(100)
-turtle.left(90)
-turtle.forward(100)
-turtle.left(90)
 ```
-
-De laatste `left(90)` hoeft niet voor het vierkant. Maar zo kijkt de
-schildpad weer naar rechts, net als aan het begin. Dat heb je in stap 2
-nodig.
 
 </details>
 
@@ -101,4 +93,4 @@ AttributeError: module 'turtle' has no attribute 'Forward'. Did you mean: 'forwa
 **Oplossing:** schrijf de commando's met kleine letters, zoals
 `turtle.forward(100)`. Python raadt het zelf al: `Did you mean: 'forward'?`.
 
-Door naar [stap 2: een huis in kleur](./stap-2-huis).
+Door naar [stap 2: naar rechts draaien](./stap-2-right).

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-250 -200 500 400" role="img">
+<title>Een dobbelsteen: een zwart vierkant met vijf zwarte stippen, vier bij de hoeken en één in het midden</title>
+<rect x="-250" y="-200" width="500" height="400" fill="white"/>
+<line x1="0" y1="0" x2="120" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="120" y1="0" x2="120" y2="-120" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="120" y1="-120" x2="0" y2="-120" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="0" y1="-120" x2="0" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<circle cx="30" cy="-30" r="10" fill="black"/>
+<circle cx="90" cy="-30" r="10" fill="black"/>
+<circle cx="60" cy="-60" r="10" fill="black"/>
+<circle cx="30" cy="-90" r="10" fill="black"/>
+<circle cx="90" cy="-90" r="10" fill="black"/>
+</svg>

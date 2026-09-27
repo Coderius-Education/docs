@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-250 -206.6 500 406.6" role="img">
+<title>Het gele huis met rood dak, met een lichtblauw vierkant raam midden in de muur</title>
+<rect x="-250" y="-206.6" width="500" height="406.6" fill="white"/>
+<polygon points="0,0 100,0 100,-100 0,-100 0,0" fill="yellow" fill-rule="evenodd"/>
+<line x1="0" y1="0" x2="100" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="100" y1="0" x2="100" y2="-100" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="100" y1="-100" x2="0" y2="-100" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="0" y1="-100" x2="0" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="0" y1="0" x2="0" y2="-100" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="0,-100 100,-100 50,-186.6 0,-100" fill="red" fill-rule="evenodd"/>
+<line x1="0" y1="-100" x2="100" y2="-100" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="100" y1="-100" x2="50" y2="-186.6" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="50" y1="-186.6" x2="0" y2="-100" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="35,-40 65,-40 65,-70 35,-70 35,-40" fill="lightblue" fill-rule="evenodd"/>
+<line x1="35" y1="-40" x2="65" y2="-40" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="65" y1="-40" x2="65" y2="-70" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="65" y1="-70" x2="35" y2="-70" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="35" y1="-70" x2="35" y2="-40" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="35,-40 26,-45 28,-40 26,-35" fill="black" stroke="black" stroke-width="1"/>
+</svg>

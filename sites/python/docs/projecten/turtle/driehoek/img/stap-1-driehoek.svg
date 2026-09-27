@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-250 -200 500 400" role="img">
+<title>Een zwarte driehoek met drie gelijke zijden van 150, met de punt naar boven</title>
+<rect x="-250" y="-200" width="500" height="400" fill="white"/>
+<line x1="0" y1="0" x2="150" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="150" y1="0" x2="75" y2="-129.9" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="75" y1="-129.9" x2="0" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="0,0 -9,-5 -7,0 -9,5" fill="black" stroke="black" stroke-width="1"/>
+</svg>

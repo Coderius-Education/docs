@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-250 -200 690 400" role="img">
+<title>Zes blauwgroene stippen op een rij, van links naar rechts steeds kleiner</title>
+<rect x="-250" y="-200" width="690" height="400" fill="white"/>
+<circle cx="0" cy="0" r="30" fill="teal"/>
+<circle cx="70" cy="0" r="25" fill="teal"/>
+<circle cx="140" cy="0" r="20" fill="teal"/>
+<circle cx="210" cy="0" r="15" fill="teal"/>
+<circle cx="280" cy="0" r="10" fill="teal"/>
+<circle cx="350" cy="0" r="5" fill="teal"/>
+<polygon points="420,0 411,-5 413,0 411,5" fill="black" stroke="black" stroke-width="1"/>
+</svg>

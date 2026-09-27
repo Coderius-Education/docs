@@ -12,8 +12,9 @@ import CodeExercise from '@site/src/components/CodeExercise';
 Deze stap rekent met variabelen, uit [Rekenmachine](/docs/basis/rekenmachine).
 :::
 
-Het hoofd heeft ogen nodig. Een oog is een stip, en die zet je met
-`turtle.dot()`. Eerst til je de pen op en loop je naar de plek van het oog:
+Het hoofd heeft ogen nodig: stippen, net als op [de dobbelsteen](/docs/projecten/turtle/dobbelsteen/stap-2-stippen).
+Het nieuwe is dat je de plek niet met vaste getallen opschrijft, maar
+uitrekent met `maat`:
 
 ```python
 import turtle
@@ -25,13 +26,10 @@ turtle.goto(maat / 4, maat * 3 / 4)
 turtle.dot(maat / 5, "black")
 ```
 
-- `turtle.penup()` tilt de pen op: de schildpad loopt, maar tekent niet.
-- `turtle.goto(x, y)` loopt naar een punt. Het eerste getal is hoe ver naar
-  rechts, het tweede hoe ver omhoog. Linksonder in het hoofd is `(0, 0)`.
-- `turtle.dot(maat / 5, "black")` zet een zwarte stip van `maat / 5` breed.
-
-Alle getallen komen uit `maat`. Het oog staat op een kwart van de breedte, en
-op driekwart van de hoogte. Maak je het hoofd groter, dan schuift het oog mee.
+Linksonder in het hoofd is `(0, 0)`, net als bij de dobbelsteen. Alle
+getallen komen uit `maat`: het oog staat op een kwart van de breedte en op
+driekwart van de hoogte, en de stip is `maat / 5` breed. Maak je het hoofd
+groter, dan schuift het oog mee en groeit het mee.
 
 ## Opdracht: een robotkop
 

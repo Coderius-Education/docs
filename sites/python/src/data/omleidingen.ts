@@ -35,4 +35,14 @@ export const omleidingen: Omleiding[] = [
   { van: '/docs/data/11e-json-bestand', naar: '/docs/bestanden/14f-json-bestand' },
   ...klassen.map((s) => ({ van: `/docs/klassen/14${s}`, naar: `/docs/klassen/15${s}` })),
   ...fouten.map((s) => ({ van: `/docs/fouten/15${s}`, naar: `/docs/fouten/16${s}` })),
+  // De turtle-projecten werden een lijn met kleinere stappen: de eerste stap
+  // van Een huis werd het project Een vierkant.
+  {
+    van: '/docs/projecten/turtle/een-huis/stap-1-vierkant',
+    naar: '/docs/projecten/turtle/vierkant/stap-1-vierkant',
+  },
+  {
+    van: '/docs/projecten/turtle/een-huis/stap-2-huis',
+    naar: '/docs/projecten/turtle/een-huis/stap-1-huis',
+  },
 ];
