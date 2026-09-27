@@ -40,6 +40,7 @@ Cheatsheet
 cijferige
 Clonen
 clonen
+cloudpartij
 codeles
 Coderius
 coderius
@@ -191,6 +192,7 @@ nameerror
 navigatiemesh
 netwerksniffer
 netwerkverkeer
+nginx
 nodenaam
 Nucleo
 níet
@@ -210,6 +212,7 @@ padnaam
 pagerank
 pastebin
 Pastebin
+pentest
 pentesters
 Photopea
 photopea
@@ -348,6 +351,7 @@ vercijferingen
 versmaller
 Verzoekheaders
 Vigenere
+vijfhonderd
 voedingspin
 voorbeeldgraph
 voorgevuld

@@ -1,0 +1,150 @@
+---
+sidebar_label: '3. In de praktijk'
+description: Wat grote sites nog meer doen tegen DoS en DDoS, van een limiet vóór je server tot DDoS-bescherming bij je hostingpartij, en wat de wet erover zegt.
+---
+
+# Te veel verzoeken: in de praktijk
+
+Je limiet uit [de oplossing](./oplossing) houdt één script tegen. Een echte site
+doet meer, omdat een echte aanval groter is en een echte site op meer dan één
+computer draait. Hieronder staat wat er in de praktijk nog gebeurt, van dichtbij
+je code naar ver weg. Je hoeft het niet allemaal zelf te bouwen: het meeste
+regelt je hostingpartij. Wel is het goed om te weten dat het bestaat.
+
+## De limiet onthouden op één plek
+
+`slowapi` onthoudt de tellingen in het geheugen van je server. Dat heeft twee
+gevolgen:
+
+- Start je server opnieuw, dan begint de telling weer bij nul.
+- Draait je site op meerdere servers tegelijk, dan telt elke server voor
+  zichzelf. Iemand die om en om bij twee servers aanklopt, mag dan twee keer zo
+  vaak.
+
+Daarom bewaren grote sites de tellingen in een aparte database die alle servers
+delen, meestal **Redis**. In `slowapi` is dat één extra argument:
+
+```python
+limiter = Limiter(
+    key_func=get_remote_address,
+    storage_uri="redis://localhost:6379",
+)
+```
+
+## Een limiet vóór je server
+
+Bij een echte site staat er meestal een programma vóór je FastAPI-server: een
+**reverse proxy**, zoals nginx. Elk verzoek komt eerst daar binnen, en de proxy
+geeft het door aan je server. Zet je de limiet in de proxy, dan komt een
+geweigerd verzoek niet eens bij Python aan. Dat scheelt je server werk.
+
+<details>
+<summary>Zo ziet een limiet in nginx eruit</summary>
+
+```nginx
+limit_req_zone $binary_remote_addr zone=bezoekers:10m rate=5r/s;
+
+server {
+    location / {
+        limit_req zone=bezoekers burst=10;
+        proxy_pass http://127.0.0.1:8000;
+    }
+}
+```
+
+Hoogstens vijf verzoeken per seconde per adres, met een kleine buffer van tien
+voor een bezoeker die snel doorklikt. Alles wat erbinnen past, gaat door naar je
+FastAPI-server op `127.0.0.1:8000`.
+
+</details>
+
+:::caution[Let op met een proxy]
+Achter een proxy komt elk verzoek bij je server binnen vanaf het adres van de
+proxy. `get_remote_address` ziet dan voor iedereen hetzelfde adres, en je limiet
+telt alle bezoekers samen: na vijf verzoeken van wie dan ook zit iedereen vast.
+Een proxy geeft het echte adres wel mee, en je server moet ingesteld zijn om dat
+te gebruiken. Test je limiet dus altijd opnieuw als er een proxy bij komt.
+:::
+
+## DDoS-bescherming bij je hostingpartij
+
+Tegen een DDoS van duizenden computers kan één server niets beginnen: het
+verkeer is dan zo groot dat de internetverbinding zelf al volloopt, nog voordat
+je code iets kan weigeren. Daarom loopt het verkeer van grote sites eerst via
+een enorm netwerk dat het filtert, bijvoorbeeld Cloudflare, Akamai of de
+bescherming van een cloudpartij. Dat netwerk herkent aanvalsverkeer aan het
+patroon en gooit het weg; alleen de echte bezoekers komen bij jouw server aan.
+
+In Nederland hebben internetproviders en hostingpartijen daarvoor ook samen een
+voorziening opgezet: de **Nationale Anti-DDoS Wasstraat** (NaWas). Wordt een
+aangesloten organisatie aangevallen, dan gaat het verkeer door de "wasstraat",
+en komt er alleen schoon verkeer uit.
+
+## Minder werk per verzoek
+
+Een aanval is gevaarlijker naarmate elk verzoek je server meer werk kost. Een
+pagina die voor elk verzoek de hele database doorzoekt, gaat sneller onderuit
+dan een pagina met een vaste tekst. Daarom doen sites ook dit:
+
+- **Cachen**: een pagina die voor iedereen hetzelfde is, maakt de server één
+  keer en bewaart hij. Volgende bezoekers krijgen de bewaarde kopie.
+- **Grenzen aan één verzoek**: een zoekopdracht geeft hoogstens vijftig
+  resultaten, en een verzoek dat te lang duurt breekt de server af.
+- **Zware endpoints strenger**: inloggen en zoeken krijgen een lagere limiet
+  dan een gewone pagina, omdat ze meer kosten en vaker het doelwit zijn.
+
+## Opletten en opschalen
+
+Een aanval die je niet ziet, kun je niet stoppen. Grote sites houden daarom in
+de gaten hoeveel verzoeken er binnenkomen, en krijgen een melding als dat
+ineens tien keer zoveel is. Vaak kunnen ze dan automatisch extra servers
+bijzetten om de drukte op te vangen, tot de aanval voorbij is of gefilterd
+wordt.
+
+## De wet
+
+Een DoS- of DDoS-aanval is in Nederland strafbaar. Het Wetboek van Strafrecht
+noemt het in artikel 138b: opzettelijk een computer of website onbereikbaar
+maken door er gegevens naartoe te sturen. Ook "even testen" hoe lang de
+schoolsite het volhoudt valt daaronder. Daarom deed je de test in
+[stap 1](./zwakheid) alleen op `127.0.0.1`, je eigen computer.
+
+Heb je toestemming nodig om een site op zijn sterkte te testen, dan heet dat
+een **belastingtest** of pentest. Die doe je alleen met schriftelijke
+toestemming van de eigenaar.
+
+## Opdracht: welke maatregel helpt waartegen?
+
+Hieronder staan vier situaties. Kies bij elke situatie de maatregel uit deze
+les die het meest helpt.
+
+1. Eén leerling laat een script duizend keer per minuut je zoekpagina opvragen.
+2. Je site draait op drie servers, en je limiet werkt ineens maar voor een
+   derde.
+3. Duizenden gekaapte camera's sturen tegelijk verzoeken naar je site.
+4. Je startpagina is voor iedereen hetzelfde, maar haalt elke keer alles uit de
+   database.
+
+<details>
+<summary>Tip</summary>
+
+Kijk bij elke situatie waar het probleem zit: bij één computer, bij je eigen
+servers, bij de hoeveelheid verkeer, of bij het werk per verzoek.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+1. **Een verzoeklimiet** per computer, zoals in [de oplossing](./oplossing),
+   eventueel strenger voor zoeken.
+2. **De tellingen op één plek**, bijvoorbeeld in Redis, zodat de drie servers
+   samen tellen.
+3. **DDoS-bescherming** bij je hostingpartij of een netwerk als Cloudflare:
+   een limiet per computer helpt hier niet, want elke camera blijft eronder.
+4. **Cachen**: maak de pagina één keer en geef daarna de bewaarde kopie.
+
+</details>
+
+Terug naar [de zwakheid](./zwakheid), het begin van deze reeks over te veel
+verzoeken.

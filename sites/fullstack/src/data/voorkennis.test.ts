@@ -66,6 +66,8 @@ const ZONDER_BLOK: Record<string, string> = {
   'cheatsheet.md': 'naslag',
   'starten.md': 'naslag: de vier stappen om te beginnen, verwijst per stap naar de editor-cursus',
   'troubleshooting.md': 'naslag',
+  'veiligheid/dos/oplossing.mdx': 'bouwt op de zwakheid-stap ervoor, in dezelfde map',
+  'veiligheid/dos/praktijk.mdx': 'achtergrond bij de twee stappen ervoor, geen nieuwe voorkennis',
 };
 
 const MET_BLOK = [
@@ -85,7 +87,7 @@ const MET_BLOK = [
   'FastAPI/server-of-browser.mdx',
   'FastAPI/sessies.mdx',
   'FastAPI/static_files.mdx',
-  'veiligheid/dos.mdx',
+  'veiligheid/dos/zwakheid.mdx',
 ];
 
 function relatievePaden(): string[] {
