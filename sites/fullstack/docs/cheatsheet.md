@@ -623,7 +623,7 @@ async def root(request: Request):
     return {"bericht": "Hallo"}
 ```
 
-Het endpoint heeft `request: Request` nodig. Zie [Te veel verzoeken](/docs/veiligheid/dos/zwakheid).
+Het endpoint heeft `request: Request` nodig. Zie [Te veel verzoeken](/docs/veiligheid/dos/limiet).
 
 </details>
 

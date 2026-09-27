@@ -1,11 +1,11 @@
 ---
-sidebar_label: '3. In de praktijk'
+sidebar_label: '6. In de praktijk'
 description: Wat grote sites nog meer doen tegen DoS en DDoS, van een limiet vóór je server tot DDoS-bescherming bij je hostingpartij, en wat de wet erover zegt.
 ---
 
 # Te veel verzoeken: in de praktijk
 
-Je limiet uit [de oplossing](./oplossing) houdt één script tegen. Een echte site
+Je limiet uit [les 4](./limiet) houdt één script tegen. Een echte site
 doet meer, omdat een echte aanval groter is en een echte site op meer dan één
 computer draait. Hieronder staat wat er in de praktijk nog gebeurt, van dichtbij
 je code naar ver weg. Je hoeft het niet allemaal zelf te bouwen: het meeste
@@ -106,8 +106,8 @@ wordt.
 Een DoS- of DDoS-aanval is in Nederland strafbaar. Het Wetboek van Strafrecht
 noemt het in artikel 138b: opzettelijk een computer of website onbereikbaar
 maken door er gegevens naartoe te sturen. Ook "even testen" hoe lang de
-schoolsite het volhoudt valt daaronder. Daarom deed je de test in
-[stap 1](./zwakheid) alleen op `127.0.0.1`, je eigen computer.
+schoolsite het volhoudt valt daaronder. Daarom deed je de tests in
+[les 3](./zelf-meten) alleen op `127.0.0.1`, je eigen computer.
 
 Heb je toestemming nodig om een site op zijn sterkte te testen, dan heet dat
 een **belastingtest** of pentest. Die doe je alleen met schriftelijke
@@ -136,7 +136,7 @@ servers, bij de hoeveelheid verkeer, of bij het werk per verzoek.
 <details>
 <summary>Antwoord</summary>
 
-1. **Een verzoeklimiet** per computer, zoals in [de oplossing](./oplossing),
+1. **Een verzoeklimiet** per computer, zoals in [les 4](./limiet),
    eventueel strenger voor zoeken.
 2. **De tellingen op één plek**, bijvoorbeeld in Redis, zodat de drie servers
    samen tellen.
@@ -146,5 +146,5 @@ servers, bij de hoeveelheid verkeer, of bij het werk per verzoek.
 
 </details>
 
-Terug naar [de zwakheid](./zwakheid), het begin van deze reeks over te veel
+Terug naar [les 1](./verzoek), het begin van deze reeks over te veel
 verzoeken.

@@ -1,0 +1,222 @@
+---
+sidebar_label: '4. Een limiet met slowapi'
+description: Zet een verzoeklimiet op je endpoint met slowapi, zodat één bezoeker niet onbeperkt verzoeken kan laten beantwoorden.
+---
+
+# Te veel verzoeken: een limiet met slowapi
+
+In [les 3](./zelf-meten) beantwoordde je server elk verzoek. Je kunt niet
+voorkomen dat iemand veel verzoeken *stuurt*. Wat je wél kunt, is weigeren om ze
+allemaal te *beantwoorden*. Krijgt één bezoeker meer dan een paar verzoeken per
+minuut, dan is dat geen mens die een pagina leest, maar een script.
+
+Een grens op het aantal verzoeken per bezoeker heet een **rate limit**, een
+verzoeklimiet.
+
+## `slowapi` installeren
+
+De module `slowapi` houdt de telling voor je bij. Installeer hem in de terminal
+van VS Code:
+
+```bash
+python -m pip install slowapi
+```
+
+## De limiet in je server
+
+<CodeUitleg>
+
+```python showLineNumbers
+from fastapi import FastAPI, Request
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
+
+limiter = Limiter(key_func=get_remote_address)
+
+app = FastAPI()
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+@app.get("/")
+@limiter.limit("5/minute")
+async def root(request: Request):
+    return {"bericht": "Hallo wereld!"}
+```
+
+<Regel n={6}>
+De `Limiter` telt de verzoeken. `get_remote_address` zegt: tel per computer, aan de hand van zijn adres. Voor jouw script is dat `127.0.0.1`.
+</Regel>
+
+<Regel n={9} tot={10}>
+Je hangt de limiter aan je app, en zegt wat er moet gebeuren als iemand over de grens gaat: het antwoord `429 Too Many Requests`.
+</Regel>
+
+<Regel n={13}>
+`@limiter.limit("5/minute")` boven een endpoint betekent: hoogstens vijf verzoeken per minuut per computer.
+</Regel>
+
+<Regel n={14}>
+Door de limiter heeft de functie nu `request: Request` nodig. Uit dat verzoek haalt `slowapi` het adres om te tellen.
+</Regel>
+
+</CodeUitleg>
+
+Het endpoint zelf doet niets anders dan eerst: de limiet staat erboven, als een
+portier voor de deur.
+
+## Doe de test opnieuw
+
+Start je server opnieuw en draai `test_verzoeken.py` uit
+[les 3](./zelf-meten):
+
+```
+Verzoek 1: status 200
+Verzoek 2: status 200
+Verzoek 3: status 200
+Verzoek 4: status 200
+Verzoek 5: status 200
+Verzoek 6: status 429
+Verzoek 7: status 429
+```
+
+en zo verder tot verzoek 20, met aan het eind `Gelukt: 5 van de 20`. De eerste
+vijf krijgen antwoord, de rest weigert je server met `429`. Hoeveel het script
+ook stuurt, je server doet nog maar vijf keer echt werk per minuut. Een bezoeker
+die één keer je pagina opvraagt, merkt er niets van.
+
+Draai je het script meteen nog een keer, dan krijg je twintig keer `429`: de
+minuut is nog niet om, en je hebt je vijf al gehad.
+
+## Er gaat iets mis
+
+Je server start niet, en in de terminal eindigt de foutmelding met:
+
+```
+Exception: No "request" or "websocket" argument on function "<function root at 0x…>"
+```
+
+**Oorzaak:** je endpoint heeft geen `request: Request` als parameter, terwijl
+`@limiter.limit(...)` erboven staat. `slowapi` controleert dat al bij het
+starten: zonder `request` weet hij niet van wie een verzoek komt. Het getal
+achter `0x` verschilt per keer.
+
+**Oplossing:** zet `request: Request` tussen de haakjes van je functie:
+
+```python
+# FOUT
+@app.get("/")
+@limiter.limit("5/minute")
+async def root():
+    return {"bericht": "Hallo wereld!"}
+
+# GOED
+@app.get("/")
+@limiter.limit("5/minute")
+async def root(request: Request):
+    return {"bericht": "Hallo wereld!"}
+```
+
+## Opdrachten
+
+### Opdracht 1: Predict - Wat zie je?
+
+Je hebt deze limiet op een endpoint gezet:
+
+```python
+@app.get("/tijd")
+@limiter.limit("3/minute")
+async def tijd(request: Request):
+    return {"bericht": "Het is nu laat"}
+```
+
+Je vraagt `/tijd` vier keer snel achter elkaar op.
+
+**Vraag:** welke statuscodes krijg je terug?
+
+<details>
+<summary>Tip</summary>
+
+De limiet is drie per minuut. Tel hoeveel verzoeken er antwoord krijgen
+voordat de grens bereikt is.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```
+200
+200
+200
+429
+```
+
+De eerste drie passen binnen de limiet, het vierde weigert de server met `429
+Too Many Requests`.
+
+</details>
+
+### Opdracht 2: Modify - Tien per minuut
+
+Zet een limiet van `10/minute` op je startpagina. Wacht een minuut, zodat de
+oude telling weg is, en draai `test_verzoeken.py`. Hoeveel verzoeken krijgen
+`200`, en hoeveel `429`?
+
+<details>
+<summary>Antwoord</summary>
+
+Tien krijgen `200`, de andere tien `429`. Aan het eind staat er
+`Gelukt: 10 van de 20`.
+
+</details>
+
+### Opdracht 3: Investigate - Een strengere grens
+
+Verander de limiet in `"2/minute"` en draai het script opnieuw. Waarom zou een
+limiet van twee per minuut op een echte site geen goed idee zijn?
+
+<details>
+<summary>Tip</summary>
+
+Denk aan een bezoeker die na het lezen van je startpagina op een link klikt en
+terugkomt.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Nu krijgen maar twee verzoeken `200` en de rest `429`. Op een echte site is dat
+te streng: een gewone bezoeker die een paar pagina's bekijkt of even
+terugklikt, zit zo aan twee verzoeken, en dan weigert je server hem. Een limiet
+moet hoog genoeg zijn voor een mens, en laag genoeg om een script te stoppen.
+
+</details>
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+```python
+from fastapi import FastAPI, Request
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
+
+limiter = Limiter(key_func=get_remote_address)
+
+app = FastAPI()
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+@app.get("/")
+@limiter.limit("5/minute")
+async def root(request: Request):
+    return {"bericht": "Hallo wereld!"}
+```
+
+De startpagina heeft nu een limiet van vijf per minuut.
+
+</details>
+
+Door naar [les 5: wat de 429 vertelt](./te-veel).

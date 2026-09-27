@@ -6,8 +6,8 @@ import sidebars from '../../sidebars';
 
 // De reeks Veiligheid heeft per zwakheid een map met stappen: eerst de
 // zwakheid (zelf nadoen), dan de oplossing, en als laatste wat er in de
-// praktijk nog gebeurt. Een kleine zwakheid past in drie stappen (dos/); een
-// grotere wordt een reeks kleine lessen met elk één idee (wachtwoorden/).
+// praktijk nog gebeurt. Elke zwakheid is een reeks kleine lessen met in elke
+// les één idee; drie stappen per zwakheid ging te snel.
 // Deze test houdt die vorm vast, en bewaakt dat een zelftest zich alleen op
 // de eigen computer richt: een ander zijn server aanvallen is strafbaar.
 
@@ -35,8 +35,11 @@ describe('de reeks Veiligheid', () => {
     expect(zwakheden.length).toBeGreaterThan(0);
   });
 
-  it('DoS blijft drie stappen: zwakheid, oplossing, praktijk', () => {
-    expect(stappenVan('dos')).toEqual(['zwakheid', 'oplossing', 'praktijk']);
+  it('elke zwakheid is opgesplitst in kleine lessen, met in elke les één idee', () => {
+    // Drie stappen per zwakheid ging te snel: elke les behandelde te veel.
+    for (const map of ['dos', 'wachtwoorden']) {
+      expect(stappenVan(map).length, `veiligheid/${map}`).toBeGreaterThanOrEqual(6);
+    }
   });
 
   for (const map of zwakheden) {

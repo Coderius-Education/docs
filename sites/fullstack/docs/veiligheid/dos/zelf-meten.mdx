@@ -1,0 +1,128 @@
+---
+sidebar_label: '3. Zelf twintig verzoeken'
+description: Stuur met een for-loop twintig verzoeken naar je eigen server en zie dat ze allemaal antwoord krijgen. Dat is de zwakheid.
+---
+
+# Te veel verzoeken: zelf twintig verzoeken
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/herhalen/06a-for-loop', label: 'De for-loop'},
+  ]}
+/>
+
+In [les 1](./verzoek) mat je één verzoek. Nu stuur je er twintig achter elkaar,
+en tel je hoeveel er antwoord krijgen. Klein, en op je eigen computer.
+
+## Twintig verzoeken
+
+Start je server met `fastapi dev main.py`, met het endpoint uit les 1. Maak een
+bestand `test_verzoeken.py`:
+
+<CodeUitleg>
+
+```python showLineNumbers
+import httpx
+
+adres = "http://127.0.0.1:8000/"
+
+gelukt = 0
+for nummer in range(20):
+    antwoord = httpx.get(adres)
+    print(f"Verzoek {nummer + 1}: status {antwoord.status_code}")
+    if antwoord.status_code == 200:
+        gelukt += 1
+
+print(f"Gelukt: {gelukt} van de 20")
+```
+
+<Regel n={3}>
+Alleen je eigen server, zoals in les 1.
+</Regel>
+
+<Regel n={5}>
+`gelukt` telt hoeveel verzoeken antwoord 200 krijgen.
+</Regel>
+
+<Regel n={6} tot={10}>
+De for-loop stuurt twintig keer hetzelfde `GET`-verzoek. Elke keer dat het lukt, gaat de teller één omhoog.
+</Regel>
+
+</CodeUitleg>
+
+Draai het in een tweede terminal:
+
+```bash
+python test_verzoeken.py
+```
+
+Je ziet twintig regels met `status 200`, en aan het eind `Gelukt: 20 van de 20`.
+In de terminal van je server staan twintig regels met `GET /`, één per verzoek.
+
+## Dit is de zwakheid
+
+Twintig verzoeken zijn niets voor je server. Maar kijk wat er gebeurt: elk
+verzoek krijgt antwoord, hoe vaak het ook komt en van wie. Er is niets in je
+server dat zegt "zo is het wel genoeg". Zet in gedachten `range(20)` op
+`range(20000)`, en laat dat door duizend computers tegelijk doen: dan is dit
+precies hoe een DDoS eruitziet, alleen groter.
+
+Dat een server alles beantwoordt, is de zwakheid. In [les 4](./limiet) zet je
+er een grens op.
+
+## Er gaat iets mis
+
+Je ziet `Gelukt: 0 van de 20`, of het script stopt meteen met een
+`ConnectError`.
+
+**Oorzaak:** bij `0 van de 20` klopt het adres niet: elk verzoek krijgt een
+404, bijvoorbeeld omdat er een pad als `/test` in `adres` staat terwijl je
+server alleen `/` kent. Bij een `ConnectError` draait je server niet, zoals in
+les 1.
+
+**Oplossing:** open `http://127.0.0.1:8000/` in je browser. Zie je daar
+`Hallo wereld!`, zet dan precies dat adres in `adres`.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Vijftig keer
+
+Je verandert `range(20)` in `range(50)` en draait het script opnieuw.
+
+**Vraag:** hoeveel verzoeken lukken er, en ligt je server daarna plat?
+
+<details>
+<summary>Tip</summary>
+
+Er is nog niets dat je server laat weigeren. En één laptop die verzoeken na
+elkaar stuurt, is niet sneller dan de server die ze beantwoordt.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Alle vijftig lukken, maar het script zegt nog steeds `van de 20`: dat getal
+staat vast in de laatste regel. Pas je dat aan naar 50, dan staat er
+`Gelukt: 50 van de 50`. Je server ligt niet plat, want één computer is niet
+genoeg, zoals in [les 2](./dos-en-ddos).
+
+</details>
+
+### Opdracht 2: Investigate - Merkt een bezoeker iets?
+
+Zet `range(20)` op `range(500)`. Open tijdens het draaien je startpagina in de
+browser. Krijg je hem te zien?
+
+<details>
+<summary>Antwoord</summary>
+
+Ja. Je browser is één verzoek extra tussen de vijfhonderd, en je server
+beantwoordt ze allemaal. Om een echte bezoeker buiten te sluiten, moet de
+server zó druk zijn dat hij achterloopt, en dat lukt niet vanaf één laptop. Dat
+is geruststellend, maar het betekent ook dat je server niet uit zichzelf
+ingrijpt.
+
+</details>
+
+Door naar [les 4: een limiet met slowapi](./limiet).

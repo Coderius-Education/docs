@@ -1,0 +1,168 @@
+---
+sidebar_label: '1. Wat een verzoek kost'
+description: Elk verzoek kost je server werk en tijd. Meet met httpx hoe lang één antwoord van je eigen server duurt.
+---
+
+# Te veel verzoeken: wat een verzoek kost
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/modules/09d-modules', label: 'Modules importeren'},
+  ]}
+/>
+
+Je hebt een endpoint gemaakt dat op een `GET`-verzoek reageert:
+
+```python
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+async def root():
+    return {"bericht": "Hallo wereld!"}
+```
+
+Voor jou is dat één regel in de adresbalk. Voor je server is het werk: het
+verzoek komt binnen, FastAPI zoekt welke functie erbij hoort, die functie
+draait, en het antwoord gaat terug. Pas daarna is de server klaar met dit
+verzoek. Een server heeft dus een grens aan hoeveel verzoeken hij per seconde
+aankan. Die grens meet je in deze les.
+
+## Eén verzoek meten
+
+:::danger[Alleen je eigen server]
+Stuur de verzoeken in deze reeks **uitsluitend** naar je eigen server op
+`127.0.0.1`. Dat adres wijst altijd naar je eigen computer en verlaat het
+netwerk niet. Een ander zijn server bestoken met verzoeken is een aanval, en
+strafbaar, ook als het "maar een testje" is.
+:::
+
+Start je server met `fastapi dev main.py`. Maak daarnaast een los bestand
+`meet.py`. Het is geen deel van je server; het speelt de rol van bezoeker. Het
+gebruikt `httpx`, een module om verzoeken te versturen. Installeer hem met
+`python -m pip install httpx`.
+
+<CodeUitleg>
+
+```python showLineNumbers
+import httpx
+
+antwoord = httpx.get("http://127.0.0.1:8000/")
+
+print(antwoord.status_code)
+print(antwoord.json())
+print(round(antwoord.elapsed.total_seconds() * 1000, 1), "milliseconden")
+```
+
+<Regel n={3}>
+`httpx.get` doet wat de browser doet als je een adres intypt: een `GET`-verzoek sturen en wachten op het antwoord. `:8000` is de poort van `fastapi dev`.
+</Regel>
+
+<Regel n={5} tot={6}>
+De statuscode en de inhoud van het antwoord. 200 betekent gelukt.
+</Regel>
+
+<Regel n={7}>
+`elapsed` is de tijd tussen versturen en antwoord. `total_seconds()` geeft seconden; keer duizend zijn het milliseconden, en `round(…, 1)` houdt één cijfer achter de komma over.
+</Regel>
+
+</CodeUitleg>
+
+Draai het in een tweede terminal, terwijl je server in de eerste blijft
+draaien. De uitvoer ziet er zo uit:
+
+```
+200
+{'bericht': 'Hallo wereld!'}
+2.3 milliseconden
+```
+
+Het laatste getal is bij jou anders, en ook elke keer dat je het script draait.
+Het is een paar milliseconden: een duizendste van een seconde, een paar keer.
+
+Kijk ook in de terminal van je server. Daar staat een nieuwe regel met
+`GET /` en `200`: je server houdt bij dat hij een verzoek heeft beantwoord.
+
+## Wat dat getal betekent
+
+Duurt één antwoord 2 milliseconden, dan kan je server er ongeveer 500 per
+seconde geven, als ze netjes na elkaar komen. Dat is ruim genoeg voor een klas
+vol bezoekers. Maar het is geen oneindig getal. Komen er meer verzoeken dan de
+server kan beantwoorden, dan moeten ze wachten, en wie te lang wacht, krijgt
+geen antwoord meer.
+
+Een endpoint dat meer doet, bijvoorbeeld alle berichten uit de database halen,
+kost meer tijd per verzoek. Dan ligt de grens lager.
+
+## Er gaat iets mis
+
+```
+httpx.ConnectError: [Errno 111] Connection refused
+```
+
+**Oorzaak:** je server draait niet. Het script klopt aan op `127.0.0.1:8000`,
+maar daar luistert niemand. Op Windows en macOS staat er een ander getal of een
+andere tekst achter `ConnectError`, met hetzelfde idee.
+
+**Oplossing:** start je server in een aparte terminal met
+`fastapi dev main.py`, en draai het script pas als daar
+`Application startup complete` staat.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Hoeveel per seconde?
+
+Een ander endpoint haalt alle berichten uit het gastenboek. Eén antwoord duurt
+daar 20 milliseconden.
+
+**Vraag:** hoeveel verzoeken per seconde kan de server daar ongeveer
+beantwoorden, als ze na elkaar komen?
+
+<details>
+<summary>Tip</summary>
+
+Een seconde is 1000 milliseconden.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Ongeveer 50: 1000 milliseconden gedeeld door 20. Tien keer zo veel werk per
+verzoek betekent tien keer zo weinig verzoeken per seconde.
+
+</details>
+
+### Opdracht 2: Run - Drie keer meten
+
+Draai `meet.py` drie keer achter elkaar. Is de tijd elke keer hetzelfde?
+
+<details>
+<summary>Antwoord</summary>
+
+Nee, elke keer een beetje anders, bijvoorbeeld 2,3 en 1,8 en 2,1
+milliseconden. Je computer doet ook andere dingen tegelijk, en dat merk je in
+de laatste cijfers. Het eerste verzoek na het starten is vaak iets trager, omdat
+Python dan nog dingen moet inladen.
+
+</details>
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+```python
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+async def root():
+    return {"bericht": "Hallo wereld!"}
+```
+
+Dit is de beginstand. In les 4 komt er een limiet bij.
+
+</details>
+
+Door naar [les 2: DoS en DDoS](./dos-en-ddos).

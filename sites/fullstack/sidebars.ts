@@ -81,14 +81,22 @@ const sidebars: SidebarsConfig = {
       ],
     },
   ],
-  // Per zwakheid een categorie met drie stappen: de zwakheid (zelf nadoen, op
-  // je eigen server), de oplossing, en wat er in de praktijk nog gebeurt.
+  // Per zwakheid een categorie met kleine lessen, één idee per les: de zwakheid
+  // (zelf nadoen, op je eigen server), de oplossing, en als laatste wat er in de
+  // praktijk nog gebeurt.
   veiligheidSidebar: [
     {
       type: 'category',
       label: 'Te veel verzoeken (DoS)',
       collapsed: false,
-      items: ['veiligheid/dos/zwakheid', 'veiligheid/dos/oplossing', 'veiligheid/dos/praktijk'],
+      items: [
+        'veiligheid/dos/verzoek',
+        'veiligheid/dos/dos-en-ddos',
+        'veiligheid/dos/zelf-meten',
+        'veiligheid/dos/limiet',
+        'veiligheid/dos/te-veel',
+        'veiligheid/dos/praktijk',
+      ],
     },
     {
       type: 'category',
