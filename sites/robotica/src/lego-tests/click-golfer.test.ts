@@ -80,6 +80,15 @@ describe('de hardware-uitleg klopt', () => {
     expect(zonder).toEqual([]);
   });
 
+  it('in Easybloqs kies je de Arduino Nano', () => {
+    // Het werkboek toonde een tegel "Leaphy Click", maar het bord van de
+    // Click Golfer is een Arduino Nano. Wie de verkeerde robot kiest, krijgt
+    // andere pinnen in de blokken dan de lessen noemen.
+    expect(tekst('microcontroller.md')).toMatch(/Kies de robot \*\*Arduino Nano\*\*/);
+    const verkeerd = paginas().filter((f) => /Leaphy Click/.test(tekst(f)));
+    expect(verkeerd).toEqual([]);
+  });
+
   it('de sensor- en de servoles noemen hun pin', () => {
     expect(tekst('ir-sensor.md')).toMatch(/\*\*A0\*\*/);
     expect(tekst('servo.md')).toMatch(/\*\*D9\*\*/);
