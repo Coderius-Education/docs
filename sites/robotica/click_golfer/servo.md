@@ -57,14 +57,14 @@ Klik op **Upload naar robot** en kijk of je voorspelling klopt.
 Laat het asje langs drie standen gaan: 45°, 90° en 135°, met steeds een seconde ertussen.
 
 <details>
-<summary>Klik hier voor een tip!</summary>
+<summary>Tip</summary>
 
 Je hebt drie keer het blok **Servo 9 op …** nodig, en na elk blok een **duurt 1000 ms**.
 
 </details>
 
 <details>
-<summary>Klik hier voor het antwoord!</summary>
+<summary>Antwoord</summary>
 
 <Blokken programma={drieHoeken} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: Servo 9 op 45, duurt 1000 ms, Servo 9 op 90, duurt 1000 ms, Servo 9 op 135, duurt 1000 ms." />
 

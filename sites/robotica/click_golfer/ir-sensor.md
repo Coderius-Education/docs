@@ -53,6 +53,8 @@ Nu laat je de robot zelf beslissen. Met het blok **als … dan** uit **Denk stap
 
 <Blokken programma={balKlaar} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan Toon op scherm 'klaar om te golfen!'. Daarna duurt 500 ms." />
 
+{/* stijl-uitzondering: uitroepteken citaat van de tekst die het programma op het scherm zet */}
+
 Is het getal kleiner dan 300, dan ligt er een bal en verschijnt "klaar om te golfen!" op het scherm.
 
 :::tip

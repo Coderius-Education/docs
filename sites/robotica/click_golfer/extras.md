@@ -18,14 +18,14 @@ In het doosje zit ook een **RGB-lampje**: een lampje dat verschillende kleuren k
 Bekijk [deze video](https://www.youtube.com/watch?v=bqGnmGiuqyc) om uit te vinden hoe je het lampje moet aansluiten.
 
 <details>
-<summary>Klik hier voor een tip!</summary>
+<summary>Tip</summary>
 
-Gebruik een **als … dan … anders**-blok: in **Denk stappen** staat onder **als … dan** een tweede **als**-blok, met **anders** erbij. Ziet de sensor een balletje: maak het lampje groen en laat de robot slaan. Ziet de sensor niets: maak het lampje rood.
+Gebruik een **als … dan … anders**-blok: in **Denk stappen** staat onder **als … dan** een tweede **als**-blok, met **anders** erbij. Ziet de sensor een balletje, dan maak je het lampje groen en laat je de robot slaan. Ziet hij niets, dan wordt het lampje rood.
 
 </details>
 
 <details>
-<summary>Klik hier voor het antwoord!</summary>
+<summary>Antwoord</summary>
 
 Je bouwt hetzelfde **als**-blok als bij [de IR-sensor](ir-sensor), maar nu met een **anders**-tak erbij:
 
@@ -41,14 +41,14 @@ Het slaan zat al in je programma: het blok **slaan** uit [Een naam voor je blokk
 Nu slaat je Golfer altijd naar dezelfde stand: [de servo](servo) op **D9** gaat naar 90 graden. Pas het subprogramma `slaan` uit [Een naam voor je blokken](subprogrammas) aan, zodat de arm telkens naar een willekeurige stand tussen 70 en 110 graden gaat.
 
 <details>
-<summary>Klik hier voor een tip!</summary>
+<summary>Tip</summary>
 
 In de groep **Functies** staat een blok dat een **willekeurig getal** tussen twee waardes geeft. Zet dat blok op de plek waar nu 90 staat.
 
 </details>
 
 <details>
-<summary>Klik hier voor het antwoord!</summary>
+<summary>Antwoord</summary>
 
 <Blokken programma={willekeurigSlaan} beschrijving="Het subprogramma slaan: Servo 9 op willekeurig getal van 70 tot 110, duurt 500 ms." />
 

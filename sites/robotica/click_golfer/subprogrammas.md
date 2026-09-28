@@ -11,7 +11,7 @@ Je programma uit [Mikken](mikken) werkt, maar het is lang geworden. Als je er sn
 
 ## Een subprogramma maken
 
-Je maakt twee subprogramma's: `mikken` en `slaan`. Eén ding moet je daarvoor weten: sleep je een blok, dan gaan **alle blokken eronder mee**. Daarom werk je van onder naar boven.
+Je maakt twee subprogramma's: `mikken` en `slaan`. Sleep je een blok, dan gaan **alle blokken eronder mee**. Daarom werk je van onder naar boven.
 
 1. Klik op de groep **Eigen blokken** en sleep twee keer het blok **Subprogramma** naar een lege plek. Noem het ene `mikken` en het andere `slaan`.
 2. Sleep **duurt 2000 ms**, het onderste blok in **als … dan**, even opzij naar een lege plek.
@@ -42,14 +42,14 @@ Klik op **Upload naar robot** en kijk of je voorspelling klopt.
 Maak ook een subprogramma `achter`, voor de blokken die de arm naar 0° zetten.
 
 <details>
-<summary>Klik hier voor een tip!</summary>
+<summary>Tip</summary>
 
 Het gaat om de twee blokken bovenaan in **als … dan**: **Servo 9 op 0** en **duurt 500 ms**. Sleep je **Servo 9 op 0**, dan gaat alles eronder mee. Sleep daarom eerst het blok **mikken**, met alles eronder, even opzij.
 
 </details>
 
 <details>
-<summary>Klik hier voor het antwoord!</summary>
+<summary>Antwoord</summary>
 
 1. Sleep het blok **mikken** in **als … dan** opzij. **slaan** en **duurt 2000 ms** gaan mee.
 2. Maak een subprogramma `achter` en sleep **Servo 9 op 0** erin. **duurt 500 ms** gaat mee.
@@ -85,7 +85,7 @@ Je wilt de slag harder maken. Waar verander je de 90, en hoe vaak?
 <details>
 <summary>Antwoord</summary>
 
-Eén keer, in het subprogramma `slaan`. Je hoeft niet in het lange programma te zoeken welke **Servo**-blok de slag is: het staat onder de naam `slaan`. Gebruik je **slaan** later op meer plekken, dan geldt de nieuwe stand overal.
+Eén keer, in het subprogramma `slaan`. Je hoeft niet in het lange programma te zoeken welk **Servo**-blok de slag is: het staat onder de naam `slaan`. Gebruik je **slaan** later op meer plekken, dan geldt de nieuwe stand overal.
 
 </details>
 

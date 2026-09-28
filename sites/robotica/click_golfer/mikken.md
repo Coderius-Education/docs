@@ -20,7 +20,7 @@ Drie blokken heb je nodig:
 
 ## Het programma
 
-De sensor zit nog op **A0** en de servo op **D9**, net als bij [Zie de bal, sla de bal](bal-slaan). Ligt er een bal, dan zet de robot de arm op 0°. Daarna gaat de arm langzaam naar 50° en weer terug: dat is het mikken. Dan slaat hij, zoals bij Zie de bal, sla de bal.
+De sensor zit nog op **A0** en de servo op **D9**, net als bij [Zie de bal, sla de bal](bal-slaan). Ligt er een bal, dan zet de robot de arm op 0°. Daarna gaat de arm langzaam naar 50° en weer terug: dat is het mikken. Dan pas slaat hij.
 
 <Blokken programma={mikken} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan: Servo 9 op 0, duurt 500 ms, stel hoek in op 0. Herhaal 50 keer: Servo 9 op hoek, duurt 10 ms, wijzig hoek met 1. Herhaal 50 keer: Servo 9 op hoek, duurt 10 ms, wijzig hoek met -1. Daarna Servo 9 op 90, duurt 500 ms, en duurt 2000 ms." />
 
@@ -38,14 +38,14 @@ De sensor zit nog op **A0** en de servo op **D9**, net als bij [Zie de bal, sla 
 Laat je Golfer sneller mikken, en daarna verder.
 
 <details>
-<summary>Klik hier voor een tip!</summary>
+<summary>Tip</summary>
 
 Hoe snel de arm gaat, hangt af van de wachttijd in **duurt**. Hoe ver hij gaat, hangt af van hoe vaak er 1 bij komt.
 
 </details>
 
 <details>
-<summary>Klik hier voor het antwoord!</summary>
+<summary>Antwoord</summary>
 
 Sneller: maak **duurt 10 ms** in beide herhaal-blokken kleiner, bijvoorbeeld 5 ms. Verder: maak in beide herhaal-blokken de 50 groter, bijvoorbeeld 70. Doe het in beide, anders komt de arm niet op 0 terug.
 

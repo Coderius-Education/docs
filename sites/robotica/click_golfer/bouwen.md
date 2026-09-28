@@ -14,7 +14,7 @@ Twijfel je hoe een onderdeel eruitziet of waar het komt? Bekijk het [3D-model op
 
 ## Onderdelenlijst
 
-Dit heb je nodig: **46 LEGO Technic-stukjes** plus de **Leaphy-servo**.
+Dit heb je nodig: **46 Lego Technic-stukjes** plus de **Leaphy-servo**.
 
 | Aantal | Onderdeel | Kleur | BrickLink-nr |
 |:---:|---|---|---|

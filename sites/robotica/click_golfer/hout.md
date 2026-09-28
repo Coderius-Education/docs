@@ -68,14 +68,14 @@ Pas je programma aan tot de bal telkens netjes in het gat gaat:
 - De wachttijd na het slaan moet lang genoeg zijn, zodat een bal die terugrolt eerst stil ligt voordat de robot weer kijkt.
 
 <details>
-<summary>Klik hier voor een tip!</summary>
+<summary>Tip</summary>
 
 Verander steeds maar één getal tegelijk, en probeer daarna een paar keer. Zo weet je welk getal het verschil maakt.
 
 </details>
 
 <details>
-<summary>Klik hier voor het antwoord!</summary>
+<summary>Antwoord</summary>
 
 Er is geen getal dat bij iedereen past: elke baan en elke Golfer is net anders. Hoe verder de twee standen in de servo-blokken uit elkaar liggen, hoe verder de arm uithaalt en hoe harder de bal gaat. Zijn ze dichter bij elkaar, dan tikt hij zachter. Rolt de bal terug en slaat de arm te vroeg, maak dan de 2000 in **duurt** groter.
 
