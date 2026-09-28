@@ -43,7 +43,7 @@ Nu slaat je Golfer altijd naar dezelfde stand: [de servo](servo) op **D9** gaat 
 <details>
 <summary>Tip</summary>
 
-In de groep **Functies** staat een blok dat een **willekeurig getal** tussen twee waardes geeft. Zet dat blok op de plek waar nu 90 staat.
+In de groep **Getal blokken** staat een blok dat een **willekeurig getal** tussen twee waardes geeft. Zet dat blok op de plek waar nu 90 staat.
 
 </details>
 

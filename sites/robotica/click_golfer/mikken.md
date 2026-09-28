@@ -53,11 +53,13 @@ Sneller: maak **duurt 10 ms** in beide herhaal-blokken kleiner, bijvoorbeeld 5 m
 
 ## Er gaat iets mis
 
-Tijdens het mikken staat de arm stil. Pas bij het slaan beweegt hij.
+<Probleem titel="Tijdens het mikken staat de arm stil. Pas bij het slaan beweegt hij.">
 
 **Oorzaak:** in **Servo 9 op …** staat een getal in plaats van het blok `hoek`, of **wijzig hoek** ontbreekt. De arm krijgt dan vijftig keer dezelfde stand.
 
 **Oplossing:** sleep het blok `hoek` op de plek van het getal in **Servo 9 op …**, en kijk of **wijzig hoek met 1** in het herhaal-blok staat.
+
+</Probleem>
 
 <details>
 <summary>Controlevraag</summary>

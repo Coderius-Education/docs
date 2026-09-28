@@ -63,17 +63,21 @@ Het Leaphy-blok leest nu als een zin: *achter, mikken, slaan*.
 
 ## Er gaat iets mis
 
-**Je hebt het subprogramma `slaan` gemaakt, maar de arm slaat niet meer.**
+<Probleem titel="Je hebt het subprogramma slaan gemaakt, maar de arm slaat niet meer.">
 
 **Oorzaak:** een subprogramma doet pas iets als het blok met zijn naam in je programma staat. Je sleepte de servo-blokken naar het subprogramma, maar zette het blok **slaan** niet terug.
 
 **Oplossing:** klik met de rechtermuisknop op het subprogramma `slaan`, kies **Maak "slaan"**, en zet het blok onder **mikken**.
 
-**In het subprogramma `mikken` staan ook de blokken van het slaan.**
+</Probleem>
+
+<Probleem titel="In het subprogramma mikken staan ook de blokken van het slaan.">
 
 **Oorzaak:** je sleepte **stel hoek in op 0** naar `mikken` terwijl de blokken van het slaan er nog onder zaten. Alles wat onder een blok vastzit, gaat mee.
 
 **Oplossing:** sleep **Servo 9 op 90** uit `mikken` naar `slaan`. De blokken eronder gaan weer mee. Sleep **duurt 2000 ms** daarna terug onder **slaan** in **als … dan**.
+
+</Probleem>
 
 <details>
 <summary>Controlevraag</summary>

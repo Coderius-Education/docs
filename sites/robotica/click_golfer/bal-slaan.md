@@ -29,11 +29,13 @@ Na het terugzetten wacht de robot twee seconden: **duurt 2000 ms**. Op de baan r
 
 ## Er gaat iets mis
 
-De servo blijft slaan, ook als er geen bal ligt.
+<Probleem titel="De servo blijft slaan, ook als er geen bal ligt.">
 
 **Oorzaak:** je grens is te hoog. Het getal zonder bal is al kleiner dan de grens.
 
 **Oplossing:** kijk nog eens naar de twee getallen die je bij de IR-sensor opschreef, en kies een grens die daar netjes tussenin ligt.
+
+</Probleem>
 
 <details>
 <summary>Controlevraag</summary>

@@ -28,6 +28,13 @@ function tekst(bestand: string): string {
   return readFileSync(join(CLICK, bestand), 'utf8');
 }
 
+function problemen(inhoud: string): { titel: string; inhoud: string }[] {
+  return [...inhoud.matchAll(/<Probleem titel="([^"]+)">([\s\S]*?)<\/Probleem>/g)].map((m) => ({
+    titel: m[1],
+    inhoud: m[2],
+  }));
+}
+
 describe('de hardware-uitleg klopt', () => {
   it('noemt het stelschroefje alleen met de mededeling dat je het laat zitten', () => {
     // Het schroefje zet de drempel van de digitale uitgang D0, en die is niet
@@ -113,7 +120,9 @@ describe('de hardware-uitleg klopt', () => {
       'Geen seriële verbinding mogelijk vanwege de browser',
       'RST',
     ]) {
-      expect(inhoud).toContain(`**${label}**`);
+      // Vet in de tekst, of als titel van een kaart bij Er gaat iets mis.
+      const genoemd = inhoud.includes(`**${label}**`) || inhoud.includes(`titel="${label}"`);
+      expect(genoemd, label).toBe(true);
     }
   });
 
@@ -161,13 +170,35 @@ describe('de hardware-uitleg klopt', () => {
 
   it('elke fout bij de servo heeft één oorzaak, niet een tweede onder de verkeerde kop', () => {
     // "Doet helemaal niets" had "beweegt één keer en daarna niet meer" als
-    // punt erbij: dat is een ander symptoom, met een eigen kop.
-    // Een symptoom is een regel die helemaal vet is en op een punt eindigt.
-    const regels = tekst('servo.md').split('\n');
-    const begin = regels.indexOf('**De servo doet helemaal niets.**');
-    const eind = regels.findIndex((r, n) => n > begin && /^\*\*[^*]+\.\*\*$/.test(r));
-    expect(begin).toBeGreaterThan(-1);
-    expect(regels.slice(begin, eind === -1 ? undefined : eind).join('\n')).not.toMatch(/één keer/);
+    // punt erbij: dat is een ander symptoom, met een eigen kaart.
+    const niets = problemen(tekst('servo.md')).find(
+      (p) => p.titel === 'De servo doet helemaal niets.',
+    );
+    expect(niets).toBeDefined();
+    expect(niets?.inhoud).not.toMatch(/één keer/);
+  });
+
+  it('"Er gaat iets mis" is een kaart per probleem, met oorzaak en oplossing', () => {
+    // Losse vette regels onder elkaar lazen als één lap tekst. Elke sectie
+    // bestaat nu uit <Probleem>-kaarten, en elke kaart zegt waarom het
+    // misgaat en wat je eraan doet.
+    const fout: string[] = [];
+    for (const bestand of paginas()) {
+      const inhoud = tekst(bestand);
+      const begin = inhoud.indexOf('## Er gaat iets mis');
+      if (begin === -1) continue;
+      const sectie = inhoud.slice(begin).split(/\n<details>|\n## (?!Er gaat)/)[0];
+      const zonderKaarten = sectie.replace(/<Probleem[\s\S]*?<\/Probleem>/g, '');
+      if (/\*\*(Oorzaak|Oplossing):\*\*/.test(zonderKaarten))
+        fout.push(`${bestand}: tekst buiten een kaart`);
+      const kaarten = problemen(sectie);
+      if (kaarten.length === 0) fout.push(`${bestand}: geen kaarten`);
+      for (const { titel, inhoud: k } of kaarten) {
+        if (!/\*\*Oorzaak:\*\*/.test(k) || !/\*\*Oplossing:\*\*/.test(k))
+          fout.push(`${bestand}: ${titel}`);
+      }
+    }
+    expect(fout).toEqual([]);
   });
 
   it('wie de servo losmaakt, sluit hem vóór stap 11 weer aan', () => {
@@ -227,7 +258,9 @@ describe('de volgorde van de route', () => {
     // Een leerling die nog nooit programmeerde, zoekt eerst naar het blok.
     // De groepen komen uit de toolbox van Easybloqs voor de Arduino Nano
     // (leaphy-webbased: src/assets/blockly/base-toolbox.xml en
-    // leaphy-toolbox.xml; de Nano toont Functies en niet Getal blokken).
+    // leaphy-toolbox.xml). Getallen, vergelijken en willekeurig getal staan
+    // in Getal blokken: zo ziet de docent het in de app, ook al gaf de
+    // toolbox in de broncode ze de naam Functies.
     // Per bloktype: de groep, en hoe de les het blok noemt (vet, zoals de
     // leerling het in Easybloqs leest).
     const GROEP: Record<string, [string, string]> = {
@@ -238,8 +271,8 @@ describe('de volgorde van de route', () => {
       controls_repeat_ext: ['Denk stappen', 'herhaal'],
       controls_if: ['Denk stappen', 'als … dan'],
       time_delay: ['Denk stappen', 'duurt'],
-      logic_compare: ['Functies', '`<`'],
-      math_random_int: ['Functies', 'willekeurig getal'],
+      logic_compare: ['Getal blokken', '`<`'],
+      math_random_int: ['Getal blokken', 'willekeurig getal'],
       variables_set: ['Variabelen', 'stel hoek in op'],
       procedures_defnoreturn: ['Eigen blokken', 'Subprogramma'],
     };
