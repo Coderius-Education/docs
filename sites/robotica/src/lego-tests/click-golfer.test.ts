@@ -152,6 +152,24 @@ describe('de hardware-uitleg klopt', () => {
     expect(tekst('easybloqs.md')).toContain('fritzing/click_golfer_rst.png');
   });
 
+  it('wat alleen in een bouwplaatje staat, staat ook in de tekst', () => {
+    // Stap 4 van het werkboek zegt in een kadertje dat het snoertje van de
+    // motor omhoog moet. In een plaatje leest een leerling daar overheen.
+    const zonderPlaatjes = tekst('bouwen.md').replace(/<figure>[\s\S]*?<\/figure>/g, '');
+    expect(zonderPlaatjes).toMatch(/snoertje[^.]*\*\*omhoog\*\*/);
+  });
+
+  it('elke fout bij de servo heeft één oorzaak, niet een tweede onder de verkeerde kop', () => {
+    // "Doet helemaal niets" had "beweegt één keer en daarna niet meer" als
+    // punt erbij: dat is een ander symptoom, met een eigen kop.
+    // Een symptoom is een regel die helemaal vet is en op een punt eindigt.
+    const regels = tekst('servo.md').split('\n');
+    const begin = regels.indexOf('**De servo doet helemaal niets.**');
+    const eind = regels.findIndex((r, n) => n > begin && /^\*\*[^*]+\.\*\*$/.test(r));
+    expect(begin).toBeGreaterThan(-1);
+    expect(regels.slice(begin, eind === -1 ? undefined : eind).join('\n')).not.toMatch(/één keer/);
+  });
+
   it('de sensor- en de servoles noemen hun pin', () => {
     expect(tekst('ir-sensor.md')).toMatch(/\*\*A0\*\*/);
     expect(tekst('servo.md')).toMatch(/\*\*D9\*\*/);

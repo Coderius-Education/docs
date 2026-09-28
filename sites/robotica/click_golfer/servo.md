@@ -94,7 +94,12 @@ Je hebt drie keer het blok **Servo 9 op …** nodig, en na elk blok een **duurt 
 
 - zit de oranje draad op het signaal van **D9**, en de bruine op GND? Een omgekeerde stekker werkt niet;
 - staat er in het blok **Servo 9**, en niet een ander getal?
-- beweegt hij één keer en daarna niet meer? Dan ontbreekt **herhaal voor altijd**.
+
+**Het asje beweegt één keer, en daarna niet meer.**
+
+**Oorzaak:** de servo-blokken staan direct in het Leaphy-blok, en dat voert zijn blokken maar één keer uit.
+
+**Oplossing:** zet de servo-blokken in **herhaal voor altijd**.
 
 **De servo trekt te weinig kracht, of de robot doet vreemd als de servo beweegt.**
 

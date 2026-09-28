@@ -50,6 +50,8 @@ In stap 4 komt de servo in de toren. Zet je robot eerst uit met de knop **ON/OFF
 
 Bij elke stap zie je linksboven welke stukjes je erbij pakt. Wat nieuw is, heeft een rode rand.
 
+**Let op bij stap 4:** zet de servo zo in de toren dat het snoertje van de motor **omhoog** wijst, zoals het werkboek zegt.
+
 <figure>
   <img src="/click_golfer/bouwen/stap-01.jpg" width="600" alt="Bouwstap 1: Het lichtgrijze frame van 5 bij 7 gaten met een open midden. Dit is de voet." />
   <figcaption>Stap 1</figcaption>

@@ -77,7 +77,7 @@ Verander steeds maar één getal tegelijk, en probeer daarna een paar keer. Zo w
 <details>
 <summary>Klik hier voor het antwoord!</summary>
 
-Er is geen getal dat bij iedereen past: elke baan en elke Golfer is net anders. Hoe verder die 90 van de 0 in **Servo 9 op 0** af ligt, hoe verder de arm uithaalt en hoe harder de bal gaat. Rolt de bal terug en slaat de arm te vroeg, maak dan de 2000 in **duurt** groter.
+Er is geen getal dat bij iedereen past: elke baan en elke Golfer is net anders. Hoe verder de twee standen in de servo-blokken uit elkaar liggen, hoe verder de arm uithaalt en hoe harder de bal gaat. Zijn ze dichter bij elkaar, dan tikt hij zachter. Rolt de bal terug en slaat de arm te vroeg, maak dan de 2000 in **duurt** groter.
 
 </details>
 

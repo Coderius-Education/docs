@@ -38,14 +38,14 @@ De servo blijft slaan, ook als er geen bal ligt.
 <details>
 <summary>Controlevraag</summary>
 
-Je haalt **herhaal voor altijd** weg, zodat **als … dan** direct in het Leaphy-blok staat. Je legt een bal voor de sensor. Wat gebeurt er?
+Je haalt **herhaal voor altijd** weg, zodat **als … dan** direct in het Leaphy-blok staat. Pas als de upload klaar is, leg je een bal voor de sensor. Wat gebeurt er?
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-Niets. Het Leaphy-blok loopt maar één keer, direct na het uploaden. Toen lag er nog geen bal, en daarna kijkt de robot niet meer.
+Niets. Het Leaphy-blok loopt maar één keer, direct na het uploaden. Toen lag er nog geen bal, en daarna kijkt de robot niet meer. Had er al een bal gelegen, dan had hij precies één keer geslagen.
 
 </details>
 
