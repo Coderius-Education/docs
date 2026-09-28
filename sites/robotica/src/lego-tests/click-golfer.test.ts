@@ -86,11 +86,12 @@ describe('de hardware-uitleg klopt', () => {
     // andere pinnen in de blokken dan de lessen noemen.
     expect(tekst('microcontroller.md')).toMatch(/Kies de robot \*\*Arduino Nano\*\*/);
     const verkeerd = paginas().filter((f) => /Leaphy Click/.test(tekst(f)));
+    expect(verkeerd).toEqual([]);
+
     // De blokken op de site zijn Nederlands; de leerling moet zien waar hij
     // Easybloqs ook op Nederlands zet, anders staat er 'Read anapin' waar de
     // les 'Lees anapin' zegt.
     expect(tekst('microcontroller.md')).toMatch(/\*\*Meer…\*\* en daarna \*\*Taal\*\*/);
-    expect(verkeerd).toEqual([]);
   });
 
   it('de sensor- en de servoles noemen hun pin', () => {
@@ -115,7 +116,7 @@ describe('de volgorde van de route', () => {
     'extras',
   ];
 
-  it('de pagina\'s staan in deze volgorde in de zijbalk', () => {
+  it("de pagina's staan in deze volgorde in de zijbalk", () => {
     const positie = (bestand: string) =>
       Number(tekst(bestand).match(/^sidebar_position: (\d+)$/m)?.[1]);
     const volgorde = paginas()
