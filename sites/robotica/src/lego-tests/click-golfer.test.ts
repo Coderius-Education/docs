@@ -136,6 +136,7 @@ describe('de volgorde van de route', () => {
     'bouwen',
     'hout',
     'mikken',
+    'subprogrammas',
     'extras',
   ];
 

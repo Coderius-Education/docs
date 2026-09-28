@@ -1,5 +1,5 @@
 ---
-sidebar_position: 9
+sidebar_position: 10
 ---
 import Blokken from '@site/src/components/Blokken';
 import willekeurigSlaan from './blokken/willekeurig-slaan.json';
@@ -32,13 +32,13 @@ Je bouwt hetzelfde **als**-blok als bij [de IR-sensor](ir-sensor), maar nu met e
 - als `Read anapin A0` groter is dan jouw grens: zet het lampje op groen en laat de arm slaan;
 - anders: zet het lampje op rood.
 
-Het slaan zat al in je programma van [Zie de bal, sla de bal](bal-slaan): het blok **slaan** sleep je in de dan-tak. De kleur zet je met het RGB-blok uit de video: groen is rood 0, groen 255, blauw 0, en rood is rood 255, groen 0, blauw 0.
+Het slaan zat al in je programma: het blok **slaan** uit [Een naam voor je blokken](subprogrammas) sleep je in de dan-tak. De kleur zet je met het RGB-blok uit de video: groen is rood 0, groen 255, blauw 0, en rood is rood 255, groen 0, blauw 0.
 
 </details>
 
 ## Willekeurig slaan
 
-Nu slaat je Golfer altijd naar dezelfde stand: [de servo](servo) op **D9** gaat naar 90 graden. Pas het subprogramma `slaan` aan, zodat de arm telkens naar een willekeurige stand tussen 70 en 110 graden gaat.
+Nu slaat je Golfer altijd naar dezelfde stand: [de servo](servo) op **D9** gaat naar 90 graden. Pas het subprogramma `slaan` uit [Een naam voor je blokken](subprogrammas) aan, zodat de arm telkens naar een willekeurige stand tussen 70 en 110 graden gaat.
 
 <details>
 <summary>Klik hier voor een tip!</summary>

@@ -20,9 +20,9 @@ Drie blokken heb je nodig:
 
 ## Het programma
 
-De sensor zit nog op **A0** en de servo op **D9**, net als bij [Zie de bal, sla de bal](bal-slaan). Het subprogramma `mikken` laat de arm langzaam van 0° naar 50° gaan, en weer terug. Daarna slaat de robot.
+De sensor zit nog op **A0** en de servo op **D9**, net als bij [Zie de bal, sla de bal](bal-slaan). Ligt er een bal, dan zet de robot de arm op 0°. Daarna gaat de arm langzaam naar 50° en weer terug: dat is het mikken. Dan slaat hij, zoals bij Zie de bal, sla de bal.
 
-<Blokken programma={mikken} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 groter is dan 300, dan achter, mikken, slaan en duurt 2000 ms. Het subprogramma mikken: stel hoek in op 0. Herhaal 50 keer: Servo 9 op hoek, duurt 10 ms, wijzig hoek met 1. Daarna herhaal 50 keer: Servo 9 op hoek, duurt 10 ms, wijzig hoek met -1. Verder de subprogramma's achter (Servo 9 op 0) en slaan (Servo 9 op 90)." />
+<Blokken programma={mikken} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 groter is dan 300, dan: Servo 9 op 0, duurt 500 ms, stel hoek in op 0. Herhaal 50 keer: Servo 9 op hoek, duurt 10 ms, wijzig hoek met 1. Herhaal 50 keer: Servo 9 op hoek, duurt 10 ms, wijzig hoek met -1. Daarna Servo 9 op 90, duurt 500 ms, en duurt 2000 ms." />
 
 **herhaal 50 keer** doet de blokken erin vijftig keer achter elkaar. Elke keer gaat de arm naar de stand in `hoek`, wacht 10 ms, en komt er 1 bij.
 
@@ -73,4 +73,4 @@ Een getal is altijd hetzelfde. `hoek` verandert elke keer dat het herhaal-blok r
 
 </details>
 
-Mikt je Golfer? Kijk dan bij de [Extra's](extras) wat je er nog bij kunt maken.
+Mikt je Golfer? Je programma is nu flink lang. Daarom geef je de blokken voor het mikken en het slaan nu [een naam](subprogrammas).

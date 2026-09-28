@@ -43,25 +43,60 @@
                       },
                       "DO0": {
                         "block": {
-                          "type": "procedures_callnoreturn",
-                          "extraState": {
-                            "name": "slaan"
+                          "type": "leaphy_servo_write",
+                          "fields": {
+                            "SERVO_PIN": "9"
+                          },
+                          "inputs": {
+                            "SERVO_ANGLE": {
+                              "block": {
+                                "type": "math_number",
+                                "fields": {
+                                  "NUM": 90
+                                }
+                              }
+                            }
                           },
                           "next": {
                             "block": {
-                              "type": "procedures_callnoreturn",
-                              "extraState": {
-                                "name": "achter"
+                              "type": "time_delay",
+                              "inputs": {
+                                "DELAY_TIME_MILI": {
+                                  "block": {
+                                    "type": "math_number",
+                                    "fields": {
+                                      "NUM": 500
+                                    }
+                                  }
+                                }
                               },
                               "next": {
                                 "block": {
-                                  "type": "time_delay",
+                                  "type": "leaphy_servo_write",
+                                  "fields": {
+                                    "SERVO_PIN": "9"
+                                  },
                                   "inputs": {
-                                    "DELAY_TIME_MILI": {
+                                    "SERVO_ANGLE": {
                                       "block": {
                                         "type": "math_number",
                                         "fields": {
-                                          "NUM": 2000
+                                          "NUM": 0
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "next": {
+                                    "block": {
+                                      "type": "time_delay",
+                                      "inputs": {
+                                        "DELAY_TIME_MILI": {
+                                          "block": {
+                                            "type": "math_number",
+                                            "fields": {
+                                              "NUM": 2000
+                                            }
+                                          }
                                         }
                                       }
                                     }
@@ -70,92 +105,6 @@
                               }
                             }
                           }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      {
-        "type": "procedures_defnoreturn",
-        "x": 0,
-        "y": 300,
-        "fields": {
-          "NAME": "achter"
-        },
-        "inputs": {
-          "STACK": {
-            "block": {
-              "type": "leaphy_servo_write",
-              "fields": {
-                "SERVO_PIN": "9"
-              },
-              "inputs": {
-                "SERVO_ANGLE": {
-                  "block": {
-                    "type": "math_number",
-                    "fields": {
-                      "NUM": 0
-                    }
-                  }
-                }
-              },
-              "next": {
-                "block": {
-                  "type": "time_delay",
-                  "inputs": {
-                    "DELAY_TIME_MILI": {
-                      "block": {
-                        "type": "math_number",
-                        "fields": {
-                          "NUM": 500
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      {
-        "type": "procedures_defnoreturn",
-        "x": 0,
-        "y": 400,
-        "fields": {
-          "NAME": "slaan"
-        },
-        "inputs": {
-          "STACK": {
-            "block": {
-              "type": "leaphy_servo_write",
-              "fields": {
-                "SERVO_PIN": "9"
-              },
-              "inputs": {
-                "SERVO_ANGLE": {
-                  "block": {
-                    "type": "math_number",
-                    "fields": {
-                      "NUM": 90
-                    }
-                  }
-                }
-              },
-              "next": {
-                "block": {
-                  "type": "time_delay",
-                  "inputs": {
-                    "DELAY_TIME_MILI": {
-                      "block": {
-                        "type": "math_number",
-                        "fields": {
-                          "NUM": 500
                         }
                       }
                     }
