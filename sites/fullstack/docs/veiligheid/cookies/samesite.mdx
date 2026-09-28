@@ -1,0 +1,99 @@
+---
+sidebar_label: '3. samesite'
+description: Met samesite bepaal je of de browser je cookie meestuurt als een andere site een verzoek naar jouw site start. FastAPI zet lax al vanzelf.
+---
+
+# Cookies afschermen: `samesite`
+
+`httponly` uit [les 2](./httponly) houdt scripts op je eigen pagina bij de
+cookie weg. Er is nog een route naar je server: vanaf een andere site.
+
+De browser stuurt je cookie mee bij verzoeken naar jouw site, ook als dat
+verzoek begint op een andere site. Stel dat je bent ingelogd op je gastenboek,
+en een andere pagina laat je browser op de achtergrond een verzoek naar je
+gastenboek sturen. Dan gaat je sessie-cookie mee, en voor je server lijkt het
+een verzoek van jou. Een andere site die zo jouw browser iets laat doen op een
+site waar jij bent ingelogd, heet **CSRF**, *cross-site request forgery*.
+
+## Wat `samesite` doet
+
+Met de instelling `samesite` zeg je wanneer de browser de cookie meestuurt:
+
+| `samesite` | Je klikt op een link naar jouw site | Een andere site start op de achtergrond een verzoek |
+|---|:---:|:---:|
+| `lax` | mee | niet mee |
+| `strict` | niet mee | niet mee |
+| `none` | mee | mee, en alleen met `secure` |
+
+## Wat FastAPI al doet
+
+Kijk nog eens naar de regel `set-cookie` uit
+[opdracht 1 van les 1](./zwakheid): daar stond al `SameSite=lax`. FastAPI zet
+`samesite="lax"` vanzelf, en dat is voor de meeste sites de goede keuze. Een
+bezoeker die via een link van een andere site binnenkomt, is gewoon ingelogd,
+maar een verzoek op de achtergrond gaat zonder cookie.
+
+Zet het toch in je code, zodat een lezer ziet dat het een keuze is:
+
+```python
+antwoord.set_cookie(
+    key="sessie_id",
+    value=sessie_id,
+    max_age=60 * 60 * 24 * 30,
+    httponly=True,
+    samesite="lax",
+)
+```
+
+## Er gaat iets mis
+
+Je zet `samesite="none"`. Daarna blijft het tabblad **App** leeg, en herkent je
+server je bij elk verzoek als nieuwe bezoeker.
+
+**Oorzaak:** browsers bewaren een cookie met `samesite="none"` alleen als hij
+ook `secure=True` heeft. Zonder `secure` gooit de browser hem stil weg.
+
+**Oplossing:** gebruik `lax`. `none` heb je alleen nodig als een andere site
+jouw cookie bewust moet kunnen meesturen, en dat is bij een gastenboek nooit zo.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Strikt
+
+Je zet `samesite="strict"`. Een klasgenoot is ingelogd op je gastenboek, en
+klikt op de schoolsite op een link naar jouw gastenboek.
+
+**Vraag:** is hij op de pagina die opent ingelogd?
+
+<details>
+<summary>Tip</summary>
+
+Kijk in de tabel naar de kolom met de link.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Nee. Met `strict` gaat de cookie niet mee als de link op een andere site staat.
+Hij ziet je gastenboek alsof hij er nieuw is. Klikt hij daarna op een link
+binnen je gastenboek, dan gaat de cookie wel weer mee.
+
+</details>
+
+### Opdracht 2: Investigate - Waarom `lax`?
+
+`strict` stuurt de cookie in nog minder gevallen mee. Waarom is `lax` voor een
+gastenboek toch een betere keuze?
+
+<details>
+<summary>Antwoord</summary>
+
+Met `strict` is iemand die via een link binnenkomt steeds even niet ingelogd,
+en dat voelt als een fout. `lax` houdt het verzoek op de achtergrond al tegen,
+en dat is waar CSRF om draait. Een bank kiest misschien toch `strict`; voor een
+gastenboek weegt het gemak zwaarder.
+
+</details>
+
+Door naar [les 4: uitloggen](./uitloggen).

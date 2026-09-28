@@ -1,9 +1,9 @@
 ---
-sidebar_label: '1. De zwakheid'
+sidebar_label: '1. Tekst of HTML?'
 description: Wat een bezoeker invult, komt met een f-string letterlijk in je HTML, en de browser leest het als HTML. Zelf gezien met een vet woord, op je eigen server.
 ---
 
-# HTML van een bezoeker: de zwakheid
+# HTML van een bezoeker: tekst of HTML?
 
 <Voorkennis
   items={[
@@ -179,9 +179,46 @@ maakt de lijst met een template, `berichten_lijst.html`. Stel dat Sara daar
 
 Nee. Je ziet `<b>vet</b>` staan, met de haakjes erbij. Jinja zet in een
 template van elke `<` een `&lt;` en van elke `>` een `&gt;`, en die tekens toont
-de browser als tekst. De f-string doet dat niet, en in de volgende stap los je
-het zo op.
+de browser als tekst. De f-string doet dat niet. In les 2 doe je hetzelfde in
+Python, en in les 3 laat je het aan een template over.
 
 </details>
 
-Door naar [stap 2: de oplossing](./oplossing).
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+{/* onveilig-voorbeeld: de zwakheid die deze les laat zien */}
+
+```python
+import time
+
+from fastapi import FastAPI, Form
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.post("/gastenboek")
+async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    return HTMLResponse(f"Bedankt, {naam}. Je bericht staat in het gastenboek.")
+
+@app.get("/berichten/lijst")
+async def berichten_lijst():
+    regels = ""
+    with SqliteDict("gastenboek.db") as db:
+        for bericht in db.values():
+            regels += f"<li>{bericht['naam']}: {bericht['bericht']}</li>"
+    return HTMLResponse(f"<ul>{regels}</ul>")
+```
+
+Naast `main.py` staan `static/gastenboek.html` en `static/js/htmx.min.js`. Dit
+is de zwakke versie; in les 2 komt er `escape` in.
+
+</details>
+
+Door naar [les 2: escapen in Python](./escape).

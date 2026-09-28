@@ -25,23 +25,25 @@ vertrouw je niet, en de controle hoort op de server.
 ## HTML van een bezoeker
 
 - [ ] Tekst van een bezoeker komt alleen via een `.html`-template in je pagina,
-  of met `escape()` in een f-string. ([De oplossing](./xss/oplossing))
-- [ ] Nergens staat `|safe` achter tekst van een bezoeker.
+  of met `escape()` in een f-string. ([Templates escapen vanzelf](./xss/templates))
+- [ ] Nergens staat `|safe` achter tekst van een bezoeker. ([`|safe`](./xss/safe))
 
 ## Wie mag wat
 
 - [ ] Elk endpoint dat iets verwijdert of aanpast, controleert zelf of het van
   deze bezoeker is, en stuurt anders een `403`.
-  ([De oplossing](./toegang/oplossing))
+  ([De controle met 403](./toegang/controle))
 - [ ] De controle gebruikt wat de server weet, zoals de sessie, niet wat de
-  bezoeker in een formulier typt.
+  bezoeker in een formulier typt. ([Controleer op wat de server weet](./toegang/server-weet))
 
 ## Cookies
 
 - [ ] De sessie-cookie heeft `httponly=True`.
-  ([De oplossing](./cookies/oplossing))
+  ([httponly](./cookies/httponly))
 - [ ] In een cookie staat alleen een sessie-id, geen naam of rechten.
   ([Sessies](/docs/FastAPI/sessies))
+- [ ] Er is een endpoint om uit te loggen, dat ook de sessie op de server
+  weggooit. ([Uitloggen](./cookies/uitloggen))
 
 ## Wachtwoorden
 

@@ -71,7 +71,10 @@ const ZONDER_BLOK: Record<string, string> = {
   'veiligheid/dos/praktijk.mdx': 'achtergrond bij de lessen ervoor, geen nieuwe voorkennis',
   'veiligheid/eigen-project.mdx': 'controlelijst over de lessen ervoor, geen nieuwe voorkennis',
   'veiligheid/index.mdx': 'startpagina van de route, verwijst naar de FastAPI-lessen zelf',
-  'veiligheid/cookies/oplossing.mdx': 'bouwt op de zwakheid-stap ervoor, in dezelfde map',
+  'veiligheid/cookies/eigen-project.mdx': 'toepassen van de lessen ervoor op het eigen project',
+  'veiligheid/cookies/httponly.mdx': 'bouwt op de les ervoor, in dezelfde map',
+  'veiligheid/cookies/samesite.mdx': 'begrippen worden in de les zelf uitgelegd',
+  'veiligheid/cookies/uitloggen.mdx': 'delete_cookie wordt in de les zelf uitgelegd',
   'veiligheid/cookies/praktijk.mdx':
     'achtergrond bij de twee stappen ervoor, geen nieuwe voorkennis',
   'veiligheid/cookies/zwakheid.mdx': 'bouwt op sessies en de toegang-reeks, geen nieuwe voorkennis',
@@ -82,10 +85,17 @@ const ZONDER_BLOK: Record<string, string> = {
     'maxlength is fullstack-stof uit server-of-browser, geen nieuwe voorkennis',
   'veiligheid/invoer/praktijk.mdx':
     'achtergrond bij de twee stappen ervoor, geen nieuwe voorkennis',
-  'veiligheid/toegang/oplossing.mdx': 'bouwt op de zwakheid-stap ervoor, in dezelfde map',
+  'veiligheid/toegang/controle.mdx': 'bouwt op de les ervoor, in dezelfde map',
+  'veiligheid/toegang/eigen-project.mdx': 'toepassen van de lessen ervoor op het eigen project',
+  'veiligheid/toegang/elk-endpoint.mdx': 'bouwt op de lessen ervoor, in dezelfde map',
+  'veiligheid/toegang/server-weet.mdx':
+    'bouwt op de lessen ervoor en op Cookies in de FastAPI-lessen',
   'veiligheid/toegang/praktijk.mdx':
     'achtergrond bij de twee stappen ervoor, geen nieuwe voorkennis',
-  'veiligheid/xss/oplossing.mdx': 'bouwt op de zwakheid-stap ervoor, in dezelfde map',
+  'veiligheid/xss/eigen-project.mdx': 'toepassen van de lessen ervoor op het eigen project',
+  'veiligheid/xss/escape.mdx': 'escape wordt in de les zelf uitgelegd',
+  'veiligheid/xss/safe.mdx': 'bouwt op de template-les ervoor, in dezelfde map',
+  'veiligheid/xss/templates.mdx': 'templates komen uit de FastAPI-lessen, hier alleen het escapen',
   'veiligheid/xss/praktijk.mdx': 'achtergrond bij de twee stappen ervoor, geen nieuwe voorkennis',
   'veiligheid/wachtwoorden/hash.mdx': 'hashlib en encode worden in de les zelf uitgelegd',
   'veiligheid/wachtwoorden/praktijk.mdx':

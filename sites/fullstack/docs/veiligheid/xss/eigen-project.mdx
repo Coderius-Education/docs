@@ -1,0 +1,52 @@
+---
+sidebar_label: '5. In je eigen project'
+description: Zoek in je eigen gastenboek elke plek waar tekst van een bezoeker in HTML komt, en zorg dat die overal tekst blijft.
+---
+
+# HTML van een bezoeker: in je eigen project
+
+Je weet nu waar tekst van een bezoeker HTML kan worden: in een f-string in een
+`HTMLResponse`, en in een template met `|safe` of met een andere extensie dan
+`.html`. Loop je eigen project uit [Jouw project](/docs/FastAPI/jouw-project)
+langs op die plekken.
+
+:::tip
+Werk in je eigen project, niet in de map `veiligheid-xss`. Test daarna met je
+eigen server op `127.0.0.1`.
+:::
+
+## Opdracht
+
+### Opdracht 1: Make - In je eigen project
+
+Zoek in je eigen project elke plek waar tekst van een bezoeker in HTML komt, en
+zorg dat die overal tekst blijft.
+
+<details>
+<summary>Tip</summary>
+
+Zoek in je `main.py` naar `HTMLResponse(f`, en in je templates naar `|safe`.
+Een `{{ }}` in een `.html`-template is al veilig.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Loop deze lijst af:
+
+- Een template dat op `.html` eindigt, escapet alles tussen `{{ }}`. Daar hoef
+  je niets te doen.
+- Staat er `|safe` achter tekst van een bezoeker, haal het weg.
+- Staat er een parameter van je endpoint in een `HTMLResponse(f"…")`, zet er
+  `escape()` omheen, of gebruik een template.
+- Heb je het recept Een formulier versturen uit het
+  [htmx-overzicht](/docs/FastAPI/htmx-overzicht) overgenomen, kijk dan of daar
+  `escape(naam)` staat; dat is later aan het recept toegevoegd.
+
+Test het door in je eigen formulier `<b>vet</b>` in te vullen: je moet de
+haakjes zien, en niets vetgedrukt.
+
+</details>
+
+Door naar [les 6: in de praktijk](./praktijk).

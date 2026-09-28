@@ -1,0 +1,53 @@
+---
+sidebar_label: '5. In je eigen project'
+description: Loop in je eigen project elk endpoint langs dat iets verandert of verwijdert, en zorg dat het zelf controleert of de bezoeker het mag.
+---
+
+# Wie mag wat: in je eigen project
+
+In deze reeks zag je dat een verborgen knop geen slot is, dat de controle in het
+endpoint hoort, dat hij moet kijken naar wat de server weet, en dat elk endpoint
+er een nodig heeft. Loop je eigen project uit
+[Jouw project](/docs/FastAPI/jouw-project) daarop na.
+
+:::tip
+Werk in je eigen project, niet in de map `veiligheid-toegang`. Test daarna met
+je eigen server op `127.0.0.1`.
+:::
+
+## Opdracht
+
+### Opdracht 1: Make - In je eigen project
+
+Loop in je eigen project elk endpoint langs dat iets verandert of verwijdert.
+Zorg dat elk ervan zelf controleert of de bezoeker het mag.
+
+<details>
+<summary>Tip</summary>
+
+Zoek naar `@app.post` en `@app.delete`. Kan iedereen iets toevoegen, zoals een
+bericht in een gastenboek, dan is dat een bewuste keuze. Maar verwijderen of
+aanpassen hoort alleen bij de eigenaar.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Loop deze lijst af:
+
+- Elk endpoint dat verwijdert of aanpast, haalt de sessie op met
+  `sessie_id: str = Cookie(default="")`.
+- De controle staat vóór het verwijderen of aanpassen, en stuurt anders een
+  `403`.
+- Je controleert op wat de server zelf weet, zoals de sleutels in de sessie,
+  niet op een naam uit het formulier.
+- Een verborgen knop is een hulp, geen slot: het endpoint controleert toch.
+
+Heb je in [Sessies](/docs/FastAPI/sessies#opdracht-5-make---echt-afschermen)
+opdracht 5 gemaakt, dan heeft `/verwijderen` deze controle al. Kijk of elk
+ander endpoint dat iets verandert, hem ook heeft.
+
+</details>
+
+Door naar [les 6: in de praktijk](./praktijk).

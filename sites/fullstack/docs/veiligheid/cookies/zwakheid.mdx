@@ -1,11 +1,11 @@
 ---
-sidebar_label: '1. De zwakheid'
+sidebar_label: '1. Scripts lezen cookies'
 description: Het sessie-id staat in een cookie die elk script op de pagina kan lezen. Bekijk je eigen cookie in de ontwikkelaarstools en in de Console.
 ---
 
 import { ConsoleRegels, DevtoolsPaneel } from '@site/src/components/Devtools';
 
-# Cookies afschermen: de zwakheid
+# Cookies afschermen: scripts lezen cookies
 
 Het sessie-id uit [Sessies](/docs/FastAPI/sessies) is de sleutel tot een
 sessie: wie het heeft, is voor je server die bezoeker. Daarom is het een lang,
@@ -20,7 +20,7 @@ het eind van de reeks pas je het geleerde toe op je eigen project.
 
 ## Een formulier bij de server
 
-Neem de server uit [Wie mag wat: de oplossing](../toegang/oplossing) en zet er
+Neem de server uit [Wie mag wat, les 2](../toegang/controle) en zet er
 een formulier bij, als los bestand `static/formulier.html`:
 
 ```html
@@ -49,7 +49,7 @@ Zet de import bovenaan bij de andere, en `app.mount` direct onder
 `app = FastAPI()`.
 
 <details>
-<summary>Het startbestand</summary>
+<summary>Zo ziet je `main.py` er nu uit</summary>
 
 Heb je de server uit Wie mag wat niet meer, of wil je zeker weten dat je
 dezelfde hebt: dit is het hele `main.py`, met de twee nieuwe regels erin.
@@ -211,4 +211,4 @@ pagina's kan hem lezen.
 
 </details>
 
-Door naar [stap 2: de oplossing](./oplossing).
+Door naar [les 2: httponly](./httponly).

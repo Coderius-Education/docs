@@ -1,11 +1,11 @@
 ---
-sidebar_label: '3. In de praktijk'
+sidebar_label: '6. In de praktijk'
 description: Hoe echte sites bepalen wie wat mag, van accounts en beheerders tot een test per endpoint, en wat de wet zegt over bij gegevens van een ander komen.
 ---
 
 # Wie mag wat: in de praktijk
 
-Je controle uit [de oplossing](./oplossing) koppelt een bericht aan een browser.
+Je controle uit [les 2](./controle) koppelt een bericht aan een browser.
 Een echte site koppelt het aan een account, heeft mensen die meer mogen dan
 anderen, en heeft honderden endpoints in plaats van vier. Het idee blijft
 hetzelfde: elk endpoint vraagt zelf wie dit mag.
@@ -25,7 +25,7 @@ bij één endpoint, dan staat dat endpoint open, dus ook dan loop je ze langs.
 
 ### Test het als de ander
 
-Je script uit [stap 1](./zwakheid) is een test: het doet alsof het
+Je script uit [les 1](./zwakheid) is een test: het doet alsof het
 Alex is en kijkt of de server weigert. Echte projecten draaien zulke tests
 automatisch, bij elke wijziging in de code. Per endpoint zijn er dan twee: de
 eigenaar krijgt `200`, een ander krijgt `403`. Breekt iemand later per ongeluk
@@ -52,7 +52,7 @@ gebruikt. Het valt pas op als iemand een verzoek zelf verstuurt.
 <details>
 <summary>Een account in plaats van een browser</summary>
 
-In [opdracht 2 van de oplossing](./oplossing) kon Sara in een privévenster niet
+In [opdracht 2 van les 2](./controle) kon Sara in een privévenster niet
 bij haar eigen bericht. Met een account kan dat wel. Na het inloggen, dat je in
 de [wachtwoordenreeks](../wachtwoorden/inloggen) bouwt, zet de server de naam
 van het account in de sessie, en bij elk bericht de naam van wie het plaatste:
@@ -62,7 +62,7 @@ if bericht["eigenaar"] != ingelogd:
     raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
 ```
 
-Dat lijkt op de foute controle uit de oplossing, maar het verschil zit in waar
+Dat lijkt op de foute controle uit [les 3](./server-weet), maar het verschil zit in waar
 `ingelogd` vandaan komt: uit de sessie, en daar heeft de server hem zelf in
 gezet, pas nadat `ph.verify` het wachtwoord goedkeurde. Een naam die de bezoeker
 in een formulier typt, blijft onbetrouwbaar.
@@ -94,7 +94,7 @@ beheerder zijn van één forum en gewone bezoeker van de rest.
 In [Detailpagina](/docs/FastAPI/detailpagina) vraag je berichten op met een
 nummer. Nummers zijn makkelijk te raden: wie bericht 12 ziet, probeert 13.
 Lange, willekeurige sleutels maken dat moeilijker, en daarom gebruiken veel
-sites ze. Maar zoals je in stap 1 zag, staat een sleutel vaak in de
+sites ze. Maar zoals je in les 1 zag, staat een sleutel vaak in de
 pagina. Een sleutel die niemand raadt is een extra drempel, geen vervanging van
 de controle.
 

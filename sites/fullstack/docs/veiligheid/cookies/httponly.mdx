@@ -1,12 +1,12 @@
 ---
-sidebar_label: '2. De oplossing'
+sidebar_label: '2. httponly'
 description: Met httponly kan een script de sessie-cookie niet meer lezen. Zet de instelling in set_cookie en zie document.cookie leeg worden.
 ---
 
 import { ConsoleRegels, DevtoolsPaneel } from '@site/src/components/Devtools';
 import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
 
-# Cookies afschermen: de oplossing
+# Cookies afschermen: `httponly`
 
 De browser kan een cookie voor scripts afschermen. Dan stuurt hij hem nog wel
 bij elk verzoek mee, zodat je server de sessie herkent, maar `document.cookie`
@@ -137,41 +137,6 @@ JavaScript is buitengesloten.
 
 </details>
 
-### Opdracht 3: Make - In je eigen project
-
-Zet in je eigen project `httponly=True` op de sessie-cookie, en controleer in
-de Console dat `document.cookie` hem niet meer laat zien.
-
-<details>
-<summary>Tip</summary>
-
-Zoek naar `set_cookie`. Denk aan de oude cookie: verstuur na de wijziging
-eerst iets, zodat de server een nieuwe zet.
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-Loop deze lijst af:
-
-- Bij elke `set_cookie` voor `sessie_id` staat `httponly=True`.
-- Na een nieuw bezoek laat `document.cookie` de sessie-cookie niet meer zien,
-  en staat er in het tabblad **App** een vinkje bij **HttpOnly**.
-- Een cookie die je eigen JavaScript wél moet lezen, zoals een voorkeur voor
-  een donker thema, krijgt geen `httponly`. Daar hangen ook geen rechten aan.
-
-```python
-antwoord.set_cookie(
-    key="sessie_id",
-    value=sessie_id,
-    max_age=60 * 60 * 24 * 30,
-    httponly=True,
-)
-```
-
-</details>
-
 <details>
 <summary>Zo ziet je `main.py` er nu uit</summary>
 
@@ -240,4 +205,4 @@ De sessie-cookie staat nu buiten bereik van scripts.
 
 </details>
 
-Door naar [stap 3: in de praktijk](./praktijk).
+Door naar [les 3: samesite](./samesite).

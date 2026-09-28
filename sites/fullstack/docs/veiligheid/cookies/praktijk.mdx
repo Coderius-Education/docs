@@ -1,49 +1,26 @@
 ---
-sidebar_label: '3. In de praktijk'
-description: Wat samesite en secure doen, waarom CSRF bestaat, en hoe een sessie verloopt en bij uitloggen echt weg is.
+sidebar_label: '6. In de praktijk'
+description: Hoe lang een sessie mag duren, en wat secure met https te maken heeft.
 ---
 
 # Cookies afschermen: in de praktijk
 
-`httponly` uit [de oplossing](./oplossing) houdt scripts bij de cookie weg. Een
-sessie-cookie heeft nog meer instellingen, en een sessie moet ook weer kunnen
-eindigen.
+Met `httponly`, `samesite` en een endpoint om uit te loggen uit
+[les 2 tot en met 4](./httponly) is je sessie-cookie goed afgeschermd. Er zijn
+nog twee dingen die echte sites met hun cookies doen.
 
 ## Wat jij zelf doet
 
-### Uitloggen en verlopen
+### Laat een sessie verlopen
 
-Een sessie hoort niet eeuwig te duren. Twee dingen horen erbij:
-
-- **Verlopen:** met `max_age` verdwijnt de cookie na een tijd vanzelf. Voor een
-  banksite is dat kort, voor een gastenboek mag het langer.
-- **Uitloggen:** dan gooi je de sessie weg aan de kant van de server, en haal je
-  de cookie weg met `antwoord.delete_cookie("sessie_id")`. Alleen de cookie
-  weghalen is niet genoeg: staat het sessie-id nog in `sessies.db`, dan werkt
-  het weer zodra iemand het opnieuw als cookie meestuurt.
+Met `max_age` verdwijnt de cookie na een tijd vanzelf. In deze reeks is dat
+30 dagen: `60 * 60 * 24 * 30` seconden. Voor een gastenboek is dat prima; een
+banksite logt je na een kwartier zonder activiteit uit. Kies een tijd die past
+bij wat er met een sessie kan.
 
 ## Wat grote sites nog meer doen
 
 Dit hoef je voor je eigen project niet te bouwen. Klap open wat je wilt lezen.
-
-<details>
-<summary>`samesite`: niet meesturen vanaf een andere site</summary>
-
-De browser stuurt een cookie mee bij verzoeken naar jouw site, ook als dat
-verzoek begint op een andere site. Stel dat je bent ingelogd op je gastenboek,
-en een andere pagina laat je browser op de achtergrond een verzoek naar je
-gastenboek sturen. Dan gaat je sessie-cookie mee, en voor je server lijkt het
-een verzoek van jou. Dat heet **CSRF**, *cross-site request
-forgery*: een andere site laat jouw browser iets doen op een site waar jij bent
-ingelogd.
-
-`samesite` is het antwoord. FastAPI zet `samesite="lax"` vanzelf, en dat betekent:
-stuur de cookie niet mee bij een verzoek dat een andere site op de achtergrond
-start. Bij een gewone klik op een link naar jouw site gaat hij wel
-mee. Met `samesite="strict"` gaat hij zelfs bij zo'n klik niet mee. Voor de
-meeste sites is `lax` de goede keuze, en dus hoef je er niets voor te doen.
-
-</details>
 
 <details>
 <summary>`secure`: alleen over https</summary>
@@ -63,8 +40,10 @@ antwoord.set_cookie(
 )
 ```
 
-Op `127.0.0.1` zou `secure=True` je cookie tegenhouden, want daar is geen
-`https`. Zet hem daarom pas aan als je project echt online staat.
+Op je eigen computer laat Chrome een `secure`-cookie toch door, omdat
+`127.0.0.1` als veilig adres telt. Online, op een adres zonder `https`, bewaart
+de browser hem niet. Zet je `secure` aan, zorg dan dat je echte site `https`
+heeft.
 
 </details>
 
@@ -83,7 +62,7 @@ Kies bij elke situatie de cookie-instelling die het meest helpt.
 
 1. `httponly`: een script kan de cookie dan niet lezen.
 2. `samesite`: de cookie gaat niet mee met een verzoek vanaf een andere site.
-   FastAPI zet `lax` al standaard.
+   FastAPI zet `lax` al standaard; zie [les 3](./samesite).
 3. `secure` samen met `https`: de cookie gaat alleen versleuteld over het
    netwerk.
 

@@ -1,0 +1,106 @@
+---
+sidebar_label: '3. Controleer op wat de server weet'
+description: Een controle op een naam uit het formulier laat zich omzeilen. Controleer op wat de server zelf heeft vastgelegd, zoals de sleutels in de sessie.
+---
+
+# Wie mag wat: controleer op wat de server weet
+
+Je controle uit [les 2](./controle) kijkt of de sleutel in de sessie van de
+bezoeker staat. Er is een controle die er net zo goed uitziet: kijken of de naam
+bij het bericht dezelfde is als de naam van de bezoeker. Die gaat mis, en het
+waarom is de kern van deze reeks.
+
+## Wie bepaalt deze waarde?
+
+Bij elke waarde in een controle is de vraag: wie heeft hem bepaald?
+
+| Waarde | Wie bepaalt hem |
+|---|---|
+| een veld uit het formulier, zoals `naam` | de bezoeker: hij typt wat hij wil |
+| de sleutel in het pad, `/bericht/{sleutel}` | de bezoeker: hij kan elk pad sturen |
+| de cookie `sessie_id` | de bezoeker stuurt hem, maar hij is te lang om te raden |
+| de lijst met sleutels in `sessies.db` | de server: die zette ze erin bij het plaatsen |
+
+Alleen wat de server zelf heeft vastgelegd, kun je vertrouwen. Het sessie-id is
+de sleutel waarmee de server zijn eigen gegevens terugvindt.
+
+## Er gaat iets mis
+
+Je controleert op de naam bij het bericht, in plaats van op de sleutels in de
+sessie:
+
+```python
+# FOUT
+if db[sleutel]["naam"] != mijn.get("naam"):
+    raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
+
+# GOED
+if sleutel not in mijn.get("berichten", []):
+    raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
+```
+
+De test uit les 1 geeft nog netjes `403`. Maar laat Alex in het script bij zijn
+eigen bericht `"naam": "Sara"` invullen, en je krijgt:
+
+```
+Alex verwijdert het bericht van Sara: 200
+Alex verwijdert het bericht van Sara: 200
+Nog in het gastenboek: []
+```
+
+**Oorzaak:** de naam komt uit het formulier, en dat vult de bezoeker zelf in.
+Alex noemt zich Sara, en zijn sessie heeft daarna de naam Sara. De controle
+laat hem door, bij haar bericht en bij zijn eigen.
+
+**Oplossing:** controleer op iets dat alleen de server kan geven. De sleutels in
+de sessie heeft de server er zelf in gezet, bij het plaatsen van het bericht.
+
+Meer uitleg over wat je van een bezoeker kunt geloven: [Server of browser?](/docs/FastAPI/server-of-browser)
+
+## Opdrachten
+
+### Opdracht 1: Predict - De naam uit een cookie
+
+In [Onthouden met een cookie](/docs/FastAPI/cookies) zette je de naam van de
+bezoeker in een cookie. Stel dat de controle vergelijkt met die cookie in plaats
+van met het formulier:
+
+```python
+if db[sleutel]["naam"] != naam_uit_cookie:
+    raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
+```
+
+**Vraag:** is dat wel veilig?
+
+<details>
+<summary>Tip</summary>
+
+Wie bepaalt wat er in een cookie staat?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Nee. In die les veranderde je zelf de cookie in het tabblad App, en de server
+geloofde het. Een cookie met een naam is net zo goed door de bezoeker te
+bepalen als een formulierveld. Daarom staat in een sessie-cookie alleen een
+sessie-id, en zoekt de server de rest zelf op.
+
+</details>
+
+### Opdracht 2: Investigate - Waarom helpt een lange sleutel niet?
+
+De sleutels van berichten zijn lang, zoals `bericht_1767000000000000000`. Waarom
+is dat geen reden om te geloven dat alleen de schrijver de sleutel kent?
+
+<details>
+<summary>Antwoord</summary>
+
+Omdat de sleutel in de pagina staat, voor iedereen die de lijst opvraagt. Je
+zag in [les 1](./zwakheid) dat Alex hem zo uit `/berichten` haalde. Een sleutel
+zegt welk bericht, niet wie het mag.
+
+</details>
+
+Door naar [les 4: elk endpoint apart](./elk-endpoint).

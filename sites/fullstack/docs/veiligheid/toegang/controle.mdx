@@ -1,11 +1,11 @@
 ---
-sidebar_label: '2. De oplossing'
-description: Controleer in het endpoint zelf of het bericht van deze bezoeker is, antwoord anders met 403, en doe dat bij elk endpoint dat iets verandert.
+sidebar_label: '2. De controle met 403'
+description: Controleer in het endpoint zelf of het bericht van deze bezoeker is, en antwoord anders met 403 Forbidden.
 ---
 
 import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
 
-# Wie mag wat: de oplossing
+# Wie mag wat: de controle met 403
 
 De controle hoort op de plek waar het verzoek binnenkomt: in het endpoint. De
 server weet welke berichten deze bezoeker heeft geplaatst, want ze staan in zijn
@@ -57,7 +57,7 @@ gemaakt, dan herken je deze controle: het is dezelfde, nu op het
 ## Doe de test opnieuw
 
 Gooi `gastenboek.db` en `sessies.db` weg, start de server opnieuw, en draai
-`test_verwijderen.py` uit [stap 1](./zwakheid):
+`test_verwijderen.py` uit [les 1](./zwakheid):
 
 ```
 Alex verwijdert het bericht van Sara: 403
@@ -67,54 +67,27 @@ Nog in het gastenboek: ['Sara', 'Alex']
 Alex stuurt nog steeds hetzelfde verzoek, maar de server weigert. Het bericht
 van Sara staat er nog.
 
-## Elk endpoint apart
-
-Een controle beschermt alleen het endpoint waar hij in staat. Het htmx-overzicht
-heeft ook een knop [Alles wissen](/docs/FastAPI/htmx-overzicht), met een eigen
-endpoint `DELETE /berichten`. Staat daar geen controle in, dan wist Alex daarmee
-alsnog het bericht van Sara, en alle andere berichten erbij.
-
-Loop daarom elk endpoint langs dat iets verandert of verwijdert, en stel bij elk
-dezelfde vraag: wie mag dit? In opdracht 4 doe je dat voor Alles wissen.
-
 ## Waar de controle zit
 
-De controle zit in het endpoint zelf, na het ophalen van de sessie en vóór het verwijderen.
+De controle zit in het endpoint zelf, na het ophalen van de sessie en vóór het
+verwijderen.
 
 <VerzoekCyclus variant="toegang" />
 
 ## Er gaat iets mis
 
-Je controleert op de naam bij het bericht, in plaats van op de sleutels in de
-sessie:
-
-```python
-# FOUT
-if db[sleutel]["naam"] != mijn.get("naam"):
-    raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
-
-# GOED
-if sleutel not in mijn.get("berichten", []):
-    raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
-```
-
-De test uit stap 1 geeft nog netjes `403`. Maar laat Alex in het script bij zijn
-eigen bericht `"naam": "Sara"` invullen, en je krijgt:
+Het verwijderen geeft `500 Internal Server Error`, ook bij je eigen bericht. In
+de terminal van je server eindigt de foutmelding met:
 
 ```
-Alex verwijdert het bericht van Sara: 200
-Alex verwijdert het bericht van Sara: 200
-Nog in het gastenboek: []
+NameError: name 'sessie_id' is not defined
 ```
 
-**Oorzaak:** de naam komt uit het formulier, en dat vult de bezoeker zelf in.
-Alex noemt zich Sara, en zijn sessie heeft daarna de naam Sara. De controle
-laat hem door, bij haar bericht en bij zijn eigen.
+**Oorzaak:** je hebt de nieuwe regels in `bericht_verwijderen` gezet, maar de
+parameter `sessie_id: str = Cookie(default="")` niet. Dan bestaat `sessie_id`
+niet in de functie.
 
-**Oplossing:** controleer op iets dat alleen de server kan geven. De sleutels in
-de sessie heeft de server er zelf in gezet, bij het plaatsen van het bericht.
-
-Meer uitleg over wat je van een bezoeker kunt geloven: [Server of browser?](/docs/FastAPI/server-of-browser)
+**Oplossing:** zet de parameter erbij, zoals in regel 2 hierboven.
 
 ## Opdrachten
 
@@ -188,99 +161,6 @@ bij [inloggen](../wachtwoorden/inloggen), in de reeks over wachtwoorden.
 
 </details>
 
-### Opdracht 4: Make - Alles wissen, maar alleen van jou
-
-Voeg een endpoint `DELETE /berichten` toe dat alleen de berichten van de
-bezoeker zelf wist. Test het met een scriptje waarin Alex alles wist, en kijk
-of het bericht van Sara blijft staan.
-
-<details>
-<summary>Tip</summary>
-
-Loop niet over alle sleutels in `gastenboek.db`, maar over de sleutels in de
-sessie.
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-```python
-@app.delete("/berichten")
-async def alles_wissen(sessie_id: str = Cookie(default="")):
-    with SqliteDict("sessies.db") as sessies:
-        mijn = sessies.get(sessie_id, {})
-    with SqliteDict("gastenboek.db") as db:
-        for sleutel in mijn.get("berichten", []):
-            if sleutel in db:
-                del db[sleutel]
-        db.commit()
-    return {"bericht": "Jouw berichten zijn gewist"}
-```
-
-Het testscript:
-
-```python
-import httpx
-
-adres = "http://127.0.0.1:8000"
-
-sara = httpx.Client(base_url=adres)
-alex = httpx.Client(base_url=adres)
-
-sara.post("/bericht", data={"naam": "Sara", "bericht": "Hoi allemaal"})
-alex.post("/bericht", data={"naam": "Alex", "bericht": "Leuk gastenboek"})
-
-print(alex.delete("/berichten").json())
-namen = [bericht["naam"] for bericht in alex.get("/berichten").json().values()]
-print(f"Nog in het gastenboek: {namen}")
-```
-
-Uitvoer, met een lege database:
-
-```
-{'bericht': 'Jouw berichten zijn gewist'}
-Nog in het gastenboek: ['Sara']
-```
-
-Hier is er geen `403` nodig: wie Alles wissen kiest, wist wat van hem is, en de
-rest blijft staan.
-
-</details>
-
-### Opdracht 5: Make - In je eigen project
-
-Loop in je eigen project elk endpoint langs dat iets verandert of verwijdert.
-Zorg dat elk ervan zelf controleert of de bezoeker het mag.
-
-<details>
-<summary>Tip</summary>
-
-Zoek naar `@app.post` en `@app.delete`. Kan iedereen iets toevoegen, zoals een
-bericht in een gastenboek, dan is dat een bewuste keuze. Maar verwijderen of
-aanpassen hoort alleen bij de eigenaar.
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-Loop deze lijst af:
-
-- Elk endpoint dat verwijdert of aanpast, haalt de sessie op met
-  `sessie_id: str = Cookie(default="")`.
-- De controle staat vóór het verwijderen of aanpassen, en stuurt anders een
-  `403`.
-- Je controleert op wat de server zelf weet, zoals de sleutels in de sessie,
-  niet op een naam uit het formulier.
-- Een verborgen knop is een hulp, geen slot: het endpoint controleert toch.
-
-Heb je in [Sessies](/docs/FastAPI/sessies#opdracht-5-make---echt-afschermen)
-opdracht 5 gemaakt, dan heeft `/verwijderen` deze controle al. Kijk of elk
-ander endpoint dat iets verandert, hem ook heeft.
-
-</details>
-
 <details>
 <summary>Zo ziet je `main.py` er nu uit</summary>
 
@@ -336,21 +216,10 @@ async def bericht_verwijderen(sleutel: str, sessie_id: str = Cookie(default=""))
             del db[sleutel]
             db.commit()
     return {"bericht": "Verwijderd"}
-
-@app.delete("/berichten")
-async def alles_wissen(sessie_id: str = Cookie(default="")):
-    with SqliteDict("sessies.db") as sessies:
-        mijn = sessies.get(sessie_id, {})
-    with SqliteDict("gastenboek.db") as db:
-        for sleutel in mijn.get("berichten", []):
-            if sleutel in db:
-                del db[sleutel]
-        db.commit()
-    return {"bericht": "Jouw berichten zijn gewist"}
 ```
 
-Elk endpoint dat iets verwijdert, controleert nu zelf.
+Het verwijderen controleert nu wie het vraagt.
 
 </details>
 
-Door naar [stap 3: in de praktijk](./praktijk).
+Door naar [les 3: controleer op wat de server weet](./server-weet).

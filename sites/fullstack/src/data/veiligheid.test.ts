@@ -20,6 +20,11 @@ const zwakheden = readdirSync(VEILIGHEID).filter((n) =>
 const lees = (map: string, stap: string) =>
   readFileSync(join(VEILIGHEID, map, `${stap}.mdx`), 'utf8');
 
+// Een les "heeft een endpoint" als een python-blok er een bevat. Een tip die
+// "zoek naar `@app.post`" zegt, telt niet.
+const heeftEndpoint = (tekst: string) =>
+  [...tekst.matchAll(/```python[^\n]*\n([\s\S]*?)```/g)].some((m) => m[1].includes('@app.'));
+
 type Categorie = { type: string; label: string; items: string[] };
 const categorieen = (sidebars.veiligheidSidebar as unknown as Categorie[]).filter(
   (c) => c.type === 'category',
@@ -82,9 +87,7 @@ describe('de reeks Veiligheid', () => {
 
   it('elke zwakheid is opgesplitst in kleine lessen, met in elke les één idee', () => {
     // Drie stappen per zwakheid ging te snel: elke les behandelde te veel.
-    // Wie mag wat, XSS en Cookies houden voorlopig drie stappen; zie de
-    // beschrijving van PR #111.
-    for (const map of ['dos', 'wachtwoorden', 'invoer']) {
+    for (const map of zwakheden) {
       expect(stappenVan(map).length, `veiligheid/${map}`).toBeGreaterThanOrEqual(6);
     }
   });
@@ -180,7 +183,7 @@ describe('de reeks Veiligheid', () => {
         it('elke les die main.py verandert, toont het hele bestand', () => {
           for (const stap of stappen.filter((s) => s !== 'praktijk')) {
             const tekst = lees(map, stap);
-            if (!tekst.includes('@app.')) continue;
+            if (!heeftEndpoint(tekst)) continue;
             expect(tekst, `${map}/${stap}`).toContain(
               '<summary>Zo ziet je `main.py` er nu uit</summary>',
             );
@@ -194,7 +197,7 @@ describe('de reeks Veiligheid', () => {
         // Invoer ontbraken de imports.
         for (const stap of stappen.filter((s) => s !== 'praktijk')) {
           const tekst = lees(map, stap);
-          if (!tekst.includes('@app.')) continue;
+          if (!heeftEndpoint(tekst)) continue;
           const blokken = [...tekst.matchAll(/```python[^\n]*\n([\s\S]*?)```/g)].map((m) => m[1]);
           expect(
             blokken.some((b) => b.includes('app = FastAPI()') && b.includes('@app.')),

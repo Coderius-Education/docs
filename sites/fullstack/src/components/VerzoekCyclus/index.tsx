@@ -375,8 +375,8 @@ const XSS_STAPPEN: Stap[] = [
     kant: 'server',
     titel: 'De lijst wordt HTML',
     tekst: 'Een .html-template of escape() maakt van < een &lt;.',
-    to: '/docs/veiligheid/xss/oplossing',
-    les: 'De oplossing',
+    to: '/docs/veiligheid/xss/escape',
+    les: 'Escapen in Python',
     controle: true,
   },
   {
@@ -405,8 +405,8 @@ const TOEGANG_STAPPEN: Stap[] = [
     kant: 'server',
     titel: 'Is dit bericht van Alex?',
     tekst: 'Nee: 403, en er verandert niets. Pas bij ja gaat het bericht weg.',
-    to: '/docs/veiligheid/toegang/oplossing',
-    les: 'De oplossing',
+    to: '/docs/veiligheid/toegang/controle',
+    les: 'De controle met 403',
     controle: true,
   },
   {
@@ -421,8 +421,8 @@ const COOKIES_STAPPEN: Stap[] = [
     kant: 'server',
     titel: 'De server zet de sessie-cookie',
     tekst: 'Met httponly=True in set_cookie.',
-    to: '/docs/veiligheid/cookies/oplossing',
-    les: 'De oplossing',
+    to: '/docs/veiligheid/cookies/httponly',
+    les: 'httponly',
     controle: true,
   },
   {

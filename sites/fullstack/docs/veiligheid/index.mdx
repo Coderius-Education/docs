@@ -68,7 +68,7 @@ deze tegen:
 |:---:|---|---|---|
 | `200` | gelukt | je endpoint, als alles goed gaat | overal |
 | `400` | dit verzoek klopt niet | jij, met `HTTPException`, voor een regel die je zelf bedacht | [Invoer, les 4](/docs/veiligheid/invoer/inhoud) |
-| `403` | dit mag jij niet | jij, als de bezoeker iets van een ander wil | [Wie mag wat](/docs/veiligheid/toegang/oplossing) |
+| `403` | dit mag jij niet | jij, als de bezoeker iets van een ander wil | [Wie mag wat, les 2](/docs/veiligheid/toegang/controle) |
 | `404` | bestaat niet | FastAPI bij een onbekend pad, of jij bij een onbekend item | [Detailpagina](/docs/FastAPI/detailpagina) |
 | `422` | een veld past niet bij `Form` | FastAPI zelf, voordat je functie draait | [Invoer, les 2 en 3](/docs/veiligheid/invoer/grenzen) |
 | `429` | te veel verzoeken | `slowapi`, je verzoeklimiet | [Te veel verzoeken, les 4](/docs/veiligheid/dos/limiet) |
@@ -86,11 +86,11 @@ nodig als je er later zelf iets over opzoekt; veel namen zijn Engels.
 | Woord | Betekent | Waar |
 |---|---|---|
 | zwakheid | een plek waar je server iets toelaat wat niet de bedoeling is | overal |
-| escapen | van `<` een `&lt;` maken, zodat de browser tekst toont in plaats van HTML | [XSS](/docs/veiligheid/xss/oplossing) |
+| escapen | van `<` een `&lt;` maken, zodat de browser tekst toont in plaats van HTML | [XSS](/docs/veiligheid/xss/escape) |
 | XSS, *cross-site scripting* | HTML of een script van een bezoeker dat in de browser van een ander draait | [XSS](/docs/veiligheid/xss/zwakheid) |
 | *broken access control*, IDOR | een endpoint dat niet controleert wie iets vraagt | [Wie mag wat](/docs/veiligheid/toegang/praktijk) |
-| `httponly` | een instelling van een cookie: scripts mogen hem niet lezen | [Cookies](/docs/veiligheid/cookies/oplossing) |
-| CSRF, *cross-site request forgery* | een andere site laat jouw browser iets doen op een site waar je bent ingelogd | [Cookies](/docs/veiligheid/cookies/praktijk) |
+| `httponly` | een instelling van een cookie: scripts mogen hem niet lezen | [Cookies](/docs/veiligheid/cookies/httponly) |
+| CSRF, *cross-site request forgery* | een andere site laat jouw browser iets doen op een site waar je bent ingelogd | [Cookies](/docs/veiligheid/cookies/samesite) |
 | hash | een code die je van een wachtwoord maakt en niet kunt terugrekenen | [Wachtwoorden](/docs/veiligheid/wachtwoorden/hash) |
 | zout, *salt* | een willekeurig stukje tekst per wachtwoord, zodat gelijke wachtwoorden verschillende hashes krijgen | [Wachtwoorden](/docs/veiligheid/wachtwoorden/zout) |
 | DoS, DDoS | een server zo druk maken dat echte bezoekers geen antwoord krijgen, door één of door heel veel computers | [Te veel verzoeken](/docs/veiligheid/dos/dos-en-ddos) |
