@@ -10,7 +10,33 @@ Een echte site koppelt het aan een account, heeft mensen die meer mogen dan
 anderen, en heeft honderden endpoints in plaats van vier. Het idee blijft
 hetzelfde: elk endpoint vraagt zelf wie dit mag.
 
-## Een naam voor deze zwakheid
+## Wat jij zelf doet
+
+### Standaard: nee
+
+Een endpoint zonder controle staat open. Daarom begin je bij elk nieuw endpoint
+met de vraag wie het mag, en schrijf je die controle als eerste, vóór de rest.
+Dat heet *deny by default*: wat je niet uitdrukkelijk toestaat, mag niet.
+
+In een groter project schrijf je de controle niet in elk endpoint opnieuw.
+FastAPI heeft daar `Depends` voor: één functie die de ingelogde gebruiker
+ophaalt, en die je aan elk endpoint koppelt dat hem nodig heeft. Vergeet je hem
+bij één endpoint, dan staat dat endpoint open, dus ook dan loop je ze langs.
+
+### Test het als de ander
+
+Je script uit [stap 1](./zwakheid) is een test: het doet alsof het
+Alex is en kijkt of de server weigert. Echte projecten draaien zulke tests
+automatisch, bij elke wijziging in de code. Per endpoint zijn er dan twee: de
+eigenaar krijgt `200`, een ander krijgt `403`. Breekt iemand later per ongeluk
+de controle, dan valt de tweede test om voordat het op de site staat.
+
+## Wat grote sites nog meer doen
+
+Dit hoef je voor je eigen project niet te bouwen. Klap open wat je wilt lezen.
+
+<details>
+<summary>Een naam voor deze zwakheid</summary>
 
 Wat Alex deed, heet **broken access control**: de toegang is niet goed geregeld.
 Het geval waarin je met een andere sleutel of een ander nummer bij iets van een
@@ -21,7 +47,10 @@ webapplicaties het vaakst gevonden worden.
 Dat het zo vaak voorkomt, komt doordat alles werkt zolang iedereen de knoppen
 gebruikt. Het valt pas op als iemand een verzoek zelf verstuurt.
 
-## Een account in plaats van een browser
+</details>
+
+<details>
+<summary>Een account in plaats van een browser</summary>
 
 In [opdracht 2 van de oplossing](./oplossing) kon Sara in een privévenster niet
 bij haar eigen bericht. Met een account kan dat wel. Na het inloggen, dat je in
@@ -38,7 +67,10 @@ Dat lijkt op de foute controle uit de oplossing, maar het verschil zit in waar
 gezet, pas nadat `ph.verify` het wachtwoord goedkeurde. Een naam die de bezoeker
 in een formulier typt, blijft onbetrouwbaar.
 
-## Beheerders
+</details>
+
+<details>
+<summary>Beheerders</summary>
 
 Op de meeste sites mag iemand meer dan de rest: een moderator verwijdert
 berichten van anderen, een docent ziet alle inleveringen. Dat heet een **rol**.
@@ -54,26 +86,10 @@ if bericht["eigenaar"] != ingelogd and ingelogd not in BEHEERDERS:
 Grote sites bewaren rollen in de database en geven ze per onderdeel: iemand kan
 beheerder zijn van één forum en gewone bezoeker van de rest.
 
-## Standaard: nee
+</details>
 
-Een endpoint zonder controle staat open. Daarom begin je bij elk nieuw endpoint
-met de vraag wie het mag, en schrijf je die controle als eerste, vóór de rest.
-Dat heet *deny by default*: wat je niet uitdrukkelijk toestaat, mag niet.
-
-In een groter project schrijf je de controle niet in elk endpoint opnieuw.
-FastAPI heeft daar `Depends` voor: één functie die de ingelogde gebruiker
-ophaalt, en die je aan elk endpoint koppelt dat hem nodig heeft. Vergeet je hem
-bij één endpoint, dan staat dat endpoint open, dus ook dan loop je ze langs.
-
-## Test het als de ander
-
-Je script uit [stap 1](./zwakheid) is een test: het doet alsof het
-Alex is en kijkt of de server weigert. Echte projecten draaien zulke tests
-automatisch, bij elke wijziging in de code. Per endpoint zijn er dan twee: de
-eigenaar krijgt `200`, een ander krijgt `403`. Breekt iemand later per ongeluk
-de controle, dan valt de tweede test om voordat het op de site staat.
-
-## Een lange sleutel is geen slot
+<details>
+<summary>Een lange sleutel is geen slot</summary>
 
 In [Detailpagina](/docs/FastAPI/detailpagina) vraag je berichten op met een
 nummer. Nummers zijn makkelijk te raden: wie bericht 12 ziet, probeert 13.
@@ -81,6 +97,8 @@ Lange, willekeurige sleutels maken dat moeilijker, en daarom gebruiken veel
 sites ze. Maar zoals je in stap 1 zag, staat een sleutel vaak in de
 pagina. Een sleutel die niemand raadt is een extra drempel, geen vervanging van
 de controle.
+
+</details>
 
 ## De wet
 

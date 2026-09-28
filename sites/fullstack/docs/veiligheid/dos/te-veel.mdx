@@ -205,6 +205,54 @@ stopt na het vijfde verzoek, en krijgt geen `429`.
 
 </details>
 
+### Opdracht 3: Make - In je eigen project
+
+Zet in je eigen project een limiet op het endpoint dat een bericht opslaat,
+bijvoorbeeld tien per minuut. Test het met een script dat twaalf keer iets
+verstuurt.
+
+<details>
+<summary>Tip</summary>
+
+Het endpoint heeft al `Form`-parameters. Zet `request: Request` er vooraan bij,
+en `@limiter.limit` onder `@app.post`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+import time
+
+from fastapi import FastAPI, Form, Request
+from fastapi.responses import RedirectResponse
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
+from sqlitedict import SqliteDict
+
+limiter = Limiter(key_func=get_remote_address)
+
+app = FastAPI()
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+@app.post("/gastenboek")
+@limiter.limit("10/minute")
+async def gastenboek_opslaan(request: Request, naam: str = Form(...), bericht: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    return RedirectResponse(url="/berichten", status_code=303)
+```
+
+Twaalf keer versturen geeft tien keer `303`, de omleiding naar de lijst, en
+daarna twee keer `429`. Een bezoeker die één bericht schrijft, merkt er niets
+van.
+
+</details>
+
 <details>
 <summary>Zo ziet je `main.py` er nu uit</summary>
 

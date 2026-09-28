@@ -3,6 +3,8 @@ sidebar_label: '2. De oplossing'
 description: Laat een template de tekst van een bezoeker escapen, gebruik escape() in een f-string, en zie waarom |safe de bescherming weer uitzet.
 ---
 
+import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
+
 # HTML van een bezoeker: de oplossing
 
 De oplossing heet **escapen**: van elke `<` een `&lt;` maken, van elke `>` een
@@ -95,6 +97,12 @@ niets is vet. `lijst.py` uit [stap 1](./zwakheid) laat zien waarom:
 
 De witruimte komt uit het template: de regels met `{% for %}` en `{% endfor %}`
 worden elk een regel met alleen vier spaties. Wat Sara typte staat er, maar als tekst.
+
+## Waar de controle zit
+
+Het bericht mag de database in zoals het getypt is. De controle zit op de plek waar het de HTML in gaat.
+
+<VerzoekCyclus variant="xss" />
 
 ## Er gaat iets mis
 
@@ -194,6 +202,38 @@ De `<b>` mag in het template staan. Het is jouw HTML, niet die van de bezoeker.
 
 De tags komen van jou, de inhoud van de bezoeker. Jinja escapet alleen wat
 tussen `{{ }}` staat, dus de naam blijft tekst en jouw `<b>` blijft HTML.
+
+</details>
+
+### Opdracht 4: Make - In je eigen project
+
+Zoek in je eigen project elke plek waar tekst van een bezoeker in HTML komt, en
+zorg dat die overal tekst blijft.
+
+<details>
+<summary>Tip</summary>
+
+Zoek in je `main.py` naar `HTMLResponse(f`, en in je templates naar `|safe`.
+Een `{{ }}` in een `.html`-template is al veilig.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Loop deze lijst af:
+
+- Een template dat op `.html` eindigt, escapet alles tussen `{{ }}`. Daar hoef
+  je niets te doen.
+- Staat er `|safe` achter tekst van een bezoeker, haal het weg.
+- Staat er een parameter van je endpoint in een `HTMLResponse(f"…")`, zet er
+  `escape()` omheen, of gebruik een template.
+- Heb je het recept Een formulier versturen uit het
+  [htmx-overzicht](/docs/FastAPI/htmx-overzicht) overgenomen, kijk dan of daar
+  `escape(naam)` staat; dat is later aan het recept toegevoegd.
+
+Test het door in je eigen formulier `<b>vet</b>` in te vullen: je moet de
+haakjes zien, en niets vetgedrukt.
 
 </details>
 

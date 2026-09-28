@@ -40,21 +40,23 @@ een aanval, en strafbaar, ook als het "maar een testje" is.
 
 ## De route
 
-Begin met [Een script als bezoeker](./gereedschap): daarin leer je verzoeken
+Begin met [Een script als bezoeker](/docs/veiligheid/gereedschap): daarin leer je verzoeken
 sturen zonder browser, en dat heb je in elke reeks nodig. Daarna volgen de
 reeksen, van dichtbij je eigen gastenboek naar ver weg:
 
 | Reeks | De vraag die hij beantwoordt |
 |---|---|
-| [Invoer controleren](./invoer/maxlength) | Hoe houd je tegen wat niet in een veld hoort, als `maxlength` dat niet doet? |
-| [HTML van een bezoeker](./xss/zwakheid) | Wat gebeurt er als een bezoeker HTML in je gastenboek typt? |
-| [Wie mag wat](./toegang/zwakheid) | Hoe zorg je dat alleen de schrijver zijn bericht kan verwijderen? |
-| [Cookies afschermen](./cookies/zwakheid) | Hoe houd je een script weg bij het sessie-id? |
-| [Wachtwoorden veilig opslaan](./wachtwoorden/gewone-tekst) | Hoe bewaar je wachtwoorden zo dat een gelekte database ze niet weggeeft? |
-| [Te veel verzoeken](./dos/verzoek) | Wat doe je tegen een bezoeker die je server blijft bestoken? |
+| [Invoer controleren](/docs/veiligheid/invoer/maxlength) | Hoe houd je tegen wat niet in een veld hoort, als `maxlength` dat niet doet? |
+| [HTML van een bezoeker](/docs/veiligheid/xss/zwakheid) | Wat gebeurt er als een bezoeker HTML in je gastenboek typt? |
+| [Wie mag wat](/docs/veiligheid/toegang/zwakheid) | Hoe zorg je dat alleen de schrijver zijn bericht kan verwijderen? |
+| [Cookies afschermen](/docs/veiligheid/cookies/zwakheid) | Hoe houd je een script weg bij het sessie-id? |
+| [Wachtwoorden veilig opslaan](/docs/veiligheid/wachtwoorden/gewone-tekst) | Hoe bewaar je wachtwoorden zo dat een gelekte database ze niet weggeeft? |
+| [Te veel verzoeken](/docs/veiligheid/dos/verzoek) | Wat doe je tegen een bezoeker die je server blijft bestoken? |
 
-Elke reeks begint met de zwakheid, gaat dan naar de verdediging in FastAPI, en
-eindigt met wat echte sites nog meer doen. Je kunt de reeksen ook los doen,
+Elke reeks begint met de zwakheid, gaat dan naar de verdediging in FastAPI, laat
+je die toepassen op je eigen project, en eindigt met wat echte sites nog meer
+doen. De route sluit af met [Beveilig je eigen project](/docs/veiligheid/eigen-project), één
+lijst om je project na te lopen. Je kunt de reeksen ook los doen,
 maar Cookies bouwt op de server uit Wie mag wat.
 
 ## Statuscodes
@@ -65,15 +67,34 @@ deze tegen:
 | Code | Betekent | Wie stuurt hem | Waar je hem ziet |
 |:---:|---|---|---|
 | `200` | gelukt | je endpoint, als alles goed gaat | overal |
-| `400` | dit verzoek klopt niet | jij, met `HTTPException`, voor een regel die je zelf bedacht | [Invoer, les 4](./invoer/inhoud) |
-| `403` | dit mag jij niet | jij, als de bezoeker iets van een ander wil | [Wie mag wat](./toegang/oplossing) |
+| `400` | dit verzoek klopt niet | jij, met `HTTPException`, voor een regel die je zelf bedacht | [Invoer, les 4](/docs/veiligheid/invoer/inhoud) |
+| `403` | dit mag jij niet | jij, als de bezoeker iets van een ander wil | [Wie mag wat](/docs/veiligheid/toegang/oplossing) |
 | `404` | bestaat niet | FastAPI bij een onbekend pad, of jij bij een onbekend item | [Detailpagina](/docs/FastAPI/detailpagina) |
-| `422` | een veld past niet bij `Form` | FastAPI zelf, voordat je functie draait | [Invoer, les 2 en 3](./invoer/grenzen) |
-| `429` | te veel verzoeken | `slowapi`, je verzoeklimiet | [Te veel verzoeken, les 4](./dos/limiet) |
+| `422` | een veld past niet bij `Form` | FastAPI zelf, voordat je functie draait | [Invoer, les 2 en 3](/docs/veiligheid/invoer/grenzen) |
+| `429` | te veel verzoeken | `slowapi`, je verzoeklimiet | [Te veel verzoeken, les 4](/docs/veiligheid/dos/limiet) |
 | `500` | er ging iets mis in de server | niemand bewust: een fout in je code | de terminal van je server |
 
 Begint een code met een 4, dan ligt het aan het verzoek. Begint hij met een 5,
 dan ligt het aan je server. Bij een `500` staat de echte foutmelding
 altijd in de terminal waarin je server draait.
 
-Door naar [Een script als bezoeker](./gereedschap).
+## Woorden
+
+In de lessen staat eerst wat iets is, en daarna pas hoe het heet. De naam heb je
+nodig als je er later zelf iets over opzoekt; veel namen zijn Engels.
+
+| Woord | Betekent | Waar |
+|---|---|---|
+| zwakheid | een plek waar je server iets toelaat wat niet de bedoeling is | overal |
+| escapen | van `<` een `&lt;` maken, zodat de browser tekst toont in plaats van HTML | [XSS](/docs/veiligheid/xss/oplossing) |
+| XSS, *cross-site scripting* | HTML of een script van een bezoeker dat in de browser van een ander draait | [XSS](/docs/veiligheid/xss/zwakheid) |
+| *broken access control*, IDOR | een endpoint dat niet controleert wie iets vraagt | [Wie mag wat](/docs/veiligheid/toegang/praktijk) |
+| `httponly` | een instelling van een cookie: scripts mogen hem niet lezen | [Cookies](/docs/veiligheid/cookies/oplossing) |
+| CSRF, *cross-site request forgery* | een andere site laat jouw browser iets doen op een site waar je bent ingelogd | [Cookies](/docs/veiligheid/cookies/praktijk) |
+| hash | een code die je van een wachtwoord maakt en niet kunt terugrekenen | [Wachtwoorden](/docs/veiligheid/wachtwoorden/hash) |
+| zout, *salt* | een willekeurig stukje tekst per wachtwoord, zodat gelijke wachtwoorden verschillende hashes krijgen | [Wachtwoorden](/docs/veiligheid/wachtwoorden/zout) |
+| DoS, DDoS | een server zo druk maken dat echte bezoekers geen antwoord krijgen, door één of door heel veel computers | [Te veel verzoeken](/docs/veiligheid/dos/dos-en-ddos) |
+| verzoeklimiet, *rate limit* | een grens op het aantal verzoeken per bezoeker | [Te veel verzoeken](/docs/veiligheid/dos/limiet) |
+| CVD | een gat netjes melden bij de eigenaar van een site | [Wie mag wat](/docs/veiligheid/toegang/praktijk) |
+
+Door naar [Een script als bezoeker](/docs/veiligheid/gereedschap).

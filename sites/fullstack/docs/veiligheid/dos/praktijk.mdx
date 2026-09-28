@@ -7,10 +7,29 @@ description: Wat grote sites nog meer doen tegen DoS en DDoS, van een limiet vó
 
 Je limiet uit [les 4](./limiet) houdt één script tegen. Een echte site doet
 meer, want een echte aanval is groter, en een echte site draait op meer dan één
-computer. Het meeste daarvan regelt je hostingpartij; je hoeft het niet zelf te
-bouwen, maar je moet weten dat het er is.
+computer. Het meeste daarvan regelt de hostingpartij.
 
-## De limiet onthouden op één plek
+## Wat jij zelf doet
+
+### Minder werk per verzoek
+
+Een aanval is gevaarlijker naarmate elk verzoek je server meer werk kost. Een
+pagina die voor elk verzoek de hele database doorzoekt, gaat sneller onderuit
+dan een pagina met een vaste tekst. Daarom doen sites ook dit:
+
+- **Cachen**: een pagina die voor iedereen hetzelfde is, maakt de server één
+  keer en bewaart hij. Volgende bezoekers krijgen de bewaarde kopie.
+- **Grenzen aan één verzoek**: een zoekopdracht geeft hoogstens vijftig
+  resultaten, en een verzoek dat te lang duurt breekt de server af.
+- **Zware endpoints strenger**: inloggen en zoeken krijgen een lagere limiet
+  dan een gewone pagina, omdat ze meer kosten en vaker het doelwit zijn.
+
+## Wat grote sites nog meer doen
+
+Dit hoef je voor je eigen project niet te bouwen. Klap open wat je wilt lezen.
+
+<details>
+<summary>De limiet onthouden op één plek</summary>
 
 `slowapi` onthoudt de tellingen in het geheugen van je server. Dat heeft twee
 gevolgen:
@@ -30,7 +49,10 @@ limiter = Limiter(
 )
 ```
 
-## Een limiet vóór je server
+</details>
+
+<details>
+<summary>Een limiet vóór je server</summary>
 
 Bij een echte site staat er meestal een programma vóór je FastAPI-server: een
 **reverse proxy**, zoals nginx. Elk verzoek komt eerst daar binnen, en de proxy
@@ -65,7 +87,10 @@ Een proxy geeft het echte adres wel mee, en je server moet ingesteld zijn om dat
 te gebruiken. Test je limiet dus altijd opnieuw als er een proxy bij komt.
 :::
 
-## DDoS-bescherming bij je hostingpartij
+</details>
+
+<details>
+<summary>DDoS-bescherming bij je hostingpartij</summary>
 
 Tegen een DDoS van duizenden computers kan één server niets beginnen: het
 verkeer is dan zo groot dat de internetverbinding zelf al volloopt, nog voordat
@@ -79,26 +104,18 @@ voorziening opgezet: de **Nationale Anti-DDoS Wasstraat** (NaWas). Wordt een
 aangesloten organisatie aangevallen, dan gaat het verkeer door de "wasstraat",
 en komt er alleen schoon verkeer uit.
 
-## Minder werk per verzoek
+</details>
 
-Een aanval is gevaarlijker naarmate elk verzoek je server meer werk kost. Een
-pagina die voor elk verzoek de hele database doorzoekt, gaat sneller onderuit
-dan een pagina met een vaste tekst. Daarom doen sites ook dit:
-
-- **Cachen**: een pagina die voor iedereen hetzelfde is, maakt de server één
-  keer en bewaart hij. Volgende bezoekers krijgen de bewaarde kopie.
-- **Grenzen aan één verzoek**: een zoekopdracht geeft hoogstens vijftig
-  resultaten, en een verzoek dat te lang duurt breekt de server af.
-- **Zware endpoints strenger**: inloggen en zoeken krijgen een lagere limiet
-  dan een gewone pagina, omdat ze meer kosten en vaker het doelwit zijn.
-
-## Opletten en opschalen
+<details>
+<summary>Opletten en opschalen</summary>
 
 Een aanval die je niet ziet, kun je niet stoppen. Grote sites houden daarom in
 de gaten hoeveel verzoeken er binnenkomen, en krijgen een melding als dat
 ineens tien keer zoveel is. Vaak kunnen ze dan automatisch extra servers
 bijzetten om de drukte op te vangen, tot de aanval voorbij is of gefilterd
 wordt.
+
+</details>
 
 ## De wet
 
@@ -145,5 +162,5 @@ servers, bij de hoeveelheid verkeer, of bij het werk per verzoek.
 
 </details>
 
-Dit was de laatste reeks. Terug naar [de startpagina](/docs/veiligheid) voor het
-overzicht.
+Dit was de laatste reeks. Door naar [Beveilig je eigen project](../eigen-project),
+de lijst om je eigen project mee na te lopen.

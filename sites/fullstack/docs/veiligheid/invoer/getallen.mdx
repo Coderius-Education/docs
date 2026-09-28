@@ -153,6 +153,47 @@ mag, dus alles wat je niet noemde, is geweigerd. In het formulier past daar een
 
 </details>
 
+### Opdracht 3: Make - In je eigen project
+
+Open je eigen project uit [Jouw project](/docs/FastAPI/jouw-project). Geef elk
+formulierveld een grens op de server, en zet in je HTML dezelfde grens als hulp
+voor de bezoeker. Test het met een script dat een te lang veld stuurt.
+
+<details>
+<summary>Tip</summary>
+
+Zoek in je `main.py` naar `Form(...)`. Elk van die velden krijgt een
+`max_length`, en een getal wordt een `int` met `ge` en `le`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Loop deze lijst af:
+
+- Elk tekstveld heeft `max_length` in `Form`.
+- Elk getal is een `int` met `ge` en `le`.
+- Een veld dat niet uit alleen spaties mag bestaan, controleer je met `strip()`
+  en een `400`.
+- Een keuze uit een paar woorden controleer je tegen een lijst.
+- Een script dat een te lang veld stuurt, krijgt een `422`.
+
+Voor het gastenboek uit de FastAPI-lessen ziet het begin van het endpoint er zo
+uit:
+
+```python
+@app.post("/gastenboek")
+async def gastenboek_opslaan(
+    naam: str = Form(..., max_length=30),
+    bericht: str = Form(..., max_length=280),
+):
+    if not naam.strip():
+        raise HTTPException(status_code=400, detail="Vul een naam in")
+```
+
+</details>
+
 <details>
 <summary>Zo ziet je `main.py` er nu uit</summary>
 

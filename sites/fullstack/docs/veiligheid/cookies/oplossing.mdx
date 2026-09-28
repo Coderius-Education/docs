@@ -3,6 +3,9 @@ sidebar_label: '2. De oplossing'
 description: Met httponly kan een script de sessie-cookie niet meer lezen. Zet de instelling in set_cookie en zie document.cookie leeg worden.
 ---
 
+import { ConsoleRegels, DevtoolsPaneel } from '@site/src/components/Devtools';
+import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
+
 # Cookies afschermen: de oplossing
 
 De browser kan een cookie voor scripts afschermen. Dan stuurt hij hem nog wel
@@ -43,16 +46,37 @@ hem niet lezen.
 ## Doe de test opnieuw
 
 Verstuur een nieuw bericht, zodat je een verse cookie krijgt. Open de Console op
-`127.0.0.1:8000` en typ weer:
+`127.0.0.1:8000` en typ weer `document.cookie`. Nu antwoordt de Console met een
+lege tekst:
 
-```js
-document.cookie
-```
+<DevtoolsPaneel tab="Console">
+  <ConsoleRegels
+    regels={[
+      { tekst: 'document.cookie', soort: 'invoer' },
+      { tekst: "''", soort: 'antwoord' },
+    ]}
+  />
+</DevtoolsPaneel>
 
-Nu antwoordt de Console met `''`, een lege tekst. In het tabblad **App** staat
-`sessie_id` er nog, en in de kolom **HttpOnly** staat nu een vinkje. De server
+In het tabblad **App** staat `sessie_id` er nog, en in de kolom **HttpOnly**
+staat nu een vinkje:
+
+<DevtoolsPaneel tab="App">
+
+| Naam | Waarde | HttpOnly | SameSite |
+|---|---|:---:|---|
+| `sessie_id` | `85aa1aca2a96c3430cce6accaeefa4db` | ✓ | Lax |
+
+</DevtoolsPaneel>
+ De server
 herkent je nog steeds: de berichten die je verwijdert, gaan weg. Alleen
 een script komt niet meer bij de cookie.
+
+## Waar de controle zit
+
+Hier zit de controle niet in een endpoint, maar in de instelling waarmee de server de cookie zet. De browser houdt zich eraan.
+
+<VerzoekCyclus variant="cookies" />
 
 ## Er gaat iets mis
 
@@ -110,6 +134,41 @@ verwijderverzoek nog wie je bent. Hoe kan dat?
 bij elk verzoek naar `127.0.0.1:8000` mee, in de kop `Cookie`. Je server leest
 hem daaruit met `sessie_id: str = Cookie(default="")`, net als eerst. Alleen
 JavaScript is buitengesloten.
+
+</details>
+
+### Opdracht 3: Make - In je eigen project
+
+Zet in je eigen project `httponly=True` op de sessie-cookie, en controleer in
+de Console dat `document.cookie` hem niet meer laat zien.
+
+<details>
+<summary>Tip</summary>
+
+Zoek naar `set_cookie`. Denk aan de oude cookie: verstuur na de wijziging
+eerst iets, zodat de server een nieuwe zet.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Loop deze lijst af:
+
+- Bij elke `set_cookie` voor `sessie_id` staat `httponly=True`.
+- Na een nieuw bezoek laat `document.cookie` de sessie-cookie niet meer zien,
+  en staat er in het tabblad **App** een vinkje bij **HttpOnly**.
+- Een cookie die je eigen JavaScript wél moet lezen, zoals een voorkeur voor
+  een donker thema, krijgt geen `httponly`. Daar hangen ook geen rechten aan.
+
+```python
+antwoord.set_cookie(
+    key="sessie_id",
+    value=sessie_id,
+    max_age=60 * 60 * 24 * 30,
+    httponly=True,
+)
+```
 
 </details>
 

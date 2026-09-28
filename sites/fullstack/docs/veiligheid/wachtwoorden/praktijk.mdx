@@ -10,15 +10,9 @@ hoort. Een echte site doet nog meer, omdat een aanvaller niet alleen op de
 database uit is: hij kan ook heel vaak proberen in te loggen, of een
 wachtwoord gebruiken dat hij bij een andere site heeft buitgemaakt.
 
-## Peper
+## Wat jij zelf doet
 
-Het zout uit [les 3](./zout) staat naast de hash in de database. Sommige sites
-doen er nog een **peper** bij: een geheim dat voor alle wachtwoorden hetzelfde
-is, maar níét in de database staat, bijvoorbeeld in een instelling op de
-server. Lekt alleen de database, dan mist wie hem heeft dat stukje, en kan hij
-met de hashes niets beginnen.
-
-## Goede wachtwoorden toestaan
+### Goede wachtwoorden toestaan
 
 Veel sites eisen een hoofdletter, een cijfer en een leesteken, en een nieuw
 wachtwoord elke drie maanden. Dat levert wachtwoorden op als `Welkom123.` en
@@ -36,7 +30,7 @@ iets anders aan:
   zonder het wachtwoord zelf te versturen: hij stuurt alleen de eerste vijf
   tekens van een hash, en vergelijkt de rest zelf.
 
-## Inloggen beperken
+### Inloggen beperken
 
 Een aanvaller zonder database kan nog steeds proberen in te loggen, keer op
 keer, met een woordenlijst. Daar helpt een verzoeklimiet, die je in
@@ -45,7 +39,23 @@ strenge grens, bijvoorbeeld vijf pogingen per minuut. Veel sites blokkeren een
 account ook even na een reeks foute pogingen, of vragen dan om een puzzel die
 een mens kan oplossen en een script niet.
 
-## Tweestapsverificatie
+## Wat grote sites nog meer doen
+
+Dit hoef je voor je eigen project niet te bouwen. Klap open wat je wilt lezen.
+
+<details>
+<summary>Peper</summary>
+
+Het zout uit [les 3](./zout) staat naast de hash in de database. Sommige sites
+doen er nog een **peper** bij: een geheim dat voor alle wachtwoorden hetzelfde
+is, maar níét in de database staat, bijvoorbeeld in een instelling op de
+server. Lekt alleen de database, dan mist wie hem heeft dat stukje, en kan hij
+met de hashes niets beginnen.
+
+</details>
+
+<details>
+<summary>Tweestapsverificatie</summary>
 
 Hoe goed je een wachtwoord ook bewaart, de gebruiker kan het zelf lekken:
 hergebruikt, afgekeken of ingetypt op een nepsite. Daarom vragen veel sites
@@ -53,7 +63,10 @@ na het wachtwoord nog iets tweeds, dat de gebruiker heeft: een code uit een
 app op zijn telefoon, of een beveiligingssleutel. Dat heet
 **tweestapsverificatie**. Een gestolen wachtwoord alleen is dan niet genoeg.
 
-## Wachtwoord vergeten
+</details>
+
+<details>
+<summary>Wachtwoord vergeten</summary>
 
 Een site die je je wachtwoord terugmailt, bewaart het als gewone tekst: met
 Argon2 kun je dat niet eens, want je hebt het wachtwoord niet. Een goede site
@@ -61,7 +74,10 @@ stuurt een link met een eenmalige, geheime code die na een korte tijd
 verloopt. Via die link kies je een nieuw wachtwoord. Zie je ooit je eigen
 wachtwoord in een mail terug, dan weet je hoe die site het bewaart.
 
-## Het wiel niet zelf uitvinden
+</details>
+
+<details>
+<summary>Het wiel niet zelf uitvinden</summary>
 
 Inloggen, tweestapsverificatie en wachtwoord vergeten: het is veel werk, en elk
 foutje is een gat. Grote sites gebruiken daarom vaak een bestaande oplossing,
@@ -69,6 +85,8 @@ een bibliotheek die inloggen voor ze regelt, of een dienst waarmee je inlogt
 met een account dat je al hebt, zoals bij "Inloggen met Google". Zelf bouwen is
 goed om te leren hoe het werkt. Voor een echte site met echte gebruikers is een
 beproefde oplossing meestal de betere keus.
+
+</details>
 
 ## De wet
 

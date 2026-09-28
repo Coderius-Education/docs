@@ -89,6 +89,8 @@ export type ConsoleRegel = {
   /** Bestand en regelnummer rechts, zoals `app.js:5`. */
   bron?: string;
   fout?: boolean;
+  /** Wat de leerling intypt (›) of wat de Console daarop antwoordt (‹), zoals Chrome ze toont. */
+  soort?: 'invoer' | 'antwoord';
 };
 
 /** De uitvoer van het tabblad Console. */
@@ -99,7 +101,19 @@ export function ConsoleRegels({ regels }: { regels: ConsoleRegel[] }): ReactElem
         // Index als key: dezelfde regel komt vaak twee keer voor (typ, wis, typ).
         // biome-ignore lint/suspicious/noArrayIndexKey: zie hierboven
         <div key={i} className={clsx(styles.regel, regel.fout && styles.fout)}>
-          <span>{regel.tekst}</span>
+          <span>
+            {regel.soort && (
+              <span className={clsx(styles.teken, styles[regel.soort])} aria-hidden="true">
+                {regel.soort === 'invoer' ? '›' : '‹'}
+              </span>
+            )}
+            {regel.soort && (
+              <span className={styles.srOnly}>
+                {regel.soort === 'invoer' ? 'Je typt: ' : 'De Console antwoordt: '}
+              </span>
+            )}
+            {regel.tekst}
+          </span>
           {regel.bron && <span className={styles.bron}>{regel.bron}</span>}
         </div>
       ))}

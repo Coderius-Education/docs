@@ -38,10 +38,12 @@ describe('de reeks Veiligheid', () => {
   const route = sidebars.veiligheidSidebar as unknown as (string | Categorie)[];
   const eersteMap = (c: Categorie) => c.items[0].split('/')[1];
 
-  it('de route begint met de startpagina en het gereedschap', () => {
+  it('de route begint met de startpagina en het gereedschap, en eindigt met je eigen project', () => {
     // Zonder startpagina opende de navbar midden in een reeks, zonder te zeggen
-    // waar de route over gaat of wat de spelregel is.
+    // waar de route over gaat of wat de spelregel is. De afsluiter bundelt wat
+    // de leerling op zijn eigen project moet toepassen.
     expect(route.slice(0, 2)).toEqual(['veiligheid/index', 'veiligheid/gereedschap']);
+    expect(route.at(-1)).toBe('veiligheid/eigen-project');
   });
 
   it('de reeksen staan van dichtbij het eigen gastenboek naar ver weg', () => {
@@ -57,19 +59,19 @@ describe('de reeks Veiligheid', () => {
     ]);
   });
 
-  it('elke reeks wijst aan het eind naar de volgende, de laatste naar de startpagina', () => {
+  it('elke reeks wijst aan het eind naar de volgende, de laatste naar de afsluiter', () => {
     categorieen.forEach((categorie, i) => {
       const map = eersteMap(categorie);
       const volgende = categorieen[i + 1];
       const doel = volgende
         ? `](../${volgende.items[0].slice('veiligheid/'.length)})`
-        : '](/docs/veiligheid)';
+        : '](../eigen-project)';
       expect(lees(map, 'praktijk'), `${map}/praktijk`).toContain(doel);
     });
   });
 
-  it('de startpagina en het gereedschap richten zich alleen op de eigen computer', () => {
-    for (const pagina of ['index', 'gereedschap']) {
+  it("de losse pagina's richten zich alleen op de eigen computer", () => {
+    for (const pagina of ['index', 'gereedschap', 'eigen-project']) {
       const tekst = readFileSync(join(VEILIGHEID, `${pagina}.mdx`), 'utf8');
       for (const [, host] of tekst.matchAll(/https?:\/\/([^/:"'\s)]+)/g)) {
         expect(['127.0.0.1', 'localhost'], `${pagina}: ${host}`).toContain(host);
@@ -101,6 +103,48 @@ describe('de reeks Veiligheid', () => {
           .map((n) => n.replace(/\.mdx$/, ''))
           .sort();
         expect(bestanden).toEqual([...stappen].sort());
+      });
+
+      it('de eerste les zegt waar je werkt en geeft het hele startbestand', () => {
+        // Elke reeks begon een nieuwe server, met steeds "gooi de database weg"
+        // of "maak een nieuwe map". Nu weet de leerling vooraf waar hij werkt,
+        // en heeft hij de hele server bij de hand.
+        const tekst = lees(map, stappen[0]);
+        expect(tekst, `${map}/${stappen[0]}`).toContain(':::note[Waar je werkt]');
+        expect(tekst, `${map}/${stappen[0]}`).toContain(`\`veiligheid-${map}\``);
+        const blokken = [...tekst.matchAll(/```python[^\n]*\n([\s\S]*?)```/g)].map((m) => m[1]);
+        expect(
+          blokken.some((b) => b.includes('app = FastAPI()')),
+          `${map}/${stappen[0]}`,
+        ).toBe(true);
+      });
+
+      it('de leerling past het toe op zijn eigen project, vlak voor de praktijk', () => {
+        const voorPraktijk = stappen.at(-2) ?? '';
+        expect(lees(map, voorPraktijk), `${map}/${voorPraktijk}`).toMatch(
+          /### Opdracht \d+: Make - In je eigen project/,
+        );
+      });
+
+      it('de praktijk begint bij wat je zelf doet, en houdt de rest in uitklapblokken', () => {
+        // De praktijkpagina's waren tot 900 woorden met tien nieuwe termen. Nu
+        // staat bovenaan wat de leerling zelf doet, en klapt hij open wat hij
+        // over grote sites wil lezen.
+        const tekst = lees(map, 'praktijk');
+        expect(tekst, `${map}/praktijk`).toContain('## Wat jij zelf doet');
+        expect(tekst, `${map}/praktijk`).toContain('## Wat grote sites nog meer doen');
+        let diepte = 0;
+        let inCode = false;
+        const zichtbaar: string[] = [];
+        for (const regel of tekst.replace(/^---[\s\S]*?---/, '').split('\n')) {
+          if (regel.startsWith('```')) inCode = !inCode;
+          if (inCode) continue;
+          if (regel.startsWith('<details>')) diepte++;
+          if (diepte === 0) zichtbaar.push(regel);
+          if (regel.startsWith('</details>')) diepte--;
+        }
+        const woorden = zichtbaar.join(' ').split(/\s+/).filter(Boolean).length;
+        expect(woorden, `${map}/praktijk: woorden buiten de uitklapblokken`).toBeLessThan(500);
       });
 
       it('eindigt met de praktijk', () => {

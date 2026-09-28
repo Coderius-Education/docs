@@ -3,6 +3,8 @@ sidebar_label: '2. De oplossing'
 description: Controleer in het endpoint zelf of het bericht van deze bezoeker is, antwoord anders met 403, en doe dat bij elk endpoint dat iets verandert.
 ---
 
+import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
+
 # Wie mag wat: de oplossing
 
 De controle hoort op de plek waar het verzoek binnenkomt: in het endpoint. De
@@ -74,6 +76,12 @@ alsnog het bericht van Sara, en alle andere berichten erbij.
 
 Loop daarom elk endpoint langs dat iets verandert of verwijdert, en stel bij elk
 dezelfde vraag: wie mag dit? In opdracht 4 doe je dat voor Alles wissen.
+
+## Waar de controle zit
+
+De controle zit in het endpoint zelf, na het ophalen van de sessie en vóór het verwijderen.
+
+<VerzoekCyclus variant="toegang" />
 
 ## Er gaat iets mis
 
@@ -237,6 +245,39 @@ Nog in het gastenboek: ['Sara']
 
 Hier is er geen `403` nodig: wie Alles wissen kiest, wist wat van hem is, en de
 rest blijft staan.
+
+</details>
+
+### Opdracht 5: Make - In je eigen project
+
+Loop in je eigen project elk endpoint langs dat iets verandert of verwijdert.
+Zorg dat elk ervan zelf controleert of de bezoeker het mag.
+
+<details>
+<summary>Tip</summary>
+
+Zoek naar `@app.post` en `@app.delete`. Kan iedereen iets toevoegen, zoals een
+bericht in een gastenboek, dan is dat een bewuste keuze. Maar verwijderen of
+aanpassen hoort alleen bij de eigenaar.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Loop deze lijst af:
+
+- Elk endpoint dat verwijdert of aanpast, haalt de sessie op met
+  `sessie_id: str = Cookie(default="")`.
+- De controle staat vóór het verwijderen of aanpassen, en stuurt anders een
+  `403`.
+- Je controleert op wat de server zelf weet, zoals de sleutels in de sessie,
+  niet op een naam uit het formulier.
+- Een verborgen knop is een hulp, geen slot: het endpoint controleert toch.
+
+Heb je in [Sessies](/docs/FastAPI/sessies#opdracht-5-make---echt-afschermen)
+opdracht 5 gemaakt, dan heeft `/verwijderen` deze controle al. Kijk of elk
+ander endpoint dat iets verandert, hem ook heeft.
 
 </details>
 

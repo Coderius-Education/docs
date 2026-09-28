@@ -229,6 +229,45 @@ dan heeft jouw versie van `argon2-cffi` strengere instellingen.
 
 </details>
 
+### Opdracht 4: Make - In je eigen project
+
+Wil je accounts in je eigen project, neem dan de drie endpoints uit deze reeks
+over, en maak er formulieren bij voor registreren en inloggen.
+
+<details>
+<summary>Tip</summary>
+
+Een wachtwoordveld in HTML is een `<input type="password">`: dan ziet niemand
+over je schouder mee. De `name` moet `wachtwoord` zijn, zoals de parameter.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Loop deze lijst af:
+
+- Er staat nergens een wachtwoord als gewone tekst: niet in de database, niet
+  in een print, niet in een cookie.
+- `/registreer` bewaart `ph.hash(wachtwoord)`.
+- `/inloggen` gebruikt `ph.verify`, en geeft bij een onbekende naam en bij een
+  fout wachtwoord dezelfde melding.
+- `/wijzig` controleert eerst het oude wachtwoord.
+
+Het formulier voor registreren:
+
+```html
+<form method="post" action="/registreer">
+    <input type="text" name="naam" required>
+    <input type="password" name="wachtwoord" required>
+    <button type="submit">Registreer</button>
+</form>
+```
+
+Het formulier voor inloggen is hetzelfde, met `action="/inloggen"`.
+
+</details>
+
 <details>
 <summary>Zo ziet je `main.py` er nu uit</summary>
 

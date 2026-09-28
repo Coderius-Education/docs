@@ -159,3 +159,23 @@
   white-space: nowrap;
   border: 0;
 }
+
+/* Route Veiligheid: de stap waar de server controleert. Een lichte achtergrond
+   over de hele regel, en een label in de cursuskleur. Tekst op een
+   primary-vlak staat in --coderius-on-primary (zie de huisstijl). */
+.controle {
+  background: color-mix(in srgb, var(--ifm-color-primary) 10%, transparent);
+}
+
+.controleLabel {
+  display: inline-block;
+  margin-right: 0.4rem;
+  padding: 0 0.45rem;
+  border-radius: 0.6rem;
+  background: var(--ifm-color-primary);
+  color: var(--coderius-on-primary);
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1.4;
+  vertical-align: 0.1em;
+}

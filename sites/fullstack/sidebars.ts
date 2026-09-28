@@ -156,6 +156,7 @@ const sidebars: SidebarsConfig = {
         'veiligheid/dos/praktijk',
       ],
     },
+    'veiligheid/eigen-project',
   ],
 };
 

@@ -102,3 +102,18 @@
   white-space: nowrap;
   border: 0;
 }
+
+/* Het teken voor een regel die je intypt (›) en voor het antwoord (‹). */
+.teken {
+  display: inline-block;
+  width: 1rem;
+  font-weight: 700;
+}
+
+.invoer {
+  color: var(--ifm-color-primary);
+}
+
+.antwoord {
+  color: var(--ifm-color-emphasis-500);
+}

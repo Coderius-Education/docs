@@ -16,6 +16,12 @@ eigen berichten. Bij de berichten van een ander is hij weg. Dat voelt als
 beveiliging, maar een knop doet maar één ding: een verzoek versturen. Wie dat
 verzoek zelf verstuurt, heeft de knop niet nodig.
 
+:::note[Waar je werkt]
+Maak voor deze reeks een nieuwe map `veiligheid-toegang`, naast je eigen
+project, en open die in VS Code. De server, de scripts en de databases van deze reeks komen daarin. Zo blijft je eigen gastenboek heel. Aan
+het eind van de reeks pas je het geleerde toe op je eigen project.
+:::
+
 ## Het gastenboek als JSON
 
 De server hieronder is het gastenboek uit Sessies, met het endpoint
@@ -97,8 +103,8 @@ gegevens van een ander verwijderen via een verzoek dat je zelf in elkaar zet, is
 strafbaar, ook als de site het toelaat en ook als het "maar een testje" is.
 :::
 
-Zet de server in `main.py` in een nieuwe map en start hem met `fastapi dev
-main.py`. Maak in dezelfde map een scriptje `test_verwijderen.py`. Het speelt
+Zet de server in `main.py` in je map `veiligheid-toegang` en start hem met
+`fastapi dev main.py`. Maak in dezelfde map een scriptje `test_verwijderen.py`. Het speelt
 twee bezoekers: Sara en Alex. Allebei plaatsen ze een bericht, en daarna
 verwijdert Alex dat van Sara.
 
@@ -160,7 +166,7 @@ van Sara.
 berichten erin. Het script ziet die ook, en verwijdert elk bericht met de naam
 Sara.
 
-**Oplossing:** zet `main.py` en het script in een nieuwe, lege map, of gooi
+**Oplossing:** werk in de map `veiligheid-toegang` uit het begin van deze les, of gooi
 `gastenboek.db` en `sessies.db` weg voordat je de server start.
 
 ## Opdrachten

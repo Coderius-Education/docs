@@ -8,7 +8,9 @@ description: Controleer op wat mag in plaats van te weren wat niet mag, zet een 
 Met de grenzen in `Form` en je eigen controles uit [les 2 tot en met 5](./grenzen)
 bewaak je één formulier. Een echte site doet dat overal, en op een vaste manier.
 
-## Toestaan wat mag, niet weren wat niet mag
+## Wat jij zelf doet
+
+### Toestaan wat mag, niet weren wat niet mag
 
 Er zijn twee manieren om invoer te controleren. Je kunt opsommen wat níét mag,
 of opsommen wat wél mag. Het tweede is veiliger.
@@ -20,7 +22,19 @@ Wat je vergeet te noemen, is dan geweigerd in plaats van toegestaan. Dat is
 hetzelfde idee als de lijst met stemmingen uit [les 5](./getallen). In
 [Wie mag wat](../toegang/praktijk) kom je het weer tegen, als *deny by default*.
 
-## Een grens op de grootte van een verzoek
+### Een 422 zegt genoeg
+
+FastAPI stuurt bij een te lang of ontbrekend veld een `422` met daarin welk veld
+het was en waarom. Dat is genoeg: de afzender weet wat hij moet aanpassen, en je
+verraadt niets gevoeligs. Bouw zelf geen uitgebreide foutmeldingen die
+bijvoorbeeld tonen wat er wél in de database staat.
+
+## Wat grote sites nog meer doen
+
+Dit hoef je voor je eigen project niet te bouwen. Klap open wat je wilt lezen.
+
+<details>
+<summary>Een grens op de grootte van een verzoek</summary>
 
 `max_length` bewaakt één veld. Starlette, het deel van FastAPI dat formulieren
 leest, weigert zelf al een veld boven een megabyte; dat zag je in
@@ -36,12 +50,7 @@ client_max_body_size 1m;
 
 Alles groter dan een megabyte weigert nginx dan, voordat het je server bereikt.
 
-## Een 422 zegt genoeg
-
-FastAPI stuurt bij een te lang of ontbrekend veld een `422` met daarin welk veld
-het was en waarom. Dat is genoeg: de afzender weet wat hij moet aanpassen, en je
-verraadt niets gevoeligs. Bouw zelf geen uitgebreide foutmeldingen die
-bijvoorbeeld tonen wat er wél in de database staat.
+</details>
 
 ## Opdracht: welke aanpak past?
 
