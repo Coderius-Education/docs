@@ -1,5 +1,6 @@
 import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
+import { eenmalig } from './eenmalig';
 import styles from './styles.module.css';
 
 interface BlokkenProps {
@@ -14,21 +15,19 @@ const MARGE = 12;
 const TUSSEN = 24;
 
 // Blockly en de Leaphy-blokken samen zijn bijna 2 MB. Ze worden pas geladen
-// op een pagina met blokken, en maar één keer per bezoek.
-let laden: Promise<typeof import('blockly/core')> | null = null;
-function laadBlockly() {
-  laden ??= (async () => {
-    const [B, , nl, { registreer }] = await Promise.all([
-      import('blockly/core'),
-      import('blockly/blocks'),
-      import('blockly/msg/nl'),
-      import('./leaphy'),
-    ]);
-    registreer(B, nl as unknown as Record<string, string>);
-    return B;
-  })();
-  return laden;
-}
+// op een pagina met blokken, en maar één keer per bezoek; mislukt het, dan
+// probeert het volgende voorbeeld het opnieuw.
+const laadBlockly = eenmalig(async () => {
+  const [B, , nl, { registreer }, { THEME }] = await Promise.all([
+    import('blockly/core'),
+    import('blockly/blocks'),
+    import('blockly/msg/nl'),
+    import('./leaphy'),
+    import('@leaphy-robotics/leaphy-blocks'),
+  ]);
+  registreer(B, nl as unknown as Record<string, string>);
+  return { B, THEME };
+});
 
 // Leaphy-blokken zoals Easybloqs ze toont, maar alleen om naar te kijken:
 // niets verslepen, niets aanpassen. Past het programma niet in de breedte,
@@ -52,9 +51,11 @@ export default function Blokken({
     let begonnen = false;
 
     const bouw = async () => {
-      const B = await laadBlockly();
+      // Eén keer wachten, en direct daarna kijken of de pagina er nog is.
+      // Is de leerling intussen weggeklikt, dan komt er geen werkblad meer in
+      // een losgekoppeld vlak dat niemand ooit opruimt.
+      const { B, THEME } = await laadBlockly();
       if (weg) return;
-      const { THEME } = await import('@leaphy-robotics/leaphy-blocks');
       const thema = B.Theme.defineTheme('coderius-leaphy', {
         name: 'coderius-leaphy',
         base: B.Themes.Classic,

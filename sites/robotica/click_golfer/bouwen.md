@@ -44,7 +44,7 @@ Wil je alle stukjes in één keer bestellen? <a href="/click_golfer/onderdelenli
 
 ## De bouwstappen
 
-In stap 4 komt de servo in de toren. Zet je robot eerst uit met de knop **ON/OFF**. De draden van de servo mogen aan het shield blijven zitten. Haal je ze toch los, sluit ze dan na het bouwen weer aan zoals bij [de servo](servo): oranje op het signaal van **D9**.
+In stap 4 komt de servo in de toren. Zet je robot eerst uit met de knop **ON/OFF**. De draden van de servo mogen aan het shield blijven zitten. Haal je ze toch los, sluit ze dan **vóór stap 11** weer aan zoals bij [de servo](servo): oranje op het signaal van **D9**. Bij stap 11 zet je de servo met een programma op 90°, en dat lukt alleen als hij aangesloten is.
 
 ![Uitsnede van het schema: de servo met de bruine draad op GND, de rode op 5V en de oranje op het signaal van D9.](@site/static/fritzing/click_golfer_servo.png)
 
@@ -105,7 +105,7 @@ Bij elke stap zie je linksboven welke stukjes je erbij pakt. Wat nieuw is, heeft
 :::caution[Eerst de servo op 90°]
 In stap 11 zet je het tandwiel op de as van de servo. Staat de servo dan in een willekeurige stand, dan klopt 0° of 90° later niet meer met de stand van de arm: de arm slaat te ver door, of haalt de bal niet.
 
-Zet je robot daarom eerst aan en upload dit programma. De servo draait naar 90°, precies het midden, en blijft daar staan. Zet je robot daarna uit en zet pas dan het tandwiel erop.
+Kijk daarom eerst of de servo op het signaal van **D9** zit, en upload dan dit programma. De servo draait naar 90°, precies het midden, en blijft daar staan. Zet je robot daarna uit en zet pas dan het tandwiel erop.
 
 <Blokken programma={servoOp90} beschrijving="Het Leaphy-blok met daarin Servo 9 op 90." />
 :::

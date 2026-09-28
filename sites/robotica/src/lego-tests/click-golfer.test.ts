@@ -170,6 +170,17 @@ describe('de hardware-uitleg klopt', () => {
     expect(regels.slice(begin, eind === -1 ? undefined : eind).join('\n')).not.toMatch(/één keer/);
   });
 
+  it('wie de servo losmaakt, sluit hem vóór stap 11 weer aan', () => {
+    // Vóór stap 11 zet de leerling de servo met een programma op 90°. De
+    // bouwpagina zei eerst "sluit ze na het bouwen weer aan": wie dat deed,
+    // zette het tandwiel op een willekeurige stand.
+    const inhoud = tekst('bouwen.md');
+    const voorStap11 = inhoud.slice(0, inhoud.indexOf('stap-11.jpg'));
+    expect(voorStap11).toMatch(/vóór stap 11\*\* weer aan/);
+    expect(voorStap11).not.toMatch(/na het bouwen weer aan/);
+    expect(voorStap11).toMatch(/Kijk daarom eerst of de servo op het signaal van \*\*D9\*\* zit/);
+  });
+
   it('de sensor- en de servoles noemen hun pin', () => {
     expect(tekst('ir-sensor.md')).toMatch(/\*\*A0\*\*/);
     expect(tekst('servo.md')).toMatch(/\*\*D9\*\*/);
