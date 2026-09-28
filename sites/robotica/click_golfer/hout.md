@@ -1,5 +1,5 @@
 ---
-sidebar_position: 3
+sidebar_position: 8
 ---
 
 # De houten baan
@@ -9,7 +9,7 @@ Naast het robotje maak je ook een **houten baan**. Die is gemaakt van dunne, las
 Werk de foto's van boven naar beneden af; zo groeit de baan onder je handen in elkaar.
 
 :::tip
-Twijfel je hoe een onderdeel eruitziet of waar het komt? Bekijk het [3D-model op de intropagina](intro), of kijk in het [werkboek](bouwen). Je kunt het 3D-model draaien en zoomen.
+Twijfel je hoe een onderdeel eruitziet of waar het komt? Bekijk het [3D-model op de intropagina](intro), of kijk nog eens bij [de bouwstappen](bouwen). Je kunt het 3D-model draaien en zoomen.
 :::
 
 ## Stap voor stap
@@ -54,4 +54,61 @@ Twijfel je hoe een onderdeel eruitziet of waar het komt? Bekijk het [3D-model op
   <figcaption>De sensor vastgezet op de baan. Het blauwe schroefje laat je met rust: in dit project lees je de sensor uit als een getal, en dat getal verandert er niet van. Hoe gevoelig je robot is, stel je straks in je programma in.</figcaption>
 </figure>
 
-Staat de baan in elkaar? Dan **[sluit je de motor en de sensor aan](aansluiten)**.
+Staat de baan in elkaar? Zet je Golfer erop, met de arm boven de bal. Zitten de sensor en de servo nog aan het shield? Vergelijk je draden met het hele schema:
+
+![Het hele schema: links de sensor op de rij van A0, rechts de servo op de rij van D9, allebei op het shield met de Arduino Nano in het midden.](@site/static/fritzing/click_golfer_bb.png)
+
+## Hole in one
+
+Upload het programma uit [Zie de bal, sla de bal](bal-slaan) naar je robot en leg een bal voor de sensor. Gaat de bal in het gat?
+
+Pas je programma aan tot de bal telkens netjes in het gat gaat:
+
+- De stand in **Servo 9 op 90** bepaalt hoe ver de arm uithaalt.
+- De wachttijd na het slaan moet lang genoeg zijn, zodat een bal die terugrolt eerst stil ligt voordat de robot weer kijkt.
+
+<details>
+<summary>Tip</summary>
+
+Verander steeds maar één getal tegelijk, en probeer daarna een paar keer. Zo weet je welk getal het verschil maakt.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Er is geen getal dat bij iedereen past: elke baan en elke Golfer is net anders. Hoe verder de twee standen in de servo-blokken uit elkaar liggen, hoe verder de arm uithaalt en hoe harder de bal gaat. Zijn ze dichter bij elkaar, dan tikt hij zachter. Rolt de bal terug en slaat de arm te vroeg, maak dan de 2000 in **duurt** groter.
+
+</details>
+
+## Er gaat iets mis
+
+**De robot lijkt steeds opnieuw te beginnen als de arm slaat.**
+
+**Oorzaak:** misschien krijgt de servo via alleen de usb-kabel te weinig stroom. Trekt hij te veel, dan valt de Arduino even uit en begint het programma opnieuw.
+
+**Oplossing:** probeer of het beter gaat met stroom via de aansluiting op het shield, met de knop **ON/OFF** aan.
+
+**Zelf vinden:** zet bovenaan in het Leaphy-blok, vóór **herhaal voor altijd**, een **Toon op scherm** met de tekst `start`, en open het scherm. Verschijnt `start` opnieuw zonder dat jij op **RST** drukte, dan is je robot opnieuw begonnen.
+
+**De arm slaat de verkeerde kant op.**
+
+**Oorzaak:** dat hangt af van hoe de servo in de toren zit.
+
+**Oplossing:** wissel de twee getallen in de servo-blokken om: waar 90 staat komt 0, en waar 0 staat komt 90. De arm wacht dan op 90° en slaat naar 0°.
+
+**De servo draait, maar de arm beweegt niet mee.**
+
+**Oorzaak:** het tandwiel slipt op de as van de servo, of zit niet goed vast.
+
+**Zelf vinden:** kijk naar de as terwijl de servo draait. Draait de as wel en het tandwiel niet, dan zit het tandwiel los.
+
+**Oplossing:** druk het tandwiel stevig op de as. Zet de servo eerst op 90°, zoals bij [stap 11 van het bouwen](bouwen).
+
+**De arm staat scheef, of haalt de bal niet.**
+
+**Oorzaak:** het tandwiel ging op de as terwijl de servo niet op 90° stond.
+
+**Oplossing:** haal het tandwiel eraf, zet de servo op 90° zoals bij [het bouwen](bouwen), en zet het tandwiel er met de arm recht weer op.
+
+Gaat de bal erin? Dan leer je je Golfer nu [netter mikken](mikken).

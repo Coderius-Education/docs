@@ -1,13 +1,37 @@
 import { createConfig } from '@coderius/shared/config';
 import { REPO_URL, repoEditUrl } from '@coderius/shared/sites';
+import type { Plugin } from '@docusaurus/types';
 
 const projectName = 'robotica-docs';
+
+// Blockly tekent de blokken van de Click Golfer, en dat gebeurt alleen in de
+// browser (`src/components/Blokken`). In de serverbuild zou webpack de
+// node-versie van Blockly meenemen, met jsdom erbij, voor code die daar nooit
+// draait; die laat je hier weg.
+function blocklyAlleenInDeBrowser(): Plugin {
+  return {
+    name: 'blockly-alleen-in-de-browser',
+    configureWebpack(_config, isServer) {
+      if (!isServer) return {};
+      return { resolve: { alias: { blockly: false, '@leaphy-robotics/leaphy-blocks': false } } };
+    },
+  };
+}
 
 export default createConfig({
   title: 'Robotica — Coderius',
   url: 'https://robotica.coderius.nl',
   projectName,
   matomoSiteId: 7,
+
+  // De Click Golfer ging van bouwen-eerst naar onderdelen-eerst. Drie lessen
+  // gingen daarbij op in andere; oude links landen op de les die hun inhoud
+  // nu heeft.
+  omleidingen: [
+    { van: '/click_golfer/aansluiten', naar: '/click_golfer/ir-sensor' },
+    { van: '/click_golfer/bal-detecteren', naar: '/click_golfer/ir-sensor' },
+    { van: '/click_golfer/hole-in-one', naar: '/click_golfer/bal-slaan' },
+  ],
 
   // @coderius/shared is de standaard; @coderius/checker levert de nakijker.
   sharedPackages: ['@coderius/shared', '@coderius/checker'],
@@ -39,6 +63,7 @@ export default createConfig({
   ],
 
   plugins: [
+    blocklyAlleenInDeBrowser,
     [
       '@docusaurus/plugin-content-docs',
       {

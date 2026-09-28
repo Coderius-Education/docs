@@ -1,0 +1,52 @@
+/* Het grijze vlak van Easybloqs, in donker iets donkerder. De blokken
+   houden hun eigen kleuren: zo ziet de leerling ze ook in Easybloqs. */
+.figuur {
+  --blokken-achtergrond: #eeeeee;
+  --blokken-rand: #d6d6d6;
+  margin: 0 0 var(--ifm-leading);
+}
+
+:global([data-theme="dark"]) .figuur {
+  --blokken-achtergrond: #2a2b2e;
+  --blokken-rand: #44464b;
+}
+
+.kader {
+  display: inline-block;
+  max-width: 100%;
+  border: 1px solid var(--blokken-rand);
+  border-radius: var(--ifm-global-radius);
+  background: var(--blokken-achtergrond);
+  overflow: hidden;
+  vertical-align: top;
+}
+
+.vlak {
+  min-width: 12rem;
+  min-height: 4rem;
+}
+
+.vlak[data-status="mislukt"] {
+  display: none;
+}
+
+.vlak :global(.blocklyMainBackground) {
+  fill: var(--blokken-achtergrond) !important;
+  stroke: none !important;
+}
+
+.vlak :global(.blocklySvg) {
+  background: transparent;
+}
+
+.melding {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.figuur figcaption {
+  margin-top: 0.4rem;
+  font-size: 0.9rem;
+  color: var(--ifm-color-emphasis-700);
+}

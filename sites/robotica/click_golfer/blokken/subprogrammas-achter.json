@@ -1,0 +1,355 @@
+{
+  "blocks": {
+    "languageVersion": 0,
+    "blocks": [
+      {
+        "type": "leaphy_start",
+        "x": 0,
+        "y": 0,
+        "inputs": {
+          "STACK": {
+            "block": {
+              "type": "controls_repeat_forever",
+              "inputs": {
+                "DO": {
+                  "block": {
+                    "type": "controls_if",
+                    "inputs": {
+                      "IF0": {
+                        "block": {
+                          "type": "logic_compare",
+                          "fields": {
+                            "OP": "LT"
+                          },
+                          "inputs": {
+                            "A": {
+                              "block": {
+                                "type": "analog_read",
+                                "fields": {
+                                  "PIN": "A0"
+                                }
+                              }
+                            },
+                            "B": {
+                              "block": {
+                                "type": "math_number",
+                                "fields": {
+                                  "NUM": 300
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "DO0": {
+                        "block": {
+                          "type": "procedures_callnoreturn",
+                          "extraState": {
+                            "name": "achter"
+                          },
+                          "next": {
+                            "block": {
+                              "type": "procedures_callnoreturn",
+                              "extraState": {
+                                "name": "mikken"
+                              },
+                              "next": {
+                                "block": {
+                                  "type": "procedures_callnoreturn",
+                                  "extraState": {
+                                    "name": "slaan"
+                                  },
+                                  "next": {
+                                    "block": {
+                                      "type": "time_delay",
+                                      "inputs": {
+                                        "DELAY_TIME_MILI": {
+                                          "block": {
+                                            "type": "math_number",
+                                            "fields": {
+                                              "NUM": 2000
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "procedures_defnoreturn",
+        "x": 0,
+        "y": 300,
+        "fields": {
+          "NAME": "achter"
+        },
+        "inputs": {
+          "STACK": {
+            "block": {
+              "type": "leaphy_servo_write",
+              "fields": {
+                "SERVO_PIN": "9"
+              },
+              "inputs": {
+                "SERVO_ANGLE": {
+                  "block": {
+                    "type": "math_number",
+                    "fields": {
+                      "NUM": 0
+                    }
+                  }
+                }
+              },
+              "next": {
+                "block": {
+                  "type": "time_delay",
+                  "inputs": {
+                    "DELAY_TIME_MILI": {
+                      "block": {
+                        "type": "math_number",
+                        "fields": {
+                          "NUM": 500
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "procedures_defnoreturn",
+        "x": 0,
+        "y": 400,
+        "fields": {
+          "NAME": "mikken"
+        },
+        "inputs": {
+          "STACK": {
+            "block": {
+              "type": "variables_set",
+              "fields": {
+                "VAR": {
+                  "id": "hoek"
+                }
+              },
+              "inputs": {
+                "VALUE": {
+                  "block": {
+                    "type": "math_number",
+                    "fields": {
+                      "NUM": 0
+                    }
+                  }
+                }
+              },
+              "next": {
+                "block": {
+                  "type": "controls_repeat_ext",
+                  "inputs": {
+                    "TIMES": {
+                      "block": {
+                        "type": "math_number",
+                        "fields": {
+                          "NUM": 50
+                        }
+                      }
+                    },
+                    "DO": {
+                      "block": {
+                        "type": "leaphy_servo_write",
+                        "fields": {
+                          "SERVO_PIN": "9"
+                        },
+                        "inputs": {
+                          "SERVO_ANGLE": {
+                            "block": {
+                              "type": "variables_get",
+                              "fields": {
+                                "VAR": {
+                                  "id": "hoek"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "next": {
+                          "block": {
+                            "type": "time_delay",
+                            "inputs": {
+                              "DELAY_TIME_MILI": {
+                                "block": {
+                                  "type": "math_number",
+                                  "fields": {
+                                    "NUM": 10
+                                  }
+                                }
+                              }
+                            },
+                            "next": {
+                              "block": {
+                                "type": "math_change",
+                                "fields": {
+                                  "VAR": {
+                                    "id": "hoek"
+                                  }
+                                },
+                                "inputs": {
+                                  "DELTA": {
+                                    "block": {
+                                      "type": "math_number",
+                                      "fields": {
+                                        "NUM": 1
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "next": {
+                    "block": {
+                      "type": "controls_repeat_ext",
+                      "inputs": {
+                        "TIMES": {
+                          "block": {
+                            "type": "math_number",
+                            "fields": {
+                              "NUM": 50
+                            }
+                          }
+                        },
+                        "DO": {
+                          "block": {
+                            "type": "leaphy_servo_write",
+                            "fields": {
+                              "SERVO_PIN": "9"
+                            },
+                            "inputs": {
+                              "SERVO_ANGLE": {
+                                "block": {
+                                  "type": "variables_get",
+                                  "fields": {
+                                    "VAR": {
+                                      "id": "hoek"
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            "next": {
+                              "block": {
+                                "type": "time_delay",
+                                "inputs": {
+                                  "DELAY_TIME_MILI": {
+                                    "block": {
+                                      "type": "math_number",
+                                      "fields": {
+                                        "NUM": 10
+                                      }
+                                    }
+                                  }
+                                },
+                                "next": {
+                                  "block": {
+                                    "type": "math_change",
+                                    "fields": {
+                                      "VAR": {
+                                        "id": "hoek"
+                                      }
+                                    },
+                                    "inputs": {
+                                      "DELTA": {
+                                        "block": {
+                                          "type": "math_number",
+                                          "fields": {
+                                            "NUM": -1
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "procedures_defnoreturn",
+        "x": 0,
+        "y": 800,
+        "fields": {
+          "NAME": "slaan"
+        },
+        "inputs": {
+          "STACK": {
+            "block": {
+              "type": "leaphy_servo_write",
+              "fields": {
+                "SERVO_PIN": "9"
+              },
+              "inputs": {
+                "SERVO_ANGLE": {
+                  "block": {
+                    "type": "math_number",
+                    "fields": {
+                      "NUM": 90
+                    }
+                  }
+                }
+              },
+              "next": {
+                "block": {
+                  "type": "time_delay",
+                  "inputs": {
+                    "DELAY_TIME_MILI": {
+                      "block": {
+                        "type": "math_number",
+                        "fields": {
+                          "NUM": 500
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "variables": [
+    {
+      "name": "hoek",
+      "id": "hoek"
+    }
+  ]
+}

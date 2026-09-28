@@ -1,0 +1,65 @@
+{
+  "blocks": {
+    "languageVersion": 0,
+    "blocks": [
+      {
+        "type": "procedures_defnoreturn",
+        "x": 0,
+        "y": 0,
+        "fields": {
+          "NAME": "slaan"
+        },
+        "inputs": {
+          "STACK": {
+            "block": {
+              "type": "leaphy_servo_write",
+              "fields": {
+                "SERVO_PIN": "9"
+              },
+              "inputs": {
+                "SERVO_ANGLE": {
+                  "block": {
+                    "type": "math_random_int",
+                    "inputs": {
+                      "FROM": {
+                        "block": {
+                          "type": "math_number",
+                          "fields": {
+                            "NUM": 70
+                          }
+                        }
+                      },
+                      "TO": {
+                        "block": {
+                          "type": "math_number",
+                          "fields": {
+                            "NUM": 110
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "next": {
+                "block": {
+                  "type": "time_delay",
+                  "inputs": {
+                    "DELAY_TIME_MILI": {
+                      "block": {
+                        "type": "math_number",
+                        "fields": {
+                          "NUM": 500
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}
