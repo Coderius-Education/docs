@@ -94,6 +94,29 @@ describe('de hardware-uitleg klopt', () => {
     expect(tekst('microcontroller.md')).toMatch(/\*\*Meer…\*\* en daarna \*\*Taal\*\*/);
   });
 
+  it('de eerste les noemt de knoppen en meldingen van Easybloqs letterlijk', () => {
+    // Een leerling van groep 7/8 zoekt op zijn scherm naar precies de woorden
+    // uit de les. Deze teksten komen uit de Nederlandse vertaling van
+    // Easybloqs (leaphy-webbased, src/assets/i18n/nl.json). Het scherm opent
+    // met een knop rechts naast de blokken, niet via het blok Toon op scherm;
+    // en omdat het Leaphy-blok maar één keer loopt, direct na de upload, is
+    // de zin weg voordat het scherm opengaat. Daarom de RST-knop.
+    const inhoud = tekst('microcontroller.md');
+    for (const label of [
+      'Upload naar robot',
+      'Code compileren',
+      'Code uploaden',
+      'Upload voltooid',
+      'Ga terug naar code scherm',
+      'Toon output op scherm',
+      'Geen robot geselecteerd',
+      'Web serial wordt niet ondersteund',
+      'RST',
+    ]) {
+      expect(inhoud).toContain(`**${label}**`);
+    }
+  });
+
   it('de sensor- en de servoles noemen hun pin', () => {
     expect(tekst('ir-sensor.md')).toMatch(/\*\*A0\*\*/);
     expect(tekst('servo.md')).toMatch(/\*\*D9\*\*/);

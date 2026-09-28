@@ -29,7 +29,7 @@ Met het blok **Lees anapin A0** lees je het getal van de sensor. **Toon op scher
 
 Het blok **herhaal voor altijd** doet alles wat erin staat steeds opnieuw. Zonder dat blok las je robot de sensor één keer, en daarna nooit meer. **duurt 500 ms** laat de robot een halve seconde wachten, zodat je het getal kunt lezen.
 
-Open het scherm in Easybloqs. Leg een bal voor de sensor en haal hem weer weg. Hoe verandert het getal? Schrijf de twee getallen op: zonder bal en met bal.
+Klik op **Upload naar robot** en open het scherm met de knop **Toon output op scherm**, zoals bij [je eerste programma](microcontroller). Er verschijnt elke halve seconde een nieuw getal. Leg een bal voor de sensor en haal hem weer weg. Hoe verandert het getal? Schrijf de twee getallen op: zonder bal en met bal.
 
 <details>
 <summary>Controlevraag</summary>

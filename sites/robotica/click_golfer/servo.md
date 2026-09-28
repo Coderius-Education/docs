@@ -44,7 +44,7 @@ De arm gaat naar 0°, wacht een seconde, gaat naar 90°, wacht weer een seconde,
 
 </details>
 
-Zet het programma op je robot en kijk of je voorspelling klopt.
+Klik op **Upload naar robot** en kijk of je voorspelling klopt.
 
 ## Probeer het zelf
 

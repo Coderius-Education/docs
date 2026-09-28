@@ -58,7 +58,7 @@ Staat de baan in elkaar? Zet je Golfer erop, met de arm boven de bal. Zitten de 
 
 ## Hole in one
 
-Zet het programma uit [Zie de bal, sla de bal](bal-slaan) op je robot en leg een bal voor de sensor. Gaat de bal in het gat?
+Upload het programma uit [Zie de bal, sla de bal](bal-slaan) naar je robot en leg een bal voor de sensor. Gaat de bal in het gat?
 
 Pas je programma aan tot de bal telkens netjes in het gat gaat:
 
