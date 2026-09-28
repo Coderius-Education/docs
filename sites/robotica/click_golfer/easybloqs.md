@@ -24,7 +24,7 @@ Links in Easybloqs staat een rij groepen. Klik op een groep, dan zie je de blokk
 | **Sensoren** | blokken die iets meten, zoals **Lees anapin** |
 | **Actuatoren** | blokken die iets doen, zoals **Toon op scherm** en **Servo** |
 | **Denk stappen** | **als … dan**, **herhaal voor altijd**, **herhaal … keer** en **duurt** |
-| **Functies** | getallen, vergelijken zoals **<**, en een willekeurig getal |
+| **Functies** | getallen, vergelijken zoals **`<`**, en een willekeurig getal |
 | **Variabelen** | blokken om een getal te onthouden |
 | **Eigen blokken** | **Subprogramma** |
 

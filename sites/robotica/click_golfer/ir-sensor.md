@@ -47,7 +47,7 @@ Zonder herhaal leest de robot de sensor één keer, bij het aanzetten. Je wilt s
 
 ## Stap 2: reageren op de bal
 
-Nu laat je de robot zelf beslissen. Met het blok **als … dan** uit **Denk stappen** kijk je of het getal kleiner is dan een grens. In het voorbeeld is die grens **300**. Het vergelijkblok vind je in **Functies**: zet **Lees anapin A0** in het linkervakje, kies in het keuzelijstje **<**, en typ in het rechtervakje je grens.
+Nu laat je de robot zelf beslissen. Met het blok **als … dan** uit **Denk stappen** kijk je of het getal kleiner is dan een grens. In het voorbeeld is die grens **300**. Het vergelijkblok vind je in **Functies**: zet **Lees anapin A0** in het linkervakje, kies in het keuzelijstje **`<`**, en typ in het rechtervakje je grens.
 
 <Blokken programma={balKlaar} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan Toon op scherm 'klaar om te golfen!'. Daarna duurt 500 ms." />
 
