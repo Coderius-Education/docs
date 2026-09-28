@@ -26,7 +26,7 @@ De sensor zit nog op **A0** en de servo op **D9**.
 
 <Blokken programma={subprogrammas} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan Servo 9 op 0, duurt 500 ms, mikken, slaan en duurt 2000 ms. Onder het Leaphy-blok staan twee subprogramma's. mikken: stel hoek in op 0, herhaal 50 keer Servo 9 op hoek, duurt 10 ms, wijzig hoek met 1, en herhaal 50 keer hetzelfde met wijzig hoek met -1. slaan: Servo 9 op 90, duurt 500 ms." />
 
-Lees nu alleen het Leaphy-blok: *als er een bal ligt, dan arm naar achter, mikken, slaan, en wachten.* Zo lees je in één keer wat de robot doet. Wil je weten hoe hij mikt, dan kijk je in het subprogramma `mikken`.
+Lees nu alleen het Leaphy-blok: *als er een bal ligt, dan de servo op 0, mikken, slaan, en wachten.* Zo lees je in één keer wat de robot doet. Wil je weten hoe hij mikt, dan kijk je in het subprogramma `mikken`.
 
 <details>
 <summary>Voorspel: doet je robot nu iets anders dan bij Mikken?</summary>
@@ -85,7 +85,7 @@ Je wilt de slag harder maken. Waar verander je de 90, en hoe vaak?
 <details>
 <summary>Antwoord</summary>
 
-Eén keer, in het subprogramma `slaan`. Overal waar het blok **slaan** staat, gebruikt de robot die nieuwe stand.
+Eén keer, in het subprogramma `slaan`. Je hoeft niet in het lange programma te zoeken welke **Servo**-blok de slag is: het staat onder de naam `slaan`. Gebruik je **slaan** later op meer plekken, dan geldt de nieuwe stand overal.
 
 </details>
 
