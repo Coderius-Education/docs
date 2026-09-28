@@ -315,11 +315,20 @@ describe('de volgorde van de route', () => {
     expect(met).toEqual([]);
   });
 
-  it('de oude adressen sturen door', () => {
+  it('de oude adressen sturen door naar de les die hun inhoud nu heeft', () => {
+    // hole-in-one stuurde eerst naar bal-slaan, maar de uitdaging Hole in one
+    // staat in de baanles. Een leerling met een oud werkblad kwam dan op de
+    // tafelles terecht, zonder de uitdaging.
     const config = readFileSync(join(CLICK, '..', 'docusaurus.config.ts'), 'utf8');
-    for (const oud of ['aansluiten', 'bal-detecteren', 'hole-in-one']) {
-      expect(config).toMatch(new RegExp(`van: '/click_golfer/${oud}'`));
+    const DOEL: Record<string, string> = {
+      aansluiten: 'ir-sensor',
+      'bal-detecteren': 'ir-sensor',
+      'hole-in-one': 'hout#hole-in-one',
+    };
+    for (const [oud, nieuw] of Object.entries(DOEL)) {
+      expect(config).toContain(`{ van: '/click_golfer/${oud}', naar: '/click_golfer/${nieuw}' }`);
     }
+    expect(tekst('hout.md')).toMatch(/^## Hole in one$/m);
   });
 });
 
