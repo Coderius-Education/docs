@@ -29,7 +29,7 @@ Gebruik een **als … dan … anders**-blok. Ziet de sensor een balletje: maak h
 
 Je bouwt hetzelfde **als**-blok als bij [de IR-sensor](ir-sensor), maar nu met een **anders**-tak erbij:
 
-- als `Read anapin A0` groter is dan jouw grens: zet het lampje op groen en laat de arm slaan;
+- als **Lees anapin A0** kleiner is dan jouw grens: zet het lampje op groen en laat de arm slaan;
 - anders: zet het lampje op rood.
 
 Het slaan zat al in je programma: het blok **slaan** uit [Een naam voor je blokken](subprogrammas) sleep je in de dan-tak. De kleur zet je met het RGB-blok uit de video: groen is rood 0, groen 255, blauw 0, en rood is rood 255, groen 0, blauw 0.

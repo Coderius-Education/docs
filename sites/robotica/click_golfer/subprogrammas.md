@@ -22,7 +22,7 @@ Je maakt twee subprogramma's: `mikken` en `slaan`.
 
 De sensor zit nog op **A0** en de servo op **D9**.
 
-<Blokken programma={subprogrammas} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 groter is dan 300, dan Servo 9 op 0, duurt 500 ms, mikken, slaan en duurt 2000 ms. Onder het Leaphy-blok staan twee subprogramma's. mikken: stel hoek in op 0, herhaal 50 keer Servo 9 op hoek, duurt 10 ms, wijzig hoek met 1, en herhaal 50 keer hetzelfde met wijzig hoek met -1. slaan: Servo 9 op 90, duurt 500 ms." />
+<Blokken programma={subprogrammas} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan Servo 9 op 0, duurt 500 ms, mikken, slaan en duurt 2000 ms. Onder het Leaphy-blok staan twee subprogramma's. mikken: stel hoek in op 0, herhaal 50 keer Servo 9 op hoek, duurt 10 ms, wijzig hoek met 1, en herhaal 50 keer hetzelfde met wijzig hoek met -1. slaan: Servo 9 op 90, duurt 500 ms." />
 
 Lees nu alleen het Leaphy-blok: *als er een bal ligt, dan arm naar achter, mikken, slaan, en wachten.* Zo lees je in één keer wat de robot doet. Wil je weten hoe hij mikt, dan kijk je in het subprogramma `mikken`.
 
@@ -49,7 +49,7 @@ Het gaat om de twee blokken bovenaan in **als … dan**: **Servo 9 op 0** en **d
 <details>
 <summary>Klik hier voor het antwoord!</summary>
 
-<Blokken programma={metAchter} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 groter is dan 300, dan achter, mikken, slaan en duurt 2000 ms. Daaronder de subprogramma's achter (Servo 9 op 0, duurt 500 ms), mikken en slaan (Servo 9 op 90, duurt 500 ms)." />
+<Blokken programma={metAchter} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan achter, mikken, slaan en duurt 2000 ms. Daaronder de subprogramma's achter (Servo 9 op 0, duurt 500 ms), mikken en slaan (Servo 9 op 90, duurt 500 ms)." />
 
 Het Leaphy-blok leest nu als een zin: *achter, mikken, slaan*.
 

@@ -7,7 +7,7 @@ import balKlaar from './blokken/bal-klaar.json';
 
 # De IR-sensor
 
-Je Click Golfer moet zien of er een bal ligt. Dat doet de **IR-sensor**. Hij stuurt onzichtbaar licht naar voren en meet hoeveel daarvan terugkomt. Ligt er een bal voor, dan komt er meer licht terug.
+Je Click Golfer moet zien of er een bal ligt. Dat doet de **IR-sensor**. Hij stuurt onzichtbaar licht naar voren en meet hoeveel daarvan terugkomt. Ligt er een bal voor, dan komt er meer licht terug, en dan wordt het getal van de sensor **lager**.
 
 ## Aansluiten
 
@@ -47,11 +47,11 @@ Zonder herhaal leest de robot de sensor één keer, bij het aanzetten. Je wilt s
 
 ## Stap 2: reageren op de bal
 
-Nu laat je de robot zelf beslissen. Met het blok **als … dan** kijk je of het getal groter is dan een grens. In het voorbeeld is die grens **300**.
+Nu laat je de robot zelf beslissen. Met het blok **als … dan** kijk je of het getal kleiner is dan een grens. In het voorbeeld is die grens **300**.
 
-<Blokken programma={balKlaar} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 groter is dan 300, dan Toon op scherm 'klaar om te golfen!'. Daarna duurt 500 ms." />
+<Blokken programma={balKlaar} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan Toon op scherm 'klaar om te golfen!'. Daarna duurt 500 ms." />
 
-Is het getal groter dan 300, dan ligt er een bal en verschijnt "klaar om te golfen!" op het scherm.
+Is het getal kleiner dan 300, dan ligt er een bal en verschijnt "klaar om te golfen!" op het scherm.
 
 :::tip
 300 is maar een voorbeeld. Gebruik de getallen die jij in stap 1 hebt opgeschreven, en kies een grens die er netjes tussenin ligt.

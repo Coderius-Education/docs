@@ -79,7 +79,7 @@ const BAL = {
                 IF0: {
                   block: {
                     type: 'logic_compare',
-                    fields: { OP: 'GT' },
+                    fields: { OP: 'LT' },
                     inputs: {
                       A: { block: { type: 'analog_read', fields: { PIN: 'A0' } } },
                       B: { block: { type: 'math_number', fields: { NUM: 300 } } },

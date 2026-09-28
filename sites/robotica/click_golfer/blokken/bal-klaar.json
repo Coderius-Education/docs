@@ -19,7 +19,7 @@
                         "block": {
                           "type": "logic_compare",
                           "fields": {
-                            "OP": "GT"
+                            "OP": "LT"
                           },
                           "inputs": {
                             "A": {

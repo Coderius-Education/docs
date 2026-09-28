@@ -12,12 +12,12 @@ Je robot ziet de bal met [de IR-sensor](ir-sensor), en beweegt de arm met [de se
 
 Je kent alle blokken al. Nieuw is alleen dat de servo-blokken nu in **als … dan** staan.
 
-<Blokken programma={balSlaan} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 groter is dan 300, dan Servo 9 op 90, duurt 500 ms, Servo 9 op 0, duurt 2000 ms." />
+<Blokken programma={balSlaan} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan Servo 9 op 90, duurt 500 ms, Servo 9 op 0, duurt 2000 ms." />
 
 <details>
 <summary>Voorspel: wat doet je robot als er géén bal ligt?</summary>
 
-Niets. Het getal van de sensor is dan kleiner dan 300, dus de blokken in **als … dan** slaat de robot over. Hij kijkt wel steeds opnieuw, want alles staat in **herhaal voor altijd**.
+Niets. Het getal van de sensor is dan groter dan 300, dus de blokken in **als … dan** slaat de robot over. Hij kijkt wel steeds opnieuw, want alles staat in **herhaal voor altijd**.
 
 </details>
 
@@ -31,7 +31,7 @@ Na het terugzetten wacht de robot twee seconden: **duurt 2000 ms**. Op de baan r
 
 De arm blijft slaan, ook als er geen bal ligt.
 
-**Oorzaak:** je grens is te laag. Het getal zonder bal is al groter dan de grens.
+**Oorzaak:** je grens is te hoog. Het getal zonder bal is al kleiner dan de grens.
 
 **Oplossing:** kijk nog eens naar de twee getallen die je bij de IR-sensor opschreef, en kies een grens die daar netjes tussenin ligt.
 

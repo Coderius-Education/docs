@@ -117,6 +117,33 @@ describe('de hardware-uitleg klopt', () => {
     }
   });
 
+  it('een bal voor de sensor geeft een lager getal, dus "bal" is kleiner dan de grens', () => {
+    // Nagemeten op het bord: een obstakel voor de IR-sensor maakt het getal
+    // op A0 lager, niet hoger. De lessen en het Leaphy-werkboek gebruikten
+    // eerst "groter dan 300", en dan ziet de robot nooit een bal.
+    const verkeerd: string[] = [];
+    type Blok = { type?: string; fields?: { OP?: string }; inputs?: { A?: { block?: Blok } } };
+    const loop = (waarde: unknown, bestand: string) => {
+      if (!waarde || typeof waarde !== 'object') return;
+      const blok = waarde as Blok;
+      if (blok.type === 'logic_compare' && blok.inputs?.A?.block?.type === 'analog_read') {
+        if (blok.fields?.OP !== 'LT') verkeerd.push(`${bestand}: ${blok.fields?.OP}`);
+      }
+      for (const kind of Object.values(waarde)) loop(kind, bestand);
+    };
+    for (const bestand of readdirSync(join(CLICK, 'blokken')).filter((f) => f.endsWith('.json'))) {
+      loop(JSON.parse(readFileSync(join(CLICK, 'blokken', bestand), 'utf8')), bestand);
+    }
+    // In de tekst gaat het om de voorwaarde zelf. "Zonder bal is het getal
+    // groter dan 300" is juist waar, en mag blijven.
+    for (const bestand of paginas()) {
+      if (/(anapin A0\**|kijk je of het getal) groter (is )?dan/i.test(tekst(bestand))) {
+        verkeerd.push(`${bestand}: "groter dan" bij de sensor`);
+      }
+    }
+    expect(verkeerd).toEqual([]);
+  });
+
   it('de sensor- en de servoles noemen hun pin', () => {
     expect(tekst('ir-sensor.md')).toMatch(/\*\*A0\*\*/);
     expect(tekst('servo.md')).toMatch(/\*\*D9\*\*/);
