@@ -83,7 +83,7 @@ Er is geen getal dat bij iedereen past: elke baan en elke Golfer is net anders. 
 
 ## Er gaat iets mis
 
-**De robot lijkt steeds opnieuw te beginnen als de arm slaat.**
+<Probleem titel="De robot lijkt steeds opnieuw te beginnen als de arm slaat.">
 
 **Oorzaak:** misschien krijgt de servo via alleen de usb-kabel te weinig stroom. Trekt hij te veel, dan valt de Arduino even uit en begint het programma opnieuw.
 
@@ -91,13 +91,17 @@ Er is geen getal dat bij iedereen past: elke baan en elke Golfer is net anders. 
 
 **Zelf vinden:** zet bovenaan in het Leaphy-blok, vóór **herhaal voor altijd**, een **Toon op scherm** met de tekst `start`, en open het scherm. Verschijnt `start` opnieuw zonder dat jij op **RST** drukte, dan is je robot opnieuw begonnen.
 
-**De arm slaat de verkeerde kant op.**
+</Probleem>
+
+<Probleem titel="De arm slaat de verkeerde kant op.">
 
 **Oorzaak:** dat hangt af van hoe de servo in de toren zit.
 
 **Oplossing:** wissel de twee getallen in de servo-blokken om: waar 90 staat komt 0, en waar 0 staat komt 90. De arm wacht dan op 90° en slaat naar 0°.
 
-**De servo draait, maar de arm beweegt niet mee.**
+</Probleem>
+
+<Probleem titel="De servo draait, maar de arm beweegt niet mee.">
 
 **Oorzaak:** het tandwiel slipt op de as van de servo, of zit niet goed vast.
 
@@ -105,10 +109,14 @@ Er is geen getal dat bij iedereen past: elke baan en elke Golfer is net anders. 
 
 **Oplossing:** druk het tandwiel stevig op de as. Zet de servo eerst op 90°, zoals bij [stap 11 van het bouwen](bouwen).
 
-**De arm staat scheef, of haalt de bal niet.**
+</Probleem>
+
+<Probleem titel="De arm staat scheef, of haalt de bal niet.">
 
 **Oorzaak:** het tandwiel ging op de as terwijl de servo niet op 90° stond.
 
 **Oplossing:** haal het tandwiel eraf, zet de servo op 90° zoals bij [het bouwen](bouwen), en zet het tandwiel er met de arm recht weer op.
+
+</Probleem>
 
 Gaat de bal erin? Dan leer je je Golfer nu [netter mikken](mikken).

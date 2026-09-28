@@ -25,7 +25,7 @@ De sensor heeft ook een pin **D0**. Die laat je leeg. D0 geeft alleen "wel bal" 
 
 ## Stap 1: het getal uitlezen
 
-Met het blok **Lees anapin A0** lees je het getal van de sensor. Je vindt het in de groep **Sensoren**. **Toon op scherm** uit **Actuatoren** laat het getal zien: sleep **Lees anapin** op de plek van het tekstvakje.
+Het blok **Lees anapin A0** vind je in de groep **Sensoren**. Daarmee lees je het getal van de sensor. **Toon op scherm** uit **Actuatoren** laat het getal zien: sleep **Lees anapin** op de plek van het tekstvakje.
 
 <Blokken programma={uitlezen} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: Toon op scherm Lees anapin A0, en daarna duurt 500 ms." />
 
@@ -49,7 +49,7 @@ Zonder herhaal leest de robot de sensor één keer, bij het aanzetten. Je wilt s
 
 ## Stap 2: reageren op de bal
 
-Nu laat je de robot zelf beslissen. Met het blok **als … dan** uit **Denk stappen** kijk je of het getal kleiner is dan een grens. In het voorbeeld is die grens **300**. Het vergelijkblok vind je in **Functies**: zet **Lees anapin A0** in het linkervakje, kies in het keuzelijstje **`<`**, en typ in het rechtervakje je grens.
+Nu laat je de robot zelf beslissen. Met het blok **als … dan** uit **Denk stappen** kijk je of het getal kleiner is dan een grens. In het voorbeeld is die grens **300**. Het vergelijkblok vind je in **Getal blokken**: zet **Lees anapin A0** in het linkervakje, kies in het keuzelijstje **`<`**, en typ in het rechtervakje je grens.
 
 <Blokken programma={balKlaar} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan Toon op scherm 'klaar om te golfen!'. Daarna duurt 500 ms." />
 
@@ -63,11 +63,13 @@ Is het getal kleiner dan 300, dan ligt er een bal en verschijnt "klaar om te gol
 
 ## Er gaat iets mis
 
-Het getal op het scherm verandert niet als je een bal voor de sensor legt.
+<Probleem titel="Het getal op het scherm verandert niet als je een bal voor de sensor legt.">
 
 **Oorzaak:** de oranje draad zit niet op het signaal van A0, of de sensor krijgt geen stroom.
 
 **Oplossing:** zet je robot uit en vergelijk je draden met de tabel bij Aansluiten: oranje op het signaal van A0, rood op 5V en zwart op GND.
+
+</Probleem>
 
 <details>
 <summary>Controlevraag</summary>

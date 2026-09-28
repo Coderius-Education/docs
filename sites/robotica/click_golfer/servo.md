@@ -72,13 +72,15 @@ Je hebt drie keer het blok **Servo 9 op …** nodig, en na elk blok een **duurt 
 
 ## Er gaat iets mis
 
-**Het asje trilt, of beweegt bijna niet.**
+<Probleem titel="Het asje trilt, of beweegt bijna niet.">
 
 **Oorzaak:** er staat geen **duurt** tussen de servo-blokken. De robot geeft dan meteen de volgende stand, nog voordat het asje bij de vorige is.
 
 **Oplossing:** zet na elk **Servo**-blok een **duurt**, bijvoorbeeld 1000 ms.
 
-**De servo zoemt of trilt, maar draait niet.**
+</Probleem>
+
+<Probleem titel="De servo zoemt of trilt, maar draait niet.">
 
 **Oorzaak:** er zit iets in de weg, zodat het asje niet verder kan. Of de servo moet naar een stand waar hij niet komt: veel servo's zitten bij 0° en 180° al tegen hun eind aan, en blijven dan zoemen.
 
@@ -86,7 +88,9 @@ Je hebt drie keer het blok **Servo 9 op …** nodig, en na elk blok een **duurt 
 
 **Zelf vinden:** haal alles van de as af. Draait de servo dan wel? Dan zat er iets in de weg.
 
-**De servo doet helemaal niets.**
+</Probleem>
+
+<Probleem titel="De servo doet helemaal niets.">
 
 **Oorzaak:** de servo krijgt geen signaal of geen stroom.
 
@@ -95,23 +99,31 @@ Je hebt drie keer het blok **Servo 9 op …** nodig, en na elk blok een **duurt 
 - zit de oranje draad op het signaal van **D9**, en de bruine op GND? Een omgekeerde stekker werkt niet;
 - staat er in het blok **Servo 9**, en niet een ander getal?
 
-**Het asje beweegt één keer, en daarna niet meer.**
+</Probleem>
+
+<Probleem titel="Het asje beweegt één keer, en daarna niet meer.">
 
 **Oorzaak:** de servo-blokken staan direct in het Leaphy-blok, en dat voert zijn blokken maar één keer uit.
 
 **Oplossing:** zet de servo-blokken in **herhaal voor altijd**.
 
-**De servo trekt te weinig kracht, of de robot doet vreemd als de servo beweegt.**
+</Probleem>
+
+<Probleem titel="De servo trekt te weinig kracht, of de robot doet vreemd als de servo beweegt.">
 
 **Oorzaak:** misschien krijgt de servo via alleen de usb-kabel te weinig stroom. Een servo die kracht moet zetten, vraagt veel.
 
 **Oplossing:** probeer of het beter gaat als je robot stroom krijgt via de aansluiting op het shield, met de knop **ON/OFF** aan. Vraag je docent welke adapter of batterij erbij hoort.
 
-**De servo wordt warm.**
+</Probleem>
+
+<Probleem titel="De servo wordt warm.">
 
 **Oorzaak:** hij duwt tegen iets aan en komt niet waar hij heen moet.
 
 **Oplossing:** zet je robot meteen uit, en zoek wat het asje tegenhoudt. Draai het asje ook nooit met de hand terwijl de robot aan staat: daar kunnen de tandwieltjes in de servo kapot van gaan.
+
+</Probleem>
 
 <details>
 <summary>Controlevraag</summary>

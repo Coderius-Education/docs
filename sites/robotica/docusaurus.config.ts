@@ -30,7 +30,7 @@ export default createConfig({
   omleidingen: [
     { van: '/click_golfer/aansluiten', naar: '/click_golfer/ir-sensor' },
     { van: '/click_golfer/bal-detecteren', naar: '/click_golfer/ir-sensor' },
-    { van: '/click_golfer/hole-in-one', naar: '/click_golfer/bal-slaan' },
+    { van: '/click_golfer/hole-in-one', naar: '/click_golfer/hout#hole-in-one' },
   ],
 
   // @coderius/shared is de standaard; @coderius/checker levert de nakijker.

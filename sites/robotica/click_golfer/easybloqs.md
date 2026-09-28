@@ -24,7 +24,7 @@ Links in Easybloqs staat een rij groepen. Klik op een groep, dan zie je de blokk
 | **Sensoren** | blokken die iets meten, zoals **Lees anapin** |
 | **Actuatoren** | blokken die iets doen, zoals **Toon op scherm** en **Servo** |
 | **Denk stappen** | **als … dan**, **herhaal voor altijd**, **herhaal … keer** en **duurt** |
-| **Functies** | getallen, vergelijken zoals **`<`**, en een willekeurig getal |
+| **Getal blokken** | getallen, vergelijken zoals **`<`**, en een willekeurig getal |
 | **Variabelen** | blokken om een getal te onthouden |
 | **Eigen blokken** | **Subprogramma** |
 
@@ -67,23 +67,29 @@ Hallo, ik ben de Click Golfer
 
 ## Er gaat iets mis
 
-**Geen robot geselecteerd**
+<Probleem titel="Geen robot geselecteerd">
 
 **Oorzaak:** je hebt in het lijstje van de browser geen robot gekozen, of het lijstje was leeg.
 
 **Oplossing:** kijk of de usb-kabel goed vastzit, en klik opnieuw op **Upload naar robot**. Blijft het lijstje leeg, dan kent je laptop de Arduino nog niet. Kies in het menu **Meer…** en daarna **Windows drivers**, en installeer die. Probeer het daarna opnieuw.
 
-**Geen seriële verbinding mogelijk vanwege de browser**
+</Probleem>
+
+<Probleem titel="Geen seriële verbinding mogelijk vanwege de browser">
 
 **Oorzaak:** je browser kan niet via de usb-kabel met je robot praten.
 
 **Oplossing:** open Easybloqs in **Chrome** of **Edge**.
 
-**Het scherm blijft leeg**
+</Probleem>
+
+<Probleem titel="Het scherm blijft leeg">
 
 **Oorzaak:** het programma liep al voordat het scherm open was.
 
 **Oplossing:** laat het scherm open staan en druk op het knopje **RST** op de Arduino.
+
+</Probleem>
 
 <details>
 <summary>Controlevraag</summary>
