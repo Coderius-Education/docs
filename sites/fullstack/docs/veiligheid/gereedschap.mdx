@@ -1,0 +1,249 @@
+---
+sidebar_label: 'Een script als bezoeker'
+description: In de route Veiligheid speel je zelf de bezoeker, met een los Python-script en httpx. Verzoeken sturen, het antwoord lezen, en met een Client cookies onthouden.
+---
+
+# Een script als bezoeker
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/modules/09d-modules', label: 'Modules importeren'},
+  ]}
+/>
+
+In deze route kijk je naar je server zoals iemand die hem wil misbruiken. Die
+gebruikt geen browser met jouw formulier, maar stuurt zelf verzoeken. Dat doe
+jij ook, met een klein Python-script. Zo zie je wat je server doet met een
+verzoek dat niet uit je eigen HTML komt.
+
+## De spelregel
+
+:::danger[Alleen je eigen server]
+Stuur de verzoeken in deze route **uitsluitend** naar je eigen server op
+`127.0.0.1`. Dat adres wijst altijd naar je eigen computer en verlaat het
+netwerk niet. Hetzelfde doen bij de server van een ander is een aanval, en
+strafbaar, ook als het "maar een testje" is.
+:::
+
+## Een server om mee te oefenen
+
+Maak een nieuwe map met dit `main.py`. Het heeft drie endpoints: een gewone
+pagina, een formulier, en een teller die met een cookie telt hoe vaak je langs
+bent geweest.
+
+<CodeUitleg>
+
+```python showLineNumbers
+from fastapi import Cookie, FastAPI, Form
+from fastapi.responses import JSONResponse
+
+app = FastAPI()
+
+@app.get("/")
+async def root():
+    return {"bericht": "Hallo wereld!"}
+
+@app.post("/groet")
+async def groet(naam: str = Form(...)):
+    return {"bericht": f"Hallo, {naam}"}
+
+@app.get("/bezoek")
+async def bezoek(teller: int = Cookie(default=0)):
+    teller = teller + 1
+    antwoord = JSONResponse({"bezoek": teller})
+    antwoord.set_cookie(key="teller", value=str(teller))
+    return antwoord
+```
+
+<Regel n={10} tot={12}>
+Een POST-endpoint met een formulierveld, zoals in [Formulieren](/docs/FastAPI/forms).
+</Regel>
+
+<Regel n={14} tot={19}>
+De teller staat in een cookie, zoals in [Onthouden met een cookie](/docs/FastAPI/cookies). Elk bezoek leest hem, telt er één bij op, en zet hem terug. Een cookie is altijd tekst, daarom `str(teller)`.
+</Regel>
+
+</CodeUitleg>
+
+Start hem in de terminal van VS Code met `fastapi dev main.py`, en laat die
+terminal openstaan.
+
+## `httpx` installeren
+
+Je script heeft de module `httpx` nodig. Open in VS Code een **tweede terminal**
+(het plusje naast de terminal), want in de eerste draait je server. Installeer
+hem daar:
+
+```bash
+python -m pip install httpx
+```
+
+## Een verzoek sturen
+
+Maak naast `main.py` een bestand `bezoeker.py`:
+
+<CodeUitleg>
+
+```python showLineNumbers
+import httpx
+
+antwoord = httpx.get("http://127.0.0.1:8000/")
+print(antwoord.status_code)
+print(antwoord.json())
+
+antwoord = httpx.post("http://127.0.0.1:8000/groet", data={"naam": "Sara"})
+print(antwoord.status_code, antwoord.json())
+```
+
+<Regel n={3}>
+`httpx.get` doet wat de browser doet als je een adres intypt. `:8000` is de poort van `fastapi dev`.
+</Regel>
+
+<Regel n={4} tot={5}>
+`status_code` is de statuscode van het antwoord, en `json()` maakt van het antwoord een dictionary.
+</Regel>
+
+<Regel n={7}>
+`httpx.post` met `data` verstuurt een formulier. De sleutels in `data` zijn de `name`s van de velden.
+</Regel>
+
+</CodeUitleg>
+
+Draai het in de tweede terminal met `python bezoeker.py`:
+
+```
+200
+{'bericht': 'Hallo wereld!'}
+200 {'bericht': 'Hallo, Sara'}
+```
+
+Een statuscode zegt in één getal hoe het verzoek afliep. `200` is gelukt; de
+andere codes die je in deze route tegenkomt, staan in het overzicht op
+[de startpagina](/docs/veiligheid#statuscodes).
+
+## Een bezoeker die cookies onthoudt
+
+Een browser onthoudt de cookies die een server terugstuurt, en stuurt ze bij
+het volgende verzoek weer mee. `httpx.get` doet dat niet: elk verzoek is een
+nieuwe bezoeker. Voor een bezoeker die onthoudt, gebruik je een `Client`:
+
+<CodeUitleg>
+
+```python showLineNumbers
+import httpx
+
+for i in range(3):
+    print(httpx.get("http://127.0.0.1:8000/bezoek").json())
+
+bezoeker = httpx.Client(base_url="http://127.0.0.1:8000")
+for i in range(3):
+    print(bezoeker.get("/bezoek").json())
+```
+
+<Regel n={3} tot={4}>
+Drie losse verzoeken, zonder geheugen.
+</Regel>
+
+<Regel n={6}>
+Een `Client` is één bezoeker die zijn cookies onthoudt, zoals een browser. Met `base_url` typ je daarna alleen nog het pad.
+</Regel>
+
+</CodeUitleg>
+
+Uitvoer:
+
+```
+{'bezoek': 1}
+{'bezoek': 1}
+{'bezoek': 1}
+{'bezoek': 1}
+{'bezoek': 2}
+{'bezoek': 3}
+```
+
+Zonder `Client` is elk bezoek het eerste. Met `Client` telt de teller door,
+want de bezoeker stuurt de cookie mee. Twee `Client`s zijn twee bezoekers, elk
+met hun eigen cookies; dat gebruik je in [Wie mag wat](./toegang/zwakheid).
+
+## Er gaat iets mis
+
+```
+httpx.ConnectError: [Errno 111] Connection refused
+```
+
+**Oorzaak:** je server draait niet. Het script klopt aan op `127.0.0.1:8000`,
+maar daar luistert niemand. Op Windows en macOS staat er een ander getal of een
+andere tekst achter `ConnectError`, met hetzelfde idee.
+
+**Oplossing:** start je server in de eerste terminal met `fastapi dev main.py`,
+en draai het script pas als daar `Application startup complete` staat.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Een formulier zonder naam
+
+Je stuurt `httpx.post("http://127.0.0.1:8000/groet", data={})`: een formulier
+zonder het veld `naam`.
+
+**Vraag:** welke statuscode krijg je?
+
+<details>
+<summary>Tip</summary>
+
+`Form(...)` betekent dat het veld verplicht is.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`422`. FastAPI mist het verplichte veld `naam`, en weigert het verzoek voordat
+je functie draait.
+
+</details>
+
+### Opdracht 2: Investigate - De browser als bezoeker
+
+Open `http://127.0.0.1:8000/bezoek` in je browser en druk een paar keer op F5.
+Loopt de teller op, zoals bij `httpx.get` of zoals bij de `Client`?
+
+<details>
+<summary>Antwoord</summary>
+
+Zoals bij de `Client`: 1, 2, 3, enzovoort. De browser bewaart de cookie
+`teller` en stuurt hem bij elke keer herladen mee. Een `Client` doet in je
+script precies wat de browser doet.
+
+</details>
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+```python
+from fastapi import Cookie, FastAPI, Form
+from fastapi.responses import JSONResponse
+
+app = FastAPI()
+
+@app.get("/")
+async def root():
+    return {"bericht": "Hallo wereld!"}
+
+@app.post("/groet")
+async def groet(naam: str = Form(...)):
+    return {"bericht": f"Hallo, {naam}"}
+
+@app.get("/bezoek")
+async def bezoek(teller: int = Cookie(default=0)):
+    teller = teller + 1
+    antwoord = JSONResponse({"bezoek": teller})
+    antwoord.set_cookie(key="teller", value=str(teller))
+    return antwoord
+```
+
+Deze oefenserver heb je na deze les niet meer nodig; elke reeks begint met zijn
+eigen server.
+
+</details>
+
+Door naar de eerste reeks: [Invoer controleren](./invoer/maxlength).

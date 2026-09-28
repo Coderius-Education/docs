@@ -95,18 +95,18 @@ Wat hier bewust níét in zit, is `fetch`: JavaScript dat zelf data ophaalt bij 
 
 ### De reeks Veiligheid
 
-Naast de FastAPI-sidebar staat een tweede sidebar, **Veiligheid**. Die past het best nadat je leerlingen [Sessies](/docs/FastAPI/sessies) en het htmx-blok hebben gehad, want de meeste lessen bouwen op het gastenboek dat ze dan hebben. Elke zwakheid is een eigen map met drie of meer stappen: de zwakheid die de leerling zelf nadoet, de oplossing in FastAPI, en wat er in de praktijk nog gebeurt, inclusief wat de wet zegt.
+Naast de FastAPI-sidebar staat een tweede sidebar, **Veiligheid**. Die past na [Jouw project](/docs/FastAPI/jouw-project): de lessen bouwen op formulieren, templates, htmx, sessies en `HTTPException`, en je leerlingen hebben dan een eigen gastenboek om te beschermen. De route begint met een [startpagina](/docs/veiligheid) (het ene idee, de spelregel, een kaart en een overzicht van statuscodes) en een les [Een script als bezoeker](/docs/veiligheid/gereedschap), waarin ze met `httpx` verzoeken sturen zonder browser. Daarna volgen de reeksen, van dichtbij het eigen gastenboek naar ver weg. Elke reeks gaat van de zwakheid die de leerling zelf nadoet, via de oplossing in FastAPI, naar wat er in de praktijk nog gebeurt, inclusief wat de wet zegt. De reeksen zijn los te volgen; alleen Cookies bouwt op de server uit Wie mag wat.
 
 De reeks is opzettelijk defensief. Elke zelftest draait tegen de eigen server op `127.0.0.1` en de eigen database; er staat een `:::danger`-blok boven dat zegt dat het aanvallen van een ander strafbaar is. De demonstratie van een zwakheid is klein: twintig verzoeken, de eigen database bekijken, een vet woord in het gastenboek, de eigen cookie in de Console. Er staat geen script in dat wachtwoorden raadt of een server platlegt. Waarom een snelle hash zwak is, laat de wachtwoordenreeks zien met een meting van de rekentijd.
 
-| Map | Zwakheid | Kern van de oplossing |
+| Reeks, in volgorde | Zwakheid | Kern van de oplossing |
 |---|---|---|
-| Te veel verzoeken (DoS) | veel verzoeken leggen de server plat | een verzoeklimiet met `slowapi` |
-| Wachtwoorden veilig opslaan | een lek geeft alle wachtwoorden weg | hashen met Argon2, in acht kleine lessen |
-| Wie mag wat | een verborgen knop is geen slot | de controle op de server, met `403` |
-| HTML van een bezoeker (XSS) | ingevulde HTML draait in andermans browser | escapen bij de uitvoer |
-| Cookies afschermen | een script leest het sessie-id | `httponly`, `samesite`, `secure` |
 | Invoer controleren | `maxlength` houdt een script niet tegen | de grens in `Form` op de server |
+| HTML van een bezoeker (XSS) | ingevulde HTML draait in andermans browser | escapen bij de uitvoer |
+| Wie mag wat | een verborgen knop is geen slot | de controle op de server, met `403` |
+| Cookies afschermen | een script leest het sessie-id | `httponly`, `samesite`, `secure` |
+| Wachtwoorden veilig opslaan | een lek geeft alle wachtwoorden weg | hashen met Argon2, in acht kleine lessen |
+| Te veel verzoeken (DoS) | veel verzoeken leggen de server plat | een verzoeklimiet met `slowapi` |
 
 De beloofde uitvoer en foutmeldingen in deze reeks draaien niet mee in CI, die alleen de Python-syntax controleert. Ze zijn met de hand nagedraaid tegen een echte server. Werk je een les bij, controleer een gewijzigde uitvoer dan zelf in een virtual environment met de echte packages.
 

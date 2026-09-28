@@ -145,6 +145,11 @@ const KOPPELING: Item[] = [
   // Een eigen reeks in de navbar, los van het nagekeken eindproject. De
   // nakijker toetst deze syntax daarom niet.
   {
+    summary: 'Wat betekent deze statuscode?',
+    concepten: [],
+    geenConcept: 'naslag bij de reeks Veiligheid, geen code in het project',
+  },
+  {
     summary: 'Wachtwoord hashen en controleren (Argon2)',
     concepten: [],
     geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',

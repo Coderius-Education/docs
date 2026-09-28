@@ -125,7 +125,7 @@ print(f"Nog in het gastenboek: {namen}")
 ```
 
 <Regel n={5} tot={6}>
-Een `httpx.Client` werkt als een browser: hij onthoudt de cookies die hij terugkrijgt en stuurt ze bij elk volgend verzoek mee. Twee clients zijn dus twee bezoekers, elk met een eigen sessie. Met `base_url` hoef je daarna alleen nog het pad te typen.
+Twee `httpx.Client`s zijn twee bezoekers, elk met hun eigen cookies en dus een eigen sessie, zoals in [Een script als bezoeker](../gereedschap).
 </Regel>
 
 <Regel n={11} tot={14}>

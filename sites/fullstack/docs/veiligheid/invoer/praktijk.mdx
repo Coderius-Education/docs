@@ -17,8 +17,8 @@ Neem een gebruikersnaam. Weren wat niet mag ("geen `<`, geen spaties, geen
 `;`…") laat altijd iets door dat je niet bedacht had. Toestaan wat mag ("alleen
 letters en cijfers, 3 tot 20 tekens") laat precies dat door en de rest niet.
 Wat je vergeet te noemen, is dan geweigerd in plaats van toegestaan. Dat is
-hetzelfde idee als de lijst met stemmingen uit [les 5](./getallen), en als
-*deny by default* uit [Wie mag wat](../toegang/praktijk).
+hetzelfde idee als de lijst met stemmingen uit [les 5](./getallen). In
+[Wie mag wat](../toegang/praktijk) kom je het weer tegen, als *deny by default*.
 
 ## Een grens op de grootte van een verzoek
 
@@ -27,8 +27,8 @@ leest, weigert zelf al een veld boven een megabyte; dat zag je in
 [les 1](./maxlength). Een verzoek kan ook op andere manieren groot zijn: een
 enorm geüpload bestand, of duizend velden tegelijk. Daar zet je een grens omheen
 die vóór je code komt. Dat regel je meestal niet in FastAPI zelf,
-maar in de server ervoor, zoals nginx uit
-[Te veel verzoeken](../dos/praktijk):
+maar in een server ervoor, zoals nginx. Daar lees je meer over in de laatste
+reeks, [Te veel verzoeken](../dos/praktijk):
 
 ```
 client_max_body_size 1m;
@@ -63,4 +63,4 @@ Kies bij elke situatie de aanpak uit deze reeks die past.
 
 </details>
 
-Terug naar [les 1](./maxlength), het begin van deze reeks over invoer.
+Door naar de volgende reeks: [HTML van een bezoeker](../xss/zwakheid).

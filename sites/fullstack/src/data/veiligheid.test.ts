@@ -35,6 +35,49 @@ describe('de reeks Veiligheid', () => {
     expect(zwakheden.length).toBeGreaterThan(0);
   });
 
+  const route = sidebars.veiligheidSidebar as unknown as (string | Categorie)[];
+  const eersteMap = (c: Categorie) => c.items[0].split('/')[1];
+
+  it('de route begint met de startpagina en het gereedschap', () => {
+    // Zonder startpagina opende de navbar midden in een reeks, zonder te zeggen
+    // waar de route over gaat of wat de spelregel is.
+    expect(route.slice(0, 2)).toEqual(['veiligheid/index', 'veiligheid/gereedschap']);
+  });
+
+  it('de reeksen staan van dichtbij het eigen gastenboek naar ver weg', () => {
+    // Invoer bouwt direct op Server of browser?; DoS gaat over infrastructuur en
+    // komt daarom als laatste. Cookies bouwt op de server uit Wie mag wat.
+    expect(categorieen.map(eersteMap)).toEqual([
+      'invoer',
+      'xss',
+      'toegang',
+      'cookies',
+      'wachtwoorden',
+      'dos',
+    ]);
+  });
+
+  it('elke reeks wijst aan het eind naar de volgende, de laatste naar de startpagina', () => {
+    categorieen.forEach((categorie, i) => {
+      const map = eersteMap(categorie);
+      const volgende = categorieen[i + 1];
+      const doel = volgende
+        ? `](../${volgende.items[0].slice('veiligheid/'.length)})`
+        : '](/docs/veiligheid)';
+      expect(lees(map, 'praktijk'), `${map}/praktijk`).toContain(doel);
+    });
+  });
+
+  it('de startpagina en het gereedschap richten zich alleen op de eigen computer', () => {
+    for (const pagina of ['index', 'gereedschap']) {
+      const tekst = readFileSync(join(VEILIGHEID, `${pagina}.mdx`), 'utf8');
+      for (const [, host] of tekst.matchAll(/https?:\/\/([^/:"'\s)]+)/g)) {
+        expect(['127.0.0.1', 'localhost'], `${pagina}: ${host}`).toContain(host);
+      }
+      expect(tekst, pagina).toMatch(/:::danger\[Alleen je eigen [a-z]+\]/);
+    }
+  });
+
   it('elke zwakheid is opgesplitst in kleine lessen, met in elke les één idee', () => {
     // Drie stappen per zwakheid ging te snel: elke les behandelde te veel.
     // Wie mag wat, XSS en Cookies houden voorlopig drie stappen; zie de

@@ -39,7 +39,7 @@ De sessie van deze bezoeker. Geen cookie of een onbekend sessie-id geeft een leg
 </Regel>
 
 <Regel n={5} tot={6}>
-Eerst de controle, vóór er iets verandert. Is de sleutel niet van deze bezoeker, dan stopt de functie met **403 Forbidden**: de server begrijpt wat je vraagt, maar jij mag het niet.
+Eerst de controle, vóór er iets verandert. Is de sleutel niet van deze bezoeker, dan stopt de functie met **403 Forbidden**: de server begrijpt wat je vraagt, maar jij mag het niet. De andere codes staan op [de startpagina](/docs/veiligheid#statuscodes).
 </Regel>
 
 <Regel n={8} tot={11}>
@@ -175,8 +175,8 @@ en waarom is het goed dat het geen `404` is?
 `403`, met `{'detail': 'Dit is niet jouw bericht'}`: de sleutel staat niet in
 zijn sessie, en de controle komt vóór de vraag of het bericht bestaat. Zo leert
 Alex niets over sleutels van anderen: een bestaand bericht van Sara en een
-verzonnen sleutel geven hetzelfde antwoord. Dat is hetzelfde idee als de ene
-melding bij [inloggen](../wachtwoorden/inloggen).
+verzonnen sleutel geven hetzelfde antwoord. Hetzelfde idee kom je later tegen
+bij [inloggen](../wachtwoorden/inloggen), in de reeks over wachtwoorden.
 
 </details>
 
