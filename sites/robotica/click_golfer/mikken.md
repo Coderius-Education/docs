@@ -1,23 +1,76 @@
 ---
-sidebar_position: 6
+sidebar_position: 8
 ---
+import Blokken from '@site/src/components/Blokken';
+import mikken from './blokken/mikken.json';
 
 # Mikken
 
-Wil je dat je Golfer wat netter mikt? Met een **variabele** kun je de snelheid van de armen aanpassen. Op de pagina hieronder staat hoe je dat doet.
+Een echte golfer slaat niet meteen: hij zwaait eerst rustig heen en weer om te mikken. Dat leer je je Click Golfer nu ook, met een **variabele**.
 
-## Wat je gaat maken
+## Een variabele
 
-Je zet het aantal graden van de slag in een **variabele** in plaats van er een vast getal in te typen. Eén plek aanpassen verandert dan meteen de hele slag.
+Een **variabele** is een doosje met een naam, waar een getal in zit. Dat getal kan je programma veranderen. Maak in Easybloqs bij de oranje blokken een variabele en noem hem `hoek`.
 
-## Wat er daarna moet werken
+Drie blokken heb je nodig:
 
-Verander het getal in de variabele en laat je robot opnieuw slaan. Een kleiner getal geeft een zachtere slag, een groter getal een hardere. Zo zoek je het getal waarmee de bal precies in het gat komt.
+- **stel hoek in op 0**: stop het getal 0 in het doosje;
+- **wijzig hoek met 1**: tel 1 op bij wat erin zit;
+- **hoek**: het getal dat er nu in zit. Dit blok zet je op de plek van een getal, bijvoorbeeld in **Servo 9 op …**.
 
-<iframe
-  src="/click_golfer/mikken.pdf"
-  width="100%"
-  height="800px"
-  title="Level 3.0 - Mikken">
-  Lukt het niet om de pagina te tonen? <a href="/click_golfer/mikken.pdf">Download de pagina (PDF)</a>.
-</iframe>
+## Het programma
+
+De sensor zit nog op **A0** en de servo op **D9**, net als bij [Zie de bal, sla de bal](bal-slaan). Het subprogramma `mikken` laat de arm langzaam van 0° naar 50° gaan, en weer terug. Daarna slaat de robot.
+
+<Blokken programma={mikken} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 groter is dan 300, dan achter, mikken, slaan en duurt 2000 ms. Het subprogramma mikken: stel hoek in op 0. Herhaal 50 keer: Servo 9 op hoek, duurt 10 ms, wijzig hoek met 1. Daarna herhaal 50 keer: Servo 9 op hoek, duurt 10 ms, wijzig hoek met -1. Verder de subprogramma's achter (Servo 9 op 0) en slaan (Servo 9 op 90)." />
+
+**herhaal 50 keer** doet de blokken erin vijftig keer achter elkaar. Elke keer gaat de arm naar de stand in `hoek`, wacht 10 ms, en komt er 1 bij.
+
+<details>
+<summary>Voorspel: welk getal zit er in hoek na het eerste herhaal-blok?</summary>
+
+50. Het begint op 0 en er komt vijftig keer 1 bij. Het tweede herhaal-blok haalt er vijftig keer 1 af, en dan staat `hoek` weer op 0.
+
+</details>
+
+## Probeer het zelf
+
+Laat je Golfer sneller mikken, en daarna verder.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Hoe snel de arm gaat, hangt af van de wachttijd in **duurt**. Hoe ver hij gaat, hangt af van hoe vaak er 1 bij komt.
+
+</details>
+
+<details>
+<summary>Klik hier voor het antwoord!</summary>
+
+Sneller: maak **duurt 10 ms** in beide herhaal-blokken kleiner, bijvoorbeeld 5 ms. Verder: maak in beide herhaal-blokken de 50 groter, bijvoorbeeld 70. Doe het in beide, anders komt de arm niet op 0 terug.
+
+</details>
+
+## Er gaat iets mis
+
+Tijdens het mikken staat de arm stil. Pas bij het slaan beweegt hij.
+
+**Oorzaak:** in **Servo 9 op …** staat een getal in plaats van het blok `hoek`, of **wijzig hoek** ontbreekt. De arm krijgt dan vijftig keer dezelfde stand.
+
+**Oplossing:** sleep het blok `hoek` op de plek van het getal in **Servo 9 op …**, en kijk of **wijzig hoek met 1** in het herhaal-blok staat.
+
+<details>
+<summary>Controlevraag</summary>
+
+Waarom gebruik je in **Servo 9 op …** het blok `hoek`, en niet een getal?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Een getal is altijd hetzelfde. `hoek` verandert elke keer dat het herhaal-blok rondgaat, en zo schuift de arm stukje voor stukje op.
+
+</details>
+
+Mikt je Golfer? Kijk dan bij de [Extra's](extras) wat je er nog bij kunt maken.

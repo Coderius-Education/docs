@@ -1,6 +1,8 @@
 ---
-sidebar_position: 8
+sidebar_position: 9
 ---
+import Blokken from '@site/src/components/Blokken';
+import willekeurigSlaan from './blokken/willekeurig-slaan.json';
 
 # Extra's
 
@@ -25,30 +27,30 @@ Gebruik een **als … dan … anders**-blok. Ziet de sensor een balletje: maak h
 <details>
 <summary>Klik hier voor het antwoord!</summary>
 
-Je bouwt hetzelfde **als**-blok als bij [Een bal detecteren](bal-detecteren), maar nu met een **anders**-tak erbij:
+Je bouwt hetzelfde **als**-blok als bij [de IR-sensor](ir-sensor), maar nu met een **anders**-tak erbij:
 
 - als `Read anapin A0` groter is dan jouw grens: zet het lampje op groen en laat de arm slaan;
 - anders: zet het lampje op rood.
 
-Het slaan zat al in je programma van [Hole in one](hole-in-one); dat blok sleep je in de dan-tak. De kleur zet je met het RGB-blok uit de video: groen is rood 0, groen 255, blauw 0, en rood is rood 255, groen 0, blauw 0.
+Het slaan zat al in je programma van [Zie de bal, sla de bal](bal-slaan): het blok **slaan** sleep je in de dan-tak. De kleur zet je met het RGB-blok uit de video: groen is rood 0, groen 255, blauw 0, en rood is rood 255, groen 0, blauw 0.
 
 </details>
 
-## Willekeurig mikken
+## Willekeurig slaan
 
-Nu mikt je Golfer altijd met dezelfde waarde: 50 graden. Pas het subprogramma **Mikken** aan zodat het een willekeurig aantal graden tussen de 40 en de 70 gebruikt, in plaats van de vaste waarde 50.
+Nu slaat je Golfer altijd naar dezelfde stand: [de servo](servo) op **D9** gaat naar 90 graden. Pas het subprogramma `slaan` aan, zodat de arm telkens naar een willekeurige stand tussen 70 en 110 graden gaat.
 
 <details>
 <summary>Klik hier voor een tip!</summary>
 
-Er bestaat een blok dat een **willekeurig getal** tussen twee waardes geeft. Zet dat blok op de plek waar nu 50 staat, en kies 40 als laagste en 70 als hoogste waarde.
+Er bestaat een blok dat een **willekeurig getal** tussen twee waardes geeft. Zet dat blok op de plek waar nu 90 staat.
 
 </details>
 
 <details>
 <summary>Klik hier voor het antwoord!</summary>
 
-Open het subprogramma Mikken. Daar staat het getal 50 ingevuld. Trek dat getal eruit en zet er het blok willekeurig getal tussen … en … voor in de plaats, met 40 in het eerste vakje en 70 in het tweede.
+<Blokken programma={willekeurigSlaan} beschrijving="Het subprogramma slaan: Servo 9 op willekeurig getal van 70 tot 110, duurt 500 ms." />
 
 Laat je robot nu een paar keer slaan. Elke slag is net iets anders, want het blok kiest telkens een nieuw getal.
 

@@ -24,6 +24,15 @@ export default createConfig({
   projectName,
   matomoSiteId: 7,
 
+  // De Click Golfer ging van bouwen-eerst naar onderdelen-eerst. Drie lessen
+  // gingen daarbij op in andere; oude links landen op de les die hun inhoud
+  // nu heeft.
+  omleidingen: [
+    { van: '/click_golfer/aansluiten', naar: '/click_golfer/ir-sensor' },
+    { van: '/click_golfer/bal-detecteren', naar: '/click_golfer/ir-sensor' },
+    { van: '/click_golfer/hole-in-one', naar: '/click_golfer/bal-slaan' },
+  ],
+
   // @coderius/shared is de standaard; @coderius/checker levert de nakijker.
   sharedPackages: ['@coderius/shared', '@coderius/checker'],
 

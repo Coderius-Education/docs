@@ -11,6 +11,7 @@ interface BlokkenProps {
 }
 
 const MARGE = 12;
+const TUSSEN = 24;
 
 // Blockly en de Leaphy-blokken samen zijn bijna 2 MB. Ze worden pas geladen
 // op een pagina met blokken, en maar één keer per bezoek.
@@ -47,61 +48,87 @@ export default function Blokken({
     if (!div || !buiten) return;
     let weg = false;
     let ws: import('blockly/core').WorkspaceSvg | null = null;
-    let kijker: ResizeObserver | null = null;
+    let pas: (() => void) | null = null;
+    let begonnen = false;
 
-    laadBlockly()
-      .then(async (B) => {
-        if (weg) return;
-        const { THEME } = await import('@leaphy-robotics/leaphy-blocks');
-        const thema = B.Theme.defineTheme('coderius-leaphy', {
-          name: 'coderius-leaphy',
-          base: B.Themes.Classic,
-          blockStyles: THEME.defaultBlockStyles,
-          categoryStyles: THEME.categoryStyles,
-          componentStyles: THEME.componentStyles,
-        });
-        const werk = B.inject(div, {
-          theme: thema,
-          renderer: 'zelos',
-          readOnly: true,
-          sounds: false,
-          trashcan: false,
-          move: { scrollbars: false, drag: false, wheel: false },
-          zoom: { controls: false, wheel: false, pinch: false, startScale: 1 },
-        });
-        ws = werk;
-        B.serialization.workspaces.load(programma, werk);
+    const bouw = async () => {
+      const B = await laadBlockly();
+      if (weg) return;
+      const { THEME } = await import('@leaphy-robotics/leaphy-blocks');
+      const thema = B.Theme.defineTheme('coderius-leaphy', {
+        name: 'coderius-leaphy',
+        base: B.Themes.Classic,
+        blockStyles: THEME.defaultBlockStyles,
+        categoryStyles: THEME.categoryStyles,
+        componentStyles: THEME.componentStyles,
+      });
+      const werk = B.inject(div, {
+        theme: thema,
+        renderer: 'zelos',
+        readOnly: true,
+        sounds: false,
+        trashcan: false,
+        move: { scrollbars: false, drag: false, wheel: false },
+        zoom: { controls: false, wheel: false, pinch: false, startScale: 1 },
+      });
+      ws = werk;
+      B.serialization.workspaces.load(programma, werk);
+      // Blockly tekent de blokken pas later. Zonder te wachten is de hoogte
+      // van een blok nog niet bekend.
+      await B.renderManagement.finishQueuedRenders();
+      if (weg) return;
 
-        // Zet de blokken linksboven, en maak het vlak precies zo hoog als
-        // het programma. Bij elke nieuwe breedte opnieuw: een telefoon die
-        // kantelt, of een zijbalk die inklapt.
-        const doos = werk.getBlocksBoundingBox();
-        for (const blok of werk.getTopBlocks(false)) {
-          blok.moveBy(MARGE - doos.left, MARGE - doos.top);
-        }
-        const breedte = doos.right - doos.left + 2 * MARGE;
-        const hoogte = doos.bottom - doos.top + 2 * MARGE;
-        const pas = () => {
-          const schaal = Math.min(1, buiten.clientWidth / breedte);
-          div.style.width = `${Math.ceil(breedte * schaal)}px`;
-          div.style.height = `${Math.ceil(hoogte * schaal)}px`;
-          werk.setScale(schaal);
-          B.svgResize(werk);
-          werk.scroll(0, 0);
-        };
-        pas();
-        kijker = new ResizeObserver(pas);
-        kijker.observe(buiten);
-        setStatus('klaar');
-      })
-      .catch((fout) => {
+      // Het Leaphy-blok en de subprogramma's onder elkaar, in de volgorde van
+      // hun `y` in het bestand, en linksboven in het vlak.
+      let y = MARGE;
+      for (const blok of werk.getTopBlocks(true)) {
+        const plek = blok.getRelativeToSurfaceXY();
+        blok.moveBy(MARGE - plek.x, y - plek.y);
+        y += blok.getHeightWidth().height + TUSSEN;
+      }
+      await B.renderManagement.finishQueuedRenders();
+      if (weg) return;
+
+      // Het vlak is precies zo groot als het programma, en past het niet in
+      // de breedte, dan schaalt het mee. Bij elke nieuwe breedte opnieuw:
+      // een telefoon die kantelt, of een zijbalk die inklapt.
+      const doos = werk.getBlocksBoundingBox();
+      const breedte = doos.right + MARGE;
+      const hoogte = doos.bottom + MARGE;
+      pas = () => {
+        if (buiten.clientWidth === 0) return;
+        const schaal = Math.min(1, buiten.clientWidth / breedte);
+        div.style.width = `${Math.ceil(breedte * schaal)}px`;
+        div.style.height = `${Math.ceil(hoogte * schaal)}px`;
+        werk.setScale(schaal);
+        B.svgResize(werk);
+        werk.scroll(0, 0);
+      };
+      pas();
+      setStatus('klaar');
+    };
+
+    // Pas beginnen als de figuur breedte heeft. In een dicht uitklapblok is
+    // die er nog niet, en een werkblad van nul pixels breed meet zijn blokken
+    // verkeerd. Zo laadt Blockly ook pas als iemand het antwoord openklapt.
+    const begin = () => {
+      if (begonnen || buiten.clientWidth === 0) return;
+      begonnen = true;
+      bouw().catch((fout) => {
         console.error(fout);
         if (!weg) setStatus('mislukt');
       });
+    };
+    const kijker = new ResizeObserver(() => {
+      begin();
+      pas?.();
+    });
+    kijker.observe(buiten);
+    begin();
 
     return () => {
       weg = true;
-      kijker?.disconnect();
+      kijker.disconnect();
       ws?.dispose();
     };
   }, [programma]);

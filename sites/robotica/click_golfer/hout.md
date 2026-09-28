@@ -1,5 +1,5 @@
 ---
-sidebar_position: 3
+sidebar_position: 7
 ---
 
 # De houten baan
@@ -9,7 +9,7 @@ Naast het robotje maak je ook een **houten baan**. Die is gemaakt van dunne, las
 Werk de foto's van boven naar beneden af; zo groeit de baan onder je handen in elkaar.
 
 :::tip
-Twijfel je hoe een onderdeel eruitziet of waar het komt? Bekijk het [3D-model op de intropagina](intro), of kijk in het [werkboek](bouwen). Je kunt het 3D-model draaien en zoomen.
+Twijfel je hoe een onderdeel eruitziet of waar het komt? Bekijk het [3D-model op de intropagina](intro), of kijk nog eens bij [de bouwstappen](bouwen). Je kunt het 3D-model draaien en zoomen.
 :::
 
 ## Stap voor stap
@@ -54,4 +54,29 @@ Twijfel je hoe een onderdeel eruitziet of waar het komt? Bekijk het [3D-model op
   <figcaption>De sensor vastgezet op de baan. Het blauwe schroefje laat je met rust: in dit project lees je de sensor uit als een getal, en dat getal verandert er niet van. Hoe gevoelig je robot is, stel je straks in je programma in.</figcaption>
 </figure>
 
-Staat de baan in elkaar? Dan **[sluit je de motor en de sensor aan](aansluiten)**.
+Staat de baan in elkaar? Zet je Golfer erop, met de arm boven de bal. Zitten de sensor en de servo nog aan het shield? Kijk het na bij [de IR-sensor](ir-sensor) en [de servo](servo).
+
+## Hole in one
+
+Zet het programma uit [Zie de bal, sla de bal](bal-slaan) op je robot en leg een bal voor de sensor. Gaat de bal in het gat?
+
+Pas je programma aan tot de bal telkens netjes in het gat gaat:
+
+- De stand in het subprogramma `slaan` bepaalt hoe ver de arm uithaalt.
+- De wachttijd na het slaan moet lang genoeg zijn, zodat een bal die terugrolt eerst stil ligt voordat de robot weer kijkt.
+
+<details>
+<summary>Klik hier voor een tip!</summary>
+
+Verander steeds maar één getal tegelijk, en probeer daarna een paar keer. Zo weet je welk getal het verschil maakt.
+
+</details>
+
+<details>
+<summary>Klik hier voor het antwoord!</summary>
+
+Er is geen getal dat bij iedereen past: elke baan en elke Golfer is net anders. Hoe verder de stand in `slaan` van de 0 in `achter` af ligt, hoe verder de arm uithaalt en hoe harder de bal gaat. Rolt de bal terug en slaat de arm te vroeg, maak dan de 2000 in **duurt** groter.
+
+</details>
+
+Gaat de bal erin? Dan leer je je Golfer nu [netter mikken](mikken).

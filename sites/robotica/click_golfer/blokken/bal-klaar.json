@@ -1,0 +1,84 @@
+{
+  "blocks": {
+    "languageVersion": 0,
+    "blocks": [
+      {
+        "type": "leaphy_start",
+        "x": 0,
+        "y": 0,
+        "inputs": {
+          "STACK": {
+            "block": {
+              "type": "controls_repeat_forever",
+              "inputs": {
+                "DO": {
+                  "block": {
+                    "type": "controls_if",
+                    "inputs": {
+                      "IF0": {
+                        "block": {
+                          "type": "logic_compare",
+                          "fields": {
+                            "OP": "GT"
+                          },
+                          "inputs": {
+                            "A": {
+                              "block": {
+                                "type": "analog_read",
+                                "fields": {
+                                  "PIN": "A0"
+                                }
+                              }
+                            },
+                            "B": {
+                              "block": {
+                                "type": "math_number",
+                                "fields": {
+                                  "NUM": 300
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "DO0": {
+                        "block": {
+                          "type": "leaphy_serial_print_line",
+                          "inputs": {
+                            "VALUE": {
+                              "block": {
+                                "type": "text",
+                                "fields": {
+                                  "TEXT": "klaar om te golfen!"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "next": {
+                      "block": {
+                        "type": "time_delay",
+                        "inputs": {
+                          "DELAY_TIME_MILI": {
+                            "block": {
+                              "type": "math_number",
+                              "fields": {
+                                "NUM": 500
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

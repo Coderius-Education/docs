@@ -54,32 +54,82 @@ describe('de hardware-uitleg klopt', () => {
     expect(zonderUitleg).toEqual([]);
   });
 
-  it('elke pagina die een pin uitleest, noemt die pin ook in de tekst', () => {
-    // `Read anapin A0` in een screenshot-onderschrift is geen aansluitinstructie.
+  it('elke pagina met een blokprogramma noemt de pinnen daaruit ook in de tekst', () => {
+    // De pin staat in de blokken, en die tekent de browser pas. Een leerling
+    // die op de pagina leest welke draad waar moet, moet de pin in de tekst
+    // vinden: vet, zoals in de aansluittabellen, of via een link naar de les
+    // die hem aansluit.
     const zonder: string[] = [];
 
     for (const bestand of paginas()) {
       const inhoud = tekst(bestand);
-      for (const m of inhoud.matchAll(/Read anapin (A\d)/g)) {
-        const pin = m[1];
-        // De pagina zelf noemt hem in de aansluittabel, of verwijst naar een
-        // pagina die de pin uitlegt: aansluiten (waar hij vastzit) of
-        // bal-detecteren (waar je hem uitleest, en dat linkt zelf door).
-        const legtUit =
-          new RegExp(`\\|[^|]*\\*\\*${pin}\\*\\*`).test(inhoud) ||
-          /\((aansluiten|bal-detecteren)(\.md)?\)/.test(inhoud);
-        if (!legtUit) zonder.push(`${bestand} leest ${pin} uit zonder aansluituitleg`);
+      for (const m of inhoud.matchAll(/from '\.\/blokken\/([^']+\.json)'/g)) {
+        const programma = readFileSync(join(CLICK, 'blokken', m[1]), 'utf8');
+        const pinnen = new Set<string>();
+        for (const p of programma.matchAll(/"PIN": "(A\d)"/g)) pinnen.add(p[1]);
+        for (const p of programma.matchAll(/"SERVO_PIN": "(\d+)"/g)) pinnen.add(`D${p[1]}`);
+        for (const pin of pinnen) {
+          const uitleg = pin.startsWith('A') ? 'ir-sensor' : 'servo';
+          const noemt =
+            inhoud.includes(`**${pin}**`) || new RegExp(`\\(${uitleg}(\\.md)?\\)`).test(inhoud);
+          if (!noemt) zonder.push(`${bestand}: ${m[1]} gebruikt ${pin}`);
+        }
       }
     }
 
     expect(zonder).toEqual([]);
   });
 
-  it('aansluiten noemt de pinnen van beide onderdelen', () => {
-    const inhoud = tekst('aansluiten.md');
+  it('de sensor- en de servoles noemen hun pin', () => {
+    expect(tekst('ir-sensor.md')).toMatch(/\*\*A0\*\*/);
+    expect(tekst('servo.md')).toMatch(/\*\*D9\*\*/);
+  });
+});
 
-    expect(inhoud).toMatch(/\*\*A0\*\*/);
-    expect(inhoud).toMatch(/\*\*D9\*\*/);
+describe('de volgorde van de route', () => {
+  // Eerst de onderdelen los, en pas als ze samen werken de Lego en de baan
+  // eromheen: wie bouwt voordat hij de servo kent, bouwt een arm die hij
+  // niet kan testen.
+  const VOLGORDE = [
+    'intro',
+    'microcontroller',
+    'ir-sensor',
+    'servo',
+    'bal-slaan',
+    'bouwen',
+    'hout',
+    'mikken',
+    'extras',
+  ];
+
+  it('de pagina\'s staan in deze volgorde in de zijbalk', () => {
+    const positie = (bestand: string) =>
+      Number(tekst(bestand).match(/^sidebar_position: (\d+)$/m)?.[1]);
+    const volgorde = paginas()
+      .sort((a, b) => positie(a) - positie(b))
+      .map((f) => f.replace(/\.mdx?$/, ''));
+    expect(volgorde).toEqual(VOLGORDE);
+  });
+
+  it('elke pagina wijst aan het eind naar de volgende', () => {
+    const zonder = VOLGORDE.slice(1, -1).filter((naam, i) => {
+      const volgende = VOLGORDE[i + 2];
+      const slot = tekst(`${naam}.md`).trimEnd().split('\n').at(-1) ?? '';
+      return !slot.includes(`](${volgende})`);
+    });
+    expect(zonder).toEqual([]);
+  });
+
+  it('geen PDF in de pagina: de lessen staan op de site zelf', () => {
+    const met = paginas().filter((f) => /<iframe|\.pdf/.test(tekst(f)));
+    expect(met).toEqual([]);
+  });
+
+  it('de oude adressen sturen door', () => {
+    const config = readFileSync(join(CLICK, '..', 'docusaurus.config.ts'), 'utf8');
+    for (const oud of ['aansluiten', 'bal-detecteren', 'hole-in-one']) {
+      expect(config).toMatch(new RegExp(`van: '/click_golfer/${oud}'`));
+    }
   });
 });
 
