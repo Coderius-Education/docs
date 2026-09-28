@@ -1,0 +1,32 @@
+{
+  "blocks": {
+    "languageVersion": 0,
+    "blocks": [
+      {
+        "type": "leaphy_start",
+        "x": 0,
+        "y": 0,
+        "inputs": {
+          "STACK": {
+            "block": {
+              "type": "leaphy_servo_write",
+              "fields": {
+                "SERVO_PIN": "9"
+              },
+              "inputs": {
+                "SERVO_ANGLE": {
+                  "block": {
+                    "type": "math_number",
+                    "fields": {
+                      "NUM": 90
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

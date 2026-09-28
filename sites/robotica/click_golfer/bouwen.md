@@ -1,6 +1,8 @@
 ---
 sidebar_position: 7
 ---
+import Blokken from '@site/src/components/Blokken';
+import servoOp90 from './blokken/servo-op-90.json';
 
 # Bouwen
 
@@ -95,6 +97,14 @@ Bij elke stap zie je linksboven welke stukjes je erbij pakt. Wat nieuw is, heeft
   <img src="/click_golfer/bouwen/stap-10.jpg" width="600" alt="Bouwstap 10: Een grijze as van 6 gaten gaat door het midden, bij de servo." />
   <figcaption>Stap 10</figcaption>
 </figure>
+
+:::caution[Eerst de servo op 90°]
+In stap 11 zet je het tandwiel op de as van de servo. Staat de servo dan in een willekeurige stand, dan klopt 0° of 90° later niet meer met de stand van de arm: de arm slaat te ver door, of haalt de bal niet.
+
+Zet je robot daarom eerst aan en upload dit programma. De servo draait naar 90°, precies het midden, en blijft daar staan. Zet je robot daarna uit en zet pas dan het tandwiel erop.
+
+<Blokken programma={servoOp90} beschrijving="Het Leaphy-blok met daarin Servo 9 op 90." />
+:::
 
 <figure>
   <img src="/click_golfer/bouwen/stap-11.jpg" width="600" alt="Bouwstap 11: Het grijze tandwiel komt op de as van de servo." />
