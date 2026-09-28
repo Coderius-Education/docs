@@ -1,5 +1,5 @@
 ---
-sidebar_position: 5
+sidebar_position: 6
 ---
 import Blokken from '@site/src/components/Blokken';
 import balSlaan from './blokken/bal-slaan.json';

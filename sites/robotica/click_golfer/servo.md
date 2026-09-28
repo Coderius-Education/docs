@@ -1,5 +1,5 @@
 ---
-sidebar_position: 4
+sidebar_position: 5
 ---
 import Blokken from '@site/src/components/Blokken';
 import heenEnWeer from './blokken/servo-heen-en-weer.json';

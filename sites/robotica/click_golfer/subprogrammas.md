@@ -1,5 +1,5 @@
 ---
-sidebar_position: 9
+sidebar_position: 10
 ---
 import Blokken from '@site/src/components/Blokken';
 import subprogrammas from './blokken/subprogrammas.json';

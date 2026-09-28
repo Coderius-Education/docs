@@ -84,24 +84,24 @@ describe('de hardware-uitleg klopt', () => {
     // Het werkboek toonde een tegel "Leaphy Click", maar het bord van de
     // Click Golfer is een Arduino Nano. Wie de verkeerde robot kiest, krijgt
     // andere pinnen in de blokken dan de lessen noemen.
-    expect(tekst('microcontroller.md')).toMatch(/Kies de robot \*\*Arduino Nano\*\*/);
+    expect(tekst('easybloqs.md')).toMatch(/Kies de robot \*\*Arduino Nano\*\*/);
     const verkeerd = paginas().filter((f) => /Leaphy Click/.test(tekst(f)));
     expect(verkeerd).toEqual([]);
 
     // De blokken op de site zijn Nederlands; de leerling moet zien waar hij
     // Easybloqs ook op Nederlands zet, anders staat er 'Read anapin' waar de
     // les 'Lees anapin' zegt.
-    expect(tekst('microcontroller.md')).toMatch(/\*\*Meer…\*\* en daarna \*\*Taal\*\*/);
+    expect(tekst('easybloqs.md')).toMatch(/\*\*Meer…\*\* en daarna \*\*Taal\*\*/);
   });
 
-  it('de eerste les noemt de knoppen en meldingen van Easybloqs letterlijk', () => {
+  it('de Easybloqs-les noemt de knoppen en meldingen van Easybloqs letterlijk', () => {
     // Een leerling van groep 7/8 zoekt op zijn scherm naar precies de woorden
     // uit de les. Deze teksten komen uit de Nederlandse vertaling van
     // Easybloqs (leaphy-webbased, src/assets/i18n/nl.json). Het scherm opent
     // met een knop rechts naast de blokken, niet via het blok Toon op scherm;
     // en omdat het Leaphy-blok maar één keer loopt, direct na de upload, is
     // de zin weg voordat het scherm opengaat. Daarom de RST-knop.
-    const inhoud = tekst('microcontroller.md');
+    const inhoud = tekst('easybloqs.md');
     for (const label of [
       'Upload naar robot',
       'Code compileren',
@@ -130,6 +130,7 @@ describe('de volgorde van de route', () => {
   const VOLGORDE = [
     'intro',
     'microcontroller',
+    'easybloqs',
     'ir-sensor',
     'servo',
     'bal-slaan',

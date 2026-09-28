@@ -1,5 +1,5 @@
 ---
-sidebar_position: 8
+sidebar_position: 9
 ---
 import Blokken from '@site/src/components/Blokken';
 import mikken from './blokken/mikken.json';

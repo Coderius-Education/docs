@@ -23,7 +23,7 @@ Een robot is een **programmeerbare machine** die zelf taken uitvoert en kan reag
 
 ## Wat ga je doen?
 
-1. Leer [de microcontroller](microcontroller) kennen: het brein van je robot.
+1. Leer [de microcontroller](microcontroller) kennen, het brein van je robot, en zet er in [Easybloqs](easybloqs) je eerste programma op.
 2. Sluit [de IR-sensor](ir-sensor) aan, die de bal ziet.
 3. Laat [de servo](servo) bewegen, de motor van de arm.
 4. Zet ze samen: [zie de bal, sla de bal](bal-slaan).

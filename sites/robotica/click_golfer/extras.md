@@ -1,5 +1,5 @@
 ---
-sidebar_position: 10
+sidebar_position: 11
 ---
 import Blokken from '@site/src/components/Blokken';
 import willekeurigSlaan from './blokken/willekeurig-slaan.json';
