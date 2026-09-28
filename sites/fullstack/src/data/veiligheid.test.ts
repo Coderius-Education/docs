@@ -20,6 +20,11 @@ const zwakheden = readdirSync(VEILIGHEID).filter((n) =>
 const lees = (map: string, stap: string) =>
   readFileSync(join(VEILIGHEID, map, `${stap}.mdx`), 'utf8');
 
+// Een les "heeft een endpoint" als een python-blok er een bevat. Een tip die
+// "zoek naar `@app.post`" zegt, telt niet.
+const heeftEndpoint = (tekst: string) =>
+  [...tekst.matchAll(/```python[^\n]*\n([\s\S]*?)```/g)].some((m) => m[1].includes('@app.'));
+
 type Categorie = { type: string; label: string; items: string[] };
 const categorieen = (sidebars.veiligheidSidebar as unknown as Categorie[]).filter(
   (c) => c.type === 'category',
@@ -35,11 +40,54 @@ describe('de reeks Veiligheid', () => {
     expect(zwakheden.length).toBeGreaterThan(0);
   });
 
+  const route = sidebars.veiligheidSidebar as unknown as (string | Categorie)[];
+  const eersteMap = (c: Categorie) => c.items[0].split('/')[1];
+
+  it('de route begint met de startpagina en het gereedschap, en eindigt met je eigen project', () => {
+    // Zonder startpagina opende de navbar midden in een reeks, zonder te zeggen
+    // waar de route over gaat of wat de spelregel is. De afsluiter bundelt wat
+    // de leerling op zijn eigen project moet toepassen.
+    expect(route.slice(0, 2)).toEqual(['veiligheid/index', 'veiligheid/gereedschap']);
+    expect(route.at(-1)).toBe('veiligheid/eigen-project');
+  });
+
+  it('de reeksen staan van dichtbij het eigen gastenboek naar ver weg', () => {
+    // Invoer bouwt direct op Server of browser?; DoS gaat over infrastructuur en
+    // komt daarom als laatste. Cookies bouwt op de server uit Wie mag wat.
+    expect(categorieen.map(eersteMap)).toEqual([
+      'invoer',
+      'xss',
+      'toegang',
+      'cookies',
+      'wachtwoorden',
+      'dos',
+    ]);
+  });
+
+  it('elke reeks wijst aan het eind naar de volgende, de laatste naar de afsluiter', () => {
+    categorieen.forEach((categorie, i) => {
+      const map = eersteMap(categorie);
+      const volgende = categorieen[i + 1];
+      const doel = volgende
+        ? `](../${volgende.items[0].slice('veiligheid/'.length)})`
+        : '](../eigen-project)';
+      expect(lees(map, 'praktijk'), `${map}/praktijk`).toContain(doel);
+    });
+  });
+
+  it("de losse pagina's richten zich alleen op de eigen computer", () => {
+    for (const pagina of ['index', 'gereedschap', 'eigen-project']) {
+      const tekst = readFileSync(join(VEILIGHEID, `${pagina}.mdx`), 'utf8');
+      for (const [, host] of tekst.matchAll(/https?:\/\/([^/:"'\s)]+)/g)) {
+        expect(['127.0.0.1', 'localhost'], `${pagina}: ${host}`).toContain(host);
+      }
+      expect(tekst, pagina).toMatch(/:::danger\[Alleen je eigen [a-z]+\]/);
+    }
+  });
+
   it('elke zwakheid is opgesplitst in kleine lessen, met in elke les één idee', () => {
     // Drie stappen per zwakheid ging te snel: elke les behandelde te veel.
-    // Wie mag wat, XSS en Cookies houden voorlopig drie stappen; zie de
-    // beschrijving van PR #111.
-    for (const map of ['dos', 'wachtwoorden', 'invoer']) {
+    for (const map of zwakheden) {
       expect(stappenVan(map).length, `veiligheid/${map}`).toBeGreaterThanOrEqual(6);
     }
   });
@@ -58,6 +106,48 @@ describe('de reeks Veiligheid', () => {
           .map((n) => n.replace(/\.mdx$/, ''))
           .sort();
         expect(bestanden).toEqual([...stappen].sort());
+      });
+
+      it('de eerste les zegt waar je werkt en geeft het hele startbestand', () => {
+        // Elke reeks begon een nieuwe server, met steeds "gooi de database weg"
+        // of "maak een nieuwe map". Nu weet de leerling vooraf waar hij werkt,
+        // en heeft hij de hele server bij de hand.
+        const tekst = lees(map, stappen[0]);
+        expect(tekst, `${map}/${stappen[0]}`).toContain(':::note[Waar je werkt]');
+        expect(tekst, `${map}/${stappen[0]}`).toContain(`\`veiligheid-${map}\``);
+        const blokken = [...tekst.matchAll(/```python[^\n]*\n([\s\S]*?)```/g)].map((m) => m[1]);
+        expect(
+          blokken.some((b) => b.includes('app = FastAPI()')),
+          `${map}/${stappen[0]}`,
+        ).toBe(true);
+      });
+
+      it('de leerling past het toe op zijn eigen project, vlak voor de praktijk', () => {
+        const voorPraktijk = stappen.at(-2) ?? '';
+        expect(lees(map, voorPraktijk), `${map}/${voorPraktijk}`).toMatch(
+          /### Opdracht \d+: Make - In je eigen project/,
+        );
+      });
+
+      it('de praktijk begint bij wat je zelf doet, en houdt de rest in uitklapblokken', () => {
+        // De praktijkpagina's waren tot 900 woorden met tien nieuwe termen. Nu
+        // staat bovenaan wat de leerling zelf doet, en klapt hij open wat hij
+        // over grote sites wil lezen.
+        const tekst = lees(map, 'praktijk');
+        expect(tekst, `${map}/praktijk`).toContain('## Wat jij zelf doet');
+        expect(tekst, `${map}/praktijk`).toContain('## Wat grote sites nog meer doen');
+        let diepte = 0;
+        let inCode = false;
+        const zichtbaar: string[] = [];
+        for (const regel of tekst.replace(/^---[\s\S]*?---/, '').split('\n')) {
+          if (regel.startsWith('```')) inCode = !inCode;
+          if (inCode) continue;
+          if (regel.startsWith('<details>')) diepte++;
+          if (diepte === 0) zichtbaar.push(regel);
+          if (regel.startsWith('</details>')) diepte--;
+        }
+        const woorden = zichtbaar.join(' ').split(/\s+/).filter(Boolean).length;
+        expect(woorden, `${map}/praktijk: woorden buiten de uitklapblokken`).toBeLessThan(500);
       });
 
       it('eindigt met de praktijk', () => {
@@ -93,7 +183,7 @@ describe('de reeks Veiligheid', () => {
         it('elke les die main.py verandert, toont het hele bestand', () => {
           for (const stap of stappen.filter((s) => s !== 'praktijk')) {
             const tekst = lees(map, stap);
-            if (!tekst.includes('@app.')) continue;
+            if (!heeftEndpoint(tekst)) continue;
             expect(tekst, `${map}/${stap}`).toContain(
               '<summary>Zo ziet je `main.py` er nu uit</summary>',
             );
@@ -107,7 +197,7 @@ describe('de reeks Veiligheid', () => {
         // Invoer ontbraken de imports.
         for (const stap of stappen.filter((s) => s !== 'praktijk')) {
           const tekst = lees(map, stap);
-          if (!tekst.includes('@app.')) continue;
+          if (!heeftEndpoint(tekst)) continue;
           const blokken = [...tekst.matchAll(/```python[^\n]*\n([\s\S]*?)```/g)].map((m) => m[1]);
           expect(
             blokken.some((b) => b.includes('app = FastAPI()') && b.includes('@app.')),

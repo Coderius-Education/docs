@@ -1,0 +1,75 @@
+---
+sidebar_label: 'Beveilig je eigen project'
+description: Eén controlelijst over de hele route, om je eigen project uit Jouw project na te lopen, met per punt de les en het cheatsheet-item.
+---
+
+# Beveilig je eigen project
+
+Aan het eind van elke reeks heb je het geleerde op je eigen project toegepast.
+Hier staat alles bij elkaar, als één lijst om je project na te lopen voordat je
+het aan anderen laat zien. Bij elk punt staat waar je het leerde, en in de
+[cheatsheet](/docs/cheatsheet#veiligheid) staat onder Veiligheid de code erbij.
+
+Het idee onder de hele lijst blijft hetzelfde: wat van de bezoeker komt,
+vertrouw je niet, en de controle hoort op de server.
+
+## Invoer
+
+- [ ] Elk tekstveld heeft `max_length` in `Form`, en elk getal is een `int` met
+  `ge` en `le`. ([Grenzen in Form](./invoer/grenzen))
+- [ ] Een veld dat niet uit alleen spaties mag bestaan, controleer je met
+  `strip()`. ([De inhoud controleren](./invoer/inhoud))
+- [ ] Een keuze uit een paar woorden controleer je tegen een lijst met wat mag.
+  ([Getallen en keuzes](./invoer/getallen))
+
+## HTML van een bezoeker
+
+- [ ] Tekst van een bezoeker komt alleen via een `.html`-template in je pagina,
+  of met `escape()` in een f-string. ([Templates escapen vanzelf](./xss/templates))
+- [ ] Nergens staat `|safe` achter tekst van een bezoeker. ([`|safe`](./xss/safe))
+
+## Wie mag wat
+
+- [ ] Elk endpoint dat iets verwijdert of aanpast, controleert zelf of het van
+  deze bezoeker is, en stuurt anders een `403`.
+  ([De controle met 403](./toegang/controle))
+- [ ] De controle gebruikt wat de server weet, zoals de sessie, niet wat de
+  bezoeker in een formulier typt. ([Controleer op wat de server weet](./toegang/server-weet))
+
+## Cookies
+
+- [ ] De sessie-cookie heeft `httponly=True`.
+  ([httponly](./cookies/httponly))
+- [ ] In een cookie staat alleen een sessie-id, geen naam of rechten.
+  ([Sessies](/docs/FastAPI/sessies))
+- [ ] Er is een endpoint om uit te loggen, dat ook de sessie op de server
+  weggooit. ([Uitloggen](./cookies/uitloggen))
+
+## Wachtwoorden
+
+Alleen als je project accounts heeft.
+
+- [ ] Je bewaart `ph.hash(wachtwoord)`, nooit het wachtwoord zelf.
+  ([Registreren met Argon2](./wachtwoorden/registreren))
+- [ ] Inloggen gebruikt `ph.verify`, met dezelfde melding bij een onbekende naam
+  en een fout wachtwoord. ([Inloggen met verify](./wachtwoorden/inloggen))
+
+## Te veel verzoeken
+
+- [ ] Het endpoint dat iets opslaat, heeft een verzoeklimiet.
+  ([Een limiet met slowapi](./dos/limiet))
+
+## Test het zoals een bezoeker
+
+Een lijst aflopen is niet hetzelfde als testen. Draai voor elk punt een klein
+script uit [Een script als bezoeker](./gereedschap) tegen je eigen server op
+`127.0.0.1`, en kijk of je de statuscode krijgt die je verwacht: een `422` bij
+een te lang veld, een `403` bij het bericht van een ander, een `429` na te veel
+verzoeken.
+
+:::danger[Alleen je eigen server]
+Test alleen je eigen project, op je eigen computer. Wil je weten of de site van
+een klasgenoot veilig is, vraag dan of je samen naar de code mag kijken.
+:::
+
+Terug naar [de startpagina](/docs/veiligheid) van de route.

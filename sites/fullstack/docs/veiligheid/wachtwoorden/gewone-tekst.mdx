@@ -11,6 +11,12 @@ description: Wat er gebeurt als je wachtwoorden bewaart zoals de gebruiker ze in
   ]}
 />
 
+:::note[Waar je werkt]
+Maak voor deze reeks een nieuwe map `veiligheid-wachtwoorden`, naast je eigen
+project, en open die in VS Code. De server, de scripts en de database van deze reeks komen daarin. Zo blijft je eigen gastenboek heel. Aan
+het eind van de reeks pas je het geleerde toe op je eigen project.
+:::
+
 Een site met accounts moet wachtwoorden bewaren, anders kan niemand inloggen.
 De eerste versie die bijna iedereen schrijft, bewaart het wachtwoord precies
 zoals de gebruiker het intypt. Met een [formulier](/docs/FastAPI/forms) en de
@@ -72,8 +78,8 @@ database. De wachtwoorden van een ander bekijken of gebruiken is strafbaar.
 
 Start je server met de code hierboven. Maak daarnaast een los scriptje
 `registreer.py` dat drie gebruikers aanmaakt, net zoals een formulier dat zou
-doen. Het gebruikt `httpx`, een module om verzoeken te versturen. Installeer
-hem met `python -m pip install httpx` als je dat nog niet had gedaan.
+doen. Het gebruikt `httpx`, zoals in
+[Een script als bezoeker](../gereedschap).
 
 <CodeUitleg>
 

@@ -1,0 +1,166 @@
+---
+sidebar_label: '4. |safe: de bescherming uitzetten'
+description: Met |safe zeg je tegen Jinja dat tekst al veilig is. Dat mag alleen voor HTML die je zelf schreef, nooit voor tekst van een bezoeker.
+---
+
+# HTML van een bezoeker: `|safe`, de bescherming uitzetten
+
+Soms wil je in een template wél HTML laten zien, bijvoorbeeld een welkomsttekst
+die je zelf hebt geschreven, met een vet woord erin. Jinja escapet die ook, dus
+dan zie je de haakjes. Met **`|safe`** zeg je tegen Jinja: deze tekst is al
+veilig, escape hem niet.
+
+## Je eigen HTML met `|safe`
+
+Zet in `main.py` een welkomsttekst, en geef hem mee aan het template:
+
+<CodeUitleg>
+
+```python showLineNumbers
+WELKOM = "<b>Welkom</b> in mijn gastenboek"
+
+@app.get("/berichten/lijst")
+async def berichten_lijst(request: Request):
+    with SqliteDict("gastenboek.db") as db:
+        alle_berichten = list(db.values())
+    return templates.TemplateResponse(
+        request, "berichten_lijst.html", {"berichten": alle_berichten, "welkom": WELKOM}
+    )
+```
+
+<Regel n={1}>
+Deze tekst schreef jij, in je eigen code. Geen bezoeker kan hem veranderen.
+</Regel>
+
+<Regel n={8}>
+Het template krijgt nu twee dingen mee: de berichten en de welkomsttekst.
+</Regel>
+
+</CodeUitleg>
+
+En bovenaan `templates/berichten_lijst.html`:
+
+```html
+<p>{{ welkom|safe }}</p>
+```
+
+`lijst.py` uit [les 1](./zwakheid) laat zien wat de server stuurt, met Sara's
+bericht eronder:
+
+```
+<p><b>Welkom</b> in mijn gastenboek</p>
+<ul>
+    
+        <li>Sara: &lt;b&gt;vet&lt;/b&gt;</li>
+    
+</ul>
+```
+
+Het welkomstwoord is vet, want de `<b>` bleef HTML. Het bericht van Sara is nog
+steeds tekst, want daar staat geen `|safe` achter.
+
+## Er gaat iets mis
+
+Je wilde dat bezoekers vet konden schrijven, en zette `|safe` achter het
+bericht:
+
+```html
+<!-- FOUT -->
+<li>{{ bericht.naam }}: {{ bericht.bericht|safe }}</li>
+
+<!-- GOED -->
+<li>{{ bericht.naam }}: {{ bericht.bericht }}</li>
+```
+
+Er komt geen foutmelding, en `<b>vet</b>` is weer vet.
+
+**Oorzaak:** `|safe` zet het escapen uit. Dan is alles wat een bezoeker invult
+weer HTML, net als met de f-string in les 1.
+
+**Oplossing:** gebruik `|safe` alleen voor tekst die je zelf in je code hebt
+geschreven, nooit voor iets wat van een bezoeker komt.
+
+## Opdrachten
+
+### Opdracht 1: Predict - `|safe` op de naam
+
+Iemand zet `|safe` achter de naam: `{{ bericht.naam|safe }}`. Noor vult als naam
+`<i>Noor</i>` in.
+
+**Vraag:** hoe staat haar naam in de lijst?
+
+<details>
+<summary>Antwoord</summary>
+
+Schuin. `|safe` zet het escapen uit voor de naam, dus de `<i>` van Noor wordt
+HTML. Het bericht ernaast blijft wel tekst, want daar staat geen `|safe`.
+
+</details>
+
+### Opdracht 2: Investigate - Mag hier `|safe`?
+
+Welke van deze drie mag je met `|safe` in een template zetten?
+
+1. `WELKOM`, een tekst die in je `main.py` staat.
+2. De naam van een bezoeker.
+3. Een bericht dat een bezoeker heeft geschreven, maar dat jij eerst hebt
+   gelezen en goedgekeurd.
+
+<details>
+<summary>Tip</summary>
+
+Vraag je bij elk af: wie heeft de tekst getypt?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Alleen de eerste. De tweede en de derde komen van een bezoeker; dat jij een
+bericht hebt gelezen, maakt het niet veilig, want HTML kan ook iets doen wat je
+bij het lezen niet ziet. Wil je dat bezoekers vet kunnen schrijven, dan heb je
+een aparte, beperkte opmaak nodig, zoals `**vet**`, die je server zelf naar HTML
+omzet.
+
+</details>
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+```python
+import time
+from html import escape
+
+from fastapi import FastAPI, Form, Request
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
+
+WELKOM = "<b>Welkom</b> in mijn gastenboek"
+
+@app.post("/gastenboek")
+async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    return HTMLResponse(f"Bedankt, {escape(naam)}. Je bericht staat in het gastenboek.")
+
+@app.get("/berichten/lijst")
+async def berichten_lijst(request: Request):
+    with SqliteDict("gastenboek.db") as db:
+        alle_berichten = list(db.values())
+    return templates.TemplateResponse(
+        request, "berichten_lijst.html", {"berichten": alle_berichten, "welkom": WELKOM}
+    )
+```
+
+`|safe` staat alleen achter `welkom`, de tekst die je zelf schreef.
+
+</details>
+
+Door naar [les 5: in je eigen project](./eigen-project).

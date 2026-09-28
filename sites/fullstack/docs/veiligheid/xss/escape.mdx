@@ -1,0 +1,191 @@
+---
+sidebar_label: '2. Escapen in Python'
+description: Met escape() uit de module html blijft tekst van een bezoeker tekst, ook in een f-string. Zet het op beide plekken in je gastenboek.
+---
+
+import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
+
+# HTML van een bezoeker: escapen in Python
+
+In [les 1](./zwakheid) las de browser `<b>vet</b>` als HTML, omdat de f-string
+het letterlijk in de pagina zette. De oplossing heet **escapen**: van elke `<`
+een `&lt;` maken, van elke `>` een `&gt;`, en zo verder. Die tekens toont de
+browser als tekst.
+
+## `escape`
+
+Python heeft er een functie voor, `escape` uit de module `html`:
+
+```python
+from html import escape
+
+print(escape("<b>vet</b>"))
+```
+
+Uitvoer:
+
+```
+&lt;b&gt;vet&lt;/b&gt;
+```
+
+In de browser staat daar weer `<b>vet</b>`, met de haakjes erbij. Niets wordt
+vet.
+
+## Op beide plekken in je server
+
+Je gastenboek zet op twee plekken tekst van een bezoeker in HTML: in het
+antwoord na het versturen, en in de lijst. Op beide komt `escape` om de tekst
+heen:
+
+<CodeUitleg>
+
+```python showLineNumbers
+@app.post("/gastenboek")
+async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    return HTMLResponse(f"Bedankt, {escape(naam)}. Je bericht staat in het gastenboek.")
+
+@app.get("/berichten/lijst")
+async def berichten_lijst():
+    regels = ""
+    with SqliteDict("gastenboek.db") as db:
+        for bericht in db.values():
+            regels += f"<li>{escape(bericht['naam'])}: {escape(bericht['bericht'])}</li>"
+    return HTMLResponse(f"<ul>{regels}</ul>")
+```
+
+<Regel n={4}>
+Het bericht gaat de database in zoals het getypt is. Escapen doe je pas bij het tonen.
+</Regel>
+
+<Regel n={6}>
+De naam in het antwoord na het versturen.
+</Regel>
+
+<Regel n={13}>
+De naam en het bericht in de lijst, elk apart.
+</Regel>
+
+</CodeUitleg>
+
+Zet `from html import escape` bovenaan `main.py`, bij de andere imports.
+
+## Doe de test opnieuw
+
+Gooi `gastenboek.db` weg, start de server opnieuw, en vul als Sara weer
+`<b>vet</b>` in. In de lijst staat nu `<b>vet</b>` met de haakjes erbij.
+`lijst.py` uit les 1 laat zien waarom:
+
+```
+<ul><li>Sara: &lt;b&gt;vet&lt;/b&gt;</li></ul>
+```
+
+## Waar de controle zit
+
+Het bericht mag de database in zoals het getypt is. De controle zit op de plek
+waar het de HTML in gaat.
+
+<VerzoekCyclus variant="xss" />
+
+## Er gaat iets mis
+
+Noor vult als naam `<i>Noor</i>` in. Onder het formulier staat haar naam als
+tekst, maar in de lijst is hij schuin. `lijst.py` geeft:
+
+```
+<ul><li><i>Noor</i>: &lt;b&gt;vet&lt;/b&gt;</li></ul>
+```
+
+**Oorzaak:** in de lijst staat `escape` om het bericht, maar niet om de naam.
+Eén vergeten plek is genoeg.
+
+**Oplossing:** elke waarde van een bezoeker krijgt zijn eigen `escape`, ook de
+naam. Omdat je zo makkelijk een plek vergeet, doet een template het in
+[les 3](./templates) voor je.
+
+## Opdrachten
+
+### Opdracht 1: Run - Beide plekken
+
+Zet `escape` op beide plekken. Vul als naam `<i>Noor</i>` in en als bericht
+`<b>vet</b>`. Wat zie je onder het formulier, en wat in de lijst?
+
+<details>
+<summary>Antwoord</summary>
+
+Onder het formulier: `Bedankt, <i>Noor</i>. Je bericht staat in het gastenboek.`
+In de lijst: `<i>Noor</i>: <b>vet</b>`. Alles staat er als tekst, niets is
+schuin of vet.
+
+</details>
+
+### Opdracht 2: Predict - `escape` twee keer
+
+Wat print dit?
+
+```python
+from html import escape
+
+print(escape(escape("<b>")))
+```
+
+<details>
+<summary>Tip</summary>
+
+De eerste `escape` maakt van `<` een `&lt;`. Welk teken in `&lt;` escapet de
+tweede?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```
+&amp;lt;b&amp;gt;
+```
+
+De tweede keer wordt de `&` van `&lt;` zelf ge-escapet, tot `&amp;`. In de
+browser zie je dan `&lt;b&gt;` staan in plaats van `<b>`. Escape daarom één
+keer, op de plek waar de tekst de HTML in gaat, en niet ook al bij het
+opslaan.
+
+</details>
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+```python
+import time
+from html import escape
+
+from fastapi import FastAPI, Form
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.post("/gastenboek")
+async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    return HTMLResponse(f"Bedankt, {escape(naam)}. Je bericht staat in het gastenboek.")
+
+@app.get("/berichten/lijst")
+async def berichten_lijst():
+    regels = ""
+    with SqliteDict("gastenboek.db") as db:
+        for bericht in db.values():
+            regels += f"<li>{escape(bericht['naam'])}: {escape(bericht['bericht'])}</li>"
+    return HTMLResponse(f"<ul>{regels}</ul>")
+```
+
+Beide plekken escapen nu. In de volgende les gaat de lijst naar een template.
+
+</details>
+
+Door naar [les 3: templates escapen vanzelf](./templates).

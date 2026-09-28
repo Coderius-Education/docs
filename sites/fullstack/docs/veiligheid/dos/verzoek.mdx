@@ -29,6 +29,12 @@ draait, en het antwoord gaat terug. Pas daarna is de server klaar met dit
 verzoek. Een server heeft dus een grens aan hoeveel verzoeken hij per seconde
 aankan. Die grens meet je in deze les.
 
+:::note[Waar je werkt]
+Maak voor deze reeks een nieuwe map `veiligheid-dos`, naast je eigen
+project, en open die in VS Code. De server en de scripts van deze reeks komen daarin. Zo blijft je eigen gastenboek heel. Aan
+het eind van de reeks pas je het geleerde toe op je eigen project.
+:::
+
 ## Eén verzoek meten
 
 :::danger[Alleen je eigen server]
@@ -39,9 +45,8 @@ strafbaar, ook als het "maar een testje" is.
 :::
 
 Start je server met `fastapi dev main.py`. Maak daarnaast een los bestand
-`meet.py`. Het is geen deel van je server; het speelt de rol van bezoeker. Het
-gebruikt `httpx`, een module om verzoeken te versturen. Installeer hem met
-`python -m pip install httpx`.
+`meet.py`. Het speelt de rol van bezoeker, met `httpx`, zoals in
+[Een script als bezoeker](../gereedschap).
 
 <CodeUitleg>
 

@@ -1,9 +1,9 @@
 ---
-sidebar_label: '1. De zwakheid'
+sidebar_label: '1. Een knop is geen slot'
 description: Een verborgen knop is geen slot. Een tweede bezoeker verwijdert met een los scriptje het bericht van een ander, op je eigen server.
 ---
 
-# Wie mag wat: de zwakheid
+# Wie mag wat: een knop is geen slot
 
 <Voorkennis
   items={[
@@ -15,6 +15,12 @@ In [Sessies](/docs/FastAPI/sessies) liet je de verwijderknop alleen zien bij je
 eigen berichten. Bij de berichten van een ander is hij weg. Dat voelt als
 beveiliging, maar een knop doet maar één ding: een verzoek versturen. Wie dat
 verzoek zelf verstuurt, heeft de knop niet nodig.
+
+:::note[Waar je werkt]
+Maak voor deze reeks een nieuwe map `veiligheid-toegang`, naast je eigen
+project, en open die in VS Code. De server, de scripts en de databases van deze reeks komen daarin. Zo blijft je eigen gastenboek heel. Aan
+het eind van de reeks pas je het geleerde toe op je eigen project.
+:::
 
 ## Het gastenboek als JSON
 
@@ -97,8 +103,8 @@ gegevens van een ander verwijderen via een verzoek dat je zelf in elkaar zet, is
 strafbaar, ook als de site het toelaat en ook als het "maar een testje" is.
 :::
 
-Zet de server in `main.py` in een nieuwe map en start hem met `fastapi dev
-main.py`. Maak in dezelfde map een scriptje `test_verwijderen.py`. Het speelt
+Zet de server in `main.py` in je map `veiligheid-toegang` en start hem met
+`fastapi dev main.py`. Maak in dezelfde map een scriptje `test_verwijderen.py`. Het speelt
 twee bezoekers: Sara en Alex. Allebei plaatsen ze een bericht, en daarna
 verwijdert Alex dat van Sara.
 
@@ -125,7 +131,7 @@ print(f"Nog in het gastenboek: {namen}")
 ```
 
 <Regel n={5} tot={6}>
-Een `httpx.Client` werkt als een browser: hij onthoudt de cookies die hij terugkrijgt en stuurt ze bij elk volgend verzoek mee. Twee clients zijn dus twee bezoekers, elk met een eigen sessie. Met `base_url` hoef je daarna alleen nog het pad te typen.
+Twee `httpx.Client`s zijn twee bezoekers, elk met hun eigen cookies en dus een eigen sessie, zoals in [Een script als bezoeker](../gereedschap).
 </Regel>
 
 <Regel n={11} tot={14}>
@@ -160,7 +166,7 @@ van Sara.
 berichten erin. Het script ziet die ook, en verwijdert elk bericht met de naam
 Sara.
 
-**Oplossing:** zet `main.py` en het script in een nieuwe, lege map, of gooi
+**Oplossing:** werk in de map `veiligheid-toegang` uit het begin van deze les, of gooi
 `gastenboek.db` en `sessies.db` weg voordat je de server start.
 
 ## Opdrachten
@@ -211,8 +217,65 @@ De sleutel staat twee keer bij elk bericht: in `id="bericht-…"` en in
 `hx-delete="/bericht/…"`. Ook als je de knop verbergt, staat hij in het `id`,
 en `/berichten` geeft hem ook terug. Een lange sleutel is dus geen slot: je hoeft
 hem niet te raden, want de server geeft hem zelf. De controle moet in het
-endpoint, en dat doe je in de volgende stap.
+endpoint, en dat doe je in les 2.
 
 </details>
 
-Door naar [stap 2: de oplossing](./oplossing).
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+```python
+import secrets
+import time
+
+from fastapi import Cookie, FastAPI, Form, HTTPException
+from fastapi.responses import JSONResponse
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+
+@app.post("/bericht")
+async def bericht_plaatsen(
+    naam: str = Form(...),
+    bericht: str = Form(...),
+    sessie_id: str = Cookie(default=""),
+):
+    if not sessie_id:
+        sessie_id = secrets.token_hex(16)
+
+    sleutel = f"bericht_{time.time_ns()}"
+    with SqliteDict("gastenboek.db") as db:
+        db[sleutel] = {"naam": naam, "bericht": bericht}
+        db.commit()
+
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {"naam": naam, "berichten": []})
+        mijn["naam"] = naam
+        mijn["berichten"].append(sleutel)
+        sessies[sessie_id] = mijn
+        sessies.commit()
+
+    antwoord = JSONResponse({"sleutel": sleutel})
+    antwoord.set_cookie(key="sessie_id", value=sessie_id, max_age=60 * 60 * 24 * 30)
+    return antwoord
+
+@app.get("/berichten")
+async def berichten():
+    with SqliteDict("gastenboek.db") as db:
+        return dict(db)
+
+@app.delete("/bericht/{sleutel}")
+async def bericht_verwijderen(sleutel: str):
+    with SqliteDict("gastenboek.db") as db:
+        if sleutel not in db:
+            raise HTTPException(status_code=404, detail="Dit bericht bestaat niet")
+        del db[sleutel]
+        db.commit()
+    return {"bericht": "Verwijderd"}
+```
+
+Dit is de zwakke versie: `bericht_verwijderen` vraagt niet wie er komt.
+
+</details>
+
+Door naar [les 2: de controle met 403](./controle).

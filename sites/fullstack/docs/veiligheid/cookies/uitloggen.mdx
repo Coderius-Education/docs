@@ -1,0 +1,203 @@
+---
+sidebar_label: '4. Uitloggen'
+description: Bij uitloggen gooit de server de sessie weg en haalt hij de cookie weg met delete_cookie. Bouw een endpoint en test het.
+---
+
+# Cookies afschermen: uitloggen
+
+Een sessie hoort niet eeuwig te duren. Hij eindigt op twee manieren: vanzelf,
+als de cookie verloopt na `max_age` seconden, of als de bezoeker uitlogt. Bij
+uitloggen doet je server twee dingen: hij gooit de sessie weg in `sessies.db`,
+en hij haalt de cookie weg bij de bezoeker.
+
+## Een endpoint om uit te loggen
+
+Zet dit endpoint onder de andere in `main.py`:
+
+<CodeUitleg>
+
+```python showLineNumbers
+@app.post("/uitloggen")
+async def uitloggen(sessie_id: str = Cookie(default="")):
+    with SqliteDict("sessies.db") as sessies:
+        if sessie_id in sessies:
+            del sessies[sessie_id]
+            sessies.commit()
+    antwoord = JSONResponse({"bericht": "Uitgelogd"})
+    antwoord.delete_cookie("sessie_id")
+    return antwoord
+```
+
+<Regel n={2}>
+Het sessie-id uit de cookie, net als bij verwijderen.
+</Regel>
+
+<Regel n={3} tot={6}>
+De sessie gaat weg op de server. Daarna hoort dit sessie-id bij niemand meer.
+</Regel>
+
+<Regel n={8}>
+`delete_cookie` zegt tegen de browser: gooi deze cookie weg.
+</Regel>
+
+</CodeUitleg>
+
+## Doe de test
+
+Een script `uitloggen.py` plaatst als Sara een bericht, logt uit, en probeert
+daarna haar bericht te verwijderen:
+
+```python
+import httpx
+
+adres = "http://127.0.0.1:8000"
+
+sara = httpx.Client(base_url=adres)
+sleutel = sara.post("/bericht", data={"naam": "Sara", "bericht": "Hoi"}).json()["sleutel"]
+print("Cookie voor uitloggen:", sara.cookies.get("sessie_id") is not None)
+print(sara.post("/uitloggen").json())
+print("Cookie na uitloggen:", sara.cookies.get("sessie_id"))
+print("Verwijderen:", sara.delete(f"/bericht/{sleutel}").status_code)
+```
+
+Uitvoer:
+
+```
+Cookie voor uitloggen: True
+{'bericht': 'Uitgelogd'}
+Cookie na uitloggen: None
+Verwijderen: 403
+```
+
+Na het uitloggen heeft Sara geen cookie meer, en de server kent haar sessie
+niet meer. Haar bericht verwijderen lukt niet: voor de server is ze een nieuwe
+bezoeker.
+
+## Er gaat iets mis
+
+Na het uitloggen is de cookie weg, maar de sessie staat nog in `sessies.db`.
+
+**Oorzaak:** het endpoint doet alleen `delete_cookie`. De browser gooit de
+cookie weg, maar voor de server is de sessie nog geldig. Wie dat sessie-id nog
+heeft, bijvoorbeeld omdat het was uitgelezen voordat je `httponly` gebruikte,
+komt er nog steeds mee binnen.
+
+**Oplossing:** gooi altijd ook de sessie op de server weg, zoals in regel 3 tot
+en met 6.
+
+## Opdrachten
+
+### Opdracht 1: Investigate - Hoe haalt de server een cookie weg?
+
+Stuur een verzoek naar `/uitloggen` en kijk in het tabblad **Netwerk** naar de
+regel `set-cookie` in het antwoord. Hoe vertelt de server de browser dat de
+cookie weg moet?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+sessie_id=""; expires=…; Max-Age=0; Path=/; SameSite=lax
+```
+
+De server zet de cookie opnieuw, met een lege waarde en `Max-Age=0`: houdbaar
+voor nul seconden. De browser gooit hem dan meteen weg. Een apart commando om
+een cookie te verwijderen bestaat niet.
+
+</details>
+
+### Opdracht 2: Predict - Uitloggen zonder in te loggen
+
+Een nieuwe bezoeker, zonder cookie, stuurt `POST /uitloggen`.
+
+**Vraag:** wat antwoordt de server?
+
+<details>
+<summary>Antwoord</summary>
+
+`{'bericht': 'Uitgelogd'}`. Het sessie-id is leeg, dus `if sessie_id in sessies`
+is niet waar en er gaat niets weg. Daarna haalt `delete_cookie` een cookie weg
+die er niet was. Er gaat niets mis: uitloggen als je niet bent ingelogd, doet
+niets.
+
+</details>
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+```python
+import secrets
+import time
+
+from fastapi import Cookie, FastAPI, Form, HTTPException
+from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.post("/bericht")
+async def bericht_plaatsen(
+    naam: str = Form(...),
+    bericht: str = Form(...),
+    sessie_id: str = Cookie(default=""),
+):
+    if not sessie_id:
+        sessie_id = secrets.token_hex(16)
+
+    sleutel = f"bericht_{time.time_ns()}"
+    with SqliteDict("gastenboek.db") as db:
+        db[sleutel] = {"naam": naam, "bericht": bericht}
+        db.commit()
+
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {"naam": naam, "berichten": []})
+        mijn["naam"] = naam
+        mijn["berichten"].append(sleutel)
+        sessies[sessie_id] = mijn
+        sessies.commit()
+
+    antwoord = JSONResponse({"sleutel": sleutel})
+    antwoord.set_cookie(
+        key="sessie_id",
+        value=sessie_id,
+        max_age=60 * 60 * 24 * 30,
+        httponly=True,
+    )
+    return antwoord
+
+@app.get("/berichten")
+async def berichten():
+    with SqliteDict("gastenboek.db") as db:
+        return dict(db)
+
+@app.delete("/bericht/{sleutel}")
+async def bericht_verwijderen(sleutel: str, sessie_id: str = Cookie(default="")):
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {})
+    if sleutel not in mijn.get("berichten", []):
+        raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
+
+    with SqliteDict("gastenboek.db") as db:
+        if sleutel in db:
+            del db[sleutel]
+            db.commit()
+    return {"bericht": "Verwijderd"}
+
+@app.post("/uitloggen")
+async def uitloggen(sessie_id: str = Cookie(default="")):
+    with SqliteDict("sessies.db") as sessies:
+        if sessie_id in sessies:
+            del sessies[sessie_id]
+            sessies.commit()
+    antwoord = JSONResponse({"bericht": "Uitgelogd"})
+    antwoord.delete_cookie("sessie_id")
+    return antwoord
+```
+
+Je gastenboek kan nu inloggen via de sessie, en weer uitloggen.
+
+</details>
+
+Door naar [les 5: in je eigen project](./eigen-project).

@@ -1,11 +1,11 @@
 ---
-sidebar_label: '3. In de praktijk'
+sidebar_label: '6. In de praktijk'
 description: Waarom XSS gevaarlijk is, waarom je bij de uitvoer escapet en niet bij de invoer filtert, en wat een Content-Security-Policy toevoegt.
 ---
 
 # HTML van een bezoeker: in de praktijk
 
-Met templates en `escape` uit [de oplossing](./oplossing) heb je het
+Met `escape` en templates uit [les 2 tot en met 4](./escape) heb je het
 belangrijkste gedaan. Echte sites doen er nog wat bij, omdat één vergeten plek
 genoeg is.
 
@@ -20,7 +20,9 @@ geen reden om te twijfelen.
 Daarom staat XSS al twintig jaar in elke lijst van de meest gevonden zwakheden
 in webapplicaties.
 
-## Escapen bij de uitvoer, niet filteren bij de invoer
+## Wat jij zelf doet
+
+### Escapen bij de uitvoer, niet filteren bij de invoer
 
 Een idee dat vaak opkomt: haal bij het opslaan alle `<script>` uit de tekst. Dat
 werkt niet goed. HTML kent veel meer manieren om code te laten draaien dan
@@ -32,7 +34,12 @@ Escapen werkt andersom. Je laat de tekst zoals hij is, en zorgt op de plek waar
 hij in de HTML komt dat hij tekst blijft. Dan maakt het niet uit wat erin
 staat.
 
-## Een tweede slot: Content-Security-Policy
+## Wat grote sites nog meer doen
+
+Dit hoef je voor je eigen project niet te bouwen. Klap open wat je wilt lezen.
+
+<details>
+<summary>Een tweede slot: Content-Security-Policy</summary>
 
 Een site kan de browser vertellen welke scripts hij mag uitvoeren. Dat heet een
 **Content-Security-Policy**, en het is een regel in de kop van elk antwoord.
@@ -57,12 +64,17 @@ Het is een tweede slot en geen vervanging, dus escapen blijft nodig. Eigen
 JavaScript moet dan wel in een `.js`-bestand staan, niet in een `<script>` in je
 HTML.
 
-## Cookies buiten bereik van scripts
+</details>
+
+<details>
+<summary>Cookies buiten bereik van scripts</summary>
 
 Een script in de pagina kan met `document.cookie` de cookies van die pagina
 lezen, ook het sessie-id. Met één instelling in `set_cookie` houd je de
 sessie-cookie daarbuiten. Dat staat in de reeks
 [Cookies afschermen](../cookies/zwakheid).
+
+</details>
 
 ## Op een site van een ander
 
@@ -90,3 +102,5 @@ bezoeker, en wat moet er anders bij de rest?
 4. Veilig: het getal komt van je eigen code, niet van de bezoeker.
 
 </details>
+
+Door naar de volgende reeks: [Wie mag wat](../toegang/zwakheid).

@@ -587,6 +587,23 @@ je-project/
 ## Veiligheid
 
 <details>
+<summary>Wat betekent deze statuscode?</summary>
+
+| Code | Betekent | Wie stuurt hem |
+|:---:|---|---|
+| `200` | gelukt | je endpoint |
+| `400` | dit verzoek klopt niet | jij, met `HTTPException` |
+| `403` | dit mag jij niet | jij, bij iets van een ander |
+| `404` | bestaat niet | FastAPI of jij |
+| `422` | een veld past niet bij `Form` | FastAPI, vóór je functie |
+| `429` | te veel verzoeken | `slowapi` |
+| `500` | fout in je server | niemand bewust; kijk in de terminal |
+
+Meer uitleg: [Veiligheid, de startpagina](/docs/veiligheid#statuscodes).
+
+</details>
+
+<details>
 <summary>Wachtwoord hashen en controleren (Argon2)</summary>
 
 ```python

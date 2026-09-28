@@ -3,6 +3,8 @@ sidebar_label: '6. Inloggen met verify'
 description: Controleer bij het inloggen een wachtwoord tegen de Argon2-hash met ph.verify, en vang een fout wachtwoord af.
 ---
 
+import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
+
 # Wachtwoorden: inloggen met verify
 
 <Voorkennis
@@ -86,6 +88,12 @@ bob, welkom123: Naam of wachtwoord klopt niet
 
 Sara komt binnen met haar eigen wachtwoord, en niet met een wachtwoord dat er
 één letter naast zit. Bob heeft geen account en krijgt dezelfde melding.
+
+## Waar de controle zit
+
+Registreren en inloggen naast elkaar: de server maakt en controleert de hash, de browser ziet hem nooit.
+
+<VerzoekCyclus variant="wachtwoorden" />
 
 ## Er gaat iets mis
 

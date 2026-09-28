@@ -81,27 +81,70 @@ const sidebars: SidebarsConfig = {
       ],
     },
   ],
-  // Per zwakheid een categorie met kleine lessen, één idee per les: de zwakheid
-  // (zelf nadoen, op je eigen server), de oplossing, en als laatste wat er in de
-  // praktijk nog gebeurt.
+  // Eerst de startpagina (het ene idee, de spelregel, de statuscodes) en het
+  // gereedschap (httpx). Dan per zwakheid een categorie met kleine lessen, van
+  // dichtbij het eigen gastenboek naar ver weg: invoer, xss, toegang, cookies,
+  // wachtwoorden, dos. Ingeklapt, zodat de sidebar een kaart blijft; Docusaurus
+  // klapt de reeks open waar de leerling in zit.
   veiligheidSidebar: [
+    'veiligheid/index',
+    'veiligheid/gereedschap',
     {
       type: 'category',
-      label: 'Te veel verzoeken (DoS)',
-      collapsed: false,
+      label: 'Invoer controleren',
+      collapsed: true,
       items: [
-        'veiligheid/dos/verzoek',
-        'veiligheid/dos/dos-en-ddos',
-        'veiligheid/dos/zelf-meten',
-        'veiligheid/dos/limiet',
-        'veiligheid/dos/te-veel',
-        'veiligheid/dos/praktijk',
+        'veiligheid/invoer/maxlength',
+        'veiligheid/invoer/grenzen',
+        'veiligheid/invoer/fouten-lezen',
+        'veiligheid/invoer/inhoud',
+        'veiligheid/invoer/getallen',
+        'veiligheid/invoer/praktijk',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'HTML van een bezoeker (XSS)',
+      collapsed: true,
+      items: [
+        'veiligheid/xss/zwakheid',
+        'veiligheid/xss/escape',
+        'veiligheid/xss/templates',
+        'veiligheid/xss/safe',
+        'veiligheid/xss/eigen-project',
+        'veiligheid/xss/praktijk',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Wie mag wat',
+      collapsed: true,
+      items: [
+        'veiligheid/toegang/zwakheid',
+        'veiligheid/toegang/controle',
+        'veiligheid/toegang/server-weet',
+        'veiligheid/toegang/elk-endpoint',
+        'veiligheid/toegang/eigen-project',
+        'veiligheid/toegang/praktijk',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Cookies afschermen',
+      collapsed: true,
+      items: [
+        'veiligheid/cookies/zwakheid',
+        'veiligheid/cookies/httponly',
+        'veiligheid/cookies/samesite',
+        'veiligheid/cookies/uitloggen',
+        'veiligheid/cookies/eigen-project',
+        'veiligheid/cookies/praktijk',
       ],
     },
     {
       type: 'category',
       label: 'Wachtwoorden veilig opslaan',
-      collapsed: false,
+      collapsed: true,
       items: [
         'veiligheid/wachtwoorden/gewone-tekst',
         'veiligheid/wachtwoorden/hash',
@@ -115,43 +158,18 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: 'Wie mag wat',
-      collapsed: false,
+      label: 'Te veel verzoeken (DoS)',
+      collapsed: true,
       items: [
-        'veiligheid/toegang/zwakheid',
-        'veiligheid/toegang/oplossing',
-        'veiligheid/toegang/praktijk',
+        'veiligheid/dos/verzoek',
+        'veiligheid/dos/dos-en-ddos',
+        'veiligheid/dos/zelf-meten',
+        'veiligheid/dos/limiet',
+        'veiligheid/dos/te-veel',
+        'veiligheid/dos/praktijk',
       ],
     },
-    {
-      type: 'category',
-      label: 'HTML van een bezoeker (XSS)',
-      collapsed: false,
-      items: ['veiligheid/xss/zwakheid', 'veiligheid/xss/oplossing', 'veiligheid/xss/praktijk'],
-    },
-    {
-      type: 'category',
-      label: 'Cookies afschermen',
-      collapsed: false,
-      items: [
-        'veiligheid/cookies/zwakheid',
-        'veiligheid/cookies/oplossing',
-        'veiligheid/cookies/praktijk',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'Invoer controleren',
-      collapsed: false,
-      items: [
-        'veiligheid/invoer/maxlength',
-        'veiligheid/invoer/grenzen',
-        'veiligheid/invoer/fouten-lezen',
-        'veiligheid/invoer/inhoud',
-        'veiligheid/invoer/getallen',
-        'veiligheid/invoer/praktijk',
-      ],
-    },
+    'veiligheid/eigen-project',
   ],
 };
 

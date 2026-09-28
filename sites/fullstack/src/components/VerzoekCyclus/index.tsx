@@ -12,6 +12,11 @@ import styles from './styles.module.css';
 // 'throw', dus een hernoemde les breekt de build in plaats van stilletjes een
 // dode link op te leveren. De twee vroege varianten linken alleen naar lessen
 // die de leerling dan al heeft gehad.
+//
+// De route Veiligheid gebruikt hetzelfde rondje met één toevoeging: de stap
+// waar de server controleert, heeft `controle` en valt op. Zo ziet de leerling
+// per reeks waar de grens zit, en dat die altijd aan de kant van de server
+// staat.
 
 type Kant = 'browser' | 'server';
 
@@ -25,6 +30,8 @@ type Stap = {
   to?: string;
   /** Linktekst; alleen nodig als `to` gezet is. */
   les?: string;
+  /** Hier controleert de server (route Veiligheid). */
+  controle?: boolean;
 };
 
 const EERSTE_STAPPEN: Stap[] = [
@@ -301,6 +308,211 @@ const SESSIE_STAPPEN: Stap[] = [
   },
 ];
 
+const INVOER_STAPPEN: Stap[] = [
+  {
+    kant: 'browser',
+    titel: 'Je vult het formulier in',
+    tekst: 'maxlength houdt je tegen, maar alleen in de browser.',
+    to: '/docs/veiligheid/invoer/maxlength',
+    les: 'maxlength is geen controle',
+  },
+  {
+    kant: 'browser',
+    titel: 'Een script slaat de browser over',
+    tekst: 'httpx stuurt hetzelfde verzoek, zonder maxlength en zonder formulier.',
+    to: '/docs/veiligheid/gereedschap',
+    les: 'Een script als bezoeker',
+  },
+  {
+    kant: 'server',
+    titel: 'FastAPI leest het formulier',
+    tekst: 'max_length, ge en le in Form: te lang of geen getal geeft een 422.',
+    to: '/docs/veiligheid/invoer/grenzen',
+    les: 'Grenzen in Form',
+    controle: true,
+  },
+  {
+    kant: 'server',
+    titel: 'Jouw functie controleert de inhoud',
+    tekst: 'Een naam van alleen spaties geeft jouw eigen 400.',
+    to: '/docs/veiligheid/invoer/inhoud',
+    les: 'De inhoud controleren',
+    controle: true,
+  },
+  {
+    kant: 'server',
+    titel: 'Pas dan de database in',
+    tekst: 'Wat hier aankomt, heeft beide controles gehad.',
+  },
+  {
+    kant: 'browser',
+    titel: 'Het antwoord komt terug',
+    tekst: 'Een 200, of een 422 of 400 met in detail wat er mis is.',
+    to: '/docs/veiligheid/invoer/fouten-lezen',
+    les: 'Een 422 lezen',
+  },
+];
+
+const XSS_STAPPEN: Stap[] = [
+  {
+    kant: 'browser',
+    titel: 'Een bezoeker typt HTML',
+    tekst: 'Bijvoorbeeld <b>vet</b> in zijn bericht.',
+    to: '/docs/veiligheid/xss/zwakheid',
+    les: 'De zwakheid',
+  },
+  {
+    kant: 'server',
+    titel: 'Het bericht gaat de database in',
+    tekst: 'Zoals het getypt is. Dat is prima: het gevaar zit pas bij het tonen.',
+  },
+  {
+    kant: 'browser',
+    titel: 'Een ander vraagt de lijst op',
+    tekst: 'Met hx-get of door de pagina te openen.',
+  },
+  {
+    kant: 'server',
+    titel: 'De lijst wordt HTML',
+    tekst: 'Een .html-template of escape() maakt van < een &lt;.',
+    to: '/docs/veiligheid/xss/escape',
+    les: 'Escapen in Python',
+    controle: true,
+  },
+  {
+    kant: 'browser',
+    titel: 'De browser toont tekst',
+    tekst: 'Je ziet <b>vet</b> met de haakjes erbij; niets van de bezoeker wordt HTML.',
+  },
+];
+
+const TOEGANG_STAPPEN: Stap[] = [
+  {
+    kant: 'browser',
+    titel: 'Alex stuurt een DELETE',
+    tekst: 'Met de sleutel van het bericht van Sara; die staat gewoon in de pagina.',
+    to: '/docs/veiligheid/toegang/zwakheid',
+    les: 'De zwakheid',
+  },
+  {
+    kant: 'server',
+    titel: 'Het endpoint haalt de sessie op',
+    tekst: 'Uit de cookie het sessie-id, uit sessies.db de sleutels van Alex.',
+    to: '/docs/FastAPI/sessies',
+    les: 'Sessies',
+  },
+  {
+    kant: 'server',
+    titel: 'Is dit bericht van Alex?',
+    tekst: 'Nee: 403, en er verandert niets. Pas bij ja gaat het bericht weg.',
+    to: '/docs/veiligheid/toegang/controle',
+    les: 'De controle met 403',
+    controle: true,
+  },
+  {
+    kant: 'browser',
+    titel: 'Alex krijgt een 403',
+    tekst: 'Het bericht van Sara staat er nog.',
+  },
+];
+
+const COOKIES_STAPPEN: Stap[] = [
+  {
+    kant: 'server',
+    titel: 'De server zet de sessie-cookie',
+    tekst: 'Met httponly=True in set_cookie.',
+    to: '/docs/veiligheid/cookies/httponly',
+    les: 'httponly',
+    controle: true,
+  },
+  {
+    kant: 'browser',
+    titel: 'De browser bewaart hem',
+    tekst: 'In het tabblad App staat een vinkje bij HttpOnly.',
+  },
+  {
+    kant: 'browser',
+    titel: 'Een script vraagt document.cookie',
+    tekst: 'Het krijgt de sessie-cookie niet te zien.',
+    to: '/docs/veiligheid/cookies/zwakheid',
+    les: 'De zwakheid',
+  },
+  {
+    kant: 'server',
+    titel: 'Bij een verzoek gaat hij wel mee',
+    tekst: 'De browser stuurt hem in de kop Cookie; je server leest hem met Cookie().',
+  },
+  {
+    kant: 'browser',
+    titel: 'Het antwoord komt terug',
+    tekst: 'De server heeft je herkend, zonder dat een script het sessie-id zag.',
+  },
+];
+
+const WACHTWOORDEN_STAPPEN: Stap[] = [
+  {
+    kant: 'browser',
+    titel: 'Je registreert',
+    tekst: 'Naam en wachtwoord gaan via het formulier naar de server.',
+  },
+  {
+    kant: 'server',
+    titel: 'ph.hash maakt de hash',
+    tekst: 'Met een eigen zout, en expres traag. Alleen de hash gaat de database in.',
+    to: '/docs/veiligheid/wachtwoorden/registreren',
+    les: 'Registreren met Argon2',
+    controle: true,
+  },
+  {
+    kant: 'browser',
+    titel: 'Je logt in',
+    tekst: 'Weer naam en wachtwoord via het formulier.',
+  },
+  {
+    kant: 'server',
+    titel: 'ph.verify vergelijkt',
+    tekst: 'Met het zout en de instellingen uit de opgeslagen hash.',
+    to: '/docs/veiligheid/wachtwoorden/inloggen',
+    les: 'Inloggen met verify',
+    controle: true,
+  },
+  {
+    kant: 'browser',
+    titel: 'Ingelogd, of één melding',
+    tekst: 'Een foute naam en een fout wachtwoord geven hetzelfde antwoord.',
+  },
+];
+
+const DOS_STAPPEN: Stap[] = [
+  {
+    kant: 'browser',
+    titel: 'Een script stuurt veel verzoeken',
+    tekst: 'Veel meer dan een mens die een pagina leest.',
+    to: '/docs/veiligheid/dos/zelf-meten',
+    les: 'Zelf twintig verzoeken',
+  },
+  {
+    kant: 'server',
+    titel: 'slowapi telt per computer',
+    tekst: 'Vóór je functie draait, met @limiter.limit erboven.',
+    to: '/docs/veiligheid/dos/limiet',
+    les: 'Een limiet met slowapi',
+    controle: true,
+  },
+  {
+    kant: 'server',
+    titel: 'Binnen de grens: je functie draait',
+    tekst: 'Zoals altijd, en het antwoord gaat terug.',
+  },
+  {
+    kant: 'browser',
+    titel: 'Over de grens: een 429',
+    tekst: 'Je functie draait niet. Met headers_enabled staat erbij wanneer het weer mag.',
+    to: '/docs/veiligheid/dos/te-veel',
+    les: 'Wat de 429 vertelt',
+  },
+];
+
 const VARIANTEN = {
   eerste: { stappen: EERSTE_STAPPEN, titel: 'Je eerste verzoek' },
   static: { stappen: STATIC_STAPPEN, titel: 'Eén pagina, drie verzoeken' },
@@ -308,6 +520,12 @@ const VARIANTEN = {
   post: { stappen: POST_STAPPEN, titel: 'Een formulier versturen' },
   htmx: { stappen: HTMX_STAPPEN, titel: 'Een verzoek zonder herladen' },
   sessie: { stappen: SESSIE_STAPPEN, titel: 'Herkend worden met een sessie' },
+  invoer: { stappen: INVOER_STAPPEN, titel: 'Waar de controle zit: invoer' },
+  xss: { stappen: XSS_STAPPEN, titel: 'Waar de controle zit: HTML van een bezoeker' },
+  toegang: { stappen: TOEGANG_STAPPEN, titel: 'Waar de controle zit: wie mag wat' },
+  cookies: { stappen: COOKIES_STAPPEN, titel: 'Waar de controle zit: cookies' },
+  wachtwoorden: { stappen: WACHTWOORDEN_STAPPEN, titel: 'Waar de controle zit: wachtwoorden' },
+  dos: { stappen: DOS_STAPPEN, titel: 'Waar de controle zit: te veel verzoeken' },
 } as const;
 
 export default function VerzoekCyclus({
@@ -335,7 +553,10 @@ export default function VerzoekCyclus({
           const pijl = !wisselt ? '' : stap.kant === 'server' ? '→' : '←';
 
           return (
-            <li key={stap.titel + stap.kant} className={clsx(styles.stap, styles[stap.kant])}>
+            <li
+              key={stap.titel + stap.kant}
+              className={clsx(styles.stap, styles[stap.kant], stap.controle && styles.controle)}
+            >
               <span className={styles.nummer} aria-hidden="true">
                 {i + 1}
               </span>
@@ -345,6 +566,11 @@ export default function VerzoekCyclus({
                 <span className={clsx(styles.stip, stap.kant === 'server' && styles.actief)} />
               </span>
               <p className={styles.inhoud}>
+                {stap.controle && (
+                  <span className={styles.controleLabel}>
+                    <span className={styles.srOnly}>Hier zit de </span>controle
+                  </span>
+                )}
                 <strong className={styles.stapTitel}>
                   <span className={styles.srOnly}>
                     {stap.kant === 'browser' ? 'Browser: ' : 'Server: '}

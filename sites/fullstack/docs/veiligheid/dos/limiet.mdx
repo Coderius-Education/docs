@@ -3,6 +3,8 @@ sidebar_label: '4. Een limiet met slowapi'
 description: Zet een verzoeklimiet op je endpoint met slowapi, zodat één bezoeker niet onbeperkt verzoeken kan laten beantwoorden.
 ---
 
+import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
+
 # Te veel verzoeken: een limiet met slowapi
 
 In [les 3](./zelf-meten) beantwoordde je server elk verzoek. Je kunt niet
@@ -84,12 +86,19 @@ Verzoek 7: status 429
 ```
 
 en zo verder tot verzoek 20, met aan het eind `Gelukt: 5 van de 20`. De eerste
-vijf krijgen antwoord, de rest weigert je server met `429`. Hoeveel het script
+vijf krijgen antwoord, de rest weigert je server met `429`, de code voor te veel
+verzoeken uit [het overzicht](/docs/veiligheid#statuscodes). Hoeveel het script
 ook stuurt, je server doet nog maar vijf keer echt werk per minuut. Een bezoeker
 die één keer je pagina opvraagt, merkt er niets van.
 
 Draai je het script meteen nog een keer, dan krijg je twintig keer `429`: de
 minuut is nog niet om, en je hebt je vijf al gehad.
+
+## Waar de controle zit
+
+De limiet telt vóór je functie draait. Een geweigerd verzoek kost je server daardoor bijna geen werk.
+
+<VerzoekCyclus variant="dos" />
 
 ## Er gaat iets mis
 
