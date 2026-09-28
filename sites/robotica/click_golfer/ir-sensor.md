@@ -23,11 +23,11 @@ De sensor heeft ook een pin **D0**. Die laat je leeg. D0 geeft alleen "wel bal" 
 
 ## Stap 1: het getal uitlezen
 
-Met het blok **Lees anapin A0** lees je het getal van de sensor. **Toon op scherm** laat het zien.
+Met het blok **Lees anapin A0** lees je het getal van de sensor. Je vindt het in de groep **Sensoren**. **Toon op scherm** uit **Actuatoren** laat het getal zien: sleep **Lees anapin** op de plek van het tekstvakje.
 
 <Blokken programma={uitlezen} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: Toon op scherm Lees anapin A0, en daarna duurt 500 ms." />
 
-Het blok **herhaal voor altijd** doet alles wat erin staat steeds opnieuw. Zonder dat blok las je robot de sensor één keer, en daarna nooit meer. **duurt 500 ms** laat de robot een halve seconde wachten, zodat je het getal kunt lezen.
+Het blok **herhaal voor altijd** uit **Denk stappen** doet alles wat erin staat steeds opnieuw. Zonder dat blok las je robot de sensor één keer, en daarna nooit meer. **duurt 500 ms**, ook uit **Denk stappen**, laat de robot een halve seconde wachten, zodat je het getal kunt lezen.
 
 Klik op **Upload naar robot** en open het scherm met de knop **Toon output op scherm**, zoals bij [je eerste programma](easybloqs). Er verschijnt elke halve seconde een nieuw getal. Leg een bal voor de sensor en haal hem weer weg. Hoe verandert het getal? Schrijf de twee getallen op: zonder bal en met bal.
 
@@ -47,7 +47,7 @@ Zonder herhaal leest de robot de sensor één keer, bij het aanzetten. Je wilt s
 
 ## Stap 2: reageren op de bal
 
-Nu laat je de robot zelf beslissen. Met het blok **als … dan** kijk je of het getal kleiner is dan een grens. In het voorbeeld is die grens **300**.
+Nu laat je de robot zelf beslissen. Met het blok **als … dan** uit **Denk stappen** kijk je of het getal kleiner is dan een grens. In het voorbeeld is die grens **300**. Het vergelijkblok vind je in **Functies**: zet **Lees anapin A0** in het linkervakje, kies in het keuzelijstje **<**, en typ in het rechtervakje je grens.
 
 <Blokken programma={balKlaar} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan Toon op scherm 'klaar om te golfen!'. Daarna duurt 500 ms." />
 

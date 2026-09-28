@@ -33,7 +33,7 @@ Alles daartussen kan ook, zoals 45° of 135°.
 
 ## Heen en weer
 
-Het blok **Servo 9 op 90** zet de servo op pin 9 in de stand van 90 graden. Dit programma laat de arm heen en weer gaan:
+Het blok **Servo 9 op 90** uit de groep **Actuatoren** zet de servo op pin 9 in de stand van 90 graden. Dit programma laat de arm heen en weer gaan:
 
 <Blokken programma={heenEnWeer} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: Servo 9 op 0, duurt 1000 ms, Servo 9 op 90, duurt 1000 ms." />
 

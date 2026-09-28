@@ -10,7 +10,7 @@ Een echte golfer slaat niet meteen: hij zwaait eerst rustig heen en weer om te m
 
 ## Een variabele
 
-Een **variabele** is een doosje met een naam, waar een getal in zit. Dat getal kan je programma veranderen. Maak in Easybloqs bij de oranje blokken een variabele en noem hem `hoek`.
+Een **variabele** is een doosje met een naam, waar een getal in zit. Dat getal kan je programma veranderen. Klik in Easybloqs op de groep **Variabelen** en daarna op **Variabele maken...**. Noem hem `hoek`.
 
 Drie blokken heb je nodig:
 
@@ -24,7 +24,7 @@ De sensor zit nog op **A0** en de servo op **D9**, net als bij [Zie de bal, sla 
 
 <Blokken programma={mikken} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan: Servo 9 op 0, duurt 500 ms, stel hoek in op 0. Herhaal 50 keer: Servo 9 op hoek, duurt 10 ms, wijzig hoek met 1. Herhaal 50 keer: Servo 9 op hoek, duurt 10 ms, wijzig hoek met -1. Daarna Servo 9 op 90, duurt 500 ms, en duurt 2000 ms." />
 
-**herhaal 50 keer** doet de blokken erin vijftig keer achter elkaar. Elke keer gaat de arm naar de stand in `hoek`, wacht 10 ms, en komt er 1 bij.
+**herhaal 50 keer** uit **Denk stappen** doet de blokken erin vijftig keer achter elkaar. Elke keer gaat de arm naar de stand in `hoek`, wacht 10 ms, en komt er 1 bij.
 
 <details>
 <summary>Voorspel: welk getal zit er in hoek na het eerste herhaal-blok?</summary>

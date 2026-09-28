@@ -11,12 +11,14 @@ Je programma uit [Mikken](mikken) werkt, maar het is lang geworden. Als je er sn
 
 ## Een subprogramma maken
 
-Je maakt twee subprogramma's: `mikken` en `slaan`.
+Je maakt twee subprogramma's: `mikken` en `slaan`. Eén ding moet je daarvoor weten: sleep je een blok, dan gaan **alle blokken eronder mee**. Daarom werk je van onder naar boven.
 
-1. Pak in Easybloqs het blok **Subprogramma** en noem het `mikken`.
-2. Sleep de blokken voor het mikken uit je programma erin: **stel hoek in op 0** en de twee **herhaal 50 keer**-blokken.
-3. Klik met de rechtermuisknop op het subprogramma en kies **Maak "mikken"**. Je krijgt een blok **mikken**. Zet dat in je programma, op de plek waar de blokken eerst stonden.
-4. Doe hetzelfde voor `slaan`, met **Servo 9 op 90** en **duurt 500 ms**.
+1. Klik op de groep **Eigen blokken** en sleep twee keer het blok **Subprogramma** naar een lege plek. Noem het ene `mikken` en het andere `slaan`.
+2. Sleep **duurt 2000 ms**, het onderste blok in **als … dan**, even opzij naar een lege plek.
+3. Sleep **Servo 9 op 90** in het subprogramma `slaan`. **duurt 500 ms** eronder gaat vanzelf mee.
+4. Sleep **stel hoek in op 0** in het subprogramma `mikken`. De twee **herhaal 50 keer**-blokken gaan vanzelf mee.
+5. Klik met de rechtermuisknop op het subprogramma `mikken` en kies **Maak "mikken"**. Je krijgt een blok **mikken**. Doe hetzelfde voor `slaan`.
+6. Zet in **als … dan**, onder **duurt 500 ms**: eerst het blok **mikken**, dan **slaan**, en dan **duurt 2000 ms** terug.
 
 ## Het programma
 
@@ -42,12 +44,16 @@ Maak ook een subprogramma `achter`, voor de blokken die de arm naar 0° zetten.
 <details>
 <summary>Klik hier voor een tip!</summary>
 
-Het gaat om de twee blokken bovenaan in **als … dan**: **Servo 9 op 0** en **duurt 500 ms**.
+Het gaat om de twee blokken bovenaan in **als … dan**: **Servo 9 op 0** en **duurt 500 ms**. Sleep je **Servo 9 op 0**, dan gaat alles eronder mee. Sleep daarom eerst het blok **mikken**, met alles eronder, even opzij.
 
 </details>
 
 <details>
 <summary>Klik hier voor het antwoord!</summary>
+
+1. Sleep het blok **mikken** in **als … dan** opzij. **slaan** en **duurt 2000 ms** gaan mee.
+2. Maak een subprogramma `achter` en sleep **Servo 9 op 0** erin. **duurt 500 ms** gaat mee.
+3. Kies met de rechtermuisknop **Maak "achter"**, zet het blok **achter** in **als … dan**, en zet het opzij gezette stapeltje eronder.
 
 <Blokken programma={metAchter} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan achter, mikken, slaan en duurt 2000 ms. Daaronder de subprogramma's achter (Servo 9 op 0, duurt 500 ms), mikken en slaan (Servo 9 op 90, duurt 500 ms)." />
 
@@ -57,11 +63,17 @@ Het Leaphy-blok leest nu als een zin: *achter, mikken, slaan*.
 
 ## Er gaat iets mis
 
-Je hebt het subprogramma `slaan` gemaakt, maar de arm slaat niet meer.
+**Je hebt het subprogramma `slaan` gemaakt, maar de arm slaat niet meer.**
 
 **Oorzaak:** een subprogramma doet pas iets als het blok met zijn naam in je programma staat. Je sleepte de servo-blokken naar het subprogramma, maar zette het blok **slaan** niet terug.
 
 **Oplossing:** klik met de rechtermuisknop op het subprogramma `slaan`, kies **Maak "slaan"**, en zet het blok onder **mikken**.
+
+**In het subprogramma `mikken` staan ook de blokken van het slaan.**
+
+**Oorzaak:** je sleepte **stel hoek in op 0** naar `mikken` terwijl de blokken van het slaan er nog onder zaten. Alles wat onder een blok vastzit, gaat mee.
+
+**Oplossing:** sleep **Servo 9 op 90** uit `mikken` naar `slaan`. De blokken eronder gaan weer mee. Sleep **duurt 2000 ms** daarna terug onder **slaan** in **als … dan**.
 
 <details>
 <summary>Controlevraag</summary>

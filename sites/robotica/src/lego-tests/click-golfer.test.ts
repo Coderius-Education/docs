@@ -110,7 +110,7 @@ describe('de hardware-uitleg klopt', () => {
       'Ga terug naar code scherm',
       'Toon output op scherm',
       'Geen robot geselecteerd',
-      'Web serial wordt niet ondersteund',
+      'Geen seriële verbinding mogelijk vanwege de browser',
       'RST',
     ]) {
       expect(inhoud).toContain(`**${label}**`);
@@ -184,6 +184,42 @@ describe('de volgorde van de route', () => {
       return !slot.includes(`](${volgende})`);
     });
     expect(zonder).toEqual([]);
+  });
+
+  it('de pagina waar een blok voor het eerst voorkomt, zegt in welke groep het staat', () => {
+    // Een leerling die nog nooit programmeerde, zoekt eerst naar het blok.
+    // De groepen komen uit de toolbox van Easybloqs voor de Arduino Nano
+    // (leaphy-webbased: src/assets/blockly/base-toolbox.xml en
+    // leaphy-toolbox.xml; de Nano toont Functies en niet Getal blokken).
+    const GROEP: Record<string, string> = {
+      analog_read: 'Sensoren',
+      leaphy_serial_print_line: 'Actuatoren',
+      leaphy_servo_write: 'Actuatoren',
+      controls_repeat_forever: 'Denk stappen',
+      controls_repeat_ext: 'Denk stappen',
+      controls_if: 'Denk stappen',
+      time_delay: 'Denk stappen',
+      logic_compare: 'Functies',
+      math_random_int: 'Functies',
+      variables_set: 'Variabelen',
+      procedures_defnoreturn: 'Eigen blokken',
+    };
+    const gezien = new Set<string>();
+    const zonder: string[] = [];
+    for (const naam of VOLGORDE) {
+      const inhoud = tekst(`${naam}.md`);
+      for (const m of inhoud.matchAll(/from '\.\/blokken\/([^']+\.json)'/g)) {
+        const programma = readFileSync(join(CLICK, 'blokken', m[1]), 'utf8');
+        for (const [type, groep] of Object.entries(GROEP)) {
+          if (gezien.has(type) || !programma.includes(`"type": "${type}"`)) continue;
+          gezien.add(type);
+          if (!inhoud.includes(`**${groep}**`))
+            zonder.push(`${naam}: ${type} zonder groep ${groep}`);
+        }
+      }
+    }
+    expect(zonder).toEqual([]);
+    expect(gezien.size).toBe(Object.keys(GROEP).length);
   });
 
   it('geen PDF in de pagina: de lessen staan op de site zelf', () => {
