@@ -222,6 +222,21 @@ describe('de volgorde van de route', () => {
     expect(gezien.size).toBe(Object.keys(GROEP).length);
   });
 
+  it('voor het bouwen is er nog geen arm, alleen het asje van de servo', () => {
+    // De servo- en de slaanles komen vóór de Lego. Een les die zegt "de arm
+    // gaat naar 0°" laat een leerling zoeken naar iets wat nog niet bestaat.
+    // Alleen een zin die zegt dat de arm straks of later komt, mag hem noemen.
+    const voorBouwen = VOLGORDE.slice(0, VOLGORDE.indexOf('bouwen')).filter((n) => n !== 'intro');
+    const met: string[] = [];
+    for (const naam of voorBouwen) {
+      for (const zin of tekst(`${naam}.md`).split(/(?<=[.?!])\s+/)) {
+        if (/\barm\b/i.test(zin) && !/straks|later/i.test(zin))
+          met.push(`${naam}: ${zin.slice(0, 60)}`);
+      }
+    }
+    expect(met).toEqual([]);
+  });
+
   it('geen PDF in de pagina: de lessen staan op de site zelf', () => {
     const met = paginas().filter((f) => /<iframe|\.pdf/.test(tekst(f)));
     expect(met).toEqual([]);

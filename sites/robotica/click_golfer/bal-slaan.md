@@ -6,7 +6,7 @@ import balSlaan from './blokken/bal-slaan.json';
 
 # Zie de bal, sla de bal
 
-Je robot ziet de bal met [de IR-sensor](ir-sensor), en beweegt de arm met [de servo](servo). Nu zet je die twee samen: ligt er een bal, dan slaat de arm.
+Je robot ziet de bal met [de IR-sensor](ir-sensor), en laat [de servo](servo) draaien. Nu zet je die twee samen: ligt er een bal, dan slaat de servo. Nog zonder Lego: kijk naar het asje, net als bij de servo.
 
 ## Het programma
 
@@ -21,15 +21,15 @@ Niets. Het getal van de sensor is dan groter dan 300, dus de blokken in **als �
 
 </details>
 
-Gebruik als grens het getal dat jij bij de IR-sensor hebt gekozen. Klik op **Upload naar robot** en leg een bal voor de sensor: de arm slaat naar 90° en gaat terug naar 0°.
+Gebruik als grens het getal dat jij bij de IR-sensor hebt gekozen. Klik op **Upload naar robot** en leg een bal voor de sensor: het asje draait naar 90° en terug naar 0°.
 
 ## Waarom wachten?
 
-Na het terugzetten wacht de robot twee seconden: **duurt 2000 ms**. Op de baan rolt de bal na een slag soms terug. Zonder wachttijd ziet de sensor die bal meteen weer, en slaat de arm nog een keer terwijl de bal nog rolt.
+Na het terugzetten wacht de robot twee seconden: **duurt 2000 ms**. Op de baan rolt de bal na een slag soms terug. Zonder wachttijd ziet de sensor die bal meteen weer, en slaat de robot nog een keer terwijl de bal nog rolt.
 
 ## Er gaat iets mis
 
-De arm blijft slaan, ook als er geen bal ligt.
+De servo blijft slaan, ook als er geen bal ligt.
 
 **Oorzaak:** je grens is te hoog. Het getal zonder bal is al kleiner dan de grens.
 
