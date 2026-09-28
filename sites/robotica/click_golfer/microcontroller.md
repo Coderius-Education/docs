@@ -52,7 +52,7 @@ Je programmeert de Arduino met blokken in **Easybloqs**.
 1. Ga naar **leaphyeasybloqs.com**.
 2. Kies de robot **Arduino Nano**.
 3. Sluit je robot met de usb-kabel aan op je laptop.
-4. Zet de taal van Easybloqs op **Nederlands**. Dan zien je blokken er hetzelfde uit als op deze site.
+4. Zet de taal op **Nederlands**: kies in het menu **Meer…** en daarna **Taal**. Dan zien je blokken er hetzelfde uit als op deze site.
 
 ## Je eerste programma
 

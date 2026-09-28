@@ -86,6 +86,10 @@ describe('de hardware-uitleg klopt', () => {
     // andere pinnen in de blokken dan de lessen noemen.
     expect(tekst('microcontroller.md')).toMatch(/Kies de robot \*\*Arduino Nano\*\*/);
     const verkeerd = paginas().filter((f) => /Leaphy Click/.test(tekst(f)));
+    // De blokken op de site zijn Nederlands; de leerling moet zien waar hij
+    // Easybloqs ook op Nederlands zet, anders staat er 'Read anapin' waar de
+    // les 'Lees anapin' zegt.
+    expect(tekst('microcontroller.md')).toMatch(/\*\*Meer…\*\* en daarna \*\*Taal\*\*/);
     expect(verkeerd).toEqual([]);
   });
 
