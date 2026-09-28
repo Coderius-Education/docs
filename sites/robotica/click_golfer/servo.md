@@ -23,6 +23,8 @@ Zet je robot uit met de knop **ON/OFF**. Sluit de servo aan op de rij van **D9**
 | rood | 5V |
 | oranje | het signaal van **D9** |
 
+![Uitsnede van het schema: de servo rechtsonder, met de bruine draad naar GND, de rode naar 5V en de oranje naar het signaal van D9 op het shield.](@site/static/fritzing/click_golfer_servo.png)
+
 ## Graden
 
 Een servo draait een halve cirkel. Die halve cirkel is verdeeld in 180 stukjes: **graden**. Je schrijft dat met een klein rondje, zoals 90°.

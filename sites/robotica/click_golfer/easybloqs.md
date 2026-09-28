@@ -55,7 +55,11 @@ Er opent een venster met bovenaan **Toon output op scherm**. Dit is het scherm: 
 
 Je robot voerde het programma al uit toen de upload klaar was, en toen stond het scherm nog niet open. Daarom zie je de zin misschien nog niet.
 
-Druk op het kleine knopje op de Arduino zelf, met **RST** ernaast. Je robot begint dan opnieuw met het programma. In het scherm verschijnt:
+Druk op het kleine knopje op de Arduino zelf, met **RST** ernaast.
+
+![Uitsnede van de blauwe Arduino Nano op het shield: in het midden het kleine grijze knopje, met RST eronder.](@site/static/fritzing/click_golfer_rst.png)
+
+Je robot begint dan opnieuw met het programma. In het scherm verschijnt:
 
 ```
 Hallo, ik ben de Click Golfer

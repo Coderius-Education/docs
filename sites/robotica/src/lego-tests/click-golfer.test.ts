@@ -144,6 +144,14 @@ describe('de hardware-uitleg klopt', () => {
     expect(verkeerd).toEqual([]);
   });
 
+  it('wie iets aansluit, ziet het schema van dat onderdeel', () => {
+    // Een tabel met draadkleuren is voor groep 7/8 niet genoeg: bij het
+    // aansluiten hoort de uitsnede van het Fritzing-schema.
+    expect(tekst('ir-sensor.md')).toContain('fritzing/click_golfer_sensor.png');
+    expect(tekst('servo.md')).toContain('fritzing/click_golfer_servo.png');
+    expect(tekst('easybloqs.md')).toContain('fritzing/click_golfer_rst.png');
+  });
+
   it('de sensor- en de servoles noemen hun pin', () => {
     expect(tekst('ir-sensor.md')).toMatch(/\*\*A0\*\*/);
     expect(tekst('servo.md')).toMatch(/\*\*D9\*\*/);
@@ -191,18 +199,20 @@ describe('de volgorde van de route', () => {
     // De groepen komen uit de toolbox van Easybloqs voor de Arduino Nano
     // (leaphy-webbased: src/assets/blockly/base-toolbox.xml en
     // leaphy-toolbox.xml; de Nano toont Functies en niet Getal blokken).
-    const GROEP: Record<string, string> = {
-      analog_read: 'Sensoren',
-      leaphy_serial_print_line: 'Actuatoren',
-      leaphy_servo_write: 'Actuatoren',
-      controls_repeat_forever: 'Denk stappen',
-      controls_repeat_ext: 'Denk stappen',
-      controls_if: 'Denk stappen',
-      time_delay: 'Denk stappen',
-      logic_compare: 'Functies',
-      math_random_int: 'Functies',
-      variables_set: 'Variabelen',
-      procedures_defnoreturn: 'Eigen blokken',
+    // Per bloktype: de groep, en hoe de les het blok noemt (vet, zoals de
+    // leerling het in Easybloqs leest).
+    const GROEP: Record<string, [string, string]> = {
+      analog_read: ['Sensoren', 'Lees anapin'],
+      leaphy_serial_print_line: ['Actuatoren', 'Toon op scherm'],
+      leaphy_servo_write: ['Actuatoren', 'Servo'],
+      controls_repeat_forever: ['Denk stappen', 'herhaal voor altijd'],
+      controls_repeat_ext: ['Denk stappen', 'herhaal'],
+      controls_if: ['Denk stappen', 'als … dan'],
+      time_delay: ['Denk stappen', 'duurt'],
+      logic_compare: ['Functies', '`<`'],
+      math_random_int: ['Functies', 'willekeurig getal'],
+      variables_set: ['Variabelen', 'stel hoek in op'],
+      procedures_defnoreturn: ['Eigen blokken', 'Subprogramma'],
     };
     const gezien = new Set<string>();
     const zonder: string[] = [];
@@ -210,11 +220,12 @@ describe('de volgorde van de route', () => {
       const inhoud = tekst(`${naam}.md`);
       for (const m of inhoud.matchAll(/from '\.\/blokken\/([^']+\.json)'/g)) {
         const programma = readFileSync(join(CLICK, 'blokken', m[1]), 'utf8');
-        for (const [type, groep] of Object.entries(GROEP)) {
+        for (const [type, [groep, blok]] of Object.entries(GROEP)) {
           if (gezien.has(type) || !programma.includes(`"type": "${type}"`)) continue;
           gezien.add(type);
           if (!inhoud.includes(`**${groep}**`))
             zonder.push(`${naam}: ${type} zonder groep ${groep}`);
+          if (!inhoud.includes(`**${blok}`)) zonder.push(`${naam}: ${type} zonder de naam ${blok}`);
         }
       }
     }

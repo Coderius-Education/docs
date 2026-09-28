@@ -29,6 +29,8 @@ Naast elke pin van de Arduino zitten op het shield **drie pinnetjes op een rij**
 
 Een onderdeel heeft daarom meestal drie draadjes: een voor het signaal, een voor 5V en een voor GND. Onderaan het shield zit een knop **ON/OFF**. Daarmee zet je je robot aan en uit.
 
+![Uitsnede van het shield: het schuifje met ON links en OFF rechts, naast de tekst VIN = 3-16Vdc.](@site/static/fritzing/click_golfer_aan-uit.png)
+
 <details>
 <summary>Controlevraag</summary>
 

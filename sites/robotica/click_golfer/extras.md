@@ -20,7 +20,7 @@ Bekijk [deze video](https://www.youtube.com/watch?v=bqGnmGiuqyc) om uit te vinde
 <details>
 <summary>Klik hier voor een tip!</summary>
 
-Gebruik een **als … dan … anders**-blok. Ziet de sensor een balletje: maak het lampje groen en laat de robot slaan. Ziet de sensor niets: maak het lampje rood.
+Gebruik een **als … dan … anders**-blok: in **Denk stappen** staat onder **als … dan** een tweede **als**-blok, met **anders** erbij. Ziet de sensor een balletje: maak het lampje groen en laat de robot slaan. Ziet de sensor niets: maak het lampje rood.
 
 </details>
 

@@ -54,7 +54,9 @@ Twijfel je hoe een onderdeel eruitziet of waar het komt? Bekijk het [3D-model op
   <figcaption>De sensor vastgezet op de baan. Het blauwe schroefje laat je met rust: in dit project lees je de sensor uit als een getal, en dat getal verandert er niet van. Hoe gevoelig je robot is, stel je straks in je programma in.</figcaption>
 </figure>
 
-Staat de baan in elkaar? Zet je Golfer erop, met de arm boven de bal. Zitten de sensor en de servo nog aan het shield? Kijk het na bij [de IR-sensor](ir-sensor) en [de servo](servo).
+Staat de baan in elkaar? Zet je Golfer erop, met de arm boven de bal. Zitten de sensor en de servo nog aan het shield? Vergelijk je draden met het hele schema:
+
+![Het hele schema: links de sensor op de rij van A0, rechts de servo op de rij van D9, allebei op het shield met de Arduino Nano in het midden.](@site/static/fritzing/click_golfer_bb.png)
 
 ## Hole in one
 

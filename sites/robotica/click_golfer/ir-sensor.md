@@ -19,6 +19,8 @@ Zet je robot uit met de knop **ON/OFF**. Sluit de sensor dan aan op de rij van *
 | zwart (GND) | GND |
 | oranje (A0) | het signaal van **A0** |
 
+![Uitsnede van het schema: de blauwe sensor linksboven, met de rode draad naar 5V, de zwarte naar GND en de oranje naar het signaal van A0 op het shield. De pin D0 van de sensor blijft leeg.](@site/static/fritzing/click_golfer_sensor.png)
+
 De sensor heeft ook een pin **D0**. Die laat je leeg. D0 geeft alleen "wel bal" of "geen bal". Op **A0** krijg je een getal, en dan kies je zelf vanaf welk getal er een bal ligt.
 
 ## Stap 1: het getal uitlezen

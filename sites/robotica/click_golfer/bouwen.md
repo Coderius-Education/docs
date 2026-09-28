@@ -46,6 +46,8 @@ Wil je alle stukjes in één keer bestellen? <a href="/click_golfer/onderdelenli
 
 In stap 4 komt de servo in de toren. Zet je robot eerst uit met de knop **ON/OFF**. De draden van de servo mogen aan het shield blijven zitten. Haal je ze toch los, sluit ze dan na het bouwen weer aan zoals bij [de servo](servo): oranje op het signaal van **D9**.
 
+![Uitsnede van het schema: de servo met de bruine draad op GND, de rode op 5V en de oranje op het signaal van D9.](@site/static/fritzing/click_golfer_servo.png)
+
 Bij elke stap zie je linksboven welke stukjes je erbij pakt. Wat nieuw is, heeft een rode rand.
 
 <figure>
