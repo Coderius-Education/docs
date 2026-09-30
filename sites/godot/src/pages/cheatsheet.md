@@ -259,7 +259,7 @@ In menu's (start spel, afsluiten, level 2) en dialoogvensters.
 De meest basale node in Godot. Heeft zelf geen positie of grafiek — alleen een naam en children. Gebruikt als root voor scripts die geen positie nodig hebben, zoals een globaal script.
 
 **Wanneer gebruik je het?**
-Als root van `global.gd` (Autoload). Zet het script in **Project Settings → Autoload** en geef het de naam `Global`. Vanaf dan kun je vanuit elk script `Global.score`, `Global.levens` etc. lezen en schrijven.
+Als root van `global.gd` (Autoload). Zet het script in **Project Settings → Globals → Autoload** en geef het de naam `Global`. Vanaf dan kun je vanuit elk script `Global.score`, `Global.levens` etc. lezen en schrijven.
 
 **Code voorbeeld:**
 ```gdscript

@@ -24,7 +24,7 @@ Sommige nodes en functies zijn pas in een specifieke 4.x-versie toegevoegd. Voor
 | `move_and_slide()` zonder parameters | **4.0+** | [Sprite movement](/docs/sprite_movement) |
 | `AnimatedSprite2D` met `SpriteFrames` | **4.0+** | [Animaties](/docs/animaties) |
 | `Area2D.body_entered`-signal | **4.0+** | [Signals & muntje](/docs/signals_muntje) |
-| Autoload-mechanisme | **4.0+** | [Global variables](/docs/global_variables) |
+| Autoload-mechanisme | **4.0+** (tot en met 4.3 een eigen tabblad in Project Settings, vanaf 4.4 onder **Globals**) | [Global variables](/docs/global_variables) |
 
 In `<` 4.3 heet de tile-node `TileMap` (zonder "Layer"). De tutorial werkt dan met aanpassingen, maar de Paint-tool / Physics Layer-workflow is anders georganiseerd.
 
@@ -32,7 +32,7 @@ In `<` 4.3 heet de tile-node `TileMap` (zonder "Layer"). De tutorial werkt dan m
 
 Toekomstige minor-versies van Godot **kunnen** UI-paden of property-namen verschuiven. Bekende risicogebieden:
 
-- **Project Settings**-navigatie (Autoload-tabblad, Main Scene-instelling, Default Texture Filter).
+- **Project Settings**-navigatie (Autoload onder Globals, Main Scene-instelling, Default Texture Filter).
 - **TileSet-editor**-toolbar (Paint-knop, Physics Layer-dropdown).
 - **Anchors Preset** in `TextureRect`.
 - Menu-volgorde **Editor → Editor Layout**.
