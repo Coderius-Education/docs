@@ -17,7 +17,7 @@ Druk op **F12**. Werkt dat niet, klik dan met de rechtermuisknop ergens op de pa
 - **Netwerk**: elk verzoek dat de browser stuurt, met het antwoord.
 - **App**: wat de browser voor deze site bewaart, zoals cookies. Firefox noemt dit tabblad Opslag.
 
-De namen staan hier in het Nederlands met het Engels erachter, want Chrome en Edge wisselen daarin. Deze les gaat over Netwerk. Console en Elementen krijgen een eigen les, [Console en Elementen](/docs/FastAPI/devtools-console), en App komt bij [cookies](/docs/FastAPI/cookies).
+De namen staan hier in het Nederlands met het Engels erachter, want Chrome en Edge wisselen daarin. Deze les gaat over Netwerk. Console en Elementen krijgen later een eigen les in de uitbreiding over JavaScript, [Console en Elementen](/docs/FastAPI/devtools-console), en App komt bij de uitbreiding over [cookies](/docs/FastAPI/cookies).
 
 ## Het tabblad Netwerk
 
@@ -38,7 +38,10 @@ Kijk nu naar de terminal waar `fastapi dev` draait. Daar staat dezelfde gebeurte
 
 ```
 INFO:     127.0.0.1:52344 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52344 - "GET /favicon.ico HTTP/1.1" 404 Not Found
 ```
+
+De tweede regel heb je niet zelf gedaan. De browser vraagt bij een nieuwe site uit zichzelf om `/favicon.ico`, het icoontje voor op het tabblad. Jouw server heeft er geen, dus antwoordt hij met 404: niet gevonden. Er is niets mis; in Netwerk zie je dit verzoek meestal niet eens.
 
 Netwerk laat zien wat de browser stuurde en kreeg. De terminal laat zien wat de server ontving en antwoordde. Het is één verzoek, twee keer gelogd. Zie je iets in de terminal en niet in Netwerk, of andersom, dan weet je aan welke kant het misgaat.
 
@@ -47,10 +50,12 @@ Netwerk laat zien wat de browser stuurde en kreeg. De terminal laat zien wat de 
 Klik op de regel. Rechts opent een venster met tabbladen. Bij **Headers** staat wat er over de lijn ging, in drie regels die je herkent:
 
 ```
-Request URL:     http://127.0.0.1:8000/
-Request Method:  GET
-Status Code:     200 OK
+Verzoek-URL:      http://127.0.0.1:8000/
+Verzoekmethode:   GET
+Statuscode:       200 OK
 ```
+
+In een Engelse browser heten ze Request URL, Request Method en Status Code.
 
 De methode is de `get` uit `@app.get("/")`. Bij **Reactie** (Response) staat wat de server terugstuurde: de JSON van je functie, letter voor letter zoals `return` hem maakte.
 
@@ -63,15 +68,6 @@ Soms staat er in Netwerk niets, en de volgende keer wel. Dat ligt bijna altijd a
 - Er staat nog een filter aan. Onder de knoppen staat een rij soorten: Alle (All), Fetch/XHR, Doc, CSS, JS en meer. Chrome onthoudt welke je het laatst koos, ook de volgende dag. Staat Fetch/XHR aan, dan zie je geen pagina's. Klik op Alle, en maak het zoekvak links ernaast leeg.
 - Opnemen staat uit. Helemaal links staat een rondje. Is het rood, dan neemt Netwerk op. Is het grijs, dan heb je erop geklikt of per ongeluk Ctrl+E gedrukt. Klik erop en herlaad.
 
-## Als je wijziging niet doorkomt
-
-De browser bewaart van sommige antwoorden een kopie, de **cache**. Vraagt hij hetzelfde adres nog eens, dan pakt hij soms die kopie in plaats van de server te vragen. Dat zie je in Netwerk aan de kolom Grootte: daar staat dan **(schijfcache)** of **(disk cache)** in plaats van een aantal bytes.
-
-Bij de JSON van je endpoint gebeurt dat zelden. Bij bestanden wel, en die komen vanaf [Static files](/docs/FastAPI/static_files). Twee manieren om het te voorkomen:
-
-- Bovenin het tabblad Netwerk staat het vinkje **Cache uitzetten** (Disable cache). Zet het aan; het werkt zolang de ontwikkelaarstools open staan.
-- Klik met de rechtermuisknop op de herlaadknop van je browser en kies **Cache wissen en geforceerd opnieuw laden**. Die keuze bestaat alleen als de ontwikkelaarstools open staan. Sneller is **Ctrl+Shift+R**.
-
 ## Testen
 
 1. Open de ontwikkelaarstools met F12 en kies Netwerk
@@ -79,7 +75,7 @@ Bij de JSON van je endpoint gebeurt dat zelden. Bij bestanden wel, en die komen 
 3. Vind de methode en de statuscode bij Headers, en je JSON bij Reactie
 
 :::danger[Gaat er iets mis?]
-Blijft de lijst leeg? Loop de vier oorzaken bij [Als de lijst leeg is](#als-de-lijst-leeg-is) langs. Zie je geen tabblad Netwerk? Het paneel is te smal en verbergt tabbladen achter `»` rechts in de rij. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
+Blijft de lijst leeg? Loop de vier oorzaken bij [Als de lijst leeg is](#als-de-lijst-leeg-is) langs. Zie je geen tabblad Netwerk? Het paneel is te smal en verbergt tabbladen achter `»` rechts in de rij. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
 :::
 
 ## Opdrachten
@@ -100,7 +96,7 @@ Wat stuurt je endpoint terug: een pagina met bestanden erin, of alleen tekst?
 <details>
 <summary>Antwoord</summary>
 
-Eén. Je endpoint stuurt JSON, en daar staat niets in dat de browser nog apart moet ophalen. Bij een HTML-pagina met CSS en een afbeelding wordt dat anders; dat zie je bij [Wat er gebeurt bij één pagina](/docs/FastAPI/verzoek-static).
+Eén. Je endpoint stuurt JSON, en daar staat niets in dat de browser nog apart moet ophalen. Bij een HTML-pagina met CSS en een afbeelding wordt dat anders; dat zie je bij [Zo werkt het: CSS en afbeeldingen](/docs/FastAPI/verzoek-static).
 
 </details>
 
@@ -126,6 +122,6 @@ Stop je server met Ctrl+C in de terminal. Herlaad de pagina met Netwerk open.
 <details>
 <summary>Antwoord</summary>
 
-De regel is rood en er staat geen statuscode, maar `(mislukt)` of `(failed)`, met bij Naam iets als `ERR_CONNECTION_REFUSED`. Er was geen server om te antwoorden, dus er is ook geen status. In de terminal staat niets: het verzoek is er nooit aangekomen. Dat is het verschil met de 404 van hiervoor. Start je server daarna weer met `fastapi dev main.py`.
+De regel is rood en er staat geen statuscode, maar `(mislukt)` of `(failed)`, vaak met `net::ERR_CONNECTION_REFUSED` erbij. Er was geen server om te antwoorden, dus er is ook geen status. In de terminal staat niets: het verzoek is er nooit aangekomen. Dat is het verschil met de 404 van hiervoor. Start je server daarna weer met `fastapi dev main.py`.
 
 </details>

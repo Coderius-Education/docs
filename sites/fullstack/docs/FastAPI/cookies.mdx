@@ -1,19 +1,20 @@
 # Onthouden met een cookie
 
-Je gastenboek werkt, maar het vraagt elke keer opnieuw je naam. Ook als je net een bericht hebt geplaatst. Dat komt niet doordat je iets vergeten bent te programmeren: je server kán het niet weten. In deze les laat je de browser het onthouden.
+Je gastenboek werkt, maar het vraagt elke keer opnieuw je naam, ook als je net een bericht hebt geplaatst. Dat komt niet doordat je iets vergeten bent te programmeren: je server kán het niet weten. Daarom laat je de browser het onthouden.
 
 ## De server herkent je niet
 
-Elk verzoek staat op zichzelf. De browser vraagt een pagina op, Python stuurt een antwoord, en daarna is het contact verbroken. Vraag je een seconde later een tweede pagina op, dan begint alles opnieuw — je server heeft geen idee dat jij dezelfde bezoeker bent als daarnet. Dat is geen gebrek, het is hoe het web werkt.
+Elk verzoek staat op zichzelf. De browser vraagt een pagina op, Python stuurt een antwoord, en daarna is het contact verbroken. Vraag je een seconde later een tweede pagina op, dan begint alles opnieuw: je server heeft geen idee dat jij dezelfde bezoeker bent als daarnet. Dat is geen gebrek, het is hoe het web werkt.
 
-Wil je toch iets onthouden tussen twee verzoeken, dan moet die informatie ergens bewaard worden. Een **cookie** is daar de eenvoudigste vorm van: een klein stukje tekst dat je meegeeft met je antwoord, en dat de browser vanaf dan bij élk volgend verzoek automatisch terugstuurt.
+Wil je toch iets onthouden tussen twee verzoeken, dan moet je die informatie ergens bewaren. Een **cookie** is daar de eenvoudigste vorm van: een klein stukje tekst dat je meegeeft met je antwoord, en dat de browser vanaf dan bij élk volgend verzoek automatisch terugstuurt.
 
 ## Een cookie meegeven
 
-Tot nu toe gaf je endpoint alleen inhoud terug. Een antwoord kan ook opdrachten voor de browser bevatten, en `set_cookie` is er daar een van:
+Tot nu toe gaf je endpoint alleen inhoud terug. Een antwoord kan ook opdrachten voor de browser bevatten, en `set_cookie` is er daar een van. Vervang je `POST /gastenboek` uit [Doorsturen na opslaan (redirect)](/docs/FastAPI/redirect) door deze versie:
 
 <CodeUitleg>
 
+{/* route-dubbel: vervangt POST /gastenboek uit redirect.mdx of het htmx-recept, nu met een cookie */}
 ```python showLineNumbers
 @app.post("/gastenboek")
 async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
@@ -40,12 +41,15 @@ Pas nu gaat het antwoord terug, mét de cookie erop.
 
 </CodeUitleg>
 
+Gebruik je het htmx-formulier uit de [htmx-recepten](/docs/FastAPI/htmx-overzicht), dan laat je de omleiding weg: maak van je `HTMLResponse` de variabele `antwoord`, zet daar `set_cookie` op en return hem.
+
 ## De cookie terugkrijgen
 
-Vanaf nu stuurt de browser die cookie mee bij elk verzoek aan jouw server. Je vraagt hem op met `Cookie`, net zoals je formuliervelden met `Form` opvraagt:
+Vanaf nu stuurt de browser die cookie mee bij elk verzoek aan jouw server. Je vraagt hem op met `Cookie`, net zoals je formuliervelden met `Form` opvraagt. Vervang je `GET /gastenboek`, dat tot nu toe een `FileResponse` gaf:
 
 <CodeUitleg>
 
+{/* route-dubbel: vervangt GET /gastenboek uit post_naar_database.mdx, nu met een template */}
 ```python showLineNumbers
 from fastapi import Cookie
 
@@ -60,7 +64,7 @@ async def gastenboek_form(request: Request, naam: str = Cookie(default="")):
 
 </CodeUitleg>
 
-Je formulier was tot nu toe een vast bestand in `static/pages/`. Om er een naam in te kunnen zetten moet het een **template** worden: verplaats het naar `templates/gastenboek.html` en zet de waarde in het naamveld:
+Je formulier was tot nu toe een vast bestand, `static/pages/gastenboek_form.html`. Om er een naam in te kunnen zetten moet het een **template** worden: verplaats het hele bestand naar `templates/gastenboek.html`, met de `<head>` en de script-tags die er misschien al in staan, en zet de waarde in het naamveld. Alleen dat veld verandert: `value="{{ naam }}"` komt erbij. Zonder htmx en JavaScript ziet het formulier er dan zo uit:
 
 ```html
 <form method="post" action="/gastenboek">
@@ -70,16 +74,16 @@ Je formulier was tot nu toe een vast bestand in `static/pages/`. Om er een naam 
 </form>
 ```
 
-Bij een eerste bezoek is `{{ naam }}` leeg en zie je een gewoon leeg veld. Daarna staat je naam er al in.
+Bij een eerste bezoek is `{{ naam }}` leeg en zie je een leeg veld. Daarna staat je naam er al in. Heeft jouw formulier `hx-post` en `hx-target`, of een `id` voor je tekenteller, laat die dan staan.
 
 ## Testen
 
 1. Start je server en vul het gastenboek in
-2. Ga terug naar `/gastenboek` — je naam staat er al
-3. Open de ontwikkelaarstools met `F12` en zoek in het tabblad **App** (Application; in Firefox **Opslag**) bij Cookies de cookies van `127.0.0.1`. Daar staat jouw naam
+2. Ga terug naar `/gastenboek`: je naam staat er al
+3. Open de ontwikkelaarstools met `F12` en zoek in het tabblad **App** (Application; in Firefox **Opslag**) bij Cookies de regel `http://127.0.0.1:8000`. Daar staat jouw naam. Heeft je naam een spatie of een letter als ë, dan zet de server er aanhalingstekens omheen of maakt hij van de ë een code als `\353`; in het formulier staat hij weer zoals je hem typte
 
 :::danger[Gaat er iets mis?]
-Blijft het veld leeg terwijl je wel een bericht hebt verstuurd? Controleer of `set_cookie` op het antwoord staat dat je ook echt returnt. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
+Blijft het veld leeg terwijl je wel een bericht hebt verstuurd? Controleer of `set_cookie` op het antwoord staat dat je ook echt returnt. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
 :::
 
 ## Opdrachten
@@ -117,7 +121,7 @@ Zoek de cookie op in het tabblad **App** en dubbelklik op de waarde om hem in ee
 
 In het formulier staat nu de naam die jij zelf in de cookie hebt getypt. Je server neemt hem klakkeloos over.
 
-Onthoud dat goed: een cookie staat op de computer van de bezoeker, en die kan er alles van maken. Voor een naam die je alleen als gemak invult is dat prima. Voor iets waar rechten aan hangen — wie mag verwijderen, wie is ingelogd — is het dat niet. Daar gaat de [volgende les](/docs/FastAPI/sessies) over.
+Een cookie staat op de computer van de bezoeker, en die kan er alles van maken. Voor een naam die je alleen als gemak invult is dat prima. Voor iets waar rechten aan hangen, zoals wie mag verwijderen of wie is ingelogd, is het dat niet. Daar gaat de [volgende les](/docs/FastAPI/sessies) over.
 
 </details>
 
@@ -159,7 +163,7 @@ Laat boven het formulier "Welkom terug, [naam]" staan als de bezoeker al eens ee
 <details>
 <summary>Tip</summary>
 
-De template weet al of `naam` gevuld is. Met `{% if naam %}` kun je daarop reageren, net zoals je in [Een lijst tonen](/docs/FastAPI/lijst_tonen) een lege lijst opving.
+De template weet al of `naam` gevuld is. Met `{% if naam %}` kun je daarop reageren, net zoals je in [Alles tonen: een for-lus in je template](/docs/FastAPI/lijst_tonen) een lege lijst opving.
 
 </details>
 

@@ -1,6 +1,6 @@
 # Laat het aan anderen zien
 
-Je server draait, maar alleen voor jou. `127.0.0.1` betekent letterlijk "deze computer": typ dat adres op de laptop van je buurman en er gebeurt niets. Dat is jammer, want een server bestaat juist zodat anderen erbij kunnen. In deze les zet je je project open voor de rest van het lokale netwerk.
+Je server draait, maar alleen voor jou. `127.0.0.1` betekent letterlijk "deze computer": typ dat adres op de laptop van je buurman en je komt niet bij jouw server uit. Dat is jammer, want een server is er zodat anderen erbij kunnen. Hier zet je je project open voor de rest van het lokale netwerk.
 
 ## Waarom niemand anders erbij kan
 
@@ -10,7 +10,7 @@ Als je `fastapi dev main.py` start, staat er in de terminal iets als:
 Server started at http://127.0.0.1:8000
 ```
 
-Dat adres luistert bewust alleen naar verzoeken van je eigen computer. Handig tijdens het bouwen: je halfafgemaakte gastenboek staat niet meteen open voor de hele school.
+Dat adres luistert bewust alleen naar verzoeken van je eigen computer. Tijdens het bouwen is dat handig, want dan staat je halfafgemaakte gastenboek niet meteen open voor de hele school.
 
 ## Openzetten
 
@@ -20,7 +20,13 @@ Start je server met een extra optie:
 fastapi dev main.py --host 0.0.0.0
 ```
 
-`0.0.0.0` betekent: luister naar verzoeken die van buiten binnenkomen, niet alleen van deze computer.
+`0.0.0.0` betekent: luister naar verzoeken die van buiten binnenkomen, niet alleen van deze computer. In de terminal staat nu:
+
+```
+Server started at http://0.0.0.0:8000
+```
+
+Dat is geen adres om naar toe te gaan, en ook niet om door te geven. Zelf blijf je `http://127.0.0.1:8000` gebruiken; je klasgenoot krijgt het adres hieronder.
 
 Nu heb je nog het adres van je computer op het netwerk nodig:
 
@@ -28,20 +34,23 @@ Nu heb je nog het adres van je computer op het netwerk nodig:
 # Windows
 ipconfig
 
-# macOS en Linux
+# macOS
+ipconfig getifaddr en0
+
+# Linux
 ip addr
 ```
 
-Zoek een regel met een adres dat begint met `192.168.` of `10.`. Dat is jouw computer op dit netwerk. Je klasgenoot typt dan bijvoorbeeld:
+Op Windows zoek je de regel `IPv4-adres` (in het Engels `IPv4 Address`); macOS geeft alleen het adres. Het begint meestal met `192.168.`, `10.` of `172.`. Dat is jouw computer op dit netwerk. Je klasgenoot typt dan bijvoorbeeld:
 
 ```
 http://192.168.1.42:8000/berichten
 ```
 
-Hetzelfde project, dezelfde database, maar nu ziet iemand anders het.
+Het is hetzelfde project met dezelfde database, maar nu ziet iemand anders het.
 
 :::caution
-Zolang je server op `0.0.0.0` draait kan iedereen op hetzelfde netwerk bij je pagina's — en bij je formulieren. Zet 'm weer op de gewone manier aan als je klaar bent met testen. En zet nooit iets in je code dat je liever niet deelt: een wachtwoord in `main.py` is een wachtwoord dat je weggeeft.
+Zolang je server op `0.0.0.0` draait kan iedereen op hetzelfde netwerk bij je pagina's, en ook bij je formulieren. Zet 'm weer op de gewone manier aan als je klaar bent met testen. En zet nooit iets in je code dat je liever niet deelt: een wachtwoord in `main.py` is een wachtwoord dat je weggeeft.
 :::
 
 ## Nu telt alles wat je hebt geleerd
@@ -56,12 +65,12 @@ welk bericht mag verwijderen en HTML die een bezoeker invult, staat in de reeks
 
 ## Buiten de school
 
-Een adres dat begint met `192.168.` werkt alleen binnen hetzelfde netwerk. Wil je je project vanaf thuis bereikbaar maken, dan heb je een computer nodig die altijd aanstaat en een vast adres heeft — een server bij een hostingpartij, of een dienst die je project voor je draait.
+Een adres dat begint met `192.168.` werkt alleen binnen hetzelfde netwerk. Wil je je project vanaf thuis bereikbaar maken, dan heb je een computer nodig die altijd aanstaat en een vast adres heeft: een server bij een hostingpartij, of een dienst die je project voor je draait.
 
 Dat valt buiten deze cursus, maar het is dezelfde `main.py`. Wat je hier hebt gebouwd is niet een oefenversie van een echte webapplicatie; het is er een.
 
 :::danger[Gaat er iets mis?]
-Kan je klasgenoot er niet bij? Meestal mist `--host 0.0.0.0`, of zitten jullie niet op hetzelfde netwerk. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
+Kan je klasgenoot er niet bij? Meestal mist `--host 0.0.0.0`, of zitten jullie niet op hetzelfde netwerk. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
 :::
 
 ## Opdrachten
@@ -88,7 +97,7 @@ Zijn eigen computer, niet die van jou. `127.0.0.1` verwijst altijd naar de machi
 
 ### Opdracht 2: Run - Samen testen
 
-Start je server met `--host 0.0.0.0`, zoek je adres op met `ipconfig` of `ip addr`, en laat iemand naast je een bericht achterlaten in je gastenboek. Kijk in je eigen terminal wat er gebeurt terwijl hij typt en verstuurt.
+Start je server met `--host 0.0.0.0`, zoek je adres op zoals hierboven, en laat iemand naast je een bericht achterlaten in je gastenboek. Kijk in je eigen terminal wat er gebeurt terwijl hij typt en verstuurt.
 
 <details>
 <summary>Tip</summary>
@@ -104,7 +113,7 @@ Kijk in je terminal naar de regels die verschijnen als je klasgenoot iets doet.
 <details>
 <summary>Antwoord</summary>
 
-Je ziet zijn verzoeken langskomen, met het pad en de statuscode — precies de stappen 2 tot en met 6 uit [Wat er gebeurt bij één klik](/docs/FastAPI/verzoek-get). Wat je níét ziet: wat hij typte terwijl hij nog aan het invullen was. Dat gebeurde in zijn browser.
+Je ziet zijn verzoeken langskomen, met vooraan zijn adres op het netwerk (bijvoorbeeld `192.168.1.57`) en verder het pad en de statuscode: precies de stappen 2 tot en met 6 uit [Zo werkt het: klikken en versturen](/docs/FastAPI/verzoek-get). Wat je níét ziet: wat hij typte terwijl hij nog aan het invullen was. Dat gebeurde in zijn browser.
 
 </details>
 
@@ -115,38 +124,31 @@ Houd bij hoe vaak `/berichten` is opgevraagd en toon dat onderaan de pagina.
 <details>
 <summary>Tip</summary>
 
-Dit moet bewaard blijven en voor iedereen gelden, dus het hoort in je database. Zet de teller in een **eigen** databasebestand, los van je berichten. Lees de stand met `db.get("aantal", 0)`, tel er één bij op, sla op, en stuur het getal mee naar je template.
+Dit moet bewaard blijven en voor iedereen gelden, dus het hoort in je database. Zet de teller in een eigen databasebestand, los van je berichten. Lees de stand met `db.get("aantal", 0)`, tel er één bij op, sla op, en stuur het getal mee naar je template.
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
+Zet deze regels vooraan in je `GET /berichten`, vóór het ophalen van de berichten:
+
 ```python
-@app.get("/berichten")
-async def berichten(request: Request):
-    with SqliteDict("bezoeken.db") as teller_db:
-        bezoeken = teller_db.get("aantal", 0) + 1
-        teller_db["aantal"] = bezoeken
-        teller_db.commit()
-
-    with SqliteDict("gastenboek.db") as db:
-        alle_berichten = list(db.items())
-
-    return templates.TemplateResponse(
-        request,
-        "berichten.html",
-        {"berichten": alle_berichten, "bezoeken": bezoeken}
-    )
+with SqliteDict("bezoeken.db") as teller_db:
+    bezoeken = teller_db.get("aantal", 0) + 1
+    teller_db["aantal"] = bezoeken
+    teller_db.commit()
 ```
+
+En zet `"bezoeken": bezoeken` erbij in de dictionary voor de template. Gebruik je htmx om te verversen, zet de teller dan niet in `GET /berichten/lijst`: dan telt elke verversing als bezoek.
 
 In je template: `<p>Deze pagina is {{ bezoeken }} keer bekeken.</p>`
 
-Let op dat de teller in `bezoeken.db` staat en niet in `gastenboek.db`. Zet je hem er wél bij, dan komt hij tussen je berichten terecht: je lijst krijgt er een regel bij die geen naam en geen bericht heeft, en `{% for sleutel, bericht in berichten %}` gaat er raar van doen. Twee soorten gegevens, twee bestanden.
+Houd de teller in `bezoeken.db`, niet in `gastenboek.db`. Zet je hem er wél bij, dan komt hij tussen je berichten terecht: je lijst krijgt er een regel bij die geen naam en geen bericht heeft, en `{% for sleutel, bericht in berichten %}` gaat er raar van doen. Twee soorten gegevens, twee bestanden.
 
 </details>
 
-### Opdracht 5: Make - Wie was er?
+### Opdracht 5: Make - Hoe laat was het?
 
 Sla bij elk bericht op wanneer het is achtergelaten, en toon dat in de lijst.
 
@@ -160,23 +162,18 @@ Je hebt de tijd al: de sleutel `bericht_<nanoseconden>` bevat hem. Maar leesbaar
 <details>
 <summary>Antwoord</summary>
 
-```python
-from datetime import datetime
+Zet `from datetime import datetime` bij je imports. Vervang in je `POST /gastenboek` alleen de dictionary van het bericht; wat links van het `=`-teken staat en de rest van het endpoint blijven hetzelfde:
 
-@app.post("/gastenboek")
-async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
-    with SqliteDict("gastenboek.db") as db:
-        db[f"bericht_{time.time_ns()}"] = {
-            "naam": naam,
-            "bericht": bericht,
-            "tijd": datetime.now().strftime("%H:%M")
-        }
-        db.commit()
-    return RedirectResponse(url="/berichten", status_code=303)
+```python
+db[sleutel] = {
+    "naam": naam,
+    "bericht": bericht,
+    "tijd": datetime.now().strftime("%H:%M"),
+}
 ```
 
-In je template: `<li>{{ bericht.tijd }} — {{ bericht.naam }}: {{ bericht.bericht }}</li>`
+In je template zet je `{{ bericht.tijd }} —` vooraan in de `<li>`, vóór `{{ bericht.naam }}`.
 
-Berichten die je vóór deze wijziging hebt opgeslagen hebben geen `tijd`. Jinja2 laat dan gewoon niets zien in plaats van te crashen.
+Berichten die je vóór deze wijziging hebt opgeslagen hebben geen `tijd`. Jinja2 laat dan niets zien in plaats van te crashen.
 
 </details>

@@ -7,7 +7,7 @@
   ]}
 />
 
-In de vorige les gaf je endpoint JSON terug. In deze les leer je hoe je een HTML pagina teruggeeft.
+Tot nu toe gaven je endpoints JSON terug. Nu geef je een HTML-pagina terug.
 
 ## HTMLResponse importeren
 
@@ -42,7 +42,7 @@ async def pagina():
 ```
 
 <Regel n={1}>
-`response_class=HTMLResponse` vertelt FastAPI dat je HTML terugstuurt en geen JSON. Zonder dit ziet de browser de tags als platte tekst.
+`response_class=HTMLResponse` vertelt FastAPI dat je HTML terugstuurt en geen JSON. Zonder dit maakt FastAPI van je string JSON: je ziet dan één regel tussen aanhalingstekens, met `\n` waar je een nieuwe regel begon, in plaats van een pagina.
 </Regel>
 
 <Regel n={3} tot={14}>
@@ -81,16 +81,72 @@ async def styled():
 ```
 
 :::danger[Gaat er iets mis?]
-Zie je de HTML als tekst (je ziet de tags `<h1>` etc.)? Dan mis je waarschijnlijk `response_class=HTMLResponse`. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
+Zie je de HTML als tekst, tussen aanhalingstekens en met `\n` erin? Dan mis je waarschijnlijk `response_class=HTMLResponse`. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
 :::
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+```python
+from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
+
+app = FastAPI()
+
+@app.get("/")
+async def root():
+    return {"bericht": "Hallo wereld!"}
+
+@app.get("/info")
+async def info():
+    return {"naam": "Jouw Naam", "leeftijd": 16}
+
+@app.get("/pagina", response_class=HTMLResponse)
+async def pagina():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Mijn Pagina</title>
+        </head>
+        <body>
+            <h1>Hallo!</h1>
+            <p>Dit is mijn eerste HTML pagina.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/styled", response_class=HTMLResponse)
+async def styled():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Met CSS</title>
+            <style>
+                h1 { color: blue; }
+                p { color: gray; }
+            </style>
+        </head>
+        <body>
+            <h1>Gestylede pagina</h1>
+            <p>Deze tekst is grijs.</p>
+        </body>
+    </html>
+    """
+```
+
+</details>
 
 ## Opdrachten
 
 ### Opdracht 1: Predict - JSON of HTML?
 
 ```python
-@app.get("/test")
-async def test():
+@app.get("/titel")
+async def titel():
     return {"titel": "<h1>Hallo</h1>"}
 ```
 
@@ -121,7 +177,13 @@ Wat gebeurt er als je `response_class=HTMLResponse` weghaalt bij het `/styled` e
 <details>
 <summary>Antwoord</summary>
 
-Zonder `response_class=HTMLResponse` stuurt FastAPI de string als **plain text** terug. Je ziet de HTML tags als tekst op je scherm in plaats van een opgemaakte pagina.
+Zonder `response_class=HTMLResponse` maakt FastAPI JSON van je string. Je ziet geen pagina, maar één lange regel tussen aanhalingstekens, ongeveer zo:
+
+```
+"\n    <!DOCTYPE html>\n    <html>\n        <head>\n            <title>Met CSS</title>\n ..."
+```
+
+Elke `\n` is een plek waar jij een nieuwe regel begon.
 
 </details>
 
@@ -135,7 +197,7 @@ Maak een endpoint `/profiel` dat een HTML pagina toont met:
 <details>
 <summary>Tip</summary>
 
-Gebruik `response_class=HTMLResponse` en een multi-line string met `"""`. Zet je CSS in een `<style>` tag in de `<head>`.
+Gebruik `response_class=HTMLResponse` en een string over meerdere regels met `"""`. Zet je CSS in een `<style>` tag in de `<head>`.
 
 </details>
 
@@ -164,18 +226,14 @@ async def profiel():
 
 </details>
 
-### Opdracht 5: Make - Twee pagina's
+### Opdracht 5: Make - Een lijstje
 
-Maak twee endpoints (`/pagina1` en `/pagina2`) die elk een andere HTML pagina tonen. Voeg op elke pagina een link toe naar de andere:
-
-```html
-<a href="/pagina2">Ga naar pagina 2</a>
-```
+Maak een endpoint `/hobbylijst` dat een pagina toont met een kop en een lijst van drie hobby's.
 
 <details>
 <summary>Tip</summary>
 
-Maak twee aparte functies met `@app.get`. Gebruik `<a href="/pagina1">` en `<a href="/pagina2">` om de pagina's aan elkaar te linken.
+Een lijst maak je in HTML met `<ul>` en voor elk item een `<li>`. Vergeet `response_class=HTMLResponse` niet.
 
 </details>
 
@@ -183,26 +241,18 @@ Maak twee aparte functies met `@app.get`. Gebruik `<a href="/pagina1">` en `<a h
 <summary>Antwoord</summary>
 
 ```python
-@app.get("/pagina1", response_class=HTMLResponse)
-async def pagina1():
+@app.get("/hobbylijst", response_class=HTMLResponse)
+async def hobbylijst():
     return """
     <!DOCTYPE html>
     <html>
         <body>
-            <h1>Pagina 1</h1>
-            <a href="/pagina2">Ga naar pagina 2</a>
-        </body>
-    </html>
-    """
-
-@app.get("/pagina2", response_class=HTMLResponse)
-async def pagina2():
-    return """
-    <!DOCTYPE html>
-    <html>
-        <body>
-            <h1>Pagina 2</h1>
-            <a href="/pagina1">Ga naar pagina 1</a>
+            <h1>Mijn hobby's</h1>
+            <ul>
+                <li>Gamen</li>
+                <li>Voetbal</li>
+                <li>Tekenen</li>
+            </ul>
         </body>
     </html>
     """

@@ -1,4 +1,4 @@
-# Gegevens opslaan
+# Gegevens opslaan met SqliteDict
 
 <Voorkennis
   items={[
@@ -6,7 +6,7 @@
   ]}
 />
 
-Tot nu toe verdwijnt alle data als je programma stopt. Met `sqlitedict` kun je data **permanent** opslaan.
+Tot nu toe verdwijnt alle data als je programma stopt. Met `sqlitedict` bewaar je hem in een bestand, en daar staat hij de volgende keer nog.
 
 ## Installatie
 
@@ -45,7 +45,7 @@ Binnen het blok gedraagt `db` zich als een dictionary: een sleutel, een waarde.
 
 </CodeUitleg>
 
-Run: `python test_db.py` — Er wordt een bestand `mijn_data.db` aangemaakt.
+Draai `python test_db.py`. Daarna staat er een bestand `mijn_data.db` naast je programma.
 
 ## Data uitlezen
 
@@ -83,7 +83,7 @@ Een database slaat wijzigingen niet meteen op in het bestand. Met `db.commit()` 
 </details>
 
 :::danger[Gaat er iets mis?]
-Data verdwenen na herstarten? Dan ben je waarschijnlijk `db.commit()` vergeten. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
+Data verdwenen na herstarten? Dan ben je waarschijnlijk `db.commit()` vergeten. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
 :::
 
 ## Opdrachten
@@ -104,25 +104,25 @@ with SqliteDict("test.db") as db:
 <details>
 <summary>Tip</summary>
 
-De data wordt opgeslagen met `commit()`. Daarna wordt het bestand opnieuw geopend. Blijft de data bewaard in het bestand?
+`commit()` schrijft de data naar het bestand. Daarna opent het programma dat bestand opnieuw. Staat de data er dan nog?
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-`100` — De data blijft bewaard in het bestand dankzij `db.commit()`.
+`100`. De data staat in het bestand, want `db.commit()` heeft hem daar weggeschreven.
 
 </details>
 
 ### Opdracht 2: Run - Eerste database
 
-Maak een programma dat een contact opslaat (naam + telefoonnummer) en het weer uitleest. Werkt het?
+Maak een programma dat een contact met naam en telefoonnummer opslaat en weer uitleest. Werkt het?
 
 <details>
 <summary>Tip</summary>
 
-Sla twee waarden op met verschillende keys, bijvoorbeeld `db["naam"] = "Jan"` en `db["telefoon"] = "0612345678"`. Vergeet `db.commit()` niet.
+Sla twee waarden op onder verschillende sleutels, bijvoorbeeld `db["naam"] = "Jan"` en `db["telefoon"] = "0612345678"`. Vergeet `db.commit()` niet.
 
 </details>
 
@@ -151,7 +151,7 @@ Wat gebeurt er als je `db.commit()` vergeet? Probeer het uit.
 <details>
 <summary>Antwoord</summary>
 
-De data wordt **niet** opgeslagen. Na herstarten is het weg. Zonder `commit()` staan de wijzigingen alleen in het geheugen.
+De data komt niet in het bestand, dus na herstarten is hij weg. Zonder `commit()` staan de wijzigingen alleen in het geheugen.
 
 </details>
 
@@ -162,7 +162,7 @@ Maak een programma dat drie favorieten opslaat (eten, muziek, game) en ze daarna
 <details>
 <summary>Tip</summary>
 
-Gebruik drie keys: `db["eten"]`, `db["muziek"]`, `db["game"]`. Sla alles op met één `db.commit()` aan het eind.
+Gebruik drie sleutels: `db["eten"]`, `db["muziek"]`, `db["game"]`. Sla alles op met één `db.commit()` aan het eind.
 
 </details>
 

@@ -1,17 +1,15 @@
 # HTML in bestanden
 
-Tot nu toe schrijf je HTML als strings in Python. Dat wordt onoverzichtelijk bij grote pagina's. In deze les leer je hoe je HTML in aparte bestanden zet.
+Tot nu toe schrijf je HTML als strings in Python. Bij een grote pagina raak je daarin het overzicht kwijt, dus zet je de HTML voortaan in een eigen bestand.
 
 ## Mappenstructuur
 
-Maak een `pages` folder in je `static` folder:
+Maak een map `static` met daarin een map `pages`. In `static` komen alle bestanden die de browser nodig heeft: straks ook je CSS en je afbeeldingen. Hoe je mappen verder groeien, zie je bij [Projectstructuur](/docs/FastAPI/projectstructuur).
 
 ```
 je-project/
 ├── main.py
 └── static/
-    ├── css/
-    │   └── style.css
     └── pages/
         └── home.html
 ```
@@ -25,7 +23,6 @@ Maak `static/pages/home.html`:
 <html>
     <head>
         <title>Home</title>
-        <link rel="stylesheet" href="/static/css/style.css">
     </head>
     <body>
         <h1>Welkom!</h1>
@@ -36,17 +33,16 @@ Maak `static/pages/home.html`:
 
 ## FileResponse gebruiken
 
-Pas je `main.py` aan:
+Zet `FileResponse` bij de imports, en vervang je endpoint voor `/` uit [Je eerste endpoint](/docs/FastAPI/eerste_endpoint) door een versie die `home.html` teruggeeft. Laat je andere endpoints staan. Zo ziet de bovenkant van je `main.py` eruit:
 
 <CodeUitleg>
 
+{/* route-dubbel: vervangt GET / uit Je eerste endpoint */}
 ```python showLineNumbers
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
-from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
-app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/")
 async def home():
@@ -57,24 +53,81 @@ async def home():
 `FileResponse` vervangt `HTMLResponse`: je stuurt geen string meer terug, maar een bestand.
 </Regel>
 
-<Regel n={10}>
-Het pad is dat van het bestand op je schijf, vanaf de map waarin `main.py` staat. FastAPI leest het bestand en stuurt de inhoud naar de browser. De HTML staat zo in een echt `.html`-bestand, met kleurtjes in je editor.
+<Regel n={8}>
+Het pad is dat van het bestand op je schijf, gerekend vanaf de map waarin je `fastapi dev` startte: je projectmap. FastAPI leest het bestand en stuurt de inhoud naar de browser. De HTML staat zo in een echt `.html`-bestand, met kleurtjes in je editor.
 </Regel>
 
 </CodeUitleg>
 
 ## Testen
 
-Ga naar [http://127.0.0.1:8000](http://127.0.0.1:8000). Je ziet de HTML pagina met CSS styling.
+Ga naar [http://127.0.0.1:8000](http://127.0.0.1:8000). Je ziet de pagina uit `home.html`.
 
 :::danger[Gaat er iets mis?]
-Krijg je een 404 of 500 error? Check of het pad in `FileResponse("...")` exact klopt en of het bestand echt op die plek staat. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
+Krijg je een 404 of een 500? Kijk of het pad in `FileResponse("...")` precies klopt en of het bestand echt op die plek staat. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
 :::
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+```python
+from fastapi import FastAPI
+from fastapi.responses import FileResponse, HTMLResponse
+
+app = FastAPI()
+
+@app.get("/")
+async def home():
+    return FileResponse("static/pages/home.html")
+
+@app.get("/info")
+async def info():
+    return {"naam": "Jouw Naam", "leeftijd": 16}
+
+@app.get("/pagina", response_class=HTMLResponse)
+async def pagina():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Mijn Pagina</title>
+        </head>
+        <body>
+            <h1>Hallo!</h1>
+            <p>Dit is mijn eerste HTML pagina.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/styled", response_class=HTMLResponse)
+async def styled():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Met CSS</title>
+            <style>
+                h1 { color: blue; }
+                p { color: gray; }
+            </style>
+        </head>
+        <body>
+            <h1>Gestylede pagina</h1>
+            <p>Deze tekst is grijs.</p>
+        </body>
+    </html>
+    """
+```
+
+</details>
 
 ## Opdrachten
 
 ### Opdracht 1: Predict - Wat gebeurt er?
 
+{/* route-dubbel: voorspelvraag; het endpoint /contact maak je pas in Links tussen pagina's */}
 ```python
 @app.get("/contact")
 async def contact():
@@ -86,14 +139,14 @@ async def contact():
 <details>
 <summary>Tip</summary>
 
-FastAPI probeert het bestand te openen. Wat kan er misgaan als een bestand niet gevonden wordt?
+FastAPI probeert het bestand te openen. Wat kan er misgaan als het bestand er niet is?
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-Je krijgt een error (500 Internal Server Error) omdat het bestand niet gevonden kan worden.
+Je krijgt een 500 Internal Server Error: het endpoint bestaat, maar het bestand dat het moet sturen niet. Een 500 betekent dat het op de server misging.
 
 </details>
 
@@ -103,110 +156,93 @@ Maak de mappenstructuur uit het voorbeeld (`static/pages/home.html`), pas je `ma
 
 ### Opdracht 3: Investigate - Fout pad
 
-Verander het pad in `FileResponse` naar een bestand dat niet bestaat, bijvoorbeeld `FileResponse("static/pages/oeps.html")`. Wat voor error krijg je?
+Verander het pad in `FileResponse` naar een bestand dat niet bestaat, bijvoorbeeld `FileResponse("static/pages/oeps.html")`. Welke fout krijg je?
 
 <details>
 <summary>Antwoord</summary>
 
-Je krijgt een **500 Internal Server Error** in de browser, en in de terminal zie je een foutmelding dat het bestand niet gevonden kan worden. Dit is een veelvoorkomende fout als je een typfout maakt in het pad.
+De browser toont alleen `Internal Server Error`. In de terminal staat een lange foutmelding; scroll naar de onderste regel:
+
+```
+RuntimeError: File at path static/pages/oeps.html does not exist.
+```
+
+Dat is de regel die je iets vertelt: het bestand bestaat niet op dat pad. Een typfout in het pad geeft precies deze fout.
 
 </details>
 
-### Opdracht 4: Make - Twee pagina's
+### Opdracht 4: Make - Een tweede pagina
 
-Maak twee HTML bestanden (`home.html` en `about.html`) met elk een eigen endpoint. Voeg op elke pagina een link naar de andere toe:
-
-```html
-<a href="/about">Over Mij</a>
-```
+Maak een tweede pagina `favoriet.html` over je favoriete game, film of boek, met een eigen endpoint `/favoriet`.
 
 <details>
 <summary>Tip</summary>
 
-Maak twee `.html` bestanden in `static/pages/` en twee endpoints in `main.py`. Vergeet niet dat de `href` verwijst naar het **endpoint**, niet naar het bestand.
+Maak het bestand in `static/pages/` en een tweede functie in `main.py` met een eigen pad in `@app.get(...)`.
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-`static/pages/home.html`:
+`static/pages/favoriet.html`:
 ```html
 <!DOCTYPE html>
 <html>
     <body>
-        <h1>Home</h1>
-        <a href="/about">Over Mij</a>
-    </body>
-</html>
-```
-
-`static/pages/about.html`:
-```html
-<!DOCTYPE html>
-<html>
-    <body>
-        <h1>Over Mij</h1>
-        <a href="/">Terug naar Home</a>
+        <h1>Mijn favoriete game</h1>
+        <p>Minecraft, omdat je alles zelf kunt bouwen.</p>
     </body>
 </html>
 ```
 
 ```python
-@app.get("/")
-async def home():
-    return FileResponse("static/pages/home.html")
-
-@app.get("/about")
-async def about():
-    return FileResponse("static/pages/about.html")
+@app.get("/favoriet")
+async def favoriet():
+    return FileResponse("static/pages/favoriet.html")
 ```
 
 </details>
 
-### Opdracht 5: Make - Drie pagina's met navigatie
+### Opdracht 5: Make - Van string naar bestand
 
-Maak drie pagina's (home, about, contact) die allemaal dezelfde CSS laden en links naar elkaar hebben.
+Zet de pagina met de `<style>`-tag uit [HTML tonen](/docs/FastAPI/html_tonen) in een bestand `static/pages/styled.html`, en laat het endpoint `/styled` dat bestand teruggeven.
 
 <details>
 <summary>Tip</summary>
 
-Maak drie `.html` bestanden die alle drie dezelfde `<link rel="stylesheet" href="/static/css/style.css">` bevatten. Zet op elke pagina links naar de andere twee met `<a href="/...">`.
+Alles tussen de drie aanhalingstekens gaat naar het bestand. In Python blijft alleen de `FileResponse` over, en `response_class=HTMLResponse` is niet meer nodig.
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-Maak drie bestanden in `static/pages/` (home.html, about.html, contact.html) met elk:
-
+`static/pages/styled.html`:
 ```html
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" href="/static/css/style.css">
+        <title>Met CSS</title>
+        <style>
+            h1 { color: blue; }
+            p { color: gray; }
+        </style>
     </head>
     <body>
-        <a href="/">Home</a> | <a href="/about">Over Mij</a> | <a href="/contact">Contact</a>
-        <h1>Home</h1>
+        <h1>Gestylede pagina</h1>
+        <p>Deze tekst is grijs.</p>
     </body>
 </html>
 ```
 
-En drie endpoints in `main.py`:
+Vervang je endpoint `/styled` uit HTML tonen door:
+
+{/* route-dubbel: vervangt GET /styled uit HTML tonen */}
 ```python
-@app.get("/")
-async def home():
-    return FileResponse("static/pages/home.html")
-
-@app.get("/about")
-async def about():
-    return FileResponse("static/pages/about.html")
-
-@app.get("/contact")
-async def contact():
-    return FileResponse("static/pages/contact.html")
+@app.get("/styled")
+async def styled():
+    return FileResponse("static/pages/styled.html")
 ```
 
 </details>
-

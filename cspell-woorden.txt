@@ -23,6 +23,7 @@ basistutorials
 bedraadt
 bestandsextensie
 bestandsextensies
+Bestandsnaamextensies
 beveiligings
 bijhouder
 bijv

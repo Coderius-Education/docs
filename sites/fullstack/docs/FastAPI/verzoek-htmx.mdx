@@ -1,11 +1,11 @@
 import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
 
-# Wat er gebeurt zonder herladen
+# Zo werkt het: een verzoek met htmx
 
-Dezelfde stappen als bij [één klik](/docs/FastAPI/verzoek-get) en [één formulier](/docs/FastAPI/verzoek-post), maar nu stuurt htmx het verzoek. Aan de serverkant verandert er bijna niets; het verschil zit aan het begin en aan het eind.
+Dezelfde stappen als bij [één klik](/docs/FastAPI/verzoek-get) en [één formulier](/docs/FastAPI/verzoek-get#een-formulier), maar nu stuurt htmx het verzoek. Aan de serverkant verandert er bijna niets; het verschil zit aan het begin en aan het eind.
 
 <VerzoekCyclus variant="htmx" />
 
-Vergelijk stap 6 en 7 met het formulier zonder htmx. Daar was het antwoord een omleiding en begon de browser opnieuw met een GET, de hele pagina over de lijn. Hier is het antwoord een stukje HTML en blijft de pagina staan. Het post/redirect/get-patroon uit [Terug naar de lijst](/docs/FastAPI/redirect) is niet nodig, want de browser heeft nooit een pagina verlaten.
+Vergelijk stap 5 en 6 met stap 5 en 6 van het formulier zonder htmx. Daar was het antwoord een omleiding en begon de browser opnieuw met een GET, de hele pagina over de lijn. Hier is het antwoord een stukje HTML en blijft de pagina staan. Het post/redirect/get-patroon uit [Doorsturen na opslaan (redirect)](/docs/FastAPI/redirect) is niet nodig, want de browser heeft nooit een pagina verlaten.
 
-Stap 3 en 4 zijn dezelfde als altijd. Ook een verzoek van htmx komt van de bezoeker, dus wat je in stap 4 controleert, controleer je nog steeds daar en niet in de HTML.
+Stap 3 en 4 zijn dezelfde als altijd. Ook een verzoek van htmx komt van de bezoeker, dus een controle, zoals de 404 uit [Eén item tonen: path-parameters en 404](/docs/FastAPI/detailpagina), hoort nog steeds in stap 4, in je Python. Waarom een controle in de HTML niet genoeg is, zie je in de volgende uitbreiding, bij [Server of browser?](/docs/FastAPI/server-of-browser).

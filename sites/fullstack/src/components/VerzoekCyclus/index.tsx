@@ -93,7 +93,7 @@ const STATIC_STAPPEN: Stap[] = [
     titel: 'De browser leest de HTML',
     tekst: 'Daarin staan een <link> naar CSS en een <img>. Die bestanden heeft hij nog niet.',
     to: '/docs/FastAPI/static_files',
-    les: 'Static files',
+    les: 'CSS in een eigen bestand (static files)',
   },
   {
     kant: 'browser',
@@ -108,7 +108,7 @@ const STATIC_STAPPEN: Stap[] = [
     tekst:
       'Zonder een functie van jou: app.mount geeft het bestand door zoals het op schijf staat.',
     to: '/docs/FastAPI/static_files',
-    les: 'Static files',
+    les: 'CSS in een eigen bestand (static files)',
   },
   {
     kant: 'browser',
@@ -121,7 +121,8 @@ const GET_STAPPEN: Stap[] = [
   {
     kant: 'browser',
     titel: 'Je klikt op een link',
-    tekst: 'De link wijst naar /berichten — een endpoint, geen bestand.',
+    tekst:
+      'Zoals de link Terug naar alle berichten: hij wijst naar /berichten, een endpoint, geen bestand.',
     to: '/docs/FastAPI/links',
     les: 'Links tussen pagina’s',
   },
@@ -144,14 +145,14 @@ const GET_STAPPEN: Stap[] = [
     titel: 'Jouw Python draait',
     tekst: 'De functie leest de berichten uit de database.',
     to: '/docs/FastAPI/database',
-    les: 'Gegevens opslaan',
+    les: 'Gegevens opslaan met SqliteDict',
   },
   {
     kant: 'server',
     titel: 'Jinja2 vult de template',
     tekst: 'De for-lus maakt van elk bericht een regel HTML.',
     to: '/docs/FastAPI/lijst_tonen',
-    les: 'Een lijst tonen',
+    les: 'Alles tonen: een for-lus in je template',
   },
   {
     kant: 'server',
@@ -171,37 +172,37 @@ const POST_STAPPEN: Stap[] = [
   {
     kant: 'browser',
     titel: 'Je vult het formulier in',
-    tekst: 'De browser controleert required en maxlength — meer niet.',
-    to: '/docs/FastAPI/server-of-browser',
-    les: 'Server of browser?',
+    tekst: 'De browser controleert of elk veld met required is ingevuld. Meer niet.',
+    to: '/docs/FastAPI/forms',
+    les: 'Een formulier versturen (POST)',
   },
   {
     kant: 'browser',
     titel: 'De browser stuurt een POST',
     tekst: 'De ingevulde velden gaan mee in het verzoek, niet in de URL.',
     to: '/docs/FastAPI/forms',
-    les: 'Eigen POST request',
+    les: 'Een formulier versturen (POST)',
   },
   {
     kant: 'server',
     titel: 'FastAPI pakt de velden uit',
     tekst: 'Elke naam uit je formulier wordt een Form-parameter van je functie.',
     to: '/docs/FastAPI/forms',
-    les: 'Eigen POST request',
+    les: 'Een formulier versturen (POST)',
   },
   {
     kant: 'server',
     titel: 'Jouw Python slaat op',
     tekst: 'Controleer hier wat je van de browser hebt gekregen, en bewaar het.',
     to: '/docs/FastAPI/post_naar_database',
-    les: 'POST naar database',
+    les: 'Een formulier opslaan',
   },
   {
     kant: 'server',
     titel: 'Het antwoord is een omleiding',
     tekst: 'Geen pagina, maar een opdracht: ga naar /berichten. Met status 303.',
     to: '/docs/FastAPI/redirect',
-    les: 'Terug naar de lijst',
+    les: 'Doorsturen na opslaan (redirect)',
   },
   {
     kant: 'browser',
@@ -238,23 +239,16 @@ const HTMX_STAPPEN: Stap[] = [
     titel: 'Jouw Python draait',
     tekst:
       'Leest de tijd, of slaat een bericht op. Ook dit verzoek komt van de bezoeker, dus controleer hier.',
-    to: '/docs/FastAPI/server-of-browser',
-    les: 'Server of browser?',
-  },
-  {
-    kant: 'server',
-    titel: 'Jouw functie maakt een stukje HTML',
-    tekst: 'Eén zin in een HTMLResponse, of een template zonder <html> eromheen.',
-    to: '/docs/FastAPI/htmx-overzicht',
-    les: 'Wat kan htmx allemaal',
+    to: '/docs/FastAPI/detailpagina',
+    les: 'Eén item tonen: path-parameters en 404',
   },
   {
     kant: 'server',
     titel: 'Het antwoord is een stukje HTML',
     tekst:
-      'Geen omleiding: de browser is nooit weggegaan, dus er is niets om naar terug te sturen.',
-    to: '/docs/FastAPI/redirect',
-    les: 'Terug naar de lijst',
+      'Eén zin in een HTMLResponse, of een template zonder <html> eromheen. Geen omleiding: de browser is nooit weggegaan.',
+    to: '/docs/FastAPI/htmx-overzicht',
+    les: 'htmx-recepten',
   },
   {
     kant: 'browser',
@@ -285,21 +279,21 @@ const SESSIE_STAPPEN: Stap[] = [
     titel: 'De server zoekt de sessie op',
     tekst: 'Het sessie-id is een sleutel in sessies.db; daar staan de echte gegevens.',
     to: '/docs/FastAPI/sessies',
-    les: 'Sessies',
+    les: 'Onthouden op de server: sessies',
   },
   {
     kant: 'server',
     titel: 'Nu pas weet je wie er is',
     tekst: 'De naam komt uit jouw database, niet uit de cookie — dus die klopt.',
     to: '/docs/FastAPI/sessies',
-    les: 'Sessies',
+    les: 'Onthouden op de server: sessies',
   },
   {
     kant: 'server',
     titel: 'Het antwoord gaat terug',
-    tekst: 'Was er nog geen sessie, dan zet set_cookie het nieuwe sessie-id erop.',
+    tekst: 'Na een bericht zet set_cookie het sessie-id erop: een nieuw id als er nog geen was.',
     to: '/docs/FastAPI/sessies',
-    les: 'Sessies',
+    les: 'Onthouden op de server: sessies',
   },
   {
     kant: 'browser',
@@ -399,7 +393,7 @@ const TOEGANG_STAPPEN: Stap[] = [
     titel: 'Het endpoint haalt de sessie op',
     tekst: 'Uit de cookie het sessie-id, uit sessies.db de sleutels van Alex.',
     to: '/docs/FastAPI/sessies',
-    les: 'Sessies',
+    les: 'Onthouden op de server: sessies',
   },
   {
     kant: 'server',

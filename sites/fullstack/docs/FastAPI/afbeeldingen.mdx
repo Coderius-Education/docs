@@ -6,11 +6,11 @@
   ]}
 />
 
-In deze les leer je hoe je een afbeelding toont op je HTML pagina.
+Voor een foto op je pagina heb je twee dingen nodig: het bestand in je `static`-map en één HTML-tag.
 
 ## Afbeelding klaarzetten
 
-Plaats een afbeelding in je `static` folder:
+Zet een afbeelding in je `static`-map:
 
 ```
 je-project/
@@ -19,6 +19,8 @@ je-project/
     ├── css/
     │   └── style.css
     ├── pages/
+    │   ├── home.html
+    │   ├── about.html
     │   └── foto.html
     └── kat.jpg          ← jouw afbeelding
 ```
@@ -31,8 +33,8 @@ In je HTML gebruik je de `<img>` tag:
 <img src="/static/kat.jpg" alt="Een kat">
 ```
 
-- `src` - Het pad naar de afbeelding (via de static folder)
-- `alt` - Tekst die wordt getoond als de afbeelding niet laadt
+- `src` is het pad naar de afbeelding, via de `static`-map.
+- In `alt` staat de tekst die de browser laat zien als de afbeelding niet laadt.
 
 ## Compleet voorbeeld
 
@@ -43,6 +45,7 @@ Maak `static/pages/foto.html`:
 <html>
     <head>
         <title>Mijn Foto</title>
+        <link rel="stylesheet" href="/static/css/style.css">
     </head>
     <body>
         <h1>Kijk naar deze foto!</h1>
@@ -65,12 +68,78 @@ Ga naar [http://127.0.0.1:8000/foto](http://127.0.0.1:8000/foto). Je ziet je afb
 
 :::danger[Gaat er iets mis?]
 Afbeelding laadt niet? Controleer of:
-1. De afbeelding echt in de `static` folder staat
-2. De bestandsnaam exact klopt (let op hoofdletters.)
+1. De afbeelding echt in de `static`-map staat
+2. De bestandsnaam precies klopt, ook de hoofdletters
 3. `app.mount("/static", ...)` in je code staat
 
-Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
+Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
 :::
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+```python
+from fastapi import FastAPI
+from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.get("/")
+async def home():
+    return FileResponse("static/pages/home.html")
+
+@app.get("/info")
+async def info():
+    return {"naam": "Jouw Naam", "leeftijd": 16}
+
+@app.get("/pagina", response_class=HTMLResponse)
+async def pagina():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Mijn Pagina</title>
+        </head>
+        <body>
+            <h1>Hallo!</h1>
+            <p>Dit is mijn eerste HTML pagina.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/styled", response_class=HTMLResponse)
+async def styled():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Met CSS</title>
+            <style>
+                h1 { color: blue; }
+                p { color: gray; }
+            </style>
+        </head>
+        <body>
+            <h1>Gestylede pagina</h1>
+            <p>Deze tekst is grijs.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/about")
+async def about():
+    return FileResponse("static/pages/about.html")
+
+@app.get("/foto")
+async def foto():
+    return FileResponse("static/pages/foto.html")
+```
+
+</details>
 
 ## Opdrachten
 
@@ -92,13 +161,13 @@ De browser kan de afbeelding niet laden. Waarvoor is het `alt` attribuut bedoeld
 <details>
 <summary>Antwoord</summary>
 
-Je ziet de alt tekst "Logo" en een broken image icoon. De pagina laadt wel, maar de afbeelding niet.
+Je ziet de alt-tekst "Logo" en het icoon van een kapotte afbeelding. De pagina laadt wel, de afbeelding niet.
 
 </details>
 
 ### Opdracht 2: Run
 
-Plaats een afbeelding in je `static` folder, maak het `foto.html` bestand uit het voorbeeld, en test of de afbeelding wordt getoond.
+Zet een afbeelding in je `static`-map, maak `foto.html` uit het voorbeeld en kijk of je de afbeelding ziet.
 
 ### Opdracht 3: Investigate - Zonder alt
 
@@ -111,13 +180,13 @@ Wat zie je als je het `alt` attribuut weglaat en het bestand niet bestaat? Probe
 <details>
 <summary>Antwoord</summary>
 
-Je ziet alleen een broken image icoon zonder tekst. Met `alt` zie je tenminste nog een beschrijving van wat er had moeten staan. Daarom is `alt` altijd handig om toe te voegen.
+Je ziet alleen het icoon van een kapotte afbeelding, zonder tekst. Met `alt` lees je tenminste nog wat er had moeten staan, dus zet hem er altijd bij.
 
 </details>
 
 ### Opdracht 4: Make - Eigen foto
 
-Plaats een afbeelding in je `static` folder en maak een pagina die hem toont.
+Zet een afbeelding in je `static`-map en maak een pagina die hem laat zien.
 
 <details>
 <summary>Tip</summary>
@@ -155,13 +224,14 @@ Maak een pagina met drie afbeeldingen onder elkaar. Geef elke afbeelding een tit
 <details>
 <summary>Tip</summary>
 
-Zet drie afbeeldingen in je `static` folder. Gebruik voor elke foto een `<h3>` gevolgd door een `<img>` tag.
+Zet drie afbeeldingen in je `static`-map. Gebruik voor elke foto een `<h3>` gevolgd door een `<img>` tag.
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
+`static/pages/galerij.html`:
 ```html
 <!DOCTYPE html>
 <html>
@@ -178,6 +248,12 @@ Zet drie afbeeldingen in je `static` folder. Gebruik voor elke foto een `<h3>` g
         <img src="/static/foto3.jpg" alt="Derde foto">
     </body>
 </html>
+```
+
+```python
+@app.get("/galerij")
+async def galerij():
+    return FileResponse("static/pages/galerij.html")
 ```
 
 </details>

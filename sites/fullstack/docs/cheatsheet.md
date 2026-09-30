@@ -1,12 +1,12 @@
 # Cheatsheet
 
-Snelle referentie voor alles wat je hebt geleerd. Klik op een onderwerp om het te openen.
+Hier zoek je op hoe iets uit de lessen ook alweer ging. De onderwerpen staan in de volgorde van de lessen; klik er een aan om hem te openen. Welk bestand in welke map hoort, staat bij [Projectstructuur](/docs/FastAPI/projectstructuur).
 
 
 ## FastAPI
 
 <details>
-<summary>FastAPI app aanmaken</summary>
+<summary>Hoe maak ik een FastAPI-app? (FastAPI)</summary>
 
 ```python
 from fastapi import FastAPI
@@ -14,45 +14,34 @@ from fastapi import FastAPI
 app = FastAPI()
 ```
 
+Eén keer, bovenaan, direct na de imports. Alle endpoints komen eronder.
+
 </details>
 
 <details>
-<summary>Server starten</summary>
+<summary>Hoe start ik mijn server? (fastapi dev)</summary>
 
 ```bash
 fastapi dev main.py
 ```
 
-Open: `http://127.0.0.1:8000`
+Open `http://127.0.0.1:8000`. Stoppen doe je met Ctrl+C in de terminal.
 
 </details>
 
 <details>
-<summary>Je server openzetten voor het netwerk</summary>
-
-```bash
-fastapi dev main.py --host 0.0.0.0
-```
-
-Zoek je adres met `ipconfig` (Windows) of `ip addr` (macOS/Linux) en geef `http://<jouw-adres>:8000` door.
-
-**Let op:** iedereen op hetzelfde netwerk kan er dan bij.
-
-</details>
-
-<details>
-<summary>GET endpoint (JSON)</summary>
+<summary>Hoe geef ik JSON terug? (@app.get)</summary>
 
 ```python
 @app.get("/")
 async def root():
-    return {"bericht": "Hallo!"}
+    return {"bericht": "Hallo wereld"}
 ```
 
 </details>
 
 <details>
-<summary>GET endpoint (HTML)</summary>
+<summary>Hoe geef ik een HTML-pagina terug? (HTMLResponse)</summary>
 
 ```python
 from fastapi.responses import HTMLResponse
@@ -61,7 +50,7 @@ from fastapi.responses import HTMLResponse
 async def pagina():
     return """
     <html>
-        <body><h1>Hallo!</h1></body>
+        <body><h1>Hallo</h1></body>
     </html>
     """
 ```
@@ -69,18 +58,7 @@ async def pagina():
 </details>
 
 <details>
-<summary>Static files instellen</summary>
-
-```python
-from fastapi.staticfiles import StaticFiles
-
-app.mount("/static", StaticFiles(directory="static"), name="static")
-```
-
-</details>
-
-<details>
-<summary>HTML bestand serveren (FileResponse)</summary>
+<summary>Hoe stuur ik een HTML-bestand? (FileResponse)</summary>
 
 ```python
 from fastapi.responses import FileResponse
@@ -93,22 +71,20 @@ async def home():
 </details>
 
 <details>
-<summary>POST endpoint (Form data)</summary>
+<summary>Hoe maak ik CSS en afbeeldingen bereikbaar? (app.mount)</summary>
 
 ```python
-from fastapi import Form
+from fastapi.staticfiles import StaticFiles
 
-@app.post("/verstuur")
-async def verstuur(naam: str = Form(...)):
-    return {"naam": naam}
+app.mount("/static", StaticFiles(directory="static"), name="static")
 ```
 
-**Let op:** de `name` in HTML moet matchen met de Python parameter.
+Alles in de map `static` staat dan op `/static/...`.
 
 </details>
 
 <details>
-<summary>Jinja2 template response</summary>
+<summary>Hoe vul ik een template in? (TemplateResponse)</summary>
 
 ```python
 from fastapi import Request
@@ -116,36 +92,60 @@ from fastapi.templating import Jinja2Templates
 
 templates = Jinja2Templates(directory="templates")
 
-@app.post("/groet")
-async def groet(request: Request, naam: str = Form(...)):
-    return templates.TemplateResponse(
-        request,
-        "resultaat.html",
-        {"naam": naam}
-    )
+@app.get("/dobbelsteen")
+async def dobbelsteen(request: Request):
+    return templates.TemplateResponse(request, "dobbelsteen.html", {"worp": 4})
 ```
 
-**Let op:** `request` is het eerste argument, vóór de bestandsnaam.
+`request` komt als eerste argument, vóór de bestandsnaam.
 
 </details>
 
 <details>
-<summary>Redirect na een POST</summary>
+<summary>Hoe lees ik iets na het vraagteken in de URL? (query-parameter)</summary>
+
+```python
+@app.get("/zoek")
+async def zoek(term: str = ""):
+    return {"je_zocht": term}
+```
+
+`/zoek?term=python` geeft `term` de waarde `python`. Met de standaardwaarde `""` werkt `/zoek` ook zonder vraagteken; zonder standaardwaarde krijg je dan een 422.
+
+</details>
+
+<details>
+<summary>Hoe ontvang ik een formulier? (@app.post en Form)</summary>
+
+```python
+from fastapi import Form
+
+@app.post("/gastenboek")
+async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
+    return {"naam": naam, "bericht": bericht}
+```
+
+De `name` in je HTML moet precies zo heten als de parameter in Python.
+
+</details>
+
+<details>
+<summary>Hoe stuur ik door na een POST? (RedirectResponse)</summary>
 
 ```python
 from fastapi.responses import RedirectResponse
 
-@app.post("/opslaan")
-async def opslaan(naam: str = Form(...)):
-    return RedirectResponse(url="/lijst", status_code=303)
+@app.post("/gastenboek")
+async def gastenboek_opslaan(naam: str = Form(...)):
+    return RedirectResponse(url="/berichten", status_code=303)
 ```
 
-**Let op:** zonder `status_code=303` krijg je een 405. De standaard is 307, en die herhaalt je POST.
+Zonder `status_code=303` krijg je een 405: de standaard is 307, en die herhaalt je POST.
 
 </details>
 
 <details>
-<summary>Path-parameter in de URL</summary>
+<summary>Hoe haal ik een waarde uit het pad? (path-parameter)</summary>
 
 ```python
 @app.get("/bericht/{sleutel}")
@@ -153,12 +153,12 @@ async def bericht_detail(sleutel: str):
     return {"sleutel": sleutel}
 ```
 
-**Let op:** de naam tussen accolades moet gelijk zijn aan de parameternaam.
+De naam tussen de accolades moet gelijk zijn aan de parameternaam.
 
 </details>
 
 <details>
-<summary>404 sturen als iets niet bestaat</summary>
+<summary>Hoe stuur ik een 404 als iets niet bestaat? (HTTPException)</summary>
 
 ```python
 from fastapi import HTTPException
@@ -168,16 +168,51 @@ async def bericht_detail(sleutel: str):
     with SqliteDict("gastenboek.db") as db:
         bericht = db.get(sleutel)
     if bericht is None:
-        raise HTTPException(status_code=404, detail="Bestaat niet")
+        raise HTTPException(status_code=404, detail="Dit bericht bestaat niet")
     return bericht
 ```
 
-**Let op:** `raise`, niet `return`.
+Met `raise`, niet met `return`.
 
 </details>
 
 <details>
-<summary>DELETE endpoint (verwijderen zonder herladen)</summary>
+<summary>Hoe weiger ik invoer die niet klopt? (HTTPException met 400)</summary>
+
+```python
+@app.post("/gastenboek")
+async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
+    if len(bericht) > 80:
+        raise HTTPException(status_code=400, detail="Bericht is te lang")
+    return RedirectResponse(url="/berichten", status_code=303)
+```
+
+Controleer aan het begin van je endpoint, vóór je iets opslaat. Een `maxlength` in de HTML is geen controle: die kan een bezoeker weghalen.
+
+</details>
+
+<details>
+<summary>Wat betekent deze statuscode?</summary>
+
+| Code | Betekent | Wie stuurt hem |
+|:---:|---|---|
+| `200` | gelukt | je endpoint |
+| `303` | ga naar deze URL, met een GET | jij, met `RedirectResponse(..., status_code=303)` |
+| `307` | doe hetzelfde verzoek op deze URL | `RedirectResponse` zonder `status_code` |
+| `400` | dit verzoek klopt niet | jij, met `HTTPException` |
+| `403` | dit mag jij niet | jij, bij iets van een ander |
+| `404` | bestaat niet | FastAPI of jij |
+| `405` | dit pad bestaat, maar niet voor deze soort verzoek | FastAPI |
+| `422` | een waarde ontbreekt of past niet | FastAPI, vóór je functie |
+| `429` | te veel verzoeken | `slowapi` |
+| `500` | fout in je server | niemand bewust; kijk in de terminal |
+
+`400`, `403` en `429` komen terug in [Veiligheid](/docs/veiligheid#statuscodes).
+
+</details>
+
+<details>
+<summary>Hoe verwijder ik zonder herladen? (@app.delete)</summary>
 
 ```python
 from fastapi.responses import HTMLResponse
@@ -185,17 +220,19 @@ from fastapi.responses import HTMLResponse
 @app.delete("/bericht/{sleutel}")
 async def bericht_verwijderen(sleutel: str):
     with SqliteDict("gastenboek.db") as db:
+        if sleutel not in db:
+            raise HTTPException(status_code=404, detail="Dit bericht bestaat niet")
         del db[sleutel]
         db.commit()
     return HTMLResponse("")
 ```
 
-Een formulier zonder htmx kan alleen GET en POST; `hx-delete` stuurt een DELETE. Een leeg antwoord haalt het doel van de pagina.
+Een formulier zonder htmx kan alleen GET en POST; `hx-delete` stuurt een DELETE. Met `hx-swap="outerHTML"` haalt het lege antwoord het doel van de pagina.
 
 </details>
 
 <details>
-<summary>Een cookie meegeven</summary>
+<summary>Hoe geef ik een cookie mee? (set_cookie)</summary>
 
 ```python
 @app.post("/gastenboek")
@@ -205,12 +242,12 @@ async def gastenboek_opslaan(naam: str = Form(...)):
     return antwoord
 ```
 
-**Let op:** maak het antwoord eerst als variabele, anders heb je geen plek om de cookie op te zetten. `max_age` is de houdbaarheid in seconden.
+Maak het antwoord eerst als variabele, anders heb je geen plek om de cookie op te zetten. `max_age` is de houdbaarheid in seconden.
 
 </details>
 
 <details>
-<summary>Een cookie uitlezen</summary>
+<summary>Hoe lees ik een cookie uit? (Cookie)</summary>
 
 ```python
 from fastapi import Cookie
@@ -222,23 +259,35 @@ async def gastenboek_form(request: Request, naam: str = Cookie(default="")):
 
 Weghalen doe je met `antwoord.delete_cookie("naam")`.
 
-**Let op:** een cookie staat bij de bezoeker en kan door hem veranderd worden. Gebruik hem niet voor iets waar rechten aan hangen.
+Een cookie staat bij de bezoeker, en die kan hem veranderen. Gebruik hem dus niet voor iets waar rechten aan hangen.
 
 </details>
 
 <details>
-<summary>Een sessie: gegevens op de server</summary>
+<summary>Hoe onthoud ik iets op de server? (sessie met secrets)</summary>
 
 ```python
 import secrets
 
 @app.post("/gastenboek")
-async def gastenboek_opslaan(naam: str = Form(...), sessie_id: str = Cookie(default="")):
+async def gastenboek_opslaan(
+    naam: str = Form(...),
+    bericht: str = Form(...),
+    sessie_id: str = Cookie(default=""),
+):
     if not sessie_id:
         sessie_id = secrets.token_hex(16)
 
+    sleutel = f"bericht_{time.time_ns()}"
+    with SqliteDict("gastenboek.db") as db:
+        db[sleutel] = {"naam": naam, "bericht": bericht}
+        db.commit()
+
     with SqliteDict("sessies.db") as sessies:
-        sessies[sessie_id] = {"naam": naam}
+        mijn = sessies.get(sessie_id, {"naam": naam, "berichten": []})
+        mijn["naam"] = naam
+        mijn["berichten"].append(sleutel)
+        sessies[sessie_id] = mijn
         sessies.commit()
 
     antwoord = RedirectResponse(url="/berichten", status_code=303)
@@ -253,14 +302,62 @@ with SqliteDict("sessies.db") as sessies:
     mijn = sessies.get(sessie_id, {})
 ```
 
-**Let op:** in de cookie staat alleen het sessie-id, de gegevens staan op de server. Gebruik `.get()` met een standaardwaarde: bij een onbekend sessie-id bestaat de sleutel niet.
+In de cookie staat alleen het sessie-id, de gegevens staan op de server. Haal de sessie eerst op met `.get()` en vul hem aan: schrijf je er een nieuwe dictionary overheen, dan ben je de lijst `berichten` kwijt.
+
+</details>
+
+<details>
+<summary>Hoe zet ik mijn server open voor het netwerk? (--host 0.0.0.0)</summary>
+
+```bash
+fastapi dev main.py --host 0.0.0.0
+```
+
+Zoek je adres met `ipconfig` (Windows) of `ip addr` (macOS/Linux) en geef `http://<jouw-adres>:8000` door.
+
+**Let op:** iedereen op hetzelfde netwerk kan er dan bij.
+
+</details>
+
+## Browser
+
+<details>
+<summary>Hoe open ik de ontwikkelaarstools? (F12)</summary>
+
+Druk op **F12**, of klik met de rechtermuisknop op de pagina en kies **Inspecteren**. Dat laatste opent meteen het tabblad **Elementen** op het element waar je op klikte.
+
+De tabbladen die je in deze cursus gebruikt:
+
+- **Console**: fouten uit je JavaScript, met bestand en regelnummer
+- **Netwerk**: elk verzoek van de pagina, met statuscode en herkomst
+- **App** (Application; in Firefox Opslag): de cookies van de site
+
+</details>
+
+<details>
+<summary>Hoe zie ik welke verzoeken de pagina doet? (tabblad Netwerk)</summary>
+
+Tabblad **Netwerk**, herlaad de pagina. Eén regel per verzoek.
+
+- **Status** `200`: gevonden. `404`: het pad klopt niet, of `app.mount` ontbreekt.
+- **Grootte** met **(schijfcache)**: de browser heeft de server niet gevraagd.
+- Klik een regel aan voor de headers, zoals `Cookie:` bij een sessie.
+
+</details>
+
+<details>
+<summary>Hoe herlaad ik zonder cache? (Ctrl+Shift+R)</summary>
+
+Met de ontwikkelaarstools open: rechtermuisknop op de herlaadknop, dan **Cache wissen en geforceerd opnieuw laden**. Sneltoets: **Ctrl+Shift+R**.
+
+Zolang je aan je site werkt: tabblad **Netwerk**, vinkje **Cache uitzetten** aan.
 
 </details>
 
 ## HTML
 
 <details>
-<summary>Basis HTML pagina</summary>
+<summary>Hoe ziet een HTML-pagina eruit? (DOCTYPE)</summary>
 
 ```html
 <!DOCTYPE html>
@@ -269,8 +366,8 @@ with SqliteDict("sessies.db") as sessies:
         <title>Titel</title>
     </head>
     <body>
-        <h1>Heading</h1>
-        <p>Paragraaf</p>
+        <h1>Kop</h1>
+        <p>Alinea</p>
     </body>
 </html>
 ```
@@ -278,7 +375,18 @@ with SqliteDict("sessies.db") as sessies:
 </details>
 
 <details>
-<summary>CSS koppelen</summary>
+<summary>Hoe link ik naar een andere pagina? (a href)</summary>
+
+```html
+<a href="/about">Over mij</a>
+```
+
+Link naar het endpoint, niet naar het bestand.
+
+</details>
+
+<details>
+<summary>Hoe koppel ik CSS aan mijn pagina? (link)</summary>
 
 ```html
 <link rel="stylesheet" href="/static/css/style.css">
@@ -287,53 +395,51 @@ with SqliteDict("sessies.db") as sessies:
 </details>
 
 <details>
-<summary>Afbeelding tonen</summary>
+<summary>Hoe toon ik een afbeelding? (img)</summary>
 
 ```html
-<img src="/static/foto.jpg" alt="Beschrijving">
+<img src="/static/kat.jpg" alt="Een kat op een vensterbank">
 ```
 
 </details>
 
 <details>
-<summary>Link naar andere pagina</summary>
+<summary>Hoe zet ik een waarde uit Python in een template? (dubbele accolades)</summary>
 
-```html
-<a href="/about">Ga naar About</a>
+In Python:
+
+{/* niet-compileren: losse regel uit een handler */}
+```python
+return templates.TemplateResponse(request, "welkom.html", {"naam": "Sam", "speler": {"punten": 12}})
 ```
 
-**Let op:** link naar het **endpoint**, niet naar het bestand.
+In de template:
+
+```html
+<h1>Welkom {{ naam }}</h1>
+<p>{{ speler.punten }} punten</p>
+```
+
+De naam tussen de accolades is de sleutel uit het dictionary. Een onderdeel van een dictionary haal je eruit met een punt.
 
 </details>
 
 <details>
-<summary>Formulier (POST)</summary>
+<summary>Hoe maak ik een formulier? (form method="post")</summary>
 
 ```html
-<form method="post" action="/verstuur">
+<form method="post" action="/gastenboek">
     <input type="text" name="naam" required>
     <button type="submit">Verstuur</button>
 </form>
 ```
 
-**Let op:** `name` in HTML moet matchen met de parameter in Python.
+De `name` van een veld is de naam van de parameter in Python.
 
 </details>
 
 <details>
-<summary>Template variabele (Jinja2)</summary>
-
-In de template:
-```html
-<h1>Hallo {{ naam }}!</h1>
-```
-
-Wordt vervangen door de waarde uit Python.
-
-</details>
-
-<details>
-<summary>Lijst herhalen in een template (for-lus)</summary>
+<summary>Hoe herhaal ik iets voor elk bericht? (for-lus in een template)</summary>
 
 ```html
 <ul>
@@ -348,7 +454,7 @@ Binnen de lus telt `{{ loop.index }}` vanaf 1.
 </details>
 
 <details>
-<summary>Lege lijst opvangen (if en else)</summary>
+<summary>Hoe vang ik een lege lijst op? (if en else in een template)</summary>
 
 ```html
 {% if berichten %}
@@ -361,7 +467,53 @@ Binnen de lus telt `{{ loop.index }}` vanaf 1.
 </details>
 
 <details>
-<summary>Een stuk template hergebruiken (include)</summary>
+<summary>Hoe maak ik een verwijderknop per bericht? (verborgen veld)</summary>
+
+Stuur de berichten mét sleutel mee (`list(db.items())`, zie Database). In de template:
+
+```html
+{% for sleutel, bericht in berichten %}
+    <li>
+        {{ bericht.naam }}: {{ bericht.bericht }}
+        <form method="post" action="/verwijderen">
+            <input type="hidden" name="sleutel" value="{{ sleutel }}">
+            <button type="submit">Verwijderen</button>
+        </form>
+    </li>
+{% endfor %}
+```
+
+In `main.py`:
+
+```python
+@app.post("/verwijderen")
+async def verwijderen(sleutel: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        if sleutel in db:
+            del db[sleutel]
+            db.commit()
+    return RedirectResponse(url="/berichten", status_code=303)
+```
+
+Een `type="hidden"` ziet de bezoeker niet, maar hij gaat wel mee met het formulier.
+
+</details>
+
+<details>
+<summary>Hoe link ik naar de pagina van één bericht? (sleutel in de link)</summary>
+
+```html
+{% for sleutel, bericht in berichten %}
+    <li><a href="/bericht/{{ sleutel }}">{{ bericht.naam }}</a></li>
+{% endfor %}
+```
+
+De link komt uit bij het endpoint `/bericht/{sleutel}` (zie Hoe haal ik een waarde uit het pad?).
+
+</details>
+
+<details>
+<summary>Hoe gebruik ik een stuk template opnieuw? (include)</summary>
 
 `templates/berichten_lijst.html` is een stuk pagina zonder `<html>` eromheen. In de pagina:
 
@@ -375,52 +527,155 @@ Hetzelfde bestand geeft je endpoint terug als antwoord op een htmx-verzoek.
 
 </details>
 
-## JavaScript
+## Mappenstructuur
 
 <details>
-<summary>JavaScript koppelen aan je pagina</summary>
+<summary>Welk bestand hoort in welke map? (projectstructuur)</summary>
 
-Bestand in `static/js/app.js`, en in de `<head>` van je template:
-
-```html
-<script src="/static/js/app.js" defer></script>
+```
+je-project/
+├── main.py
+├── gastenboek.db
+├── static/
+│   ├── css/
+│   │   └── style.css
+│   ├── js/
+│   │   ├── app.js
+│   │   └── htmx.min.js
+│   ├── pages/
+│   │   ├── home.html
+│   │   └── gastenboek_form.html
+│   └── kat.jpg
+└── templates/
+    ├── bericht.html
+    ├── berichten.html
+    └── berichten_lijst.html
 ```
 
-`app.mount("/static", ...)` serveert het al; aan `main.py` verandert niets.
+Vaste pagina's staan in `static/pages/`, pagina's met `{{ }}` in `templates/`. De `.db`-bestanden maakt `sqlitedict` zelf aan. Hoe de mappen per les groeien, staat bij [Projectstructuur](/docs/FastAPI/projectstructuur).
 
-**Let op:** zonder `defer` draait je script voordat de pagina er staat, en vindt `querySelector` niets.
+</details>
+
+## Database (sqlitedict)
+
+<details>
+<summary>Hoe installeer ik sqlitedict? (python -m pip install)</summary>
+
+```bash
+python -m pip install sqlitedict
+```
 
 </details>
 
 <details>
-<summary>Reageren op typen of klikken</summary>
+<summary>Hoe sla ik iets op? (db[...] = en commit)</summary>
 
-```js
-const veld = document.querySelector("#bericht-veld");
-const teller = document.querySelector("#teller");
+```python
+from sqlitedict import SqliteDict
 
-veld.addEventListener("input", function () {
-    teller.textContent = 80 - veld.value.length + " tekens over";
-});
+with SqliteDict("data.db") as db:
+    db["naam"] = "Jan"
+    db.commit()
 ```
+
+Zonder `db.commit()` is je wijziging weg als de server stopt.
+
+</details>
+
+<details>
+<summary>Hoe lees ik iets uit? (db[...])</summary>
+
+```python
+with SqliteDict("data.db") as db:
+    print(db["naam"])
+```
+
+</details>
+
+<details>
+<summary>Hoe geef ik elk bericht een eigen sleutel? (time.time_ns)</summary>
+
+```python
+import time
+
+with SqliteDict("gastenboek.db") as db:
+    sleutel = f"bericht_{time.time_ns()}"
+    db[sleutel] = {"naam": "Sam", "bericht": "Hoi"}
+    db.commit()
+```
+
+Met een vaste sleutel, of met `int(time.time())`, overschrijft een nieuw bericht het vorige.
+
+</details>
+
+<details>
+<summary>Hoe stuur ik alle berichten naar een template? (list met db.values)</summary>
+
+```python
+@app.get("/berichten")
+async def berichten(request: Request):
+    with SqliteDict("gastenboek.db") as db:
+        alle_berichten = list(db.values())
+    return templates.TemplateResponse(request, "berichten.html", {"berichten": alle_berichten})
+```
+
+`list()` haalt de berichten op zolang de database nog open is. Zonder `list()` krijg je `AttributeError: 'NoneType' object has no attribute 'select'`.
+
+</details>
+
+<details>
+<summary>Hoe krijg ik de sleutels erbij? (db.items)</summary>
+
+```python
+with SqliteDict("gastenboek.db") as db:
+    alle_berichten = list(db.items())
+```
+
+Elk element is een paar: eerst de sleutel, dan het bericht. In de template loop je dan met `{% for sleutel, bericht in berichten %}`.
+
+</details>
+
+<details>
+<summary>Hoe verwijder ik iets? (del db[...])</summary>
+
+```python
+with SqliteDict("gastenboek.db") as db:
+    if sleutel in db:
+        del db[sleutel]
+        db.commit()
+```
+
+Zonder `if sleutel in db` crasht je endpoint als iemand twee keer op Verwijderen klikt.
+
+</details>
+
+<details>
+<summary>Hoe lees ik iets uit dat misschien niet bestaat? (db.get)</summary>
+
+```python
+with SqliteDict("data.db") as db:
+    naam = db.get("naam", "Niet gevonden")
+```
+
+Zonder tweede argument geeft `db.get()` `None` als de sleutel niet bestaat, in plaats van een `KeyError`.
 
 </details>
 
 ## htmx
 
 <details>
-<summary>htmx koppelen aan je pagina</summary>
+<summary>Hoe koppel ik htmx aan mijn pagina? (htmx.min.js)</summary>
 
-Download `htmx.min.js` (de link staat bij [Zonder herladen met htmx](/docs/FastAPI/htmx)) naar `static/js/`, en in de `<head>`:
+Download `htmx.min.js` (de link staat bij [Zonder herladen met htmx](/docs/FastAPI/htmx)) naar `static/js/`, en in de `<head>` van elke pagina die htmx gebruikt:
 
 ```html
-<script src="/static/js/htmx.min.js" defer></script>
+<script src="/static/js/htmx.min.js"></script>
 ```
 
 </details>
 
 <details>
-<summary>Een verzoek zonder herladen (hx-post, hx-get, hx-delete)</summary>
+<summary>Hoe stuur ik een verzoek zonder herladen? (hx-post, hx-get, hx-delete)</summary>
 
 ```html
 <form hx-post="/gastenboek" hx-target="#berichten-lijst">
@@ -433,7 +688,7 @@ Het endpoint geeft een stukje HTML terug (`HTMLResponse("Bedankt")` of een templ
 </details>
 
 <details>
-<summary>Waar het antwoord komt (hx-target en hx-swap)</summary>
+<summary>Waar komt het antwoord terecht? (hx-target en hx-swap)</summary>
 
 - `hx-target="#id"`: het element dat het antwoord krijgt. Zonder `hx-target` is dat het element met het attribuut zelf.
 - `hx-swap="innerHTML"` (standaard): vervangt wat er in het doel staat.
@@ -442,7 +697,7 @@ Het endpoint geeft een stukje HTML terug (`HTMLResponse("Bedankt")` of een templ
 </details>
 
 <details>
-<summary>Wanneer het verzoek gaat (hx-trigger)</summary>
+<summary>Wanneer gaat het verzoek? (hx-trigger)</summary>
 
 ```html
 <div id="berichten-lijst" hx-get="/berichten/lijst" hx-trigger="every 10s">
@@ -453,7 +708,7 @@ Standaard: bij een klik op een knop of het versturen van een formulier.
 </details>
 
 <details>
-<summary>Bevestiging vooraf (hx-confirm)</summary>
+<summary>Hoe vraag ik eerst om bevestiging? (hx-confirm)</summary>
 
 ```html
 <button hx-delete="/bericht/{{ sleutel }}" hx-confirm="Dit bericht verwijderen?">Verwijderen</button>
@@ -461,125 +716,33 @@ Standaard: bij een klik op een knop of het versturen van een formulier.
 
 </details>
 
-## Database (sqlitedict)
+## JavaScript
 
 <details>
-<summary>Installatie</summary>
+<summary>Hoe koppel ik JavaScript aan mijn pagina? (script met defer)</summary>
 
-```bash
-python -m pip install sqlitedict
+Bestand in `static/js/app.js`, en in de `<head>` van je template:
+
+```html
+<script src="/static/js/app.js" defer></script>
 ```
 
-</details>
+`app.mount("/static", ...)` serveert het al; aan `main.py` verandert niets.
 
-<details>
-<summary>Data opslaan</summary>
-
-```python
-from sqlitedict import SqliteDict
-
-with SqliteDict("data.db") as db:
-    db["naam"] = "Jan"
-    db.commit()  # NIET vergeten!
-```
+Zonder `defer` draait je script voordat de pagina er staat, en vindt `querySelector` niets.
 
 </details>
 
 <details>
-<summary>Data uitlezen</summary>
+<summary>Hoe reageer ik op typen of klikken? (addEventListener)</summary>
 
-```python
-with SqliteDict("data.db") as db:
-    print(db["naam"])
-```
+```js
+const veld = document.querySelector("#bericht-veld");
+const teller = document.querySelector("#teller");
 
-</details>
-
-<details>
-<summary>Data veilig uitlezen (met default)</summary>
-
-```python
-with SqliteDict("data.db") as db:
-    # Crasht niet als "naam" niet bestaat:
-    naam = db.get("naam", "Niet gevonden")
-```
-
-</details>
-
-<details>
-<summary>Data verwijderen</summary>
-
-```python
-with SqliteDict("data.db") as db:
-    del db["naam"]
-    db.commit()
-```
-
-</details>
-
-<details>
-<summary>Alles bekijken</summary>
-
-```python
-with SqliteDict("data.db") as db:
-    for key, value in db.items():
-        print(key, value)
-```
-
-</details>
-
-## Browser
-
-<details>
-<summary>Ontwikkelaarstools openen</summary>
-
-Druk op **F12**, of klik met de rechtermuisknop op de pagina en kies **Inspecteren**. Dat laatste opent meteen het tabblad **Elementen** op het element waar je op klikte.
-
-De tabbladen die je in deze cursus gebruikt:
-
-- **Console**: fouten uit je JavaScript, met bestand en regelnummer
-- **Netwerk**: elk verzoek van de pagina, met statuscode en herkomst
-- **App** (Application; in Firefox Opslag): de cookies van de site
-
-</details>
-
-<details>
-<summary>Herladen zonder cache</summary>
-
-Met de ontwikkelaarstools open: rechtermuisknop op de herlaadknop, dan **Cache wissen en geforceerd opnieuw laden**. Sneltoets: **Ctrl+Shift+R**.
-
-Zolang je aan je site werkt: tabblad **Netwerk**, vinkje **Cache uitzetten** aan.
-
-</details>
-
-<details>
-<summary>Verzoeken bekijken</summary>
-
-Tabblad **Netwerk**, herlaad de pagina. Eén regel per verzoek.
-
-- **Status** `200`: gevonden. `404`: het pad klopt niet, of `app.mount` ontbreekt.
-- **Grootte** met **(schijfcache)**: de browser heeft de server niet gevraagd.
-- Klik een regel aan voor de headers, zoals `Cookie:` bij een sessie.
-
-</details>
-
-## Mappenstructuur
-
-<details>
-<summary>Compleet project</summary>
-
-```
-je-project/
-├── main.py
-├── static/
-│   ├── css/
-│   │   └── style.css
-│   ├── pages/
-│   │   ├── home.html
-│   │   └── form.html
-│   └── foto.jpg
-└── templates/
-    └── resultaat.html
+veld.addEventListener("input", function () {
+    teller.textContent = 80 - veld.value.length + " tekens over";
+});
 ```
 
 </details>
@@ -587,24 +750,7 @@ je-project/
 ## Veiligheid
 
 <details>
-<summary>Wat betekent deze statuscode?</summary>
-
-| Code | Betekent | Wie stuurt hem |
-|:---:|---|---|
-| `200` | gelukt | je endpoint |
-| `400` | dit verzoek klopt niet | jij, met `HTTPException` |
-| `403` | dit mag jij niet | jij, bij iets van een ander |
-| `404` | bestaat niet | FastAPI of jij |
-| `422` | een veld past niet bij `Form` | FastAPI, vóór je functie |
-| `429` | te veel verzoeken | `slowapi` |
-| `500` | fout in je server | niemand bewust; kijk in de terminal |
-
-Meer uitleg: [Veiligheid, de startpagina](/docs/veiligheid#statuscodes).
-
-</details>
-
-<details>
-<summary>Wachtwoord hashen en controleren (Argon2)</summary>
+<summary>Hoe bewaar ik een wachtwoord veilig? (Argon2)</summary>
 
 ```python
 from argon2 import PasswordHasher
@@ -621,23 +767,29 @@ except VerifyMismatchError:
     print("Klopt niet")
 ```
 
-Bewaar de hash, nooit het wachtwoord. `ph.verify` vergelijk je nooit zelf met `==`: elke hash heeft een eigen zout. Zie [Wachtwoorden](/docs/veiligheid/wachtwoorden/gewone-tekst).
+Bewaar de hash, nooit het wachtwoord. Vergelijk met `ph.verify` en niet zelf met `==`: elke hash heeft een eigen zout. Zie [Wachtwoorden](/docs/veiligheid/wachtwoorden/gewone-tekst).
 
 </details>
 
 <details>
-<summary>Een verzoeklimiet (slowapi)</summary>
+<summary>Hoe beperk ik het aantal verzoeken? (slowapi)</summary>
 
 ```python
-from slowapi import Limiter
+from fastapi import FastAPI, Request
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 
 limiter = Limiter(key_func=get_remote_address)
 
+app = FastAPI()
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 @app.get("/")
 @limiter.limit("5/minute")
 async def root(request: Request):
-    return {"bericht": "Hallo"}
+    return {"bericht": "Hallo wereld!"}
 ```
 
 Het endpoint heeft `request: Request` nodig. Zie [Te veel verzoeken](/docs/veiligheid/dos/limiet).
@@ -645,7 +797,7 @@ Het endpoint heeft `request: Request` nodig. Zie [Te veel verzoeken](/docs/veili
 </details>
 
 <details>
-<summary>Controleren wie iets mag (403)</summary>
+<summary>Hoe controleer ik wie iets mag? (403)</summary>
 
 ```python
 if sleutel not in mijn.get("berichten", []):
@@ -657,7 +809,7 @@ Zet de controle in het endpoint, vóór er iets verandert, en op elk endpoint ap
 </details>
 
 <details>
-<summary>HTML van een bezoeker onschadelijk maken (escape)</summary>
+<summary>Hoe maak ik HTML van een bezoeker onschadelijk? (escape)</summary>
 
 {/* niet-compileren: losse regel uit een handler */}
 
@@ -672,7 +824,7 @@ Een `{{ }}`-template escapet vanzelf; een f-string niet. Gebruik `|safe` nooit v
 </details>
 
 <details>
-<summary>Een cookie buiten bereik van scripts (httponly)</summary>
+<summary>Hoe houd ik scripts bij mijn cookie weg? (httponly)</summary>
 
 ```python
 antwoord.set_cookie(
@@ -689,7 +841,7 @@ antwoord.set_cookie(
 </details>
 
 <details>
-<summary>Invoer begrenzen op de server (Form)</summary>
+<summary>Hoe begrens ik invoer op de server? (Form met max_length)</summary>
 
 ```python
 @app.post("/bericht")

@@ -38,144 +38,237 @@ type Item = {
 };
 
 // In dezelfde volgorde als de cheatsheet. Die volgorde meetesten klinkt streng,
-// maar hij is didactisch: de items lopen mee met de lesvolgorde.
+// maar hij is didactisch: de items lopen mee met de lesvolgorde van de sidebar,
+// en de koppen staan in de volgorde waarin hun onderwerp voor het eerst
+// terugkomt (FastAPI, Browser bij Kijken wat de browser doet, HTML, ...).
+// Een summary is een vraag met de functienaam erachter (schrijfgids §7).
 const KOPPELING: Item[] = [
   // --- FastAPI ---
-  { summary: 'FastAPI app aanmaken', concepten: ['fastapi-app'] },
+  { summary: 'Hoe maak ik een FastAPI-app? (FastAPI)', concepten: ['fastapi-app'] },
   {
-    summary: 'Server starten',
+    summary: 'Hoe start ik mijn server? (fastapi dev)',
     concepten: [],
     geenConcept: 'een terminalcommando, dat staat niet in de ingeleverde code',
   },
+  { summary: 'Hoe geef ik JSON terug? (@app.get)', concepten: ['fastapi-get'] },
   {
-    summary: 'Je server openzetten voor het netwerk',
-    concepten: [],
-    geenConcept: 'een terminalcommando met een vlag, niet terug te zien in een bestand',
+    summary: 'Hoe geef ik een HTML-pagina terug? (HTMLResponse)',
+    concepten: ['fastapi-html-response'],
   },
-  { summary: 'GET endpoint (JSON)', concepten: ['fastapi-get'] },
-  { summary: 'GET endpoint (HTML)', concepten: ['fastapi-html-response'] },
-  { summary: 'Static files instellen', concepten: ['fastapi-static'] },
-  { summary: 'HTML bestand serveren (FileResponse)', concepten: ['fastapi-fileresponse'] },
-  { summary: 'POST endpoint (Form data)', concepten: ['fastapi-post', 'fastapi-form'] },
-  { summary: 'Jinja2 template response', concepten: ['fastapi-templates', 'fastapi-request'] },
-  { summary: 'Redirect na een POST', concepten: ['fastapi-redirect'] },
-  { summary: 'Path-parameter in de URL', concepten: ['fastapi-path-param'] },
-  { summary: '404 sturen als iets niet bestaat', concepten: ['fastapi-httpexception'] },
-  { summary: 'DELETE endpoint (verwijderen zonder herladen)', concepten: ['fastapi-delete'] },
-  { summary: 'Een cookie meegeven', concepten: ['fastapi-cookie'] },
+  { summary: 'Hoe stuur ik een HTML-bestand? (FileResponse)', concepten: ['fastapi-fileresponse'] },
+  {
+    summary: 'Hoe maak ik CSS en afbeeldingen bereikbaar? (app.mount)',
+    concepten: ['fastapi-static'],
+  },
+  {
+    summary: 'Hoe vul ik een template in? (TemplateResponse)',
+    concepten: ['fastapi-templates', 'fastapi-request'],
+  },
+  {
+    summary: 'Hoe lees ik iets na het vraagteken in de URL? (query-parameter)',
+    concepten: [],
+    geenConcept:
+      'een gewone parameter zonder Form of accolades; aan de code is niet te zien dat hij uit de URL komt',
+  },
+  {
+    summary: 'Hoe ontvang ik een formulier? (@app.post en Form)',
+    concepten: ['fastapi-post', 'fastapi-form'],
+  },
+  {
+    summary: 'Hoe stuur ik door na een POST? (RedirectResponse)',
+    concepten: ['fastapi-redirect'],
+  },
+  {
+    summary: 'Hoe haal ik een waarde uit het pad? (path-parameter)',
+    concepten: ['fastapi-path-param'],
+  },
+  {
+    summary: 'Hoe stuur ik een 404 als iets niet bestaat? (HTTPException)',
+    concepten: ['fastapi-httpexception'],
+  },
+  // Dezelfde regex als de 404: een project met een eigen controle gebruikt
+  // HTTPException ook, en scoort daarmee op hetzelfde concept.
+  {
+    summary: 'Hoe weiger ik invoer die niet klopt? (HTTPException met 400)',
+    concepten: ['fastapi-httpexception'],
+  },
+  {
+    summary: 'Wat betekent deze statuscode?',
+    concepten: [],
+    geenConcept: 'naslag bij het lezen van Netwerk en de terminal, geen code in het project',
+  },
+  {
+    summary: 'Hoe verwijder ik zonder herladen? (@app.delete)',
+    concepten: ['fastapi-delete'],
+  },
+  { summary: 'Hoe geef ik een cookie mee? (set_cookie)', concepten: ['fastapi-cookie'] },
   // Zetten en uitlezen zijn twee cheatsheet-items maar één concept: de regex
   // vangt set_cookie én Cookie(, en een project dat maar de helft doet werkt
   // sowieso niet.
-  { summary: 'Een cookie uitlezen', concepten: ['fastapi-cookie'] },
-  { summary: 'Een sessie: gegevens op de server', concepten: ['fastapi-sessie'] },
-
-  // --- HTML ---
-  { summary: 'Basis HTML pagina', concepten: ['html-basis'] },
-  { summary: 'CSS koppelen', concepten: ['html-css-link'] },
-  { summary: 'Afbeelding tonen', concepten: ['html-img'] },
-  { summary: 'Link naar andere pagina', concepten: ['html-link'] },
-  { summary: 'Formulier (POST)', concepten: ['html-form'] },
-  { summary: 'Template variabele (Jinja2)', concepten: ['html-jinja-var'] },
-  { summary: 'Lijst herhalen in een template (for-lus)', concepten: ['html-jinja-loop'] },
-  { summary: 'Lege lijst opvangen (if en else)', concepten: ['html-jinja-if'] },
-  { summary: 'Een stuk template hergebruiken (include)', concepten: ['html-jinja-include'] },
-
-  // --- JavaScript ---
-  { summary: 'JavaScript koppelen aan je pagina', concepten: ['js-bestand-koppelen'] },
+  { summary: 'Hoe lees ik een cookie uit? (Cookie)', concepten: ['fastapi-cookie'] },
   {
-    summary: 'Reageren op typen of klikken',
+    summary: 'Hoe onthoud ik iets op de server? (sessie met secrets)',
+    concepten: ['fastapi-sessie'],
+  },
+  {
+    summary: 'Hoe zet ik mijn server open voor het netwerk? (--host 0.0.0.0)',
     concepten: [],
-    geenConcept:
-      'querySelector en addEventListener horen bij de web-cursus en worden daar nagekeken',
+    geenConcept: 'een terminalcommando met een vlag, niet terug te zien in een bestand',
   },
-
-  // --- htmx ---
-  { summary: 'htmx koppelen aan je pagina', concepten: ['htmx-koppelen'] },
-  {
-    summary: 'Een verzoek zonder herladen (hx-post, hx-get, hx-delete)',
-    concepten: ['htmx-verzoek'],
-  },
-  { summary: 'Waar het antwoord komt (hx-target en hx-swap)', concepten: ['htmx-target'] },
-  { summary: 'Wanneer het verzoek gaat (hx-trigger)', concepten: ['htmx-trigger'] },
-  {
-    summary: 'Bevestiging vooraf (hx-confirm)',
-    concepten: [],
-    geenConcept: 'een tekst in een attribuut; het verzoek zelf wordt al nagekeken via hx-delete',
-  },
-
-  // --- Database (sqlitedict) ---
-  {
-    summary: 'Installatie',
-    concepten: [],
-    geenConcept: 'een pip-commando, geen code in het project',
-  },
-  { summary: 'Data opslaan', concepten: ['db-sqlitedict', 'db-write', 'db-commit'] },
-  {
-    summary: 'Data uitlezen',
-    concepten: [],
-    geenConcept: 'db["naam"] is gewoon indexeren; alleen db.get() wordt apart nagekeken',
-  },
-  { summary: 'Data veilig uitlezen (met default)', concepten: ['db-get'] },
-  { summary: 'Data verwijderen', concepten: ['db-del'] },
-  { summary: 'Alles bekijken', concepten: ['db-items'] },
 
   // --- Browser ---
   // Handelingen in de browser van de leerling; daar staat niets van in het
   // ingeleverde project.
   {
-    summary: 'Ontwikkelaarstools openen',
+    summary: 'Hoe open ik de ontwikkelaarstools? (F12)',
     concepten: [],
     geenConcept: 'een handeling in de browser, niet terug te zien in een bestand',
   },
   {
-    summary: 'Herladen zonder cache',
+    summary: 'Hoe zie ik welke verzoeken de pagina doet? (tabblad Netwerk)',
     concepten: [],
     geenConcept: 'een handeling in de browser, niet terug te zien in een bestand',
   },
   {
-    summary: 'Verzoeken bekijken',
+    summary: 'Hoe herlaad ik zonder cache? (Ctrl+Shift+R)',
     concepten: [],
     geenConcept: 'een handeling in de browser, niet terug te zien in een bestand',
   },
 
+  // --- HTML ---
+  { summary: 'Hoe ziet een HTML-pagina eruit? (DOCTYPE)', concepten: ['html-basis'] },
+  { summary: 'Hoe link ik naar een andere pagina? (a href)', concepten: ['html-link'] },
+  { summary: 'Hoe koppel ik CSS aan mijn pagina? (link)', concepten: ['html-css-link'] },
+  { summary: 'Hoe toon ik een afbeelding? (img)', concepten: ['html-img'] },
+  {
+    summary: 'Hoe zet ik een waarde uit Python in een template? (dubbele accolades)',
+    concepten: ['html-jinja-var'],
+  },
+  { summary: 'Hoe maak ik een formulier? (form method="post")', concepten: ['html-form'] },
+  {
+    summary: 'Hoe herhaal ik iets voor elk bericht? (for-lus in een template)',
+    concepten: ['html-jinja-loop'],
+  },
+  {
+    summary: 'Hoe vang ik een lege lijst op? (if en else in een template)',
+    concepten: ['html-jinja-if'],
+  },
+  {
+    summary: 'Hoe maak ik een verwijderknop per bericht? (verborgen veld)',
+    concepten: [],
+    geenConcept:
+      'een gewoon input-veld; het verwijderen zelf wordt nagekeken via db-del en het formulier via html-form',
+  },
+  {
+    summary: 'Hoe link ik naar de pagina van één bericht? (sleutel in de link)',
+    concepten: [],
+    geenConcept:
+      'een gewone link met {{ }}; de lus en de path-parameter aan de andere kant worden al nagekeken',
+  },
+  {
+    summary: 'Hoe gebruik ik een stuk template opnieuw? (include)',
+    concepten: ['html-jinja-include'],
+  },
+
   // --- Mappenstructuur ---
-  { summary: 'Compleet project', concepten: ['struct-main', 'struct-static', 'struct-templates'] },
+  {
+    summary: 'Welk bestand hoort in welke map? (projectstructuur)',
+    concepten: ['struct-main', 'struct-static', 'struct-templates'],
+  },
+
+  // --- Database (sqlitedict) ---
+  {
+    summary: 'Hoe installeer ik sqlitedict? (python -m pip install)',
+    concepten: [],
+    geenConcept: 'een pip-commando, geen code in het project',
+  },
+  {
+    summary: 'Hoe sla ik iets op? (db[...] = en commit)',
+    concepten: ['db-sqlitedict', 'db-write', 'db-commit'],
+  },
+  {
+    summary: 'Hoe lees ik iets uit? (db[...])',
+    concepten: [],
+    geenConcept: 'db["naam"] is gewoon indexeren; alleen db.get() wordt apart nagekeken',
+  },
+  {
+    summary: 'Hoe geef ik elk bericht een eigen sleutel? (time.time_ns)',
+    concepten: [],
+    geenConcept:
+      'een functie uit Python zelf; het opslaan onder die sleutel wordt nagekeken via db-write',
+  },
+  {
+    summary: 'Hoe stuur ik alle berichten naar een template? (list met db.values)',
+    concepten: [],
+    geenConcept:
+      'list() en values() zijn Python; de lus in de template wordt nagekeken via html-jinja-loop',
+  },
+  { summary: 'Hoe krijg ik de sleutels erbij? (db.items)', concepten: ['db-items'] },
+  { summary: 'Hoe verwijder ik iets? (del db[...])', concepten: ['db-del'] },
+  {
+    summary: 'Hoe lees ik iets uit dat misschien niet bestaat? (db.get)',
+    concepten: ['db-get'],
+  },
+
+  // --- htmx ---
+  { summary: 'Hoe koppel ik htmx aan mijn pagina? (htmx.min.js)', concepten: ['htmx-koppelen'] },
+  {
+    summary: 'Hoe stuur ik een verzoek zonder herladen? (hx-post, hx-get, hx-delete)',
+    concepten: ['htmx-verzoek'],
+  },
+  {
+    summary: 'Waar komt het antwoord terecht? (hx-target en hx-swap)',
+    concepten: ['htmx-target'],
+  },
+  { summary: 'Wanneer gaat het verzoek? (hx-trigger)', concepten: ['htmx-trigger'] },
+  {
+    summary: 'Hoe vraag ik eerst om bevestiging? (hx-confirm)',
+    concepten: [],
+    geenConcept: 'een tekst in een attribuut; het verzoek zelf wordt al nagekeken via hx-delete',
+  },
+
+  // --- JavaScript ---
+  {
+    summary: 'Hoe koppel ik JavaScript aan mijn pagina? (script met defer)',
+    concepten: ['js-bestand-koppelen'],
+  },
+  {
+    summary: 'Hoe reageer ik op typen of klikken? (addEventListener)',
+    concepten: [],
+    geenConcept:
+      'querySelector en addEventListener horen bij de web-cursus en worden daar nagekeken',
+  },
 
   // --- Veiligheid ---
   // Een eigen reeks in de navbar, los van het nagekeken eindproject. De
   // nakijker toetst deze syntax daarom niet.
   {
-    summary: 'Wat betekent deze statuscode?',
-    concepten: [],
-    geenConcept: 'naslag bij de reeks Veiligheid, geen code in het project',
-  },
-  {
-    summary: 'Wachtwoord hashen en controleren (Argon2)',
+    summary: 'Hoe bewaar ik een wachtwoord veilig? (Argon2)',
     concepten: [],
     geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
   },
   {
-    summary: 'Een verzoeklimiet (slowapi)',
+    summary: 'Hoe beperk ik het aantal verzoeken? (slowapi)',
     concepten: [],
     geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
   },
   {
-    summary: 'Controleren wie iets mag (403)',
+    summary: 'Hoe controleer ik wie iets mag? (403)',
     concepten: [],
     geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
   },
   {
-    summary: 'HTML van een bezoeker onschadelijk maken (escape)',
+    summary: 'Hoe maak ik HTML van een bezoeker onschadelijk? (escape)',
     concepten: [],
     geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
   },
   {
-    summary: 'Een cookie buiten bereik van scripts (httponly)',
+    summary: 'Hoe houd ik scripts bij mijn cookie weg? (httponly)',
     concepten: [],
     geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
   },
   {
-    summary: 'Invoer begrenzen op de server (Form)',
+    summary: 'Hoe begrens ik invoer op de server? (Form met max_length)',
     concepten: [],
     geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
   },
