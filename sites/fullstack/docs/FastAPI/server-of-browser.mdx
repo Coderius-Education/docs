@@ -6,7 +6,7 @@
   ]}
 />
 
-Je hebt nu twee plekken waar je code kunt zetten. Het gastenboek draait op de server: Python slaat op, Python bouwt de lijst. De tekenteller draait in de browser: JavaScript rekent, de server weet van niets.
+Je hebt nu twee plekken waar je code kunt zetten. Het gastenboek draait op de server: Python slaat op, Python bouwt de lijst. Met htmx vraag je de server iets zonder dat de pagina verspringt, maar het werk gebeurt nog steeds in Python. De tekenteller draait in de browser: JavaScript rekent, de server weet van niets.
 
 Bij alles wat je vanaf nu bouwt kies je tussen die twee. Deze les gaat over hoe je kiest.
 
@@ -21,9 +21,9 @@ Een bericht in het gastenboek moet bewaard blijven en anderen moeten het lezen: 
 
 ## De tweede vraag: hoe vaak gebeurt het?
 
-Alles wat via de server gaat kost een verzoek heen en een antwoord terug. Eén keer bij het versturen van een formulier merk je daar niets van. Bij elke toetsaanslag wél: veertien letters worden veertien verzoeken, en de pagina zou bij elke letter opnieuw geladen worden.
+Alles wat via de server gaat kost een verzoek heen en een antwoord terug. Eén keer bij het versturen van een formulier merk je daar niets van. Bij elke toetsaanslag wél: veertien letters worden veertien verzoeken. Zonder htmx zou de pagina bij elke letter opnieuw laden; met htmx blijft hij staan, maar elk verzoek moet nog steeds heen en terug.
 
-Daarom hoort werk dat vaak gebeurt — meetypen, slepen, in- en uitklappen, iets rood kleuren — in de browser, ook als je het in Python zou kúnnen.
+Daarom hoort werk dat vaak gebeurt — meetypen, slepen, in- en uitklappen, iets rood kleuren — in de browser, ook als je het in Python zou kúnnen. Het htmx-recept Zoeken terwijl je typt is de uitzondering die de regel bevestigt: de server heeft ook de berichten die niet op de pagina staan, en met een `delay` stuurt htmx pas een verzoek als je even stopt met typen.
 
 ## De derde vraag: mag je het geloven?
 
@@ -35,8 +35,9 @@ Hier zit een valkuil. In je formulier staat:
 
 Dat ziet eruit als een regel: berichten zijn nooit langer dan 80 tekens. Maar `maxlength` is een instructie aan de **browser**, en de browser is van de bezoeker. Wie het formulier omzeilt en rechtstreeks naar je endpoint stuurt, komt met 500 tekens gewoon binnen — jouw Python-code slaat het op zonder klagen.
 
-Wil je echt een grens, dan moet Python die zelf controleren:
+Wil je echt een grens, dan moet Python die zelf controleren. Zet deze controle bovenaan in je POST-endpoint `/gastenboek`; de rest van de functie blijft zoals hij was:
 
+{/* route-dubbel: toont alleen de controle bovenaan het bestaande POST /gastenboek */}
 ```python
 @app.post("/gastenboek")
 async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
@@ -110,7 +111,7 @@ Voeg de controle toe in je POST-endpoint, zoals hierboven, en probeer opdracht 2
 <details>
 <summary>Antwoord</summary>
 
-Nu krijg je een 400 met "Bericht is te lang", hoe je het ook probeert. De controle staat op de server, en daar komt de bezoeker niet bij.
+Nu krijg je een 400 met "Bericht is te lang", hoe je het ook probeert. Gebruik je het htmx-formulier, dan zie je op de pagina niets: htmx zet een foutantwoord niet in de pagina. In Netwerk staat dan een rode regel met status 400, en bij Reactie de melding. De controle staat op de server, en daar komt de bezoeker niet bij.
 
 Let op dat je `maxlength` in de HTML laat staan. Die twee bijten elkaar niet: de browser helpt wie zich vergist, de server houdt tegen wie het expres probeert.
 
@@ -123,26 +124,34 @@ Zet op je berichtenpagina een knop die de lijst omdraait: nieuwste eerst, oudste
 <details>
 <summary>Tip</summary>
 
-De lijstitems staan al in de HTML. Met `document.querySelectorAll("li")` haal je ze op, en met `lijst.prepend(item)` zet je een item weer vooraan. Loop door de items heen en zet ze allemaal opnieuw vooraan.
+De lijstitems staan al in de HTML. Met `lijst.querySelectorAll("li")` haal je ze op, en met `lijst.prepend(item)` zet je een item weer vooraan. Loop met een for-lus door de items heen en zet ze allemaal opnieuw vooraan.
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-```js
-const knop = document.querySelector("#omdraai-knop");
-const lijst = document.querySelector("#berichten-lijst");
+Zet in `templates/berichten.html`, boven je lijst:
 
-knop.addEventListener("click", function () {
-    const items = document.querySelectorAll("#berichten-lijst li");
-    for (const item of items) {
-        lijst.prepend(item);
+```html
+<button id="omdraai-knop">Omdraaien</button>
+```
+
+En in `static/js/berichten.js`, onder wat er al staat:
+
+```js
+const omdraaiKnop = document.querySelector("#omdraai-knop");
+
+omdraaiKnop.addEventListener("click", function () {
+    const lijst = document.querySelector("ul");
+    const items = lijst.querySelectorAll("li");
+    for (let i = 0; i < items.length; i++) {
+        lijst.prepend(items[i]);
     }
 });
 ```
 
-Elk item weer vooraan zetten draait de volgorde om. De server komt er niet aan te pas: alle berichten stonden al op de pagina.
+`document.querySelector("ul")` pakt de eerste `<ul>` op de pagina: je berichtenlijst. Je zoekt hem pas op bij de klik, want htmx vervangt de lijst als je ververst. De knop heet `omdraaiKnop`, omdat `berichten.js` al een `knop` heeft. Elk item weer vooraan zetten draait de volgorde om. De server komt er niet aan te pas: alle berichten stonden al op de pagina.
 
 </details>
 
