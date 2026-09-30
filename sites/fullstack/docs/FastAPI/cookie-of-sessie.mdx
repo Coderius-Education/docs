@@ -49,7 +49,7 @@ Voor een voorkeur die niemand kan schaden — welke taal, welk thema, of het uit
 
 ## Testen
 
-Je hebt allebei al draaien. Kijk nog één keer in het tabblad **App** naar je cookies en vergelijk wat je ziet: bij de cookie-aanpak stond je naam er leesbaar in, bij de sessie een rij tekens die niets verraadt.
+Je server draait nu met sessies. Kijk nog één keer in het tabblad **App** naar je cookies en denk terug aan de vorige twee lessen: bij de cookie-aanpak stond je naam er leesbaar in, in `sessie_id` staat een rij tekens die niets verraadt.
 
 ## Opdrachten
 
@@ -79,12 +79,12 @@ Bij site B verandert er niets: je hebt een sessie-id gewijzigd dat nu nergens me
 
 ### Opdracht 2: Run - Kijk wat er over de lijn gaat
 
-Open het tabblad **Netwerk** zoals in [Kijken wat de browser doet](/docs/FastAPI/devtools-netwerk), herlaad je gastenboek en klik het bovenste verzoek aan. Zoek bij Headers, onder Verzoekheaders, de regel die met `Cookie:` begint.
+Open het tabblad **Netwerk** zoals in [Kijken wat de browser doet](/docs/FastAPI/devtools-netwerk), herlaad je gastenboek en klik het bovenste verzoek aan. Zoek bij Headers, onder Verzoekheaders, de regel `Cookie`. Zet je bij Verzoekheaders Onbewerkt aan, dan zie je hem zoals hij echt over de lijn gaat: als één regel die met `Cookie:` begint.
 
 <details>
 <summary>Antwoord</summary>
 
-Daar staat precies wat de browser meestuurde, bijvoorbeeld `Cookie: sessie_id=9f2c4a7e10b8d3f5a6c1e0b4d7928f3a`.
+Daar staat precies wat de browser meestuurde, bijvoorbeeld `Cookie: sessie_id=9f2c4a7e10b8d3f5a6c1e0b4d7928f3a`. Staat er ook `naam=…` in, dan heb je de cookie uit [Onthouden met een cookie](/docs/FastAPI/cookies) nog: de browser stuurt alles mee wat hij van jouw server heeft, ook wat je server niet meer gebruikt.
 
 Dit gebeurt bij elk verzoek, ook bij het ophalen van je CSS-bestand en je afbeeldingen. Daarom is die 4 kB-grens een echte grens: alles wat je in een cookie zet, reist de hele dag heen en weer over het netwerk.
 
@@ -110,12 +110,14 @@ Geef je gastenboek een knop waarmee de bezoeker kiest of berichten van nieuw naa
 <details>
 <summary>Tip</summary>
 
-Dit is een voorkeur die niemand kan schaden, dus een cookie volstaat — geen sessie nodig. Lees hem uit met `Cookie(default="nieuw")` en draai je lijst om met `list(reversed(...))` als de waarde `oud` is.
+Dit is een voorkeur die niemand kan schaden, dus een cookie volstaat — geen sessie nodig. Lees hem uit met `Cookie(default="nieuw")`. De database geeft de berichten van oud naar nieuw, dus draai je lijst om met `list(reversed(...))` als de waarde níét `oud` is.
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
+
+Een nieuw endpoint dat de keuze onthoudt:
 
 ```python
 @app.get("/volgorde/{keuze}")
@@ -123,15 +125,16 @@ async def volgorde(keuze: str):
     antwoord = RedirectResponse(url="/berichten", status_code=303)
     antwoord.set_cookie(key="volgorde", value=keuze, max_age=60 * 60 * 24 * 30)
     return antwoord
-
-@app.get("/berichten")
-async def berichten(request: Request, volgorde: str = Cookie(default="nieuw")):
-    with SqliteDict("gastenboek.db") as db:
-        alle_berichten = list(db.items())
-    if volgorde == "oud":
-        alle_berichten = list(reversed(alle_berichten))
-    return templates.TemplateResponse(request, "berichten.html", {"berichten": alle_berichten})
 ```
+
+In je `GET /berichten` komen twee dingen bij. Zet de parameter `volgorde: str = Cookie(default="nieuw")` erbij, naast wat er al staat. En zet direct na het ophalen van `alle_berichten`:
+
+```python
+if volgorde != "oud":
+    alle_berichten = list(reversed(alle_berichten))
+```
+
+Gebruik je `berichten_lijst.html` uit de htmx-recepten, geef `GET /berichten/lijst` dan dezelfde twee aanpassingen, anders springt de lijst na Ververs terug.
 
 In je template:
 ```html
@@ -139,7 +142,7 @@ In je template:
 <a href="/volgorde/oud">Oudste eerst</a>
 ```
 
-Verandert een bezoeker deze cookie in `banaan`, dan valt de lijst terug op de standaardvolgorde. Vervelend voor die bezoeker, verder gebeurt er niets — en dat is precies waarom een cookie hier genoeg is.
+Verandert een bezoeker deze cookie in `banaan`, dan valt de lijst terug op de standaardvolgorde, nieuwste eerst. Vervelend voor die bezoeker, verder gebeurt er niets — en dat is precies waarom een cookie hier genoeg is.
 
 </details>
 
@@ -170,6 +173,6 @@ async def uitloggen(sessie_id: str = Cookie(default="")):
     return antwoord
 ```
 
-Allebei is nodig. Haal je alleen de cookie weg, dan blijft de sessie op je server staan; iemand die het oude sessie-id nog heeft, is gewoon weer binnen. Gooi je alleen de sessie weg, dan houdt de bezoeker een cookie die nergens meer op past — dat werkt, maar je server maakt bij het volgende bezoek een tweede sessie aan naast de eerste.
+Allebei is nodig. Haal je alleen de cookie weg, dan blijft de sessie op je server staan; iemand die het oude sessie-id nog heeft, is gewoon weer binnen. Gooi je alleen de sessie weg, dan houdt de bezoeker een cookie die nergens meer op past. Plaatst hij daarna een bericht, dan maakt je server onder datzelfde oude id een verse sessie aan, en wie dat id nog had, zit er weer in.
 
 </details>

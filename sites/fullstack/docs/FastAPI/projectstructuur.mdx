@@ -1,6 +1,6 @@
 # Projectstructuur
 
-Tijdens de lessen groeit je project stap voor stap. Hier zie je hoe de mappenstructuur evolueert.
+Tijdens de lessen groeit je project stap voor stap. Hier zie je hoe de mappenstructuur groeit: elke stand is de vorige plus wat die les toevoegt. Een bestand verdwijnt alleen als een les zegt dat je het verplaatst.
 
 ## Bij [Je eerste endpoint](/docs/FastAPI/eerste_endpoint)
 
@@ -9,7 +9,7 @@ je-project/
 └── main.py
 ```
 
-Alleen een Python bestand — meer heb je niet nodig.
+Alleen een Python-bestand, meer heb je niet nodig.
 
 ## Bij [HTML in bestanden](/docs/FastAPI/html_bestanden)
 
@@ -21,7 +21,21 @@ je-project/
         └── home.html
 ```
 
-HTML staat nu in aparte bestanden.
+HTML staat nu in aparte bestanden, in `static/pages/`.
+
+## Bij [Links tussen pagina's](/docs/FastAPI/links)
+
+```
+je-project/
+├── main.py
+└── static/
+    └── pages/
+        ├── about.html
+        ├── contact.html
+        └── home.html
+```
+
+Een tweede pagina, en uit de opdracht een derde.
 
 ## Bij [CSS in een eigen bestand (static files)](/docs/FastAPI/static_files)
 
@@ -30,12 +44,15 @@ je-project/
 ├── main.py
 └── static/
     ├── css/
+    │   ├── about.css
     │   └── style.css
     └── pages/
+        ├── about.html
+        ├── contact.html
         └── home.html
 ```
 
-CSS in een apart bestand, bereikbaar via `/static/css/style.css`.
+CSS in een eigen map, bereikbaar via `/static/css/style.css`. `about.css` komt uit een opdracht.
 
 ## Bij [Afbeeldingen tonen](/docs/FastAPI/afbeeldingen)
 
@@ -44,32 +61,41 @@ je-project/
 ├── main.py
 └── static/
     ├── css/
+    │   ├── about.css
     │   └── style.css
     ├── pages/
-    │   ├── home.html
-    │   └── foto.html
+    │   ├── about.html
+    │   ├── contact.html
+    │   ├── foto.html
+    │   └── home.html
     └── kat.jpg
 ```
 
-Afbeeldingen staan direct in de `static` folder.
+Afbeeldingen staan direct in de map `static`.
 
-## Bij [Templates met Jinja2](/docs/FastAPI/templates) en [Een formulier beantwoorden met een template](/docs/FastAPI/post_met_templates)
+## Bij [Templates met Jinja2](/docs/FastAPI/templates) tot en met [Een formulier beantwoorden met een template](/docs/FastAPI/post_met_templates)
 
 ```
 je-project/
 ├── main.py
 ├── static/
 │   ├── css/
+│   │   ├── about.css
 │   │   └── style.css
-│   └── pages/
-│       ├── home.html
-│       └── groet_form.html
+│   ├── pages/
+│   │   ├── about.html
+│   │   ├── contact.html
+│   │   ├── foto.html
+│   │   ├── groet_form.html
+│   │   ├── home.html
+│   │   └── naam_form.html
+│   └── kat.jpg
 └── templates/
     ├── dobbelsteen.html
     └── groet_resultaat.html
 ```
 
-Er komt een `templates/` folder bij voor Jinja2 templates.
+Er komt een map `templates/` bij voor Jinja2-templates. De formulieren zelf blijven vaste bestanden in `static/pages/`.
 
 :::tip[Verschil: static/pages vs templates]
 - **static/pages/** — Vaste HTML bestanden die altijd hetzelfde zijn
@@ -81,15 +107,22 @@ Er komt een `templates/` folder bij voor Jinja2 templates.
 ```
 je-project/
 ├── main.py
-├── namen.db
 ├── gastenboek.db
+├── namen.db
 ├── static/
 │   ├── css/
+│   │   ├── about.css
 │   │   └── style.css
-│   └── pages/
-│       ├── home.html
-│       ├── naam_opslaan.html
-│       └── gastenboek_form.html
+│   ├── pages/
+│   │   ├── about.html
+│   │   ├── contact.html
+│   │   ├── foto.html
+│   │   ├── gastenboek_form.html
+│   │   ├── groet_form.html
+│   │   ├── home.html
+│   │   ├── naam_form.html
+│   │   └── naam_opslaan.html
+│   └── kat.jpg
 └── templates/
     ├── dobbelsteen.html
     └── groet_resultaat.html
@@ -103,14 +136,26 @@ De `.db`-bestanden maakt `sqlitedict` zelf aan, de eerste keer dat je iets opsla
 je-project/
 ├── main.py
 ├── gastenboek.db
+├── namen.db
 ├── static/
 │   ├── css/
+│   │   ├── about.css
 │   │   └── style.css
-│   └── pages/
-│       └── gastenboek_form.html
+│   ├── pages/
+│   │   ├── about.html
+│   │   ├── contact.html
+│   │   ├── foto.html
+│   │   ├── gastenboek_form.html
+│   │   ├── groet_form.html
+│   │   ├── home.html
+│   │   ├── naam_form.html
+│   │   └── naam_opslaan.html
+│   └── kat.jpg
 └── templates/
+    ├── bericht.html
     ├── berichten.html
-    └── bericht.html
+    ├── dobbelsteen.html
+    └── groet_resultaat.html
 ```
 
 Er komen geen mappen bij: een lijstpagina en een detailpagina zijn gewoon twee templates naast elkaar.
@@ -121,18 +166,29 @@ Er komen geen mappen bij: een lijstpagina en een detailpagina zijn gewoon twee t
 je-project/
 ├── main.py
 ├── gastenboek.db
+├── namen.db
 ├── static/
 │   ├── css/
+│   │   ├── about.css
 │   │   └── style.css
 │   ├── js/
 │   │   └── htmx.min.js
-│   └── pages/
-│       ├── home.html
-│       └── gastenboek_form.html
+│   ├── pages/
+│   │   ├── about.html
+│   │   ├── contact.html
+│   │   ├── foto.html
+│   │   ├── gastenboek_form.html
+│   │   ├── groet_form.html
+│   │   ├── home.html
+│   │   ├── naam_form.html
+│   │   └── naam_opslaan.html
+│   └── kat.jpg
 └── templates/
+    ├── bericht.html
     ├── berichten.html
     ├── berichten_lijst.html
-    └── bericht.html
+    ├── dobbelsteen.html
+    └── groet_resultaat.html
 ```
 
 htmx is één bestand in een nieuwe map `static/js/`. Bij de [htmx-recepten](/docs/FastAPI/htmx-overzicht) komt `berichten_lijst.html` erbij: een stuk pagina zonder `<html>` eromheen, dat een endpoint als antwoord teruggeeft.
@@ -143,32 +199,78 @@ htmx is één bestand in een nieuwe map `static/js/`. Bij de [htmx-recepten](/do
 je-project/
 ├── main.py
 ├── gastenboek.db
+├── namen.db
 ├── static/
 │   ├── css/
+│   │   ├── about.css
 │   │   └── style.css
 │   ├── js/
 │   │   ├── app.js
 │   │   └── htmx.min.js
-│   └── pages/
-│       └── gastenboek_form.html
+│   ├── pages/
+│   │   ├── about.html
+│   │   ├── contact.html
+│   │   ├── foto.html
+│   │   ├── gastenboek_form.html
+│   │   ├── groet_form.html
+│   │   ├── home.html
+│   │   ├── naam_form.html
+│   │   └── naam_opslaan.html
+│   └── kat.jpg
 └── templates/
+    ├── bericht.html
     ├── berichten.html
     ├── berichten_lijst.html
-    └── bericht.html
+    ├── dobbelsteen.html
+    └── groet_resultaat.html
 ```
 
 Je JavaScript komt naast htmx te staan, in dezelfde `static`-map. Aan `main.py` verandert niets: `app.mount` serveert die map al.
+
+## Bij [Onthouden met een cookie](/docs/FastAPI/cookies) en [Onthouden op de server: sessies](/docs/FastAPI/sessies)
+
+```
+je-project/
+├── main.py
+├── gastenboek.db
+├── namen.db
+├── sessies.db
+├── static/
+│   ├── css/
+│   │   ├── about.css
+│   │   └── style.css
+│   ├── js/
+│   │   ├── app.js
+│   │   └── htmx.min.js
+│   ├── pages/
+│   │   ├── about.html
+│   │   ├── contact.html
+│   │   ├── foto.html
+│   │   ├── groet_form.html
+│   │   ├── home.html
+│   │   ├── naam_form.html
+│   │   └── naam_opslaan.html
+│   └── kat.jpg
+└── templates/
+    ├── bericht.html
+    ├── berichten.html
+    ├── berichten_lijst.html
+    ├── dobbelsteen.html
+    ├── gastenboek.html
+    └── groet_resultaat.html
+```
+
+Het gastenboekformulier is verhuisd: `static/pages/gastenboek_form.html` is nu de template `templates/gastenboek.html`, zodat je naam erin kan. `sessies.db` maakt `sqlitedict` aan bij het eerste bericht met een sessie.
 
 ## Compleet overzicht
 
 | Map | Wat staat er? | Voorbeeld |
 |-----|---------------|-----------|
-| `/` | Python code en database | `main.py`, `gastenboek.db` |
+| `/` | Python code en databases | `main.py`, `gastenboek.db`, `sessies.db` |
 | `static/css/` | CSS bestanden | `style.css` |
 | `static/js/` | JavaScript en htmx | `app.js`, `htmx.min.js` |
-| `static/pages/` | Vaste HTML pagina's | `home.html`, `form.html` |
-| `static/` | Afbeeldingen | `foto.jpg`, `logo.png` |
-| `templates/` | Jinja2 templates, ook stukken voor htmx | `resultaat.html`, `berichten_lijst.html` |
+| `static/pages/` | Vaste HTML pagina's | `home.html`, `about.html` |
+| `static/` | Afbeeldingen | `kat.jpg` |
+| `templates/` | Jinja2 templates, ook stukken voor htmx | `berichten.html`, `berichten_lijst.html` |
 
 **Tip:** een project met zoveel bestanden is precies waar git voor bestaat. Eén commit per werkende versie, en je durft te verbouwen omdat je altijd terug kunt. Hoe je dat in VS Code doet staat in <SiteLink site="editor" to="/git/vscode/">Git in VS Code</SiteLink>.
-

@@ -10,10 +10,11 @@ Wil je toch iets onthouden tussen twee verzoeken, dan moet die informatie ergens
 
 ## Een cookie meegeven
 
-Tot nu toe gaf je endpoint alleen inhoud terug. Een antwoord kan ook opdrachten voor de browser bevatten, en `set_cookie` is er daar een van:
+Tot nu toe gaf je endpoint alleen inhoud terug. Een antwoord kan ook opdrachten voor de browser bevatten, en `set_cookie` is er daar een van. Vervang je `POST /gastenboek` uit [Doorsturen na opslaan (redirect)](/docs/FastAPI/redirect) door deze versie:
 
 <CodeUitleg>
 
+{/* route-dubbel: vervangt POST /gastenboek uit redirect.mdx of het htmx-recept, nu met een cookie */}
 ```python showLineNumbers
 @app.post("/gastenboek")
 async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
@@ -40,12 +41,15 @@ Pas nu gaat het antwoord terug, mét de cookie erop.
 
 </CodeUitleg>
 
+Gebruik je het htmx-formulier uit de [htmx-recepten](/docs/FastAPI/htmx-overzicht), dan laat je de omleiding weg: maak van je `HTMLResponse` de variabele `antwoord`, zet daar `set_cookie` op en return hem.
+
 ## De cookie terugkrijgen
 
-Vanaf nu stuurt de browser die cookie mee bij elk verzoek aan jouw server. Je vraagt hem op met `Cookie`, net zoals je formuliervelden met `Form` opvraagt:
+Vanaf nu stuurt de browser die cookie mee bij elk verzoek aan jouw server. Je vraagt hem op met `Cookie`, net zoals je formuliervelden met `Form` opvraagt. Vervang je `GET /gastenboek`, dat tot nu toe een `FileResponse` gaf:
 
 <CodeUitleg>
 
+{/* route-dubbel: vervangt GET /gastenboek uit post_naar_database.mdx, nu met een template */}
 ```python showLineNumbers
 from fastapi import Cookie
 
@@ -60,7 +64,7 @@ async def gastenboek_form(request: Request, naam: str = Cookie(default="")):
 
 </CodeUitleg>
 
-Je formulier was tot nu toe een vast bestand in `static/pages/`. Om er een naam in te kunnen zetten moet het een **template** worden: verplaats het naar `templates/gastenboek.html` en zet de waarde in het naamveld:
+Je formulier was tot nu toe een vast bestand, `static/pages/gastenboek_form.html`. Om er een naam in te kunnen zetten moet het een **template** worden: verplaats het hele bestand naar `templates/gastenboek.html`, met de `<head>` en de script-tags die er misschien al in staan, en zet de waarde in het naamveld. Alleen dat veld verandert: `value="{{ naam }}"` komt erbij. Zonder htmx en JavaScript ziet het formulier er dan zo uit:
 
 ```html
 <form method="post" action="/gastenboek">
@@ -70,13 +74,13 @@ Je formulier was tot nu toe een vast bestand in `static/pages/`. Om er een naam 
 </form>
 ```
 
-Bij een eerste bezoek is `{{ naam }}` leeg en zie je een gewoon leeg veld. Daarna staat je naam er al in.
+Bij een eerste bezoek is `{{ naam }}` leeg en zie je een gewoon leeg veld. Daarna staat je naam er al in. Heeft jouw formulier `hx-post` en `hx-target`, of een `id` voor je tekenteller, laat die dan staan.
 
 ## Testen
 
 1. Start je server en vul het gastenboek in
 2. Ga terug naar `/gastenboek` — je naam staat er al
-3. Open de ontwikkelaarstools met `F12` en zoek in het tabblad **App** (Application; in Firefox **Opslag**) bij Cookies de cookies van `127.0.0.1`. Daar staat jouw naam
+3. Open de ontwikkelaarstools met `F12` en zoek in het tabblad **App** (Application; in Firefox **Opslag**) bij Cookies de regel `http://127.0.0.1:8000`. Daar staat jouw naam. Heeft je naam een spatie of een letter als ë, dan zet de server er aanhalingstekens omheen of maakt hij van de ë een code als `\353`; in het formulier staat hij weer zoals je hem typte
 
 :::danger[Gaat er iets mis?]
 Blijft het veld leeg terwijl je wel een bericht hebt verstuurd? Controleer of `set_cookie` op het antwoord staat dat je ook echt returnt. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
