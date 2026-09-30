@@ -56,18 +56,24 @@ describe('volgorde van de FastAPI-lessen', () => {
     expect(hoofdtekst(eerste as string), `eerste keer in ${eerste}`).toContain(bouwsteen);
   });
 
+  // Het eigen project is een losse pagina in de sidebar, tussen de basis en
+  // de uitbreidingen.
+  const project = (sidebars.apiSidebar as unknown as Item[]).indexOf('FastAPI/jouw-project');
+  const label = (i: Item | undefined) => (typeof i === 'string' ? i : i?.label);
+
   it('het eigen project komt direct na de basis, vóór de uitbreidingen', () => {
-    const labels = categorieen.map((c) => c.label);
-    const project = labels.indexOf('Je eigen project');
-    expect(labels[project - 1]).toBe('Gegevens opslaan en tonen');
-    expect(labels.slice(project + 1, project + 4).every((l) => l.startsWith('Uitbreiding:'))).toBe(
-      true,
-    );
+    const items = sidebars.apiSidebar as unknown as Item[];
+    expect(project).toBeGreaterThan(0);
+    expect(label(items[project - 1])).toBe('Gegevens opslaan en tonen');
+    expect(
+      items.slice(project + 1, project + 4).every((i) => label(i)?.startsWith('Uitbreiding:')),
+    ).toBe(true);
   });
 
   it('de basis heeft geen les uit een uitbreiding nodig', () => {
-    const basis = plat(categorieen.slice(0, 5).flatMap((c) => c.items));
-    const uitbreiding = new Set(plat(categorieen.slice(5).flatMap((c) => c.items)));
+    const items = sidebars.apiSidebar as unknown as Item[];
+    const basis = plat(items.slice(0, project + 1));
+    const uitbreiding = new Set(plat(items.slice(project + 1)));
     // Een link naar een uitbreiding mag, als de zin zegt dat die later komt,
     // of in een sectie die over uitbreidingen gaat.
     const later = /uitbreiding|later|aan het eind/i;

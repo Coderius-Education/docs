@@ -58,11 +58,8 @@ const sidebars: SidebarsConfig = {
     },
     // Het eigen project komt direct na de basis: alle zes eisen zijn dan
     // behandeld. Wat erna komt, maakt het project mooier maar is niet nodig.
-    {
-      type: 'category',
-      label: 'Je eigen project',
-      items: ['FastAPI/jouw-project'],
-    },
+    // Het is één les, dus een losse pagina en geen categorie.
+    'FastAPI/jouw-project',
     {
       type: 'category',
       label: 'Uitbreiding: zonder herladen (htmx)',
