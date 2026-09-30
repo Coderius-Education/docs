@@ -8,7 +8,7 @@
   ]}
 />
 
-In deze les maak je je eerste FastAPI endpoint. Een endpoint is een URL waarop je server reageert.
+Een endpoint is een URL waarop je server reageert. Hieronder maak je je eerste FastAPI endpoint.
 
 ## main.py aanmaken
 
@@ -66,7 +66,7 @@ Je browser bewaart soms een kopie van een pagina, de **cache**. Pas je iets aan 
 
 ## Meerdere endpoints
 
-Je kunt meerdere endpoints toevoegen:
+Een tweede endpoint zet je er op dezelfde manier onder:
 
 ```python
 @app.get("/info")
@@ -77,7 +77,7 @@ async def info():
 Ga naar [http://127.0.0.1:8000/info](http://127.0.0.1:8000/info) om dit te testen.
 
 :::danger[Gaat er iets mis?]
-Start je server niet, met `NameError: name 'app' is not defined`? Dan staat je endpoint bóven de regel `app = FastAPI()` — Python leest van boven naar beneden. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
+Start je server niet, met `NameError: name 'app' is not defined`? Dan staat je endpoint bóven de regel `app = FastAPI()`. Python leest van boven naar beneden. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
 :::
 
 <details>
@@ -116,7 +116,7 @@ async def school():
 <details>
 <summary>Tip</summary>
 
-Let op: de functie returnt een Python dictionary. Wat doet FastAPI standaard met een dictionary?
+De functie returnt een Python dictionary. Wat doet FastAPI standaard met een dictionary?
 
 </details>
 
@@ -133,7 +133,7 @@ FastAPI zet de dictionary automatisch om naar JSON.
 
 ### Opdracht 2: Run
 
-Voer de code hierboven uit. Voeg het `/school` endpoint toe aan je `main.py`, start de server, en ga naar `http://127.0.0.1:8000/school`. Zie je dezelfde output als het antwoord hierboven?
+Voeg het `/school` endpoint toe aan je `main.py`, start de server en ga naar `http://127.0.0.1:8000/school`. Zie je hetzelfde als in het antwoord hierboven?
 
 ### Opdracht 3: Investigate - Dubbele URL
 
@@ -154,7 +154,7 @@ Probeer het uit. Welke van de twee zie je?
 <details>
 <summary>Antwoord</summary>
 
-Je ziet `{"bericht": "Eerste"}`. FastAPI gebruikt het **eerste** endpoint dat matcht. Het tweede wordt genegeerd.
+Je ziet `{"bericht": "Eerste"}`. FastAPI gebruikt het eerste endpoint dat matcht en slaat het tweede over.
 
 </details>
 

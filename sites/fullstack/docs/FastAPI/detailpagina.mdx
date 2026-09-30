@@ -21,7 +21,7 @@ async def bericht_detail(request: Request, sleutel: str):
 
 Ga je naar `/bericht/bericht_17` dan krijg je `{"je_vroeg_om": "bericht_17"}`. Wat er op de plek van `{sleutel}` staat, komt binnen als de parameter met dezelfde naam.
 
-**Let op:** de naam tussen de accolades moet exact gelijk zijn aan de naam van de parameter in je functie.
+De naam tussen de accolades en de naam van de parameter in je functie moeten dus precies gelijk zijn.
 
 ## Het bericht opzoeken
 
@@ -89,7 +89,7 @@ async def bericht_detail(request: Request, sleutel: str):
 </Regel>
 
 <Regel n={8} tot={9}>
-Let op `raise` in plaats van `return`. Je geeft geen antwoord terug, je onderbreekt de functie: de regels eronder worden niet meer uitgevoerd. **404** is de code die "niet gevonden" betekent. Diezelfde code kreeg je eerder als je een adres opvroeg waar geen endpoint bij hoort; nu stuur je hem zelf.
+Hier staat `raise`, geen `return`. Je geeft geen antwoord terug maar onderbreekt de functie, en Python voert de regels eronder niet meer uit. **404** is de code die "niet gevonden" betekent. Diezelfde code kreeg je eerder als je een adres opvroeg waar geen endpoint bij hoort; nu stuur je hem zelf.
 </Regel>
 
 </CodeUitleg>
@@ -311,7 +311,7 @@ De accolades zijn een plekhouder, geen letterlijke tekst. Wat je ook intypt, dá
 <details>
 <summary>Antwoord</summary>
 
-`/groet/Sarah` geeft `{"bericht": "Hallo Sarah"}` en `/groet/naam` geeft `{"bericht": "Hallo naam"}`. Ook het woord "naam" is gewoon een waarde.
+`/groet/Sarah` geeft `{"bericht": "Hallo Sarah"}` en `/groet/naam` geeft `{"bericht": "Hallo naam"}`. Ook het woord "naam" is hier niets meer dan een waarde.
 
 </details>
 
@@ -332,9 +332,9 @@ async def bericht_detail(request: Request, key: str):
 <details>
 <summary>Antwoord</summary>
 
-Je browser toont een weigering met `"loc":["query","key"]` en `"msg":"Field required"`, en in je terminal staat de statuscode **422**.
+Je browser toont een weigering met `"loc":["query","key"]` en `"msg":"Field required"`, en in je terminal staat de statuscode 422.
 
-FastAPI koppelt op naam, niet op volgorde. Het ziet `{sleutel}` in het pad en zoekt een parameter die zo heet; die is er niet. Tegelijk vraagt je functie om `key`, en dat staat nergens in de URL — dus vraagt FastAPI erom als query-parameter. `/bericht/abc?key=abc` zou wél werken, maar dat is niet wat je bedoelde.
+FastAPI koppelt op naam, niet op volgorde. Het ziet `{sleutel}` in het pad en zoekt een parameter die zo heet; die is er niet. Tegelijk vraagt je functie om `key`, en dat staat nergens in de URL. Daarom vraagt FastAPI erom als query-parameter. `/bericht/abc?key=abc` zou wél werken, maar dat is niet wat je bedoelde.
 
 </details>
 

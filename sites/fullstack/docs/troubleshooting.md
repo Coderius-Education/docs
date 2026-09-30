@@ -84,7 +84,7 @@ INFO:     127.0.0.1:52341 - "GET /favicon.ico HTTP/1.1" 404 Not Found
 
 **Oorzaak:** de browser vraagt bij een nieuwe site uit zichzelf om `/favicon.ico`, het icoontje voor op het tabblad. Jouw server heeft geen endpoint voor dat adres, dus antwoordt hij met 404.
 
-**Oplossing:** niets; er is niets mis. Je eigen pagina's werken gewoon.
+**Oplossing:** niets, er is niets mis. Je eigen pagina's werken wel.
 
 Meer uitleg: [Kijken wat de browser doet](/docs/FastAPI/devtools-netwerk)
 
@@ -191,7 +191,7 @@ Meer uitleg: [Je eerste endpoint](/docs/FastAPI/eerste_endpoint)
 <details>
 <summary>Het tabblad Netwerk is leeg, of mist het verzoek dat je zoekt</summary>
 
-**Oorzaak:** Netwerk laat alleen zien wat het heeft opgenomen, en alleen wat door het filter komt. Dat verschilt per keer, en daarom is de lijst soms leeg en soms niet.
+**Oorzaak:** Netwerk laat alleen zien wat het heeft opgenomen, en alleen wat door het filter komt. Daarom is de lijst de ene keer leeg en de andere keer niet.
 
 **Oplossing:** loop deze vier langs.
 
@@ -237,7 +237,7 @@ INFO:     127.0.0.1:54164 - "GET / HTTP/1.1" 500 Internal Server Error
 RuntimeError: File at path static/pages/home.html does not exist.
 ```
 
-**Oorzaak:** het endpoint bestaat wél, maar het bestand dat `FileResponse` moet sturen niet. Let op: dit is een 500, geen 404. De fout zit aan de serverkant, dus kijk in je terminal.
+**Oorzaak:** het endpoint bestaat wél, maar het bestand dat `FileResponse` moet sturen niet. Daarom krijg je een 500 en geen 404: de fout zit aan de serverkant, dus kijk in je terminal.
 
 **Oplossing:** check of het bestand echt op die plek staat, met precies die naam (hoofdletters tellen). Het pad is relatief aan de map waar je `fastapi dev` startte, dus start de server vanuit je projectmap.
 
@@ -256,7 +256,7 @@ INFO:     127.0.0.1:52344 - "GET /about.html HTTP/1.1" 404 Not Found
 
 **Oorzaak:** het endpoint bestaat niet. De URL die je opvraagt komt met geen enkele `@app.get(...)` in je `main.py` overeen: een typfout in de link, of het endpoint is nooit gemaakt.
 
-**Oplossing:** vergelijk de URL in de adresbalk letter voor letter met het pad in je decorator. Een veelgemaakte variant is linken naar het bestand in plaats van het endpoint:
+**Oplossing:** vergelijk de URL in de adresbalk letter voor letter met het pad in je decorator. Vaak zit de fout in een link naar het bestand in plaats van naar het endpoint:
 
 ```html
 <!-- FOUT - de browser zoekt een endpoint /about.html, dat bestaat niet -->
@@ -346,7 +346,7 @@ Meer uitleg: [Templates met Jinja2](/docs/FastAPI/templates)
 <details>
 <summary>Template variabele toont niets</summary>
 
-**Oorzaak:** Jinja2 vult alleen in wat je meestuurt in het dictionary. Een naam die daar niet in zit wordt stilletjes leeg, zonder foutmelding.
+**Oorzaak:** Jinja2 vult alleen in wat je meestuurt in het dictionary. Een naam die daar niet in zit, blijft leeg, zonder foutmelding.
 
 **Oplossing:**
 
@@ -372,7 +372,7 @@ Meer uitleg: [Templates met Jinja2](/docs/FastAPI/templates)
 TypeError: unhashable type: 'dict'
 ```
 
-**Oorzaak:** je gebruikt de oude volgorde, waarin `request` ín het dictionary staat. Die kom je nog overal online tegen, maar hij werkt niet meer: je bestandsnaam belandt op de plek van `request` en je dictionary op de plek van de bestandsnaam, dus FastAPI zoekt een template met een dictionary als naam.
+**Oorzaak:** je gebruikt de oude volgorde, waarin `request` ín het dictionary staat. Die kom je online nog overal tegen, maar hij werkt niet meer. Je bestandsnaam belandt dan op de plek van `request` en je dictionary op de plek van de bestandsnaam, dus FastAPI zoekt een template met een dictionary als naam.
 
 **Oplossing:** zet `request` vooraan:
 
@@ -564,7 +564,7 @@ Meer uitleg: [Alles tonen: een for-lus in je template](/docs/FastAPI/lijst_tonen
 jinja2.exceptions.TemplateSyntaxError: Unexpected end of template. Jinja was looking for the following tags: 'endfor' or 'else'. The innermost block that needs to be closed is 'for'.
 ```
 
-**Oorzaak:** een `{% for %}` of `{% if %}` in je template wordt nooit gesloten. Het bestand is op terwijl het blok nog openstaat.
+**Oorzaak:** een `{% for %}` of `{% if %}` in je template gaat nooit dicht. Het bestand is op terwijl het blok nog openstaat.
 
 **Oplossing:** elke `{% for %}` heeft een `{% endfor %}` nodig, elke `{% if %}` een `{% endif %}`:
 
@@ -592,7 +592,7 @@ Meer uitleg: [Alles tonen: een for-lus in je template](/docs/FastAPI/lijst_tonen
 
 1. Staat de naam in `{% for bericht in berichten %}` precies gelijk aan de sleutel in `{"berichten": ...}`?
 2. Print `alle_berichten` in je endpoint. Zie je daar wél data, dan zit de fout in de template.
-3. Staat je database wel echt vol? Open `/berichten` nadat je een bericht hebt verstuurd, niet ervoor.
+3. Staat er echt iets in je database? Open `/berichten` nadat je een bericht hebt verstuurd, niet ervoor.
 
 Meer uitleg: [Alles tonen: een for-lus in je template](/docs/FastAPI/lijst_tonen)
 
@@ -759,7 +759,7 @@ Meer uitleg: [JavaScript erbij](/docs/FastAPI/javascript)
 <details>
 <summary>Mijn JavaScript-bestand wordt niet geladen (rode regel in de Console)</summary>
 
-**Oorzaak:** de browser kan het bestand niet vinden: verkeerde plek, verkeerd pad, of de static-map is niet gekoppeld.
+**Oorzaak:** de browser kan het bestand niet vinden. Het staat op de verkeerde plek, het pad klopt niet, of de static-map is niet gekoppeld.
 
 **Oplossing:**
 
@@ -776,7 +776,7 @@ Meer uitleg: [JavaScript erbij](/docs/FastAPI/javascript)
 <details>
 <summary>Mijn controle in de HTML wordt genegeerd</summary>
 
-**Oorzaak:** `maxlength` en `required` zijn instructies aan de browser, en de browser is van de bezoeker. Wie het formulier omzeilt, komt er gewoon langs.
+**Oorzaak:** `maxlength` en `required` zijn instructies aan de browser, en de browser is van de bezoeker. Wie het formulier omzeilt, komt er zo langs.
 
 **Oplossing:** wil je echt een grens, controleer dan óók in Python:
 

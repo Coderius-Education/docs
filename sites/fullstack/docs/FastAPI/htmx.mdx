@@ -8,7 +8,7 @@ import { DevtoolsPaneel, NetwerkTabel } from '@site/src/components/Devtools';
   ]}
 />
 
-Tot nu toe betekent "iets aan de server vragen" dat de hele pagina opnieuw laadt: je klikt op een link of verstuurt een formulier, en alles verspringt. In deze les vraagt een knop iets aan de server terwijl de pagina blijft staan. Daar gebruik je **htmx** voor: een bestand dat je HTML twee nieuwe attributen geeft. Je schrijft er zelf geen JavaScript voor.
+Tot nu toe betekent "iets aan de server vragen" dat de hele pagina opnieuw laadt: je klikt op een link of verstuurt een formulier, en alles verspringt. Hier vraagt een knop iets aan de server terwijl de pagina blijft staan. Daar gebruik je **htmx** voor: een bestand dat je HTML twee nieuwe attributen geeft. Je schrijft er zelf geen JavaScript voor.
 
 ## Waar het bestand komt
 
@@ -25,7 +25,7 @@ je-project/
 └── templates/
 ```
 
-Het is dezelfde versie als op [htmx.org](https://htmx.org/docs/#installing). Door het bestand in je eigen project te zetten werkt je site ook op een netwerk dat externe scripts blokkeert, zoals op school. Om het bestand te serveren hoef je niets aan `main.py` te veranderen: `app.mount` serveert de map `static` al.
+Het is dezelfde versie als op [htmx.org](https://htmx.org/docs/#installing). Door het bestand in je eigen project te zetten werkt je site ook op een netwerk dat externe scripts blokkeert, zoals op school. Aan `main.py` hoef je niets te veranderen, want `app.mount` serveert de map `static` al.
 
 ## Een knop en een lege alinea
 

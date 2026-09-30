@@ -1,8 +1,8 @@
 # htmx-recepten: formulier, verversen, verwijderen, zoeken
 
-Met `hx-get` en `hx-target` haalde je een zin op zonder herladen. Hetzelfde idee werkt voor alles wat je tot nu toe via een herlaad deed. Dit is een overzicht van de mogelijkheden, elk met de HTML en het endpoint dat erbij hoort. Kies wat je gastenboek nodig heeft; je hoeft ze niet allemaal te bouwen.
+Met `hx-get` en `hx-target` haalde je een zin op zonder herladen. Hetzelfde idee werkt voor alles wat je tot nu toe via een herlaad deed. Hieronder staat per recept de HTML en het endpoint dat erbij hoort. Kies wat je gastenboek nodig heeft; je hoeft ze niet allemaal te bouwen.
 
-Drie regels gelden overal. De pagina met de `hx-`-attributen heeft de script-tag van htmx in de `<head>`, net als `home.html` in [Zonder herladen met htmx](/docs/FastAPI/htmx): zonder die regel doet een knop niets en verstuurt een formulier zichzelf als GET. Het endpoint geeft een **stukje HTML** terug: een zin in een `HTMLResponse`, of een template zonder `<html>` eromheen. En het geeft **nooit een omleiding**: htmx volgt die en zet dan de hele pagina in het doel.
+Drie regels gelden overal. De pagina met de `hx-`-attributen heeft de script-tag van htmx in de `<head>`, net als `home.html` in [Zonder herladen met htmx](/docs/FastAPI/htmx): zonder die regel doet een knop niets en verstuurt een formulier zichzelf als GET. Het endpoint geeft een stukje HTML terug: een zin in een `HTMLResponse`, of een template zonder `<html>` eromheen. En het geeft nooit een omleiding, want htmx volgt die en zet dan de hele pagina in het doel.
 
 ## Een formulier versturen
 
@@ -41,7 +41,7 @@ Zet `from html import escape` bovenaan je `main.py`. De naam komt van de bezoeke
 
 De `Form`-parameters blijven hetzelfde; voor je endpoint is er geen verschil met een formulier zonder htmx. De omleiding met 303 is niet meer nodig, want de browser is nooit weggegaan.
 
-**Handig:** met `hx-on::after-request="this.reset()"` op de `<form>` maakt htmx de velden leeg zodra het antwoord binnen is.
+Zet je `hx-on::after-request="this.reset()"` op de `<form>`, dan maakt htmx de velden leeg zodra het antwoord binnen is.
 
 ## Een stuk van de pagina verversen
 

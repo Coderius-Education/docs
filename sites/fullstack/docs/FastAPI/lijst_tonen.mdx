@@ -8,7 +8,7 @@
   ]}
 />
 
-Je gastenboek slaat berichten op, maar om ze te zien moet je nog naar `/berichten` en een hoop JSON lezen. In deze les zet je ze op een echte pagina.
+Je gastenboek slaat berichten op, maar om ze te zien moet je nog naar `/berichten` en een hoop JSON lezen. Nu zet je ze op een echte pagina.
 
 ## De for-lus in een template
 
@@ -22,7 +22,7 @@ Tot nu toe vulde je template één waarde in met `{{ naam }}`. Met `{% for %}` h
 </ul>
 ```
 
-Dit werkt net als een for-lus in Python. Het verschil: er staat `{% endfor %}` in plaats van inspringen, want HTML kent geen inspringing die betekenis heeft.
+Dit werkt net als een for-lus in Python, alleen sluit je de lus af met `{% endfor %}` in plaats van met inspringen. HTML kent geen inspringing die betekenis heeft.
 
 ## De data meesturen
 
@@ -279,14 +279,14 @@ Template:
 <details>
 <summary>Tip</summary>
 
-Alleen wat tússen `{% for %}` en `{% endfor %}` staat wordt herhaald. De rest staat er één keer.
+Jinja2 herhaalt alleen wat tússen `{% for %}` en `{% endfor %}` staat. De rest staat er één keer.
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-Eén `<h1>` en drie `<p>`. De `<h1>` staat buiten de lus, dus die wordt niet herhaald.
+Eén `<h1>` en drie `<p>`. De `<h1>` staat buiten de lus, dus die komt er maar één keer.
 
 </details>
 
@@ -366,6 +366,6 @@ De `<tr>` met de kopjes hoort buiten de lus. Alleen de `<tr>` met de data herhaa
 </table>
 ```
 
-De kopregel staat buiten de lus, dus die verschijnt één keer. De rij met `<td>` staat erbinnen en wordt per bericht herhaald.
+De kopregel staat buiten de lus, dus die verschijnt één keer. De rij met `<td>` staat erbinnen en komt er voor elk bericht opnieuw.
 
 </details>

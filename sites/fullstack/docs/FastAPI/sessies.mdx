@@ -6,7 +6,7 @@
   ]}
 />
 
-In de vorige les veranderde je je eigen cookie in een andere naam, en je server geloofde het meteen. Voor een naam in een formulier maakt dat weinig uit. Maar zodra er rechten aan hangen — wie mag een bericht verwijderen — is het een probleem. In deze les los je dat op met een **sessie**.
+In de vorige les veranderde je je eigen cookie in een andere naam, en je server geloofde het meteen. Voor een naam in een formulier maakt dat weinig uit. Maar zodra er rechten aan hangen, zoals wie een bericht mag verwijderen, is het een probleem. Dat los je op met een **sessie**.
 
 ## Waarom de naam niet in de cookie hoort
 
@@ -26,7 +26,7 @@ import secrets
 sessie_id = secrets.token_hex(16)
 ```
 
-Dat geeft 32 tekens, bijvoorbeeld `9f2c4a7e10b8d3f5a6c1e0b4d7928f3a`. Een bezoeker kan dat wel veranderen, maar niet in het sessie-id van iemand anders — daar zijn te veel mogelijkheden voor.
+Dat geeft 32 tekens, bijvoorbeeld `9f2c4a7e10b8d3f5a6c1e0b4d7928f3a`. Een bezoeker kan dat wel veranderen, maar niet in het sessie-id van iemand anders, want daar zijn te veel mogelijkheden voor.
 
 ## De sessie opslaan
 
@@ -119,12 +119,12 @@ Voor de bezoeker verandert er niets: de naam staat nog steeds voorgevuld. Het ve
 
 ## Testen
 
-1. Vul het gastenboek in en ga terug naar `/gastenboek` — je naam staat er nog
+1. Vul het gastenboek in en ga terug naar `/gastenboek`: je naam staat er nog
 2. Kijk in het tabblad **App** naar de cookies: `sessie_id` bevat een rij tekens in plaats van je naam
 3. Staat de cookie `naam` uit de vorige les er ook nog? Die houdt 30 dagen, want je server haalt hem niet weg. Selecteer hem en druk op Delete; je server gebruikt hem niet meer
 
 :::danger[Gaat er iets mis?]
-Krijg je `KeyError` bij het uitlezen? Gebruik `sessies.get(sessie_id, {})` en niet `sessies[sessie_id]` — bij een onbekend sessie-id bestaat die sleutel niet. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
+Krijg je `KeyError` bij het uitlezen? Gebruik `sessies.get(sessie_id, {})` en niet `sessies[sessie_id]`, want bij een onbekend sessie-id bestaat die sleutel niet. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
 :::
 
 ## Opdrachten
@@ -145,9 +145,9 @@ Kijk naar de tweede waarde in `sessies.get(sessie_id, {})`.
 <details>
 <summary>Antwoord</summary>
 
-De bezoeker ziet een leeg naamveld: onder de sleutel `hallo` staat niets, dus `get` geeft de lege dictionary terug. In `sessies.db` verandert er niets — uitlezen schrijft niet.
+De bezoeker ziet een leeg naamveld: onder de sleutel `hallo` staat niets, dus `get` geeft de lege dictionary terug. In `sessies.db` verandert er niets, want uitlezen schrijft niet.
 
-Dat is precies de bedoeling. Wie aan de eigen cookie sleutelt, wordt behandeld als een nieuwe bezoeker en komt niet in de sessie van iemand anders terecht.
+Dat is precies de bedoeling. Wie aan de eigen cookie sleutelt, is voor je server een nieuwe bezoeker en komt niet in de sessie van iemand anders terecht.
 
 </details>
 
@@ -222,7 +222,7 @@ In `templates/berichten.html` komt een `{% if %}` om het formuliertje:
 
 Gebruik je de htmx-recepten, dan staat de lijst in `berichten_lijst.html`. Zet de `{% if %}` daar om je `hx-delete`-knop, en geef ook `GET /berichten/lijst` de drie aanpassingen hierboven, anders zijn de knoppen na Ververs weg.
 
-De knop verdwijnt bij berichten van anderen. Let op wat dit wél en niet is: de knop is weg, maar het endpoint `/verwijderen` verwijdert nog steeds alles wat het binnenkrijgt. Wie het formulier nabouwt, komt er alsnog bij.
+De knop verdwijnt bij berichten van anderen, maar het endpoint `/verwijderen` verwijdert nog steeds alles wat het binnenkrijgt. Wie het formulier nabouwt, komt er alsnog bij.
 
 </details>
 
@@ -249,7 +249,7 @@ if sleutel not in mijn.get("berichten", []):
     raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
 ```
 
-**403 Forbidden** betekent: ik weet wie je bent, maar dit mag je niet. Nu ligt de controle op de server, waar de bezoeker er niet bij kan. De verborgen knop uit opdracht 4 blijft nuttig — die voorkomt dat iemand per ongeluk iets probeert wat toch niet mag — maar de echte afscherming zit hier.
+**403 Forbidden** betekent: ik weet wie je bent, maar dit mag je niet. Nu ligt de controle op de server, waar de bezoeker er niet bij kan. De verborgen knop uit opdracht 4 blijft nuttig, want die voorkomt dat iemand per ongeluk iets probeert wat toch niet mag. De echte afscherming zit hier.
 
 Dat geldt alleen voor dit endpoint. Bouwde je het htmx-recept Verwijderen, dan verwijdert `DELETE /bericht/{sleutel}` nog steeds elk bericht: zet dezelfde parameter en dezelfde regels ook daarin. Een knop Alles wissen kan iedereen nog steeds gebruiken; hoe je elk endpoint apart afschermt, staat in [Wie mag wat: elk endpoint apart](/docs/veiligheid/toegang/elk-endpoint).
 

@@ -10,11 +10,11 @@
   ]}
 />
 
-Alles wat je tot nu toe hebt gebouwd gaat via de server. Zonder htmx verspringt de pagina, met htmx blijft hij staan, maar in beide gevallen vraagt de browser iets aan Python en wacht hij op het antwoord. Voor sommige dingen is dat omslachtig — en soms onmogelijk. In deze les zet je JavaScript in je FastAPI-project.
+Alles wat je tot nu toe hebt gebouwd gaat via de server. Zonder htmx verspringt de pagina, met htmx blijft hij staan, maar in beide gevallen vraagt de browser iets aan Python en wacht hij op het antwoord. Voor sommige dingen is dat omslachtig, en soms kan het niet eens. Daarvoor zet je JavaScript in je FastAPI-project.
 
 ## Waar het bestand komt
 
-JavaScript is een gewoon bestand in je `static`-map, net als je CSS:
+JavaScript is een bestand in je `static`-map, net als je CSS:
 
 ```
 je-project/
@@ -67,7 +67,7 @@ Bij elke toetsaanslag stuurt de browser een `input`-event, en jouw functie past 
 
 Typ een paar letters in het veld en kijk dan naar de terminal waar `fastapi dev` draait.
 
-Daar staat niets nieuws. Geen enkele regel. Je server heeft de teller nooit gezien: het bestand `app.js` is één keer opgehaald, en daarna doet de browser alles zelf.
+Daar staat niets nieuws, geen enkele regel. Je server heeft de teller nooit gezien: het bestand `app.js` is één keer opgehaald, en daarna doet de browser alles zelf.
 
 Dat is precies het verschil met alles wat je hiervoor bouwde. Een formulier versturen betekent een verzoek naar Python. Een teller bijwerken via de server zou dat ook betekenen: twintig verzoeken voor twintig letters, ook met htmx, terwijl alles wat de teller nodig heeft al in de browser staat. Daarom hoort dit in de browser.
 
@@ -99,7 +99,7 @@ Kijk naar wat er gebeurt bij een toetsaanslag: verandert er iets aan de pagina d
 <details>
 <summary>Antwoord</summary>
 
-Nul. De pagina en `app.js` waren al opgehaald voordat je begon te typen. Alle vijf de toetsaanslagen worden afgehandeld door code die al in de browser zit.
+Nul. De pagina en `app.js` waren al opgehaald voordat je begon te typen. Alle vijf de toetsaanslagen handelt code af die al in de browser zit.
 
 </details>
 

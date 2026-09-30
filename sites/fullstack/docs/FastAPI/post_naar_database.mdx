@@ -7,7 +7,7 @@
   ]}
 />
 
-Een formulier en een database samen: wat een bezoeker invult, blijft bewaard, ook als je de server stopt. Eerst één naam, daarna een gastenboek met alle berichten.
+Je koppelt een formulier aan een database, zodat wat een bezoeker invult bewaard blijft, ook als je de server stopt. Je begint met één naam en maakt daarna een gastenboek dat alle berichten bewaart.
 
 ## Voorbeeld: Naam opslaan
 
@@ -145,7 +145,7 @@ async def berichten():
 ```
 
 <Regel n={8}>
-Elke keer een nieuwe sleutel, zoals `bericht_1767225600123456789`. Twee berichten overschrijven elkaar dus niet meer.
+Zo krijgt elk bericht een nieuwe sleutel, zoals `bericht_1767225600123456789`, en overschrijven twee berichten elkaar niet meer.
 </Regel>
 
 <Regel n={9}>
@@ -169,7 +169,7 @@ Gebruik `time.time_ns()` (nanoseconden) en niet `int(time.time())` (hele seconde
 3. Stop de server, start hem opnieuw en kijk nog een keer: ze staan er nog.
 
 :::danger[Gaat er iets mis?]
-Data niet opgeslagen? Check of je `db.commit()` niet vergeet. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
+Blijft je data niet bewaard? Kijk dan of je `db.commit()` niet bent vergeten. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
 :::
 
 <details>
@@ -318,7 +318,7 @@ async def berichten():
 
 ### Opdracht 1: Predict - Hoeveel berichten?
 
-Iemand haalt `time.time_ns()` weg en schrijft `sleutel = "bericht"`. Daarna worden er drie berichten verstuurd. Wat laat `/berichten` zien?
+Iemand haalt `time.time_ns()` weg en schrijft `sleutel = "bericht"`. Daarna verstuurt iemand drie berichten. Wat laat `/berichten` zien?
 
 <details>
 <summary>Tip</summary>

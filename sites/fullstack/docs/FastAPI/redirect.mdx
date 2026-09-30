@@ -1,6 +1,6 @@
 # Doorsturen na opslaan (redirect)
 
-Je gastenboek werkt, maar na het versturen van een bericht sta je op een doodlopende pagina. Druk je daar op F5, dan vraagt je browser of je het formulier nog een keer wilt versturen — en zo krijg je hetzelfde bericht twee keer in je database. In deze les stuur je de bezoeker na het opslaan terug naar de lijst.
+Je gastenboek werkt, maar na het versturen van een bericht sta je op een doodlopende pagina. Druk je daar op F5, dan vraagt je browser of je het formulier nog een keer wilt versturen. Zeg je ja, dan staat hetzelfde bericht twee keer in je database. Daarom stuur je de bezoeker na het opslaan terug naar de lijst.
 
 ## RedirectResponse
 
@@ -30,22 +30,22 @@ Het opslaan is hetzelfde als in [Een formulier opslaan](/docs/FastAPI/post_naar_
 </Regel>
 
 <Regel n={7}>
-Hier zit het verschil met de vorige les. Het endpoint geeft geen pagina terug, maar een opdracht aan de browser: ga naar `/berichten`. De browser doet dat meteen, en de bezoeker ziet zijn eigen bericht onderaan de lijst verschijnen. Waarom er `status_code=303` bij moet, staat hieronder.
+Het endpoint geeft nu geen pagina terug, maar een opdracht aan de browser: ga naar `/berichten`. De browser doet dat meteen, en de bezoeker ziet zijn eigen bericht onderaan de lijst verschijnen. Waarom er `status_code=303` bij moet, staat hieronder.
 </Regel>
 
 </CodeUitleg>
 
 ## Waarom 303
 
-`status_code=303` lijkt een detail, maar zonder dat getal werkt het niet. `RedirectResponse` stuurt standaard een **307**, en 307 betekent: doe hetzelfde verzoek nog een keer op de nieuwe URL. Jouw verzoek was een POST, dus de browser stuurt een POST naar `/berichten` — en dat endpoint is een `@app.get`. Resultaat: **405 Method Not Allowed**.
+`status_code=303` lijkt een detail, maar zonder dat getal werkt het niet. `RedirectResponse` stuurt standaard een 307, en 307 betekent: doe hetzelfde verzoek nog een keer op de nieuwe URL. Jouw verzoek was een POST, dus de browser stuurt een POST naar `/berichten`. Dat endpoint is een `@app.get`, dus je krijgt **405 Method Not Allowed**.
 
-**303** betekent wél wat je bedoelt: ga naar die URL met een GET.
+Een 303 zegt wél wat je bedoelt: ga naar die URL met een GET.
 
-Deze combinatie — POST, dan doorsturen naar een GET — heet het **post/redirect/get**-patroon. Bijna elke website die je gebruikt doet dit na een formulier.
+Eerst een POST en dan doorsturen naar een GET: dat heet het **post/redirect/get**-patroon. Bijna elke website die je gebruikt doet dit na een formulier.
 
 ## Verwijderen en terug
 
-Hetzelfde patroon werkt ook voor verwijderen: een formulier met een POST, en daarna terug naar de lijst. Om één bericht aan te wijzen heb je zijn sleutel nodig. Stuur de berichten daarom mét hun sleutel naar de template: vervang in je endpoint `/berichten` de `db.values()` door `db.items()`. Het endpoint voor verwijderen zet je eronder:
+Met verwijderen gaat het net zo: een formulier met een POST, en daarna terug naar de lijst. Om één bericht aan te wijzen heb je zijn sleutel nodig. Stuur de berichten daarom mét hun sleutel naar de template: vervang in je endpoint `/berichten` de `db.values()` door `db.items()`. Het endpoint voor verwijderen zet je eronder:
 
 <CodeUitleg>
 
@@ -79,7 +79,7 @@ async def verwijderen(sleutel: str = Form(...)):
 </Regel>
 
 <Regel n={17}>
-Daarna weer terug naar de lijst, met 303, precies zoals na het opslaan.
+Daarna stuur je de bezoeker terug naar de lijst, met 303, zoals na het opslaan.
 </Regel>
 
 </CodeUitleg>
@@ -318,7 +318,7 @@ Maak een endpoint `/annuleren` dat niets opslaat en de bezoeker direct terugstuu
 <details>
 <summary>Tip</summary>
 
-Dit endpoint wordt met een gewone link bezocht, dus het is een `@app.get`. Een redirect vanuit een GET heeft geen 303 nodig.
+Een bezoeker komt hier via een gewone link, dus het is een `@app.get`. Een redirect vanuit een GET heeft geen 303 nodig.
 
 </details>
 

@@ -91,14 +91,14 @@ Omdat `pages` ook in `static` staat, is `home.html` nu ook bereikbaar op `/stati
 Ga naar [http://127.0.0.1:8000](http://127.0.0.1:8000). De kop is blauw en de tekst grijs: de CSS uit het eigen bestand werkt.
 
 :::danger[Gaat er iets mis?]
-CSS werkt niet? Check of `app.mount("/static", ...)` in je code staat en of het pad in `<link>` klopt. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
+Werkt je CSS niet? Kijk of `app.mount("/static", ...)` in je code staat en of het pad in `<link>` klopt. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
 :::
 
 ## Als je wijziging niet doorkomt
 
 Pas je `style.css` aan en blijft de kop blauw? Dan kijk je waarschijnlijk naar een oude kopie. De browser bewaart van sommige antwoorden een kopie, de **cache**. Vraagt hij hetzelfde adres nog eens, dan pakt hij soms die kopie in plaats van de server te vragen. Bij de JSON van je endpoints gebeurt dat zelden, bij bestanden zoals je CSS wel.
 
-In het tabblad Netwerk uit [Kijken wat de browser doet](/docs/FastAPI/devtools-netwerk) zie je het aan de kolom Grootte: daar staat dan **(geheugencache)** of **(schijfcache)** (in het Engels memory cache of disk cache) in plaats van een aantal bytes. De status is dan gewoon 200, dus aan de status zie je het niet. Twee manieren om het te voorkomen:
+In het tabblad Netwerk uit [Kijken wat de browser doet](/docs/FastAPI/devtools-netwerk) zie je het aan de kolom Grootte: daar staat dan **(geheugencache)** of **(schijfcache)** (in het Engels memory cache of disk cache) in plaats van een aantal bytes. De status blijft 200, dus daaraan zie je het niet. Twee manieren om het te voorkomen:
 
 - Bovenin het tabblad Netwerk staat het vinkje **Cache uitzetten** (Disable cache). Zet het aan; het werkt zolang de ontwikkelaarstools open staan.
 - Klik met de rechtermuisknop op de herlaadknop van je browser en kies **Cache wissen en geforceerd opnieuw laden**. Die keuze bestaat alleen als de ontwikkelaarstools open staan. Sneller is **Ctrl+Shift+R**.
@@ -193,7 +193,7 @@ Beide pagina's laden hetzelfde bestand. Wat betekent dat als je dat ene bestand 
 
 ### Opdracht 2: Run
 
-Maak `static/css/style.css` en de `<link>` in `home.html` uit het voorbeeld. Start de server en controleer of de styling werkt. Pas daarna de kleur aan en kijk in Netwerk of de nieuwe CSS binnenkomt.
+Maak `static/css/style.css` en de `<link>` in `home.html` uit het voorbeeld. Start de server en kijk of je CSS werkt. Pas daarna de kleur aan en kijk in Netwerk of de nieuwe CSS binnenkomt.
 
 ### Opdracht 3: Investigate - Ander pad
 
@@ -202,7 +202,7 @@ Wat gebeurt er als je `app.mount("/static", ...)` verandert in `app.mount("/best
 <details>
 <summary>Antwoord</summary>
 
-Nee. De `<link>` verwijst naar `/static/css/style.css`, maar dat adres bestaat niet meer. In Netwerk zie je bij `style.css` een 404. Je zou de link moeten aanpassen naar `/bestanden/css/style.css`.
+Nee. De `<link>` verwijst naar `/static/css/style.css`, maar dat adres bestaat niet meer. In Netwerk zie je bij `style.css` een 404. Om het te repareren pas je de link aan naar `/bestanden/css/style.css`.
 
 </details>
 

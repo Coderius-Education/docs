@@ -1,6 +1,6 @@
 # HTML in bestanden
 
-Tot nu toe schrijf je HTML als strings in Python. Dat wordt onoverzichtelijk bij grote pagina's. In deze les leer je hoe je HTML in aparte bestanden zet.
+Tot nu toe schrijf je HTML als strings in Python. Bij een grote pagina raak je daarin het overzicht kwijt, dus zet je de HTML voortaan in een eigen bestand.
 
 ## Mappenstructuur
 
@@ -64,7 +64,7 @@ Het pad is dat van het bestand op je schijf, gerekend vanaf de map waarin je `fa
 Ga naar [http://127.0.0.1:8000](http://127.0.0.1:8000). Je ziet de pagina uit `home.html`.
 
 :::danger[Gaat er iets mis?]
-Krijg je een 404 of 500 error? Check of het pad in `FileResponse("...")` exact klopt en of het bestand echt op die plek staat. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
+Krijg je een 404 of een 500? Kijk of het pad in `FileResponse("...")` precies klopt en of het bestand echt op die plek staat. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
 :::
 
 <details>
@@ -139,7 +139,7 @@ async def contact():
 <details>
 <summary>Tip</summary>
 
-FastAPI probeert het bestand te openen. Wat kan er misgaan als een bestand niet gevonden wordt?
+FastAPI probeert het bestand te openen. Wat kan er misgaan als het bestand er niet is?
 
 </details>
 
@@ -156,7 +156,7 @@ Maak de mappenstructuur uit het voorbeeld (`static/pages/home.html`), pas je `ma
 
 ### Opdracht 3: Investigate - Fout pad
 
-Verander het pad in `FileResponse` naar een bestand dat niet bestaat, bijvoorbeeld `FileResponse("static/pages/oeps.html")`. Wat voor error krijg je?
+Verander het pad in `FileResponse` naar een bestand dat niet bestaat, bijvoorbeeld `FileResponse("static/pages/oeps.html")`. Welke fout krijg je?
 
 <details>
 <summary>Antwoord</summary>

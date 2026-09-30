@@ -7,11 +7,11 @@
   ]}
 />
 
-Tot nu toe gebruikte je alleen GET. Er is nog een tweede soort verzoek, POST, en in deze les zie je het verschil.
+Tot nu toe gebruikte je alleen GET. Er is nog een tweede soort verzoek: POST.
 
 ## GET = Data ophalen
 
-Alles wat je tot nu toe hebt gedaan is GET. De browser vraagt data op van de server, zoals bij je endpoint voor `/`:
+Bij een GET vraagt de browser data op van de server, zoals bij je endpoint voor `/`:
 
 {/* route-dubbel: voorbeeld van een endpoint dat de leerling al heeft */}
 ```python
@@ -20,7 +20,7 @@ async def home():
     return FileResponse("static/pages/home.html")
 ```
 
-Data kan meegestuurd worden in de URL:
+Je kunt ook data meesturen in de URL:
 ```
 http://127.0.0.1:8000/zoek?term=python
 ```
@@ -81,7 +81,7 @@ async def verstuur(naam: str = Form(...)):
 | **Data in** | URL | Request body |
 | **Voorbeeld** | Pagina laden, zoeken | Formulier versturen, inloggen |
 
-**Vuistregel:** GET = "Geef me iets" / POST = "Hier is iets"
+Als vuistregel: met GET zeg je "Geef me iets", met POST "Hier is iets".
 
 :::danger[Gaat er iets mis?]
 Krijg je een **405 Method Not Allowed**? Dan stuur je waarschijnlijk een POST naar een GET endpoint of andersom. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
@@ -186,7 +186,7 @@ Wat gebruik je voor:
 <details>
 <summary>Tip</summary>
 
-Denk aan de vuistregel: GET = "Geef me iets" (data ophalen), POST = "Hier is iets" (data versturen).
+Denk aan de vuistregel. Met GET zeg je "Geef me iets" en haal je data op, met POST zeg je "Hier is iets" en verstuur je data.
 
 </details>
 
@@ -218,7 +218,7 @@ Wat gebeurt er als je `http://127.0.0.1:8000/verstuur` rechtstreeks in je browse
 <details>
 <summary>Tip</summary>
 
-Als je een URL in je browser typt, stuurt de browser altijd een GET request. Wat is het endpoint type van `/verstuur`?
+Als je een URL in je browser typt, stuurt de browser altijd een GET-verzoek. Wat voor endpoint is `/verstuur`?
 
 </details>
 

@@ -1,6 +1,6 @@
 # Cheatsheet
 
-Snelle referentie voor alles wat je hebt geleerd. Klik op een onderwerp om het te openen. De onderwerpen staan in de volgorde van de lessen. Welk bestand in welke map hoort, staat bij [Projectstructuur](/docs/FastAPI/projectstructuur).
+Hier zoek je op hoe iets uit de lessen ook alweer ging. De onderwerpen staan in de volgorde van de lessen; klik er een aan om hem te openen. Welk bestand in welke map hoort, staat bij [Projectstructuur](/docs/FastAPI/projectstructuur).
 
 
 ## FastAPI
@@ -25,7 +25,7 @@ Eén keer, bovenaan, direct na de imports. Alle endpoints komen eronder.
 fastapi dev main.py
 ```
 
-Open: `http://127.0.0.1:8000`. Stoppen doe je met Ctrl+C in de terminal.
+Open `http://127.0.0.1:8000`. Stoppen doe je met Ctrl+C in de terminal.
 
 </details>
 
@@ -97,7 +97,7 @@ async def dobbelsteen(request: Request):
     return templates.TemplateResponse(request, "dobbelsteen.html", {"worp": 4})
 ```
 
-**Let op:** `request` is het eerste argument, vóór de bestandsnaam.
+`request` komt als eerste argument, vóór de bestandsnaam.
 
 </details>
 
@@ -125,7 +125,7 @@ async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
     return {"naam": naam, "bericht": bericht}
 ```
 
-**Let op:** de `name` in HTML moet gelijk zijn aan de parameter in Python.
+De `name` in je HTML moet precies zo heten als de parameter in Python.
 
 </details>
 
@@ -140,7 +140,7 @@ async def gastenboek_opslaan(naam: str = Form(...)):
     return RedirectResponse(url="/berichten", status_code=303)
 ```
 
-**Let op:** zonder `status_code=303` krijg je een 405. De standaard is 307, en die herhaalt je POST.
+Zonder `status_code=303` krijg je een 405: de standaard is 307, en die herhaalt je POST.
 
 </details>
 
@@ -153,7 +153,7 @@ async def bericht_detail(sleutel: str):
     return {"sleutel": sleutel}
 ```
 
-**Let op:** de naam tussen accolades moet gelijk zijn aan de parameternaam.
+De naam tussen de accolades moet gelijk zijn aan de parameternaam.
 
 </details>
 
@@ -172,7 +172,7 @@ async def bericht_detail(sleutel: str):
     return bericht
 ```
 
-**Let op:** `raise`, niet `return`.
+Met `raise`, niet met `return`.
 
 </details>
 
@@ -242,7 +242,7 @@ async def gastenboek_opslaan(naam: str = Form(...)):
     return antwoord
 ```
 
-**Let op:** maak het antwoord eerst als variabele, anders heb je geen plek om de cookie op te zetten. `max_age` is de houdbaarheid in seconden.
+Maak het antwoord eerst als variabele, anders heb je geen plek om de cookie op te zetten. `max_age` is de houdbaarheid in seconden.
 
 </details>
 
@@ -259,7 +259,7 @@ async def gastenboek_form(request: Request, naam: str = Cookie(default="")):
 
 Weghalen doe je met `antwoord.delete_cookie("naam")`.
 
-**Let op:** een cookie staat bij de bezoeker en kan door hem veranderd worden. Gebruik hem niet voor iets waar rechten aan hangen.
+Een cookie staat bij de bezoeker, en die kan hem veranderen. Gebruik hem dus niet voor iets waar rechten aan hangen.
 
 </details>
 
@@ -302,7 +302,7 @@ with SqliteDict("sessies.db") as sessies:
     mijn = sessies.get(sessie_id, {})
 ```
 
-**Let op:** in de cookie staat alleen het sessie-id, de gegevens staan op de server. Haal de sessie eerst op met `.get()` en vul hem aan: schrijf je er een nieuwe dictionary overheen, dan ben je de lijst `berichten` kwijt.
+In de cookie staat alleen het sessie-id, de gegevens staan op de server. Haal de sessie eerst op met `.get()` en vul hem aan: schrijf je er een nieuwe dictionary overheen, dan ben je de lijst `berichten` kwijt.
 
 </details>
 
@@ -381,7 +381,7 @@ Zolang je aan je site werkt: tabblad **Netwerk**, vinkje **Cache uitzetten** aan
 <a href="/about">Over mij</a>
 ```
 
-**Let op:** link naar het **endpoint**, niet naar het bestand.
+Link naar het endpoint, niet naar het bestand.
 
 </details>
 
@@ -434,7 +434,7 @@ De naam tussen de accolades is de sleutel uit het dictionary. Een onderdeel van 
 </form>
 ```
 
-**Let op:** `name` in HTML moet gelijk zijn aan de parameter in Python.
+De `name` van een veld is de naam van de parameter in Python.
 
 </details>
 
@@ -604,7 +604,7 @@ with SqliteDict("gastenboek.db") as db:
     db.commit()
 ```
 
-**Let op:** met een vaste sleutel, of met `int(time.time())`, overschrijft een nieuw bericht het vorige.
+Met een vaste sleutel, of met `int(time.time())`, overschrijft een nieuw bericht het vorige.
 
 </details>
 
@@ -619,7 +619,7 @@ async def berichten(request: Request):
     return templates.TemplateResponse(request, "berichten.html", {"berichten": alle_berichten})
 ```
 
-**Let op:** `list()` haalt de berichten op zolang de database nog open is. Zonder `list()` krijg je `AttributeError: 'NoneType' object has no attribute 'select'`.
+`list()` haalt de berichten op zolang de database nog open is. Zonder `list()` krijg je `AttributeError: 'NoneType' object has no attribute 'select'`.
 
 </details>
 
@@ -729,7 +729,7 @@ Bestand in `static/js/app.js`, en in de `<head>` van je template:
 
 `app.mount("/static", ...)` serveert het al; aan `main.py` verandert niets.
 
-**Let op:** zonder `defer` draait je script voordat de pagina er staat, en vindt `querySelector` niets.
+Zonder `defer` draait je script voordat de pagina er staat, en vindt `querySelector` niets.
 
 </details>
 
@@ -767,7 +767,7 @@ except VerifyMismatchError:
     print("Klopt niet")
 ```
 
-Bewaar de hash, nooit het wachtwoord. `ph.verify` vergelijk je nooit zelf met `==`: elke hash heeft een eigen zout. Zie [Wachtwoorden](/docs/veiligheid/wachtwoorden/gewone-tekst).
+Bewaar de hash, nooit het wachtwoord. Vergelijk met `ph.verify` en niet zelf met `==`: elke hash heeft een eigen zout. Zie [Wachtwoorden](/docs/veiligheid/wachtwoorden/gewone-tekst).
 
 </details>
 

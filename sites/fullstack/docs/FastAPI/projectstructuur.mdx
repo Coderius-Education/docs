@@ -1,6 +1,6 @@
 # Projectstructuur
 
-Tijdens de lessen groeit je project stap voor stap. Hier zie je hoe de mappenstructuur groeit: elke stand is de vorige plus wat die les toevoegt. Een bestand verdwijnt alleen als een les zegt dat je het verplaatst.
+Je project groeit met de lessen mee. Elke stand hieronder is de vorige plus wat die les toevoegt. Een bestand verdwijnt alleen als een les zegt dat je het verplaatst.
 
 ## Bij [Je eerste endpoint](/docs/FastAPI/eerste_endpoint)
 
@@ -98,8 +98,8 @@ je-project/
 Er komt een map `templates/` bij voor Jinja2-templates. De formulieren zelf blijven vaste bestanden in `static/pages/`.
 
 :::tip[Verschil: static/pages vs templates]
-- **static/pages/** — Vaste HTML bestanden die altijd hetzelfde zijn
-- **templates/** — HTML bestanden met `{{ variabelen }}` die door Python worden ingevuld
+- `static/pages/`: vaste HTML-bestanden, die altijd hetzelfde zijn
+- `templates/`: HTML-bestanden met `{{ variabelen }}` die Python invult
 :::
 
 ## Bij [Gegevens opslaan met SqliteDict](/docs/FastAPI/database) en [Een formulier opslaan](/docs/FastAPI/post_naar_database)
@@ -158,7 +158,7 @@ je-project/
     └── groet_resultaat.html
 ```
 
-Er komen geen mappen bij: een lijstpagina en een detailpagina zijn gewoon twee templates naast elkaar.
+Er komen geen mappen bij: een lijstpagina en een detailpagina zijn twee templates naast elkaar.
 
 ## Bij [Zonder herladen met htmx](/docs/FastAPI/htmx)
 
@@ -273,4 +273,4 @@ Het gastenboekformulier is verhuisd: `static/pages/gastenboek_form.html` is nu d
 | `static/` | Afbeeldingen | `kat.jpg` |
 | `templates/` | Jinja2 templates, ook stukken voor htmx | `berichten.html`, `berichten_lijst.html` |
 
-**Tip:** een project met zoveel bestanden is precies waar git voor bestaat. Eén commit per werkende versie, en je durft te verbouwen omdat je altijd terug kunt. Hoe je dat in VS Code doet staat in <SiteLink site="editor" to="/git/vscode/">Git in VS Code</SiteLink>.
+**Tip:** bij zoveel bestanden komt git goed van pas. Maak een commit bij elke werkende versie; dan durf je te verbouwen, want je kunt altijd terug. Hoe je dat in VS Code doet staat in <SiteLink site="editor" to="/git/vscode/">Git in VS Code</SiteLink>.
