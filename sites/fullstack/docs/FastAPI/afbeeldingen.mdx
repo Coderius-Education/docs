@@ -19,6 +19,8 @@ je-project/
     ├── css/
     │   └── style.css
     ├── pages/
+    │   ├── home.html
+    │   ├── about.html
     │   └── foto.html
     └── kat.jpg          ← jouw afbeelding
 ```
@@ -43,6 +45,7 @@ Maak `static/pages/foto.html`:
 <html>
     <head>
         <title>Mijn Foto</title>
+        <link rel="stylesheet" href="/static/css/style.css">
     </head>
     <body>
         <h1>Kijk naar deze foto!</h1>
@@ -71,6 +74,72 @@ Afbeelding laadt niet? Controleer of:
 
 Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
 :::
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+```python
+from fastapi import FastAPI
+from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.get("/")
+async def home():
+    return FileResponse("static/pages/home.html")
+
+@app.get("/info")
+async def info():
+    return {"naam": "Jouw Naam", "leeftijd": 16}
+
+@app.get("/pagina", response_class=HTMLResponse)
+async def pagina():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Mijn Pagina</title>
+        </head>
+        <body>
+            <h1>Hallo!</h1>
+            <p>Dit is mijn eerste HTML pagina.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/styled", response_class=HTMLResponse)
+async def styled():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Met CSS</title>
+            <style>
+                h1 { color: blue; }
+                p { color: gray; }
+            </style>
+        </head>
+        <body>
+            <h1>Gestylede pagina</h1>
+            <p>Deze tekst is grijs.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/about")
+async def about():
+    return FileResponse("static/pages/about.html")
+
+@app.get("/foto")
+async def foto():
+    return FileResponse("static/pages/foto.html")
+```
+
+</details>
 
 ## Opdrachten
 
@@ -162,6 +231,7 @@ Zet drie afbeeldingen in je `static` folder. Gebruik voor elke foto een `<h3>` g
 <details>
 <summary>Antwoord</summary>
 
+`static/pages/galerij.html`:
 ```html
 <!DOCTYPE html>
 <html>
@@ -178,6 +248,12 @@ Zet drie afbeeldingen in je `static` folder. Gebruik voor elke foto een `<h3>` g
         <img src="/static/foto3.jpg" alt="Derde foto">
     </body>
 </html>
+```
+
+```python
+@app.get("/galerij")
+async def galerij():
+    return FileResponse("static/pages/galerij.html")
 ```
 
 </details>

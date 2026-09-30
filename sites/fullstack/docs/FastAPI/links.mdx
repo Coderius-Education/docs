@@ -26,7 +26,7 @@ Gebruik `href="/about"` (het endpoint), **niet** `href="about.html"` (het bestan
 
 ## Voorbeeld
 
-Twee pagina's die naar elkaar linken:
+Twee pagina's die naar elkaar linken: je `home.html` krijgt een link, en er komt een pagina `about.html` bij.
 
 **`static/pages/home.html`:**
 ```html
@@ -50,12 +50,9 @@ Twee pagina's die naar elkaar linken:
 </html>
 ```
 
-**`main.py`:**
-```python
-@app.get("/")
-async def home():
-    return FileResponse("static/pages/home.html")
+**`main.py`:** je endpoint voor `/` heb je al. Zet er een endpoint voor `/about` onder:
 
+```python
 @app.get("/about")
 async def about():
     return FileResponse("static/pages/about.html")
@@ -67,6 +64,66 @@ Klik op "Terug naar Home" → je gaat naar `/`.
 :::danger[Gaat er iets mis?]
 Krijg je een 404 als je op een link klikt? Dan bestaat het endpoint waarschijnlijk niet in je `main.py`. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
 :::
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+```python
+from fastapi import FastAPI
+from fastapi.responses import FileResponse, HTMLResponse
+
+app = FastAPI()
+
+@app.get("/")
+async def home():
+    return FileResponse("static/pages/home.html")
+
+@app.get("/info")
+async def info():
+    return {"naam": "Jouw Naam", "leeftijd": 16}
+
+@app.get("/pagina", response_class=HTMLResponse)
+async def pagina():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Mijn Pagina</title>
+        </head>
+        <body>
+            <h1>Hallo!</h1>
+            <p>Dit is mijn eerste HTML pagina.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/styled", response_class=HTMLResponse)
+async def styled():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Met CSS</title>
+            <style>
+                h1 { color: blue; }
+                p { color: gray; }
+            </style>
+        </head>
+        <body>
+            <h1>Gestylede pagina</h1>
+            <p>Deze tekst is grijs.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/about")
+async def about():
+    return FileResponse("static/pages/about.html")
+```
+
+</details>
 
 ## Opdrachten
 
@@ -109,12 +166,12 @@ De browser probeert naar `http://127.0.0.1:8000/about.html` te gaan, maar dat en
 
 ### Opdracht 4: Make - Drie pagina's
 
-Maak drie pagina's (home, about, contact) die allemaal links naar de andere twee hebben.
+Maak er een derde pagina bij, `contact.html`, en zorg dat alle drie de pagina's (home, about, contact) links naar de andere twee hebben.
 
 <details>
 <summary>Tip</summary>
 
-Maak drie HTML bestanden en drie endpoints. Zet op elke pagina twee `<a>` tags naar de andere pagina's.
+Je hebt één nieuw HTML-bestand en één nieuw endpoint nodig. Zet op elke pagina twee `<a>`-tags naar de andere pagina's.
 
 </details>
 
@@ -133,16 +190,8 @@ Drie HTML bestanden in `static/pages/` met elk links naar de andere twee, bijvoo
 </html>
 ```
 
-En drie endpoints:
+De endpoints voor `/` en `/about` heb je al. Er komt er één bij:
 ```python
-@app.get("/")
-async def home():
-    return FileResponse("static/pages/home.html")
-
-@app.get("/about")
-async def about():
-    return FileResponse("static/pages/about.html")
-
 @app.get("/contact")
 async def contact():
     return FileResponse("static/pages/contact.html")

@@ -33,18 +33,12 @@ Maak `static/pages/naam_form.html`:
 
 ## De endpoints
 
-In `main.py`:
+`Form` heb je in [GET vs POST](/docs/FastAPI/get_vs_post) al geïmporteerd. Zet in `main.py` een endpoint erbij dat het formulier toont, en vervang je `/verstuur` uit GET vs POST door deze versie:
 
 <CodeUitleg>
 
+{/* route-dubbel: vervangt POST /verstuur uit GET vs POST, nu met een print */}
 ```python showLineNumbers
-from fastapi import FastAPI, Form
-from fastapi.responses import FileResponse
-from fastapi.staticfiles import StaticFiles
-
-app = FastAPI()
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
 @app.get("/naam")
 async def toon_formulier():
     return FileResponse("static/pages/naam_form.html")
@@ -55,19 +49,19 @@ async def ontvang_naam(naam: str = Form(...)):
     return {"bericht": f"Hallo {naam}!"}
 ```
 
-<Regel n={8} tot={10}>
+<Regel n={1} tot={3}>
 Een gewone GET die het formulier toont. Het formulier is een HTML-bestand, dus `FileResponse`.
 </Regel>
 
-<Regel n={12}>
+<Regel n={5}>
 Het pad `/verstuur` is de `action` van het formulier, en `@app.post` de `method`. Die twee moeten kloppen met de HTML, anders komt het verzoek nergens aan.
 </Regel>
 
-<Regel n={13}>
+<Regel n={6}>
 `Form(...)` haalt het veld `naam` uit het verstuurde formulier. De parameter heet `naam` omdat het veld in de HTML `name="naam"` heeft; die twee namen moeten gelijk zijn.
 </Regel>
 
-<Regel n={14}>
+<Regel n={7}>
 De print komt in je terminal terecht, niet in de browser. Handig om te zien wat er binnenkomt.
 </Regel>
 
@@ -76,7 +70,13 @@ De print komt in je terminal terecht, niet in de browser. Handig om te zien wat 
 <details>
 <summary>Waarom moet de naam matchen?</summary>
 
-Als je in HTML `name="naam"` schrijft, stuurt de browser de data als `naam=Jan`. FastAPI zoekt dan naar een Python parameter die ook `naam` heet. Als die namen niet overeenkomen, kan FastAPI de data niet vinden en krijg je een **422 error**.
+Als je in HTML `name="naam"` schrijft, stuurt de browser de data als `naam=Jan`. FastAPI zoekt dan naar een Python parameter die ook `naam` heet. Als die namen niet overeenkomen, kan FastAPI de data niet vinden. Je browser toont dan:
+
+```json
+{"detail":[{"type":"missing","loc":["body","naam"],"msg":"Field required","input":null}]}
+```
+
+`"loc":["body","naam"]` betekent: in de body van het verzoek, waar het formulier in zit, ontbreekt `naam`. In je terminal en in Netwerk staat de statuscode **422**.
 
 </details>
 
@@ -88,8 +88,100 @@ Als je in HTML `name="naam"` schrijft, stuurt de browser de data als `naam=Jan`.
 4. In de terminal: `Naam ontvangen: Jan`
 
 :::danger[Gaat er iets mis?]
-Krijg je een **422 Unprocessable Entity**? Check of de `name` in je HTML matcht met de parameter in Python. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
+Zie je `"msg":"Field required"` in je browser, en een 422 in je terminal? Check of de `name` in je HTML matcht met de parameter in Python. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
 :::
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+```python
+import random
+
+from fastapi import FastAPI, Form, Request
+from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
+
+@app.get("/")
+async def home():
+    return FileResponse("static/pages/home.html")
+
+@app.get("/info")
+async def info():
+    return {"naam": "Jouw Naam", "leeftijd": 16}
+
+@app.get("/pagina", response_class=HTMLResponse)
+async def pagina():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Mijn Pagina</title>
+        </head>
+        <body>
+            <h1>Hallo!</h1>
+            <p>Dit is mijn eerste HTML pagina.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/styled", response_class=HTMLResponse)
+async def styled():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Met CSS</title>
+            <style>
+                h1 { color: blue; }
+                p { color: gray; }
+            </style>
+        </head>
+        <body>
+            <h1>Gestylede pagina</h1>
+            <p>Deze tekst is grijs.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/about")
+async def about():
+    return FileResponse("static/pages/about.html")
+
+@app.get("/foto")
+async def foto():
+    return FileResponse("static/pages/foto.html")
+
+@app.get("/dobbelsteen")
+async def dobbelsteen(request: Request):
+    worp = random.randint(1, 6)
+    return templates.TemplateResponse(
+        request,
+        "dobbelsteen.html",
+        {"worp": worp}
+    )
+
+@app.get("/zoek")
+async def zoek(term: str):
+    return {"je_zocht": term}
+
+@app.get("/naam")
+async def toon_formulier():
+    return FileResponse("static/pages/naam_form.html")
+
+@app.post("/verstuur")
+async def ontvang_naam(naam: str = Form(...)):
+    print(f"Naam ontvangen: {naam}")
+    return {"bericht": f"Hallo {naam}!"}
+```
+
+</details>
 
 ## Opdrachten
 
@@ -102,6 +194,7 @@ Krijg je een **422 Unprocessable Entity**? Check of de `name` in je HTML matcht 
 </form>
 ```
 
+{/* route-dubbel: voorspelvraag, je voegt dit endpoint niet toe */}
 ```python
 @app.post("/groet")
 async def groet(naam: str = Form(...)):
@@ -128,14 +221,14 @@ Kijk wat de Python functie returnt. De waarde van `naam` wordt `"Sarah"` — wat
 
 Maak het formulier en de endpoints uit het voorbeeld. Test of je een naam kunt invullen en het bericht terugkrijgt.
 
-### Opdracht 3: Investigate - Naam mismatch
+### Opdracht 3: Investigate - Zonder name
 
-Wat gebeurt er als je in HTML `name="voornaam"` schrijft, maar in Python `naam: str = Form(...)` houdt? Probeer het uit.
+Haal in `naam_form.html` het attribuut `name="naam"` helemaal weg, zodat er `<input type="text" required>` staat. Vul een naam in en verstuur. Wat gebeurt er?
 
 <details>
 <summary>Antwoord</summary>
 
-Je krijgt een **422 Unprocessable Entity** error. FastAPI zoekt naar een veld genaamd `naam`, maar de browser stuurt `voornaam`. De namen moeten exact matchen.
+Je krijgt dezelfde weigering als bij een verkeerde naam: `"loc":["body","naam"]` en `"msg":"Field required"`, en een 422 in je terminal. De browser stuurt alleen velden mee die een `name` hebben. Zonder `name` gaat er dus niets mee, ook al heb je iets ingevuld.
 
 </details>
 
@@ -182,36 +275,25 @@ async def kleur_ontvang(kleur: str = Form(...)):
 
 ### Opdracht 5: Make - Twee velden
 
-Maak een formulier met naam en leeftijd:
-
-```html
-<input type="text" name="naam" required>
-<input type="number" name="leeftijd" required>
-```
-
-```python
-@app.post("/profiel")
-async def profiel(naam: str = Form(...), leeftijd: int = Form(...)):
-    return {"naam": naam, "leeftijd": leeftijd}
-```
+Maak een formulier om je aan te melden, met naam en leeftijd, op het adres `/aanmelden`. Na het versturen krijg je beide waarden terug als JSON.
 
 <details>
 <summary>Tip</summary>
 
-Je hebt twee `<input>` velden nodig in je HTML en twee `Form(...)` parameters in Python. Let op: `leeftijd` is een `int`, niet een `str`.
+Je hebt twee `<input>` velden nodig in je HTML (`name="naam"` en `name="leeftijd"`, die laatste met `type="number"`) en twee `Form(...)` parameters in Python. Let op: `leeftijd` is een `int`, niet een `str`.
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-`static/pages/profiel_form.html`:
+`static/pages/aanmelden_form.html`:
 ```html
 <!DOCTYPE html>
 <html>
     <body>
-        <h1>Profiel</h1>
-        <form method="post" action="/profiel">
+        <h1>Aanmelden</h1>
+        <form method="post" action="/aanmelden">
             <input type="text" name="naam" required>
             <input type="number" name="leeftijd" required>
             <button type="submit">Verstuur</button>
@@ -221,12 +303,12 @@ Je hebt twee `<input>` velden nodig in je HTML en twee `Form(...)` parameters in
 ```
 
 ```python
-@app.get("/profiel")
-async def profiel_form():
-    return FileResponse("static/pages/profiel_form.html")
+@app.get("/aanmelden")
+async def aanmelden_form():
+    return FileResponse("static/pages/aanmelden_form.html")
 
-@app.post("/profiel")
-async def profiel(naam: str = Form(...), leeftijd: int = Form(...)):
+@app.post("/aanmelden")
+async def aanmelden(naam: str = Form(...), leeftijd: int = Form(...)):
     return {"naam": naam, "leeftijd": leeftijd}
 ```
 

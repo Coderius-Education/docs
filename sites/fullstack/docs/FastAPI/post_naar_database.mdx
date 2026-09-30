@@ -28,18 +28,18 @@ Een formulier en een database samen: wat een bezoeker invult, blijft bewaard, oo
 
 ### Endpoints (`main.py`):
 
+Zet bij je imports bovenaan:
+
+```python
+from sqlitedict import SqliteDict
+```
+
+En onder je andere endpoints:
+
 <CodeUitleg>
 
 ```python showLineNumbers
-from fastapi import FastAPI, Form
-from fastapi.responses import FileResponse
-from fastapi.staticfiles import StaticFiles
-from sqlitedict import SqliteDict
-
-app = FastAPI()
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
-@app.get("/naam")
+@app.get("/bewaar")
 async def naam_formulier():
     return FileResponse("static/pages/naam_opslaan.html")
 
@@ -52,26 +52,19 @@ async def naam_opslaan(naam: str = Form(...)):
     return {"bericht": f"'{naam}' opgeslagen!"}
 ```
 
-<Regel n={13} tot={14}>
+<Regel n={5} tot={6}>
 Het POST-endpoint uit [Een formulier versturen (POST)](/docs/FastAPI/forms): `naam` komt uit het formulier.
 </Regel>
 
-<Regel n={15} tot={17}>
+<Regel n={7} tot={9}>
 Nieuw is wat je ermee doet. Binnen het `with`-blok open je de database, zet je de naam onder de sleutel `laatste_naam` en schrijf je hem weg met `commit()`. Elke nieuwe naam overschrijft de vorige, want de sleutel is steeds dezelfde.
 </Regel>
 
-<Regel n={19}>
+<Regel n={11}>
 Het antwoord komt ná het `with`-blok: de database is dan al netjes gesloten.
 </Regel>
 
 </CodeUitleg>
-
-## De naam testen
-
-1. Ga naar `http://127.0.0.1:8000/naam`
-2. Vul een naam in en klik Opslaan
-3. **Stop de server** en start opnieuw
-4. De naam staat nog in `namen.db`.
 
 ## Data terug lezen
 
@@ -90,6 +83,13 @@ async def toon_naam():
 </Regel>
 
 </CodeUitleg>
+
+## De naam testen
+
+1. Ga naar `http://127.0.0.1:8000/bewaar`
+2. Vul een naam in en klik Opslaan
+3. **Stop de server** en start opnieuw
+4. Ga naar `http://127.0.0.1:8000/toon_naam`. Je naam staat er nog: hij is bewaard in `namen.db`.
 
 ## Meer dan één bericht: het gastenboek
 
@@ -171,6 +171,148 @@ Gebruik `time.time_ns()` (nanoseconden) en niet `int(time.time())` (hele seconde
 :::danger[Gaat er iets mis?]
 Data niet opgeslagen? Check of je `db.commit()` niet vergeet. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
 :::
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+```python
+import random
+import time
+
+from fastapi import FastAPI, Form, Request
+from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
+
+@app.get("/")
+async def home():
+    return FileResponse("static/pages/home.html")
+
+@app.get("/info")
+async def info():
+    return {"naam": "Jouw Naam", "leeftijd": 16}
+
+@app.get("/pagina", response_class=HTMLResponse)
+async def pagina():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Mijn Pagina</title>
+        </head>
+        <body>
+            <h1>Hallo!</h1>
+            <p>Dit is mijn eerste HTML pagina.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/styled", response_class=HTMLResponse)
+async def styled():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Met CSS</title>
+            <style>
+                h1 { color: blue; }
+                p { color: gray; }
+            </style>
+        </head>
+        <body>
+            <h1>Gestylede pagina</h1>
+            <p>Deze tekst is grijs.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/about")
+async def about():
+    return FileResponse("static/pages/about.html")
+
+@app.get("/foto")
+async def foto():
+    return FileResponse("static/pages/foto.html")
+
+@app.get("/dobbelsteen")
+async def dobbelsteen(request: Request):
+    worp = random.randint(1, 6)
+    return templates.TemplateResponse(
+        request,
+        "dobbelsteen.html",
+        {"worp": worp}
+    )
+
+@app.get("/zoek")
+async def zoek(term: str):
+    return {"je_zocht": term}
+
+@app.get("/naam")
+async def toon_formulier():
+    return FileResponse("static/pages/naam_form.html")
+
+@app.post("/verstuur")
+async def ontvang_naam(naam: str = Form(...)):
+    print(f"Naam ontvangen: {naam}")
+    return {"bericht": f"Hallo {naam}!"}
+
+@app.get("/groet")
+async def groet_form():
+    return FileResponse("static/pages/groet_form.html")
+
+@app.post("/groet")
+async def groet_verwerk(request: Request, naam: str = Form(...)):
+    return templates.TemplateResponse(
+        request,
+        "groet_resultaat.html",
+        {"naam": naam}
+    )
+
+@app.get("/bewaar")
+async def naam_formulier():
+    return FileResponse("static/pages/naam_opslaan.html")
+
+@app.post("/opslaan")
+async def naam_opslaan(naam: str = Form(...)):
+    with SqliteDict("namen.db") as db:
+        db["laatste_naam"] = naam
+        db.commit()
+
+    return {"bericht": f"'{naam}' opgeslagen!"}
+
+@app.get("/toon_naam")
+async def toon_naam():
+    with SqliteDict("namen.db") as db:
+        naam = db.get("laatste_naam", "Nog niets opgeslagen")
+    return {"naam": naam}
+
+@app.get("/gastenboek")
+async def gastenboek_form():
+    return FileResponse("static/pages/gastenboek_form.html")
+
+@app.post("/gastenboek")
+async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        sleutel = f"bericht_{time.time_ns()}"
+        db[sleutel] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    return {"bericht": "Bedankt voor je bericht"}
+
+@app.get("/berichten")
+async def berichten():
+    with SqliteDict("gastenboek.db") as db:
+        alle_berichten = list(db.values())
+    return {"berichten": alle_berichten}
+```
+
+</details>
 
 ## Opdrachten
 

@@ -19,26 +19,23 @@ je-project/
     ├── css/
     │   └── style.css
     └── pages/
-        └── home.html
+        ├── home.html
+        └── about.html
 ```
 
 ## Static files configureren
 
-Pas je `main.py` aan:
+Er komen twee regels bij in je `main.py`: een import bovenaan, en direct onder `app = FastAPI()` de regel met `app.mount`. Je endpoints blijven staan. De bovenkant ziet er dan zo uit:
 
 <CodeUitleg>
 
 ```python showLineNumbers
 from fastapi import FastAPI
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
-
-@app.get("/")
-async def home():
-    return FileResponse("static/pages/home.html")
 ```
 
 <Regel n={3}>
@@ -46,7 +43,7 @@ async def home():
 </Regel>
 
 <Regel n={6}>
-`app.mount` hangt de map `static` aan de URL `/static`. Alles in die map is daarmee bereikbaar in de browser: `static/css/style.css` staat op `/static/css/style.css`. De `name` is verplicht en mag zo blijven staan.
+`app.mount` hangt de map `static` aan de URL `/static`. Alles in die map is daarmee bereikbaar in de browser: `static/css/style.css` staat op `/static/css/style.css`. De `name` gebruik je in deze cursus niet; laat hem staan.
 </Regel>
 
 </CodeUitleg>
@@ -67,7 +64,7 @@ p {
 
 ## CSS koppelen aan je pagina
 
-Zet in `static/pages/home.html` een `<link>` in de `<head>`:
+Zet in `static/pages/home.html` een `<link>` in de `<head>`. De rest van je pagina blijft staan:
 
 ```html
 <!DOCTYPE html>
@@ -77,8 +74,8 @@ Zet in `static/pages/home.html` een `<link>` in de `<head>`:
         <link rel="stylesheet" href="/static/css/style.css">
     </head>
     <body>
-        <h1>Welkom</h1>
-        <p>De CSS komt uit een eigen bestand.</p>
+        <h1>Home</h1>
+        <a href="/about">Ga naar Over Mij</a>
     </body>
 </html>
 ```
@@ -101,10 +98,72 @@ CSS werkt niet? Check of `app.mount("/static", ...)` in je code staat en of het 
 
 Pas je `style.css` aan en blijft de kop blauw? Dan kijk je waarschijnlijk naar een oude kopie. De browser bewaart van sommige antwoorden een kopie, de **cache**. Vraagt hij hetzelfde adres nog eens, dan pakt hij soms die kopie in plaats van de server te vragen. Bij de JSON van je endpoints gebeurt dat zelden, bij bestanden zoals je CSS wel.
 
-In het tabblad Netwerk uit [Kijken wat de browser doet](/docs/FastAPI/devtools-netwerk) zie je het aan de kolom Grootte: daar staat dan **(schijfcache)** of **(disk cache)** in plaats van een aantal bytes. Twee manieren om het te voorkomen:
+In het tabblad Netwerk uit [Kijken wat de browser doet](/docs/FastAPI/devtools-netwerk) zie je het aan de kolom Grootte: daar staat dan **(geheugencache)** of **(schijfcache)** (in het Engels memory cache of disk cache) in plaats van een aantal bytes. De status is dan gewoon 200, dus aan de status zie je het niet. Twee manieren om het te voorkomen:
 
 - Bovenin het tabblad Netwerk staat het vinkje **Cache uitzetten** (Disable cache). Zet het aan; het werkt zolang de ontwikkelaarstools open staan.
 - Klik met de rechtermuisknop op de herlaadknop van je browser en kies **Cache wissen en geforceerd opnieuw laden**. Die keuze bestaat alleen als de ontwikkelaarstools open staan. Sneller is **Ctrl+Shift+R**.
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+```python
+from fastapi import FastAPI
+from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.get("/")
+async def home():
+    return FileResponse("static/pages/home.html")
+
+@app.get("/info")
+async def info():
+    return {"naam": "Jouw Naam", "leeftijd": 16}
+
+@app.get("/pagina", response_class=HTMLResponse)
+async def pagina():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Mijn Pagina</title>
+        </head>
+        <body>
+            <h1>Hallo!</h1>
+            <p>Dit is mijn eerste HTML pagina.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/styled", response_class=HTMLResponse)
+async def styled():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Met CSS</title>
+            <style>
+                h1 { color: blue; }
+                p { color: gray; }
+            </style>
+        </head>
+        <body>
+            <h1>Gestylede pagina</h1>
+            <p>Deze tekst is grijs.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/about")
+async def about():
+    return FileResponse("static/pages/about.html")
+```
+
+</details>
 
 ## Opdrachten
 
@@ -172,12 +231,12 @@ body { background-color: lightyellow; }
 
 ### Opdracht 5: Make - Twee stijlen
 
-Maak een tweede pagina `about.html` met een eigen CSS-bestand `about.css`, zodat `/` en `/about` er verschillend uitzien.
+Geef je pagina `about.html` uit [Links tussen pagina's](/docs/FastAPI/links) een eigen CSS-bestand `about.css`, zodat `/` en `/about` er verschillend uitzien.
 
 <details>
 <summary>Tip</summary>
 
-Maak `static/css/about.css` en zet in `about.html` een `<link>` naar `/static/css/about.css`. Voor de pagina zelf heb je een endpoint `/about` nodig, net als in [HTML in bestanden](/docs/FastAPI/html_bestanden).
+Maak `static/css/about.css` en zet in `about.html` een `<link>` naar `/static/css/about.css`. Aan `main.py` verandert niets: `app.mount` geeft ook dit bestand door.
 
 </details>
 
@@ -198,15 +257,10 @@ body { background-color: lightblue; }
         <link rel="stylesheet" href="/static/css/about.css">
     </head>
     <body>
-        <h1>Over mij</h1>
+        <h1>Over Mij</h1>
+        <a href="/">Terug naar Home</a>
     </body>
 </html>
-```
-
-```python
-@app.get("/about")
-async def about():
-    return FileResponse("static/pages/about.html")
 ```
 
 </details>

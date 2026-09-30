@@ -80,6 +80,27 @@ Ga naar [http://127.0.0.1:8000/info](http://127.0.0.1:8000/info) om dit te teste
 Start je server niet, met `NameError: name 'app' is not defined`? Dan staat je endpoint bóven de regel `app = FastAPI()` — Python leest van boven naar beneden. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
 :::
 
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+```python
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+async def root():
+    return {"bericht": "Hallo wereld!"}
+
+@app.get("/info")
+async def info():
+    return {"naam": "Jouw Naam", "leeftijd": 16}
+```
+
+</details>
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - Wat zie je?

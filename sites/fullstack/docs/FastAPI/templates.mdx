@@ -30,7 +30,7 @@ je-project/
 </html>
 ```
 
-`{{ worp }}` is een open plek. Wat daar komt te staan, beslist Python:
+`{{ worp }}` is een open plek. Wat daar komt te staan, beslist Python. In je `main.py` komen daarvoor drie dingen bij: `import random` helemaal bovenaan, `Request` en `Jinja2Templates` bij de imports, en onder `app.mount` de regel `templates = …`. De bovenkant van je `main.py` ziet er dan zo uit:
 
 <CodeUitleg>
 
@@ -38,11 +38,26 @@ je-project/
 import random
 
 from fastapi import FastAPI, Request
+from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
+```
 
+<Regel n={10}>
+`templates` weet waar je templates staan. Vanaf nu vraag je een template op met alleen de bestandsnaam.
+</Regel>
+
+</CodeUitleg>
+
+Zet het endpoint onder je andere endpoints:
+
+<CodeUitleg>
+
+```python showLineNumbers
 @app.get("/dobbelsteen")
 async def dobbelsteen(request: Request):
     worp = random.randint(1, 6)
@@ -53,19 +68,15 @@ async def dobbelsteen(request: Request):
     )
 ```
 
-<Regel n={7}>
-`templates` weet waar je templates staan. Vanaf nu vraag je een template op met alleen de bestandsnaam.
-</Regel>
-
-<Regel n={10}>
+<Regel n={2}>
 `request: Request` vult FastAPI zelf in met het verzoek van de browser. Een template heeft dat nodig, dus je geeft hem door.
 </Regel>
 
-<Regel n={11}>
+<Regel n={3}>
 `random.randint(1, 6)` kiest een willekeurig getal van 1 tot en met 6.
 </Regel>
 
-<Regel n={12} tot={16}>
+<Regel n={4} tot={8}>
 `TemplateResponse` vult de template in en stuurt het resultaat als HTML terug. Eerst het verzoek, dan de bestandsnaam in de map `templates`, dan een dictionary. Elke sleutel wordt in de template een naam: `"worp"` vult `{{ worp }}`.
 </Regel>
 
@@ -78,7 +89,7 @@ Steeds een ander getal, bijvoorbeeld "Je gooide een 4.", dan een 1, dan een 6. B
 
 </details>
 
-Ga naar `http://127.0.0.1:8000/dobbelsteen` en herlaad een paar keer.
+Ga naar [http://127.0.0.1:8000/dobbelsteen](http://127.0.0.1:8000/dobbelsteen) en herlaad een paar keer.
 
 ## Wat de browser krijgt
 
@@ -165,6 +176,85 @@ jinja2.exceptions.TemplateNotFound: 'dobbelsteen.html' not found in search path:
 
 Meer uitleg: [Er gaat iets mis](/docs/troubleshooting#templates-jinja2)
 
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+```python
+import random
+
+from fastapi import FastAPI, Request
+from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
+
+@app.get("/")
+async def home():
+    return FileResponse("static/pages/home.html")
+
+@app.get("/info")
+async def info():
+    return {"naam": "Jouw Naam", "leeftijd": 16}
+
+@app.get("/pagina", response_class=HTMLResponse)
+async def pagina():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Mijn Pagina</title>
+        </head>
+        <body>
+            <h1>Hallo!</h1>
+            <p>Dit is mijn eerste HTML pagina.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/styled", response_class=HTMLResponse)
+async def styled():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Met CSS</title>
+            <style>
+                h1 { color: blue; }
+                p { color: gray; }
+            </style>
+        </head>
+        <body>
+            <h1>Gestylede pagina</h1>
+            <p>Deze tekst is grijs.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/about")
+async def about():
+    return FileResponse("static/pages/about.html")
+
+@app.get("/foto")
+async def foto():
+    return FileResponse("static/pages/foto.html")
+
+@app.get("/dobbelsteen")
+async def dobbelsteen(request: Request):
+    worp = random.randint(1, 6)
+    return templates.TemplateResponse(
+        request,
+        "dobbelsteen.html",
+        {"worp": worp}
+    )
+```
+
+</details>
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - Wat zie je?
@@ -180,7 +270,7 @@ Python:
 {/* niet-compileren: fragment uit een handler */}
 ```python
 return templates.TemplateResponse(request, "welkom.html", {
-    "naam": "Jan", "leeftijd": 16
+    "naam": "Jan", "leeftijd": 16, "Klas": "3B"
 })
 ```
 
@@ -189,7 +279,7 @@ return templates.TemplateResponse(request, "welkom.html", {
 <details>
 <summary>Tip</summary>
 
-Zoek bij elke `{{ }}` de sleutel met dezelfde naam in het dictionary. Wat gebeurt er als die er niet is?
+Zoek bij elke `{{ }}` de sleutel met precies dezelfde naam in het dictionary, letter voor letter.
 
 </details>
 
@@ -202,7 +292,7 @@ Leeftijd: 16
 Klas:
 ```
 
-`klas` staat niet in het dictionary, dus die plek blijft leeg, zonder foutmelding.
+In het dictionary staat `Klas` met een hoofdletter, en de template vraagt om `klas`. Voor Jinja2 zijn dat twee verschillende namen, dus die plek blijft leeg, zonder foutmelding.
 
 </details>
 
@@ -222,7 +312,7 @@ return templates.TemplateResponse("dobbelsteen.html", {"request": request, "worp
 <details>
 <summary>Antwoord</summary>
 
-Je krijgt **TypeError: unhashable type: 'dict'**.
+De browser zegt alleen `Internal Server Error`. Onderaan de lange foutmelding in je terminal staat **TypeError: unhashable type: 'dict'**.
 
 Die melding zegt niets over templates, en dat maakt hem lastig. Het eerste argument is tegenwoordig `request`, dus jouw bestandsnaam belandt op de plek van `request` en jouw dictionary op de plek van de bestandsnaam. FastAPI probeert dan een template op te zoeken met een dictionary als naam, en dat kan niet.
 
@@ -270,7 +360,7 @@ async def twee(request: Request):
 
 ### Opdracht 5: Make - Een profielkaart
 
-Maak een endpoint `/profiel` dat een dictionary met je naam, je leeftijd en je hobby als één waarde meestuurt, en toon ze op de pagina met de punt.
+Maak een endpoint `/kaart` dat een dictionary met je naam, je leeftijd en je hobby als één waarde meestuurt, en toon ze op de pagina met de punt.
 
 <details>
 <summary>Tip</summary>
@@ -282,7 +372,7 @@ Stuur `{"ik": {"naam": …, "leeftijd": …, "hobby": …}}` mee. In de template
 <details>
 <summary>Antwoord</summary>
 
-`templates/profiel.html`:
+`templates/kaart.html`:
 ```html
 <!DOCTYPE html>
 <html>
@@ -295,10 +385,10 @@ Stuur `{"ik": {"naam": …, "leeftijd": …, "hobby": …}}` mee. In de template
 ```
 
 ```python
-@app.get("/profiel")
-async def profiel(request: Request):
+@app.get("/kaart")
+async def kaart(request: Request):
     ik = {"naam": "Sam", "leeftijd": 15, "hobby": "gamen"}
-    return templates.TemplateResponse(request, "profiel.html", {"ik": ik})
+    return templates.TemplateResponse(request, "kaart.html", {"ik": ik})
 ```
 
 </details>

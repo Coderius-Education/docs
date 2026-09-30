@@ -21,12 +21,24 @@ Kies iets waar je zelf nieuwsgierig naar bent — dat scheelt bij het derde prob
 
 - **Recensies** van games, films of boeken, met een cijfer erbij en een gemiddelde bovenaan
 - **Een webshop** met een pagina per product en een bestelformulier; de bestellingen komen in de database en op een eigen overzichtspagina
-- **Een verlanglijst** waar mensen items op zetten en kunnen afvinken
+- **Een verlanglijst** waar mensen items op zetten en kunnen afvinken (zie de tip hieronder)
 - **Een quiz** die vragen stelt en de scores bewaart
 - **Een klassenagenda** met huiswerk per vak en per datum
-- **Een muziekaanvraag** voor het schoolfeest, met een teller hoe vaak een nummer is aangevraagd
+- **Een muziekaanvraag** voor het schoolfeest, met een teller hoe vaak een nummer is aangevraagd (zie de tip hieronder)
 - **Een verzamelsite** voor iets waar je te veel van weet
 - **Een namaak van een echte site**: kies er een die je vaak gebruikt en zoek uit wat daar het overzicht is, wat de detailpagina en waar het formulier zit. Bouw die kern na met wat jij hebt geleerd.
+
+:::tip[Een item bijwerken]
+Afvinken of een teller ophogen betekent: een item dat al in de database staat, aanpassen. Haal het op, pas het aan en zet het terug. Alleen `db[sleutel]["af"] = True` wordt niet bewaard, want `db[sleutel]` geeft je een kopie.
+
+```python
+with SqliteDict("verlanglijst.db") as db:
+    item = db[sleutel]
+    item["af"] = True
+    db[sleutel] = item
+    db.commit()
+```
+:::
 
 ## Stap voor stap
 
@@ -67,14 +79,14 @@ Je hebt de sleutel nodig in je template, dus loop met `db.items()` in plaats van
 
 ### Stap 4: Controleren en weigeren
 
-Bedenk wat er mis kan gaan als iemand anders je formulier invult. Een leeg veld, een cijfer van 200, een tekst van duizend woorden. Vang dat af in Python.
+Bedenk wat er mis kan gaan als iemand anders je formulier invult: een naam van alleen spaties, een cijfer van 200, een tekst van duizend woorden. Vang dat af in Python. Een helemaal leeg veld hoef je niet zelf te controleren: dat weigert `Form(...)` al, met een 422.
 
 <details>
 <summary>Vastgelopen?</summary>
 
 `raise HTTPException(status_code=400, detail="...")` stopt de functie en stuurt een foutmelding, net als de 404 uit [Eén item tonen](/docs/FastAPI/detailpagina). Controleer aan het begin van je endpoint, vóór je iets opslaat.
 
-Een `required` of `maxlength` in je HTML is geen controle: die kan een bezoeker weghalen. Hoe dat gaat, zie je later in de uitbreiding [Server of browser?](/docs/FastAPI/server-of-browser).
+Test je controle door iets in te vullen dat niet mag. Staat er een `maxlength` of `max` in je HTML, haal die dan even weg, anders houdt de browser het tegen voordat je server het ziet. Zo'n grens in de HTML is ook geen echte controle: een bezoeker kan hem weghalen. Hoe dat gaat, zie je later in de uitbreiding [Server of browser?](/docs/FastAPI/server-of-browser).
 
 </details>
 
@@ -94,9 +106,9 @@ Na dit project volgen in de sidebar drie uitbreidingen. Elk ervan kun je in je p
 
 En verder:
 
-- Een **bevestiging** vooraf bij het verwijderen
+- Een **bevestiging** vooraf bij het verwijderen, met htmx
 - **Sorteren** op datum, cijfer of naam
-- Een **zoekveld** dat filtert terwijl je typt
+- Een **zoekveld** dat filtert terwijl je typt, met htmx of JavaScript
 - **Afbeeldingen** bij je items, zoals in [Afbeeldingen tonen](/docs/FastAPI/afbeeldingen)
 - Een **statistiekpagina**: hoeveel items, gemiddeld cijfer, wie het meest heeft toegevoegd
 - Je project **openzetten** voor de klas en kijken wat er gebeurt ([Laat het aan anderen zien](/docs/FastAPI/laat-het-zien))

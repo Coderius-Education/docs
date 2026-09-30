@@ -114,3 +114,37 @@ describe('titels en categorieën', () => {
     expect(cheatsheet).toContain('(/docs/FastAPI/projectstructuur)');
   });
 });
+
+describe('verwijzingen naar een les', () => {
+  // Na de nieuwe titels bleven oude namen staan: "CSS en afbeeldingen (static
+  // files)" in vier linkteksten, "Static files" en "Terug naar de lijst" in de
+  // diagrammen. Een linktekst die als titel bedoeld is (met een dubbele punt of
+  // haakjes) moet de titel van de doelles zijn; een label in het diagram ook,
+  // of het deel vóór de dubbele punt.
+  const titelVan = (to: string) => titel(to.replace(/^\/docs\//, '').split('#')[0]);
+  const alleTeksten = [...lessen, 'troubleshooting', 'cheatsheet'].map((id) => ({
+    id,
+    tekst: readFileSync(`${DOCS}/${id}${id.startsWith('FastAPI/') ? '.mdx' : '.md'}`, 'utf8'),
+  }));
+
+  it('een linktekst met een dubbele punt of haakjes is de titel van de doelles', () => {
+    const fout = alleTeksten.flatMap(({ id, tekst }) =>
+      [...tekst.matchAll(/\[([^\]]*[:(][^\]]*)\]\((\/docs\/FastAPI\/[\w-]+)[^)]*\)/g)]
+        .filter((m) => m[1] !== titelVan(m[2]))
+        .map((m) => `${id}: [${m[1]}] → ${titelVan(m[2])}`),
+    );
+    expect(fout).toEqual([]);
+  });
+
+  it('elk les-label in het verzoekdiagram is de titel van de les', () => {
+    const bron = readFileSync(
+      new URL('../components/VerzoekCyclus/index.tsx', import.meta.url),
+      'utf8',
+    );
+    const fout = [...bron.matchAll(/to: '(\/docs\/FastAPI\/[^']+)',\s*les: '([^']+)'/g)]
+      .map((m) => [m[0], m[1], m[2].replace(/’/g, "'")])
+      .filter((m) => m[2] !== titelVan(m[1]) && m[2] !== titelVan(m[1]).split(':')[0])
+      .map((m) => `${m[2]} → ${titelVan(m[1])}`);
+    expect(fout).toEqual([]);
+  });
+});

@@ -7,15 +7,16 @@
   ]}
 />
 
-Tot nu toe gebruiken we alleen GET requests. In deze les leer je het verschil tussen GET en POST.
+Tot nu toe gebruikte je alleen GET. Er is nog een tweede soort verzoek, POST, en in deze les zie je het verschil.
 
 ## GET = Data ophalen
 
-Alles wat je tot nu toe hebt gedaan is GET. De browser vraagt data op van de server.
+Alles wat je tot nu toe hebt gedaan is GET. De browser vraagt data op van de server, zoals bij je endpoint voor `/`:
 
+{/* route-dubbel: voorbeeld van een endpoint dat de leerling al heeft */}
 ```python
-@app.get("/pagina")
-async def pagina():
+@app.get("/")
+async def home():
     return FileResponse("static/pages/home.html")
 ```
 
@@ -38,9 +39,19 @@ Een parameter met een type, `term: str`, haalt FastAPI uit de URL: het stuk na h
 
 </CodeUitleg>
 
+Zet dit endpoint onder je andere endpoints en ga naar [http://127.0.0.1:8000/zoek?term=python](http://127.0.0.1:8000/zoek?term=python). Je ziet `{"je_zocht":"python"}`.
+
+Laat je `?term=python` weg, dan weigert FastAPI het verzoek. Je ziet:
+
+```json
+{"detail":[{"type":"missing","loc":["query","term"],"msg":"Field required","input":null}]}
+```
+
+`"loc":["query","term"]` zegt waar het mis ging: in de query, het stuk na het vraagteken, ontbreekt `term`. Wil je dat de parameter mag ontbreken, geef hem dan een standaardwaarde: met `term: str = ""` krijgt `term` een lege tekst als er niets in de URL staat.
+
 ## POST = Data versturen
 
-POST gebruik je als een gebruiker data naar de server stuurt, bijvoorbeeld via een formulier.
+POST gebruik je als een gebruiker data naar de server stuurt, bijvoorbeeld via een formulier. Zet `Form` bij je imports en dit endpoint onder je andere endpoints. Het formulier dat hem gebruikt, maak je in de volgende les.
 
 <CodeUitleg>
 
@@ -57,7 +68,7 @@ async def verstuur(naam: str = Form(...)):
 </Regel>
 
 <Regel n={4}>
-`Form(...)` zegt dat `naam` uit een verstuurd formulier komt, niet uit de URL. De data zit in de body van het verzoek en is niet zichtbaar in de adresbalk.
+`Form(...)` zegt dat `naam` uit een verstuurd formulier komt, niet uit de URL. De data zit in de body van het verzoek en is niet zichtbaar in de adresbalk. In het tabblad Netwerk zie je hem wel: klik op het verzoek en kies **Payload**, dan staat hij onder **Formuliergegevens** (Form Data).
 </Regel>
 
 </CodeUitleg>
@@ -75,6 +86,93 @@ async def verstuur(naam: str = Form(...)):
 :::danger[Gaat er iets mis?]
 Krijg je een **405 Method Not Allowed**? Dan stuur je waarschijnlijk een POST naar een GET endpoint of andersom. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
 :::
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+```python
+import random
+
+from fastapi import FastAPI, Form, Request
+from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
+
+@app.get("/")
+async def home():
+    return FileResponse("static/pages/home.html")
+
+@app.get("/info")
+async def info():
+    return {"naam": "Jouw Naam", "leeftijd": 16}
+
+@app.get("/pagina", response_class=HTMLResponse)
+async def pagina():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Mijn Pagina</title>
+        </head>
+        <body>
+            <h1>Hallo!</h1>
+            <p>Dit is mijn eerste HTML pagina.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/styled", response_class=HTMLResponse)
+async def styled():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Met CSS</title>
+            <style>
+                h1 { color: blue; }
+                p { color: gray; }
+            </style>
+        </head>
+        <body>
+            <h1>Gestylede pagina</h1>
+            <p>Deze tekst is grijs.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/about")
+async def about():
+    return FileResponse("static/pages/about.html")
+
+@app.get("/foto")
+async def foto():
+    return FileResponse("static/pages/foto.html")
+
+@app.get("/dobbelsteen")
+async def dobbelsteen(request: Request):
+    worp = random.randint(1, 6)
+    return templates.TemplateResponse(
+        request,
+        "dobbelsteen.html",
+        {"worp": worp}
+    )
+
+@app.get("/zoek")
+async def zoek(term: str):
+    return {"je_zocht": term}
+
+@app.post("/verstuur")
+async def verstuur(naam: str = Form(...)):
+    return {"ontvangen": naam}
+```
+
+</details>
 
 ## Opdrachten
 
@@ -95,23 +193,23 @@ Denk aan de vuistregel: GET = "Geef me iets" (data ophalen), POST = "Hier is iet
 <details>
 <summary>Antwoord</summary>
 
-1. **GET** — je haalt data op
-2. **POST** — je stuurt gevoelige data (wachtwoord)
-3. **GET** — je haalt een pagina op
+1. **GET**: je haalt zoekresultaten op
+2. **POST**: je stuurt je naam en wachtwoord naar de server
+3. **GET**: je haalt een bestand op
 
 </details>
 
 ### Opdracht 2: Run - GET met parameter
 
-Maak dit endpoint en test het met verschillende namen in de URL:
+Maak dit endpoint en test het met verschillende namen in de URL, en ook een keer zonder:
 
 ```python
-@app.get("/groet")
-async def groet(naam: str = "Bezoeker"):
+@app.get("/hallo")
+async def hallo(naam: str = "Bezoeker"):
     return {"bericht": f"Hallo {naam}!"}
 ```
 
-Test: `http://127.0.0.1:8000/groet?naam=Jan`
+Test: `http://127.0.0.1:8000/hallo?naam=Jan` en `http://127.0.0.1:8000/hallo`. Zonder naam in de URL krijgt `naam` de standaardwaarde `"Bezoeker"`.
 
 ### Opdracht 3: Investigate - POST via browser
 
@@ -127,18 +225,18 @@ Als je een URL in je browser typt, stuurt de browser altijd een GET request. Wat
 <details>
 <summary>Antwoord</summary>
 
-Je krijgt een **405 Method Not Allowed** error. De browser stuurt een GET request, maar `/verstuur` is een POST endpoint (`@app.post`). POST endpoints kun je alleen bereiken via formulieren of tools, niet door de URL in te typen.
+Je browser toont `{"detail":"Method Not Allowed"}`, en in Netwerk en je terminal staat de statuscode **405**. De browser stuurt een GET, maar `/verstuur` is een POST endpoint (`@app.post`). POST endpoints kun je alleen bereiken via formulieren of tools, niet door de URL in te typen.
 
 </details>
 
-### Opdracht 4: Make - Zoekfunctie
+### Opdracht 4: Make - Rekensom
 
-Maak een GET endpoint `/zoek` dat een `term` parameter accepteert en een bericht teruggeeft: "Je zocht naar: [term]".
+Maak een endpoint `/rekensom` met twee getallen in de URL, dat hun som teruggeeft: `/rekensom?a=3&b=4` geeft `{"som":7}`.
 
 <details>
 <summary>Tip</summary>
 
-Gebruik `@app.get("/zoek")` met een parameter `term: str`. De parameter wordt automatisch uit de URL gehaald (`/zoek?term=...`).
+Twee parameters in de URL scheid je met `&`. Geef ze het type `int`, dan rekent Python met getallen en niet met tekst.
 
 </details>
 
@@ -146,11 +244,11 @@ Gebruik `@app.get("/zoek")` met een parameter `term: str`. De parameter wordt au
 <summary>Antwoord</summary>
 
 ```python
-@app.get("/zoek")
-async def zoek(term: str):
-    return {"bericht": f"Je zocht naar: {term}"}
+@app.get("/rekensom")
+async def rekensom(a: int, b: int):
+    return {"som": a + b}
 ```
 
-Test met: `http://127.0.0.1:8000/zoek?term=python`
+Test met `http://127.0.0.1:8000/rekensom?a=3&b=4`. Met `?a=3&b=vier` krijg je weer een weigering, nu met `"loc":["query","b"]`: `vier` is geen getal.
 
 </details>
