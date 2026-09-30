@@ -44,3 +44,81 @@
 .balkKnop:hover {
   border-color: var(--ifm-color-primary);
 }
+
+/* Het paneel om het iframe heen; gemeten om een apparaat in te passen. */
+.volleRuimte {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+/* Alleen in de volledige IDE: kies Desktop, Tablet of Telefoon. */
+.apparaatBalk {
+  flex-shrink: 0;
+  margin: 0;
+  min-width: 0;
+  border: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.78rem;
+  color: var(--ifm-font-color-base);
+  background: var(--ifm-color-emphasis-100);
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.apparaatKnop {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font: inherit;
+  padding: 0.1rem 0.5rem;
+  border: 1px solid var(--ifm-color-emphasis-400);
+  border-radius: 4px;
+  background: var(--ifm-background-color);
+  color: inherit;
+  cursor: pointer;
+}
+
+.apparaatKnop:hover {
+  border-color: var(--ifm-color-primary);
+}
+
+.apparaatKnop[aria-pressed="true"] {
+  border-color: var(--ifm-color-primary);
+  color: var(--ifm-color-primary);
+  font-weight: 600;
+}
+
+.apparaatMaat {
+  margin-left: auto;
+  color: var(--ifm-color-emphasis-700);
+  font-variant-numeric: tabular-nums;
+}
+
+.apparaatRuimte {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 0.5rem;
+  overflow: hidden;
+  background: var(--ifm-color-emphasis-200);
+}
+
+.apparaatDoos {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.apparaatFrame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 1px solid var(--ifm-color-emphasis-400);
+  border-radius: 6px;
+  background: #fff;
+  transform-origin: top left;
+}

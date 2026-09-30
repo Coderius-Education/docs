@@ -54,6 +54,9 @@ export interface RunSessionApi {
 
 export interface RunnerHostProps {
   session: RunSessionApi;
+  // Alleen in de volledige IDE: knoppen om de preview als tablet of telefoon
+  // te tonen (web-runner). In een les is daar geen ruimte voor.
+  apparaten?: boolean;
 }
 
 export interface Runner {

@@ -1,5 +1,7 @@
-import type { ReactNode } from 'react';
+import { Monitor, Smartphone, Tablet } from 'lucide-react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 import type { RunContext, Runner, RunnerHostProps } from '../types';
+import { APPARATEN, type Apparaat, schaal } from './apparaten';
 import { MESSAGE_SOURCE, buildDoc } from './buildDoc';
 import { Bezoek, linkDoel } from './navigatie';
 import styles from './styles.module.css';
@@ -55,11 +57,83 @@ export function createWebRunner(): Runner {
     });
   };
 
-  function PreviewComponent({ session }: RunnerHostProps): ReactNode {
+  const ICONEN = { desktop: Monitor, tablet: Tablet, telefoon: Smartphone } as const;
+
+  function PreviewComponent({ session, apparaten }: RunnerHostProps): ReactNode {
     const srcdoc = (session.data.srcdoc as string) ?? '';
     const stand = session.data.bezoek as BezoekData | undefined;
+    const [apparaat, setApparaat] = useState<Apparaat>(APPARATEN[0]);
+    const ruimteRef = useRef<HTMLDivElement>(null);
+    const [ruimte, setRuimte] = useState({ breedte: 0, hoogte: 0 });
+
+    // Meet het paneel, zodat een tablet of telefoon er verkleind in past.
+    useEffect(() => {
+      const el = ruimteRef.current;
+      if (!el || typeof ResizeObserver === 'undefined') return;
+      const meet = () => setRuimte({ breedte: el.clientWidth, hoogte: el.clientHeight });
+      meet();
+      const waarnemer = new ResizeObserver(meet);
+      waarnemer.observe(el);
+      return () => waarnemer.disconnect();
+    }, []);
+
+    const maat = apparaten ? apparaat.maat : null;
+    // Het paneel heeft rondom een halve rem marge om het apparaat heen.
+    const MARGE = 16;
+    const factor = maat
+      ? schaal(maat, { breedte: ruimte.breedte - MARGE, hoogte: ruimte.hoogte - MARGE })
+      : 1;
+
+    const iframe = (
+      <iframe
+        className={maat ? styles.apparaatFrame : styles.preview}
+        style={
+          maat
+            ? { width: maat.breedte, height: maat.hoogte, transform: `scale(${factor})` }
+            : undefined
+        }
+        title="Voorbeeld van je website"
+        // allow-modals zodat alert() en prompt() uit de les gewoon werken.
+        // allow-popups zodat target="_blank" een tabblad opent, en
+        // allow-popups-to-escape-sandbox zodat dat tabblad niet de sandbox
+        // erft (opaque origin, SecurityError op localStorage: de meeste sites
+        // doen het dan niet). Géén allow-same-origin: de code van de leerling
+        // blijft van de editor af.
+        sandbox="allow-scripts allow-modals allow-popups allow-popups-to-escape-sandbox"
+        srcDoc={srcdoc}
+      />
+    );
+
     return (
       <div className={styles.kolom}>
+        {apparaten && (
+          <fieldset className={styles.apparaatBalk} aria-label="Voorbeeld tonen als">
+            {APPARATEN.map((a) => {
+              const Icoon = ICONEN[a.id];
+              return (
+                <button
+                  key={a.id}
+                  type="button"
+                  className={styles.apparaatKnop}
+                  aria-pressed={a.id === apparaat.id}
+                  title={
+                    a.maat ? `${a.label}: ${a.maat.breedte} × ${a.maat.hoogte}` : 'Volle breedte'
+                  }
+                  onClick={() => setApparaat(a)}
+                >
+                  <Icoon aria-hidden="true" size={14} />
+                  {a.label}
+                </button>
+              );
+            })}
+            {maat && (
+              <span className={styles.apparaatMaat}>
+                {maat.breedte} × {maat.hoogte}
+                {factor < 1 && `, ${Math.round(factor * 100)}%`}
+              </span>
+            )}
+          </fieldset>
+        )}
         {stand?.terugNaar !== null && stand?.terugNaar !== undefined && (
           // De leerling volgde een link naar een ander bestand; de Terug-knop
           // van de browser werkt niet in een srcdoc-iframe, dus hier een eigen.
@@ -72,18 +146,22 @@ export function createWebRunner(): Runner {
             </button>
           </div>
         )}
-        <iframe
-          className={styles.preview}
-          title="Voorbeeld van je website"
-          // allow-modals zodat alert() en prompt() uit de les gewoon werken.
-          // allow-popups zodat target="_blank" een tabblad opent, en
-          // allow-popups-to-escape-sandbox zodat dat tabblad niet de sandbox
-          // erft (opaque origin, SecurityError op localStorage: de meeste sites
-          // doen het dan niet). Géén allow-same-origin: de code van de leerling
-          // blijft van de editor af.
-          sandbox="allow-scripts allow-modals allow-popups allow-popups-to-escape-sandbox"
-          srcDoc={srcdoc}
-        />
+        {/* Eén gemeten paneel, of er nu een apparaat gekozen is of niet. */}
+        <div ref={ruimteRef} className={maat ? styles.apparaatRuimte : styles.volleRuimte}>
+          {maat ? (
+            // Het iframe krijgt de echte maat van het apparaat, zodat @media
+            // aanslaat, en wordt verkleind; de doos eromheen neemt de
+            // verkleinde maat aan, zodat hij netjes in het midden staat.
+            <div
+              className={styles.apparaatDoos}
+              style={{ width: maat.breedte * factor, height: maat.hoogte * factor }}
+            >
+              {iframe}
+            </div>
+          ) : (
+            iframe
+          )}
+        </div>
       </div>
     );
   }
