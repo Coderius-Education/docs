@@ -49,7 +49,11 @@ Je kunt in de Console ook zelf typen. Onderin staat een prompt. Typ dit en druk 
 document.querySelector("#teller").textContent = "Hoi"
 ```
 
-De tekst op de pagina verandert meteen. De Console is een plek waar je JavaScript regel voor regel kunt proberen, op de pagina die open staat.
+De tekst op de pagina verandert meteen.
+
+Typ de regel over. Plak je hem, dan houdt Chrome dat de eerste keer tegen met een waarschuwing: "Plak geen code in de DevTools-console die je niet begrijpt …". Plakken in de Console is een bekende truc om mensen iets te laten uitvoeren wat ze niet snappen. Wil je toch plakken, typ dan `plakken toestaan` en druk op Enter; daarna mag het. Chrome in het Engels vraagt om `allow pasting`.
+
+De Console is een plek waar je JavaScript regel voor regel kunt proberen, op de pagina die open staat.
 
 ## Elementen
 
@@ -71,14 +75,14 @@ Blijft de Console leeg terwijl je typt? Kijk of je het bestand hebt opgeslagen e
 
 ### Opdracht 1: Predict - Blijft het staan?
 
-Je verandert in Elementen de kop van je gastenboek in "Mijn gastenboek" en herlaadt de pagina.
+Je verandert in Elementen de kop van je gastenboekformulier in "Mijn gastenboek" en herlaadt de pagina.
 
 **Vraag:** wat staat er na het herladen?
 
 <details>
 <summary>Antwoord</summary>
 
-De oude kop. Elementen past alleen de kopie in jouw browser aan. Bij het herladen vraagt de browser de pagina opnieuw aan de server, en die stuurt zijn template zoals hij altijd doet.
+De oude kop. Elementen past alleen de kopie in jouw browser aan. Bij het herladen vraagt de browser de pagina opnieuw aan de server, en die stuurt `gastenboek_form.html` zoals hij altijd doet.
 
 </details>
 
@@ -93,7 +97,7 @@ Druk op Ctrl+U: je ziet de broncode van de pagina, precies zoals de server hem s
 <details>
 <summary>Antwoord</summary>
 
-In de broncode staat `80 tekens over`, want dat stuurde je template. In Elementen staat het aantal dat je JavaScript erin zette. De server heeft die tekst nooit gezien. Elementen toont de pagina van nu, de broncode de pagina van het moment van laden.
+In de broncode staat `80 tekens over`, want zo staat het in `gastenboek_form.html`. In Elementen staat het aantal dat je JavaScript erin zette. De server heeft die tekst nooit gezien. Elementen toont de pagina van nu, de broncode de pagina van het moment van laden.
 
 </details>
 
@@ -104,6 +108,6 @@ Zoek in Elementen het `<input>` van het bericht op. Daar staat `maxlength="80"`.
 <details>
 <summary>Antwoord</summary>
 
-Het veld laat nu 800 tekens toe. Wat er gebeurt als je dat bericht verstuurt, en waarom dat een probleem is, is de vraag van de volgende les: [Server of browser?](/docs/FastAPI/server-of-browser).
+Het veld laat nu 800 tekens toe, en je teller telt door onder nul: "-21 tekens over". Je script rekent nog steeds met 80, want `app.js` heb je niet veranderd. Wat er gebeurt als je dat bericht verstuurt, en waarom dat een probleem is, is de vraag van de volgende les: [Server of browser?](/docs/FastAPI/server-of-browser).
 
 </details>

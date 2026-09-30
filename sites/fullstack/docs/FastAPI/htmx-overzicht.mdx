@@ -2,11 +2,19 @@
 
 Met `hx-get` en `hx-target` haalde je een zin op zonder herladen. Hetzelfde idee werkt voor alles wat je tot nu toe via een herlaad deed. Dit is een overzicht van de mogelijkheden, elk met de HTML en het endpoint dat erbij hoort. Kies wat je gastenboek nodig heeft; je hoeft ze niet allemaal te bouwen.
 
-Twee regels gelden overal. Het endpoint geeft een **stukje HTML** terug: een zin in een `HTMLResponse`, of een template zonder `<html>` eromheen. En het geeft **nooit een omleiding**: htmx volgt die en zet dan de hele pagina in het doel.
+Drie regels gelden overal. De pagina met de `hx-`-attributen heeft de script-tag van htmx in de `<head>`, net als `home.html` in [Zonder herladen met htmx](/docs/FastAPI/htmx): zonder die regel doet een knop niets en verstuurt een formulier zichzelf als GET. Het endpoint geeft een **stukje HTML** terug: een zin in een `HTMLResponse`, of een template zonder `<html>` eromheen. En het geeft **nooit een omleiding**: htmx volgt die en zet dan de hele pagina in het doel.
 
 ## Een formulier versturen
 
-Het gastenboekformulier zonder herladen. Vervang `method` en `action` door `hx-post`:
+Het gastenboekformulier zonder herladen. Het staat in `static/pages/gastenboek_form.html` uit [Een formulier opslaan](/docs/FastAPI/post_naar_database), en dat bestand heeft nog geen `<head>`. Zet er een `<head>` met de script-tag bij, boven de `<body>`:
+
+```html
+<head>
+    <script src="/static/js/htmx.min.js"></script>
+</head>
+```
+
+Vervang in de `<form>`-tag `method` en `action` door `hx-post` en `hx-target`, en zet onder het formulier een lege `<p>` erbij. De velden en de knop blijven zoals ze waren:
 
 ```html
 <form hx-post="/gastenboek" hx-target="#antwoord">
@@ -17,8 +25,9 @@ Het gastenboekformulier zonder herladen. Vervang `method` en `action` door `hx-p
 <p id="antwoord"></p>
 ```
 
-In het endpoint uit [Doorsturen na opslaan (redirect)](/docs/FastAPI/redirect) verandert één regel: de `return`.
+In het endpoint uit [Doorsturen na opslaan (redirect)](/docs/FastAPI/redirect) verandert één regel: vervang de `return`.
 
+{/* route-dubbel: vervangt POST /gastenboek uit Doorsturen na opslaan (redirect); alleen de return verandert */}
 ```python
 @app.post("/gastenboek")
 async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
@@ -36,15 +45,27 @@ De `Form`-parameters blijven hetzelfde; voor je endpoint is er geen verschil met
 
 ## Een stuk van de pagina verversen
 
-Een knop die de lijst met berichten opnieuw ophaalt. Het antwoord is nu geen zin maar een lijst, dus die krijgt een eigen template, `templates/berichten_lijst.html`, zonder `<html>` of `<head>`:
+Een knop die de lijst met berichten opnieuw ophaalt. Het antwoord is nu geen zin maar een lijst, dus die krijgt een eigen template, `templates/berichten_lijst.html`, zonder `<html>` of `<head>`. Knip het hele `{% if berichten %}`-blok uit je `berichten.html` en zet het in dat nieuwe bestand. Met alles wat je lijst al had: de link naar de detailpagina uit [Eén item tonen](/docs/FastAPI/detailpagina) en het formuliertje om te verwijderen uit [Doorsturen na opslaan](/docs/FastAPI/redirect#verwijderen-en-terug). Zo ziet het er dan ongeveer uit:
 
 ```html
-<ul>
-    {% for sleutel, bericht in berichten %}
-        <li>{{ bericht.naam }}: {{ bericht.bericht }}</li>
-    {% endfor %}
-</ul>
+{% if berichten %}
+    <ul>
+        {% for sleutel, bericht in berichten %}
+            <li>
+                <a href="/bericht/{{ sleutel }}">{{ bericht.naam }}</a>: {{ bericht.bericht }}
+                <form method="post" action="/verwijderen">
+                    <input type="hidden" name="sleutel" value="{{ sleutel }}">
+                    <button type="submit">Verwijderen</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Nog geen berichten. Wees de eerste.</p>
+{% endif %}
 ```
+
+Het endpoint is nieuw, met een eigen pad:
 
 ```python
 @app.get("/berichten/lijst")
@@ -58,7 +79,7 @@ async def berichten_lijst(request: Request):
     )
 ```
 
-In `berichten.html` wijst de knop naar dat endpoint, en de lijst krijgt een id:
+In `berichten.html` zet je de script-tag van htmx in de `<head>`. Op de plek waar het `{% if %}`-blok stond, komen de knop en een `<div>` met een id:
 
 ```html
 <button hx-get="/berichten/lijst" hx-target="#berichten-lijst">Ververs</button>
@@ -72,7 +93,7 @@ In `berichten.html` wijst de knop naar dat endpoint, en de lijst krijgt een id:
 
 ## Vanzelf verversen
 
-Zet je server open voor de klas, dan wil je berichten van anderen zien verschijnen zonder F5. Met **`hx-trigger`** kies je wanneer het verzoek gaat:
+Als anderen tegelijk berichten schrijven, wil je die zien verschijnen zonder F5. Dat gebeurt als je je server openzet voor de klas, wat je later doet in [Laat het aan anderen zien](/docs/FastAPI/laat-het-zien). Met **`hx-trigger`** kies je wanneer het verzoek gaat:
 
 ```html
 <div id="berichten-lijst" hx-get="/berichten/lijst" hx-trigger="every 10s">
@@ -97,11 +118,11 @@ async def bericht_verwijderen(sleutel: str):
     return HTMLResponse("")
 ```
 
-In `berichten_lijst.html` krijgt elk bericht een id en een knop:
+In `berichten_lijst.html` krijgt elke `<li>` een id, en vervang je het formuliertje door een knop. De link naar de detailpagina blijft staan:
 
 ```html
 <li id="bericht-{{ sleutel }}">
-    {{ bericht.naam }}: {{ bericht.bericht }}
+    <a href="/bericht/{{ sleutel }}">{{ bericht.naam }}</a>: {{ bericht.bericht }}
     <button hx-delete="/bericht/{{ sleutel }}"
             hx-target="#bericht-{{ sleutel }}"
             hx-swap="outerHTML"
@@ -113,7 +134,7 @@ Het antwoord is leeg, en dat is de bedoeling. **`hx-swap`** zegt hoe het antwoor
 
 ## Zoeken terwijl je typt
 
-Een zoekveld dat de server vraagt om berichten met een woord erin:
+Een zoekveld dat de server vraagt om berichten met een woord erin. Het komt in `berichten.html`, boven de `<div id="berichten-lijst">` uit het verversrecept:
 
 ```html
 <input type="search" name="term" placeholder="Zoek een woord"
@@ -121,7 +142,7 @@ Een zoekveld dat de server vraagt om berichten met een woord erin:
        hx-trigger="keyup changed delay:300ms">
 ```
 
-Een `<input>` met `hx-get` stuurt zijn eigen waarde mee als query-parameter, dus `/berichten/lijst?term=hoi`. Het endpoint van hierboven krijgt er een parameter bij:
+Een `<input>` met `hx-get` stuurt zijn eigen waarde mee als query-parameter, dus `/berichten/lijst?term=hoi`. Vervang het endpoint van hierboven door deze versie, met een parameter erbij:
 
 ```python
 @app.get("/berichten/lijst")
@@ -139,7 +160,9 @@ async def berichten_lijst(request: Request, term: str = ""):
     )
 ```
 
-`delay:300ms` wacht tot je even stopt met typen, anders gaat er bij elke letter een verzoek. En `changed` slaat toetsen over die de tekst niet veranderen, zoals de pijltjes.
+`delay:300ms` wacht tot je even stopt met typen, anders gaat er bij elke letter een verzoek. En `changed` slaat toetsen over die de tekst niet veranderen, zoals de pijltjes. Vindt de server niets, dan zie je de zin uit het `{% else %}`-blok.
+
+Zoeken en vanzelf verversen gaan niet samen: de `<div>` die elke tien seconden ververst, stuurt geen `term` mee, en zet dus steeds weer de hele lijst neer. Kies er één van de twee.
 
 ## Waar het antwoord komt
 
@@ -198,7 +221,7 @@ Kies twee recepten uit dit overzicht en bouw ze in je gastenboek. Schrijf bij al
 <details>
 <summary>Tip</summary>
 
-Verversen en verwijderen horen bij elkaar: als je kunt verwijderen wil je ook dat de lijst klopt. Het formulier en zoeken staan los van de rest.
+Verversen en verwijderen horen bij elkaar: als je kunt verwijderen wil je ook dat de lijst klopt. Het formulier staat los van de rest. Zoeken heeft de `<div id="berichten-lijst">` uit het verversrecept nodig, maar gaat niet samen met vanzelf verversen.
 
 </details>
 
@@ -237,6 +260,6 @@ async def alles_wissen(request: Request):
 <button hx-delete="/berichten" hx-target="#berichten-lijst" hx-confirm="Alle berichten verwijderen?">Alles wissen</button>
 ```
 
-De `list()` om `db.keys()` is nodig: je mag niet uit een database verwijderen terwijl je er nog doorheen loopt.
+De `list()` om `db.keys()` maakt eerst een vaste lijst van de sleutels, en daarna haal je ze één voor één weg. Bij een gewone dictionary is dat nodig: verwijderen terwijl je erdoorheen loopt geeft daar een `RuntimeError`. `SqliteDict` klaagt niet, maar met `list()` hoef je daar niet over na te denken.
 
 </details>
