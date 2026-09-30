@@ -332,7 +332,7 @@ async def bericht_detail(request: Request, key: str):
 <details>
 <summary>Antwoord</summary>
 
-Je krijgt een **422 Unprocessable Entity**, met in het antwoord dat `key` ontbreekt.
+Je browser toont een weigering met `"loc":["query","key"]` en `"msg":"Field required"`, en in je terminal staat de statuscode **422**.
 
 FastAPI koppelt op naam, niet op volgorde. Het ziet `{sleutel}` in het pad en zoekt een parameter die zo heet; die is er niet. Tegelijk vraagt je functie om `key`, en dat staat nergens in de URL — dus vraagt FastAPI erom als query-parameter. `/bericht/abc?key=abc` zou wél werken, maar dat is niet wat je bedoelde.
 
