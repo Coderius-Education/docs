@@ -774,7 +774,7 @@ Meer uitleg: [JavaScript erbij](/docs/FastAPI/javascript)
 </details>
 
 <details>
-<summary>Mijn controle in de HTML wordt genegeerd</summary>
+<summary>Een bezoeker komt langs mijn controle in de HTML</summary>
 
 **Oorzaak:** `maxlength` en `required` zijn instructies aan de browser, en de browser is van de bezoeker. Wie het formulier omzeilt, komt er zo langs.
 
