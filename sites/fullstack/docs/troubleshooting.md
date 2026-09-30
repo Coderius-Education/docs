@@ -5,7 +5,15 @@ Klik op je probleem om de oplossing te zien.
 ## Server starten
 
 <details>
-<summary>fastapi: command not found</summary>
+<summary>De term 'fastapi' wordt niet herkend (fastapi: command not found)</summary>
+
+In PowerShell op Windows staat er:
+
+```
+fastapi : De term fastapi wordt niet herkend als de naam van een cmdlet, functie, scriptbestand of uitvoerbaar programma.
+```
+
+In een Engelse Windows is dat `The term 'fastapi' is not recognized as the name of a cmdlet`, en op een Mac `fastapi: command not found`.
 
 **Oorzaak:** FastAPI is niet geïnstalleerd in de omgeving waar je terminal nu in werkt.
 
@@ -39,7 +47,15 @@ Meer uitleg: [Installatie](/docs/FastAPI/installatie)
 </details>
 
 <details>
-<summary>Address already in use (poort 8000 bezet)</summary>
+<summary>Poort 8000 is bezet (WinError 10048, Address already in use)</summary>
+
+Op Windows eindigt de melding met:
+
+```
+[WinError 10048] Elk socketadres (protocol/netwerkadres/poort) kan normaal slechts één keer worden gebruikt
+```
+
+In een Engelse Windows staat er `only one usage of each socket address`, en op een Mac `Address already in use`.
 
 **Oorzaak:** er draait al een server op poort 8000 — meestal een vorige `fastapi dev` in een andere terminal die je vergeten bent.
 
@@ -50,6 +66,17 @@ fastapi dev main.py --port 8001
 ```
 
 Meer uitleg: [Je eerste endpoint](/docs/FastAPI/eerste_endpoint)
+
+</details>
+
+<details>
+<summary>In de terminal staat GET /favicon.ico 404 Not Found</summary>
+
+**Oorzaak:** de browser vraagt bij een nieuwe site uit zichzelf om `/favicon.ico`, het icoontje voor op het tabblad. Jouw server heeft geen endpoint voor dat adres, dus antwoordt hij met 404.
+
+**Oplossing:** niets; er is niets mis. Je eigen pagina's werken gewoon.
+
+Meer uitleg: [Kijken wat de browser doet](/docs/FastAPI/devtools-netwerk)
 
 </details>
 
@@ -711,7 +738,7 @@ Meer uitleg: [Kijken wat de browser doet](/docs/FastAPI/devtools-netwerk#als-de-
 3. Herstart de server (Ctrl+C, dan opnieuw `fastapi dev main.py`)
 4. Check of je het juiste bestand hebt aangepast
 
-Meer uitleg: [Kijken wat de browser doet](/docs/FastAPI/devtools-netwerk)
+Meer uitleg: [Als je wijziging niet doorkomt](/docs/FastAPI/static_files#als-je-wijziging-niet-doorkomt)
 
 </details>
 

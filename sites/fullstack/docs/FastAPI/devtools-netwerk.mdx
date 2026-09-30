@@ -38,7 +38,10 @@ Kijk nu naar de terminal waar `fastapi dev` draait. Daar staat dezelfde gebeurte
 
 ```
 INFO:     127.0.0.1:52344 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52344 - "GET /favicon.ico HTTP/1.1" 404 Not Found
 ```
+
+De tweede regel heb je niet zelf gedaan. De browser vraagt bij een nieuwe site uit zichzelf om `/favicon.ico`, het icoontje voor op het tabblad. Jouw server heeft er geen, dus antwoordt hij met 404: niet gevonden. Er is niets mis; in Netwerk zie je dit verzoek meestal niet eens.
 
 Netwerk laat zien wat de browser stuurde en kreeg. De terminal laat zien wat de server ontving en antwoordde. Het is één verzoek, twee keer gelogd. Zie je iets in de terminal en niet in Netwerk, of andersom, dan weet je aan welke kant het misgaat.
 
@@ -47,10 +50,12 @@ Netwerk laat zien wat de browser stuurde en kreeg. De terminal laat zien wat de 
 Klik op de regel. Rechts opent een venster met tabbladen. Bij **Headers** staat wat er over de lijn ging, in drie regels die je herkent:
 
 ```
-Request URL:     http://127.0.0.1:8000/
-Request Method:  GET
-Status Code:     200 OK
+Verzoek-URL:      http://127.0.0.1:8000/
+Verzoekmethode:   GET
+Statuscode:       200 OK
 ```
+
+In een Engelse browser heten ze Request URL, Request Method en Status Code.
 
 De methode is de `get` uit `@app.get("/")`. Bij **Reactie** (Response) staat wat de server terugstuurde: de JSON van je functie, letter voor letter zoals `return` hem maakte.
 
@@ -70,7 +75,7 @@ Soms staat er in Netwerk niets, en de volgende keer wel. Dat ligt bijna altijd a
 3. Vind de methode en de statuscode bij Headers, en je JSON bij Reactie
 
 :::danger[Gaat er iets mis?]
-Blijft de lijst leeg? Loop de vier oorzaken bij [Als de lijst leeg is](#als-de-lijst-leeg-is) langs. Zie je geen tabblad Netwerk? Het paneel is te smal en verbergt tabbladen achter `»` rechts in de rij. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
+Blijft de lijst leeg? Loop de vier oorzaken bij [Als de lijst leeg is](#als-de-lijst-leeg-is) langs. Zie je geen tabblad Netwerk? Het paneel is te smal en verbergt tabbladen achter `»` rechts in de rij. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
 :::
 
 ## Opdrachten
@@ -117,6 +122,6 @@ Stop je server met Ctrl+C in de terminal. Herlaad de pagina met Netwerk open.
 <details>
 <summary>Antwoord</summary>
 
-De regel is rood en er staat geen statuscode, maar `(mislukt)` of `(failed)`, met bij Naam iets als `ERR_CONNECTION_REFUSED`. Er was geen server om te antwoorden, dus er is ook geen status. In de terminal staat niets: het verzoek is er nooit aangekomen. Dat is het verschil met de 404 van hiervoor. Start je server daarna weer met `fastapi dev main.py`.
+De regel is rood en er staat geen statuscode, maar `(mislukt)` of `(failed)`, vaak met `net::ERR_CONNECTION_REFUSED` erbij. Er was geen server om te antwoorden, dus er is ook geen status. In de terminal staat niets: het verzoek is er nooit aangekomen. Dat is het verschil met de 404 van hiervoor. Start je server daarna weer met `fastapi dev main.py`.
 
 </details>
