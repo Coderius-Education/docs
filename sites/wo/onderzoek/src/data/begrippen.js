@@ -199,13 +199,19 @@ const begrippen = {
     term: 'Hypothese',
     kort: 'Je verwachte antwoord, opgesteld vóórdat je gegevens verzamelt; een hypothese die niet klopt is óók een geldig resultaat.',
     lang: 'Je verwachte antwoord op je (deel)vraag, opgesteld vóórdat je gegevens verzamelt. Centraal in verklarend-toetsend onderzoek — en een hypothese die niet klopt is óók een geldig resultaat.',
-    url: '/opzet/functies/verklarend-toetsend',
+    url: '/vragen/hypothese',
   },
   idealisme: {
     term: 'Idealisme',
     kort: 'Er bestaat geen stoffelijke wereld buiten de waarneming: zijn is waargenomen worden.',
     lang: 'De opvatting van Berkeley dat er geen stoffelijke wereld bestaat buiten de waarneming om: zijn is waargenomen worden.',
     url: '/kennisleer/berkeley',
+  },
+  indicator: {
+    term: 'Indicator',
+    kort: 'Een waarneembaar kenmerk waaraan je een begrip herkent en dat je kunt meten.',
+    lang: 'Een waarneembaar en meetbaar kenmerk dat aangeeft hoe het met een begrip staat, zoals het aantal fouten op een aandachtstaak als indicator voor concentratie.',
+    url: '/vragen/operationaliseren',
   },
   inductieprobleem: {
     term: 'Inductieprobleem',
@@ -326,6 +332,12 @@ const begrippen = {
     kort: 'Een artikel dat gratis en legaal voor iedereen online staat.',
     lang: 'Wetenschappelijke artikelen die gratis en legaal voor iedereen te lezen zijn, vaak met een Creative Commons-licentie. Herkenbaar aan een open slotje of het label Open Access.',
     url: '/literatuurstudie/betaalmuur',
+  },
+  operationaliseren: {
+    term: 'Operationaliseren',
+    kort: 'Een begrip zo precies maken dat je het kunt meten: welke indicatoren, welk meetinstrument.',
+    lang: 'Een begrip uit je vraag meetbaar maken: je legt vast wat je eronder verstaat, aan welke waarneembare kenmerken (indicatoren) je het herkent en met welk meetinstrument en welke meetregel je die meet.',
+    url: '/vragen/operationaliseren',
   },
   overzichtsartikel: {
     term: 'Overzichtsartikel',

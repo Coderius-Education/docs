@@ -31,8 +31,10 @@ naar `main` deployt automatisch (`.github/workflows/deploy.yml`).
   `src/css/custom.css`: `printbaar` (het enige blok dat op papier komt — staat er zo'n blok op
   een pagina, dan printen alleen dat blok, de titel en de `alleen-print`-regel), `alleen-print`
   (alleen op papier), `geen-print` (nooit op papier), `invulschema` (schrijfruimte in de
-  laatste kolom) en `invulschema-kort` (compacte variant: twee blokken passen op één A4).
-  De schrijfruimte staat in `--schrijfruimte`. Een pagina zonder `printbaar`-blok print
+  laatste kolom), `invulschema-kort` (compacte variant: twee blokken passen op één A4),
+  `invulschema-gelijk` (gelijke kolommen), `invulschema-deelvragen` (brede eerste, smalle
+  tweede kolom) en `nieuwe-pagina` (begin dit blok op een nieuw vel). De schrijfruimte staat
+  in `--schrijfruimte`. Controleer na elke wijziging hoeveel A4 een werkblad beslaat. Een pagina zonder `printbaar`-blok print
   gewoon helemaal.
 - `src/data/begrippen.js` is de enige bron voor definities: tooltips (`<B t="…"/>`),
   de termen-trainer en de termenlijst worden eruit gegenereerd. Nieuwe begrippen dáár toevoegen.

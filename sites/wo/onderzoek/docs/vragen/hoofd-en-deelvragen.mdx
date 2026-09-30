@@ -26,6 +26,7 @@ flowchart TD
 | **Welke keuze hoort erbij?** | Het [type](../typen/theorie-vs-ontwerp.mdx): kennisvraag of ontwerpvraag | Per deelvraag een [driehoek](../opzet/keuzedriehoek.mdx): functie, soort onderzoek, methode |
 | **Waar komt het antwoord?** | In je conclusie | In je resultaten, per deelvraag |
 | **Typische fout** | Te breed, gesloten of sturend | Herhaalt de hoofdvraag, of gaat een zijstraat in |
+| **Wat komt erbij?** | Een aanleiding en een afbakening | Bij vergelijkende en toetsende deelvragen een [hypothese](./hypothese.md); bij alles wat je meet een [operationalisatie](./operationaliseren.md) |
 
 ## Twee uitgewerkte voorbeelden
 
@@ -39,6 +40,8 @@ flowchart TD
 | 4. Verschilt de concentratie tussen leerlingen die kort en die lang slapen? | [Vergelijkend](../opzet/functies/beschrijvend-vergelijkend.md) |
 
 Zet je de antwoorden naast elkaar, dan heb je je conclusie. Let wel op het woord *samenhang* in de hoofdvraag: dat twee dingen samen voorkomen, bewijst nog niet dat het een het ander veroorzaakt. Zie [interne validiteit](../spelregels/interne-validiteit.md).
+
+Twee dingen maken deze deelvragen klaar voor de uitvoering. Bij deelvraag 4 hoort een [hypothese](./hypothese.md): *ik verwacht dat leerlingen die korter dan zeven uur slapen zich slechter concentreren, omdat eerder onderzoek laat zien dat slaaptekort de aandacht vermindert.* En deelvraag 1 is het begin van [operationaliseren](./operationaliseren.md): pas als je weet hoe je concentratie meet, kun je deelvraag 3 en 4 beantwoorden.
 
 **Ontwerpgericht.** *Hoe kan ik een planningsapp ontwerpen waarmee 4-havoleerlingen hun huiswerk beter over de week verdelen?*
 
@@ -135,6 +138,47 @@ Hoofdvraag: *In hoeverre hangt de slaapduur van 4-havoleerlingen samen met hun c
     },
   ]}
 />
+
+## Oefenen: wat is er mis met deze hypothese?
+
+<Quiz
+  vragen={[
+    {
+      vraag: 'Slaap is belangrijk voor scholieren.',
+      opties: ['Niet toetsbaar', 'Geen richting', 'Kan niet sneuvelen', 'Niet onderbouwd', 'Goede hypothese'],
+      juist: 0,
+      uitleg: 'Wat zou je moeten meten om dit te weerleggen? "Belangrijk" is een oordeel, geen meetbare uitkomst.',
+    },
+    {
+      vraag: 'Slaapduur en concentratie hangen met elkaar samen.',
+      opties: ['Niet toetsbaar', 'Geen richting', 'Kan niet sneuvelen', 'Niet onderbouwd', 'Goede hypothese'],
+      juist: 1,
+      uitleg: 'Welke kant op? Zeg wat je verwacht: wie korter slaapt, concentreert zich slechter.',
+    },
+    {
+      vraag: 'Misschien concentreren leerlingen die kort slapen zich soms slechter.',
+      opties: ['Niet toetsbaar', 'Geen richting', 'Kan niet sneuvelen', 'Niet onderbouwd', 'Goede hypothese'],
+      juist: 2,
+      uitleg: 'Met "misschien" en "soms" klopt hij altijd, wat er ook uitkomt — en zegt hij dus niets.',
+    },
+    {
+      vraag: 'Ik verwacht dat leerlingen met een rode fiets beter presteren, omdat ik dat een leuk idee vind.',
+      opties: ['Niet toetsbaar', 'Geen richting', 'Kan niet sneuvelen', 'Niet onderbouwd', 'Goede hypothese'],
+      juist: 3,
+      uitleg: 'Toetsbaar en met richting, maar het "omdat" komt niet uit bronnen of vooronderzoek.',
+    },
+    {
+      vraag: 'Ik verwacht dat leerlingen die korter dan zeven uur slapen meer fouten maken op een aandachtstaak, omdat eerder onderzoek laat zien dat slaaptekort de aandacht vermindert.',
+      opties: ['Niet toetsbaar', 'Geen richting', 'Kan niet sneuvelen', 'Niet onderbouwd', 'Goede hypothese'],
+      juist: 4,
+      uitleg: 'Toetsbaar, met richting, kan sneuvelen (als er geen verschil is) en onderbouwd met vooronderzoek.',
+    },
+  ]}
+/>
+
+## Aan de slag
+
+In de werkvorm [Scherp je vraag](../werkvormen/scherp-je-vraag.mdx) maak je van je eigen onderwerp een hoofdvraag, laat je die beoordelen door een klasgenoot, en werk je hem uit tot deelvragen, hypothesen en een operationalisatie.
 
 ## Hangt samen met
 

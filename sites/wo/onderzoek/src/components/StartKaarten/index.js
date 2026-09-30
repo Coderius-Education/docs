@@ -40,7 +40,7 @@ const kaarten = [
   },
   {
     titel: 'Werkvormen',
-    tekst: 'Klasopdrachten met een printbaar werkblad: methoden langs de kennisleer-bril, en van vijftig bronnen naar drie.',
+    tekst: 'Klasopdrachten met een printbaar werkblad: je vraag scherpstellen, van vijftig bronnen naar drie, en methoden langs de kennisleer-bril.',
     to: '/werkvormen/overzicht',
   },
   {

@@ -78,6 +78,17 @@
   padding: 0.3rem 0.6rem;
 }
 
+/* Deelvragenschema: brede vraagkolom, smalle functiekolom. */
+.invulschema-deelvragen tbody td:first-child,
+.invulschema-deelvragen thead th:first-child {
+  width: 44%;
+}
+
+.invulschema-deelvragen tbody td:nth-child(2),
+.invulschema-deelvragen thead th:nth-child(2) {
+  width: 16%;
+}
+
 /* Gelijke kolommen, voor schema's met meer dan twee kolommen. */
 .invulschema-gelijk tbody td:first-child,
 .invulschema-gelijk thead th:first-child {
@@ -229,6 +240,16 @@
   }
 
   .invulschema-kort .hint {
-    font-size: 0.78em;
+    font-size: 0.76em;
+    line-height: 1.25;
+  }
+
+  /* Werkbladen compact: minder lucht rond koppen en uitleg. */
+  .printbaar > h2 {
+    margin: 0.7rem 0 0.3rem;
+  }
+
+  .printbaar > p {
+    margin-bottom: 0.45rem;
   }
 }

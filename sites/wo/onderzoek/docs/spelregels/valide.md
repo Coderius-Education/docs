@@ -46,3 +46,4 @@ Rond 1904 veroverde het Duitse paard Kluge Hans ("Slimme Hans") de wereldpers: h
 - [De vier spelregels samen](./de-vier-spelregels.md) — valide is een van de vier spelregels
 - [Interne validiteit](./interne-validiteit.md) en [externe validiteit](./externe-validiteit.md) — de twee kanten van validiteit
 - [Betrouwbaar](./betrouwbaar.md) — herhaalbaar meten; samen met valide pas echt sterk
+- [Operationaliseren](../vragen/operationaliseren.md) — hoe je vooraf vastlegt wat je precies meet

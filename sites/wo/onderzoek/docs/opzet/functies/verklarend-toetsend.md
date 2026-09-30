@@ -45,4 +45,5 @@ In het ziekenhuis van Wenen stierven op de kraamafdeling van de artsen véél me
 
 - [Functies van onderzoek](./functies-overzicht.mdx) — alle zes functies naast elkaar
 - [Verklarend-explorerend](./verklarend-explorerend.md) — de stap ervóór: verklaringen opsporen
+- [Hypothese](../../vragen/hypothese.md) — hoe je een goede hypothese formuleert
 - [Experimenteel onderzoek](../soorten/experimenteel.md) en [interne validiteit](../../spelregels/interne-validiteit.md) — het gereedschap voor het toetsen

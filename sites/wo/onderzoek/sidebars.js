@@ -23,6 +23,8 @@ const sidebars = {
         'vragen/hoofd-en-deelvragen',
         'vragen/hoofdvraag',
         'vragen/deelvragen',
+        'vragen/hypothese',
+        'vragen/operationaliseren',
       ],
     },
     {
@@ -182,8 +184,9 @@ const sidebars = {
       label: 'Werkvormen',
       items: [
         'werkvormen/overzicht',
-        'werkvormen/methoden-kennisleer',
+        'werkvormen/scherp-je-vraag',
         'werkvormen/van-vijftig-naar-drie',
+        'werkvormen/methoden-kennisleer',
       ],
     },
     'termen',

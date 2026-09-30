@@ -25,7 +25,7 @@ title: Deelvragen
 3. Aan welke eisen moet mijn ontwerp voldoen?
 4. In hoeverre voldoet mijn prototype aan die eisen?
 
-Voor een profielwerkstuk zijn drie tot zes deelvragen meestal genoeg. Per deelvraag maak je daarna de keuzes van de [keuzedriehoek](../opzet/keuzedriehoek.mdx): welke functie, welk soort onderzoek, welke methode.
+Voor een profielwerkstuk zijn drie tot zes deelvragen meestal genoeg. Per deelvraag maak je daarna de keuzes van de [keuzedriehoek](../opzet/keuzedriehoek.mdx): welke functie, welk soort onderzoek, welke methode. Bij vergelijkende en toetsende deelvragen schrijf je een [hypothese](./hypothese.md), en elk begrip dat je gaat meten [operationaliseer](./operationaliseren.md) je.
 
 ## Vier eisen
 
@@ -49,3 +49,4 @@ Twee fouten komen steeds terug. **De kopie**: een deelvraag die de hoofdvraag he
 - [Hoofd- en deelvragen samen](./hoofd-en-deelvragen.mdx) — uitgewerkte voorbeelden en oefeningen
 - [De keuzedriehoek](../opzet/keuzedriehoek.mdx) — wat je per deelvraag kiest
 - [Functies van onderzoek](../opzet/functies/functies-overzicht.mdx) — de zes soorten deelvragen
+- [Hypothese](./hypothese.md) en [operationaliseren](./operationaliseren.md) — de volgende stappen per deelvraag
