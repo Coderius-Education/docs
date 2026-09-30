@@ -1,28 +1,10 @@
-# POST met templates
+# Een formulier beantwoorden met een template
 
-<Voorkennis
-  items={[
-    {site: 'python', to: '/docs/data/11a-dictionaries-basis', label: 'Dictionaries'},
-  ]}
-/>
+In [Een formulier versturen](/docs/FastAPI/forms) gaf je POST-endpoint JSON terug. Nu antwoordt het met een pagina: de waarde uit het formulier gaat in een [template](/docs/FastAPI/templates), net zoals de worp van de dobbelsteen.
 
-In de vorige les gaf je POST endpoint JSON terug. In deze les leer je hoe je een mooie HTML pagina toont met **Jinja2 templates**.
+Je hebt de map `templates` en de regel `templates = Jinja2Templates(directory="templates")` al. Zet `Form` erbij in de import:
 
-## Templates configureren
-
-Maak een `templates` folder en configureer Jinja2 in `main.py`:
-
-```
-je-project/
-├── main.py
-├── static/
-└── templates/
-    └── resultaat.html
-```
-
-<CodeUitleg>
-
-```python showLineNumbers
+```python
 from fastapi import FastAPI, Form, Request
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -32,16 +14,6 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 ```
-
-<Regel n={1}>
-`Request` is nieuw in de import: een template heeft straks het verzoek zelf nodig.
-</Regel>
-
-<Regel n={8}>
-`Jinja2Templates` krijgt de map waarin je templates staan. Vanaf nu vraag je een template op bij `templates`, met alleen de bestandsnaam.
-</Regel>
-
-</CodeUitleg>
 
 ## Voorbeeld
 
@@ -97,35 +69,20 @@ Dezelfde URL als de GET erboven, maar met `@app.post`: dat mag, want een GET en 
 </Regel>
 
 <Regel n={6}>
-`request: Request` is een extra parameter die FastAPI zelf invult met het verzoek. Je geeft hem door aan de template.
+Twee parameters: `request` voor de template, zoals bij de dobbelsteen, en `naam` uit het formulier.
 </Regel>
 
 <Regel n={7} tot={11}>
-`TemplateResponse` rendert een template: eerst het verzoek, dan de bestandsnaam in de `templates`-map, dan een dictionary met de waardes. Elke sleutel wordt in de template een naam: `{"naam": naam}` vult `{{ naam }}` in.
+Het dictionary brengt de waarde uit het formulier naar de template: `{"naam": naam}` vult `{{ naam }}`.
 </Regel>
 
 </CodeUitleg>
-
-<details>
-<summary>Waarom moet "request" altijd mee?</summary>
-
-FastAPI heeft het request-object nodig om te weten welke gebruiker de pagina opvraagt. Daarom is het het eerste argument, vóór de bestandsnaam.
-
-Kom je online een voorbeeld tegen waarin `request` juist ín het dictionary staat, zo?
-
-```python
-templates.TemplateResponse("groet_resultaat.html", {"request": request, "naam": naam})
-```
-
-Dat is de oude schrijfwijze. Die werkt niet meer, en de foutmelding die je krijgt legt dat niet uit — zie [Er gaat iets mis](/docs/troubleshooting).
-
-</details>
 
 ## Testen
 
 1. Ga naar `http://127.0.0.1:8000/groet`
 2. Vul je naam in en klik Verstuur
-3. Je ziet een mooie HTML pagina: "Hallo [jouw naam]."
+3. Je ziet een pagina met "Hallo" en jouw naam.
 
 :::danger[Gaat er iets mis?]
 Krijg je een **TemplateNotFound** error? Check of je template in de `templates/` folder staat en of de bestandsnaam klopt. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
@@ -133,38 +90,28 @@ Krijg je een **TemplateNotFound** error? Check of je template in de `templates/`
 
 ## Opdrachten
 
-### Opdracht 1: Predict - Wat zie je?
+### Opdracht 1: Predict - Vier keer dezelfde naam
 
-Template:
-```html
-<h1>Welkom {{ naam }}!</h1>
-<p>Leeftijd: {{ leeftijd }}</p>
-```
+De naam uit het formulier gaat vier keer over: `name="naam"` in het formulier, `naam: str = Form(...)` in de functie, de sleutel `"naam"` in het dictionary en `{{ naam }}` in de template. Iemand verandert één ervan:
 
-Python:
 {/* niet-compileren: fragment uit een handler */}
 ```python
-return templates.TemplateResponse(request, "welkom.html", {
-    "naam": "Jan", "leeftijd": 16
-})
+return templates.TemplateResponse(request, "groet_resultaat.html", {"voornaam": naam})
 ```
 
-**Vraag:** Wat zie je op de pagina?
+**Vraag:** wat zie je na het versturen van het formulier?
 
 <details>
 <summary>Tip</summary>
 
-De `{{ }}` variabelen worden vervangen door de waarden uit het Python dictionary. Welke waarden staan er voor `naam` en `leeftijd`?
+Om welke naam vraagt de template? Staat die in het dictionary?
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-```
-Welkom Jan!
-Leeftijd: 16
-```
+"Hallo !". De template vraagt om `naam`, maar het dictionary heeft alleen `voornaam`. Jinja2 laat de plek dan leeg, zonder foutmelding.
 
 </details>
 
@@ -172,27 +119,7 @@ Leeftijd: 16
 
 Maak het formulier, de template en de endpoints uit het voorbeeld. Test of het werkt door een naam in te vullen.
 
-### Opdracht 3: Investigate - De oude schrijfwijze
-
-De meeste voorbeelden die je online vindt zetten `request` ín het dictionary in plaats van ervoor. Probeer dat eens:
-
-{/* niet-compileren: fragment uit een handler */}
-```python
-return templates.TemplateResponse("groet_resultaat.html", {"request": request, "naam": naam})
-```
-
-<details>
-<summary>Antwoord</summary>
-
-Je krijgt **TypeError: unhashable type: 'dict'**.
-
-Die melding zegt niets over templates, en dat maakt 'm lastig. Wat er gebeurt: het eerste argument is tegenwoordig `request`, dus jouw bestandsnaam belandt op de plek van `request` en jouw dictionary op de plek van de bestandsnaam. FastAPI probeert dan een template op te zoeken met een dictionary als naam — en dat kan niet.
-
-Zie je deze fout in je eigen code, of in een voorbeeld dat je overneemt? Zet `request` vooraan.
-
-</details>
-
-### Opdracht 4: Make - Favoriete eten
+### Opdracht 3: Make - Favoriete eten
 
 Maak een formulier voor je favoriete eten. Na versturen toont een template: "Jouw favoriete eten is: [eten]"
 
@@ -247,7 +174,7 @@ async def eten_verwerk(request: Request, eten: str = Form(...)):
 
 </details>
 
-### Opdracht 5: Make - Profiel pagina
+### Opdracht 4: Make - Profiel pagina
 
 Maak een formulier met naam, leeftijd en hobby. Na versturen toont een template alle drie de waarden.
 

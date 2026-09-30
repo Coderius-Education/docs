@@ -53,35 +53,36 @@ Tips en antwoorden staan in `<details>`-blokken. Laat je leerlingen eerst zelf p
 
 De lessen staan in de **FastAPI**-sidebar en bouwen op elkaar voort. Begin bij [Installatie](/docs/FastAPI/installatie); de [Cheatsheet](/docs/cheatsheet) en [Er gaat iets mis](/docs/troubleshooting) zijn naslag.
 
-Zes keer onderweg staat een diagram van de hele keten, browser links en server rechts, met per stap een link naar de les. Het begint kaal [bij het eerste verzoek](/docs/FastAPI/verzoek-eerste), direct na het eerste endpoint, en groeit mee. [Bij één pagina](/docs/FastAPI/verzoek-static), aan het eind van Pagina's tonen, komen de losse verzoeken voor CSS en afbeeldingen erbij. [Bij één klik](/docs/FastAPI/verzoek-get), aan het eind van het gastenboek, de database en de template; [bij één formulier](/docs/FastAPI/verzoek-post) direct daarna de omleiding. [Zonder herladen](/docs/FastAPI/verzoek-htmx), aan het eind van het htmx-blok, wordt die omleiding een stuk HTML als antwoord; [bij een sessie](/docs/FastAPI/verzoek-sessie), aan het eind van Onthouden, komt de cookie erbij. [Hoe een verzoek werkt](/docs/FastAPI/hoe-een-verzoek-werkt) bundelt ze bij het afronden met een tabel "waar hoort jouw code", handig bij het eigen project.
+Zes keer onderweg staat een diagram van de hele keten, browser links en server rechts, met per stap een link naar de les. Het begint kaal [bij het eerste verzoek](/docs/FastAPI/verzoek-eerste), direct na het eerste endpoint, en groeit mee. [Bij één pagina](/docs/FastAPI/verzoek-static), aan het eind van HTML-pagina's en templates, komen de losse verzoeken voor CSS en afbeeldingen erbij. [Bij één klik](/docs/FastAPI/verzoek-get), aan het eind van Gegevens opslaan en tonen, de database en de template; [bij één formulier](/docs/FastAPI/verzoek-post) direct daarna de omleiding. [Zonder herladen](/docs/FastAPI/verzoek-htmx), aan het eind van het htmx-blok, wordt die omleiding een stuk HTML als antwoord; [bij een sessie](/docs/FastAPI/verzoek-sessie), aan het eind van Onthouden (cookies en sessies), komt de cookie erbij. [Hoe een verzoek werkt](/docs/FastAPI/hoe-een-verzoek-werkt) bundelt ze bij het afronden met een tabel "waar hoort jouw code", handig bij het eigen project.
 
 | Onderwerp | Leerdoel |
 |---|---|
 | Je eerste endpoint | Een API-route maken en aanroepen |
 | Kijken wat de browser doet | Het tabblad Netwerk: verzoek, antwoord, statuscode en cache |
 | GET vs POST | Verschil tussen data ophalen en versturen |
-| HTML tonen & templates | Pagina's serveren en dynamisch vullen |
-| Formulieren | Gebruikersinvoer verwerken |
-| Database | Gegevens opslaan en ophalen met SQLite |
-| Een lijst tonen | Opgeslagen records op een pagina zetten met een for-lus |
-| Terug naar de lijst | Doorsturen na een POST (post/redirect/get) |
-| Eén bericht tonen: path-parameters | Path-parameters en zelf een 404 sturen |
+| HTML tonen | Pagina's serveren vanuit Python en uit bestanden |
+| Templates met Jinja2 | Een pagina met waarden uit Python: `{{ }}`, het dictionary, en wat de browser krijgt |
+| Formulieren (GET en POST) | Gebruikersinvoer verwerken en beantwoorden met een template |
+| Gegevens opslaan met SqliteDict | Gegevens opslaan en ophalen met SQLite |
+| Alles tonen: een for-lus in je template | Opgeslagen records op een pagina zetten met een for-lus |
+| Doorsturen na opslaan (redirect) | Doorsturen na een POST (post/redirect/get) |
+| Eén item tonen: path-parameters en 404 | Path-parameters en zelf een 404 sturen |
 | Zonder herladen met htmx | Een knop die iets aan de server vraagt terwijl de pagina blijft staan |
-| Wat kan htmx allemaal | Overzicht van recepten: formulier, verversen, vanzelf verversen, verwijderen, zoeken |
+| htmx-recepten | Overzicht van recepten: formulier, verversen, vanzelf verversen, verwijderen, zoeken |
 | JavaScript erbij | Code die in de browser draait in plaats van op de server |
 | Console en Elementen | Uitvoer en fouten van JavaScript zien, en de pagina zoals de browser hem nu heeft |
 | Server of browser? | Kiezen waar iets hoort, en waarom controles op de server moeten |
 | Onthouden met een cookie | De browser iets laten onthouden tussen twee verzoeken |
-| Sessies | Alleen een sessie-id bij de bezoeker, de gegevens op de server |
+| Onthouden op de server: sessies | Alleen een sessie-id bij de bezoeker, de gegevens op de server |
 | Cookie of sessie? | Kiezen tussen de twee, en waarom je niet alles kunt geloven |
 | Laat het aan anderen zien | De server openzetten voor het netwerk |
 | Jouw eigen project | Eindopdracht: een complete applicatie in vijf stappen |
 
-"Een lijst tonen" tot en met "Eén bericht tonen: path-parameters" maken samen het gastenboek af dat je leerlingen in de database-lessen bouwen. Tot en met "POST naar database" kunnen ze wel opslaan maar niet tonen; daarna hebben ze een werkende webapplicatie met een overzicht, een detailpagina en nette foutafhandeling.
+"Alles tonen" tot en met "Eén item tonen" maken samen het gastenboek af dat je leerlingen in de database-lessen bouwen. Tot en met "Een formulier opslaan" kunnen ze wel opslaan maar niet tonen; daarna hebben ze een werkende webapplicatie met een overzicht, een detailpagina en nette foutafhandeling.
 
 De ontwikkelaarstools van de browser krijgen twee eigen lessen, zonder schermafbeeldingen: de lessen bouwen het paneel na met de Nederlandse en Engelse naam van elk tabblad naast elkaar. "Kijken wat de browser doet" komt direct na het eerste endpoint en leert het tabblad Netwerk: één verzoek, de statuscode, en de cache als reden waarom een wijziging niet doorkomt. Dat laatste is de vraag die je in de les het vaakst krijgt. "Console en Elementen" komt na "JavaScript erbij", als de terminal niets meer laat zien, en bereidt "Server of browser?" voor: wie in Elementen `maxlength` weghaalt, ziet daar wat de bezoeker kan.
 
-Na het gastenboek komt het blok "Zonder herladen": de server doet het werk, maar de pagina blijft staan, omdat htmx het verzoek stuurt en het antwoord op zijn plek zet. De eerste les is bewust zo klein mogelijk: één knop met twee attributen die de tijd van de server ophaalt, en een endpoint van drie regels. Daarna volgt één les met een overzicht van recepten (formulier, verversen, vanzelf verversen, verwijderen, zoeken), waaruit je leerlingen kiezen wat hun gastenboek nodig heeft. Ze schrijven er geen JavaScript voor; ze hergebruiken alles wat ze al hebben. Elk endpoint geeft een stukje HTML terug in plaats van een omleiding, en dat is ook de fout die je het meest zult zien: een hele pagina in het doel. De tweede valkuil is dat htmx een mislukt verzoek stil negeert; de lessen sturen daarom steeds naar het tabblad Netwerk. Het bestand `htmx.min.js` staat op deze site om te downloaden, zodat het ook werkt op een netwerk dat externe scripts blokkeert.
+Na Gegevens opslaan en tonen komt het blok "Zonder herladen (htmx)": de server doet het werk, maar de pagina blijft staan, omdat htmx het verzoek stuurt en het antwoord op zijn plek zet. De eerste les is bewust zo klein mogelijk: één knop met twee attributen die de tijd van de server ophaalt, en een endpoint van drie regels. Daarna volgt één les met een overzicht van recepten (formulier, verversen, vanzelf verversen, verwijderen, zoeken), waaruit je leerlingen kiezen wat hun gastenboek nodig heeft. Ze schrijven er geen JavaScript voor; ze hergebruiken alles wat ze al hebben. Elk endpoint geeft een stukje HTML terug in plaats van een omleiding, en dat is ook de fout die je het meest zult zien: een hele pagina in het doel. De tweede valkuil is dat htmx een mislukt verzoek stil negeert; de lessen sturen daarom steeds naar het tabblad Netwerk. Het bestand `htmx.min.js` staat op deze site om te downloaden, zodat het ook werkt op een netwerk dat externe scripts blokkeert.
 
 Vanaf "JavaScript erbij" komt de browserkant in beeld. Je leerlingen kennen JavaScript al uit de web-cursus; nieuw is de vraag wáár code hoort. Die vraag krijgt een eigen les ("Server of browser?") nadat ze de drie smaken hebben gevoeld: een formulier versturen gaat via de server en de pagina verspringt, met htmx blijft de pagina staan, en een tekenteller draait in de browser zonder dat de server er iets van ziet. De tabel in die les heeft voor elk een kolom.
 

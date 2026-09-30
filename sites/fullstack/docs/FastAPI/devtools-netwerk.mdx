@@ -67,7 +67,7 @@ Soms staat er in Netwerk niets, en de volgende keer wel. Dat ligt bijna altijd a
 
 De browser bewaart van sommige antwoorden een kopie, de **cache**. Vraagt hij hetzelfde adres nog eens, dan pakt hij soms die kopie in plaats van de server te vragen. Dat zie je in Netwerk aan de kolom Grootte: daar staat dan **(schijfcache)** of **(disk cache)** in plaats van een aantal bytes.
 
-Bij de JSON van je endpoint gebeurt dat zelden. Bij bestanden wel, en die komen vanaf [Static files](/docs/FastAPI/static_files). Twee manieren om het te voorkomen:
+Bij de JSON van je endpoint gebeurt dat zelden. Bij bestanden wel, en die komen vanaf [CSS en afbeeldingen (static files)](/docs/FastAPI/static_files). Twee manieren om het te voorkomen:
 
 - Bovenin het tabblad Netwerk staat het vinkje **Cache uitzetten** (Disable cache). Zet het aan; het werkt zolang de ontwikkelaarstools open staan.
 - Klik met de rechtermuisknop op de herlaadknop van je browser en kies **Cache wissen en geforceerd opnieuw laden**. Die keuze bestaat alleen als de ontwikkelaarstools open staan. Sneller is **Ctrl+Shift+R**.
@@ -100,7 +100,7 @@ Wat stuurt je endpoint terug: een pagina met bestanden erin, of alleen tekst?
 <details>
 <summary>Antwoord</summary>
 
-Eén. Je endpoint stuurt JSON, en daar staat niets in dat de browser nog apart moet ophalen. Bij een HTML-pagina met CSS en een afbeelding wordt dat anders; dat zie je bij [Wat er gebeurt bij één pagina](/docs/FastAPI/verzoek-static).
+Eén. Je endpoint stuurt JSON, en daar staat niets in dat de browser nog apart moet ophalen. Bij een HTML-pagina met CSS en een afbeelding wordt dat anders; dat zie je bij [Zo werkt het: CSS en afbeeldingen](/docs/FastAPI/verzoek-static).
 
 </details>
 

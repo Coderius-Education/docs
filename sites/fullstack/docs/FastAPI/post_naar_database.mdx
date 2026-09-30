@@ -1,4 +1,4 @@
-# POST naar database
+# Een formulier opslaan
 
 <Voorkennis
   items={[
@@ -53,7 +53,7 @@ async def naam_opslaan(naam: str = Form(...)):
 ```
 
 <Regel n={13} tot={14}>
-Het POST-endpoint uit [Eigen POST request](/docs/FastAPI/forms): `naam` komt uit het formulier.
+Het POST-endpoint uit [Een formulier versturen (POST)](/docs/FastAPI/forms): `naam` komt uit het formulier.
 </Regel>
 
 <Regel n={15} tot={17}>
@@ -241,6 +241,6 @@ async def berichten():
     return {"berichten": alle_berichten}
 ```
 
-Je berichten staan nu in de database, maar `/berichten` geeft ze nog als JSON terug. In [Een lijst tonen](/docs/FastAPI/lijst_tonen) zet je ze op een echte pagina.
+Je berichten staan nu in de database, maar `/berichten` geeft ze nog als JSON terug. In [Alles tonen: een for-lus in je template](/docs/FastAPI/lijst_tonen) zet je ze op een echte pagina.
 
 </details>

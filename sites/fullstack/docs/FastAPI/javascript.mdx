@@ -27,7 +27,7 @@ je-project/
 └── templates/
 ```
 
-Je hoeft niets aan `main.py` te veranderen. De regel `app.mount("/static", StaticFiles(directory="static"), name="static")` uit [Static files](/docs/FastAPI/static_files) serveert alles in die map, dus ook je JavaScript.
+Je hoeft niets aan `main.py` te veranderen. De regel `app.mount("/static", StaticFiles(directory="static"), name="static")` uit [CSS en afbeeldingen (static files)](/docs/FastAPI/static_files) serveert alles in die map, dus ook je JavaScript.
 
 Koppelen doe je in de `<head>` van je template:
 

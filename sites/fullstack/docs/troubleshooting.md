@@ -100,7 +100,7 @@ Meer uitleg: [Laat het aan anderen zien](/docs/FastAPI/laat-het-zien)
 
 Open `http://127.0.0.1:8000/static/css/style.css` rechtstreeks: zie je je CSS, dan ligt het aan de `<link>`; een 404, dan aan het pad of de mount.
 
-Meer uitleg: [Static files](/docs/FastAPI/static_files)
+Meer uitleg: [CSS en afbeeldingen (static files)](/docs/FastAPI/static_files)
 
 </details>
 
@@ -198,7 +198,7 @@ Meer uitleg: [HTML tonen](/docs/FastAPI/html_tonen)
 naam: str = Form(...)    # Python: moet ook "naam" heten
 ```
 
-Meer uitleg: [Eigen POST request](/docs/FastAPI/forms)
+Meer uitleg: [Een formulier versturen (POST)](/docs/FastAPI/forms)
 
 </details>
 
@@ -214,7 +214,7 @@ Meer uitleg: [Eigen POST request](/docs/FastAPI/forms)
 3. `name="veldnaam"` op elk input-veld?
 4. Parameternaam in Python gelijk aan de `name` in HTML?
 
-Meer uitleg: [Eigen POST request](/docs/FastAPI/forms)
+Meer uitleg: [Een formulier versturen (POST)](/docs/FastAPI/forms)
 
 </details>
 
@@ -247,7 +247,7 @@ Meer uitleg: [GET vs POST](/docs/FastAPI/get_vs_post)
 2. Klopt de bestandsnaam in `TemplateResponse(request, "bestand.html", ...)` precies?
 3. Staat `templates = Jinja2Templates(directory="templates")` in je code?
 
-Meer uitleg: [POST met templates](/docs/FastAPI/post_met_templates)
+Meer uitleg: [Templates met Jinja2](/docs/FastAPI/templates)
 
 </details>
 
@@ -269,7 +269,7 @@ return templates.TemplateResponse(request, "pagina.html", {"naam": naam})
 
 Check ook dat de naam in `{{ naam }}` precies gelijk is aan de sleutel in het dictionary.
 
-Meer uitleg: [POST met templates](/docs/FastAPI/post_met_templates)
+Meer uitleg: [Templates met Jinja2](/docs/FastAPI/templates)
 
 </details>
 
@@ -289,7 +289,7 @@ return templates.TemplateResponse("pagina.html", {"request": request, "naam": na
 return templates.TemplateResponse(request, "pagina.html", {"naam": naam})
 ```
 
-Meer uitleg: [POST met templates](/docs/FastAPI/post_met_templates)
+Meer uitleg: [Templates met Jinja2](/docs/FastAPI/templates)
 
 </details>
 
@@ -316,7 +316,7 @@ looking for the following tags: 'endfor' or 'else'.
 {% endfor %}
 ```
 
-Meer uitleg: [Een lijst tonen](/docs/FastAPI/lijst_tonen)
+Meer uitleg: [Alles tonen: een for-lus in je template](/docs/FastAPI/lijst_tonen)
 
 </details>
 
@@ -331,7 +331,7 @@ Meer uitleg: [Een lijst tonen](/docs/FastAPI/lijst_tonen)
 2. Print `alle_berichten` in je endpoint. Zie je daar wél data, dan zit de fout in de template.
 3. Staat je database wel echt vol? Open `/berichten` nadat je een bericht hebt verstuurd, niet ervoor.
 
-Meer uitleg: [Een lijst tonen](/docs/FastAPI/lijst_tonen)
+Meer uitleg: [Alles tonen: een for-lus in je template](/docs/FastAPI/lijst_tonen)
 
 </details>
 
@@ -352,7 +352,7 @@ with SqliteDict("gastenboek.db") as db:
     alle_berichten = list(db.values())
 ```
 
-Meer uitleg: [Een lijst tonen](/docs/FastAPI/lijst_tonen)
+Meer uitleg: [Alles tonen: een for-lus in je template](/docs/FastAPI/lijst_tonen)
 
 </details>
 
@@ -372,7 +372,7 @@ return RedirectResponse(url="/berichten")
 return RedirectResponse(url="/berichten", status_code=303)
 ```
 
-Meer uitleg: [Terug naar de lijst](/docs/FastAPI/redirect)
+Meer uitleg: [Doorsturen na opslaan (redirect)](/docs/FastAPI/redirect)
 
 </details>
 
@@ -476,7 +476,7 @@ Meer uitleg: [Zonder herladen met htmx](/docs/FastAPI/htmx)
 
 **Oplossing:** open Netwerk en klik nog een keer. De rode regel zegt wat er mis is: 404 is een verkeerd pad in `hx-get` of `hx-post`, 500 een fout in je endpoint (kijk in de terminal), `(mislukt)` een server die niet draait.
 
-Meer uitleg: [Wat kan htmx allemaal](/docs/FastAPI/htmx-overzicht)
+Meer uitleg: [htmx-recepten: formulier, verversen, verwijderen, zoeken](/docs/FastAPI/htmx-overzicht)
 
 </details>
 
@@ -496,7 +496,7 @@ Meer uitleg: [Wat kan htmx allemaal](/docs/FastAPI/htmx-overzicht)
 @app.delete("/bericht/{sleutel}")
 ```
 
-Meer uitleg: [Wat kan htmx allemaal](/docs/FastAPI/htmx-overzicht)
+Meer uitleg: [htmx-recepten: formulier, verversen, verwijderen, zoeken](/docs/FastAPI/htmx-overzicht)
 
 </details>
 
@@ -513,7 +513,7 @@ Meer uitleg: [Wat kan htmx allemaal](/docs/FastAPI/htmx-overzicht)
 python -m pip install sqlitedict
 ```
 
-Meer uitleg: [Gegevens opslaan](/docs/FastAPI/database)
+Meer uitleg: [Gegevens opslaan met SqliteDict](/docs/FastAPI/database)
 
 </details>
 
@@ -535,7 +535,7 @@ with SqliteDict("data.db") as db:
     db.commit()
 ```
 
-Meer uitleg: [Gegevens opslaan](/docs/FastAPI/database)
+Meer uitleg: [Gegevens opslaan met SqliteDict](/docs/FastAPI/database)
 
 </details>
 
@@ -554,7 +554,7 @@ waarde = db["naam"]
 waarde = db.get("naam", "Onbekend")
 ```
 
-Meer uitleg: [Gegevens opslaan](/docs/FastAPI/database)
+Meer uitleg: [Gegevens opslaan met SqliteDict](/docs/FastAPI/database)
 
 </details>
 
@@ -636,7 +636,7 @@ with SqliteDict("sessies.db") as sessies:
     mijn = sessies.get(sessie_id, {})
 ```
 
-Meer uitleg: [Sessies](/docs/FastAPI/sessies)
+Meer uitleg: [Onthouden op de server: sessies](/docs/FastAPI/sessies)
 
 </details>
 
@@ -655,7 +655,7 @@ sessie_id = "sessie1"
 sessie_id = secrets.token_hex(16)
 ```
 
-Meer uitleg: [Sessies](/docs/FastAPI/sessies)
+Meer uitleg: [Onthouden op de server: sessies](/docs/FastAPI/sessies)
 
 </details>
 
@@ -675,7 +675,7 @@ if not sessie_id:
     sessie_id = secrets.token_hex(16)
 ```
 
-Meer uitleg: [Sessies](/docs/FastAPI/sessies)
+Meer uitleg: [Onthouden op de server: sessies](/docs/FastAPI/sessies)
 
 </details>
 

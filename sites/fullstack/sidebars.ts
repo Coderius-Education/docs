@@ -12,7 +12,7 @@ const sidebars: SidebarsConfig = {
   apiSidebar: [
     {
       type: 'category',
-      label: 'Starten',
+      label: 'Je eerste server',
       items: [
         'FastAPI/installatie',
         'FastAPI/eerste_endpoint',
@@ -22,7 +22,7 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: "Pagina's tonen",
+      label: "HTML-pagina's en templates",
       items: [
         'FastAPI/html_tonen',
         'FastAPI/static_files',
@@ -30,16 +30,17 @@ const sidebars: SidebarsConfig = {
         'FastAPI/links',
         'FastAPI/afbeeldingen',
         'FastAPI/verzoek-static',
+        'FastAPI/templates',
       ],
     },
     {
       type: 'category',
-      label: 'Formulieren',
+      label: 'Formulieren (GET en POST)',
       items: ['FastAPI/get_vs_post', 'FastAPI/forms', 'FastAPI/post_met_templates'],
     },
     {
       type: 'category',
-      label: 'Het gastenboek',
+      label: 'Gegevens opslaan en tonen',
       items: [
         'FastAPI/database',
         'FastAPI/post_naar_database',
@@ -52,17 +53,17 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: 'Zonder herladen',
+      label: 'Zonder herladen (htmx)',
       items: ['FastAPI/htmx', 'FastAPI/htmx-overzicht', 'FastAPI/verzoek-htmx'],
     },
     {
       type: 'category',
-      label: 'In de browser',
+      label: 'JavaScript in de browser',
       items: ['FastAPI/javascript', 'FastAPI/devtools-console', 'FastAPI/server-of-browser'],
     },
     {
       type: 'category',
-      label: 'Onthouden',
+      label: 'Onthouden (cookies en sessies)',
       items: [
         'FastAPI/cookies',
         'FastAPI/sessies',
@@ -72,7 +73,7 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: 'Afronden',
+      label: 'Je eigen project',
       items: [
         'FastAPI/hoe-een-verzoek-werkt',
         'FastAPI/laat-het-zien',
