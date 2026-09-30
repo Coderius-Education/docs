@@ -202,9 +202,9 @@ describe('Er gaat iets mis', () => {
 });
 
 describe('Cheatsheet', () => {
-  // De bouwstenen van de basis: wat jouw-project vraagt en lesvolgorde.test.ts
-  // in de hoofdtekst eist. Jouw project belooft dat de cheatsheet van elk
-  // onderdeel het minimale voorbeeld heeft.
+  // De bouwstenen van de basis, die lesvolgorde.test.ts in de hoofdtekst
+  // eist: wie iets opzoekt, vindt in de cheatsheet van elk onderdeel het
+  // minimale voorbeeld.
   it.each([
     'time.time_ns()',
     'list(db.values())',

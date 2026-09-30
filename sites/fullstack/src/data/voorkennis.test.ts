@@ -58,7 +58,6 @@ const ZONDER_BLOK: Record<string, string> = {
   'FastAPI/html_bestanden.mdx': 'HTML-bestand en pad; HTML zelf staat al bij html_tonen',
   'FastAPI/installatie.mdx':
     'controlelijst: elke check verwijst zelf met een SiteLink naar de editor-cursus',
-  'FastAPI/jouw-project.mdx': 'eindopdracht, verwijst per stap naar de eigen lessen',
   'FastAPI/laat-het-zien.mdx': 'terminalcommando en netwerkadres, geen voorkennis uit een cursus',
   'FastAPI/projectstructuur.mdx': 'naslag over deze cursus zelf',
   'FastAPI/post_met_templates.mdx': 'bouwt op forms en templates, allebei in deze cursus',

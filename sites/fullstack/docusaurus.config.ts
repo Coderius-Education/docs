@@ -13,9 +13,12 @@ export default createConfig({
   keywords: 'fastapi leren, fullstack python, backend leren beginners, sqlite database python',
 
   // @coderius/checker levert de gedeelde 'nakijken'-validator (TSX-bron).
-  // Het diagram van één formulier staat sinds de herindeling op dezelfde
-  // pagina als dat van één klik.
   omleidingen: [
+    // De eindopdracht Jouw eigen project is uit de cursus gehaald; het oude
+    // adres komt uit bij het eind van de basis.
+    { van: '/docs/FastAPI/jouw-project', naar: '/docs/FastAPI/verzoek-get' },
+    // Het diagram van één formulier staat sinds de herindeling op dezelfde
+    // pagina als dat van één klik.
     { van: '/docs/FastAPI/verzoek-post', naar: '/docs/FastAPI/verzoek-get#een-formulier' },
   ],
 

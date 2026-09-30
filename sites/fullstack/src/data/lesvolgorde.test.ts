@@ -11,7 +11,7 @@ import sidebars from '../../sidebars';
 // opdracht 5 van de redirect-les. Een leerling die een opdracht oversloeg
 // (en dat mag, zegt de docentenhandleiding) liep daarna vast. Deze test eist
 // dat een bouwsteen de eerste keer in de hoofdtekst staat, niet in een
-// uitklapblok. Daarnaast staat het eigen project direct na de basis, en noemt
+// uitklapblok. Daarnaast komt de basis vóór de uitbreidingen, en noemt
 // elke titel het begrip dat de les leert.
 
 const DOCS = fileURLToPath(new URL('../../docs', import.meta.url));
@@ -56,24 +56,22 @@ describe('volgorde van de FastAPI-lessen', () => {
     expect(hoofdtekst(eerste as string), `eerste keer in ${eerste}`).toContain(bouwsteen);
   });
 
-  // Het eigen project is een losse pagina in de sidebar, tussen de basis en
-  // de uitbreidingen.
-  const project = (sidebars.apiSidebar as unknown as Item[]).indexOf('FastAPI/jouw-project');
+  // Eerst de basis, dan de uitbreidingen: wie na de basis stopt, heeft een
+  // werkend gastenboek met alles wat de basis leert.
+  const items = sidebars.apiSidebar as unknown as Item[];
   const label = (i: Item | undefined) => (typeof i === 'string' ? i : i?.label);
+  const grens = items.findIndex((i) => label(i)?.startsWith('Uitbreiding:'));
 
-  it('het eigen project komt direct na de basis, vóór de uitbreidingen', () => {
-    const items = sidebars.apiSidebar as unknown as Item[];
-    expect(project).toBeGreaterThan(0);
-    expect(label(items[project - 1])).toBe('Gegevens opslaan en tonen');
-    expect(
-      items.slice(project + 1, project + 4).every((i) => label(i)?.startsWith('Uitbreiding:')),
-    ).toBe(true);
+  it('de basis eindigt met Gegevens opslaan en tonen, daarna alleen uitbreidingen', () => {
+    expect(label(items[grens - 1])).toBe('Gegevens opslaan en tonen');
+    expect(items.slice(grens, grens + 3).every((i) => label(i)?.startsWith('Uitbreiding:'))).toBe(
+      true,
+    );
   });
 
   it('de basis heeft geen les uit een uitbreiding nodig', () => {
-    const items = sidebars.apiSidebar as unknown as Item[];
-    const basis = plat(items.slice(0, project + 1));
-    const uitbreiding = new Set(plat(items.slice(project + 1)));
+    const basis = plat(items.slice(0, grens));
+    const uitbreiding = new Set(plat(items.slice(grens)));
     // Een link naar een uitbreiding mag, als de zin zegt dat die later komt,
     // of in een sectie die over uitbreidingen gaat.
     const later = /uitbreiding|later|aan het eind/i;

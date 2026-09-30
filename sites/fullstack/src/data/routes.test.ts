@@ -66,7 +66,10 @@ describe('de stand van main.py per les', () => {
   // main.py in de stand van die les. Losse stukken lieten de leerling zelf een
   // bestand samenstellen, en een compleet blok halverwege gooide eerder werk
   // weg. Elke stand bevat alle endpoints van de stand ervoor.
-  const basis = lessen.slice(0, lessen.indexOf('FastAPI/jouw-project'));
+  const eersteUitbreiding = (sidebars.apiSidebar as unknown as Item[]).findIndex(
+    (i) => typeof i !== 'string' && i.label.startsWith('Uitbreiding:'),
+  );
+  const basis = plat((sidebars.apiSidebar as unknown as Item[]).slice(0, eersteUitbreiding));
   const stand = (tekst: string) =>
     tekst.match(
       /<summary>Zo ziet je `main\.py` er nu uit<\/summary>[\s\S]*?```python\n([\s\S]*?)```/,

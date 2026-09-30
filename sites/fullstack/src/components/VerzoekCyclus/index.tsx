@@ -239,8 +239,8 @@ const HTMX_STAPPEN: Stap[] = [
     titel: 'Jouw Python draait',
     tekst:
       'Leest de tijd, of slaat een bericht op. Ook dit verzoek komt van de bezoeker, dus controleer hier.',
-    to: '/docs/FastAPI/jouw-project',
-    les: 'Jouw eigen project',
+    to: '/docs/FastAPI/detailpagina',
+    les: 'Eén item tonen: path-parameters en 404',
   },
   {
     kant: 'server',
