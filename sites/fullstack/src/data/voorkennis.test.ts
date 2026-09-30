@@ -54,7 +54,6 @@ const ZONDER_BLOK: Record<string, string> = {
   'FastAPI/verzoek-eerste.mdx': 'diagram van de les ervoor, geen nieuwe stof',
   'FastAPI/verzoek-static.mdx': 'diagram van de lessen ervoor, geen nieuwe stof',
   'FastAPI/verzoek-get.mdx': 'diagram van de lessen ervoor, geen nieuwe stof',
-  'FastAPI/verzoek-post.mdx': 'diagram van de lessen ervoor, geen nieuwe stof',
   'FastAPI/verzoek-sessie.mdx': 'diagram van de lessen ervoor, geen nieuwe stof',
   'FastAPI/html_bestanden.mdx': 'HTML-bestand en pad; HTML zelf staat al bij html_tonen',
   'FastAPI/installatie.mdx':

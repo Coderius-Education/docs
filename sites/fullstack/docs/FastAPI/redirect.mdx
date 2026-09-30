@@ -20,7 +20,7 @@ async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
 ```
 
 <Regel n={6}>
-Elk bericht krijgt een eigen sleutel met de tijd erin (met `import time` bovenaan je bestand), zodat een nieuw bericht het vorige niet overschrijft. De waarde is een dictionary met beide velden.
+Het opslaan is hetzelfde als in [Een formulier opslaan](/docs/FastAPI/post_naar_database): een eigen sleutel per bericht, met `import time` bovenaan je bestand.
 </Regel>
 
 <Regel n={8}>
@@ -37,11 +37,68 @@ Hier zit het verschil met de vorige les. Het endpoint geeft geen pagina terug, m
 
 Deze combinatie — POST, dan doorsturen naar een GET — heet het **post/redirect/get**-patroon. Bijna elke website die je gebruikt doet dit na een formulier.
 
+## Verwijderen en terug
+
+Hetzelfde patroon werkt ook voor verwijderen: een formulier met een POST, en daarna terug naar de lijst. Om één bericht aan te wijzen heb je zijn sleutel nodig. Stuur de berichten daarom mét hun sleutel naar de template, met `db.items()` in plaats van `db.values()`:
+
+<CodeUitleg>
+
+```python showLineNumbers
+@app.get("/berichten")
+async def berichten(request: Request):
+    with SqliteDict("gastenboek.db") as db:
+        alle_berichten = list(db.items())
+    return templates.TemplateResponse(
+        request,
+        "berichten.html",
+        {"berichten": alle_berichten}
+    )
+
+@app.post("/verwijderen")
+async def verwijderen(sleutel: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        if sleutel in db:
+            del db[sleutel]
+            db.commit()
+    return RedirectResponse(url="/berichten", status_code=303)
+```
+
+<Regel n={4}>
+`db.items()` geeft paren: eerst de sleutel, dan het bericht.
+</Regel>
+
+<Regel n={14} tot={16}>
+`del db[sleutel]` haalt het bericht weg. De `if sleutel in db` voorkomt een crash als iemand twee keer op verwijderen klikt.
+</Regel>
+
+<Regel n={17}>
+Daarna weer terug naar de lijst, met 303, precies zoals na het opslaan.
+</Regel>
+
+</CodeUitleg>
+
+In `templates/berichten.html` loop je nu over twee dingen tegelijk, en krijgt elk bericht een eigen formuliertje:
+
+```html
+{% for sleutel, bericht in berichten %}
+    <li>
+        {{ bericht.naam }}: {{ bericht.bericht }}
+        <form method="post" action="/verwijderen">
+            <input type="hidden" name="sleutel" value="{{ sleutel }}">
+            <button type="submit">Verwijderen</button>
+        </form>
+    </li>
+{% endfor %}
+```
+
+Een `<input type="hidden">` ziet de bezoeker niet, maar hij gaat wel mee met het formulier. Zo weet `/verwijderen` welk bericht weg moet.
+
 ## Testen
 
 1. Vul het gastenboek in en klik Verstuur
 2. Je belandt op `/berichten` en ziet je eigen bericht staan
-3. Druk op F5 — de pagina herlaadt gewoon, zonder vraag over opnieuw versturen
+3. Druk op F5. De pagina herlaadt, zonder vraag over opnieuw versturen
+4. Klik bij een bericht op Verwijderen. Je blijft op de lijst, en het bericht is weg
 
 :::danger[Gaat er iets mis?]
 Krijg je **405 Method Not Allowed** meteen na het versturen? Dan mist `status_code=303`. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
@@ -121,21 +178,14 @@ Hier mag de standaard 307 blijven staan: het oorspronkelijke verzoek was al een 
 
 </details>
 
-### Opdracht 5: Make - Verwijderen en terug
+### Opdracht 5: Make - Een melding na verwijderen
 
-Maak een endpoint dat een bericht verwijdert en daarna terugstuurt naar de lijst. Gebruik een formulier met een verborgen veld voor de sleutel:
-
-```html
-<form method="post" action="/verwijderen">
-    <input type="hidden" name="sleutel" value="{{ sleutel }}">
-    <button type="submit">Verwijderen</button>
-</form>
-```
+Laat na het verwijderen bovenaan de lijst "Bericht verwijderd" zien. Bij een bezoek aan `/berichten` zonder verwijderen staat die zin er niet.
 
 <details>
 <summary>Tip</summary>
 
-Om de sleutel in je template te hebben moet je de berichten mét hun sleutel meesturen. Gebruik `list(db.items())` in plaats van `list(db.values())` en loop in je template met `{% for sleutel, bericht in berichten %}`.
+Stuur door naar `/berichten?verwijderd=1`. Het stuk na het vraagteken kun je in het endpoint uitlezen, zoals in [GET vs POST](/docs/FastAPI/get_vs_post). Geef het een standaardwaarde, zodat `/berichten` zonder vraagteken ook werkt, en gebruik `{% if %}` in de template.
 
 </details>
 
@@ -144,13 +194,13 @@ Om de sleutel in je template te hebben moet je de berichten mét hun sleutel mee
 
 ```python
 @app.get("/berichten")
-async def berichten(request: Request):
+async def berichten(request: Request, verwijderd: int = 0):
     with SqliteDict("gastenboek.db") as db:
         alle_berichten = list(db.items())
     return templates.TemplateResponse(
         request,
         "berichten.html",
-        {"berichten": alle_berichten}
+        {"berichten": alle_berichten, "verwijderd": verwijderd}
     )
 
 @app.post("/verwijderen")
@@ -159,22 +209,14 @@ async def verwijderen(sleutel: str = Form(...)):
         if sleutel in db:
             del db[sleutel]
             db.commit()
-    return RedirectResponse(url="/berichten", status_code=303)
+    return RedirectResponse(url="/berichten?verwijderd=1", status_code=303)
 ```
 
-In `templates/berichten.html`:
+Bovenaan `templates/berichten.html`:
 ```html
-{% for sleutel, bericht in berichten %}
-    <li>
-        {{ bericht.naam }}: {{ bericht.bericht }}
-        <form method="post" action="/verwijderen">
-            <input type="hidden" name="sleutel" value="{{ sleutel }}">
-            <button type="submit">Verwijderen</button>
-        </form>
-    </li>
-{% endfor %}
+{% if verwijderd %}
+    <p>Bericht verwijderd</p>
+{% endif %}
 ```
-
-De `if sleutel in db` voorkomt een crash als iemand twee keer op verwijderen klikt.
 
 </details>

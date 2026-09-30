@@ -30,7 +30,7 @@ Kies iets waar je zelf nieuwsgierig naar bent — dat scheelt bij het derde prob
 
 ## Stap voor stap
 
-Bouw in deze volgorde. Elke stap levert iets op dat werkt, zodat je nooit lang zonder werkende versie zit. Weet je niet meer hoe iets ook alweer heette? De [Cheatsheet](/docs/cheatsheet) heeft van elk onderdeel het minimale voorbeeld.
+Bouw in deze volgorde. Voor deze vier stappen heb je alles al geleerd. Elke stap levert iets op dat werkt, zodat je nooit lang zonder werkende versie zit. Weet je niet meer hoe iets ook alweer heette? De [Cheatsheet](/docs/cheatsheet) heeft van elk onderdeel het minimale voorbeeld, en [Projectstructuur](/docs/FastAPI/projectstructuur) laat zien welk bestand in welke map hoort.
 
 ### Stap 1: Eén pagina die iets toont
 
@@ -72,20 +72,9 @@ Bedenk wat er mis kan gaan als iemand anders je formulier invult. Een leeg veld,
 <details>
 <summary>Vastgelopen?</summary>
 
-`raise HTTPException(status_code=400, detail="...")` stopt de functie en stuurt een foutmelding. Controleer aan het begin van je endpoint, vóór je iets opslaat.
+`raise HTTPException(status_code=400, detail="...")` stopt de functie en stuurt een foutmelding, net als de 404 uit [Eén item tonen](/docs/FastAPI/detailpagina). Controleer aan het begin van je endpoint, vóór je iets opslaat.
 
-Test je controle door hem te omzeilen zoals in [Server of browser?](/docs/FastAPI/server-of-browser), niet door netjes je eigen formulier in te vullen.
-
-</details>
-
-### Stap 5: Iets dat de server niet nodig heeft
-
-Voeg één ding toe dat volledig in de browser gebeurt: een filterveld, een teller, een knop die iets in- of uitklapt.
-
-<details>
-<summary>Vastgelopen?</summary>
-
-Kijk eerst of de data die je nodig hebt al op de pagina staat. Zo ja, dan heb je alleen JavaScript nodig ([JavaScript erbij](/docs/FastAPI/javascript)). Zo nee, laat je endpoint die gegevens dan meegeven aan de template, zodat ze er bij het laden al staan. Moet de server er bij elke klik aan te pas komen, maar wil je dat de pagina blijft staan? Dan is [htmx](/docs/FastAPI/htmx) de weg.
+Een `required` of `maxlength` in je HTML is geen controle: die kan een bezoeker weghalen. Hoe dat gaat, zie je later in de uitbreiding [Server of browser?](/docs/FastAPI/server-of-browser).
 
 </details>
 
@@ -97,8 +86,15 @@ Kom je er niet uit met een foutmelding, kijk dan eerst op [Er gaat iets mis](/do
 
 ## Mogelijke uitbreidingen
 
-- Items kunnen **verwijderen**, met een bevestiging vooraf
-- Versturen en verwijderen **zonder herladen**, met [htmx](/docs/FastAPI/htmx)
+Na dit project volgen in de sidebar drie uitbreidingen. Elk ervan kun je in je project gebruiken:
+
+- Versturen, verversen en verwijderen **zonder herladen**, met [htmx](/docs/FastAPI/htmx)
+- Iets dat **volledig in de browser** gebeurt, zoals een filterveld, een teller of een knop die iets in- of uitklapt, met [JavaScript](/docs/FastAPI/javascript)
+- **Onthouden** wie er terugkomt, met [cookies](/docs/FastAPI/cookies) en [sessies](/docs/FastAPI/sessies)
+
+En verder:
+
+- Een **bevestiging** vooraf bij het verwijderen
 - **Sorteren** op datum, cijfer of naam
 - Een **zoekveld** dat filtert terwijl je typt
 - **Afbeeldingen** bij je items, zoals in [Afbeeldingen tonen](/docs/FastAPI/afbeeldingen)

@@ -47,42 +47,45 @@ Tips en antwoorden staan in `<details>`-blokken. Laat je leerlingen eerst zelf p
 - **Plenair starten**: bespreek de Predict-vraag klassikaal, daarna werken je leerlingen zelfstandig door.
 - **Snelle leerlingen** breiden een endpoint uit met extra validatie of een tweede route.
 - **Langzamere leerlingen** mogen de Make-opdracht overslaan zonder dat de volgende les daarop bouwt.
-- **Beoordelen**: [Jouw eigen project](/docs/FastAPI/jouw-project) is de eindopdracht, met zes eisen en vijf stappen. De nakijker op [Project checken](/project-checken) laat zien welke onderwerpen erin terugkomen — bedoeld als checklist, niet als cijfer.
+- **Beoordelen**: [Jouw eigen project](/docs/FastAPI/jouw-project) is de eindopdracht, met zes eisen en vier stappen. De nakijker op [Project checken](/project-checken) laat zien welke onderwerpen erin terugkomen — bedoeld als checklist, niet als cijfer.
 
 ## Leerlijn
 
-De lessen staan in de **FastAPI**-sidebar en bouwen op elkaar voort. Begin bij [Installatie](/docs/FastAPI/installatie); de [Cheatsheet](/docs/cheatsheet) en [Er gaat iets mis](/docs/troubleshooting) zijn naslag.
+De lessen staan in de **FastAPI**-sidebar en bouwen op elkaar voort. Begin bij [Installatie](/docs/FastAPI/installatie); de [Cheatsheet](/docs/cheatsheet) en [Er gaat iets mis](/docs/troubleshooting) zijn naslag en staan in de navbar. [Projectstructuur](/docs/FastAPI/projectstructuur), met de mappen van het project per les, staat bovenaan de cheatsheet.
 
-Zes keer onderweg staat een diagram van de hele keten, browser links en server rechts, met per stap een link naar de les. Het begint kaal [bij het eerste verzoek](/docs/FastAPI/verzoek-eerste), direct na het eerste endpoint, en groeit mee. [Bij één pagina](/docs/FastAPI/verzoek-static), aan het eind van HTML-pagina's en templates, komen de losse verzoeken voor CSS en afbeeldingen erbij. [Bij één klik](/docs/FastAPI/verzoek-get), aan het eind van Gegevens opslaan en tonen, de database en de template; [bij één formulier](/docs/FastAPI/verzoek-post) direct daarna de omleiding. [Zonder herladen](/docs/FastAPI/verzoek-htmx), aan het eind van het htmx-blok, wordt die omleiding een stuk HTML als antwoord; [bij een sessie](/docs/FastAPI/verzoek-sessie), aan het eind van Onthouden (cookies en sessies), komt de cookie erbij. [Hoe een verzoek werkt](/docs/FastAPI/hoe-een-verzoek-werkt) bundelt ze bij het afronden met een tabel "waar hoort jouw code", handig bij het eigen project.
+De sidebar heeft twee delen. De **basis** (Je eerste server, HTML-pagina's, Templates en formulieren, Gegevens opslaan en tonen) behandelt alle zes eisen van [Jouw eigen project](/docs/FastAPI/jouw-project), en dat project komt direct daarna. Wat volgt zijn drie **uitbreidingen** (htmx, JavaScript, cookies en sessies) en een afronding. Die maken het project mooier, maar het project vraagt ze niet. Heb je weinig tijd, dan kun je na de basis stoppen; wie verder gaat, volgt de uitbreidingen op volgorde, want "Server of browser?" vergelijkt de server met htmx en JavaScript.
+
+Vijf keer onderweg staat een diagram van de hele keten, browser links en server rechts, met per stap een link naar de les. Het begint kaal [bij het eerste verzoek](/docs/FastAPI/verzoek-eerste), direct na het eerste endpoint, en groeit mee. [Bij één pagina](/docs/FastAPI/verzoek-static), aan het eind van HTML-pagina's, komen de losse verzoeken voor CSS en afbeeldingen erbij. [Bij klikken en versturen](/docs/FastAPI/verzoek-get), aan het eind van Gegevens opslaan en tonen, de database en de template, en bij een formulier de omleiding. [Zonder herladen](/docs/FastAPI/verzoek-htmx), aan het eind van de htmx-uitbreiding, wordt die omleiding een stuk HTML als antwoord; [bij een sessie](/docs/FastAPI/verzoek-sessie), aan het eind van Onthouden, komt de cookie erbij. [Hoe een verzoek werkt](/docs/FastAPI/hoe-een-verzoek-werkt) bundelt ze bij het afronden met een tabel "waar hoort jouw code".
 
 | Onderwerp | Leerdoel |
 |---|---|
 | Je eerste endpoint | Een API-route maken en aanroepen |
-| Kijken wat de browser doet | Het tabblad Netwerk: verzoek, antwoord, statuscode en cache |
-| GET vs POST | Verschil tussen data ophalen en versturen |
-| HTML tonen | Pagina's serveren vanuit Python en uit bestanden |
+| Kijken wat de browser doet | Het tabblad Netwerk: verzoek, antwoord en statuscode |
+| HTML tonen en HTML in bestanden | Pagina's serveren vanuit Python en uit bestanden |
+| CSS in een eigen bestand (static files) | Eén stylesheet voor alle pagina's, en de cache |
 | Templates met Jinja2 | Een pagina met waarden uit Python: `{{ }}`, het dictionary, en wat de browser krijgt |
-| Formulieren (GET en POST) | Gebruikersinvoer verwerken en beantwoorden met een template |
+| GET vs POST en formulieren | Gebruikersinvoer verwerken en beantwoorden met een template |
 | Gegevens opslaan met SqliteDict | Gegevens opslaan en ophalen met SQLite |
+| Een formulier opslaan | Het gastenboek: elk bericht een eigen sleutel |
 | Alles tonen: een for-lus in je template | Opgeslagen records op een pagina zetten met een for-lus |
-| Doorsturen na opslaan (redirect) | Doorsturen na een POST (post/redirect/get) |
+| Doorsturen na opslaan (redirect) | Doorsturen na een POST (post/redirect/get), en verwijderen |
 | Eén item tonen: path-parameters en 404 | Path-parameters en zelf een 404 sturen |
-| Zonder herladen met htmx | Een knop die iets aan de server vraagt terwijl de pagina blijft staan |
-| htmx-recepten | Overzicht van recepten: formulier, verversen, vanzelf verversen, verwijderen, zoeken |
-| JavaScript erbij | Code die in de browser draait in plaats van op de server |
-| Console en Elementen | Uitvoer en fouten van JavaScript zien, en de pagina zoals de browser hem nu heeft |
-| Server of browser? | Kiezen waar iets hoort, en waarom controles op de server moeten |
-| Onthouden met een cookie | De browser iets laten onthouden tussen twee verzoeken |
-| Onthouden op de server: sessies | Alleen een sessie-id bij de bezoeker, de gegevens op de server |
-| Cookie of sessie? | Kiezen tussen de twee, en waarom je niet alles kunt geloven |
+| Jouw eigen project | Eindopdracht: een complete applicatie in vier stappen |
+| Zonder herladen met htmx *(uitbreiding)* | Een knop die iets aan de server vraagt terwijl de pagina blijft staan |
+| htmx-recepten *(uitbreiding)* | Overzicht van recepten: formulier, verversen, vanzelf verversen, verwijderen, zoeken |
+| JavaScript erbij *(uitbreiding)* | Code die in de browser draait in plaats van op de server |
+| Console en Elementen *(uitbreiding)* | Uitvoer en fouten van JavaScript zien, en de pagina zoals de browser hem nu heeft |
+| Server of browser? *(uitbreiding)* | Kiezen waar iets hoort, en waarom controles op de server moeten |
+| Onthouden met een cookie *(uitbreiding)* | De browser iets laten onthouden tussen twee verzoeken |
+| Onthouden op de server: sessies *(uitbreiding)* | Alleen een sessie-id bij de bezoeker, de gegevens op de server |
+| Cookie of sessie? *(uitbreiding)* | Kiezen tussen de twee, en waarom je niet alles kunt geloven |
 | Laat het aan anderen zien | De server openzetten voor het netwerk |
-| Jouw eigen project | Eindopdracht: een complete applicatie in vijf stappen |
 
-"Alles tonen" tot en met "Eén item tonen" maken samen het gastenboek af dat je leerlingen in de database-lessen bouwen. Tot en met "Een formulier opslaan" kunnen ze wel opslaan maar niet tonen; daarna hebben ze een werkende webapplicatie met een overzicht, een detailpagina en nette foutafhandeling.
+"Een formulier opslaan" tot en met "Eén item tonen" bouwen samen het gastenboek. Alles wat een latere les nodig heeft, staat in de hoofdtekst en niet in een opdracht: het gastenboek zelf in "Een formulier opslaan", het verwijderen in "Doorsturen na opslaan". Daarna hebben je leerlingen een werkende webapplicatie met een overzicht, een detailpagina en nette foutafhandeling, en dat is precies wat het eigen project vraagt.
 
-De ontwikkelaarstools van de browser krijgen twee eigen lessen, zonder schermafbeeldingen: de lessen bouwen het paneel na met de Nederlandse en Engelse naam van elk tabblad naast elkaar. "Kijken wat de browser doet" komt direct na het eerste endpoint en leert het tabblad Netwerk: één verzoek, de statuscode, en de cache als reden waarom een wijziging niet doorkomt. Dat laatste is de vraag die je in de les het vaakst krijgt. "Console en Elementen" komt na "JavaScript erbij", als de terminal niets meer laat zien, en bereidt "Server of browser?" voor: wie in Elementen `maxlength` weghaalt, ziet daar wat de bezoeker kan.
+De ontwikkelaarstools van de browser krijgen twee eigen lessen, zonder schermafbeeldingen: de lessen bouwen het paneel na met de Nederlandse en Engelse naam van elk tabblad naast elkaar. "Kijken wat de browser doet" komt direct na het eerste endpoint en leert het tabblad Netwerk: één verzoek en de statuscode. De cache, de reden waarom een wijziging niet doorkomt en de vraag die je in de les het vaakst krijgt, komt bij "CSS in een eigen bestand", waar hij voor het eerst speelt. "Console en Elementen" komt na "JavaScript erbij", als de terminal niets meer laat zien, en bereidt "Server of browser?" voor: wie in Elementen `maxlength` weghaalt, ziet daar wat de bezoeker kan.
 
-Na Gegevens opslaan en tonen komt het blok "Zonder herladen (htmx)": de server doet het werk, maar de pagina blijft staan, omdat htmx het verzoek stuurt en het antwoord op zijn plek zet. De eerste les is bewust zo klein mogelijk: één knop met twee attributen die de tijd van de server ophaalt, en een endpoint van drie regels. Daarna volgt één les met een overzicht van recepten (formulier, verversen, vanzelf verversen, verwijderen, zoeken), waaruit je leerlingen kiezen wat hun gastenboek nodig heeft. Ze schrijven er geen JavaScript voor; ze hergebruiken alles wat ze al hebben. Elk endpoint geeft een stukje HTML terug in plaats van een omleiding, en dat is ook de fout die je het meest zult zien: een hele pagina in het doel. De tweede valkuil is dat htmx een mislukt verzoek stil negeert; de lessen sturen daarom steeds naar het tabblad Netwerk. Het bestand `htmx.min.js` staat op deze site om te downloaden, zodat het ook werkt op een netwerk dat externe scripts blokkeert.
+Na het eigen project komt de eerste uitbreiding, "Zonder herladen (htmx)": de server doet het werk, maar de pagina blijft staan, omdat htmx het verzoek stuurt en het antwoord op zijn plek zet. De eerste les is bewust zo klein mogelijk: één knop met twee attributen die de tijd van de server ophaalt, en een endpoint van drie regels. Daarna volgt één les met een overzicht van recepten (formulier, verversen, vanzelf verversen, verwijderen, zoeken), waaruit je leerlingen kiezen wat hun gastenboek nodig heeft. Ze schrijven er geen JavaScript voor; ze hergebruiken alles wat ze al hebben. Elk endpoint geeft een stukje HTML terug in plaats van een omleiding, en dat is ook de fout die je het meest zult zien: een hele pagina in het doel. De tweede valkuil is dat htmx een mislukt verzoek stil negeert; de lessen sturen daarom steeds naar het tabblad Netwerk. Het bestand `htmx.min.js` staat op deze site om te downloaden, zodat het ook werkt op een netwerk dat externe scripts blokkeert.
 
 Vanaf "JavaScript erbij" komt de browserkant in beeld. Je leerlingen kennen JavaScript al uit de web-cursus; nieuw is de vraag wáár code hoort. Die vraag krijgt een eigen les ("Server of browser?") nadat ze de drie smaken hebben gevoeld: een formulier versturen gaat via de server en de pagina verspringt, met htmx blijft de pagina staan, en een tekenteller draait in de browser zonder dat de server er iets van ziet. De tabel in die les heeft voor elk een kolom.
 
@@ -90,13 +93,13 @@ Daarop volgt "Onthouden", drie lessen die het sterkst zijn als je ze achter elka
 
 "Cookie of sessie?" sluit dat blok af zoals "Server of browser?" het vorige afsluit — niet met nieuwe techniek, maar met de vraag wanneer je wat kiest. De kern is dat een sessie ook gewoon een cookie is; het verschil zit in wát erin staat. Leerlingen die alles voor de zekerheid een sessie willen maken, vinden daar het tegenargument: een voorkeur die niemand kan schaden hoort in een gewone cookie.
 
-Daarna sluit de cursus af met de server openzetten voor het netwerk en de eindopdracht.
+Daarna sluit de cursus af met een overzicht van alle diagrammen en de server openzetten voor het netwerk, zodat de klas elkaars project kan bezoeken.
 
 Wat hier bewust níét in zit, is `fetch`: JavaScript dat zelf data ophaalt bij een endpoint. Dat vraagt `async`/`await`, JSON verwerken en objecten — stof die de web-cursus nog niet behandelt. Het blok "Zonder herladen" vult dat gat met htmx: de server stuurt HTML, niet JSON. Leerlingen die toch `fetch` willen kun je die kant op sturen; de cursus bouwt er niet op.
 
 ### De reeks Veiligheid
 
-Naast de FastAPI-sidebar staat een tweede sidebar, **Veiligheid**. Die past na [Jouw project](/docs/FastAPI/jouw-project): de lessen bouwen op formulieren, templates, htmx, sessies en `HTTPException`, en je leerlingen hebben dan een eigen gastenboek om te beschermen. De route begint met een [startpagina](/docs/veiligheid) (het ene idee, de spelregel, een kaart en een overzicht van statuscodes) en een les [Een script als bezoeker](/docs/veiligheid/gereedschap), waarin ze met `httpx` verzoeken sturen zonder browser. Daarna volgen de reeksen, van dichtbij het eigen gastenboek naar ver weg. Elke reeks gaat van de zwakheid die de leerling zelf nadoet, via de oplossing in FastAPI, naar wat er in de praktijk nog gebeurt, inclusief wat de wet zegt. De reeksen zijn los te volgen; alleen Cookies bouwt op de server uit Wie mag wat.
+Naast de FastAPI-sidebar staat een tweede sidebar, **Veiligheid**. Die past na de hele FastAPI-route, dus ook na de drie uitbreidingen: de lessen bouwen op formulieren, templates, htmx, sessies en `HTTPException`, en je leerlingen hebben dan een eigen gastenboek om te beschermen. De route begint met een [startpagina](/docs/veiligheid) (het ene idee, de spelregel, een kaart en een overzicht van statuscodes) en een les [Een script als bezoeker](/docs/veiligheid/gereedschap), waarin ze met `httpx` verzoeken sturen zonder browser. Daarna volgen de reeksen, van dichtbij het eigen gastenboek naar ver weg. Elke reeks gaat van de zwakheid die de leerling zelf nadoet, via de oplossing in FastAPI, naar wat er in de praktijk nog gebeurt, inclusief wat de wet zegt. De reeksen zijn los te volgen; alleen Cookies bouwt op de server uit Wie mag wat.
 
 De reeks is opzettelijk defensief. Elke zelftest draait tegen de eigen server op `127.0.0.1` en de eigen database; er staat een `:::danger`-blok boven dat zegt dat het aanvallen van een ander strafbaar is. De demonstratie van een zwakheid is klein: twintig verzoeken, de eigen database bekijken, een vet woord in het gastenboek, de eigen cookie in de Console. Er staat geen script in dat wachtwoorden raadt of een server platlegt. Waarom een snelle hash zwak is, laat de wachtwoordenreeks zien met een meting van de rekentijd.
 

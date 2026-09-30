@@ -7,7 +7,7 @@
   ]}
 />
 
-Nu combineren we formulieren met een database: data van een gebruiker permanent opslaan.
+Een formulier en een database samen: wat een bezoeker invult, blijft bewaard, ook als je de server stopt. Eerst één naam, daarna een gastenboek met alle berichten.
 
 ## Voorbeeld: Naam opslaan
 
@@ -66,7 +66,7 @@ Het antwoord komt ná het `with`-blok: de database is dan al netjes gesloten.
 
 </CodeUitleg>
 
-## Testen
+## De naam testen
 
 1. Ga naar `http://127.0.0.1:8000/naam`
 2. Vul een naam in en klik Opslaan
@@ -91,42 +91,119 @@ async def toon_naam():
 
 </CodeUitleg>
 
+## Meer dan één bericht: het gastenboek
+
+<details>
+<summary>Voorspel: je slaat eerst "Jan" op, dan "Sarah". Wat staat er in de database?</summary>
+
+Alleen "Sarah". Allebei gaan ze onder de sleutel `laatste_naam`, en een nieuwe waarde onder dezelfde sleutel overschrijft de oude.
+
+</details>
+
+Voor een gastenboek wil je elk bericht bewaren. Dan heeft elk bericht een eigen sleutel nodig. `time.time_ns()` geeft het aantal nanoseconden sinds 1970: bij elk bericht een ander getal, dus een nieuwe sleutel. Dit gastenboek bouw je in de volgende lessen verder uit, dus maak het echt.
+
+### Formulier (`static/pages/gastenboek_form.html`):
+
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Gastenboek</h1>
+        <form method="post" action="/gastenboek">
+            <input type="text" name="naam" placeholder="Je naam" required>
+            <input type="text" name="bericht" placeholder="Je bericht" required>
+            <button type="submit">Verstuur</button>
+        </form>
+    </body>
+</html>
+```
+
+### Endpoints (`main.py`, onder de endpoints van de naam):
+
+Zet `import time` bovenaan je `main.py`, bij de andere imports.
+
+<CodeUitleg>
+
+```python showLineNumbers
+@app.get("/gastenboek")
+async def gastenboek_form():
+    return FileResponse("static/pages/gastenboek_form.html")
+
+@app.post("/gastenboek")
+async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        sleutel = f"bericht_{time.time_ns()}"
+        db[sleutel] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    return {"bericht": "Bedankt voor je bericht"}
+
+@app.get("/berichten")
+async def berichten():
+    with SqliteDict("gastenboek.db") as db:
+        alle_berichten = list(db.values())
+    return {"berichten": alle_berichten}
+```
+
+<Regel n={8}>
+Elke keer een nieuwe sleutel, zoals `bericht_1767225600123456789`. Twee berichten overschrijven elkaar dus niet meer.
+</Regel>
+
+<Regel n={9}>
+De waarde is een dictionary met beide velden. Zo blijft bij elkaar wat bij elkaar hoort.
+</Regel>
+
+<Regel n={16}>
+`db.values()` geeft alle waarden, zonder sleutels. `list()` maakt er een lijst van die FastAPI als JSON kan terugsturen.
+</Regel>
+
+</CodeUitleg>
+
+:::caution
+Gebruik `time.time_ns()` (nanoseconden) en niet `int(time.time())` (hele seconden). Twee berichten die binnen dezelfde seconde binnenkomen, krijgen anders dezelfde sleutel, en dan overschrijft het tweede het eerste.
+:::
+
+## Het gastenboek testen
+
+1. Ga naar `http://127.0.0.1:8000/gastenboek` en verstuur twee berichten.
+2. Ga naar `http://127.0.0.1:8000/berichten`. Je ziet ze allebei, als JSON.
+3. Stop de server, start hem opnieuw en kijk nog een keer: ze staan er nog.
+
 :::danger[Gaat er iets mis?]
 Data niet opgeslagen? Check of je `db.commit()` niet vergeet. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
 :::
 
 ## Opdrachten
 
-### Opdracht 1: Predict - Overschrijven
+### Opdracht 1: Predict - Hoeveel berichten?
 
-Je slaat eerst "Jan" op, dan "Sarah". Wat staat er in de database?
+Iemand haalt `time.time_ns()` weg en schrijft `sleutel = "bericht"`. Daarna worden er drie berichten verstuurd. Wat laat `/berichten` zien?
 
 <details>
 <summary>Tip</summary>
 
-Beide worden opgeslagen onder dezelfde key (`"laatste_naam"`). Wat gebeurt er als je twee keer dezelfde key gebruikt?
+Hoeveel verschillende sleutels zijn er dan?
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-Alleen "Sarah" — de nieuwe waarde overschrijft de oude bij dezelfde key.
+Eén bericht: het laatste. Alle drie gaan onder de sleutel `bericht`, dus elk nieuw bericht overschrijft het vorige.
 
 </details>
 
 ### Opdracht 2: Run
 
-Maak het formulier en de endpoints uit het voorbeeld. Test of de naam echt bewaard blijft door de server te stoppen en opnieuw te starten.
+Maak de naam en het gastenboek uit deze les. Test of de berichten bewaard blijven door de server te stoppen en opnieuw te starten.
 
-### Opdracht 3: Investigate - Dezelfde key
+### Opdracht 3: Investigate - Wat staat er echt in?
 
-Wat als twee gebruikers allebei hun naam opslaan via het formulier? Blijven beide namen bewaard?
+Laat `/berichten` ook de sleutels zien: vervang `list(db.values())` door `list(db.items())`. Wat verandert er in de JSON?
 
 <details>
 <summary>Antwoord</summary>
 
-Nee. Beide namen worden opgeslagen onder `"laatste_naam"`, dus de tweede overschrijft de eerste. Om meerdere namen op te slaan heb je **unieke keys** nodig, bijvoorbeeld met `time.time_ns()` (zie opdracht 5).
+Elk bericht wordt een paar: eerst de sleutel, dan de dictionary, zoals `["bericht_1767225600123456789", {"naam": "Sam", "bericht": "Hoi"}]`. Aan de getallen zie je in welke volgorde de berichten binnenkwamen. De sleutel heb je later nodig om één bericht aan te wijzen.
 
 </details>
 
@@ -179,68 +256,28 @@ async def toon_score():
 
 </details>
 
-### Opdracht 5: Make - Gastenboek
+### Opdracht 5: Make - Hoeveel berichten
 
-Maak een gastenboek met naam en bericht. Gebruik `time.time_ns()` als unieke key zodat berichten niet overschreven worden:
-
-```python
-import time
-
-key = f"bericht_{time.time_ns()}"
-db[key] = {"naam": naam, "bericht": bericht}
-```
-
-:::caution
-Gebruik `time.time_ns()` (nanoseconden) en niet `int(time.time())` (hele seconden). Twee berichten die binnen dezelfde seconde binnenkomen krijgen anders dezelfde sleutel, en dan overschrijft het tweede het eerste.
-:::
+Maak een endpoint `/aantal` dat teruggeeft hoeveel berichten er in het gastenboek staan: `{"aantal": 3}`.
 
 <details>
 <summary>Tip</summary>
 
-Je hebt twee `<input>` velden nodig (`name="naam"` en `name="bericht"`). Gebruik `time.time_ns()` om een unieke key te genereren, zodat elk bericht apart wordt opgeslagen.
+`len(db)` geeft het aantal sleutels in de database, net als bij een dictionary.
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-`static/pages/gastenboek_form.html`:
-```html
-<!DOCTYPE html>
-<html>
-    <body>
-        <h1>Gastenboek</h1>
-        <form method="post" action="/gastenboek">
-            <input type="text" name="naam" placeholder="Je naam" required>
-            <input type="text" name="bericht" placeholder="Je bericht" required>
-            <button type="submit">Verstuur</button>
-        </form>
-    </body>
-</html>
-```
-
 ```python
-import time
-
-@app.get("/gastenboek")
-async def gastenboek_form():
-    return FileResponse("static/pages/gastenboek_form.html")
-
-@app.post("/gastenboek")
-async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
+@app.get("/aantal")
+async def aantal():
     with SqliteDict("gastenboek.db") as db:
-        key = f"bericht_{time.time_ns()}"
-        db[key] = {"naam": naam, "bericht": bericht}
-        db.commit()
-    return {"bericht": "Bedankt voor je bericht!"}
-
-@app.get("/berichten")
-async def berichten():
-    with SqliteDict("gastenboek.db") as db:
-        alle_berichten = list(db.values())
-    return {"berichten": alle_berichten}
+        hoeveel = len(db)
+    return {"aantal": hoeveel}
 ```
-
-Je berichten staan nu in de database, maar `/berichten` geeft ze nog als JSON terug. In [Alles tonen: een for-lus in je template](/docs/FastAPI/lijst_tonen) zet je ze op een echte pagina.
 
 </details>
+
+Je berichten staan nu in de database, maar `/berichten` geeft ze nog als JSON terug. In [Alles tonen: een for-lus in je template](/docs/FastAPI/lijst_tonen) zet je ze op een echte pagina.

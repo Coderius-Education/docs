@@ -1,13 +1,27 @@
 import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
 
-# Zo werkt het: een GET-verzoek
+# Zo werkt het: klikken en versturen
 
-Endpoints, templates en een database werken nu samen. Dit zijn dezelfde stappen als bij [je eerste verzoek](/docs/FastAPI/verzoek-eerste), met een database en een template ertussen: van de klik op een link tot de lijst op het scherm.
+Endpoints, templates en een database werken nu samen. Twee diagrammen laten zien wat er dan gebeurt: bij een klik op een link, en bij een formulier.
+
+## Een klik
+
+Dit zijn dezelfde stappen als bij [je eerste verzoek](/docs/FastAPI/verzoek-eerste), met een database en een template ertussen: van de klik op een link tot de lijst op het scherm.
 
 <VerzoekCyclus variant="get" />
 
 Tussen stap 6 en 7 gebeurt het belangrijkste van de hele cursus: er gaat **alleen HTML** over de lijn. Je database blijft op de server, je Python-code ook. De browser krijgt het resultaat, niet de weg ernaartoe. Wie de broncode van je pagina bekijkt ziet de berichten, maar niet hoe je ze hebt opgehaald.
 
-Stap 7 komt pas in [JavaScript erbij](/docs/FastAPI/javascript) aan bod. Tot die tijd tekent de browser de pagina en is hij klaar; wat er daarna nog in de browser kan gebeuren, is het onderwerp van het blok In de browser.
+Stap 7 komt pas aan bod in de uitbreiding [JavaScript erbij](/docs/FastAPI/javascript). Tot die tijd tekent de browser de pagina en is hij klaar.
 
-Kom je bij een nieuwe functie vast te zitten, zoek dan eerst de stap op waar hij thuishoort. Die tabel staat bij [Hoe een verzoek werkt](/docs/FastAPI/hoe-een-verzoek-werkt).
+## Een formulier
+
+Een formulier volgt hetzelfde patroon, maar eindigt anders: niet met een pagina, maar met een omleiding.
+
+<VerzoekCyclus variant="post" />
+
+De laatste stap start het diagram van de klik opnieuw. Dat is het post/redirect/get-patroon uit [Doorsturen na opslaan (redirect)](/docs/FastAPI/redirect): versturen en tonen zijn twee losse verzoeken, zodat F5 de pagina herlaadt in plaats van je bericht nog een keer op te sturen.
+
+Stap 1 gebeurt in de browser, en die is van de bezoeker. Wat een bezoeker instuurt controleer je daarom in stap 4, in je endpoint, en nooit alleen in de HTML. Waarom dat zo is, zie je in de uitbreiding [Server of browser?](/docs/FastAPI/server-of-browser).
+
+Kom je bij een nieuwe functie vast te zitten, zoek dan eerst de stap op waar hij thuishoort. Die tabel staat aan het eind van de cursus, bij [Hoe een verzoek werkt](/docs/FastAPI/hoe-een-verzoek-werkt).

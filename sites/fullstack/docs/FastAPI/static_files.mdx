@@ -1,4 +1,4 @@
-# CSS en afbeeldingen (static files)
+# CSS in een eigen bestand (static files)
 
 <Voorkennis
   items={[
@@ -6,18 +6,20 @@
   ]}
 />
 
-In de vorige les zette je CSS in een `<style>` tag in je Python code. Dat wordt snel rommelig. In deze les leer je hoe je bestanden (CSS, afbeeldingen, etc.) in een aparte folder zet.
+In [HTML tonen](/docs/FastAPI/html_tonen) zette je CSS in een `<style>`-tag. Met meer pagina's wil je één CSS-bestand dat ze allemaal delen. Zo'n bestand stuurt de server ongewijzigd door, zonder dat er een functie van jou aan te pas komt: een **static file**.
 
 ## Mappenstructuur
 
-Maak een `static` folder met een `css` subfolder:
+Maak in je map `static` naast `pages` een map `css`:
 
 ```
 je-project/
 ├── main.py
 └── static/
-    └── css/
-        └── style.css
+    ├── css/
+    │   └── style.css
+    └── pages/
+        └── home.html
 ```
 
 ## Static files configureren
@@ -28,25 +30,28 @@ Pas je `main.py` aan:
 
 ```python showLineNumbers
 from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
-
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.get("/")
+async def home():
+    return FileResponse("static/pages/home.html")
 ```
 
 <Regel n={3}>
-`StaticFiles` is het stuk van FastAPI dat bestanden ongewijzigd doorgeeft, zonder dat er een functie van jou aan te pas komt.
+`StaticFiles` is het stuk van FastAPI dat bestanden ongewijzigd doorgeeft.
 </Regel>
 
-<Regel n={7}>
+<Regel n={6}>
 `app.mount` hangt de map `static` aan de URL `/static`. Alles in die map is daarmee bereikbaar in de browser: `static/css/style.css` staat op `/static/css/style.css`. De `name` is verplicht en mag zo blijven staan.
 </Regel>
 
 </CodeUitleg>
 
-## CSS in apart bestand
+## CSS in een eigen bestand
 
 Maak `static/css/style.css`:
 
@@ -60,59 +65,58 @@ p {
 }
 ```
 
-## CSS koppelen aan HTML
+## CSS koppelen aan je pagina
 
-<CodeUitleg>
+Zet in `static/pages/home.html` een `<link>` in de `<head>`:
 
-```python showLineNumbers
-@app.get("/mooi", response_class=HTMLResponse)
-async def mooi():
-    return """
-    <!DOCTYPE html>
-    <html>
-        <head>
-            <title>Mooi</title>
-            <link rel="stylesheet" href="/static/css/style.css">
-        </head>
-        <body>
-            <h1>Mooie pagina</h1>
-            <p>De CSS komt uit een apart bestand!</p>
-        </body>
-    </html>
-    """
+```html
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Home</title>
+        <link rel="stylesheet" href="/static/css/style.css">
+    </head>
+    <body>
+        <h1>Welkom</h1>
+        <p>De CSS komt uit een eigen bestand.</p>
+    </body>
+</html>
 ```
 
-<Regel n={8}>
-De `<link>` laadt de CSS uit het aparte bestand, via de URL die `app.mount` net heeft aangemaakt. De browser vraagt dat bestand zelf op, als tweede verzoek na de pagina. Dezelfde regel kun je op elke pagina zetten; dan delen ze één stylesheet.
-</Regel>
+De `<link>` laadt de CSS via de URL die `app.mount` net heeft aangemaakt. De browser vraagt dat bestand zelf op, als tweede verzoek na de pagina. Dezelfde regel kun je op elke pagina zetten; dan delen ze één stylesheet.
 
-</CodeUitleg>
+:::note
+Omdat `pages` ook in `static` staat, is `home.html` nu ook bereikbaar op `/static/pages/home.html`. Dat kan geen kwaad, maar link in je pagina's altijd naar het endpoint, zoals `/`, en niet naar het bestand.
+:::
 
 ## Testen
 
-Ga naar [http://127.0.0.1:8000/mooi](http://127.0.0.1:8000/mooi). De heading is blauw en de tekst grijs — de CSS uit het aparte bestand werkt.
+Ga naar [http://127.0.0.1:8000](http://127.0.0.1:8000). De kop is blauw en de tekst grijs: de CSS uit het eigen bestand werkt.
 
 :::danger[Gaat er iets mis?]
 CSS werkt niet? Check of `app.mount("/static", ...)` in je code staat en of het pad in `<link>` klopt. Bekijk de [troubleshooting pagina](/docs/troubleshooting) voor meer oplossingen.
 :::
 
+## Als je wijziging niet doorkomt
+
+Pas je `style.css` aan en blijft de kop blauw? Dan kijk je waarschijnlijk naar een oude kopie. De browser bewaart van sommige antwoorden een kopie, de **cache**. Vraagt hij hetzelfde adres nog eens, dan pakt hij soms die kopie in plaats van de server te vragen. Bij de JSON van je endpoints gebeurt dat zelden, bij bestanden zoals je CSS wel.
+
+In het tabblad Netwerk uit [Kijken wat de browser doet](/docs/FastAPI/devtools-netwerk) zie je het aan de kolom Grootte: daar staat dan **(schijfcache)** of **(disk cache)** in plaats van een aantal bytes. Twee manieren om het te voorkomen:
+
+- Bovenin het tabblad Netwerk staat het vinkje **Cache uitzetten** (Disable cache). Zet het aan; het werkt zolang de ontwikkelaarstools open staan.
+- Klik met de rechtermuisknop op de herlaadknop van je browser en kies **Cache wissen en geforceerd opnieuw laden**. Die keuze bestaat alleen als de ontwikkelaarstools open staan. Sneller is **Ctrl+Shift+R**.
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - Wat gebeurt er?
 
-Je maakt twee endpoints die allebei dezelfde CSS laden:
+Je hebt twee pagina's, `home.html` en `about.html`, en in allebei staat dezelfde regel:
 
-```python
-@app.get("/pagina1", response_class=HTMLResponse)
-async def pagina1():
-    return """...<link rel="stylesheet" href="/static/css/style.css">..."""
-
-@app.get("/pagina2", response_class=HTMLResponse)
-async def pagina2():
-    return """...<link rel="stylesheet" href="/static/css/style.css">..."""
+```html
+<link rel="stylesheet" href="/static/css/style.css">
 ```
 
-**Vraag:** Wat gebeurt er met pagina2 als je de CSS in `style.css` aanpast?
+**Vraag:** wat gebeurt er met `about.html` als je de kleur in `style.css` aanpast?
 
 <details>
 <summary>Tip</summary>
@@ -124,33 +128,33 @@ Beide pagina's laden hetzelfde bestand. Wat betekent dat als je dat ene bestand 
 <details>
 <summary>Antwoord</summary>
 
-Pagina2 verandert ook. Beide pagina's laden hetzelfde CSS bestand. Als je dat bestand aanpast, veranderen alle pagina's die het gebruiken.
+`about.html` verandert ook. Beide pagina's laden hetzelfde CSS-bestand, dus als je dat bestand aanpast, veranderen alle pagina's die het gebruiken.
 
 </details>
 
 ### Opdracht 2: Run
 
-Maak de `static/css/style.css` en het `/mooi` endpoint uit het voorbeeld. Start de server en controleer of de styling werkt.
+Maak `static/css/style.css` en de `<link>` in `home.html` uit het voorbeeld. Start de server en controleer of de styling werkt. Pas daarna de kleur aan en kijk in Netwerk of de nieuwe CSS binnenkomt.
 
 ### Opdracht 3: Investigate - Ander pad
 
-Wat gebeurt er als je `app.mount("/static", ...)` verandert naar `app.mount("/bestanden", ...)`? Laadt de CSS dan nog?
+Wat gebeurt er als je `app.mount("/static", ...)` verandert in `app.mount("/bestanden", ...)`? Laadt de CSS dan nog?
 
 <details>
 <summary>Antwoord</summary>
 
-Nee. De CSS laadt niet meer, want de `<link>` tag verwijst naar `/static/css/style.css`, maar dat pad bestaat niet meer. Je zou de link moeten aanpassen naar `/bestanden/css/style.css`.
+Nee. De `<link>` verwijst naar `/static/css/style.css`, maar dat adres bestaat niet meer. In Netwerk zie je bij `style.css` een 404. Je zou de link moeten aanpassen naar `/bestanden/css/style.css`.
 
 </details>
 
 ### Opdracht 4: Make - Eigen CSS
 
-Maak een eigen `style.css` met minimaal 3 CSS regels en een endpoint dat deze CSS gebruikt.
+Geef je `style.css` minstens drie eigen regels, bijvoorbeeld een achtergrondkleur, een lettergrootte en een kleur voor je kop.
 
 <details>
 <summary>Tip</summary>
 
-Maak een CSS bestand in `static/css/` en koppel het met `<link rel="stylesheet" href="/static/css/style.css">` in de `<head>` van je HTML.
+Je hoeft niets aan `main.py` of `home.html` te veranderen: alleen `style.css` verandert. Zie je niets, denk dan aan de cache.
 
 </details>
 
@@ -164,73 +168,45 @@ p { font-size: 18px; }
 body { background-color: lightyellow; }
 ```
 
-`main.py`:
-```python
-@app.get("/mijn_pagina", response_class=HTMLResponse)
-async def mijn_pagina():
-    return """
-    <!DOCTYPE html>
-    <html>
-        <head>
-            <link rel="stylesheet" href="/static/css/style.css">
-        </head>
-        <body>
-            <h1>Mijn pagina</h1>
-            <p>Met eigen styling!</p>
-        </body>
-    </html>
-    """
-```
-
 </details>
 
-### Opdracht 5: Make - Twee CSS bestanden
+### Opdracht 5: Make - Twee stijlen
 
-Maak twee CSS bestanden (`style1.css` en `style2.css`) met verschillende kleuren. Maak twee endpoints die elk een ander CSS bestand gebruiken.
+Maak een tweede pagina `about.html` met een eigen CSS-bestand `about.css`, zodat `/` en `/about` er verschillend uitzien.
 
 <details>
 <summary>Tip</summary>
 
-Maak twee bestanden in `static/css/`. Gebruik in het ene endpoint `href="/static/css/style1.css"` en in het andere `href="/static/css/style2.css"`.
+Maak `static/css/about.css` en zet in `about.html` een `<link>` naar `/static/css/about.css`. Voor de pagina zelf heb je een endpoint `/about` nodig, net als in [HTML in bestanden](/docs/FastAPI/html_bestanden).
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-`static/css/style1.css`:
-```css
-h1 { color: red; }
-body { background-color: lightyellow; }
-```
-
-`static/css/style2.css`:
+`static/css/about.css`:
 ```css
 h1 { color: green; }
 body { background-color: lightblue; }
 ```
 
-```python
-@app.get("/rood", response_class=HTMLResponse)
-async def rood():
-    return """
-    <!DOCTYPE html>
-    <html>
-        <head><link rel="stylesheet" href="/static/css/style1.css"></head>
-        <body><h1>Rode pagina</h1></body>
-    </html>
-    """
+`static/pages/about.html`:
+```html
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="/static/css/about.css">
+    </head>
+    <body>
+        <h1>Over mij</h1>
+    </body>
+</html>
+```
 
-@app.get("/groen", response_class=HTMLResponse)
-async def groen():
-    return """
-    <!DOCTYPE html>
-    <html>
-        <head><link rel="stylesheet" href="/static/css/style2.css"></head>
-        <body><h1>Groene pagina</h1></body>
-    </html>
-    """
+```python
+@app.get("/about")
+async def about():
+    return FileResponse("static/pages/about.html")
 ```
 
 </details>
-

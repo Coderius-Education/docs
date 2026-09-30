@@ -17,7 +17,7 @@ Druk op **F12**. Werkt dat niet, klik dan met de rechtermuisknop ergens op de pa
 - **Netwerk**: elk verzoek dat de browser stuurt, met het antwoord.
 - **App**: wat de browser voor deze site bewaart, zoals cookies. Firefox noemt dit tabblad Opslag.
 
-De namen staan hier in het Nederlands met het Engels erachter, want Chrome en Edge wisselen daarin. Deze les gaat over Netwerk. Console en Elementen krijgen een eigen les, [Console en Elementen](/docs/FastAPI/devtools-console), en App komt bij [cookies](/docs/FastAPI/cookies).
+De namen staan hier in het Nederlands met het Engels erachter, want Chrome en Edge wisselen daarin. Deze les gaat over Netwerk. Console en Elementen krijgen later een eigen les in de uitbreiding over JavaScript, [Console en Elementen](/docs/FastAPI/devtools-console), en App komt bij de uitbreiding over [cookies](/docs/FastAPI/cookies).
 
 ## Het tabblad Netwerk
 
@@ -62,15 +62,6 @@ Soms staat er in Netwerk niets, en de volgende keer wel. Dat ligt bijna altijd a
 - Je ging naar een andere pagina. Bij elke nieuwe pagina, ook na een formulier dat je doorstuurt, begint de lijst opnieuw. Wil je zien wat er vóór de overstap gebeurde, zet dan bovenin het vinkje **Logboek behouden** (Preserve log) aan.
 - Er staat nog een filter aan. Onder de knoppen staat een rij soorten: Alle (All), Fetch/XHR, Doc, CSS, JS en meer. Chrome onthoudt welke je het laatst koos, ook de volgende dag. Staat Fetch/XHR aan, dan zie je geen pagina's. Klik op Alle, en maak het zoekvak links ernaast leeg.
 - Opnemen staat uit. Helemaal links staat een rondje. Is het rood, dan neemt Netwerk op. Is het grijs, dan heb je erop geklikt of per ongeluk Ctrl+E gedrukt. Klik erop en herlaad.
-
-## Als je wijziging niet doorkomt
-
-De browser bewaart van sommige antwoorden een kopie, de **cache**. Vraagt hij hetzelfde adres nog eens, dan pakt hij soms die kopie in plaats van de server te vragen. Dat zie je in Netwerk aan de kolom Grootte: daar staat dan **(schijfcache)** of **(disk cache)** in plaats van een aantal bytes.
-
-Bij de JSON van je endpoint gebeurt dat zelden. Bij bestanden wel, en die komen vanaf [CSS en afbeeldingen (static files)](/docs/FastAPI/static_files). Twee manieren om het te voorkomen:
-
-- Bovenin het tabblad Netwerk staat het vinkje **Cache uitzetten** (Disable cache). Zet het aan; het werkt zolang de ontwikkelaarstools open staan.
-- Klik met de rechtermuisknop op de herlaadknop van je browser en kies **Cache wissen en geforceerd opnieuw laden**. Die keuze bestaat alleen als de ontwikkelaarstools open staan. Sneller is **Ctrl+Shift+R**.
 
 ## Testen
 

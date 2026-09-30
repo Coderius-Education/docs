@@ -83,12 +83,7 @@ Let op `raise` in plaats van `return`. Je geeft geen antwoord terug, je onderbre
 
 ## Linken vanuit de lijst
 
-Om op de detailpagina te komen heb je in je lijst de sleutel nodig. Loop dus over `db.items()`:
-
-```python
-with SqliteDict("gastenboek.db") as db:
-    alle_berichten = list(db.items())
-```
+Sinds het [verwijderen](/docs/FastAPI/redirect#verwijderen-en-terug) stuurt `/berichten` de sleutels al mee, via `db.items()`. Dezelfde sleutel zet je nu in een link:
 
 ```html
 {% for sleutel, bericht in berichten %}

@@ -1,6 +1,6 @@
 # Cheatsheet
 
-Snelle referentie voor alles wat je hebt geleerd. Klik op een onderwerp om het te openen.
+Snelle referentie voor alles wat je hebt geleerd. Klik op een onderwerp om het te openen. Welk bestand in welke map hoort, staat bij [Projectstructuur](/docs/FastAPI/projectstructuur).
 
 
 ## FastAPI

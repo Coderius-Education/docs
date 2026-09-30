@@ -11,19 +11,19 @@ je-project/
 
 Alleen een Python bestand — meer heb je niet nodig.
 
-## Bij [CSS en afbeeldingen (static files)](/docs/FastAPI/static_files)
+## Bij [HTML in bestanden](/docs/FastAPI/html_bestanden)
 
 ```
 je-project/
 ├── main.py
 └── static/
-    └── css/
-        └── style.css
+    └── pages/
+        └── home.html
 ```
 
-CSS in een apart bestand, bereikbaar via `/static/css/style.css`.
+HTML staat nu in aparte bestanden.
 
-## Bij [HTML in bestanden](/docs/FastAPI/html_bestanden)
+## Bij [CSS in een eigen bestand (static files)](/docs/FastAPI/static_files)
 
 ```
 je-project/
@@ -35,7 +35,7 @@ je-project/
         └── home.html
 ```
 
-HTML staat nu ook in aparte bestanden.
+CSS in een apart bestand, bereikbaar via `/static/css/style.css`.
 
 ## Bij [Afbeeldingen tonen](/docs/FastAPI/afbeeldingen)
 
@@ -81,21 +81,23 @@ Er komt een `templates/` folder bij voor Jinja2 templates.
 ```
 je-project/
 ├── main.py
-├── mijn_data.db
+├── namen.db
+├── gastenboek.db
 ├── static/
 │   ├── css/
 │   │   └── style.css
 │   └── pages/
 │       ├── home.html
-│       ├── groet_form.html
-│       └── naam_opslaan.html
+│       ├── naam_opslaan.html
+│       └── gastenboek_form.html
 └── templates/
+    ├── dobbelsteen.html
     └── groet_resultaat.html
 ```
 
-Het `.db` bestand wordt automatisch aangemaakt door `sqlitedict`.
+De `.db`-bestanden maakt `sqlitedict` zelf aan, de eerste keer dat je iets opslaat.
 
-## Bij [Alles tonen: een for-lus in je template](/docs/FastAPI/lijst_tonen) en [Eén bericht tonen](/docs/FastAPI/detailpagina)
+## Bij [Alles tonen: een for-lus in je template](/docs/FastAPI/lijst_tonen) en [Eén item tonen: path-parameters en 404](/docs/FastAPI/detailpagina)
 
 ```
 je-project/
@@ -161,7 +163,7 @@ Je JavaScript komt naast htmx te staan, in dezelfde `static`-map. Aan `main.py` 
 
 | Map | Wat staat er? | Voorbeeld |
 |-----|---------------|-----------|
-| `/` | Python code en database | `main.py`, `mijn_data.db` |
+| `/` | Python code en database | `main.py`, `gastenboek.db` |
 | `static/css/` | CSS bestanden | `style.css` |
 | `static/js/` | JavaScript en htmx | `app.js`, `htmx.min.js` |
 | `static/pages/` | Vaste HTML pagina's | `home.html`, `form.html` |
