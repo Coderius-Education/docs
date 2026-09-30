@@ -550,6 +550,6 @@ func reset():
     levens = 3
 ```
 
-Vergeet niet dit script als **Autoload** in te stellen via Project Settings.
+Vergeet niet dit script als **Autoload** in te stellen via Project Settings, tabblad Globals.
 
 </details>

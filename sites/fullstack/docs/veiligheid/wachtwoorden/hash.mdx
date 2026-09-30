@@ -190,7 +190,7 @@ zie je dat dat met zout anders moet.
 ```python
 import hashlib
 
-from fastapi import FastAPI, Form
+from fastapi import FastAPI, Form, HTTPException
 from sqlitedict import SqliteDict
 
 app = FastAPI()
@@ -198,6 +198,8 @@ app = FastAPI()
 @app.post("/registreer")
 async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
     with SqliteDict("gebruikers.db") as db:
+        if naam in db:
+            raise HTTPException(status_code=400, detail="Deze naam is al bezet")
         db[naam] = hashlib.sha256(wachtwoord.encode()).hexdigest()
         db.commit()
     return {"bericht": f"Welkom, {naam}"}

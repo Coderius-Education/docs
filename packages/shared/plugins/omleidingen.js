@@ -11,6 +11,9 @@ function ontsnap(tekst) {
   return tekst.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 }
 
+// Het anker van het oude adres (/oud#stap-2) gaat mee naar het nieuwe, tenzij
+// het doel zelf al een anker heeft (/nieuw#sectie): twee ankers achter elkaar
+// (/nieuw#sectie#stap-2) laten de browser bovenaan de pagina beginnen.
 function omleidingHtml(naar, canoniek = naar) {
   const doel = ontsnap(naar);
   return `<!doctype html>
@@ -21,7 +24,7 @@ function omleidingHtml(naar, canoniek = naar) {
 <meta name="robots" content="noindex">
 <link rel="canonical" href="${ontsnap(canoniek)}">
 <meta http-equiv="refresh" content="0; url=${doel}">
-<script>location.replace(${JSON.stringify(naar)} + location.hash);</script>
+<script>location.replace(${JSON.stringify(naar)}${naar.includes('#') ? '' : ' + location.hash'});</script>
 </head>
 <body>
 <p>Deze les is verhuisd naar <a href="${doel}">${doel}</a>.</p>
@@ -55,7 +58,9 @@ function schrijfOmleidingen(outDir, baseUrl, omleidingen, url = '') {
       throw new Error(`omleidingen: op ${van} staat weer een echte pagina; haal hem uit de lijst`);
     }
     fs.mkdirSync(path.dirname(bestand), { recursive: true });
-    fs.writeFileSync(bestand, omleidingHtml(basis + naar, url.replace(/\/$/, '') + basis + naar));
+    // Een canonieke URL heeft geen anker.
+    const canoniek = url.replace(/\/$/, '') + basis + naar.split('#')[0];
+    fs.writeFileSync(bestand, omleidingHtml(basis + naar, canoniek));
   }
 }
 

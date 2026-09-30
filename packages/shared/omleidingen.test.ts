@@ -26,6 +26,24 @@ describe('omleidingen', () => {
     expect(html).toContain('<meta name="robots" content="noindex">');
   });
 
+  it('geeft het anker van het doel voorrang, zonder er een tweede achter te plakken', () => {
+    // /click_golfer/hole-in-one#x werd /click_golfer/hout#hole-in-one#x, en
+    // de browser begon dan bovenaan de pagina in plaats van bij Hole in one.
+    const uit = mkdtempSync(join(tmpdir(), 'omleiding-'));
+    schrijfOmleidingen(
+      uit,
+      '/',
+      [{ van: '/click_golfer/hole-in-one', naar: '/click_golfer/hout#hole-in-one' }],
+      'https://robotica.coderius.nl',
+    );
+    const html = readFileSync(join(uit, 'click_golfer/hole-in-one/index.html'), 'utf8');
+    expect(html).toContain('location.replace("/click_golfer/hout#hole-in-one");');
+    expect(html).not.toContain('location.hash');
+    expect(html).toContain(
+      '<link rel="canonical" href="https://robotica.coderius.nl/click_golfer/hout">',
+    );
+  });
+
   it('zet de baseUrl van de site voor het doel', () => {
     const uit = mkdtempSync(join(tmpdir(), 'omleiding-'));
     schrijfOmleidingen(uit, '/cursus/', [{ van: '/docs/a', naar: '/docs/b' }]);

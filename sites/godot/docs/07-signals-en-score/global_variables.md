@@ -47,7 +47,7 @@ Dat is alles. Dit script bevat variabelen die je overal wilt gebruiken.
 Dit is de belangrijkste stap. Door het script als **Autoload** te registreren, laadt Godot het automatisch bij het opstarten en is het overal beschikbaar.
 
 1. Ga naar **Project** → **Project Settings**.
-2. Klik bovenin op het tabblad **Autoload**. Zie je het niet meteen? Het tabblad staat naast **General** — eventueel even doorscrollen.
+2. Klik bovenin op het tabblad **Globals**, en daarbinnen op Autoload. Het tabblad Globals staat naast **General**; is het venster smal, scroll dan even door de rij.
 3. Klik op het mapje naast **Path** en kies `global.gd`.
 4. Bij **Node Name** vul je `Global` in (met hoofdletter).
 5. Klik op **Add**.
@@ -212,7 +212,7 @@ func _on_body_entered(body: Node2D) -> void:
 
 **Oplossing:**
 
-1. Ga naar **Project → Project Settings → Autoload**.
+1. Ga naar **Project → Project Settings → Globals → Autoload**.
 2. Klik op het mapje naast **Path** en kies `global.gd`.
 3. Vul bij **Node Name** precies `Global` in (met hoofdletter G).
 4. Klik op **Add**.

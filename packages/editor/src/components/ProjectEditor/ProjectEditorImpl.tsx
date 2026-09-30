@@ -765,7 +765,7 @@ export default function ProjectEditorImpl({
             </div>
             {Preview && (
               <div className={styles.previewPane}>
-                <Preview session={session} />
+                <Preview session={session} apparaten />
               </div>
             )}
             <Console events={session.events} />
