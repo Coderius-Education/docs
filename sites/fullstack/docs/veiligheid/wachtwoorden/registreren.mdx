@@ -15,7 +15,7 @@ expres traag. In je server verandert alleen `/registreer`.
 
 ```python showLineNumbers
 from argon2 import PasswordHasher
-from fastapi import FastAPI, Form
+from fastapi import FastAPI, Form, HTTPException
 from sqlitedict import SqliteDict
 
 app = FastAPI()
@@ -24,6 +24,8 @@ ph = PasswordHasher()
 @app.post("/registreer")
 async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
     with SqliteDict("gebruikers.db") as db:
+        if naam in db:
+            raise HTTPException(status_code=400, detail="Deze naam is al bezet")
         db[naam] = ph.hash(wachtwoord)
         db.commit()
     return {"bericht": f"Welkom, {naam}"}
@@ -33,7 +35,7 @@ async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
 Eén `PasswordHasher` voor de hele server, met instellingen die veilig zijn voor nu.
 </Regel>
 
-<Regel n={11}>
+<Regel n={13}>
 `ph.hash` maakt de hash, met een nieuw zout erin. Die gaat de database in, het wachtwoord zelf niet.
 </Regel>
 
@@ -129,7 +131,7 @@ de codes allemaal, ook die van Sara en Noor. Dat komt door het zout.
 import hashlib
 
 from argon2 import PasswordHasher
-from fastapi import FastAPI, Form
+from fastapi import FastAPI, Form, HTTPException
 from sqlitedict import SqliteDict
 
 app = FastAPI()
@@ -138,6 +140,8 @@ ph = PasswordHasher()
 @app.post("/registreer")
 async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
     with SqliteDict("gebruikers.db") as db:
+        if naam in db:
+            raise HTTPException(status_code=400, detail="Deze naam is al bezet")
         db[naam] = ph.hash(wachtwoord)
         db.commit()
     return {"bericht": f"Welkom, {naam}"}

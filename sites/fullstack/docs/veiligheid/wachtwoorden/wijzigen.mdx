@@ -274,7 +274,7 @@ Het formulier voor inloggen is hetzelfde, met `action="/inloggen"`.
 ```python
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
-from fastapi import FastAPI, Form
+from fastapi import FastAPI, Form, HTTPException
 from sqlitedict import SqliteDict
 
 app = FastAPI()
@@ -283,6 +283,8 @@ ph = PasswordHasher()
 @app.post("/registreer")
 async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
     with SqliteDict("gebruikers.db") as db:
+        if naam in db:
+            raise HTTPException(status_code=400, detail="Deze naam is al bezet")
         db[naam] = ph.hash(wachtwoord)
         db.commit()
     return {"bericht": f"Welkom, {naam}"}

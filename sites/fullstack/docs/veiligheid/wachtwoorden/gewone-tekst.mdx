@@ -25,7 +25,7 @@ zoals de gebruiker het intypt. Met een [formulier](/docs/FastAPI/forms) en de
 <CodeUitleg>
 
 ```python showLineNumbers
-from fastapi import FastAPI, Form
+from fastapi import FastAPI, Form, HTTPException
 from sqlitedict import SqliteDict
 
 app = FastAPI()
@@ -33,6 +33,8 @@ app = FastAPI()
 @app.post("/registreer")
 async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
     with SqliteDict("gebruikers.db") as db:
+        if naam in db:
+            raise HTTPException(status_code=400, detail="Deze naam is al bezet")
         db[naam] = wachtwoord
         db.commit()
     return {"bericht": f"Welkom, {naam}"}
@@ -45,11 +47,17 @@ async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
     return {"bericht": "Naam of wachtwoord klopt niet"}
 ```
 
-<Regel n={9}>
+<Regel n={9} tot={10}>
+Bestaat de naam al, dan weigert de server hem met een 400. Zonder die controle
+overschrijft iemand die zich als `sara` registreert het wachtwoord van Sara, en
+kan hij daarna als haar inloggen.
+</Regel>
+
+<Regel n={11}>
 Het wachtwoord gaat letterlijk de database in, onder de naam van de gebruiker.
 </Regel>
 
-<Regel n={16}>
+<Regel n={18}>
 Inloggen vergelijkt wat de gebruiker intypt met wat er in de database staat. Staat de naam er niet in, dan geeft `db.get` `None`, en dat is nooit gelijk aan een wachtwoord.
 </Regel>
 
@@ -186,7 +194,7 @@ Daarom bewaart een site een wachtwoord nooit als gewone tekst.
 <summary>Zo ziet je `main.py` er nu uit</summary>
 
 ```python
-from fastapi import FastAPI, Form
+from fastapi import FastAPI, Form, HTTPException
 from sqlitedict import SqliteDict
 
 app = FastAPI()
@@ -194,6 +202,8 @@ app = FastAPI()
 @app.post("/registreer")
 async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
     with SqliteDict("gebruikers.db") as db:
+        if naam in db:
+            raise HTTPException(status_code=400, detail="Deze naam is al bezet")
         db[naam] = wachtwoord
         db.commit()
     return {"bericht": f"Welkom, {naam}"}
