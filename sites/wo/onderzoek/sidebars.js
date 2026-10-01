@@ -184,6 +184,7 @@ const sidebars = {
       label: 'Werkvormen',
       items: [
         'werkvormen/overzicht',
+        'werkvormen/vragenkaartjes',
         'werkvormen/scherp-je-vraag',
         'werkvormen/van-vijftig-naar-drie',
         'werkvormen/methoden-kennisleer',
