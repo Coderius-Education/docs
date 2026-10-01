@@ -32,8 +32,7 @@ naar `main` deployt automatisch (`.github/workflows/deploy.yml`).
   een pagina, dan printen alleen dat blok, de titel en de `alleen-print`-regel), `alleen-print`
   (alleen op papier), `geen-print` (nooit op papier), `invulschema` (schrijfruimte in de
   laatste kolom), `invulschema-kort` (compacte variant: twee blokken passen op één A4),
-  `invulschema-gelijk` (gelijke kolommen), `invulschema-deelvragen` (brede eerste, smalle
-  tweede kolom), `nieuwe-pagina` (begin dit blok op een nieuw vel) en `kaartjesvel`/`kaartje` (kaartjes om uit te knippen; schrijflijnen zijn randen, want browsers printen achtergronden standaard niet). De schrijfruimte staat
+  `invulschema-gelijk` (gelijke kolommen), `nieuwe-pagina` (begin dit blok op een nieuw vel) en `kaartjesvel`/`kaartje` (kaartjes om uit te knippen; schrijflijnen zijn randen, want browsers printen achtergronden standaard niet). De schrijfruimte staat
   in `--schrijfruimte`. Controleer na elke wijziging hoeveel A4 een werkblad beslaat. Een pagina zonder `printbaar`-blok print
   gewoon helemaal.
 - `src/data/begrippen.js` is de enige bron voor definities: tooltips (`<B t="…"/>`),

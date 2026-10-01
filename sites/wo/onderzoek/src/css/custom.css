@@ -78,17 +78,6 @@
   padding: 0.3rem 0.6rem;
 }
 
-/* Deelvragenschema: brede vraagkolom, smalle functiekolom. */
-.invulschema-deelvragen tbody td:first-child,
-.invulschema-deelvragen thead th:first-child {
-  width: 44%;
-}
-
-.invulschema-deelvragen tbody td:nth-child(2),
-.invulschema-deelvragen thead th:nth-child(2) {
-  width: 16%;
-}
-
 /* Gelijke kolommen, voor schema's met meer dan twee kolommen. */
 .invulschema-gelijk tbody td:first-child,
 .invulschema-gelijk thead th:first-child {

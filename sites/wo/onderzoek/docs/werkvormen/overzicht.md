@@ -14,6 +14,6 @@ Elke werkvorm is geschreven als handout: je loopt genummerde stappen langs en vu
 | Werkvorm | Waar gaat het over? | Duur |
 |---|---|---|
 | [Vragenkaartjes](./vragenkaartjes.mdx) | Je hoofdvraag en deelvragen op kaartjes schrijven, neerleggen en toetsen: elke vraag los en de samenhang ertussen, met een raadtest als afsluiter | 30 tot 45 minuten |
-| [Scherp je vraag](./scherp-je-vraag.mdx) | Van onderwerp naar een scherpe [hoofdvraag](../vragen/hoofd-en-deelvragen.mdx), met deelvragen, hypothesen en wat je gaat meten — beoordeeld door een klasgenoot | 2 lesuren |
+| [Scherp je vraag](./scherp-je-vraag.mdx) | Van onderwerp naar een scherpe [hoofdvraag](../vragen/hoofd-en-deelvragen.mdx), met deelvragen en wat je gaat meten — beoordeeld door een klasgenoot | 2 lesuren |
 | [Methoden door de kennisleer-bril](./methoden-kennisleer.mdx) | Elke onderzoeksmethode analyseren met de vier brillen uit de [kennisleer](../kennisleer/hoe-weet-je-iets.mdx) | 1 tot 2 lesuren |
 | [Van vijftig naar drie](./van-vijftig-naar-drie.mdx) | Voor één eigen deelvraag de hele [literatuurtrechter](../literatuurstudie/van-zoeken-tot-lezen.mdx) doorlopen: zoeken, scannen, beoordelen, skimmen, kiezen | 2 lesuren plus huiswerk |
