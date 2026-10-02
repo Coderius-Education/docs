@@ -7,7 +7,7 @@
   ]}
 />
 
-Je koppelt een formulier aan een database, zodat wat een bezoeker invult bewaard blijft, ook als je de server stopt. Je begint met één naam en maakt daarna een gastenboek dat alle berichten bewaart.
+Wat een bezoeker in een formulier invult, zet je nu in een database. Dan staat het er nog als je de server stopt. Eerst bewaar je één naam, daarna bouw je een gastenboek dat alle berichten bewaart.
 
 ## Voorbeeld: Naam opslaan
 
@@ -39,7 +39,7 @@ En onder je andere endpoints:
 <CodeUitleg>
 
 ```python showLineNumbers
-@app.get("/bewaar")
+@app.get("/opslaan")
 async def naam_formulier():
     return FileResponse("static/pages/naam_opslaan.html")
 
@@ -86,7 +86,7 @@ async def toon_naam():
 
 ## De naam testen
 
-1. Ga naar `http://127.0.0.1:8000/bewaar`
+1. Ga naar `http://127.0.0.1:8000/opslaan`
 2. Vul een naam in en klik Opslaan
 3. **Stop de server** en start opnieuw
 4. Ga naar `http://127.0.0.1:8000/toon_naam`. Je naam staat er nog: hij is bewaard in `namen.db`.
@@ -153,7 +153,7 @@ De waarde is een dictionary met beide velden. Zo blijft bij elkaar wat bij elkaa
 </Regel>
 
 <Regel n={16}>
-`db.values()` geeft alle waarden, zonder sleutels. `list()` maakt er een lijst van die FastAPI als JSON kan terugsturen.
+`db.values()` geeft alle waarden, zonder sleutels, maar haalt ze pas op als iets erdoorheen loopt. `list()` doet dat meteen, binnen het `with`-blok. Zonder `list()` loopt FastAPI er pas doorheen als hij de JSON maakt, en dan is de database al dicht: je krijgt `AttributeError: 'NoneType' object has no attribute 'select'`.
 </Regel>
 
 </CodeUitleg>
@@ -275,7 +275,7 @@ async def groet_verwerk(request: Request, naam: str = Form(...)):
         {"naam": naam}
     )
 
-@app.get("/bewaar")
+@app.get("/opslaan")
 async def naam_formulier():
     return FileResponse("static/pages/naam_opslaan.html")
 
@@ -400,7 +400,7 @@ async def toon_score():
 
 ### Opdracht 5: Make - Hoeveel berichten
 
-Maak een endpoint `/aantal` dat teruggeeft hoeveel berichten er in het gastenboek staan: `{"aantal": 3}`.
+Maak een endpoint `/aantal` dat teruggeeft hoeveel berichten er in het gastenboek staan: `{"aantal":3}`.
 
 <details>
 <summary>Tip</summary>

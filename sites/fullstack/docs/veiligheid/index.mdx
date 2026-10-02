@@ -12,8 +12,8 @@ verzoek zonder je formulier, of vraagt iets wat niet van hem is.
 
 ## Het ene idee
 
-Alle reeksen komen neer op één regel, die je al kent uit
-[Server of browser?](/docs/FastAPI/server-of-browser):
+Alle reeksen komen neer op één regel. Deed je de uitbreiding JavaScript, dan
+ken je hem al uit [Server of browser?](/docs/FastAPI/server-of-browser):
 
 > Wat van de bezoeker komt, vertrouw je niet. De controle hoort op de server.
 
@@ -24,9 +24,15 @@ tegenhoudt.
 
 ## Wat je al moet kunnen
 
-De route bouwt op de hele FastAPI-route, dus ook op de drie uitbreidingen:
-formulieren, de database, templates, htmx, cookies en sessies. Heb je die gedaan, dan heb je ook een gastenboek om te
-beschermen.
+De route bouwt op de hele FastAPI-route: de basis, met formulieren, de
+database en templates, plus de uitbreidingen htmx, JavaScript en cookies en
+sessies. Heb je die gedaan, dan heb je ook een gastenboek om te beschermen.
+
+Met alleen de basis kun je al beginnen aan
+[Invoer controleren](/docs/veiligheid/invoer/maxlength). Waar die reeks naar
+[Server of browser?](/docs/FastAPI/server-of-browser) verwijst, is dat een les
+uit de uitbreiding JavaScript die je later doet; de reeks is ook zonder die
+les te volgen.
 
 ## De spelregel
 
@@ -66,9 +72,9 @@ deze tegen:
 | Code | Betekent | Wie stuurt hem | Waar je hem ziet |
 |:---:|---|---|---|
 | `200` | gelukt | je endpoint, als alles goed gaat | overal |
-| `400` | dit verzoek klopt niet | jij, met `HTTPException`, voor een regel die je zelf bedacht | [Invoer, les 4](/docs/veiligheid/invoer/inhoud) |
+| `400` | dit verzoek klopt niet | meestal jij, met `HTTPException`, voor een regel die je zelf bedacht; Starlette zelf bij een veld boven een megabyte | [Invoer, les 1 en 4](/docs/veiligheid/invoer/inhoud) |
 | `403` | dit mag jij niet | jij, als de bezoeker iets van een ander wil | [Wie mag wat, les 2](/docs/veiligheid/toegang/controle) |
-| `404` | bestaat niet | FastAPI bij een onbekend pad, of jij bij een onbekend item | [Detailpagina](/docs/FastAPI/detailpagina) |
+| `404` | bestaat niet | FastAPI bij een onbekend pad, of jij bij een onbekend item | [Eén item tonen: path-parameters en 404](/docs/FastAPI/detailpagina) |
 | `422` | een veld past niet bij `Form` | FastAPI zelf, voordat je functie draait | [Invoer, les 2 en 3](/docs/veiligheid/invoer/grenzen) |
 | `429` | te veel verzoeken | `slowapi`, je verzoeklimiet | [Te veel verzoeken, les 4](/docs/veiligheid/dos/limiet) |
 | `500` | er ging iets mis in de server | niemand bewust: een fout in je code | de terminal van je server |

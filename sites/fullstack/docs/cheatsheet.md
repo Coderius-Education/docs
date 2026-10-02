@@ -14,7 +14,7 @@ from fastapi import FastAPI
 app = FastAPI()
 ```
 
-Eén keer, bovenaan, direct na de imports. Alle endpoints komen eronder.
+Dit staat één keer in je bestand, direct na de imports, en alle endpoints komen eronder.
 
 </details>
 
@@ -35,7 +35,7 @@ Open `http://127.0.0.1:8000`. Stoppen doe je met Ctrl+C in de terminal.
 ```python
 @app.get("/")
 async def root():
-    return {"bericht": "Hallo wereld"}
+    return {"bericht": "Hallo wereld!"}
 ```
 
 </details>
@@ -49,6 +49,7 @@ from fastapi.responses import HTMLResponse
 @app.get("/pagina", response_class=HTMLResponse)
 async def pagina():
     return """
+    <!DOCTYPE html>
     <html>
         <body><h1>Hallo</h1></body>
     </html>
@@ -212,6 +213,21 @@ Controleer aan het begin van je endpoint, vóór je iets opslaat. Een `maxlength
 </details>
 
 <details>
+<summary>Hoe zet ik de tijd in een antwoord? (datetime.now)</summary>
+
+```python
+from datetime import datetime
+
+@app.get("/tijd")
+async def tijd():
+    return HTMLResponse(f"Het is nu {datetime.now().strftime('%H:%M:%S')}")
+```
+
+`strftime('%H:%M')` geeft alleen uren en minuten, zoals `14:32`.
+
+</details>
+
+<details>
 <summary>Hoe verwijder ik zonder herladen? (@app.delete)</summary>
 
 ```python
@@ -313,7 +329,18 @@ In de cookie staat alleen het sessie-id, de gegevens staan op de server. Haal de
 fastapi dev main.py --host 0.0.0.0
 ```
 
-Zoek je adres met `ipconfig` (Windows) of `ip addr` (macOS/Linux) en geef `http://<jouw-adres>:8000` door.
+Zoek je adres op en geef `http://<jouw-adres>:8000` door:
+
+```bash
+# Windows: de regel IPv4-adres
+ipconfig
+
+# macOS
+ipconfig getifaddr en0
+
+# Linux
+ip addr
+```
 
 **Let op:** iedereen op hetzelfde netwerk kan er dan bij.
 
@@ -337,7 +364,7 @@ De tabbladen die je in deze cursus gebruikt:
 <details>
 <summary>Hoe zie ik welke verzoeken de pagina doet? (tabblad Netwerk)</summary>
 
-Tabblad **Netwerk**, herlaad de pagina. Eén regel per verzoek.
+Open het tabblad **Netwerk** en herlaad de pagina. Elk verzoek krijgt een eigen regel.
 
 - **Status** `200`: gevonden. `404`: het pad klopt niet, of `app.mount` ontbreekt.
 - **Grootte** met **(schijfcache)**: de browser heeft de server niet gevraagd.
@@ -348,9 +375,9 @@ Tabblad **Netwerk**, herlaad de pagina. Eén regel per verzoek.
 <details>
 <summary>Hoe herlaad ik zonder cache? (Ctrl+Shift+R)</summary>
 
-Met de ontwikkelaarstools open: rechtermuisknop op de herlaadknop, dan **Cache wissen en geforceerd opnieuw laden**. Sneltoets: **Ctrl+Shift+R**.
+Met de ontwikkelaarstools open: rechtermuisknop op de herlaadknop, dan **Cache wissen en geforceerd opnieuw laden** (Empty Cache and Hard Reload). Sneltoets: **Ctrl+Shift+R**.
 
-Zolang je aan je site werkt: tabblad **Netwerk**, vinkje **Cache uitzetten** aan.
+Zet zolang je aan je site werkt in het tabblad **Netwerk** het vinkje **Cache uitzetten** aan.
 
 </details>
 
@@ -536,6 +563,7 @@ Hetzelfde bestand geeft je endpoint terug als antwoord op een htmx-verzoek.
 je-project/
 ├── main.py
 ├── gastenboek.db
+├── sessies.db
 ├── static/
 │   ├── css/
 │   │   └── style.css
@@ -543,16 +571,16 @@ je-project/
 │   │   ├── app.js
 │   │   └── htmx.min.js
 │   ├── pages/
-│   │   ├── home.html
-│   │   └── gastenboek_form.html
+│   │   └── home.html
 │   └── kat.jpg
 └── templates/
     ├── bericht.html
     ├── berichten.html
-    └── berichten_lijst.html
+    ├── berichten_lijst.html
+    └── gastenboek.html
 ```
 
-Vaste pagina's staan in `static/pages/`, pagina's met `{{ }}` in `templates/`. De `.db`-bestanden maakt `sqlitedict` zelf aan. Hoe de mappen per les groeien, staat bij [Projectstructuur](/docs/FastAPI/projectstructuur).
+Vaste pagina's staan in `static/pages/`, pagina's met `{{ }}` in `templates/`. Het gastenboekformulier begint als `static/pages/gastenboek_form.html` en verhuist bij [Onthouden met een cookie](/docs/FastAPI/cookies) naar `templates/gastenboek.html`. De `.db`-bestanden maakt `sqlitedict` zelf aan. Hoe de mappen per les groeien, staat bij [Projectstructuur](/docs/FastAPI/projectstructuur).
 
 </details>
 
@@ -578,7 +606,7 @@ with SqliteDict("data.db") as db:
     db.commit()
 ```
 
-Zonder `db.commit()` is je wijziging weg als de server stopt.
+Zonder `db.commit()` is je wijziging weg zodra het `with`-blok sluit: open je de database daarna opnieuw, ook in hetzelfde programma, dan staat hij er niet in.
 
 </details>
 
@@ -666,7 +694,7 @@ Zonder tweede argument geeft `db.get()` `None` als de sleutel niet bestaat, in p
 <details>
 <summary>Hoe koppel ik htmx aan mijn pagina? (htmx.min.js)</summary>
 
-Download `htmx.min.js` (de link staat bij [Zonder herladen met htmx](/docs/FastAPI/htmx)) naar `static/js/`, en in de `<head>` van elke pagina die htmx gebruikt:
+Download `htmx.min.js` (de link staat bij [Zonder herladen met htmx](/docs/FastAPI/htmx)) naar `static/js/`, en zet deze regel in de `<head>` van elke pagina die htmx gebruikt:
 
 ```html
 <script src="/static/js/htmx.min.js"></script>
@@ -678,12 +706,13 @@ Download `htmx.min.js` (de link staat bij [Zonder herladen met htmx](/docs/FastA
 <summary>Hoe stuur ik een verzoek zonder herladen? (hx-post, hx-get, hx-delete)</summary>
 
 ```html
-<form hx-post="/gastenboek" hx-target="#berichten-lijst">
+<form hx-post="/gastenboek" hx-target="#antwoord">
+<p id="antwoord"></p>
 <button hx-get="/berichten/lijst" hx-target="#berichten-lijst">Ververs</button>
 <button hx-delete="/bericht/{{ sleutel }}" hx-target="#bericht-{{ sleutel }}" hx-swap="outerHTML">Verwijderen</button>
 ```
 
-Het endpoint geeft een stukje HTML terug (`HTMLResponse("Bedankt")` of een template zonder `<html>` eromheen), nooit een omleiding.
+Het endpoint geeft een stukje HTML terug (`HTMLResponse("Bedankt")` of een template zonder `<html>` eromheen), nooit een omleiding. Het element uit `hx-target` moet op dezelfde pagina staan als de knop of het formulier; bestaat het niet, dan stuurt htmx geen verzoek.
 
 </details>
 
@@ -693,6 +722,7 @@ Het endpoint geeft een stukje HTML terug (`HTMLResponse("Bedankt")` of een templ
 - `hx-target="#id"`: het element dat het antwoord krijgt. Zonder `hx-target` is dat het element met het attribuut zelf.
 - `hx-swap="innerHTML"` (standaard): vervangt wat er in het doel staat.
 - `hx-swap="outerHTML"`: vervangt het doel zelf. Met een leeg antwoord verdwijnt het.
+- `hx-swap="beforeend"`: zet het antwoord achter wat er al in het doel staat.
 
 </details>
 
@@ -701,9 +731,12 @@ Het endpoint geeft een stukje HTML terug (`HTMLResponse("Bedankt")` of een templ
 
 ```html
 <div id="berichten-lijst" hx-get="/berichten/lijst" hx-trigger="every 10s">
+
+<input type="search" name="term" hx-get="/berichten/lijst" hx-target="#berichten-lijst"
+       hx-trigger="keyup changed delay:300ms">
 ```
 
-Standaard: bij een klik op een knop of het versturen van een formulier.
+Zonder `hx-trigger` gaat het verzoek bij een klik op een knop of als je een formulier verstuurt. Een `<input>` stuurt zijn waarde mee als query-parameter (`/berichten/lijst?term=hoi`); `delay:300ms` wacht tot je even stopt met typen.
 
 </details>
 
@@ -716,12 +749,23 @@ Standaard: bij een klik op een knop of het versturen van een formulier.
 
 </details>
 
+<details>
+<summary>Hoe maak ik een formulier leeg na versturen? (hx-on::after-request)</summary>
+
+```html
+<form hx-post="/gastenboek" hx-target="#antwoord" hx-on::after-request="this.reset()">
+```
+
+Met een Content-Security-Policy op je site werkt dit attribuut niet meer; zie [HTML van een bezoeker: in de praktijk](/docs/veiligheid/xss/praktijk).
+
+</details>
+
 ## JavaScript
 
 <details>
 <summary>Hoe koppel ik JavaScript aan mijn pagina? (script met defer)</summary>
 
-Bestand in `static/js/app.js`, en in de `<head>` van je template:
+Zet je bestand in `static/js/app.js` en deze regel in de `<head>` van je template:
 
 ```html
 <script src="/static/js/app.js" defer></script>
@@ -747,7 +791,75 @@ veld.addEventListener("input", function () {
 
 </details>
 
+<details>
+<summary>Hoe zie ik wat mijn JavaScript doet? (console.log)</summary>
+
+```js
+console.log("nog", over, "tekens");
+```
+
+De regel verschijnt in het tabblad **Console** van de ontwikkelaarstools, met rechts het bestand en het regelnummer. Fouten staan daar in het rood.
+
+</details>
+
 ## Veiligheid
+
+<details>
+<summary>Hoe begrens ik invoer op de server? (Form met max_length)</summary>
+
+```python
+@app.post("/bericht")
+async def bericht_plaatsen(bericht: str = Form(..., max_length=280)):
+    ...
+```
+
+`maxlength` in de HTML helpt alleen wie zich vergist; de echte grens staat in `Form`. Zie [Invoer controleren](/docs/veiligheid/invoer/grenzen).
+
+</details>
+
+<details>
+<summary>Hoe maak ik HTML van een bezoeker onschadelijk? (escape)</summary>
+
+{/* niet-compileren: losse regel uit een handler */}
+
+```python
+from html import escape
+
+return HTMLResponse(f"Bedankt, {escape(naam)}.")
+```
+
+Een `{{ }}`-template escapet vanzelf; een f-string niet. Gebruik `|safe` nooit voor tekst van een bezoeker. Zie [HTML van een bezoeker: escapen in Python](/docs/veiligheid/xss/escape).
+
+</details>
+
+<details>
+<summary>Hoe controleer ik wie iets mag? (403)</summary>
+
+```python
+if sleutel not in mijn.get("berichten", []):
+    raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
+```
+
+Zet de controle in het endpoint, vóór er iets verandert, en op elk endpoint apart. Zie [Wie mag wat: de controle met 403](/docs/veiligheid/toegang/controle).
+
+</details>
+
+<details>
+<summary>Hoe houd ik scripts bij mijn cookie weg? (httponly)</summary>
+
+```python
+antwoord.set_cookie(
+    key="sessie_id",
+    value=sessie_id,
+    max_age=60 * 60 * 24 * 30,
+    httponly=True,
+    samesite="lax",
+)
+```
+
+`httponly` houdt scripts bij de cookie weg. Met `samesite="lax"`, dat FastAPI al vanzelf zet, gaat de cookie niet mee als een formulier op een andere site naar jouw site post; bij een klik op een link daar wel. `secure=True` (met https) stuurt hem alleen versleuteld. Zie [Cookies afschermen: `httponly`](/docs/veiligheid/cookies/httponly) en [`samesite`](/docs/veiligheid/cookies/samesite).
+
+</details>
 
 <details>
 <summary>Hoe bewaar ik een wachtwoord veilig? (Argon2)</summary>
@@ -767,20 +879,22 @@ except VerifyMismatchError:
     print("Klopt niet")
 ```
 
-Bewaar de hash, nooit het wachtwoord. Vergelijk met `ph.verify` en niet zelf met `==`: elke hash heeft een eigen zout. Zie [Wachtwoorden](/docs/veiligheid/wachtwoorden/gewone-tekst).
+Bewaar de hash, nooit het wachtwoord. Vergelijk met `ph.verify` en niet zelf met `==`: elke hash heeft een eigen zout. Zie [Wachtwoorden: registreren met Argon2](/docs/veiligheid/wachtwoorden/registreren) en [inloggen met verify](/docs/veiligheid/wachtwoorden/inloggen).
 
 </details>
 
 <details>
 <summary>Hoe beperk ik het aantal verzoeken? (slowapi)</summary>
 
+Dit is de hele `main.py` uit de map `veiligheid-dos` van de reeks [Te veel verzoeken](/docs/veiligheid/dos/limiet), met een eigen `app = FastAPI()`. Zet je een limiet in je gastenboek, neem dan de imports en de regels met `limiter` en `app.state` en `app.add_exception_handler` over, en zet `@limiter.limit` boven je eigen endpoint. Geen tweede `app = FastAPI()`: die maakt je andere endpoints onbereikbaar.
+
 ```python
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 
-limiter = Limiter(key_func=get_remote_address)
+limiter = Limiter(key_func=get_remote_address, headers_enabled=True)
 
 app = FastAPI()
 app.state.limiter = limiter
@@ -788,67 +902,10 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 @app.get("/")
 @limiter.limit("5/minute")
-async def root(request: Request):
+async def root(request: Request, response: Response):
     return {"bericht": "Hallo wereld!"}
 ```
 
-Het endpoint heeft `request: Request` nodig. Zie [Te veel verzoeken](/docs/veiligheid/dos/limiet).
-
-</details>
-
-<details>
-<summary>Hoe controleer ik wie iets mag? (403)</summary>
-
-```python
-if sleutel not in mijn.get("berichten", []):
-    raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
-```
-
-Zet de controle in het endpoint, vóór er iets verandert, en op elk endpoint apart. Zie [Wie mag wat](/docs/veiligheid/toegang/zwakheid).
-
-</details>
-
-<details>
-<summary>Hoe maak ik HTML van een bezoeker onschadelijk? (escape)</summary>
-
-{/* niet-compileren: losse regel uit een handler */}
-
-```python
-from html import escape
-
-return HTMLResponse(f"Bedankt, {escape(naam)}.")
-```
-
-Een `{{ }}`-template escapet vanzelf; een f-string niet. Gebruik `|safe` nooit voor tekst van een bezoeker. Zie [HTML van een bezoeker](/docs/veiligheid/xss/zwakheid).
-
-</details>
-
-<details>
-<summary>Hoe houd ik scripts bij mijn cookie weg? (httponly)</summary>
-
-```python
-antwoord.set_cookie(
-    key="sessie_id",
-    value=sessie_id,
-    max_age=60 * 60 * 24 * 30,
-    httponly=True,
-    samesite="lax",
-)
-```
-
-`httponly` houdt scripts bij de cookie weg, `samesite` stuurt hem niet mee vanaf een andere site, en `secure=True` (met https) alleen versleuteld. Zie [Cookies afschermen](/docs/veiligheid/cookies/zwakheid).
-
-</details>
-
-<details>
-<summary>Hoe begrens ik invoer op de server? (Form met max_length)</summary>
-
-```python
-@app.post("/bericht")
-async def bericht_plaatsen(bericht: str = Form(..., min_length=1, max_length=280)):
-    ...
-```
-
-`maxlength` in de HTML helpt alleen wie zich vergist; de echte grens staat in `Form`. Zie [Invoer controleren](/docs/veiligheid/invoer/grenzen).
+Het endpoint heeft `request: Request` nodig. Met `headers_enabled=True` vertelt elk antwoord hoeveel verzoeken er nog over zijn; een endpoint dat een dictionary teruggeeft, heeft dan ook `response: Response` nodig. Installeer met `python -m pip install slowapi`.
 
 </details>

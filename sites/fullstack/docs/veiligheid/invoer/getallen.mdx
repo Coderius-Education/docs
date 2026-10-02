@@ -82,19 +82,101 @@ dus altijd een getal van 1 tot en met 10.
 
 Bij een getal zet je een onder- en een bovengrens. Bij een keuze uit een paar
 woorden, zoals een stemming, maak je een lijst met wat mag, en weiger je de
-rest. Dat doe je in opdracht 2.
+rest:
+
+<CodeUitleg>
+
+```python showLineNumbers
+STEMMINGEN = ["blij", "neutraal", "boos"]
+
+@app.post("/bericht")
+async def bericht_plaatsen(
+    naam: str = Form(..., max_length=30),
+    bericht: str = Form(..., max_length=280),
+    cijfer: int = Form(..., ge=1, le=10),
+    stemming: str = Form(...),
+):
+    if not naam.strip():
+        raise HTTPException(status_code=400, detail="Vul een naam in")
+    if stemming not in STEMMINGEN:
+        raise HTTPException(status_code=400, detail="Kies blij, neutraal of boos")
+    with SqliteDict("gastenboek.db") as db:
+        db[f"bericht_{time.time_ns()}"] = {
+            "naam": naam,
+            "bericht": bericht,
+            "cijfer": cijfer,
+            "stemming": stemming,
+        }
+        db.commit()
+    return {"lengte": len(bericht), "cijfer": cijfer, "stemming": stemming}
+```
+
+<Regel n={1}>
+De lijst met wat mag, bovenaan `main.py`, boven je endpoints.
+</Regel>
+
+<Regel n={12} tot={13}>
+`not in` is waar als de stemming niet in de lijst staat. Dan stuur je een eigen `400`, net als bij de lege naam in [les 4](./inhoud).
+</Regel>
+
+<Regel n={15} tot={20}>
+De stemming gaat mee de database in, en komt terug in het antwoord. De dictionary staat over meer regels, want hij is te lang voor één.
+</Regel>
+
+</CodeUitleg>
+
+Vervang `bericht_plaatsen` door deze, en zet in `static/formulier.html` een
+`<select>` met dezelfde drie woorden binnen het `<form>`:
+
+```html
+<select name="stemming">
+    <option>blij</option>
+    <option>neutraal</option>
+    <option>boos</option>
+</select>
+```
+
+Een script `stemming.py` probeert er twee:
+
+```python
+import httpx
+
+adres = "http://127.0.0.1:8000/bericht"
+
+for stemming in ["blij", "vrolijk"]:
+    gegevens = {"naam": "Sara", "bericht": "hoi", "cijfer": "8", "stemming": stemming}
+    antwoord = httpx.post(adres, data=gegevens)
+    print(stemming, "->", antwoord.status_code, antwoord.json())
+```
+
+Uitvoer:
+
+```
+blij -> 200 {'lengte': 3, 'cijfer': 8, 'stemming': 'blij'}
+vrolijk -> 400 {'detail': 'Kies blij, neutraal of boos'}
+```
+
+Je noemt op wat mag, dus alles wat je niet noemde, is geweigerd. Ook een
+woord dat je zelf nooit bedacht had.
+
+`stemming` is verplicht, net als `cijfer`. De scripts uit de vorige lessen, en
+ook `cijfer.py`, sturen geen stemming mee. Die krijgen nu een `422`, met in
+`detail` het veld `stemming` en `Field required`; `cijfer.py` print bij `8`
+dan `422 Field required`. Zet in zo'n script `"stemming": "blij"` bij de
+`data`.
 
 ## Er gaat iets mis
 
-Elk verzoek geeft `422` met `cijfer` en `Field required`, ook vanuit het
-formulier.
+Elk verzoek geeft `422` met `cijfer` of `stemming` en `Field required`, ook
+vanuit het formulier.
 
-**Oorzaak:** er komt geen `cijfer` mee. In het formulier heet het veld anders
-dan de parameter, of het `<input>` staat buiten het `<form>`. Een script uit een
-eerdere les, zoals `fouten.py`, stuurt helemaal geen cijfer.
+**Oorzaak:** het veld komt niet mee. In het formulier heet het veld anders dan
+de parameter, of het `<input>` of `<select>` staat buiten het `<form>`. Een
+script uit een eerdere les, zoals `fouten.py`, stuurt het helemaal niet mee.
 
-**Oplossing:** controleer dat er `name="cijfer"` staat, binnen het `<form>`. Zet
-in een script `"cijfer": "8"` bij de `data`.
+**Oplossing:** controleer dat er `name="cijfer"` en `name="stemming"` staan,
+binnen het `<form>`. Zet in een script `"cijfer": "8"` en `"stemming": "blij"`
+bij de `data`.
 
 ## Opdrachten
 
@@ -112,44 +194,33 @@ integer`. Een `int` is een geheel getal; `7.5` is dat niet.
 
 </details>
 
-### Opdracht 2: Make - Een stemming
+### Opdracht 2: Investigate - Een hoofdletter
 
-Voeg een veld `stemming` toe. Alleen `blij`, `neutraal` en `boos` mogen; al het
-andere geeft `400` met de melding `Kies blij, neutraal of boos`.
+Je stuurt als stemming `Blij`, met een hoofdletter.
+
+**Vraag:** wat antwoordt de server, en hoe zorg je dat `Blij` toch mag?
 
 <details>
 <summary>Tip</summary>
 
-Maak een lijst `STEMMINGEN` bovenaan `main.py`, en controleer met `not in`.
+`"Blij" == "blij"` is in Python niet waar. Met `lower()` maak je van alle
+letters kleine letters.
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-```python
-STEMMINGEN = ["blij", "neutraal", "boos"]
+`400 {'detail': 'Kies blij, neutraal of boos'}`. `Blij` staat niet in de lijst:
+voor Python is een hoofdletter een ander teken. Wil je het toestaan, zet dan
+bovenaan de functie:
 
-@app.post("/bericht")
-async def bericht_plaatsen(
-    naam: str = Form(..., max_length=30),
-    bericht: str = Form(..., max_length=280),
-    cijfer: int = Form(..., ge=1, le=10),
-    stemming: str = Form(...),
-):
-    if not naam.strip():
-        raise HTTPException(status_code=400, detail="Vul een naam in")
-    if stemming not in STEMMINGEN:
-        raise HTTPException(status_code=400, detail="Kies blij, neutraal of boos")
-    with SqliteDict("gastenboek.db") as db:
-        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht, "cijfer": cijfer}
-        db.commit()
-    return {"lengte": len(bericht), "cijfer": cijfer}
+```python
+stemming = stemming.lower()
 ```
 
-Met `stemming` `blij` krijg je `200`, met `vrolijk` een `400`. Je noemt op wat
-mag, dus alles wat je niet noemde, is geweigerd. In het formulier past daar een
-`<select>` bij met dezelfde drie woorden.
+Dan wordt `Blij` eerst `blij`, en komt hij door de controle. In de database
+staat dan `blij`, zoals in je lijst.
 
 </details>
 
@@ -179,18 +250,36 @@ Loop deze lijst af:
 - Een keuze uit een paar woorden controleer je tegen een lijst.
 - Een script dat een te lang veld stuurt, krijgt een `422`.
 
-Voor het gastenboek uit de FastAPI-lessen ziet het begin van het endpoint er zo
-uit:
+In het gastenboek uit de FastAPI-lessen zet je de grenzen in de parameters die
+je `POST /gastenboek` al heeft, en de controle op spaties bovenaan de functie.
+Met de sessies uit [Onthouden op de server: sessies](/docs/FastAPI/sessies)
+ziet het begin er zo uit:
 
 ```python
 @app.post("/gastenboek")
 async def gastenboek_opslaan(
     naam: str = Form(..., max_length=30),
-    bericht: str = Form(..., max_length=280),
+    bericht: str = Form(..., max_length=80),
+    sessie_id: str = Cookie(default=""),
 ):
     if not naam.strip():
         raise HTTPException(status_code=400, detail="Vul een naam in")
+    if not sessie_id:
+        sessie_id = secrets.token_hex(16)
 ```
+
+Daaronder blijft je functie zoals hij was. Laat `sessie_id` niet weg: de rest
+van de functie gebruikt hem. Heb je de uitbreiding cookies en sessies nog niet
+gedaan, dan heeft je functie alleen `naam` en `bericht`, en zet je de grens
+daarin. Zet `HTTPException` bij de import uit `fastapi` als hij er nog niet
+staat.
+
+Het bericht krijgt hier 80 tekens en geen 280 zoals in deze reeks. Zo past het
+bij [Server of browser?](/docs/FastAPI/server-of-browser), waar je gastenboek
+`maxlength="80"` krijgt; zet die ook in je HTML. Deed je die les al, en staat
+de `if len(bericht) > 80` daaruit nog in je functie, dan mag hij weg:
+`max_length=80` doet hetzelfde, alleen krijgt een te lang bericht nu een `422`
+in plaats van jouw `400`.
 
 </details>
 
@@ -207,21 +296,32 @@ from sqlitedict import SqliteDict
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+STEMMINGEN = ["blij", "neutraal", "boos"]
+
 @app.post("/bericht")
 async def bericht_plaatsen(
     naam: str = Form(..., max_length=30),
     bericht: str = Form(..., max_length=280),
     cijfer: int = Form(..., ge=1, le=10),
+    stemming: str = Form(...),
 ):
     if not naam.strip():
         raise HTTPException(status_code=400, detail="Vul een naam in")
+    if stemming not in STEMMINGEN:
+        raise HTTPException(status_code=400, detail="Kies blij, neutraal of boos")
     with SqliteDict("gastenboek.db") as db:
-        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht, "cijfer": cijfer}
+        db[f"bericht_{time.time_ns()}"] = {
+            "naam": naam,
+            "bericht": bericht,
+            "cijfer": cijfer,
+            "stemming": stemming,
+        }
         db.commit()
-    return {"lengte": len(bericht), "cijfer": cijfer}
+    return {"lengte": len(bericht), "cijfer": cijfer, "stemming": stemming}
 ```
 
-Elk veld heeft nu een controle op de server.
+Elk veld heeft nu een controle op de server: de lengte, het getal en de keuze
+bewaakt FastAPI of je eigen lijst.
 
 </details>
 

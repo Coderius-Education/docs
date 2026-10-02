@@ -10,7 +10,7 @@ Voor een foto op je pagina heb je twee dingen nodig: het bestand in je `static`-
 
 ## Afbeelding klaarzetten
 
-Zet een afbeelding in je `static`-map:
+Zoek een afbeelding op internet, klik er met de rechtermuisknop op en kies **Afbeelding opslaan als…** (Save image as…). Sla hem op in de map `static` van je project, onder de naam `kat.jpg`:
 
 ```
 je-project/
@@ -69,7 +69,7 @@ Ga naar [http://127.0.0.1:8000/foto](http://127.0.0.1:8000/foto). Je ziet je afb
 :::danger[Gaat er iets mis?]
 Afbeelding laadt niet? Controleer of:
 1. De afbeelding echt in de `static`-map staat
-2. De bestandsnaam precies klopt, ook de hoofdletters
+2. De bestandsnaam precies klopt, ook de hoofdletters en de extensie. Windows verbergt de extensie vaak: dan heet je bestand `kat.jpg.jpg` of `kat.webp` terwijl je `kat.jpg` ziet. In de Verkenner van VS Code zie je de echte naam.
 3. `app.mount("/static", ...)` in je code staat
 
 Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
@@ -167,7 +167,7 @@ Je ziet de alt-tekst "Logo" en het icoon van een kapotte afbeelding. De pagina l
 
 ### Opdracht 2: Run
 
-Zet een afbeelding in je `static`-map, maak `foto.html` uit het voorbeeld en kijk of je de afbeelding ziet.
+Ga naar `http://127.0.0.1:8000/static/kat.jpg`. Zie je alleen de afbeelding, zonder pagina eromheen? Dan geeft `app.mount` het bestand goed door. Ga daarna naar `/foto`: staat hij nu op je pagina, onder de kop?
 
 ### Opdracht 3: Investigate - Zonder alt
 

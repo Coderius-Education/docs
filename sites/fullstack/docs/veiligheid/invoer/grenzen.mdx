@@ -7,10 +7,17 @@ import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
 
 # Invoer controleren: grenzen in Form
 
-De grens hoort op de server, waar de bezoeker er niet bij kan. In
-[Server of browser?](/docs/FastAPI/server-of-browser) schreef je daarvoor zelf
-een `if` met `len`. FastAPI kan het ook voor je doen: je zet de grens in `Form`,
-en een verzoek dat eroverheen gaat, komt niet eens in je functie.
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/data/11c-geneste-dictionaries', label: 'Geneste dictionaries'},
+  ]}
+/>
+
+De grens hoort op de server, waar de bezoeker er niet bij kan. Je zou daarvoor
+zelf een `if` met `len` kunnen schrijven; wie de uitbreiding JavaScript deed,
+heeft dat in [Server of browser?](/docs/FastAPI/server-of-browser) al gedaan.
+FastAPI kan het ook voor je doen: je zet de grens in `Form`, en een verzoek dat
+eroverheen gaat, komt niet eens in je functie.
 
 ## `max_length` in `Form`
 
@@ -60,7 +67,7 @@ print(antwoord.json()["detail"][0]["msg"])
 ```
 
 <Regel n={8}>
-Het antwoord heeft een lijst `detail` met een foutmelding per veld. Wat daar precies in staat, zie je in [les 3](./fouten-lezen).
+Het antwoord is een dictionary met onder `detail` een lijst, met één fout per veld. `[0]` pakt de eerste fout uit die lijst, en `["msg"]` de melding daarin. Wat er verder in staat, zie je in [les 3](./fouten-lezen).
 </Regel>
 
 </CodeUitleg>

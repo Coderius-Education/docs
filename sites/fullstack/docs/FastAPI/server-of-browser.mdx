@@ -58,7 +58,7 @@ async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
 | **Mag je het vertrouwen** | Ja | Ja | Nee |
 | **Typisch voor** | Opslaan, ophalen, controleren | Hetzelfde, midden op een pagina | Reageren op klikken en typen |
 
-De vuistregel blijft: moet iets bewaard blijven of zichtbaar zijn voor anderen, dan hoort het op de server. Gaat het om reageren op wat de bezoeker doet met data die al op de pagina staat, dan is het de browser.
+Moet iets bewaard blijven of zichtbaar zijn voor anderen, dan hoort het op de server. Reageer je op wat de bezoeker doet, met data die al op de pagina staat, dan hoort het in de browser.
 
 De middelste kolom is wat je in [Zonder herladen met htmx](/docs/FastAPI/htmx) deed. Het is nog steeds de server, met dezelfde endpoints, database en controles; alleen de pagina blijft staan. Voor de hoofdvraag maakt dat niets uit.
 
@@ -110,7 +110,7 @@ Voeg de controle toe in je POST-endpoint, zoals hierboven, en probeer opdracht 2
 <details>
 <summary>Antwoord</summary>
 
-Nu krijg je een 400 met "Bericht is te lang", hoe je het ook probeert. Gebruik je het htmx-formulier, dan zie je op de pagina niets: htmx zet een foutantwoord niet in de pagina. In Netwerk staat dan een rode regel met status 400, en bij Reactie de melding. De controle staat op de server, en daar komt de bezoeker niet bij.
+Nu krijg je een 400 met "Bericht is te lang", hoe je het ook probeert. Gebruik je het htmx-formulier, dan verandert er op de pagina niets: htmx zet een foutantwoord niet in de pagina. Stond er van een eerder bericht nog "Bedankt, …", dan blijft die zin staan, alsof het gelukt is. Staat `hx-on::after-request="this.reset()"` op je formulier, dan is je lange bericht bovendien uit het veld verdwenen. In Netwerk staat een rode regel met status 400, en bij Reactie de melding. De controle staat op de server, en daar komt de bezoeker niet bij.
 
 Laat `maxlength` wel in de HTML staan. Die twee bijten elkaar niet: de browser helpt wie zich vergist, de server houdt tegen wie het expres probeert.
 
@@ -136,7 +136,13 @@ Zet in `templates/berichten.html`, boven je lijst:
 <button id="omdraai-knop">Omdraaien</button>
 ```
 
-En in `static/js/berichten.js`, onder wat er al staat:
+En in `static/js/berichten.js`. Maakte je dat bestand niet in opdracht 5 van [JavaScript erbij](/docs/FastAPI/javascript), maak het dan nu en koppel het in de `<head>` van `berichten.html`:
+
+```html
+<script src="/static/js/berichten.js" defer></script>
+```
+
+Staat er al code in het bestand, zet dit eronder:
 
 ```js
 const omdraaiKnop = document.querySelector("#omdraai-knop");
@@ -150,7 +156,7 @@ omdraaiKnop.addEventListener("click", function () {
 });
 ```
 
-`document.querySelector("ul")` pakt de eerste `<ul>` op de pagina: je berichtenlijst. Je zoekt hem pas op bij de klik, want htmx vervangt de lijst als je ververst. De knop heet `omdraaiKnop`, omdat `berichten.js` al een `knop` heeft. Elk item weer vooraan zetten draait de volgorde om. De server komt er niet aan te pas: alle berichten stonden al op de pagina.
+`document.querySelector("ul")` pakt de eerste `<ul>` op de pagina: je berichtenlijst. Je zoekt hem pas op bij de klik, want htmx vervangt de lijst als je ververst. De knop heet `omdraaiKnop`, omdat `berichten.js` uit opdracht 5 al een `knop` heeft. Elk item weer vooraan zetten draait de volgorde om. De server komt er niet aan te pas: alle berichten stonden al op de pagina.
 
 </details>
 

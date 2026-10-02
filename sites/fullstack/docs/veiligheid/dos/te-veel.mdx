@@ -127,24 +127,29 @@ telling van de vorige keer loopt nog.
 Het script print bij elk verzoek `nog None over, wacht None seconden`.
 
 **Oorzaak:** je server heeft `headers_enabled=True` nog niet, bijvoorbeeld omdat
-hij nog de code uit les 4 draait. Dan stuurt hij de headers niet mee, en
-`headers.get` geeft `None` als een header ontbreekt.
+hij nog de code uit les 4 draait, of je mist `response: Response` in je
+endpoint. Dan stuurt hij de headers niet mee, en `headers.get` geeft `None` als
+een header ontbreekt. Mis je `response: Response`, dan staat er bovendien `500`
+in plaats van `200`; dat is de volgende fout.
 
 **Oplossing:** zet `headers_enabled=True` in de `Limiter` en `response: Response`
 in je endpoint, en sla `main.py` op.
 
-Na `headers_enabled=True` geeft elk verzoek ineens `500 Internal Server Error`,
-ook het eerste. In de terminal van je server eindigt de foutmelding met:
+Na `headers_enabled=True` geven de eerste vijf verzoeken ineens
+`500 Internal Server Error`, en de verzoeken daarna `429`. In de terminal van
+je server eindigt de foutmelding met:
 
 ```
 Exception: parameter `response` must be an instance of starlette.responses.Response
 ```
 
 **Oorzaak:** je endpoint heeft geen parameter `response: Response`. `slowapi`
-wil de headers op het antwoord zetten, maar heeft er dan geen.
+wil de headers op het antwoord zetten, maar heeft er dan geen. De limiet telt
+wel mee: ook een verzoek dat op `500` uitloopt, telt als een van je vijf. Het
+zesde weigert `slowapi` dus al met `429`, voordat je functie draait.
 
 **Oplossing:** zet `response: Response` bij de parameters van elk endpoint met
-een limiet, en `Response` in de import:
+een limiet dat een dictionary teruggeeft, en `Response` in de import:
 
 {/* niet-compileren: alleen de kop van de functie, zonder inhoud */}
 
@@ -214,42 +219,93 @@ verstuurt.
 <details>
 <summary>Tip</summary>
 
-Het endpoint heeft al `Form`-parameters. Zet `request: Request` er vooraan bij,
-en `@limiter.limit` onder `@app.post`.
+Het endpoint heeft al parameters. Zet `request: Request` er vooraan bij, en
+`@limiter.limit` onder `@app.post`. Installeer `slowapi` eerst in de
+virtual environment van je eigen project.
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-```python
-import time
+Loop deze lijst af:
 
-from fastapi import FastAPI, Form, Request
-from fastapi.responses import RedirectResponse
+- `slowapi` is geïnstalleerd in de virtual environment van je project.
+- Bovenaan `main.py` staan de imports en de `limiter`, en onder
+  `app = FastAPI()` de twee regels die hem aan je app hangen.
+- Het endpoint dat opslaat, heeft `@limiter.limit` onder `@app.post`.
+- `request: Request` staat vooraan bij de parameters; de rest blijft.
+- Een script dat twaalf keer verstuurt, krijgt na tien keer een `429`.
+
+Zet de imports en de `limiter` bij de andere imports, en `Request` bij de
+import uit `fastapi`:
+
+```python
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
-from sqlitedict import SqliteDict
 
-limiter = Limiter(key_func=get_remote_address)
-
-app = FastAPI()
-app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
-
-@app.post("/gastenboek")
-@limiter.limit("10/minute")
-async def gastenboek_opslaan(request: Request, naam: str = Form(...), bericht: str = Form(...)):
-    with SqliteDict("gastenboek.db") as db:
-        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
-        db.commit()
-    return RedirectResponse(url="/berichten", status_code=303)
+limiter = Limiter(key_func=get_remote_address, headers_enabled=True)
 ```
 
-Twaalf keer versturen geeft tien keer `303`, de omleiding naar de lijst, en
-daarna twee keer `429`. Een bezoeker die één bericht schrijft, merkt er niets
-van.
+Zet deze twee regels direct onder je bestaande `app = FastAPI()`:
+
+```python
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+```
+
+In het gastenboek met sessies verandert alleen de kop van je
+`POST /gastenboek`. De parameters die er al stonden, ook `sessie_id`, blijven:
+
+```python
+@app.post("/gastenboek")
+@limiter.limit("10/minute")
+async def gastenboek_opslaan(
+    request: Request,
+    naam: str = Form(..., max_length=30),
+    bericht: str = Form(..., max_length=80),
+    sessie_id: str = Cookie(default=""),
+):
+    ...
+```
+
+Op de plek van `...` blijft je functie zoals hij was. Die geeft een
+`RedirectResponse` terug en geen dictionary, dus `response: Response` is hier
+niet nodig: `slowapi` zet de headers op de omleiding zelf.
+
+Het script `twaalf.py`, naast je `main.py`:
+
+```python
+import httpx
+
+adres = "http://127.0.0.1:8000/gastenboek"
+
+for nummer in range(12):
+    antwoord = httpx.post(adres, data={"naam": "Sara", "bericht": f"Bericht {nummer + 1}"})
+    print(f"Verzoek {nummer + 1}: status {antwoord.status_code}")
+```
+
+Uitvoer:
+
+```
+Verzoek 1: status 303
+Verzoek 2: status 303
+Verzoek 3: status 303
+Verzoek 4: status 303
+Verzoek 5: status 303
+Verzoek 6: status 303
+Verzoek 7: status 303
+Verzoek 8: status 303
+Verzoek 9: status 303
+Verzoek 10: status 303
+Verzoek 11: status 429
+Verzoek 12: status 429
+```
+
+`303` is de omleiding naar de lijst: het bericht is opgeslagen. Een bezoeker
+die één bericht schrijft, merkt niets van de limiet. In je gastenboek staan nu
+wel tien testberichten.
 
 </details>
 

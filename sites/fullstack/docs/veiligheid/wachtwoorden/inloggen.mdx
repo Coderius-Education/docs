@@ -24,44 +24,55 @@ wachtwoord uit, en vergelijkt.
 <CodeUitleg>
 
 ```python showLineNumbers
-from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
-from fastapi import FastAPI, Form
-from sqlitedict import SqliteDict
 
-app = FastAPI()
-ph = PasswordHasher()
+NEP = ph.hash("niemand")
 
 @app.post("/inloggen")
 async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
     with SqliteDict("gebruikers.db") as db:
-        opgeslagen = db.get(naam)
-    if opgeslagen is None:
-        return {"bericht": "Naam of wachtwoord klopt niet"}
+        opgeslagen = db.get(naam, NEP)
     try:
         ph.verify(opgeslagen, wachtwoord)
     except VerifyMismatchError:
         return {"bericht": "Naam of wachtwoord klopt niet"}
+    if opgeslagen == NEP:
+        return {"bericht": "Naam of wachtwoord klopt niet"}
     return {"bericht": "Ingelogd"}
 ```
 
-<Regel n={2}>
+<Regel n={1}>
 `VerifyMismatchError` is de fout die `ph.verify` gooit als het wachtwoord niet klopt.
 </Regel>
 
-<Regel n={13} tot={14}>
-Bestaat de naam niet, dan zeg je hetzelfde als bij een fout wachtwoord. Zo verraad je niet welke namen er wél een account hebben.
+<Regel n={3}>
+Een nep-hash: de Argon2-hash van een wachtwoord dat bij geen enkel account hoort. Je rekent hem één keer uit, als de server start.
 </Regel>
 
-<Regel n={15} tot={18}>
+<Regel n={8}>
+Bestaat de naam niet, dan geeft `db.get` de nep-hash terug in plaats van `None`.
+</Regel>
+
+<Regel n={9} tot={12}>
 Klopt het wachtwoord, dan gaat `ph.verify` zonder fout verder. Klopt het niet, dan vang je de fout af en meld je dat inloggen niet lukt.
+</Regel>
+
+<Regel n={13} tot={14}>
+Was het de nep-hash, dan bestaat de naam niet. Ook wie toevallig `niemand` intypt, komt dus niet binnen. De melding is dezelfde als bij een fout wachtwoord, zodat je niet verraadt welke namen wél een account hebben.
 </Regel>
 
 </CodeUitleg>
 
-Vervang je oude `/inloggen` door deze, in hetzelfde `main.py` als je
-`/registreer` uit les 5. De imports en `ph` staan maar één keer bovenaan, en
-`import hashlib` mag weg: niets gebruikt hem meer.
+Zet de import bij je andere imports, `NEP` direct onder `ph = PasswordHasher()`,
+en vervang je oude `/inloggen` door deze, in hetzelfde `main.py` als je
+`/registreer` uit les 5. `import hashlib` mag weg: niets gebruikt hem meer.
+
+Waarom die nep-hash? `ph.verify` rekent een Argon2-hash uit, en die is expres
+traag, zoals je in [les 4](./traag) mat. Zou je bij een onbekende naam meteen
+antwoorden, dan komt dat antwoord vele malen sneller terug dan bij een bestaande naam met een fout wachtwoord.
+De melding is gelijk, maar de tijd verraadt dan alsnog welke namen een account
+hebben. Met de nep-hash doet de server bij een onbekende naam hetzelfde
+rekenwerk, en duren beide antwoorden even lang.
 
 ## Doe de test
 
@@ -97,6 +108,8 @@ Registreren en inloggen naast elkaar: de server maakt en controleert de hash, de
 
 ## Er gaat iets mis
 
+### Zelf vergelijken
+
 Je vergelijkt zelf, in plaats van `ph.verify` te gebruiken:
 
 {/* niet-compileren: fragment uit de functie inloggen, met return buiten een functie */}
@@ -123,11 +136,27 @@ hash. Twee hashes van hetzelfde wachtwoord zijn nooit gelijk.
 **Oplossing:** vergelijk nooit zelf. `ph.verify` haalt het zout uit de
 opgeslagen hash en rekent daarmee.
 
-Staat er nog een oude `sha256`-hash of een wachtwoord als gewone tekst in de
-database, dan krijgt `inloggen.py` `500 Internal Server Error` terug, en
-eindigt de foutmelding in de terminal van je server met
-`argon2.exceptions.InvalidHashError`: `ph.verify` herkent die code niet als
-Argon2-hash. Gooi `gebruikers.db` weg en registreer opnieuw.
+### Een oude hash in de database
+
+Je draait `inloggen.py`, en het script stopt met een lange foutmelding die zo
+eindigt:
+
+```
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+```
+
+In de terminal van je server staat bij dezelfde poging
+`"POST /inloggen HTTP/1.1" 500`, en daaronder een
+foutmelding die eindigt met `argon2.exceptions.InvalidHashError`.
+
+**Oorzaak:** in de database staat nog een `sha256`-hash of een wachtwoord als
+gewone tekst, uit de lessen hiervoor. `ph.verify` herkent die code niet als
+Argon2-hash en gooit een fout, en de server stuurt dan een 500 met als inhoud
+de platte tekst `Internal Server Error`. Daar zit geen JSON in, dus
+`antwoord.json()` in je script loopt vast.
+
+**Oplossing:** gooi `gebruikers.db` weg, en draai `registreer.py` opnieuw met
+je server van nu.
 
 ## Opdrachten
 
@@ -155,8 +184,13 @@ duidelijker voor de gebruiker. Waarom doe je dat hier toch niet?
 <summary>Antwoord</summary>
 
 Dan kan iedereen uitzoeken welke namen een account hebben: probeer een naam,
-en de melding verraadt of hij bestaat. Met dezelfde melding voor een foute naam
-en een fout wachtwoord leert iemand die raadt niets.
+en de melding verraadt of hij bestaat. Daarom krijgen een foute naam en een
+fout wachtwoord dezelfde melding.
+
+Alleen dezelfde melding is niet genoeg. Zonder de nep-hash antwoordt de server
+bij een onbekende naam meteen, en bij een bestaande naam pas na het trage
+`ph.verify`. Wie de tijd meet, ziet dan nog steeds welke namen bestaan. De
+nep-hash maakt ook de tijd gelijk.
 
 </details>
 
@@ -171,6 +205,7 @@ from sqlitedict import SqliteDict
 
 app = FastAPI()
 ph = PasswordHasher()
+NEP = ph.hash("niemand")
 
 @app.post("/registreer")
 async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
@@ -184,12 +219,12 @@ async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
 @app.post("/inloggen")
 async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
     with SqliteDict("gebruikers.db") as db:
-        opgeslagen = db.get(naam)
-    if opgeslagen is None:
-        return {"bericht": "Naam of wachtwoord klopt niet"}
+        opgeslagen = db.get(naam, NEP)
     try:
         ph.verify(opgeslagen, wachtwoord)
     except VerifyMismatchError:
+        return {"bericht": "Naam of wachtwoord klopt niet"}
+    if opgeslagen == NEP:
         return {"bericht": "Naam of wachtwoord klopt niet"}
     return {"bericht": "Ingelogd"}
 ```

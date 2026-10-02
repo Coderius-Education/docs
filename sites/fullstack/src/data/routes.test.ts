@@ -20,14 +20,42 @@ const lessen = plat(sidebars.apiSidebar as unknown as Item[]);
 // Elk python-blok, met of er een route-dubbel-marker boven staat. Blokken in
 // een uitklapblok "Zo ziet je main.py er nu uit" tellen niet: dat is een
 // samenvatting van wat de les al liet zien.
-function blokken(tekst: string): { code: string; dubbel: boolean }[] {
+function blokken(tekst: string): { code: string; dubbel: boolean; reden: string; voor: string }[] {
   const zonderStand = tekst.replace(
     /<details>\s*<summary>Zo ziet je `main\.py` er nu uit<\/summary>[\s\S]*?<\/details>/g,
     '',
   );
   return [
-    ...zonderStand.matchAll(/(\{\/\* route-dubbel:[^*]*\*\/\}\s*)?```python[^\n]*\n([\s\S]*?)```/g),
-  ].map((m) => ({ code: m[2], dubbel: Boolean(m[1]) }));
+    ...zonderStand.matchAll(
+      /(\{\/\* route-dubbel:([^*]*)\*\/\}\s*)?```python[^\n]*\n([\s\S]*?)```/g,
+    ),
+  ].map((m) => ({
+    code: m[3],
+    dubbel: Boolean(m[1]),
+    reden: (m[2] ?? '').trim(),
+    voor: alineaErvoor(zonderStand.slice(0, m.index)),
+  }));
+}
+
+// De laatste alinea lestekst vóór een blok, zonder <CodeUitleg> en markers.
+function alineaErvoor(tekst: string): string {
+  const alineas = tekst
+    .split(/\n\s*\n/)
+    .map((a) => a.trim())
+    .filter((a) => a && !a.startsWith('<') && !a.startsWith('{/*'));
+  return alineas.at(-1) ?? '';
+}
+
+// De handler bij elke route in een blok: van de decorator tot de volgende
+// decorator of het eind van het blok, zonder verschil in witruimte.
+function handlers(code: string): Map<string, string> {
+  const delen = code.split(/(?=@app\.)/);
+  const uit = new Map<string, string>();
+  for (const deel of delen) {
+    const [route] = routes(deel);
+    if (route) uit.set(route, deel.replace(/\s+/g, ' ').trim());
+  }
+  return uit;
 }
 
 const routes = (code: string) =>
@@ -57,6 +85,59 @@ describe('één project, geen dubbele paden', () => {
         }
       }
     }
+    expect(fout).toEqual([]);
+  });
+});
+
+describe('één les, één versie per pad', () => {
+  // detailpagina.mdx gaf drie versies van GET /bericht/{sleutel} onder elkaar,
+  // zonder "vervang". Wie ze alle drie toevoegde, kreeg stil de eerste: JSON
+  // met status 200 in plaats van de template of de 404. Ook binnen één les
+  // zegt een tweede versie van hetzelfde pad dat hij vervangt: met de marker,
+  // of met "vervang" in de alinea erboven, die de leerling leest.
+  it('een tweede blok met hetzelfde pad in dezelfde les zegt dat hij vervangt', () => {
+    const fout: string[] = [];
+    for (const id of lessen) {
+      const tekst = readFileSync(`${DOCS}/${id}.mdx`, 'utf8');
+      const gezien = new Set<string>();
+      for (const { code, dubbel, voor } of blokken(tekst.split('\n## Opdrachten\n')[0])) {
+        for (const route of routes(code)) {
+          if (gezien.has(route) && !dubbel && !/vervang/i.test(voor))
+            fout.push(`${route} twee keer in ${id}`);
+          gezien.add(route);
+        }
+      }
+    }
+    expect(fout).toEqual([]);
+  });
+});
+
+describe('een voorspelvraag botst niet met het project', () => {
+  // De marker "voorspelvraag" ziet de leerling niet. Probeert hij de vraag uit
+  // (Predict, dan Run), dan zet hij het endpoint toch in zijn main.py. Stond
+  // dat pad al in het project, of komt het er later bij, dan neemt FastAPI
+  // stil het eerste: forms.mdx had POST /groet (later de templateversie) en
+  // redirect.mdx POST /opslaan (al uit Een formulier opslaan). Een
+  // voorspelvraag gebruikt daarom een eigen pad, of precies dezelfde handler.
+  it('elk pad uit een voorspelvraag is nieuw, of heeft dezelfde handler als in het project', () => {
+    const project = new Map<string, Set<string>>();
+    const vragen: { id: string; route: string; handler: string }[] = [];
+    for (const id of lessen) {
+      const tekst = readFileSync(`${DOCS}/${id}.mdx`, 'utf8');
+      for (const { code, dubbel, reden } of blokken(tekst)) {
+        for (const [route, handler] of handlers(code)) {
+          if (dubbel && reden.startsWith('voorspelvraag')) {
+            vragen.push({ id, route, handler });
+          } else {
+            if (!project.has(route)) project.set(route, new Set());
+            project.get(route)?.add(handler);
+          }
+        }
+      }
+    }
+    const fout = vragen
+      .filter(({ route, handler }) => project.has(route) && !project.get(route)?.has(handler))
+      .map(({ id, route }) => `${route} in de voorspelvraag van ${id}`);
     expect(fout).toEqual([]);
   });
 });

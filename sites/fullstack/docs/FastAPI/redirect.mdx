@@ -30,14 +30,14 @@ Het opslaan is hetzelfde als in [Een formulier opslaan](/docs/FastAPI/post_naar_
 </Regel>
 
 <Regel n={7}>
-Het endpoint geeft nu geen pagina terug, maar een opdracht aan de browser: ga naar `/berichten`. De browser doet dat meteen, en de bezoeker ziet zijn eigen bericht onderaan de lijst verschijnen. Waarom er `status_code=303` bij moet, staat hieronder.
+Het endpoint geeft nu geen pagina terug, maar een opdracht aan de browser: ga naar `/berichten`. De browser doet dat meteen, en de bezoeker ziet zijn eigen bericht onderaan de lijst verschijnen.
 </Regel>
 
 </CodeUitleg>
 
 ## Waarom 303
 
-`status_code=303` lijkt een detail, maar zonder dat getal werkt het niet. `RedirectResponse` stuurt standaard een 307, en 307 betekent: doe hetzelfde verzoek nog een keer op de nieuwe URL. Jouw verzoek was een POST, dus de browser stuurt een POST naar `/berichten`. Dat endpoint is een `@app.get`, dus je krijgt **405 Method Not Allowed**.
+Zonder `status_code=303` werkt het niet. `RedirectResponse` stuurt standaard een 307, en 307 betekent: doe hetzelfde verzoek nog een keer op de nieuwe URL. Jouw verzoek was een POST, dus de browser stuurt een POST naar `/berichten`. Dat endpoint is een `@app.get`, dus je krijgt **405 Method Not Allowed**.
 
 Een 303 zegt wél wat je bedoelt: ga naar die URL met een GET.
 
@@ -84,7 +84,7 @@ Daarna stuur je de bezoeker terug naar de lijst, met 303, zoals na het opslaan.
 
 </CodeUitleg>
 
-In `templates/berichten.html` loop je nu over twee dingen tegelijk, en krijgt elk bericht een eigen formuliertje:
+In `templates/berichten.html` loop je nu over twee dingen tegelijk, en krijgt elk bericht een eigen formuliertje. Vervang de for-lus binnen de `<ul>` door deze:
 
 ```html
 {% for sleutel, bericht in berichten %}
@@ -99,6 +99,44 @@ In `templates/berichten.html` loop je nu over twee dingen tegelijk, en krijgt el
 ```
 
 Een `<input type="hidden">` ziet de bezoeker niet, maar hij gaat wel mee met het formulier. Zo weet `/verwijderen` welk bericht weg moet.
+
+<details>
+<summary>Zo ziet je `templates/berichten.html` er nu uit</summary>
+
+Het `{% if %}`-blok uit [Alles tonen: een for-lus in je template](/docs/FastAPI/lijst_tonen) blijft staan; alleen de lus binnen de `<ul>` is nieuw.
+
+```html
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Gastenboek</title>
+        <link rel="stylesheet" href="/static/css/style.css">
+    </head>
+    <body>
+        <h1>Gastenboek</h1>
+
+        {% if berichten %}
+            <ul>
+                {% for sleutel, bericht in berichten %}
+                    <li>
+                        {{ bericht.naam }}: {{ bericht.bericht }}
+                        <form method="post" action="/verwijderen">
+                            <input type="hidden" name="sleutel" value="{{ sleutel }}">
+                            <button type="submit">Verwijderen</button>
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Nog geen berichten. Wees de eerste.</p>
+        {% endif %}
+
+        <a href="/gastenboek">Nieuw bericht</a>
+    </body>
+</html>
+```
+
+</details>
 
 ## Testen
 
@@ -214,7 +252,7 @@ async def groet_verwerk(request: Request, naam: str = Form(...)):
         {"naam": naam}
     )
 
-@app.get("/bewaar")
+@app.get("/opslaan")
 async def naam_formulier():
     return FileResponse("static/pages/naam_opslaan.html")
 
@@ -269,10 +307,10 @@ async def verwijderen(sleutel: str = Form(...)):
 
 ### Opdracht 1: Predict - Waar kom je uit?
 
-{/* route-dubbel: voorspelvraag, je voegt deze endpoints niet toe */}
+{/* route-dubbel: voorspelvraag, met eigen paden zodat uitproberen niet botst met het project */}
 ```python
-@app.post("/opslaan")
-async def opslaan(naam: str = Form(...)):
+@app.post("/inschrijven")
+async def inschrijven(naam: str = Form(...)):
     return RedirectResponse(url="/bedankt", status_code=303)
 
 @app.get("/bedankt")
@@ -292,7 +330,7 @@ Een redirect verandert niet alleen wat je ziet, maar ook wat er in de adresbalk 
 <details>
 <summary>Antwoord</summary>
 
-`/bedankt`. De browser volgt de redirect en vraagt die pagina op alsof je er zelf naartoe was gegaan. Van `/opslaan` zie je niets terug.
+`/bedankt`. De browser volgt de redirect en vraagt die pagina op alsof je er zelf naartoe was gegaan. Van `/inschrijven` zie je niets terug.
 
 </details>
 
@@ -307,13 +345,13 @@ Haal `status_code=303` weg en verstuur nog een keer.
 <details>
 <summary>Antwoord</summary>
 
-Je krijgt **405 Method Not Allowed**. Zonder dat getal stuurt FastAPI een 307, en dan herhaalt de browser je POST op `/berichten`. Daar staat alleen een `@app.get`, dus het antwoord is: dit endpoint doet geen POST. Je bericht is wel opgeslagen; alleen het doorsturen ging mis. Probeer je het opnieuw, dan staat het er twee keer in.
+Je krijgt **405 Method Not Allowed**. Zonder dat getal stuurt FastAPI een 307, en dan herhaalt de browser je POST op `/berichten`. Daar staat alleen een `@app.get`, dus het antwoord is: dit endpoint doet geen POST. Je bericht is wel opgeslagen; alleen het doorsturen ging mis. Ga je terug en verstuur je hetzelfde formulier nog een keer, dan staat het er twee keer in.
 
 </details>
 
 ### Opdracht 4: Make - Annuleren
 
-Maak een endpoint `/annuleren` dat niets opslaat en de bezoeker direct terugstuurt naar het formulier op `/gastenboek`. Zet er een link naartoe op je berichtenpagina.
+Maak een endpoint `/annuleren` dat niets opslaat en de bezoeker direct terugstuurt naar de lijst op `/berichten`. Zet er een link naartoe op je gastenboekformulier.
 
 <details>
 <summary>Tip</summary>
@@ -328,12 +366,12 @@ Een bezoeker komt hier via een gewone link, dus het is een `@app.get`. Een redir
 ```python
 @app.get("/annuleren")
 async def annuleren():
-    return RedirectResponse(url="/gastenboek")
+    return RedirectResponse(url="/berichten")
 ```
 
-In `templates/berichten.html`:
+In `static/pages/gastenboek_form.html`, onder het formulier:
 ```html
-<a href="/annuleren">Nieuw bericht schrijven</a>
+<a href="/annuleren">Annuleren</a>
 ```
 
 Hier mag de standaard 307 blijven staan: het oorspronkelijke verzoek was al een GET, dus het herhalen daarvan levert precies op wat je wilt.
@@ -380,5 +418,7 @@ Bovenaan `templates/berichten.html`:
     <p>Bericht verwijderd</p>
 {% endif %}
 ```
+
+Zonder `?verwijderd=1` in de URL is `verwijderd` gelijk aan 0, en 0 telt in een `{% if %}` als niet waar, net als een lege lijst.
 
 </details>

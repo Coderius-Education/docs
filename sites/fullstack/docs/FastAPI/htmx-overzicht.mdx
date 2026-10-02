@@ -41,7 +41,7 @@ Zet `from html import escape` bovenaan je `main.py`. De naam komt van de bezoeke
 
 De `Form`-parameters blijven hetzelfde; voor je endpoint is er geen verschil met een formulier zonder htmx. De omleiding met 303 is niet meer nodig, want de browser is nooit weggegaan.
 
-Zet je `hx-on::after-request="this.reset()"` op de `<form>`, dan maakt htmx de velden leeg zodra het antwoord binnen is.
+Zet je `hx-on::after-request="this.reset()"` op de `<form>`, dan maakt htmx de velden leeg zodra het antwoord binnen is. Dat doet hij ook als het antwoord een fout is, zoals een 400: wat de bezoeker typte, is dan weg. Zet je later een Content-Security-Policy op je site, dan werkt dit attribuut niet meer; wat je dan doet, staat in [HTML van een bezoeker: in de praktijk](/docs/veiligheid/xss/praktijk).
 
 ## Een stuk van de pagina verversen
 
@@ -156,11 +156,25 @@ async def berichten_lijst(request: Request, term: str = ""):
     return templates.TemplateResponse(
         request,
         "berichten_lijst.html",
-        {"berichten": gevonden}
+        {"berichten": gevonden, "term": term}
     )
 ```
 
-`delay:300ms` wacht tot je even stopt met typen, anders gaat er bij elke letter een verzoek. En `changed` slaat toetsen over die de tekst niet veranderen, zoals de pijltjes. Vindt de server niets, dan zie je de zin uit het `{% else %}`-blok.
+`delay:300ms` wacht tot je even stopt met typen, anders gaat er bij elke letter een verzoek. En `changed` slaat toetsen over die de tekst niet veranderen, zoals de pijltjes.
+
+Vindt de server niets, dan komt het `{% else %}`-blok in beeld. Daar staat "Nog geen berichten. Wees de eerste.", en dat klopt niet als er wel berichten zijn maar geen enkele past. Daarom gaat `term` mee naar de template. Vervang in `berichten_lijst.html` het `{% else %}`-blok door:
+
+```html
+{% else %}
+    {% if term %}
+        <p>Geen bericht met "{{ term }}".</p>
+    {% else %}
+        <p>Nog geen berichten. Wees de eerste.</p>
+    {% endif %}
+{% endif %}
+```
+
+Op `/berichten` en na Ververs is er geen `term`, en zie je de oude zin.
 
 Zoeken en vanzelf verversen gaan niet samen: de `<div>` die elke tien seconden ververst, stuurt geen `term` mee, en zet dus steeds weer de hele lijst neer. Kies er één van de twee.
 
@@ -175,7 +189,7 @@ Zoeken en vanzelf verversen gaan niet samen: de `<div>` die elke tien seconden v
 
 ## Er gaat iets mis
 
-Bij htmx zie je fouten niet op de pagina. Een 404, een 500 of een server die uit staat: htmx laat het doel dan met rust, en op het scherm gebeurt niets. Kijk daarom bij elk probleem eerst in het tabblad **Netwerk**. Een rode regel zegt wat er mis is: 404 is een verkeerd pad in `hx-get` of `hx-post`, 500 een fout in je endpoint (kijk in de terminal), `(mislukt)` een server die niet draait, 405 een `@app.post` waar `hx-delete` op wijst.
+Bij htmx zie je fouten niet op de pagina. Een 404, een 500 of een server die uit staat: htmx laat het doel dan met rust, en op het scherm gebeurt niets. Kijk daarom bij elk probleem eerst in het tabblad **Netwerk**. htmx meldt de fout ook in het tabblad **Console**, met een rode regel als `Response Status Error Code 404 from /bericht/…`; dat tabblad leer je kennen in [Console en Elementen](/docs/FastAPI/devtools-console). Een rode regel in Netwerk zegt wat er mis is: 404 is een verkeerd pad in `hx-get` of `hx-post`, 500 een fout in je endpoint (kijk in de terminal), `(mislukt)` een server die niet draait, 405 een `@app.post` waar `hx-delete` op wijst.
 
 ## Opdrachten
 
@@ -228,7 +242,7 @@ Verversen en verwijderen horen bij elkaar: als je kunt verwijderen wil je ook da
 <details>
 <summary>Antwoord</summary>
 
-Er is geen fout antwoord, wel een valkuil: elk recept dat de lijst verandert (versturen, verwijderen) moet de lijst ook op de pagina bijwerken. Laat het endpoint dan `berichten_lijst.html` teruggeven en richt de knop op `#berichten-lijst`, in plaats van één zin of één `<li>`. Een groter stuk terugsturen kost iets meer, maar houdt alles wat erin staat kloppend.
+Er is geen fout antwoord, wel een valkuil: een recept verandert alleen zijn eigen doel, de rest van de pagina blijft staan. Verstuur je een bericht met het formulierrecept, dan staat het pas in de lijst na Ververs of F5, want het formulier staat op `/gastenboek` en de lijst op `/berichten`. Verwijderen haalt alleen dat ene `<li>` weg; wat een ander intussen schreef, zie je pas na Ververs. Verversen en verwijderen samen houden de lijst dus kloppend.
 
 </details>
 

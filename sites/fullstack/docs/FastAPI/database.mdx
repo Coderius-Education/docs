@@ -10,6 +10,8 @@ Tot nu toe verdwijnt alle data als je programma stopt. Met `sqlitedict` bewaar j
 
 ## Installatie
 
+Je server houdt de terminal in VS Code bezet: wat je daar nu typt, komt niet aan. Stop hem eerst met Ctrl+C. De commando's op deze pagina typ je daarna in dezelfde terminal, en in de volgende les start je de server weer met `fastapi dev main.py`.
+
 ```bash
 python -m pip install sqlitedict
 ```
@@ -40,7 +42,7 @@ Binnen het blok gedraagt `db` zich als een dictionary: een sleutel, een waarde.
 </Regel>
 
 <Regel n={6}>
-`db.commit()` schrijft de wijzigingen echt naar het bestand. Zonder deze regel staan ze alleen in het geheugen en zijn ze weg als het programma stopt.
+`db.commit()` schrijft de wijzigingen echt naar het bestand. Zonder deze regel is de wijziging weg zodra het `with`-blok sluit, ook als je programma daarna nog doorloopt.
 </Regel>
 
 </CodeUitleg>
@@ -63,27 +65,27 @@ De data is er nog, zelfs na herstarten.
 
 ```python
 with SqliteDict("data.db") as db:
-    db["key"] = "waarde"      # Opslaan
-    waarde = db["key"]        # Uitlezen
-    del db["key"]             # Verwijderen
-    db.commit()               # Wijzigingen opslaan (NIET vergeten!)
+    db["sleutel"] = "waarde"            # Opslaan
+    waarde = db["sleutel"]              # Uitlezen
+    del db["sleutel"]                   # Verwijderen
+    db.commit()                         # Wijzigingen opslaan, niet vergeten
 
-    for k, v in db.items():   # Alles bekijken
-        print(k, v)
+    for sleutel, waarde in db.items():  # Alles bekijken
+        print(sleutel, waarde)
 
-    if "key" in db:           # Checken of iets bestaat
-        print("Bestaat!")
+    if "sleutel" in db:                 # Checken of iets bestaat
+        print("Bestaat")
 ```
 
 <details>
 <summary>Waarom is db.commit() nodig?</summary>
 
-Een database slaat wijzigingen niet meteen op in het bestand. Met `db.commit()` zeg je: "Sla nu alles echt op." Als je dit vergeet, staan je wijzigingen alleen in het geheugen en verdwijnen ze als het programma stopt. Vergelijk het met een Word-document: je moet op "Opslaan" klikken, anders ben je je werk kwijt.
+Een database slaat wijzigingen niet meteen op in het bestand. Met `db.commit()` zeg je: "Sla nu alles echt op." Als je dit vergeet, verdwijnen je wijzigingen zodra de database sluit, aan het eind van het `with`-blok. Vergelijk het met een Word-document: je moet op "Opslaan" klikken, anders ben je je werk kwijt.
 
 </details>
 
 :::danger[Gaat er iets mis?]
-Data verdwenen na herstarten? Dan ben je waarschijnlijk `db.commit()` vergeten. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
+Is je data weg zodra je hem opnieuw opvraagt? Dan ben je waarschijnlijk `db.commit()` vergeten. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
 :::
 
 ## Opdrachten
@@ -91,6 +93,8 @@ Data verdwenen na herstarten? Dan ben je waarschijnlijk `db.commit()` vergeten. 
 ### Opdracht 1: Predict - Wat gebeurt er?
 
 ```python
+from sqlitedict import SqliteDict
+
 with SqliteDict("test.db") as db:
     db["score"] = 100
     db.commit()
@@ -115,9 +119,9 @@ with SqliteDict("test.db") as db:
 
 </details>
 
-### Opdracht 2: Run - Eerste database
+### Opdracht 2: Make - Eerste database
 
-Maak een programma dat een contact met naam en telefoonnummer opslaat en weer uitleest. Werkt het?
+Maak een programma dat een contact met naam en telefoonnummer opslaat en weer uitleest.
 
 <details>
 <summary>Tip</summary>
@@ -151,7 +155,7 @@ Wat gebeurt er als je `db.commit()` vergeet? Probeer het uit.
 <details>
 <summary>Antwoord</summary>
 
-De data komt niet in het bestand, dus na herstarten is hij weg. Zonder `commit()` staan de wijzigingen alleen in het geheugen.
+De data komt niet in het bestand. Zodra het `with`-blok sluit, is de wijziging weg: open je de database daarna opnieuw, ook in hetzelfde programma, dan staat hij er niet meer in.
 
 </details>
 
@@ -179,8 +183,8 @@ with SqliteDict("favorieten.db") as db:
     db.commit()
 
 with SqliteDict("favorieten.db") as db:
-    for key, value in db.items():
-        print(f"{key}: {value}")
+    for sleutel, waarde in db.items():
+        print(f"{sleutel}: {waarde}")
 ```
 
 </details>

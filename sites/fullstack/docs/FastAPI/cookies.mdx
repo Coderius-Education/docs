@@ -10,7 +10,7 @@ Wil je toch iets onthouden tussen twee verzoeken, dan moet je die informatie erg
 
 ## Een cookie meegeven
 
-Tot nu toe gaf je endpoint alleen inhoud terug. Een antwoord kan ook opdrachten voor de browser bevatten, en `set_cookie` is er daar een van. Vervang je `POST /gastenboek` uit [Doorsturen na opslaan (redirect)](/docs/FastAPI/redirect) door deze versie:
+Tot nu toe gaf je endpoint alleen inhoud terug. Een antwoord kan ook opdrachten voor de browser bevatten, en `set_cookie` is er daar een van. Vervang je `POST /gastenboek` door deze versie. De controle op de lengte uit [Server of browser?](/docs/FastAPI/server-of-browser) blijft bovenaan staan:
 
 <CodeUitleg>
 
@@ -18,6 +18,9 @@ Tot nu toe gaf je endpoint alleen inhoud terug. Een antwoord kan ook opdrachten 
 ```python showLineNumbers
 @app.post("/gastenboek")
 async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
+    if len(bericht) > 80:
+        raise HTTPException(status_code=400, detail="Bericht is te lang")
+
     with SqliteDict("gastenboek.db") as db:
         db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
         db.commit()
@@ -27,15 +30,15 @@ async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
     return antwoord
 ```
 
-<Regel n={7}>
-Het verschil met eerder: je maakt het antwoord eerst als variabele in plaats van het meteen terug te geven. Zolang je het antwoord meteen returnt, heb je geen plek om er iets aan toe te voegen.
+<Regel n={10}>
+Je maakt het antwoord nu eerst als variabele, in plaats van het meteen terug te geven. Return je het meteen, dan heb je geen plek om er iets aan toe te voegen.
 </Regel>
 
-<Regel n={8}>
+<Regel n={11}>
 `set_cookie` zet een cookie op het antwoord: een naam, een waarde, en met `max_age` de houdbaarheid in seconden. Hier is dat 30 dagen: `60 * 60 * 24 * 30`. Laat je `max_age` weg, dan verdwijnt de cookie zodra de bezoeker de browser afsluit.
 </Regel>
 
-<Regel n={9}>
+<Regel n={12}>
 Pas nu gaat het antwoord terug, mét de cookie erop.
 </Regel>
 
@@ -153,6 +156,8 @@ In `templates/gastenboek.html`:
 ```
 
 Na het klikken is het naamveld weer leeg: de browser heeft de cookie weggegooid en stuurt hem dus niet meer mee.
+
+Dit mag een GET zijn, want op de server verandert er niets: alleen een cookie voor het gemak verdwijnt uit de browser. Waarom uitloggen wél een POST is, lees je straks in [Cookie of sessie?](/docs/FastAPI/cookie-of-sessie).
 
 </details>
 

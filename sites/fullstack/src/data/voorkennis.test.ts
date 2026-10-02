@@ -78,7 +78,8 @@ const ZONDER_BLOK: Record<string, string> = {
     'achtergrond bij de twee stappen ervoor, geen nieuwe voorkennis',
   'veiligheid/cookies/zwakheid.mdx': 'bouwt op sessies en de toegang-reeks, geen nieuwe voorkennis',
   'veiligheid/invoer/getallen.mdx': 'int, ge en le worden in de les zelf uitgelegd',
-  'veiligheid/invoer/grenzen.mdx': 'bouwt op de maxlength-les ervoor, in dezelfde map',
+  'veiligheid/invoer/fouten-lezen.mdx':
+    'geneste dictionaries staan al bij grenzen.mdx, de les ervoor; niet herhalen',
   'veiligheid/invoer/inhoud.mdx': 'strip() wordt in de les zelf uitgelegd',
   'veiligheid/invoer/maxlength.mdx':
     'maxlength is fullstack-stof uit server-of-browser, geen nieuwe voorkennis',
@@ -125,7 +126,7 @@ const MET_BLOK = [
   'veiligheid/dos/verzoek.mdx',
   'veiligheid/dos/zelf-meten.mdx',
   'veiligheid/gereedschap.mdx',
-  'veiligheid/invoer/fouten-lezen.mdx',
+  'veiligheid/invoer/grenzen.mdx',
   'veiligheid/toegang/zwakheid.mdx',
   'veiligheid/wachtwoorden/gewone-tekst.mdx',
   'veiligheid/wachtwoorden/inloggen.mdx',

@@ -21,12 +21,12 @@ Het begin is daarom hetzelfde als bij `/inloggen`:
 @app.post("/wijzig")
 async def wijzig(naam: str = Form(...), oud: str = Form(...), nieuw: str = Form(...)):
     with SqliteDict("gebruikers.db") as db:
-        opgeslagen = db.get(naam)
-    if opgeslagen is None:
-        return {"bericht": "Naam of wachtwoord klopt niet"}
+        opgeslagen = db.get(naam, NEP)
     try:
         ph.verify(opgeslagen, oud)
     except VerifyMismatchError:
+        return {"bericht": "Naam of wachtwoord klopt niet"}
+    if opgeslagen == NEP:
         return {"bericht": "Naam of wachtwoord klopt niet"}
     with SqliteDict("gebruikers.db") as db:
         db[naam] = ph.hash(nieuw)
@@ -35,7 +35,7 @@ async def wijzig(naam: str = Form(...), oud: str = Form(...), nieuw: str = Form(
 ```
 
 <Regel n={3} tot={10}>
-Net als bij inloggen: opzoeken, en `ph.verify` met het oude wachtwoord.
+Net als bij inloggen: opzoeken met de nep-hash als reserve, `ph.verify` met het oude wachtwoord, en dezelfde melding bij een onbekende naam.
 </Regel>
 
 <Regel n={11} tot={13}>
@@ -45,7 +45,8 @@ Pas als het oude wachtwoord klopt, open je de database opnieuw en bewaar je de h
 </CodeUitleg>
 
 Zet dit endpoint in hetzelfde `main.py` als `/registreer` en `/inloggen`: het
-gebruikt dezelfde imports en dezelfde `ph`.
+gebruikt dezelfde imports, dezelfde `ph` en dezelfde `NEP`. Zonder de nep-hash
+zou ook `/wijzig` met zijn snelle antwoord verraden welke namen bestaan.
 
 ## Oude hashes bijwerken
 
@@ -81,8 +82,8 @@ True
 maakt, met lichtere instellingen: `time_cost` is de `t=` uit de tabel in
 [les 5](./registreren).
 
-In `/inloggen` komt het bijwerken ná het `try`/`except`-blok en vóór de laatste
-`return`. Daar weet je zeker dat het wachtwoord klopt:
+In `/inloggen` komt het bijwerken ná de controle op `NEP` en vóór de laatste
+`return`. Daar weet je zeker dat de naam bestaat en het wachtwoord klopt:
 
 <CodeUitleg>
 
@@ -90,12 +91,12 @@ In `/inloggen` komt het bijwerken ná het `try`/`except`-blok en vóór de laats
 @app.post("/inloggen")
 async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
     with SqliteDict("gebruikers.db") as db:
-        opgeslagen = db.get(naam)
-    if opgeslagen is None:
-        return {"bericht": "Naam of wachtwoord klopt niet"}
+        opgeslagen = db.get(naam, NEP)
     try:
         ph.verify(opgeslagen, wachtwoord)
     except VerifyMismatchError:
+        return {"bericht": "Naam of wachtwoord klopt niet"}
+    if opgeslagen == NEP:
         return {"bericht": "Naam of wachtwoord klopt niet"}
     if ph.check_needs_rehash(opgeslagen):
         with SqliteDict("gebruikers.db") as db:
@@ -104,8 +105,8 @@ async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
     return {"bericht": "Ingelogd"}
 ```
 
-<Regel n={7} tot={10}>
-Dit ken je uit les 6. Klopt het wachtwoord niet, dan stopt de functie hier.
+<Regel n={3} tot={10}>
+Dit ken je uit les 6. Klopt het wachtwoord niet, of bestaat de naam niet, dan stopt de functie hier.
 </Regel>
 
 <Regel n={11} tot={14}>
@@ -232,7 +233,8 @@ dan heeft jouw versie van `argon2-cffi` strengere instellingen.
 ### Opdracht 4: Make - In je eigen project
 
 Wil je accounts in je eigen project, neem dan de drie endpoints uit deze reeks
-over, en maak er formulieren bij voor registreren en inloggen.
+over, met `ph` en `NEP` bovenaan, en maak er formulieren bij voor registreren
+en inloggen.
 
 <details>
 <summary>Tip</summary>
@@ -250,8 +252,8 @@ Loop deze lijst af:
 - Er staat nergens een wachtwoord als gewone tekst: niet in de database, niet
   in een print, niet in een cookie.
 - `/registreer` bewaart `ph.hash(wachtwoord)`.
-- `/inloggen` gebruikt `ph.verify`, en geeft bij een onbekende naam en bij een
-  fout wachtwoord dezelfde melding.
+- `/inloggen` gebruikt `ph.verify`, ook bij een onbekende naam (tegen `NEP`), en
+  geeft bij een onbekende naam en bij een fout wachtwoord dezelfde melding.
 - `/wijzig` controleert eerst het oude wachtwoord.
 
 Het formulier voor registreren:
@@ -266,6 +268,30 @@ Het formulier voor registreren:
 
 Het formulier voor inloggen is hetzelfde, met `action="/inloggen"`.
 
+Moet je site na het inloggen onthouden wie er is, zet de naam dan in de sessie
+uit [Onthouden op de server: sessies](/docs/FastAPI/sessies). Zet in
+`/inloggen` de parameter `sessie_id: str = Cookie(default="")` erbij, naast
+`wachtwoord`, en vervang de laatste `return` door:
+
+{/* niet-compileren: de laatste regels van inloggen, ingesprongen fragment */}
+
+```python
+    if not sessie_id:
+        sessie_id = secrets.token_hex(16)
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {"naam": naam, "berichten": []})
+        mijn["naam"] = naam
+        sessies[sessie_id] = mijn
+        sessies.commit()
+    antwoord = RedirectResponse(url="/berichten", status_code=303)
+    antwoord.set_cookie(key="sessie_id", value=sessie_id, httponly=True, samesite="lax")
+    return antwoord
+```
+
+Dit staat ná `ph.verify` en de controle op `NEP`: pas daar weet je wie er
+inlogt. `secrets`, `Cookie` en `RedirectResponse` heb je sinds de les over
+sessies al geïmporteerd.
+
 </details>
 
 <details>
@@ -279,6 +305,7 @@ from sqlitedict import SqliteDict
 
 app = FastAPI()
 ph = PasswordHasher()
+NEP = ph.hash("niemand")
 
 @app.post("/registreer")
 async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
@@ -292,12 +319,12 @@ async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
 @app.post("/inloggen")
 async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
     with SqliteDict("gebruikers.db") as db:
-        opgeslagen = db.get(naam)
-    if opgeslagen is None:
-        return {"bericht": "Naam of wachtwoord klopt niet"}
+        opgeslagen = db.get(naam, NEP)
     try:
         ph.verify(opgeslagen, wachtwoord)
     except VerifyMismatchError:
+        return {"bericht": "Naam of wachtwoord klopt niet"}
+    if opgeslagen == NEP:
         return {"bericht": "Naam of wachtwoord klopt niet"}
     if ph.check_needs_rehash(opgeslagen):
         with SqliteDict("gebruikers.db") as db:
@@ -308,12 +335,12 @@ async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
 @app.post("/wijzig")
 async def wijzig(naam: str = Form(...), oud: str = Form(...), nieuw: str = Form(...)):
     with SqliteDict("gebruikers.db") as db:
-        opgeslagen = db.get(naam)
-    if opgeslagen is None:
-        return {"bericht": "Naam of wachtwoord klopt niet"}
+        opgeslagen = db.get(naam, NEP)
     try:
         ph.verify(opgeslagen, oud)
     except VerifyMismatchError:
+        return {"bericht": "Naam of wachtwoord klopt niet"}
+    if opgeslagen == NEP:
         return {"bericht": "Naam of wachtwoord klopt niet"}
     with SqliteDict("gebruikers.db") as db:
         db[naam] = ph.hash(nieuw)

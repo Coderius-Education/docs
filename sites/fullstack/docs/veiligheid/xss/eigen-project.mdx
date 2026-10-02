@@ -44,6 +44,20 @@ Loop deze lijst af:
   [htmx-overzicht](/docs/FastAPI/htmx-overzicht) overgenomen, kijk dan of daar
   `escape(naam)` staat; dat is later aan het recept toegevoegd.
 
+Gebruik je in je gastenboek het htmx-formulier, dan is dat de `return` van je
+`POST /gastenboek`. Zet `from html import escape` bij je imports, en laat de
+`return` zo eindigen:
+
+{/* niet-compileren: alleen de laatste regel van je POST /gastenboek */}
+
+```python
+    return HTMLResponse(f"Bedankt, {escape(naam)}. Je bericht staat in het gastenboek.")
+```
+
+Stuurt je `POST /gastenboek` nog door met een `RedirectResponse`, dan zet hij
+geen tekst in HTML, en hoeft er niets bij. Je lijst, je detailpagina en
+`berichten.html` zijn templates op `.html`; ook daar komt niets bij.
+
 Test het door in je eigen formulier `<b>vet</b>` in te vullen: je moet de
 haakjes zien, en niets vetgedrukt.
 

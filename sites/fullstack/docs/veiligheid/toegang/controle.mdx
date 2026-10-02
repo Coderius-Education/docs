@@ -7,9 +7,15 @@ import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
 
 # Wie mag wat: de controle met 403
 
-De controle hoort op de plek waar het verzoek binnenkomt: in het endpoint. De
-server weet welke berichten deze bezoeker heeft geplaatst, want ze staan in zijn
-sessie. Staat de sleutel daar niet in, dan verwijdert het endpoint niets.
+In [les 1](./zwakheid) verwijderde Alex het bericht van Sara, met of zonder
+knop. De controle hoort daarom op de plek waar het verzoek binnenkomt: in het
+endpoint. De server weet welke berichten deze bezoeker heeft geplaatst, want ze
+staan in zijn sessie. Staat de sleutel daar niet in, dan verwijdert het endpoint
+niets.
+
+Heb je [opdracht 5 van Sessies](/docs/FastAPI/sessies#opdracht-5-make---echt-afschermen)
+gemaakt, dan deed je dit al, op `/verwijderen`. Hier zet je dezelfde controle op
+`DELETE /bericht/{sleutel}`, en zie je met het script uit les 1 dat hij werkt.
 
 ## De controle in het endpoint
 
@@ -49,10 +55,6 @@ Pas nu gaat het bericht weg. `if sleutel in db` vangt een bericht op dat al weg 
 </Regel>
 
 </CodeUitleg>
-
-Heb je in Sessies [opdracht 5](/docs/FastAPI/sessies#opdracht-5-make---echt-afschermen)
-gemaakt, dan herken je deze controle: het is dezelfde, nu op het
-`DELETE`-endpoint.
 
 ## Doe de test opnieuw
 
@@ -112,7 +114,9 @@ for sleutel, bericht in sara.get("/berichten").json().items():
         antwoord = sara.delete(f"/bericht/{sleutel}")
         print(f"Sara verwijdert haar eigen bericht: {antwoord.status_code}")
 
-namen = [bericht["naam"] for bericht in sara.get("/berichten").json().values()]
+namen = []
+for bericht in sara.get("/berichten").json().values():
+    namen.append(bericht["naam"])
 print(f"Nog in het gastenboek: {namen}")
 ```
 
@@ -129,9 +133,9 @@ De `Client` van Sara stuurt haar cookie mee, en de sleutel staat in haar sessie.
 
 ### Opdracht 2: Predict - Een nieuw venster
 
-Sara opent het gastenboek in een privévenster en klikt daar op Verwijderen bij
-haar eigen bericht. In het script is dat een derde `httpx.Client`, zonder
-cookie.
+Sara opent het gastenboek in een privévenster en stuurt daar het verzoek om
+haar eigen bericht te verwijderen. In het script is dat een derde
+`httpx.Client`, zonder cookie.
 
 **Vraag:** krijgt ze `200` of `403`?
 

@@ -44,7 +44,7 @@ async def berichten(request: Request):
 ```
 
 <Regel n={4}>
-`db.values()` geeft alle opgeslagen berichten, zonder hun sleutels. De `list()` eromheen is het belangrijkste van deze les: `db.values()` haalt de rijen pas op als je erdoorheen loopt, en dat gebeurt in de template, als de database allang weer dicht is. `list()` haalt ze binnen het `with`-blok op. Vergeet je dat, dan krijg je `AttributeError: 'NoneType' object has no attribute 'select'`.
+`db.values()` geeft alle opgeslagen berichten, zonder hun sleutels. De `list()` eromheen ken je uit [Een formulier opslaan](/docs/FastAPI/post_naar_database), en hier is hij net zo nodig: de template loopt pas door de berichten als de database allang weer dicht is. Vergeet je hem, dan krijg je ook hier `AttributeError: 'NoneType' object has no attribute 'select'`.
 </Regel>
 
 <Regel n={8}>
@@ -68,6 +68,8 @@ Een gastenboek zonder berichten toont nu een lege `<ul>`. Met `{% if %}` vang je
     <p>Nog geen berichten. Wees de eerste.</p>
 {% endif %}
 ```
+
+`{% if berichten %}` is waar zodra er minstens één bericht in de lijst staat. Een lege lijst telt als niet waar, en dan toont Jinja2 wat onder `{% else %}` staat.
 
 ## Compleet voorbeeld
 
@@ -104,7 +106,7 @@ Een gastenboek zonder berichten toont nu een lege `<ul>`. Met `{% if %}` vang je
 2. Je ziet de berichten die je in de vorige les verstuurde, nu als lijst
 3. Vul het formulier op `/gastenboek` nog een keer in en ga terug naar `/berichten`: de lijst is gegroeid
 
-Wil je "Nog geen berichten" zien, stop dan de server, gooi `gastenboek.db` weg en start opnieuw.
+Wil je "Nog geen berichten" zien, stop dan de server, hernoem `gastenboek.db` tijdelijk (bijvoorbeeld naar `gastenboek-bewaar.db`) en start opnieuw. Zet daarna de oude naam terug, want de volgende lessen bouwen op je berichten voort.
 
 :::danger[Gaat er iets mis?]
 Blijft de lijst leeg terwijl er wel data in je database staat? Dan komt de lijst waarschijnlijk onder een andere naam binnen dan de template verwacht. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
@@ -213,7 +215,7 @@ async def groet_verwerk(request: Request, naam: str = Form(...)):
         {"naam": naam}
     )
 
-@app.get("/bewaar")
+@app.get("/opslaan")
 async def naam_formulier():
     return FileResponse("static/pages/naam_opslaan.html")
 

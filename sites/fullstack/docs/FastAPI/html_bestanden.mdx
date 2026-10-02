@@ -40,7 +40,7 @@ Zet `FileResponse` bij de imports, en vervang je endpoint voor `/` uit [Je eerst
 {/* route-dubbel: vervangt GET / uit Je eerste endpoint */}
 ```python showLineNumbers
 from fastapi import FastAPI
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, HTMLResponse
 
 app = FastAPI()
 
@@ -50,7 +50,7 @@ async def home():
 ```
 
 <Regel n={2}>
-`FileResponse` vervangt `HTMLResponse`: je stuurt geen string meer terug, maar een bestand.
+`FileResponse` komt naast `HTMLResponse`, want `/pagina` en `/styled` gebruiken die nog. Met `FileResponse` stuur je geen string terug, maar een bestand.
 </Regel>
 
 <Regel n={8}>
@@ -64,7 +64,7 @@ Het pad is dat van het bestand op je schijf, gerekend vanaf de map waarin je `fa
 Ga naar [http://127.0.0.1:8000](http://127.0.0.1:8000). Je ziet de pagina uit `home.html`.
 
 :::danger[Gaat er iets mis?]
-Krijg je een 404 of een 500? Kijk of het pad in `FileResponse("...")` precies klopt en of het bestand echt op die plek staat. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
+Zie je de pagina niet? Kijk of het pad in `FileResponse("...")` precies klopt en of het bestand echt op die plek staat. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
 :::
 
 <details>
@@ -152,11 +152,11 @@ Je krijgt een 500 Internal Server Error: het endpoint bestaat, maar het bestand 
 
 ### Opdracht 2: Run
 
-Maak de mappenstructuur uit het voorbeeld (`static/pages/home.html`), pas je `main.py` aan met `FileResponse`, en test of de pagina laadt.
+Maak de mappenstructuur uit het voorbeeld (`static/pages/home.html`) en pas je `main.py` aan met `FileResponse`. Laadt `/` de pagina uit `home.html`? En werken `/pagina` en `/styled` nog?
 
 ### Opdracht 3: Investigate - Fout pad
 
-Verander het pad in `FileResponse` naar een bestand dat niet bestaat, bijvoorbeeld `FileResponse("static/pages/oeps.html")`. Welke fout krijg je?
+Toets je voorspelling uit opdracht 1. Verander het pad in je endpoint voor `/` naar een bestand dat niet bestaat, bijvoorbeeld `FileResponse("static/pages/oeps.html")`, en herlaad. Wat zegt de browser, en welke regel in de terminal vertelt je wat er mis is?
 
 <details>
 <summary>Antwoord</summary>
@@ -167,7 +167,7 @@ De browser toont alleen `Internal Server Error`. In de terminal staat een lange 
 RuntimeError: File at path static/pages/oeps.html does not exist.
 ```
 
-Dat is de regel die je iets vertelt: het bestand bestaat niet op dat pad. Een typfout in het pad geeft precies deze fout.
+Dat is de regel die je iets vertelt: het bestand bestaat niet op dat pad. Een typfout in het pad geeft precies deze fout. Zet het pad daarna terug op `home.html`.
 
 </details>
 

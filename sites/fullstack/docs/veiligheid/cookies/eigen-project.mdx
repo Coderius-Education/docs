@@ -1,13 +1,14 @@
 ---
 sidebar_label: '5. In je eigen project'
-description: Zet httponly op de sessie-cookie van je eigen project, laat samesite op lax staan, en maak een endpoint om uit te loggen.
+description: Zet httponly en samesite op de sessie-cookie van je eigen project, laat sessies op de server verlopen, en maak een POST-endpoint om uit te loggen.
 ---
 
 # Cookies afschermen: in je eigen project
 
 In deze reeks zette je `httponly` op de sessie-cookie, zag je dat FastAPI
-`samesite="lax"` al vanzelf zet, en bouwde je een endpoint om uit te loggen. Doe
-hetzelfde in je gastenboek, of in een eigen project dat je bouwde.
+`samesite="lax"` al vanzelf zet, bouwde je een endpoint om uit te loggen en liet
+je een sessie op de server verlopen. Doe hetzelfde in je gastenboek, of in een
+eigen project dat je bouwde.
 
 :::tip
 Werk in je eigen project, niet in de map `veiligheid-cookies`. Test daarna met
@@ -18,14 +19,17 @@ je eigen server op `127.0.0.1`.
 
 ### Opdracht 1: Make - In je eigen project
 
-Zet in je eigen project `httponly=True` op de sessie-cookie, en controleer in
-de Console dat `document.cookie` hem niet meer laat zien.
+Zet in je eigen project `httponly=True` en `samesite="lax"` op de sessie-cookie,
+en controleer in de Console dat `document.cookie` hem niet meer laat zien. Geef
+de sessie een eigen verlooptijd, en zorg voor een knop om uit te loggen.
 
 <details>
 <summary>Tip</summary>
 
 Zoek naar `set_cookie`. Denk aan de oude cookie: verstuur na de wijziging
-eerst iets, zodat de server een nieuwe zet.
+eerst iets, zodat de server een nieuwe zet. Lees je de sessie op meer plekken
+uit, zoals in `GET /gastenboek` en `POST /verwijderen`, dan gebruik je overal
+`sessie_ophalen` uit [les 4](./uitloggen).
 
 </details>
 
@@ -34,11 +38,20 @@ eerst iets, zodat de server een nieuwe zet.
 
 Loop deze lijst af:
 
-- Bij elke `set_cookie` voor `sessie_id` staat `httponly=True`.
+- Bij elke `set_cookie` voor `sessie_id` staan `httponly=True` en
+  `samesite="lax"`.
 - Na een nieuw bezoek laat `document.cookie` de sessie-cookie niet meer zien,
   en staat er in het tabblad **App** een vinkje bij **HttpOnly**.
-- Er is een endpoint om uit te loggen, dat de sessie in `sessies.db` weggooit
-  en de cookie weghaalt met `delete_cookie`.
+- In `POST /gastenboek` krijgt de sessie bij elk bericht
+  `mijn["tot"] = time.time() + GELDIG`, en een nieuw sessie-id als
+  `sessie_ophalen` niets vindt. Elk ander endpoint dat de sessie leest, haalt
+  hem ook op met `sessie_ophalen`, zodat een verlopen sessie telt als geen
+  sessie.
+- Er is een `@app.post("/uitloggen")` dat de sessie in `sessies.db` weggooit
+  en de cookie weghaalt met `delete_cookie`, met een formulierknop
+  (`<form method="post" action="/uitloggen">`) op je pagina. Heb je uit
+  opdracht 5 van [Cookie of sessie?](/docs/FastAPI/cookie-of-sessie) nog een
+  versie met `@app.get` en een link, maak er dan een POST van.
 - Een cookie die je eigen JavaScript wél moet lezen, zoals een voorkeur voor
   een donker thema, krijgt geen `httponly`. Daar hangen ook geen rechten aan.
 
@@ -46,8 +59,9 @@ Loop deze lijst af:
 antwoord.set_cookie(
     key="sessie_id",
     value=sessie_id,
-    max_age=60 * 60 * 24 * 30,
+    max_age=GELDIG,
     httponly=True,
+    samesite="lax",
 )
 ```
 

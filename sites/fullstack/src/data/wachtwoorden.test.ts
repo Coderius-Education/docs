@@ -11,14 +11,22 @@ import { describe, expect, it } from 'vitest';
 
 const MAP = fileURLToPath(new URL('../../docs/veiligheid/wachtwoorden', import.meta.url));
 
-const blokken = readdirSync(MAP)
+const lessen = readdirSync(MAP)
   .filter((naam) => naam.endsWith('.mdx'))
-  .flatMap((naam) =>
-    [...readFileSync(join(MAP, naam), 'utf8').matchAll(/```python[^\n]*\n([\s\S]*?)```/g)]
-      .map((m) => m[1])
-      .filter((code) => code.includes('@app.post("/registreer")'))
-      .map((code) => ({ naam, code })),
-  );
+  .map((naam) => ({ naam, tekst: readFileSync(join(MAP, naam), 'utf8') }));
+
+const pythonBlokken = lessen.flatMap(({ naam, tekst }) =>
+  [...tekst.matchAll(/```python[^\n]*\n([\s\S]*?)```/g)].map((m) => ({ naam, code: m[1] })),
+);
+
+const blokken = pythonBlokken.filter(({ code }) => code.includes('@app.post("/registreer")'));
+
+// Het stuk van een blok vanaf een endpoint tot het volgende endpoint.
+const endpoint = (code: string, kop: string) => {
+  const begin = code.indexOf(kop);
+  const eind = code.indexOf('\n@app.', begin + kop.length);
+  return code.slice(begin, eind === -1 ? undefined : eind);
+};
 
 describe('registreren in de wachtwoordenreeks', () => {
   it('vindt de versies van /registreer', () => {
@@ -28,9 +36,85 @@ describe('registreren in de wachtwoordenreeks', () => {
   it.each(blokken.map((b, i) => [`${b.naam} #${i}`, b.code]))(
     '%s weigert een naam die al bestaat',
     (_, code) => {
-      const registreer = code.slice(code.indexOf('@app.post("/registreer")'));
+      const registreer = endpoint(code, '@app.post("/registreer")');
       expect(registreer).toMatch(/if naam in db:\s+raise HTTPException\(status_code=400/);
       expect(code).toMatch(/from fastapi import [^\n]*HTTPException/);
     },
   );
+});
+
+// Het blok met /inloggen in les 6 importeerde `from fastapi import FastAPI,
+// Form`, terwijl het main.py ernaast /registreer met HTTPException had. Wie die
+// importregel overnam, kreeg een NameError bij de eerste dubbele naam. Een blok
+// dat HTTPException gebruikt, importeert hem dus zelf. En omdat main.py in deze
+// reeks vanaf les 1 /registreer met HTTPException heeft, houdt elke
+// fastapi-importregel naast een endpoint HTTPException erin.
+describe('imports in de wachtwoordenreeks', () => {
+  const metImport = pythonBlokken.filter(
+    ({ code }) => code.includes('@app.') && /^from fastapi import/m.test(code),
+  );
+
+  it.each(metImport.map((b, i) => [`${b.naam} #${i}`, b.code]))(
+    '%s laat HTTPException niet uit de importregel van main.py vallen',
+    (_, code) => {
+      expect(code).toMatch(/^from fastapi import [^\n]*\bHTTPException\b/m);
+    },
+  );
+
+  const metHttpException = pythonBlokken.filter(({ code }) => code.includes('HTTPException'));
+
+  it('vindt blokken met HTTPException', () => {
+    expect(metHttpException.length).toBeGreaterThanOrEqual(5);
+  });
+
+  it.each(metHttpException.map((b, i) => [`${b.naam} #${i}`, b.code]))(
+    '%s importeert HTTPException uit fastapi',
+    (_, code) => {
+      expect(code).toMatch(/^from fastapi import [^\n]*\bHTTPException\b/m);
+    },
+  );
+});
+
+// /inloggen antwoordde bij een onbekende naam meteen (een paar milliseconden)
+// en bij een bestaande naam pas na het trage ph.verify (zo'n 90 ms). De melding
+// was gelijk, maar de tijd verraadde welke namen een account hadden. Elk
+// endpoint dat ph.verify gebruikt, rekent daarom bij een onbekende naam ook een
+// verify uit, tegen de nep-hash NEP, en laat die naam daarna niet binnen.
+describe('een onbekende naam kost even veel tijd', () => {
+  const versies = pythonBlokken.flatMap(({ naam, code }) =>
+    ['@app.post("/inloggen")', '@app.post("/wijzig")']
+      .filter((kop) => code.includes(kop))
+      .map((kop) => ({ naam, kop, code, stuk: endpoint(code, kop) }))
+      .filter(({ stuk }) => stuk.includes('ph.verify')),
+  );
+
+  it('vindt de versies van /inloggen en /wijzig met ph.verify', () => {
+    expect(versies.length).toBeGreaterThanOrEqual(5);
+  });
+
+  it.each(versies.map((v, i) => [`${v.naam} #${i} ${v.kop}`, v.code, v.stuk]))(
+    '%s doet ook bij een onbekende naam een verify',
+    (_, code, stuk) => {
+      expect(stuk).toContain('db.get(naam, NEP)');
+      expect(stuk).not.toMatch(/is None:\s+return/);
+      expect(stuk).toMatch(
+        /if opgeslagen == NEP:\s+return \{"bericht": "Naam of wachtwoord klopt niet"\}/,
+      );
+      // De controle op NEP staat na ph.verify, anders is de tijd weer ongelijk.
+      expect(stuk.indexOf('if opgeslagen == NEP')).toBeGreaterThan(stuk.indexOf('ph.verify'));
+      if (code.includes('app = FastAPI()')) {
+        expect(code).toMatch(/^NEP = ph\.hash\(/m);
+      }
+    },
+  );
+});
+
+// hash.mdx zei "Regel 9 wordt:", maar sinds de controle `if naam in db` erbij
+// kwam, was dat regel 11. Wie regel 9 verving, kreeg een IndentationError. Een
+// les noemt een regel daarom bij zijn inhoud, niet bij zijn nummer.
+describe('regels bij hun inhoud', () => {
+  it.each(lessen.map((l) => [l.naam, l.tekst]))('%s noemt geen regel bij nummer', (_, tekst) => {
+    const proza = tekst.replace(/```[\s\S]*?```/g, '');
+    expect(proza).not.toMatch(/\b[Rr]egels? \d+/);
+  });
 });

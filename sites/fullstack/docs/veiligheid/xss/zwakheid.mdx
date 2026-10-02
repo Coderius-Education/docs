@@ -11,20 +11,25 @@ description: Wat een bezoeker invult, komt met een f-string letterlijk in je HTM
   ]}
 />
 
-In een gastenboek komt tekst van bezoekers in jouw HTML. Met een
-[template](/docs/FastAPI/post_met_templates) blijft die tekst tekst. Maar een endpoint
-voor htmx geeft vaak een klein stukje HTML terug, en dat bouw je snel met een
-f-string. Dan gaat het mis.
+In het htmx-recept [Een formulier versturen](/docs/FastAPI/htmx-overzicht#een-formulier-versturen)
+zette je `escape(naam)` in het antwoord, zodat een naam als `<b>Sara</b>` niet
+vet werd. In deze reeks zie je waarom die `escape` er staat: je haalt hem weg en
+kijkt wat er dan gebeurt. Met een
+[template](/docs/FastAPI/post_met_templates) blijft tekst van een bezoeker
+tekst; met een f-string niet.
 
 :::note[Waar je werkt]
 Maak voor deze reeks een nieuwe map `veiligheid-xss`, naast je eigen
 project, en open die in VS Code. De server, de scripts en de database van deze reeks komen daarin. Zo blijft je eigen gastenboek heel. Aan
 het eind van de reeks pas je het geleerde toe op je eigen project.
+
+Maak in die map een virtual environment en installeer de packages; hoe dat gaat staat bij [Een map per reeks](/docs/veiligheid/gereedschap#een-map-per-reeks).
 :::
 
 ## Een gastenboek met een f-string
 
-Dit gastenboek zet de berichten niet in een template, maar in een f-string.
+Dit gastenboek zet de berichten niet in een template, maar in een f-string,
+en het antwoord na het versturen heeft geen `escape`.
 De pagina zelf is een los bestand `static/gastenboek.html`:
 
 ```html
@@ -80,7 +85,7 @@ async def berichten_lijst():
 ```
 
 <Regel n={16}>
-Het antwoord na het versturen, zoals in het htmx-recept stond voordat er `escape` in kwam.
+Het antwoord na het versturen, zoals in het recept Een formulier versturen, maar zonder `escape` om de naam.
 </Regel>
 
 <Regel n={20} tot={24}>
@@ -97,7 +102,12 @@ site van een ander om te kijken wat er gebeurt, is een aanval op die site en op
 de bezoekers ervan, en strafbaar.
 :::
 
-Start je server en open `http://127.0.0.1:8000/static/gastenboek.html`. Vul als
+Start je server en open `http://127.0.0.1:8000/static/gastenboek.html`. In de
+terminal van je server komt elke vijf seconden een regel `GET /berichten/lijst`
+bij: dat is de lijst die zich ververst. Zie je in het tabblad **Netwerk** een
+rode regel `favicon.ico` met 404, dan heeft dat niets met htmx te maken: de
+browser vraagt vanzelf om een icoontje voor het tabblad, en deze server heeft
+er geen. Vul als
 naam `Sara` in en als bericht:
 
 ```html

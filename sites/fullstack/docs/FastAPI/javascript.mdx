@@ -29,7 +29,7 @@ je-project/
 
 Je hoeft niets aan `main.py` te veranderen. De regel `app.mount("/static", StaticFiles(directory="static"), name="static")` uit [CSS in een eigen bestand (static files)](/docs/FastAPI/static_files) serveert alles in die map, dus ook je JavaScript.
 
-De teller in deze les komt op het gastenboekformulier, `static/pages/gastenboek_form.html`. Koppel je script in de `<head>` van dat bestand, onder de script-tag van htmx als die er staat:
+De teller in deze les komt op het gastenboekformulier, `static/pages/gastenboek_form.html`. Koppel je script in de `<head>` van dat bestand, onder de script-tag van htmx als die er staat. Heeft het bestand nog geen `<head>`, omdat je het formulierrecept uit de [htmx-recepten](/docs/FastAPI/htmx-overzicht) niet bouwde, zet er dan een boven de `<body>`:
 
 ```html
 <script src="/static/js/app.js" defer></script>
@@ -49,7 +49,7 @@ En zet direct onder dat veld een plek waar de teller kan staan:
 <p id="teller">80 tekens over</p>
 ```
 
-En in `static/js/app.js`:
+De code komt in `static/js/app.js`:
 
 ```js
 const veld = document.querySelector("#bericht-veld");
@@ -63,13 +63,23 @@ veld.addEventListener("input", function () {
 
 Bij elke toetsaanslag stuurt de browser een `input`-event, en jouw functie past de tekst aan.
 
+Staat `hx-on::after-request="this.reset()"` uit de htmx-recepten op je formulier, dan maakt htmx het veld leeg zonder `input`-event, en blijft de teller op het oude getal staan. Zet dan onderaan in `app.js`:
+
+```js
+document.querySelector("form").addEventListener("reset", function () {
+    teller.textContent = "80 tekens over";
+});
+```
+
+Een formulier stuurt een `reset`-event als het wordt leeggemaakt.
+
 ## Kijk wat de server ervan merkt
 
 Typ een paar letters in het veld en kijk dan naar de terminal waar `fastapi dev` draait.
 
 Daar staat niets nieuws, geen enkele regel. Je server heeft de teller nooit gezien: het bestand `app.js` is één keer opgehaald, en daarna doet de browser alles zelf.
 
-Dat is precies het verschil met alles wat je hiervoor bouwde. Een formulier versturen betekent een verzoek naar Python. Een teller bijwerken via de server zou dat ook betekenen: twintig verzoeken voor twintig letters, ook met htmx, terwijl alles wat de teller nodig heeft al in de browser staat. Daarom hoort dit in de browser.
+Daarin verschilt dit van alles wat je hiervoor bouwde. Een formulier versturen betekent een verzoek naar Python. Een teller bijwerken via de server zou dat ook betekenen: twintig verzoeken voor twintig letters, ook met htmx, terwijl alles wat de teller nodig heeft al in de browser staat. Daarom hoort dit in de browser.
 
 ## Testen
 
@@ -150,6 +160,8 @@ veld.addEventListener("input", function () {
 });
 ```
 
+Een `reset`-functie onderaan uit deze les laat je staan.
+
 De `else` is nodig: zonder die regel blijft de teller rood zodra je één keer onder de tien bent geweest, ook als je tekst weer weghaalt.
 
 </details>
@@ -187,6 +199,8 @@ In de `<body>`, boven de lijst. De `<form>`-tag is dezelfde als op je gastenboek
 ```
 
 Zonder het htmx-recept schrijf je `method="post" action="/gastenboek"` in plaats van `hx-post` en `hx-target`, en laat je de `<p>` weg.
+
+Met `hx-post` verschijnt na Verstuur alleen de zin met "Bedankt", en staat je nieuwe bericht pas in de lijst na Ververs of F5. Zonder htmx stuurt de omleiding je terug naar `/berichten`, en staat het er meteen.
 
 In `static/js/berichten.js`:
 

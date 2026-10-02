@@ -226,3 +226,132 @@ describe('de reeks Veiligheid', () => {
     });
   }
 });
+
+// Wat een leerling-doorloop van de route vond, vastgepind. Elk blok hieronder
+// faalde op de tekst van daarvoor.
+describe('de route Veiligheid sluit aan op het eigen project', () => {
+  const route = sidebars.veiligheidSidebar as unknown as (string | Categorie)[];
+  const reeksen = route
+    .filter((c): c is Categorie => typeof c !== 'string' && c.type === 'category')
+    .map((c) => c.items[0].split('/')[1]);
+  const pythonBlokken = (tekst: string) =>
+    [...tekst.matchAll(/```python[^\n]*\n([\s\S]*?)```/g)].map((m) => m[1]);
+  const alleLessen = (): string[] => {
+    const uit: string[] = [];
+    const loop = (map: string) => {
+      for (const naam of readdirSync(map)) {
+        const pad = join(map, naam);
+        if (statSync(pad).isDirectory()) loop(pad);
+        else if (naam.endsWith('.mdx')) uit.push(pad);
+      }
+    };
+    loop(VEILIGHEID);
+    return uit;
+  };
+  const relatief = (pad: string) => pad.slice(VEILIGHEID.length + 1);
+
+  it('gereedschap heeft een sectie die zegt hoe je een map voor een reeks klaarzet', () => {
+    // Elke reeks zei "maak een nieuwe map", maar nergens stond dat daar een
+    // virtual environment en fastapi, sqlitedict en httpx in moeten.
+    const tekst = readFileSync(join(VEILIGHEID, 'gereedschap.mdx'), 'utf8');
+    expect(tekst).toContain('## Een map per reeks \\{#een-map-per-reeks}');
+    expect(tekst).toContain('python -m pip install "fastapi[standard]" sqlitedict httpx');
+  });
+
+  for (const map of reeksen) {
+    it(`${map}: de eerste les zegt in Waar je werkt hoe je de map klaarzet`, () => {
+      const eerste = stappenVan(map)[0];
+      const tekst = lees(map, eerste);
+      const note = tekst.match(/:::note\[Waar je werkt\]([\s\S]*?)\n:::/)?.[1] ?? '';
+      expect(note, `${map}/${eerste}`).toContain(
+        '(/docs/veiligheid/gereedschap#een-map-per-reeks)',
+      );
+    });
+  }
+
+  it('een antwoord bij "In je eigen project" geeft geen nieuwe app', () => {
+    // Het antwoord van Te veel verzoeken was een compleet main.py met een
+    // eigen app = FastAPI() en een oud POST /gastenboek zonder sessie. Wie
+    // dat overnam, gooide zijn project weg.
+    const fout: string[] = [];
+    for (const pad of alleLessen()) {
+      const delen = readFileSync(pad, 'utf8').split(/^### /m).slice(1);
+      for (const deel of delen.filter((d) => /^Opdracht \d+: Make - In je eigen project/.test(d))) {
+        const antwoorden = [...deel.matchAll(/<summary>Antwoord<\/summary>([\s\S]*?)<\/details>/g)];
+        const code = antwoorden.flatMap((a) => pythonBlokken(a[1]));
+        if (code.some((b) => b.includes('app = FastAPI()'))) fout.push(relatief(pad));
+      }
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('een POST /gastenboek van het eigen gastenboek houdt zijn sessie_id', () => {
+    // Het eigen gastenboek heeft sinds Onthouden op de server een sessie_id.
+    // Een antwoord dat de kop zonder die parameter liet zien, gaf na overnemen
+    // een 500 (UnboundLocalError: sessie_id). Een reeks met een eigen
+    // gastenboek in het startbestand (XSS) telt niet mee, behalve in zijn
+    // eigen-project-les.
+    const eigenServer = new Set(
+      reeksen.filter((map) =>
+        pythonBlokken(lees(map, stappenVan(map)[0])).some((b) =>
+          b.includes('@app.post("/gastenboek")'),
+        ),
+      ),
+    );
+    const fout: string[] = [];
+    for (const pad of alleLessen()) {
+      const rel = relatief(pad);
+      const [map, bestand] = rel.split('/');
+      if (bestand && eigenServer.has(map) && bestand !== 'eigen-project.mdx') continue;
+      for (const blok of pythonBlokken(readFileSync(pad, 'utf8'))) {
+        if (blok.includes('@app.post("/gastenboek")') && !blok.includes('sessie_id')) {
+          fout.push(rel);
+        }
+      }
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('elke term in de controlelijst staat in de les waar het punt naar linkt', () => {
+    // De lijst noemde ge en le bij de les over Form, terwijl die pas in
+    // Getallen en keuzes komen. Een term mag ook in een van de andere links
+    // van hetzelfde punt staan.
+    const ALLOWLIST: Record<string, string> = {};
+    const tekst = readFileSync(join(VEILIGHEID, 'eigen-project.mdx'), 'utf8');
+    const punten = tekst
+      .split(/^- \[ \] /m)
+      .slice(1)
+      .map((p) => p.split(/\n\n/)[0]);
+    expect(punten.length).toBeGreaterThan(10);
+    const fout: string[] = [];
+    for (const punt of punten) {
+      const doelen = [...punt.matchAll(/\]\(([^)#]+)(?:#[^)]*)?\)/g)].map((m) => {
+        const doel = m[1];
+        if (doel.startsWith('./')) return join(VEILIGHEID, `${doel.slice(2)}.mdx`);
+        return fileURLToPath(new URL(`../..${doel}.mdx`, import.meta.url));
+      });
+      expect(doelen.length, punt).toBeGreaterThan(0);
+      const lessen = doelen.map((d) => readFileSync(d, 'utf8')).join('\n');
+      for (const [, term] of punt.matchAll(/`([^`]+)`/g)) {
+        if (term in ALLOWLIST) continue;
+        if (!lessen.includes(term)) fout.push(`${term} (${punt.split('\n')[0]})`);
+      }
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('de Veiligheid-items in de cheatsheet staan in de volgorde van de route', () => {
+    const cheatsheet = readFileSync(
+      fileURLToPath(new URL('../../docs/cheatsheet.md', import.meta.url)),
+      'utf8',
+    );
+    const sectie = cheatsheet.split(/^## Veiligheid$/m)[1].split(/^## /m)[0];
+    const volgorde = [...sectie.matchAll(/<details>[\s\S]*?<\/details>/g)].map((m) => {
+      const reeks = m[0].match(/\(\/docs\/veiligheid\/([a-z]+)\//)?.[1] ?? '';
+      expect(reeks, m[0].split('\n')[1]).not.toBe('');
+      return reeksen.indexOf(reeks);
+    });
+    expect(volgorde.length).toBeGreaterThan(0);
+    expect(volgorde).toEqual([...volgorde].sort((a, b) => a - b));
+  });
+});

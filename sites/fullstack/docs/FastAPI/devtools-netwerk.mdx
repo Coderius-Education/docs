@@ -24,7 +24,7 @@ De namen staan hier in het Nederlands met het Engels erachter, want Chrome en Ed
 Kies **Netwerk**. De lijst is leeg: het tabblad ziet alleen wat er gebeurt terwijl het open staat. Herlaad de pagina en er verschijnt één regel:
 
 <DevtoolsPaneel tab="Netwerk">
-  <NetwerkTabel rijen={[{ naam: '127.0.0.1', status: 200, type: 'document', grootte: '312 B' }]} />
+  <NetwerkTabel rijen={[{ naam: '127.0.0.1', status: 200, type: 'document', grootte: '152 B' }]} />
 </DevtoolsPaneel>
 
 Die regel is stap 2 en stap 5 uit het diagram in één: het verzoek dat de browser stuurde, en het antwoord dat terugkwam.
@@ -37,13 +37,15 @@ Die regel is stap 2 en stap 5 uit het diagram in één: het verzoek dat de brows
 Kijk nu naar de terminal waar `fastapi dev` draait. Daar staat dezelfde gebeurtenis, van de andere kant:
 
 ```
-INFO:     127.0.0.1:52344 - "GET / HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52344 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+▕  127.0.0.1:52344 - "GET / HTTP/1.1" 200
+▕  127.0.0.1:52344 - "GET /favicon.ico HTTP/1.1" 404
 ```
+
+Zo ziet het eruit in de terminal van VS Code. Start je de server in een ander venster, dan kan er `INFO:` vooraan staan en `OK` of `Not Found` achter de statuscode. Het is dezelfde regel.
 
 De tweede regel heb je niet zelf gedaan. De browser vraagt bij een nieuwe site uit zichzelf om `/favicon.ico`, het icoontje voor op het tabblad. Jouw server heeft er geen, dus antwoordt hij met 404: niet gevonden. Er is niets mis; in Netwerk zie je dit verzoek meestal niet eens.
 
-Netwerk laat zien wat de browser stuurde en kreeg. De terminal laat zien wat de server ontving en antwoordde. Het is één verzoek, twee keer gelogd. Zie je iets in de terminal en niet in Netwerk, of andersom, dan weet je aan welke kant het misgaat.
+Het is één verzoek, en je ziet het twee keer: in Netwerk wat de browser stuurde en terugkreeg, in de terminal wat de server binnenkreeg en antwoordde. Zie je iets in de terminal en niet in Netwerk, of andersom, dan weet je aan welke kant het misgaat.
 
 ## Eén verzoek van dichtbij
 
@@ -57,7 +59,7 @@ Statuscode:       200 OK
 
 In een Engelse browser heten ze Request URL, Request Method en Status Code.
 
-De methode is de `get` uit `@app.get("/")`. Bij **Reactie** (Response) staat wat de server terugstuurde: de JSON van je functie, letter voor letter zoals `return` hem maakte.
+De methode is de `get` uit `@app.get("/")`. Bij **Reactie** (Response) staat wat de server terugstuurde: de JSON die FastAPI van de dictionary uit je `return` maakte.
 
 ## Als de lijst leeg is
 
@@ -65,8 +67,8 @@ Soms staat er in Netwerk niets, en de volgende keer wel. Dat ligt bijna altijd a
 
 - Je opende het tabblad na het laden. Netwerk ziet alleen wat er gebeurt terwijl het open staat. Herlaad met het tabblad open.
 - Je ging naar een andere pagina. Bij elke nieuwe pagina, ook na een formulier dat je doorstuurt, begint de lijst opnieuw. Wil je zien wat er vóór de overstap gebeurde, zet dan bovenin het vinkje **Logboek behouden** (Preserve log) aan.
-- Er staat nog een filter aan. Onder de knoppen staat een rij soorten: Alle (All), Fetch/XHR, Doc, CSS, JS en meer. Chrome onthoudt welke je het laatst koos, ook de volgende dag. Staat Fetch/XHR aan, dan zie je geen pagina's. Klik op Alle, en maak het zoekvak links ernaast leeg.
-- Opnemen staat uit. Helemaal links staat een rondje. Is het rood, dan neemt Netwerk op. Is het grijs, dan heb je erop geklikt of per ongeluk Ctrl+E gedrukt. Klik erop en herlaad.
+- Er staat nog een filter aan. Onder de knoppen staat een rij soorten: Alle (All), Fetch/XHR, Document (Doc), Css (CSS), JavaScript (JS) en meer. Chrome onthoudt welke je het laatst koos, ook de volgende dag. Staat Fetch/XHR aan, dan zie je geen pagina's. Klik op Alle, en maak het zoekvak links ernaast leeg.
+- Opnemen staat uit. Helemaal links staat een rondje, en zolang dat rood is neemt Netwerk op. Is het grijs, dan heb je erop geklikt of per ongeluk Ctrl+E gedrukt. Klik erop en herlaad.
 
 ## Testen
 
@@ -102,7 +104,7 @@ Eén. Je endpoint stuurt JSON, en daar staat niets in dat de browser nog apart m
 
 ### Opdracht 2: Run
 
-Open Netwerk, herlaad je pagina en klik op de regel. Zoek de methode, de statuscode en je JSON.
+Klopte je voorspelling uit opdracht 1? Ga met Netwerk open naar `/info` en klik op de regel. Welke statuscode staat er bij Headers, en welke JSON bij Reactie?
 
 ### Opdracht 3: Investigate - Een adres dat niet bestaat
 
@@ -111,7 +113,7 @@ Ga naar `http://127.0.0.1:8000/bestaat-niet`. Kijk in Netwerk én in de terminal
 <details>
 <summary>Antwoord</summary>
 
-De regel is rood en heeft status `404`. Bij Reactie staat `{"detail":"Not Found"}`: FastAPI vond geen functie voor dit pad. De terminal logt dezelfde regel, met `404 Not Found` aan het eind. Het verzoek is dus wel aangekomen; de server had er alleen geen antwoord op.
+De regel is rood en heeft status `404`. Bij Reactie staat `{"detail":"Not Found"}`: FastAPI vond geen functie voor dit pad. De terminal logt dezelfde regel, met `404` aan het eind. Het verzoek is dus wel aangekomen; de server had er alleen geen antwoord op.
 
 </details>
 

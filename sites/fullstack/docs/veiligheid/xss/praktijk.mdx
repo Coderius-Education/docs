@@ -64,6 +64,26 @@ Het is een tweede slot en geen vervanging, dus escapen blijft nodig. Eigen
 JavaScript moet dan wel in een `.js`-bestand staan, niet in een `<script>` in je
 HTML.
 
+Dat geldt ook voor de `hx-on`-attributen van htmx. Van
+`hx-on::after-request="this.reset()"` uit het
+[htmx-overzicht](/docs/FastAPI/htmx-overzicht#een-formulier-versturen) maakt
+htmx een stukje JavaScript, en dat houdt `script-src 'self'` tegen. De velden
+blijven na het versturen gevuld; de enige aanwijzing is een rode `EvalError` in
+de Console. Haal het attribuut dan weg, en zet de reset in een eigen bestand
+`static/js/leegmaken.js`:
+
+```js
+document.addEventListener("htmx:afterRequest", (event) => {
+    if (event.target.tagName === "FORM") {
+        event.target.reset();
+    }
+});
+```
+
+Laad het in de `<head>`, onder htmx, met
+`<script src="/static/js/leegmaken.js" defer></script>`. Je kunt de reset ook
+weglaten: het formulier werkt zonder.
+
 </details>
 
 <details>
