@@ -19,15 +19,16 @@ met de vraag wie het mag, en schrijf je die controle als eerste, vóór de rest.
 Dat heet *deny by default*: wat je niet uitdrukkelijk toestaat, mag niet.
 
 In een groter project schrijf je de controle niet in elk endpoint opnieuw.
-FastAPI heeft daar `Depends` voor: één functie die de ingelogde gebruiker
-ophaalt, en die je aan elk endpoint koppelt dat hem nodig heeft. Vergeet je hem
+FastAPI heeft daar `Depends` voor, dat deze cursus niet behandelt: één functie
+die de ingelogde gebruiker ophaalt, en die FastAPI aanroept vóór elk endpoint
+waaraan je hem koppelt. Vergeet je hem
 bij één endpoint, dan staat dat endpoint open, dus ook dan loop je ze langs.
 
 ### Test het als de ander
 
 Je script uit [les 1](./zwakheid) is een test: het doet alsof het
 Alex is en kijkt of de server weigert. Echte projecten draaien zulke tests
-automatisch, bij elke wijziging in de code. Per endpoint zijn er dan twee: de
+automatisch, bij elke wijziging. Per endpoint zijn er dan twee: de
 eigenaar krijgt `200`, een ander krijgt `403`. Breekt iemand later per ongeluk
 de controle, dan valt de tweede test om voordat het op de site staat.
 
@@ -53,9 +54,11 @@ gebruikt. Het valt pas op als iemand een verzoek zelf verstuurt.
 <summary>Een account in plaats van een browser</summary>
 
 In [opdracht 2 van les 2](./controle) kon Sara in een privévenster niet
-bij haar eigen bericht. Met een account kan dat wel. Na het inloggen, dat je in
-de [wachtwoordenreeks](../wachtwoorden/inloggen) bouwt, zet de server de naam
-van het account in de sessie, en bij elk bericht de naam van wie het plaatste:
+bij haar eigen bericht. Met een account kan dat wel. Inloggen bouw je later in
+de [wachtwoordenreeks](../wachtwoorden/inloggen). De koppeling met de sessie bouw
+je daar zelf erbij: na een geslaagde inlog zet de server de naam van het account
+in de sessie, zoals in [Wachtwoord wijzigen](/docs/veiligheid/wachtwoorden/wijzigen),
+en bij elk bericht de naam van wie het plaatste:
 
 ```python
 if bericht["eigenaar"] != ingelogd:
@@ -64,7 +67,8 @@ if bericht["eigenaar"] != ingelogd:
 
 Dat lijkt op de foute controle uit [les 3](./server-weet), maar het verschil zit in waar
 `ingelogd` vandaan komt: uit de sessie, en daar heeft de server hem zelf in
-gezet, pas nadat `ph.verify` het wachtwoord goedkeurde. Een naam die de bezoeker
+gezet, pas nadat het wachtwoord klopte. Dat controleren doe je in de
+wachtwoordenreeks met `ph.verify`. Een naam die de bezoeker
 in een formulier typt, blijft onbetrouwbaar.
 
 </details>
@@ -91,11 +95,13 @@ beheerder zijn van één forum en gewone bezoeker van de rest.
 <details>
 <summary>Een lange sleutel is geen slot</summary>
 
-In [Detailpagina](/docs/FastAPI/detailpagina) vraag je berichten op met een
-nummer. Nummers zijn makkelijk te raden: wie bericht 12 ziet, probeert 13.
-Lange, willekeurige sleutels maken dat moeilijker, en daarom gebruiken veel
-sites ze. Maar zoals je in les 1 zag, staat een sleutel vaak in de
-pagina. Een sleutel die niemand raadt is een extra drempel, geen vervanging van
+Heb je [opdracht 5 van Eén item tonen](/docs/FastAPI/detailpagina#opdracht-5-make---bericht-per-nummer)
+gemaakt, dan heeft je gastenboek `/bericht-nummer/12`. Zo'n nummer is makkelijk
+te raden: wie bericht 12 ziet, probeert 13. Je sleutels uit `time.time_ns()`
+zijn lang, maar niet willekeurig: het is de tijd in nanoseconden, dus wie weet
+wanneer een bericht geplaatst is, zit er dichtbij. Veel sites gebruiken daarom
+lange, willekeurige sleutels, zoals je sessie-id uit `secrets.token_hex`. Maar
+zoals je in les 1 zag, staat een sleutel vaak in de pagina. Een sleutel die niemand raadt is een extra drempel, geen vervanging van
 de controle.
 
 </details>

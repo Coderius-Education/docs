@@ -7,12 +7,20 @@ import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
 
 # HTML van een bezoeker: escapen in Python
 
-In [les 1](./zwakheid) las de browser `<b>vet</b>` als HTML, omdat de f-string
-het letterlijk in de pagina zette. De oplossing heet **escapen**: van elke `<`
-een `&lt;` maken, van elke `>` een `&gt;`, en zo verder. Die tekens toont de
-browser als tekst.
+`escape` ken je al uit het htmx-recept
+[Een formulier versturen](/docs/FastAPI/htmx-overzicht#een-formulier-versturen).
+Daar stond hij om de naam, zonder dat je zag wat hij doet. In [les 1](./zwakheid)
+zag je wat er zonder gebeurt: de browser las `<b>vet</b>` als HTML, omdat de
+f-string het letterlijk in de pagina zette. Deze les gaat over het waarom.
 
-## `escape`
+## Waarom `escape` werkt
+
+De browser leest een `<` als het begin van een tag. Dat is de hele zwakheid: hij
+kan niet zien of die `<` van jou komt of van een bezoeker. **Escapen** vervangt
+de tekens die in HTML iets betekenen door een code die de browser alleen als
+teken toont: `<` wordt `&lt;`, `>` wordt `&gt;`, `&` wordt `&amp;` en `"` wordt
+`&quot;`. Op het scherm staat dan weer `<`, maar de browser begint er geen tag
+mee.
 
 Python heeft er een functie voor, `escape` uit de module `html`:
 
@@ -91,18 +99,29 @@ waar het de HTML in gaat.
 
 ## Er gaat iets mis
 
-Noor vult als naam `<i>Noor</i>` in. Onder het formulier staat haar naam als
-tekst, maar in de lijst is hij schuin. `lijst.py` geeft:
+Noor vult als naam `<i>Noor</i>` in en als bericht `hoi`. Onder het formulier
+staat haar naam als tekst, maar in de lijst is hij schuin. `lijst.py` geeft, met
+het bericht van Sara er nog in:
 
 ```
-<ul><li><i>Noor</i>: &lt;b&gt;vet&lt;/b&gt;</li></ul>
+<ul><li>Sara: &lt;b&gt;vet&lt;/b&gt;</li><li><i>Noor</i>: hoi</li></ul>
 ```
 
 **Oorzaak:** in de lijst staat `escape` om het bericht, maar niet om de naam.
 Eén vergeten plek is genoeg.
 
 **Oplossing:** elke waarde van een bezoeker krijgt zijn eigen `escape`, ook de
-naam. Omdat je zo makkelijk een plek vergeet, doet een template het in
+naam.
+
+```python
+# FOUT
+regels += f"<li>{bericht['naam']}: {escape(bericht['bericht'])}</li>"
+
+# GOED
+regels += f"<li>{escape(bericht['naam'])}: {escape(bericht['bericht'])}</li>"
+```
+
+Omdat je zo makkelijk een plek vergeet, doet een template het in
 [les 3](./templates) voor je.
 
 ## Opdrachten

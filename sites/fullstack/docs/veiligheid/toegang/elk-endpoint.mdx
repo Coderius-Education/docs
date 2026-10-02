@@ -5,10 +5,12 @@ description: Een controle beschermt alleen het endpoint waar hij in staat. Loop 
 
 # Wie mag wat: elk endpoint apart
 
-Een controle beschermt alleen het endpoint waar hij in staat. Het htmx-overzicht
-heeft ook een knop [Alles wissen](/docs/FastAPI/htmx-overzicht), met een eigen
-endpoint `DELETE /berichten`. Staat daar geen controle in, dan wist Alex daarmee
-alsnog het bericht van Sara, en alle andere berichten erbij.
+Een controle beschermt alleen het endpoint waar hij in staat. Heb je
+[opdracht 5 van het htmx-overzicht](/docs/FastAPI/htmx-overzicht#opdracht-5-make---alles-wissen)
+gemaakt, dan heeft je gastenboek een knop Alles wissen, met een eigen endpoint
+`DELETE /berichten`. Daar staat geen controle in, dus Alex wist daarmee alsnog
+het bericht van Sara, en alle andere berichten erbij. Een endpoint dat je
+later toevoegt, heeft hetzelfde probleem.
 
 Loop daarom elk endpoint langs dat iets verandert of verwijdert, en stel bij elk
 dezelfde vraag: wie mag dit? In opdracht 1 doe je dat voor Alles wissen.
@@ -59,7 +61,9 @@ sara.post("/bericht", data={"naam": "Sara", "bericht": "Hoi allemaal"})
 alex.post("/bericht", data={"naam": "Alex", "bericht": "Leuk gastenboek"})
 
 print(alex.delete("/berichten").json())
-namen = [bericht["naam"] for bericht in alex.get("/berichten").json().values()]
+namen = []
+for bericht in alex.get("/berichten").json().values():
+    namen.append(bericht["naam"])
 print(f"Nog in het gastenboek: {namen}")
 ```
 
@@ -72,6 +76,14 @@ Nog in het gastenboek: ['Sara']
 
 Hier is er geen `403` nodig: wie Alles wissen kiest, wist wat van hem is, en de
 rest blijft staan.
+
+Deze server praat JSON, dus het antwoord is een dictionary. In je eigen
+gastenboek gaf `alles_wissen` uit het htmx-overzicht de lijst-template terug,
+met een lege lijst. Houd die `TemplateResponse` en de parameter
+`request: Request`, en zet `sessie_id: str = Cookie(default="")` ernaast. Lees
+na het wissen, nog in het `with`-blok, wat er over is met
+`alle_berichten = list(db.items())`, en geef `{"berichten": alle_berichten}`
+mee in plaats van `{"berichten": []}`: de berichten van anderen blijven staan.
 
 </details>
 
