@@ -98,6 +98,12 @@ const KOPPELING: Item[] = [
     geenConcept: 'naslag bij het lezen van Netwerk en de terminal, geen code in het project',
   },
   {
+    summary: 'Hoe zet ik de tijd in een antwoord? (datetime.now)',
+    concepten: [],
+    geenConcept:
+      'een functie uit Python zelf; het endpoint eromheen wordt nagekeken via fastapi-get',
+  },
+  {
     summary: 'Hoe verwijder ik zonder herladen? (@app.delete)',
     concepten: ['fastapi-delete'],
   },
@@ -226,6 +232,11 @@ const KOPPELING: Item[] = [
     concepten: [],
     geenConcept: 'een tekst in een attribuut; het verzoek zelf wordt al nagekeken via hx-delete',
   },
+  {
+    summary: 'Hoe maak ik een formulier leeg na versturen? (hx-on::after-request)',
+    concepten: [],
+    geenConcept: 'een gemak in de browser; het verzoek zelf wordt al nagekeken via hx-post',
+  },
 
   // --- JavaScript ---
   {
@@ -237,6 +248,11 @@ const KOPPELING: Item[] = [
     concepten: [],
     geenConcept:
       'querySelector en addEventListener horen bij de web-cursus en worden daar nagekeken',
+  },
+  {
+    summary: 'Hoe zie ik wat mijn JavaScript doet? (console.log)',
+    concepten: [],
+    geenConcept: 'een hulpmiddel bij het zoeken naar fouten, dat haal je weg voor je inlevert',
   },
 
   // --- Veiligheid ---

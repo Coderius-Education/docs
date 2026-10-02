@@ -1,6 +1,8 @@
 # Projectstructuur
 
-Je project groeit met de lessen mee. Elke stand hieronder is de vorige plus wat die les toevoegt. Een bestand verdwijnt alleen als een les zegt dat je het verplaatst.
+Je project groeit met de lessen mee. Elke stand hieronder is de vorige plus wat die les toevoegt. Een bestand verdwijnt alleen als een les zegt dat je het verplaatst. Bestanden die je in een opdracht maakt, zoals `contact.html` of `about.css`, staan er niet bij.
+
+De map `.venv` staat ook niet in de bomen, en net zo min `__pycache__`, die Python zelf aanmaakt. Ze staan wel in je Explorer, naast `main.py`; je verandert er niets in.
 
 ## Bij [Je eerste endpoint](/docs/FastAPI/eerste_endpoint)
 
@@ -31,11 +33,10 @@ je-project/
 └── static/
     └── pages/
         ├── about.html
-        ├── contact.html
         └── home.html
 ```
 
-Een tweede pagina, en uit de opdracht een derde.
+Een tweede pagina, met een link heen en terug.
 
 ## Bij [CSS in een eigen bestand (static files)](/docs/FastAPI/static_files)
 
@@ -44,15 +45,13 @@ je-project/
 ├── main.py
 └── static/
     ├── css/
-    │   ├── about.css
     │   └── style.css
     └── pages/
         ├── about.html
-        ├── contact.html
         └── home.html
 ```
 
-CSS in een eigen map, bereikbaar via `/static/css/style.css`. `about.css` komt uit een opdracht.
+CSS in een eigen map, bereikbaar via `/static/css/style.css`.
 
 ## Bij [Afbeeldingen tonen](/docs/FastAPI/afbeeldingen)
 
@@ -61,11 +60,9 @@ je-project/
 ├── main.py
 └── static/
     ├── css/
-    │   ├── about.css
     │   └── style.css
     ├── pages/
     │   ├── about.html
-    │   ├── contact.html
     │   ├── foto.html
     │   └── home.html
     └── kat.jpg
@@ -80,11 +77,9 @@ je-project/
 ├── main.py
 ├── static/
 │   ├── css/
-│   │   ├── about.css
 │   │   └── style.css
 │   ├── pages/
 │   │   ├── about.html
-│   │   ├── contact.html
 │   │   ├── foto.html
 │   │   ├── groet_form.html
 │   │   ├── home.html
@@ -108,14 +103,14 @@ Er komt een map `templates/` bij voor Jinja2-templates. De formulieren zelf blij
 je-project/
 ├── main.py
 ├── gastenboek.db
+├── mijn_data.db
 ├── namen.db
+├── test_db.py
 ├── static/
 │   ├── css/
-│   │   ├── about.css
 │   │   └── style.css
 │   ├── pages/
 │   │   ├── about.html
-│   │   ├── contact.html
 │   │   ├── foto.html
 │   │   ├── gastenboek_form.html
 │   │   ├── groet_form.html
@@ -128,7 +123,7 @@ je-project/
     └── groet_resultaat.html
 ```
 
-De `.db`-bestanden maakt `sqlitedict` zelf aan, de eerste keer dat je iets opslaat.
+De `.db`-bestanden maakt `sqlitedict` zelf aan, de eerste keer dat je iets opslaat. `test_db.py` en `mijn_data.db` komen uit de proef in [Gegevens opslaan met SqliteDict](/docs/FastAPI/database); je server gebruikt ze niet.
 
 ## Bij [Alles tonen: een for-lus in je template](/docs/FastAPI/lijst_tonen) en [Eén item tonen: path-parameters en 404](/docs/FastAPI/detailpagina)
 
@@ -136,14 +131,14 @@ De `.db`-bestanden maakt `sqlitedict` zelf aan, de eerste keer dat je iets opsla
 je-project/
 ├── main.py
 ├── gastenboek.db
+├── mijn_data.db
 ├── namen.db
+├── test_db.py
 ├── static/
 │   ├── css/
-│   │   ├── about.css
 │   │   └── style.css
 │   ├── pages/
 │   │   ├── about.html
-│   │   ├── contact.html
 │   │   ├── foto.html
 │   │   ├── gastenboek_form.html
 │   │   ├── groet_form.html
@@ -166,16 +161,16 @@ Er komen geen mappen bij: een lijstpagina en een detailpagina zijn twee template
 je-project/
 ├── main.py
 ├── gastenboek.db
+├── mijn_data.db
 ├── namen.db
+├── test_db.py
 ├── static/
 │   ├── css/
-│   │   ├── about.css
 │   │   └── style.css
 │   ├── js/
 │   │   └── htmx.min.js
 │   ├── pages/
 │   │   ├── about.html
-│   │   ├── contact.html
 │   │   ├── foto.html
 │   │   ├── gastenboek_form.html
 │   │   ├── groet_form.html
@@ -199,17 +194,17 @@ htmx is één bestand in een nieuwe map `static/js/`. Bij de [htmx-recepten](/do
 je-project/
 ├── main.py
 ├── gastenboek.db
+├── mijn_data.db
 ├── namen.db
+├── test_db.py
 ├── static/
 │   ├── css/
-│   │   ├── about.css
 │   │   └── style.css
 │   ├── js/
 │   │   ├── app.js
 │   │   └── htmx.min.js
 │   ├── pages/
 │   │   ├── about.html
-│   │   ├── contact.html
 │   │   ├── foto.html
 │   │   ├── gastenboek_form.html
 │   │   ├── groet_form.html
@@ -233,18 +228,18 @@ Je JavaScript komt naast htmx te staan, in dezelfde `static`-map. Aan `main.py` 
 je-project/
 ├── main.py
 ├── gastenboek.db
+├── mijn_data.db
 ├── namen.db
 ├── sessies.db
+├── test_db.py
 ├── static/
 │   ├── css/
-│   │   ├── about.css
 │   │   └── style.css
 │   ├── js/
 │   │   ├── app.js
 │   │   └── htmx.min.js
 │   ├── pages/
 │   │   ├── about.html
-│   │   ├── contact.html
 │   │   ├── foto.html
 │   │   ├── groet_form.html
 │   │   ├── home.html

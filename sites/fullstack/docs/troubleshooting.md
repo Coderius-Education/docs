@@ -17,13 +17,55 @@ In een Engelse Windows is dat `The term 'fastapi' is not recognized as the name 
 
 **Oorzaak:** FastAPI is niet geïnstalleerd in de omgeving waar je terminal nu in werkt.
 
-**Oplossing:** check eerst of je `(.venv)` vooraan je terminalregel ziet. Installeer daarna:
+**Oplossing:** check eerst of je `(.venv)` vooraan je terminalregel ziet. Zie je het niet, open dan de terminal van VS Code (**Terminal** → **New Terminal**) en kijk daar; wat je doet als het daar ook ontbreekt, staat bij ModuleNotFoundError hieronder. Installeer daarna in die terminal:
 
 ```bash
 python -m pip install "fastapi[standard]"
 ```
 
 Meer uitleg: [Installatie](/docs/FastAPI/installatie)
+
+</details>
+
+<details>
+<summary>Path does not exist main.py</summary>
+
+De server start niet, en onder `Starting FastAPI in development mode` staat:
+
+```
+Path does not exist main.py
+```
+
+**Oorzaak:** `fastapi dev main.py` zoekt `main.py` in de map waarin je terminal nu staat, en daar is hij niet. Je terminal staat in een andere map, of je bestand heet anders, zoals `Main.py` of `main.py.txt`.
+
+**Oplossing:** kijk naar het pad vóór je prompt. Is dat niet je projectmap, open dan je project opnieuw met `code .` vanuit je projectmap en gebruik de terminal van VS Code (**Terminal** → **New Terminal**). Staat `main.py` in de Explorer links met precies die naam, dan start de server.
+
+```bash
+# FOUT - de terminal staat in de map erboven
+PS C:\Users\jij\Documenten> fastapi dev main.py
+
+# GOED - de terminal staat in je projectmap
+PS C:\Users\jij\Documenten\fullstack-project> fastapi dev main.py
+```
+
+Meer uitleg: [Installatie](/docs/FastAPI/installatie)
+
+</details>
+
+<details>
+<summary>Je drukt op de afspeelknop van VS Code, en er start geen server</summary>
+
+In de terminal verschijnt een regel met `python.exe` en `main.py`, en direct daarna weer de prompt. Er staat geen foutmelding en geen adres.
+
+**Oorzaak:** de afspeelknop rechtsboven draait `python main.py`. Python leest je bestand, maakt `app` aan en is dan klaar: niets in `main.py` start een server. Dat doet `fastapi dev`.
+
+**Oplossing:** start je server in de terminal, niet met de afspeelknop:
+
+```bash
+fastapi dev main.py
+```
+
+Meer uitleg: [Je eerste endpoint](/docs/FastAPI/eerste_endpoint)
 
 </details>
 
@@ -93,10 +135,11 @@ Meer uitleg: [Kijken wat de browser doet](/docs/FastAPI/devtools-netwerk)
 <details>
 <summary>De pagina laadt niet: ERR_CONNECTION_REFUSED of ERR_SSL_PROTOCOL_ERROR</summary>
 
-De browser zegt dat de site niet bereikbaar is, met onderaan een code:
+De browser zegt dat de site niet bereikbaar is, met onderaan een van deze twee codes:
 
 ```
 ERR_CONNECTION_REFUSED
+ERR_SSL_PROTOCOL_ERROR
 ```
 
 **Oorzaak:** de browser praat niet met je server. Bij `ERR_CONNECTION_REFUSED` draait er geen server: hij is gestopt, of nooit gestart. Bij `ERR_SSL_PROTOCOL_ERROR` probeert de browser `https`, en je server spreekt alleen `http`. In de terminal staat dan:
@@ -246,6 +289,29 @@ Meer uitleg: [HTML in bestanden](/docs/FastAPI/html_bestanden)
 </details>
 
 <details>
+<summary>De server start niet: Directory 'static' does not exist</summary>
+
+Onderaan de melding staat:
+
+```
+RuntimeError: Directory 'static' does not exist
+```
+
+**Oorzaak:** `app.mount("/static", StaticFiles(directory="static"), ...)` zoekt bij het starten een map `static` in de map waar je `fastapi dev` startte, en die is er niet. Dat gebeurt in een nieuwe projectmap, zoals de map van een reeks in Veiligheid, als je `main.py` maakt vóór de map `static`. Of je startte de server vanuit een andere map.
+
+**Oplossing:** maak de map `static` naast `main.py`, of start de server vanuit je projectmap. Een lege map is genoeg om te starten.
+
+```
+je-project/
+├── main.py
+└── static/
+```
+
+Meer uitleg: [CSS in een eigen bestand (static files)](/docs/FastAPI/static_files)
+
+</details>
+
+<details>
 <summary>404 Not Found bij het openen van een pagina</summary>
 
 In de browser staat `{"detail":"Not Found"}`, en in de terminal:
@@ -291,9 +357,7 @@ Meer uitleg: [CSS in een eigen bestand (static files)](/docs/FastAPI/static_file
 <details>
 <summary>Wijzigingen zijn niet zichtbaar</summary>
 
-**Oorzaak:** de browser toont zijn eigen bewaarde kopie van de pagina (de cache), of de server draait nog met je oude code.
-
-**Zelf vinden:** druk op F12, kies het tabblad **Netwerk** en herlaad. Staat bij Grootte **(schijfcache)** of **(geheugencache)**, dan heeft de browser de server niet eens gevraagd; de status is dan ook 200, dus kijk naar Grootte. Staat er een echt aantal bytes en is het bestand toch oud, dan draait de server met oude code.
+**Oorzaak:** de browser toont zijn eigen bewaarde kopie van de pagina (de cache), of de server draait nog met je oude code. Welke van de twee het is, zie je zo: druk op F12, kies het tabblad **Netwerk** en herlaad. Staat bij Grootte **(schijfcache)** of **(geheugencache)**, dan heeft de browser de server niet eens gevraagd; de status is dan ook 200, dus kijk naar Grootte. Staat er een echt aantal bytes en is het bestand toch oud, dan draait de server met oude code.
 
 **Oplossing:**
 
@@ -410,6 +474,7 @@ Met een oudere Python staat er `422 Unprocessable Entity`. Het is dezelfde fout.
 
 - `"body"`: een formulierveld. De `name` in je HTML is anders dan de parameter in Python, het veld mist een `name`, of het veld is leeg verstuurd. Een leeg veld telt bij `Form(...)` als ontbrekend
 - `"query"`: een parameter na het vraagteken in de URL. Die staat niet in de URL, of je parameter heet anders dan de naam tussen de accolades in het pad; dan zoekt FastAPI hem na het vraagteken
+- `"query"` met `"request"`: je schreef `request` zonder type. Een parameter zonder `: Request` erachter leest FastAPI als query-parameter. Schrijf `request: Request`
 - `"path"` met `"type":"int_parsing"`: je parameter is een `int`, en in de URL staat tekst, zoals bij `/bericht-nummer/abc`
 
 **Oplossing:** maak de namen gelijk:
@@ -491,9 +556,9 @@ Meer uitleg: [Gegevens opslaan met SqliteDict](/docs/FastAPI/database)
 </details>
 
 <details>
-<summary>Data is weg na herstarten</summary>
+<summary>Je bericht is meteen weg, of weg na herstarten (db.commit vergeten)</summary>
 
-**Oorzaak:** zonder `db.commit()` blijven je wijzigingen in het geheugen hangen en schrijft de database ze nooit naar het bestand.
+**Oorzaak:** zonder `db.commit()` schrijft de database je wijziging nooit naar het bestand. Zodra het `with`-blok sluit, is hij weg. Daarom zie je hem al bij het volgende verzoek niet, ook zonder herstart: `/berichten` opent de database opnieuw en vindt niets.
 
 **Oplossing:**
 
@@ -593,6 +658,7 @@ Meer uitleg: [Alles tonen: een for-lus in je template](/docs/FastAPI/lijst_tonen
 1. Staat de naam in `{% for bericht in berichten %}` precies gelijk aan de sleutel in `{"berichten": ...}`?
 2. Print `alle_berichten` in je endpoint. Zie je daar wél data, dan zit de fout in de template.
 3. Staat er echt iets in je database? Open `/berichten` nadat je een bericht hebt verstuurd, niet ervoor.
+4. Staat `db.commit()` in je POST-endpoint, binnen het `with`-blok? Zonder die regel is je bericht weg zodra het blok sluit (zie Je bericht is meteen weg, hierboven).
 
 Meer uitleg: [Alles tonen: een for-lus in je template](/docs/FastAPI/lijst_tonen)
 
@@ -601,9 +667,24 @@ Meer uitleg: [Alles tonen: een for-lus in je template](/docs/FastAPI/lijst_tonen
 <details>
 <summary>Elk bericht is een lege regel met alleen een dubbele punt</summary>
 
-**Oorzaak:** je endpoint stuurt `list(db.items())`, maar je template loopt nog met `{% for bericht in berichten %}`. Elk element is dan een paar van sleutel en bericht, en zo'n paar heeft geen `naam`. Jinja2 laat de plek leeg, zonder foutmelding.
+**Oorzaak:** je endpoint en je template passen niet bij elkaar. Dat kan op twee manieren, en ze zien er hetzelfde uit:
 
-**Oplossing:** pak het paar uit in de lus:
+- Je endpoint stuurt `list(db.items())`, maar je template loopt met `{% for bericht in berichten %}`. Elk element is dan een paar van sleutel en bericht, en zo'n paar heeft geen `naam`.
+- Je template loopt met `{% for sleutel, bericht in berichten %}`, maar je endpoint stuurt nog `list(db.values())`. Jinja2 pakt dan elk bericht zelf uit: `sleutel` wordt `naam` en `bericht` wordt het woord `bericht`. Je link wijst dan naar `/bericht/naam`, en Verwijderen haalt niets weg.
+
+Jinja2 laat de lege plekken leeg, zonder foutmelding.
+
+**Oplossing:** stuur de sleutels mee met `db.items()`, en pak het paar uit in de lus:
+
+```python
+# FOUT - geen sleutels
+with SqliteDict("gastenboek.db") as db:
+    alle_berichten = list(db.values())
+
+# GOED - paren van sleutel en bericht
+with SqliteDict("gastenboek.db") as db:
+    alle_berichten = list(db.items())
+```
 
 ```html
 <!-- FOUT - bericht is hier een paar -->
@@ -616,6 +697,8 @@ Meer uitleg: [Alles tonen: een for-lus in je template](/docs/FastAPI/lijst_tonen
     <li>{{ bericht.naam }}: {{ bericht.bericht }}</li>
 {% endfor %}
 ```
+
+Gebruikt je template de sleutel niet, dan mag het ook allebei zonder: `db.values()` met `{% for bericht in berichten %}`.
 
 Meer uitleg: [Doorsturen na opslaan (redirect)](/docs/FastAPI/redirect)
 
@@ -711,17 +794,25 @@ Meer uitleg: [Zonder herladen met htmx](/docs/FastAPI/htmx)
 <details>
 <summary>Er gebeurt niets na een klik, of het formulier verspringt met ?naam= in de adresbalk</summary>
 
-**Oorzaak:** htmx zet alleen een geslaagd antwoord in de pagina. Er gebeurt dus niets als htmx niet geladen is, of als het verzoek mislukt.
+**Oorzaak:** htmx zet alleen een geslaagd antwoord in de pagina. Er gebeurt dus niets als htmx niet geladen is, als `hx-target` naar een element wijst dat niet op de pagina staat, of als het verzoek mislukt.
 
 **Oplossing:** open het tabblad **Netwerk** en klik nog een keer.
 
-1. **Geen nieuwe regel, of een rode regel bij `htmx.min.js`**: htmx is niet geladen. Zonder htmx zijn `hx-get` en `hx-post` attributen die de browser niet kent: een knop doet niets, en een formulier zonder `method` verstuurt hij als GET naar dezelfde pagina, met `?naam=` in de adresbalk. Zet `htmx.min.js` in `static/js/` en de script-tag in de `<head>`:
+1. **Geen nieuwe regel, en in de Console een rode regel met `htmx:targetError`**: htmx is wel geladen, maar vindt het doel niet, en stuurt dan geen verzoek. Achter de melding staat wat er in je `hx-target` staat:
+
+   ```
+   htmx:targetError, #antwoord
+   ```
+
+   Staat er op de pagina geen element met `id="antwoord"`, of mist het `#` in `hx-target`? Zet het element op dezelfde pagina als je knop of formulier, en begin `hx-target` met `#`.
+
+2. **Geen nieuwe regel en geen `htmx:targetError`, of een rode regel bij `htmx.min.js`**: htmx is niet geladen. Zonder htmx zijn `hx-get` en `hx-post` attributen die de browser niet kent: een knop doet niets, en een formulier zonder `method` verstuurt hij als GET naar dezelfde pagina, met `?naam=` in de adresbalk. Zet `htmx.min.js` in `static/js/` en de script-tag in de `<head>`:
 
    ```html
    <script src="/static/js/htmx.min.js"></script>
    ```
 
-2. **Een rode regel bij je eigen verzoek**: 404 is een verkeerd pad in `hx-get` of `hx-post`, 405 een verkeerd werkwoord (zie 405 Method Not Allowed hierboven), 500 een fout in je endpoint (kijk in de terminal), `(mislukt)` een server die niet draait.
+3. **Een rode regel bij je eigen verzoek**: 404 is een verkeerd pad in `hx-get` of `hx-post`, 405 een verkeerd werkwoord (zie 405 Method Not Allowed hierboven), 500 een fout in je endpoint (kijk in de terminal), `(mislukt)` een server die niet draait.
 
 Meer uitleg: [Zonder herladen met htmx](/docs/FastAPI/htmx) en [htmx-recepten: formulier, verversen, verwijderen, zoeken](/docs/FastAPI/htmx-overzicht)
 
@@ -853,28 +944,11 @@ Meer uitleg: [Onthouden met een cookie](/docs/FastAPI/cookies)
 </details>
 
 <details>
-<summary>Iedereen krijgt dezelfde sessie te zien</summary>
+<summary>Alleen je laatste bericht is van jou (een nieuwe sessie bij elk bericht)</summary>
 
-**Oorzaak:** je gebruikt een vaste waarde als sessie-id in plaats van een willekeurige. Dan krijgt elke bezoeker dezelfde sleutel, en dus elkaars gegevens.
+Je naam staat nog steeds voorgevuld, maar de verwijderknop uit [sessies](/docs/FastAPI/sessies) staat alleen bij het bericht dat je het laatst plaatste, en in `sessies.db` komt bij elk bericht een sessie-id bij.
 
-**Oplossing:** laat `secrets` het id maken:
-
-```python
-# FOUT - iedereen deelt deze sessie
-sessie_id = "sessie1"
-
-# GOED - niet te raden, en voor elke bezoeker anders
-sessie_id = secrets.token_hex(16)
-```
-
-Meer uitleg: [Onthouden op de server: sessies](/docs/FastAPI/sessies)
-
-</details>
-
-<details>
-<summary>Mijn sessie wordt elke keer vergeten</summary>
-
-**Oorzaak:** je maakt bij elk verzoek een nieuw sessie-id aan, ook als de bezoeker er al een had. De vorige sessie blijft dan onaangeroerd achter in je database.
+**Oorzaak:** je maakt bij elk bericht een nieuw sessie-id aan, ook als de bezoeker er al een had. Het nieuwe id krijgt alleen het nieuwe bericht; de vorige sessie blijft onaangeroerd achter in je database.
 
 **Oplossing:** maak alleen een nieuw id als er nog geen is:
 
@@ -901,7 +975,7 @@ Meer uitleg: [Onthouden op de server: sessies](/docs/FastAPI/sessies)
 **Oplossing:** check in deze volgorde:
 
 1. Draait je server met `--host 0.0.0.0`? Zonder dat luistert hij alleen naar je eigen computer.
-2. Geef je het juiste adres door? `127.0.0.1` verwijst bij hem naar zijn eigen computer, niet naar die van jou. Zoek je adres met `ipconfig` of `ip addr`.
+2. Geef je het juiste adres door? `127.0.0.1` verwijst bij hem naar zijn eigen computer, niet naar die van jou. Zoek je adres met `ipconfig` (Windows, de regel `IPv4-adres`), `ipconfig getifaddr en0` (macOS) of `ip addr` (Linux).
 3. Zitten jullie op hetzelfde netwerk? Het gastennetwerk op school staat vaak los van het schoolnetwerk.
 4. Vraagt je firewall om toestemming? Die moet je toestaan.
 
@@ -912,7 +986,7 @@ Meer uitleg: [Laat het aan anderen zien](/docs/FastAPI/laat-het-zien)
 ## Algemeen
 
 <details>
-<summary>NameError: name '...' is not defined (een import ontbreekt)</summary>
+<summary>NameError: name '...' is not defined (een import of een parameter ontbreekt)</summary>
 
 ```
 NameError: name 'Form' is not defined
@@ -924,9 +998,28 @@ Voor een module als `time` voegt Python 3.12 en nieuwer er een hint aan toe:
 NameError: name 'time' is not defined. Did you forget to import 'time'?
 ```
 
-**Oorzaak:** je gebruikt iets dat niet geïmporteerd is. Elke naam die je van FastAPI, sqlitedict of Python zelf gebruikt, moet bovenaan je bestand geïmporteerd staan. Staat de naam in een `@app`-regel of in de parameters, dan start de server niet; staat hij in de functie, dan gaat het pas mis bij het eerste verzoek, met een 500.
+Of de naam is er een uit je eigen functie:
 
-**Oplossing:** zet de import bovenaan. Dit zijn alle imports die in deze cursus voorkomen; neem over wat je gebruikt:
+```
+NameError: name 'request' is not defined
+```
+
+**Oorzaak:** Python kent de naam niet. Bij `Form` of `time` ontbreekt een import: elke naam die je van FastAPI, sqlitedict of Python zelf gebruikt, moet bovenaan je bestand geïmporteerd staan. Bij `request`, of een andere naam die alleen in je eigen functie bestaat, ontbreekt een parameter: hij staat niet tussen de haakjes van `async def`. Dat gebeurt vaak als je een endpoint met `FileResponse` ombouwt naar `TemplateResponse(request, ...)`. Staat de naam in een `@app`-regel of in de parameters, dan start de server niet; staat hij in de functie, dan gaat het pas mis bij het eerste verzoek, met een 500.
+
+**Oplossing:** ontbreekt er een parameter, zet hem dan tussen de haakjes. Een import helpt daar niet:
+
+{/* niet-compileren: losse handler-signatures */}
+```python
+# FOUT - request staat niet bij de parameters
+@app.get("/naam")
+async def toon_formulier():
+
+# GOED
+@app.get("/naam")
+async def toon_formulier(request: Request):
+```
+
+Ontbreekt er een import, zet die dan bovenaan. Dit zijn alle imports die in deze cursus voorkomen; neem over wat je gebruikt:
 
 ```python
 import random
