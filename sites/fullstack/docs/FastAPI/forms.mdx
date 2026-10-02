@@ -84,7 +84,7 @@ Als je in HTML `name="naam"` schrijft, stuurt de browser de data als `naam=Jan`.
 
 1. Ga naar `http://127.0.0.1:8000/naam`
 2. Vul je naam in en klik Verstuur
-3. Je ziet: `{"bericht": "Hallo Jan!"}`
+3. Je ziet: `{"bericht":"Hallo Jan!"}`
 4. In de terminal: `Naam ontvangen: Jan`
 
 :::danger[Gaat er iets mis?]
@@ -188,16 +188,16 @@ async def ontvang_naam(naam: str = Form(...)):
 ### Opdracht 1: Predict - Wat zie je?
 
 ```html
-<form method="post" action="/groet">
+<form method="post" action="/begroeting">
     <input type="text" name="naam">
     <button type="submit">Verstuur</button>
 </form>
 ```
 
-{/* route-dubbel: voorspelvraag, je voegt dit endpoint niet toe */}
+{/* route-dubbel: voorspelvraag, met een eigen pad zodat uitproberen niet botst met het project */}
 ```python
-@app.post("/groet")
-async def groet(naam: str = Form(...)):
+@app.post("/begroeting")
+async def begroeting(naam: str = Form(...)):
     return {"groet": f"Hallo {naam}!"}
 ```
 
@@ -213,7 +213,7 @@ Kijk wat de functie teruggeeft. De waarde van `naam` wordt `"Sarah"`, dus wat wo
 <details>
 <summary>Antwoord</summary>
 
-`{"groet": "Hallo Sarah!"}`
+`{"groet":"Hallo Sarah!"}`
 
 </details>
 

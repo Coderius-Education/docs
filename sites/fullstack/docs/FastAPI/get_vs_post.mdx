@@ -68,7 +68,7 @@ async def verstuur(naam: str = Form(...)):
 </Regel>
 
 <Regel n={4}>
-`Form(...)` zegt dat `naam` uit een verstuurd formulier komt, niet uit de URL. De data zit in de body van het verzoek en is niet zichtbaar in de adresbalk. In het tabblad Netwerk zie je hem wel: klik op het verzoek en kies **Payload**, dan staat hij onder **Formuliergegevens** (Form Data).
+`Form(...)` zegt dat `naam` uit een verstuurd formulier komt, niet uit de URL. De data zit in de body van het verzoek en is niet zichtbaar in de adresbalk. Als je in de volgende les een formulier verstuurt, zie je hem in het tabblad Netwerk wel: klik op het verzoek en kies **Payload**, dan staat hij onder **Formuliergegevens** (Form Data).
 </Regel>
 
 </CodeUitleg>
@@ -209,7 +209,7 @@ async def hallo(naam: str = "Bezoeker"):
     return {"bericht": f"Hallo {naam}!"}
 ```
 
-Test: `http://127.0.0.1:8000/hallo?naam=Jan` en `http://127.0.0.1:8000/hallo`. Zonder naam in de URL krijgt `naam` de standaardwaarde `"Bezoeker"`.
+Test: `http://127.0.0.1:8000/hallo?naam=Jan` en `http://127.0.0.1:8000/hallo`. Je ziet `{"bericht":"Hallo Jan!"}`. Zonder naam in de URL krijgt `naam` de standaardwaarde `"Bezoeker"`, en zie je `{"bericht":"Hallo Bezoeker!"}`.
 
 ### Opdracht 3: Investigate - POST via browser
 

@@ -3,7 +3,7 @@
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/data/10a-lijsten-basis', label: 'Lijsten en hun plaatsnummer'},
-    {site: 'python', to: '/docs/tekst/04b-string-methoden', label: 'len() en string-methoden'},
+    {site: 'python', to: '/docs/data/10b-lijst-methoden', label: 'Lijst-methoden en in'},
   ]}
 />
 
@@ -11,7 +11,7 @@ Je lijst toont alle berichten onder elkaar, op één pagina. Op echte websites k
 
 ## De URL als parameter
 
-In [GET vs POST](/docs/FastAPI/get_vs_post) haalde je data uit de URL met een vraagteken: `/zoek?term=python`. Voor een detailpagina is een **path-parameter** gebruikelijker. Die zet je tussen accolades in het pad:
+In [GET vs POST](/docs/FastAPI/get_vs_post) haalde je data uit de URL met een vraagteken: `/zoek?term=python`. Voor een detailpagina is een **path-parameter** gebruikelijker. Die zet je tussen accolades in het pad. Zet dit endpoint onder je andere endpoints:
 
 ```python
 @app.get("/bericht/{sleutel}")
@@ -19,14 +19,15 @@ async def bericht_detail(request: Request, sleutel: str):
     return {"je_vroeg_om": sleutel}
 ```
 
-Ga je naar `/bericht/bericht_17` dan krijg je `{"je_vroeg_om": "bericht_17"}`. Wat er op de plek van `{sleutel}` staat, komt binnen als de parameter met dezelfde naam.
+Ga je naar `/bericht/bericht_17` dan krijg je `{"je_vroeg_om":"bericht_17"}`. Wat er op de plek van `{sleutel}` staat, komt binnen als de parameter met dezelfde naam.
 
 De naam tussen de accolades en de naam van de parameter in je functie moeten dus precies gelijk zijn.
 
 ## Het bericht opzoeken
 
-Met die sleutel kun je het bericht uit de database halen:
+Met die sleutel kun je het bericht uit de database halen. Vervang je endpoint door deze versie:
 
+{/* route-dubbel: vervangt de eerste versie van GET /bericht/{sleutel} hierboven */}
 ```python
 @app.get("/bericht/{sleutel}")
 async def bericht_detail(request: Request, sleutel: str):
@@ -58,10 +59,11 @@ De template `templates/bericht.html` toont één bericht, met een link terug naa
 
 Iemand kan een URL intypen die nergens op slaat, of een bericht dat net verwijderd is opvragen. Dan is `bericht` gelijk aan `None` en toont je template een lege pagina. Dat is verwarrend: de bezoeker denkt dat er iets stuk is.
 
-Zeg liever expliciet dat het niet bestaat, met `HTTPException`:
+Zeg liever expliciet dat het niet bestaat, met `HTTPException`. Zet `HTTPException` bij je imports en vervang je endpoint nog een keer:
 
 <CodeUitleg>
 
+{/* route-dubbel: vervangt de tweede versie van GET /bericht/{sleutel} hierboven */}
 ```python showLineNumbers
 from fastapi import HTTPException
 
@@ -110,12 +112,50 @@ Sinds het [verwijderen](/docs/FastAPI/redirect#verwijderen-en-terug) stuurt `/be
 {% endfor %}
 ```
 
+<details>
+<summary>Zo ziet je `templates/berichten.html` er nu uit</summary>
+
+Alleen de naam in de `<li>` is nu een link; de rest is zoals in [Doorsturen na opslaan (redirect)](/docs/FastAPI/redirect).
+
+```html
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Gastenboek</title>
+        <link rel="stylesheet" href="/static/css/style.css">
+    </head>
+    <body>
+        <h1>Gastenboek</h1>
+
+        {% if berichten %}
+            <ul>
+                {% for sleutel, bericht in berichten %}
+                    <li>
+                        <a href="/bericht/{{ sleutel }}">{{ bericht.naam }}</a>: {{ bericht.bericht }}
+                        <form method="post" action="/verwijderen">
+                            <input type="hidden" name="sleutel" value="{{ sleutel }}">
+                            <button type="submit">Verwijderen</button>
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Nog geen berichten. Wees de eerste.</p>
+        {% endif %}
+
+        <a href="/gastenboek">Nieuw bericht</a>
+    </body>
+</html>
+```
+
+</details>
+
 ## Testen
 
 1. Ga naar `/berichten` en klik op een naam
 2. Je ziet één bericht, en de sleutel staat in de adresbalk
 3. Verander de sleutel in de adresbalk in iets willekeurigs
-4. Je krijgt `{"detail": "Dit bericht bestaat niet"}` met status 404
+4. Je krijgt `{"detail":"Dit bericht bestaat niet"}` met status 404
 
 :::danger[Gaat er iets mis?]
 Krijg je een pagina met lege plekken in plaats van een 404? Dan staat je `if bericht is None` waarschijnlijk ná de `return`. Zie je `{"status_code":404,"detail":"Dit bericht bestaat niet","headers":null}` met status 200? Dan schreef je `return` in plaats van `raise`. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
@@ -224,7 +264,7 @@ async def groet_verwerk(request: Request, naam: str = Form(...)):
         {"naam": naam}
     )
 
-@app.get("/bewaar")
+@app.get("/opslaan")
 async def naam_formulier():
     return FileResponse("static/pages/naam_opslaan.html")
 
@@ -311,7 +351,7 @@ De accolades zijn een plekhouder, geen letterlijke tekst. Wat je ook intypt, dá
 <details>
 <summary>Antwoord</summary>
 
-`/groet/Sarah` geeft `{"bericht": "Hallo Sarah"}` en `/groet/naam` geeft `{"bericht": "Hallo naam"}`. Ook het woord "naam" is hier niets meer dan een waarde.
+`/groet/Sarah` geeft `{"bericht":"Hallo Sarah"}` en `/groet/naam` geeft `{"bericht":"Hallo naam"}`. Ook het woord "naam" is hier niets meer dan een waarde.
 
 </details>
 
@@ -334,18 +374,18 @@ async def bericht_detail(request: Request, key: str):
 
 Je browser toont een weigering met `"loc":["query","key"]` en `"msg":"Field required"`, en in je terminal staat de statuscode 422.
 
-FastAPI koppelt op naam, niet op volgorde. Het ziet `{sleutel}` in het pad en zoekt een parameter die zo heet; die is er niet. Tegelijk vraagt je functie om `key`, en dat staat nergens in de URL. Daarom vraagt FastAPI erom als query-parameter. `/bericht/abc?key=abc` zou wél werken, maar dat is niet wat je bedoelde.
+FastAPI koppelt op naam, niet op volgorde. Het ziet `{sleutel}` in het pad en zoekt een parameter die zo heet; die is er niet. Tegelijk vraagt je functie om `key`, en dat staat nergens in de URL. Daarom vraagt FastAPI erom als query-parameter. Verander je ook `db.get(sleutel)` in `db.get(key)`, dan komt `/bericht/abc?key=abc` wél aan, maar dat is niet wat je bedoelde. Laat je `db.get(sleutel)` staan, dan geeft dat adres een `Internal Server Error`: de naam `sleutel` bestaat niet meer in je functie.
 
 </details>
 
 ### Opdracht 4: Make - Bezoeker begroeten
 
-Maak een endpoint `/welkom/{naam}` dat een template toont met "Welkom, [naam]". Geef een 404 met de tekst "Onbekende bezoeker" als de naam korter is dan twee letters.
+Maak een endpoint `/welkom/{naam}` dat een template toont met "Welkom, [naam]". Geef een 404 met de tekst "Onbekende bezoeker" als de naam niet in je lijst met bekende bezoekers staat, bijvoorbeeld `["Sam", "Jan", "Sarah"]`.
 
 <details>
 <summary>Tip</summary>
 
-`len(naam) < 2` controleert de lengte. Zet die controle vóór de `TemplateResponse`, met `raise`.
+`naam not in bekend` is waar als de naam niet in de lijst `bekend` staat. Zet die controle vóór de `TemplateResponse`, met `raise`.
 
 </details>
 
@@ -365,7 +405,8 @@ Maak een endpoint `/welkom/{naam}` dat een template toont met "Welkom, [naam]". 
 ```python
 @app.get("/welkom/{naam}")
 async def welkom(request: Request, naam: str):
-    if len(naam) < 2:
+    bekend = ["Sam", "Jan", "Sarah"]
+    if naam not in bekend:
         raise HTTPException(status_code=404, detail="Onbekende bezoeker")
     return templates.TemplateResponse(request, "welkom.html", {"naam": naam})
 ```
