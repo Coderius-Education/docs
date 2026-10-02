@@ -68,9 +68,11 @@ staat nu een vinkje:
 | `sessie_id` | `85aa1aca2a96c3430cce6accaeefa4db` | ✓ | Lax |
 
 </DevtoolsPaneel>
- De server
-herkent je nog steeds: de berichten die je verwijdert, gaan weg. Alleen
-een script komt niet meer bij de cookie.
+
+De browser stuurt de cookie nog steeds mee. Verstuur nog een bericht en klik in
+het tabblad **Netwerk** op het verzoek `bericht`: onder **Verzoekheaders** staat
+de regel `Cookie` met je sessie-id. Alleen een script komt niet meer bij de
+cookie.
 
 ## Waar de controle zit
 
@@ -199,6 +201,17 @@ async def bericht_verwijderen(sleutel: str, sessie_id: str = Cookie(default=""))
             del db[sleutel]
             db.commit()
     return {"bericht": "Verwijderd"}
+
+@app.delete("/berichten")
+async def alles_wissen(sessie_id: str = Cookie(default="")):
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {})
+    with SqliteDict("gastenboek.db") as db:
+        for sleutel in mijn.get("berichten", []):
+            if sleutel in db:
+                del db[sleutel]
+        db.commit()
+    return {"bericht": "Jouw berichten zijn gewist"}
 ```
 
 De sessie-cookie staat nu buiten bereik van scripts.

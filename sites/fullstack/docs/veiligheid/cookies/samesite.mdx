@@ -17,21 +17,31 @@ site waar jij bent ingelogd, heet **CSRF**, *cross-site request forgery*.
 
 ## Wat `samesite` doet
 
-Met de instelling `samesite` zeg je wanneer de browser de cookie meestuurt:
+Met de instelling `samesite` zeg je wanneer de browser de cookie meestuurt. Het
+hangt af van wat er op de andere site gebeurt:
 
-| `samesite` | Je klikt op een link naar jouw site | Een andere site start op de achtergrond een verzoek |
-|---|:---:|:---:|
-| `lax` | mee | niet mee |
-| `strict` | niet mee | niet mee |
-| `none` | mee | mee, en alleen met `secure` |
+| `samesite` | Je klikt daar op een link naar jouw site (GET) | Een formulier daar post naar jouw site (POST) | Die site start op de achtergrond een verzoek |
+|---|:---:|:---:|:---:|
+| `lax` | mee | niet mee | niet mee |
+| `strict` | niet mee | niet mee | niet mee |
+| `none` | mee | mee | mee |
+
+Bij `none` gaat de cookie alleen mee als hij ook `secure` heeft; daarover gaat
+[Er gaat iets mis](#er-gaat-iets-mis).
+
+Een klik op een link is altijd een GET-verzoek. Met `lax` gaat je cookie daarbij
+mee, dus een endpoint dat iets verandert, mag nooit een GET zijn. Was
+`/uitloggen` een GET, dan logde een link op een andere site je uit. Een POST
+van een andere site gaat zonder cookie, en daarom is uitloggen in
+[les 4](./uitloggen) een POST.
 
 ## Wat FastAPI al doet
 
 Kijk nog eens naar de regel `set-cookie` uit
 [opdracht 1 van les 1](./zwakheid): daar stond al `SameSite=lax`. FastAPI zet
 `samesite="lax"` vanzelf, en dat is voor de meeste sites de goede keuze. Een
-bezoeker die via een link van een andere site binnenkomt, is gewoon ingelogd,
-maar een verzoek op de achtergrond gaat zonder cookie.
+bezoeker die via een link van een andere site binnenkomt, is meteen ingelogd,
+maar een formulier of een verzoek op de achtergrond gaat zonder cookie.
 
 Zet het toch in je code, zodat een lezer ziet dat het een keuze is:
 
@@ -47,14 +57,19 @@ antwoord.set_cookie(
 
 ## Er gaat iets mis
 
-Je zet `samesite="none"`. Daarna blijft het tabblad **App** leeg, en herkent je
-server je bij elk verzoek als nieuwe bezoeker.
+Je zet `samesite="none"` om te zien wat er gebeurt, maar in het tabblad **App**
+staat bij `sessie_id` nog steeds Lax. Verwijder je de cookie daar en verstuur je
+opnieuw een bericht, dan blijft **App** leeg, en herkent je server je bij elk
+verzoek als nieuwe bezoeker.
 
 **Oorzaak:** browsers bewaren een cookie met `samesite="none"` alleen als hij
-ook `secure=True` heeft. Zonder `secure` gooit de browser hem stil weg.
+ook `secure=True` heeft. Zonder `secure` gooit de browser de nieuwe cookie stil
+weg en houdt hij de oude `lax`-cookie, als die er nog was.
 
 **Oplossing:** gebruik `lax`. `none` heb je alleen nodig als een andere site
 jouw cookie bewust moet kunnen meesturen, en dat is bij een gastenboek nooit zo.
+Probeer je een instelling uit, verwijder dan eerst je oude cookie in **App**;
+anders zie je niet wat de nieuwe doet.
 
 ## Opdrachten
 

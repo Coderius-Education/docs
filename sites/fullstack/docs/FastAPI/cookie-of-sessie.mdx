@@ -147,12 +147,12 @@ Verandert een bezoeker deze cookie in `banaan`, dan valt de lijst terug op de st
 
 ### Opdracht 5: Make - Uitloggen
 
-Maak een endpoint `/uitloggen` dat de sessie op de server weggooit én de cookie bij de bezoeker weghaalt.
+Maak een endpoint `POST /uitloggen` dat de sessie op de server weggooit én de cookie bij de bezoeker weghaalt, en zet in `gastenboek.html` een knop die het aanroept.
 
 <details>
 <summary>Tip</summary>
 
-Twee dingen dus: `del sessies[sessie_id]` op de server en `delete_cookie` op het antwoord. Vang met `if sessie_id in sessies` op dat de sessie er misschien niet meer is.
+Twee dingen dus: `del sessies[sessie_id]` op de server en `delete_cookie` op het antwoord. Vang met `if sessie_id in sessies` op dat de sessie er misschien niet meer is. De knop is een klein formulier met `method="post"`, net als je gastenboekformulier.
 
 </details>
 
@@ -160,7 +160,7 @@ Twee dingen dus: `del sessies[sessie_id]` op de server en `delete_cookie` op het
 <summary>Antwoord</summary>
 
 ```python
-@app.get("/uitloggen")
+@app.post("/uitloggen")
 async def uitloggen(sessie_id: str = Cookie(default="")):
     with SqliteDict("sessies.db") as sessies:
         if sessie_id in sessies:
@@ -171,6 +171,16 @@ async def uitloggen(sessie_id: str = Cookie(default="")):
     antwoord.delete_cookie("sessie_id")
     return antwoord
 ```
+
+En de knop in `gastenboek.html`:
+
+```html
+<form method="post" action="/uitloggen">
+    <button>Uitloggen</button>
+</form>
+```
+
+Waarom een formulier en geen link? Een link is altijd een GET, en een link kan ook op een andere site staan. Was `/uitloggen` een GET, dan logde een klik op zo'n link je uit, want de browser stuurt je cookie bij een link mee. Een formulier dat vanaf een andere site naar jouw `POST` stuurt, gaat zonder cookie. Hoe dat zit, lees je in [`samesite`](/docs/veiligheid/cookies/samesite) in de reeks Veiligheid, die je later doet. Alles wat op de server iets verandert, hoort daarom achter een POST.
 
 Allebei is nodig. Haal je alleen de cookie weg, dan blijft de sessie op je server staan; iemand die het oude sessie-id nog heeft, is zo weer binnen. Gooi je alleen de sessie weg, dan houdt de bezoeker een cookie die nergens meer op past. Plaatst hij daarna een bericht, dan maakt je server onder datzelfde oude id een verse sessie aan, en wie dat id nog had, zit er weer in.
 
