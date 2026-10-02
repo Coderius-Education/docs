@@ -24,7 +24,7 @@ Zet je de naam in de cookie, dan slaat de server stap drie en vier over: hij lee
 |:---:|:---:|:---:|
 | **Waar staan de gegevens** | Bij de bezoeker | Op jouw server |
 | **Wat reist er mee** | Alles wat je bewaarde | Alleen het sessie-id |
-| **Kan de bezoeker het wijzigen** | Ja | Nee |
+| **Kan de bezoeker de gegevens wijzigen** | Ja | Nee, alleen het id, en dan is hij onbekend |
 | **Mag je het vertrouwen** | Nee | Ja |
 | **Blijft het na een herstart van je server** | Ja | Alleen als je het opslaat |
 | **Hoeveel past erin** | Ongeveer 4 kB | Zoveel als je database aankan |
@@ -104,7 +104,7 @@ Dat laat zien waar de identiteit echt zit: niet bij de persoon achter het scherm
 
 ### Opdracht 4: Make - Een voorkeur in een cookie
 
-Geef je gastenboek een knop waarmee de bezoeker kiest of berichten van nieuw naar oud of van oud naar nieuw staan, en onthoud die keuze in een gewone cookie.
+Zet op je berichtenpagina twee links waarmee de bezoeker kiest of berichten van nieuw naar oud of van oud naar nieuw staan, en onthoud die keuze in een gewone cookie.
 
 <details>
 <summary>Tip</summary>
@@ -135,7 +135,7 @@ if volgorde != "oud":
 
 Gebruik je `berichten_lijst.html` uit de htmx-recepten, geef `GET /berichten/lijst` dan dezelfde twee aanpassingen, anders springt de lijst na Ververs terug.
 
-In je template:
+In `templates/berichten.html`, bijvoorbeeld boven de lijst:
 ```html
 <a href="/volgorde/nieuw">Nieuwste eerst</a>
 <a href="/volgorde/oud">Oudste eerst</a>
@@ -180,7 +180,7 @@ En de knop in `gastenboek.html`:
 </form>
 ```
 
-Waarom een formulier en geen link? Een link is altijd een GET, en een link kan ook op een andere site staan. Was `/uitloggen` een GET, dan logde een klik op zo'n link je uit, want de browser stuurt je cookie bij een link mee. Een formulier dat vanaf een andere site naar jouw `POST` stuurt, gaat zonder cookie. Hoe dat zit, lees je in [`samesite`](/docs/veiligheid/cookies/samesite) in de reeks Veiligheid, die je later doet. Alles wat op de server iets verandert, hoort daarom achter een POST.
+Waarom een formulier en geen link? Een link is altijd een GET, en een link kan ook op een andere site staan; bij een klik op zo'n link stuurt de browser je cookie mee. Een formulier op een andere site dat naar jouw `POST` stuurt, gaat zonder cookie, en dan weet je server niet om welke sessie het gaat. Helemaal dicht is uitloggen daarmee niet: de `delete_cookie` in het antwoord voert de browser ook dan uit, dus zo'n formulier haalt je cookie wel weg. Je sessie op de server blijft staan, en dat id heeft verder niemand. Bij een endpoint dat met je sessie iets verandert, zoals verwijderen in opdracht 5 van [Onthouden op de server: sessies](/docs/FastAPI/sessies), betekent zonder cookie: geen sessie, dus niets. Hoe dat zit, lees je in [`samesite`](/docs/veiligheid/cookies/samesite) in de reeks Veiligheid, die je later doet. Alles wat op de server iets verandert, hoort daarom achter een POST.
 
 Allebei is nodig. Haal je alleen de cookie weg, dan blijft de sessie op je server staan; iemand die het oude sessie-id nog heeft, is zo weer binnen. Gooi je alleen de sessie weg, dan houdt de bezoeker een cookie die nergens meer op past. Plaatst hij daarna een bericht, dan maakt je server onder datzelfde oude id een verse sessie aan, en wie dat id nog had, zit er weer in.
 

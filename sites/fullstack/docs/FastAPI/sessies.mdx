@@ -6,7 +6,7 @@
   ]}
 />
 
-In de vorige les veranderde je je eigen cookie in een andere naam, en je server geloofde het meteen. Voor een naam in een formulier maakt dat weinig uit. Maar zodra er rechten aan hangen, zoals wie een bericht mag verwijderen, is het een probleem. Dat los je op met een **sessie**.
+In opdracht 3 van de vorige les kon je je eigen cookie veranderen in een andere naam, en je server geloofde het meteen. Voor een naam in een formulier maakt dat weinig uit. Maar zodra er rechten aan hangen, zoals wie een bericht mag verwijderen, is het een probleem. Dat los je op met een **sessie**.
 
 ## Waarom de naam niet in de cookie hoort
 
@@ -30,7 +30,7 @@ Dat geeft 32 tekens, bijvoorbeeld `9f2c4a7e10b8d3f5a6c1e0b4d7928f3a`. Een bezoek
 
 ## De sessie opslaan
 
-Sessies bewaar je in een eigen database, los van je gastenboek. Vervang je `POST /gastenboek` uit de vorige les door deze versie. Drie dingen gebeuren erin. Is er nog geen sessie-id, dan maak je er een. Het bericht gaat zoals altijd in `gastenboek.db`. En in `sessies.db` groeit onder dat ene sessie-id een lijst met de sleutels van de berichten die deze bezoeker heeft geplaatst.
+Sessies bewaar je in een eigen database, los van je gastenboek. Vervang je `POST /gastenboek` uit de vorige les door deze versie; de controle op de lengte bovenaan blijft. Drie dingen gebeuren erin. Is er nog geen sessie-id, dan maak je er een. Het bericht gaat zoals altijd in `gastenboek.db`. En in `sessies.db` groeit onder dat ene sessie-id een lijst met de sleutels van de berichten die deze bezoeker heeft geplaatst.
 
 <CodeUitleg>
 
@@ -42,6 +42,9 @@ async def gastenboek_opslaan(
     bericht: str = Form(...),
     sessie_id: str = Cookie(default=""),
 ):
+    if len(bericht) > 80:
+        raise HTTPException(status_code=400, detail="Bericht is te lang")
+
     if not sessie_id:
         sessie_id = secrets.token_hex(16)
 
@@ -66,23 +69,23 @@ async def gastenboek_opslaan(
 De cookie heet nu `sessie_id` en bevat alleen het nummer; bij een eerste bezoek is hij leeg.
 </Regel>
 
-<Regel n={7} tot={8}>
+<Regel n={10} tot={11}>
 Geen sessie-id? Dan maak je er een, en verderop gaat het als cookie mee terug.
 </Regel>
 
-<Regel n={10}>
+<Regel n={13}>
 De sleutel van het bericht staat nu in een variabele, want je hebt hem straks een tweede keer nodig.
 </Regel>
 
-<Regel n={15} tot={16}>
+<Regel n={18} tot={19}>
 Een tweede database, alleen voor sessies. `sessies.get(sessie_id, {"naam": naam, "berichten": []})` doet het werk bij een eerste bezoek: bestaat de sessie nog niet, dan krijg je een verse dictionary in plaats van een foutmelding.
 </Regel>
 
-<Regel n={17} tot={20}>
+<Regel n={20} tot={23}>
 De naam bijwerken, de sleutel van dit bericht aan de lijst toevoegen, en de dictionary terugzetten onder het sessie-id. Dat terugzetten is nodig: een gewijzigde dictionary die je uit `sessies` haalde, schrijft zich niet vanzelf terug.
 </Regel>
 
-<Regel n={23}>
+<Regel n={26}>
 Dezelfde `set_cookie` als in de vorige les, maar met het sessie-id als waarde in plaats van de naam.
 </Regel>
 
@@ -162,7 +165,7 @@ Maak een tijdelijk endpoint dat alles in `sessies.db` als JSON teruggeeft, en be
 <details>
 <summary>Tip</summary>
 
-Zo'n endpoint ken je al uit [Een formulier opslaan](/docs/FastAPI/post_naar_database): open de database en geef `dict(sessies)` terug.
+In [Een formulier opslaan](/docs/FastAPI/post_naar_database) gaf `/berichten` de database als JSON terug, met `list(db.values())`. Hier wil je ook de sessie-id's zien: `dict(sessies)` maakt van de hele database een dictionary, met elke sleutel en zijn waarde.
 
 </details>
 
@@ -205,11 +208,11 @@ with SqliteDict("sessies.db") as sessies:
 
 En zet in de dictionary voor de template `"mijn_berichten": mijn.get("berichten", [])` naast `"berichten"`.
 
-In `templates/berichten.html` komt een `{% if %}` om het formuliertje:
+In `templates/berichten.html` komt een `{% if %}` om het formuliertje. De link naar de detailpagina blijft staan:
 ```html
 {% for sleutel, bericht in berichten %}
     <li>
-        {{ bericht.naam }}: {{ bericht.bericht }}
+        <a href="/bericht/{{ sleutel }}">{{ bericht.naam }}</a>: {{ bericht.bericht }}
         {% if sleutel in mijn_berichten %}
             <form method="post" action="/verwijderen">
                 <input type="hidden" name="sleutel" value="{{ sleutel }}">

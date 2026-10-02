@@ -30,10 +30,13 @@ Bij `none` gaat de cookie alleen mee als hij ook `secure` heeft; daarover gaat
 [Er gaat iets mis](#er-gaat-iets-mis).
 
 Een klik op een link is altijd een GET-verzoek. Met `lax` gaat je cookie daarbij
-mee, dus een endpoint dat iets verandert, mag nooit een GET zijn. Was
-`/uitloggen` een GET, dan logde een link op een andere site je uit. Een POST
-van een andere site gaat zonder cookie, en daarom is uitloggen in
-[les 4](./uitloggen) een POST.
+mee, dus een endpoint dat iets verandert, mag nooit een GET zijn. Een POST
+van een andere site gaat zonder cookie: je server ziet dan geen sessie, en een
+endpoint dat een sessie nodig heeft, doet niets. Daarom is uitloggen in
+[les 4](./uitloggen) een POST. Helemaal dicht is uitloggen daarmee niet: de
+`delete_cookie` in het antwoord voert de browser ook na zo'n POST uit, dus een
+andere site kan je cookie laten weghalen. Je sessie op de server raakt hij niet
+aan.
 
 ## Wat FastAPI al doet
 
