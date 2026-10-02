@@ -12,11 +12,11 @@ In opdracht 3 van de vorige les kon je je eigen cookie veranderen in een andere 
 
 Stel dat je op de berichtenpagina een verwijderknop wilt tonen, maar alleen bij berichten die de bezoeker zelf heeft geplaatst. Met de naam in de cookie werkt dat niet: iedereen kan er een andere naam in typen en zo bij de berichten van een ander komen.
 
-De vuistregel uit [Server of browser?](/docs/FastAPI/server-of-browser) geldt hier onverkort. Alles wat op de computer van de bezoeker staat, mag je niet vertrouwen. Alleen wat op jouw server staat, mag dat wel.
+Hier geldt de vuistregel uit [Server of browser?](/docs/FastAPI/server-of-browser): wat op de computer van de bezoeker staat, mag je niet vertrouwen. Wat op jouw server staat wel.
 
 ## Alleen een kenmerk in de cookie
 
-De oplossing is de cookie leeg te maken van betekenis. In plaats van de naam zet je er een **sessie-id** in: een lang, willekeurig getal dat verder niets betekent. De gegevens zelf bewaar je op de server, met dat sessie-id als sleutel.
+Je maakt de cookie dus leeg van betekenis. In plaats van de naam zet je er een **sessie-id** in: een lang, willekeurig getal dat verder niets betekent. De gegevens zelf bewaar je op de server, met dat sessie-id als sleutel.
 
 Het sessie-id maak je met `secrets`, een ingebouwde module voor waarden die niet te raden mogen zijn:
 
@@ -118,7 +118,7 @@ Ook `mijn.get("naam", "")` heeft een standaardwaarde, zodat een eerste bezoek ee
 
 </CodeUitleg>
 
-Voor de bezoeker verandert er niets: de naam staat nog steeds voorgevuld. Het verschil zit erin dat die naam nu van jouw server komt en niet van een computer waar je niets over te zeggen hebt.
+Voor de bezoeker verandert er niets: de naam staat nog steeds voorgevuld. Alleen komt die naam nu van jouw server, en niet van een computer waar je niets over te zeggen hebt.
 
 ## Testen
 
@@ -150,7 +150,7 @@ Kijk naar de tweede waarde in `sessies.get(sessie_id, {})`.
 
 De bezoeker ziet een leeg naamveld: onder de sleutel `hallo` staat niets, dus `get` geeft de lege dictionary terug. In `sessies.db` verandert er niets, want uitlezen schrijft niet.
 
-Dat is precies de bedoeling. Wie aan de eigen cookie sleutelt, is voor je server een nieuwe bezoeker en komt niet in de sessie van iemand anders terecht.
+Zo hoort het. Wie aan de eigen cookie sleutelt, is voor je server een nieuwe bezoeker en komt niet in de sessie van iemand anders terecht.
 
 </details>
 

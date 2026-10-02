@@ -402,8 +402,8 @@ Meer uitleg: [Als je wijziging niet doorkomt](/docs/FastAPI/static_files#als-je-
 
 **Oplossing:**
 
-1. Staat de afbeelding in de `static` folder?
-2. Klopt de bestandsnaam exact? (hoofdletters tellen) Windows verbergt vaak de extensie: een bestand dat `kat.jpg` lijkt, heet soms `kat.jpg.jpg` of `kat.jpeg`. Zet in de Verkenner bij Beeld het vinkje **Bestandsnaamextensies** aan om de echte naam te zien.
+1. Staat de afbeelding in de map `static`?
+2. Klopt de bestandsnaam precies, met hoofdletters en al? Windows verbergt vaak de extensie: een bestand dat `kat.jpg` lijkt, heet soms `kat.jpg.jpg` of `kat.jpeg`. Zet in de Verkenner bij Beeld het vinkje **Bestandsnaamextensies** aan om de echte naam te zien.
 3. Klopt het pad in `src="/static/foto.jpg"`?
 4. Staat `app.mount("/static", ...)` in je code?
 
@@ -1002,7 +1002,7 @@ Meer uitleg: [Onthouden op de server: sessies](/docs/FastAPI/sessies)
 1. Draait je server met `--host 0.0.0.0`? Zonder dat luistert hij alleen naar je eigen computer.
 2. Geef je het juiste adres door? `127.0.0.1` verwijst bij hem naar zijn eigen computer, niet naar die van jou. Zoek je adres met `ipconfig` (Windows, de regel `IPv4-adres`), `ipconfig getifaddr en0` (macOS) of `ip addr` (Linux).
 3. Zitten jullie op hetzelfde netwerk? Het gastennetwerk op school staat vaak los van het schoolnetwerk.
-4. Vraagt je firewall om toestemming? Die moet je toestaan.
+4. Vraagt je firewall om toestemming, sta die dan toe.
 
 Meer uitleg: [Laat het aan anderen zien](/docs/FastAPI/laat-het-zien)
 

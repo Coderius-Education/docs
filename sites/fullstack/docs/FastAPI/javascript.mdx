@@ -49,7 +49,7 @@ En zet direct onder dat veld een plek waar de teller kan staan:
 <p id="teller">80 tekens over</p>
 ```
 
-En in `static/js/app.js`:
+De code komt in `static/js/app.js`:
 
 ```js
 const veld = document.querySelector("#bericht-veld");
@@ -79,7 +79,7 @@ Typ een paar letters in het veld en kijk dan naar de terminal waar `fastapi dev`
 
 Daar staat niets nieuws, geen enkele regel. Je server heeft de teller nooit gezien: het bestand `app.js` is één keer opgehaald, en daarna doet de browser alles zelf.
 
-Dat is precies het verschil met alles wat je hiervoor bouwde. Een formulier versturen betekent een verzoek naar Python. Een teller bijwerken via de server zou dat ook betekenen: twintig verzoeken voor twintig letters, ook met htmx, terwijl alles wat de teller nodig heeft al in de browser staat. Daarom hoort dit in de browser.
+Daarin verschilt dit van alles wat je hiervoor bouwde. Een formulier versturen betekent een verzoek naar Python. Een teller bijwerken via de server zou dat ook betekenen: twintig verzoeken voor twintig letters, ook met htmx, terwijl alles wat de teller nodig heeft al in de browser staat. Daarom hoort dit in de browser.
 
 ## Testen
 

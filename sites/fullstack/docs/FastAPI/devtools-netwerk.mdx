@@ -45,7 +45,7 @@ Zo ziet het eruit in de terminal van VS Code. Start je de server in een ander ve
 
 De tweede regel heb je niet zelf gedaan. De browser vraagt bij een nieuwe site uit zichzelf om `/favicon.ico`, het icoontje voor op het tabblad. Jouw server heeft er geen, dus antwoordt hij met 404: niet gevonden. Er is niets mis; in Netwerk zie je dit verzoek meestal niet eens.
 
-Netwerk laat zien wat de browser stuurde en kreeg. De terminal laat zien wat de server ontving en antwoordde. Het is één verzoek, twee keer gelogd. Zie je iets in de terminal en niet in Netwerk, of andersom, dan weet je aan welke kant het misgaat.
+Het is één verzoek, en je ziet het twee keer: in Netwerk wat de browser stuurde en terugkreeg, in de terminal wat de server binnenkreeg en antwoordde. Zie je iets in de terminal en niet in Netwerk, of andersom, dan weet je aan welke kant het misgaat.
 
 ## Eén verzoek van dichtbij
 
@@ -68,7 +68,7 @@ Soms staat er in Netwerk niets, en de volgende keer wel. Dat ligt bijna altijd a
 - Je opende het tabblad na het laden. Netwerk ziet alleen wat er gebeurt terwijl het open staat. Herlaad met het tabblad open.
 - Je ging naar een andere pagina. Bij elke nieuwe pagina, ook na een formulier dat je doorstuurt, begint de lijst opnieuw. Wil je zien wat er vóór de overstap gebeurde, zet dan bovenin het vinkje **Logboek behouden** (Preserve log) aan.
 - Er staat nog een filter aan. Onder de knoppen staat een rij soorten: Alle (All), Fetch/XHR, Document (Doc), Css (CSS), JavaScript (JS) en meer. Chrome onthoudt welke je het laatst koos, ook de volgende dag. Staat Fetch/XHR aan, dan zie je geen pagina's. Klik op Alle, en maak het zoekvak links ernaast leeg.
-- Opnemen staat uit. Helemaal links staat een rondje. Is het rood, dan neemt Netwerk op. Is het grijs, dan heb je erop geklikt of per ongeluk Ctrl+E gedrukt. Klik erop en herlaad.
+- Opnemen staat uit. Helemaal links staat een rondje, en zolang dat rood is neemt Netwerk op. Is het grijs, dan heb je erop geklikt of per ongeluk Ctrl+E gedrukt. Klik erop en herlaad.
 
 ## Testen
 

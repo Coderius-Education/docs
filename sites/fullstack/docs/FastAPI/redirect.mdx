@@ -30,14 +30,14 @@ Het opslaan is hetzelfde als in [Een formulier opslaan](/docs/FastAPI/post_naar_
 </Regel>
 
 <Regel n={7}>
-Het endpoint geeft nu geen pagina terug, maar een opdracht aan de browser: ga naar `/berichten`. De browser doet dat meteen, en de bezoeker ziet zijn eigen bericht onderaan de lijst verschijnen. Waarom er `status_code=303` bij moet, staat hieronder.
+Het endpoint geeft nu geen pagina terug, maar een opdracht aan de browser: ga naar `/berichten`. De browser doet dat meteen, en de bezoeker ziet zijn eigen bericht onderaan de lijst verschijnen.
 </Regel>
 
 </CodeUitleg>
 
 ## Waarom 303
 
-`status_code=303` lijkt een detail, maar zonder dat getal werkt het niet. `RedirectResponse` stuurt standaard een 307, en 307 betekent: doe hetzelfde verzoek nog een keer op de nieuwe URL. Jouw verzoek was een POST, dus de browser stuurt een POST naar `/berichten`. Dat endpoint is een `@app.get`, dus je krijgt **405 Method Not Allowed**.
+Zonder `status_code=303` werkt het niet. `RedirectResponse` stuurt standaard een 307, en 307 betekent: doe hetzelfde verzoek nog een keer op de nieuwe URL. Jouw verzoek was een POST, dus de browser stuurt een POST naar `/berichten`. Dat endpoint is een `@app.get`, dus je krijgt **405 Method Not Allowed**.
 
 Een 303 zegt wél wat je bedoelt: ga naar die URL met een GET.
 

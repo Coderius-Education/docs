@@ -14,7 +14,7 @@ from fastapi import FastAPI
 app = FastAPI()
 ```
 
-Eén keer, bovenaan, direct na de imports. Alle endpoints komen eronder.
+Dit staat één keer in je bestand, direct na de imports, en alle endpoints komen eronder.
 
 </details>
 
@@ -364,7 +364,7 @@ De tabbladen die je in deze cursus gebruikt:
 <details>
 <summary>Hoe zie ik welke verzoeken de pagina doet? (tabblad Netwerk)</summary>
 
-Tabblad **Netwerk**, herlaad de pagina. Eén regel per verzoek.
+Open het tabblad **Netwerk** en herlaad de pagina. Elk verzoek krijgt een eigen regel.
 
 - **Status** `200`: gevonden. `404`: het pad klopt niet, of `app.mount` ontbreekt.
 - **Grootte** met **(schijfcache)**: de browser heeft de server niet gevraagd.
@@ -377,7 +377,7 @@ Tabblad **Netwerk**, herlaad de pagina. Eén regel per verzoek.
 
 Met de ontwikkelaarstools open: rechtermuisknop op de herlaadknop, dan **Cache wissen en geforceerd opnieuw laden** (Empty Cache and Hard Reload). Sneltoets: **Ctrl+Shift+R**.
 
-Zolang je aan je site werkt: tabblad **Netwerk**, vinkje **Cache uitzetten** aan.
+Zet zolang je aan je site werkt in het tabblad **Netwerk** het vinkje **Cache uitzetten** aan.
 
 </details>
 
@@ -694,7 +694,7 @@ Zonder tweede argument geeft `db.get()` `None` als de sleutel niet bestaat, in p
 <details>
 <summary>Hoe koppel ik htmx aan mijn pagina? (htmx.min.js)</summary>
 
-Download `htmx.min.js` (de link staat bij [Zonder herladen met htmx](/docs/FastAPI/htmx)) naar `static/js/`, en in de `<head>` van elke pagina die htmx gebruikt:
+Download `htmx.min.js` (de link staat bij [Zonder herladen met htmx](/docs/FastAPI/htmx)) naar `static/js/`, en zet deze regel in de `<head>` van elke pagina die htmx gebruikt:
 
 ```html
 <script src="/static/js/htmx.min.js"></script>
@@ -736,7 +736,7 @@ Het endpoint geeft een stukje HTML terug (`HTMLResponse("Bedankt")` of een templ
        hx-trigger="keyup changed delay:300ms">
 ```
 
-Standaard: bij een klik op een knop of het versturen van een formulier. Een `<input>` stuurt zijn waarde mee als query-parameter (`/berichten/lijst?term=hoi`); `delay:300ms` wacht tot je even stopt met typen.
+Zonder `hx-trigger` gaat het verzoek bij een klik op een knop of als je een formulier verstuurt. Een `<input>` stuurt zijn waarde mee als query-parameter (`/berichten/lijst?term=hoi`); `delay:300ms` wacht tot je even stopt met typen.
 
 </details>
 
@@ -765,7 +765,7 @@ Met een Content-Security-Policy op je site werkt dit attribuut niet meer; zie [H
 <details>
 <summary>Hoe koppel ik JavaScript aan mijn pagina? (script met defer)</summary>
 
-Bestand in `static/js/app.js`, en in de `<head>` van je template:
+Zet je bestand in `static/js/app.js` en deze regel in de `<head>` van je template:
 
 ```html
 <script src="/static/js/app.js" defer></script>

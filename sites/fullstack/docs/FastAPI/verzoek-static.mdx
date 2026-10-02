@@ -7,7 +7,7 @@ Bij [je eerste verzoek](/docs/FastAPI/verzoek-eerste) was één verzoek één an
 
 <VerzoekCyclus variant="static" />
 
-Stap 5 is de stap om te onthouden. Voor de CSS en de afbeelding draait er geen functie van jou; `app.mount` uit [CSS in een eigen bestand (static files)](/docs/FastAPI/static_files) beantwoordt die verzoeken zelf. Daarom heb je die ene regel nodig, en daarom heeft een fout in het pad van `<link>` of `<img>` niets met je Python-code te maken: het bestand wordt in stap 4 opgevraagd op een adres waar niets staat.
+In stap 5 draait er geen functie van jou. De verzoeken voor de CSS en de afbeelding beantwoordt `app.mount` uit [CSS in een eigen bestand (static files)](/docs/FastAPI/static_files) zelf. Daarom heb je die ene regel nodig, en daarom heeft een fout in het pad van `<link>` of `<img>` niets met je Python-code te maken: de browser vraagt het bestand in stap 4 op bij een adres waar niets staat.
 
 De pagina zelf staat op stap 2 wel achter een functie van jou. Zo kun je per verzoek iets anders terugsturen, en dat doe je in de volgende les met een [template](/docs/FastAPI/templates). Het volgende diagram, [bij één klik](/docs/FastAPI/verzoek-get), laat zien wat er dan tussen stap 2 en 3 bijkomt.
 
