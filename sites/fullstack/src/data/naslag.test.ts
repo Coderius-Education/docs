@@ -45,9 +45,50 @@ describe('naslag en gereedschap', () => {
     expect(zonder).toEqual([]);
   });
 
+  // Andersom: een Nederlands label dat niet uit nl.json van DevTools komt
+  // (het menu van de herlaadknop is van Chrome zelf), of dat per taal anders
+  // heet, krijgt zijn Engelse naam erbij. De filters in Netwerk stonden er in
+  // het Engels (Doc, CSS, JS), terwijl een Nederlandse Chrome Document, Css en
+  // JavaScript toont.
+  const MET_ENGELS: Record<string, string> = {
+    'Cache wissen en geforceerd opnieuw laden': 'Empty Cache and Hard Reload',
+    'Document (Doc)': 'Css (CSS)',
+  };
+
+  it.each(Object.entries(MET_ENGELS))('naast "%s" staat ook "%s"', (nederlands, engels) => {
+    const zonder = lessen
+      .filter((pad) => lees(pad).includes(nederlands) && !lees(pad).includes(engels))
+      .map(kort);
+    expect(zonder).toEqual([]);
+  });
+
+  it('de filters in Netwerk heten zoals in een Nederlandse Chrome', () => {
+    const tekst = lees(`${SITE}/docs/FastAPI/devtools-netwerk.mdx`);
+    expect(tekst).not.toMatch(/Fetch\/XHR, Doc, CSS, JS/);
+    expect(tekst).toContain('Document (Doc)');
+  });
+
   it('de les die de eerste terminalregel belooft, legt de favicon-404 uit', () => {
     const tekst = lees(`${SITE}/docs/FastAPI/devtools-netwerk.mdx`);
-    expect(tekst).toContain('GET /favicon.ico HTTP/1.1" 404 Not Found');
+    expect(tekst).toContain('GET /favicon.ico HTTP/1.1" 404\n');
+  });
+
+  // De terminalregels kwamen van kale uvicorn in een pijp: `INFO:     ...
+  // 200 OK`. In de terminal van VS Code (een TTY) zet fastapi dev zijn eigen
+  // opmaak aan: een streepje vooraan, geen INFO:, en alleen de statuscode
+  // (nagedraaid met fastapi-cli 0.0.32 onder `script`). Een leerling die zijn
+  // terminal naast de les legt, zag een andere regel.
+  it('een terminalregel staat zoals fastapi dev hem in VS Code toont', () => {
+    const fout = lessen.flatMap((pad) =>
+      lees(pad)
+        .split('\n')
+        .filter(
+          (regel) =>
+            /^(INFO|WARNING|ERROR): {2,}/.test(regel) || /HTTP\/1\.1" \d{3} [A-Z]/.test(regel),
+        )
+        .map((regel) => `${kort(pad)}: ${regel.trim()}`),
+    );
+    expect(fout).toEqual([]);
   });
 });
 

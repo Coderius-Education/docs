@@ -118,10 +118,10 @@ Meer uitleg: [Kijken wat de browser doet](/docs/FastAPI/devtools-netwerk#opdrach
 </details>
 
 <details>
-<summary>In de terminal staat GET /favicon.ico 404 Not Found</summary>
+<summary>In de terminal staat GET /favicon.ico 404</summary>
 
 ```
-INFO:     127.0.0.1:52341 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+▕  127.0.0.1:52341 - "GET /favicon.ico HTTP/1.1" 404
 ```
 
 **Oorzaak:** de browser vraagt bij een nieuwe site uit zichzelf om `/favicon.ico`, het icoontje voor op het tabblad. Jouw server heeft geen endpoint voor dat adres, dus antwoordt hij met 404.
@@ -145,7 +145,7 @@ ERR_SSL_PROTOCOL_ERROR
 **Oorzaak:** de browser praat niet met je server. Bij `ERR_CONNECTION_REFUSED` draait er geen server: hij is gestopt, of nooit gestart. Bij `ERR_SSL_PROTOCOL_ERROR` probeert de browser `https`, en je server spreekt alleen `http`. In de terminal staat dan:
 
 ```
-WARNING:  Invalid HTTP request received.
+▕  Invalid HTTP request received.
 ```
 
 **Oplossing:**
@@ -178,6 +178,31 @@ app = FastAPI()
 @app.get("/")
 async def root():
     return {"bericht": "Hallo"}
+```
+
+Meer uitleg: [Je eerste endpoint](/docs/FastAPI/eerste_endpoint)
+
+</details>
+
+<details>
+<summary>De pagina blijft laden, en er verschijnt niets</summary>
+
+Het tabblad draait en draait, zonder foutpagina. In de terminal staat onderaan een foutmelding, bijvoorbeeld:
+
+```
+NameError: name 'HTMLResponse' is not defined
+```
+
+**Oorzaak:** je sloeg `main.py` op met een fout erin. `fastapi dev` probeert opnieuw te starten, loopt op de fout vast en wacht tot je weer opslaat. De poort blijft bezet, dus de browser krijgt verbinding maar nooit een antwoord.
+
+**Oplossing:** lees de onderste regel in de terminal, los de fout op en sla op. De server start dan vanzelf, en na het herladen verschijnt je pagina. Een `NameError` op een naam als `HTMLResponse` of `FileResponse` betekent meestal dat de import ontbreekt:
+
+```python
+# FOUT
+from fastapi.responses import FileResponse
+
+# GOED
+from fastapi.responses import FileResponse, HTMLResponse
 ```
 
 Meer uitleg: [Je eerste endpoint](/docs/FastAPI/eerste_endpoint)
@@ -276,7 +301,7 @@ Meer uitleg: [HTML tonen](/docs/FastAPI/html_tonen)
 <summary>500 Internal Server Error, en in de terminal: RuntimeError ... does not exist</summary>
 
 ```
-INFO:     127.0.0.1:54164 - "GET / HTTP/1.1" 500 Internal Server Error
+▕  127.0.0.1:54164 - "GET / HTTP/1.1" 500
 RuntimeError: File at path static/pages/home.html does not exist.
 ```
 
@@ -317,7 +342,7 @@ Meer uitleg: [CSS in een eigen bestand (static files)](/docs/FastAPI/static_file
 In de browser staat `{"detail":"Not Found"}`, en in de terminal:
 
 ```
-INFO:     127.0.0.1:52344 - "GET /about.html HTTP/1.1" 404 Not Found
+▕  127.0.0.1:52344 - "GET /about.html HTTP/1.1" 404
 ```
 
 **Oorzaak:** het endpoint bestaat niet. De URL die je opvraagt komt met geen enkele `@app.get(...)` in je `main.py` overeen: een typfout in de link, of het endpoint is nooit gemaakt.
@@ -361,7 +386,7 @@ Meer uitleg: [CSS in een eigen bestand (static files)](/docs/FastAPI/static_file
 
 **Oplossing:**
 
-1. Herlaad zonder cache: met de ontwikkelaarstools open, rechtermuisknop op de herlaadknop en **Cache wissen en geforceerd opnieuw laden**, of Ctrl+Shift+R
+1. Herlaad zonder cache: met de ontwikkelaarstools open, rechtermuisknop op de herlaadknop en **Cache wissen en geforceerd opnieuw laden** (Empty Cache and Hard Reload), of Ctrl+Shift+R
 2. Zet in het tabblad Netwerk het vinkje **Cache uitzetten** aan zolang je werkt
 3. Herstart de server (Ctrl+C, dan opnieuw `fastapi dev main.py`)
 4. Check of je het juiste bestand hebt aangepast
@@ -462,13 +487,13 @@ In de browser staat een antwoord als dit:
 {"detail":[{"type":"missing","loc":["body","naam"],"msg":"Field required","input":null}]}
 ```
 
-En in de terminal, met Python 3.13 en nieuwer:
+En in de terminal:
 
 ```
-INFO:     127.0.0.1:54152 - "POST /gastenboek HTTP/1.1" 422 Unprocessable Content
+▕  127.0.0.1:54152 - "POST /gastenboek HTTP/1.1" 422
 ```
 
-Met een oudere Python staat er `422 Unprocessable Entity`. Het is dezelfde fout.
+In Netwerk staat bij Headers de statuscode `422 Unprocessable Content`, of met een Python ouder dan 3.13 `422 Unprocessable Entity`. Het is dezelfde fout.
 
 **Oorzaak:** FastAPI verwacht een waarde die niet binnenkomt, of niet in het goede type. `loc` zegt waar hij zocht, en het tweede woord is de naam die hij niet vond:
 
@@ -508,7 +533,7 @@ Meer uitleg: [GET vs POST](/docs/FastAPI/get_vs_post) (wat `loc` zegt), [Een for
 In de browser staat `{"detail":"Method Not Allowed"}`, en in de terminal bijvoorbeeld:
 
 ```
-INFO:     127.0.0.1:54160 - "GET /verwijderen HTTP/1.1" 405 Method Not Allowed
+▕  127.0.0.1:54160 - "GET /verwijderen HTTP/1.1" 405
 ```
 
 **Oorzaak:** het pad bestaat, maar niet voor deze soort verzoek. Er komt een GET binnen bij een `@app.post`, een POST bij een `@app.get`, of een DELETE bij een `@app.post`.
@@ -517,7 +542,7 @@ INFO:     127.0.0.1:54160 - "GET /verwijderen HTTP/1.1" 405 Method Not Allowed
 
 1. **Je typte de URL in de adresbalk.** Dat is altijd een GET, dus het endpoint moet `@app.get(...)` zijn.
 2. **Je verstuurde een formulier en de adresbalk toont `?naam=...`.** De `<form>` mist `method="post"`, en zonder die regel verstuurt de browser een GET.
-3. **Je verstuurde een formulier en de 405 komt meteen daarna.** In de terminal staat dan `"POST /berichten HTTP/1.1" 405` na een `307 Temporary Redirect`. Je redirect mist `status_code=303`. De standaard is 307, en die laat de browser je POST herhalen op de nieuwe URL, waar alleen een `@app.get` staat:
+3. **Je verstuurde een formulier en de 405 komt meteen daarna.** In de terminal staat dan `"POST /berichten HTTP/1.1" 405` na een regel met `307`. Je redirect mist `status_code=303`. De standaard is 307, en die laat de browser je POST herhalen op de nieuwe URL, waar alleen een `@app.get` staat:
 
    {/* niet-compileren: FOUT/GOED-voorbeeld */}
    ```python

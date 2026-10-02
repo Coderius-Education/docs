@@ -60,8 +60,14 @@ Ga naar [http://127.0.0.1:8000](http://127.0.0.1:8000) in je browser. Je ziet:
 
 Misschien staat het er bij jou zonder spaties: `{"bericht":"Hallo wereld!"}`. Dat is dezelfde JSON; spaties tussen de onderdelen tellen niet mee. Dat geldt voor alle JSON in deze cursus.
 
+:::note[Laat de server draaien]
+Je hoeft de server niet opnieuw te starten als je `main.py` aanpast. Sla op met **Ctrl+S**, en `fastapi dev` ziet de wijziging en start zichzelf opnieuw. In de terminal verschijnt dan `WatchFiles detected changes in 'main.py'. Reloading...`, en even later `Application startup complete.` Daarna herlaad je de pagina in je browser.
+
+Stoppen doe je met **Ctrl+C** in de terminal. Typ je `fastapi dev main.py` terwijl de server nog draait, dan krijg je `Address already in use`.
+:::
+
 :::tip[Wijzigingen niet zichtbaar?]
-Je browser bewaart soms een kopie van een pagina, de **cache**. Pas je iets aan en verandert er niets, dan kijk je naar die kopie. Druk op **Ctrl+Shift+R** om te herladen zonder cache. Hoe je ziet dat het de cache was, en hoe je hem uitzet, staat bij [CSS in een eigen bestand](/docs/FastAPI/static_files#als-je-wijziging-niet-doorkomt).
+Kijk eerst of je hebt opgeslagen: een stip in plaats van het kruisje op het tabblad van `main.py` in VS Code betekent dat er nog iets niet is opgeslagen. Kijk daarna in de terminal. Staat daar een foutmelding, dan kon de server niet opnieuw starten, en blijft je pagina laden zonder dat er iets verschijnt. Los de fout op, sla op, en herlaad.
 :::
 
 ## Meerdere endpoints
@@ -133,7 +139,7 @@ FastAPI zet de dictionary automatisch om naar JSON.
 
 ### Opdracht 2: Run
 
-Voeg het `/school` endpoint toe aan je `main.py`, start de server en ga naar `http://127.0.0.1:8000/school`. Zie je hetzelfde als in het antwoord hierboven?
+Voeg het `/school` endpoint toe aan je `main.py`, sla op en ga naar `http://127.0.0.1:8000/school`. Zie je hetzelfde als in het antwoord hierboven?
 
 ### Opdracht 3: Investigate - Dubbele URL
 

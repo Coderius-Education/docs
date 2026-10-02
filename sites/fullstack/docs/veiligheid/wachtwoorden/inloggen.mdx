@@ -146,7 +146,7 @@ json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
 ```
 
 In de terminal van je server staat bij dezelfde poging
-`"POST /inloggen HTTP/1.1" 500 Internal Server Error`, en daaronder een
+`"POST /inloggen HTTP/1.1" 500`, en daaronder een
 foutmelding die eindigt met `argon2.exceptions.InvalidHashError`.
 
 **Oorzaak:** in de database staat nog een `sha256`-hash of een wachtwoord als

@@ -11,7 +11,7 @@ Tot nu toe gaven je endpoints JSON terug. Nu geef je een HTML-pagina terug.
 
 ## HTMLResponse importeren
 
-Pas je `main.py` aan:
+Zet `HTMLResponse` bij de imports. Je endpoints blijven staan. De bovenkant van je `main.py` ziet er dan zo uit:
 
 ```python
 from fastapi import FastAPI
@@ -21,6 +21,8 @@ app = FastAPI()
 ```
 
 ## Een HTML pagina tonen
+
+Zet dit endpoint onder je andere endpoints:
 
 <CodeUitleg>
 
@@ -42,7 +44,7 @@ async def pagina():
 ```
 
 <Regel n={1}>
-`response_class=HTMLResponse` vertelt FastAPI dat je HTML terugstuurt en geen JSON. Zonder dit maakt FastAPI van je string JSON: je ziet dan één regel tussen aanhalingstekens, met `\n` waar je een nieuwe regel begon, in plaats van een pagina.
+`response_class=HTMLResponse` vertelt FastAPI dat je HTML terugstuurt en geen JSON. Wat er zonder gebeurt, probeer je uit in opdracht 3.
 </Regel>
 
 <Regel n={3} tot={14}>
@@ -57,7 +59,7 @@ Ga naar [http://127.0.0.1:8000/pagina](http://127.0.0.1:8000/pagina). Je ziet nu
 
 ## CSS toevoegen
 
-Je kunt CSS in een `<style>` tag zetten:
+In de web-cursus zette je CSS in een eigen bestand en koppelde je het met `<link>`. Dat kan hier ook, maar daarvoor moet je server dat bestand kunnen sturen; dat leer je in [CSS in een eigen bestand](/docs/FastAPI/static_files). Tot die tijd zet je de CSS in een `<style>`-tag in de `<head>`. Zet dit endpoint er ook bij:
 
 ```python
 @app.get("/styled", response_class=HTMLResponse)
@@ -81,7 +83,7 @@ async def styled():
 ```
 
 :::danger[Gaat er iets mis?]
-Zie je de HTML als tekst, tussen aanhalingstekens en met `\n` erin? Dan mis je waarschijnlijk `response_class=HTMLResponse`. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
+Zie je geen pagina maar platte tekst? Kijk of `response_class=HTMLResponse` in je decorator staat. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
 :::
 
 <details>
@@ -168,7 +170,7 @@ Je ziet JSON: `{"titel": "<h1>Hallo</h1>"}`. Zonder `response_class=HTMLResponse
 
 ### Opdracht 2: Run
 
-Maak beide endpoints in je `main.py`: het `/pagina` endpoint en het `/styled` endpoint. Start de server en bezoek ze allebei. Werken ze zoals verwacht?
+Ga naar `/pagina` en `/styled`. Is de kop op `/styled` blauw en de tekst grijs? En werkt `/info` uit de vorige les nog?
 
 ### Opdracht 3: Investigate - Zonder HTMLResponse
 

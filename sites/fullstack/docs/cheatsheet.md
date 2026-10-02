@@ -375,7 +375,7 @@ Tabblad **Netwerk**, herlaad de pagina. Eén regel per verzoek.
 <details>
 <summary>Hoe herlaad ik zonder cache? (Ctrl+Shift+R)</summary>
 
-Met de ontwikkelaarstools open: rechtermuisknop op de herlaadknop, dan **Cache wissen en geforceerd opnieuw laden**. Sneltoets: **Ctrl+Shift+R**.
+Met de ontwikkelaarstools open: rechtermuisknop op de herlaadknop, dan **Cache wissen en geforceerd opnieuw laden** (Empty Cache and Hard Reload). Sneltoets: **Ctrl+Shift+R**.
 
 Zolang je aan je site werkt: tabblad **Netwerk**, vinkje **Cache uitzetten** aan.
 

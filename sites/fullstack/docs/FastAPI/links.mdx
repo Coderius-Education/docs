@@ -21,7 +21,7 @@ Met `<a>` maak je een klikbare link:
 - De tekst tussen `<a>` en `</a>` is klikbaar
 
 :::warning[Link naar endpoint, niet naar bestand]
-Gebruik `href="/about"` (het endpoint) en niet `href="about.html"` (het bestand). De browser kent je bestanden niet, alleen de endpoints die je in Python hebt aangemaakt.
+Gebruik `href="/about"`, het endpoint, en niet de naam van het bestand. Wat er met de bestandsnaam gebeurt, probeer je uit in opdracht 3.
 :::
 
 ## Voorbeeld
@@ -150,7 +150,7 @@ De browser gaat naar `/contact`. Je hebt dus een `@app.get("/contact")` endpoint
 
 ### Opdracht 2: Run
 
-Maak de twee pagina's uit het voorbeeld (home.html en about.html) en de bijbehorende endpoints. Test of je heen en weer kunt klikken.
+Maak de twee pagina's uit het voorbeeld (`home.html` en `about.html`) en het endpoint voor `/about`. Klik op "Ga naar Over Mij": staat er `/about` in de adresbalk, met de kop Over Mij? En brengt "Terug naar Home" je weer op `/`?
 
 ### Opdracht 3: Investigate - Bestandsnaam als link
 
@@ -159,7 +159,7 @@ Wat gebeurt er als je `href="about.html"` schrijft in plaats van `href="/about"`
 <details>
 <summary>Antwoord</summary>
 
-De browser probeert naar `http://127.0.0.1:8000/about.html` te gaan, maar dat endpoint bestaat niet in je Python code. Je krijgt een 404 Not Found. Een link verwijst altijd naar een endpoint, nooit naar een bestand.
+De browser probeert naar `http://127.0.0.1:8000/about.html` te gaan, maar dat endpoint bestaat niet in je Python code. Je krijgt `{"detail":"Not Found"}`, een 404. De browser kent je bestanden niet, alleen de endpoints die je in Python hebt aangemaakt. Een link verwijst daarom altijd naar een endpoint, nooit naar een bestand.
 
 </details>
 

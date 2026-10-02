@@ -13,7 +13,23 @@ De pagina zelf staat op stap 2 wel achter een functie van jou. Zo kun je per ver
 
 ## Zie het zelf
 
-Ga naar `/foto` uit [Afbeeldingen tonen](/docs/FastAPI/afbeeldingen): die pagina heeft een stylesheet én een afbeelding. Open het tabblad **Netwerk** uit [Kijken wat de browser doet](/docs/FastAPI/devtools-netwerk) en herlaad. Bij je eerste verzoek stond er één regel; nu staan er drie, in de volgorde van het diagram:
+Ga naar `/foto` uit [Afbeeldingen tonen](/docs/FastAPI/afbeeldingen): die pagina heeft een stylesheet én een afbeelding. Open het tabblad **Netwerk** uit [Kijken wat de browser doet](/docs/FastAPI/devtools-netwerk) en herlaad. Bij je eerste verzoek stond er één regel; nu staan er drie, in de volgorde van het diagram. Als alles goed staat, ziet het er zo uit:
+
+<DevtoolsPaneel tab="Netwerk">
+  <NetwerkTabel
+    rijen={[
+      { naam: 'foto', status: 200, type: 'document', grootte: '1,2 kB' },
+      { naam: 'style.css', status: 200, type: 'stylesheet', grootte: '312 B' },
+      { naam: 'kat.jpg', status: 200, type: 'jpeg', grootte: '48,3 kB' },
+    ]}
+  />
+</DevtoolsPaneel>
+
+De groottes verschillen per computer; de statuscode is wat telt. Alle drie zijn `200`: de pagina kwam van je functie, de CSS en de afbeelding van `app.mount`.
+
+## Als het misgaat
+
+Staat het pad in `<img>` verkeerd, en heb je **Cache uitzetten** niet aan, dan kan dezelfde lijst er zo uitzien:
 
 <DevtoolsPaneel tab="Netwerk">
   <NetwerkTabel
@@ -25,7 +41,5 @@ Ga naar `/foto` uit [Afbeeldingen tonen](/docs/FastAPI/afbeeldingen): die pagina
   />
 </DevtoolsPaneel>
 
-De groottes verschillen per computer; de statuscode is wat telt. Deze lijst laat twee dingen zien die je in de les ook tegenkomt:
-
-- `kat.jpg` heeft status **404**. De browser vroeg het bestand in stap 4, maar op dat adres stond niets: het pad in `<img>` klopt niet, of `app.mount` ontbreekt. Het type is `json`, want de foutmelding van FastAPI is JSON, geen plaatje. Je Python-code heeft er niets mee te maken, en de terminal logt het als `"GET /static/kat.jpg HTTP/1.1" 404 Not Found`.
+- `kat.jpg` heeft status **404**. De browser vroeg het bestand in stap 4, maar op dat adres stond niets: het pad in `<img>` klopt niet, of `app.mount` ontbreekt. Het type is `json`, want de foutmelding van FastAPI is JSON, geen plaatje. Je Python-code heeft er niets mee te maken, en de terminal logt het als `"GET /static/kat.jpg HTTP/1.1" 404`.
 - `style.css` kwam uit de **schijfcache**. De browser heeft de server niet eens gevraagd en toonde zijn eigen kopie. Soms staat er **(geheugencache)**; dat betekent hetzelfde. Pas je de CSS aan en verandert er niets, dan is dit de reden. Zet het vinkje **Cache uitzetten** aan zolang je werkt, of herlaad zonder cache.
