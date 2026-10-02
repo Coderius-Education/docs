@@ -7,7 +7,8 @@ description: Een naam van alleen spaties komt langs max_length. Controleer de in
 
 `max_length` uit [les 2](./grenzen) bewaakt de lengte, en een leeg veld weigert
 FastAPI al, zoals je in [les 3](./fouten-lezen) zag. Maar een naam van drie
-spaties is niet leeg en niet te lang. Hij komt erdoor:
+spaties is niet leeg en niet te lang. Maak een script `spaties.py` dat zo'n
+naam stuurt:
 
 ```python
 import httpx
@@ -22,7 +23,15 @@ Uitvoer:
 200 {'lengte': 3}
 ```
 
-In je gastenboek staat nu een bericht zonder zichtbare naam. Zo'n regel over de
+Draai `lees_database.py` uit [les 1](./maxlength). Onderaan staat het nieuwe
+bericht:
+
+```
+[   ] 3 tekens
+```
+
+Tussen de blokhaken staan drie spaties: in je gastenboek staat nu een bericht
+zonder zichtbare naam. Zo'n regel over de
 inhoud controleer je zelf.
 
 ## `strip()`
@@ -72,20 +81,24 @@ Een lege tekst telt in een `if` als niet waar, dus `not naam.strip()` is waar al
 
 </CodeUitleg>
 
-Draai het script opnieuw:
+Draai `spaties.py` opnieuw:
 
 ```
 400 {'detail': 'Vul een naam in'}
 ```
 
 Het is een **400** en geen 422. Een 422 komt van FastAPI zelf, als een veld niet
-past bij wat er in `Form` staat. Een 400 stuur jij, voor een regel die je zelf
-bedacht.
+past bij wat er in `Form` staat. Een 400 stuur meestal jij, voor een regel die
+je zelf bedacht. De uitzondering zag je in [les 1](./maxlength): bij een veld
+boven een megabyte stuurt Starlette zelf een 400.
+
+`lees_database.py` laat geen nieuwe regel met `[   ]` zien: het bericht kwam
+niet in de database.
 
 ## Er gaat iets mis
 
-De server geeft `400`, maar het bericht met de lege naam staat toch in de
-database.
+De server geeft `400`, maar `lees_database.py` laat toch een nieuwe regel met
+`[   ]` zien.
 
 **Oorzaak:** de controle staat ná het opslaan:
 
@@ -120,9 +133,10 @@ Je stuurt de naam `" Sara "`, met een spatie ervoor en erachter.
 <details>
 <summary>Antwoord</summary>
 
-`200`: na `strip()` blijft `Sara` over, dus de controle laat hem door. Maar in
-de database staat `" Sara "`, met de spaties, want de controle verandert `naam`
-niet. Wil je ze kwijt, zet dan `naam = naam.strip()` bovenaan de functie.
+`200`: na `strip()` blijft `Sara` over, dus de controle laat hem door. Maar
+`lees_database.py` laat `[ Sara ] 3 tekens` zien, met de spaties, want de
+controle verandert `naam` niet. Wil je ze kwijt, zet dan `naam = naam.strip()`
+bovenaan de functie.
 
 </details>
 

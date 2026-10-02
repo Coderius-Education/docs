@@ -41,7 +41,7 @@ Zet `from html import escape` bovenaan je `main.py`. De naam komt van de bezoeke
 
 De `Form`-parameters blijven hetzelfde; voor je endpoint is er geen verschil met een formulier zonder htmx. De omleiding met 303 is niet meer nodig, want de browser is nooit weggegaan.
 
-Zet je `hx-on::after-request="this.reset()"` op de `<form>`, dan maakt htmx de velden leeg zodra het antwoord binnen is.
+Zet je `hx-on::after-request="this.reset()"` op de `<form>`, dan maakt htmx de velden leeg zodra het antwoord binnen is. Zet je later een Content-Security-Policy op je site, dan werkt dit attribuut niet meer; wat je dan doet, staat in [HTML van een bezoeker: in de praktijk](/docs/veiligheid/xss/praktijk).
 
 ## Een stuk van de pagina verversen
 

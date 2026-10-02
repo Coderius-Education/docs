@@ -320,7 +320,7 @@ const INVOER_STAPPEN: Stap[] = [
   {
     kant: 'server',
     titel: 'FastAPI leest het formulier',
-    tekst: 'max_length, ge en le in Form: te lang of geen getal geeft een 422.',
+    tekst: 'max_length in Form: een te lang of leeg veld geeft een 422.',
     to: '/docs/veiligheid/invoer/grenzen',
     les: 'Grenzen in Form',
     controle: true,

@@ -750,6 +750,63 @@ veld.addEventListener("input", function () {
 ## Veiligheid
 
 <details>
+<summary>Hoe begrens ik invoer op de server? (Form met max_length)</summary>
+
+```python
+@app.post("/bericht")
+async def bericht_plaatsen(bericht: str = Form(..., max_length=280)):
+    ...
+```
+
+`maxlength` in de HTML helpt alleen wie zich vergist; de echte grens staat in `Form`. Zie [Invoer controleren](/docs/veiligheid/invoer/grenzen).
+
+</details>
+
+<details>
+<summary>Hoe maak ik HTML van een bezoeker onschadelijk? (escape)</summary>
+
+{/* niet-compileren: losse regel uit een handler */}
+
+```python
+from html import escape
+
+return HTMLResponse(f"Bedankt, {escape(naam)}.")
+```
+
+Een `{{ }}`-template escapet vanzelf; een f-string niet. Gebruik `|safe` nooit voor tekst van een bezoeker. Zie [HTML van een bezoeker](/docs/veiligheid/xss/zwakheid).
+
+</details>
+
+<details>
+<summary>Hoe controleer ik wie iets mag? (403)</summary>
+
+```python
+if sleutel not in mijn.get("berichten", []):
+    raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
+```
+
+Zet de controle in het endpoint, vóór er iets verandert, en op elk endpoint apart. Zie [Wie mag wat](/docs/veiligheid/toegang/zwakheid).
+
+</details>
+
+<details>
+<summary>Hoe houd ik scripts bij mijn cookie weg? (httponly)</summary>
+
+```python
+antwoord.set_cookie(
+    key="sessie_id",
+    value=sessie_id,
+    max_age=60 * 60 * 24 * 30,
+    httponly=True,
+    samesite="lax",
+)
+```
+
+`httponly` houdt scripts bij de cookie weg, `samesite` stuurt hem niet mee vanaf een andere site, en `secure=True` (met https) alleen versleuteld. Zie [Cookies afschermen](/docs/veiligheid/cookies/zwakheid).
+
+</details>
+
+<details>
 <summary>Hoe bewaar ik een wachtwoord veilig? (Argon2)</summary>
 
 ```python
@@ -775,12 +832,12 @@ Bewaar de hash, nooit het wachtwoord. Vergelijk met `ph.verify` en niet zelf met
 <summary>Hoe beperk ik het aantal verzoeken? (slowapi)</summary>
 
 ```python
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 
-limiter = Limiter(key_func=get_remote_address)
+limiter = Limiter(key_func=get_remote_address, headers_enabled=True)
 
 app = FastAPI()
 app.state.limiter = limiter
@@ -788,67 +845,10 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 @app.get("/")
 @limiter.limit("5/minute")
-async def root(request: Request):
+async def root(request: Request, response: Response):
     return {"bericht": "Hallo wereld!"}
 ```
 
-Het endpoint heeft `request: Request` nodig. Zie [Te veel verzoeken](/docs/veiligheid/dos/limiet).
-
-</details>
-
-<details>
-<summary>Hoe controleer ik wie iets mag? (403)</summary>
-
-```python
-if sleutel not in mijn.get("berichten", []):
-    raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
-```
-
-Zet de controle in het endpoint, vóór er iets verandert, en op elk endpoint apart. Zie [Wie mag wat](/docs/veiligheid/toegang/zwakheid).
-
-</details>
-
-<details>
-<summary>Hoe maak ik HTML van een bezoeker onschadelijk? (escape)</summary>
-
-{/* niet-compileren: losse regel uit een handler */}
-
-```python
-from html import escape
-
-return HTMLResponse(f"Bedankt, {escape(naam)}.")
-```
-
-Een `{{ }}`-template escapet vanzelf; een f-string niet. Gebruik `|safe` nooit voor tekst van een bezoeker. Zie [HTML van een bezoeker](/docs/veiligheid/xss/zwakheid).
-
-</details>
-
-<details>
-<summary>Hoe houd ik scripts bij mijn cookie weg? (httponly)</summary>
-
-```python
-antwoord.set_cookie(
-    key="sessie_id",
-    value=sessie_id,
-    max_age=60 * 60 * 24 * 30,
-    httponly=True,
-    samesite="lax",
-)
-```
-
-`httponly` houdt scripts bij de cookie weg, `samesite` stuurt hem niet mee vanaf een andere site, en `secure=True` (met https) alleen versleuteld. Zie [Cookies afschermen](/docs/veiligheid/cookies/zwakheid).
-
-</details>
-
-<details>
-<summary>Hoe begrens ik invoer op de server? (Form met max_length)</summary>
-
-```python
-@app.post("/bericht")
-async def bericht_plaatsen(bericht: str = Form(..., min_length=1, max_length=280)):
-    ...
-```
-
-`maxlength` in de HTML helpt alleen wie zich vergist; de echte grens staat in `Form`. Zie [Invoer controleren](/docs/veiligheid/invoer/grenzen).
+Het endpoint heeft `request: Request` nodig. Met `headers_enabled=True` vertelt elk antwoord hoeveel verzoeken er nog over zijn; een endpoint dat een dictionary teruggeeft, heeft dan ook `response: Response` nodig. Installeer met `python -m pip install slowapi`. Zie [Te veel verzoeken](/docs/veiligheid/dos/limiet).
 
 </details>

@@ -11,7 +11,16 @@ description: Elk verzoek kost je server werk en tijd. Meet met httpx hoe lang é
   ]}
 />
 
-Je hebt een endpoint gemaakt dat op een `GET`-verzoek reageert:
+:::note[Waar je werkt]
+Maak voor deze reeks een nieuwe map `veiligheid-dos`, naast je eigen
+project, en open die in VS Code. De server en de scripts van deze reeks komen daarin. Zo blijft je eigen gastenboek heel. Aan
+het eind van de reeks pas je het geleerde toe op je eigen project.
+
+Maak in die map een virtual environment en installeer de packages; hoe dat gaat staat bij [Een map per reeks](/docs/veiligheid/gereedschap#een-map-per-reeks).
+:::
+
+Je begint met het kleinste endpoint dat er is, een dat op een `GET`-verzoek
+reageert. Zet dit in `main.py` in die map:
 
 ```python
 from fastapi import FastAPI
@@ -28,12 +37,6 @@ verzoek komt binnen, FastAPI zoekt welke functie erbij hoort, die functie
 draait, en het antwoord gaat terug. Pas daarna is de server klaar met dit
 verzoek. Een server heeft dus een grens aan hoeveel verzoeken hij per seconde
 aankan. Die grens meet je in deze les.
-
-:::note[Waar je werkt]
-Maak voor deze reeks een nieuwe map `veiligheid-dos`, naast je eigen
-project, en open die in VS Code. De server en de scripts van deze reeks komen daarin. Zo blijft je eigen gastenboek heel. Aan
-het eind van de reeks pas je het geleerde toe op je eigen project.
-:::
 
 ## Eén verzoek meten
 

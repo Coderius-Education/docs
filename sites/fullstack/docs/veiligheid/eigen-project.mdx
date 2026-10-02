@@ -1,22 +1,25 @@
 ---
 sidebar_label: 'Beveilig je eigen project'
-description: Eén controlelijst over de hele route, om je gastenboek of een eigen project na te lopen, met per punt de les en het cheatsheet-item.
+description: Eén controlelijst over de hele route, om je gastenboek of een eigen project na te lopen, met per punt de les waar je het leerde en per reeks een voorbeeld in de cheatsheet.
 ---
 
 # Beveilig je eigen project
 
 Aan het eind van elke reeks heb je het geleerde op je eigen project toegepast.
 Hier staat alles bij elkaar, als één lijst om je project na te lopen voordat je
-het aan anderen laat zien. Bij elk punt staat waar je het leerde, en in de
-[cheatsheet](/docs/cheatsheet#veiligheid) staat onder Veiligheid de code erbij.
+het aan anderen laat zien. Bij elk punt staat waar je het leerde. In de
+[cheatsheet](/docs/cheatsheet#veiligheid) staat onder Veiligheid per reeks een
+kort codevoorbeeld, in dezelfde volgorde als hieronder.
 
 Het idee onder de hele lijst blijft hetzelfde: wat van de bezoeker komt,
 vertrouw je niet, en de controle hoort op de server.
 
 ## Invoer
 
-- [ ] Elk tekstveld heeft `max_length` in `Form`, en elk getal is een `int` met
-  `ge` en `le`. ([Grenzen in Form](./invoer/grenzen))
+- [ ] Elk tekstveld heeft `max_length` in `Form`.
+  ([Grenzen in Form](./invoer/grenzen))
+- [ ] Elk getal is een `int` met `ge` en `le`.
+  ([Getallen en keuzes](./invoer/getallen))
 - [ ] Een veld dat niet uit alleen spaties mag bestaan, controleer je met
   `strip()`. ([De inhoud controleren](./invoer/inhoud))
 - [ ] Een keuze uit een paar woorden controleer je tegen een lijst met wat mag.
@@ -25,7 +28,8 @@ vertrouw je niet, en de controle hoort op de server.
 ## HTML van een bezoeker
 
 - [ ] Tekst van een bezoeker komt alleen via een `.html`-template in je pagina,
-  of met `escape()` in een f-string. ([Templates escapen vanzelf](./xss/templates))
+  of met `escape()` in een f-string. ([Escapen in Python](./xss/escape),
+  [Templates escapen vanzelf](./xss/templates))
 - [ ] Nergens staat `|safe` achter tekst van een bezoeker. ([`|safe`](./xss/safe))
 
 ## Wie mag wat
@@ -33,8 +37,13 @@ vertrouw je niet, en de controle hoort op de server.
 - [ ] Elk endpoint dat iets verwijdert of aanpast, controleert zelf of het van
   deze bezoeker is, en stuurt anders een `403`.
   ([De controle met 403](./toegang/controle))
+- [ ] Die controle staat in elk endpoint apart, ook in Alles wissen en in een
+  endpoint dat je later toevoegt. ([Elk endpoint apart](./toegang/elk-endpoint))
 - [ ] De controle gebruikt wat de server weet, zoals de sessie, niet wat de
   bezoeker in een formulier typt. ([Controleer op wat de server weet](./toegang/server-weet))
+- [ ] Een `GET` die gegevens van anderen teruggeeft, zoals `GET /sessies`, is
+  ook een gat: haal hem weg of scherm hem af.
+  ([Wie mag wat in je eigen project](./toegang/eigen-project))
 
 ## Cookies
 
@@ -42,17 +51,23 @@ vertrouw je niet, en de controle hoort op de server.
   ([httponly](./cookies/httponly))
 - [ ] In een cookie staat alleen een sessie-id, geen naam of rechten.
   ([Onthouden op de server: sessies](/docs/FastAPI/sessies))
-- [ ] Er is een endpoint om uit te loggen, dat ook de sessie op de server
-  weggooit. ([Uitloggen](./cookies/uitloggen))
+- [ ] Uitloggen is een `POST`, en gooit de sessie ook op de server weg, niet
+  alleen de cookie met `delete_cookie`. ([Uitloggen](./cookies/uitloggen))
+- [ ] Een sessie verloopt ook op de server, niet alleen in de browser met
+  `max_age`. ([Uitloggen](./cookies/uitloggen))
 
 ## Wachtwoorden
 
 Alleen als je project accounts heeft.
 
+- [ ] `/registreer` weigert een naam die al bestaat, anders overschrijft een
+  tweede registratie het wachtwoord van de eerste.
+  ([Waarom geen gewone tekst](./wachtwoorden/gewone-tekst))
 - [ ] Je bewaart `ph.hash(wachtwoord)`, nooit het wachtwoord zelf.
   ([Registreren met Argon2](./wachtwoorden/registreren))
 - [ ] Inloggen gebruikt `ph.verify`, met dezelfde melding bij een onbekende naam
-  en een fout wachtwoord. ([Inloggen met verify](./wachtwoorden/inloggen))
+  en een fout wachtwoord, en ook bij een onbekende naam een `verify` tegen een
+  nep-hash. ([Inloggen met verify](./wachtwoorden/inloggen))
 
 ## Te veel verzoeken
 

@@ -5,15 +5,19 @@ description: maxlength in de HTML houdt een script niet tegen. Stuur op je eigen
 
 # Invoer controleren: maxlength is geen controle
 
-In [Server of browser?](/docs/FastAPI/server-of-browser) zag je het al voor de
-lengte van één bericht: `maxlength` in de HTML is een hulp voor wie zich
-vergist, geen controle. Hier doe je het na met een script, en zie je hoe ver het
-gaat.
+In een formulier kun je met `maxlength` een grens zetten op een veld. De
+browser laat je dan niet verder typen. Maar die grens is een hulp voor wie zich
+vergist, geen controle. Hier zie je met een script waarom, en hoe ver het gaat.
+Deed je de uitbreiding JavaScript al, dan ken je het idee uit
+[Server of browser?](/docs/FastAPI/server-of-browser); deze les kun je ook
+zonder die uitbreiding volgen.
 
 :::note[Waar je werkt]
 Maak voor deze reeks een nieuwe map `veiligheid-invoer`, naast je eigen
 project, en open die in VS Code. De server, de scripts en de database van deze reeks komen daarin. Zo blijft je eigen gastenboek heel. Aan
 het eind van de reeks pas je het geleerde toe op je eigen project.
+
+Maak in die map een virtual environment en installeer de packages; hoe dat gaat staat bij [Een map per reeks](/docs/veiligheid/gereedschap#een-map-per-reeks).
 :::
 
 ## Een gastenboek met een formulier
@@ -109,12 +113,62 @@ Uitvoer:
 {'lengte': 1000000}
 ```
 
+## Kijk in je database
+
+De server zegt dat hij een miljoen tekens kreeg. Of ze ook echt in je database
+staan, zie je met een tweede scriptje, `lees_database.py`. Het print van elk
+bericht de naam en hoeveel tekens het bericht heeft; het bericht zelf zou je
+terminal vullen.
+
+<CodeUitleg>
+
+```python showLineNumbers
+from sqlitedict import SqliteDict
+
+with SqliteDict("gastenboek.db") as db:
+    for gegevens in db.values():
+        print(f"[{gegevens['naam']}] {len(gegevens['bericht'])} tekens")
+```
+
+<Regel n={4}>
+`db.values()` geeft alle berichten, zoals in [Alles tonen: een for-lus in je template](/docs/FastAPI/lijst_tonen).
+</Regel>
+
+<Regel n={5}>
+De naam staat tussen blokhaken, zodat je ook ziet of er spaties in staan. Dat komt in [les 4](./inhoud) van pas.
+</Regel>
+
+</CodeUitleg>
+
+Uitvoer:
+
+```
+[Sara] 1000000 tekens
+```
+
 Alle miljoen tekens staan in je database. `maxlength` zat in de HTML, en die
 HTML draaide in de browser die je nu hebt overgeslagen. Het endpoint zag alleen
 het verzoek, en dat had geen grens.
 
 Eén bericht van een miljoen tekens is al vervelend, en een script dat dat
 duizend keer doet, vult je schijf.
+
+## Eén ruwe grens
+
+Helemaal zonder grens is je server niet. Maak van het bericht in `groot.py`
+tien miljoen tekens, `10_000_000`, en zet er onderaan een regel
+`print(antwoord.status_code)` bij:
+
+```
+{'detail': 'Field exceeded maximum size of 1024KB.'}
+400
+```
+
+Starlette, het deel van FastAPI dat formulieren leest, weigert zelf een veld
+dat groter is dan een megabyte, ongeveer een miljoen tekens. Het bericht van
+precies een miljoen kwam er nog net door. Die grens beschermt je tegen het
+ergste, maar een bericht in een gastenboek hoort geen megabyte te zijn. De
+echte grens zet je zelf, in [les 2](./grenzen).
 
 ## Er gaat iets mis
 
@@ -126,6 +180,16 @@ veld.
 
 **Oplossing:** stuur beide velden mee, met precies de namen `naam` en `bericht`,
 net als het formulier.
+
+`lees_database.py` print niets, terwijl `groot.py` wel `{'lengte': 1000000}`
+gaf.
+
+**Oorzaak:** het script draait in een andere map dan je server.
+`SqliteDict("gastenboek.db")` zoekt het bestand in de map waarin je het script
+start. Bestaat het daar niet, dan maakt hij stil een nieuwe, lege database aan.
+
+**Oplossing:** zet `lees_database.py` in dezelfde map als `main.py`, en draai
+het vanuit de terminal in die map.
 
 Wat er in zo'n `422` staat, lees je in [les 3](./fouten-lezen). Alle
 statuscodes van deze route staan op [de startpagina](/docs/veiligheid#statuscodes).
@@ -147,31 +211,25 @@ de HTML.
 
 </details>
 
-### Opdracht 2: Investigate - Tien miljoen
+### Opdracht 2: Investigate - Vijf keer
 
-Maak van het bericht in `groot.py` tien miljoen tekens, `10_000_000`, en print
-ook de statuscode met `print(antwoord.status_code)`. Wat komt er terug?
+Draai `groot.py` vijf keer achter elkaar, en daarna `lees_database.py`. Hoeveel
+tekens staan er nu in je database?
 
 <details>
 <summary>Tip</summary>
 
-Starlette, het deel van FastAPI dat formulieren leest, heeft zelf één ruwe
-grens.
+Tel ook het bericht mee dat er al stond.
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-```
-400
-{'detail': 'Field exceeded maximum size of 1024KB.'}
-```
-
-Starlette weigert een veld dat groter is dan een megabyte, ongeveer een miljoen
-tekens. Daarom kwam het bericht van een miljoen tekens er nog net door. Die
-grens beschermt je tegen het ergste, maar een bericht in een gastenboek hoort
-geen megabyte te zijn. De echte grens zet je zelf, in [les 2](./grenzen).
+Zes regels `[Sara] 1000000 tekens`: het bericht van daarnet en de vijf nieuwe.
+Samen zes miljoen tekens, en het bestand `gastenboek.db` is ongeveer zes
+megabyte. Elke keer dat het script draait, groeit het. Een script dat niet
+stopt, maakt je schijf vol.
 
 </details>
 

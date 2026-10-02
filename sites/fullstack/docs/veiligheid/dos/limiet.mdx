@@ -92,7 +92,9 @@ ook stuurt, je server doet nog maar vijf keer echt werk per minuut. Een bezoeker
 die één keer je pagina opvraagt, merkt er niets van.
 
 Draai je het script meteen nog een keer, dan krijg je twintig keer `429`: de
-minuut is nog niet om, en je hebt je vijf al gehad.
+minuut is nog niet om, en je hebt je vijf al gehad. Sla je `main.py` op, dan
+begint de telling wel opnieuw: `fastapi dev` start de server dan opnieuw, en
+die vergeet wat hij geteld had.
 
 ## Waar de controle zit
 
@@ -171,9 +173,10 @@ Too Many Requests`.
 
 ### Opdracht 2: Modify - Tien per minuut
 
-Zet een limiet van `10/minute` op je startpagina. Wacht een minuut, zodat de
-oude telling weg is, en draai `test_verzoeken.py`. Hoeveel verzoeken krijgen
-`200`, en hoeveel `429`?
+Zet een limiet van `10/minute` op je startpagina en sla `main.py` op. Wachten
+hoeft niet: bij het opslaan start `fastapi dev` je server opnieuw, en daarmee
+begint de telling weer bij nul. Draai `test_verzoeken.py`. Hoeveel verzoeken
+krijgen `200`, en hoeveel `429`?
 
 <details>
 <summary>Antwoord</summary>
@@ -181,11 +184,13 @@ oude telling weg is, en draai `test_verzoeken.py`. Hoeveel verzoeken krijgen
 Tien krijgen `200`, de andere tien `429`. Aan het eind staat er
 `Gelukt: 10 van de 20`.
 
+Zet de limiet daarna terug op `5/minute`: les 5 rekent met vijf.
+
 </details>
 
 ### Opdracht 3: Investigate - Een strengere grens
 
-Verander de limiet in `"2/minute"` en draai het script opnieuw. Waarom zou een
+Verander de limiet in `"2/minute"`, sla op en draai het script opnieuw. Waarom zou een
 limiet van twee per minuut op een echte site geen goed idee zijn?
 
 <details>
@@ -203,6 +208,9 @@ Nu krijgen maar twee verzoeken `200` en de rest `429`. Op een echte site is dat
 te streng: een gewone bezoeker die een paar pagina's bekijkt of even
 terugklikt, zit zo aan twee verzoeken, en dan weigert je server hem. Een limiet
 moet hoog genoeg zijn voor een mens, en laag genoeg om een script te stoppen.
+
+Zet de limiet daarna terug op `5/minute`, zoals in de stand hieronder: les 5
+rekent met vijf.
 
 </details>
 

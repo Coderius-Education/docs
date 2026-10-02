@@ -25,11 +25,53 @@ netwerk niet. Hetzelfde doen bij de server van een ander is een aanval, en
 strafbaar, ook als het "maar een testje" is.
 :::
 
+## Een map per reeks \{#een-map-per-reeks}
+
+Elke reeks in deze route begint in een nieuwe, lege map, naast je eigen
+project. Zo blijft je eigen gastenboek heel, en heeft elke reeks zijn eigen
+server en database. In zo'n nieuwe map doe je steeds hetzelfde:
+
+1. Maak er een virtual environment in, zoals in
+   <SiteLink site="editor" to="/python/stap-4-venv">Een virtual environment aanmaken</SiteLink>.
+2. Open de map in VS Code, zoals in
+   <SiteLink site="editor" to="/python/stap-5-vscode">Je project openen in VS Code</SiteLink>.
+3. Installeer de packages in de terminal van VS Code:
+
+```bash
+python -m pip install "fastapi[standard]" sqlitedict httpx
+```
+
+Met `fastapi[standard]` krijg je ook het commando `fastapi dev`, met
+`sqlitedict` de database, en met `httpx` kan een script verzoeken sturen.
+Heeft een reeks nog iets nodig, zoals `argon2-cffi` voor wachtwoorden of
+`slowapi` tegen te veel verzoeken, dan zegt de les dat op het moment dat het
+nodig is.
+
+Je scripts zet je in dezelfde map als `main.py`. Daar zit één ding aan vast:
+`fastapi dev` start opnieuw zodra je een `.py`-bestand in die map opslaat, ook
+als het niet `main.py` is. In de terminal van je server zie je dan:
+
+```
+WARNING:  WatchFiles detected changes in 'bezoeker.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [14065]
+INFO:     Started server process [14072]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+```
+
+Dat is geen fout. Draai je script pas als de laatste regel er staat, anders
+klopt het aan bij een server die net opnieuw opstart. De getallen achter
+`process` zijn bij jou anders.
+
 ## Een server om mee te oefenen
 
-Maak een nieuwe map met dit `main.py`. Het heeft drie endpoints: een gewone
-pagina, een formulier, en een teller die met een cookie telt hoe vaak je langs
-bent geweest.
+Maak een nieuwe map, met een virtual environment en de packages zoals in
+[Een map per reeks](#een-map-per-reeks) hierboven. Zet er dit `main.py` in. Het
+heeft drie endpoints: een gewone pagina, een formulier, en een teller die met
+een cookie telt hoe vaak je langs bent geweest.
 
 <CodeUitleg>
 
@@ -56,7 +98,7 @@ async def bezoek(teller: int = Cookie(default=0)):
 ```
 
 <Regel n={10} tot={12}>
-Een POST-endpoint met een formulierveld, zoals in [Formulieren](/docs/FastAPI/forms).
+Een POST-endpoint met een formulierveld, zoals in [Een formulier versturen (POST)](/docs/FastAPI/forms).
 </Regel>
 
 <Regel n={14} tot={19}>
@@ -68,15 +110,12 @@ De teller staat in een cookie, zoals in [Onthouden met een cookie](/docs/FastAPI
 Start hem in de terminal van VS Code met `fastapi dev main.py`, en laat die
 terminal openstaan.
 
-## `httpx` installeren
+## Een tweede terminal
 
-Je script heeft de module `httpx` nodig. Open in VS Code een **tweede terminal**
-(het plusje naast de terminal), want in de eerste draait je server. Installeer
-hem daar:
-
-```bash
-python -m pip install httpx
-```
+Je script draait naast je server, en die houdt de eerste terminal bezet. Open
+in VS Code daarom een **tweede terminal** (het plusje naast de terminal). Daarin
+draai je de scripts uit deze route. `httpx` heb je al geïnstalleerd, bij
+[Een map per reeks](#een-map-per-reeks).
 
 ## Een verzoek sturen
 
