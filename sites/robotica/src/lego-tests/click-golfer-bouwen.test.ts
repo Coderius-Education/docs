@@ -357,10 +357,14 @@ describe("Mikken, subprogramma's en de extra's", () => {
 
 describe('controlevragen', () => {
   // robotica/CLAUDE.md: na elke uitleg een korte controlevraag in een
-  // <details>-blok. De extra's zijn opdrachten, geen uitleg.
+  // <details>-blok, of als <Voorspel soort="Controlevraag"> waarin de
+  // leerling eerst kiest. De extra's zijn opdrachten, geen uitleg.
   it("elke les behalve de extra's heeft een controlevraag", () => {
     const zonder = paginas().filter(
-      (f) => f !== 'extras.md' && !tekst(f).includes('<summary>Controlevraag</summary>'),
+      (f) =>
+        f !== 'extras.md' &&
+        !tekst(f).includes('<summary>Controlevraag</summary>') &&
+        !/<Voorspel soort="Controlevraag"/.test(tekst(f)),
     );
     expect(zonder).toEqual([]);
   });

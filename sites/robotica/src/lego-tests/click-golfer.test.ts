@@ -187,7 +187,7 @@ describe('de hardware-uitleg klopt', () => {
       const inhoud = tekst(bestand);
       const begin = inhoud.indexOf('## Er gaat iets mis');
       if (begin === -1) continue;
-      const sectie = inhoud.slice(begin).split(/\n<details>|\n## (?!Er gaat)/)[0];
+      const sectie = inhoud.slice(begin).split(/\n<details>|\n<Voorspel|\n## (?!Er gaat)/)[0];
       const zonderKaarten = sectie.replace(/<Probleem[\s\S]*?<\/Probleem>/g, '');
       if (/\*\*(Oorzaak|Oplossing):\*\*/.test(zonderKaarten))
         fout.push(`${bestand}: tekst buiten een kaart`);

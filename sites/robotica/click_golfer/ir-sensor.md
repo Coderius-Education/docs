@@ -40,19 +40,16 @@ Het blok **herhaal voor altijd** uit **Denk stappen** doet alles wat erin staat 
 
 Klik op **Upload naar robot** en open het scherm met de knop **Toon output op scherm**, zoals bij [je eerste programma](easybloqs). Er verschijnt elke halve seconde een nieuw getal. Leg een bal voor de sensor en haal hem weer weg. Wordt het getal lager met een bal ervoor? Schrijf de twee getallen op: zonder bal en met bal.
 
-<details>
-<summary>Controlevraag</summary>
-
-Waarom staat **Lees anapin A0** in een **herhaal voor altijd**?
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
+<Voorspel soort="Controlevraag" vraag="Waarom staat Lees anapin A0 in een herhaal voor altijd?">
+  <Keuze goed uitleg="Zonder herhaal leest de robot de sensor één keer, bij het aanzetten, en daarna nooit meer.">Zodat de robot steeds opnieuw kijkt of er een bal ligt</Keuze>
+  <Keuze uitleg="Hoe vaak er een nieuw getal komt, bepaalt duurt. Herhaal voor altijd zorgt dat er steeds opnieuw gelezen wordt.">Zodat het getal sneller op het scherm komt</Keuze>
+  <Keuze uitleg="De sensor meet wel steeds, maar je robot leest het getal alleen als hij bij Lees anapin komt. Het Leaphy-blok doet dat één keer.">Dat hoeft niet, de sensor meet zelf steeds</Keuze>
+  <Uitleg>
 
 Zonder herhaal leest de robot de sensor één keer, bij het aanzetten. Je wilt steeds opnieuw weten of er een bal ligt.
 
-</details>
+  </Uitleg>
+</Voorspel>
 
 ## Een grens kiezen
 
@@ -123,18 +120,15 @@ Is het getal kleiner dan 300, dan ligt er een bal en verschijnt "klaar om te gol
 
 </Probleem>
 
-<details>
-<summary>Controlevraag</summary>
-
-De sensor heeft twee pinnen waar een signaal uit komt: **A0** en **D0**. Welke van de twee sluit je aan, en waarom?
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
+<Voorspel soort="Controlevraag" vraag="De sensor heeft twee pinnen waar een signaal uit komt: A0 en D0. Welke van de twee sluit je aan?">
+  <Keuze goed uitleg="A0 geeft een getal, en met een getal kies je zelf een grens.">A0, op het signaal van A0 op het shield</Keuze>
+  <Keuze uitleg="D0 van de sensor geeft alleen ja of nee. Dan ligt de grens al vast, en kun je hem niet zelf kiezen.">D0, want die zegt meteen of er een bal ligt</Keuze>
+  <Keuze uitleg="Je gebruikt er maar één: de robot leest één getal, met Lees anapin A0.">Allebei</Keuze>
+  <Uitleg>
 
 **A0**, op het signaal van **A0** op het shield. Die pin geeft een getal, en met een getal kies je zelf een grens. D0 van de sensor geeft alleen ja of nee, en dan ligt die grens al vast.
 
-</details>
+  </Uitleg>
+</Voorspel>
 
 Ziet je robot de bal? Dan leer je nu [de servo](servo) bewegen.

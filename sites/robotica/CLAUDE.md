@@ -9,6 +9,7 @@ Dit is een project waarin leerlingen zelf via een Arduino Nano RP2040 Connect se
 ## Aandachtspunten
 
 - **Tutorial:** simpel Nederlands. Na elke uitleg een korte controlevraag in een `<details>`-blok, zodat de leerling zelf kan toetsen of het begrepen is.
+- **Voorspel- en controlevragen met meteen antwoord:** `<Voorspel vraag="…">` met `<Keuze goed uitleg="…">…</Keuze>`, minstens één foute `<Keuze uitleg="…">`, en een `<Uitleg>` (gedeeld, `packages/shared/components/Voorspel`, globaal via `src/theme/MDXComponents.tsx`). De leerling kiest eerst; daarna ziet hij goed of fout, de zin bij zijn keuze en de uitleg, en hij kan opnieuw kiezen. Een controlevraag krijgt `soort="Controlevraag"` en telt dan als controlevraag van de les. Laat elke foute keuze een echte denkfout zijn die de pagina zelf weerlegt. `packages/shared/voorspel.test.ts` eist over alle sites precies één goede keuze, minstens twee keuzes en bij elke keuze een uitleg. In de Click Golfer staat hij in `microcontroller`, `easybloqs`, `bal-slaan` en `oefenen`.
 - **Cheatsheet:** gebruik H2-headers per onderwerp, met daaronder de items in `<details>`-blokken in dezelfde stijl als play-docs.
 - Bij hardware-instructies: noem de exacte pin-aansluitingen en toon een minimale werkende schets vóór uitbreidingen.
 - **Bibliotheek versus lego_auto** — twee rollen, twee stijlen:

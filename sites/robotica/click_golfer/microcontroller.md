@@ -35,18 +35,15 @@ Onderaan het shield zit een schuifknop **ON/OFF**. Daarmee zet je je robot aan e
 
 ![Uitsnede van het shield: het schuifje met ON links en OFF rechts, naast de tekst VIN = 3-16Vdc.](@site/static/fritzing/click_golfer_aan-uit.png)
 
-<details>
-<summary>Controlevraag</summary>
+<Voorspel soort="Controlevraag" vraag="Waarom heeft elke pin op het shield drie pinnetjes, en niet één?">
+  <Keuze uitleg="Op een rij komt maar één onderdeel. De drie pinnetjes zijn voor de drie draadjes van dat ene onderdeel.">Zodat je drie onderdelen op één pin kunt aansluiten</Keuze>
+  <Keuze goed uitleg="Een onderdeel heeft behalve het signaal ook stroom nodig, en die komt van 5V en GND.">Eén voor het signaal, en twee voor de stroom</Keuze>
+  <Keuze uitleg="Elk pinnetje heeft zijn eigen taak: signaal, 5V of GND. Ze zijn niet hetzelfde, dus het ene kan het andere niet vervangen.">Als reserve, voor als er een kapotgaat</Keuze>
+  <Uitleg>
 
-Waarom heeft elke pin op het shield drie pinnetjes, en niet één?
+Een onderdeel heeft behalve het signaal ook stroom nodig. Twee pinnetjes, **5V** en **GND**, geven die stroom. Over het derde gaat het signaal.
 
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-Een onderdeel heeft behalve het signaal ook stroom nodig. Twee pinnetjes, 5V en GND, geven die stroom. Over het derde gaat het signaal.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 Weet je hoe het shield werkt? Dan ga je nu [programmeren in Easybloqs](easybloqs).

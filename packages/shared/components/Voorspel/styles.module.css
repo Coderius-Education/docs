@@ -1,0 +1,202 @@
+/* Alle kleuren uit Infima en de huisstijl, zodat licht en donker vanzelf
+   kloppen. Goed en fout zijn een rand en een lichte tint; de tekst blijft in
+   de gewone tekstkleur, want groen of rood op een tint is in een van de twee
+   thema's slecht te lezen. Het woord en het teken doen het echte werk. */
+
+.voorspel {
+  margin: 0 0 1.5rem;
+  padding: 0.9rem 1rem 1rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-left: 4px solid var(--ifm-color-primary);
+  border-radius: var(--ifm-global-radius);
+  background: var(--ifm-background-surface-color);
+}
+
+.label {
+  display: inline-block;
+  margin-bottom: 0.35rem;
+  padding: 0.05rem 0.55rem;
+  border-radius: 999px;
+  background: var(--ifm-color-primary);
+  color: var(--coderius-on-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.vraag {
+  font-weight: var(--ifm-font-weight-bold);
+  line-height: 1.4;
+}
+
+.hint {
+  margin-top: 0.15rem;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.9rem;
+}
+
+/* Een <fieldset> zonder de rand en de ruimte van de browser. */
+.keuzes {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+/* Een knop zonder browserstijl: font, kleur en achtergrond van de pagina. */
+.keuze {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  border: 2px solid var(--ifm-color-emphasis-300);
+  border-radius: 0.5rem;
+  background: var(--ifm-background-color);
+  color: var(--ifm-font-color-base);
+  font: inherit;
+  line-height: 1.4;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.keuze:hover {
+  border-color: var(--ifm-color-primary);
+}
+
+.keuze:focus-visible {
+  outline: 3px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+}
+
+.teken {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 999px;
+  background: var(--ifm-color-emphasis-200);
+  color: var(--ifm-font-color-base);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.tekst {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.oordeel {
+  font-size: 0.85rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.keuze.goed {
+  border-color: var(--ifm-color-success);
+  background: color-mix(in srgb, var(--ifm-color-success) 12%, var(--ifm-background-color));
+}
+
+.keuze.fout {
+  border-color: var(--ifm-color-danger);
+  background: color-mix(in srgb, var(--ifm-color-danger) 10%, var(--ifm-background-color));
+}
+
+/* De donkerste tint, zodat het witte teken erop leesbaar blijft. */
+.keuze.goed .teken,
+.keuze.fout .teken {
+  font-size: 1.05rem;
+}
+
+.keuze.goed .teken {
+  background: var(--ifm-color-success-darkest);
+  color: var(--ifm-color-white);
+}
+
+.keuze.fout .teken {
+  background: var(--ifm-color-danger-darkest);
+  color: var(--ifm-color-white);
+}
+
+/* Wat nu gekozen is, staat er dikker: een tweede ring om de rand. */
+.keuze.gekozen {
+  box-shadow: 0 0 0 1px currentColor;
+}
+
+.keuze.goed.gekozen {
+  box-shadow: 0 0 0 1px var(--ifm-color-success);
+}
+
+.keuze.fout.gekozen {
+  box-shadow: 0 0 0 1px var(--ifm-color-danger);
+}
+
+.terugkoppeling {
+  margin-top: 0.75rem;
+  padding: 0.6rem 0.8rem;
+  border-left: 4px solid var(--ifm-color-emphasis-400);
+  border-radius: 0.4rem;
+  background: var(--ifm-color-emphasis-100);
+}
+
+.terugkoppeling.goed {
+  border-left-color: var(--ifm-color-success);
+  background: color-mix(in srgb, var(--ifm-color-success) 8%, var(--ifm-background-color));
+}
+
+.terugkoppeling.fout {
+  border-left-color: var(--ifm-color-danger);
+  background: color-mix(in srgb, var(--ifm-color-danger) 7%, var(--ifm-background-color));
+}
+
+.kop {
+  font-weight: 700;
+}
+
+.opnieuw {
+  margin-top: 0.25rem;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.9rem;
+}
+
+.uitleg {
+  margin-top: 0.9rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.uitlegKop {
+  margin-bottom: 0.35rem;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.uitleg > :last-child {
+  margin-bottom: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .keuze {
+    transition: none;
+  }
+}
+
+/* Op een telefoon past het woord Goed of Niet goed niet meer naast een lange
+   keuze; het gaat dan onder de tekst staan. */
+@media (max-width: 480px) {
+  .keuze {
+    grid-template-columns: auto 1fr;
+  }
+
+  .oordeel {
+    grid-column: 2;
+  }
+}

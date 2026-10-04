@@ -50,12 +50,17 @@ Het blok **Servo 9 op 90** uit de groep **Actuatoren** zet de servo op pin 9 in 
 
 <Blokken programma={heenEnWeer} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: Servo 9 op 0, duurt 1000 ms, Servo 9 op 90, duurt 1000 ms." />
 
-<details>
-<summary>Voorspel: wat doet het asje?</summary>
+<Voorspel vraag="Wat doet het asje?">
+  <Keuze goed uitleg="Na elke stand wacht hij 1000 ms, en alles staat in herhaal voor altijd.">Naar 0°, een seconde wachten, naar 90°, een seconde wachten, en steeds opnieuw</Keuze>
+  <Keuze uitleg="Het staat in herhaal voor altijd, dus het begint steeds opnieuw.">Het draait één keer naar 0° en terug, en stopt dan</Keuze>
+  <Keuze uitleg="Servo 9 op 0 zet het asje eerst naar 0°. Pas daarna gaat het terug naar 90°.">Het blijft op 90° staan</Keuze>
+  <Keuze uitleg="Een servo draait maar een halve cirkel, van 0° tot 180°. Hij gaat naar een stand en blijft daar.">Het draait steeds rondjes</Keuze>
+  <Uitleg>
 
 Het asje draait naar 0°, wacht een seconde, draait naar 90°, wacht weer een seconde, en begint opnieuw. Dat blijft hij doen, want alles staat in **herhaal voor altijd**.
 
-</details>
+  </Uitleg>
+</Voorspel>
 
 Klik op **Upload naar robot** en kijk of je voorspelling klopt.
 
@@ -124,18 +129,15 @@ Je hebt drie keer het blok **Servo 9 op …** nodig, en na elk blok een **duurt 
 
 </Probleem>
 
-<details>
-<summary>Controlevraag</summary>
-
-Het programma Heen en weer zet het asje op 0° en daarna op 90°. Welk deel van een hele cirkel draait het asje dan elke keer?
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
+<Voorspel soort="Controlevraag" vraag="Het programma Heen en weer zet het asje op 0° en daarna op 90°. Welk deel van een hele cirkel draait het asje dan elke keer?">
+  <Keuze uitleg="De servo kan een halve cirkel draaien, maar van 0° naar 90° is de helft daarvan.">Een halve cirkel</Keuze>
+  <Keuze goed uitleg="Een halve cirkel is 180°, en 90° is daar de helft van.">Een kwart cirkel</Keuze>
+  <Keuze uitleg="90° betekent 90 graden: kleine stukjes van een halve cirkel, geen rondjes.">90 rondjes</Keuze>
+  <Uitleg>
 
 Een kwart cirkel. Een halve cirkel is 180°, en 90° is daar de helft van.
 
-</details>
+  </Uitleg>
+</Voorspel>
 
 Draait het asje? Dan laat je de servo nu [slaan als hij een bal ziet](bal-slaan).

@@ -188,7 +188,7 @@ describe('wat de lessen over Easybloqs zeggen, klopt met de app', () => {
     // "Hoe vaak zie je elke zin?" had dan twee goede antwoorden, tenzij de
     // vraag zegt dat het scherm eerst leeg is.
     const inhoud = tekst('easybloqs');
-    const vraag = inhoud.slice(inhoud.lastIndexOf('<summary>Controlevraag</summary>'));
+    const vraag = inhoud.slice(inhoud.lastIndexOf('<Voorspel soort="Controlevraag"'));
     expect(vraag.slice(0, 400)).toMatch(/prullenbak/);
   });
 

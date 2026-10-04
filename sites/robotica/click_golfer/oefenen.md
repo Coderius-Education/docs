@@ -88,12 +88,16 @@ Dit programma laat eerst de servo op **D9** draaien, en daarna die op **D10**.
 
 <Blokken programma={omDeBeurt} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: Servo 9 op 0, duurt 1000 ms, Servo 9 op 90, duurt 1000 ms, Servo 10 op 0, duurt 1000 ms, Servo 10 op 90, duurt 1000 ms." />
 
-<details>
-<summary>Voorspel: bewegen de twee asjes ooit tegelijk?</summary>
+<Voorspel vraag="Bewegen de twee asjes ooit tegelijk?">
+  <Keuze uitleg="Twee servo's kunnen wel tegelijk bewegen, maar hier staat tussen elke twee blokken Servo een duurt. Je robot wacht dus steeds voordat het volgende blok aan de beurt is.">Ja, het zijn twee servo's, dus ze draaien samen</Keuze>
+  <Keuze goed uitleg="Tussen elke twee blokken Servo staat een duurt, dus eerst draait D9 en daarna D10.">Nee, ze bewegen om de beurt</Keuze>
+  <Keuze uitleg="Na de blokken Servo 9 komen ook twee blokken Servo 10. Als D9 klaar is, is D10 aan de beurt.">Alleen het asje op D9 beweegt</Keuze>
+  <Uitleg>
 
 Nee. Eerst draait het asje op D9 naar 0° en terug naar 90°. Daarna doet het asje op D10 hetzelfde. Tussen elke twee blokken **Servo** staat een **duurt**, dus ze zijn om de beurt.
 
-</details>
+  </Uitleg>
+</Voorspel>
 
 Klik op **Upload naar robot** en kijk of je voorspelling klopt.
 
@@ -277,18 +281,15 @@ Naar 45°. Je robot kijkt eerst naar A0. Klopt dat, dan doet hij wat achter **da
 
 </Probleem>
 
-<details>
-<summary>Controlevraag</summary>
-
-Bij de oranje draad van de tweede sensor staat op de sensor **A0**. Welke pin kies je in het blok **Lees anapin** voor die sensor, en waarom?
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
+<Voorspel soort="Controlevraag" vraag="Bij de oranje draad van de tweede sensor staat op de sensor A0. Welke pin kies je in het blok Lees anapin voor die sensor?">
+  <Keuze uitleg="A0 is de naam van het pootje op de sensor. Je robot leest niet de sensor, maar de pin van het shield waar de draad op zit.">**A0**, want dat staat op de sensor</Keuze>
+  <Keuze goed uitleg="De draad zit op het shield op het signaal van A1, en die pin leest je robot.">**A1**</Keuze>
+  <Keuze uitleg="Je robot zoekt de sensor niet zelf. Hij leest alleen de pin die jij in Lees anapin kiest. Kies je A0, dan leest hij de eerste sensor.">Dat maakt niet uit, de robot vindt de sensor zelf</Keuze>
+  <Uitleg>
 
 **A1**. De naam op de sensor is de naam van het pootje. Je robot leest de pin van het shield waar de draad op zit, en dat is het signaal van A1.
 
-</details>
+  </Uitleg>
+</Voorspel>
 
 Ken je de sensor en de servo nu goed? Dan [bouw je de Golfer van Lego](bouwen).

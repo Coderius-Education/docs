@@ -119,18 +119,16 @@ Hallo, ik ben de Click Golfer
 
 </Probleem>
 
-<details>
-<summary>Controlevraag</summary>
-
-Je zet een tweede **Toon op scherm** onder het eerste, met de tekst "Ik ben er klaar voor". Je uploadt, maakt het scherm leeg met de prullenbak en drukt op **RST**. Hoe vaak zie je elke zin op het scherm?
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
+<Voorspel soort="Controlevraag" vraag='Je zet een tweede Toon op scherm onder het eerste, met de tekst "Ik ben er klaar voor". Je uploadt, maakt het scherm leeg met de prullenbak en drukt op RST. Hoe vaak zie je elke zin op het scherm?'>
+  <Keuze uitleg="De zinnen van na de upload heb je met de prullenbak weggehaald. Na RST komen ze nog één keer.">Elke zin twee keer: een keer na de upload en een keer na **RST**</Keuze>
+  <Keuze uitleg="Het scherm zet elke regel onder de vorige. De eerste zin blijft dus gewoon staan.">Alleen "Ik ben er klaar voor", want die komt over de eerste heen</Keuze>
+  <Keuze uitleg="Het Leaphy-blok loopt één keer en stopt dan. Er komt daarna niets meer bij.">Steeds opnieuw, tot het scherm vol is</Keuze>
+  <Keuze goed uitleg="Het Leaphy-blok loopt één keer van boven naar beneden, en elke regel komt onder de vorige.">Elke zin één keer, de bovenste zin eerst</Keuze>
+  <Uitleg>
 
 Elke zin één keer: eerst "Hallo, ik ben de Click Golfer", daarna "Ik ben er klaar voor". Het Leaphy-blok loopt één keer van boven naar beneden.
 
-</details>
+  </Uitleg>
+</Voorspel>
 
 Werkt je eerste programma? Dan sluit je nu [de sensor aan](ir-sensor).
