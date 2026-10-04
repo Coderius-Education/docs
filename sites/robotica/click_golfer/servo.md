@@ -2,6 +2,7 @@
 sidebar_position: 5
 ---
 import Blokken from '@site/src/components/Blokken';
+import ServoSchijf from '@site/src/components/ServoSchijf';
 import heenEnWeer from './blokken/servo-heen-en-weer.json';
 import drieHoeken from './blokken/servo-drie-hoeken.json';
 
@@ -38,6 +39,10 @@ Een servo draait een halve cirkel. Die halve cirkel is verdeeld in 180 stukjes: 
 | 180° | helemaal naar de andere kant |
 
 Alles daartussen kan ook, zoals 45° of 135°.
+
+Probeer het hier. Sleep de schuif of typ een getal bij **Servo 9 op**, en kijk waar het asje heen draait. Op je eigen servo kan 0° ook rechts liggen: dat hangt ervan af hoe hij op tafel ligt.
+
+<ServoSchijf />
 
 ## Heen en weer
 

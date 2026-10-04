@@ -1,0 +1,223 @@
+/* Het blok "Servo 9 op …" houdt de kleur uit Easybloqs (Leaphy-groep), net
+   als de blokken in `Blokken`: zo herkent de leerling het. De rest volgt het
+   thema van de site. */
+.schijf {
+  --servo-blok: #06778f;
+  --servo-blok-tekst: #ffffff;
+  --servo-behuizing: #2f6db5;
+  --servo-goed: var(--ifm-color-success-darkest);
+  --servo-bijna: var(--ifm-color-warning-darkest);
+  max-width: 34rem;
+  margin: 0 0 var(--ifm-leading);
+  padding: 1rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-global-radius);
+  background: var(--ifm-background-surface-color);
+}
+
+:global([data-theme="dark"]) .schijf {
+  --servo-behuizing: #3d7cc4;
+  --servo-goed: var(--ifm-color-success-lightest);
+  --servo-bijna: var(--ifm-color-warning-lightest);
+}
+
+.tekening {
+  display: block;
+  width: 100%;
+  max-width: 22rem;
+  height: auto;
+  margin: 0 auto;
+}
+
+.boog {
+  fill: none;
+  stroke: var(--ifm-color-emphasis-400);
+  stroke-width: 2;
+}
+
+.streepje {
+  stroke: var(--ifm-font-color-base);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+.getal {
+  fill: var(--ifm-font-color-base);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.behuizing,
+.oor {
+  fill: var(--servo-behuizing);
+}
+
+.oor {
+  opacity: 0.75;
+}
+
+.arm {
+  transition: transform 0.4s ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arm {
+    transition: none;
+  }
+}
+
+.armVorm {
+  fill: var(--ifm-background-surface-color);
+  stroke: var(--ifm-font-color-base);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.gaatje {
+  fill: var(--ifm-font-color-base);
+}
+
+.as {
+  fill: var(--ifm-color-emphasis-200);
+  stroke: var(--ifm-font-color-base);
+  stroke-width: 2;
+}
+
+.schroef {
+  fill: var(--ifm-font-color-base);
+}
+
+.stand {
+  margin: 0.25rem 0 0.75rem;
+  text-align: center;
+  font-size: 1.15rem;
+}
+
+.bediening {
+  margin-bottom: 1rem;
+}
+
+.schuifLabel {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-weight: var(--ifm-font-weight-semibold);
+}
+
+/* Groot genoeg voor een vinger: de hele balk is 44px hoog. */
+.schuif {
+  display: block;
+  width: 100%;
+  height: 44px;
+  margin: 0;
+  accent-color: var(--ifm-color-primary);
+  cursor: pointer;
+}
+
+.schuifEinden {
+  display: flex;
+  margin-top: 0.3rem;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.blok {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+  padding: 0.5rem 0.9rem;
+  border-radius: 10px;
+  background: var(--servo-blok);
+  color: var(--servo-blok-tekst);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.veld {
+  width: 5rem;
+  min-height: 44px;
+  padding: 0 0.6rem;
+  border: 0;
+  border-radius: 22px;
+  background: #ffffff;
+  color: #1c1e21;
+  color-scheme: light;
+  font: inherit;
+  text-align: center;
+}
+
+.veld:focus-visible,
+.knop:focus-visible,
+.schuif:focus-visible {
+  outline: 3px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+}
+
+.veld:focus-visible {
+  outline-color: var(--ifm-color-warning);
+}
+
+.hint {
+  margin: 0.4rem 0 0;
+  font-size: 0.9rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+/* <output> is van zichzelf inline. */
+.melding,
+.oordeel {
+  display: block;
+}
+
+.melding {
+  margin: 0.25rem 0 0;
+  color: var(--servo-bijna);
+}
+
+.opdracht {
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.kop {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.vraag {
+  margin: 0.2rem 0 0.4rem;
+  font-size: 1.15rem;
+  font-weight: var(--ifm-font-weight-bold);
+}
+
+.oordeel {
+  min-height: 1.6em;
+  margin: 0 0 0.6rem;
+}
+
+.oordeel[data-goed="true"] {
+  color: var(--servo-goed);
+  font-weight: var(--ifm-font-weight-semibold);
+}
+
+.oordeel[data-goed="false"] {
+  color: var(--servo-bijna);
+}
+
+.knop {
+  min-height: 44px;
+  padding: 0 1.1rem;
+  border: 1px solid var(--ifm-color-primary);
+  border-radius: var(--ifm-global-radius);
+  background: var(--ifm-color-primary);
+  color: var(--coderius-on-primary);
+  font: inherit;
+  font-weight: var(--ifm-font-weight-semibold);
+  cursor: pointer;
+}
+
+.knop:hover {
+  background: var(--ifm-color-primary-dark);
+}
