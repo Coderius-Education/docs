@@ -1,6 +1,8 @@
 packages:
   - 'packages/*'
-  - 'sites/*'
+  - 'sites/home'
+  # Elke cursus staat onder zijn vak: sites/<vak>/<id> (zie packages/shared/sites.js).
+  - 'sites/*/*'
 
 # One pinned version per shared dependency. Sites reference these with
 # "catalog:" so every site builds against the same toolchain.
