@@ -46,7 +46,11 @@ Kijk nog eens naar de regel `set-cookie` uit
 bezoeker die via een link van een andere site binnenkomt, is meteen ingelogd,
 maar een formulier of een verzoek op de achtergrond gaat zonder cookie.
 
-Zet het toch in je code, zodat een lezer ziet dat het een keuze is:
+Sites die niet alleen op de browser willen vertrouwen, zetten daarnaast een
+eigen code in elk formulier. Hoe dat werkt, lees je in
+[de praktijk](./praktijk); voor je gastenboek is `lax` genoeg.
+
+Zet `samesite` toch in je code, zodat een lezer ziet dat het een keuze is:
 
 ```python
 antwoord.set_cookie(

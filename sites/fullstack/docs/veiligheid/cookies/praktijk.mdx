@@ -51,6 +51,40 @@ heeft.
 
 </details>
 
+<details>
+<summary>Een eigen code in elk formulier (CSRF-token)</summary>
+
+`samesite="lax"` uit [les 3](./samesite) houdt een formulier van een andere
+site al tegen: de cookie gaat niet mee. Sites die niet alleen op de browser
+willen vertrouwen, of die `samesite="none"` nodig hebben, zetten daarnaast in
+elk formulier een eigen code, een **CSRF-token**. De server maakt die code als
+hij het formulier toont, met `secrets.token_hex(16)`, bewaart hem in de sessie
+en zet hem in een verborgen veld:
+
+```html
+<input type="hidden" name="token" value="{{ token }}">
+```
+
+Het endpoint dat het formulier ontvangt, krijgt een parameter
+`token: str = Form("")` en vergelijkt die eerst met de code in de sessie:
+
+```python
+if not secrets.compare_digest(token.encode(), mijn.get("token", "").encode()):
+    raise HTTPException(status_code=403, detail="Dit formulier komt niet van deze site")
+```
+
+Een andere site kan je formulier nabouwen, maar kent de code niet: die staat
+alleen in jouw pagina en in jouw sessie. `secrets.compare_digest` vergelijkt
+twee codes in een vaste tijd, zodat de duur niet verraadt hoeveel tekens er
+kloppen; met `.encode()` werkt dat ook als iemand een teken als `é` stuurt.
+
+Dit is geen les in de reeks. Met `lax` komt een formulier van een andere site
+zonder cookie aan, dus op je eigen server zie je geen gat. Om het wel te zien,
+zou je je cookie eerst zelf onveiliger moeten maken met `samesite="none"`, en
+een tweede site moeten bouwen die naar de jouwe post.
+
+</details>
+
 ## Opdracht: welke instelling helpt?
 
 Kies bij elke situatie de cookie-instelling die het meest helpt.

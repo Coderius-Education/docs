@@ -115,4 +115,19 @@ describe('de reeks Cookies afschermen', () => {
     const code = pythonBlokken(lees('zwakheid')).find((b) => b.includes('app = FastAPI()')) ?? '';
     expect(code).toContain('@app.delete("/berichten")');
   });
+
+  it('de praktijk heeft het CSRF-token als uitklapblok, en samesite wijst ernaar', () => {
+    // CSRF stond alleen als uitleg in samesite. Een eigen les met een token
+    // past niet: met lax is de aanval op de eigen server niet te zien. Wie
+    // meer wil, vindt de code in de praktijk; compare_digest krijgt bytes,
+    // want met een str als "é" geeft hij een TypeError en de server een 500.
+    const tekst = lees('praktijk');
+    const blok = tekst.slice(tekst.indexOf('(CSRF-token)</summary>'));
+    const csrf = blok.slice(0, blok.indexOf('</details>'));
+    expect(csrf).toContain('<input type="hidden" name="token" value="{{ token }}">');
+    expect(csrf).toContain('secrets.token_hex(16)');
+    expect(csrf).toMatch(/secrets\.compare_digest\(token\.encode\(\), [^)]*\)\.encode\(\)\)/);
+    expect(csrf).toContain('status_code=403');
+    expect(lees('samesite')).toContain('](./praktijk)');
+  });
 });
