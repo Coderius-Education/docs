@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://algoritmes.coderius.nl/sitemap.xml
+Sitemap: https://informatica.coderius.nl/algoritmes/sitemap.xml

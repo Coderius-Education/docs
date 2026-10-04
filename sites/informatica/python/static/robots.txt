@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://python.coderius.nl/sitemap.xml
+Sitemap: https://informatica.coderius.nl/python/sitemap.xml

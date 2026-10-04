@@ -1,4 +1,4 @@
-// Eén bron voor de koppeling tussen web.coderius.nl en de Code.org Web Lab-cursus
+// Eén bron voor de koppeling tussen de web-cursus en de Code.org Web Lab-cursus
 // "Web Development". Zowel de per-les callout (<CodeOrg>) als de centrale tabel
 // (<CodeOrgTabel>) lezen hieruit, zodat ze nooit uit elkaar lopen.
 //

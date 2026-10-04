@@ -220,7 +220,8 @@ In de lopende tekst is `**Let op:** …` of `**Tip:** …` ook gangbaar en korte
 
 ### Cross-site links (naar een andere cursus)
 
-De cursussen zijn aparte sites op losse subdomeinen. Hardcode **nooit** een
+De cursussen zijn aparte sites, elk onder een pad van de host van zijn vak
+(`informatica.coderius.nl/python/`). Hardcode **nooit** een
 `https://*.coderius.nl`-URL in de tekst; die staan centraal in de registry
 `packages/shared/sites.js` (de enige bron van waarheid).
 
@@ -273,7 +274,7 @@ Voor pagina's onder `jouw_project/` (of vergelijkbaar):
 ## 15. Voor de docent
 
 - **Elke site heeft een Docentenhandleiding** op `/docenten` (`src/pages/docenten.mdx`). De "Docenten"-link in de navbar wordt centraal toegevoegd door `createConfig` — niets per site instellen.
-- Standaardstructuur: `## Wat is dit?`, `## Technische randvoorwaarden`, `## Didactische aanpak (PRIMM)`, `## Klassikaal gebruik & differentiatie`, `## Leerlijn`, `## Feedback & bijdragen`. Zie [web/src/pages/docenten.mdx](../sites/web/src/pages/docenten.mdx) als referentie.
+- Standaardstructuur: `## Wat is dit?`, `## Technische randvoorwaarden`, `## Didactische aanpak (PRIMM)`, `## Klassikaal gebruik & differentiatie`, `## Leerlijn`, `## Feedback & bijdragen`. Zie [web/src/pages/docenten.mdx](../sites/informatica/web/src/pages/docenten.mdx) als referentie.
 - Diepere docent-onderwerpen mogen in een aparte `voor-de-docent/`-docsmap; laat `/docenten` daar dan naartoe linken (zoals play en embedded).
 - Andere toon: collegiaal, korter, geen "je leert" — wel "je leerlingen".
 - Voor docent-pagina's mag `hide_table_of_contents` weggelaten worden.
@@ -307,7 +308,7 @@ merknaam, een vakterm, een samenstelling), zet het dan in `cspell-woorden.txt`
 in de juiste groep.
 
 **`pnpm stijl`** draait de regels uit `packages/shared/stijl.js` over elke
-pagina onder `sites/*/docs/` en `sites/*/src/pages/`. Alles wat geen proza is
+pagina onder `sites/*/*/docs/` en `sites/*/*/src/pages/`. Alles wat geen proza is
 gaat er eerst uit, dus een uitroepteken in `print("Klaar!")` telt niet mee.
 Twee niveaus:
 
@@ -322,7 +323,7 @@ daar schrijft §15 juist "je leerlingen" voor.
 Structuur controleert `pnpm stijl` niet. Of de frontmatter klopt, of de
 opdrachtnummers doorlopen en of elke opdracht een oplossing heeft, hangt aan
 de nummering van één cursus; dat staat daarom per site in een test —
-`sites/play/src/docs-tests/opdrachten.test.ts` is het voorbeeld, en die draait
+`sites/informatica/play/src/docs-tests/opdrachten.test.ts` is het voorbeeld, en die draait
 blokkerend mee.
 
 De job is voorlopig niet-blokkerend: de gemigreerde sites hebben nog een

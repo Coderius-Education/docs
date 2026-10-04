@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://play.coderius.nl/sitemap.xml
+Sitemap: https://informatica.coderius.nl/play/sitemap.xml

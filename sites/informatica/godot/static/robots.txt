@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://godot.coderius.nl/sitemap.xml
+Sitemap: https://informatica.coderius.nl/godot/sitemap.xml

@@ -11,10 +11,25 @@ Elke repo heeft zijn eigen `CLAUDE.md` met uitsluitend project-specifieke aanvul
 
 Elke branch krijgt per site automatisch een preview op
 `https://<branch-met-streepjes>--<site-id>.preview.coderius.nl/` — de `/` in de
-branchnaam wordt een `-`, de site-id is de mapnaam onder `sites/`. Voorbeeld:
+branchnaam wordt een `-`, de site-id is de mapnaam onder `sites/<vak>/`. Voorbeeld:
 branch `claude/status-ttlwfx` + site `play` →
 `https://claude-status-ttlwfx--play.preview.coderius.nl/`. Zet in elke
 PR-beschrijving de preview-links van de aangepaste sites.
+
+## Vakken en mappen
+
+Elke cursus hoort bij een vak en staat in `sites/<vak>/<id>/`
+(`sites/informatica/python/`); de homepage staat in `sites/home/`. Online staat
+een cursus onder een pad van de host van zijn vak:
+`https://informatica.coderius.nl/python/`. Vak, pad en URL komen uit één bron,
+de registry `packages/shared/sites.js` (`SUBJECTS`, `siteDir(id)`,
+`sitesOfSubject(vak)`); `createConfig({ siteId })` leidt er `url` en
+`baseUrl` uit af. Scripts lopen via de registry over de sites, Python via
+`scripts/sites-json.mjs`. Een kale `<a href="/…">` of `<img src="/…">` in JSX
+of MDX krijgt de baseUrl niet; gebruik `<Link to>`, `useBaseUrl` of een
+markdown-link (`packages/shared/baseurl.test.ts` bewaakt dat). De oude
+subdomeinen (`python.coderius.nl`) sturen alleen nog door; een link ernaartoe
+is een fout in de CI-job `cross-links`.
 
 ## Links tussen cursussen
 
