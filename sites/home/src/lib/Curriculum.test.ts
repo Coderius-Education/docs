@@ -1,6 +1,15 @@
-import { HOME, SITES, SITES_BY_ID } from '@coderius/shared/sites';
+import { HOME, SITES, SITES_BY_ID, SUBJECTS } from '@coderius/shared/sites';
 import { describe, expect, it } from 'vitest';
-import { KLASSEN, curriculum, levelColors, levelLabels, themasVan } from './Curriculum';
+import {
+  KLASSEN,
+  THEMAS,
+  THEMAS_PER_VAK,
+  curriculum,
+  levelColors,
+  levelLabels,
+  themasVan,
+  themasVoorVakken,
+} from './Curriculum';
 import { examDomainByCode } from './ExamProgram';
 
 // Bewaakt de homepage-kaarten. Curriculum.ts is een handgeschreven mapping
@@ -75,6 +84,46 @@ describe('curriculum versus de registry', () => {
   });
 });
 
+describe('vakken en thema', () => {
+  it('elke cursus heeft het vak uit de registry, en dat vak bestaat', () => {
+    const vakken = SUBJECTS.map((v) => v.id);
+    const kapot = curriculum
+      .filter(
+        (c) =>
+          !c.subject || c.subject !== SITES_BY_ID[c.id]?.subject || !vakken.includes(c.subject),
+      )
+      .map((c) => c.id);
+    expect(kapot).toEqual([]);
+  });
+
+  it('elk thema van een cursus hoort bij het vak van die cursus', () => {
+    // Anders verschijnt een informatica-cursus onder het thema Onderzoek, of
+    // toont het Thema-filter op wo.coderius.nl een thema zonder kaarten.
+    const kapot: string[] = [];
+    for (const c of curriculum) {
+      const eigen: readonly string[] =
+        THEMAS_PER_VAK[c.subject as keyof typeof THEMAS_PER_VAK] ?? [];
+      for (const t of themasVan(c)) if (!eigen.includes(t)) kapot.push(`${c.id}: ${t}`);
+    }
+    expect(kapot).toEqual([]);
+  });
+
+  it('elk thema hoort bij precies één bestaand vak en heeft minstens één cursus', () => {
+    const vakken = SUBJECTS.map((v) => v.id);
+    expect(Object.keys(THEMAS_PER_VAK).filter((v) => !vakken.includes(v))).toEqual([]);
+    expect(new Set(THEMAS).size).toBe(THEMAS.length);
+    const leeg = THEMAS.filter((t) => !curriculum.some((c) => themasVan(c).includes(t)));
+    expect(leeg).toEqual([]);
+  });
+
+  it("het Thema-filter toont de thema's van de gekozen vakken, of alle", () => {
+    expect(themasVoorVakken([])).toEqual(THEMAS);
+    expect(themasVoorVakken(['wo'])).toEqual(['Onderzoek']);
+    expect(themasVoorVakken(['informatica'])).toEqual([...THEMAS_PER_VAK.informatica]);
+    expect(themasVoorVakken(['informatica', 'wo'])).toEqual(THEMAS);
+  });
+});
+
 describe('curriculum versus het examenprogramma', () => {
   it('elke examencode bestaat in ExamProgram.ts', () => {
     const kapot: string[] = [];
@@ -111,7 +160,15 @@ describe('curriculum versus het examenprogramma', () => {
     expect(kapot).toEqual([]);
   });
 
-  it('elke cursus heeft minstens één sterk raakvlak; alleen gereedschap heeft er geen', () => {
+  it('alleen informatica-cursussen hebben examendomeinen', () => {
+    // Het examenprogramma is dat van informatica.
+    const kapot = curriculum
+      .filter((c) => c.subject !== 'informatica' && (c.examDomains ?? []).length > 0)
+      .map((c) => c.id);
+    expect(kapot).toEqual([]);
+  });
+
+  it('elke informatica-cursus heeft minstens één sterk raakvlak; alleen gereedschap heeft er geen', () => {
     // Gereedschap (editor, ide) valt onder domein A en heeft bewust geen
     // mapping. Een lesreeks zonder sterk raakvlak is vergeten of half ingevuld,
     // zoals embedded lang was.
@@ -119,7 +176,7 @@ describe('curriculum versus het examenprogramma', () => {
     // (onderzoek, wo) heeft er geen.
     const GEREEDSCHAP = ['editor', 'ide'];
     const zonder = curriculum
-      .filter((c) => SITES_BY_ID[c.id]?.subject === 'informatica')
+      .filter((c) => c.subject === 'informatica')
       .filter((c) => !GEREEDSCHAP.includes(c.id))
       .filter((c) => !c.examDomains?.some((m) => m.strength === 'strong'))
       .map((c) => c.id);

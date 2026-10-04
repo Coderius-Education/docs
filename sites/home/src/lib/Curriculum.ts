@@ -13,6 +13,8 @@ export type Activity = {
   description: string;
   /** Voorkennis (registry-ids van cursussen waarop deze voortbouwt). */
   requires: string[];
+  /** Vak uit de registry (SUBJECTS-id), bv. 'informatica' of 'wo'. */
+  subject: string;
   labels: string[]; // Keep for backward compatibility
 
   // New categorical fields
@@ -50,7 +52,7 @@ function siteVan(id: string) {
   return site;
 }
 
-type CurriculumEntry = Omit<Activity, 'label' | 'description' | 'requires' | 'link'>;
+type CurriculumEntry = Omit<Activity, 'label' | 'description' | 'requires' | 'subject' | 'link'>;
 
 // examDomains: 'strong' is een kern van de cursus, 'weak' een zijdelings
 // raakvlak. Beoordeeld op de inhoudsopgave van elke cursussite (PR #58);
@@ -341,6 +343,7 @@ export const curriculum: Activity[] = entries
       label: site.label,
       description: site.description,
       requires: site.requires,
+      subject: site.subject,
       link: site.url,
     };
   })
@@ -368,12 +371,33 @@ export function voorkennisVan(activity: Activity): string {
   return activity.requires.map((id) => SITES_BY_ID[id]?.label ?? id).join(', ');
 }
 
-export const THEMAS = ['Python', 'Web', 'Games', 'Hardware', 'Security', 'Onderzoek'] as const;
-export type Thema = (typeof THEMAS)[number];
+// Herkenbare thema's voor de filters op de homepage, per vak: een leerling
+// kiest niet uit 23 fijnmazige opties, en de examendomeinen blijven op de
+// docentenpagina. Elk thema hoort bij precies één vak; de Thema-filter toont
+// alleen de thema's van de gekozen vakken.
+export const THEMAS_PER_VAK = {
+  informatica: ['Python', 'Web', 'Games', 'Hardware', 'Security'],
+  wo: ['Onderzoek'],
+} as const;
+export type Thema = (typeof THEMAS_PER_VAK)[keyof typeof THEMAS_PER_VAK][number];
 
-// Vijf herkenbare thema's voor de filterrij op de homepage, afgeleid uit de
-// fijnmazige velden hierboven. Zo hoeft een leerling niet uit 23 opties te
-// kiezen; de examendomeinen blijven op de docentenpagina.
+/** Alle thema's, vak na vak. */
+export const THEMAS: Thema[] = Object.values(THEMAS_PER_VAK).flat();
+
+/** De thema's van één vak (leeg voor een vak zonder thema's). */
+export function themasVanVak(vak: string): readonly Thema[] {
+  return (THEMAS_PER_VAK as Record<string, readonly Thema[]>)[vak] ?? [];
+}
+
+/** De thema's van de gekozen vakken, of alle thema's als er geen vak gekozen is. */
+export function themasVoorVakken(vakken: readonly string[]): Thema[] {
+  return vakken.length === 0
+    ? THEMAS
+    : THEMAS.filter((t) => vakken.some((v) => themasVanVak(v).includes(t)));
+}
+
+// De thema's van een cursus, afgeleid uit de fijnmazige velden hierboven.
+// Curriculum.test.ts eist dat ze allemaal bij het vak van de cursus horen.
 export function themasVan(activity: Activity): Thema[] {
   const talen = activity.programmingLanguages ?? [];
   const typen = activity.projectTypes ?? [];

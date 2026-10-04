@@ -7,7 +7,7 @@
 </script>
 
 <header class="border-b bg-sidebar">
-	<div class="mx-auto flex h-12 max-w-7xl items-center gap-1 px-4">
+	<div class="mx-auto flex h-12 max-w-[100rem] items-center gap-1 px-4">
 		<a href="/" class="mr-3 flex items-center" aria-label="Coderius, naar de homepage">
 			<img src={woordmerk} alt="" class="h-9 w-auto dark:hidden" />
 			<img src={woordmerkDonker} alt="" class="hidden h-9 w-auto dark:block" />

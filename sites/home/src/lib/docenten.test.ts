@@ -7,6 +7,7 @@ import {
   NOG_VERBORGEN,
   docentenCursussen,
   docentenUrl,
+  examenCursussen,
   hostVan,
   inKlas4,
   inKlas5,
@@ -90,5 +91,21 @@ describe('de tabel op de docentenpagina', () => {
       'informatica.coderius.nl/editor',
     );
     expect(hostVan('https://coderius.nl')).toBe('coderius.nl');
+  });
+});
+
+describe('de examenprogramma-tabel', () => {
+  it('toont precies de informatica-cursussen van de docentenpagina', () => {
+    // Het examenprogramma is dat van informatica; onderzoek (wo) heeft geen
+    // examendomeinen en hoort niet als lege rij in die tabel.
+    expect(examenCursussen.map((c) => c.id)).toEqual(
+      docentenCursussen.filter((c) => c.subject === 'informatica').map((c) => c.id),
+    );
+    expect(examenCursussen.some((c) => c.subject !== 'informatica')).toBe(false);
+  });
+
+  it('de docentenpagina toont ook de cursussen van andere vakken', () => {
+    const vakken = new Set(docentenCursussen.map((c) => c.subject));
+    expect(vakken.has('wo')).toBe(true);
   });
 });

@@ -36,6 +36,15 @@ export const HULPMIDDELEN: Site[] = [
 /** De cursussen op de docentenpagina: alles uit het curriculum behalve de hulpmiddelen. */
 export const docentenCursussen: Activity[] = curriculum.filter((c) => c.id !== 'ide');
 
+/**
+ * De cursussen in de examenprogramma-tabel: alleen informatica. Het
+ * examenprogramma is dat van informatica; een cursus van een ander vak
+ * (onderzoek, wo) heeft geen examendomeinen.
+ */
+export const examenCursussen: Activity[] = docentenCursussen.filter(
+  (c) => c.subject === 'informatica',
+);
+
 /** Hoort de cursus bij klas 4 (basis)? Gedeelde cursussen tellen mee. */
 export function inKlas4(activity: Activity): boolean {
   return activity.klas === '4' || activity.klas === '4 en 5+';
