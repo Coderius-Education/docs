@@ -7,6 +7,7 @@ import {
   MESSAGE_TYPE,
   WEB_ORIGIN,
   isAllowedOrigin,
+  isAllowedSender,
   parseImportMessage,
   projectFromImport,
 } from './importContract';
@@ -123,5 +124,45 @@ describe('projectFromImport', () => {
   it('valt terug op een standaardnaam bij een lege of ontbrekende naam', () => {
     expect(projectFromImport({ ...msg, name: '' }, 'id', 0).name).toBe(DEFAULT_PROJECT_NAME);
     expect(projectFromImport(msg, 'id', 0).name).toBe(DEFAULT_PROJECT_NAME);
+  });
+});
+
+describe('isAllowedSender — één origin voor alle informatica-cursussen', () => {
+  // Elke cursus op informatica.coderius.nl heeft dezelfde origin, ook een
+  // DVWA-lab of een speeltuin die leerling-HTML draait. Alleen het venster
+  // dat de IDE opende, en dan alleen op een pagina van de web-cursus, mag een
+  // project sturen.
+  const checker = { location: { pathname: '/web/docs/html-css/intro-html' } };
+
+  it('accepteert de web-cursus die de IDE opende', () => {
+    expect(isAllowedSender(WEB, checker, checker)).toBe(true);
+  });
+
+  it('weigert een ander venster dan de opener, ook van dezelfde origin', () => {
+    const ander = { location: { pathname: '/web/x' } };
+    expect(isAllowedSender(WEB, ander, checker)).toBe(false);
+    expect(isAllowedSender(WEB, checker, null)).toBe(false);
+  });
+
+  it('weigert een opener op een andere cursus van dezelfde vak-host', () => {
+    const dvwa = { location: { pathname: '/dvwa/docs/xss' } };
+    expect(isAllowedSender(WEB, dvwa, dvwa)).toBe(false);
+    const lijktOpWeb = { location: { pathname: '/webx/' } };
+    expect(isAllowedSender(WEB, lijktOpWeb, lijktOpWeb)).toBe(false);
+  });
+
+  it('weigert een opener op een vreemde origin, ook als het pad leesbaar lijkt', () => {
+    expect(isAllowedSender('https://kwaad.nl', checker, checker)).toBe(false);
+    const ontoegankelijk = {
+      get location(): { pathname: string } {
+        throw new Error('cross-origin');
+      },
+    };
+    expect(isAllowedSender(WEB, ontoegankelijk, ontoegankelijk)).toBe(false);
+  });
+
+  it('accepteert een lokale dev-server als opener', () => {
+    const lokaal = { location: { pathname: '/' } };
+    expect(isAllowedSender('http://localhost:3000', lokaal, lokaal)).toBe(true);
   });
 });
