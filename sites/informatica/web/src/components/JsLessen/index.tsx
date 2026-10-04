@@ -1,3 +1,4 @@
+import Link from '@docusaurus/Link';
 import { jsLessons } from '@site/src/data/jsLessons';
 import type { ReactNode } from 'react';
 
@@ -20,7 +21,7 @@ export default function JsLessen(): ReactNode {
           <tr key={les.to}>
             <td>{i + 1}</td>
             <td>
-              <a href={les.to}>{les.label}</a>
+              <Link to={les.to}>{les.label}</Link>
             </td>
           </tr>
         ))}

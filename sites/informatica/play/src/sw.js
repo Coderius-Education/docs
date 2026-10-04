@@ -6,7 +6,7 @@ import { ExpirationPlugin } from 'workbox-expiration';
  *
  * Adds runtime caching for:
  *   - Pyodide CDN assets (https://cdn.jsdelivr.net/pyodide/*)
- *   - Local wheel files (/whl/*)
+ *   - Local wheel files (<baseUrl>whl/*, bv. /play/whl/*)
  *
  * Both use CacheFirst so PygbagRunner cold-loads only hit the network once
  * per cache lifetime; subsequent loads come from the SW cache instantly.
@@ -35,8 +35,11 @@ registerRoute(
 
 // Local wheels (pymunk, coderius-play). Small but versioned by filename
 // (coderius_play-3.4.0-…whl, pymunk-7.3.0-…whl) so old versions safely fall out of cache.
+// De site staat onder een pad van de vak-host (/play/), en de scope van de
+// service worker is precies die baseUrl.
+const WHL_PREFIX = `${new URL(self.registration.scope).pathname}whl/`;
 registerRoute(
-  ({ url }) => url.pathname.startsWith('/whl/'),
+  ({ url }) => url.origin === self.location.origin && url.pathname.startsWith(WHL_PREFIX),
   new CacheFirst({
     cacheName: 'play-wheels',
     plugins: [

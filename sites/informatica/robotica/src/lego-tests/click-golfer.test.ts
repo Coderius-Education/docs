@@ -356,7 +356,7 @@ describe('elk bestand waar een pagina naar wijst, bestaat', () => {
   for (const bestand of paginas()) {
     const inhoud = tekst(bestand);
     for (const m of inhoud.matchAll(
-      /(?:src|href)="\/((?:click_golfer|models|fritzing)\/[^"]+)"/g,
+      /(?:src|href)=(?:"|\{useBaseUrl\(')\/((?:click_golfer|models|fritzing)\/[^"']+)["']/g,
     )) {
       verwijzingen.push([bestand, m[1]]);
     }
@@ -367,6 +367,16 @@ describe('elk bestand waar een pagina naar wijst, bestaat', () => {
 
   it('vindt de verwijzingen', () => {
     expect(verwijzingen.length).toBeGreaterThan(10);
+  });
+
+  it('zet de baseUrl voor elk absoluut pad in een kale <img> of <a>', () => {
+    // De site staat onder /robotica/ op de vak-host. Een markdown-plaatje
+    // krijgt de baseUrl vanzelf, een JSX-<img src="/…"> niet: dat wijst naar
+    // de root van de vak-host en geeft een kapot plaatje.
+    const kaal = paginas().filter((bestand) =>
+      /<(?:img|a)\b[^>]*\b(?:src|href)="\/(?!\/)/.test(tekst(bestand)),
+    );
+    expect(kaal).toEqual([]);
   });
 
   it.each(verwijzingen)('%s wijst naar bestaand %s', (_bestand, pad) => {

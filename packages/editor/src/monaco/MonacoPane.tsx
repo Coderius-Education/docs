@@ -1,3 +1,4 @@
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import Editor, { type BeforeMount, type OnMount } from '@monaco-editor/react';
 import type * as monacoNs from 'monaco-editor';
 import { type ReactNode, useCallback, useEffect, useState } from 'react';
@@ -71,7 +72,8 @@ export default function MonacoPane({
   options,
   onMount,
 }: MonacoPaneProps): ReactNode {
-  configureMonacoLoader();
+  // Onder de baseUrl van de site (/web/monaco/vs), niet op de root van de vak-host.
+  configureMonacoLoader(useBaseUrl('/monaco/vs'));
   const { colorMode } = useColorMode();
 
   const handleBeforeMount: BeforeMount = useCallback((monaco) => {

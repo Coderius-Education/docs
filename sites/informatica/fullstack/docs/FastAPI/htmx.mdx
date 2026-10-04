@@ -1,3 +1,4 @@
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import { DevtoolsPaneel, NetwerkTabel } from '@site/src/components/Devtools';
 
 # Zonder herladen met htmx
@@ -12,7 +13,7 @@ Tot nu toe betekent "iets aan de server vragen" dat de hele pagina opnieuw laadt
 
 ## Waar het bestand komt
 
-Maak een map `static/js/` en zet daar <a href="/htmx/htmx.min.js" download>htmx.min.js</a> in (versie 2.0.10):
+Maak een map `static/js/` en zet daar <a href={useBaseUrl('/htmx/htmx.min.js')} download>htmx.min.js</a> in (versie 2.0.10):
 
 ```
 je-project/

@@ -6,12 +6,13 @@ const projectName = 'play-docs';
 export default createConfig({
   title: 'Coderius Play',
   tagline: 'Leer nog beter Python door het maken van games',
-  url: 'https://play.coderius.nl',
+  siteId: 'play',
   projectName,
   matomoSiteId: 5,
   // @coderius/shared is de standaard; @coderius/checker levert de nakijker.
   sharedPackages: ['@coderius/shared', '@coderius/checker'],
   trailingSlash: false,
+  clientModules: ['./src/sitebasis-setup.js'],
 
   description:
     'Leer nog beter Python door het maken van games met pygame. Gratis cursus met speloefeningen direct in je browser.',

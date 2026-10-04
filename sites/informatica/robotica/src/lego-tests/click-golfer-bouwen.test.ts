@@ -46,7 +46,8 @@ describe('de onderdelenlijst klopt met de bouwplaatjes', () => {
   // er drie waren, zeventien zwarte pinnen waar de lijst er twaalf zwart en
   // vier geel had. De leerling volgt de plaatjes, dus die zijn leidend; de
   // telling per plaatje staat in click_golfer/bouwstappen.json.
-  const PLAATJE = /<img src="\/click_golfer\/bouwen\/stap-(\d+)\.jpg"[^>]*alt="([^"]+)"/g;
+  const PLAATJE =
+    /<img src=\{useBaseUrl\('\/click_golfer\/bouwen\/stap-(\d+)\.jpg'\)\}[^>]*alt="([^"]+)"/g;
   const plaatjes = [...tekst('bouwen.md').matchAll(PLAATJE)].map((m) => ({
     stap: Number(m[1]),
     alt: m[2],

@@ -1,3 +1,4 @@
+import Link from '@docusaurus/Link';
 import {
   GDQUEST_URL,
   type GDQuestKoppeling,
@@ -73,7 +74,7 @@ export function GDQuestTabel(): ReactNode {
           <tr key={k.slug}>
             <td>{k.concept}</td>
             <td>
-              <a href={k.to}>{k.nl}</a>
+              <Link to={k.to}>{k.nl}</Link>
             </td>
             <td>{lesTekst(k)}</td>
           </tr>

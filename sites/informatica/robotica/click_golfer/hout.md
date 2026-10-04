@@ -1,6 +1,7 @@
 ---
 sidebar_position: 8
 ---
+import useBaseUrl from '@docusaurus/useBaseUrl';
 
 # De houten baan
 
@@ -22,42 +23,42 @@ Twijfel je hoe een onderdeel eruitziet of waar het komt? Bekijk het [3D-model op
 ## Stap voor stap
 
 <figure>
-  <img src="/click_golfer/hout/hout-8.jpg" width="600" alt="De houten bodemplaat: een lang plankje met een halve ronding aan de rand, en aan het eind een breder stuk met vier gaatjes." />
+  <img src={useBaseUrl('/click_golfer/hout/hout-8.jpg')} width="600" alt="De houten bodemplaat: een lang plankje met een halve ronding aan de rand, en aan het eind een breder stuk met vier gaatjes." />
   <figcaption>De bodemplaat. Hierop komt alles te staan. Op de vier gaatjes komt straks je Golfer, en in de halve ronding ligt de bal.</figcaption>
 </figure>
 
 <figure>
-  <img src="/click_golfer/hout/hout-7.jpg" width="600" alt="De lange houten helling met een groot rond gat, en een klein steunplankje met twee sleuven dat erop past." />
+  <img src={useBaseUrl('/click_golfer/hout/hout-7.jpg')} width="600" alt="De lange houten helling met een groot rond gat, en een klein steunplankje met twee sleuven dat erop past." />
   <figcaption>De helling met het ronde gat: daar moet de bal in. Het kleine steunplankje klikt aan het eind met het gat.</figcaption>
 </figure>
 
 <figure>
-  <img src="/click_golfer/hout/hout-1.jpg" width="600" alt="De helling staat op het steunplankje; het ronde gat zit aan de hoge kant, de andere kant loopt schuin naar beneden." />
+  <img src={useBaseUrl('/click_golfer/hout/hout-1.jpg')} width="600" alt="De helling staat op het steunplankje; het ronde gat zit aan de hoge kant, de andere kant loopt schuin naar beneden." />
   <figcaption>De helling op het steunplankje. Het gat zit aan de hoge kant. De lage kant loopt schuin af, zodat de bal makkelijk de helling op rolt.</figcaption>
 </figure>
 
 <figure>
-  <img src="/click_golfer/hout/hout-5.jpg" width="600" alt="De helling ligt met de lage kant tegen de bodemplaat, naast de halve ronding." />
+  <img src={useBaseUrl('/click_golfer/hout/hout-5.jpg')} width="600" alt="De helling ligt met de lage kant tegen de bodemplaat, naast de halve ronding." />
   <figcaption>De lage kant van de helling komt tegen de bodemplaat, vlak naast de halve ronding waar de bal ligt.</figcaption>
 </figure>
 
 <figure>
-  <img src="/click_golfer/hout/hout-4.jpg" width="600" alt="Onder de helling zit het gebogen zijplankje; de helling ligt tegen de bodemplaat." />
+  <img src={useBaseUrl('/click_golfer/hout/hout-4.jpg')} width="600" alt="Onder de helling zit het gebogen zijplankje; de helling ligt tegen de bodemplaat." />
   <figcaption>Het gebogen zijplankje komt onder de helling en houdt hem op zijn plek.</figcaption>
 </figure>
 
 <figure>
-  <img src="/click_golfer/hout/hout-2.jpg" width="600" alt="Het kleine houten blokje voor de sensor, met blauwe tape en een gaatje voor de schroef, zit op de hoek van de bodemplaat naast de halve ronding." />
+  <img src={useBaseUrl('/click_golfer/hout/hout-2.jpg')} width="600" alt="Het kleine houten blokje voor de sensor, met blauwe tape en een gaatje voor de schroef, zit op de hoek van de bodemplaat naast de halve ronding." />
   <figcaption>Het blokje voor de sensor klikt op de hoek van de bodemplaat, naast de halve ronding. De plankjes klikken met de uitsparingen stevig aan elkaar.</figcaption>
 </figure>
 
 <figure>
-  <img src="/click_golfer/hout/hout-3.jpg" width="600" alt="De blauwe infraroodsensor zit aan de voorkant van de houten baan." />
+  <img src={useBaseUrl('/click_golfer/hout/hout-3.jpg')} width="600" alt="De blauwe infraroodsensor zit aan de voorkant van de houten baan." />
   <figcaption>Schroef de sensor met de kleine schroef op het blokje, zoals op de foto. Zo ziet hij of er een bal in de halve ronding ligt.</figcaption>
 </figure>
 
 <figure>
-  <img src="/click_golfer/hout/hout-6.jpg" width="600" alt="De infraroodsensor met een blauw stelschroefje, vastgezet op de houten baan." />
+  <img src={useBaseUrl('/click_golfer/hout/hout-6.jpg')} width="600" alt="De infraroodsensor met een blauw stelschroefje, vastgezet op de houten baan." />
   <figcaption>De sensor vastgezet op de baan. Het blauwe schroefje laat je met rust: in dit project lees je de sensor uit als een getal, en dat getal verandert er niet van. Hoe gevoelig je robot is, stel je straks in je programma in.</figcaption>
 </figure>
 

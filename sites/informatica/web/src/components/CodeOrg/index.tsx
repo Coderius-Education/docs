@@ -1,3 +1,4 @@
+import Link from '@docusaurus/Link';
 import { codeorgBySlug, codeorgProjects, codeorgUnit1 } from '@site/src/data/codeorg';
 import type { ReactNode } from 'react';
 import styles from './styles.module.css';
@@ -52,7 +53,7 @@ export function CodeOrgTabel(): ReactNode {
             </td>
             <td>{l.title}</td>
             <td>
-              <a href={l.to}>{l.nl}</a>
+              <Link to={l.to}>{l.nl}</Link>
             </td>
           </tr>
         ))}

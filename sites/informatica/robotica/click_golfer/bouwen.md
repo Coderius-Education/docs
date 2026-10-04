@@ -1,6 +1,7 @@
 ---
 sidebar_position: 7
 ---
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import Link from '@docusaurus/Link';
 import Blokken from '@site/src/components/Blokken';
 import servoOp90 from './blokken/servo-op-90.json';
@@ -41,7 +42,7 @@ Dit heb je nodig: **48 Lego Technic-stukjes** plus de **Leaphy-servo**.
 | 1 | Tandwiel 16 tanden (met asgat) | Lichtgrijs | 94925 |
 | 1 | Servo (Leaphy) | Donker nougat (oranjebruin) | – |
 
-Mist er iets in je doosje? Vraag het je docent. Die bestelt de stukjes, bijvoorbeeld bij [BrickLink](https://www.bricklink.com), en heeft daarvoor <a href="/click_golfer/onderdelenlijst.csv" download>de onderdelenlijst (CSV)</a>.
+Mist er iets in je doosje? Vraag het je docent. Die bestelt de stukjes, bijvoorbeeld bij [BrickLink](https://www.bricklink.com), en heeft daarvoor <a href={useBaseUrl('/click_golfer/onderdelenlijst.csv')} download>de onderdelenlijst (CSV)</a>.
 
 ## De toren
 
@@ -54,52 +55,52 @@ Bij elke stap zie je linksboven welke stukjes je erbij pakt. Wat nieuw is, heeft
 **Let op bij stap 4:** zet de servo zo in de toren dat het snoertje van de motor **omhoog** wijst, zoals op het plaatje van stap 4 staat.
 
 <figure>
-  <img src="/click_golfer/bouwen/stap-01.jpg" width="600" alt="Bouwstap 1: Het lichtgrijze frame van 5 bij 7 gaten met een open midden. Dit is de voet." />
+  <img src={useBaseUrl('/click_golfer/bouwen/stap-01.jpg')} width="600" alt="Bouwstap 1: Het lichtgrijze frame van 5 bij 7 gaten met een open midden. Dit is de voet." />
   <figcaption>Stap 1</figcaption>
 </figure>
 
 <figure>
-  <img src="/click_golfer/bouwen/stap-02.jpg" width="600" alt="Bouwstap 2: Vier zwarte pinnen in de gaten aan de binnenkant van het frame." />
+  <img src={useBaseUrl('/click_golfer/bouwen/stap-02.jpg')} width="600" alt="Bouwstap 2: Vier zwarte pinnen in de gaten aan de binnenkant van het frame." />
   <figcaption>Stap 2</figcaption>
 </figure>
 
 <figure>
-  <img src="/click_golfer/bouwen/stap-03.jpg" width="600" alt="Bouwstap 3: Twee lange zwarte balken van 15 gaten staan rechtop op het frame." />
+  <img src={useBaseUrl('/click_golfer/bouwen/stap-03.jpg')} width="600" alt="Bouwstap 3: Twee lange zwarte balken van 15 gaten staan rechtop op het frame." />
   <figcaption>Stap 3</figcaption>
 </figure>
 
 <figure>
-  <img src="/click_golfer/bouwen/stap-04.jpg" width="600" alt="Bouwstap 4: De oranjebruine servo zit met vier blauwe pinnen tussen de twee balken. Een briefje zegt: het snoertje van de motor moet omhoog." />
+  <img src={useBaseUrl('/click_golfer/bouwen/stap-04.jpg')} width="600" alt="Bouwstap 4: De oranjebruine servo zit met vier blauwe pinnen tussen de twee balken. Een briefje zegt: het snoertje van de motor moet omhoog." />
   <figcaption>Stap 4</figcaption>
 </figure>
 
 <figure>
-  <img src="/click_golfer/bouwen/stap-05.jpg" width="600" alt="Bouwstap 5: Twee zwarte pinnen bovenin de twee balken." />
+  <img src={useBaseUrl('/click_golfer/bouwen/stap-05.jpg')} width="600" alt="Bouwstap 5: Twee zwarte pinnen bovenin de twee balken." />
   <figcaption>Stap 5</figcaption>
 </figure>
 
 <figure>
-  <img src="/click_golfer/bouwen/stap-06.jpg" width="600" alt="Bouwstap 6: Een zwarte balk van 5 gaten ligt bovenop de twee balken en verbindt ze." />
+  <img src={useBaseUrl('/click_golfer/bouwen/stap-06.jpg')} width="600" alt="Bouwstap 6: Een zwarte balk van 5 gaten ligt bovenop de twee balken en verbindt ze." />
   <figcaption>Stap 6</figcaption>
 </figure>
 
 <figure>
-  <img src="/click_golfer/bouwen/stap-07.jpg" width="600" alt="Bouwstap 7: Nog twee lange zwarte balken van 15 gaten aan de voorkant, over de servo heen." />
+  <img src={useBaseUrl('/click_golfer/bouwen/stap-07.jpg')} width="600" alt="Bouwstap 7: Nog twee lange zwarte balken van 15 gaten aan de voorkant, over de servo heen." />
   <figcaption>Stap 7</figcaption>
 </figure>
 
 <figure>
-  <img src="/click_golfer/bouwen/stap-08.jpg" width="600" alt="Bouwstap 8: Een lichtgrijs busje en twee lichtgrijze assen met een pin bovenaan de toren." />
+  <img src={useBaseUrl('/click_golfer/bouwen/stap-08.jpg')} width="600" alt="Bouwstap 8: Een lichtgrijs busje en twee lichtgrijze assen met een pin bovenaan de toren." />
   <figcaption>Stap 8</figcaption>
 </figure>
 
 <figure>
-  <img src="/click_golfer/bouwen/stap-09.jpg" width="600" alt="Bouwstap 9: Twee gebogen zwarte balken aan de zijkanten van de toren." />
+  <img src={useBaseUrl('/click_golfer/bouwen/stap-09.jpg')} width="600" alt="Bouwstap 9: Twee gebogen zwarte balken aan de zijkanten van de toren." />
   <figcaption>Stap 9</figcaption>
 </figure>
 
 <figure>
-  <img src="/click_golfer/bouwen/stap-10.jpg" width="600" alt="Bouwstap 10: Een lichtgrijze as van 6 gaten gaat door het midden, door de servo." />
+  <img src={useBaseUrl('/click_golfer/bouwen/stap-10.jpg')} width="600" alt="Bouwstap 10: Een lichtgrijze as van 6 gaten gaat door het midden, door de servo." />
   <figcaption>Stap 10</figcaption>
 </figure>
 
@@ -115,7 +116,7 @@ Kijk daarom eerst of de servo op het signaal van **D9** zit. Zet je robot weer a
 :::
 
 <figure>
-  <img src="/click_golfer/bouwen/stap-11.jpg" width="600" alt="Bouwstap 11: Het grijze tandwiel komt op de as van de servo." />
+  <img src={useBaseUrl('/click_golfer/bouwen/stap-11.jpg')} width="600" alt="Bouwstap 11: Het grijze tandwiel komt op de as van de servo." />
   <figcaption>Stap 11</figcaption>
 </figure>
 
@@ -142,77 +143,77 @@ Gaat er iets mis? Haal dan eerst het tandwiel eraf en kijk of het asje van de se
 Nu bouw je de arm. In stap 12 komt de zwarte verbinder op de as, aan de voorkant. Daar komt straks de arm aan. De servo staat nu nog op 90°, en zo moet het blijven: draai de as en het tandwiel tijdens het bouwen niet met de hand.
 
 <figure>
-  <img src="/click_golfer/bouwen/stap-12.jpg" width="600" alt="Bouwstap 12: Een lichtgrijs busje en een zwarte verbinder komen aan de voorkant op de as. Aan die verbinder komt de arm." />
+  <img src={useBaseUrl('/click_golfer/bouwen/stap-12.jpg')} width="600" alt="Bouwstap 12: Een lichtgrijs busje en een zwarte verbinder komen aan de voorkant op de as. Aan die verbinder komt de arm." />
   <figcaption>Stap 12</figcaption>
 </figure>
 
 <figure>
-  <img src="/click_golfer/bouwen/stap-13.jpg" width="600" alt="Bouwstap 13: Twee zwarte pinnen in de verbinder." />
+  <img src={useBaseUrl('/click_golfer/bouwen/stap-13.jpg')} width="600" alt="Bouwstap 13: Twee zwarte pinnen in de verbinder." />
   <figcaption>Stap 13</figcaption>
 </figure>
 
 <figure>
-  <img src="/click_golfer/bouwen/stap-14.jpg" width="600" alt="Bouwstap 14: Een gebogen zwarte balk aan de voorkant, schuin naar beneden." />
+  <img src={useBaseUrl('/click_golfer/bouwen/stap-14.jpg')} width="600" alt="Bouwstap 14: Een gebogen zwarte balk aan de voorkant, schuin naar beneden." />
   <figcaption>Stap 14</figcaption>
 </figure>
 
 <figure>
-  <img src="/click_golfer/bouwen/stap-15.jpg" width="600" alt="Bouwstap 15: Twee zwarte pinnen aan het uiteinde van de gebogen balk." />
+  <img src={useBaseUrl('/click_golfer/bouwen/stap-15.jpg')} width="600" alt="Bouwstap 15: Twee zwarte pinnen aan het uiteinde van de gebogen balk." />
   <figcaption>Stap 15</figcaption>
 </figure>
 
 <figure>
-  <img src="/click_golfer/bouwen/stap-16.jpg" width="600" alt="Bouwstap 16: Een zwarte balk van 7 gaten, schuin naar beneden aan de voorkant." />
+  <img src={useBaseUrl('/click_golfer/bouwen/stap-16.jpg')} width="600" alt="Bouwstap 16: Een zwarte balk van 7 gaten, schuin naar beneden aan de voorkant." />
   <figcaption>Stap 16</figcaption>
 </figure>
 
 <figure>
-  <img src="/click_golfer/bouwen/stap-17.jpg" width="600" alt="Bouwstap 17: Twee zwarte pinnen onderaan die balk." />
+  <img src={useBaseUrl('/click_golfer/bouwen/stap-17.jpg')} width="600" alt="Bouwstap 17: Twee zwarte pinnen onderaan die balk." />
   <figcaption>Stap 17</figcaption>
 </figure>
 
 <figure>
-  <img src="/click_golfer/bouwen/stap-18.jpg" width="600" alt="Bouwstap 18: Een gebogen zwarte balk onderaan, bijna bij de grond." />
+  <img src={useBaseUrl('/click_golfer/bouwen/stap-18.jpg')} width="600" alt="Bouwstap 18: Een gebogen zwarte balk onderaan, bijna bij de grond." />
   <figcaption>Stap 18</figcaption>
 </figure>
 
 <figure>
-  <img src="/click_golfer/bouwen/stap-19.jpg" width="600" alt="Bouwstap 19: Twee zwarte pinnen in de onderkant van de gebogen balk." />
+  <img src={useBaseUrl('/click_golfer/bouwen/stap-19.jpg')} width="600" alt="Bouwstap 19: Twee zwarte pinnen in de onderkant van de gebogen balk." />
   <figcaption>Stap 19</figcaption>
 </figure>
 
 <figure>
-  <img src="/click_golfer/bouwen/stap-20.jpg" width="600" alt="Bouwstap 20: Een zwarte balk van 3 gaten onderaan de schuine arm." />
+  <img src={useBaseUrl('/click_golfer/bouwen/stap-20.jpg')} width="600" alt="Bouwstap 20: Een zwarte balk van 3 gaten onderaan de schuine arm." />
   <figcaption>Stap 20</figcaption>
 </figure>
 
 <figure>
-  <img src="/click_golfer/bouwen/stap-21.jpg" width="600" alt="Bouwstap 21: Twee lichtgrijze assen met een pin aan de twee zijarmen." />
+  <img src={useBaseUrl('/click_golfer/bouwen/stap-21.jpg')} width="600" alt="Bouwstap 21: Twee lichtgrijze assen met een pin aan de twee zijarmen." />
   <figcaption>Stap 21</figcaption>
 </figure>
 
 <figure>
-  <img src="/click_golfer/bouwen/stap-22.jpg" width="600" alt="Bouwstap 22: Twee zwarte L-vormige balken aan de uiteinden van de zijarmen." />
+  <img src={useBaseUrl('/click_golfer/bouwen/stap-22.jpg')} width="600" alt="Bouwstap 22: Twee zwarte L-vormige balken aan de uiteinden van de zijarmen." />
   <figcaption>Stap 22</figcaption>
 </figure>
 
 <figure>
-  <img src="/click_golfer/bouwen/stap-23.jpg" width="600" alt="Bouwstap 23: Twee zwarte pinnen in de L-vormige balken." />
+  <img src={useBaseUrl('/click_golfer/bouwen/stap-23.jpg')} width="600" alt="Bouwstap 23: Twee zwarte pinnen in de L-vormige balken." />
   <figcaption>Stap 23</figcaption>
 </figure>
 
 <figure>
-  <img src="/click_golfer/bouwen/stap-24.jpg" width="600" alt="Bouwstap 24: Twee zwarte haakse verbinders op die pinnen." />
+  <img src={useBaseUrl('/click_golfer/bouwen/stap-24.jpg')} width="600" alt="Bouwstap 24: Twee zwarte haakse verbinders op die pinnen." />
   <figcaption>Stap 24</figcaption>
 </figure>
 
 <figure>
-  <img src="/click_golfer/bouwen/stap-25.jpg" width="600" alt="Bouwstap 25: Een zwarte pin en een lichtgrijze balk van 4 gaten bovenop de toren." />
+  <img src={useBaseUrl('/click_golfer/bouwen/stap-25.jpg')} width="600" alt="Bouwstap 25: Een zwarte pin en een lichtgrijze balk van 4 gaten bovenop de toren." />
   <figcaption>Stap 25</figcaption>
 </figure>
 
 <figure>
-  <img src="/click_golfer/bouwen/stap-26.jpg" width="600" alt="Bouwstap 26: Een lichtgrijze as van 4 gaten gaat door de verbinders. De Click Golfer is klaar." />
+  <img src={useBaseUrl('/click_golfer/bouwen/stap-26.jpg')} width="600" alt="Bouwstap 26: Een lichtgrijze as van 4 gaten gaat door de verbinders. De Click Golfer is klaar." />
   <figcaption>Stap 26</figcaption>
 </figure>
 

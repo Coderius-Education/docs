@@ -1,6 +1,7 @@
 ---
 sidebar_position: 1
 ---
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import ObjViewer from '@site/src/components/ObjViewer';
 
 # De Click Golfer
@@ -15,7 +16,7 @@ Hieronder zie je de Click Golfer in 3D. Sleep met je muis of je vinger om hem te
 
 <ObjViewer src="/models/golfer.obj" mtl="/models/golfer.mtl" />
 
-Wil je zelf sleutelen aan het model? <a href="/click_golfer/golfer.io" download>Download het model</a> en open het in het gratis programma BrickLink Studio.
+Wil je zelf sleutelen aan het model? <a href={useBaseUrl('/click_golfer/golfer.io')} download>Download het model</a> en open het in het gratis programma BrickLink Studio.
 
 ## Wat is een robot?
 

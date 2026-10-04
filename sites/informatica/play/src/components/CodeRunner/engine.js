@@ -24,6 +24,8 @@ import {
   ensureAsync,
 } from './puur';
 
+import { siteBasis } from './sitebasis';
+
 export { detectMode, ensureAsync, isBerichtVanOuder, rewriteTraceback } from './puur';
 
 /**
@@ -109,7 +111,7 @@ _gl.should_auto_start = False
  * page; the superset of needed packages is computed from them.
  */
 export function buildPrewarmSrcDoc(codes) {
-  const siteOrigin = typeof window !== 'undefined' ? window.location.origin : '';
+  const siteOrigin = siteBasis();
   const combined = codes.join('\n');
   const { pyodidePackages, micropipNoDepsPackages } = detectPackages(combined, siteOrigin);
   const pyodidePackagesCode = pyodidePackages.map((p) => `'${p}'`).join(', ');
@@ -178,7 +180,7 @@ export function buildSrcDoc({ code, mode = 'pygame', canvasWidth, canvasHeight }
 
   // Determine which packages to install. Resolve origin now (in the parent
   // frame) since srcdoc iframes have an opaque origin (null).
-  const siteOrigin = typeof window !== 'undefined' ? window.location.origin : '';
+  const siteOrigin = siteBasis();
   const { pyodidePackages, micropipNoDepsPackages } = detectPackages(sanitized, siteOrigin);
   // Pyodide's own packages can be loaded in parallel with the WASM init via
   // the `packages` option of loadPyodide() — saves ~1-2 sec per cold start.
@@ -340,7 +342,7 @@ def __pygbag_reset():
 `;
 
 export function buildSharedRunnerSrcDoc(codes) {
-  const siteOrigin = typeof window !== 'undefined' ? window.location.origin : '';
+  const siteOrigin = siteBasis();
   const combined = codes.join('\n');
   const { pyodidePackages, micropipNoDepsPackages } = detectPackages(combined, siteOrigin);
   const pyodidePackagesCode = pyodidePackages.map((p) => `'${p}'`).join(', ');

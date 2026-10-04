@@ -4,6 +4,8 @@ import { python } from '@codemirror/lang-python';
 import { indentUnit } from '@codemirror/language';
 import { type Extension, Prec } from '@codemirror/state';
 import { Decoration, EditorView, keymap } from '@codemirror/view';
+import Link from '@docusaurus/Link';
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import CodeMirror from '@uiw/react-codemirror';
 import clsx from 'clsx';
 import {
@@ -204,6 +206,8 @@ function labelVan(client: SerialClient | null): string | null {
 }
 
 export default function WebMicroEditor(): React.JSX.Element {
+  // Opent in een nieuw tabblad, dus een kale <a>: zelf de baseUrl ervoor zetten.
+  const debugDocsUrl = useBaseUrl(DEBUG_DOCS_URL);
   const supported = useMemo(() => SerialClient.isSupported(), []);
   const { colorMode } = useColorMode();
   const replRef = useRef<HTMLDivElement | null>(null);
@@ -789,9 +793,9 @@ export default function WebMicroEditor(): React.JSX.Element {
           <p>
             Gebruik Google Chrome of Microsoft Edge (versie 89+) om met het board te kunnen praten
             vanuit de browser. Werkt dat niet? Volg dan de Thonny-instructies onder{' '}
-            <a href="/docs/Microcontrollers/Arduino Nano RP2040 Connect/Tutorial-installatie/2_editor">
+            <Link to="/docs/Microcontrollers/Arduino Nano RP2040 Connect/Tutorial-installatie/2_editor">
               Tutorial installatie
-            </a>
+            </Link>
             .
           </p>
         </div>
@@ -1151,7 +1155,7 @@ export default function WebMicroEditor(): React.JSX.Element {
           {fout.melding && <code className={styles.foutBannerMelding}>{fout.melding}</code>}
           <p className={styles.foutBannerUitleg}>
             {fout.uitleg} Kom je er niet uit? Kijk op de{' '}
-            <a href={DEBUG_DOCS_URL} target="_blank" rel="noreferrer">
+            <a href={debugDocsUrl} target="_blank" rel="noreferrer">
               Debuggen-pagina
             </a>
             .
