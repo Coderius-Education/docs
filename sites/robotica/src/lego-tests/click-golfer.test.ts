@@ -212,6 +212,19 @@ describe('de hardware-uitleg klopt', () => {
     expect(voorStap11).toMatch(/Kijk daarom eerst of de servo op het signaal van \*\*D9\*\* zit/);
   });
 
+  it('na stap 11 test je de servo met alleen het tandwiel, en pas dan bouw je de arm', () => {
+    // De bouwpagina ging van het tandwiel in stap 11 meteen door naar de arm.
+    // Werkte de Golfer daarna niet, dan wist de leerling niet of het aan de
+    // servo, het tandwiel of de arm lag. Met alleen een tandwiel zie je het
+    // meteen; daarna zet je de servo terug op 90° en bouw je verder.
+    const inhoud = tekst('bouwen.md');
+    const tussen = inhoud.slice(inhoud.indexOf('stap-11.jpg'), inhoud.indexOf('stap-12.jpg'));
+    expect(tussen).toMatch(/^## Eerst testen: alleen het tandwiel$/m);
+    expect(tussen).toMatch(/<Blokken programma=\{heenEnWeer\}/);
+    expect(tussen).toMatch(/\*\*Servo 9 op 90\*\*/);
+    expect(tussen).toMatch(/^## De arm$/m);
+  });
+
   it('de sensor- en de servoles noemen hun pin', () => {
     expect(tekst('ir-sensor.md')).toMatch(/\*\*A0\*\*/);
     expect(tekst('servo.md')).toMatch(/\*\*D9\*\*/);

@@ -3,10 +3,11 @@ sidebar_position: 7
 ---
 import Blokken from '@site/src/components/Blokken';
 import servoOp90 from './blokken/servo-op-90.json';
+import heenEnWeer from './blokken/servo-heen-en-weer.json';
 
 # Bouwen
 
-Je sensor ziet de bal en je servo slaat. Nu bouw je er de Click Golfer van Lego omheen. Hieronder zie je eerst welke stukjes je nodig hebt. Daarna bouw je hem stap voor stap in elkaar.
+Je sensor ziet de bal en je servo slaat. Nu bouw je er de Click Golfer van Lego omheen. Hieronder zie je eerst welke stukjes je nodig hebt. Daarna bouw je hem stap voor stap in elkaar: eerst de toren met de servo en het tandwiel. Dat test je, en pas als het werkt, bouw je de arm.
 
 :::tip
 Twijfel je hoe een onderdeel eruitziet of waar het komt? Bekijk het [3D-model op de intropagina](intro). Je kunt het draaien en zoomen.
@@ -42,7 +43,7 @@ Dit heb je nodig: **46 Lego Technic-stukjes** plus de **Leaphy-servo**.
 
 Wil je alle stukjes in één keer bestellen? <a href="/click_golfer/onderdelenlijst.csv" download>Download de onderdelenlijst (CSV)</a> en importeer die in [BrickLink](https://www.bricklink.com).
 
-## De bouwstappen
+## De toren
 
 In stap 4 komt de servo in de toren. Zet je robot eerst uit met de knop **ON/OFF**. De draden van de servo mogen aan het shield blijven zitten. Haal je ze toch los, sluit ze dan **vóór stap 11** weer aan zoals bij [de servo](servo): oranje op het signaal van **D9**. Bij stap 11 zet je de servo met een programma op 90°, en dat lukt alleen als hij aangesloten is.
 
@@ -114,6 +115,28 @@ Kijk daarom eerst of de servo op het signaal van **D9** zit, en upload dan dit p
   <img src="/click_golfer/bouwen/stap-11.jpg" width="600" alt="Bouwstap 11: Het grijze tandwiel komt op de as van de servo." />
   <figcaption>Stap 11</figcaption>
 </figure>
+
+## Eerst testen: alleen het tandwiel
+
+De servo zit nu in de toren, met het tandwiel erop. De arm is er nog niet, en dat is precies goed om te testen. Draait er straks iets niet goed met de hele arm eraan, dan weet je niet of het aan de servo ligt, aan het tandwiel of aan de arm. Met alleen een tandwiel zie je het meteen.
+
+Zet je robot aan en upload het programma uit [de servo](servo) dat heen en weer draait:
+
+<Blokken programma={heenEnWeer} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: Servo 9 op 0, duurt 1000 ms, Servo 9 op 90, duurt 1000 ms." />
+
+Kijk naar het tandwiel en loop deze vragen langs:
+
+1. Draait het tandwiel steeds een kwart rondje heen en weer?
+2. Draait het soepel, zonder te zoemen, te trillen of te haperen?
+3. Zit het tandwiel vast op de as, of slipt het?
+
+Is het antwoord drie keer ja, dan werkt je servo in de toren. Upload dan weer het programma **Servo 9 op 90** van hierboven, zodat de servo in het midden staat, en zet je robot uit. Pas dan bouw je verder.
+
+Gaat er iets mis? Haal dan eerst het tandwiel eraf en kijk of het asje van de servo los wel draait. Bij [de servo](servo) staat onder **Er gaat iets mis** wat je dan doet. Zoemt hij alleen met het tandwiel erop, dan zit het tandwiel ergens tegenaan: kijk of het vrij kan draaien.
+
+## De arm
+
+Nu bouw je de arm aan het tandwiel. Draai het tandwiel tijdens het bouwen niet met de hand: dan staat de servo niet meer op 90°.
 
 <figure>
   <img src="/click_golfer/bouwen/stap-12.jpg" width="600" alt="Bouwstap 12: Een lichtgrijs busje en een zwarte verbinder aan de voorkant, bij het tandwiel." />
