@@ -242,6 +242,7 @@ describe('de volgorde van de route', () => {
     'ir-sensor',
     'servo',
     'bal-slaan',
+    'oefenen',
     'bouwen',
     'hout',
     'mikken',
@@ -251,7 +252,7 @@ describe('de volgorde van de route', () => {
 
   it("de pagina's staan in deze volgorde in de zijbalk", () => {
     const positie = (bestand: string) =>
-      Number(tekst(bestand).match(/^sidebar_position: (\d+)$/m)?.[1]);
+      Number(tekst(bestand).match(/^sidebar_position: ([\d.]+)$/m)?.[1]);
     const volgorde = paginas()
       .sort((a, b) => positie(a) - positie(b))
       .map((f) => f.replace(/\.mdx?$/, ''));

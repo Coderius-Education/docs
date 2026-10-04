@@ -25,6 +25,7 @@ const ROUTE = [
   'ir-sensor',
   'servo',
   'bal-slaan',
+  'oefenen',
   'bouwen',
   'hout',
   'mikken',

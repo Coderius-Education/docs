@@ -55,4 +55,4 @@ Hij slaat niet. Het Leaphy-blok loopt maar één keer, direct na het uploaden. T
 
 </details>
 
-Werkt het op tafel? Dan [bouw je de Golfer van Lego](bouwen).
+Werkt het op tafel? Dan [oefen je met twee sensoren en twee servo's](oefenen).

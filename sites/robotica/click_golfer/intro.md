@@ -27,8 +27,9 @@ Een robot is een **programmeerbare machine** die zelf taken uitvoert en kan reag
 2. Sluit [de IR-sensor](ir-sensor) aan, die de bal ziet.
 3. Laat [de servo](servo) bewegen, de motor van de arm.
 4. Zet ze samen: [zie de bal, sla de bal](bal-slaan).
-5. [Bouw het robotje](bouwen) van Lego en maak [de houten baan](hout).
-6. Leer je Golfer [netter mikken](mikken), geef je blokken [een naam](subprogrammas), en kijk bij de [Extra's](extras) wat je er nog bij kunt maken.
+5. [Oefen met twee sensoren en twee servo's](oefenen), als je docent die heeft.
+6. [Bouw het robotje](bouwen) van Lego en maak [de houten baan](hout).
+7. Leer je Golfer [netter mikken](mikken), geef je blokken [een naam](subprogrammas), en kijk bij de [Extra's](extras) wat je er nog bij kunt maken.
 
 <details>
 <summary>Controlevraag</summary>
