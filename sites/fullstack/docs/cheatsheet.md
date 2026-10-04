@@ -848,7 +848,7 @@ Een `{{ }}`-template escapet vanzelf; een f-string niet. Gebruik `|safe` nooit v
 <details>
 <summary>Hoe beperk ik het aantal verzoeken? (slowapi)</summary>
 
-Dit is de hele `main.py` uit de map `veiligheid-dos` van de reeks [Te veel verzoeken](/docs/veiligheid/dos/limiet), met een eigen `app = FastAPI()`. Zet je een limiet in je gastenboek, neem dan de imports en de regels met `limiter` en `app.state` en `app.add_exception_handler` over, en zet `@limiter.limit` boven je eigen endpoint. Geen tweede `app = FastAPI()`: die maakt je andere endpoints onbereikbaar.
+Dit is de hele `main.py` uit de map `veiligheid-dos` van de reeks [Te veel verzoeken](/docs/veiligheid/dos/limiet), met een eigen `app = FastAPI()`. Zet je een limiet in je gastenboek, neem dan de imports en de regels met `limiter` en `app.state` en `app.add_exception_handler` over, en zet `@limiter.limit` onder de `@app.`-regel van je eigen endpoint. Geen tweede `app = FastAPI()`: die maakt je andere endpoints onbereikbaar.
 
 ```python
 from fastapi import FastAPI, Request, Response
@@ -868,7 +868,7 @@ async def root(request: Request, response: Response):
     return {"bericht": "Hallo wereld!"}
 ```
 
-Het endpoint heeft `request: Request` nodig. Met `headers_enabled=True` vertelt elk antwoord hoeveel verzoeken er nog over zijn; een endpoint dat een dictionary teruggeeft, heeft dan ook `response: Response` nodig. Installeer met `python -m pip install slowapi`.
+Het endpoint heeft `request: Request` nodig, en `@limiter.limit` staat direct onder `@app.get` of `@app.post`, niet erboven. Met `headers_enabled=True` vertelt elk antwoord hoeveel verzoeken er nog over zijn; een endpoint dat een dictionary teruggeeft, heeft dan ook `response: Response` nodig. Installeer met `python -m pip install slowapi`. Een limiet op `/inloggen` en `/wijzig` staat in [Wachtwoorden: inlogpogingen beperken](/docs/veiligheid/wachtwoorden/pogingen).
 
 </details>
 

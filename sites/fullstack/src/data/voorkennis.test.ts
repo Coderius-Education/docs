@@ -111,6 +111,8 @@ const ZONDER_BLOK: Record<string, string> = {
     'achtergrond bij de lessen ervoor, geen nieuwe voorkennis',
   'veiligheid/wachtwoorden/registreren.mdx': 'bouwt op de lessen ervoor, in dezelfde map',
   'veiligheid/wachtwoorden/wijzigen.mdx': 'bouwt op registreren en inloggen, in dezelfde map',
+  'veiligheid/wachtwoorden/pogingen.mdx':
+    'slowapi komt uit Te veel verzoeken, de endpoints uit de lessen ervoor',
   'veiligheid/wachtwoorden/zout.mdx': 'bouwt op de hash-les ervoor, in dezelfde map',
 };
 

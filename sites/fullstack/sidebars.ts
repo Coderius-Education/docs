@@ -186,6 +186,7 @@ const sidebars: SidebarsConfig = {
         'veiligheid/wachtwoorden/registreren',
         'veiligheid/wachtwoorden/inloggen',
         'veiligheid/wachtwoorden/wijzigen',
+        'veiligheid/wachtwoorden/pogingen',
         'veiligheid/wachtwoorden/praktijk',
       ],
     },

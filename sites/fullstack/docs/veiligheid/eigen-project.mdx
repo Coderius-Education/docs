@@ -82,6 +82,8 @@ Alleen als je project accounts heeft.
 - [ ] Inloggen gebruikt `ph.verify`, met dezelfde melding bij een onbekende naam
   en een fout wachtwoord, en ook bij een onbekende naam een `verify` tegen een
   nep-hash. ([Inloggen met verify](./wachtwoorden/inloggen))
+- [ ] `/inloggen` en `/wijzig` hebben een limiet: `@limiter.limit` direct onder
+  `@app.post`, met `request: Request`. ([Inlogpogingen beperken](./wachtwoorden/pogingen))
 
 ## Test het zoals een bezoeker
 

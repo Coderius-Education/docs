@@ -230,70 +230,6 @@ dan heeft jouw versie van `argon2-cffi` strengere instellingen.
 
 </details>
 
-### Opdracht 4: Make - In je eigen project
-
-Wil je accounts in je eigen project, neem dan de drie endpoints uit deze reeks
-over, met `ph` en `NEP` bovenaan, en maak er formulieren bij voor registreren
-en inloggen.
-
-<details>
-<summary>Tip</summary>
-
-Een wachtwoordveld in HTML is een `<input type="password">`: dan ziet niemand
-over je schouder mee. De `name` moet `wachtwoord` zijn, zoals de parameter.
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-Loop deze lijst af:
-
-- Er staat nergens een wachtwoord als gewone tekst: niet in de database, niet
-  in een print, niet in een cookie.
-- `/registreer` bewaart `ph.hash(wachtwoord)`.
-- `/inloggen` gebruikt `ph.verify`, ook bij een onbekende naam (tegen `NEP`), en
-  geeft bij een onbekende naam en bij een fout wachtwoord dezelfde melding.
-- `/wijzig` controleert eerst het oude wachtwoord.
-
-Het formulier voor registreren:
-
-```html
-<form method="post" action="/registreer">
-    <input type="text" name="naam" required>
-    <input type="password" name="wachtwoord" required>
-    <button type="submit">Registreer</button>
-</form>
-```
-
-Het formulier voor inloggen is hetzelfde, met `action="/inloggen"`.
-
-Moet je site na het inloggen onthouden wie er is, zet de naam dan in de sessie
-uit [Onthouden op de server: sessies](/docs/FastAPI/sessies). Zet in
-`/inloggen` de parameter `sessie_id: str = Cookie(default="")` erbij, naast
-`wachtwoord`, en vervang de laatste `return` door:
-
-{/* niet-compileren: de laatste regels van inloggen, ingesprongen fragment */}
-
-```python
-    if not sessie_id:
-        sessie_id = secrets.token_hex(16)
-    with SqliteDict("sessies.db") as sessies:
-        mijn = sessies.get(sessie_id, {"naam": naam, "berichten": []})
-        mijn["naam"] = naam
-        sessies[sessie_id] = mijn
-        sessies.commit()
-    antwoord = RedirectResponse(url="/berichten", status_code=303)
-    antwoord.set_cookie(key="sessie_id", value=sessie_id, httponly=True, samesite="lax")
-    return antwoord
-```
-
-Dit staat ná `ph.verify` en de controle op `NEP`: pas daar weet je wie er
-inlogt. `secrets`, `Cookie` en `RedirectResponse` heb je sinds de les over
-sessies al geïmporteerd.
-
-</details>
-
 <details>
 <summary>Zo ziet je `main.py` er nu uit</summary>
 
@@ -348,8 +284,9 @@ async def wijzig(naam: str = Form(...), oud: str = Form(...), nieuw: str = Form(
     return {"bericht": "Wachtwoord gewijzigd"}
 ```
 
-Registreren, inloggen met bijwerken, en wijzigen: de hele reeks in één server.
+Registreren, inloggen met bijwerken, en wijzigen in één server. In les 8 komt
+er een limiet op het aantal pogingen bij.
 
 </details>
 
-Door naar [les 8: in de praktijk](./praktijk).
+Door naar [les 8: inlogpogingen beperken](./pogingen).

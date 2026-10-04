@@ -118,3 +118,51 @@ describe('regels bij hun inhoud', () => {
     expect(proza).not.toMatch(/\b[Rr]egels? \d+/);
   });
 });
+
+// Argon2 beschermt een gelekte database, maar /inloggen liet iedereen
+// eindeloos proberen; de praktijk noemde een limiet alleen in een zin. Nu zet
+// pogingen.mdx de limiet uit Te veel verzoeken op elk endpoint dat ph.verify
+// doet, ook /wijzig: daar kon een script anders hetzelfde proberen. En
+// @limiter.limit staat onder @app.post, want erboven telt slowapi stil niets.
+describe('inlogpogingen beperken', () => {
+  const pogingen = pythonBlokken.filter(({ naam }) => naam === 'pogingen.mdx');
+  const stand = pogingen.find(({ code }) => code.includes('app = FastAPI()'))?.code ?? '';
+
+  it('de stand van pogingen.mdx heeft een limiter', () => {
+    expect(stand).toContain('limiter = Limiter(key_func=get_remote_address)');
+    expect(stand).toContain('app.state.limiter = limiter');
+    expect(stand).toMatch(/^from fastapi import [^\n]*\bRequest\b/m);
+  });
+
+  it.each(['@app.post("/inloggen")', '@app.post("/wijzig")'])(
+    'in de stand heeft %s een limiet en request: Request',
+    (kop) => {
+      const stuk = endpoint(stand, kop);
+      expect(stuk).toContain('ph.verify');
+      expect(stuk).toMatch(
+        /^@app\.post\("[^"]+"\)\n@limiter\.limit\("5\/minute"\)\nasync def \w+\(request: Request, /,
+      );
+    },
+  );
+
+  it('nergens in de cursus staat @limiter.limit boven @app., behalve in een FOUT-voorbeeld', () => {
+    const DOCS = fileURLToPath(new URL('../../docs', import.meta.url));
+    const alle = (map: string): string[] =>
+      readdirSync(map, { withFileTypes: true }).flatMap((d) =>
+        d.isDirectory()
+          ? alle(join(map, d.name))
+          : /\.mdx?$/.test(d.name)
+            ? [join(map, d.name)]
+            : [],
+      );
+    const fout = alle(DOCS).flatMap((pad) =>
+      [...readFileSync(pad, 'utf8').matchAll(/```python[^\n]*\n([\s\S]*?)```/g)]
+        .map((m) => m[1].split('# GOED')[0])
+        .filter(
+          (code) => !code.startsWith('# FOUT') && /@limiter\.limit\([^)]*\)\n@app\./.test(code),
+        )
+        .map(() => pad),
+    );
+    expect(fout).toEqual([]);
+  });
+});

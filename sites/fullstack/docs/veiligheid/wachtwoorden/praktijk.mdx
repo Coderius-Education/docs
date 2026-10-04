@@ -1,5 +1,5 @@
 ---
-sidebar_label: '8. In de praktijk'
+sidebar_label: '9. In de praktijk'
 description: Wat echte sites nog meer doen om wachtwoorden en accounts te beschermen, van instellingen die meegroeien tot tweestapsverificatie, en wat de AVG zegt over een datalek.
 ---
 
@@ -33,15 +33,30 @@ iets anders aan:
 ### Inloggen beperken
 
 Een aanvaller zonder database kan nog steeds proberen in te loggen, keer op
-keer, met een woordenlijst. Daar helpt een verzoeklimiet, zoals je die in
-[Te veel verzoeken](/docs/veiligheid/dos/limiet) bouwde: zet op `/inloggen` een
-strenge grens, bijvoorbeeld vijf pogingen per minuut. Veel sites blokkeren een
-account ook even na een reeks foute pogingen, of vragen dan om een puzzel die
-een mens kan oplossen en een script niet.
+keer, met een woordenlijst. Daarom heeft `/inloggen` uit [les 8](./pogingen)
+een limiet van vijf pogingen per minuut. Houd die streng op elk endpoint dat
+een wachtwoord controleert, ook als je er later een bij bouwt.
 
 ## Wat grote sites nog meer doen
 
 Dit hoef je voor je eigen project niet te bouwen. Klap open wat je wilt lezen.
+
+<details>
+<summary>Een slot op het account</summary>
+
+Een limiet per computer stopt één computer. Een aanvaller met veel computers
+probeert vanaf elke computer een paar wachtwoorden, en blijft overal onder de
+grens. Daarom tellen veel sites ook per account: na tien foute pogingen op
+Sara's naam gaat haar account een kwartier op slot, van welke computer de
+pogingen ook kwamen.
+
+Dat heeft een keerzijde. Wie Sara dwars wil zitten, typt tien keer een fout
+wachtwoord met haar naam, en dan kan zij zelf niet meer in. Sites houden het
+slot daarom kort, of vragen na een paar foute pogingen om een puzzel die een
+mens kan oplossen en een script niet, in plaats van het account dicht te
+zetten.
+
+</details>
 
 <details>
 <summary>Peper</summary>
@@ -124,8 +139,8 @@ het wachtwoord zelf, of om wie er inlogt?
 <details>
 <summary>Antwoord</summary>
 
-1. **Een verzoeklimiet op `/inloggen`**, eventueel met een tijdelijke blokkade
-   na veel foute pogingen.
+1. **Een verzoeklimiet op `/inloggen`**, zoals in [les 8](./pogingen),
+   eventueel met een kort slot op het account na veel foute pogingen.
 2. **Controleren tegen gelekte wachtwoorden** bij het registreren, zodat Sara
    een ander wachtwoord moet kiezen.
 3. **`check_needs_rehash`** bij het inloggen, uit [les 7](./wijzigen), zodat oude hashes vanzelf worden

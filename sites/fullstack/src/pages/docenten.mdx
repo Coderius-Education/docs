@@ -110,7 +110,7 @@ De reeks is opzettelijk defensief. Elke zelftest draait tegen de eigen server op
 | Te veel verzoeken (DoS) | veel verzoeken leggen de server plat | een verzoeklimiet met `slowapi` |
 | Wie mag wat | een verborgen knop is geen slot | de controle op de server, met `403` |
 | Cookies afschermen | een script leest het sessie-id | `httponly`, `samesite`, `secure` |
-| Wachtwoorden veilig opslaan | een lek geeft alle wachtwoorden weg | hashen met Argon2, in acht kleine lessen |
+| Wachtwoorden veilig opslaan | een lek geeft alle wachtwoorden weg; `/inloggen` laat eindeloos proberen | hashen met Argon2, en een limiet op `/inloggen` en `/wijzig`, in negen kleine lessen |
 
 De beloofde uitvoer en foutmeldingen in deze reeks draaien niet mee in CI, die alleen de Python-syntax controleert. Ze zijn met de hand nagedraaid tegen een echte server. Werk je een les bij, controleer een gewijzigde uitvoer dan zelf in een virtual environment met de echte packages.
 
