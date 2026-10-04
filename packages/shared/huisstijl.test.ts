@@ -1,6 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
+import { alleSiteMappen, siteDir } from '@coderius/shared/sites';
 import { describe, expect, it } from 'vitest';
 
 const { CURSUSSEN, CURSUS_KLEUREN, NEUTRAAL } = require('./huisstijl');
@@ -85,7 +86,7 @@ describe('huisstijl', () => {
 
   it('createConfig zet merk, naam en favicon van de cursus', () => {
     const config = createConfig({
-      url: 'https://python.coderius.nl',
+      siteId: 'python',
       presets: [['classic', { theme: {} }]],
     });
     expect(config.themeConfig.navbar.logo).toMatchObject({
@@ -101,7 +102,7 @@ describe('huisstijl', () => {
   it('een eigen navbar-logo van de site blijft staan', () => {
     const logo = { alt: 'eigen', src: 'img/eigen.svg' };
     const config = createConfig({
-      url: 'https://python.coderius.nl',
+      siteId: 'python',
       themeConfig: { navbar: { logo, title: 'Eigen' } },
     });
     expect(config.themeConfig.navbar.logo).toEqual(logo);
@@ -109,12 +110,12 @@ describe('huisstijl', () => {
   });
 
   it('geen site overschrijft het huisstijl-merk of de primary-kleur nog met de hand', () => {
-    for (const map of fs.readdirSync(path.join(ROOT, 'sites'))) {
-      const cfg = path.join(ROOT, 'sites', map, 'docusaurus.config.ts');
+    for (const { dir } of alleSiteMappen()) {
+      const cfg = path.join(ROOT, dir, 'docusaurus.config.ts');
       if (fs.existsSync(cfg)) {
         expect(fs.readFileSync(cfg, 'utf8'), cfg).not.toMatch(/navbar:\s*\{\s*(title|logo):/);
       }
-      const css = path.join(ROOT, 'sites', map, 'src', 'css', 'custom.css');
+      const css = path.join(ROOT, dir, 'src', 'css', 'custom.css');
       if (fs.existsSync(css))
         expect(fs.readFileSync(css, 'utf8'), css).not.toMatch(/--ifm-color-primary\s*:/);
     }
@@ -178,8 +179,7 @@ describe('de homepage van elke cursus past in één scherm', () => {
       path.join(__dirname, 'components', 'HomepageSections', 'styles.module.css'),
       path.join(
         ROOT,
-        'sites',
-        'algorithms',
+        siteDir('algorithms'),
         'src',
         'components',
         'AlgorithmGrid',
@@ -221,8 +221,8 @@ describe('de homepage van elke cursus past in één scherm', () => {
     );
     expect(managedCss).toMatch(/\+ :is\(section, main\)\s*\{[^}]*justify-content: center;/);
     const fout: string[] = [];
-    for (const site of fs.readdirSync(path.join(ROOT, 'sites'))) {
-      const pages = path.join(ROOT, 'sites', site, 'src', 'pages');
+    for (const { id: site, dir } of alleSiteMappen()) {
+      const pages = path.join(ROOT, dir, 'src', 'pages');
       const index =
         fs.existsSync(pages) &&
         fs.readdirSync(pages).find((n) => /^index\.(tsx|jsx?|mdx)$/.test(n));

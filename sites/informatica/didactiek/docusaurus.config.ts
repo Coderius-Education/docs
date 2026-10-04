@@ -3,7 +3,7 @@ import { createConfig, prismThemes } from '@coderius/shared/config';
 export default createConfig({
   title: 'Didactiek — Coderius',
   tagline: 'Waarom we het zo doen, en waarop dat berust',
-  url: 'https://didactiek.coderius.nl',
+  siteId: 'didactiek',
   organizationName: 'coderius',
   projectName: 'coderius-didactiek',
   matomoSiteId: 14,

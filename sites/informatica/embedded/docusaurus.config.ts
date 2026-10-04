@@ -4,7 +4,7 @@ import { REPO_URL, repoEditUrl } from '@coderius/shared/sites';
 export default createConfig({
   title: 'Embedded Programmeren — Coderius',
   tagline: 'Van knipperende LED tot STM32: leer microcontrollers programmeren',
-  url: 'https://embedded.coderius.nl',
+  siteId: 'embedded',
   projectName: 'embedded-docs',
   matomoSiteId: 13,
 

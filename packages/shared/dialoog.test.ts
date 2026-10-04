@@ -28,9 +28,9 @@ const UITZONDERINGEN: Record<string, string> = {
   'packages/python-runner/src/PyodideProvider.ts': 'input() zonder JSPI',
   // Code van de leerling of van een nagebouwde kwetsbare site, die in een
   // eigen iframe draait: daar hoort alert() bij de les.
-  'sites/dvwa/src/components/DvwaLab/modules/authorization_bypass.js': 'lab-inhoud',
-  'sites/dvwa/src/components/DvwaLab/modules/csp_bypass.js': 'lab-inhoud',
-  'sites/web/src/checker/curriculum.ts': 'labels van JS-concepten',
+  'sites/informatica/dvwa/src/components/DvwaLab/modules/authorization_bypass.js': 'lab-inhoud',
+  'sites/informatica/dvwa/src/components/DvwaLab/modules/csp_bypass.js': 'lab-inhoud',
+  'sites/informatica/web/src/checker/curriculum.ts': 'labels van JS-concepten',
   'packages/editor/src/runners/web/WebRunner.tsx': 'commentaar over de sandbox',
 };
 

@@ -1,6 +1,7 @@
 import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { siteDir } from '@coderius/shared/sites';
 import { lesBestaat } from '@coderius/shared/voorkennis';
 import { describe, expect, it } from 'vitest';
 import { algoritmes } from './algorithms';
@@ -18,8 +19,9 @@ import {
 // hernoemde les, en de lesvolgorde die de linkerkolom van de kaart bepaalt.
 // Cross-site paden vallen buiten de linkcheck van `pnpm build`.
 
-const SITES_ROOT = fileURLToPath(new URL('../../..', import.meta.url));
-const PYTHON_DOCS = join(SITES_ROOT, 'python', 'docs');
+// De repo-root: lesBestaat zoekt de map van een site zelf op in de registry.
+const ROOT = fileURLToPath(new URL('../../../../..', import.meta.url));
+const PYTHON_DOCS = join(ROOT, siteDir('python'), 'docs');
 
 const slugs = algoritmes.map((a) => a.slug);
 const conceptIds = new Set(pythonConcepten.map((c) => c.id));
@@ -54,7 +56,7 @@ describe('pythonConcepten', () => {
 
   it('elk pad wijst naar een bestaande les in de python-cursus', () => {
     const kapot = pythonConcepten
-      .filter((c) => !lesBestaat(SITES_ROOT, 'python', c.to))
+      .filter((c) => !lesBestaat(ROOT, 'python', c.to))
       .map((c) => `${c.id} -> ${c.to}`);
     expect(kapot).toEqual([]);
   });
@@ -100,8 +102,7 @@ describe('algoritmes', () => {
     const kapot = algoritmes
       .filter(
         (a) =>
-          !a.startPad.startsWith(`/docs/${a.slug}/`) ||
-          !lesBestaat(SITES_ROOT, 'algorithms', a.startPad),
+          !a.startPad.startsWith(`/docs/${a.slug}/`) || !lesBestaat(ROOT, 'algorithms', a.startPad),
       )
       .map((a) => `${a.slug} -> ${a.startPad}`);
     expect(kapot).toEqual([]);
@@ -109,8 +110,8 @@ describe('algoritmes', () => {
 
   it('de lescontrole herkent een verzonnen pad wél als kapot', () => {
     // Zonder deze check zou een lesBestaat die altijd ja zegt alles groen laten.
-    expect(lesBestaat(SITES_ROOT, 'python', '/docs/data/bestaat-niet')).toBe(false);
-    expect(lesBestaat(SITES_ROOT, 'algorithms', '/docs/hanoi/01-concept')).toBe(false);
+    expect(lesBestaat(ROOT, 'python', '/docs/data/bestaat-niet')).toBe(false);
+    expect(lesBestaat(ROOT, 'algorithms', '/docs/hanoi/01-concept')).toBe(false);
     expect(lesPositie('/docs/data/bestaat-niet')).toBeUndefined();
   });
 });

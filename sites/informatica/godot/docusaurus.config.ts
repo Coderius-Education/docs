@@ -4,7 +4,7 @@ import { REPO_URL, repoEditUrl } from '@coderius/shared/sites';
 export default createConfig({
   title: 'Games met Godot — Coderius',
   tagline: 'De eerste stappen in Godot',
-  url: 'https://godot.coderius.nl',
+  siteId: 'godot',
   projectName: 'GoDot',
   matomoSiteId: 9,
 

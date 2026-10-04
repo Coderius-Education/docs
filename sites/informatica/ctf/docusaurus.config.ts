@@ -5,7 +5,7 @@ import { createConfig } from '@coderius/shared/config';
 export default createConfig({
   title: 'Capture The Flag — Coderius',
   tagline: 'Leer cybersecurity door Capture the Flag challenges',
-  url: 'https://ctf.coderius.nl',
+  siteId: 'ctf',
   projectName: 'ctf-docs',
   matomoSiteId: 8,
 

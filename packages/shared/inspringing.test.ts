@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { SITES, SITES_BY_ID } from '@coderius/shared/sites';
+import { SITES, SITES_BY_ID, siteDir } from '@coderius/shared/sites';
 import { alleLesbestanden } from '@coderius/shared/voorkennis';
 import { describe, expect, it } from 'vitest';
 
@@ -15,7 +15,7 @@ import { describe, expect, it } from 'vitest';
 // fout voorbeeld (IndentationError in "Er gaat iets mis") draagt de bestaande
 // marker {/* niet-compileren: … */} vlak erboven en wordt overgeslagen.
 
-const SITES_ROOT = fileURLToPath(new URL('../../sites/', import.meta.url));
+const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 const MARKER = /niet-compileren/;
 // Attribuut-vorm (initialCode={`…`}) én kind-vorm (<CodeExercise>{`…`}</CodeExercise>).
 const LITERAL = /(?:(?:initialCode|code|starterCode|startCode)=|>)\{`([\s\S]*?)`\}/g;
@@ -26,7 +26,7 @@ function lesbestanden(): string[] {
   const mappen = [...SITES, ...Object.values(SITES_BY_ID)]
     .map((s) => s.id)
     .filter((id, i, alle) => alle.indexOf(id) === i)
-    .flatMap((id) => [`${SITES_ROOT}${id}/docs`, `${SITES_ROOT}${id}/src/pages`]);
+    .flatMap((id) => [`${ROOT}${siteDir(id)}/docs`, `${ROOT}${siteDir(id)}/src/pages`]);
   return mappen.flatMap((map) => {
     try {
       return alleLesbestanden(map);
@@ -80,7 +80,7 @@ describe('inspringing in python-voorbeelden', () => {
 
   it('springt overal in met vier spaties, zonder tabs', () => {
     const kapot = bestanden.flatMap((b) =>
-      controleer(readFileSync(b, 'utf8'), b.slice(SITES_ROOT.length)),
+      controleer(readFileSync(b, 'utf8'), b.slice(ROOT.length)),
     );
     expect(kapot.map((k) => `${k.bestand}: ${JSON.stringify(k.regel)}`)).toEqual([]);
   });

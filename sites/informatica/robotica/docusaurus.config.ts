@@ -20,7 +20,7 @@ function blocklyAlleenInDeBrowser(): Plugin {
 
 export default createConfig({
   title: 'Robotica — Coderius',
-  url: 'https://robotica.coderius.nl',
+  siteId: 'robotica',
   projectName,
   matomoSiteId: 7,
 

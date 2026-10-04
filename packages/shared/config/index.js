@@ -7,17 +7,51 @@ const cursussenRoute = require('../plugins/cursussen-route');
 const privacyRoute = require('../plugins/privacy-route');
 const omleidingenPlugin = require('../plugins/omleidingen');
 const matomoPlugin = require('../plugins/matomo');
-const { SITES, DOCENTEN_SITES, HOME, normalizeUrl } = require('../sites');
+const {
+  SITES,
+  DOCENTEN_SITES,
+  SITES_BY_ID,
+  SUBJECTS_BY_ID,
+  HOME,
+  normalizeUrl,
+  siteByUrl,
+  sitesOfSubject,
+} = require('../sites');
 const { CURSUSSEN } = require('../huisstijl');
 const { resolvePackageDir } = transpileShared;
 const { loadSettings, applySettings, deepMerge } = require('./managed-settings');
 const managedManifest = require('../plugins/managed-manifest');
 
-// Alle cursussen behalve de huidige (op url gematcht). Voedt de footerkolom en
-// de navbar-dropdown, zodat cross-site links uit één registry komen.
-function otherSites(currentUrl) {
-  const norm = normalizeUrl(currentUrl);
-  return SITES.filter((s) => normalizeUrl(s.url) !== norm);
+/**
+ * Welke site uit de registry bouwen we? De registry is de bron van waarheid
+ * voor host en pad, dus een site noemt alleen zijn id (`siteId`). Voor oudere
+ * configs (en docs-management) werkt ook een `url` die de oude of nieuwe URL
+ * van een cursus is, en anders de mapnaam: docusaurus draait altijd vanuit de
+ * map van de site, en die heet naar het id.
+ */
+function registrySite(siteId, url) {
+  if (siteId) {
+    const site = SITES_BY_ID[siteId];
+    if (!site) throw new Error(`createConfig: onbekende siteId '${siteId}' (zie sites.js)`);
+    return site;
+  }
+  const norm = normalizeUrl(url);
+  if (norm) {
+    const site =
+      [...SITES, ...DOCENTEN_SITES].find((s) => normalizeUrl(s.legacyUrl) === norm) ||
+      siteByUrl(norm) ||
+      DOCENTEN_SITES.find((s) => norm === normalizeUrl(s.url));
+    if (site) return site;
+  }
+  return SITES_BY_ID[path.basename(process.cwd())];
+}
+
+// De andere cursussen van hetzelfde vak. Voedt de navbar-dropdown, zodat
+// cross-site links uit één registry komen; cursussen van een ander vak staan
+// op coderius.nl ("Andere vakken").
+function otherSites(site) {
+  if (!site) return SITES;
+  return sitesOfSubject(site.subject).filter((s) => s.id !== site.id);
 }
 
 // Absolute paths into deze package — robuust ongeacht waar de site staat.
@@ -34,10 +68,8 @@ const LETTER_CSS = [
   require.resolve('@fontsource-variable/literata'),
 ];
 
-/** Het huisstijl-merk van de cursus op deze url (cursussen én docentensites). */
-function merkVoorUrl(url) {
-  const norm = normalizeUrl(url);
-  const site = [...SITES, ...DOCENTEN_SITES].find((s) => normalizeUrl(s.url) === norm);
+/** Het huisstijl-merk van een site uit de registry (cursussen én docentensites). */
+function merkVoorSite(site) {
   return site ? CURSUSSEN.find((c) => c.id === site.id) : undefined;
 }
 
@@ -127,8 +159,19 @@ function createConfig(course = {}) {
     future,
     matomoSiteId,
     omleidingen,
+    siteId,
     ...rest
   } = site;
+
+  // Host en pad uit de registry: https://informatica.coderius.nl + /python/.
+  // Dat is niet overschrijfbaar; een cursus die ergens anders wil staan, past
+  // sites.js aan, zodat links, scripts en hosting het eens blijven.
+  const registry = registrySite(siteId, rest.url);
+  const vak = registry && SUBJECTS_BY_ID[registry.subject];
+  if (registry) {
+    rest.url = vak.url;
+    rest.baseUrl = `/${registry.path}/`;
+  }
 
   const seoTags = [];
   if (description)
@@ -170,8 +213,8 @@ function createConfig(course = {}) {
       themeConfig.prism[key] = prismThemes[value];
     }
   }
-  const others = otherSites(rest.url);
-  const merk = merkVoorUrl(rest.url);
+  const others = otherSites(registry);
+  const merk = merkVoorSite(registry);
 
   // Footer: zorg voor de CC-BY-NC copyright en één teruglink naar de homepage.
   // Cross-site navigatie tussen cursussen zit in de navbar-dropdown "Cursussen"
@@ -199,8 +242,9 @@ function createConfig(course = {}) {
   footer.links = footerLinks;
   themeConfig.footer = footer;
 
-  // Navbar: één "Cursussen"-dropdown (rechts) om naar een andere cursus te
-  // springen, plus een link naar het volledige overzicht op /cursussen.
+  // Navbar: één "Cursussen"-dropdown (rechts) om naar een andere cursus van
+  // hetzelfde vak te springen, plus het overzicht op /cursussen en een link
+  // naar coderius.nl voor de andere vakken.
   const navbar = themeConfig.navbar ? { ...themeConfig.navbar } : {};
   // Merk en naam uit de huisstijl, tenzij de site (of docs-management) er
   // bewust een eigen zet.
@@ -228,9 +272,9 @@ function createConfig(course = {}) {
       label: 'Cursussen',
       position: 'right',
       items: [
-        { label: `${HOME.label} (home)`, href: HOME.url },
         ...others.map((s) => ({ label: s.label, href: s.url })),
         { label: 'Alle cursussen', to: '/cursussen' },
+        { label: 'Andere vakken', href: HOME.url },
       ],
     },
   ];

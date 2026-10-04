@@ -4,6 +4,7 @@ import {
   buildsIn,
   controleer,
   doelBestaat,
+  doelVan,
   hrefsUit,
   siteVanHost,
 } from '../../scripts/controleer-cross-links.mjs';
@@ -18,22 +19,58 @@ import {
 const FIXTURE = fileURLToPath(new URL('./__fixtures__/cross-links', import.meta.url));
 
 describe('siteVanHost', () => {
-  it('kent alleen de registry-domeinen', () => {
+  it('kent de apex en de oude subdomeinen, geen andere hosts', () => {
     expect(siteVanHost('editor.coderius.nl')).toBe('editor');
+    expect(siteVanHost('algoritmes.coderius.nl')).toBe('algorithms');
     expect(siteVanHost('coderius.nl')).toBe('home');
     expect(siteVanHost('stats.coderius.nl')).toBeNull();
     expect(siteVanHost('www.python.org')).toBeNull();
   });
 });
 
+describe('doelVan — vak-host plus pad naar de build van de cursus', () => {
+  const doel = (href: string) => doelVan(new URL(href));
+
+  it('het eerste padsegment kiest de cursus; de rest is het pad in diens build', () => {
+    expect(doel('https://informatica.coderius.nl/python/docs/basis/x')).toEqual({
+      site: 'python',
+      pad: '/docs/basis/x',
+    });
+    expect(doel('https://informatica.coderius.nl/algoritmes/')).toEqual({
+      site: 'algorithms',
+      pad: '/',
+    });
+    expect(doel('https://informatica.coderius.nl/editor')).toEqual({ site: 'editor', pad: '/' });
+  });
+
+  it('de vak-host zelf en onbekende paden horen bij de homepage', () => {
+    expect(doel('https://informatica.coderius.nl/')).toEqual({ site: 'home', pad: '/' });
+    expect(doel('https://informatica.coderius.nl/algorithms/')).toEqual({
+      site: 'home',
+      pad: '/algorithms/',
+    });
+    expect(doel('https://coderius.nl/docent')).toEqual({ site: 'home', pad: '/docent' });
+  });
+
+  it('een oud subdomein is herkenbaar als oud domein', () => {
+    expect(doel('https://python.coderius.nl/docs/x')).toEqual({
+      site: 'python',
+      pad: '/docs/x',
+      oudDomein: true,
+    });
+    expect(doel('https://www.python.org/')).toBeNull();
+    expect(doel('https://stats.coderius.nl/')).toBeNull();
+  });
+});
+
 describe('hrefsUit', () => {
   it('pakt alleen absolute hrefs naar een registry-domein, zonder anker en query', () => {
     const html =
-      '<a href="https://editor.coderius.nl/python/stap-4-venv#kop?x=1">a</a>' +
+      '<a href="https://informatica.coderius.nl/editor/python/stap-4-venv#kop?x=1">a</a>' +
       '<a href="/docs/intern">b</a><a href="https://www.python.org/">c</a>';
     expect(hrefsUit(html)).toEqual([
       {
-        href: 'https://editor.coderius.nl/python/stap-4-venv#kop?x=1',
+        href: 'https://informatica.coderius.nl/editor/python/stap-4-venv#kop?x=1',
         site: 'editor',
         pad: '/python/stap-4-venv',
       },
@@ -43,19 +80,21 @@ describe('hrefsUit', () => {
 
 describe('hrefsUit — een pad zonder slash plakt aan de host vast', () => {
   it('meldt een host die met een registry-domein begint als misvormd', () => {
-    // <Voorkennis to: 'python/stap-1'> zonder slash geeft
-    // https://editor.coderius.nlpython/stap-1: geen bekend domein, dus de
-    // guard-tests én dit script zouden hem anders stil laten passeren.
-    const html = '<a href="https://editor.coderius.nlpython/stap-1-installeren">x</a>';
+    // Een SiteLink-pad zonder slash plakt aan de host vast, en een URL met de
+    // vak-host als prefix (informatica.coderius.nlpython) is geen bekend
+    // domein: de guard-tests én dit script zouden hem anders stil laten
+    // passeren.
+    const html = '<a href="https://informatica.coderius.nlpython/stap-1-installeren">x</a>';
     expect(hrefsUit(html)).toEqual([
       {
-        href: 'https://editor.coderius.nlpython/stap-1-installeren',
-        site: 'editor',
+        href: 'https://informatica.coderius.nlpython/stap-1-installeren',
+        site: 'home',
         pad: '/stap-1-installeren',
         misvormd: true,
       },
     ]);
     expect(hrefsUit('<a href="https://editor.coderius.nl.kwaad.nl/x">y</a>')).toHaveLength(1);
+    expect(hrefsUit('<a href="https://informatica.coderius.nl.kwaad.nl/x">y</a>')).toHaveLength(1);
   });
 });
 
@@ -84,17 +123,20 @@ describe('controleer over de fixture-builds', () => {
     expect([...builds.keys()].sort()).toEqual(['editor', 'fullstack']);
   });
 
-  it('meldt precies de link met /docs/ naar de editor als kapot', () => {
+  it('meldt de link met /docs/, de aangeplakte host en het oude subdomein als kapot', () => {
     const { kapot, gecontroleerd, overgeslagen } = controleer(builds);
     expect(kapot.map((k) => k.href)).toEqual([
-      'https://editor.coderius.nl/docs/python/stap-4-venv',
-      'https://editor.coderius.nlpython/stap-4-venv',
+      'https://informatica.coderius.nl/editor/docs/python/stap-4-venv',
+      'https://informatica.coderius.nlpython/stap-4-venv',
+      'https://editor.coderius.nl/python/stap-4-venv',
     ]);
     expect(kapot[0]).toMatchObject({ site: 'fullstack', doelSite: 'editor' });
     expect(kapot[0].bron.split('\\').join('/')).toBe('docs/FastAPI/installatie/index.html');
-    // Vier goede links plus de twee kapotte zijn gecontroleerd; de link naar
+    // Een oud subdomein is kapot, ook al bestaat het pad op de doelsite.
+    expect(kapot[2]).toMatchObject({ doelSite: 'editor', reden: 'oud domein' });
+    // Vier goede links plus de drie kapotte zijn gecontroleerd; de link naar
     // de niet-gebouwde python-site is overgeslagen, niet kapot.
-    expect(gecontroleerd).toBe(6);
+    expect(gecontroleerd).toBe(7);
     expect(overgeslagen).toBe(1);
   });
 });

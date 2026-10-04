@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { SITES_BY_ID } from '@coderius/shared/sites';
+import { SITES_BY_ID, siteDir } from '@coderius/shared/sites';
 import {
   alleLesbestanden,
   docsPrefix,
@@ -22,7 +22,7 @@ import { describe, expect, it } from 'vitest';
 // Toen deze test er kwam had algorithms 42 bestanden met blokken en geen
 // enkele controle erop.
 
-const SITES_ROOT = fileURLToPath(new URL('../../sites', import.meta.url));
+const ROOT = fileURLToPath(new URL('../..', import.meta.url)).replace(/[\\/]$/, '');
 
 // Niet elke site zet zijn lessen in docs/: robotica heeft lego_auto/ en
 // click_golfer/, algorithms heeft dev-docs/, editor heeft blog/. Daarom
@@ -44,7 +44,7 @@ function alleItems(): Vondst[] {
   const vondsten: Vondst[] = [];
 
   for (const site of Object.keys(SITES_BY_ID)) {
-    const siteMap = join(SITES_ROOT, site);
+    const siteMap = join(ROOT, siteDir(site));
     if (!existsSync(siteMap)) continue;
 
     for (const entry of readdirSync(siteMap, { withFileTypes: true })) {
@@ -57,7 +57,7 @@ function alleItems(): Vondst[] {
           vondsten.push({
             site,
             bestand: pad
-              .slice(SITES_ROOT.length + 1)
+              .slice(ROOT.length + 1)
               .split('\\')
               .join('/'),
             item,
@@ -91,7 +91,7 @@ describe('Voorkennis-blokken over alle sites', () => {
 
   it('elke doelpagina bestaat', () => {
     const kapot = vondsten
-      .filter((v) => !lesBestaat(SITES_ROOT, v.item.site, v.item.to))
+      .filter((v) => !lesBestaat(ROOT, v.item.site, v.item.to))
       .map((v) => `${v.bestand} -> ${v.item.site}${v.item.to}`);
 
     expect(kapot).toEqual([]);
@@ -113,8 +113,8 @@ describe('Voorkennis-blokken over alle sites', () => {
 
   it('vindt een verzonnen pad wél als kapot', () => {
     // De vorige test is alleen wat waard als lesBestaat ook nee kan zeggen.
-    expect(lesBestaat(SITES_ROOT, 'python', '/docs/basis/bestaat-niet')).toBe(false);
-    expect(lesBestaat(SITES_ROOT, 'bestaat-niet', '/docs/x/y')).toBe(false);
+    expect(lesBestaat(ROOT, 'python', '/docs/basis/bestaat-niet')).toBe(false);
+    expect(lesBestaat(ROOT, 'bestaat-niet', '/docs/x/y')).toBe(false);
   });
 
   it('kijkt naar hoe de doelsite zijn docs serveert, niet alleen of het bestand bestaat', () => {
@@ -122,21 +122,21 @@ describe('Voorkennis-blokken over alle sites', () => {
     // pad met /docs/ wijst daar naar een bestaand bestand maar een 404-URL; de
     // fullstack-installatiepagina had er drie en de guard keurde ze goed.
     // Andersom mist een pad zonder /docs/ op elke andere site.
-    expect(lesBestaat(SITES_ROOT, 'editor', '/docs/python/stap-4-venv')).toBe(false);
-    expect(lesBestaat(SITES_ROOT, 'editor', '/python/stap-4-venv')).toBe(true);
-    expect(lesBestaat(SITES_ROOT, 'python', '/basis/jij-als-variabele')).toBe(false);
-    expect(lesBestaat(SITES_ROOT, 'python', '/docs/basis/jij-als-variabele')).toBe(true);
+    expect(lesBestaat(ROOT, 'editor', '/docs/python/stap-4-venv')).toBe(false);
+    expect(lesBestaat(ROOT, 'editor', '/python/stap-4-venv')).toBe(true);
+    expect(lesBestaat(ROOT, 'python', '/basis/jij-als-variabele')).toBe(false);
+    expect(lesBestaat(ROOT, 'python', '/docs/basis/jij-als-variabele')).toBe(true);
     // didactiek serveert onder 'bronnen', niet onder 'docs'.
-    expect(lesBestaat(SITES_ROOT, 'didactiek', '/docs/cognitieve-belasting')).toBe(false);
-    expect(lesBestaat(SITES_ROOT, 'didactiek', '/bronnen/cognitieve-belasting')).toBe(true);
+    expect(lesBestaat(ROOT, 'didactiek', '/docs/cognitieve-belasting')).toBe(false);
+    expect(lesBestaat(ROOT, 'didactiek', '/bronnen/cognitieve-belasting')).toBe(true);
   });
 
   it('leest het docs-prefix per site uit de docusaurus-config', () => {
-    expect(docsPrefix(SITES_ROOT, 'editor')).toBe('');
-    expect(docsPrefix(SITES_ROOT, 'didactiek')).toBe('bronnen');
-    expect(docsPrefix(SITES_ROOT, 'python')).toBe('docs');
+    expect(docsPrefix(ROOT, 'editor')).toBe('');
+    expect(docsPrefix(ROOT, 'didactiek')).toBe('bronnen');
+    expect(docsPrefix(ROOT, 'python')).toBe('docs');
     // robotica heeft losse docs-plugins onder `plugins`; die tellen niet mee.
-    expect(docsPrefix(SITES_ROOT, 'robotica')).toBe('docs');
+    expect(docsPrefix(ROOT, 'robotica')).toBe('docs');
   });
 
   it('leest routeBasePath ook als er een genest object vóór staat', () => {
@@ -153,8 +153,8 @@ describe('Voorkennis-blokken over alle sites', () => {
 
   it('eist een slash vooraan: zonder slash wordt de host zelf kapot', () => {
     // De componenten plakken het pad achter de site-URL:
-    // 'python/stap-1' geeft https://editor.coderius.nlpython/stap-1.
-    expect(lesBestaat(SITES_ROOT, 'editor', 'python/stap-4-venv')).toBe(false);
-    expect(lesBestaat(SITES_ROOT, 'python', 'docs/basis/jij-als-variabele')).toBe(false);
+    // 'python/stap-1' geeft https://informatica.coderius.nl/editorpython/stap-1.
+    expect(lesBestaat(ROOT, 'editor', 'python/stap-4-venv')).toBe(false);
+    expect(lesBestaat(ROOT, 'python', 'docs/basis/jij-als-variabele')).toBe(false);
   });
 });

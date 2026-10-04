@@ -3,7 +3,7 @@ import { SITES_BY_ID } from '@coderius/shared/sites';
 
 // Het /import-contract met de Website-checker (de zender staat in
 // packages/checker/src/Checker/openInIde.ts). Dit zijn wire-waarden tussen twee
-// apart gedeployde sites (web.coderius.nl -> ide.coderius.nl): wie er één
+// apart gedeployde sites (/web/ -> /ide/ op de vak-host): wie er één
 // wijzigt, wijzigt ze aan beide kanten en deployt samen. Er is bewust geen
 // gedeelde constante — de tests hier en in openInIde.test.ts pinnen de
 // letterlijke strings, zodat een wijziging aan één kant niet stil blijft.
@@ -21,10 +21,13 @@ export interface ImportMessage {
 }
 
 // Alleen de checker zelf, of een lokale dev-server. Een exacte vergelijking
-// met de registry-URL: die moet dus origin-vormig zijn (schema + host, geen
-// slash erachter).
+// met de origin van de web-cursus uit de registry. Die cursus staat onder een
+// pad van de vak-host (https://informatica.coderius.nl/web/), en een origin
+// heeft geen pad: elke cursus van hetzelfde vak deelt deze origin.
+export const WEB_ORIGIN = new URL(SITES_BY_ID.web.url).origin;
+
 export function isAllowedOrigin(origin: string): boolean {
-  return origin === SITES_BY_ID.web.url || origin.startsWith('http://localhost:');
+  return origin === WEB_ORIGIN || origin.startsWith('http://localhost:');
 }
 
 // postMessage levert wat dan ook af (andere extensies, andere tabbladen), dus

@@ -17,7 +17,7 @@ const sidebarItemsGenerator: PluginOptions['sidebarItemsGenerator'] = async ({
 export default createConfig({
   title: 'Python Leren — Coderius',
   tagline: 'Leer stap voor stap programmeren in Python',
-  url: 'https://python.coderius.nl',
+  siteId: 'python',
   projectName: 'python-docs',
   matomoSiteId: 4,
   omleidingen,

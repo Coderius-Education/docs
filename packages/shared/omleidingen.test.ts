@@ -11,17 +11,19 @@ import omleidingenPlugin, { schrijfOmleidingen } from './plugins/omleidingen';
 describe('omleidingen', () => {
   it('schrijft op het oude adres een pagina die naar het nieuwe doorstuurt', () => {
     const uit = mkdtempSync(join(tmpdir(), 'omleiding-'));
+    // Zoals createConfig het zet: de vak-host als url, het pad van de cursus
+    // als baseUrl. De build zelf bevat dat pad niet.
     schrijfOmleidingen(
       uit,
-      '/',
+      '/python/',
       [{ van: '/docs/oud/les', naar: '/docs/nieuw/les' }],
-      'https://python.coderius.nl',
+      'https://informatica.coderius.nl',
     );
     const html = readFileSync(join(uit, 'docs/oud/les/index.html'), 'utf8');
-    expect(html).toContain('<meta http-equiv="refresh" content="0; url=/docs/nieuw/les">');
-    expect(html).toContain('location.replace("/docs/nieuw/les" + location.hash)');
+    expect(html).toContain('<meta http-equiv="refresh" content="0; url=/python/docs/nieuw/les">');
+    expect(html).toContain('location.replace("/python/docs/nieuw/les" + location.hash)');
     expect(html).toContain(
-      '<link rel="canonical" href="https://python.coderius.nl/docs/nieuw/les">',
+      '<link rel="canonical" href="https://informatica.coderius.nl/python/docs/nieuw/les">',
     );
     expect(html).toContain('<meta name="robots" content="noindex">');
   });
@@ -32,15 +34,15 @@ describe('omleidingen', () => {
     const uit = mkdtempSync(join(tmpdir(), 'omleiding-'));
     schrijfOmleidingen(
       uit,
-      '/',
+      '/robotica/',
       [{ van: '/click_golfer/hole-in-one', naar: '/click_golfer/hout#hole-in-one' }],
-      'https://robotica.coderius.nl',
+      'https://informatica.coderius.nl',
     );
     const html = readFileSync(join(uit, 'click_golfer/hole-in-one/index.html'), 'utf8');
-    expect(html).toContain('location.replace("/click_golfer/hout#hole-in-one");');
+    expect(html).toContain('location.replace("/robotica/click_golfer/hout#hole-in-one");');
     expect(html).not.toContain('location.hash');
     expect(html).toContain(
-      '<link rel="canonical" href="https://robotica.coderius.nl/click_golfer/hout">',
+      '<link rel="canonical" href="https://informatica.coderius.nl/robotica/click_golfer/hout">',
     );
   });
 

@@ -1,5 +1,6 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { join, relative } from 'node:path';
+import { alleSiteMappen } from '@coderius/shared/sites';
 import { describe, expect, it } from 'vitest';
 
 // Kleine vormregels die pnpm stijl niet ziet, omdat hij naar zinnen kijkt en
@@ -19,10 +20,10 @@ function lessen(map: string): string[] {
   });
 }
 
-const bestanden = readdirSync(join(ROOT, 'sites')).flatMap((site) =>
+const bestanden = alleSiteMappen().flatMap(({ dir }) =>
   ['docs', 'src/pages', 'lego_auto'].flatMap((sub) => {
     try {
-      return lessen(join(ROOT, 'sites', site, sub));
+      return lessen(join(ROOT, dir, sub));
     } catch {
       return [];
     }

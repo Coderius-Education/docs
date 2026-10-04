@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { SITES_BY_ID } from '@coderius/shared/sites';
+import { SITES_BY_ID, siteDir } from '@coderius/shared/sites';
 import { alleLesbestanden } from '@coderius/shared/voorkennis';
 import { describe, expect, it } from 'vitest';
 import { problemen } from './components/Voorspel/logica';
@@ -12,7 +12,7 @@ import { problemen } from './components/Voorspel/logica';
 // de pagina zie je dat pas als je de verkeerde knop indrukt, dus deze guard
 // leest de bron van elke les in elke site.
 
-const SITES_ROOT = fileURLToPath(new URL('../../sites', import.meta.url));
+const ROOT = fileURLToPath(new URL('../..', import.meta.url)).replace(/[\\/]$/, '');
 const OVERSLAAN = new Set([
   'node_modules',
   'build',
@@ -27,22 +27,22 @@ const OVERSLAAN = new Set([
 function alleLessen(): { site: string; bestand: string; pad: string }[] {
   const uit: { site: string; bestand: string; pad: string }[] = [];
   for (const site of Object.keys(SITES_BY_ID)) {
-    const siteMap = join(SITES_ROOT, site);
+    const siteMap = join(ROOT, siteDir(site));
     if (!existsSync(siteMap)) continue;
     for (const entry of readdirSync(siteMap, { withFileTypes: true })) {
       if (!entry.isDirectory() || OVERSLAAN.has(entry.name)) continue;
       for (const pad of alleLesbestanden(join(siteMap, entry.name))) {
         if (pad.split(/[\\/]/).some((deel) => OVERSLAAN.has(deel))) continue;
-        uit.push({ site, bestand: pad.slice(SITES_ROOT.length + 1).replace(/\\/g, '/'), pad });
+        uit.push({ site, bestand: pad.slice(ROOT.length + 1).replace(/\\/g, '/'), pad });
       }
     }
   }
   // De pagina's in src/pages (docenten.mdx en zo) tellen ook.
   for (const site of Object.keys(SITES_BY_ID)) {
-    const pages = join(SITES_ROOT, site, 'src', 'pages');
+    const pages = join(ROOT, siteDir(site), 'src', 'pages');
     if (!existsSync(pages)) continue;
     for (const pad of alleLesbestanden(pages))
-      uit.push({ site, bestand: pad.slice(SITES_ROOT.length + 1).replace(/\\/g, '/'), pad });
+      uit.push({ site, bestand: pad.slice(ROOT.length + 1).replace(/\\/g, '/'), pad });
   }
   return uit;
 }
@@ -257,7 +257,9 @@ Een kwart cirkel. Een halve cirkel is 180°, en 90° is daar de helft van.
 describe('<Voorspel> in de lessen', () => {
   it('staat in elk geval in de Click Golfer', () => {
     // Zonder vondsten zou de controle hieronder stil groen zijn.
-    expect(metVoorspel.some((l) => l.bestand.startsWith('robotica/click_golfer/'))).toBe(true);
+    expect(
+      metVoorspel.some((l) => l.bestand.startsWith('sites/informatica/robotica/click_golfer/')),
+    ).toBe(true);
   });
 
   it('heeft precies één goede keuze, minstens twee keuzes, en bij elke keuze een uitleg', () => {
@@ -285,7 +287,7 @@ describe('<Voorspel> in de lessen', () => {
     const sites = new Set(metVoorspel.map((l) => l.site));
     const zonder = [...sites].filter((site) => {
       const theme = ['tsx', 'ts', 'js', 'jsx']
-        .map((ext) => join(SITES_ROOT, site, 'src', 'theme', `MDXComponents.${ext}`))
+        .map((ext) => join(ROOT, siteDir(site), 'src', 'theme', `MDXComponents.${ext}`))
         .find((p) => existsSync(p));
       if (!theme) return true;
       const bron = readFileSync(theme, 'utf8');

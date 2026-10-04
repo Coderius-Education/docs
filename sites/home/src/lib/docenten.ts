@@ -1,7 +1,7 @@
 import { DOCENTEN_SITES, SITES_BY_ID, type Site, normalizeUrl } from '@coderius/shared/sites';
 import { type Activity, curriculum } from './Curriculum';
 
-// De docentenpagina koppelt elk subdomein aan zijn cursus én aan de
+// De docentenpagina koppelt elk cursusadres aan zijn cursus én aan de
 // docentenhandleiding die elke cursussite op /docenten heeft (schrijfgids
 // §15). Of die pagina's bestaan bewaakt docenten.test.ts vóór de build en de
 // CI-job cross-links erna, tegen de gebouwde sites.
@@ -11,9 +11,13 @@ export function docentenUrl(url: string): string {
   return `${normalizeUrl(url)}/docenten`;
 }
 
-/** Zichtbare hostnaam van een cursus-URL, voor in de tabel. */
+/**
+ * Zichtbaar adres van een cursus-URL, voor in de tabel: host plus pad, want
+ * een cursus staat onder het pad van zijn vak (informatica.coderius.nl/python).
+ */
 export function hostVan(url: string): string {
-  return new URL(url).host;
+  const { host, pathname } = new URL(url);
+  return host + pathname.replace(/\/+$/, '');
 }
 
 /**

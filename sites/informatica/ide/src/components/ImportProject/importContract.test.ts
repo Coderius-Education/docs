@@ -5,6 +5,7 @@ import {
   DEFAULT_PROJECT_NAME,
   MESSAGE_SOURCE,
   MESSAGE_TYPE,
+  WEB_ORIGIN,
   isAllowedOrigin,
   parseImportMessage,
   projectFromImport,
@@ -18,7 +19,7 @@ import {
 // vormcontrole letterlijk; de zender-kant staat in
 // packages/checker/src/Checker/openInIde.test.ts.
 
-const WEB = 'https://web.coderius.nl';
+const WEB = 'https://informatica.coderius.nl';
 
 function bericht(overrides: Record<string, unknown> = {}): Record<string, unknown> {
   return {
@@ -40,12 +41,14 @@ describe('het /import-contract — wire-waarden', () => {
 });
 
 describe('isAllowedOrigin', () => {
-  it('accepteert de checker uit de registry, en die URL is origin-vormig', () => {
-    // Een slash of pad achter de URL in sites.js zou de === stil laten
-    // mislukken: dan komt geen enkel project meer binnen.
-    expect(SITES_BY_ID.web.url).toBe(WEB);
-    expect(isAllowedOrigin(SITES_BY_ID.web.url)).toBe(true);
+  it('accepteert de checker uit de registry: de origin van de web-cursus', () => {
+    // De web-cursus staat onder een pad (…/web/); een browser stuurt alleen
+    // de origin mee. Een === tegen de volledige URL zou stil mislukken: dan
+    // komt geen enkel project meer binnen.
+    expect(SITES_BY_ID.web.url).toBe(`${WEB}/web/`);
+    expect(WEB_ORIGIN).toBe(WEB);
     expect(isAllowedOrigin(WEB)).toBe(true);
+    expect(isAllowedOrigin(SITES_BY_ID.web.url)).toBe(false);
   });
 
   it('accepteert een lokale dev-server op een poort', () => {
@@ -54,8 +57,9 @@ describe('isAllowedOrigin', () => {
 
   it.each([
     `${WEB}/`,
-    'http://web.coderius.nl',
-    'https://web.coderius.nl.kwaad.nl',
+    'http://informatica.coderius.nl',
+    'https://informatica.coderius.nl.kwaad.nl',
+    'https://web.coderius.nl',
     'https://kwaad.nl',
     'null',
     'http://localhost',

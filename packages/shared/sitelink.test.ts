@@ -1,8 +1,14 @@
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { SITES_BY_ID } from '@coderius/shared/sites';
-import { alleLesbestanden, lesBestaat, segmentenNaPrefix } from '@coderius/shared/voorkennis';
+import { SITES_BY_ID, siteDir } from '@coderius/shared/sites';
+import {
+  alleLesbestanden,
+  lesBestaat,
+  mapVanSite,
+  segmentenNaPrefix,
+  siteMappenOpSchijf,
+} from '@coderius/shared/voorkennis';
 import { describe, expect, it } from 'vitest';
 
 // <SiteLink> is de vooruitwijzende tegenhanger van <Voorkennis>: een inline
@@ -10,7 +16,7 @@ import { describe, expect, it } from 'vitest';
 // die links buiten de linkcheck van `pnpm build` — een hernoemde pagina op de
 // doelsite breekt ze pas in productie. Vandaar dezelfde monorepo-brede guard.
 
-const SITES_ROOT = fileURLToPath(new URL('../../sites', import.meta.url));
+const ROOT = fileURLToPath(new URL('../..', import.meta.url));
 
 const OVERSLAAN = new Set([
   'node_modules',
@@ -25,21 +31,12 @@ const SITELINK_RE = /<SiteLink\s+site="(\w+)"\s+to="([^"]*)"\s*>/g;
 
 type Vondst = { bestand: string; site: string; to: string };
 
-/** Elke map onder sites/, ook sites die (nog) niet in de registry staan. */
-function alleSiteMappen(): string[] {
-  return readdirSync(SITES_ROOT, { withFileTypes: true })
-    .filter((e) => e.isDirectory() && !OVERSLAAN.has(e.name))
-    .map((e) => e.name)
-    .sort();
-}
-
 // Bewust over alle mappen, niet over de registry: een site die daar niet in
 // staat (didactiek) verwijst óók naar andere cursussen, en juist die links
 // zouden anders stil buiten deze guard vallen.
 function alleBronbestanden(): string[] {
   const paden: string[] = [];
-  for (const site of alleSiteMappen()) {
-    const siteMap = join(SITES_ROOT, site);
+  for (const { map: siteMap } of siteMappenOpSchijf(ROOT)) {
     for (const entry of readdirSync(siteMap, { withFileTypes: true })) {
       if (!entry.isDirectory() || OVERSLAAN.has(entry.name)) continue;
       for (const pad of alleLesbestanden(join(siteMap, entry.name))) {
@@ -56,10 +53,7 @@ function alleGebruik(): Vondst[] {
   for (const pad of alleBronbestanden()) {
     for (const m of readFileSync(pad, 'utf8').matchAll(SITELINK_RE)) {
       vondsten.push({
-        bestand: pad
-          .slice(SITES_ROOT.length + 1)
-          .split('\\')
-          .join('/'),
+        bestand: relative(ROOT, pad).split('\\').join('/'),
         site: m[1],
         to: m[2],
       });
@@ -75,7 +69,7 @@ function alleGebruik(): Vondst[] {
  * src/pages wijzen.
  */
 function doelBestaat(site: string, to: string): boolean {
-  const siteMap = join(SITES_ROOT, site);
+  const siteMap = mapVanSite(ROOT, site);
   if (!existsSync(siteMap)) return false;
 
   // Zonder slash vooraan plakt de component het pad aan de host vast.
@@ -83,13 +77,13 @@ function doelBestaat(site: string, to: string): boolean {
   const zonder = to.replace(/\/+$/, '');
   if (zonder === '') return true; // de site-root bestaat altijd
 
-  if (lesBestaat(SITES_ROOT, site, zonder)) return true;
+  if (lesBestaat(ROOT, site, zonder)) return true;
 
   // Dezelfde prefix-regel als lesBestaat, uit dezelfde helper: alleen een
   // pad dat onder het docs-prefix van de doelsite valt komt in aanmerking
   // voor een categorie-index. Past het pad daar niet bij (null), dan blijft
   // alleen de src/pages-route over, en die kijkt naar het ruwe pad.
-  const segmenten = segmentenNaPrefix(SITES_ROOT, site, zonder) ?? [];
+  const segmenten = segmentenNaPrefix(ROOT, site, zonder) ?? [];
 
   // Categorie-index onder docs/: elk segment een map (numeriek prefix mag
   // wegvallen, net als bij lesBestaat), de laatste met een index-pagina.
@@ -129,12 +123,12 @@ describe('SiteLink-verwijzingen over alle sites', () => {
   it('vindt überhaupt verwijzingen om te controleren', () => {
     // Een kapotte regex of walk zou de tests hieronder leeg en groen laten.
     expect(gebruik.length).toBeGreaterThan(10);
-    expect(new Set(gebruik.map((v) => v.bestand.split('/')[0])).size).toBeGreaterThan(3);
+    expect(new Set(gebruik.map((v) => v.bestand.split('/')[2])).size).toBeGreaterThan(3);
   });
 
-  it('elke registry-id heeft een map onder sites/', () => {
+  it('elke registry-id heeft een map onder sites/<vak>/', () => {
     // Een hernoemde sitemap zou de scan van die site anders stil overslaan.
-    const zonderMap = Object.keys(SITES_BY_ID).filter((id) => !existsSync(join(SITES_ROOT, id)));
+    const zonderMap = Object.keys(SITES_BY_ID).filter((id) => !existsSync(join(ROOT, siteDir(id))));
     expect(zonderMap).toEqual([]);
   });
 
@@ -182,10 +176,7 @@ describe('geen hardcoded cursus-URL in lestekst', () => {
     const fout: string[] = [];
 
     for (const pad of alleBronbestanden()) {
-      const kort = pad
-        .slice(SITES_ROOT.length + 1)
-        .split('\\')
-        .join('/');
+      const kort = relative(ROOT, pad).split('\\').join('/');
       if (UITZONDERINGEN.includes(kort)) continue;
       readFileSync(pad, 'utf8')
         .split('\n')
@@ -200,7 +191,7 @@ describe('geen hardcoded cursus-URL in lestekst', () => {
   it('de uitzonderingenlijst bevat geen dode paden', () => {
     // Anders blijft een uitzondering bestaan nadat het bestand verdween en
     // dekt hij ooit stilletjes een nieuw bestand met dezelfde naam.
-    const dood = UITZONDERINGEN.filter((p) => !existsSync(join(SITES_ROOT, p)));
+    const dood = UITZONDERINGEN.filter((p) => !existsSync(join(ROOT, p)));
     expect(dood).toEqual([]);
   });
 });

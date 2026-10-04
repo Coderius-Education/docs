@@ -3,7 +3,7 @@ import { createConfig } from '@coderius/shared/config';
 export default createConfig({
   title: 'Online Editor — Coderius',
   tagline: 'Schrijf en draai code direct in je browser',
-  url: 'https://ide.coderius.nl',
+  siteId: 'ide',
   projectName: 'ide',
   matomoSiteId: 15,
 

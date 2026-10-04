@@ -9,6 +9,41 @@
 
 const { existsSync, readFileSync, readdirSync } = require('node:fs');
 const { join } = require('node:path');
+const { SITES_BY_ID, SUBJECTS, HOME, siteDir } = require('./sites');
+
+/**
+ * Elke site-map op schijf, ook een die (nog) niet in de registry staat: alles
+ * onder sites/<vak>/ voor elk vak, plus sites/home. Voor de guard-tests die
+ * bewust over de mappen lopen en niet over de registry, zodat een site die
+ * nergens geregistreerd is toch gecontroleerd wordt.
+ *
+ * @param {string} root de repo-root
+ * @returns {{ id: string, map: string }[]} gesorteerd op id; `map` is absoluut
+ */
+function siteMappenOpSchijf(root) {
+  const uit = [];
+  for (const vak of SUBJECTS) {
+    const vakMap = join(root, 'sites', vak.id);
+    if (!existsSync(vakMap)) continue;
+    for (const e of readdirSync(vakMap, { withFileTypes: true })) {
+      if (e.isDirectory() && !e.name.startsWith('.') && e.name !== 'node_modules') {
+        uit.push({ id: e.name, map: join(vakMap, e.name) });
+      }
+    }
+  }
+  const home = join(root, siteDir(HOME.id));
+  if (existsSync(home)) uit.push({ id: HOME.id, map: home });
+  return uit.sort((a, b) => a.id.localeCompare(b.id));
+}
+
+/**
+ * Map van een site, gerekend vanaf de repo-root: sites/<vak>/<id> volgens de
+ * registry. Een onbekend id geeft een map die niet bestaat, zodat de
+ * controles gewoon "nee" zeggen in plaats van te gooien.
+ */
+function mapVanSite(root, site) {
+  return SITES_BY_ID[site] ? join(root, siteDir(site)) : join(root, 'sites', '_onbekend', site);
+}
 
 // Items staan letterlijk in deze vorm in de bron, dus een regex volstaat.
 // Het label mag tussen enkele of dubbele quotes staan: een label met een
@@ -73,12 +108,12 @@ function routeBasePathUit(configTekst) {
 }
 
 const prefixCache = new Map();
-function docsPrefix(sitesRoot, site) {
-  const sleutel = `${sitesRoot}|${site}`;
+function docsPrefix(root, site) {
+  const sleutel = `${root}|${site}`;
   if (prefixCache.has(sleutel)) return prefixCache.get(sleutel);
   let prefix = 'docs';
   for (const naam of ['docusaurus.config.ts', 'docusaurus.config.js']) {
-    const pad = join(sitesRoot, site, naam);
+    const pad = join(mapVanSite(root, site), naam);
     if (!existsSync(pad)) continue;
     prefix = routeBasePathUit(readFileSync(pad, 'utf8'));
     break;
@@ -92,14 +127,14 @@ function docsPrefix(sitesRoot, site) {
  * niet bij die site past: geen slash vooraan (de componenten plakken het pad
  * achter de site-URL, dus zonder slash wordt de host zelf kapot), /docs op een
  * site die op de root serveert, of een ander eerste segment dan het prefix.
- * @param {string} sitesRoot
+ * @param {string} root de repo-root
  * @param {string} site
  * @param {string} to
  * @returns {string[] | null}
  */
-function segmentenNaPrefix(sitesRoot, site, to) {
+function segmentenNaPrefix(root, site, to) {
   if (!to.startsWith('/')) return null;
-  const prefix = docsPrefix(sitesRoot, site);
+  const prefix = docsPrefix(root, site);
   const alle = to.split('/').filter(Boolean);
   if (prefix === '') return alle[0] === 'docs' ? null : alle;
   return alle[0] === prefix ? alle.slice(1) : null;
@@ -114,19 +149,20 @@ function segmentenNaPrefix(sitesRoot, site, to) {
  * Een slug in de frontmatter wint van de bestandsnaam; die is relatief aan
  * de routeBasePath, dus vergelijken we hem met het pad ná /docs.
  *
- * @param sitesRoot map met alle sites (de `sites/`-map)
+ * @param root de repo-root; de map van de site komt uit de registry
+ *   (sites/<vak>/<id>)
  * @param site site-id, bijvoorbeeld 'python' of 'web'
  * @param to pad zoals het in het Voorkennis-item staat, met /docs-prefix
  */
-function lesBestaat(sitesRoot, site, to) {
-  const docsMap = join(sitesRoot, site, 'docs');
+function lesBestaat(root, site, to) {
+  const docsMap = join(mapVanSite(root, site), 'docs');
   if (!existsSync(docsMap)) return false;
 
   // Het pad moet passen bij hoe de doelsite zijn docs serveert. De
   // fullstack-installatiepagina wees met /docs/python/… naar de editor-cursus:
   // het bestand bestond, de URL niet. Op de root (prefix '') mag het pad niet
   // met /docs beginnen; elders moet het eerste segment het prefix zijn.
-  const segmenten = segmentenNaPrefix(sitesRoot, site, to);
+  const segmenten = segmentenNaPrefix(root, site, to);
   if (!segmenten || segmenten.length === 0) return false;
 
   // Alle segmenten op één na zijn mappen; het laatste is de pagina.
@@ -163,4 +199,6 @@ module.exports = {
   docsPrefix,
   routeBasePathUit,
   segmentenNaPrefix,
+  mapVanSite,
+  siteMappenOpSchijf,
 };

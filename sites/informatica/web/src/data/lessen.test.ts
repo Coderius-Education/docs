@@ -1,6 +1,7 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { siteDir } from '@coderius/shared/sites';
 import { lesBestaat } from '@coderius/shared/voorkennis';
 import { describe, expect, it, vi } from 'vitest';
 import sidebars from '../../sidebars';
@@ -18,8 +19,9 @@ const { jsLessons } = await import('./jsLessons');
 // React-component, geen Markdown-link, dus de linkcheck van `pnpm build`
 // ziet hem niet. De Code.org-URL's zijn extern en worden nergens gecheckt.
 
-const SITES_ROOT = fileURLToPath(new URL('../../..', import.meta.url));
-const DOCS = join(SITES_ROOT, 'web', 'docs');
+// De repo-root: lesBestaat zoekt de map van een site zelf op in de registry.
+const ROOT = fileURLToPath(new URL('../../../../..', import.meta.url));
+const DOCS = join(ROOT, siteDir('web'), 'docs');
 const JS_LESSONS_BRON = fileURLToPath(new URL('./jsLessons.ts', import.meta.url));
 
 describe('codeorg.ts', () => {
@@ -32,7 +34,7 @@ describe('codeorg.ts', () => {
 
   it('elke route wijst naar een bestaande les onder docs/html-css', () => {
     const kapot = codeorgUnit1
-      .filter((l) => !lesBestaat(SITES_ROOT, 'web', l.to))
+      .filter((l) => !lesBestaat(ROOT, 'web', l.to))
       .map((l) => `${l.slug} -> ${l.to}`);
     expect(kapot).toEqual([]);
   });
@@ -75,7 +77,7 @@ describe('jsLessons.ts', () => {
   });
 
   it('elke route wijst naar een bestaande les', () => {
-    const kapot = jsLessons.filter((l) => !lesBestaat(SITES_ROOT, 'web', l.to)).map((l) => l.to);
+    const kapot = jsLessons.filter((l) => !lesBestaat(ROOT, 'web', l.to)).map((l) => l.to);
     expect(kapot).toEqual([]);
   });
 
@@ -105,7 +107,7 @@ describe('jsLessons.ts', () => {
   });
 
   it('de lescontrole herkent een verzonnen pad wél als kapot', () => {
-    expect(lesBestaat(SITES_ROOT, 'web', '/docs/js-basics/bestaat-niet')).toBe(false);
-    expect(lesBestaat(SITES_ROOT, 'web', '/docs/html-css/intro-html')).toBe(true);
+    expect(lesBestaat(ROOT, 'web', '/docs/js-basics/bestaat-niet')).toBe(false);
+    expect(lesBestaat(ROOT, 'web', '/docs/html-css/intro-html')).toBe(true);
   });
 });

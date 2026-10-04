@@ -4,7 +4,7 @@ import { REPO_URL, repoEditUrl } from '@coderius/shared/sites';
 export default createConfig({
   title: 'DVWA Websecurity — Coderius',
   tagline: 'Oefen websecurity met DVWA direct in je browser',
-  url: 'https://dvwa.coderius.nl',
+  siteId: 'dvwa',
   projectName: 'DVWA',
   matomoSiteId: 10,
 

@@ -13,8 +13,9 @@ import { describe, expect, it } from 'vitest';
 // fullstack.
 
 const GODOT_DOCS = fileURLToPath(new URL('../../docs', import.meta.url));
-const SITES_ROOT = fileURLToPath(new URL('../../..', import.meta.url));
-const SITES_JS = fileURLToPath(new URL('../../../../packages/shared/sites.js', import.meta.url));
+// De repo-root: lesBestaat zoekt de map van een site zelf op in de registry.
+const ROOT = fileURLToPath(new URL('../../../../..', import.meta.url));
+const SITES_JS = fileURLToPath(new URL('../../../../../packages/shared/sites.js', import.meta.url));
 
 type Item = { site: string; to: string; label: string };
 
@@ -154,7 +155,7 @@ describe('godot Voorkennis naar de python-cursus', () => {
     const kapot: string[] = [];
     for (const [les, items] of voorkennisPerLes()) {
       for (const item of items) {
-        if (!lesBestaat(SITES_ROOT, item.site, item.to)) {
+        if (!lesBestaat(ROOT, item.site, item.to)) {
           kapot.push(`${les} -> ${item.site}:${item.to}`);
         }
       }
@@ -165,9 +166,9 @@ describe('godot Voorkennis naar de python-cursus', () => {
   it('de URL-vertaling herkent een niet-bestaande les als kapot', () => {
     // Zonder deze check zou een lesBestaat die altijd true geeft de hele
     // suite stil groen laten.
-    expect(lesBestaat(SITES_ROOT, 'python', '/docs/basis/bestaat-niet')).toBe(false);
-    expect(lesBestaat(SITES_ROOT, 'python', '/docs/bestaat-niet/jij-als-variabele')).toBe(false);
-    expect(lesBestaat(SITES_ROOT, 'python', '/docs/basis/jij-als-variabele')).toBe(true);
+    expect(lesBestaat(ROOT, 'python', '/docs/basis/bestaat-niet')).toBe(false);
+    expect(lesBestaat(ROOT, 'python', '/docs/bestaat-niet/jij-als-variabele')).toBe(false);
+    expect(lesBestaat(ROOT, 'python', '/docs/basis/jij-als-variabele')).toBe(true);
   });
 
   it('de registry noemt python als voorkennis van godot', () => {

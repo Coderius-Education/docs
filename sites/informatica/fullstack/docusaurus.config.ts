@@ -4,7 +4,7 @@ import { REPO_URL, repoEditUrl } from '@coderius/shared/sites';
 export default createConfig({
   title: 'Fullstack met FastAPI — Coderius',
   tagline: 'Leer hier een Python back-end toe te voegen aan je website',
-  url: 'https://fullstack.coderius.nl',
+  siteId: 'fullstack',
   projectName: 'fullstack-docs',
   matomoSiteId: 11,
 

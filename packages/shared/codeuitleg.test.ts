@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { SITES_BY_ID } from '@coderius/shared/sites';
+import { SITES_BY_ID, siteDir } from '@coderius/shared/sites';
 import { alleLesbestanden } from '@coderius/shared/voorkennis';
 import { describe, expect, it } from 'vitest';
 
@@ -15,7 +15,7 @@ import { describe, expect, it } from 'vitest';
 // component staat in packages/shared en wordt inmiddels door meer dan één
 // cursus gebruikt. Een per-site test zou de tweede gebruiker stil overslaan.
 
-const SITES_ROOT = fileURLToPath(new URL('../../sites', import.meta.url));
+const ROOT = fileURLToPath(new URL('../..', import.meta.url)).replace(/[\\/]$/, '');
 const OVERSLAAN = new Set([
   'node_modules',
   'build',
@@ -29,7 +29,7 @@ const OVERSLAAN = new Set([
 function alleLessen(): { bestand: string; pad: string }[] {
   const uit: { bestand: string; pad: string }[] = [];
   for (const site of Object.keys(SITES_BY_ID)) {
-    const siteMap = join(SITES_ROOT, site);
+    const siteMap = join(ROOT, siteDir(site));
     if (!existsSync(siteMap)) continue;
     for (const entry of readdirSync(siteMap, { withFileTypes: true })) {
       if (!entry.isDirectory() || OVERSLAAN.has(entry.name)) continue;
@@ -37,7 +37,7 @@ function alleLessen(): { bestand: string; pad: string }[] {
         if (pad.split(/[\\/]/).some((deel) => OVERSLAAN.has(deel))) continue;
         uit.push({
           bestand: pad
-            .slice(SITES_ROOT.length + 1)
+            .slice(ROOT.length + 1)
             .split('\\')
             .join('/'),
           pad,

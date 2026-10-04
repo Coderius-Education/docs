@@ -14,8 +14,9 @@ import { describe, expect, it } from 'vitest';
 // dezelfde mapconventie; die verschillen zitten in de gedeelde helper.
 
 const FULLSTACK_DOCS = fileURLToPath(new URL('../../docs', import.meta.url));
-const SITES_ROOT = fileURLToPath(new URL('../../..', import.meta.url));
-const SITES_JS = fileURLToPath(new URL('../../../../packages/shared/sites.js', import.meta.url));
+// De repo-root: lesBestaat zoekt de map van een site zelf op in de registry.
+const ROOT = fileURLToPath(new URL('../../../../..', import.meta.url));
+const SITES_JS = fileURLToPath(new URL('../../../../../packages/shared/sites.js', import.meta.url));
 
 type Item = { site: string; to: string; label: string };
 
@@ -193,7 +194,7 @@ describe('fullstack Voorkennis-blokken', () => {
     const kapot: string[] = [];
     for (const [les, items] of voorkennisPerLes()) {
       for (const item of items) {
-        if (!lesBestaat(SITES_ROOT, item.site, item.to)) {
+        if (!lesBestaat(ROOT, item.site, item.to)) {
           kapot.push(`${les} -> ${item.site}:${item.to}`);
         }
       }
@@ -204,14 +205,14 @@ describe('fullstack Voorkennis-blokken', () => {
   it('de URL-vertaling herkent een niet-bestaande les als kapot', () => {
     // Zonder deze check zou een lesBestaat die altijd true geeft de hele
     // suite stil groen laten.
-    expect(lesBestaat(SITES_ROOT, 'python', '/docs/basis/jij-als-variabele')).toBe(true);
-    expect(lesBestaat(SITES_ROOT, 'web', '/docs/html-css/intro-html')).toBe(true);
+    expect(lesBestaat(ROOT, 'python', '/docs/basis/jij-als-variabele')).toBe(true);
+    expect(lesBestaat(ROOT, 'web', '/docs/html-css/intro-html')).toBe(true);
     // De editor-cursus serveert zijn docs op de root: zónder /docs/.
-    expect(lesBestaat(SITES_ROOT, 'editor', '/python/stap-4-venv')).toBe(true);
-    expect(lesBestaat(SITES_ROOT, 'editor', '/docs/python/stap-4-venv')).toBe(false);
-    expect(lesBestaat(SITES_ROOT, 'python', '/docs/basis/bestaat-niet')).toBe(false);
-    expect(lesBestaat(SITES_ROOT, 'web', '/docs/bestaat-niet/intro-html')).toBe(false);
-    expect(lesBestaat(SITES_ROOT, 'bestaat-niet', '/docs/x/y')).toBe(false);
+    expect(lesBestaat(ROOT, 'editor', '/python/stap-4-venv')).toBe(true);
+    expect(lesBestaat(ROOT, 'editor', '/docs/python/stap-4-venv')).toBe(false);
+    expect(lesBestaat(ROOT, 'python', '/docs/basis/bestaat-niet')).toBe(false);
+    expect(lesBestaat(ROOT, 'web', '/docs/bestaat-niet/intro-html')).toBe(false);
+    expect(lesBestaat(ROOT, 'bestaat-niet', '/docs/x/y')).toBe(false);
   });
 
   it('elke gebruikte site staat in de registry', () => {

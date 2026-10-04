@@ -4,7 +4,7 @@ import { REPO_URL, repoEditUrl } from '@coderius/shared/sites';
 export default createConfig({
   title: 'Webontwikkeling — Coderius',
   tagline: 'leer hier je eerste website te maken',
-  url: 'https://web.coderius.nl',
+  siteId: 'web',
   projectName: 'web-docs',
   matomoSiteId: 3,
 
