@@ -40,6 +40,22 @@ van de routing) en door de CI-job `cross-links`, die na de builds elke href in d
 gebouwde HTML tegen de build van de doelsite legt (de waarheid). Lokaal:
 `pnpm cross-links` na `pnpm build`.
 
+## Incrementele CI
+
+CI doet alleen wat een wijziging raakt. De job `plan` draait
+`scripts/wijzigingen.mjs` (logica en tests in
+`packages/shared/wijzigingen.js`) en schrijft `changed.json`: per bestand de
+gewijzigde regels, de geraakte sites (pnpm `--filter "...[<base>]"`, dus ook
+sites die van een gewijzigd package afhangen) en welke jobs draaien. De
+build-matrix bevat alleen geraakte sites; `cross-links` haalt de rest uit de
+cache (`scripts/site-hash.mjs`, job `voorraad`). De blokrunners krijgen
+`--alleen changed.json` en doen alleen de blokken op gewijzigde regels plus
+wat erop doorbouwt (`draaien-met`); de tekstcontrole krijgt `--regels`. Een
+globaal bestand (lockfile, root-config, `.github/`, de registry) of de
+nachtelijke run draait alles. Een nieuwe runner of een nieuw bestand dat een
+job leest: zet het in `RUNNERS`, `PER_JOB` of `GLOBAAL` in
+`wijzigingen.js`, anders slaat CI hem stil over.
+
 ## Een les verhuizen
 
 Een les die een ander adres krijgt (nieuwe map, nieuw nummer) laat oude links
