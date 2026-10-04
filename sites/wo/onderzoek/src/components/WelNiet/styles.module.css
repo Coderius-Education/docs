@@ -1,0 +1,47 @@
+.blok {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin: 1.25rem 0;
+}
+
+@media (max-width: 700px) {
+  .blok {
+    grid-template-columns: 1fr;
+  }
+}
+
+.kolom {
+  border-radius: var(--ifm-global-radius);
+  padding: 0.8rem 1rem;
+  font-size: 0.92rem;
+}
+
+.kolom p {
+  margin: 0;
+}
+
+.kop {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+  font-size: 0.85rem;
+}
+
+.wel {
+  background: var(--ifm-color-success-contrast-background);
+  border: 1px solid var(--ifm-color-success-dark);
+}
+
+.wel .kop {
+  color: var(--ifm-color-success-darkest);
+}
+
+.niet {
+  background: var(--ifm-color-danger-contrast-background);
+  border: 1px solid var(--ifm-color-danger-dark);
+}
+
+.niet .kop {
+  color: var(--ifm-color-danger-darkest);
+}

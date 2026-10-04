@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { ExternalLink } from "@lucide/svelte";
-	import { type Activity, curriculum } from "$lib/Curriculum";
+	import type { Activity } from "$lib/Curriculum";
 	import { type CardChip, buildCardChipGroups } from "$lib/ExamProgram";
-	import { HULPMIDDELEN, docentenCursussen, hostVan } from "$lib/docenten";
+	import { HULPMIDDELEN, examenCursussen, hostVan } from "$lib/docenten";
 	import { Badge } from "$lib/components/ui/badge";
 	import * as Card from "$lib/components/ui/card/index.js";
 	import { cn } from "$lib/utils";
@@ -29,7 +29,8 @@
 
 	// Filteren op id, niet op titel: de titels komen uit de registry en mogen
 	// daar veranderen zonder dat deze pagina stil een cursus kwijtraakt.
-	const rijen = $derived(docentenCursussen.filter(matchesFilters));
+	// Alleen informatica: het examenprogramma is dat van informatica.
+	const rijen = $derived(examenCursussen.filter(matchesFilters));
 
 	function handleFilterChange(newFilters: {
 		programmingLanguages: string[];
@@ -65,7 +66,7 @@
 	{/if}
 {/snippet}
 
-<main class="mx-auto max-w-7xl px-4">
+<main class="mx-auto max-w-[100rem] px-4">
 	<section class="pt-6 pb-4">
 		<h1 class="text-2xl font-bold tracking-tight sm:text-3xl">Examenprogramma</h1>
 		<p class="mt-1 max-w-3xl text-muted-foreground">
@@ -79,7 +80,7 @@
 	<DocentTabs />
 
 	<FilterPanel
-		activities={curriculum}
+		activities={examenCursussen}
 		{selectedFilters}
 		onFilterChange={handleFilterChange}
 		showExamDomains

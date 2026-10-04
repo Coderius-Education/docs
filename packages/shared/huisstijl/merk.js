@@ -118,6 +118,9 @@ const GLYPHS = {
       '<rect x="-4.5" y="-3.5" width="9" height="1.4" rx="0.7"/><rect x="-4.5" y="-0.5" width="5.5" height="1.4" rx="0.7"/>',
     ],
   ],
+  loep: [
+    ['lijn', '<circle cx="-1.5" cy="-1.5" r="4.6"/><path d="M2 2l4.8 4.8" stroke-width="3"/>'],
+  ],
 };
 
 // Midden van de rechterbladzijde.

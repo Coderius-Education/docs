@@ -1,0 +1,64 @@
+.wrapper {
+  position: relative;
+  display: inline;
+}
+
+.term {
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1.5px;
+}
+
+.tooltip {
+  /* display:none in plaats van visibility:hidden: een verborgen maar wél
+     gepositioneerd kader telt mee voor de breedte van de pagina en gaf op
+     smalle schermen horizontale scroll. */
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  width: max-content;
+  max-width: min(320px, 80vw);
+  padding: 0.6rem 0.8rem;
+  border-radius: var(--ifm-global-radius);
+  background: var(--ifm-color-emphasis-900);
+  color: var(--ifm-color-emphasis-0);
+  font-size: 0.82rem;
+  font-weight: 400;
+  font-style: normal;
+  line-height: 1.45;
+  text-align: left;
+  box-shadow: var(--ifm-global-shadow-md);
+  pointer-events: none;
+}
+
+.wrapper:hover .tooltip,
+.wrapper:focus-within .tooltip {
+  display: block;
+  animation: tooltipIn 0.15s ease 0.1s both;
+}
+
+@keyframes tooltipIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wrapper:hover .tooltip,
+  .wrapper:focus-within .tooltip {
+    animation: none;
+  }
+}
+
+.meer {
+  display: block;
+  margin-top: 0.25rem;
+  opacity: 0.75;
+  font-size: 0.78rem;
+}
