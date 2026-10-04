@@ -65,11 +65,44 @@ function code(bestand: string): string {
 
 const PAGINA = tekst('oefenen.md');
 
+// De pagina heeft drie delen (##), en daarin de oefeningen (###).
+const DELEN = ['## Een tweede sensor', '## Een tweede servo', "## Twee sensoren en twee servo's"];
+
 // Per oefening: welk programma erbij hoort (op volgorde van de pagina).
 function oefeningen(): { kop: string; inhoud: string }[] {
-  return PAGINA.split(/^(?=## )/m)
-    .filter((stuk) => stuk.startsWith('## Oefening'))
+  return PAGINA.split(/^(?=#{2,3} )/m)
+    .filter((stuk) => stuk.startsWith('### Oefening'))
     .map((stuk) => ({ kop: stuk.split('\n')[0], inhoud: stuk }));
+}
+
+// Een deel loopt van zijn kop tot de volgende ##-kop.
+function deel(kop: string): string {
+  const begin = PAGINA.indexOf(`${kop}\n`);
+  if (begin === -1) return '';
+  const rest = PAGINA.slice(begin + kop.length);
+  const eind = rest.search(/^## /m);
+  return kop + (eind === -1 ? rest : rest.slice(0, eind));
+}
+
+function aansluittabel(inhoud: string): string {
+  return inhoud
+    .split('\n')
+    .filter((regel) => regel.startsWith('|'))
+    .join('\n');
+}
+
+// Welke sensoren en servo's een programma echt gebruikt, uit de code die
+// Easybloqs ervan maakt.
+function pinnen(bestand: string): { sensoren: Set<string>; servos: Set<string> } {
+  const c = code(bestand);
+  return {
+    sensoren: new Set([...c.matchAll(/analogRead\((A\d)\)/g)].map((m) => m[1])),
+    servos: new Set([...c.matchAll(/myServo(\d+)\.attach/g)].map((m) => m[1])),
+  };
+}
+
+function programmasIn(inhoud: string): string[] {
+  return [...inhoud.matchAll(/programma=\{(\w+)\}/g)].map((m) => bestandVan(inhoud, m[1]));
 }
 
 function bestandVan(inhoud: string, naam: string): string {
@@ -172,8 +205,17 @@ describe('elke oefening voegt hooguit één nieuw blok toe', () => {
     'controls_if+anders': ['Denk stappen', 'als … dan … anders'],
   };
 
-  it('vindt zes oefeningen', () => {
-    expect(oefeningen().map((o) => o.kop)).toHaveLength(6);
+  it('vindt acht oefeningen, doorgenummerd', () => {
+    expect(oefeningen().map((o) => o.kop.match(/^### Oefening (\d+):/)?.[1])).toEqual([
+      '1',
+      '2',
+      '3',
+      '4',
+      '5',
+      '6',
+      '7',
+      '8',
+    ]);
   });
 
   it('en noemt bij het nieuwe blok de groep', () => {
@@ -203,14 +245,97 @@ describe('elke oefening voegt hooguit één nieuw blok toe', () => {
     expect([...bekend]).toEqual(expect.arrayContaining(Object.keys(NIEUW)));
   });
 
-  it('elke oefening heeft een tip en een antwoord met blokken', () => {
+  it('elke oefening heeft een tip en een antwoord met blokken, of een voorspelling bij het programma', () => {
+    // De kleine eerste stap van een deel verandert één pin in een programma
+    // dat de leerling al heeft. Daar is niets te puzzelen; de leerling
+    // voorspelt wat er gebeurt, en kijkt dat na op zijn robot.
     const zonder = oefeningen()
       .filter(({ inhoud }) => {
         const tip = /<summary>Tip<\/summary>/.test(inhoud);
         const antwoord = /<summary>Antwoord<\/summary>\s*<Blokken programma=/.test(inhoud);
-        return !tip || !antwoord;
+        const voorspel = /<Blokken programma=[\s\S]*<Voorspel vraag=/.test(inhoud);
+        return !(tip && antwoord) && !voorspel;
       })
       .map((o) => o.kop);
     expect(zonder).toEqual([]);
+  });
+});
+
+describe('de overstap vanuit bal-slaan is klein', () => {
+  // De pagina liet de leerling eerst een tweede sensor én een tweede servo
+  // aansluiten, en oefening 1 bracht meteen een tweede sensor en een nieuw
+  // blok. Voor groep 7/8 was die stap te groot. Nu komt er eerst alleen een
+  // sensor bij, dan alleen een servo, en pas in het laatste deel samen. Elk
+  // deel begint met hetzelfde programma als in een eerdere les, met één
+  // andere pin.
+
+  it('de delen staan in deze volgorde: eerst de sensor, dan de servo, dan samen', () => {
+    const plek = DELEN.map((kop) => PAGINA.search(new RegExp(`^${kop}$`, 'm')));
+    expect(
+      plek.every((p) => p !== -1),
+      plek.join(', '),
+    ).toBe(true);
+    expect([...plek].sort((a, b) => a - b)).toEqual(plek);
+  });
+
+  it('elk deel sluit alleen zijn eigen onderdeel aan', () => {
+    const sensor = aansluittabel(deel(DELEN[0]));
+    const servo = aansluittabel(deel(DELEN[1]));
+    expect(sensor).toMatch(/het signaal van \*\*A1\*\*/);
+    expect(sensor).not.toMatch(/D10/);
+    expect(servo).toMatch(/het signaal van \*\*D10\*\*/);
+    expect(servo).not.toMatch(/A1/);
+    // Wie iets aansluit, zet de robot eerst uit en daarna weer aan.
+    for (const kop of DELEN.slice(0, 2)) {
+      const inhoud = deel(kop);
+      const uit = inhoud.indexOf('uit met de knop **ON/OFF**');
+      expect(uit, kop).toBeGreaterThan(-1);
+      expect(inhoud.slice(uit), kop).toMatch(/weer aan met \*\*ON\/OFF\*\*/);
+    }
+    // Het laatste deel sluit niets meer aan.
+    expect(aansluittabel(deel(DELEN[2]))).toBe('');
+  });
+
+  it("vóór het laatste deel gebruikt geen voorbeeld twee sensoren én twee servo's", () => {
+    const vooraf = DELEN.slice(0, 2).flatMap((kop) => programmasIn(deel(kop)));
+    expect(vooraf.length).toBeGreaterThan(0);
+    const samen = vooraf.filter((bestand) => {
+      const { sensoren, servos } = pinnen(bestand);
+      return sensoren.size > 1 && servos.size > 1;
+    });
+    expect(samen).toEqual([]);
+    // In het deel van de sensor stuurt geen programma een tweede servo aan,
+    // en in het deel van de servo leest geen programma een tweede sensor.
+    for (const bestand of programmasIn(deel(DELEN[0])))
+      expect([...pinnen(bestand).servos], bestand).not.toContain('10');
+    for (const bestand of programmasIn(deel(DELEN[1])))
+      expect([...pinnen(bestand).sensoren], bestand).not.toContain('A1');
+  });
+
+  it('elk deel begint met een programma dat de leerling al kent, met één andere pin', () => {
+    const eerste = (kop: string) => programmasIn(deel(kop))[0];
+    expect(code(eerste(DELEN[0]))).toBe(
+      code('bal-slaan.json').replaceAll('analogRead(A0)', 'analogRead(A1)'),
+    );
+    expect(code(eerste(DELEN[1]))).toBe(
+      code('servo-heen-en-weer.json').replace(/myServo9\b|attach\(9\)/g, (m) =>
+        m.replace('9', '10'),
+      ),
+    );
+    // En die eerste oefening laat de leerling voorspellen wat er gebeurt.
+    for (const kop of DELEN.slice(0, 2)) {
+      const eersteOefening = deel(kop).split(/^(?=### Oefening)/m)[1] ?? '';
+      expect(eersteOefening, kop).toMatch(/<Voorspel vraag=/);
+    }
+  });
+
+  it('de inleiding stuurt wie maar één onderdeel heeft naar het juiste deel', () => {
+    const inleiding = PAGINA.slice(0, PAGINA.indexOf(`${DELEN[0]}\n`));
+    expect(inleiding).toMatch(
+      /alleen een tweede sensor\?[^.]*\[Een tweede sensor\]\(#een-tweede-sensor\)/,
+    );
+    expect(inleiding).toMatch(
+      /alleen een tweede servo\?[^.]*\[Een tweede servo\]\(#een-tweede-servo\)/,
+    );
   });
 });

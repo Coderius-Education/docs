@@ -2,8 +2,10 @@
 sidebar_position: 6.5
 ---
 import Blokken from '@site/src/components/Blokken';
+import andereSensor from './blokken/oefenen-andere-sensor.json';
 import tweeSensoren from './blokken/oefenen-twee-sensoren.json';
 import welkeSensor from './blokken/oefenen-welke-sensor.json';
+import andereServo from './blokken/oefenen-andere-servo.json';
 import omDeBeurt from './blokken/oefenen-om-de-beurt.json';
 import gespiegeld from './blokken/oefenen-gespiegeld.json';
 import eigenServo from './blokken/oefenen-eigen-servo.json';
@@ -15,13 +17,17 @@ import standPerSensor from './blokken/oefenen-stand-per-sensor.json';
 
 Met één sensor en één servo ziet je robot een bal en slaat hij hem weg. Met twee van elk kan hij meer: hij ziet wáár de bal ligt, en hij kiest welke servo slaat. Zo leer je de sensor en de servo goed kennen, voordat je de Lego eromheen bouwt.
 
-Je docent zegt of er voor jou een tweede sensor en een tweede servo klaarliggen. Heb je alleen een tweede sensor? Doe dan oefening 1, 5 en 6. Met alleen een tweede servo doe je oefening 2.
+Je docent zegt of er voor jou een tweede sensor en een tweede servo klaarliggen. Je sluit ze niet allebei tegelijk aan. Eerst komt er een sensor bij, dan een servo, en pas aan het eind gebruik je ze samen. Heb je alleen een tweede sensor? Doe dan alleen het deel [Een tweede sensor](#een-tweede-sensor). Heb je alleen een tweede servo? Doe dan alleen het deel [Een tweede servo](#een-tweede-servo).
 
-De eerste oefening is de makkelijkste. De laatste is een puzzel.
+Elk deel begint met een kleine stap. De laatste oefening is een puzzel.
 
-## Aansluiten
+## Een tweede sensor
 
-Zet je robot uit met de knop **ON/OFF**. De eerste sensor blijft op **A0** en de eerste servo op **D9**, zoals bij [de IR-sensor](ir-sensor) en [de servo](servo). De tweede sensor komt op de rij van A1 van het [shield](microcontroller):
+De servo blijft er één, op **D9**. Er komt alleen een sensor bij.
+
+### Aansluiten
+
+Zet je robot uit met de knop **ON/OFF**. De eerste sensor blijft op **A0** en de servo op **D9**, zoals bij [de IR-sensor](ir-sensor) en [de servo](servo). De tweede sensor komt op de rij van A1 van het [shield](microcontroller):
 
 | Pin van de tweede sensor | Komt op |
 |---|---|
@@ -31,19 +37,30 @@ Zet je robot uit met de knop **ON/OFF**. De eerste sensor blijft op **A0** en de
 
 Let op: op de sensor zelf heet de pin nog steeds **A0**. Dat is de naam van het pootje op de sensor. De draad gaat op het shield naar **A1**.
 
-De tweede servo komt op de rij van D10:
-
-| Draad van de tweede servo | Komt op |
-|---|---|
-| bruin | GND |
-| rood | 5V |
-| oranje | het signaal van **D10**: het pinnetje het dichtst bij de naam D10 |
-
 Zit alles vast? Zet je robot dan weer aan met **ON/OFF**.
 
-In elk blok kies je zelf de pin. Klik in **Lees anapin** op A0, en kies **A1** in het lijstje. Een nieuw blok **Servo** staat in Easybloqs eerst op **Servo 2 op 90**. Klik op de 2 en kies **9** of **10**.
+In het blok **Lees anapin** kies je zelf welke sensor je robot leest. Klik op A0, en kies **A1** in het lijstje.
 
-## Oefening 1: twee sensoren tegelijk
+### Oefening 1: een andere sensor
+
+Pak je programma van [Zie de bal, sla de bal](bal-slaan). Je verandert maar één ding: klik in **Lees anapin** op A0 en kies **A1**.
+
+<Blokken programma={andereSensor} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A1 kleiner is dan 300, dan Servo 9 op 0, duurt 500 ms, Servo 9 op 90, duurt 2000 ms." />
+
+<Voorspel vraag="Welke sensor laat de servo nu slaan?">
+  <Keuze uitleg="Je robot leest alleen de pin die in Lees anapin staat. Daar staat nu A1, dus naar de sensor op A0 kijkt hij niet meer.">De sensor op A0, net als eerst</Keuze>
+  <Keuze goed uitleg="In Lees anapin staat A1. Daar zit de draad van de tweede sensor.">De tweede sensor, op A1</Keuze>
+  <Keuze uitleg="Er staat maar één blok Lees anapin in je programma, en daarin staat A1. Een sensor die je robot niet leest, telt niet mee.">Allebei, want er zitten nu twee sensoren op je robot</Keuze>
+  <Uitleg>
+
+De tweede sensor, op **A1**. Je robot leest alleen de pin die in **Lees anapin** staat. Een bal voor de eerste sensor doet nu niets.
+
+  </Uitleg>
+</Voorspel>
+
+Klik op **Upload naar robot**. Leg de bal eerst voor de ene sensor, en dan voor de andere. Klopt je voorspelling? Slaat de servo niet, of slaat hij steeds? Dan past de grens van 300 niet bij deze sensor. In de volgende oefening meet je dat.
+
+### Oefening 2: twee sensoren tegelijk
 
 Om te zien wat twee sensoren meten, zet je allebei hun getallen op het scherm. Daarvoor pak je nu het andere blok **Toon op scherm** uit **Actuatoren**: het blok met een `=` erin. In het eerste vakje typ je de naam van de sensor. In het tweede vakje komt **Lees anapin**.
 
@@ -62,7 +79,7 @@ Onderzoek nu hoe ver elke sensor kijkt. Schuif de bal langzaam naar een sensor t
 
 Twee sensoren van dezelfde soort geven vaak niet precies hetzelfde getal. Kies daarom voor elke sensor een eigen grens. In de voorbeelden hieronder is de grens van **A0** 300 en die van **A1** 350. Gebruik jouw eigen getallen.
 
-### Zelf maken
+#### Zelf maken
 
 Laat het scherm `bal bij A0` tonen als de sensor op A0 de bal ziet, en `bal bij A1` als de sensor op A1 hem ziet.
 
@@ -82,98 +99,7 @@ Houd je een bal voor allebei de sensoren, dan zie je allebei de zinnen.
 
 </details>
 
-## Oefening 2: twee servo's
-
-Dit programma laat eerst de servo op **D9** draaien, en daarna die op **D10**.
-
-<Blokken programma={omDeBeurt} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: Servo 9 op 0, duurt 1000 ms, Servo 9 op 90, duurt 1000 ms, Servo 10 op 0, duurt 1000 ms, Servo 10 op 90, duurt 1000 ms." />
-
-<Voorspel vraag="Bewegen de twee asjes ooit tegelijk?">
-  <Keuze uitleg="Twee servo's kunnen wel tegelijk bewegen, maar hier staat tussen elke twee blokken Servo een duurt. Je robot wacht dus steeds voordat het volgende blok aan de beurt is.">Ja, het zijn twee servo's, dus ze draaien samen</Keuze>
-  <Keuze goed uitleg="Tussen elke twee blokken Servo staat een duurt, dus eerst draait D9 en daarna D10.">Nee, ze bewegen om de beurt</Keuze>
-  <Keuze uitleg="Na de blokken Servo 9 komen ook twee blokken Servo 10. Als D9 klaar is, is D10 aan de beurt.">Alleen het asje op D9 beweegt</Keuze>
-  <Uitleg>
-
-Nee. Eerst draait het asje op D9 naar 0° en terug naar 90°. Daarna doet het asje op D10 hetzelfde. Tussen elke twee blokken **Servo** staat een **duurt**, dus ze zijn om de beurt.
-
-  </Uitleg>
-</Voorspel>
-
-Klik op **Upload naar robot** en kijk of je voorspelling klopt.
-
-### Zelf maken: gespiegeld
-
-Leg de twee servo's naast elkaar, op dezelfde manier. Laat ze nu tegelijk bewegen, als in een spiegel: gaat de servo op D9 naar 45°, dan gaat die op D10 naar 135°. Na een seconde draaien ze om: D9 naar 135° en D10 naar 45°.
-
-<details>
-<summary>Tip</summary>
-
-Zet de twee blokken **Servo** direct onder elkaar, zonder **duurt** ertussen. Dan bewegen ze tegelijk. Pas daarna wacht je robot een seconde.
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-<Blokken programma={gespiegeld} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: Servo 9 op 45, Servo 10 op 135, duurt 1000 ms, Servo 9 op 135, Servo 10 op 45, duurt 1000 ms." />
-
-Tussen **Servo 9** en **Servo 10** staat geen **duurt**. Het zijn twee verschillende servo's, dus ze zitten elkaar niet in de weg. Tussen twee standen van dezelfde servo staat wel een **duurt**.
-
-</details>
-
-## Oefening 3: elke sensor zijn eigen servo
-
-Ziet de sensor op **A0** een bal, dan slaat de servo op **D9**. Ziet de sensor op **A1** een bal, dan slaat de servo op **D10**. Slaan gaat zoals bij [Zie de bal, sla de bal](bal-slaan): uithalen naar 0°, 500 ms wachten, terugslaan naar 90°, en 2000 ms wachten. Gebruikte je bij de servo 10° in plaats van 0°? Doe dat hier ook.
-
-<details>
-<summary>Tip</summary>
-
-Begin met het programma van [Zie de bal, sla de bal](bal-slaan). Daar staat één **als … dan** in, en je hebt er twee nodig. Klik met de rechtermuisknop op het woord **als** en kies **Dupliceren**. Dan krijg je een kopie met alle blokken erin. Zet die kopie onder de eerste. Kies daarin bij **Lees anapin** de pin **A1**, typ je grens voor A1, en klik in de blokken **Servo** op de 9 en kies **10**.
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-<Blokken programma={eigenServo} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan Servo 9 op 0, duurt 500 ms, Servo 9 op 90, duurt 2000 ms. Daarna: als Lees anapin A1 kleiner is dan 350, dan Servo 10 op 0, duurt 500 ms, Servo 10 op 90, duurt 2000 ms." />
-
-</details>
-
-<details>
-<summary>Onderzoek: je legt een bal voor A0, en meteen daarna een voor A1. Slaat de servo op D10 meteen?</summary>
-
-Nee. Je robot doet de blokken in **herhaal voor altijd** een voor een. Hij slaat eerst met de servo op D9, en wacht dan 2000 ms. Pas daarna kijkt hij naar A1. De servo op D10 slaat dus pas na ruim twee seconden.
-
-</details>
-
-## Oefening 4: gekruist
-
-Nu ruil je de servo's om. Ziet de sensor op **A0** een bal, dan slaat de servo op **D10**. Ziet de sensor op **A1** een bal, dan slaat de servo op **D9**.
-
-<details>
-<summary>Tip</summary>
-
-Begin met je programma van oefening 3. Er hoeft geen blok bij en geen blok af. In elk **als … dan** staan twee blokken **Servo**: kijk welk pinnummer erin staat.
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-<Blokken programma={gekruist} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan Servo 10 op 0, duurt 500 ms, Servo 10 op 90, duurt 2000 ms. Daarna: als Lees anapin A1 kleiner is dan 350, dan Servo 9 op 0, duurt 500 ms, Servo 9 op 90, duurt 2000 ms." />
-
-Je verandert vier pinnummers: twee keer 9 in 10, en twee keer 10 in 9.
-
-</details>
-
-<details>
-<summary>Onderzoek: de sensor op A0 en de servo op D9 liggen links, A1 en D10 rechts. Je legt de bal links. Welk asje draait?</summary>
-
-Het asje rechts, op D10. De linker sensor ziet de bal, en de rechter servo slaat.
-
-</details>
-
-## Oefening 5: alleen als ze hem allebei zien
+### Oefening 3: alleen als ze hem allebei zien
 
 Zet de twee sensoren vlak naast elkaar, zodat één bal voor allebei kan liggen. De servo op **D9** slaat nu alleen als de sensor op **A0** én de sensor op **A1** de bal zien. Ziet maar één sensor de bal, dan gebeurt er niets.
 
@@ -200,7 +126,7 @@ Hij slaat al als één van de twee sensoren de bal ziet. Zien ze hem allebei, da
 
 </details>
 
-## Oefening 6: een stand per sensor
+### Oefening 4: een stand per sensor
 
 Je hebt nog één nieuw blok nodig. In de groep **Denk stappen** staan twee blokken **als**. Het tweede heeft onderaan nog een gat, met **anders** ervoor: dat is **als … dan … anders**. Klopt de vergelijking, dan doet je robot wat achter **dan** staat. Klopt hij niet, dan doet hij wat achter **anders** staat.
 
@@ -232,6 +158,138 @@ Hier staat geen **duurt** in. Dat hoeft niet: zolang de bal blijft liggen, krijg
 <summary>Onderzoek: je legt een bal voor allebei de sensoren. Waar wijst de servo?</summary>
 
 Naar 45°. Je robot kijkt eerst naar A0. Klopt dat, dan doet hij wat achter **dan** staat en slaat hij **anders** over. Naar A1 kijkt hij dan niet meer.
+
+</details>
+
+## Een tweede servo
+
+Nu komt er een servo bij. De sensoren mogen blijven zitten.
+
+### Aansluiten
+
+Zet je robot uit met de knop **ON/OFF**. De eerste servo blijft op **D9**. De tweede servo komt op de rij van D10:
+
+| Draad van de tweede servo | Komt op |
+|---|---|
+| bruin | GND |
+| rood | 5V |
+| oranje | het signaal van **D10**: het pinnetje het dichtst bij de naam D10 |
+
+Zit alles vast? Zet je robot dan weer aan met **ON/OFF**.
+
+Een nieuw blok **Servo** staat in Easybloqs eerst op **Servo 2 op 90**. Voor de tweede servo klik je op de 2 en kies je **10**.
+
+### Oefening 5: een andere servo
+
+Pak het programma Heen en weer van [de servo](servo). Je verandert alleen het pinnummer: klik in allebei de blokken **Servo** op de 9 en kies **10**.
+
+<Blokken programma={andereServo} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: Servo 10 op 0, duurt 1000 ms, Servo 10 op 90, duurt 1000 ms." />
+
+<Voorspel vraag="Welk asje draait nu heen en weer?">
+  <Keuze uitleg="Je robot stuurt alleen de servo aan waarvan het nummer in het blok staat. In dit programma staat nergens meer Servo 9.">Het asje op D9, want die servo zat er eerst</Keuze>
+  <Keuze goed uitleg="In allebei de blokken Servo staat 10. Daar zit de oranje draad van de tweede servo.">Het asje op D10</Keuze>
+  <Keuze uitleg="Er staat alleen Servo 10 in het programma. De servo op D9 krijgt geen bericht.">Allebei de asjes, om de beurt</Keuze>
+  <Uitleg>
+
+Het asje op **D10**. Het draait naar 0°, wacht een seconde, en gaat terug naar 90°. De servo op D9 krijgt geen bericht en blijft staan.
+
+  </Uitleg>
+</Voorspel>
+
+Klik op **Upload naar robot** en kijk of je voorspelling klopt.
+
+### Oefening 6: twee servo's om de beurt
+
+Dit programma laat eerst de servo op **D9** draaien, en daarna die op **D10**.
+
+<Blokken programma={omDeBeurt} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: Servo 9 op 0, duurt 1000 ms, Servo 9 op 90, duurt 1000 ms, Servo 10 op 0, duurt 1000 ms, Servo 10 op 90, duurt 1000 ms." />
+
+<Voorspel vraag="Bewegen de twee asjes ooit tegelijk?">
+  <Keuze uitleg="Twee servo's kunnen wel tegelijk bewegen, maar hier staat tussen elke twee blokken Servo een duurt. Je robot wacht dus steeds voordat het volgende blok aan de beurt is.">Ja, het zijn twee servo's, dus ze draaien samen</Keuze>
+  <Keuze goed uitleg="Tussen elke twee blokken Servo staat een duurt, dus eerst draait D9 en daarna D10.">Nee, ze bewegen om de beurt</Keuze>
+  <Keuze uitleg="Na de blokken Servo 9 komen ook twee blokken Servo 10. Als D9 klaar is, is D10 aan de beurt.">Alleen het asje op D9 beweegt</Keuze>
+  <Uitleg>
+
+Nee. Eerst draait het asje op D9 naar 0° en terug naar 90°. Daarna doet het asje op D10 hetzelfde. Tussen elke twee blokken **Servo** staat een **duurt**, dus ze zijn om de beurt.
+
+  </Uitleg>
+</Voorspel>
+
+Klik op **Upload naar robot** en kijk of je voorspelling klopt.
+
+#### Zelf maken: gespiegeld
+
+Leg de twee servo's naast elkaar, op dezelfde manier. Laat ze nu tegelijk bewegen, als in een spiegel: gaat de servo op D9 naar 45°, dan gaat die op D10 naar 135°. Na een seconde draaien ze om: D9 naar 135° en D10 naar 45°.
+
+<details>
+<summary>Tip</summary>
+
+Zet de twee blokken **Servo** direct onder elkaar, zonder **duurt** ertussen. Dan bewegen ze tegelijk. Pas daarna wacht je robot een seconde.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+<Blokken programma={gespiegeld} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: Servo 9 op 45, Servo 10 op 135, duurt 1000 ms, Servo 9 op 135, Servo 10 op 45, duurt 1000 ms." />
+
+Tussen **Servo 9** en **Servo 10** staat geen **duurt**. Het zijn twee verschillende servo's, dus ze zitten elkaar niet in de weg. Tussen twee standen van dezelfde servo staat wel een **duurt**.
+
+</details>
+
+## Twee sensoren en twee servo's
+
+Hiervoor heb je de tweede sensor én de tweede servo nodig. Nu gebruik je ze samen.
+
+### Oefening 7: elke sensor zijn eigen servo
+
+Ziet de sensor op **A0** een bal, dan slaat de servo op **D9**. Ziet de sensor op **A1** een bal, dan slaat de servo op **D10**. Slaan gaat zoals bij [Zie de bal, sla de bal](bal-slaan): uithalen naar 0°, 500 ms wachten, terugslaan naar 90°, en 2000 ms wachten. Gebruikte je bij de servo 10° in plaats van 0°? Doe dat hier ook.
+
+<details>
+<summary>Tip</summary>
+
+Begin met het programma van [Zie de bal, sla de bal](bal-slaan). Daar staat één **als … dan** in, en je hebt er twee nodig. Klik met de rechtermuisknop op het woord **als** en kies **Dupliceren**. Dan krijg je een kopie met alle blokken erin. Zet die kopie onder de eerste. Kies daarin bij **Lees anapin** de pin **A1**, typ je grens voor A1, en klik in de blokken **Servo** op de 9 en kies **10**.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+<Blokken programma={eigenServo} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan Servo 9 op 0, duurt 500 ms, Servo 9 op 90, duurt 2000 ms. Daarna: als Lees anapin A1 kleiner is dan 350, dan Servo 10 op 0, duurt 500 ms, Servo 10 op 90, duurt 2000 ms." />
+
+</details>
+
+<details>
+<summary>Onderzoek: je legt een bal voor A0, en meteen daarna een voor A1. Slaat de servo op D10 meteen?</summary>
+
+Nee. Je robot doet de blokken in **herhaal voor altijd** een voor een. Hij slaat eerst met de servo op D9, en wacht dan 2000 ms. Pas daarna kijkt hij naar A1. De servo op D10 slaat dus pas na ruim twee seconden.
+
+</details>
+
+### Oefening 8: gekruist
+
+Nu ruil je de servo's om. Ziet de sensor op **A0** een bal, dan slaat de servo op **D10**. Ziet de sensor op **A1** een bal, dan slaat de servo op **D9**.
+
+<details>
+<summary>Tip</summary>
+
+Begin met je programma van oefening 7. Er hoeft geen blok bij en geen blok af. In elk **als … dan** staan twee blokken **Servo**: kijk welk pinnummer erin staat.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+<Blokken programma={gekruist} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan Servo 10 op 0, duurt 500 ms, Servo 10 op 90, duurt 2000 ms. Daarna: als Lees anapin A1 kleiner is dan 350, dan Servo 9 op 0, duurt 500 ms, Servo 9 op 90, duurt 2000 ms." />
+
+Je verandert vier pinnummers: twee keer 9 in 10, en twee keer 10 in 9.
+
+</details>
+
+<details>
+<summary>Onderzoek: de sensor op A0 en de servo op D9 liggen links, A1 en D10 rechts. Je legt de bal links. Welk asje draait?</summary>
+
+Het asje rechts, op D10. De linker sensor ziet de bal, en de rechter servo slaat.
 
 </details>
 
@@ -267,7 +325,7 @@ Naar 45°. Je robot kijkt eerst naar A0. Klopt dat, dan doet hij wat achter **da
 
 **Oorzaak:** twee sensoren geven niet precies hetzelfde getal. Een grens die bij de ene sensor past, kan bij de andere te laag zijn.
 
-**Oplossing:** geef elke sensor zijn eigen grens. Zet het programma van oefening 1 terug en schrijf voor elke sensor het getal met en zonder bal op. Kies voor elke sensor een grens die daar netjes tussenin ligt.
+**Oplossing:** geef elke sensor zijn eigen grens. Zet het programma van oefening 2 terug en schrijf voor elke sensor het getal met en zonder bal op. Kies voor elke sensor een grens die daar netjes tussenin ligt.
 
 </Probleem>
 
@@ -277,7 +335,7 @@ Naar 45°. Je robot kijkt eerst naar A0. Klopt dat, dan doet hij wat achter **da
 
 **Oplossing:** geef je robot stroom via de aansluiting op het shield, met de knop **ON/OFF** aan. Vraag je docent welke adapter of batterij erbij hoort.
 
-**Zelf vinden:** laat de servo's om de beurt bewegen, zoals in oefening 2. Gaat het dan wel goed, dan lag het aan de stroom.
+**Zelf vinden:** laat de servo's om de beurt bewegen, zoals in oefening 6. Gaat het dan wel goed, dan lag het aan de stroom.
 
 </Probleem>
 
