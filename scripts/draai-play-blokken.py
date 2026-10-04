@@ -63,8 +63,10 @@ import zipfile
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
+from sites_registry import site_dir
+
 ROOT = Path(__file__).resolve().parent.parent
-SITE = ROOT / "sites" / "play"
+SITE = site_dir("play")
 DOCS = SITE / "docs"
 ENGINE = SITE / "src" / "components" / "CodeRunner" / "engine.js"
 

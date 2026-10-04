@@ -6,7 +6,7 @@ fullstack (FastAPI) - voor compile() is MicroPython gewoon Python.
 
 Aanroep vanuit de repo-root, met de map waar de extractie in schrijft:
 
-    python3 scripts/compileer-blokken.py sites/fullstack/code-tests/extracted
+    python3 scripts/compileer-blokken.py sites/informatica/fullstack/code-tests/extracted
 
 Afsluitcode 0 als alles compileert, 1 zodra er iets misgaat.
 """

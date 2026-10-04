@@ -8,14 +8,17 @@
  */
 
 import { spawnSync } from 'node:child_process';
+import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
+
+const { siteDir } = createRequire(import.meta.url)('../packages/shared/sites.js');
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const site = process.argv.slice(2).find((a) => !a.startsWith('--'));
 
 const patroon = site
-  ? [`sites/${site}/docs/**/*.{md,mdx}`, `sites/${site}/src/pages/**/*.{md,mdx}`]
-  : ['sites/*/docs/**/*.{md,mdx}', 'sites/*/src/pages/**/*.{md,mdx}'];
+  ? [`${siteDir(site)}/docs/**/*.{md,mdx}`, `${siteDir(site)}/src/pages/**/*.{md,mdx}`]
+  : ['sites/*/*/docs/**/*.{md,mdx}', 'sites/*/*/src/pages/**/*.{md,mdx}'];
 
 console.log('── Spelling ──────────────────────────────────────────────────');
 const spel = spawnSync(

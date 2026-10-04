@@ -116,12 +116,12 @@ jobs:
       # Eerste run bouwt de importcache op; die eindigt zelf met een exitcode
       # die niets over de tests zegt, vandaar de tweede run.
       - name: Project importeren
-        run: ~/godot-bin/godot --headless --path sites/godot/godot-tests --import || true
+        run: ~/godot-bin/godot --headless --path sites/informatica/godot/godot-tests --import || true
 
       # Geen --quit-after: die stopt met code 0 en zou een echte fout maskeren.
       # De runner sluit zelf af; `timeout` is alleen de vangnet tegen vastlopen.
       - name: Codevoorbeelden testen
-        run: timeout 300 ~/godot-bin/godot --headless --path sites/godot/godot-tests
+        run: timeout 300 ~/godot-bin/godot --headless --path sites/informatica/godot/godot-tests
 
       # Een hernoemd menu-item verandert niets aan de code en niets aan de
       # build; het valt pas op als een leerling naar een knop zoekt die er niet
@@ -140,8 +140,8 @@ jobs:
               echo "::error::label '$label' komt niet voor in Godot ${GODOT_VERSIE}"
               mist=$((mist + 1))
             fi
-          done < sites/godot/godot-tests/extracted/labels.txt
-          echo "$(wc -l < sites/godot/godot-tests/extracted/labels.txt) labels gecontroleerd, $mist niet gevonden."
+          done < sites/informatica/godot/godot-tests/extracted/labels.txt
+          echo "$(wc -l < sites/informatica/godot/godot-tests/extracted/labels.txt) labels gecontroleerd, $mist niet gevonden."
           exit $((mist > 0))
 
   # De robotica-lessen bevatten MicroPython die verder nergens wordt
@@ -169,7 +169,7 @@ jobs:
         run: pnpm --filter @coderius/robotica-docs lego:extract
 
       - name: Codevoorbeelden compileren
-        run: python3 scripts/compileer-blokken.py sites/robotica/lego-tests/extracted
+        run: python3 scripts/compileer-blokken.py sites/informatica/robotica/lego-tests/extracted
 
   # Zelfde verhaal voor de fullstack-cursus: python-blokken die nergens worden
   # uitgevoerd. Extractie én compilatie deelt deze job met robotica
@@ -196,7 +196,7 @@ jobs:
         run: pnpm --filter @coderius/fullstack-docs code:extract
 
       - name: Codevoorbeelden compileren
-        run: python3 scripts/compileer-blokken.py sites/fullstack/code-tests/extracted
+        run: python3 scripts/compileer-blokken.py sites/informatica/fullstack/code-tests/extracted
 
   # Play gaat een stap verder dan compileren: elk speeltuin-blok wordt echt
   # uitgevoerd tegen de gebundelde wheel uit static/whl/ — dezelfde die de
@@ -354,8 +354,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Mapnamen onder sites/; het filter werkt op de map, niet op de
-        # package-naam (sites/ide heet @coderius/ide, zonder -docs-suffix).
+        # Site-ids uit packages/shared/sites.js. De map (sites/<vak>/<id>, of
+        # sites/home) komt uit de registry; het filter werkt op de map, niet op
+        # de package-naam (ide heet @coderius/ide, zonder -docs-suffix).
         site:
           - python
           - web
@@ -384,14 +385,18 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Map van ${{ matrix.site }} uit de registry
+        id: map
+        run: echo "dir=$(node scripts/sites-json.mjs ${{ matrix.site }})" >> "$GITHUB_OUTPUT"
+
       - name: Build ${{ matrix.site }}
-        run: pnpm --filter "./sites/${{ matrix.site }}" build
+        run: pnpm --filter "./${{ steps.map.outputs.dir }}" build
 
       - name: Upload static bundle
         uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.site }}-static
-          path: sites/${{ matrix.site }}/build
+          path: ${{ steps.map.outputs.dir }}/build
           if-no-files-found: error
 
   # Links tussen cursussen zijn voor Docusaurus externe URL's: onBrokenLinks

@@ -21,10 +21,11 @@ import { createRequire } from 'node:module';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const { controleer } = createRequire(import.meta.url)('../packages/shared/stijl.js');
+const require = createRequire(import.meta.url);
+const { controleer } = require('../packages/shared/stijl.js');
+const { alleSiteMappen } = require('../packages/shared/sites.js');
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
-const SITES = join(ROOT, 'sites');
 const OVERSLAAN = new Set([
   'node_modules',
   'build',
@@ -50,11 +51,12 @@ function lesbestanden(map) {
   return uit;
 }
 
+// Uit de registry: elke site staat in sites/<vak>/<id> (de homepage in
+// sites/home, zonder docs/ of src/pages/, dus die levert niets op).
 function sites() {
-  return readdirSync(SITES)
-    .filter((naam) => !OVERSLAAN.has(naam))
-    .filter((naam) => statSync(join(SITES, naam)).isDirectory())
-    .filter((naam) => !alleenSite || naam === alleenSite);
+  return alleSiteMappen()
+    .filter(({ id }) => !alleenSite || id === alleenSite)
+    .sort((a, b) => a.id.localeCompare(b.id));
 }
 
 const inActions = process.env.GITHUB_ACTIONS === 'true';
@@ -62,8 +64,8 @@ const perSite = new Map();
 let fouten = 0;
 let waarschuwingen = 0;
 
-for (const site of sites()) {
-  const wortels = [join(SITES, site, 'docs'), join(SITES, site, 'src', 'pages')];
+for (const { id: site, dir } of sites()) {
+  const wortels = [join(ROOT, dir, 'docs'), join(ROOT, dir, 'src', 'pages')];
   const telling = { fout: 0, waarschuwing: 0, bestanden: 0 };
 
   for (const wortel of wortels) {

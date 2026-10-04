@@ -115,6 +115,8 @@ import tempfile
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
+from sites_registry import site_dir
+
 ROOT = Path(__file__).resolve().parent.parent
 
 # Twee cursussen delen dit script; hier staat alleen wat echt verschilt.
@@ -125,7 +127,7 @@ ROOT = Path(__file__).resolve().parent.parent
 # afgelezen uit static/pyodide/pyodide-lock.json van de site zelf.
 SITES = {
     "python": {
-        "docs": ROOT / "sites" / "python" / "docs",
+        "docs": site_dir("python") / "docs",
         "component": r"<CodeExercise>\{`(?P<oefcode>.*?)`\}</CodeExercise>",
         "component_tag": r"<CodeExercise\b",
         "python_versie": (3, 13),
@@ -135,7 +137,7 @@ SITES = {
         "fences_draaien": True,
     },
     "algorithms": {
-        "docs": ROOT / "sites" / "algorithms" / "docs",
+        "docs": site_dir("algorithms") / "docs",
         # rows/editable mogen voor of na initialCode staan, en de props mogen
         # over meerdere regels gespreid zijn; vóór de code-literal komt nooit
         # een backtick, dus daar loopt de match op af.
@@ -145,7 +147,7 @@ SITES = {
         # code draait maar niet in de editor zet. Eén bestand per naam, met
         # `export default String.raw\`…\``; het stuk tussen de eerste en de
         # laatste backtick is de Python. De prop staat vóór initialCode.
-        "verborgen_map": ROOT / "sites" / "algorithms" / "src" / "components" / "PyRunner" / "verborgen",
+        "verborgen_map": site_dir("algorithms") / "src" / "components" / "PyRunner" / "verborgen",
         "python_versie": (3, 12),
         # numpy en matplotlib bepalen wat een blok print; de rest van de
         # matplotlib-keten reist als dependency mee.
@@ -234,7 +236,7 @@ def lees_verborgen(naam: str) -> str:
 STARTCODE_RE = re.compile(r"\{/\*\s*niet-draaien:\s*startcode\b.*?\*/\}\s*$")
 # Startcodes die nog niet aan die regel voldoen, met de reden; exact, zodat een
 # opgeloste eruit moet en een nieuwe meteen opvalt (zelfde aanpak als
-# sites/algorithms/src/docs-tests/opdrachten.test.ts).
+# sites/informatica/algorithms/src/docs-tests/opdrachten.test.ts).
 STARTCODE_ACHTERSTAND: dict[str, str] = {}
 DRAAIEN_RE = re.compile(r"\{/\*\s*draaien:.*?\*/\}\s*$")
 # Een Voorspel-blok gebruikt vaak de functie die eerder op de pagina is
@@ -342,9 +344,12 @@ def zelftest() -> None:
     assert FOUT_RE.match("KeyError: 'leeftijd'")
     assert FOUT_RE.match("json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)")
     assert not FOUT_RE.match("Sara: 120")
-    paden = ["sites/algorithms/docs/pagerank/bouwen/06-itereren.mdx", "sites/python/docs/04-herhalen/06a-for-loop.mdx"]
-    assert achterstand_van_deze_site(paden, "sites/python/docs") == [paden[1]]
-    assert achterstand_van_deze_site(paden, "sites/algorithms/docs") == [paden[0]]
+    paden = [
+        "sites/informatica/algorithms/docs/pagerank/bouwen/06-itereren.mdx",
+        "sites/informatica/python/docs/04-herhalen/06a-for-loop.mdx",
+    ]
+    assert achterstand_van_deze_site(paden, "sites/informatica/python/docs") == [paden[1]]
+    assert achterstand_van_deze_site(paden, "sites/informatica/algorithms/docs") == [paden[0]]
     assert STARTCODE_RE.search("{/* niet-draaien: startcode; de assert faalt tot dan */}")
     assert not STARTCODE_RE.search("{/* niet-draaien: fragment uit de les erboven */}")
     assert beoordeel_startcode(1, "AssertionError") is None
