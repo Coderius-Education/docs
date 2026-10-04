@@ -10,38 +10,37 @@ import heenEnWeer from './blokken/servo-heen-en-weer.json';
 Je sensor ziet de bal en je servo slaat. Nu bouw je er de Click Golfer van Lego omheen. Hieronder zie je eerst welke stukjes je nodig hebt. Daarna bouw je hem stap voor stap in elkaar: eerst de toren met de servo en het tandwiel. Dat test je, en pas als het werkt, bouw je de arm.
 
 :::tip
-Twijfel je hoe een onderdeel eruitziet of waar het komt? Bekijk het [3D-model op de intropagina](intro). Je kunt het draaien en zoomen.
+Twijfel je hoe een onderdeel eruitziet of waar het komt? Bekijk het [3D-model op de intropagina](intro). Je kunt het draaien en zoomen. Het model komt uit een iets andere versie: sommige kleuren en pinnen wijken af. De plaatjes hieronder kloppen met je doosje.
 :::
 
 ## Onderdelenlijst
 
-Dit heb je nodig: **46 Lego Technic-stukjes** plus de **Leaphy-servo**.
+Dit heb je nodig: **48 Lego Technic-stukjes** plus de **Leaphy-servo**.
 
 | Aantal | Onderdeel | Kleur | BrickLink-nr |
 |:---:|---|---|---|
-| 12 | Technic-pin met lange wrijvingsribbels | Zwart | 4459 |
+| 13 | Technic-pin met lange wrijvingsribbels | Zwart | 4459 |
 | 4 | Liftarm gebogen 1 × 9 (6–4) | Zwart | 6629 |
-| 4 | Pin zonder wrijvingsribbels | Geel | 3673 |
-| 4 | Liftarm dik 1 × 15 (met 'LO'/'HI'-sticker) | Donkergrijs | 32278pb038 |
-| 3 | As 1L met pin (met wrijvingsribbels) | Blauw | 43093 |
+| 4 | Pin zonder wrijvingsribbels | Zwart | 3673 |
+| 4 | Liftarm dik 1 × 15 | Zwart | 32278 |
+| 4 | Pin 3L zonder wrijvingsribbels | Blauw | 32556 |
+| 2 | As 1L met pin (met wrijvingsribbels) | Lichtgrijs | 43093 |
 | 2 | Liftarm gebogen L-vorm 2 × 4 | Zwart | 32140 |
-| 2 | Pin 3L zonder wrijvingsribbels | Blauw | 32556 |
-| 2 | As 1L met pin (zonder wrijvingsribbels) | Beige (tan) | 3749 |
+| 2 | As 1L met pin (zonder wrijvingsribbels) | Lichtgrijs | 3749 |
 | 2 | Haakse as-pin-verbinder | Zwart | 6536 |
-| 1 | Bus 1/2 (glad) | Lichtgrijs | 4265c |
+| 2 | Bus 1/2 (glad) | Lichtgrijs | 4265c |
 | 1 | Liftarm dik 1 × 5 | Zwart | 32316 |
-| 1 | Liftarm dun 1 × 4 (met asgaten) | Wit | 32449 |
+| 1 | Liftarm dun 1 × 4 (met asgaten) | Lichtgrijs | 32449 |
 | 1 | Liftarm dik 1 × 3 | Zwart | 32523 |
 | 1 | Liftarm dik 1 × 7 | Zwart | 32524 |
 | 1 | As 4L | Lichtgrijs | 3705 |
-| 1 | As 6L | Rood | 3706 |
+| 1 | As 6L | Lichtgrijs | 3706 |
 | 1 | Haakse as-pin-verbinder 3L (2 pingaten) | Zwart | 42003 |
 | 1 | Frame-liftarm dik 5 × 7 (open midden) | Lichtgrijs | 64179 |
-| 1 | Pin 3L met wrijvingsribbels | Blauw | 6558 |
 | 1 | Tandwiel 16 tanden (met asgat) | Lichtgrijs | 94925 |
-| 1 | Servo (Leaphy) | Donker nougat | – |
+| 1 | Servo (Leaphy) | Donker nougat (oranjebruin) | – |
 
-Wil je alle stukjes in één keer bestellen? <a href="/click_golfer/onderdelenlijst.csv" download>Download de onderdelenlijst (CSV)</a> en importeer die in [BrickLink](https://www.bricklink.com).
+Mist er iets in je doosje? Vraag het je docent. Die kan de stukjes in één keer bestellen met <a href="/click_golfer/onderdelenlijst.csv" download>de onderdelenlijst (CSV)</a>, door die te importeren in [BrickLink](https://www.bricklink.com).
 
 ## De toren
 
@@ -49,9 +48,9 @@ In stap 4 komt de servo in de toren. Zet je robot eerst uit met de knop **ON/OFF
 
 ![Uitsnede van het schema: de servo met de bruine draad op GND, de rode op 5V en de oranje op het signaal van D9.](@site/static/fritzing/click_golfer_servo.png)
 
-Bij elke stap zie je linksboven welke stukjes je erbij pakt. Wat nieuw is, heeft een rode rand.
+Bij elke stap zie je linksboven welke stukjes je erbij pakt. Wat nieuw is, heeft een rode rand. Staat er onder een stap een latje met een getal in een rondje, dan is dat de lengte van de balk of de as: zoveel gaatjes lang. Tel de gaatjes van je stukje, want op je scherm is het latje niet even groot als het echte stukje. Een blauw vierkantje met twee pijlen betekent: draai je Golfer om, het plaatje laat hem van de andere kant zien.
 
-**Let op bij stap 4:** zet de servo zo in de toren dat het snoertje van de motor **omhoog** wijst, zoals het werkboek zegt.
+**Let op bij stap 4:** zet de servo zo in de toren dat het snoertje van de motor **omhoog** wijst, zoals op het plaatje van stap 4 staat.
 
 <figure>
   <img src="/click_golfer/bouwen/stap-01.jpg" width="600" alt="Bouwstap 1: Het lichtgrijze frame van 5 bij 7 gaten met een open midden. Dit is de voet." />
@@ -69,7 +68,7 @@ Bij elke stap zie je linksboven welke stukjes je erbij pakt. Wat nieuw is, heeft
 </figure>
 
 <figure>
-  <img src="/click_golfer/bouwen/stap-04.jpg" width="600" alt="Bouwstap 4: De oranje servo zit met vier blauwe pinnen tussen de twee balken. Een briefje zegt: het snoertje van de motor moet omhoog." />
+  <img src="/click_golfer/bouwen/stap-04.jpg" width="600" alt="Bouwstap 4: De oranjebruine servo zit met vier blauwe pinnen tussen de twee balken. Een briefje zegt: het snoertje van de motor moet omhoog." />
   <figcaption>Stap 4</figcaption>
 </figure>
 
@@ -89,7 +88,7 @@ Bij elke stap zie je linksboven welke stukjes je erbij pakt. Wat nieuw is, heeft
 </figure>
 
 <figure>
-  <img src="/click_golfer/bouwen/stap-08.jpg" width="600" alt="Bouwstap 8: Een lichtgrijs busje en twee zwarte pinnen bovenaan de toren." />
+  <img src="/click_golfer/bouwen/stap-08.jpg" width="600" alt="Bouwstap 8: Een lichtgrijs busje en twee lichtgrijze assen met een pin bovenaan de toren." />
   <figcaption>Stap 8</figcaption>
 </figure>
 
@@ -99,14 +98,14 @@ Bij elke stap zie je linksboven welke stukjes je erbij pakt. Wat nieuw is, heeft
 </figure>
 
 <figure>
-  <img src="/click_golfer/bouwen/stap-10.jpg" width="600" alt="Bouwstap 10: Een grijze as van 6 gaten gaat door het midden, bij de servo." />
+  <img src="/click_golfer/bouwen/stap-10.jpg" width="600" alt="Bouwstap 10: Een lichtgrijze as van 6 gaten gaat door het midden, door de servo." />
   <figcaption>Stap 10</figcaption>
 </figure>
 
 :::caution[Eerst de servo op 90°]
-In stap 11 zet je het tandwiel op de as van de servo. Staat de servo dan in een willekeurige stand, dan klopt 0° of 90° later niet meer met de stand van de arm: de arm slaat te ver door, of haalt de bal niet.
+In stap 12 komt de arm op de as van de servo. Staat de servo dan in een willekeurige stand, dan klopt 0° of 90° later niet meer met de stand van de arm: de arm slaat te ver door, of haalt de bal niet.
 
-Kijk daarom eerst of de servo op het signaal van **D9** zit, en upload dan dit programma. De servo draait naar 90°, precies het midden, en blijft daar staan. Zet je robot daarna uit en zet pas dan het tandwiel erop.
+Kijk daarom eerst of de servo op het signaal van **D9** zit. Zet je robot weer aan met **ON/OFF** en upload dan dit programma. De servo draait naar 90°, precies het midden, en blijft daar staan. Zet je robot daarna uit. Tot en met stap 12 moet de servo zo blijven staan: draai de as en het tandwiel niet met de hand.
 
 <Blokken programma={servoOp90} beschrijving="Het Leaphy-blok met daarin Servo 9 op 90." />
 :::
@@ -120,7 +119,7 @@ Kijk daarom eerst of de servo op het signaal van **D9** zit, en upload dan dit p
 
 De servo zit nu in de toren, met het tandwiel erop. De arm is er nog niet, en dat is precies goed om te testen. Draait er straks iets niet goed met de hele arm eraan, dan weet je niet of het aan de servo ligt, aan het tandwiel of aan de arm. Met alleen een tandwiel zie je het meteen.
 
-Zet je robot aan en upload het programma uit [de servo](servo) dat heen en weer draait:
+Zet je robot weer aan met **ON/OFF** en upload het programma uit [de servo](servo) dat heen en weer draait:
 
 <Blokken programma={heenEnWeer} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: Servo 9 op 0, duurt 1000 ms, Servo 9 op 90, duurt 1000 ms." />
 
@@ -128,7 +127,7 @@ Kijk naar het tandwiel en loop deze vragen langs:
 
 1. Draait het tandwiel steeds een kwart rondje heen en weer?
 2. Draait het soepel, zonder te zoemen, te trillen of te haperen?
-3. Zit het tandwiel vast op de as, of slipt het?
+3. Zit het tandwiel recht op de as, zonder te wiebelen?
 
 Is het antwoord drie keer ja, dan werkt je servo in de toren. Upload dan weer het programma **Servo 9 op 90** van hierboven, zodat de servo in het midden staat, en zet je robot uit. Pas dan bouw je verder.
 
@@ -136,10 +135,10 @@ Gaat er iets mis? Haal dan eerst het tandwiel eraf en kijk of het asje van de se
 
 ## De arm
 
-Nu bouw je de arm aan het tandwiel. Draai het tandwiel tijdens het bouwen niet met de hand: dan staat de servo niet meer op 90°.
+Nu bouw je de arm. In stap 12 komt de zwarte verbinder op de as, aan de voorkant. Daar zit straks de arm aan, en de servo staat dan nog op 90°. Draai de as en het tandwiel tijdens het bouwen niet met de hand: dan staat de servo niet meer op 90°.
 
 <figure>
-  <img src="/click_golfer/bouwen/stap-12.jpg" width="600" alt="Bouwstap 12: Een lichtgrijs busje en een zwarte verbinder aan de voorkant, bij het tandwiel." />
+  <img src="/click_golfer/bouwen/stap-12.jpg" width="600" alt="Bouwstap 12: Een lichtgrijs busje en een zwarte verbinder komen aan de voorkant op de as. Aan die verbinder komt de arm." />
   <figcaption>Stap 12</figcaption>
 </figure>
 
@@ -179,12 +178,12 @@ Nu bouw je de arm aan het tandwiel. Draai het tandwiel tijdens het bouwen niet m
 </figure>
 
 <figure>
-  <img src="/click_golfer/bouwen/stap-20.jpg" width="600" alt="Bouwstap 20: Een zwarte verbinder aan de schuine arm vooraan." />
+  <img src="/click_golfer/bouwen/stap-20.jpg" width="600" alt="Bouwstap 20: Een zwarte balk van 3 gaten onderaan de schuine arm." />
   <figcaption>Stap 20</figcaption>
 </figure>
 
 <figure>
-  <img src="/click_golfer/bouwen/stap-21.jpg" width="600" alt="Bouwstap 21: Twee grijze assen met een pin aan de twee zijarmen." />
+  <img src="/click_golfer/bouwen/stap-21.jpg" width="600" alt="Bouwstap 21: Twee lichtgrijze assen met een pin aan de twee zijarmen." />
   <figcaption>Stap 21</figcaption>
 </figure>
 
@@ -209,10 +208,24 @@ Nu bouw je de arm aan het tandwiel. Draai het tandwiel tijdens het bouwen niet m
 </figure>
 
 <figure>
-  <img src="/click_golfer/bouwen/stap-26.jpg" width="600" alt="Bouwstap 26: Een grijze as van 4 gaten gaat door de verbinders. De Click Golfer is klaar." />
+  <img src="/click_golfer/bouwen/stap-26.jpg" width="600" alt="Bouwstap 26: Een lichtgrijze as van 4 gaten gaat door de verbinders. De Click Golfer is klaar." />
   <figcaption>Stap 26</figcaption>
 </figure>
 
 *Bouwstappen: ClickGolfer-werkboek, ©Stichting Leaphy.*
+
+<details>
+<summary>Controlevraag</summary>
+
+Waarom moet de servo op 90° staan als de verbinder van stap 12 op de as komt?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Je programma's gaan ervan uit dat de arm bij 90° staat zoals op het plaatje. Zet je de arm er in een andere stand op, dan slaat hij te ver door of haalt hij de bal niet.
+
+</details>
 
 Staat je Golfer? Dan maak je nu [de houten baan](hout).

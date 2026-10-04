@@ -49,7 +49,7 @@
                       "block": {
                         "type": "math_number",
                         "fields": {
-                          "NUM": 500
+                          "NUM": 2000
                         }
                       }
                     }

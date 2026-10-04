@@ -1,0 +1,285 @@
+{
+  "_uitleg": "Wat er per bouwplaatje (static/click_golfer/bouwen/stap-NN.jpg) linksboven in het kader staat, geteld op het plaatje. De plaatjes volgt de leerling, dus deze telling is leidend voor de onderdelenlijst in bouwen.md en voor onderdelenlijst.csv. Het onderdeelnummer komt uit golfer.io (model.ldr, dezelfde stap); de kleur uit het plaatje. click-golfer-bouwen.test.ts houdt de drie gelijk.",
+  "stappen": [
+    {
+      "stap": 1,
+      "onderdelen": [
+        {
+          "nr": "64179",
+          "kleur": "Lichtgrijs",
+          "aantal": 1
+        }
+      ]
+    },
+    {
+      "stap": 2,
+      "onderdelen": [
+        {
+          "nr": "4459",
+          "kleur": "Zwart",
+          "aantal": 4
+        }
+      ]
+    },
+    {
+      "stap": 3,
+      "onderdelen": [
+        {
+          "nr": "32278",
+          "kleur": "Zwart",
+          "aantal": 2
+        }
+      ]
+    },
+    {
+      "stap": 4,
+      "onderdelen": [
+        {
+          "nr": "32556",
+          "kleur": "Blauw",
+          "aantal": 4
+        },
+        {
+          "nr": "–",
+          "kleur": "Donker nougat (oranjebruin)",
+          "aantal": 1
+        }
+      ]
+    },
+    {
+      "stap": 5,
+      "onderdelen": [
+        {
+          "nr": "4459",
+          "kleur": "Zwart",
+          "aantal": 2
+        }
+      ]
+    },
+    {
+      "stap": 6,
+      "onderdelen": [
+        {
+          "nr": "32316",
+          "kleur": "Zwart",
+          "aantal": 1
+        }
+      ]
+    },
+    {
+      "stap": 7,
+      "onderdelen": [
+        {
+          "nr": "32278",
+          "kleur": "Zwart",
+          "aantal": 2
+        }
+      ]
+    },
+    {
+      "stap": 8,
+      "onderdelen": [
+        {
+          "nr": "4265c",
+          "kleur": "Lichtgrijs",
+          "aantal": 1
+        },
+        {
+          "nr": "43093",
+          "kleur": "Lichtgrijs",
+          "aantal": 2
+        }
+      ]
+    },
+    {
+      "stap": 9,
+      "onderdelen": [
+        {
+          "nr": "6629",
+          "kleur": "Zwart",
+          "aantal": 2
+        }
+      ]
+    },
+    {
+      "stap": 10,
+      "onderdelen": [
+        {
+          "nr": "3706",
+          "kleur": "Lichtgrijs",
+          "aantal": 1
+        }
+      ]
+    },
+    {
+      "stap": 11,
+      "onderdelen": [
+        {
+          "nr": "94925",
+          "kleur": "Lichtgrijs",
+          "aantal": 1
+        }
+      ]
+    },
+    {
+      "stap": 12,
+      "onderdelen": [
+        {
+          "nr": "4265c",
+          "kleur": "Lichtgrijs",
+          "aantal": 1
+        },
+        {
+          "nr": "42003",
+          "kleur": "Zwart",
+          "aantal": 1
+        }
+      ]
+    },
+    {
+      "stap": 13,
+      "onderdelen": [
+        {
+          "nr": "3673",
+          "kleur": "Zwart",
+          "aantal": 2
+        }
+      ]
+    },
+    {
+      "stap": 14,
+      "onderdelen": [
+        {
+          "nr": "6629",
+          "kleur": "Zwart",
+          "aantal": 1
+        }
+      ]
+    },
+    {
+      "stap": 15,
+      "onderdelen": [
+        {
+          "nr": "4459",
+          "kleur": "Zwart",
+          "aantal": 2
+        }
+      ]
+    },
+    {
+      "stap": 16,
+      "onderdelen": [
+        {
+          "nr": "32524",
+          "kleur": "Zwart",
+          "aantal": 1
+        }
+      ]
+    },
+    {
+      "stap": 17,
+      "onderdelen": [
+        {
+          "nr": "4459",
+          "kleur": "Zwart",
+          "aantal": 2
+        }
+      ]
+    },
+    {
+      "stap": 18,
+      "onderdelen": [
+        {
+          "nr": "6629",
+          "kleur": "Zwart",
+          "aantal": 1
+        }
+      ]
+    },
+    {
+      "stap": 19,
+      "onderdelen": [
+        {
+          "nr": "4459",
+          "kleur": "Zwart",
+          "aantal": 2
+        }
+      ]
+    },
+    {
+      "stap": 20,
+      "onderdelen": [
+        {
+          "nr": "32523",
+          "kleur": "Zwart",
+          "aantal": 1
+        }
+      ]
+    },
+    {
+      "stap": 21,
+      "onderdelen": [
+        {
+          "nr": "3749",
+          "kleur": "Lichtgrijs",
+          "aantal": 2
+        }
+      ]
+    },
+    {
+      "stap": 22,
+      "onderdelen": [
+        {
+          "nr": "32140",
+          "kleur": "Zwart",
+          "aantal": 2
+        }
+      ]
+    },
+    {
+      "stap": 23,
+      "onderdelen": [
+        {
+          "nr": "3673",
+          "kleur": "Zwart",
+          "aantal": 2
+        }
+      ]
+    },
+    {
+      "stap": 24,
+      "onderdelen": [
+        {
+          "nr": "6536",
+          "kleur": "Zwart",
+          "aantal": 2
+        }
+      ]
+    },
+    {
+      "stap": 25,
+      "onderdelen": [
+        {
+          "nr": "4459",
+          "kleur": "Zwart",
+          "aantal": 1
+        },
+        {
+          "nr": "32449",
+          "kleur": "Lichtgrijs",
+          "aantal": 1
+        }
+      ]
+    },
+    {
+      "stap": 26,
+      "onderdelen": [
+        {
+          "nr": "3705",
+          "kleur": "Lichtgrijs",
+          "aantal": 1
+        }
+      ]
+    }
+  ]
+}

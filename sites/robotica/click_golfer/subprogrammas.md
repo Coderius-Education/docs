@@ -13,20 +13,19 @@ Je programma uit [Mikken](mikken) werkt, maar het is lang geworden. Als je er sn
 
 Je maakt twee subprogramma's: `mikken` en `slaan`. Sleep je een blok, dan gaan **alle blokken eronder mee**. Daarom werk je van onder naar boven.
 
-1. Klik op de groep **Eigen blokken** en sleep twee keer het blok **Subprogramma** naar een lege plek. Noem het ene `mikken` en het andere `slaan`.
-2. Sleep **duurt 2000 ms**, het onderste blok in **als … dan**, even opzij naar een lege plek.
-3. Sleep **Servo 9 op 90** in het subprogramma `slaan`. **duurt 500 ms** eronder gaat vanzelf mee.
-4. Sleep **stel hoek in op 0** in het subprogramma `mikken`. De twee **herhaal 50 keer**-blokken gaan vanzelf mee.
-5. Klik met de rechtermuisknop op het subprogramma `mikken` en kies **Maak "mikken"**. Je krijgt een blok **mikken**. Doe hetzelfde voor `slaan`.
-6. Zet in **als … dan**, onder **duurt 500 ms**: eerst het blok **mikken**, dan **slaan**, en dan **duurt 2000 ms** terug.
+1. Klik op de groep **Eigen blokken** en sleep twee keer het blok **Subprogramma** naar een lege plek. Neem het bovenste blok, zonder **geef terug**: het blok met **geef terug** is rond en past nergens in je programma. Noem het ene `mikken` en het andere `slaan`.
+2. Sleep **Servo 9 op 90**, onderaan in **als … dan**, in het subprogramma `slaan`. **duurt 2000 ms** eronder gaat vanzelf mee.
+3. Sleep **stel hoek in op 0** in het subprogramma `mikken`. De twee **herhaal 50 keer**-blokken gaan vanzelf mee.
+4. Klik weer op de groep **Eigen blokken**. Daar staan nu ook de blokken **mikken** en **slaan**. (Je krijgt ze ook met de rechtermuisknop op een subprogramma: kies **Maak "mikken"**.)
+5. Zet in **als … dan**, onder **duurt 500 ms**: eerst het blok **mikken**, dan **slaan**.
 
 ## Het programma
 
 De sensor zit nog op **A0** en de servo op **D9**.
 
-<Blokken programma={subprogrammas} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan Servo 9 op 0, duurt 500 ms, mikken, slaan en duurt 2000 ms. Onder het Leaphy-blok staan twee subprogramma's. mikken: stel hoek in op 0, herhaal 50 keer Servo 9 op hoek, duurt 10 ms, wijzig hoek met 1, en herhaal 50 keer hetzelfde met wijzig hoek met -1. slaan: Servo 9 op 90, duurt 500 ms." />
+<Blokken programma={subprogrammas} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan Servo 9 op 0, duurt 500 ms, mikken en slaan. Onder het Leaphy-blok staan twee subprogramma's. mikken: stel hoek in op 0, herhaal 50 keer Servo 9 op hoek, duurt 10 ms, wijzig hoek met 1, en herhaal 50 keer hetzelfde met wijzig hoek met -1. slaan: Servo 9 op 90, duurt 2000 ms." />
 
-Lees nu alleen het Leaphy-blok: *als er een bal ligt, dan de servo op 0, mikken, slaan, en wachten.* Zo lees je in één keer wat de robot doet. Wil je weten hoe hij mikt, dan kijk je in het subprogramma `mikken`.
+Lees nu alleen het Leaphy-blok: *als er een bal ligt, dan de servo op 0, mikken en slaan.* Zo lees je in één keer wat de robot doet. Wil je weten hoe hij mikt, dan kijk je in het subprogramma `mikken`.
 
 <details>
 <summary>Voorspel: doet je robot nu iets anders dan bij Mikken?</summary>
@@ -51,11 +50,11 @@ Het gaat om de twee blokken bovenaan in **als … dan**: **Servo 9 op 0** en **d
 <details>
 <summary>Antwoord</summary>
 
-1. Sleep het blok **mikken** in **als … dan** opzij. **slaan** en **duurt 2000 ms** gaan mee.
+1. Sleep het blok **mikken** in **als … dan** opzij. **slaan** gaat mee.
 2. Maak een subprogramma `achter` en sleep **Servo 9 op 0** erin. **duurt 500 ms** gaat mee.
 3. Kies met de rechtermuisknop **Maak "achter"**, zet het blok **achter** in **als … dan**, en zet het opzij gezette stapeltje eronder.
 
-<Blokken programma={metAchter} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan achter, mikken, slaan en duurt 2000 ms. Daaronder de subprogramma's achter (Servo 9 op 0, duurt 500 ms), mikken en slaan (Servo 9 op 90, duurt 500 ms)." />
+<Blokken programma={metAchter} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan achter, mikken en slaan. Daaronder de subprogramma's achter (Servo 9 op 0, duurt 500 ms), mikken en slaan (Servo 9 op 90, duurt 2000 ms)." />
 
 Het Leaphy-blok leest nu als een zin: *achter, mikken, slaan*.
 
@@ -67,7 +66,7 @@ Het Leaphy-blok leest nu als een zin: *achter, mikken, slaan*.
 
 **Oorzaak:** een subprogramma doet pas iets als het blok met zijn naam in je programma staat. Je sleepte de servo-blokken naar het subprogramma, maar zette het blok **slaan** niet terug.
 
-**Oplossing:** klik met de rechtermuisknop op het subprogramma `slaan`, kies **Maak "slaan"**, en zet het blok onder **mikken**.
+**Oplossing:** pak het blok **slaan** uit **Eigen blokken**, en zet het onder **mikken**.
 
 </Probleem>
 
@@ -75,21 +74,21 @@ Het Leaphy-blok leest nu als een zin: *achter, mikken, slaan*.
 
 **Oorzaak:** je sleepte **stel hoek in op 0** naar `mikken` terwijl de blokken van het slaan er nog onder zaten. Alles wat onder een blok vastzit, gaat mee.
 
-**Oplossing:** sleep **Servo 9 op 90** uit `mikken` naar `slaan`. De blokken eronder gaan weer mee. Sleep **duurt 2000 ms** daarna terug onder **slaan** in **als … dan**.
+**Oplossing:** sleep **Servo 9 op 90** uit `mikken` naar `slaan`. **duurt 2000 ms** eronder gaat weer mee.
 
 </Probleem>
 
 <details>
 <summary>Controlevraag</summary>
 
-Je wilt de slag harder maken. Waar verander je de 90, en hoe vaak?
+Je wilt dat de arm na de slag langer wacht. Waar verander je de 2000, en hoe vaak?
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-Eén keer, in het subprogramma `slaan`. Je hoeft niet in het lange programma te zoeken welk **Servo**-blok de slag is: het staat onder de naam `slaan`. Gebruik je **slaan** later op meer plekken, dan geldt de nieuwe stand overal.
+Eén keer, in het subprogramma `slaan`. Je hoeft niet in het lange programma te zoeken welk **duurt**-blok bij de slag hoort: het staat onder de naam `slaan`. Gebruik je **slaan** later op meer plekken, dan geldt de nieuwe wachttijd overal.
 
 </details>
 

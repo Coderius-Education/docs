@@ -288,6 +288,8 @@ describe('de volgorde van de route', () => {
       math_random_int: ['Getal blokken', 'willekeurig getal'],
       variables_set: ['Variabelen', 'stel hoek in op'],
       procedures_defnoreturn: ['Eigen blokken', 'Subprogramma'],
+      procedures_callnoreturn: ['Eigen blokken', 'mikken'],
+      leaphy_io_analogwrite: ['Actuatoren', 'Zet PWM'],
     };
     const gezien = new Set<string>();
     const zonder: string[] = [];

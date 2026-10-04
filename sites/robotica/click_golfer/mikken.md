@@ -18,13 +18,15 @@ Drie blokken heb je nodig:
 - **wijzig hoek met 1**: tel 1 op bij wat erin zit;
 - **hoek**: het getal dat er nu in zit. Dit blok zet je op de plek van een getal, bijvoorbeeld in **Servo 9 op …**.
 
+In het blok stel hoek in op zit achter op eerst een leeg gat. Sleep daar een getal in uit **Getal blokken**: daar staat 123 in, klik erop en typ 0.
+
 ## Het programma
 
-De sensor zit nog op **A0** en de servo op **D9**, net als bij [Zie de bal, sla de bal](bal-slaan). Ligt er een bal, dan zet de robot de arm op 0°. Daarna gaat de arm langzaam naar 50° en weer terug: dat is het mikken. Dan pas slaat hij.
+De sensor zit nog op **A0** en de servo op **D9**, net als bij [Zie de bal, sla de bal](bal-slaan). Je bouwt verder op dat programma: de nieuwe blokken komen tussen **duurt 500 ms** en **Servo 9 op 90**. Ligt er een bal, dan zet de robot de arm op 0°. Daarna gaat de arm langzaam naar 50° en weer terug: dat is het mikken. Dan pas slaat hij, terug naar 90°. Daar wacht de arm op de volgende bal. Zoemde je servo bij [de servo](servo) op 0°, en gebruikte je daar 10°? Zet dan hier ook 10 in plaats van 0, in Servo 9 op 0 en in stel hoek in op 0.
 
-<Blokken programma={mikken} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan: Servo 9 op 0, duurt 500 ms, stel hoek in op 0. Herhaal 50 keer: Servo 9 op hoek, duurt 10 ms, wijzig hoek met 1. Herhaal 50 keer: Servo 9 op hoek, duurt 10 ms, wijzig hoek met -1. Daarna Servo 9 op 90, duurt 500 ms, en duurt 2000 ms." />
+<Blokken programma={mikken} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan: Servo 9 op 0, duurt 500 ms, stel hoek in op 0. Herhaal 50 keer: Servo 9 op hoek, duurt 10 ms, wijzig hoek met 1. Herhaal 50 keer: Servo 9 op hoek, duurt 10 ms, wijzig hoek met -1. Daarna Servo 9 op 90 en duurt 2000 ms." />
 
-**herhaal 50 keer** uit **Denk stappen** doet de blokken erin vijftig keer achter elkaar. Elke keer gaat de arm naar de stand in `hoek`, wacht 10 ms, en komt er 1 bij.
+**herhaal 50 keer** uit **Denk stappen** doet de blokken erin vijftig keer achter elkaar. In Easybloqs staat er eerst 10 in: klik erop en typ 50. Elke keer gaat de arm naar de stand in `hoek`, wacht 10 ms, en verandert `hoek`.
 
 <details>
 <summary>Voorspel: welk getal zit er in hoek na het eerste herhaal-blok?</summary>
