@@ -11,7 +11,7 @@ Het brein van je Click Golfer is een **microcontroller**: een heel klein compute
 Langs de randen van de Arduino zitten pootjes. Dat zijn de **pinnen**. Op een pin sluit je een onderdeel aan, zoals een sensor of een motor. Elke pin heeft een naam:
 
 - **A0** tot en met **A7**: hier lees je een getal uit. Daar komt straks de sensor op.
-- **D2** tot en met **D13**: hier stuur je iets aan. Daar komt straks de motor op.
+- **D2** tot en met **D13**: hiermee stuur je iets aan, zoals straks de motor.
 
 ## Het shield
 
@@ -19,7 +19,7 @@ De Arduino zit vast op een groene plaat: het **shield**. Daarmee sluit je makkel
 
 ![Het groene shield met in het midden de blauwe Arduino Nano. Links zit een sensor vast op de rij van A0, rechts een servomotor op de rij van D9. Onderaan zitten de aan-uitknop en de aansluiting voor de stroom.](@site/static/fritzing/click_golfer_bb.png)
 
-Naast elke pin van de Arduino zitten op het shield **drie pinnetjes op een rij**:
+Naast elke pin van de Arduino zitten op het shield drie pinnetjes op een rij:
 
 | Pinnetje | Waarvoor |
 |---|---|

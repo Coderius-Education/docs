@@ -18,13 +18,13 @@ Voor deze extra heb je een **RGB-lampje** nodig: een lampje met vier pootjes dat
 
 In Easybloqs staat in **Actuatoren** een blok **Led** met Rood, Groen en Blauw. Dat blok past hier niet.
 
-Het gebruikt de pinnen **D11** (rood), **D10** (groen), **D9** (blauw) en **D8** (min), en op D9 zit je servo al. Daarom laat je blauw weg.
+Het gebruikt de pinnen **D11** (rood), **D10** (groen), **D9** (blauw) en **D8** (min), en op D9 zit je servo al. Blauw laat je daarom weg.
 
 Gebruik in plaats daarvan het blok **Zet PWM**, ook uit Actuatoren, één keer voor rood en één keer voor groen:
 
 1. Vraag je docent welk pootje van het lampje rood is, welk groen en welk de min.
 2. Sluit rood aan op het signaal van **D11**, groen op het signaal van **D10**, en de min op GND. Het blauwe pootje sluit je niet aan.
-3. **Zet PWM 11 op 255** maakt het lampje rood, Zet PWM 11 op 0 zet rood weer uit. Met pin 10 doe je hetzelfde voor groen.
+3. **Zet PWM 11 op 255** maakt het lampje rood. Met Zet PWM 11 op 0 gaat rood weer uit. Met pin 10 doe je hetzelfde voor groen.
 
 <details>
 <summary>Tip</summary>

@@ -7,7 +7,7 @@ import heenEnWeer from './blokken/servo-heen-en-weer.json';
 
 # Bouwen
 
-Je sensor ziet de bal en je servo slaat. Nu bouw je er de Click Golfer van Lego omheen. Hieronder zie je eerst welke stukjes je nodig hebt. Daarna bouw je hem stap voor stap in elkaar: eerst de toren met de servo en het tandwiel. Dat test je, en pas als het werkt, bouw je de arm.
+Je sensor ziet de bal en je servo slaat. Nu bouw je er de Click Golfer van Lego omheen. Eerst bouw je de toren met de servo en het tandwiel. Die test je, en pas als hij werkt, bouw je de arm.
 
 :::tip
 Twijfel je hoe een onderdeel eruitziet of waar het komt? Bekijk het [3D-model op de intropagina](intro). Je kunt het draaien en zoomen. Het model komt uit een iets andere versie: sommige kleuren en pinnen wijken af. De plaatjes hieronder kloppen met je doosje.
@@ -131,7 +131,7 @@ Kijk naar het tandwiel en loop deze vragen langs:
 
 Is het antwoord drie keer ja, dan werkt je servo in de toren. Upload dan weer het programma **Servo 9 op 90** van hierboven, zodat de servo in het midden staat, en zet je robot uit. Pas dan bouw je verder.
 
-Gaat er iets mis? Haal dan eerst het tandwiel eraf en kijk of het asje van de servo los wel draait. Bij [de servo](servo) staat onder **Er gaat iets mis** wat je dan doet. Zoemt hij alleen met het tandwiel erop, dan zit het tandwiel ergens tegenaan: kijk of het vrij kan draaien.
+Gaat er iets mis? Haal dan eerst het tandwiel eraf en kijk of het asje van de servo zonder tandwiel wel draait. Bij [de servo](servo) staat onder **Er gaat iets mis** wat je dan doet. Zoemt hij alleen met het tandwiel erop, dan zit het tandwiel ergens tegenaan: kijk of het vrij kan draaien.
 
 ## De arm
 

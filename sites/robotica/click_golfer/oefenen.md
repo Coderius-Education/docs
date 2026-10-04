@@ -104,7 +104,7 @@ Leg de twee servo's naast elkaar, op dezelfde manier. Laat ze nu tegelijk bewege
 <details>
 <summary>Tip</summary>
 
-Wil je twee servo's tegelijk laten bewegen? Zet hun blokken **Servo** dan direct onder elkaar, zonder **duurt** ertussen. Pas daarna wacht je robot een seconde.
+Zet de twee blokken **Servo** direct onder elkaar, zonder **duurt** ertussen. Dan bewegen ze tegelijk. Pas daarna wacht je robot een seconde.
 
 </details>
 

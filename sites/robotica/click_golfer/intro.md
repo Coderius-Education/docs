@@ -19,7 +19,7 @@ Wil je zelf sleutelen aan het model? <a href="/click_golfer/golfer.io" download>
 
 ## Wat is een robot?
 
-Een robot is een **programmeerbare machine** die zelf taken uitvoert en kan reageren op wat er om hem heen gebeurt. Jouw Click Golfer doet straks precies dat: hij voelt met een sensor of er een balletje ligt en slaat het dan weg.
+Jouw Click Golfer voelt straks met een sensor of er een balletje ligt, en slaat het dan weg. Zo'n machine heet een **robot**: je kunt hem programmeren, en hij reageert zelf op wat er om hem heen gebeurt.
 
 ## Wat ga je doen?
 

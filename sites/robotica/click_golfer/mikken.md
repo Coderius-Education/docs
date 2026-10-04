@@ -6,7 +6,7 @@ import mikken from './blokken/mikken.json';
 
 # Mikken
 
-Een echte golfer slaat niet meteen: hij zwaait eerst rustig heen en weer om te mikken. Dat leer je je Click Golfer nu ook, met een **variabele**.
+Een echte golfer slaat niet meteen: hij zwaait eerst rustig heen en weer om te mikken. Dat leer je je Click Golfer nu ook, met een variabele.
 
 ## Een variabele
 
@@ -18,11 +18,13 @@ Drie blokken heb je nodig:
 - **wijzig hoek met 1**: tel 1 op bij wat erin zit;
 - **hoek**: het getal dat er nu in zit. Dit blok zet je op de plek van een getal, bijvoorbeeld in **Servo 9 op …**.
 
-In het blok stel hoek in op zit achter op eerst een leeg gat. Sleep daar een getal in uit **Getal blokken**: daar staat 123 in, klik erop en typ 0.
+Het blok stel hoek in op heeft eerst een leeg gat, achter het woord op. Sleep daar een getal in uit **Getal blokken**. In dat blok staat 123: klik erop en typ 0.
 
 ## Het programma
 
-De sensor zit nog op **A0** en de servo op **D9**, net als bij [Zie de bal, sla de bal](bal-slaan). Je bouwt verder op dat programma: de nieuwe blokken komen tussen **duurt 500 ms** en **Servo 9 op 90**. Ligt er een bal, dan zet de robot de arm op 0°. Daarna gaat de arm langzaam naar 50° en weer terug: dat is het mikken. Dan pas slaat hij, terug naar 90°. Daar wacht de arm op de volgende bal. Zoemde je servo bij [de servo](servo) op 0°, en gebruikte je daar 10°? Zet dan hier ook 10 in plaats van 0, in Servo 9 op 0 en in stel hoek in op 0.
+De sensor zit nog op **A0** en de servo op **D9**, net als bij [Zie de bal, sla de bal](bal-slaan). Je bouwt verder op dat programma: de nieuwe blokken komen tussen **duurt 500 ms** en **Servo 9 op 90**. Ligt er een bal, dan zet de robot de arm op 0°. Daarna gaat de arm langzaam naar 50° en weer terug: dat is het mikken. Dan pas slaat hij, terug naar 90°. Daar wacht de arm op de volgende bal.
+
+Zoemde je servo bij [de servo](servo) op 0°, en gebruikte je daar 10°? Zet dan hier ook 10 in plaats van 0, in Servo 9 op 0 en in stel hoek in op 0.
 
 <Blokken programma={mikken} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan: Servo 9 op 0, duurt 500 ms, stel hoek in op 0. Herhaal 50 keer: Servo 9 op hoek, duurt 10 ms, wijzig hoek met 1. Herhaal 50 keer: Servo 9 op hoek, duurt 10 ms, wijzig hoek met -1. Daarna Servo 9 op 90 en duurt 2000 ms." />
 

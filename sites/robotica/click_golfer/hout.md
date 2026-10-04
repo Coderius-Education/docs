@@ -4,16 +4,16 @@ sidebar_position: 8
 
 # De houten baan
 
-Naast het robotje maak je ook een **houten baan**. Die is gemaakt van dunne plankjes. Je docent heeft ze al uitgesneden met een lasersnijder. Op de baan staat je Golfer, naast de plek waar de bal ligt. De **sensor** ziet of de bal er ligt, de arm slaat hem weg, en de bal rolt de helling op naar het **gat**.
+Naast het robotje maak je ook een **houten baan** van dunne plankjes. Je docent heeft ze al uitgesneden met een lasersnijder. Op de baan staat je Golfer, naast de plek waar de bal ligt. De sensor ziet of de bal er ligt, de arm slaat hem weg, en de bal rolt de helling op naar het gat.
 
 Dit heb je nodig:
 
 - de plankjes van je docent: de bodemplaat, de lange helling met het ronde gat, een klein steunplankje, een gebogen zijplankje en een blokje voor de sensor;
-- de sensor, een kleine schroef en een schroevendraaier, om de sensor vast te zetten (de schroef krijg je ook van je docent);
+- de sensor, een kleine schroef van je docent en een schroevendraaier, om de sensor vast te zetten;
 - je Golfer van Lego;
 - een bal (vraag je docent welke).
 
-Werk de foto's van boven naar beneden af; zo groeit de baan onder je handen in elkaar.
+Werk de foto's van boven naar beneden af. Zo groeit de baan onder je handen in elkaar.
 
 :::tip
 Twijfel je hoe een onderdeel eruitziet of waar het komt? Bekijk het [3D-model op de intropagina](intro), of kijk nog eens bij [de bouwstappen](bouwen). Je kunt het 3D-model draaien en zoomen.

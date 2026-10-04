@@ -113,9 +113,9 @@ Je hebt drie keer het blok **Servo 9 op …** nodig, en na elk blok een **duurt 
 
 <Probleem titel="De servo trekt te weinig kracht, of de robot doet vreemd als de servo beweegt.">
 
-**Oorzaak:** misschien krijgt de servo via alleen de usb-kabel te weinig stroom. Een servo die kracht moet zetten, vraagt veel.
+**Oorzaak:** misschien krijgt de servo via alleen de usb-kabel te weinig stroom. Een servo die kracht moet zetten, heeft veel stroom nodig.
 
-**Oplossing:** vraag je docent of er een adapter of batterij bij je robot hoort. Probeer dan of het beter gaat als je robot daar stroom van krijgt, via de aansluiting op het shield, met **ON/OFF** aan.
+**Oplossing:** vraag je docent of er een adapter of batterij bij je robot hoort. Steek die in de aansluiting voor de stroom op het shield, zet **ON/OFF** aan en kijk of het beter gaat.
 
 </Probleem>
 

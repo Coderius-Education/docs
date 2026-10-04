@@ -53,7 +53,7 @@ Er opent een venster met bovenaan **Toon output op scherm**. Dit is het scherm: 
 
 ### Stap 3: laat de robot opnieuw beginnen
 
-Je robot voerde het programma al uit toen de upload klaar was. Misschien staat de zin daarom al op het scherm, misschien ook niet. Om zeker te weten wat je robot nu doet, klik je eerst op de prullenbak, zodat het scherm leeg is.
+Je robot voerde het programma al uit toen de upload klaar was. Misschien staat de zin daarom al op het scherm, misschien ook niet. Klik eerst op de prullenbak, zodat het scherm leeg is. Dan zie je zeker wat je robot nu doet.
 
 Druk dan op het kleine knopje op de Arduino zelf, met **RST** eronder.
 
