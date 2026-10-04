@@ -1,0 +1,61 @@
+.kader {
+  border: 1px solid #8a6bbf;
+  border-left-width: 6px;
+  border-radius: var(--ifm-global-radius);
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  background: rgba(138, 107, 191, 0.09);
+}
+
+.kop {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.6rem;
+}
+
+.label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6b4f9e;
+}
+
+[data-theme='dark'] .label {
+  color: #b79ee0;
+}
+
+.naam {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.jaartal {
+  font-weight: 400;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.stroming {
+  font-size: 0.75rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid #8a6bbf;
+  color: var(--ifm-color-emphasis-800);
+}
+
+.uitleg {
+  font-size: 0.93rem;
+}
+
+.uitleg p:last-child {
+  margin-bottom: 0;
+}
+
+.voet {
+  margin-top: 0.7rem;
+  padding-top: 0.6rem;
+  border-top: 1px dashed rgba(138, 107, 191, 0.5);
+  font-size: 0.85rem;
+}

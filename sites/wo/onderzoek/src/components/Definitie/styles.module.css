@@ -1,0 +1,34 @@
+.kader {
+  border: 1.5px solid var(--ifm-color-primary);
+  border-left-width: 6px;
+  border-radius: var(--ifm-global-radius);
+  padding: 1rem 1.25rem 0.9rem;
+  margin: 1.25rem 0 1.5rem;
+  background: var(--ifm-color-primary-contrast-background, var(--ifm-background-surface-color));
+}
+
+.label {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ifm-color-primary);
+  margin-bottom: 0.35rem;
+}
+
+.tekst {
+  font-size: 1.05rem;
+}
+
+.tekst p:last-child {
+  margin-bottom: 0;
+}
+
+.gewoneTaal {
+  margin-top: 0.6rem;
+  padding-top: 0.6rem;
+  border-top: 1px dashed var(--ifm-color-emphasis-300);
+  font-size: 0.92rem;
+  color: var(--ifm-color-emphasis-800);
+}

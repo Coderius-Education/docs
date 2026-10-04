@@ -1,0 +1,328 @@
+/**
+ * Globale stijlen. De classic template gebruikt het Infima CSS-framework;
+ * hier overschrijven we de standaardkleuren met een blauw palet.
+ */
+
+:root {
+  --ifm-color-primary: #1d5fa8;
+  --ifm-color-primary-dark: #1a5697;
+  --ifm-color-primary-darker: #19518f;
+  --ifm-color-primary-darkest: #144376;
+  --ifm-color-primary-light: #2068b9;
+  --ifm-color-primary-lighter: #216dc1;
+  --ifm-color-primary-lightest: #2f7cd3;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #6fa8e8;
+  --ifm-color-primary-dark: #529ae4;
+  --ifm-color-primary-darker: #4392e2;
+  --ifm-color-primary-darkest: #217bd7;
+  --ifm-color-primary-light: #8cb6ec;
+  --ifm-color-primary-lighter: #9bbfee;
+  --ifm-color-primary-lightest: #c7dbf6;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+/**
+ * Handout-onderdelen
+ * ------------------
+ * Gebruikt door de werkvormen: een docentenblok dat je uitklapt, een
+ * invulschema met schrijfruimte en regels die alleen op papier verschijnen.
+ */
+
+/* Docusaurus rendert <details> al als uitklapbaar kader met eigen pijltje;
+   hier alleen de kleuren, zodat het docentenblok zich onderscheidt van de
+   andere uitklappers op een werkvorm. */
+.docentblok.alert {
+  --ifm-alert-background-color: var(--ifm-color-emphasis-100);
+  --ifm-alert-background-color-highlight: rgba(29, 95, 168, 0.07);
+  --ifm-alert-foreground-color: var(--ifm-font-color-base);
+  --ifm-alert-border-color: var(--ifm-color-primary);
+  margin: 1.5rem 0;
+}
+
+.docentblok.alert > summary {
+  font-weight: 600;
+  color: var(--ifm-color-primary);
+}
+
+.invulschema {
+  --schrijfruimte: 4rem;
+}
+
+.invulschema table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.invulschema tbody td:last-child {
+  height: var(--schrijfruimte);
+  vertical-align: top;
+}
+
+/* Twee blokken op één blad: smallere vraagkolom en minder schrijfruimte. */
+.invulschema-kort {
+  --schrijfruimte: 2.5rem;
+}
+
+.invulschema-kort tbody td:first-child,
+.invulschema-kort thead th:first-child {
+  width: 42%;
+}
+
+.invulschema-kort th,
+.invulschema-kort td {
+  padding: 0.3rem 0.6rem;
+}
+
+/* Gelijke kolommen, voor schema's met meer dan twee kolommen. */
+.invulschema-gelijk tbody td:first-child,
+.invulschema-gelijk thead th:first-child {
+  width: auto;
+}
+
+.hint {
+  display: block;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.82em;
+  font-weight: 400;
+}
+
+.handout-regel {
+  margin: 0 0 0.6rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid #999;
+  font-size: 0.95rem;
+}
+
+/* Standaard verborgen; verschijnt alleen in de afdruk. */
+.alleen-print {
+  display: none;
+}
+
+/**
+ * Printen
+ * -------
+ * Op papier valt alle site-navigatie weg, zodat een werkvorm als handout
+ * uit de printer komt. Een dichtgeklapt <details> print zijn inhoud niet —
+ * zo blijft het docentenblok vanzelf buiten de leerlingversie.
+ */
+@media print {
+  .theme-layout-navbar,
+  .theme-doc-sidebar-container,
+  .theme-doc-toc-desktop,
+  .theme-doc-toc-mobile,
+  .theme-doc-breadcrumbs,
+  .theme-doc-footer,
+  .theme-layout-footer,
+  .theme-back-to-top-button,
+  .pagination-nav,
+  .geen-print {
+    display: none !important;
+  }
+
+  html,
+  body {
+    background: #fff;
+    font-size: 11pt;
+  }
+
+  .main-wrapper,
+  [class*='docRoot'],
+  [class*='docMainContainer'],
+  [class*='docItemCol'],
+  [class*='docItemContainer'],
+  .container,
+  .row,
+  .col {
+    display: block !important;
+    width: auto !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .markdown a {
+    color: inherit;
+    text-decoration: underline;
+  }
+
+  /* Een dichtgeklapt docentenblok verdwijnt helemaal van de leerlingversie;
+     staat het open, dan print het voluit. */
+  details.docentblok:not([open]) {
+    display: none !important;
+  }
+
+  .markdown h1,
+  .markdown h2,
+  .markdown h3 {
+    break-after: avoid;
+  }
+
+  .markdown h1 {
+    margin-bottom: 0.4rem;
+    font-size: 19pt;
+  }
+
+  .markdown h2 {
+    margin-top: 1.1rem;
+    font-size: 14pt;
+  }
+
+  .markdown h3 {
+    font-size: 12pt;
+  }
+
+  .markdown table,
+  .markdown blockquote,
+  .theme-admonition,
+  details {
+    break-inside: avoid;
+  }
+
+  /* Tabellen scrollen niet op papier: laten uitvullen en afbreken. */
+  .markdown table {
+    display: table !important;
+    width: 100% !important;
+    overflow: visible !important;
+  }
+
+  .alleen-print {
+    display: block !important;
+  }
+
+  /* Begin dit blok op een nieuw vel. */
+  .nieuwe-pagina {
+    break-before: page;
+  }
+
+  /* Alleen de blokken met de klasse `printbaar` gaan mee naar het papier,
+     plus de paginatitel en de naam/klas-regel. De rest van de werkvorm
+     blijft op het scherm staan. Staat er geen printbaar blok op een
+     pagina, dan print die pagina gewoon helemaal. */
+  .markdown:has(> .printbaar) > *:not(header):not(.alleen-print):not(.printbaar) {
+    display: none !important;
+  }
+
+  .printbaar > h2:first-child {
+    margin-top: 0;
+  }
+
+  .invulschema {
+    --schrijfruimte: 3cm;
+  }
+
+  .invulschema-kort {
+    --schrijfruimte: 1.4cm;
+  }
+
+  .invulschema-kort table {
+    margin-bottom: 0.6rem;
+  }
+
+  .invulschema-kort th,
+  .invulschema-kort td {
+    padding: 0.18rem 0.5rem;
+  }
+
+  .invulschema-kort .hint {
+    font-size: 0.76em;
+    line-height: 1.25;
+  }
+
+  /* Werkbladen compact: minder lucht rond koppen en uitleg. */
+  .printbaar > h2 {
+    margin: 0.7rem 0 0.3rem;
+  }
+
+  .printbaar > p {
+    margin-bottom: 0.45rem;
+  }
+}
+
+/**
+ * Kaartjes om uit te knippen (werkvorm Vragenkaartjes)
+ * -----------------------------------------------------
+ * Schrijflijnen zijn randen in plaats van achtergronden: browsers printen
+ * achtergronden standaard niet, randen wel.
+ */
+.kaartjesvel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: 0.75rem 0 1.5rem;
+}
+
+.kaartje {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 0.75cm;
+  min-height: 4cm;
+  margin: -1px 0 0 -1px;
+  padding: 1.9rem 0.7rem 1.9rem;
+  border: 1.5px dashed var(--ifm-color-emphasis-500);
+  break-inside: avoid;
+}
+
+.kaartje-groot {
+  grid-column: 1 / -1;
+  min-height: 3.6cm;
+}
+
+.kaartje-label {
+  position: absolute;
+  top: 0.4rem;
+  left: 0.7rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.kaartje-lijn {
+  display: block;
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.kaartje-voet {
+  position: absolute;
+  bottom: 0.4rem;
+  left: 0.7rem;
+  right: 0.7rem;
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.toetskaart table {
+  width: 100%;
+  font-size: 0.9rem;
+}
+
+.toetskaart tbody td:last-child {
+  width: 22%;
+}
+
+@media print {
+  .kaartje {
+    min-height: 4.6cm;
+    border-color: #777;
+  }
+
+  .kaartje-lijn {
+    border-bottom-color: #bbb;
+  }
+
+  .toetskaart table {
+    font-size: 9.5pt;
+  }
+
+  .toetskaart th,
+  .toetskaart td {
+    padding: 0.25rem 0.5rem;
+  }
+}
