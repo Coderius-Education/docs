@@ -127,6 +127,7 @@ describe('cheatsheet volgt de lessen', () => {
   const KENMERK: Record<string, string> = {
     'docs_url=None': 'docs_url=None',
     'Form met max_length': 'max_length=',
+    'lijst met wat mag': 'if naam not in PAGINAS:',
     escape: 'escape(',
     '403': 'status_code=403',
     httponly: 'httponly=True',

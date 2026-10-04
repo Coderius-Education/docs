@@ -269,6 +269,11 @@ const KOPPELING: Item[] = [
     geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
   },
   {
+    summary: 'Hoe laat ik een bezoeker een pagina kiezen? (lijst met wat mag)',
+    concepten: [],
+    geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
+  },
+  {
     summary: 'Hoe maak ik HTML van een bezoeker onschadelijk? (escape)',
     concepten: [],
     geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',

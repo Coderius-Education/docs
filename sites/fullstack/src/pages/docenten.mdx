@@ -105,7 +105,7 @@ De reeks is opzettelijk defensief. Elke zelftest draait tegen de eigen server op
 | Reeks, in volgorde | Zwakheid | Kern van de oplossing |
 |---|---|---|
 | Wat je server laat zien | `/docs` toont elk endpoint, ook een vergeten `GET /sessies`; een zip neemt de databases mee | de handleiding uit met `docs_url=None`, het endpoint weg, een `.gitignore` |
-| Invoer controleren | `maxlength` houdt een script niet tegen | de grens in `Form` op de server |
+| Invoer controleren | `maxlength` houdt een script niet tegen; met `?naam=../../main.py` leest een bezoeker je code | de grens in `Form` op de server, en een lijst met wat mag |
 | HTML van een bezoeker (XSS) | ingevulde HTML draait in andermans browser | escapen bij de uitvoer |
 | Te veel verzoeken (DoS) | veel verzoeken leggen de server plat | een verzoeklimiet met `slowapi` |
 | Wie mag wat | een verborgen knop is geen slot | de controle op de server, met `403` |

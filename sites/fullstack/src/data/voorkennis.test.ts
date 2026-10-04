@@ -83,6 +83,8 @@ const ZONDER_BLOK: Record<string, string> = {
   'veiligheid/invoer/fouten-lezen.mdx':
     'geneste dictionaries staan al bij grenzen.mdx, de les ervoor; niet herhalen',
   'veiligheid/invoer/inhoud.mdx': 'strip() wordt in de les zelf uitgelegd',
+  'veiligheid/invoer/paden.mdx':
+    'FileResponse en query-parameters komen uit de FastAPI-lessen; .. wordt in de les zelf uitgelegd',
   'veiligheid/invoer/maxlength.mdx':
     'maxlength is fullstack-stof uit server-of-browser, geen nieuwe voorkennis',
   'veiligheid/invoer/praktijk.mdx':

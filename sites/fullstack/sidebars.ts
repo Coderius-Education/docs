@@ -119,6 +119,7 @@ const sidebars: SidebarsConfig = {
         'veiligheid/invoer/fouten-lezen',
         'veiligheid/invoer/inhoud',
         'veiligheid/invoer/getallen',
+        'veiligheid/invoer/paden',
         'veiligheid/invoer/praktijk',
       ],
     },

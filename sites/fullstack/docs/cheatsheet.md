@@ -831,6 +831,23 @@ async def bericht_plaatsen(bericht: str = Form(..., max_length=280)):
 </details>
 
 <details>
+<summary>Hoe laat ik een bezoeker een pagina kiezen? (lijst met wat mag)</summary>
+
+```python
+PAGINAS = ["home.html", "over.html"]
+
+@app.get("/pagina")
+async def pagina(naam: str):
+    if naam not in PAGINAS:
+        raise HTTPException(status_code=404, detail="Deze pagina bestaat niet")
+    return FileResponse(f"static/pages/{naam}")
+```
+
+Zonder de lijst vraagt een bezoeker met `?naam=../../main.py` om de code van je server. Zie [Invoer controleren: een bestandsnaam van een bezoeker](/docs/veiligheid/invoer/paden).
+
+</details>
+
+<details>
 <summary>Hoe maak ik HTML van een bezoeker onschadelijk? (escape)</summary>
 
 {/* niet-compileren: losse regel uit een handler */}
