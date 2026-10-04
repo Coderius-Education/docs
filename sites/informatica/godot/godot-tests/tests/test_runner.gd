@@ -10,6 +10,10 @@
 extends Node2D
 
 const EXTRACTED := "res://extracted"
+# Een blok dat de wijziging niet raakt (`godot:extract -- --alleen changed.json`)
+# staat in de index met `overslaan`; dan geen compileercheck, en de gedragstest
+# die op dat blok leunt slaat zichzelf over.
+const OVERGESLAGEN := "<overgeslagen>"
 
 var fouten: Array[String] = []
 var gedaan := 0
@@ -35,7 +39,11 @@ func _lees_index() -> Array:
 	return data if data is Array else []
 
 func _compileer_alles(index: Array) -> void:
+	var overgeslagen := 0
 	for item in index:
+		if item.get("overslaan", false):
+			overgeslagen += 1
+			continue
 		var pad: String = EXTRACTED + "/" + item["naam"] + ".gd"
 		var bron: String = "%s:%d" % [item["bron"], int(item["regel"])]
 		if not FileAccess.file_exists(pad):
@@ -50,7 +58,9 @@ func _compileer_alles(index: Array) -> void:
 			_faal("%s — compileert niet (zie de fout hierboven)" % bron)
 		else:
 			gedaan += 1
-	print("Gecompileerd: %d van %d blokken." % [gedaan, index.size()])
+	print("Gecompileerd: %d van %d blokken." % [gedaan, index.size() - overgeslagen])
+	if overgeslagen > 0:
+		print("Overgeslagen: %d blokken die de wijziging niet raakt (--alleen)." % overgeslagen)
 
 # --- laag 2: gedrag ----------------------------------------------------------
 
@@ -58,9 +68,9 @@ func _compileer_alles(index: Array) -> void:
 func _stap_script(index: Array, bron_bevat: String) -> String:
 	for item in index:
 		var kop: String = item["kop"]
-		if String(item["bron"]).contains(bron_bevat) and kop.begins_with("Je script tot nu toe"):
-			return EXTRACTED + "/" + item["naam"] + ".gd"
-		if String(item["bron"]).contains(bron_bevat) and kop.begins_with("Je complete script"):
+		if String(item["bron"]).contains(bron_bevat) and (kop.begins_with("Je script tot nu toe") or kop.begins_with("Je complete script")):
+			if item.get("overslaan", false):
+				return OVERGESLAGEN
 			return EXTRACTED + "/" + item["naam"] + ".gd"
 	return ""
 
@@ -140,6 +150,8 @@ func _gedrag_tests(index: Array) -> void:
 
 func _test_skelet(index: Array) -> void:
 	var pad := _stap_script(index, "skelet.md")
+	if pad == OVERGESLAGEN:
+		return
 	if pad == "":
 		_faal("Deel 1: geen script gevonden onder 'Je script tot nu toe'")
 		return
@@ -150,6 +162,8 @@ func _test_skelet(index: Array) -> void:
 
 func _test_vallen(index: Array) -> void:
 	var pad := _stap_script(index, "motor.md")
+	if pad == OVERGESLAGEN:
+		return
 	if pad == "":
 		_faal("Deel 2: geen script gevonden")
 		return
@@ -178,6 +192,8 @@ func _test_vallen(index: Array) -> void:
 
 func _test_grond(index: Array) -> void:
 	var pad := _stap_script(index, "grond.md")
+	if pad == OVERGESLAGEN:
+		return
 	if pad == "":
 		_faal("Deel 4: geen script gevonden")
 		return
@@ -191,6 +207,8 @@ func _test_grond(index: Array) -> void:
 
 func _test_lopen(index: Array) -> void:
 	var pad := _stap_script(index, "krachten.md")
+	if pad == OVERGESLAGEN:
+		return
 	if pad == "":
 		_faal("Deel 5: geen script gevonden")
 		return
@@ -204,6 +222,8 @@ func _test_lopen(index: Array) -> void:
 
 func _test_remmen(index: Array) -> void:
 	var pad := _stap_script(index, "remmen.md")
+	if pad == OVERGESLAGEN:
+		return
 	if pad == "":
 		_faal("Deel 6: geen script gevonden")
 		return
@@ -217,6 +237,8 @@ func _test_remmen(index: Array) -> void:
 
 func _test_springen(index: Array) -> void:
 	var pad := _stap_script(index, "afsluiter.md")
+	if pad == OVERGESLAGEN:
+		return
 	if pad == "":
 		_faal("Deel 7: geen script gevonden")
 		return

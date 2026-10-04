@@ -94,6 +94,14 @@ Aanroep vanuit de repo-root (zonder site-naam: de python-cursus):
     python3 scripts/draai-python-blokken.py
     python3 scripts/draai-python-blokken.py algorithms
     python3 scripts/draai-python-blokken.py algorithms --pins   # pip-regel voor CI
+    python3 scripts/draai-python-blokken.py --alleen changed.json
+
+Met `--alleen changed.json` (uit de plan-job, zie scripts/alleen.py) draaien
+alleen de blokken waarvan een regel gewijzigd is, en de blokken die erop
+doorbouwen: een draaien-met-blok draait mee als het blok dat ervoor geplakt
+wordt verandert, een blok met een uitvoerblok als dat uitvoerblok verandert, en
+een PyRunner met `verborgen` als die verborgen code verandert. Een losse
+foutmelding hangt af van zijn eigen regels en van de blokken eromheen.
 
 Het script bedient meerdere cursussen; wat per site verschilt (docs-map, het
 runbare component, de Python-versie van de Pyodide, de gepinde pakketten) staat
@@ -115,6 +123,7 @@ import tempfile
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
+from alleen import HEEL, Selectie, lees, regels_van
 from sites_registry import site_dir
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -407,10 +416,14 @@ def melding_van(kaalcode: str) -> str | None:
 def verzamel():
     """(blokken, claims, fouten).
 
-    Elk blok is (bron, regel, code, soort, verwacht, varieert, voorplak);
+    Elk blok is (bron, regel, code, soort, verwacht, varieert, voorplak, afh);
     voorplak is het aantal regels dat draaien-met ervoor heeft geplakt (0 als
-    er niets geplakt is). `fouten` zijn structurele problemen die het
-    verzamelen zelf vond, zoals een component-tag die niet geparseerd werd.
+    er niets geplakt is). `afh` zijn de (pad, eerste, laatste regel) waar het
+    oordeel over dit blok van afhangt, voor `--alleen`: het blok zelf, zijn
+    uitvoerblok, de keten die ervoor geplakt wordt en de verborgen code. Een
+    claim draagt dezelfde lijst als achtste veld. `fouten` zijn structurele
+    problemen die het verzamelen zelf vond, zoals een component-tag die niet
+    geparseerd werd.
     """
     blokken, claims, fouten = [], [], []
     tag_re = re.compile(SITE["component_tag"])
@@ -419,6 +432,7 @@ def verzamel():
     for pad in sorted(DOCS.rglob("*.mdx")) + sorted(DOCS.rglob("*.md")):
         tekst = pad.read_text()
         bron = pad.relative_to(ROOT)
+        bron_pad = bron.as_posix()
         verzameld_hier = 0  # componenten die BLOK_RE in dit bestand oppikt
         vorige = None  # laatst geziene python-blok, kandidaat voor een uitvoerblok
         # Voor draaien-met: de code van het vorige blok, mét zijn eigen
@@ -426,6 +440,7 @@ def verzamel():
         # een lezer ze ook van boven naar beneden leest. Bewust kapotte
         # blokken (niet-draaien/niet-compileren) doen niet mee.
         erboven_effectief = None
+        erboven_afh: tuple = ()
 
         for m in BLOK_RE.finditer(tekst):
             if m.group("kaal") is not None:
@@ -443,7 +458,10 @@ def verzamel():
                     soort = (
                         "draai" if rij[3] not in ("compileer-marker", "startcode") else rij[3]
                     )
-                    blokken[vorige[1]] = rij[:3] + (soort, inspring_weg(m.group("kaalcode")), rij[5], rij[6])
+                    uitvoer = (bron_pad, *regels_van(tekst, m.start(), m.end()))
+                    blokken[vorige[1]] = rij[:3] + (
+                        soort, inspring_weg(m.group("kaalcode")), rij[5], rij[6], rij[7] + (uitvoer,)
+                    )
                 melding = melding_van(m.group("kaalcode"))
                 if melding and not gepaard:
                     ervoor = tekst[: m.start()].rstrip()
@@ -457,6 +475,7 @@ def verzamel():
                             bool(LOS_RE.search(ervoor)),
                             vorig_blok(tekst, m.start()),
                             volgend_blok(tekst, m.end()),
+                            claim_afh(tekst, bron_pad, m.start(), m.end()),
                         )
                     )
                 vorige = None
@@ -475,6 +494,13 @@ def verzamel():
                 continue
             kaalcode = inspring_weg(code)
             voorplak = 0
+            # De marker boven het blok hoort erbij: wie niet-draaien weghaalt,
+            # verandert wat er met dit blok gebeurt.
+            begin_marker = ervoor.rfind("\n\n") + 1 if ervoor.endswith("*/}") else m.start()
+            eerste, laatste = regels_van(tekst, begin_marker, m.end())
+            # Twee regels extra: een weggehaalde marker laat in de diff alleen
+            # de buren van het gat achter.
+            afh: tuple = ((bron_pad, max(1, min(eerste, regel - 2)), laatste),)
             vb = VERBORGEN_RE.search(m.group(0)) if m.group("py") is None else None
             if vb:
                 # Precies zoals draaien-met: de verborgen code ervoor, een
@@ -490,18 +516,23 @@ def verzamel():
                     continue
                 voorplak = stuk.count("\n") + 2
                 kaalcode = stuk + "\n" + f"print({STAART_MARKER!r})" + "\n" + kaalcode
+                verborgen_pad = (SITE["verborgen_map"] / f"{vb.group(1)}.ts").relative_to(ROOT)
+                afh += ((verborgen_pad.as_posix(), *HEEL),)
             if MET_RE.search(ervoor):
                 boven = erboven_effectief
                 if boven is None:
                     blokken.append(
                         (bron, regel, "raise SyntaxError('draaien-met zonder blok erboven')",
-                         "draai", None, False, 0)
+                         "draai", None, False, 0, afh)
                     )
                     vorige = None
                     continue
                 # Eén regel extra: de markeerregel, zie STAART_MARKER.
                 voorplak = boven.count("\n") + 2
                 kaalcode = boven + "\n" + f"print({STAART_MARKER!r})" + "\n" + kaalcode
+                # Het voorgeplakte blok, met zijn eigen keten: verandert een
+                # blok, dan draait elk blok dat erop doorbouwt mee.
+                afh = erboven_afh + afh
             if STARTCODE_RE.search(ervoor):
                 # Draait wel, maar wordt anders beoordeeld: zie draai_startcode.
                 soort = "startcode"
@@ -520,12 +551,13 @@ def verzamel():
             else:
                 soort = "draai"
             varieert = bool(VARIEERT_RE.search(ervoor))
-            blokken.append((bron, regel, kaalcode, soort, None, varieert, voorplak))
+            blokken.append((bron, regel, kaalcode, soort, None, varieert, voorplak, afh))
             # De keten mag alleen gevoed worden door blokken die op zichzelf
             # kunnen bestaan: een fragment dat zelf niet compileert (een losse
             # return-regel) zou elk volgend draaien-met-blok meeslepen.
             if soort not in ("compileer-marker", "startcode") and compileert_los(kaalcode):
                 erboven_effectief = kaalcode
+                erboven_afh = afh
             vorige = (m.end(), len(blokken) - 1)
 
         claims += list(inline_claims(tekst, bron))
@@ -558,6 +590,18 @@ def volgend_blok(tekst: str, vanaf: int) -> str | None:
     if not m:
         return None
     return inspring_weg(m.group("py") if m.group("py") is not None else m.group("oefcode"))
+
+
+def claim_afh(tekst: str, bron: str, start: int, einde: int) -> tuple:
+    """Waar een losse foutmelding van afhangt: alles van het blok ervoor tot
+    en met het blok erna. Daartussen staan de melding, zijn marker en de code
+    die hem reproduceert (blok-erboven, blok-eronder, fout-helft)."""
+    blok = rf"^```python[^\n]*\n.*?^```|{SITE['component']}"
+    ervoor = list(re.finditer(blok, tekst[:start], re.S | re.M))
+    erna = re.search(blok, tekst[einde:], re.S | re.M)
+    van = ervoor[-1].start() if ervoor else 0
+    tot = einde + erna.end() if erna else einde
+    return ((bron, *regels_van(tekst, van, tot)),)
 
 
 def vorig_blok(tekst: str, tot: int) -> str | None:
@@ -632,6 +676,7 @@ def inline_claims(tekst: str, bron):
             bool(LOS_RE.search(ervoor)),
             vorig_blok(tekst, plek),
             volgend_blok(tekst, plek),
+            claim_afh(tekst, bron.as_posix(), plek, plek + len(m.group(0))),
         )
 
 
@@ -842,7 +887,7 @@ def los_fragment(code: str) -> tuple[int, str]:
 
 
 def controleer_claim(claim) -> str | None:
-    bron, regel, melding, hoe, los, erboven, eronder = claim
+    bron, regel, melding, hoe, los, erboven, eronder = claim[:7]
     plek = f"{bron}:{regel}"
 
     if los:
@@ -945,7 +990,9 @@ def controleer_pins() -> str | None:
 
 def main() -> int:
     argv = [a for a in sys.argv[1:] if a != "--pins"]
-    naam = argv[0] if argv else "python"
+    zonder_alleen = lees(argv, "")[1]
+    naam = zonder_alleen[0] if zonder_alleen else "python"
+    selectie = lees(argv, naam)[0]
     if naam not in SITES:
         print(f"onbekende site {naam!r}; kies uit: {', '.join(SITES)}", file=sys.stderr)
         return 2
@@ -988,6 +1035,9 @@ def main() -> int:
         return 1
 
     blokken, claims, fouten_vooraf = verzamel()
+    alle_blokken, alle_claims = len(blokken), len(claims)
+    blokken = [b for b in blokken if selectie.raakt_een(b[7])]
+    claims = [c for c in claims if selectie.raakt_een(c[7])]
     te_draaien = [b for b in blokken if b[3] == "draai"]
     startcodes = [b for b in blokken if b[3] == "startcode"]
     te_compileren = [b for b in blokken if b[3] not in ("draai", "startcode")]
@@ -1019,6 +1069,15 @@ def main() -> int:
 
     for fout in fouten:
         print(fout)
+    if not selectie.alles:
+        print(
+            f"--alleen: {len(blokken)} van {alle_blokken} blokken en {len(claims)} van "
+            f"{alle_claims} losse foutmeldingen geraakt door de wijziging:"
+        )
+        for b in blokken:
+            print(f"  blok {b[0]}:{b[1]} ({b[3]})")
+        for c in claims:
+            print(f"  foutmelding {c[0]}:{c[1]} {c[2]!r}")
     print(
         f"Uitgevoerd: {len(te_draaien)} blokken, waarvan {met_belofte} met een "
         f"beloofde uitvoer; startcodes gedraaid: {len(startcodes)}; "

@@ -28,6 +28,8 @@ writeFileSync(
       naam: f.naam,
       bron: f.bron.startsWith(SITE) ? f.bron.slice(SITE.length + 1) : f.bron,
       regel: f.regel,
+      begin: f.begin,
+      eind: f.eind,
       kop: f.kop,
     })),
     null,

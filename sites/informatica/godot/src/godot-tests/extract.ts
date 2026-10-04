@@ -17,6 +17,12 @@ export type Fragment = {
   bron: string;
   /** 1-gebaseerd regelnummer waar het codeblok begint */
   regel: number;
+  /**
+   * eerste en laatste regel die bij het blok horen (twee regels erboven, voor
+   * een marker, en de sluitende fence); `--alleen` legt dit tegen de diff
+   */
+  begin: number;
+  eind: number;
   /** de GDScript-broncode, klaar om te compileren */
   code: string;
   /** de dichtstbijzijnde `##`-kop erboven; de gedragstest kiest hierop */
@@ -69,6 +75,8 @@ export function fragmentenUit(
     const code = match[1].replace(/\s+$/, '');
     const ervoor = inhoud.slice(0, match.index);
     const regel = ervoor.split('\n').length;
+    const begin = Math.max(1, regel - 2);
+    const eind = regel + match[0].split('\n').length - 1;
     const koppen = ervoor.match(/^#{2,3} (.+)$/gm);
     const kop = koppen ? koppen[koppen.length - 1].replace(/^#+ /, '') : '';
     n += 1;
@@ -80,7 +88,7 @@ export function fragmentenUit(
     }
 
     if (/^extends\s+\w+/m.test(code)) {
-      fragmenten.push({ naam, bron, regel, kop, code: `${code}\n` });
+      fragmenten.push({ naam, bron, regel, begin, eind, kop, code: `${code}\n` });
       continue;
     }
 
