@@ -11,7 +11,11 @@ import type { SidebarsConfig } from '@docusaurus/plugin-content-docs';
 // ook niet; die is naslag en gelinkt vanuit de cheatsheet en de lessen. In de
 // navbar paste hij niet meer: op 1280 breed liepen de items dan over twee regels.
 const sidebars: SidebarsConfig = {
+  // Eerst de startpagina: wat je aan het eind hebt, wat je al moet kunnen, en
+  // de route als kaart (<Routekaart>, die deze sidebar zelf leest). De navbar-
+  // link FastAPI komt daar uit.
   apiSidebar: [
+    'FastAPI/index',
     {
       type: 'category',
       label: 'Je eerste server',

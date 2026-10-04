@@ -1,0 +1,82 @@
+---
+sidebar_label: 'Zo werkt deze cursus'
+description: Wat je aan het eind van de FastAPI-cursus hebt, wat je al moet kunnen, de route van de basis via de uitbreidingen naar Veiligheid, en hoe een les werkt.
+---
+
+import Gastenboek from '@site/src/components/Gastenboek';
+import Routekaart from '@site/src/components/Routekaart';
+
+# FastAPI: zo werkt deze cursus
+
+Je website heeft een formulier, maar wat een bezoeker invult, verdwijnt zodra
+hij op de knop drukt. Er is niemand die het ontvangt. In deze cursus bouw je
+die ontvanger zelf: een server in Python, met FastAPI.
+
+## Wat je aan het eind hebt
+
+Je eigen website met een gastenboek dat echt werkt. Zo ziet het eruit als de
+basis af is:
+
+<Gastenboek />
+
+Een bezoeker vult zijn naam en een bericht in. Je server bewaart het in een
+database en zet alle berichten op een tweede pagina. Elk bericht heeft een
+eigen adres, en een onbekend adres geeft een nette 404. Alles draait op je
+eigen computer, op `127.0.0.1:8000`; helemaal aan het eind zet je hem open
+voor je netwerk, zodat je klas je gastenboek kan bezoeken.
+
+## Wat je al moet kunnen
+
+De cursus bouwt op drie andere cursussen van Coderius. Je hoeft ze niet uit je
+hoofd te kennen: een les die iets uit zo'n cursus gebruikt, heeft bovenaan een
+dichtgeklapt blok dat naar de uitleg linkt.
+
+- **Python**: functies, `if`, lijsten en dictionaries. Het vaakst komen <SiteLink site="python" to="/docs/functies/functies">Functies</SiteLink> en <SiteLink site="python" to="/docs/data/11a-dictionaries-basis">Dictionaries</SiteLink> terug.
+- **HTML en CSS**: een pagina met koppen, links en een <SiteLink site="web" to="/docs/html-css/formulieren">formulier</SiteLink>. JavaScript heb je pas in de uitbreiding JavaScript nodig.
+- **VS Code**: een projectmap met een virtual environment, zoals in <SiteLink site="editor" to="/python/">Python in VS Code</SiteLink>. De eerste les controleert of alles klaarstaat.
+
+Ga je verder waar je gebleven was? [Hoe start ik?](/docs/starten) zet in drie
+stappen VS Code, de terminal en je server weer klaar.
+
+## De route
+
+De eerste vier stappen zijn de basis, en die eindigen met het gastenboek van
+hierboven. Daarna volgen drie uitbreidingen: een pagina die niet herlaadt,
+JavaScript in de browser, en een server die bezoekers onthoudt. Doe ze op
+volgorde, want elke uitbreiding gaat uit van je project zoals het na de vorige
+is. De afronding laat de hele weg van klik tot antwoord zien.
+
+<Routekaart kop="De route door de FastAPI-cursus" />
+
+Na de laatste stap is je gastenboek af, maar nog niet veilig. Dat is een
+aparte route, met een eigen knop in de menubalk:
+[Veiligheid](/docs/veiligheid). Daar ontdek je wat een bezoeker met je
+server kan doen als hij zich niet aan je formulier houdt, en hoe je server
+dat tegenhoudt.
+
+## Hoe een les werkt
+
+Elke les gaat over één ding, en begint met code die werkt.
+
+1. **Voorspel.** Vaak vraagt de les eerst wat je denkt dat de code doet. Het
+   antwoord staat dichtgeklapt, zodat je eerst zelf nadenkt.
+2. **Probeer het uit.** Je zet de code in je eigen project en kijkt in de
+   browser of je voorspelling klopte.
+3. **Opdrachten.** Bij elke opdracht staan een tip en een antwoord, allebei
+   dicht. De laatste opdracht (Make) mag je overslaan; geen volgende les bouwt
+   erop.
+4. **Zo ziet je `main.py` er nu uit.** Een les uit de basis die je server verandert,
+   sluit af met het hele bestand zoals het na die les hoort te zijn. Ben je de draad kwijt, dan
+   vergelijk je het met dat van jou.
+
+Loopt het vast, dan helpt een van deze drie:
+
+- [Er gaat iets mis](/docs/troubleshooting) heeft de foutmeldingen die je het
+  vaakst ziet, met de oorzaak en de oplossing.
+- De [cheatsheet](/docs/cheatsheet) zet alle code van de cursus kort op een
+  rij.
+- De ontwikkelaarstools van je browser laten zien wat er tussen browser en
+  server heen en weer gaat. Hoe je ze opent, staat in
+  [Kijken wat de browser doet](/docs/FastAPI/devtools-netwerk).
+
+Begin bij [Installatie](/docs/FastAPI/installatie).

@@ -48,6 +48,8 @@ const ZONDER_BLOK: Record<string, string> = {
   'FastAPI/devtools-console.mdx':
     'console.log en de DOM staan al bij javascript.mdx, de les ervoor; niet herhalen',
   'FastAPI/hoe-een-verzoek-werkt.mdx': 'samenvatting van deze cursus, geen nieuwe stof',
+  'FastAPI/index.mdx':
+    'startpagina: noemt de drie cursussen zichtbaar met SiteLinks onder Wat je al moet kunnen; de lessen hebben elk hun eigen blok',
   'FastAPI/htmx-overzicht.mdx':
     'recepten die op de htmx-les ervoor en op de gastenboek-lessen bouwen, allemaal in deze cursus',
   'FastAPI/verzoek-htmx.mdx': 'diagram van de lessen ervoor, geen nieuwe stof',

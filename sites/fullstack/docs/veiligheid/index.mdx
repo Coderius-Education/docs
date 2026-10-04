@@ -3,6 +3,9 @@ sidebar_label: 'Zo werkt deze route'
 description: Waar de route Veiligheid over gaat, wat je al moet kunnen, de spelregel, de volgorde van de reeksen, en een overzicht van de statuscodes.
 ---
 
+import Gastenboek from '@site/src/components/Gastenboek';
+import Routekaart from '@site/src/components/Routekaart';
+
 # Veiligheid: zo werkt deze route
 
 Je gastenboek werkt. Zolang jij de enige bezoeker bent, gaat alles goed, want je
@@ -45,24 +48,30 @@ een aanval, en strafbaar, ook als het "maar een testje" is.
 
 ## De route
 
-Begin met [Een script als bezoeker](/docs/veiligheid/gereedschap): daarin leer je verzoeken
-sturen zonder browser, en dat heb je in elke reeks nodig. Daarna volgen de
-reeksen, van dichtbij je eigen gastenboek naar ver weg:
+Begin met het gereedschap: daarin leer je verzoeken sturen zonder browser, en
+dat heb je in elke reeks nodig. Daarna volgen de reeksen, van dichtbij je eigen
+gastenboek naar ver weg. Bij elke reeks staat de vraag die hij beantwoordt.
 
-| Reeks | De vraag die hij beantwoordt |
-|---|---|
-| [Invoer controleren](/docs/veiligheid/invoer/maxlength) | Hoe houd je tegen wat niet in een veld hoort, als `maxlength` dat niet doet? |
-| [HTML van een bezoeker](/docs/veiligheid/xss/zwakheid) | Wat gebeurt er als een bezoeker HTML in je gastenboek typt? |
-| [Wie mag wat](/docs/veiligheid/toegang/zwakheid) | Hoe zorg je dat alleen de schrijver zijn bericht kan verwijderen? |
-| [Cookies afschermen](/docs/veiligheid/cookies/zwakheid) | Hoe houd je een script weg bij het sessie-id? |
-| [Wachtwoorden veilig opslaan](/docs/veiligheid/wachtwoorden/gewone-tekst) | Hoe bewaar je wachtwoorden zo dat een gelekte database ze niet weggeeft? |
-| [Te veel verzoeken](/docs/veiligheid/dos/verzoek) | Wat doe je tegen een bezoeker die je server blijft bestoken? |
+<Routekaart kop="De route Veiligheid" />
 
 Elke reeks begint met de zwakheid, gaat dan naar de verdediging in FastAPI, laat
 je die toepassen op je eigen project, en eindigt met wat echte sites nog meer
-doen. De route sluit af met [Beveilig je eigen project](/docs/veiligheid/eigen-project), één
-lijst om je project na te lopen. Je kunt de reeksen ook los doen,
-maar Cookies bouwt op de server uit Wie mag wat.
+doen. Je kunt de reeksen ook los doen, maar Cookies bouwt op de server uit Wie
+mag wat.
+
+## Wat je aan het eind hebt
+
+Hetzelfde gastenboek, maar nu houdt je server zelf de grens bij. Een bericht
+dat te lang is of leeg, weigert hij. HTML die een bezoeker typt, komt er als
+gewone tekst in. Alleen de schrijver kan zijn bericht verwijderen, ook als
+iemand het verzoek met een script in elkaar zet:
+
+<Gastenboek beschermd />
+
+Verder kan geen script meer bij het sessie-id, staan wachtwoorden er als
+hash in, en remt een verzoeklimiet een bezoeker af die je server blijft
+bestoken. [Beveilig je eigen project](/docs/veiligheid/eigen-project) zet dat
+allemaal op één lijst.
 
 ## Statuscodes
 

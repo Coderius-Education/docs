@@ -1,5 +1,25 @@
+import { createRequire } from 'node:module';
 import { createConfig } from '@coderius/shared/config';
 import { REPO_URL, repoEditUrl } from '@coderius/shared/sites';
+
+// <Routekaart> leest de sidebar met useDocsSidebar() uit
+// '@docusaurus/plugin-content-docs/client'. pnpm heeft meerdere kopieën van dat
+// package; vanuit src/ kwam een andere kopie dan die van theme-classic, en dan
+// zit de hook buiten de <DocsSidebarProvider> van het thema en faalt de build.
+// Deze alias stuurt elke import naar de kopie die theme-classic gebruikt.
+const require = createRequire(import.meta.url);
+const themeClassic = require.resolve('@docusaurus/theme-classic', {
+  paths: [require.resolve('@docusaurus/preset-classic')],
+});
+const docsClient = require.resolve('@docusaurus/plugin-content-docs/client', {
+  paths: [themeClassic],
+});
+const eenDocsClient = () => ({
+  name: 'een-docs-client',
+  configureWebpack: () => ({
+    resolve: { alias: { '@docusaurus/plugin-content-docs/client$': docsClient } },
+  }),
+});
 
 export default createConfig({
   title: 'Fullstack met FastAPI — Coderius',
@@ -23,6 +43,8 @@ export default createConfig({
   ],
 
   sharedPackages: ['@coderius/shared', '@coderius/checker'],
+
+  plugins: [eenDocsClient],
 
   presets: [
     [
