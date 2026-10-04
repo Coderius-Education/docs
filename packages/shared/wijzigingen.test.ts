@@ -1,8 +1,10 @@
 import { alleSiteMappen } from '@coderius/shared/sites';
+import { controleer } from '@coderius/shared/stijl';
 import {
   HEEL_BESTAND,
   binnenWijziging,
   isGlobaal,
+  opGewijzigdeRegels,
   overlapt,
   parseDiff,
   plan,
@@ -279,5 +281,35 @@ describe('workspaceAfhankelijkheden', () => {
       b: { naam: 'b', deps: ['a'] },
     };
     expect(workspaceAfhankelijkheden(pakketten, 'a')).toEqual(['a', 'b']);
+  });
+});
+
+describe('opGewijzigdeRegels (tekst --regels)', () => {
+  // Een alinea met vijf keer vet over drie regels: één melding, regel 3 t/m 5.
+  const tekst = [
+    '# Kop',
+    '',
+    'Hier staat **een** en **twee**',
+    'en ook **drie** en **vier**',
+    'en tot slot **vijf** woorden vet.',
+    '',
+    'Hier kunt u verder lezen.',
+    '',
+  ].join('\n');
+  const meldingen = controleer(tekst);
+
+  it('stijl.js geeft een melding over meer regels een eind', () => {
+    expect(meldingen.find((m) => m.naam === 'vet-overdaad')).toMatchObject({ regel: 3, eind: 5 });
+    expect(meldingen.find((m) => m.naam === 'u-vorm')).toMatchObject({ regel: 7, eind: 7 });
+  });
+
+  it('een gewijzigde middelste regel houdt de melding over de hele alinea', () => {
+    expect(opGewijzigdeRegels(meldingen, [[4, 4]]).map((m) => m.naam)).toEqual(['vet-overdaad']);
+  });
+
+  it('een wijziging elders laat alleen die melding over', () => {
+    expect(opGewijzigdeRegels(meldingen, [[7, 7]]).map((m) => m.naam)).toEqual(['u-vorm']);
+    expect(opGewijzigdeRegels(meldingen, [[1, 2]])).toEqual([]);
+    expect(opGewijzigdeRegels(meldingen, undefined)).toEqual([]);
   });
 });
