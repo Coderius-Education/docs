@@ -46,14 +46,16 @@ Probeer het hier. Sleep de schuif of typ een getal bij **Servo 9 op**, en kijk w
 
 ## Heen en weer
 
-Het blok **Servo 9 op 90** uit de groep **Actuatoren** zet de servo op pin 9 in de stand van 90 graden. In Easybloqs staat er eerst **Servo 2 op 90**. Klik op de 2 en kies **9**: daar zit je servo. Dit programma laat het asje heen en weer draaien:
+Je maakt nu een nieuw programma. Wil je het programma van de sensor bewaren? Kies dan in het menu **Mijn projecten** de knop **Opslaan als ...**, typ een naam en klik op **Opslaan**. Je laptop bewaart het als bestand. Haal daarna de oude blokken weg: sleep **herhaal voor altijd** uit het Leaphy-blok naar de groepen links. Alles wat erin zit, gaat mee. Het Leaphy-blok blijft staan.
+
+Het blok **Servo 9 op 90** uit de groep **Actuatoren** zet de servo op pin 9 in de stand van 90 graden. In Easybloqs staat er eerst **Servo 2 op 90**. Klik op de 2 en kies **9**: daar zit je servo. Bekijk dit programma, maar upload het nog niet:
 
 <Blokken programma={heenEnWeer} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: Servo 9 op 0, duurt 1000 ms, Servo 9 op 90, duurt 1000 ms." />
 
 <Voorspel vraag="Wat doet het asje?">
-  <Keuze goed uitleg="Na elke stand wacht hij 1000 ms, en alles staat in herhaal voor altijd.">Naar 0°, een seconde wachten, naar 90°, een seconde wachten, en steeds opnieuw</Keuze>
-  <Keuze uitleg="Het staat in herhaal voor altijd, dus het begint steeds opnieuw.">Het draait één keer naar 0° en terug, en stopt dan</Keuze>
-  <Keuze uitleg="Servo 9 op 0 zet het asje eerst naar 0°. Pas daarna gaat het terug naar 90°.">Het blijft op 90° staan</Keuze>
+  <Keuze goed uitleg="Elk duurt-blok is 1000 ms: een seconde stilstaan voor de volgende stand.">Naar 0°, een seconde wachten, naar 90°, een seconde wachten, en steeds opnieuw</Keuze>
+  <Keuze uitleg="Kijk in welk blok de servo-blokken staan. Na één keer stoppen doet alleen het Leaphy-blok.">Het draait één keer naar 0° en terug, en stopt dan</Keuze>
+  <Keuze uitleg="Kijk naar het eerste servo-blok in herhaal voor altijd: daar staat geen 90.">Het blijft op 90° staan</Keuze>
   <Keuze uitleg="Een servo draait maar een halve cirkel, van 0° tot 180°. Hij gaat naar een stand en blijft daar.">Het draait steeds rondjes</Keuze>
   <Uitleg>
 
@@ -71,7 +73,7 @@ Laat het asje langs drie standen gaan: 45°, 90° en 135°, met steeds een secon
 <details>
 <summary>Tip</summary>
 
-Je hebt drie keer het blok **Servo 9 op …** nodig, en na elk blok een **duurt 1000 ms**.
+Begin met het programma van Heen en weer. Wat moet erbij, en welke getallen veranderen?
 
 </details>
 
@@ -130,12 +132,12 @@ Je hebt drie keer het blok **Servo 9 op …** nodig, en na elk blok een **duurt 
 </Probleem>
 
 <Voorspel soort="Controlevraag" vraag="Het programma Heen en weer zet het asje op 0° en daarna op 90°. Welk deel van een hele cirkel draait het asje dan elke keer?">
-  <Keuze uitleg="De servo kan een halve cirkel draaien, maar van 0° naar 90° is de helft daarvan.">Een halve cirkel</Keuze>
+  <Keuze uitleg="Een halve cirkel is het hele stuk van 0° tot 180°. Het asje stopt al eerder.">Een halve cirkel</Keuze>
   <Keuze goed uitleg="Een halve cirkel is 180°, en 90° is daar de helft van.">Een kwart cirkel</Keuze>
-  <Keuze uitleg="90° betekent 90 graden: kleine stukjes van een halve cirkel, geen rondjes.">90 rondjes</Keuze>
+  <Keuze uitleg="Heen en terug gaat twee keer over hetzelfde stukje. Het asje draait nooit helemaal rond.">Een hele cirkel, want het asje gaat heen en terug</Keuze>
   <Uitleg>
 
-Een kwart cirkel. Een halve cirkel is 180°, en 90° is daar de helft van.
+Een kwart cirkel. Van 0° tot 180° is een halve cirkel. Van 0° tot 90° is de helft daarvan, en de helft van een halve cirkel is een kwart.
 
   </Uitleg>
 </Voorspel>

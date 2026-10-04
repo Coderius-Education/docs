@@ -1,8 +1,10 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import { TEKST } from '../../../../packages/shared/components/Voorspel/logica';
 import {
   BIJNA,
+  MELDING_REGELS,
   MIDDEN,
   OPDRACHTEN,
   type Opdracht,
@@ -10,6 +12,7 @@ import {
   beoordeel,
   draaiing,
   leesInvoer,
+  moetBevestigen,
   punt,
 } from '../components/ServoSchijf/logica';
 
@@ -74,6 +77,44 @@ describe('begrenzen', () => {
   });
 });
 
+describe('het veld verlaten', () => {
+  it('na Enter bij 200 blijft de melding staan als je op Volgende opdracht klikt', () => {
+    // Enter bij 200 zet de stand op 180 en het veld op "180", met een
+    // melding. De klik op de knop haalt de focus uit het veld; bevestigde dat
+    // opnieuw, dan verdween de melding, schoof de knop omhoog en telde de
+    // klik niet. Nagespeeld met Playwright op 1280 en 375 breed.
+    const { stand, melding } = leesInvoer('200');
+    expect(melding).not.toBeNull();
+    expect(moetBevestigen(String(stand), stand as number)).toBe(false);
+  });
+
+  it('de melding heeft altijd haar ruimte, en past daarin op een telefoon', () => {
+    // Wie 200 typt en zonder Enter op de knop klikt, laat het veld los
+    // terwijl de muisknop omlaag is. De melding verschijnt dan; stond haar
+    // ruimte er nog niet, dan schoof de knop weg en telde de klik niet.
+    const css = readFileSync(
+      fileURLToPath(new URL('../components/ServoSchijf/styles.module.css', import.meta.url)),
+      'utf8',
+    );
+    expect(css).toMatch(new RegExp(`min-height: calc\\(${MELDING_REGELS} \\* 1\\.4em\\)`));
+    // Het oordeel ook: dat verschijnt bij 200 zonder Enter tegelijk met de
+    // melding, en is op 375 breed twee regels (gemeten: 45 px, elke tekst).
+    expect(css).toMatch(/\.oordeel \{\s*min-height: calc\(2 \* 1\.4em\)/);
+    // Op 375 breed passen er zo'n 40 tekens op een regel van 0.9rem
+    // (gemeten met Playwright); 200 en -180 zijn de langste.
+    for (const invoer of ['200', '-180', '44.5', 'abc']) {
+      expect((leesInvoer(invoer).melding ?? '').length).toBeLessThanOrEqual(MELDING_REGELS * 36);
+    }
+  });
+
+  it('bevestigt wel wat nog niet de stand is: een half getal, een leeg veld, of 200 zonder Enter', () => {
+    expect(moetBevestigen('44.6', 90)).toBe(true);
+    expect(moetBevestigen('', 90)).toBe(true);
+    expect(moetBevestigen('200', 90)).toBe(true);
+    expect(moetBevestigen('90', 90)).toBe(false);
+  });
+});
+
 describe('de opdrachten', () => {
   const vind = (doel: number): Opdracht => {
     const o = OPDRACHTEN.find((x) => x.doelen.length === 1 && x.doelen[0] === doel);
@@ -94,7 +135,7 @@ describe('de opdrachten', () => {
   it('beoordeelt goed, bijna en nog niet', () => {
     expect(beoordeel(90, vind(90))).toMatchObject({
       goed: true,
-      tekst: expect.stringMatching(/^Goed zo/),
+      tekst: expect.stringMatching(/^Goed\. /),
     });
     expect(beoordeel(60, vind(45)).tekst).toBe('Bijna: je staat op 60°, je moet naar 45°.');
     expect(beoordeel(45 - BIJNA, vind(45)).tekst).toMatch(/^Bijna/);
@@ -110,6 +151,11 @@ describe('de opdrachten', () => {
     expect(beoordeel(180, kant).goed).toBe(true);
     expect(beoordeel(170, kant).tekst).toMatch(/naar 180°/);
     expect(beoordeel(10, kant).tekst).toMatch(/naar 0°/);
+  });
+
+  it('zegt goed met hetzelfde woord als de voorspelvragen op de pagina', () => {
+    // De draaischijf zei "Goed zo.", de <Voorspel> eronder "Goed.".
+    for (const o of OPDRACHTEN) expect(o.goed.startsWith(`${TEKST.goed} `)).toBe(true);
   });
 
   it('geen terugkoppeling met een uitroepteken', () => {

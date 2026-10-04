@@ -32,17 +32,19 @@ Zit alles vast? Zet je robot dan weer aan met **ON/OFF**.
 
 ## Stap 1: het getal uitlezen
 
-Het blok **Lees anapin A0** vind je in de groep **Sensoren**. Daarmee lees je het getal van de sensor. **Toon op scherm** uit **Actuatoren** laat het getal zien: sleep **Lees anapin** op de plek van het tekstvakje. Neem het blok **Toon op scherm** met één vakje, zoals bij [je eerste programma](easybloqs).
+Sleep eerst het blok **herhaal voor altijd** uit **Denk stappen** in het Leaphy-blok. Het doet alles wat erin staat steeds opnieuw. Zonder dat blok las je robot de sensor één keer, en daarna nooit meer.
+
+Het blok **Lees anapin A0** vind je in de groep **Sensoren**. Daarmee lees je het getal van de sensor. **Toon op scherm** uit **Actuatoren** laat het getal zien: sleep het in **herhaal voor altijd**, en sleep **Lees anapin** op de plek van het tekstvakje. Neem het blok **Toon op scherm** met één vakje, zoals bij [je eerste programma](easybloqs).
+
+Onder **Toon op scherm** komt **duurt 500 ms**, ook uit **Denk stappen**. Het laat de robot een halve seconde wachten, zodat je het getal kunt lezen. In Easybloqs heet het blok **Duurt**, en staat er eerst 1000 in: klik op het getal en typ 500. Achter het getal staat een keuzelijstje met ms, μs en s. Laat dat op **ms** staan.
 
 <Blokken programma={uitlezen} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: Toon op scherm Lees anapin A0, en daarna duurt 500 ms." />
-
-Het blok **herhaal voor altijd** uit **Denk stappen** doet alles wat erin staat steeds opnieuw. Zonder dat blok las je robot de sensor één keer, en daarna nooit meer. **duurt 500 ms**, ook uit **Denk stappen**, laat de robot een halve seconde wachten, zodat je het getal kunt lezen. In Easybloqs staat er eerst 1000 in **duurt**: klik op het getal en typ 500.
 
 Klik op **Upload naar robot** en open het scherm met de knop **Toon output op scherm**, zoals bij [je eerste programma](easybloqs). Er verschijnt elke halve seconde een nieuw getal. Leg een bal voor de sensor en haal hem weer weg. Wordt het getal lager met een bal ervoor? Schrijf de twee getallen op: zonder bal en met bal.
 
 <Voorspel soort="Controlevraag" vraag="Waarom staat Lees anapin A0 in een herhaal voor altijd?">
-  <Keuze goed uitleg="Zonder herhaal leest de robot de sensor één keer, bij het aanzetten, en daarna nooit meer.">Zodat de robot steeds opnieuw kijkt of er een bal ligt</Keuze>
-  <Keuze uitleg="Hoe vaak er een nieuw getal komt, bepaalt duurt. Herhaal voor altijd zorgt dat er steeds opnieuw gelezen wordt.">Zodat het getal sneller op het scherm komt</Keuze>
+  <Keuze goed uitleg="Herhaal voor altijd laat je robot steeds opnieuw lezen. Zo merkt hij ook een bal die je later neerlegt.">Zodat de robot steeds opnieuw kijkt of er een bal ligt</Keuze>
+  <Keuze uitleg="Hoe snel er een nieuw getal komt, bepaalt het blok duurt, niet herhaal voor altijd.">Zodat het getal sneller op het scherm komt</Keuze>
   <Keuze uitleg="De sensor meet wel steeds, maar je robot leest het getal alleen als hij bij Lees anapin komt. Het Leaphy-blok doet dat één keer.">Dat hoeft niet, de sensor meet zelf steeds</Keuze>
   <Uitleg>
 
@@ -55,7 +57,7 @@ Zonder herhaal leest de robot de sensor één keer, bij het aanzetten. Je wilt s
 
 Zonder bal geeft je sensor een hoog getal, met een bal een laag getal. Je robot moet dus weten vanaf welk getal er een bal ligt. Dat getal kies je zelf: het heet je **grens**. Is het getal op A0 kleiner dan je grens, dan ligt er een bal.
 
-Hieronder oefen je dat zonder robot. Schuif met de muis, of klik op een schuifje en gebruik de pijltjestoetsen.
+Hieronder oefen je dat zonder robot. Schuif met de muis of met je vinger, of klik op een schuifje en gebruik de pijltjestoetsen.
 
 <SensorSimulator />
 
@@ -80,10 +82,10 @@ De getallen hier zijn een voorbeeld. Jouw sensor geeft andere getallen: dat hang
 
 ## Stap 2: reageren op de bal
 
-Nu laat je de robot zelf beslissen. Met het blok **als … dan** uit **Denk stappen** kijk je of het getal kleiner is dan een grens. In het voorbeeld is die grens **300**. Je bouwt verder op het programma van stap 1:
+Nu laat je de robot zelf beslissen. Met het blok **als … dan** uit **Denk stappen** kijk je of het getal kleiner is dan een grens. In **Denk stappen** staan twee blokken **als**: neem het eerste, zonder **anders**. In het voorbeeld is die grens **300**. Je bouwt verder op het programma van stap 1:
 
 1. Sleep als … dan in herhaal voor altijd, helemaal bovenaan. Toon op scherm en duurt schuiven eronder.
-2. Sleep Toon op scherm in het gat achter het woord dan. Het blok duurt gaat mee, want een blok neemt alles eronder mee. Sleep duurt daarna terug, onder als … dan.
+2. Sleep Toon op scherm in het gat onder als … dan. Het blok duurt gaat mee, want een blok neemt alles eronder mee. Sleep duurt daarna terug, onder als … dan.
 3. Het vergelijkblok vind je in **Getal blokken**. In Easybloqs staat er eerst `1 = 1` in. Sleep het in het gat achter het woord als.
 4. Sleep Lees anapin A0 uit Toon op scherm naar het linkervakje van het vergelijkblok. In Toon op scherm komt het tekstvakje terug: typ daarin `klaar om te golfen!`.
 5. Klik op het `=` en kies in het keuzelijstje **`<`**. Typ in het rechtervakje je grens.
@@ -123,10 +125,10 @@ Is het getal kleiner dan 300, dan ligt er een bal en verschijnt "klaar om te gol
 <Voorspel soort="Controlevraag" vraag="De sensor heeft twee pinnen waar een signaal uit komt: A0 en D0. Welke van de twee sluit je aan?">
   <Keuze goed uitleg="A0 geeft een getal, en met een getal kies je zelf een grens.">A0, op het signaal van A0 op het shield</Keuze>
   <Keuze uitleg="D0 van de sensor geeft alleen ja of nee. Dan ligt de grens al vast, en kun je hem niet zelf kiezen.">D0, want die zegt meteen of er een bal ligt</Keuze>
-  <Keuze uitleg="Je gebruikt er maar één: de robot leest één getal, met Lees anapin A0.">Allebei</Keuze>
+  <Keuze uitleg="Je programma leest maar één pin van de sensor. Een tweede draad doet dus niets.">Allebei</Keuze>
   <Uitleg>
 
-**A0**, op het signaal van **A0** op het shield. Die pin geeft een getal, en met een getal kies je zelf een grens. D0 van de sensor geeft alleen ja of nee, en dan ligt die grens al vast.
+Sluit **A0** van de sensor aan op het signaal van **A0** op het shield. Het getal dat je daar leest, vergelijk je in je programma met je eigen grens.
 
   </Uitleg>
 </Voorspel>

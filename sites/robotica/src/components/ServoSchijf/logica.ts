@@ -59,7 +59,7 @@ export function leesInvoer(tekst: string): Invoer {
   if (getal > MAX) {
     return {
       stand: MAX,
-      melding: `${tekst.trim()} kan niet: een servo draait maar een halve cirkel, tot 180°. Hij staat nu op 180°.`,
+      melding: `${tekst.trim()} kan niet: een servo draait maar tot 180°. Hij staat nu op 180°.`,
     };
   }
   const stand = begrens(getal);
@@ -67,6 +67,22 @@ export function leesInvoer(tekst: string): Invoer {
     return { stand, melding: `Een servo kent alleen hele graden. Hij staat nu op ${stand}°.` };
   }
   return { stand, melding: null };
+}
+
+// Hoeveel regels de melding onder het veld mag hebben. De ruimte staat er
+// altijd (`.melding` in styles.module.css): verscheen de melding pas als je
+// het veld verliet, dan schoof alles eronder omlaag, ook de knop waar je net
+// op klikte.
+export const MELDING_REGELS = 2;
+
+// Moet het veld bij het verlaten nog bevestigd worden? Alleen als er iets
+// staat dat nog niet de stand is. Na Enter staat de stand er al; bevestigen
+// zou dan de melding wissen. Die melding wiste een klik op "Volgende
+// opdracht" eerst halverwege: de muisknop ging omlaag, het veld verloor zijn
+// focus, de melding verdween, de knop schoof omhoog en de muisknop kwam
+// naast de knop weer omhoog. De klik telde dan niet.
+export function moetBevestigen(tekst: string, stand: number): boolean {
+  return tekst !== String(stand);
 }
 
 export interface Opdracht {
@@ -82,22 +98,22 @@ export const OPDRACHTEN: Opdracht[] = [
   {
     vraag: 'Draai het asje helemaal naar één kant.',
     doelen: [0, 180],
-    goed: 'Goed zo. Verder dan 0° of 180° komt een servo niet.',
+    goed: 'Goed. Verder dan 0° of 180° komt een servo niet.',
   },
   {
     vraag: 'Zet het asje recht in het midden.',
     doelen: [90],
-    goed: 'Goed zo. 90° is recht in het midden.',
+    goed: 'Goed. 90° is recht in het midden.',
   },
   {
     vraag: 'Zet het asje halverwege tussen 0° en het midden.',
     doelen: [45],
-    goed: 'Goed zo. 45° is de helft van 90°.',
+    goed: 'Goed. 45° is de helft van 90°.',
   },
   {
     vraag: 'Zet het asje halverwege tussen het midden en 180°.',
     doelen: [135],
-    goed: 'Goed zo. 135° ligt precies tussen 90° en 180°.',
+    goed: 'Goed. 135° ligt precies tussen 90° en 180°.',
   },
 ];
 

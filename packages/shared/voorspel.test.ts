@@ -65,6 +65,8 @@ function attribuut(attrs: string, naam: string): string | true | undefined {
 interface Blok {
   vraag: string;
   keuzes: { goed: boolean; uitleg: string; tekst: string }[];
+  /** De tekst in <Uitleg>, of leeg. */
+  uitleg: string;
 }
 
 /** Alle <Voorspel>-blokken in een bron, met hun keuzes. */
@@ -73,6 +75,7 @@ function voorspellingen(bron: string): Blok[] {
     const vraag = attribuut(m[1], 'vraag');
     return {
       vraag: typeof vraag === 'string' ? vraag : '',
+      uitleg: (m[2].match(/<Uitleg>([\s\S]*?)<\/Uitleg>/)?.[1] ?? '').trim(),
       keuzes: [...m[2].matchAll(KEUZE)].map((k) => {
         const goed = attribuut(k[1], 'goed');
         const uitleg = attribuut(k[1], 'uitleg');
@@ -84,6 +87,56 @@ function voorspellingen(bron: string): Blok[] {
       }),
     };
   });
+}
+
+/** Kleine letters, zonder opmaak en leestekens, met een spatie eromheen. */
+function normaal(tekst: string): string {
+  const woorden = tekst
+    .toLowerCase()
+    .replace(/[*`_]/g, '')
+    .replace(/[^\p{L}\p{N}°<>=…]+/gu, ' ')
+    .trim();
+  return woorden ? ` ${woorden} ` : '';
+}
+
+/**
+ * Wat er mis is aan de uitleg, los van de vorm: de uitleg bij een foute keuze
+ * die het goede antwoord noemt, en een goede uitleg die <Uitleg> herhaalt.
+ */
+function verklapt(blok: Blok): { antwoord: string[]; herhaling: string[] } {
+  const antwoord: string[] = [];
+  const herhaling: string[] = [];
+  const uit = { antwoord, herhaling };
+  const goed = blok.keuzes.find((k) => k.goed);
+  if (!goed) return uit;
+  // Wie eerst fout gokt, leest de uitleg bij zijn keuze en mag daarna nog
+  // een keer kiezen. Staat het goede antwoord in die uitleg, dan is de
+  // tweede keuze geen denkwerk meer. Ook een deel van het antwoord telt: bij
+  // "A0, op het signaal van A0" verklapt "met Lees anapin A0" het al.
+  const delen = [goed.tekst, ...goed.tekst.split(/[,:;]/)].map(normaal).filter(Boolean);
+  blok.keuzes.forEach((k, j) => {
+    if (k.goed) return;
+    const deel = delen.find((d) => normaal(k.uitleg).includes(d));
+    if (deel)
+      antwoord.push(`de uitleg bij keuze ${j + 1} noemt het goede antwoord ("${deel.trim()}")`);
+  });
+  // Wie meteen goed kiest, ziet de uitleg bij zijn keuze en daaronder
+  // <Uitleg>. Staat dezelfde zin er twee keer, dan leest hij hem twee keer.
+  // Alleen zinsdelen van vijf woorden of meer: "met de servo" mag terugkomen.
+  const algemeen = normaal(blok.uitleg);
+  for (const zinsdeel of goed.uitleg.split(/[.,:;?]/)) {
+    const n = normaal(zinsdeel);
+    if (n.trim().split(' ').length >= 5 && algemeen.includes(n))
+      herhaling.push(`de uitleg bij de goede keuze staat ook in <Uitleg> ("${n.trim()}")`);
+  }
+  return uit;
+}
+
+/** Per <Voorspel> in een bron: wat de uitleg verklapt of herhaalt. */
+function verklaptIn(bron: string, soort: 'antwoord' | 'herhaling'): string[] {
+  return voorspellingen(bron).flatMap((blok, i) =>
+    verklapt(blok)[soort].map((v) => `voorspelling ${i + 1}: ${v}`),
+  );
 }
 
 function fouten(bron: string): string[] {
@@ -126,6 +179,7 @@ describe('de guard leest <Voorspel> zoals een schrijver hem typt', () => {
           },
           { goed: false, uitleg: 'Nee, het Leaphy-blok loopt "één" keer.', tekst: 'Het stopt' },
         ],
+        uitleg: 'Algemeen.',
       },
     ]);
     expect(fouten(bron)).toEqual([]);
@@ -146,6 +200,60 @@ describe('de guard leest <Voorspel> zoals een schrijver hem typt', () => {
   });
 });
 
+describe('de uitleg verklapt niets en herhaalt niets', () => {
+  it('meldt een foute keuze waarvan de uitleg het goede antwoord noemt, ook een deel ervan', () => {
+    // Uit de Click Golfer, ir-sensor, vóór de fix.
+    const bron = `<Voorspel vraag="Welke sluit je aan?">
+  <Keuze goed uitleg="A0 geeft een getal.">A0, op het signaal van A0 op het shield</Keuze>
+  <Keuze uitleg="Je gebruikt er maar één: de robot leest één getal, met Lees anapin A0.">Allebei</Keuze>
+</Voorspel>`;
+    expect(verklaptIn(bron, 'antwoord')).toEqual([
+      'voorspelling 1: de uitleg bij keuze 2 noemt het goede antwoord ("a0")',
+    ]);
+    // Met **vet** en andere hoofdletters is het hetzelfde antwoord.
+    expect(
+      verklaptIn(
+        `<Voorspel vraag="?">
+  <Keuze uitleg="Nee, want het antwoord is een **kwart cirkel**.">Een halve cirkel</Keuze>
+  <Keuze goed uitleg="Klopt.">Een kwart cirkel</Keuze>
+</Voorspel>`,
+        'antwoord',
+      ),
+    ).toEqual([
+      'voorspelling 1: de uitleg bij keuze 1 noemt het goede antwoord ("een kwart cirkel")',
+    ]);
+  });
+
+  it('laat een uitleg die zegt waarom het niet klopt, zonder het antwoord, met rust', () => {
+    expect(
+      verklaptIn(
+        `<Voorspel vraag="?">
+  <Keuze uitleg="Een halve cirkel is het hele stuk van 0° tot 180°. Het asje stopt al eerder.">Een halve cirkel</Keuze>
+  <Keuze goed uitleg="Klopt.">Een kwart cirkel</Keuze>
+</Voorspel>`,
+        'antwoord',
+      ),
+    ).toEqual([]);
+  });
+
+  it('meldt een goede uitleg die <Uitleg> letterlijk herhaalt', () => {
+    // Uit de Click Golfer, servo, vóór de fix.
+    const bron = `<Voorspel vraag="?">
+  <Keuze uitleg="Het asje stopt al eerder.">Een halve cirkel</Keuze>
+  <Keuze goed uitleg="Een halve cirkel is 180°, en 90° is daar de helft van.">Een kwart cirkel</Keuze>
+  <Uitleg>
+
+Een kwart cirkel. Een halve cirkel is 180°, en 90° is daar de helft van.
+
+  </Uitleg>
+</Voorspel>`;
+    expect(verklaptIn(bron, 'herhaling')).toEqual([
+      'voorspelling 1: de uitleg bij de goede keuze staat ook in <Uitleg> ("een halve cirkel is 180°")',
+      'voorspelling 1: de uitleg bij de goede keuze staat ook in <Uitleg> ("en 90° is daar de helft van")',
+    ]);
+  });
+});
+
 describe('<Voorspel> in de lessen', () => {
   it('staat in elk geval in de Click Golfer', () => {
     // Zonder vondsten zou de controle hieronder stil groen zijn.
@@ -154,6 +262,20 @@ describe('<Voorspel> in de lessen', () => {
 
   it('heeft precies één goede keuze, minstens twee keuzes, en bij elke keuze een uitleg', () => {
     const fout = metVoorspel.flatMap((l) => fouten(l.bron).map((f) => `${l.bestand}: ${f}`));
+    expect(fout).toEqual([]);
+  });
+
+  it('de uitleg bij een foute keuze noemt het goede antwoord niet', () => {
+    const fout = metVoorspel.flatMap((l) =>
+      verklaptIn(l.bron, 'antwoord').map((f) => `${l.bestand}: ${f}`),
+    );
+    expect(fout).toEqual([]);
+  });
+
+  it('de uitleg bij de goede keuze herhaalt <Uitleg> niet letterlijk', () => {
+    const fout = metVoorspel.flatMap((l) =>
+      verklaptIn(l.bron, 'herhaling').map((f) => `${l.bestand}: ${f}`),
+    );
     expect(fout).toEqual([]);
   });
 

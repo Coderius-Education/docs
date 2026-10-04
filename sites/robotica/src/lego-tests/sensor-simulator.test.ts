@@ -103,3 +103,21 @@ describe('de les', () => {
     expect(sectie).toContain(`grens van ${laagste} tot en met ${hoogste}`);
   });
 });
+
+describe('de tekening op een telefoon', () => {
+  it('heeft tekst van minstens 9 px op 375 breed', () => {
+    // De tekening schaalt mee met de breedte; op 375 breed is hij 309 px
+    // (gemeten met Playwright in de build). De tekst schaalt mee, dus een
+    // kleinere letter of een bredere viewBox maakt "sensor" en de liniaal
+    // onleesbaar.
+    const map = '../components/SensorSimulator/';
+    const css = readFileSync(
+      fileURLToPath(new URL(`${map}styles.module.css`, import.meta.url)),
+      'utf8',
+    );
+    const tsx = readFileSync(fileURLToPath(new URL(`${map}index.tsx`, import.meta.url)), 'utf8');
+    const letter = Number(css.match(/\.label \{[^}]*font-size: (\d+)px/)?.[1]);
+    const breed = Number(tsx.match(/viewBox="0 0 (\d+) \d+"/)?.[1]);
+    expect(letter * (309 / breed)).toBeGreaterThanOrEqual(9);
+  });
+});

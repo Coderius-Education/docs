@@ -170,8 +170,15 @@
   display: block;
 }
 
+/* Altijd twee regels hoog (MELDING_REGELS in logica.ts), ook leeg: wie 200
+   typt en meteen op Volgende opdracht klikt, laat het veld los terwijl de
+   muisknop omlaag is. Verschijnt de melding dan pas, en schuift de knop
+   omlaag, dan telt de klik niet. */
 .melding {
+  min-height: calc(2 * 1.4em);
   margin: 0.25rem 0 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
   color: var(--servo-bijna);
 }
 
@@ -192,9 +199,13 @@
   font-weight: var(--ifm-font-weight-bold);
 }
 
+/* Net als de melding: twee regels, ook leeg. Het oordeel verschijnt na de
+   eerste zet, en die kan het loslaten van het veld zijn, onder een klik op
+   de knop. Op een telefoon is een oordeel twee regels. */
 .oordeel {
-  min-height: 1.6em;
+  min-height: calc(2 * 1.4em);
   margin: 0 0 0.6rem;
+  line-height: 1.4;
 }
 
 .oordeel[data-goed="true"] {

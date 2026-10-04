@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
+import { cameraAfstand } from './passend';
 import styles from './styles.module.css';
 
 interface ObjViewerProps {
@@ -72,16 +73,36 @@ export default function ObjViewer({
     bottomLight.position.set(0, -100, 0);
     scene.add(bottomLight);
 
+    // De straal van de bol om het model; null zolang het model laadt.
+    let straal: number | null = null;
+    // Zet de camera zo ver weg dat het hele model in het vak past, in de
+    // breedte én in de hoogte. De richting blijft wat hij is: wie het model
+    // heeft gedraaid en daarna het venster smaller maakt, kijkt nog van
+    // dezelfde kant.
+    const pasCameraAan = () => {
+      if (straal === null) return;
+      const richting = camera.position.clone().sub(controls.target).normalize();
+      const afstand = cameraAfstand(straal, camera.fov, camera.aspect);
+      camera.position.copy(controls.target).addScaledVector(richting, afstand);
+      // Het model is groot (honderden eenheden). Met een vast verre vlak van
+      // 1000 viel op een smal scherm, waar de camera verder weg moet, alles
+      // achter het eerste stuk weg. Ruimte genoeg om ook uit te zoomen.
+      camera.near = afstand / 100;
+      camera.far = afstand * 10;
+      camera.updateProjectionMatrix();
+      controls.update();
+    };
+
     const addObjectToScene = (obj: THREE.Group) => {
       const box = new THREE.Box3().setFromObject(obj);
       const center = box.getCenter(new THREE.Vector3());
-      const size = box.getSize(new THREE.Vector3());
       obj.position.sub(center);
 
-      const maxDim = Math.max(size.x, size.y, size.z);
-      camera.position.set(0, maxDim * 0.5, maxDim * 1.5);
+      straal = box.getBoundingSphere(new THREE.Sphere()).radius;
+      // Iets van boven en van voren, zoals eerst.
+      camera.position.set(0, 0.5, 1.5);
       controls.target.set(0, 0, 0);
-      controls.update();
+      pasCameraAan();
 
       scene.add(obj);
       setPercentage(null);
@@ -129,6 +150,7 @@ export default function ObjViewer({
       camera.aspect = container.clientWidth / container.clientHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(container.clientWidth, container.clientHeight);
+      pasCameraAan();
     };
     const observer =
       typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(handleResize);

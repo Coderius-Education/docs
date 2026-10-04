@@ -10,10 +10,15 @@ Je programmeert [de Arduino](microcontroller) met blokken in **Easybloqs**, een 
 
 ## Easybloqs openen
 
+{/* stijl-uitzondering: uitroepteken letterlijke knop van Easybloqs */}
+
 1. Ga naar **leaphyeasybloqs.com**.
-2. Kies de robot **Arduino Nano**.
-3. Sluit je robot met de usb-kabel aan op je laptop.
-4. Zet de taal op **Nederlands**: kies in het menu **Meer…** en daarna **Taal**. Dan zien je blokken er hetzelfde uit als op deze site.
+2. De eerste keer opent er een venster met drie talen. Kies **Nederlands**. Dan zien je blokken er hetzelfde uit als op deze site.
+3. Daarna zie je een venster over wie Easybloqs maakt. Klik onderaan op **Aan de slag!**.
+4. Kies de robot **Arduino Nano**.
+5. Sluit je robot met de usb-kabel aan op je laptop.
+
+Staat Easybloqs toch in het Engels, of in een andere taal? Kies dan in het menu **Meer…** en daarna **Taal** (in het Engels: More... > Language), en klik op **Nederlands**.
 
 ## Waar staan de blokken?
 
@@ -47,7 +52,7 @@ Alles wat in het Leaphy-blok staat, doet je robot **één keer**, van boven naar
 
 ### Stap 2: open het scherm
 
-Rechts naast je blokken staat een rij ronde knoppen. Ga met je muis over de knop met het plaatje van een vierkantje met liggende streepjes. Er verschijnt de tekst **Toon output op scherm**. Klik erop.
+Rechts naast je blokken staat een rij ronde knoppen. Klik op de knop met het plaatje van een vierkantje met liggende streepjes: dat is de knop **Toon output op scherm**.
 
 Er opent een venster met bovenaan **Toon output op scherm**. Dit is het scherm: alles wat je robot met **Toon op scherm** laat zien, komt hier regel voor regel onder elkaar. Voor elke regel staat de tijd waarop hij binnenkwam. Bovenaan het scherm staat een knop met een prullenbak: daarmee maak je het scherm leeg.
 
@@ -83,7 +88,7 @@ Hallo, ik ben de Click Golfer
 
 </Probleem>
 
-<Probleem titel="Het scherm blijft leeg">
+<Probleem titel="Het scherm blijft leeg.">
 
 **Oorzaak:** het programma liep al voordat het scherm open was.
 
@@ -120,13 +125,13 @@ Hallo, ik ben de Click Golfer
 </Probleem>
 
 <Voorspel soort="Controlevraag" vraag='Je zet een tweede Toon op scherm onder het eerste, met de tekst "Ik ben er klaar voor". Je uploadt, maakt het scherm leeg met de prullenbak en drukt op RST. Hoe vaak zie je elke zin op het scherm?'>
-  <Keuze uitleg="De zinnen van na de upload heb je met de prullenbak weggehaald. Na RST komen ze nog één keer.">Elke zin twee keer: een keer na de upload en een keer na **RST**</Keuze>
+  <Keuze uitleg="De zinnen van na de upload heb je met de prullenbak weggehaald. Die komen niet terug.">Elke zin twee keer: een keer na de upload en een keer na **RST**</Keuze>
   <Keuze uitleg="Het scherm zet elke regel onder de vorige. De eerste zin blijft dus gewoon staan.">Alleen "Ik ben er klaar voor", want die komt over de eerste heen</Keuze>
   <Keuze uitleg="Het Leaphy-blok loopt één keer en stopt dan. Er komt daarna niets meer bij.">Steeds opnieuw, tot het scherm vol is</Keuze>
   <Keuze goed uitleg="Het Leaphy-blok loopt één keer van boven naar beneden, en elke regel komt onder de vorige.">Elke zin één keer, de bovenste zin eerst</Keuze>
   <Uitleg>
 
-Elke zin één keer: eerst "Hallo, ik ben de Click Golfer", daarna "Ik ben er klaar voor". Het Leaphy-blok loopt één keer van boven naar beneden.
+Bovenaan staat "Hallo, ik ben de Click Golfer", en daaronder "Ik ben er klaar voor". Na **RST** begint je robot opnieuw bovenaan, en elk blok **Toon op scherm** zet er één regel bij.
 
   </Uitleg>
 </Voorspel>

@@ -10,7 +10,7 @@ Je robot ziet de bal met [de IR-sensor](ir-sensor), en laat [de servo](servo) dr
 
 ## Het programma
 
-Je kent alle blokken al. Nieuw is alleen dat de servo-blokken nu in **als … dan** staan. Begin met het programma uit stap 2 van [de IR-sensor](ir-sensor). Haal Toon op scherm uit als … dan, en zet daar de servo-blokken voor in de plaats. Het blok duurt 500 ms onder als … dan haal je ook weg: na een slag wacht de robot al.
+Je kent alle blokken al. Nieuw is alleen dat de servo-blokken nu in **als … dan** staan. Begin met het programma uit stap 2 van [de IR-sensor](ir-sensor). Heb je het bewaard, open het dan met **Mijn projecten** en **Open**. Heb je het niet bewaard, haal dan je servoprogramma weg, zoals bij [de servo](servo), en bouw stap 2 opnieuw. Haal Toon op scherm uit als … dan, en zet daar de servo-blokken voor in de plaats. Het blok duurt 500 ms onder als … dan haal je ook weg: na een slag wacht de robot al.
 
 <Blokken programma={balSlaan} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan Servo 9 op 0, duurt 500 ms, Servo 9 op 90, duurt 2000 ms." />
 
@@ -18,7 +18,7 @@ Tussen twee slagen staat de servo op 90°, recht in het midden. Ligt er een bal,
 
 <Voorspel vraag="Wat doet je robot als er géén bal ligt?">
   <Keuze uitleg="De servo-blokken staan nu in als … dan. Die doet de robot alleen als het getal kleiner is dan 300, en dat is het alleen met een bal.">Het asje slaat steeds heen en weer, net als bij de servo</Keuze>
-  <Keuze goed uitleg="Zonder bal is het getal groter dan 300, dus de robot slaat de blokken in als … dan over.">Niets: het asje blijft staan</Keuze>
+  <Keuze goed uitleg="Zonder bal klopt de vergelijking in als … dan niet, en dan doet je robot niets met de servo.">Niets: het asje blijft staan</Keuze>
   <Keuze uitleg="Het programma stopt niet: alles staat in herhaal voor altijd. De robot kijkt steeds opnieuw, en leg je later een bal neer, dan slaat hij alsnog.">Het programma stopt, want er is niets te doen</Keuze>
   <Uitleg>
 
@@ -29,7 +29,7 @@ Misschien draait het asje direct na de upload één keer naar 90°. Dat is geen 
   </Uitleg>
 </Voorspel>
 
-Gebruik als grens het getal dat jij bij de IR-sensor hebt gekozen. Klik op **Upload naar robot** en leg een bal voor de sensor: het asje draait naar 0° en slaat terug naar 90°.
+Gebruik als grens het getal dat jij bij de IR-sensor hebt gekozen. Klik op **Upload naar robot** en leg een bal voor de sensor: het asje draait naar 0° en slaat terug naar 90°. Haal de bal na de slag weg. Blijft hij liggen, dan ziet de sensor hem na de wachttijd weer, en slaat je robot opnieuw.
 
 ## Waarom wachten?
 
@@ -37,7 +37,15 @@ Na de slag wacht de robot twee seconden: **duurt 2000 ms**. Op de baan rolt de b
 
 ## Er gaat iets mis
 
-<Probleem titel="De servo blijft slaan, ook als er geen bal ligt.">
+<Probleem titel="De servo slaat steeds, en het gat onder als … dan is leeg.">
+
+**Oorzaak:** de servo-blokken staan onder **als … dan**, en niet erin. Dan doet je robot ze elke keer, met of zonder bal.
+
+**Oplossing:** sleep **Servo 9 op 0** in het gat onder **als … dan**. De blokken eronder gaan mee.
+
+</Probleem>
+
+<Probleem titel="De servo blijft slaan zonder bal, terwijl de servo-blokken in als … dan staan.">
 
 **Oorzaak:** je grens is te hoog. Het getal zonder bal is al kleiner dan de grens.
 
@@ -46,9 +54,9 @@ Na de slag wacht de robot twee seconden: **duurt 2000 ms**. Op de baan rolt de b
 </Probleem>
 
 <Voorspel soort="Controlevraag" vraag="Je haalt herhaal voor altijd weg, zodat als … dan direct in het Leaphy-blok staat. Pas als de upload klaar is, leg je een bal voor de sensor. Wat gebeurt er?">
-  <Keuze uitleg="Zonder herhaal voor altijd kijkt de robot maar één keer naar de sensor. Hij merkt de bal niet meer op.">Hij slaat, net als eerst</Keuze>
-  <Keuze uitleg="Eén slag krijg je alleen als de bal er al lag toen de upload klaar was. Jij legt hem er pas later neer.">Hij slaat één keer, en daarna niet meer</Keuze>
-  <Keuze goed uitleg="Het Leaphy-blok loopt maar één keer, direct na het uploaden. Toen lag er nog geen bal.">Hij slaat niet</Keuze>
+  <Keuze uitleg="Net als eerst zou betekenen dat de robot steeds opnieuw kijkt. Dat deed herhaal voor altijd, en dat blok is weg.">Hij slaat, net als eerst</Keuze>
+  <Keuze uitleg="Voor één slag moet je robot de bal minstens één keer zien. Denk na over wanneer hij kijkt.">Hij slaat één keer, en daarna niet meer</Keuze>
+  <Keuze goed uitleg="Je robot keek één keer, net na de upload, en zag toen geen bal.">Hij slaat niet</Keuze>
   <Uitleg>
 
 Hij slaat niet. Het Leaphy-blok loopt maar één keer, direct na het uploaden. Toen lag er nog geen bal, en daarna kijkt de robot niet meer. Draait het asje direct na de upload naar 90°, dan is dat geen slag: daar wacht de servo. Had er al een bal gelegen, dan had hij precies één keer geslagen.

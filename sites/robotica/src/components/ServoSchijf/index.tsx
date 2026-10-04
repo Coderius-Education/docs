@@ -10,6 +10,7 @@ import {
   beoordeel,
   draaiing,
   leesInvoer,
+  moetBevestigen,
   punt,
 } from './logica';
 import styles from './styles.module.css';
@@ -212,7 +213,9 @@ export default function ServoSchijf({
             value={tekst}
             aria-describedby={meldingId}
             onChange={typ}
-            onBlur={bevestig}
+            onBlur={() => {
+              if (moetBevestigen(tekst, stand)) bevestig();
+            }}
           />
         </form>
         <p className={styles.hint}>Typ een getal en druk op Enter.</p>
