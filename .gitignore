@@ -18,6 +18,11 @@ build/
 .temp/
 .tmp/
 
+# ── CI ───────────────────────────────────────────────────────────────────────
+# Het plan van de incrementele CI (scripts/wijzigingen.mjs); elke job haalt
+# het als artifact op in de werkmap, en biome mag het niet als bron lezen.
+changed.json
+
 # ── TypeScript / bundler / linter caches ─────────────────────────────────────
 *.tsbuildinfo
 .eslintcache

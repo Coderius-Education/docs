@@ -42,6 +42,7 @@ const GLOBAAL = [
   'tsconfig.base.json',
   '.npmrc',
   '.nvmrc',
+  '.gitignore',
   '.github/',
   'scripts/wijzigingen.mjs',
   'scripts/site-hash.mjs',
@@ -385,13 +386,18 @@ function plan({
     const kruis = leest.filter((t) => LEEST_ANDERE_SITES.test(t.tekst));
     for (const p of paden) {
       if (CODE.test(p) && bestaat(p)) vitestBestanden.add(p);
-      const dir = pakketVan(p, alleMappen);
-      if (!dir) continue;
       // Tests die bestanden lezen in plaats van ze te importeren, ziet
       // `vitest related` niet: een les is geen import. Die van het package
-      // zelf, en de guards die over alle sites lopen, doen dus mee.
-      for (const t of leest) if (t.pad.startsWith(`${dir}/`)) vitestBestanden.add(t.pad);
-      for (const t of kruis) vitestBestanden.add(t.pad);
+      // zelf, de guards die over alle sites of de hele repo lopen, en elke
+      // test die het bestand bij naam noemt (de schrijfgids, een
+      // pyodide-lock), doen dus mee.
+      const naam = p.split('/').pop() ?? p;
+      if (!CODE.test(p) && naam.length >= 8) {
+        for (const t of leest) if (t.tekst.includes(naam)) vitestBestanden.add(t.pad);
+      }
+      const dir = pakketVan(p, alleMappen);
+      if (dir) for (const t of leest) if (t.pad.startsWith(`${dir}/`)) vitestBestanden.add(t.pad);
+      if (dir || !CODE.test(p)) for (const t of kruis) vitestBestanden.add(t.pad);
     }
   }
 

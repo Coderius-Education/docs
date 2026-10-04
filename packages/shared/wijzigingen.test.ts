@@ -218,6 +218,24 @@ describe('plan', () => {
     expect(p.jobs.tekst).toBe(false);
   });
 
+  it('een bestand buiten de packages: de guards en de tests die het bij naam noemen', () => {
+    const tests = [
+      { pad: 'packages/shared/bestanden.test.ts', tekst: "readdirSync 'WRITING_STYLE_GUIDE.md'" },
+      { pad: 'packages/shared/sitelink.test.ts', tekst: 'readFileSync alleSiteMappen()' },
+      { pad: 'packages/shared/dialoog.test.ts', tekst: "import { x } from './dialoog'" },
+      { pad: `${MAP.web}/src/docs-tests/lessen.test.ts`, tekst: 'readFileSync(x)' },
+    ];
+    const p = planVoor({ 'org-handbook/WRITING_STYLE_GUIDE.md': [[9, 9]] }, [], tests);
+    expect(p.sites).toEqual([]);
+    expect(p.vitest.bestanden).toEqual([
+      'packages/shared/bestanden.test.ts',
+      'packages/shared/sitelink.test.ts',
+    ]);
+    // Een los script buiten de packages: alleen wat het importeert.
+    const s = planVoor({ 'scripts/run-all-sites.mjs': [[3, 3]] }, [], tests);
+    expect(s.vitest.bestanden).toEqual(['scripts/run-all-sites.mjs']);
+  });
+
   it('vitest-config en woordenlijst raken alleen hun eigen job', () => {
     const v = planVoor({ 'vitest.setup.ts': [[1, 1]] }, []);
     expect(v.vitest.alles).toBe(true);

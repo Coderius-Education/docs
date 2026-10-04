@@ -36,7 +36,14 @@ const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const posix = (p) => p.split('\\').join('/');
 
 function git(...args) {
-  return execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', maxBuffer: 1 << 28 });
+  // stderr opvangen: een base die niet bestaat is een verwachte uitkomst
+  // (dan draait alles), geen "fatal:" in het log.
+  return execFileSync('git', args, {
+    cwd: ROOT,
+    encoding: 'utf8',
+    maxBuffer: 1 << 28,
+    stdio: ['ignore', 'pipe', 'pipe'],
+  });
 }
 
 function pnpmMappen(...filter) {
