@@ -143,6 +143,11 @@ const AFKORTINGEN = new Set([
   'LFI',
   'RFI',
   'SSRF',
+  // Onderzoek (wo): instituten, experimenten en diensten bij hun eigen naam.
+  'CERN',
+  'ATLAS',
+  'CORE',
+  'TLDR',
 ]);
 
 // ── De regels ───────────────────────────────────────────────────────────────

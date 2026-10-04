@@ -1,5 +1,5 @@
-import React from 'react';
 import Link from '@docusaurus/Link';
+import React from 'react';
 import styles from './styles.module.css';
 
 /**
@@ -7,7 +7,7 @@ import styles from './styles.module.css';
  * het volledige verhaal staat op de pagina van de denker zelf.
  * Gebruik: <Denker naam="…" jaartal="…" stroming="…" linkUrl="…" linkTekst="…">uitleg</Denker>
  */
-export default function Denker({naam, jaartal, stroming, children, linkUrl, linkTekst}) {
+export default function Denker({ naam, jaartal, stroming, children, linkUrl, linkTekst }) {
   const extern = /^https?:/.test(linkUrl || '');
   return (
     <div className={styles.kader}>
@@ -22,9 +22,7 @@ export default function Denker({naam, jaartal, stroming, children, linkUrl, link
       <div className={styles.uitleg}>{children}</div>
       {linkUrl && (
         <div className={styles.voet}>
-          <Link
-            to={linkUrl}
-            {...(extern ? {target: '_blank', rel: 'noopener noreferrer'} : {})}>
+          <Link to={linkUrl} {...(extern ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
             {linkTekst || (extern ? 'Verder kijken' : 'Lees verder')} {extern ? '↗' : '→'}
           </Link>
         </div>

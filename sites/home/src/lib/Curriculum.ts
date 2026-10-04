@@ -311,6 +311,21 @@ const entries: CurriculumEntry[] = [
       havo: 4,
     },
   },
+  {
+    id: 'onderzoek',
+    labels: [],
+    programmingLanguages: [],
+    projectTypes: ['Research'],
+    operatingSystems: ['Windows', 'Linux', 'macOS', 'ChromeOS'],
+    // Wetenschapsoriëntatie, geen informatica: geen examDomains. Bedoeld voor
+    // de bovenbouw, bij een profielwerkstuk of praktische opdracht.
+    level: 'Beginner',
+    klas: '4 en 5+',
+    order: {
+      vwo: 1,
+      havo: 1,
+    },
+  },
 ];
 
 // Eerst alle cursussen voor beginners, dan de gevorderde; binnen een niveau in
@@ -353,7 +368,7 @@ export function voorkennisVan(activity: Activity): string {
   return activity.requires.map((id) => SITES_BY_ID[id]?.label ?? id).join(', ');
 }
 
-export const THEMAS = ['Python', 'Web', 'Games', 'Hardware', 'Security'] as const;
+export const THEMAS = ['Python', 'Web', 'Games', 'Hardware', 'Security', 'Onderzoek'] as const;
 export type Thema = (typeof THEMAS)[number];
 
 // Vijf herkenbare thema's voor de filterrij op de homepage, afgeleid uit de
@@ -379,5 +394,6 @@ export function themasVan(activity: Activity): Thema[] {
   if (typen.includes('Game Development')) uit.push('Games');
   if (typen.includes('Robotics') || typen.includes('Embedded')) uit.push('Hardware');
   if (typen.includes('Cybersecurity')) uit.push('Security');
+  if (typen.includes('Research')) uit.push('Onderzoek');
   return uit;
 }

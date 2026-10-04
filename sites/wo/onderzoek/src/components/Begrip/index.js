@@ -1,13 +1,13 @@
-import React from 'react';
 import Link from '@docusaurus/Link';
 import begrippen from '@site/src/data/begrippen';
+import React from 'react';
 import styles from './styles.module.css';
 
 /**
  * Term met hover/focus-tooltip (mini-definitie) en link naar de conceptpagina.
  * Gebruik in MDX: <B t="valide"/> of <B t="valide" tekst="validiteit"/>.
  */
-export default function Begrip({t, tekst}) {
+export default function Begrip({ t, tekst }) {
   const begrip = begrippen[t];
   if (!begrip) {
     return <strong>{tekst || t}</strong>;

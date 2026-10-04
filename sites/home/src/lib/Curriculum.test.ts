@@ -115,8 +115,11 @@ describe('curriculum versus het examenprogramma', () => {
     // Gereedschap (editor, ide) valt onder domein A en heeft bewust geen
     // mapping. Een lesreeks zonder sterk raakvlak is vergeten of half ingevuld,
     // zoals embedded lang was.
+    // Examendomeinen horen bij informatica; een cursus van een ander vak
+    // (onderzoek, wo) heeft er geen.
     const GEREEDSCHAP = ['editor', 'ide'];
     const zonder = curriculum
+      .filter((c) => SITES_BY_ID[c.id]?.subject === 'informatica')
       .filter((c) => !GEREEDSCHAP.includes(c.id))
       .filter((c) => !c.examDomains?.some((m) => m.strength === 'strong'))
       .map((c) => c.id);

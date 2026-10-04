@@ -62,6 +62,7 @@ const CURSUSSEN = [
   { id: 'dvwa', label: 'DVWA', tint: 0, glyph: 'slot' },
   { id: 'ide', label: 'Online Editor', tint: 212, glyph: 'terminal' },
   { id: 'didactiek', label: 'Didactiek', tint: 335, glyph: 'gesprek' },
+  { id: 'onderzoek', label: 'Onderzoek', tint: 248, glyph: 'loep' },
 ];
 
 const CHROMA = 0.14;

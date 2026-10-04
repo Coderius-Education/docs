@@ -6,7 +6,7 @@ import styles from './styles.module.css';
  * grensgeval dat er níét onder valt (met waarom).
  * Gebruik: <WelNiet wel="…" niet="…"/>
  */
-export default function WelNiet({wel, niet}) {
+export default function WelNiet({ wel, niet }) {
   return (
     <div className={styles.blok}>
       <div className={`${styles.kolom} ${styles.wel}`}>

@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
 import Link from '@docusaurus/Link';
 import begrippen from '@site/src/data/begrippen';
+import React, { useState } from 'react';
 import styles from './styles.module.css';
 
 /**
@@ -14,9 +14,7 @@ export default function TermenLijst() {
   );
   const q = zoek.trim().toLowerCase();
   const zichtbaar = q
-    ? lijst.filter(([, b]) =>
-        `${b.term} ${b.kort} ${b.lang || ''}`.toLowerCase().includes(q),
-      )
+    ? lijst.filter(([, b]) => `${b.term} ${b.kort} ${b.lang || ''}`.toLowerCase().includes(q))
     : lijst;
 
   return (
@@ -29,9 +27,7 @@ export default function TermenLijst() {
         value={zoek}
         onChange={(e) => setZoek(e.target.value)}
       />
-      {zichtbaar.length === 0 && (
-        <p className={styles.leeg}>Geen begrip gevonden voor “{zoek}”.</p>
-      )}
+      {zichtbaar.length === 0 && <p className={styles.leeg}>Geen begrip gevonden voor “{zoek}”.</p>}
       <dl className={styles.lijst}>
         {zichtbaar.map(([id, b]) => (
           <React.Fragment key={id}>

@@ -6,7 +6,7 @@ import styles from './styles.module.css';
  * mis (of juist spectaculair goed) ging.
  * Gebruik: <EchtGebeurd titel="…" jaar="…" linkUrl="…" linkTekst="…" boek="…">verhaal</EchtGebeurd>
  */
-export default function EchtGebeurd({titel, jaar, children, linkUrl, linkTekst, boek}) {
+export default function EchtGebeurd({ titel, jaar, children, linkUrl, linkTekst, boek }) {
   return (
     <div className={styles.kader}>
       <div className={styles.kop}>

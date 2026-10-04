@@ -7,6 +7,8 @@ sidebar_position: 2
 
 <Definitie gewoneTaal="je meet het juiste ding, bij de juiste mensen, op de juiste manier.">
 
+{/* stijl-uitzondering: uitroepteken nadruk uit de oorspronkelijke onderzoek-tekst; herschrijven is aan de auteur */}
+
 Onderzoek is **valide** als je gegevens echt gaan over de vraag die je wilt beantwoorden: je meet wat je wílt meten. Je kunt heel betrouwbaar (herhaalbaar!) het verkeerde meten — dan is je onderzoek alsnog waardeloos.
 
 </Definitie>

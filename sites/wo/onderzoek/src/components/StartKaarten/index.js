@@ -1,5 +1,5 @@
-import React from 'react';
 import Link from '@docusaurus/Link';
+import React from 'react';
 import styles from './styles.module.css';
 
 const kaarten = [
@@ -15,12 +15,14 @@ const kaarten = [
   },
   {
     titel: 'De spelregels',
-    tekst: 'Betrouwbaar, valide, transparant en aanvaardbaar — waar elk onderzoek aan moet voldoen.',
+    tekst:
+      'Betrouwbaar, valide, transparant en aanvaardbaar — waar elk onderzoek aan moet voldoen.',
     to: '/spelregels/de-vier-spelregels',
   },
   {
     titel: 'Kennisleer',
-    tekst: 'Hoe weet je eigenlijk iets? Scepticisme, rationalisme en empirisme — en wat dat met onderzoek te maken heeft.',
+    tekst:
+      'Hoe weet je eigenlijk iets? Scepticisme, rationalisme en empirisme — en wat dat met onderzoek te maken heeft.',
     to: '/kennisleer/hoe-weet-je-iets',
   },
   {
@@ -35,12 +37,14 @@ const kaarten = [
   },
   {
     titel: 'Literatuurstudie',
-    tekst: 'Zoeken met Google Scholar, beoordelen op citaties en peer review, en lezen op het juiste niveau.',
+    tekst:
+      'Zoeken met Google Scholar, beoordelen op citaties en peer review, en lezen op het juiste niveau.',
     to: '/literatuurstudie/van-zoeken-tot-lezen',
   },
   {
     titel: 'Werkvormen',
-    tekst: 'Klasopdrachten met een printbaar werkblad: vragenkaartjes, je vraag scherpstellen, van vijftig bronnen naar drie, en methoden langs de kennisleer-bril.',
+    tekst:
+      'Klasopdrachten met een printbaar werkblad: vragenkaartjes, je vraag scherpstellen, van vijftig bronnen naar drie, en methoden langs de kennisleer-bril.',
     to: '/werkvormen/overzicht',
   },
   {

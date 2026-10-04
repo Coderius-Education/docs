@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import styles from './styles.module.css';
 
 /**
@@ -6,7 +6,7 @@ import styles from './styles.module.css';
  *
  * @param {{vragen: {vraag: string, opties: string[], juist: number, uitleg: string}[]}} props
  */
-export default function Quiz({vragen}) {
+export default function Quiz({ vragen }) {
   // Per vraag de index van het gekozen antwoord, of null.
   const [antwoorden, setAntwoorden] = useState(() => vragen.map(() => null));
 
@@ -16,9 +16,7 @@ export default function Quiz({vragen}) {
 
   const kies = (vraagIndex, optieIndex) => {
     if (antwoorden[vraagIndex] !== null) return; // vraag is al beantwoord
-    setAntwoorden((huidig) =>
-      huidig.map((a, i) => (i === vraagIndex ? optieIndex : a)),
-    );
+    setAntwoorden((huidig) => huidig.map((a, i) => (i === vraagIndex ? optieIndex : a)));
   };
 
   const reset = () => setAntwoorden(vragen.map(() => null));
@@ -30,7 +28,7 @@ export default function Quiz({vragen}) {
         const isBeantwoord = gekozen !== null;
         const isGoed = gekozen === v.juist;
         return (
-          <div key={vi} className={styles.vraag}>
+          <div key={v.vraag} className={styles.vraag}>
             <p className={styles.vraagTekst}>
               <span className={styles.vraagNummer}>{vi + 1}</span>
               <em>{v.vraag}</em>
@@ -45,11 +43,12 @@ export default function Quiz({vragen}) {
                 }
                 return (
                   <button
-                    key={oi}
+                    key={optie}
                     type="button"
                     className={klasse}
                     onClick={() => kies(vi, oi)}
-                    disabled={isBeantwoord}>
+                    disabled={isBeantwoord}
+                  >
                     {optie}
                     {isBeantwoord && oi === v.juist && ' ✓'}
                     {isBeantwoord && oi === gekozen && oi !== v.juist && ' ✗'}
@@ -58,10 +57,7 @@ export default function Quiz({vragen}) {
               })}
             </div>
             {isBeantwoord && (
-              <div
-                className={`${styles.uitleg} ${
-                  isGoed ? styles.uitlegGoed : styles.uitlegFout
-                }`}>
+              <div className={`${styles.uitleg} ${isGoed ? styles.uitlegGoed : styles.uitlegFout}`}>
                 <strong>{isGoed ? 'Goed!' : 'Helaas.'}</strong> {v.uitleg}
               </div>
             )}

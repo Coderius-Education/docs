@@ -371,6 +371,7 @@ jobs:
           - algorithms
           - ide
           - didactiek
+          - onderzoek
           - home
     steps:
       - uses: actions/checkout@v5

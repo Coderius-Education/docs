@@ -29,6 +29,8 @@ Een goede kennisvraag is **open**, **afgebakend** en **onderzoekbaar**. *"Is sla
 :::
 
 :::tip[Goed om te weten]
+{/* stijl-uitzondering: uitroepteken nadruk uit de oorspronkelijke onderzoek-tekst; herschrijven is aan de auteur */}
+
 Een conclusie als *"mijn hypothese klopt niet"* is óók een geldig resultaat! Het gaat erom dat je **eerlijk** antwoord geeft op je vraag, niet dat de uitkomst is wat je hoopte.
 :::
 

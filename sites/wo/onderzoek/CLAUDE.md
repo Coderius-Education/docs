@@ -1,8 +1,9 @@
 # Onderzoek (Docusaurus-site)
 
 Nederlandstalig lesmateriaal over onderzoeksvaardigheden voor bovenbouw havo/vwo.
-Live op https://coderius-education.github.io/onderzoek/ via GitHub Pages; elke push
-naar `main` deployt automatisch (`.github/workflows/deploy.yml`).
+Hoort bij het vak wetenschapsoriëntatie en staat op https://wo.coderius.nl/onderzoek/
+(registry: `packages/shared/sites.js`, id `onderzoek`). De oude GitHub Pages-site
+(coderius-education.github.io/onderzoek) wordt vervangen door doorverwijzingen hierheen.
 
 ## Stijlregels
 
@@ -41,11 +42,17 @@ naar `main` deployt automatisch (`.github/workflows/deploy.yml`).
   (nieuwe map in `docs/`) krijgt een regel in `src/data/hoofdstukken.js`, anders ontbreekt
   het in de trainer.
 - Teksten van de zoekplugin staan in het Nederlands in `i18n/nl/code.json`.
+- Kleuren, letters en het merk komen uit de gedeelde huisstijl (`createConfig`);
+  `src/css/custom.css` bevat alleen de handout- en printregels en wordt na de
+  gedeelde CSS geladen.
 - Componenten zijn globaal geregistreerd in `src/theme/MDXComponents.js`; geen imports nodig in docs.
-- Verplaatste of hernoemde pagina's krijgen een redirect in `docusaurus.config.js`
-  (plugin-client-redirects).
+- Verplaatste of hernoemde pagina's krijgen een omleiding in `src/data/omleidingen.js`
+  (het gedeelde `omleidingen`-mechanisme van `createConfig`).
+- Een interne route in een component-prop (`linkUrl`, `to`) is absoluut vanaf de
+  site (`/kennisleer/plato`) en gaat altijd via `<Link>` of `useBaseUrl`, zodat
+  de baseUrl `/onderzoek/` ervoor komt.
 
 ## Werkwijze
 
-- `npm run build` moet slagen vóór elke push (`onBrokenLinks: 'throw'` vangt kapotte links).
-- Ontwikkel op branch `claude/repo-push-permissions-cz6p40`; direct pushen naar `main` is toegestaan.
+- `pnpm --filter @coderius/onderzoek build` moet slagen (`onBrokenLinks: 'throw'` vangt
+  kapotte links); de algemene werkwijze van de monorepo staat in `../../../CLAUDE.md`.

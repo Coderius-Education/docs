@@ -1,7 +1,7 @@
-import React, {useState} from 'react';
 import Link from '@docusaurus/Link';
 import begrippen from '@site/src/data/begrippen';
-import {hoofdstukken, hoofdstukVan} from '@site/src/data/hoofdstukken';
+import { hoofdstukVan, hoofdstukken } from '@site/src/data/hoofdstukken';
+import React, { useState } from 'react';
 import styles from './styles.module.css';
 
 function schud(lijst) {
@@ -39,8 +39,8 @@ export default function TermenTrainer() {
     return (
       <div className={styles.trainer}>
         <p className={styles.introTekst}>
-          Test jezelf: telkens een term — weet jij wat die betekent voordat je
-          het kaartje omdraait? Kies alles of één hoofdstuk.
+          Test jezelf: telkens een term — weet jij wat die betekent voordat je het kaartje omdraait?
+          Kies alles of één hoofdstuk.
         </p>
         <button type="button" className={styles.primair} onClick={() => start(alleIds)}>
           Alle termen ({alleIds.length})
@@ -53,7 +53,8 @@ export default function TermenTrainer() {
                 key={h.id}
                 type="button"
                 className={styles.hoofdstukKnop}
-                onClick={() => start(idsVan(h.id))}>
+                onClick={() => start(idsVan(h.id))}
+              >
                 {h.naam} ({n})
               </button>
             );
@@ -110,15 +111,13 @@ export default function TermenTrainer() {
         className={`${styles.kaart} ${omgedraaid ? styles.kaartOm : ''}`}
         onClick={() => {
           if (!omgedraaid) setOmgedraaid(true);
-        }}>
+        }}
+      >
         {omgedraaid ? (
           <span className={styles.achterkant}>
             <strong>{huidig.term}</strong>
             <span>{huidig.kort}</span>
-            <Link
-              to={huidig.url}
-              className={styles.meerLink}
-              onClick={(e) => e.stopPropagation()}>
+            <Link to={huidig.url} className={styles.meerLink} onClick={(e) => e.stopPropagation()}>
               Lees meer →
             </Link>
           </span>

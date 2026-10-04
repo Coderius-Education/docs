@@ -7,12 +7,9 @@ import styles from './styles.module.css';
  *
  * Gebruik in MDX: <PrintKnop /> of <PrintKnop tekst="Print deze werkvorm" />
  */
-export default function PrintKnop({tekst = 'Print deze pagina'}) {
+export default function PrintKnop({ tekst = 'Print deze pagina' }) {
   return (
-    <button
-      type="button"
-      className={`${styles.knop} geen-print`}
-      onClick={() => window.print()}>
+    <button type="button" className={`${styles.knop} geen-print`} onClick={() => window.print()}>
       <span aria-hidden="true" className={styles.icoon}>
         ⎙
       </span>

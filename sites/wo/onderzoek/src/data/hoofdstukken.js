@@ -2,12 +2,12 @@
 // hun url. Gebruikt door de termen-trainer en de termenlijst.
 
 export const hoofdstukken = [
-  {id: 'typen', naam: 'Typen onderzoek', mappen: ['typen']},
-  {id: 'vragen', naam: 'Onderzoeksvragen', mappen: ['vragen']},
-  {id: 'spelregels', naam: 'De spelregels', mappen: ['spelregels']},
-  {id: 'kennisleer', naam: 'Kennisleer', mappen: ['kennisleer']},
-  {id: 'opzet', naam: 'Onderzoek opzetten', mappen: ['opzet', 'gegevens']},
-  {id: 'literatuurstudie', naam: 'Literatuurstudie', mappen: ['literatuurstudie']},
+  { id: 'typen', naam: 'Typen onderzoek', mappen: ['typen'] },
+  { id: 'vragen', naam: 'Onderzoeksvragen', mappen: ['vragen'] },
+  { id: 'spelregels', naam: 'De spelregels', mappen: ['spelregels'] },
+  { id: 'kennisleer', naam: 'Kennisleer', mappen: ['kennisleer'] },
+  { id: 'opzet', naam: 'Onderzoek opzetten', mappen: ['opzet', 'gegevens'] },
+  { id: 'literatuurstudie', naam: 'Literatuurstudie', mappen: ['literatuurstudie'] },
 ];
 
 export function hoofdstukVan(begrip) {

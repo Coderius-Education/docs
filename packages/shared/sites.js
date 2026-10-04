@@ -151,6 +151,14 @@ const SITES = defineSites([
     description: 'Schrijf en draai code direct in je browser.',
     requires: [],
   },
+  {
+    id: 'onderzoek',
+    label: 'Onderzoek',
+    subject: 'wo',
+    path: 'onderzoek',
+    description: 'Leer onderzoek doen, van een scherpe vraag tot een eerlijke conclusie.',
+    requires: [],
+  },
 ]);
 
 // Sites voor docenten. Bewust niet in SITES: die lijst vult de navbar-dropdown,

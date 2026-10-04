@@ -1,33 +1,26 @@
 # Onderzoek
 
-Materiaal voor het doen van onderzoek, gericht op bovenbouw havo/vwo. Gebouwd met [Docusaurus](https://docusaurus.io/) en gehost op GitHub Pages:
+Materiaal voor het doen van onderzoek, gericht op bovenbouw havo/vwo. Een
+Docusaurus-site in de Coderius-monorepo, onder het vak wetenschapsoriëntatie:
 
-**https://coderius-education.github.io/onderzoek/**
+**https://wo.coderius.nl/onderzoek/**
 
 ## Lokaal draaien
 
-Vereist Node.js 20 of hoger.
+Vanuit de root van de monorepo:
 
 ```bash
-npm install
-npm start
+pnpm install
+pnpm --filter @coderius/onderzoek start
 ```
-
-De site draait dan op http://localhost:3000/onderzoek/ en herlaadt automatisch bij wijzigingen.
 
 ## Productie-build
 
 ```bash
-npm run build
+pnpm --filter @coderius/onderzoek build
 ```
 
 De statische site komt in de map `build/`.
-
-## Deployment
-
-Elke push naar `main` bouwt en publiceert de site automatisch via de GitHub Actions-workflow in `.github/workflows/deploy.yml`.
-
-**Eenmalige instelling:** zet in de repo onder **Settings → Pages → Build and deployment → Source** de optie op **"GitHub Actions"**.
 
 ## Inhoud toevoegen
 

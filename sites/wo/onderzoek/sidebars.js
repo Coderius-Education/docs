@@ -10,11 +10,7 @@ const sidebars = {
     {
       type: 'category',
       label: 'Typen onderzoek',
-      items: [
-        'typen/theorie-vs-ontwerp',
-        'typen/theoriegericht',
-        'typen/ontwerpgericht',
-      ],
+      items: ['typen/theorie-vs-ontwerp', 'typen/theoriegericht', 'typen/ontwerpgericht'],
     },
     {
       type: 'category',
@@ -49,11 +45,7 @@ const sidebars = {
         {
           type: 'category',
           label: 'Kennis vooraf en achteraf',
-          items: [
-            'kennisleer/a-priori',
-            'kennisleer/a-posteriori',
-            'kennisleer/vork-van-hume',
-          ],
+          items: ['kennisleer/a-priori', 'kennisleer/a-posteriori', 'kennisleer/vork-van-hume'],
         },
         {
           type: 'category',
@@ -68,11 +60,7 @@ const sidebars = {
         {
           type: 'category',
           label: 'Drie posities',
-          items: [
-            'kennisleer/scepticisme',
-            'kennisleer/rationalisme',
-            'kennisleer/empirisme',
-          ],
+          items: ['kennisleer/scepticisme', 'kennisleer/rationalisme', 'kennisleer/empirisme'],
         },
         'kennisleer/inductieprobleem',
         {
@@ -100,7 +88,7 @@ const sidebars = {
         {
           type: 'category',
           label: 'Functies',
-          link: {type: 'doc', id: 'opzet/functies/functies-overzicht'},
+          link: { type: 'doc', id: 'opzet/functies/functies-overzicht' },
           items: [
             'opzet/functies/puur-beschrijvend',
             'opzet/functies/beschrijvend-vergelijkend',
@@ -113,7 +101,7 @@ const sidebars = {
         {
           type: 'category',
           label: 'Soorten onderzoek',
-          link: {type: 'doc', id: 'opzet/soorten/soorten-combineren'},
+          link: { type: 'doc', id: 'opzet/soorten/soorten-combineren' },
           items: [
             'opzet/soorten/experimenteel',
             'opzet/soorten/veldonderzoek',
@@ -123,7 +111,7 @@ const sidebars = {
         {
           type: 'category',
           label: 'Methoden',
-          link: {type: 'doc', id: 'opzet/methoden/methode-kiezen'},
+          link: { type: 'doc', id: 'opzet/methoden/methode-kiezen' },
           items: [
             'opzet/methoden/observatie',
             'opzet/methoden/interview',
@@ -134,7 +122,7 @@ const sidebars = {
         {
           type: 'category',
           label: 'Soorten gegevens',
-          link: {type: 'doc', id: 'gegevens/kwal-vs-kwant'},
+          link: { type: 'doc', id: 'gegevens/kwal-vs-kwant' },
           items: ['gegevens/kwantitatief', 'gegevens/kwalitatief'],
         },
       ],
