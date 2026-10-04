@@ -1,3 +1,4 @@
+import { storageKey } from '@coderius/shared/opslag';
 import { describe, expect, it } from 'vitest';
 import type { SerialPort } from './serial';
 import { SerialClient } from './serial';
@@ -228,8 +229,8 @@ describe('EditorSessie.stand: wat een operatie na een await verandert', () => {
       progress: null,
     });
     const blijvend = nepOpslag();
-    blijvend.setItem('webMicroEditor.code', 'print(1)\n');
-    blijvend.setItem('webMicroEditor.currentFile', '/blink.py');
+    blijvend.setItem(storageKey('robotica', 'webMicroEditor.code'), 'print(1)\n');
+    blijvend.setItem(storageKey('robotica', 'webMicroEditor.currentFile'), '/blink.py');
     const bewaard = new EditorSessie(nepOpslag(), blijvend);
     expect(bewaard.stand.code).toBe('print(1)\n');
     expect(bewaard.stand.currentFile).toBe('/blink.py');
@@ -247,10 +248,10 @@ describe('EditorSessie.stand: wat een operatie na een await verandert', () => {
     sessie.zet({ currentFile: '/main.py', loadedCode: 'x' });
     expect(oud.standen).toEqual(['/blink.py']);
     expect(sessie.stand.currentFile).toBe('/main.py');
-    expect(blijvend.getItem('webMicroEditor.currentFile')).toBe('/main.py');
+    expect(blijvend.getItem(storageKey('robotica', 'webMicroEditor.currentFile'))).toBe('/main.py');
     sessie.zet({ currentFile: null, code: 'y' });
-    expect(blijvend.getItem('webMicroEditor.currentFile')).toBeNull();
-    expect(blijvend.getItem('webMicroEditor.code')).toBe('y');
+    expect(blijvend.getItem(storageKey('robotica', 'webMicroEditor.currentFile'))).toBeNull();
+    expect(blijvend.getItem(storageKey('robotica', 'webMicroEditor.code'))).toBe('y');
   });
 });
 

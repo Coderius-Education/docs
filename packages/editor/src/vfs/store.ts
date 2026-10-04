@@ -1,3 +1,4 @@
+import { storageKey } from '@coderius/shared/opslag';
 import { createStore, del, get, set } from 'idb-keyval';
 import type { Project, ProjectSummary } from './types';
 
@@ -61,3 +62,13 @@ export function newProjectId(): string {
 // in op. Wijken die twee af, dan komt een import in een database die de editor
 // nooit opent en lijkt er "niets te gebeuren".
 export const DEFAULT_STORAGE_PREFIX = 'coderius-editor';
+
+/**
+ * De database van één site: alle cursussen van een vak delen één origin (en
+ * dus één IndexedDB), en de projecten van de IDE horen niet in die van een
+ * andere cursus. ProjectEditor en de /import-pagina van de IDE gebruiken
+ * allebei deze naam.
+ */
+export function projectOpslag(siteId: string): string {
+  return storageKey(siteId, DEFAULT_STORAGE_PREFIX);
+}

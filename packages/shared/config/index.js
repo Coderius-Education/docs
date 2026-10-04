@@ -295,6 +295,9 @@ function createConfig(course = {}) {
     ...rest,
     // ---- door de factory beheerd (niet overschrijfbaar via ...rest) ----
     headTags: headTags || (seoTags.length ? seoTags : undefined),
+    // De site-id uit de registry, voor componenten die per site opslaan
+    // (storageKey in opslag.js): alle cursussen van een vak delen één origin.
+    customFields: { ...(rest.customFields || {}), ...(registry ? { siteId: registry.id } : {}) },
     staticDirectories:
       staticDirectories ||
       uniqueDirs(['static', SHARED_STATIC, ...packageStaticDirs(sharedPackages)]),

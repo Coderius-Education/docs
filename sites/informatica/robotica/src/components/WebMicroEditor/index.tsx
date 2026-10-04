@@ -57,6 +57,7 @@ function useColorMode(): { colorMode: 'light' | 'dark' } {
 
 import Keuzelijst from '@coderius/shared/components/Keuzelijst';
 import { bevestig, vraag } from '@coderius/shared/dialoog';
+import { storageKey } from '@coderius/shared/opslag';
 import { leesEditorHash } from './codeLink';
 import { friendlyError } from './errorMessages';
 import { BoardFS } from './filesystem';
@@ -183,9 +184,9 @@ const pythonTabExtensions = [
   ),
 ];
 
-const LEAPHY_REPO_STORAGE_KEY = 'webMicroEditor.leaphyRepo';
-const LEAPHY_BRANCH_STORAGE_KEY = 'webMicroEditor.leaphyBranch';
-const FONT_STORAGE_KEY = 'webMicroEditor.fontSize';
+const LEAPHY_REPO_STORAGE_KEY = storageKey('robotica', 'webMicroEditor.leaphyRepo');
+const LEAPHY_BRANCH_STORAGE_KEY = storageKey('robotica', 'webMicroEditor.leaphyBranch');
+const FONT_STORAGE_KEY = storageKey('robotica', 'webMicroEditor.fontSize');
 
 // Officiële MicroPython-firmware voor de Arduino Nano RP2040 Connect.
 // Nieuwe versie? Pak de laatste .uf2 van de download-pagina hieronder en werk

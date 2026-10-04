@@ -223,7 +223,10 @@ describe('srcdoc-bouwers', () => {
       expect(doc).toMatch(
         /const WHEELS = \[[^\]]*\/whl\/pymunk-[^\]]*\/whl\/coderius_play-[^\]]*\];/,
       );
-      expect(doc).toContain('await pyodide.loadPackage(WHEELS)');
+      // De iframe heeft een opaque origin: de wheels komen via de pagina.
+      expect(doc).toContain('await laadWielen(pyodide, WHEELS)');
+      expect(doc).toContain('async function laadWielen(');
+      expect(doc).not.toContain('pyodide.loadPackage(WHEELS)');
     });
   }
 

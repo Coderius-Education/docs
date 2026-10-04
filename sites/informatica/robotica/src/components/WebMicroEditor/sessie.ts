@@ -21,6 +21,7 @@
 // alleen in de tab die eerder zelf verbonden was (sessionStorage), zodat een
 // tweede tab niet om de poort gaat vechten.
 
+import { storageKey } from '@coderius/shared/opslag';
 import { friendlyError } from './errorMessages';
 import type { InstallProgress } from './leaphyInstaller';
 import { SerialClient, type SerialPort, type SerialStatus } from './serial';
@@ -28,9 +29,10 @@ import { TEMPLATES } from './templates';
 
 /** Zelfde plafond als de shell zelf: meer dan dit ziet niemand terug. */
 const MAX_SHELL = 20000;
-export const WAS_VERBONDEN_KEY = 'webMicroEditor.wasVerbonden';
-const CODE_KEY = 'webMicroEditor.code';
-const FILE_KEY = 'webMicroEditor.currentFile';
+// Per site: alle informatica-cursussen delen één origin en dus één opslag.
+export const WAS_VERBONDEN_KEY = storageKey('robotica', 'webMicroEditor.wasVerbonden');
+const CODE_KEY = storageKey('robotica', 'webMicroEditor.code');
+const FILE_KEY = storageKey('robotica', 'webMicroEditor.currentFile');
 
 /** 'verbindt': er loopt een stille herverbind-poging na een herlaad. */
 export type SessieStatus = SerialStatus | 'verbindt';

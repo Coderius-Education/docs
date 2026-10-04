@@ -1,6 +1,8 @@
+import { storageKey as siteSleutel } from '@coderius/shared/opslag';
 import clsx from 'clsx';
 import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { languageForPath } from '../../lib/languages';
+import { useSiteId } from '../../lib/siteId';
 import MonacoPane from '../../monaco/MonacoPane';
 import { RUNNER_META } from '../../runners/registry';
 import Console from '../shared/Console';
@@ -22,8 +24,9 @@ const AUTO_RUN_DEBOUNCE_MS = 600;
 // model-deling (en dus gedeelde inhoud) te voorkomen.
 let instanceCounter = 0;
 
-function storageKey(persistKey: string): string {
-  return `coderius-editor:inline:${persistKey}`;
+// Per site: alle cursussen van een vak delen één origin en dus één localStorage.
+function storageKey(siteId: string, persistKey: string): string {
+  return siteSleutel(siteId, `editor:inline:${persistKey}`);
 }
 
 export default function InlineEditorImpl({
@@ -40,6 +43,7 @@ export default function InlineEditorImpl({
   showPreview = true,
   title,
 }: InlineEditorProps): ReactNode {
+  const siteId = useSiteId();
   const entryPath =
     entry ?? (files ? Object.keys(files)[0] : (DEFAULT_ENTRY[runnerId] ?? 'main.py'));
 
@@ -53,7 +57,7 @@ export default function InlineEditorImpl({
   const [currentFiles, setCurrentFiles] = useState<Record<string, string>>(() => {
     if (persistKey) {
       try {
-        const saved = window.localStorage.getItem(storageKey(persistKey));
+        const saved = window.localStorage.getItem(storageKey(siteId, persistKey));
         if (saved) {
           const parsed = JSON.parse(saved);
           // Alleen herstellen als de bestandsnamen nog overeenkomen met de
@@ -99,25 +103,25 @@ export default function InlineEditorImpl({
     session.clear();
     if (persistKey) {
       try {
-        window.localStorage.removeItem(storageKey(persistKey));
+        window.localStorage.removeItem(storageKey(siteId, persistKey));
       } catch {
         // opslag niet beschikbaar
       }
     }
-  }, [initialFiles, session.clear, persistKey]);
+  }, [initialFiles, session.clear, persistKey, siteId]);
 
   // Opt-in: bewerkingen bewaren zodat een leerling na een refresh verder kan.
   useEffect(() => {
     if (!persistKey || currentFiles === initialFiles) return;
     const timer = window.setTimeout(() => {
       try {
-        window.localStorage.setItem(storageKey(persistKey), JSON.stringify(currentFiles));
+        window.localStorage.setItem(storageKey(siteId, persistKey), JSON.stringify(currentFiles));
       } catch {
         // opslag vol of niet beschikbaar
       }
     }, 300);
     return () => window.clearTimeout(timer);
-  }, [currentFiles, persistKey, initialFiles]);
+  }, [currentFiles, persistKey, initialFiles, siteId]);
 
   // Live preview: opnieuw uitvoeren tijdens het typen (web-runner).
   const wantAutoRun = (session.runner?.capabilities.autoRun ?? false) && autoRun !== false;

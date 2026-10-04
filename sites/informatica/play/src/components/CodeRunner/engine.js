@@ -25,6 +25,7 @@ import {
 } from './puur';
 
 import { siteBasis } from './sitebasis';
+import { LAAD_WIELEN_SNIPPET } from './wielen';
 
 export { detectMode, ensureAsync, isBerichtVanOuder, rewriteTraceback } from './puur';
 
@@ -120,13 +121,14 @@ export function buildPrewarmSrcDoc(codes) {
   return `<!DOCTYPE html>
 <html><head><meta charset="utf-8"></head><body>
 <script type="module">
+${LAAD_WIELEN_SNIPPET}
 try {
   const { loadPyodide } = await import('${PYODIDE_CDN}');
   // Parallel-load Pyodide's own packages with the WASM init.
   const pyodide = await loadPyodide({ packages: [${pyodidePackagesCode}] });
   const WHEELS = [${wheelsCode}];
   if (WHEELS.length) {
-    await pyodide.loadPackage(WHEELS);
+    await laadWielen(pyodide, WHEELS);
   }
   // Done — assets are now in the browser cache and SW cache.
 } catch (err) {
@@ -215,6 +217,7 @@ export function buildSrcDoc({ code, mode = 'pygame', canvasWidth, canvasHeight }
 <div id="canvas-wrap"><canvas id="canvas"></canvas></div>
 <div id="console"></div>
 <script type="module">
+${LAAD_WIELEN_SNIPPET}
 const loading = document.getElementById('loading');
 const canvas = document.getElementById('canvas');
 const consoleEl = document.getElementById('console');
@@ -250,7 +253,7 @@ try {
   const WHEELS = [${wheelsCode}];
   if (WHEELS.length) {
     loading.textContent = 'Pakketten installeren...';
-    await pyodide.loadPackage(WHEELS);
+    await laadWielen(pyodide, WHEELS);
   }
 
   loading.style.display = 'none';
@@ -375,6 +378,7 @@ export function buildSharedRunnerSrcDoc(codes) {
 <div id="loading">Python laden...</div>
 <div id="canvas-wrap"><canvas id="canvas"></canvas></div>
 <script type="module">
+${LAAD_WIELEN_SNIPPET}
 const loading = document.getElementById('loading');
 const canvas = document.getElementById('canvas');
 
@@ -407,7 +411,7 @@ let booting = (async () => {
     const WHEELS = [${wheelsCode}];
     if (WHEELS.length) {
       loading.textContent = 'Pakketten installeren...';
-      await pyodide.loadPackage(WHEELS);
+      await laadWielen(pyodide, WHEELS);
     }
 
     const BOOTSTRAP = \`${escapedBootstrap}\`;

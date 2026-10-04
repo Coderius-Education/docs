@@ -10,6 +10,7 @@
  * active PygbagRunner's slot when running. When idle it hides off-screen.
  */
 import { buildSharedRunnerSrcDoc } from '../CodeRunner/engine';
+import { beantwoordWielen } from '../CodeRunner/wielen';
 import { routeerBericht } from './routeer';
 
 // --- Module-level singleton state ---
@@ -47,8 +48,10 @@ export function schedule(code) {
 function initIframe(codes) {
   iframe = document.createElement('iframe');
   iframe.setAttribute('aria-hidden', 'true');
-  // allow-same-origin is required so the iframe can fetch local /whl/*.whl
-  iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-downloads');
+  // Bewust zonder allow-same-origin: alle informatica-cursussen delen één
+  // origin, en leerlingcode hoort niet bij hun opslag te kunnen. De wheels
+  // komen via deze pagina (zie wielen.js en handleMessage).
+  iframe.setAttribute('sandbox', 'allow-scripts allow-downloads');
   iframe.style.cssText =
     'position:fixed;top:0;left:0;width:0;height:0;border:0;visibility:hidden;pointer-events:none;z-index:9999;background:#1a1a2e;';
   iframe.srcdoc = buildSharedRunnerSrcDoc(codes);
@@ -63,6 +66,7 @@ function initIframe(codes) {
 function handleMessage(e) {
   if (!iframe || e.source !== iframe.contentWindow) return;
   if (!e.data || !e.data.type) return;
+  if (beantwoordWielen(e, iframe.contentWindow)) return;
 
   const { type } = e.data;
 

@@ -1,8 +1,14 @@
-import { DEFAULT_STORAGE_PREFIX, newProjectId, saveProject } from '@coderius/editor/vfs/store';
+import { useSiteId } from '@coderius/editor/lib/siteId';
+import { newProjectId, projectOpslag, saveProject } from '@coderius/editor/vfs/store';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import { useEffect, useState } from 'react';
 import styles from './ImportProject.module.css';
-import { ACK_MESSAGE, parseImportMessage, projectFromImport } from './importContract';
+import {
+  ACK_MESSAGE,
+  isAllowedSender,
+  parseImportMessage,
+  projectFromImport,
+} from './importContract';
 
 // Ontvangt een project via postMessage van de Website-checker
 // (de web-cursus) en slaat het op in dezelfde IndexedDB-opslag als
@@ -15,12 +21,17 @@ const TIMEOUT_MS = 15000;
 export default function ImportProjectImpl() {
   const [timedOut, setTimedOut] = useState(false);
   const ideStart = useBaseUrl('/');
+  // Dezelfde database als ProjectEditor op deze site (projectOpslag).
+  const opslag = projectOpslag(useSiteId());
 
   useEffect(() => {
     let handled = false;
 
     function onMessage(event: MessageEvent) {
       if (handled) return;
+      // Alle informatica-cursussen delen één origin: alleen het venster dat
+      // ons opende, en dan alleen als dat de web-cursus is.
+      if (!isAllowedSender(event.origin, event.source, window.opener)) return;
       const msg = parseImportMessage(event.data, event.origin);
       if (!msg) return;
       handled = true;
@@ -29,7 +40,7 @@ export default function ImportProjectImpl() {
       source?.postMessage(ACK_MESSAGE, event.origin);
 
       const project = projectFromImport(msg, newProjectId(), Date.now());
-      void saveProject(DEFAULT_STORAGE_PREFIX, project).then(() => {
+      void saveProject(opslag, project).then(() => {
         // Naar de IDE zelf: de baseUrl (/ide/), niet de root van de vak-host.
         window.location.replace(ideStart);
       });
@@ -44,7 +55,7 @@ export default function ImportProjectImpl() {
       window.removeEventListener('message', onMessage);
       window.clearTimeout(timer);
     };
-  }, [ideStart]);
+  }, [ideStart, opslag]);
 
   return (
     <div className={styles.wrap}>

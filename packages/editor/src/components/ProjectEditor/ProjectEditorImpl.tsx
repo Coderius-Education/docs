@@ -19,6 +19,7 @@ import {
 import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { downloadBestand } from '../../lib/download';
 import { languageForPath } from '../../lib/languages';
+import { useSiteId } from '../../lib/siteId';
 import { leesBestand } from '../../lib/upload';
 import { useVolledigScherm } from '../../lib/volledigScherm';
 import MonacoPane from '../../monaco/MonacoPane';
@@ -32,11 +33,11 @@ import {
   veiligeBestandsnaam,
 } from '../../vfs/bestanden';
 import {
-  DEFAULT_STORAGE_PREFIX,
   deleteProject,
   listProjects,
   loadProject,
   newProjectId,
+  projectOpslag,
   saveProject,
 } from '../../vfs/store';
 import { BUILTIN_TEMPLATES } from '../../vfs/templates';
@@ -65,10 +66,13 @@ const DEFAULT_RUNNERS: RunnerId[] = ['python', 'web', 'micropython'];
 
 export default function ProjectEditorImpl({
   runners = DEFAULT_RUNNERS,
-  storagePrefix = DEFAULT_STORAGE_PREFIX,
+  storagePrefix: eigenPrefix,
   templates,
   height = '100%',
 }: ProjectEditorProps): ReactNode {
+  // Standaard de database van deze site (projectOpslag), niet één voor het hele vak.
+  const siteId = useSiteId();
+  const storagePrefix = eigenPrefix ?? projectOpslag(siteId);
   const allTemplates = useMemo(
     () => [...BUILTIN_TEMPLATES, ...(templates ?? [])].filter((t) => runners.includes(t.runnerId)),
     [templates, runners],

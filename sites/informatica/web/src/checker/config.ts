@@ -1,4 +1,5 @@
 import type { CheckerConfig, Concept } from '@coderius/checker/types';
+import { storageKey } from '@coderius/shared/opslag';
 import { SITES_BY_ID } from '@coderius/shared/sites';
 import { CSS_TECHNIQUES, HTML_ELEMENTS, JS_TECHNIQUES } from './curriculum';
 
@@ -88,7 +89,10 @@ export const webConfig: CheckerConfig = {
   accept: '.zip,.html,.htm,.css,.js,.png,.jpg,.jpeg,.gif,.svg,.webp,.ico',
 
   ide: { url: SITES_BY_ID.ide.url },
-  teacher: { password: 'coderius-docent', storageKey: 'webChecker.docentUnlocked' },
+  teacher: {
+    password: 'coderius-docent',
+    storageKey: storageKey('web', 'webChecker.docentUnlocked'),
+  },
   pdfFilename: (d) => `Beoordeling Web Project - ${todayStamp(d)}.pdf`,
   privacyNote:
     'Let op: je bestanden gaan nooit naar een server. Alles gebeurt in je eigen browser.',

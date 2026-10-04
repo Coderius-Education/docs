@@ -1,4 +1,5 @@
 import type { CheckerConfig, Concept, ConceptDetect, Level } from '@coderius/checker/types';
+import { storageKey } from '@coderius/shared/opslag';
 import niveaus from './niveaus.json';
 
 // De nakijker voor Godot-projecten. Wélke concepten er zijn en op welk niveau
@@ -235,7 +236,10 @@ export const godotConfig: CheckerConfig = {
   textKinds: ['gd', 'tscn', 'godot'],
   accept: '.zip,.gd,.tscn,.godot,.tres,.import,.png,.jpg,.jpeg,.gif,.svg,.webp',
 
-  teacher: { password: 'coderius-docent', storageKey: 'godotChecker.docentUnlocked' },
+  teacher: {
+    password: 'coderius-docent',
+    storageKey: storageKey('godot', 'godotChecker.docentUnlocked'),
+  },
   pdfFilename: (d) => `Beoordeling Godot Project - ${todayStamp(d)}.pdf`,
   privacyNote:
     'Let op: je bestanden gaan nooit naar een server. Alles gebeurt in je eigen browser.',

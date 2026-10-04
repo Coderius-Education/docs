@@ -1,10 +1,11 @@
 import Keuzelijst from '@coderius/shared/components/Keuzelijst';
 import BrowserOnly from '@docusaurus/BrowserOnly';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import CodeEditor from './CodeEditor';
 import styles from './Sidebar.module.css';
 import { useCodeRunner } from './context';
 import { buildSrcDoc } from './engine';
+import { beantwoordWielen } from './wielen';
 
 function SidebarInner() {
   const { isOpen, code, mode, isRunning, setCode, setMode, setIsRunning, close } = useCodeRunner();
@@ -41,6 +42,16 @@ function SidebarInner() {
   }
 
   const srcDoc = isRunning ? buildSrcDoc({ code, mode }) : null;
+
+  // De iframe heeft een opaque origin en vraagt de wheels aan deze pagina.
+  const uitvoerRef = useRef(null);
+  useEffect(() => {
+    function onMessage(e) {
+      beantwoordWielen(e, uitvoerRef.current?.contentWindow);
+    }
+    window.addEventListener('message', onMessage);
+    return () => window.removeEventListener('message', onMessage);
+  }, []);
 
   return (
     <>
@@ -103,14 +114,15 @@ function SidebarInner() {
         {/* Output area */}
         {isRunning && srcDoc && (
           <div className={styles.outputArea}>
-            {/* allow-same-origin is required to fetch local wheel files (/whl/*.whl)
-                from the same origin. Removing it gives the iframe a null origin,
-                which causes the wheel fetch to fail due to CORS. */}
+            {/* Bewust zonder allow-same-origin: alle informatica-cursussen delen één
+                origin, en leerlingcode hoort niet bij hun opslag te kunnen. De
+                wheels komen via de pagina (wielen.js). */}
             <iframe
+              ref={uitvoerRef}
               title="Uitvoer van je code"
               srcDoc={srcDoc}
               className={styles.outputFrame}
-              sandbox="allow-scripts allow-same-origin allow-downloads"
+              sandbox="allow-scripts allow-downloads"
             />
           </div>
         )}

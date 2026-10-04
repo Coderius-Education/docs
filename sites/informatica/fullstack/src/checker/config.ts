@@ -1,4 +1,5 @@
 import type { CheckerConfig } from '@coderius/checker/types';
+import { storageKey } from '@coderius/shared/opslag';
 
 // Conceptenlijst voor de fullstack-nakijker, afgeleid van
 // sites/fullstack/docs/cheatsheet.md (koppen: FastAPI, HTML, JavaScript,
@@ -56,7 +57,10 @@ export const fullstackConfig: CheckerConfig = {
   textKinds: ['py', 'html', 'css', 'js'],
   accept: '.zip,.py,.html,.htm,.css,.js,.png,.jpg,.jpeg,.gif,.svg,.webp,.ico',
 
-  teacher: { password: 'coderius-docent', storageKey: 'fullstackChecker.docentUnlocked' },
+  teacher: {
+    password: 'coderius-docent',
+    storageKey: storageKey('fullstack', 'fullstackChecker.docentUnlocked'),
+  },
   pdfFilename: (d) => `Beoordeling Fullstack Project - ${todayStamp(d)}.pdf`,
   privacyNote:
     'Let op: je bestanden gaan nooit naar een server. Alles gebeurt in je eigen browser.',

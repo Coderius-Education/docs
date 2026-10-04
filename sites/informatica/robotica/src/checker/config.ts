@@ -1,4 +1,5 @@
 import type { CheckerConfig, Concept } from '@coderius/checker/types';
+import { storageKey } from '@coderius/shared/opslag';
 
 // Conceptenlijst voor de robotica-nakijker, afgeleid van de vastgestelde
 // leerlijntabel (kolommen Onderwerp / Concept / Niveau start / Niveau
@@ -397,7 +398,10 @@ export const roboticaConfig: CheckerConfig = {
   // niet tonen. De leerlingpagina vraagt daarom om JPG of PNG.
   accept: '.zip,.py,.png,.jpg,.jpeg,.webp',
 
-  teacher: { password: 'coderius-docent', storageKey: 'roboticaChecker.docentUnlocked' },
+  teacher: {
+    password: 'coderius-docent',
+    storageKey: storageKey('robotica', 'roboticaChecker.docentUnlocked'),
+  },
   pdfFilename: (d) => `Beoordeling Robot - ${todayStamp(d)}.pdf`,
   privacyNote:
     'Let op: je bestanden gaan nooit naar een server. Alles gebeurt in je eigen browser.',

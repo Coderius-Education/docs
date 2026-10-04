@@ -1,4 +1,5 @@
 import type { CheckerConfig } from '@coderius/checker/types';
+import { storageKey } from '@coderius/shared/opslag';
 
 // Conceptenlijst voor de play-nakijker, één op één afgeleid van de hoofdstukken
 // van deze cursus: 1 Vormen tot en met 9 Levels, met pygame-ce (10) als
@@ -57,7 +58,10 @@ export const playConfig: CheckerConfig = {
   imageKinds: ['image'],
   accept: '.zip,.py,.json,.png,.jpg,.jpeg,.gif,.webp,.bmp,.mp3,.wav,.ogg,.mp4',
 
-  teacher: { password: 'coderius-docent', storageKey: 'playChecker.docentUnlocked' },
+  teacher: {
+    password: 'coderius-docent',
+    storageKey: storageKey('play', 'playChecker.docentUnlocked'),
+  },
   pdfFilename: (d) => `Beoordeling play-project - ${todayStamp(d)}.pdf`,
   privacyNote:
     'Let op: je bestanden gaan nooit naar een server. Alles gebeurt in je eigen browser.',

@@ -1,3 +1,4 @@
+import { storageKey } from '@coderius/shared/opslag';
 import { createStore, del, get, set } from 'idb-keyval';
 
 // Het werk in een oefenveld was weg zodra je de pagina ververste of de
@@ -31,7 +32,8 @@ let store: IdbStore | undefined;
 // Pas bij het eerste gebruik: createStore opent de database meteen, en dat
 // hoort niet te gebeuren bij het importeren (tests, server-render).
 function getStore(): IdbStore {
-  store ??= createStore('coderius-oefenvelden', 'velden');
+  // Per site: alle informatica-cursussen delen één origin en dus één IndexedDB.
+  store ??= createStore(storageKey('web', 'oefenvelden'), 'velden');
   return store;
 }
 
