@@ -5,6 +5,12 @@ export type Fragment = {
   bron: string;
   /** 1-gebaseerd regelnummer waar het codeblok begint */
   regel: number;
+  /**
+   * eerste en laatste regel die bij het blok horen (twee regels erboven, voor
+   * een marker, en de sluitende fence); `--alleen` legt dit tegen de diff
+   */
+  begin?: number;
+  eind?: number;
   /** de dichtstbijzijnde kop erboven, voor context in rapportage */
   kop: string;
   /** de Python-broncode, gededent en klaar om te compileren */

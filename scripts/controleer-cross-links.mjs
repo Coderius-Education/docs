@@ -4,6 +4,12 @@
  *     node scripts/controleer-cross-links.mjs               sites/<vak>/<site>/build
  *     node scripts/controleer-cross-links.mjs builds        map met artifacts
  *     node scripts/controleer-cross-links.mjs --annotaties  GitHub-annotaties
+ *     node scripts/controleer-cross-links.mjs --compleet    elke site moet er zijn
+ *
+ * CI bouwt alleen de sites die een wijziging raakt en haalt de rest uit de
+ * cache (zie de jobs `build` en `voorraad` in build.yml). Met --compleet faalt
+ * het script als er een site uit de registry ontbreekt: een link naar een site
+ * zonder build telt anders stil als overgeslagen.
  *
  * Waarom dit naast de guard-tests bestaat: elke cursus is een eigen
  * Docusaurus-site, en `onBrokenLinks: 'throw'` controleert alleen links
@@ -216,12 +222,21 @@ const isHoofdscript =
 if (isHoofdscript) {
   const argumenten = process.argv.slice(2);
   const annotaties = argumenten.includes('--annotaties');
+  const compleet = argumenten.includes('--compleet');
   const map = argumenten.find((a) => !a.startsWith('--')) ?? join(ROOT, 'sites');
 
   const builds = buildsIn(map);
   if (builds.size === 0) {
     console.error(
       `Geen gebouwde sites gevonden in ${map}. Bouw eerst (pnpm build) of wijs de artifacts aan.`,
+    );
+    process.exit(1);
+  }
+
+  const ontbreekt = [...ALLE_SITES, HOME].map((s) => s.id).filter((id) => !builds.has(id));
+  if (compleet && ontbreekt.length) {
+    console.error(
+      `Geen build van: ${ontbreekt.join(', ')}. Met --compleet moet elke site er zijn.`,
     );
     process.exit(1);
   }
