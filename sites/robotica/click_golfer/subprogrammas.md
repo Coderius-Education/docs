@@ -7,13 +7,13 @@ import metAchter from './blokken/subprogrammas-achter.json';
 
 # Een naam voor je blokken
 
-Je programma uit [Mikken](mikken) werkt, maar het is lang geworden. Als je er snel naar kijkt, zie je niet meteen wat de robot doet. Daarom geef je een groepje blokken een naam: een **subprogramma**. Daarna zet je in je programma alleen nog die naam.
+Je programma uit [Mikken](mikken) werkt, maar het is lang geworden. Kijk je er snel naar, dan zie je niet meteen wat de robot doet. Daarom geef je een groepje blokken een naam: een **subprogramma**. Daarna zet je in je programma alleen nog die naam.
 
 ## Een subprogramma maken
 
 Je maakt twee subprogramma's: `mikken` en `slaan`. Sleep je een blok, dan gaan alle blokken eronder mee. Daarom werk je van onder naar boven.
 
-1. Klik op de groep **Eigen blokken** en sleep twee keer het blok **Subprogramma** naar een lege plek. Neem het bovenste blok, zonder **geef terug**. Het blok eronder ziet er hetzelfde uit, maar heeft onderaan nog een gat met de woorden **geef terug**: dat is voor een subprogramma dat een getal teruggeeft, en dat heb je hier niet nodig. Noem het ene `mikken` en het andere `slaan`.
+1. Klik op de groep **Eigen blokken** en sleep twee keer het blok **Subprogramma** naar een lege plek. Neem het bovenste blok, zonder **geef terug**. Het blok eronder lijkt erop, maar heeft onderaan nog een gat met de woorden **geef terug**. Dat is voor een subprogramma dat een getal teruggeeft, en dat heb je hier niet nodig. Noem het ene `mikken` en het andere `slaan`.
 2. Sleep **Servo 9 op 90**, onderaan in **als … dan**, in het subprogramma `slaan`. **duurt 2000 ms** eronder gaat vanzelf mee.
 3. Sleep **stel hoek in op 0** in het subprogramma `mikken`. De twee **herhaal 50 keer**-blokken gaan vanzelf mee.
 4. Klik weer op de groep **Eigen blokken**. Daar staan nu ook de blokken **mikken** en **slaan**. Je krijgt ze ook met de rechtermuisknop op een subprogramma: kies dan **Maak "mikken"**.

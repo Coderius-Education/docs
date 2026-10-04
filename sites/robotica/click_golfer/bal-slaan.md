@@ -6,15 +6,15 @@ import balSlaan from './blokken/bal-slaan.json';
 
 # Zie de bal, sla de bal
 
-Je robot ziet de bal met [de IR-sensor](ir-sensor), en laat [de servo](servo) draaien. Nu zet je die twee samen: ligt er een bal, dan slaat de servo. Nog zonder Lego: kijk naar het asje, net als bij de servo.
+Je robot kan de bal zien met [de IR-sensor](ir-sensor), en hij kan [de servo](servo) laten draaien. Nu zet je die twee samen: ligt er een bal, dan slaat de servo. De Lego komt later; je kijkt weer naar het asje, net als bij de servo.
 
 ## Het programma
 
-Je kent alle blokken al. Nieuw is alleen dat de servo-blokken nu in **als … dan** staan. Begin met het programma uit stap 2 van [de IR-sensor](ir-sensor). Heb je het bewaard, open het dan met **Mijn projecten** en **Open**. Heb je het niet bewaard, haal dan je servoprogramma weg, zoals bij [de servo](servo), en bouw stap 2 opnieuw. Haal Toon op scherm uit als … dan, en zet daar de servo-blokken voor in de plaats. Het blok duurt 500 ms onder als … dan haal je ook weg: na een slag wacht de robot al.
+Alle blokken ken je al. Nieuw is alleen dat de servo-blokken nu in **als … dan** staan. Begin met het programma uit stap 2 van [de IR-sensor](ir-sensor). Heb je het bewaard, open het dan met **Mijn projecten** en **Open**. Zo niet, haal dan je servoprogramma weg zoals bij [de servo](servo), en bouw stap 2 opnieuw. Daarna haal je Toon op scherm uit als … dan, en zet je de servo-blokken op die plek. Het blok duurt 500 ms onder als … dan mag ook weg, want na een slag wacht de robot al.
 
 <Blokken programma={balSlaan} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan Servo 9 op 0, duurt 500 ms, Servo 9 op 90, duurt 2000 ms." />
 
-Tussen twee slagen staat de servo op 90°, recht in het midden. Ligt er een bal, dan draait hij eerst naar 0°: dat is uithalen. Daarna slaat hij terug naar 90°. Zoemde je servo bij [de servo](servo) op 0°, en gebruikte je daar 10°? Zet dan hier ook 10 in plaats van 0.
+Tussen twee slagen staat de servo op 90°, recht in het midden. Ligt er een bal, dan draait hij eerst naar 0°: dat is uithalen. Daarna slaat hij terug naar 90°. Gebruikte je bij [de servo](servo) 10°, omdat hij op 0° zoemde? Zet dan hier ook 10 in plaats van 0.
 
 <Voorspel vraag="Wat doet je robot als er géén bal ligt?">
   <Keuze uitleg="De servo-blokken staan nu in als … dan. Die doet de robot alleen als het getal kleiner is dan 300, en dat is het alleen met een bal.">Het asje slaat steeds heen en weer, net als bij de servo</Keuze>
@@ -29,7 +29,7 @@ Misschien draait het asje direct na de upload één keer naar 90°. Dat is geen 
   </Uitleg>
 </Voorspel>
 
-Gebruik als grens het getal dat jij bij de IR-sensor hebt gekozen. Klik op **Upload naar robot** en leg een bal voor de sensor: het asje draait naar 0° en slaat terug naar 90°. Haal de bal na de slag weg. Blijft hij liggen, dan ziet de sensor hem na de wachttijd weer, en slaat je robot opnieuw.
+Gebruik als grens het getal dat jij bij de IR-sensor hebt gekozen. Klik op **Upload naar robot** en leg een bal voor de sensor: het asje draait naar 0° en slaat terug naar 90°. Haal de bal na de slag weg, anders ziet de sensor hem na de wachttijd weer en slaat je robot nog een keer.
 
 ## Waarom wachten?
 

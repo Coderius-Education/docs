@@ -18,11 +18,11 @@ Drie blokken heb je nodig:
 - **wijzig hoek met 1**: tel 1 op bij wat erin zit;
 - **hoek**: het getal dat er nu in zit. Dit blok zet je op de plek van een getal, bijvoorbeeld in **Servo 9 op …**.
 
-Het blok stel hoek in op heeft eerst een leeg gat, achter het woord op. Sleep daar een getal in uit **Getal blokken**. In dat blok staat 123: klik erop en typ 0.
+Het blok stel hoek in op heeft eerst een leeg gat, achter het woord op. Daar sleep je een getal in uit **Getal blokken**. Dat getal staat eerst op 123: klik erop en typ 0.
 
 ## Het programma
 
-De sensor zit nog op **A0** en de servo op **D9**, net als bij [Zie de bal, sla de bal](bal-slaan). Je bouwt verder op dat programma: de nieuwe blokken komen tussen **duurt 500 ms** en **Servo 9 op 90**. Ligt er een bal, dan zet de robot de arm op 0°. Daarna gaat de arm langzaam naar 50° en weer terug: dat is het mikken. Dan pas slaat hij, terug naar 90°. Daar wacht de arm op de volgende bal.
+De sensor zit nog op **A0** en de servo op **D9**, net als bij [Zie de bal, sla de bal](bal-slaan). Je bouwt verder op dat programma: de nieuwe blokken komen tussen **duurt 500 ms** en **Servo 9 op 90**. Ligt er een bal, dan zet de robot de arm op 0°. Daarna gaat de arm langzaam naar 50° en weer terug, en dat is het mikken. Pas dan slaat hij, terug naar 90°, waar de arm op de volgende bal wacht.
 
 Zoemde je servo bij [de servo](servo) op 0°, en gebruikte je daar 10°? Zet dan hier ook 10 in plaats van 0, in Servo 9 op 0 en in stel hoek in op 0.
 
@@ -30,7 +30,7 @@ Zoemde je servo bij [de servo](servo) op 0°, en gebruikte je daar 10°? Zet dan
 
 **herhaal 50 keer** uit **Denk stappen** doet de blokken erin vijftig keer achter elkaar. In Easybloqs staat er eerst 10 in: klik erop en typ 50. Elke keer gaat de arm naar de stand in `hoek`, wacht 10 ms, en verandert `hoek`.
 
-In het tweede herhaal-blok staat **wijzig hoek met -1**: daar gaat er telkens 1 af, zodat de arm terug draait. Easybloqs geeft het blok **wijzig** met 1. Klik op de 1 en typ -1.
+In het tweede herhaal-blok staat **wijzig hoek met -1**: daar gaat er telkens 1 af, zodat de arm terugdraait. Uit Easybloqs komt het blok **wijzig** met een 1 erin; klik op de 1 en typ -1.
 
 <Voorspel vraag="Welk getal zit er in hoek na het eerste herhaal-blok?">
   <Keuze uitleg="Er komt vijftig keer 1 bij, niet één keer.">1</Keuze>

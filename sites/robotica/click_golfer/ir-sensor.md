@@ -8,7 +8,7 @@ import SensorSimulator from '@site/src/components/SensorSimulator';
 
 # De IR-sensor
 
-Je Click Golfer moet zien of er een bal ligt. Dat doet de **IR-sensor**. Hij stuurt onzichtbaar licht naar voren en meet hoeveel daarvan terugkomt. Ligt er een bal voor, dan komt er meer licht terug, en dan wordt het getal van de sensor **lager**.
+Of er een bal ligt, ziet je Click Golfer met de **IR-sensor**. Die stuurt onzichtbaar licht naar voren en meet hoeveel daarvan terugkomt. Ligt er een bal voor, dan komt er meer licht terug, en dan wordt het getal van de sensor **lager**.
 
 ## Aansluiten
 
@@ -22,25 +22,25 @@ Zet je robot uit met de knop **ON/OFF**. Sluit de sensor dan aan op de rij van *
 
 ![Uitsnede van het schema: de blauwe sensor linksboven, met de rode draad naar 5V, de zwarte naar GND en de oranje naar het signaal van A0 op het shield. De pin D0 van de sensor blijft leeg.](@site/static/fritzing/click_golfer_sensor.png)
 
-Op het plaatje loopt de oranje draad eerst een stukje langs de rij van A4, en gaat dan omhoog naar A0. Hij hoort alleen op het signaal van **A0**: de hoekjes in de draad zijn geen aansluitingen.
+Op het plaatje loopt de oranje draad eerst een stukje langs de rij van A4, en gaat dan omhoog naar A0. De hoekjes in de draad zijn geen aansluitingen: hij zit alleen op het signaal van **A0**.
 
-De sensor heeft ook een pin **D0**. Die laat je leeg. D0 geeft alleen "wel bal" of "geen bal". Op **A0** krijg je een getal, en dan kies je zelf vanaf welk getal er een bal ligt.
+De sensor heeft ook een pin **D0**, maar die laat je leeg. D0 zegt alleen "wel bal" of "geen bal". Op **A0** krijg je een getal, en dan kies je zelf vanaf welk getal er een bal ligt.
 
-Let op: op het shield staat ook een D0, bij **D0/TX1**. Daar sluit je niets op aan. Over D0 en D1 van het shield gaat je programma via de usb-kabel naar de Arduino.
+Op het shield staat ook een D0, bij **D0/TX1**. Daar sluit je niets op aan, want over D0 en D1 van het shield gaat je programma via de usb-kabel naar de Arduino.
 
 Zit alles vast? Zet je robot dan weer aan met **ON/OFF**.
 
 ## Stap 1: het getal uitlezen
 
-Sleep eerst het blok **herhaal voor altijd** uit **Denk stappen** in het Leaphy-blok. Het doet alles wat erin staat steeds opnieuw. Zonder dat blok las je robot de sensor één keer, en daarna nooit meer.
+Sleep eerst het blok **herhaal voor altijd** uit **Denk stappen** in het Leaphy-blok. Wat erin staat, doet je robot steeds opnieuw. Zonder dat blok leest hij de sensor één keer en daarna nooit meer.
 
-Het blok **Lees anapin A0** vind je in de groep **Sensoren**. Daarmee lees je het getal van de sensor. **Toon op scherm** uit **Actuatoren** laat het getal zien: sleep het in **herhaal voor altijd**, en sleep **Lees anapin** op de plek van het tekstvakje. Neem het blok **Toon op scherm** met één vakje, zoals bij [je eerste programma](easybloqs).
+Het getal van de sensor lees je met het blok **Lees anapin A0** uit de groep **Sensoren**. Om het getal te zien sleep je **Toon op scherm** uit **Actuatoren** in herhaal voor altijd, en daarna Lees anapin op de plek van het tekstvakje. Neem weer het blok Toon op scherm met één vakje, zoals bij [je eerste programma](easybloqs).
 
-Onder **Toon op scherm** komt **duurt 500 ms**, ook uit **Denk stappen**. Het laat de robot een halve seconde wachten, zodat je het getal kunt lezen. In Easybloqs heet het blok **Duurt**, en staat er eerst 1000 in: klik op het getal en typ 500. Achter het getal staat een keuzelijstje met ms, μs en s. Laat dat op **ms** staan.
+Onder Toon op scherm komt **duurt 500 ms**, ook uit Denk stappen. Daarmee wacht de robot een halve seconde, zodat je het getal kunt lezen. In Easybloqs heet het blok **Duurt** en staat er eerst 1000 in; klik op het getal en typ 500. Achter het getal staat een keuzelijstje met ms, μs en s. Laat dat op **ms** staan.
 
 <Blokken programma={uitlezen} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: Toon op scherm Lees anapin A0, en daarna duurt 500 ms." />
 
-Klik op **Upload naar robot** en open het scherm met de knop **Toon output op scherm**, zoals bij [je eerste programma](easybloqs). Er verschijnt elke halve seconde een nieuw getal. Leg een bal voor de sensor en haal hem weer weg. Wordt het getal lager met een bal ervoor? Schrijf de twee getallen op: zonder bal en met bal.
+Klik op **Upload naar robot** en open het scherm met de knop **Toon output op scherm**, zoals bij [je eerste programma](easybloqs). Er verschijnt elke halve seconde een nieuw getal. Leg een bal voor de sensor en haal hem weer weg. Wordt het getal lager met een bal ervoor? Schrijf twee getallen op: een zonder bal en een met bal.
 
 <Voorspel soort="Controlevraag" vraag="Waarom staat Lees anapin A0 in een herhaal voor altijd?">
   <Keuze goed uitleg="Herhaal voor altijd laat je robot steeds opnieuw lezen. Zo merkt hij ook een bal die je later neerlegt.">Zodat de robot steeds opnieuw kijkt of er een bal ligt</Keuze>
@@ -82,7 +82,7 @@ De getallen hier zijn een voorbeeld. Jouw sensor geeft andere getallen: dat hang
 
 ## Stap 2: reageren op de bal
 
-Nu laat je de robot zelf beslissen. Met het blok **als … dan** uit **Denk stappen** kijk je of het getal kleiner is dan een grens. In **Denk stappen** staan twee blokken **als**: neem het eerste, zonder **anders**. In het voorbeeld is die grens **300**. Je bouwt verder op het programma van stap 1:
+Nu laat je de robot zelf beslissen. Met het blok **als … dan** uit **Denk stappen** kijkt hij of het getal kleiner is dan een grens; in het voorbeeld is dat 300. In die groep staan twee blokken **als**: neem het eerste, zonder **anders**. Je bouwt verder op het programma van stap 1:
 
 1. Sleep als … dan in herhaal voor altijd, helemaal bovenaan. Toon op scherm en duurt schuiven eronder.
 2. Sleep Toon op scherm in het gat onder als … dan. Het blok duurt gaat mee, want een blok neemt alles eronder mee. Sleep duurt daarna terug, onder als … dan.

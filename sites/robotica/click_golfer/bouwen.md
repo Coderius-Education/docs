@@ -8,7 +8,7 @@ import heenEnWeer from './blokken/servo-heen-en-weer.json';
 
 # Bouwen
 
-Je sensor ziet de bal en je servo slaat. Nu bouw je er de Click Golfer van Lego omheen. Eerst bouw je de toren met de servo en het tandwiel. Die test je, en pas als hij werkt, bouw je de arm.
+Je sensor ziet de bal en je servo slaat. Nu komt de Click Golfer van Lego eromheen. Je begint met de toren, met de servo en het tandwiel erin. Die test je eerst, en pas als hij werkt, komt de arm erbij.
 
 :::tip
 Twijfel je hoe een onderdeel eruitziet of waar het komt? Bekijk het [3D-model op de intropagina](intro). Je kunt het draaien en zoomen. Het model komt uit een iets andere versie: sommige kleuren en pinnen wijken af. De plaatjes hieronder kloppen met je doosje.
@@ -45,7 +45,7 @@ Mist er iets in je doosje? Vraag het je docent. Die bestelt de stukjes, bijvoorb
 
 ## De toren
 
-In stap 4 komt de servo in de toren: de servo op **D9**. Zet je robot eerst uit met de knop **ON/OFF**. Zit er van [Oefenen](oefenen) nog een tweede servo op D10, haal die dan los. De draden van de servo mogen aan het shield blijven zitten. Haal je ze toch los, sluit ze dan **vóór stap 11** weer aan zoals bij [de servo](servo): oranje op het signaal van **D9**. Bij stap 11 zet je de servo met een programma op 90°, en dat lukt alleen als hij aangesloten is.
+In stap 4 gaat de servo op **D9** de toren in. Zet je robot eerst uit met de knop **ON/OFF**. Zit er van [Oefenen](oefenen) nog een tweede servo op D10, haal die dan los. De draden van de servo op D9 mogen aan het shield blijven zitten. Haal je ze toch los, sluit ze dan **vóór stap 11** weer aan zoals bij [de servo](servo), met oranje op het signaal van **D9**. Bij stap 11 zet je de servo met een programma op 90°, en dat kan alleen als hij aangesloten is.
 
 ![Uitsnede van het schema: de servo met de bruine draad op GND, de rode op 5V en de oranje op het signaal van D9.](@site/static/fritzing/click_golfer_servo.png)
 
@@ -121,7 +121,7 @@ Kijk daarom eerst of de servo op het signaal van **D9** zit. Zet je robot weer a
 
 ## Eerst testen: alleen het tandwiel
 
-De servo zit nu in de toren, met het tandwiel erop. De arm is er nog niet, en dat is precies goed om te testen. Draait er straks iets niet goed met de hele arm eraan, dan weet je niet of het aan de servo ligt, aan het tandwiel of aan de arm. Met alleen een tandwiel zie je het meteen.
+De servo zit nu in de toren, met het tandwiel erop. De arm zit er nog niet aan, dus dit is het moment om te testen. Draait er straks iets niet goed met de hele arm eraan, dan weet je niet of het aan de servo ligt, aan het tandwiel of aan de arm. Met alleen een tandwiel zie je het meteen.
 
 Zet je robot weer aan met **ON/OFF** en upload het programma uit [de servo](servo) dat heen en weer draait:
 
@@ -139,7 +139,7 @@ Gaat er iets mis? Haal dan eerst het tandwiel eraf en kijk of het asje van de se
 
 ## De arm
 
-Nu bouw je de arm. In stap 12 komt de zwarte verbinder op de as, aan de voorkant. Daar zit straks de arm aan, en de servo staat dan nog op 90°. Draai de as en het tandwiel tijdens het bouwen niet met de hand: dan staat de servo niet meer op 90°.
+Nu bouw je de arm. In stap 12 komt de zwarte verbinder op de as, aan de voorkant. Daar komt straks de arm aan. De servo staat nu nog op 90°, en zo moet het blijven: draai de as en het tandwiel tijdens het bouwen niet met de hand.
 
 <figure>
   <img src="/click_golfer/bouwen/stap-12.jpg" width="600" alt="Bouwstap 12: Een lichtgrijs busje en een zwarte verbinder komen aan de voorkant op de as. Aan die verbinder komt de arm." />

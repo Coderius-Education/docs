@@ -13,12 +13,12 @@ Je programmeert [de Arduino](microcontroller) met blokken in **Easybloqs**, een 
 {/* stijl-uitzondering: uitroepteken letterlijke knop van Easybloqs */}
 
 1. Ga naar **leaphyeasybloqs.com**.
-2. De eerste keer opent er een venster met drie talen. Kies **Nederlands**. Dan zien je blokken er hetzelfde uit als op deze site.
+2. De eerste keer opent er een venster met drie talen. Kies **Nederlands**: dan zien je blokken er net zo uit als op deze site.
 3. Daarna zie je een venster over wie Easybloqs maakt. Klik onderaan op **Aan de slag!**.
 4. Kies de robot **Arduino Nano**.
 5. Sluit je robot met de usb-kabel aan op je laptop.
 
-Staat Easybloqs toch in het Engels, of in een andere taal? Kies dan in het menu **Meer…** en daarna **Taal** (in het Engels: More... > Language), en klik op **Nederlands**.
+Staat Easybloqs toch in het Engels of in een andere taal? Kies dan in het menu **Meer…** en daarna **Taal** (in het Engels: More... > Language), en klik op **Nederlands**.
 
 ## Waar staan de blokken?
 
@@ -37,17 +37,17 @@ Een blok pak je in de groep en sleep je naar je programma. Past het, dan klikt h
 
 ## Je eerste programma
 
-Maak dit programma na. Het **Leaphy**-blok staat al klaar. Het blok **Toon op scherm** vind je in de groep **Actuatoren**: sleep het in het Leaphy-blok. In die groep staan twee blokken **Toon op scherm**. Neem het blok met één vakje, niet het blok met een `=` erin. Er zit al een tekstvakje in met het woord `text`. Klik daarop en typ je zin.
+Maak dit programma na. Het Leaphy-blok staat al klaar. Het blok **Toon op scherm** vind je in de groep **Actuatoren**, en je sleept het in het Leaphy-blok. In die groep staan twee blokken **Toon op scherm**: je wilt het blok met één vakje, niet dat met een `=` erin. In dat vakje staat al het woord `text`. Klik erop en typ je zin.
 
 <Blokken programma={hallo} beschrijving="Het Leaphy-blok met daarin Toon op scherm 'Hallo, ik ben de Click Golfer'." />
 
-Alles wat in het Leaphy-blok staat, doet je robot **één keer**, van boven naar beneden. Nu zet je het programma op je robot en kijk je of de zin verschijnt.
+Alles wat in het Leaphy-blok staat, doet je robot **één keer**, van boven naar beneden. Zet het programma nu op je robot en kijk of de zin verschijnt.
 
 ### Stap 1: upload naar je robot
 
 1. Klik rechtsboven op de gekleurde knop **Upload naar robot**.
-2. De eerste keer vraagt je browser met welk apparaat hij moet praten. Er verschijnt een lijstje. Klik op je robot en daarna op de knop om verbinding te maken. Staat er meer dan één regel, trek dan de usb-kabel eruit en kijk welke regel verdwijnt: dat is je robot.
-3. Er opent een venster. Daarin zie je eerst **Verbinden met robot...** en dan **Code compileren**: Easybloqs maakt van je blokken een programma. Daarna **Poort openen** en **Code uploaden**: het programma gaat naar je robot. Als het klaar is, staat er **Upload voltooid**.
+2. De eerste keer laat je browser een lijstje zien en vraagt met welk apparaat hij moet praten. Klik op je robot en daarna op de knop om verbinding te maken. Staat er meer dan één regel, trek dan de usb-kabel eruit en kijk welke regel verdwijnt: dat is je robot.
+3. Er opent een venster met eerst **Verbinden met robot...** en dan **Code compileren**: Easybloqs maakt van je blokken een programma. Daarna **Poort openen** en **Code uploaden**: het programma gaat naar je robot. Als het klaar is, staat er **Upload voltooid**.
 4. Klik op **Ga terug naar code scherm**. Je ziet je blokken weer.
 
 ### Stap 2: open het scherm
@@ -58,7 +58,7 @@ Er opent een venster met bovenaan **Toon output op scherm**. Dit is het scherm: 
 
 ### Stap 3: laat de robot opnieuw beginnen
 
-Je robot voerde het programma al uit toen de upload klaar was. Misschien staat de zin daarom al op het scherm, misschien ook niet. Klik eerst op de prullenbak, zodat het scherm leeg is. Dan zie je zeker wat je robot nu doet.
+Je robot deed het programma al meteen toen de upload klaar was. Misschien staat de zin daarom al op het scherm, misschien ook niet. Klik eerst op de prullenbak, zodat het scherm leeg is. Dan zie je zeker wat je robot nu doet.
 
 Druk dan op het kleine knopje op de Arduino zelf, met **RST** eronder.
 

@@ -61,7 +61,7 @@ Twijfel je hoe een onderdeel eruitziet of waar het komt? Bekijk het [3D-model op
   <figcaption>De sensor vastgezet op de baan. Het blauwe schroefje laat je met rust: in dit project lees je de sensor uit als een getal, en dat getal verandert er niet van. Hoe gevoelig je robot is, stel je straks in je programma in.</figcaption>
 </figure>
 
-Staat de baan in elkaar? Zet je Golfer met de vier hoeken van het Lego-frame op de vier gaatjes van de bodemplaat, met de arm boven de halve ronding waar de bal ligt. Je Golfer staat er los op. Je docent zegt of hij vast moet, en hoe. Zitten de sensor en de servo nog aan het shield? Vergelijk je draden met het hele schema:
+Staat de baan in elkaar? Zet je Golfer dan met de vier hoeken van het Lego-frame op de vier gaatjes van de bodemplaat, met de arm boven de halve ronding waar de bal ligt. Hij staat er los op; of hij vast moet, en hoe, zegt je docent. Kijk daarna of de sensor en de servo nog goed aan het shield zitten, en vergelijk je draden met het hele schema:
 
 ![Het hele schema: links de sensor op de rij van A0, rechts de servo op de rij van D9, allebei op het shield met de Arduino Nano in het midden.](@site/static/fritzing/click_golfer_bb.png)
 

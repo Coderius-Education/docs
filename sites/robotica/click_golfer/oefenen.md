@@ -15,11 +15,11 @@ import standPerSensor from './blokken/oefenen-stand-per-sensor.json';
 
 # Oefenen met twee sensoren en twee servo's
 
-Met één sensor en één servo ziet je robot een bal en slaat hij hem weg. Met twee van elk kan hij meer: hij ziet wáár de bal ligt, en hij kiest welke servo slaat. Zo leer je de sensor en de servo goed kennen, voordat je de Lego eromheen bouwt.
+Met één sensor en één servo ziet je robot een bal en slaat hij hem weg. Met twee van elk kan hij meer: hij ziet wáár de bal ligt, en hij kiest welke servo slaat. Daarna ken je de sensor en de servo goed genoeg om de Lego eromheen te bouwen.
 
-Je docent zegt of er voor jou een tweede sensor en een tweede servo klaarliggen. Je sluit ze niet allebei tegelijk aan. Eerst komt er een sensor bij, dan een servo, en pas aan het eind gebruik je ze samen. Heb je alleen een tweede sensor? Doe dan alleen het deel [Een tweede sensor](#een-tweede-sensor). Heb je alleen een tweede servo? Doe dan alleen het deel [Een tweede servo](#een-tweede-servo).
+Je docent zegt of er voor jou een tweede sensor en een tweede servo klaarliggen. Je sluit ze niet in één keer aan: eerst komt er een sensor bij, dan een servo, en pas aan het eind gebruik je ze samen. Heb je alleen een tweede sensor? Doe dan alleen het deel [Een tweede sensor](#een-tweede-sensor). Heb je alleen een tweede servo? Doe dan alleen het deel [Een tweede servo](#een-tweede-servo).
 
-Elk deel begint met een kleine stap. Oefening 8, de laatste, is een puzzel.
+Elk deel begint makkelijk. Oefening 8, de laatste, is een puzzel.
 
 ## Een tweede sensor
 
@@ -58,11 +58,11 @@ De tweede sensor, op **A1**. Je robot leest alleen de pin die in **Lees anapin**
   </Uitleg>
 </Voorspel>
 
-Klik op **Upload naar robot**. Leg de bal eerst voor de ene sensor, en dan voor de andere. Klopt je voorspelling? Slaat de servo niet, of slaat hij steeds? Dan past de grens uit je programma niet bij deze sensor. In de volgende oefening meet je dat.
+Klik op **Upload naar robot** en leg de bal eerst voor de ene sensor, en dan voor de andere. Klopt je voorspelling? Slaat de servo helemaal niet, of juist steeds, dan past de grens uit je programma niet bij deze sensor. Dat meet je in de volgende oefening.
 
 ### Oefening 2: twee sensoren tegelijk
 
-Om te zien wat twee sensoren meten, zet je allebei hun getallen op het scherm. Daarvoor pak je nu het andere blok **Toon op scherm** uit **Actuatoren**: het blok met een `=` erin. In het eerste vakje typ je de naam van de sensor. In het tweede vakje komt **Lees anapin**.
+Nu zet je de getallen van allebei de sensoren op het scherm. Daarvoor heb je het andere blok **Toon op scherm** uit **Actuatoren** nodig, dat met een `=` erin. In het eerste vakje typ je de naam van de sensor, en in het tweede komt **Lees anapin**.
 
 <Blokken programma={tweeSensoren} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: Toon op scherm 'A0' = Lees anapin A0, Toon op scherm 'A1' = Lees anapin A1, en duurt 500 ms." />
 
@@ -79,7 +79,7 @@ Er komen steeds twee regels bij, bijvoorbeeld `A0 = 600` en `A1 = 580`. Houd je 
 
 Klik op **Upload naar robot** en open het scherm met de knop **Toon output op scherm**. Klopt je voorspelling?
 
-Onderzoek nu hoe ver elke sensor kijkt. Schuif de bal langzaam naar een sensor toe. Bij welke afstand gaat het getal omlaag? Schrijf voor elke sensor drie dingen op: het getal zonder bal, het getal met bal, en de afstand waarop hij de bal ziet.
+Hoe ver kijkt elke sensor? Schuif de bal langzaam naar een sensor toe en kijk bij welke afstand het getal omlaag gaat. Schrijf voor elke sensor drie dingen op: het getal zonder bal, het getal met bal, en de afstand waarop hij de bal ziet.
 
 Twee sensoren van dezelfde soort geven vaak niet precies hetzelfde getal. Kies daarom voor elke sensor een eigen grens. In de voorbeelden hieronder is de grens van **A0** 300 en die van **A1** 350. Gebruik jouw eigen getallen.
 
@@ -112,7 +112,7 @@ Daarvoor heb je een nieuw blok nodig: **en**, uit de groep **Getal blokken**. He
 <details>
 <summary>Tip</summary>
 
-In het gat achter **als** staat nog de vergelijking met **Lees anapin A1**. Sleep die eerst uit het gat en leg hem even opzij. Sleep dan het blok **en** in het lege gat. Pak nog een vergelijkblok uit **Getal blokken**. Het staat eerst op `1 = 1`: klik op het **`=`** en kies **`<`**. Zet daarin **Lees anapin A0** en je grens voor A0. Zet in het linkergat van **en** de vergelijking met **Lees anapin A0**, en in het rechtergat die met **Lees anapin A1**.
+In het gat achter **als** zit nog de vergelijking met **Lees anapin A1**. Sleep die eerst uit het gat en leg hem even opzij; in het lege gat komt het blok **en**. Voor A0 pak je nog een vergelijkblok uit **Getal blokken**. Dat staat eerst op `1 = 1`, dus klik op het **`=`** en kies **`<`**. Zet er **Lees anapin A0** en je grens voor A0 in. Die vergelijking gaat in het linkergat van **en**, en die met **Lees anapin A1** in het rechtergat.
 
 </details>
 
@@ -185,7 +185,7 @@ Zet je robot uit met de knop **ON/OFF**. De eerste servo blijft op **D9**. De tw
 
 Zit alles vast? Zet je robot dan weer aan met **ON/OFF**.
 
-Een nieuw blok **Servo** staat in Easybloqs eerst op **Servo 2 op 90**. Voor de tweede servo klik je op de 2 en kies je **10**.
+Sleep je een nieuw blok **Servo** in je programma, dan staat het eerst op **Servo 2 op 90**. Voor de tweede servo klik je op de 2 en kies je **10**.
 
 ### Oefening 5: een andere servo
 
@@ -223,7 +223,7 @@ Nee. Eerst draait het asje op D9 naar 0° en terug naar 90°. Daarna doet het as
   </Uitleg>
 </Voorspel>
 
-Klik op **Upload naar robot** en kijk of je voorspelling klopt.
+Upload het programma en kijk of je gelijk had.
 
 #### Zelf maken: gespiegeld
 
@@ -232,7 +232,7 @@ Leg de twee servo's naast elkaar, op dezelfde manier. Laat ze nu tegelijk bewege
 <details>
 <summary>Tip</summary>
 
-Zet de twee blokken **Servo** direct onder elkaar, zonder **duurt** ertussen. Dan bewegen ze tegelijk. Pas daarna wacht je robot een seconde.
+Zet de twee blokken **Servo** direct onder elkaar, zonder **duurt** ertussen, dan bewegen ze tegelijk. Pas daarna wacht je robot een seconde.
 
 </details>
 
@@ -247,7 +247,7 @@ Tussen **Servo 9** en **Servo 10** staat geen **duurt**. Het zijn twee verschill
 
 ## Twee sensoren en twee servo's
 
-Hiervoor heb je de tweede sensor én de tweede servo nodig. Nu gebruik je ze samen.
+Nu gebruik je de tweede sensor en de tweede servo samen, dus je hebt ze allebei nodig.
 
 ### Oefening 7: elke sensor zijn eigen servo
 
@@ -256,7 +256,7 @@ Ziet de sensor op **A0** een bal, dan slaat de servo op **D9**. Ziet de sensor o
 <details>
 <summary>Tip</summary>
 
-Begin met het programma van [Zie de bal, sla de bal](bal-slaan). Daar staat één **als … dan** in, en je hebt er twee nodig. Klik met de rechtermuisknop op het woord **als** en kies **Dupliceren**. Dan krijg je een kopie met alle blokken erin. Zet die kopie onder de eerste. Kies daarin bij **Lees anapin** de pin **A1**, typ je grens voor A1, en klik in de blokken **Servo** op de 9 en kies **10**.
+Begin met het programma van [Zie de bal, sla de bal](bal-slaan). Daar staat één **als … dan** in, en je hebt er twee nodig. Klik met de rechtermuisknop op het woord **als** en kies **Dupliceren**. Je krijgt een kopie met alle blokken erin, en die zet je onder de eerste. Kies daarin bij **Lees anapin** de pin **A1**, typ je grens voor A1, en klik in de blokken **Servo** op de 9 en kies **10**.
 
 </details>
 
@@ -331,7 +331,7 @@ Het asje rechts, op D10. De linker sensor ziet de bal, en de rechter servo slaat
 
 <Probleem titel="Het getal achter A1 = verandert niet als je een bal voor de tweede sensor houdt.">
 
-**Oorzaak:** de oranje draad van de tweede sensor zit niet op het signaal van A1, maar op een andere rij of op een ander pinnetje van de rij van A1. Op de sensor heet die pin A0, en daardoor zoek je de goede plek op het shield makkelijk op de verkeerde rij.
+**Oorzaak:** de oranje draad van de tweede sensor zit niet op het signaal van A1, maar op een andere rij of op een ander pinnetje van de rij van A1. Op de sensor heet die pin A0, en dan zoek je op het shield al snel op de verkeerde rij.
 
 **Oplossing:** zet je robot uit, en zet de oranje draad op het signaal van **A1**: het pinnetje het dichtst bij de naam A1/D15.
 

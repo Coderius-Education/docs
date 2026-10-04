@@ -8,7 +8,7 @@ Het brein van je Click Golfer is een **microcontroller**: een heel klein compute
 
 ## Pinnen
 
-Langs de randen van de Arduino zitten pootjes. Dat zijn de **pinnen**. Op een pin sluit je een onderdeel aan, zoals een sensor of een motor. Elke pin heeft een naam:
+Langs de randen van de Arduino zitten pootjes: de **pinnen**. Op een pin sluit je een onderdeel aan, zoals een sensor of een motor. Elke pin heeft een naam:
 
 - **A0** tot en met **A7**: hier lees je een getal uit. Daar komt straks de sensor op.
 - **D2** tot en met **D13**: hiermee stuur je iets aan, zoals straks de motor.
@@ -29,9 +29,9 @@ Naast elke pin van de Arduino zitten op het shield drie pinnetjes op een rij:
 
 Een onderdeel heeft daarom meestal drie draadjes: een voor het signaal, een voor 5V en een voor GND.
 
-Boven de rijen staat bij twee pinnetjes `<5V` en `<GND`. Bij het signaal staat niets: dat is het pinnetje dat het dichtst bij de naam van de pin zit, zoals **A0/D14** of **D9**. Bij A0 staat ook D14: die pin heeft twee namen. In deze lessen heet hij A0.
+Boven de rijen staat bij twee pinnetjes `<5V` en `<GND`. Bij het signaal staat niets. Dat is het pinnetje het dichtst bij de naam van de pin, zoals **A0/D14** of **D9**. Bij A0 staat ook D14: die pin heeft twee namen. In deze lessen heet hij A0.
 
-Onderaan het shield zit een schuifknop **ON/OFF**. Daarmee zet je je robot aan en uit. Zet hem uit voordat je iets aansluit, en weer aan voordat je een programma test.
+Onderaan het shield zit een schuifknop, **ON/OFF**, waarmee je je robot aan- en uitzet. Zet hem uit voordat je iets aansluit, en weer aan voordat je een programma test.
 
 ![Uitsnede van het shield: het schuifje met ON links en OFF rechts, naast de tekst VIN = 3-16Vdc.](@site/static/fritzing/click_golfer_aan-uit.png)
 

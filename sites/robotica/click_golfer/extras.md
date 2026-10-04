@@ -7,20 +7,22 @@ import lampje from './blokken/lampje.json';
 
 # Extra's
 
-Je Golfer werkt. Hieronder staan drie dingen die je er nog bij kunt maken. Ze zijn lastiger dan wat je tot nu toe deed, dus pak ze een voor een aan.
+Je Golfer werkt. Hieronder staan drie dingen die je er nog bij kunt maken. Ze zijn lastiger dan wat je tot nu toe deed, dus neem ze een voor een.
 
 ## Een lampje dat meekleurt
 
-Voor deze extra heb je een **RGB-lampje** nodig: een lampje met vier pootjes dat verschillende kleuren kan maken. Het moet een lampje met een gemeenschappelijke min zijn, met een weerstand voor elke kleur, bijvoorbeeld een kleine module waar de weerstanden al op zitten. Zonder weerstand gaat er te veel stroom door het lampje. Je docent geeft je het goede lampje en drie losse draadjes. Zorg dat:
+Voor deze extra heb je een **RGB-lampje** nodig: een lampje met vier pootjes dat verschillende kleuren kan maken. Niet elk RGB-lampje is goed. Het moet er een zijn met een gemeenschappelijke min, en met een weerstand voor elke kleur, want zonder weerstand gaat er te veel stroom door het lampje. Zo'n lampje zit bijvoorbeeld op een klein bordje waar de weerstanden al op zitten. Je docent geeft je het goede lampje en drie losse draadjes.
+
+Zorg dat:
 
 - het lampje **groen** wordt als er een balletje ligt en de robot aan het slaan is;
 - het lampje **rood** wordt als er geen balletje ligt en de robot stilstaat.
 
-In Easybloqs staat in **Actuatoren** een blok **Led** met Rood, Groen en Blauw. Dat blok past hier niet.
+In **Actuatoren** staat ook een blok **Led**, met Rood, Groen en Blauw. Dat blok kun je hier niet gebruiken.
 
-Het gebruikt de pinnen **D11** (rood), **D10** (groen), **D9** (blauw) en **D8** (min), en op D9 zit je servo al. Blauw laat je daarom weg.
+Het stuurt de pinnen **D11** (rood), **D10** (groen), **D9** (blauw) en **D8** (min) aan, en op D9 zit je servo al. Blauw laat je daarom weg.
 
-Gebruik in plaats daarvan het blok **Zet PWM**, ook uit Actuatoren, één keer voor rood en één keer voor groen. In Easybloqs staat er eerst **Zet PWM 3 op 0**: klik op de 3 en kies **11** of **10**.
+Je neemt het blok **Zet PWM**, ook uit Actuatoren: één keer voor rood en één keer voor groen. Een nieuw blok staat eerst op **Zet PWM 3 op 0**. Klik op de 3 en kies **11** of **10**.
 
 1. Vraag je docent welk pootje van het lampje rood is, welk groen en welk de min.
 2. Zet je robot uit met **ON/OFF**. Zit er van [Oefenen](oefenen) nog een tweede servo op D10? Haal die dan los, want daar komt nu groen.
@@ -42,7 +44,7 @@ Je bouwt hetzelfde **als**-blok als bij [de IR-sensor](ir-sensor), maar nu met e
 - als **Lees anapin A0** kleiner is dan jouw grens: zet het lampje op groen en laat de arm slaan;
 - anders: zet het lampje op rood.
 
-Het slaan zat al in je programma uit [Een naam voor je blokken](subprogrammas). Sleep het bovenste blok in de dan-tak van je oude **als … dan**, met alles eronder, naar de dan-tak van het nieuwe blok. Zet bovenaan in de dan-tak de twee **Zet PWM**-blokken voor groen: Zet PWM 11 op 0 (rood uit) en Zet PWM 10 op 255 (groen aan). In de anders-tak komen Zet PWM 11 op 255 (rood aan) en Zet PWM 10 op 0 (groen uit).
+Het slaan heb je al, in je programma uit [Een naam voor je blokken](subprogrammas). Pak het bovenste blok in de dan-tak van je oude **als … dan** en sleep het, met alles eronder, naar de dan-tak van het nieuwe blok. Zet bovenaan in de dan-tak de twee **Zet PWM**-blokken voor groen: Zet PWM 11 op 0 (rood uit) en Zet PWM 10 op 255 (groen aan). In de anders-tak komen Zet PWM 11 op 255 (rood aan) en Zet PWM 10 op 0 (groen uit).
 
 <Blokken programma={lampje} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan Zet PWM 11 op 0, Zet PWM 10 op 255, Servo 9 op 0, duurt 500 ms, mikken en slaan. Anders: Zet PWM 11 op 255 en Zet PWM 10 op 0. Daaronder de subprogramma's mikken en slaan, net als bij Een naam voor je blokken." />
 

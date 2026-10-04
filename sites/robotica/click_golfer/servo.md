@@ -46,9 +46,9 @@ Probeer het hier. Sleep de schuif of typ een getal bij **Servo 9 op**, en kijk w
 
 ## Heen en weer
 
-Je maakt nu een nieuw programma. Wil je het programma van de sensor bewaren? Kies dan in het menu **Mijn projecten** de knop **Opslaan als ...**, typ een naam en klik op **Opslaan**. Je laptop bewaart het als bestand. Haal daarna de oude blokken weg: sleep **herhaal voor altijd** uit het Leaphy-blok naar de groepen links. Alles wat erin zit, gaat mee. Het Leaphy-blok blijft staan.
+Voor de servo begin je een nieuw programma. Wil je het programma van de sensor bewaren, kies dan in het menu **Mijn projecten** de knop **Opslaan als ...**, typ een naam en klik op **Opslaan**. Je laptop bewaart het dan als bestand. Haal daarna de oude blokken weg: sleep **herhaal voor altijd** uit het Leaphy-blok naar de groepen links. Alles wat erin zit gaat mee, en het Leaphy-blok blijft staan.
 
-Het blok **Servo 9 op 90** uit de groep **Actuatoren** zet de servo op pin 9 in de stand van 90 graden. In Easybloqs staat er eerst **Servo 2 op 90**. Klik op de 2 en kies **9**: daar zit je servo. Bekijk dit programma, maar upload het nog niet:
+Het blok **Servo 9 op 90** uit de groep **Actuatoren** zet de servo op pin 9 in de stand van 90 graden. Als je het blok pakt, staat er eerst **Servo 2 op 90**. Klik op de 2 en kies **9**: daar zit je servo. Bekijk dit programma, maar upload het nog niet:
 
 <Blokken programma={heenEnWeer} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: Servo 9 op 0, duurt 1000 ms, Servo 9 op 90, duurt 1000 ms." />
 
