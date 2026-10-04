@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { arduino } from '@leaphy-robotics/leaphy-blocks';
@@ -337,5 +337,116 @@ describe('de overstap vanuit bal-slaan is klein', () => {
     expect(inleiding).toMatch(
       /alleen een tweede servo\?[^.]*\[Een tweede servo\]\(#een-tweede-servo\)/,
     );
+  });
+});
+
+describe('de kaarten bij twee sensoren kloppen met wat de robot doet', () => {
+  // De kaart "met een bal voor de tweede sensor gaan allebei de getallen
+  // omlaag" gaf als oorzaak dat in het tweede Lees anapin nog A0 staat.
+  // Dan lezen beide regels de eerste sensor: een bal voor de tweede doet
+  // niets, en een bal voor de eerste laat allebei de getallen zakken. Hier
+  // spelen we dat na met de code die Easybloqs ervan maakt.
+
+  // Welke regel op het scherm (`A0 =`, `A1 =`) welke pin leest.
+  function regels(prog: Programma): Map<string, string> {
+    const ws = new B.Workspace();
+    try {
+      B.serialization.workspaces.load(prog, ws);
+      const c = arduino.workspaceToCode(ws);
+      return new Map(
+        [...c.matchAll(/"(A\d)"[^;]*;[\s\S]*?analogRead\((A\d)\)/g)].map((m) => [m[1], m[2]]),
+      );
+    } finally {
+      ws.dispose();
+    }
+  }
+
+  // Welke regels omlaag gaan met een bal voor de sensor op `pin`.
+  const omlaag = (r: Map<string, string>, pin: string) =>
+    [...r].filter(([, gelezen]) => gelezen === pin).map(([regel]) => regel);
+
+  function kaart(oorzaak: RegExp): { titel: string; inhoud: string } {
+    const kaarten = [...PAGINA.matchAll(/<Probleem titel="([^"]+)">([\s\S]*?)<\/Probleem>/g)];
+    const gevonden = kaarten.find(([, , inhoud]) =>
+      oorzaak.test(inhoud.match(/\*\*Oorzaak:\*\*([^\n]*)/)?.[1] ?? ''),
+    );
+    expect(gevonden, String(oorzaak)).toBeDefined();
+    return { titel: gevonden?.[1] ?? '', inhoud: gevonden?.[2] ?? '' };
+  }
+
+  it('het goede programma: elke sensor zijn eigen regel', () => {
+    const r = regels(programma('oefenen-twee-sensoren.json'));
+    expect(omlaag(r, 'A0')).toEqual(['A0']);
+    expect(omlaag(r, 'A1')).toEqual(['A1']);
+  });
+
+  it('nog A0 in het tweede Lees anapin: de bal voor de eerste sensor laat allebei zakken', () => {
+    const fout = programma('oefenen-twee-sensoren.json');
+    const tekst = JSON.stringify(fout).replace('"PIN":"A1"', '"PIN":"A0"');
+    const r = regels(JSON.parse(tekst));
+    expect(omlaag(r, 'A0')).toEqual(['A0', 'A1']);
+    expect(omlaag(r, 'A1')).toEqual([]);
+
+    const { titel } = kaart(/Lees anapin\*\* staat nog A0/);
+    expect(titel).toMatch(/eerste sensor/);
+    expect(titel).toMatch(/allebei/);
+    expect(titel).not.toMatch(/tweede sensor/);
+  });
+
+  it('de draad niet op A1: de kaart zegt hoe je hem onderscheidt van een fout in het programma', () => {
+    // Ook met nog A0 in het programma verandert de regel A1 niet met een
+    // bal voor de tweede sensor. Het verschil zie je met een bal voor de
+    // eerste. En op A0 van het shield zit de eerste sensor al.
+    const { inhoud } = kaart(/draad van de tweede sensor/);
+    expect(inhoud).toMatch(/\*\*Zelf vinden:\*\*[^\n]*eerste sensor/);
+    expect(inhoud).not.toMatch(/op A0 van het shield/);
+  });
+});
+
+describe('elke oefening zegt waar je begint', () => {
+  // Oefening 3 en 4 zeiden niet met welk programma je begint, en de tip bij
+  // 3 ging uit van een leeg gat achter als, terwijl daar in het programma
+  // van oefening 1 al een vergelijking zit.
+  it('met een programma op de pagina, of met een programma dat je al hebt', () => {
+    const zonder = oefeningen()
+      .filter(({ inhoud }) => {
+        // Blokken buiten een uitklapblok: die bouw je na.
+        const buiten = inhoud.replace(/<details>[\s\S]*?<\/details>/g, '');
+        if (/<Blokken programma=/.test(buiten)) return false;
+        return !/\b(Begin|Pak) (met )?(je|het|een) [^.]*programma/i.test(inhoud);
+      })
+      .map((o) => o.kop);
+    expect(zonder).toEqual([]);
+  });
+
+  it('oefening 3 haalt eerst de vergelijking uit het gat achter als', () => {
+    const drie = oefeningen().find((o) => o.kop.startsWith('### Oefening 3'))?.inhoud ?? '';
+    expect(drie).toMatch(/Begin met je programma van oefening 1/);
+    expect(drie).toMatch(/uit het gat/);
+  });
+
+  it('de inleiding zegt welke oefening de puzzel is', () => {
+    const inleiding = PAGINA.slice(0, PAGINA.indexOf(`${DELEN[0]}\n`));
+    expect(inleiding).not.toMatch(/De laatste oefening is een puzzel/);
+    expect(inleiding).toMatch(/Oefening \d+[^.]*puzzel/);
+  });
+
+  it('aan het eind haal je de tweede sensor en servo weer los', () => {
+    // Bij de extra's komt groen op D10, en in de toren hoort de servo van D9.
+    expect(PAGINA).toMatch(/haal de tweede sensor en de tweede servo weer los/);
+    expect(tekst('bouwen.md')).toMatch(/tweede servo op D10, haal die dan los/);
+    expect(tekst('extras.md')).toMatch(/tweede servo op D10\? Haal die dan los/);
+  });
+});
+
+describe('elke voorspelvraag is een <Voorspel>', () => {
+  // Oefening 2, Mikken en Een naam voor je blokken hadden hun voorspelvraag
+  // nog als uitklapblok, de rest van de cursus als <Voorspel>: daar kiest
+  // de leerling eerst, en pas dan ziet hij het antwoord.
+  it('geen <summary>Voorspel in de Click Golfer', () => {
+    const fout = readdirSync(CLICK)
+      .filter((f) => f.endsWith('.md'))
+      .filter((f) => /<summary>\s*Voorspel/i.test(tekst(f)));
+    expect(fout).toEqual([]);
   });
 });

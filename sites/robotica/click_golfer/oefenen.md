@@ -19,7 +19,7 @@ Met één sensor en één servo ziet je robot een bal en slaat hij hem weg. Met 
 
 Je docent zegt of er voor jou een tweede sensor en een tweede servo klaarliggen. Je sluit ze niet allebei tegelijk aan. Eerst komt er een sensor bij, dan een servo, en pas aan het eind gebruik je ze samen. Heb je alleen een tweede sensor? Doe dan alleen het deel [Een tweede sensor](#een-tweede-sensor). Heb je alleen een tweede servo? Doe dan alleen het deel [Een tweede servo](#een-tweede-servo).
 
-Elk deel begint met een kleine stap. De laatste oefening is een puzzel.
+Elk deel begint met een kleine stap. Oefening 8, de laatste, is een puzzel.
 
 ## Een tweede sensor
 
@@ -58,7 +58,7 @@ De tweede sensor, op **A1**. Je robot leest alleen de pin die in **Lees anapin**
   </Uitleg>
 </Voorspel>
 
-Klik op **Upload naar robot**. Leg de bal eerst voor de ene sensor, en dan voor de andere. Klopt je voorspelling? Slaat de servo niet, of slaat hij steeds? Dan past de grens van 300 niet bij deze sensor. In de volgende oefening meet je dat.
+Klik op **Upload naar robot**. Leg de bal eerst voor de ene sensor, en dan voor de andere. Klopt je voorspelling? Slaat de servo niet, of slaat hij steeds? Dan past de grens uit je programma niet bij deze sensor. In de volgende oefening meet je dat.
 
 ### Oefening 2: twee sensoren tegelijk
 
@@ -66,12 +66,16 @@ Om te zien wat twee sensoren meten, zet je allebei hun getallen op het scherm. D
 
 <Blokken programma={tweeSensoren} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: Toon op scherm 'A0' = Lees anapin A0, Toon op scherm 'A1' = Lees anapin A1, en duurt 500 ms." />
 
-<details>
-<summary>Voorspel: wat zie je op het scherm als je een bal voor de tweede sensor houdt?</summary>
+<Voorspel vraag="Wat zie je op het scherm als je een bal voor de tweede sensor houdt?">
+  <Keuze goed uitleg="Het tweede blok Toon op scherm leest A1, en daar zit de tweede sensor. De eerste sensor ziet de bal niet.">Alleen het getal achter `A1 =` gaat omlaag</Keuze>
+  <Keuze uitleg="Elk blok Lees anapin leest zijn eigen pin. De sensor op A0 ziet de bal niet, dus zijn getal blijft ongeveer gelijk.">Allebei de getallen gaan omlaag</Keuze>
+  <Keuze uitleg="Een bal voor de sensor maakt het getal lager, net als bij de IR-sensor.">Het getal achter `A1 =` gaat omhoog</Keuze>
+  <Uitleg>
 
 Er komen steeds twee regels bij, bijvoorbeeld `A0 = 600` en `A1 = 580`. Houd je de bal voor de tweede sensor, dan gaat alleen het getal achter `A1 =` omlaag. Het getal van A0 blijft ongeveer gelijk.
 
-</details>
+  </Uitleg>
+</Voorspel>
 
 Klik op **Upload naar robot** en open het scherm met de knop **Toon output op scherm**. Klopt je voorspelling?
 
@@ -101,14 +105,14 @@ Houd je een bal voor allebei de sensoren, dan zie je allebei de zinnen.
 
 ### Oefening 3: alleen als ze hem allebei zien
 
-Zet de twee sensoren vlak naast elkaar, zodat één bal voor allebei kan liggen. De servo op **D9** slaat nu alleen als de sensor op **A0** én de sensor op **A1** de bal zien. Ziet maar één sensor de bal, dan gebeurt er niets.
+Zet de twee sensoren vlak naast elkaar, zodat één bal voor allebei kan liggen. Begin met je programma van oefening 1. De servo op **D9** slaat nu alleen als de sensor op **A0** én de sensor op **A1** de bal zien. Ziet maar één sensor de bal, dan gebeurt er niets.
 
 Daarvoor heb je een nieuw blok nodig: **en**, uit de groep **Getal blokken**. Het heeft twee gaten. In elk gat past een vergelijking, en het blok klopt alleen als ze allebei kloppen.
 
 <details>
 <summary>Tip</summary>
 
-Sleep het blok **en** in het gat achter **als**. Pak dan twee keer het vergelijkblok uit **Getal blokken**. Het staat eerst op `1 = 1`: klik op het **`=`** en kies **`<`**. Zet in het linkergat de vergelijking met **Lees anapin A0**, en in het rechtergat die met **Lees anapin A1**.
+In het gat achter **als** staat nog de vergelijking met **Lees anapin A1**. Sleep die eerst uit het gat en leg hem even opzij. Sleep dan het blok **en** in het lege gat. Pak nog een vergelijkblok uit **Getal blokken**. Het staat eerst op `1 = 1`: klik op het **`=`** en kies **`<`**. Zet daarin **Lees anapin A0** en je grens voor A0. Zet in het linkergat van **en** de vergelijking met **Lees anapin A0**, en in het rechtergat die met **Lees anapin A1**.
 
 </details>
 
@@ -130,7 +134,7 @@ Hij slaat al als één van de twee sensoren de bal ziet. Zien ze hem allebei, da
 
 Je hebt nog één nieuw blok nodig. In de groep **Denk stappen** staan twee blokken **als**. Het tweede heeft onderaan nog een gat, met **anders** ervoor: dat is **als … dan … anders**. Klopt de vergelijking, dan doet je robot wat achter **dan** staat. Klopt hij niet, dan doet hij wat achter **anders** staat.
 
-Laat de servo op **D9** aanwijzen waar de bal ligt:
+Begin met een leeg programma: het Leaphy-blok met alleen **herhaal voor altijd** erin. Laat de servo op **D9** aanwijzen waar de bal ligt:
 
 - ligt de bal bij de sensor op **A0**, dan draait de servo naar 45°;
 - ligt hij bij **A1**, dan gaat de servo naar 135°;
@@ -154,12 +158,16 @@ Hier staat geen **duurt** in. Dat hoeft niet: zolang de bal blijft liggen, krijg
 
 </details>
 
-<details>
-<summary>Onderzoek: je legt een bal voor allebei de sensoren. Waar wijst de servo?</summary>
+<Voorspel soort="Onderzoek" vraag="Je legt een bal voor allebei de sensoren. Waar wijst de servo?">
+  <Keuze goed uitleg="A0 staat in het eerste als. Ziet die sensor de bal, dan komt je robot niet bij anders.">Naar 45°</Keuze>
+  <Keuze uitleg="Naar A1 kijkt je robot alleen in de anders-tak. Ziet A0 de bal, dan komt hij daar niet.">Naar 135°, want A1 komt als laatste</Keuze>
+  <Keuze uitleg="90° is de stand voor als geen van de twee sensoren de bal ziet. Hier zien ze hem allebei.">Naar 90°, want hij kan niet kiezen</Keuze>
+  <Uitleg>
 
 Naar 45°. Je robot kijkt eerst naar A0. Klopt dat, dan doet hij wat achter **dan** staat en slaat hij **anders** over. Naar A1 kijkt hij dan niet meer.
 
-</details>
+  </Uitleg>
+</Voorspel>
 
 ## Een tweede servo
 
@@ -206,7 +214,7 @@ Dit programma laat eerst de servo op **D9** draaien, en daarna die op **D10**.
 
 <Voorspel vraag="Bewegen de twee asjes ooit tegelijk?">
   <Keuze uitleg="Twee servo's kunnen wel tegelijk bewegen, maar hier staat tussen elke twee blokken Servo een duurt. Je robot wacht dus steeds voordat het volgende blok aan de beurt is.">Ja, het zijn twee servo's, dus ze draaien samen</Keuze>
-  <Keuze goed uitleg="Tussen elke twee blokken Servo staat een duurt, dus eerst draait D9 en daarna D10.">Nee, ze bewegen om de beurt</Keuze>
+  <Keuze goed uitleg="Na elk blok Servo wacht je robot eerst. De servo op D10 is pas aan de beurt als die op D9 klaar is.">Nee, ze bewegen om de beurt</Keuze>
   <Keuze uitleg="Na de blokken Servo 9 komen ook twee blokken Servo 10. Als D9 klaar is, is D10 aan de beurt.">Alleen het asje op D9 beweegt</Keuze>
   <Uitleg>
 
@@ -259,12 +267,16 @@ Begin met het programma van [Zie de bal, sla de bal](bal-slaan). Daar staat éé
 
 </details>
 
-<details>
-<summary>Onderzoek: je legt een bal voor A0, en meteen daarna een voor A1. Slaat de servo op D10 meteen?</summary>
+<Voorspel soort="Onderzoek" vraag="Je legt een bal voor A0, en meteen daarna een voor A1. Slaat de servo op D10 meteen?">
+  <Keuze uitleg="Twee servo's kunnen wel tegelijk bewegen, maar je robot doet de blokken een voor een. Hij is nog bezig met het eerste als … dan.">Ja, elke servo heeft zijn eigen sensor</Keuze>
+  <Keuze goed uitleg="Eerst slaat de servo op D9, met daarna duurt 2000 ms. Pas dan kijkt je robot naar A1.">Nee, pas na ruim twee seconden</Keuze>
+  <Keuze uitleg="Je robot kijkt wel naar A1, alleen later. Ligt de bal er dan nog, dan slaat de servo op D10.">Nee, de servo op D10 slaat helemaal niet</Keuze>
+  <Uitleg>
 
 Nee. Je robot doet de blokken in **herhaal voor altijd** een voor een. Hij slaat eerst met de servo op D9, en wacht dan 2000 ms. Pas daarna kijkt hij naar A1. De servo op D10 slaat dus pas na ruim twee seconden.
 
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Oefening 8: gekruist
 
@@ -286,12 +298,16 @@ Je verandert vier pinnummers: twee keer 9 in 10, en twee keer 10 in 9.
 
 </details>
 
-<details>
-<summary>Onderzoek: de sensor op A0 en de servo op D9 liggen links, A1 en D10 rechts. Je legt de bal links. Welk asje draait?</summary>
+<Voorspel soort="Onderzoek" vraag="De sensor op A0 en de servo op D9 liggen links, A1 en D10 rechts. Je legt de bal links. Welk asje draait?">
+  <Keuze uitleg="De servo naast de bal hoort nu bij de andere sensor. In het als-blok van A0 staat Servo 10.">Het linker asje, op D9</Keuze>
+  <Keuze goed uitleg="De linker sensor op A0 ziet de bal, en in zijn als-blok staat Servo 10.">Het rechter asje, op D10</Keuze>
+  <Keuze uitleg="Er ligt alleen links een bal, dus alleen het als-blok van A0 klopt.">Allebei</Keuze>
+  <Uitleg>
 
 Het asje rechts, op D10. De linker sensor ziet de bal, en de rechter servo slaat.
 
-</details>
+  </Uitleg>
+</Voorspel>
 
 ## Er gaat iets mis
 
@@ -305,9 +321,9 @@ Het asje rechts, op D10. De linker sensor ziet de bal, en de rechter servo slaat
 
 </Probleem>
 
-<Probleem titel="Met een bal voor de tweede sensor gaan allebei de getallen omlaag.">
+<Probleem titel="Met een bal voor de eerste sensor gaan allebei de getallen omlaag.">
 
-**Oorzaak:** in het tweede blok **Lees anapin** staat nog A0. Dan lees je twee keer dezelfde sensor, ook al heb je er `A1` voor getypt.
+**Oorzaak:** in het tweede blok **Lees anapin** staat nog A0. Dan lees je twee keer de eerste sensor, ook al heb je er `A1` voor getypt. Een bal voor de tweede sensor verandert dan niets.
 
 **Oplossing:** klik in het tweede blok **Lees anapin** op A0 en kies A1.
 
@@ -315,9 +331,11 @@ Het asje rechts, op D10. De linker sensor ziet de bal, en de rechter servo slaat
 
 <Probleem titel="Het getal achter A1 = verandert niet als je een bal voor de tweede sensor houdt.">
 
-**Oorzaak:** de oranje draad van de tweede sensor zit niet op het signaal van A1. Op de sensor heet die pin A0, en daardoor zet je hem makkelijk op A0 van het shield.
+**Oorzaak:** de oranje draad van de tweede sensor zit niet op het signaal van A1, maar op een andere rij of op een ander pinnetje van de rij van A1. Op de sensor heet die pin A0, en daardoor zoek je de goede plek op het shield makkelijk op de verkeerde rij.
 
 **Oplossing:** zet je robot uit, en zet de oranje draad op het signaal van **A1**: het pinnetje het dichtst bij de naam A1/D15.
+
+**Zelf vinden:** houd de bal voor de eerste sensor. Gaat het getal achter `A1 =` dan ook omlaag? Dan zit de fout in je programma, zoals bij de kaart hierboven.
 
 </Probleem>
 
@@ -349,5 +367,7 @@ Het asje rechts, op D10. De linker sensor ziet de bal, en de rechter servo slaat
 
   </Uitleg>
 </Voorspel>
+
+Klaar met oefenen? Zet je robot uit met **ON/OFF** en haal de tweede sensor en de tweede servo weer los. Je Golfer gebruikt alleen de sensor op **A0** en de servo op **D9**.
 
 Ken je de sensor en de servo nu goed? Dan [bouw je de Golfer van Lego](bouwen).

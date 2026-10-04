@@ -61,7 +61,7 @@ Twijfel je hoe een onderdeel eruitziet of waar het komt? Bekijk het [3D-model op
   <figcaption>De sensor vastgezet op de baan. Het blauwe schroefje laat je met rust: in dit project lees je de sensor uit als een getal, en dat getal verandert er niet van. Hoe gevoelig je robot is, stel je straks in je programma in.</figcaption>
 </figure>
 
-Staat de baan in elkaar? Zet je Golfer met de vier hoeken van het Lego-frame op de vier gaatjes van de bodemplaat, met de arm boven de halve ronding waar de bal ligt. Zitten de sensor en de servo nog aan het shield? Vergelijk je draden met het hele schema:
+Staat de baan in elkaar? Zet je Golfer met de vier hoeken van het Lego-frame op de vier gaatjes van de bodemplaat, met de arm boven de halve ronding waar de bal ligt. Je Golfer staat er los op. Je docent zegt of hij vast moet, en hoe. Zitten de sensor en de servo nog aan het shield? Vergelijk je draden met het hele schema:
 
 ![Het hele schema: links de sensor op de rij van A0, rechts de servo op de rij van D9, allebei op het shield met de Arduino Nano in het midden.](@site/static/fritzing/click_golfer_bb.png)
 
@@ -108,7 +108,7 @@ Er is geen getal dat bij iedereen past: elke baan en elke Golfer is net anders. 
 
 **Zelf vinden:** kijk naar het snoertje van de servo. Wijst het omlaag in plaats van omhoog, zoals bij [stap 4 van het bouwen](bouwen)?
 
-**Oplossing:** haal de toren uit elkaar tot stap 4 en zet de servo erin met het snoertje **omhoog**. Bouw daarna verder zoals op de plaatjes, en zet de servo vóór stap 12 weer op 90°. Zo blijven de getallen in je programma's kloppen: uithalen naar 0°, slaan naar 90°.
+**Oplossing:** haal de toren uit elkaar tot stap 4 en zet de servo erin met het snoertje **omhoog**. Bouw daarna verder zoals op de plaatjes, en zet de servo vóór stap 12 weer op 90°, zoals bij [Eerst de servo op 90°](bouwen#servo-op-90). Zo blijven de getallen in je programma's kloppen: uithalen naar 0°, slaan naar 90°.
 
 </Probleem>
 
@@ -118,7 +118,7 @@ Er is geen getal dat bij iedereen past: elke baan en elke Golfer is net anders. 
 
 **Zelf vinden:** kijk naar de as terwijl de servo draait. Draait de as niet mee, dan zit hij niet goed in de servo. Draait de as wel en de arm niet, dan zit de verbinder los.
 
-**Oplossing:** zet de servo eerst op 90°, zoals vóór [stap 11 van het bouwen](bouwen). Duw dan de as door de servo, of de verbinder op de as, zoals op de plaatjes van stap 10 en 12.
+**Oplossing:** zet de servo eerst op 90°, zoals vóór stap 12 bij [Eerst de servo op 90°](bouwen#servo-op-90). Duw dan de as door de servo, of de verbinder op de as, zoals op de plaatjes van stap 10 en 12.
 
 </Probleem>
 
@@ -126,7 +126,7 @@ Er is geen getal dat bij iedereen past: elke baan en elke Golfer is net anders. 
 
 **Oorzaak:** de verbinder van stap 12 ging op de as terwijl de servo niet op 90° stond.
 
-**Oplossing:** haal de verbinder met de arm eraan van de as, zet de servo op 90° zoals bij [het bouwen](bouwen), en zet de verbinder er weer op zoals op het plaatje van stap 12.
+**Oplossing:** haal de verbinder met de arm eraan van de as, zet de servo op 90° zoals bij [Eerst de servo op 90°](bouwen#servo-op-90), en zet de verbinder er weer op zoals op het plaatje van stap 12.
 
 </Probleem>
 

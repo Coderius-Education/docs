@@ -13,7 +13,7 @@ Je programma uit [Mikken](mikken) werkt, maar het is lang geworden. Als je er sn
 
 Je maakt twee subprogramma's: `mikken` en `slaan`. Sleep je een blok, dan gaan alle blokken eronder mee. Daarom werk je van onder naar boven.
 
-1. Klik op de groep **Eigen blokken** en sleep twee keer het blok **Subprogramma** naar een lege plek. Neem het bovenste blok, zonder **geef terug**: het blok met **geef terug** is rond en past nergens in je programma. Noem het ene `mikken` en het andere `slaan`.
+1. Klik op de groep **Eigen blokken** en sleep twee keer het blok **Subprogramma** naar een lege plek. Neem het bovenste blok, zonder **geef terug**. Het blok eronder ziet er hetzelfde uit, maar heeft onderaan nog een gat met de woorden **geef terug**: dat is voor een subprogramma dat een getal teruggeeft, en dat heb je hier niet nodig. Noem het ene `mikken` en het andere `slaan`.
 2. Sleep **Servo 9 op 90**, onderaan in **als … dan**, in het subprogramma `slaan`. **duurt 2000 ms** eronder gaat vanzelf mee.
 3. Sleep **stel hoek in op 0** in het subprogramma `mikken`. De twee **herhaal 50 keer**-blokken gaan vanzelf mee.
 4. Klik weer op de groep **Eigen blokken**. Daar staan nu ook de blokken **mikken** en **slaan**. Je krijgt ze ook met de rechtermuisknop op een subprogramma: kies dan **Maak "mikken"**.
@@ -27,12 +27,16 @@ De sensor zit nog op **A0** en de servo op **D9**.
 
 Lees nu alleen het Leaphy-blok: *als er een bal ligt, dan de servo op 0, mikken en slaan.* Zo lees je in één keer wat de robot doet. Wil je weten hoe hij mikt, dan kijk je in het subprogramma `mikken`.
 
-<details>
-<summary>Voorspel: doet je robot nu iets anders dan bij Mikken?</summary>
+<Voorspel vraag="Doet je robot nu iets anders dan bij Mikken?">
+  <Keuze uitleg="Een subprogramma geeft je blokken alleen een naam. De robot doet precies dezelfde blokken, in dezelfde volgorde.">Ja, hij is sneller, want het programma is korter</Keuze>
+  <Keuze goed uitleg="Je zette dezelfde blokken alleen onder een naam. De robot springt naar het subprogramma, en komt daarna terug.">Nee, hij doet precies hetzelfde</Keuze>
+  <Keuze uitleg="Het blok mikken staat in als … dan, dus de robot voert het subprogramma uit als er een bal ligt.">Ja, de subprogramma's onderaan doet hij niet, want ze staan niet in het Leaphy-blok</Keuze>
+  <Uitleg>
 
 Nee. De robot voert precies dezelfde blokken uit, in dezelfde volgorde. Komt hij het blok **mikken** tegen, dan doet hij alles wat in het subprogramma `mikken` staat, en gaat daarna verder met **slaan**.
 
-</details>
+  </Uitleg>
+</Voorspel>
 
 Klik op **Upload naar robot** en kijk of je voorspelling klopt.
 

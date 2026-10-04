@@ -1,6 +1,7 @@
 ---
 sidebar_position: 7
 ---
+import Link from '@docusaurus/Link';
 import Blokken from '@site/src/components/Blokken';
 import servoOp90 from './blokken/servo-op-90.json';
 import heenEnWeer from './blokken/servo-heen-en-weer.json';
@@ -40,11 +41,11 @@ Dit heb je nodig: **48 Lego Technic-stukjes** plus de **Leaphy-servo**.
 | 1 | Tandwiel 16 tanden (met asgat) | Lichtgrijs | 94925 |
 | 1 | Servo (Leaphy) | Donker nougat (oranjebruin) | – |
 
-Mist er iets in je doosje? Vraag het je docent. Die kan de stukjes in één keer bestellen met <a href="/click_golfer/onderdelenlijst.csv" download>de onderdelenlijst (CSV)</a>, door die te importeren in [BrickLink](https://www.bricklink.com).
+Mist er iets in je doosje? Vraag het je docent. Die bestelt de stukjes, bijvoorbeeld bij [BrickLink](https://www.bricklink.com), en heeft daarvoor <a href="/click_golfer/onderdelenlijst.csv" download>de onderdelenlijst (CSV)</a>.
 
 ## De toren
 
-In stap 4 komt de servo in de toren. Zet je robot eerst uit met de knop **ON/OFF**. De draden van de servo mogen aan het shield blijven zitten. Haal je ze toch los, sluit ze dan **vóór stap 11** weer aan zoals bij [de servo](servo): oranje op het signaal van **D9**. Bij stap 11 zet je de servo met een programma op 90°, en dat lukt alleen als hij aangesloten is.
+In stap 4 komt de servo in de toren: de servo op **D9**. Zet je robot eerst uit met de knop **ON/OFF**. Zit er van [Oefenen](oefenen) nog een tweede servo op D10, haal die dan los. De draden van de servo mogen aan het shield blijven zitten. Haal je ze toch los, sluit ze dan **vóór stap 11** weer aan zoals bij [de servo](servo): oranje op het signaal van **D9**. Bij stap 11 zet je de servo met een programma op 90°, en dat lukt alleen als hij aangesloten is.
 
 ![Uitsnede van het schema: de servo met de bruine draad op GND, de rode op 5V en de oranje op het signaal van D9.](@site/static/fritzing/click_golfer_servo.png)
 
@@ -101,6 +102,9 @@ Bij elke stap zie je linksboven welke stukjes je erbij pakt. Wat nieuw is, heeft
   <img src="/click_golfer/bouwen/stap-10.jpg" width="600" alt="Bouwstap 10: Een lichtgrijze as van 6 gaten gaat door het midden, door de servo." />
   <figcaption>Stap 10</figcaption>
 </figure>
+
+{/* Een kale <a id> telt Docusaurus niet als anker; een Link met id wel. De marge houdt de titel onder de navigatiebalk vandaan. */}
+<Link id="servo-op-90" style={{scrollMarginTop: 'calc(var(--ifm-navbar-height) + 0.5rem)'}} />
 
 :::caution[Eerst de servo op 90°]
 In stap 12 komt de arm op de as van de servo. Staat de servo dan in een willekeurige stand, dan klopt 0° of 90° later niet meer met de stand van de arm: de arm slaat te ver door, of haalt de bal niet.

@@ -30,12 +30,18 @@ Zoemde je servo bij [de servo](servo) op 0°, en gebruikte je daar 10°? Zet dan
 
 **herhaal 50 keer** uit **Denk stappen** doet de blokken erin vijftig keer achter elkaar. In Easybloqs staat er eerst 10 in: klik erop en typ 50. Elke keer gaat de arm naar de stand in `hoek`, wacht 10 ms, en verandert `hoek`.
 
-<details>
-<summary>Voorspel: welk getal zit er in hoek na het eerste herhaal-blok?</summary>
+In het tweede herhaal-blok staat **wijzig hoek met -1**: daar gaat er telkens 1 af, zodat de arm terug draait. Easybloqs geeft het blok **wijzig** met 1. Klik op de 1 en typ -1.
+
+<Voorspel vraag="Welk getal zit er in hoek na het eerste herhaal-blok?">
+  <Keuze uitleg="Er komt vijftig keer 1 bij, niet één keer.">1</Keuze>
+  <Keuze goed uitleg="Elke ronde komt er 1 bij, en het herhaal-blok gaat vijftig keer rond.">50</Keuze>
+  <Keuze uitleg="Het tweede herhaal-blok komt pas daarna. Na het eerste is hoek nog niet terug.">0, want de arm gaat weer terug</Keuze>
+  <Uitleg>
 
 50. Het begint op 0 en er komt vijftig keer 1 bij. Het tweede herhaal-blok haalt er vijftig keer 1 af, en dan staat `hoek` weer op 0.
 
-</details>
+  </Uitleg>
+</Voorspel>
 
 ## Probeer het zelf
 
@@ -56,6 +62,16 @@ Sneller: maak **duurt 10 ms** in beide herhaal-blokken kleiner, bijvoorbeeld 5 m
 </details>
 
 ## Er gaat iets mis
+
+<Probleem titel="Bij het mikken gaat de arm niet terug, maar schuift hij langzaam door tot voorbij de bal.">
+
+**Oorzaak:** in het tweede herhaal-blok staat nog **wijzig hoek met 1**. Dan komt er ook daar vijftig keer 1 bij, en loopt `hoek` door tot 100. Bij 90° staat de arm al bij de bal.
+
+**Oplossing:** klik in het tweede herhaal-blok op de 1 achter **wijzig hoek met** en typ -1.
+
+**Zelf vinden:** kijk in allebei de herhaal-blokken welk getal er achter **wijzig hoek met** staat.
+
+</Probleem>
 
 <Probleem titel="Tijdens het mikken staat de arm stil. Pas bij het slaan beweegt hij.">
 

@@ -17,7 +17,9 @@
   border: 1px solid var(--blokken-rand);
   border-radius: var(--ifm-global-radius);
   background: var(--blokken-achtergrond);
-  overflow: hidden;
+  /* Op een smal scherm schuift het werkblad hierbinnen opzij, nooit de pagina. */
+  overflow-x: auto;
+  overflow-y: hidden;
   vertical-align: top;
 }
 

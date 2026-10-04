@@ -1,7 +1,11 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import * as B from 'blockly/core';
+import 'blockly/blocks';
+import * as nl from 'blockly/msg/nl';
 import { describe, expect, it } from 'vitest';
+import { registreer } from '../components/Blokken/leaphy';
 
 // Het tweede deel van de Click Golfer: bouwen, de houten baan, mikken,
 // subprogramma's en de extra's. Wat hier vastligt, ging mis in de
@@ -9,6 +13,8 @@ import { describe, expect, it } from 'vitest';
 
 const CLICK = fileURLToPath(new URL('../../click_golfer', import.meta.url));
 const STATIC = fileURLToPath(new URL('../../static', import.meta.url));
+
+registreer(B, nl as unknown as Record<string, string>);
 
 function tekst(bestand: string): string {
   return readFileSync(join(CLICK, bestand), 'utf8');
@@ -321,9 +327,25 @@ describe("Mikken, subprogramma's en de extra's", () => {
   });
 
   it('Een naam voor je blokken waarschuwt voor het subprogramma met geef terug', () => {
-    // Eigen blokken heeft ook "Subprogramma naam … geef terug": dat blok is
-    // rond en past nergens.
-    expect(tekst('subprogrammas.md')).toMatch(/\*\*geef terug\*\*/);
+    // Eigen blokken heeft ook "Subprogramma naam … geef terug". De les zei
+    // dat dat blok rond is, maar het heeft dezelfde vorm als Subprogramma:
+    // geen uitgang, en onderaan een gat met geef terug.
+    const ws = new B.Workspace();
+    const met = ws.newBlock('procedures_defreturn');
+    const zonder = ws.newBlock('procedures_defnoreturn');
+    const vorm = (b: B.Block) => [!!b.outputConnection, !!b.previousConnection, !!b.nextConnection];
+    expect(vorm(met)).toEqual(vorm(zonder));
+    expect(met.outputConnection).toBeNull();
+    const laatste = met.inputList.at(-1);
+    expect(laatste?.name).toBe('RETURN');
+    expect(laatste?.fieldRow.map((v) => v.getText())).toContain('geef terug');
+    ws.dispose();
+
+    const inhoud = tekst('subprogrammas.md');
+    expect(inhoud).toMatch(/\*\*geef terug\*\*/);
+    const zin = inhoud.split('\n').find((r) => r.includes('**geef terug**')) ?? '';
+    expect(zin).not.toMatch(/\brond\b/);
+    expect(zin).toMatch(/onderaan/);
   });
 
   it('het blok om een subprogramma te gebruiken pak je uit Eigen blokken', () => {
@@ -341,6 +363,12 @@ describe("Mikken, subprogramma's en de extra's", () => {
     for (const pin of ['D11', 'D10', 'D9', 'D8']) expect(sectie).toContain(`**${pin}**`);
     expect(sectie).toMatch(/op D9 zit je servo/);
     expect(sectie).toMatch(/heb je een \*\*RGB-lampje\*\* nodig/);
+    // Een kale led zonder weerstand op D10/D11 trekt te veel stroom, en met
+    // een gemeenschappelijke plus werkt alles omgekeerd. De docent geeft
+    // het goede lampje.
+    expect(sectie).toMatch(/gemeenschappelijke min/);
+    expect(sectie).toMatch(/weerstand voor elke kleur/);
+    expect(sectie).toMatch(/Je docent geeft je het goede lampje/);
   });
 
   it("elk antwoord bij een programmeeropdracht in de extra's toont de blokken", () => {
@@ -384,5 +412,28 @@ describe('het antwoord bij het lampje', () => {
     ])
       expect(extras).toContain(`${blok} (`);
     expect(extras).toMatch(/In de anders-tak komen Zet PWM 11 op 255/);
+  });
+});
+
+describe('de houten baan verwijst naar dezelfde stap als het bouwen', () => {
+  // De ene kaart zei "vóór stap 12 weer op 90°", de volgende "zoals vóór
+  // stap 11", en de links gingen naar de bovenkant van de bouwpagina. De arm
+  // komt in stap 12 op de as; het blok "Eerst de servo op 90°" heeft een
+  // anker, en elke kaart linkt daarheen.
+  it('het caution-blok heeft een anker', () => {
+    const inhoud = tekst('bouwen.md');
+    // Een kale <a id> ziet de ankercontrole van Docusaurus niet.
+    expect(inhoud).toMatch(/<Link id="servo-op-90"[^>]*\/>\s*:::caution\[Eerst de servo op 90°\]/);
+  });
+
+  it('elke zin in hout over 90° noemt stap 12 en linkt naar het anker', () => {
+    const zinnen = tekst('hout.md')
+      .split(/(?<=[.?])\s+/)
+      .filter((z) => /op 90°/.test(z) && /\]\(bouwen/.test(z));
+    expect(zinnen.length).toBeGreaterThanOrEqual(3);
+    for (const zin of zinnen) {
+      expect(zin).toMatch(/\]\(bouwen#servo-op-90\)/);
+      for (const m of zin.matchAll(/stap (\d+)/g)) expect(m[1], zin).toBe('12');
+    }
   });
 });

@@ -11,7 +11,7 @@ Je Golfer werkt. Hieronder staan drie dingen die je er nog bij kunt maken. Ze zi
 
 ## Een lampje dat meekleurt
 
-Voor deze extra heb je een **RGB-lampje** nodig: een lampje met vier pootjes dat verschillende kleuren kan maken. Je docent geeft je het lampje en drie losse draadjes. Zorg dat:
+Voor deze extra heb je een **RGB-lampje** nodig: een lampje met vier pootjes dat verschillende kleuren kan maken. Het moet een lampje met een gemeenschappelijke min zijn, met een weerstand voor elke kleur, bijvoorbeeld een kleine module waar de weerstanden al op zitten. Zonder weerstand gaat er te veel stroom door het lampje. Je docent geeft je het goede lampje en drie losse draadjes. Zorg dat:
 
 - het lampje **groen** wordt als er een balletje ligt en de robot aan het slaan is;
 - het lampje **rood** wordt als er geen balletje ligt en de robot stilstaat.
@@ -20,11 +20,12 @@ In Easybloqs staat in **Actuatoren** een blok **Led** met Rood, Groen en Blauw. 
 
 Het gebruikt de pinnen **D11** (rood), **D10** (groen), **D9** (blauw) en **D8** (min), en op D9 zit je servo al. Blauw laat je daarom weg.
 
-Gebruik in plaats daarvan het blok **Zet PWM**, ook uit Actuatoren, één keer voor rood en één keer voor groen:
+Gebruik in plaats daarvan het blok **Zet PWM**, ook uit Actuatoren, één keer voor rood en één keer voor groen. In Easybloqs staat er eerst **Zet PWM 3 op 0**: klik op de 3 en kies **11** of **10**.
 
 1. Vraag je docent welk pootje van het lampje rood is, welk groen en welk de min.
-2. Sluit rood aan op het signaal van **D11**, groen op het signaal van **D10**, en de min op GND. Het blauwe pootje sluit je niet aan.
-3. **Zet PWM 11 op 255** maakt het lampje rood. Met Zet PWM 11 op 0 gaat rood weer uit. Met pin 10 doe je hetzelfde voor groen.
+2. Zet je robot uit met **ON/OFF**. Zit er van [Oefenen](oefenen) nog een tweede servo op D10? Haal die dan los, want daar komt nu groen.
+3. Sluit rood aan op het signaal van **D11**, groen op het signaal van **D10**, en de min op GND. Het blauwe pootje sluit je niet aan. Zet je robot daarna weer aan met **ON/OFF**.
+4. **Zet PWM 11 op 255** maakt het lampje rood. Met Zet PWM 11 op 0 gaat rood weer uit. Met pin 10 doe je hetzelfde voor groen.
 
 <details>
 <summary>Tip</summary>
