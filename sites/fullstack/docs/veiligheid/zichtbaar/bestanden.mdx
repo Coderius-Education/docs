@@ -1,0 +1,117 @@
+---
+sidebar_label: '4. Wat er in je map staat'
+description: Naast main.py staan databases met berichten en sessie-id's, en een map met packages. Wie je map krijgt, krijgt die ook. Kijk wat erin staat en wat je deelt.
+---
+
+# Wat je server laat zien: wat er in je map staat
+
+Na [les 3](./uitzetten) geeft je server geen lijst en geen sessies meer weg.
+Maar je server is niet de enige weg naar je gegevens. Ze staan ook in
+bestanden, naast je code. Deel je je projectmap, als zip met een klasgenoot of
+op GitHub, dan deel je die bestanden mee.
+
+## Kijk wat er in sessies.db staat
+
+Maak naast `main.py` een script `lees_sessies.py`. Het opent de database zelf,
+zonder server:
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("sessies.db") as sessies:
+    for sessie_id, sessie in sessies.items():
+        print(sessie_id, sessie["naam"])
+```
+
+Uitvoer, met andere sessie-id's bij jou:
+
+```
+17fc855565c554ac6a2fc8c071a48e89 Sara
+916312710b4a64610d1a100578050e18 Alex
+```
+
+Hetzelfde lijstje dat `/sessies` in [les 2](./vergeten) weggaf. Daar heb je
+geen endpoint voor nodig: wie het bestand heeft, heeft de sessie-id's. En met
+een sessie-id is hij voor je server die bezoeker, zolang je server draait met
+deze `sessies.db`.
+
+## Wat er nog meer in je map staat
+
+Kijk in het Explorer-paneel van VS Code. Naast je code en je scripts staat meer
+dan je zelf maakte:
+
+| Bestand of map | Wat erin staat | Delen? |
+|---|---|:---:|
+| `main.py` en je scripts | je code | ja |
+| `static/` en `templates/`, als je die hebt | je HTML, CSS en afbeeldingen | ja |
+| `gastenboek.db` | alles wat je bezoekers schreven, met hun namen | nee |
+| `sessies.db` | de sessie-id's van je bezoekers | nee |
+| `.venv/` | de virtual environment met alle packages | nee |
+| `__pycache__/` | bestanden die Python zelf maakt om sneller te starten | nee |
+
+Een `.db`-bestand hoort bij je server, niet bij je code. De berichten zijn van
+je bezoekers, en een sessie-id is een sleutel. `.venv` bevat geen geheimen,
+maar is groot en werkt alleen op jouw computer: wie je project krijgt, maakt
+zelf een virtual environment. `__pycache__` maakt Python opnieuw als het nodig
+is.
+
+Heb je later accounts, zoals in de reeks
+[Wachtwoorden veilig opslaan](/docs/veiligheid/wachtwoorden/gewone-tekst), dan
+staat er ook een `gebruikers.db` bij, met de wachtwoorden van je gebruikers of
+hun hashes. Die deel je nog minder.
+
+## Er gaat iets mis
+
+`lees_sessies.py` print niets, terwijl `twee.py` uit les 2 wel twee namen gaf.
+
+**Oorzaak:** het script draait in een andere map dan je server.
+`SqliteDict("sessies.db")` zoekt het bestand in de map waarin je het script
+start. Bestaat het daar niet, dan maakt hij stil een nieuwe, lege database aan.
+
+**Oplossing:** zet `lees_sessies.py` in dezelfde map als `main.py`, draai het
+vanuit de terminal in die map, en gooi de lege `sessies.db` in de andere map
+weg.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Sessies weg
+
+Je stopt je server, gooit `sessies.db` weg en start de server opnieuw. Sara's
+`Client` uit `twee.py` stuurt daarna `GET /ik`, met haar oude cookie.
+
+**Vraag:** wat antwoordt de server?
+
+<details>
+<summary>Tip</summary>
+
+Waar zoekt `/ik` het sessie-id op?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`{'naam': 'onbekend'}`. De cookie staat nog in de `Client`, maar het sessie-id
+staat niet meer in `sessies.db`. Voor de server is Sara een nieuwe bezoeker. Een
+sessie bestaat dus alleen zolang de server hem kent, en wie `sessies.db`
+heeft, heeft alle sessies die je server kent.
+
+</details>
+
+### Opdracht 2: Investigate - Een zip voor je docent
+
+Je wilt je project inleveren als zip. Welke bestanden en mappen uit de tabel
+stop je erin, en welke niet?
+
+<details>
+<summary>Antwoord</summary>
+
+Wel: `main.py`, je scripts als je docent ze wil zien, en `static/` en
+`templates/` als je project die heeft. Niet: de `.db`-bestanden, `.venv/` en
+`__pycache__/`. Je docent heeft je code nodig om te zien wat je bouwde, niet de
+berichten en sessies van je bezoekers. Hoe je dat bij elke zip en elke upload
+goed doet, zie je in [les 5](./gitignore).
+
+</details>
+
+Door naar [les 5: een .gitignore en een nette zip](./gitignore).

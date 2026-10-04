@@ -88,13 +88,27 @@ const sidebars: SidebarsConfig = {
   ],
   // Eerst de startpagina (het ene idee, de spelregel, de statuscodes) en het
   // gereedschap (httpx). Dan per zwakheid een categorie met kleine lessen, van
-  // makkelijk naar moeilijk: invoer, xss, dos, toegang, cookies, wachtwoorden.
+  // makkelijk naar moeilijk: zichtbaar (wat je server laat zien, nog zonder
+  // aanval), invoer, xss, dos, toegang, cookies, wachtwoorden.
   // DoS staat vroeg, want het is één decorator en een for-loop; Wachtwoorden
   // staat achteraan en gebruikt de limiet uit DoS. Ingeklapt, zodat de sidebar
   // een kaart blijft; Docusaurus klapt de reeks open waar de leerling in zit.
   veiligheidSidebar: [
     'veiligheid/index',
     'veiligheid/gereedschap',
+    {
+      type: 'category',
+      label: 'Wat je server laat zien',
+      collapsed: true,
+      items: [
+        'veiligheid/zichtbaar/handleiding',
+        'veiligheid/zichtbaar/vergeten',
+        'veiligheid/zichtbaar/uitzetten',
+        'veiligheid/zichtbaar/bestanden',
+        'veiligheid/zichtbaar/gitignore',
+        'veiligheid/zichtbaar/praktijk',
+      ],
+    },
     {
       type: 'category',
       label: 'Invoer controleren',

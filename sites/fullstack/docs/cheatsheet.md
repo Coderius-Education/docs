@@ -805,6 +805,19 @@ De regel verschijnt in het tabblad **Console** van de ontwikkelaarstools, met re
 ## Veiligheid
 
 <details>
+<summary>Hoe zet ik de lijst met endpoints uit? (docs_url=None)</summary>
+
+```python
+from fastapi import FastAPI
+
+app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
+```
+
+Zonder deze instellingen zet FastAPI al je endpoints op `/docs`, `/redoc` en `/openapi.json`, voor iedereen die je server kan bereiken. Uitzetten verstopt alleen: haal een endpoint dat niet voor iedereen is ook echt weg. Zet `.venv/`, `__pycache__/` en `*.db` in je `.gitignore`. Zie [Wat je server laat zien: de handleiding uitzetten](/docs/veiligheid/zichtbaar/uitzetten) en [een .gitignore en een nette zip](/docs/veiligheid/zichtbaar/gitignore).
+
+</details>
+
+<details>
 <summary>Hoe begrens ik invoer op de server? (Form met max_length)</summary>
 
 ```python

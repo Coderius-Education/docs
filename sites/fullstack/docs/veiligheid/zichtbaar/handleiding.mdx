@@ -1,0 +1,306 @@
+---
+sidebar_label: '1. De handleiding op /docs'
+description: FastAPI zet zelf een pagina op /docs met al je endpoints, en dezelfde lijst als JSON op /openapi.json. Bekijk wat je eigen server zo over zichzelf vertelt.
+---
+
+# Wat je server laat zien: de handleiding op /docs
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/data/11b-itereren-dictionaries', label: 'Door een dictionary lopen'},
+  ]}
+/>
+
+:::note[Waar je werkt]
+Maak voor deze reeks een nieuwe map `veiligheid-zichtbaar`, naast je eigen
+project, en open die in VS Code. De server, de scripts en de databases van deze
+reeks komen daarin. Zo blijft je eigen gastenboek heel. Aan het eind van de
+reeks pas je het geleerde toe op je eigen project.
+
+Maak in die map een virtual environment en installeer de packages; hoe dat gaat
+staat bij [Een map per reeks](/docs/veiligheid/gereedschap#een-map-per-reeks).
+:::
+
+Start je een server met `fastapi dev`, dan staan er in de terminal twee adressen:
+
+```
+Server started at http://127.0.0.1:8000
+Documentation at http://127.0.0.1:8000/docs
+```
+
+Het eerste ken je. Het tweede heb je misschien nooit geopend. In deze les kijk
+je wat daar staat, en voor wie.
+
+## Een server om mee te oefenen
+
+Zet dit `main.py` in de map. Het is een klein gastenboek met sessies, zoals in
+[Onthouden op de server: sessies](/docs/FastAPI/sessies). Onderaan staat ook
+het endpoint `GET /sessies` uit opdracht 3 van die les, dat je daar maakte om in
+je sessies te kijken.
+
+<CodeUitleg>
+
+```python showLineNumbers
+import secrets
+import time
+
+from fastapi import Cookie, FastAPI, Form
+from fastapi.responses import JSONResponse
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+
+@app.post("/bericht")
+async def bericht_plaatsen(
+    naam: str = Form(...),
+    bericht: str = Form(...),
+    sessie_id: str = Cookie(default=""),
+):
+    if not sessie_id:
+        sessie_id = secrets.token_hex(16)
+    sleutel = f"bericht_{time.time_ns()}"
+    with SqliteDict("gastenboek.db") as db:
+        db[sleutel] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {"naam": naam, "berichten": []})
+        mijn["naam"] = naam
+        mijn["berichten"].append(sleutel)
+        sessies[sessie_id] = mijn
+        sessies.commit()
+    antwoord = JSONResponse({"opgeslagen": sleutel})
+    antwoord.set_cookie(key="sessie_id", value=sessie_id, httponly=True, samesite="lax")
+    return antwoord
+
+@app.get("/berichten")
+async def berichten():
+    with SqliteDict("gastenboek.db") as db:
+        return list(db.values())
+
+@app.get("/ik")
+async def wie_ben_ik(sessie_id: str = Cookie(default="")):
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {})
+    return {"naam": mijn.get("naam", "onbekend")}
+
+@app.get("/sessies")
+async def alle_sessies():
+    with SqliteDict("sessies.db") as sessies:
+        return dict(sessies)
+```
+
+<Regel n={10} tot={30}>
+Een bericht plaatsen. Het bericht gaat in `gastenboek.db`, en in `sessies.db` onthoudt de server wie het schreef, onder het sessie-id uit de cookie.
+</Regel>
+
+<Regel n={37} tot={41}>
+`/ik` zegt wie je bent: de naam uit je sessie, of `onbekend` als je server je sessie-id niet kent.
+</Regel>
+
+<Regel n={43} tot={46}>
+Het endpoint uit opdracht 3 van Sessies. Het geeft alles uit `sessies.db` terug, met de sessie-id's erbij.
+</Regel>
+
+</CodeUitleg>
+
+Start de server met `fastapi dev main.py`.
+
+## Open /docs
+
+:::danger[Alleen je eigen server]
+Bekijk en gebruik in deze reeks **uitsluitend** je eigen server op
+`127.0.0.1`. Een endpoint van een ander gebruiken dat niet voor jou bedoeld is,
+is binnendringen, en strafbaar, ook als het "maar een testje" is.
+:::
+
+Open `http://127.0.0.1:8000/docs` in je browser. Je ziet een pagina die je nooit
+hebt gemaakt, met een regel per endpoint:
+
+```
+POST  /bericht    Bericht Plaatsen
+GET   /berichten  Berichten
+GET   /ik         Wie Ben Ik
+GET   /sessies    Alle Sessies
+```
+
+FastAPI maakt die pagina zelf, uit je `main.py`: elk pad, elke methode, en de
+naam van je functie met hoofdletters. Klap je een regel open, dan zie je ook
+welke velden en cookies het endpoint verwacht. Met de knop **Try it out** kun je
+het endpoint vanaf die pagina gebruiken, zonder formulier.
+
+Voor jou als bouwer is dat handig. Maar de pagina staat er voor iedereen die je
+server kan bereiken, en niet alleen voor jou.
+
+## Dezelfde lijst als JSON
+
+De pagina op `/docs` leest zijn lijst uit een ander adres: `/openapi.json`. Daar
+staat dezelfde beschrijving als JSON, in een vaste vorm die **OpenAPI** heet. Een
+script kan hem dus ook lezen. Maak naast `main.py` een bestand
+`handleiding.py`:
+
+<CodeUitleg>
+
+```python showLineNumbers
+import httpx
+
+antwoord = httpx.get("http://127.0.0.1:8000/openapi.json")
+for pad, methoden in antwoord.json()["paths"].items():
+    for methode in methoden:
+        print(methode.upper(), pad)
+```
+
+<Regel n={4}>
+Onder `paths` staat een dictionary met elk pad als sleutel. `.items()` geeft het pad en wat erbij hoort.
+</Regel>
+
+<Regel n={5} tot={6}>
+Bij elk pad staan de methoden, zoals `get` of `post`. `upper()` maakt er hoofdletters van.
+</Regel>
+
+</CodeUitleg>
+
+Draai het in een tweede terminal, zoals in
+[Een script als bezoeker](/docs/veiligheid/gereedschap):
+
+```
+POST /bericht
+GET /berichten
+GET /ik
+GET /sessies
+```
+
+Elk endpoint staat erin, ook `GET /sessies`, dat je alleen voor jezelf maakte.
+
+## Wie er nog meer bij kan
+
+Zolang je server op `127.0.0.1` draait, kan alleen jij bij `/docs`. Zet je hem
+open zoals in [Laat het aan anderen zien](/docs/FastAPI/laat-het-zien), met
+`--host 0.0.0.0`, dan kan iedereen op het netwerk het netwerkadres van je
+computer typen met `:8000/docs` erachter. Je klasgenoot ziet dan dezelfde lijst
+als jij, met het endpoint dat je vergeten bent weg te halen. Wat dat kost, zie
+je in [les 2](./vergeten).
+
+## Er gaat iets mis
+
+`/docs` blijft een witte pagina, terwijl `/openapi.json` wel een lange tekst
+toont.
+
+**Oorzaak:** de pagina op `/docs` haalt zijn opmaak en zijn script van internet,
+van `cdn.jsdelivr.net`. Blokkeert het netwerk dat, of heb je geen internet, dan
+blijft de pagina leeg. Je server doet niets fout.
+
+**Oplossing:** gebruik `/openapi.json` of het script `handleiding.py`. Daarin
+staat dezelfde lijst, en die komt van je eigen server.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Een endpoint erbij
+
+Je zet dit endpoint onderaan `main.py`, en draait `handleiding.py` opnieuw:
+
+```python
+@app.get("/tijd")
+async def tijd():
+    return {"tijd": time.time()}
+```
+
+**Vraag:** wat print het script nu?
+
+<details>
+<summary>Tip</summary>
+
+FastAPI maakt de lijst uit wat er op dat moment in `main.py` staat.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```
+POST /bericht
+GET /berichten
+GET /ik
+GET /sessies
+GET /tijd
+```
+
+Het nieuwe endpoint staat er meteen bij. Je hoeft niets bij te houden: wat in
+`main.py` staat, staat ook in de handleiding. Haal `/tijd` daarna weer weg.
+
+</details>
+
+### Opdracht 2: Run - Een bericht via /docs
+
+Open `/docs`, klap `POST /bericht` open en klik op **Try it out**. Laat het vak
+`sessie_id` leeg, en vul bij `naam` en `bericht` iets in; in die vakken staat al
+het woord `string`, dat vervang je. Klik op **Execute**. Open daarna
+`/berichten`. Staat je bericht erbij?
+
+<details>
+<summary>Antwoord</summary>
+
+Ja. Onder **Execute** zie je het antwoord, met `opgeslagen` en de sleutel, en op
+`/berichten` staat je bericht in de lijst. De pagina op `/docs` stuurt hetzelfde
+verzoek als een formulier of een script. Wie de pagina kan openen, kan elk
+endpoint dus ook gebruiken, zonder je HTML te zien.
+
+</details>
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+```python
+import secrets
+import time
+
+from fastapi import Cookie, FastAPI, Form
+from fastapi.responses import JSONResponse
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+
+@app.post("/bericht")
+async def bericht_plaatsen(
+    naam: str = Form(...),
+    bericht: str = Form(...),
+    sessie_id: str = Cookie(default=""),
+):
+    if not sessie_id:
+        sessie_id = secrets.token_hex(16)
+    sleutel = f"bericht_{time.time_ns()}"
+    with SqliteDict("gastenboek.db") as db:
+        db[sleutel] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {"naam": naam, "berichten": []})
+        mijn["naam"] = naam
+        mijn["berichten"].append(sleutel)
+        sessies[sessie_id] = mijn
+        sessies.commit()
+    antwoord = JSONResponse({"opgeslagen": sleutel})
+    antwoord.set_cookie(key="sessie_id", value=sessie_id, httponly=True, samesite="lax")
+    return antwoord
+
+@app.get("/berichten")
+async def berichten():
+    with SqliteDict("gastenboek.db") as db:
+        return list(db.values())
+
+@app.get("/ik")
+async def wie_ben_ik(sessie_id: str = Cookie(default="")):
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {})
+    return {"naam": mijn.get("naam", "onbekend")}
+
+@app.get("/sessies")
+async def alle_sessies():
+    with SqliteDict("sessies.db") as sessies:
+        return dict(sessies)
+```
+
+Dit is de beginstand. In les 3 verandert de regel met `app = FastAPI()`, en gaat
+`GET /sessies` eruit.
+
+</details>
+
+Door naar [les 2: een vergeten endpoint](./vergeten).

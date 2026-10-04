@@ -56,8 +56,10 @@ describe('de reeks Veiligheid', () => {
     // "want het gaat over infrastructuur", maar het is één decorator en een
     // for-loop: lichter dan Wie mag wat met twee bezoekers en sessies. Nu staat
     // het als derde, en kan Wachtwoorden achteraan de limiet op /inloggen uit
-    // DoS gebruiken. Cookies bouwt op de server uit Wie mag wat.
+    // DoS gebruiken. Cookies bouwt op de server uit Wie mag wat. Wat je server
+    // laat zien gaat voorop: kijken wat er openstaat, nog zonder aanval.
     expect(categorieen.map(eersteMap)).toEqual([
+      'zichtbaar',
       'invoer',
       'xss',
       'dos',
@@ -89,6 +91,14 @@ describe('de reeks Veiligheid', () => {
       }
     }
     expect(fout).toEqual([]);
+  });
+
+  it('het gereedschap wijst door naar de eerste les van de eerste reeks', () => {
+    // Toen Wat je server laat zien voor Invoer kwam, wees Een script als
+    // bezoeker nog naar Invoer.
+    const tekst = readFileSync(join(VEILIGHEID, 'gereedschap.mdx'), 'utf8');
+    const eerste = categorieen[0].items[0].slice('veiligheid/'.length);
+    expect(tekst.match(/Door naar de eerste reeks: \[[^\]]+\]\(\.\/([^)]+)\)/)?.[1]).toBe(eerste);
   });
 
   it('elke reeks wijst aan het eind naar de volgende, de laatste naar de afsluiter', () => {
@@ -226,8 +236,10 @@ describe('de reeks Veiligheid', () => {
           const tekst = lees(map, stap);
           if (!heeftEndpoint(tekst)) continue;
           const blokken = [...tekst.matchAll(/```python[^\n]*\n([\s\S]*?)```/g)].map((m) => m[1]);
+          // FastAPI(...) mag instellingen hebben, zoals docs_url=None in
+          // Wat je server laat zien.
           expect(
-            blokken.some((b) => b.includes('app = FastAPI()') && b.includes('@app.')),
+            blokken.some((b) => /^app = FastAPI\(/m.test(b) && b.includes('@app.')),
             `${map}/${stap}`,
           ).toBe(true);
         }

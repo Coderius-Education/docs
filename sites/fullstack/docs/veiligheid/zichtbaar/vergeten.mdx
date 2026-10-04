@@ -1,0 +1,142 @@
+---
+sidebar_label: '2. Een vergeten endpoint'
+description: Een endpoint dat je voor jezelf maakte, staat in de handleiding voor iedereen. Met GET /sessies krijgt een bezoeker elk sessie-id, en daarmee is hij een ander.
+---
+
+# Wat je server laat zien: een vergeten endpoint
+
+In [les 1](./handleiding) zag je dat `/docs` elk endpoint noemt. Ook
+`GET /sessies`, dat je in [Onthouden op de server: sessies](/docs/FastAPI/sessies)
+maakte om zelf in je sessies te kijken. Daar stond bij: haal het daarna weg.
+Wie dat vergat, heeft een endpoint dat niemand anders mag gebruiken, op een
+lijst die iedereen kan lezen.
+
+## Twee bezoekers
+
+Start je server uit les 1. Maak een script `twee.py` met twee bezoekers die
+elk een bericht plaatsen. Een `Client` onthoudt zijn cookie, zoals in
+[Een script als bezoeker](/docs/veiligheid/gereedschap):
+
+```python
+import httpx
+
+sara = httpx.Client(base_url="http://127.0.0.1:8000")
+alex = httpx.Client(base_url="http://127.0.0.1:8000")
+sara.post("/bericht", data={"naam": "Sara", "bericht": "Hoi allemaal"})
+alex.post("/bericht", data={"naam": "Alex", "bericht": "Leuk gastenboek"})
+print(sara.get("/ik").json())
+print(alex.get("/ik").json())
+```
+
+Uitvoer:
+
+```
+{'naam': 'Sara'}
+{'naam': 'Alex'}
+```
+
+Elke bezoeker heeft zijn eigen sessie-id in een cookie, en `/ik` herkent hem
+daaraan.
+
+## Wat `/sessies` weggeeft
+
+Nu ben je een derde bezoeker, zonder cookie, die alleen de handleiding heeft
+gelezen. Maak `sessies.py`:
+
+<CodeUitleg>
+
+```python showLineNumbers
+import httpx
+
+adres = "http://127.0.0.1:8000"
+
+antwoord = httpx.get(adres + "/sessies")
+for sessie_id, sessie in antwoord.json().items():
+    ik = httpx.get(adres + "/ik", cookies={"sessie_id": sessie_id})
+    print(sessie_id, ik.json())
+```
+
+<Regel n={5}>
+Het vergeten endpoint. Het geeft elke sessie terug, met het sessie-id als sleutel.
+</Regel>
+
+<Regel n={7}>
+Met `cookies` stuur je zelf een cookie mee. Het script stuurt het sessie-id van een ander, alsof het zijn eigen cookie is.
+</Regel>
+
+</CodeUitleg>
+
+Uitvoer, met andere sessie-id's bij jou:
+
+```
+ed37173ad83bc8b8d2442ee65e107e22 {'naam': 'Sara'}
+87da570d5ae77ba22e8e11900e2061d2 {'naam': 'Alex'}
+```
+
+Het script heeft nooit een bericht geplaatst, en toch is het voor je server
+eerst Sara en dan Alex. Een sessie-id is zo lang en willekeurig dat niemand het
+kan raden. Dat helpt niets meer als je server ze zelf op een rij zet.
+
+In dit gastenboek kan een sessie-id weinig kwaad: `/ik` zegt alleen een naam.
+In de reeks [Wie mag wat](/docs/veiligheid/toegang/zwakheid), die later komt,
+mag alleen de schrijver zijn bericht verwijderen, en dat controleert de server
+met precies dit sessie-id. Met `/sessies` erbij kan iedereen elk bericht
+verwijderen.
+
+## Dit is de zwakheid
+
+Je maakte `/sessies` voor jezelf, om te testen. De server weet dat niet: hij
+beantwoordt elk verzoek, van wie dan ook, en `/docs` zet het endpoint netjes op
+de lijst. Een endpoint dat alleen voor jou is, bestaat niet. In
+[les 3](./uitzetten) zet je de lijst uit en haal je het endpoint weg.
+
+## Er gaat iets mis
+
+`sessies.py` print niets.
+
+**Oorzaak:** er staan nog geen sessies in `sessies.db`, omdat er nog niemand
+een bericht plaatste. Of `sessies.py` draait tegen een server die in een andere
+map staat.
+
+**Oplossing:** draai eerst `twee.py`, in dezelfde map als `main.py`, en daarna
+`sessies.py`.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Een verzonnen sessie-id
+
+Je stuurt `GET /ik` met de cookie `sessie_id` op `abc`.
+
+**Vraag:** wat antwoordt de server?
+
+<details>
+<summary>Tip</summary>
+
+Kijk in `wie_ben_ik` wat `sessies.get` doet als het sessie-id niet bestaat.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`{'naam': 'onbekend'}`. Een verzonnen sessie-id staat niet in `sessies.db`, dus
+`get` geeft de lege dictionary. Raden lukt niet; daarvoor zijn er te veel
+mogelijkheden. Alleen een sessie-id dat de server zelf uitdeelt, werkt.
+
+</details>
+
+### Opdracht 2: Investigate - Welke is erger?
+
+`GET /berichten` en `GET /sessies` geven allebei de inhoud van een database
+terug, aan iedereen. Waarom is de tweede een gat en de eerste niet?
+
+<details>
+<summary>Antwoord</summary>
+
+De berichten zijn bedoeld om te lezen: daarvoor is een gastenboek. Een
+sessie-id is een sleutel. Wie het heeft, is voor de server die bezoeker. Een
+lijst met sessie-id's is dus een sleutelbos van al je bezoekers.
+
+</details>
+
+Door naar [les 3: de handleiding uitzetten](./uitzetten).

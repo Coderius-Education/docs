@@ -1,0 +1,168 @@
+---
+sidebar_label: '5. Een .gitignore en een nette zip'
+description: Met een .gitignore laat git je databases, .venv en __pycache__ liggen, en een zip maak je van alleen je code. Daarna loop je je eigen project na.
+---
+
+# Wat je server laat zien: een .gitignore en een nette zip
+
+<Voorkennis
+  items={[
+    {site: 'editor', to: '/git/basis/stap-7-gitignore', label: 'Bestanden negeren met .gitignore'},
+  ]}
+/>
+
+In [les 4](./bestanden) zag je welke bestanden in je map niet bij je code
+horen. Je kunt ze elke keer met de hand overslaan, maar één keer vergeten is
+genoeg. Laat het daarom een bestand onthouden.
+
+## Een `.gitignore` voor je server
+
+Staat deze map nog niet in git, typ dan eerst `git init` in de terminal van
+VS Code, zoals in
+<SiteLink site="editor" to="/git/basis/stap-1-init">een repository starten met git init</SiteLink>.
+Typ daarna `git status --short`. Die geeft een korte lijst van alles wat git
+ziet:
+
+```
+?? .venv/
+?? __pycache__/
+?? dicht.py
+?? gastenboek.db
+?? handleiding.py
+?? lees_sessies.py
+?? main.py
+?? sessies.db
+?? sessies.py
+?? twee.py
+```
+
+`??` betekent: git kent dit bestand nog niet, en neemt het mee zodra je alles
+toevoegt. Ook de databases dus.
+
+Maak in VS Code naast `main.py` een bestand `.gitignore`, met de punt vooraan,
+en zet erin:
+
+```
+.venv/
+__pycache__/
+*.db
+```
+
+Een regel die eindigt op `/` slaat een hele map over. `*.db` slaat elk bestand
+over dat op `.db` eindigt: `gastenboek.db`, `sessies.db`, en later ook
+`gebruikers.db`. Sla op en typ opnieuw `git status --short`:
+
+```
+?? .gitignore
+?? dicht.py
+?? handleiding.py
+?? lees_sessies.py
+?? main.py
+?? sessies.py
+?? twee.py
+```
+
+De databases, `.venv` en `__pycache__` staan er niet meer bij. In het
+Explorer-paneel zijn ze grijs geworden. `.gitignore` zelf staat er wel bij, en
+die hoort ook in je repository: zo weet een klasgenoot die je project ophaalt
+welke bestanden er niet bij horen.
+
+Met een nieuwere Python staat `.venv/` er in de eerste lijst al niet bij: die
+zet bij het aanmaken een eigen `.gitignore` in de map `.venv`. Zet de regel er
+toch in, dan werkt het ook met een oudere Python.
+
+## Een zip zonder databases
+
+Een zip maken heeft geen `.gitignore`: hij pakt alles wat je selecteert. Kies
+in de Verkenner van Windows (of de Finder op een Mac) daarom niet de hele map,
+maar alleen wat je wilt delen: `main.py`, je scripts als iemand die moet zien,
+en `static/` en `templates/` als je project die heeft. Maak daar een zip van.
+
+Open de zip daarna, en kijk of er geen `.db`-bestand of `.venv` in staat. Wie
+je project nakijkt, heeft je code nodig, niet de berichten en sessie-id's van je
+bezoekers. De pagina [Project checken](/project-checken) vraagt ook alleen om
+`main.py`, `static/` en `templates/`.
+
+## Er gaat iets mis
+
+Je hebt `.gitignore` gemaakt, maar `git status --short` laat nog steeds een
+database zien, met een `M` ervoor:
+
+```
+ M sessies.db
+```
+
+**Oorzaak:** je had `sessies.db` al eerder met git vastgelegd, met een commit.
+`.gitignore` slaat alleen bestanden over die git nog niet kent. Een bestand dat
+al in je repository staat, blijft git volgen.
+
+**Oplossing:** haal het bestand uit git, maar laat het op je computer staan:
+
+```bash
+git rm --cached sessies.db
+```
+
+Maak daarna een commit. Stond de repository al op GitHub, dan staat het bestand
+nog in de oude commits, en kan iedereen het daar ophalen. Gooi dan ook
+`sessies.db` op je computer weg: je server begint met een lege, en de oude
+sessie-id's werken nergens meer, zoals je in opdracht 1 van [les 4](./bestanden)
+zag.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Een nieuwe database
+
+In de reeks Wachtwoorden maak je later een `gebruikers.db`. Je `.gitignore` is
+niet veranderd.
+
+**Vraag:** staat `gebruikers.db` dan in de lijst van `git status --short`?
+
+<details>
+<summary>Antwoord</summary>
+
+Nee. `*.db` slaat elk bestand over dat op `.db` eindigt, ook een database die
+er nog niet was toen je de regel schreef. Daarom gebruik je hier `*.db` en niet
+de losse namen.
+
+</details>
+
+### Opdracht 2: Make - In je eigen project
+
+Loop je eigen project na, of je gastenboek uit de FastAPI-lessen: wat laat je
+server zien, en wat staat er in je map?
+
+<details>
+<summary>Tip</summary>
+
+Begin met `/docs` van je eigen project open. Wat daar staat, is precies wat een
+klasgenoot zou zien als je je server openzet.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Loop deze lijst af:
+
+- Elk endpoint op `/docs` is voor iedereen bedoeld. Een endpoint dat je voor
+  jezelf maakte, zoals `GET /sessies` uit Sessies, is weg.
+- `docs_url=None`, `redoc_url=None` en `openapi_url=None` staan in je
+  `FastAPI()`, voordat je je server openzet zoals in Laat het aan anderen zien.
+- Er staat een `.gitignore` met `.venv/`, `__pycache__/` en `*.db`.
+- `git status --short` noemt geen `.db`-bestand.
+- Een zip die je deelt, bevat geen `.db`-bestand en geen `.venv`.
+
+Voor de handleiding verander je alleen de regel waar je app begint. Vervang je
+bestaande `app = FastAPI()` door:
+
+```python
+app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
+```
+
+De rest van `main.py` blijft. Werk je zelf nog aan je project, dan kun je de
+handleiding laten staan zolang je server op `127.0.0.1` draait, en hem
+uitzetten zodra anderen erbij kunnen.
+
+</details>
+
+Door naar [les 6: in de praktijk](./praktijk).

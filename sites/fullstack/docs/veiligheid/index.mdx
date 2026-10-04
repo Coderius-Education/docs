@@ -35,7 +35,10 @@ Met alleen de basis kun je al beginnen aan
 [Invoer controleren](/docs/veiligheid/invoer/maxlength). Waar die reeks naar
 [Server of browser?](/docs/FastAPI/server-of-browser) verwijst, is dat een les
 uit de uitbreiding JavaScript die je later doet; de reeks is ook zonder die
-les te volgen.
+les te volgen. De reeks ervoor,
+[Wat je server laat zien](/docs/veiligheid/zichtbaar/handleiding), geeft je een
+server met sessies kant-en-klaar; wat een sessie is, staat in
+[Onthouden op de server: sessies](/docs/FastAPI/sessies).
 
 ## De spelregel
 
@@ -61,7 +64,9 @@ mag wat.
 
 ## Wat je aan het eind hebt
 
-Hetzelfde gastenboek, maar nu houdt je server zelf de grens bij. Een bericht
+Hetzelfde gastenboek, maar nu houdt je server zelf de grens bij. Hij zet geen
+lijst met zijn endpoints meer open, en je databases gaan niet mee in een zip of
+naar GitHub. Een bericht
 dat te lang is of leeg, weigert hij. HTML die een bezoeker typt, komt er als
 gewone tekst in. Alleen de schrijver kan zijn bericht verwijderen, ook als
 iemand het verzoek met een script in elkaar zet:
@@ -83,7 +88,7 @@ deze tegen:
 | `200` | gelukt | je endpoint, als alles goed gaat | overal |
 | `400` | dit verzoek klopt niet | meestal jij, met `HTTPException`, voor een regel die je zelf bedacht; Starlette zelf bij een veld boven een megabyte | [Invoer, les 1 en 4](/docs/veiligheid/invoer/inhoud) |
 | `403` | dit mag jij niet | jij, als de bezoeker iets van een ander wil | [Wie mag wat, les 2](/docs/veiligheid/toegang/controle) |
-| `404` | bestaat niet | FastAPI bij een onbekend pad, of jij bij een onbekend item | [Eén item tonen: path-parameters en 404](/docs/FastAPI/detailpagina) |
+| `404` | bestaat niet | FastAPI bij een onbekend pad, of jij bij een onbekend item | [Eén item tonen: path-parameters en 404](/docs/FastAPI/detailpagina), [De handleiding uitzetten](/docs/veiligheid/zichtbaar/uitzetten) |
 | `422` | een veld past niet bij `Form` | FastAPI zelf, voordat je functie draait | [Invoer, les 2 en 3](/docs/veiligheid/invoer/grenzen) |
 | `429` | te veel verzoeken | `slowapi`, je verzoeklimiet | [Te veel verzoeken, les 4](/docs/veiligheid/dos/limiet) |
 | `500` | er ging iets mis in de server | niemand bewust: een fout in je code | de terminal van je server |
@@ -100,6 +105,9 @@ nodig als je er later zelf iets over opzoekt; veel namen zijn Engels.
 | Woord | Betekent | Waar |
 |---|---|---|
 | zwakheid | een plek waar je server iets toelaat wat niet de bedoeling is | overal |
+| OpenAPI | de beschrijving van al je endpoints, die FastAPI zelf maakt en op `/openapi.json` en `/docs` zet | [Wat je server laat zien](/docs/veiligheid/zichtbaar/handleiding) |
+| *security through obscurity* | iets verstoppen in plaats van afschermen; het houdt niemand tegen die het toch vindt | [Wat je server laat zien](/docs/veiligheid/zichtbaar/uitzetten) |
+| `.gitignore` | een bestand met de namen van bestanden en mappen die git overslaat | [Wat je server laat zien](/docs/veiligheid/zichtbaar/gitignore) |
 | escapen | van `<` een `&lt;` maken, zodat de browser tekst toont in plaats van HTML | [XSS](/docs/veiligheid/xss/escape) |
 | XSS, *cross-site scripting* | HTML of een script van een bezoeker dat in de browser van een ander draait | [XSS](/docs/veiligheid/xss/zwakheid) |
 | *broken access control*, IDOR | een endpoint dat niet controleert wie iets vraagt | [Wie mag wat](/docs/veiligheid/toegang/praktijk) |

@@ -259,6 +259,11 @@ const KOPPELING: Item[] = [
   // Een eigen reeks in de navbar, los van het nagekeken eindproject. De
   // nakijker toetst deze syntax daarom niet.
   {
+    summary: 'Hoe zet ik de lijst met endpoints uit? (docs_url=None)',
+    concepten: [],
+    geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
+  },
+  {
     summary: 'Hoe begrens ik invoer op de server? (Form met max_length)',
     concepten: [],
     geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',

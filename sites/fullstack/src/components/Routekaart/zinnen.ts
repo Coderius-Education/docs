@@ -25,6 +25,8 @@ export const ZINNEN: Record<string, string> = {
   // Veiligheid
   'Een script als bezoeker':
     'Hoe stuur je een verzoek zonder browser? Dat gereedschap gebruik je in elke reeks.',
+  'Wat je server laat zien':
+    'Wat ziet een bezoeker van je server zonder dat je het hem vertelt, en wat deel je met je bestanden?',
   'Invoer controleren':
     'Hoe houd je tegen wat niet in een veld hoort, als maxlength dat niet doet?',
   'HTML van een bezoeker (XSS)': 'Wat gebeurt er als een bezoeker HTML in je gastenboek typt?',

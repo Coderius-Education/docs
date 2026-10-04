@@ -99,6 +99,13 @@ const ZONDER_BLOK: Record<string, string> = {
   'veiligheid/xss/safe.mdx': 'bouwt op de template-les ervoor, in dezelfde map',
   'veiligheid/xss/templates.mdx': 'templates komen uit de FastAPI-lessen, hier alleen het escapen',
   'veiligheid/xss/praktijk.mdx': 'achtergrond bij de twee stappen ervoor, geen nieuwe voorkennis',
+  'veiligheid/zichtbaar/vergeten.mdx':
+    'cookies meesturen met httpx staat in gereedschap, sessies in de FastAPI-lessen',
+  'veiligheid/zichtbaar/uitzetten.mdx':
+    'de instellingen van FastAPI() worden in de les zelf uitgelegd',
+  'veiligheid/zichtbaar/bestanden.mdx':
+    'SqliteDict en .items() kent de leerling uit de FastAPI-lessen en les 1',
+  'veiligheid/zichtbaar/praktijk.mdx': 'achtergrond bij de lessen ervoor, geen nieuwe voorkennis',
   'veiligheid/wachtwoorden/hash.mdx': 'hashlib en encode worden in de les zelf uitgelegd',
   'veiligheid/wachtwoorden/praktijk.mdx':
     'achtergrond bij de lessen ervoor, geen nieuwe voorkennis',
@@ -134,6 +141,8 @@ const MET_BLOK = [
   'veiligheid/wachtwoorden/inloggen.mdx',
   'veiligheid/wachtwoorden/traag.mdx',
   'veiligheid/xss/zwakheid.mdx',
+  'veiligheid/zichtbaar/gitignore.mdx',
+  'veiligheid/zichtbaar/handleiding.mdx',
 ];
 
 function relatievePaden(): string[] {
