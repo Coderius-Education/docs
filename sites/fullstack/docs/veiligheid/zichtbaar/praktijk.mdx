@@ -1,0 +1,143 @@
+---
+sidebar_label: '6. In de praktijk'
+description: Geheimen buiten je code houden, nakijken wat je deelt, en wat grote sites nog meer doen om niet meer te laten zien dan nodig, met wat de wet zegt over andermans gegevens.
+---
+
+# Wat je server laat zien: in de praktijk
+
+Met de handleiding uit, geen vergeten endpoints en een `.gitignore` uit
+[les 3 tot en met 5](./uitzetten) laat je server alleen zien wat hij moet
+laten zien. Een echte site let op nog een paar plekken.
+
+## Wat jij zelf doet
+
+### Geen geheimen in je code
+
+Gebruik je ooit een sleutel van een andere dienst, zoals een weer-app die een
+code wil bij elk verzoek, zet die dan niet in `main.py`. Je code deel je: in een
+zip, op GitHub, met je docent. Een sleutel in je code deel je mee, en een
+`.gitignore` helpt daar niet tegen, want `main.py` hoort er wel in. Hoe het wel
+kan, staat hieronder bij omgevingsvariabelen.
+
+### Elke keer kijken wat je deelt
+
+Een `.gitignore` maak je één keer, maar een zip maak je elke keer opnieuw. Kijk
+voor elke commit even naar de lijst in Source Control of `git status --short`,
+en open een zip voordat je hem verstuurt. Staat er een `.db` in, dan deel je de
+gegevens van je bezoekers.
+
+## Wat grote sites nog meer doen
+
+Dit hoef je voor je eigen project niet te bouwen. Klap open wat je wilt lezen.
+
+<details>
+<summary>Geheimen in omgevingsvariabelen</summary>
+
+Een **omgevingsvariabele** is een waarde die je in de terminal zet, buiten je
+code. Je server leest hem bij het starten:
+
+```python
+import os
+
+sleutel = os.environ.get("WEER_SLEUTEL", "")
+```
+
+In PowerShell zet je hem vóór `fastapi dev`, in dezelfde terminal:
+
+```bash
+$env:WEER_SLEUTEL = "de-code-van-de-dienst"
+```
+
+Je code bevat dan alleen de naam `WEER_SLEUTEL`, niet de code zelf. Op een
+echte server stelt de beheerder de waarde in. Veel projecten zetten zulke
+waarden ook in een bestand `.env`; dat bestand staat dan in de `.gitignore`.
+
+</details>
+
+<details>
+<summary>GitHub zoekt mee</summary>
+
+Sleutels in code komen zo vaak voor dat GitHub ernaar zoekt. Herkent GitHub in
+een push een sleutel van een bekende dienst, dan houdt hij de push tegen of
+waarschuwt hij de eigenaar. Dat heet **secret scanning**. Het werkt alleen
+voor sleutels die GitHub kent, en niet voor een database met sessie-id's.
+Kijken wat je deelt, blijft je eigen werk.
+
+</details>
+
+<details>
+<summary>Wat je server nog meer vertelt</summary>
+
+Elk antwoord van je server heeft een header `server: uvicorn`. Dat zie je in
+het tabblad Netwerk van je browser bij Reactieheaders. Zo weet een bezoeker welk
+programma je server draait, en dus naar welke bekende fouten hij kan zoeken.
+Grote sites halen zulke headers weg, meestal in de server die vóór hun eigen
+code staat.
+
+Een fout in je code verraadt weinig: FastAPI stuurt dan alleen
+`Internal Server Error`, en de echte foutmelding staat in je terminal. Zet
+nooit zelf een foutmelding met details in een antwoord.
+
+</details>
+
+<details>
+<summary>De handleiding achter een slot</summary>
+
+Een API die bedoeld is voor andere programmeurs, zoals die van een weerdienst,
+houdt zijn `/docs` juist aan: zonder handleiding kan niemand hem gebruiken.
+Zo'n site zet dan wel alleen de endpoints erin die voor buitenstaanders zijn,
+en houdt zijn beheer-endpoints op een aparte server die van buiten niet te
+bereiken is.
+
+</details>
+
+## De wet
+
+De berichten in je gastenboek staan er met de naam van wie ze schreef. Dat zijn
+persoonsgegevens, en daarvoor geldt de **AVG**, de privacywet: je moet ze
+passend beveiligen. Deel je per ongeluk een database met zulke gegevens, dan is
+dat een **datalek**.
+
+Andersom is het gebruiken van een endpoint dat duidelijk niet voor jou bedoeld
+is, zoals de `/sessies` van een klasgenoot, om daarna als een ander in te
+loggen, binnendringen. Het Wetboek van Strafrecht noemt dat
+**computervredebreuk** (artikel 138ab). Dat het endpoint openstond, maakt dat
+niet anders. Daarom deed je de test in [les 2](./vergeten) alleen op je eigen
+server.
+
+## Opdracht: welke maatregel past?
+
+Kies bij elke situatie de maatregel uit deze reeks die het meest helpt.
+
+1. Je zet je server open voor de klas, en op `/docs` staat een endpoint
+   `GET /alles-wissen` dat je om te testen maakte.
+2. Een klasgenoot vraagt je project als zip. In je map staan `gastenboek.db` en
+   `sessies.db`.
+3. Je project gebruikt een sleutel van een weerdienst, en je wilt het op GitHub
+   zetten.
+4. Je hebt de handleiding uitgezet, maar een oud test-endpoint staat nog in
+   `main.py`.
+
+<details>
+<summary>Tip</summary>
+
+Vraag je bij elke situatie af waar het gat zit: in wat je server laat zien, in
+wat je server kan, of in de bestanden die je deelt.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+1. **Het endpoint weghalen**, en de handleiding uitzetten zoals in
+   [les 3](./uitzetten). Alleen uitzetten is verstoppen.
+2. **Een zip van alleen je code**, zonder de `.db`-bestanden, zoals in
+   [les 5](./gitignore).
+3. **Een omgevingsvariabele** voor de sleutel, zodat hij niet in `main.py`
+   staat.
+4. **Het endpoint weghalen.** Zonder handleiding is het moeilijker te vinden,
+   maar wie het pad kent, kan het nog steeds gebruiken.
+
+</details>
+
+Door naar de volgende reeks: [Invoer controleren](../invoer/maxlength).

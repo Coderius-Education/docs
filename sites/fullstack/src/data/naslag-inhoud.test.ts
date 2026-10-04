@@ -125,7 +125,9 @@ describe('cheatsheet volgt de lessen', () => {
   // doelles moet staan. Een link naar de eerste les van de reeks landt op de
   // zwakheid, waar de syntax nog niet staat.
   const KENMERK: Record<string, string> = {
+    'docs_url=None': 'docs_url=None',
     'Form met max_length': 'max_length=',
+    'lijst met wat mag': 'if naam not in PAGINAS:',
     escape: 'escape(',
     '403': 'status_code=403',
     httponly: 'httponly=True',

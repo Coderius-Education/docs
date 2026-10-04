@@ -805,6 +805,19 @@ De regel verschijnt in het tabblad **Console** van de ontwikkelaarstools, met re
 ## Veiligheid
 
 <details>
+<summary>Hoe zet ik de lijst met endpoints uit? (docs_url=None)</summary>
+
+```python
+from fastapi import FastAPI
+
+app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
+```
+
+Zonder deze instellingen zet FastAPI al je endpoints op `/docs`, `/redoc` en `/openapi.json`, voor iedereen die je server kan bereiken. Uitzetten verstopt alleen: haal een endpoint dat niet voor iedereen is ook echt weg. Zet `.venv/`, `__pycache__/` en `*.db` in je `.gitignore`. Zie [Wat je server laat zien: de handleiding uitzetten](/docs/veiligheid/zichtbaar/uitzetten) en [een .gitignore en een nette zip](/docs/veiligheid/zichtbaar/gitignore).
+
+</details>
+
+<details>
 <summary>Hoe begrens ik invoer op de server? (Form met max_length)</summary>
 
 ```python
@@ -814,6 +827,23 @@ async def bericht_plaatsen(bericht: str = Form(..., max_length=280)):
 ```
 
 `maxlength` in de HTML helpt alleen wie zich vergist; de echte grens staat in `Form`. Zie [Invoer controleren](/docs/veiligheid/invoer/grenzen).
+
+</details>
+
+<details>
+<summary>Hoe laat ik een bezoeker een pagina kiezen? (lijst met wat mag)</summary>
+
+```python
+PAGINAS = ["home.html", "over.html"]
+
+@app.get("/pagina")
+async def pagina(naam: str):
+    if naam not in PAGINAS:
+        raise HTTPException(status_code=404, detail="Deze pagina bestaat niet")
+    return FileResponse(f"static/pages/{naam}")
+```
+
+Zonder de lijst vraagt een bezoeker met `?naam=../../main.py` om de code van je server. Zie [Invoer controleren: een bestandsnaam van een bezoeker](/docs/veiligheid/invoer/paden).
 
 </details>
 
@@ -829,6 +859,33 @@ return HTMLResponse(f"Bedankt, {escape(naam)}.")
 ```
 
 Een `{{ }}`-template escapet vanzelf; een f-string niet. Gebruik `|safe` nooit voor tekst van een bezoeker. Zie [HTML van een bezoeker: escapen in Python](/docs/veiligheid/xss/escape).
+
+</details>
+
+<details>
+<summary>Hoe beperk ik het aantal verzoeken? (slowapi)</summary>
+
+Dit is de hele `main.py` uit de map `veiligheid-dos` van de reeks [Te veel verzoeken](/docs/veiligheid/dos/limiet), met een eigen `app = FastAPI()`. Zet je een limiet in je gastenboek, neem dan de imports en de regels met `limiter` en `app.state` en `app.add_exception_handler` over, en zet `@limiter.limit` onder de `@app.`-regel van je eigen endpoint. Geen tweede `app = FastAPI()`: die maakt je andere endpoints onbereikbaar.
+
+```python
+from fastapi import FastAPI, Request, Response
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
+
+limiter = Limiter(key_func=get_remote_address, headers_enabled=True)
+
+app = FastAPI()
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+@app.get("/")
+@limiter.limit("5/minute")
+async def root(request: Request, response: Response):
+    return {"bericht": "Hallo wereld!"}
+```
+
+Het endpoint heeft `request: Request` nodig, en `@limiter.limit` staat direct onder `@app.get` of `@app.post`, niet erboven. Met `headers_enabled=True` vertelt elk antwoord hoeveel verzoeken er nog over zijn; een endpoint dat een dictionary teruggeeft, heeft dan ook `response: Response` nodig. Installeer met `python -m pip install slowapi`. Een limiet op `/inloggen` en `/wijzig` staat in [Wachtwoorden: inlogpogingen beperken](/docs/veiligheid/wachtwoorden/pogingen).
 
 </details>
 
@@ -880,32 +937,5 @@ except VerifyMismatchError:
 ```
 
 Bewaar de hash, nooit het wachtwoord. Vergelijk met `ph.verify` en niet zelf met `==`: elke hash heeft een eigen zout. Zie [Wachtwoorden: registreren met Argon2](/docs/veiligheid/wachtwoorden/registreren) en [inloggen met verify](/docs/veiligheid/wachtwoorden/inloggen).
-
-</details>
-
-<details>
-<summary>Hoe beperk ik het aantal verzoeken? (slowapi)</summary>
-
-Dit is de hele `main.py` uit de map `veiligheid-dos` van de reeks [Te veel verzoeken](/docs/veiligheid/dos/limiet), met een eigen `app = FastAPI()`. Zet je een limiet in je gastenboek, neem dan de imports en de regels met `limiter` en `app.state` en `app.add_exception_handler` over, en zet `@limiter.limit` boven je eigen endpoint. Geen tweede `app = FastAPI()`: die maakt je andere endpoints onbereikbaar.
-
-```python
-from fastapi import FastAPI, Request, Response
-from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.errors import RateLimitExceeded
-from slowapi.util import get_remote_address
-
-limiter = Limiter(key_func=get_remote_address, headers_enabled=True)
-
-app = FastAPI()
-app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
-
-@app.get("/")
-@limiter.limit("5/minute")
-async def root(request: Request, response: Response):
-    return {"bericht": "Hallo wereld!"}
-```
-
-Het endpoint heeft `request: Request` nodig. Met `headers_enabled=True` vertelt elk antwoord hoeveel verzoeken er nog over zijn; een endpoint dat een dictionary teruggeeft, heeft dan ook `response: Response` nodig. Installeer met `python -m pip install slowapi`.
 
 </details>

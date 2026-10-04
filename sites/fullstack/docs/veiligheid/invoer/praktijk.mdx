@@ -1,11 +1,11 @@
 ---
-sidebar_label: '6. In de praktijk'
+sidebar_label: '7. In de praktijk'
 description: Controleer op wat mag in plaats van te weren wat niet mag, zet een grens op de grootte van verzoeken, en waarom een 422 genoeg zegt.
 ---
 
 # Invoer controleren: in de praktijk
 
-Met de grenzen in `Form` en je eigen controles uit [les 2 tot en met 5](./grenzen)
+Met de grenzen in `Form` en je eigen controles uit [les 2 tot en met 6](./grenzen)
 bewaak je één formulier. Een echte site doet dat overal, en op een vaste manier.
 
 ## Wat jij zelf doet
@@ -19,8 +19,9 @@ Neem een gebruikersnaam. Weren wat niet mag ("geen `<`, geen spaties, geen
 `;`…") laat altijd iets door dat je niet bedacht had. Toestaan wat mag ("alleen
 letters en cijfers, 3 tot 20 tekens") laat precies dat door en de rest niet.
 Wat je vergeet te noemen, is dan geweigerd in plaats van toegestaan. Dat is
-hetzelfde idee als de lijst met stemmingen uit [les 5](./getallen). In
-[Wie mag wat](../toegang/praktijk) kom je het weer tegen, als *deny by default*.
+hetzelfde idee als de lijst met stemmingen uit [les 5](./getallen) en de
+pagina's uit [les 6](./paden). In [Wie mag wat](../toegang/praktijk) kom je het
+weer tegen, als *deny by default*.
 
 ### Een 422 zegt genoeg
 
@@ -41,8 +42,9 @@ leest, weigert zelf al een veld boven een megabyte; dat zag je in
 [les 1](./maxlength). Een verzoek kan ook op andere manieren groot zijn: een
 enorm geüpload bestand, of duizend velden tegelijk. Daar zet je een grens omheen
 die vóór je code komt. Dat regel je meestal niet in FastAPI zelf,
-maar in een server ervoor, zoals nginx. Daar lees je meer over in de laatste
-reeks, [Te veel verzoeken](../dos/praktijk):
+maar in een server ervoor, zoals nginx. Wat zo'n server ervoor doet, lees je
+later in de praktijk van [Te veel verzoeken](../dos/praktijk). In nginx is de
+grens één regel:
 
 ```
 client_max_body_size 1m;
@@ -59,6 +61,7 @@ Kies bij elke situatie de aanpak uit deze reeks die past.
 1. Een veld voor een leeftijd krijgt de tekst `honderd` binnen.
 2. Iemand uploadt een bestand van 2 gigabyte naar je server.
 3. Je wilt een gebruikersnaam toestaan, maar geen rare tekens.
+4. Een bezoeker kiest met `?naam=` welke pagina je server stuurt.
 
 <details>
 <summary>Antwoord</summary>
@@ -69,6 +72,8 @@ Kies bij elke situatie de aanpak uit deze reeks die past.
 2. Een grens op de grootte van het verzoek, in de server vóór FastAPI.
 3. Toestaan wat mag: alleen letters en cijfers, met een minimum- en
    maximumlengte.
+4. Een lijst met de pagina's die mogen, zoals in [les 6](./paden). Een naam
+   die er niet in staat, krijgt een `404` voordat `FileResponse` iets opent.
 
 </details>
 

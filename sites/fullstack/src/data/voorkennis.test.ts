@@ -48,6 +48,8 @@ const ZONDER_BLOK: Record<string, string> = {
   'FastAPI/devtools-console.mdx':
     'console.log en de DOM staan al bij javascript.mdx, de les ervoor; niet herhalen',
   'FastAPI/hoe-een-verzoek-werkt.mdx': 'samenvatting van deze cursus, geen nieuwe stof',
+  'FastAPI/index.mdx':
+    'startpagina: noemt de drie cursussen zichtbaar met SiteLinks onder Wat je al moet kunnen; de lessen hebben elk hun eigen blok',
   'FastAPI/htmx-overzicht.mdx':
     'recepten die op de htmx-les ervoor en op de gastenboek-lessen bouwen, allemaal in deze cursus',
   'FastAPI/verzoek-htmx.mdx': 'diagram van de lessen ervoor, geen nieuwe stof',
@@ -81,6 +83,8 @@ const ZONDER_BLOK: Record<string, string> = {
   'veiligheid/invoer/fouten-lezen.mdx':
     'geneste dictionaries staan al bij grenzen.mdx, de les ervoor; niet herhalen',
   'veiligheid/invoer/inhoud.mdx': 'strip() wordt in de les zelf uitgelegd',
+  'veiligheid/invoer/paden.mdx':
+    'FileResponse en query-parameters komen uit de FastAPI-lessen; .. wordt in de les zelf uitgelegd',
   'veiligheid/invoer/maxlength.mdx':
     'maxlength is fullstack-stof uit server-of-browser, geen nieuwe voorkennis',
   'veiligheid/invoer/praktijk.mdx':
@@ -97,11 +101,20 @@ const ZONDER_BLOK: Record<string, string> = {
   'veiligheid/xss/safe.mdx': 'bouwt op de template-les ervoor, in dezelfde map',
   'veiligheid/xss/templates.mdx': 'templates komen uit de FastAPI-lessen, hier alleen het escapen',
   'veiligheid/xss/praktijk.mdx': 'achtergrond bij de twee stappen ervoor, geen nieuwe voorkennis',
+  'veiligheid/zichtbaar/vergeten.mdx':
+    'cookies meesturen met httpx staat in gereedschap, sessies in de FastAPI-lessen',
+  'veiligheid/zichtbaar/uitzetten.mdx':
+    'de instellingen van FastAPI() worden in de les zelf uitgelegd',
+  'veiligheid/zichtbaar/bestanden.mdx':
+    'SqliteDict en .items() kent de leerling uit de FastAPI-lessen en les 1',
+  'veiligheid/zichtbaar/praktijk.mdx': 'achtergrond bij de lessen ervoor, geen nieuwe voorkennis',
   'veiligheid/wachtwoorden/hash.mdx': 'hashlib en encode worden in de les zelf uitgelegd',
   'veiligheid/wachtwoorden/praktijk.mdx':
     'achtergrond bij de lessen ervoor, geen nieuwe voorkennis',
   'veiligheid/wachtwoorden/registreren.mdx': 'bouwt op de lessen ervoor, in dezelfde map',
   'veiligheid/wachtwoorden/wijzigen.mdx': 'bouwt op registreren en inloggen, in dezelfde map',
+  'veiligheid/wachtwoorden/pogingen.mdx':
+    'slowapi komt uit Te veel verzoeken, de endpoints uit de lessen ervoor',
   'veiligheid/wachtwoorden/zout.mdx': 'bouwt op de hash-les ervoor, in dezelfde map',
 };
 
@@ -132,6 +145,8 @@ const MET_BLOK = [
   'veiligheid/wachtwoorden/inloggen.mdx',
   'veiligheid/wachtwoorden/traag.mdx',
   'veiligheid/xss/zwakheid.mdx',
+  'veiligheid/zichtbaar/gitignore.mdx',
+  'veiligheid/zichtbaar/handleiding.mdx',
 ];
 
 function relatievePaden(): string[] {

@@ -1,0 +1,342 @@
+---
+sidebar_label: '8. Inlogpogingen beperken'
+description: Zet een verzoeklimiet op /inloggen en /wijzig, zodat niemand eindeloos wachtwoorden kan proberen, en zie na vijf foute pogingen een 429.
+---
+
+# Wachtwoorden: inlogpogingen beperken
+
+Met Argon2 uit [les 5 tot en met 7](./registreren) geeft een gelekte database
+de wachtwoorden niet weg. Maar wie de database niet heeft, kan nog iets anders:
+`/inloggen` zelf proberen, keer op keer, met steeds een ander wachtwoord. Je
+server antwoordt op elke poging, en elk antwoord zegt of het raak was.
+
+Een grens op het aantal pogingen ken je al: de verzoeklimiet met `slowapi` uit
+[Te veel verzoeken](/docs/veiligheid/dos/limiet). Die zet je nu op de twee
+endpoints die een wachtwoord controleren.
+
+## `slowapi` in deze map
+
+Elke reeks heeft zijn eigen virtual environment, dus installeer `slowapi` ook
+hier, in de terminal van VS Code:
+
+```bash
+python -m pip install slowapi
+```
+
+## De limiet op `/inloggen`
+
+Bovenaan `main.py` komen de imports en de `limiter`, net als in Te veel
+verzoeken. `Request` komt bij de import uit `fastapi`:
+
+<CodeUitleg>
+
+```python showLineNumbers
+from fastapi import FastAPI, Form, HTTPException, Request
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
+
+limiter = Limiter(key_func=get_remote_address)
+```
+
+<Regel n={6}>
+Tel per computer, aan de hand van zijn adres. Zonder `headers_enabled` hoeft een endpoint geen `response: Response` te hebben.
+</Regel>
+
+</CodeUitleg>
+
+Direct onder `app = FastAPI()` komen de twee regels die de limiter aan je app
+hangen:
+
+```python
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+```
+
+In `/inloggen` uit [les 7](./wijzigen) veranderen alleen de kop en de regel
+erboven:
+
+<CodeUitleg>
+
+```python showLineNumbers
+@app.post("/inloggen")
+@limiter.limit("5/minute")
+async def inloggen(request: Request, naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        opgeslagen = db.get(naam, NEP)
+    try:
+        ph.verify(opgeslagen, wachtwoord)
+    except VerifyMismatchError:
+        return {"bericht": "Naam of wachtwoord klopt niet"}
+    if opgeslagen == NEP:
+        return {"bericht": "Naam of wachtwoord klopt niet"}
+    if ph.check_needs_rehash(opgeslagen):
+        with SqliteDict("gebruikers.db") as db:
+            db[naam] = ph.hash(wachtwoord)
+            db.commit()
+    return {"bericht": "Ingelogd"}
+```
+
+<Regel n={2}>
+Hoogstens vijf pogingen per minuut per computer. Een mens die zich vergist, heeft er genoeg aan; een script dat een lijst afloopt, komt nergens.
+</Regel>
+
+<Regel n={3}>
+`request: Request` staat vooraan. Daaruit haalt `slowapi` het adres om te tellen.
+</Regel>
+
+</CodeUitleg>
+
+`/wijzig` controleert ook een wachtwoord: het oude. Zonder limiet daar probeert
+een script daar wat `/inloggen` nu weigert. Zet dus ook boven `/wijzig` een
+`@limiter.limit("5/minute")`, en `request: Request` vooraan bij zijn
+parameters. Elk endpoint telt apart: vijf foute pogingen op `/inloggen` laten
+`/wijzig` met rust.
+
+## Doe de test
+
+:::danger[Alleen je eigen server]
+Probeer dit **uitsluitend** op je eigen server op `127.0.0.1`, met je eigen
+testaccount. Inlogpogingen doen op een account van een ander is strafbaar, ook
+als het "maar een testje" is.
+:::
+
+Start je server opnieuw. Staat Sara nog niet in je database, draai dan eerst
+`registreer.py` uit [les 1](./gewone-tekst). Maak daarna `pogingen.py`, dat zes
+keer met hetzelfde foute wachtwoord inlogt:
+
+```python
+import httpx
+
+adres = "http://127.0.0.1:8000/inloggen"
+
+for nummer in range(6):
+    antwoord = httpx.post(adres, data={"naam": "sara", "wachtwoord": "fout"})
+    print(f"Poging {nummer + 1}: {antwoord.status_code} {antwoord.json()}")
+```
+
+Uitvoer:
+
+```
+Poging 1: 200 {'bericht': 'Naam of wachtwoord klopt niet'}
+Poging 2: 200 {'bericht': 'Naam of wachtwoord klopt niet'}
+Poging 3: 200 {'bericht': 'Naam of wachtwoord klopt niet'}
+Poging 4: 200 {'bericht': 'Naam of wachtwoord klopt niet'}
+Poging 5: 200 {'bericht': 'Naam of wachtwoord klopt niet'}
+Poging 6: 429 {'error': 'Rate limit exceeded: 5 per 1 minute'}
+```
+
+De zesde poging komt niet meer bij `ph.verify`: `slowapi` weigert hem met een
+`429` voordat je functie draait. Wie wachtwoorden wil proberen, haalt er nu
+vijf per minuut, en een lijst van duizend wachtwoorden kost hem meer dan drie
+uur. Het scheelt je server ook werk, want elke `ph.verify` is expres traag.
+
+## Er gaat iets mis
+
+`pogingen.py` geeft zes keer `200`, en nooit een `429`.
+
+**Oorzaak:** `@limiter.limit` staat boven `@app.post` in plaats van eronder.
+FastAPI legt dan de functie zonder limiet vast als endpoint, en `slowapi` telt
+niets. Je krijgt geen foutmelding; de limiet werkt stil niet.
+
+**Oplossing:** zet `@app.post` bovenaan, en `@limiter.limit` direct eronder:
+
+{/* niet-compileren: alleen de decorators, zonder functie eronder */}
+
+```python
+# FOUT
+@limiter.limit("5/minute")
+@app.post("/inloggen")
+
+# GOED
+@app.post("/inloggen")
+@limiter.limit("5/minute")
+```
+
+Sla `main.py` op en draai `pogingen.py` opnieuw.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Sara zelf
+
+Je draait `pogingen.py`, en direct daarna logt Sara in met haar goede
+wachtwoord `welkom123`, vanaf dezelfde computer.
+
+**Vraag:** wat krijgt ze terug?
+
+<details>
+<summary>Tip</summary>
+
+Waarop telt `get_remote_address`: op de naam, of op de computer?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`429 {'error': 'Rate limit exceeded: 5 per 1 minute'}`. De limiet telt per
+computer, en het script en Sara zitten op `127.0.0.1`. Ze moet wachten tot de
+minuut om is, of je slaat `main.py` op en `fastapi dev` begint opnieuw te
+tellen. Op een echte site zit een bezoeker niet op de computer van een
+aanvaller, en merkt hij hier niets van.
+
+</details>
+
+### Opdracht 2: Investigate - Waarom `/wijzig` ook?
+
+Je zet de limiet alleen op `/inloggen`. Hoe kan een script dan toch onbeperkt
+wachtwoorden van Sara proberen?
+
+<details>
+<summary>Antwoord</summary>
+
+Via `/wijzig`. Dat endpoint doet met het veld `oud` precies wat `/inloggen`
+met `wachtwoord` doet: `ph.verify`, en een ander antwoord als het klopt. Klopt
+het, dan verandert het wachtwoord meteen ook. Elk endpoint dat een wachtwoord
+controleert, krijgt daarom een limiet, net als in
+[Wie mag wat](/docs/veiligheid/toegang/elk-endpoint) elk endpoint zijn eigen
+controle kreeg.
+
+</details>
+
+### Opdracht 3: Make - In je eigen project
+
+Wil je accounts in je eigen project, neem dan de drie endpoints uit deze reeks
+over, met `ph`, `NEP` en de `limiter` bovenaan, en maak er formulieren bij voor
+registreren en inloggen.
+
+<details>
+<summary>Tip</summary>
+
+Een wachtwoordveld in HTML is een `<input type="password">`: dan ziet niemand
+over je schouder mee. De `name` moet `wachtwoord` zijn, zoals de parameter.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Loop deze lijst af:
+
+- Er staat nergens een wachtwoord als gewone tekst: niet in de database, niet
+  in een print, niet in een cookie.
+- `/registreer` bewaart `ph.hash(wachtwoord)`.
+- `/inloggen` gebruikt `ph.verify`, ook bij een onbekende naam (tegen `NEP`), en
+  geeft bij een onbekende naam en bij een fout wachtwoord dezelfde melding.
+- `/wijzig` controleert eerst het oude wachtwoord.
+- `/inloggen` en `/wijzig` hebben `@limiter.limit` direct onder `@app.post`, en
+  `request: Request` vooraan bij de parameters. Een script dat zes keer fout
+  inlogt, krijgt bij de zesde een `429`.
+
+Heb je in je project al een limiter uit Te veel verzoeken, gebruik dan die; een
+tweede `limiter` of `app.add_exception_handler` is niet nodig.
+
+Het formulier voor registreren:
+
+```html
+<form method="post" action="/registreer">
+    <input type="text" name="naam" required>
+    <input type="password" name="wachtwoord" required>
+    <button type="submit">Registreer</button>
+</form>
+```
+
+Het formulier voor inloggen is hetzelfde, met `action="/inloggen"`.
+
+Moet je site na het inloggen onthouden wie er is, zet de naam dan in de sessie
+uit [Onthouden op de server: sessies](/docs/FastAPI/sessies). Zet in
+`/inloggen` de parameter `sessie_id: str = Cookie(default="")` erbij, naast
+`wachtwoord`, en vervang de laatste `return` door:
+
+{/* niet-compileren: de laatste regels van inloggen, ingesprongen fragment */}
+
+```python
+    if not sessie_id:
+        sessie_id = secrets.token_hex(16)
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {"naam": naam, "berichten": []})
+        mijn["naam"] = naam
+        sessies[sessie_id] = mijn
+        sessies.commit()
+    antwoord = RedirectResponse(url="/berichten", status_code=303)
+    antwoord.set_cookie(key="sessie_id", value=sessie_id, httponly=True, samesite="lax")
+    return antwoord
+```
+
+Dit staat ná `ph.verify` en de controle op `NEP`: pas daar weet je wie er
+inlogt. `secrets`, `Cookie` en `RedirectResponse` heb je sinds de les over
+sessies al geïmporteerd. Geeft `/inloggen` zo een `RedirectResponse` terug, dan
+werkt de limiet ook: `slowapi` heeft alleen bij `headers_enabled=True` een
+`response: Response` nodig voor een dictionary.
+
+</details>
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+```python
+from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError
+from fastapi import FastAPI, Form, HTTPException, Request
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
+from sqlitedict import SqliteDict
+
+limiter = Limiter(key_func=get_remote_address)
+
+app = FastAPI()
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+ph = PasswordHasher()
+NEP = ph.hash("niemand")
+
+@app.post("/registreer")
+async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        if naam in db:
+            raise HTTPException(status_code=400, detail="Deze naam is al bezet")
+        db[naam] = ph.hash(wachtwoord)
+        db.commit()
+    return {"bericht": f"Welkom, {naam}"}
+
+@app.post("/inloggen")
+@limiter.limit("5/minute")
+async def inloggen(request: Request, naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        opgeslagen = db.get(naam, NEP)
+    try:
+        ph.verify(opgeslagen, wachtwoord)
+    except VerifyMismatchError:
+        return {"bericht": "Naam of wachtwoord klopt niet"}
+    if opgeslagen == NEP:
+        return {"bericht": "Naam of wachtwoord klopt niet"}
+    if ph.check_needs_rehash(opgeslagen):
+        with SqliteDict("gebruikers.db") as db:
+            db[naam] = ph.hash(wachtwoord)
+            db.commit()
+    return {"bericht": "Ingelogd"}
+
+@app.post("/wijzig")
+@limiter.limit("5/minute")
+async def wijzig(request: Request, naam: str = Form(...), oud: str = Form(...), nieuw: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        opgeslagen = db.get(naam, NEP)
+    try:
+        ph.verify(opgeslagen, oud)
+    except VerifyMismatchError:
+        return {"bericht": "Naam of wachtwoord klopt niet"}
+    if opgeslagen == NEP:
+        return {"bericht": "Naam of wachtwoord klopt niet"}
+    with SqliteDict("gebruikers.db") as db:
+        db[naam] = ph.hash(nieuw)
+        db.commit()
+    return {"bericht": "Wachtwoord gewijzigd"}
+```
+
+Registreren, inloggen en wijzigen met Argon2, en een limiet op elk endpoint dat
+een wachtwoord controleert: de hele reeks in één server.
+
+</details>
+
+Door naar [les 9: in de praktijk](./praktijk).

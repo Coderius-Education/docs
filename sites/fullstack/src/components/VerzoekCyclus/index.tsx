@@ -302,6 +302,44 @@ const SESSIE_STAPPEN: Stap[] = [
   },
 ];
 
+const ZICHTBAAR_STAPPEN: Stap[] = [
+  {
+    kant: 'browser',
+    titel: 'Een bezoeker opent /docs',
+    tekst: 'Of /openapi.json: daar stond de lijst met al je endpoints.',
+    to: '/docs/veiligheid/zichtbaar/handleiding',
+    les: 'De handleiding op /docs',
+  },
+  {
+    kant: 'server',
+    titel: 'FastAPI zoekt het pad',
+    tekst: 'Met docs_url, redoc_url en openapi_url op None bestaat de handleiding niet: 404.',
+    to: '/docs/veiligheid/zichtbaar/uitzetten',
+    les: 'De handleiding uitzetten',
+    controle: true,
+  },
+  {
+    kant: 'browser',
+    titel: 'Hij probeert een pad dat hij kent',
+    tekst: 'Bijvoorbeeld GET /sessies, van een lijst die hij eerder zag.',
+    to: '/docs/veiligheid/zichtbaar/vergeten',
+    les: 'Een vergeten endpoint',
+  },
+  {
+    kant: 'server',
+    titel: 'Staat het endpoint in main.py?',
+    tekst: 'Alleen wat er staat, antwoordt. Een weggehaald endpoint geeft een 404.',
+    to: '/docs/veiligheid/zichtbaar/uitzetten',
+    les: 'De handleiding uitzetten',
+    controle: true,
+  },
+  {
+    kant: 'browser',
+    titel: 'Hij krijgt twee keer een 404',
+    tekst: 'Er valt niets te vinden en niets te gebruiken.',
+  },
+];
+
 const INVOER_STAPPEN: Stap[] = [
   {
     kant: 'browser',
@@ -514,6 +552,7 @@ const VARIANTEN = {
   post: { stappen: POST_STAPPEN, titel: 'Een formulier versturen' },
   htmx: { stappen: HTMX_STAPPEN, titel: 'Een verzoek zonder herladen' },
   sessie: { stappen: SESSIE_STAPPEN, titel: 'Herkend worden met een sessie' },
+  zichtbaar: { stappen: ZICHTBAAR_STAPPEN, titel: 'Waar de controle zit: wat je server laat zien' },
   invoer: { stappen: INVOER_STAPPEN, titel: 'Waar de controle zit: invoer' },
   xss: { stappen: XSS_STAPPEN, titel: 'Waar de controle zit: HTML van een bezoeker' },
   toegang: { stappen: TOEGANG_STAPPEN, titel: 'Waar de controle zit: wie mag wat' },
