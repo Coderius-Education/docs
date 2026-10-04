@@ -52,7 +52,7 @@
                               "block": {
                                 "type": "math_number",
                                 "fields": {
-                                  "NUM": 90
+                                  "NUM": 0
                                 }
                               }
                             }
@@ -81,7 +81,7 @@
                                       "block": {
                                         "type": "math_number",
                                         "fields": {
-                                          "NUM": 0
+                                          "NUM": 90
                                         }
                                       }
                                     }

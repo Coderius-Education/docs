@@ -25,6 +25,8 @@ Zet je robot uit met de knop **ON/OFF**. Sluit de servo aan op de rij van **D9**
 
 ![Uitsnede van het schema: de servo rechtsonder, met de bruine draad naar GND, de rode naar 5V en de oranje naar het signaal van D9 op het shield.](@site/static/fritzing/click_golfer_servo.png)
 
+Het signaal van **D9** is het pinnetje het dichtst bij de naam D9. Zit alles vast? Zet je robot dan weer aan met **ON/OFF**.
+
 ## Graden
 
 Een servo draait een halve cirkel. Die halve cirkel is verdeeld in 180 stukjes: **graden**. Je schrijft dat met een klein rondje, zoals 90°.
@@ -39,7 +41,7 @@ Alles daartussen kan ook, zoals 45° of 135°.
 
 ## Heen en weer
 
-Het blok **Servo 9 op 90** uit de groep **Actuatoren** zet de servo op pin 9 in de stand van 90 graden. Dit programma laat het asje heen en weer draaien:
+Het blok **Servo 9 op 90** uit de groep **Actuatoren** zet de servo op pin 9 in de stand van 90 graden. In Easybloqs staat er eerst **Servo 2 op 90**. Klik op de 2 en kies **9**: daar zit je servo. Dit programma laat het asje heen en weer draaien:
 
 <Blokken programma={heenEnWeer} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: Servo 9 op 0, duurt 1000 ms, Servo 9 op 90, duurt 1000 ms." />
 
@@ -72,7 +74,7 @@ Je hebt drie keer het blok **Servo 9 op …** nodig, en na elk blok een **duurt 
 
 ## Er gaat iets mis
 
-<Probleem titel="Het asje trilt, of beweegt bijna niet.">
+<Probleem titel="Het asje beweegt bijna niet, of schokt een beetje heen en weer.">
 
 **Oorzaak:** er staat geen **duurt** tussen de servo-blokken. De robot geeft dan meteen de volgende stand, nog voordat het asje bij de vorige is.
 
@@ -80,11 +82,11 @@ Je hebt drie keer het blok **Servo 9 op …** nodig, en na elk blok een **duurt 
 
 </Probleem>
 
-<Probleem titel="De servo zoemt of trilt, maar draait niet.">
+<Probleem titel="De servo zoemt of wordt warm, maar draait niet.">
 
 **Oorzaak:** er zit iets in de weg, zodat het asje niet verder kan. Of de servo moet naar een stand waar hij niet komt: veel servo's zitten bij 0° en 180° al tegen hun eind aan, en blijven dan zoemen.
 
-**Oplossing:** kijk of de Lego-as ergens tegenaan zit. Zoemt hij alleen bij 0° of 180°, probeer dan 10° en 170°.
+**Oplossing:** kijk of de Lego-as ergens tegenaan zit. Zoemt hij alleen bij 0° of 180°, probeer dan 10° en 170°. Gebruik dat getal dan ook in de volgende lessen, overal waar 0 of 180 staat. Wordt de servo warm, zet je robot dan meteen uit en zoek wat het asje tegenhoudt. Draai het asje ook nooit met de hand terwijl de robot aan staat: daar kunnen de tandwieltjes in de servo kapot van gaan.
 
 **Zelf vinden:** haal alles van de as af. Draait de servo dan wel? Dan zat er iets in de weg.
 
@@ -97,7 +99,7 @@ Je hebt drie keer het blok **Servo 9 op …** nodig, en na elk blok een **duurt 
 **Oplossing:** loop deze punten na:
 
 - zit de oranje draad op het signaal van **D9**, en de bruine op GND? Een omgekeerde stekker werkt niet;
-- staat er in het blok **Servo 9**, en niet een ander getal?
+- staat er in het blok **Servo 9**, en niet een ander getal? Een nieuw servo-blok begint op **Servo 2**.
 
 </Probleem>
 
@@ -113,15 +115,7 @@ Je hebt drie keer het blok **Servo 9 op …** nodig, en na elk blok een **duurt 
 
 **Oorzaak:** misschien krijgt de servo via alleen de usb-kabel te weinig stroom. Een servo die kracht moet zetten, vraagt veel.
 
-**Oplossing:** probeer of het beter gaat als je robot stroom krijgt via de aansluiting op het shield, met de knop **ON/OFF** aan. Vraag je docent welke adapter of batterij erbij hoort.
-
-</Probleem>
-
-<Probleem titel="De servo wordt warm.">
-
-**Oorzaak:** hij duwt tegen iets aan en komt niet waar hij heen moet.
-
-**Oplossing:** zet je robot meteen uit, en zoek wat het asje tegenhoudt. Draai het asje ook nooit met de hand terwijl de robot aan staat: daar kunnen de tandwieltjes in de servo kapot van gaan.
+**Oplossing:** vraag je docent of er een adapter of batterij bij je robot hoort. Probeer dan of het beter gaat als je robot daar stroom van krijgt, via de aansluiting op het shield, met **ON/OFF** aan.
 
 </Probleem>
 

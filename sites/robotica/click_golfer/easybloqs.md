@@ -32,7 +32,7 @@ Een blok pak je in de groep en sleep je naar je programma. Past het, dan klikt h
 
 ## Je eerste programma
 
-Maak dit programma na. Het **Leaphy**-blok staat al klaar. Het blok **Toon op scherm** vind je in de groep **Actuatoren**: sleep het in het Leaphy-blok. Er zit al een tekstvakje in met het woord `text`. Klik daarop en typ je zin.
+Maak dit programma na. Het **Leaphy**-blok staat al klaar. Het blok **Toon op scherm** vind je in de groep **Actuatoren**: sleep het in het Leaphy-blok. In die groep staan twee blokken **Toon op scherm**. Neem het blok met één vakje, niet het blok met een `=` erin. Er zit al een tekstvakje in met het woord `text`. Klik daarop en typ je zin.
 
 <Blokken programma={hallo} beschrijving="Het Leaphy-blok met daarin Toon op scherm 'Hallo, ik ben de Click Golfer'." />
 
@@ -42,20 +42,20 @@ Alles wat in het Leaphy-blok staat, doet je robot **één keer**, van boven naar
 
 1. Klik rechtsboven op de gekleurde knop **Upload naar robot**.
 2. De eerste keer vraagt je browser met welk apparaat hij moet praten. Er verschijnt een lijstje. Klik op je robot en daarna op de knop om verbinding te maken. Staat er meer dan één regel, trek dan de usb-kabel eruit en kijk welke regel verdwijnt: dat is je robot.
-3. Er opent een venster. Daarin zie je eerst **Code compileren**: Easybloqs maakt van je blokken een programma. Daarna **Code uploaden**: het programma gaat naar je robot. Als het klaar is, staat er **Upload voltooid**.
+3. Er opent een venster. Daarin zie je eerst **Verbinden met robot...** en dan **Code compileren**: Easybloqs maakt van je blokken een programma. Daarna **Poort openen** en **Code uploaden**: het programma gaat naar je robot. Als het klaar is, staat er **Upload voltooid**.
 4. Klik op **Ga terug naar code scherm**. Je ziet je blokken weer.
 
 ### Stap 2: open het scherm
 
-Rechts naast je blokken staat een rij ronde knoppen. Ga met je muis over de knop met het plaatje van een blaadje met streepjes. Er verschijnt de tekst **Toon output op scherm**. Klik erop.
+Rechts naast je blokken staat een rij ronde knoppen. Ga met je muis over de knop met het plaatje van een vierkantje met liggende streepjes. Er verschijnt de tekst **Toon output op scherm**. Klik erop.
 
-Er opent een venster met bovenaan **Toon output op scherm**. Dit is het scherm: alles wat je robot met **Toon op scherm** laat zien, komt hier regel voor regel onder elkaar.
+Er opent een venster met bovenaan **Toon output op scherm**. Dit is het scherm: alles wat je robot met **Toon op scherm** laat zien, komt hier regel voor regel onder elkaar. Voor elke regel staat de tijd waarop hij binnenkwam. Bovenaan het scherm staat een knop met een prullenbak: daarmee maak je het scherm leeg.
 
 ### Stap 3: laat de robot opnieuw beginnen
 
-Je robot voerde het programma al uit toen de upload klaar was, en toen stond het scherm nog niet open. Daarom zie je de zin misschien nog niet.
+Je robot voerde het programma al uit toen de upload klaar was. Misschien staat de zin daarom al op het scherm, misschien ook niet. Om zeker te weten wat je robot nu doet, klik je eerst op de prullenbak, zodat het scherm leeg is.
 
-Druk op het kleine knopje op de Arduino zelf, met **RST** ernaast.
+Druk dan op het kleine knopje op de Arduino zelf, met **RST** eronder.
 
 ![Uitsnede van de blauwe Arduino Nano op het shield: in het midden het kleine grijze knopje, met RST eronder.](@site/static/fritzing/click_golfer_rst.png)
 
@@ -71,7 +71,7 @@ Hallo, ik ben de Click Golfer
 
 **Oorzaak:** je hebt in het lijstje van de browser geen robot gekozen, of het lijstje was leeg.
 
-**Oplossing:** kijk of de usb-kabel goed vastzit, en klik opnieuw op **Upload naar robot**. Blijft het lijstje leeg, dan kent je laptop de Arduino nog niet. Kies in het menu **Meer…** en daarna **Windows drivers**, en installeer die. Probeer het daarna opnieuw.
+**Oplossing:** kijk of de usb-kabel goed vastzit, en klik opnieuw op **Upload naar robot**. Blijft het lijstje leeg op een Windows-laptop, dan kent je laptop de Arduino nog niet. Kies in het menu **Meer…** en daarna **Download Windows drivers**, en installeer die. Probeer het daarna opnieuw. Op een Chromebook staat die knop er niet; vraag dan je docent.
 
 </Probleem>
 
@@ -91,10 +91,38 @@ Hallo, ik ben de Click Golfer
 
 </Probleem>
 
+<Probleem titel="De zin staat twee keer op het scherm.">
+
+**Oorzaak:** je robot heeft het programma twee keer uitgevoerd: een keer na de upload en een keer na **RST**. Het scherm laat allebei zien.
+
+**Oplossing:** klik op de prullenbak bovenaan het scherm en druk daarna op **RST**. Nu staat de zin er één keer.
+
+**Zelf vinden:** kijk naar de tijd voor de regels. Liggen ze ver uit elkaar, dan komen ze van twee keer opstarten.
+
+</Probleem>
+
+<Probleem titel="Op het scherm staat = 0 achter je zin.">
+
+**Oorzaak:** je pakte het andere blok **Toon op scherm**, het blok met een `=` erin. Dat zet achter je tekst een `=` en een getal.
+
+**Oplossing:** sleep dat blok terug naar de groepen links, en neem het blok **Toon op scherm** met één vakje.
+
+</Probleem>
+
+{/* stijl-uitzondering: uitroepteken letterlijke melding van Easybloqs */}
+
+<Probleem titel="Upload mislukt!">
+
+**Oorzaak:** het programma kwam niet goed op je robot. Onder de melding staat vaak nog een zin, zoals **De robot is niet in sync, probeer het opnieuw**. Dan kreeg je laptop geen goed antwoord van de Arduino. Dat gebeurt bijvoorbeeld als er een draad op de rij van D0 of D1 van het shield zit: over die pinnen gaat het programma naar de Arduino.
+
+**Oplossing:** kijk of je in Easybloqs de robot **Arduino Nano** hebt gekozen, en of er niets op de rijen van D0 en D1 zit. Klik op **Ga terug naar code scherm** en daarna nog een keer op **Upload naar robot**.
+
+</Probleem>
+
 <details>
 <summary>Controlevraag</summary>
 
-Je zet een tweede **Toon op scherm** onder het eerste, met de tekst "Ik ben er klaar voor". Hoe vaak zie je elke zin op het scherm?
+Je zet een tweede **Toon op scherm** onder het eerste, met de tekst "Ik ben er klaar voor". Je uploadt, maakt het scherm leeg met de prullenbak en drukt op **RST**. Hoe vaak zie je elke zin op het scherm?
 
 </details>
 
