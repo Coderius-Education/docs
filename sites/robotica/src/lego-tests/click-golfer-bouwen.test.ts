@@ -365,3 +365,20 @@ describe('controlevragen', () => {
     expect(zonder).toEqual([]);
   });
 });
+
+describe('het antwoord bij het lampje', () => {
+  // Het antwoord zei "zet de twee Zet PWM-blokken voor groen erboven", maar
+  // een van die twee zet rood uit, en de blokken voor de anders-tak stonden
+  // alleen in de opsomming. Elk blok uit lampje.json staat nu in de tekst.
+  it('noemt elk Zet PWM-blok uit het programma, met zijn tak', () => {
+    const extras = tekst('extras.md');
+    for (const blok of [
+      'Zet PWM 11 op 0',
+      'Zet PWM 10 op 255',
+      'Zet PWM 11 op 255',
+      'Zet PWM 10 op 0',
+    ])
+      expect(extras).toContain(`${blok} (`);
+    expect(extras).toMatch(/In de anders-tak komen Zet PWM 11 op 255/);
+  });
+});

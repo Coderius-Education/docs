@@ -41,7 +41,7 @@ Je bouwt hetzelfde **als**-blok als bij [de IR-sensor](ir-sensor), maar nu met e
 - als **Lees anapin A0** kleiner is dan jouw grens: zet het lampje op groen en laat de arm slaan;
 - anders: zet het lampje op rood.
 
-Het slaan zat al in je programma uit [Een naam voor je blokken](subprogrammas). Sleep het bovenste blok in de dan-tak van je oude **als … dan**, met alles eronder, naar de dan-tak van het nieuwe blok. Zet de twee **Zet PWM**-blokken voor groen erboven.
+Het slaan zat al in je programma uit [Een naam voor je blokken](subprogrammas). Sleep het bovenste blok in de dan-tak van je oude **als … dan**, met alles eronder, naar de dan-tak van het nieuwe blok. Zet bovenaan in de dan-tak de twee **Zet PWM**-blokken voor groen: Zet PWM 11 op 0 (rood uit) en Zet PWM 10 op 255 (groen aan). In de anders-tak komen Zet PWM 11 op 255 (rood aan) en Zet PWM 10 op 0 (groen uit).
 
 <Blokken programma={lampje} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan Zet PWM 11 op 0, Zet PWM 10 op 255, Servo 9 op 0, duurt 500 ms, mikken en slaan. Anders: Zet PWM 11 op 255 en Zet PWM 10 op 0. Daaronder de subprogramma's mikken en slaan, net als bij Een naam voor je blokken." />
 
