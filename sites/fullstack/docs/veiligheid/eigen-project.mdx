@@ -32,6 +32,11 @@ vertrouw je niet, en de controle hoort op de server.
   [Templates escapen vanzelf](./xss/templates))
 - [ ] Nergens staat `|safe` achter tekst van een bezoeker. ([`|safe`](./xss/safe))
 
+## Te veel verzoeken
+
+- [ ] Het endpoint dat iets opslaat, heeft een verzoeklimiet.
+  ([Een limiet met slowapi](./dos/limiet))
+
 ## Wie mag wat
 
 - [ ] Elk endpoint dat iets verwijdert of aanpast, controleert zelf of het van
@@ -69,18 +74,13 @@ Alleen als je project accounts heeft.
   en een fout wachtwoord, en ook bij een onbekende naam een `verify` tegen een
   nep-hash. ([Inloggen met verify](./wachtwoorden/inloggen))
 
-## Te veel verzoeken
-
-- [ ] Het endpoint dat iets opslaat, heeft een verzoeklimiet.
-  ([Een limiet met slowapi](./dos/limiet))
-
 ## Test het zoals een bezoeker
 
 Een lijst aflopen is niet hetzelfde als testen. Draai voor elk punt een klein
 script uit [Een script als bezoeker](./gereedschap) tegen je eigen server op
 `127.0.0.1`, en kijk of je de statuscode krijgt die je verwacht: een `422` bij
-een te lang veld, een `403` bij het bericht van een ander, een `429` na te veel
-verzoeken.
+een te lang veld, een `429` na te veel verzoeken, een `403` bij het bericht van
+een ander.
 
 :::danger[Alleen je eigen server]
 Test alleen je eigen project, op je eigen computer. Wil je weten of de site van

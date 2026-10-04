@@ -51,17 +51,44 @@ describe('de reeks Veiligheid', () => {
     expect(route.at(-1)).toBe('veiligheid/eigen-project');
   });
 
-  it('de reeksen staan van dichtbij het eigen gastenboek naar ver weg', () => {
-    // Invoer bouwt direct op Server of browser?; DoS gaat over infrastructuur en
-    // komt daarom als laatste. Cookies bouwt op de server uit Wie mag wat.
+  it('de reeksen staan van makkelijk naar moeilijk', () => {
+    // Invoer bouwt direct op Server of browser?. DoS stond een tijd als laatste,
+    // "want het gaat over infrastructuur", maar het is één decorator en een
+    // for-loop: lichter dan Wie mag wat met twee bezoekers en sessies. Nu staat
+    // het als derde, en kan Wachtwoorden achteraan de limiet op /inloggen uit
+    // DoS gebruiken. Cookies bouwt op de server uit Wie mag wat.
     expect(categorieen.map(eersteMap)).toEqual([
       'invoer',
       'xss',
+      'dos',
       'toegang',
       'cookies',
       'wachtwoorden',
-      'dos',
     ]);
+  });
+
+  it('"de laatste reeks" is ook echt de laatste', () => {
+    // Toen DoS naar voren schoof, zeiden Invoer en Wachtwoorden nog "de
+    // laatste reeks, Te veel verzoeken". Een zin met "laatste reeks" linkt naar
+    // de laatste reeks; een praktijk die zegt dat het de laatste reeks was,
+    // staat ook in de laatste.
+    const mappen = categorieen.map(eersteMap);
+    const laatste = mappen.at(-1);
+    const fout: string[] = [];
+    for (const map of zwakheden) {
+      for (const stap of stappenVan(map)) {
+        const tekst = lees(map, stap).replace(/\s+/g, ' ');
+        for (const m of tekst.matchAll(
+          /laatste reeks[^.]{0,80}?\]\((?:\.\.\/|\/docs\/veiligheid\/)([a-z-]+)\//g,
+        )) {
+          if (m[1] !== laatste) fout.push(`${map}/${stap}: laatste reeks -> ${m[1]}`);
+        }
+        if (/Dit was de laatste reeks/.test(tekst) && map !== laatste) {
+          fout.push(`${map}/${stap}: zegt dat het de laatste reeks was`);
+        }
+      }
+    }
+    expect(fout).toEqual([]);
   });
 
   it('elke reeks wijst aan het eind naar de volgende, de laatste naar de afsluiter', () => {
@@ -338,6 +365,20 @@ describe('de route Veiligheid sluit aan op het eigen project', () => {
       }
     }
     expect(fout).toEqual([]);
+  });
+
+  it('de controlelijst in Beveilig je eigen project volgt de route', () => {
+    // De lijst noemde Te veel verzoeken nog als laatste nadat DoS naar voren
+    // was geschoven. Elke sectie hoort bij de reeks van zijn eerste link.
+    const tekst = readFileSync(join(VEILIGHEID, 'eigen-project.mdx'), 'utf8');
+    const volgorde = tekst
+      .split(/^## /m)
+      .slice(1)
+      .map((sectie) => sectie.match(/\]\(\.\/([a-z-]+)\//)?.[1])
+      .filter((map): map is string => map !== undefined)
+      .map((map) => reeksen.indexOf(map));
+    expect(volgorde.length).toBe(reeksen.length);
+    expect(volgorde).toEqual([...volgorde].sort((a, b) => a - b));
   });
 
   it('de Veiligheid-items in de cheatsheet staan in de volgorde van de route', () => {

@@ -833,6 +833,33 @@ Een `{{ }}`-template escapet vanzelf; een f-string niet. Gebruik `|safe` nooit v
 </details>
 
 <details>
+<summary>Hoe beperk ik het aantal verzoeken? (slowapi)</summary>
+
+Dit is de hele `main.py` uit de map `veiligheid-dos` van de reeks [Te veel verzoeken](/docs/veiligheid/dos/limiet), met een eigen `app = FastAPI()`. Zet je een limiet in je gastenboek, neem dan de imports en de regels met `limiter` en `app.state` en `app.add_exception_handler` over, en zet `@limiter.limit` boven je eigen endpoint. Geen tweede `app = FastAPI()`: die maakt je andere endpoints onbereikbaar.
+
+```python
+from fastapi import FastAPI, Request, Response
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
+
+limiter = Limiter(key_func=get_remote_address, headers_enabled=True)
+
+app = FastAPI()
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+@app.get("/")
+@limiter.limit("5/minute")
+async def root(request: Request, response: Response):
+    return {"bericht": "Hallo wereld!"}
+```
+
+Het endpoint heeft `request: Request` nodig. Met `headers_enabled=True` vertelt elk antwoord hoeveel verzoeken er nog over zijn; een endpoint dat een dictionary teruggeeft, heeft dan ook `response: Response` nodig. Installeer met `python -m pip install slowapi`.
+
+</details>
+
+<details>
 <summary>Hoe controleer ik wie iets mag? (403)</summary>
 
 ```python
@@ -880,32 +907,5 @@ except VerifyMismatchError:
 ```
 
 Bewaar de hash, nooit het wachtwoord. Vergelijk met `ph.verify` en niet zelf met `==`: elke hash heeft een eigen zout. Zie [Wachtwoorden: registreren met Argon2](/docs/veiligheid/wachtwoorden/registreren) en [inloggen met verify](/docs/veiligheid/wachtwoorden/inloggen).
-
-</details>
-
-<details>
-<summary>Hoe beperk ik het aantal verzoeken? (slowapi)</summary>
-
-Dit is de hele `main.py` uit de map `veiligheid-dos` van de reeks [Te veel verzoeken](/docs/veiligheid/dos/limiet), met een eigen `app = FastAPI()`. Zet je een limiet in je gastenboek, neem dan de imports en de regels met `limiter` en `app.state` en `app.add_exception_handler` over, en zet `@limiter.limit` boven je eigen endpoint. Geen tweede `app = FastAPI()`: die maakt je andere endpoints onbereikbaar.
-
-```python
-from fastapi import FastAPI, Request, Response
-from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.errors import RateLimitExceeded
-from slowapi.util import get_remote_address
-
-limiter = Limiter(key_func=get_remote_address, headers_enabled=True)
-
-app = FastAPI()
-app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
-
-@app.get("/")
-@limiter.limit("5/minute")
-async def root(request: Request, response: Response):
-    return {"bericht": "Hallo wereld!"}
-```
-
-Het endpoint heeft `request: Request` nodig. Met `headers_enabled=True` vertelt elk antwoord hoeveel verzoeken er nog over zijn; een endpoint dat een dictionary teruggeeft, heeft dan ook `response: Response` nodig. Installeer met `python -m pip install slowapi`.
 
 </details>

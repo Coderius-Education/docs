@@ -269,6 +269,11 @@ const KOPPELING: Item[] = [
     geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
   },
   {
+    summary: 'Hoe beperk ik het aantal verzoeken? (slowapi)',
+    concepten: [],
+    geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
+  },
+  {
     summary: 'Hoe controleer ik wie iets mag? (403)',
     concepten: [],
     geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
@@ -280,11 +285,6 @@ const KOPPELING: Item[] = [
   },
   {
     summary: 'Hoe bewaar ik een wachtwoord veilig? (Argon2)',
-    concepten: [],
-    geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
-  },
-  {
-    summary: 'Hoe beperk ik het aantal verzoeken? (slowapi)',
     concepten: [],
     geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
   },

@@ -41,8 +41,9 @@ leest, weigert zelf al een veld boven een megabyte; dat zag je in
 [les 1](./maxlength). Een verzoek kan ook op andere manieren groot zijn: een
 enorm geüpload bestand, of duizend velden tegelijk. Daar zet je een grens omheen
 die vóór je code komt. Dat regel je meestal niet in FastAPI zelf,
-maar in een server ervoor, zoals nginx. Daar lees je meer over in de laatste
-reeks, [Te veel verzoeken](../dos/praktijk):
+maar in een server ervoor, zoals nginx. Wat zo'n server ervoor doet, lees je
+later in de praktijk van [Te veel verzoeken](../dos/praktijk). In nginx is de
+grens één regel:
 
 ```
 client_max_body_size 1m;

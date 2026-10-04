@@ -88,9 +88,10 @@ const sidebars: SidebarsConfig = {
   ],
   // Eerst de startpagina (het ene idee, de spelregel, de statuscodes) en het
   // gereedschap (httpx). Dan per zwakheid een categorie met kleine lessen, van
-  // dichtbij het eigen gastenboek naar ver weg: invoer, xss, toegang, cookies,
-  // wachtwoorden, dos. Ingeklapt, zodat de sidebar een kaart blijft; Docusaurus
-  // klapt de reeks open waar de leerling in zit.
+  // makkelijk naar moeilijk: invoer, xss, dos, toegang, cookies, wachtwoorden.
+  // DoS staat vroeg, want het is één decorator en een for-loop; Wachtwoorden
+  // staat achteraan en gebruikt de limiet uit DoS. Ingeklapt, zodat de sidebar
+  // een kaart blijft; Docusaurus klapt de reeks open waar de leerling in zit.
   veiligheidSidebar: [
     'veiligheid/index',
     'veiligheid/gereedschap',
@@ -118,6 +119,19 @@ const sidebars: SidebarsConfig = {
         'veiligheid/xss/safe',
         'veiligheid/xss/eigen-project',
         'veiligheid/xss/praktijk',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Te veel verzoeken (DoS)',
+      collapsed: true,
+      items: [
+        'veiligheid/dos/verzoek',
+        'veiligheid/dos/dos-en-ddos',
+        'veiligheid/dos/zelf-meten',
+        'veiligheid/dos/limiet',
+        'veiligheid/dos/te-veel',
+        'veiligheid/dos/praktijk',
       ],
     },
     {
@@ -159,19 +173,6 @@ const sidebars: SidebarsConfig = {
         'veiligheid/wachtwoorden/inloggen',
         'veiligheid/wachtwoorden/wijzigen',
         'veiligheid/wachtwoorden/praktijk',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'Te veel verzoeken (DoS)',
-      collapsed: true,
-      items: [
-        'veiligheid/dos/verzoek',
-        'veiligheid/dos/dos-en-ddos',
-        'veiligheid/dos/zelf-meten',
-        'veiligheid/dos/limiet',
-        'veiligheid/dos/te-veel',
-        'veiligheid/dos/praktijk',
       ],
     },
     'veiligheid/eigen-project',

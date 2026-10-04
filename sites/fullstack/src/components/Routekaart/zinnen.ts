@@ -28,11 +28,11 @@ export const ZINNEN: Record<string, string> = {
   'Invoer controleren':
     'Hoe houd je tegen wat niet in een veld hoort, als maxlength dat niet doet?',
   'HTML van een bezoeker (XSS)': 'Wat gebeurt er als een bezoeker HTML in je gastenboek typt?',
+  'Te veel verzoeken (DoS)': 'Wat doe je tegen een bezoeker die je server blijft bestoken?',
   'Wie mag wat': 'Hoe zorg je dat alleen de schrijver zijn bericht kan verwijderen?',
   'Cookies afschermen': 'Hoe houd je een script weg bij het sessie-id?',
   'Wachtwoorden veilig opslaan':
     'Hoe bewaar je wachtwoorden zo dat een gelekte database ze niet weggeeft?',
-  'Te veel verzoeken (DoS)': 'Wat doe je tegen een bezoeker die je server blijft bestoken?',
   'Beveilig je eigen project': 'Eén lijst om je gastenboek of eigen project mee na te lopen.',
 };
 
