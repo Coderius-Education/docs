@@ -22,6 +22,10 @@
       "types": "./stijl.d.ts",
       "default": "./stijl.js"
     },
+    "./wijzigingen": {
+      "types": "./wijzigingen.d.ts",
+      "default": "./wijzigingen.js"
+    },
     "./matomo": {
       "types": "./matomo.d.ts",
       "default": "./matomo.js"
