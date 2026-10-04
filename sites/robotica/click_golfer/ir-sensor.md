@@ -4,6 +4,7 @@ sidebar_position: 4
 import Blokken from '@site/src/components/Blokken';
 import uitlezen from './blokken/sensor-uitlezen.json';
 import balKlaar from './blokken/bal-klaar.json';
+import SensorSimulator from '@site/src/components/SensorSimulator';
 
 # De IR-sensor
 
@@ -50,6 +51,33 @@ Waarom staat **Lees anapin A0** in een **herhaal voor altijd**?
 <summary>Antwoord</summary>
 
 Zonder herhaal leest de robot de sensor één keer, bij het aanzetten. Je wilt steeds opnieuw weten of er een bal ligt.
+
+</details>
+
+## Een grens kiezen
+
+Zonder bal geeft je sensor een hoog getal, met een bal een laag getal. Je robot moet dus weten vanaf welk getal er een bal ligt. Dat getal kies je zelf: het heet je **grens**. Is het getal op A0 kleiner dan je grens, dan ligt er een bal.
+
+Hieronder oefen je dat zonder robot. Schuif met de muis, of klik op een schuifje en gebruik de pijltjestoetsen.
+
+<SensorSimulator />
+
+De getallen hier zijn een voorbeeld. Jouw sensor geeft andere getallen: dat hangt af van de sensor, het licht in de klas en de bal. Daarom kies je in stap 2 een grens met de getallen die jij in stap 1 hebt opgeschreven.
+
+{/* stijl-uitzondering: uitroepteken citaat van de tekst die het programma op het scherm zet */}
+
+1. Schuif de bal naar de sensor. Wat doet het getal?
+2. Laat de grens op 300 staan. Bij welke afstanden verschijnt "klaar om te golfen!"?
+3. Kies een grens zodat de zin verschijnt als de bal op 3 cm of dichterbij ligt, en niet als hij verder weg ligt.
+4. Zet een vinkje bij **Geen bal** en schuif de grens helemaal naar rechts. Wat zie je?
+
+<details>
+<summary>Antwoord</summary>
+
+1. Het getal wordt lager als de bal dichterbij komt. Zonder bal is het het hoogst.
+2. Op 2 cm en dichterbij. Op 3 cm is het getal 399, en dat is niet kleiner dan 300.
+3. Een grens van 400 tot en met 550, bijvoorbeeld 500. Op 3 cm is het getal 399 en op 4 cm 555. Je grens moet daar tussenin liggen.
+4. De zin verschijnt, terwijl er geen bal ligt. Je grens is dan hoger dan het getal zonder bal, en je robot denkt steeds dat er een bal ligt.
 
 </details>
 
