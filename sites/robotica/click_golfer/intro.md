@@ -11,7 +11,7 @@ Je hoeft hier niets voor te kunnen. Ook als je nog nooit hebt geprogrammeerd, ko
 
 ## Bekijk het robotje
 
-Hieronder zie je de Click Golfer in 3D. Sleep met je muis om hem te draaien, en scroll om in en uit te zoomen. Met de knop **Volledig scherm** rechtsboven in het model maak je hem zo groot als je scherm; met Esc of **Sluiten** kom je terug.
+Hieronder zie je de Click Golfer in 3D. Sleep met je muis of je vinger om hem te draaien. Zoom in en uit met het scrollwiel, of met twee vingers. Met de knop **Volledig scherm** rechtsboven in het model maak je hem zo groot als je scherm; met Esc of **Sluiten** kom je terug.
 
 <ObjViewer src="/models/golfer.obj" mtl="/models/golfer.mtl" />
 
@@ -19,7 +19,7 @@ Wil je zelf sleutelen aan het model? <a href="/click_golfer/golfer.io" download>
 
 ## Wat is een robot?
 
-Een robot is een **programmeerbare machine** die zelf taken uitvoert en kan reageren op wat er om hem heen gebeurt. Jouw Click Golfer doet straks precies dat: hij voelt met een sensor of er een balletje ligt en slaat het dan weg.
+Jouw Click Golfer voelt straks met een sensor of er een balletje ligt, en slaat het dan weg. Zo'n machine heet een **robot**: je kunt hem programmeren, en hij reageert zelf op wat er om hem heen gebeurt.
 
 ## Wat ga je doen?
 
@@ -27,22 +27,20 @@ Een robot is een **programmeerbare machine** die zelf taken uitvoert en kan reag
 2. Sluit [de IR-sensor](ir-sensor) aan, die de bal ziet.
 3. Laat [de servo](servo) bewegen, de motor van de arm.
 4. Zet ze samen: [zie de bal, sla de bal](bal-slaan).
-5. [Bouw het robotje](bouwen) van Lego en maak [de houten baan](hout).
-6. Leer je Golfer [netter mikken](mikken), geef je blokken [een naam](subprogrammas), en kijk bij de [Extra's](extras) wat je er nog bij kunt maken.
+5. [Oefen met twee sensoren en twee servo's](oefenen), als je docent die heeft.
+6. [Bouw het robotje](bouwen) van Lego en maak [de houten baan](hout).
+7. Leer je Golfer [netter mikken](mikken), geef je blokken [een naam](subprogrammas), en kijk bij de [Extra's](extras) wat je er nog bij kunt maken.
 
-<details>
-<summary>Controlevraag</summary>
+<Voorspel soort="Controlevraag" vraag="Waarom kan de Click Golfer een robot genoemd worden?">
+  <Keuze uitleg="Waar hij van gemaakt is, telt niet. Een huis van Lego noem je ook geen robot.">Hij is van Lego gemaakt</Keuze>
+  <Keuze uitleg="Een ventilator heeft ook een motor, en toch noem je die geen robot.">Hij heeft een motor die beweegt</Keuze>
+  <Keuze goed uitleg="Met de sensor merkt hij of de bal er ligt, en jouw programma zegt wat hij dan doet.">Je kunt hem programmeren, en hij reageert op wat er om hem heen gebeurt</Keuze>
+  <Uitleg>
 
-Waarom kan de Click Golfer een robot genoemd worden?
+Een robot is een machine die je kunt programmeren en die reageert op zijn omgeving. Een motor of een mooi model alleen is niet genoeg.
 
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-Hij is een machine die je kunt programmeren en die reageert op zijn omgeving: met de sensor merkt hij of de bal er ligt en slaat dan.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ---
 

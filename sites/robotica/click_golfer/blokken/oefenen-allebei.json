@@ -17,24 +17,60 @@
                     "inputs": {
                       "IF0": {
                         "block": {
-                          "type": "logic_compare",
+                          "type": "logic_operation",
                           "fields": {
-                            "OP": "LT"
+                            "OP": "AND"
                           },
                           "inputs": {
                             "A": {
                               "block": {
-                                "type": "analog_read",
+                                "type": "logic_compare",
                                 "fields": {
-                                  "PIN": "A0"
+                                  "OP": "LT"
+                                },
+                                "inputs": {
+                                  "A": {
+                                    "block": {
+                                      "type": "analog_read",
+                                      "fields": {
+                                        "PIN": "A0"
+                                      }
+                                    }
+                                  },
+                                  "B": {
+                                    "block": {
+                                      "type": "math_number",
+                                      "fields": {
+                                        "NUM": 300
+                                      }
+                                    }
+                                  }
                                 }
                               }
                             },
                             "B": {
                               "block": {
-                                "type": "math_number",
+                                "type": "logic_compare",
                                 "fields": {
-                                  "NUM": 300
+                                  "OP": "LT"
+                                },
+                                "inputs": {
+                                  "A": {
+                                    "block": {
+                                      "type": "analog_read",
+                                      "fields": {
+                                        "PIN": "A1"
+                                      }
+                                    }
+                                  },
+                                  "B": {
+                                    "block": {
+                                      "type": "math_number",
+                                      "fields": {
+                                        "NUM": 350
+                                      }
+                                    }
+                                  }
                                 }
                               }
                             }

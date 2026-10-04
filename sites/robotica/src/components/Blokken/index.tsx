@@ -1,6 +1,7 @@
 import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { eenmalig } from './eenmalig';
+import { schaalVoor } from './schaal';
 import styles from './styles.module.css';
 
 interface BlokkenProps {
@@ -31,7 +32,8 @@ const laadBlockly = eenmalig(async () => {
 
 // Leaphy-blokken zoals Easybloqs ze toont, maar alleen om naar te kijken:
 // niets verslepen, niets aanpassen. Past het programma niet in de breedte,
-// dan wordt het kleiner in plaats van dat de pagina opzij gaat schuiven.
+// dan wordt het kleiner, en wordt het daarvan onleesbaar, dan schuift het
+// kader opzij. De pagina zelf schuift nooit.
 export default function Blokken({
   programma,
   beschrijving,
@@ -40,6 +42,7 @@ export default function Blokken({
   const figuur = useRef<HTMLElement>(null);
   const vlak = useRef<HTMLDivElement>(null);
   const [status, setStatus] = useState<'laden' | 'klaar' | 'mislukt'>('laden');
+  const [schuift, setSchuift] = useState(false);
 
   useEffect(() => {
     const div = vlak.current;
@@ -103,11 +106,16 @@ export default function Blokken({
         if (weg || deze !== beurt) return;
 
         // Het vlak is precies zo groot als het programma, en past het niet
-        // in de breedte, dan schaalt het mee.
+        // in de breedte, dan schaalt het mee, tot MINSTE_SCHAAL. Daarna
+        // schuift het kader.
         const doos = werk.getBlocksBoundingBox();
         const breedte = doos.right + MARGE;
         const hoogte = doos.bottom + MARGE;
-        const schaal = Math.min(1, buiten.clientWidth / breedte);
+        // Binnen de rand van het kader (1 px aan elke kant) is 2 px minder
+        // ruimte dan de figuur breed is.
+        const ruimte = buiten.clientWidth - 2;
+        const schaal = schaalVoor(ruimte, breedte);
+        setSchuift(Math.ceil(breedte * schaal) > ruimte);
         div.style.width = `${Math.ceil(breedte * schaal)}px`;
         div.style.height = `${Math.ceil(hoogte * schaal)}px`;
         werk.setScale(schaal);
@@ -145,7 +153,14 @@ export default function Blokken({
 
   return (
     <figure ref={figuur} className={styles.figuur}>
-      <div className={styles.kader} role="img" aria-label={beschrijving}>
+      {/* Schuift het werkblad opzij, dan moet het ook met het toetsenbord
+          te bereiken zijn. */}
+      <div
+        className={styles.kader}
+        role="img"
+        aria-label={beschrijving}
+        tabIndex={schuift ? 0 : undefined}
+      >
         <div ref={vlak} className={styles.vlak} data-status={status} aria-hidden="true" />
         {status === 'laden' && <p className={styles.melding}>De blokken worden geladen.</p>}
         {status === 'mislukt' && (

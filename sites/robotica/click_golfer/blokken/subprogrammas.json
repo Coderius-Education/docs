@@ -81,21 +81,6 @@
                                       "type": "procedures_callnoreturn",
                                       "extraState": {
                                         "name": "slaan"
-                                      },
-                                      "next": {
-                                        "block": {
-                                          "type": "time_delay",
-                                          "inputs": {
-                                            "DELAY_TIME_MILI": {
-                                              "block": {
-                                                "type": "math_number",
-                                                "fields": {
-                                                  "NUM": 2000
-                                                }
-                                              }
-                                            }
-                                          }
-                                        }
                                       }
                                     }
                                   }
@@ -315,7 +300,7 @@
                       "block": {
                         "type": "math_number",
                         "fields": {
-                          "NUM": 500
+                          "NUM": 2000
                         }
                       }
                     }

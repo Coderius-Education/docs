@@ -187,7 +187,7 @@ describe('de hardware-uitleg klopt', () => {
       const inhoud = tekst(bestand);
       const begin = inhoud.indexOf('## Er gaat iets mis');
       if (begin === -1) continue;
-      const sectie = inhoud.slice(begin).split(/\n<details>|\n## (?!Er gaat)/)[0];
+      const sectie = inhoud.slice(begin).split(/\n<details>|\n<Voorspel|\n## (?!Er gaat)/)[0];
       const zonderKaarten = sectie.replace(/<Probleem[\s\S]*?<\/Probleem>/g, '');
       if (/\*\*(Oorzaak|Oplossing):\*\*/.test(zonderKaarten))
         fout.push(`${bestand}: tekst buiten een kaart`);
@@ -212,6 +212,19 @@ describe('de hardware-uitleg klopt', () => {
     expect(voorStap11).toMatch(/Kijk daarom eerst of de servo op het signaal van \*\*D9\*\* zit/);
   });
 
+  it('na stap 11 test je de servo met alleen het tandwiel, en pas dan bouw je de arm', () => {
+    // De bouwpagina ging van het tandwiel in stap 11 meteen door naar de arm.
+    // Werkte de Golfer daarna niet, dan wist de leerling niet of het aan de
+    // servo, het tandwiel of de arm lag. Met alleen een tandwiel zie je het
+    // meteen; daarna zet je de servo terug op 90° en bouw je verder.
+    const inhoud = tekst('bouwen.md');
+    const tussen = inhoud.slice(inhoud.indexOf('stap-11.jpg'), inhoud.indexOf('stap-12.jpg'));
+    expect(tussen).toMatch(/^## Eerst testen: alleen het tandwiel$/m);
+    expect(tussen).toMatch(/<Blokken programma=\{heenEnWeer\}/);
+    expect(tussen).toMatch(/\*\*Servo 9 op 90\*\*/);
+    expect(tussen).toMatch(/^## De arm$/m);
+  });
+
   it('de sensor- en de servoles noemen hun pin', () => {
     expect(tekst('ir-sensor.md')).toMatch(/\*\*A0\*\*/);
     expect(tekst('servo.md')).toMatch(/\*\*D9\*\*/);
@@ -229,6 +242,7 @@ describe('de volgorde van de route', () => {
     'ir-sensor',
     'servo',
     'bal-slaan',
+    'oefenen',
     'bouwen',
     'hout',
     'mikken',
@@ -238,7 +252,7 @@ describe('de volgorde van de route', () => {
 
   it("de pagina's staan in deze volgorde in de zijbalk", () => {
     const positie = (bestand: string) =>
-      Number(tekst(bestand).match(/^sidebar_position: (\d+)$/m)?.[1]);
+      Number(tekst(bestand).match(/^sidebar_position: ([\d.]+)$/m)?.[1]);
     const volgorde = paginas()
       .sort((a, b) => positie(a) - positie(b))
       .map((f) => f.replace(/\.mdx?$/, ''));
@@ -275,6 +289,8 @@ describe('de volgorde van de route', () => {
       math_random_int: ['Getal blokken', 'willekeurig getal'],
       variables_set: ['Variabelen', 'stel hoek in op'],
       procedures_defnoreturn: ['Eigen blokken', 'Subprogramma'],
+      procedures_callnoreturn: ['Eigen blokken', 'mikken'],
+      leaphy_io_analogwrite: ['Actuatoren', 'Zet PWM'],
     };
     const gezien = new Set<string>();
     const zonder: string[] = [];

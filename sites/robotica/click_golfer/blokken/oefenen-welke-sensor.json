@@ -43,63 +43,75 @@
                       },
                       "DO0": {
                         "block": {
-                          "type": "leaphy_servo_write",
-                          "fields": {
-                            "SERVO_PIN": "9"
-                          },
+                          "type": "leaphy_serial_print_line",
                           "inputs": {
-                            "SERVO_ANGLE": {
+                            "VALUE": {
                               "block": {
-                                "type": "math_number",
+                                "type": "text",
                                 "fields": {
-                                  "NUM": 0
+                                  "TEXT": "bal bij A0"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "next": {
+                      "block": {
+                        "type": "controls_if",
+                        "inputs": {
+                          "IF0": {
+                            "block": {
+                              "type": "logic_compare",
+                              "fields": {
+                                "OP": "LT"
+                              },
+                              "inputs": {
+                                "A": {
+                                  "block": {
+                                    "type": "analog_read",
+                                    "fields": {
+                                      "PIN": "A1"
+                                    }
+                                  }
+                                },
+                                "B": {
+                                  "block": {
+                                    "type": "math_number",
+                                    "fields": {
+                                      "NUM": 350
+                                    }
+                                  }
                                 }
                               }
                             }
                           },
-                          "next": {
+                          "DO0": {
                             "block": {
-                              "type": "time_delay",
+                              "type": "leaphy_serial_print_line",
                               "inputs": {
-                                "DELAY_TIME_MILI": {
+                                "VALUE": {
                                   "block": {
-                                    "type": "math_number",
+                                    "type": "text",
                                     "fields": {
-                                      "NUM": 500
+                                      "TEXT": "bal bij A1"
                                     }
                                   }
                                 }
-                              },
-                              "next": {
+                              }
+                            }
+                          }
+                        },
+                        "next": {
+                          "block": {
+                            "type": "time_delay",
+                            "inputs": {
+                              "DELAY_TIME_MILI": {
                                 "block": {
-                                  "type": "leaphy_servo_write",
+                                  "type": "math_number",
                                   "fields": {
-                                    "SERVO_PIN": "9"
-                                  },
-                                  "inputs": {
-                                    "SERVO_ANGLE": {
-                                      "block": {
-                                        "type": "math_number",
-                                        "fields": {
-                                          "NUM": 90
-                                        }
-                                      }
-                                    }
-                                  },
-                                  "next": {
-                                    "block": {
-                                      "type": "time_delay",
-                                      "inputs": {
-                                        "DELAY_TIME_MILI": {
-                                          "block": {
-                                            "type": "math_number",
-                                            "fields": {
-                                              "NUM": 2000
-                                            }
-                                          }
-                                        }
-                                      }
-                                    }
+                                    "NUM": 500
                                   }
                                 }
                               }

@@ -3,19 +3,31 @@ sidebar_position: 11
 ---
 import Blokken from '@site/src/components/Blokken';
 import willekeurigSlaan from './blokken/willekeurig-slaan.json';
+import lampje from './blokken/lampje.json';
 
 # Extra's
 
-Je Golfer werkt. Hieronder staan drie dingen die je er nog bij kunt maken. Ze zijn lastiger dan wat je tot nu toe deed, dus pak ze een voor een aan.
+Je Golfer werkt. Hieronder staan drie dingen die je er nog bij kunt maken. Ze zijn lastiger dan wat je tot nu toe deed, dus neem ze een voor een.
 
 ## Een lampje dat meekleurt
 
-In het doosje zit ook een **RGB-lampje**: een lampje dat verschillende kleuren kan maken. Zorg dat:
+Voor deze extra heb je een **RGB-lampje** nodig: een lampje met vier pootjes dat verschillende kleuren kan maken. Niet elk RGB-lampje is goed. Het moet er een zijn met een gemeenschappelijke min, en met een weerstand voor elke kleur, want zonder weerstand gaat er te veel stroom door het lampje. Zo'n lampje zit bijvoorbeeld op een klein bordje waar de weerstanden al op zitten. Je docent geeft je het goede lampje en drie losse draadjes.
+
+Zorg dat:
 
 - het lampje **groen** wordt als er een balletje ligt en de robot aan het slaan is;
 - het lampje **rood** wordt als er geen balletje ligt en de robot stilstaat.
 
-Bekijk [deze video](https://www.youtube.com/watch?v=bqGnmGiuqyc) om uit te vinden hoe je het lampje moet aansluiten.
+In **Actuatoren** staat ook een blok **Led**, met Rood, Groen en Blauw. Dat blok kun je hier niet gebruiken.
+
+Het stuurt de pinnen **D11** (rood), **D10** (groen), **D9** (blauw) en **D8** (min) aan, en op D9 zit je servo al. Blauw laat je daarom weg.
+
+Je neemt het blok **Zet PWM**, ook uit Actuatoren: één keer voor rood en één keer voor groen. Een nieuw blok staat eerst op **Zet PWM 3 op 0**. Klik op de 3 en kies **11** of **10**.
+
+1. Vraag je docent welk pootje van het lampje rood is, welk groen en welk de min.
+2. Zet je robot uit met **ON/OFF**. Zit er van [Oefenen](oefenen) nog een tweede servo op D10? Haal die dan los, want daar komt nu groen.
+3. Sluit rood aan op het signaal van **D11**, groen op het signaal van **D10**, en de min op GND. Het blauwe pootje sluit je niet aan. Zet je robot daarna weer aan met **ON/OFF**.
+4. **Zet PWM 11 op 255** maakt het lampje rood. Met Zet PWM 11 op 0 gaat rood weer uit. Met pin 10 doe je hetzelfde voor groen.
 
 <details>
 <summary>Tip</summary>
@@ -32,7 +44,9 @@ Je bouwt hetzelfde **als**-blok als bij [de IR-sensor](ir-sensor), maar nu met e
 - als **Lees anapin A0** kleiner is dan jouw grens: zet het lampje op groen en laat de arm slaan;
 - anders: zet het lampje op rood.
 
-Het slaan zat al in je programma: het blok **slaan** uit [Een naam voor je blokken](subprogrammas) sleep je in de dan-tak. De kleur zet je met het RGB-blok uit de video: groen is rood 0, groen 255, blauw 0, en rood is rood 255, groen 0, blauw 0.
+Het slaan heb je al, in je programma uit [Een naam voor je blokken](subprogrammas). Pak het bovenste blok in de dan-tak van je oude **als … dan** en sleep het, met alles eronder, naar de dan-tak van het nieuwe blok. Zet bovenaan in de dan-tak de twee **Zet PWM**-blokken voor groen: Zet PWM 11 op 0 (rood uit) en Zet PWM 10 op 255 (groen aan). In de anders-tak komen Zet PWM 11 op 255 (rood aan) en Zet PWM 10 op 0 (groen uit).
+
+<Blokken programma={lampje} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan Zet PWM 11 op 0, Zet PWM 10 op 255, Servo 9 op 0, duurt 500 ms, mikken en slaan. Anders: Zet PWM 11 op 255 en Zet PWM 10 op 0. Daaronder de subprogramma's mikken en slaan, net als bij Een naam voor je blokken." />
 
 </details>
 
@@ -50,9 +64,9 @@ In de groep **Getal blokken** staat een blok dat een **willekeurig getal** tusse
 <details>
 <summary>Antwoord</summary>
 
-<Blokken programma={willekeurigSlaan} beschrijving="Het subprogramma slaan: Servo 9 op willekeurig getal van 70 tot 110, duurt 500 ms." />
+<Blokken programma={willekeurigSlaan} beschrijving="Het subprogramma slaan: Servo 9 op willekeurig getal van 70 tot 110, duurt 2000 ms." />
 
-Laat je robot nu een paar keer slaan. Elke slag is net iets anders, want het blok kiest telkens een nieuw getal.
+Laat je robot nu een paar keer slaan. Elke slag is net iets anders, want het blok kiest telkens een nieuw getal. Druk je op **RST**, dan begint de robot wel weer met dezelfde rij getallen.
 
 </details>
 
