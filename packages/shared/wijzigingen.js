@@ -258,6 +258,27 @@ function isGlobaal(pad) {
   return past(pad, GLOBAAL);
 }
 
+/** Boven dit aantal gewijzigde bestanden draait alles (zie volledigOpNamen). */
+const MAX_BESTANDEN = 400;
+
+/**
+ * Beslist op alleen de bestandsnamen of de run volledig moet: een globaal
+ * bestand, of zoveel bestanden dat selecteren niets scheelt. Zo hoeft de
+ * -U0-diff van een grote verhuizing (duizenden bestanden, honderden MB)
+ * nooit ingelezen te worden; die liep eerder tegen de buffer van
+ * execFileSync aan (ENOBUFS).
+ *
+ * @param {string[]} namen
+ * @param {number} [max]
+ * @returns {string | null} reden voor een volledige run, of null
+ */
+function volledigOpNamen(namen, max = MAX_BESTANDEN) {
+  const globaal = namen.find(isGlobaal);
+  if (globaal) return `globale wijziging (${globaal})`;
+  if (namen.length > max) return `${namen.length} bestanden gewijzigd (meer dan ${max})`;
+  return null;
+}
+
 // ── Workspace-afhankelijkheden ──────────────────────────────────────────────
 
 /**
@@ -448,6 +469,8 @@ module.exports = {
   opGewijzigdeRegels,
   runnerAlles,
   isGlobaal,
+  MAX_BESTANDEN,
+  volledigOpNamen,
   workspaceAfhankelijkheden,
   plan,
 };

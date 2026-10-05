@@ -2,6 +2,7 @@ import { alleSiteMappen } from '@coderius/shared/sites';
 import { controleer } from '@coderius/shared/stijl';
 import {
   HEEL_BESTAND,
+  MAX_BESTANDEN,
   binnenWijziging,
   isGlobaal,
   opGewijzigdeRegels,
@@ -9,6 +10,7 @@ import {
   parseDiff,
   plan,
   runnerAlles,
+  volledigOpNamen,
   workspaceAfhankelijkheden,
 } from '@coderius/shared/wijzigingen';
 import { describe, expect, it } from 'vitest';
@@ -329,5 +331,35 @@ describe('opGewijzigdeRegels (tekst --regels)', () => {
     expect(opGewijzigdeRegels(meldingen, [[7, 7]]).map((m) => m.naam)).toEqual(['u-vorm']);
     expect(opGewijzigdeRegels(meldingen, [[1, 2]])).toEqual([]);
     expect(opGewijzigdeRegels(meldingen, undefined)).toEqual([]);
+  });
+});
+
+describe('volledigOpNamen', () => {
+  // De eerste CI-run op de vakken-PR viel om met ENOBUFS: de -U0-diff van
+  // ~1900 verhuisde bestanden paste niet in de buffer van execFileSync. Op de
+  // namen alleen moet al vaststaan dat zo'n wijziging volledig draait.
+  it('een globaal bestand geeft een volledige run met dat bestand als reden', () => {
+    expect(
+      volledigOpNamen(['sites/informatica/python/docs/a.md', '.github/workflows/build.yml']),
+    ).toBe('globale wijziging (.github/workflows/build.yml)');
+  });
+
+  it('een grote verhuizing draait volledig, ook zonder globaal bestand', () => {
+    const namen = Array.from(
+      { length: MAX_BESTANDEN + 1 },
+      (_, i) => `sites/informatica/python/docs/les-${i}.md`,
+    );
+    expect(volledigOpNamen(namen)).toBe(
+      `${MAX_BESTANDEN + 1} bestanden gewijzigd (meer dan ${MAX_BESTANDEN})`,
+    );
+  });
+
+  it('een gewone wijziging blijft incrementeel', () => {
+    const namen = Array.from(
+      { length: MAX_BESTANDEN },
+      (_, i) => `sites/informatica/python/docs/les-${i}.md`,
+    );
+    expect(volledigOpNamen(namen)).toBeNull();
+    expect(volledigOpNamen([])).toBeNull();
   });
 });

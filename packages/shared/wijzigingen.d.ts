@@ -42,6 +42,9 @@ export declare function opGewijzigdeRegels<M extends { regel: number; eind?: num
 ): M[];
 export declare function runnerAlles(gewijzigd: Partial<Gewijzigd>, naam: string): boolean;
 export declare function isGlobaal(pad: string): boolean;
+export declare const MAX_BESTANDEN: number;
+/** Reden voor een volledige run op grond van alleen de bestandsnamen, of null. */
+export declare function volledigOpNamen(namen: string[], max?: number): string | null;
 export declare function workspaceAfhankelijkheden(
   pakketten: Record<string, { naam: string; deps: string[] }>,
   dir: string,

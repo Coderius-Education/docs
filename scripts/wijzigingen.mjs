@@ -29,7 +29,12 @@ import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const require = createRequire(import.meta.url);
-const { plan, parseDiff, binnenWijziging } = require('../packages/shared/wijzigingen.js');
+const {
+  plan,
+  parseDiff,
+  binnenWijziging,
+  volledigOpNamen,
+} = require('../packages/shared/wijzigingen.js');
 const { alleSiteMappen } = require('../packages/shared/sites.js');
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
@@ -107,6 +112,21 @@ function maakPlan(opties) {
     else {
       volledig = true;
       reden = keuze.reden;
+    }
+  }
+
+  // Eerst alleen de namen: raakt de wijziging iets globaals, of is hij zo groot
+  // dat regel-voor-regel niets meer scheelt, dan draait alles. Zo lezen we de
+  // -U0-diff van een grote verhuizing (duizenden bestanden) nooit in.
+  if (base) {
+    const namen = git('diff', '--name-only', '--no-renames', '--no-ext-diff', base)
+      .split('\n')
+      .filter(Boolean);
+    const waarom = volledigOpNamen(namen);
+    if (waarom) {
+      volledig = true;
+      reden = waarom;
+      base = null;
     }
   }
 
