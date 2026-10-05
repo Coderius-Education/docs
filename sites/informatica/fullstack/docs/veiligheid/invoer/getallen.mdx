@@ -224,65 +224,6 @@ staat dan `blij`, zoals in je lijst.
 
 </details>
 
-### Opdracht 3: Make - In je eigen project
-
-Open je gastenboek, of een eigen project dat je bouwde. Geef elk
-formulierveld een grens op de server, en zet in je HTML dezelfde grens als hulp
-voor de bezoeker. Test het met een script dat een te lang veld stuurt.
-
-<details>
-<summary>Tip</summary>
-
-Zoek in je `main.py` naar `Form(...)`. Elk van die velden krijgt een
-`max_length`, en een getal wordt een `int` met `ge` en `le`.
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-Loop deze lijst af:
-
-- Elk tekstveld heeft `max_length` in `Form`.
-- Elk getal is een `int` met `ge` en `le`.
-- Een veld dat niet uit alleen spaties mag bestaan, controleer je met `strip()`
-  en een `400`.
-- Een keuze uit een paar woorden controleer je tegen een lijst.
-- Een script dat een te lang veld stuurt, krijgt een `422`.
-
-In het gastenboek uit de FastAPI-lessen zet je de grenzen in de parameters die
-je `POST /gastenboek` al heeft, en de controle op spaties bovenaan de functie.
-Met de sessies uit [Onthouden op de server: sessies](/docs/FastAPI/sessies)
-ziet het begin er zo uit:
-
-```python
-@app.post("/gastenboek")
-async def gastenboek_opslaan(
-    naam: str = Form(..., max_length=30),
-    bericht: str = Form(..., max_length=80),
-    sessie_id: str = Cookie(default=""),
-):
-    if not naam.strip():
-        raise HTTPException(status_code=400, detail="Vul een naam in")
-    if not sessie_id:
-        sessie_id = secrets.token_hex(16)
-```
-
-Daaronder blijft je functie zoals hij was. Laat `sessie_id` niet weg: de rest
-van de functie gebruikt hem. Heb je de uitbreiding cookies en sessies nog niet
-gedaan, dan heeft je functie alleen `naam` en `bericht`, en zet je de grens
-daarin. Zet `HTTPException` bij de import uit `fastapi` als hij er nog niet
-staat.
-
-Het bericht krijgt hier 80 tekens en geen 280 zoals in deze reeks. Zo past het
-bij [Server of browser?](/docs/FastAPI/server-of-browser), waar je gastenboek
-`maxlength="80"` krijgt; zet die ook in je HTML. Deed je die les al, en staat
-de `if len(bericht) > 80` daaruit nog in je functie, dan mag hij weg:
-`max_length=80` doet hetzelfde, alleen krijgt een te lang bericht nu een `422`
-in plaats van jouw `400`.
-
-</details>
-
 <details>
 <summary>Zo ziet je `main.py` er nu uit</summary>
 
@@ -325,4 +266,4 @@ bewaakt FastAPI of je eigen lijst.
 
 </details>
 
-Door naar [les 6: in de praktijk](./praktijk).
+Door naar [les 6: een bestandsnaam van een bezoeker](./paden).

@@ -259,12 +259,27 @@ const KOPPELING: Item[] = [
   // Een eigen reeks in de navbar, los van het nagekeken eindproject. De
   // nakijker toetst deze syntax daarom niet.
   {
+    summary: 'Hoe zet ik de lijst met endpoints uit? (docs_url=None)',
+    concepten: [],
+    geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
+  },
+  {
     summary: 'Hoe begrens ik invoer op de server? (Form met max_length)',
     concepten: [],
     geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
   },
   {
+    summary: 'Hoe laat ik een bezoeker een pagina kiezen? (lijst met wat mag)',
+    concepten: [],
+    geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
+  },
+  {
     summary: 'Hoe maak ik HTML van een bezoeker onschadelijk? (escape)',
+    concepten: [],
+    geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
+  },
+  {
+    summary: 'Hoe beperk ik het aantal verzoeken? (slowapi)',
     concepten: [],
     geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
   },
@@ -280,11 +295,6 @@ const KOPPELING: Item[] = [
   },
   {
     summary: 'Hoe bewaar ik een wachtwoord veilig? (Argon2)',
-    concepten: [],
-    geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
-  },
-  {
-    summary: 'Hoe beperk ik het aantal verzoeken? (slowapi)',
     concepten: [],
     geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
   },

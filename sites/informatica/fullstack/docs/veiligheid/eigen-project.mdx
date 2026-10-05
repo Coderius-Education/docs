@@ -14,6 +14,15 @@ kort codevoorbeeld, in dezelfde volgorde als hieronder.
 Het idee onder de hele lijst blijft hetzelfde: wat van de bezoeker komt,
 vertrouw je niet, en de controle hoort op de server.
 
+## Wat je server laat zien
+
+- [ ] Elk endpoint op `/docs` is voor iedereen bedoeld. Een endpoint dat je voor
+  jezelf maakte, zoals `GET /sessies`, is weg. ([Een vergeten endpoint](./zichtbaar/vergeten))
+- [ ] Zet je je server open, dan staan `docs_url`, `redoc_url` en `openapi_url`
+  op `None`. ([De handleiding uitzetten](./zichtbaar/uitzetten))
+- [ ] Een `.gitignore` slaat `.venv/`, `__pycache__/` en `*.db` over, en een zip
+  die je deelt bevat geen `.db`-bestand. ([Een .gitignore en een nette zip](./zichtbaar/gitignore))
+
 ## Invoer
 
 - [ ] Elk tekstveld heeft `max_length` in `Form`.
@@ -24,6 +33,9 @@ vertrouw je niet, en de controle hoort op de server.
   `strip()`. ([De inhoud controleren](./invoer/inhoud))
 - [ ] Een keuze uit een paar woorden controleer je tegen een lijst met wat mag.
   ([Getallen en keuzes](./invoer/getallen))
+- [ ] Kiest een bezoeker een bestand, zoals met `?naam=`, dan gaat de naam pas
+  naar `FileResponse` als hij in je lijst staat.
+  ([Een bestandsnaam van een bezoeker](./invoer/paden))
 
 ## HTML van een bezoeker
 
@@ -31,6 +43,11 @@ vertrouw je niet, en de controle hoort op de server.
   of met `escape()` in een f-string. ([Escapen in Python](./xss/escape),
   [Templates escapen vanzelf](./xss/templates))
 - [ ] Nergens staat `|safe` achter tekst van een bezoeker. ([`|safe`](./xss/safe))
+
+## Te veel verzoeken
+
+- [ ] Het endpoint dat iets opslaat, heeft een verzoeklimiet.
+  ([Een limiet met slowapi](./dos/limiet))
 
 ## Wie mag wat
 
@@ -68,19 +85,17 @@ Alleen als je project accounts heeft.
 - [ ] Inloggen gebruikt `ph.verify`, met dezelfde melding bij een onbekende naam
   en een fout wachtwoord, en ook bij een onbekende naam een `verify` tegen een
   nep-hash. ([Inloggen met verify](./wachtwoorden/inloggen))
-
-## Te veel verzoeken
-
-- [ ] Het endpoint dat iets opslaat, heeft een verzoeklimiet.
-  ([Een limiet met slowapi](./dos/limiet))
+- [ ] `/inloggen` en `/wijzig` hebben een limiet: `@limiter.limit` direct onder
+  `@app.post`, met `request: Request`. ([Inlogpogingen beperken](./wachtwoorden/pogingen))
 
 ## Test het zoals een bezoeker
 
 Een lijst aflopen is niet hetzelfde als testen. Draai voor elk punt een klein
 script uit [Een script als bezoeker](./gereedschap) tegen je eigen server op
-`127.0.0.1`, en kijk of je de statuscode krijgt die je verwacht: een `422` bij
-een te lang veld, een `403` bij het bericht van een ander, een `429` na te veel
-verzoeken.
+`127.0.0.1`, en kijk of je de statuscode krijgt die je verwacht: een `404` op
+`/docs`, een `422` bij
+een te lang veld, een `429` na te veel verzoeken, een `403` bij het bericht van
+een ander.
 
 :::danger[Alleen je eigen server]
 Test alleen je eigen project, op je eigen computer. Wil je weten of de site van

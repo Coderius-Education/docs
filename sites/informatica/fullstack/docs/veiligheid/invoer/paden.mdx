@@ -1,0 +1,363 @@
+---
+sidebar_label: '6. Een bestandsnaam van een bezoeker'
+description: Laat je een bezoeker met ?naam= kiezen welk bestand je server stuurt, dan kan hij ook om main.py vragen. Sta alleen de pagina's uit je eigen lijst toe.
+---
+
+# Invoer controleren: een bestandsnaam van een bezoeker
+
+In [HTML in bestanden](/docs/FastAPI/html_bestanden) kreeg elke pagina een
+eigen endpoint met `FileResponse`. Met tien pagina's wil je liever één endpoint,
+waarin de bezoeker de pagina kiest met een query-parameter, zoals `?term=` in
+[GET vs POST](/docs/FastAPI/get_vs_post). Maar die naam komt van de bezoeker,
+net als een formulierveld. Hij kan er meer in zetten dan een paginanaam.
+
+## Eén endpoint voor alle pagina's
+
+Maak naast `formulier.html` een map `static/pages` met twee pagina's. Eerst
+`home.html`:
+
+```html
+<!doctype html>
+<html>
+<body>
+    <h1>Welkom in het gastenboek</h1>
+</body>
+</html>
+```
+
+Maak `over.html` net zo, met de kop `Over dit gastenboek`.
+
+Zet `from fastapi.responses import FileResponse` bij je imports, en dit endpoint
+onder `bericht_plaatsen`:
+
+{/* onveilig-voorbeeld: de zwakheid die deze les laat zien */}
+
+<CodeUitleg>
+
+```python showLineNumbers
+@app.get("/pagina")
+async def pagina(naam: str):
+    return FileResponse(f"static/pages/{naam}")
+```
+
+<Regel n={2}>
+`naam` heeft geen `Form` en staat niet tussen accolades in het pad, dus FastAPI haalt hem uit het adres, na `?naam=`.
+</Regel>
+
+<Regel n={3}>
+Het pad naar het bestand, met de naam die de bezoeker koos.
+</Regel>
+
+</CodeUitleg>
+
+Open `http://127.0.0.1:8000/pagina?naam=home.html`, en daarna
+`?naam=over.html`. Je ziet de twee koppen.
+
+## Doe het na, op je eigen server
+
+In een pad betekent `..` de map erboven. Vanuit `static/pages` is `../..` twee
+mappen omhoog: de map van je project, waar `main.py` staat. Een scriptje
+`pagina.py` vraagt om dat bestand:
+
+```python
+import httpx
+
+antwoord = httpx.get("http://127.0.0.1:8000/pagina?naam=../../main.py")
+print(antwoord.status_code)
+print(antwoord.text)
+```
+
+Uitvoer, het begin:
+
+```
+200
+import time
+
+from fastapi import FastAPI, Form, HTTPException
+from fastapi.responses import FileResponse
+```
+
+Je server stuurt zijn eigen code. Zo leest een bezoeker elk bestand waar je
+server bij kan, zoals `gastenboek.db` met alle berichten, of in een echt project
+een bestand met een geheime sleutel. Met `..` uit de bedoelde map klimmen heet
+**path traversal**.
+
+Met een path-parameter, zoals in
+[Eén item tonen: path-parameters en 404](/docs/FastAPI/detailpagina), gaat dit
+net anders. Dat zie je in opdracht 1.
+
+## Alleen wat in je lijst staat
+
+Een bestandsnaam controleer je net als de stemming in [les 5](./getallen): met
+een lijst met wat mag.
+
+<CodeUitleg>
+
+```python showLineNumbers
+PAGINAS = ["home.html", "over.html"]
+
+@app.get("/pagina")
+async def pagina(naam: str):
+    if naam not in PAGINAS:
+        raise HTTPException(status_code=404, detail="Deze pagina bestaat niet")
+    return FileResponse(f"static/pages/{naam}")
+```
+
+<Regel n={1}>
+De pagina's die een bezoeker mag zien, bovenaan `main.py`, onder `STEMMINGEN`.
+</Regel>
+
+<Regel n={5} tot={6}>
+Staat de naam niet in de lijst, dan bestaat de pagina voor de bezoeker niet: een `404`, zoals in [Eén item tonen](/docs/FastAPI/detailpagina). `FileResponse` komt pas daarna.
+</Regel>
+
+</CodeUitleg>
+
+Vervang je `/pagina` door deze. Een script `paden.py` probeert er drie:
+
+```python
+import httpx
+
+for naam in ["home.html", "../../main.py", "oeps.html"]:
+    antwoord = httpx.get(f"http://127.0.0.1:8000/pagina?naam={naam}")
+    print(naam, "->", antwoord.status_code)
+```
+
+Uitvoer:
+
+```
+home.html -> 200
+../../main.py -> 404
+oeps.html -> 404
+```
+
+Je hoeft niet te bedenken welke trucs er met `..`, `/` of `\` bestaan. Wat niet
+in je lijst staat, komt er niet door. Met het endpoint van daarnet gaf
+`oeps.html` trouwens een `500`, want het bestand bestaat niet. Nu is dat een
+nette `404`.
+
+## Er gaat iets mis
+
+### `RuntimeError: File at path static/pages/over.html does not exist.`
+
+`http://127.0.0.1:8000/pagina?naam=over.html` geeft `Internal Server Error`,
+en in de terminal van je server staat:
+
+```
+RuntimeError: File at path static/pages/over.html does not exist.
+```
+
+**Oorzaak:** `over.html` staat in je lijst, maar het bestand staat niet in
+`static/pages`, of het heet daar anders, zoals `over-ons.html`. De controle laat de
+naam door, en `FileResponse` vindt het bestand niet.
+
+**Oplossing:** zet het bestand in `static/pages`, met precies de naam uit je
+lijst.
+
+### `{"detail":"Deze pagina bestaat niet"}` bij een pagina die er wel is
+
+`?naam=home` geeft een `404`, terwijl `home.html` wel in `static/pages`
+staat.
+
+**Oorzaak:** in de lijst staat `home.html`, en `home` is een andere tekst.
+
+**Oplossing:** vraag de naam op zoals hij in de lijst staat:
+
+```python
+# FOUT
+"http://127.0.0.1:8000/pagina?naam=home"
+
+# GOED
+"http://127.0.0.1:8000/pagina?naam=home.html"
+```
+
+Meer over `FileResponse` en de map `static/pages`: [HTML in bestanden](/docs/FastAPI/html_bestanden).
+
+## Opdrachten
+
+### Opdracht 1: Predict - Met een path-parameter
+
+Zet dit endpoint tijdelijk onder je andere endpoints. De naam staat nu in het
+pad, en `.html` plakt de server er zelf achter:
+
+{/* onveilig-voorbeeld: voorspelvraag, een path-parameter is geen controle */}
+
+```python
+@app.get("/pagina/{naam}")
+async def pagina_pad(naam: str):
+    return FileResponse(f"static/pages/{naam}.html")
+```
+
+Een `/` in een adres schrijf je als `%2F` als hij geen scheiding mag zijn. Een
+script stuurt twee verzoeken:
+
+```python
+import httpx
+
+print(httpx.get("http://127.0.0.1:8000/pagina/home").status_code)
+print(httpx.get("http://127.0.0.1:8000/pagina/..%2F..%2Fmain").status_code)
+```
+
+**Vraag:** welke twee statuscodes print het?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+200
+404
+```
+
+FastAPI maakt van `%2F` weer een `/`, en een path-parameter houdt op bij een
+`/`. Er is dus geen endpoint dat bij `/pagina/../../main` past, en FastAPI
+stuurt `{"detail":"Not Found"}`.
+
+Dat is geluk en geen controle: het slot zit in hoe FastAPI een endpoint zoekt,
+niet in jouw code. Met `{naam:path}`, dat wel een `/` doorlaat, of met de
+query-parameter uit deze les is het gat er weer. Op Windows is ook `\` een
+scheiding in een pad, en een `\` past wel in een path-parameter. De lijst werkt
+in alle gevallen. Haal het endpoint weer weg.
+
+</details>
+
+### Opdracht 2: Modify - Een derde pagina
+
+Voeg een pagina `contact.html` toe, zodat
+`http://127.0.0.1:8000/pagina?naam=contact.html` een `200` geeft.
+
+<details>
+<summary>Tip</summary>
+
+Er zijn twee plekken: de map `static/pages` en je `main.py`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Maak `static/pages/contact.html`, net als `home.html` met een eigen kop, en zet
+de naam in je lijst:
+
+```python
+PAGINAS = ["home.html", "over.html", "contact.html"]
+```
+
+Alleen het bestand geeft een `404`, want de naam staat niet in de lijst. Alleen
+de lijst geeft een `500`, want het bestand bestaat niet.
+
+</details>
+
+### Opdracht 3: Make - In je eigen project
+
+Open je gastenboek, of een eigen project dat je bouwde. Geef elk
+formulierveld een grens op de server, en zet in je HTML dezelfde grens als hulp
+voor de bezoeker. Test het met een script dat een te lang veld stuurt.
+
+<details>
+<summary>Tip</summary>
+
+Zoek in je `main.py` naar `Form(...)`. Elk van die velden krijgt een
+`max_length`, en een getal wordt een `int` met `ge` en `le`. Zoek ook naar
+`FileResponse(f"`: daar kiest een bezoeker misschien een bestand.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Loop deze lijst af:
+
+- Elk tekstveld heeft `max_length` in `Form`.
+- Elk getal is een `int` met `ge` en `le`.
+- Een veld dat niet uit alleen spaties mag bestaan, controleer je met `strip()`
+  en een `400`.
+- Een keuze uit een paar woorden controleer je tegen een lijst.
+- Een bestandsnaam van een bezoeker gaat pas naar `FileResponse` als hij in je
+  lijst staat. Heeft je project geen endpoint met `FileResponse(f"`, dan sla je
+  dit punt over.
+- Een script dat een te lang veld stuurt, krijgt een `422`.
+
+In het gastenboek uit de FastAPI-lessen zet je de grenzen in de parameters die
+je `POST /gastenboek` al heeft, en de controle op spaties bovenaan de functie.
+Met de sessies uit [Onthouden op de server: sessies](/docs/FastAPI/sessies)
+ziet het begin er zo uit:
+
+```python
+@app.post("/gastenboek")
+async def gastenboek_opslaan(
+    naam: str = Form(..., max_length=30),
+    bericht: str = Form(..., max_length=80),
+    sessie_id: str = Cookie(default=""),
+):
+    if not naam.strip():
+        raise HTTPException(status_code=400, detail="Vul een naam in")
+    if not sessie_id:
+        sessie_id = secrets.token_hex(16)
+```
+
+Daaronder blijft je functie zoals hij was. Laat `sessie_id` niet weg: de rest
+van de functie gebruikt hem. Heb je de uitbreiding cookies en sessies nog niet
+gedaan, dan heeft je functie alleen `naam` en `bericht`, en zet je de grens
+daarin. Zet `HTTPException` bij de import uit `fastapi` als hij er nog niet
+staat.
+
+Het bericht krijgt hier 80 tekens en geen 280 zoals in deze reeks. Zo past het
+bij [Server of browser?](/docs/FastAPI/server-of-browser), waar je gastenboek
+`maxlength="80"` krijgt; zet die ook in je HTML. Deed je die les al, en staat
+de `if len(bericht) > 80` daaruit nog in je functie, dan mag hij weg:
+`max_length=80` doet hetzelfde, alleen krijgt een te lang bericht nu een `422`
+in plaats van jouw `400`.
+
+</details>
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+```python
+import time
+
+from fastapi import FastAPI, Form, HTTPException
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+STEMMINGEN = ["blij", "neutraal", "boos"]
+PAGINAS = ["home.html", "over.html"]
+
+@app.post("/bericht")
+async def bericht_plaatsen(
+    naam: str = Form(..., max_length=30),
+    bericht: str = Form(..., max_length=280),
+    cijfer: int = Form(..., ge=1, le=10),
+    stemming: str = Form(...),
+):
+    if not naam.strip():
+        raise HTTPException(status_code=400, detail="Vul een naam in")
+    if stemming not in STEMMINGEN:
+        raise HTTPException(status_code=400, detail="Kies blij, neutraal of boos")
+    with SqliteDict("gastenboek.db") as db:
+        db[f"bericht_{time.time_ns()}"] = {
+            "naam": naam,
+            "bericht": bericht,
+            "cijfer": cijfer,
+            "stemming": stemming,
+        }
+        db.commit()
+    return {"lengte": len(bericht), "cijfer": cijfer, "stemming": stemming}
+
+@app.get("/pagina")
+async def pagina(naam: str):
+    if naam not in PAGINAS:
+        raise HTTPException(status_code=404, detail="Deze pagina bestaat niet")
+    return FileResponse(f"static/pages/{naam}")
+```
+
+Naast `main.py` staan `static/formulier.html` en de map `static/pages` met
+`home.html` en `over.html`. Een bezoeker kiest nu alleen uit jouw lijst.
+
+</details>
+
+Door naar [les 7: in de praktijk](./praktijk).

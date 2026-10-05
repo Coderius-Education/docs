@@ -11,7 +11,11 @@ import type { SidebarsConfig } from '@docusaurus/plugin-content-docs';
 // ook niet; die is naslag en gelinkt vanuit de cheatsheet en de lessen. In de
 // navbar paste hij niet meer: op 1280 breed liepen de items dan over twee regels.
 const sidebars: SidebarsConfig = {
+  // Eerst de startpagina: wat je aan het eind hebt, wat je al moet kunnen, en
+  // de route als kaart (<Routekaart>, die deze sidebar zelf leest). De navbar-
+  // link FastAPI komt daar uit.
   apiSidebar: [
+    'FastAPI/index',
     {
       type: 'category',
       label: 'Je eerste server',
@@ -84,12 +88,27 @@ const sidebars: SidebarsConfig = {
   ],
   // Eerst de startpagina (het ene idee, de spelregel, de statuscodes) en het
   // gereedschap (httpx). Dan per zwakheid een categorie met kleine lessen, van
-  // dichtbij het eigen gastenboek naar ver weg: invoer, xss, toegang, cookies,
-  // wachtwoorden, dos. Ingeklapt, zodat de sidebar een kaart blijft; Docusaurus
-  // klapt de reeks open waar de leerling in zit.
+  // makkelijk naar moeilijk: zichtbaar (wat je server laat zien, nog zonder
+  // aanval), invoer, xss, dos, toegang, cookies, wachtwoorden.
+  // DoS staat vroeg, want het is één decorator en een for-loop; Wachtwoorden
+  // staat achteraan en gebruikt de limiet uit DoS. Ingeklapt, zodat de sidebar
+  // een kaart blijft; Docusaurus klapt de reeks open waar de leerling in zit.
   veiligheidSidebar: [
     'veiligheid/index',
     'veiligheid/gereedschap',
+    {
+      type: 'category',
+      label: 'Wat je server laat zien',
+      collapsed: true,
+      items: [
+        'veiligheid/zichtbaar/handleiding',
+        'veiligheid/zichtbaar/vergeten',
+        'veiligheid/zichtbaar/uitzetten',
+        'veiligheid/zichtbaar/bestanden',
+        'veiligheid/zichtbaar/gitignore',
+        'veiligheid/zichtbaar/praktijk',
+      ],
+    },
     {
       type: 'category',
       label: 'Invoer controleren',
@@ -100,6 +119,7 @@ const sidebars: SidebarsConfig = {
         'veiligheid/invoer/fouten-lezen',
         'veiligheid/invoer/inhoud',
         'veiligheid/invoer/getallen',
+        'veiligheid/invoer/paden',
         'veiligheid/invoer/praktijk',
       ],
     },
@@ -114,6 +134,19 @@ const sidebars: SidebarsConfig = {
         'veiligheid/xss/safe',
         'veiligheid/xss/eigen-project',
         'veiligheid/xss/praktijk',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Te veel verzoeken (DoS)',
+      collapsed: true,
+      items: [
+        'veiligheid/dos/verzoek',
+        'veiligheid/dos/dos-en-ddos',
+        'veiligheid/dos/zelf-meten',
+        'veiligheid/dos/limiet',
+        'veiligheid/dos/te-veel',
+        'veiligheid/dos/praktijk',
       ],
     },
     {
@@ -154,20 +187,8 @@ const sidebars: SidebarsConfig = {
         'veiligheid/wachtwoorden/registreren',
         'veiligheid/wachtwoorden/inloggen',
         'veiligheid/wachtwoorden/wijzigen',
+        'veiligheid/wachtwoorden/pogingen',
         'veiligheid/wachtwoorden/praktijk',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'Te veel verzoeken (DoS)',
-      collapsed: true,
-      items: [
-        'veiligheid/dos/verzoek',
-        'veiligheid/dos/dos-en-ddos',
-        'veiligheid/dos/zelf-meten',
-        'veiligheid/dos/limiet',
-        'veiligheid/dos/te-veel',
-        'veiligheid/dos/praktijk',
       ],
     },
     'veiligheid/eigen-project',
