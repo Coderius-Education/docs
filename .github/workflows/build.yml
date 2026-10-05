@@ -72,6 +72,9 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 22
+          # Deze job installeert niets; zonder pnpm-store faalt de automatische
+          # cache van setup-node v5 in zijn post-stap (Path Validation Error).
+          package-manager-cache: false
 
       - name: Plan
         id: plan
@@ -683,6 +686,9 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 22
+          # Deze job installeert niets; zonder pnpm-store faalt de automatische
+          # cache van setup-node v5 in zijn post-stap (Path Validation Error).
+          package-manager-cache: false
 
       - uses: actions/download-artifact@v6
         if: needs.plan.outputs.build == 'true'
