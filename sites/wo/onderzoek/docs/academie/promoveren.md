@@ -12,10 +12,13 @@ title: Promoveren
 
 ## Wie promoveert er?
 
-Wie wil promoveren, heeft eerst een master gehaald. Daarna zijn er twee gebruikelijke routes:
+Wie wil promoveren, heeft eerst een master gehaald. Daarna zijn er drie routes:
 
-- **Als promovendus in dienst van de universiteit.** Je solliciteert op een vacature voor een promotieplek, net als bij een gewone baan. Je krijgt salaris, een contract van meestal vier jaar, en je geeft vaak ook wat onderwijs. Zo promoveert het grootste deel in Nederland.
+- **Als promovendus in dienst van de universiteit.** Je solliciteert op een vacature voor een promotieplek, net als bij een gewone baan. Je krijgt salaris, een contract van meestal vier jaar, en je geeft vaak ook wat onderwijs. In 2026 begint het salaris op ruim 3.200 euro bruto per maand en loopt in vier jaar op tot ruim 4.000 euro. Zo promoveert bijna twee derde van de promovendi in Nederland.
 - **Als buitenpromovendus.** Je doet het onderzoek naast een andere baan of op eigen kosten, bijvoorbeeld als arts, leraar of gepensioneerde. Je hebt wel een begeleider aan de universiteit, maar geen contract.
+- **Met een beurs.** Je krijgt een beurs in plaats van een salaris, vaak als je uit het buitenland komt en je eigen land of een fonds je promotie betaalt.
+
+Elk jaar promoveren in Nederland zo'n 5.600 mensen; vijfentwintig jaar geleden waren het er nog geen 2.000. Het contract duurt vier jaar, maar de meesten doen er in de praktijk iets langer over, gemiddeld ruim vijf jaar.
 
 ## De begeleiders
 
@@ -31,8 +34,8 @@ Wie wil promoveren, heeft eerst een master gehaald. Daarna zijn er twee gebruike
 2. **Onderzoek en artikelen.** Je doet het onderzoek en schrijft de resultaten op. In veel vakgebieden bestaat een proefschrift uit drie tot vijf artikelen die apart in tijdschriften met [peer review](../literatuurstudie/peer-review.md) verschijnen, met een inleiding en een slothoofdstuk eromheen. In andere vakgebieden, zoals geschiedenis, schrijf je één doorlopend boek.
 3. **Proefschrift.** Als de promotor tevreden is, gaat het manuscript naar de commissie. Die beoordeelt of het een zelfstandige, nieuwe bijdrage aan de wetenschap is. Pas na hun goedkeuring wordt het gedrukt.
 4. **Stellingen.** Bij veel universiteiten hoort bij het proefschrift een lijstje stellingen: korte beweringen die je moet kunnen verdedigen. De meeste gaan over je onderzoek, een of twee over iets heel anders — soms met een knipoog.
-5. **De openbare verdediging.** In een aula, voor familie, vrienden en collega's, stellen de commissieleden in toga vragen over het proefschrift. Je staat naast je twee *paranimfen*: vroeger hielpen zij bij de organisatie, nu zijn het vooral eregasten. Na een vaste tijd komt de pedel binnen met de woorden *hora est* ("het is tijd"), en de vragen stoppen.
-6. **De bul.** De commissie trekt zich kort terug, en daarna reikt de promotor de bul uit: het diploma van je doctorstitel. Heel soms gebeurt dat *cum laude*, met lof, voor een uitzonderlijk proefschrift.
+5. **De openbare verdediging.** In een aula, voor familie, vrienden en collega's, stellen de commissieleden in toga vragen over het proefschrift. Je staat naast je twee *paranimfen*: vroeger hielpen zij bij de organisatie, nu zijn het vooral eregasten. Na een vaste tijd, bij de Universiteit van Amsterdam bijvoorbeeld 45 minuten, komt de pedel binnen met de woorden *hora est* ("het is tijd"), en de vragen stoppen.
+6. **De bul.** De commissie trekt zich kort terug, en daarna reikt de promotor de bul uit: het diploma van je doctorstitel. Heel soms gebeurt dat *cum laude*, met lof, voor een uitzonderlijk proefschrift: ongeveer een op de twintig promoties. De Universiteit Twente schafte cum laude bij promoties per 2026 af: het oordeel bleek niet objectief te maken, en mannen kregen het twee keer zo vaak als vrouwen.
 
 De verdediging is vooral een ceremonie: de beslissing over het proefschrift is al gevallen voordat je de zaal in komt. Het echte examen zijn de jaren ervoor.
 

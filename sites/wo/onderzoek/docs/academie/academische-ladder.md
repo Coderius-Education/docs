@@ -27,7 +27,7 @@ Wie met pensioen gaat, wordt *emeritus*: nog verbonden aan de universiteit, vaak
 Een trede hoger kom je niet automatisch, door jaren te tellen. Je solliciteert op een vacature of wordt bevorderd als je aan eisen voldoet. Wat telt:
 
 - **Publicaties:** artikelen in tijdschriften met [peer review](../literatuurstudie/peer-review.md), en hoe vaak anderen ze [citeren](../literatuurstudie/citaties.md).
-- **Geld:** onderzoek kost geld, en een groot deel daarvan moet je zelf binnenhalen met beurzen. De bekendste in Nederland zijn de Veni, Vidi en Vici van NWO: drie beurzen voor drie fasen van je loopbaan.
+- **Geld:** onderzoek kost geld, en een groot deel daarvan moet je zelf binnenhalen met beurzen. De bekendste in Nederland zijn de Veni, Vidi en Vici van NWO, de nationale organisatie die onderzoeksgeld verdeelt: drie beurzen voor drie fasen van je loopbaan, van ruim drie ton voor een pas gepromoveerde onderzoeker tot anderhalf miljoen euro voor een ervaren onderzoeker die een eigen groep opbouwt.
 - **Onderwijs:** colleges geven, scripties begeleiden, een vak opzetten.
 - **Begeleiding en leiding:** promovendi begeleiden, een groep aansturen, meedraaien in commissies.
 
@@ -37,7 +37,16 @@ Veel universiteiten nemen een universitair docent eerst aan op een **tenure trac
 
 ## Een smalle ladder
 
-De ladder wordt naar boven toe snel smaller. Er zijn veel meer promovendi dan vaste plekken: de meeste gepromoveerden gaan na hun promotie buiten de universiteit werken, bij de overheid, in het bedrijfsleven, in het onderwijs of in de zorg. Dat is geen mislukking; een promotie leert je zelfstandig onderzoek doen, en dat is ook buiten de universiteit veel waard. Maar het betekent wel dat jonge onderzoekers jarenlang op tijdelijke contracten werken, met de onzekerheid die daarbij hoort.
+De ladder wordt naar boven toe snel smaller. Zo waren er in 2025 aan de Nederlandse universiteiten ongeveer:
+
+| Trede | Aantal (in voltijdbanen) |
+|---|---|
+| Promovendi | 12.300 |
+| Universitair docenten | 6.900 |
+| Universitair hoofddocenten | 3.400 |
+| Hoogleraren | 3.200 |
+
+Er zijn dus veel meer promovendi dan vaste plekken. Ongeveer drie op de tien gepromoveerden blijven aan een universiteit werken; de rest gaat daarbuiten aan de slag, bij de overheid, in het bedrijfsleven, in het onderwijs of in de zorg. Dat is geen mislukking; een promotie leert je zelfstandig onderzoek doen, en dat is ook buiten de universiteit veel waard. Maar het betekent wel dat jonge onderzoekers jarenlang op tijdelijke contracten werken, met de onzekerheid die daarbij hoort.
 
 :::caution[Valkuil: hoger is niet beter op jouw onderwerp]
 Een hoogleraar weet veel van een smal vakgebied, niet van alles. En wie het onderzoek in een artikel echt heeft uitgevoerd, staat vaak onderaan de ladder: de promovendus die als [eerste auteur](../literatuurstudie/auteurvolgorde.md) op het artikel staat. Gebruik de trede om iemand in te schatten, niet om een argument te winnen.
