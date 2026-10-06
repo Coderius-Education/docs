@@ -17,7 +17,7 @@ Onderzoek is **aanvaardbaar** als het **ethisch verantwoord** is: eerlijk uitgev
 - **Vraag toestemming.** Deelnemers aan je enquête of test weten waar ze aan meedoen en doen vrijwillig mee. Zijn je deelnemers jonger dan 16, dan is volgens de privacywet (AVG) meestal ook toestemming van een ouder nodig — overleg met je begeleider hoe dat op jouw school geregeld is.
 - **Bescherm privacy.** Verwerk antwoorden anoniem, deel geen herkenbare gegevens en bewaar niet meer dan je nodig hebt.
 - **Breng niemand in gevaar of verlegenheid.** Geen experimenten die deelnemers kunnen schaden, geen vragen die onnodig kwetsen, geen tests die spullen van anderen slopen.
-- **Houd je aan de regels.** Van school, van de wet, en van de plek waar je onderzoek doet. Twijfel je? Overleg met je begeleider *voordat* je begint.
+- **Houd je aan de regels.** Van school, van de wet (bijvoorbeeld het [auteursrecht](./auteursrecht.md) als je werk van anderen overneemt), en van de plek waar je onderzoek doet. Twijfel je? Overleg met je begeleider *voordat* je begint.
 
 :::caution[Voorbeeld van onaanvaardbaar onderzoek]
 Je onderzoekt hoe makkelijk wachtwoorden van klasgenoten te raden zijn — door het gewoon te proberen op hun echte accounts, zonder dat ze het weten. Interessante vraag, onaanvaardbare methode. Aanvaardbaar alternatief: laat vrijwilligers een *nep*-wachtwoord aanmaken zoals ze dat gewend zijn, en test dáárop.

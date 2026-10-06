@@ -16,7 +16,7 @@ Onderzoek is **valide** als je gegevens echt gaan over de vraag die je wilt bean
 ## Zo maak je je onderzoek valide
 
 - **Kies een methode die bij je vraag past.** Wil je weten hoeveel tijd leerlingen op hun telefoon zitten, kijk dan in de schermtijd-statistieken in plaats van te vragen "hoeveel denk je?" — mensen schatten dat notoir verkeerd.
-- **Ondervraag de juiste groep.** Wil je iets weten over "scholieren", vraag dan niet alleen je eigen vriendengroep: die lijkt te veel op jou. Zorg voor een **representatieve** groep.
+- **Ondervraag de juiste groep.** Wil je iets weten over "scholieren", vraag dan niet alleen je eigen vriendengroep: die lijkt te veel op jou. Zorg voor een <B t="representatief" tekst="representatieve"/> groep.
 - **Stel neutrale vragen.** *"Vind je ook niet dat er te veel huiswerk is?"* stuurt het antwoord. *"Hoeveel uur besteed je per week aan huiswerk?"* niet.
 - **Trek geen grotere conclusie dan je gegevens toelaten.** Heb je alleen 4-havo ondervraagd, dan gaat je conclusie over 4-havo — niet over "de jeugd".
 

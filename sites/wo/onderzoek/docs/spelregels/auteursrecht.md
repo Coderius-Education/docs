@@ -21,7 +21,7 @@ De twee worden vaak door elkaar gehaald, maar ze gaan over iets anders:
 | **Wat los je op met een bronvermelding?** | Alles | Niet alles: soms heb je ook toestemming nodig |
 | **Voorbeeld van een overtreding** | Een alinea overnemen zonder bron | Een foto van een fotograaf op je voorblad zetten, met bron maar zonder toestemming |
 
-Bij [transparant](./transparant.md) leer je dat alles wat je overneemt een bronvermelding krijgt. Dat blijft zo. Auteursrecht voegt er een vraag aan toe: mag ik dit wel gebruiken?
+Bij [transparant](./transparant.md) leer je dat alles wat je overneemt een bronvermelding krijgt. Dat blijft zo. Auteursrecht voegt er een vraag aan toe: mag ik dit wel gebruiken? Het hoort bij de spelregel [aanvaardbaar](./aanvaardbaar.md): je houdt je aan de wet en respecteert het werk van anderen.
 
 ## Wat is beschermd, en wat niet?
 
