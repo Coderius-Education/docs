@@ -6,7 +6,7 @@ title: De academische ladder
 
 <Definitie gewoneTaal="de treden die een onderzoeker aan de universiteit beklimt: van promovendus tot hoogleraar, met op elke trede meer zelfstandigheid en verantwoordelijkheid.">
 
-De **academische ladder** is de vaste volgorde van functies aan een universiteit: promovendus, postdoc, universitair docent, universitair hoofddocent en hoogleraar. Wie hoger op de ladder staat, bedenkt meer zelf, begeleidt meer anderen en is verantwoordelijk voor geld, onderwijs en een eigen onderzoekslijn.
+De **academische ladder** is de vaste volgorde van functies aan een universiteit: promovendus, postdoc, universitair docent, universitair hoofddocent en hoogleraar. De postdoc is een tussenstap die niet iedereen zet. Wie hoger op de ladder staat, bedenkt meer zelf, begeleidt meer anderen en is verantwoordelijk voor geld, onderwijs en een eigen onderzoekslijn.
 
 </Definitie>
 
@@ -17,10 +17,14 @@ De **academische ladder** is de vaste volgorde van functies aan een universiteit
 | **Promovendus** | PhD candidate | Je eerste eigen onderzoek, onder begeleiding; aan het eind schrijf je een proefschrift ([promoveren](./promoveren.md)) | Tijdelijk, meestal vier jaar |
 | **Postdoc** | Postdoctoral researcher | Na je promotie onderzoek doen in het project van een ander; ervaring en publicaties opbouwen | Tijdelijk, vaak een tot drie jaar |
 | **Universitair docent (UD)** | Assistant professor | Eigen onderzoek én onderwijs geven; je begint een eigen onderzoekslijn | Vaak eerst tijdelijk (tenure track), daarna vast |
-| **Universitair hoofddocent (UHD)** | Associate professor | Een eigen groep begeleiden, geld binnenhalen, promovendi begeleiden | Vast |
-| **Hoogleraar** | (Full) professor | Een vakgebied leiden: koers bepalen, groep aansturen, promoties afnemen | Vast |
+| **Universitair hoofddocent (UHD)** | Associate professor | Een eigen onderzoekslijn leiden, geld binnenhalen, promovendi begeleiden | Vast |
+| **Hoogleraar** | (Full) professor | Een vakgebied leiden: koers bepalen, een groep aansturen, als promotor promovendi begeleiden | Vast |
 
-Wie met pensioen gaat, wordt *emeritus*: nog verbonden aan de universiteit, vaak nog schrijvend, maar zonder vaste taken.
+Daarnaast kom je nog drie namen tegen:
+
+- **Bijzonder hoogleraar:** een hoogleraar die meestal een dag per week aan de universiteit werkt, op een leerstoel die betaald wordt door een fonds, bedrijf of organisatie. Kijk bij zo iemand extra goed [wie er betaalt](../literatuurstudie/onderzoeker-onderzoeken.md).
+- **Emeritus:** een hoogleraar die met pensioen is: nog verbonden aan de universiteit, vaak nog schrijvend, maar zonder vaste taken.
+- **Lector:** de leider van een onderzoeksgroep aan een hogeschool. Hogescholen hebben geen promovendi en hoogleraren, maar doen wel praktijkgericht onderzoek.
 
 ## Hoe je een trede hoger komt
 
@@ -37,7 +41,7 @@ Veel universiteiten nemen een universitair docent eerst aan op een **tenure trac
 
 ## Een smalle ladder
 
-De ladder wordt naar boven toe snel smaller. Zo waren er in 2025 aan de Nederlandse universiteiten ongeveer:
+De ladder wordt naar boven toe snel smaller. Volgens het Rathenau Instituut, dat cijfers over de wetenschap bijhoudt, waren er in 2025 aan de Nederlandse universiteiten ongeveer:
 
 | Trede | Aantal (in voltijdbanen) |
 |---|---|
