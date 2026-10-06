@@ -52,6 +52,12 @@ const begrippen = {
     lang: 'Een uitspraak die waar is op grond van de betekenis van de woorden zelf, zoals "alle vrijgezellen zijn ongetrouwd". Een van de twee tanden van de vork van Hume.',
     url: '/kennisleer/vork-van-hume',
   },
+  auteursrecht: {
+    term: 'Auteursrecht',
+    kort: 'Het recht van de maker om te bepalen of en hoe anderen een werk mogen overnemen, verspreiden of openbaar maken.',
+    lang: 'Het recht van de maker van een tekst, foto, figuur, filmpje of ander werk om te bepalen of en hoe anderen het mogen overnemen, verspreiden of openbaar maken. Het ontstaat vanzelf, ook zonder ©, en geldt tot zeventig jaar na de dood van de maker. Een bronvermelding voorkomt plagiaat, maar geeft niet vanzelf toestemming.',
+    url: '/spelregels/auteursrecht',
+  },
   auteurvolgorde: {
     term: 'Auteurvolgorde',
     kort: 'De plek van een naam in de auteurslijst: eerste auteur deed het werk, laatste auteur leidde het — behalve waar alfabetisch geldt.',
@@ -112,6 +118,12 @@ const begrippen = {
     lang: 'Het vermelden waar informatie vandaan komt, bij alles wat je van een ander overneemt. Hoort bij de spelregel transparant.',
     url: '/spelregels/transparant',
   },
+  citaatrecht: {
+    term: 'Citaatrecht',
+    kort: 'Het wettelijke recht om een stukje van het werk van een ander over te nemen als je het bespreekt, ongewijzigd en met bron.',
+    lang: 'Het recht uit de Auteurswet om een deel van een werk, ook een afbeelding, zonder toestemming over te nemen, als het werk openbaar is, het citaat jouw tekst ondersteunt, je niet meer overneemt dan nodig, je niets verandert en je de bron vermeldt.',
+    url: '/spelregels/auteursrecht',
+  },
   citatie: {
     term: 'Citatie',
     kort: 'Een verwijzing van het ene artikel naar het andere; het aantal citaties meet gebruik, niet juistheid.',
@@ -140,6 +152,12 @@ const begrippen = {
     kort: 'De auteur die als aanspreekpunt voor het artikel dient, herkenbaar aan een sterretje of envelopje.',
     lang: 'De auteur die de communicatie over een artikel verzorgt en vragen beantwoordt; meestal de eerste of de laatste auteur, gemarkeerd met een sterretje of envelopje.',
     url: '/literatuurstudie/auteurvolgorde',
+  },
+  'creative-commons': {
+    term: 'Creative Commons',
+    kort: 'Een open licentie waarmee een maker vooraf zegt wat anderen met een werk mogen, aangegeven met codes als BY, SA, NC en ND.',
+    lang: 'Een open licentie waarmee de maker vooraf toestemming geeft om een werk te gebruiken, onder voorwaarden die met codes worden aangegeven: BY (naamsvermelding), SA (gelijk delen), NC (niet commercieel) en ND (geen bewerkingen). CC0 betekent: geen rechten voorbehouden.',
+    url: '/spelregels/auteursrecht',
   },
   deelvraag: {
     term: 'Deelvraag',
@@ -368,6 +386,12 @@ const begrippen = {
     kort: 'Werk of ideeën van een ander presenteren alsof ze van jou zijn, zonder bronvermelding.',
     lang: 'Werk of ideeën van een ander presenteren alsof ze van jou zijn, zonder bronvermelding. Schendt de spelregels transparant en aanvaardbaar.',
     url: '/spelregels/transparant',
+  },
+  portretrecht: {
+    term: 'Portretrecht',
+    kort: 'Het recht van een herkenbaar persoon op een foto of video om zich te verzetten tegen publicatie; vraag dus toestemming.',
+    lang: 'Het recht van iemand die herkenbaar op een foto of in een video staat om iets te zeggen over het openbaar maken van dat beeld. Maak je bij onderzoek opnamen van deelnemers, vraag dan vooraf toestemming, ook voor publicatie.',
+    url: '/spelregels/auteursrecht',
   },
   postdoc: {
     term: 'Postdoc',

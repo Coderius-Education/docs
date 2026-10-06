@@ -43,4 +43,6 @@ Bij elke spelregel vind je een kader **"Echt gebeurd"** met een beroemd onderzoe
 
 ## Verder lezen
 
+Overneem je tekst, figuren of foto's van een ander, dan speelt naast bronvermelding ook het [auteursrecht](./auteursrecht.md): niet alles wat je netjes vermeldt, mag je ook gebruiken.
+
 Validiteit heeft twee kanten — klopt je conclusie bínnen je onderzoek, en geldt die ook daarbuiten? Lees verder bij [interne validiteit](./interne-validiteit.md), [externe validiteit](./externe-validiteit.md) en [het spanningsveld tussen die twee](./intern-vs-extern.mdx).

@@ -45,3 +45,4 @@ Diederik Stapel was een gevierde Nederlandse hoogleraar sociale psychologie met 
 - [De vier spelregels samen](./de-vier-spelregels.md) — aanvaardbaar is een van de vier spelregels
 - [Transparant](./transparant.md) — eerlijk rapporteren hoort bij allebei
 - [Observatie](../opzet/methoden/observatie.md) en [interview](../opzet/methoden/interview.md) — methoden waar toestemming en privacy direct spelen
+- [Auteursrecht](./auteursrecht.md) — toestemming voor het werk van anderen, en portretrecht bij foto's van deelnemers
