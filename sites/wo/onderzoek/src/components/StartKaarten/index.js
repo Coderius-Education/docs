@@ -42,6 +42,11 @@ const kaarten = [
     to: '/literatuurstudie/van-zoeken-tot-lezen',
   },
   {
+    titel: 'De academische wereld',
+    tekst: 'Van promovendus tot hoogleraar, hoe promoveren werkt, en hoe Nederlandse universiteiten met AI omgaan.',
+    to: '/academie/academische-wereld',
+  },
+  {
     titel: 'Werkvormen',
     tekst:
       'Klasopdrachten met een printbaar werkblad: vragenkaartjes, je vraag scherpstellen, van vijftig bronnen naar drie, en methoden langs de kennisleer-bril.',

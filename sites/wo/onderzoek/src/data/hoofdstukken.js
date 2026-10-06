@@ -8,6 +8,7 @@ export const hoofdstukken = [
   { id: 'kennisleer', naam: 'Kennisleer', mappen: ['kennisleer'] },
   { id: 'opzet', naam: 'Onderzoek opzetten', mappen: ['opzet', 'gegevens'] },
   { id: 'literatuurstudie', naam: 'Literatuurstudie', mappen: ['literatuurstudie'] },
+  { id: 'academie', naam: 'De academische wereld', mappen: ['academie'] },
 ];
 
 export function hoofdstukVan(begrip) {

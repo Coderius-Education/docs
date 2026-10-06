@@ -12,7 +12,7 @@ title: Een onderzoeker onderzoeken
 
 ## Vijf checks
 
-**1. Wie is het en waar werkt deze onderzoeker?** Zoek de naam met de universiteit erbij. Vrijwel elke onderzoeker heeft een pagina op de site van de eigen instelling met functie en afdeling. De functie zegt iets over ervaring: *promovendus* (doet een eerste eigen onderzoek), *postdoc*, *universitair docent*, *universitair hoofddocent*, *hoogleraar*, *emeritus* (met pensioen). Let ook op de werkgever: een universiteit, een onafhankelijk instituut of een bedrijf met een belang?
+**1. Wie is het en waar werkt deze onderzoeker?** Zoek de naam met de universiteit erbij. Vrijwel elke onderzoeker heeft een pagina op de site van de eigen instelling met functie en afdeling. De functie zegt iets over ervaring (zie [de academische ladder](../academie/academische-ladder.md)): *promovendus* (doet een eerste eigen onderzoek), *postdoc*, *universitair docent*, *universitair hoofddocent*, *hoogleraar*, *emeritus* (met pensioen). Let ook op de werkgever: een universiteit, een onafhankelijk instituut of een bedrijf met een belang?
 
 **2. Waarover publiceert deze onderzoeker?** Open het profiel in [Google Scholar](./google-scholar.md) of de auteurspagina in [Semantic Scholar](./semantic-scholar.md). Je ziet in één oogopslag de onderwerpen, het aantal artikelen, de medeauteurs en de tijdschriften. De belangrijkste vraag: gaat dat werk over *dít* onderwerp? Expertise is smal. Een hoogleraar hartchirurgie is geen autoriteit over klimaat, hoe indrukwekkend de titel ook klinkt.
 
@@ -55,3 +55,4 @@ Linus Pauling won de Nobelprijs voor scheikunde (1954) én de Nobelprijs voor de
 - [Citaties](./citaties.md) en [h-index](./h-index.md) — de getallen die je bij check 3 gebruikt
 - [Peer review](./peer-review.md) — de controle van het artikel; deze pagina gaat over de controle van de auteur
 - [Aanvaardbaar](../spelregels/aanvaardbaar.md) — waarom belangen en fraude ertoe doen
+- [De academische ladder](../academie/academische-ladder.md) — wat de functies van promovendus tot hoogleraar betekenen

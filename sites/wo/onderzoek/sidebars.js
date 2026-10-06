@@ -169,6 +169,16 @@ const sidebars = {
     },
     {
       type: 'category',
+      label: 'De academische wereld',
+      items: [
+        'academie/academische-wereld',
+        'academie/academische-ladder',
+        'academie/promoveren',
+        'academie/universiteiten-en-ai',
+      ],
+    },
+    {
+      type: 'category',
       label: 'Werkvormen',
       items: [
         'werkvormen/overzicht',
