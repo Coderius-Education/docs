@@ -34,6 +34,7 @@ describe('normaliseerKlas', () => {
           items: [
             { type: 'cursus', site: 'bestaat-niet' },
             { type: 'link', url: 'javascript:alert(1)', label: 'x' },
+            { type: 'link', url: 'https://[kapot', label: 'x' },
             { type: 'pagina', site: 'python', docId: 'a', pad: '//evil.example/x', label: 'x' },
             { type: 'pagina', site: 'python', docId: 'a', pad: '/\t/evil.example', label: 'x' },
             { type: 'pagina', site: 'python', docId: 'a', pad: '/\\evil.example', label: 'x' },

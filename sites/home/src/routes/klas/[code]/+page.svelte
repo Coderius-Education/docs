@@ -100,7 +100,7 @@
 									rel="noopener noreferrer"
 									class="flex h-full flex-col gap-1 rounded-xl border bg-card p-3.5 text-card-foreground shadow-sm transition-colors hover:border-primary focus-visible:border-primary focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
 								>
-									<span class="text-xs text-muted-foreground">{new URL(item.url).hostname}</span>
+									<span class="text-xs text-muted-foreground">{item.host}</span>
 									<span class="text-base font-semibold leading-tight">
 										{item.label}<ExternalLink class="ml-1 inline h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
 									</span>

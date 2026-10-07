@@ -8,7 +8,7 @@ import { SITES_BY_ID } from '@coderius/shared/sites';
 export type KlasItem =
   | { type: 'cursus'; site: string; label?: string | null }
   | { type: 'pagina'; site: string; docId: string; pad: string; label: string }
-  | { type: 'link'; url: string; label: string };
+  | { type: 'link'; url: string; host: string; label: string };
 
 export type KlasGroep = { id: string; titel: string; items: KlasItem[] };
 
@@ -33,6 +33,17 @@ function padVanCursus(pad: string, site: string): boolean {
   return !!cursus && VEILIG_PAD.test(pad) && pad.startsWith(`/${cursus.path}/`);
 }
 
+/** De host van een https-link, of null als het geen geldige https-link is. */
+function httpsHost(url: string): string | null {
+  if (/[\s\\]/.test(url)) return null;
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === 'https:' && parsed.hostname ? parsed.hostname : null;
+  } catch {
+    return null;
+  }
+}
+
 function item(ruw: unknown): KlasItem | null {
   if (!ruw || typeof ruw !== 'object') return null;
   const i = ruw as Record<string, unknown>;
@@ -54,8 +65,9 @@ function item(ruw: unknown): KlasItem | null {
       label: tekst(i.label, 100) || i.pad,
     };
   }
-  if (i.type === 'link' && typeof i.url === 'string' && /^https:\/\//.test(i.url)) {
-    return { type: 'link', url: i.url, label: tekst(i.label, 100) || i.url };
+  if (i.type === 'link' && typeof i.url === 'string') {
+    const host = httpsHost(i.url);
+    if (host) return { type: 'link', url: i.url, host, label: tekst(i.label, 100) || i.url };
   }
   return null;
 }
