@@ -43,7 +43,8 @@ const kaarten = [
   },
   {
     titel: 'De academische wereld',
-    tekst: 'Van promovendus tot hoogleraar, hoe promoveren werkt, en wat je als student met AI mag.',
+    tekst:
+      'Van promovendus tot hoogleraar, hoe promoveren werkt, en wat je als student met AI mag.',
     to: '/academie/academische-wereld',
   },
   {
