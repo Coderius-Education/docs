@@ -86,6 +86,17 @@ const KOPPELING: Item[] = [
     summary: 'Hoe stuur ik een 404 als iets niet bestaat? (HTTPException)',
     concepten: ['fastapi-httpexception'],
   },
+  {
+    summary: 'Hoe maak ik een account? (registreren)',
+    concepten: [],
+    geenConcept:
+      'opslaan met een controle ervoor; nagekeken via db-write en fastapi-httpexception, aan de code niet te onderscheiden van een gewoon formulier',
+  },
+  {
+    summary: 'Hoe controleer ik een wachtwoord? (inloggen met 401)',
+    concepten: [],
+    geenConcept: 'een vergelijking met ==; db-get en fastapi-httpexception worden al nagekeken',
+  },
   // Dezelfde regex als de 404: een project met een eigen controle gebruikt
   // HTTPException ook, en scoort daarmee op hetzelfde concept.
   {

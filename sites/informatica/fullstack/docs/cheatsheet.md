@@ -178,6 +178,38 @@ Met `raise`, niet met `return`.
 </details>
 
 <details>
+<summary>Hoe maak ik een account? (registreren)</summary>
+
+```python
+@app.post("/registreer")
+async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as gebruikers:
+        if naam in gebruikers:
+            raise HTTPException(status_code=400, detail="Deze naam is al bezet")
+        gebruikers[naam] = wachtwoord
+        gebruikers.commit()
+    return RedirectResponse(url="/gastenboek", status_code=303)
+```
+
+Zonder de controle op een bestaande naam neemt een tweede registratie het account over. Het wachtwoord staat zo nog leesbaar in `gebruikers.db`; hoe je het veilig bewaart, staat onder [Veiligheid](#veiligheid).
+
+</details>
+
+<details>
+<summary>Hoe controleer ik een wachtwoord? (inloggen met 401)</summary>
+
+```python
+with SqliteDict("gebruikers.db") as gebruikers:
+    opgeslagen = gebruikers.get(naam)
+if opgeslagen != wachtwoord:
+    raise HTTPException(status_code=401, detail="Naam of wachtwoord klopt niet")
+```
+
+Een naam zonder account geeft `None`, en dat is nooit gelijk aan een wachtwoord. Geef bij een onbekende naam en een fout wachtwoord dezelfde melding, anders verraad je welke namen een account hebben.
+
+</details>
+
+<details>
 <summary>Hoe weiger ik invoer die niet klopt? (HTTPException met 400)</summary>
 
 ```python
@@ -201,6 +233,7 @@ Controleer aan het begin van je endpoint, vóór je iets opslaat. Een `maxlength
 | `303` | ga naar deze URL, met een GET | jij, met `RedirectResponse(..., status_code=303)` |
 | `307` | doe hetzelfde verzoek op deze URL | `RedirectResponse` zonder `status_code` |
 | `400` | dit verzoek klopt niet | jij, met `HTTPException` |
+| `401` | je bent niet (goed) ingelogd | jij, met `HTTPException` |
 | `403` | dit mag jij niet | jij, bij iets van een ander |
 | `404` | bestaat niet | FastAPI of jij |
 | `405` | dit pad bestaat, maar niet voor deze soort verzoek | FastAPI |
@@ -563,6 +596,7 @@ Hetzelfde bestand geeft je endpoint terug als antwoord op een htmx-verzoek.
 je-project/
 ├── main.py
 ├── gastenboek.db
+├── gebruikers.db
 ├── sessies.db
 ├── static/
 │   ├── css/

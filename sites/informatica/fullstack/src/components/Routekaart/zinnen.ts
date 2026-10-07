@@ -12,7 +12,7 @@ export const ZINNEN: Record<string, string> = {
   'Templates en formulieren':
     'Een pagina vult zich met waarden uit Python, en je server beantwoordt een formulier.',
   'Gegevens opslaan en tonen':
-    'Berichten blijven bewaard in een database en staan in een lijst, elk met een eigen pagina.',
+    'Berichten blijven bewaard en staan in een lijst, elk met een eigen pagina, en wie schrijft, heeft een account.',
   // FastAPI: de uitbreidingen en de afronding
   'Uitbreiding: zonder herladen (htmx)':
     'Een knop of formulier praat met de server terwijl de pagina blijft staan.',

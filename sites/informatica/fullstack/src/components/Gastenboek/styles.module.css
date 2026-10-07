@@ -83,6 +83,7 @@
 
 .veld {
   flex: 1 1 6rem;
+  white-space: nowrap;
   padding: 0.1rem 0.3rem;
   border: 1px solid #767676;
   border-radius: 2px;

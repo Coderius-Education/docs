@@ -794,6 +794,31 @@ Meer uitleg: [Gegevens opslaan met SqliteDict](/docs/FastAPI/database#er-gaat-ie
 </details>
 
 <details>
+<summary>Naam of wachtwoord klopt niet, terwijl je het goede wachtwoord typt</summary>
+
+```
+{"detail":"Naam of wachtwoord klopt niet"}
+```
+
+**Oorzaak:** de naam is niet letter voor letter de naam van het account. Een sleutel in `gebruikers.db` telt elke letter mee: `Sara` is een ander account dan `sara`, en een spatie achter de naam telt ook. Bestaat het account helemaal niet, bijvoorbeeld omdat `gebruikers.db` weg is of je server in een andere map draait, dan krijg je dezelfde melding.
+
+**Oplossing:** kijk met `bekijk_db.py` welke namen er in `gebruikers.db` staan, en typ de naam precies zo:
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("gebruikers.db") as gebruikers:
+    for naam in gebruikers.keys():
+        print(repr(naam))
+```
+
+`repr` zet aanhalingstekens om de naam, zodat je ook een spatie aan het eind ziet.
+
+Meer uitleg: [Inloggen: een wachtwoord controleren](/docs/FastAPI/inloggen)
+
+</details>
+
+<details>
 <summary>In plaats van een foutpagina zie je JSON met status_code en detail (return in plaats van raise)</summary>
 
 ```

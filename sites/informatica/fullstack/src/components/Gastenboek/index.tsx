@@ -5,8 +5,8 @@ import styles from './styles.module.css';
 // Het gastenboek uit de basis, nagebouwd in HTML en CSS voor de startpagina's:
 // wat je aan het eind hebt. Geen schermafbeelding, om dezelfde reden als bij
 // DevtoolsPaneel: die veroudert en hoort bij één browser. De inhoud volgt de
-// templates uit de lessen (gastenboek_form.html en berichten.html na Eén item
-// tonen). Het is een plaatje: de knoppen en velden zijn geen echte knoppen en
+// pagina's uit de lessen (gastenboek_form.html na Inloggen, met een
+// wachtwoordveld, en berichten.html na Eén item tonen). Het is een plaatje: de knoppen en velden zijn geen echte knoppen en
 // velden, daarom staat de inhoud onder aria-hidden en zegt het onderschrift
 // wat er te zien is.
 //
@@ -49,9 +49,11 @@ function Formulier(): ReactElement {
       <div className={styles.kop}>Gastenboek</div>
       <div className={styles.formulier}>
         <span className={styles.veld}>Je naam</span>
+        <span className={styles.veld}>Je wachtwoord</span>
         <span className={styles.veld}>Je bericht</span>
         <Knop>Verstuur</Knop>
       </div>
+      <span className={styles.link}>Nog geen account?</span>
     </Venster>
   );
 }
@@ -107,7 +109,7 @@ export default function Gastenboek({ beschermd = false }: { beschermd?: boolean 
       <figcaption className={styles.onderschrift}>
         {beschermd
           ? 'In de terminal probeert Alex met een script het bericht van Sara te verwijderen, en je server antwoordt met 403. In het gastenboek staat de HTML die Alex typte als gewone tekst, en heeft alleen je eigen bericht een verwijderknop.'
-          : 'Het formulier op /gastenboek en alle berichten op /berichten. Een klik op een naam opent de losse pagina van dat bericht, en Verwijderen haalt het weg. Het ziet er kaal uit, met jouw stylesheet erbij wordt het je eigen site.'}
+          : 'Het formulier op /gastenboek, waar je met de naam en het wachtwoord van je account een bericht schrijft, en alle berichten op /berichten. Een klik op een naam opent de losse pagina van dat bericht, en Verwijderen haalt het weg. Het ziet er kaal uit, met jouw stylesheet erbij wordt het je eigen site.'}
       </figcaption>
     </figure>
   );

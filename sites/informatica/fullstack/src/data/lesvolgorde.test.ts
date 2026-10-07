@@ -106,6 +106,8 @@ describe('titels en categorieën', () => {
     ['FastAPI/database-waarden', /SqliteDict/],
     ['FastAPI/static_files', /static files/],
     ['FastAPI/lijst_tonen', /for-lus/],
+    ['FastAPI/registreren', /account/],
+    ['FastAPI/inloggen', /wachtwoord/],
   ])('de titel van %s noemt %s', (id, begrip) => {
     expect(titel(id)).toMatch(begrip);
   });

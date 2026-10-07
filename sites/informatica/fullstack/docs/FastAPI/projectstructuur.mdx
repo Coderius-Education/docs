@@ -161,12 +161,48 @@ je-project/
 
 Er komen geen mappen bij: een lijstpagina en een detailpagina zijn twee templates naast elkaar.
 
+## Bij [Registreren: een account opslaan](/docs/FastAPI/registreren) en [Inloggen: een wachtwoord controleren](/docs/FastAPI/inloggen)
+
+```
+je-project/
+├── main.py
+├── gastenboek.db
+├── gebruikers.db
+├── mijn_data.db
+├── namen.db
+├── bekijk_db.py
+├── lees_db.py
+├── proef_db.py
+├── test_db.py
+├── static/
+│   ├── css/
+│   │   └── style.css
+│   ├── pages/
+│   │   ├── about.html
+│   │   ├── foto.html
+│   │   ├── gastenboek_form.html
+│   │   ├── groet_form.html
+│   │   ├── home.html
+│   │   ├── naam_form.html
+│   │   ├── naam_opslaan.html
+│   │   └── registreer.html
+│   └── kat.jpg
+└── templates/
+    ├── bericht.html
+    ├── berichten.html
+    ├── dobbelsteen.html
+    └── groet_resultaat.html
+```
+
+De accounts staan in een eigen database, `gebruikers.db`, en het formulier om er een te maken is een vast bestand. `gastenboek_form.html` blijft waar het was; het krijgt in Inloggen alleen een wachtwoordveld.
+
 ## Bij [Zonder herladen met htmx](/docs/FastAPI/htmx)
 
 ```
 je-project/
 ├── main.py
 ├── gastenboek.db
+├── gebruikers.db
 ├── mijn_data.db
 ├── namen.db
 ├── bekijk_db.py
@@ -185,7 +221,8 @@ je-project/
 │   │   ├── groet_form.html
 │   │   ├── home.html
 │   │   ├── naam_form.html
-│   │   └── naam_opslaan.html
+│   │   ├── naam_opslaan.html
+│   │   └── registreer.html
 │   └── kat.jpg
 └── templates/
     ├── bericht.html
@@ -203,6 +240,7 @@ htmx is één bestand in een nieuwe map `static/js/`. Bij de [htmx-recepten](/do
 je-project/
 ├── main.py
 ├── gastenboek.db
+├── gebruikers.db
 ├── mijn_data.db
 ├── namen.db
 ├── bekijk_db.py
@@ -222,7 +260,8 @@ je-project/
 │   │   ├── groet_form.html
 │   │   ├── home.html
 │   │   ├── naam_form.html
-│   │   └── naam_opslaan.html
+│   │   ├── naam_opslaan.html
+│   │   └── registreer.html
 │   └── kat.jpg
 └── templates/
     ├── bericht.html
@@ -240,6 +279,7 @@ Je JavaScript komt naast htmx te staan, in dezelfde `static`-map. Aan `main.py` 
 je-project/
 ├── main.py
 ├── gastenboek.db
+├── gebruikers.db
 ├── mijn_data.db
 ├── namen.db
 ├── sessies.db
@@ -259,7 +299,8 @@ je-project/
 │   │   ├── groet_form.html
 │   │   ├── home.html
 │   │   ├── naam_form.html
-│   │   └── naam_opslaan.html
+│   │   ├── naam_opslaan.html
+│   │   └── registreer.html
 │   └── kat.jpg
 └── templates/
     ├── bericht.html

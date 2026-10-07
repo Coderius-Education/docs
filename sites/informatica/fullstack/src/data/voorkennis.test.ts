@@ -61,6 +61,8 @@ const ZONDER_BLOK: Record<string, string> = {
   'FastAPI/verzoek-get.mdx': 'diagram van de lessen ervoor, geen nieuwe stof',
   'FastAPI/verzoek-sessie.mdx': 'diagram van de lessen ervoor, geen nieuwe stof',
   'FastAPI/html_bestanden.mdx': 'HTML-bestand en pad; HTML zelf staat al bij html_tonen',
+  'FastAPI/inloggen.mdx':
+    'het wachtwoordveld staat al bij registreren.mdx, de les ervoor; de controle is server-side en wordt hier zelf uitgelegd',
   'FastAPI/installatie.mdx':
     'controlelijst: elke check verwijst zelf met een SiteLink naar de editor-cursus',
   'FastAPI/laat-het-zien.mdx': 'terminalcommando en netwerkadres, geen voorkennis uit een cursus',
@@ -136,6 +138,7 @@ const MET_BLOK = [
   'FastAPI/lijst_tonen.mdx',
   'FastAPI/links.mdx',
   'FastAPI/post_naar_database.mdx',
+  'FastAPI/registreren.mdx',
   'FastAPI/server-of-browser.mdx',
   'FastAPI/sessies.mdx',
   'FastAPI/static_files.mdx',

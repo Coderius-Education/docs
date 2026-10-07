@@ -61,6 +61,8 @@ const sidebars: SidebarsConfig = {
         'FastAPI/lijst_tonen',
         'FastAPI/redirect',
         'FastAPI/detailpagina',
+        'FastAPI/registreren',
+        'FastAPI/inloggen',
         'FastAPI/verzoek-get',
       ],
     },
