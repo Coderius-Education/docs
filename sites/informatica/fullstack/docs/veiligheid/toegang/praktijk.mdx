@@ -5,10 +5,10 @@ description: Hoe echte sites bepalen wie wat mag, van accounts en beheerders tot
 
 # Wie mag wat: in de praktijk
 
-Je controle uit [les 2](./controle) koppelt een bericht aan een browser.
-Een echte site koppelt het aan een account, heeft mensen die meer mogen dan
-anderen, en heeft honderden endpoints in plaats van vier. Het idee blijft
-hetzelfde: elk endpoint vraagt zelf wie dit mag.
+Je controle uit [les 2](./controle) koppelt een bericht aan een account. Een
+echte site doet dat ook, maar daar mogen sommige mensen meer dan anderen, en
+zijn er honderden endpoints. Het idee blijft hetzelfde: elk endpoint vraagt
+zelf wie dit mag.
 
 ## Wat jij zelf doet
 
@@ -51,25 +51,16 @@ gebruikt. Het valt pas op als iemand een verzoek zelf verstuurt.
 </details>
 
 <details>
-<summary>Een account in plaats van een browser</summary>
+<summary>Een vast nummer in plaats van een naam</summary>
 
-In [opdracht 2 van les 2](./controle) kon Sara in een privévenster niet
-bij haar eigen bericht. Met een account kan dat wel. Inloggen bouw je later in
-de [wachtwoordenreeks](../wachtwoorden/inloggen). De koppeling met de sessie bouw
-je daar zelf erbij: na een geslaagde inlog zet de server de naam van het account
-in de sessie, zoals in [Wachtwoord wijzigen](/docs/veiligheid/wachtwoorden/wijzigen),
-en bij elk bericht de naam van wie het plaatste:
+Je gastenboek koppelt een bericht aan de naam van een account. Dat gaat goed
+zolang een naam nooit verandert. Mag iemand zijn naam wijzigen, dan zijn zijn
+oude berichten van niemand meer, of van wie die naam daarna kiest. Grote sites
+geven daarom elk account een vast nummer dat nooit verandert, en zetten dat
+nummer bij elk bericht. De naam is dan alleen wat je op het scherm ziet.
 
-```python
-if bericht["eigenaar"] != ingelogd:
-    raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
-```
-
-Dat lijkt op de foute controle uit [les 3](./server-weet), maar het verschil zit in waar
-`ingelogd` vandaan komt: uit de sessie, en daar heeft de server hem zelf in
-gezet, pas nadat het wachtwoord klopte. Dat controleren doe je in de
-wachtwoordenreeks met `ph.verify`. Een naam die de bezoeker
-in een formulier typt, blijft onbetrouwbaar.
+De controle blijft hetzelfde: het nummer in de sessie en het nummer bij het
+bericht heeft de server allebei zelf vastgelegd, nadat het wachtwoord klopte.
 
 </details>
 
@@ -81,9 +72,10 @@ berichten van anderen, een docent ziet alle inleveringen. Dat heet een **rol**.
 In de controle wordt dat één voorwaarde erbij:
 
 ```python
-BEHEERDERS = {"sara"}
+BEHEERDERS = {"Sara"}
 
-if bericht["eigenaar"] != ingelogd and ingelogd not in BEHEERDERS:
+ingelogd = mijn.get("naam")
+if bericht["naam"] != ingelogd and ingelogd not in BEHEERDERS:
     raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
 ```
 

@@ -56,8 +56,9 @@ vertrouw je niet, en de controle hoort op de server.
   ([De controle met 403](./toegang/controle))
 - [ ] Die controle staat in elk endpoint apart, ook in Alles wissen en in een
   endpoint dat je later toevoegt. ([Elk endpoint apart](./toegang/elk-endpoint))
-- [ ] De controle gebruikt wat de server weet, zoals de sessie, niet wat de
-  bezoeker in een formulier typt. ([Controleer op wat de server weet](./toegang/server-weet))
+- [ ] De controle gebruikt wat de server weet, zoals de naam in de sessie, niet
+  wat de bezoeker in een formulier of de URL meestuurt.
+  ([Controleer op wat de server weet](./toegang/server-weet))
 - [ ] Een `GET` die gegevens van anderen teruggeeft, zoals `GET /sessies`, is
   ook een gat: haal hem weg of scherm hem af.
   ([Wie mag wat in je eigen project](./toegang/eigen-project))
@@ -75,7 +76,8 @@ vertrouw je niet, en de controle hoort op de server.
 
 ## Wachtwoorden
 
-Alleen als je project accounts heeft.
+Je gastenboek heeft accounts sinds de basis; een eigen project alleen als je
+ze erin bouwde.
 
 - [ ] `/registreer` weigert een naam die al bestaat, anders overschrijft een
   tweede registratie het wachtwoord van de eerste.
@@ -85,8 +87,9 @@ Alleen als je project accounts heeft.
 - [ ] Inloggen gebruikt `ph.verify`, met dezelfde melding bij een onbekende naam
   en een fout wachtwoord, en ook bij een onbekende naam een `verify` tegen een
   nep-hash. ([Inloggen met verify](./wachtwoorden/inloggen))
-- [ ] `/inloggen` en `/wijzig` hebben een limiet: `@limiter.limit` direct onder
-  `@app.post`, met `request: Request`. ([Inlogpogingen beperken](./wachtwoorden/pogingen))
+- [ ] Elk endpoint dat een wachtwoord controleert, zoals `/inloggen`, heeft een
+  limiet: `@limiter.limit` direct onder `@app.post`, met `request: Request`.
+  ([Inlogpogingen beperken](./wachtwoorden/pogingen))
 
 ## Test het zoals een bezoeker
 

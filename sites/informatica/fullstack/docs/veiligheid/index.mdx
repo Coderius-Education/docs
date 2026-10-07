@@ -87,6 +87,7 @@ deze tegen:
 |:---:|---|---|---|
 | `200` | gelukt | je endpoint, als alles goed gaat | overal |
 | `400` | dit verzoek klopt niet | meestal jij, met `HTTPException`, voor een regel die je zelf bedacht; Starlette zelf bij een veld boven een megabyte | [Invoer, les 1 en 4](/docs/veiligheid/invoer/inhoud) |
+| `401` | je bent niet (goed) ingelogd | jij, met `HTTPException`, als een wachtwoord niet klopt of er geen sessie is | [Inloggen: een wachtwoord controleren](/docs/FastAPI/inloggen), [Wie mag wat, les 1](/docs/veiligheid/toegang/zwakheid) |
 | `403` | dit mag jij niet | jij, als de bezoeker iets van een ander wil | [Wie mag wat, les 2](/docs/veiligheid/toegang/controle) |
 | `404` | bestaat niet | FastAPI bij een onbekend pad, of jij bij een onbekend item | [Eén item tonen: path-parameters en 404](/docs/FastAPI/detailpagina), [De handleiding uitzetten](/docs/veiligheid/zichtbaar/uitzetten), [Invoer, les 6](/docs/veiligheid/invoer/paden) |
 | `422` | een veld past niet bij `Form` | FastAPI zelf, voordat je functie draait | [Invoer, les 2 en 3](/docs/veiligheid/invoer/grenzen) |

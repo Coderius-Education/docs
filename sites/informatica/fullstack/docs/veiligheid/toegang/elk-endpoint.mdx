@@ -26,8 +26,9 @@ of het bericht van Sara blijft staan.
 <details>
 <summary>Tip</summary>
 
-Loop niet over alle sleutels in `gastenboek.db`, maar over de sleutels in de
-sessie.
+Loop door `db.items()` en zoek de berichten met de naam uit de sessie. Zet hun
+sleutels eerst in een lijst, en verwijder ze daarna: bij een gewone dictionary
+mag je niets weghalen terwijl je er nog doorheen loopt.
 
 </details>
 
@@ -40,9 +41,12 @@ async def alles_wissen(sessie_id: str = Cookie(default="")):
     with SqliteDict("sessies.db") as sessies:
         mijn = sessies.get(sessie_id, {})
     with SqliteDict("gastenboek.db") as db:
-        for sleutel in mijn.get("berichten", []):
-            if sleutel in db:
-                del db[sleutel]
+        van_mij = []
+        for sleutel, bericht in db.items():
+            if bericht["naam"] == mijn.get("naam"):
+                van_mij.append(sleutel)
+        for sleutel in van_mij:
+            del db[sleutel]
         db.commit()
     return {"bericht": "Jouw berichten zijn gewist"}
 ```
@@ -57,8 +61,13 @@ adres = "http://127.0.0.1:8000"
 sara = httpx.Client(base_url=adres)
 alex = httpx.Client(base_url=adres)
 
-sara.post("/bericht", data={"naam": "Sara", "bericht": "Hoi allemaal"})
-alex.post("/bericht", data={"naam": "Alex", "bericht": "Leuk gastenboek"})
+sara.post("/registreer", data={"naam": "Sara", "wachtwoord": "zon123"})
+sara.post("/inloggen", data={"naam": "Sara", "wachtwoord": "zon123"})
+alex.post("/registreer", data={"naam": "Alex", "wachtwoord": "maan456"})
+alex.post("/inloggen", data={"naam": "Alex", "wachtwoord": "maan456"})
+
+sara.post("/bericht", data={"bericht": "Hoi allemaal"})
+alex.post("/bericht", data={"bericht": "Leuk gastenboek"})
 
 print(alex.delete("/berichten").json())
 namen = []
@@ -67,7 +76,7 @@ for bericht in alex.get("/berichten").json().values():
 print(f"Nog in het gastenboek: {namen}")
 ```
 
-Uitvoer, met een lege database:
+Uitvoer, met lege databases:
 
 ```
 {'bericht': 'Jouw berichten zijn gewist'}
@@ -75,7 +84,8 @@ Nog in het gastenboek: ['Sara']
 ```
 
 Hier is er geen `403` nodig: wie Alles wissen kiest, wist wat van hem is, en de
-rest blijft staan.
+rest blijft staan. Wie niet is ingelogd, heeft geen naam in de sessie, en wist
+dus niets.
 
 Deze server praat JSON, dus het antwoord is een dictionary. In je eigen
 gastenboek gaf `alles_wissen` uit het htmx-overzicht de lijst-template terug,
@@ -117,30 +127,43 @@ from sqlitedict import SqliteDict
 
 app = FastAPI()
 
+@app.post("/registreer")
+async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as gebruikers:
+        if naam in gebruikers:
+            raise HTTPException(status_code=400, detail="Deze naam is al bezet")
+        gebruikers[naam] = wachtwoord
+        gebruikers.commit()
+    return {"bericht": f"Welkom, {naam}"}
+
+@app.post("/inloggen")
+async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as gebruikers:
+        opgeslagen = gebruikers.get(naam)
+    if opgeslagen != wachtwoord:
+        raise HTTPException(status_code=401, detail="Naam of wachtwoord klopt niet")
+
+    sessie_id = secrets.token_hex(16)
+    with SqliteDict("sessies.db") as sessies:
+        sessies[sessie_id] = {"naam": naam}
+        sessies.commit()
+
+    antwoord = JSONResponse({"bericht": f"Ingelogd als {naam}"})
+    antwoord.set_cookie(key="sessie_id", value=sessie_id, max_age=60 * 60 * 24 * 30)
+    return antwoord
+
 @app.post("/bericht")
-async def bericht_plaatsen(
-    naam: str = Form(...),
-    bericht: str = Form(...),
-    sessie_id: str = Cookie(default=""),
-):
-    if not sessie_id:
-        sessie_id = secrets.token_hex(16)
+async def bericht_plaatsen(bericht: str = Form(...), sessie_id: str = Cookie(default="")):
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {})
+    if not mijn:
+        raise HTTPException(status_code=401, detail="Log eerst in")
 
     sleutel = f"bericht_{time.time_ns()}"
     with SqliteDict("gastenboek.db") as db:
-        db[sleutel] = {"naam": naam, "bericht": bericht}
+        db[sleutel] = {"naam": mijn["naam"], "bericht": bericht}
         db.commit()
-
-    with SqliteDict("sessies.db") as sessies:
-        mijn = sessies.get(sessie_id, {"naam": naam, "berichten": []})
-        mijn["naam"] = naam
-        mijn["berichten"].append(sleutel)
-        sessies[sessie_id] = mijn
-        sessies.commit()
-
-    antwoord = JSONResponse({"sleutel": sleutel})
-    antwoord.set_cookie(key="sessie_id", value=sessie_id, max_age=60 * 60 * 24 * 30)
-    return antwoord
+    return {"sleutel": sleutel}
 
 @app.get("/berichten")
 async def berichten():
@@ -151,13 +174,13 @@ async def berichten():
 async def bericht_verwijderen(sleutel: str, sessie_id: str = Cookie(default="")):
     with SqliteDict("sessies.db") as sessies:
         mijn = sessies.get(sessie_id, {})
-    if sleutel not in mijn.get("berichten", []):
-        raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
 
     with SqliteDict("gastenboek.db") as db:
-        if sleutel in db:
-            del db[sleutel]
-            db.commit()
+        bericht = db.get(sleutel)
+        if bericht is None or bericht["naam"] != mijn.get("naam"):
+            raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
+        del db[sleutel]
+        db.commit()
     return {"bericht": "Verwijderd"}
 
 @app.delete("/berichten")
@@ -165,9 +188,12 @@ async def alles_wissen(sessie_id: str = Cookie(default="")):
     with SqliteDict("sessies.db") as sessies:
         mijn = sessies.get(sessie_id, {})
     with SqliteDict("gastenboek.db") as db:
-        for sleutel in mijn.get("berichten", []):
-            if sleutel in db:
-                del db[sleutel]
+        van_mij = []
+        for sleutel, bericht in db.items():
+            if bericht["naam"] == mijn.get("naam"):
+                van_mij.append(sleutel)
+        for sleutel in van_mij:
+            del db[sleutel]
         db.commit()
     return {"bericht": "Jouw berichten zijn gewist"}
 ```

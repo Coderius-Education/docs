@@ -965,9 +965,13 @@ Het endpoint heeft `request: Request` nodig, en `@limiter.limit` staat direct on
 <summary>Hoe controleer ik wie iets mag? (403)</summary>
 
 ```python
-if sleutel not in mijn.get("berichten", []):
-    raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
+with SqliteDict("gastenboek.db") as db:
+    bericht = db.get(sleutel)
+    if bericht is None or bericht["naam"] != mijn.get("naam"):
+        raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
 ```
+
+`mijn` is de sessie uit `sessies.db`, met de naam waarmee de bezoeker inlogde.
 
 Zet de controle in het endpoint, vóór er iets verandert, en op elk endpoint apart. Zie [Wie mag wat: de controle met 403](/docs/veiligheid/toegang/controle).
 

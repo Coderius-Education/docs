@@ -41,26 +41,35 @@ Loop deze lijst af:
   `sessie_id: str = Cookie(default="")`.
 - De controle staat vóór het verwijderen of aanpassen, en stuurt anders een
   `403`.
-- Je controleert op wat de server zelf weet, zoals de sleutels in de sessie,
-  niet op een naam uit het formulier.
+- Je controleert op wat de server zelf weet, zoals de naam in de sessie, niet
+  op een naam uit het formulier, de URL of een cookie.
 - Een verborgen knop is een hulp, geen slot: het endpoint controleert toch.
 - Ook een `GET` is een gat als hij gegevens van anderen teruggeeft. Staat
   `GET /sessies` uit [opdracht 3 van Sessies](/docs/FastAPI/sessies#opdracht-3-investigate---kijk-in-je-sessies)
   nog in je project, haal hem weg: hij geeft elk sessie-id weg, en met het
-  sessie-id van Sara is Alex voor je server Sara. Elke `403` is dan omzeild.
+  sessie-id van Sara is Alex voor je server ingelogd als Sara, zonder haar
+  wachtwoord. Elke `403` is dan omzeild.
 
 Heb je in [Onthouden op de server: sessies](/docs/FastAPI/sessies#opdracht-5-make---echt-afschermen)
 opdracht 5 gemaakt, dan heeft `POST /verwijderen` deze controle al. Bouwde je
 het htmx-recept Verwijderen, dan heeft je `DELETE /bericht/{sleutel}` hem nog
-niet. Zet daar `sessie_id: str = Cookie(default="")` naast `sleutel`, en deze
-regels vooraan in de functie, vóór het `with`-blok van `gastenboek.db`:
+niet. Zet daar `sessie_id: str = Cookie(default="")` naast `sleutel`, haal
+vooraan in de functie de sessie op, en zet in het `with`-blok van
+`gastenboek.db` de controle vóór de `del`. Binnen de functie staat dan:
 
 ```python
 with SqliteDict("sessies.db") as sessies:
     mijn = sessies.get(sessie_id, {})
-if sleutel not in mijn.get("berichten", []):
-    raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
+with SqliteDict("gastenboek.db") as db:
+    if sleutel not in db:
+        raise HTTPException(status_code=404, detail="Dit bericht bestaat niet")
+    if db[sleutel]["naam"] != mijn.get("naam"):
+        raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
+    del db[sleutel]
+    db.commit()
 ```
+
+De `return HTMLResponse("")` eronder blijft.
 
 Bij een `403` laat htmx de pagina met rust: het bericht blijft staan, en in
 **Netwerk** zie je een rode regel. Kijk daarna of elk ander endpoint dat iets

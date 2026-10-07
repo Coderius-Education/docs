@@ -80,6 +80,10 @@ describe('imports in de wachtwoordenreeks', () => {
 // was gelijk, maar de tijd verraadde welke namen een account hadden. Elk
 // endpoint dat ph.verify gebruikt, rekent daarom bij een onbekende naam ook een
 // verify uit, tegen de nep-hash NEP, en laat die naam daarna niet binnen.
+// Sinds de accounts in de basis (issue #126) staat in pogingen.mdx ook het
+// /inloggen van het eigen gastenboek: dat noemt de database `gebruikers` en
+// antwoordt met de 401 uit de basis in plaats van een dictionary. Ook die
+// versie moet dezelfde tijd kosten, dus de test accepteert beide vormen.
 describe('een onbekende naam kost even veel tijd', () => {
   const versies = pythonBlokken.flatMap(({ naam, code }) =>
     ['@app.post("/inloggen")', '@app.post("/wijzig")']
@@ -95,10 +99,10 @@ describe('een onbekende naam kost even veel tijd', () => {
   it.each(versies.map((v, i) => [`${v.naam} #${i} ${v.kop}`, v.code, v.stuk]))(
     '%s doet ook bij een onbekende naam een verify',
     (_, code, stuk) => {
-      expect(stuk).toContain('db.get(naam, NEP)');
+      expect(stuk).toMatch(/\b(db|gebruikers)\.get\(naam, NEP\)/);
       expect(stuk).not.toMatch(/is None:\s+return/);
       expect(stuk).toMatch(
-        /if opgeslagen == NEP:\s+return \{"bericht": "Naam of wachtwoord klopt niet"\}/,
+        /if opgeslagen == NEP:\s+(return \{"bericht": "Naam of wachtwoord klopt niet"\}|raise HTTPException\(status_code=401, detail="Naam of wachtwoord klopt niet"\))/,
       );
       // De controle op NEP staat na ph.verify, anders is de tijd weer ongelijk.
       expect(stuk.indexOf('if opgeslagen == NEP')).toBeGreaterThan(stuk.indexOf('ph.verify'));

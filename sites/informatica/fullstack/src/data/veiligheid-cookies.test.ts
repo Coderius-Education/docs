@@ -61,8 +61,11 @@ describe('de reeks Cookies afschermen', () => {
 
   it('een sessie verloopt op de server, in de hoofdtekst van uitloggen', () => {
     const code = pythonBlokken(zonderUitklap(lees('uitloggen'))).join('\n');
-    // De tijd gaat bij het plaatsen in de sessie ...
-    expect(code).toMatch(/mijn\["tot"\]\s*=\s*time\.time\(\)\s*\+/);
+    // De tijd gaat in de sessie. Eerst gebeurde dat bij elk bericht
+    // (mijn["tot"] = …); sinds de accounts uit de basis (issue #126) maakt
+    // alleen /inloggen een sessie, dus daar komt "tot" in de nieuwe sessie ...
+    expect(code).toMatch(/"tot": time\.time\(\)\s*\+/);
+    expect(code).toContain('@app.post("/inloggen")');
     // ... en bij het uitlezen vergelijkt de server hem met nu en gooit hij
     // een verlopen sessie weg.
     expect(code).toMatch(/\.get\("tot"[^)]*\)\s*<\s*time\.time\(\)/);

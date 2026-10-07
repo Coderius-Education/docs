@@ -263,7 +263,6 @@ In het gastenboek met sessies verandert alleen de kop van je
 @limiter.limit("10/minute")
 async def gastenboek_opslaan(
     request: Request,
-    naam: str = Form(..., max_length=30),
     bericht: str = Form(..., max_length=80),
     sessie_id: str = Cookie(default=""),
 ):
@@ -274,15 +273,18 @@ Op de plek van `...` blijft je functie zoals hij was. Die geeft een
 `RedirectResponse` terug en geen dictionary, dus `response: Response` is hier
 niet nodig: `slowapi` zet de headers op de omleiding zelf.
 
-Het script `twaalf.py`, naast je `main.py`:
+Het script `twaalf.py`, naast je `main.py`. Het logt eerst in, want zonder
+sessie krijgt elk bericht een `401`; gebruik de naam en het wachtwoord van een
+account dat je in je gastenboek hebt gemaakt:
 
 ```python
 import httpx
 
-adres = "http://127.0.0.1:8000/gastenboek"
+sara = httpx.Client(base_url="http://127.0.0.1:8000")
+sara.post("/inloggen", data={"naam": "sara", "wachtwoord": "welkom123"})
 
 for nummer in range(12):
-    antwoord = httpx.post(adres, data={"naam": "Sara", "bericht": f"Bericht {nummer + 1}"})
+    antwoord = sara.post("/gastenboek", data={"bericht": f"Bericht {nummer + 1}"})
     print(f"Verzoek {nummer + 1}: status {antwoord.status_code}")
 ```
 

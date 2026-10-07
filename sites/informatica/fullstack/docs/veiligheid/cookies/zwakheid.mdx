@@ -8,7 +8,8 @@ import { ConsoleRegels, DevtoolsPaneel } from '@site/src/components/Devtools';
 # Cookies afschermen: scripts lezen cookies
 
 Het sessie-id uit [Onthouden op de server: sessies](/docs/FastAPI/sessies) is de sleutel tot een
-sessie: wie het heeft, is voor je server die bezoeker. Daarom is het een lang,
+sessie: wie het heeft, is voor je server ingelogd als die bezoeker, zonder
+wachtwoord. Daarom is het een lang,
 willekeurig getal dat niemand raadt. Maar raden hoeft niet als een script het
 kan lezen, en standaard kan dat.
 
@@ -24,14 +25,24 @@ Maak in die map een virtual environment en installeer de packages; hoe dat gaat 
 
 Neem de server uit Wie mag wat, in de stand van
 [les 4: elk endpoint apart](../toegang/elk-endpoint), met Alles wissen erin. Zet
-er een formulier bij, als los bestand `static/formulier.html`:
+er formulieren bij, als los bestand `static/formulier.html`: een om te
+registreren, een om in te loggen en een voor een bericht.
 
 ```html
 <!doctype html>
 <html>
 <body>
-    <form method="post" action="/bericht">
+    <form method="post" action="/registreer">
         <input type="text" name="naam" placeholder="Je naam" required>
+        <input type="password" name="wachtwoord" placeholder="Wachtwoord" required>
+        <button type="submit">Registreer</button>
+    </form>
+    <form method="post" action="/inloggen">
+        <input type="text" name="naam" placeholder="Je naam" required>
+        <input type="password" name="wachtwoord" placeholder="Wachtwoord" required>
+        <button type="submit">Inloggen</button>
+    </form>
+    <form method="post" action="/bericht">
         <input type="text" name="bericht" placeholder="Je bericht" required>
         <button type="submit">Verstuur</button>
     </form>
@@ -69,30 +80,43 @@ from sqlitedict import SqliteDict
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+@app.post("/registreer")
+async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as gebruikers:
+        if naam in gebruikers:
+            raise HTTPException(status_code=400, detail="Deze naam is al bezet")
+        gebruikers[naam] = wachtwoord
+        gebruikers.commit()
+    return {"bericht": f"Welkom, {naam}"}
+
+@app.post("/inloggen")
+async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as gebruikers:
+        opgeslagen = gebruikers.get(naam)
+    if opgeslagen != wachtwoord:
+        raise HTTPException(status_code=401, detail="Naam of wachtwoord klopt niet")
+
+    sessie_id = secrets.token_hex(16)
+    with SqliteDict("sessies.db") as sessies:
+        sessies[sessie_id] = {"naam": naam}
+        sessies.commit()
+
+    antwoord = JSONResponse({"bericht": f"Ingelogd als {naam}"})
+    antwoord.set_cookie(key="sessie_id", value=sessie_id, max_age=60 * 60 * 24 * 30)
+    return antwoord
+
 @app.post("/bericht")
-async def bericht_plaatsen(
-    naam: str = Form(...),
-    bericht: str = Form(...),
-    sessie_id: str = Cookie(default=""),
-):
-    if not sessie_id:
-        sessie_id = secrets.token_hex(16)
+async def bericht_plaatsen(bericht: str = Form(...), sessie_id: str = Cookie(default="")):
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {})
+    if not mijn:
+        raise HTTPException(status_code=401, detail="Log eerst in")
 
     sleutel = f"bericht_{time.time_ns()}"
     with SqliteDict("gastenboek.db") as db:
-        db[sleutel] = {"naam": naam, "bericht": bericht}
+        db[sleutel] = {"naam": mijn["naam"], "bericht": bericht}
         db.commit()
-
-    with SqliteDict("sessies.db") as sessies:
-        mijn = sessies.get(sessie_id, {"naam": naam, "berichten": []})
-        mijn["naam"] = naam
-        mijn["berichten"].append(sleutel)
-        sessies[sessie_id] = mijn
-        sessies.commit()
-
-    antwoord = JSONResponse({"sleutel": sleutel})
-    antwoord.set_cookie(key="sessie_id", value=sessie_id, max_age=60 * 60 * 24 * 30)
-    return antwoord
+    return {"sleutel": sleutel}
 
 @app.get("/berichten")
 async def berichten():
@@ -103,13 +127,13 @@ async def berichten():
 async def bericht_verwijderen(sleutel: str, sessie_id: str = Cookie(default="")):
     with SqliteDict("sessies.db") as sessies:
         mijn = sessies.get(sessie_id, {})
-    if sleutel not in mijn.get("berichten", []):
-        raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
 
     with SqliteDict("gastenboek.db") as db:
-        if sleutel in db:
-            del db[sleutel]
-            db.commit()
+        bericht = db.get(sleutel)
+        if bericht is None or bericht["naam"] != mijn.get("naam"):
+            raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
+        del db[sleutel]
+        db.commit()
     return {"bericht": "Verwijderd"}
 
 @app.delete("/berichten")
@@ -117,9 +141,12 @@ async def alles_wissen(sessie_id: str = Cookie(default="")):
     with SqliteDict("sessies.db") as sessies:
         mijn = sessies.get(sessie_id, {})
     with SqliteDict("gastenboek.db") as db:
-        for sleutel in mijn.get("berichten", []):
-            if sleutel in db:
-                del db[sleutel]
+        van_mij = []
+        for sleutel, bericht in db.items():
+            if bericht["naam"] == mijn.get("naam"):
+                van_mij.append(sleutel)
+        for sleutel in van_mij:
+            del db[sleutel]
         db.commit()
     return {"bericht": "Jouw berichten zijn gewist"}
 ```
@@ -134,8 +161,9 @@ browser. Het sessie-id van een ander gebruiken om als die persoon binnen te
 komen, is strafbaar.
 :::
 
-1. Open `http://127.0.0.1:8000/static/formulier.html` en verstuur een bericht.
-   Je ziet de sleutel van je bericht als JSON.
+1. Open `http://127.0.0.1:8000/static/formulier.html`, maak een account met het
+   eerste formulier, ga terug en log in met het tweede. Je ziet
+   `{"bericht":"Ingelogd als …"}` als JSON.
 2. Ga terug naar het formulier en open de ontwikkelaarstools. Kijk in het
    tabblad **App** (Firefox: Opslag) onder Cookies bij `http://127.0.0.1:8000`.
    Daar staat `sessie_id`, met in de kolom **HttpOnly** niets:
@@ -167,22 +195,21 @@ script van een ander op je pagina, en dat leest je sessie-id net zo makkelijk.
 
 ## Er gaat iets mis
 
-`document.cookie` geeft `''`, een lege tekst, terwijl je wel een bericht hebt
-verstuurd.
+`document.cookie` geeft `''`, een lege tekst, terwijl je wel bent ingelogd.
 
 **Oorzaak:** je hebt de pagina geopend via `localhost:8000` in plaats van
 `127.0.0.1:8000`, of andersom. Het is dezelfde server, maar voor de browser zijn
 het twee verschillende sites, elk met eigen cookies.
 
-**Oplossing:** gebruik overal hetzelfde adres. Verstuur het bericht en open de
-Console op `127.0.0.1:8000`.
+**Oplossing:** gebruik overal hetzelfde adres. Log in en open de Console op
+`127.0.0.1:8000`.
 
 ## Opdrachten
 
 ### Opdracht 1: Investigate - Wat stuurt de server mee?
 
-Open het tabblad **Netwerk**, verstuur nog een bericht, en klik op het verzoek
-`bericht`. Zoek bij Headers, onder **Reactieheaders**, de regel `set-cookie`. Welke instellingen
+Open het tabblad **Netwerk**, log nog een keer in, en klik op het verzoek
+`inloggen`. Zoek bij Headers, onder **Reactieheaders**, de regel `set-cookie`. Welke instellingen
 zie je achter het sessie-id staan?
 
 <details>

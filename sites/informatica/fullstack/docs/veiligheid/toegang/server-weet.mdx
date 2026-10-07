@@ -1,14 +1,14 @@
 ---
 sidebar_label: '3. Controleer op wat de server weet'
-description: Een controle op een naam uit het formulier laat zich omzeilen. Controleer op wat de server zelf heeft vastgelegd, zoals de sleutels in de sessie.
+description: Een controle op een naam die de bezoeker meestuurt, laat zich omzeilen. Controleer op wat de server zelf heeft vastgelegd, zoals de naam in de sessie.
 ---
 
 # Wie mag wat: controleer op wat de server weet
 
-Je controle uit [les 2](./controle) kijkt of de sleutel in de sessie van de
-bezoeker staat. Er is een controle die er net zo goed uitziet: kijken of de naam
-bij het bericht dezelfde is als de naam van de bezoeker. Die gaat mis, en het
-waarom is de kern van deze reeks.
+Je controle uit [les 2](./controle) vergelijkt de naam bij het bericht met de
+naam in de sessie. Er is een controle die er bijna hetzelfde uitziet: de naam
+bij het bericht vergelijken met een naam die de bezoeker zelf meestuurt. Die
+gaat mis, en het waarom is de kern van deze reeks.
 
 ## Wie bepaalt deze waarde?
 
@@ -16,69 +16,69 @@ Bij elke waarde in een controle is de vraag: wie heeft hem bepaald?
 
 | Waarde | Wie bepaalt hem |
 |---|---|
-| een veld uit het formulier, zoals `naam` | de bezoeker: hij typt wat hij wil |
+| een veld uit het formulier of de URL, zoals `naam` | de bezoeker: hij typt wat hij wil |
 | de sleutel in het pad, `/bericht/{sleutel}` | de bezoeker: hij kan elk pad sturen |
 | de cookie `sessie_id` | de bezoeker stuurt hem, maar hij is te lang om te raden |
-| de lijst met sleutels in `sessies.db` | de server: die zette ze erin bij het plaatsen |
+| de naam in `sessies.db` | de server: die zette hem erin bij het inloggen, nadat het wachtwoord klopte |
+| de naam bij een bericht in `gastenboek.db` | de server: die nam hem bij het plaatsen uit de sessie |
 
 Alleen wat de server zelf heeft vastgelegd, kun je vertrouwen. Het sessie-id is
 de sleutel waarmee de server zijn eigen gegevens terugvindt.
 
 ## Er gaat iets mis
 
-Je controleert op de naam bij het bericht, in plaats van op de sleutels in de
-sessie. Doe het na: vervang `bericht_verwijderen` in je `main.py` tijdelijk door
-deze versie.
+Je laat de verwijderknop de naam van de bezoeker meesturen, in de URL, en
+controleert daarop. Doe het na: vervang `bericht_verwijderen` in je `main.py`
+tijdelijk door deze versie.
 
 {/* route-dubbel: tijdelijke foute versie van het DELETE-endpoint, daarna zet je die uit les 2 terug */}
 ```python
 @app.delete("/bericht/{sleutel}")
-async def bericht_verwijderen(sleutel: str, sessie_id: str = Cookie(default="")):
-    with SqliteDict("sessies.db") as sessies:
-        mijn = sessies.get(sessie_id, {})
-
+async def bericht_verwijderen(sleutel: str, naam: str = ""):
     with SqliteDict("gastenboek.db") as db:
-        if sleutel not in db:
-            raise HTTPException(status_code=404, detail="Dit bericht bestaat niet")
-        if db[sleutel]["naam"] != mijn.get("naam"):
+        bericht = db.get(sleutel)
+        if bericht is None or bericht["naam"] != naam:
             raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
         del db[sleutel]
         db.commit()
     return {"bericht": "Verwijderd"}
 ```
 
-Gooi `gastenboek.db` en `sessies.db` weg en draai `test_verwijderen.py` uit
-[les 1](./zwakheid). Alex krijgt nog netjes `403`. Verander nu in het script de
-regel van Alex, zodat hij zich Sara noemt:
+`naam` is een query-parameter, zoals in [GET vs POST](/docs/FastAPI/get_vs_post):
+de knop zou `/bericht/…?naam=Alex` versturen. Gooi `gastenboek.db`,
+`sessies.db` en `gebruikers.db` weg en draai `test_verwijderen.py` uit
+[les 1](./zwakheid). Alex stuurt geen naam mee en krijgt netjes `403`. Verander
+nu in het script de regel waarmee Alex verwijdert, zodat hij de naam van Sara
+meestuurt:
 
+{/* niet-compileren: de regel uit de for-lus van test_verwijderen.py, ingesprongen */}
 ```python
-alex.post("/bericht", data={"naam": "Sara", "bericht": "Leuk gastenboek"})
+        antwoord = alex.delete(f"/bericht/{sleutel}?naam=Sara")
 ```
 
 Gooi de databases weer weg en draai het script opnieuw:
 
 ```
 Alex verwijdert het bericht van Sara: 200
-Alex verwijdert het bericht van Sara: 200
-Nog in het gastenboek: []
+Nog in het gastenboek: ['Alex']
 ```
 
-**Oorzaak:** de naam komt uit het formulier, en dat vult de bezoeker zelf in.
-Alex noemt zich Sara, en zijn sessie heeft daarna de naam Sara. De controle
-laat hem door, bij haar bericht en bij zijn eigen.
+**Oorzaak:** de naam komt uit de URL, en die bepaalt de bezoeker zelf. Alex is
+ingelogd als Alex, maar hij stuurt "Sara" mee, en de controle gelooft wat hij
+stuurt. Zijn sessie wordt niet eens opgevraagd.
 
-**Oplossing:** controleer op iets dat alleen de server kan geven. De sleutels in
-de sessie heeft de server er zelf in gezet, bij het plaatsen van het bericht.
-Zet `bericht_verwijderen` uit [les 2](./controle) terug, en zet in het script
-`"naam": "Alex"` terug.
+**Oplossing:** controleer op iets dat alleen de server kan geven. De naam in de
+sessie heeft de server er zelf in gezet, nadat het wachtwoord klopte. Zet
+`bericht_verwijderen` uit [les 2](./controle) terug, en zet in het script de
+regel van Alex terug.
 
 ```python
 # FOUT
-if db[sleutel]["naam"] != mijn.get("naam"):
+if bericht is None or bericht["naam"] != naam:
     raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
 
 # GOED
-if sleutel not in mijn.get("berichten", []):
+if bericht is None or bericht["naam"] != mijn.get("naam"):
     raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
 ```
 
@@ -90,10 +90,10 @@ Meer uitleg over wat je van een bezoeker kunt geloven: [Server of browser?](/doc
 
 In [Onthouden met een cookie](/docs/FastAPI/cookies) zette je de naam van de
 bezoeker in een cookie. Stel dat de controle vergelijkt met die cookie in plaats
-van met het formulier:
+van met de sessie:
 
 ```python
-if db[sleutel]["naam"] != naam_uit_cookie:
+if bericht["naam"] != naam_uit_cookie:
     raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
 ```
 
@@ -111,8 +111,8 @@ Wie bepaalt wat er in een cookie staat?
 
 Nee. In die les veranderde je zelf de cookie in het tabblad App, en de server
 geloofde het. Een cookie met een naam is net zo goed door de bezoeker te
-bepalen als een formulierveld. Daarom staat in een sessie-cookie alleen een
-sessie-id, en zoekt de server de rest zelf op.
+bepalen als een formulierveld of de URL. Daarom staat in een sessie-cookie
+alleen een sessie-id, en zoekt de server de naam zelf op.
 
 </details>
 
@@ -143,30 +143,43 @@ from sqlitedict import SqliteDict
 
 app = FastAPI()
 
+@app.post("/registreer")
+async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as gebruikers:
+        if naam in gebruikers:
+            raise HTTPException(status_code=400, detail="Deze naam is al bezet")
+        gebruikers[naam] = wachtwoord
+        gebruikers.commit()
+    return {"bericht": f"Welkom, {naam}"}
+
+@app.post("/inloggen")
+async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as gebruikers:
+        opgeslagen = gebruikers.get(naam)
+    if opgeslagen != wachtwoord:
+        raise HTTPException(status_code=401, detail="Naam of wachtwoord klopt niet")
+
+    sessie_id = secrets.token_hex(16)
+    with SqliteDict("sessies.db") as sessies:
+        sessies[sessie_id] = {"naam": naam}
+        sessies.commit()
+
+    antwoord = JSONResponse({"bericht": f"Ingelogd als {naam}"})
+    antwoord.set_cookie(key="sessie_id", value=sessie_id, max_age=60 * 60 * 24 * 30)
+    return antwoord
+
 @app.post("/bericht")
-async def bericht_plaatsen(
-    naam: str = Form(...),
-    bericht: str = Form(...),
-    sessie_id: str = Cookie(default=""),
-):
-    if not sessie_id:
-        sessie_id = secrets.token_hex(16)
+async def bericht_plaatsen(bericht: str = Form(...), sessie_id: str = Cookie(default="")):
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {})
+    if not mijn:
+        raise HTTPException(status_code=401, detail="Log eerst in")
 
     sleutel = f"bericht_{time.time_ns()}"
     with SqliteDict("gastenboek.db") as db:
-        db[sleutel] = {"naam": naam, "bericht": bericht}
+        db[sleutel] = {"naam": mijn["naam"], "bericht": bericht}
         db.commit()
-
-    with SqliteDict("sessies.db") as sessies:
-        mijn = sessies.get(sessie_id, {"naam": naam, "berichten": []})
-        mijn["naam"] = naam
-        mijn["berichten"].append(sleutel)
-        sessies[sessie_id] = mijn
-        sessies.commit()
-
-    antwoord = JSONResponse({"sleutel": sleutel})
-    antwoord.set_cookie(key="sessie_id", value=sessie_id, max_age=60 * 60 * 24 * 30)
-    return antwoord
+    return {"sleutel": sleutel}
 
 @app.get("/berichten")
 async def berichten():
@@ -177,18 +190,18 @@ async def berichten():
 async def bericht_verwijderen(sleutel: str, sessie_id: str = Cookie(default="")):
     with SqliteDict("sessies.db") as sessies:
         mijn = sessies.get(sessie_id, {})
-    if sleutel not in mijn.get("berichten", []):
-        raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
 
     with SqliteDict("gastenboek.db") as db:
-        if sleutel in db:
-            del db[sleutel]
-            db.commit()
+        bericht = db.get(sleutel)
+        if bericht is None or bericht["naam"] != mijn.get("naam"):
+            raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
+        del db[sleutel]
+        db.commit()
     return {"bericht": "Verwijderd"}
 ```
 
 Na het terugzetten is het hetzelfde bestand als in les 2: de controle kijkt
-naar de sleutels in de sessie.
+naar de naam in de sessie.
 
 </details>
 
