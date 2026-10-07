@@ -690,22 +690,44 @@ jobs:
           # cache van setup-node v5 in zijn post-stap (Path Validation Error).
           package-manager-cache: false
 
+      # Matcht een patroon precies één artifact, dan pakt download-artifact
+      # dat uit in `path` zelf en niet in `path/<naam>`. Een PR die één site
+      # raakt, gaf zo "Geen build van: fullstack": de build stond los in
+      # builds/. Daarom elk patroon in een eigen map, en daarna per site een
+      # map `<site>-static` (zie `Eén map per site`).
       - uses: actions/download-artifact@v6
         if: needs.plan.outputs.build == 'true'
         with:
           pattern: '*-static'
-          path: builds
+          path: geraakt
 
       - uses: actions/download-artifact@v6
         if: needs.plan.outputs.ongewijzigd != '[]'
         with:
           pattern: '*-voorraad'
-          path: builds
+          path: voorraad
 
-      - name: Voorraad onder de naam van een artifact
+      - name: Eén map per site
+        env:
+          GERAAKT: ${{ needs.plan.outputs.build == 'true' && needs.plan.outputs.sites || '[]' }}
+          ONGEWIJZIGD: ${{ needs.plan.outputs.ongewijzigd }}
         run: |
-          shopt -s nullglob
-          for map in builds/*-voorraad; do mv "$map" "${map%-voorraad}-static"; done
+          mkdir -p builds
+          # $1: de downloadmap, $2: de sites als JSON, $3: het achtervoegsel.
+          verdeel() {
+            [ -d "$1" ] || return 0
+            if [ "$(jq length <<<"$2")" = 1 ]; then
+              mv "$1" "builds/$(jq -r '.[0]' <<<"$2")-static"
+            else
+              for map in "$1"/*"$3"; do
+                naam=$(basename "$map")
+                mv "$map" "builds/${naam%"$3"}-static"
+              done
+            fi
+          }
+          verdeel geraakt "$GERAAKT" -static
+          verdeel voorraad "${ONGEWIJZIGD:-[]}" -voorraad
+          ls builds
 
       - name: Cross-site links tegen de gebouwde sites
         run: node scripts/controleer-cross-links.mjs builds --annotaties --compleet
