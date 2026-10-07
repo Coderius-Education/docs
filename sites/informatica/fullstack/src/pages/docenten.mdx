@@ -65,7 +65,9 @@ Vijf keer onderweg staat een diagram van de hele keten, browser links en server 
 | CSS in een eigen bestand (static files) | Eén stylesheet voor alle pagina's, en de cache |
 | Templates met Jinja2 | Een pagina met waarden uit Python: `{{ }}`, het dictionary, en wat de browser krijgt |
 | GET vs POST en formulieren | Gebruikersinvoer verwerken en beantwoorden met een template |
-| Gegevens opslaan met SqliteDict | Gegevens opslaan en ophalen met SQLite |
+| Gegevens opslaan met SqliteDict | Opslaan, `commit()` en uitlezen, in een los script zonder server |
+| Sleutels in SqliteDict | Alles bekijken, `in`, `get` en `del`, ook in een los script |
+| Een dictionary als waarde in SqliteDict | Ophalen, aanpassen, terugzetten |
 | Een formulier opslaan | Het gastenboek: elk bericht een eigen sleutel |
 | Alles tonen: een for-lus in je template | Opgeslagen records op een pagina zetten met een for-lus |
 | Doorsturen na opslaan (redirect) | Doorsturen na een POST (post/redirect/get), en verwijderen |
@@ -79,6 +81,8 @@ Vijf keer onderweg staat een diagram van de hele keten, browser links en server 
 | Onthouden op de server: sessies *(uitbreiding)* | Alleen een sessie-id bij de bezoeker, de gegevens op de server |
 | Cookie of sessie? *(uitbreiding)* | Kiezen tussen de twee, en waarom je niet alles kunt geloven |
 | Laat het aan anderen zien | De server openzetten voor het netwerk |
+
+De drie lessen over SqliteDict draaien nog zonder server: je leerlingen oefenen in losse scripts, met een script `bekijk_db.py` dat ze daarna bij elke database gebruiken. Zo komen de fouten die ze anders pas in de server maken (een vergeten `commit()`, een script in een andere map dat stil een lege database aanmaakt, een dictionary die ze aanpassen maar niet terugzetten) los van FastAPI aan bod. [SqliteDict op een rij](/docs/FastAPI/sqlitedict) zet alles op één pagina, net als Projectstructuur buiten de sidebar.
 
 "Een formulier opslaan" tot en met "Eén item tonen" bouwen samen het gastenboek. Alles wat een latere les nodig heeft, staat in de hoofdtekst en niet in een opdracht: het gastenboek zelf in "Een formulier opslaan", het verwijderen in "Doorsturen na opslaan". Daarna hebben je leerlingen een werkende webapplicatie met een overzicht, een detailpagina en nette foutafhandeling.
 

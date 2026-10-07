@@ -10,6 +10,8 @@ import type { SidebarsConfig } from '@docusaurus/plugin-content-docs';
 // sidebar: het zijn referentiepagina's, bereikbaar via de navbar. Projectstructuur
 // ook niet; die is naslag en gelinkt vanuit de cheatsheet en de lessen. In de
 // navbar paste hij niet meer: op 1280 breed liepen de items dan over twee regels.
+// SqliteDict op een rij (FastAPI/sqlitedict) is net zo naslag: gelinkt vanuit
+// de cheatsheet en de drie lessen over SqliteDict.
 const sidebars: SidebarsConfig = {
   // Eerst de startpagina: wat je aan het eind hebt, wat je al moet kunnen, en
   // de route als kaart (<Routekaart>, die deze sidebar zelf leest). De navbar-
@@ -53,6 +55,8 @@ const sidebars: SidebarsConfig = {
       label: 'Gegevens opslaan en tonen',
       items: [
         'FastAPI/database',
+        'FastAPI/database-sleutels',
+        'FastAPI/database-waarden',
         'FastAPI/post_naar_database',
         'FastAPI/lijst_tonen',
         'FastAPI/redirect',

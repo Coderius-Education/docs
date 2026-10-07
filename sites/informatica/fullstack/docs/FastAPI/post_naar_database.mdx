@@ -79,7 +79,7 @@ async def toon_naam():
 ```
 
 <Regel n={4}>
-`db.get(sleutel, standaard)` geeft de standaardwaarde terug als de sleutel nog niet bestaat, in plaats van te crashen. Zo werkt de pagina ook vóór de eerste keer opslaan.
+`db.get` uit [Sleutels in SqliteDict: bekijken, zoeken en verwijderen](/docs/FastAPI/database-sleutels) geeft de standaardwaarde zolang er nog niets is opgeslagen. Zo werkt de pagina ook vóór de eerste keer opslaan, zonder `KeyError`.
 </Regel>
 
 </CodeUitleg>
@@ -149,7 +149,7 @@ Zo krijgt elk bericht een nieuwe sleutel, zoals `bericht_1767225600123456789`, e
 </Regel>
 
 <Regel n={9}>
-De waarde is een dictionary met beide velden. Zo blijft bij elkaar wat bij elkaar hoort.
+De waarde is een dictionary met beide velden, zoals in [Een dictionary als waarde in SqliteDict](/docs/FastAPI/database-waarden).
 </Regel>
 
 <Regel n={16}>

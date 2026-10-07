@@ -102,6 +102,8 @@ describe('titels en categorieën', () => {
     ['FastAPI/redirect', /redirect/],
     ['FastAPI/templates', /Jinja2/],
     ['FastAPI/database', /SqliteDict/],
+    ['FastAPI/database-sleutels', /SqliteDict/],
+    ['FastAPI/database-waarden', /SqliteDict/],
     ['FastAPI/static_files', /static files/],
     ['FastAPI/lijst_tonen', /for-lus/],
   ])('de titel van %s noemt %s', (id, begrip) => {

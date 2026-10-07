@@ -1,6 +1,6 @@
 # Cheatsheet
 
-Hier zoek je op hoe iets uit de lessen ook alweer ging. De onderwerpen staan in de volgorde van de lessen; klik er een aan om hem te openen. Welk bestand in welke map hoort, staat bij [Projectstructuur](/docs/FastAPI/projectstructuur).
+Hier zoek je op hoe iets uit de lessen ook alweer ging. De onderwerpen staan in de volgorde van de lessen; klik er een aan om hem te openen. Welk bestand in welke map hoort, staat bij [Projectstructuur](/docs/FastAPI/projectstructuur); alles over de database bij [SqliteDict op een rij](/docs/FastAPI/sqlitedict).
 
 
 ## FastAPI
@@ -586,6 +586,8 @@ Vaste pagina's staan in `static/pages/`, pagina's met `{{ }}` in `templates/`. H
 
 ## Database (sqlitedict)
 
+Alles over SqliteDict op één pagina, met de punten waarop hij anders is dan een gewone dictionary: [SqliteDict op een rij](/docs/FastAPI/sqlitedict).
+
 <details>
 <summary>Hoe installeer ik sqlitedict? (python -m pip install)</summary>
 
@@ -618,6 +620,89 @@ with SqliteDict("data.db") as db:
     print(db["naam"])
 ```
 
+Bestaat de sleutel niet, dan krijg je een `KeyError`. Dat gebeurt ook als je script in een andere map draait: daar maakt SqliteDict stil een lege database aan.
+
+</details>
+
+<details>
+<summary>Hoe bekijk ik alles wat erin staat? (db.items)</summary>
+
+```python
+with SqliteDict("data.db") as db:
+    print(len(db), "sleutels")
+    for sleutel, waarde in db.items():
+        print(sleutel, "=", waarde)
+```
+
+Elk element is een paar: eerst de sleutel, dan de waarde. Stuur je ze naar een template, maak er dan binnen het `with`-blok een lijst van met `list(db.items())`, en loop in de template met `{% for sleutel, bericht in berichten %}`.
+
+</details>
+
+<details>
+<summary>Hoe kijk ik of een sleutel bestaat? (in)</summary>
+
+```python
+with SqliteDict("data.db") as db:
+    if "email" in db:
+        print(db["email"])
+    else:
+        print("Geen email opgeslagen")
+```
+
+</details>
+
+<details>
+<summary>Hoe lees ik iets uit dat misschien niet bestaat? (db.get)</summary>
+
+```python
+with SqliteDict("data.db") as db:
+    naam = db.get("naam", "Niet gevonden")
+```
+
+Zonder tweede argument geeft `db.get()` `None` als de sleutel niet bestaat, in plaats van een `KeyError`.
+
+</details>
+
+<details>
+<summary>Hoe verwijder ik iets? (del db[...])</summary>
+
+```python
+with SqliteDict("gastenboek.db") as db:
+    if sleutel in db:
+        del db[sleutel]
+        db.commit()
+```
+
+Zonder `if sleutel in db` crasht je endpoint als iemand twee keer op Verwijderen klikt.
+
+</details>
+
+<details>
+<summary>Hoe sla ik meer dan één ding onder een sleutel op? (dictionary als waarde)</summary>
+
+```python
+with SqliteDict("data.db") as db:
+    db["sara"] = {"klas": "4B", "vakken": ["informatica", "wiskunde"]}
+    db.commit()
+```
+
+Uitlezen gaat in twee stappen: `db["sara"]["klas"]`.
+
+</details>
+
+<details>
+<summary>Hoe pas ik een opgeslagen dictionary aan? (ophalen, aanpassen, terugzetten)</summary>
+
+```python
+with SqliteDict("data.db") as db:
+    sara = db["sara"]
+    sara["vakken"].append("biologie")
+    db["sara"] = sara
+    db.commit()
+```
+
+`db["sara"]` geeft een kopie. `db["sara"]["vakken"].append(...)` past alleen die kopie aan, en dan blijft in het bestand de oude waarde staan, zonder foutmelding.
+
 </details>
 
 <details>
@@ -648,44 +733,6 @@ async def berichten(request: Request):
 ```
 
 `list()` haalt de berichten op zolang de database nog open is. Zonder `list()` krijg je `AttributeError: 'NoneType' object has no attribute 'select'`.
-
-</details>
-
-<details>
-<summary>Hoe krijg ik de sleutels erbij? (db.items)</summary>
-
-```python
-with SqliteDict("gastenboek.db") as db:
-    alle_berichten = list(db.items())
-```
-
-Elk element is een paar: eerst de sleutel, dan het bericht. In de template loop je dan met `{% for sleutel, bericht in berichten %}`.
-
-</details>
-
-<details>
-<summary>Hoe verwijder ik iets? (del db[...])</summary>
-
-```python
-with SqliteDict("gastenboek.db") as db:
-    if sleutel in db:
-        del db[sleutel]
-        db.commit()
-```
-
-Zonder `if sleutel in db` crasht je endpoint als iemand twee keer op Verwijderen klikt.
-
-</details>
-
-<details>
-<summary>Hoe lees ik iets uit dat misschien niet bestaat? (db.get)</summary>
-
-```python
-with SqliteDict("data.db") as db:
-    naam = db.get("naam", "Niet gevonden")
-```
-
-Zonder tweede argument geeft `db.get()` `None` als de sleutel niet bestaat, in plaats van een `KeyError`.
 
 </details>
 

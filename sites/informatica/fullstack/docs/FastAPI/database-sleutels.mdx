@@ -1,0 +1,273 @@
+# Sleutels in SqliteDict: bekijken, zoeken en verwijderen
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/data/11b-itereren-dictionaries', label: 'Door een dictionary loopen'},
+  ]}
+/>
+
+In [Gegevens opslaan met SqliteDict](/docs/FastAPI/database) wist je precies welke sleutels er in je database stonden: je had ze zelf getypt. Een server weet dat niet. Daar bepalen de bezoekers wat erin komt, en wil je weten wat er staat, dan moet je kijken. Je oefent nog steeds in losse scripts, met de `mijn_data.db` uit de vorige les.
+
+## Alles bekijken
+
+Maak `bekijk_db.py`, naast `test_db.py`:
+
+<CodeUitleg>
+
+```python showLineNumbers
+from sqlitedict import SqliteDict
+
+with SqliteDict("mijn_data.db") as db:
+    print(len(db), "sleutels")
+    for sleutel, waarde in db.items():
+        print(sleutel, "=", waarde)
+```
+
+<Regel n={4}>
+`len(db)` telt de sleutels, net als bij een dictionary.
+</Regel>
+
+<Regel n={5} tot={6}>
+`db.items()` geeft elke sleutel met zijn waarde. De lus staat binnen het `with`-blok, want daarbuiten is de database dicht.
+</Regel>
+
+</CodeUitleg>
+
+Draai `python bekijk_db.py`:
+
+```
+2 sleutels
+naam = Jan
+leeftijd = 16
+```
+
+Heb je in de vorige les meer opgeslagen, zoals een woonplaats, dan staat die er ook bij. Bewaar dit script: in de lessen hierna kijk je er steeds mee wat je server heeft opgeslagen. Verander alleen de bestandsnaam tussen de haakjes, bijvoorbeeld in `"gastenboek.db"`.
+
+## Bestaat de sleutel?
+
+Vraag je een sleutel op die er niet is, dan stopt je script met een `KeyError`. Met `in` kijk je eerst. Maak `proef_db.py`:
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("mijn_data.db") as db:
+    if "email" in db:
+        print(db["email"])
+    else:
+        print("Geen email opgeslagen")
+```
+
+<details>
+<summary>Voorspel: wat print dit?</summary>
+
+`Geen email opgeslagen`. Onder `"email"` heb je nooit iets bewaard, dus `"email" in db` is `False` en Python doet wat onder `else` staat. Er komt geen `KeyError`, want `db["email"]` wordt nooit uitgevoerd.
+
+</details>
+
+Hetzelfde kan korter, met **`get`**: dat geeft de waarde als de sleutel bestaat, en anders wat je als tweede meegeeft.
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("mijn_data.db") as db:
+    print(db.get("email", "Geen email opgeslagen"))
+```
+
+Laat je de tweede waarde weg, dan geeft `get` `None` bij een sleutel die er niet is.
+
+## Verwijderen
+
+Met `del` haal je een sleutel weg, met zijn waarde. Vervang de inhoud van `proef_db.py` door:
+
+<CodeUitleg>
+
+```python showLineNumbers
+from sqlitedict import SqliteDict
+
+with SqliteDict("mijn_data.db") as db:
+    if "leeftijd" in db:
+        del db["leeftijd"]
+        db.commit()
+        print("Leeftijd verwijderd")
+    else:
+        print("Er was geen leeftijd")
+```
+
+<Regel n={4}>
+Eerst kijken of hij er is. Zonder die regel krijg je een `KeyError` als hij al weg is.
+</Regel>
+
+<Regel n={5} tot={6}>
+`del` is een wijziging, net als opslaan. Ook hier schrijft pas `db.commit()` hem naar het bestand.
+</Regel>
+
+</CodeUitleg>
+
+Draai het twee keer. De eerste keer staat er `Leeftijd verwijderd`, de tweede keer `Er was geen leeftijd`. Draai daarna `bekijk_db.py`: de leeftijd staat er niet meer in.
+
+## Er gaat iets mis
+
+### KeyError bij verwijderen
+
+```
+KeyError: 'leeftijd'
+```
+
+**Oorzaak:** je verwijdert een sleutel die er niet (meer) is. Dat gebeurt als je hetzelfde script twee keer draait, of als iemand op een website twee keer op Verwijderen klikt.
+
+**Oplossing:** kijk eerst met `in`:
+
+{/* niet-compileren: losse regels binnen een with-blok */}
+```python
+# FOUT: crasht de tweede keer
+del db["leeftijd"]
+
+# GOED
+if "leeftijd" in db:
+    del db["leeftijd"]
+    db.commit()
+```
+
+### Je verwijderde sleutel is terug
+
+Na `del` print je script dat de leeftijd weg is, maar `bekijk_db.py` laat hem nog zien.
+
+**Oorzaak:** `db.commit()` ontbreekt na de `del`. Zodra het `with`-blok sluit, gooit SqliteDict het verwijderen weg, net als een gewone wijziging zonder commit.
+
+**Oplossing:** zet `db.commit()` direct onder de `del`, binnen het `with`-blok.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Hoeveel sleutels?
+
+Je database heeft de sleutels `naam`, `leeftijd` en `woonplaats`. Je draait dit:
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("mijn_data.db") as db:
+    del db["woonplaats"]
+    db["hobby"] = "voetbal"
+    db.commit()
+
+with SqliteDict("mijn_data.db") as db:
+    print(len(db))
+    print("Woonplaats" in db)
+```
+
+**Vraag:** welke twee regels print dit?
+
+<details>
+<summary>Tip</summary>
+
+Er gaat één sleutel weg en er komt één bij. En let op de hoofdletter in de laatste regel.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```
+3
+False
+```
+
+Drie sleutels: `naam`, `leeftijd` en `hobby`. `"Woonplaats" in db` is `False`, en dat zou ook zo zijn als de woonplaats er nog stond: de sleutel heet `woonplaats`, met een kleine letter.
+
+</details>
+
+### Opdracht 2: Run
+
+Maak `bekijk_db.py` en `proef_db.py` uit deze les en draai ze. Zie je in `bekijk_db.py` dezelfde sleutels als in `test_db.py`, of meer?
+
+<details>
+<summary>Antwoord</summary>
+
+Het kunnen er meer zijn. `bekijk_db.py` toont alles wat ooit in `mijn_data.db` is gezet en niet verwijderd, ook uit een oudere versie van `test_db.py`. Een database onthoudt wat je opsloeg, niet wat er nu in je script staat.
+
+</details>
+
+### Opdracht 3: Investigate - Zonder in
+
+Vervang de inhoud van `proef_db.py` door deze versie zonder `in`, en draai hem twee keer:
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("mijn_data.db") as db:
+    del db["leeftijd"]
+    db.commit()
+    print("Leeftijd verwijderd")
+```
+
+Wat zie je de tweede keer, en op welke regel stopt het script?
+
+<details>
+<summary>Antwoord</summary>
+
+De tweede keer stopt het met `KeyError: 'leeftijd'`, op de regel met `del`. De leeftijd was de eerste keer al weg. Staat er ook de eerste keer al een `KeyError`, dan had je hem eerder in deze les al verwijderd: draai `test_db.py` en probeer het opnieuw. `Leeftijd verwijderd` print het na de fout niet meer: Python stopt bij de fout en voert de regels eronder niet uit.
+
+</details>
+
+### Opdracht 4: Modify - Netjes op een rij
+
+Laat `bekijk_db.py` de sleutels op alfabet zetten, en een lege database melden met `Database is leeg` in plaats van `0 sleutels`.
+
+<details>
+<summary>Tip</summary>
+
+`sorted(db.items())` geeft de paren gesorteerd op sleutel. Een lege database telt in een `if` als niet waar, net als een lege dictionary.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("mijn_data.db") as db:
+    if not db:
+        print("Database is leeg")
+    for sleutel, waarde in sorted(db.items()):
+        print(sleutel, "=", waarde)
+```
+
+Test het lege geval met een bestandsnaam die nog niet bestaat, zoals `"leeg.db"`. SqliteDict maakt dat bestand dan aan, zonder sleutels. Gooi het daarna weg.
+
+</details>
+
+### Opdracht 5: Make - Telefoonboek
+
+Maak `telefoonboek.py`. Het vraagt met `input()` een naam en zoekt die op in `telefoonboek.db`. Staat de naam er, dan print het het nummer. Staat hij er niet, dan vraagt het een nummer en slaat het de naam met dat nummer op.
+
+<details>
+<summary>Tip</summary>
+
+De naam is de sleutel, het nummer de waarde. Met `if naam in db:` kies je tussen opzoeken en opslaan, en na het opslaan volgt `db.commit()`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+from sqlitedict import SqliteDict
+
+naam = input("Naam: ")
+
+with SqliteDict("telefoonboek.db") as db:
+    if naam in db:
+        print(f"Het nummer van {naam} is {db[naam]}")
+    else:
+        nummer = input(f"{naam} staat er nog niet in. Nummer: ")
+        db[naam] = nummer
+        db.commit()
+        print(f"{naam} opgeslagen")
+```
+
+Draai het een paar keer: de eerste keer per naam slaat het op, daarna zoekt het op.
+
+</details>
+
+Door naar [Een dictionary als waarde in SqliteDict](/docs/FastAPI/database-waarden).

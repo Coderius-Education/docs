@@ -197,6 +197,29 @@ const KOPPELING: Item[] = [
     concepten: [],
     geenConcept: 'db["naam"] is gewoon indexeren; alleen db.get() wordt apart nagekeken',
   },
+  { summary: 'Hoe bekijk ik alles wat erin staat? (db.items)', concepten: ['db-items'] },
+  {
+    summary: 'Hoe kijk ik of een sleutel bestaat? (in)',
+    concepten: [],
+    geenConcept:
+      'in is gewoon Python; verwijderen met die controle ervoor wordt nagekeken via db-del',
+  },
+  {
+    summary: 'Hoe lees ik iets uit dat misschien niet bestaat? (db.get)',
+    concepten: ['db-get'],
+  },
+  { summary: 'Hoe verwijder ik iets? (del db[...])', concepten: ['db-del'] },
+  {
+    summary: 'Hoe sla ik meer dan één ding onder een sleutel op? (dictionary als waarde)',
+    concepten: [],
+    geenConcept: 'een dictionary is Python; het opslaan zelf wordt nagekeken via db-write',
+  },
+  {
+    summary: 'Hoe pas ik een opgeslagen dictionary aan? (ophalen, aanpassen, terugzetten)',
+    concepten: [],
+    geenConcept:
+      'terugzetten is een gewone toewijzing, aan de code niet te onderscheiden van db-write',
+  },
   {
     summary: 'Hoe geef ik elk bericht een eigen sleutel? (time.time_ns)',
     concepten: [],
@@ -208,12 +231,6 @@ const KOPPELING: Item[] = [
     concepten: [],
     geenConcept:
       'list() en values() zijn Python; de lus in de template wordt nagekeken via html-jinja-loop',
-  },
-  { summary: 'Hoe krijg ik de sleutels erbij? (db.items)', concepten: ['db-items'] },
-  { summary: 'Hoe verwijder ik iets? (del db[...])', concepten: ['db-del'] },
-  {
-    summary: 'Hoe lees ik iets uit dat misschien niet bestaat? (db.get)',
-    concepten: ['db-get'],
   },
 
   // --- htmx ---

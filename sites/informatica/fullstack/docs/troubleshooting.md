@@ -603,6 +603,31 @@ Meer uitleg: [Gegevens opslaan met SqliteDict](/docs/FastAPI/database)
 </details>
 
 <details>
+<summary>Je aanpassing aan een opgeslagen dictionary of lijst is weg (niet teruggezet)</summary>
+
+**Oorzaak:** `db["sara"]` geeft een kopie van wat er in het bestand staat. Pas je die kopie aan, met `db["sara"]["klas"] = "5B"` of met `append`, dan verandert het bestand niet. Er komt geen foutmelding, en `db.commit()` helpt niet: voor de database is er niets gewijzigd.
+
+**Oplossing:** haal de waarde op, pas hem aan en zet hem terug onder dezelfde sleutel:
+
+```python
+# FOUT - de kopie verandert, het bestand niet
+with SqliteDict("data.db") as db:
+    db["sara"]["vakken"].append("biologie")
+    db.commit()
+
+# GOED - ophalen, aanpassen, terugzetten
+with SqliteDict("data.db") as db:
+    sara = db["sara"]
+    sara["vakken"].append("biologie")
+    db["sara"] = sara
+    db.commit()
+```
+
+Meer uitleg: [Een dictionary als waarde in SqliteDict](/docs/FastAPI/database-waarden)
+
+</details>
+
+<details>
 <summary>Er blijft maar één bericht over, of er verdwijnt er af en toe een</summary>
 
 **Oorzaak:** elk bericht krijgt dezelfde sleutel, en een nieuw bericht overschrijft dan het vorige. Dat gebeurt met een vaste sleutel zoals `"bericht"`, en ook met `int(time.time())`: twee berichten in dezelfde seconde krijgen dan dezelfde sleutel.
@@ -738,7 +763,7 @@ In de browser staat `Internal Server Error`, en in de terminal eindigt de meldin
 KeyError: 'bericht_1767225600123456789'
 ```
 
-**Oorzaak:** je vraagt met vierkante haken een sleutel op die niet in de database staat, of je verwijdert hem. Dat gebeurt bij een verkeerde sleutel in de URL, als iemand twee keer op Verwijderen klikt, en bij een eerste bezoek zonder sessie.
+**Oorzaak:** je vraagt met vierkante haken een sleutel op die niet in de database staat, of je verwijdert hem. Dat gebeurt bij een tikfout of een hoofdletter in de sleutel, bij een verkeerde sleutel in de URL, als iemand twee keer op Verwijderen klikt, en bij een eerste bezoek zonder sessie. Staat de sleutel er wel in volgens je eigen script, dan draait dat script misschien in een andere map: daar maakt SqliteDict stil een nieuwe, lege database aan, met dezelfde bestandsnaam.
 
 **Oplossing:** controleer eerst of de sleutel er is, of gebruik `.get()`:
 
@@ -764,7 +789,7 @@ with SqliteDict("sessies.db") as sessies:
     mijn = sessies.get(sessie_id, {})
 ```
 
-Meer uitleg: [Eén item tonen: path-parameters en 404](/docs/FastAPI/detailpagina) (`db.get`), [Doorsturen na opslaan (redirect)](/docs/FastAPI/redirect) (verwijderen) en [Onthouden op de server: sessies](/docs/FastAPI/sessies)
+Meer uitleg: [Gegevens opslaan met SqliteDict](/docs/FastAPI/database#er-gaat-iets-mis) (een andere map), [Sleutels in SqliteDict: bekijken, zoeken en verwijderen](/docs/FastAPI/database-sleutels) (`in`, `get` en `del`), [Eén item tonen: path-parameters en 404](/docs/FastAPI/detailpagina) en [Onthouden op de server: sessies](/docs/FastAPI/sessies)
 
 </details>
 

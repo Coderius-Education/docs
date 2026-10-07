@@ -45,6 +45,8 @@ function voorkennisPerLes(): Map<string, Item[]> {
 const ZONDER_BLOK: Record<string, string> = {
   'FastAPI/cookie-of-sessie.mdx': 'bouwt alleen op de twee lessen ervoor, in dezelfde cursus',
   'FastAPI/cookies.mdx': 'nieuwe stof is server-side en wordt hier zelf uitgelegd',
+  'FastAPI/database-waarden.mdx':
+    'geneste dictionaries staan al bij templates.mdx; het terugzetten is SqliteDict en wordt hier zelf uitgelegd',
   'FastAPI/devtools-netwerk.mdx': 'de ontwikkelaarstools zelf, nergens anders behandeld',
   'FastAPI/devtools-console.mdx':
     'console.log en de DOM staan al bij javascript.mdx, de les ervoor; niet herhalen',
@@ -63,6 +65,7 @@ const ZONDER_BLOK: Record<string, string> = {
     'controlelijst: elke check verwijst zelf met een SiteLink naar de editor-cursus',
   'FastAPI/laat-het-zien.mdx': 'terminalcommando en netwerkadres, geen voorkennis uit een cursus',
   'FastAPI/projectstructuur.mdx': 'naslag over deze cursus zelf',
+  'FastAPI/sqlitedict.mdx': 'naslag over de drie SqliteDict-lessen, geen nieuwe stof',
   'FastAPI/post_met_templates.mdx': 'bouwt op forms en templates, allebei in deze cursus',
   'FastAPI/redirect.mdx': 'bouwt op forms en database, allebei in deze cursus',
   'cheatsheet.md': 'naslag',
@@ -121,6 +124,7 @@ const ZONDER_BLOK: Record<string, string> = {
 
 const MET_BLOK = [
   'FastAPI/afbeeldingen.mdx',
+  'FastAPI/database-sleutels.mdx',
   'FastAPI/database.mdx',
   'FastAPI/detailpagina.mdx',
   'FastAPI/eerste_endpoint.mdx',
