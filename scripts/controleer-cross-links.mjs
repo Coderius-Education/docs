@@ -1,9 +1,15 @@
 /**
  * Controleert elke link tussen twee cursussites tegen de gebouwde sites.
  *
- *     node scripts/controleer-cross-links.mjs               sites/<site>/build
+ *     node scripts/controleer-cross-links.mjs               sites/<vak>/<site>/build
  *     node scripts/controleer-cross-links.mjs builds        map met artifacts
  *     node scripts/controleer-cross-links.mjs --annotaties  GitHub-annotaties
+ *     node scripts/controleer-cross-links.mjs --compleet    elke site moet er zijn
+ *
+ * CI bouwt alleen de sites die een wijziging raakt en haalt de rest uit de
+ * cache (zie de jobs `build` en `voorraad` in build.yml). Met --compleet faalt
+ * het script als er een site uit de registry ontbreekt: een link naar een site
+ * zonder build telt anders stil als overgeslagen.
  *
  * Waarom dit naast de guard-tests bestaat: elke cursus is een eigen
  * Docusaurus-site, en `onBrokenLinks: 'throw'` controleert alleen links
@@ -18,6 +24,13 @@
  *
  * Alleen registry-domeinen (packages/shared/sites.js) tellen mee; externe
  * sites en stats.coderius.nl niet. Ankers en query's worden afgeknipt.
+ *
+ * Een cursus staat onder een pad van de host van zijn vak:
+ * https://informatica.coderius.nl/python/docs/x is `docs/x` in de build van
+ * python (de build bevat de baseUrl niet). Een ander pad op de vak-host, of
+ * de vak-host zelf, hoort bij de homepage. Een link naar een oud subdomein
+ * (https://python.coderius.nl/...) is altijd een fout: die stuurt alleen nog
+ * door, en hoort in de bron vervangen te zijn.
  */
 
 import { existsSync, readFileSync, readdirSync, realpathSync, statSync } from 'node:fs';
@@ -25,25 +38,55 @@ import { createRequire } from 'node:module';
 import { join, relative } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-const { SITES, HOME } = createRequire(import.meta.url)('../packages/shared/sites.js');
+const { SITES, DOCENTEN_SITES, SUBJECTS, SUBJECTS_BY_ID, HOME } = createRequire(import.meta.url)(
+  '../packages/shared/sites.js',
+);
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
+const ALLE_SITES = [...SITES, ...DOCENTEN_SITES];
 
-/** host -> site-id, uit de registry (cursussen plus de apex-homepage). */
-export const HOST_NAAR_SITE = new Map([...SITES, HOME].map((s) => [new URL(s.url).host, s.id]));
+/** host van een vak -> vak-id. */
+const HOST_NAAR_VAK = new Map(SUBJECTS.map((v) => [new URL(v.url).host, v.id]));
+const HOME_HOST = new URL(HOME.url).host;
+/** oud subdomein -> site-id (python.coderius.nl -> python). */
+export const OUDE_HOSTS = new Map(
+  ALLE_SITES.filter((s) => s.legacyUrl).map((s) => [new URL(s.legacyUrl).host, s.id]),
+);
+/** Elke host die bij Coderius hoort: vakken, apex en de oude subdomeinen. */
+const BEKENDE_HOSTS = [...HOST_NAAR_VAK.keys(), HOME_HOST, ...OUDE_HOSTS.keys()];
+
+/**
+ * Bij welke site en welk pad in diens build hoort deze URL? null voor een
+ * URL buiten de registry-domeinen.
+ * @param {URL} url
+ * @returns {{ site: string, pad: string, oudDomein?: true } | null}
+ */
+export function doelVan(url) {
+  if (url.host === HOME_HOST) return { site: HOME.id, pad: url.pathname };
+  const oud = OUDE_HOSTS.get(url.host);
+  if (oud) return { site: oud, pad: url.pathname, oudDomein: true };
+  const vak = HOST_NAAR_VAK.get(url.host);
+  if (!vak) return null;
+  const [, eerste = '', ...rest] = url.pathname.split('/');
+  const site = ALLE_SITES.find((s) => s.subject === vak && s.path === eerste);
+  // Alles op de vak-host buiten een cursus serveert de homepage.
+  if (!site) return { site: HOME.id, pad: url.pathname };
+  return { site: site.id, pad: `/${rest.join('/')}` };
+}
 
 /** @param {string} host */
 export function siteVanHost(host) {
-  return HOST_NAAR_SITE.get(host) ?? null;
+  if (host === HOME_HOST) return HOME.id;
+  return OUDE_HOSTS.get(host) ?? null;
 }
 
 /**
  * Alle absolute hrefs naar een registry-domein in één HTML-bestand. Een host
  * die met een registry-domein begínt maar er niet aan gelijk is
- * (`editor.coderius.nlpython/...`, het gevolg van een pad zonder slash) telt
- * als misvormd: die hoort gemeld te worden, niet stil genegeerd.
+ * (`informatica.coderius.nlpython/...`, het gevolg van een pad zonder slash)
+ * telt als misvormd: die hoort gemeld te worden, niet stil genegeerd.
  * @param {string} html
- * @returns {{ href: string, site: string, pad: string, misvormd?: true }[]}
+ * @returns {{ href: string, site: string, pad: string, misvormd?: true, oudDomein?: true }[]}
  */
 export function hrefsUit(html) {
   const uit = [];
@@ -54,14 +97,19 @@ export function hrefsUit(html) {
     } catch {
       continue;
     }
-    const site = siteVanHost(url.host);
-    if (site) {
-      uit.push({ href: m[1], site, pad: url.pathname });
+    const doel = doelVan(url);
+    if (doel) {
+      uit.push({ href: m[1], ...doel });
       continue;
     }
-    const aangeplakt = [...HOST_NAAR_SITE].find(([host]) => url.host.startsWith(host));
+    const aangeplakt = BEKENDE_HOSTS.find((host) => url.host.startsWith(host));
     if (aangeplakt)
-      uit.push({ href: m[1], site: aangeplakt[1], pad: url.pathname, misvormd: true });
+      uit.push({
+        href: m[1],
+        site: OUDE_HOSTS.get(aangeplakt) ?? HOME.id,
+        pad: url.pathname,
+        misvormd: true,
+      });
   }
   return uit;
 }
@@ -99,8 +147,10 @@ export function htmlBestanden(map) {
 }
 
 /**
- * Vindt de builds in een map. Twee indelingen: `sites/<site>/build` (lokaal)
- * en `<site>-static/` (de artifacts uit CI, één map per artifact).
+ * Vindt de builds in een map. Twee indelingen: `sites/<vak>/<site>/build` en
+ * `sites/home/build` (lokaal; een map die naar een vak heet wordt één niveau
+ * dieper doorzocht) en `<site>-static/` (de artifacts uit CI, één map per
+ * artifact).
  * @param {string} map
  * @returns {Map<string, string>} site-id -> build-map
  */
@@ -113,6 +163,7 @@ export function buildsIn(map) {
     if (naam.endsWith('-static')) builds.set(naam.slice(0, -'-static'.length), pad);
     else if (existsSync(join(pad, 'build', 'index.html'))) builds.set(naam, join(pad, 'build'));
     else if (existsSync(join(pad, 'index.html'))) builds.set(naam, pad);
+    else if (SUBJECTS_BY_ID[naam]) for (const [id, b] of buildsIn(pad)) builds.set(id, b);
   }
   return builds;
 }
@@ -129,13 +180,26 @@ export function controleer(builds) {
   for (const [site, buildMap] of builds) {
     for (const bestand of htmlBestanden(buildMap)) {
       for (const link of hrefsUit(readFileSync(bestand, 'utf8'))) {
+        // Een oud subdomein of een aangeplakte host is kapot, of de doelsite
+        // nu gebouwd is of niet.
+        if (link.oudDomein || link.misvormd) {
+          gecontroleerd += 1;
+          kapot.push({
+            site,
+            bron: relative(buildMap, bestand),
+            href: link.href,
+            doelSite: link.site,
+            ...(link.oudDomein ? { reden: 'oud domein' } : {}),
+          });
+          continue;
+        }
         const doelBuild = builds.get(link.site);
         if (!doelBuild) {
           overgeslagen += 1;
           continue;
         }
         gecontroleerd += 1;
-        if (link.misvormd || !doelBestaat(doelBuild, link.pad)) {
+        if (!doelBestaat(doelBuild, link.pad)) {
           kapot.push({
             site,
             bron: relative(buildMap, bestand),
@@ -158,12 +222,21 @@ const isHoofdscript =
 if (isHoofdscript) {
   const argumenten = process.argv.slice(2);
   const annotaties = argumenten.includes('--annotaties');
+  const compleet = argumenten.includes('--compleet');
   const map = argumenten.find((a) => !a.startsWith('--')) ?? join(ROOT, 'sites');
 
   const builds = buildsIn(map);
   if (builds.size === 0) {
     console.error(
       `Geen gebouwde sites gevonden in ${map}. Bouw eerst (pnpm build) of wijs de artifacts aan.`,
+    );
+    process.exit(1);
+  }
+
+  const ontbreekt = [...ALLE_SITES, HOME].map((s) => s.id).filter((id) => !builds.has(id));
+  if (compleet && ontbreekt.length) {
+    console.error(
+      `Geen build van: ${ontbreekt.join(', ')}. Met --compleet moet elke site er zijn.`,
     );
     process.exit(1);
   }
@@ -177,10 +250,11 @@ if (isHoofdscript) {
   for (const [site, lijst] of perSite) {
     console.log(`\n${site}: ${lijst.length} kapotte cross-site link(s)`);
     for (const k of lijst) {
-      console.log(`  ${k.bron} -> ${k.href}`);
+      const reden = k.reden ? ` (${k.reden}; gebruik <SiteLink> of de nieuwe URL)` : '';
+      console.log(`  ${k.bron} -> ${k.href}${reden}`);
       if (annotaties)
         console.log(
-          `::error title=cross-site link naar ${k.doelSite}::${site}/${k.bron} -> ${k.href}`,
+          `::error title=cross-site link naar ${k.doelSite}::${site}/${k.bron} -> ${k.href}${reden}`,
         );
     }
   }

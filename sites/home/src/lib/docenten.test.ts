@@ -1,34 +1,39 @@
 import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { DOCENTEN_SITES, SITES } from '@coderius/shared/sites';
+import { DOCENTEN_SITES, SITES, siteDir } from '@coderius/shared/sites';
 import { describe, expect, it } from 'vitest';
 import {
   HULPMIDDELEN,
   NOG_VERBORGEN,
   docentenCursussen,
   docentenUrl,
+  examenCursussen,
   hostVan,
   inKlas4,
   inKlas5,
 } from './docenten';
 
-// De docentenpagina linkt per cursus naar /docenten op het subdomein. Die
+// De docentenpagina linkt per cursus naar /docenten onder het adres van de cursus. Die
 // pagina bestaat op elke cursussite als src/pages/docenten.mdx; verdwijnt hij
 // ergens, dan wijst de homepage naar een 404. Dit is de snelle controle vóór
 // de build; de CI-job cross-links doet dezelfde controle daarna tegen de
 // gebouwde sites.
 
-const SITES_ROOT = fileURLToPath(new URL('../../../', import.meta.url));
+const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
 
 describe('docentenUrl', () => {
   it('plakt /docenten achter de site-URL, zonder dubbele slash', () => {
-    expect(docentenUrl('https://python.coderius.nl')).toBe('https://python.coderius.nl/docenten');
-    expect(docentenUrl('https://python.coderius.nl/')).toBe('https://python.coderius.nl/docenten');
+    expect(docentenUrl('https://informatica.coderius.nl/python')).toBe(
+      'https://informatica.coderius.nl/python/docenten',
+    );
+    expect(docentenUrl('https://informatica.coderius.nl/python/')).toBe(
+      'https://informatica.coderius.nl/python/docenten',
+    );
   });
 
   it('elke cursussite heeft de docentenhandleiding waar de link naartoe wijst', () => {
     const zonder = SITES.filter(
-      (s) => !existsSync(`${SITES_ROOT}${s.id}/src/pages/docenten.mdx`),
+      (s) => !existsSync(`${ROOT}${siteDir(s.id)}/src/pages/docenten.mdx`),
     ).map((s) => s.id);
     expect(zonder).toEqual([]);
   });
@@ -81,7 +86,26 @@ describe('de tabel op de docentenpagina', () => {
     expect(nergens).toEqual([]);
   });
 
-  it('hostVan geeft alleen de hostnaam', () => {
-    expect(hostVan('https://editor.coderius.nl')).toBe('editor.coderius.nl');
+  it('hostVan geeft host en pad, zonder schema en slash', () => {
+    expect(hostVan('https://informatica.coderius.nl/editor/')).toBe(
+      'informatica.coderius.nl/editor',
+    );
+    expect(hostVan('https://coderius.nl')).toBe('coderius.nl');
+  });
+});
+
+describe('de examenprogramma-tabel', () => {
+  it('toont precies de informatica-cursussen van de docentenpagina', () => {
+    // Het examenprogramma is dat van informatica; onderzoek (wo) heeft geen
+    // examendomeinen en hoort niet als lege rij in die tabel.
+    expect(examenCursussen.map((c) => c.id)).toEqual(
+      docentenCursussen.filter((c) => c.subject === 'informatica').map((c) => c.id),
+    );
+    expect(examenCursussen.some((c) => c.subject !== 'informatica')).toBe(false);
+  });
+
+  it('de docentenpagina toont ook de cursussen van andere vakken', () => {
+    const vakken = new Set(docentenCursussen.map((c) => c.subject));
+    expect(vakken.has('wo')).toBe(true);
   });
 });

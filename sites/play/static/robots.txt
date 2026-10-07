@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://play.coderius.nl/sitemap.xml

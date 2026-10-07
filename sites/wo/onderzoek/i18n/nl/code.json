@@ -1,0 +1,42 @@
+{
+  "theme.SearchBar.label": {
+    "message": "Zoeken",
+    "description": "Plaatshouder en label van de zoekbalk"
+  },
+  "theme.SearchBar.noResultsText": {
+    "message": "Geen resultaten",
+    "description": "Melding als de zoekbalk niets vindt"
+  },
+  "theme.SearchBar.seeAll": {
+    "message": "Alle resultaten bekijken",
+    "description": "Link naar de volledige zoekpagina"
+  },
+  "theme.SearchBar.seeAllOutsideContext": {
+    "message": "Alle resultaten buiten \"{context}\"",
+    "description": "Link naar zoekresultaten buiten de huidige context"
+  },
+  "theme.SearchBar.searchInContext": {
+    "message": "Alle resultaten binnen \"{context}\"",
+    "description": "Link naar zoekresultaten binnen de huidige context"
+  },
+  "theme.SearchPage.existingResultsTitle": {
+    "message": "Zoekresultaten voor \"{query}\"",
+    "description": "Titel van de zoekpagina met resultaten"
+  },
+  "theme.SearchPage.emptyResultsTitle": {
+    "message": "Doorzoek het lesmateriaal",
+    "description": "Titel van de lege zoekpagina"
+  },
+  "theme.SearchPage.searchContext.everywhere": {
+    "message": "Overal",
+    "description": "Optie om overal te zoeken"
+  },
+  "theme.SearchPage.documentsFound.plurals": {
+    "message": "1 pagina gevonden|{count} pagina's gevonden",
+    "description": "Aantal gevonden pagina's"
+  },
+  "theme.SearchPage.noResultsText": {
+    "message": "Geen pagina's gevonden",
+    "description": "Melding als de zoekpagina niets vindt"
+  }
+}

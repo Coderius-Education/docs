@@ -10,6 +10,10 @@
       "types": "./sites.d.ts",
       "default": "./sites.js"
     },
+    "./opslag": {
+      "types": "./opslag.d.ts",
+      "default": "./opslag.js"
+    },
     "./voorkennis": {
       "types": "./voorkennis.d.ts",
       "default": "./voorkennis.js"
@@ -21,6 +25,10 @@
     "./stijl": {
       "types": "./stijl.d.ts",
       "default": "./stijl.js"
+    },
+    "./wijzigingen": {
+      "types": "./wijzigingen.d.ts",
+      "default": "./wijzigingen.js"
     },
     "./matomo": {
       "types": "./matomo.d.ts",

@@ -27,7 +27,8 @@ export default function SiteLink({
   children: ReactNode;
 }): ReactNode {
   const { siteConfig } = useDocusaurusContext();
-  const current = siteByUrl(siteConfig.url);
+  // De cursus staat onder een pad van de vak-host: url + baseUrl wijst hem aan.
+  const current = siteByUrl(siteConfig.url + siteConfig.baseUrl);
   const target = site ? SITES_BY_ID[site] : current;
   const isExternal = !!target && (!current || target.id !== current.id);
 

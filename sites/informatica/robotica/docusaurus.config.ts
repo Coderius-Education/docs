@@ -1,0 +1,132 @@
+import { createConfig } from '@coderius/shared/config';
+import { REPO_URL, repoEditUrl } from '@coderius/shared/sites';
+import type { Plugin } from '@docusaurus/types';
+
+const projectName = 'robotica-docs';
+
+// Blockly tekent de blokken van de Click Golfer, en dat gebeurt alleen in de
+// browser (`src/components/Blokken`). In de serverbuild zou webpack de
+// node-versie van Blockly meenemen, met jsdom erbij, voor code die daar nooit
+// draait; die laat je hier weg.
+function blocklyAlleenInDeBrowser(): Plugin {
+  return {
+    name: 'blockly-alleen-in-de-browser',
+    configureWebpack(_config, isServer) {
+      if (!isServer) return {};
+      return { resolve: { alias: { blockly: false, '@leaphy-robotics/leaphy-blocks': false } } };
+    },
+  };
+}
+
+export default createConfig({
+  title: 'Robotica — Coderius',
+  siteId: 'robotica',
+  projectName,
+  matomoSiteId: 7,
+
+  // De Click Golfer ging van bouwen-eerst naar onderdelen-eerst. Drie lessen
+  // gingen daarbij op in andere; oude links landen op de les die hun inhoud
+  // nu heeft.
+  omleidingen: [
+    { van: '/click_golfer/aansluiten', naar: '/click_golfer/ir-sensor' },
+    { van: '/click_golfer/bal-detecteren', naar: '/click_golfer/ir-sensor' },
+    { van: '/click_golfer/hole-in-one', naar: '/click_golfer/hout#hole-in-one' },
+  ],
+
+  // @coderius/shared is de standaard; @coderius/checker levert de nakijker.
+  sharedPackages: ['@coderius/shared', '@coderius/checker'],
+
+  // Robotica is (nog) Engelstalig.
+  i18n: { defaultLocale: 'en', locales: ['en'] },
+  markdown: { hooks: { onBrokenMarkdownLinks: 'warn' } },
+  // De "Open in de editor"-links zetten de code in #code=…, en dat is geen
+  // anker; ze slaan de controle over (theme/CodeBlock). Daarna bleef er niets
+  // over, dus een echt kapot anker breekt de build in plaats van te
+  // verdwijnen tussen negentig meldingen.
+  onBrokenAnchors: 'throw',
+
+  presets: [
+    [
+      'classic',
+      {
+        docs: {
+          sidebarPath: './sidebars.ts',
+          editUrl: repoEditUrl('robotica'),
+        },
+        blog: {
+          showReadingTime: true,
+          editUrl: repoEditUrl('robotica'),
+        },
+        theme: { customCss: './src/css/custom.css' },
+      },
+    ],
+  ],
+
+  plugins: [
+    blocklyAlleenInDeBrowser,
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'lego_auto',
+        path: 'lego_auto',
+        routeBasePath: 'lego_auto',
+        sidebarPath: './sidebarsLegoAuto.ts',
+      },
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'click_golfer',
+        path: 'click_golfer',
+        routeBasePath: 'click_golfer',
+        sidebarPath: './sidebarsClickGolfer.ts',
+      },
+    ],
+  ],
+
+  themeConfig: {
+    image: 'img/docusaurus-social-card.jpg',
+    navbar: {
+      items: [
+        {
+          type: 'docSidebar',
+          sidebarId: 'tutorialSidebar',
+          position: 'right',
+          label: 'Bibliotheek',
+        },
+        {
+          type: 'doc',
+          docId: 'intro',
+          position: 'left',
+          label: 'Lego-auto',
+          docsPluginId: 'lego_auto',
+        },
+        { to: '/cheatsheet', label: 'Cheatsheet', position: 'left' },
+        { to: '/robot-checken', label: 'Robot checken', position: 'left' },
+        { to: '/editor', label: 'Editor', position: 'left' },
+        {
+          to: '/docs/Microcontrollers/Arduino Nano RP2040 Connect/Tutorial-debuggen/debuggen',
+          label: 'Er gaat iets mis',
+          position: 'left',
+        },
+        {
+          type: 'doc',
+          docId: 'intro',
+          position: 'left',
+          label: 'Click Golfer',
+          docsPluginId: 'click_golfer',
+        },
+        {
+          href: REPO_URL,
+          label: 'GitHub',
+          position: 'right',
+        },
+      ],
+    },
+    footer: {
+      style: 'dark',
+      links: [],
+      copyright: `Licensed under <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener noreferrer">Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</a>.`,
+    },
+  },
+});

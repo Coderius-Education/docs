@@ -1,24 +1,106 @@
 name: Build sites
 
-# Bouwt elke site naar een zelfstandige statische bundle en uploadt die
-# als artifact. Geen deploy hier: een aparte backend pakt de artifacts op
-# (hosting, A/B-tests, analytics).
+# Bouwt elke geraakte site naar een zelfstandige statische bundle en uploadt
+# die als artifact. Geen deploy hier: een aparte backend pakt de artifacts op
+# (hosting, A/B-tests, analytics). Een site zonder artifact in deze run blijft
+# daar staan zoals hij was: previews vallen terug op main, en op main wordt
+# per artifact bijgewerkt.
+#
+# Incrementeel: de job `plan` bepaalt wat de wijziging raakt
+# (scripts/wijzigingen.mjs, logica en tests in packages/shared/wijzigingen.js)
+# en elke job hieronder doet alleen dat. Een les van één regel bouwt één site,
+# draait de codeblokken rond die regel en controleert de tekst van die regel.
+# Elke nacht, en bij een handmatige run, draait alles: zo valt drift op die
+# geen enkele wijziging raakte (een nieuwe Python, een verlopen pin).
 
 on:
   push:
     branches: [main]
   pull_request:
+  schedule:
+    - cron: '23 2 * * *'
   workflow_dispatch:
+    inputs:
+      volledig:
+        description: 'Alles controleren, ook wat niet gewijzigd is'
+        type: boolean
+        default: true
 
 # Snel achter elkaar pushen op dezelfde branch: alleen de nieuwste build telt.
+# De nachtelijke run heeft een eigen groep, zodat een push hem niet afbreekt.
 concurrency:
-  group: build-${{ github.ref }}
+  group: build-${{ github.event_name == 'schedule' && 'nacht' || github.ref }}
   cancel-in-progress: true
 
 permissions:
   contents: read
 
 jobs:
+  # Wat raakt deze wijziging? Vergelijkt met de merge-base van de PR (of met
+  # `before` bij een push op main), mapt de gewijzigde regels op sites, jobs
+  # en codeblokken, en zet dat in changed.json (artifact `wijzigingen`). Elke
+  # job hieronder leest dat bestand. Geen bruikbare base, of een globaal
+  # bestand gewijzigd (lockfile, root-config, deze workflow): alles.
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      volledig: ${{ steps.plan.outputs.volledig }}
+      sites: ${{ steps.plan.outputs.sites }}
+      ongewijzigd: ${{ steps.plan.outputs.ongewijzigd }}
+      build: ${{ steps.plan.outputs.build }}
+      test: ${{ steps.plan.outputs.test }}
+      checks: ${{ steps.plan.outputs.checks }}
+      tekst: ${{ steps.plan.outputs.tekst }}
+      crosslinks: ${{ steps.plan.outputs.crosslinks }}
+      python: ${{ steps.plan.outputs.python }}
+      algorithms: ${{ steps.plan.outputs.algorithms }}
+      play: ${{ steps.plan.outputs.play }}
+      godot: ${{ steps.plan.outputs.godot }}
+      robotica: ${{ steps.plan.outputs.robotica }}
+      fullstack: ${{ steps.plan.outputs.fullstack }}
+    steps:
+      # De hele geschiedenis, maar zonder blobs: git merge-base en pnpm's
+      # `[<base>]`-filter hebben alleen commits en trees nodig, en git diff
+      # haalt de paar gewijzigde bestanden zelf op.
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          filter: blob:none
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          # Deze job installeert niets; zonder pnpm-store faalt de automatische
+          # cache van setup-node v5 in zijn post-stap (Path Validation Error).
+          package-manager-cache: false
+
+      - name: Plan
+        id: plan
+        env:
+          EVENT: ${{ github.event_name }}
+          VOLLEDIG: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.volledig) }}
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          set -euo pipefail
+          if [ "$VOLLEDIG" = "true" ]; then
+            node scripts/wijzigingen.mjs plan --volledig --reden "$EVENT"
+          elif [ "$EVENT" = "workflow_dispatch" ] && [ "$GITHUB_REF" != "refs/heads/main" ]; then
+            # Handmatig op een branch, zonder volledig: vergelijk met main.
+            node scripts/wijzigingen.mjs plan --base "$(git rev-parse origin/main)"
+          elif [ "$EVENT" = "workflow_dispatch" ]; then
+            node scripts/wijzigingen.mjs plan --volledig --reden "handmatig op main"
+          else
+            node scripts/wijzigingen.mjs plan --base "$BASE"
+          fi
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: wijzigingen
+          path: changed.json
+          retention-days: 7
+
   # Aparte, kleine job omdat `build` erop wacht. De nakijker bepaalt wat een
   # leerling als beoordeling ziet, en een scoringsfout geeft geen foutmelding —
   # die telt gewoon stil iets verkeerd. Zulke code mag niet gedeployd worden.
@@ -27,7 +109,14 @@ jobs:
   # een willekeurige site de artifacts van alle veertien tegenhouden, en zou de
   # trage typecheck (~30s) elke build vertragen. De installatie hier kost 12s en
   # loopt parallel aan checks, dus dit kost vrijwel geen doorlooptijd.
+  #
+  # Incrementeel: `vitest related` op de gewijzigde code, plus de tests die
+  # lestekst of andere bestanden lezen in plaats van importeren (die ziet
+  # related niet) uit elk package waarin iets veranderde, en de guards die over
+  # alle sites lopen. De vitest-config of -setup gewijzigd: alles.
   test:
+    needs: plan
+    if: needs.plan.outputs.test == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -51,8 +140,18 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - uses: actions/download-artifact@v6
+        with:
+          name: wijzigingen
+
       - name: Test (nakijker, editor, DVWA-labs en de stap-opnemer)
-        run: pnpm test
+        run: |
+          read -ra argumenten <<< "$(node scripts/wijzigingen.mjs vitest changed.json)"
+          pnpm exec vitest "${argumenten[@]}"
+
+      # De selectie van --alleen in de blokrunners (scripts/alleen.py).
+      - name: Test (blokrunners)
+        run: python3 -m unittest discover -s scripts -p 'test_*.py'
 
   # De godot-cursus laat leerlingen elk script zelf opbouwen, dus staan de
   # tussenstanden alleen in de lestekst. Niets in de docusaurus-build leest die
@@ -63,7 +162,12 @@ jobs:
   #
   # Blokkeert `build` bewust niet: dit gaat over de inhoud van de lessen, niet
   # over of de site bouwt.
+  #
+  # Met --alleen compileert hij alleen de blokken die de wijziging raakt, en
+  # slaat hij de gedragstest over van een tussenstand die niet veranderde.
   godot:
+    needs: plan
+    if: needs.plan.outputs.godot == 'true'
     runs-on: ubuntu-latest
     env:
       GODOT_VERSIE: 4.7.2-stable
@@ -110,18 +214,22 @@ jobs:
       - name: Godot-versie
         run: ~/godot-bin/godot --headless --version
 
+      - uses: actions/download-artifact@v6
+        with:
+          name: wijzigingen
+
       - name: Codeblokken uit de docs halen
-        run: pnpm --filter @coderius/godot-docs godot:extract
+        run: pnpm --filter @coderius/godot-docs godot:extract --alleen "$GITHUB_WORKSPACE/changed.json"
 
       # Eerste run bouwt de importcache op; die eindigt zelf met een exitcode
       # die niets over de tests zegt, vandaar de tweede run.
       - name: Project importeren
-        run: ~/godot-bin/godot --headless --path sites/godot/godot-tests --import || true
+        run: ~/godot-bin/godot --headless --path sites/informatica/godot/godot-tests --import || true
 
       # Geen --quit-after: die stopt met code 0 en zou een echte fout maskeren.
       # De runner sluit zelf af; `timeout` is alleen de vangnet tegen vastlopen.
       - name: Codevoorbeelden testen
-        run: timeout 300 ~/godot-bin/godot --headless --path sites/godot/godot-tests
+        run: timeout 300 ~/godot-bin/godot --headless --path sites/informatica/godot/godot-tests
 
       # Een hernoemd menu-item verandert niets aan de code en niets aan de
       # build; het valt pas op als een leerling naar een knop zoekt die er niet
@@ -140,8 +248,8 @@ jobs:
               echo "::error::label '$label' komt niet voor in Godot ${GODOT_VERSIE}"
               mist=$((mist + 1))
             fi
-          done < sites/godot/godot-tests/extracted/labels.txt
-          echo "$(wc -l < sites/godot/godot-tests/extracted/labels.txt) labels gecontroleerd, $mist niet gevonden."
+          done < sites/informatica/godot/godot-tests/extracted/labels.txt
+          echo "$(wc -l < sites/informatica/godot/godot-tests/extracted/labels.txt) labels gecontroleerd, $mist niet gevonden."
           exit $((mist > 0))
 
   # De robotica-lessen bevatten MicroPython die verder nergens wordt
@@ -151,6 +259,8 @@ jobs:
   # overtypt. Blokkeert `build` bewust niet: dit gaat over de inhoud van de
   # lessen, niet over of de site bouwt.
   robotica:
+    needs: plan
+    if: needs.plan.outputs.robotica == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -168,8 +278,12 @@ jobs:
       - name: Codeblokken uit de docs halen
         run: pnpm --filter @coderius/robotica-docs lego:extract
 
+      - uses: actions/download-artifact@v6
+        with:
+          name: wijzigingen
+
       - name: Codevoorbeelden compileren
-        run: python3 scripts/compileer-blokken.py sites/robotica/lego-tests/extracted
+        run: python3 scripts/compileer-blokken.py sites/informatica/robotica/lego-tests/extracted --alleen changed.json
 
   # Zelfde verhaal voor de fullstack-cursus: python-blokken die nergens worden
   # uitgevoerd. Extractie én compilatie deelt deze job met robotica
@@ -178,6 +292,8 @@ jobs:
   # fragmenten uit een handler — slaan we over met de marker
   # `{/* niet-compileren: reden */}`.
   fullstack:
+    needs: plan
+    if: needs.plan.outputs.fullstack == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -195,14 +311,20 @@ jobs:
       - name: Codeblokken uit de docs halen
         run: pnpm --filter @coderius/fullstack-docs code:extract
 
+      - uses: actions/download-artifact@v6
+        with:
+          name: wijzigingen
+
       - name: Codevoorbeelden compileren
-        run: python3 scripts/compileer-blokken.py sites/fullstack/code-tests/extracted
+        run: python3 scripts/compileer-blokken.py sites/informatica/fullstack/code-tests/extracted --alleen changed.json
 
   # Play gaat een stap verder dan compileren: elk speeltuin-blok wordt echt
   # uitgevoerd tegen de gebundelde wheel uit static/whl/ — dezelfde die de
   # browser serveert. Kale blokken worden alleen gecompileerd. Bewust kapotte
   # lesvoorbeelden dragen een niet-draaien/niet-compileren-marker.
   play:
+    needs: plan
+    if: needs.plan.outputs.play == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -218,15 +340,24 @@ jobs:
       - name: Play-dependencies installeren
         run: pip install $(python3 scripts/draai-play-blokken.py --pins)
 
+      - uses: actions/download-artifact@v6
+        with:
+          name: wijzigingen
+
       - name: Codevoorbeelden uitvoeren tegen de gebundelde wheel
-        run: python3 scripts/draai-play-blokken.py
+        run: python3 scripts/draai-play-blokken.py --alleen changed.json
 
   # De python-cursus zegt bij veel voorbeelden wát er op het scherm komt: als
   # commentaar achter de print-regel, of als uitvoerblok eronder. Die belofte is
   # na te lopen, en dat is een sterkere controle dan "het draait": een blok dat
   # iets anders print dan de les zegt, laat een leerling denken dat híj de fout
   # maakt. Zo stond er in de les over len() een 11 bij een string van 12 tekens.
+  #
+  # Met --alleen draaien alleen de blokken rond de gewijzigde regels, plus wat
+  # erop doorbouwt (draaien-met) en de losse foutmeldingen ernaast.
   python:
+    needs: plan
+    if: needs.plan.outputs.python == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -235,8 +366,12 @@ jobs:
         with:
           python-version: '3.13'
 
+      - uses: actions/download-artifact@v6
+        with:
+          name: wijzigingen
+
       - name: Codevoorbeelden uitvoeren en de beloofde uitvoer vergelijken
-        run: python3 scripts/draai-python-blokken.py
+        run: python3 scripts/draai-python-blokken.py --alleen changed.json
 
   # Dezelfde controle als de python-cursus, maar dan voor algorithms: elk blok
   # draait of compileert, beloofde uitvoer wordt vergeleken, en de geciteerde
@@ -245,6 +380,8 @@ jobs:
   # static/pyodide/ — dus test deze job op 3.12 en met precies die versies;
   # --pins leest ze uit pyodide-lock.json van de site zelf.
   algorithms:
+    needs: plan
+    if: needs.plan.outputs.algorithms == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -256,8 +393,12 @@ jobs:
       - name: Browser-versies van numpy en matplotlib installeren
         run: pip install $(python3 scripts/draai-python-blokken.py algorithms --pins)
 
+      - uses: actions/download-artifact@v6
+        with:
+          name: wijzigingen
+
       - name: Codevoorbeelden uitvoeren en de beloofde uitvoer vergelijken
-        run: python3 scripts/draai-python-blokken.py algorithms
+        run: python3 scripts/draai-python-blokken.py algorithms --alleen changed.json
 
   # Lestekst is het product van deze repo, maar niets controleerde hem. Een
   # typefout, een emoji, een "u" in plaats van "je" of een alinea vol vet:
@@ -280,7 +421,14 @@ jobs:
   # De regels zelf zijn getest in packages/shared/stijl.test.ts, en die test
   # loopt in de `test`-job wél blokkerend mee. Zo kan een regel niet stilletjes
   # stukgaan en toch groen blijven.
+  #
+  # Incrementeel: alleen gewijzigde lespagina's, en alleen meldingen die een
+  # gewijzigde regel raken (`--regels`). Een melding over meer regels (een
+  # alinea) telt als één ervan gewijzigd is. De woordenlijst, de
+  # cspell-config of de stijlregels gewijzigd: alles.
   tekst:
+    needs: plan
+    if: needs.plan.outputs.tekst == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -295,13 +443,32 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - uses: actions/download-artifact@v6
+        with:
+          name: wijzigingen
+
       # cspell schrijft "bestand:regel:kolom - Unknown word (x)". Dat omzetten
       # naar een annotatie zet de melding op de juiste regel in de diff in
-      # plaats van onderin het joblog.
+      # plaats van onderin het joblog. Incrementeel spelt hij alleen de
+      # gewijzigde pagina's, en filtert `wijzigingen.mjs filter` de meldingen
+      # op gewijzigde regels; een cspell-fout die geen spelmelding is (een
+      # kapotte config) laat de stap zelf falen.
       - name: Spelling (cspell)
         run: |
           set -uo pipefail
-          pnpm run spel > "$RUNNER_TEMP/spel.txt" 2>&1 || uitkomst=$?
+          if jq -e '.volledig or .tekst.alles' changed.json > /dev/null; then
+            pnpm run spel > "$RUNNER_TEMP/spel.txt" 2>&1 || uitkomst=$?
+          else
+            mapfile -t bestanden < <(node scripts/wijzigingen.mjs cspell changed.json)
+            pnpm exec cspell lint --no-progress --relative --no-must-find-files "${bestanden[@]}" \
+              > "$RUNNER_TEMP/spel-alles.txt" 2>&1 || cspell=$?
+            if [ "${cspell:-0}" -ne 0 ] && ! grep -q 'Unknown word' "$RUNNER_TEMP/spel-alles.txt"; then
+              cat "$RUNNER_TEMP/spel-alles.txt"
+              exit "$cspell"
+            fi
+            node scripts/wijzigingen.mjs filter changed.json < "$RUNNER_TEMP/spel-alles.txt" \
+              > "$RUNNER_TEMP/spel.txt" || uitkomst=$?
+          fi
           sed -n 's|^\(.*\):\([0-9]*\):\([0-9]*\) - \(.*\)$|::warning file=\1,line=\2,col=\3,title=spelling::\4|p' "$RUNNER_TEMP/spel.txt"
           cat "$RUNNER_TEMP/spel.txt"
           aantal=$(grep -c 'Unknown word' "$RUNNER_TEMP/spel.txt" || true)
@@ -311,16 +478,24 @@ jobs:
             echo "$aantal onbekende woorden. Klopt een woord wel? Zet het in \`cspell-woorden.txt\`."
             echo
           } >> "$GITHUB_STEP_SUMMARY"
-          exit ${uitkomst:-0}
+          exit "${uitkomst:-0}"
 
       # Schrijft zelf al annotaties en een tabel in de job-samenvatting.
       - name: Stijl (schrijfgids)
-        run: node scripts/controleer-tekst.mjs --streng
+        run: node scripts/controleer-tekst.mjs --streng --regels changed.json
 
+  # Incrementeel: biome alleen op gewijzigde bestanden (`--changed`; biome.json
+  # gewijzigd: alles), en tsc alleen op de packages die pnpm geraakt noemt.
   checks:
+    needs: plan
+    if: needs.plan.outputs.checks == 'true'
     runs-on: ubuntu-latest
     steps:
+      # biome --changed vergelijkt met de base, dus die commit moet er zijn.
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          filter: blob:none
 
       - uses: pnpm/action-setup@v6
 
@@ -332,45 +507,59 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - uses: actions/download-artifact@v6
+        with:
+          name: wijzigingen
+
       # Blokkerend: de biome-achterstand uit de migratie is opgeruimd, dus een
       # lintfout is weer een fout. Samen met de typecheck telt deze job mee in
       # de `build`-check hieronder.
       - name: Lint (biome)
-        run: pnpm lint
+        run: |
+          set -euo pipefail
+          if jq -e '.volledig or .jobs.lint' changed.json > /dev/null; then
+            pnpm lint
+          else
+            pnpm exec biome check --changed --since="$(jq -r .base changed.json)" --no-errors-on-unmatched
+          fi
 
-      - name: Typecheck (sites + packages)
-        run: pnpm typecheck
+      - name: Typecheck (geraakte sites + packages)
+        run: |
+          set -euo pipefail
+          if jq -e '.volledig' changed.json > /dev/null; then
+            pnpm typecheck
+          else
+            read -ra filters <<< "$(node scripts/wijzigingen.mjs typecheck changed.json)"
+            if [ "${#filters[@]}" -gt 0 ]; then
+              pnpm "${filters[@]}" -r typecheck
+            else
+              echo "Geen site of package geraakt; niets te typechecken."
+            fi
+          fi
 
   build:
     # Alleen op de tests wachten, niet op lint of typecheck. De hostingbackend
     # haalt de artifacts namelijk óók op als de run is mislukt (bewust: met
     # fail-fast:false mag één kapotte site de andere niet blokkeren), dus zonder
     # deze afhankelijkheid zou een nakijker met rode tests alsnog live gaan.
+    # Raakt de wijziging geen test, dan is `test` overgeslagen en mag de build
+    # gewoon door.
     #
     # Lint en typecheck blijven bewust buiten deze poort: die falen op eigen
     # kracht de run, en zo blijft zichtbaar welke sites nog wél bouwen.
-    needs: test
+    needs: [plan, test]
+    if: >-
+      !cancelled() && needs.plan.outputs.build == 'true'
+      && (needs.test.result == 'success' || needs.test.result == 'skipped')
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        # Mapnamen onder sites/; het filter werkt op de map, niet op de
-        # package-naam (sites/ide heet @coderius/ide, zonder -docs-suffix).
-        site:
-          - python
-          - web
-          - fullstack
-          - robotica
-          - ctf
-          - embedded
-          - editor
-          - godot
-          - dvwa
-          - play
-          - algorithms
-          - ide
-          - didactiek
-          - home
+        # Alleen de geraakte sites, uit de plan-job (site-ids uit
+        # packages/shared/sites.js). De map (sites/<vak>/<id>, of sites/home)
+        # komt uit de registry; het filter werkt op de map, niet op de
+        # package-naam (ide heet @coderius/ide, zonder -docs-suffix).
+        site: ${{ fromJSON(needs.plan.outputs.sites) }}
     steps:
       - uses: actions/checkout@v5
 
@@ -381,18 +570,93 @@ jobs:
           node-version: 22
           cache: pnpm
 
+      # Vóór de install, net als in `voorraad`: zo kan niets wat de install
+      # neerzet de sleutel laten verschillen.
+      - name: Map en cache-sleutel van ${{ matrix.site }}
+        id: map
+        run: |
+          echo "dir=$(node scripts/sites-json.mjs ${{ matrix.site }})" >> "$GITHUB_OUTPUT"
+          echo "sleutel=site-${{ runner.os }}-${{ matrix.site }}-$(node scripts/site-hash.mjs ${{ matrix.site }})" >> "$GITHUB_OUTPUT"
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Build ${{ matrix.site }}
-        run: pnpm --filter "./sites/${{ matrix.site }}" build
+        run: pnpm --filter "./${{ steps.map.outputs.dir }}" build
+
+      # Voor cross-links in een latere run waarin deze site niet verandert. De
+      # sleutel is een hash van alles waar de build van afhangt
+      # (scripts/site-hash.mjs), dus een treffer is dezelfde build.
+      - name: Build in de cache
+        uses: actions/cache/save@v5
+        with:
+          path: ${{ steps.map.outputs.dir }}/build
+          key: ${{ steps.map.outputs.sleutel }}
 
       - name: Upload static bundle
         uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.site }}-static
-          path: sites/${{ matrix.site }}/build
+          path: ${{ steps.map.outputs.dir }}/build
           if-no-files-found: error
+
+  # De sites die deze wijziging niet raakt, voor cross-links: uit de cache van
+  # een eerdere build (main vult hem bij elke push en elke nacht), en bij een
+  # misser alsnog gebouwd. Bewust als `<site>-voorraad` en kort bewaard: de
+  # hostingbackend pakt alleen `<site>-static` op, en deze sites staan al live.
+  voorraad:
+    needs: plan
+    if: needs.plan.outputs.crosslinks == 'true' && needs.plan.outputs.ongewijzigd != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        site: ${{ fromJSON(needs.plan.outputs.ongewijzigd) }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Map en cache-sleutel van ${{ matrix.site }}
+        id: map
+        run: |
+          echo "dir=$(node scripts/sites-json.mjs ${{ matrix.site }})" >> "$GITHUB_OUTPUT"
+          echo "sleutel=site-${{ runner.os }}-${{ matrix.site }}-$(node scripts/site-hash.mjs ${{ matrix.site }})" >> "$GITHUB_OUTPUT"
+
+      - name: Uit de cache
+        id: cache
+        uses: actions/cache/restore@v5
+        with:
+          path: ${{ steps.map.outputs.dir }}/build
+          key: ${{ steps.map.outputs.sleutel }}
+
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: pnpm install --frozen-lockfile
+
+      - name: Build ${{ matrix.site }} (niet in de cache)
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: pnpm --filter "./${{ steps.map.outputs.dir }}" build
+
+      - name: Build in de cache
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v5
+        with:
+          path: ${{ steps.map.outputs.dir }}/build
+          key: ${{ steps.map.outputs.sleutel }}
+
+      - name: Upload voor cross-links
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ matrix.site }}-voorraad
+          path: ${{ steps.map.outputs.dir }}/build
+          if-no-files-found: error
+          retention-days: 1
 
   # Links tussen cursussen zijn voor Docusaurus externe URL's: onBrokenLinks
   # controleert alleen de eigen site, en de guard-tests in de test-job bootsen
@@ -400,8 +664,16 @@ jobs:
   # liep). Deze job kijkt naar wat de browser krijgt: elke href naar een
   # cursusdomein in de gebouwde HTML, tegen de build van de doelsite. Telt mee
   # in de `build`-check hieronder.
+  #
+  # Altijd tegen álle sites (--compleet): de geraakte uit `build`, de rest uit
+  # `voorraad`. Een link van een ongewijzigde site naar een gewijzigde pagina
+  # valt zo ook op.
   cross-links:
-    needs: build
+    needs: [plan, build, voorraad]
+    if: >-
+      !cancelled() && needs.plan.outputs.crosslinks == 'true'
+      && (needs.build.result == 'success' || needs.build.result == 'skipped')
+      && (needs.voorraad.result == 'success' || needs.voorraad.result == 'skipped')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -414,14 +686,29 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 22
+          # Deze job installeert niets; zonder pnpm-store faalt de automatische
+          # cache van setup-node v5 in zijn post-stap (Path Validation Error).
+          package-manager-cache: false
 
       - uses: actions/download-artifact@v6
+        if: needs.plan.outputs.build == 'true'
         with:
           pattern: '*-static'
           path: builds
 
+      - uses: actions/download-artifact@v6
+        if: needs.plan.outputs.ongewijzigd != '[]'
+        with:
+          pattern: '*-voorraad'
+          path: builds
+
+      - name: Voorraad onder de naam van een artifact
+        run: |
+          shopt -s nullglob
+          for map in builds/*-voorraad; do mv "$map" "${map%-voorraad}-static"; done
+
       - name: Cross-site links tegen de gebouwde sites
-        run: node scripts/controleer-cross-links.mjs builds --annotaties
+        run: node scripts/controleer-cross-links.mjs builds --annotaties --compleet
 
   # De branch protection eist een check die exact "build" heet, maar een
   # matrix-job rapporteert alleen "build (site)" per site — die eis kon dus
@@ -429,17 +716,52 @@ jobs:
   # ís die ene check: hij draait altijd en slaagt alleen als élke site-build
   # slaagde (fail-fast staat uit, dus needs.build.result is pas "success" als
   # alles groen is).
+  #
+  # Een job die het plan niet nodig had is `skipped`, en dat telt als geslaagd;
+  # `failure` en `cancelled` tellen als mislukt. Wat het plan wél nodig had
+  # maar toch is overgeslagen, telt ook als mislukt: dan viel er iets ervoor
+  # om (een rode test houdt de build tegen), en dat mag niet groen ogen.
   build-klaar:
     name: build
     # Ook `checks` (lint + typecheck) telt mee: een tsc-fout houdt de artifacts
     # niet tegen (die job draait los van `build`), maar maakt deze verplichte
     # check wel rood, zodat hij niet gemerged wordt.
-    needs: [build, checks, cross-links]
+    needs: [plan, test, build, voorraad, checks, cross-links]
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: Alle site-builds gelukt, lint, typecheck en cross-site links groen?
+      - name: Plan, tests, site-builds, lint, typecheck en cross-site links groen?
+        env:
+          PLAN: ${{ needs.plan.result }}
+          TEST: ${{ needs.test.result }}
+          BUILD: ${{ needs.build.result }}
+          VOORRAAD: ${{ needs.voorraad.result }}
+          CHECKS: ${{ needs.checks.result }}
+          CROSSLINKS: ${{ needs.cross-links.result }}
+          NODIG_TEST: ${{ needs.plan.outputs.test }}
+          NODIG_BUILD: ${{ needs.plan.outputs.build }}
+          NODIG_CHECKS: ${{ needs.plan.outputs.checks }}
+          NODIG_CROSSLINKS: ${{ needs.plan.outputs.crosslinks }}
         run: |
-          test "${{ needs.build.result }}" = "success"
-          test "${{ needs.checks.result }}" = "success"
-          test "${{ needs.cross-links.result }}" = "success"
+          fout=0
+          # oordeel <job> <resultaat> <nodig volgens het plan>
+          oordeel() {
+            case "$2" in
+              success) echo "$1: geslaagd" ;;
+              skipped)
+                if [ "$3" = "true" ]; then
+                  echo "::error::$1 was nodig maar is overgeslagen (viel er een job ervoor om?)"
+                  fout=1
+                else
+                  echo "$1: niet nodig voor deze wijziging"
+                fi ;;
+              *) echo "::error::$1: $2"; fout=1 ;;
+            esac
+          }
+          oordeel plan "$PLAN" true
+          oordeel test "$TEST" "$NODIG_TEST"
+          oordeel build "$BUILD" "$NODIG_BUILD"
+          oordeel voorraad "$VOORRAAD" false
+          oordeel checks "$CHECKS" "$NODIG_CHECKS"
+          oordeel cross-links "$CROSSLINKS" "$NODIG_CROSSLINKS"
+          exit $fout

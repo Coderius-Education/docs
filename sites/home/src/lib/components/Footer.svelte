@@ -3,7 +3,7 @@
 </script>
 
 <footer class="border-t px-4 py-6 text-sm">
-	<div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-2">
+	<div class="mx-auto flex max-w-[100rem] flex-wrap items-center justify-between gap-x-6 gap-y-2">
 		<p class="text-muted-foreground">
 			Licensed under
 			<a

@@ -32,7 +32,8 @@ export default function Voorkennis({
   title?: string;
 }): ReactNode {
   const { siteConfig } = useDocusaurusContext();
-  const current = siteByUrl(siteConfig.url);
+  // De cursus staat onder een pad van de vak-host: url + baseUrl wijst hem aan.
+  const current = siteByUrl(siteConfig.url + siteConfig.baseUrl);
 
   if (items.length === 0) return null;
 

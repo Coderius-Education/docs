@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://informatica.coderius.nl/python/sitemap.xml

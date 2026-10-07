@@ -18,6 +18,11 @@ build/
 .temp/
 .tmp/
 
+# ── CI ───────────────────────────────────────────────────────────────────────
+# Het plan van de incrementele CI (scripts/wijzigingen.mjs); elke job haalt
+# het als artifact op in de werkmap, en biome mag het niet als bron lezen.
+changed.json
+
 # ── TypeScript / bundler / linter caches ─────────────────────────────────────
 *.tsbuildinfo
 .eslintcache
@@ -86,13 +91,13 @@ Desktop.ini
 # ── Site-specifieke gegenereerde / lokale bestanden ──────────────────────────
 # Bewust gescoped per site, zodat een gelijknamig bestand elders niet per
 # ongeluk genegeerd wordt.
-/sites/godot/static/zips/
-/sites/algorithms/.trace-tests/
-/sites/dvwa/GEMINI.md
-/sites/play/database.json
-/sites/play/development.py
-/sites/play/TODO.md
+/sites/informatica/godot/static/zips/
+/sites/informatica/algorithms/.trace-tests/
+/sites/informatica/dvwa/GEMINI.md
+/sites/informatica/play/database.json
+/sites/informatica/play/development.py
+/sites/informatica/play/TODO.md
 # leerlijn.md werd in deze sites gegenereerd (stond in hun originele .gitignore).
-/sites/godot/**/leerlijn.md
-/sites/python/**/leerlijn.md
-/sites/web/**/leerlijn.md
+/sites/informatica/godot/**/leerlijn.md
+/sites/informatica/python/**/leerlijn.md
+/sites/informatica/web/**/leerlijn.md

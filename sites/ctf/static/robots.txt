@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://ctf.coderius.nl/sitemap.xml

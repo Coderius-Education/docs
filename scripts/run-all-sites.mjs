@@ -11,12 +11,16 @@
 
 import { spawn, spawnSync } from 'node:child_process';
 import fs from 'node:fs';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+const { alleSiteMappen, SITES_BY_ID } = createRequire(import.meta.url)(
+  '../packages/shared/sites.js',
+);
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, '..');
-const SITES_DIR = path.join(ROOT, 'sites');
 const BASE_PORT = 3001;
 
 const mode = process.argv[2];
@@ -27,12 +31,9 @@ if (mode !== 'serve' && mode !== 'start') {
   process.exit(1);
 }
 
-// Map-namen onder sites/ — gesorteerd zodat poorten stabiel blijven.
-const sites = fs
-  .readdirSync(SITES_DIR, { withFileTypes: true })
-  .filter((d) => d.isDirectory())
-  .map((d) => d.name)
-  .sort();
+// Uit de registry (sites/<vak>/<id> en sites/home) — gesorteerd op id zodat
+// poorten stabiel blijven.
+const sites = alleSiteMappen().sort((a, b) => a.id.localeCompare(b.id));
 
 // `serve` heeft een bestaande build nodig; bouw eerst als --build is gegeven.
 if (mode === 'serve' && doBuild) {
@@ -44,21 +45,23 @@ if (mode === 'serve' && doBuild) {
 const children = [];
 
 console.log('\nPreview-overzicht:');
-sites.forEach((name, i) => {
+sites.forEach(({ id: name, dir }, i) => {
   const port = BASE_PORT + i;
 
-  if (mode === 'serve' && !fs.existsSync(path.join(SITES_DIR, name, 'build'))) {
+  if (mode === 'serve' && !fs.existsSync(path.join(ROOT, dir, 'build'))) {
     console.log(`  ${name.padEnd(12)} OVERGESLAGEN (geen build/ — draai met --build)`);
     return;
   }
 
-  console.log(`  ${name.padEnd(12)} http://localhost:${port}`);
+  // Een cursus draait onder zijn pad (baseUrl), net als op de vak-host.
+  const pad = SITES_BY_ID[name] ? `/${SITES_BY_ID[name].path}/` : '/';
+  console.log(`  ${name.padEnd(12)} http://localhost:${port}${pad}`);
 
   const args =
     mode === 'serve'
       ? [
           '--filter',
-          `./sites/${name}`,
+          `./${dir}`,
           'exec',
           'docusaurus',
           'serve',
@@ -68,7 +71,7 @@ sites.forEach((name, i) => {
           'build',
           '--no-open',
         ]
-      : ['--filter', `./sites/${name}`, 'start', '--port', String(port), '--no-open'];
+      : ['--filter', `./${dir}`, 'start', '--port', String(port), '--no-open'];
 
   const child = spawn('pnpm', args, { cwd: ROOT, stdio: 'inherit', shell: true });
   children.push(child);

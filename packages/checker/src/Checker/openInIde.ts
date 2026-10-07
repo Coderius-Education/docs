@@ -6,9 +6,9 @@ import type { ProjectFiles } from '../types';
 // ongeacht Cross-Origin-Opener-Policy, omdat de ouder zijn eigen
 // window.open()-handle gebruikt. De message-source blijft
 // 'coderius-website-checker' zodat het bestaande /import-contract op
-// ide.coderius.nl blijft werken.
+// de IDE (informatica.coderius.nl/ide/) blijft werken.
 // Wire-waarden van het /import-contract; de ontvanger staat in
-// sites/ide/src/components/ImportProject/importContract.ts. Beide kanten pinnen
+// sites/informatica/ide/src/components/ImportProject/importContract.ts. Beide kanten pinnen
 // ze in hun tests, zodat een wijziging aan één kant niet stil blijft.
 export const MESSAGE_SOURCE = 'coderius-website-checker';
 export const ACK_SOURCE = 'coderius-editor-import';
@@ -88,7 +88,8 @@ export function openInIde(
   const payload = buildImportPayload(files, projectName);
   if (!payload) return;
 
-  const win = window.open(`${ideUrl}/import`, '_blank');
+  // De IDE staat onder een pad met een slash erachter (…/ide/): geen dubbele slash.
+  const win = window.open(`${ideUrl.replace(/\/+$/, '')}/import`, '_blank');
   if (!win) {
     onResult('blocked');
     return;

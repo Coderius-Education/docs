@@ -1,0 +1,46 @@
+import { createConfig, prismThemes } from '@coderius/shared/config';
+
+export default createConfig({
+  title: 'Didactiek — Coderius',
+  tagline: 'Waarom we het zo doen, en waarop dat berust',
+  siteId: 'didactiek',
+  organizationName: 'coderius',
+  projectName: 'coderius-didactiek',
+  matomoSiteId: 14,
+  deploymentBranch: 'gh-pages',
+  trailingSlash: false,
+
+  description:
+    'De onderbouwing achter het Coderius-lesmateriaal: didactische tips en de onderzoeken waarop ze rusten.',
+  keywords:
+    'didactiek, onderwijs, cognitive load, PRIMM, scaffolding, retrieval practice, onderzoek',
+
+  presets: [
+    [
+      'classic',
+      {
+        docs: {
+          sidebarPath: './sidebars.ts',
+          routeBasePath: 'bronnen',
+          numberPrefixParser: false,
+        },
+        blog: false,
+        theme: { customCss: './src/css/custom.css' },
+      },
+    ],
+  ],
+
+  themeConfig: {
+    navbar: {
+      items: [
+        { to: '/', label: 'Tips', position: 'left' },
+        { type: 'docSidebar', sidebarId: 'bronnenSidebar', position: 'left', label: 'Bronnen' },
+      ],
+    },
+    prism: {
+      theme: prismThemes.github,
+      darkTheme: prismThemes.dracula,
+      additionalLanguages: ['python'],
+    },
+  },
+});

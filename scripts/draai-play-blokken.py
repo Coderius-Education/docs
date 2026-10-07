@@ -51,6 +51,11 @@ Markers, direct boven het blok:
 Aanroep vanuit de repo-root:
 
     python3 scripts/draai-play-blokken.py
+    python3 scripts/draai-play-blokken.py --alleen changed.json
+
+Met `--alleen changed.json` (uit de plan-job, zie scripts/alleen.py) draaien
+alleen de blokken waarvan een regel gewijzigd is, de marker erboven
+meegerekend. Play kent geen keten: elk blok staat op zichzelf.
 
 Afsluitcode 0 als alles slaagt, 1 zodra er iets misgaat.
 """
@@ -63,8 +68,11 @@ import zipfile
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
+from alleen import Selectie, lees, regels_van
+from sites_registry import site_dir
+
 ROOT = Path(__file__).resolve().parent.parent
-SITE = ROOT / "sites" / "play"
+SITE = site_dir("play")
 DOCS = SITE / "docs"
 ENGINE = SITE / "src" / "components" / "CodeRunner" / "engine.js"
 
@@ -353,8 +361,22 @@ def wheel_pad() -> Path:
     return pad
 
 
-def verzamel():
-    """Alle blokken uit de docs: (bron, regel, code, soort)."""
+def _bereik(tekst: str, m) -> tuple[int, int]:
+    """Regels van het blok, met een marker direct erboven erbij."""
+    ervoor = tekst[: m.start()].rstrip()
+    begin = ervoor.rfind("\n\n") + 1 if ervoor.endswith("*/}") else m.start()
+    eerste, laatste = regels_van(tekst, begin, m.end())
+    # Twee regels extra: een weggehaalde marker laat in de diff alleen de
+    # buren van het gat achter.
+    return max(1, min(eerste, regels_van(tekst, m.start(), m.start())[0] - 2)), laatste
+
+
+def verzamel(selectie: Selectie | None = None):
+    """Alle blokken uit de docs: (bron, regel, code, soort).
+
+    Met een selectie (`--alleen`) alleen de blokken waarvan een regel, of de
+    marker erboven, gewijzigd is."""
+    selectie = selectie or Selectie(None, "play")
     blokken = []
     for pad in sorted(DOCS.rglob("*.md")) + sorted(DOCS.rglob("*.mdx")):
         tekst = pad.read_text()
@@ -367,12 +389,16 @@ def verzamel():
             # niet-compileren (helemaal overslaan).
             if NIET_COMPILEREN_RE.search(ervoor):
                 continue
+            if not selectie.raakt(bron, *_bereik(tekst, m)):
+                continue
             soort = "compileer" if NIET_DRAAIEN_RE.search(ervoor) else "draai"
             blokken.append((bron, regel, m.group(1), soort))
         for m in KAAL_RE.finditer(tekst):
             regel = tekst[: m.start()].count("\n") + 1
             ervoor = tekst[: m.start()].rstrip()
             if NIET_COMPILEREN_RE.search(ervoor):
+                continue
+            if not selectie.raakt(bron, *_bereik(tekst, m)):
                 continue
             soort = "draai" if DRAAIEN_RE.search(ervoor) else "compileer"
             blokken.append((bron, regel, m.group(1), soort))
@@ -419,6 +445,7 @@ def draai(bron, regel, code, wheel_map: str) -> str | None:
 
 
 def main() -> int:
+    selectie, _ = lees(sys.argv[1:], "play")
     if "--pins" in sys.argv:
         print(" ".join(f"{n}=={v}" for n, v in pins().items()))
         return 0
@@ -428,7 +455,11 @@ def main() -> int:
         print(scheef, file=sys.stderr)
         return 1
 
-    blokken = verzamel()
+    blokken = verzamel(selectie)
+    if not selectie.alles:
+        print(f"--alleen: {len(blokken)} blokken geraakt door de wijziging:")
+        for b in blokken:
+            print(f"  blok {b[0]}:{b[1]} ({b[3]})")
     te_draaien = [b for b in blokken if b[3] == "draai"]
     te_compileren = [b for b in blokken if b[3] == "compileer"]
 

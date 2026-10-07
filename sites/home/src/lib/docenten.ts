@@ -1,7 +1,7 @@
 import { DOCENTEN_SITES, SITES_BY_ID, type Site, normalizeUrl } from '@coderius/shared/sites';
 import { type Activity, curriculum } from './Curriculum';
 
-// De docentenpagina koppelt elk subdomein aan zijn cursus én aan de
+// De docentenpagina koppelt elk cursusadres aan zijn cursus én aan de
 // docentenhandleiding die elke cursussite op /docenten heeft (schrijfgids
 // §15). Of die pagina's bestaan bewaakt docenten.test.ts vóór de build en de
 // CI-job cross-links erna, tegen de gebouwde sites.
@@ -11,9 +11,13 @@ export function docentenUrl(url: string): string {
   return `${normalizeUrl(url)}/docenten`;
 }
 
-/** Zichtbare hostnaam van een cursus-URL, voor in de tabel. */
+/**
+ * Zichtbaar adres van een cursus-URL, voor in de tabel: host plus pad, want
+ * een cursus staat onder het pad van zijn vak (informatica.coderius.nl/python).
+ */
 export function hostVan(url: string): string {
-  return new URL(url).host;
+  const { host, pathname } = new URL(url);
+  return host + pathname.replace(/\/+$/, '');
 }
 
 /**
@@ -31,6 +35,15 @@ export const HULPMIDDELEN: Site[] = [
 
 /** De cursussen op de docentenpagina: alles uit het curriculum behalve de hulpmiddelen. */
 export const docentenCursussen: Activity[] = curriculum.filter((c) => c.id !== 'ide');
+
+/**
+ * De cursussen in de examenprogramma-tabel: alleen informatica. Het
+ * examenprogramma is dat van informatica; een cursus van een ander vak
+ * (onderzoek, wo) heeft geen examendomeinen.
+ */
+export const examenCursussen: Activity[] = docentenCursussen.filter(
+  (c) => c.subject === 'informatica',
+);
 
 /** Hoort de cursus bij klas 4 (basis)? Gedeelde cursussen tellen mee. */
 export function inKlas4(activity: Activity): boolean {

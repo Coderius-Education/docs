@@ -1,0 +1,41 @@
+.lijst {
+  margin: 1.5rem 0;
+}
+
+.term {
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin-top: 1.1rem;
+  scroll-margin-top: 80px;
+}
+
+.definitie {
+  margin: 0.25rem 0 0 0;
+  padding-left: 0;
+}
+
+.meer {
+  white-space: nowrap;
+  font-size: 0.88rem;
+}
+
+.zoek {
+  width: 100%;
+  margin: 0.5rem 0 1rem;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-global-radius);
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  font-size: 0.95rem;
+}
+
+.zoek:focus {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 1px;
+}
+
+.leeg {
+  color: var(--ifm-color-emphasis-700);
+  font-style: italic;
+}

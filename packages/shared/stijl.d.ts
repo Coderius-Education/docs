@@ -2,6 +2,8 @@ export type Niveau = 'fout' | 'waarschuwing';
 
 export type Melding = {
   regel: number;
+  /** laatste regel van de melding (een lange zin beslaat er meer) */
+  eind: number;
   naam: string;
   niveau: Niveau;
   bericht: string;
@@ -12,7 +14,7 @@ export type Regel = {
   niveau: Niveau;
   metLinkdoelen?: boolean;
   nietIn?: RegExp;
-  zoek(proza: string): Iterable<{ index: number; bericht: string }>;
+  zoek(proza: string): Iterable<{ index: number; lengte?: number; bericht: string }>;
 };
 
 export declare const REGELS: Regel[];

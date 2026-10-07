@@ -1,0 +1,41 @@
+---
+title: Ontwerpgericht onderzoek
+sidebar_position: 2
+---
+
+# Ontwerpgericht onderzoek
+
+<Definitie gewoneTaal="je bouwt iets dat een probleem oplost, en je toont met tests aan dat het werkt.">
+
+Bij **ontwerpgericht onderzoek** wil je een **product maken** dat een probleem oplost: een app, een website, een machine, een lesprogramma of een spel. Het eindresultaat is geen conclusie, maar een **werkend ontwerp** — vaak nog geen af product, maar een <B t="prototype" tekst="prototype"/>: een eerste versie waarmee je kunt testen of je oplossing werkt.
+
+</Definitie>
+
+## Herken het aan de hoofdvraag
+
+Ontwerpgerichte hoofdvragen zijn **ontwerpvragen**. Ze beginnen bijna altijd met *"Hoe kan ik … ontwerpen/maken/ontwikkelen …"* gevolgd door een doel:
+
+- *Hoe kan ik een app ontwerpen die scholieren helpt minder tijd op hun telefoon door te brengen?*
+- *Hoe ontwerp ik een fietsenstalling waarin twee keer zoveel fietsen passen?*
+- *Hoe maak ik een website waarop brugklassers snel hun weg vinden?*
+- *Hoe ontwikkel ik een spel dat groep 8 leert omgaan met nepnieuws?*
+
+## Wat lever je op?
+
+Een **ontwerp of prototype**, plus een verslag waarin je laat zien dat (en hoe goed) het werkt. Daarvoor stel je vooraf **eisen** op waaraan je ontwerp moet voldoen, en toets je je ontwerp daar aan het einde aan — dat toetsen is de [evaluerende functie](../opzet/functies/beschrijvend-evaluerend.md) van onderzoek.
+
+:::caution[Let op]
+Alleen iets maken is nog geen onderzoek. Het verschil zit in het **toetsen van je ontwerp aan vooraf opgestelde eisen** en het **onderbouwen van je keuzes**. Zonder eisen en tests heb je een knutselproject, geen ontwerponderzoek.
+:::
+
+<WelNiet
+  wel="Je ontwerpt een rooster-app voor brugklassers en toetst die met tien brugklassers aan je vooraf opgestelde eisen."
+  niet="Je knutselt een app in elkaar zonder eisenlijst of tests — maken zonder toetsen is geen ontwerponderzoek."
+/>
+
+## Hangt samen met
+
+- [Theoriegericht onderzoek](./theoriegericht.md) — de tegenhanger: iets *weten* in plaats van iets *maken*
+- [Theoriegericht vs. ontwerpgericht](./theorie-vs-ontwerp.mdx) — het verband tussen beide typen
+- [Beschrijvend-evaluerend onderzoek](../opzet/functies/beschrijvend-evaluerend.md) — de functie achter het toetsen aan eisen
+- [Deelvragen](../vragen/deelvragen.md) — het vaste patroon van deelvragen bij een ontwerpvraag

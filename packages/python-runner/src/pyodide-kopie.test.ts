@@ -3,6 +3,7 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { alleSiteMappen } from '@coderius/shared/sites';
 import { describe, expect, it } from 'vitest';
 
 // Sommige sites serveren Pyodide zelf uit static/pyodide/ in plaats van vanaf de
@@ -21,7 +22,9 @@ import { describe, expect, it } from 'vitest';
 // versieveld is er simpelweg niet altijd.
 
 const ROOT = join(fileURLToPath(new URL('../../..', import.meta.url)));
-const SITES = join(ROOT, 'sites');
+/** Map van een site (sites/<vak>/<id>), uit de registry. */
+const siteMap = (id: string) =>
+  join(ROOT, alleSiteMappen().find((s) => s.id === id)?.dir ?? `sites/_onbekend/${id}`);
 const WASM = 'pyodide.asm.wasm';
 
 // Een site die (nog) niet gelijkloopt hoort hier met een reden te staan. Zonder
@@ -30,7 +33,7 @@ const WASM = 'pyodide.asm.wasm';
 const NOG_NIET_BIJGEWERKT = new Map([
   [
     'algorithms',
-    'draait bewust op 0.27.4 (Python 3.12): de dertien met de hand toegevoegde wheels zijn cp312, en verversen breekt matplotlib in vijftien lessen — zie sites/algorithms/CLAUDE.md',
+    'draait bewust op 0.27.4 (Python 3.12): de dertien met de hand toegevoegde wheels zijn cp312, en verversen breekt matplotlib in vijftien lessen — zie sites/informatica/algorithms/CLAUDE.md',
   ],
 ]);
 
@@ -40,9 +43,9 @@ function somVan(pad: string): string {
 
 /** De sites met een eigen gecommitte Pyodide-kopie. */
 function zelfHostendeSites(): string[] {
-  return readdirSync(SITES).filter((naam) =>
-    existsSync(join(SITES, naam, 'static', 'pyodide', WASM)),
-  );
+  return alleSiteMappen()
+    .map((s) => s.id)
+    .filter((id) => existsSync(join(siteMap(id), 'static', 'pyodide', WASM)));
 }
 
 function geinstalleerdeWasm(): string {
@@ -61,7 +64,7 @@ describe('de zelf geserveerde Pyodide-kopieën', () => {
     const verwacht = somVan(geinstalleerdeWasm());
     const afwijkend = zelfHostendeSites()
       .filter((site) => !NOG_NIET_BIJGEWERKT.has(site))
-      .filter((site) => somVan(join(SITES, site, 'static', 'pyodide', WASM)) !== verwacht);
+      .filter((site) => somVan(join(siteMap(site), 'static', 'pyodide', WASM)) !== verwacht);
 
     expect(afwijkend).toEqual([]);
   });
@@ -72,8 +75,8 @@ describe('de zelf geserveerde Pyodide-kopieën', () => {
     // en dekt die stilzwijgend de volgende drift toe.
     const verwacht = somVan(geinstalleerdeWasm());
     const inmiddelsGelijk = [...NOG_NIET_BIJGEWERKT.keys()]
-      .filter((site) => existsSync(join(SITES, site, 'static', 'pyodide', WASM)))
-      .filter((site) => somVan(join(SITES, site, 'static', 'pyodide', WASM)) === verwacht);
+      .filter((site) => existsSync(join(siteMap(site), 'static', 'pyodide', WASM)))
+      .filter((site) => somVan(join(siteMap(site), 'static', 'pyodide', WASM)) === verwacht);
 
     expect(inmiddelsGelijk).toEqual([]);
   });
@@ -88,7 +91,7 @@ describe('de zelf geserveerde Pyodide-kopieën', () => {
     const mismatch: string[] = [];
 
     for (const site of zelfHostendeSites()) {
-      const map = join(SITES, site, 'static', 'pyodide');
+      const map = join(siteMap(site), 'static', 'pyodide');
       const lock = JSON.parse(readFileSync(join(map, 'pyodide-lock.json'), 'utf8'));
       const [groot, klein] = String(lock.info.python).split('.');
       const verwacht = `cp${groot}${klein}`;
@@ -129,7 +132,7 @@ describe('de zelf geserveerde Pyodide-kopieën', () => {
           bronnen.push(pad);
       }
     };
-    loop(SITES);
+    loop(join(ROOT, 'sites'));
     loop(join(ROOT, 'packages'));
 
     const afwijkend: string[] = [];
@@ -151,7 +154,7 @@ describe('de zelf geserveerde Pyodide-kopieën', () => {
     // lockfile-druk, geen signaal als de rest doorloopt. Zo dreef python-docs
     // weg — de lockfile noemde pyodide daar wél, de package.json niet.
     const zonder = zelfHostendeSites().filter((site) => {
-      const pkg = JSON.parse(readFileSync(join(SITES, site, 'package.json'), 'utf8'));
+      const pkg = JSON.parse(readFileSync(join(siteMap(site), 'package.json'), 'utf8'));
       return !pkg.devDependencies?.pyodide && !pkg.dependencies?.pyodide;
     });
 

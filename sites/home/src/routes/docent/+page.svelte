@@ -1,14 +1,29 @@
 <script lang="ts">
-	import { ExternalLink } from "@lucide/svelte";
+	import { onMount } from "svelte";
+	import { ExternalLink, X } from "@lucide/svelte";
+	import { SUBJECTS } from "@coderius/shared/sites";
 	import { type Activity, levelColors, levelLabels, voorkennisVan } from "$lib/Curriculum";
 	import { docentenCursussen, docentenUrl, inKlas4, inKlas5 } from "$lib/docenten";
 	import { Badge } from "$lib/components/ui/badge";
 	import * as Card from "$lib/components/ui/card/index.js";
 	import { cn } from "$lib/utils";
 	import DocentTabs from "$lib/components/DocentTabs.svelte";
+	import FilterDropdown from "$lib/components/FilterDropdown.svelte";
+	import { vakVanHost } from "$lib/vakken";
 
-	const klas4 = docentenCursussen.filter(inKlas4);
-	const klas5 = docentenCursussen.filter(inKlas5);
+	// Vakfilter, net als op de homepage: op wo.coderius.nl staat het vak vooraf aan.
+	const VAKKEN = SUBJECTS.filter((v) => docentenCursussen.some((c) => c.subject === v.id));
+	let vakken = $state<string[]>([]);
+	onMount(() => {
+		const vak = vakVanHost(location.hostname);
+		if (vak && VAKKEN.some((v) => v.id === vak)) vakken = [vak];
+	});
+
+	const vanVak = $derived(
+		docentenCursussen.filter((c) => vakken.length === 0 || vakken.includes(c.subject))
+	);
+	const klas4 = $derived(vanVak.filter(inKlas4));
+	const klas5 = $derived(vanVak.filter(inKlas5));
 
 	const link = "inline-flex items-center gap-1 underline-offset-2 hover:underline";
 </script>
@@ -44,7 +59,7 @@
 	</li>
 {/snippet}
 
-<main class="mx-auto max-w-7xl px-4">
+<main class="mx-auto max-w-[100rem] px-4">
 	<section class="pt-6 pb-4">
 		<h1 class="text-2xl font-bold tracking-tight sm:text-3xl">Voor docenten</h1>
 		<p class="mt-1 max-w-3xl text-muted-foreground">
@@ -55,6 +70,23 @@
 	</section>
 
 	<DocentTabs />
+
+	{#if VAKKEN.length > 1}
+		<section aria-label="Filters" class="mb-6 flex flex-wrap items-center gap-2">
+			<FilterDropdown label="Vak" opties={VAKKEN.map((v) => ({ waarde: v.id, label: v.label }))} bind:gekozen={vakken} />
+			{#each vakken as v (v)}
+				<button
+					type="button"
+					class="inline-flex items-center gap-1 rounded-full border border-primary bg-primary py-1 pr-2 pl-3 text-sm text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
+					aria-label={`Vak ${SUBJECTS.find((s) => s.id === v)?.label ?? v} weghalen`}
+					onclick={() => (vakken = vakken.filter((x) => x !== v))}
+				>
+					{SUBJECTS.find((s) => s.id === v)?.label ?? v}
+					<X class="size-3.5" aria-hidden="true" />
+				</button>
+			{/each}
+		</section>
+	{/if}
 
 	<section aria-label="Leerlijn" class="relative mb-8 ml-4 md:ml-8">
 		<div class="absolute top-0 bottom-0 left-2 w-0.5 bg-border"></div>

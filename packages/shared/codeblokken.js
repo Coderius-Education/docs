@@ -60,6 +60,9 @@ function fragmentenUit(bron, inhoud) {
     const rauw = match[1].replace(/\s+$/, '');
     const ervoor = inhoud.slice(0, match.index);
     const regel = ervoor.split('\n').length;
+    // Laatste regel: de sluitende fence. Met regel samen het bereik dat
+    // `--alleen` (scripts/compileer-blokken.py) tegen de wijziging legt.
+    const eind = regel + match[0].split('\n').length - 1;
     const koppen = ervoor.match(/^#{2,3} (.+)$/gm);
     const kop = koppen ? koppen[koppen.length - 1].replace(/^#+ /, '') : '';
     n += 1;
@@ -77,7 +80,18 @@ function fragmentenUit(bron, inhoud) {
       continue;
     }
 
-    fragmenten.push({ naam: `${basis}_${n}`, bron, regel, kop, code: `${code}\n` });
+    // Twee regels erboven tellen mee: daar staat een marker, en wie hem
+    // weghaalt laat in de diff alleen de buren van het gat achter.
+    const begin = Math.max(1, regel - 2);
+    fragmenten.push({
+      naam: `${basis}_${n}`,
+      bron,
+      regel,
+      begin,
+      eind,
+      kop,
+      code: `${code}\n`,
+    });
   }
 
   return { fragmenten, overgeslagen };

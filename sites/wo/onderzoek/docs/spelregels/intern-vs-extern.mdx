@@ -1,0 +1,57 @@
+---
+title: Intern vs. extern
+sidebar_position: 8
+---
+
+# Interne vs. externe validiteit
+
+**Het verband in één zin:** <B t="interne-validiteit" tekst="interne validiteit"/> (klopt mijn conclusie bínnen het onderzoek?) en <B t="externe-validiteit" tekst="externe validiteit"/> (geldt die ook daarbuiten?) zijn de twee kanten van <B t="valide" tekst="valide"/> onderzoek — en maatregelen die de één verhogen, verlagen vaak de ander.
+
+## Naast elkaar
+
+| | **Interne validiteit** | **Externe validiteit** |
+|---|---|---|
+| **Kernvraag** | Komt de uitkomst echt door wat ik onderzocht? | Geldt mijn conclusie ook voor andere mensen en situaties? |
+| **Bedreiging** | Storende variabelen, geen controlegroep, groepen die vooraf al verschillen | Te kleine of eenzijdige groep, onrealistische testsituatie |
+| **Verhogen door** | Omstandigheden gelijk houden, controlegroep, willekeurige indeling | Representatieve groep (en groot genoeg), realistische situatie |
+| **Typische fout** | "Groep A scoort beter, dus het komt door de muziek" (terwijl ook het tijdstip verschilde) | "Mijn drie vrienden vonden de app handig, dus scholieren vinden de app handig" |
+
+## Ze zitten elkaar in de weg
+
+- Een **strak gecontroleerd experiment** (stil lokaal, vaste tijden, alles gelijk) is heel intern valide, maar lijkt weinig op de echte wereld: lage externe validiteit.
+- Een **meting in het echte, rommelige leven** (leerlingen leren thuis, wanneer en hoe ze willen) is realistisch, maar vol storende variabelen: lage interne validiteit.
+
+Perfect scoren op allebei lukt zelden — ook echte wetenschappers moeten hierin kiezen. Waar het om gaat: maak een **bewuste keuze**, en **benoem in je verslag** wat de beperkingen van je aanpak zijn. Dat is geen zwakte, dat is precies wat een goede onderzoeker doet.
+
+## Oefenen: wat is hier mis?
+
+Bepaal bij elke situatie of vooral de interne of de externe validiteit in gevaar is:
+
+<Quiz
+  vragen={[
+    {
+      vraag: 'Je test je studie-app alleen met je twee beste vrienden en concludeert dat leerlingen de app fijn vinden.',
+      opties: ['Interne validiteit', 'Externe validiteit'],
+      juist: 1,
+      uitleg: 'Twee vrienden zijn niet representatief voor "leerlingen" — de conclusie generaliseert niet.',
+    },
+    {
+      vraag: 'Je vergelijkt de kiemsnelheid van zaadjes op de vensterbank (met licht) met zaadjes in de kelder (zonder licht) — maar in de kelder is het ook tien graden kouder.',
+      opties: ['Interne validiteit', 'Externe validiteit'],
+      juist: 0,
+      uitleg: 'Temperatuur is een storende variabele: je weet niet of het aan het licht of aan de kou ligt.',
+    },
+    {
+      vraag: 'Je vergelijkt het huiswerkgedrag van leerlingen die zich vrijwillig voor een beloningssysteem opgaven met dat van de rest van de klas, en schrijft het verschil toe aan de beloning.',
+      opties: ['Interne validiteit', 'Externe validiteit'],
+      juist: 0,
+      uitleg: 'Vrijwilligers zijn waarschijnlijk al gemotiveerder; het verschil kan door hún motivatie komen in plaats van door de beloning — een storende variabele door zelfselectie.',
+    },
+    {
+      vraag: 'Je meet in het lab dat fietsband-type X de minste weerstand heeft op een gladde rol, en concludeert dat X de beste band is voor op straat.',
+      opties: ['Interne validiteit', 'Externe validiteit'],
+      juist: 1,
+      uitleg: 'De testsituatie (gladde rol) lijkt niet op de echte situatie (ruwe straat), dus de conclusie generaliseert niet zomaar.',
+    },
+  ]}
+/>

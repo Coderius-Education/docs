@@ -56,6 +56,7 @@ thema. Zo leest de rechterbladzijde overal even goed.
 | DVWA | hangslot | websecurity |
 | Online Editor | terminalvenster | code draaien in de browser |
 | Didactiek | tekstballon | het gesprek, zoals in de *Colloquia* |
+| Onderzoek | vergrootglas | goed kijken voordat je iets concludeert |
 
 Per cursus zijn er vijf bestanden in `static/img/merk/`:
 

@@ -70,7 +70,7 @@ function alineas(proza) {
 
 function* treffers(proza, patroon, bericht) {
   for (const m of proza.matchAll(patroon)) {
-    yield { index: m.index, bericht: bericht(m) };
+    yield { index: m.index, lengte: m[0].length, bericht: bericht(m) };
   }
 }
 
@@ -143,6 +143,11 @@ const AFKORTINGEN = new Set([
   'LFI',
   'RFI',
   'SSRF',
+  // Onderzoek (wo): instituten, experimenten en diensten bij hun eigen naam.
+  'CERN',
+  'ATLAS',
+  'CORE',
+  'TLDR',
 ]);
 
 // ── De regels ───────────────────────────────────────────────────────────────
@@ -281,7 +286,11 @@ const REGELS = [
       for (const [stuk, start] of alineas(proza)) {
         const aantal = (stuk.match(/—/g) || []).length;
         if (aantal >= 3) {
-          yield { index: start, bericht: `${aantal} gedachtestreepjes in één alinea` };
+          yield {
+            index: start,
+            lengte: stuk.length,
+            bericht: `${aantal} gedachtestreepjes in één alinea`,
+          };
         }
       }
     },
@@ -292,7 +301,9 @@ const REGELS = [
     zoek: function* (proza) {
       for (const [stuk, start] of alineas(proza)) {
         const aantal = (stuk.match(/\*\*[^*\n]+\*\*/g) || []).length;
-        if (aantal >= 5) yield { index: start, bericht: `${aantal} keer vet in één alinea` };
+        if (aantal >= 5) {
+          yield { index: start, lengte: stuk.length, bericht: `${aantal} keer vet in één alinea` };
+        }
       }
     },
   },
@@ -303,7 +314,9 @@ const REGELS = [
       const zinnen = /[^.!?\n]+[.!?]/g;
       for (const m of proza.matchAll(zinnen)) {
         const woorden = m[0].trim().split(/\s+/).filter(Boolean).length;
-        if (woorden > 40) yield { index: m.index, bericht: `zin van ${woorden} woorden` };
+        if (woorden > 40) {
+          yield { index: m.index, lengte: m[0].length, bericht: `zin van ${woorden} woorden` };
+        }
       }
     },
   },
@@ -321,7 +334,11 @@ const REGELS = [
         if (eerste && eerste === vorig) {
           reeks += 1;
           if (reeks === 2) {
-            yield { index: startRegel, bericht: `drie regels op rij beginnen met "${eerste}"` };
+            yield {
+              index: startRegel,
+              lengte: positie + regels[i].length - startRegel,
+              bericht: `drie regels op rij beginnen met "${eerste}"`,
+            };
           }
         } else {
           reeks = 0;
@@ -388,7 +405,10 @@ function parseUitzonderingen(tekst) {
 /**
  * @param {string} tekst  de ruwe inhoud van een .md/.mdx-bestand
  * @param {{bestand?: string}} opties  het pad, voor regels die niet overal gelden
- * @returns {{regel:number, naam:string, niveau:string, bericht:string}[]}
+ * @returns {{regel:number, eind:number, naam:string, niveau:string, bericht:string}[]}
+ *   `eind` is de laatste regel van de melding; een lange zin of een alinea
+ *   beslaat er meer dan één (`--regels` in scripts/controleer-tekst.mjs legt
+ *   dat bereik tegen de gewijzigde regels).
  */
 function controleer(tekst, { bestand = '' } = {}) {
   const proza = alleenProza(tekst);
@@ -399,13 +419,16 @@ function controleer(tekst, { bestand = '' } = {}) {
   for (const regel of REGELS) {
     if (uitgezonderd.has(regel.naam)) continue;
     if (regel.nietIn?.test(bestand)) continue;
-    for (const { index, bericht } of regel.zoek(regel.metLinkdoelen ? prozaMetLinks : proza)) {
+    for (const { index, lengte = 0, bericht } of regel.zoek(
+      regel.metLinkdoelen ? prozaMetLinks : proza,
+    )) {
       const gedekt = lokaal.some(
         (u) => u.namen.has(regel.naam) && index >= u.van && index <= u.tot,
       );
       if (gedekt) continue;
       meldingen.push({
         regel: regelVan(tekst, index),
+        eind: regelVan(tekst, index + Math.max(lengte - 1, 0)),
         naam: regel.naam,
         niveau: regel.niveau,
         bericht,
