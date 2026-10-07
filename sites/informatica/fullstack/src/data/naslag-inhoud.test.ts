@@ -250,10 +250,16 @@ describe('Er gaat iets mis', () => {
   });
 
   it('het sessie-item beschrijft wat je ziet, niet wat de server doet', () => {
-    // Met een nieuw sessie-id bij elk bericht blijft de naam gewoon voorgevuld;
-    // wat je ziet is dat alleen je laatste bericht een verwijderknop heeft.
+    // Sinds de accounts (issue #126) maakt alleen /inloggen een sessie, dus de
+    // oude fout (een nieuw sessie-id bij elk bericht, en daardoor alleen bij je
+    // laatste bericht een verwijderknop) bestaat niet meer. De fout die je nu
+    // ziet: na het inloggen weer het inlogformulier. Nagedraaid in Chromium,
+    // allebei met precies dat symptoom: zonder sessies.commit() staat er wel
+    // een cookie, met set_cookie op een ander antwoord geen.
     expect(foutItems.map((i) => i.summary)).not.toContain('Mijn sessie wordt elke keer vergeten');
-    expect(foutItem('Alleen je laatste bericht is van jou').tekst).toContain('if not sessie_id');
+    const item = foutItem('Na het inloggen zie je weer het inlogformulier').tekst;
+    expect(item).toContain('sessies.commit()');
+    expect(item).toContain('set_cookie');
   });
 
   // Fouten bij het starten die in de cursus vaak voorkomen, letterlijk zoals

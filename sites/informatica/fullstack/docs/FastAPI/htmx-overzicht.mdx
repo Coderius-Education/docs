@@ -19,18 +19,28 @@ Vervang in de `<form>`-tag `method` en `action` door `hx-post` en `hx-target`, e
 ```html
 <form hx-post="/gastenboek" hx-target="#antwoord">
     <input type="text" name="naam" placeholder="Je naam" required>
+    <input type="password" name="wachtwoord" placeholder="Je wachtwoord" required>
     <input type="text" name="bericht" placeholder="Je bericht" required>
     <button type="submit">Verstuur</button>
 </form>
 <p id="antwoord"></p>
 ```
 
-In het endpoint uit [Doorsturen na opslaan (redirect)](/docs/FastAPI/redirect) verandert één regel: vervang de `return`.
+In het endpoint uit [Inloggen: een wachtwoord controleren](/docs/FastAPI/inloggen) verandert één regel: vervang de `return`.
 
-{/* route-dubbel: vervangt POST /gastenboek uit Doorsturen na opslaan (redirect); alleen de return verandert */}
+{/* route-dubbel: vervangt POST /gastenboek uit Inloggen; alleen de return verandert */}
 ```python
 @app.post("/gastenboek")
-async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
+async def gastenboek_opslaan(
+    naam: str = Form(...),
+    wachtwoord: str = Form(...),
+    bericht: str = Form(...),
+):
+    with SqliteDict("gebruikers.db") as gebruikers:
+        opgeslagen = gebruikers.get(naam)
+    if opgeslagen != wachtwoord:
+        raise HTTPException(status_code=401, detail="Naam of wachtwoord klopt niet")
+
     with SqliteDict("gastenboek.db") as db:
         db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
         db.commit()
@@ -39,7 +49,9 @@ async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
 
 Zet `from html import escape` bovenaan je `main.py`. De naam komt van de bezoeker, en in een f-string komt hij letterlijk in je HTML: typt iemand `<b>Sara</b>`, dan staat er een vette naam. `escape` maakt er gewone tekst van. Een template doet dat vanzelf; een f-string niet. Meer hierover in [HTML van een bezoeker](/docs/veiligheid/xss/zwakheid).
 
-De `Form`-parameters blijven hetzelfde; voor je endpoint is er geen verschil met een formulier zonder htmx. De omleiding met 303 is niet meer nodig, want de browser is nooit weggegaan.
+De `Form`-parameters en de controle van het wachtwoord blijven hetzelfde; voor je endpoint is er geen verschil met een formulier zonder htmx. De omleiding met 303 is niet meer nodig, want de browser is nooit weggegaan.
+
+Klopt het wachtwoord niet, dan antwoordt je endpoint met een 401, net als zonder htmx. Een antwoord met een foutcode zet htmx niet in de pagina: er gebeurt zichtbaar niets. In het tabblad **Netwerk** staat het verzoek dan in het rood, met de melding bij **Reactie**.
 
 Zet je `hx-on::after-request="this.reset()"` op de `<form>`, dan maakt htmx de velden leeg zodra het antwoord binnen is. Dat doet hij ook als het antwoord een fout is, zoals een 400: wat de bezoeker typte, is dan weg. Zet je later een Content-Security-Policy op je site, dan werkt dit attribuut niet meer; wat je dan doet, staat in [HTML van een bezoeker: in de praktijk](/docs/veiligheid/xss/praktijk).
 

@@ -20,10 +20,6 @@ const plat = (items: Item[]): string[] =>
   items.flatMap((i) => (typeof i === 'string' ? [i] : plat(i.items)));
 const zijbalk = sidebars.apiSidebar as unknown as Item[];
 const lessen = plat(zijbalk);
-const eersteUitbreiding = zijbalk.findIndex(
-  (i) => typeof i !== 'string' && i.label.startsWith('Uitbreiding:'),
-);
-const basis = plat(zijbalk.slice(0, eersteUitbreiding));
 const tekst = (id: string) => readFileSync(`${DOCS}/${id}.mdx`, 'utf8');
 const blokken = (bron: string, taal: string) =>
   [...bron.matchAll(new RegExp(`\`\`\`${taal}[^\\n]*\\n([\\s\\S]*?)\`\`\``, 'g'))].map((m) => m[1]);
@@ -105,27 +101,64 @@ describe('elke registratie weigert een naam die al bestaat', () => {
   });
 });
 
-describe('na Inloggen heeft een bericht in de basis een wachtwoord nodig', () => {
-  const vanaf = basis.slice(basis.indexOf('FastAPI/inloggen'));
+// Eerst gold dit alleen voor de basis. Nu de uitbreidingen op de accounts
+// aansluiten, geldt het voor elke les na Inloggen: een vervangend POST
+// /gastenboek (het htmx-recept, Cookies, Sessies) liet de controle anders
+// stil vallen, en dan kon iedereen weer onder elke naam schrijven.
+describe('na Inloggen heeft elk bericht een wachtwoord of een sessie nodig', () => {
+  const vanaf = lessen.slice(lessen.indexOf('FastAPI/inloggen'));
+  const versies = vanaf.flatMap((id) =>
+    blokken(tekst(id), 'python')
+      .filter((b) => b.includes('@app.post("/gastenboek")'))
+      .map((b) => ({ id, stuk: endpoint(b, '@app.post("/gastenboek")') }))
+      .filter(({ stuk }) => stuk.includes('SqliteDict("gastenboek.db")')),
+  );
+  const opslaan = (stuk: string) => stuk.indexOf('SqliteDict("gastenboek.db")');
 
-  it('vindt de lessen', () => {
+  it('vindt de lessen en de versies, ook in de uitbreidingen', () => {
     expect(vanaf[0]).toBe('FastAPI/inloggen');
+    expect(versies.map((v) => v.id)).toEqual(
+      expect.arrayContaining([
+        'FastAPI/inloggen',
+        'FastAPI/htmx-overzicht',
+        'FastAPI/cookies',
+        'FastAPI/sessies',
+      ]),
+    );
   });
 
-  it('elk volledig POST /gastenboek controleert het wachtwoord vóór het opslaan', () => {
-    const fout = vanaf.flatMap((id) =>
-      blokken(tekst(id), 'python')
-        .filter((b) => b.includes('@app.post("/gastenboek")'))
-        .map((b) => endpoint(b, '@app.post("/gastenboek")'))
-        .filter((stuk) => stuk.includes('SqliteDict("gastenboek.db")'))
-        .filter(
-          (stuk) =>
-            !stuk.includes('gebruikers.get(naam)') ||
-            stuk.indexOf('status_code=401') > stuk.indexOf('SqliteDict("gastenboek.db")'),
-        )
-        .map(() => id),
+  it.each(versies.map((v, i) => [`${v.id} #${i}`, v.stuk]))(
+    '%s controleert vóór het opslaan het wachtwoord of de sessie',
+    (_, stuk) => {
+      const wachtwoord = stuk.includes('gebruikers.get(naam)');
+      const sessie = stuk.includes('sessies.get(sessie_id') && stuk.includes('mijn["naam"]');
+      expect(wachtwoord || sessie).toBe(true);
+      const controle = stuk.indexOf('status_code=401');
+      expect(controle).toBeGreaterThan(-1);
+      expect(controle).toBeLessThan(opslaan(stuk));
+    },
+  );
+
+  it('vanaf Sessies komt de naam bij een bericht uit de sessie, niet uit het formulier', () => {
+    const naSessies = versies.filter(
+      ({ id }) => lessen.indexOf(id) >= lessen.indexOf('FastAPI/sessies'),
     );
-    expect(fout).toEqual([]);
+    expect(naSessies.length).toBeGreaterThan(0);
+    for (const { id, stuk } of naSessies) {
+      expect(stuk, id).not.toContain('naam: str = Form(');
+      expect(stuk, id).toContain('{"naam": mijn["naam"]');
+    }
+  });
+
+  it('Sessies maakt de sessie in /inloggen, pas nadat het wachtwoord klopt', () => {
+    const code = blokken(hoofdtekst('FastAPI/sessies'), 'python').join('\n');
+    const inloggen = endpoint(code, '@app.post("/inloggen")');
+    expect(inloggen).toContain('gebruikers.get(naam)');
+    expect(inloggen.indexOf('secrets.token_hex(16)')).toBeGreaterThan(
+      inloggen.indexOf('status_code=401'),
+    );
+    expect(inloggen).toContain('sessies.commit()');
+    expect(inloggen).toContain('set_cookie(key="sessie_id"');
   });
 
   it('een onbekende naam en een fout wachtwoord krijgen één melding', () => {

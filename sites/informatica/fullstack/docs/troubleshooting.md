@@ -1019,21 +1019,35 @@ Meer uitleg: [Onthouden met een cookie](/docs/FastAPI/cookies)
 </details>
 
 <details>
-<summary>Alleen je laatste bericht is van jou (een nieuwe sessie bij elk bericht)</summary>
+<summary>Na het inloggen zie je weer het inlogformulier (Log eerst in)</summary>
 
-Je naam staat nog steeds voorgevuld, maar de verwijderknop uit [sessies](/docs/FastAPI/sessies) staat alleen bij het bericht dat je het laatst plaatste, en in `sessies.db` komt bij elk bericht een sessie-id bij.
+Het inloggen lijkt te lukken: je komt terug op `/gastenboek`. Maar daar staat weer het inlogformulier, en wie toch een bericht stuurt, krijgt:
 
-**Oorzaak:** je maakt bij elk bericht een nieuw sessie-id aan, ook als de bezoeker er al een had. Het nieuwe id krijgt alleen het nieuwe bericht; de vorige sessie blijft onaangeroerd achter in je database.
+```
+{"detail":"Log eerst in"}
+```
 
-**Oplossing:** maak alleen een nieuw id als er nog geen is:
+**Oorzaak:** je server vindt bij het volgende verzoek geen sessie. Dat kan op twee manieren, en ze zien er hetzelfde uit. Kijk in het tabblad **App** bij Cookies welke het is:
 
+- Staat er een `sessie_id`, dan ontbreekt `sessies.commit()` in `/inloggen`. De sessie verdwijnt zodra het `with`-blok sluit, en het id in je cookie hoort bij niemand.
+- Staat er geen `sessie_id`, dan zet `set_cookie` de cookie op een ander antwoord dan het antwoord dat je returnt (zie De cookie wordt niet onthouden, hierboven).
+
+**Oplossing:** schrijf de sessie weg, en return het antwoord waar de cookie op staat:
+
+{/* niet-compileren: FOUT/GOED-voorbeeld, regels uit een handler */}
 ```python
-# FOUT - overschrijft ook een bestaande sessie
-sessie_id = secrets.token_hex(16)
+# FOUT - de sessie wordt nooit opgeslagen
+with SqliteDict("sessies.db") as sessies:
+    sessies[sessie_id] = {"naam": naam}
 
 # GOED
-if not sessie_id:
-    sessie_id = secrets.token_hex(16)
+with SqliteDict("sessies.db") as sessies:
+    sessies[sessie_id] = {"naam": naam}
+    sessies.commit()
+
+antwoord = RedirectResponse(url="/gastenboek", status_code=303)
+antwoord.set_cookie(key="sessie_id", value=sessie_id, max_age=60 * 60 * 24 * 30)
+return antwoord
 ```
 
 Meer uitleg: [Onthouden op de server: sessies](/docs/FastAPI/sessies)

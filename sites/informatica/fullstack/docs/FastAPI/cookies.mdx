@@ -1,6 +1,6 @@
 # Onthouden met een cookie
 
-Je gastenboek werkt, maar het vraagt elke keer opnieuw je naam, ook als je net een bericht hebt geplaatst. Dat komt niet doordat je iets vergeten bent te programmeren: je server kán het niet weten. Daarom laat je de browser het onthouden.
+Je gastenboek werkt, maar het vraagt bij elk bericht opnieuw je naam en je wachtwoord, ook als je net een bericht hebt geplaatst. Dat komt niet doordat je iets vergeten bent te programmeren: je server kán niet weten dat jij het weer bent. Hier laat je de browser je naam onthouden. Je wachtwoord typ je nog wel; waarom, ontdek je in opdracht 3.
 
 ## De server herkent je niet
 
@@ -10,16 +10,25 @@ Wil je toch iets onthouden tussen twee verzoeken, dan moet je die informatie erg
 
 ## Een cookie meegeven
 
-Tot nu toe gaf je endpoint alleen inhoud terug. Een antwoord kan ook opdrachten voor de browser bevatten, en `set_cookie` is er daar een van. Vervang je `POST /gastenboek` door deze versie. De controle op de lengte uit [Server of browser?](/docs/FastAPI/server-of-browser) blijft bovenaan staan:
+Tot nu toe gaf je endpoint alleen inhoud terug. Een antwoord kan ook opdrachten voor de browser bevatten, en `set_cookie` is er daar een van. Vervang je `POST /gastenboek` door deze versie. De controle op de lengte uit [Server of browser?](/docs/FastAPI/server-of-browser) en die op het wachtwoord uit [Inloggen: een wachtwoord controleren](/docs/FastAPI/inloggen) blijven bovenaan staan:
 
 <CodeUitleg>
 
-{/* route-dubbel: vervangt POST /gastenboek uit redirect.mdx of het htmx-recept, nu met een cookie */}
+{/* route-dubbel: vervangt POST /gastenboek uit Inloggen of het htmx-recept, nu met een cookie */}
 ```python showLineNumbers
 @app.post("/gastenboek")
-async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
+async def gastenboek_opslaan(
+    naam: str = Form(...),
+    wachtwoord: str = Form(...),
+    bericht: str = Form(...),
+):
     if len(bericht) > 80:
         raise HTTPException(status_code=400, detail="Bericht is te lang")
+
+    with SqliteDict("gebruikers.db") as gebruikers:
+        opgeslagen = gebruikers.get(naam)
+    if opgeslagen != wachtwoord:
+        raise HTTPException(status_code=401, detail="Naam of wachtwoord klopt niet")
 
     with SqliteDict("gastenboek.db") as db:
         db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
@@ -30,19 +39,21 @@ async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
     return antwoord
 ```
 
-<Regel n={10}>
+<Regel n={19}>
 Je maakt het antwoord nu eerst als variabele, in plaats van het meteen terug te geven. Return je het meteen, dan heb je geen plek om er iets aan toe te voegen.
 </Regel>
 
-<Regel n={11}>
+<Regel n={20}>
 `set_cookie` zet een cookie op het antwoord: een naam, een waarde, en met `max_age` de houdbaarheid in seconden. Hier is dat 30 dagen: `60 * 60 * 24 * 30`. Laat je `max_age` weg, dan verdwijnt de cookie zodra de bezoeker de browser afsluit.
 </Regel>
 
-<Regel n={12}>
+<Regel n={21}>
 Pas nu gaat het antwoord terug, mét de cookie erop.
 </Regel>
 
 </CodeUitleg>
+
+Alleen de naam gaat in de cookie, nooit het wachtwoord. Een cookie staat leesbaar in de browser, en reist bij elk verzoek mee.
 
 Gebruik je het htmx-formulier uit de [htmx-recepten](/docs/FastAPI/htmx-overzicht), dan laat je de omleiding weg: maak van je `HTMLResponse` de variabele `antwoord`, zet daar `set_cookie` op en return hem.
 
@@ -72,17 +83,18 @@ Je formulier was tot nu toe een vast bestand, `static/pages/gastenboek_form.html
 ```html
 <form method="post" action="/gastenboek">
     <input type="text" name="naam" value="{{ naam }}" required>
+    <input type="password" name="wachtwoord" required>
     <input type="text" name="bericht" required>
     <button type="submit">Verstuur</button>
 </form>
 ```
 
-Bij een eerste bezoek is `{{ naam }}` leeg en zie je een leeg veld. Daarna staat je naam er al in. Heeft jouw formulier `hx-post` en `hx-target`, of een `id` voor je tekenteller, laat die dan staan.
+Bij een eerste bezoek is `{{ naam }}` leeg en zie je een leeg veld. Daarna staat je naam er al in; je wachtwoord typ je zelf. Heeft jouw formulier `hx-post` en `hx-target`, of een `id` voor je tekenteller, laat die dan staan.
 
 ## Testen
 
-1. Start je server en vul het gastenboek in
-2. Ga terug naar `/gastenboek`: je naam staat er al
+1. Start je server en schrijf een bericht, met je naam en je wachtwoord
+2. Ga terug naar `/gastenboek`: je naam staat er al, het wachtwoordveld is leeg
 3. Open de ontwikkelaarstools met `F12` en zoek in het tabblad **App** (Application; in Firefox **Opslag**) bij Cookies de regel `http://127.0.0.1:8000`. Daar staat jouw naam. Heeft je naam een spatie of een letter als ë, dan zet de server er aanhalingstekens omheen of maakt hij van de ë een code als `\353`; in het formulier staat hij weer zoals je hem typte
 
 :::danger[Gaat er iets mis?]
@@ -124,7 +136,7 @@ Zoek de cookie op in het tabblad **App** en dubbelklik op de waarde om hem in ee
 
 In het formulier staat nu de naam die jij zelf in de cookie hebt getypt. Je server neemt hem klakkeloos over.
 
-Een cookie staat op de computer van de bezoeker, en die kan er alles van maken. Voor een naam die je alleen als gemak invult is dat prima. Voor iets waar rechten aan hangen, zoals wie mag verwijderen of wie is ingelogd, is het dat niet. Daar gaat de [volgende les](/docs/FastAPI/sessies) over.
+Hier kan dat weinig kwaad: met de naam van een ander kom je zonder diens wachtwoord niet in het gastenboek. Maar stel dat je het wachtwoord wilt overslaan, en de cookie zou gelden als bewijs dat je bent ingelogd. Dan was iedereen met één dubbelklik iemand anders. Een cookie staat op de computer van de bezoeker, en die kan er alles van maken. Voor een naam die je alleen als gemak invult is dat prima; voor iets waar rechten aan hangen, zoals wie is ingelogd of wie mag verwijderen, niet. Daar gaat de [volgende les](/docs/FastAPI/sessies) over.
 
 </details>
 

@@ -192,6 +192,7 @@ In de `<body>`, boven de lijst. De `<form>`-tag is dezelfde als op je gastenboek
 <button id="klap-knop">Nieuw bericht</button>
 <form id="bericht-formulier" hx-post="/gastenboek" hx-target="#antwoord" style="display: none">
     <input type="text" name="naam" placeholder="Je naam" required>
+    <input type="password" name="wachtwoord" placeholder="Je wachtwoord" required>
     <input type="text" name="bericht" placeholder="Je bericht" required>
     <button type="submit">Verstuur</button>
 </form>

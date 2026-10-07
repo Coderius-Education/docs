@@ -291,7 +291,7 @@ const SESSIE_STAPPEN: Stap[] = [
   {
     kant: 'server',
     titel: 'Het antwoord gaat terug',
-    tekst: 'Na een bericht zet set_cookie het sessie-id erop: een nieuw id als er nog geen was.',
+    tekst: 'Na het inloggen zet set_cookie het sessie-id erop: bij elke inlog een nieuw id.',
     to: '/docs/FastAPI/sessies',
     les: 'Onthouden op de server: sessies',
   },
@@ -429,7 +429,7 @@ const TOEGANG_STAPPEN: Stap[] = [
   {
     kant: 'server',
     titel: 'Het endpoint haalt de sessie op',
-    tekst: 'Uit de cookie het sessie-id, uit sessies.db de sleutels van Alex.',
+    tekst: 'Uit de cookie het sessie-id, uit sessies.db de naam waarmee Alex inlogde.',
     to: '/docs/FastAPI/sessies',
     les: 'Onthouden op de server: sessies',
   },

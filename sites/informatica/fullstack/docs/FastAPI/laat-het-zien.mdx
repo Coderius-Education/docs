@@ -97,7 +97,7 @@ Zijn eigen computer, niet die van jou. `127.0.0.1` verwijst altijd naar de machi
 
 ### Opdracht 2: Run - Samen testen
 
-Start je server met `--host 0.0.0.0`, zoek je adres op zoals hierboven, en laat iemand naast je een bericht achterlaten in je gastenboek. Kijk in je eigen terminal wat er gebeurt terwijl hij typt en verstuurt.
+Start je server met `--host 0.0.0.0`, zoek je adres op zoals hierboven, en laat iemand naast je een account maken en een bericht achterlaten in je gastenboek. Kijk in je eigen terminal wat er gebeurt terwijl hij typt en verstuurt.
 
 <details>
 <summary>Tip</summary>
@@ -162,11 +162,11 @@ Je hebt de tijd al: de sleutel `bericht_<nanoseconden>` bevat hem. Maar leesbaar
 <details>
 <summary>Antwoord</summary>
 
-Zet `from datetime import datetime` bij je imports. Vervang in je `POST /gastenboek` alleen de dictionary van het bericht; wat links van het `=`-teken staat en de rest van het endpoint blijven hetzelfde:
+Zet `from datetime import datetime` bij je imports. Vervang in je `POST /gastenboek` alleen de dictionary van het bericht; wat links van het `=`-teken staat en de rest van het endpoint blijven hetzelfde. De naam komt uit de sessie, zoals in [Onthouden op de server: sessies](/docs/FastAPI/sessies):
 
 ```python
 db[sleutel] = {
-    "naam": naam,
+    "naam": mijn["naam"],
     "bericht": bericht,
     "tijd": datetime.now().strftime("%H:%M"),
 }

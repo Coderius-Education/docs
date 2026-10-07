@@ -124,7 +124,7 @@ const KOPPELING: Item[] = [
   // sowieso niet.
   { summary: 'Hoe lees ik een cookie uit? (Cookie)', concepten: ['fastapi-cookie'] },
   {
-    summary: 'Hoe onthoud ik iets op de server? (sessie met secrets)',
+    summary: 'Hoe onthoud ik wie er is ingelogd? (sessie met secrets)',
     concepten: ['fastapi-sessie'],
   },
   {

@@ -80,7 +80,7 @@ Vijf keer onderweg staat een diagram van de hele keten, browser links en server 
 | Console en Elementen *(uitbreiding)* | Uitvoer en fouten van JavaScript zien, en de pagina zoals de browser hem nu heeft |
 | Server of browser? *(uitbreiding)* | Kiezen waar iets hoort, en waarom controles op de server moeten |
 | Onthouden met een cookie *(uitbreiding)* | De browser iets laten onthouden tussen twee verzoeken |
-| Onthouden op de server: sessies *(uitbreiding)* | Alleen een sessie-id bij de bezoeker, de gegevens op de server |
+| Onthouden op de server: sessies *(uitbreiding)* | Eén keer inloggen: alleen een sessie-id bij de bezoeker, de naam op de server |
 | Cookie of sessie? *(uitbreiding)* | Kiezen tussen de twee, en waarom je niet alles kunt geloven |
 | Laat het aan anderen zien | De server openzetten voor het netwerk |
 
@@ -96,7 +96,7 @@ Na de basis komt de eerste uitbreiding, "Zonder herladen (htmx)": de server doet
 
 Vanaf "JavaScript erbij" komt de browserkant in beeld. Je leerlingen kennen JavaScript al uit de web-cursus; nieuw is de vraag wáár code hoort. Die vraag krijgt een eigen les ("Server of browser?") nadat ze de drie smaken hebben gevoeld: een formulier versturen gaat via de server en de pagina verspringt, met htmx blijft de pagina staan, en een tekenteller draait in de browser zonder dat de server er iets van ziet. De tabel in die les heeft voor elk een kolom.
 
-Daarop volgt "Onthouden", drie lessen die het sterkst zijn als je ze achter elkaar plant. In de eerste veranderen je leerlingen hun eigen cookie in een andere naam en zien ze de server dat klakkeloos overnemen. In de tweede lossen ze dat op door alleen een sessie-id bij de bezoeker te laten en de gegevens op de server te zetten. Het is voor veel leerlingen het eerste moment waarop beveiliging concreet wordt: de verwijderknop verbergen is niet hetzelfde als verwijderen onmogelijk maken.
+Daarop volgt "Onthouden", drie lessen die het sterkst zijn als je ze achter elkaar plant. In de eerste onthoudt een cookie de naam, en veranderen je leerlingen die cookie in een andere naam: de server neemt het klakkeloos over, en alleen het wachtwoord uit Inloggen houdt ze nog tegen. In de tweede loggen ze één keer in. `/inloggen` maakt een sessie, er gaat alleen een sessie-id naar de bezoeker, en de naam bij een bericht komt voortaan uit de sessie in plaats van uit het formulier. Daarmee wordt "eigenaar van een bericht" iets wat de server zelf weet, en kunnen ze verwijderen afschermen met een 403. Het is voor veel leerlingen het eerste moment waarop beveiliging concreet wordt: de verwijderknop verbergen is niet hetzelfde als verwijderen onmogelijk maken.
 
 "Cookie of sessie?" sluit dat blok af zoals "Server of browser?" het vorige afsluit — niet met nieuwe techniek, maar met de vraag wanneer je wat kiest. De kern is dat een sessie ook gewoon een cookie is; het verschil zit in wát erin staat. Leerlingen die alles voor de zekerheid een sessie willen maken, vinden daar het tegenargument: een voorkeur die niemand kan schaden hoort in een gewone cookie.
 

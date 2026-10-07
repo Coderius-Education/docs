@@ -34,12 +34,16 @@ In je formulier staat:
 
 Dat ziet eruit als een regel: berichten zijn nooit langer dan 80 tekens. Maar `maxlength` is een instructie aan de browser, en de browser is van de bezoeker. Wie het formulier omzeilt en rechtstreeks naar je endpoint stuurt, komt met 500 tekens binnen, en jouw Python-code slaat het op zonder klagen.
 
-Wil je echt een grens, dan moet Python die zelf controleren. Zet deze controle bovenaan in je POST-endpoint `/gastenboek`; de rest van de functie blijft zoals hij was:
+Wil je echt een grens, dan moet Python die zelf controleren. Zet deze controle bovenaan in je POST-endpoint `/gastenboek`, boven de controle van het wachtwoord uit [Inloggen: een wachtwoord controleren](/docs/FastAPI/inloggen); de rest van de functie blijft zoals hij was:
 
 {/* route-dubbel: toont alleen de controle bovenaan het bestaande POST /gastenboek */}
 ```python
 @app.post("/gastenboek")
-async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
+async def gastenboek_opslaan(
+    naam: str = Form(...),
+    wachtwoord: str = Form(...),
+    bericht: str = Form(...),
+):
     if len(bericht) > 80:
         raise HTTPException(status_code=400, detail="Bericht is te lang")
     ...

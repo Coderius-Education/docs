@@ -2,7 +2,7 @@ import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
 
 # Cookie of sessie?
 
-Je kunt nu allebei: een cookie met de naam erin, en een sessie waarbij alleen een sessie-id bij de bezoeker ligt. Allebei lossen ze op dat je server een terugkerende bezoeker niet herkent. Ze doen het alleen op een andere plek, en dat bepaalt welke je kiest.
+Je kunt nu allebei: een cookie met de naam erin, en een sessie waarbij alleen een sessie-id bij de bezoeker ligt en je server onthoudt wie er inlogde. Allebei lossen ze op dat je server een terugkerende bezoeker niet herkent. Ze doen het alleen op een andere plek, en dat bepaalt welke je kiest.
 
 ## Wat ze allebei oplossen
 
@@ -36,7 +36,7 @@ Wat gebeurt er als de bezoeker deze waarde zelf verandert?
 
 Gebeurt er niets ergs, dan mag het in de cookie. De bezoeker verandert de eigen naam in het formulier, of zet het donkere thema aan na eerst het lichte te hebben gekozen: daar heeft niemand last van, ook de bezoeker zelf niet.
 
-Kom je daarmee ergens waar je niet hoort, dan moet het een sessie zijn. Denk aan berichten van iemand anders verwijderen, betalen zonder te betalen of bij andermans gegevens komen.
+Kom je daarmee ergens waar je niet hoort, dan moet het een sessie zijn. Denk aan ingelogd zijn als iemand anders, berichten van een ander verwijderen, betalen zonder te betalen of bij andermans gegevens komen.
 
 Dat is dezelfde vraag als in [Server of browser?](/docs/FastAPI/server-of-browser), en het antwoord komt uit dezelfde regel: alles wat op de computer van de bezoeker staat, is van de bezoeker.
 
@@ -91,12 +91,12 @@ Dit gebeurt bij elk verzoek, ook bij het ophalen van je CSS-bestand en je afbeel
 
 ### Opdracht 3: Investigate - Twee browsers
 
-Open je gastenboek in een normaal venster en in een privévenster, en plaats in allebei een bericht met een andere naam.
+Open je gastenboek in een normaal venster en in een privévenster, en log in allebei in met een ander account.
 
 <details>
 <summary>Antwoord</summary>
 
-Je krijgt twee sessies. Een privévenster begint met een lege cookiejar, dus er gaat geen `sessie_id` mee en je server maakt een nieuwe aan.
+Je krijgt twee sessies, en in elk venster schrijf je onder een andere naam. Een privévenster begint met een lege cookiejar, dus er gaat geen `sessie_id` mee: je ziet er eerst het inlogformulier, en na het inloggen maakt je server een tweede sessie aan.
 
 Dat laat zien waar de identiteit echt zit: niet bij de persoon achter het scherm en niet bij de computer, maar bij één browservenster met één cookie. Log je op een gedeelde computer in, dan zit die cookie er na jou nog steeds. Daarom bestaat er een uitlogknop.
 
@@ -172,7 +172,7 @@ async def uitloggen(sessie_id: str = Cookie(default="")):
     return antwoord
 ```
 
-En de knop in `gastenboek.html`:
+En de knop in `gastenboek.html`, binnen het `{% if naam %}`-blok, onder het formulier om te schrijven. Wie niet is ingelogd, ziet hem dan niet:
 
 ```html
 <form method="post" action="/uitloggen">
@@ -182,6 +182,6 @@ En de knop in `gastenboek.html`:
 
 Waarom een formulier en geen link? Een link is altijd een GET, en een link kan ook op een andere site staan; bij een klik op zo'n link stuurt de browser je cookie mee. Een formulier op een andere site dat naar jouw `POST` stuurt, gaat zonder cookie, en dan weet je server niet om welke sessie het gaat. Helemaal dicht is uitloggen daarmee niet: de `delete_cookie` in het antwoord voert de browser ook dan uit, dus zo'n formulier haalt je cookie wel weg. Je sessie op de server blijft staan, en dat id heeft verder niemand. Bij een endpoint dat met je sessie iets verandert, zoals verwijderen in opdracht 5 van [Onthouden op de server: sessies](/docs/FastAPI/sessies), betekent zonder cookie: geen sessie, dus niets. Hoe dat zit, lees je in [`samesite`](/docs/veiligheid/cookies/samesite) in de reeks Veiligheid, die je later doet. Alles wat op de server iets verandert, hoort daarom achter een POST.
 
-Allebei is nodig. Haal je alleen de cookie weg, dan blijft de sessie op je server staan; iemand die het oude sessie-id nog heeft, is zo weer binnen. Gooi je alleen de sessie weg, dan houdt de bezoeker een cookie die nergens meer op past. Plaatst hij daarna een bericht, dan maakt je server onder datzelfde oude id een verse sessie aan, en wie dat id nog had, zit er weer in.
+Allebei is nodig. Haal je alleen de cookie weg, dan blijft de sessie op je server staan; iemand die het oude sessie-id nog heeft, is zo weer binnen, zonder wachtwoord. Gooi je alleen de sessie weg, dan houdt de bezoeker een cookie die nergens meer op past. Je server ziet hem dan als niet ingelogd, en dat klopt, maar zijn browser blijft bij elk verzoek een cookie meesturen waar niemand iets aan heeft.
 
 </details>

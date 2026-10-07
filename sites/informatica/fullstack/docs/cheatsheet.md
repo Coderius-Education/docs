@@ -313,45 +313,36 @@ Een cookie staat bij de bezoeker, en die kan hem veranderen. Gebruik hem dus nie
 </details>
 
 <details>
-<summary>Hoe onthoud ik iets op de server? (sessie met secrets)</summary>
+<summary>Hoe onthoud ik wie er is ingelogd? (sessie met secrets)</summary>
 
 ```python
 import secrets
 
-@app.post("/gastenboek")
-async def gastenboek_opslaan(
-    naam: str = Form(...),
-    bericht: str = Form(...),
-    sessie_id: str = Cookie(default=""),
-):
-    if not sessie_id:
-        sessie_id = secrets.token_hex(16)
+@app.post("/inloggen")
+async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as gebruikers:
+        opgeslagen = gebruikers.get(naam)
+    if opgeslagen != wachtwoord:
+        raise HTTPException(status_code=401, detail="Naam of wachtwoord klopt niet")
 
-    sleutel = f"bericht_{time.time_ns()}"
-    with SqliteDict("gastenboek.db") as db:
-        db[sleutel] = {"naam": naam, "bericht": bericht}
-        db.commit()
-
+    sessie_id = secrets.token_hex(16)
     with SqliteDict("sessies.db") as sessies:
-        mijn = sessies.get(sessie_id, {"naam": naam, "berichten": []})
-        mijn["naam"] = naam
-        mijn["berichten"].append(sleutel)
-        sessies[sessie_id] = mijn
+        sessies[sessie_id] = {"naam": naam}
         sessies.commit()
 
-    antwoord = RedirectResponse(url="/berichten", status_code=303)
+    antwoord = RedirectResponse(url="/gastenboek", status_code=303)
     antwoord.set_cookie(key="sessie_id", value=sessie_id, max_age=60 * 60 * 24 * 30)
     return antwoord
 ```
 
-Uitlezen:
+Uitlezen, in elk endpoint met de parameter `sessie_id: str = Cookie(default="")`:
 
 ```python
 with SqliteDict("sessies.db") as sessies:
     mijn = sessies.get(sessie_id, {})
 ```
 
-In de cookie staat alleen het sessie-id, de gegevens staan op de server. Haal de sessie eerst op met `.get()` en vul hem aan: schrijf je er een nieuwe dictionary overheen, dan ben je de lijst `berichten` kwijt.
+In de cookie staat alleen het sessie-id; wie er inlogde, staat op de server. Een lege dictionary betekent: niet ingelogd. Zet de naam bij een bericht met `mijn["naam"]`, nooit uit een formulierveld.
 
 </details>
 
@@ -614,7 +605,7 @@ je-project/
     └── gastenboek.html
 ```
 
-Vaste pagina's staan in `static/pages/`, pagina's met `{{ }}` in `templates/`. Het gastenboekformulier begint als `static/pages/gastenboek_form.html` en verhuist bij [Onthouden met een cookie](/docs/FastAPI/cookies) naar `templates/gastenboek.html`. De `.db`-bestanden maakt `sqlitedict` zelf aan. Hoe de mappen per les groeien, staat bij [Projectstructuur](/docs/FastAPI/projectstructuur).
+Vaste pagina's staan in `static/pages/`, pagina's met `{{ }}` in `templates/`. Het gastenboekformulier begint als `static/pages/gastenboek_form.html` en verhuist bij [Onthouden met een cookie](/docs/FastAPI/cookies) naar `templates/gastenboek.html`; in [sessies](/docs/FastAPI/sessies) wordt het een inlogformulier of een formulier om te schrijven. De `.db`-bestanden maakt `sqlitedict` zelf aan. Hoe de mappen per les groeien, staat bij [Projectstructuur](/docs/FastAPI/projectstructuur).
 
 </details>
 
