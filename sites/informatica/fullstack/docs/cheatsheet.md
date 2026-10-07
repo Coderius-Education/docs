@@ -347,6 +347,24 @@ In de cookie staat alleen het sessie-id; wie er inlogde, staat op de server. Een
 </details>
 
 <details>
+<summary>Hoe maak ik een eigen 404-pagina? (exception_handler)</summary>
+
+```python
+@app.exception_handler(404)
+async def niet_gevonden(request: Request, fout):
+    return templates.TemplateResponse(
+        request,
+        "404.html",
+        {"pad": request.url.path},
+        status_code=404,
+    )
+```
+
+Deze handler krijgt elke 404: een adres zonder endpoint en je eigen `raise HTTPException(status_code=404, …)`. Andere fouten blijven zoals ze waren, en een fout in je code blijft een 500. Zet geen handler op `Exception`: dan lijkt een fout in je code een ontbrekende pagina.
+
+</details>
+
+<details>
 <summary>Hoe zet ik mijn server open voor het netwerk? (--host 0.0.0.0)</summary>
 
 ```bash

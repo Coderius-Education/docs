@@ -128,6 +128,12 @@ const KOPPELING: Item[] = [
     concepten: ['fastapi-sessie'],
   },
   {
+    summary: 'Hoe maak ik een eigen 404-pagina? (exception_handler)',
+    concepten: [],
+    geenConcept:
+      'een afronding na de basis; de template eromheen wordt al nagekeken via fastapi-templates',
+  },
+  {
     summary: 'Hoe zet ik mijn server open voor het netwerk? (--host 0.0.0.0)',
     concepten: [],
     geenConcept: 'een terminalcommando met een vlag, niet terug te zien in een bestand',

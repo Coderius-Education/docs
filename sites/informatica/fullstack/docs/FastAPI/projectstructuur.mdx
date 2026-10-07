@@ -313,6 +313,47 @@ je-project/
 
 Het gastenboekformulier is verhuisd: `static/pages/gastenboek_form.html` is nu de template `templates/gastenboek.html`, zodat je naam erin kan. `sessies.db` maakt `sqlitedict` aan bij de eerste keer inloggen.
 
+## Bij [Een eigen 404-pagina: een handler voor fouten](/docs/FastAPI/foutpagina)
+
+```
+je-project/
+├── main.py
+├── gastenboek.db
+├── gebruikers.db
+├── mijn_data.db
+├── namen.db
+├── sessies.db
+├── bekijk_db.py
+├── lees_db.py
+├── proef_db.py
+├── test_db.py
+├── static/
+│   ├── css/
+│   │   └── style.css
+│   ├── js/
+│   │   ├── app.js
+│   │   └── htmx.min.js
+│   ├── pages/
+│   │   ├── about.html
+│   │   ├── foto.html
+│   │   ├── groet_form.html
+│   │   ├── home.html
+│   │   ├── naam_form.html
+│   │   ├── naam_opslaan.html
+│   │   └── registreer.html
+│   └── kat.jpg
+└── templates/
+    ├── 404.html
+    ├── bericht.html
+    ├── berichten.html
+    ├── berichten_lijst.html
+    ├── dobbelsteen.html
+    ├── gastenboek.html
+    └── groet_resultaat.html
+```
+
+De foutpagina is een gewone template, naast de andere. De handler die hem gebruikt, staat in `main.py`.
+
 ## Compleet overzicht
 
 | Map | Wat staat er? | Voorbeeld |

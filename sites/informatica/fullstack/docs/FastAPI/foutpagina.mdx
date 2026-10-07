@@ -1,0 +1,264 @@
+# Een eigen 404-pagina: een handler voor fouten
+
+Typt een bezoeker een adres dat niet bestaat, dan ziet hij `{"detail":"Not Found"}`. Voor jezelf is dat duidelijk genoeg. Laat je je gastenboek aan anderen zien, dan wil je een pagina in je eigen stijl, met een link terug naar de berichten.
+
+## Twee soorten 404
+
+<details>
+<summary>Voorspel: wat zie je op `/bestaat-niet`, en wat op `/bericht/onzin`?</summary>
+
+Op `/bestaat-niet` staat `{"detail":"Not Found"}`. Bij dat pad hoort geen endpoint, dus FastAPI stuurt zelf een 404.
+
+Op `/bericht/onzin` staat `{"detail":"Dit bericht bestaat niet"}`. Dat pad hoort wel bij een endpoint, en dat stuurt de 404 met `raise HTTPException` uit [Eén item tonen: path-parameters en 404](/docs/FastAPI/detailpagina).
+
+</details>
+
+Allebei zijn het een 404, en allebei moeten ze straks je eigen pagina tonen. Een andere fout, zoals een fout wachtwoord (401) of een fout in je code (500), moet blijven wat hij is.
+
+## Drie manieren
+
+FastAPI laat je op drie manieren een eigen pagina tonen.
+
+**Een handler voor 404.** Een **exception handler** is een functie die FastAPI aanroept als er een fout ontstaat, in plaats van zelf JSON te sturen. Deze handler is alleen voor 404:
+
+```python
+@app.exception_handler(404)
+async def niet_gevonden(request: Request, fout):
+    return templates.TemplateResponse(
+        request,
+        "404.html",
+        {"pad": request.url.path},
+        status_code=404,
+    )
+```
+
+Je kunt hem ook aan `FastAPI()` meegeven, als `app = FastAPI(exception_handlers={404: niet_gevonden})`, met de functie boven die regel. Dat doet precies hetzelfde.
+
+**Een handler voor elke HTTP-fout.** Een handler voor `StarletteHTTPException` krijgt elke fout die FastAPI of jij met een statuscode stuurt: 404, maar ook 401, 403 en 405. Daarom kijkt hij zelf naar de code, en geeft hij de rest door aan de handler die FastAPI normaal gebruikt:
+
+```python
+from fastapi.exception_handlers import http_exception_handler
+from starlette.exceptions import HTTPException as StarletteHTTPException
+
+@app.exception_handler(StarletteHTTPException)
+async def http_fouten(request: Request, fout):
+    if fout.status_code == 404:
+        return templates.TemplateResponse(
+            request,
+            "404.html",
+            {"pad": request.url.path},
+            status_code=404,
+        )
+    return await http_exception_handler(request, fout)
+```
+
+Vergeet je de `if` en de laatste regel, dan toont je server bij een fout wachtwoord of een verkeerde methode ook "Niet gevonden", met status 404. Een bezoeker zoekt dan naar een pagina die er wel is.
+
+**Een pagina in je eigen endpoint.** In `bericht_detail` kun je in plaats van `raise HTTPException` zelf de pagina teruggeven:
+
+{/* niet-compileren: alleen de if uit bericht_detail, ingesprongen */}
+```python
+    if bericht is None:
+        return templates.TemplateResponse(
+            request,
+            "404.html",
+            {"pad": request.url.path},
+            status_code=404,
+        )
+```
+
+Dat werkt alleen voor dit ene endpoint. Een adres zonder endpoint geeft nog steeds JSON, want daar draait geen functie van jou.
+
+| | Handler voor 404 | Handler voor elke HTTP-fout | In je eigen endpoint |
+|---|:---:|:---:|:---:|
+| Onbekend adres | jouw pagina | jouw pagina | JSON |
+| Jouw `raise HTTPException(status_code=404)` | jouw pagina | jouw pagina | alleen waar je het verandert |
+| 401, 403, 405 | blijven JSON | blijven JSON, als je ze doorgeeft | blijven JSON |
+| Fout in je code (500) | blijft een 500 | blijft een 500 | blijft een 500 |
+| Wat je schrijft | één functie | een functie, een `if` en twee imports | dezelfde regels in elk endpoint |
+
+De handler voor 404 doet wat je wilt, met de minste code, en raakt de andere fouten niet. Die bouw je hieronder.
+
+## De handler voor 404
+
+Maak `templates/404.html`:
+
+```html
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Niet gevonden</title>
+        <link rel="stylesheet" href="/static/css/style.css">
+    </head>
+    <body>
+        <h1>Niet gevonden</h1>
+        <p>Er staat niets op {{ pad }}.</p>
+        <a href="/berichten">Naar alle berichten</a>
+    </body>
+</html>
+```
+
+Zet de handler onder je andere endpoints:
+
+<CodeUitleg>
+
+```python showLineNumbers
+@app.exception_handler(404)
+async def niet_gevonden(request: Request, fout):
+    return templates.TemplateResponse(
+        request,
+        "404.html",
+        {"pad": request.url.path},
+        status_code=404,
+    )
+```
+
+<Regel n={1}>
+`@app.exception_handler(404)` lijkt op `@app.get`, maar hoort niet bij een pad. Hij hoort bij een statuscode: bij elke 404, waar die ook vandaan komt.
+</Regel>
+
+<Regel n={2}>
+FastAPI geeft het verzoek en de fout zelf mee. `fout` gebruik je hier nog niet; in opdracht 4 wel.
+</Regel>
+
+<Regel n={6}>
+`request.url.path` is het pad dat de bezoeker opvroeg, zoals `/bestaat-niet`.
+</Regel>
+
+<Regel n={7}>
+Zonder deze regel krijgt de pagina status 200: dan lijkt het voor de browser en voor elk script alsof de pagina bestaat.
+</Regel>
+
+</CodeUitleg>
+
+`templates` en `Request` heb je sinds [Templates met Jinja2](/docs/FastAPI/templates) al.
+
+## Testen
+
+1. Ga naar `http://127.0.0.1:8000/bestaat-niet`. Je ziet je eigen pagina, met "Er staat niets op /bestaat-niet." In het tabblad **Netwerk** staat status `404`.
+2. Ga naar `/bericht/onzin`. Ook daar staat je pagina: je `raise HTTPException(status_code=404, …)` gaat door dezelfde handler.
+3. Log in met een fout wachtwoord. Daar staat nog steeds `{"detail":"Naam of wachtwoord klopt niet"}`, met status `401`.
+
+## Een fout in je code blijft een 500
+
+Zit er een fout in je Python, dan krijgt de bezoeker `Internal Server Error`, met status 500, en staat de foutmelding in je terminal. Dat is niet mooi, maar wel eerlijk: een 500 zegt dat het aan je server ligt, en jij weet dat je in de terminal moet kijken.
+
+Het kan verleidelijk zijn om ook daar een nette pagina voor te maken, met een handler voor `Exception`, elke fout in Python. Doe dat niet terwijl je nog bouwt. Je browser toont dan een pagina die er goed uitziet, en jij zoekt de fout op de verkeerde plek. Wat er dan gebeurt, zie je in opdracht 3.
+
+## Er gaat iets mis
+
+### Netwerk zegt 200 bij je foutpagina
+
+**Oorzaak:** `status_code=404` ontbreekt in de `TemplateResponse`. Dan stuurt je server je pagina met de standaardcode 200: alles goed. De bezoeker ziet het verschil niet, maar een script of een zoekmachine denkt dat de pagina bestaat.
+
+**Oplossing:** geef de status mee als laatste argument:
+
+{/* niet-compileren: alleen de return uit de handler, ingesprongen */}
+```python
+    return templates.TemplateResponse(
+        request,
+        "404.html",
+        {"pad": request.url.path},
+        status_code=404,
+    )
+```
+
+### Elk onbekend adres geeft Internal Server Error
+
+In je terminal staat onderaan:
+
+```
+jinja2.exceptions.TemplateNotFound: '404.html' not found in search path: 'templates'
+```
+
+**Oorzaak:** je handler vindt zijn template niet. Hij draait bij elke 404, dus elke 404 wordt een 500.
+
+**Oplossing:** zet `404.html` in de map `templates`, naast je andere templates, en controleer de bestandsnaam.
+
+### Een onbekend adres geeft nog steeds JSON
+
+**Oorzaak:** je handler is voor `HTTPException` uit `fastapi`, in plaats van voor `404` of voor `StarletteHTTPException`. Die vangt alleen je eigen `raise HTTPException`. Een adres zonder endpoint geeft FastAPI zelf, met de `HTTPException` uit Starlette, en daar komt je handler niet langs.
+
+**Oplossing:** gebruik `@app.exception_handler(404)`.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Een verkeerde methode
+
+`/verwijderen` bestaat alleen als POST. Iemand typt het adres in zijn adresbalk, en de browser stuurt een GET.
+
+**Vraag:** ziet hij je 404-pagina?
+
+<details>
+<summary>Tip</summary>
+
+Welke statuscode stuurt FastAPI als het pad wel bestaat, maar niet voor deze soort verzoek?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Nee. Hij krijgt `{"detail":"Method Not Allowed"}` met status 405, zoals in [Doorsturen na opslaan (redirect)](/docs/FastAPI/redirect). Je handler is alleen voor 404, en het pad bestaat.
+
+</details>
+
+### Opdracht 2: Run
+
+Maak `404.html` en de handler, en open drie adressen: een die niet bestaat, `/bericht/onzin` en `/berichten`. Welke statuscode geeft Netwerk bij elk?
+
+<details>
+<summary>Antwoord</summary>
+
+`404`, `404` en `200`. De eerste twee tonen je eigen pagina. `/berichten` bestaat, dus daar komt je handler niet aan te pas.
+
+</details>
+
+### Opdracht 3: Investigate - Een handler voor alles
+
+Vervang tijdelijk `@app.exception_handler(404)` door `@app.exception_handler(Exception)`. Zet daarna in je `GET /berichten` een tikfout: verander `alle_berichten` in de `return` in `alle_berichtn`. Open `/berichten`. Wat ziet je browser, wat zegt Netwerk, en wat staat er in je terminal? Zet daarna alles terug.
+
+<details>
+<summary>Antwoord</summary>
+
+Je browser toont "Niet gevonden: er staat niets op /berichten", met status 404, terwijl die pagina wel bestaat. In je terminal staat de echte fout: `NameError: name 'alle_berichtn' is not defined`. Wie alleen naar de browser kijkt, zoekt een ontbrekende pagina en niet een tikfout.
+
+Probeer ook `/bestaat-niet`: daar staat weer `{"detail":"Not Found"}`. Een 404 is in FastAPI geen gewone fout in Python, dus een handler voor `Exception` vangt hem niet. Deze handler doet het precies verkeerd om.
+
+</details>
+
+### Opdracht 4: Make - De melding erbij
+
+Laat je pagina ook de melding van de 404 zien. Bij `/bericht/onzin` staat er dan "Dit bericht bestaat niet". Bij een onbekend adres geeft FastAPI de Engelse melding `Not Found`; zet daar "Deze pagina bestaat niet" voor in de plaats.
+
+<details>
+<summary>Tip</summary>
+
+De melding staat in `fout.detail`. Geef hem mee aan de template, net als het pad, en vergelijk hem eerst met `"Not Found"`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+@app.exception_handler(404)
+async def niet_gevonden(request: Request, fout):
+    melding = fout.detail
+    if melding == "Not Found":
+        melding = "Deze pagina bestaat niet"
+    return templates.TemplateResponse(
+        request,
+        "404.html",
+        {"pad": request.url.path, "melding": melding},
+        status_code=404,
+    )
+```
+
+In `templates/404.html`, onder de kop:
+
+```html
+<p>{{ melding }}</p>
+```
+
+</details>

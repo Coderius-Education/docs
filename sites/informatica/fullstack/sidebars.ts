@@ -89,7 +89,11 @@ const sidebars: SidebarsConfig = {
     {
       type: 'category',
       label: 'Afronden',
-      items: ['FastAPI/hoe-een-verzoek-werkt', 'FastAPI/laat-het-zien'],
+      // De eigen 404-pagina staat vooraan in Afronden: hij bouwt op Eén item
+      // tonen en de templates uit de basis, heeft geen uitbreiding nodig, en
+      // hoort bij het netjes maken voordat je de site in Laat het zien aan je
+      // klas toont.
+      items: ['FastAPI/foutpagina', 'FastAPI/hoe-een-verzoek-werkt', 'FastAPI/laat-het-zien'],
     },
   ],
   // Eerst de startpagina (het ene idee, de spelregel, de statuscodes) en het

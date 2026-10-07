@@ -82,6 +82,7 @@ Vijf keer onderweg staat een diagram van de hele keten, browser links en server 
 | Onthouden met een cookie *(uitbreiding)* | De browser iets laten onthouden tussen twee verzoeken |
 | Onthouden op de server: sessies *(uitbreiding)* | Eén keer inloggen: alleen een sessie-id bij de bezoeker, de naam op de server |
 | Cookie of sessie? *(uitbreiding)* | Kiezen tussen de twee, en waarom je niet alles kunt geloven |
+| Een eigen 404-pagina *(afronding)* | Een handler voor 404 met een template, en waarom een 500 een 500 blijft |
 | Laat het aan anderen zien | De server openzetten voor het netwerk |
 
 De drie lessen over SqliteDict draaien nog zonder server: je leerlingen oefenen in losse scripts, met een script `bekijk_db.py` dat ze daarna bij elke database gebruiken. Zo komen de fouten die ze anders pas in de server maken (een vergeten `commit()`, een script in een andere map dat stil een lege database aanmaakt, een dictionary die ze aanpassen maar niet terugzetten) los van FastAPI aan bod. [SqliteDict op een rij](/docs/FastAPI/sqlitedict) zet alles op één pagina, net als Projectstructuur buiten de sidebar.
@@ -100,7 +101,7 @@ Daarop volgt "Onthouden", drie lessen die het sterkst zijn als je ze achter elka
 
 "Cookie of sessie?" sluit dat blok af zoals "Server of browser?" het vorige afsluit — niet met nieuwe techniek, maar met de vraag wanneer je wat kiest. De kern is dat een sessie ook gewoon een cookie is; het verschil zit in wát erin staat. Leerlingen die alles voor de zekerheid een sessie willen maken, vinden daar het tegenargument: een voorkeur die niemand kan schaden hoort in een gewone cookie.
 
-Daarna sluit de cursus af met een overzicht van alle diagrammen en de server openzetten voor het netwerk, zodat de klas elkaars project kan bezoeken.
+Daarna sluit de cursus af met een eigen 404-pagina, een overzicht van alle diagrammen en de server openzetten voor het netwerk, zodat de klas elkaars project kan bezoeken. De 404-les zet drie manieren naast elkaar (een handler voor 404, een handler voor elke HTTP-fout die de rest doorgeeft, en een pagina in het eigen endpoint) en werkt de handler voor 404 uit. Een handler voor alle fouten is bewust geen optie: dan lijkt een fout in de code van een leerling een ontbrekende pagina, en zoekt hij op de verkeerde plek. In een opdracht zien je leerlingen dat zelf gebeuren.
 
 Wat hier bewust níét in zit, is `fetch`: JavaScript dat zelf data ophaalt bij een endpoint. Dat vraagt `async`/`await`, JSON verwerken en objecten — stof die de web-cursus nog niet behandelt. Het blok "Zonder herladen" vult dat gat met htmx: de server stuurt HTML, niet JSON. Leerlingen die toch `fetch` willen kun je die kant op sturen; de cursus bouwt er niet op.
 

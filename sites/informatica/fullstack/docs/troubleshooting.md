@@ -1057,6 +1057,48 @@ Meer uitleg: [Onthouden op de server: sessies](/docs/FastAPI/sessies)
 ## Afronden
 
 <details>
+<summary>Je eigen foutpagina verschijnt, maar Netwerk zegt dat het gelukt is</summary>
+
+**Oorzaak:** de `TemplateResponse` in je handler heeft geen `status_code`. Dan gaat je foutpagina terug met de standaardcode voor gelukt, en denken een script of een zoekmachine dat de pagina bestaat.
+
+**Oplossing:** geef de statuscode mee:
+
+{/* niet-compileren: FOUT/GOED-voorbeeld, de return uit een handler */}
+```python
+# FOUT - de foutpagina komt terug als gelukt
+return templates.TemplateResponse(request, "404.html", {"pad": request.url.path})
+
+# GOED
+return templates.TemplateResponse(request, "404.html", {"pad": request.url.path}, status_code=404)
+```
+
+Meer uitleg: [Een eigen 404-pagina: een handler voor fouten](/docs/FastAPI/foutpagina)
+
+</details>
+
+<details>
+<summary>Sinds je eigen foutpagina geeft elk onbekend adres Internal Server Error</summary>
+
+Onderaan in je terminal staat:
+
+```
+jinja2.exceptions.TemplateNotFound: '404.html' not found in search path: 'templates'
+```
+
+**Oorzaak:** je handler voor 404 vindt zijn template niet. Hij draait bij elke 404, dus elke 404 wordt een 500.
+
+**Oplossing:** zet `404.html` in de map `templates`, naast je andere templates, en geef alleen de bestandsnaam door:
+
+{/* niet-compileren: losse regel uit een handler */}
+```python
+templates.TemplateResponse(request, "404.html", {"pad": request.url.path}, status_code=404)
+```
+
+Meer uitleg: [Een eigen 404-pagina: een handler voor fouten](/docs/FastAPI/foutpagina)
+
+</details>
+
+<details>
 <summary>Mijn klasgenoot kan niet bij mijn server</summary>
 
 **Oorzaak:** je server luistert alleen naar je eigen computer, of jullie zitten niet op hetzelfde netwerk.
@@ -1118,10 +1160,12 @@ from datetime import datetime
 from html import escape
 
 from fastapi import Cookie, FastAPI, Form, HTTPException, Request
+from fastapi.exception_handlers import http_exception_handler
 from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlitedict import SqliteDict
+from starlette.exceptions import HTTPException as StarletteHTTPException
 ```
 
 Meer uitleg: <SiteLink site="python" to="/docs/modules/09d-modules">Modules importeren</SiteLink>

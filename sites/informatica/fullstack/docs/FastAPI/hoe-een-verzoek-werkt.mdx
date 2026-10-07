@@ -21,5 +21,6 @@ Kom je vast te zitten bij een nieuwe functie, zoek dan eerst de stap op waar hij
 | Controleren wat een bezoeker instuurt | formulier, stap 4 | in je endpoint-functie, nooit alleen in de HTML |
 | Iets aan de server vragen zonder dat de pagina verspringt | zonder herladen, stap 1 | `hx-get` of `hx-post` in je HTML, en een endpoint dat een stukje teruggeeft |
 | Onthouden wie er terugkomt | sessie, stap 3 | `sessies.db`, met alleen het id in de cookie |
+| Een eigen pagina als iets niet bestaat | klik, stap 3 of 4 | `@app.exception_handler(404)` en een template |
 
 De regel over controleren is de valkuil. Stap 1 van het formulier gebeurt in de browser, en die is van de bezoeker. Zie [Server of browser?](/docs/FastAPI/server-of-browser).

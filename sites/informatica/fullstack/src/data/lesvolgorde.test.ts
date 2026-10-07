@@ -108,6 +108,7 @@ describe('titels en categorieën', () => {
     ['FastAPI/lijst_tonen', /for-lus/],
     ['FastAPI/registreren', /account/],
     ['FastAPI/inloggen', /wachtwoord/],
+    ['FastAPI/foutpagina', /404/],
   ])('de titel van %s noemt %s', (id, begrip) => {
     expect(titel(id)).toMatch(begrip);
   });

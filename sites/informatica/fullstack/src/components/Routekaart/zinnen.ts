@@ -20,7 +20,8 @@ export const ZINNEN: Record<string, string> = {
     'Code draait in de browser, en je weet wat daar hoort en wat op de server.',
   'Uitbreiding: onthouden (cookies en sessies)':
     'Je logt één keer in, en je server herkent je bij het volgende verzoek.',
-  Afronden: 'Je overziet de hele weg van klik tot antwoord, en je klas bezoekt je gastenboek.',
+  Afronden:
+    'Een onbekend adres krijgt een eigen pagina, je ziet de weg van klik tot antwoord, en je klas komt kijken.',
 
   // Veiligheid
   'Een script als bezoeker':
