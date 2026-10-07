@@ -122,6 +122,11 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/* Logo's van vakpagina's staan verborgen tot VakThema ze per vak toont. */
+.vak-logo {
+  display: none;
+}
+
 @layer base {
   /* De homepage is bedoeld om in één scherm te passen: alle cursussen zonder
      scrollen. Tailwind rekent in rem, dus schaalt de hele pagina mee met de
