@@ -23,6 +23,16 @@ export type Klas = {
 const tekst = (waarde: unknown, max = 2000) =>
   typeof waarde === 'string' ? waarde.slice(0, max) : '';
 
+// Alleen een pad binnen de cursus zelf: /<pad-van-de-cursus>/…, zonder spaties,
+// stuurtekens of backslashes. Browsers halen tabs en regeleinden uit een URL,
+// dus '/\t/x' zou anders '//x' worden: een link naar een andere host.
+const VEILIG_PAD = /^\/[A-Za-z0-9._~!$&'()*+,;=:@%/#?-]*$/;
+
+function padVanCursus(pad: string, site: string): boolean {
+  const cursus = SITES_BY_ID[site];
+  return !!cursus && VEILIG_PAD.test(pad) && pad.startsWith(`/${cursus.path}/`);
+}
+
 function item(ruw: unknown): KlasItem | null {
   if (!ruw || typeof ruw !== 'object') return null;
   const i = ruw as Record<string, unknown>;
@@ -34,8 +44,7 @@ function item(ruw: unknown): KlasItem | null {
     typeof i.site === 'string' &&
     SITES_BY_ID[i.site] &&
     typeof i.pad === 'string' &&
-    // Alleen een pad binnen deze host, nooit //andere-host.
-    /^\/[^/\\]/.test(i.pad)
+    padVanCursus(i.pad, i.site)
   ) {
     return {
       type: 'pagina',
