@@ -39,6 +39,12 @@
       "default": "./privacy-content.js"
     },
     "./dialoog": "./dialoog.ts",
+    "./klas": {
+      "types": "./klas/index.d.ts",
+      "default": "./klas/index.js"
+    },
+    "./plugins/sidebar-manifest": "./plugins/sidebar-manifest.js",
+    "./plugins/klas": "./plugins/klas.js",
     "./plugins/transpile-shared": "./plugins/transpile-shared.js",
     "./plugins/cursussen-route": "./plugins/cursussen-route.js",
     "./plugins/privacy-route": "./plugins/privacy-route.js",
