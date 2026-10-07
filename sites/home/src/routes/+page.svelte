@@ -1,30 +1,19 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import { ExternalLink, X } from "@lucide/svelte";
+	import { X } from "@lucide/svelte";
 	import { REPO_URL, SUBJECTS } from "@coderius/shared/sites";
 	import {
 		type Activity,
 		type Thema,
 		curriculum,
-		levelColors,
 		levelLabels,
 		themasVan,
 		themasVoorVakken,
-		voorkennisVan,
 	} from "$lib/Curriculum";
 	import { inleiding, vakVanHost } from "$lib/vakken";
+	import CursusKaart from "$lib/components/CursusKaart.svelte";
 	import FilterDropdown from "$lib/components/FilterDropdown.svelte";
-	import { Badge } from "$lib/components/ui/badge";
 	import { cn } from "$lib/utils";
-
-	// Het huisstijl-merk per cursus, gegenereerd door scripts/genereer-huisstijl.mjs.
-	const merken = import.meta.glob<string>("$lib/assets/merk/*.svg", {
-		eager: true,
-		query: "?url",
-		import: "default",
-	});
-	const merk = (id: string, donker = false) =>
-		merken[`/src/lib/assets/merk/${id}${donker ? "-donker" : ""}.svg`];
 
 	const NIVEAUS: Activity["level"][] = ["Beginner", "Medium"];
 	// Alleen vakken met minstens één cursus; een vak zonder kaarten is geen filter.
@@ -141,33 +130,7 @@
 		{:else}
 			<ul id="cursussen" class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
 				{#each zichtbaar as c (c.id)}
-					{@const woorden = c.label.split(" ")}
-					<li>
-						<a
-							href={c.link}
-							target="_blank"
-							rel="noopener noreferrer"
-							class="flex h-full flex-col gap-1 rounded-xl border bg-card p-3.5 text-card-foreground shadow-sm transition-colors hover:border-primary focus-visible:border-primary focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
-						>
-							<div class="flex items-center gap-2">
-								{#if merk(c.id)}
-									<img src={merk(c.id)} alt="" class="-my-1 -ml-1 size-9 shrink-0 dark:hidden" />
-									<img src={merk(c.id, true)} alt="" class="-my-1 -ml-1 hidden size-9 shrink-0 dark:block" />
-								{/if}
-								<Badge class={cn("ml-auto shrink-0", levelColors[c.level])}>{levelLabels[c.level]}</Badge>
-							</div>
-							<div>
-								<h2 class="text-base font-semibold leading-tight">
-									{woorden.slice(0, -1).join(" ")}
-									<span class="whitespace-nowrap">{woorden.at(-1)}<ExternalLink class="ml-1 inline h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" /></span>
-								</h2>
-							</div>
-							<p class="text-lg leading-snug text-muted-foreground">{c.description}</p>
-							{#if c.requires.length > 0}
-								<p class="mt-auto text-xs text-muted-foreground">Voorkennis: {voorkennisVan(c)}</p>
-							{/if}
-						</a>
-					</li>
+					<li><CursusKaart cursus={c} /></li>
 				{/each}
 			</ul>
 		{/if}

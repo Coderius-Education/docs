@@ -1,5 +1,6 @@
 # allow crawling everything by default
 User-agent: *
-Disallow:
+# Klaspagina's zijn alleen voor wie de link van de docent heeft.
+Disallow: /klas/
 
 Sitemap: https://coderius.nl/sitemap.xml

@@ -24,7 +24,10 @@ function BovensteLaag(props) {
   useEffect(() => {
     if (klaar) markeerKlaar();
   }, [klaar]);
-  return <DocSidebarItems {...props} items={items} />;
+  // Docusaurus bewaart de open/dicht-stand per positie; na het herordenen zou
+  // een hoofdstuk de stand van zijn voorganger erven. Een nieuwe key laat de
+  // lijst opnieuw beginnen.
+  return <DocSidebarItems key={instelling ? 'klas' : 'alles'} {...props} items={items} />;
 }
 
 export default function DocSidebarItemsMetKlas(props) {
