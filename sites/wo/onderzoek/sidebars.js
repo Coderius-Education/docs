@@ -30,11 +30,12 @@ const sidebars = {
         'spelregels/de-vier-spelregels',
         'spelregels/betrouwbaar',
         'spelregels/valide',
-        'spelregels/transparant',
-        'spelregels/aanvaardbaar',
         'spelregels/interne-validiteit',
         'spelregels/externe-validiteit',
         'spelregels/intern-vs-extern',
+        'spelregels/transparant',
+        'spelregels/aanvaardbaar',
+        'spelregels/auteursrecht',
       ],
     },
     {
@@ -165,6 +166,16 @@ const sidebars = {
           ],
         },
         'literatuurstudie/welke-strategie',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'De academische wereld',
+      items: [
+        'academie/academische-wereld',
+        'academie/academische-ladder',
+        'academie/promoveren',
+        'academie/universiteiten-en-ai',
       ],
     },
     {

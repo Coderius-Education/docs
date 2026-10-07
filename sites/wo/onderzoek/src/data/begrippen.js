@@ -28,6 +28,12 @@ const begrippen = {
     lang: 'De samenvatting van hooguit een paar honderd woorden waarmee elk wetenschappelijk artikel begint, bijna altijd in de vaste volgorde doel, methode, resultaten, conclusie. Je gebruikt het om te kiezen welke artikelen je verder leest, niet als bron voor wat je beweert.',
     url: '/literatuurstudie/abstract-scannen',
   },
+  'academische-ladder': {
+    term: 'Academische ladder',
+    kort: 'De vaste volgorde van functies aan een universiteit: promovendus, postdoc, universitair docent, universitair hoofddocent, hoogleraar.',
+    lang: 'De vaste volgorde van functies aan een universiteit: promovendus, postdoc, universitair docent (UD), universitair hoofddocent (UHD) en hoogleraar. Hoger op de ladder betekent meer zelfstandigheid en meer verantwoordelijkheid voor geld, onderwijs en begeleiding. De ladder wordt naar boven toe snel smaller.',
+    url: '/academie/academische-ladder',
+  },
   afbakening: {
     term: 'Afbakening',
     kort: 'Vastleggen over wie, wat, waar en wanneer je onderzoek gaat, zodat je vraag onderzoekbaar wordt.',
@@ -45,6 +51,12 @@ const begrippen = {
     kort: 'Waar op grond van de betekenis van de woorden; de ontkenning levert een tegenspraak op.',
     lang: 'Een uitspraak die waar is op grond van de betekenis van de woorden zelf, zoals "alle vrijgezellen zijn ongetrouwd". Een van de twee tanden van de vork van Hume.',
     url: '/kennisleer/vork-van-hume',
+  },
+  auteursrecht: {
+    term: 'Auteursrecht',
+    kort: 'Het recht van de maker om te bepalen of en hoe anderen een werk mogen overnemen, verspreiden of openbaar maken.',
+    lang: 'Het recht van de maker van een tekst, foto, figuur, filmpje of ander werk om te bepalen of en hoe anderen het mogen overnemen, verspreiden of openbaar maken. Het ontstaat vanzelf, ook zonder ©, en geldt tot zeventig jaar na de dood van de maker. Een bronvermelding voorkomt plagiaat, maar geeft niet vanzelf toestemming.',
+    url: '/spelregels/auteursrecht',
   },
   auteurvolgorde: {
     term: 'Auteurvolgorde',
@@ -106,6 +118,12 @@ const begrippen = {
     lang: 'Het vermelden waar informatie vandaan komt, bij alles wat je van een ander overneemt. Hoort bij de spelregel transparant.',
     url: '/spelregels/transparant',
   },
+  citaatrecht: {
+    term: 'Citaatrecht',
+    kort: 'Het wettelijke recht om een stukje van het werk van een ander over te nemen als je het bespreekt, ongewijzigd en met bron.',
+    lang: 'Het recht uit de Auteurswet om een deel van een werk, ook een afbeelding, zonder toestemming over te nemen, als het werk openbaar is, het citaat jouw tekst ondersteunt, je niet meer overneemt dan nodig, je niets verandert en je de bron vermeldt.',
+    url: '/spelregels/auteursrecht',
+  },
   citatie: {
     term: 'Citatie',
     kort: 'Een verwijzing van het ene artikel naar het andere; het aantal citaties meet gebruik, niet juistheid.',
@@ -134,6 +152,12 @@ const begrippen = {
     kort: 'De auteur die als aanspreekpunt voor het artikel dient, herkenbaar aan een sterretje of envelopje.',
     lang: 'De auteur die de communicatie over een artikel verzorgt en vragen beantwoordt; meestal de eerste of de laatste auteur, gemarkeerd met een sterretje of envelopje.',
     url: '/literatuurstudie/auteurvolgorde',
+  },
+  'creative-commons': {
+    term: 'Creative Commons',
+    kort: 'Een open licentie waarmee een maker vooraf zegt wat anderen met een werk mogen, aangegeven met codes als BY, SA, NC en ND.',
+    lang: 'Een open licentie waarmee de maker vooraf toestemming geeft om een werk te gebruiken, onder voorwaarden die met codes worden aangegeven: BY (naamsvermelding), SA (gelijk delen), NC (niet commercieel) en ND (geen bewerkingen). CC0 betekent: geen rechten voorbehouden.',
+    url: '/spelregels/auteursrecht',
   },
   deelvraag: {
     term: 'Deelvraag',
@@ -194,6 +218,12 @@ const begrippen = {
     kort: 'De centrale vraag van je onderzoek: een kennisvraag (theoriegericht) of een ontwerpvraag (ontwerpgericht).',
     lang: 'De centrale vraag van je onderzoek. Bij theoriegericht onderzoek is het een kennisvraag, bij ontwerpgericht onderzoek een ontwerpvraag.',
     url: '/vragen/hoofdvraag',
+  },
+  hoogleraar: {
+    term: 'Hoogleraar',
+    kort: 'De hoogste trede op de academische ladder: leidt een vakgebied en een onderzoeksgroep, en mag promoties begeleiden.',
+    lang: 'De hoogste trede op de academische ladder (in het Engels: full professor). Een hoogleraar bepaalt de koers van een vakgebied aan de universiteit, leidt een onderzoeksgroep en is vaak promotor van promovendi.',
+    url: '/academie/academische-ladder',
   },
   hypothese: {
     term: 'Hypothese',
@@ -357,6 +387,18 @@ const begrippen = {
     lang: 'Werk of ideeën van een ander presenteren alsof ze van jou zijn, zonder bronvermelding. Schendt de spelregels transparant en aanvaardbaar.',
     url: '/spelregels/transparant',
   },
+  portretrecht: {
+    term: 'Portretrecht',
+    kort: 'Het recht van een herkenbaar persoon op een foto of video om zich te verzetten tegen publicatie; vraag dus toestemming.',
+    lang: 'Het recht van iemand die herkenbaar op een foto of in een video staat om iets te zeggen over het openbaar maken van dat beeld. Maak je bij onderzoek opnamen van deelnemers, vraag dan vooraf toestemming, ook voor publicatie.',
+    url: '/spelregels/auteursrecht',
+  },
+  postdoc: {
+    term: 'Postdoc',
+    kort: 'Een gepromoveerde onderzoeker die tijdelijk in het project van een ander werkt om ervaring en publicaties op te bouwen.',
+    lang: 'Een onderzoeker die al gepromoveerd is en op een tijdelijk contract, vaak een tot drie jaar, werkt in het onderzoeksproject van een ander. De trede tussen promovendus en universitair docent.',
+    url: '/academie/academische-ladder',
+  },
   preprint: {
     term: 'Preprint',
     kort: 'Een artikel dat al online staat maar nog niet door vakgenoten is beoordeeld.',
@@ -368,6 +410,30 @@ const begrippen = {
     kort: 'Primaire zitten in het voorwerp (vorm, omvang), secundaire ontstaan in de waarnemer (kleur, smaak).',
     lang: 'Het onderscheid van Locke: primaire eigenschappen zitten in het voorwerp zelf (omvang, vorm, aantal, beweging), secundaire ontstaan pas in de waarnemer (kleur, geur, smaak, geluid).',
     url: '/kennisleer/locke',
+  },
+  proefschrift: {
+    term: 'Proefschrift',
+    kort: 'Het boek waarin een promovendus het eigen onderzoek beschrijft; na goedkeuring en een openbare verdediging volgt de doctorstitel.',
+    lang: 'Het boek waarin een promovendus jaren zelfstandig onderzoek beschrijft, vaak een bundeling van drie tot vijf artikelen met een inleiding en een slothoofdstuk. Een commissie keurt het goed; daarna volgt de openbare verdediging. Proefschriften zijn meestal gratis te downloaden en een goede bron voor je literatuuronderzoek.',
+    url: '/academie/promoveren',
+  },
+  promotor: {
+    term: 'Promotor',
+    kort: 'De eindverantwoordelijke begeleider van een promovendus: een hoogleraar of hoofddocent met promotierecht.',
+    lang: 'De eindverantwoordelijke begeleider van een promovendus: een hoogleraar, of een universitair hoofddocent met promotierecht. De promotor beslist samen met de promotiecommissie of het proefschrift goed genoeg is. De dagelijkse begeleiding ligt vaak bij een copromotor.',
+    url: '/academie/promoveren',
+  },
+  promovendus: {
+    term: 'Promovendus',
+    kort: 'Een beginnende onderzoeker met een master die in een paar jaar een proefschrift schrijft; in het Engels PhD candidate.',
+    lang: 'Een beginnende onderzoeker die al een master heeft en in een paar jaar, meestal vier, zelfstandig onderzoek doet en dat opschrijft in een proefschrift. In Nederland is een promovendus meestal in dienst van de universiteit en krijgt salaris. In het Engels: PhD candidate.',
+    url: '/academie/promoveren',
+  },
+  promoveren: {
+    term: 'Promoveren',
+    kort: 'De hoogste academische graad behalen: zelfstandig onderzoek doen, een proefschrift schrijven en dat openbaar verdedigen.',
+    lang: 'Het behalen van de graad van doctor: je doet zelfstandig wetenschappelijk onderzoek, schrijft een proefschrift en verdedigt het in een openbare zitting. Daarna mag je de titel dr. voeren.',
+    url: '/academie/promoveren',
   },
   prototype: {
     term: 'Prototype',
@@ -452,6 +518,12 @@ const begrippen = {
     kort: 'De geest begint bij de geboorte als onbeschreven blad (Locke).',
     lang: 'Het beeld dat Locke gebruikte voor de pasgeboren geest: een onbeschreven blad, want er zijn geen aangeboren ideeën, alles komt via de zintuigen binnen.',
     url: '/kennisleer/locke',
+  },
+  'tenure-track': {
+    term: 'Tenure track',
+    kort: 'Een tijdelijk contract met vooraf afgesproken doelen; haal je die, dan volgt een vaste aanstelling.',
+    lang: 'Een tijdelijke aanstelling, meestal voor een universitair docent, met vooraf afgesproken doelen zoals publicaties, een beurs en goed onderwijs. Haal je de doelen, dan krijg je een vast contract (tenure); haal je ze niet, dan stopt het contract.',
+    url: '/academie/academische-ladder',
   },
   theoriegericht: {
     term: 'Theoriegericht onderzoek',
