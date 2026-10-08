@@ -83,8 +83,8 @@ tekst, net als met `escape`.
 Je noemt het template `berichten_lijst.jinja`, en `<b>vet</b>` is weer vet.
 
 **Oorzaak:** Jinja escapet in FastAPI alleen templates die op `.html`, `.htm` of
-`.xml` eindigen. Een andere extensie zet het escapen stil uit: geen foutmelding,
-geen waarschuwing.
+`.xml` eindigen. Een andere extensie zet het escapen stil uit, zonder
+foutmelding of waarschuwing.
 
 **Oplossing:** houd je templates op `.html`, en pas de naam in
 `TemplateResponse` mee aan.

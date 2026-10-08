@@ -29,7 +29,7 @@ Uitvoer:
 5e83ee3a35dabb618662f2b8e13037c42d3bdf9858f1ff7dec0f365237516053
 ```
 
-Hetzelfde wachtwoord, twee totaal verschillende hashes. In de database zie je
+Hetzelfde wachtwoord geeft nu twee totaal verschillende hashes. In de database zie je
 niet meer dat Sara en Noor hetzelfde kozen.
 
 ## Het zout is geen geheim
@@ -39,11 +39,11 @@ daarvoor heb je hetzelfde zout nodig. Het zout staat daarom naast de
 hash in de database. Dat is geen probleem: het zout hoeft niet geheim te zijn,
 alleen per gebruiker anders.
 
-Wat het zout wél doet: vooraf uitgerekende lijsten onbruikbaar maken. Er
+Wel maakt het zout vooraf uitgerekende lijsten onbruikbaar. Er
 bestaan grote lijsten met de `sha256` van miljoenen bekende wachtwoorden, die
 **rainbow tables** heten. Zonder zout zoek je een hash daarin op, zoals je een
-woord opzoekt in een woordenboek. Met een zout per gebruiker zou zo'n lijst voor
-elk zout opnieuw gemaakt moeten worden, en dat is niet te doen.
+woord opzoekt in een woordenboek. Met een zout per gebruiker moet je zo'n lijst
+voor elk zout opnieuw maken, en dat is niet te doen.
 
 ## Een echt zout
 

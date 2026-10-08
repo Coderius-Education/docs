@@ -22,7 +22,7 @@ kan, staat hieronder bij omgevingsvariabelen.
 ### Elke keer kijken wat je deelt
 
 Een `.gitignore` maak je één keer, maar een zip maak je elke keer opnieuw. Kijk
-voor elke commit even naar de lijst in Source Control of `git status --short`,
+voor elke commit naar de lijst in Source Control of `git status --short`,
 en open een zip voordat je hem verstuurt. Staat er een `.db` in, dan deel je de
 gegevens van je bezoekers.
 
@@ -104,9 +104,9 @@ persoonsgegevens, en daarvoor geldt de **AVG**, de privacywet: je moet ze
 passend beveiligen. Deel je per ongeluk een database met zulke gegevens, dan is
 dat een **datalek**.
 
-Andersom is het gebruiken van een endpoint dat duidelijk niet voor jou bedoeld
-is, zoals de `/sessies` van een klasgenoot, om daarna als een ander in te
-loggen, binnendringen. Het Wetboek van Strafrecht noemt dat
+Andersom: gebruik je een endpoint dat duidelijk niet voor jou bedoeld is, zoals
+de `/sessies` van een klasgenoot, om daarna als een ander in te loggen, dan is
+dat binnendringen. Het Wetboek van Strafrecht noemt dat
 **computervredebreuk** (artikel 138ab). Dat het endpoint openstond, maakt dat
 niet anders. Daarom deed je de test in [les 2](./vergeten) alleen op je eigen
 server.
@@ -135,13 +135,13 @@ wat je server kan, of in de bestanden die je deelt.
 <details>
 <summary>Antwoord</summary>
 
-1. **Het endpoint weghalen**, en de handleiding uitzetten zoals in
+1. Het endpoint weghalen, en de handleiding uitzetten zoals in
    [les 3](./uitzetten). Alleen uitzetten is verstoppen.
-2. **Een zip van alleen je code**, zonder de `.db`-bestanden, zoals in
+2. Een zip van alleen je code, zonder de `.db`-bestanden, zoals in
    [les 5](./gitignore).
-3. **Een omgevingsvariabele** voor de sleutel, zodat hij niet in `main.py`
+3. Een omgevingsvariabele voor de sleutel, zodat hij niet in `main.py`
    staat.
-4. **Het endpoint weghalen.** Zonder handleiding is het moeilijker te vinden,
+4. Het endpoint weghalen. Zonder handleiding is het moeilijker te vinden,
    maar wie het pad kent, kan het nog steeds gebruiken.
 
 </details>

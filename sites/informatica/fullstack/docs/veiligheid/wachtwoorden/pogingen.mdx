@@ -87,8 +87,8 @@ Hoogstens vijf pogingen per minuut per computer. Een mens die zich vergist, heef
 
 </CodeUitleg>
 
-`/wijzig` controleert ook een wachtwoord: het oude. Zonder limiet daar probeert
-een script daar wat `/inloggen` nu weigert. Zet dus ook boven `/wijzig` een
+`/wijzig` controleert ook een wachtwoord: het oude. Zonder limiet op `/wijzig`
+probeert een script daar wat `/inloggen` nu weigert. Zet dus ook boven `/wijzig` een
 `@limiter.limit("5/minute")`, en `request: Request` vooraan bij zijn
 parameters. Elk endpoint telt apart: vijf foute pogingen op `/inloggen` laten
 `/wijzig` met rust.

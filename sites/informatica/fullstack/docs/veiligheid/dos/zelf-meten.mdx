@@ -61,8 +61,8 @@ In de terminal van je server staan twintig regels met `GET /`, één per verzoek
 
 ## Dit is de zwakheid
 
-Twintig verzoeken zijn niets voor je server. Maar kijk wat er gebeurt: elk
-verzoek krijgt antwoord, hoe vaak het ook komt en van wie. Er is niets in je
+Twintig verzoeken zijn niets voor je server. Maar elk verzoek krijgt
+antwoord, hoe vaak het ook komt en van wie. Er is niets in je
 server dat zegt "zo is het wel genoeg". Zet in gedachten `range(20)` op
 `range(20000)`, en laat dat door duizend computers tegelijk doen: zo ziet een
 DDoS eruit, alleen groter. In [les 4](./limiet) zet je er een grens op.

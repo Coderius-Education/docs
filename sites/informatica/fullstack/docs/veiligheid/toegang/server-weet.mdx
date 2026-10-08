@@ -81,7 +81,7 @@ statuscode valt weg.
 
 **Oorzaak:** de naam komt uit de URL, en die bepaalt de bezoeker zelf. Alex is
 ingelogd als Alex, maar hij stuurt "Sara" mee, en de controle gelooft wat hij
-stuurt. Zijn sessie wordt niet eens opgevraagd.
+stuurt. Het endpoint vraagt zijn sessie niet eens op.
 
 **Oplossing:** controleer op iets dat alleen de server kan geven. De naam in de
 sessie heeft de server er zelf in gezet, nadat het wachtwoord klopte. Zet
