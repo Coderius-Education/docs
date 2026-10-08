@@ -23,6 +23,8 @@ const { loadSettings, applySettings, deepMerge } = require('./managed-settings')
 const managedManifest = require('../plugins/managed-manifest');
 const sidebarManifest = require('../plugins/sidebar-manifest');
 const klasPlugin = require('../plugins/klas');
+const oudeOpslagPlugin = require('../plugins/oude-opslag');
+const { controleerRegels } = require('../oude-opslag');
 
 /**
  * Welke site uit de registry bouwen we? De registry is de bron van waarheid
@@ -144,7 +146,9 @@ function withSharedCustomCss(presets, merk) {
  *
  * Handige extra's: geef `description`/`keywords` mee i.p.v. zelf headTags te
  * schrijven, en `omleidingen` ([{ van, naar }]) als een les verhuist: op elk
- * oud adres komt dan na de build een pagina die doorstuurt.
+ * oud adres komt dan na de build een pagina die doorstuurt. Bewaarde de
+ * cursus op zijn oude subdomein iets in de browser, geef dan `oudeOpslag` mee
+ * (zie oude-opslag.js): de leerling kan dat werk dan overzetten.
  */
 function createConfig(course = {}) {
   const managed = loadSettings(process.cwd());
@@ -161,6 +165,7 @@ function createConfig(course = {}) {
     future,
     matomoSiteId,
     omleidingen,
+    oudeOpslag,
     siteId,
     ...rest
   } = site;
@@ -173,6 +178,14 @@ function createConfig(course = {}) {
   if (registry) {
     rest.url = vak.url;
     rest.baseUrl = `/${registry.path}/`;
+  }
+
+  if (oudeOpslag) {
+    // Werk van het oude subdomein overzetten kan alleen als er een was.
+    if (!registry?.legacyUrl) {
+      throw new Error(`oudeOpslag: ${registry?.id ?? siteId} had geen eigen subdomein`);
+    }
+    controleerRegels(oudeOpslag);
   }
 
   const seoTags = [];
@@ -241,6 +254,11 @@ function createConfig(course = {}) {
   } else if (!hasPrivacyLink) {
     footerLinks.push({ title: 'Privacy', items: [{ label: 'Privacy', to: '/privacy' }] });
   }
+  if (oudeOpslag) {
+    // Werk van het oude subdomein ophalen: onder Home en Privacy, voor wie het zoekt.
+    const kolom = footerLinks.find((col) => col.title === HOME.label) ?? footerLinks.at(-1);
+    kolom.items = [...(kolom.items || []), { label: 'Werk van het oude adres', to: '/overzetten' }];
+  }
   footer.links = footerLinks;
   themeConfig.footer = footer;
 
@@ -299,7 +317,11 @@ function createConfig(course = {}) {
     headTags: headTags || (seoTags.length ? seoTags : undefined),
     // De site-id uit de registry, voor componenten die per site opslaan
     // (storageKey in opslag.js): alle cursussen van een vak delen één origin.
-    customFields: { ...(rest.customFields || {}), ...(registry ? { siteId: registry.id } : {}) },
+    customFields: {
+      ...(rest.customFields || {}),
+      ...(registry ? { siteId: registry.id } : {}),
+      ...(oudeOpslag ? { oudeOpslag } : {}),
+    },
     staticDirectories:
       staticDirectories ||
       uniqueDirs(['static', SHARED_STATIC, ...packageStaticDirs(sharedPackages)]),
@@ -318,6 +340,7 @@ function createConfig(course = {}) {
       privacyRoute,
       [matomoPlugin, { siteId: matomoSiteId }],
       ...(omleidingen?.length ? [[omleidingenPlugin, { omleidingen }]] : []),
+      ...(oudeOpslag ? [[oudeOpslagPlugin, { siteId: registry?.id, regels: oudeOpslag }]] : []),
     ],
     themeConfig,
   };

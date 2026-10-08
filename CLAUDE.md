@@ -31,6 +31,18 @@ markdown-link (`packages/shared/baseurl.test.ts` bewaakt dat). De oude
 subdomeinen (`python.coderius.nl`) sturen alleen nog door; een link ernaartoe
 is een fout in de CI-job `cross-links`.
 
+## Werk van het oude adres
+
+Wat een leerling op een oud subdomein bewaarde (`web.coderius.nl`), staat in de
+browseropslag van die origin; de cursus op de vak-host kan er niet bij. Een site
+met zulke opslag geeft `createConfig` een `oudeOpslag` mee (oude sleutel ->
+nieuwe, zie `packages/shared/oude-opslag.js`). Dan komt er een losse pagina op
+`<oud-subdomein>/oud/overzetten/` en een route `/overzetten` die het werk
+overneemt; docs-management laat `/oud/` op het oude subdomein staan via
+`legacy_paths` in `sites.json`. Hernoem je een opslagsleutel, pas dan `naar`
+mee aan: `oude-opslag.test.ts` faalt als de nieuwe sleutel niet meer in de code
+staat. De IDE heeft een eigen variant (`sites/informatica/ide/.../Overzetten`).
+
 ## Links tussen cursussen
 
 Elke cursus is een eigen site; Docusaurus controleert alleen links binnen de

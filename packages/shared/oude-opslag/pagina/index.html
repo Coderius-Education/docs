@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Je werk overzetten — Coderius</title>
+    <link rel="stylesheet" href="overzetten.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Je werk overzetten</h1>
+      <p>
+        <span id="naam">Deze cursus</span> is verhuisd naar
+        <a id="nieuw-adres" href="https://coderius.nl/">het nieuwe adres</a>. Wat je hier eerder
+        bewaarde, staat nog in deze browser, op het oude adres. Met deze pagina neem je het mee.
+      </p>
+
+      <section aria-labelledby="kop-gevonden">
+        <h2 id="kop-gevonden">Gevonden in deze browser</h2>
+        <p id="status" role="status" aria-live="polite">Zoeken…</p>
+        <ul id="lijst" hidden></ul>
+      </section>
+
+      <div id="knoppen" class="knoppen" hidden>
+        <button type="button" id="overzetten" class="primair">Zet over naar het nieuwe adres</button>
+        <button type="button" id="download">Download als bestand</button>
+      </div>
+
+      <p id="uitleg-download" class="klein" hidden>
+        Lukt overzetten niet, bijvoorbeeld omdat je browser het nieuwe venster tegenhoudt? Download
+        dan het bestand en kies het op de overzetpagina van het nieuwe adres (onderaan elke pagina:
+        <strong>Werk van het oude adres</strong>).
+      </p>
+      <p class="klein">
+        Je werk blijft ook hier staan; overzetten kopieert het alleen. Wat je op het nieuwe adres al
+        hebt, wordt niet overschreven.
+      </p>
+    </main>
+    <script src="overzetten.js"></script>
+  </body>
+</html>

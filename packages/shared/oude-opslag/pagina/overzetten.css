@@ -1,0 +1,88 @@
+:root {
+  --groen: #007e57;
+  --op-groen: #ffffff;
+  --tekst: #1c2a24;
+  --zacht: #4c5b55;
+  --vlak: #ffffff;
+  --rand: #d5dfda;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --groen: #3ec691;
+    --op-groen: #0b1f17;
+    --tekst: #e3ece8;
+    --zacht: #a9b8b2;
+    --vlak: #15201b;
+    --rand: #2b3a34;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--vlak);
+  color: var(--tekst);
+  font: 16px / 1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+main {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 2.5rem 1rem;
+}
+
+a {
+  color: var(--groen);
+}
+
+ul {
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--rand);
+  border-radius: 8px;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 0.9rem;
+}
+
+li + li {
+  border-top: 1px solid var(--rand);
+}
+
+.wanneer,
+.klein {
+  color: var(--zacht);
+  font-size: 0.9rem;
+}
+
+.knoppen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1.25rem 0;
+}
+
+button {
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--groen);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--groen);
+  font: inherit;
+  cursor: pointer;
+}
+
+button.primair {
+  background: var(--groen);
+  color: var(--op-groen);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
