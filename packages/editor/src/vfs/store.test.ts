@@ -1,5 +1,13 @@
 import { describe, expect, it, vi } from 'vitest';
-import { deleteProject, listProjects, loadProject, newProjectId, saveProject } from './store';
+import {
+  DEFAULT_STORAGE_PREFIX,
+  deleteProject,
+  listProjects,
+  loadProject,
+  newProjectId,
+  projectOpslag,
+  saveProject,
+} from './store';
 import type { Project } from './types';
 
 // De projectopslag houdt naast elk project een index van samenvattingen bij
@@ -120,5 +128,35 @@ describe('newProjectId', () => {
     const id = newProjectId();
     expect(id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
     expect(newProjectId()).not.toBe(id);
+  });
+});
+
+describe('projectOpslag', () => {
+  // ide.coderius.nl draait een tijd nog live (docs-management:
+  // legacy_live_until). Daar staan de projecten van vóór de verhuizing in de
+  // database zonder site-voorvoegsel; de IDE moet die openen, anders ziet een
+  // leerling op het oude adres een lege editor.
+  const opHost = (hostname: string) => vi.stubGlobal('window', { location: { hostname } });
+
+  it('op de vak-host: de database van de site', () => {
+    opHost('informatica.coderius.nl');
+    expect(projectOpslag('ide')).toBe('coderius:ide:coderius-editor');
+    vi.unstubAllGlobals();
+  });
+
+  it('op het oude subdomein van de site: de oude database', () => {
+    opHost('ide.coderius.nl');
+    expect(projectOpslag('ide')).toBe(DEFAULT_STORAGE_PREFIX);
+    vi.unstubAllGlobals();
+  });
+
+  it('het oude subdomein van een andere site telt niet', () => {
+    opHost('web.coderius.nl');
+    expect(projectOpslag('ide')).toBe('coderius:ide:coderius-editor');
+    vi.unstubAllGlobals();
+  });
+
+  it('tijdens server-render (geen window): de database van de site', () => {
+    expect(projectOpslag('ide')).toBe('coderius:ide:coderius-editor');
   });
 });
