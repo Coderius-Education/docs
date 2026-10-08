@@ -366,7 +366,7 @@ async def verwijderen(sleutel: str = Form(...)):
     return RedirectResponse(url="/berichten?verwijderd=1", status_code=303)
 ```
 
-Bovenaan `templates/berichten.html`:
+In `templates/berichten.html`, onder de `<h1>`:
 ```html
 {% if verwijderd %}
     <p>Bericht verwijderd</p>

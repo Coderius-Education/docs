@@ -90,4 +90,22 @@ describe('leerling-doorloop van de FastAPI-route', () => {
       if (b.includes('db[sleutel] =')) expect(b, b).toMatch(/sleutel = /);
     }
   });
+
+  it('elke opdracht behalve Run heeft een antwoord, zoals de startpagina belooft', () => {
+    // De startpagina beloofde "bij elke opdracht een tip en een antwoord";
+    // Run-opdrachten hebben vaak geen antwoord, want daar zie je het zelf.
+    const items = sidebars.apiSidebar as unknown as (string | Categorie)[];
+    const ids = items.flatMap((i) => (typeof i === 'string' ? [i] : i.items));
+    const fout = ids.flatMap((id) => {
+      const deel = readFileSync(`${DOCS}/${id}.mdx`, 'utf8').split('\n## Opdrachten\n')[1] ?? '';
+      return deel
+        .split(/\n(?=### Opdracht )/)
+        .filter(
+          (b) => /^### Opdracht \d+: (?!Run)/.test(b) && !b.includes('<summary>Antwoord</summary>'),
+        )
+        .map((b) => `${id}: ${b.split('\n')[0]}`);
+    });
+    expect(fout).toEqual([]);
+    expect(les('index')).toContain('Bij Run zie je zelf of het');
+  });
 });

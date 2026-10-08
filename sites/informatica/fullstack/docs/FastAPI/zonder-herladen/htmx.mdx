@@ -82,7 +82,7 @@ Open het tabblad **Netwerk** zoals in [Kijken wat de browser doet](/docs/FastAPI
   <NetwerkTabel rijen={[{ naam: 'tijd', status: 200, type: 'xhr', grootte: '151 B' }]} />
 </DevtoolsPaneel>
 
-Het type is `xhr`: een verzoek dat een script stuurde, geen pagina die de browser opvroeg. De grootte verschilt per computer; de zin zelf is maar 18 bytes, de rest zijn de headers die er altijd bij zitten. Klik de regel aan. Bij **Reactie** staat alleen je zin, geen `<html>` en geen `<head>`. In de terminal staat één regel, `GET /tijd 200 OK`.
+Het type is `xhr`: een verzoek dat een script stuurde, geen pagina die de browser opvroeg. De grootte verschilt per computer; de zin zelf is maar 18 bytes, de rest zijn de headers die er altijd bij zitten. Klik de regel aan. Bij **Reactie** staat alleen je zin, geen `<html>` en geen `<head>`. In de terminal staat één regel met `"GET /tijd HTTP/1.1" 200`.
 
 ## Testen
 

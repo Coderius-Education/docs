@@ -118,7 +118,7 @@ In `templates/gastenboek.html` kiest de template met de naam welk formulier je z
 {% endif %}
 ```
 
-Het formulier om te schrijven heeft geen naam en geen wachtwoord meer. Heeft jouw formulier `hx-post` en `hx-target`, of een `id` voor je tekenteller, laat die dan staan. Het inlogformulier houdt `method` en `action`, zonder htmx: na het inloggen stuurt je server de browser door, en dan hoort de hele pagina te verversen.
+Het formulier om te schrijven heeft geen naam en geen wachtwoord meer. Heeft jouw formulier `hx-post` en `hx-target`, of een `id` voor je tekenteller, laat die dan staan. Staat de `<script>` voor `app.js` in je `<head>`, dan toont de Console zonder inloggen een rode regel: het inlogformulier heeft geen veld voor de teller. Zet de `<script>` dan binnen het `{% if naam %}`-blok, onder het formulier om te schrijven. Het inlogformulier houdt `method` en `action`, zonder htmx: na het inloggen stuurt je server de browser door, en dan hoort de hele pagina te verversen.
 
 ## Een bericht op naam van de sessie
 

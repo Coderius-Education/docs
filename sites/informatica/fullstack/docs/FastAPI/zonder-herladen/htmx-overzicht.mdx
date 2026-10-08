@@ -53,7 +53,7 @@ De `Form`-parameters en de controle van het wachtwoord blijven hetzelfde; voor j
 
 Klopt het wachtwoord niet, dan antwoordt je endpoint met een 401, net als zonder htmx. Een antwoord met een foutcode zet htmx niet in de pagina: er gebeurt zichtbaar niets. In het tabblad **Netwerk** staat het verzoek dan in het rood, met de melding bij **Reactie**.
 
-Zet je `hx-on::after-request="this.reset()"` op de `<form>`, dan maakt htmx de velden leeg zodra het antwoord binnen is. Dat doet hij ook als het antwoord een fout is, zoals een 400: wat de bezoeker typte, is dan weg. Zet je later een Content-Security-Policy op je site, dan werkt dit attribuut niet meer; wat je dan doet, staat in [HTML van een bezoeker: in de praktijk](/docs/veiligheid/xss/praktijk).
+Zet je `hx-on::after-request="this.reset()"` op de `<form>`, dan maakt htmx de velden leeg zodra het antwoord binnen is. Dat doet hij ook als het antwoord een fout is, zoals een 401: wat de bezoeker typte, is dan weg. Zet je later een Content-Security-Policy op je site, dan werkt dit attribuut niet meer; wat je dan doet, staat in [HTML van een bezoeker: in de praktijk](/docs/veiligheid/xss/praktijk).
 
 ## Een stuk van de pagina verversen
 

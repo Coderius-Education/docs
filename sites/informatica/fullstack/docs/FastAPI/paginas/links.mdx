@@ -26,12 +26,15 @@ Gebruik `href="/about"`, het endpoint, en niet de naam van het bestand. Wat er m
 
 ## Voorbeeld
 
-Twee pagina's die naar elkaar linken: je `home.html` krijgt een link, en er komt een pagina `about.html` bij.
+Twee pagina's die naar elkaar linken. Vervang je `home.html` door deze versie, met een link, en maak er een pagina `about.html` bij.
 
 **`static/pages/home.html`:**
 ```html
 <!DOCTYPE html>
 <html>
+    <head>
+        <title>Home</title>
+    </head>
     <body>
         <h1>Home</h1>
         <a href="/about">Ga naar Over Mij</a>
@@ -159,7 +162,7 @@ Wat gebeurt er als je `href="about.html"` schrijft in plaats van `href="/about"`
 <details>
 <summary>Antwoord</summary>
 
-De browser probeert naar `http://127.0.0.1:8000/about.html` te gaan, maar dat endpoint bestaat niet in je Python code. Je krijgt `{"detail":"Not Found"}`, een 404. De browser kent je bestanden niet, alleen de endpoints die je in Python hebt aangemaakt. Een link verwijst daarom altijd naar een endpoint, nooit naar een bestand.
+De browser probeert naar `http://127.0.0.1:8000/about.html` te gaan, maar dat endpoint bestaat niet in je Python code. Je krijgt `{"detail":"Not Found"}`, een 404. De browser kent je bestanden niet, alleen de adressen die je server aanbiedt. Een link verwijst daarom naar een endpoint, niet naar de naam van een bestand. Later geef je ook bestanden een eigen adres, zoals `/static/css/style.css`; dan link je naar dat adres.
 
 </details>
 

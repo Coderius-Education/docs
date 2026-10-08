@@ -76,7 +76,7 @@ const EERSTE_STAPPEN: Stap[] = [
 const STATIC_STAPPEN: Stap[] = [
   {
     kant: 'browser',
-    titel: 'De browser stuurt een GET naar /',
+    titel: 'De browser stuurt een GET naar /foto',
     tekst: 'Je typt het adres of klikt op een link; de pagina wordt opgevraagd.',
     to: '/docs/FastAPI/paginas/links',
     les: 'Links tussen pagina’s',
@@ -84,7 +84,7 @@ const STATIC_STAPPEN: Stap[] = [
   {
     kant: 'server',
     titel: 'Jouw functie stuurt het bestand',
-    tekst: 'home() geeft een FileResponse: de inhoud van static/pages/home.html, ongewijzigd.',
+    tekst: 'foto() geeft een FileResponse: de inhoud van static/pages/foto.html, ongewijzigd.',
     to: '/docs/FastAPI/paginas/html_bestanden',
     les: 'HTML in bestanden',
   },

@@ -85,7 +85,7 @@ In `templates/berichten.html` loop je nu over twee dingen tegelijk, en wordt de 
 {% endfor %}
 ```
 
-`{% for sleutel, bericht in berichten %}` pakt elk paar uit in twee namen, net als `for sleutel, waarde in db.items():` in Python. Vergeet je de `sleutel, ` in de lus, dan wordt elk bericht een lege regel met alleen een dubbele punt: Jinja2 zoekt dan `naam` in een paar, en dat heeft geen naam.
+Heb je in een opdracht `berichten` ook buiten deze lus gebruikt, zoals `berichten[-1].naam`, pas dat dan ook aan: elk item is nu een paar, dus `berichten[-1][1].naam`. `{% for sleutel, bericht in berichten %}` pakt elk paar uit in twee namen, net als `for sleutel, waarde in db.items():` in Python. Vergeet je de `sleutel, ` in de lus, dan wordt elk bericht een lege regel met alleen een dubbele punt: Jinja2 zoekt dan `naam` in een paar, en dat heeft geen naam.
 
 <details>
 <summary>Zo ziet je `templates/berichten.html` er nu uit</summary>

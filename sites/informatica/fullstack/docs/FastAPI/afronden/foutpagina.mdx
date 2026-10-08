@@ -217,7 +217,7 @@ Vervang tijdelijk `@app.exception_handler(404)` door `@app.exception_handler(Exc
 <details>
 <summary>Antwoord</summary>
 
-Je browser toont "Niet gevonden: er staat niets op /berichten", met status 404, terwijl die pagina wel bestaat. In je terminal staat de echte fout: `NameError: name 'alle_berichtn' is not defined`. Wie alleen naar de browser kijkt, zoekt een ontbrekende pagina en niet een tikfout.
+Je browser toont de kop "Niet gevonden" met "Er staat niets op /berichten." eronder, met status 404, terwijl die pagina wel bestaat. In je terminal staat de echte fout: `NameError: name 'alle_berichtn' is not defined`. Wie alleen naar de browser kijkt, zoekt een ontbrekende pagina en niet een tikfout.
 
 Probeer ook `/bestaat-niet`: daar staat weer `{"detail":"Not Found"}`. Een 404 is in FastAPI geen gewone fout in Python, dus een handler voor `Exception` vangt hem niet. Deze handler doet het precies verkeerd om.
 

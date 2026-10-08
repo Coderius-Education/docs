@@ -219,6 +219,13 @@ Beide pagina's laden hetzelfde bestand. Wat betekent dat als je dat ene bestand 
 
 Maak `static/css/style.css` en de `<link>` in `home.html` uit het voorbeeld, en kijk of je kop blauw is. Pas daarna de kleur aan en herlaad met Netwerk open. Staat er bij `style.css` een aantal bytes, of **(geheugencache)**? En welke kleur heeft je kop?
 
+<details>
+<summary>Antwoord</summary>
+
+Staat er een aantal bytes, dan haalde de browser het nieuwe bestand op, en is je kop in de nieuwe kleur. Staat er **(geheugencache)** of **(schijfcache)**, dan gebruikte hij zijn oude kopie, en kan je kop nog de oude kleur hebben. Wat je dan doet, staat onder Als je wijziging niet doorkomt.
+
+</details>
+
 ### Opdracht 3: Investigate - Ander pad
 
 Wat gebeurt er als je `app.mount("/static", ...)` verandert in `app.mount("/bestanden", ...)`? Laadt de CSS dan nog?
