@@ -13,6 +13,9 @@ const ROUTES_DIR = fileURLToPath(new URL('.', import.meta.url));
 function paginas(dir: string): string[] {
   const uit: string[] = [];
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    // Een route met parameter (/klas/[code]) bestaat pas na het bouwen en hoort
+    // niet in de sitemap.
+    if (entry.isDirectory() && entry.name.startsWith('[')) continue;
     if (entry.isDirectory()) uit.push(...paginas(join(dir, entry.name)));
     else if (entry.name === '+page.svelte') {
       const pad = relative(ROUTES_DIR, dir).split('\\').join('/');

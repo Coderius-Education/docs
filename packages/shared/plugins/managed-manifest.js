@@ -1,30 +1,12 @@
 const fs = require('node:fs/promises');
 const path = require('node:path');
-const { execFileSync } = require('node:child_process');
+const { buildCommit } = require('./build-commit');
 module.exports = function managedManifest(context, { settings }) {
   return {
     name: 'coderius-managed-settings',
     async postBuild({ outDir }) {
       const config = context.siteConfig;
-      let commit = process.env.GITHUB_SHA || null;
-      if (!commit) {
-        try {
-          commit = execFileSync('git', ['rev-parse', 'HEAD'], {
-            cwd: context.siteDir,
-            encoding: 'utf8',
-          }).trim();
-        } catch {}
-      }
-      let dirty = false;
-      try {
-        dirty = Boolean(
-          execFileSync('git', ['status', '--porcelain', '--untracked-files=no'], {
-            cwd: context.siteDir,
-            encoding: 'utf8',
-          }).trim(),
-        );
-      } catch {}
-      if (dirty) commit = null;
+      const { commit, dirty } = buildCommit(context.siteDir);
       const site = Object.fromEntries(
         ['title', 'tagline', 'favicon']
           .filter((k) => config[k] !== undefined)

@@ -5,6 +5,7 @@
 	import Footer from "$lib/components/Footer.svelte";
 	import Matomo from "$lib/components/Matomo.svelte";
 	import ThemeContext from "$lib/context/theme/ThemeContext.svelte";
+	import VakThema from "$lib/components/vakpagina/VakThema.svelte";
 
 	let { children } = $props();
 </script>
@@ -19,11 +20,18 @@
 			const systeem = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 			document.documentElement.className =
 				savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : systeem;
+			// Het vak van de host (zie vakVanHost in src/lib/vakken.ts), voor de
+			// kleuren van de vakpagina. Ook vóór de eerste render, anders flitsen ze.
+			const host = window.location.hostname.toLowerCase();
+			const vak = /^([a-z0-9-]+)\.(?:coderius\.nl|localtest\.me)$/.exec(host)?.[1] ||
+				/--([a-z0-9-]+)\.preview\.coderius\.nl$/.exec(host)?.[1];
+			if (vak) document.documentElement.dataset.vak = vak;
 		}
 	</script>
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
+<VakThema />
 <Matomo />
 <ThemeContext>
 	<div class="flex min-h-screen flex-col">

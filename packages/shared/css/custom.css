@@ -203,3 +203,36 @@
 .coderius-dialoog--gevaarlijk .coderius-dialoog__knop--hoofd:hover {
   background: var(--ifm-color-danger-dark);
 }
+
+/* Klassen (plugins/klas.js): sidebar verborgen tot de klas geladen is, en de
+   balk boven de les. */
+html[data-klas]:not([data-klas-klaar]) .theme-doc-sidebar-menu {
+  visibility: hidden;
+}
+
+.coderius-klasbalk {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  margin: 1rem var(--ifm-spacing-horizontal) 0;
+  padding: 0.5rem 1rem;
+  border-radius: var(--ifm-global-radius);
+  background: var(--ifm-color-emphasis-100);
+  font-size: 0.875rem;
+}
+
+.coderius-klasbalk button {
+  margin-left: auto;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-global-radius);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  padding: 0.125rem 0.75rem;
+  cursor: pointer;
+}
+
+.coderius-klasbalk button:hover {
+  background: var(--ifm-color-emphasis-200);
+}

@@ -21,6 +21,8 @@ const { CURSUSSEN } = require('../huisstijl');
 const { resolvePackageDir } = transpileShared;
 const { loadSettings, applySettings, deepMerge } = require('./managed-settings');
 const managedManifest = require('../plugins/managed-manifest');
+const sidebarManifest = require('../plugins/sidebar-manifest');
+const klasPlugin = require('../plugins/klas');
 
 /**
  * Welke site uit de registry bouwen we? De registry is de bron van waarheid
@@ -306,6 +308,10 @@ function createConfig(course = {}) {
     plugins: [
       ...(plugins || []),
       ...(managed ? [[managedManifest, { settings: managed }]] : []),
+      // Klassen (docs-management): hoofdstukkenlijst voor docenten, en de
+      // klasweergave in de sidebar voor leerlingen.
+      sidebarManifest,
+      klasPlugin,
       [transpileShared, { packages: sharedPackages }],
       mdxInspringing,
       cursussenRoute,
