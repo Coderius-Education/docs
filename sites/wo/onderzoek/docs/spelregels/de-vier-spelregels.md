@@ -36,11 +36,51 @@ Loop deze vragen na vóór je begint én vlak voor je je verslag inlevert:
 - [ ] Staat bij alles wat ik heb overgenomen een bronvermelding? *(transparant)*
 - [ ] Hebben mijn deelnemers vrijwillig en geïnformeerd meegedaan, en blijven ze anoniem? *(aanvaardbaar)*
 - [ ] Rapporteer ik ook de resultaten die me niet uitkomen? *(aanvaardbaar)*
+- [ ] Mag ik alles gebruiken wat ik heb overgenomen: is het een citaat, heeft het een open licentie, of heb ik toestemming? *(aanvaardbaar — [auteursrecht](./auteursrecht.md))*
 
 :::tip[Echt gebeurd]
-Bij elke spelregel vind je een kader **"Echt gebeurd"** met een beroemd onderzoek waar die spelregel het verschil maakte — van het paard dat leek te kunnen rekenen tot de zaak-Stapel. Ook de pagina’s over interne en externe validiteit hebben er een.
+Bij elke spelregel vind je een kader **"Echt gebeurd"** met een beroemd onderzoek waar die spelregel het verschil maakte — van het paard dat leek te kunnen rekenen tot de zaak-Stapel. Ook de pagina’s over interne en externe validiteit en over auteursrecht hebben er een.
 :::
+
+## Oefenen: welke spelregel?
+
+<Quiz
+  vragen={[
+    {
+      vraag: 'Je meet de temperatuur van je proefopstelling één keer en baseert je hele conclusie op die ene meting.',
+      opties: ['Betrouwbaar', 'Valide', 'Transparant', 'Aanvaardbaar'],
+      juist: 0,
+      uitleg: 'Eén meting kan door toeval afwijken. Wie het herhaalt, krijgt misschien iets anders: niet betrouwbaar.',
+    },
+    {
+      vraag: 'Je wilt weten hoe gestrest leerlingen zijn voor een toets, en vraagt: "Je bent toch ook gestrest voor toetsen?"',
+      opties: ['Betrouwbaar', 'Valide', 'Transparant', 'Aanvaardbaar'],
+      juist: 1,
+      uitleg: 'Een sturende vraag meet vooral wat jij verwacht, niet hoe gestrest leerlingen echt zijn: niet valide.',
+    },
+    {
+      vraag: 'In je verslag staat alleen: "Uit mijn enquête bleek dat de meeste leerlingen het eens zijn." Geen vragen, geen aantallen.',
+      opties: ['Betrouwbaar', 'Valide', 'Transparant', 'Aanvaardbaar'],
+      juist: 2,
+      uitleg: 'Niemand kan nagaan hoe je aan die conclusie komt: niet transparant.',
+    },
+    {
+      vraag: 'Je filmt klasgenoten in de kantine voor je observatie, zonder het ze te vertellen.',
+      opties: ['Betrouwbaar', 'Valide', 'Transparant', 'Aanvaardbaar'],
+      juist: 3,
+      uitleg: 'Zonder toestemming schend je hun privacy en hun portretrecht: niet aanvaardbaar.',
+    },
+    {
+      vraag: 'Twee meetwaarden passen niet in je verwachting. Je laat ze weg, want "het waren vast meetfouten".',
+      opties: ['Betrouwbaar', 'Valide', 'Transparant', 'Aanvaardbaar'],
+      juist: 3,
+      uitleg: 'Gegevens weglaten omdat ze je niet uitkomen, is je resultaten mooier maken: niet aanvaardbaar. Vermoed je echt een meetfout, meld dat dan in je verslag.',
+    },
+  ]}
+/>
 
 ## Verder lezen
 
 Validiteit heeft twee kanten — klopt je conclusie bínnen je onderzoek, en geldt die ook daarbuiten? Lees verder bij [interne validiteit](./interne-validiteit.md), [externe validiteit](./externe-validiteit.md) en [het spanningsveld tussen die twee](./intern-vs-extern.mdx).
+
+Neem je tekst, figuren of foto's van een ander over, dan speelt naast bronvermelding ook het [auteursrecht](./auteursrecht.md): niet alles wat je netjes vermeldt, mag je ook gebruiken.

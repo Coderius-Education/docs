@@ -20,7 +20,7 @@ Universiteiten betalen voor abonnementen op tijdschriften, zodat hun studenten e
 |---|---|
 | In [Google Scholar](./google-scholar.md) staat rechts naast de treffer een link **[PDF]** of **[HTML]** | Geen link rechts, en de titel leidt naar een pagina van de uitgever |
 | Op de pagina van het tijdschrift: **Open Access**, **Free access** of een open slotje | Een dicht slotje, of knoppen als *Buy article*, *Purchase PDF*, *Rent* of *Get access* |
-| Een **Creative Commons**-licentie (bijvoorbeeld *CC BY*) onder de titel of onderaan | Een prijs in euro's of dollars |
+| Een **Creative Commons**-licentie (bijvoorbeeld *CC BY*, zie [auteursrecht](../spelregels/auteursrecht.md)) onder de titel of onderaan | Een prijs in euro's of dollars |
 | In [Semantic Scholar](./semantic-scholar.md) een knop **PDF** of het label *Open access* | Alleen een knop naar de uitgever |
 
 ## Zo vind je toch een gratis versie
@@ -68,3 +68,4 @@ En gebruik geen sites die betaalde artikelen zonder toestemming verspreiden, zoa
 - [Peer review](./peer-review.md) — het verschil tussen een preprint en een gepubliceerde versie
 - [Abstract scannen](./abstract-scannen.md) — waarom een abstract niet genoeg is om op te bouwen
 - [Welke strategie wanneer?](./welke-strategie.mdx) — wat je doet als je vastloopt
+- [Auteursrecht](../spelregels/auteursrecht.md) — wat een Creative Commons-licentie je toestaat

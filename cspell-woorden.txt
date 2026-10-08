@@ -39,11 +39,13 @@ bronnenset
 browserextensie
 browsertab
 browsertabblad
+buitenpromovendus
 busdrukte
 bént
 canvaslayer
 cartesisch
 characterbody
+chatbots
 cheatsheet
 Cheatsheet
 cijferige
@@ -53,6 +55,7 @@ cloudpartij
 codeles
 coderius
 Coderius
+cognitiewetenschappers
 collisionshape
 commentarieert
 commitboodschap
@@ -171,6 +174,8 @@ knoppenrij
 knopstand
 Kortingschecker
 kortingschecker
+kuifmakaak
+kuifmakaken
 kénnen
 Labbeperking
 labtafel
@@ -218,6 +223,7 @@ móet
 nagedraaid
 nakijker
 nameerror
+Naruto
 navigatiemesh
 nepsite
 netwerksniffer
@@ -242,6 +248,7 @@ ontwikkelaarstools
 onvervalsbare
 opengameart
 openingstag
+Openverse
 padnaam
 pagerank
 pastebin
@@ -249,6 +256,7 @@ Pastebin
 pentest
 pentesters
 percipi
+PETA
 Pfungst
 Photopea
 photopea
@@ -276,6 +284,7 @@ preprintserver
 prescaler
 PRIMM
 printend
+probleemgestuurde
 programmeertaalconstructies
 projectpad
 précies
@@ -407,14 +416,19 @@ uitgeremd
 uitlogknop
 ultrasoonsensor
 Unpaywall
+vakstuk
 valregel
 vastgeprogrammeerd
+Veni
 vercijferingen
 versmaller
 Reactieheaders
 verdieper
 Verzoekheaders
+Vici
+Vidi
 Vigenere
+vijfentwintig
 vijfhonderd
 Vlamingh
 voedingspin

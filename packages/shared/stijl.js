@@ -116,6 +116,7 @@ const AFKORTINGEN = new Set([
   'OLED',
   'OSINT',
   'PATH',
+  'PETA',
   'RCWL',
   'README',
   'REPL',

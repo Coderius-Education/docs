@@ -7,7 +7,7 @@ sidebar_position: 5
 
 <Definitie gewoneTaal="binnen je onderzoek klopt de redenering: het verschil dat je meet komt echt door wat jij veranderde.">
 
-Een onderzoek is **intern valide** als de uitkomst echt komt door wat jij onderzocht — en niet door iets anders dat stiekem meespeelde. Zo'n "iets anders" heet een **storende variabele**.
+Een onderzoek is **intern valide** als de uitkomst echt komt door wat jij onderzocht — en niet door iets anders dat stiekem meespeelde. Zo'n "iets anders" heet een <B t="storende-variabele" tekst="storende variabele"/>.
 
 </Definitie>
 
@@ -18,12 +18,12 @@ Je wilt weten of leerlingen beter scoren op een toets als ze met muziek leren. G
 ## Zo verhoog je de interne validiteit
 
 - **Houd alles gelijk behalve wat je onderzoekt.** Zelfde tijdstip, zelfde toets, zelfde omstandigheden — alleen de muziek verschilt.
-- **Gebruik een controlegroep.** Een groep die de "behandeling" niet krijgt, zodat je iets hebt om mee te vergelijken.
+- **Gebruik een <B t="controlegroep" tekst="controlegroep"/>.** Een groep die de "behandeling" niet krijgt, zodat je iets hebt om mee te vergelijken.
 - **Verdeel deelnemers willekeurig over de groepen.** Laat je leerlingen zelf kiezen, dan kiezen muziekliefhebbers massaal voor de muziekgroep — en meet je misschien hún eigenschappen in plaats van het effect van muziek.
 - **Meet in elke groep op precies dezelfde manier.** Stel je de muziekgroep andere vragen, of beoordeel je hun toets milder omdat je op een effect hoopt, dan kan dát het verschil verklaren.
 
 :::caution[Samenhang is nog geen oorzaak]
-Dat twee dingen samen voorkomen, bewijst niet dat het één het ander veroorzaakt. Leerlingen die ontbijten halen hogere cijfers — maar komt dat door het ontbijt, of doordat achter ontbijt én cijfers dezelfde factor zit (bijvoorbeeld een gestructureerd thuisleven)? Een intern valide onderzoek sluit zulke alternatieve verklaringen zo veel mogelijk uit.
+Dat twee dingen samen voorkomen, bewijst niet dat het één het ander veroorzaakt. Stel dat leerlingen die ontbijten hogere cijfers halen. Komt dat dan door het ontbijt, of doordat achter ontbijt én cijfers dezelfde factor zit (bijvoorbeeld een gestructureerd thuisleven)? Een intern valide onderzoek sluit zulke alternatieve verklaringen zo veel mogelijk uit.
 :::
 
 <WelNiet
