@@ -44,6 +44,18 @@
   margin-bottom: 0.5rem;
 }
 
+/* De kop: de titel vet, de onderwerpen erachter gewoon, zodat je ze leest
+   als een zin en niet als een tweede kop. */
+.onderwerpen {
+  font-weight: 400;
+}
+
+.hint {
+  margin: 0 0 0.25rem;
+  font-size: 0.9rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
 .voorkennis ul {
   margin: 0;
   padding-left: 1.25rem;
