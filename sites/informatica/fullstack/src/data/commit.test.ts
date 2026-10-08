@@ -1,5 +1,6 @@
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { alleLesbestanden } from '@coderius/shared/voorkennis';
 import { describe, expect, it } from 'vitest';
 
 // database.mdx zei dat een wijziging zonder commit() weg is "als het programma
@@ -14,8 +15,8 @@ const LESSEN = fileURLToPath(new URL('../../docs/FastAPI', import.meta.url));
 describe('wat commit() doet', () => {
   it('geen alinea over commit zegt dat de data pas bij stoppen of herstarten weg is', () => {
     const fout: string[] = [];
-    for (const bestand of readdirSync(LESSEN).filter((f) => f.endsWith('.mdx'))) {
-      const tekst = readFileSync(`${LESSEN}/${bestand}`, 'utf8').replace(/```[\s\S]*?```/g, '');
+    for (const bestand of alleLesbestanden(LESSEN)) {
+      const tekst = readFileSync(bestand, 'utf8').replace(/```[\s\S]*?```/g, '');
       for (const alinea of tekst.split(/\n\s*\n/)) {
         if (!alinea.includes('commit')) continue;
         for (const zin of alinea.split(/(?<=[.?!])\s+/)) {

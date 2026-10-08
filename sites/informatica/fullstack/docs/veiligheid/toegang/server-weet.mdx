@@ -44,7 +44,7 @@ async def bericht_verwijderen(sleutel: str, naam: str = ""):
     return {"bericht": "Verwijderd"}
 ```
 
-`naam` is een query-parameter, zoals in [GET vs POST](/docs/FastAPI/get_vs_post):
+`naam` is een query-parameter, zoals in [GET vs POST](/docs/FastAPI/formulieren/get_vs_post):
 de knop zou `/bericht/…?naam=Alex` versturen. Gooi `gastenboek.db`,
 `sessies.db` en `gebruikers.db` weg en draai `test_verwijderen.py` uit
 [les 1](./zwakheid). Alex stuurt geen naam mee en krijgt netjes `403`. Verander
@@ -82,13 +82,13 @@ if bericht is None or bericht["naam"] != mijn.get("naam"):
     raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
 ```
 
-Meer uitleg over wat je van een bezoeker kunt geloven: [Server of browser?](/docs/FastAPI/server-of-browser)
+Meer uitleg over wat je van een bezoeker kunt geloven: [Server of browser?](/docs/FastAPI/in-de-browser/server-of-browser)
 
 ## Opdrachten
 
 ### Opdracht 1: Predict - De naam uit een cookie
 
-In [Onthouden met een cookie](/docs/FastAPI/cookies) zette je de naam van de
+In [Onthouden met een cookie](/docs/FastAPI/onthouden/cookies) zette je de naam van de
 bezoeker in een cookie. Stel dat de controle vergelijkt met die cookie in plaats
 van met de sessie:
 

@@ -1,0 +1,424 @@
+# Doorsturen na opslaan (redirect)
+
+Je gastenboek werkt, maar na het versturen van een bericht sta je op een doodlopende pagina. Druk je daar op F5, dan vraagt je browser of je het formulier nog een keer wilt versturen. Zeg je ja, dan staat hetzelfde bericht twee keer in je database. Daarom stuur je de bezoeker na het opslaan terug naar de lijst.
+
+## RedirectResponse
+
+Met `RedirectResponse` stuur je de browser door naar een andere URL. Zet `RedirectResponse` bij je imports:
+
+```python
+from fastapi.responses import RedirectResponse
+```
+
+Vervang dan je POST-endpoint `/gastenboek` uit [Een formulier opslaan](/docs/FastAPI/gastenboek/post_naar_database). Alleen de laatste regel verandert:
+
+<CodeUitleg>
+
+{/* route-dubbel: vervangt POST /gastenboek uit Een formulier opslaan */}
+```python showLineNumbers
+@app.post("/gastenboek")
+async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        sleutel = f"bericht_{time.time_ns()}"
+        db[sleutel] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    return RedirectResponse(url="/berichten", status_code=303)
+```
+
+<Regel n={3} tot={6}>
+Het opslaan is hetzelfde als in [Een formulier opslaan](/docs/FastAPI/gastenboek/post_naar_database): een eigen sleutel per bericht, met `import time` bovenaan je bestand.
+</Regel>
+
+<Regel n={7}>
+Het endpoint geeft nu geen pagina terug, maar een opdracht aan de browser: ga naar `/berichten`. De browser doet dat meteen, en de bezoeker ziet zijn eigen bericht onderaan de lijst verschijnen.
+</Regel>
+
+</CodeUitleg>
+
+## Waarom 303
+
+Zonder `status_code=303` werkt het niet. `RedirectResponse` stuurt standaard een 307, en 307 betekent: doe hetzelfde verzoek nog een keer op de nieuwe URL. Jouw verzoek was een POST, dus de browser stuurt een POST naar `/berichten`. Dat endpoint is een `@app.get`, dus je krijgt **405 Method Not Allowed**.
+
+Een 303 zegt wél wat je bedoelt: ga naar die URL met een GET.
+
+Eerst een POST en dan doorsturen naar een GET: dat heet het **post/redirect/get**-patroon. Bijna elke website die je gebruikt doet dit na een formulier.
+
+## Verwijderen en terug
+
+Met verwijderen gaat het net zo: een formulier met een POST, en daarna terug naar de lijst. Om één bericht aan te wijzen heb je zijn sleutel nodig. Stuur de berichten daarom mét hun sleutel naar de template: vervang in je endpoint `/berichten` de `db.values()` door `db.items()`. Het endpoint voor verwijderen zet je eronder:
+
+<CodeUitleg>
+
+{/* route-dubbel: vervangt GET /berichten uit Alles tonen, nu met db.items() */}
+```python showLineNumbers
+@app.get("/berichten")
+async def berichten(request: Request):
+    with SqliteDict("gastenboek.db") as db:
+        alle_berichten = list(db.items())
+    return templates.TemplateResponse(
+        request,
+        "berichten.html",
+        {"berichten": alle_berichten}
+    )
+
+@app.post("/verwijderen")
+async def verwijderen(sleutel: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        if sleutel in db:
+            del db[sleutel]
+            db.commit()
+    return RedirectResponse(url="/berichten", status_code=303)
+```
+
+<Regel n={4}>
+`db.items()` geeft paren: eerst de sleutel, dan het bericht.
+</Regel>
+
+<Regel n={14} tot={16}>
+`del db[sleutel]` haalt het bericht weg. De `if sleutel in db` voorkomt een crash als iemand twee keer op verwijderen klikt.
+</Regel>
+
+<Regel n={17}>
+Daarna stuur je de bezoeker terug naar de lijst, met 303, zoals na het opslaan.
+</Regel>
+
+</CodeUitleg>
+
+In `templates/berichten.html` loop je nu over twee dingen tegelijk, en krijgt elk bericht een eigen formuliertje. Vervang de for-lus binnen de `<ul>` door deze:
+
+```html
+{% for sleutel, bericht in berichten %}
+    <li>
+        {{ bericht.naam }}: {{ bericht.bericht }}
+        <form method="post" action="/verwijderen">
+            <input type="hidden" name="sleutel" value="{{ sleutel }}">
+            <button type="submit">Verwijderen</button>
+        </form>
+    </li>
+{% endfor %}
+```
+
+Een `<input type="hidden">` ziet de bezoeker niet, maar hij gaat wel mee met het formulier. Zo weet `/verwijderen` welk bericht weg moet.
+
+<details>
+<summary>Zo ziet je `templates/berichten.html` er nu uit</summary>
+
+Het `{% if %}`-blok uit [Alles tonen: een for-lus in je template](/docs/FastAPI/gastenboek/lijst_tonen) blijft staan; alleen de lus binnen de `<ul>` is nieuw.
+
+```html
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Gastenboek</title>
+        <link rel="stylesheet" href="/static/css/style.css">
+    </head>
+    <body>
+        <h1>Gastenboek</h1>
+
+        {% if berichten %}
+            <ul>
+                {% for sleutel, bericht in berichten %}
+                    <li>
+                        {{ bericht.naam }}: {{ bericht.bericht }}
+                        <form method="post" action="/verwijderen">
+                            <input type="hidden" name="sleutel" value="{{ sleutel }}">
+                            <button type="submit">Verwijderen</button>
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Nog geen berichten. Wees de eerste.</p>
+        {% endif %}
+
+        <a href="/gastenboek">Nieuw bericht</a>
+    </body>
+</html>
+```
+
+</details>
+
+## Testen
+
+1. Vul het gastenboek in en klik Verstuur
+2. Je belandt op `/berichten` en ziet je eigen bericht staan
+3. Druk op F5. De pagina herlaadt, zonder vraag over opnieuw versturen
+4. Klik bij een bericht op Verwijderen. Je blijft op de lijst, en het bericht is weg
+
+:::danger[Gaat er iets mis?]
+Krijg je **405 Method Not Allowed** meteen na het versturen? Dan mist `status_code=303`. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
+:::
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+```python
+import random
+import time
+
+from fastapi import FastAPI, Form, Request
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
+
+@app.get("/")
+async def home():
+    return FileResponse("static/pages/home.html")
+
+@app.get("/info")
+async def info():
+    return {"naam": "Jouw Naam", "leeftijd": 16}
+
+@app.get("/pagina", response_class=HTMLResponse)
+async def pagina():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Mijn Pagina</title>
+        </head>
+        <body>
+            <h1>Hallo!</h1>
+            <p>Dit is mijn eerste HTML pagina.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/styled", response_class=HTMLResponse)
+async def styled():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Met CSS</title>
+            <style>
+                h1 { color: blue; }
+                p { color: gray; }
+            </style>
+        </head>
+        <body>
+            <h1>Gestylede pagina</h1>
+            <p>Deze tekst is grijs.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/about")
+async def about():
+    return FileResponse("static/pages/about.html")
+
+@app.get("/foto")
+async def foto():
+    return FileResponse("static/pages/foto.html")
+
+@app.get("/dobbelsteen")
+async def dobbelsteen(request: Request):
+    worp = random.randint(1, 6)
+    return templates.TemplateResponse(
+        request,
+        "dobbelsteen.html",
+        {"worp": worp}
+    )
+
+@app.get("/zoek")
+async def zoek(term: str):
+    return {"je_zocht": term}
+
+@app.get("/naam")
+async def toon_formulier():
+    return FileResponse("static/pages/naam_form.html")
+
+@app.post("/verstuur")
+async def ontvang_naam(naam: str = Form(...)):
+    print(f"Naam ontvangen: {naam}")
+    return {"bericht": f"Hallo {naam}!"}
+
+@app.get("/groet")
+async def groet_form():
+    return FileResponse("static/pages/groet_form.html")
+
+@app.post("/groet")
+async def groet_verwerk(request: Request, naam: str = Form(...)):
+    return templates.TemplateResponse(
+        request,
+        "groet_resultaat.html",
+        {"naam": naam}
+    )
+
+@app.get("/opslaan")
+async def naam_formulier():
+    return FileResponse("static/pages/naam_opslaan.html")
+
+@app.post("/opslaan")
+async def naam_opslaan(naam: str = Form(...)):
+    with SqliteDict("namen.db") as db:
+        db["laatste_naam"] = naam
+        db.commit()
+
+    return {"bericht": f"'{naam}' opgeslagen!"}
+
+@app.get("/toon_naam")
+async def toon_naam():
+    with SqliteDict("namen.db") as db:
+        naam = db.get("laatste_naam", "Nog niets opgeslagen")
+    return {"naam": naam}
+
+@app.get("/gastenboek")
+async def gastenboek_form():
+    return FileResponse("static/pages/gastenboek_form.html")
+
+@app.post("/gastenboek")
+async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        sleutel = f"bericht_{time.time_ns()}"
+        db[sleutel] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    return RedirectResponse(url="/berichten", status_code=303)
+
+@app.get("/berichten")
+async def berichten(request: Request):
+    with SqliteDict("gastenboek.db") as db:
+        alle_berichten = list(db.items())
+    return templates.TemplateResponse(
+        request,
+        "berichten.html",
+        {"berichten": alle_berichten}
+    )
+
+@app.post("/verwijderen")
+async def verwijderen(sleutel: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        if sleutel in db:
+            del db[sleutel]
+            db.commit()
+    return RedirectResponse(url="/berichten", status_code=303)
+```
+
+</details>
+
+## Opdrachten
+
+### Opdracht 1: Predict - Waar kom je uit?
+
+{/* route-dubbel: voorspelvraag, met eigen paden zodat uitproberen niet botst met het project */}
+```python
+@app.post("/inschrijven")
+async def inschrijven(naam: str = Form(...)):
+    return RedirectResponse(url="/bedankt", status_code=303)
+
+@app.get("/bedankt")
+async def bedankt():
+    return {"bericht": "Bedankt"}
+```
+
+**Vraag:** welke URL staat er in de adresbalk nadat je het formulier hebt verstuurd?
+
+<details>
+<summary>Tip</summary>
+
+Een redirect verandert niet alleen wat je ziet, maar ook wat er in de adresbalk staat.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`/bedankt`. De browser volgt de redirect en vraagt die pagina op alsof je er zelf naartoe was gegaan. Van `/inschrijven` zie je niets terug.
+
+</details>
+
+### Opdracht 2: Run
+
+Pas je `/gastenboek` POST-endpoint aan zodat het doorstuurt naar `/berichten`. Verstuur een bericht en kijk of je op de lijst uitkomt.
+
+### Opdracht 3: Investigate - Zonder 303
+
+Haal `status_code=303` weg en verstuur nog een keer.
+
+<details>
+<summary>Antwoord</summary>
+
+Je krijgt **405 Method Not Allowed**. Zonder dat getal stuurt FastAPI een 307, en dan herhaalt de browser je POST op `/berichten`. Daar staat alleen een `@app.get`, dus het antwoord is: dit endpoint doet geen POST. Je bericht is wel opgeslagen; alleen het doorsturen ging mis. Ga je terug en verstuur je hetzelfde formulier nog een keer, dan staat het er twee keer in.
+
+</details>
+
+### Opdracht 4: Make - Annuleren
+
+Maak een endpoint `/annuleren` dat niets opslaat en de bezoeker direct terugstuurt naar de lijst op `/berichten`. Zet er een link naartoe op je gastenboekformulier.
+
+<details>
+<summary>Tip</summary>
+
+Een bezoeker komt hier via een gewone link, dus het is een `@app.get`. Een redirect vanuit een GET heeft geen 303 nodig.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+@app.get("/annuleren")
+async def annuleren():
+    return RedirectResponse(url="/berichten")
+```
+
+In `static/pages/gastenboek_form.html`, onder het formulier:
+```html
+<a href="/annuleren">Annuleren</a>
+```
+
+Hier mag de standaard 307 blijven staan: het oorspronkelijke verzoek was al een GET, dus het herhalen daarvan levert precies op wat je wilt.
+
+</details>
+
+### Opdracht 5: Make - Een melding na verwijderen
+
+Laat na het verwijderen bovenaan de lijst "Bericht verwijderd" zien. Bij een bezoek aan `/berichten` zonder verwijderen staat die zin er niet.
+
+<details>
+<summary>Tip</summary>
+
+Stuur door naar `/berichten?verwijderd=1`. Het stuk na het vraagteken kun je in het endpoint uitlezen, zoals in [GET vs POST](/docs/FastAPI/formulieren/get_vs_post). Geef het een standaardwaarde, zodat `/berichten` zonder vraagteken ook werkt, en gebruik `{% if %}` in de template.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+@app.get("/berichten")
+async def berichten(request: Request, verwijderd: int = 0):
+    with SqliteDict("gastenboek.db") as db:
+        alle_berichten = list(db.items())
+    return templates.TemplateResponse(
+        request,
+        "berichten.html",
+        {"berichten": alle_berichten, "verwijderd": verwijderd}
+    )
+
+@app.post("/verwijderen")
+async def verwijderen(sleutel: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        if sleutel in db:
+            del db[sleutel]
+            db.commit()
+    return RedirectResponse(url="/berichten?verwijderd=1", status_code=303)
+```
+
+Bovenaan `templates/berichten.html`:
+```html
+{% if verwijderd %}
+    <p>Bericht verwijderd</p>
+{% endif %}
+```
+
+Zonder `?verwijderd=1` in de URL is `verwijderd` gelijk aan 0, en 0 telt in een `{% if %}` als niet waar, net als een lege lijst.
+
+</details>

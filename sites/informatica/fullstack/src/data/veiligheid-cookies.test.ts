@@ -54,7 +54,7 @@ describe('de reeks Cookies afschermen', () => {
   });
 
   it('Cookie of sessie? logt uit met een formulier dat post', () => {
-    const tekst = readFileSync(join(DOCS, 'FastAPI/cookie-of-sessie.mdx'), 'utf8');
+    const tekst = readFileSync(join(DOCS, 'FastAPI/onthouden/cookie-of-sessie.mdx'), 'utf8');
     expect(tekst).toContain('@app.post("/uitloggen")');
     expect(tekst).toContain('<form method="post" action="/uitloggen">');
   });

@@ -11,8 +11,11 @@ export const ZINNEN: Record<string, string> = {
   "HTML-pagina's": "Je server stuurt echte pagina's, met links, een stylesheet en afbeeldingen.",
   'Templates en formulieren':
     'Een pagina vult zich met waarden uit Python, en je server beantwoordt een formulier.',
-  'Gegevens opslaan en tonen':
-    'Berichten blijven bewaard en staan in een lijst, elk met een eigen pagina, en wie schrijft, heeft een account.',
+  'Gegevens opslaan (SqliteDict)':
+    'Een script bewaart gegevens in een bestand, zodat ze er na het afsluiten nog zijn.',
+  'Opslaan en tonen in je server':
+    'Berichten blijven bewaard en staan in een lijst, elk met een eigen pagina.',
+  Accounts: 'Wie schrijft, heeft een account met een naam en een wachtwoord.',
   // FastAPI: de uitbreidingen en de afronding
   'Uitbreiding: zonder herladen (htmx)':
     'Een knop of formulier praat met de server terwijl de pagina blijft staan.',
@@ -41,7 +44,6 @@ export const ZINNEN: Record<string, string> = {
 
 // Een mijlpaal staat onder een etappe: hier heb je iets wat werkt.
 export const MIJLPALEN: Record<string, string> = {
-  'Gegevens opslaan en tonen':
-    'Hier werkt je gastenboek. Wat hierna komt, maakt het mooier, maar is niet nodig.',
+  Accounts: 'Hier werkt je gastenboek. Wat hierna komt, maakt het mooier, maar is niet nodig.',
   'Beveilig je eigen project': 'Hier is je gastenboek beschermd.',
 };

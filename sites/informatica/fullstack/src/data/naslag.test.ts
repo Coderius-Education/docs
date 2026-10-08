@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { alleLesbestanden } from '@coderius/shared/voorkennis';
 import { describe, expect, it } from 'vitest';
@@ -63,13 +63,13 @@ describe('naslag en gereedschap', () => {
   });
 
   it('de filters in Netwerk heten zoals in een Nederlandse Chrome', () => {
-    const tekst = lees(`${SITE}/docs/FastAPI/devtools-netwerk.mdx`);
+    const tekst = lees(`${SITE}/docs/FastAPI/eerste-server/devtools-netwerk.mdx`);
     expect(tekst).not.toMatch(/Fetch\/XHR, Doc, CSS, JS/);
     expect(tekst).toContain('Document (Doc)');
   });
 
   it('de les die de eerste terminalregel belooft, legt de favicon-404 uit', () => {
-    const tekst = lees(`${SITE}/docs/FastAPI/devtools-netwerk.mdx`);
+    const tekst = lees(`${SITE}/docs/FastAPI/eerste-server/devtools-netwerk.mdx`);
     expect(tekst).toContain('GET /favicon.ico HTTP/1.1" 404\n');
   });
 
@@ -196,9 +196,8 @@ describe('Er gaat iets mis', () => {
   });
 
   it('elke import uit de lessen staat in de importlijst', () => {
-    const lesTekst = readdirSync(`${DOCS}/FastAPI`)
-      .filter((f) => f.endsWith('.mdx'))
-      .map((f) => lees(`${DOCS}/FastAPI/${f}`))
+    const lesTekst = alleLesbestanden(`${DOCS}/FastAPI`)
+      .map((f) => lees(f))
       .join('\n');
     const inLessen = new Set<string>();
     const pythonCode = [...lesTekst.matchAll(/```python[^\n]*\n([\s\S]*?)```/g)]

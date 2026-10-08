@@ -1,6 +1,7 @@
 import { createRequire } from 'node:module';
 import { createConfig } from '@coderius/shared/config';
 import { REPO_URL, repoEditUrl } from '@coderius/shared/sites';
+import { omleidingen } from './src/data/omleidingen';
 
 // <Routekaart> leest de sidebar met useDocsSidebar() uit
 // '@docusaurus/plugin-content-docs/client'. pnpm heeft meerdere kopieën van dat
@@ -32,16 +33,11 @@ export default createConfig({
     'Leer een back-end bouwen met FastAPI (Python). Van frontend naar database, direct in je browser.',
   keywords: 'fastapi leren, fullstack python, backend leren beginners, sqlite database python',
 
-  // @coderius/checker levert de gedeelde 'nakijken'-validator (TSX-bron).
-  omleidingen: [
-    // De eindopdracht Jouw eigen project is uit de cursus gehaald; het oude
-    // adres komt uit bij het eind van de basis.
-    { van: '/docs/FastAPI/jouw-project', naar: '/docs/FastAPI/verzoek-get' },
-    // Het diagram van één formulier staat sinds de herindeling op dezelfde
-    // pagina als dat van één klik.
-    { van: '/docs/FastAPI/verzoek-post', naar: '/docs/FastAPI/verzoek-get#een-formulier' },
-  ],
+  // Oude adressen van verhuisde lessen sturen door; de lijst en de reden staan
+  // in src/data/omleidingen.ts.
+  omleidingen,
 
+  // @coderius/checker levert de gedeelde 'nakijken'-validator (TSX-bron).
   sharedPackages: ['@coderius/shared', '@coderius/checker'],
 
   plugins: [eenDocsClient],

@@ -44,24 +44,21 @@ function alleDocs(map: string): string[] {
 }
 
 describe('accounts in de basis', () => {
-  it('Registreren en Inloggen staan in Gegevens opslaan en tonen, na Eén item tonen', () => {
-    const categorie = zijbalk.find(
-      (i): i is Exclude<Item, string> =>
-        typeof i !== 'string' && i.label === 'Gegevens opslaan en tonen',
-    );
-    const items = plat(categorie?.items ?? []);
-    const plek = items.indexOf('FastAPI/detailpagina');
-    expect(items.slice(plek, plek + 3)).toEqual([
-      'FastAPI/detailpagina',
-      'FastAPI/registreren',
-      'FastAPI/inloggen',
+  it('Registreren en Inloggen zijn de categorie Accounts, direct na Opslaan en tonen in je server', () => {
+    const labels = zijbalk.map((i) => (typeof i === 'string' ? i : i.label));
+    const plek = labels.indexOf('Accounts');
+    expect(labels[plek - 1]).toBe('Opslaan en tonen in je server');
+    const categorie = zijbalk[plek] as Exclude<Item, string>;
+    expect(plat(categorie.items)).toEqual([
+      'FastAPI/accounts/registreren',
+      'FastAPI/accounts/inloggen',
     ]);
   });
 
   it('beide lessen hebben het hele main.py, met de nieuwe endpoints', () => {
     for (const [id, kop] of [
-      ['FastAPI/registreren', '@app.post("/registreer")'],
-      ['FastAPI/inloggen', 'wachtwoord: str = Form(...)'],
+      ['FastAPI/accounts/registreren', '@app.post("/registreer")'],
+      ['FastAPI/accounts/inloggen', 'wachtwoord: str = Form(...)'],
     ]) {
       const stand = tekst(id).match(
         /<summary>Zo ziet je `main\.py` er nu uit<\/summary>[\s\S]*?```python\n([\s\S]*?)```/,
@@ -72,7 +69,7 @@ describe('accounts in de basis', () => {
   });
 
   it('het wachtwoordveld is een type="password" met de naam van de parameter', () => {
-    for (const id of ['FastAPI/registreren', 'FastAPI/inloggen']) {
+    for (const id of ['FastAPI/accounts/registreren', 'FastAPI/accounts/inloggen']) {
       const html = blokken(hoofdtekst(id), 'html').join('\n');
       expect(html, id).toContain('<input type="password" name="wachtwoord"');
     }
@@ -93,7 +90,7 @@ describe('elke registratie weigert een naam die al bestaat', () => {
   );
 
   it('vindt de versies, ook in de basis', () => {
-    expect(versies.some((v) => v.pad === 'FastAPI/registreren.mdx')).toBe(true);
+    expect(versies.some((v) => v.pad === 'FastAPI/accounts/registreren.mdx')).toBe(true);
   });
 
   it.each(versies.map((v, i) => [`${v.pad} #${i}`, v.stuk]))('%s', (_, stuk) => {
@@ -106,7 +103,7 @@ describe('elke registratie weigert een naam die al bestaat', () => {
 // /gastenboek (het htmx-recept, Cookies, Sessies) liet de controle anders
 // stil vallen, en dan kon iedereen weer onder elke naam schrijven.
 describe('na Inloggen heeft elk bericht een wachtwoord of een sessie nodig', () => {
-  const vanaf = lessen.slice(lessen.indexOf('FastAPI/inloggen'));
+  const vanaf = lessen.slice(lessen.indexOf('FastAPI/accounts/inloggen'));
   const versies = vanaf.flatMap((id) =>
     blokken(tekst(id), 'python')
       .filter((b) => b.includes('@app.post("/gastenboek")'))
@@ -116,13 +113,13 @@ describe('na Inloggen heeft elk bericht een wachtwoord of een sessie nodig', () 
   const opslaan = (stuk: string) => stuk.indexOf('SqliteDict("gastenboek.db")');
 
   it('vindt de lessen en de versies, ook in de uitbreidingen', () => {
-    expect(vanaf[0]).toBe('FastAPI/inloggen');
+    expect(vanaf[0]).toBe('FastAPI/accounts/inloggen');
     expect(versies.map((v) => v.id)).toEqual(
       expect.arrayContaining([
-        'FastAPI/inloggen',
-        'FastAPI/htmx-overzicht',
-        'FastAPI/cookies',
-        'FastAPI/sessies',
+        'FastAPI/accounts/inloggen',
+        'FastAPI/zonder-herladen/htmx-overzicht',
+        'FastAPI/onthouden/cookies',
+        'FastAPI/onthouden/sessies',
       ]),
     );
   });
@@ -141,7 +138,7 @@ describe('na Inloggen heeft elk bericht een wachtwoord of een sessie nodig', () 
 
   it('vanaf Sessies komt de naam bij een bericht uit de sessie, niet uit het formulier', () => {
     const naSessies = versies.filter(
-      ({ id }) => lessen.indexOf(id) >= lessen.indexOf('FastAPI/sessies'),
+      ({ id }) => lessen.indexOf(id) >= lessen.indexOf('FastAPI/onthouden/sessies'),
     );
     expect(naSessies.length).toBeGreaterThan(0);
     for (const { id, stuk } of naSessies) {
@@ -151,7 +148,7 @@ describe('na Inloggen heeft elk bericht een wachtwoord of een sessie nodig', () 
   });
 
   it('Sessies maakt de sessie in /inloggen, pas nadat het wachtwoord klopt', () => {
-    const code = blokken(hoofdtekst('FastAPI/sessies'), 'python').join('\n');
+    const code = blokken(hoofdtekst('FastAPI/onthouden/sessies'), 'python').join('\n');
     const inloggen = endpoint(code, '@app.post("/inloggen")');
     expect(inloggen).toContain('gebruikers.get(naam)');
     expect(inloggen.indexOf('secrets.token_hex(16)')).toBeGreaterThan(
@@ -162,7 +159,7 @@ describe('na Inloggen heeft elk bericht een wachtwoord of een sessie nodig', () 
   });
 
   it('een onbekende naam en een fout wachtwoord krijgen één melding', () => {
-    const code = blokken(hoofdtekst('FastAPI/inloggen'), 'python').join('\n');
+    const code = blokken(hoofdtekst('FastAPI/accounts/inloggen'), 'python').join('\n');
     expect(code).toContain('detail="Naam of wachtwoord klopt niet"');
     expect(code).not.toMatch(/bestaat niet|Fout wachtwoord/);
   });
@@ -170,18 +167,19 @@ describe('na Inloggen heeft elk bericht een wachtwoord of een sessie nodig', () 
 
 describe('de lessen zeggen eerlijk wat nog niet veilig is', () => {
   it('Registreren waarschuwt dat het wachtwoord leesbaar in gebruikers.db staat', () => {
-    const les = hoofdtekst('FastAPI/registreren');
+    const les = hoofdtekst('FastAPI/accounts/registreren');
     expect(les).toContain(':::caution[Nog niet veilig]');
     expect(les).toContain('](/docs/veiligheid/wachtwoorden/gewone-tekst)');
     expect(les).toContain('sara = welkom123');
   });
 
   it('Inloggen noemt wat nog niet af is, en zegt bij elke vooruitwijzing dat het later komt', () => {
-    const deel = hoofdtekst('FastAPI/inloggen').split('\n## Wat nog niet af is\n')[1] ?? '';
+    const deel =
+      hoofdtekst('FastAPI/accounts/inloggen').split('\n## Wat nog niet af is\n')[1] ?? '';
     const punten = deel.split(/\n## /)[0].split('\n- ').slice(1);
     expect(punten.length).toBe(3);
     for (const doel of [
-      '/docs/FastAPI/sessies',
+      '/docs/FastAPI/onthouden/sessies',
       '/docs/veiligheid/wachtwoorden/gewone-tekst',
       '/docs/veiligheid/toegang/zwakheid',
     ]) {
@@ -211,5 +209,7 @@ describe('de startpagina en de naslag kennen de accounts', () => {
 });
 
 it('de lessen van de basis staan vóór de uitbreidingen', () => {
-  expect(lessen.indexOf('FastAPI/inloggen')).toBeLessThan(lessen.indexOf('FastAPI/htmx'));
+  expect(lessen.indexOf('FastAPI/accounts/inloggen')).toBeLessThan(
+    lessen.indexOf('FastAPI/zonder-herladen/htmx'),
+  );
 });

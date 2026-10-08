@@ -19,7 +19,7 @@ type Item = string | { type: string; label: string; items: Item[] };
 const plat = (items: Item[]): string[] =>
   items.flatMap((i) => (typeof i === 'string' ? [i] : plat(i.items)));
 const zijbalk = sidebars.apiSidebar as unknown as Item[];
-const les = () => readFileSync(`${DOCS}/FastAPI/foutpagina.mdx`, 'utf8');
+const les = () => readFileSync(`${DOCS}/FastAPI/afronden/foutpagina.mdx`, 'utf8');
 const hoofdtekst = () => les().split(/\n## Opdrachten\n/)[0];
 const python = (bron: string) =>
   [...bron.matchAll(/```python[^\n]*\n([\s\S]*?)```/g)].map((m) => m[1]);
@@ -37,9 +37,11 @@ describe('een eigen 404-pagina', () => {
     const afronden = zijbalk.find(
       (i): i is Exclude<Item, string> => typeof i !== 'string' && i.label === 'Afronden',
     );
-    expect(plat(afronden?.items ?? [])[0]).toBe('FastAPI/foutpagina');
+    expect(plat(afronden?.items ?? [])[0]).toBe('FastAPI/afronden/foutpagina');
     const lessen = plat(zijbalk);
-    expect(lessen.indexOf('FastAPI/foutpagina')).toBeGreaterThan(lessen.indexOf('FastAPI/sessies'));
+    expect(lessen.indexOf('FastAPI/afronden/foutpagina')).toBeGreaterThan(
+      lessen.indexOf('FastAPI/onthouden/sessies'),
+    );
   });
 
   it('zet de drie manieren naast elkaar', () => {
@@ -89,6 +91,6 @@ describe('een eigen 404-pagina', () => {
       '<summary>Hoe maak ik een eigen 404-pagina? (exception_handler)</summary>',
     );
     const fouten = readFileSync(`${DOCS}/troubleshooting.md`, 'utf8');
-    expect(fouten).toContain('(/docs/FastAPI/foutpagina)');
+    expect(fouten).toContain('(/docs/FastAPI/afronden/foutpagina)');
   });
 });

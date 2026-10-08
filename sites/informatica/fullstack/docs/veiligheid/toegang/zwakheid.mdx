@@ -12,7 +12,7 @@ description: Een knop is geen slot. Een tweede bezoeker verwijdert met een los s
 />
 
 In je gastenboek staat bij een bericht een knop Verwijderen. Heb je
-[opdracht 4 van Sessies](/docs/FastAPI/sessies#opdracht-4-make---alleen-je-eigen-berichten-verwijderen)
+[opdracht 4 van Sessies](/docs/FastAPI/onthouden/sessies#opdracht-4-make---alleen-je-eigen-berichten-verwijderen)
 gemaakt, dan staat hij alleen bij je eigen berichten, en dat voelt als
 beveiliging. Maar een knop doet maar één ding: een verzoek versturen. Wie dat
 verzoek zelf verstuurt, heeft de knop niet nodig, verborgen of niet.
@@ -29,7 +29,7 @@ Maak in die map een virtual environment en installeer de packages; hoe dat gaat 
 
 De server hieronder is het gastenboek uit Sessies: registreren uit de basis,
 inloggen met een sessie, en het endpoint Verwijderen uit het
-[htmx-overzicht](/docs/FastAPI/htmx-overzicht#verwijderen). De HTML is eruit:
+[htmx-overzicht](/docs/FastAPI/zonder-herladen/htmx-overzicht#verwijderen). De HTML is eruit:
 elk endpoint geeft JSON terug, zodat een scriptje kan lezen wat de server
 antwoordt. Een bericht plaatsen heet hier `POST /bericht`.
 
@@ -242,7 +242,7 @@ met een account; verwijderen kan iedereen.
 ### Opdracht 2: Investigate - Waar staat de sleutel?
 
 Kijk naar de HTML van het recept Verwijderen in het
-[htmx-overzicht](/docs/FastAPI/htmx-overzicht#verwijderen): het stukje met
+[htmx-overzicht](/docs/FastAPI/zonder-herladen/htmx-overzicht#verwijderen): het stukje met
 `<li id="bericht-{{ sleutel }}">`, tot en met de knop. Heb je dat recept gebouwd, open dan ook je
 gastenboek en kijk in het tabblad **Elementen** naar een bericht. Waar staat de
 sleutel? Wat betekent dat voor een idee als "maak de sleutels heel lang, dan

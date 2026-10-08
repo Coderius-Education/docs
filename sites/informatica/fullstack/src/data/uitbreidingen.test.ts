@@ -88,7 +88,7 @@ describe('het verzoekdiagram wijst niet vooruit', () => {
   const ACHTERSTAND = [
     // Stap 7 van één klik (de browser voert JavaScript uit) hoort bij de
     // uitbreiding; de pagina zegt erbij dat die later komt.
-    'FastAPI/verzoek-get (get) → FastAPI/javascript',
+    'FastAPI/gastenboek/verzoek-get (get) → FastAPI/in-de-browser/javascript',
   ];
 
   it('elke les in het diagram komt vóór of op de pagina die het toont', () => {

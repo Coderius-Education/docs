@@ -202,7 +202,7 @@ controle kreeg.
 ### Opdracht 3: Make - In je eigen project
 
 Je gastenboek heeft accounts sinds
-[Registreren: een account opslaan](/docs/FastAPI/registreren), en bewaart de
+[Registreren: een account opslaan](/docs/FastAPI/accounts/registreren), en bewaart de
 wachtwoorden nog als gewone tekst. Maak ze veilig met wat je in deze reeks
 leerde: Argon2 bij het registreren, `ph.verify` met `NEP` op elke plek die een
 wachtwoord controleert, en een limiet op elk van die plekken.
@@ -240,7 +240,7 @@ Heb je in je project al een limiter uit Te veel verzoeken, gebruik dan die; een
 tweede `limiter` of `app.add_exception_handler` is niet nodig. Anders zet je de
 regels uit deze les bovenaan, net als `ph` en `NEP`.
 
-Met de sessies uit [Onthouden op de server: sessies](/docs/FastAPI/sessies)
+Met de sessies uit [Onthouden op de server: sessies](/docs/FastAPI/onthouden/sessies)
 wordt je `POST /inloggen` zo. De 401 uit de basis blijft, en onder de controle
 blijft de sessie zoals hij was. Bij je imports komt `VerifyMismatchError`;
 `Request` staat er sinds de templates al:

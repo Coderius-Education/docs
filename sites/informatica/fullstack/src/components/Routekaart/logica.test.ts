@@ -36,13 +36,13 @@ describe('etappes', () => {
     const categorieen = fastapi.filter((c) => typeof c !== 'string');
     expect(route).toHaveLength(categorieen.length);
     expect(route[0].lessen.map((l) => l.href)).toEqual([
-      '/docs/FastAPI/installatie',
-      '/docs/FastAPI/eerste_endpoint',
-      '/docs/FastAPI/verzoek-eerste',
-      '/docs/FastAPI/devtools-netwerk',
+      '/docs/FastAPI/eerste-server/installatie',
+      '/docs/FastAPI/eerste-server/eerste_endpoint',
+      '/docs/FastAPI/eerste-server/verzoek-eerste',
+      '/docs/FastAPI/eerste-server/devtools-netwerk',
     ]);
     // Zonder eigen pagina linkt de kop naar de eerste les.
-    expect(route[0].href).toBe('/docs/FastAPI/installatie');
+    expect(route[0].href).toBe('/docs/FastAPI/eerste-server/installatie');
   });
 
   it('haalt "Uitbreiding:" uit de naam en markeert de etappe', () => {
@@ -81,8 +81,8 @@ describe('etappes', () => {
 
   it('zet de zin en de mijlpaal bij de juiste etappe', () => {
     const route = etappes(alsProp(fastapi), { zinnen: ZINNEN, mijlpalen: MIJLPALEN });
-    const basisEinde = route.find((e) => e.sidebarLabel === 'Gegevens opslaan en tonen');
-    expect(basisEinde?.zin).toBe(ZINNEN['Gegevens opslaan en tonen']);
+    const basisEinde = route.find((e) => e.sidebarLabel === 'Accounts');
+    expect(basisEinde?.zin).toBe(ZINNEN.Accounts);
     expect(basisEinde?.mijlpaal).toMatch(/gastenboek/);
   });
 });

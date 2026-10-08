@@ -45,12 +45,12 @@ Loop deze lijst af:
   op een naam uit het formulier, de URL of een cookie.
 - Een verborgen knop is een hulp, geen slot: het endpoint controleert toch.
 - Ook een `GET` is een gat als hij gegevens van anderen teruggeeft. Staat
-  `GET /sessies` uit [opdracht 3 van Sessies](/docs/FastAPI/sessies#opdracht-3-investigate---kijk-in-je-sessies)
+  `GET /sessies` uit [opdracht 3 van Sessies](/docs/FastAPI/onthouden/sessies#opdracht-3-investigate---kijk-in-je-sessies)
   nog in je project, haal hem weg: hij geeft elk sessie-id weg, en met het
   sessie-id van Sara is Alex voor je server ingelogd als Sara, zonder haar
   wachtwoord. Elke `403` is dan omzeild.
 
-Heb je in [Onthouden op de server: sessies](/docs/FastAPI/sessies#opdracht-5-make---echt-afschermen)
+Heb je in [Onthouden op de server: sessies](/docs/FastAPI/onthouden/sessies#opdracht-5-make---echt-afschermen)
 opdracht 5 gemaakt, dan heeft `POST /verwijderen` deze controle al. Bouwde je
 het htmx-recept Verwijderen, dan heeft je `DELETE /bericht/{sleutel}` hem nog
 niet. Zet daar `sessie_id: str = Cookie(default="")` naast `sleutel`, haal

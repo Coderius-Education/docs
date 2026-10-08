@@ -11,11 +11,11 @@ description: Wat een bezoeker invult, komt met een f-string letterlijk in je HTM
   ]}
 />
 
-In het htmx-recept [Een formulier versturen](/docs/FastAPI/htmx-overzicht#een-formulier-versturen)
+In het htmx-recept [Een formulier versturen](/docs/FastAPI/zonder-herladen/htmx-overzicht#een-formulier-versturen)
 zette je `escape(naam)` in het antwoord, zodat een naam als `<b>Sara</b>` niet
 vet werd. In deze reeks zie je waarom die `escape` er staat: je haalt hem weg en
 kijkt wat er dan gebeurt. Met een
-[template](/docs/FastAPI/post_met_templates) blijft tekst van een bezoeker
+[template](/docs/FastAPI/formulieren/post_met_templates) blijft tekst van een bezoeker
 tekst; met een f-string niet.
 
 :::note[Waar je werkt]
@@ -50,7 +50,7 @@ De pagina zelf is een los bestand `static/gastenboek.html`:
 </html>
 ```
 
-Zet `htmx.min.js` uit [Zonder herladen](/docs/FastAPI/htmx) in `static/js/`.
+Zet `htmx.min.js` uit [Zonder herladen](/docs/FastAPI/zonder-herladen/htmx) in `static/js/`.
 Het endpoint staat in `main.py`:
 
 {/* onveilig-voorbeeld: de zwakheid die deze les laat zien */}
@@ -152,7 +152,7 @@ pagina.
 **Oplossing:** kijk in het tabblad **Netwerk** of `htmx.min.js` een 200
 kreeg. Een 404 betekent dat het bestand niet in `static/js/` staat.
 
-Meer uitleg: [Zonder herladen met htmx](/docs/FastAPI/htmx)
+Meer uitleg: [Zonder herladen met htmx](/docs/FastAPI/zonder-herladen/htmx)
 
 ## Opdrachten
 
@@ -180,7 +180,7 @@ browser de naam als HTML. Dat raakt alleen Noor zelf; de lijst raakt iedereen.
 
 ### Opdracht 2: Investigate - En met een template?
 
-Het recept Verversen in het [htmx-overzicht](/docs/FastAPI/htmx-overzicht)
+Het recept Verversen in het [htmx-overzicht](/docs/FastAPI/zonder-herladen/htmx-overzicht)
 maakt de lijst met een template, `berichten_lijst.html`. Stel dat Sara daar
 `<b>vet</b>` invult. Wordt het dan vet?
 

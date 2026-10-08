@@ -1,6 +1,6 @@
 # Cheatsheet
 
-Hier zoek je op hoe iets uit de lessen ook alweer ging. De onderwerpen staan in de volgorde van de lessen; klik er een aan om hem te openen. Welk bestand in welke map hoort, staat bij [Projectstructuur](/docs/FastAPI/projectstructuur); alles over de database bij [SqliteDict op een rij](/docs/FastAPI/sqlitedict).
+Hier zoek je op hoe iets uit de lessen ook alweer ging. De onderwerpen staan in de volgorde van de lessen; klik er een aan om hem te openen. Welk bestand in welke map hoort, staat bij [Projectstructuur](/docs/FastAPI/projectstructuur); alles over de database bij [SqliteDict op een rij](/docs/FastAPI/sqlitedict/op-een-rij).
 
 
 ## FastAPI
@@ -623,13 +623,13 @@ je-project/
     └── gastenboek.html
 ```
 
-Vaste pagina's staan in `static/pages/`, pagina's met `{{ }}` in `templates/`. Het gastenboekformulier begint als `static/pages/gastenboek_form.html` en verhuist bij [Onthouden met een cookie](/docs/FastAPI/cookies) naar `templates/gastenboek.html`; in [sessies](/docs/FastAPI/sessies) wordt het een inlogformulier of een formulier om te schrijven. De `.db`-bestanden maakt `sqlitedict` zelf aan. Hoe de mappen per les groeien, staat bij [Projectstructuur](/docs/FastAPI/projectstructuur).
+Vaste pagina's staan in `static/pages/`, pagina's met `{{ }}` in `templates/`. Het gastenboekformulier begint als `static/pages/gastenboek_form.html` en verhuist bij [Onthouden met een cookie](/docs/FastAPI/onthouden/cookies) naar `templates/gastenboek.html`; in [sessies](/docs/FastAPI/onthouden/sessies) wordt het een inlogformulier of een formulier om te schrijven. De `.db`-bestanden maakt `sqlitedict` zelf aan. Hoe de mappen per les groeien, staat bij [Projectstructuur](/docs/FastAPI/projectstructuur).
 
 </details>
 
 ## Database (sqlitedict)
 
-Alles over SqliteDict op één pagina, met de punten waarop hij anders is dan een gewone dictionary: [SqliteDict op een rij](/docs/FastAPI/sqlitedict).
+Alles over SqliteDict op één pagina, met de punten waarop hij anders is dan een gewone dictionary: [SqliteDict op een rij](/docs/FastAPI/sqlitedict/op-een-rij).
 
 <details>
 <summary>Hoe installeer ik sqlitedict? (python -m pip install)</summary>
@@ -784,7 +784,7 @@ async def berichten(request: Request):
 <details>
 <summary>Hoe koppel ik htmx aan mijn pagina? (htmx.min.js)</summary>
 
-Download `htmx.min.js` (de link staat bij [Zonder herladen met htmx](/docs/FastAPI/htmx)) naar `static/js/`, en zet deze regel in de `<head>` van elke pagina die htmx gebruikt:
+Download `htmx.min.js` (de link staat bij [Zonder herladen met htmx](/docs/FastAPI/zonder-herladen/htmx)) naar `static/js/`, en zet deze regel in de `<head>` van elke pagina die htmx gebruikt:
 
 ```html
 <script src="/static/js/htmx.min.js"></script>

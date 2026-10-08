@@ -1,0 +1,326 @@
+# Een formulier beantwoorden met een template
+
+In [Een formulier versturen](/docs/FastAPI/formulieren/forms) gaf je POST-endpoint JSON terug. Nu antwoordt het met een pagina: de waarde uit het formulier gaat in een [template](/docs/FastAPI/formulieren/templates), net zoals de worp van de dobbelsteen.
+
+Alles wat je nodig hebt, staat al in je `main.py`: de map `templates` met de regel `templates = …` uit [Templates met Jinja2](/docs/FastAPI/formulieren/templates), en `Form` uit [GET vs POST](/docs/FastAPI/formulieren/get_vs_post). Er komen alleen een formulier, een template en twee endpoints bij.
+
+## Voorbeeld
+
+### Formulier (`static/pages/groet_form.html`):
+
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Hoe heet je?</h1>
+        <form method="post" action="/groet">
+            <input type="text" name="naam" required>
+            <button type="submit">Verstuur</button>
+        </form>
+    </body>
+</html>
+```
+
+### Template (`templates/groet_resultaat.html`):
+
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Hallo {{ naam }}!</h1>
+        <a href="/groet">Terug</a>
+    </body>
+</html>
+```
+
+Op de plek van `{{ naam }}` zet Jinja2 de waarde uit Python.
+
+### Endpoints (`main.py`):
+
+<CodeUitleg>
+
+```python showLineNumbers
+@app.get("/groet")
+async def groet_form():
+    return FileResponse("static/pages/groet_form.html")
+
+@app.post("/groet")
+async def groet_verwerk(request: Request, naam: str = Form(...)):
+    return templates.TemplateResponse(
+        request,
+        "groet_resultaat.html",
+        {"naam": naam}
+    )
+```
+
+<Regel n={5}>
+Dezelfde URL als de GET erboven, maar met `@app.post`: dat mag, want een GET en een POST op `/groet` zijn twee verschillende endpoints.
+</Regel>
+
+<Regel n={6}>
+Twee parameters: `request` voor de template, zoals bij de dobbelsteen, en `naam` uit het formulier.
+</Regel>
+
+<Regel n={7} tot={11}>
+Het dictionary brengt de waarde uit het formulier naar de template: `{"naam": naam}` vult `{{ naam }}`.
+</Regel>
+
+</CodeUitleg>
+
+## Testen
+
+1. Ga naar `http://127.0.0.1:8000/groet`
+2. Vul je naam in en klik Verstuur
+3. Je ziet een pagina met "Hallo" en jouw naam.
+
+:::danger[Gaat er iets mis?]
+Krijg je de foutmelding **TemplateNotFound**? Controleer of je template in de map `templates/` staat en of de bestandsnaam klopt. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
+:::
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+```python
+import random
+
+from fastapi import FastAPI, Form, Request
+from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
+
+@app.get("/")
+async def home():
+    return FileResponse("static/pages/home.html")
+
+@app.get("/info")
+async def info():
+    return {"naam": "Jouw Naam", "leeftijd": 16}
+
+@app.get("/pagina", response_class=HTMLResponse)
+async def pagina():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Mijn Pagina</title>
+        </head>
+        <body>
+            <h1>Hallo!</h1>
+            <p>Dit is mijn eerste HTML pagina.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/styled", response_class=HTMLResponse)
+async def styled():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Met CSS</title>
+            <style>
+                h1 { color: blue; }
+                p { color: gray; }
+            </style>
+        </head>
+        <body>
+            <h1>Gestylede pagina</h1>
+            <p>Deze tekst is grijs.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/about")
+async def about():
+    return FileResponse("static/pages/about.html")
+
+@app.get("/foto")
+async def foto():
+    return FileResponse("static/pages/foto.html")
+
+@app.get("/dobbelsteen")
+async def dobbelsteen(request: Request):
+    worp = random.randint(1, 6)
+    return templates.TemplateResponse(
+        request,
+        "dobbelsteen.html",
+        {"worp": worp}
+    )
+
+@app.get("/zoek")
+async def zoek(term: str):
+    return {"je_zocht": term}
+
+@app.get("/naam")
+async def toon_formulier():
+    return FileResponse("static/pages/naam_form.html")
+
+@app.post("/verstuur")
+async def ontvang_naam(naam: str = Form(...)):
+    print(f"Naam ontvangen: {naam}")
+    return {"bericht": f"Hallo {naam}!"}
+
+@app.get("/groet")
+async def groet_form():
+    return FileResponse("static/pages/groet_form.html")
+
+@app.post("/groet")
+async def groet_verwerk(request: Request, naam: str = Form(...)):
+    return templates.TemplateResponse(
+        request,
+        "groet_resultaat.html",
+        {"naam": naam}
+    )
+```
+
+</details>
+
+## Opdrachten
+
+### Opdracht 1: Predict - Vier keer dezelfde naam
+
+De naam uit het formulier gaat vier keer over: `name="naam"` in het formulier, `naam: str = Form(...)` in de functie, de sleutel `"naam"` in het dictionary en `{{ naam }}` in de template. Iemand verandert één ervan:
+
+{/* niet-compileren: fragment uit een handler */}
+```python
+return templates.TemplateResponse(request, "groet_resultaat.html", {"voornaam": naam})
+```
+
+**Vraag:** wat zie je na het versturen van het formulier?
+
+<details>
+<summary>Tip</summary>
+
+Om welke naam vraagt de template? Staat die in het dictionary?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+"Hallo !". De template vraagt om `naam`, maar het dictionary heeft alleen `voornaam`. Jinja2 laat de plek dan leeg, zonder foutmelding.
+
+</details>
+
+### Opdracht 2: Run
+
+Maak het formulier, de template en de endpoints uit het voorbeeld. Vul een naam in en kijk of de pagina je begroet.
+
+### Opdracht 3: Make - Favoriete eten
+
+Maak een formulier voor je favoriete eten op het adres `/favoriet-eten`. Na versturen toont een template: "Jouw favoriete eten is: [eten]"
+
+<details>
+<summary>Tip</summary>
+
+Je hebt nodig: een HTML formulier met `name="eten"`, een template met `{{ eten }}`, en een POST endpoint dat `TemplateResponse` teruggeeft met `request` vooraan en `{"eten": eten}` erachter.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`static/pages/eten_form.html`:
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Favoriete eten</h1>
+        <form method="post" action="/favoriet-eten">
+            <input type="text" name="eten" required>
+            <button type="submit">Verstuur</button>
+        </form>
+    </body>
+</html>
+```
+
+`templates/eten_resultaat.html`:
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Jouw favoriete eten is: {{ eten }}</h1>
+        <a href="/favoriet-eten">Terug</a>
+    </body>
+</html>
+```
+
+```python
+@app.get("/favoriet-eten")
+async def eten_form():
+    return FileResponse("static/pages/eten_form.html")
+
+@app.post("/favoriet-eten")
+async def eten_verwerk(request: Request, eten: str = Form(...)):
+    return templates.TemplateResponse(
+        request,
+        "eten_resultaat.html",
+        {"eten": eten}
+    )
+```
+
+</details>
+
+### Opdracht 4: Make - Profielkaart
+
+Maak op het adres `/profielkaart` een formulier met naam, leeftijd en hobby. Na versturen toont een template alle drie de waarden.
+
+<details>
+<summary>Tip</summary>
+
+Je hebt een formulier met drie `<input>`-velden nodig, een GET die het formulier toont, een POST met drie `Form(...)` parameters, en een template met drie `{{ }}`-plekken. Zet alle drie de waarden in het dictionary.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`static/pages/profielkaart_form.html`:
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Maak je profielkaart</h1>
+        <form method="post" action="/profielkaart">
+            <input type="text" name="naam" placeholder="Naam" required>
+            <input type="number" name="leeftijd" placeholder="Leeftijd" required>
+            <input type="text" name="hobby" placeholder="Hobby" required>
+            <button type="submit">Verstuur</button>
+        </form>
+    </body>
+</html>
+```
+
+`templates/profielkaart.html`:
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Profiel van {{ naam }}</h1>
+        <p>Leeftijd: {{ leeftijd }}</p>
+        <p>Hobby: {{ hobby }}</p>
+    </body>
+</html>
+```
+
+```python
+@app.get("/profielkaart")
+async def profielkaart_form():
+    return FileResponse("static/pages/profielkaart_form.html")
+
+@app.post("/profielkaart")
+async def profielkaart(request: Request, naam: str = Form(...), leeftijd: int = Form(...), hobby: str = Form(...)):
+    return templates.TemplateResponse(
+        request,
+        "profielkaart.html",
+        {"naam": naam, "leeftijd": leeftijd, "hobby": hobby}
+    )
+```
+
+</details>

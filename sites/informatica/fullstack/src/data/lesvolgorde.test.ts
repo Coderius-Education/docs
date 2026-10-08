@@ -36,7 +36,7 @@ const hoofdtekst = (id: string) =>
 describe('volgorde van de FastAPI-lessen', () => {
   it('de eerste les met TemplateResponse is Templates met Jinja2', () => {
     const eerste = lessen.find((id) => tekst(id).includes('TemplateResponse'));
-    expect(eerste).toBe('FastAPI/templates');
+    expect(eerste).toBe('FastAPI/formulieren/templates');
   });
 
   it.each([
@@ -62,8 +62,8 @@ describe('volgorde van de FastAPI-lessen', () => {
   const label = (i: Item | undefined) => (typeof i === 'string' ? i : i?.label);
   const grens = items.findIndex((i) => label(i)?.startsWith('Uitbreiding:'));
 
-  it('de basis eindigt met Gegevens opslaan en tonen, daarna alleen uitbreidingen', () => {
-    expect(label(items[grens - 1])).toBe('Gegevens opslaan en tonen');
+  it('de basis eindigt met Accounts, daarna alleen uitbreidingen', () => {
+    expect(label(items[grens - 1])).toBe('Accounts');
     expect(items.slice(grens, grens + 3).every((i) => label(i)?.startsWith('Uitbreiding:'))).toBe(
       true,
     );
@@ -81,7 +81,7 @@ describe('volgorde van de FastAPI-lessen', () => {
         .filter((sectie) => !later.test(sectie.split('\n')[0]))
         .flatMap((sectie) => sectie.split('\n'))
         .flatMap((regel) =>
-          [...regel.matchAll(/\]\(\/docs\/(FastAPI\/[\w-]+)/g)]
+          [...regel.matchAll(/\]\(\/docs\/(FastAPI\/[\w/-]+)/g)]
             .filter((m) => uitbreiding.has(m[1]) && !later.test(regel))
             .map((m) => `${id} → ${m[1]}`),
         ),
@@ -97,18 +97,18 @@ describe('titels en categorieën', () => {
   });
 
   it.each([
-    ['FastAPI/detailpagina', /path-parameters/],
-    ['FastAPI/detailpagina', /404/],
-    ['FastAPI/redirect', /redirect/],
-    ['FastAPI/templates', /Jinja2/],
-    ['FastAPI/database', /SqliteDict/],
-    ['FastAPI/database-sleutels', /SqliteDict/],
-    ['FastAPI/database-waarden', /SqliteDict/],
-    ['FastAPI/static_files', /static files/],
-    ['FastAPI/lijst_tonen', /for-lus/],
-    ['FastAPI/registreren', /account/],
-    ['FastAPI/inloggen', /wachtwoord/],
-    ['FastAPI/foutpagina', /404/],
+    ['FastAPI/gastenboek/detailpagina', /path-parameters/],
+    ['FastAPI/gastenboek/detailpagina', /404/],
+    ['FastAPI/gastenboek/redirect', /redirect/],
+    ['FastAPI/formulieren/templates', /Jinja2/],
+    ['FastAPI/sqlitedict/database', /SqliteDict/],
+    ['FastAPI/sqlitedict/database-sleutels', /SqliteDict/],
+    ['FastAPI/sqlitedict/database-waarden', /SqliteDict/],
+    ['FastAPI/html/static_files', /static files/],
+    ['FastAPI/gastenboek/lijst_tonen', /for-lus/],
+    ['FastAPI/accounts/registreren', /account/],
+    ['FastAPI/accounts/inloggen', /wachtwoord/],
+    ['FastAPI/afronden/foutpagina', /404/],
   ])('de titel van %s noemt %s', (id, begrip) => {
     expect(titel(id)).toMatch(begrip);
   });
@@ -138,7 +138,7 @@ describe('verwijzingen naar een les', () => {
 
   it('een linktekst met een dubbele punt of haakjes is de titel van de doelles', () => {
     const fout = alleTeksten.flatMap(({ id, tekst }) =>
-      [...tekst.matchAll(/\[([^\]]*[:(][^\]]*)\]\((\/docs\/FastAPI\/[\w-]+)[^)]*\)/g)]
+      [...tekst.matchAll(/\[([^\]]*[:(][^\]]*)\]\((\/docs\/FastAPI\/[\w/-]+)[^)]*\)/g)]
         .filter((m) => m[1] !== titelVan(m[2]))
         .map((m) => `${id}: [${m[1]}] → ${titelVan(m[2])}`),
     );

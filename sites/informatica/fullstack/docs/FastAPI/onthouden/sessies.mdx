@@ -1,0 +1,315 @@
+# Onthouden op de server: sessies
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/data/11c-geneste-dictionaries', label: 'Een dictionary in een dictionary'},
+  ]}
+/>
+
+In opdracht 3 van de vorige les veranderde je je eigen cookie in een andere naam, en je server geloofde het meteen. Daar kon weinig mis, want je wachtwoord moest nog kloppen. Maar je wilt niet bij elk bericht je wachtwoord typen: je wilt één keer inloggen, en dat je server dat onthoudt. Met de naam in een cookie kan dat niet. Daarvoor heb je een **sessie** nodig.
+
+## Waarom de naam niet in de cookie hoort
+
+Stel dat je server na het inloggen een cookie `naam=sara` zet, en bij elk volgend bericht gelooft dat je Sara bent. Dan typt Alex in het tabblad **App** `sara` in zijn eigen cookie, en schrijft hij als Sara, zonder haar wachtwoord ooit te kennen.
+
+Hier geldt de vuistregel uit [Server of browser?](/docs/FastAPI/in-de-browser/server-of-browser): wat op de computer van de bezoeker staat, mag je niet vertrouwen. Wat op jouw server staat wel.
+
+## Alleen een kenmerk in de cookie
+
+Je maakt de cookie dus leeg van betekenis. In plaats van de naam zet je er een **sessie-id** in: een lang, willekeurig getal dat verder niets betekent. Wie er bij dat getal is ingelogd, bewaar je op de server, met het sessie-id als sleutel.
+
+Het sessie-id maak je met `secrets`, een ingebouwde module voor waarden die niet te raden mogen zijn:
+
+```python
+import secrets
+
+sessie_id = secrets.token_hex(16)
+```
+
+Dat geeft 32 tekens, bijvoorbeeld `9f2c4a7e10b8d3f5a6c1e0b4d7928f3a`. Een bezoeker kan dat wel veranderen, maar niet in het sessie-id van iemand anders, want daar zijn te veel mogelijkheden voor.
+
+## Inloggen maakt een sessie
+
+Inloggen wordt een eigen endpoint: één keer naam en wachtwoord, en daarna een sessie. Zet `import secrets` bij je imports, en dit endpoint onder je andere endpoints:
+
+<CodeUitleg>
+
+```python showLineNumbers
+@app.post("/inloggen")
+async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as gebruikers:
+        opgeslagen = gebruikers.get(naam)
+    if opgeslagen != wachtwoord:
+        raise HTTPException(status_code=401, detail="Naam of wachtwoord klopt niet")
+
+    sessie_id = secrets.token_hex(16)
+    with SqliteDict("sessies.db") as sessies:
+        sessies[sessie_id] = {"naam": naam}
+        sessies.commit()
+
+    antwoord = RedirectResponse(url="/gastenboek", status_code=303)
+    antwoord.set_cookie(key="sessie_id", value=sessie_id, max_age=60 * 60 * 24 * 30)
+    return antwoord
+```
+
+<Regel n={3} tot={6}>
+Dezelfde controle als in je `POST /gastenboek` uit [Inloggen: een wachtwoord controleren](/docs/FastAPI/accounts/inloggen). Pas als het wachtwoord klopt, gaat de functie verder.
+</Regel>
+
+<Regel n={8}>
+Elke keer dat iemand inlogt, een nieuw sessie-id.
+</Regel>
+
+<Regel n={9} tot={11}>
+Een tweede database, alleen voor sessies. Onder het sessie-id staat een dictionary met de naam. Die naam zette je server er zelf in, nadat het wachtwoord klopte; de bezoeker kan er niet bij. Het is een dictionary en geen losse naam, zodat er later meer bij kan.
+</Regel>
+
+<Regel n={13} tot={15}>
+Terug naar het gastenboek, met het sessie-id als cookie. Dezelfde `set_cookie` als in de vorige les, maar met het sessie-id als waarde in plaats van de naam.
+</Regel>
+
+</CodeUitleg>
+
+## Het formulier: inloggen of schrijven
+
+Je `GET /gastenboek` zoekt nu de sessie op. Vervang hem door:
+
+<CodeUitleg>
+
+{/* route-dubbel: vervangt GET /gastenboek uit cookies.mdx, nu met een sessie */}
+```python showLineNumbers
+@app.get("/gastenboek")
+async def gastenboek_form(request: Request, sessie_id: str = Cookie(default="")):
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {})
+    return templates.TemplateResponse(request, "gastenboek.html", {"naam": mijn.get("naam", "")})
+```
+
+<Regel n={2}>
+De cookie heet nu `sessie_id` en bevat alleen het nummer. Zonder cookie is hij leeg.
+</Regel>
+
+<Regel n={4}>
+Het sessie-id uit de cookie is de sleutel in `sessies.db`. Een onbekend of leeg id geeft een lege dictionary, geen `KeyError`.
+</Regel>
+
+<Regel n={5}>
+Ook `mijn.get("naam", "")` heeft een standaardwaarde: wie niet is ingelogd, krijgt een lege naam.
+</Regel>
+
+</CodeUitleg>
+
+In `templates/gastenboek.html` kiest de template met de naam welk formulier je ziet. Vervang je formulier door:
+
+```html
+{% if naam %}
+    <p>Je schrijft als {{ naam }}.</p>
+    <form method="post" action="/gastenboek">
+        <input type="text" name="bericht" required>
+        <button type="submit">Verstuur</button>
+    </form>
+{% else %}
+    <form method="post" action="/inloggen">
+        <input type="text" name="naam" required>
+        <input type="password" name="wachtwoord" required>
+        <button type="submit">Inloggen</button>
+    </form>
+    <a href="/registreer">Nog geen account?</a>
+{% endif %}
+```
+
+Het formulier om te schrijven heeft geen naam en geen wachtwoord meer. Heeft jouw formulier `hx-post` en `hx-target`, of een `id` voor je tekenteller, laat die dan staan. Het inlogformulier houdt `method` en `action`, zonder htmx: na het inloggen stuurt je server de browser door, en dan hoort de hele pagina te verversen.
+
+## Een bericht op naam van de sessie
+
+Vervang ook je `POST /gastenboek`. De controle op de lengte blijft bovenaan; de naam komt nu uit de sessie:
+
+<CodeUitleg>
+
+{/* route-dubbel: vervangt POST /gastenboek uit cookies.mdx, nu met een sessie */}
+```python showLineNumbers
+@app.post("/gastenboek")
+async def gastenboek_opslaan(bericht: str = Form(...), sessie_id: str = Cookie(default="")):
+    if len(bericht) > 80:
+        raise HTTPException(status_code=400, detail="Bericht is te lang")
+
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {})
+    if not mijn:
+        raise HTTPException(status_code=401, detail="Log eerst in")
+
+    with SqliteDict("gastenboek.db") as db:
+        db[f"bericht_{time.time_ns()}"] = {"naam": mijn["naam"], "bericht": bericht}
+        db.commit()
+    return RedirectResponse(url="/berichten", status_code=303)
+```
+
+<Regel n={2}>
+`naam` en `wachtwoord` zijn weg uit de parameters. Alleen het bericht komt nog uit het formulier, en het sessie-id uit de cookie.
+</Regel>
+
+<Regel n={6} tot={9}>
+Geen sessie, dan niet ingelogd: **401**, net als bij een fout wachtwoord.
+</Regel>
+
+<Regel n={11} tot={13}>
+De naam bij het bericht komt uit de sessie. Die zette je server er bij het inloggen in, dus hij klopt.
+</Regel>
+
+</CodeUitleg>
+
+De cookie `naam` uit de vorige les zet je server niet meer. Gebruik je het htmx-formulier, dan blijft je `HTMLResponse` het antwoord in plaats van de omleiding; zet daarin `escape(mijn["naam"])` waar `escape(naam)` stond.
+
+## Testen
+
+1. Ga naar `/gastenboek`. Je ziet het inlogformulier. Log in als `sara`.
+2. Je komt terug op `/gastenboek`, met "Je schrijft als sara". Plaats twee berichten, zonder één keer je wachtwoord te typen.
+3. Kijk in het tabblad **App** naar de cookies: `sessie_id` bevat een rij tekens in plaats van een naam.
+4. Staat de cookie `naam` uit de vorige les er ook nog? Die houdt 30 dagen, want je server haalt hem niet weg. Selecteer hem en druk op Delete; je server gebruikt hem niet meer.
+
+:::danger[Gaat er iets mis?]
+Krijg je `{"detail":"Log eerst in"}` terwijl je net bent ingelogd? Kijk dan of `sessies.commit()` in je `/inloggen` staat, en of `set_cookie` op het antwoord staat dat je ook echt returnt. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
+:::
+
+## Opdrachten
+
+### Opdracht 1: Predict - Een vreemd sessie-id
+
+Je bent ingelogd. Je verandert de cookie `sessie_id` in `hallo` en vraagt `/gastenboek` op.
+
+**Vraag:** wat ziet de bezoeker, en wat gebeurt er in `sessies.db`?
+
+<details>
+<summary>Tip</summary>
+
+Kijk naar de tweede waarde in `sessies.get(sessie_id, {})`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Het inlogformulier: onder de sleutel `hallo` staat niets, dus `get` geeft de lege dictionary terug, en de naam is leeg. In `sessies.db` verandert er niets, want uitlezen schrijft niet.
+
+Zo hoort het. Wie aan de eigen cookie sleutelt, is voor je server niet meer ingelogd, en komt niet in de sessie van iemand anders terecht.
+
+</details>
+
+### Opdracht 2: Run
+
+Bouw `/inloggen`, het nieuwe formulier en je GET- en POST-endpoint om naar sessies. Log in, plaats twee berichten en bekijk de cookie in het tabblad **App**. Hoe vaak moest je je wachtwoord typen?
+
+<details>
+<summary>Antwoord</summary>
+
+Eén keer, bij het inloggen. Daarna stuurt je browser bij elk verzoek de cookie `sessie_id` mee, en vindt je server daarmee je naam in `sessies.db`.
+
+</details>
+
+### Opdracht 3: Investigate - Kijk in je sessies
+
+Maak een tijdelijk endpoint dat alles in `sessies.db` als JSON teruggeeft. Log in, en log daarna in een privévenster nog een keer in als dezelfde gebruiker. Wat zie je?
+
+<details>
+<summary>Tip</summary>
+
+In [Een formulier opslaan](/docs/FastAPI/gastenboek/post_naar_database) gaf `/berichten` de database als JSON terug, met `list(db.values())`. Hier wil je ook de sessie-id's zien: `dict(sessies)` maakt van de hele database een dictionary, met elke sleutel en zijn waarde.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+@app.get("/sessies")
+async def alle_sessies():
+    with SqliteDict("sessies.db") as sessies:
+        return dict(sessies)
+```
+
+Je ziet twee sessie-id's, elk met `{"naam": "sara"}`. Elke inlog maakt een nieuwe sessie, ook voor dezelfde gebruiker: het privévenster stuurt jouw cookie niet mee.
+
+Haal dit endpoint daarna weg. Op een echte site zou je hiermee de sessies van al je bezoekers weggeven, en met een sessie-id is iemand voor je server ingelogd als die bezoeker, zonder wachtwoord.
+
+</details>
+
+### Opdracht 4: Make - Alleen je eigen berichten verwijderen
+
+Toon op `/berichten` de verwijderknop uit [Doorsturen na opslaan (redirect)](/docs/FastAPI/gastenboek/redirect) alleen bij berichten van de bezoeker die is ingelogd.
+
+<details>
+<summary>Tip</summary>
+
+Geef de naam uit de sessie mee aan de template, en gebruik in je for-lus `{% if bericht.naam == naam %}`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+In je `GET /berichten` komen drie dingen bij. Zet de parameter `sessie_id: str = Cookie(default="")` erbij, naast `request: Request`. Zet vóór de `return` het uitlezen van de sessie:
+
+```python
+with SqliteDict("sessies.db") as sessies:
+    mijn = sessies.get(sessie_id, {})
+```
+
+En zet in de dictionary voor de template `"naam": mijn.get("naam", "")` naast `"berichten"`.
+
+In `templates/berichten.html` komt een `{% if %}` om het formuliertje. De link naar de detailpagina blijft staan:
+```html
+{% for sleutel, bericht in berichten %}
+    <li>
+        <a href="/bericht/{{ sleutel }}">{{ bericht.naam }}</a>: {{ bericht.bericht }}
+        {% if bericht.naam == naam %}
+            <form method="post" action="/verwijderen">
+                <input type="hidden" name="sleutel" value="{{ sleutel }}">
+                <button type="submit">Verwijderen</button>
+            </form>
+        {% endif %}
+    </li>
+{% endfor %}
+```
+
+Gebruik je de htmx-recepten, dan staat de lijst in `berichten_lijst.html`. Zet de `{% if %}` daar om je `hx-delete`-knop, en geef ook `GET /berichten/lijst` de drie aanpassingen hierboven, anders zijn de knoppen na Ververs weg.
+
+Wie niet is ingelogd, krijgt een lege naam, en geen enkel bericht heeft een lege naam: dan staat er nergens een knop. De knop verdwijnt bij berichten van anderen, maar het endpoint `/verwijderen` verwijdert nog steeds alles wat het binnenkrijgt. Wie het formulier nabouwt, komt er alsnog bij.
+
+</details>
+
+### Opdracht 5: Make - Echt afschermen
+
+Zorg dat `/verwijderen` een bericht alleen weggooit als het van de ingelogde bezoeker is.
+
+<details>
+<summary>Tip</summary>
+
+Het POST-endpoint kan de cookie net zo goed opvragen als de GET. Vergelijk de naam bij het bericht met de naam uit de sessie voordat je iets verwijdert.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Vervang je `POST /verwijderen` door deze versie:
+
+{/* route-dubbel: antwoord, vervangt POST /verwijderen uit Doorsturen na opslaan (redirect) met een controle */}
+```python
+@app.post("/verwijderen")
+async def verwijderen(sleutel: str = Form(...), sessie_id: str = Cookie(default="")):
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {})
+    with SqliteDict("gastenboek.db") as db:
+        if sleutel in db:
+            if db[sleutel]["naam"] != mijn.get("naam"):
+                raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
+            del db[sleutel]
+            db.commit()
+    return RedirectResponse(url="/berichten", status_code=303)
+```
+
+**403 Forbidden** betekent: ik weet wie je bent, maar dit mag je niet. De naam bij het bericht en de naam in de sessie heeft je server allebei zelf vastgelegd, nadat het wachtwoord klopte. Daarom mag hij ze vergelijken. Een naam uit een formulier of een cookie zou de bezoeker zelf kunnen kiezen. De verborgen knop uit opdracht 4 blijft nuttig, want die voorkomt dat iemand per ongeluk iets probeert wat toch niet mag. De echte afscherming zit hier.
+
+Dat geldt alleen voor dit endpoint. Bouwde je het htmx-recept Verwijderen, dan verwijdert `DELETE /bericht/{sleutel}` nog steeds elk bericht: zet dezelfde parameter en dezelfde controle ook daarin. Een knop Alles wissen kan iedereen nog steeds gebruiken; hoe je elk endpoint apart afschermt, staat in [Wie mag wat: elk endpoint apart](/docs/veiligheid/toegang/elk-endpoint).
+
+</details>

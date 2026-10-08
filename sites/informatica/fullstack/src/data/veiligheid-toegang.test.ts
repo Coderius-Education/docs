@@ -160,14 +160,14 @@ describe('Veiligheid sluit aan op de accounts uit de basis', () => {
   it('Wachtwoorden begint bij de accounts uit de basis', () => {
     const tekst = lees('wachtwoorden/gewone-tekst.mdx');
     const intro = tekst.slice(0, tekst.indexOf('<CodeUitleg>'));
-    expect(intro).toContain('](/docs/FastAPI/registreren)');
-    expect(intro).toContain('](/docs/FastAPI/inloggen)');
+    expect(intro).toContain('](/docs/FastAPI/accounts/registreren)');
+    expect(intro).toContain('](/docs/FastAPI/accounts/inloggen)');
   });
 
   it('In je eigen project zet Argon2 op het inloggen van het gastenboek, en zegt wat een oud wachtwoord doet', () => {
     const tekst = lees('wachtwoorden/pogingen.mdx');
     const opdracht = tekst.slice(tekst.indexOf('### Opdracht 3: Make - In je eigen project'));
-    expect(opdracht).toContain('](/docs/FastAPI/registreren)');
+    expect(opdracht).toContain('](/docs/FastAPI/accounts/registreren)');
     expect(opdracht).toContain('gebruikers.get(naam, NEP)');
     expect(opdracht).toContain('InvalidHashError');
   });

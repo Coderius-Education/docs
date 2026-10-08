@@ -1,0 +1,102 @@
+# Installatie
+
+Tijd voor een back-end. Voordat je de eerste server start, loop je deze vijf checks van boven naar beneden door. Elke check zegt hoe je ziet dat het goed is. Klopt het niet, klap dan de hulp eronder open: daar staat wat er ontbreekt en waar de uitleg staat.
+
+De volledige installatie met schermafbeeldingen staat in de editor-cursus, in zeven stappen: <SiteLink site="editor" to="/python/">Python in VS Code</SiteLink>. Deze pagina herhaalt ze niet.
+
+## Check 1: VS Code
+
+Start Visual Studio Code. Je ziet het welkomstscherm of het project waar je het laatst aan werkte.
+
+<details>
+<summary>Heb je dit nog niet? Klik hier.</summary>
+
+Visual Studio Code is de editor waarin je in deze cursus werkt. Hij is gratis. Laat tijdens de installatie op Windows het vakje **Add to PATH** aangevinkt staan; zonder dat vakje werkt het commando `code .` niet, waarmee je bij check 4 je project opent.
+
+<SiteLink site="editor" to="/installatie-vscode/">VS Code installeren</SiteLink>
+
+</details>
+
+## Check 2: een projectmap met een terminal erin
+
+In die map komt alles van deze cursus te staan. Open PowerShell vanuit die map: klik met de rechtermuisknop in het lege deel van het Verkenner-venster en kies **Openen in Terminal**. Het prompt eindigt op het pad van je map:
+
+```
+PS C:\Users\jij\Documenten\fullstack-project>
+```
+
+<details>
+<summary>Heb je dit nog niet? Klik hier.</summary>
+
+Het maakt uit vanuit welke map je de terminal opent: alles wat je typt gebeurt in díé map, en daar komen straks je virtual environment en je code te staan.
+
+<SiteLink site="editor" to="/python/stap-1-projectmap">Een projectmap aanmaken</SiteLink> en <SiteLink site="editor" to="/python/stap-2-powershell">PowerShell openen vanuit je map</SiteLink>
+
+</details>
+
+## Check 3: Python
+
+Typ in PowerShell:
+
+```bash
+python --version
+```
+
+Het antwoord begint met `Python 3`.
+
+<details>
+<summary>Heb je dit nog niet? Klik hier.</summary>
+
+Typ `python` zonder meer, dan wijst Windows je de weg naar de Microsoft Store. Wat je doet als die Store geblokkeerd is, en hoe het op een Mac gaat, staat in de stap zelf.
+
+<SiteLink site="editor" to="/python/stap-3-installeren">Python installeren</SiteLink>
+
+</details>
+
+## Check 4: een virtual environment
+
+Je project staat open in VS Code, met een map `.venv` in de Explorer links. Open een terminal via **Terminal** → **New Terminal**; vóór de prompt staat `(.venv)`:
+
+![De terminal in VS Code met (.venv) voor de prompt](@site/static/vs_code/venv.png)
+
+Deze check gaat het vaakst mis. Zonder `(.venv)` installeer je FastAPI straks op de verkeerde plek en zegt Python later dat het `fastapi` niet kent.
+
+<details>
+<summary>Heb je dit nog niet? Klik hier.</summary>
+
+Een virtual environment is een afgesloten omgeving voor dit project. Packages die je hier installeert, komen niet in de weg van andere projecten. Je maakt hem aan met `python -m venv .venv` en opent je project daarna met `code .`; VS Code zet de omgeving in zijn eigen terminal vanzelf aan.
+
+<SiteLink site="editor" to="/python/stap-4-venv">Een virtual environment aanmaken</SiteLink> en <SiteLink site="editor" to="/python/stap-5-vscode">je project openen in VS Code</SiteLink>
+
+</details>
+
+## Check 5: FastAPI
+
+Typ in de terminal van VS Code (met `(.venv)` ervoor):
+
+```bash
+fastapi --version
+```
+
+Je ziet een versienummer, bijvoorbeeld `FastAPI CLI version: 0.0.32`. Staat er nog een tweede regel onder, over `FastAPI Cloud CLI`, dan is dat ook goed.
+
+<details>
+<summary>Heb je dit nog niet? Klik hier.</summary>
+
+FastAPI is een package: een stuk Python van iemand anders, dat je in je virtual environment zet. Typ in de terminal van VS Code:
+
+```bash
+python -m pip install "fastapi[standard]"
+```
+
+De aanhalingstekens horen erbij. Het installeren duurt even; daarna geeft `fastapi --version` een versienummer.
+
+<SiteLink site="editor" to="/python/stap-7-pip">Packages installeren met pip</SiteLink>
+
+</details>
+
+## Loopt er iets vast
+
+De foutmeldingen van deze vijf checks staan bij elkaar in de editor-cursus, met per melding de oorzaak: <SiteLink site="editor" to="/python/problemen">problemen bij het installeren</SiteLink>. Voor fouten die je later in deze cursus tegenkomt, is er de pagina [Er gaat iets mis](/docs/troubleshooting) van deze cursus.
+
+Alle vijf checks goed? Dan ben je klaar voor [je eerste endpoint](/docs/FastAPI/eerste-server/eerste_endpoint).

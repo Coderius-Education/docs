@@ -61,7 +61,7 @@ describe('Run-opdrachten in de eerste twee hoofdstukken', () => {
     .flatMap((c) => plat(c.items));
 
   it('vinden de lessen', () => {
-    expect(vroeg).toContain('FastAPI/html_bestanden');
+    expect(vroeg).toContain('FastAPI/html/html_bestanden');
   });
 
   it('elke Run stelt een vraag en zegt niet "start de server"', () => {

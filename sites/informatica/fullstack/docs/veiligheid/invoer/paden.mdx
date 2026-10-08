@@ -5,10 +5,10 @@ description: Laat je een bezoeker met ?naam= kiezen welk bestand je server stuur
 
 # Invoer controleren: een bestandsnaam van een bezoeker
 
-In [HTML in bestanden](/docs/FastAPI/html_bestanden) kreeg elke pagina een
+In [HTML in bestanden](/docs/FastAPI/html/html_bestanden) kreeg elke pagina een
 eigen endpoint met `FileResponse`. Met tien pagina's wil je liever één endpoint,
 waarin de bezoeker de pagina kiest met een query-parameter, zoals `?term=` in
-[GET vs POST](/docs/FastAPI/get_vs_post). Maar die naam komt van de bezoeker,
+[GET vs POST](/docs/FastAPI/formulieren/get_vs_post). Maar die naam komt van de bezoeker,
 net als een formulierveld. Hij kan er meer in zetten dan een paginanaam.
 
 ## Eén endpoint voor alle pagina's
@@ -83,7 +83,7 @@ een bestand met een geheime sleutel. Met `..` uit de bedoelde map klimmen heet
 **path traversal**.
 
 Met een path-parameter, zoals in
-[Eén item tonen: path-parameters en 404](/docs/FastAPI/detailpagina), gaat dit
+[Eén item tonen: path-parameters en 404](/docs/FastAPI/gastenboek/detailpagina), gaat dit
 net anders. Dat zie je in opdracht 1.
 
 ## Alleen wat in je lijst staat
@@ -108,7 +108,7 @@ De pagina's die een bezoeker mag zien, bovenaan `main.py`, onder `STEMMINGEN`.
 </Regel>
 
 <Regel n={5} tot={6}>
-Staat de naam niet in de lijst, dan bestaat de pagina voor de bezoeker niet: een `404`, zoals in [Eén item tonen](/docs/FastAPI/detailpagina). `FileResponse` komt pas daarna.
+Staat de naam niet in de lijst, dan bestaat de pagina voor de bezoeker niet: een `404`, zoals in [Eén item tonen](/docs/FastAPI/gastenboek/detailpagina). `FileResponse` komt pas daarna.
 </Regel>
 
 </CodeUitleg>
@@ -171,7 +171,7 @@ staat.
 "http://127.0.0.1:8000/pagina?naam=home.html"
 ```
 
-Meer over `FileResponse` en de map `static/pages`: [HTML in bestanden](/docs/FastAPI/html_bestanden).
+Meer over `FileResponse` en de map `static/pages`: [HTML in bestanden](/docs/FastAPI/html/html_bestanden).
 
 ## Opdrachten
 
@@ -279,7 +279,7 @@ Loop deze lijst af:
 
 In het gastenboek uit de FastAPI-lessen zet je de grenzen in de parameters die
 je endpoints al hebben, en de controle op spaties bovenaan de functie. Met de
-sessies uit [Onthouden op de server: sessies](/docs/FastAPI/sessies) komt in
+sessies uit [Onthouden op de server: sessies](/docs/FastAPI/onthouden/sessies) komt in
 `POST /gastenboek` alleen nog het bericht uit het formulier:
 
 ```python
@@ -300,7 +300,7 @@ Heb je de uitbreiding cookies en sessies nog niet gedaan, dan heeft je
 `naam`.
 
 Het bericht krijgt hier 80 tekens en geen 280 zoals in deze reeks. Zo past het
-bij [Server of browser?](/docs/FastAPI/server-of-browser), waar je gastenboek
+bij [Server of browser?](/docs/FastAPI/in-de-browser/server-of-browser), waar je gastenboek
 `maxlength="80"` krijgt; zet die ook in je HTML. Deed je die les al, en staat
 de `if len(bericht) > 80` daaruit nog in je functie, dan mag hij weg:
 `max_length=80` doet hetzelfde, alleen krijgt een te lang bericht nu een `422`

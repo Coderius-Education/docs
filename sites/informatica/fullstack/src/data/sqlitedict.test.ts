@@ -32,7 +32,11 @@ const hoofdtekst = (id: string) =>
     .replace(/<details>[\s\S]*?<\/details>/g, '');
 const sectie = (bron: string, kop: string) => bron.split(`\n## ${kop}\n`)[1]?.split(/\n## /)[0];
 
-const SCRIPTLESSEN = ['FastAPI/database', 'FastAPI/database-sleutels', 'FastAPI/database-waarden'];
+const SCRIPTLESSEN = [
+  'FastAPI/sqlitedict/database',
+  'FastAPI/sqlitedict/database-sleutels',
+  'FastAPI/sqlitedict/database-waarden',
+];
 
 describe('SqliteDict eerst in een script', () => {
   const eersteInServer = lessen.find((id) =>
@@ -40,7 +44,7 @@ describe('SqliteDict eerst in een script', () => {
   );
 
   it('de drie scriptlessen staan direct vóór de eerste les met SqliteDict in een endpoint', () => {
-    expect(eersteInServer).toBe('FastAPI/post_naar_database');
+    expect(eersteInServer).toBe('FastAPI/gastenboek/post_naar_database');
     const plek = lessen.indexOf(eersteInServer as string);
     expect(lessen.slice(plek - SCRIPTLESSEN.length, plek)).toEqual(SCRIPTLESSEN);
   });
@@ -71,11 +75,23 @@ describe('SqliteDict eerst in een script', () => {
 
   // De fouten die leerlingen echt maken, elk nagedraaid.
   it.each([
-    ['FastAPI/database', 'db.commit()', 'een vergeten commit: geen fout, de oude waarde blijft'],
-    ['FastAPI/database', 'andere map', 'een script in een andere map maakt een lege database'],
-    ['FastAPI/database', "KeyError: 'Naam'", 'een hoofdletter in de sleutel'],
-    ['FastAPI/database-sleutels', "KeyError: 'leeftijd'", 'del zonder in, de tweede keer'],
-    ['FastAPI/database-waarden', 'terug', 'een dictionary aanpassen zonder terugzetten'],
+    [
+      'FastAPI/sqlitedict/database',
+      'db.commit()',
+      'een vergeten commit: geen fout, de oude waarde blijft',
+    ],
+    [
+      'FastAPI/sqlitedict/database',
+      'andere map',
+      'een script in een andere map maakt een lege database',
+    ],
+    ['FastAPI/sqlitedict/database', "KeyError: 'Naam'", 'een hoofdletter in de sleutel'],
+    [
+      'FastAPI/sqlitedict/database-sleutels',
+      "KeyError: 'leeftijd'",
+      'del zonder in, de tweede keer',
+    ],
+    ['FastAPI/sqlitedict/database-waarden', 'terug', 'een dictionary aanpassen zonder terugzetten'],
   ])('%s: Er gaat iets mis noemt %s (%s)', (id, nodig) => {
     expect(sectie(tekst(id), 'Er gaat iets mis') ?? '').toContain(nodig);
   });
@@ -91,20 +107,22 @@ describe('SqliteDict eerst in een script', () => {
   });
 
   it('Een formulier opslaan legt db.get niet opnieuw uit, maar linkt naar de les', () => {
-    const les = tekst('FastAPI/post_naar_database');
-    expect(les).toContain('](/docs/FastAPI/database-sleutels)');
-    expect(les).toContain('](/docs/FastAPI/database-waarden)');
+    const les = tekst('FastAPI/gastenboek/post_naar_database');
+    expect(les).toContain('](/docs/FastAPI/sqlitedict/database-sleutels)');
+    expect(les).toContain('](/docs/FastAPI/sqlitedict/database-waarden)');
   });
 });
 
 describe('SqliteDict op een rij', () => {
   // Pas in de test gelezen: bestaat de pagina niet, dan faalt elke test apart.
-  const naslag = () => tekst('FastAPI/sqlitedict');
+  const naslag = () => tekst('FastAPI/sqlitedict/op-een-rij');
 
   it('is naslag: niet in de sidebar, wel in de Database-sectie van de cheatsheet', () => {
-    expect(lessen).not.toContain('FastAPI/sqlitedict');
+    expect(lessen).not.toContain('FastAPI/sqlitedict/op-een-rij');
     const cheatsheet = readFileSync(`${DOCS}/cheatsheet.md`, 'utf8');
-    expect(sectie(cheatsheet, 'Database (sqlitedict)')).toContain('(/docs/FastAPI/sqlitedict)');
+    expect(sectie(cheatsheet, 'Database (sqlitedict)')).toContain(
+      '(/docs/FastAPI/sqlitedict/op-een-rij)',
+    );
   });
 
   it.each(SCRIPTLESSEN)('de naslag linkt naar %s', (id) => {
@@ -112,7 +130,9 @@ describe('SqliteDict op een rij', () => {
   });
 
   it('de eerste scriptles noemt de naslag', () => {
-    expect(tekst('FastAPI/database')).toContain('](/docs/FastAPI/sqlitedict)');
+    expect(tekst('FastAPI/sqlitedict/database')).toContain(
+      '](/docs/FastAPI/sqlitedict/op-een-rij)',
+    );
   });
 
   // Elk verschil met een gewone dictionary is een fout uit de lessen.

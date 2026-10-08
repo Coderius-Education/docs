@@ -1,0 +1,45 @@
+import { DevtoolsPaneel, NetwerkTabel } from '@site/src/components/Devtools';
+import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
+
+# Zo werkt het: CSS en afbeeldingen
+
+Bij [je eerste verzoek](/docs/FastAPI/eerste-server/verzoek-eerste) was één verzoek één antwoord. Met een stylesheet en een afbeelding erbij klopt dat niet meer: de browser krijgt eerst de HTML, leest daarin wat er nog ontbreekt, en haalt dat apart op.
+
+<VerzoekCyclus variant="static" />
+
+In stap 5 draait er geen functie van jou. De verzoeken voor de CSS en de afbeelding beantwoordt `app.mount` uit [CSS in een eigen bestand (static files)](/docs/FastAPI/html/static_files) zelf. Daarom heb je die ene regel nodig, en daarom heeft een fout in het pad van `<link>` of `<img>` niets met je Python-code te maken: de browser vraagt het bestand in stap 4 op bij een adres waar niets staat.
+
+De pagina zelf staat op stap 2 wel achter een functie van jou. Zo kun je per verzoek iets anders terugsturen, en dat doe je in de volgende les met een [template](/docs/FastAPI/formulieren/templates). Het volgende diagram, [bij één klik](/docs/FastAPI/gastenboek/verzoek-get), laat zien wat er dan tussen stap 2 en 3 bijkomt.
+
+## Zie het zelf
+
+Ga naar `/foto` uit [Afbeeldingen tonen](/docs/FastAPI/html/afbeeldingen): die pagina heeft een stylesheet én een afbeelding. Open het tabblad **Netwerk** uit [Kijken wat de browser doet](/docs/FastAPI/eerste-server/devtools-netwerk) en herlaad. Bij je eerste verzoek stond er één regel; nu staan er drie, in de volgorde van het diagram. Als alles goed staat, ziet het er zo uit:
+
+<DevtoolsPaneel tab="Netwerk">
+  <NetwerkTabel
+    rijen={[
+      { naam: 'foto', status: 200, type: 'document', grootte: '1,2 kB' },
+      { naam: 'style.css', status: 200, type: 'stylesheet', grootte: '312 B' },
+      { naam: 'kat.jpg', status: 200, type: 'jpeg', grootte: '48,3 kB' },
+    ]}
+  />
+</DevtoolsPaneel>
+
+De groottes verschillen per computer; de statuscode is wat telt. Alle drie zijn `200`: de pagina kwam van je functie, de CSS en de afbeelding van `app.mount`.
+
+## Als het misgaat
+
+Staat het pad in `<img>` verkeerd, en heb je **Cache uitzetten** niet aan, dan kan dezelfde lijst er zo uitzien:
+
+<DevtoolsPaneel tab="Netwerk">
+  <NetwerkTabel
+    rijen={[
+      { naam: 'foto', status: 200, type: 'document', grootte: '1,2 kB' },
+      { naam: 'style.css', status: 200, type: 'stylesheet', grootte: '(schijfcache)' },
+      { naam: 'kat.jpg', status: 404, type: 'json', grootte: '214 B' },
+    ]}
+  />
+</DevtoolsPaneel>
+
+- `kat.jpg` heeft status **404**. De browser vroeg het bestand in stap 4, maar op dat adres stond niets: het pad in `<img>` klopt niet, of `app.mount` ontbreekt. Het type is `json`, want de foutmelding van FastAPI is JSON, geen plaatje. Je Python-code heeft er niets mee te maken, en de terminal logt het als `"GET /static/kat.jpg HTTP/1.1" 404`.
+- `style.css` kwam uit de **schijfcache**. De browser heeft de server niet eens gevraagd en toonde zijn eigen kopie. Soms staat er **(geheugencache)**; dat betekent hetzelfde. Pas je de CSS aan en verandert er niets, dan is dit de reden. Zet het vinkje **Cache uitzetten** aan zolang je werkt, of herlaad zonder cache.

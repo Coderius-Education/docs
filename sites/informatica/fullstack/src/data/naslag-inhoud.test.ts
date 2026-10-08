@@ -75,12 +75,12 @@ describe('cheatsheet volgt de lessen', () => {
   // staat waarschijnlijk niet op de pagina waar de leerling het neerzet.
   it('elk htmx-doel in de cheatsheet komt met hetzelfde pad in een les voor', () => {
     const lessen = [
-      'htmx',
-      'htmx-overzicht',
-      'javascript',
-      'server-of-browser',
-      'sessies',
-      'cookie-of-sessie',
+      'zonder-herladen/htmx',
+      'zonder-herladen/htmx-overzicht',
+      'in-de-browser/javascript',
+      'in-de-browser/server-of-browser',
+      'onthouden/sessies',
+      'onthouden/cookie-of-sessie',
     ]
       .map((f) => lees(`${DOCS}/FastAPI/${f}.mdx`))
       .join('\n');
@@ -95,7 +95,7 @@ describe('cheatsheet volgt de lessen', () => {
   });
 
   it('het adres zoeken gaat met dezelfde commando’s als in Laat het aan anderen zien', () => {
-    const les = lees(`${DOCS}/FastAPI/laat-het-zien.mdx`);
+    const les = lees(`${DOCS}/FastAPI/afronden/laat-het-zien.mdx`);
     const blok = codeblokken(les, 'bash').find((c) => c.includes('ipconfig'));
     expect(blok, 'codeblok met ipconfig in laat-het-zien').toBeDefined();
     const commandos = (blok as string)

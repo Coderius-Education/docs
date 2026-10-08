@@ -66,7 +66,7 @@ HTML.
 
 Dat geldt ook voor de `hx-on`-attributen van htmx. Van
 `hx-on::after-request="this.reset()"` uit het
-[htmx-overzicht](/docs/FastAPI/htmx-overzicht#een-formulier-versturen) maakt
+[htmx-overzicht](/docs/FastAPI/zonder-herladen/htmx-overzicht#een-formulier-versturen) maakt
 htmx een stukje JavaScript, en dat houdt `script-src 'self'` tegen. De velden
 blijven na het versturen gevuld; de enige aanwijzing is een rode `EvalError` in
 de Console. Haal het attribuut dan weg, en zet de reset in een eigen bestand

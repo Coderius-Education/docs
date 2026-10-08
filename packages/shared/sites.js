@@ -236,8 +236,8 @@ function legacyHost(id) {
 /**
  * Basis-URL voor Docusaurus' `editUrl` van één cursus. Docusaurus plakt daar
  * het pad van het bronbestand achter, gerekend vanaf de map van de site — dus
- * `docs/FastAPI/links.mdx` wordt
- * `…/tree/main/sites/informatica/fullstack/docs/FastAPI/links.mdx`.
+ * `docs/FastAPI/html/links.mdx` wordt
+ * `…/tree/main/sites/informatica/fullstack/docs/FastAPI/html/links.mdx`.
  *
  * @param {string} id site-id, bv. 'fullstack'
  */
