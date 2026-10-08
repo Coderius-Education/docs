@@ -408,3 +408,118 @@ describe('de route Veiligheid sluit aan op het eigen project', () => {
     expect(volgorde).toEqual([...volgorde].sort((a, b) => a - b));
   });
 });
+
+// Uit de leerling-doorloop van de hele route Veiligheid (oktober 2026). Elk
+// blok hieronder faalde op de tekst van daarvoor.
+describe('verwijzingen en vaste vormen in de route Veiligheid', () => {
+  const route = sidebars.veiligheidSidebar as unknown as (string | Categorie)[];
+  const reeksen = route
+    .filter((c): c is Categorie => typeof c !== 'string' && c.type === 'category')
+    .map((c) => c.items[0].split('/')[1]);
+  const nummer = (map: string, stap: string) =>
+    lees(map, stap).match(/^sidebar_label: '(\d+)\./m)?.[1];
+
+  it('een link "les N" binnen een reeks wijst naar de les met dat nummer', () => {
+    // Toen Tekst uit de URL als les 3 in XSS kwam, zei les 2 nog "in de
+    // volgende les gaat de lijst naar een template", terwijl dat les 4 werd.
+    const fout: string[] = [];
+    for (const map of reeksen) {
+      for (const stap of stappenVan(map)) {
+        for (const m of lees(map, stap).matchAll(/\[les (\d+)[^\]]*\]\(\.\/([a-z-]+)\)/g)) {
+          const doel = nummer(map, m[2]);
+          if (doel !== m[1]) fout.push(`${map}/${stap}: les ${m[1]} -> ${m[2]} (les ${doel})`);
+        }
+        if (/In de volgende les\b/.test(lees(map, stap))) {
+          fout.push(`${map}/${stap}: "In de volgende les" zonder nummer`);
+        }
+      }
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('een verwijzing naar een latere reeks zegt dat die later komt', () => {
+    // XSS in de praktijk verwees naar Cookies en Wie mag wat alsof de
+    // leerling die al had gedaan. De laatste regel van een praktijkpagina
+    // ("Door naar de volgende reeks") telt niet.
+    const fout: string[] = [];
+    reeksen.forEach((map, i) => {
+      for (const stap of stappenVan(map)) {
+        const zinnen = lees(map, stap)
+          .replace(/^Door naar de volgende reeks:.*$/m, '')
+          .split(/(?<=[.?])\s+(?=[A-Z])/);
+        for (const zin of zinnen) {
+          for (const m of zin.matchAll(/\]\(\.\.\/([a-z-]+)\//g)) {
+            const j = reeksen.indexOf(m[1]);
+            if (j > i && !/\blater\b/.test(zin)) {
+              fout.push(`${map}/${stap} -> ${m[1]}: ${zin.slice(0, 80)}`);
+            }
+          }
+        }
+      }
+    });
+    expect(fout).toEqual([]);
+  });
+
+  it('in Er gaat iets mis heeft elke fout een eigen kop', () => {
+    // In Invoer les 1 en Te veel verzoeken les 5 stonden twee fouten onder één
+    // kop, en een verwijzing hing bij de verkeerde.
+    const fout: string[] = [];
+    for (const map of reeksen) {
+      for (const stap of stappenVan(map)) {
+        const sectie = lees(map, stap)
+          .split(/^## Er gaat iets mis\s*$/m)[1]
+          ?.split(/^## /m)[0];
+        if (!sectie) continue;
+        const oorzaken = sectie.match(/\*\*Oorzaak:\*\*/g)?.length ?? 0;
+        const koppen = sectie.match(/^### /gm)?.length ?? 0;
+        if (oorzaken > 1 && koppen < oorzaken) fout.push(`${map}/${stap}: ${oorzaken} fouten`);
+      }
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('de controlelijst noemt wat de reeksen leren, en geen punt twee keer', () => {
+    // samesite en check_needs_rehash ontbraken, terwijl de reeksen ze lieten
+    // toepassen, en GET /sessies stond er twee keer in.
+    const tekst = readFileSync(join(VEILIGHEID, 'eigen-project.mdx'), 'utf8');
+    for (const term of [
+      'docs_url',
+      '.gitignore',
+      'max_length',
+      'strip()',
+      'escape()',
+      'textContent',
+      '|safe',
+      '@limiter.limit',
+      '403',
+      'httponly=True',
+      'samesite="lax"',
+      'delete_cookie',
+      'ph.hash(wachtwoord)',
+      'ph.verify',
+      'check_needs_rehash',
+    ]) {
+      expect(tekst, term).toContain(term);
+    }
+    const punten = tekst.split(/^- \[ \] /m).slice(1);
+    const endpoints = punten.flatMap((p) => [
+      ...new Set([...p.matchAll(/`((?:GET|POST|DELETE) \/[a-z/{}]*)`/g)].map((m) => m[1])),
+    ]);
+    expect(endpoints.filter((e, i) => endpoints.indexOf(e) !== i)).toEqual([]);
+  });
+
+  it('de vaktermen van Wachtwoorden staan in de woordenlijst', () => {
+    // De reeks maakte zes termen vet zonder ze in ## Woorden te zetten.
+    const woorden = readFileSync(join(VEILIGHEID, 'index.mdx'), 'utf8').split('## Woorden')[1];
+    for (const term of [
+      'rainbow tables',
+      'Argon2',
+      'peper',
+      'tweestapsverificatie',
+      'AVG',
+      'datalek',
+    ]) {
+      expect(woorden, term).toContain(term);
+    }
+  });
+});
