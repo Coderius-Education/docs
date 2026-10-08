@@ -29,7 +29,11 @@ export default createConfig({
 
   themeConfig: {
     navbar: {
-      items: [{ to: '/', label: 'Editor', position: 'left' }],
+      items: [
+        { to: '/', label: 'Editor', position: 'left' },
+        // Projecten van ide.coderius.nl (vóór de verhuizing) meenemen.
+        { to: '/overzetten', label: 'Oude projecten', position: 'left' },
+      ],
     },
   },
 });
