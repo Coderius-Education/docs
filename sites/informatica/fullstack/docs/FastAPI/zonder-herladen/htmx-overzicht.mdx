@@ -161,10 +161,10 @@ Een `<input>` met `hx-get` stuurt zijn eigen waarde mee als query-parameter, dus
 async def berichten_lijst(request: Request, term: str = ""):
     with SqliteDict("gastenboek.db") as db:
         alle_berichten = list(db.items())
-    gevonden = [
-        (sleutel, bericht) for sleutel, bericht in alle_berichten
-        if term.lower() in bericht["bericht"].lower()
-    ]
+    gevonden = []
+    for sleutel, bericht in alle_berichten:
+        if term.lower() in bericht["bericht"].lower():
+            gevonden.append((sleutel, bericht))
     return templates.TemplateResponse(
         request,
         "berichten_lijst.html",
@@ -172,7 +172,7 @@ async def berichten_lijst(request: Request, term: str = ""):
     )
 ```
 
-`delay:300ms` wacht tot je even stopt met typen, anders gaat er bij elke letter een verzoek. En `changed` slaat toetsen over die de tekst niet veranderen, zoals de pijltjes.
+De for-lus houdt alleen de berichten waar de zoekterm in staat. `lower()` maakt van een tekst kleine letters, zodat `Hoi` ook gevonden wordt als je `hoi` typt. `delay:300ms` wacht tot je even stopt met typen, anders gaat er bij elke letter een verzoek. En `changed` slaat toetsen over die de tekst niet veranderen, zoals de pijltjes.
 
 Vindt de server niets, dan komt het `{% else %}`-blok in beeld. Daar staat "Nog geen berichten. Wees de eerste.", en dat klopt niet als er wel berichten zijn maar geen enkele past. Daarom gaat `term` mee naar de template. Vervang in `berichten_lijst.html` het `{% else %}`-blok door:
 

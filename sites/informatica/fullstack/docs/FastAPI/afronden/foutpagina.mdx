@@ -15,26 +15,18 @@ Op `/bericht/onzin` staat `{"detail":"Dit bericht bestaat niet"}`. Dat pad hoort
 
 Allebei zijn het een 404, en allebei moeten ze straks je eigen pagina tonen. Een andere fout, zoals een fout wachtwoord (401) of een fout in je code (500), moet blijven wat hij is.
 
-## Drie manieren
+## Een handler voor 404
 
-FastAPI laat je op drie manieren een eigen pagina tonen.
+Een **exception handler** is een functie die FastAPI aanroept als er een fout ontstaat, in plaats van zelf JSON te sturen. Jij maakt er een voor 404: een onbekend adres en jouw eigen `raise HTTPException(status_code=404)` gaan er allebei doorheen, en een 401, een 405 of een fout in je code blijven wat ze zijn.
 
-**Een handler voor 404.** Een **exception handler** is een functie die FastAPI aanroept als er een fout ontstaat, in plaats van zelf JSON te sturen. Deze handler is alleen voor 404:
+Die bouw je hieronder. Er zijn nog andere manieren; waarom deze de beste keuze is, lees je onder Achtergrond.
 
-```python
-@app.exception_handler(404)
-async def niet_gevonden(request: Request, fout):
-    return templates.TemplateResponse(
-        request,
-        "404.html",
-        {"pad": request.url.path},
-        status_code=404,
-    )
-```
+<details>
+<summary>Achtergrond: twee andere manieren</summary>
 
-Je kunt hem ook aan `FastAPI()` meegeven, als `app = FastAPI(exception_handlers={404: niet_gevonden})`, met de functie boven die regel. Dat doet precies hetzelfde.
+Je kunt de handler ook aan `FastAPI()` meegeven, als `app = FastAPI(exception_handlers={404: niet_gevonden})`, met de functie boven die regel. Dat doet precies hetzelfde. Daarnaast zijn er twee manieren die echt anders werken.
 
-**Een handler voor elke HTTP-fout.** Een handler voor `StarletteHTTPException` krijgt elke fout die FastAPI of jij met een statuscode stuurt: 404, maar ook 401, 403 en 405. Daarom kijkt hij zelf naar de code, en geeft hij de rest door aan de handler die FastAPI normaal gebruikt:
+**Een handler voor elke HTTP-fout.** Een handler voor `StarletteHTTPException` krijgt elke fout die FastAPI of jij met een statuscode stuurt: 404, maar ook 401 en 405. Daarom kijkt hij zelf naar de code, en geeft hij de rest door aan de handler die FastAPI normaal gebruikt:
 
 ```python
 from fastapi.exception_handlers import http_exception_handler
@@ -51,6 +43,8 @@ async def http_fouten(request: Request, fout):
         )
     return await http_exception_handler(request, fout)
 ```
+
+De `await` wacht op het antwoord van die andere handler. Meer hoef je er hier niet over te weten.
 
 Vergeet je de `if` en de laatste regel, dan toont je server bij een fout wachtwoord of een verkeerde methode ook "Niet gevonden", met status 404. Een bezoeker zoekt dan naar een pagina die er wel is.
 
@@ -73,13 +67,15 @@ Dat werkt alleen voor dit ene endpoint. Een adres zonder endpoint geeft nog stee
 |---|:---:|:---:|:---:|
 | Onbekend adres | jouw pagina | jouw pagina | JSON |
 | Jouw `raise HTTPException(status_code=404)` | jouw pagina | jouw pagina | alleen waar je het verandert |
-| 401, 403, 405 | blijven JSON | blijven JSON, als je ze doorgeeft | blijven JSON |
+| 401, 405 | blijven JSON | blijven JSON, als je ze doorgeeft | blijven JSON |
 | Fout in je code (500) | blijft een 500 | blijft een 500 | blijft een 500 |
 | Wat je schrijft | één functie | een functie, een `if` en twee imports | dezelfde regels in elk endpoint |
 
-De handler voor 404 doet wat je wilt, met de minste code, en raakt de andere fouten niet. Die bouw je hieronder.
+De handler voor 404 doet wat je wilt, met de minste code, en raakt de andere fouten niet.
 
-## De handler voor 404
+</details>
+
+## De handler bouwen
 
 Maak `templates/404.html`:
 

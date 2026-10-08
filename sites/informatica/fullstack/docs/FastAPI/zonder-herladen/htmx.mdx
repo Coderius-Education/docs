@@ -60,12 +60,16 @@ async def tijd():
     return HTMLResponse(f"Het is nu {datetime.now().strftime('%H:%M:%S')}")
 ```
 
+<Regel n={1} tot={2}>
+Zet deze imports bovenaan je `main.py`, bij de andere. `datetime` hoort bij Python zelf, en `HTMLResponse` heb je al sinds HTML tonen.
+</Regel>
+
 <Regel n={4} tot={5}>
 Een endpoint zoals je eerste, uit [Je eerste endpoint](/docs/FastAPI/eerste-server/eerste_endpoint). Voor je Python-code maakt het niet uit of htmx het verzoek stuurde of de browser zelf.
 </Regel>
 
 <Regel n={6}>
-Het antwoord is één zin, geen hele pagina. `datetime.now()` is de tijd van de server, en `strftime` maakt er "14:32:07" van. htmx zet de zin in `#uitkomst`.
+Het antwoord is één zin, geen hele pagina. Je geeft hier een `HTMLResponse` met de tekst erin zelf terug, in plaats van `response_class=HTMLResponse` bij de decorator: dat doet hetzelfde. `datetime.now()` is de tijd van de server, en `strftime` maakt er "14:32:07" van. htmx zet de zin in `#uitkomst`.
 </Regel>
 
 </CodeUitleg>

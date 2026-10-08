@@ -40,7 +40,7 @@ async def dier(naam: str):
 
 Ga naar [http://127.0.0.1:8000/dier/kat](http://127.0.0.1:8000/dier/kat). Je krijgt `{"je_vroeg_om":"kat"}`. Op `/dier/olifant` krijg je `{"je_vroeg_om":"olifant"}`.
 
-`{naam}` tussen accolades is een plekhouder in het pad: een **path-parameter**. Wat er in de URL op die plek staat, komt binnen als de parameter met dezelfde naam. Eén route vangt zo elk adres dat begint met `/dier/`.
+`{naam}` tussen accolades is een plekhouder in het pad: een **path-parameter**. Wat er in de URL op die plek staat, komt binnen als de parameter met dezelfde naam. Met `naam: str` zeg je dat het tekst is; wat zo'n type doet, zie je in de volgende les. Eén route vangt zo elk adres dat begint met `/dier/`.
 
 ## De tekst opzoeken
 
@@ -97,7 +97,7 @@ Een nette foutpagina voor een dier dat er niet is, met de statuscode 404, maak j
 
 ## Er gaat iets mis
 
-Schrijf je `DIEREN[naam]` in plaats van `DIEREN.get(naam, …)`, dan werkt `/dier/kat` wel. Maar `/dier/olifant` geeft `Internal Server Error`, en in je terminal staat:
+Schrijf je `DIEREN[naam]` in plaats van `DIEREN.get(naam, …)`, dan werkt `/dier/kat` wel. Maar `/dier/olifant` geeft `Internal Server Error`, met de statuscode 500: er ging iets mis in jouw code. In je terminal staat:
 
 ```
 KeyError: 'olifant'

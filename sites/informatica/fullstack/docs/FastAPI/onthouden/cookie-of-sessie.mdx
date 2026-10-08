@@ -4,9 +4,7 @@ Je kunt nu allebei: een cookie met de naam erin, en een sessie waarbij alleen ee
 
 ## Wat ze allebei oplossen
 
-Elk verzoek staat op zichzelf. Vraag je twee pagina's achter elkaar op, dan ziet je server twee losse verzoeken zonder enig verband. Er is niets in HTTP dat zegt "dit is dezelfde persoon als daarnet".
-
-Een cookie is het enige wat dat gat dicht. De server geeft de browser een stukje tekst mee, en de browser stuurt dat vanaf dan bij élk verzoek terug. Dat geldt voor allebei de aanpakken, want een sessie is ook een cookie. Het verschil zit niet in de techniek, maar in wát er in die cookie staat.
+Elk verzoek staat op zichzelf, zag je in [Onthouden met een cookie](/docs/FastAPI/onthouden/cookies#de-server-herkent-je-niet). Een cookie is het enige wat dat gat dicht. De server geeft de browser een stukje tekst mee, en de browser stuurt dat vanaf dan bij élk verzoek terug. Dat geldt voor allebei de aanpakken, want een sessie is ook een cookie. Het verschil zit niet in de techniek, maar in wát er in die cookie staat.
 
 ## Het verschil in één zin
 
@@ -105,7 +103,7 @@ Zet op je berichtenpagina twee links waarmee de bezoeker kiest of berichten van 
 <details>
 <summary>Tip</summary>
 
-Dit is een voorkeur die niemand kan schaden, dus een cookie volstaat en heb je geen sessie nodig. Lees hem uit met `Cookie(default="nieuw")`. De database geeft de berichten van oud naar nieuw, dus draai je lijst om met `list(reversed(...))` als de waarde níét `oud` is.
+Dit is een voorkeur die niemand kan schaden, dus een cookie volstaat en heb je geen sessie nodig. Lees hem uit met `Cookie(default="nieuw")`. De database geeft de berichten van oud naar nieuw, dus draai je lijst om met `list(reversed(...))` als de waarde níét `oud` is. `reversed()` loopt een lijst van achter naar voren, en `list()` eromheen maakt er weer een lijst van.
 
 </details>
 
