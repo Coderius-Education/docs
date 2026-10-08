@@ -1,0 +1,24 @@
+.wrap {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 2.5rem 1rem;
+}
+
+.stappen li + li {
+  margin-top: 0.4rem;
+}
+
+.status {
+  display: block;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+}
+
+.status[hidden] {
+  display: none;
+}
+
+.bestand {
+  margin-top: 1.5rem;
+}

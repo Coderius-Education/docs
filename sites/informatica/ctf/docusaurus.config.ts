@@ -8,6 +8,17 @@ export default createConfig({
   siteId: 'ctf',
   projectName: 'ctf-docs',
   matomoSiteId: 8,
+  // Werk van ctf.coderius.nl (vóór de verhuizing): zie oude-opslag.js.
+  oudeOpslag: {
+    localStorage: [
+      {
+        van: 'coderius-editor:inline:',
+        naar: 'editor:inline:',
+        prefix: true,
+        label: 'Je code in de oefenvelden',
+      },
+    ],
+  },
 
   description:
     'Los CTF-challenges op en leer cybersecurity. Codes kraken, websites hacken, forensisch onderzoek — direct in je browser.',

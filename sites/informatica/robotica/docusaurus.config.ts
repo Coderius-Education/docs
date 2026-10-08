@@ -23,6 +23,16 @@ export default createConfig({
   siteId: 'robotica',
   projectName,
   matomoSiteId: 7,
+  // Werk van robotica.coderius.nl (vóór de verhuizing): zie oude-opslag.js.
+  oudeOpslag: {
+    localStorage: [
+      { van: 'webMicroEditor.code', label: 'Je code in de editor' },
+      { van: 'webMicroEditor.currentFile', label: 'Je code in de editor' },
+      { van: 'webMicroEditor.leaphyRepo', label: 'Instellingen van de editor' },
+      { van: 'webMicroEditor.leaphyBranch', label: 'Instellingen van de editor' },
+      { van: 'webMicroEditor.fontSize', label: 'Instellingen van de editor' },
+    ],
+  },
 
   // De Click Golfer ging van bouwen-eerst naar onderdelen-eerst. Drie lessen
   // gingen daarbij op in andere; oude links landen op de les die hun inhoud

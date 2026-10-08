@@ -14,6 +14,10 @@
       "types": "./opslag.d.ts",
       "default": "./opslag.js"
     },
+    "./oude-opslag": {
+      "types": "./oude-opslag.d.ts",
+      "default": "./oude-opslag.js"
+    },
     "./voorkennis": {
       "types": "./voorkennis.d.ts",
       "default": "./voorkennis.js"
@@ -64,6 +68,7 @@
     "./components/Leerlijnen/CursussenPage": "./components/Leerlijnen/CursussenPage.tsx",
     "./components/Privacy/PrivacyPage": "./components/Privacy/PrivacyPage.tsx",
     "./components/Privacy/MatomoOptOut": "./components/Privacy/MatomoOptOut.tsx",
+    "./components/OudeOpslag/OverzettenPagina": "./components/OudeOpslag/OverzettenPagina.tsx",
     "./package.json": "./package.json",
     "./components/ManagedHomepage": "./components/ManagedHomepage/index.tsx",
     "./components/HomepageSections": "./components/HomepageSections/index.tsx"

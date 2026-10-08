@@ -7,6 +7,19 @@ export default createConfig({
   siteId: 'web',
   projectName: 'web-docs',
   matomoSiteId: 3,
+  // Werk van web.coderius.nl (vóór de verhuizing): zie oude-opslag.js.
+  oudeOpslag: {
+    indexedDB: [
+      {
+        van: 'coderius-oefenvelden',
+        store: 'velden',
+        naar: 'oefenvelden',
+        // Sleutel = location.pathname|zaad|n; het pad kreeg /web/ ervoor.
+        sleutelBegintMetPad: true,
+        label: 'Je oefenvelden',
+      },
+    ],
+  },
 
   description:
     'Leer hier je eerste website te maken met HTML en CSS. Gratis cursus direct in je browser.',
