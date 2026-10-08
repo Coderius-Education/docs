@@ -69,7 +69,7 @@ Een endpoint zoals je eerste, uit [Je eerste endpoint](/docs/FastAPI/eerste-serv
 </Regel>
 
 <Regel n={6}>
-Het antwoord is één zin, geen hele pagina. Je geeft hier een `HTMLResponse` met de tekst erin zelf terug, in plaats van `response_class=HTMLResponse` bij de decorator: dat doet hetzelfde. `datetime.now()` is de tijd van de server, en `strftime` maakt er "14:32:07" van. htmx zet de zin in `#uitkomst`.
+Het antwoord is één zin, geen hele pagina. Je geeft hier zelf een `HTMLResponse` met de tekst terug in plaats van `response_class=HTMLResponse` bij de decorator te zetten; dat komt op hetzelfde neer. `datetime.now()` is de tijd van de server, en `strftime` maakt er "14:32:07" van. htmx zet de zin in `#uitkomst`.
 </Regel>
 
 </CodeUitleg>
@@ -158,7 +158,7 @@ async def aantal_zin():
 <button hx-get="/aantal-zin" hx-target="#uitkomst">Hoeveel berichten?</button>
 ```
 
-Twee knoppen, één doel: het antwoord van de laatste klik staat in de `<p>`. Een nieuw pad is nodig: bestaan er twee endpoints met `@app.get("/aantal")`, dan gebruikt FastAPI zonder waarschuwing het eerste, en staat er JSON onder je knop.
+Beide knoppen schrijven in dezelfde `<p>`, dus daar staat het antwoord van de laatste klik. Het nieuwe pad heb je nodig, want bestaan er twee endpoints met `@app.get("/aantal")`, dan gebruikt FastAPI zonder waarschuwing het eerste en staat er JSON onder je knop.
 
 </details>
 

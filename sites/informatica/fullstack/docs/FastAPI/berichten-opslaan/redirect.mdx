@@ -4,7 +4,7 @@ Je gastenboek werkt, maar na het versturen van een bericht sta je op een doodlop
 
 ## RedirectResponse
 
-Met `RedirectResponse` stuur je de browser door naar een andere URL. Zet `RedirectResponse` bij je imports:
+Met `RedirectResponse` stuur je de browser door naar een andere URL. Zet hem bij je imports:
 
 ```python
 from fastapi.responses import RedirectResponse
@@ -257,7 +257,7 @@ Haal `status_code=303` weg en verstuur nog een keer.
 <details>
 <summary>Antwoord</summary>
 
-Je krijgt **405 Method Not Allowed**. Zonder dat getal stuurt FastAPI een 307, en dan herhaalt de browser je POST op `/berichten`. Daar staat alleen een `@app.get`, dus het antwoord is: dit endpoint doet geen POST. Je bericht is wel opgeslagen; alleen het doorsturen ging mis. Ga je terug en verstuur je hetzelfde formulier nog een keer, dan staat het er twee keer in.
+Je krijgt 405 Method Not Allowed. Zonder dat getal stuurt FastAPI een 307, en dan herhaalt de browser je POST op `/berichten`. Daar staat alleen een `@app.get`, dus het antwoord is: dit endpoint doet geen POST. Je bericht is wel opgeslagen; alleen het doorsturen ging mis. Ga je terug en verstuur je hetzelfde formulier nog een keer, dan staat het er twee keer in.
 
 </details>
 

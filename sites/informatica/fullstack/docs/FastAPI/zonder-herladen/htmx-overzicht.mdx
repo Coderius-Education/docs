@@ -2,7 +2,7 @@
 
 Met `hx-get` en `hx-target` haalde je een zin op zonder herladen. Hetzelfde idee werkt voor alles wat je tot nu toe via een herlaad deed. Hieronder staat per recept de HTML en het endpoint dat erbij hoort. Kies wat je gastenboek nodig heeft; je hoeft ze niet allemaal te bouwen.
 
-Drie regels gelden overal. De pagina met de `hx-`-attributen heeft de script-tag van htmx in de `<head>`, net als `home.html` in [Zonder herladen met htmx](/docs/FastAPI/zonder-herladen/htmx): zonder die regel doet een knop niets en verstuurt een formulier zichzelf als GET. Het endpoint geeft een stukje HTML terug: een zin in een `HTMLResponse`, of een template zonder `<html>` eromheen. En het geeft nooit een omleiding, want htmx volgt die en zet dan de hele pagina in het doel.
+Voor elk recept geldt hetzelfde. De pagina met de `hx-`-attributen heeft de script-tag van htmx in de `<head>`, net als `home.html` in [Zonder herladen met htmx](/docs/FastAPI/zonder-herladen/htmx): zonder die regel doet een knop niets en verstuurt een formulier zichzelf als GET. Het endpoint geeft een stukje HTML terug: een zin in een `HTMLResponse`, of een template zonder `<html>` eromheen. En het geeft nooit een omleiding, want htmx volgt die en zet dan de hele pagina in het doel.
 
 ## Een formulier versturen
 
@@ -57,7 +57,7 @@ Zet je `hx-on::after-request="this.reset()"` op de `<form>`, dan maakt htmx de v
 
 ## Een stuk van de pagina verversen
 
-Een knop die de lijst met berichten opnieuw ophaalt. Het antwoord is nu geen zin maar een lijst, dus die krijgt een eigen template, `templates/berichten_lijst.html`, zonder `<html>` of `<head>`. Knip het hele `{% if berichten %}`-blok uit je `berichten.html` en zet het in dat nieuwe bestand. Met alles wat je lijst al had: de link naar de detailpagina uit [Eén item tonen](/docs/FastAPI/berichten-tonen/detailpagina) en het formuliertje om te verwijderen uit [Een bericht verwijderen: een verborgen veld](/docs/FastAPI/berichten-verwijderen/verwijderen). Zo ziet het er dan ongeveer uit:
+Een knop die de lijst met berichten opnieuw ophaalt. Het antwoord is nu geen zin maar een lijst, dus die krijgt een eigen template, `templates/berichten_lijst.html`, zonder `<html>` of `<head>`. Knip het hele `{% if berichten %}`-blok uit je `berichten.html` en zet het in dat nieuwe bestand. Neem alles mee wat je lijst al had: de link naar de detailpagina uit [Eén item tonen](/docs/FastAPI/berichten-tonen/detailpagina) en het formuliertje om te verwijderen uit [Een bericht verwijderen: een verborgen veld](/docs/FastAPI/berichten-verwijderen/verwijderen). Zo ziet het er dan ongeveer uit:
 
 ```html
 {% if berichten %}

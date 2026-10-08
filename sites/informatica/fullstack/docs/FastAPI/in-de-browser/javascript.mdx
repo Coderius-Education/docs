@@ -186,7 +186,7 @@ In de `<head>` van `berichten.html`:
 <script src="/static/js/berichten.js" defer></script>
 ```
 
-In de `<body>`, boven de lijst. De `<form>`-tag is dezelfde als op je gastenboekformulier. Bouwde je het htmx-recept, dan is dat de versie met `hx-post` en een `<p id="antwoord">` eronder (en staat `<script src="/static/js/htmx.min.js"></script>` ook in deze `<head>`), want je endpoint geeft dan een zin terug en geen omleiding:
+In de `<body>`, boven de lijst. De `<form>`-tag is dezelfde als op je gastenboekformulier. Bouwde je het htmx-recept, dan is dat de versie met `hx-post` en een `<p id="antwoord">` eronder, want je endpoint geeft dan een zin terug en geen omleiding. Zet in dat geval ook `<script src="/static/js/htmx.min.js"></script>` in deze `<head>`:
 
 ```html
 <button id="klap-knop">Nieuw bericht</button>

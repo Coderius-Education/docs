@@ -22,7 +22,7 @@ Een bericht in het gastenboek moet bewaard blijven en anderen moeten het lezen: 
 
 Alles wat via de server gaat kost een verzoek heen en een antwoord terug. Eén keer bij het versturen van een formulier merk je daar niets van. Bij elke toetsaanslag wél: veertien letters worden veertien verzoeken. Zonder htmx zou de pagina bij elke letter opnieuw laden; met htmx blijft hij staan, maar elk verzoek moet nog steeds heen en terug.
 
-Werk dat vaak gebeurt hoort daarom in de browser, ook als je het in Python zou kúnnen: meetypen, slepen, in- en uitklappen, iets rood kleuren. Het htmx-recept Zoeken terwijl je typt is de uitzondering die de regel bevestigt: de server heeft ook de berichten die niet op de pagina staan, en met een `delay` stuurt htmx pas een verzoek als je even stopt met typen.
+Werk dat vaak gebeurt hoort daarom in de browser, ook als je het in Python zou kúnnen: meetypen, slepen, in- en uitklappen, iets rood kleuren. Het htmx-recept Zoeken terwijl je typt gaat daar tegenin, en met reden: de server heeft ook de berichten die niet op de pagina staan, en met een `delay` stuurt htmx pas een verzoek als je even stopt met typen.
 
 ## De derde vraag: mag je het geloven?
 
@@ -89,7 +89,7 @@ Stel bij elk geval de hoofdvraag: moet dit bewaard blijven, of moet iemand ander
 
 1. **Browser.** Het bericht stond er al; je laat het alleen zien.
 2. **Server.** Het moet bewaard blijven en anderen moeten het lezen.
-3. **Browser.** Het geldt alleen voor deze bezoeker en hoeft niet bewaard te blijven. Wil je dat de keuze onthouden wordt tot de volgende keer, dan wordt het lastiger, want dan moet je hem ergens bewaren.
+3. **Browser.** Het geldt alleen voor deze bezoeker en hoeft niet bewaard te blijven. Wil je dat de site je keuze onthoudt tot de volgende keer, dan wordt het lastiger, want dan moet je hem ergens bewaren.
 4. **Server.** Een teller die van alle bezoekers samen optelt kan alleen op één plek staan, en dat is jouw database.
 
 </details>

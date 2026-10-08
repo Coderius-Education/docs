@@ -6,7 +6,7 @@
   ]}
 />
 
-Tot nu toe stuurde de browser alleen GET-verzoeken: hij haalt iets op, en wat hij meestuurt staat in de URL. Met een formulier stuurt hij iets naar je server. Dat doet hij met een tweede soort verzoek: **POST**.
+Tot nu toe stuurde de browser alleen GET-verzoeken: hij haalt iets op, en wat hij meestuurt staat in de URL. Met een formulier stuurt hij iets naar je server, en daarvoor gebruikt hij een tweede soort verzoek: **POST**.
 
 ## Het formulier
 
@@ -88,7 +88,7 @@ Schrijf je in HTML `name="naam"`, dan stuurt de browser de data als `naam=Jan`. 
 | **Data in** | De URL | De body van het verzoek |
 | **Voorbeeld** | Pagina laden, zoeken | Formulier versturen, inloggen |
 
-Als vuistregel: met GET zeg je "Geef me iets", met POST "Hier is iets". Wat een formulier met POST verstuurt, staat niet in de adresbalk. In het tabblad Netwerk zie je het wel: klik op het verzoek en kies **Payload**, dan staat het onder **Formuliergegevens** (Form Data).
+Grofweg zeg je met GET "Geef me iets" en met POST "Hier is iets". Wat een formulier met POST verstuurt, staat niet in de adresbalk. In het tabblad Netwerk zie je het wel: klik op het verzoek en kies **Payload**, dan staat het onder **Formuliergegevens** (Form Data).
 
 ## Testen
 
@@ -276,7 +276,7 @@ Als je een URL in je adresbalk typt, stuurt de browser altijd een GET-verzoek. W
 <details>
 <summary>Antwoord</summary>
 
-Je browser toont `{"detail":"Method Not Allowed"}`, en in Netwerk en je terminal staat de statuscode **405**. De browser stuurt een GET, maar `/verstuur` is een POST-endpoint (`@app.post`). Een POST-endpoint bereik je via een formulier, niet door de URL in te typen.
+Je browser toont `{"detail":"Method Not Allowed"}`, en in Netwerk en je terminal staat de statuscode 405. De browser stuurt een GET, maar `/verstuur` is een POST-endpoint (`@app.post`). Een POST-endpoint bereik je via een formulier, niet door de URL in te typen.
 
 </details>
 

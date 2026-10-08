@@ -57,7 +57,7 @@ Dezelfde controle als in je `POST /gastenboek` uit [Inloggen: een wachtwoord con
 </Regel>
 
 <Regel n={8}>
-Elke keer dat iemand inlogt, een nieuw sessie-id.
+Elke keer dat iemand inlogt, maakt je server een nieuw sessie-id.
 </Regel>
 
 <Regel n={9} tot={11}>
@@ -149,7 +149,7 @@ async def gastenboek_opslaan(bericht: str = Form(...), sessie_id: str = Cookie(d
 </Regel>
 
 <Regel n={6} tot={9}>
-Geen sessie, dan niet ingelogd: **401**, net als bij een fout wachtwoord.
+Zonder sessie ben je niet ingelogd, en dan antwoordt je server met een 401, net als bij een fout wachtwoord.
 </Regel>
 
 <Regel n={11} tot={13}>

@@ -11,9 +11,9 @@ Op `/bericht/onzin` toont je detailpagina nu een kop met lege plekken, met statu
 
 ## Zeggen dat het niet bestaat
 
-Iemand kan een URL intypen die nergens op slaat, of een bericht dat net verwijderd is opvragen. Dan is `bericht` gelijk aan `None` en toont je template een lege pagina. Dat is verwarrend: de bezoeker denkt dat er iets stuk is.
+Iemand kan een URL intypen die nergens op slaat, of een bericht opvragen dat net verwijderd is. Dan is `bericht` gelijk aan `None` en toont je template een lege pagina.
 
-Zeg liever expliciet dat het niet bestaat, met `HTTPException`. Zet `HTTPException` bij je imports en vervang je endpoint nog een keer:
+Zeg liever expliciet dat het niet bestaat, met `HTTPException`. Zet hem bij je imports en vervang je endpoint nog een keer:
 
 <CodeUitleg>
 

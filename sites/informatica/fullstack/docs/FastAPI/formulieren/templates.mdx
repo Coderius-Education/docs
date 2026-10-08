@@ -113,7 +113,7 @@ En dit is het antwoord dat de browser kreeg:
 </html>
 ```
 
-Nergens staat `{{ worp }}`. Jinja2 vult de template in op de server, en de browser krijgt gewone HTML. De browser weet dus niet dat er een template was; hij ziet alleen het getal.
+Nergens staat `{{ worp }}`. Jinja2 vult de template in op de server, en de browser krijgt gewone HTML. Van de template weet hij niets; hij ziet alleen het getal.
 
 ## Meer waarden meesturen
 
@@ -342,7 +342,7 @@ De browser zegt alleen `Internal Server Error`. Onderaan de lange foutmelding in
 
 Die melding zegt niets over templates, en dat maakt hem lastig. Het eerste argument is tegenwoordig `request`, dus jouw bestandsnaam belandt op de plek van `request` en jouw dictionary op de plek van de bestandsnaam. FastAPI probeert dan een template op te zoeken met een dictionary als naam, en dat kan niet.
 
-Zie je deze fout in je eigen code, of in een voorbeeld dat je overneemt? Zet `request` vooraan.
+Zie je deze fout in je eigen code of in een voorbeeld dat je overneemt, zet dan `request` vooraan.
 
 </details>
 

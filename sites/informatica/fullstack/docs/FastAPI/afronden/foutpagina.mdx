@@ -24,7 +24,7 @@ Die bouw je hieronder. Er zijn nog andere manieren; waarom deze de beste keuze i
 <details>
 <summary>Achtergrond: twee andere manieren</summary>
 
-Je kunt de handler ook aan `FastAPI()` meegeven, als `app = FastAPI(exception_handlers={404: niet_gevonden})`, met de functie boven die regel. Dat doet precies hetzelfde. Daarnaast zijn er twee manieren die echt anders werken.
+Je kunt de handler ook aan `FastAPI()` meegeven, als `app = FastAPI(exception_handlers={404: niet_gevonden})`, met de functie boven die regel. Dat doet precies hetzelfde. Er zijn ook twee manieren die echt anders werken.
 
 **Een handler voor elke HTTP-fout.** Een handler voor `StarletteHTTPException` krijgt elke fout die FastAPI of jij met een statuscode stuurt: 404, maar ook 401 en 405. Daarom kijkt hij zelf naar de code, en geeft hij de rest door aan de handler die FastAPI normaal gebruikt:
 
@@ -139,7 +139,7 @@ Zonder deze regel krijgt de pagina status 200: dan lijkt het voor de browser en 
 
 Zit er een fout in je Python, dan krijgt de bezoeker `Internal Server Error`, met status 500, en staat de foutmelding in je terminal. Dat is niet mooi, maar wel eerlijk: een 500 zegt dat het aan je server ligt, en jij weet dat je in de terminal moet kijken.
 
-Het kan verleidelijk zijn om ook daar een nette pagina voor te maken, met een handler voor `Exception`, elke fout in Python. Doe dat niet terwijl je nog bouwt. Je browser toont dan een pagina die er goed uitziet, en jij zoekt de fout op de verkeerde plek. Wat er dan gebeurt, zie je in opdracht 3.
+Je wilt daar misschien ook een nette pagina voor, met een handler voor `Exception`, die elke fout in Python opvangt. Doe dat niet terwijl je nog bouwt. Je browser toont dan een pagina die er goed uitziet, en jij zoekt de fout op de verkeerde plek. Wat er dan gebeurt, zie je in opdracht 3.
 
 ## Er gaat iets mis
 

@@ -2,7 +2,7 @@
 
 Sara heeft een account, maar je gastenboek vraagt er nog niet naar: wie "sara" intypt, schrijft nog steeds als Sara. Nu controleert je server het wachtwoord, en pas als dat klopt, bewaart hij het bericht.
 
-Een server onthoudt niets tussen twee verzoeken. Dat hij jou na het inloggen bij het volgende bericht nog herkent, kan hij nog niet; dat leer je later, in de uitbreiding over cookies en sessies. Tot die tijd typ je je wachtwoord bij elk bericht, en controleert je server het voordat hij iets opslaat. Elk bericht is zo een kleine inlog.
+Een server onthoudt niets tussen twee verzoeken, dus bij je volgende bericht herkent hij je niet meer. Hoe dat wel kan, leer je later, in de uitbreiding over cookies en sessies. Tot die tijd typ je je wachtwoord bij elk bericht, en controleert je server het voordat hij iets opslaat. Elk bericht is zo een kleine inlog.
 
 ## Het formulier
 
@@ -73,7 +73,7 @@ Een fout wachtwoord en een naam zonder account krijgen dezelfde melding, en dat 
 ## Testen
 
 1. Ga naar `http://127.0.0.1:8000/gastenboek` en verstuur een bericht als `sara` met `welkom123`. Je komt uit op de lijst, met je bericht erin.
-2. Verstuur nog een bericht als `sara`, nu met een fout wachtwoord. Je ziet `{"detail":"Naam of wachtwoord klopt niet"}`, en het tabblad **Netwerk** toont status `401`.
+2. Verstuur nog een bericht als `sara`, nu met een fout wachtwoord. Je ziet `{"detail":"Naam of wachtwoord klopt niet"}`, en het tabblad Netwerk toont status `401`.
 3. Probeer een naam zonder account, zoals `piet`. Je krijgt precies dezelfde melding.
 
 ## Wat nog niet af is
