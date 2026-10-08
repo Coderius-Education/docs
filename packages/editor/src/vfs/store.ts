@@ -1,4 +1,5 @@
 import { storageKey } from '@coderius/shared/opslag';
+import { legacyHost } from '@coderius/shared/sites';
 import { createStore, del, get, set } from 'idb-keyval';
 import type { Project, ProjectSummary } from './types';
 
@@ -70,5 +71,11 @@ export const DEFAULT_STORAGE_PREFIX = 'coderius-editor';
  * allebei deze naam.
  */
 export function projectOpslag(siteId: string): string {
+  // Op het oude subdomein van de site (ide.coderius.nl, dat docs-management
+  // een tijd live houdt) staan de projecten van vóór de verhuizing nog in de
+  // database zonder voorvoegsel; die origin deelt hij met niemand.
+  if (typeof window !== 'undefined' && window.location?.hostname === legacyHost(siteId)) {
+    return DEFAULT_STORAGE_PREFIX;
+  }
   return storageKey(siteId, DEFAULT_STORAGE_PREFIX);
 }
