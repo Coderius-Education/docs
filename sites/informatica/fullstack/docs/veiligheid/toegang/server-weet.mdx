@@ -47,8 +47,20 @@ async def bericht_verwijderen(sleutel: str, naam: str = ""):
 `naam` is een query-parameter, zoals in [Een waarde na een vraagteken: query-parameters](/docs/FastAPI/veel-paginas/query-parameters):
 de knop zou `/bericht/…?naam=Alex` versturen. Gooi `gastenboek.db`,
 `sessies.db` en `gebruikers.db` weg en draai `test_verwijderen.py` uit
-[les 1](./zwakheid). Alex stuurt geen naam mee en krijgt netjes `403`. Verander
-nu in het script de regel waarmee Alex verwijdert, zodat hij de naam van Sara
+[les 1](./zwakheid), met onderaan het stuk van Sara uit
+[opdracht 1 van les 2](./controle#opdracht-1-run---sara-mag-wel). Heb je dat
+stuk nog niet, zet het er dan eerst bij:
+
+```
+Alex verwijdert het bericht van Sara: 403
+Nog in het gastenboek: ['Sara', 'Alex']
+Sara verwijdert haar eigen bericht: 403
+Nog in het gastenboek: ['Sara', 'Alex']
+```
+
+Alex stuurt geen naam mee en krijgt `403`. Maar Sara ook: zij stuurt evenmin
+een naam mee, en dus blokkeert deze controle zelfs de eigenaar. Verander nu in
+het script de regel waarmee Alex verwijdert, zodat hij de naam van Sara
 meestuurt:
 
 {/* niet-compileren: de regel uit de for-lus van test_verwijderen.py, ingesprongen */}
@@ -61,11 +73,15 @@ Gooi de databases weer weg en draai het script opnieuw:
 ```
 Alex verwijdert het bericht van Sara: 200
 Nog in het gastenboek: ['Alex']
+Nog in het gastenboek: ['Alex']
 ```
+
+Sara heeft geen bericht meer om te verwijderen, dus haar regel met de
+statuscode valt weg.
 
 **Oorzaak:** de naam komt uit de URL, en die bepaalt de bezoeker zelf. Alex is
 ingelogd als Alex, maar hij stuurt "Sara" mee, en de controle gelooft wat hij
-stuurt. Zijn sessie wordt niet eens opgevraagd.
+stuurt. Het endpoint vraagt zijn sessie niet eens op.
 
 **Oplossing:** controleer op iets dat alleen de server kan geven. De naam in de
 sessie heeft de server er zelf in gezet, nadat het wachtwoord klopte. Zet

@@ -1,0 +1,261 @@
+---
+sidebar_label: '3. Tekst uit de URL'
+description: Ook tekst uit de URL komt van een bezoeker. Een zoekpagina die ?term= letterlijk terugzet, maakt HTML van een link. escape() helpt ook hier.
+---
+
+# HTML van een bezoeker: tekst uit de URL
+
+In [les 1](./zwakheid) bleef de HTML van Sara in de database staan, en zag
+iedereen die daarna kwam hem. Er is ook een kortere weg, zonder database: een
+link. Een zoekpagina zet vaak boven de resultaten waar je naar zocht, en dat
+woord staat in de URL.
+
+## Een zoekpagina
+
+In [Een waarde na een vraagteken](/docs/FastAPI/veel-paginas/query-parameters)
+gaf `/zoek?term=` JSON terug. Hier wordt het een pagina met de berichten waarin
+de term staat. Zet dit endpoint onder de andere in `main.py`:
+
+{/* onveilig-voorbeeld: de zwakheid die deze les laat zien */}
+
+<CodeUitleg>
+
+```python showLineNumbers
+@app.get("/zoek")
+async def zoek(term: str = ""):
+    gevonden = ""
+    with SqliteDict("gastenboek.db") as db:
+        for bericht in db.values():
+            if term.lower() in bericht["bericht"].lower():
+                gevonden += f"<li>{escape(bericht['naam'])}: {escape(bericht['bericht'])}</li>"
+    return HTMLResponse(f"<p>Je zocht naar: {term}</p><ul>{gevonden}</ul>")
+```
+
+<Regel n={6}>
+Met `lower()` vindt `vet` ook een bericht met `Vet`. Een lege term staat in elk bericht, dus zonder `?term=` zie je ze allemaal.
+</Regel>
+
+<Regel n={7}>
+De berichten escapet hij, zoals je in [les 2](./escape) leerde.
+</Regel>
+
+<Regel n={8}>
+De term niet. Die komt toch van jezelf, lijkt het: je typte hem net.
+</Regel>
+
+</CodeUitleg>
+
+## Doe het na, op je eigen server
+
+:::danger[Alleen je eigen server]
+Maak zo'n link alleen voor je eigen server op `127.0.0.1`, en stuur hem niet
+naar een ander. Een link met HTML naar de site van een ander is een aanval op
+die site en op wie erop klikt.
+:::
+
+Zorg dat het bericht `<b>vet</b>` van Sara uit les 2 in je gastenboek staat.
+Open dan in je browser:
+
+```
+http://127.0.0.1:8000/zoek?term=<b>vet</b>
+```
+
+Boven het bericht van Sara staat "Je zocht naar: **vet**", vetgedrukt. Het
+bericht zelf staat er als tekst, met de haakjes. Met een scriptje `zoek.py`
+zie je beide in één antwoord:
+
+```python
+import httpx
+
+antwoord = httpx.get("http://127.0.0.1:8000/zoek", params={"term": "<b>vet</b>"})
+print(antwoord.url)
+print(antwoord.text)
+```
+
+Uitvoer, met alleen het bericht van Sara in de database:
+
+```
+http://127.0.0.1:8000/zoek?term=%3Cb%3Evet%3C%2Fb%3E
+<p>Je zocht naar: <b>vet</b></p><ul><li>Sara: &lt;b&gt;vet&lt;/b&gt;</li></ul>
+```
+
+De eerste regel is de link zelf: `httpx` zet de haakjes om in codes als `%3C`,
+omdat ze in een URL niet los mogen staan. FastAPI maakt er weer `<b>vet</b>`
+van, en de f-string zet dat in de pagina.
+
+Hier is niets opgeslagen. De HTML zit in de link, en de server kaatst hem
+terug in de pagina. Dat heet **reflected XSS**. Stuurt iemand je zo'n link naar
+een site die je vertrouwt, dan draait zijn HTML in jouw browser, op die site,
+zodra je klikt.
+
+## Op deze plek ook `escape`
+
+Zet `escape` om de term, net als om de berichten:
+
+{/* niet-compileren: alleen de return uit zoek, ingesprongen */}
+
+```python
+    return HTMLResponse(f"<p>Je zocht naar: {escape(term)}</p><ul>{gevonden}</ul>")
+```
+
+Draai `zoek.py` opnieuw:
+
+```
+http://127.0.0.1:8000/zoek?term=%3Cb%3Evet%3C%2Fb%3E
+<p>Je zocht naar: &lt;b&gt;vet&lt;/b&gt;</p><ul><li>Sara: &lt;b&gt;vet&lt;/b&gt;</li></ul>
+```
+
+Wat in de URL staat, typt de bezoeker, net als wat in een formulier staat. Het
+maakt niet uit of het in de database belandt: op de plek waar het de HTML in
+gaat, krijgt het `escape`.
+
+## Er gaat iets mis
+
+Met een term werkt je zoekpagina, maar `http://127.0.0.1:8000/zoek` zonder
+vraagteken geeft:
+
+```
+{"detail":[{"type":"missing","loc":["query","term"],"msg":"Field required","input":null}]}
+```
+
+**Oorzaak:** er staat `term: str` zonder `= ""`. Dan is de term verplicht, en
+stuurt FastAPI een 422 als hij ontbreekt.
+
+**Oplossing:** geef de term een standaardwaarde, `term: str = ""`, zoals in
+[Een waarde na een vraagteken](/docs/FastAPI/veel-paginas/query-parameters).
+
+## Opdrachten
+
+### Opdracht 1: Predict - Zoeken op een haakje
+
+`escape` staat om de term, en in je gastenboek staat alleen het bericht
+`<b>vet</b>` van Sara. Je opent `http://127.0.0.1:8000/zoek?term=<b>`.
+
+**Vraag:** wat staat er boven de resultaten, en vindt de zoekpagina het
+bericht van Sara?
+
+<details>
+<summary>Tip</summary>
+
+De for-lus zoekt in wat er in de database staat. Escapet je server het bericht
+bij het opslaan, of pas bij het tonen?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Er staat "Je zocht naar: `<b>`", met de haakjes erbij, en daaronder het
+bericht van Sara: `Sara: <b>vet</b>`, ook als tekst. Met
+`params={"term": "<b>"}` geeft `zoek.py`:
+
+```
+http://127.0.0.1:8000/zoek?term=%3Cb%3E
+<p>Je zocht naar: &lt;b&gt;</p><ul><li>Sara: &lt;b&gt;vet&lt;/b&gt;</li></ul>
+```
+
+Het bericht staat in de database zoals Sara het typte, dus `<b>` staat erin.
+`escape` verandert pas iets op de plek waar de tekst de HTML in gaat; het
+zoeken merkt er niets van.
+
+</details>
+
+### Opdracht 2: Investigate - Wat de server ziet
+
+Haal `escape` om de term nog even weg. Open de link uit "Doe het na" in je
+browser en kijk in de terminal van je server. Welk pad staat er in de regel van
+dat verzoek? Gooi daarna `gastenboek.db` weg, start de server opnieuw en open
+dezelfde link nog een keer. Is de term nog vet? Zet `escape` daarna terug.
+
+<details>
+<summary>Tip</summary>
+
+In les 1 bleef het vet staan omdat het in de database stond. Waar staat het nu?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+In de terminal staat iets als `"GET /zoek?term=%3Cb%3Evet%3C/b%3E HTTP/1.1" 200`.
+Je browser zette de haakjes om in codes; de schuine streep laat hij staan. Ook
+met een lege database is de term vet, alleen staat er nu geen bericht onder. De
+HTML staat niet op de server, maar in de link: wie de link opent, krijgt hem.
+
+</details>
+
+### Opdracht 3: Modify - Een zoekveld
+
+Zet boven het formulier in `static/gastenboek.html` een zoekveld, zodat een
+bezoeker de term niet zelf in de adresbalk hoeft te typen.
+
+<details>
+<summary>Tip</summary>
+
+Een formulier zonder `method` stuurt een GET, en zet de velden achter een `?`
+in de URL. De `name` van het veld wordt de naam van de query-parameter.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<form action="/zoek">
+    <input type="text" name="term" placeholder="Zoek in het gastenboek">
+    <button type="submit">Zoek</button>
+</form>
+```
+
+Zoek je op `vet`, dan staat er `/zoek?term=vet` in de adresbalk. Daarom is de
+term ook tekst van een bezoeker: zo'n adres kan iedereen maken en versturen,
+zonder je zoekveld te gebruiken.
+
+</details>
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+```python
+import time
+from html import escape
+
+from fastapi import FastAPI, Form
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.post("/gastenboek")
+async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    return HTMLResponse(f"Bedankt, {escape(naam)}. Je bericht staat in het gastenboek.")
+
+@app.get("/berichten/lijst")
+async def berichten_lijst():
+    regels = ""
+    with SqliteDict("gastenboek.db") as db:
+        for bericht in db.values():
+            regels += f"<li>{escape(bericht['naam'])}: {escape(bericht['bericht'])}</li>"
+    return HTMLResponse(f"<ul>{regels}</ul>")
+
+@app.get("/zoek")
+async def zoek(term: str = ""):
+    gevonden = ""
+    with SqliteDict("gastenboek.db") as db:
+        for bericht in db.values():
+            if term.lower() in bericht["bericht"].lower():
+                gevonden += f"<li>{escape(bericht['naam'])}: {escape(bericht['bericht'])}</li>"
+    return HTMLResponse(f"<p>Je zocht naar: {escape(term)}</p><ul>{gevonden}</ul>")
+```
+
+Alle drie de plekken met tekst van een bezoeker escapen nu: de naam na het
+versturen, de lijst, en de zoekterm.
+
+</details>
+
+Door naar [les 4: templates escapen vanzelf](./templates).

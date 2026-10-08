@@ -45,6 +45,11 @@ Het cijfer gaat mee de database in.
 
 </CodeUitleg>
 
+Vervang `bericht_plaatsen` door deze. Zette je in opdracht 2 van
+[les 4](./inhoud) ook een controle op het bericht, neem die twee regels dan
+mee, onder de controle op de naam. In de code van deze les staan ze niet, net
+als in de stand van les 4.
+
 Zet het `<input>` met `name="cijfer"` in `static/formulier.html`, zodat ook het
 formulier een cijfer meestuurt.
 
@@ -125,8 +130,9 @@ De stemming gaat mee de database in, en komt terug in het antwoord. De dictionar
 
 </CodeUitleg>
 
-Vervang `bericht_plaatsen` door deze, en zet in `static/formulier.html` een
-`<select>` met dezelfde drie woorden binnen het `<form>`:
+Vervang `bericht_plaatsen` door deze, weer met je controle op het bericht als
+je die hebt, en zet in `static/formulier.html` een `<select>` met dezelfde drie
+woorden binnen het `<form>`:
 
 ```html
 <select name="stemming">
@@ -261,8 +267,8 @@ async def bericht_plaatsen(
     return {"lengte": len(bericht), "cijfer": cijfer, "stemming": stemming}
 ```
 
-Elk veld heeft nu een controle op de server: de lengte, het getal en de keuze
-bewaakt FastAPI of je eigen lijst.
+Elk veld heeft nu een controle op de server: de lengte en het getal bewaakt
+FastAPI, de keuze je eigen lijst.
 
 </details>
 

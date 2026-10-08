@@ -61,9 +61,8 @@ vooraan in de functie de sessie op, en zet in het `with`-blok van
 with SqliteDict("sessies.db") as sessies:
     mijn = sessies.get(sessie_id, {})
 with SqliteDict("gastenboek.db") as db:
-    if sleutel not in db:
-        raise HTTPException(status_code=404, detail="Dit bericht bestaat niet")
-    if db[sleutel]["naam"] != mijn.get("naam"):
+    bericht = db.get(sleutel)
+    if bericht is None or bericht["naam"] != mijn.get("naam"):
         raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
     del db[sleutel]
     db.commit()

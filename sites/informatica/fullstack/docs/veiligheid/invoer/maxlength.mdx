@@ -22,8 +22,8 @@ Maak in die map een virtual environment en installeer de packages; hoe dat gaat 
 
 ## Een gastenboek met een formulier
 
-Het formulier staat als los bestand in `static/formulier.html`, met een grens
-op beide velden:
+Maak in de map `veiligheid-invoer` een map `static`, en zet daarin
+`formulier.html`. Het formulier zet een grens op beide velden:
 
 ```html
 <!doctype html>
@@ -38,7 +38,8 @@ op beide velden:
 </html>
 ```
 
-De server slaat op wat binnenkomt, en geeft terug hoe lang het bericht was:
+Zet dit `main.py` in de map `veiligheid-invoer`, naast `static`. De server
+slaat op wat binnenkomt, en geeft terug hoe lang het bericht was:
 
 <CodeUitleg>
 
@@ -82,8 +83,8 @@ Start je server en open `http://127.0.0.1:8000/static/formulier.html`. Typ een
 lang bericht: na 280 tekens gaat er niets meer bij, want `maxlength` houdt je
 tegen.
 
-Nu een scriptje `groot.py` dat níét via het formulier gaat, maar rechtstreeks
-naar het endpoint:
+Nu een scriptje `groot.py`, naast `main.py`, dat níét via het formulier gaat,
+maar rechtstreeks naar het endpoint:
 
 <CodeUitleg>
 
@@ -116,9 +117,9 @@ Uitvoer:
 ## Kijk in je database
 
 De server zegt dat hij een miljoen tekens kreeg. Of ze ook echt in je database
-staan, zie je met een tweede scriptje, `lees_database.py`. Het print van elk
-bericht de naam en hoeveel tekens het bericht heeft; het bericht zelf zou je
-terminal vullen.
+staan, zie je met een tweede scriptje naast `main.py`, `lees_database.py`. Het
+print van elk bericht de naam en hoeveel tekens het bericht heeft; het bericht
+zelf zou je terminal vullen.
 
 <CodeUitleg>
 
@@ -155,9 +156,23 @@ duizend keer doet, vult je schijf.
 
 ## Eén ruwe grens
 
-Helemaal zonder grens is je server niet. Maak van het bericht in `groot.py`
-tien miljoen tekens, `10_000_000`, en zet er onderaan een regel
-`print(antwoord.status_code)` bij:
+Helemaal zonder grens is je server niet. Maak naast `groot.py` een tweede
+script, `te_groot.py`, met tien miljoen tekens en onderaan ook de statuscode.
+`groot.py` zelf laat je zoals hij is: die heb je in de opdrachten en in les 2
+nog nodig.
+
+```python
+import httpx
+
+adres = "http://127.0.0.1:8000/bericht"
+
+bericht = "a" * 10_000_000
+antwoord = httpx.post(adres, data={"naam": "Sara", "bericht": bericht})
+print(antwoord.json())
+print(antwoord.status_code)
+```
+
+Uitvoer:
 
 ```
 {'detail': 'Field exceeded maximum size of 1024KB.'}
@@ -172,14 +187,25 @@ echte grens zet je zelf, in [les 2](./grenzen).
 
 ## Er gaat iets mis
 
-`groot.py` geeft een `422` terug in plaats van de lengte.
+### `Field required` in plaats van de lengte
+
+`groot.py` print geen lengte, maar een melding zoals deze:
+
+```
+{'detail': [{'type': 'missing', 'loc': ['body', 'bericht'], 'msg': 'Field required', 'input': None}]}
+```
 
 **Oorzaak:** je stuurt geen `naam` of `bericht` mee, of de namen in `data`
-komen niet overeen met de `Form`-parameters. FastAPI mist dan een verplicht
-veld.
+komen niet overeen met de `Form`-parameters, zoals `berichten` in plaats van
+`bericht`. FastAPI mist dan een verplicht veld en antwoordt met een `422`.
 
 **Oplossing:** stuur beide velden mee, met precies de namen `naam` en `bericht`,
 net als het formulier.
+
+Wat er in zo'n `422` staat, lees je in [les 3](./fouten-lezen). Alle
+statuscodes van deze route staan op [de startpagina](/docs/veiligheid#statuscodes).
+
+### `lees_database.py` print niets
 
 `lees_database.py` print niets, terwijl `groot.py` wel `{'lengte': 1000000}`
 gaf.
@@ -190,9 +216,6 @@ start. Bestaat het daar niet, dan maakt hij stil een nieuwe, lege database aan.
 
 **Oplossing:** zet `lees_database.py` in dezelfde map als `main.py`, en draai
 het vanuit de terminal in die map.
-
-Wat er in zo'n `422` staat, lees je in [les 3](./fouten-lezen). Alle
-statuscodes van deze route staan op [de startpagina](/docs/veiligheid#statuscodes).
 
 ## Opdrachten
 
@@ -213,8 +236,10 @@ de HTML.
 
 ### Opdracht 2: Investigate - Vijf keer
 
-Draai `groot.py` vijf keer achter elkaar, en daarna `lees_database.py`. Hoeveel
-tekens staan er nu in je database?
+Draai `groot.py`, met het bericht van `1_000_000` tekens, vijf keer achter
+elkaar, en daarna `lees_database.py`. Veranderde je `groot.py` voor opdracht 1,
+zet het bericht dan eerst terug op `1_000_000`. Hoeveel tekens staan er nu in je
+database?
 
 <details>
 <summary>Tip</summary>
@@ -227,7 +252,9 @@ Tel ook het bericht mee dat er al stond.
 <summary>Antwoord</summary>
 
 Zes regels `[Sara] 1000000 tekens`: het bericht van daarnet en de vijf nieuwe.
-Samen zes miljoen tekens, en het bestand `gastenboek.db` is ongeveer zes
+Stuurde je in opdracht 1 echt 300 tekens, dan staat daartussen ook
+`[Sara] 300 tekens`. Het bericht van `te_groot.py` staat er niet bij: dat
+weigerde de server. Samen zes miljoen tekens, en het bestand `gastenboek.db` is ongeveer zes
 megabyte. Elke keer dat het script draait, groeit het. Een script dat niet
 stopt, maakt je schijf vol.
 

@@ -44,6 +44,7 @@ describe('de reeks Cookies afschermen', () => {
   it('vindt de lessen in de sidebar', () => {
     expect(stappen).toContain('samesite');
     expect(stappen).toContain('uitloggen');
+    expect(stappen).toContain('verlopen');
   });
 
   it('nergens in de cursus is uitloggen een GET', () => {
@@ -59,8 +60,12 @@ describe('de reeks Cookies afschermen', () => {
     expect(tekst).toContain('<form method="post" action="/uitloggen">');
   });
 
-  it('een sessie verloopt op de server, in de hoofdtekst van uitloggen', () => {
-    const code = pythonBlokken(zonderUitklap(lees('uitloggen'))).join('\n');
+  // Uitloggen en een sessie laten verlopen stonden samen in uitloggen.mdx
+  // (1518 woorden, twee ideeën in één les). Het verlopen staat nu in een eigen
+  // les, verlopen.mdx, direct na uitloggen; deze twee tests kijken daarom
+  // daar.
+  it('een sessie verloopt op de server, in de hoofdtekst van verlopen', () => {
+    const code = pythonBlokken(zonderUitklap(lees('verlopen'))).join('\n');
     // De tijd gaat in de sessie. Eerst gebeurde dat bij elk bericht
     // (mijn["tot"] = …); sinds de accounts uit de basis (issue #126) maakt
     // alleen /inloggen een sessie, dus daar komt "tot" in de nieuwe sessie ...
@@ -72,8 +77,8 @@ describe('de reeks Cookies afschermen', () => {
     expect(code).toMatch(/< time\.time\(\):\s+del sessies\[sessie_id\]/);
   });
 
-  it('de stand van uitloggen controleert de tijd in elk endpoint dat de sessie leest', () => {
-    const tekst = lees('uitloggen');
+  it('de stand van verlopen controleert de tijd in elk endpoint dat de sessie leest', () => {
+    const tekst = lees('verlopen');
     const stand = tekst.slice(tekst.indexOf('<summary>Zo ziet je `main.py` er nu uit'));
     const code = pythonBlokken(stand)[0] ?? '';
     expect(code).toContain('app = FastAPI()');
@@ -132,5 +137,75 @@ describe('de reeks Cookies afschermen', () => {
     expect(csrf).toMatch(/secrets\.compare_digest\(token\.encode\(\), [^)]*\)\.encode\(\)\)/);
     expect(csrf).toContain('status_code=403');
     expect(lees('samesite')).toContain('](./praktijk)');
+  });
+
+  // Uit de leerling-doorloop van oktober 2026.
+  it('uitloggen gaat over uitloggen, verlopen over de tijd', () => {
+    // Na de splitsing hoort sessie_ophalen niet meer in uitloggen, en komt
+    // verlopen direct na uitloggen.
+    expect(stappen.indexOf('verlopen')).toBe(stappen.indexOf('uitloggen') + 1);
+    expect(lees('uitloggen')).not.toContain('sessie_ophalen');
+    expect(lees('uitloggen')).toContain('](./verlopen)');
+  });
+
+  it('de scripts van uitloggen en verlopen zeggen eerst welke databases weg moeten', () => {
+    // uitloggen.py en verlopen.py registreren Sara met zon123. Bestond ze al
+    // met een ander wachtwoord, dan gaf het inloggen 401 en het script
+    // KeyError: 'sleutel', zonder dat de les zei waarom.
+    for (const [stap, script] of [
+      ['uitloggen', 'oud_id = '],
+      ['verlopen', 'mijn["tot"] = time.time() - 1'],
+    ]) {
+      const tekst = lees(stap);
+      const ervoor = tekst.slice(0, tekst.indexOf(script));
+      const laatsteTest = ervoor.slice(ervoor.lastIndexOf('## Doe de test'));
+      for (const db of ['gastenboek.db', 'sessies.db', 'gebruikers.db']) {
+        expect(laatsteTest, `${stap}: ${db}`).toContain(db);
+      }
+    }
+  });
+
+  it('de scripts van uitloggen en verlopen hebben uitleg per regel', () => {
+    for (const [stap, script] of [
+      ['uitloggen', 'oud_id = '],
+      ['verlopen', 'mijn["tot"] = time.time() - 1'],
+    ]) {
+      const blokken = [...lees(stap).matchAll(/<CodeUitleg>([\s\S]*?)<\/CodeUitleg>/g)];
+      expect(
+        blokken.some((m) => m[1].includes(script)),
+        stap,
+      ).toBe(true);
+    }
+  });
+
+  it('cookies van eerdere projecten op 127.0.0.1 staan erbij, met hoe je ze kwijtraakt', () => {
+    // Een cookie hoort bij 127.0.0.1, niet bij de map of de poort. Wie eerder
+    // Onthouden met een cookie deed, zag na httponly geen '' maar
+    // 'naam=sara; volgorde=nieuw', en dacht dat httponly niet werkte.
+    const tekst = `${lees('zwakheid')}\n${lees('httponly')}`.replace(/\s+/g, ' ');
+    expect(tekst).toMatch(/eerdere projecten/);
+    expect(tekst).toMatch(/hoort bij het adres `127\.0\.0\.1`, niet bij de map of de poort/);
+    expect(tekst).toMatch(/privévenster|tabblad \*\*App\*\*/);
+  });
+
+  it('kleine punten uit de doorloop', () => {
+    // Het kwartier kwam nergens vandaan (GELDIG is 30 dagen), de test print
+    // over een Client in een script, niet over een browser, en de GET-versie
+    // van /uitloggen uit Cookie of sessie? bestaat niet meer.
+    expect(lees('verlopen')).not.toContain('Een kwartier of dertig dagen');
+    expect(lees('verlopen')).not.toContain('Cookie nog in de browser');
+    expect(lees('eigen-project')).not.toMatch(/versie met `@app\.get`/);
+    // De tekst zet sessie_ophalen waar de stand hem heeft: onder app.mount.
+    expect(lees('verlopen')).toContain('Zet onder `app.mount(...)` een functie');
+    // De httponly-les toont een formulier dat niets kan verwijderen.
+    expect(lees('httponly')).not.toContain('verwijderverzoek');
+    // samesite zegt waar de set_cookie hoort.
+    expect(lees('samesite')).toMatch(/Vervang in `inloggen` de `set_cookie`/);
+  });
+
+  it('de praktijk zegt dat de tot vanaf het inloggen telt, niet vanaf de laatste activiteit', () => {
+    const tekst = lees('praktijk').replace(/\s+/g, ' ');
+    expect(tekst).toContain('telt vanaf het inloggen');
+    expect(tekst).not.toContain('nog twee dingen');
   });
 });

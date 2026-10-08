@@ -50,16 +50,18 @@ Sites die niet alleen op de browser willen vertrouwen, zetten daarnaast een
 eigen code in elk formulier. Hoe dat werkt, lees je in
 [de praktijk](./praktijk); voor je gastenboek is `lax` genoeg.
 
-Zet `samesite` toch in je code, zodat een lezer ziet dat het een keuze is:
+Zet `samesite` toch in je code, zodat een lezer ziet dat het een keuze is.
+Vervang in `inloggen` de `set_cookie` door:
 
+{/* niet-compileren: de set_cookie uit inloggen, ingesprongen fragment */}
 ```python
-antwoord.set_cookie(
-    key="sessie_id",
-    value=sessie_id,
-    max_age=60 * 60 * 24 * 30,
-    httponly=True,
-    samesite="lax",
-)
+    antwoord.set_cookie(
+        key="sessie_id",
+        value=sessie_id,
+        max_age=60 * 60 * 24 * 30,
+        httponly=True,
+        samesite="lax",
+    )
 ```
 
 ## Er gaat iets mis

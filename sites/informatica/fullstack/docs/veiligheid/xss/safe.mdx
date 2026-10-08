@@ -1,5 +1,5 @@
 ---
-sidebar_label: '4. |safe: de bescherming uitzetten'
+sidebar_label: '5. |safe: de bescherming uitzetten'
 description: Met |safe zeg je tegen Jinja dat tekst al veilig is. Dat mag alleen voor HTML die je zelf schreef, nooit voor tekst van een bezoeker.
 ---
 
@@ -82,18 +82,53 @@ geschreven, nooit voor iets wat van een bezoeker komt.
 
 ## Opdrachten
 
-### Opdracht 1: Predict - `|safe` op de naam
+### Opdracht 1: Predict - Een bericht in de welkomsttekst
 
-Iemand zet `|safe` achter de naam: `{{ bericht.naam|safe }}`. Noor vult als naam
-`<i>Noor</i>` in.
+Je wilt het eerste bericht boven de lijst zetten, en maakt de welkomsttekst in
+`berichten_lijst` zelf, na het lezen van de database:
 
-**Vraag:** hoe staat haar naam in de lijst?
+```python
+welkom = f"<b>Eerste bericht:</b> {alle_berichten[0]['bericht']}"
+```
+
+Het template krijgt `"welkom": welkom` mee, en houdt `{{ welkom|safe }}`. In de
+database staat alleen het bericht `<b>vet</b>` van Sara.
+
+**Vraag:** hoe staat het bericht van Sara bovenaan, en hoe in de lijst eronder?
+
+<details>
+<summary>Tip</summary>
+
+Wie typte welk stuk van `welkom`?
+
+</details>
 
 <details>
 <summary>Antwoord</summary>
 
-Schuin. `|safe` zet het escapen uit voor de naam, dus de `<i>` van Noor wordt
-HTML. Het bericht ernaast blijft wel tekst, want daar staat geen `|safe`.
+Bovenaan is het vet: "**Eerste bericht:** **vet**". In de lijst staat het als
+tekst, met de haakjes. `lijst.py` geeft:
+
+```
+<p><b>Eerste bericht:</b> <b>vet</b></p>
+<ul>
+    
+        <li>Sara: &lt;b&gt;vet&lt;/b&gt;</li>
+    
+</ul>
+```
+
+`|safe` geldt voor de hele tekst in `welkom`, en die komt nu voor een deel van
+Sara. Dat jij de f-string schreef, maakt haar stuk niet veilig. Zet je eigen
+`<b>` in het template, en geef het bericht apart mee, zonder `|safe`:
+
+```html
+<p><b>Eerste bericht:</b> {{ eerste }}</p>
+```
+
+Geef bij `"welkom"` weer je eigen `WELKOM` mee, en zet
+`"eerste": alle_berichten[0]["bericht"]` erbij. Dan staat het bericht ook
+bovenaan als tekst.
 
 </details>
 
@@ -157,10 +192,19 @@ async def berichten_lijst(request: Request):
     return templates.TemplateResponse(
         request, "berichten_lijst.html", {"berichten": alle_berichten, "welkom": WELKOM}
     )
+
+@app.get("/zoek")
+async def zoek(term: str = ""):
+    gevonden = ""
+    with SqliteDict("gastenboek.db") as db:
+        for bericht in db.values():
+            if term.lower() in bericht["bericht"].lower():
+                gevonden += f"<li>{escape(bericht['naam'])}: {escape(bericht['bericht'])}</li>"
+    return HTMLResponse(f"<p>Je zocht naar: {escape(term)}</p><ul>{gevonden}</ul>")
 ```
 
 `|safe` staat alleen achter `welkom`, de tekst die je zelf schreef.
 
 </details>
 
-Door naar [les 5: in je eigen project](./eigen-project).
+Door naar [les 6: in de browser met innerHTML](./browser).

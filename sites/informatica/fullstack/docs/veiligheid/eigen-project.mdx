@@ -17,7 +17,9 @@ vertrouw je niet, en de controle hoort op de server.
 ## Wat je server laat zien
 
 - [ ] Elk endpoint op `/docs` is voor iedereen bedoeld. Een endpoint dat je voor
-  jezelf maakte, zoals `GET /sessies`, is weg. ([Een vergeten endpoint](./zichtbaar/vergeten))
+  jezelf maakte of dat gegevens van anderen teruggeeft, zoals `GET /sessies`, is
+  weg. ([Een vergeten endpoint](./zichtbaar/vergeten),
+  [Wie mag wat in je eigen project](./toegang/eigen-project))
 - [ ] Zet je je server open, dan staan `docs_url`, `redoc_url` en `openapi_url`
   op `None`. ([De handleiding uitzetten](./zichtbaar/uitzetten))
 - [ ] Een `.gitignore` slaat `.venv/`, `__pycache__/` en `*.db` over, en een zip
@@ -42,7 +44,11 @@ vertrouw je niet, en de controle hoort op de server.
 - [ ] Tekst van een bezoeker komt alleen via een `.html`-template in je pagina,
   of met `escape()` in een f-string. ([Escapen in Python](./xss/escape),
   [Templates escapen vanzelf](./xss/templates))
+- [ ] Ook tekst uit de URL, zoals een zoekterm, gaat door `escape()` of een
+  template. ([Tekst uit de URL](./xss/url))
 - [ ] Nergens staat `|safe` achter tekst van een bezoeker. ([`|safe`](./xss/safe))
+- [ ] Je JavaScript zet tekst uit een veld of de URL in de pagina met
+  `textContent`, niet met `innerHTML`. ([In de browser](./xss/browser))
 
 ## Te veel verzoeken
 
@@ -59,20 +65,17 @@ vertrouw je niet, en de controle hoort op de server.
 - [ ] De controle gebruikt wat de server weet, zoals de naam in de sessie, niet
   wat de bezoeker in een formulier of de URL meestuurt.
   ([Controleer op wat de server weet](./toegang/server-weet))
-- [ ] Een `GET` die gegevens van anderen teruggeeft, zoals `GET /sessies`, is
-  ook een gat: haal hem weg of scherm hem af.
-  ([Wie mag wat in je eigen project](./toegang/eigen-project))
 
 ## Cookies
 
-- [ ] De sessie-cookie heeft `httponly=True`.
-  ([httponly](./cookies/httponly))
+- [ ] De sessie-cookie heeft `httponly=True` en `samesite="lax"`.
+  ([`httponly`](./cookies/httponly), [`samesite`](./cookies/samesite))
 - [ ] In een cookie staat alleen een sessie-id, geen naam of rechten.
   ([Onthouden op de server: sessies](/docs/FastAPI/onthouden/sessies))
 - [ ] Uitloggen is een `POST`, en gooit de sessie ook op de server weg, niet
   alleen de cookie met `delete_cookie`. ([Uitloggen](./cookies/uitloggen))
 - [ ] Een sessie verloopt ook op de server, niet alleen in de browser met
-  `max_age`. ([Uitloggen](./cookies/uitloggen))
+  `max_age`. ([Een sessie laten verlopen](./cookies/verlopen))
 
 ## Wachtwoorden
 
@@ -87,15 +90,20 @@ ze erin bouwde.
 - [ ] Inloggen gebruikt `ph.verify`, met dezelfde melding bij een onbekende naam
   en een fout wachtwoord, en ook bij een onbekende naam een `verify` tegen een
   nep-hash. ([Inloggen met verify](./wachtwoorden/inloggen))
+- [ ] Een wachtwoord wijzigen vraagt eerst het oude. Bij het inloggen werk je
+  na een geslaagde `verify` een oude hash bij met `check_needs_rehash`.
+  ([Wachtwoord wijzigen](./wachtwoorden/wijzigen),
+  [Een oude hash bijwerken](./wachtwoorden/rehash))
 - [ ] Elk endpoint dat een wachtwoord controleert, zoals `/inloggen`, heeft een
   limiet: `@limiter.limit` direct onder `@app.post`, met `request: Request`.
   ([Inlogpogingen beperken](./wachtwoorden/pogingen))
 
 ## Test het zoals een bezoeker
 
-Een lijst aflopen is niet hetzelfde als testen. Draai voor elk punt een klein
-script uit [Een script als bezoeker](./gereedschap) tegen je eigen server op
-`127.0.0.1`, en kijk of je de statuscode krijgt die je verwacht: een `404` op
+Een lijst aflopen is niet hetzelfde als testen. Draai voor elk punt dat een
+statuscode geeft een klein script uit [Een script als bezoeker](./gereedschap)
+tegen je eigen server op `127.0.0.1`, en kijk of je de statuscode krijgt die je
+verwacht: een `404` op
 `/docs`, een `422` bij
 een te lang veld, een `429` na te veel verzoeken, een `403` bij het bericht van
 een ander.

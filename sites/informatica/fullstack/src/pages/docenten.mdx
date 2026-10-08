@@ -124,11 +124,11 @@ De reeks is opzettelijk defensief. Elke zelftest draait tegen de eigen server op
 |---|---|---|
 | Wat je server laat zien | `/docs` toont elk endpoint, ook een vergeten `GET /sessies`; een zip neemt de databases mee | de handleiding uit met `docs_url=None`, het endpoint weg, een `.gitignore` |
 | Invoer controleren | `maxlength` houdt een script niet tegen; met `?naam=../../main.py` leest een bezoeker je code | de grens in `Form` op de server, en een lijst met wat mag |
-| HTML van een bezoeker (XSS) | ingevulde HTML draait in andermans browser | escapen bij de uitvoer |
+| HTML van een bezoeker (XSS) | ingevulde HTML draait in andermans browser: opgeslagen in het gastenboek, teruggezet uit een link (`?term=`), of door JavaScript met `innerHTML` | escapen bij de uitvoer: `escape()` of een template op de server, `textContent` in de browser |
 | Te veel verzoeken (DoS) | veel verzoeken leggen de server plat | een verzoeklimiet met `slowapi` |
 | Wie mag wat | een verborgen knop is geen slot | de controle op de server, met `403` |
-| Cookies afschermen | een script leest het sessie-id | `httponly`, `samesite`, `secure` |
-| Wachtwoorden veilig opslaan | de accounts uit de basis bewaren het wachtwoord leesbaar, en een lek geeft ze allemaal weg; `/inloggen` laat eindeloos proberen | hashen met Argon2, en een limiet op `/inloggen` en `/wijzig`, in negen kleine lessen |
+| Cookies afschermen | een script leest het sessie-id; een sessie die niemand uitlogt, geldt eeuwig | `httponly`, `samesite`, `secure`, uitloggen en een verlooptijd op de server |
+| Wachtwoorden veilig opslaan | de accounts uit de basis bewaren het wachtwoord leesbaar, en een lek geeft ze allemaal weg; `/inloggen` laat eindeloos proberen | hashen met Argon2, en een limiet op `/inloggen` en `/wijzig`, in tien kleine lessen |
 
 De beloofde uitvoer en foutmeldingen in deze reeks draaien niet mee in CI, die alleen de Python-syntax controleert. Ze zijn met de hand nagedraaid tegen een echte server. Werk je een les bij, controleer een gewijzigde uitvoer dan zelf in een virtual environment met de echte packages.
 

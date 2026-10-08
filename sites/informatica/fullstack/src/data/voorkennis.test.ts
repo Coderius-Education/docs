@@ -99,8 +99,9 @@ const ZONDER_BLOK: Record<string, string> = {
   'veiligheid/cookies/httponly.mdx': 'bouwt op de les ervoor, in dezelfde map',
   'veiligheid/cookies/samesite.mdx': 'begrippen worden in de les zelf uitgelegd',
   'veiligheid/cookies/uitloggen.mdx': 'delete_cookie wordt in de les zelf uitgelegd',
-  'veiligheid/cookies/praktijk.mdx':
-    'achtergrond bij de twee stappen ervoor, geen nieuwe voorkennis',
+  'veiligheid/cookies/verlopen.mdx':
+    'time.time() en de verlooptijd worden in de les zelf uitgelegd',
+  'veiligheid/cookies/praktijk.mdx': 'achtergrond bij de lessen ervoor, geen nieuwe voorkennis',
   'veiligheid/cookies/zwakheid.mdx': 'bouwt op sessies en de toegang-reeks, geen nieuwe voorkennis',
   'veiligheid/invoer/getallen.mdx': 'int, ge en le worden in de les zelf uitgelegd',
   'veiligheid/invoer/fouten-lezen.mdx':
@@ -122,6 +123,10 @@ const ZONDER_BLOK: Record<string, string> = {
   'veiligheid/xss/eigen-project.mdx': 'toepassen van de lessen ervoor op het eigen project',
   'veiligheid/xss/escape.mdx': 'escape wordt in de les zelf uitgelegd',
   'veiligheid/xss/safe.mdx': 'bouwt op de template-les ervoor, in dezelfde map',
+  'veiligheid/xss/url.mdx':
+    'query-parameters en escape komen uit eerdere lessen, waar ze gelinkt zijn',
+  'veiligheid/xss/browser.mdx':
+    'bouwt op JavaScript erbij uit de FastAPI-route, waar de voorkennis voor JavaScript staat',
   'veiligheid/xss/templates.mdx': 'templates komen uit de FastAPI-lessen, hier alleen het escapen',
   'veiligheid/xss/praktijk.mdx': 'achtergrond bij de twee stappen ervoor, geen nieuwe voorkennis',
   'veiligheid/zichtbaar/vergeten.mdx':
@@ -136,6 +141,10 @@ const ZONDER_BLOK: Record<string, string> = {
     'achtergrond bij de lessen ervoor, geen nieuwe voorkennis',
   'veiligheid/wachtwoorden/registreren.mdx': 'bouwt op de lessen ervoor, in dezelfde map',
   'veiligheid/wachtwoorden/wijzigen.mdx': 'bouwt op registreren en inloggen, in dezelfde map',
+  'veiligheid/wachtwoorden/rehash.mdx':
+    'check_needs_rehash wordt in de les zelf uitgelegd, /inloggen komt uit les 6',
+  'veiligheid/wachtwoorden/traag.mdx':
+    'import kent de leerling uit de lessen ervoor; time.perf_counter en Argon2 worden in de les zelf uitgelegd',
   'veiligheid/wachtwoorden/pogingen.mdx':
     'slowapi komt uit Te veel verzoeken, de endpoints uit de lessen ervoor',
   'veiligheid/wachtwoorden/zout.mdx': 'bouwt op de hash-les ervoor, in dezelfde map',
@@ -171,7 +180,6 @@ const MET_BLOK = [
   'veiligheid/toegang/zwakheid.mdx',
   'veiligheid/wachtwoorden/gewone-tekst.mdx',
   'veiligheid/wachtwoorden/inloggen.mdx',
-  'veiligheid/wachtwoorden/traag.mdx',
   'veiligheid/xss/zwakheid.mdx',
   'veiligheid/zichtbaar/gitignore.mdx',
   'veiligheid/zichtbaar/handleiding.mdx',

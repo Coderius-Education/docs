@@ -1,13 +1,14 @@
 ---
 sidebar_label: '4. Uitloggen'
-description: Een sessie eindigt op de server, niet in de browser. Bij uitloggen gooit de server de sessie weg, en na een tijd laat hij hem verlopen.
+description: Bij uitloggen gooit de server de sessie weg en haalt hij de cookie weg. Een bewaard sessie-id hoort daarna bij niemand meer.
 ---
 
 # Cookies afschermen: uitloggen
 
 Een sessie hoort niet eeuwig te duren. Hij eindigt op twee manieren: de
 bezoeker logt uit, of de tijd is om. In allebei de gevallen beslist je server,
-niet de browser. De cookie weghalen is niet genoeg: wie het sessie-id eerder
+niet de browser. Deze les gaat over uitloggen; de tijd komt in
+[les 5](./verlopen). De cookie weghalen is niet genoeg: wie het sessie-id eerder
 heeft gekopieerd, stuurt het zelf mee. Pas als de sessie uit
 `sessies.db` weg is, hoort dat id bij niemand meer.
 
@@ -81,9 +82,17 @@ formulier, met `method="post"`, onder de andere drie:
 
 Een script `uitloggen.py` logt in als Sara, plaatst een bericht en bewaart
 haar sessie-id. Daarna logt Sara uit, en probeert een dief met dat bewaarde id
-haar bericht te verwijderen:
+haar bericht te verwijderen.
 
-```python
+Het script maakt Sara aan met het wachtwoord `zon123`. Gooi daarom eerst
+`gastenboek.db`, `sessies.db` en `gebruikers.db` weg en start de server
+opnieuw. Bestaat Sara nog met een ander wachtwoord, bijvoorbeeld uit
+[les 1](./zwakheid), dan mislukt het inloggen en stopt het script met
+`KeyError: 'sleutel'`.
+
+<CodeUitleg>
+
+```python showLineNumbers
 import httpx
 
 adres = "http://127.0.0.1:8000"
@@ -100,6 +109,28 @@ dief = httpx.Client(base_url=adres, cookies={"sessie_id": oud_id})
 print("Met het oude sessie-id:", dief.delete(f"/bericht/{sleutel}").status_code)
 ```
 
+<Regel n={6} tot={7}>
+Sara maakt een account en logt in, zoals in Wie mag wat. Daarna heeft haar `Client` de cookie `sessie_id`.
+</Regel>
+
+<Regel n={8}>
+`/bericht` geeft de sleutel van het nieuwe bericht terug. Het script bewaart hem om straks te verwijderen.
+</Regel>
+
+<Regel n={9}>
+Het sessie-id van Sara, bewaard voordat ze uitlogt. Zo heeft een dief het id als hij het eerder heeft gekopieerd.
+</Regel>
+
+<Regel n={10} tot={11}>
+Sara logt uit, en het script kijkt of haar `Client` de cookie nog heeft.
+</Regel>
+
+<Regel n={13} tot={14}>
+Een tweede `Client` krijgt het bewaarde id als cookie mee en probeert het bericht van Sara te verwijderen.
+</Regel>
+
+</CodeUitleg>
+
 Uitvoer:
 
 ```
@@ -110,126 +141,6 @@ Met het oude sessie-id: 403
 
 Sara heeft geen cookie meer, en de server kent haar sessie niet meer. Wie het
 oude id nog heeft, is voor de server niet ingelogd.
-
-## Een sessie laten verlopen
-
-In `set_cookie` staat `max_age`. Daarmee gooit de browser de cookie na 30 dagen
-weg, maar `sessies.db` weet daar niets van. Een sessie-id dat iemand heeft
-gekopieerd, blijft zo eeuwig geldig. Daarom bewaart de server in de sessie zelf
-tot wanneer hij geldt, en kijkt hij daar bij elk verzoek naar.
-
-Zet bovenaan `main.py`, onder de imports, hoe lang een sessie geldt, en een
-functie die een sessie ophaalt en controleert:
-
-<CodeUitleg>
-
-```python showLineNumbers
-GELDIG = 60 * 60 * 24 * 30
-
-def sessie_ophalen(sessie_id: str) -> dict:
-    with SqliteDict("sessies.db") as sessies:
-        mijn = sessies.get(sessie_id, {})
-        if mijn and mijn.get("tot", 0) < time.time():
-            del sessies[sessie_id]
-            sessies.commit()
-            return {}
-    return mijn
-```
-
-<Regel n={1}>
-30 dagen in seconden, net als `max_age`. Nu staat het getal op één plek.
-</Regel>
-
-<Regel n={6}>
-`time.time()` is het tijdstip van nu in seconden. Ligt `tot` daarvoor, dan is
-de sessie verlopen. Een sessie zonder `tot`, uit een eerdere les, telt ook als
-verlopen: wie toen inlogde, moet opnieuw inloggen.
-</Regel>
-
-<Regel n={7} tot={9}>
-Een verlopen sessie gaat weg, en de functie doet alsof er geen sessie is.
-</Regel>
-
-</CodeUitleg>
-
-In `inloggen` veranderen twee dingen: de nieuwe sessie krijgt een `tot`, en
-`max_age` gebruikt `GELDIG`. Na dertig dagen log je dus opnieuw in. Vervang je
-`inloggen` door:
-
-{/* route-dubbel: vervangt POST /inloggen uit les 1 tot en met 3, nu met een verlooptijd in de sessie */}
-```python
-@app.post("/inloggen")
-async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
-    with SqliteDict("gebruikers.db") as gebruikers:
-        opgeslagen = gebruikers.get(naam)
-    if opgeslagen != wachtwoord:
-        raise HTTPException(status_code=401, detail="Naam of wachtwoord klopt niet")
-
-    sessie_id = secrets.token_hex(16)
-    with SqliteDict("sessies.db") as sessies:
-        sessies[sessie_id] = {"naam": naam, "tot": time.time() + GELDIG}
-        sessies.commit()
-
-    antwoord = JSONResponse({"bericht": f"Ingelogd als {naam}"})
-    antwoord.set_cookie(
-        key="sessie_id",
-        value=sessie_id,
-        max_age=GELDIG,
-        httponly=True,
-        samesite="lax",
-    )
-    return antwoord
-```
-
-In `bericht_plaatsen`, `bericht_verwijderen` en `alles_wissen` vervang je het
-`with`-blok van `sessies.db` door één regel:
-
-{/* niet-compileren: losse regel uit een handler */}
-
-```python
-    mijn = sessie_ophalen(sessie_id)
-```
-
-## Doe de test met een verlopen sessie
-
-Een kwartier of dertig dagen wachten is geen test. Het script `verlopen.py`
-zet daarom de tijd van Sara's sessie in je eigen `sessies.db` op een moment dat
-al voorbij is, en probeert dan haar bericht te verwijderen:
-
-```python
-import time
-
-import httpx
-from sqlitedict import SqliteDict
-
-adres = "http://127.0.0.1:8000"
-
-sara = httpx.Client(base_url=adres)
-sara.post("/registreer", data={"naam": "Sara", "wachtwoord": "zon123"})
-sara.post("/inloggen", data={"naam": "Sara", "wachtwoord": "zon123"})
-sleutel = sara.post("/bericht", data={"bericht": "Hoi"}).json()["sleutel"]
-sessie_id = sara.cookies.get("sessie_id")
-
-with SqliteDict("sessies.db") as sessies:
-    mijn = sessies[sessie_id]
-    mijn["tot"] = time.time() - 1
-    sessies[sessie_id] = mijn
-    sessies.commit()
-
-print("Cookie nog in de browser:", sara.cookies.get("sessie_id") is not None)
-print("Verwijderen:", sara.delete(f"/bericht/{sleutel}").status_code)
-```
-
-Uitvoer:
-
-```
-Cookie nog in de browser: True
-Verwijderen: 403
-```
-
-De cookie staat er nog, net als bij een dief die het id heeft gekopieerd. Toch
-weigert de server. Zonder `sessie_ophalen`, met alleen `max_age`, geeft
-hetzelfde script `Verwijderen: 200`.
 
 ## Er gaat iets mis
 
@@ -294,19 +205,8 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from sqlitedict import SqliteDict
 
-GELDIG = 60 * 60 * 24 * 30
-
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
-
-def sessie_ophalen(sessie_id: str) -> dict:
-    with SqliteDict("sessies.db") as sessies:
-        mijn = sessies.get(sessie_id, {})
-        if mijn and mijn.get("tot", 0) < time.time():
-            del sessies[sessie_id]
-            sessies.commit()
-            return {}
-    return mijn
 
 @app.post("/registreer")
 async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
@@ -326,14 +226,14 @@ async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
 
     sessie_id = secrets.token_hex(16)
     with SqliteDict("sessies.db") as sessies:
-        sessies[sessie_id] = {"naam": naam, "tot": time.time() + GELDIG}
+        sessies[sessie_id] = {"naam": naam}
         sessies.commit()
 
     antwoord = JSONResponse({"bericht": f"Ingelogd als {naam}"})
     antwoord.set_cookie(
         key="sessie_id",
         value=sessie_id,
-        max_age=GELDIG,
+        max_age=60 * 60 * 24 * 30,
         httponly=True,
         samesite="lax",
     )
@@ -341,7 +241,8 @@ async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
 
 @app.post("/bericht")
 async def bericht_plaatsen(bericht: str = Form(...), sessie_id: str = Cookie(default="")):
-    mijn = sessie_ophalen(sessie_id)
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {})
     if not mijn:
         raise HTTPException(status_code=401, detail="Log eerst in")
 
@@ -358,7 +259,8 @@ async def berichten():
 
 @app.delete("/bericht/{sleutel}")
 async def bericht_verwijderen(sleutel: str, sessie_id: str = Cookie(default="")):
-    mijn = sessie_ophalen(sessie_id)
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {})
 
     with SqliteDict("gastenboek.db") as db:
         bericht = db.get(sleutel)
@@ -370,7 +272,8 @@ async def bericht_verwijderen(sleutel: str, sessie_id: str = Cookie(default=""))
 
 @app.delete("/berichten")
 async def alles_wissen(sessie_id: str = Cookie(default="")):
-    mijn = sessie_ophalen(sessie_id)
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {})
     with SqliteDict("gastenboek.db") as db:
         van_mij = []
         for sleutel, bericht in db.items():
@@ -392,9 +295,10 @@ async def uitloggen(sessie_id: str = Cookie(default="")):
     return antwoord
 ```
 
-Een sessie eindigt nu op de server: bij uitloggen, of als de tijd om is. Een
-inlog eindigt daarmee ook op die twee manieren, wat de browser ook nog bewaart.
+Uitloggen beëindigt de sessie nu op de server. Wie niet uitlogt, houdt zijn
+sessie in `sessies.db` nog eeuwig: de 30 dagen van `max_age` gelden alleen voor
+de cookie in de browser. Dat los je op in les 5.
 
 </details>
 
-Door naar [les 5: in je eigen project](./eigen-project).
+Door naar [les 5: een sessie laten verlopen](./verlopen).

@@ -2,6 +2,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import sidebars from '../../sidebars';
 
 // Bevindingen uit een leerling-doorloop van de reeksen HTML van een bezoeker
 // (xss) en Wie mag wat (toegang), elk vastgepind:
@@ -58,6 +59,15 @@ describe('Python-blokken in de veiligheidsroute', () => {
     expect(fout).toEqual([]);
   });
 
+  it('hebben geen return-annotatie (de cursus gebruikt nergens `) ->`)', () => {
+    // cookies/uitloggen.mdx had `def sessie_ophalen(sessie_id: str) -> dict:`.
+    // Een pijl na de parameters komt in de Python-cursus en hier nergens voor.
+    const fout = regels
+      .filter(({ regel }) => /\)\s*->/.test(regel))
+      .map(({ bestand, regel }) => `${bestand}: ${regel.trim()}`);
+    expect(fout).toEqual([]);
+  });
+
   it('elke uitzondering bestaat nog', () => {
     const gevonden = new Set(regels.map(({ bestand, regel }) => `${bestand}: ${regel.trim()}`));
     for (const sleutel of Object.keys(TOEGESTAAN))
@@ -76,6 +86,46 @@ describe('XSS in de praktijk: Content-Security-Policy', () => {
 });
 
 describe('Wie mag wat', () => {
+  type Categorie = { type: string; items: string[] };
+  const stappen = (
+    (sidebars.veiligheidSidebar as unknown as (string | Categorie)[]).find(
+      (c): c is Categorie => typeof c !== 'string' && c.items[0]?.startsWith('veiligheid/toegang/'),
+    )?.items ?? []
+  ).map((id) => id.slice('veiligheid/toegang/'.length));
+
+  it('na de controle met 403 geeft geen blok een 404 voor een bericht', () => {
+    // Les 2 (controle.mdx, opdracht 3) legt uit waarom een onbekende sleutel
+    // geen 404 krijgt: zo leert Alex niets over sleutels van anderen. Het
+    // antwoord in In je eigen project zette toch eerst een 404 en dan de 403.
+    expect(stappen).toContain('controle');
+    const fout = stappen.slice(stappen.indexOf('controle')).flatMap((stap) =>
+      [
+        ...readFileSync(join(VEILIGHEID, 'toegang', `${stap}.mdx`), 'utf8').matchAll(
+          /```python[^\n]*\n([\s\S]*?)```/g,
+        ),
+      ]
+        .map((m) => m[1])
+        .filter((code) => code.includes('status_code=404'))
+        .map(() => stap),
+    );
+    expect(fout).toEqual([]);
+  });
+
+  it('Controleer op wat de server weet toont de uitvoer met het stuk van Sara uit les 2', () => {
+    // De beloofde uitvoer ging uit van het script zonder opdracht 1 van les 2.
+    // Met dat stuk krijgt ook Sara 403: de foute controle blokkeert de eigenaar.
+    const tekst = lees('toegang/server-weet.mdx');
+    expect(tekst).toContain('](./controle#opdracht-1-run---sara-mag-wel)');
+    expect(tekst).toContain('Sara verwijdert haar eigen bericht: 403');
+  });
+
+  it('Alles wissen doet niet alsof Alex hem al had, en zegt wat een bezoeker zonder sessie krijgt', () => {
+    const tekst = lees('toegang/elk-endpoint.mdx');
+    expect(tekst).not.toContain('Alex wist daarmee alsnog');
+    expect(tekst).not.toContain('en wist dus niets');
+    expect(lees('toegang/praktijk.mdx')).toMatch(/Alles wissen.{0,60}is de uitzondering/);
+  });
+
   it('in je eigen project noemt GET /sessies uit Sessies', () => {
     expect(lees('toegang/eigen-project.mdx')).toContain('`GET /sessies`');
   });

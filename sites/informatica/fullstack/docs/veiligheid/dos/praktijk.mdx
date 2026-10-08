@@ -6,12 +6,31 @@ description: Wat grote sites nog meer doen tegen DoS en DDoS, van een limiet vó
 # Te veel verzoeken: in de praktijk
 
 Je limiet uit [les 4](./limiet) houdt één script tegen. Een echte site doet
-meer, want een echte aanval is groter, en een echte site draait op meer dan één
-computer. Het meeste daarvan regelt de hostingpartij.
+meer: een aanval is daar groter, en de site draait op meer dan één computer.
+Het meeste daarvan regelt de hostingpartij.
 
 ## Wat jij zelf doet
 
-### Minder werk per verzoek
+### Een limiet per bezoeker
+
+Met `@limiter.limit` direct onder `@app.get` of `@app.post` krijgt één computer
+hoogstens een paar verzoeken per minuut beantwoord, zoals in
+[les 4](./limiet). De rest weigert `slowapi` met een `429`, voordat je functie
+draait. Met `headers_enabled=True` uit [les 5](./te-veel) ziet een eerlijk
+script hoeveel er nog over is.
+
+### Zware endpoints strenger
+
+Inloggen en zoeken krijgen een lagere limiet dan een gewone pagina, omdat ze
+meer kosten en vaker het doelwit zijn. Elk endpoint krijgt zijn eigen
+`@limiter.limit`, met zijn eigen grens.
+
+## Wat grote sites nog meer doen
+
+Dit hoef je voor je eigen project niet te bouwen. Klap open wat je wilt lezen.
+
+<details>
+<summary>Minder werk per verzoek</summary>
 
 Een aanval is gevaarlijker naarmate elk verzoek je server meer werk kost. Een
 pagina die voor elk verzoek de hele database doorzoekt, gaat sneller onderuit
@@ -21,12 +40,8 @@ dan een pagina met een vaste tekst. Daarom doen sites ook dit:
   keer en bewaart hij. Volgende bezoekers krijgen de bewaarde kopie.
 - **Grenzen aan één verzoek**: een zoekopdracht geeft hoogstens vijftig
   resultaten, en een verzoek dat te lang duurt breekt de server af.
-- **Zware endpoints strenger**: inloggen en zoeken krijgen een lagere limiet
-  dan een gewone pagina, omdat ze meer kosten en vaker het doelwit zijn.
 
-## Wat grote sites nog meer doen
-
-Dit hoef je voor je eigen project niet te bouwen. Klap open wat je wilt lezen.
+</details>
 
 <details>
 <summary>De limiet onthouden op één plek</summary>
@@ -109,8 +124,8 @@ en komt er alleen schoon verkeer uit.
 <details>
 <summary>Opletten en opschalen</summary>
 
-Een aanval die je niet ziet, kun je niet stoppen. Grote sites houden daarom in
-de gaten hoeveel verzoeken er binnenkomen, en krijgen een melding als dat
+Grote sites houden in de gaten hoeveel verzoeken er binnenkomen, en krijgen
+een melding als dat
 ineens tien keer zoveel is. Vaak kunnen ze dan automatisch extra servers
 bijzetten om de drukte op te vangen, tot de aanval voorbij is of gefilterd
 wordt.
@@ -125,8 +140,8 @@ maken door er gegevens naartoe te sturen. Ook "even testen" hoe lang de
 schoolsite het volhoudt valt daaronder. Daarom deed je de tests in
 [les 3](./zelf-meten) alleen op `127.0.0.1`, je eigen computer.
 
-Heb je toestemming nodig om een site op zijn sterkte te testen, dan heet dat
-een **belastingtest** of pentest. Die doe je alleen met schriftelijke
+Wil je een site op zijn sterkte testen, dan heet dat een **belastingtest** of
+pentest. Die doe je alleen met schriftelijke
 toestemming van de eigenaar.
 
 ## Opdracht: welke maatregel helpt waartegen?
@@ -135,8 +150,8 @@ Hieronder staan vier situaties. Kies bij elke situatie de maatregel uit deze
 les die het meest helpt.
 
 1. Eén leerling laat een script duizend keer per minuut je zoekpagina opvragen.
-2. Je site draait op drie servers, en je limiet werkt ineens maar voor een
-   derde.
+2. Je site draait op drie servers, en iemand mag ineens drie keer zo vaak
+   als je limiet zegt.
 3. Duizenden gekaapte camera's sturen tegelijk verzoeken naar je site.
 4. Je startpagina is voor iedereen hetzelfde, maar haalt elke keer alles uit de
    database.

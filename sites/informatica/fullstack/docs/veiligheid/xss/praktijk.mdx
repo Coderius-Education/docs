@@ -1,11 +1,11 @@
 ---
-sidebar_label: '6. In de praktijk'
+sidebar_label: '8. In de praktijk'
 description: Waarom XSS gevaarlijk is, waarom je bij de uitvoer escapet en niet bij de invoer filtert, en wat een Content-Security-Policy toevoegt.
 ---
 
 # HTML van een bezoeker: in de praktijk
 
-Met `escape` en templates uit [les 2 tot en met 4](./escape) heb je het
+Met `escape` en templates uit [les 2 tot en met 6](./escape) heb je het
 belangrijkste gedaan. Echte sites doen er nog wat bij, omdat één vergeten plek
 genoeg is.
 
@@ -24,9 +24,9 @@ in webapplicaties.
 
 ### Escapen bij de uitvoer, niet filteren bij de invoer
 
-Een idee dat vaak opkomt: haal bij het opslaan alle `<script>` uit de tekst. Dat
+Veel mensen willen bij het opslaan alle `<script>` uit de tekst halen. Dat
 werkt niet goed. HTML kent veel meer manieren om code te laten draaien dan
-`<script>`, en een filter mist er altijd een. Bovendien kan een bezoeker niet
+`<script>`, en een filter mist er altijd een. En een bezoeker kan dan niet
 meer schrijven over `<b>` zelf, terwijl dat in een gastenboek over HTML heel
 normaal is.
 
@@ -91,7 +91,7 @@ weglaten: het formulier werkt zonder.
 
 Een script in de pagina kan met `document.cookie` de cookies van die pagina
 lezen, ook het sessie-id. Met één instelling in `set_cookie` houd je de
-sessie-cookie daarbuiten. Dat staat in de reeks
+sessie-cookie daarbuiten. Dat doe je later, in de reeks
 [Cookies afschermen](../cookies/zwakheid).
 
 </details>
@@ -100,18 +100,20 @@ sessie-cookie daarbuiten. Dat staat in de reeks
 
 Of een site van een ander escapet, test je niet door er HTML in te vullen. Dat
 is een aanval op die site en op de bezoekers ervan. Zie je per ongeluk dat
-tekst als HTML verschijnt, meld het dan bij de eigenaar, zoals staat in
+tekst als HTML verschijnt, meld het dan bij de eigenaar. Hoe dat gaat, lees je later in
 [Wie mag wat: in de praktijk](../toegang/praktijk).
 
 ## Opdracht: waar moet de bescherming?
 
-Hieronder staan vier stukken code. Welke zijn veilig voor tekst van een
+Hieronder staan zes stukken code. Welke zijn veilig voor tekst van een
 bezoeker, en wat moet er anders bij de rest?
 
 1. `<p>{{ bericht.bericht }}</p>` in `berichten.html`
 2. `HTMLResponse(f"<p>{bericht}</p>")`
 3. `<p>{{ bericht.bericht|safe }}</p>` in `berichten.html`
 4. `HTMLResponse(f"Er staan {len(berichten)} berichten in het gastenboek.")`
+5. `HTMLResponse(f"<p>Je zocht naar: {term}</p>")`, met `term` uit `?term=`
+6. `lijst.innerHTML = veld.value` in een `.js`-bestand
 
 <details>
 <summary>Antwoord</summary>
@@ -120,6 +122,8 @@ bezoeker, en wat moet er anders bij de rest?
 2. Niet veilig: maak er `{escape(bericht)}` van, of gebruik een template.
 3. Niet veilig: haal `|safe` weg.
 4. Veilig: het getal komt van je eigen code, niet van de bezoeker.
+5. Niet veilig: ook de URL komt van de bezoeker. Maak er `{escape(term)}` van.
+6. Niet veilig: maak er `lijst.textContent = veld.value` van.
 
 </details>
 

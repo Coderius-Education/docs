@@ -29,7 +29,7 @@ Uitvoer:
 5e83ee3a35dabb618662f2b8e13037c42d3bdf9858f1ff7dec0f365237516053
 ```
 
-Hetzelfde wachtwoord, twee totaal verschillende hashes. In de database zie je
+Hetzelfde wachtwoord geeft nu twee totaal verschillende hashes. In de database zie je
 niet meer dat Sara en Noor hetzelfde kozen.
 
 ## Het zout is geen geheim
@@ -39,11 +39,11 @@ daarvoor heb je hetzelfde zout nodig. Het zout staat daarom naast de
 hash in de database. Dat is geen probleem: het zout hoeft niet geheim te zijn,
 alleen per gebruiker anders.
 
-Wat het zout wél doet: vooraf uitgerekende lijsten onbruikbaar maken. Er
+Wel maakt het zout vooraf uitgerekende lijsten onbruikbaar. Er
 bestaan grote lijsten met de `sha256` van miljoenen bekende wachtwoorden, die
 **rainbow tables** heten. Zonder zout zoek je een hash daarin op, zoals je een
-woord opzoekt in een woordenboek. Met een zout per gebruiker zou zo'n lijst voor
-elk zout opnieuw gemaakt moeten worden, en dat is niet te doen.
+woord opzoekt in een woordenboek. Met een zout per gebruiker moet je zo'n lijst
+voor elk zout opnieuw maken, en dat is niet te doen.
 
 ## Een echt zout
 
@@ -118,18 +118,31 @@ kiest niemand. Zoek je de gezouten hash op in de lijst, dan vind je niets.
 
 </details>
 
-### Opdracht 2: Investigate - Waarom niet geheim?
+### Opdracht 2: Investigate - Rekenen voor duizend gebruikers
 
-Een klasgenoot zegt: "Als het zout in de database staat, kan een aanvaller het
-toch lezen? Dan heeft het geen zin." Klopt dat?
+Een aanvaller heeft een gelekte database met duizend gebruikers, en wil weten
+wie `welkom123` als wachtwoord heeft. Hoeveel hashes moet hij daarvoor
+uitrekenen als de database geen zout gebruikt, zoals in [les 2](./hash)? En
+hoeveel als elke gebruiker een eigen zout heeft?
+
+<details>
+<summary>Tip</summary>
+
+In les 2 vond je met één `sha256` van `welkom123` zowel Sara als Noor. Lukt dat
+nog als elk zout een andere hash geeft?
+
+</details>
 
 <details>
 <summary>Antwoord</summary>
 
-Nee. Het zout is er niet om geheim te zijn, maar om elke hash uniek te maken.
-Daardoor zie je niet wie hetzelfde wachtwoord heeft, en werken vooraf
-uitgerekende lijsten niet meer. Een aanvaller die het zout kent, moet nog
-steeds voor elke gebruiker apart gaan rekenen.
+Zonder zout één: hij rekent de hash van `welkom123` één keer uit en zoekt die
+code in de hele database. Iedereen met die code heeft `welkom123`.
+
+Met een eigen zout per gebruiker duizend: voor elke gebruiker moet hij zijn
+zout plus `welkom123` apart hashen, want elk zout geeft een andere code. Dat
+het zout in de database staat, helpt hem dus niet: hij heeft duizend keer
+zoveel werk. Waarom dat telt, zie je in [les 4](./traag).
 
 </details>
 

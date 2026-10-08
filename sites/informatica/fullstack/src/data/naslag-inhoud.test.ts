@@ -133,6 +133,7 @@ describe('cheatsheet volgt de lessen', () => {
     httponly: 'httponly=True',
     Argon2: 'ph.hash(',
     slowapi: '@limiter.limit',
+    textContent: 'textContent = veld.value',
   };
 
   it('elk Veiligheid-item linkt naar een les waarvan de code de syntax bevat', () => {
@@ -146,7 +147,9 @@ describe('cheatsheet volgt de lessen', () => {
         (m) => m[1],
       );
       const raak = doelen.some((d) =>
-        codeblokken(lees(`${SITE}${d}.mdx`), 'python').some((c) => c.includes(nodig)),
+        ['python', 'js'].some((taal) =>
+          codeblokken(lees(`${SITE}${d}.mdx`), taal).some((c) => c.includes(nodig)),
+        ),
       );
       return raak ? [] : [`${item.summary}: geen link naar een les met ${nodig}`];
     });

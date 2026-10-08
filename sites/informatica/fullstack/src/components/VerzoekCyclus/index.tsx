@@ -366,7 +366,7 @@ const INVOER_STAPPEN: Stap[] = [
   {
     kant: 'server',
     titel: 'Jouw functie controleert de inhoud',
-    tekst: 'Een naam van alleen spaties geeft jouw eigen 400.',
+    tekst: 'Wat max_length niet ziet, controleer je zelf, in je eigen code.',
     to: '/docs/veiligheid/invoer/inhoud',
     les: 'De inhoud controleren',
     controle: true,
@@ -526,7 +526,7 @@ const DOS_STAPPEN: Stap[] = [
   {
     kant: 'server',
     titel: 'slowapi telt per computer',
-    tekst: 'Vóór je functie draait, met @limiter.limit erboven.',
+    tekst: 'Vóór je functie draait, met @limiter.limit direct onder @app.get.',
     to: '/docs/veiligheid/dos/limiet',
     les: 'Een limiet met slowapi',
     controle: true,

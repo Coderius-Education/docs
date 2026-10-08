@@ -1,0 +1,233 @@
+---
+sidebar_label: '6. In de browser: innerHTML'
+description: Ook JavaScript kan van tekst HTML maken, met innerHTML. Dan helpt escape() op de server niet, want de server ziet de tekst niet. textContent houdt het tekst.
+---
+
+# HTML van een bezoeker: in de browser met `innerHTML`
+
+Je server escapet nu elke plek waar tekst van een bezoeker in HTML komt. Maar
+HTML maken kan ook JavaScript, in de browser, nadat de server zijn werk al
+heeft gedaan. In [JavaScript erbij](/docs/FastAPI/in-de-browser/javascript)
+zette je tekst in de pagina met `textContent`. Er is nog een manier, en die
+leest de tekst als HTML.
+
+## Een voorbeeld van je bericht
+
+Onder het formulier komt te staan hoe je bericht eruit gaat zien, terwijl je
+typt. Het berichtveld krijgt een `id`, en onder het formulier komt een lege
+`<p>`. Zet dit in `static/gastenboek.html`, met een tweede script-tag in de
+`<head>`:
+
+```html
+<!doctype html>
+<html>
+<head>
+    <script src="/static/js/htmx.min.js" defer></script>
+    <script src="/static/js/voorbeeld.js" defer></script>
+</head>
+<body>
+    <form hx-post="/gastenboek" hx-target="#antwoord">
+        <input type="text" name="naam" placeholder="Je naam" required>
+        <input type="text" id="bericht" name="bericht" placeholder="Je bericht" required>
+        <button type="submit">Verstuur</button>
+    </form>
+    <p id="voorbeeld"></p>
+    <p id="antwoord"></p>
+    <div id="lijst" hx-get="/berichten/lijst" hx-trigger="load, every 5s"></div>
+</body>
+</html>
+```
+
+Heb je in les 3 een zoekveld boven het formulier gezet, laat dat dan staan.
+
+En maak `static/js/voorbeeld.js`:
+
+{/* onveilig-voorbeeld: de zwakheid die deze les laat zien */}
+
+```js
+const veld = document.querySelector("#bericht");
+const voorbeeld = document.querySelector("#voorbeeld");
+
+function toon() {
+    voorbeeld.innerHTML = veld.value;
+}
+
+veld.addEventListener("input", toon);
+
+const vooraf = new URLSearchParams(location.search).get("bericht");
+if (vooraf) {
+    veld.value = vooraf;
+    toon();
+}
+```
+
+`innerHTML` zet tekst in een element, net als `textContent`, maar leest hem als
+HTML.
+
+Het tweede stuk vult het formulier alvast in met een link, bijvoorbeeld om
+iemand een bericht voor te stellen. `location.search` is het stuk van de URL
+vanaf het vraagteken. `URLSearchParams` haalt daar de waarde van `bericht` uit,
+en maakt van codes als `%3C` weer een `<`. Staat er geen `?bericht=`, dan is
+`vooraf` leeg en gebeurt er niets.
+
+## Doe het na, op je eigen server
+
+Open `http://127.0.0.1:8000/static/gastenboek.html` en typ als bericht
+`<b>vet</b>`. In het voorbeeld onder het formulier staat **vet**,
+vetgedrukt. Dat is je eigen tekst, in je eigen browser: daar kan nog niemand
+anders bij.
+
+Open nu deze link:
+
+```
+http://127.0.0.1:8000/static/gastenboek.html?bericht=<b>vet</b>
+```
+
+Het veld is ingevuld, en het voorbeeld is weer vet. Deze keer kwam de tekst
+uit de link, en die kan iemand anders gemaakt hebben. Een `<script>` dat zo
+binnenkomt, voert de browser niet uit, maar HTML heeft andere manieren om code
+te laten draaien. Dit heet **DOM-XSS**: de HTML van een bezoeker komt in de
+pagina via JavaScript, in plaats van via de server. De DOM is de pagina zoals
+JavaScript hem ziet.
+
+## Waarom `escape` op de server hier niet helpt
+
+Kijk in de terminal van je server. Daar staat één regel met
+`"GET /static/gastenboek.html?bericht=%3Cb%3Evet%3C/b%3E HTTP/1.1" 200`. Open
+je de link nog een keer, dan staat er `304 Not Modified`: je browser had de
+pagina al, en de server zegt alleen dat hij niet veranderd is. Je
+server stuurde `gastenboek.html` zoals het in `static/` staat. Het stuk na het
+vraagteken heeft hij niet gebruikt, en er is geen endpoint waar je een
+`escape` kunt zetten. De HTML ontstaat pas in de browser, in de functie `toon` in
+`voorbeeld.js`.
+
+De regel blijft dezelfde als in de lessen hiervoor: de bescherming hoort op de
+plek waar tekst HTML wordt. Hier is dat de browser, en daar doet `textContent`
+wat `escape` op de server doet. Vervang de regel in `toon`:
+
+```js
+    voorbeeld.textContent = veld.value;
+```
+
+Open de link opnieuw. In het voorbeeld staat nu `<b>vet</b>`, met de haakjes
+erbij.
+
+Gebruik `innerHTML` alleen voor HTML die je zelf in je code schreef, net als
+`|safe` in [les 5](./safe). Voor alles wat uit een veld, de URL of de server
+komt, is `textContent` de goede keuze.
+
+htmx zet het antwoord van je server ook met `innerHTML` in de pagina, dat is
+`hx-swap="innerHTML"`. Dat is veilig zolang je server escapet: wat htmx krijgt,
+is dan al `&lt;b&gt;`, en de browser toont het als tekst.
+
+## Er gaat iets mis
+
+Het voorbeeld blijft leeg, hoe je ook typt. In de Console staat:
+
+```
+Uncaught TypeError: Cannot read properties of null (reading 'addEventListener')
+```
+
+**Oorzaak:** `document.querySelector("#bericht")` vond geen element. Het
+berichtveld heeft geen `id="bericht"`, of het `id` is anders gespeld.
+
+**Oplossing:** geef het berichtveld `id="bericht"`, precies zoals in
+`querySelector`, zonder het hekje.
+
+Meer uitleg: [Console en Elementen](/docs/FastAPI/in-de-browser/devtools-console)
+
+## Opdrachten
+
+### Opdracht 1: Predict - Een ampersand
+
+`textContent` staat in `toon`. Je opent
+`http://127.0.0.1:8000/static/gastenboek.html?bericht=Tom%20%26%20Jerry`.
+
+**Vraag:** wat staat er in het voorbeeld?
+
+<details>
+<summary>Tip</summary>
+
+`%20` is een spatie en `%26` een `&`. Wat doet `URLSearchParams` met die codes?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`Tom & Jerry`. `URLSearchParams` maakt van de codes weer een spatie en een `&`,
+en `textContent` zet de tekst erin zoals hij is. De `&` moest in de link een
+code zijn, anders had de browser hem gelezen als het begin van een tweede
+query-parameter.
+
+</details>
+
+### Opdracht 2: Run - Beide versies
+
+Probeer de link met `<b>vet</b>` eerst met `innerHTML` in `toon`, en daarna met
+`textContent`. Typ bij allebei in de Console:
+
+```js
+document.querySelector("#voorbeeld").innerHTML
+```
+
+Wat geeft de Console terug?
+
+<details>
+<summary>Antwoord</summary>
+
+Met `innerHTML`: `'<b>vet</b>'`. In de `<p>` staat een echte tag.
+
+Met `textContent`: `'&lt;b&gt;vet&lt;/b&gt;'`. De browser heeft de haakjes
+zelf ge-escapet, net als `escape` in Python, en toont ze daarom als tekst.
+
+</details>
+
+### Opdracht 3: Investigate - De server escapet toch?
+
+Iemand zegt: "Mijn server escapet alles, dus `innerHTML` in mijn JavaScript kan
+geen kwaad." Klopt dat?
+
+<details>
+<summary>Tip</summary>
+
+Waar komt de tekst in `voorbeeld.js` vandaan? Is hij langs een endpoint van jou
+gekomen?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Nee. Het escapen op de server beschermt alleen wat door je endpoints gaat. De
+tekst uit het veld en uit `location.search` komt nooit langs een endpoint: de
+browser leest hem zelf. Die tekst is alleen veilig als je JavaScript hem met
+`textContent` in de pagina zet.
+
+</details>
+
+<details>
+<summary>Zo ziet `voorbeeld.js` er nu uit</summary>
+
+```js
+const veld = document.querySelector("#bericht");
+const voorbeeld = document.querySelector("#voorbeeld");
+
+function toon() {
+    voorbeeld.textContent = veld.value;
+}
+
+veld.addEventListener("input", toon);
+
+const vooraf = new URLSearchParams(location.search).get("bericht");
+if (vooraf) {
+    veld.value = vooraf;
+    toon();
+}
+```
+
+`main.py` is in deze les niet veranderd.
+
+</details>
+
+Door naar [les 7: in je eigen project](./eigen-project).

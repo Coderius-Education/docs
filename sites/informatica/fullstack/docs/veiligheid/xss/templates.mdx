@@ -1,5 +1,5 @@
 ---
-sidebar_label: '3. Templates escapen vanzelf'
+sidebar_label: '4. Templates escapen vanzelf'
 description: Een .html-template van Jinja escapet alles tussen dubbele accolades, zodat je geen plek kunt vergeten. Zet de lijst van je gastenboek in een template.
 ---
 
@@ -57,8 +57,9 @@ from fastapi.templating import Jinja2Templates
 templates = Jinja2Templates(directory="templates")
 ```
 
-Het antwoord na het versturen blijft één zin in een f-string, met `escape(naam)`.
-Voor één zin is een template wat veel.
+Het antwoord na het versturen blijft één zin in een f-string, met `escape(naam)`,
+en de zoekpagina uit [les 3](./url) houdt `escape(term)`. Voor één zin is een
+template wat veel.
 
 ## Doe de test opnieuw
 
@@ -82,8 +83,8 @@ tekst, net als met `escape`.
 Je noemt het template `berichten_lijst.jinja`, en `<b>vet</b>` is weer vet.
 
 **Oorzaak:** Jinja escapet in FastAPI alleen templates die op `.html`, `.htm` of
-`.xml` eindigen. Een andere extensie zet het escapen stil uit: geen foutmelding,
-geen waarschuwing.
+`.xml` eindigen. Een andere extensie zet het escapen stil uit, zonder
+foutmelding of waarschuwing.
 
 **Oplossing:** houd je templates op `.html`, en pas de naam in
 `TemplateResponse` mee aan.
@@ -118,17 +119,34 @@ tussen `{{ }}` staat, dus de naam blijft tekst en jouw `<b>` blijft HTML.
 
 </details>
 
-### Opdracht 2: Investigate - Waarom nog `escape`?
+### Opdracht 2: Predict - Aanhalingstekens
 
-De lijst gebruikt nu een template. Waarom staat er in `gastenboek_opslaan` nog
-steeds `escape(naam)`?
+Noor vult als naam `Noor` in en als bericht `Ik zeg "hoi"`.
+
+**Vraag:** wat ziet een bezoeker in de lijst? En wat staat er voor dat bericht
+in wat `lijst.py` print?
+
+<details>
+<summary>Tip</summary>
+
+In [les 2](./escape) zag je welke tekens escapen vervangt. Een `"` is er een
+van.
+
+</details>
 
 <details>
 <summary>Antwoord</summary>
 
-Omdat dat antwoord geen template is maar een f-string in een `HTMLResponse`.
-Een template escapet alleen wat door het template gaat. Haal je daar `escape`
-weg, dan is de naam na het versturen weer HTML.
+In de lijst staat `Noor: Ik zeg "hoi"`, met de aanhalingstekens erbij. `lijst.py`
+geeft voor dat bericht:
+
+```
+        <li>Noor: Ik zeg &#34;hoi&#34;</li>
+```
+
+Jinja schrijft een `"` als `&#34;`, waar `escape` uit les 2 `&quot;` maakt. Het
+zijn twee codes voor hetzelfde teken, en de browser toont van allebei een `"`.
+Wie gewone tekst typt, merkt dus niets van het escapen.
 
 </details>
 
@@ -161,6 +179,15 @@ async def berichten_lijst(request: Request):
     with SqliteDict("gastenboek.db") as db:
         alle_berichten = list(db.values())
     return templates.TemplateResponse(request, "berichten_lijst.html", {"berichten": alle_berichten})
+
+@app.get("/zoek")
+async def zoek(term: str = ""):
+    gevonden = ""
+    with SqliteDict("gastenboek.db") as db:
+        for bericht in db.values():
+            if term.lower() in bericht["bericht"].lower():
+                gevonden += f"<li>{escape(bericht['naam'])}: {escape(bericht['bericht'])}</li>"
+    return HTMLResponse(f"<p>Je zocht naar: {escape(term)}</p><ul>{gevonden}</ul>")
 ```
 
 Naast `main.py` staan `static/gastenboek.html`, `static/js/htmx.min.js` en
@@ -168,4 +195,4 @@ Naast `main.py` staan `static/gastenboek.html`, `static/js/htmx.min.js` en
 
 </details>
 
-Door naar [les 4: |safe, de bescherming uitzetten](./safe).
+Door naar [les 5: |safe, de bescherming uitzetten](./safe).
