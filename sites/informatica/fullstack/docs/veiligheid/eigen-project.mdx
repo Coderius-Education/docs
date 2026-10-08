@@ -90,8 +90,8 @@ ze erin bouwde.
 - [ ] Inloggen gebruikt `ph.verify`, met dezelfde melding bij een onbekende naam
   en een fout wachtwoord, en ook bij een onbekende naam een `verify` tegen een
   nep-hash. ([Inloggen met verify](./wachtwoorden/inloggen))
-- [ ] Een wachtwoord wijzigen vraagt eerst het oude, en na een geslaagde
-  `verify` werk je een oude hash bij met `check_needs_rehash`.
+- [ ] Een wachtwoord wijzigen vraagt eerst het oude. Bij het inloggen werk je
+  na een geslaagde `verify` een oude hash bij met `check_needs_rehash`.
   ([Wachtwoord wijzigen](./wachtwoorden/wijzigen),
   [Een oude hash bijwerken](./wachtwoorden/rehash))
 - [ ] Elk endpoint dat een wachtwoord controleert, zoals `/inloggen`, heeft een
