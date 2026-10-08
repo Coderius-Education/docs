@@ -59,7 +59,7 @@ describe("de startpagina's", () => {
       expect(tekst, site).toContain(`<SiteLink site="${site}"`);
     }
     expect(tekst).toContain('](/docs/starten)');
-    expect(tekst).toContain('](/docs/FastAPI/installatie)');
+    expect(tekst).toContain('](/docs/FastAPI/eerste-server/installatie)');
     expect(tekst).toContain('](/docs/veiligheid)');
   });
 });

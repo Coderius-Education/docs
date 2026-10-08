@@ -1,0 +1,263 @@
+# HTML tonen
+
+<Voorkennis
+  items={[
+    {site: 'web', to: '/docs/html-css/intro-html', label: 'Intro tot HTML'},
+    {site: 'web', to: '/docs/html-css/tekst-opmaken-css', label: 'Tekst opmaken met CSS'},
+  ]}
+/>
+
+Tot nu toe gaven je endpoints JSON terug. Nu geef je een HTML-pagina terug.
+
+## HTMLResponse importeren
+
+Zet `HTMLResponse` bij de imports. Je endpoints blijven staan. De bovenkant van je `main.py` ziet er dan zo uit:
+
+```python
+from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
+
+app = FastAPI()
+```
+
+## Een HTML pagina tonen
+
+Zet dit endpoint onder je andere endpoints:
+
+<CodeUitleg>
+
+```python showLineNumbers
+@app.get("/pagina", response_class=HTMLResponse)
+async def pagina():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Mijn Pagina</title>
+        </head>
+        <body>
+            <h1>Hallo!</h1>
+            <p>Dit is mijn eerste HTML pagina.</p>
+        </body>
+    </html>
+    """
+```
+
+<Regel n={1}>
+`response_class=HTMLResponse` vertelt FastAPI dat je HTML terugstuurt en geen JSON. Wat er zonder gebeurt, probeer je uit in opdracht 3.
+</Regel>
+
+<Regel n={3} tot={14}>
+De functie geeft één lange string terug. De drie aanhalingstekens `"""` openen een string die over meerdere regels doorloopt, zodat je de HTML kunt schrijven zoals hij is.
+</Regel>
+
+</CodeUitleg>
+
+## Testen
+
+Ga naar [http://127.0.0.1:8000/pagina](http://127.0.0.1:8000/pagina). Je ziet nu een echte webpagina.
+
+## CSS toevoegen
+
+In de web-cursus zette je CSS in een eigen bestand en koppelde je het met `<link>`. Dat kan hier ook, maar daarvoor moet je server dat bestand kunnen sturen; dat leer je in [CSS in een eigen bestand](/docs/FastAPI/css-en-afbeeldingen/static_files). Tot die tijd zet je de CSS in een `<style>`-tag in de `<head>`. Zet dit endpoint er ook bij:
+
+```python
+@app.get("/styled", response_class=HTMLResponse)
+async def styled():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Met CSS</title>
+            <style>
+                h1 { color: blue; }
+                p { color: gray; }
+            </style>
+        </head>
+        <body>
+            <h1>Gestylede pagina</h1>
+            <p>Deze tekst is grijs.</p>
+        </body>
+    </html>
+    """
+```
+
+:::danger[Gaat er iets mis?]
+Zie je geen pagina maar platte tekst? Kijk of `response_class=HTMLResponse` in je decorator staat. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
+:::
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+```python
+from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
+
+app = FastAPI()
+
+@app.get("/")
+async def root():
+    return {"bericht": "Hallo wereld!"}
+
+@app.get("/info")
+async def info():
+    return {"naam": "Jouw Naam", "leeftijd": 16}
+
+@app.get("/pagina", response_class=HTMLResponse)
+async def pagina():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Mijn Pagina</title>
+        </head>
+        <body>
+            <h1>Hallo!</h1>
+            <p>Dit is mijn eerste HTML pagina.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/styled", response_class=HTMLResponse)
+async def styled():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Met CSS</title>
+            <style>
+                h1 { color: blue; }
+                p { color: gray; }
+            </style>
+        </head>
+        <body>
+            <h1>Gestylede pagina</h1>
+            <p>Deze tekst is grijs.</p>
+        </body>
+    </html>
+    """
+```
+
+</details>
+
+## Opdrachten
+
+### Opdracht 1: Predict - JSON of HTML?
+
+```python
+@app.get("/titel")
+async def titel():
+    return {"titel": "<h1>Hallo</h1>"}
+```
+
+**Vraag:** Zie je een heading of JSON?
+
+<details>
+<summary>Tip</summary>
+
+Kijk of er `response_class=HTMLResponse` staat. Wat doet FastAPI als dat er niet staat?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Je ziet JSON: `{"titel": "<h1>Hallo</h1>"}`. Zonder `response_class=HTMLResponse` maakt FastAPI JSON van wat je functie teruggeeft.
+
+</details>
+
+### Opdracht 2: Run
+
+Ga naar `/pagina` en `/styled`. Is de kop op `/styled` blauw en de tekst grijs? En werkt `/info` uit de vorige les nog?
+
+### Opdracht 3: Investigate - Zonder HTMLResponse
+
+Wat gebeurt er als je `response_class=HTMLResponse` weghaalt bij het `/styled` endpoint? Probeer het uit.
+
+<details>
+<summary>Antwoord</summary>
+
+Zonder `response_class=HTMLResponse` maakt FastAPI JSON van je string. Je ziet geen pagina, maar één lange regel tussen aanhalingstekens, ongeveer zo:
+
+```
+"\n    <!DOCTYPE html>\n    <html>\n        <head>\n            <title>Met CSS</title>\n ..."
+```
+
+Elke `\n` is een plek waar jij een nieuwe regel begon.
+
+</details>
+
+### Opdracht 4: Make - Eigen pagina
+
+Maak een endpoint `/profiel` dat een HTML pagina toont met:
+- Jouw naam als heading
+- Een paragraaf over jezelf
+- Een gekleurde heading via CSS
+
+<details>
+<summary>Tip</summary>
+
+Gebruik `response_class=HTMLResponse` en een string over meerdere regels met `"""`. Zet je CSS in een `<style>` tag in de `<head>`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+@app.get("/profiel", response_class=HTMLResponse)
+async def profiel():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Profiel</title>
+            <style>
+                h1 { color: purple; }
+            </style>
+        </head>
+        <body>
+            <h1>Jan</h1>
+            <p>Ik ben 16 en hou van programmeren.</p>
+        </body>
+    </html>
+    """
+```
+
+</details>
+
+### Opdracht 5: Make - Een lijstje
+
+Maak een endpoint `/hobbylijst` dat een pagina toont met een kop en een lijst van drie hobby's.
+
+<details>
+<summary>Tip</summary>
+
+Een lijst maak je in HTML met `<ul>` en voor elk item een `<li>`. Vergeet `response_class=HTMLResponse` niet.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+@app.get("/hobbylijst", response_class=HTMLResponse)
+async def hobbylijst():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <body>
+            <h1>Mijn hobby's</h1>
+            <ul>
+                <li>Gamen</li>
+                <li>Voetbal</li>
+                <li>Tekenen</li>
+            </ul>
+        </body>
+    </html>
+    """
+```
+
+</details>

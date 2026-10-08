@@ -1,0 +1,370 @@
+# Alles tonen: een for-lus in je template
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/herhalen/06a-for-loop', label: 'De for-loop'},
+    {site: 'web', to: '/docs/html-css/koppen-lijsten', label: 'Lijsten in HTML'},
+  ]}
+/>
+
+Je gastenboek slaat berichten op, maar om ze te zien moet je nog naar `/berichten` en een hoop JSON lezen. Nu zet je ze op een echte pagina.
+
+## De for-lus in een template
+
+Tot nu toe vulde je template één waarde in met `{{ naam }}`. Met `{% for %}` herhaalt Jinja2 een stuk HTML voor elk item in een lijst:
+
+```html
+<ul>
+    {% for bericht in berichten %}
+        <li>{{ bericht.naam }}: {{ bericht.bericht }}</li>
+    {% endfor %}
+</ul>
+```
+
+Dit werkt net als een for-lus in Python, alleen sluit je de lus af met `{% endfor %}` in plaats van met inspringen. HTML kent geen inspringing die betekenis heeft.
+
+## De data meesturen
+
+In [Elk bericht bewaren: een eigen sleutel](/docs/FastAPI/berichten-opslaan/eigen-sleutel) gaf `/berichten` de berichten nog als JSON terug. Vervang dat endpoint door deze versie, die alle berichten ophaalt en meestuurt onder de naam die de template gebruikt:
+
+<CodeUitleg>
+
+{/* route-dubbel: vervangt GET /berichten (JSON) uit Elk bericht bewaren */}
+```python showLineNumbers
+@app.get("/berichten")
+async def berichten(request: Request):
+    with SqliteDict("gastenboek.db") as db:
+        alle_berichten = list(db.values())
+    return templates.TemplateResponse(
+        request,
+        "berichten.html",
+        {"berichten": alle_berichten}
+    )
+```
+
+<Regel n={4}>
+`db.values()` geeft alle opgeslagen berichten, zonder hun sleutels. De `list()` eromheen ken je uit [Elk bericht bewaren: een eigen sleutel](/docs/FastAPI/berichten-opslaan/eigen-sleutel), en hier is hij net zo nodig: de template loopt pas door de berichten als de database allang weer dicht is. Vergeet je hem, dan krijg je ook hier `AttributeError: 'NoneType' object has no attribute 'select'`.
+</Regel>
+
+<Regel n={8}>
+De lijst gaat mee onder de naam `berichten`, en dat is precies de naam die de template in `{% for bericht in berichten %}` gebruikt.
+</Regel>
+
+</CodeUitleg>
+
+## Compleet voorbeeld
+
+`templates/berichten.html`:
+
+```html
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Gastenboek</title>
+        <link rel="stylesheet" href="/static/css/style.css">
+    </head>
+    <body>
+        <h1>Gastenboek</h1>
+
+        <ul>
+            {% for bericht in berichten %}
+                <li>{{ bericht.naam }}: {{ bericht.bericht }}</li>
+            {% endfor %}
+        </ul>
+
+        <a href="/gastenboek">Nieuw bericht</a>
+    </body>
+</html>
+```
+
+## Testen
+
+1. Start je server en ga naar `http://127.0.0.1:8000/berichten`
+2. Je ziet de berichten die je eerder verstuurde, nu als lijst
+3. Vul het formulier op `/gastenboek` nog een keer in. Na het versturen kom je vanzelf op de lijst uit, en die is gegroeid
+
+:::danger[Gaat er iets mis?]
+Blijft de lijst leeg terwijl er wel data in je database staat? Dan komt de lijst waarschijnlijk onder een andere naam binnen dan de template verwacht. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
+:::
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+```python
+import random
+import time
+
+from fastapi import FastAPI, Form, Request
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
+
+@app.get("/")
+async def home():
+    return FileResponse("static/pages/home.html")
+
+@app.get("/info")
+async def info():
+    return {"naam": "Jouw Naam", "leeftijd": 16}
+
+@app.get("/pagina", response_class=HTMLResponse)
+async def pagina():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Mijn Pagina</title>
+        </head>
+        <body>
+            <h1>Hallo!</h1>
+            <p>Dit is mijn eerste HTML pagina.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/styled", response_class=HTMLResponse)
+async def styled():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Met CSS</title>
+            <style>
+                h1 { color: blue; }
+                p { color: gray; }
+            </style>
+        </head>
+        <body>
+            <h1>Gestylede pagina</h1>
+            <p>Deze tekst is grijs.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/about")
+async def about():
+    return FileResponse("static/pages/about.html")
+
+DIEREN = {
+    "kat": "Een kat spint als hij tevreden is.",
+    "hond": "Een hond kwispelt als hij blij is.",
+    "vis": "Een vis ademt met kieuwen.",
+}
+
+@app.get("/dier/{naam}", response_class=HTMLResponse)
+async def dier(naam: str):
+    tekst = DIEREN.get(naam, "Dit dier staat nog niet op de site.")
+    return f"""
+    <!DOCTYPE html>
+    <html>
+        <body>
+            <h1>Over dieren</h1>
+            <p>{tekst}</p>
+            <a href="/">Terug naar Home</a>
+        </body>
+    </html>
+    """
+
+@app.get("/zoek")
+async def zoek(term: str):
+    return {"je_zocht": term}
+
+@app.get("/foto")
+async def foto():
+    return FileResponse("static/pages/foto.html")
+
+@app.get("/dobbelsteen")
+async def dobbelsteen(request: Request):
+    worp = random.randint(1, 6)
+    return templates.TemplateResponse(
+        request,
+        "dobbelsteen.html",
+        {"worp": worp}
+    )
+
+@app.get("/naam")
+async def toon_formulier():
+    return FileResponse("static/pages/naam_form.html")
+
+@app.post("/verstuur")
+async def ontvang_naam(naam: str = Form(...)):
+    print(f"Naam ontvangen: {naam}")
+    return {"bericht": f"Hallo {naam}!"}
+
+@app.get("/groet")
+async def groet_form():
+    return FileResponse("static/pages/groet_form.html")
+
+@app.post("/groet")
+async def groet_verwerk(request: Request, naam: str = Form(...)):
+    return templates.TemplateResponse(
+        request,
+        "groet_resultaat.html",
+        {"naam": naam}
+    )
+
+@app.get("/opslaan")
+async def naam_formulier():
+    return FileResponse("static/pages/naam_opslaan.html")
+
+@app.post("/opslaan")
+async def naam_opslaan(naam: str = Form(...)):
+    with SqliteDict("namen.db") as db:
+        db["laatste_naam"] = naam
+        db.commit()
+
+    return {"bericht": f"'{naam}' opgeslagen!"}
+
+@app.get("/toon_naam")
+async def toon_naam():
+    with SqliteDict("namen.db") as db:
+        naam = db.get("laatste_naam", "Nog niets opgeslagen")
+    return {"naam": naam}
+
+@app.get("/gastenboek")
+async def gastenboek_form():
+    return FileResponse("static/pages/gastenboek_form.html")
+
+@app.post("/gastenboek")
+async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        sleutel = f"bericht_{time.time_ns()}"
+        db[sleutel] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    return RedirectResponse(url="/berichten", status_code=303)
+
+@app.get("/berichten")
+async def berichten(request: Request):
+    with SqliteDict("gastenboek.db") as db:
+        alle_berichten = list(db.values())
+    return templates.TemplateResponse(
+        request,
+        "berichten.html",
+        {"berichten": alle_berichten}
+    )
+```
+
+</details>
+
+## Opdrachten
+
+### Opdracht 1: Predict - Hoeveel regels?
+
+{/* niet-compileren: fragment uit een handler */}
+```python
+namen = ["Jan", "Sarah", "Piet"]
+return templates.TemplateResponse(request, "namen.html", {"namen": namen})
+```
+
+Template:
+```html
+<h1>Bezoekers</h1>
+{% for naam in namen %}
+    <p>{{ naam }}</p>
+{% endfor %}
+```
+
+**Vraag:** hoeveel `<h1>` en hoeveel `<p>` staan er straks op de pagina?
+
+<details>
+<summary>Tip</summary>
+
+Jinja2 herhaalt alleen wat tússen `{% for %}` en `{% endfor %}` staat. De rest staat er één keer.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Eén `<h1>` en drie `<p>`. De `<h1>` staat buiten de lus, dus die komt er maar één keer.
+
+</details>
+
+### Opdracht 2: Run
+
+Maak `templates/berichten.html` uit het voorbeeld en pas je `/berichten` endpoint aan. Vul het gastenboek een paar keer in en kijk of je lijst groeit.
+
+### Opdracht 3: Investigate - Endfor vergeten
+
+Haal in je complete `berichten.html` de regel `{% endfor %}` weg en herlaad de pagina.
+
+<details>
+<summary>Antwoord</summary>
+
+De browser zegt `Internal Server Error`. Onderaan in je terminal staat:
+
+```
+jinja2.exceptions.TemplateSyntaxError: Unexpected end of template. Jinja was looking for the following tags: 'endfor' or 'else'. The innermost block that needs to be closed is 'for'.
+```
+
+Jinja2 leest je template van boven naar beneden. De lus is nog open als het bestand ophoudt, en dan weet hij niet waar de herhaling stopt. Elke `{% for %}` heeft een `{% endfor %}` nodig. Zet de regel terug.
+
+</details>
+
+### Opdracht 4: Make - Nummer erbij
+
+Zet een volgnummer voor elk bericht: "1. Jan: Hallo", "2. Sarah: Leuke site".
+
+<details>
+<summary>Tip</summary>
+
+Jinja2 houdt zelf bij hoeveel keer de lus gedraaid heeft. Binnen een `{% for %}` kun je `{{ loop.index }}` gebruiken; die begint bij 1.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<ul>
+    {% for bericht in berichten %}
+        <li>{{ loop.index }}. {{ bericht.naam }}: {{ bericht.bericht }}</li>
+    {% endfor %}
+</ul>
+```
+
+`loop.index` telt vanaf 1. Wil je vanaf 0 tellen, gebruik dan `loop.index0`.
+
+</details>
+
+### Opdracht 5: Make - Tabel met bezoekers
+
+Toon de berichten in een `<table>` in plaats van een lijst, met twee kolommen: naam en bericht. Zorg dat de kopregel er één keer staat. Een tabel bouw je met `<table>`: elke rij is een `<tr>`, een kopje in die rij een `<th>` en een gewone cel een `<td>`.
+
+<details>
+<summary>Tip</summary>
+
+De `<tr>` met de kopjes hoort buiten de lus. Alleen de `<tr>` met de data herhaal je.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+<table>
+    <tr>
+        <th>Naam</th>
+        <th>Bericht</th>
+    </tr>
+    {% for bericht in berichten %}
+        <tr>
+            <td>{{ bericht.naam }}</td>
+            <td>{{ bericht.bericht }}</td>
+        </tr>
+    {% endfor %}
+</table>
+```
+
+De kopregel staat buiten de lus, dus die verschijnt één keer. De rij met `<td>` staat erbinnen en komt er voor elk bericht opnieuw.
+
+</details>
+
+Door naar [Nog niets? if en else in je template](/docs/FastAPI/berichten-tonen/leeg).

@@ -1,0 +1,172 @@
+# Nog niets? if en else in je template
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/beslissen/05b-if-else', label: 'If en else'},
+  ]}
+/>
+
+Een gastenboek zonder berichten toont nu een kop, een lege lijst en een link. Een nieuwe bezoeker weet dan niet of de pagina stuk is of dat er nog niemand schreef. Met `{% if %}` zeg je het.
+
+## Het lege geval opvangen
+
+Vervang in `templates/berichten.html` de `<ul>` met de lus door dit blok:
+
+```html
+{% if berichten %}
+    <ul>
+        {% for bericht in berichten %}
+            <li>{{ bericht.naam }}: {{ bericht.bericht }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Nog geen berichten. Wees de eerste.</p>
+{% endif %}
+```
+
+`{% if berichten %}` is waar zodra er minstens één bericht in de lijst staat. Een lege lijst telt als niet waar, en dan toont Jinja2 wat onder `{% else %}` staat.
+
+<details>
+<summary>Zo ziet je `templates/berichten.html` er nu uit</summary>
+
+```html
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Gastenboek</title>
+        <link rel="stylesheet" href="/static/css/style.css">
+    </head>
+    <body>
+        <h1>Gastenboek</h1>
+
+        {% if berichten %}
+            <ul>
+                {% for bericht in berichten %}
+                    <li>{{ bericht.naam }}: {{ bericht.bericht }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Nog geen berichten. Wees de eerste.</p>
+        {% endif %}
+
+        <a href="/gastenboek">Nieuw bericht</a>
+    </body>
+</html>
+```
+
+</details>
+
+Je endpoint `/berichten` hoeft niet te veranderen: de template kijkt zelf of de lijst leeg is.
+
+## Testen
+
+1. Ga naar `http://127.0.0.1:8000/berichten`. Je berichten staan er nog, als lijst.
+2. Stop de server, hernoem `gastenboek.db` tijdelijk (bijvoorbeeld naar `gastenboek-bewaar.db`) en start opnieuw.
+3. Herlaad `/berichten`. Nu staat er "Nog geen berichten. Wees de eerste."
+4. Stop de server. SqliteDict heeft intussen een nieuwe, lege `gastenboek.db` gemaakt: gooi die weg, hernoem `gastenboek-bewaar.db` terug naar `gastenboek.db` en start opnieuw. De volgende lessen bouwen op je berichten voort.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Leeg of niet?
+
+```html
+{% if namen %}
+    <p>Er staan namen in de lijst.</p>
+{% else %}
+    <p>De lijst is leeg.</p>
+{% endif %}
+```
+
+**Vraag:** wat zie je als je endpoint `{"namen": []}` meestuurt? En bij `{"namen": [""]}`, een lijst met één lege tekst erin?
+
+<details>
+<summary>Tip</summary>
+
+Een lijst telt als niet waar als er niets in staat. Telt een lege tekst als niets, of als één ding?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Bij `[]` zie je "De lijst is leeg." Bij `[""]` zie je "Er staan namen in de lijst.": de lijst heeft één item, ook al is dat een lege tekst. Het gaat om de lijst, niet om wat erin staat.
+
+</details>
+
+### Opdracht 2: Run
+
+Zet het `{% if %}`-blok in je `berichten.html` en doe de stappen onder Testen. Zie je "Nog geen berichten" zolang `gastenboek.db` een andere naam heeft?
+
+<details>
+<summary>Antwoord</summary>
+
+Ja. Zonder `gastenboek.db` maakt SqliteDict een nieuwe, lege database aan, en is de lijst die je endpoint meestuurt leeg. Gooi je dat lege bestand weg, zet je de oude naam terug en start je opnieuw, dan staan je berichten er weer.
+
+</details>
+
+### Opdracht 3: Investigate - Endif vergeten
+
+Haal in je `berichten.html` de regel `{% endif %}` weg en herlaad de pagina.
+
+<details>
+<summary>Antwoord</summary>
+
+De browser zegt `Internal Server Error`. Onderaan in je terminal staat:
+
+```
+jinja2.exceptions.TemplateSyntaxError: Unexpected end of template. Jinja was looking for the following tags: 'endif'. The innermost block that needs to be closed is 'if'.
+```
+
+Net als bij een vergeten `{% endfor %}`: Jinja2 komt aan het eind van het bestand terwijl het `{% if %}`-blok nog openstaat. Elke `{% if %}` heeft een `{% endif %}` nodig. Zet de regel terug.
+
+</details>
+
+### Opdracht 4: Modify - Een link in het lege geval
+
+Verander de tekst in het lege geval zo dat "Schrijf de eerste" een link wordt naar het formulier op `/gastenboek`.
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+{% else %}
+    <p>Nog geen berichten. <a href="/gastenboek">Schrijf de eerste</a>.</p>
+{% endif %}
+```
+
+Alles tussen `{% else %}` en `{% endif %}` is gewone HTML, dus een link mag daar ook.
+
+</details>
+
+### Opdracht 5: Make - Het nieuwste bericht
+
+Zet boven de lijst "Laatste bericht van [naam]", met de naam van het bericht dat als laatste binnenkwam. Staan er nog geen berichten, dan staat die regel er niet.
+
+<details>
+<summary>Tip</summary>
+
+De berichten komen binnen in de volgorde waarin ze zijn opgeslagen, dus het laatste staat achteraan. `berichten[-1]` werkt in een template net als in Python. Zet de regel binnen het `{% if berichten %}`-blok.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```html
+{% if berichten %}
+    <p>Laatste bericht van {{ berichten[-1].naam }}</p>
+    <ul>
+        {% for bericht in berichten %}
+            <li>{{ bericht.naam }}: {{ bericht.bericht }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Nog geen berichten. Wees de eerste.</p>
+{% endif %}
+```
+
+Buiten het `{% if %}`-blok zou `berichten[-1]` bij een lege lijst niets hebben om te tonen. Binnen het blok weet je zeker dat er minstens één bericht is.
+
+</details>
+
+Door naar [Eén item tonen: de sleutel uit de URL](/docs/FastAPI/berichten-tonen/detailpagina).

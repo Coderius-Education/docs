@@ -23,7 +23,7 @@ In een Engelse Windows is dat `The term 'fastapi' is not recognized as the name 
 python -m pip install "fastapi[standard]"
 ```
 
-Meer uitleg: [Installatie](/docs/FastAPI/installatie)
+Meer uitleg: [Installatie](/docs/FastAPI/eerste-server/installatie)
 
 </details>
 
@@ -48,7 +48,7 @@ PS C:\Users\jij\Documenten> fastapi dev main.py
 PS C:\Users\jij\Documenten\fullstack-project> fastapi dev main.py
 ```
 
-Meer uitleg: [Installatie](/docs/FastAPI/installatie)
+Meer uitleg: [Installatie](/docs/FastAPI/eerste-server/installatie)
 
 </details>
 
@@ -65,7 +65,7 @@ In de terminal verschijnt een regel met `python.exe` en `main.py`, en direct daa
 fastapi dev main.py
 ```
 
-Meer uitleg: [Je eerste endpoint](/docs/FastAPI/eerste_endpoint)
+Meer uitleg: [Je eerste endpoint](/docs/FastAPI/eerste-server/eerste_endpoint)
 
 </details>
 
@@ -90,7 +90,7 @@ source .venv/bin/activate
 
 Zegt PowerShell dan dat het script niet kan worden geladen omdat het uitvoeren van scripts is uitgeschakeld (in een Engelse Windows: `running scripts is disabled on this system`), dan blokkeert Windows het handmatig activeren. Ga dan terug naar de terminal van VS Code; wat je daar moet controleren staat bij <SiteLink site="editor" to="/python/problemen">problemen bij het installeren</SiteLink>.
 
-Meer uitleg: [Installatie](/docs/FastAPI/installatie)
+Meer uitleg: [Installatie](/docs/FastAPI/eerste-server/installatie)
 
 </details>
 
@@ -113,7 +113,7 @@ In een Engelse Windows staat er `only one usage of each socket address`, en op e
 fastapi dev main.py --port 8001
 ```
 
-Meer uitleg: [Kijken wat de browser doet](/docs/FastAPI/devtools-netwerk#opdracht-4-investigate---de-server-staat-uit), waar je de server met Ctrl+C stopt.
+Meer uitleg: [Kijken wat de browser doet](/docs/FastAPI/eerste-server/devtools-netwerk#opdracht-4-investigate---de-server-staat-uit), waar je de server met Ctrl+C stopt.
 
 </details>
 
@@ -128,7 +128,7 @@ Meer uitleg: [Kijken wat de browser doet](/docs/FastAPI/devtools-netwerk#opdrach
 
 **Oplossing:** niets, er is niets mis. Je eigen pagina's werken wel.
 
-Meer uitleg: [Kijken wat de browser doet](/docs/FastAPI/devtools-netwerk)
+Meer uitleg: [Kijken wat de browser doet](/docs/FastAPI/eerste-server/devtools-netwerk)
 
 </details>
 
@@ -153,7 +153,7 @@ ERR_SSL_PROTOCOL_ERROR
 1. Kijk in de terminal of de server nog draait. Staat de prompt er weer, start hem dan opnieuw met `fastapi dev main.py`
 2. Typ het adres helemaal uit: `http://127.0.0.1:8000`, met `http` en niet `https`
 
-Meer uitleg: [Kijken wat de browser doet](/docs/FastAPI/devtools-netwerk#opdracht-4-investigate---de-server-staat-uit)
+Meer uitleg: [Kijken wat de browser doet](/docs/FastAPI/eerste-server/devtools-netwerk#opdracht-4-investigate---de-server-staat-uit)
 
 </details>
 
@@ -180,7 +180,7 @@ async def root():
     return {"bericht": "Hallo"}
 ```
 
-Meer uitleg: [Je eerste endpoint](/docs/FastAPI/eerste_endpoint)
+Meer uitleg: [Je eerste endpoint](/docs/FastAPI/eerste-server/eerste_endpoint)
 
 </details>
 
@@ -205,7 +205,7 @@ from fastapi.responses import FileResponse
 from fastapi.responses import FileResponse, HTMLResponse
 ```
 
-Meer uitleg: [Je eerste endpoint](/docs/FastAPI/eerste_endpoint)
+Meer uitleg: [Je eerste endpoint](/docs/FastAPI/eerste-server/eerste_endpoint)
 
 </details>
 
@@ -237,7 +237,7 @@ async def test2():
     return {"bericht": "Tweede"}
 ```
 
-Meer uitleg: [Je eerste endpoint](/docs/FastAPI/eerste_endpoint#opdracht-3-investigate---dubbele-url)
+Meer uitleg: [Je eerste endpoint](/docs/FastAPI/eerste-server/eerste_endpoint#opdracht-3-investigate---dubbele-url)
 
 </details>
 
@@ -252,7 +252,7 @@ Meer uitleg: [Je eerste endpoint](/docs/FastAPI/eerste_endpoint#opdracht-3-inves
 
 **Oplossing:** laat één `app = FastAPI()` staan, bovenaan, direct na de imports. Haal de tweede weg.
 
-Meer uitleg: [Je eerste endpoint](/docs/FastAPI/eerste_endpoint)
+Meer uitleg: [Je eerste endpoint](/docs/FastAPI/eerste-server/eerste_endpoint)
 
 </details>
 
@@ -268,11 +268,11 @@ Meer uitleg: [Je eerste endpoint](/docs/FastAPI/eerste_endpoint)
 3. Klik op **Alle** (All) in de rij soorten en maak het zoekvak leeg: een filter als **Fetch/XHR** blijft staan tot je hem uitzet
 4. Kijk of het rondje linksboven rood is; grijs betekent dat opnemen uit staat (Ctrl+E zet het aan en uit)
 
-Meer uitleg: [Kijken wat de browser doet](/docs/FastAPI/devtools-netwerk#als-de-lijst-leeg-is)
+Meer uitleg: [Kijken wat de browser doet](/docs/FastAPI/eerste-server/devtools-netwerk#als-de-lijst-leeg-is)
 
 </details>
 
-## HTML-pagina's
+## Losse pagina's en routes
 
 <details>
 <summary>HTML wordt als tekst getoond, tussen aanhalingstekens en met \n erin</summary>
@@ -293,7 +293,7 @@ async def pagina():
     return "<h1>Hallo</h1>"
 ```
 
-Meer uitleg: [HTML tonen](/docs/FastAPI/html_tonen)
+Meer uitleg: [HTML tonen](/docs/FastAPI/paginas/html_tonen)
 
 </details>
 
@@ -309,30 +309,7 @@ RuntimeError: File at path static/pages/home.html does not exist.
 
 **Oplossing:** check of het bestand echt op die plek staat, met precies die naam (hoofdletters tellen). Het pad is relatief aan de map waar je `fastapi dev` startte, dus start de server vanuit je projectmap.
 
-Meer uitleg: [HTML in bestanden](/docs/FastAPI/html_bestanden)
-
-</details>
-
-<details>
-<summary>De server start niet: Directory 'static' does not exist</summary>
-
-Onderaan de melding staat:
-
-```
-RuntimeError: Directory 'static' does not exist
-```
-
-**Oorzaak:** `app.mount("/static", StaticFiles(directory="static"), ...)` zoekt bij het starten een map `static` in de map waar je `fastapi dev` startte, en die is er niet. Dat gebeurt in een nieuwe projectmap, zoals de map van een reeks in Veiligheid, als je `main.py` maakt vóór de map `static`. Of je startte de server vanuit een andere map.
-
-**Oplossing:** maak de map `static` naast `main.py`, of start de server vanuit je projectmap. Een lege map is genoeg om te starten.
-
-```
-je-project/
-├── main.py
-└── static/
-```
-
-Meer uitleg: [CSS in een eigen bestand (static files)](/docs/FastAPI/static_files)
+Meer uitleg: [HTML in bestanden](/docs/FastAPI/paginas/html_bestanden)
 
 </details>
 
@@ -357,7 +334,32 @@ In de browser staat `{"detail":"Not Found"}`, en in de terminal:
 <a href="/about">Over mij</a>
 ```
 
-Meer uitleg: [Links tussen pagina's](/docs/FastAPI/links)
+Meer uitleg: [Links tussen pagina's](/docs/FastAPI/paginas/links)
+
+</details>
+
+## CSS en afbeeldingen
+
+<details>
+<summary>De server start niet: Directory 'static' does not exist</summary>
+
+Onderaan de melding staat:
+
+```
+RuntimeError: Directory 'static' does not exist
+```
+
+**Oorzaak:** `app.mount("/static", StaticFiles(directory="static"), ...)` zoekt bij het starten een map `static` in de map waar je `fastapi dev` startte, en die is er niet. Dat gebeurt in een nieuwe projectmap, zoals de map van een reeks in Veiligheid, als je `main.py` maakt vóór de map `static`. Of je startte de server vanuit een andere map.
+
+**Oplossing:** maak de map `static` naast `main.py`, of start de server vanuit je projectmap. Een lege map is genoeg om te starten.
+
+```
+je-project/
+├── main.py
+└── static/
+```
+
+Meer uitleg: [CSS in een eigen bestand (static files)](/docs/FastAPI/css-en-afbeeldingen/static_files)
 
 </details>
 
@@ -375,7 +377,7 @@ Meer uitleg: [Links tussen pagina's](/docs/FastAPI/links)
 
 Open `http://127.0.0.1:8000/static/css/style.css` rechtstreeks: zie je je CSS, dan ligt het aan de `<link>`; een 404, dan aan het pad of de mount.
 
-Meer uitleg: [CSS in een eigen bestand (static files)](/docs/FastAPI/static_files)
+Meer uitleg: [CSS in een eigen bestand (static files)](/docs/FastAPI/css-en-afbeeldingen/static_files)
 
 </details>
 
@@ -391,7 +393,7 @@ Meer uitleg: [CSS in een eigen bestand (static files)](/docs/FastAPI/static_file
 3. Herstart de server (Ctrl+C, dan opnieuw `fastapi dev main.py`)
 4. Check of je het juiste bestand hebt aangepast
 
-Meer uitleg: [Als je wijziging niet doorkomt](/docs/FastAPI/static_files#als-je-wijziging-niet-doorkomt)
+Meer uitleg: [Als je wijziging niet doorkomt](/docs/FastAPI/css-en-afbeeldingen/static_files#als-je-wijziging-niet-doorkomt)
 
 </details>
 
@@ -407,7 +409,7 @@ Meer uitleg: [Als je wijziging niet doorkomt](/docs/FastAPI/static_files#als-je-
 3. Klopt het pad in `src="/static/foto.jpg"`?
 4. Staat `app.mount("/static", ...)` in je code?
 
-Meer uitleg: [Afbeeldingen tonen](/docs/FastAPI/afbeeldingen)
+Meer uitleg: [Afbeeldingen tonen](/docs/FastAPI/css-en-afbeeldingen/afbeeldingen)
 
 </details>
 
@@ -428,7 +430,7 @@ jinja2.exceptions.TemplateNotFound: 'dobbelsteen.html' not found in search path:
 2. Klopt de bestandsnaam in `TemplateResponse(request, "bestand.html", ...)` precies? Geef alleen de naam door, zonder `templates/` ervoor
 3. Staat `templates = Jinja2Templates(directory="templates")` in je code?
 
-Meer uitleg: [Templates met Jinja2](/docs/FastAPI/templates)
+Meer uitleg: [Templates met Jinja2](/docs/FastAPI/formulieren/templates)
 
 </details>
 
@@ -450,7 +452,7 @@ return templates.TemplateResponse(request, "pagina.html", {"naam": naam})
 
 Check ook dat de naam in `{{ naam }}` precies gelijk is aan de sleutel in het dictionary.
 
-Meer uitleg: [Templates met Jinja2](/docs/FastAPI/templates)
+Meer uitleg: [Templates met Jinja2](/docs/FastAPI/formulieren/templates)
 
 </details>
 
@@ -474,7 +476,7 @@ return templates.TemplateResponse("pagina.html", {"request": request, "naam": na
 return templates.TemplateResponse(request, "pagina.html", {"naam": naam})
 ```
 
-Meer uitleg: [Templates met Jinja2](/docs/FastAPI/templates)
+Meer uitleg: [Templates met Jinja2](/docs/FastAPI/formulieren/templates)
 
 </details>
 
@@ -523,7 +525,7 @@ async def bericht_detail(request: Request, sleutel: str):
 
 Mag een query-parameter ontbreken, geef hem dan een standaardwaarde: `term: str = ""`. Vergeet `required` op je `<input>` niet, dan verstuurt de browser geen leeg veld.
 
-Meer uitleg: [GET vs POST](/docs/FastAPI/get_vs_post) (wat `loc` zegt), [Een formulier versturen (POST)](/docs/FastAPI/forms) en [Eén item tonen: path-parameters en 404](/docs/FastAPI/detailpagina)
+Meer uitleg: [Een waarde na een vraagteken: query-parameters](/docs/FastAPI/veel-paginas/query-parameters) (wat `loc` zegt), [Een formulier versturen (POST)](/docs/FastAPI/formulieren/forms) en [Eén route voor veel pagina's: path-parameters](/docs/FastAPI/veel-paginas/path-parameters)
 
 </details>
 
@@ -555,11 +557,11 @@ In de browser staat `{"detail":"Method Not Allowed"}`, en in de terminal bijvoor
 
 4. **Je klikte op een htmx-knop met `hx-delete`.** Die stuurt een DELETE, dus het endpoint moet `@app.delete(...)` zijn en niet `@app.post(...)`.
 
-Meer uitleg: [GET vs POST](/docs/FastAPI/get_vs_post), [Doorsturen na opslaan (redirect)](/docs/FastAPI/redirect) en [htmx-recepten: formulier, verversen, verwijderen, zoeken](/docs/FastAPI/htmx-overzicht)
+Meer uitleg: [Een formulier versturen (POST)](/docs/FastAPI/formulieren/forms), [Doorsturen na opslaan (redirect)](/docs/FastAPI/berichten-opslaan/redirect) en [htmx-recepten: formulier, verversen, verwijderen, zoeken](/docs/FastAPI/zonder-herladen/htmx-overzicht)
 
 </details>
 
-## Gegevens opslaan en tonen
+## Gegevens opslaan (SqliteDict)
 
 <details>
 <summary>ModuleNotFoundError: No module named 'sqlitedict'</summary>
@@ -576,7 +578,7 @@ ModuleNotFoundError: No module named 'sqlitedict'
 python -m pip install sqlitedict
 ```
 
-Meer uitleg: [Gegevens opslaan met SqliteDict](/docs/FastAPI/database)
+Meer uitleg: [Gegevens opslaan met SqliteDict](/docs/FastAPI/sqlitedict/database)
 
 </details>
 
@@ -598,9 +600,75 @@ with SqliteDict("data.db") as db:
     db.commit()
 ```
 
-Meer uitleg: [Gegevens opslaan met SqliteDict](/docs/FastAPI/database)
+Meer uitleg: [Gegevens opslaan met SqliteDict](/docs/FastAPI/sqlitedict/database)
 
 </details>
+
+<details>
+<summary>Je aanpassing aan een opgeslagen dictionary of lijst is weg (niet teruggezet)</summary>
+
+**Oorzaak:** `db["sara"]` geeft een kopie van wat er in het bestand staat. Pas je die kopie aan, met `db["sara"]["klas"] = "5B"` of met `append`, dan verandert het bestand niet. Er komt geen foutmelding, en `db.commit()` helpt niet: voor de database is er niets gewijzigd.
+
+**Oplossing:** haal de waarde op, pas hem aan en zet hem terug onder dezelfde sleutel:
+
+```python
+# FOUT - de kopie verandert, het bestand niet
+with SqliteDict("data.db") as db:
+    db["sara"]["vakken"].append("biologie")
+    db.commit()
+
+# GOED - ophalen, aanpassen, terugzetten
+with SqliteDict("data.db") as db:
+    sara = db["sara"]
+    sara["vakken"].append("biologie")
+    db["sara"] = sara
+    db.commit()
+```
+
+Meer uitleg: [Een dictionary aanpassen: ophalen, aanpassen, terugzetten](/docs/FastAPI/sqlitedict/aanpassen#er-gaat-iets-mis)
+
+</details>
+
+<details>
+<summary>KeyError bij uitlezen of verwijderen</summary>
+
+In de browser staat `Internal Server Error`, en in de terminal eindigt de melding met de sleutel die niet bestaat:
+
+```
+KeyError: 'bericht_1767225600123456789'
+```
+
+**Oorzaak:** je vraagt met vierkante haken een sleutel op die niet in de database staat, of je verwijdert hem. Dat gebeurt bij een tikfout of een hoofdletter in de sleutel, bij een verkeerde sleutel in de URL, als iemand twee keer op Verwijderen klikt, en bij een eerste bezoek zonder sessie. Staat de sleutel er wel in volgens je eigen script, dan draait dat script misschien in een andere map: daar maakt SqliteDict stil een nieuwe, lege database aan, met dezelfde bestandsnaam.
+
+**Oplossing:** controleer eerst of de sleutel er is, of gebruik `.get()`:
+
+```python
+# FOUT - crasht als de sleutel niet bestaat
+with SqliteDict("gastenboek.db") as db:
+    bericht = db[sleutel]
+    del db[sleutel]
+    db.commit()
+
+# GOED - get() geeft None als de sleutel niet bestaat
+with SqliteDict("gastenboek.db") as db:
+    bericht = db.get(sleutel)
+
+# GOED - alleen verwijderen wat er is
+with SqliteDict("gastenboek.db") as db:
+    if sleutel in db:
+        del db[sleutel]
+        db.commit()
+
+# GOED - bij sessies een lege sessie als er nog geen is
+with SqliteDict("sessies.db") as sessies:
+    mijn = sessies.get(sessie_id, {})
+```
+
+Meer uitleg: [Gegevens opslaan met SqliteDict](/docs/FastAPI/sqlitedict/database#er-gaat-iets-mis) (een andere map), [Bestaat de sleutel? in en get](/docs/FastAPI/sqlitedict/zoeken) (`in` en `get`), [Verwijderen met del](/docs/FastAPI/sqlitedict/verwijderen#er-gaat-iets-mis) (`del`), [Eén item tonen: de sleutel uit de URL](/docs/FastAPI/berichten-tonen/detailpagina), [Onthouden op de server: sessies](/docs/FastAPI/onthouden/sessies) en, voor een gewone dictionary, [Eén route voor veel pagina's: path-parameters](/docs/FastAPI/veel-paginas/path-parameters#er-gaat-iets-mis)
+
+</details>
+
+## Berichten opslaan
 
 <details>
 <summary>Er blijft maar één bericht over, of er verdwijnt er af en toe een</summary>
@@ -618,7 +686,7 @@ sleutel = "bericht"
 sleutel = f"bericht_{time.time_ns()}"
 ```
 
-Meer uitleg: [Een formulier opslaan](/docs/FastAPI/post_naar_database)
+Meer uitleg: [Elk bericht bewaren: een eigen sleutel](/docs/FastAPI/berichten-opslaan/eigen-sleutel)
 
 </details>
 
@@ -643,9 +711,11 @@ with SqliteDict("gastenboek.db") as db:
     alle_berichten = list(db.values())
 ```
 
-Meer uitleg: [Alles tonen: een for-lus in je template](/docs/FastAPI/lijst_tonen)
+Meer uitleg: [Alles tonen: een for-lus in je template](/docs/FastAPI/berichten-tonen/lijst_tonen)
 
 </details>
+
+## Berichten tonen
 
 <details>
 <summary>TemplateSyntaxError: Unexpected end of template</summary>
@@ -669,7 +739,7 @@ jinja2.exceptions.TemplateSyntaxError: Unexpected end of template. Jinja was loo
 {% endfor %}
 ```
 
-Meer uitleg: [Alles tonen: een for-lus in je template](/docs/FastAPI/lijst_tonen)
+Meer uitleg: [Alles tonen: een for-lus in je template](/docs/FastAPI/berichten-tonen/lijst_tonen)
 
 </details>
 
@@ -685,7 +755,7 @@ Meer uitleg: [Alles tonen: een for-lus in je template](/docs/FastAPI/lijst_tonen
 3. Staat er echt iets in je database? Open `/berichten` nadat je een bericht hebt verstuurd, niet ervoor.
 4. Staat `db.commit()` in je POST-endpoint, binnen het `with`-blok? Zonder die regel is je bericht weg zodra het blok sluit (zie Je bericht is meteen weg, hierboven).
 
-Meer uitleg: [Alles tonen: een for-lus in je template](/docs/FastAPI/lijst_tonen)
+Meer uitleg: [Alles tonen: een for-lus in je template](/docs/FastAPI/berichten-tonen/lijst_tonen)
 
 </details>
 
@@ -695,7 +765,7 @@ Meer uitleg: [Alles tonen: een for-lus in je template](/docs/FastAPI/lijst_tonen
 **Oorzaak:** je endpoint en je template passen niet bij elkaar. Dat kan op twee manieren, en ze zien er hetzelfde uit:
 
 - Je endpoint stuurt `list(db.items())`, maar je template loopt met `{% for bericht in berichten %}`. Elk element is dan een paar van sleutel en bericht, en zo'n paar heeft geen `naam`.
-- Je template loopt met `{% for sleutel, bericht in berichten %}`, maar je endpoint stuurt nog `list(db.values())`. Jinja2 pakt dan elk bericht zelf uit: `sleutel` wordt `naam` en `bericht` wordt het woord `bericht`. Je link wijst dan naar `/bericht/naam`, en Verwijderen haalt niets weg.
+- Je template loopt met `{% for sleutel, bericht in berichten %}`, maar je endpoint stuurt nog `list(db.values())`. Jinja2 pakt dan elk bericht zelf uit: `sleutel` wordt `naam` en `bericht` wordt het woord `bericht`. Je link wijst dan naar `/bericht/naam`, en later haalt Verwijderen niets weg.
 
 Jinja2 laat de lege plekken leeg, zonder foutmelding.
 
@@ -725,46 +795,7 @@ with SqliteDict("gastenboek.db") as db:
 
 Gebruikt je template de sleutel niet, dan mag het ook allebei zonder: `db.values()` met `{% for bericht in berichten %}`.
 
-Meer uitleg: [Doorsturen na opslaan (redirect)](/docs/FastAPI/redirect)
-
-</details>
-
-<details>
-<summary>KeyError bij uitlezen of verwijderen</summary>
-
-In de browser staat `Internal Server Error`, en in de terminal eindigt de melding met de sleutel die niet bestaat:
-
-```
-KeyError: 'bericht_1767225600123456789'
-```
-
-**Oorzaak:** je vraagt met vierkante haken een sleutel op die niet in de database staat, of je verwijdert hem. Dat gebeurt bij een verkeerde sleutel in de URL, als iemand twee keer op Verwijderen klikt, en bij een eerste bezoek zonder sessie.
-
-**Oplossing:** controleer eerst of de sleutel er is, of gebruik `.get()`:
-
-```python
-# FOUT - crasht als de sleutel niet bestaat
-with SqliteDict("gastenboek.db") as db:
-    bericht = db[sleutel]
-    del db[sleutel]
-    db.commit()
-
-# GOED - get() geeft None als de sleutel niet bestaat
-with SqliteDict("gastenboek.db") as db:
-    bericht = db.get(sleutel)
-
-# GOED - alleen verwijderen wat er is
-with SqliteDict("gastenboek.db") as db:
-    if sleutel in db:
-        del db[sleutel]
-        db.commit()
-
-# GOED - bij sessies een lege sessie als er nog geen is
-with SqliteDict("sessies.db") as sessies:
-    mijn = sessies.get(sessie_id, {})
-```
-
-Meer uitleg: [Eén item tonen: path-parameters en 404](/docs/FastAPI/detailpagina) (`db.get`), [Doorsturen na opslaan (redirect)](/docs/FastAPI/redirect) (verwijderen) en [Onthouden op de server: sessies](/docs/FastAPI/sessies)
+Meer uitleg: [Eén item tonen: de sleutel uit de URL](/docs/FastAPI/berichten-tonen/detailpagina#linken-vanuit-de-lijst)
 
 </details>
 
@@ -790,7 +821,34 @@ if bericht is None:
     raise HTTPException(status_code=404, detail="Dit bericht bestaat niet")
 ```
 
-Meer uitleg: [Eén item tonen: path-parameters en 404](/docs/FastAPI/detailpagina)
+Meer uitleg: [Een 404 sturen: als het item niet bestaat](/docs/FastAPI/berichten-tonen/niet-gevonden)
+
+</details>
+
+## Accounts
+
+<details>
+<summary>Naam of wachtwoord klopt niet, terwijl je het goede wachtwoord typt</summary>
+
+```
+{"detail":"Naam of wachtwoord klopt niet"}
+```
+
+**Oorzaak:** de naam is niet letter voor letter de naam van het account. Een sleutel in `gebruikers.db` telt elke letter mee: `Sara` is een ander account dan `sara`, en een spatie achter de naam telt ook. Bestaat het account helemaal niet, bijvoorbeeld omdat `gebruikers.db` weg is of je server in een andere map draait, dan krijg je dezelfde melding.
+
+**Oplossing:** kijk met `bekijk_db.py` welke namen er in `gebruikers.db` staan, en typ de naam precies zo:
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("gebruikers.db") as gebruikers:
+    for naam in gebruikers.keys():
+        print(repr(naam))
+```
+
+`repr` zet aanhalingstekens om de naam, zodat je ook een spatie aan het eind ziet.
+
+Meer uitleg: [Inloggen: een wachtwoord controleren](/docs/FastAPI/accounts/inloggen)
 
 </details>
 
@@ -812,7 +870,7 @@ return RedirectResponse(url="/berichten", status_code=303)
 return HTMLResponse(f"Bedankt, {escape(naam)}. Je bericht staat in het gastenboek.")
 ```
 
-Meer uitleg: [Zonder herladen met htmx](/docs/FastAPI/htmx)
+Meer uitleg: [Zonder herladen met htmx](/docs/FastAPI/zonder-herladen/htmx)
 
 </details>
 
@@ -839,7 +897,7 @@ Meer uitleg: [Zonder herladen met htmx](/docs/FastAPI/htmx)
 
 3. **Een rode regel bij je eigen verzoek**: 404 is een verkeerd pad in `hx-get` of `hx-post`, 405 een verkeerd werkwoord (zie 405 Method Not Allowed hierboven), 500 een fout in je endpoint (kijk in de terminal), `(mislukt)` een server die niet draait.
 
-Meer uitleg: [Zonder herladen met htmx](/docs/FastAPI/htmx) en [htmx-recepten: formulier, verversen, verwijderen, zoeken](/docs/FastAPI/htmx-overzicht)
+Meer uitleg: [Zonder herladen met htmx](/docs/FastAPI/zonder-herladen/htmx) en [htmx-recepten: formulier, verversen, verwijderen, zoeken](/docs/FastAPI/zonder-herladen/htmx-overzicht)
 
 </details>
 
@@ -868,7 +926,7 @@ Uncaught TypeError: Cannot read properties of null (reading 'addEventListener')
 
 Staat `defer` er wel? Check dan of de `id` in je HTML precies gelijk is aan die in je `querySelector`, inclusief hoofdletters.
 
-Meer uitleg: [JavaScript erbij](/docs/FastAPI/javascript)
+Meer uitleg: [JavaScript erbij](/docs/FastAPI/in-de-browser/javascript)
 
 </details>
 
@@ -885,7 +943,7 @@ Meer uitleg: [JavaScript erbij](/docs/FastAPI/javascript)
 
 Open `http://127.0.0.1:8000/static/js/app.js` rechtstreeks in je browser. Zie je je code, dan ligt het aan de script-tag; krijg je een 404, dan aan het pad of de mount.
 
-Meer uitleg: [JavaScript erbij](/docs/FastAPI/javascript)
+Meer uitleg: [JavaScript erbij](/docs/FastAPI/in-de-browser/javascript)
 
 </details>
 
@@ -901,13 +959,13 @@ if len(bericht) > 80:
     raise HTTPException(status_code=400, detail="Bericht is te lang")
 ```
 
-Meer uitleg: [Server of browser?](/docs/FastAPI/server-of-browser)
+Meer uitleg: [Server of browser?](/docs/FastAPI/in-de-browser/server-of-browser)
 
 </details>
 
 ## Uitbreiding: onthouden (cookies en sessies)
 
-Een `KeyError` bij `sessies[sessie_id]` staat bij KeyError bij uitlezen of verwijderen, onder [Gegevens opslaan en tonen](#gegevens-opslaan-en-tonen).
+Een `KeyError` bij `sessies[sessie_id]` staat bij KeyError bij uitlezen of verwijderen, onder [Gegevens opslaan (SqliteDict)](#gegevens-opslaan-sqlitedict).
 
 <details>
 <summary>De cookie wordt niet onthouden</summary>
@@ -929,7 +987,7 @@ antwoord.set_cookie(key="naam", value=naam)
 return antwoord
 ```
 
-Meer uitleg: [Onthouden met een cookie](/docs/FastAPI/cookies)
+Meer uitleg: [Onthouden met een cookie](/docs/FastAPI/onthouden/cookies)
 
 </details>
 
@@ -949,7 +1007,7 @@ async def gastenboek_form(request: Request, sid: str = Cookie(default="")):
 async def gastenboek_form(request: Request, sessie_id: str = Cookie(default="")):
 ```
 
-Meer uitleg: [Onthouden met een cookie](/docs/FastAPI/cookies)
+Meer uitleg: [Onthouden met een cookie](/docs/FastAPI/onthouden/cookies)
 
 </details>
 
@@ -964,33 +1022,89 @@ Meer uitleg: [Onthouden met een cookie](/docs/FastAPI/cookies)
 antwoord.set_cookie(key="naam", value=naam, max_age=60 * 60 * 24 * 30)
 ```
 
-Meer uitleg: [Onthouden met een cookie](/docs/FastAPI/cookies)
+Meer uitleg: [Onthouden met een cookie](/docs/FastAPI/onthouden/cookies)
 
 </details>
 
 <details>
-<summary>Alleen je laatste bericht is van jou (een nieuwe sessie bij elk bericht)</summary>
+<summary>Na het inloggen zie je weer het inlogformulier (Log eerst in)</summary>
 
-Je naam staat nog steeds voorgevuld, maar de verwijderknop uit [sessies](/docs/FastAPI/sessies) staat alleen bij het bericht dat je het laatst plaatste, en in `sessies.db` komt bij elk bericht een sessie-id bij.
+Het inloggen lijkt te lukken: je komt terug op `/gastenboek`. Maar daar staat weer het inlogformulier, en wie toch een bericht stuurt, krijgt:
 
-**Oorzaak:** je maakt bij elk bericht een nieuw sessie-id aan, ook als de bezoeker er al een had. Het nieuwe id krijgt alleen het nieuwe bericht; de vorige sessie blijft onaangeroerd achter in je database.
-
-**Oplossing:** maak alleen een nieuw id als er nog geen is:
-
-```python
-# FOUT - overschrijft ook een bestaande sessie
-sessie_id = secrets.token_hex(16)
-
-# GOED
-if not sessie_id:
-    sessie_id = secrets.token_hex(16)
+```
+{"detail":"Log eerst in"}
 ```
 
-Meer uitleg: [Onthouden op de server: sessies](/docs/FastAPI/sessies)
+**Oorzaak:** je server vindt bij het volgende verzoek geen sessie. Dat kan op twee manieren, en ze zien er hetzelfde uit. Kijk in het tabblad **App** bij Cookies welke het is:
+
+- Staat er een `sessie_id`, dan ontbreekt `sessies.commit()` in `/inloggen`. De sessie verdwijnt zodra het `with`-blok sluit, en het id in je cookie hoort bij niemand.
+- Staat er geen `sessie_id`, dan zet `set_cookie` de cookie op een ander antwoord dan het antwoord dat je returnt (zie De cookie wordt niet onthouden, hierboven).
+
+**Oplossing:** schrijf de sessie weg, en return het antwoord waar de cookie op staat:
+
+{/* niet-compileren: FOUT/GOED-voorbeeld, regels uit een handler */}
+```python
+# FOUT - de sessie wordt nooit opgeslagen
+with SqliteDict("sessies.db") as sessies:
+    sessies[sessie_id] = {"naam": naam}
+
+# GOED
+with SqliteDict("sessies.db") as sessies:
+    sessies[sessie_id] = {"naam": naam}
+    sessies.commit()
+
+antwoord = RedirectResponse(url="/gastenboek", status_code=303)
+antwoord.set_cookie(key="sessie_id", value=sessie_id, max_age=60 * 60 * 24 * 30)
+return antwoord
+```
+
+Meer uitleg: [Onthouden op de server: sessies](/docs/FastAPI/onthouden/sessies)
 
 </details>
 
 ## Afronden
+
+<details>
+<summary>Je eigen foutpagina verschijnt, maar Netwerk zegt dat het gelukt is</summary>
+
+**Oorzaak:** de `TemplateResponse` in je handler heeft geen `status_code`. Dan gaat je foutpagina terug met de standaardcode voor gelukt, en denken een script of een zoekmachine dat de pagina bestaat.
+
+**Oplossing:** geef de statuscode mee:
+
+{/* niet-compileren: FOUT/GOED-voorbeeld, de return uit een handler */}
+```python
+# FOUT - de foutpagina komt terug als gelukt
+return templates.TemplateResponse(request, "404.html", {"pad": request.url.path})
+
+# GOED
+return templates.TemplateResponse(request, "404.html", {"pad": request.url.path}, status_code=404)
+```
+
+Meer uitleg: [Een eigen 404-pagina: een handler voor fouten](/docs/FastAPI/afronden/foutpagina)
+
+</details>
+
+<details>
+<summary>Sinds je eigen foutpagina geeft elk onbekend adres Internal Server Error</summary>
+
+Onderaan in je terminal staat:
+
+```
+jinja2.exceptions.TemplateNotFound: '404.html' not found in search path: 'templates'
+```
+
+**Oorzaak:** je handler voor 404 vindt zijn template niet. Hij draait bij elke 404, dus elke 404 wordt een 500.
+
+**Oplossing:** zet `404.html` in de map `templates`, naast je andere templates, en geef alleen de bestandsnaam door:
+
+{/* niet-compileren: losse regel uit een handler */}
+```python
+templates.TemplateResponse(request, "404.html", {"pad": request.url.path}, status_code=404)
+```
+
+Meer uitleg: [Een eigen 404-pagina: een handler voor fouten](/docs/FastAPI/afronden/foutpagina)
+
+</details>
 
 <details>
 <summary>Mijn klasgenoot kan niet bij mijn server</summary>
@@ -1004,7 +1118,7 @@ Meer uitleg: [Onthouden op de server: sessies](/docs/FastAPI/sessies)
 3. Zitten jullie op hetzelfde netwerk? Het gastennetwerk op school staat vaak los van het schoolnetwerk.
 4. Vraagt je firewall om toestemming, sta die dan toe.
 
-Meer uitleg: [Laat het aan anderen zien](/docs/FastAPI/laat-het-zien)
+Meer uitleg: [Laat het aan anderen zien](/docs/FastAPI/afronden/laat-het-zien)
 
 </details>
 
@@ -1054,10 +1168,12 @@ from datetime import datetime
 from html import escape
 
 from fastapi import Cookie, FastAPI, Form, HTTPException, Request
+from fastapi.exception_handlers import http_exception_handler
 from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlitedict import SqliteDict
+from starlette.exceptions import HTTPException as StarletteHTTPException
 ```
 
 Meer uitleg: <SiteLink site="python" to="/docs/modules/09d-modules">Modules importeren</SiteLink>

@@ -1,0 +1,380 @@
+# Een bericht verwijderen: een verborgen veld
+
+Verwijderen gaat net als opslaan: een formulier met een POST, en daarna met een redirect terug naar de lijst. Nieuw is dat het formulier moet zeggen wélk bericht weg moet.
+
+## Het endpoint
+
+De sleutels staan sinds [Eén item tonen: de sleutel uit de URL](/docs/FastAPI/berichten-tonen/detailpagina) al in je lijst. Zet het endpoint voor verwijderen onder je andere endpoints:
+
+<CodeUitleg>
+
+```python showLineNumbers
+@app.post("/verwijderen")
+async def verwijderen(sleutel: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        if sleutel in db:
+            del db[sleutel]
+            db.commit()
+    return RedirectResponse(url="/berichten", status_code=303)
+```
+
+<Regel n={2}>
+De sleutel komt uit het formulier, net als een naam of een bericht.
+</Regel>
+
+<Regel n={4} tot={6}>
+`del db[sleutel]` haalt het bericht weg, zoals in [Verwijderen met del](/docs/FastAPI/sqlitedict/verwijderen). De `if sleutel in db` voorkomt een crash als het bericht al weg is, bijvoorbeeld omdat iemand het in een ander tabblad al verwijderde.
+</Regel>
+
+<Regel n={7}>
+Daarna stuur je de bezoeker terug naar de lijst, met 303, zoals na het opslaan.
+</Regel>
+
+</CodeUitleg>
+
+## Een formulier per bericht
+
+In `templates/berichten.html` krijgt elk bericht een eigen formuliertje, onder de link. Vervang de for-lus binnen de `<ul>` door deze:
+
+```html
+{% for sleutel, bericht in berichten %}
+    <li>
+        <a href="/bericht/{{ sleutel }}">{{ bericht.naam }}</a>: {{ bericht.bericht }}
+        <form method="post" action="/verwijderen">
+            <input type="hidden" name="sleutel" value="{{ sleutel }}">
+            <button type="submit">Verwijderen</button>
+        </form>
+    </li>
+{% endfor %}
+```
+
+Een `<input type="hidden">` ziet de bezoeker niet, maar hij gaat wel mee met het formulier. Zo weet `/verwijderen` welk bericht weg moet.
+
+<details>
+<summary>Zo ziet je `templates/berichten.html` er nu uit</summary>
+
+Alleen het formulier in de `<li>` is nieuw; de rest is zoals in [Eén item tonen: de sleutel uit de URL](/docs/FastAPI/berichten-tonen/detailpagina).
+
+```html
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Gastenboek</title>
+        <link rel="stylesheet" href="/static/css/style.css">
+    </head>
+    <body>
+        <h1>Gastenboek</h1>
+
+        {% if berichten %}
+            <ul>
+                {% for sleutel, bericht in berichten %}
+                    <li>
+                        <a href="/bericht/{{ sleutel }}">{{ bericht.naam }}</a>: {{ bericht.bericht }}
+                        <form method="post" action="/verwijderen">
+                            <input type="hidden" name="sleutel" value="{{ sleutel }}">
+                            <button type="submit">Verwijderen</button>
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Nog geen berichten. Wees de eerste.</p>
+        {% endif %}
+
+        <a href="/gastenboek">Nieuw bericht</a>
+    </body>
+</html>
+```
+
+</details>
+
+## Testen
+
+1. Ga naar `/berichten`. Bij elk bericht staat een knop Verwijderen.
+2. Klik er een aan. Je blijft op de lijst, en dat bericht is weg.
+3. Kijk met `bekijk_db.py`, met `"gastenboek.db"` tussen de haakjes: de sleutel staat er ook niet meer in. Je server houdt de terminal bezet; open er een tweede met het plusje (+) rechtsboven in het terminalpaneel van VS Code.
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+```python
+import random
+import time
+
+from fastapi import FastAPI, Form, HTTPException, Request
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
+
+@app.get("/")
+async def home():
+    return FileResponse("static/pages/home.html")
+
+@app.get("/info")
+async def info():
+    return {"naam": "Jouw Naam", "leeftijd": 16}
+
+@app.get("/pagina", response_class=HTMLResponse)
+async def pagina():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Mijn Pagina</title>
+        </head>
+        <body>
+            <h1>Hallo!</h1>
+            <p>Dit is mijn eerste HTML pagina.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/styled", response_class=HTMLResponse)
+async def styled():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Met CSS</title>
+            <style>
+                h1 { color: blue; }
+                p { color: gray; }
+            </style>
+        </head>
+        <body>
+            <h1>Gestylede pagina</h1>
+            <p>Deze tekst is grijs.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/about")
+async def about():
+    return FileResponse("static/pages/about.html")
+
+DIEREN = {
+    "kat": "Een kat spint als hij tevreden is.",
+    "hond": "Een hond kwispelt als hij blij is.",
+    "vis": "Een vis ademt met kieuwen.",
+}
+
+@app.get("/dier/{naam}", response_class=HTMLResponse)
+async def dier(naam: str):
+    tekst = DIEREN.get(naam, "Dit dier staat nog niet op de site.")
+    return f"""
+    <!DOCTYPE html>
+    <html>
+        <body>
+            <h1>Over dieren</h1>
+            <p>{tekst}</p>
+            <a href="/">Terug naar Home</a>
+        </body>
+    </html>
+    """
+
+@app.get("/zoek")
+async def zoek(term: str):
+    return {"je_zocht": term}
+
+@app.get("/foto")
+async def foto():
+    return FileResponse("static/pages/foto.html")
+
+@app.get("/dobbelsteen")
+async def dobbelsteen(request: Request):
+    worp = random.randint(1, 6)
+    return templates.TemplateResponse(
+        request,
+        "dobbelsteen.html",
+        {"worp": worp}
+    )
+
+@app.get("/naam")
+async def toon_formulier():
+    return FileResponse("static/pages/naam_form.html")
+
+@app.post("/verstuur")
+async def ontvang_naam(naam: str = Form(...)):
+    print(f"Naam ontvangen: {naam}")
+    return {"bericht": f"Hallo {naam}!"}
+
+@app.get("/groet")
+async def groet_form():
+    return FileResponse("static/pages/groet_form.html")
+
+@app.post("/groet")
+async def groet_verwerk(request: Request, naam: str = Form(...)):
+    return templates.TemplateResponse(
+        request,
+        "groet_resultaat.html",
+        {"naam": naam}
+    )
+
+@app.get("/opslaan")
+async def naam_formulier():
+    return FileResponse("static/pages/naam_opslaan.html")
+
+@app.post("/opslaan")
+async def naam_opslaan(naam: str = Form(...)):
+    with SqliteDict("namen.db") as db:
+        db["laatste_naam"] = naam
+        db.commit()
+
+    return {"bericht": f"'{naam}' opgeslagen!"}
+
+@app.get("/toon_naam")
+async def toon_naam():
+    with SqliteDict("namen.db") as db:
+        naam = db.get("laatste_naam", "Nog niets opgeslagen")
+    return {"naam": naam}
+
+@app.get("/gastenboek")
+async def gastenboek_form():
+    return FileResponse("static/pages/gastenboek_form.html")
+
+@app.post("/gastenboek")
+async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        sleutel = f"bericht_{time.time_ns()}"
+        db[sleutel] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    return RedirectResponse(url="/berichten", status_code=303)
+
+@app.get("/berichten")
+async def berichten(request: Request):
+    with SqliteDict("gastenboek.db") as db:
+        alle_berichten = list(db.items())
+    return templates.TemplateResponse(
+        request,
+        "berichten.html",
+        {"berichten": alle_berichten}
+    )
+
+@app.post("/verwijderen")
+async def verwijderen(sleutel: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        if sleutel in db:
+            del db[sleutel]
+            db.commit()
+    return RedirectResponse(url="/berichten", status_code=303)
+
+@app.get("/bericht/{sleutel}")
+async def bericht_detail(request: Request, sleutel: str):
+    with SqliteDict("gastenboek.db") as db:
+        bericht = db.get(sleutel)
+
+    if bericht is None:
+        raise HTTPException(status_code=404, detail="Dit bericht bestaat niet")
+
+    return templates.TemplateResponse(
+        request,
+        "bericht.html",
+        {"bericht": bericht}
+    )
+```
+
+</details>
+
+## Opdrachten
+
+### Opdracht 1: Predict - Wat ziet de bezoeker?
+
+```html
+<form method="post" action="/verwijderen">
+    <input type="hidden" name="sleutel" value="bericht_17">
+    <button type="submit">Verwijderen</button>
+</form>
+```
+
+**Vraag:** wat ziet de bezoeker van dit formulier op de pagina? En wat komt er binnen bij `/verwijderen` als hij op de knop klikt?
+
+<details>
+<summary>Tip</summary>
+
+Een `<input>` met `type="hidden"` staat wel in de HTML, maar niet op het scherm.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Alleen de knop Verwijderen. Het verborgen veld zie je niet, maar het gaat wel mee: bij `/verwijderen` komt `sleutel` binnen met de waarde `"bericht_17"`. Wie de broncode van de pagina bekijkt (Ctrl+U), ziet hem wel staan.
+
+</details>
+
+### Opdracht 2: Run
+
+Pas `berichten.html` aan en maak `/verwijderen`. Verwijder een bericht. Sta je daarna weer op de lijst, zonder dat bericht?
+
+<details>
+<summary>Antwoord</summary>
+
+Ja: `/verwijderen` haalt het weg en stuurt je met een 303 terug naar `/berichten`. In het tabblad Netwerk zie je twee regels: de POST naar `/verwijderen` met `303`, en daarna de GET naar `/berichten` met `200`.
+
+</details>
+
+### Opdracht 3: Investigate - Zonder de controle
+
+Haal in `/verwijderen` de regel `if sleutel in db:` weg (en zet de twee regels eronder een stap terug). Open `/berichten` in twee tabbladen. Verwijder een bericht in het eerste tabblad, en klik daarna in het tweede tabblad bij hetzelfde bericht op Verwijderen. Wat zie je, en wat staat er in je terminal?
+
+<details>
+<summary>Antwoord</summary>
+
+Het tweede tabblad toont `Internal Server Error`, en in je terminal staat `KeyError` met de sleutel van het bericht, zoals `KeyError: 'bericht_1767225600123456789'`. Het tweede tabblad liet nog de oude lijst zien, met een bericht dat al weg is. Het formulier stuurt die sleutel mee, en `del db[sleutel]` crasht op een sleutel die er niet in staat. Met `if sleutel in db:` gebeurt er dan niets en kom je weer op de lijst. Zet de controle terug.
+
+</details>
+
+### Opdracht 4: Make - Een melding na verwijderen
+
+Laat na het verwijderen bovenaan de lijst "Bericht verwijderd" zien. Bij een bezoek aan `/berichten` zonder verwijderen staat die zin er niet.
+
+<details>
+<summary>Tip</summary>
+
+Stuur door naar `/berichten?verwijderd=1`. Het stuk na het vraagteken kun je in het endpoint uitlezen, zoals in [Een waarde na een vraagteken: query-parameters](/docs/FastAPI/veel-paginas/query-parameters). Geef het een standaardwaarde, zodat `/berichten` zonder vraagteken ook werkt, en gebruik `{% if %}` in de template.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+{/* route-dubbel: antwoord vervangt GET /berichten uit Eén item tonen, met een melding erbij */}
+```python
+@app.get("/berichten")
+async def berichten(request: Request, verwijderd: int = 0):
+    with SqliteDict("gastenboek.db") as db:
+        alle_berichten = list(db.items())
+    return templates.TemplateResponse(
+        request,
+        "berichten.html",
+        {"berichten": alle_berichten, "verwijderd": verwijderd}
+    )
+
+@app.post("/verwijderen")
+async def verwijderen(sleutel: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        if sleutel in db:
+            del db[sleutel]
+            db.commit()
+    return RedirectResponse(url="/berichten?verwijderd=1", status_code=303)
+```
+
+In `templates/berichten.html`, onder de `<h1>`:
+```html
+{% if verwijderd %}
+    <p>Bericht verwijderd</p>
+{% endif %}
+```
+
+Zonder `?verwijderd=1` in de URL is `verwijderd` gelijk aan 0, en 0 telt in een `{% if %}` als niet waar, net als een lege lijst.
+
+</details>
+
+Door naar [Registreren: een account opslaan](/docs/FastAPI/accounts/registreren).

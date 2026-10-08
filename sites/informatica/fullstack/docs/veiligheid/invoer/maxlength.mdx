@@ -9,7 +9,7 @@ In een formulier kun je met `maxlength` een grens zetten op een veld. De
 browser laat je dan niet verder typen. Maar die grens is een hulp voor wie zich
 vergist, geen controle. Hier zie je met een script waarom, en hoe ver het gaat.
 Deed je de uitbreiding JavaScript al, dan ken je het idee uit
-[Server of browser?](/docs/FastAPI/server-of-browser); deze les kun je ook
+[Server of browser?](/docs/FastAPI/in-de-browser/server-of-browser); deze les kun je ook
 zonder die uitbreiding volgen.
 
 :::note[Waar je werkt]
@@ -61,7 +61,7 @@ async def bericht_plaatsen(naam: str = Form(...), bericht: str = Form(...)):
 ```
 
 <Regel n={8}>
-De map `static` met het formulier, zoals in [CSS in een eigen bestand (static files)](/docs/FastAPI/static_files).
+De map `static` met het formulier, zoals in [CSS in een eigen bestand (static files)](/docs/FastAPI/css-en-afbeeldingen/static_files).
 </Regel>
 
 <Regel n={15}>
@@ -131,7 +131,7 @@ with SqliteDict("gastenboek.db") as db:
 ```
 
 <Regel n={4}>
-`db.values()` geeft alle berichten, zoals in [Alles tonen: een for-lus in je template](/docs/FastAPI/lijst_tonen).
+`db.values()` geeft alle berichten, zoals in [Alles tonen: een for-lus in je template](/docs/FastAPI/berichten-tonen/lijst_tonen).
 </Regel>
 
 <Regel n={5}>

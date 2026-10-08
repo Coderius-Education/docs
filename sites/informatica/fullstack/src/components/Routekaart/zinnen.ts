@@ -8,19 +8,32 @@ export const ZINNEN: Record<string, string> = {
   // FastAPI: de basis
   'Je eerste server':
     'Je start een server op je eigen computer en ziet in de browser wat je functie teruggeeft.',
-  "HTML-pagina's": "Je server stuurt echte pagina's, met links, een stylesheet en afbeeldingen.",
+  "Losse pagina's en routes":
+    "Je server stuurt echte pagina's, elk op een eigen adres, met links ertussen.",
+  "Eén route voor veel pagina's":
+    'Eén functie maakt een pagina voor elk adres dat op hetzelfde patroon past.',
+  'CSS en afbeeldingen': "Je pagina's krijgen een stylesheet en afbeeldingen.",
   'Templates en formulieren':
     'Een pagina vult zich met waarden uit Python, en je server beantwoordt een formulier.',
-  'Gegevens opslaan en tonen':
-    'Berichten blijven bewaard in een database en staan in een lijst, elk met een eigen pagina.',
+  'Gegevens opslaan (SqliteDict)':
+    'Een script bewaart gegevens in een bestand, zodat ze er na het afsluiten nog zijn.',
+  'Berichten opslaan':
+    'Wat een bezoeker invult, blijft bewaard, en na het versturen sta je weer op de lijst.',
+  'Berichten tonen':
+    'Alle berichten staan op een pagina, elk bericht heeft een eigen pagina, en een onbekend adres krijgt een 404.',
+  'Berichten verwijderen':
+    'Een bericht kan er met een knop weer af, en je ziet de hele weg van klik tot antwoord.',
+  Accounts:
+    'Wie schrijft, heeft een account, en twee diagrammen laten zien wat er bij een klik en een formulier gebeurt.',
   // FastAPI: de uitbreidingen en de afronding
   'Uitbreiding: zonder herladen (htmx)':
     'Een knop of formulier praat met de server terwijl de pagina blijft staan.',
   'Uitbreiding: JavaScript in de browser':
     'Code draait in de browser, en je weet wat daar hoort en wat op de server.',
   'Uitbreiding: onthouden (cookies en sessies)':
-    'Je server herkent een bezoeker bij het volgende verzoek.',
-  Afronden: 'Je overziet de hele weg van klik tot antwoord, en je klas bezoekt je gastenboek.',
+    'Je logt één keer in, en je server herkent je bij het volgende verzoek.',
+  Afronden:
+    'Een onbekend adres krijgt een eigen pagina, je ziet de weg van klik tot antwoord, en je klas komt kijken.',
 
   // Veiligheid
   'Een script als bezoeker':
@@ -40,7 +53,6 @@ export const ZINNEN: Record<string, string> = {
 
 // Een mijlpaal staat onder een etappe: hier heb je iets wat werkt.
 export const MIJLPALEN: Record<string, string> = {
-  'Gegevens opslaan en tonen':
-    'Hier werkt je gastenboek. Wat hierna komt, maakt het mooier, maar is niet nodig.',
+  Accounts: 'Hier werkt je gastenboek. Wat hierna komt, maakt het mooier, maar is niet nodig.',
   'Beveilig je eigen project': 'Hier is je gastenboek beschermd.',
 };

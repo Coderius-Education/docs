@@ -36,7 +36,63 @@ const hoofdtekst = (id: string) =>
 describe('volgorde van de FastAPI-lessen', () => {
   it('de eerste les met TemplateResponse is Templates met Jinja2', () => {
     const eerste = lessen.find((id) => tekst(id).includes('TemplateResponse'));
-    expect(eerste).toBe('FastAPI/templates');
+    expect(eerste).toBe('FastAPI/formulieren/templates');
+  });
+
+  // Path-parameters kwamen pas binnen bij Eén item tonen, midden in het
+  // gastenboek en samen met de database en de 404. Nu maakt de leerling eerst
+  // losse pagina's met elk een eigen route, en ziet hij daarna in een eigen
+  // les waarom één route met een plekhouder beter is.
+  it("de eerste route met een path-parameter staat in Eén route voor veel pagina's", () => {
+    const pad = /@app\.\w+\("[^"]*\{\w+\}/;
+    const eerste = lessen.find((id) => pad.test(tekst(id)));
+    expect(eerste).toBe('FastAPI/veel-paginas/path-parameters');
+    expect(hoofdtekst('FastAPI/veel-paginas/path-parameters')).toMatch(pad);
+    const plek = categorieen.findIndex((c) => c.label === "Eén route voor veel pagina's");
+    expect(categorieen[plek - 1].label).toBe("Losse pagina's en routes");
+    // Het probleem staat vóór de oplossing: losse routes per pagina, eerst in
+    // de les, dan de plekhouder.
+    const les = hoofdtekst('FastAPI/veel-paginas/path-parameters');
+    expect(les.indexOf('@app.get("/kat"')).toBeGreaterThan(-1);
+    expect(les.indexOf('@app.get("/kat"')).toBeLessThan(les.indexOf('@app.get("/dier/{naam}")'));
+  });
+
+  // Het gastenboek stond in één categorie, "Opslaan en tonen in je server",
+  // en één les deed vaak twee dingen: de naam én het gastenboek, de redirect
+  // én verwijderen, opzoeken én de 404. Nu staat het per handeling met
+  // berichten in een eigen categorie, en doet elke les één ding.
+  it('het gastenboek staat per handeling in drie categorieën, tussen SqliteDict en Accounts', () => {
+    const labels = categorieen.map((c) => c.label);
+    const van = labels.indexOf('Gegevens opslaan (SqliteDict)');
+    const tot = labels.indexOf('Accounts');
+    expect(labels.slice(van + 1, tot)).toEqual([
+      'Berichten opslaan',
+      'Berichten tonen',
+      'Berichten verwijderen',
+    ]);
+    const lessenVan = (label: string) =>
+      plat(categorieen.find((c) => c.label === label)?.items ?? []);
+    expect(lessenVan('Berichten opslaan')).toEqual([
+      'FastAPI/berichten-opslaan/naam-opslaan',
+      'FastAPI/berichten-opslaan/eigen-sleutel',
+      'FastAPI/berichten-opslaan/redirect',
+    ]);
+    expect(lessenVan('Berichten tonen')).toEqual([
+      'FastAPI/berichten-tonen/lijst_tonen',
+      'FastAPI/berichten-tonen/leeg',
+      'FastAPI/berichten-tonen/detailpagina',
+      'FastAPI/berichten-tonen/niet-gevonden',
+    ]);
+  });
+
+  it.each([
+    ['FastAPI/berichten-opslaan/naam-opslaan', 'time.time_ns()'],
+    ['FastAPI/berichten-opslaan/eigen-sleutel', 'RedirectResponse'],
+    ['FastAPI/berichten-tonen/lijst_tonen', '{% if'],
+    ['FastAPI/berichten-tonen/detailpagina', 'raise HTTPException'],
+    ['FastAPI/berichten-tonen/niet-gevonden', 'del db['],
+  ])('%s doet één ding: %s komt pas later', (id, later) => {
+    expect(hoofdtekst(id)).not.toContain(later);
   });
 
   it.each([
@@ -62,8 +118,8 @@ describe('volgorde van de FastAPI-lessen', () => {
   const label = (i: Item | undefined) => (typeof i === 'string' ? i : i?.label);
   const grens = items.findIndex((i) => label(i)?.startsWith('Uitbreiding:'));
 
-  it('de basis eindigt met Gegevens opslaan en tonen, daarna alleen uitbreidingen', () => {
-    expect(label(items[grens - 1])).toBe('Gegevens opslaan en tonen');
+  it('de basis eindigt met Accounts, daarna alleen uitbreidingen', () => {
+    expect(label(items[grens - 1])).toBe('Accounts');
     expect(items.slice(grens, grens + 3).every((i) => label(i)?.startsWith('Uitbreiding:'))).toBe(
       true,
     );
@@ -81,7 +137,7 @@ describe('volgorde van de FastAPI-lessen', () => {
         .filter((sectie) => !later.test(sectie.split('\n')[0]))
         .flatMap((sectie) => sectie.split('\n'))
         .flatMap((regel) =>
-          [...regel.matchAll(/\]\(\/docs\/(FastAPI\/[\w-]+)/g)]
+          [...regel.matchAll(/\]\(\/docs\/(FastAPI\/[\w/-]+)/g)]
             .filter((m) => uitbreiding.has(m[1]) && !later.test(regel))
             .map((m) => `${id} → ${m[1]}`),
         ),
@@ -97,13 +153,25 @@ describe('titels en categorieën', () => {
   });
 
   it.each([
-    ['FastAPI/detailpagina', /path-parameters/],
-    ['FastAPI/detailpagina', /404/],
-    ['FastAPI/redirect', /redirect/],
-    ['FastAPI/templates', /Jinja2/],
-    ['FastAPI/database', /SqliteDict/],
-    ['FastAPI/static_files', /static files/],
-    ['FastAPI/lijst_tonen', /for-lus/],
+    ['FastAPI/veel-paginas/path-parameters', /path-parameters/],
+    ['FastAPI/berichten-tonen/detailpagina', /sleutel uit de URL/],
+    ['FastAPI/berichten-tonen/niet-gevonden', /404/],
+    ['FastAPI/berichten-opslaan/redirect', /redirect/],
+    ['FastAPI/formulieren/templates', /Jinja2/],
+    ['FastAPI/sqlitedict/database', /SqliteDict/],
+    ['FastAPI/sqlitedict/bekijken', /len en items/],
+    ['FastAPI/sqlitedict/zoeken', /in en get/],
+    ['FastAPI/sqlitedict/verwijderen', /del/],
+    ['FastAPI/sqlitedict/dictionary', /dictionary als waarde/],
+    ['FastAPI/sqlitedict/aanpassen', /terugzetten/],
+    ['FastAPI/css-en-afbeeldingen/static_files', /static files/],
+    ['FastAPI/berichten-tonen/lijst_tonen', /for-lus/],
+    ['FastAPI/berichten-tonen/leeg', /if en else/],
+    ['FastAPI/berichten-opslaan/eigen-sleutel', /eigen sleutel/],
+    ['FastAPI/berichten-verwijderen/verwijderen', /verborgen veld/],
+    ['FastAPI/accounts/registreren', /account/],
+    ['FastAPI/accounts/inloggen', /wachtwoord/],
+    ['FastAPI/afronden/foutpagina', /404/],
   ])('de titel van %s noemt %s', (id, begrip) => {
     expect(titel(id)).toMatch(begrip);
   });
@@ -133,7 +201,7 @@ describe('verwijzingen naar een les', () => {
 
   it('een linktekst met een dubbele punt of haakjes is de titel van de doelles', () => {
     const fout = alleTeksten.flatMap(({ id, tekst }) =>
-      [...tekst.matchAll(/\[([^\]]*[:(][^\]]*)\]\((\/docs\/FastAPI\/[\w-]+)[^)]*\)/g)]
+      [...tekst.matchAll(/\[([^\]]*[:(][^\]]*)\]\((\/docs\/FastAPI\/[\w/-]+)[^)]*\)/g)]
         .filter((m) => m[1] !== titelVan(m[2]))
         .map((m) => `${id}: [${m[1]}] → ${titelVan(m[2])}`),
     );

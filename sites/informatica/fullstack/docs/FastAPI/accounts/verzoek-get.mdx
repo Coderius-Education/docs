@@ -1,0 +1,27 @@
+import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
+
+# Zo werkt het: klikken en versturen
+
+Je gastenboek is af: endpoints, templates en een database werken samen, en wie schrijft, heeft een account. Twee diagrammen laten zien wat er dan gebeurt: bij een klik op een link, en bij een formulier.
+
+## Een klik
+
+Dit zijn dezelfde stappen als bij [je eerste verzoek](/docs/FastAPI/eerste-server/verzoek-eerste), met een database en een template ertussen: van de klik op een link tot de lijst op het scherm.
+
+<VerzoekCyclus variant="get" />
+
+Tussen stap 6 en 7 gebeurt het belangrijkste van de hele cursus: er gaat alleen HTML over de lijn. Je database blijft op de server, je Python-code ook. De browser krijgt het resultaat, niet de weg ernaartoe. Wie de broncode van je pagina bekijkt ziet de berichten, maar niet hoe je ze hebt opgehaald.
+
+Het JavaScript uit stap 7 komt pas aan bod in de uitbreiding [JavaScript erbij](/docs/FastAPI/in-de-browser/javascript). Tot die tijd haalt de browser je CSS op, tekent hij de pagina en is hij klaar.
+
+## Een formulier
+
+Een formulier volgt hetzelfde patroon, maar eindigt met een omleiding in plaats van een pagina.
+
+<VerzoekCyclus variant="post" />
+
+De laatste stap start het diagram van de klik opnieuw. Dat is het post/redirect/get-patroon uit [Doorsturen na opslaan (redirect)](/docs/FastAPI/berichten-opslaan/redirect): versturen en tonen zijn twee losse verzoeken, zodat F5 de pagina herlaadt in plaats van je bericht nog een keer op te sturen.
+
+Stap 1 gebeurt in de browser, en die is van de bezoeker. Wat een bezoeker instuurt controleer je daarom in stap 4, in je endpoint, en nooit alleen in de HTML. Waarom dat zo is, zie je in de uitbreiding [Server of browser?](/docs/FastAPI/in-de-browser/server-of-browser).
+
+Kom je bij een nieuwe functie vast te zitten, zoek dan eerst de stap op waar hij thuishoort. Een tabel met de stappen staat aan het eind van de cursus, bij [Hoe een verzoek werkt](/docs/FastAPI/afronden/hoe-een-verzoek-werkt).

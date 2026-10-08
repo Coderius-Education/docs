@@ -70,4 +70,4 @@ staan zoals hij was. Morgen open je VS Code en staat alles er weer.
 
 Beide meldingen staan met hun oplossing bij [Er gaat iets mis](/docs/troubleshooting).
 
-Werkt de installatie zelf nog niet? Dan is [Installatie](/docs/FastAPI/installatie) de controlelijst: vijf checks met per check wat je hoort te zien.
+Werkt de installatie zelf nog niet? Dan is [Installatie](/docs/FastAPI/eerste-server/installatie) de controlelijst: vijf checks met per check wat je hoort te zien.

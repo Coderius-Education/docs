@@ -9,11 +9,11 @@ import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
 
 In [les 1](./zwakheid) verwijderde Alex het bericht van Sara, met of zonder
 knop. De controle hoort daarom op de plek waar het verzoek binnenkomt: in het
-endpoint. De server weet welke berichten deze bezoeker heeft geplaatst, want ze
-staan in zijn sessie. Staat de sleutel daar niet in, dan verwijdert het endpoint
-niets.
+endpoint. De server weet wie deze bezoeker is: sinds het inloggen staat zijn
+naam in zijn sessie. En bij elk bericht staat de naam van wie het plaatste. Zijn
+die twee niet gelijk, dan verwijdert het endpoint niets.
 
-Heb je [opdracht 5 van Sessies](/docs/FastAPI/sessies#opdracht-5-make---echt-afschermen)
+Heb je [opdracht 5 van Sessies](/docs/FastAPI/onthouden/sessies#opdracht-5-make---echt-afschermen)
 gemaakt, dan deed je dit al, op `/verwijderen`. Hier zet je dezelfde controle op
 `DELETE /bericht/{sleutel}`, en zie je met het script uit les 1 dat hij werkt.
 
@@ -28,13 +28,13 @@ Vervang `bericht_verwijderen` in je `main.py` door deze:
 async def bericht_verwijderen(sleutel: str, sessie_id: str = Cookie(default="")):
     with SqliteDict("sessies.db") as sessies:
         mijn = sessies.get(sessie_id, {})
-    if sleutel not in mijn.get("berichten", []):
-        raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
 
     with SqliteDict("gastenboek.db") as db:
-        if sleutel in db:
-            del db[sleutel]
-            db.commit()
+        bericht = db.get(sleutel)
+        if bericht is None or bericht["naam"] != mijn.get("naam"):
+            raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
+        del db[sleutel]
+        db.commit()
     return {"bericht": "Verwijderd"}
 ```
 
@@ -43,23 +43,23 @@ Het endpoint vraagt nu ook de cookie op, net als `bericht_plaatsen`.
 </Regel>
 
 <Regel n={3} tot={4}>
-De sessie van deze bezoeker. Geen cookie of een onbekend sessie-id geeft een lege dictionary.
+De sessie van deze bezoeker. Geen cookie of een onbekend sessie-id geeft een lege dictionary, en daarin is `mijn.get("naam")` gelijk aan `None`.
 </Regel>
 
-<Regel n={5} tot={6}>
-Eerst de controle, vóór er iets verandert. Is de sleutel niet van deze bezoeker, dan stopt de functie met **403 Forbidden**: de server begrijpt wat je vraagt, maar jij mag het niet. De andere codes staan op [de startpagina](/docs/veiligheid#statuscodes).
+<Regel n={7} tot={9}>
+Eerst de controle, vóór er iets verandert. Bestaat het bericht niet, of staat er een andere naam bij dan in de sessie, dan stopt de functie met **403 Forbidden**: de server begrijpt wat je vraagt, maar jij mag het niet. De andere codes staan op [de startpagina](/docs/veiligheid#statuscodes).
 </Regel>
 
-<Regel n={8} tot={11}>
-Pas nu gaat het bericht weg. `if sleutel in db` vangt een bericht op dat al weg is, bijvoorbeeld omdat je het in een ander tabblad al had verwijderd.
+<Regel n={10} tot={11}>
+Pas nu gaat het bericht weg.
 </Regel>
 
 </CodeUitleg>
 
 ## Doe de test opnieuw
 
-Gooi `gastenboek.db` en `sessies.db` weg, start de server opnieuw, en draai
-`test_verwijderen.py` uit [les 1](./zwakheid):
+Gooi `gastenboek.db`, `sessies.db` en `gebruikers.db` weg, start de server
+opnieuw, en draai `test_verwijderen.py` uit [les 1](./zwakheid):
 
 ```
 Alex verwijdert het bericht van Sara: 403
@@ -127,25 +127,34 @@ Sara verwijdert haar eigen bericht: 200
 Nog in het gastenboek: ['Alex']
 ```
 
-De `Client` van Sara stuurt haar cookie mee, en de sleutel staat in haar sessie.
+De `Client` van Sara stuurt haar cookie mee, en in haar sessie staat de naam Sara, dezelfde naam als bij het bericht.
 
 </details>
 
 ### Opdracht 2: Predict - Een nieuw venster
 
-Sara opent het gastenboek in een privévenster en stuurt daar het verzoek om
-haar eigen bericht te verwijderen. In het script is dat een derde
-`httpx.Client`, zonder cookie.
+Sara opent het gastenboek in een privévenster. Daar logt ze opnieuw in, als
+Sara, en stuurt ze het verzoek om haar eigen bericht te verwijderen. In het
+script is dat een derde `httpx.Client`, die met haar naam en wachtwoord
+inlogt.
 
 **Vraag:** krijgt ze `200` of `403`?
 
 <details>
+<summary>Tip</summary>
+
+Waarmee vergelijkt de controle de naam bij het bericht: met de browser, of met
+de naam in de sessie?
+
+</details>
+
+<details>
 <summary>Antwoord</summary>
 
-`403`. De server herkent een bezoeker aan zijn sessie-id, en een privévenster
-heeft een ander, of nog geen. Voor de server is dat een nieuwe bezoeker, ook al
-typt die "Sara". Wil je dat iemand overal bij zijn eigen berichten kan, dan
-heb je een account nodig met een wachtwoord: zie [de praktijk](./praktijk).
+`200`. Het privévenster heeft een ander sessie-id, maar onder dat id staat ook
+de naam Sara, want ze logde in met haar wachtwoord. De controle kijkt naar die
+naam, niet naar het venster. Logt ze in het privévenster níét in, dan heeft ze
+geen sessie en krijgt ze `403`.
 
 </details>
 
@@ -157,11 +166,12 @@ en waarom is het goed dat het geen `404` is?
 <details>
 <summary>Antwoord</summary>
 
-`403`, met `{'detail': 'Dit is niet jouw bericht'}`: de sleutel staat niet in
-zijn sessie, en de controle komt vóór de vraag of het bericht bestaat. Zo leert
+`403`, met `{'detail': 'Dit is niet jouw bericht'}`: een bericht dat niet
+bestaat, valt onder dezelfde voorwaarde als een bericht van een ander. Zo leert
 Alex niets over sleutels van anderen: een bestaand bericht van Sara en een
-verzonnen sleutel geven hetzelfde antwoord. Hetzelfde idee kom je later tegen
-bij [inloggen](../wachtwoorden/inloggen), in de reeks over wachtwoorden.
+verzonnen sleutel geven hetzelfde antwoord. Hetzelfde idee zag je bij
+[Inloggen: een wachtwoord controleren](/docs/FastAPI/accounts/inloggen): één melding
+voor een onbekende naam en een fout wachtwoord.
 
 </details>
 
@@ -178,30 +188,43 @@ from sqlitedict import SqliteDict
 
 app = FastAPI()
 
+@app.post("/registreer")
+async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as gebruikers:
+        if naam in gebruikers:
+            raise HTTPException(status_code=400, detail="Deze naam is al bezet")
+        gebruikers[naam] = wachtwoord
+        gebruikers.commit()
+    return {"bericht": f"Welkom, {naam}"}
+
+@app.post("/inloggen")
+async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as gebruikers:
+        opgeslagen = gebruikers.get(naam)
+    if opgeslagen != wachtwoord:
+        raise HTTPException(status_code=401, detail="Naam of wachtwoord klopt niet")
+
+    sessie_id = secrets.token_hex(16)
+    with SqliteDict("sessies.db") as sessies:
+        sessies[sessie_id] = {"naam": naam}
+        sessies.commit()
+
+    antwoord = JSONResponse({"bericht": f"Ingelogd als {naam}"})
+    antwoord.set_cookie(key="sessie_id", value=sessie_id, max_age=60 * 60 * 24 * 30)
+    return antwoord
+
 @app.post("/bericht")
-async def bericht_plaatsen(
-    naam: str = Form(...),
-    bericht: str = Form(...),
-    sessie_id: str = Cookie(default=""),
-):
-    if not sessie_id:
-        sessie_id = secrets.token_hex(16)
+async def bericht_plaatsen(bericht: str = Form(...), sessie_id: str = Cookie(default="")):
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {})
+    if not mijn:
+        raise HTTPException(status_code=401, detail="Log eerst in")
 
     sleutel = f"bericht_{time.time_ns()}"
     with SqliteDict("gastenboek.db") as db:
-        db[sleutel] = {"naam": naam, "bericht": bericht}
+        db[sleutel] = {"naam": mijn["naam"], "bericht": bericht}
         db.commit()
-
-    with SqliteDict("sessies.db") as sessies:
-        mijn = sessies.get(sessie_id, {"naam": naam, "berichten": []})
-        mijn["naam"] = naam
-        mijn["berichten"].append(sleutel)
-        sessies[sessie_id] = mijn
-        sessies.commit()
-
-    antwoord = JSONResponse({"sleutel": sleutel})
-    antwoord.set_cookie(key="sessie_id", value=sessie_id, max_age=60 * 60 * 24 * 30)
-    return antwoord
+    return {"sleutel": sleutel}
 
 @app.get("/berichten")
 async def berichten():
@@ -212,13 +235,13 @@ async def berichten():
 async def bericht_verwijderen(sleutel: str, sessie_id: str = Cookie(default="")):
     with SqliteDict("sessies.db") as sessies:
         mijn = sessies.get(sessie_id, {})
-    if sleutel not in mijn.get("berichten", []):
-        raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
 
     with SqliteDict("gastenboek.db") as db:
-        if sleutel in db:
-            del db[sleutel]
-            db.commit()
+        bericht = db.get(sleutel)
+        if bericht is None or bericht["naam"] != mijn.get("naam"):
+            raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
+        del db[sleutel]
+        db.commit()
     return {"bericht": "Verwijderd"}
 ```
 

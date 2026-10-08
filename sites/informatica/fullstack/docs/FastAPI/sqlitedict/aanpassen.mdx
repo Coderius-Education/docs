@@ -1,0 +1,235 @@
+# Een dictionary aanpassen: ophalen, aanpassen, terugzetten
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/data/10b-lijst-methoden', label: 'Lijst-methoden'},
+  ]}
+/>
+
+Sara gaat naar 5B. In een gewone dictionary pas je dat aan op de plek zelf, met `sara["klas"] = "5B"`. Je werkt verder met de Sara uit [Een dictionary als waarde](/docs/FastAPI/sqlitedict/dictionary), in `mijn_data.db`, waar ze nog in 4B zit.
+
+## Op de plek zelf aanpassen?
+
+<details>
+<summary>Voorspel: wat print dit script?</summary>
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("mijn_data.db") as db:
+    db["sara"]["klas"] = "5B"
+    db.commit()
+
+with SqliteDict("mijn_data.db") as db:
+    print(db["sara"]["klas"])
+```
+
+`4B`, niet `5B`. En je krijgt geen foutmelding.
+
+Elke keer dat je `db["sara"]` schrijft, leest SqliteDict de waarde uit het bestand en maakt hij er een nieuwe dictionary van. Op de eerste regel in het `with`-blok pas je zo'n nieuwe dictionary aan, en daarna gebruik je hem nergens meer. Het bestand weet daar niets van.
+
+</details>
+
+Draai het script zelf, en kijk of je voorspelling klopte. Een gewone dictionary in Python onthoudt zo'n wijziging wel. SqliteDict niet: ophalen geeft een **kopie**.
+
+## Ophalen, aanpassen, terugzetten
+
+Je haalt de dictionary op, past hem aan en zet hem terug. Pas als je de aangepaste dictionary terugzet met `db["sara"] = …`, schrijft SqliteDict hem weg. Sara krijgt er meteen een vak bij. Maak `aanpassen.py`:
+
+<CodeUitleg>
+
+```python showLineNumbers
+from sqlitedict import SqliteDict
+
+with SqliteDict("mijn_data.db") as db:
+    sara = db["sara"]
+    sara["klas"] = "5B"
+    sara["vakken"].append("biologie")
+    db["sara"] = sara
+    db.commit()
+```
+
+<Regel n={4}>
+Ophalen. `sara` is nu een gewone dictionary in je programma.
+</Regel>
+
+<Regel n={5} tot={6}>
+Aanpassen, zoals je met elke dictionary en lijst doet.
+</Regel>
+
+<Regel n={7}>
+Terugzetten. Pas deze regel stuurt de aangepaste dictionary naar de database.
+</Regel>
+
+<Regel n={8}>
+En zoals altijd: `commit()` schrijft het naar het bestand.
+</Regel>
+
+</CodeUitleg>
+
+Draai `aanpassen.py` en daarna `bekijk_db.py`:
+
+```
+sara = {'klas': '5B', 'vakken': ['informatica', 'wiskunde', 'biologie']}
+```
+
+Onthoud die drie stappen: ophalen, aanpassen, terugzetten.
+
+## Er gaat iets mis
+
+### Je aanpassing is weg, zonder foutmelding
+
+Je script past een veld aan of zet iets in een lijst, er komt geen fout, en toch toont `bekijk_db.py` de oude waarde.
+
+**Oorzaak:** je past de kopie aan die `db["sara"]` je geeft, en zet hem niet terug. Met `db.commit()` erbij verandert dat niets: er is voor de database niets gewijzigd.
+
+**Oplossing:** haal de waarde op in een variabele, pas die aan, en zet hem terug onder dezelfde sleutel.
+
+```python
+from sqlitedict import SqliteDict
+
+# FOUT: de kopie krijgt het vak, het bestand niet
+with SqliteDict("mijn_data.db") as db:
+    db["sara"]["vakken"].append("Duits")
+    db.commit()
+
+# GOED
+with SqliteDict("mijn_data.db") as db:
+    sara = db["sara"]
+    sara["vakken"].append("Duits")
+    db["sara"] = sara
+    db.commit()
+```
+
+## Opdrachten
+
+### Opdracht 1: Predict - Twee keer append
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("scores.db") as db:
+    db["piet"] = {"scores": [10]}
+    db.commit()
+
+with SqliteDict("scores.db") as db:
+    db["piet"]["scores"].append(20)
+    piet = db["piet"]
+    piet["scores"].append(30)
+    db["piet"] = piet
+    db.commit()
+
+with SqliteDict("scores.db") as db:
+    print(db["piet"]["scores"])
+```
+
+**Vraag:** wat print dit: `[10, 20, 30]`, `[10, 30]` of `[10]`?
+
+<details>
+<summary>Tip</summary>
+
+Welke van de twee keer `append` gebeurt op een dictionary die daarna wordt teruggezet?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`[10, 30]`. De `20` gaat in een kopie die niemand terugzet. De `30` gaat in `piet`, en `piet` gaat terug in de database.
+
+</details>
+
+### Opdracht 2: Run
+
+Draai `aanpassen.py` uit deze les, en controleer met `bekijk_db.py` dat Sara in 5B zit met drie vakken.
+
+<details>
+<summary>Antwoord</summary>
+
+`bekijk_db.py` toont `sara = {'klas': '5B', 'vakken': ['informatica', 'wiskunde', 'biologie']}`. Heb je `aanpassen.py` twee keer gedraaid, dan staat `biologie` er twee keer in: elke keer komt er één bij.
+
+</details>
+
+### Opdracht 3: Investigate - Twee keer ophalen
+
+Draai dit, en verklaar wat je ziet:
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("mijn_data.db") as db:
+    eerste = db["sara"]
+    tweede = db["sara"]
+    eerste["klas"] = "3A"
+    print(eerste["klas"], tweede["klas"])
+```
+
+<details>
+<summary>Antwoord</summary>
+
+Het print `3A 5B`. `eerste` en `tweede` zijn twee losse kopieën uit het bestand. Pas je de ene aan, dan verandert de andere niet, en de database ook niet, want het script zet niets terug.
+
+</details>
+
+### Opdracht 4: Modify - Een vak eraf
+
+Pas `aanpassen.py` aan, zodat het `wiskunde` weghaalt uit de vakken van Sara. Controleer met `bekijk_db.py` dat het echt weg is.
+
+<details>
+<summary>Tip</summary>
+
+Een lijst heeft `remove()`. Daarna dezelfde stappen: terugzetten en `commit()`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("mijn_data.db") as db:
+    sara = db["sara"]
+    if "wiskunde" in sara["vakken"]:
+        sara["vakken"].remove("wiskunde")
+    db["sara"] = sara
+    db.commit()
+```
+
+De `if` voorkomt een `ValueError` als je het script een tweede keer draait: dan staat `wiskunde` er niet meer in.
+
+</details>
+
+### Opdracht 5: Make - Scorebord
+
+Maak `scorebord.py`. Het vraagt een naam en een score. Bestaat de speler nog niet in `scorebord.db`, dan komt hij erin met een lege lijst scores. Daarna komt de score in zijn lijst, en print het alle scores van die speler.
+
+<details>
+<summary>Tip</summary>
+
+`db.get(naam, {"scores": []})` geeft de speler, of een nieuwe dictionary als hij er nog niet is. Daarna ophalen, aanpassen, terugzetten.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+from sqlitedict import SqliteDict
+
+naam = input("Naam: ")
+score = int(input("Score: "))
+
+with SqliteDict("scorebord.db") as db:
+    speler = db.get(naam, {"scores": []})
+    speler["scores"].append(score)
+    db[naam] = speler
+    db.commit()
+    print(f"Scores van {naam}: {speler['scores']}")
+```
+
+Zonder `db[naam] = speler` print het de nieuwe score wel, want `speler` is de aangepaste kopie. Maar de volgende keer is hij weg.
+
+</details>
+
+Nu ken je SqliteDict genoeg om hem in je server te gebruiken. Dat doe je in [Een formulier opslaan](/docs/FastAPI/berichten-opslaan/naam-opslaan).

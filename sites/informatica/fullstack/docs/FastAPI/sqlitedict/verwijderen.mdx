@@ -1,0 +1,178 @@
+# Verwijderen met del
+
+Wat je opslaat, blijft staan tot je het weghaalt. Een bericht in een gastenboek dat weg moet, een account dat iemand opheft: daarvoor haal je een sleutel uit de database. Je oefent weer met `mijn_data.db`. Staat de leeftijd er niet meer in, draai dan eerst `test_db.py` uit [Gegevens opslaan met SqliteDict](/docs/FastAPI/sqlitedict/database).
+
+## Een sleutel weghalen
+
+Met **`del`** haal je een sleutel weg, met zijn waarde. Vervang de inhoud van `proef_db.py` door:
+
+<CodeUitleg>
+
+```python showLineNumbers
+from sqlitedict import SqliteDict
+
+with SqliteDict("mijn_data.db") as db:
+    if "leeftijd" in db:
+        del db["leeftijd"]
+        db.commit()
+        print("Leeftijd verwijderd")
+    else:
+        print("Er was geen leeftijd")
+```
+
+<Regel n={4}>
+Eerst kijken of hij er is, met `in` uit [Bestaat de sleutel? in en get](/docs/FastAPI/sqlitedict/zoeken). Zonder die regel krijg je een `KeyError` als hij al weg is.
+</Regel>
+
+<Regel n={5} tot={6}>
+`del` is een wijziging, net als opslaan. Ook hier schrijft pas `db.commit()` hem naar het bestand.
+</Regel>
+
+</CodeUitleg>
+
+<details>
+<summary>Voorspel: wat print het de eerste keer, en wat de tweede keer?</summary>
+
+De eerste keer `Leeftijd verwijderd`. De tweede keer `Er was geen leeftijd`: de sleutel is dan al weg, dus `"leeftijd" in db` is `False`.
+
+</details>
+
+Draai het twee keer en kijk of je voorspelling klopte. Draai daarna `bekijk_db.py`: de leeftijd staat er niet meer in.
+
+## Er gaat iets mis
+
+### KeyError bij verwijderen
+
+```
+KeyError: 'leeftijd'
+```
+
+**Oorzaak:** je verwijdert een sleutel die er niet (meer) is. Dat gebeurt als je hetzelfde script twee keer draait, of als iemand op een website twee keer op Verwijderen klikt.
+
+**Oplossing:** kijk eerst met `in`:
+
+{/* niet-compileren: losse regels binnen een with-blok */}
+```python
+# FOUT: crasht de tweede keer
+del db["leeftijd"]
+
+# GOED
+if "leeftijd" in db:
+    del db["leeftijd"]
+    db.commit()
+```
+
+### Je verwijderde sleutel is terug
+
+Na `del` print je script dat de leeftijd weg is, maar `bekijk_db.py` laat hem nog zien.
+
+**Oorzaak:** `db.commit()` ontbreekt na de `del`. Zodra het `with`-blok sluit, gooit SqliteDict het verwijderen weg, net als een gewone wijziging zonder commit.
+
+**Oplossing:** zet `db.commit()` direct onder de `del`, binnen het `with`-blok.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Hoeveel sleutels?
+
+Je database heeft de sleutels `naam`, `leeftijd` en `woonplaats`. Je draait dit:
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("mijn_data.db") as db:
+    del db["woonplaats"]
+    db["hobby"] = "voetbal"
+    db.commit()
+
+with SqliteDict("mijn_data.db") as db:
+    print(len(db))
+    print("Woonplaats" in db)
+```
+
+**Vraag:** welke twee regels print dit?
+
+<details>
+<summary>Tip</summary>
+
+Er gaat één sleutel weg en er komt één bij. En let op de hoofdletter in de laatste regel.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```
+3
+False
+```
+
+Drie sleutels: `naam`, `leeftijd` en `hobby`. `"Woonplaats" in db` is `False`, en dat zou ook zo zijn als de woonplaats er nog stond: de sleutel heet `woonplaats`, met een kleine letter.
+
+</details>
+
+### Opdracht 2: Run
+
+Draai `proef_db.py` uit deze les twee keer, en daarna `bekijk_db.py`. Draai dan `test_db.py` en nog een keer `proef_db.py`. Wat print `proef_db.py` die laatste keer?
+
+<details>
+<summary>Antwoord</summary>
+
+`Leeftijd verwijderd`. `test_db.py` heeft de leeftijd teruggezet, dus er is weer iets om te verwijderen. Daartussen liet `bekijk_db.py` een database zonder leeftijd zien.
+
+</details>
+
+### Opdracht 3: Investigate - Zonder in
+
+Draai eerst `test_db.py` uit de eerste les, zodat de leeftijd er weer staat. Vervang dan de inhoud van `proef_db.py` door deze versie zonder `in`, en draai hem twee keer:
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("mijn_data.db") as db:
+    del db["leeftijd"]
+    db.commit()
+    print("Leeftijd verwijderd")
+```
+
+Wat zie je de tweede keer, en op welke regel stopt het script?
+
+<details>
+<summary>Antwoord</summary>
+
+De tweede keer stopt het met `KeyError: 'leeftijd'`, op de regel met `del`. De leeftijd was de eerste keer al weg. Staat er ook de eerste keer al een `KeyError`, dan had je hem eerder in deze les al verwijderd: draai `test_db.py` en probeer het opnieuw. `Leeftijd verwijderd` print het na de fout niet meer: Python stopt bij de fout en voert de regels eronder niet uit.
+
+</details>
+
+### Opdracht 4: Modify - Jij kiest wat weg moet
+
+Pas `proef_db.py` aan: het vraagt met `input()` welke sleutel weg moet, en verwijdert die. Is de sleutel er niet, dan print het `Er was geen` met de sleutel erachter.
+
+<details>
+<summary>Tip</summary>
+
+Zet wat `input()` teruggeeft in een variabele, en gebruik die variabele overal waar nu `"leeftijd"` staat.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+from sqlitedict import SqliteDict
+
+sleutel = input("Welke sleutel moet weg? ")
+
+with SqliteDict("mijn_data.db") as db:
+    if sleutel in db:
+        del db[sleutel]
+        db.commit()
+        print(sleutel, "verwijderd")
+    else:
+        print("Er was geen", sleutel)
+```
+
+Typ je twee keer `hobby`, dan print het eerst `hobby verwijderd` en daarna `Er was geen hobby`.
+
+</details>
+
+Door naar [Een dictionary als waarde](/docs/FastAPI/sqlitedict/dictionary).

@@ -1,0 +1,392 @@
+# Inloggen: een wachtwoord controleren
+
+Sara heeft een account, maar je gastenboek vraagt er nog niet naar: wie "sara" intypt, schrijft nog steeds als Sara. Nu controleert je server het wachtwoord, en pas als dat klopt, bewaart hij het bericht.
+
+Een server onthoudt niets tussen twee verzoeken, dus bij je volgende bericht herkent hij je niet meer. Hoe dat wel kan, leer je later, in de uitbreiding over cookies en sessies. Tot die tijd typ je je wachtwoord bij elk bericht, en controleert je server het voordat hij iets opslaat. Elk bericht is zo een kleine inlog.
+
+## Het formulier
+
+Vervang `static/pages/gastenboek_form.html` uit [Elk bericht bewaren: een eigen sleutel](/docs/FastAPI/berichten-opslaan/eigen-sleutel) door deze versie, met een wachtwoordveld en een link naar het registreren:
+
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Gastenboek</h1>
+        <form method="post" action="/gastenboek">
+            <input type="text" name="naam" placeholder="Je naam" required>
+            <input type="password" name="wachtwoord" placeholder="Je wachtwoord" required>
+            <input type="text" name="bericht" placeholder="Je bericht" required>
+            <button type="submit">Verstuur</button>
+        </form>
+        <a href="/registreer">Nog geen account?</a>
+    </body>
+</html>
+```
+
+## De controle
+
+Vervang je `POST /gastenboek` uit [Doorsturen na opslaan (redirect)](/docs/FastAPI/berichten-opslaan/redirect) door deze versie. Het opslaan blijft hetzelfde; er komt een controle boven:
+
+<CodeUitleg>
+
+{/* route-dubbel: vervangt POST /gastenboek uit Doorsturen na opslaan (redirect), nu met een wachtwoord */}
+```python showLineNumbers
+@app.post("/gastenboek")
+async def gastenboek_opslaan(
+    naam: str = Form(...),
+    wachtwoord: str = Form(...),
+    bericht: str = Form(...),
+):
+    with SqliteDict("gebruikers.db") as gebruikers:
+        opgeslagen = gebruikers.get(naam)
+    if opgeslagen != wachtwoord:
+        raise HTTPException(status_code=401, detail="Naam of wachtwoord klopt niet")
+
+    with SqliteDict("gastenboek.db") as db:
+        sleutel = f"bericht_{time.time_ns()}"
+        db[sleutel] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    return RedirectResponse(url="/berichten", status_code=303)
+```
+
+<Regel n={2} tot={6}>
+Er komt een derde veld uit het formulier bij: `wachtwoord`. Met drie parameters past de regel niet meer op het scherm, dus staat elke parameter op een eigen regel. Voor Python maakt dat niet uit.
+</Regel>
+
+<Regel n={7} tot={8}>
+Het wachtwoord dat bij deze naam is opgeslagen. Heeft de naam geen account, dan geeft `get` `None`.
+</Regel>
+
+<Regel n={9} tot={10}>
+Is het opgeslagen wachtwoord iets anders dan wat de bezoeker typte, dan stopt de functie met **401 Unauthorized**: je bent niet ingelogd, of je inlog klopt niet. `None` is nooit gelijk aan een wachtwoord, dus een naam zonder account komt hier ook niet langs.
+</Regel>
+
+<Regel n={12} tot={16}>
+Pas als de controle klopt, komt het bericht in de database, zoals in de lessen ervoor.
+</Regel>
+
+</CodeUitleg>
+
+Een fout wachtwoord en een naam zonder account krijgen dezelfde melding, en dat is expres. Zei je server "Deze naam bestaat niet", dan kon iedereen uitproberen welke namen een account hebben.
+
+## Testen
+
+1. Ga naar `http://127.0.0.1:8000/gastenboek` en verstuur een bericht als `sara` met `welkom123`. Je komt uit op de lijst, met je bericht erin.
+2. Verstuur nog een bericht als `sara`, nu met een fout wachtwoord. Je ziet `{"detail":"Naam of wachtwoord klopt niet"}`, en het tabblad Netwerk toont status `401`.
+3. Probeer een naam zonder account, zoals `piet`. Je krijgt precies dezelfde melding.
+
+## Wat nog niet af is
+
+Je gastenboek heeft nu accounts, en een bericht komt er alleen in als het wachtwoord klopt. Drie dingen zijn nog niet zoals op een echte site:
+
+- Je typt je wachtwoord bij elk bericht. Eén keer inloggen en ingelogd blijven, leer je later, in de uitbreiding [Onthouden op de server: sessies](/docs/FastAPI/onthouden/sessies).
+- De wachtwoorden staan leesbaar in `gebruikers.db`. Hoe je ze veilig bewaart, leer je later in de route Veiligheid: [Wachtwoorden veilig opslaan](/docs/veiligheid/wachtwoorden/gewone-tekst).
+- Verwijderen kan nog iedereen, ook bij een bericht van een ander. Ook dat komt later, met sessies, en in de reeks [Wie mag wat](/docs/veiligheid/toegang/zwakheid).
+
+## Er gaat iets mis
+
+### 401 met het goede wachtwoord
+
+```
+{"detail":"Naam of wachtwoord klopt niet"}
+```
+
+**Oorzaak:** de naam is niet letter voor letter de naam van het account. `Sara` met een hoofdletter is een andere sleutel dan `sara`, en een spatie achter de naam telt ook mee.
+
+**Oplossing:** typ de naam precies zoals bij het registreren. Welke namen er zijn, zie je met `bekijk_db.py` op `gebruikers.db`.
+
+### 422 na Verstuur
+
+```
+{"detail":[{"type":"missing","loc":["body","wachtwoord"],"msg":"Field required","input":null}]}
+```
+
+**Oorzaak:** het formulier stuurt geen `wachtwoord` mee. Staat het veld er wel, dan heet het anders, of je browser toont nog de oude versie van `gastenboek_form.html`.
+
+**Oplossing:** controleer `name="wachtwoord"` in het formulier, en herlaad de pagina met Ctrl+Shift+R, zoals bij de cache in [CSS in een eigen bestand (static files)](/docs/FastAPI/css-en-afbeeldingen/static_files).
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+```python
+import random
+import time
+
+from fastapi import FastAPI, Form, HTTPException, Request
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
+
+@app.get("/")
+async def home():
+    return FileResponse("static/pages/home.html")
+
+@app.get("/info")
+async def info():
+    return {"naam": "Jouw Naam", "leeftijd": 16}
+
+@app.get("/pagina", response_class=HTMLResponse)
+async def pagina():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Mijn Pagina</title>
+        </head>
+        <body>
+            <h1>Hallo!</h1>
+            <p>Dit is mijn eerste HTML pagina.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/styled", response_class=HTMLResponse)
+async def styled():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Met CSS</title>
+            <style>
+                h1 { color: blue; }
+                p { color: gray; }
+            </style>
+        </head>
+        <body>
+            <h1>Gestylede pagina</h1>
+            <p>Deze tekst is grijs.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/about")
+async def about():
+    return FileResponse("static/pages/about.html")
+
+DIEREN = {
+    "kat": "Een kat spint als hij tevreden is.",
+    "hond": "Een hond kwispelt als hij blij is.",
+    "vis": "Een vis ademt met kieuwen.",
+}
+
+@app.get("/dier/{naam}", response_class=HTMLResponse)
+async def dier(naam: str):
+    tekst = DIEREN.get(naam, "Dit dier staat nog niet op de site.")
+    return f"""
+    <!DOCTYPE html>
+    <html>
+        <body>
+            <h1>Over dieren</h1>
+            <p>{tekst}</p>
+            <a href="/">Terug naar Home</a>
+        </body>
+    </html>
+    """
+
+@app.get("/zoek")
+async def zoek(term: str):
+    return {"je_zocht": term}
+
+@app.get("/foto")
+async def foto():
+    return FileResponse("static/pages/foto.html")
+
+@app.get("/dobbelsteen")
+async def dobbelsteen(request: Request):
+    worp = random.randint(1, 6)
+    return templates.TemplateResponse(
+        request,
+        "dobbelsteen.html",
+        {"worp": worp}
+    )
+
+@app.get("/naam")
+async def toon_formulier():
+    return FileResponse("static/pages/naam_form.html")
+
+@app.post("/verstuur")
+async def ontvang_naam(naam: str = Form(...)):
+    print(f"Naam ontvangen: {naam}")
+    return {"bericht": f"Hallo {naam}!"}
+
+@app.get("/groet")
+async def groet_form():
+    return FileResponse("static/pages/groet_form.html")
+
+@app.post("/groet")
+async def groet_verwerk(request: Request, naam: str = Form(...)):
+    return templates.TemplateResponse(
+        request,
+        "groet_resultaat.html",
+        {"naam": naam}
+    )
+
+@app.get("/opslaan")
+async def naam_formulier():
+    return FileResponse("static/pages/naam_opslaan.html")
+
+@app.post("/opslaan")
+async def naam_opslaan(naam: str = Form(...)):
+    with SqliteDict("namen.db") as db:
+        db["laatste_naam"] = naam
+        db.commit()
+
+    return {"bericht": f"'{naam}' opgeslagen!"}
+
+@app.get("/toon_naam")
+async def toon_naam():
+    with SqliteDict("namen.db") as db:
+        naam = db.get("laatste_naam", "Nog niets opgeslagen")
+    return {"naam": naam}
+
+@app.get("/gastenboek")
+async def gastenboek_form():
+    return FileResponse("static/pages/gastenboek_form.html")
+
+@app.post("/gastenboek")
+async def gastenboek_opslaan(
+    naam: str = Form(...),
+    wachtwoord: str = Form(...),
+    bericht: str = Form(...),
+):
+    with SqliteDict("gebruikers.db") as gebruikers:
+        opgeslagen = gebruikers.get(naam)
+    if opgeslagen != wachtwoord:
+        raise HTTPException(status_code=401, detail="Naam of wachtwoord klopt niet")
+
+    with SqliteDict("gastenboek.db") as db:
+        sleutel = f"bericht_{time.time_ns()}"
+        db[sleutel] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    return RedirectResponse(url="/berichten", status_code=303)
+
+@app.get("/berichten")
+async def berichten(request: Request):
+    with SqliteDict("gastenboek.db") as db:
+        alle_berichten = list(db.items())
+    return templates.TemplateResponse(
+        request,
+        "berichten.html",
+        {"berichten": alle_berichten}
+    )
+
+@app.post("/verwijderen")
+async def verwijderen(sleutel: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        if sleutel in db:
+            del db[sleutel]
+            db.commit()
+    return RedirectResponse(url="/berichten", status_code=303)
+
+@app.get("/bericht/{sleutel}")
+async def bericht_detail(request: Request, sleutel: str):
+    with SqliteDict("gastenboek.db") as db:
+        bericht = db.get(sleutel)
+
+    if bericht is None:
+        raise HTTPException(status_code=404, detail="Dit bericht bestaat niet")
+
+    return templates.TemplateResponse(
+        request,
+        "bericht.html",
+        {"bericht": bericht}
+    )
+
+@app.get("/registreer")
+async def registreer_formulier():
+    return FileResponse("static/pages/registreer.html")
+
+@app.post("/registreer")
+async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as gebruikers:
+        if naam in gebruikers:
+            raise HTTPException(status_code=400, detail="Deze naam is al bezet")
+        gebruikers[naam] = wachtwoord
+        gebruikers.commit()
+    return RedirectResponse(url="/gastenboek", status_code=303)
+```
+
+</details>
+
+## Opdrachten
+
+### Opdracht 1: Predict - Alex als Sara
+
+Alex heeft een account met het wachtwoord `maan456`. Hij vult in het gastenboek de naam `sara` in, met zijn eigen wachtwoord.
+
+**Vraag:** wat gebeurt er?
+
+<details>
+<summary>Tip</summary>
+
+Welk wachtwoord haalt `gebruikers.get(naam)` op, als `naam` gelijk is aan `sara`?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Hij krijgt `401` met `Naam of wachtwoord klopt niet`, en er komt geen bericht bij. De server haalt het wachtwoord van Sara op, `welkom123`, en dat is niet wat Alex typte. Zijn eigen wachtwoord helpt hem alleen bij zijn eigen naam.
+
+</details>
+
+### Opdracht 2: Run
+
+Pas het formulier en je `POST /gastenboek` aan, en verstuur een paar berichten met en zonder het goede wachtwoord. Welke komen er in de lijst?
+
+<details>
+<summary>Antwoord</summary>
+
+Alleen de berichten met het goede wachtwoord. Bij elk ander bericht stopt `raise` de functie vóór het `with`-blok van `gastenboek.db`, dus er wordt niets opgeslagen.
+
+</details>
+
+### Opdracht 3: Investigate - Twee meldingen
+
+Stel dat je de controle in twee stukken splitst: bij een naam zonder account de melding `Deze naam bestaat niet`, en bij een fout wachtwoord `Fout wachtwoord`. Wat kan een bezoeker dan te weten komen, zonder één wachtwoord te kennen?
+
+<details>
+<summary>Antwoord</summary>
+
+Welke namen een account hebben. Hij probeert een naam met een willekeurig wachtwoord: zegt de server `Fout wachtwoord`, dan bestaat het account. Zo maakt hij een lijst met namen om daarna wachtwoorden bij te raden. Met één melding voor allebei leert hij niets.
+
+</details>
+
+### Opdracht 4: Make - De pagina van een gebruiker
+
+Maak een endpoint `/gebruiker/{naam}` dat alle berichten van één gebruiker als JSON teruggeeft: `{"naam":"sara","berichten":["Hoi","Leuk gastenboek"]}`. Een naam zonder berichten geeft een lege lijst.
+
+<details>
+<summary>Tip</summary>
+
+Loop met een for-lus door `db.values()` van `gastenboek.db`, en zet de tekst van elk bericht met die naam in een lijst.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+@app.get("/gebruiker/{naam}")
+async def gebruiker(naam: str):
+    van_hem = []
+    with SqliteDict("gastenboek.db") as db:
+        for bericht in db.values():
+            if bericht["naam"] == naam:
+                van_hem.append(bericht["bericht"])
+    return {"naam": naam, "berichten": van_hem}
+```
+
+Kijk je eerst in `gebruikers.db` en geef je een 404 bij een naam zonder account, dan verraad je welke namen een account hebben: hetzelfde lek als de twee meldingen uit opdracht 3. Een lege lijst zegt alleen dat er geen berichten zijn.
+
+</details>
+
+Door naar [Zo werkt het: klikken en versturen](/docs/FastAPI/accounts/verzoek-get).

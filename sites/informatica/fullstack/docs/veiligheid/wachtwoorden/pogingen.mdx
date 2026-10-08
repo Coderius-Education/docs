@@ -201,15 +201,19 @@ controle kreeg.
 
 ### Opdracht 3: Make - In je eigen project
 
-Wil je accounts in je eigen project, neem dan de drie endpoints uit deze reeks
-over, met `ph`, `NEP` en de `limiter` bovenaan, en maak er formulieren bij voor
-registreren en inloggen.
+Je gastenboek heeft accounts sinds
+[Registreren: een account opslaan](/docs/FastAPI/accounts/registreren), en bewaart de
+wachtwoorden nog als gewone tekst. Maak ze veilig met wat je in deze reeks
+leerde: Argon2 bij het registreren, `ph.verify` met `NEP` op elke plek die een
+wachtwoord controleert, en een limiet op elk van die plekken.
 
 <details>
 <summary>Tip</summary>
 
-Een wachtwoordveld in HTML is een `<input type="password">`: dan ziet niemand
-over je schouder mee. De `name` moet `wachtwoord` zijn, zoals de parameter.
+Zoek naar `gebruikers.get(naam)`: op elke plek waar je een wachtwoord
+vergelijkt, komt `ph.verify`. Bouwde je de uitbreiding sessies, dan is dat
+`POST /inloggen`. Zonder die uitbreiding is het je `POST /gastenboek`, want
+daar controleert je server het wachtwoord bij elk bericht.
 
 </details>
 
@@ -218,56 +222,60 @@ over je schouder mee. De `name` moet `wachtwoord` zijn, zoals de parameter.
 
 Loop deze lijst af:
 
-- Er staat nergens een wachtwoord als gewone tekst: niet in de database, niet
-  in een print, niet in een cookie.
-- `/registreer` bewaart `ph.hash(wachtwoord)`.
-- `/inloggen` gebruikt `ph.verify`, ook bij een onbekende naam (tegen `NEP`), en
-  geeft bij een onbekende naam en bij een fout wachtwoord dezelfde melding.
-- `/wijzig` controleert eerst het oude wachtwoord.
-- `/inloggen` en `/wijzig` hebben `@limiter.limit` direct onder `@app.post`, en
+- `/registreer` bewaart `ph.hash(wachtwoord)`, en weigert nog steeds een naam
+  die al bestaat.
+- Elke plek die een wachtwoord controleert, gebruikt `ph.verify`, ook bij een
+  onbekende naam (tegen `NEP`), en geeft bij een onbekende naam en bij een fout
+  wachtwoord dezelfde melding.
+- Elk van die endpoints heeft `@limiter.limit` direct onder `@app.post`, en
   `request: Request` vooraan bij de parameters. Een script dat zes keer fout
   inlogt, krijgt bij de zesde een `429`.
+- Er staat nergens een wachtwoord als gewone tekst: niet in de database, niet
+  in een print, niet in een cookie. Gooi je oude `gebruikers.db` weg en
+  registreer opnieuw: `ph.verify` kan niets met een wachtwoord dat als gewone
+  tekst is opgeslagen, en dan stopt je server met een `500` en in de terminal
+  `argon2.exceptions.InvalidHashError`.
 
 Heb je in je project al een limiter uit Te veel verzoeken, gebruik dan die; een
-tweede `limiter` of `app.add_exception_handler` is niet nodig.
+tweede `limiter` of `app.add_exception_handler` is niet nodig. Anders zet je de
+regels uit deze les bovenaan, net als `ph` en `NEP`.
 
-Het formulier voor registreren:
-
-```html
-<form method="post" action="/registreer">
-    <input type="text" name="naam" required>
-    <input type="password" name="wachtwoord" required>
-    <button type="submit">Registreer</button>
-</form>
-```
-
-Het formulier voor inloggen is hetzelfde, met `action="/inloggen"`.
-
-Moet je site na het inloggen onthouden wie er is, zet de naam dan in de sessie
-uit [Onthouden op de server: sessies](/docs/FastAPI/sessies). Zet in
-`/inloggen` de parameter `sessie_id: str = Cookie(default="")` erbij, naast
-`wachtwoord`, en vervang de laatste `return` door:
-
-{/* niet-compileren: de laatste regels van inloggen, ingesprongen fragment */}
+Met de sessies uit [Onthouden op de server: sessies](/docs/FastAPI/onthouden/sessies)
+wordt je `POST /inloggen` zo. De 401 uit de basis blijft, en onder de controle
+blijft de sessie zoals hij was. Bij je imports komt `VerifyMismatchError`;
+`Request` staat er sinds de templates al:
 
 ```python
-    if not sessie_id:
-        sessie_id = secrets.token_hex(16)
+from argon2.exceptions import VerifyMismatchError
+from fastapi import Cookie, FastAPI, Form, HTTPException, Request
+
+@app.post("/inloggen")
+@limiter.limit("5/minute")
+async def inloggen(request: Request, naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as gebruikers:
+        opgeslagen = gebruikers.get(naam, NEP)
+    try:
+        ph.verify(opgeslagen, wachtwoord)
+    except VerifyMismatchError:
+        raise HTTPException(status_code=401, detail="Naam of wachtwoord klopt niet")
+    if opgeslagen == NEP:
+        raise HTTPException(status_code=401, detail="Naam of wachtwoord klopt niet")
+
+    sessie_id = secrets.token_hex(16)
     with SqliteDict("sessies.db") as sessies:
-        mijn = sessies.get(sessie_id, {"naam": naam, "berichten": []})
-        mijn["naam"] = naam
-        sessies[sessie_id] = mijn
+        sessies[sessie_id] = {"naam": naam}
         sessies.commit()
-    antwoord = RedirectResponse(url="/berichten", status_code=303)
-    antwoord.set_cookie(key="sessie_id", value=sessie_id, httponly=True, samesite="lax")
+
+    antwoord = RedirectResponse(url="/gastenboek", status_code=303)
+    antwoord.set_cookie(key="sessie_id", value=sessie_id, max_age=60 * 60 * 24 * 30)
     return antwoord
 ```
 
-Dit staat ná `ph.verify` en de controle op `NEP`: pas daar weet je wie er
-inlogt. `secrets`, `Cookie` en `RedirectResponse` heb je sinds de les over
-sessies al geïmporteerd. Geeft `/inloggen` zo een `RedirectResponse` terug, dan
-werkt de limiet ook: `slowapi` heeft alleen bij `headers_enabled=True` een
-`response: Response` nodig voor een dictionary.
+Geeft `/inloggen` zo een `RedirectResponse` terug, dan werkt de limiet ook:
+`slowapi` heeft alleen bij `headers_enabled=True` een `response: Response`
+nodig voor een dictionary. Deed je de reeks Cookies afschermen, dan heeft je
+`set_cookie` ook `httponly=True` en `samesite="lax"`, en je sessie een `tot`;
+laat die staan.
 
 </details>
 

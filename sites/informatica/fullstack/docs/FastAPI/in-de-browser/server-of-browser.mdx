@@ -1,0 +1,182 @@
+# Server of browser?
+
+<Voorkennis
+  items={[
+    {site: 'web', to: '/docs/js-basics/modern-dom', label: 'querySelector en querySelectorAll'},
+  ]}
+/>
+
+Je hebt nu twee plekken waar je code kunt zetten. Het gastenboek draait op de server: Python slaat op, Python bouwt de lijst. Met htmx vraag je de server iets zonder dat de pagina verspringt, maar het werk gebeurt nog steeds in Python. De tekenteller draait in de browser: JavaScript rekent, de server weet van niets.
+
+Bij alles wat je vanaf nu bouwt kies je tussen die twee.
+
+## De hoofdvraag
+
+Moet het bewaard blijven, of moet iemand anders het kunnen zien?
+
+Is het antwoord ja, dan hoort het op de server. Alleen Python komt bij je database, en alleen wat daar staat is er straks nog. Is het alleen voor deze bezoeker, nu, op deze pagina, dan hoort het in de browser.
+
+Een bericht in het gastenboek moet bewaard blijven en anderen moeten het lezen: server. Een teller die laat zien hoeveel tekens je nog mag typen is weg zodra je de pagina sluit, en niemand anders heeft er iets aan: browser.
+
+## De tweede vraag: hoe vaak gebeurt het?
+
+Alles wat via de server gaat kost een verzoek heen en een antwoord terug. Eén keer bij het versturen van een formulier merk je daar niets van. Bij elke toetsaanslag wél: veertien letters worden veertien verzoeken. Zonder htmx zou de pagina bij elke letter opnieuw laden; met htmx blijft hij staan, maar elk verzoek moet nog steeds heen en terug.
+
+Werk dat vaak gebeurt hoort daarom in de browser, ook als je het in Python zou kúnnen: meetypen, slepen, in- en uitklappen, iets rood kleuren. Het htmx-recept Zoeken terwijl je typt gaat daar tegenin, en met reden: de server heeft ook de berichten die niet op de pagina staan, en met een `delay` stuurt htmx pas een verzoek als je even stopt met typen.
+
+## De derde vraag: mag je het geloven?
+
+In je formulier staat:
+
+```html
+<input type="text" name="bericht" maxlength="80" required>
+```
+
+Dat ziet eruit als een regel: berichten zijn nooit langer dan 80 tekens. Maar `maxlength` is een instructie aan de browser, en de browser is van de bezoeker. Wie het formulier omzeilt en rechtstreeks naar je endpoint stuurt, komt met 500 tekens binnen, en jouw Python-code slaat het op zonder klagen.
+
+Wil je echt een grens, dan moet Python die zelf controleren. Zet deze controle bovenaan in je POST-endpoint `/gastenboek`, boven de controle van het wachtwoord uit [Inloggen: een wachtwoord controleren](/docs/FastAPI/accounts/inloggen); de rest van de functie blijft zoals hij was:
+
+{/* route-dubbel: toont alleen de controle bovenaan het bestaande POST /gastenboek */}
+```python
+@app.post("/gastenboek")
+async def gastenboek_opslaan(
+    naam: str = Form(...),
+    wachtwoord: str = Form(...),
+    bericht: str = Form(...),
+):
+    if len(bericht) > 80:
+        raise HTTPException(status_code=400, detail="Bericht is te lang")
+    ...
+```
+
+`maxlength` blijft nuttig: het helpt een gewone bezoeker die zich vergist. Maar het is een hulpmiddel, geen controle. Controles horen op de server, want daar heeft de bezoeker geen invloed op.
+
+## Naast elkaar
+
+| | Server (FastAPI) | Server zonder herladen (htmx) | Browser (JavaScript) |
+|:---:|:---:|:---:|:---:|
+| **Waar draait het** | Op jouw computer | Op jouw computer | Op die van de bezoeker |
+| **Blijft het bewaard** | Ja, in je database | Ja, in je database | Nee, weg bij het sluiten |
+| **Zien anderen het** | Ja | Ja | Nee |
+| **Kost een verzoek** | Elke keer, en de pagina verspringt | Elke keer, de pagina blijft staan | Alleen bij het laden |
+| **Mag je het vertrouwen** | Ja | Ja | Nee |
+| **Typisch voor** | Opslaan, ophalen, controleren | Hetzelfde, midden op een pagina | Reageren op klikken en typen |
+
+Moet iets bewaard blijven of zichtbaar zijn voor anderen, dan hoort het op de server. Reageer je op wat de bezoeker doet, met data die al op de pagina staat, dan hoort het in de browser.
+
+De middelste kolom is wat je in [Zonder herladen met htmx](/docs/FastAPI/zonder-herladen/htmx) deed. Het is nog steeds de server, met dezelfde endpoints, database en controles; alleen de pagina blijft staan. Voor de hoofdvraag maakt dat niets uit.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Waar hoort het?
+
+Voor elk van deze vier: server of browser?
+
+1. Een bezoeker klikt op een naam en er klapt een bericht open dat al op de pagina stond.
+2. Een bezoeker verstuurt een bericht voor het gastenboek.
+3. De achtergrondkleur van de pagina wisselt tussen licht en donker als je op een knop klikt.
+4. Bijhouden hoe vaak een bericht is bekeken.
+
+<details>
+<summary>Tip</summary>
+
+Stel bij elk geval de hoofdvraag: moet dit bewaard blijven, of moet iemand anders dit kunnen zien?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+1. **Browser.** Het bericht stond er al; je laat het alleen zien.
+2. **Server.** Het moet bewaard blijven en anderen moeten het lezen.
+3. **Browser.** Het geldt alleen voor deze bezoeker en hoeft niet bewaard te blijven. Wil je dat de site je keuze onthoudt tot de volgende keer, dan wordt het lastiger, want dan moet je hem ergens bewaren.
+4. **Server.** Een teller die van alle bezoekers samen optelt kan alleen op één plek staan, en dat is jouw database.
+
+</details>
+
+### Opdracht 2: Run - Omzeil je eigen formulier
+
+Je gastenboekveld heeft `maxlength="80"`. Open het in **Elementen**, zoals in [Console en Elementen](/docs/FastAPI/in-de-browser/devtools-console): rechtermuisknop op het veld, Inspecteren, en dubbelklik op `maxlength="80"` om het weg te halen. Typ nu een heel lang bericht en verstuur het.
+
+Kijk daarna op `/berichten` wat er is opgeslagen.
+
+<details>
+<summary>Antwoord</summary>
+
+Het lange bericht staat ertussen, van begin tot eind. `maxlength` zit alleen in de HTML die jij hebt gestuurd, en die HTML staat op de computer van de bezoeker. Die mag ermee doen wat hij wil.
+
+</details>
+
+### Opdracht 3: Investigate - Repareer het aan de goede kant
+
+Voeg de controle toe in je POST-endpoint, zoals hierboven, en probeer opdracht 2 opnieuw.
+
+<details>
+<summary>Antwoord</summary>
+
+Nu krijg je een 400 met "Bericht is te lang", hoe je het ook probeert. Gebruik je het htmx-formulier, dan verandert er op de pagina niets: htmx zet een foutantwoord niet in de pagina. Stond er van een eerder bericht nog "Bedankt, …", dan blijft die zin staan, alsof het gelukt is. Staat `hx-on::after-request="this.reset()"` op je formulier, dan is je lange bericht bovendien uit het veld verdwenen. In Netwerk staat een rode regel met status 400, en bij Reactie de melding. De controle staat op de server, en daar komt de bezoeker niet bij.
+
+Laat `maxlength` wel in de HTML staan. Die twee bijten elkaar niet: de browser helpt wie zich vergist, de server houdt tegen wie het expres probeert.
+
+</details>
+
+### Opdracht 4: Make - Een knop die niets aan de server vraagt
+
+Zet op je berichtenpagina een knop die de lijst omdraait: nieuwste eerst, oudste eerst. Doe dit in JavaScript, zonder de pagina te herladen.
+
+<details>
+<summary>Tip</summary>
+
+De lijstitems staan al in de HTML. Met `lijst.querySelectorAll("li")` haal je ze op, en met `lijst.prepend(item)` zet je een item weer vooraan. Loop met een for-lus door de items heen en zet ze allemaal opnieuw vooraan.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Zet in `templates/berichten.html`, boven je lijst:
+
+```html
+<button id="omdraai-knop">Omdraaien</button>
+```
+
+En in `static/js/berichten.js`. Maakte je dat bestand niet in opdracht 5 van [JavaScript erbij](/docs/FastAPI/in-de-browser/javascript), maak het dan nu en koppel het in de `<head>` van `berichten.html`:
+
+```html
+<script src="/static/js/berichten.js" defer></script>
+```
+
+Staat er al code in het bestand, zet dit eronder:
+
+```js
+const omdraaiKnop = document.querySelector("#omdraai-knop");
+
+omdraaiKnop.addEventListener("click", function () {
+    const lijst = document.querySelector("ul");
+    const items = lijst.querySelectorAll("li");
+    for (let i = 0; i < items.length; i++) {
+        lijst.prepend(items[i]);
+    }
+});
+```
+
+`document.querySelector("ul")` pakt de eerste `<ul>` op de pagina: je berichtenlijst. Je zoekt hem pas op bij de klik, want htmx vervangt de lijst als je ververst. De knop heet `omdraaiKnop`, omdat `berichten.js` uit opdracht 5 al een `knop` heeft. Elk item weer vooraan zetten draait de volgorde om. De server komt er niet aan te pas: alle berichten stonden al op de pagina.
+
+</details>
+
+### Opdracht 5: Make - Bedenk het zelf
+
+Bedenk twee uitbreidingen voor je gastenboek: één die op de server hoort en één die in de browser hoort. Schrijf bij allebei in één zin waarom.
+
+<details>
+<summary>Antwoord</summary>
+
+Er is niet één goed antwoord. Twee voorbeelden:
+
+**Server:** een bericht kunnen verwijderen. Het moet weg blijven, ook voor andere bezoekers, dus het moet uit de database.
+
+**Browser:** een zoekveld dat de berichten die al op de pagina staan filtert terwijl je typt. Het gebeurt bij elke toetsaanslag en hoeft niet bewaard te blijven.
+
+Zit jouw browser-idee aan data die nog niet op de pagina staat? Dan hoort het bij de server: laat je endpoint die gegevens meegeven aan de template, zodat ze er bij het laden al staan.
+
+</details>

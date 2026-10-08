@@ -1,0 +1,225 @@
+# JavaScript erbij
+
+<Voorkennis
+  items={[
+    {site: 'web', to: '/docs/js-basics/scriptjs', label: 'script.js koppelen met defer'},
+    {site: 'web', to: '/docs/js-basics/modern-dom', label: 'querySelector en de DOM'},
+    {site: 'web', to: '/docs/js-basics/events', label: 'addEventListener'},
+    {site: 'web', to: '/docs/js-basics/formulier-data', label: 'Formulier-data uitlezen'},
+    {site: 'web', to: '/docs/js-basics/inline-stijl', label: 'Stijl aanpassen met JavaScript'},
+  ]}
+/>
+
+Alles wat je tot nu toe hebt gebouwd gaat via de server. Zonder htmx verspringt de pagina, met htmx blijft hij staan, maar in beide gevallen vraagt de browser iets aan Python en wacht hij op het antwoord. Voor sommige dingen is dat omslachtig, en soms kan het niet eens. Daarvoor zet je JavaScript in je FastAPI-project.
+
+## Waar het bestand komt
+
+JavaScript is een bestand in je `static`-map, net als je CSS:
+
+```
+je-project/
+├── main.py
+├── static/
+│   ├── css/
+│   │   └── style.css
+│   └── js/
+│       └── app.js
+└── templates/
+```
+
+Je hoeft niets aan `main.py` te veranderen. De regel `app.mount("/static", StaticFiles(directory="static"), name="static")` uit [CSS in een eigen bestand (static files)](/docs/FastAPI/css-en-afbeeldingen/static_files) serveert alles in die map, dus ook je JavaScript.
+
+De teller in deze les komt op het gastenboekformulier, `static/pages/gastenboek_form.html`. Koppel je script in de `<head>` van dat bestand, onder de script-tag van htmx als die er staat. Heeft het bestand nog geen `<head>`, omdat je het formulierrecept uit de [htmx-recepten](/docs/FastAPI/zonder-herladen/htmx-overzicht) niet bouwde, zet er dan een boven de `<body>`:
+
+```html
+<script src="/static/js/app.js" defer></script>
+```
+
+## Een teller die meteen reageert
+
+Op het gastenboekformulier laat je zien hoeveel tekens er nog over zijn. Je formulier blijft zoals het is, met `hx-post` als je het htmx-recept bouwde of met `method` en `action` als je dat niet deed. Er veranderen twee dingen. Het berichtveld krijgt een `id` en een `maxlength`:
+
+```html
+<input type="text" id="bericht-veld" name="bericht" placeholder="Je bericht" maxlength="80" required>
+```
+
+En zet direct onder dat veld een plek waar de teller kan staan:
+
+```html
+<p id="teller">80 tekens over</p>
+```
+
+De code komt in `static/js/app.js`:
+
+```js
+const veld = document.querySelector("#bericht-veld");
+const teller = document.querySelector("#teller");
+
+veld.addEventListener("input", function () {
+    const over = 80 - veld.value.length;
+    teller.textContent = over + " tekens over";
+});
+```
+
+Bij elke toetsaanslag stuurt de browser een `input`-event, en jouw functie past de tekst aan.
+
+Staat `hx-on::after-request="this.reset()"` uit de htmx-recepten op je formulier, dan maakt htmx het veld leeg zonder `input`-event, en blijft de teller op het oude getal staan. Zet dan onderaan in `app.js`:
+
+```js
+document.querySelector("form").addEventListener("reset", function () {
+    teller.textContent = "80 tekens over";
+});
+```
+
+Een formulier stuurt een `reset`-event als het wordt leeggemaakt.
+
+## Kijk wat de server ervan merkt
+
+Typ een paar letters in het veld en kijk dan naar de terminal waar `fastapi dev` draait.
+
+Daar staat niets nieuws, geen enkele regel. Je server heeft de teller nooit gezien: het bestand `app.js` is één keer opgehaald, en daarna doet de browser alles zelf.
+
+Daarin verschilt dit van alles wat je hiervoor bouwde. Een formulier versturen betekent een verzoek naar Python. Een teller bijwerken via de server zou dat ook betekenen: twintig verzoeken voor twintig letters, ook met htmx, terwijl alles wat de teller nodig heeft al in de browser staat. Daarom hoort dit in de browser.
+
+## Testen
+
+1. Start je server en ga naar het gastenboekformulier
+2. Typ in het berichtveld en kijk of de teller meeloopt
+3. Kijk in de terminal: er komt geen enkel verzoek bij
+
+:::danger[Gaat er iets mis?]
+Doet de teller niets? Druk op **F12** en kies het tabblad **Console**: daar staat elke fout uit je JavaScript in het rood. Staat er `Cannot read properties of null`, dan vindt je script het element niet. De Console leer je in de volgende les, [Console en Elementen](/docs/FastAPI/in-de-browser/devtools-console), goed kennen. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
+:::
+
+## Opdrachten
+
+### Opdracht 1: Predict - Wat ziet de server?
+
+Je typt het woord "hallo" in het berichtveld, letter voor letter.
+
+**Vraag:** hoeveel verzoeken ziet je server in de terminal?
+
+<details>
+<summary>Tip</summary>
+
+Kijk naar wat er gebeurt bij een toetsaanslag: verandert er iets aan de pagina die de server heeft gestuurd, of vraagt de browser een nieuwe pagina op?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Nul. De pagina en `app.js` waren al opgehaald voordat je begon te typen. Alle vijf de toetsaanslagen handelt code af die al in de browser zit.
+
+</details>
+
+### Opdracht 2: Run
+
+Maak `static/js/app.js`, koppel het in de `<head>` van `gastenboek_form.html` en voeg het `<p id="teller">` toe. Controleer dat de teller meeloopt.
+
+### Opdracht 3: Investigate - Defer weghalen
+
+Haal `defer` weg uit je script-tag, zodat er `<script src="/static/js/app.js"></script>` staat. Herlaad de pagina en kijk in de console.
+
+<details>
+<summary>Antwoord</summary>
+
+Je krijgt `Uncaught TypeError: Cannot read properties of null (reading 'addEventListener')`.
+
+Zonder `defer` draait je script meteen, terwijl de browser de `<head>` leest. De `<form>` bestaat dan nog niet, dus `document.querySelector("#bericht-veld")` vindt niets en geeft `null` terug. Met `defer` wacht de browser tot de hele pagina er staat.
+
+</details>
+
+### Opdracht 4: Make - Rood bij bijna vol
+
+Laat de teller rood worden zodra er nog minder dan tien tekens over zijn, en weer zwart als er weer ruimte is.
+
+<details>
+<summary>Tip</summary>
+
+`teller.style.color = "red"` verandert de kleur. Je hebt een `if` nodig die kijkt of `over` kleiner is dan tien, met een `else` voor het andere geval.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```js
+const veld = document.querySelector("#bericht-veld");
+const teller = document.querySelector("#teller");
+
+veld.addEventListener("input", function () {
+    const over = 80 - veld.value.length;
+    teller.textContent = over + " tekens over";
+
+    if (over < 10) {
+        teller.style.color = "red";
+    } else {
+        teller.style.color = "black";
+    }
+});
+```
+
+Een `reset`-functie onderaan uit deze les laat je staan.
+
+De `else` is nodig: zonder die regel blijft de teller rood zodra je één keer onder de tien bent geweest, ook als je tekst weer weghaalt.
+
+</details>
+
+### Opdracht 5: Make - Formulier in- en uitklappen
+
+Zet op je berichtenpagina een knop "Nieuw bericht" die een formulier toont of verbergt. Het formulier begint verborgen. Zet de JavaScript in een eigen bestand, `static/js/berichten.js`, en koppel dat in de `<head>` van `berichten.html`.
+
+<details>
+<summary>Tip</summary>
+
+Koppel niet `app.js` op de berichtenpagina: daar staat geen `#bericht-veld`, dus de eerste regel met `addEventListener` geeft een fout, en alles eronder draait dan niet meer. Geef het formulier `style="display: none"` als beginstand. In je JavaScript kun je `formulier.style.display` op `"block"` of `"none"` zetten. Kijk met een `if` welke van de twee er nu staat.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+In de `<head>` van `berichten.html`:
+
+```html
+<script src="/static/js/berichten.js" defer></script>
+```
+
+In de `<body>`, boven de lijst. De `<form>`-tag is dezelfde als op je gastenboekformulier. Bouwde je het htmx-recept, dan is dat de versie met `hx-post` en een `<p id="antwoord">` eronder, want je endpoint geeft dan een zin terug en geen omleiding. Zet in dat geval ook `<script src="/static/js/htmx.min.js"></script>` in deze `<head>`:
+
+```html
+<button id="klap-knop">Nieuw bericht</button>
+<form id="bericht-formulier" hx-post="/gastenboek" hx-target="#antwoord" style="display: none">
+    <input type="text" name="naam" placeholder="Je naam" required>
+    <input type="password" name="wachtwoord" placeholder="Je wachtwoord" required>
+    <input type="text" name="bericht" placeholder="Je bericht" required>
+    <button type="submit">Verstuur</button>
+</form>
+<p id="antwoord"></p>
+```
+
+Zonder het htmx-recept schrijf je `method="post" action="/gastenboek"` in plaats van `hx-post` en `hx-target`, en laat je de `<p>` weg.
+
+Met `hx-post` verschijnt na Verstuur alleen de zin met "Bedankt", en staat je nieuwe bericht pas in de lijst na Ververs of F5. Zonder htmx stuurt de omleiding je terug naar `/berichten`, en staat het er meteen.
+
+In `static/js/berichten.js`:
+
+```js
+const knop = document.querySelector("#klap-knop");
+const formulier = document.querySelector("#bericht-formulier");
+
+knop.addEventListener("click", function () {
+    if (formulier.style.display === "none") {
+        formulier.style.display = "block";
+        knop.textContent = "Annuleren";
+    } else {
+        formulier.style.display = "none";
+        knop.textContent = "Nieuw bericht";
+    }
+});
+```
+
+Ook hier komt de server er niet aan te pas. Het formulier stond de hele tijd al in de HTML die Python stuurde; JavaScript laat het alleen zien of verbergt het.
+
+</details>

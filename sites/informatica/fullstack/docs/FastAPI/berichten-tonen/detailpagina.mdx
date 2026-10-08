@@ -1,0 +1,393 @@
+# Eén item tonen: de sleutel uit de URL
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/data/11b-itereren-dictionaries', label: 'Door een dictionary lopen met items()'},
+  ]}
+/>
+
+Je lijst toont alle berichten onder elkaar, op één pagina. Op echte websites klik je op één item en krijg je een eigen pagina, met een eigen URL die je kunt delen. Daarvoor moet de URL zeggen wélk bericht je bedoelt.
+
+## De sleutel in de URL
+
+In [Eén route voor veel pagina's: path-parameters](/docs/FastAPI/veel-paginas/path-parameters) gaf `/dier/{naam}` elk dier een eigen pagina. Een bericht krijgt op dezelfde manier een eigen adres, met de sleutel uit de database in het pad. Een vraagteken, zoals `/zoek?term=python` uit [Een waarde na een vraagteken: query-parameters](/docs/FastAPI/veel-paginas/query-parameters), kan ook, maar voor één item is een path-parameter gebruikelijker. Zet dit endpoint onder je andere endpoints:
+
+```python
+@app.get("/bericht/{sleutel}")
+async def bericht_detail(request: Request, sleutel: str):
+    return {"je_vroeg_om": sleutel}
+```
+
+Ga je naar `/bericht/bericht_17` dan krijg je `{"je_vroeg_om":"bericht_17"}`, net als bij de dieren.
+
+## Het bericht opzoeken
+
+Met die sleutel kun je het bericht uit de database halen. Vervang je endpoint door deze versie:
+
+{/* route-dubbel: vervangt de eerste versie van GET /bericht/{sleutel} hierboven */}
+```python
+@app.get("/bericht/{sleutel}")
+async def bericht_detail(request: Request, sleutel: str):
+    with SqliteDict("gastenboek.db") as db:
+        bericht = db.get(sleutel)
+    return templates.TemplateResponse(
+        request,
+        "bericht.html",
+        {"bericht": bericht}
+    )
+```
+
+`db.get(sleutel)` geeft `None` als de sleutel niet bestaat, in plaats van te crashen met een `KeyError`.
+
+De template `templates/bericht.html` toont één bericht, met een link terug naar de lijst:
+
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Bericht van {{ bericht.naam }}</h1>
+        <p>{{ bericht.bericht }}</p>
+        <a href="/berichten">Terug naar alle berichten</a>
+    </body>
+</html>
+```
+
+## Linken vanuit de lijst
+
+Om naar een bericht te linken, heeft de lijst zijn sleutel nodig. Tot nu toe stuurde `/berichten` alleen de berichten mee, via `db.values()`. Met **`db.items()`** gaan de sleutels mee. Vervang je endpoint `/berichten`:
+
+<CodeUitleg>
+
+{/* route-dubbel: vervangt GET /berichten uit Alles tonen, nu met db.items() */}
+```python showLineNumbers
+@app.get("/berichten")
+async def berichten(request: Request):
+    with SqliteDict("gastenboek.db") as db:
+        alle_berichten = list(db.items())
+    return templates.TemplateResponse(
+        request,
+        "berichten.html",
+        {"berichten": alle_berichten}
+    )
+```
+
+<Regel n={4}>
+`db.items()` geeft paren: eerst de sleutel, dan het bericht. De `list()` eromheen is net zo nodig als bij `db.values()`.
+</Regel>
+
+</CodeUitleg>
+
+In `templates/berichten.html` loop je nu over twee dingen tegelijk, en wordt de naam een link met de sleutel erin. Vervang de for-lus binnen de `<ul>` door deze:
+
+```html
+{% for sleutel, bericht in berichten %}
+    <li><a href="/bericht/{{ sleutel }}">{{ bericht.naam }}</a>: {{ bericht.bericht }}</li>
+{% endfor %}
+```
+
+`{% for sleutel, bericht in berichten %}` pakt elk paar uit in twee namen, net als `for sleutel, waarde in db.items():` in Python. Vergeet je de `sleutel, ` in de lus, dan wordt elk bericht een lege regel met alleen een dubbele punt: Jinja2 zoekt dan `naam` in een paar, en dat heeft geen naam.
+
+Heb je in een opdracht `berichten` ook buiten deze lus gebruikt, zoals `berichten[-1].naam`? Pas dat dan ook aan: elk item is nu een paar, dus `berichten[-1][1].naam`.
+
+<details>
+<summary>Zo ziet je `templates/berichten.html` er nu uit</summary>
+
+Het `{% if %}`-blok uit [Nog niets? if en else in je template](/docs/FastAPI/berichten-tonen/leeg) blijft staan; alleen de lus binnen de `<ul>` is nieuw.
+
+```html
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Gastenboek</title>
+        <link rel="stylesheet" href="/static/css/style.css">
+    </head>
+    <body>
+        <h1>Gastenboek</h1>
+
+        {% if berichten %}
+            <ul>
+                {% for sleutel, bericht in berichten %}
+                    <li><a href="/bericht/{{ sleutel }}">{{ bericht.naam }}</a>: {{ bericht.bericht }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Nog geen berichten. Wees de eerste.</p>
+        {% endif %}
+
+        <a href="/gastenboek">Nieuw bericht</a>
+    </body>
+</html>
+```
+
+</details>
+
+## Testen
+
+1. Ga naar `/berichten` en klik op een naam.
+2. Je ziet één bericht, en de sleutel staat in de adresbalk.
+
+Wat er gebeurt bij een sleutel die niet bestaat, probeer je uit in opdracht 3. Een nette 404 daarvoor maak je in de [volgende les](/docs/FastAPI/berichten-tonen/niet-gevonden).
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+```python
+import random
+import time
+
+from fastapi import FastAPI, Form, Request
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
+
+@app.get("/")
+async def home():
+    return FileResponse("static/pages/home.html")
+
+@app.get("/info")
+async def info():
+    return {"naam": "Jouw Naam", "leeftijd": 16}
+
+@app.get("/pagina", response_class=HTMLResponse)
+async def pagina():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Mijn Pagina</title>
+        </head>
+        <body>
+            <h1>Hallo!</h1>
+            <p>Dit is mijn eerste HTML pagina.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/styled", response_class=HTMLResponse)
+async def styled():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Met CSS</title>
+            <style>
+                h1 { color: blue; }
+                p { color: gray; }
+            </style>
+        </head>
+        <body>
+            <h1>Gestylede pagina</h1>
+            <p>Deze tekst is grijs.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/about")
+async def about():
+    return FileResponse("static/pages/about.html")
+
+DIEREN = {
+    "kat": "Een kat spint als hij tevreden is.",
+    "hond": "Een hond kwispelt als hij blij is.",
+    "vis": "Een vis ademt met kieuwen.",
+}
+
+@app.get("/dier/{naam}", response_class=HTMLResponse)
+async def dier(naam: str):
+    tekst = DIEREN.get(naam, "Dit dier staat nog niet op de site.")
+    return f"""
+    <!DOCTYPE html>
+    <html>
+        <body>
+            <h1>Over dieren</h1>
+            <p>{tekst}</p>
+            <a href="/">Terug naar Home</a>
+        </body>
+    </html>
+    """
+
+@app.get("/zoek")
+async def zoek(term: str):
+    return {"je_zocht": term}
+
+@app.get("/foto")
+async def foto():
+    return FileResponse("static/pages/foto.html")
+
+@app.get("/dobbelsteen")
+async def dobbelsteen(request: Request):
+    worp = random.randint(1, 6)
+    return templates.TemplateResponse(
+        request,
+        "dobbelsteen.html",
+        {"worp": worp}
+    )
+
+@app.get("/naam")
+async def toon_formulier():
+    return FileResponse("static/pages/naam_form.html")
+
+@app.post("/verstuur")
+async def ontvang_naam(naam: str = Form(...)):
+    print(f"Naam ontvangen: {naam}")
+    return {"bericht": f"Hallo {naam}!"}
+
+@app.get("/groet")
+async def groet_form():
+    return FileResponse("static/pages/groet_form.html")
+
+@app.post("/groet")
+async def groet_verwerk(request: Request, naam: str = Form(...)):
+    return templates.TemplateResponse(
+        request,
+        "groet_resultaat.html",
+        {"naam": naam}
+    )
+
+@app.get("/opslaan")
+async def naam_formulier():
+    return FileResponse("static/pages/naam_opslaan.html")
+
+@app.post("/opslaan")
+async def naam_opslaan(naam: str = Form(...)):
+    with SqliteDict("namen.db") as db:
+        db["laatste_naam"] = naam
+        db.commit()
+
+    return {"bericht": f"'{naam}' opgeslagen!"}
+
+@app.get("/toon_naam")
+async def toon_naam():
+    with SqliteDict("namen.db") as db:
+        naam = db.get("laatste_naam", "Nog niets opgeslagen")
+    return {"naam": naam}
+
+@app.get("/gastenboek")
+async def gastenboek_form():
+    return FileResponse("static/pages/gastenboek_form.html")
+
+@app.post("/gastenboek")
+async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        sleutel = f"bericht_{time.time_ns()}"
+        db[sleutel] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    return RedirectResponse(url="/berichten", status_code=303)
+
+@app.get("/berichten")
+async def berichten(request: Request):
+    with SqliteDict("gastenboek.db") as db:
+        alle_berichten = list(db.items())
+    return templates.TemplateResponse(
+        request,
+        "berichten.html",
+        {"berichten": alle_berichten}
+    )
+
+@app.get("/bericht/{sleutel}")
+async def bericht_detail(request: Request, sleutel: str):
+    with SqliteDict("gastenboek.db") as db:
+        bericht = db.get(sleutel)
+    return templates.TemplateResponse(
+        request,
+        "bericht.html",
+        {"bericht": bericht}
+    )
+```
+
+</details>
+
+## Opdrachten
+
+### Opdracht 1: Predict - Waar kom je uit?
+
+In je database staat een bericht van Sam onder de sleutel `bericht_1767225600123456789`. Je klikt op `/berichten` op de naam Sam.
+
+**Vraag:** welke URL staat er daarna in de adresbalk, en welke waarde krijgt `sleutel` in je functie?
+
+<details>
+<summary>Tip</summary>
+
+Kijk naar de `href` in je template: `/bericht/{{ sleutel }}`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+De adresbalk toont `/bericht/bericht_1767225600123456789`, en `sleutel` is de tekst `"bericht_1767225600123456789"`. De template zette de sleutel in de link, en FastAPI haalt hem er bij `{sleutel}` weer uit.
+
+</details>
+
+### Opdracht 2: Run
+
+Maak het `/bericht/{sleutel}` endpoint en de template `bericht.html`. Pas je lijst aan zodat elke naam een link is.
+
+### Opdracht 3: Investigate - Een sleutel die niet bestaat
+
+Ga naar `/bericht/onzin` met het tabblad Netwerk open. Wat zie je op de pagina, en welke statuscode staat in Netwerk?
+
+<details>
+<summary>Antwoord</summary>
+
+De pagina toont "Bericht van" met een lege plek erachter, en eronder een lege regel. `db.get("onzin")` geeft `None`, en Jinja2 zet voor `{{ bericht.naam }}` dan niets neer, zonder foutmelding. In Netwerk staat `200`: voor de browser ging alles goed. Een bezoeker, en ook een zoekmachine, kan niet zien dat dit bericht niet bestaat. Dat los je op in de volgende les.
+
+</details>
+
+### Opdracht 4: Make - Alle berichten van één naam
+
+Maak een route `/van/{naam}` die alle berichten toont die onder die naam zijn geschreven. Gebruik je template `berichten.html` niet; maak een eigen template `van.html` met de naam als kop en de berichten als lijst.
+
+<details>
+<summary>Tip</summary>
+
+Loop in je endpoint door `db.values()` en zet elk bericht met `bericht["naam"] == naam` in een nieuwe lijst. Stuur die lijst en de naam mee naar de template.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`templates/van.html`:
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Berichten van {{ naam }}</h1>
+        <ul>
+            {% for bericht in berichten %}
+                <li>{{ bericht.bericht }}</li>
+            {% endfor %}
+        </ul>
+        <a href="/berichten">Alle berichten</a>
+    </body>
+</html>
+```
+
+```python
+@app.get("/van/{naam}")
+async def van(request: Request, naam: str):
+    zijn_berichten = []
+    with SqliteDict("gastenboek.db") as db:
+        for bericht in db.values():
+            if bericht["naam"] == naam:
+                zijn_berichten.append(bericht)
+    return templates.TemplateResponse(
+        request,
+        "van.html",
+        {"naam": naam, "berichten": zijn_berichten}
+    )
+```
+
+Een naam die niemand gebruikte, geeft een pagina met alleen de kop. De `for`-lus over `db.values()` staat binnen het `with`-blok; daarbuiten is de database dicht.
+
+</details>
+
+Door naar [Een 404 sturen: als het item niet bestaat](/docs/FastAPI/berichten-tonen/niet-gevonden).

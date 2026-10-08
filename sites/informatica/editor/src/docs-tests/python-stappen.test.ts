@@ -121,7 +121,10 @@ describe('de uitleg staat op één plek', () => {
   // Command Palette, later de PowerShell-route, en die twee kopieën liepen uit
   // elkaar zonder dat iemand het zag. De checklist zegt nu wat je moet zien en
   // wijst voor het hoe naar de editor-cursus.
-  const installatie = readFileSync(join(FULLSTACK, 'FastAPI/installatie.mdx'), 'utf8');
+  const installatie = readFileSync(
+    join(FULLSTACK, 'FastAPI/eerste-server/installatie.mdx'),
+    'utf8',
+  );
   const blokken = installatie
     .split('<details>')
     .slice(1)

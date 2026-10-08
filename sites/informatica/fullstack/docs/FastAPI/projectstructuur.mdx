@@ -4,7 +4,7 @@ Je project groeit met de lessen mee. Elke stand hieronder is de vorige plus wat 
 
 Ook de map `.venv` ontbreekt in de bomen, net als `__pycache__`, die Python zelf aanmaakt. In je Explorer zie je ze wel, naast `main.py`; je verandert er niets in.
 
-## Bij [Je eerste endpoint](/docs/FastAPI/eerste_endpoint)
+## Bij [Je eerste endpoint](/docs/FastAPI/eerste-server/eerste_endpoint)
 
 ```
 je-project/
@@ -13,7 +13,7 @@ je-project/
 
 Alleen een Python-bestand, meer heb je niet nodig.
 
-## Bij [HTML in bestanden](/docs/FastAPI/html_bestanden)
+## Bij [HTML in bestanden](/docs/FastAPI/paginas/html_bestanden)
 
 ```
 je-project/
@@ -25,7 +25,7 @@ je-project/
 
 HTML staat nu in aparte bestanden, in `static/pages/`.
 
-## Bij [Links tussen pagina's](/docs/FastAPI/links)
+## Bij [Links tussen pagina's](/docs/FastAPI/paginas/links)
 
 ```
 je-project/
@@ -38,7 +38,7 @@ je-project/
 
 Een tweede pagina, met een link heen en terug.
 
-## Bij [CSS in een eigen bestand (static files)](/docs/FastAPI/static_files)
+## Bij [CSS in een eigen bestand (static files)](/docs/FastAPI/css-en-afbeeldingen/static_files)
 
 ```
 je-project/
@@ -53,7 +53,7 @@ je-project/
 
 CSS in een eigen map, bereikbaar via `/static/css/style.css`.
 
-## Bij [Afbeeldingen tonen](/docs/FastAPI/afbeeldingen)
+## Bij [Afbeeldingen tonen](/docs/FastAPI/css-en-afbeeldingen/afbeeldingen)
 
 ```
 je-project/
@@ -70,7 +70,7 @@ je-project/
 
 Afbeeldingen staan direct in de map `static`.
 
-## Bij [Templates met Jinja2](/docs/FastAPI/templates) tot en met [Een formulier beantwoorden met een template](/docs/FastAPI/post_met_templates)
+## Bij [Templates met Jinja2](/docs/FastAPI/formulieren/templates) tot en met [Een formulier beantwoorden met een template](/docs/FastAPI/formulieren/post_met_templates)
 
 ```
 je-project/
@@ -97,7 +97,7 @@ Er komt een map `templates/` bij voor Jinja2-templates. De formulieren zelf blij
 - `templates/`: HTML-bestanden met `{{ variabelen }}` die Python invult
 :::
 
-## Bij [Gegevens opslaan met SqliteDict](/docs/FastAPI/database) en [Een formulier opslaan](/docs/FastAPI/post_naar_database)
+## Bij [Gegevens opslaan met SqliteDict](/docs/FastAPI/sqlitedict/database) tot en met [Doorsturen na opslaan (redirect)](/docs/FastAPI/berichten-opslaan/redirect)
 
 ```
 je-project/
@@ -105,6 +105,9 @@ je-project/
 ├── gastenboek.db
 ├── mijn_data.db
 ├── namen.db
+├── bekijk_db.py
+├── lees_db.py
+├── proef_db.py
 ├── test_db.py
 ├── static/
 │   ├── css/
@@ -123,9 +126,9 @@ je-project/
     └── groet_resultaat.html
 ```
 
-De `.db`-bestanden maakt `sqlitedict` zelf aan, de eerste keer dat je iets opslaat. `test_db.py` en `mijn_data.db` komen uit de proef in [Gegevens opslaan met SqliteDict](/docs/FastAPI/database); je server gebruikt ze niet.
+De `.db`-bestanden maakt `sqlitedict` zelf aan, de eerste keer dat je iets opslaat. De vier scripts en `mijn_data.db` komen uit de proeven in [Gegevens opslaan met SqliteDict](/docs/FastAPI/sqlitedict/database) en de twee lessen erna; je server gebruikt ze niet. `bekijk_db.py` houd je bij de hand: daarmee kijk je in elke database van je project.
 
-## Bij [Alles tonen: een for-lus in je template](/docs/FastAPI/lijst_tonen) en [Eén item tonen: path-parameters en 404](/docs/FastAPI/detailpagina)
+## Bij [Alles tonen: een for-lus in je template](/docs/FastAPI/berichten-tonen/lijst_tonen) tot en met [Een bericht verwijderen: een verborgen veld](/docs/FastAPI/berichten-verwijderen/verwijderen)
 
 ```
 je-project/
@@ -133,6 +136,9 @@ je-project/
 ├── gastenboek.db
 ├── mijn_data.db
 ├── namen.db
+├── bekijk_db.py
+├── lees_db.py
+├── proef_db.py
 ├── test_db.py
 ├── static/
 │   ├── css/
@@ -155,14 +161,53 @@ je-project/
 
 Er komen geen mappen bij: een lijstpagina en een detailpagina zijn twee templates naast elkaar.
 
-## Bij [Zonder herladen met htmx](/docs/FastAPI/htmx)
+## Bij [Registreren: een account opslaan](/docs/FastAPI/accounts/registreren) en [Inloggen: een wachtwoord controleren](/docs/FastAPI/accounts/inloggen)
 
 ```
 je-project/
 ├── main.py
 ├── gastenboek.db
+├── gebruikers.db
 ├── mijn_data.db
 ├── namen.db
+├── bekijk_db.py
+├── lees_db.py
+├── proef_db.py
+├── test_db.py
+├── static/
+│   ├── css/
+│   │   └── style.css
+│   ├── pages/
+│   │   ├── about.html
+│   │   ├── foto.html
+│   │   ├── gastenboek_form.html
+│   │   ├── groet_form.html
+│   │   ├── home.html
+│   │   ├── naam_form.html
+│   │   ├── naam_opslaan.html
+│   │   └── registreer.html
+│   └── kat.jpg
+└── templates/
+    ├── bericht.html
+    ├── berichten.html
+    ├── dobbelsteen.html
+    └── groet_resultaat.html
+```
+
+De accounts staan in een eigen database, `gebruikers.db`, en het formulier om er een te maken is een vast bestand. `gastenboek_form.html` blijft waar het was; het krijgt in Inloggen alleen een wachtwoordveld.
+
+## Bij [Zonder herladen met htmx](/docs/FastAPI/zonder-herladen/htmx)
+
+```
+je-project/
+├── main.py
+├── gastenboek.db
+├── gebruikers.db
+├── mijn_data.db
+├── namen.db
+├── bekijk_db.py
+├── lees_db.py
+├── proef_db.py
 ├── test_db.py
 ├── static/
 │   ├── css/
@@ -176,7 +221,8 @@ je-project/
 │   │   ├── groet_form.html
 │   │   ├── home.html
 │   │   ├── naam_form.html
-│   │   └── naam_opslaan.html
+│   │   ├── naam_opslaan.html
+│   │   └── registreer.html
 │   └── kat.jpg
 └── templates/
     ├── bericht.html
@@ -186,16 +232,20 @@ je-project/
     └── groet_resultaat.html
 ```
 
-htmx is één bestand in een nieuwe map `static/js/`. Bij de [htmx-recepten](/docs/FastAPI/htmx-overzicht) komt `berichten_lijst.html` erbij: een stuk pagina zonder `<html>` eromheen, dat een endpoint als antwoord teruggeeft.
+htmx is één bestand in een nieuwe map `static/js/`. Bij de [htmx-recepten](/docs/FastAPI/zonder-herladen/htmx-overzicht) komt `berichten_lijst.html` erbij: een stuk pagina zonder `<html>` eromheen, dat een endpoint als antwoord teruggeeft.
 
-## Bij [JavaScript erbij](/docs/FastAPI/javascript)
+## Bij [JavaScript erbij](/docs/FastAPI/in-de-browser/javascript)
 
 ```
 je-project/
 ├── main.py
 ├── gastenboek.db
+├── gebruikers.db
 ├── mijn_data.db
 ├── namen.db
+├── bekijk_db.py
+├── lees_db.py
+├── proef_db.py
 ├── test_db.py
 ├── static/
 │   ├── css/
@@ -210,7 +260,8 @@ je-project/
 │   │   ├── groet_form.html
 │   │   ├── home.html
 │   │   ├── naam_form.html
-│   │   └── naam_opslaan.html
+│   │   ├── naam_opslaan.html
+│   │   └── registreer.html
 │   └── kat.jpg
 └── templates/
     ├── bericht.html
@@ -222,15 +273,19 @@ je-project/
 
 Je JavaScript komt naast htmx te staan, in dezelfde `static`-map. Aan `main.py` verandert niets: `app.mount` serveert die map al.
 
-## Bij [Onthouden met een cookie](/docs/FastAPI/cookies) en [Onthouden op de server: sessies](/docs/FastAPI/sessies)
+## Bij [Onthouden met een cookie](/docs/FastAPI/onthouden/cookies) en [Onthouden op de server: sessies](/docs/FastAPI/onthouden/sessies)
 
 ```
 je-project/
 ├── main.py
 ├── gastenboek.db
+├── gebruikers.db
 ├── mijn_data.db
 ├── namen.db
 ├── sessies.db
+├── bekijk_db.py
+├── lees_db.py
+├── proef_db.py
 ├── test_db.py
 ├── static/
 │   ├── css/
@@ -244,7 +299,8 @@ je-project/
 │   │   ├── groet_form.html
 │   │   ├── home.html
 │   │   ├── naam_form.html
-│   │   └── naam_opslaan.html
+│   │   ├── naam_opslaan.html
+│   │   └── registreer.html
 │   └── kat.jpg
 └── templates/
     ├── bericht.html
@@ -255,7 +311,48 @@ je-project/
     └── groet_resultaat.html
 ```
 
-Het gastenboekformulier is verhuisd: `static/pages/gastenboek_form.html` is nu de template `templates/gastenboek.html`, zodat je naam erin kan. `sessies.db` maakt `sqlitedict` aan bij het eerste bericht met een sessie.
+Het gastenboekformulier is verhuisd: `static/pages/gastenboek_form.html` is nu de template `templates/gastenboek.html`, zodat je naam erin kan. `sessies.db` maakt `sqlitedict` aan bij de eerste keer inloggen.
+
+## Bij [Een eigen 404-pagina: een handler voor fouten](/docs/FastAPI/afronden/foutpagina)
+
+```
+je-project/
+├── main.py
+├── gastenboek.db
+├── gebruikers.db
+├── mijn_data.db
+├── namen.db
+├── sessies.db
+├── bekijk_db.py
+├── lees_db.py
+├── proef_db.py
+├── test_db.py
+├── static/
+│   ├── css/
+│   │   └── style.css
+│   ├── js/
+│   │   ├── app.js
+│   │   └── htmx.min.js
+│   ├── pages/
+│   │   ├── about.html
+│   │   ├── foto.html
+│   │   ├── groet_form.html
+│   │   ├── home.html
+│   │   ├── naam_form.html
+│   │   ├── naam_opslaan.html
+│   │   └── registreer.html
+│   └── kat.jpg
+└── templates/
+    ├── 404.html
+    ├── bericht.html
+    ├── berichten.html
+    ├── berichten_lijst.html
+    ├── dobbelsteen.html
+    ├── gastenboek.html
+    └── groet_resultaat.html
+```
+
+De foutpagina is een gewone template, naast de andere. De handler die hem gebruikt, staat in `main.py`.
 
 ## Compleet overzicht
 

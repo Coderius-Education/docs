@@ -19,10 +19,19 @@ Maak in die map een virtual environment en installeer de packages; hoe dat gaat
 staat bij [Een map per reeks](/docs/veiligheid/gereedschap#een-map-per-reeks).
 :::
 
-Een site met accounts moet wachtwoorden bewaren, anders kan niemand inloggen.
-De eerste versie die bijna iedereen schrijft, bewaart het wachtwoord precies
-zoals de gebruiker het intypt. Met een [formulier](/docs/FastAPI/forms) en de
-[database](/docs/FastAPI/database) uit de FastAPI-lessen ziet dat er zo uit:
+Je gastenboek heeft accounts sinds
+[Registreren: een account opslaan](/docs/FastAPI/accounts/registreren), en controleert
+het wachtwoord sinds [Inloggen: een wachtwoord controleren](/docs/FastAPI/accounts/inloggen).
+Het bewaart dat wachtwoord precies zoals de gebruiker het intypt; in
+Registreren zag je het al staan. Deze reeks laat zien waarom dat gevaarlijk is,
+en maakt het stap voor stap veilig.
+
+Je werkt met dezelfde twee stappen, als een kleine server die JSON teruggeeft,
+zodat een script elk antwoord kan lezen: `/registreer` uit de basis, en
+`/inloggen` met de controle uit je gastenboek, als eigen endpoint zoals in
+[Sessies](/docs/FastAPI/onthouden/sessies), maar nog zonder sessie. Een fout wachtwoord
+geeft hier geen `401` maar een melding: het gaat in deze reeks om wat er in de
+database staat.
 
 <CodeUitleg>
 
@@ -115,7 +124,8 @@ Drie gebruikers, elk een tuple van naam en wachtwoord. Sara en Noor kozen hetzel
 </CodeUitleg>
 
 Draai het in een tweede terminal. Je ziet drie keer een welkom. Bekijk daarna
-wat er in het bestand staat, met `lees_database.py`:
+wat er in het bestand staat, met `lees_database.py`. Het lijkt op `bekijk_db.py`
+uit [Alles bekijken: len en items](/docs/FastAPI/sqlitedict/bekijken):
 
 ```python
 from sqlitedict import SqliteDict

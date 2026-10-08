@@ -64,10 +64,11 @@ antwoord.set_cookie(
 
 ## Er gaat iets mis
 
-Je zet `samesite="none"` om te zien wat er gebeurt, maar in het tabblad **App**
-staat bij `sessie_id` nog steeds Lax. Verwijder je de cookie daar en verstuur je
-opnieuw een bericht, dan blijft **App** leeg, en herkent je server je bij elk
-verzoek als nieuwe bezoeker.
+Je zet `samesite="none"` om te zien wat er gebeurt, en logt opnieuw in. Maar in
+het tabblad **App** staat bij `sessie_id` nog steeds Lax. Verwijder je de cookie
+daar en log je nog een keer in, dan blijft **App** leeg. Je server zegt
+`Ingelogd`, maar bij het volgende bericht krijg je `401`: je browser stuurt geen
+sessie mee.
 
 **Oorzaak:** browsers bewaren een cookie met `samesite="none"` alleen als hij
 ook `secure=True` heeft. Zonder `secure` gooit de browser de nieuwe cookie stil

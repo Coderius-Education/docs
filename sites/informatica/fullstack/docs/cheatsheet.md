@@ -1,6 +1,6 @@
 # Cheatsheet
 
-Hier zoek je op hoe iets uit de lessen ook alweer ging. De onderwerpen staan in de volgorde van de lessen; klik er een aan om hem te openen. Welk bestand in welke map hoort, staat bij [Projectstructuur](/docs/FastAPI/projectstructuur).
+Hier zoek je op hoe iets uit de lessen ook alweer ging. De onderwerpen staan in de volgorde van de lessen; klik er een aan om hem te openen. Welk bestand in welke map hoort, staat bij [Projectstructuur](/docs/FastAPI/projectstructuur); alles over de database bij [SqliteDict op een rij](/docs/FastAPI/sqlitedict/op-een-rij).
 
 
 ## FastAPI
@@ -178,6 +178,38 @@ Met `raise`, niet met `return`.
 </details>
 
 <details>
+<summary>Hoe maak ik een account? (registreren)</summary>
+
+```python
+@app.post("/registreer")
+async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as gebruikers:
+        if naam in gebruikers:
+            raise HTTPException(status_code=400, detail="Deze naam is al bezet")
+        gebruikers[naam] = wachtwoord
+        gebruikers.commit()
+    return RedirectResponse(url="/gastenboek", status_code=303)
+```
+
+Zonder de controle op een bestaande naam neemt een tweede registratie het account over. Het wachtwoord staat zo nog leesbaar in `gebruikers.db`; hoe je het veilig bewaart, staat onder [Veiligheid](#veiligheid).
+
+</details>
+
+<details>
+<summary>Hoe controleer ik een wachtwoord? (inloggen met 401)</summary>
+
+```python
+with SqliteDict("gebruikers.db") as gebruikers:
+    opgeslagen = gebruikers.get(naam)
+if opgeslagen != wachtwoord:
+    raise HTTPException(status_code=401, detail="Naam of wachtwoord klopt niet")
+```
+
+Een naam zonder account geeft `None`, en dat is nooit gelijk aan een wachtwoord. Geef bij een onbekende naam en een fout wachtwoord dezelfde melding, anders verraad je welke namen een account hebben.
+
+</details>
+
+<details>
 <summary>Hoe weiger ik invoer die niet klopt? (HTTPException met 400)</summary>
 
 ```python
@@ -201,6 +233,7 @@ Controleer aan het begin van je endpoint, vóór je iets opslaat. Een `maxlength
 | `303` | ga naar deze URL, met een GET | jij, met `RedirectResponse(..., status_code=303)` |
 | `307` | doe hetzelfde verzoek op deze URL | `RedirectResponse` zonder `status_code` |
 | `400` | dit verzoek klopt niet | jij, met `HTTPException` |
+| `401` | je bent niet (goed) ingelogd | jij, met `HTTPException` |
 | `403` | dit mag jij niet | jij, bij iets van een ander |
 | `404` | bestaat niet | FastAPI of jij |
 | `405` | dit pad bestaat, maar niet voor deze soort verzoek | FastAPI |
@@ -280,45 +313,54 @@ Een cookie staat bij de bezoeker, en die kan hem veranderen. Gebruik hem dus nie
 </details>
 
 <details>
-<summary>Hoe onthoud ik iets op de server? (sessie met secrets)</summary>
+<summary>Hoe onthoud ik wie er is ingelogd? (sessie met secrets)</summary>
 
 ```python
 import secrets
 
-@app.post("/gastenboek")
-async def gastenboek_opslaan(
-    naam: str = Form(...),
-    bericht: str = Form(...),
-    sessie_id: str = Cookie(default=""),
-):
-    if not sessie_id:
-        sessie_id = secrets.token_hex(16)
+@app.post("/inloggen")
+async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as gebruikers:
+        opgeslagen = gebruikers.get(naam)
+    if opgeslagen != wachtwoord:
+        raise HTTPException(status_code=401, detail="Naam of wachtwoord klopt niet")
 
-    sleutel = f"bericht_{time.time_ns()}"
-    with SqliteDict("gastenboek.db") as db:
-        db[sleutel] = {"naam": naam, "bericht": bericht}
-        db.commit()
-
+    sessie_id = secrets.token_hex(16)
     with SqliteDict("sessies.db") as sessies:
-        mijn = sessies.get(sessie_id, {"naam": naam, "berichten": []})
-        mijn["naam"] = naam
-        mijn["berichten"].append(sleutel)
-        sessies[sessie_id] = mijn
+        sessies[sessie_id] = {"naam": naam}
         sessies.commit()
 
-    antwoord = RedirectResponse(url="/berichten", status_code=303)
+    antwoord = RedirectResponse(url="/gastenboek", status_code=303)
     antwoord.set_cookie(key="sessie_id", value=sessie_id, max_age=60 * 60 * 24 * 30)
     return antwoord
 ```
 
-Uitlezen:
+Uitlezen, in elk endpoint met de parameter `sessie_id: str = Cookie(default="")`:
 
 ```python
 with SqliteDict("sessies.db") as sessies:
     mijn = sessies.get(sessie_id, {})
 ```
 
-In de cookie staat alleen het sessie-id, de gegevens staan op de server. Haal de sessie eerst op met `.get()` en vul hem aan: schrijf je er een nieuwe dictionary overheen, dan ben je de lijst `berichten` kwijt.
+In de cookie staat alleen het sessie-id; wie er inlogde, staat op de server. Een lege dictionary betekent: niet ingelogd. Zet de naam bij een bericht met `mijn["naam"]`, nooit uit een formulierveld.
+
+</details>
+
+<details>
+<summary>Hoe maak ik een eigen 404-pagina? (exception_handler)</summary>
+
+```python
+@app.exception_handler(404)
+async def niet_gevonden(request: Request, fout):
+    return templates.TemplateResponse(
+        request,
+        "404.html",
+        {"pad": request.url.path},
+        status_code=404,
+    )
+```
+
+Deze handler krijgt elke 404: een adres zonder endpoint en je eigen `raise HTTPException(status_code=404, …)`. Andere fouten blijven zoals ze waren, en een fout in je code blijft een 500. Zet geen handler op `Exception`: dan lijkt een fout in je code een ontbrekende pagina.
 
 </details>
 
@@ -563,6 +605,7 @@ Hetzelfde bestand geeft je endpoint terug als antwoord op een htmx-verzoek.
 je-project/
 ├── main.py
 ├── gastenboek.db
+├── gebruikers.db
 ├── sessies.db
 ├── static/
 │   ├── css/
@@ -580,11 +623,13 @@ je-project/
     └── gastenboek.html
 ```
 
-Vaste pagina's staan in `static/pages/`, pagina's met `{{ }}` in `templates/`. Het gastenboekformulier begint als `static/pages/gastenboek_form.html` en verhuist bij [Onthouden met een cookie](/docs/FastAPI/cookies) naar `templates/gastenboek.html`. De `.db`-bestanden maakt `sqlitedict` zelf aan. Hoe de mappen per les groeien, staat bij [Projectstructuur](/docs/FastAPI/projectstructuur).
+Vaste pagina's staan in `static/pages/`, pagina's met `{{ }}` in `templates/`. Het gastenboekformulier begint als `static/pages/gastenboek_form.html` en verhuist bij [Onthouden met een cookie](/docs/FastAPI/onthouden/cookies) naar `templates/gastenboek.html`; in [sessies](/docs/FastAPI/onthouden/sessies) wordt het een inlogformulier of een formulier om te schrijven. De `.db`-bestanden maakt `sqlitedict` zelf aan. Hoe de mappen per les groeien, staat bij [Projectstructuur](/docs/FastAPI/projectstructuur).
 
 </details>
 
 ## Database (sqlitedict)
+
+Alles over SqliteDict op één pagina, met de punten waarop hij anders is dan een gewone dictionary: [SqliteDict op een rij](/docs/FastAPI/sqlitedict/op-een-rij).
 
 <details>
 <summary>Hoe installeer ik sqlitedict? (python -m pip install)</summary>
@@ -617,6 +662,89 @@ Zonder `db.commit()` is je wijziging weg zodra het `with`-blok sluit: open je de
 with SqliteDict("data.db") as db:
     print(db["naam"])
 ```
+
+Bestaat de sleutel niet, dan krijg je een `KeyError`. Dat gebeurt ook als je script in een andere map draait: daar maakt SqliteDict stil een lege database aan.
+
+</details>
+
+<details>
+<summary>Hoe bekijk ik alles wat erin staat? (db.items)</summary>
+
+```python
+with SqliteDict("data.db") as db:
+    print(len(db), "sleutels")
+    for sleutel, waarde in db.items():
+        print(sleutel, "=", waarde)
+```
+
+Elk element is een paar: eerst de sleutel, dan de waarde. Stuur je ze naar een template, maak er dan binnen het `with`-blok een lijst van met `list(db.items())`, en loop in de template met `{% for sleutel, bericht in berichten %}`.
+
+</details>
+
+<details>
+<summary>Hoe kijk ik of een sleutel bestaat? (in)</summary>
+
+```python
+with SqliteDict("data.db") as db:
+    if "email" in db:
+        print(db["email"])
+    else:
+        print("Geen email opgeslagen")
+```
+
+</details>
+
+<details>
+<summary>Hoe lees ik iets uit dat misschien niet bestaat? (db.get)</summary>
+
+```python
+with SqliteDict("data.db") as db:
+    naam = db.get("naam", "Niet gevonden")
+```
+
+Zonder tweede argument geeft `db.get()` `None` als de sleutel niet bestaat, in plaats van een `KeyError`.
+
+</details>
+
+<details>
+<summary>Hoe verwijder ik iets? (del db[...])</summary>
+
+```python
+with SqliteDict("gastenboek.db") as db:
+    if sleutel in db:
+        del db[sleutel]
+        db.commit()
+```
+
+Zonder `if sleutel in db` crasht je endpoint als iemand twee keer op Verwijderen klikt.
+
+</details>
+
+<details>
+<summary>Hoe sla ik meer dan één ding onder een sleutel op? (dictionary als waarde)</summary>
+
+```python
+with SqliteDict("data.db") as db:
+    db["sara"] = {"klas": "4B", "vakken": ["informatica", "wiskunde"]}
+    db.commit()
+```
+
+Uitlezen gaat in twee stappen: `db["sara"]["klas"]`.
+
+</details>
+
+<details>
+<summary>Hoe pas ik een opgeslagen dictionary aan? (ophalen, aanpassen, terugzetten)</summary>
+
+```python
+with SqliteDict("data.db") as db:
+    sara = db["sara"]
+    sara["vakken"].append("biologie")
+    db["sara"] = sara
+    db.commit()
+```
+
+`db["sara"]` geeft een kopie. `db["sara"]["vakken"].append(...)` past alleen die kopie aan, en dan blijft in het bestand de oude waarde staan, zonder foutmelding.
 
 </details>
 
@@ -651,50 +779,12 @@ async def berichten(request: Request):
 
 </details>
 
-<details>
-<summary>Hoe krijg ik de sleutels erbij? (db.items)</summary>
-
-```python
-with SqliteDict("gastenboek.db") as db:
-    alle_berichten = list(db.items())
-```
-
-Elk element is een paar: eerst de sleutel, dan het bericht. In de template loop je dan met `{% for sleutel, bericht in berichten %}`.
-
-</details>
-
-<details>
-<summary>Hoe verwijder ik iets? (del db[...])</summary>
-
-```python
-with SqliteDict("gastenboek.db") as db:
-    if sleutel in db:
-        del db[sleutel]
-        db.commit()
-```
-
-Zonder `if sleutel in db` crasht je endpoint als iemand twee keer op Verwijderen klikt.
-
-</details>
-
-<details>
-<summary>Hoe lees ik iets uit dat misschien niet bestaat? (db.get)</summary>
-
-```python
-with SqliteDict("data.db") as db:
-    naam = db.get("naam", "Niet gevonden")
-```
-
-Zonder tweede argument geeft `db.get()` `None` als de sleutel niet bestaat, in plaats van een `KeyError`.
-
-</details>
-
 ## htmx
 
 <details>
 <summary>Hoe koppel ik htmx aan mijn pagina? (htmx.min.js)</summary>
 
-Download `htmx.min.js` (de link staat bij [Zonder herladen met htmx](/docs/FastAPI/htmx)) naar `static/js/`, en zet deze regel in de `<head>` van elke pagina die htmx gebruikt:
+Download `htmx.min.js` (de link staat bij [Zonder herladen met htmx](/docs/FastAPI/zonder-herladen/htmx)) naar `static/js/`, en zet deze regel in de `<head>` van elke pagina die htmx gebruikt:
 
 ```html
 <script src="/static/js/htmx.min.js"></script>
@@ -893,9 +983,13 @@ Het endpoint heeft `request: Request` nodig, en `@limiter.limit` staat direct on
 <summary>Hoe controleer ik wie iets mag? (403)</summary>
 
 ```python
-if sleutel not in mijn.get("berichten", []):
-    raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
+with SqliteDict("gastenboek.db") as db:
+    bericht = db.get(sleutel)
+    if bericht is None or bericht["naam"] != mijn.get("naam"):
+        raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
 ```
+
+`mijn` is de sessie uit `sessies.db`, met de naam waarmee de bezoeker inlogde.
 
 Zet de controle in het endpoint, vóór er iets verandert, en op elk endpoint apart. Zie [Wie mag wat: de controle met 403](/docs/veiligheid/toegang/controle).
 

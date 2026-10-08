@@ -69,7 +69,7 @@ describe('Projectstructuur', () => {
   });
 
   it('heeft een stand voor cookies en sessies, met sessies.db en de verhuisde template', () => {
-    const stand = secties.find((s) => s.kop.includes('/docs/FastAPI/sessies'));
+    const stand = secties.find((s) => s.kop.includes('/docs/FastAPI/onthouden/sessies'));
     expect(stand?.paden).toEqual(
       expect.arrayContaining(['sessies.db', 'templates/gastenboek.html']),
     );
@@ -78,7 +78,7 @@ describe('Projectstructuur', () => {
 });
 
 describe('antwoorden gaan uit van het project zoals het nu is', () => {
-  const naSessies = volgorde.slice(volgorde.indexOf('FastAPI/sessies') + 1);
+  const naSessies = volgorde.slice(volgorde.indexOf('FastAPI/onthouden/sessies') + 1);
 
   it('na de sessies gooit geen blok het gastenboek of de lijst zonder sessie_id opnieuw neer', () => {
     const fout = naSessies.flatMap((id) =>
@@ -93,13 +93,13 @@ describe('antwoorden gaan uit van het project zoals het nu is', () => {
   });
 
   it('de sessieles schermt ook het htmx-endpoint voor verwijderen af', () => {
-    const tekst = les('FastAPI/sessies');
+    const tekst = les('FastAPI/onthouden/sessies');
     expect(tekst).toContain('DELETE /bericht/{sleutel}');
     expect(tekst).toContain('/docs/veiligheid/toegang/elk-endpoint');
   });
 
   it('de volgorde-knop draait om voor nieuwste eerst: de database geeft oud → nieuw', () => {
-    const blok = pythonBlokken(les('FastAPI/cookie-of-sessie')).find((b) =>
+    const blok = pythonBlokken(les('FastAPI/onthouden/cookie-of-sessie')).find((b) =>
       b.includes('reversed('),
     );
     expect(blok).toBeDefined();
@@ -107,12 +107,14 @@ describe('antwoorden gaan uit van het project zoals het nu is', () => {
   });
 
   it('alleen de sessie weggooien geeft geen tweede sessie, maar dezelfde onder het oude id', () => {
-    expect(les('FastAPI/cookie-of-sessie')).not.toContain('tweede sessie aan naast de eerste');
+    expect(les('FastAPI/onthouden/cookie-of-sessie')).not.toContain(
+      'tweede sessie aan naast de eerste',
+    );
   });
 });
 
 describe('Laat het zien', () => {
-  const tekst = les('FastAPI/laat-het-zien');
+  const tekst = les('FastAPI/afronden/laat-het-zien');
 
   it('`ip addr` staat er nooit zonder een commando voor macOS', () => {
     const zonder = volgorde

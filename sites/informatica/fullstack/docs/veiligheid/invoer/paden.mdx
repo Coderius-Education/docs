@@ -5,10 +5,10 @@ description: Laat je een bezoeker met ?naam= kiezen welk bestand je server stuur
 
 # Invoer controleren: een bestandsnaam van een bezoeker
 
-In [HTML in bestanden](/docs/FastAPI/html_bestanden) kreeg elke pagina een
+In [HTML in bestanden](/docs/FastAPI/paginas/html_bestanden) kreeg elke pagina een
 eigen endpoint met `FileResponse`. Met tien pagina's wil je liever één endpoint,
 waarin de bezoeker de pagina kiest met een query-parameter, zoals `?term=` in
-[GET vs POST](/docs/FastAPI/get_vs_post). Maar die naam komt van de bezoeker,
+[Een waarde na een vraagteken: query-parameters](/docs/FastAPI/veel-paginas/query-parameters). Maar die naam komt van de bezoeker,
 net als een formulierveld. Hij kan er meer in zetten dan een paginanaam.
 
 ## Eén endpoint voor alle pagina's
@@ -83,7 +83,7 @@ een bestand met een geheime sleutel. Met `..` uit de bedoelde map klimmen heet
 **path traversal**.
 
 Met een path-parameter, zoals in
-[Eén item tonen: path-parameters en 404](/docs/FastAPI/detailpagina), gaat dit
+[Een 404 sturen: als het item niet bestaat](/docs/FastAPI/berichten-tonen/niet-gevonden), gaat dit
 net anders. Dat zie je in opdracht 1.
 
 ## Alleen wat in je lijst staat
@@ -108,7 +108,7 @@ De pagina's die een bezoeker mag zien, bovenaan `main.py`, onder `STEMMINGEN`.
 </Regel>
 
 <Regel n={5} tot={6}>
-Staat de naam niet in de lijst, dan bestaat de pagina voor de bezoeker niet: een `404`, zoals in [Eén item tonen](/docs/FastAPI/detailpagina). `FileResponse` komt pas daarna.
+Staat de naam niet in de lijst, dan bestaat de pagina voor de bezoeker niet: een `404`, zoals in [Een 404 sturen](/docs/FastAPI/berichten-tonen/niet-gevonden). `FileResponse` komt pas daarna.
 </Regel>
 
 </CodeUitleg>
@@ -171,7 +171,7 @@ staat.
 "http://127.0.0.1:8000/pagina?naam=home.html"
 ```
 
-Meer over `FileResponse` en de map `static/pages`: [HTML in bestanden](/docs/FastAPI/html_bestanden).
+Meer over `FileResponse` en de map `static/pages`: [HTML in bestanden](/docs/FastAPI/paginas/html_bestanden).
 
 ## Opdrachten
 
@@ -278,31 +278,29 @@ Loop deze lijst af:
 - Een script dat een te lang veld stuurt, krijgt een `422`.
 
 In het gastenboek uit de FastAPI-lessen zet je de grenzen in de parameters die
-je `POST /gastenboek` al heeft, en de controle op spaties bovenaan de functie.
-Met de sessies uit [Onthouden op de server: sessies](/docs/FastAPI/sessies)
-ziet het begin er zo uit:
+je endpoints al hebben, en de controle op spaties bovenaan de functie. Met de
+sessies uit [Onthouden op de server: sessies](/docs/FastAPI/onthouden/sessies) komt in
+`POST /gastenboek` alleen nog het bericht uit het formulier:
 
 ```python
 @app.post("/gastenboek")
 async def gastenboek_opslaan(
-    naam: str = Form(..., max_length=30),
     bericht: str = Form(..., max_length=80),
     sessie_id: str = Cookie(default=""),
 ):
-    if not naam.strip():
-        raise HTTPException(status_code=400, detail="Vul een naam in")
-    if not sessie_id:
-        sessie_id = secrets.token_hex(16)
+    if not bericht.strip():
+        raise HTTPException(status_code=400, detail="Vul een bericht in")
 ```
 
 Daaronder blijft je functie zoals hij was. Laat `sessie_id` niet weg: de rest
-van de functie gebruikt hem. Heb je de uitbreiding cookies en sessies nog niet
-gedaan, dan heeft je functie alleen `naam` en `bericht`, en zet je de grens
-daarin. Zet `HTTPException` bij de import uit `fastapi` als hij er nog niet
-staat.
+van de functie gebruikt hem. De naam typt een bezoeker nu bij `/registreer`;
+geef `naam` daar `max_length=30`, en weiger daar een naam van alleen spaties.
+Heb je de uitbreiding cookies en sessies nog niet gedaan, dan heeft je
+`POST /gastenboek` ook nog `naam` en `wachtwoord`, en zet je de grens ook op
+`naam`.
 
 Het bericht krijgt hier 80 tekens en geen 280 zoals in deze reeks. Zo past het
-bij [Server of browser?](/docs/FastAPI/server-of-browser), waar je gastenboek
+bij [Server of browser?](/docs/FastAPI/in-de-browser/server-of-browser), waar je gastenboek
 `maxlength="80"` krijgt; zet die ook in je HTML. Deed je die les al, en staat
 de `if len(bericht) > 80` daaruit nog in je functie, dan mag hij weg:
 `max_length=80` doet hetzelfde, alleen krijgt een te lang bericht nu een `422`

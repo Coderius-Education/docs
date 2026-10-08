@@ -1,0 +1,322 @@
+# Een formulier opslaan
+
+Wat een bezoeker in een formulier invult, zet je nu in een database. Dan staat het er nog als je de server stopt. Je begint met één naam; in de [volgende les](/docs/FastAPI/berichten-opslaan/eigen-sleutel) bewaar je alle berichten van een gastenboek.
+
+## Voorbeeld: Naam opslaan
+
+### Formulier (`static/pages/naam_opslaan.html`):
+
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Bewaar je naam</h1>
+        <form method="post" action="/opslaan">
+            <input type="text" name="naam" required>
+            <button type="submit">Opslaan</button>
+        </form>
+    </body>
+</html>
+```
+
+### Endpoints (`main.py`):
+
+Zet bij je imports bovenaan:
+
+```python
+from sqlitedict import SqliteDict
+```
+
+En onder je andere endpoints:
+
+<CodeUitleg>
+
+```python showLineNumbers
+@app.get("/opslaan")
+async def naam_formulier():
+    return FileResponse("static/pages/naam_opslaan.html")
+
+@app.post("/opslaan")
+async def naam_opslaan(naam: str = Form(...)):
+    with SqliteDict("namen.db") as db:
+        db["laatste_naam"] = naam
+        db.commit()
+
+    return {"bericht": f"'{naam}' opgeslagen!"}
+```
+
+<Regel n={5} tot={6}>
+Het POST-endpoint uit [Een formulier versturen (POST)](/docs/FastAPI/formulieren/forms): `naam` komt uit het formulier.
+</Regel>
+
+<Regel n={7} tot={9}>
+Nieuw is wat je ermee doet. Binnen het `with`-blok open je de database, zet je de naam onder de sleutel `laatste_naam` en schrijf je hem weg met `commit()`. Elke nieuwe naam overschrijft de vorige, want de sleutel is steeds dezelfde.
+</Regel>
+
+<Regel n={11}>
+Het antwoord komt ná het `with`-blok: de database is dan al netjes gesloten.
+</Regel>
+
+</CodeUitleg>
+
+## Data terug lezen
+
+<CodeUitleg>
+
+```python showLineNumbers
+@app.get("/toon_naam")
+async def toon_naam():
+    with SqliteDict("namen.db") as db:
+        naam = db.get("laatste_naam", "Nog niets opgeslagen")
+    return {"naam": naam}
+```
+
+<Regel n={4}>
+`db.get` uit [Bestaat de sleutel? in en get](/docs/FastAPI/sqlitedict/zoeken) geeft de standaardwaarde zolang er nog niets is opgeslagen. Zo werkt de pagina ook vóór de eerste keer opslaan, zonder `KeyError`.
+</Regel>
+
+</CodeUitleg>
+
+## De naam testen
+
+1. Ga naar `http://127.0.0.1:8000/opslaan`
+2. Vul een naam in en klik Opslaan
+3. Stop de server en start hem opnieuw
+4. Ga naar `http://127.0.0.1:8000/toon_naam`. Je naam staat er nog: hij is bewaard in `namen.db`.
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+```python
+import random
+
+from fastapi import FastAPI, Form, Request
+from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
+
+@app.get("/")
+async def home():
+    return FileResponse("static/pages/home.html")
+
+@app.get("/info")
+async def info():
+    return {"naam": "Jouw Naam", "leeftijd": 16}
+
+@app.get("/pagina", response_class=HTMLResponse)
+async def pagina():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Mijn Pagina</title>
+        </head>
+        <body>
+            <h1>Hallo!</h1>
+            <p>Dit is mijn eerste HTML pagina.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/styled", response_class=HTMLResponse)
+async def styled():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Met CSS</title>
+            <style>
+                h1 { color: blue; }
+                p { color: gray; }
+            </style>
+        </head>
+        <body>
+            <h1>Gestylede pagina</h1>
+            <p>Deze tekst is grijs.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/about")
+async def about():
+    return FileResponse("static/pages/about.html")
+
+DIEREN = {
+    "kat": "Een kat spint als hij tevreden is.",
+    "hond": "Een hond kwispelt als hij blij is.",
+    "vis": "Een vis ademt met kieuwen.",
+}
+
+@app.get("/dier/{naam}", response_class=HTMLResponse)
+async def dier(naam: str):
+    tekst = DIEREN.get(naam, "Dit dier staat nog niet op de site.")
+    return f"""
+    <!DOCTYPE html>
+    <html>
+        <body>
+            <h1>Over dieren</h1>
+            <p>{tekst}</p>
+            <a href="/">Terug naar Home</a>
+        </body>
+    </html>
+    """
+
+@app.get("/zoek")
+async def zoek(term: str):
+    return {"je_zocht": term}
+
+@app.get("/foto")
+async def foto():
+    return FileResponse("static/pages/foto.html")
+
+@app.get("/dobbelsteen")
+async def dobbelsteen(request: Request):
+    worp = random.randint(1, 6)
+    return templates.TemplateResponse(
+        request,
+        "dobbelsteen.html",
+        {"worp": worp}
+    )
+
+@app.get("/naam")
+async def toon_formulier():
+    return FileResponse("static/pages/naam_form.html")
+
+@app.post("/verstuur")
+async def ontvang_naam(naam: str = Form(...)):
+    print(f"Naam ontvangen: {naam}")
+    return {"bericht": f"Hallo {naam}!"}
+
+@app.get("/groet")
+async def groet_form():
+    return FileResponse("static/pages/groet_form.html")
+
+@app.post("/groet")
+async def groet_verwerk(request: Request, naam: str = Form(...)):
+    return templates.TemplateResponse(
+        request,
+        "groet_resultaat.html",
+        {"naam": naam}
+    )
+
+@app.get("/opslaan")
+async def naam_formulier():
+    return FileResponse("static/pages/naam_opslaan.html")
+
+@app.post("/opslaan")
+async def naam_opslaan(naam: str = Form(...)):
+    with SqliteDict("namen.db") as db:
+        db["laatste_naam"] = naam
+        db.commit()
+    return {"bericht": f"'{naam}' opgeslagen!"}
+
+@app.get("/toon_naam")
+async def toon_naam():
+    with SqliteDict("namen.db") as db:
+        naam = db.get("laatste_naam", "Nog niets opgeslagen")
+    return {"naam": naam}
+```
+
+</details>
+
+## Opdrachten
+
+### Opdracht 1: Predict - Twee namen
+
+Je slaat op `/opslaan` eerst "Jan" op, en daarna "Sarah". Daarna ga je naar `/toon_naam`.
+
+**Vraag:** welke naam of namen zie je?
+
+<details>
+<summary>Tip</summary>
+
+Onder welke sleutel komt elke naam terecht?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Alleen "Sarah". Allebei gaan ze onder de sleutel `laatste_naam`, en een nieuwe waarde onder dezelfde sleutel overschrijft de oude.
+
+</details>
+
+### Opdracht 2: Run
+
+Maak het formulier en de twee endpoints uit deze les. Sla een naam op, stop de server en start hem opnieuw. Staat je naam nog op `/toon_naam`?
+
+<details>
+<summary>Antwoord</summary>
+
+Ja. De naam staat in `namen.db`, naast je `main.py`, en niet in het geheugen van de server. Daarom overleeft hij een herstart. Met `bekijk_db.py` uit [Alles bekijken: len en items](/docs/FastAPI/sqlitedict/bekijken), met `"namen.db"` tussen de haakjes, zie je hem ook staan. Draai dat script in een tweede terminal, want je server houdt de eerste bezet: het plusje (+) rechtsboven in het terminalpaneel van VS Code opent er een.
+
+</details>
+
+### Opdracht 3: Investigate - Zonder commit
+
+Zet in `/opslaan` een `#` voor `db.commit()`. Sla een nieuwe naam op en ga naar `/toon_naam`. Welke naam zie je? Haal de `#` daarna weer weg.
+
+<details>
+<summary>Antwoord</summary>
+
+De naam van de vorige keer, of "Nog niets opgeslagen" als er nooit een naam bewaard is. Je krijgt wel netjes het antwoord "opgeslagen", want dat stuurt je endpoint hoe dan ook. Zonder `commit()` gooit SqliteDict de wijziging weg zodra het `with`-blok sluit, net als in je losse scripts.
+
+</details>
+
+### Opdracht 4: Make - Score opslaan
+
+Maak een formulier met een getalveld voor je score in een game. Sla de score op in `scores.db` en maak een endpoint om de score te bekijken.
+
+<details>
+<summary>Tip</summary>
+
+Gebruik `<input type="number" name="score">` in je HTML en `score: int = Form(...)` in Python. Maak een apart GET endpoint dat `db.get("score", 0)` teruggeeft.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`static/pages/score_form.html`:
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Game Score</h1>
+        <form method="post" action="/score">
+            <input type="number" name="score" required>
+            <button type="submit">Opslaan</button>
+        </form>
+    </body>
+</html>
+```
+
+```python
+@app.get("/score")
+async def score_form():
+    return FileResponse("static/pages/score_form.html")
+
+@app.post("/score")
+async def score_opslaan(score: int = Form(...)):
+    with SqliteDict("scores.db") as db:
+        db["score"] = score
+        db.commit()
+    return {"bericht": f"Score {score} opgeslagen!"}
+
+@app.get("/toon_score")
+async def toon_score():
+    with SqliteDict("scores.db") as db:
+        score = db.get("score", 0)
+    return {"score": score}
+```
+
+</details>
+
+Door naar [Elk bericht bewaren: een eigen sleutel](/docs/FastAPI/berichten-opslaan/eigen-sleutel).

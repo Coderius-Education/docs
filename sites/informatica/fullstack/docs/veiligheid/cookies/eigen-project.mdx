@@ -26,10 +26,11 @@ de sessie een eigen verlooptijd, en zorg voor een knop om uit te loggen.
 <details>
 <summary>Tip</summary>
 
-Zoek naar `set_cookie`. Denk aan de oude cookie: verstuur na de wijziging
-eerst iets, zodat de server een nieuwe zet. Lees je de sessie op meer plekken
-uit, zoals in `GET /gastenboek` en `POST /verwijderen`, dan gebruik je overal
-`sessie_ophalen` uit [les 4](./uitloggen).
+Zoek naar `set_cookie`; in je gastenboek staat hij sinds Sessies in
+`POST /inloggen`. Denk aan de oude cookie: log na de wijziging opnieuw in, zodat
+de server een nieuwe zet. Lees je de sessie op meer plekken uit, zoals in
+`GET /gastenboek`, `POST /gastenboek` en `POST /verwijderen`, dan gebruik je
+overal `sessie_ophalen` uit [les 4](./uitloggen).
 
 </details>
 
@@ -42,15 +43,13 @@ Loop deze lijst af:
   `samesite="lax"`.
 - Na een nieuw bezoek laat `document.cookie` de sessie-cookie niet meer zien,
   en staat er in het tabblad **App** een vinkje bij **HttpOnly**.
-- In `POST /gastenboek` krijgt de sessie bij elk bericht
-  `mijn["tot"] = time.time() + GELDIG`, en een nieuw sessie-id als
-  `sessie_ophalen` niets vindt. Elk ander endpoint dat de sessie leest, haalt
-  hem ook op met `sessie_ophalen`, zodat een verlopen sessie telt als geen
-  sessie.
+- In `POST /inloggen` krijgt de nieuwe sessie een
+  `"tot": time.time() + GELDIG`. Elk endpoint dat de sessie leest, haalt hem op
+  met `sessie_ophalen`, zodat een verlopen sessie telt als niet ingelogd.
 - Er is een `@app.post("/uitloggen")` dat de sessie in `sessies.db` weggooit
   en de cookie weghaalt met `delete_cookie`, met een formulierknop
   (`<form method="post" action="/uitloggen">`) op je pagina. Heb je uit
-  opdracht 5 van [Cookie of sessie?](/docs/FastAPI/cookie-of-sessie) nog een
+  opdracht 5 van [Cookie of sessie?](/docs/FastAPI/onthouden/cookie-of-sessie) nog een
   versie met `@app.get` en een link, maak er dan een POST van.
 - Een cookie die je eigen JavaScript wél moet lezen, zoals een voorkeur voor
   een donker thema, krijgt geen `httponly`. Daar hangen ook geen rechten aan.

@@ -7,12 +7,12 @@ description: Een knop is geen slot. Een tweede bezoeker verwijdert met een los s
 
 <Voorkennis
   items={[
-    {site: 'python', to: '/docs/data/11b-itereren-dictionaries', label: 'Door een dictionary loopen'},
+    {site: 'python', to: '/docs/data/11b-itereren-dictionaries', label: 'Door een dictionary lopen'},
   ]}
 />
 
 In je gastenboek staat bij een bericht een knop Verwijderen. Heb je
-[opdracht 4 van Sessies](/docs/FastAPI/sessies#opdracht-4-make---alleen-je-eigen-berichten-verwijderen)
+[opdracht 4 van Sessies](/docs/FastAPI/onthouden/sessies#opdracht-4-make---alleen-je-eigen-berichten-verwijderen)
 gemaakt, dan staat hij alleen bij je eigen berichten, en dat voelt als
 beveiliging. Maar een knop doet maar één ding: een verzoek versturen. Wie dat
 verzoek zelf verstuurt, heeft de knop niet nodig, verborgen of niet.
@@ -27,10 +27,11 @@ Maak in die map een virtual environment en installeer de packages; hoe dat gaat 
 
 ## Het gastenboek als JSON
 
-De server hieronder is het gastenboek uit Sessies, met het endpoint
-Verwijderen uit het [htmx-overzicht](/docs/FastAPI/htmx-overzicht#verwijderen).
-De HTML is eruit: elk endpoint geeft JSON terug, zodat een scriptje kan lezen
-wat de server antwoordt.
+De server hieronder is het gastenboek uit Sessies: registreren uit de basis,
+inloggen met een sessie, en het endpoint Verwijderen uit het
+[htmx-overzicht](/docs/FastAPI/zonder-herladen/htmx-overzicht#verwijderen). De HTML is eruit:
+elk endpoint geeft JSON terug, zodat een scriptje kan lezen wat de server
+antwoordt. Een bericht plaatsen heet hier `POST /bericht`.
 
 <CodeUitleg>
 
@@ -44,30 +45,43 @@ from sqlitedict import SqliteDict
 
 app = FastAPI()
 
+@app.post("/registreer")
+async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as gebruikers:
+        if naam in gebruikers:
+            raise HTTPException(status_code=400, detail="Deze naam is al bezet")
+        gebruikers[naam] = wachtwoord
+        gebruikers.commit()
+    return {"bericht": f"Welkom, {naam}"}
+
+@app.post("/inloggen")
+async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as gebruikers:
+        opgeslagen = gebruikers.get(naam)
+    if opgeslagen != wachtwoord:
+        raise HTTPException(status_code=401, detail="Naam of wachtwoord klopt niet")
+
+    sessie_id = secrets.token_hex(16)
+    with SqliteDict("sessies.db") as sessies:
+        sessies[sessie_id] = {"naam": naam}
+        sessies.commit()
+
+    antwoord = JSONResponse({"bericht": f"Ingelogd als {naam}"})
+    antwoord.set_cookie(key="sessie_id", value=sessie_id, max_age=60 * 60 * 24 * 30)
+    return antwoord
+
 @app.post("/bericht")
-async def bericht_plaatsen(
-    naam: str = Form(...),
-    bericht: str = Form(...),
-    sessie_id: str = Cookie(default=""),
-):
-    if not sessie_id:
-        sessie_id = secrets.token_hex(16)
+async def bericht_plaatsen(bericht: str = Form(...), sessie_id: str = Cookie(default="")):
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {})
+    if not mijn:
+        raise HTTPException(status_code=401, detail="Log eerst in")
 
     sleutel = f"bericht_{time.time_ns()}"
     with SqliteDict("gastenboek.db") as db:
-        db[sleutel] = {"naam": naam, "bericht": bericht}
+        db[sleutel] = {"naam": mijn["naam"], "bericht": bericht}
         db.commit()
-
-    with SqliteDict("sessies.db") as sessies:
-        mijn = sessies.get(sessie_id, {"naam": naam, "berichten": []})
-        mijn["naam"] = naam
-        mijn["berichten"].append(sleutel)
-        sessies[sessie_id] = mijn
-        sessies.commit()
-
-    antwoord = JSONResponse({"sleutel": sleutel})
-    antwoord.set_cookie(key="sessie_id", value=sessie_id, max_age=60 * 60 * 24 * 30)
-    return antwoord
+    return {"sleutel": sleutel}
 
 @app.get("/berichten")
 async def berichten():
@@ -84,15 +98,23 @@ async def bericht_verwijderen(sleutel: str):
     return {"bericht": "Verwijderd"}
 ```
 
-<Regel n={10} tot={33}>
-Het POST-endpoint uit Sessies. Alleen het antwoord is anders: JSON met de sleutel van het nieuwe bericht, in plaats van een omleiding naar `/berichten`.
+<Regel n={10} tot={17}>
+Registreren uit de basis, met JSON als antwoord in plaats van een omleiding.
 </Regel>
 
-<Regel n={35} tot={38}>
+<Regel n={19} tot={33}>
+Inloggen uit Sessies: pas als het wachtwoord klopt, komt er een sessie met de naam.
+</Regel>
+
+<Regel n={35} tot={46}>
+Een bericht plaatsen. De naam komt uit de sessie, en het antwoord is de sleutel van het nieuwe bericht.
+</Regel>
+
+<Regel n={48} tot={51}>
 Alle berichten, met hun sleutels. Op de pagina ziet elke bezoeker ze ook.
 </Regel>
 
-<Regel n={40} tot={47}>
+<Regel n={53} tot={60}>
 Het DELETE-endpoint uit het htmx-recept. Het vraagt welk bericht weg moet, en niet wie dat vraagt.
 </Regel>
 
@@ -108,8 +130,8 @@ strafbaar, ook als de site het toelaat en ook als het "maar een testje" is.
 
 Zet de server in `main.py` in je map `veiligheid-toegang` en start hem met
 `fastapi dev main.py`. Maak in dezelfde map een scriptje `test_verwijderen.py`. Het speelt
-twee bezoekers: Sara en Alex. Allebei plaatsen ze een bericht, en daarna
-verwijdert Alex dat van Sara.
+twee bezoekers: Sara en Alex. Allebei maken ze een account, loggen ze in en
+plaatsen ze een bericht. Daarna verwijdert Alex dat van Sara.
 
 <CodeUitleg>
 
@@ -121,8 +143,13 @@ adres = "http://127.0.0.1:8000"
 sara = httpx.Client(base_url=adres)
 alex = httpx.Client(base_url=adres)
 
-sara.post("/bericht", data={"naam": "Sara", "bericht": "Hoi allemaal"})
-alex.post("/bericht", data={"naam": "Alex", "bericht": "Leuk gastenboek"})
+sara.post("/registreer", data={"naam": "Sara", "wachtwoord": "zon123"})
+sara.post("/inloggen", data={"naam": "Sara", "wachtwoord": "zon123"})
+alex.post("/registreer", data={"naam": "Alex", "wachtwoord": "maan456"})
+alex.post("/inloggen", data={"naam": "Alex", "wachtwoord": "maan456"})
+
+sara.post("/bericht", data={"bericht": "Hoi allemaal"})
+alex.post("/bericht", data={"bericht": "Leuk gastenboek"})
 
 for sleutel, bericht in alex.get("/berichten").json().items():
     if bericht["naam"] == "Sara":
@@ -139,11 +166,15 @@ print(f"Nog in het gastenboek: {namen}")
 Twee `httpx.Client`s zijn twee bezoekers, elk met hun eigen cookies en dus een eigen sessie, zoals in [Een script als bezoeker](../gereedschap).
 </Regel>
 
-<Regel n={11} tot={14}>
-Alex vraagt de berichten op, zoals elke bezoeker kan, en stuurt voor het bericht van Sara een `DELETE`. De knop in de browser verstuurt hetzelfde verzoek.
+<Regel n={8} tot={11}>
+Elk een account en een inlog. Na het inloggen bewaart elke `Client` zijn eigen cookie `sessie_id`.
 </Regel>
 
 <Regel n={16} tot={19}>
+Alex vraagt de berichten op, zoals elke bezoeker kan, en stuurt voor het bericht van Sara een `DELETE`. De knop in de browser verstuurt hetzelfde verzoek.
+</Regel>
+
+<Regel n={21} tot={24}>
 Van elk bericht dat over is alleen de naam, want de sleutels zijn bij jou anders.
 </Regel>
 
@@ -156,11 +187,12 @@ Alex verwijdert het bericht van Sara: 200
 Nog in het gastenboek: ['Alex']
 ```
 
-Het bericht van Sara is weg. Alex hoefde niets te raden of te kraken: de sleutel
-stond in het antwoord van `/berichten`. Het endpoint deed wat hem gevraagd werd.
+Het bericht van Sara is weg. Alex hoefde niets te raden of te kraken: hij logde
+in als zichzelf, en de sleutel stond in het antwoord van `/berichten`. Het endpoint deed wat hem gevraagd werd.
 
-De server controleert niet wie iets vraagt. Een verborgen knop, zoals in
-opdracht 4 van Sessies, maakt dat alleen minder zichtbaar.
+Je server weet precies wie Alex is: de naam staat in zijn sessie. Alleen vraagt
+`bericht_verwijderen` er niet naar. Een verborgen knop, zoals in opdracht 4 van
+Sessies, maakt dat alleen minder zichtbaar.
 
 ## Er gaat iets mis
 
@@ -172,14 +204,14 @@ berichten erin. Het script ziet die ook, en verwijdert elk bericht met de naam
 Sara.
 
 **Oplossing:** werk in de map `veiligheid-toegang` uit het begin van deze les, of gooi
-`gastenboek.db` en `sessies.db` weg voordat je de server start.
+`gastenboek.db`, `sessies.db` en `gebruikers.db` weg voordat je de server start.
 
 ## Opdrachten
 
 ### Opdracht 1: Predict - Zonder browser
 
-Een derde script heeft nooit iets geplaatst en gebruikt geen `Client`. Het kent
-de sleutel van een bericht en stuurt alleen dit:
+Een derde script heeft geen account, is nooit ingelogd en gebruikt geen
+`Client`. Het kent de sleutel van een bericht en stuurt alleen dit:
 
 ```python
 import httpx
@@ -202,14 +234,15 @@ Kijk welke parameters `bericht_verwijderen` heeft. Komt daar een cookie in voor?
 <summary>Antwoord</summary>
 
 `200`. Het endpoint kijkt alleen naar de sleutel in het pad. Wie het verzoek
-stuurt, met of zonder cookie, maakt voor deze server niets uit.
+stuurt, ingelogd of niet, maakt voor deze server niets uit. Plaatsen kan alleen
+met een account; verwijderen kan iedereen.
 
 </details>
 
 ### Opdracht 2: Investigate - Waar staat de sleutel?
 
 Kijk naar de HTML van het recept Verwijderen in het
-[htmx-overzicht](/docs/FastAPI/htmx-overzicht#verwijderen): het stukje met
+[htmx-overzicht](/docs/FastAPI/zonder-herladen/htmx-overzicht#verwijderen): het stukje met
 `<li id="bericht-{{ sleutel }}">`, tot en met de knop. Heb je dat recept gebouwd, open dan ook je
 gastenboek en kijk in het tabblad **Elementen** naar een bericht. Waar staat de
 sleutel? Wat betekent dat voor een idee als "maak de sleutels heel lang, dan
@@ -240,30 +273,43 @@ from sqlitedict import SqliteDict
 
 app = FastAPI()
 
+@app.post("/registreer")
+async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as gebruikers:
+        if naam in gebruikers:
+            raise HTTPException(status_code=400, detail="Deze naam is al bezet")
+        gebruikers[naam] = wachtwoord
+        gebruikers.commit()
+    return {"bericht": f"Welkom, {naam}"}
+
+@app.post("/inloggen")
+async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as gebruikers:
+        opgeslagen = gebruikers.get(naam)
+    if opgeslagen != wachtwoord:
+        raise HTTPException(status_code=401, detail="Naam of wachtwoord klopt niet")
+
+    sessie_id = secrets.token_hex(16)
+    with SqliteDict("sessies.db") as sessies:
+        sessies[sessie_id] = {"naam": naam}
+        sessies.commit()
+
+    antwoord = JSONResponse({"bericht": f"Ingelogd als {naam}"})
+    antwoord.set_cookie(key="sessie_id", value=sessie_id, max_age=60 * 60 * 24 * 30)
+    return antwoord
+
 @app.post("/bericht")
-async def bericht_plaatsen(
-    naam: str = Form(...),
-    bericht: str = Form(...),
-    sessie_id: str = Cookie(default=""),
-):
-    if not sessie_id:
-        sessie_id = secrets.token_hex(16)
+async def bericht_plaatsen(bericht: str = Form(...), sessie_id: str = Cookie(default="")):
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {})
+    if not mijn:
+        raise HTTPException(status_code=401, detail="Log eerst in")
 
     sleutel = f"bericht_{time.time_ns()}"
     with SqliteDict("gastenboek.db") as db:
-        db[sleutel] = {"naam": naam, "bericht": bericht}
+        db[sleutel] = {"naam": mijn["naam"], "bericht": bericht}
         db.commit()
-
-    with SqliteDict("sessies.db") as sessies:
-        mijn = sessies.get(sessie_id, {"naam": naam, "berichten": []})
-        mijn["naam"] = naam
-        mijn["berichten"].append(sleutel)
-        sessies[sessie_id] = mijn
-        sessies.commit()
-
-    antwoord = JSONResponse({"sleutel": sleutel})
-    antwoord.set_cookie(key="sessie_id", value=sessie_id, max_age=60 * 60 * 24 * 30)
-    return antwoord
+    return {"sleutel": sleutel}
 
 @app.get("/berichten")
 async def berichten():

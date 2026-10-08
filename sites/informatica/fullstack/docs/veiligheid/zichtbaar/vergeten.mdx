@@ -6,7 +6,7 @@ description: Een endpoint dat je voor jezelf maakte, staat in de handleiding voo
 # Wat je server laat zien: een vergeten endpoint
 
 In [les 1](./handleiding) zag je dat `/docs` elk endpoint noemt. Ook
-`GET /sessies`, dat je in [Onthouden op de server: sessies](/docs/FastAPI/sessies)
+`GET /sessies`, dat je in [Onthouden op de server: sessies](/docs/FastAPI/onthouden/sessies)
 maakte om zelf in je sessies te kijken. Daar stond bij: haal het daarna weg.
 Wie dat vergat, heeft een endpoint dat niemand anders mag gebruiken, op een
 lijst die iedereen kan lezen.
@@ -77,10 +77,12 @@ Het script heeft nooit een bericht geplaatst, en toch is het voor je server
 eerst Sara en dan Alex. Een sessie-id is zo lang en willekeurig dat niemand het
 kan raden. Dat helpt niets meer als je server ze zelf op een rij zet.
 
-In dit gastenboek kan een sessie-id weinig kwaad: `/ik` zegt alleen een naam.
-In de reeks [Wie mag wat](/docs/veiligheid/toegang/zwakheid), die later komt,
-mag alleen de schrijver zijn bericht verwijderen, en dat controleert de server
-met precies dit sessie-id. Met `/sessies` erbij kan iedereen elk bericht
+In dit kleine gastenboek kan een sessie-id weinig kwaad: `/ik` zegt alleen een
+naam. In je eigen gastenboek is een sessie-id een inlog. Wie het sessie-id van
+Sara heeft, is voor je server ingelogd als Sara, zonder haar wachtwoord te
+kennen. In de reeks [Wie mag wat](/docs/veiligheid/toegang/zwakheid), die later
+komt, mag alleen de schrijver zijn bericht verwijderen, en dat controleert de
+server met precies dit sessie-id. Met `/sessies` erbij kan iedereen elk bericht
 verwijderen.
 
 ## Dit is de zwakheid

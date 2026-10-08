@@ -1,0 +1,297 @@
+# CSS in een eigen bestand (static files)
+
+<Voorkennis
+  items={[
+    {site: 'web', to: '/docs/html-css/tekst-opmaken-css', label: 'CSS in een apart bestand koppelen'},
+  ]}
+/>
+
+In [HTML tonen](/docs/FastAPI/paginas/html_tonen) zette je CSS in een `<style>`-tag. Met meer pagina's wil je één CSS-bestand dat ze allemaal delen. Zo'n bestand stuurt de server ongewijzigd door, zonder dat er een functie van jou aan te pas komt: een **static file**.
+
+## Mappenstructuur
+
+Maak in je map `static` naast `pages` een map `css`:
+
+```
+je-project/
+├── main.py
+└── static/
+    ├── css/
+    │   └── style.css
+    └── pages/
+        ├── home.html
+        └── about.html
+```
+
+## Static files configureren
+
+Er komen twee regels bij in je `main.py`: een import bovenaan, en direct onder `app = FastAPI()` de regel met `app.mount`. Je endpoints blijven staan. De bovenkant ziet er dan zo uit:
+
+<CodeUitleg>
+
+```python showLineNumbers
+from fastapi import FastAPI
+from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+```
+
+<Regel n={3}>
+`StaticFiles` is het stuk van FastAPI dat bestanden ongewijzigd doorgeeft.
+</Regel>
+
+<Regel n={6}>
+`app.mount` hangt de map `static` aan de URL `/static`. Alles in die map is daarmee bereikbaar in de browser: `static/css/style.css` staat op `/static/css/style.css`. De `name` gebruik je in deze cursus niet; laat hem staan.
+</Regel>
+
+</CodeUitleg>
+
+## CSS in een eigen bestand
+
+Maak `static/css/style.css`:
+
+```css
+h1 {
+    color: blue;
+}
+
+p {
+    color: gray;
+}
+```
+
+## CSS koppelen aan je pagina
+
+Zet in `static/pages/home.html` een `<link>` in de `<head>`. De rest van je pagina blijft staan:
+
+```html
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Home</title>
+        <link rel="stylesheet" href="/static/css/style.css">
+    </head>
+    <body>
+        <h1>Home</h1>
+        <a href="/about">Ga naar Over Mij</a>
+    </body>
+</html>
+```
+
+De `<link>` laadt de CSS via de URL die `app.mount` net heeft aangemaakt. De browser vraagt dat bestand zelf op, als tweede verzoek na de pagina. Dezelfde regel kun je op elke pagina zetten; dan delen ze één stylesheet.
+
+:::note
+Omdat `pages` ook in `static` staat, is `home.html` nu ook bereikbaar op `/static/pages/home.html`. Dat kan geen kwaad, maar link in je pagina's altijd naar het endpoint, zoals `/`, en niet naar het bestand.
+:::
+
+## Testen
+
+Ga naar [http://127.0.0.1:8000](http://127.0.0.1:8000). De kop is blauw: de CSS uit het eigen bestand werkt.
+
+:::danger[Gaat er iets mis?]
+Werkt je CSS niet? Kijk of `app.mount("/static", ...)` in je code staat en of het pad in `<link>` klopt. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
+:::
+
+## Als je wijziging niet doorkomt
+
+Pas je `style.css` aan en blijft de kop blauw? Dan kijk je waarschijnlijk naar een oude kopie. De browser bewaart van sommige antwoorden een kopie, de **cache**. Vraagt hij hetzelfde adres nog eens, dan pakt hij soms die kopie in plaats van de server te vragen. Bij de JSON van je endpoints gebeurt dat vrijwel nooit, bij bestanden wel: je CSS, je afbeeldingen, en ook een HTML-pagina die je met `FileResponse` terugstuurt.
+
+In het tabblad Netwerk uit [Kijken wat de browser doet](/docs/FastAPI/eerste-server/devtools-netwerk) zie je het aan de kolom Grootte: daar staat dan **(geheugencache)** of **(schijfcache)** (in het Engels memory cache of disk cache) in plaats van een aantal bytes. De status blijft 200, dus daaraan zie je het niet. Twee manieren om het te voorkomen:
+
+- Bovenin het tabblad Netwerk staat het vinkje **Cache uitzetten** (Disable cache). Zet het aan; het werkt zolang de ontwikkelaarstools open staan.
+- Klik met de rechtermuisknop op de herlaadknop van je browser en kies **Cache wissen en geforceerd opnieuw laden** (Empty Cache and Hard Reload). Die keuze bestaat alleen als de ontwikkelaarstools open staan. Sneller is **Ctrl+Shift+R**.
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+```python
+from fastapi import FastAPI
+from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.get("/")
+async def home():
+    return FileResponse("static/pages/home.html")
+
+@app.get("/info")
+async def info():
+    return {"naam": "Jouw Naam", "leeftijd": 16}
+
+@app.get("/pagina", response_class=HTMLResponse)
+async def pagina():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Mijn Pagina</title>
+        </head>
+        <body>
+            <h1>Hallo!</h1>
+            <p>Dit is mijn eerste HTML pagina.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/styled", response_class=HTMLResponse)
+async def styled():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Met CSS</title>
+            <style>
+                h1 { color: blue; }
+                p { color: gray; }
+            </style>
+        </head>
+        <body>
+            <h1>Gestylede pagina</h1>
+            <p>Deze tekst is grijs.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/about")
+async def about():
+    return FileResponse("static/pages/about.html")
+
+DIEREN = {
+    "kat": "Een kat spint als hij tevreden is.",
+    "hond": "Een hond kwispelt als hij blij is.",
+    "vis": "Een vis ademt met kieuwen.",
+}
+
+@app.get("/dier/{naam}", response_class=HTMLResponse)
+async def dier(naam: str):
+    tekst = DIEREN.get(naam, "Dit dier staat nog niet op de site.")
+    return f"""
+    <!DOCTYPE html>
+    <html>
+        <body>
+            <h1>Over dieren</h1>
+            <p>{tekst}</p>
+            <a href="/">Terug naar Home</a>
+        </body>
+    </html>
+    """
+
+@app.get("/zoek")
+async def zoek(term: str):
+    return {"je_zocht": term}
+```
+
+</details>
+
+## Opdrachten
+
+### Opdracht 1: Predict - Wat gebeurt er?
+
+Je hebt twee pagina's, `home.html` en `about.html`, en in allebei staat dezelfde regel:
+
+```html
+<link rel="stylesheet" href="/static/css/style.css">
+```
+
+**Vraag:** wat gebeurt er met `about.html` als je de kleur in `style.css` aanpast?
+
+<details>
+<summary>Tip</summary>
+
+Beide pagina's laden hetzelfde bestand. Wat betekent dat als je dat ene bestand aanpast?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`about.html` verandert mee. Elke pagina met deze `<link>` laadt hetzelfde bestand, dus ze krijgen allemaal de nieuwe kleur.
+
+</details>
+
+### Opdracht 2: Run
+
+Maak `static/css/style.css` en de `<link>` in `home.html` uit het voorbeeld, en kijk of je kop blauw is. Pas daarna de kleur aan en herlaad met Netwerk open. Staat er bij `style.css` een aantal bytes, of (geheugencache)? En welke kleur heeft je kop?
+
+<details>
+<summary>Antwoord</summary>
+
+Staat er een aantal bytes, dan haalde de browser het nieuwe bestand op, en is je kop in de nieuwe kleur. Staat er (geheugencache) of (schijfcache), dan gebruikte hij zijn oude kopie, en kan je kop nog de oude kleur hebben. Wat je dan doet, staat onder Als je wijziging niet doorkomt.
+
+</details>
+
+### Opdracht 3: Investigate - Ander pad
+
+Wat gebeurt er als je `app.mount("/static", ...)` verandert in `app.mount("/bestanden", ...)`? Laadt de CSS dan nog?
+
+<details>
+<summary>Antwoord</summary>
+
+Nee. De `<link>` verwijst naar `/static/css/style.css`, maar dat adres bestaat niet meer. In Netwerk zie je bij `style.css` een 404. Om het te repareren pas je de link aan naar `/bestanden/css/style.css`.
+
+</details>
+
+### Opdracht 4: Make - Eigen CSS
+
+Geef je `style.css` minstens drie eigen regels, bijvoorbeeld een achtergrondkleur, een lettergrootte en een kleur voor je kop.
+
+<details>
+<summary>Tip</summary>
+
+Je hoeft niets aan `main.py` of `home.html` te veranderen: alleen `style.css` verandert. Zie je niets, denk dan aan de cache.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`static/css/style.css`:
+```css
+h1 { color: darkblue; }
+p { font-size: 18px; }
+body { background-color: lightyellow; }
+```
+
+</details>
+
+### Opdracht 5: Make - Twee stijlen
+
+Geef je pagina `about.html` uit [Links tussen pagina's](/docs/FastAPI/paginas/links) een eigen CSS-bestand `about.css`, zodat `/` en `/about` er verschillend uitzien.
+
+<details>
+<summary>Tip</summary>
+
+Maak `static/css/about.css` en zet in `about.html` een `<link>` naar `/static/css/about.css`. Aan `main.py` verandert niets: `app.mount` geeft ook dit bestand door.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`static/css/about.css`:
+```css
+h1 { color: green; }
+body { background-color: lightblue; }
+```
+
+`static/pages/about.html`:
+```html
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="/static/css/about.css">
+    </head>
+    <body>
+        <h1>Over Mij</h1>
+        <a href="/">Terug naar Home</a>
+    </body>
+</html>
+```
+
+</details>

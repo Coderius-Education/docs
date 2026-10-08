@@ -43,28 +43,50 @@ function voorkennisPerLes(): Map<string, Item[]> {
 // cookie-of-sessie.mdx erbij zonder dat iemand de keuze maakte. Daarom staan
 // nu álle lesbestanden in een van de twee lijsten.
 const ZONDER_BLOK: Record<string, string> = {
-  'FastAPI/cookie-of-sessie.mdx': 'bouwt alleen op de twee lessen ervoor, in dezelfde cursus',
-  'FastAPI/cookies.mdx': 'nieuwe stof is server-side en wordt hier zelf uitgelegd',
-  'FastAPI/devtools-netwerk.mdx': 'de ontwikkelaarstools zelf, nergens anders behandeld',
-  'FastAPI/devtools-console.mdx':
+  'FastAPI/berichten-opslaan/naam-opslaan.mdx':
+    'f-strings staan als voorkennis bij path-parameters, waar ze voor het eerst nodig zijn',
+  'FastAPI/veel-paginas/query-parameters.mdx':
+    'parameters en standaardwaarden staan als voorkennis bij path-parameters, de les ervoor; het type wordt hier zelf uitgelegd',
+  'FastAPI/onthouden/cookie-of-sessie.mdx':
+    'bouwt alleen op de twee lessen ervoor, in dezelfde cursus',
+  'FastAPI/onthouden/cookies.mdx': 'nieuwe stof is server-side en wordt hier zelf uitgelegd',
+  'FastAPI/sqlitedict/zoeken.mdx':
+    '`in` staat al bij bekijken.mdx (11b), de les ervoor; `get` komt in de python-cursus niet voor en wordt hier zelf uitgelegd',
+  'FastAPI/sqlitedict/verwijderen.mdx':
+    '`del` komt in de python-cursus niet voor en wordt hier zelf uitgelegd; `in` staat bij bekijken.mdx',
+  'FastAPI/sqlitedict/dictionary.mdx':
+    'geneste dictionaries staan al bij templates.mdx; opslaan en ophalen van een dictionary is SqliteDict en wordt hier zelf uitgelegd',
+  'FastAPI/eerste-server/devtools-netwerk.mdx':
+    'de ontwikkelaarstools zelf, nergens anders behandeld',
+  'FastAPI/in-de-browser/devtools-console.mdx':
     'console.log en de DOM staan al bij javascript.mdx, de les ervoor; niet herhalen',
-  'FastAPI/hoe-een-verzoek-werkt.mdx': 'samenvatting van deze cursus, geen nieuwe stof',
+  'FastAPI/afronden/foutpagina.mdx':
+    'bouwt op de 404 uit niet-gevonden en op templates, allebei in deze cursus; de handler wordt in de les zelf uitgelegd',
+  'FastAPI/afronden/hoe-een-verzoek-werkt.mdx': 'samenvatting van deze cursus, geen nieuwe stof',
   'FastAPI/index.mdx':
     'startpagina: noemt de drie cursussen zichtbaar met SiteLinks onder Wat je al moet kunnen; de lessen hebben elk hun eigen blok',
-  'FastAPI/htmx-overzicht.mdx':
+  'FastAPI/zonder-herladen/htmx-overzicht.mdx':
     'recepten die op de htmx-les ervoor en op de gastenboek-lessen bouwen, allemaal in deze cursus',
-  'FastAPI/verzoek-htmx.mdx': 'diagram van de lessen ervoor, geen nieuwe stof',
-  'FastAPI/verzoek-eerste.mdx': 'diagram van de les ervoor, geen nieuwe stof',
-  'FastAPI/verzoek-static.mdx': 'diagram van de lessen ervoor, geen nieuwe stof',
-  'FastAPI/verzoek-get.mdx': 'diagram van de lessen ervoor, geen nieuwe stof',
-  'FastAPI/verzoek-sessie.mdx': 'diagram van de lessen ervoor, geen nieuwe stof',
-  'FastAPI/html_bestanden.mdx': 'HTML-bestand en pad; HTML zelf staat al bij html_tonen',
-  'FastAPI/installatie.mdx':
+  'FastAPI/zonder-herladen/verzoek-htmx.mdx': 'diagram van de lessen ervoor, geen nieuwe stof',
+  'FastAPI/eerste-server/verzoek-eerste.mdx': 'diagram van de les ervoor, geen nieuwe stof',
+  'FastAPI/css-en-afbeeldingen/verzoek-static.mdx':
+    'diagram van de lessen ervoor, geen nieuwe stof',
+  'FastAPI/accounts/verzoek-get.mdx': 'diagram van de lessen ervoor, geen nieuwe stof',
+  'FastAPI/onthouden/verzoek-sessie.mdx': 'diagram van de lessen ervoor, geen nieuwe stof',
+  'FastAPI/paginas/html_bestanden.mdx': 'HTML-bestand en pad; HTML zelf staat al bij html_tonen',
+  'FastAPI/accounts/inloggen.mdx':
+    'het wachtwoordveld staat al bij registreren.mdx, de les ervoor; de controle is server-side en wordt hier zelf uitgelegd',
+  'FastAPI/eerste-server/installatie.mdx':
     'controlelijst: elke check verwijst zelf met een SiteLink naar de editor-cursus',
-  'FastAPI/laat-het-zien.mdx': 'terminalcommando en netwerkadres, geen voorkennis uit een cursus',
+  'FastAPI/afronden/laat-het-zien.mdx':
+    'terminalcommando en netwerkadres, geen voorkennis uit een cursus',
   'FastAPI/projectstructuur.mdx': 'naslag over deze cursus zelf',
-  'FastAPI/post_met_templates.mdx': 'bouwt op forms en templates, allebei in deze cursus',
-  'FastAPI/redirect.mdx': 'bouwt op forms en database, allebei in deze cursus',
+  'FastAPI/sqlitedict/op-een-rij.mdx': 'naslag over de zes SqliteDict-lessen, geen nieuwe stof',
+  'FastAPI/formulieren/post_met_templates.mdx':
+    'bouwt op forms en templates, allebei in deze cursus',
+  'FastAPI/berichten-verwijderen/verwijderen.mdx':
+    'een formulier, del en een redirect staan al eerder in deze cursus; het verborgen veld wordt hier zelf uitgelegd',
+  'FastAPI/berichten-opslaan/redirect.mdx': 'bouwt op forms en database, allebei in deze cursus',
   'cheatsheet.md': 'naslag',
   'starten.md': 'naslag: de vier stappen om te beginnen, verwijst per stap naar de editor-cursus',
   'troubleshooting.md': 'naslag',
@@ -120,22 +142,27 @@ const ZONDER_BLOK: Record<string, string> = {
 };
 
 const MET_BLOK = [
-  'FastAPI/afbeeldingen.mdx',
-  'FastAPI/database.mdx',
-  'FastAPI/detailpagina.mdx',
-  'FastAPI/eerste_endpoint.mdx',
-  'FastAPI/forms.mdx',
-  'FastAPI/get_vs_post.mdx',
-  'FastAPI/html_tonen.mdx',
-  'FastAPI/htmx.mdx',
-  'FastAPI/javascript.mdx',
-  'FastAPI/lijst_tonen.mdx',
-  'FastAPI/links.mdx',
-  'FastAPI/post_naar_database.mdx',
-  'FastAPI/server-of-browser.mdx',
-  'FastAPI/sessies.mdx',
-  'FastAPI/static_files.mdx',
-  'FastAPI/templates.mdx',
+  'FastAPI/css-en-afbeeldingen/afbeeldingen.mdx',
+  'FastAPI/sqlitedict/bekijken.mdx',
+  'FastAPI/sqlitedict/aanpassen.mdx',
+  'FastAPI/sqlitedict/database.mdx',
+  'FastAPI/berichten-tonen/niet-gevonden.mdx',
+  'FastAPI/berichten-opslaan/eigen-sleutel.mdx',
+  'FastAPI/berichten-tonen/leeg.mdx',
+  'FastAPI/berichten-tonen/detailpagina.mdx',
+  'FastAPI/veel-paginas/path-parameters.mdx',
+  'FastAPI/eerste-server/eerste_endpoint.mdx',
+  'FastAPI/formulieren/forms.mdx',
+  'FastAPI/paginas/html_tonen.mdx',
+  'FastAPI/zonder-herladen/htmx.mdx',
+  'FastAPI/in-de-browser/javascript.mdx',
+  'FastAPI/berichten-tonen/lijst_tonen.mdx',
+  'FastAPI/paginas/links.mdx',
+  'FastAPI/accounts/registreren.mdx',
+  'FastAPI/in-de-browser/server-of-browser.mdx',
+  'FastAPI/onthouden/sessies.mdx',
+  'FastAPI/css-en-afbeeldingen/static_files.mdx',
+  'FastAPI/formulieren/templates.mdx',
   'veiligheid/dos/te-veel.mdx',
   'veiligheid/dos/verzoek.mdx',
   'veiligheid/dos/zelf-meten.mdx',
@@ -163,7 +190,7 @@ function relatievePaden(): string[] {
 
 describe('fullstack Voorkennis-blokken', () => {
   it('precies de afgesproken lessen hebben een blok', () => {
-    expect([...voorkennisPerLes().keys()].sort()).toEqual(MET_BLOK);
+    expect([...voorkennisPerLes().keys()].sort()).toEqual([...MET_BLOK].sort());
   });
 
   it('elke lespagina staat in een van de twee lijsten', () => {

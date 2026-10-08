@@ -3,6 +3,7 @@ import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import type { ReactNode } from 'react';
 // sites.js is CommonJS; named imports werken via de bundler-interop.
 import { SITES_BY_ID, normalizeUrl, siteByUrl } from '../../sites';
+import { opsomming } from './logica';
 import styles from './styles.module.css';
 
 export type VoorkennisItem = {
@@ -23,6 +24,10 @@ export type VoorkennisItem = {
  * De titel is bewust een geruststelling en geen eis: het blok is een vangnet
  * voor wie iets wil terugzoeken, geen toelatingstoets ("Wat moet je al
  * kennen?" bleek in de praktijk te scherp te klinken).
+ *
+ * De onderwerpen staan ook in de kop, zodat je ze ziet zonder te klikken:
+ * een dicht blok met alleen de titel werd niet gelezen. Openklappen geeft de
+ * links, met een zin die zegt waarvoor.
  */
 export default function Voorkennis({
   items = [],
@@ -39,7 +44,15 @@ export default function Voorkennis({
 
   return (
     <details className={styles.voorkennis}>
-      <summary>{title}</summary>
+      <summary>
+        <span>
+          <span>{title}:</span>{' '}
+          <span className={styles.onderwerpen}>{opsomming(items.map((i) => i.label))}</span>
+        </span>
+      </summary>
+      <p className={styles.hint}>
+        Weet je dit niet meer zeker? Lees het terug voordat je verdergaat.
+      </p>
       <ul>
         {items.map((item) => {
           const target = item.site ? SITES_BY_ID[item.site] : current;

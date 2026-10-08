@@ -86,6 +86,17 @@ const KOPPELING: Item[] = [
     summary: 'Hoe stuur ik een 404 als iets niet bestaat? (HTTPException)',
     concepten: ['fastapi-httpexception'],
   },
+  {
+    summary: 'Hoe maak ik een account? (registreren)',
+    concepten: [],
+    geenConcept:
+      'opslaan met een controle ervoor; nagekeken via db-write en fastapi-httpexception, aan de code niet te onderscheiden van een gewoon formulier',
+  },
+  {
+    summary: 'Hoe controleer ik een wachtwoord? (inloggen met 401)',
+    concepten: [],
+    geenConcept: 'een vergelijking met ==; db-get en fastapi-httpexception worden al nagekeken',
+  },
   // Dezelfde regex als de 404: een project met een eigen controle gebruikt
   // HTTPException ook, en scoort daarmee op hetzelfde concept.
   {
@@ -113,8 +124,14 @@ const KOPPELING: Item[] = [
   // sowieso niet.
   { summary: 'Hoe lees ik een cookie uit? (Cookie)', concepten: ['fastapi-cookie'] },
   {
-    summary: 'Hoe onthoud ik iets op de server? (sessie met secrets)',
+    summary: 'Hoe onthoud ik wie er is ingelogd? (sessie met secrets)',
     concepten: ['fastapi-sessie'],
+  },
+  {
+    summary: 'Hoe maak ik een eigen 404-pagina? (exception_handler)',
+    concepten: [],
+    geenConcept:
+      'een afronding na de basis; de template eromheen wordt al nagekeken via fastapi-templates',
   },
   {
     summary: 'Hoe zet ik mijn server open voor het netwerk? (--host 0.0.0.0)',
@@ -197,6 +214,29 @@ const KOPPELING: Item[] = [
     concepten: [],
     geenConcept: 'db["naam"] is gewoon indexeren; alleen db.get() wordt apart nagekeken',
   },
+  { summary: 'Hoe bekijk ik alles wat erin staat? (db.items)', concepten: ['db-items'] },
+  {
+    summary: 'Hoe kijk ik of een sleutel bestaat? (in)',
+    concepten: [],
+    geenConcept:
+      'in is gewoon Python; verwijderen met die controle ervoor wordt nagekeken via db-del',
+  },
+  {
+    summary: 'Hoe lees ik iets uit dat misschien niet bestaat? (db.get)',
+    concepten: ['db-get'],
+  },
+  { summary: 'Hoe verwijder ik iets? (del db[...])', concepten: ['db-del'] },
+  {
+    summary: 'Hoe sla ik meer dan één ding onder een sleutel op? (dictionary als waarde)',
+    concepten: [],
+    geenConcept: 'een dictionary is Python; het opslaan zelf wordt nagekeken via db-write',
+  },
+  {
+    summary: 'Hoe pas ik een opgeslagen dictionary aan? (ophalen, aanpassen, terugzetten)',
+    concepten: [],
+    geenConcept:
+      'terugzetten is een gewone toewijzing, aan de code niet te onderscheiden van db-write',
+  },
   {
     summary: 'Hoe geef ik elk bericht een eigen sleutel? (time.time_ns)',
     concepten: [],
@@ -208,12 +248,6 @@ const KOPPELING: Item[] = [
     concepten: [],
     geenConcept:
       'list() en values() zijn Python; de lus in de template wordt nagekeken via html-jinja-loop',
-  },
-  { summary: 'Hoe krijg ik de sleutels erbij? (db.items)', concepten: ['db-items'] },
-  { summary: 'Hoe verwijder ik iets? (del db[...])', concepten: ['db-del'] },
-  {
-    summary: 'Hoe lees ik iets uit dat misschien niet bestaat? (db.get)',
-    concepten: ['db-get'],
   },
 
   // --- htmx ---
