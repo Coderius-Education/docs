@@ -12,10 +12,14 @@ import sidebars from '../../sidebars';
 // fout maar ook geen wijziging, en del zonder in crasht de tweede keer. Alles
 // nagedraaid met sqlitedict 2.1.
 //
-// Nu oefent de leerling eerst in drie lessen met losse scripts, vóór de les
-// die SqliteDict in een endpoint zet, en elke les heeft een Er gaat iets mis
-// met die fouten. Daarnaast is er een naslagpagina, net als Projectstructuur
-// niet in de sidebar.
+// Nu oefent de leerling eerst in losse scripts, vóór de les die SqliteDict in
+// een endpoint zet, en elke les heeft een Er gaat iets mis met die fouten.
+// Dat waren eerst drie lessen (opslaan; sleutels bekijken, zoeken en
+// verwijderen; een dictionary als waarde), maar de opdrachtgever vond de
+// stappen te groot. Nu zijn het zes kleine lessen met elk één concept:
+// opslaan en uitlezen, len en items, in en get, del, een dictionary als
+// waarde, en ophalen-aanpassen-terugzetten. Daarnaast is er een
+// naslagpagina, net als Projectstructuur niet in de sidebar.
 
 const DOCS = fileURLToPath(new URL('../../docs', import.meta.url));
 
@@ -34,17 +38,22 @@ const sectie = (bron: string, kop: string) => bron.split(`\n## ${kop}\n`)[1]?.sp
 
 const SCRIPTLESSEN = [
   'FastAPI/sqlitedict/database',
-  'FastAPI/sqlitedict/database-sleutels',
-  'FastAPI/sqlitedict/database-waarden',
+  'FastAPI/sqlitedict/bekijken',
+  'FastAPI/sqlitedict/zoeken',
+  'FastAPI/sqlitedict/verwijderen',
+  'FastAPI/sqlitedict/dictionary',
+  'FastAPI/sqlitedict/aanpassen',
 ];
+const PRIMM = ['Predict', 'Run', 'Investigate', 'Modify', 'Make'];
+const opdrachtenVan = (id: string) => sectie(tekst(id), 'Opdrachten') ?? '';
 
 describe('SqliteDict eerst in een script', () => {
   const eersteInServer = lessen.find((id) =>
     pythonBlokken(tekst(id)).some((b) => b.includes('@app.') && b.includes('SqliteDict')),
   );
 
-  it('de drie scriptlessen staan direct vóór de eerste les met SqliteDict in een endpoint', () => {
-    expect(eersteInServer).toBe('FastAPI/gastenboek/post_naar_database');
+  it('de scriptlessen staan direct vóór de eerste les met SqliteDict in een endpoint', () => {
+    expect(eersteInServer).toBe('FastAPI/formulier-opslaan/naam-opslaan');
     const plek = lessen.indexOf(eersteInServer as string);
     expect(lessen.slice(plek - SCRIPTLESSEN.length, plek)).toEqual(SCRIPTLESSEN);
   });
@@ -87,29 +96,46 @@ describe('SqliteDict eerst in een script', () => {
     ],
     ['FastAPI/sqlitedict/database', "KeyError: 'Naam'", 'een hoofdletter in de sleutel'],
     [
-      'FastAPI/sqlitedict/database-sleutels',
-      "KeyError: 'leeftijd'",
-      'del zonder in, de tweede keer',
+      'FastAPI/sqlitedict/bekijken',
+      "AttributeError: 'NoneType' object has no attribute 'select'",
+      'de lus buiten het with-blok',
     ],
-    ['FastAPI/sqlitedict/database-waarden', 'terug', 'een dictionary aanpassen zonder terugzetten'],
+    ['FastAPI/sqlitedict/verwijderen', "KeyError: 'leeftijd'", 'del zonder in, de tweede keer'],
+    ['FastAPI/sqlitedict/aanpassen', 'terug', 'een dictionary aanpassen zonder terugzetten'],
   ])('%s: Er gaat iets mis noemt %s (%s)', (id, nodig) => {
     expect(sectie(tekst(id), 'Er gaat iets mis') ?? '').toContain(nodig);
   });
 
-  it.each(SCRIPTLESSEN)('%s doorloopt PRIMM: van Predict tot Make, elk met een antwoord', (id) => {
-    const opdrachten = sectie(tekst(id), 'Opdrachten') ?? '';
-    for (const stap of ['Predict', 'Run', 'Investigate', 'Modify', 'Make']) {
-      expect(opdrachten, stap).toMatch(new RegExp(`### Opdracht \\d+: ${stap}`));
+  // Elke les is klein, maar doorloopt toch de cyclus: voorspellen, draaien,
+  // onderzoeken en zelf iets aanpassen of maken.
+  it.each(SCRIPTLESSEN)(
+    '%s heeft Predict, Run, Investigate en Modify of Make, elk met een antwoord',
+    (id) => {
+      const opdrachten = opdrachtenVan(id);
+      for (const stap of ['Predict', 'Run', 'Investigate']) {
+        expect(opdrachten, stap).toMatch(new RegExp(`### Opdracht \\d+: ${stap}`));
+      }
+      expect(opdrachten).toMatch(/### Opdracht \d+: (Modify|Make)/);
+      const aantal = opdrachten.match(/^### Opdracht /gm)?.length ?? 0;
+      const antwoorden = opdrachten.match(/<summary>Antwoord<\/summary>/g)?.length ?? 0;
+      expect(antwoorden).toBe(aantal);
+    },
+  );
+
+  it('over de scriptlessen samen komen alle vijf PRIMM-stappen voor', () => {
+    const alle = SCRIPTLESSEN.map(opdrachtenVan).join('\n');
+    for (const stap of PRIMM) {
+      expect(alle, stap).toMatch(new RegExp(`### Opdracht \\d+: ${stap}`));
     }
-    const aantal = opdrachten.match(/^### Opdracht /gm)?.length ?? 0;
-    const antwoorden = opdrachten.match(/<summary>Antwoord<\/summary>/g)?.length ?? 0;
-    expect(antwoorden).toBe(aantal);
   });
 
-  it('Een formulier opslaan legt db.get niet opnieuw uit, maar linkt naar de les', () => {
-    const les = tekst('FastAPI/gastenboek/post_naar_database');
-    expect(les).toContain('](/docs/FastAPI/sqlitedict/database-sleutels)');
-    expect(les).toContain('](/docs/FastAPI/sqlitedict/database-waarden)');
+  it('Een formulier opslaan legt db.get en de dictionary niet opnieuw uit, maar linkt naar de les', () => {
+    expect(tekst('FastAPI/formulier-opslaan/naam-opslaan')).toContain(
+      '](/docs/FastAPI/sqlitedict/zoeken)',
+    );
+    expect(tekst('FastAPI/formulier-opslaan/berichten-opslaan')).toContain(
+      '](/docs/FastAPI/sqlitedict/dictionary)',
+    );
   });
 });
 

@@ -6,7 +6,7 @@ Drie regels gelden overal. De pagina met de `hx-`-attributen heeft de script-tag
 
 ## Een formulier versturen
 
-Het gastenboekformulier zonder herladen. Het staat in `static/pages/gastenboek_form.html` uit [Een formulier opslaan](/docs/FastAPI/gastenboek/post_naar_database), en dat bestand heeft nog geen `<head>`. Zet er een `<head>` met de script-tag bij, boven de `<body>`:
+Het gastenboekformulier zonder herladen. Het staat in `static/pages/gastenboek_form.html` uit [Elk bericht bewaren: een eigen sleutel](/docs/FastAPI/formulier-opslaan/berichten-opslaan), en dat bestand heeft nog geen `<head>`. Zet er een `<head>` met de script-tag bij, boven de `<body>`:
 
 ```html
 <head>
@@ -57,7 +57,7 @@ Zet je `hx-on::after-request="this.reset()"` op de `<form>`, dan maakt htmx de v
 
 ## Een stuk van de pagina verversen
 
-Een knop die de lijst met berichten opnieuw ophaalt. Het antwoord is nu geen zin maar een lijst, dus die krijgt een eigen template, `templates/berichten_lijst.html`, zonder `<html>` of `<head>`. Knip het hele `{% if berichten %}`-blok uit je `berichten.html` en zet het in dat nieuwe bestand. Met alles wat je lijst al had: de link naar de detailpagina uit [Eén item tonen](/docs/FastAPI/gastenboek/detailpagina) en het formuliertje om te verwijderen uit [Doorsturen na opslaan](/docs/FastAPI/gastenboek/redirect#verwijderen-en-terug). Zo ziet het er dan ongeveer uit:
+Een knop die de lijst met berichten opnieuw ophaalt. Het antwoord is nu geen zin maar een lijst, dus die krijgt een eigen template, `templates/berichten_lijst.html`, zonder `<html>` of `<head>`. Knip het hele `{% if berichten %}`-blok uit je `berichten.html` en zet het in dat nieuwe bestand. Met alles wat je lijst al had: de link naar de detailpagina uit [Eén item tonen](/docs/FastAPI/een-item/detailpagina) en het formuliertje om te verwijderen uit [Doorsturen na opslaan](/docs/FastAPI/doorsturen/verwijderen). Zo ziet het er dan ongeveer uit:
 
 ```html
 {% if berichten %}

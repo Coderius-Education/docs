@@ -557,7 +557,7 @@ In de browser staat `{"detail":"Method Not Allowed"}`, en in de terminal bijvoor
 
 4. **Je klikte op een htmx-knop met `hx-delete`.** Die stuurt een DELETE, dus het endpoint moet `@app.delete(...)` zijn en niet `@app.post(...)`.
 
-Meer uitleg: [GET vs POST](/docs/FastAPI/formulieren/get_vs_post), [Doorsturen na opslaan (redirect)](/docs/FastAPI/gastenboek/redirect) en [htmx-recepten: formulier, verversen, verwijderen, zoeken](/docs/FastAPI/zonder-herladen/htmx-overzicht)
+Meer uitleg: [GET vs POST](/docs/FastAPI/formulieren/get_vs_post), [Doorsturen na opslaan (redirect)](/docs/FastAPI/doorsturen/redirect) en [htmx-recepten: formulier, verversen, verwijderen, zoeken](/docs/FastAPI/zonder-herladen/htmx-overzicht)
 
 </details>
 
@@ -625,7 +625,7 @@ with SqliteDict("data.db") as db:
     db.commit()
 ```
 
-Meer uitleg: [Een dictionary als waarde in SqliteDict](/docs/FastAPI/sqlitedict/database-waarden)
+Meer uitleg: [Een dictionary aanpassen: ophalen, aanpassen, terugzetten](/docs/FastAPI/sqlitedict/aanpassen#er-gaat-iets-mis)
 
 </details>
 
@@ -664,11 +664,11 @@ with SqliteDict("sessies.db") as sessies:
     mijn = sessies.get(sessie_id, {})
 ```
 
-Meer uitleg: [Gegevens opslaan met SqliteDict](/docs/FastAPI/sqlitedict/database#er-gaat-iets-mis) (een andere map), [Sleutels in SqliteDict: bekijken, zoeken en verwijderen](/docs/FastAPI/sqlitedict/database-sleutels) (`in`, `get` en `del`), [Eén item tonen: opzoeken en 404](/docs/FastAPI/gastenboek/detailpagina), [Onthouden op de server: sessies](/docs/FastAPI/onthouden/sessies) en, voor een gewone dictionary, [Eén route voor veel pagina's: path-parameters](/docs/FastAPI/veel-paginas/path-parameters#er-gaat-iets-mis)
+Meer uitleg: [Gegevens opslaan met SqliteDict](/docs/FastAPI/sqlitedict/database#er-gaat-iets-mis) (een andere map), [Bestaat de sleutel? in en get](/docs/FastAPI/sqlitedict/zoeken) (`in` en `get`), [Verwijderen met del](/docs/FastAPI/sqlitedict/verwijderen#er-gaat-iets-mis) (`del`), [Eén item tonen: de sleutel uit de URL](/docs/FastAPI/een-item/detailpagina), [Onthouden op de server: sessies](/docs/FastAPI/onthouden/sessies) en, voor een gewone dictionary, [Eén route voor veel pagina's: path-parameters](/docs/FastAPI/veel-paginas/path-parameters#er-gaat-iets-mis)
 
 </details>
 
-## Opslaan en tonen in je server
+## Opslaan vanuit een formulier
 
 <details>
 <summary>Er blijft maar één bericht over, of er verdwijnt er af en toe een</summary>
@@ -686,7 +686,7 @@ sleutel = "bericht"
 sleutel = f"bericht_{time.time_ns()}"
 ```
 
-Meer uitleg: [Een formulier opslaan](/docs/FastAPI/gastenboek/post_naar_database)
+Meer uitleg: [Elk bericht bewaren: een eigen sleutel](/docs/FastAPI/formulier-opslaan/berichten-opslaan)
 
 </details>
 
@@ -711,9 +711,11 @@ with SqliteDict("gastenboek.db") as db:
     alle_berichten = list(db.values())
 ```
 
-Meer uitleg: [Alles tonen: een for-lus in je template](/docs/FastAPI/gastenboek/lijst_tonen)
+Meer uitleg: [Alles tonen: een for-lus in je template](/docs/FastAPI/alles-tonen/lijst_tonen)
 
 </details>
+
+## Alles tonen
 
 <details>
 <summary>TemplateSyntaxError: Unexpected end of template</summary>
@@ -737,7 +739,7 @@ jinja2.exceptions.TemplateSyntaxError: Unexpected end of template. Jinja was loo
 {% endfor %}
 ```
 
-Meer uitleg: [Alles tonen: een for-lus in je template](/docs/FastAPI/gastenboek/lijst_tonen)
+Meer uitleg: [Alles tonen: een for-lus in je template](/docs/FastAPI/alles-tonen/lijst_tonen)
 
 </details>
 
@@ -753,9 +755,11 @@ Meer uitleg: [Alles tonen: een for-lus in je template](/docs/FastAPI/gastenboek/
 3. Staat er echt iets in je database? Open `/berichten` nadat je een bericht hebt verstuurd, niet ervoor.
 4. Staat `db.commit()` in je POST-endpoint, binnen het `with`-blok? Zonder die regel is je bericht weg zodra het blok sluit (zie Je bericht is meteen weg, hierboven).
 
-Meer uitleg: [Alles tonen: een for-lus in je template](/docs/FastAPI/gastenboek/lijst_tonen)
+Meer uitleg: [Alles tonen: een for-lus in je template](/docs/FastAPI/alles-tonen/lijst_tonen)
 
 </details>
+
+## Doorsturen en verwijderen
 
 <details>
 <summary>Elk bericht is een lege regel met alleen een dubbele punt</summary>
@@ -793,9 +797,11 @@ with SqliteDict("gastenboek.db") as db:
 
 Gebruikt je template de sleutel niet, dan mag het ook allebei zonder: `db.values()` met `{% for bericht in berichten %}`.
 
-Meer uitleg: [Doorsturen na opslaan (redirect)](/docs/FastAPI/gastenboek/redirect)
+Meer uitleg: [Doorsturen na opslaan (redirect)](/docs/FastAPI/doorsturen/redirect)
 
 </details>
+
+## Eén item tonen
 
 <details>
 <summary>In plaats van een foutpagina zie je JSON met status_code en detail (return in plaats van raise)</summary>
@@ -819,7 +825,7 @@ if bericht is None:
     raise HTTPException(status_code=404, detail="Dit bericht bestaat niet")
 ```
 
-Meer uitleg: [Eén item tonen: opzoeken en 404](/docs/FastAPI/gastenboek/detailpagina)
+Meer uitleg: [Een 404 sturen: als het item niet bestaat](/docs/FastAPI/een-item/niet-gevonden)
 
 </details>
 

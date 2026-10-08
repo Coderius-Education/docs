@@ -71,19 +71,38 @@ const sidebars: SidebarsConfig = {
       label: 'Gegevens opslaan (SqliteDict)',
       items: [
         'FastAPI/sqlitedict/database',
-        'FastAPI/sqlitedict/database-sleutels',
-        'FastAPI/sqlitedict/database-waarden',
+        'FastAPI/sqlitedict/bekijken',
+        'FastAPI/sqlitedict/zoeken',
+        'FastAPI/sqlitedict/verwijderen',
+        'FastAPI/sqlitedict/dictionary',
+        'FastAPI/sqlitedict/aanpassen',
       ],
     },
     {
       type: 'category',
-      label: 'Opslaan en tonen in je server',
+      label: 'Opslaan vanuit een formulier',
       items: [
-        'FastAPI/gastenboek/post_naar_database',
-        'FastAPI/gastenboek/lijst_tonen',
-        'FastAPI/gastenboek/redirect',
-        'FastAPI/gastenboek/detailpagina',
-        'FastAPI/gastenboek/verzoek-get',
+        'FastAPI/formulier-opslaan/naam-opslaan',
+        'FastAPI/formulier-opslaan/berichten-opslaan',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Alles tonen',
+      items: ['FastAPI/alles-tonen/lijst_tonen', 'FastAPI/alles-tonen/leeg'],
+    },
+    {
+      type: 'category',
+      label: 'Doorsturen en verwijderen',
+      items: ['FastAPI/doorsturen/redirect', 'FastAPI/doorsturen/verwijderen'],
+    },
+    {
+      type: 'category',
+      label: 'Eén item tonen',
+      items: [
+        'FastAPI/een-item/detailpagina',
+        'FastAPI/een-item/niet-gevonden',
+        'FastAPI/een-item/verzoek-get',
       ],
     },
     {

@@ -4,29 +4,50 @@
 
 export type Omleiding = { van: string; naar: string };
 
-// Elke categorie van de FastAPI-route kreeg een eigen map. Daarvoor stonden
-// alle lessen los in docs/FastAPI/. Per map de lessen die erin kwamen; SqliteDict
-// op een rij heette sqlitedict.mdx en werd sqlitedict/op-een-rij.mdx.
-const mappen: Record<string, (string | [string, string])[]> = {
-  'eerste-server': ['installatie', 'eerste_endpoint', 'verzoek-eerste', 'devtools-netwerk'],
-  paginas: ['html_tonen', 'html_bestanden', 'links'],
-  'css-en-afbeeldingen': ['static_files', 'afbeeldingen', 'verzoek-static'],
-  formulieren: ['templates', 'get_vs_post', 'forms', 'post_met_templates'],
-  sqlitedict: ['database', 'database-sleutels', 'database-waarden', ['sqlitedict', 'op-een-rij']],
-  gastenboek: ['post_naar_database', 'lijst_tonen', 'redirect', 'detailpagina', 'verzoek-get'],
-  accounts: ['registreren', 'inloggen'],
-  'zonder-herladen': ['htmx', 'htmx-overzicht', 'verzoek-htmx'],
-  'in-de-browser': ['javascript', 'devtools-console', 'server-of-browser'],
-  onthouden: ['cookies', 'sessies', 'cookie-of-sessie', 'verzoek-sessie'],
-  afronden: ['foutpagina', 'hoe-een-verzoek-werkt', 'laat-het-zien'],
+// Tot oktober 2026 stonden alle lessen los in docs/FastAPI/; toen kreeg elke
+// categorie een eigen map. Hier staan alleen de adressen die toen live waren,
+// met de les waar ze nu heen gaan. Een gesplitste les stuurt door naar zijn
+// eerste deel: post_naar_database naar Een formulier opslaan, en lijst_tonen,
+// redirect en detailpagina naar de les die de oude naam hield.
+const losseLessen: Record<string, string> = {
+  installatie: 'eerste-server/installatie',
+  eerste_endpoint: 'eerste-server/eerste_endpoint',
+  'verzoek-eerste': 'eerste-server/verzoek-eerste',
+  'devtools-netwerk': 'eerste-server/devtools-netwerk',
+  html_tonen: 'paginas/html_tonen',
+  html_bestanden: 'paginas/html_bestanden',
+  links: 'paginas/links',
+  static_files: 'css-en-afbeeldingen/static_files',
+  afbeeldingen: 'css-en-afbeeldingen/afbeeldingen',
+  'verzoek-static': 'css-en-afbeeldingen/verzoek-static',
+  templates: 'formulieren/templates',
+  get_vs_post: 'formulieren/get_vs_post',
+  forms: 'formulieren/forms',
+  post_met_templates: 'formulieren/post_met_templates',
+  database: 'sqlitedict/database',
+  post_naar_database: 'formulier-opslaan/naam-opslaan',
+  lijst_tonen: 'alles-tonen/lijst_tonen',
+  redirect: 'doorsturen/redirect',
+  detailpagina: 'een-item/detailpagina',
+  'verzoek-get': 'een-item/verzoek-get',
+  htmx: 'zonder-herladen/htmx',
+  'htmx-overzicht': 'zonder-herladen/htmx-overzicht',
+  'verzoek-htmx': 'zonder-herladen/verzoek-htmx',
+  javascript: 'in-de-browser/javascript',
+  'devtools-console': 'in-de-browser/devtools-console',
+  'server-of-browser': 'in-de-browser/server-of-browser',
+  cookies: 'onthouden/cookies',
+  sessies: 'onthouden/sessies',
+  'cookie-of-sessie': 'onthouden/cookie-of-sessie',
+  'verzoek-sessie': 'onthouden/verzoek-sessie',
+  'hoe-een-verzoek-werkt': 'afronden/hoe-een-verzoek-werkt',
+  'laat-het-zien': 'afronden/laat-het-zien',
 };
 
-export const verhuisd: Omleiding[] = Object.entries(mappen).flatMap(([map, lessen]) =>
-  lessen.map((les) => {
-    const [oud, nieuw] = typeof les === 'string' ? [les, les] : les;
-    return { van: `/docs/FastAPI/${oud}`, naar: `/docs/FastAPI/${map}/${nieuw}` };
-  }),
-);
+export const verhuisd: Omleiding[] = Object.entries(losseLessen).map(([oud, nieuw]) => ({
+  van: `/docs/FastAPI/${oud}`,
+  naar: `/docs/FastAPI/${nieuw}`,
+}));
 
 export const omleidingen: Omleiding[] = [
   // De eindopdracht Jouw eigen project is uit de cursus gehaald; het oude
@@ -34,6 +55,6 @@ export const omleidingen: Omleiding[] = [
   { van: '/docs/FastAPI/jouw-project', naar: '/docs/FastAPI/accounts/inloggen' },
   // Het diagram van één formulier staat sinds de herindeling op dezelfde
   // pagina als dat van één klik.
-  { van: '/docs/FastAPI/verzoek-post', naar: '/docs/FastAPI/gastenboek/verzoek-get#een-formulier' },
+  { van: '/docs/FastAPI/verzoek-post', naar: '/docs/FastAPI/een-item/verzoek-get#een-formulier' },
   ...verhuisd,
 ];

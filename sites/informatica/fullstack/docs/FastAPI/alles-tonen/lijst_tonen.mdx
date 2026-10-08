@@ -3,7 +3,6 @@
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/herhalen/06a-for-loop', label: 'De for-loop'},
-    {site: 'python', to: '/docs/beslissen/05b-if-else', label: 'If en else'},
     {site: 'web', to: '/docs/html-css/koppen-lijsten', label: 'Lijsten in HTML'},
   ]}
 />
@@ -26,7 +25,7 @@ Dit werkt net als een for-lus in Python, alleen sluit je de lus af met `{% endfo
 
 ## De data meesturen
 
-In [Een formulier opslaan](/docs/FastAPI/gastenboek/post_naar_database) gaf `/berichten` de berichten nog als JSON terug. Vervang dat endpoint door deze versie, die alle berichten ophaalt en meestuurt onder de naam die de template gebruikt:
+In [Elk bericht bewaren: een eigen sleutel](/docs/FastAPI/formulier-opslaan/berichten-opslaan) gaf `/berichten` de berichten nog als JSON terug. Vervang dat endpoint door deze versie, die alle berichten ophaalt en meestuurt onder de naam die de template gebruikt:
 
 <CodeUitleg>
 
@@ -44,7 +43,7 @@ async def berichten(request: Request):
 ```
 
 <Regel n={4}>
-`db.values()` geeft alle opgeslagen berichten, zonder hun sleutels. De `list()` eromheen ken je uit [Een formulier opslaan](/docs/FastAPI/gastenboek/post_naar_database), en hier is hij net zo nodig: de template loopt pas door de berichten als de database allang weer dicht is. Vergeet je hem, dan krijg je ook hier `AttributeError: 'NoneType' object has no attribute 'select'`.
+`db.values()` geeft alle opgeslagen berichten, zonder hun sleutels. De `list()` eromheen ken je uit [Elk bericht bewaren: een eigen sleutel](/docs/FastAPI/formulier-opslaan/berichten-opslaan), en hier is hij net zo nodig: de template loopt pas door de berichten als de database allang weer dicht is. Vergeet je hem, dan krijg je ook hier `AttributeError: 'NoneType' object has no attribute 'select'`.
 </Regel>
 
 <Regel n={8}>
@@ -52,24 +51,6 @@ De lijst gaat mee onder de naam `berichten`, en dat is precies de naam die de te
 </Regel>
 
 </CodeUitleg>
-
-## Het lege geval
-
-Een gastenboek zonder berichten toont nu een lege `<ul>`. Met `{% if %}` vang je dat op:
-
-```html
-{% if berichten %}
-    <ul>
-        {% for bericht in berichten %}
-            <li>{{ bericht.naam }}: {{ bericht.bericht }}</li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>Nog geen berichten. Wees de eerste.</p>
-{% endif %}
-```
-
-`{% if berichten %}` is waar zodra er minstens één bericht in de lijst staat. Een lege lijst telt als niet waar, en dan toont Jinja2 wat onder `{% else %}` staat.
 
 ## Compleet voorbeeld
 
@@ -85,15 +66,11 @@ Een gastenboek zonder berichten toont nu een lege `<ul>`. Met `{% if %}` vang je
     <body>
         <h1>Gastenboek</h1>
 
-        {% if berichten %}
-            <ul>
-                {% for bericht in berichten %}
-                    <li>{{ bericht.naam }}: {{ bericht.bericht }}</li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>Nog geen berichten. Wees de eerste.</p>
-        {% endif %}
+        <ul>
+            {% for bericht in berichten %}
+                <li>{{ bericht.naam }}: {{ bericht.bericht }}</li>
+            {% endfor %}
+        </ul>
 
         <a href="/gastenboek">Nieuw bericht</a>
     </body>
@@ -105,8 +82,6 @@ Een gastenboek zonder berichten toont nu een lege `<ul>`. Met `{% if %}` vang je
 1. Start je server en ga naar `http://127.0.0.1:8000/berichten`
 2. Je ziet de berichten die je in de vorige les verstuurde, nu als lijst
 3. Vul het formulier op `/gastenboek` nog een keer in en ga terug naar `/berichten`: de lijst is gegroeid
-
-Wil je "Nog geen berichten" zien, stop dan de server, hernoem `gastenboek.db` tijdelijk (bijvoorbeeld naar `gastenboek-bewaar.db`) en start opnieuw. Zet daarna de oude naam terug, want de volgende lessen bouwen op je berichten voort.
 
 :::danger[Gaat er iets mis?]
 Blijft de lijst leeg terwijl er wel data in je database staat? Dan komt de lijst waarschijnlijk onder een andere naam binnen dan de template verwacht. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
@@ -326,10 +301,10 @@ Haal in je complete `berichten.html` de regel `{% endfor %}` weg en herlaad de p
 De browser zegt `Internal Server Error`. Onderaan in je terminal staat:
 
 ```
-jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'endif'. You probably made a nesting mistake. Jinja is expecting this tag, but currently looking for 'endfor'. The innermost block that needs to be closed is 'for'.
+jinja2.exceptions.TemplateSyntaxError: Unexpected end of template. Jinja was looking for the following tags: 'endfor' or 'else'. The innermost block that needs to be closed is 'for'.
 ```
 
-Jinja2 leest je template van boven naar beneden. De lus is nog open, en dan komt hij `{% endif %}` tegen terwijl hij op `{% endfor %}` wacht. Staat er na de lus geen `{% endif %}` meer, dan loopt Jinja2 tegen het einde van het bestand en zegt hij `Unexpected end of template`. Allebei betekenen ze hetzelfde: elke `{% for %}` heeft een `{% endfor %}` nodig, en elke `{% if %}` een `{% endif %}`.
+Jinja2 leest je template van boven naar beneden. De lus is nog open als het bestand ophoudt, en dan weet hij niet waar de herhaling stopt. Elke `{% for %}` heeft een `{% endfor %}` nodig. Zet de regel terug.
 
 </details>
 
@@ -391,3 +366,5 @@ De `<tr>` met de kopjes hoort buiten de lus. Alleen de `<tr>` met de data herhaa
 De kopregel staat buiten de lus, dus die verschijnt één keer. De rij met `<td>` staat erbinnen en komt er voor elk bericht opnieuw.
 
 </details>
+
+Door naar [Nog niets? if en else in je template](/docs/FastAPI/alles-tonen/leeg).

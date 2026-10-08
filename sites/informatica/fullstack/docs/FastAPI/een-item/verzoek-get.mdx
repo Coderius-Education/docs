@@ -20,7 +20,7 @@ Een formulier volgt hetzelfde patroon, maar eindigt met een omleiding in plaats 
 
 <VerzoekCyclus variant="post" />
 
-De laatste stap start het diagram van de klik opnieuw. Dat is het post/redirect/get-patroon uit [Doorsturen na opslaan (redirect)](/docs/FastAPI/gastenboek/redirect): versturen en tonen zijn twee losse verzoeken, zodat F5 de pagina herlaadt in plaats van je bericht nog een keer op te sturen.
+De laatste stap start het diagram van de klik opnieuw. Dat is het post/redirect/get-patroon uit [Doorsturen na opslaan (redirect)](/docs/FastAPI/doorsturen/redirect): versturen en tonen zijn twee losse verzoeken, zodat F5 de pagina herlaadt in plaats van je bericht nog een keer op te sturen.
 
 Stap 1 gebeurt in de browser, en die is van de bezoeker. Wat een bezoeker instuurt controleer je daarom in stap 4, in je endpoint, en nooit alleen in de HTML. Waarom dat zo is, zie je in de uitbreiding [Server of browser?](/docs/FastAPI/in-de-browser/server-of-browser).
 

@@ -57,6 +57,41 @@ describe('volgorde van de FastAPI-lessen', () => {
     expect(les.indexOf('@app.get("/kat"')).toBeLessThan(les.indexOf('@app.get("/dier/{naam}")'));
   });
 
+  // Het gastenboek stond in één categorie, "Opslaan en tonen in je server",
+  // en één les deed vaak twee dingen: de naam én het gastenboek, de redirect
+  // én verwijderen, opzoeken én de 404. Nu heeft elk onderwerp een eigen
+  // categorie, en elke les één ding.
+  it('het gastenboek staat in vier categorieën, tussen SqliteDict en Accounts', () => {
+    const labels = categorieen.map((c) => c.label);
+    const van = labels.indexOf('Gegevens opslaan (SqliteDict)');
+    const tot = labels.indexOf('Accounts');
+    expect(labels.slice(van + 1, tot)).toEqual([
+      'Opslaan vanuit een formulier',
+      'Alles tonen',
+      'Doorsturen en verwijderen',
+      'Eén item tonen',
+    ]);
+    const lessenVan = (label: string) =>
+      plat(categorieen.find((c) => c.label === label)?.items ?? []);
+    expect(lessenVan('Opslaan vanuit een formulier')).toEqual([
+      'FastAPI/formulier-opslaan/naam-opslaan',
+      'FastAPI/formulier-opslaan/berichten-opslaan',
+    ]);
+    expect(lessenVan('Doorsturen en verwijderen')).toEqual([
+      'FastAPI/doorsturen/redirect',
+      'FastAPI/doorsturen/verwijderen',
+    ]);
+  });
+
+  it.each([
+    ['FastAPI/formulier-opslaan/naam-opslaan', 'time.time_ns()'],
+    ['FastAPI/alles-tonen/lijst_tonen', '{% if'],
+    ['FastAPI/doorsturen/redirect', 'del db['],
+    ['FastAPI/een-item/detailpagina', 'raise HTTPException'],
+  ])('%s doet één ding: %s komt pas in de les erna', (id, later) => {
+    expect(hoofdtekst(id)).not.toContain(later);
+  });
+
   it.each([
     'time.time_ns()',
     'db.items()',
@@ -116,15 +151,21 @@ describe('titels en categorieën', () => {
 
   it.each([
     ['FastAPI/veel-paginas/path-parameters', /path-parameters/],
-    ['FastAPI/gastenboek/detailpagina', /opzoeken/],
-    ['FastAPI/gastenboek/detailpagina', /404/],
-    ['FastAPI/gastenboek/redirect', /redirect/],
+    ['FastAPI/een-item/detailpagina', /sleutel uit de URL/],
+    ['FastAPI/een-item/niet-gevonden', /404/],
+    ['FastAPI/doorsturen/redirect', /redirect/],
     ['FastAPI/formulieren/templates', /Jinja2/],
     ['FastAPI/sqlitedict/database', /SqliteDict/],
-    ['FastAPI/sqlitedict/database-sleutels', /SqliteDict/],
-    ['FastAPI/sqlitedict/database-waarden', /SqliteDict/],
+    ['FastAPI/sqlitedict/bekijken', /len en items/],
+    ['FastAPI/sqlitedict/zoeken', /in en get/],
+    ['FastAPI/sqlitedict/verwijderen', /del/],
+    ['FastAPI/sqlitedict/dictionary', /dictionary als waarde/],
+    ['FastAPI/sqlitedict/aanpassen', /terugzetten/],
     ['FastAPI/css-en-afbeeldingen/static_files', /static files/],
-    ['FastAPI/gastenboek/lijst_tonen', /for-lus/],
+    ['FastAPI/alles-tonen/lijst_tonen', /for-lus/],
+    ['FastAPI/alles-tonen/leeg', /if en else/],
+    ['FastAPI/formulier-opslaan/berichten-opslaan', /eigen sleutel/],
+    ['FastAPI/doorsturen/verwijderen', /verborgen veld/],
     ['FastAPI/accounts/registreren', /account/],
     ['FastAPI/accounts/inloggen', /wachtwoord/],
     ['FastAPI/afronden/foutpagina', /404/],

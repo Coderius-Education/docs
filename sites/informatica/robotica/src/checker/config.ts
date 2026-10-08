@@ -199,7 +199,7 @@ const pythonConcepts: Concept[] = [
   {
     id: 'py-dict-loop',
     group: 'Data',
-    label: 'Door een dictionary loopen',
+    label: 'Door een dictionary lopen',
     level: 'gevorderd',
     detect: py(/\.(items|keys|values)\s*\(\s*\)/g),
   },

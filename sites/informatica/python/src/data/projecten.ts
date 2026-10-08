@@ -55,7 +55,7 @@ export const CONCEPTNAMEN: Record<string, string> = {
   '09b': 'Return',
   '10a': 'Lijsten',
   '11a': 'Dictionaries',
-  '11b': 'Door een dictionary loopen',
+  '11b': 'Door een dictionary lopen',
   '12': 'Tuples',
   '13': 'Sets',
 };

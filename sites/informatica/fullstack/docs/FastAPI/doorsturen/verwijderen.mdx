@@ -1,59 +1,62 @@
-# Eén item tonen: de sleutel uit de URL
+# Een bericht verwijderen: een verborgen veld
 
-Je lijst toont alle berichten onder elkaar, op één pagina. Op echte websites klik je op één item en krijg je een eigen pagina, met een eigen URL die je kunt delen. Daarvoor moet de URL zeggen wélk bericht je bedoelt.
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/data/11b-itereren-dictionaries', label: 'Door een dictionary lopen met items()'},
+  ]}
+/>
 
-## De sleutel in de URL
+Verwijderen gaat net als opslaan: een formulier met een POST, en daarna met een redirect terug naar de lijst. Nieuw is dat het formulier moet zeggen wélk bericht weg moet.
 
-In [Eén route voor veel pagina's: path-parameters](/docs/FastAPI/veel-paginas/path-parameters) gaf `/dier/{naam}` elk dier een eigen pagina. Een bericht krijgt op dezelfde manier een eigen adres, met de sleutel uit de database in het pad. Een vraagteken, zoals `/zoek?term=python` uit [GET vs POST](/docs/FastAPI/formulieren/get_vs_post), kan ook, maar voor één item is een path-parameter gebruikelijker. Zet dit endpoint onder je andere endpoints:
+## De sleutel meesturen en het endpoint
 
-```python
-@app.get("/bericht/{sleutel}")
-async def bericht_detail(request: Request, sleutel: str):
-    return {"je_vroeg_om": sleutel}
-```
+Om één bericht aan te wijzen heb je zijn sleutel nodig. Stuur de berichten daarom mét hun sleutel naar de template: vervang in je endpoint `/berichten` de `db.values()` door `db.items()`. Het endpoint voor verwijderen zet je eronder:
 
-Ga je naar `/bericht/bericht_17` dan krijg je `{"je_vroeg_om":"bericht_17"}`, net als bij de dieren.
+<CodeUitleg>
 
-## Het bericht opzoeken
-
-Met die sleutel kun je het bericht uit de database halen. Vervang je endpoint door deze versie:
-
-{/* route-dubbel: vervangt de eerste versie van GET /bericht/{sleutel} hierboven */}
-```python
-@app.get("/bericht/{sleutel}")
-async def bericht_detail(request: Request, sleutel: str):
+{/* route-dubbel: vervangt GET /berichten uit Alles tonen, nu met db.items() */}
+```python showLineNumbers
+@app.get("/berichten")
+async def berichten(request: Request):
     with SqliteDict("gastenboek.db") as db:
-        bericht = db.get(sleutel)
+        alle_berichten = list(db.items())
     return templates.TemplateResponse(
         request,
-        "bericht.html",
-        {"bericht": bericht}
+        "berichten.html",
+        {"berichten": alle_berichten}
     )
+
+@app.post("/verwijderen")
+async def verwijderen(sleutel: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        if sleutel in db:
+            del db[sleutel]
+            db.commit()
+    return RedirectResponse(url="/berichten", status_code=303)
 ```
 
-`db.get(sleutel)` geeft `None` als de sleutel niet bestaat, in plaats van te crashen met een `KeyError`.
+<Regel n={4}>
+`db.items()` geeft paren: eerst de sleutel, dan het bericht.
+</Regel>
 
-De template `templates/bericht.html` toont één bericht, met een link terug naar de lijst:
+<Regel n={14} tot={16}>
+`del db[sleutel]` haalt het bericht weg. De `if sleutel in db` voorkomt een crash als het bericht al weg is, bijvoorbeeld omdat iemand het in een ander tabblad al verwijderde.
+</Regel>
 
-```html
-<!DOCTYPE html>
-<html>
-    <body>
-        <h1>Bericht van {{ bericht.naam }}</h1>
-        <p>{{ bericht.bericht }}</p>
-        <a href="/berichten">Terug naar alle berichten</a>
-    </body>
-</html>
-```
+<Regel n={17}>
+Daarna stuur je de bezoeker terug naar de lijst, met 303, zoals na het opslaan.
+</Regel>
 
-## Linken vanuit de lijst
+</CodeUitleg>
 
-Sinds het [verwijderen](/docs/FastAPI/doorsturen/verwijderen) stuurt `/berichten` de sleutels al mee, via `db.items()`. Dezelfde sleutel zet je nu in een link. In `templates/berichten.html` wordt de naam klikbaar; het verwijderformulier blijft staan:
+## Een formulier per bericht
+
+In `templates/berichten.html` loop je nu over twee dingen tegelijk, en krijgt elk bericht een eigen formuliertje. Vervang de for-lus binnen de `<ul>` door deze:
 
 ```html
 {% for sleutel, bericht in berichten %}
     <li>
-        <a href="/bericht/{{ sleutel }}">{{ bericht.naam }}</a>: {{ bericht.bericht }}
+        {{ bericht.naam }}: {{ bericht.bericht }}
         <form method="post" action="/verwijderen">
             <input type="hidden" name="sleutel" value="{{ sleutel }}">
             <button type="submit">Verwijderen</button>
@@ -62,10 +65,12 @@ Sinds het [verwijderen](/docs/FastAPI/doorsturen/verwijderen) stuurt `/berichten
 {% endfor %}
 ```
 
+Een `<input type="hidden">` ziet de bezoeker niet, maar hij gaat wel mee met het formulier. Zo weet `/verwijderen` welk bericht weg moet.
+
 <details>
 <summary>Zo ziet je `templates/berichten.html` er nu uit</summary>
 
-Alleen de naam in de `<li>` is nu een link; de rest is zoals in [Doorsturen na opslaan (redirect)](/docs/FastAPI/doorsturen/redirect).
+Het `{% if %}`-blok uit [Nog niets? if en else in je template](/docs/FastAPI/alles-tonen/leeg) blijft staan; alleen de lus binnen de `<ul>` is nieuw.
 
 ```html
 <!DOCTYPE html>
@@ -81,7 +86,7 @@ Alleen de naam in de `<li>` is nu een link; de rest is zoals in [Doorsturen na o
             <ul>
                 {% for sleutel, bericht in berichten %}
                     <li>
-                        <a href="/bericht/{{ sleutel }}">{{ bericht.naam }}</a>: {{ bericht.bericht }}
+                        {{ bericht.naam }}: {{ bericht.bericht }}
                         <form method="post" action="/verwijderen">
                             <input type="hidden" name="sleutel" value="{{ sleutel }}">
                             <button type="submit">Verwijderen</button>
@@ -102,10 +107,9 @@ Alleen de naam in de `<li>` is nu een link; de rest is zoals in [Doorsturen na o
 
 ## Testen
 
-1. Ga naar `/berichten` en klik op een naam.
-2. Je ziet één bericht, en de sleutel staat in de adresbalk.
-
-Wat er gebeurt bij een sleutel die niet bestaat, probeer je uit in opdracht 3. Een nette 404 daarvoor maak je in de [volgende les](/docs/FastAPI/een-item/niet-gevonden).
+1. Ga naar `/berichten`. Bij elk bericht staat een knop Verwijderen.
+2. Klik er een aan. Je blijft op de lijst, en dat bericht is weg.
+3. Kijk met `bekijk_db.py`, met `"gastenboek.db"` tussen de haakjes: de sleutel staat er ook niet meer in.
 
 <details>
 <summary>Zo ziet je `main.py` er nu uit</summary>
@@ -277,104 +281,97 @@ async def verwijderen(sleutel: str = Form(...)):
             del db[sleutel]
             db.commit()
     return RedirectResponse(url="/berichten", status_code=303)
-
-@app.get("/bericht/{sleutel}")
-async def bericht_detail(request: Request, sleutel: str):
-    with SqliteDict("gastenboek.db") as db:
-        bericht = db.get(sleutel)
-    return templates.TemplateResponse(
-        request,
-        "bericht.html",
-        {"bericht": bericht}
-    )
 ```
 
 </details>
 
 ## Opdrachten
 
-### Opdracht 1: Predict - Waar kom je uit?
+### Opdracht 1: Predict - Wat krijgt de template?
 
-In je database staat een bericht van Sam onder de sleutel `bericht_1767225600123456789`. Je klikt op `/berichten` op de naam Sam.
+Je database heeft twee berichten. `/berichten` stuurt nu `list(db.items())` mee in plaats van `list(db.values())`.
 
-**Vraag:** welke URL staat er daarna in de adresbalk, en welke waarde krijgt `sleutel` in je functie?
+**Vraag:** hoe ziet één item uit die lijst eruit?
 
 <details>
 <summary>Tip</summary>
 
-Kijk naar de `href` in je template: `/bericht/{{ sleutel }}`.
+`items()` geeft bij een dictionary de sleutel én de waarde.
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-De adresbalk toont `/bericht/bericht_1767225600123456789`, en `sleutel` is de tekst `"bericht_1767225600123456789"`. De template zette de sleutel in de link, en FastAPI haalt hem er bij `{sleutel}` weer uit.
+Een paar: eerst de sleutel, dan het bericht, zoals `("bericht_1767225600123456789", {"naam": "Sam", "bericht": "Hoi"})`. Daarom schrijf je in de template `{% for sleutel, bericht in berichten %}`: Jinja2 pakt elk paar uit in twee namen, net als Python.
 
 </details>
 
 ### Opdracht 2: Run
 
-Maak het `/bericht/{sleutel}` endpoint en de template `bericht.html`. Pas je lijst aan zodat elke naam een link is.
-
-### Opdracht 3: Investigate - Een sleutel die niet bestaat
-
-Ga naar `/bericht/onzin` met het tabblad Netwerk open. Wat zie je op de pagina, en welke statuscode staat in Netwerk?
+Pas `/berichten` en `berichten.html` aan en maak `/verwijderen`. Verwijder een bericht. Sta je daarna weer op de lijst, zonder dat bericht?
 
 <details>
 <summary>Antwoord</summary>
 
-De pagina toont "Bericht van" met een lege plek erachter, en eronder een lege regel. `db.get("onzin")` geeft `None`, en Jinja2 zet voor `{{ bericht.naam }}` dan niets neer, zonder foutmelding. In Netwerk staat `200`: voor de browser ging alles goed. Een bezoeker, en ook een zoekmachine, kan niet zien dat dit bericht niet bestaat. Dat los je op in de volgende les.
+Ja: `/verwijderen` haalt het weg en stuurt je met een 303 terug naar `/berichten`. In het tabblad Netwerk zie je twee regels: de POST naar `/verwijderen` met `303`, en daarna de GET naar `/berichten` met `200`.
 
 </details>
 
-### Opdracht 4: Make - Alle berichten van één naam
+### Opdracht 3: Investigate - Zonder de controle
 
-Maak een route `/van/{naam}` die alle berichten toont die onder die naam zijn geschreven. Gebruik je template `berichten.html` niet; maak een eigen template `van.html` met de naam als kop en de berichten als lijst.
+Haal in `/verwijderen` de regel `if sleutel in db:` weg (en zet de twee regels eronder een stap terug). Open `/berichten` in twee tabbladen. Verwijder een bericht in het eerste tabblad, en klik daarna in het tweede tabblad bij hetzelfde bericht op Verwijderen. Wat zie je, en wat staat er in je terminal?
+
+<details>
+<summary>Antwoord</summary>
+
+Het tweede tabblad toont `Internal Server Error`, en in je terminal staat `KeyError` met de sleutel van het bericht, zoals `KeyError: 'bericht_1767225600123456789'`. Het tweede tabblad liet nog de oude lijst zien, met een bericht dat al weg is. Het formulier stuurt die sleutel mee, en `del db[sleutel]` crasht op een sleutel die er niet in staat. Met `if sleutel in db:` gebeurt er dan niets en kom je weer op de lijst. Zet de controle terug.
+
+</details>
+
+### Opdracht 4: Make - Een melding na verwijderen
+
+Laat na het verwijderen bovenaan de lijst "Bericht verwijderd" zien. Bij een bezoek aan `/berichten` zonder verwijderen staat die zin er niet.
 
 <details>
 <summary>Tip</summary>
 
-Loop in je endpoint door `db.values()` en zet elk bericht met `bericht["naam"] == naam` in een nieuwe lijst. Stuur die lijst en de naam mee naar de template.
+Stuur door naar `/berichten?verwijderd=1`. Het stuk na het vraagteken kun je in het endpoint uitlezen, zoals in [GET vs POST](/docs/FastAPI/formulieren/get_vs_post). Geef het een standaardwaarde, zodat `/berichten` zonder vraagteken ook werkt, en gebruik `{% if %}` in de template.
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-`templates/van.html`:
-```html
-<!DOCTYPE html>
-<html>
-    <body>
-        <h1>Berichten van {{ naam }}</h1>
-        <ul>
-            {% for bericht in berichten %}
-                <li>{{ bericht.bericht }}</li>
-            {% endfor %}
-        </ul>
-        <a href="/berichten">Alle berichten</a>
-    </body>
-</html>
-```
-
 ```python
-@app.get("/van/{naam}")
-async def van(request: Request, naam: str):
-    zijn_berichten = []
+@app.get("/berichten")
+async def berichten(request: Request, verwijderd: int = 0):
     with SqliteDict("gastenboek.db") as db:
-        for bericht in db.values():
-            if bericht["naam"] == naam:
-                zijn_berichten.append(bericht)
+        alle_berichten = list(db.items())
     return templates.TemplateResponse(
         request,
-        "van.html",
-        {"naam": naam, "berichten": zijn_berichten}
+        "berichten.html",
+        {"berichten": alle_berichten, "verwijderd": verwijderd}
     )
+
+@app.post("/verwijderen")
+async def verwijderen(sleutel: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        if sleutel in db:
+            del db[sleutel]
+            db.commit()
+    return RedirectResponse(url="/berichten?verwijderd=1", status_code=303)
 ```
 
-Een naam die niemand gebruikte, geeft een pagina met alleen de kop. De `for`-lus over `db.values()` staat binnen het `with`-blok; daarbuiten is de database dicht.
+Bovenaan `templates/berichten.html`:
+```html
+{% if verwijderd %}
+    <p>Bericht verwijderd</p>
+{% endif %}
+```
+
+Zonder `?verwijderd=1` in de URL is `verwijderd` gelijk aan 0, en 0 telt in een `{% if %}` als niet waar, net als een lege lijst.
 
 </details>
 
-Door naar [Een 404 sturen: als het item niet bestaat](/docs/FastAPI/een-item/niet-gevonden).
+Door naar [Eén item tonen: de sleutel uit de URL](/docs/FastAPI/een-item/detailpagina).

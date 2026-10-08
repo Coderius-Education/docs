@@ -4,7 +4,14 @@ description: Alles wat je met SqliteDict doet op één pagina, en waarin het ver
 
 # SqliteDict op een rij
 
-Alles wat je in de lessen met SqliteDict doet, kort bij elkaar. De uitleg staat in [Gegevens opslaan met SqliteDict](/docs/FastAPI/sqlitedict/database), [Sleutels in SqliteDict: bekijken, zoeken en verwijderen](/docs/FastAPI/sqlitedict/database-sleutels) en [Een dictionary als waarde in SqliteDict](/docs/FastAPI/sqlitedict/database-waarden).
+Alles wat je in de lessen met SqliteDict doet, kort bij elkaar. De uitleg staat in zes lessen:
+
+1. [Gegevens opslaan met SqliteDict](/docs/FastAPI/sqlitedict/database)
+2. [Alles bekijken: len en items](/docs/FastAPI/sqlitedict/bekijken)
+3. [Bestaat de sleutel? in en get](/docs/FastAPI/sqlitedict/zoeken)
+4. [Verwijderen met del](/docs/FastAPI/sqlitedict/verwijderen)
+5. [Een dictionary als waarde](/docs/FastAPI/sqlitedict/dictionary)
+6. [Een dictionary aanpassen: ophalen, aanpassen, terugzetten](/docs/FastAPI/sqlitedict/aanpassen)
 
 ## Wat wil je doen?
 
@@ -15,12 +22,13 @@ Elke regel staat binnen een `with SqliteDict("bestand.db") as db:`-blok.
 | Opslaan | `db["naam"] = "Jan"` | niets; pas na `commit()` staat het in het bestand |
 | Wijzigingen bewaren | `db.commit()` | niets |
 | Uitlezen | `db["naam"]` | de waarde, of een `KeyError` als de sleutel er niet is |
-| Uitlezen als hij misschien niet bestaat | `db.get("naam", "onbekend")` | de waarde, of `"onbekend"` |
-| Kijken of een sleutel bestaat | `"naam" in db` | `True` of `False` |
-| Verwijderen | `del db["naam"]` | niets, of een `KeyError` als de sleutel er niet is |
 | Tellen | `len(db)` | het aantal sleutels |
 | Alles langslopen | `for sleutel, waarde in db.items():` | elke sleutel met zijn waarde |
 | Alle waarden als lijst | `list(db.values())` | een lijst die je ook na het `with`-blok kunt gebruiken |
+| Kijken of een sleutel bestaat | `"naam" in db` | `True` of `False` |
+| Uitlezen als hij misschien niet bestaat | `db.get("naam", "onbekend")` | de waarde, of `"onbekend"` |
+| Verwijderen | `del db["naam"]` | niets, of een `KeyError` als de sleutel er niet is |
+| Een dictionary opslaan | `db["sara"] = {"klas": "4B"}` | niets; pas na `commit()` staat hij in het bestand |
 | Een veld van een dictionary aanpassen | ophalen, aanpassen, `db["sara"] = sara` | niets; zonder terugzetten blijft de oude waarde |
 
 ## Zo ziet het er in een script uit
@@ -53,7 +61,7 @@ SqliteDict lijkt op een dictionary, maar op deze punten gedraagt hij zich anders
 
 ## Alles bekijken wat erin staat
 
-Het script uit [Sleutels in SqliteDict](/docs/FastAPI/sqlitedict/database-sleutels). Verander de bestandsnaam in de database die je wilt zien, zoals `gastenboek.db`:
+Het script uit [Alles bekijken: len en items](/docs/FastAPI/sqlitedict/bekijken). Verander de bestandsnaam in de database die je wilt zien, zoals `gastenboek.db`:
 
 ```python
 from sqlitedict import SqliteDict
@@ -68,9 +76,9 @@ with SqliteDict("mijn_data.db") as db:
 
 | Bestand | Wat erin staat | Les |
 |---|---|---|
-| `mijn_data.db` | je eerste proeven | [Gegevens opslaan met SqliteDict](/docs/FastAPI/sqlitedict/database) |
-| `namen.db` | de laatst opgeslagen naam | [Een formulier opslaan](/docs/FastAPI/gastenboek/post_naar_database) |
-| `gastenboek.db` | elk bericht onder een eigen sleutel, met een naam en een tekst | [Een formulier opslaan](/docs/FastAPI/gastenboek/post_naar_database) |
+| `mijn_data.db` | je eerste proeven, en later Sara met haar klas en vakken | [Gegevens opslaan met SqliteDict](/docs/FastAPI/sqlitedict/database) tot en met [Een dictionary aanpassen: ophalen, aanpassen, terugzetten](/docs/FastAPI/sqlitedict/aanpassen) |
+| `namen.db` | de laatst opgeslagen naam | [Een formulier opslaan](/docs/FastAPI/formulier-opslaan/naam-opslaan) |
+| `gastenboek.db` | elk bericht onder een eigen sleutel, met een naam en een tekst | [Elk bericht bewaren: een eigen sleutel](/docs/FastAPI/formulier-opslaan/berichten-opslaan) |
 | `gebruikers.db` | per naam het wachtwoord van een account, nog leesbaar | [Registreren: een account opslaan](/docs/FastAPI/accounts/registreren) |
 | `sessies.db` | per sessie-id de naam waarmee iemand inlogde (uitbreiding) | [Onthouden op de server: sessies](/docs/FastAPI/onthouden/sessies) |
 

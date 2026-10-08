@@ -1,0 +1,177 @@
+# Alles bekijken: len en items
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/data/11b-itereren-dictionaries', label: 'Door een dictionary loopen'},
+  ]}
+/>
+
+In [Gegevens opslaan met SqliteDict](/docs/FastAPI/sqlitedict/database) wist je precies welke sleutels er in je database stonden: je had ze zelf getypt. Een server weet dat niet. Daar bepalen de bezoekers wat erin komt, en wil je weten wat er staat, dan moet je kijken. Je oefent nog steeds in losse scripts, met de `mijn_data.db` uit de vorige les.
+
+## Alles bekijken
+
+Maak `bekijk_db.py`, naast `test_db.py`:
+
+<CodeUitleg>
+
+```python showLineNumbers
+from sqlitedict import SqliteDict
+
+with SqliteDict("mijn_data.db") as db:
+    print(len(db), "sleutels")
+    for sleutel, waarde in db.items():
+        print(sleutel, "=", waarde)
+```
+
+<Regel n={4}>
+**`len(db)`** telt de sleutels, net als bij een dictionary.
+</Regel>
+
+<Regel n={5} tot={6}>
+**`db.items()`** geeft elke sleutel met zijn waarde. De lus staat binnen het `with`-blok, want daarbuiten is de database dicht.
+</Regel>
+
+</CodeUitleg>
+
+Draai `python bekijk_db.py`:
+
+```
+2 sleutels
+naam = Jan
+leeftijd = 16
+```
+
+Heb je in de vorige les meer opgeslagen, zoals een woonplaats, dan staat die er ook bij. Bewaar dit script: in de lessen hierna kijk je er steeds mee wat je server heeft opgeslagen. Verander alleen de bestandsnaam tussen de haakjes, bijvoorbeeld in `"gastenboek.db"`.
+
+## Er gaat iets mis
+
+### AttributeError na het with-blok
+
+```
+AttributeError: 'NoneType' object has no attribute 'select'
+```
+
+**Oorzaak:** de lus staat na het `with`-blok, en daar is de database al dicht. `db.items()` haalt pas iets uit het bestand als je erdoorheen loopt. Zet je `paren = db.items()` binnen het blok en de lus erbuiten, dan krijg je dus dezelfde fout. Met `db.values()` gaat het net zo. Vraag je na het blok `len(db)` of `db["naam"]`, dan eindigt de fout op `'select_one'`.
+
+**Oplossing:** laat de lus inspringen, zodat hij binnen het blok staat. Heb je de paren ook na het blok nodig, maak er dan binnen het blok een lijst van met `list()`.
+
+```python
+from sqlitedict import SqliteDict
+
+# FOUT: de lus staat na het with-blok
+with SqliteDict("mijn_data.db") as db:
+    paren = db.items()
+
+for sleutel, waarde in paren:
+    print(sleutel, "=", waarde)
+
+# GOED: list() haalt alles op zolang de database open is
+with SqliteDict("mijn_data.db") as db:
+    paren = list(db.items())
+
+for sleutel, waarde in paren:
+    print(sleutel, "=", waarde)
+```
+
+### 0 sleutels, terwijl je wel iets opsloeg
+
+```
+0 sleutels
+```
+
+**Oorzaak:** je draait `bekijk_db.py` vanuit een andere map. Net als in [Gegevens opslaan met SqliteDict](/docs/FastAPI/sqlitedict/database#er-gaat-iets-mis) maakt SqliteDict daar stil een nieuwe, lege `mijn_data.db` aan.
+
+**Oplossing:** start het script vanuit de terminal in je projectmap, en gooi de lege `mijn_data.db` in de andere map weg.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Twee keer kat
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("dieren.db") as db:
+    db["kat"] = "miauw"
+    db["hond"] = "woef"
+    db["kat"] = "mauw"
+    db.commit()
+
+with SqliteDict("dieren.db") as db:
+    print(len(db), "sleutels")
+    for sleutel, waarde in db.items():
+        print(sleutel, "=", waarde)
+```
+
+**Vraag:** hoeveel sleutels telt dit, en wat staat er bij `kat`?
+
+<details>
+<summary>Tip</summary>
+
+Onder één sleutel staat altijd één waarde.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```
+2 sleutels
+hond = woef
+kat = mauw
+```
+
+Twee sleutels: de tweede `db["kat"] = …` overschrijft de eerste. Dat `kat` onderaan staat, komt door SqliteDict: een sleutel die een nieuwe waarde krijgt, schuift naar achteren.
+
+</details>
+
+### Opdracht 2: Run
+
+Maak `bekijk_db.py` uit deze les en draai het. Zie je dezelfde sleutels als in `test_db.py`, of meer?
+
+<details>
+<summary>Antwoord</summary>
+
+Het kunnen er meer zijn. `bekijk_db.py` toont alles wat ooit in `mijn_data.db` is gezet, ook uit een oudere versie van `test_db.py`. Een database onthoudt wat je opsloeg, niet wat er nu in je script staat.
+
+</details>
+
+### Opdracht 3: Investigate - De lus naar buiten
+
+Haal in `bekijk_db.py` de inspringing weg voor de twee regels van de lus, zodat ze onder het `with`-blok staan. Draai het. Wat print het nog, en op welke regel stopt het?
+
+<details>
+<summary>Antwoord</summary>
+
+Het print nog `2 sleutels`, want die regel staat binnen het blok. Daarna stopt het op de regel met `for` met `AttributeError: 'NoneType' object has no attribute 'select'`: de database is dan al dicht. Zet de inspringing daarna weer terug.
+
+</details>
+
+### Opdracht 4: Modify - Netjes op een rij
+
+Laat `bekijk_db.py` de sleutels op alfabet zetten, en een lege database melden met `Database is leeg` in plaats van `0 sleutels`.
+
+<details>
+<summary>Tip</summary>
+
+`sorted(db.items())` geeft de paren gesorteerd op sleutel. Een lege database telt in een `if` als niet waar, net als een lege dictionary.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("mijn_data.db") as db:
+    if not db:
+        print("Database is leeg")
+    for sleutel, waarde in sorted(db.items()):
+        print(sleutel, "=", waarde)
+```
+
+Test het lege geval met een bestandsnaam die nog niet bestaat, zoals `"leeg.db"`. SqliteDict maakt dat bestand dan aan, zonder sleutels. Gooi het daarna weg.
+
+</details>
+
+Door naar [Bestaat de sleutel? in en get](/docs/FastAPI/sqlitedict/zoeken).

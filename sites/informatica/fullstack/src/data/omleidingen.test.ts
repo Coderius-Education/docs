@@ -35,8 +35,10 @@ describe('omleidingen van de fullstack-cursus', () => {
     for (const { van } of omleidingen) expect(bestaand.has(van), van).toBe(false);
   });
 
-  it('de verhuizing naar mappen zit erin: elke les die los stond, met de map ervoor', () => {
-    expect(verhuisd).toHaveLength(38);
+  it('de verhuizing naar mappen zit erin: elk adres dat toen live was, met de map ervoor', () => {
+    // De 32 lessen die op main los in docs/FastAPI/ stonden, zonder de
+    // startpagina en Projectstructuur (die bleven staan).
+    expect(verhuisd).toHaveLength(32);
     for (const { van, naar } of verhuisd) {
       expect(van, van).toMatch(/^\/docs\/FastAPI\/[\w-]+$/);
       expect(naar, naar).toMatch(/^\/docs\/FastAPI\/[\w-]+\/[\w-]+$/);

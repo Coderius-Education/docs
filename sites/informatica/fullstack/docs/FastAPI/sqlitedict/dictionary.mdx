@@ -1,0 +1,188 @@
+# Een dictionary als waarde
+
+Tot nu toe stond onder elke sleutel één ding: een naam, een getal. Een bericht in een gastenboek heeft meer: wie het schreef en wat er staat. Die zet je samen onder één sleutel, als dictionary. Zo blijft bij elkaar wat bij elkaar hoort.
+
+## Een dictionary opslaan
+
+Vervang de inhoud van `proef_db.py` door:
+
+<CodeUitleg>
+
+```python showLineNumbers
+from sqlitedict import SqliteDict
+
+with SqliteDict("mijn_data.db") as db:
+    db["sara"] = {"klas": "4B", "vakken": ["informatica", "wiskunde"]}
+    db.commit()
+
+with SqliteDict("mijn_data.db") as db:
+    sara = db["sara"]
+    print(sara["klas"])
+    print(sara["vakken"])
+```
+
+<Regel n={4}>
+De waarde onder `"sara"` is een dictionary, met daarin zelfs een lijst. SqliteDict bewaart hem zoals hij is.
+</Regel>
+
+<Regel n={8}>
+Bij het uitlezen krijg je hem terug als dictionary.
+</Regel>
+
+<Regel n={9} tot={10}>
+Een veld haal je eruit zoals bij elke dictionary.
+</Regel>
+
+</CodeUitleg>
+
+Uitvoer:
+
+```
+4B
+['informatica', 'wiskunde']
+```
+
+Het kan ook in één keer: `db["sara"]["klas"]` haalt eerst de dictionary van Sara uit de database en daarna het veld `klas` uit die dictionary.
+
+Draai ook `bekijk_db.py`. Daar staat Sara op één regel, naast de sleutels die je al had:
+
+```
+sara = {'klas': '4B', 'vakken': ['informatica', 'wiskunde']}
+```
+
+## Er gaat iets mis
+
+### KeyError met de naam van een veld
+
+```
+KeyError: 'naam'
+```
+
+**Oorzaak:** de sleutel bestaat wel, maar het veld in de dictionary niet. `db["sara"]["naam"]` vraagt om een veld `naam`, en de dictionary van Sara heeft alleen `klas` en `vakken`.
+
+**Oplossing:** kijk met `bekijk_db.py` welke velden er echt in staan. Ontbreekt een veld soms, gebruik dan `get` op de dictionary: `sara.get("naam", "onbekend")`.
+
+### TypeError: string indices must be integers
+
+```
+TypeError: string indices must be integers, not 'str'
+```
+
+**Oorzaak:** onder de sleutel staat tekst, geen dictionary. `db["naam"]["klas"]` haalt eerst `"Jan"` op, en vraagt daarna aan die tekst om een veld `klas`. Een stuk tekst heeft geen velden.
+
+**Oplossing:** kijk met `bekijk_db.py` wat er onder de sleutel staat. Alleen waar `{…}` achter de `=` staat, kun je een veld opvragen.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Wat telt len?
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("klas.db") as db:
+    db["sara"] = {"klas": "4B", "vakken": ["informatica", "wiskunde"]}
+    db["ali"] = {"klas": "4A", "vakken": ["biologie"]}
+    db.commit()
+
+with SqliteDict("klas.db") as db:
+    print(len(db))
+    print(db["ali"]["klas"])
+    print(len(db["sara"]["vakken"]))
+```
+
+**Vraag:** welke drie regels print dit?
+
+<details>
+<summary>Tip</summary>
+
+Wat telt `len` bij de database, en wat bij een lijst?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```
+2
+4A
+2
+```
+
+`len(db)` telt de sleutels, niet de velden: `sara` en `ali`. De laatste regel telt de vakken van Sara.
+
+</details>
+
+### Opdracht 2: Run
+
+Draai `proef_db.py` uit deze les en daarna `bekijk_db.py`. Staat Sara erbij?
+
+<details>
+<summary>Antwoord</summary>
+
+`proef_db.py` print `4B` en `['informatica', 'wiskunde']`. `bekijk_db.py` toont naast je andere sleutels de regel `sara = {'klas': '4B', 'vakken': ['informatica', 'wiskunde']}`.
+
+</details>
+
+### Opdracht 3: Investigate - Welke KeyError?
+
+Verander in `proef_db.py` de regel `print(sara["klas"])` in `print(sara["Klas"])` en draai het. Zet hem terug, verander daarna `sara = db["sara"]` in `sara = db["Sara"]` en draai het weer. Beide keren krijg je een `KeyError`. Kijk naar de regels erboven: waaraan zie je of de database of de dictionary de sleutel niet vond?
+
+<details>
+<summary>Tip</summary>
+
+Een foutmelding noemt elk bestand waar Python doorheen ging, van boven naar onder.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Bij `KeyError: 'Klas'` noemt de foutmelding alleen je eigen `proef_db.py`: de dictionary van Sara heeft geen veld `Klas`. Bij `KeyError: 'Sara'` staat er onder je eigen regel nog een regel uit `sqlitedict.py`, met `raise KeyError(key)`: SqliteDict zocht in de database en vond geen sleutel `Sara`. Zet beide regels daarna weer terug.
+
+</details>
+
+### Opdracht 4: Make - Huisdieren
+
+Maak `huisdieren_opslaan.py` dat twee huisdieren opslaat in `huisdieren.db`. De naam is de sleutel, en de waarde een dictionary met de soort en de leeftijd. Maak daarna `huisdieren_lezen.py` dat per dier één regel print, zoals `Max is een hond van 3 jaar`.
+
+<details>
+<summary>Tip</summary>
+
+Voor het lezen loop je met `db.items()` door de database. Elke waarde is een dictionary, dus daaruit haal je de soort en de leeftijd.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`huisdieren_opslaan.py`:
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("huisdieren.db") as db:
+    db["Max"] = {"soort": "hond", "leeftijd": 3}
+    db["Pluis"] = {"soort": "kat", "leeftijd": 7}
+    db.commit()
+```
+
+`huisdieren_lezen.py`:
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("huisdieren.db") as db:
+    for naam, dier in db.items():
+        print(f"{naam} is een {dier['soort']} van {dier['leeftijd']} jaar")
+```
+
+Uitvoer:
+
+```
+Max is een hond van 3 jaar
+Pluis is een kat van 7 jaar
+```
+
+</details>
+
+Door naar [Een dictionary aanpassen: ophalen, aanpassen, terugzetten](/docs/FastAPI/sqlitedict/aanpassen).

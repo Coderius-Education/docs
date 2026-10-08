@@ -123,7 +123,7 @@ export const lessen: Les[] = [
   },
   {
     id: '11b',
-    label: '11b Door een dictionary loopen',
+    label: '11b Door een dictionary lopen',
     hoofdstuk: 'Data',
     pad: '/docs/data/11b-itereren-dictionaries',
   },

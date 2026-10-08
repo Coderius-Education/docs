@@ -1,0 +1,370 @@
+# Een 404 sturen: als het item niet bestaat
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/data/10a-lijsten-basis', label: 'Lijsten en hun plaatsnummer'},
+    {site: 'python', to: '/docs/data/10b-lijst-methoden', label: 'Lijst-methoden en in'},
+  ]}
+/>
+
+Op `/bericht/onzin` toont je detailpagina nu een kop met lege plekken, met status 200. Zo denkt een bezoeker dat er iets stuk is. Beter is het om eerlijk te zeggen dat dit bericht er niet is, met de statuscode die daarvoor bestaat: 404.
+
+## Zeggen dat het niet bestaat
+
+Iemand kan een URL intypen die nergens op slaat, of een bericht dat net verwijderd is opvragen. Dan is `bericht` gelijk aan `None` en toont je template een lege pagina. Dat is verwarrend: de bezoeker denkt dat er iets stuk is.
+
+Zeg liever expliciet dat het niet bestaat, met `HTTPException`. Zet `HTTPException` bij je imports en vervang je endpoint nog een keer:
+
+<CodeUitleg>
+
+{/* route-dubbel: vervangt GET /bericht/{sleutel} uit Eén item tonen */}
+```python showLineNumbers
+from fastapi import HTTPException
+
+@app.get("/bericht/{sleutel}")
+async def bericht_detail(request: Request, sleutel: str):
+    with SqliteDict("gastenboek.db") as db:
+        bericht = db.get(sleutel)
+
+    if bericht is None:
+        raise HTTPException(status_code=404, detail="Dit bericht bestaat niet")
+
+    return templates.TemplateResponse(
+        request,
+        "bericht.html",
+        {"bericht": bericht}
+    )
+```
+
+<Regel n={3} tot={4}>
+`{sleutel}` in het pad komt binnen als de parameter `sleutel`; de twee namen moeten gelijk zijn.
+</Regel>
+
+<Regel n={6}>
+`db.get(sleutel)` geeft `None` als de sleutel niet bestaat, in plaats van een `KeyError`.
+</Regel>
+
+<Regel n={8} tot={9}>
+Hier staat `raise`, geen `return`. Je geeft geen antwoord terug maar onderbreekt de functie, en Python voert de regels eronder niet meer uit. **404** is de code die "niet gevonden" betekent. Diezelfde code kreeg je eerder als je een adres opvroeg waar geen endpoint bij hoort; nu stuur je hem zelf.
+</Regel>
+
+</CodeUitleg>
+
+## Testen
+
+1. Ga naar `/berichten` en klik op een naam. Het bericht staat er nog.
+2. Verander de sleutel in de adresbalk in iets willekeurigs.
+3. Je krijgt `{"detail":"Dit bericht bestaat niet"}`, en in het tabblad Netwerk staat `404`.
+
+:::danger[Gaat er iets mis?]
+Krijg je een pagina met lege plekken in plaats van een 404? Dan staat je `if bericht is None` waarschijnlijk ná de `return`. Zie je `{"status_code":404,"detail":"Dit bericht bestaat niet","headers":null}` met status 200? Dan schreef je `return` in plaats van `raise`. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
+:::
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+```python
+import random
+import time
+
+from fastapi import FastAPI, Form, HTTPException, Request
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
+
+@app.get("/")
+async def home():
+    return FileResponse("static/pages/home.html")
+
+@app.get("/info")
+async def info():
+    return {"naam": "Jouw Naam", "leeftijd": 16}
+
+@app.get("/pagina", response_class=HTMLResponse)
+async def pagina():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Mijn Pagina</title>
+        </head>
+        <body>
+            <h1>Hallo!</h1>
+            <p>Dit is mijn eerste HTML pagina.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/styled", response_class=HTMLResponse)
+async def styled():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Met CSS</title>
+            <style>
+                h1 { color: blue; }
+                p { color: gray; }
+            </style>
+        </head>
+        <body>
+            <h1>Gestylede pagina</h1>
+            <p>Deze tekst is grijs.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/about")
+async def about():
+    return FileResponse("static/pages/about.html")
+
+DIEREN = {
+    "kat": "Een kat spint als hij tevreden is.",
+    "hond": "Een hond kwispelt als hij blij is.",
+    "vis": "Een vis ademt met kieuwen.",
+}
+
+@app.get("/dier/{naam}", response_class=HTMLResponse)
+async def dier(naam: str):
+    tekst = DIEREN.get(naam, "Dit dier staat nog niet op de site.")
+    return f"""
+    <!DOCTYPE html>
+    <html>
+        <body>
+            <h1>Over dieren</h1>
+            <p>{tekst}</p>
+            <a href="/">Terug naar Home</a>
+        </body>
+    </html>
+    """
+
+@app.get("/foto")
+async def foto():
+    return FileResponse("static/pages/foto.html")
+
+@app.get("/dobbelsteen")
+async def dobbelsteen(request: Request):
+    worp = random.randint(1, 6)
+    return templates.TemplateResponse(
+        request,
+        "dobbelsteen.html",
+        {"worp": worp}
+    )
+
+@app.get("/zoek")
+async def zoek(term: str):
+    return {"je_zocht": term}
+
+@app.get("/naam")
+async def toon_formulier():
+    return FileResponse("static/pages/naam_form.html")
+
+@app.post("/verstuur")
+async def ontvang_naam(naam: str = Form(...)):
+    print(f"Naam ontvangen: {naam}")
+    return {"bericht": f"Hallo {naam}!"}
+
+@app.get("/groet")
+async def groet_form():
+    return FileResponse("static/pages/groet_form.html")
+
+@app.post("/groet")
+async def groet_verwerk(request: Request, naam: str = Form(...)):
+    return templates.TemplateResponse(
+        request,
+        "groet_resultaat.html",
+        {"naam": naam}
+    )
+
+@app.get("/opslaan")
+async def naam_formulier():
+    return FileResponse("static/pages/naam_opslaan.html")
+
+@app.post("/opslaan")
+async def naam_opslaan(naam: str = Form(...)):
+    with SqliteDict("namen.db") as db:
+        db["laatste_naam"] = naam
+        db.commit()
+
+    return {"bericht": f"'{naam}' opgeslagen!"}
+
+@app.get("/toon_naam")
+async def toon_naam():
+    with SqliteDict("namen.db") as db:
+        naam = db.get("laatste_naam", "Nog niets opgeslagen")
+    return {"naam": naam}
+
+@app.get("/gastenboek")
+async def gastenboek_form():
+    return FileResponse("static/pages/gastenboek_form.html")
+
+@app.post("/gastenboek")
+async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        sleutel = f"bericht_{time.time_ns()}"
+        db[sleutel] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    return RedirectResponse(url="/berichten", status_code=303)
+
+@app.get("/berichten")
+async def berichten(request: Request):
+    with SqliteDict("gastenboek.db") as db:
+        alle_berichten = list(db.items())
+    return templates.TemplateResponse(
+        request,
+        "berichten.html",
+        {"berichten": alle_berichten}
+    )
+
+@app.post("/verwijderen")
+async def verwijderen(sleutel: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        if sleutel in db:
+            del db[sleutel]
+            db.commit()
+    return RedirectResponse(url="/berichten", status_code=303)
+
+@app.get("/bericht/{sleutel}")
+async def bericht_detail(request: Request, sleutel: str):
+    with SqliteDict("gastenboek.db") as db:
+        bericht = db.get(sleutel)
+
+    if bericht is None:
+        raise HTTPException(status_code=404, detail="Dit bericht bestaat niet")
+
+    return templates.TemplateResponse(
+        request,
+        "bericht.html",
+        {"bericht": bericht}
+    )
+```
+
+</details>
+
+## Opdrachten
+
+### Opdracht 1: Predict - Twee keer niet gevonden
+
+Je endpoint `/bericht/{sleutel}` staat er, met de controle op `None`. Je gaat naar twee adressen die allebei niet bestaan:
+
+1. `/bericht/onzin`
+2. `/bericht/onzin/meer`
+
+**Vraag:** krijg je twee keer hetzelfde te zien?
+
+<details>
+<summary>Tip</summary>
+
+Zoek bij elk adres het endpoint dat erbij past. Draait je eigen functie bij allebei?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Nee. Allebei geven ze een 404, maar met een andere tekst:
+
+1. `/bericht/onzin` past op je route. Je functie draait, vindt niets en stuurt jouw 404: `{"detail":"Dit bericht bestaat niet"}`.
+2. `/bericht/onzin/meer` past op geen enkele route. Je functie draait niet, en FastAPI stuurt zelf `{"detail":"Not Found"}`.
+
+</details>
+
+### Opdracht 2: Run
+
+Zet de controle in je endpoint en ga naar `/bericht/onzin` met het tabblad Netwerk open. Welke statuscode zie je nu, en welke bij een bericht dat wel bestaat?
+
+<details>
+<summary>Antwoord</summary>
+
+Bij `/bericht/onzin` staat `404`, met `{"detail":"Dit bericht bestaat niet"}` op de pagina. Bij een bestaand bericht staat `200`: de controle laat het gewone geval met rust.
+
+</details>
+
+### Opdracht 3: Investigate - Return in plaats van raise
+
+Vervang in je endpoint `raise HTTPException(...)` door `return HTTPException(...)`, met verder dezelfde regel. Ga naar `/bericht/onzin` met Netwerk open. Wat zie je, en welke statuscode?
+
+<details>
+<summary>Antwoord</summary>
+
+De pagina toont `{"status_code":404,"detail":"Dit bericht bestaat niet","headers":null}`, en in Netwerk staat `200`. Met `return` geeft je functie de fout terug als gewone data, en FastAPI maakt er JSON van met status 200. Pas `raise` onderbreekt de functie en laat FastAPI een echte 404 sturen. Zet `raise` terug.
+
+</details>
+
+### Opdracht 4: Make - Bezoeker begroeten
+
+Maak een endpoint `/welkom/{naam}` dat een template toont met "Welkom, [naam]". Geef een 404 met de tekst "Onbekende bezoeker" als de naam niet in je lijst met bekende bezoekers staat, bijvoorbeeld `["Sam", "Jan", "Sarah"]`.
+
+<details>
+<summary>Tip</summary>
+
+`naam not in bekend` is waar als de naam niet in de lijst `bekend` staat. Zet die controle vóór de `TemplateResponse`, met `raise`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`templates/welkom.html`:
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Welkom, {{ naam }}</h1>
+    </body>
+</html>
+```
+
+```python
+@app.get("/welkom/{naam}")
+async def welkom(request: Request, naam: str):
+    bekend = ["Sam", "Jan", "Sarah"]
+    if naam not in bekend:
+        raise HTTPException(status_code=404, detail="Onbekende bezoeker")
+    return templates.TemplateResponse(request, "welkom.html", {"naam": naam})
+```
+
+</details>
+
+### Opdracht 5: Make - Bericht per nummer
+
+Geef elk bericht een nummer in de URL: `/bericht-nummer/1` toont het eerste bericht, `/bericht-nummer/2` het tweede. Geef een 404 als dat nummer niet bestaat.
+
+<details>
+<summary>Tip</summary>
+
+Schrijf `nummer: int` als type. FastAPI zet de tekst uit de URL dan om naar een getal. Een lijst begint bij 0, dus het eerste bericht staat op `alle_berichten[nummer - 1]`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+@app.get("/bericht-nummer/{nummer}")
+async def bericht_nummer(request: Request, nummer: int):
+    with SqliteDict("gastenboek.db") as db:
+        alle_berichten = list(db.values())
+
+    if nummer < 1 or nummer > len(alle_berichten):
+        raise HTTPException(status_code=404, detail="Dit bericht bestaat niet")
+
+    return templates.TemplateResponse(
+        request,
+        "bericht.html",
+        {"bericht": alle_berichten[nummer - 1]}
+    )
+```
+
+Door `nummer: int` te schrijven controleert FastAPI zelf of het een getal is. Typ je `/bericht-nummer/abc`, dan krijg je een 422 nog voordat jouw code draait.
+
+</details>
+
+Door naar [Zo werkt het: klikken en versturen](/docs/FastAPI/een-item/verzoek-get).

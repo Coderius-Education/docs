@@ -1,0 +1,228 @@
+# Bestaat de sleutel? in en get
+
+Vraag je een sleutel op die er niet is, dan stopt je script met een `KeyError`. Op een server gebeurt dat vaak: de eerste bezoeker vraagt iets op voordat iemand het heeft opgeslagen. Je kijkt daarom eerst of de sleutel er is. Je werkt nog steeds met `mijn_data.db`, met de naam en de leeftijd erin.
+
+## Kijken met in
+
+Maak `proef_db.py`:
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("mijn_data.db") as db:
+    if "email" in db:
+        print(db["email"])
+    else:
+        print("Geen email opgeslagen")
+```
+
+<details>
+<summary>Voorspel: wat print dit?</summary>
+
+`Geen email opgeslagen`. Onder `"email"` heb je nooit iets bewaard, dus `"email" in db` is `False` en Python doet wat onder `else` staat. Er komt geen `KeyError`, want Python komt nooit bij `db["email"]`.
+
+</details>
+
+`in` kijkt alleen naar de sleutels, net als bij een dictionary.
+
+## Korter met get
+
+Hetzelfde kan korter, met **`get`**. Vervang de inhoud van `proef_db.py` door:
+
+<CodeUitleg>
+
+```python showLineNumbers
+from sqlitedict import SqliteDict
+
+with SqliteDict("mijn_data.db") as db:
+    print(db.get("email", "Geen email opgeslagen"))
+    print(db.get("email"))
+    print(db.get("naam", "onbekend"))
+```
+
+<Regel n={4}>
+De sleutel bestaat niet, dus `get` geeft wat je als tweede meegeeft: de standaardwaarde.
+</Regel>
+
+<Regel n={5}>
+Zonder standaardwaarde geeft `get` `None` bij een sleutel die er niet is.
+</Regel>
+
+<Regel n={6}>
+De sleutel bestaat wel, dus `get` geeft de waarde die erbij hoort. De standaardwaarde doet dan niets.
+</Regel>
+
+</CodeUitleg>
+
+Draai `python proef_db.py`:
+
+```
+Geen email opgeslagen
+None
+Jan
+```
+
+Met `in` kies je tussen twee dingen die je script kan doen. Met `get` krijg je altijd een waarde terug, en die kun je meteen gebruiken.
+
+## Er gaat iets mis
+
+### None in je uitvoer
+
+```
+None
+```
+
+**Oorzaak:** je vroeg met `get` om een sleutel die er niet is, zonder standaardwaarde. Dan geeft `get` `None`, en `print` zet dat als woord in je terminal.
+
+**Oplossing:** geef een standaardwaarde mee die past bij wat je wilt laten zien: `db.get("email", "geen email")`.
+
+### De standaardwaarde, terwijl de sleutel er wel staat
+
+Je script print `onbekend`, maar `bekijk_db.py` laat een naam zien.
+
+**Oorzaak:** de sleutel in je `get` is net anders dan die in de database, bijvoorbeeld `"Naam"` in plaats van `"naam"`. Met `db["Naam"]` had je een `KeyError` gekregen, maar `get` geeft zonder foutmelding de standaardwaarde. Zo merk je een tikfout pas als je de uitvoer goed leest.
+
+**Oplossing:** schrijf de sleutel precies zoals bij het opslaan, hoofdletters meegeteld. Kijk met `bekijk_db.py` uit [Alles bekijken: len en items](/docs/FastAPI/sqlitedict/bekijken) welke sleutels er echt in staan.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Sleutel of waarde?
+
+`mijn_data.db` heeft de sleutels `naam` (met `Jan`) en `leeftijd` (met `16`).
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("mijn_data.db") as db:
+    print("naam" in db)
+    print("Jan" in db)
+    print(db.get("leeftijd", 0))
+    print(db.get("hobby", "geen hobby"))
+```
+
+**Vraag:** welke vier regels print dit?
+
+<details>
+<summary>Tip</summary>
+
+Kijkt `in` naar de sleutels of naar de waarden?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```
+True
+False
+16
+geen hobby
+```
+
+`"Jan" in db` is `False`: `Jan` is een waarde, geen sleutel. De leeftijd bestaat, dus de `0` doet niets. Een hobby staat er niet in, dus daar komt de standaardwaarde.
+
+</details>
+
+### Opdracht 2: Run
+
+Draai beide versies van `proef_db.py` uit deze les, eerst die met `in` en dan die met `get`. Komt er ergens een `KeyError`?
+
+<details>
+<summary>Antwoord</summary>
+
+Nee. De versie met `in` print `Geen email opgeslagen`, die met `get` de drie regels `Geen email opgeslagen`, `None` en `Jan`. Geen van beide vraagt met `db[…]` om een sleutel die er niet is.
+
+</details>
+
+### Opdracht 3: Investigate - Zonder te kijken
+
+Vervang de inhoud van `proef_db.py` door een versie die niet eerst kijkt:
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("mijn_data.db") as db:
+    print(db["email"])
+```
+
+Draai het. Zet daarna in `test_db.py` de regel `db["email"] = "jan@example.com"` boven `db.commit()`, draai `test_db.py`, en draai `proef_db.py` nog een keer. Wat verandert er?
+
+<details>
+<summary>Antwoord</summary>
+
+De eerste keer stopt het met `KeyError: 'email'`. Na `test_db.py` staat de sleutel erin en print het `jan@example.com`. Hetzelfde script werkt of crasht, afhankelijk van wat er in de database staat. Op een server weet je dat niet van tevoren, en daarom kijk je eerst met `in` of gebruik je `get`.
+
+</details>
+
+### Opdracht 4: Modify - Een teller
+
+Dit script moet bijhouden hoe vaak je het hebt gedraaid, maar de eerste keer crasht het met `KeyError: 'keer'`:
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("teller.db") as db:
+    db["keer"] = db["keer"] + 1
+    db.commit()
+    print("Gedraaid:", db["keer"])
+```
+
+Pas één regel aan, zodat het de eerste keer `Gedraaid: 1` print, daarna `Gedraaid: 2`, enzovoort.
+
+<details>
+<summary>Tip</summary>
+
+De eerste keer staat er nog geen `keer`. Welke waarde wil je dan als begin gebruiken?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("teller.db") as db:
+    db["keer"] = db.get("keer", 0) + 1
+    db.commit()
+    print("Gedraaid:", db["keer"])
+```
+
+De eerste keer geeft `get` de `0`, en daar komt `1` bij. De laatste regel mag `db["keer"]` houden: daar bestaat de sleutel al.
+
+</details>
+
+### Opdracht 5: Make - Telefoonboek
+
+Maak `telefoonboek.py`. Het vraagt met `input()` een naam en zoekt die op in `telefoonboek.db`. Staat de naam er, dan print het het nummer. Staat hij er niet, dan vraagt het een nummer en slaat het de naam met dat nummer op.
+
+<details>
+<summary>Tip</summary>
+
+De naam is de sleutel, het nummer de waarde. Met `if naam in db:` kies je tussen opzoeken en opslaan, en na het opslaan volgt `db.commit()`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+from sqlitedict import SqliteDict
+
+naam = input("Naam: ")
+
+with SqliteDict("telefoonboek.db") as db:
+    if naam in db:
+        print(f"Het nummer van {naam} is {db[naam]}")
+    else:
+        nummer = input(f"{naam} staat er nog niet in. Nummer: ")
+        db[naam] = nummer
+        db.commit()
+        print(f"{naam} opgeslagen")
+```
+
+Draai het een paar keer: de eerste keer per naam slaat het op, daarna zoekt het op.
+
+</details>
+
+Door naar [Verwijderen met del](/docs/FastAPI/sqlitedict/verwijderen).

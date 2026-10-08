@@ -2,12 +2,11 @@
 
 <Voorkennis
   items={[
-    {site: 'python', to: '/docs/data/10a-lijsten-basis', label: 'Lijsten'},
     {site: 'python', to: '/docs/tekst/04a-f-strings', label: 'F-strings'},
   ]}
 />
 
-Wat een bezoeker in een formulier invult, zet je nu in een database. Dan staat het er nog als je de server stopt. Eerst bewaar je één naam, daarna bouw je een gastenboek dat alle berichten bewaart.
+Wat een bezoeker in een formulier invult, zet je nu in een database. Dan staat het er nog als je de server stopt. Je begint met één naam; in de [volgende les](/docs/FastAPI/formulier-opslaan/berichten-opslaan) bewaar je alle berichten van een gastenboek.
 
 ## Voorbeeld: Naam opslaan
 
@@ -79,7 +78,7 @@ async def toon_naam():
 ```
 
 <Regel n={4}>
-`db.get` uit [Sleutels in SqliteDict: bekijken, zoeken en verwijderen](/docs/FastAPI/sqlitedict/database-sleutels) geeft de standaardwaarde zolang er nog niets is opgeslagen. Zo werkt de pagina ook vóór de eerste keer opslaan, zonder `KeyError`.
+`db.get` uit [Bestaat de sleutel? in en get](/docs/FastAPI/sqlitedict/zoeken) geeft de standaardwaarde zolang er nog niets is opgeslagen. Zo werkt de pagina ook vóór de eerste keer opslaan, zonder `KeyError`.
 </Regel>
 
 </CodeUitleg>
@@ -91,87 +90,6 @@ async def toon_naam():
 3. **Stop de server** en start opnieuw
 4. Ga naar `http://127.0.0.1:8000/toon_naam`. Je naam staat er nog: hij is bewaard in `namen.db`.
 
-## Meer dan één bericht: het gastenboek
-
-<details>
-<summary>Voorspel: je slaat eerst "Jan" op, dan "Sarah". Wat staat er in de database?</summary>
-
-Alleen "Sarah". Allebei gaan ze onder de sleutel `laatste_naam`, en een nieuwe waarde onder dezelfde sleutel overschrijft de oude.
-
-</details>
-
-Voor een gastenboek wil je elk bericht bewaren. Dan heeft elk bericht een eigen sleutel nodig. `time.time_ns()` geeft het aantal nanoseconden sinds 1970: bij elk bericht een ander getal, dus een nieuwe sleutel. Dit gastenboek bouw je in de volgende lessen verder uit, dus maak het echt.
-
-### Formulier (`static/pages/gastenboek_form.html`):
-
-```html
-<!DOCTYPE html>
-<html>
-    <body>
-        <h1>Gastenboek</h1>
-        <form method="post" action="/gastenboek">
-            <input type="text" name="naam" placeholder="Je naam" required>
-            <input type="text" name="bericht" placeholder="Je bericht" required>
-            <button type="submit">Verstuur</button>
-        </form>
-    </body>
-</html>
-```
-
-### Endpoints (`main.py`, onder de endpoints van de naam):
-
-Zet `import time` bovenaan je `main.py`, bij de andere imports.
-
-<CodeUitleg>
-
-```python showLineNumbers
-@app.get("/gastenboek")
-async def gastenboek_form():
-    return FileResponse("static/pages/gastenboek_form.html")
-
-@app.post("/gastenboek")
-async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
-    with SqliteDict("gastenboek.db") as db:
-        sleutel = f"bericht_{time.time_ns()}"
-        db[sleutel] = {"naam": naam, "bericht": bericht}
-        db.commit()
-    return {"bericht": "Bedankt voor je bericht"}
-
-@app.get("/berichten")
-async def berichten():
-    with SqliteDict("gastenboek.db") as db:
-        alle_berichten = list(db.values())
-    return {"berichten": alle_berichten}
-```
-
-<Regel n={8}>
-Zo krijgt elk bericht een nieuwe sleutel, zoals `bericht_1767225600123456789`, en overschrijven twee berichten elkaar niet meer.
-</Regel>
-
-<Regel n={9}>
-De waarde is een dictionary met beide velden, zoals in [Een dictionary als waarde in SqliteDict](/docs/FastAPI/sqlitedict/database-waarden).
-</Regel>
-
-<Regel n={16}>
-`db.values()` geeft alle waarden, zonder sleutels, maar haalt ze pas op als iets erdoorheen loopt. `list()` doet dat meteen, binnen het `with`-blok. Zonder `list()` loopt FastAPI er pas doorheen als hij de JSON maakt, en dan is de database al dicht: je krijgt `AttributeError: 'NoneType' object has no attribute 'select'`.
-</Regel>
-
-</CodeUitleg>
-
-:::caution
-Gebruik `time.time_ns()` (nanoseconden) en niet `int(time.time())` (hele seconden). Twee berichten die binnen dezelfde seconde binnenkomen, krijgen anders dezelfde sleutel, en dan overschrijft het tweede het eerste.
-:::
-
-## Het gastenboek testen
-
-1. Ga naar `http://127.0.0.1:8000/gastenboek` en verstuur twee berichten.
-2. Ga naar `http://127.0.0.1:8000/berichten`. Je ziet ze allebei, als JSON.
-3. Stop de server, start hem opnieuw en kijk nog een keer: ze staan er nog.
-
-:::danger[Gaat er iets mis?]
-Blijft je data niet bewaard? Kijk dan of je `db.commit()` niet bent vergeten. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
-:::
-
 <details>
 <summary>Zo ziet je `main.py` er nu uit</summary>
 
@@ -179,7 +97,6 @@ Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
 
 ```python
 import random
-import time
 
 from fastapi import FastAPI, Form, Request
 from fastapi.responses import FileResponse, HTMLResponse
@@ -304,7 +221,6 @@ async def naam_opslaan(naam: str = Form(...)):
     with SqliteDict("namen.db") as db:
         db["laatste_naam"] = naam
         db.commit()
-
     return {"bericht": f"'{naam}' opgeslagen!"}
 
 @app.get("/toon_naam")
@@ -312,60 +228,51 @@ async def toon_naam():
     with SqliteDict("namen.db") as db:
         naam = db.get("laatste_naam", "Nog niets opgeslagen")
     return {"naam": naam}
-
-@app.get("/gastenboek")
-async def gastenboek_form():
-    return FileResponse("static/pages/gastenboek_form.html")
-
-@app.post("/gastenboek")
-async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
-    with SqliteDict("gastenboek.db") as db:
-        sleutel = f"bericht_{time.time_ns()}"
-        db[sleutel] = {"naam": naam, "bericht": bericht}
-        db.commit()
-    return {"bericht": "Bedankt voor je bericht"}
-
-@app.get("/berichten")
-async def berichten():
-    with SqliteDict("gastenboek.db") as db:
-        alle_berichten = list(db.values())
-    return {"berichten": alle_berichten}
 ```
 
 </details>
 
 ## Opdrachten
 
-### Opdracht 1: Predict - Hoeveel berichten?
+### Opdracht 1: Predict - Twee namen
 
-Iemand haalt `time.time_ns()` weg en schrijft `sleutel = "bericht"`. Daarna verstuurt iemand drie berichten. Wat laat `/berichten` zien?
+Je slaat op `/opslaan` eerst "Jan" op, en daarna "Sarah". Daarna ga je naar `/toon_naam`.
+
+**Vraag:** welke naam of namen zie je?
 
 <details>
 <summary>Tip</summary>
 
-Hoeveel verschillende sleutels zijn er dan?
+Onder welke sleutel komt elke naam terecht?
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-Eén bericht: het laatste. Alle drie gaan onder de sleutel `bericht`, dus elk nieuw bericht overschrijft het vorige.
+Alleen "Sarah". Allebei gaan ze onder de sleutel `laatste_naam`, en een nieuwe waarde onder dezelfde sleutel overschrijft de oude.
 
 </details>
 
 ### Opdracht 2: Run
 
-Maak de naam en het gastenboek uit deze les. Test of de berichten bewaard blijven door de server te stoppen en opnieuw te starten.
-
-### Opdracht 3: Investigate - Wat staat er echt in?
-
-Laat `/berichten` ook de sleutels zien: vervang `list(db.values())` door `list(db.items())`. Wat verandert er in de JSON?
+Maak het formulier en de twee endpoints uit deze les. Sla een naam op, stop de server en start hem opnieuw. Staat je naam nog op `/toon_naam`?
 
 <details>
 <summary>Antwoord</summary>
 
-Elk bericht wordt een paar: eerst de sleutel, dan de dictionary, zoals `["bericht_1767225600123456789", {"naam": "Sam", "bericht": "Hoi"}]`. Aan de getallen zie je in welke volgorde de berichten binnenkwamen. De sleutel heb je later nodig om één bericht aan te wijzen.
+Ja. De naam staat in `namen.db`, naast je `main.py`, en niet in het geheugen van de server. Daarom overleeft hij een herstart. Met `bekijk_db.py` uit [Alles bekijken: len en items](/docs/FastAPI/sqlitedict/bekijken), met `"namen.db"` tussen de haakjes, zie je hem ook staan.
+
+</details>
+
+### Opdracht 3: Investigate - Zonder commit
+
+Zet in `/opslaan` een `#` voor `db.commit()`. Sla een nieuwe naam op en ga naar `/toon_naam`. Welke naam zie je? Haal de `#` daarna weer weg.
+
+<details>
+<summary>Antwoord</summary>
+
+De naam van de vorige keer, of "Nog niets opgeslagen" als er nooit een naam bewaard is. Je krijgt wel netjes het antwoord "opgeslagen", want dat stuurt je endpoint hoe dan ook. Zonder `commit()` gooit SqliteDict de wijziging weg zodra het `with`-blok sluit, net als in je losse scripts.
 
 </details>
 
@@ -418,28 +325,4 @@ async def toon_score():
 
 </details>
 
-### Opdracht 5: Make - Hoeveel berichten
-
-Maak een endpoint `/aantal` dat teruggeeft hoeveel berichten er in het gastenboek staan: `{"aantal":3}`.
-
-<details>
-<summary>Tip</summary>
-
-`len(db)` geeft het aantal sleutels in de database, net als bij een dictionary.
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-```python
-@app.get("/aantal")
-async def aantal():
-    with SqliteDict("gastenboek.db") as db:
-        hoeveel = len(db)
-    return {"aantal": hoeveel}
-```
-
-</details>
-
-Je berichten staan nu in de database, maar `/berichten` geeft ze nog als JSON terug. In [Alles tonen: een for-lus in je template](/docs/FastAPI/gastenboek/lijst_tonen) zet je ze op een echte pagina.
+Door naar [Elk bericht bewaren: een eigen sleutel](/docs/FastAPI/formulier-opslaan/berichten-opslaan).

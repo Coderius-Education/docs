@@ -2,10 +2,10 @@ import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
 
 # Zo werkt het: een verzoek met htmx
 
-Dezelfde stappen als bij [één klik](/docs/FastAPI/gastenboek/verzoek-get) en [één formulier](/docs/FastAPI/gastenboek/verzoek-get#een-formulier), maar nu stuurt htmx het verzoek. Aan de serverkant verandert er bijna niets; het verschil zit aan het begin en aan het eind.
+Dezelfde stappen als bij [één klik](/docs/FastAPI/een-item/verzoek-get) en [één formulier](/docs/FastAPI/een-item/verzoek-get#een-formulier), maar nu stuurt htmx het verzoek. Aan de serverkant verandert er bijna niets; het verschil zit aan het begin en aan het eind.
 
 <VerzoekCyclus variant="htmx" />
 
-Vergelijk stap 5 en 6 met stap 5 en 6 van het formulier zonder htmx. Daar was het antwoord een omleiding en begon de browser opnieuw met een GET, de hele pagina over de lijn. Hier is het antwoord een stukje HTML en blijft de pagina staan. Het post/redirect/get-patroon uit [Doorsturen na opslaan (redirect)](/docs/FastAPI/gastenboek/redirect) is niet nodig, want de browser heeft nooit een pagina verlaten.
+Vergelijk stap 5 en 6 met stap 5 en 6 van het formulier zonder htmx. Daar was het antwoord een omleiding en begon de browser opnieuw met een GET, de hele pagina over de lijn. Hier is het antwoord een stukje HTML en blijft de pagina staan. Het post/redirect/get-patroon uit [Doorsturen na opslaan (redirect)](/docs/FastAPI/doorsturen/redirect) is niet nodig, want de browser heeft nooit een pagina verlaten.
 
-Stap 3 en 4 zijn dezelfde als altijd. Ook een verzoek van htmx komt van de bezoeker, dus een controle, zoals de 404 uit [Eén item tonen: opzoeken en 404](/docs/FastAPI/gastenboek/detailpagina), hoort nog steeds in stap 4, in je Python. Waarom een controle in de HTML niet genoeg is, zie je in de volgende uitbreiding, bij [Server of browser?](/docs/FastAPI/in-de-browser/server-of-browser).
+Stap 3 en 4 zijn dezelfde als altijd. Ook een verzoek van htmx komt van de bezoeker, dus een controle, zoals de 404 uit [Een 404 sturen: als het item niet bestaat](/docs/FastAPI/een-item/niet-gevonden), hoort nog steeds in stap 4, in je Python. Waarom een controle in de HTML niet genoeg is, zie je in de volgende uitbreiding, bij [Server of browser?](/docs/FastAPI/in-de-browser/server-of-browser).

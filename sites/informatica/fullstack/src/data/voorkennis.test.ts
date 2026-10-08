@@ -46,8 +46,12 @@ const ZONDER_BLOK: Record<string, string> = {
   'FastAPI/onthouden/cookie-of-sessie.mdx':
     'bouwt alleen op de twee lessen ervoor, in dezelfde cursus',
   'FastAPI/onthouden/cookies.mdx': 'nieuwe stof is server-side en wordt hier zelf uitgelegd',
-  'FastAPI/sqlitedict/database-waarden.mdx':
-    'geneste dictionaries staan al bij templates.mdx; het terugzetten is SqliteDict en wordt hier zelf uitgelegd',
+  'FastAPI/sqlitedict/zoeken.mdx':
+    '`in` staat al bij bekijken.mdx (11b), de les ervoor; `get` komt in de python-cursus niet voor en wordt hier zelf uitgelegd',
+  'FastAPI/sqlitedict/verwijderen.mdx':
+    '`del` komt in de python-cursus niet voor en wordt hier zelf uitgelegd; `in` staat bij bekijken.mdx',
+  'FastAPI/sqlitedict/dictionary.mdx':
+    'geneste dictionaries staan al bij templates.mdx; opslaan en ophalen van een dictionary is SqliteDict en wordt hier zelf uitgelegd',
   'FastAPI/eerste-server/devtools-netwerk.mdx':
     'de ontwikkelaarstools zelf, nergens anders behandeld',
   'FastAPI/in-de-browser/devtools-console.mdx':
@@ -63,7 +67,7 @@ const ZONDER_BLOK: Record<string, string> = {
   'FastAPI/eerste-server/verzoek-eerste.mdx': 'diagram van de les ervoor, geen nieuwe stof',
   'FastAPI/css-en-afbeeldingen/verzoek-static.mdx':
     'diagram van de lessen ervoor, geen nieuwe stof',
-  'FastAPI/gastenboek/verzoek-get.mdx': 'diagram van de lessen ervoor, geen nieuwe stof',
+  'FastAPI/een-item/verzoek-get.mdx': 'diagram van de lessen ervoor, geen nieuwe stof',
   'FastAPI/onthouden/verzoek-sessie.mdx': 'diagram van de lessen ervoor, geen nieuwe stof',
   'FastAPI/paginas/html_bestanden.mdx': 'HTML-bestand en pad; HTML zelf staat al bij html_tonen',
   'FastAPI/accounts/inloggen.mdx':
@@ -73,10 +77,12 @@ const ZONDER_BLOK: Record<string, string> = {
   'FastAPI/afronden/laat-het-zien.mdx':
     'terminalcommando en netwerkadres, geen voorkennis uit een cursus',
   'FastAPI/projectstructuur.mdx': 'naslag over deze cursus zelf',
-  'FastAPI/sqlitedict/op-een-rij.mdx': 'naslag over de drie SqliteDict-lessen, geen nieuwe stof',
+  'FastAPI/sqlitedict/op-een-rij.mdx': 'naslag over de zes SqliteDict-lessen, geen nieuwe stof',
   'FastAPI/formulieren/post_met_templates.mdx':
     'bouwt op forms en templates, allebei in deze cursus',
-  'FastAPI/gastenboek/redirect.mdx': 'bouwt op forms en database, allebei in deze cursus',
+  'FastAPI/doorsturen/redirect.mdx': 'bouwt op forms en database, allebei in deze cursus',
+  'FastAPI/een-item/detailpagina.mdx':
+    'path-parameters en templates staan al eerder in deze cursus; de lijst-voorkennis staat bij de 404-les erna',
   'cheatsheet.md': 'naslag',
   'starten.md': 'naslag: de vier stappen om te beginnen, verwijst per stap naar de editor-cursus',
   'troubleshooting.md': 'naslag',
@@ -133,9 +139,13 @@ const ZONDER_BLOK: Record<string, string> = {
 
 const MET_BLOK = [
   'FastAPI/css-en-afbeeldingen/afbeeldingen.mdx',
-  'FastAPI/sqlitedict/database-sleutels.mdx',
+  'FastAPI/sqlitedict/bekijken.mdx',
+  'FastAPI/sqlitedict/aanpassen.mdx',
   'FastAPI/sqlitedict/database.mdx',
-  'FastAPI/gastenboek/detailpagina.mdx',
+  'FastAPI/een-item/niet-gevonden.mdx',
+  'FastAPI/formulier-opslaan/berichten-opslaan.mdx',
+  'FastAPI/alles-tonen/leeg.mdx',
+  'FastAPI/doorsturen/verwijderen.mdx',
   'FastAPI/veel-paginas/path-parameters.mdx',
   'FastAPI/eerste-server/eerste_endpoint.mdx',
   'FastAPI/formulieren/forms.mdx',
@@ -143,9 +153,9 @@ const MET_BLOK = [
   'FastAPI/paginas/html_tonen.mdx',
   'FastAPI/zonder-herladen/htmx.mdx',
   'FastAPI/in-de-browser/javascript.mdx',
-  'FastAPI/gastenboek/lijst_tonen.mdx',
+  'FastAPI/alles-tonen/lijst_tonen.mdx',
   'FastAPI/paginas/links.mdx',
-  'FastAPI/gastenboek/post_naar_database.mdx',
+  'FastAPI/formulier-opslaan/naam-opslaan.mdx',
   'FastAPI/accounts/registreren.mdx',
   'FastAPI/in-de-browser/server-of-browser.mdx',
   'FastAPI/onthouden/sessies.mdx',

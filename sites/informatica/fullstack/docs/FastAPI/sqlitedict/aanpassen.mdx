@@ -1,36 +1,16 @@
-# Een dictionary als waarde in SqliteDict
+# Een dictionary aanpassen: ophalen, aanpassen, terugzetten
 
-Tot nu toe stond onder elke sleutel één ding: een naam, een getal. Een bericht in een gastenboek heeft meer: wie het schreef en wat er staat. Die zet je samen onder één sleutel, als dictionary. Zo blijft bij elkaar wat bij elkaar hoort.
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/data/10b-lijst-methoden', label: 'Lijst-methoden'},
+  ]}
+/>
 
-## Een dictionary opslaan
-
-Vervang de inhoud van `proef_db.py` uit de [vorige les](/docs/FastAPI/sqlitedict/database-sleutels) door:
-
-```python
-from sqlitedict import SqliteDict
-
-with SqliteDict("mijn_data.db") as db:
-    db["sara"] = {"klas": "4B", "vakken": ["informatica", "wiskunde"]}
-    db.commit()
-
-with SqliteDict("mijn_data.db") as db:
-    sara = db["sara"]
-    print(sara["klas"])
-    print(sara["vakken"])
-```
-
-Uitvoer:
-
-```
-4B
-['informatica', 'wiskunde']
-```
-
-De waarde onder `"sara"` is een dictionary, met daarin zelfs een lijst. SqliteDict bewaart hem zoals hij is, en geeft hem bij het uitlezen terug als dictionary. Draai ook `bekijk_db.py`: daar staat hij op één regel, naast je naam.
+Sara gaat naar 5B en krijgt er een vak bij. In een gewone dictionary pas je dat aan op de plek zelf. In SqliteDict kan dat niet, en je krijgt er geen foutmelding van. Je werkt verder met de Sara uit [Een dictionary als waarde](/docs/FastAPI/sqlitedict/dictionary), in `mijn_data.db`.
 
 ## Eén veld aanpassen
 
-Sara gaat naar 5B. Je haalt de dictionary op, past hem aan en zet hem terug:
+Je haalt de dictionary op, past hem aan en zet hem terug. Maak `aanpassen.py`:
 
 <CodeUitleg>
 
@@ -63,7 +43,11 @@ En zoals altijd: `commit()` schrijft het naar het bestand.
 
 </CodeUitleg>
 
-Draai `bekijk_db.py`. Onder `sara` staan nu `5B` en drie vakken.
+Draai `aanpassen.py` en daarna `bekijk_db.py`:
+
+```
+sara = {'klas': '5B', 'vakken': ['informatica', 'wiskunde', 'biologie']}
+```
 
 ## Waarom terugzetten nodig is
 
@@ -87,7 +71,7 @@ Elke keer dat je `db["sara"]` schrijft, leest SqliteDict de waarde uit het besta
 
 </details>
 
-Een gewone dictionary in Python onthoudt zo'n wijziging wel. SqliteDict niet: ophalen geeft een kopie. Onthoud daarom drie stappen: ophalen, aanpassen, terugzetten.
+Een gewone dictionary in Python onthoudt zo'n wijziging wel. SqliteDict niet: ophalen geeft een **kopie**. Onthoud daarom drie stappen: ophalen, aanpassen, terugzetten.
 
 ## Er gaat iets mis
 
@@ -114,16 +98,6 @@ with SqliteDict("mijn_data.db") as db:
     db["sara"] = sara
     db.commit()
 ```
-
-### KeyError met de naam van een veld
-
-```
-KeyError: 'naam'
-```
-
-**Oorzaak:** de sleutel bestaat wel, maar het veld in de dictionary niet. `db["sara"]["naam"]` vraagt om een veld `naam`, en de dictionary van Sara heeft alleen `klas` en `vakken`.
-
-**Oplossing:** kijk met `bekijk_db.py` welke velden er echt in staan. Ontbreekt een veld soms, gebruik dan `get` op de dictionary: `sara.get("naam", "onbekend")`.
 
 ## Opdrachten
 
@@ -165,12 +139,12 @@ Welke van de twee keer `append` gebeurt op een dictionary die daarna wordt terug
 
 ### Opdracht 2: Run
 
-Draai het opslaan en het aanpassen uit deze les, en controleer met `bekijk_db.py` dat Sara in 5B zit met drie vakken.
+Draai `aanpassen.py` uit deze les, en controleer met `bekijk_db.py` dat Sara in 5B zit met drie vakken.
 
 <details>
 <summary>Antwoord</summary>
 
-`bekijk_db.py` toont een regel als `sara = {'klas': '5B', 'vakken': ['informatica', 'wiskunde', 'biologie']}`. Heb je het aanpassen twee keer gedraaid, dan staat `biologie` er twee keer in: elke keer komt er één bij.
+`bekijk_db.py` toont `sara = {'klas': '5B', 'vakken': ['informatica', 'wiskunde', 'biologie']}`. Heb je `aanpassen.py` twee keer gedraaid, dan staat `biologie` er twee keer in: elke keer komt er één bij.
 
 </details>
 
@@ -191,13 +165,13 @@ with SqliteDict("mijn_data.db") as db:
 <details>
 <summary>Antwoord</summary>
 
-Het print `3A 5B`. `eerste` en `tweede` zijn twee losse kopieën uit het bestand. Pas je de ene aan, dan verandert de andere niet, en de database ook niet, want er wordt niets teruggezet.
+Het print `3A 5B`. `eerste` en `tweede` zijn twee losse kopieën uit het bestand. Pas je de ene aan, dan verandert de andere niet, en de database ook niet, want het script zet niets terug.
 
 </details>
 
 ### Opdracht 4: Modify - Een vak eraf
 
-Haal `wiskunde` weg uit de vakken van Sara, en controleer met `bekijk_db.py` dat het echt weg is.
+Pas `aanpassen.py` aan, zodat het `wiskunde` weghaalt uit de vakken van Sara. Controleer met `bekijk_db.py` dat het echt weg is.
 
 <details>
 <summary>Tip</summary>
@@ -256,4 +230,4 @@ Zonder `db[naam] = speler` print het de nieuwe score wel, want `speler` is de aa
 
 </details>
 
-Nu ken je SqliteDict genoeg om hem in je server te gebruiken. Dat doe je in [Een formulier opslaan](/docs/FastAPI/gastenboek/post_naar_database).
+Nu ken je SqliteDict genoeg om hem in je server te gebruiken. Dat doe je in [Een formulier opslaan](/docs/FastAPI/formulier-opslaan/naam-opslaan).

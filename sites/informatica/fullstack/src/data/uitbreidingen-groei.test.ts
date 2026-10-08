@@ -42,7 +42,7 @@ describe('een vervangend blok houdt wat een eerdere les erbij zette', () => {
   });
 
   it('na Eén item tonen houdt elke berichtenlijst de link naar de detailpagina', () => {
-    const fout = na('FastAPI/gastenboek/detailpagina').flatMap((id) =>
+    const fout = na('FastAPI/een-item/detailpagina').flatMap((id) =>
       blokken(les(id), 'html')
         .filter((b) => b.includes('{% for sleutel, bericht in berichten %}'))
         .filter((b) => !b.includes('/bericht/{{ sleutel }}'))
@@ -73,7 +73,7 @@ describe('een opdracht gaat niet uit van een overgeslagen opdracht', () => {
 
   it('wie een script in de <head> van gastenboek_form.html zet, hoort wat te doen zonder <head>', () => {
     // In de basis (Een formulier opslaan) heeft gastenboek_form.html geen <head>.
-    const fout = na('FastAPI/gastenboek/post_naar_database').filter((id) => {
+    const fout = na('FastAPI/formulier-opslaan/naam-opslaan').filter((id) => {
       const alineas = hoofdtekst(id).split('\n\n');
       const koppelt = alineas.some(
         (a) => a.includes('gastenboek_form.html') && a.includes('in de `<head>`'),

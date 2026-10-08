@@ -9,7 +9,7 @@ Typt een bezoeker een adres dat niet bestaat, dan ziet hij `{"detail":"Not Found
 
 Op `/bestaat-niet` staat `{"detail":"Not Found"}`. Bij dat pad hoort geen endpoint, dus FastAPI stuurt zelf een 404.
 
-Op `/bericht/onzin` staat `{"detail":"Dit bericht bestaat niet"}`. Dat pad hoort wel bij een endpoint, en dat stuurt de 404 met `raise HTTPException` uit [Eén item tonen: opzoeken en 404](/docs/FastAPI/gastenboek/detailpagina).
+Op `/bericht/onzin` staat `{"detail":"Dit bericht bestaat niet"}`. Dat pad hoort wel bij een endpoint, en dat stuurt de 404 met `raise HTTPException` uit [Een 404 sturen: als het item niet bestaat](/docs/FastAPI/een-item/niet-gevonden).
 
 </details>
 
@@ -199,7 +199,7 @@ Welke statuscode stuurt FastAPI als het pad wel bestaat, maar niet voor deze soo
 <details>
 <summary>Antwoord</summary>
 
-Nee. Hij krijgt `{"detail":"Method Not Allowed"}` met status 405, zoals in [Doorsturen na opslaan (redirect)](/docs/FastAPI/gastenboek/redirect). Je handler is alleen voor 404, en het pad bestaat.
+Nee. Hij krijgt `{"detail":"Method Not Allowed"}` met status 405, zoals in [Doorsturen na opslaan (redirect)](/docs/FastAPI/doorsturen/redirect). Je handler is alleen voor 404, en het pad bestaat.
 
 </details>
 
