@@ -25,11 +25,11 @@ Dit werkt net als een for-lus in Python, alleen sluit je de lus af met `{% endfo
 
 ## De data meesturen
 
-In [Elk bericht bewaren: een eigen sleutel](/docs/FastAPI/formulier-opslaan/berichten-opslaan) gaf `/berichten` de berichten nog als JSON terug. Vervang dat endpoint door deze versie, die alle berichten ophaalt en meestuurt onder de naam die de template gebruikt:
+In [Elk bericht bewaren: een eigen sleutel](/docs/FastAPI/berichten-opslaan/eigen-sleutel) gaf `/berichten` de berichten nog als JSON terug. Vervang dat endpoint door deze versie, die alle berichten ophaalt en meestuurt onder de naam die de template gebruikt:
 
 <CodeUitleg>
 
-{/* route-dubbel: vervangt GET /berichten (JSON) uit Een formulier opslaan */}
+{/* route-dubbel: vervangt GET /berichten (JSON) uit Elk bericht bewaren */}
 ```python showLineNumbers
 @app.get("/berichten")
 async def berichten(request: Request):
@@ -43,7 +43,7 @@ async def berichten(request: Request):
 ```
 
 <Regel n={4}>
-`db.values()` geeft alle opgeslagen berichten, zonder hun sleutels. De `list()` eromheen ken je uit [Elk bericht bewaren: een eigen sleutel](/docs/FastAPI/formulier-opslaan/berichten-opslaan), en hier is hij net zo nodig: de template loopt pas door de berichten als de database allang weer dicht is. Vergeet je hem, dan krijg je ook hier `AttributeError: 'NoneType' object has no attribute 'select'`.
+`db.values()` geeft alle opgeslagen berichten, zonder hun sleutels. De `list()` eromheen ken je uit [Elk bericht bewaren: een eigen sleutel](/docs/FastAPI/berichten-opslaan/eigen-sleutel), en hier is hij net zo nodig: de template loopt pas door de berichten als de database allang weer dicht is. Vergeet je hem, dan krijg je ook hier `AttributeError: 'NoneType' object has no attribute 'select'`.
 </Regel>
 
 <Regel n={8}>
@@ -80,8 +80,8 @@ De lijst gaat mee onder de naam `berichten`, en dat is precies de naam die de te
 ## Testen
 
 1. Start je server en ga naar `http://127.0.0.1:8000/berichten`
-2. Je ziet de berichten die je in de vorige les verstuurde, nu als lijst
-3. Vul het formulier op `/gastenboek` nog een keer in en ga terug naar `/berichten`: de lijst is gegroeid
+2. Je ziet de berichten die je eerder verstuurde, nu als lijst
+3. Vul het formulier op `/gastenboek` nog een keer in. Na het versturen kom je vanzelf op de lijst uit, en die is gegroeid
 
 :::danger[Gaat er iets mis?]
 Blijft de lijst leeg terwijl er wel data in je database staat? Dan komt de lijst waarschijnlijk onder een andere naam binnen dan de template verwacht. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
@@ -97,7 +97,7 @@ import random
 import time
 
 from fastapi import FastAPI, Form, Request
-from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlitedict import SqliteDict
@@ -238,7 +238,7 @@ async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
         sleutel = f"bericht_{time.time_ns()}"
         db[sleutel] = {"naam": naam, "bericht": bericht}
         db.commit()
-    return {"bericht": "Bedankt voor je bericht"}
+    return RedirectResponse(url="/berichten", status_code=303)
 
 @app.get("/berichten")
 async def berichten(request: Request):
@@ -367,4 +367,4 @@ De kopregel staat buiten de lus, dus die verschijnt één keer. De rij met `<td>
 
 </details>
 
-Door naar [Nog niets? if en else in je template](/docs/FastAPI/alles-tonen/leeg).
+Door naar [Nog niets? if en else in je template](/docs/FastAPI/berichten-tonen/leeg).

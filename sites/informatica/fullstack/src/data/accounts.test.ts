@@ -44,10 +44,10 @@ function alleDocs(map: string): string[] {
 }
 
 describe('accounts in de basis', () => {
-  it('Registreren en Inloggen zijn de categorie Accounts, direct na Eén item tonen', () => {
+  it('Registreren en Inloggen zijn de categorie Accounts, direct na Berichten verwijderen', () => {
     const labels = zijbalk.map((i) => (typeof i === 'string' ? i : i.label));
     const plek = labels.indexOf('Accounts');
-    expect(labels[plek - 1]).toBe('Eén item tonen');
+    expect(labels[plek - 1]).toBe('Berichten verwijderen');
     const categorie = zijbalk[plek] as Exclude<Item, string>;
     expect(plat(categorie.items)).toEqual([
       'FastAPI/accounts/registreren',

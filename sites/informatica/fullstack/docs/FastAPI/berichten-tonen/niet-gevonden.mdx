@@ -223,14 +223,6 @@ async def berichten(request: Request):
         {"berichten": alle_berichten}
     )
 
-@app.post("/verwijderen")
-async def verwijderen(sleutel: str = Form(...)):
-    with SqliteDict("gastenboek.db") as db:
-        if sleutel in db:
-            del db[sleutel]
-            db.commit()
-    return RedirectResponse(url="/berichten", status_code=303)
-
 @app.get("/bericht/{sleutel}")
 async def bericht_detail(request: Request, sleutel: str):
     with SqliteDict("gastenboek.db") as db:
@@ -367,4 +359,4 @@ Door `nummer: int` te schrijven controleert FastAPI zelf of het een getal is. Ty
 
 </details>
 
-Door naar [Zo werkt het: klikken en versturen](/docs/FastAPI/een-item/verzoek-get).
+Door naar [Een bericht verwijderen: een verborgen veld](/docs/FastAPI/berichten-verwijderen/verwijderen).

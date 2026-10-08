@@ -79,30 +79,33 @@ const sidebars: SidebarsConfig = {
       ],
     },
     {
+      // Het gastenboek per handeling met berichten: opslaan (met doorsturen
+      // na het opslaan), tonen (alles, leeg, één, en een 404) en verwijderen.
+      // Het diagram van klikken en versturen sluit het gastenboek af.
       type: 'category',
-      label: 'Opslaan vanuit een formulier',
+      label: 'Berichten opslaan',
       items: [
-        'FastAPI/formulier-opslaan/naam-opslaan',
-        'FastAPI/formulier-opslaan/berichten-opslaan',
+        'FastAPI/berichten-opslaan/naam-opslaan',
+        'FastAPI/berichten-opslaan/eigen-sleutel',
+        'FastAPI/berichten-opslaan/redirect',
       ],
     },
     {
       type: 'category',
-      label: 'Alles tonen',
-      items: ['FastAPI/alles-tonen/lijst_tonen', 'FastAPI/alles-tonen/leeg'],
-    },
-    {
-      type: 'category',
-      label: 'Doorsturen en verwijderen',
-      items: ['FastAPI/doorsturen/redirect', 'FastAPI/doorsturen/verwijderen'],
-    },
-    {
-      type: 'category',
-      label: 'Eén item tonen',
+      label: 'Berichten tonen',
       items: [
-        'FastAPI/een-item/detailpagina',
-        'FastAPI/een-item/niet-gevonden',
-        'FastAPI/een-item/verzoek-get',
+        'FastAPI/berichten-tonen/lijst_tonen',
+        'FastAPI/berichten-tonen/leeg',
+        'FastAPI/berichten-tonen/detailpagina',
+        'FastAPI/berichten-tonen/niet-gevonden',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Berichten verwijderen',
+      items: [
+        'FastAPI/berichten-verwijderen/verwijderen',
+        'FastAPI/berichten-verwijderen/verzoek-get',
       ],
     },
     {

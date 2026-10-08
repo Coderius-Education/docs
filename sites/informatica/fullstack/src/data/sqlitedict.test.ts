@@ -53,7 +53,7 @@ describe('SqliteDict eerst in een script', () => {
   );
 
   it('de scriptlessen staan direct vóór de eerste les met SqliteDict in een endpoint', () => {
-    expect(eersteInServer).toBe('FastAPI/formulier-opslaan/naam-opslaan');
+    expect(eersteInServer).toBe('FastAPI/berichten-opslaan/naam-opslaan');
     const plek = lessen.indexOf(eersteInServer as string);
     expect(lessen.slice(plek - SCRIPTLESSEN.length, plek)).toEqual(SCRIPTLESSEN);
   });
@@ -130,10 +130,10 @@ describe('SqliteDict eerst in een script', () => {
   });
 
   it('Een formulier opslaan legt db.get en de dictionary niet opnieuw uit, maar linkt naar de les', () => {
-    expect(tekst('FastAPI/formulier-opslaan/naam-opslaan')).toContain(
+    expect(tekst('FastAPI/berichten-opslaan/naam-opslaan')).toContain(
       '](/docs/FastAPI/sqlitedict/zoeken)',
     );
-    expect(tekst('FastAPI/formulier-opslaan/berichten-opslaan')).toContain(
+    expect(tekst('FastAPI/berichten-opslaan/eigen-sleutel')).toContain(
       '](/docs/FastAPI/sqlitedict/dictionary)',
     );
   });

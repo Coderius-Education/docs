@@ -17,12 +17,12 @@ export const ZINNEN: Record<string, string> = {
     'Een pagina vult zich met waarden uit Python, en je server beantwoordt een formulier.',
   'Gegevens opslaan (SqliteDict)':
     'Een script bewaart gegevens in een bestand, zodat ze er na het afsluiten nog zijn.',
-  'Opslaan vanuit een formulier':
-    'Wat een bezoeker invult, blijft bewaard, ook als je de server stopt.',
-  'Alles tonen': 'Alle berichten staan op een pagina, en een leeg gastenboek zegt dat ook.',
-  'Doorsturen en verwijderen':
-    'Na het versturen sta je weer op de lijst, en een bericht kan er ook weer af.',
-  'Eén item tonen': 'Elk bericht heeft een eigen pagina, en een onbekend adres krijgt een 404.',
+  'Berichten opslaan':
+    'Wat een bezoeker invult, blijft bewaard, en na het versturen sta je weer op de lijst.',
+  'Berichten tonen':
+    'Alle berichten staan op een pagina, elk bericht heeft een eigen pagina, en een onbekend adres krijgt een 404.',
+  'Berichten verwijderen':
+    'Een bericht kan er met een knop weer af, en je ziet de hele weg van klik tot antwoord.',
   Accounts: 'Wie schrijft, heeft een account met een naam en een wachtwoord.',
   // FastAPI: de uitbreidingen en de afronding
   'Uitbreiding: zonder herladen (htmx)':

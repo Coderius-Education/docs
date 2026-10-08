@@ -25,11 +25,11 @@ const losseLessen: Record<string, string> = {
   forms: 'formulieren/forms',
   post_met_templates: 'formulieren/post_met_templates',
   database: 'sqlitedict/database',
-  post_naar_database: 'formulier-opslaan/naam-opslaan',
-  lijst_tonen: 'alles-tonen/lijst_tonen',
-  redirect: 'doorsturen/redirect',
-  detailpagina: 'een-item/detailpagina',
-  'verzoek-get': 'een-item/verzoek-get',
+  post_naar_database: 'berichten-opslaan/naam-opslaan',
+  lijst_tonen: 'berichten-tonen/lijst_tonen',
+  redirect: 'berichten-opslaan/redirect',
+  detailpagina: 'berichten-tonen/detailpagina',
+  'verzoek-get': 'berichten-verwijderen/verzoek-get',
   htmx: 'zonder-herladen/htmx',
   'htmx-overzicht': 'zonder-herladen/htmx-overzicht',
   'verzoek-htmx': 'zonder-herladen/verzoek-htmx',
@@ -55,6 +55,9 @@ export const omleidingen: Omleiding[] = [
   { van: '/docs/FastAPI/jouw-project', naar: '/docs/FastAPI/accounts/inloggen' },
   // Het diagram van één formulier staat sinds de herindeling op dezelfde
   // pagina als dat van één klik.
-  { van: '/docs/FastAPI/verzoek-post', naar: '/docs/FastAPI/een-item/verzoek-get#een-formulier' },
+  {
+    van: '/docs/FastAPI/verzoek-post',
+    naar: '/docs/FastAPI/berichten-verwijderen/verzoek-get#een-formulier',
+  },
   ...verhuisd,
 ];

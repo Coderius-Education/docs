@@ -1,5 +1,11 @@
 # Eén item tonen: de sleutel uit de URL
 
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/data/11b-itereren-dictionaries', label: 'Door een dictionary lopen met items()'},
+  ]}
+/>
+
 Je lijst toont alle berichten onder elkaar, op één pagina. Op echte websites klik je op één item en krijg je een eigen pagina, met een eigen URL die je kunt delen. Daarvoor moet de URL zeggen wélk bericht je bedoelt.
 
 ## De sleutel in de URL
@@ -48,24 +54,43 @@ De template `templates/bericht.html` toont één bericht, met een link terug naa
 
 ## Linken vanuit de lijst
 
-Sinds het [verwijderen](/docs/FastAPI/doorsturen/verwijderen) stuurt `/berichten` de sleutels al mee, via `db.items()`. Dezelfde sleutel zet je nu in een link. In `templates/berichten.html` wordt de naam klikbaar; het verwijderformulier blijft staan:
+Om naar een bericht te linken, heeft de lijst zijn sleutel nodig. Tot nu toe stuurde `/berichten` alleen de berichten mee, via `db.values()`. Met **`db.items()`** gaan de sleutels mee. Vervang je endpoint `/berichten`:
+
+<CodeUitleg>
+
+{/* route-dubbel: vervangt GET /berichten uit Alles tonen, nu met db.items() */}
+```python showLineNumbers
+@app.get("/berichten")
+async def berichten(request: Request):
+    with SqliteDict("gastenboek.db") as db:
+        alle_berichten = list(db.items())
+    return templates.TemplateResponse(
+        request,
+        "berichten.html",
+        {"berichten": alle_berichten}
+    )
+```
+
+<Regel n={4}>
+`db.items()` geeft paren: eerst de sleutel, dan het bericht. De `list()` eromheen is net zo nodig als bij `db.values()`.
+</Regel>
+
+</CodeUitleg>
+
+In `templates/berichten.html` loop je nu over twee dingen tegelijk, en wordt de naam een link met de sleutel erin. Vervang de for-lus binnen de `<ul>` door deze:
 
 ```html
 {% for sleutel, bericht in berichten %}
-    <li>
-        <a href="/bericht/{{ sleutel }}">{{ bericht.naam }}</a>: {{ bericht.bericht }}
-        <form method="post" action="/verwijderen">
-            <input type="hidden" name="sleutel" value="{{ sleutel }}">
-            <button type="submit">Verwijderen</button>
-        </form>
-    </li>
+    <li><a href="/bericht/{{ sleutel }}">{{ bericht.naam }}</a>: {{ bericht.bericht }}</li>
 {% endfor %}
 ```
+
+`{% for sleutel, bericht in berichten %}` pakt elk paar uit in twee namen, net als `for sleutel, waarde in db.items():` in Python. Vergeet je de `sleutel, ` in de lus, dan wordt elk bericht een lege regel met alleen een dubbele punt: Jinja2 zoekt dan `naam` in een paar, en dat heeft geen naam.
 
 <details>
 <summary>Zo ziet je `templates/berichten.html` er nu uit</summary>
 
-Alleen de naam in de `<li>` is nu een link; de rest is zoals in [Doorsturen na opslaan (redirect)](/docs/FastAPI/doorsturen/redirect).
+Het `{% if %}`-blok uit [Nog niets? if en else in je template](/docs/FastAPI/berichten-tonen/leeg) blijft staan; alleen de lus binnen de `<ul>` is nieuw.
 
 ```html
 <!DOCTYPE html>
@@ -80,13 +105,7 @@ Alleen de naam in de `<li>` is nu een link; de rest is zoals in [Doorsturen na o
         {% if berichten %}
             <ul>
                 {% for sleutel, bericht in berichten %}
-                    <li>
-                        <a href="/bericht/{{ sleutel }}">{{ bericht.naam }}</a>: {{ bericht.bericht }}
-                        <form method="post" action="/verwijderen">
-                            <input type="hidden" name="sleutel" value="{{ sleutel }}">
-                            <button type="submit">Verwijderen</button>
-                        </form>
-                    </li>
+                    <li><a href="/bericht/{{ sleutel }}">{{ bericht.naam }}</a>: {{ bericht.bericht }}</li>
                 {% endfor %}
             </ul>
         {% else %}
@@ -105,7 +124,7 @@ Alleen de naam in de `<li>` is nu een link; de rest is zoals in [Doorsturen na o
 1. Ga naar `/berichten` en klik op een naam.
 2. Je ziet één bericht, en de sleutel staat in de adresbalk.
 
-Wat er gebeurt bij een sleutel die niet bestaat, probeer je uit in opdracht 3. Een nette 404 daarvoor maak je in de [volgende les](/docs/FastAPI/een-item/niet-gevonden).
+Wat er gebeurt bij een sleutel die niet bestaat, probeer je uit in opdracht 3. Een nette 404 daarvoor maak je in de [volgende les](/docs/FastAPI/berichten-tonen/niet-gevonden).
 
 <details>
 <summary>Zo ziet je `main.py` er nu uit</summary>
@@ -270,14 +289,6 @@ async def berichten(request: Request):
         {"berichten": alle_berichten}
     )
 
-@app.post("/verwijderen")
-async def verwijderen(sleutel: str = Form(...)):
-    with SqliteDict("gastenboek.db") as db:
-        if sleutel in db:
-            del db[sleutel]
-            db.commit()
-    return RedirectResponse(url="/berichten", status_code=303)
-
 @app.get("/bericht/{sleutel}")
 async def bericht_detail(request: Request, sleutel: str):
     with SqliteDict("gastenboek.db") as db:
@@ -377,4 +388,4 @@ Een naam die niemand gebruikte, geeft een pagina met alleen de kop. De `for`-lus
 
 </details>
 
-Door naar [Een 404 sturen: als het item niet bestaat](/docs/FastAPI/een-item/niet-gevonden).
+Door naar [Een 404 sturen: als het item niet bestaat](/docs/FastAPI/berichten-tonen/niet-gevonden).

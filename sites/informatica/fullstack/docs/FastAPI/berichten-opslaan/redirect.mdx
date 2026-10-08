@@ -1,85 +1,56 @@
-# Elk bericht bewaren: een eigen sleutel
+# Doorsturen na opslaan (redirect)
 
-<Voorkennis
-  items={[
-    {site: 'python', to: '/docs/data/10a-lijsten-basis', label: 'Lijsten'},
-  ]}
-/>
+Je gastenboek werkt, maar na het versturen van een bericht sta je op een doodlopende pagina. Druk je daar op F5, dan vraagt je browser of je het formulier nog een keer wilt versturen. Zeg je ja, dan staat hetzelfde bericht twee keer in je database. Daarom stuur je de bezoeker na het opslaan door naar de berichten.
 
-In [Een formulier opslaan](/docs/FastAPI/formulier-opslaan/naam-opslaan) overschreef elke naam de vorige, want ze gingen allemaal onder de sleutel `laatste_naam`. Voor een gastenboek wil je elk bericht bewaren. Dan heeft elk bericht een eigen sleutel nodig.
+## RedirectResponse
 
-## Een nieuwe sleutel per bericht
+Met `RedirectResponse` stuur je de browser door naar een andere URL. Zet `RedirectResponse` bij je imports:
 
-`time.time_ns()` geeft het aantal nanoseconden sinds 1970: bij elk bericht een ander getal, dus een nieuwe sleutel. Dit gastenboek bouw je in de volgende lessen verder uit, dus maak het echt.
-
-### Formulier (`static/pages/gastenboek_form.html`)
-
-```html
-<!DOCTYPE html>
-<html>
-    <body>
-        <h1>Gastenboek</h1>
-        <form method="post" action="/gastenboek">
-            <input type="text" name="naam" placeholder="Je naam" required>
-            <input type="text" name="bericht" placeholder="Je bericht" required>
-            <button type="submit">Verstuur</button>
-        </form>
-    </body>
-</html>
+```python
+from fastapi.responses import RedirectResponse
 ```
 
-### Endpoints (`main.py`, onder de endpoints van de naam)
-
-Zet `import time` bovenaan je `main.py`, bij de andere imports.
+Vervang dan je POST-endpoint `/gastenboek` uit [Elk bericht bewaren: een eigen sleutel](/docs/FastAPI/berichten-opslaan/eigen-sleutel). Alleen de laatste regel verandert:
 
 <CodeUitleg>
 
+{/* route-dubbel: vervangt POST /gastenboek uit Elk bericht bewaren */}
 ```python showLineNumbers
-@app.get("/gastenboek")
-async def gastenboek_form():
-    return FileResponse("static/pages/gastenboek_form.html")
-
 @app.post("/gastenboek")
 async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
     with SqliteDict("gastenboek.db") as db:
         sleutel = f"bericht_{time.time_ns()}"
         db[sleutel] = {"naam": naam, "bericht": bericht}
         db.commit()
-    return {"bericht": "Bedankt voor je bericht"}
-
-@app.get("/berichten")
-async def berichten():
-    with SqliteDict("gastenboek.db") as db:
-        alle_berichten = list(db.values())
-    return {"berichten": alle_berichten}
+    return RedirectResponse(url="/berichten", status_code=303)
 ```
 
-<Regel n={8}>
-Zo krijgt elk bericht een nieuwe sleutel, zoals `bericht_1767225600123456789`, en overschrijven twee berichten elkaar niet meer.
+<Regel n={3} tot={6}>
+Het opslaan is hetzelfde als in [Elk bericht bewaren: een eigen sleutel](/docs/FastAPI/berichten-opslaan/eigen-sleutel): een eigen sleutel per bericht, met `import time` bovenaan je bestand.
 </Regel>
 
-<Regel n={9}>
-De waarde is een dictionary met beide velden, zoals in [Een dictionary als waarde](/docs/FastAPI/sqlitedict/dictionary).
-</Regel>
-
-<Regel n={16}>
-`db.values()` geeft alle waarden, zonder sleutels, maar haalt ze pas op als iets erdoorheen loopt. `list()` doet dat meteen, binnen het `with`-blok. Zonder `list()` loopt FastAPI er pas doorheen als hij de JSON maakt, en dan is de database al dicht: je krijgt `AttributeError: 'NoneType' object has no attribute 'select'`.
+<Regel n={7}>
+Het endpoint geeft nu geen pagina terug, maar een opdracht aan de browser: ga naar `/berichten`. De browser doet dat meteen, en de bezoeker ziet zijn eigen bericht achteraan staan. Nu nog als JSON; in de volgende les wordt `/berichten` een echte pagina.
 </Regel>
 
 </CodeUitleg>
 
-:::caution
-Gebruik `time.time_ns()` (nanoseconden) en niet `int(time.time())` (hele seconden). Twee berichten die binnen dezelfde seconde binnenkomen, krijgen anders dezelfde sleutel, en dan overschrijft het tweede het eerste.
-:::
+## Waarom 303
 
-## Het gastenboek testen
+Zonder `status_code=303` werkt het niet. `RedirectResponse` stuurt standaard een 307, en 307 betekent: doe hetzelfde verzoek nog een keer op de nieuwe URL. Jouw verzoek was een POST, dus de browser stuurt een POST naar `/berichten`. Dat endpoint is een `@app.get`, dus je krijgt **405 Method Not Allowed**.
 
-1. Ga naar `http://127.0.0.1:8000/gastenboek` en verstuur twee berichten.
-2. Ga naar `http://127.0.0.1:8000/berichten`. Je ziet ze allebei, als JSON.
-3. Stop de server, start hem opnieuw en kijk nog een keer: ze staan er nog.
+Een 303 zegt wél wat je bedoelt: ga naar die URL met een GET.
+
+Eerst een POST en dan doorsturen naar een GET: dat heet het **post/redirect/get**-patroon. Bijna elke website die je gebruikt doet dit na een formulier.
+
+## Testen
+
+1. Vul het gastenboek in en klik Verstuur
+2. Je belandt op `/berichten` en ziet je eigen bericht staan, nog als JSON
+3. Druk op F5. De pagina herlaadt, zonder vraag over opnieuw versturen
 
 :::danger[Gaat er iets mis?]
-Blijft je data niet bewaard? Kijk dan of je `db.commit()` niet bent vergeten. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
+Krijg je **405 Method Not Allowed** meteen na het versturen? Dan mist `status_code=303`. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
 :::
 
 <details>
@@ -92,7 +63,7 @@ import random
 import time
 
 from fastapi import FastAPI, Form, Request
-from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlitedict import SqliteDict
@@ -233,7 +204,7 @@ async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
         sleutel = f"bericht_{time.time_ns()}"
         db[sleutel] = {"naam": naam, "bericht": bericht}
         db.commit()
-    return {"bericht": "Bedankt voor je bericht"}
+    return RedirectResponse(url="/berichten", status_code=303)
 
 @app.get("/berichten")
 async def berichten():
@@ -246,47 +217,58 @@ async def berichten():
 
 ## Opdrachten
 
-### Opdracht 1: Predict - Hoeveel berichten?
+### Opdracht 1: Predict - Waar kom je uit?
 
-Iemand haalt `time.time_ns()` weg en schrijft `sleutel = "bericht"`. Daarna verstuurt iemand drie berichten. Wat laat `/berichten` zien?
+{/* route-dubbel: voorspelvraag, met eigen paden zodat uitproberen niet botst met het project */}
+```python
+@app.post("/inschrijven")
+async def inschrijven(naam: str = Form(...)):
+    return RedirectResponse(url="/bedankt", status_code=303)
+
+@app.get("/bedankt")
+async def bedankt():
+    return {"bericht": "Bedankt"}
+```
+
+**Vraag:** welke URL staat er in de adresbalk nadat je het formulier hebt verstuurd?
 
 <details>
 <summary>Tip</summary>
 
-Hoeveel verschillende sleutels zijn er dan?
+Een redirect verandert niet alleen wat je ziet, maar ook wat er in de adresbalk staat.
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-Eén bericht: het laatste. Alle drie gaan onder de sleutel `bericht`, dus elk nieuw bericht overschrijft het vorige.
+`/bedankt`. De browser volgt de redirect en vraagt die pagina op alsof je er zelf naartoe was gegaan. Van `/inschrijven` zie je niets terug.
 
 </details>
 
 ### Opdracht 2: Run
 
-Maak het gastenboek uit deze les. Test of de berichten bewaard blijven door de server te stoppen en opnieuw te starten.
+Pas je `/gastenboek` POST-endpoint aan zodat het doorstuurt naar `/berichten`. Verstuur een bericht en kijk of je op de lijst uitkomt.
 
-### Opdracht 3: Investigate - Wat staat er echt in?
+### Opdracht 3: Investigate - Zonder 303
 
-Laat `/berichten` ook de sleutels zien: vervang `list(db.values())` door `list(db.items())`. Wat verandert er in de JSON?
+Haal `status_code=303` weg en verstuur nog een keer.
 
 <details>
 <summary>Antwoord</summary>
 
-Elk bericht wordt een paar: eerst de sleutel, dan de dictionary, zoals `["bericht_1767225600123456789", {"naam": "Sam", "bericht": "Hoi"}]`. Aan de getallen zie je in welke volgorde de berichten binnenkwamen. De sleutel heb je later nodig om één bericht aan te wijzen.
+Je krijgt **405 Method Not Allowed**. Zonder dat getal stuurt FastAPI een 307, en dan herhaalt de browser je POST op `/berichten`. Daar staat alleen een `@app.get`, dus het antwoord is: dit endpoint doet geen POST. Je bericht is wel opgeslagen; alleen het doorsturen ging mis. Ga je terug en verstuur je hetzelfde formulier nog een keer, dan staat het er twee keer in.
 
 </details>
 
-### Opdracht 4: Make - Hoeveel berichten
+### Opdracht 4: Make - Annuleren
 
-Maak een endpoint `/aantal` dat teruggeeft hoeveel berichten er in het gastenboek staan: `{"aantal":3}`.
+Maak een endpoint `/annuleren` dat niets opslaat en de bezoeker direct doorstuurt naar `/berichten`. Zet er een link naartoe op je gastenboekformulier.
 
 <details>
 <summary>Tip</summary>
 
-`len(db)` geeft het aantal sleutels in de database, net als bij een dictionary.
+Een bezoeker komt hier via een gewone link, dus het is een `@app.get`. Een redirect vanuit een GET heeft geen 303 nodig.
 
 </details>
 
@@ -294,13 +276,18 @@ Maak een endpoint `/aantal` dat teruggeeft hoeveel berichten er in het gastenboe
 <summary>Antwoord</summary>
 
 ```python
-@app.get("/aantal")
-async def aantal():
-    with SqliteDict("gastenboek.db") as db:
-        hoeveel = len(db)
-    return {"aantal": hoeveel}
+@app.get("/annuleren")
+async def annuleren():
+    return RedirectResponse(url="/berichten")
 ```
+
+In `static/pages/gastenboek_form.html`, onder het formulier:
+```html
+<a href="/annuleren">Annuleren</a>
+```
+
+Hier mag de standaard 307 blijven staan: het oorspronkelijke verzoek was al een GET, dus het herhalen daarvan levert precies op wat je wilt.
 
 </details>
 
-Je berichten staan nu in de database, maar `/berichten` geeft ze nog als JSON terug. In [Alles tonen: een for-lus in je template](/docs/FastAPI/alles-tonen/lijst_tonen) zet je ze op een echte pagina.
+Door naar [Alles tonen: een for-lus in je template](/docs/FastAPI/berichten-tonen/lijst_tonen).

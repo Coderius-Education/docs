@@ -67,7 +67,7 @@ const ZONDER_BLOK: Record<string, string> = {
   'FastAPI/eerste-server/verzoek-eerste.mdx': 'diagram van de les ervoor, geen nieuwe stof',
   'FastAPI/css-en-afbeeldingen/verzoek-static.mdx':
     'diagram van de lessen ervoor, geen nieuwe stof',
-  'FastAPI/een-item/verzoek-get.mdx': 'diagram van de lessen ervoor, geen nieuwe stof',
+  'FastAPI/berichten-verwijderen/verzoek-get.mdx': 'diagram van de lessen ervoor, geen nieuwe stof',
   'FastAPI/onthouden/verzoek-sessie.mdx': 'diagram van de lessen ervoor, geen nieuwe stof',
   'FastAPI/paginas/html_bestanden.mdx': 'HTML-bestand en pad; HTML zelf staat al bij html_tonen',
   'FastAPI/accounts/inloggen.mdx':
@@ -80,9 +80,9 @@ const ZONDER_BLOK: Record<string, string> = {
   'FastAPI/sqlitedict/op-een-rij.mdx': 'naslag over de zes SqliteDict-lessen, geen nieuwe stof',
   'FastAPI/formulieren/post_met_templates.mdx':
     'bouwt op forms en templates, allebei in deze cursus',
-  'FastAPI/doorsturen/redirect.mdx': 'bouwt op forms en database, allebei in deze cursus',
-  'FastAPI/een-item/detailpagina.mdx':
-    'path-parameters en templates staan al eerder in deze cursus; de lijst-voorkennis staat bij de 404-les erna',
+  'FastAPI/berichten-verwijderen/verwijderen.mdx':
+    'een formulier, del en een redirect staan al eerder in deze cursus; het verborgen veld wordt hier zelf uitgelegd',
+  'FastAPI/berichten-opslaan/redirect.mdx': 'bouwt op forms en database, allebei in deze cursus',
   'cheatsheet.md': 'naslag',
   'starten.md': 'naslag: de vier stappen om te beginnen, verwijst per stap naar de editor-cursus',
   'troubleshooting.md': 'naslag',
@@ -142,10 +142,10 @@ const MET_BLOK = [
   'FastAPI/sqlitedict/bekijken.mdx',
   'FastAPI/sqlitedict/aanpassen.mdx',
   'FastAPI/sqlitedict/database.mdx',
-  'FastAPI/een-item/niet-gevonden.mdx',
-  'FastAPI/formulier-opslaan/berichten-opslaan.mdx',
-  'FastAPI/alles-tonen/leeg.mdx',
-  'FastAPI/doorsturen/verwijderen.mdx',
+  'FastAPI/berichten-tonen/niet-gevonden.mdx',
+  'FastAPI/berichten-opslaan/eigen-sleutel.mdx',
+  'FastAPI/berichten-tonen/leeg.mdx',
+  'FastAPI/berichten-tonen/detailpagina.mdx',
   'FastAPI/veel-paginas/path-parameters.mdx',
   'FastAPI/eerste-server/eerste_endpoint.mdx',
   'FastAPI/formulieren/forms.mdx',
@@ -153,9 +153,9 @@ const MET_BLOK = [
   'FastAPI/paginas/html_tonen.mdx',
   'FastAPI/zonder-herladen/htmx.mdx',
   'FastAPI/in-de-browser/javascript.mdx',
-  'FastAPI/alles-tonen/lijst_tonen.mdx',
+  'FastAPI/berichten-tonen/lijst_tonen.mdx',
   'FastAPI/paginas/links.mdx',
-  'FastAPI/formulier-opslaan/naam-opslaan.mdx',
+  'FastAPI/berichten-opslaan/naam-opslaan.mdx',
   'FastAPI/accounts/registreren.mdx',
   'FastAPI/in-de-browser/server-of-browser.mdx',
   'FastAPI/onthouden/sessies.mdx',

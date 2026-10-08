@@ -1,31 +1,14 @@
 # Een bericht verwijderen: een verborgen veld
 
-<Voorkennis
-  items={[
-    {site: 'python', to: '/docs/data/11b-itereren-dictionaries', label: 'Door een dictionary lopen met items()'},
-  ]}
-/>
-
 Verwijderen gaat net als opslaan: een formulier met een POST, en daarna met een redirect terug naar de lijst. Nieuw is dat het formulier moet zeggen wélk bericht weg moet.
 
-## De sleutel meesturen en het endpoint
+## Het endpoint
 
-Om één bericht aan te wijzen heb je zijn sleutel nodig. Stuur de berichten daarom mét hun sleutel naar de template: vervang in je endpoint `/berichten` de `db.values()` door `db.items()`. Het endpoint voor verwijderen zet je eronder:
+De sleutels staan sinds [Eén item tonen: de sleutel uit de URL](/docs/FastAPI/berichten-tonen/detailpagina) al in je lijst. Zet het endpoint voor verwijderen onder je andere endpoints:
 
 <CodeUitleg>
 
-{/* route-dubbel: vervangt GET /berichten uit Alles tonen, nu met db.items() */}
 ```python showLineNumbers
-@app.get("/berichten")
-async def berichten(request: Request):
-    with SqliteDict("gastenboek.db") as db:
-        alle_berichten = list(db.items())
-    return templates.TemplateResponse(
-        request,
-        "berichten.html",
-        {"berichten": alle_berichten}
-    )
-
 @app.post("/verwijderen")
 async def verwijderen(sleutel: str = Form(...)):
     with SqliteDict("gastenboek.db") as db:
@@ -35,15 +18,15 @@ async def verwijderen(sleutel: str = Form(...)):
     return RedirectResponse(url="/berichten", status_code=303)
 ```
 
-<Regel n={4}>
-`db.items()` geeft paren: eerst de sleutel, dan het bericht.
+<Regel n={2}>
+De sleutel komt uit het formulier, net als een naam of een bericht.
 </Regel>
 
-<Regel n={14} tot={16}>
-`del db[sleutel]` haalt het bericht weg. De `if sleutel in db` voorkomt een crash als het bericht al weg is, bijvoorbeeld omdat iemand het in een ander tabblad al verwijderde.
+<Regel n={4} tot={6}>
+`del db[sleutel]` haalt het bericht weg, zoals in [Verwijderen met del](/docs/FastAPI/sqlitedict/verwijderen). De `if sleutel in db` voorkomt een crash als het bericht al weg is, bijvoorbeeld omdat iemand het in een ander tabblad al verwijderde.
 </Regel>
 
-<Regel n={17}>
+<Regel n={7}>
 Daarna stuur je de bezoeker terug naar de lijst, met 303, zoals na het opslaan.
 </Regel>
 
@@ -51,12 +34,12 @@ Daarna stuur je de bezoeker terug naar de lijst, met 303, zoals na het opslaan.
 
 ## Een formulier per bericht
 
-In `templates/berichten.html` loop je nu over twee dingen tegelijk, en krijgt elk bericht een eigen formuliertje. Vervang de for-lus binnen de `<ul>` door deze:
+In `templates/berichten.html` krijgt elk bericht een eigen formuliertje, onder de link. Vervang de for-lus binnen de `<ul>` door deze:
 
 ```html
 {% for sleutel, bericht in berichten %}
     <li>
-        {{ bericht.naam }}: {{ bericht.bericht }}
+        <a href="/bericht/{{ sleutel }}">{{ bericht.naam }}</a>: {{ bericht.bericht }}
         <form method="post" action="/verwijderen">
             <input type="hidden" name="sleutel" value="{{ sleutel }}">
             <button type="submit">Verwijderen</button>
@@ -70,7 +53,7 @@ Een `<input type="hidden">` ziet de bezoeker niet, maar hij gaat wel mee met het
 <details>
 <summary>Zo ziet je `templates/berichten.html` er nu uit</summary>
 
-Het `{% if %}`-blok uit [Nog niets? if en else in je template](/docs/FastAPI/alles-tonen/leeg) blijft staan; alleen de lus binnen de `<ul>` is nieuw.
+Alleen het formulier in de `<li>` is nieuw; de rest is zoals in [Eén item tonen: de sleutel uit de URL](/docs/FastAPI/berichten-tonen/detailpagina).
 
 ```html
 <!DOCTYPE html>
@@ -86,7 +69,7 @@ Het `{% if %}`-blok uit [Nog niets? if en else in je template](/docs/FastAPI/all
             <ul>
                 {% for sleutel, bericht in berichten %}
                     <li>
-                        {{ bericht.naam }}: {{ bericht.bericht }}
+                        <a href="/bericht/{{ sleutel }}">{{ bericht.naam }}</a>: {{ bericht.bericht }}
                         <form method="post" action="/verwijderen">
                             <input type="hidden" name="sleutel" value="{{ sleutel }}">
                             <button type="submit">Verwijderen</button>
@@ -120,7 +103,7 @@ Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
 import random
 import time
 
-from fastapi import FastAPI, Form, Request
+from fastapi import FastAPI, Form, HTTPException, Request
 from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -281,35 +264,54 @@ async def verwijderen(sleutel: str = Form(...)):
             del db[sleutel]
             db.commit()
     return RedirectResponse(url="/berichten", status_code=303)
+
+@app.get("/bericht/{sleutel}")
+async def bericht_detail(request: Request, sleutel: str):
+    with SqliteDict("gastenboek.db") as db:
+        bericht = db.get(sleutel)
+
+    if bericht is None:
+        raise HTTPException(status_code=404, detail="Dit bericht bestaat niet")
+
+    return templates.TemplateResponse(
+        request,
+        "bericht.html",
+        {"bericht": bericht}
+    )
 ```
 
 </details>
 
 ## Opdrachten
 
-### Opdracht 1: Predict - Wat krijgt de template?
+### Opdracht 1: Predict - Wat ziet de bezoeker?
 
-Je database heeft twee berichten. `/berichten` stuurt nu `list(db.items())` mee in plaats van `list(db.values())`.
+```html
+<form method="post" action="/verwijderen">
+    <input type="hidden" name="sleutel" value="bericht_17">
+    <button type="submit">Verwijderen</button>
+</form>
+```
 
-**Vraag:** hoe ziet één item uit die lijst eruit?
+**Vraag:** wat ziet de bezoeker van dit formulier op de pagina? En wat komt er binnen bij `/verwijderen` als hij op de knop klikt?
 
 <details>
 <summary>Tip</summary>
 
-`items()` geeft bij een dictionary de sleutel én de waarde.
+Een `<input>` met `type="hidden"` staat wel in de HTML, maar niet op het scherm.
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-Een paar: eerst de sleutel, dan het bericht, zoals `("bericht_1767225600123456789", {"naam": "Sam", "bericht": "Hoi"})`. Daarom schrijf je in de template `{% for sleutel, bericht in berichten %}`: Jinja2 pakt elk paar uit in twee namen, net als Python.
+Alleen de knop Verwijderen. Het verborgen veld zie je niet, maar het gaat wel mee: bij `/verwijderen` komt `sleutel` binnen met de waarde `"bericht_17"`. Wie de broncode van de pagina bekijkt, of de Elementen in de ontwikkelaarstools, ziet hem wel staan.
 
 </details>
 
 ### Opdracht 2: Run
 
-Pas `/berichten` en `berichten.html` aan en maak `/verwijderen`. Verwijder een bericht. Sta je daarna weer op de lijst, zonder dat bericht?
+Pas `berichten.html` aan en maak `/verwijderen`. Verwijder een bericht. Sta je daarna weer op de lijst, zonder dat bericht?
 
 <details>
 <summary>Antwoord</summary>
@@ -343,6 +345,7 @@ Stuur door naar `/berichten?verwijderd=1`. Het stuk na het vraagteken kun je in 
 <details>
 <summary>Antwoord</summary>
 
+{/* route-dubbel: antwoord vervangt GET /berichten uit Eén item tonen, met een melding erbij */}
 ```python
 @app.get("/berichten")
 async def berichten(request: Request, verwijderd: int = 0):
@@ -374,4 +377,4 @@ Zonder `?verwijderd=1` in de URL is `verwijderd` gelijk aan 0, en 0 telt in een 
 
 </details>
 
-Door naar [Eén item tonen: de sleutel uit de URL](/docs/FastAPI/een-item/detailpagina).
+Door naar [Zo werkt het: klikken en versturen](/docs/FastAPI/berichten-verwijderen/verzoek-get).

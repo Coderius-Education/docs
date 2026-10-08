@@ -151,7 +151,7 @@ const GET_STAPPEN: Stap[] = [
     kant: 'server',
     titel: 'Jinja2 vult de template',
     tekst: 'De for-lus maakt van elk bericht een regel HTML.',
-    to: '/docs/FastAPI/alles-tonen/lijst_tonen',
+    to: '/docs/FastAPI/berichten-tonen/lijst_tonen',
     les: 'Alles tonen: een for-lus in je template',
   },
   {
@@ -194,14 +194,14 @@ const POST_STAPPEN: Stap[] = [
     kant: 'server',
     titel: 'Jouw Python slaat op',
     tekst: 'Controleer hier wat je van de browser hebt gekregen, en bewaar het.',
-    to: '/docs/FastAPI/formulier-opslaan/naam-opslaan',
+    to: '/docs/FastAPI/berichten-opslaan/naam-opslaan',
     les: 'Een formulier opslaan',
   },
   {
     kant: 'server',
     titel: 'Het antwoord is een omleiding',
     tekst: 'Geen pagina, maar een opdracht: ga naar /berichten. Met status 303.',
-    to: '/docs/FastAPI/doorsturen/redirect',
+    to: '/docs/FastAPI/berichten-opslaan/redirect',
     les: 'Doorsturen na opslaan (redirect)',
   },
   {
@@ -239,7 +239,7 @@ const HTMX_STAPPEN: Stap[] = [
     titel: 'Jouw Python draait',
     tekst:
       'Leest de tijd, of slaat een bericht op. Ook dit verzoek komt van de bezoeker, dus controleer hier.',
-    to: '/docs/FastAPI/een-item/niet-gevonden',
+    to: '/docs/FastAPI/berichten-tonen/niet-gevonden',
     les: 'Een 404 sturen: als het item niet bestaat',
   },
   {
