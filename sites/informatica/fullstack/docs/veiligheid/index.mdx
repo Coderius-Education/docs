@@ -112,6 +112,8 @@ nodig als je er later zelf iets over opzoekt; veel namen zijn Engels.
 | *path traversal* | met `..` in een bestandsnaam uit de map klimmen die je server bedoelde | [Invoer](/docs/veiligheid/invoer/paden) |
 | escapen | van `<` een `&lt;` maken, zodat de browser tekst toont in plaats van HTML | [XSS](/docs/veiligheid/xss/escape) |
 | XSS, *cross-site scripting* | HTML of een script van een bezoeker dat in de browser van een ander draait | [XSS](/docs/veiligheid/xss/zwakheid) |
+| *reflected XSS* | XSS waarbij de HTML in een link zit en de server hem terugzet in de pagina, zonder iets op te slaan | [XSS](/docs/veiligheid/xss/url) |
+| DOM-XSS | XSS waarbij JavaScript in de browser de HTML in de pagina zet, bijvoorbeeld met `innerHTML` | [XSS](/docs/veiligheid/xss/browser) |
 | *broken access control*, IDOR | een endpoint dat niet controleert wie iets vraagt | [Wie mag wat](/docs/veiligheid/toegang/praktijk) |
 | `httponly` | een instelling van een cookie: scripts mogen hem niet lezen | [Cookies](/docs/veiligheid/cookies/httponly) |
 | CSRF, *cross-site request forgery* | een andere site laat jouw browser iets doen op een site waar je bent ingelogd | [Cookies](/docs/veiligheid/cookies/samesite) |

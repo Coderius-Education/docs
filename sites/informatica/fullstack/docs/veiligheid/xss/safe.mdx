@@ -1,5 +1,5 @@
 ---
-sidebar_label: '4. |safe: de bescherming uitzetten'
+sidebar_label: '5. |safe: de bescherming uitzetten'
 description: Met |safe zeg je tegen Jinja dat tekst al veilig is. Dat mag alleen voor HTML die je zelf schreef, nooit voor tekst van een bezoeker.
 ---
 
@@ -157,10 +157,19 @@ async def berichten_lijst(request: Request):
     return templates.TemplateResponse(
         request, "berichten_lijst.html", {"berichten": alle_berichten, "welkom": WELKOM}
     )
+
+@app.get("/zoek")
+async def zoek(term: str = ""):
+    gevonden = ""
+    with SqliteDict("gastenboek.db") as db:
+        for bericht in db.values():
+            if term.lower() in bericht["bericht"].lower():
+                gevonden += f"<li>{escape(bericht['naam'])}: {escape(bericht['bericht'])}</li>"
+    return HTMLResponse(f"<p>Je zocht naar: {escape(term)}</p><ul>{gevonden}</ul>")
 ```
 
 `|safe` staat alleen achter `welkom`, de tekst die je zelf schreef.
 
 </details>
 
-Door naar [les 5: in je eigen project](./eigen-project).
+Door naar [les 6: in de browser met innerHTML](./browser).

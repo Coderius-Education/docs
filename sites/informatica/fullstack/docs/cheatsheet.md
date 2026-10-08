@@ -948,7 +948,18 @@ from html import escape
 return HTMLResponse(f"Bedankt, {escape(naam)}.")
 ```
 
-Een `{{ }}`-template escapet vanzelf; een f-string niet. Gebruik `|safe` nooit voor tekst van een bezoeker. Zie [HTML van een bezoeker: escapen in Python](/docs/veiligheid/xss/escape).
+Een `{{ }}`-template escapet vanzelf; een f-string niet. Ook een query-parameter komt van de bezoeker. Gebruik `|safe` nooit voor tekst van een bezoeker. Zie [HTML van een bezoeker: escapen in Python](/docs/veiligheid/xss/escape).
+
+</details>
+
+<details>
+<summary>Hoe zet ik tekst van een bezoeker in de pagina met JavaScript? (textContent)</summary>
+
+```js
+voorbeeld.textContent = veld.value;
+```
+
+`textContent` houdt het tekst; `innerHTML` leest het als HTML. Gebruik `innerHTML` alleen voor HTML die je zelf schreef. Zie [HTML van een bezoeker: in de browser met innerHTML](/docs/veiligheid/xss/browser).
 
 </details>
 

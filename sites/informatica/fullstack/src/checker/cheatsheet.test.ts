@@ -313,6 +313,11 @@ const KOPPELING: Item[] = [
     geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
   },
   {
+    summary: 'Hoe zet ik tekst van een bezoeker in de pagina met JavaScript? (textContent)',
+    concepten: [],
+    geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
+  },
+  {
     summary: 'Hoe beperk ik het aantal verzoeken? (slowapi)',
     concepten: [],
     geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',

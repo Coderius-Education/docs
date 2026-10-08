@@ -42,7 +42,11 @@ vertrouw je niet, en de controle hoort op de server.
 - [ ] Tekst van een bezoeker komt alleen via een `.html`-template in je pagina,
   of met `escape()` in een f-string. ([Escapen in Python](./xss/escape),
   [Templates escapen vanzelf](./xss/templates))
+- [ ] Ook tekst uit de URL, zoals een zoekterm, gaat door `escape()` of een
+  template. ([Tekst uit de URL](./xss/url))
 - [ ] Nergens staat `|safe` achter tekst van een bezoeker. ([`|safe`](./xss/safe))
+- [ ] Je JavaScript zet tekst uit een veld of de URL in de pagina met
+  `textContent`, niet met `innerHTML`. ([In de browser](./xss/browser))
 
 ## Te veel verzoeken
 

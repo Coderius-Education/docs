@@ -1,5 +1,5 @@
 ---
-sidebar_label: '3. Templates escapen vanzelf'
+sidebar_label: '4. Templates escapen vanzelf'
 description: Een .html-template van Jinja escapet alles tussen dubbele accolades, zodat je geen plek kunt vergeten. Zet de lijst van je gastenboek in een template.
 ---
 
@@ -57,8 +57,9 @@ from fastapi.templating import Jinja2Templates
 templates = Jinja2Templates(directory="templates")
 ```
 
-Het antwoord na het versturen blijft één zin in een f-string, met `escape(naam)`.
-Voor één zin is een template wat veel.
+Het antwoord na het versturen blijft één zin in een f-string, met `escape(naam)`,
+en de zoekpagina uit [les 3](./url) houdt `escape(term)`. Voor één zin is een
+template wat veel.
 
 ## Doe de test opnieuw
 
@@ -161,6 +162,15 @@ async def berichten_lijst(request: Request):
     with SqliteDict("gastenboek.db") as db:
         alle_berichten = list(db.values())
     return templates.TemplateResponse(request, "berichten_lijst.html", {"berichten": alle_berichten})
+
+@app.get("/zoek")
+async def zoek(term: str = ""):
+    gevonden = ""
+    with SqliteDict("gastenboek.db") as db:
+        for bericht in db.values():
+            if term.lower() in bericht["bericht"].lower():
+                gevonden += f"<li>{escape(bericht['naam'])}: {escape(bericht['bericht'])}</li>"
+    return HTMLResponse(f"<p>Je zocht naar: {escape(term)}</p><ul>{gevonden}</ul>")
 ```
 
 Naast `main.py` staan `static/gastenboek.html`, `static/js/htmx.min.js` en
@@ -168,4 +178,4 @@ Naast `main.py` staan `static/gastenboek.html`, `static/js/htmx.min.js` en
 
 </details>
 
-Door naar [les 4: |safe, de bescherming uitzetten](./safe).
+Door naar [les 5: |safe, de bescherming uitzetten](./safe).

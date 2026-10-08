@@ -200,8 +200,10 @@ const sidebars: SidebarsConfig = {
       items: [
         'veiligheid/xss/zwakheid',
         'veiligheid/xss/escape',
+        'veiligheid/xss/url',
         'veiligheid/xss/templates',
         'veiligheid/xss/safe',
+        'veiligheid/xss/browser',
         'veiligheid/xss/eigen-project',
         'veiligheid/xss/praktijk',
       ],

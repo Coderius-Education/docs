@@ -122,6 +122,10 @@ const ZONDER_BLOK: Record<string, string> = {
   'veiligheid/xss/eigen-project.mdx': 'toepassen van de lessen ervoor op het eigen project',
   'veiligheid/xss/escape.mdx': 'escape wordt in de les zelf uitgelegd',
   'veiligheid/xss/safe.mdx': 'bouwt op de template-les ervoor, in dezelfde map',
+  'veiligheid/xss/url.mdx':
+    'query-parameters en escape komen uit eerdere lessen, waar ze gelinkt zijn',
+  'veiligheid/xss/browser.mdx':
+    'bouwt op JavaScript erbij uit de FastAPI-route, waar de voorkennis voor JavaScript staat',
   'veiligheid/xss/templates.mdx': 'templates komen uit de FastAPI-lessen, hier alleen het escapen',
   'veiligheid/xss/praktijk.mdx': 'achtergrond bij de twee stappen ervoor, geen nieuwe voorkennis',
   'veiligheid/zichtbaar/vergeten.mdx':
