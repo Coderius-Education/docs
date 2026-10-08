@@ -181,6 +181,10 @@ async def dier(naam: str):
         </body>
     </html>
     """
+
+@app.get("/zoek")
+async def zoek(term: str):
+    return {"je_zocht": term}
 ```
 
 </details>

@@ -6,7 +6,7 @@
   ]}
 />
 
-Je bouwt een formulier dat met POST data naar je server stuurt.
+Tot nu toe stuurde de browser alleen GET-verzoeken: hij haalt iets op, en wat hij meestuurt staat in de URL. Met een formulier stuurt hij iets naar je server. Dat doet hij met een tweede soort verzoek: **POST**.
 
 ## Het formulier
 
@@ -33,11 +33,10 @@ Maak `static/pages/naam_form.html`:
 
 ## De endpoints
 
-`Form` heb je in [GET vs POST](/docs/FastAPI/formulieren/get_vs_post) al geïmporteerd. Zet in `main.py` een endpoint erbij dat het formulier toont, en vervang je `/verstuur` uit GET vs POST door deze versie:
+Zet `Form` bij je imports, uit `fastapi`, net als `FastAPI` zelf. Zet daarna twee endpoints onder je andere endpoints: één dat het formulier toont, en één dat het verstuurde formulier ontvangt:
 
 <CodeUitleg>
 
-{/* route-dubbel: vervangt POST /verstuur uit GET vs POST, nu met een print */}
 ```python showLineNumbers
 @app.get("/naam")
 async def toon_formulier():
@@ -54,11 +53,11 @@ Een gewone GET die het formulier toont. Het formulier is een HTML-bestand, dus `
 </Regel>
 
 <Regel n={5}>
-Het pad `/verstuur` is de `action` van het formulier, en `@app.post` de `method`. Die twee moeten kloppen met de HTML, anders komt het verzoek nergens aan.
+`@app.post` in plaats van `@app.get`: dit endpoint reageert alleen op een POST. Het pad `/verstuur` is de `action` van het formulier, en `post` de `method`. Die twee moeten kloppen met de HTML, anders komt het verzoek nergens aan.
 </Regel>
 
 <Regel n={6}>
-`Form(...)` haalt het veld `naam` uit het verstuurde formulier. De parameter heet `naam` omdat het veld in de HTML `name="naam"` heeft; die twee namen moeten gelijk zijn.
+`Form(...)` haalt het veld `naam` uit het verstuurde formulier, niet uit de URL. De drie puntjes zijn hier echte Python, geen plek om iets in te vullen: ze betekenen dat het veld verplicht is. De parameter heet `naam` omdat het veld in de HTML `name="naam"` heeft; die twee namen moeten gelijk zijn.
 </Regel>
 
 <Regel n={7}>
@@ -80,6 +79,16 @@ Schrijf je in HTML `name="naam"`, dan stuurt de browser de data als `naam=Jan`. 
 
 </details>
 
+## GET of POST?
+
+| | GET | POST |
+|---|---|---|
+| **Doel** | Data ophalen | Data versturen |
+| **Data in** | De URL | De body van het verzoek |
+| **Voorbeeld** | Pagina laden, zoeken | Formulier versturen, inloggen |
+
+Als vuistregel: met GET zeg je "Geef me iets", met POST "Hier is iets". Wat een formulier met POST verstuurt, staat niet in de adresbalk. In het tabblad Netwerk zie je het wel: klik op het verzoek en kies **Payload**, dan staat het onder **Formuliergegevens** (Form Data).
+
 ## Testen
 
 1. Ga naar `http://127.0.0.1:8000/naam`
@@ -88,7 +97,7 @@ Schrijf je in HTML `name="naam"`, dan stuurt de browser de data als `naam=Jan`. 
 4. In de terminal: `Naam ontvangen: Jan`
 
 :::danger[Gaat er iets mis?]
-Zie je `"msg":"Field required"` in je browser, en een 422 in je terminal? Controleer of de `name` in je HTML gelijk is aan de naam van de parameter in Python. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
+Zie je `"msg":"Field required"` in je browser, en een 422 in je terminal? Controleer of de `name` in je HTML gelijk is aan de naam van de parameter in Python. Krijg je een **405 Method Not Allowed**, dan stuur je een GET naar een POST-endpoint of andersom. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
 :::
 
 <details>
@@ -174,6 +183,10 @@ async def dier(naam: str):
     </html>
     """
 
+@app.get("/zoek")
+async def zoek(term: str):
+    return {"je_zocht": term}
+
 @app.get("/foto")
 async def foto():
     return FileResponse("static/pages/foto.html")
@@ -186,10 +199,6 @@ async def dobbelsteen(request: Request):
         "dobbelsteen.html",
         {"worp": worp}
     )
-
-@app.get("/zoek")
-async def zoek(term: str):
-    return {"je_zocht": term}
 
 @app.get("/naam")
 async def toon_formulier():
@@ -252,7 +261,25 @@ Je krijgt dezelfde weigering als bij een verkeerde naam: `"loc":["body","naam"]`
 
 </details>
 
-### Opdracht 4: Make - Eigen formulier
+### Opdracht 4: Investigate - POST via de adresbalk
+
+Wat gebeurt er als je `http://127.0.0.1:8000/verstuur` rechtstreeks in je adresbalk typt?
+
+<details>
+<summary>Tip</summary>
+
+Als je een URL in je adresbalk typt, stuurt de browser altijd een GET-verzoek. Wat voor endpoint is `/verstuur`?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Je browser toont `{"detail":"Method Not Allowed"}`, en in Netwerk en je terminal staat de statuscode **405**. De browser stuurt een GET, maar `/verstuur` is een POST-endpoint (`@app.post`). Een POST-endpoint bereik je via een formulier, niet door de URL in te typen.
+
+</details>
+
+### Opdracht 5: Make - Eigen formulier
 
 Maak een formulier voor je favoriete kleur, met een GET-endpoint dat het formulier toont en een POST-endpoint dat de kleur ontvangt. Print de kleur in de terminal.
 
@@ -293,7 +320,7 @@ async def kleur_ontvang(kleur: str = Form(...)):
 
 </details>
 
-### Opdracht 5: Make - Twee velden
+### Opdracht 6: Make - Twee velden
 
 Maak een formulier om je aan te melden, met naam en leeftijd, op het adres `/aanmelden`. Na het versturen krijg je beide waarden terug als JSON.
 

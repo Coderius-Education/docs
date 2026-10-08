@@ -23,7 +23,8 @@ export const ZINNEN: Record<string, string> = {
     'Alle berichten staan op een pagina, elk bericht heeft een eigen pagina, en een onbekend adres krijgt een 404.',
   'Berichten verwijderen':
     'Een bericht kan er met een knop weer af, en je ziet de hele weg van klik tot antwoord.',
-  Accounts: 'Wie schrijft, heeft een account met een naam en een wachtwoord.',
+  Accounts:
+    'Wie schrijft, heeft een account, en twee diagrammen laten zien wat er bij een klik en een formulier gebeurt.',
   // FastAPI: de uitbreidingen en de afronding
   'Uitbreiding: zonder herladen (htmx)':
     'Een knop of formulier praat met de server terwijl de pagina blijft staan.',

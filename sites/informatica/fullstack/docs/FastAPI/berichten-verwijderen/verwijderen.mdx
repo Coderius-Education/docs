@@ -179,6 +179,10 @@ async def dier(naam: str):
     </html>
     """
 
+@app.get("/zoek")
+async def zoek(term: str):
+    return {"je_zocht": term}
+
 @app.get("/foto")
 async def foto():
     return FileResponse("static/pages/foto.html")
@@ -191,10 +195,6 @@ async def dobbelsteen(request: Request):
         "dobbelsteen.html",
         {"worp": worp}
     )
-
-@app.get("/zoek")
-async def zoek(term: str):
-    return {"je_zocht": term}
 
 @app.get("/naam")
 async def toon_formulier():
@@ -338,7 +338,7 @@ Laat na het verwijderen bovenaan de lijst "Bericht verwijderd" zien. Bij een bez
 <details>
 <summary>Tip</summary>
 
-Stuur door naar `/berichten?verwijderd=1`. Het stuk na het vraagteken kun je in het endpoint uitlezen, zoals in [GET vs POST](/docs/FastAPI/formulieren/get_vs_post). Geef het een standaardwaarde, zodat `/berichten` zonder vraagteken ook werkt, en gebruik `{% if %}` in de template.
+Stuur door naar `/berichten?verwijderd=1`. Het stuk na het vraagteken kun je in het endpoint uitlezen, zoals in [Een waarde na een vraagteken: query-parameters](/docs/FastAPI/veel-paginas/query-parameters). Geef het een standaardwaarde, zodat `/berichten` zonder vraagteken ook werkt, en gebruik `{% if %}` in de template.
 
 </details>
 
@@ -377,4 +377,4 @@ Zonder `?verwijderd=1` in de URL is `verwijderd` gelijk aan 0, en 0 telt in een 
 
 </details>
 
-Door naar [Zo werkt het: klikken en versturen](/docs/FastAPI/berichten-verwijderen/verzoek-get).
+Door naar [Registreren: een account opslaan](/docs/FastAPI/accounts/registreren).

@@ -1,11 +1,5 @@
 # Een formulier opslaan
 
-<Voorkennis
-  items={[
-    {site: 'python', to: '/docs/tekst/04a-f-strings', label: 'F-strings'},
-  ]}
-/>
-
 Wat een bezoeker in een formulier invult, zet je nu in een database. Dan staat het er nog als je de server stopt. Je begint met één naam; in de [volgende les](/docs/FastAPI/berichten-opslaan/eigen-sleutel) bewaar je alle berichten van een gastenboek.
 
 ## Voorbeeld: Naam opslaan
@@ -174,6 +168,10 @@ async def dier(naam: str):
     </html>
     """
 
+@app.get("/zoek")
+async def zoek(term: str):
+    return {"je_zocht": term}
+
 @app.get("/foto")
 async def foto():
     return FileResponse("static/pages/foto.html")
@@ -186,10 +184,6 @@ async def dobbelsteen(request: Request):
         "dobbelsteen.html",
         {"worp": worp}
     )
-
-@app.get("/zoek")
-async def zoek(term: str):
-    return {"je_zocht": term}
 
 @app.get("/naam")
 async def toon_formulier():

@@ -75,4 +75,18 @@ describe('verwijzingen naar een les van de FastAPI-route', () => {
     }
     expect(fout).toEqual([]);
   });
+
+  it('elk diagram staat in de FastAPI-route op precies één pagina', () => {
+    // Het sessie-diagram stond in Cookie of sessie? en in de les erna, die
+    // het pas stap voor stap uitlegde.
+    const perVariant = new Map<string, string[]>();
+    for (const id of lessen) {
+      for (const m of tekst(id).matchAll(/<VerzoekCyclus variant="(\w+)"/g)) {
+        perVariant.set(m[1], [...(perVariant.get(m[1]) ?? []), id]);
+      }
+    }
+    const dubbel = [...perVariant].filter(([, ids]) => ids.length > 1);
+    expect(dubbel).toEqual([]);
+    expect(perVariant.get('sessie')).toEqual(['FastAPI/onthouden/verzoek-sessie']);
+  });
 });

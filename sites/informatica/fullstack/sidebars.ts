@@ -45,7 +45,7 @@ const sidebars: SidebarsConfig = {
       // opzoeken in een database en de 404 komen later, in Eén item tonen.
       type: 'category',
       label: "Eén route voor veel pagina's",
-      items: ['FastAPI/veel-paginas/path-parameters'],
+      items: ['FastAPI/veel-paginas/path-parameters', 'FastAPI/veel-paginas/query-parameters'],
     },
     {
       type: 'category',
@@ -61,7 +61,6 @@ const sidebars: SidebarsConfig = {
       label: 'Templates en formulieren',
       items: [
         'FastAPI/formulieren/templates',
-        'FastAPI/formulieren/get_vs_post',
         'FastAPI/formulieren/forms',
         'FastAPI/formulieren/post_met_templates',
       ],
@@ -81,7 +80,6 @@ const sidebars: SidebarsConfig = {
     {
       // Het gastenboek per handeling met berichten: opslaan (met doorsturen
       // na het opslaan), tonen (alles, leeg, één, en een 404) en verwijderen.
-      // Het diagram van klikken en versturen sluit het gastenboek af.
       type: 'category',
       label: 'Berichten opslaan',
       items: [
@@ -103,15 +101,18 @@ const sidebars: SidebarsConfig = {
     {
       type: 'category',
       label: 'Berichten verwijderen',
-      items: [
-        'FastAPI/berichten-verwijderen/verwijderen',
-        'FastAPI/berichten-verwijderen/verzoek-get',
-      ],
+      items: ['FastAPI/berichten-verwijderen/verwijderen'],
     },
     {
       type: 'category',
       label: 'Accounts',
-      items: ['FastAPI/accounts/registreren', 'FastAPI/accounts/inloggen'],
+      items: [
+        'FastAPI/accounts/registreren',
+        'FastAPI/accounts/inloggen',
+        // Het diagram van één klik en één formulier sluit de basis af: alles
+        // wat erin staat, heb je dan gebouwd.
+        'FastAPI/accounts/verzoek-get',
+      ],
     },
     {
       type: 'category',
@@ -137,8 +138,8 @@ const sidebars: SidebarsConfig = {
       items: [
         'FastAPI/onthouden/cookies',
         'FastAPI/onthouden/sessies',
-        'FastAPI/onthouden/cookie-of-sessie',
         'FastAPI/onthouden/verzoek-sessie',
+        'FastAPI/onthouden/cookie-of-sessie',
       ],
     },
     {

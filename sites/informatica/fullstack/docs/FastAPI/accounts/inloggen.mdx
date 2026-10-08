@@ -191,6 +191,10 @@ async def dier(naam: str):
     </html>
     """
 
+@app.get("/zoek")
+async def zoek(term: str):
+    return {"je_zocht": term}
+
 @app.get("/foto")
 async def foto():
     return FileResponse("static/pages/foto.html")
@@ -203,10 +207,6 @@ async def dobbelsteen(request: Request):
         "dobbelsteen.html",
         {"worp": worp}
     )
-
-@app.get("/zoek")
-async def zoek(term: str):
-    return {"je_zocht": term}
 
 @app.get("/naam")
 async def toon_formulier():
@@ -388,3 +388,5 @@ async def gebruiker(naam: str):
 Kijk je eerst in `gebruikers.db` en geef je een 404 bij een naam zonder account, dan verraad je welke namen een account hebben: hetzelfde lek als de twee meldingen uit opdracht 3. Een lege lijst zegt alleen dat er geen berichten zijn.
 
 </details>
+
+Door naar [Zo werkt het: klikken en versturen](/docs/FastAPI/accounts/verzoek-get).

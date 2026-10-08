@@ -154,6 +154,10 @@ async def dier(naam: str):
     </html>
     """
 
+@app.get("/zoek")
+async def zoek(term: str):
+    return {"je_zocht": term}
+
 @app.get("/foto")
 async def foto():
     return FileResponse("static/pages/foto.html")

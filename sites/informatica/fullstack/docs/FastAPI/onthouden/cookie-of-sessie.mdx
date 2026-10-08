@@ -1,5 +1,3 @@
-import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
-
 # Cookie of sessie?
 
 Je kunt nu allebei: een cookie met de naam erin, en een sessie waarbij alleen een sessie-id bij de bezoeker ligt en je server onthoudt wie er inlogde. Allebei lossen ze op dat je server een terugkerende bezoeker niet herkent. Ze doen het alleen op een andere plek, en dat bepaalt welke je kiest.
@@ -14,9 +12,7 @@ Een cookie is het enige wat dat gat dicht. De server geeft de browser een stukje
 
 Bij een cookie staat het antwoord zelf bij de bezoeker. Bij een sessie staat er alleen een nummertje, en het antwoord ligt bij jou.
 
-<VerzoekCyclus variant="sessie" />
-
-Zet je de naam in de cookie, dan slaat de server stap drie en vier over: hij leest de naam direct uit wat de browser stuurde. Dat is sneller, maar dan gelooft hij op zijn woord wat er binnenkomt.
+Kijk nog eens naar het diagram in [Zo werkt het: een sessie](/docs/FastAPI/onthouden/verzoek-sessie). Zet je de naam in de cookie, dan slaat de server stap drie en vier over: hij leest de naam direct uit wat de browser stuurde. Dat is sneller, maar dan gelooft hij op zijn woord wat er binnenkomt.
 
 ## Naast elkaar
 

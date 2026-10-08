@@ -55,7 +55,7 @@ De lessen staan in de **FastAPI**-sidebar en bouwen op elkaar voort. Die begint 
 
 De sidebar heeft twee delen. De **basis** (Je eerste server, Losse pagina's en routes, Eén route voor veel pagina's, CSS en afbeeldingen, Templates en formulieren, Gegevens opslaan, Berichten opslaan, Berichten tonen, Berichten verwijderen, Accounts) eindigt met een werkend gastenboek: een formulier, opslaan, een overzicht, een detailpagina, een nette 404 en accounts met een wachtwoord. Wat volgt zijn drie **uitbreidingen** (htmx, JavaScript, cookies en sessies) en een afronding. Die maken het gastenboek mooier, maar zijn niet nodig om het te laten werken. Heb je weinig tijd, dan kun je na de basis stoppen; wie verder gaat, volgt de uitbreidingen op volgorde, want "Server of browser?" vergelijkt de server met htmx en JavaScript.
 
-Vijf keer onderweg staat een diagram van de hele keten, browser links en server rechts, met per stap een link naar de les. Het begint kaal [bij het eerste verzoek](/docs/FastAPI/eerste-server/verzoek-eerste), direct na het eerste endpoint, en groeit mee. [Bij één pagina](/docs/FastAPI/css-en-afbeeldingen/verzoek-static), aan het eind van CSS en afbeeldingen, komen de losse verzoeken voor CSS en afbeeldingen erbij. [Bij klikken en versturen](/docs/FastAPI/berichten-verwijderen/verzoek-get), aan het eind van Berichten verwijderen, de database en de template, en bij een formulier de omleiding. [Zonder herladen](/docs/FastAPI/zonder-herladen/verzoek-htmx), aan het eind van de htmx-uitbreiding, wordt die omleiding een stuk HTML als antwoord; [bij een sessie](/docs/FastAPI/onthouden/verzoek-sessie), aan het eind van Onthouden, komt de cookie erbij. [Hoe een verzoek werkt](/docs/FastAPI/afronden/hoe-een-verzoek-werkt) bundelt ze bij het afronden met een tabel "waar hoort jouw code".
+Vijf keer onderweg staat een diagram van de hele keten, browser links en server rechts, met per stap een link naar de les. Het begint kaal [bij het eerste verzoek](/docs/FastAPI/eerste-server/verzoek-eerste), direct na het eerste endpoint, en groeit mee. [Bij één pagina](/docs/FastAPI/css-en-afbeeldingen/verzoek-static), aan het eind van CSS en afbeeldingen, komen de losse verzoeken voor CSS en afbeeldingen erbij. [Bij klikken en versturen](/docs/FastAPI/accounts/verzoek-get), aan het eind van de basis, de database en de template, en bij een formulier de omleiding. [Zonder herladen](/docs/FastAPI/zonder-herladen/verzoek-htmx), aan het eind van de htmx-uitbreiding, wordt die omleiding een stuk HTML als antwoord; [bij een sessie](/docs/FastAPI/onthouden/verzoek-sessie), direct na de les Sessies, komt de cookie erbij. [Hoe een verzoek werkt](/docs/FastAPI/afronden/hoe-een-verzoek-werkt) bundelt ze bij het afronden met een tabel "waar hoort jouw code".
 
 | Onderwerp | Leerdoel |
 |---|---|
@@ -63,9 +63,10 @@ Vijf keer onderweg staat een diagram van de hele keten, browser links en server 
 | Kijken wat de browser doet | Het tabblad Netwerk: verzoek, antwoord en statuscode |
 | HTML tonen en HTML in bestanden | Pagina's serveren vanuit Python en uit bestanden |
 | Eén route voor veel pagina's: path-parameters | Na de losse pagina's met elk een eigen route: één route met een plekhouder en een dictionary |
+| Een waarde na een vraagteken: query-parameters | `?term=`, een standaardwaarde, de 422, en het type `int` tegenover `str` |
 | CSS in een eigen bestand (static files) | Eén stylesheet voor alle pagina's, en de cache |
 | Templates met Jinja2 | Een pagina met waarden uit Python: `{{ }}`, het dictionary, en wat de browser krijgt |
-| GET vs POST en formulieren | Gebruikersinvoer verwerken en beantwoorden met een template |
+| Een formulier versturen (POST) en beantwoorden | GET of POST, `Form(...)`, en een formulier beantwoorden met een template |
 | Gegevens opslaan met SqliteDict | Opslaan, `commit()` en uitlezen, in een los script zonder server |
 | Alles bekijken: len en items | Alles in een database tonen met `bekijk_db.py`, in een los script |
 | Bestaat de sleutel? in en get | Kijken of een sleutel er is, en `get` met een standaardwaarde |

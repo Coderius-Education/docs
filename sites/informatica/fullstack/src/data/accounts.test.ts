@@ -52,6 +52,7 @@ describe('accounts in de basis', () => {
     expect(plat(categorie.items)).toEqual([
       'FastAPI/accounts/registreren',
       'FastAPI/accounts/inloggen',
+      'FastAPI/accounts/verzoek-get',
     ]);
   });
 

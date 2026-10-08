@@ -1,0 +1,210 @@
+# Een waarde na een vraagteken: query-parameters
+
+Bij `/dier/kat` staat de waarde in het pad zelf. Er is nog een plek waar een URL een waarde kan meegeven: na een vraagteken. Die ken je van zoekmachines, zoals `?q=fastapi`.
+
+## Na een vraagteken
+
+Zet dit endpoint onder je andere endpoints:
+
+<CodeUitleg>
+
+```python showLineNumbers
+@app.get("/zoek")
+async def zoek(term: str):
+    return {"je_zocht": term}
+```
+
+<Regel n={2}>
+`term` staat niet tussen accolades in het pad. Dan zoekt FastAPI hem na het vraagteken in de URL: `?term=python`. De naam na het vraagteken moet gelijk zijn aan de naam van de parameter.
+</Regel>
+
+</CodeUitleg>
+
+Ga naar [http://127.0.0.1:8000/zoek?term=python](http://127.0.0.1:8000/zoek?term=python). Je ziet `{"je_zocht":"python"}`. Het stuk na het vraagteken heet de **query**, en `term` is een **query-parameter**.
+
+## Als de waarde ontbreekt
+
+Laat je `?term=python` weg, dan weigert FastAPI het verzoek. Je ziet:
+
+```json
+{"detail":[{"type":"missing","loc":["query","term"],"msg":"Field required","input":null}]}
+```
+
+In je terminal en in het tabblad Netwerk staat de statuscode **422**: het verzoek klopt niet met wat het endpoint vraagt. `"loc":["query","term"]` zegt waar het mis ging: in de query ontbreekt `term`.
+
+Mag de waarde ontbreken, geef de parameter dan een standaardwaarde, net als bij een gewone Python-functie: met `term: str = ""` krijgt `term` een lege tekst als er niets in de URL staat.
+
+## Tekst of een getal
+
+Achter elke parameter staat een type: `naam: str` bij de dieren, `term: str` hier. Wat in een URL staat is altijd tekst, en `str` laat het tekst. Met `int` zet FastAPI het om naar een heel getal:
+
+```python
+@app.get("/dubbel")
+async def dubbel(getal: int):
+    return {"dubbel": getal * 2}
+```
+
+Op `/dubbel?getal=4` krijg je `{"dubbel":8}`. Op `/dubbel?getal=vier` krijg je weer een 422, nu met `"type":"int_parsing"`: `vier` is geen getal, en FastAPI weigert het voordat jouw functie draait. Wat er gebeurt als je `str` laat staan, zie je in opdracht 3.
+
+## Pad of vraagteken?
+
+Allebei halen ze een waarde uit de URL. De gewoonte op websites:
+
+- In het pad staat wélke pagina je bedoelt: `/dier/kat`, en later `/bericht/bericht_17`.
+- Na het vraagteken staat iets wat je erbij vraagt, en wat vaak mag ontbreken: een zoekterm, een sortering, een pagina in een lange lijst.
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+```python
+from fastapi import FastAPI
+from fastapi.responses import FileResponse, HTMLResponse
+
+app = FastAPI()
+
+@app.get("/")
+async def home():
+    return FileResponse("static/pages/home.html")
+
+@app.get("/info")
+async def info():
+    return {"naam": "Jouw Naam", "leeftijd": 16}
+
+@app.get("/pagina", response_class=HTMLResponse)
+async def pagina():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Mijn Pagina</title>
+        </head>
+        <body>
+            <h1>Hallo!</h1>
+            <p>Dit is mijn eerste HTML pagina.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/styled", response_class=HTMLResponse)
+async def styled():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Met CSS</title>
+            <style>
+                h1 { color: blue; }
+                p { color: gray; }
+            </style>
+        </head>
+        <body>
+            <h1>Gestylede pagina</h1>
+            <p>Deze tekst is grijs.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/about")
+async def about():
+    return FileResponse("static/pages/about.html")
+
+DIEREN = {
+    "kat": "Een kat spint als hij tevreden is.",
+    "hond": "Een hond kwispelt als hij blij is.",
+    "vis": "Een vis ademt met kieuwen.",
+}
+
+@app.get("/dier/{naam}", response_class=HTMLResponse)
+async def dier(naam: str):
+    tekst = DIEREN.get(naam, "Dit dier staat nog niet op de site.")
+    return f"""
+    <!DOCTYPE html>
+    <html>
+        <body>
+            <h1>Over dieren</h1>
+            <p>{tekst}</p>
+            <a href="/">Terug naar Home</a>
+        </body>
+    </html>
+    """
+
+@app.get("/zoek")
+async def zoek(term: str):
+    return {"je_zocht": term}
+```
+
+</details>
+
+## Opdrachten
+
+### Opdracht 1: Predict - Welke waarde?
+
+```python
+@app.get("/hallo")
+async def hallo(naam: str = "Bezoeker"):
+    return {"bericht": f"Hallo {naam}!"}
+```
+
+**Vraag:** wat krijg je op `/hallo?naam=Jan`? En op `/hallo`, zonder vraagteken?
+
+<details>
+<summary>Tip</summary>
+
+Achter `naam` staat een standaardwaarde. Wanneer gebruikt Python die?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`/hallo?naam=Jan` geeft `{"bericht":"Hallo Jan!"}`. Op `/hallo` staat er geen naam in de URL, dus krijgt `naam` de standaardwaarde: `{"bericht":"Hallo Bezoeker!"}`. Zonder die standaardwaarde had je een 422 gekregen.
+
+</details>
+
+### Opdracht 2: Run
+
+Maak `/zoek` uit deze les en probeer `/zoek?term=python`, `/zoek?term=` en `/zoek`. Welke van de drie geeft een 422?
+
+<details>
+<summary>Antwoord</summary>
+
+Alleen `/zoek`. Bij `/zoek?term=` staat `term` wel in de URL, met een lege tekst erachter, en je krijgt `{"je_zocht":""}`. Ontbreekt `term` helemaal, dan krijg je de 422 met `"type":"missing"`.
+
+</details>
+
+### Opdracht 3: Investigate - Zonder int
+
+Maak `/dubbel` uit deze les, en verander daarna `getal: int` in `getal: str`. Wat geeft `/dubbel?getal=4` nu?
+
+<details>
+<summary>Antwoord</summary>
+
+`{"dubbel":"44"}`. Met `str` blijft `getal` de tekst `"4"`, en een tekst keer twee plakt hem twee keer achter elkaar. Pas met `int` rekent Python met een getal. Zet `int` terug.
+
+</details>
+
+### Opdracht 4: Make - Rekensom
+
+Maak een endpoint `/rekensom` met twee getallen in de URL, dat hun som teruggeeft: `/rekensom?a=3&b=4` geeft `{"som":7}`.
+
+<details>
+<summary>Tip</summary>
+
+Twee parameters in de URL scheid je met `&`. Geef ze het type `int`, dan rekent Python met getallen en niet met tekst.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+@app.get("/rekensom")
+async def rekensom(a: int, b: int):
+    return {"som": a + b}
+```
+
+Test met `http://127.0.0.1:8000/rekensom?a=3&b=4`. Met `?a=3&b=vier` krijg je weer een weigering, nu met `"loc":["query","b"]`: `vier` is geen getal.
+
+</details>

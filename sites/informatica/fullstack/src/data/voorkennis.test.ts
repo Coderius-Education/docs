@@ -43,6 +43,10 @@ function voorkennisPerLes(): Map<string, Item[]> {
 // cookie-of-sessie.mdx erbij zonder dat iemand de keuze maakte. Daarom staan
 // nu álle lesbestanden in een van de twee lijsten.
 const ZONDER_BLOK: Record<string, string> = {
+  'FastAPI/berichten-opslaan/naam-opslaan.mdx':
+    'f-strings staan als voorkennis bij path-parameters, waar ze voor het eerst nodig zijn',
+  'FastAPI/veel-paginas/query-parameters.mdx':
+    'parameters en standaardwaarden staan als voorkennis bij path-parameters, de les ervoor; het type wordt hier zelf uitgelegd',
   'FastAPI/onthouden/cookie-of-sessie.mdx':
     'bouwt alleen op de twee lessen ervoor, in dezelfde cursus',
   'FastAPI/onthouden/cookies.mdx': 'nieuwe stof is server-side en wordt hier zelf uitgelegd',
@@ -67,7 +71,7 @@ const ZONDER_BLOK: Record<string, string> = {
   'FastAPI/eerste-server/verzoek-eerste.mdx': 'diagram van de les ervoor, geen nieuwe stof',
   'FastAPI/css-en-afbeeldingen/verzoek-static.mdx':
     'diagram van de lessen ervoor, geen nieuwe stof',
-  'FastAPI/berichten-verwijderen/verzoek-get.mdx': 'diagram van de lessen ervoor, geen nieuwe stof',
+  'FastAPI/accounts/verzoek-get.mdx': 'diagram van de lessen ervoor, geen nieuwe stof',
   'FastAPI/onthouden/verzoek-sessie.mdx': 'diagram van de lessen ervoor, geen nieuwe stof',
   'FastAPI/paginas/html_bestanden.mdx': 'HTML-bestand en pad; HTML zelf staat al bij html_tonen',
   'FastAPI/accounts/inloggen.mdx':
@@ -149,13 +153,11 @@ const MET_BLOK = [
   'FastAPI/veel-paginas/path-parameters.mdx',
   'FastAPI/eerste-server/eerste_endpoint.mdx',
   'FastAPI/formulieren/forms.mdx',
-  'FastAPI/formulieren/get_vs_post.mdx',
   'FastAPI/paginas/html_tonen.mdx',
   'FastAPI/zonder-herladen/htmx.mdx',
   'FastAPI/in-de-browser/javascript.mdx',
   'FastAPI/berichten-tonen/lijst_tonen.mdx',
   'FastAPI/paginas/links.mdx',
-  'FastAPI/berichten-opslaan/naam-opslaan.mdx',
   'FastAPI/accounts/registreren.mdx',
   'FastAPI/in-de-browser/server-of-browser.mdx',
   'FastAPI/onthouden/sessies.mdx',

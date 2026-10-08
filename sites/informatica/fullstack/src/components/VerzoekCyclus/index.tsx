@@ -130,8 +130,8 @@ const GET_STAPPEN: Stap[] = [
     kant: 'browser',
     titel: 'De browser stuurt een GET',
     tekst: 'Een verzoek over het netwerk: geef me wat er op /berichten staat.',
-    to: '/docs/FastAPI/formulieren/get_vs_post',
-    les: 'GET vs POST',
+    to: '/docs/FastAPI/eerste-server/devtools-netwerk',
+    les: 'Kijken wat de browser doet',
   },
   {
     kant: 'server',

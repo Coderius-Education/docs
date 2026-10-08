@@ -525,7 +525,7 @@ async def bericht_detail(request: Request, sleutel: str):
 
 Mag een query-parameter ontbreken, geef hem dan een standaardwaarde: `term: str = ""`. Vergeet `required` op je `<input>` niet, dan verstuurt de browser geen leeg veld.
 
-Meer uitleg: [GET vs POST](/docs/FastAPI/formulieren/get_vs_post) (wat `loc` zegt), [Een formulier versturen (POST)](/docs/FastAPI/formulieren/forms) en [Eén route voor veel pagina's: path-parameters](/docs/FastAPI/veel-paginas/path-parameters)
+Meer uitleg: [Een waarde na een vraagteken: query-parameters](/docs/FastAPI/veel-paginas/query-parameters) (wat `loc` zegt), [Een formulier versturen (POST)](/docs/FastAPI/formulieren/forms) en [Eén route voor veel pagina's: path-parameters](/docs/FastAPI/veel-paginas/path-parameters)
 
 </details>
 
@@ -557,7 +557,7 @@ In de browser staat `{"detail":"Method Not Allowed"}`, en in de terminal bijvoor
 
 4. **Je klikte op een htmx-knop met `hx-delete`.** Die stuurt een DELETE, dus het endpoint moet `@app.delete(...)` zijn en niet `@app.post(...)`.
 
-Meer uitleg: [GET vs POST](/docs/FastAPI/formulieren/get_vs_post), [Doorsturen na opslaan (redirect)](/docs/FastAPI/berichten-opslaan/redirect) en [htmx-recepten: formulier, verversen, verwijderen, zoeken](/docs/FastAPI/zonder-herladen/htmx-overzicht)
+Meer uitleg: [Een formulier versturen (POST)](/docs/FastAPI/formulieren/forms), [Doorsturen na opslaan (redirect)](/docs/FastAPI/berichten-opslaan/redirect) en [htmx-recepten: formulier, verversen, verwijderen, zoeken](/docs/FastAPI/zonder-herladen/htmx-overzicht)
 
 </details>
 

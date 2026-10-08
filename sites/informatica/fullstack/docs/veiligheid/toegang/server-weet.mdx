@@ -44,7 +44,7 @@ async def bericht_verwijderen(sleutel: str, naam: str = ""):
     return {"bericht": "Verwijderd"}
 ```
 
-`naam` is een query-parameter, zoals in [GET vs POST](/docs/FastAPI/formulieren/get_vs_post):
+`naam` is een query-parameter, zoals in [Een waarde na een vraagteken: query-parameters](/docs/FastAPI/veel-paginas/query-parameters):
 de knop zou `/bericht/…?naam=Alex` versturen. Gooi `gastenboek.db`,
 `sessies.db` en `gebruikers.db` weg en draai `test_verwijderen.py` uit
 [les 1](./zwakheid). Alex stuurt geen naam mee en krijgt netjes `403`. Verander

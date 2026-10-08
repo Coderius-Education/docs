@@ -10,7 +10,7 @@ Je lijst toont alle berichten onder elkaar, op één pagina. Op echte websites k
 
 ## De sleutel in de URL
 
-In [Eén route voor veel pagina's: path-parameters](/docs/FastAPI/veel-paginas/path-parameters) gaf `/dier/{naam}` elk dier een eigen pagina. Een bericht krijgt op dezelfde manier een eigen adres, met de sleutel uit de database in het pad. Een vraagteken, zoals `/zoek?term=python` uit [GET vs POST](/docs/FastAPI/formulieren/get_vs_post), kan ook, maar voor één item is een path-parameter gebruikelijker. Zet dit endpoint onder je andere endpoints:
+In [Eén route voor veel pagina's: path-parameters](/docs/FastAPI/veel-paginas/path-parameters) gaf `/dier/{naam}` elk dier een eigen pagina. Een bericht krijgt op dezelfde manier een eigen adres, met de sleutel uit de database in het pad. Een vraagteken, zoals `/zoek?term=python` uit [Een waarde na een vraagteken: query-parameters](/docs/FastAPI/veel-paginas/query-parameters), kan ook, maar voor één item is een path-parameter gebruikelijker. Zet dit endpoint onder je andere endpoints:
 
 ```python
 @app.get("/bericht/{sleutel}")
@@ -211,6 +211,10 @@ async def dier(naam: str):
     </html>
     """
 
+@app.get("/zoek")
+async def zoek(term: str):
+    return {"je_zocht": term}
+
 @app.get("/foto")
 async def foto():
     return FileResponse("static/pages/foto.html")
@@ -223,10 +227,6 @@ async def dobbelsteen(request: Request):
         "dobbelsteen.html",
         {"worp": worp}
     )
-
-@app.get("/zoek")
-async def zoek(term: str):
-    return {"je_zocht": term}
 
 @app.get("/naam")
 async def toon_formulier():

@@ -21,7 +21,7 @@ const losseLessen: Record<string, string> = {
   afbeeldingen: 'css-en-afbeeldingen/afbeeldingen',
   'verzoek-static': 'css-en-afbeeldingen/verzoek-static',
   templates: 'formulieren/templates',
-  get_vs_post: 'formulieren/get_vs_post',
+  get_vs_post: 'formulieren/forms',
   forms: 'formulieren/forms',
   post_met_templates: 'formulieren/post_met_templates',
   database: 'sqlitedict/database',
@@ -29,7 +29,7 @@ const losseLessen: Record<string, string> = {
   lijst_tonen: 'berichten-tonen/lijst_tonen',
   redirect: 'berichten-opslaan/redirect',
   detailpagina: 'berichten-tonen/detailpagina',
-  'verzoek-get': 'berichten-verwijderen/verzoek-get',
+  'verzoek-get': 'accounts/verzoek-get',
   htmx: 'zonder-herladen/htmx',
   'htmx-overzicht': 'zonder-herladen/htmx-overzicht',
   'verzoek-htmx': 'zonder-herladen/verzoek-htmx',
@@ -52,12 +52,12 @@ export const verhuisd: Omleiding[] = Object.entries(losseLessen).map(([oud, nieu
 export const omleidingen: Omleiding[] = [
   // De eindopdracht Jouw eigen project is uit de cursus gehaald; het oude
   // adres komt uit bij het eind van de basis.
-  { van: '/docs/FastAPI/jouw-project', naar: '/docs/FastAPI/accounts/inloggen' },
+  { van: '/docs/FastAPI/jouw-project', naar: '/docs/FastAPI/accounts/verzoek-get' },
   // Het diagram van één formulier staat sinds de herindeling op dezelfde
   // pagina als dat van één klik.
   {
     van: '/docs/FastAPI/verzoek-post',
-    naar: '/docs/FastAPI/berichten-verwijderen/verzoek-get#een-formulier',
+    naar: '/docs/FastAPI/accounts/verzoek-get#een-formulier',
   },
   ...verhuisd,
 ];
