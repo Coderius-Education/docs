@@ -170,3 +170,112 @@ describe('inlogpogingen beperken', () => {
     expect(fout).toEqual([]);
   });
 });
+
+// Het antwoord van "In je eigen project" in pogingen.mdx noemde alleen de
+// import van VerifyMismatchError en zei verder "zet de regels uit deze les
+// bovenaan, net als ph en NEP". Wie dat letterlijk volgde, miste
+// `from argon2 import PasswordHasher` (een NameError bij `ph =`) en, als zijn
+// project nog geen limiter had, de imports en regels van slowapi. Het antwoord
+// noemt daarom alles wat bovenaan main.py erbij komt: wat de code gebruikt
+// (ph, NEP, @limiter.limit), is gedefinieerd, en elke naam uit argon2 en
+// slowapi die het gebruikt, heeft zijn importregel.
+describe('In je eigen project noemt alles wat bovenaan main.py erbij komt', () => {
+  const tekst = lessen.find(({ naam }) => naam === 'pogingen.mdx')?.tekst ?? '';
+  const opdracht = tekst.slice(tekst.indexOf('### Opdracht 3: Make - In je eigen project'));
+  const antwoord = opdracht.match(/<summary>Antwoord<\/summary>([\s\S]*?)<\/details>/)?.[1] ?? '';
+  const code = [...antwoord.matchAll(/```python[^\n]*\n([\s\S]*?)```/g)]
+    .map((m) => m[1])
+    .join('\n');
+  const zonderImports = code.replace(/^(from|import) [^\n]*$/gm, '');
+
+  it('het antwoord heeft code', () => {
+    expect(code).toContain('@app.post("/inloggen")');
+  });
+
+  const DEFINITIES: [string, RegExp, RegExp][] = [
+    ['ph', /\bph\./, /^ph = PasswordHasher\(\)$/m],
+    ['NEP', /\bNEP\b/, /^NEP = ph\.hash\(/m],
+    ['limiter', /@limiter\.limit/, /^limiter = Limiter\(key_func=get_remote_address\)$/m],
+    ['app.state.limiter', /@limiter\.limit/, /^app\.state\.limiter = limiter$/m],
+    [
+      'de handler voor de 429',
+      /@limiter\.limit/,
+      /^app\.add_exception_handler\(RateLimitExceeded, _rate_limit_exceeded_handler\)$/m,
+    ],
+  ];
+
+  it.each(DEFINITIES)('wat de code gebruikt, is gedefinieerd: %s', (_, gebruik, definitie) => {
+    if (gebruik.test(zonderImports)) expect(code).toMatch(definitie);
+  });
+
+  const IMPORTS: [string, RegExp][] = [
+    ['PasswordHasher', /^from argon2 import [^\n]*\bPasswordHasher\b/m],
+    ['VerifyMismatchError', /^from argon2\.exceptions import [^\n]*\bVerifyMismatchError\b/m],
+    ['Limiter', /^from slowapi import [^\n]*\bLimiter\b/m],
+    [
+      '_rate_limit_exceeded_handler',
+      /^from slowapi import [^\n]*\b_rate_limit_exceeded_handler\b/m,
+    ],
+    ['RateLimitExceeded', /^from slowapi\.errors import [^\n]*\bRateLimitExceeded\b/m],
+    ['get_remote_address', /^from slowapi\.util import [^\n]*\bget_remote_address\b/m],
+  ];
+
+  it.each(IMPORTS)('%s heeft zijn importregel als de code hem gebruikt', (naam, importregel) => {
+    if (new RegExp(`\\b${naam}\\b`).test(zonderImports)) expect(code).toMatch(importregel);
+  });
+
+  it('het antwoord zegt dat argon2-cffi en slowapi in de venv van je project moeten', () => {
+    expect(antwoord).toContain('python -m pip install argon2-cffi slowapi');
+  });
+});
+
+// wijzigen.mdx leerde twee ideeën: het wachtwoord wijzigen na controle van het
+// oude, en oude hashes bijwerken met check_needs_rehash. Dat is gesplitst:
+// check_needs_rehash staat in een eigen les rehash.mdx, direct na wijzigen.
+describe('wijzigen en bijwerken zijn twee lessen', () => {
+  const les = (naam: string) => lessen.find((l) => l.naam === naam)?.tekst ?? '';
+
+  it('wijzigen.mdx gaat alleen over wijzigen', () => {
+    expect(les('wijzigen.mdx')).toContain('@app.post("/wijzig")');
+    expect(les('wijzigen.mdx')).not.toContain('check_needs_rehash');
+  });
+
+  it('rehash.mdx zet check_needs_rehash in /inloggen', () => {
+    const inloggen = pythonBlokken
+      .filter(({ naam }) => naam === 'rehash.mdx')
+      .map(({ code }) => endpoint(code, '@app.post("/inloggen")'))
+      .filter((stuk) => stuk.startsWith('@app.post("/inloggen")'));
+    expect(inloggen.length).toBeGreaterThan(0);
+    for (const stuk of inloggen) {
+      // Het bijwerken staat na de controle op NEP, anders krijgt een onbekende
+      // naam een hash.
+      expect(stuk.indexOf('check_needs_rehash')).toBeGreaterThan(
+        stuk.indexOf('if opgeslagen == NEP'),
+      );
+    }
+  });
+});
+
+// traag.mdx en registreren.mdx hadden een "### Opdracht 1: Run" zonder titel;
+// elke andere opdracht in de reeks zegt na het soort waar hij over gaat.
+describe('elke opdracht heeft een titel', () => {
+  it.each(lessen.map((l) => [l.naam, l.tekst]))('%s', (_, tekst) => {
+    const koppen = [...tekst.matchAll(/^### (Opdracht \d+:.*)$/gm)].map((m) => m[1]);
+    for (const kop of koppen) {
+      expect(kop).toMatch(/^Opdracht \d+: (Predict|Run|Investigate|Modify|Make) - \S/);
+    }
+  });
+});
+
+// De tabel "Wat er in de hash staat" in registreren.mdx sloeg v=19 over,
+// terwijl de tekst erboven zei dat de hash uit stukken bestaat, gescheiden door
+// een $. Elk stuk van de voorbeeldhash heeft een rij.
+describe('de tabel in registreren.mdx', () => {
+  it('heeft een rij voor elk stuk van de hash', () => {
+    const tekst = lessen.find((l) => l.naam === 'registreren.mdx')?.tekst ?? '';
+    const tabel = tekst.split('## Wat er in de hash staat')[1].split('\n\n').slice(1, 3).join('\n');
+    for (const stuk of ['argon2id', 'v=19', 'm=65536,t=3,p=4']) {
+      expect(tabel).toContain(`| \`${stuk}\` |`);
+    }
+  });
+});

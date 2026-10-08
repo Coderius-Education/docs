@@ -1,5 +1,5 @@
 ---
-sidebar_label: '5. In je eigen project'
+sidebar_label: '6. In je eigen project'
 description: Zet httponly en samesite op de sessie-cookie van je eigen project, laat sessies op de server verlopen, en maak een POST-endpoint om uit te loggen.
 ---
 
@@ -30,7 +30,7 @@ Zoek naar `set_cookie`; in je gastenboek staat hij sinds Sessies in
 `POST /inloggen`. Denk aan de oude cookie: log na de wijziging opnieuw in, zodat
 de server een nieuwe zet. Lees je de sessie op meer plekken uit, zoals in
 `GET /gastenboek`, `POST /gastenboek` en `POST /verwijderen`, dan gebruik je
-overal `sessie_ophalen` uit [les 4](./uitloggen).
+overal `sessie_ophalen` uit [les 5](./verlopen).
 
 </details>
 
@@ -48,9 +48,7 @@ Loop deze lijst af:
   met `sessie_ophalen`, zodat een verlopen sessie telt als niet ingelogd.
 - Er is een `@app.post("/uitloggen")` dat de sessie in `sessies.db` weggooit
   en de cookie weghaalt met `delete_cookie`, met een formulierknop
-  (`<form method="post" action="/uitloggen">`) op je pagina. Heb je uit
-  opdracht 5 van [Cookie of sessie?](/docs/FastAPI/onthouden/cookie-of-sessie) nog een
-  versie met `@app.get` en een link, maak er dan een POST van.
+  (`<form method="post" action="/uitloggen">`) op je pagina.
 - Een cookie die je eigen JavaScript wél moet lezen, zoals een voorkeur voor
   een donker thema, krijgt geen `httponly`. Daar hangen ook geen rechten aan.
 
@@ -66,4 +64,4 @@ antwoord.set_cookie(
 
 </details>
 
-Door naar [les 6: in de praktijk](./praktijk).
+Door naar [les 7: in de praktijk](./praktijk).

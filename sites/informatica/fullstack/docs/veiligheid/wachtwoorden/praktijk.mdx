@@ -1,11 +1,11 @@
 ---
-sidebar_label: '9. In de praktijk'
+sidebar_label: '10. In de praktijk'
 description: Wat echte sites nog meer doen om wachtwoorden en accounts te beschermen, van instellingen die meegroeien tot tweestapsverificatie, en wat de AVG zegt over een datalek.
 ---
 
 # Wachtwoorden: in de praktijk
 
-Met Argon2 uit [les 5 tot en met 7](./registreren) bewaar je wachtwoorden zoals het
+Met Argon2 uit [les 5 tot en met 8](./registreren) bewaar je wachtwoorden zoals het
 hoort. Een echte site doet nog meer, omdat een aanvaller niet alleen op de
 database uit is: hij kan ook heel vaak proberen in te loggen, of een
 wachtwoord gebruiken dat hij bij een andere site heeft buitgemaakt.
@@ -22,24 +22,32 @@ iets anders aan:
 
 - **Lengte boven rare tekens.** Een wachtzin van een paar woorden, zoals
   `zonnebloem fiets regen zolder`, is sterker en makkelijker te onthouden.
-  Laat lange wachtwoorden en spaties dus toe.
+  Laat lange wachtwoorden en spaties dus toe. Elk tekstveld krijgt een
+  `max_length` uit [Grenzen in Form](/docs/veiligheid/invoer/grenzen), maar
+  geef het wachtwoordveld een ruime grens, zoals 200 tekens, en haal er geen
+  spaties af met `strip()`: een spatie hoort bij het wachtwoord.
 - **Niet verplicht vervangen**, alleen als er reden voor is, zoals een lek.
-- **Controleren tegen gelekte wachtwoorden.** De dienst Have I Been Pwned houdt
-  een lijst bij van honderden miljoenen wachtwoorden uit eerdere lekken. Een
-  site kan bij het registreren nagaan of een nieuw wachtwoord daarin staat,
-  zonder het wachtwoord zelf te versturen: hij stuurt alleen de eerste vijf
-  tekens van een hash, en vergelijkt de rest zelf.
 
 ### Inloggen beperken
 
 Een aanvaller zonder database kan nog steeds proberen in te loggen, keer op
-keer, met een woordenlijst. Daarom heeft `/inloggen` uit [les 8](./pogingen)
+keer, met een woordenlijst. Daarom heeft `/inloggen` uit [les 9](./pogingen)
 een limiet van vijf pogingen per minuut. Houd die streng op elk endpoint dat
 een wachtwoord controleert, ook als je er later een bij bouwt.
 
 ## Wat grote sites nog meer doen
 
 Dit hoef je voor je eigen project niet te bouwen. Klap open wat je wilt lezen.
+
+<details>
+<summary>Controleren tegen gelekte wachtwoorden</summary>
+
+De dienst Have I Been Pwned houdt een lijst bij van honderden miljoenen
+wachtwoorden uit eerdere lekken. Een site kan bij het registreren nagaan of een
+nieuw wachtwoord daarin staat, zonder het wachtwoord zelf te versturen: hij
+stuurt alleen de eerste vijf tekens van een hash, en vergelijkt de rest zelf.
+
+</details>
 
 <details>
 <summary>Een slot op het account</summary>
@@ -118,7 +126,9 @@ als je "alleen even kijkt". Daarom deed je de test in
 
 ## Opdracht: welke maatregel helpt waartegen?
 
-Kies bij elke situatie de maatregel uit deze les die het meest helpt.
+Kies bij elke situatie de maatregel uit deze reeks die het meest helpt. Voor
+situatie 2 en 4 heb je de blokken Controleren tegen gelekte wachtwoorden en
+Tweestapsverificatie hierboven nodig: klap ze open.
 
 1. Iemand probeert met een script duizend wachtwoorden per minuut uit op je
    inlogpagina.
@@ -139,11 +149,12 @@ het wachtwoord zelf, of om wie er inlogt?
 <details>
 <summary>Antwoord</summary>
 
-1. **Een verzoeklimiet op `/inloggen`**, zoals in [les 8](./pogingen),
-   eventueel met een kort slot op het account na veel foute pogingen.
+1. **Een verzoeklimiet op `/inloggen`**, zoals in [les 9](./pogingen). Las je
+   het blok over een slot op het account, dan kan dat er ook bij: een kort
+   slot na veel foute pogingen.
 2. **Controleren tegen gelekte wachtwoorden** bij het registreren, zodat Sara
    een ander wachtwoord moet kiezen.
-3. **`check_needs_rehash`** bij het inloggen, uit [les 7](./wijzigen), zodat oude hashes vanzelf worden
+3. **`check_needs_rehash`** bij het inloggen, uit [les 8](./rehash), zodat oude hashes vanzelf worden
    bijgewerkt.
 4. **Tweestapsverificatie**: het wachtwoord alleen is dan niet genoeg.
 

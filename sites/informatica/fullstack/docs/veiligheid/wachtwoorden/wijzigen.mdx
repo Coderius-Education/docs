@@ -1,13 +1,12 @@
 ---
 sidebar_label: '7. Wachtwoord wijzigen'
-description: Laat een gebruiker zijn wachtwoord wijzigen na controle van het oude, en werk oude hashes bij met check_needs_rehash.
+description: Laat een gebruiker zijn wachtwoord wijzigen, maar pas als het oude wachtwoord klopt.
 ---
 
 # Wachtwoorden: wachtwoord wijzigen
 
 Met [registreren](./registreren) en [inloggen](./inloggen) heb je de basis.
-Twee dingen horen er nog bij: een gebruiker moet zijn wachtwoord kunnen
-veranderen, en een hash met oude instellingen moet je kunnen bijwerken.
+Er hoort nog iets bij: een gebruiker moet zijn wachtwoord kunnen veranderen.
 
 ## Het oude wachtwoord eerst
 
@@ -47,76 +46,6 @@ Pas als het oude wachtwoord klopt, open je de database opnieuw en bewaar je de h
 Zet dit endpoint in hetzelfde `main.py` als `/registreer` en `/inloggen`: het
 gebruikt dezelfde imports, dezelfde `ph` en dezelfde `NEP`. Zonder de nep-hash
 zou ook `/wijzig` met zijn snelle antwoord verraden welke namen bestaan.
-
-## Oude hashes bijwerken
-
-Computers worden elk jaar sneller, dus wat vandaag traag genoeg is, is dat over
-een paar jaar niet meer. Daarom worden de standaardinstellingen van Argon2 af en
-toe strenger. De oude hashes in je database blijven werken, want hun
-instellingen staan erin. Maar je wilt ze wel bijwerken.
-
-Dat kan alleen als iemand inlogt: dan heb je het wachtwoord even in handen.
-`ph.check_needs_rehash` zegt of een hash met andere instellingen is gemaakt dan
-je `PasswordHasher` nu gebruikt:
-
-```python
-from argon2 import PasswordHasher
-
-ph = PasswordHasher()
-
-nieuw = ph.hash("welkom123")
-oud = PasswordHasher(time_cost=1).hash("welkom123")
-
-print(ph.check_needs_rehash(nieuw))
-print(ph.check_needs_rehash(oud))
-```
-
-Uitvoer:
-
-```
-False
-True
-```
-
-`PasswordHasher(time_cost=1)` doet hier alsof hij een hash van jaren geleden
-maakt, met lichtere instellingen: `time_cost` is de `t=` uit de tabel in
-[les 5](./registreren).
-
-In `/inloggen` komt het bijwerken ná de controle op `NEP` en vóór de laatste
-`return`. Daar weet je zeker dat de naam bestaat en het wachtwoord klopt:
-
-<CodeUitleg>
-
-```python showLineNumbers
-@app.post("/inloggen")
-async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
-    with SqliteDict("gebruikers.db") as db:
-        opgeslagen = db.get(naam, NEP)
-    try:
-        ph.verify(opgeslagen, wachtwoord)
-    except VerifyMismatchError:
-        return {"bericht": "Naam of wachtwoord klopt niet"}
-    if opgeslagen == NEP:
-        return {"bericht": "Naam of wachtwoord klopt niet"}
-    if ph.check_needs_rehash(opgeslagen):
-        with SqliteDict("gebruikers.db") as db:
-            db[naam] = ph.hash(wachtwoord)
-            db.commit()
-    return {"bericht": "Ingelogd"}
-```
-
-<Regel n={3} tot={10}>
-Dit ken je uit les 6. Klopt het wachtwoord niet, of bestaat de naam niet, dan stopt de functie hier.
-</Regel>
-
-<Regel n={11} tot={14}>
-Nieuw: is de opgeslagen hash met oude instellingen gemaakt, dan maak je een nieuwe van het wachtwoord dat je nu even in handen hebt, en bewaar je die.
-</Regel>
-
-</CodeUitleg>
-
-Zo worden de hashes vanzelf bijgewerkt, zonder dat iemand zijn wachtwoord hoeft
-te veranderen.
 
 ## Opdrachten
 
@@ -166,67 +95,28 @@ het nieuwe wachtwoord nog.
 
 </details>
 
-### Opdracht 2: Investigate - Wanneer bijwerken?
+### Opdracht 2: Predict - Hetzelfde wachtwoord opnieuw
 
-Waarom werk je een oude hash bij in `/inloggen`, en niet bijvoorbeeld in een
-apart script dat alle hashes in de database in één keer bijwerkt?
+Sara wijzigt haar wachtwoord nog een keer, en typt bij `nieuw` precies
+hetzelfde als bij `oud`: `Lange-Nieuwe-Zin-7`.
 
-<details>
-<summary>Antwoord</summary>
-
-Voor een nieuwe hash heb je het wachtwoord nodig, en dat staat nergens: in de
-database staat alleen de oude hash. Het enige moment waarop je het wachtwoord
-even hebt, is als iemand inlogt.
-
-</details>
-
-### Opdracht 3: Run - Zie het bijwerken gebeuren
-
-Zet het bijwerken in je `/inloggen`. Dit script zet voor een nieuwe gebruiker
-Tim een hash met oude instellingen in de database, logt in als Tim, en laat de
-hash ervoor en erna zien. Voorspel eerst: verandert er iets aan de `t=`?
-
-```python
-import httpx
-from argon2 import PasswordHasher
-from sqlitedict import SqliteDict
-
-oud = PasswordHasher(time_cost=1).hash("zolder-regen-7")
-with SqliteDict("gebruikers.db") as db:
-    db["tim"] = oud
-    db.commit()
-    print(db["tim"][:31])
-
-antwoord = httpx.post("http://127.0.0.1:8000/inloggen", data={"naam": "tim", "wachtwoord": "zolder-regen-7"})
-print(antwoord.json())
-
-with SqliteDict("gebruikers.db") as db:
-    print(db["tim"][:31])
-```
+**Vraag:** staat er daarna dezelfde code bij `sara` in de database als ervoor?
+En kan ze nog inloggen met `Lange-Nieuwe-Zin-7`?
 
 <details>
 <summary>Tip</summary>
 
-`[:31]` laat alleen het begin van de hash zien: het algoritme en de
-instellingen, zonder het zout. Let op het getal achter `t=`.
+Wat doet `ph.hash` elke keer anders? Bekijk het daarna zelf met
+`lees_database.py`, voor en na het wijzigen.
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-Uitvoer:
-
-```
-$argon2id$v=19$m=65536,t=1,p=4$
-{'bericht': 'Ingelogd'}
-$argon2id$v=19$m=65536,t=3,p=4$
-```
-
-Tim komt binnen met de oude hash, want de instellingen staan erin. Daarna ziet
-`/inloggen` dat die hash lichter is dan de instellingen van nu, en bewaart hij
-een nieuwe: `t=1` is `t=3` geworden. Staat er bij jou een ander getal dan 3,
-dan heeft jouw versie van `argon2-cffi` strengere instellingen.
+Een andere code, want `ph.hash` maakt bij elke hash een nieuw zout. Inloggen
+met `Lange-Nieuwe-Zin-7` lukt nog steeds: `ph.verify` haalt het nieuwe zout uit
+de nieuwe hash.
 
 </details>
 
@@ -262,10 +152,6 @@ async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
         return {"bericht": "Naam of wachtwoord klopt niet"}
     if opgeslagen == NEP:
         return {"bericht": "Naam of wachtwoord klopt niet"}
-    if ph.check_needs_rehash(opgeslagen):
-        with SqliteDict("gebruikers.db") as db:
-            db[naam] = ph.hash(wachtwoord)
-            db.commit()
     return {"bericht": "Ingelogd"}
 
 @app.post("/wijzig")
@@ -284,9 +170,10 @@ async def wijzig(naam: str = Form(...), oud: str = Form(...), nieuw: str = Form(
     return {"bericht": "Wachtwoord gewijzigd"}
 ```
 
-Registreren, inloggen met bijwerken, en wijzigen in één server. In les 8 komt
-er een limiet op het aantal pogingen bij.
+Registreren, inloggen en wijzigen in één server. Een hash met oude
+instellingen blijft nog zoals hij is; dat verandert in les 8. En iedereen kan
+nog eindeloos wachtwoorden proberen; daar komt in les 9 een limiet op.
 
 </details>
 
-Door naar [les 8: inlogpogingen beperken](./pogingen).
+Door naar [les 8: een oude hash bijwerken](./rehash).

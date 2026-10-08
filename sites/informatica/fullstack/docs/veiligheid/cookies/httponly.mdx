@@ -82,6 +82,8 @@ Hier zit de controle niet in een endpoint, maar in de instelling waarmee de serv
 
 ## Er gaat iets mis
 
+### Je oude sessie-id staat er nog
+
 `document.cookie` toont je oude sessie-id nog, ook al heb je `httponly=True`
 gezet.
 
@@ -91,6 +93,24 @@ het moment dat de server de cookie zet, en de oude staat al in je browser.
 **Oplossing:** log opnieuw in, zodat de server een nieuwe `set_cookie` stuurt.
 Verwijder je de cookie in het tabblad **App**, dan ben je uitgelogd, en krijg je
 de nieuwe cookie ook bij de volgende keer inloggen.
+
+### Andere cookies dan `sessie_id`
+
+`document.cookie` is niet leeg, maar geeft bijvoorbeeld:
+
+```
+'naam=sara; volgorde=nieuw'
+```
+
+**Oorzaak:** een cookie hoort bij het adres `127.0.0.1`, niet bij de map of de
+poort. De cookies van eerdere projecten, zoals `naam` uit
+[Onthouden met een cookie](/docs/FastAPI/onthouden/cookies), staan dus nog in je
+browser. Ze hebben geen `httponly`, en een script ziet ze. Je `sessie_id` staat
+er niet bij: die is wel afgeschermd.
+
+**Oplossing:** verwijder `naam`, `volgorde` en de andere oude cookies in het
+tabblad **App**, onder Cookies bij `http://127.0.0.1:8000`. Of open de pagina in
+een privévenster en log daar opnieuw in: daar begint de browser zonder cookies.
 
 ## Opdrachten
 
@@ -127,7 +147,7 @@ een vinkje bij **HttpOnly** en `thema` zonder.
 ### Opdracht 2: Investigate - Waarom stuurt de browser hem nog mee?
 
 Met `httponly` kan een script de cookie niet lezen. Toch weet je server na een
-verwijderverzoek nog wie je bent. Hoe kan dat?
+bericht nog wie je bent. Hoe kan dat?
 
 <details>
 <summary>Antwoord</summary>

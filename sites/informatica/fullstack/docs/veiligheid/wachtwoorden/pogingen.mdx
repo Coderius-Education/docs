@@ -1,11 +1,11 @@
 ---
-sidebar_label: '8. Inlogpogingen beperken'
+sidebar_label: '9. Inlogpogingen beperken'
 description: Zet een verzoeklimiet op /inloggen en /wijzig, zodat niemand eindeloos wachtwoorden kan proberen, en zie na vijf foute pogingen een 429.
 ---
 
 # Wachtwoorden: inlogpogingen beperken
 
-Met Argon2 uit [les 5 tot en met 7](./registreren) geeft een gelekte database
+Met Argon2 uit [les 5 tot en met 8](./registreren) geeft een gelekte database
 de wachtwoorden niet weg. Maar wie de database niet heeft, kan nog iets anders:
 `/inloggen` zelf proberen, keer op keer, met steeds een ander wachtwoord. Je
 server antwoordt op elke poging, en elk antwoord zegt of het raak was.
@@ -53,7 +53,7 @@ app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 ```
 
-In `/inloggen` uit [les 7](./wijzigen) veranderen alleen de kop en de regel
+In `/inloggen` uit [les 8](./rehash) veranderen alleen de kop en de regel
 erboven:
 
 <CodeUitleg>
@@ -160,7 +160,8 @@ Sla `main.py` op en draai `pogingen.py` opnieuw.
 ### Opdracht 1: Predict - Sara zelf
 
 Je draait `pogingen.py`, en direct daarna logt Sara in met haar goede
-wachtwoord `welkom123`, vanaf dezelfde computer.
+wachtwoord, vanaf dezelfde computer. Sinds opdracht 1 van [les 7](./wijzigen) is
+dat `Lange-Nieuwe-Zin-7`.
 
 **Vraag:** wat krijgt ze terug?
 
@@ -182,20 +183,32 @@ aanvaller, en merkt hij hier niets van.
 
 </details>
 
-### Opdracht 2: Investigate - Waarom `/wijzig` ook?
+### Opdracht 2: Investigate - En `/registreer`?
 
-Je zet de limiet alleen op `/inloggen`. Hoe kan een script dan toch onbeperkt
-wachtwoorden van Sara proberen?
+`/registreer` controleert geen wachtwoord, en krijgt in deze les geen limiet.
+Kan een script daar toch iets mee doen wat je niet wilt?
+
+<details>
+<summary>Tip</summary>
+
+Wat kost `ph.hash`? En wat antwoordt `/registreer` als een naam al bestaat?
+
+</details>
 
 <details>
 <summary>Antwoord</summary>
 
-Via `/wijzig`. Dat endpoint doet met het veld `oud` precies wat `/inloggen`
-met `wachtwoord` doet: `ph.verify`, en een ander antwoord als het klopt. Klopt
-het, dan verandert het wachtwoord meteen ook. Elk endpoint dat een wachtwoord
-controleert, krijgt daarom een limiet, net als in
-[Wie mag wat](/docs/veiligheid/toegang/elk-endpoint) elk endpoint zijn eigen
-controle kreeg.
+Ja, twee dingen. Elke registratie rekent een trage `ph.hash` uit. Een script
+dat duizend accounts aanmaakt, laat je server dus lang rekenen: met de 19
+hashes per seconde uit [les 4](./traag) bijna een minuut, en ondertussen wacht
+iedereen. Dat is [wat een verzoek kost](/docs/veiligheid/dos/verzoek).
+
+En bij een naam die al bestaat, antwoordt `/registreer` met
+`400 Deze naam is al bezet`. Zo zoekt een script uit welke namen een account
+hebben, precies wat `/inloggen` met de nep-hash verborgen houdt.
+
+Een limiet op `/registreer` helpt tegen allebei, ook al raadt daar niemand een
+wachtwoord.
 
 </details>
 
@@ -236,18 +249,43 @@ Loop deze lijst af:
   tekst is opgeslagen, en dan stopt je server met een `500` en in de terminal
   `argon2.exceptions.InvalidHashError`.
 
-Heb je in je project al een limiter uit Te veel verzoeken, gebruik dan die; een
-tweede `limiter` of `app.add_exception_handler` is niet nodig. Anders zet je de
-regels uit deze les bovenaan, net als `ph` en `NEP`.
+Installeer eerst in de virtual environment van je project wat erbij komt, in
+de terminal van VS Code:
 
-Met de sessies uit [Onthouden op de server: sessies](/docs/FastAPI/onthouden/sessies)
-wordt je `POST /inloggen` zo. De 401 uit de basis blijft, en onder de controle
-blijft de sessie zoals hij was. Bij je imports komt `VerifyMismatchError`;
-`Request` staat er sinds de templates al:
+```bash
+python -m pip install argon2-cffi slowapi
+```
+
+Direct onder `app = FastAPI()` komen de `PasswordHasher`, de nep-hash en de
+limiter:
 
 ```python
+ph = PasswordHasher()
+NEP = ph.hash("niemand")
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+```
+
+Heb je in je project al een limiter uit Te veel verzoeken, gebruik dan die: de
+laatste drie regels en de imports van `slowapi` staan er dan al, en een tweede
+`limiter` of `app.add_exception_handler` is niet nodig.
+
+Met de sessies uit [Onthouden op de server: sessies](/docs/FastAPI/onthouden/sessies)
+wordt je `POST /inloggen` zo. Bij je imports komen de regels van `argon2` en
+`slowapi`; `Request` staat in de import uit `fastapi` sinds de templates al. De
+401 uit de basis blijft, en onder de controle blijft de sessie zoals hij was:
+hier met de `tot`, `httponly=True` en `samesite="lax"` uit de reeks Cookies
+afschermen. Laat die staan. Sloeg je die reeks over, dan houd je je eigen
+`sessies[sessie_id]` en `set_cookie`.
+
+```python
+from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 from fastapi import Cookie, FastAPI, Form, HTTPException, Request
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
 
 @app.post("/inloggen")
 @limiter.limit("5/minute")
@@ -263,19 +301,23 @@ async def inloggen(request: Request, naam: str = Form(...), wachtwoord: str = Fo
 
     sessie_id = secrets.token_hex(16)
     with SqliteDict("sessies.db") as sessies:
-        sessies[sessie_id] = {"naam": naam}
+        sessies[sessie_id] = {"naam": naam, "tot": time.time() + GELDIG}
         sessies.commit()
 
     antwoord = RedirectResponse(url="/gastenboek", status_code=303)
-    antwoord.set_cookie(key="sessie_id", value=sessie_id, max_age=60 * 60 * 24 * 30)
+    antwoord.set_cookie(
+        key="sessie_id",
+        value=sessie_id,
+        max_age=GELDIG,
+        httponly=True,
+        samesite="lax",
+    )
     return antwoord
 ```
 
 Geeft `/inloggen` zo een `RedirectResponse` terug, dan werkt de limiet ook:
 `slowapi` heeft alleen bij `headers_enabled=True` een `response: Response`
-nodig voor een dictionary. Deed je de reeks Cookies afschermen, dan heeft je
-`set_cookie` ook `httponly=True` en `samesite="lax"`, en je sessie een `tot`;
-laat die staan.
+nodig voor een dictionary.
 
 </details>
 
@@ -347,4 +389,4 @@ een wachtwoord controleert: de hele reeks in één server.
 
 </details>
 
-Door naar [les 9: in de praktijk](./praktijk).
+Door naar [les 10: in de praktijk](./praktijk).

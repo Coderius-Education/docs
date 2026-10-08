@@ -7,10 +7,13 @@ description: Een controle beschermt alleen het endpoint waar hij in staat. Loop 
 
 Een controle beschermt alleen het endpoint waar hij in staat. Heb je
 [opdracht 5 van het htmx-overzicht](/docs/FastAPI/zonder-herladen/htmx-overzicht#opdracht-5-make---alles-wissen)
-gemaakt, dan heeft je gastenboek een knop Alles wissen, met een eigen endpoint
-`DELETE /berichten`. Daar staat geen controle in, dus Alex wist daarmee alsnog
-het bericht van Sara, en alle andere berichten erbij. Een endpoint dat je
-later toevoegt, heeft hetzelfde probleem.
+gemaakt, dan heeft je eigen gastenboek een knop Alles wissen, met een eigen
+endpoint `DELETE /berichten`. Daar staat geen controle in: wie dat endpoint
+aanroept, wist elk bericht, ook dat van een ander. De controle in
+`bericht_verwijderen` verandert daar niets aan. De server van deze reeks heeft
+dat endpoint nog niet; in opdracht 1 zet je het erop, meteen met een grens. Een
+endpoint dat je later toevoegt, heeft hetzelfde probleem als je die grens
+vergeet.
 
 Loop daarom elk endpoint langs dat iets verandert of verwijdert, en stel bij elk
 dezelfde vraag: wie mag dit? In opdracht 1 doe je dat voor Alles wissen.
@@ -84,8 +87,10 @@ Nog in het gastenboek: ['Sara']
 ```
 
 Hier is er geen `403` nodig: wie Alles wissen kiest, wist wat van hem is, en de
-rest blijft staan. Wie niet is ingelogd, heeft geen naam in de sessie, en wist
-dus niets.
+rest blijft staan. Wie niet is ingelogd, heeft geen naam in de sessie. Dan
+wist de server niets, maar het antwoord is toch
+`{'bericht': 'Jouw berichten zijn gewist'}`. Wil je dat eerlijker, zet dan
+dezelfde `401 Log eerst in` erin als in `bericht_plaatsen`.
 
 Deze server praat JSON, dus het antwoord is een dictionary. In je eigen
 gastenboek gaf `alles_wissen` uit het htmx-overzicht de lijst-template terug,

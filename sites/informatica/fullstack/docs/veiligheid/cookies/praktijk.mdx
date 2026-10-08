@@ -1,22 +1,24 @@
 ---
-sidebar_label: '6. In de praktijk'
+sidebar_label: '7. In de praktijk'
 description: Hoe lang een sessie mag duren, en wat secure met https te maken heeft.
 ---
 
 # Cookies afschermen: in de praktijk
 
 Met `httponly`, `samesite`, uitloggen en een verlooptijd op de server uit
-[les 2 tot en met 4](./httponly) is je sessie-cookie goed afgeschermd. Er zijn
-nog twee dingen die echte sites met hun cookies doen.
+[les 2 tot en met 5](./httponly) is je sessie-cookie goed afgeschermd. Er zijn
+nog drie dingen die echte sites met hun cookies doen.
 
 ## Wat jij zelf doet
 
 ### Kies hoe lang een sessie geldt
 
-In [les 4](./uitloggen) kreeg je sessie een eigen `tot` op de server. Hoe lang
+In [les 5](./verlopen) kreeg je sessie een eigen `tot` op de server. Hoe lang
 die is, staat in `GELDIG`: in deze reeks 30 dagen. Voor een gastenboek is dat
-prima; een banksite logt je na een kwartier zonder activiteit uit. Kies een tijd
-die past bij wat er met een sessie kan.
+prima; een banksite logt je na een kwartier zonder activiteit uit. Dat werkt
+anders dan jouw `tot`: die telt vanaf het inloggen, en schuift niet op als je
+iets doet. Een bank zet de eindtijd bij elk verzoek opnieuw een kwartier
+verder. Kies een tijd die past bij wat er met een sessie kan.
 
 Verander alleen `max_age` niet en denk dat je klaar bent. Dat zegt alleen tegen
 de browser wanneer hij de cookie weggooit; wie het sessie-id heeft gekopieerd,

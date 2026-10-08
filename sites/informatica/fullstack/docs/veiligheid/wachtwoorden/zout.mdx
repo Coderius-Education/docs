@@ -118,18 +118,31 @@ kiest niemand. Zoek je de gezouten hash op in de lijst, dan vind je niets.
 
 </details>
 
-### Opdracht 2: Investigate - Waarom niet geheim?
+### Opdracht 2: Investigate - Rekenen voor duizend gebruikers
 
-Een klasgenoot zegt: "Als het zout in de database staat, kan een aanvaller het
-toch lezen? Dan heeft het geen zin." Klopt dat?
+Een aanvaller heeft een gelekte database met duizend gebruikers, en wil weten
+wie `welkom123` als wachtwoord heeft. Hoeveel hashes moet hij daarvoor
+uitrekenen als de database geen zout gebruikt, zoals in [les 2](./hash)? En
+hoeveel als elke gebruiker een eigen zout heeft?
+
+<details>
+<summary>Tip</summary>
+
+In les 2 vond je met één `sha256` van `welkom123` zowel Sara als Noor. Lukt dat
+nog als elk zout een andere hash geeft?
+
+</details>
 
 <details>
 <summary>Antwoord</summary>
 
-Nee. Het zout is er niet om geheim te zijn, maar om elke hash uniek te maken.
-Daardoor zie je niet wie hetzelfde wachtwoord heeft, en werken vooraf
-uitgerekende lijsten niet meer. Een aanvaller die het zout kent, moet nog
-steeds voor elke gebruiker apart gaan rekenen.
+Zonder zout één: hij rekent de hash van `welkom123` één keer uit en zoekt die
+code in de hele database. Iedereen met die code heeft `welkom123`.
+
+Met een eigen zout per gebruiker duizend: voor elke gebruiker moet hij zijn
+zout plus `welkom123` apart hashen, want elk zout geeft een andere code. Dat
+het zout in de database staat, helpt hem dus niet: hij heeft duizend keer
+zoveel werk. Waarom dat telt, zie je in [les 4](./traag).
 
 </details>
 

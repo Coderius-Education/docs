@@ -71,6 +71,7 @@ Een Argon2-hash bestaat uit stukken, gescheiden door een `$`:
 | Stuk | Betekent |
 |:---:|:---:|
 | `argon2id` | welk algoritme |
+| `v=19` | welke versie van Argon2 |
 | `m=65536,t=3,p=4` | hoeveel geheugen en rekenwerk het kost |
 | `X9osXpPM7r/H8fRMyPCE+Q` | het zout |
 | `etV1GLXt…` | de hash zelf |
@@ -108,19 +109,35 @@ in les 6.
 
 </details>
 
-### Opdracht 2: Run
+### Opdracht 2: Run - Een lange wachtzin
 
-Zet Argon2 in je `/registreer`, gooi `gebruikers.db` weg, en draai
-`registreer.py` en `lees_database.py`. Begint elke code met `$argon2id$`, en
-verschillen de codes van Sara en Noor?
+Registreer een vierde gebruiker, Tim, met de wachtzin
+`zonnebloem fiets regen zolder`. Voorspel eerst: wordt de code van Tim in
+`lees_database.py` langer dan die van Sara, die `welkom123` heeft?
+
+<details>
+<summary>Tip</summary>
+
+Maak een kopie van `registreer.py` met in de lijst alleen
+`("tim", "zonnebloem fiets regen zolder")`. Denk bij het voorspellen aan
+[les 2](./hash): was de `sha256` van een lange naam langer dan die van een
+korte?
+
+</details>
 
 <details>
 <summary>Antwoord</summary>
 
-Ja: elke code begint met iets als `$argon2id$v=19$m=65536,t=3,p=4$`. De
-getallen na `m=`, `t=` en `p=` kunnen bij jou anders zijn, want een nieuwere
-versie van `argon2-cffi` kan strengere instellingen hebben. Daarna verschillen
-de codes allemaal, ook die van Sara en Noor. Dat komt door het zout.
+Nee. In `lees_database.py` staat er een regel bij zoals deze:
+
+```
+tim: $argon2id$v=19$m=65536,t=3,p=4$UJPkc6G27VAZQnKN6K2xkQ$NGys+yqqtBo/7xbmkDKX8H7M8mGYMsLO+0ciV1pZ6qU
+```
+
+Die code is even lang als die van Sara. De hash zelf, het laatste stuk, heeft
+altijd dezelfde lengte, hoe lang het wachtwoord ook is. Een lange wachtzin kost
+je database dus geen extra ruimte, en de spaties zijn gewone tekens van het
+wachtwoord.
 
 </details>
 

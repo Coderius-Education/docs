@@ -5,12 +5,6 @@ description: Een hash voor wachtwoorden is expres traag. Meet zelf het verschil 
 
 # Wachtwoorden: traag is goed
 
-<Voorkennis
-  items={[
-    {site: 'python', to: '/docs/modules/09d-modules', label: 'Modules importeren'},
-  ]}
-/>
-
 Met een hash en een zout kan niemand het wachtwoord meer terugrekenen. Maar een
 aanvaller met de database kan nog wel proberen: een veelgebruikt wachtwoord
 nemen, de hash uitrekenen met het zout van een gebruiker, en kijken of die
@@ -77,12 +71,14 @@ is steeds enorm: tienduizenden tot honderdduizenden keren.
 
 Je server rekent één hash uit als iemand inlogt. Of dat een miljoenste of een
 twintigste seconde duurt, merkt de gebruiker niet. Wie de database heeft
-gestolen en per gebruiker duizenden wachtwoorden wil proberen, merkt het wel:
-wat met `sha256` een fractie van een seconde kost, duurt met Argon2 uren.
+gestolen en per gebruiker 5000 veelgebruikte wachtwoorden wil proberen,
+merkt het wel. Met de getallen hierboven kost dat met `sha256` een paar
+duizendste seconde, en met Argon2 ruim vier minuten, voor elke gebruiker
+opnieuw. Bij duizend gebruikers is dat ruim drie dagen.
 
 Een trage hash beschermt niet tegen alles. Een wachtwoord als `welkom123` staat
 in elke lijst met veelgebruikte wachtwoorden en blijft zwak, hoe traag de hash
-ook is. Hoe sites daar mee omgaan, zie je in [les 9](./praktijk).
+ook is. Hoe sites daar mee omgaan, zie je in [les 10](./praktijk).
 
 ## Er gaat iets mis
 
@@ -99,7 +95,7 @@ maar je importeert `argon2`.
 
 ## Opdrachten
 
-### Opdracht 1: Run
+### Opdracht 1: Run - Hoeveel keer trager?
 
 Draai het script. Deel het getal van `sha256` door dat van Argon2. Hoeveel
 keer trager is Argon2 op jouw computer?

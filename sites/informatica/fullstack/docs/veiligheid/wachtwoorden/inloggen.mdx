@@ -175,22 +175,32 @@ ander wachtwoord, en `ph.verify` gooit een `VerifyMismatchError`.
 
 </details>
 
-### Opdracht 2: Investigate - Waarom dezelfde melding?
+### Opdracht 2: Investigate - Wachten in plaats van rekenen
 
-Je zou bij Bob ook "Deze naam bestaat niet" kunnen antwoorden. Dat is
-duidelijker voor de gebruiker. Waarom doe je dat hier toch niet?
+Een klasgenoot stelt voor om de nep-hash weg te laten, en bij een onbekende
+naam de server even te laten wachten met `time.sleep(0.05)`. Dan duurt dat
+antwoord toch ook lang. Waarom is de nep-hash beter?
+
+<details>
+<summary>Tip</summary>
+
+Hoe lang duurt één Argon2-hash? Kijk naar je meting in [les 4](./traag), en
+vergelijk die met de meting van een klasgenoot.
+
+</details>
 
 <details>
 <summary>Antwoord</summary>
 
-Dan kan iedereen uitzoeken welke namen een account hebben: probeer een naam,
-en de melding verraadt of hij bestaat. Daarom krijgen een foute naam en een
-fout wachtwoord dezelfde melding.
+Hoe lang `ph.verify` duurt, verschilt per computer en per moment: in les 4
+kreeg elke computer andere getallen, en een server die het druk heeft, rekent
+langzamer. Een vaste `0.05` past dus bijna nooit precies, en wie de tijd meet,
+ziet het verschil alsnog. Worden de instellingen van Argon2 later strenger, dan
+klopt het getal helemaal niet meer.
 
-Alleen dezelfde melding is niet genoeg. Zonder de nep-hash antwoordt de server
-bij een onbekende naam meteen, en bij een bestaande naam pas na het trage
-`ph.verify`. Wie de tijd meet, ziet dan nog steeds welke namen bestaan. De
-nep-hash maakt ook de tijd gelijk.
+Met de nep-hash doet de server bij een onbekende naam precies hetzelfde
+rekenwerk als bij een bestaande naam. Daardoor duren beide antwoorden even
+lang, op elke computer.
 
 </details>
 
