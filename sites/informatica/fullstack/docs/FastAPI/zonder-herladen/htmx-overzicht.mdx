@@ -57,7 +57,7 @@ Zet je `hx-on::after-request="this.reset()"` op de `<form>`, dan maakt htmx de v
 
 ## Een stuk van de pagina verversen
 
-Een knop die de lijst met berichten opnieuw ophaalt. Het antwoord is nu geen zin maar een lijst, dus die krijgt een eigen template, `templates/berichten_lijst.html`, zonder `<html>` of `<head>`. Knip het hele `{% if berichten %}`-blok uit je `berichten.html` en zet het in dat nieuwe bestand. Met alles wat je lijst al had: de link naar de detailpagina uit [Eén item tonen](/docs/FastAPI/berichten-tonen/detailpagina) en het formuliertje om te verwijderen uit [Doorsturen na opslaan](/docs/FastAPI/berichten-verwijderen/verwijderen). Zo ziet het er dan ongeveer uit:
+Een knop die de lijst met berichten opnieuw ophaalt. Het antwoord is nu geen zin maar een lijst, dus die krijgt een eigen template, `templates/berichten_lijst.html`, zonder `<html>` of `<head>`. Knip het hele `{% if berichten %}`-blok uit je `berichten.html` en zet het in dat nieuwe bestand. Met alles wat je lijst al had: de link naar de detailpagina uit [Eén item tonen](/docs/FastAPI/berichten-tonen/detailpagina) en het formuliertje om te verwijderen uit [Een bericht verwijderen: een verborgen veld](/docs/FastAPI/berichten-verwijderen/verwijderen). Zo ziet het er dan ongeveer uit:
 
 ```html
 {% if berichten %}

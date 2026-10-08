@@ -63,7 +63,7 @@ Vanaf nu stuurt de browser die cookie mee bij elk verzoek aan jouw server. Je vr
 
 <CodeUitleg>
 
-{/* route-dubbel: vervangt GET /gastenboek uit post_naar_database.mdx, nu met een template */}
+{/* route-dubbel: vervangt GET /gastenboek uit Elk bericht bewaren, nu met een template */}
 ```python showLineNumbers
 from fastapi import Cookie
 
@@ -180,7 +180,7 @@ Laat boven het formulier "Welkom terug, [naam]" staan als de bezoeker al eens ee
 <details>
 <summary>Tip</summary>
 
-De template weet al of `naam` gevuld is. Met `{% if naam %}` kun je daarop reageren, net zoals je in [Alles tonen: een for-lus in je template](/docs/FastAPI/berichten-tonen/lijst_tonen) een lege lijst opving.
+De template weet al of `naam` gevuld is. Met `{% if naam %}` kun je daarop reageren, net zoals je in [Nog niets? if en else in je template](/docs/FastAPI/berichten-tonen/leeg) een lege lijst opving.
 
 </details>
 

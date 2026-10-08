@@ -63,7 +63,7 @@ Je endpoint `/berichten` hoeft niet te veranderen: de template kijkt zelf of de 
 1. Ga naar `http://127.0.0.1:8000/berichten`. Je berichten staan er nog, als lijst.
 2. Stop de server, hernoem `gastenboek.db` tijdelijk (bijvoorbeeld naar `gastenboek-bewaar.db`) en start opnieuw.
 3. Herlaad `/berichten`. Nu staat er "Nog geen berichten. Wees de eerste."
-4. Stop de server, zet de oude naam terug en start opnieuw, want de volgende lessen bouwen op je berichten voort.
+4. Stop de server. SqliteDict heeft intussen een nieuwe, lege `gastenboek.db` gemaakt: gooi die weg, hernoem `gastenboek-bewaar.db` terug naar `gastenboek.db` en start opnieuw. De volgende lessen bouwen op je berichten voort.
 
 ## Opdrachten
 
@@ -100,7 +100,7 @@ Zet het `{% if %}`-blok in je `berichten.html` en doe de stappen onder Testen. Z
 <details>
 <summary>Antwoord</summary>
 
-Ja. Zonder `gastenboek.db` maakt SqliteDict een nieuwe, lege database aan, en is de lijst die je endpoint meestuurt leeg. Zet je de oude naam terug en start je opnieuw, dan staan je berichten er weer. Gooi het lege bestand dat SqliteDict aanmaakte daarna weg.
+Ja. Zonder `gastenboek.db` maakt SqliteDict een nieuwe, lege database aan, en is de lijst die je endpoint meestuurt leeg. Gooi je dat lege bestand weg, zet je de oude naam terug en start je opnieuw, dan staan je berichten er weer.
 
 </details>
 

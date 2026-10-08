@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import sidebars from '../../sidebars';
 
 // templates/berichten.html groeit in drie basislessen: de lijst (Alles tonen),
-// de verwijderknop (redirect) en de link naar de detailpagina. De laatste twee
+// de link naar de detailpagina (detailpagina) en de verwijderknop (verwijderen). De laatste twee
 // gaven alleen een losse for-lus, zonder te zeggen waar die kwam en zonder de
 // hele template; main.py had wel een stand, de template niet. Een basisles die
 // een stuk van berichten.html laat zien, toont daarom in de hoofdtekst ook de

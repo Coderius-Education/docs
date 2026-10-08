@@ -362,12 +362,12 @@ Welke namen een account hebben. Hij probeert een naam met een willekeurig wachtw
 
 ### Opdracht 4: Make - De pagina van een gebruiker
 
-Maak een endpoint `/gebruiker/{naam}` dat alle berichten van één gebruiker als JSON teruggeeft: `{"naam":"sara","berichten":["Hoi","Leuk gastenboek"]}`. Heeft de naam geen account, dan geeft het een 404.
+Maak een endpoint `/gebruiker/{naam}` dat alle berichten van één gebruiker als JSON teruggeeft: `{"naam":"sara","berichten":["Hoi","Leuk gastenboek"]}`. Een naam zonder berichten geeft een lege lijst.
 
 <details>
 <summary>Tip</summary>
 
-Kijk eerst in `gebruikers.db` of de naam bestaat. Loop daarna met een for-lus door `db.values()` van `gastenboek.db`, en zet de tekst van elk bericht met die naam in een lijst.
+Loop met een for-lus door `db.values()` van `gastenboek.db`, en zet de tekst van elk bericht met die naam in een lijst.
 
 </details>
 
@@ -377,10 +377,6 @@ Kijk eerst in `gebruikers.db` of de naam bestaat. Loop daarna met een for-lus do
 ```python
 @app.get("/gebruiker/{naam}")
 async def gebruiker(naam: str):
-    with SqliteDict("gebruikers.db") as gebruikers:
-        if naam not in gebruikers:
-            raise HTTPException(status_code=404, detail="Deze gebruiker bestaat niet")
-
     van_hem = []
     with SqliteDict("gastenboek.db") as db:
         for bericht in db.values():
@@ -389,6 +385,6 @@ async def gebruiker(naam: str):
     return {"naam": naam, "berichten": van_hem}
 ```
 
-Een bericht uit de tijd vóór de accounts, met een naam die niemand registreerde, komt op geen enkele gebruikerspagina terecht.
+Kijk je eerst in `gebruikers.db` en geef je een 404 bij een naam zonder account, dan verraad je welke namen een account hebben: hetzelfde lek als de twee meldingen uit opdracht 3. Een lege lijst zegt alleen dat er geen berichten zijn.
 
 </details>

@@ -6,11 +6,35 @@
   ]}
 />
 
-Sara gaat naar 5B en krijgt er een vak bij. In een gewone dictionary pas je dat aan op de plek zelf. In SqliteDict kan dat niet, en je krijgt er geen foutmelding van. Je werkt verder met de Sara uit [Een dictionary als waarde](/docs/FastAPI/sqlitedict/dictionary), in `mijn_data.db`.
+Sara gaat naar 5B. In een gewone dictionary pas je dat aan op de plek zelf, met `sara["klas"] = "5B"`. Je werkt verder met de Sara uit [Een dictionary als waarde](/docs/FastAPI/sqlitedict/dictionary), in `mijn_data.db`, waar ze nog in 4B zit.
 
-## Eén veld aanpassen
+## Op de plek zelf aanpassen?
 
-Je haalt de dictionary op, past hem aan en zet hem terug. Maak `aanpassen.py`:
+<details>
+<summary>Voorspel: wat print dit script?</summary>
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("mijn_data.db") as db:
+    db["sara"]["klas"] = "5B"
+    db.commit()
+
+with SqliteDict("mijn_data.db") as db:
+    print(db["sara"]["klas"])
+```
+
+`4B`, niet `5B`. En je krijgt geen foutmelding.
+
+Elke keer dat je `db["sara"]` schrijft, leest SqliteDict de waarde uit het bestand en maakt hij er een nieuwe dictionary van. Op de eerste regel in het `with`-blok pas je zo'n nieuwe dictionary aan, en daarna gebruik je hem nergens meer. Het bestand weet daar niets van.
+
+</details>
+
+Draai het script zelf, en kijk of je voorspelling klopte. Een gewone dictionary in Python onthoudt zo'n wijziging wel. SqliteDict niet: ophalen geeft een **kopie**.
+
+## Ophalen, aanpassen, terugzetten
+
+Je haalt de dictionary op, past hem aan en zet hem terug. Pas als je de aangepaste dictionary terugzet met `db["sara"] = …`, schrijft SqliteDict hem weg. Sara krijgt er meteen een vak bij. Maak `aanpassen.py`:
 
 <CodeUitleg>
 
@@ -49,29 +73,7 @@ Draai `aanpassen.py` en daarna `bekijk_db.py`:
 sara = {'klas': '5B', 'vakken': ['informatica', 'wiskunde', 'biologie']}
 ```
 
-## Waarom terugzetten nodig is
-
-<details>
-<summary>Voorspel: wat print dit script?</summary>
-
-```python
-from sqlitedict import SqliteDict
-
-with SqliteDict("mijn_data.db") as db:
-    db["sara"]["klas"] = "6B"
-    db.commit()
-
-with SqliteDict("mijn_data.db") as db:
-    print(db["sara"]["klas"])
-```
-
-`5B`, niet `6B`. En je krijgt geen foutmelding.
-
-Elke keer dat je `db["sara"]` schrijft, leest SqliteDict de waarde uit het bestand en maakt hij er een nieuwe dictionary van. Op de eerste regel in het `with`-blok pas je zo'n nieuwe dictionary aan, en daarna gebruik je hem nergens meer. Het bestand weet daar niets van. Pas als je de aangepaste dictionary terugzet met `db["sara"] = …`, schrijft SqliteDict hem weg.
-
-</details>
-
-Een gewone dictionary in Python onthoudt zo'n wijziging wel. SqliteDict niet: ophalen geeft een **kopie**. Onthoud daarom drie stappen: ophalen, aanpassen, terugzetten.
+Onthoud daarom drie stappen: ophalen, aanpassen, terugzetten.
 
 ## Er gaat iets mis
 

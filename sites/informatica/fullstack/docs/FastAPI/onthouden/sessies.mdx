@@ -168,7 +168,7 @@ De cookie `naam` uit de vorige les zet je server niet meer. Gebruik je het htmx-
 4. Staat de cookie `naam` uit de vorige les er ook nog? Die houdt 30 dagen, want je server haalt hem niet weg. Selecteer hem en druk op Delete; je server gebruikt hem niet meer.
 
 :::danger[Gaat er iets mis?]
-Krijg je `{"detail":"Log eerst in"}` terwijl je net bent ingelogd? Kijk dan of `sessies.commit()` in je `/inloggen` staat, en of `set_cookie` op het antwoord staat dat je ook echt returnt. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
+Zie je na het inloggen weer het inlogformulier? Staat er in het tabblad App wel een cookie `sessie_id`, kijk dan of `sessies.commit()` in je `/inloggen` staat. Staat er geen cookie, kijk dan of `set_cookie` op het antwoord staat dat je ook echt returnt. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
 :::
 
 ## Opdrachten
@@ -235,7 +235,7 @@ Haal dit endpoint daarna weg. Op een echte site zou je hiermee de sessies van al
 
 ### Opdracht 4: Make - Alleen je eigen berichten verwijderen
 
-Toon op `/berichten` de verwijderknop uit [Doorsturen na opslaan (redirect)](/docs/FastAPI/berichten-opslaan/redirect) alleen bij berichten van de bezoeker die is ingelogd.
+Toon op `/berichten` de verwijderknop uit [Een bericht verwijderen: een verborgen veld](/docs/FastAPI/berichten-verwijderen/verwijderen) alleen bij berichten van de bezoeker die is ingelogd.
 
 <details>
 <summary>Tip</summary>
@@ -293,7 +293,7 @@ Het POST-endpoint kan de cookie net zo goed opvragen als de GET. Vergelijk de na
 
 Vervang je `POST /verwijderen` door deze versie:
 
-{/* route-dubbel: antwoord, vervangt POST /verwijderen uit Doorsturen na opslaan (redirect) met een controle */}
+{/* route-dubbel: antwoord, vervangt POST /verwijderen uit Een bericht verwijderen met een controle */}
 ```python
 @app.post("/verwijderen")
 async def verwijderen(sleutel: str = Form(...), sessie_id: str = Cookie(default="")):

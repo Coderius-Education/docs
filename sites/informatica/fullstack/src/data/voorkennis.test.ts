@@ -57,7 +57,7 @@ const ZONDER_BLOK: Record<string, string> = {
   'FastAPI/in-de-browser/devtools-console.mdx':
     'console.log en de DOM staan al bij javascript.mdx, de les ervoor; niet herhalen',
   'FastAPI/afronden/foutpagina.mdx':
-    'bouwt op de 404 uit detailpagina en op templates, allebei in deze cursus; de handler wordt in de les zelf uitgelegd',
+    'bouwt op de 404 uit niet-gevonden en op templates, allebei in deze cursus; de handler wordt in de les zelf uitgelegd',
   'FastAPI/afronden/hoe-een-verzoek-werkt.mdx': 'samenvatting van deze cursus, geen nieuwe stof',
   'FastAPI/index.mdx':
     'startpagina: noemt de drie cursussen zichtbaar met SiteLinks onder Wat je al moet kunnen; de lessen hebben elk hun eigen blok',
