@@ -1,0 +1,318 @@
+# Eén route voor veel pagina's: path-parameters
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/data/11a-dictionaries-basis', label: 'Dictionaries'},
+    {site: 'python', to: '/docs/data/11b-itereren-dictionaries', label: 'Door een dictionary lopen'},
+  ]}
+/>
+
+Je site heeft nu drie pagina's, en elke pagina heeft een eigen route: `/`, `/about` en `/contact`. Stel dat je een site over dieren maakt, met een pagina per dier. Dan zou het zo beginnen:
+
+{/* niet-compileren: drie losse routes als voorbeeld van het probleem, niet om over te nemen */}
+```python
+@app.get("/kat", response_class=HTMLResponse)
+async def kat():
+    return "<h1>Over dieren</h1><p>Een kat spint als hij tevreden is.</p>"
+
+@app.get("/hond", response_class=HTMLResponse)
+async def hond():
+    return "<h1>Over dieren</h1><p>Een hond kwispelt als hij blij is.</p>"
+
+@app.get("/vis", response_class=HTMLResponse)
+async def vis():
+    return "<h1>Over dieren</h1><p>Een vis ademt met kieuwen.</p>"
+```
+
+Deze drie hoef je niet over te nemen. Ze laten zien waar het knelt: drie functies die bijna hetzelfde doen. Bij vijftig dieren schrijf je vijftig functies, en wil je een link terug naar Home, dan pas je er vijftig aan. Alleen het stuk achter de `/` en de zin verschillen.
+
+## Eén route met een plekhouder
+
+Zet dit endpoint onder je andere endpoints:
+
+```python
+@app.get("/dier/{naam}")
+async def dier(naam: str):
+    return {"je_vroeg_om": naam}
+```
+
+Ga naar [http://127.0.0.1:8000/dier/kat](http://127.0.0.1:8000/dier/kat). Je krijgt `{"je_vroeg_om":"kat"}`. Op `/dier/olifant` krijg je `{"je_vroeg_om":"olifant"}`.
+
+`{naam}` tussen accolades is een plekhouder in het pad: een **path-parameter**. Wat er in de URL op die plek staat, komt binnen als de parameter met dezelfde naam. Eén route vangt zo elk adres dat begint met `/dier/`.
+
+## De tekst opzoeken
+
+Wat per dier verschilt, zet je in een dictionary, met de naam uit de URL als sleutel. Vervang je endpoint door deze versie, met de dictionary erboven:
+
+<CodeUitleg>
+
+{/* route-dubbel: vervangt de eerste versie van GET /dier/{naam} hierboven */}
+```python showLineNumbers
+DIEREN = {
+    "kat": "Een kat spint als hij tevreden is.",
+    "hond": "Een hond kwispelt als hij blij is.",
+    "vis": "Een vis ademt met kieuwen.",
+}
+
+@app.get("/dier/{naam}", response_class=HTMLResponse)
+async def dier(naam: str):
+    tekst = DIEREN.get(naam, "Dit dier staat nog niet op de site.")
+    return f"""
+    <!DOCTYPE html>
+    <html>
+        <body>
+            <h1>Over dieren</h1>
+            <p>{tekst}</p>
+            <a href="/">Terug naar Home</a>
+        </body>
+    </html>
+    """
+```
+
+<Regel n={1} tot={5}>
+De dictionary `DIEREN` staat buiten de functie, bovenaan bij je andere code of vlak boven het endpoint. Een dier erbij is één regel erbij.
+</Regel>
+
+<Regel n={9}>
+`DIEREN.get(naam, …)` geeft de zin bij `naam`. Staat `naam` niet in de dictionary, dan krijg je de tekst na de komma.
+</Regel>
+
+<Regel n={10} tot={19}>
+De `f` voor de string zet de waarde van `tekst` op de plek van `{tekst}`, net als bij `print(f"…")`.
+</Regel>
+
+</CodeUitleg>
+
+Zet in de HTML de zin uit je eigen dictionary, en niet `naam` zelf. Wat in de URL staat, typt de bezoeker, en dat kan ook HTML zijn. Waarom dat gevaarlijk is, zie je later in de route Veiligheid, bij [HTML van een bezoeker](/docs/veiligheid/xss/zwakheid).
+
+## Testen
+
+1. Ga naar `/dier/kat`, `/dier/hond` en `/dier/vis`. Elk dier krijgt zijn eigen zin, uit één functie.
+2. Ga naar `/dier/olifant`. Je ziet "Dit dier staat nog niet op de site."
+3. Ga naar `/dier/Kat`, met een hoofdletter. Ook dat dier kent je site niet: een sleutel telt elke letter mee.
+
+Een nette foutpagina voor een dier dat er niet is, met de statuscode 404, maak je later, in [Eén item tonen: opzoeken en 404](/docs/FastAPI/gastenboek/detailpagina).
+
+## Er gaat iets mis
+
+Schrijf je `DIEREN[naam]` in plaats van `DIEREN.get(naam, …)`, dan werkt `/dier/kat` wel. Maar `/dier/olifant` geeft `Internal Server Error`, en in je terminal staat:
+
+```
+KeyError: 'olifant'
+```
+
+Met vierkante haken vraag je een sleutel op die er moet zijn. `get` geeft bij een onbekende sleutel de tekst na de komma, en je server blijft heel.
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+```python
+from fastapi import FastAPI
+from fastapi.responses import FileResponse, HTMLResponse
+
+app = FastAPI()
+
+@app.get("/")
+async def home():
+    return FileResponse("static/pages/home.html")
+
+@app.get("/info")
+async def info():
+    return {"naam": "Jouw Naam", "leeftijd": 16}
+
+@app.get("/pagina", response_class=HTMLResponse)
+async def pagina():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Mijn Pagina</title>
+        </head>
+        <body>
+            <h1>Hallo!</h1>
+            <p>Dit is mijn eerste HTML pagina.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/styled", response_class=HTMLResponse)
+async def styled():
+    return """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Met CSS</title>
+            <style>
+                h1 { color: blue; }
+                p { color: gray; }
+            </style>
+        </head>
+        <body>
+            <h1>Gestylede pagina</h1>
+            <p>Deze tekst is grijs.</p>
+        </body>
+    </html>
+    """
+
+@app.get("/about")
+async def about():
+    return FileResponse("static/pages/about.html")
+
+DIEREN = {
+    "kat": "Een kat spint als hij tevreden is.",
+    "hond": "Een hond kwispelt als hij blij is.",
+    "vis": "Een vis ademt met kieuwen.",
+}
+
+@app.get("/dier/{naam}", response_class=HTMLResponse)
+async def dier(naam: str):
+    tekst = DIEREN.get(naam, "Dit dier staat nog niet op de site.")
+    return f"""
+    <!DOCTYPE html>
+    <html>
+        <body>
+            <h1>Over dieren</h1>
+            <p>{tekst}</p>
+            <a href="/">Terug naar Home</a>
+        </body>
+    </html>
+    """
+```
+
+</details>
+
+## Opdrachten
+
+### Opdracht 1: Predict - Welke waarde komt binnen?
+
+```python
+@app.get("/groet/{naam}")
+async def groet(naam: str):
+    return {"bericht": f"Hallo {naam}"}
+```
+
+**Vraag:** wat krijg je te zien op `/groet/Sarah`? En op `/groet/naam`?
+
+<details>
+<summary>Tip</summary>
+
+De accolades zijn een plekhouder, geen letterlijke tekst. Wat je ook intypt, dát komt binnen.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`/groet/Sarah` geeft `{"bericht":"Hallo Sarah"}` en `/groet/naam` geeft `{"bericht":"Hallo naam"}`. Ook het woord "naam" is hier niets meer dan een waarde.
+
+</details>
+
+### Opdracht 2: Run
+
+Maak de dictionary `DIEREN` en het endpoint `/dier/{naam}`. Zet er een vierde dier bij, zonder een nieuwe functie. Krijgt het op `/dier/<jouw dier>` meteen een eigen pagina?
+
+### Opdracht 3: Investigate - Andere naam
+
+Verander de parameter in je functie van `naam` naar `dier_naam`, maar laat `{naam}` in het pad staan:
+
+{/* niet-compileren: losse handler-signature, toont juist de mismatch */}
+```python
+@app.get("/dier/{naam}", response_class=HTMLResponse)
+async def dier(dier_naam: str):
+```
+
+Verander `DIEREN.get(naam, …)` ook in `DIEREN.get(dier_naam, …)`. Wat zie je op `/dier/kat`?
+
+<details>
+<summary>Antwoord</summary>
+
+Je browser toont een weigering met `"loc":["query","dier_naam"]` en `"msg":"Field required"`, en in je terminal staat de statuscode 422.
+
+FastAPI koppelt op naam, niet op volgorde. Het ziet `{naam}` in het pad en zoekt een parameter die zo heet; die is er niet. Tegelijk vraagt je functie om `dier_naam`, en dat staat nergens in het pad. Daarom vraagt FastAPI erom na een vraagteken in de URL: `/dier/kat?dier_naam=hond` toont de zin over de hond. Dat is niet wat je bedoelde. Zet beide namen weer gelijk.
+
+</details>
+
+### Opdracht 4: Investigate - Zonder naam
+
+Wat krijg je op `/dier`, zonder `/` en zonder naam erachter? En op `/dier/kat/hond`?
+
+<details>
+<summary>Antwoord</summary>
+
+Allebei `{"detail":"Not Found"}`, een 404. De route `/dier/{naam}` past alleen op een adres met precies één stuk na `/dier/`. Bij `/dier` ontbreekt dat stuk, en bij `/dier/kat/hond` zijn het er twee. Geen enkel endpoint past, dus FastAPI stuurt zelf een 404.
+
+</details>
+
+### Opdracht 5: Make - Een eigen verzameling
+
+Maak een route `/vak/{naam}` met een dictionary van drie schoolvakken, met bij elk vak één zin. Een vak dat er niet in staat, krijgt "Dit vak ken ik niet."
+
+<details>
+<summary>Tip</summary>
+
+Het is dezelfde vorm als `/dier/{naam}`: een dictionary, `get` met een tekst na de komma, en een f-string met de zin erin.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+VAKKEN = {
+    "wiskunde": "Bij wiskunde reken je met getallen en vormen.",
+    "biologie": "Bij biologie leer je hoe levende dingen werken.",
+    "informatica": "Bij informatica leer je programmeren.",
+}
+
+@app.get("/vak/{naam}", response_class=HTMLResponse)
+async def vak(naam: str):
+    tekst = VAKKEN.get(naam, "Dit vak ken ik niet.")
+    return f"""
+    <!DOCTYPE html>
+    <html>
+        <body>
+            <h1>Mijn vakken</h1>
+            <p>{tekst}</p>
+        </body>
+    </html>
+    """
+```
+
+</details>
+
+### Opdracht 6: Make - Alle dieren met een link
+
+Maak een pagina `/dieren` met een link naar de pagina van elk dier in `DIEREN`. Zet er een dier bij in de dictionary: staat het daarna ook in de lijst, zonder dat je de pagina aanpast?
+
+<details>
+<summary>Tip</summary>
+
+Loop met `for naam in DIEREN:` langs de sleutels, en plak per dier een regel HTML aan een string vast, zoals `<li><a href="/dier/kat">kat</a></li>`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+@app.get("/dieren", response_class=HTMLResponse)
+async def dieren():
+    links = ""
+    for naam in DIEREN:
+        links += f'<li><a href="/dier/{naam}">{naam}</a></li>'
+    return f"""
+    <!DOCTYPE html>
+    <html>
+        <body>
+            <h1>Alle dieren</h1>
+            <ul>{links}</ul>
+        </body>
+    </html>
+    """
+```
+
+Hier mag `naam` wel in de HTML: het komt uit je eigen dictionary, niet uit de URL. Een dier erbij in `DIEREN` geeft meteen een link erbij, en die link komt uit bij dezelfde route `/dier/{naam}`.
+
+</details>

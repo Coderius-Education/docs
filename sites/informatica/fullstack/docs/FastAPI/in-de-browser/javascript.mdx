@@ -27,7 +27,7 @@ je-project/
 └── templates/
 ```
 
-Je hoeft niets aan `main.py` te veranderen. De regel `app.mount("/static", StaticFiles(directory="static"), name="static")` uit [CSS in een eigen bestand (static files)](/docs/FastAPI/html/static_files) serveert alles in die map, dus ook je JavaScript.
+Je hoeft niets aan `main.py` te veranderen. De regel `app.mount("/static", StaticFiles(directory="static"), name="static")` uit [CSS in een eigen bestand (static files)](/docs/FastAPI/css-en-afbeeldingen/static_files) serveert alles in die map, dus ook je JavaScript.
 
 De teller in deze les komt op het gastenboekformulier, `static/pages/gastenboek_form.html`. Koppel je script in de `<head>` van dat bestand, onder de script-tag van htmx als die er staat. Heeft het bestand nog geen `<head>`, omdat je het formulierrecept uit de [htmx-recepten](/docs/FastAPI/zonder-herladen/htmx-overzicht) niet bouwde, zet er dan een boven de `<body>`:
 

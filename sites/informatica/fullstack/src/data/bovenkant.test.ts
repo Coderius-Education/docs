@@ -55,13 +55,21 @@ describe('de bovenkant van main.py', () => {
   });
 });
 
-describe('Run-opdrachten in de eerste twee hoofdstukken', () => {
-  const vroeg = categorieen
-    .filter((c) => c.label === 'Je eerste server' || c.label === "HTML-pagina's")
-    .flatMap((c) => plat(c.items));
+describe('Run-opdrachten in de eerste hoofdstukken', () => {
+  // Je eerste server en wat eerst HTML-pagina's heette: de losse pagina's, de
+  // path-parameters en CSS en afbeeldingen.
+  const VROEG = [
+    'Je eerste server',
+    "Losse pagina's en routes",
+    "Eén route voor veel pagina's",
+    'CSS en afbeeldingen',
+  ];
+  const vroeg = categorieen.filter((c) => VROEG.includes(c.label)).flatMap((c) => plat(c.items));
 
   it('vinden de lessen', () => {
-    expect(vroeg).toContain('FastAPI/html/html_bestanden');
+    expect(vroeg).toContain('FastAPI/paginas/html_bestanden');
+    expect(vroeg).toContain('FastAPI/veel-paginas/path-parameters');
+    expect(vroeg).toContain('FastAPI/css-en-afbeeldingen/afbeeldingen');
   });
 
   it('elke Run stelt een vraag en zegt niet "start de server"', () => {

@@ -39,6 +39,24 @@ describe('volgorde van de FastAPI-lessen', () => {
     expect(eerste).toBe('FastAPI/formulieren/templates');
   });
 
+  // Path-parameters kwamen pas binnen bij Eén item tonen, midden in het
+  // gastenboek en samen met de database en de 404. Nu maakt de leerling eerst
+  // losse pagina's met elk een eigen route, en ziet hij daarna in een eigen
+  // les waarom één route met een plekhouder beter is.
+  it("de eerste route met een path-parameter staat in Eén route voor veel pagina's", () => {
+    const pad = /@app\.\w+\("[^"]*\{\w+\}/;
+    const eerste = lessen.find((id) => pad.test(tekst(id)));
+    expect(eerste).toBe('FastAPI/veel-paginas/path-parameters');
+    expect(hoofdtekst('FastAPI/veel-paginas/path-parameters')).toMatch(pad);
+    const plek = categorieen.findIndex((c) => c.label === "Eén route voor veel pagina's");
+    expect(categorieen[plek - 1].label).toBe("Losse pagina's en routes");
+    // Het probleem staat vóór de oplossing: losse routes per pagina, eerst in
+    // de les, dan de plekhouder.
+    const les = hoofdtekst('FastAPI/veel-paginas/path-parameters');
+    expect(les.indexOf('@app.get("/kat"')).toBeGreaterThan(-1);
+    expect(les.indexOf('@app.get("/kat"')).toBeLessThan(les.indexOf('@app.get("/dier/{naam}")'));
+  });
+
   it.each([
     'time.time_ns()',
     'db.items()',
@@ -97,14 +115,15 @@ describe('titels en categorieën', () => {
   });
 
   it.each([
-    ['FastAPI/gastenboek/detailpagina', /path-parameters/],
+    ['FastAPI/veel-paginas/path-parameters', /path-parameters/],
+    ['FastAPI/gastenboek/detailpagina', /opzoeken/],
     ['FastAPI/gastenboek/detailpagina', /404/],
     ['FastAPI/gastenboek/redirect', /redirect/],
     ['FastAPI/formulieren/templates', /Jinja2/],
     ['FastAPI/sqlitedict/database', /SqliteDict/],
     ['FastAPI/sqlitedict/database-sleutels', /SqliteDict/],
     ['FastAPI/sqlitedict/database-waarden', /SqliteDict/],
-    ['FastAPI/html/static_files', /static files/],
+    ['FastAPI/css-en-afbeeldingen/static_files', /static files/],
     ['FastAPI/gastenboek/lijst_tonen', /for-lus/],
     ['FastAPI/accounts/registreren', /account/],
     ['FastAPI/accounts/inloggen', /wachtwoord/],

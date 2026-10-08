@@ -9,7 +9,8 @@ export type Omleiding = { van: string; naar: string };
 // op een rij heette sqlitedict.mdx en werd sqlitedict/op-een-rij.mdx.
 const mappen: Record<string, (string | [string, string])[]> = {
   'eerste-server': ['installatie', 'eerste_endpoint', 'verzoek-eerste', 'devtools-netwerk'],
-  html: ['html_tonen', 'html_bestanden', 'links', 'static_files', 'afbeeldingen', 'verzoek-static'],
+  paginas: ['html_tonen', 'html_bestanden', 'links'],
+  'css-en-afbeeldingen': ['static_files', 'afbeeldingen', 'verzoek-static'],
   formulieren: ['templates', 'get_vs_post', 'forms', 'post_met_templates'],
   sqlitedict: ['database', 'database-sleutels', 'database-waarden', ['sqlitedict', 'op-een-rij']],
   gastenboek: ['post_naar_database', 'lijst_tonen', 'redirect', 'detailpagina', 'verzoek-get'],

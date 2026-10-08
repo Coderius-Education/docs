@@ -8,7 +8,11 @@ export const ZINNEN: Record<string, string> = {
   // FastAPI: de basis
   'Je eerste server':
     'Je start een server op je eigen computer en ziet in de browser wat je functie teruggeeft.',
-  "HTML-pagina's": "Je server stuurt echte pagina's, met links, een stylesheet en afbeeldingen.",
+  "Losse pagina's en routes":
+    "Je server stuurt echte pagina's, elk op een eigen adres, met links ertussen.",
+  "Eén route voor veel pagina's":
+    'Eén functie maakt een pagina voor elk adres dat op hetzelfde patroon past.',
+  'CSS en afbeeldingen': "Je pagina's krijgen een stylesheet en afbeeldingen.",
   'Templates en formulieren':
     'Een pagina vult zich met waarden uit Python, en je server beantwoordt een formulier.',
   'Gegevens opslaan (SqliteDict)':

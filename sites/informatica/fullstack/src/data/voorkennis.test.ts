@@ -61,10 +61,11 @@ const ZONDER_BLOK: Record<string, string> = {
     'recepten die op de htmx-les ervoor en op de gastenboek-lessen bouwen, allemaal in deze cursus',
   'FastAPI/zonder-herladen/verzoek-htmx.mdx': 'diagram van de lessen ervoor, geen nieuwe stof',
   'FastAPI/eerste-server/verzoek-eerste.mdx': 'diagram van de les ervoor, geen nieuwe stof',
-  'FastAPI/html/verzoek-static.mdx': 'diagram van de lessen ervoor, geen nieuwe stof',
+  'FastAPI/css-en-afbeeldingen/verzoek-static.mdx':
+    'diagram van de lessen ervoor, geen nieuwe stof',
   'FastAPI/gastenboek/verzoek-get.mdx': 'diagram van de lessen ervoor, geen nieuwe stof',
   'FastAPI/onthouden/verzoek-sessie.mdx': 'diagram van de lessen ervoor, geen nieuwe stof',
-  'FastAPI/html/html_bestanden.mdx': 'HTML-bestand en pad; HTML zelf staat al bij html_tonen',
+  'FastAPI/paginas/html_bestanden.mdx': 'HTML-bestand en pad; HTML zelf staat al bij html_tonen',
   'FastAPI/accounts/inloggen.mdx':
     'het wachtwoordveld staat al bij registreren.mdx, de les ervoor; de controle is server-side en wordt hier zelf uitgelegd',
   'FastAPI/eerste-server/installatie.mdx':
@@ -131,23 +132,24 @@ const ZONDER_BLOK: Record<string, string> = {
 };
 
 const MET_BLOK = [
-  'FastAPI/html/afbeeldingen.mdx',
+  'FastAPI/css-en-afbeeldingen/afbeeldingen.mdx',
   'FastAPI/sqlitedict/database-sleutels.mdx',
   'FastAPI/sqlitedict/database.mdx',
   'FastAPI/gastenboek/detailpagina.mdx',
+  'FastAPI/veel-paginas/path-parameters.mdx',
   'FastAPI/eerste-server/eerste_endpoint.mdx',
   'FastAPI/formulieren/forms.mdx',
   'FastAPI/formulieren/get_vs_post.mdx',
-  'FastAPI/html/html_tonen.mdx',
+  'FastAPI/paginas/html_tonen.mdx',
   'FastAPI/zonder-herladen/htmx.mdx',
   'FastAPI/in-de-browser/javascript.mdx',
   'FastAPI/gastenboek/lijst_tonen.mdx',
-  'FastAPI/html/links.mdx',
+  'FastAPI/paginas/links.mdx',
   'FastAPI/gastenboek/post_naar_database.mdx',
   'FastAPI/accounts/registreren.mdx',
   'FastAPI/in-de-browser/server-of-browser.mdx',
   'FastAPI/onthouden/sessies.mdx',
-  'FastAPI/html/static_files.mdx',
+  'FastAPI/css-en-afbeeldingen/static_files.mdx',
   'FastAPI/formulieren/templates.mdx',
   'veiligheid/dos/te-veel.mdx',
   'veiligheid/dos/verzoek.mdx',

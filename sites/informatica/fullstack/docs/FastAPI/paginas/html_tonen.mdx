@@ -59,7 +59,7 @@ Ga naar [http://127.0.0.1:8000/pagina](http://127.0.0.1:8000/pagina). Je ziet nu
 
 ## CSS toevoegen
 
-In de web-cursus zette je CSS in een eigen bestand en koppelde je het met `<link>`. Dat kan hier ook, maar daarvoor moet je server dat bestand kunnen sturen; dat leer je in [CSS in een eigen bestand](/docs/FastAPI/html/static_files). Tot die tijd zet je de CSS in een `<style>`-tag in de `<head>`. Zet dit endpoint er ook bij:
+In de web-cursus zette je CSS in een eigen bestand en koppelde je het met `<link>`. Dat kan hier ook, maar daarvoor moet je server dat bestand kunnen sturen; dat leer je in [CSS in een eigen bestand](/docs/FastAPI/css-en-afbeeldingen/static_files). Tot die tijd zet je de CSS in een `<style>`-tag in de `<head>`. Zet dit endpoint er ook bij:
 
 ```python
 @app.get("/styled", response_class=HTMLResponse)

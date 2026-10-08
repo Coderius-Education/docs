@@ -78,28 +78,28 @@ const STATIC_STAPPEN: Stap[] = [
     kant: 'browser',
     titel: 'De browser stuurt een GET naar /',
     tekst: 'Je typt het adres of klikt op een link; de pagina wordt opgevraagd.',
-    to: '/docs/FastAPI/html/links',
+    to: '/docs/FastAPI/paginas/links',
     les: 'Links tussen pagina’s',
   },
   {
     kant: 'server',
     titel: 'Jouw functie stuurt het bestand',
     tekst: 'home() geeft een FileResponse: de inhoud van static/pages/home.html, ongewijzigd.',
-    to: '/docs/FastAPI/html/html_bestanden',
+    to: '/docs/FastAPI/paginas/html_bestanden',
     les: 'HTML in bestanden',
   },
   {
     kant: 'browser',
     titel: 'De browser leest de HTML',
     tekst: 'Daarin staan een <link> naar CSS en een <img>. Die bestanden heeft hij nog niet.',
-    to: '/docs/FastAPI/html/static_files',
+    to: '/docs/FastAPI/css-en-afbeeldingen/static_files',
     les: 'CSS in een eigen bestand (static files)',
   },
   {
     kant: 'browser',
     titel: 'Nog twee verzoeken',
     tekst: 'Een GET naar /static/css/style.css en een naar /static/kat.jpg, allebei apart.',
-    to: '/docs/FastAPI/html/afbeeldingen',
+    to: '/docs/FastAPI/css-en-afbeeldingen/afbeeldingen',
     les: 'Afbeeldingen tonen',
   },
   {
@@ -107,7 +107,7 @@ const STATIC_STAPPEN: Stap[] = [
     titel: 'StaticFiles antwoordt',
     tekst:
       'Zonder een functie van jou: app.mount geeft het bestand door zoals het op schijf staat.',
-    to: '/docs/FastAPI/html/static_files',
+    to: '/docs/FastAPI/css-en-afbeeldingen/static_files',
     les: 'CSS in een eigen bestand (static files)',
   },
   {
@@ -123,7 +123,7 @@ const GET_STAPPEN: Stap[] = [
     titel: 'Je klikt op een link',
     tekst:
       'Zoals de link Terug naar alle berichten: hij wijst naar /berichten, een endpoint, geen bestand.',
-    to: '/docs/FastAPI/html/links',
+    to: '/docs/FastAPI/paginas/links',
     les: 'Links tussen pagina’s',
   },
   {
@@ -240,7 +240,7 @@ const HTMX_STAPPEN: Stap[] = [
     tekst:
       'Leest de tijd, of slaat een bericht op. Ook dit verzoek komt van de bezoeker, dus controleer hier.',
     to: '/docs/FastAPI/gastenboek/detailpagina',
-    les: 'Eén item tonen: path-parameters en 404',
+    les: 'Eén item tonen: opzoeken en 404',
   },
   {
     kant: 'server',

@@ -1,4 +1,4 @@
-# Eén item tonen: path-parameters en 404
+# Eén item tonen: opzoeken en 404
 
 <Voorkennis
   items={[
@@ -9,9 +9,9 @@
 
 Je lijst toont alle berichten onder elkaar, op één pagina. Op echte websites klik je op één item en krijg je een eigen pagina, met een eigen URL die je kunt delen. Daarvoor moet de URL zeggen wélk bericht je bedoelt.
 
-## De URL als parameter
+## De sleutel in de URL
 
-In [GET vs POST](/docs/FastAPI/formulieren/get_vs_post) haalde je data uit de URL met een vraagteken: `/zoek?term=python`. Voor een detailpagina is een **path-parameter** gebruikelijker. Die zet je tussen accolades in het pad. Zet dit endpoint onder je andere endpoints:
+In [Eén route voor veel pagina's: path-parameters](/docs/FastAPI/veel-paginas/path-parameters) gaf `/dier/{naam}` elk dier een eigen pagina. Een bericht krijgt op dezelfde manier een eigen adres, met de sleutel uit de database in het pad. Een vraagteken, zoals `/zoek?term=python` uit [GET vs POST](/docs/FastAPI/formulieren/get_vs_post), kan ook, maar voor één item is een path-parameter gebruikelijker. Zet dit endpoint onder je andere endpoints:
 
 ```python
 @app.get("/bericht/{sleutel}")
@@ -19,9 +19,7 @@ async def bericht_detail(request: Request, sleutel: str):
     return {"je_vroeg_om": sleutel}
 ```
 
-Ga je naar `/bericht/bericht_17` dan krijg je `{"je_vroeg_om":"bericht_17"}`. Wat er op de plek van `{sleutel}` staat, komt binnen als de parameter met dezelfde naam.
-
-De naam tussen de accolades en de naam van de parameter in je functie moeten dus precies gelijk zijn.
+Ga je naar `/bericht/bericht_17` dan krijg je `{"je_vroeg_om":"bericht_17"}`, net als bij de dieren.
 
 ## Het bericht opzoeken
 
@@ -226,6 +224,26 @@ async def styled():
 async def about():
     return FileResponse("static/pages/about.html")
 
+DIEREN = {
+    "kat": "Een kat spint als hij tevreden is.",
+    "hond": "Een hond kwispelt als hij blij is.",
+    "vis": "Een vis ademt met kieuwen.",
+}
+
+@app.get("/dier/{naam}", response_class=HTMLResponse)
+async def dier(naam: str):
+    tekst = DIEREN.get(naam, "Dit dier staat nog niet op de site.")
+    return f"""
+    <!DOCTYPE html>
+    <html>
+        <body>
+            <h1>Over dieren</h1>
+            <p>{tekst}</p>
+            <a href="/">Terug naar Home</a>
+        </body>
+    </html>
+    """
+
 @app.get("/foto")
 async def foto():
     return FileResponse("static/pages/foto.html")
@@ -331,27 +349,29 @@ async def bericht_detail(request: Request, sleutel: str):
 
 ## Opdrachten
 
-### Opdracht 1: Predict - Welke waarde komt binnen?
+### Opdracht 1: Predict - Twee keer niet gevonden
 
-```python
-@app.get("/groet/{naam}")
-async def groet(naam: str):
-    return {"bericht": f"Hallo {naam}"}
-```
+Je endpoint `/bericht/{sleutel}` staat er, met de controle op `None`. Je gaat naar twee adressen die allebei niet bestaan:
 
-**Vraag:** wat krijg je te zien op `/groet/Sarah`? En op `/groet/naam`?
+1. `/bericht/onzin`
+2. `/bericht/onzin/meer`
+
+**Vraag:** krijg je twee keer hetzelfde te zien?
 
 <details>
 <summary>Tip</summary>
 
-De accolades zijn een plekhouder, geen letterlijke tekst. Wat je ook intypt, dát komt binnen.
+Zoek bij elk adres het endpoint dat erbij past. Draait je eigen functie bij allebei?
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-`/groet/Sarah` geeft `{"bericht":"Hallo Sarah"}` en `/groet/naam` geeft `{"bericht":"Hallo naam"}`. Ook het woord "naam" is hier niets meer dan een waarde.
+Nee. Allebei geven ze een 404, maar met een andere tekst:
+
+1. `/bericht/onzin` past op je route. Je functie draait, vindt niets en stuurt jouw 404: `{"detail":"Dit bericht bestaat niet"}`.
+2. `/bericht/onzin/meer` past op geen enkele route. Je functie draait niet, en FastAPI stuurt zelf `{"detail":"Not Found"}`.
 
 </details>
 
@@ -359,22 +379,14 @@ De accolades zijn een plekhouder, geen letterlijke tekst. Wat je ook intypt, dá
 
 Maak het `/bericht/{sleutel}` endpoint en de template `bericht.html`. Pas je lijst aan zodat elke naam een link is.
 
-### Opdracht 3: Investigate - Andere naam
+### Opdracht 3: Investigate - Zonder de controle
 
-Verander de parameter in je functie van `sleutel` naar `key`, maar laat `{sleutel}` in het pad staan:
-
-{/* niet-compileren: losse handler-signature, toont juist de mismatch */}
-```python
-@app.get("/bericht/{sleutel}")
-async def bericht_detail(request: Request, key: str):
-```
+Zet een `#` voor de twee regels met `if bericht is None:` en `raise HTTPException(...)`. Ga naar `/bericht/onzin` met het tabblad Netwerk open. Wat zie je op de pagina, en welke statuscode staat in Netwerk?
 
 <details>
 <summary>Antwoord</summary>
 
-Je browser toont een weigering met `"loc":["query","key"]` en `"msg":"Field required"`, en in je terminal staat de statuscode 422.
-
-FastAPI koppelt op naam, niet op volgorde. Het ziet `{sleutel}` in het pad en zoekt een parameter die zo heet; die is er niet. Tegelijk vraagt je functie om `key`, en dat staat nergens in de URL. Daarom vraagt FastAPI erom als query-parameter. Verander je ook `db.get(sleutel)` in `db.get(key)`, dan komt `/bericht/abc?key=abc` wél aan, maar dat is niet wat je bedoelde. Laat je `db.get(sleutel)` staan, dan geeft dat adres een `Internal Server Error`: de naam `sleutel` bestaat niet meer in je functie.
+De pagina toont "Bericht van" met een lege plek erachter, en eronder een lege regel. `bericht` is `None`, en Jinja2 zet voor `{{ bericht.naam }}` dan niets neer, zonder foutmelding. In Netwerk staat `200`: voor de browser ging alles goed. Een bezoeker, en ook een zoekmachine, kan niet zien dat dit bericht niet bestaat. Haal de `#` weer weg.
 
 </details>
 

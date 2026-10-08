@@ -5,7 +5,7 @@ description: Laat je een bezoeker met ?naam= kiezen welk bestand je server stuur
 
 # Invoer controleren: een bestandsnaam van een bezoeker
 
-In [HTML in bestanden](/docs/FastAPI/html/html_bestanden) kreeg elke pagina een
+In [HTML in bestanden](/docs/FastAPI/paginas/html_bestanden) kreeg elke pagina een
 eigen endpoint met `FileResponse`. Met tien pagina's wil je liever één endpoint,
 waarin de bezoeker de pagina kiest met een query-parameter, zoals `?term=` in
 [GET vs POST](/docs/FastAPI/formulieren/get_vs_post). Maar die naam komt van de bezoeker,
@@ -83,7 +83,7 @@ een bestand met een geheime sleutel. Met `..` uit de bedoelde map klimmen heet
 **path traversal**.
 
 Met een path-parameter, zoals in
-[Eén item tonen: path-parameters en 404](/docs/FastAPI/gastenboek/detailpagina), gaat dit
+[Eén item tonen: opzoeken en 404](/docs/FastAPI/gastenboek/detailpagina), gaat dit
 net anders. Dat zie je in opdracht 1.
 
 ## Alleen wat in je lijst staat
@@ -171,7 +171,7 @@ staat.
 "http://127.0.0.1:8000/pagina?naam=home.html"
 ```
 
-Meer over `FileResponse` en de map `static/pages`: [HTML in bestanden](/docs/FastAPI/html/html_bestanden).
+Meer over `FileResponse` en de map `static/pages`: [HTML in bestanden](/docs/FastAPI/paginas/html_bestanden).
 
 ## Opdrachten
 

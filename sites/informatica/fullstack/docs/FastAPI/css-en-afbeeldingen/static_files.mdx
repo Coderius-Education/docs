@@ -6,7 +6,7 @@
   ]}
 />
 
-In [HTML tonen](/docs/FastAPI/html/html_tonen) zette je CSS in een `<style>`-tag. Met meer pagina's wil je één CSS-bestand dat ze allemaal delen. Zo'n bestand stuurt de server ongewijzigd door, zonder dat er een functie van jou aan te pas komt: een **static file**.
+In [HTML tonen](/docs/FastAPI/paginas/html_tonen) zette je CSS in een `<style>`-tag. Met meer pagina's wil je één CSS-bestand dat ze allemaal delen. Zo'n bestand stuurt de server ongewijzigd door, zonder dat er een functie van jou aan te pas komt: een **static file**.
 
 ## Mappenstructuur
 
@@ -161,6 +161,26 @@ async def styled():
 @app.get("/about")
 async def about():
     return FileResponse("static/pages/about.html")
+
+DIEREN = {
+    "kat": "Een kat spint als hij tevreden is.",
+    "hond": "Een hond kwispelt als hij blij is.",
+    "vis": "Een vis ademt met kieuwen.",
+}
+
+@app.get("/dier/{naam}", response_class=HTMLResponse)
+async def dier(naam: str):
+    tekst = DIEREN.get(naam, "Dit dier staat nog niet op de site.")
+    return f"""
+    <!DOCTYPE html>
+    <html>
+        <body>
+            <h1>Over dieren</h1>
+            <p>{tekst}</p>
+            <a href="/">Terug naar Home</a>
+        </body>
+    </html>
+    """
 ```
 
 </details>
@@ -231,7 +251,7 @@ body { background-color: lightyellow; }
 
 ### Opdracht 5: Make - Twee stijlen
 
-Geef je pagina `about.html` uit [Links tussen pagina's](/docs/FastAPI/html/links) een eigen CSS-bestand `about.css`, zodat `/` en `/about` er verschillend uitzien.
+Geef je pagina `about.html` uit [Links tussen pagina's](/docs/FastAPI/paginas/links) een eigen CSS-bestand `about.css`, zodat `/` en `/about` er verschillend uitzien.
 
 <details>
 <summary>Tip</summary>

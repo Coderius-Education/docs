@@ -272,7 +272,7 @@ Meer uitleg: [Kijken wat de browser doet](/docs/FastAPI/eerste-server/devtools-n
 
 </details>
 
-## HTML-pagina's
+## Losse pagina's en routes
 
 <details>
 <summary>HTML wordt als tekst getoond, tussen aanhalingstekens en met \n erin</summary>
@@ -293,7 +293,7 @@ async def pagina():
     return "<h1>Hallo</h1>"
 ```
 
-Meer uitleg: [HTML tonen](/docs/FastAPI/html/html_tonen)
+Meer uitleg: [HTML tonen](/docs/FastAPI/paginas/html_tonen)
 
 </details>
 
@@ -309,30 +309,7 @@ RuntimeError: File at path static/pages/home.html does not exist.
 
 **Oplossing:** check of het bestand echt op die plek staat, met precies die naam (hoofdletters tellen). Het pad is relatief aan de map waar je `fastapi dev` startte, dus start de server vanuit je projectmap.
 
-Meer uitleg: [HTML in bestanden](/docs/FastAPI/html/html_bestanden)
-
-</details>
-
-<details>
-<summary>De server start niet: Directory 'static' does not exist</summary>
-
-Onderaan de melding staat:
-
-```
-RuntimeError: Directory 'static' does not exist
-```
-
-**Oorzaak:** `app.mount("/static", StaticFiles(directory="static"), ...)` zoekt bij het starten een map `static` in de map waar je `fastapi dev` startte, en die is er niet. Dat gebeurt in een nieuwe projectmap, zoals de map van een reeks in Veiligheid, als je `main.py` maakt vóór de map `static`. Of je startte de server vanuit een andere map.
-
-**Oplossing:** maak de map `static` naast `main.py`, of start de server vanuit je projectmap. Een lege map is genoeg om te starten.
-
-```
-je-project/
-├── main.py
-└── static/
-```
-
-Meer uitleg: [CSS in een eigen bestand (static files)](/docs/FastAPI/html/static_files)
+Meer uitleg: [HTML in bestanden](/docs/FastAPI/paginas/html_bestanden)
 
 </details>
 
@@ -357,7 +334,32 @@ In de browser staat `{"detail":"Not Found"}`, en in de terminal:
 <a href="/about">Over mij</a>
 ```
 
-Meer uitleg: [Links tussen pagina's](/docs/FastAPI/html/links)
+Meer uitleg: [Links tussen pagina's](/docs/FastAPI/paginas/links)
+
+</details>
+
+## CSS en afbeeldingen
+
+<details>
+<summary>De server start niet: Directory 'static' does not exist</summary>
+
+Onderaan de melding staat:
+
+```
+RuntimeError: Directory 'static' does not exist
+```
+
+**Oorzaak:** `app.mount("/static", StaticFiles(directory="static"), ...)` zoekt bij het starten een map `static` in de map waar je `fastapi dev` startte, en die is er niet. Dat gebeurt in een nieuwe projectmap, zoals de map van een reeks in Veiligheid, als je `main.py` maakt vóór de map `static`. Of je startte de server vanuit een andere map.
+
+**Oplossing:** maak de map `static` naast `main.py`, of start de server vanuit je projectmap. Een lege map is genoeg om te starten.
+
+```
+je-project/
+├── main.py
+└── static/
+```
+
+Meer uitleg: [CSS in een eigen bestand (static files)](/docs/FastAPI/css-en-afbeeldingen/static_files)
 
 </details>
 
@@ -375,7 +377,7 @@ Meer uitleg: [Links tussen pagina's](/docs/FastAPI/html/links)
 
 Open `http://127.0.0.1:8000/static/css/style.css` rechtstreeks: zie je je CSS, dan ligt het aan de `<link>`; een 404, dan aan het pad of de mount.
 
-Meer uitleg: [CSS in een eigen bestand (static files)](/docs/FastAPI/html/static_files)
+Meer uitleg: [CSS in een eigen bestand (static files)](/docs/FastAPI/css-en-afbeeldingen/static_files)
 
 </details>
 
@@ -391,7 +393,7 @@ Meer uitleg: [CSS in een eigen bestand (static files)](/docs/FastAPI/html/static
 3. Herstart de server (Ctrl+C, dan opnieuw `fastapi dev main.py`)
 4. Check of je het juiste bestand hebt aangepast
 
-Meer uitleg: [Als je wijziging niet doorkomt](/docs/FastAPI/html/static_files#als-je-wijziging-niet-doorkomt)
+Meer uitleg: [Als je wijziging niet doorkomt](/docs/FastAPI/css-en-afbeeldingen/static_files#als-je-wijziging-niet-doorkomt)
 
 </details>
 
@@ -407,7 +409,7 @@ Meer uitleg: [Als je wijziging niet doorkomt](/docs/FastAPI/html/static_files#al
 3. Klopt het pad in `src="/static/foto.jpg"`?
 4. Staat `app.mount("/static", ...)` in je code?
 
-Meer uitleg: [Afbeeldingen tonen](/docs/FastAPI/html/afbeeldingen)
+Meer uitleg: [Afbeeldingen tonen](/docs/FastAPI/css-en-afbeeldingen/afbeeldingen)
 
 </details>
 
@@ -523,7 +525,7 @@ async def bericht_detail(request: Request, sleutel: str):
 
 Mag een query-parameter ontbreken, geef hem dan een standaardwaarde: `term: str = ""`. Vergeet `required` op je `<input>` niet, dan verstuurt de browser geen leeg veld.
 
-Meer uitleg: [GET vs POST](/docs/FastAPI/formulieren/get_vs_post) (wat `loc` zegt), [Een formulier versturen (POST)](/docs/FastAPI/formulieren/forms) en [Eén item tonen: path-parameters en 404](/docs/FastAPI/gastenboek/detailpagina)
+Meer uitleg: [GET vs POST](/docs/FastAPI/formulieren/get_vs_post) (wat `loc` zegt), [Een formulier versturen (POST)](/docs/FastAPI/formulieren/forms) en [Eén route voor veel pagina's: path-parameters](/docs/FastAPI/veel-paginas/path-parameters)
 
 </details>
 
@@ -662,7 +664,7 @@ with SqliteDict("sessies.db") as sessies:
     mijn = sessies.get(sessie_id, {})
 ```
 
-Meer uitleg: [Gegevens opslaan met SqliteDict](/docs/FastAPI/sqlitedict/database#er-gaat-iets-mis) (een andere map), [Sleutels in SqliteDict: bekijken, zoeken en verwijderen](/docs/FastAPI/sqlitedict/database-sleutels) (`in`, `get` en `del`), [Eén item tonen: path-parameters en 404](/docs/FastAPI/gastenboek/detailpagina) en [Onthouden op de server: sessies](/docs/FastAPI/onthouden/sessies)
+Meer uitleg: [Gegevens opslaan met SqliteDict](/docs/FastAPI/sqlitedict/database#er-gaat-iets-mis) (een andere map), [Sleutels in SqliteDict: bekijken, zoeken en verwijderen](/docs/FastAPI/sqlitedict/database-sleutels) (`in`, `get` en `del`), [Eén item tonen: opzoeken en 404](/docs/FastAPI/gastenboek/detailpagina), [Onthouden op de server: sessies](/docs/FastAPI/onthouden/sessies) en, voor een gewone dictionary, [Eén route voor veel pagina's: path-parameters](/docs/FastAPI/veel-paginas/path-parameters#er-gaat-iets-mis)
 
 </details>
 
@@ -817,7 +819,7 @@ if bericht is None:
     raise HTTPException(status_code=404, detail="Dit bericht bestaat niet")
 ```
 
-Meer uitleg: [Eén item tonen: path-parameters en 404](/docs/FastAPI/gastenboek/detailpagina)
+Meer uitleg: [Eén item tonen: opzoeken en 404](/docs/FastAPI/gastenboek/detailpagina)
 
 </details>
 

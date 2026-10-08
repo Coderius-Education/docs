@@ -104,7 +104,7 @@ Je gastenboek heeft nu accounts, en een bericht komt er alleen in als het wachtw
 
 **Oorzaak:** het formulier stuurt geen `wachtwoord` mee. Staat het veld er wel, dan heet het anders, of je browser toont nog de oude versie van `gastenboek_form.html`.
 
-**Oplossing:** controleer `name="wachtwoord"` in het formulier, en herlaad de pagina met Ctrl+Shift+R, zoals bij de cache in [CSS in een eigen bestand (static files)](/docs/FastAPI/html/static_files).
+**Oplossing:** controleer `name="wachtwoord"` in het formulier, en herlaad de pagina met Ctrl+Shift+R, zoals bij de cache in [CSS in een eigen bestand (static files)](/docs/FastAPI/css-en-afbeeldingen/static_files).
 
 <details>
 <summary>Zo ziet je `main.py` er nu uit</summary>
@@ -170,6 +170,26 @@ async def styled():
 @app.get("/about")
 async def about():
     return FileResponse("static/pages/about.html")
+
+DIEREN = {
+    "kat": "Een kat spint als hij tevreden is.",
+    "hond": "Een hond kwispelt als hij blij is.",
+    "vis": "Een vis ademt met kieuwen.",
+}
+
+@app.get("/dier/{naam}", response_class=HTMLResponse)
+async def dier(naam: str):
+    tekst = DIEREN.get(naam, "Dit dier staat nog niet op de site.")
+    return f"""
+    <!DOCTYPE html>
+    <html>
+        <body>
+            <h1>Over dieren</h1>
+            <p>{tekst}</p>
+            <a href="/">Terug naar Home</a>
+        </body>
+    </html>
+    """
 
 @app.get("/foto")
 async def foto():
