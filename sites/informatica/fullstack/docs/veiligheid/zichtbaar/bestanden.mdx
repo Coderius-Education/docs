@@ -30,6 +30,9 @@ Uitvoer, met andere sessie-id's bij jou:
 916312710b4a64610d1a100578050e18 Alex
 ```
 
+Heb je opdracht 2 van [les 1](./handleiding) gedaan, dan staat jouw eigen sessie
+er ook bij, bovenaan, met de naam die je op `/docs` invulde.
+
 Hetzelfde lijstje dat `/sessies` in [les 2](./vergeten) weggaf. Daar heb je
 geen endpoint voor nodig: wie het bestand heeft, heeft de sessie-id's. En met
 een sessie-id is hij voor je server die bezoeker, zolang je server draait met
@@ -77,8 +80,16 @@ weg.
 
 ### Opdracht 1: Predict - Sessies weg
 
-Je stopt je server, gooit `sessies.db` weg en start de server opnieuw. Sara's
-`Client` uit `twee.py` stuurt daarna `GET /ik`, met haar oude cookie.
+Kopieer het sessie-id van Sara uit de uitvoer van `lees_sessies.py`. Je stopt
+je server, gooit `sessies.db` weg en start de server opnieuw. Daarna stuur je
+`GET /ik` met dat sessie-id als cookie, zoals `sessies.py` in les 2 deed:
+
+```python
+import httpx
+
+ik = httpx.get("http://127.0.0.1:8000/ik", cookies={"sessie_id": "plak-hier-het-sessie-id"})
+print(ik.json())
+```
 
 **Vraag:** wat antwoordt de server?
 
@@ -92,7 +103,7 @@ Waar zoekt `/ik` het sessie-id op?
 <details>
 <summary>Antwoord</summary>
 
-`{'naam': 'onbekend'}`. De cookie staat nog in de `Client`, maar het sessie-id
+`{'naam': 'onbekend'}`. De cookie is dezelfde als eerst, maar het sessie-id
 staat niet meer in `sessies.db`. Voor de server is Sara een nieuwe bezoeker. Een
 sessie bestaat dus alleen zolang de server hem kent, en wie `sessies.db`
 heeft, heeft alle sessies die je server kent.

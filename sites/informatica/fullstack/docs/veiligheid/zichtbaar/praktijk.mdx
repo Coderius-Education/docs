@@ -44,8 +44,14 @@ sleutel = os.environ.get("WEER_SLEUTEL", "")
 
 In PowerShell zet je hem vóór `fastapi dev`, in dezelfde terminal:
 
-```bash
+```powershell
 $env:WEER_SLEUTEL = "de-code-van-de-dienst"
+```
+
+Op macOS of Linux gaat dat zo:
+
+```bash
+export WEER_SLEUTEL="de-code-van-de-dienst"
 ```
 
 Je code bevat dan alleen de naam `WEER_SLEUTEL`, niet de code zelf. Op een

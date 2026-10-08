@@ -58,7 +58,7 @@ Je hangt de limiter aan je app, en zegt wat er moet gebeuren als iemand over de 
 </Regel>
 
 <Regel n={13}>
-`@limiter.limit("5/minute")` boven een endpoint betekent: hoogstens vijf verzoeken per minuut per computer.
+`@limiter.limit("5/minute")` direct onder `@app.get` betekent: hoogstens vijf verzoeken per minuut per computer. Hij moet eronder staan; andersom telt hij niets.
 </Regel>
 
 <Regel n={14}>
@@ -67,8 +67,8 @@ Door de limiter heeft de functie nu `request: Request` nodig. Uit dat verzoek ha
 
 </CodeUitleg>
 
-Het endpoint zelf doet niets anders dan eerst: de limiet staat erboven, als een
-portier voor de deur.
+Het endpoint zelf doet niets anders dan eerst: de limiet staat tussen
+`@app.get` en de functie, als een portier voor de deur.
 
 ## Doe de test opnieuw
 
@@ -104,6 +104,8 @@ De limiet telt vóór je functie draait. Een geweigerd verzoek kost je server da
 
 ## Er gaat iets mis
 
+### De server start niet
+
 Je server start niet, en in de terminal eindigt de foutmelding met:
 
 ```
@@ -111,7 +113,7 @@ Exception: No "request" or "websocket" argument on function "<function root at 0
 ```
 
 **Oorzaak:** je endpoint heeft geen `request: Request` als parameter, terwijl
-`@limiter.limit(...)` erboven staat. `slowapi` controleert dat al bij het
+er wel `@limiter.limit(...)` op staat. `slowapi` controleert dat al bij het
 starten: zonder `request` weet hij niet van wie een verzoek komt. Het getal
 achter `0x` verschilt per keer.
 
@@ -130,6 +132,33 @@ async def root():
 async def root(request: Request):
     return {"bericht": "Hallo wereld!"}
 ```
+
+### Twintig keer `200`
+
+Je server start zonder foutmelding, maar `test_verzoeken.py` geeft twintig keer
+`status 200`, en aan het eind `Gelukt: 20 van de 20`.
+
+**Oorzaak:** `@limiter.limit` staat boven `@app.get` in plaats van eronder.
+FastAPI legt dan de functie zonder limiet vast als endpoint, en `slowapi` telt
+niets. Je krijgt geen foutmelding; de limiet werkt stil niet.
+
+**Oplossing:** zet `@app.get` bovenaan, en `@limiter.limit` direct eronder:
+
+```python
+# FOUT
+@limiter.limit("5/minute")
+@app.get("/")
+async def root(request: Request):
+    return {"bericht": "Hallo wereld!"}
+
+# GOED
+@app.get("/")
+@limiter.limit("5/minute")
+async def root(request: Request):
+    return {"bericht": "Hallo wereld!"}
+```
+
+Sla `main.py` op en draai `test_verzoeken.py` opnieuw.
 
 ## Opdrachten
 

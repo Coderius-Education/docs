@@ -119,17 +119,34 @@ tussen `{{ }}` staat, dus de naam blijft tekst en jouw `<b>` blijft HTML.
 
 </details>
 
-### Opdracht 2: Investigate - Waarom nog `escape`?
+### Opdracht 2: Predict - Aanhalingstekens
 
-De lijst gebruikt nu een template. Waarom staat er in `gastenboek_opslaan` nog
-steeds `escape(naam)`?
+Noor vult als naam `Noor` in en als bericht `Ik zeg "hoi"`.
+
+**Vraag:** wat ziet een bezoeker in de lijst? En wat staat er voor dat bericht
+in wat `lijst.py` print?
+
+<details>
+<summary>Tip</summary>
+
+In [les 2](./escape) zag je welke tekens escapen vervangt. Een `"` is er een
+van.
+
+</details>
 
 <details>
 <summary>Antwoord</summary>
 
-Omdat dat antwoord geen template is maar een f-string in een `HTMLResponse`.
-Een template escapet alleen wat door het template gaat. Haal je daar `escape`
-weg, dan is de naam na het versturen weer HTML.
+In de lijst staat `Noor: Ik zeg "hoi"`, met de aanhalingstekens erbij. `lijst.py`
+geeft voor dat bericht:
+
+```
+        <li>Noor: Ik zeg &#34;hoi&#34;</li>
+```
+
+Jinja schrijft een `"` als `&#34;`, waar `escape` uit les 2 `&quot;` maakt. Het
+zijn twee codes voor hetzelfde teken, en de browser toont van allebei een `"`.
+Wie gewone tekst typt, merkt dus niets van het escapen.
 
 </details>
 

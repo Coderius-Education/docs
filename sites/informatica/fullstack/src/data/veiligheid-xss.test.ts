@@ -76,6 +76,30 @@ describe('HTML van een bezoeker (XSS)', () => {
     expect(js.at(-1)).not.toContain('innerHTML');
   });
 
+  it('de eerste les zegt dat het gastenboek van de reeks geen accounts heeft', () => {
+    // De basis eindigt met accounts en een wachtwoordveld; dit gastenboek heeft
+    // ze niet, en dat stond er niet bij.
+    const tekst = lees('zwakheid');
+    expect(tekst).toContain('zonder accounts');
+    expect(tekst).toContain('wachtwoordveld');
+  });
+
+  it('de eerste les met hx-trigger="load, …" legt load en de komma uit', () => {
+    // De htmx-lessen kennen alleen every; load en twee triggers met een komma
+    // kwamen in de reeks zonder uitleg.
+    const eerste = stappen.find((stap) => lees(stap).includes('hx-trigger="load, '));
+    expect(eerste).toBe('zwakheid');
+    const proza = lees('zwakheid').replace(/```[\s\S]*?```/g, '');
+    expect(proza).toMatch(/`load`[^.]*geladen/);
+    expect(proza).toMatch(/komma/);
+  });
+
+  it('de les over innerHTML zegt dat de link een tweede keer een 304 geeft', () => {
+    // De les beloofde een regel met 200; open je de link opnieuw, dan staat er
+    // 304 Not Modified (nagedraaid in Chromium).
+    expect(lees('browser')).toContain('304 Not Modified');
+  });
+
   for (const pad of bestanden(DOCS)) {
     const tekst = readFileSync(pad, 'utf8');
     if (!tekst.includes('innerHTML =')) continue;

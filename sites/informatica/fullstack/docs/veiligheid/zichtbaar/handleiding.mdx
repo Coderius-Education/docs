@@ -90,8 +90,12 @@ async def alle_sessies():
         return dict(sessies)
 ```
 
-<Regel n={10} tot={30}>
+<Regel n={10} tot={28}>
 Een bericht plaatsen. Het bericht gaat in `gastenboek.db`, en in `sessies.db` onthoudt de server wie het schreef, onder het sessie-id uit de cookie.
+</Regel>
+
+<Regel n={29}>
+De cookie met het sessie-id. In Sessies stond er `max_age` bij; hier staan `httponly` en `samesite`, twee instellingen die de cookie afschermen. Wat ze doen, leer je later in [Cookies afschermen](/docs/veiligheid/cookies/httponly).
 </Regel>
 
 <Regel n={37} tot={41}>

@@ -53,6 +53,16 @@ Het pad naar het bestand, met de naam die de bezoeker koos.
 Open `http://127.0.0.1:8000/pagina?naam=home.html`, en daarna
 `?naam=over.html`. Je ziet de twee koppen.
 
+Probeer ook `?naam=oeps.html`, een pagina die er niet is. Je browser toont
+`Internal Server Error`, een `500`, en in de terminal van je server staat:
+
+```
+RuntimeError: File at path static/pages/oeps.html does not exist.
+```
+
+Het endpoint geeft elke naam door aan `FileResponse`, ook een naam waar geen
+bestand bij hoort.
+
 ## Doe het na, op je eigen server
 
 In een pad betekent `..` de map erboven. Vanuit `static/pages` is `../..` twee
@@ -133,8 +143,7 @@ oeps.html -> 404
 
 Je hoeft niet te bedenken welke trucs er met `..`, `/` of `\` bestaan. Wat niet
 in je lijst staat, komt er niet door. Met het endpoint van daarnet gaf
-`oeps.html` trouwens een `500`, want het bestand bestaat niet. Nu is dat een
-nette `404`.
+`oeps.html` een `500`, zoals je zelf zag. Nu is dat een nette `404`.
 
 ## Er gaat iets mis
 
@@ -213,10 +222,12 @@ FastAPI maakt van `%2F` weer een `/`, en een path-parameter houdt op bij een
 stuurt `{"detail":"Not Found"}`.
 
 Dat is geluk en geen controle: het slot zit in hoe FastAPI een endpoint zoekt,
-niet in jouw code. Met `{naam:path}`, dat wel een `/` doorlaat, of met de
-query-parameter uit deze les is het gat er weer. Op Windows is ook `\` een
-scheiding in een pad, en een `\` past wel in een path-parameter. De lijst werkt
-in alle gevallen. Haal het endpoint weer weg.
+niet in jouw code. Met `{naam:path}`, dat wel een `/` doorlaat, komt dit
+verzoek wél in je functie, en zoekt de server buiten `static/pages`. Je krijgt
+dan een `500` en niet je code, maar alleen omdat er geen `main.html` is: ook
+dat is geluk. Op Windows is ook `\` een scheiding in een pad, en een `\` past
+wel in een path-parameter. De lijst werkt in alle gevallen. Haal het endpoint
+weer weg.
 
 </details>
 

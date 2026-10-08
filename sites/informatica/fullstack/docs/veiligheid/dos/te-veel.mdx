@@ -124,20 +124,42 @@ telling van de vorige keer loopt nog.
 
 ## Er gaat iets mis
 
-Het script print bij elk verzoek `nog None over, wacht None seconden`.
+### `None` bij elk verzoek
 
-**Oorzaak:** je server heeft `headers_enabled=True` nog niet, bijvoorbeeld omdat
-hij nog de code uit les 4 draait, of je mist `response: Response` in je
-endpoint. Dan stuurt hij de headers niet mee, en `headers.get` geeft `None` als
-een header ontbreekt. Mis je `response: Response`, dan staat er bovendien `500`
-in plaats van `200`; dat is de volgende fout.
+Het script print bij elk verzoek `nog None over, wacht None seconden`, ook bij
+de `429` van verzoek 6.
 
-**Oplossing:** zet `headers_enabled=True` in de `Limiter` en `response: Response`
-in je endpoint, en sla `main.py` op.
+**Oorzaak:** je server draait nog de code uit les 4, zonder
+`headers_enabled=True`. Dan stuurt hij de headers niet mee, en `headers.get`
+geeft `None` als een header ontbreekt.
 
-Na `headers_enabled=True` geven de eerste vijf verzoeken ineens
-`500 Internal Server Error`, en de verzoeken daarna `429`. In de terminal van
-je server eindigt de foutmelding met:
+**Oplossing:** zet `headers_enabled=True` in de `Limiter`, en sla `main.py` op:
+
+```python
+# FOUT
+limiter = Limiter(key_func=get_remote_address)
+
+# GOED
+limiter = Limiter(key_func=get_remote_address, headers_enabled=True)
+```
+
+Zet er ook `response: Response` in je endpoint bij, anders krijg je de
+volgende fout.
+
+### `500` bij de eerste vijf verzoeken
+
+Na `headers_enabled=True` geeft het script:
+
+```
+Verzoek 1: 500, nog None over, wacht None seconden
+Verzoek 2: 500, nog None over, wacht None seconden
+Verzoek 3: 500, nog None over, wacht None seconden
+Verzoek 4: 500, nog None over, wacht None seconden
+Verzoek 5: 500, nog None over, wacht None seconden
+Verzoek 6: 429, nog 0 over, wacht 60 seconden
+```
+
+In de terminal van je server eindigt de foutmelding met:
 
 ```
 Exception: parameter `response` must be an instance of starlette.responses.Response

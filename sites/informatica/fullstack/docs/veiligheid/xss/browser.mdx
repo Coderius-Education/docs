@@ -93,7 +93,9 @@ JavaScript hem ziet.
 ## Waarom `escape` op de server hier niet helpt
 
 Kijk in de terminal van je server. Daar staat één regel met
-`"GET /static/gastenboek.html?bericht=%3Cb%3Evet%3C/b%3E HTTP/1.1" 200`. Je
+`"GET /static/gastenboek.html?bericht=%3Cb%3Evet%3C/b%3E HTTP/1.1" 200`. Open
+je de link nog een keer, dan staat er `304 Not Modified`: je browser had de
+pagina al, en de server zegt alleen dat hij niet veranderd is. Je
 server stuurde `gastenboek.html` zoals het in `static/` staat. Het stuk na het
 vraagteken heeft hij niet gebruikt, en er is geen endpoint waar je een
 `escape` kunt zetten. De HTML ontstaat pas in de browser, in de functie `toon` in

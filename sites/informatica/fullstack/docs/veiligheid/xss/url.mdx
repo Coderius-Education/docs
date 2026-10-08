@@ -126,17 +126,37 @@ stuurt FastAPI een 422 als hij ontbreekt.
 
 ## Opdrachten
 
-### Opdracht 1: Predict - Na de fix
+### Opdracht 1: Predict - Zoeken op een haakje
 
-`escape` staat om de term. Je opent `http://127.0.0.1:8000/zoek?term=<i>hoi</i>`.
+`escape` staat om de term, en in je gastenboek staat alleen het bericht
+`<b>vet</b>` van Sara. Je opent `http://127.0.0.1:8000/zoek?term=<b>`.
 
-**Vraag:** wat staat er boven de resultaten?
+**Vraag:** wat staat er boven de resultaten, en vindt de zoekpagina het
+bericht van Sara?
+
+<details>
+<summary>Tip</summary>
+
+De for-lus zoekt in wat er in de database staat. Escapet je server het bericht
+bij het opslaan, of pas bij het tonen?
+
+</details>
 
 <details>
 <summary>Antwoord</summary>
 
-"Je zocht naar: `<i>hoi</i>`", met de haakjes erbij en niets schuin. Er staat
-geen bericht onder, want geen bericht bevat `<i>hoi</i>`.
+Er staat "Je zocht naar: `<b>`", met de haakjes erbij, en daaronder het
+bericht van Sara: `Sara: <b>vet</b>`, ook als tekst. Met
+`params={"term": "<b>"}` geeft `zoek.py`:
+
+```
+http://127.0.0.1:8000/zoek?term=%3Cb%3E
+<p>Je zocht naar: &lt;b&gt;</p><ul><li>Sara: &lt;b&gt;vet&lt;/b&gt;</li></ul>
+```
+
+Het bericht staat in de database zoals Sara het typte, dus `<b>` staat erin.
+`escape` verandert pas iets op de plek waar de tekst de HTML in gaat; het
+zoeken merkt er niets van.
 
 </details>
 

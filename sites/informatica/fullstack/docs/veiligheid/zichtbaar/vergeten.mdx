@@ -73,8 +73,12 @@ ed37173ad83bc8b8d2442ee65e107e22 {'naam': 'Sara'}
 87da570d5ae77ba22e8e11900e2061d2 {'naam': 'Alex'}
 ```
 
+Heb je opdracht 2 van [les 1](./handleiding) gedaan, dan staat jouw eigen sessie
+er ook bij, bovenaan: **Execute** op `/docs` maakte er een, met de naam die je
+daar invulde.
+
 Het script heeft nooit een bericht geplaatst, en toch is het voor je server
-eerst Sara en dan Alex. Een sessie-id is zo lang en willekeurig dat niemand het
+om de beurt elke bezoeker op de lijst. Een sessie-id is zo lang en willekeurig dat niemand het
 kan raden. Dat helpt niets meer als je server ze zelf op een rij zet.
 
 In dit kleine gastenboek kan een sessie-id weinig kwaad: `/ik` zegt alleen een
@@ -96,12 +100,14 @@ de lijst. Een endpoint dat alleen voor jou is, bestaat niet. In
 
 `sessies.py` print niets.
 
-**Oorzaak:** er staan nog geen sessies in `sessies.db`, omdat er nog niemand
-een bericht plaatste. Of `sessies.py` draait tegen een server die in een andere
-map staat.
+**Oorzaak:** de server heeft geen sessies in zijn `sessies.db`. Er plaatste nog
+niemand een bericht, of je startte de server na `twee.py` opnieuw vanuit een
+andere map. De server opent `sessies.db` in de map waarin je hem start, en maakt
+daar stil een nieuwe, lege aan als hij er niet is. De map van `twee.py` en
+`sessies.py` maakt niet uit: die praten via HTTP met de server.
 
-**Oplossing:** draai eerst `twee.py`, in dezelfde map als `main.py`, en daarna
-`sessies.py`.
+**Oplossing:** start de server in de map `veiligheid-zichtbaar`, waar `main.py`
+staat. Draai daarna eerst `twee.py` en dan `sessies.py`.
 
 ## Opdrachten
 

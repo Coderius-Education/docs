@@ -29,7 +29,9 @@ Maak in die map een virtual environment en installeer de packages; hoe dat gaat 
 ## Een gastenboek met een f-string
 
 Dit gastenboek zet de berichten niet in een template, maar in een f-string,
-en het antwoord na het versturen heeft geen `escape`.
+en het antwoord na het versturen heeft geen `escape`. Het is kleiner dan je
+gastenboek uit de basis: zonder accounts en zonder wachtwoordveld. Wie een
+bericht schrijft, typt alleen een naam.
 De pagina zelf is een los bestand `static/gastenboek.html`:
 
 ```html
@@ -49,6 +51,9 @@ De pagina zelf is een los bestand `static/gastenboek.html`:
 </body>
 </html>
 ```
+
+Door `load` haalt htmx de lijst meteen op als de pagina geladen is, en na de
+komma komt `every 5s` erbij: daarna elke vijf seconden opnieuw.
 
 Zet `htmx.min.js` uit [Zonder herladen](/docs/FastAPI/zonder-herladen/htmx) in `static/js/`.
 Het endpoint staat in `main.py`:
