@@ -1,3 +1,4 @@
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import clsx from 'clsx';
 import type React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -21,6 +22,8 @@ export default function ObjViewer({
   width = '100%',
   height = '500px',
 }: ObjViewerProps): React.JSX.Element {
+  const modelUrl = useBaseUrl(src);
+  const materialUrl = useBaseUrl(mtl ?? '');
   const wrapRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   // Het golfer-model is 30 MB. Zonder deze melding kijkt een leerling op een
@@ -121,19 +124,19 @@ export default function ObjViewer({
     if (mtl) {
       const mtlLoader = new MTLLoader();
       mtlLoader.load(
-        mtl,
+        materialUrl,
         (materials) => {
           materials.preload();
           const objLoader = new OBJLoader();
           objLoader.setMaterials(materials);
-          objLoader.load(src, addObjectToScene, volgLaden, meldMislukt);
+          objLoader.load(modelUrl, addObjectToScene, volgLaden, meldMislukt);
         },
         undefined,
         meldMislukt,
       );
     } else {
       const objLoader = new OBJLoader();
-      objLoader.load(src, addObjectToScene, volgLaden, meldMislukt);
+      objLoader.load(modelUrl, addObjectToScene, volgLaden, meldMislukt);
     }
 
     const animate = () => {
@@ -164,7 +167,7 @@ export default function ObjViewer({
       renderer.dispose();
       container.removeChild(renderer.domElement);
     };
-  }, [src, mtl]);
+  }, [modelUrl, materialUrl, mtl]);
 
   // De Fullscreen API meldt zelf wanneer het scherm weer normaal is (Esc, of
   // de knop van de browser); de vaste laag heeft daar een eigen Esc voor.
@@ -213,6 +216,8 @@ export default function ObjViewer({
 
   return (
     <div
+      data-obj-src={modelUrl}
+      data-obj-mtl={mtl ? materialUrl : undefined}
       ref={wrapRef}
       className={clsx(styles.wrap, vast && styles.wrapVast)}
       style={schermVol ? undefined : { width }}

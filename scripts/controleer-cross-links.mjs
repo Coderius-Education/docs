@@ -81,31 +81,37 @@ export function siteVanHost(host) {
 }
 
 /**
- * Alle absolute hrefs naar een registry-domein in één HTML-bestand. Een host
+ * Links en assets naar een registry-domein in één HTML-bestand.
+ * Met paginaUrl worden ook relatieve URLs zoals in de browser opgelost.
+ * ObjViewer publiceert zijn runtime-requests als data-obj-src/data-obj-mtl. Een host
  * die met een registry-domein begínt maar er niet aan gelijk is
  * (`informatica.coderius.nlpython/...`, het gevolg van een pad zonder slash)
  * telt als misvormd: die hoort gemeld te worden, niet stil genegeerd.
  * @param {string} html
+ * @param {string} [paginaUrl]
  * @returns {{ href: string, site: string, pad: string, misvormd?: true, oudDomein?: true }[]}
  */
-export function hrefsUit(html) {
+export function hrefsUit(html, paginaUrl) {
   const uit = [];
-  for (const m of html.matchAll(/href="(https?:\/\/[^"]+)"/g)) {
+  for (const m of html.matchAll(/\s(href|src|poster|data-obj-src|data-obj-mtl)="([^"]+)"/g)) {
+    const href = m[2].replace(/&amp;/g, '&');
+    if (!paginaUrl && !/^https?:\/\//.test(href)) continue;
+    if (/^(?:#|data:|blob:|mailto:|tel:|javascript:)/i.test(href)) continue;
     let url;
     try {
-      url = new URL(m[1]);
+      url = new URL(href, paginaUrl);
     } catch {
       continue;
     }
     const doel = doelVan(url);
     if (doel) {
-      uit.push({ href: m[1], ...doel });
+      uit.push({ href, ...doel });
       continue;
     }
     const aangeplakt = BEKENDE_HOSTS.find((host) => url.host.startsWith(host));
     if (aangeplakt)
       uit.push({
-        href: m[1],
+        href,
         site: OUDE_HOSTS.get(aangeplakt) ?? HOME.id,
         pad: url.pathname,
         misvormd: true,
@@ -179,7 +185,13 @@ export function controleer(builds) {
   let overgeslagen = 0;
   for (const [site, buildMap] of builds) {
     for (const bestand of htmlBestanden(buildMap)) {
-      for (const link of hrefsUit(readFileSync(bestand, 'utf8'))) {
+      const registry = [...ALLE_SITES, HOME].find((s) => s.id === site);
+      const bronPad = relative(buildMap, bestand)
+        .split('\\')
+        .join('/')
+        .replace(/index\.html$/, '');
+      const paginaUrl = registry ? new URL(bronPad, registry.url).href : undefined;
+      for (const link of hrefsUit(readFileSync(bestand, 'utf8'), paginaUrl)) {
         // Een oud subdomein of een aangeplakte host is kapot, of de doelsite
         // nu gebouwd is of niet.
         if (link.oudDomein || link.misvormd) {

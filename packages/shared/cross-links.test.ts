@@ -1,3 +1,6 @@
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import {
@@ -139,4 +142,48 @@ describe('controleer over de fixture-builds', () => {
     expect(gecontroleerd).toBe(7);
     expect(overgeslagen).toBe(1);
   });
+});
+
+describe('assets op een vak-host', () => {
+  it('controleert model- en afbeeldingspaden zoals de browser ze oplost', () => {
+    const html =
+      '<div data-obj-src="/robotica/models/main.obj" data-obj-mtl="/models/main.mtl"></div>' +
+      '<img src="../img/foto.png"><script src="https://cdn.example.org/x.js"></script>';
+    expect(hrefsUit(html, 'https://informatica.coderius.nl/robotica/lego_auto/intro')).toEqual([
+      { href: '/robotica/models/main.obj', site: 'robotica', pad: '/models/main.obj' },
+      { href: '/models/main.mtl', site: 'home', pad: '/models/main.mtl' },
+      { href: '../img/foto.png', site: 'robotica', pad: '/img/foto.png' },
+    ]);
+  });
+});
+
+it('CI meldt ontbrekende modellen en assets, ook met een bestaand model ernaast', () => {
+  const root = mkdtempSync(join(tmpdir(), 'coderius-links-'));
+  try {
+    const robotica = join(root, 'robotica');
+    const home = join(root, 'home');
+    mkdirSync(join(robotica, 'models'), { recursive: true });
+    mkdirSync(home);
+    writeFileSync(join(robotica, 'models/main.obj'), 'model');
+    writeFileSync(join(home, 'index.html'), 'home');
+    writeFileSync(
+      join(robotica, 'index.html'),
+      '<div data-obj-src="/robotica/models/main.obj" data-obj-mtl="/models/main.mtl"></div>' +
+        '<img src="/robotica/img/missing.png">',
+    );
+    const result = controleer(
+      new Map([
+        ['robotica', robotica],
+        ['home', home],
+      ]),
+    );
+    expect(result.kapot.map((k) => k.href)).toEqual([
+      '/models/main.mtl',
+      '/robotica/img/missing.png',
+    ]);
+    expect(result.gecontroleerd).toBe(3);
+    expect(result.overgeslagen).toBe(0);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
 });

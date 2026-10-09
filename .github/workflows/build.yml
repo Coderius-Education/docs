@@ -729,7 +729,7 @@ jobs:
           verdeel voorraad "${ONGEWIJZIGD:-[]}" -voorraad
           ls builds
 
-      - name: Cross-site links tegen de gebouwde sites
+      - name: Links, afbeeldingen en 3D-modellen tegen de gebouwde sites
         run: node scripts/controleer-cross-links.mjs builds --annotaties --compleet
 
   # De branch protection eist een check die exact "build" heet, maar een
