@@ -1,5 +1,5 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import { join, posix } from 'node:path';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
@@ -77,9 +77,9 @@ function bestaat(pad: string): boolean {
   return existsSync(join(DOCS, `${kaal}.mdx`)) || existsSync(join(DOCS, `${kaal}.md`));
 }
 
-/** Een relatieve link (./x, ../x) vanuit een les, als pad vanaf docs/. */
-function doelVan(les: Les, link: string): string {
-  return posix.normalize(posix.join(posix.dirname(les.id), link));
+/** De site:-link naar een les van deze site: `](site:algorithms/docs/<id>)`. */
+function linkNaar(id: string): string {
+  return `](site:algorithms/docs/${id})`;
 }
 
 const ALLE = hoofdstukken().flatMap(lessen);
@@ -113,13 +113,13 @@ describe('de nummering van de lessen', () => {
 });
 
 describe('de links tussen lessen', () => {
-  it('elke ./NN-, ../hoofdstuk/NN- en /docs/hoofdstuk/NN-link wijst naar een bestaand bestand', () => {
+  it('elke site:algorithms/docs/…/NN-link wijst naar een bestaand bestand', () => {
+    // Deze site houdt de nummers in zijn URL's, dus de route is het pad vanaf docs/.
     const kapot: string[] = [];
     for (const l of ALLE) {
-      for (const m of l.tekst.matchAll(/\]\((\.\.?\/[^)\s]+|\/docs\/[^)\s]+)\)/g)) {
-        const link = m[1];
-        if (!/(^|\/)\d\d-/.test(link)) continue;
-        const pad = link.startsWith('/docs/') ? link.slice('/docs/'.length) : doelVan(l, link);
+      for (const m of l.tekst.matchAll(/\]\(site:algorithms\/docs\/([^)\s]+)\)/g)) {
+        const pad = decodeURIComponent(m[1]);
+        if (!/(^|\/)\d\d-/.test(pad)) continue;
         if (!bestaat(pad)) kapot.push(`${l.id} -> ${m[0]}`);
       }
     }
@@ -180,11 +180,10 @@ describe('de bekijk-pagina en de verdwenen bouwsteen-widgets', () => {
       const eerste = alle[0];
       expect(eerste.tekst, h).toContain('## Zo bouw je het op');
       for (const stap of stappen) {
-        if (!eerste.tekst.includes(`](./bouwen/${posix.basename(stap.id)})`))
-          kapot.push(`${h}: ${stap.id}`);
+        if (!eerste.tekst.includes(linkNaar(stap.id))) kapot.push(`${h}: ${stap.id}`);
       }
       const compleet = alle.find((l) => l.map === '' && /-compleet$/.test(l.id));
-      if (compleet && !eerste.tekst.includes(`](./${posix.basename(compleet.id)})`))
+      if (compleet && !eerste.tekst.includes(linkNaar(compleet.id)))
         kapot.push(`${h}: ${compleet.id}`);
     }
     expect(kapot).toEqual([]);

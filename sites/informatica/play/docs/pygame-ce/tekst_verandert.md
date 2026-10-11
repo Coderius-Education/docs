@@ -5,7 +5,7 @@ sidebar_position: 6
 # 10.6 Tekst die verandert
 
 :::warning[Online speeltuin]
-De voorbeelden in dit hoofdstuk draaien niet in de online speeltuin. Een pygame-ce-programma schrijft zijn eigen game-loop, en die is in de browser niet meer te stoppen. Draai ze op je eigen computer, in Thonny of VS Code — zie [installatie](/docs/installatie).
+De voorbeelden in dit hoofdstuk draaien niet in de online speeltuin. Een pygame-ce-programma schrijft zijn eigen game-loop, en die is in de browser niet meer te stoppen. Draai ze op je eigen computer, in Thonny of VS Code — zie [installatie](site:play/docs/installatie).
 :::
 
 In de vorige les heb je geleerd hoe je tekst op het scherm toont. Maar wat als de tekst moet veranderen, bijvoorbeeld een score die omhoog gaat?

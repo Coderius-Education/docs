@@ -8,16 +8,16 @@ description: Bij uitloggen gooit de server de sessie weg en haalt hij de cookie 
 Een sessie hoort niet eeuwig te duren. Hij eindigt op twee manieren: de
 bezoeker logt uit, of de tijd is om. In allebei de gevallen beslist je server,
 niet de browser. Deze les gaat over uitloggen; de tijd komt in
-[les 5](./verlopen). De cookie weghalen is niet genoeg: wie het sessie-id eerder
+[les 5](site:fullstack/docs/veiligheid/cookies/verlopen). De cookie weghalen is niet genoeg: wie het sessie-id eerder
 heeft gekopieerd, stuurt het zelf mee. Pas als de sessie uit
 `sessies.db` weg is, hoort dat id bij niemand meer.
 
 ## Een endpoint om uit te loggen
 
 Een `/uitloggen` ken je al uit opdracht 5 van
-[Cookie of sessie?](/docs/FastAPI/onthouden/cookie-of-sessie). Daar was het een POST, en
+[Cookie of sessie?](site:fullstack/docs/FastAPI/onthouden/cookie-of-sessie). Daar was het een POST, en
 dat is geen toeval: een link is altijd een GET, en een link kan ook op een
-andere site staan. Hoe dat zit, zag je in [les 3](./samesite).
+andere site staan. Hoe dat zit, zag je in [les 3](site:fullstack/docs/veiligheid/cookies/samesite).
 
 Zet dit endpoint onder de andere in `main.py`:
 
@@ -87,7 +87,7 @@ haar bericht te verwijderen.
 Het script maakt Sara aan met het wachtwoord `zon123`. Gooi daarom eerst
 `gastenboek.db`, `sessies.db` en `gebruikers.db` weg en start de server
 opnieuw. Bestaat Sara nog met een ander wachtwoord, bijvoorbeeld uit
-[les 1](./zwakheid), dan mislukt het inloggen en stopt het script met
+[les 1](site:fullstack/docs/veiligheid/cookies/zwakheid), dan mislukt het inloggen en stopt het script met
 `KeyError: 'sleutel'`.
 
 <CodeUitleg>
@@ -301,4 +301,4 @@ de cookie in de browser. Dat los je op in les 5.
 
 </details>
 
-Door naar [les 5: een sessie laten verlopen](./verlopen).
+Door naar [les 5: een sessie laten verlopen](site:fullstack/docs/veiligheid/cookies/verlopen).

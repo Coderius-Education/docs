@@ -82,7 +82,7 @@ Met `just_pressed` gebeurt het één keer per druk, en moet de speler loslaten v
 
 </details>
 
-Het verschil staat ook in de [GDScript-tips](/gdscript-tips#input).
+Het verschil staat ook in de [GDScript-tips](site:godot/gdscript-tips#input).
 
 ## Stap 4: Twee voorwaarden met `and`
 
@@ -250,4 +250,4 @@ Zo weet je bij een fout meteen aan welke kant je moet zoeken: bij het uitlezen v
 
 ---
 
-← [Deel 6 — Stoppen](./remmen.md) · **Volgende:** [Fouten zoeken](./fouten-zoeken.md) →
+← [Deel 6 — Stoppen](site:godot/docs/movement-remmen) · **Volgende:** [Fouten zoeken](site:godot/docs/fouten-zoeken) →

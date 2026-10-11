@@ -15,8 +15,8 @@ Het hart van het spel is hetzelfde als in jouw platformer: `velocity.y` aanpasse
 
 ## Wat ga je leren?
 
-- Een spawner bouwen die met een `Timer` periodiek nieuwe obstakels aanmaakt — de techniek uit [Automatisch spawnen met een Timer](../08-meer-levels-en-menu/spawn_timer.md).
-- Scenes "instantiëren" met `preload()` + `instantiate()` (zie [Spawnen: nodes maken in code](../08-meer-levels-en-menu/spawnen.md)).
+- Een spawner bouwen die met een `Timer` periodiek nieuwe obstakels aanmaakt — de techniek uit [Automatisch spawnen met een Timer](site:godot/docs/spawn_timer).
+- Scenes "instantiëren" met `preload()` + `instantiate()` (zie [Spawnen: nodes maken in code](site:godot/docs/spawnen)).
 - Een Area2D als game-over-trigger inzetten.
 - Score per gepasseerde buis verhogen via een tweede Area2D.
 
@@ -50,7 +50,7 @@ Het hart van het spel is hetzelfde als in jouw platformer: `velocity.y` aanpasse
 ## Externe links
 
 - [Itch.io: gratis vogel-assets](https://itch.io/game-assets/free/tag-bird) — sprite-sheets om mee te beginnen.
-- [Godot Docs — Instancing scenes](https://docs.godotengine.org/en/stable/getting_started/step_by_step/instancing.html) — verdieping op `preload()` + `instantiate()` uit [8.3](../08-meer-levels-en-menu/spawnen.md).
+- [Godot Docs — Instancing scenes](https://docs.godotengine.org/en/stable/getting_started/step_by_step/instancing.html) — verdieping op `preload()` + `instantiate()` uit [8.3](site:godot/docs/spawnen).
 
 ## Eerste stappen
 
@@ -60,4 +60,4 @@ Het hart van het spel is hetzelfde als in jouw platformer: `velocity.y` aanpasse
 4. Bouw een `buis.tscn` met twee `StaticBody2D`'s (boven en onder) en een `Area2D` ertussen voor de score-trigger.
 5. Voeg een `Timer` toe aan de wereld. Koppel `timeout` aan een script-functie die `buis.tscn` instantieert op een willekeurige hoogte.
 
-Vanaf hier kun je polish toevoegen: een achtergrond, geluidseffecten, een game-over-scherm met de techniek uit [Een startmenu](/docs/start_menu).
+Vanaf hier kun je polish toevoegen: een achtergrond, geluidseffecten, een game-over-scherm met de techniek uit [Een startmenu](site:godot/docs/start_menu).

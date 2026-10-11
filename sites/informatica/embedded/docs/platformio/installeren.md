@@ -24,7 +24,7 @@ De eerste installatie duurt even: PlatformIO downloadt op de achtergrond de gere
 Na het herstarten zie je in de linkerbalk een nieuw icoon: het **mierenhoofd** van PlatformIO. Klik erop en kies **PIO Home → Open**. Dit startscherm gebruik je om nieuwe projecten te maken.
 
 :::tip
-Heb je een echt bord? Sluit het nu alvast aan via USB. Op Windows installeert PlatformIO meestal zelf de juiste driver. Lukt uploaden later niet, kijk dan bij [Upload mislukt](/docs/er-gaat-iets-mis/upload-mislukt).
+Heb je een echt bord? Sluit het nu alvast aan via USB. Op Windows installeert PlatformIO meestal zelf de juiste driver. Lukt uploaden later niet, kijk dan bij [Upload mislukt](site:embedded/docs/er-gaat-iets-mis/upload-mislukt).
 :::
 
 In de volgende les maak je je eerste PlatformIO-project: opnieuw een blink, maar nu in deze nieuwe omgeving.

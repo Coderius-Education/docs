@@ -53,7 +53,7 @@ export const makeHtml = `<!DOCTYPE html>
 export const makeCss = `/* Schrijf hier je stijl */
 `;
 
-Tot nu toe schreef je code direct in `onclick`. Dat werkt voor één regel, maar in [Opdracht 2 van Inline stijl](/docs/js-basics/inline-stijl) zag je al hoe onleesbaar het wordt zodra er meer bij komt:
+Tot nu toe schreef je code direct in `onclick`. Dat werkt voor één regel, maar in [Opdracht 2 van Inline stijl](site:web/docs/js-basics/inline-stijl) zag je al hoe onleesbaar het wordt zodra er meer bij komt:
 
 ```html
 <!-- Onoverzichtelijk: -->
@@ -300,7 +300,7 @@ Gebruik `style.backgroundColor` voor de achtergrondkleur, en `''` om hem weer we
 JavaScript fout: Uncaught TypeError: Cannot set properties of null (setting 'textContent')
 ```
 
-De aanroep `verander();` draait zodra de browser de `<script>`-tag in de `<head>` tegenkomt — en op dat moment is de `<body>` nog niet geladen, dus `getElementById` geeft `null`. Alleen de functie *definiëren* in de `<head>` is niet erg (die draait pas later), maar code die meteen een element aanraakt wel. Zet de `<script>`-tag daarom **onderaan** de `<body>`, na alle HTML-elementen. In [script.js](/docs/js-basics/scriptjs) zie je hoe je dit met `defer` ook vanuit de `<head>` oplost.
+De aanroep `verander();` draait zodra de browser de `<script>`-tag in de `<head>` tegenkomt — en op dat moment is de `<body>` nog niet geladen, dus `getElementById` geeft `null`. Alleen de functie *definiëren* in de `<head>` is niet erg (die draait pas later), maar code die meteen een element aanraakt wel. Zet de `<script>`-tag daarom **onderaan** de `<body>`, na alle HTML-elementen. In [script.js](site:web/docs/js-basics/scriptjs) zie je hoe je dit met `defer` ook vanuit de `<head>` oplost.
 
 **Functienaam verschilt tussen `onclick` en `<script>`**
 

@@ -136,7 +136,7 @@ describe('de uitleg staat op één plek', () => {
   });
 
   it('elk hulpblok wijst naar de editor-cursus', () => {
-    const zonder = blokken.filter((b) => !/<SiteLink site="editor"/.test(b));
+    const zonder = blokken.filter((b) => !/\]\(site:editor\//.test(b));
 
     expect(zonder).toEqual([]);
   });

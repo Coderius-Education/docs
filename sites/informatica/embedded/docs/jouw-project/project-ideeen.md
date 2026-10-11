@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # Projectideeën
 
-Hieronder staan vier projecten, van makkelijk naar uitdagend. Bij elk staan stappen en een tip, maar geen volledige oplossing — die bedenk je zelf. Gebruik de [cheatsheet](/cheatsheet) als naslag.
+Hieronder staan vier projecten, van makkelijk naar uitdagend. Bij elk staan stappen en een tip, maar geen volledige oplossing — die bedenk je zelf. Gebruik de [cheatsheet](site:embedded/cheatsheet) als naslag.
 
 ## Idee 1: Reactiespel
 
@@ -42,7 +42,7 @@ Begin met een potmeter in plaats van een echte sensor om je `if`-logica te teste
 
 ## Idee 3: Parkeersensor (STM32)
 
-Bouw de parkeersensor uit [6.2](/docs/timing-sensoren/een-sensor-uitlezen) na op de STM32, en gebruik de extra mogelijkheden van het bord.
+Bouw de parkeersensor uit [6.2](site:embedded/docs/timing-sensoren/een-sensor-uitlezen) na op de STM32, en gebruik de extra mogelijkheden van het bord.
 
 1. Sluit een ultrasoonsensor aan op de Blue Pill.
 2. Laat een LED sneller knipperen naarmate iets dichterbij komt.
@@ -51,7 +51,7 @@ Bouw de parkeersensor uit [6.2](/docs/timing-sensoren/een-sensor-uitlezen) na op
 <details>
 <summary>Tip</summary>
 
-Houd het meten in je `while`-lus, maar laat het knipperen lopen via een **hardware-timer** met HAL (zie [10.4 Hardware-timers](/docs/stm32-interfaces/timers-pwm)). Pas de timer-instelling aan op basis van de afstand.
+Houd het meten in je `while`-lus, maar laat het knipperen lopen via een **hardware-timer** met HAL (zie [10.4 Hardware-timers](site:embedded/docs/stm32-interfaces/timers-pwm)). Pas de timer-instelling aan op basis van de afstand.
 
 </details>
 

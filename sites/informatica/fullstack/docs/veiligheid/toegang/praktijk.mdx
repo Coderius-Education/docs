@@ -5,7 +5,7 @@ description: Hoe echte sites bepalen wie wat mag, van accounts en beheerders tot
 
 # Wie mag wat: in de praktijk
 
-Je controle uit [les 2](./controle) koppelt een bericht aan een account. Een
+Je controle uit [les 2](site:fullstack/docs/veiligheid/toegang/controle) koppelt een bericht aan een account. Een
 echte site doet dat ook, maar daar mogen sommige mensen meer dan anderen, en
 zijn er honderden endpoints. Het idee blijft hetzelfde: elk endpoint vraagt
 zelf wie dit mag.
@@ -26,7 +26,7 @@ bij één endpoint, dan staat dat endpoint open, dus ook dan loop je ze langs.
 
 ### Test het als de ander
 
-Je script uit [les 1](./zwakheid) is een test: het doet alsof het
+Je script uit [les 1](site:fullstack/docs/veiligheid/toegang/zwakheid) is een test: het doet alsof het
 Alex is en kijkt of de server weigert. Echte projecten draaien zulke tests
 automatisch, bij elke wijziging. Per endpoint zijn er dan twee: de
 eigenaar krijgt `200`, een ander `403`; Alles wissen uit les 4 is de
@@ -88,7 +88,7 @@ beheerder zijn van één forum en gewone bezoeker van de rest.
 <details>
 <summary>Een lange sleutel is geen slot</summary>
 
-Heb je [opdracht 5 van Een 404 sturen](/docs/FastAPI/berichten-tonen/niet-gevonden#opdracht-5-make---bericht-per-nummer)
+Heb je [opdracht 5 van Een 404 sturen](site:fullstack/docs/FastAPI/berichten-tonen/niet-gevonden#opdracht-5-make---bericht-per-nummer)
 gemaakt, dan heeft je gastenboek `/bericht-nummer/12`. Zo'n nummer is makkelijk
 te raden: wie bericht 12 ziet, probeert 13. Je sleutels uit `time.time_ns()`
 zijn lang, maar niet willekeurig: het is de tijd in nanoseconden, dus wie weet
@@ -144,4 +144,4 @@ die het meest helpt.
 
 </details>
 
-Door naar de volgende reeks: [Cookies afschermen](../cookies/zwakheid).
+Door naar de volgende reeks: [Cookies afschermen](site:fullstack/docs/veiligheid/cookies/zwakheid).

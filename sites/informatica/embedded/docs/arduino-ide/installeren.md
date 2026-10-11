@@ -7,7 +7,7 @@ sidebar_position: 1
 Om een Arduino te programmeren heb je een programma nodig dat jouw code omzet naar iets wat de microcontroller begrijpt, en het daarna op het bord zet. Het standaardprogramma daarvoor is de **Arduino IDE** (IDE staat voor *Integrated Development Environment*: een werkplek waarin je schrijft, controleert en uploadt).
 
 :::tip
-Wil je alleen in de simulator werken? Dan kun je dit hoofdstuk overslaan en direct door naar [2.2 Je eerste blink](je-eerste-blink.mdx). Je hebt de Arduino IDE alleen nodig voor een echt bord.
+Wil je alleen in de simulator werken? Dan kun je dit hoofdstuk overslaan en direct door naar [2.2 Je eerste blink](site:embedded/docs/arduino-ide/je-eerste-blink). Je hebt de Arduino IDE alleen nodig voor een echt bord.
 :::
 
 ## Stap 1: Downloaden
@@ -26,7 +26,7 @@ In de Arduino IDE kies je bovenaan welk bord je gebruikt en op welke poort het i
 2. Kies **Arduino Uno**.
 3. Kies de **poort** waarop je bord staat (op Windows iets als `COM3`, op macOS iets als `/dev/cu.usbmodem…`).
 
-Zie je geen poort? Dan herkent je computer het bord nog niet. Lees [Poort niet gevonden](/docs/er-gaat-iets-mis/poort-niet-gevonden).
+Zie je geen poort? Dan herkent je computer het bord nog niet. Lees [Poort niet gevonden](site:embedded/docs/er-gaat-iets-mis/poort-niet-gevonden).
 
 ## Stap 4: Een sketch
 

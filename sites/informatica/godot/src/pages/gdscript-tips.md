@@ -399,10 +399,10 @@ ondertussen door — je bevriest alleen deze functie.
 
 Dit is bedoeld voor één keer wachten. Moet er telkens opnieuw iets
 gebeuren, neem dan een echte `Timer`-node, zoals bij
-[Automatisch spawnen met een Timer](/docs/spawn_timer).
+[Automatisch spawnen met een Timer](site:godot/docs/spawn_timer).
 
 Uitgebreid, met een power-up die vijf seconden duurt:
-[Een power-up: tijdelijk hoger springen](/docs/power_up).
+[Een power-up: tijdelijk hoger springen](site:godot/docs/power_up).
 
 </details>
 
@@ -439,7 +439,7 @@ Wil je daar wél op wachten, zet er dan zelf ook `await` voor:
 
 ## Debuggen \{#debuggen}
 
-De methode om zélf een onbekende fout te vinden staat in [Fouten zoeken](/docs/fouten-zoeken). Hieronder alleen de losse hulpmiddelen.
+De methode om zélf een onbekende fout te vinden staat in [Fouten zoeken](site:godot/docs/fouten-zoeken). Hieronder alleen de losse hulpmiddelen.
 
 <details>
 <summary>Hoe debug ik mijn code?</summary>
@@ -466,7 +466,7 @@ res://scripts/player.gd:15 - Invalid call. Nonexistent function 'plya' in base '
 
 Bestand → regelnummer → wat er mis is. Dubbelklik op de melding en Godot springt naar die regel.
 
-Uitgebreider, met de veelvoorkomende meldingen erbij: [Een foutmelding lezen](/docs/fouten-zoeken#foutmelding-lezen).
+Uitgebreider, met de veelvoorkomende meldingen erbij: [Een foutmelding lezen](site:godot/docs/fouten-zoeken#foutmelding-lezen).
 
 </details>
 

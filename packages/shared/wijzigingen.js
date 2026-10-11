@@ -67,7 +67,7 @@ const PER_JOB = {
     'scripts/controleer-tekst-alles.mjs',
     'packages/shared/stijl.js',
   ],
-  crosslinks: ['scripts/controleer-cross-links.mjs'],
+  crosslinks: ['scripts/controleer-cross-links.mjs', 'scripts/links-in-bron.mjs'],
 };
 
 const COMPILEER = [

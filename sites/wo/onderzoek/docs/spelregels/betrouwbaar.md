@@ -14,14 +14,14 @@ Onderzoek is **betrouwbaar** als het resultaat niet van toeval afhangt: wie het 
 ## Zo maak je je onderzoek betrouwbaar
 
 - **Herhaal je metingen.** Eén meting is geen meting. Meet je de kiemtijd van tuinkers, gebruik dan niet één bakje maar tien.
-- **Vraag genoeg mensen.** Een enquête onder drie mensen zegt niets: toeval bepaalt dan de uitkomst. Onder tachtig mensen zegt dezelfde enquête een stuk meer. (Wíé je vraagt, is een kwestie van [validiteit](./valide.md).)
+- **Vraag genoeg mensen.** Een enquête onder drie mensen zegt niets: toeval bepaalt dan de uitkomst. Onder tachtig mensen zegt dezelfde enquête een stuk meer. (Wíé je vraagt, is een kwestie van [validiteit](site:onderzoek/spelregels/valide).)
 - **Meet nauwkeurig en steeds op dezelfde manier.** Zelfde meetinstrument, zelfde omstandigheden, zelfde vraagstelling. Wie je meting herhaalt, moet precies kunnen doen wat jij deed.
 
 :::caution[Voorbeeld van onbetrouwbaar onderzoek]
 Je meet één keer hoe snel je oude laptop opstart en één keer hoe snel de nieuwe opstart, en concludeert dat de nieuwe "twee keer zo snel" is. Misschien draaide er toevallig net een update. Meet tien keer en neem het gemiddelde — dan pas kun je iets zeggen.
 :::
 
-**Bij [ontwerpgericht onderzoek](../typen/ontwerpgericht.md)** betekent betrouwbaar: test je prototype vaker dan één keer, en met meer dan één testpersoon. Dat je app bij jou op je eigen telefoon één keer werkte, bewijst nog niets.
+**Bij [ontwerpgericht onderzoek](site:onderzoek/typen/ontwerpgericht)** betekent betrouwbaar: test je prototype vaker dan één keer, en met meer dan één testpersoon. Dat je app bij jou op je eigen telefoon één keer werkte, bewijst nog niets.
 
 <WelNiet
   wel="Je meet de opstarttijd van elke laptop tien keer en vergelijkt de gemiddelden."
@@ -42,6 +42,6 @@ In maart 1989 kondigden de chemici Fleischmann en Pons op een persconferentie aa
 
 ## Hangt samen met
 
-- [De vier spelregels samen](./de-vier-spelregels.md) — betrouwbaar is een van de vier spelregels
-- [Valide](./valide.md) — betrouwbaar meten is niet genoeg als je het *verkeerde* meet
-- [Interne validiteit](./interne-validiteit.md) — ook daar houd je omstandigheden gelijk, maar dan om te weten waar een verschil door komt
+- [De vier spelregels samen](site:onderzoek/spelregels/de-vier-spelregels) — betrouwbaar is een van de vier spelregels
+- [Valide](site:onderzoek/spelregels/valide) — betrouwbaar meten is niet genoeg als je het *verkeerde* meet
+- [Interne validiteit](site:onderzoek/spelregels/interne-validiteit) — ook daar houd je omstandigheden gelijk, maar dan om te weten waar een verschil door komt

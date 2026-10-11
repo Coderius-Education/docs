@@ -15,7 +15,7 @@ allemaal te doen, en ook niet op volgorde.
 
 ## Tic-Tac-Toe
 
-Bekend terrein: [onze minimax-module](/docs/minimax/01-concept) is een
+Bekend terrein: [onze minimax-module](site:algorithms/docs/minimax/01-concept) is een
 Nederlandse bewerking van dit project. Bij CS50 bouw je dezelfde acht
 functies in het echte project, met een klikbare spelinterface eromheen. Je
 leert er inhoudelijk weinig nieuws, maar het is de zachtste instap in hoe
@@ -25,7 +25,7 @@ CS50 werkt: een specificatie lezen, functies invullen, testen.
 
 ## PageRank
 
-Ook dit algoritme [heb je al gebouwd](/docs/pagerank/01-concept). CS50 voegt
+Ook dit algoritme [heb je al gebouwd](site:algorithms/docs/pagerank/01-concept). CS50 voegt
 een tweede aanpak toe: in plaats van iteratief rekenen simuleer je een
 *random surfer* die willekeurig rondklikt over het web (een Markov-keten) en
 telt waar hij uitkomt. Twee wegen naar hetzelfde antwoord.

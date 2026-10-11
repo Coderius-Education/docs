@@ -8,7 +8,7 @@ Naast het gewone lampje zit er ook een **RGB-lampje** op het bord. Daarmee kun j
 
 ## Code
 
-Het script is je knipperscript uit [2.2](2_knipperen.md), met twee verschillen: een andere pinnaam, en `value()` in plaats van `on()` en `off()`. Kies zelf een van de drie kleurnamen:
+Het script is je knipperscript uit [2.2](site:robotica/docs/Microcontrollers/Arduino%20Nano%20RP2040%20Connect/Tutorial-ingebouwd-lampje/knipperen), met twee verschillen: een andere pinnaam, en `value()` in plaats van `on()` en `off()`. Kies zelf een van de drie kleurnamen:
 
 ```python
 from machine import Pin

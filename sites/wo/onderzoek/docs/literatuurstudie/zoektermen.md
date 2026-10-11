@@ -28,7 +28,7 @@ Met een paar tekens stuur je de zoekmachine veel preciezer:
 | `intitle:` | Het woord moet in de titel staan | `intitle:sleep` |
 | `author:` | Van deze auteur | `author:walker` |
 
-Deze werken in [Google Scholar](./google-scholar.md); [Semantic Scholar](./semantic-scholar.md) kent de aanhalingstekens en verder vooral filters.
+Deze werken in [Google Scholar](site:onderzoek/literatuurstudie/google-scholar); [Semantic Scholar](site:onderzoek/literatuurstudie/semantic-scholar) kent de aanhalingstekens en verder vooral filters.
 
 :::caution[Te specifiek is net zo erg als te breed]
 `"slaaptekort" "concentratie" "havo 4"` levert nul treffers op — niemand heeft precies jouw onderzoek al gedaan. Dat is geen teken dat er niets is, maar dat je zoektermen te dicht op je eigen situatie zitten. Zoek breder (adolescenten, aandacht) en vertaal daarna zelf naar je eigen groep.
@@ -41,6 +41,6 @@ Deze werken in [Google Scholar](./google-scholar.md); [Semantic Scholar](./seman
 
 ## Hangt samen met
 
-- [Google Scholar](./google-scholar.md) en [Semantic Scholar](./semantic-scholar.md) — waar je de termen intikt
-- [Sneeuwbalmethode](./sneeuwbalmethode.md) — de manier om verder te komen zodra je één goed artikel hebt
-- [Beschrijvend-definiërend](../opzet/functies/beschrijvend-definierend.md) — scherpe begrippen zijn ook scherpe zoektermen
+- [Google Scholar](site:onderzoek/literatuurstudie/google-scholar) en [Semantic Scholar](site:onderzoek/literatuurstudie/semantic-scholar) — waar je de termen intikt
+- [Sneeuwbalmethode](site:onderzoek/literatuurstudie/sneeuwbalmethode) — de manier om verder te komen zodra je één goed artikel hebt
+- [Beschrijvend-definiërend](site:onderzoek/opzet/functies/beschrijvend-definierend) — scherpe begrippen zijn ook scherpe zoektermen

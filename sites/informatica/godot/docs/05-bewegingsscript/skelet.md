@@ -40,7 +40,7 @@ Je hoeft de GDQuest-cursus niet uitgespeeld te hebben; je loopt hem ernaast door
 
 <GDQuestTabel />
 
-Alles hieruit staat kort bij elkaar in de [GDScript-tips](/gdscript-tips), de naslag bij alle lessen.
+Alles hieruit staat kort bij elkaar in de [GDScript-tips](site:godot/gdscript-tips), de naslag bij alle lessen.
 
 </details>
 
@@ -124,7 +124,7 @@ Godot heeft twee functies die elke frame draaien. Welke je kiest hangt af van of
 | `_process(delta)`         | UI bijwerken, tellers, animatie-logica zonder botsingen              |
 | `_physics_process(delta)` | Beweging, zwaartekracht, botsingen — alles waar physics bij hoort     |
 
-Wij bouwen beweging met botsingen, dus `_physics_process`. Deze tabel staat ook in de [GDScript-tips](/gdscript-tips#functies).
+Wij bouwen beweging met botsingen, dus `_physics_process`. Deze tabel staat ook in de [GDScript-tips](site:godot/gdscript-tips#functies).
 
 ## Je script tot nu toe
 
@@ -175,4 +175,4 @@ func _physics_process(delta: float) -> void:
 
 ---
 
-**Volgende:** [Deel 2 — Vallen](./motor.md) →
+**Volgende:** [Deel 2 — Vallen](site:godot/docs/movement-motor) →

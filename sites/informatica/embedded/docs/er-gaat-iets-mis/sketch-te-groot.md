@@ -25,4 +25,4 @@ Serial.println(F("Een lange uitleg die veel RAM kost"));
 - Verwijder libraries die je niet echt gebruikt.
 - Vervang grote `String`-objecten door gewone `char`-tekst waar het kan.
 
-**Loop je hier vaak tegenaan?** Dan is dit precies een reden om naar de STM32 over te stappen. Zie [8.1 Waarom STM32?](/docs/stm32-intro/waarom-stm32).
+**Loop je hier vaak tegenaan?** Dan is dit precies een reden om naar de STM32 over te stappen. Zie [8.1 Waarom STM32?](site:embedded/docs/stm32-intro/waarom-stm32).

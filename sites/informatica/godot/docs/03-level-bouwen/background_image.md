@@ -10,7 +10,7 @@ Tijd om je lege scène iets minder grijs te maken. In deze les zet je een achter
 <GodotVersie />
 
 :::note
-Heb je de assets nog niet gedownload? Volg eerst de stappen op [Bestanden downloaden](../02-editor-leren-kennen/bestanden-downloaden.md).
+Heb je de assets nog niet gedownload? Volg eerst de stappen op [Bestanden downloaden](site:godot/docs/bestanden-downloaden).
 :::
 
 ## Stap 1: Voeg een `TextureRect` toe \{#texturerect}
@@ -21,7 +21,7 @@ Een `TextureRect` is een node die een afbeelding toont. Voor een achtergrond is 
 2. Zoek naar `TextureRect` en voeg deze toe.
 3. Sleep hem in de Scene Tree **bovenaan**, boven al je andere nodes. Godot tekent van boven naar beneden, dus wat bovenaan staat in de tree komt onderaan in beeld — precies wat je wilt voor een achtergrond.
 
-De `TextureRect`-instellingen staan ook in de [Nodes cheatsheet](/cheatsheet#level-wereld).
+De `TextureRect`-instellingen staan ook in de [Nodes cheatsheet](site:godot/cheatsheet#level-wereld).
 
 ## Stap 2: Zet de afbeelding erin
 

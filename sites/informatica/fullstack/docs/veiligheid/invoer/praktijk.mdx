@@ -5,7 +5,7 @@ description: Controleer op wat mag in plaats van te weren wat niet mag, zet een 
 
 # Invoer controleren: in de praktijk
 
-Met de grenzen in `Form` en je eigen controles uit [les 2 tot en met 6](./grenzen)
+Met de grenzen in `Form` en je eigen controles uit [les 2 tot en met 6](site:fullstack/docs/veiligheid/invoer/grenzen)
 bewaak je één formulier. Een echte site doet dat overal, en op een vaste manier.
 
 ## Wat jij zelf doet
@@ -19,9 +19,9 @@ Neem een gebruikersnaam. Weren wat niet mag ("geen `<`, geen spaties, geen
 `;`…") laat altijd iets door dat je niet bedacht had. Toestaan wat mag ("alleen
 letters en cijfers, 3 tot 20 tekens") laat precies dat door en de rest niet.
 Wat je vergeet te noemen, is dan geweigerd in plaats van toegestaan. Dat is
-hetzelfde idee als de lijst met stemmingen uit [les 5](./getallen) en de
-pagina's uit [les 6](./paden). Je komt het later weer tegen in
-[Wie mag wat](../toegang/praktijk), als *deny by default*.
+hetzelfde idee als de lijst met stemmingen uit [les 5](site:fullstack/docs/veiligheid/invoer/getallen) en de
+pagina's uit [les 6](site:fullstack/docs/veiligheid/invoer/paden). Je komt het later weer tegen in
+[Wie mag wat](site:fullstack/docs/veiligheid/toegang/praktijk), als *deny by default*.
 
 ### Een 422 zegt genoeg
 
@@ -39,11 +39,11 @@ Dit hoef je voor je eigen project niet te bouwen. Klap open wat je wilt lezen.
 
 `max_length` bewaakt één veld. Starlette, het deel van FastAPI dat formulieren
 leest, weigert zelf al een veld boven een megabyte; dat zag je in
-[les 1](./maxlength). Een verzoek kan ook op andere manieren groot zijn: een
+[les 1](site:fullstack/docs/veiligheid/invoer/maxlength). Een verzoek kan ook op andere manieren groot zijn: een
 enorm geüpload bestand, of duizend velden tegelijk. Daar zet je een grens omheen
 die vóór je code komt. Dat regel je meestal niet in FastAPI zelf,
 maar in een server ervoor, zoals nginx. Wat zo'n server ervoor doet, lees je
-later in de praktijk van [Te veel verzoeken](../dos/praktijk). In nginx is de
+later in de praktijk van [Te veel verzoeken](site:fullstack/docs/veiligheid/dos/praktijk). In nginx is de
 grens één regel:
 
 ```
@@ -67,14 +67,14 @@ Kies bij elke situatie de aanpak uit deze reeks die past.
 <summary>Antwoord</summary>
 
 1. Type in de parameter: `leeftijd: int = Form(...)`. FastAPI weigert `honderd`
-   dan met een `422`, net als het cijfer in [les 5](./getallen). Met `ge` en
+   dan met een `422`, net als het cijfer in [les 5](site:fullstack/docs/veiligheid/invoer/getallen). Met `ge` en
    `le` zet je er ook een onder- en bovengrens op.
 2. Een grens op de grootte van het verzoek, in de server vóór FastAPI.
 3. Toestaan wat mag: alleen letters en cijfers, met een minimum- en
    maximumlengte.
-4. Een lijst met de pagina's die mogen, zoals in [les 6](./paden). Een naam
+4. Een lijst met de pagina's die mogen, zoals in [les 6](site:fullstack/docs/veiligheid/invoer/paden). Een naam
    die er niet in staat, krijgt een `404` voordat `FileResponse` iets opent.
 
 </details>
 
-Door naar de volgende reeks: [HTML van een bezoeker](../xss/zwakheid).
+Door naar de volgende reeks: [HTML van een bezoeker](site:fullstack/docs/veiligheid/xss/zwakheid).

@@ -56,7 +56,7 @@ Gebruik je de [online editor](https://editor.godotengine.org/)? Dan kun je geen 
 
 ## Voorspel: wat betekent `res://`?
 
-Bovenaan het FileSystem-paneel staat `res://`. **Wat denk je dat dat is?** Denk terug aan [Opdracht 1.2.a](../01-aan-de-slag/project.md#opdracht-12a-vind-je-projectmap-terug), waar je je projectmap opzocht in de Verkenner.
+Bovenaan het FileSystem-paneel staat `res://`. **Wat denk je dat dat is?** Denk terug aan [Opdracht 1.2.a](site:godot/docs/project#opdracht-12a-vind-je-projectmap-terug), waar je je projectmap opzocht in de Verkenner.
 
 <details>
 <summary>Antwoord</summary>
@@ -82,7 +82,7 @@ Klap de mappen in het FileSystem-paneel open met het pijltje ervoor. Klik op een
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
-1. `Background` bevat effen kleurtegels, waaronder `Green.png` — die gebruik je in [Achtergrond](../03-level-bouwen/background_image.md).
+1. `Background` bevat effen kleurtegels, waaronder `Green.png` — die gebruik je in [Achtergrond](site:godot/docs/background_image).
 2. De figuren staan in `Main Characters`, elk in een eigen map. Een animatie is één breed bestand zoals `Run (32x32).png`: alle stapjes van de beweging naast elkaar in een **sprite-sheet**. In hoofdstuk 6 knip je die frames in Godot los.
 
 </details>

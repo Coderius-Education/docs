@@ -89,4 +89,4 @@ Zie je de letterlijke tekst `<script>alert(1);</script>` op het scherm in plaats
 Wat als je probeert een geavanceerd script te injecteren, maar de webpagina toont simpelweg letterlijk de tekst `<script>...` op het scherm in plaats van het uit te voeren?
 Als beveiliger wil je precies dat. De applicatie *escapet* dan je invoer: ze zet `<` en `>` om in tekens die de browser als tekst toont, niet als HTML. Zo komt je `<script>`-tag nooit bij de browser aan als code. In DVWA gebeurt dat op het niveau **impossible**; controleer dus of het security level op **low** staat.
 
-*Content Security Policy (CSP)* doet iets anders. Die laat de tag in de pagina staan, maar verbiedt de browser om het script uit te voeren: je ziet dan geen pop-up, en ook geen tekst. Hoe dat werkt, en hoe je er soms toch omheen komt, zie je in [CSP bypass](/docs/dvwa_tutorial/csp-bypass/low).
+*Content Security Policy (CSP)* doet iets anders. Die laat de tag in de pagina staan, maar verbiedt de browser om het script uit te voeren: je ziet dan geen pop-up, en ook geen tekst. Hoe dat werkt, en hoe je er soms toch omheen komt, zie je in [CSP bypass](site:dvwa/docs/dvwa_tutorial/csp-bypass/low).

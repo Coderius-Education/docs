@@ -51,7 +51,7 @@ Dit venster is even wennen. In deze video zie je dezelfde stappen in beeld: het 
 <iframe width="100%" height="500px" src="https://www.youtube-nocookie.com/embed/5V9f3MT86M8?start=712&end=868" title="Start Your Game Creation Journey Today. (Godot beginner tutorial)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 :::tip
-Werk je liever met losse PNG-bestanden (één per frame)? Zie [Je eigen animaties maken](./eigen_animaties.md) voor hoe je die zelf produceert — anders kun je ze direct vanuit het FileSystem in het frame-paneel slepen.
+Werk je liever met losse PNG-bestanden (één per frame)? Zie [Je eigen animaties maken](site:godot/docs/eigen_animaties) voor hoe je die zelf produceert — anders kun je ze direct vanuit het FileSystem in het frame-paneel slepen.
 :::
 
 :::tip
@@ -60,7 +60,7 @@ Zet de **FPS** (frames per seconde) van elke animatie op een waarde die er soepe
 
 In de volgende les laat je via code de juiste animatie afspelen op het juiste moment.
 
-De `AnimatedSprite2D`-instellingen staan ook in de [Nodes cheatsheet](/cheatsheet#hoofdpersoon).
+De `AnimatedSprite2D`-instellingen staan ook in de [Nodes cheatsheet](site:godot/cheatsheet#hoofdpersoon).
 
 ## Er gaat iets mis
 
@@ -71,7 +71,7 @@ De `AnimatedSprite2D`-instellingen staan ook in de [Nodes cheatsheet](/cheatshee
 
 **Oplossing:**
 
-1. Controleer of je in het script `$AnimatedSprite2D.play("idle")` (of een andere animatienaam) aanroept — het `$`-teken leer je in [Animaties in code](./animaties_code.md).
+1. Controleer of je in het script `$AnimatedSprite2D.play("idle")` (of een andere animatienaam) aanroept — het `$`-teken leer je in [Animaties in code](site:godot/docs/animaties_code).
 2. Controleer of de naam in het script **exact** overeenkomt met de naam in SpriteFrames (hoofdlettergevoelig).
 3. Controleer dat de node `AnimatedSprite2D` heet in de Scene Tree — anders past `$AnimatedSprite2D` niet.
 
@@ -97,7 +97,7 @@ De `AnimatedSprite2D`-instellingen staan ook in de [Nodes cheatsheet](/cheatshee
 - Zorg dat je script `$AnimatedSprite2D` gebruikt met exact dezelfde naam.
 - Controleer dat `AnimatedSprite2D` een **child** is van `CharacterBody2D`, niet los in de scène.
 
-**Zelf vinden:** sleep de node vanuit de Scene Tree je script in met `Ctrl` ingedrukt. Godot typt het pad dan zelf, en verschilt dat van wat er stond, dan heb je je fout. Zie ook [Meldingen tijdens het spelen](/docs/fouten-zoeken#runtime-meldingen).
+**Zelf vinden:** sleep de node vanuit de Scene Tree je script in met `Ctrl` ingedrukt. Godot typt het pad dan zelf, en verschilt dat van wat er stond, dan heb je je fout. Zie ook [Meldingen tijdens het spelen](site:godot/docs/fouten-zoeken#runtime-meldingen).
 
 </details>
 

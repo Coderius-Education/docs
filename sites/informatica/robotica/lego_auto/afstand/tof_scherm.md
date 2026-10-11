@@ -10,7 +10,7 @@ De afstand staat nu in de Shell, maar je robot rijdt los van de laptop. Je weet 
 
 ## Opdracht 11.5.a: toon de afstand op het OLED-scherm
 
-Combineer wat je hebt: de TOF-uitlezing uit de [vorige stap](./uitlezen.md) en het scherm uit je robotscript ([Deel 5](../debuggen_met_scherm/deel5_scherm.md)). Laat de afstand elke ronde op het scherm verschijnen.
+Combineer wat je hebt: de TOF-uitlezing uit de [vorige stap](site:robotica/lego_auto/afstand/uitlezen) en het scherm uit je robotscript ([Deel 5](site:robotica/lego_auto/scherm/waardes-op-scherm)). Laat de afstand elke ronde op het scherm verschijnen.
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -46,4 +46,4 @@ while True:
 Wil je meer? Twee richtingen, zonder stappenplan:
 
 - Laat je **lijnvolger stoppen** zodra de TOF een obstakel dichterbij dan 10 cm ziet — een extra `if` in je robotscript.
-- **Meer TOF-sensoren** aansluiten kan via de andere channels van de multiplexer; hoe dat werkt staat in de bibliotheek bij [twee TOF-sensoren met multiplexer](/docs/Microcontrollers/Arduino%20Nano%20RP2040%20Connect/Tutorial-TOF/wiring_code_2_met_mux).
+- **Meer TOF-sensoren** aansluiten kan via de andere channels van de multiplexer; hoe dat werkt staat in de bibliotheek bij [twee TOF-sensoren met multiplexer](site:robotica/docs/Microcontrollers/Arduino%20Nano%20RP2040%20Connect/Tutorial-TOF/wiring_code_2_met_mux).

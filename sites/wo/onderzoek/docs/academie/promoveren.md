@@ -31,7 +31,7 @@ Elk jaar promoveren in Nederland zo'n 5.600 mensen; vijfentwintig jaar geleden w
 ## Van eerste dag tot verdediging
 
 1. **Onderzoeksplan.** Je begint met een plan: welke vraag, welke deelvragen, welke methoden. In het eerste jaar wordt beoordeeld of je goed op weg bent; gaat het niet, dan kan het contract stoppen.
-2. **Onderzoek en artikelen.** Je doet het onderzoek en schrijft de resultaten op. In veel vakgebieden bestaat een proefschrift uit drie tot vijf artikelen die apart in tijdschriften met [peer review](../literatuurstudie/peer-review.md) verschijnen, met een inleiding en een slothoofdstuk eromheen. In andere vakgebieden, zoals geschiedenis, schrijf je één doorlopend boek.
+2. **Onderzoek en artikelen.** Je doet het onderzoek en schrijft de resultaten op. In veel vakgebieden bestaat een proefschrift uit drie tot vijf artikelen die apart in tijdschriften met [peer review](site:onderzoek/literatuurstudie/peer-review) verschijnen, met een inleiding en een slothoofdstuk eromheen. In andere vakgebieden, zoals geschiedenis, schrijf je één doorlopend boek.
 3. **Proefschrift.** Als de promotor tevreden is, gaat het manuscript naar de commissie. Die beoordeelt of het een zelfstandige, nieuwe bijdrage aan de wetenschap is. Pas na hun goedkeuring wordt het gedrukt.
 4. **Stellingen.** Bij veel universiteiten hoort bij het proefschrift een lijstje stellingen: korte beweringen die je moet kunnen verdedigen. De meeste gaan over je onderzoek, een of twee over iets heel anders — soms met een knipoog.
 5. **De openbare verdediging.** In een aula, voor familie, vrienden en collega's, stellen de commissieleden, de hoogleraren in toga, vragen over het proefschrift. Je staat naast je twee *paranimfen*: vroeger hielpen zij bij de organisatie, nu zijn het vooral eregasten. Na een vaste tijd, bij de Universiteit van Amsterdam bijvoorbeeld 45 minuten, komt de pedel binnen met de woorden *hora est* ("het is tijd"), en de vragen stoppen.
@@ -41,10 +41,10 @@ De verdediging is vooral een ceremonie: de beslissing over het proefschrift is a
 
 ## Wat een proefschrift voor jou betekent
 
-Een proefschrift is een goudmijn voor je eigen [literatuuronderzoek](../opzet/soorten/literatuuronderzoek.md). De inleiding geeft een overzicht van wat er over het onderwerp bekend is, en de literatuurlijst telt vaak honderden bronnen. Recente proefschriften van Nederlandse universiteiten zijn bijna altijd gratis te downloaden uit de *repository* van de universiteit, dus zonder [betaalmuur](../literatuurstudie/betaalmuur.md). Zoek in [Google Scholar](../literatuurstudie/google-scholar.md) op je onderwerp met *proefschrift* of *dissertation* erbij.
+Een proefschrift is een goudmijn voor je eigen [literatuuronderzoek](site:onderzoek/opzet/soorten/literatuuronderzoek). De inleiding geeft een overzicht van wat er over het onderwerp bekend is, en de literatuurlijst telt vaak honderden bronnen. Recente proefschriften van Nederlandse universiteiten zijn bijna altijd gratis te downloaden uit de *repository* van de universiteit, dus zonder [betaalmuur](site:onderzoek/literatuurstudie/betaalmuur). Zoek in [Google Scholar](site:onderzoek/literatuurstudie/google-scholar) op je onderwerp met *proefschrift* of *dissertation* erbij.
 
 :::caution[Valkuil: een promovendus is geen student]
-Een promovendus heeft al een master, krijgt salaris en doet zelfstandig onderzoek. Het is een beginnende onderzoeker, geen student die nog les krijgt. Een artikel van een promovendus is na [peer review](../literatuurstudie/peer-review.md) net zo serieus te nemen als een artikel van een hoogleraar.
+Een promovendus heeft al een master, krijgt salaris en doet zelfstandig onderzoek. Het is een beginnende onderzoeker, geen student die nog les krijgt. Een artikel van een promovendus is na [peer review](site:onderzoek/literatuurstudie/peer-review) net zo serieus te nemen als een artikel van een hoogleraar.
 :::
 
 <WelNiet
@@ -66,7 +66,7 @@ In 1905, het jaar waarin hij ook de relativiteitstheorie publiceerde, leverde Al
 
 ## Hangt samen met
 
-- [De academische ladder](./academische-ladder.md) — wat er na de promotie komt
-- [Auteurvolgorde](../literatuurstudie/auteurvolgorde.md) — waarom promovendi zo vaak eerste auteur zijn
-- [Hoofd- en deelvragen samen](../vragen/hoofd-en-deelvragen.mdx) — ook een proefschrift begint met een hoofdvraag en deelvragen
-- [Peer review](../literatuurstudie/peer-review.md) — de controle die de artikelen in een proefschrift doorlopen
+- [De academische ladder](site:onderzoek/academie/academische-ladder) — wat er na de promotie komt
+- [Auteurvolgorde](site:onderzoek/literatuurstudie/auteurvolgorde) — waarom promovendi zo vaak eerste auteur zijn
+- [Hoofd- en deelvragen samen](site:onderzoek/vragen/hoofd-en-deelvragen) — ook een proefschrift begint met een hoofdvraag en deelvragen
+- [Peer review](site:onderzoek/literatuurstudie/peer-review) — de controle die de artikelen in een proefschrift doorlopen

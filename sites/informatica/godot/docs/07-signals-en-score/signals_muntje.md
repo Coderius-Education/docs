@@ -39,7 +39,7 @@ Een signal is een bericht dat een node verstuurt zodra er iets gebeurt. Andere n
 - De **deurbel** stuurt een signaal als iemand erop drukt.
 - **Jij** luistert naar dat signaal en doet de deur open.
 
-In Godot is het precies zo: een node *stuurt* een signal, een andere node *vangt* het op en voert code uit. De `Area2D`-node die je zo gebruikt staat in de [Nodes cheatsheet](/cheatsheet#collectibles-vijanden); de signal-code vind je terug in de [GDScript-tips](/gdscript-tips#signals).
+In Godot is het precies zo: een node *stuurt* een signal, een andere node *vangt* het op en voert code uit. De `Area2D`-node die je zo gebruikt staat in de [Nodes cheatsheet](site:godot/cheatsheet#collectibles-vijanden); de signal-code vind je terug in de [GDScript-tips](site:godot/gdscript-tips#signals).
 
 ## Stap 1: Maak een muntje-scène \{#area2d}
 
@@ -212,4 +212,4 @@ In de volgende les bouw je een **score-teller** in je karakter, zodat opgepakte 
 
 </details>
 
-Staat je fout er niet bij? In [Fouten zoeken](../05-bewegingsscript/fouten-zoeken.md) staat hoe je hem zelf opspoort.
+Staat je fout er niet bij? In [Fouten zoeken](site:godot/docs/fouten-zoeken) staat hoe je hem zelf opspoort.

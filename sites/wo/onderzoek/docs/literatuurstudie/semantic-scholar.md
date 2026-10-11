@@ -13,17 +13,17 @@ title: Semantic Scholar
 ## Wat het anders doet dan Google Scholar
 
 - **TLDR.** Bij veel artikelen staat een samenvatting van één zin, gemaakt door een taalmodel. Ideaal om in seconden te zien of iets over jouw onderwerp gaat — maar het blijft een samenvatting van een samenvatting.
-- **Highly influential citations.** Naast het totale aantal [citaties](./citaties.md) staat hoeveel artikelen dit stuk *echt* gebruikten: ze bouwen erop voort in plaats van het even te noemen. Dat getal zegt vaak meer dan het totaal.
+- **Highly influential citations.** Naast het totale aantal [citaties](site:onderzoek/literatuurstudie/citaties) staat hoeveel artikelen dit stuk *echt* gebruikten: ze bouwen erop voort in plaats van het even te noemen. Dat getal zegt vaak meer dan het totaal.
 - **Waarom wordt het geciteerd?** Elke citatie is ingedeeld als *background* (het onderwerp inleiden), *methods* (de methode overnemen) of *results* (de uitkomsten vergelijken). Zo zie je of een artikel bekend is om zijn aanpak of om zijn conclusie.
 - **Filters.** Op vakgebied, op jaar, op *has PDF* (alleen gratis leesbare stukken) en op soort artikel, zoals *Review*.
 - **Research feeds.** Sla artikelen op die je goed vindt; de site stelt vergelijkbare nieuwe artikelen voor.
 
 ## Wanneer kies je het?
 
-Semantic Scholar is het sterkst in de exacte vakken, informatica en de biomedische wetenschappen. Voor Nederlandstalige bronnen, geschiedenis of literatuurwetenschap vind je in [Google Scholar](./google-scholar.md) meer. Veel onderzoekers gebruiken ze naast elkaar: Scholar om breed te zoeken, Semantic Scholar om te wegen welke treffer ertoe doet.
+Semantic Scholar is het sterkst in de exacte vakken, informatica en de biomedische wetenschappen. Voor Nederlandstalige bronnen, geschiedenis of literatuurwetenschap vind je in [Google Scholar](site:onderzoek/literatuurstudie/google-scholar) meer. Veel onderzoekers gebruiken ze naast elkaar: Scholar om breed te zoeken, Semantic Scholar om te wegen welke treffer ertoe doet.
 
 :::caution[De samenvatting is niet het artikel]
-Een TLDR en zelfs een [abstract](./abstract-scannen.md) zijn hulpmiddelen om te *kiezen*, niet om te *citeren*. Wie in een verslag schrijft wat een artikel concludeert, moet dat artikel gelezen hebben — zie [deep reading](./deep-reading.md).
+Een TLDR en zelfs een [abstract](site:onderzoek/literatuurstudie/abstract-scannen) zijn hulpmiddelen om te *kiezen*, niet om te *citeren*. Wie in een verslag schrijft wat een artikel concludeert, moet dat artikel gelezen hebben — zie [deep reading](site:onderzoek/literatuurstudie/deep-reading).
 :::
 
 <WelNiet
@@ -33,6 +33,6 @@ Een TLDR en zelfs een [abstract](./abstract-scannen.md) zijn hulpmiddelen om te 
 
 ## Hangt samen met
 
-- [Google Scholar](./google-scholar.md) — de bredere zoekmachine
-- [Citaties](./citaties.md) — waarom ‘veel geciteerd’ niet hetzelfde is als ‘invloedrijk’
-- [Abstract scannen](./abstract-scannen.md) — de volgende stap na de TLDR
+- [Google Scholar](site:onderzoek/literatuurstudie/google-scholar) — de bredere zoekmachine
+- [Citaties](site:onderzoek/literatuurstudie/citaties) — waarom ‘veel geciteerd’ niet hetzelfde is als ‘invloedrijk’
+- [Abstract scannen](site:onderzoek/literatuurstudie/abstract-scannen) — de volgende stap na de TLDR

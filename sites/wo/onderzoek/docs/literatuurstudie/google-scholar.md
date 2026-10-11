@@ -14,22 +14,22 @@ title: Google Scholar
 
 Elk resultaat bestaat uit een titel, de auteurs, het tijdschrift en het jaar, en een stukje tekst. De links eronder zijn het interessantst:
 
-- **Geciteerd door 213** — hoe vaak andere artikelen naar dit stuk verwijzen. Klik erop en je krijgt al die artikelen: de snelste manier om vooruit te [sneeuwballen](./sneeuwbalmethode.md).
+- **Geciteerd door 213** — hoe vaak andere artikelen naar dit stuk verwijzen. Klik erop en je krijgt al die artikelen: de snelste manier om vooruit te [sneeuwballen](site:onderzoek/literatuurstudie/sneeuwbalmethode).
 - **Gerelateerde artikelen** — stukken over hetzelfde onderwerp; handig als je één goede treffer hebt.
 - **Alle 6 versies** — dezelfde tekst op verschillende plekken; soms zit daar een gratis pdf tussen.
 - **Citeren** (het aanhalingsteken) — geeft je de bronvermelding in APA-stijl en een paar andere stijlen, klaar om te plakken.
-- Rechts staat, als die er is, een directe **[PDF]**- of **[HTML]**-link: dan is het artikel gratis te lezen. Staat er niets, dan zit het waarschijnlijk achter een [betaalmuur](./betaalmuur.md).
+- Rechts staat, als die er is, een directe **[PDF]**- of **[HTML]**-link: dan is het artikel gratis te lezen. Staat er niets, dan zit het waarschijnlijk achter een [betaalmuur](site:onderzoek/literatuurstudie/betaalmuur).
 
 Links op de pagina kun je filteren op jaar (*Sinds …*, of een eigen bereik), sorteren op datum, en — heel nuttig — het vinkje **Overzichtsartikelen** aanzetten om alleen artikelen te krijgen die de stand van zaken samenvatten.
 
 ## Zo gebruik je het slim
 
 - **Begin met een <B t="overzichtsartikel" tekst="overzichtsartikel"/>.** Zet het filter aan, kies het meest geciteerde recente overzichtsartikel, en je hebt in één keer een kaart van het vakgebied — inclusief literatuurlijst.
-- **Gebruik de [zoekoperatoren](./zoektermen.md).** Aanhalingstekens voor een exacte woordgroep, `intitle:` om alleen in titels te zoeken.
+- **Gebruik de [zoekoperatoren](site:onderzoek/literatuurstudie/zoektermen).** Aanhalingstekens voor een exacte woordgroep, `intitle:` om alleen in titels te zoeken.
 - **Zet een melding aan.** Via het envelop-icoon krijg je een mail zodra er iets nieuws verschijnt over je zoekterm.
 
 :::caution[Alles ziet er even wetenschappelijk uit]
-Google Scholar zet een geplaatst artikel uit een toptijdschrift, een bachelorscriptie en een stuk uit een nep-tijdschrift naast elkaar in dezelfde opmaak. De zoekmachine weet niet wat betrouwbaar is. Kijk daarom altijd naar het tijdschrift, het jaar en het aantal citaties — en lees op [Peer review](./peer-review.md) waarom dat ertoe doet.
+Google Scholar zet een geplaatst artikel uit een toptijdschrift, een bachelorscriptie en een stuk uit een nep-tijdschrift naast elkaar in dezelfde opmaak. De zoekmachine weet niet wat betrouwbaar is. Kijk daarom altijd naar het tijdschrift, het jaar en het aantal citaties — en lees op [Peer review](site:onderzoek/literatuurstudie/peer-review) waarom dat ertoe doet.
 :::
 
 <WelNiet
@@ -39,7 +39,7 @@ Google Scholar zet een geplaatst artikel uit een toptijdschrift, een bachelorscr
 
 ## Hangt samen met
 
-- [Semantic Scholar](./semantic-scholar.md) — het alternatief dat wél iets over invloed en inhoud zegt
-- [Citaties](./citaties.md) — wat het getal achter ‘Geciteerd door’ betekent
-- [Sneeuwbalmethode](./sneeuwbalmethode.md) — waar ‘Geciteerd door’ en ‘Gerelateerde artikelen’ voor bedoeld zijn
-- [Betaalmuren en open access](./betaalmuur.md) — wat je doet als je niet bij de tekst kunt
+- [Semantic Scholar](site:onderzoek/literatuurstudie/semantic-scholar) — het alternatief dat wél iets over invloed en inhoud zegt
+- [Citaties](site:onderzoek/literatuurstudie/citaties) — wat het getal achter ‘Geciteerd door’ betekent
+- [Sneeuwbalmethode](site:onderzoek/literatuurstudie/sneeuwbalmethode) — waar ‘Geciteerd door’ en ‘Gerelateerde artikelen’ voor bedoeld zijn
+- [Betaalmuren en open access](site:onderzoek/literatuurstudie/betaalmuur) — wat je doet als je niet bij de tekst kunt

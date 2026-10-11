@@ -25,7 +25,7 @@ describe('ctf: de intro en de challenges', () => {
     expect(items.length).toBeGreaterThan(0);
     expect(items.map((m) => +m[1])).toEqual(items.map((_, i) => i + 1));
     for (const [, nr, regel] of items) {
-      const link = regel.match(/^\[[^\]]+\]\(\/docs\/([\w/-]+)\)/);
+      const link = regel.match(/^\[[^\]]+\]\(site:ctf\/docs\/([\w/-]+)\)/);
       expect(link, `item ${nr}: ${regel}`).not.toBeNull();
       expect(existsSync(join(DOCS, `${link?.[1]}.md`)), `item ${nr}`).toBe(true);
     }

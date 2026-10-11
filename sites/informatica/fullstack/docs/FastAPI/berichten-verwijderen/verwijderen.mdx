@@ -4,7 +4,7 @@ Verwijderen gaat net als opslaan: een formulier met een POST, en daarna met een 
 
 ## Het endpoint
 
-De sleutels staan sinds [Eén item tonen: de sleutel uit de URL](/docs/FastAPI/berichten-tonen/detailpagina) al in je lijst. Zet het endpoint voor verwijderen onder je andere endpoints:
+De sleutels staan sinds [Eén item tonen: de sleutel uit de URL](site:fullstack/docs/FastAPI/berichten-tonen/detailpagina) al in je lijst. Zet het endpoint voor verwijderen onder je andere endpoints:
 
 <CodeUitleg>
 
@@ -23,7 +23,7 @@ De sleutel komt uit het formulier, net als een naam of een bericht.
 </Regel>
 
 <Regel n={4} tot={6}>
-`del db[sleutel]` haalt het bericht weg, zoals in [Verwijderen met del](/docs/FastAPI/sqlitedict/verwijderen). De `if sleutel in db` voorkomt een crash als het bericht al weg is, bijvoorbeeld omdat iemand het in een ander tabblad al verwijderde.
+`del db[sleutel]` haalt het bericht weg, zoals in [Verwijderen met del](site:fullstack/docs/FastAPI/sqlitedict/verwijderen). De `if sleutel in db` voorkomt een crash als het bericht al weg is, bijvoorbeeld omdat iemand het in een ander tabblad al verwijderde.
 </Regel>
 
 <Regel n={7}>
@@ -53,7 +53,7 @@ Een `<input type="hidden">` ziet de bezoeker niet, maar hij gaat wel mee met het
 <details>
 <summary>Zo ziet je `templates/berichten.html` er nu uit</summary>
 
-Alleen het formulier in de `<li>` is nieuw; de rest is zoals in [Eén item tonen: de sleutel uit de URL](/docs/FastAPI/berichten-tonen/detailpagina).
+Alleen het formulier in de `<li>` is nieuw; de rest is zoals in [Eén item tonen: de sleutel uit de URL](site:fullstack/docs/FastAPI/berichten-tonen/detailpagina).
 
 ```html
 <!DOCTYPE html>
@@ -338,7 +338,7 @@ Laat na het verwijderen bovenaan de lijst "Bericht verwijderd" zien. Bij een bez
 <details>
 <summary>Tip</summary>
 
-Stuur door naar `/berichten?verwijderd=1`. Het stuk na het vraagteken kun je in het endpoint uitlezen, zoals in [Een waarde na een vraagteken: query-parameters](/docs/FastAPI/veel-paginas/query-parameters). Geef het een standaardwaarde, zodat `/berichten` zonder vraagteken ook werkt, en gebruik `{% if %}` in de template.
+Stuur door naar `/berichten?verwijderd=1`. Het stuk na het vraagteken kun je in het endpoint uitlezen, zoals in [Een waarde na een vraagteken: query-parameters](site:fullstack/docs/FastAPI/veel-paginas/query-parameters). Geef het een standaardwaarde, zodat `/berichten` zonder vraagteken ook werkt, en gebruik `{% if %}` in de template.
 
 </details>
 
@@ -377,4 +377,4 @@ Zonder `?verwijderd=1` in de URL is `verwijderd` gelijk aan 0, en 0 telt in een 
 
 </details>
 
-Door naar [Registreren: een account opslaan](/docs/FastAPI/accounts/registreren).
+Door naar [Registreren: een account opslaan](site:fullstack/docs/FastAPI/accounts/registreren).

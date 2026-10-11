@@ -24,4 +24,4 @@ print("Hallo wereld")
 
 Onderaan opent de terminal en daar staat `Hallo wereld`. Vóór de prompt staat `(.venv)`: VS Code heeft je virtual environment gebruikt.
 
-Ontbreekt de Play-knop, dan mist de Python-extensie uit [stap 5](./stap-5-vscode).
+Ontbreekt de Play-knop, dan mist de Python-extensie uit [stap 5](site:editor/python/stap-5-vscode).

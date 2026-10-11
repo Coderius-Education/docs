@@ -4,7 +4,7 @@ title: Plato
 
 # Plato
 
-**ca. 427–347 v.Chr. · [rationalisme](./rationalisme.md)**
+**ca. 427–347 v.Chr. · [rationalisme](site:onderzoek/kennisleer/rationalisme)**
 
 Plato was een leerling van Socrates en stichtte in Athene de Akademia, een van de eerste filosofiescholen van Europa. Hij is een van de eerste denkers die systematisch uitwerken waaróm je je zintuigen niet zomaar mag vertrouwen.
 
@@ -16,13 +16,13 @@ Ontsnapt er één, dan is hij eerst verblind door het daglicht. Langzaam ziet hi
 
 Zo verhoudt onze waarneming zich volgens Plato tot de werkelijkheid. Wat je ziet is een afschaduwing van iets volmaakters: de **Ideeën**. De perfecte cirkel, de rechtvaardigheid zelf, het goede — die bestaan echt, los van de dingen die je tegenkomt, en je bereikt ze alleen met je verstand. Die opvatting heet **begripsrealisme**.
 
-Een cirkel die je op papier tekent is nooit helemaal rond; toch weet je precies wat een volmaakte cirkel is. Die kennis kan dus niet uit je ogen komen — ze is [a priori](./a-priori.md).
+Een cirkel die je op papier tekent is nooit helemaal rond; toch weet je precies wat een volmaakte cirkel is. Die kennis kan dus niet uit je ogen komen — ze is [a priori](site:onderzoek/kennisleer/a-priori).
 
 ## Wat je hieraan hebt bij je eigen onderzoek
 
 De grot van Plato is een blijvende waarschuwing: wat je waarneemt is altijd al een interpretatie. Je meet nooit "de werkelijkheid", maar iets wat je met een instrument, een schema of een vragenlijst zichtbaar hebt gemaakt.
 
-Praktisch levert dat twee dingen op. Ten eerste: neem de tijd om je begrippen scherp te definiëren vóór je gaat meten — dat is precies wat [definiërend onderzoek](../opzet/functies/beschrijvend-definierend.md) doet. Ten tweede: beschrijf hoe je gemeten hebt, zodat een ander kan zien welke schaduw jij hebt bekeken.
+Praktisch levert dat twee dingen op. Ten eerste: neem de tijd om je begrippen scherp te definiëren vóór je gaat meten — dat is precies wat [definiërend onderzoek](site:onderzoek/opzet/functies/beschrijvend-definierend) doet. Ten tweede: beschrijf hoe je gemeten hebt, zodat een ander kan zien welke schaduw jij hebt bekeken.
 
 :::tip[Verder kijken]
 [De grotallegorie in beeld](https://www.youtube.com/watch?v=1RWOpQXTltA)
@@ -30,6 +30,6 @@ Praktisch levert dat twee dingen op. Ten eerste: neem de tijd om je begrippen sc
 
 ## Hangt samen met
 
-- [Rationalisme](./rationalisme.md) — de stroming waarvan Plato de grondlegger is
-- [Aristoteles](./aristoteles.md) — zijn leerling, die hem juist tegensprak
-- [A priori](./a-priori.md) — het soort kennis waar Plato alles op bouwde
+- [Rationalisme](site:onderzoek/kennisleer/rationalisme) — de stroming waarvan Plato de grondlegger is
+- [Aristoteles](site:onderzoek/kennisleer/aristoteles) — zijn leerling, die hem juist tegensprak
+- [A priori](site:onderzoek/kennisleer/a-priori) — het soort kennis waar Plato alles op bouwde

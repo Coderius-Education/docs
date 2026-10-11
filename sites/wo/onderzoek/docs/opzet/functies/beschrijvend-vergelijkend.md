@@ -21,7 +21,7 @@ Je kunt alleen eerlijk vergelijken als je beide gevallen op **dezelfde manier** 
 :::
 
 :::tip[Past vaak bij]
-Dezelfde [enquête](../methoden/enquete.md) of [observatie](../methoden/observatie.md) uitvoeren bij twee groepen, en de resultaten naast elkaar zetten.
+Dezelfde [enquête](site:onderzoek/opzet/methoden/enquete) of [observatie](site:onderzoek/opzet/methoden/observatie) uitvoeren bij twee groepen, en de resultaten naast elkaar zetten.
 :::
 
 <WelNiet
@@ -31,6 +31,6 @@ Dezelfde [enquête](../methoden/enquete.md) of [observatie](../methoden/observat
 
 ## Hangt samen met
 
-- [Functies van onderzoek](./functies-overzicht.mdx) — alle zes functies naast elkaar
-- [Puur beschrijvend](./puur-beschrijvend.md) — de basis: eerst elk geval apart beschrijven
-- [Betrouwbaar](../../spelregels/betrouwbaar.md) — steeds op dezelfde manier meten
+- [Functies van onderzoek](site:onderzoek/opzet/functies/functies-overzicht) — alle zes functies naast elkaar
+- [Puur beschrijvend](site:onderzoek/opzet/functies/puur-beschrijvend) — de basis: eerst elk geval apart beschrijven
+- [Betrouwbaar](site:onderzoek/spelregels/betrouwbaar) — steeds op dezelfde manier meten

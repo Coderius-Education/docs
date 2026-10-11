@@ -26,7 +26,7 @@ Om die map als één pictogram te zien, ga je één niveau omhoog. Dat doe je in
 
 ## Stap 1: Open je projectmap vanuit Godot
 
-De snelste route loopt via de editor, precies zoals in [Bestanden downloaden](./02-editor-leren-kennen/bestanden-downloaden.md):
+De snelste route loopt via de editor, precies zoals in [Bestanden downloaden](site:godot/docs/bestanden-downloaden):
 
 1. Klik met rechts op `res://` in het **FileSystem**-paneel (linksonder).
 2. Kies **Open in File Manager** (heet **Openen in Bestandsbeheer** als je editor Nederlands is).

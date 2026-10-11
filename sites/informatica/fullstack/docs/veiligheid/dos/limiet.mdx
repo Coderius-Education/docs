@@ -7,7 +7,7 @@ import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
 
 # Te veel verzoeken: een limiet met slowapi
 
-In [les 3](./zelf-meten) beantwoordde je server elk verzoek. Je kunt niet
+In [les 3](site:fullstack/docs/veiligheid/dos/zelf-meten) beantwoordde je server elk verzoek. Je kunt niet
 voorkomen dat iemand veel verzoeken *stuurt*. Wat je wél kunt, is weigeren om ze
 allemaal te *beantwoorden*. Krijgt één bezoeker meer dan een paar verzoeken per
 minuut, dan is dat geen mens die een pagina leest, maar een script.
@@ -16,7 +16,7 @@ Een grens op het aantal verzoeken per bezoeker heet een **rate limit**, een
 verzoeklimiet. Hij stopt één computer die te veel vraagt, of die zijn verzoeken
 nu na elkaar of tegelijk stuurt. Tegen een DDoS van duizenden computers helpt
 hij minder, want elk apparaat blijft onder de grens; wat daartegen helpt, zie je
-in [les 6](./praktijk).
+in [les 6](site:fullstack/docs/veiligheid/dos/praktijk).
 
 ## `slowapi` installeren
 
@@ -73,7 +73,7 @@ Het endpoint zelf doet niets anders dan eerst: de limiet staat tussen
 ## Doe de test opnieuw
 
 Start je server opnieuw en draai `test_verzoeken.py` uit
-[les 3](./zelf-meten):
+[les 3](site:fullstack/docs/veiligheid/dos/zelf-meten):
 
 ```
 Verzoek 1: status 200
@@ -87,7 +87,7 @@ Verzoek 7: status 429
 
 en zo verder tot verzoek 20, met aan het eind `Gelukt: 5 van de 20`. De eerste
 vijf krijgen antwoord, de rest weigert je server met `429`, de code voor te veel
-verzoeken uit [het overzicht](/docs/veiligheid#statuscodes). Hoeveel het script
+verzoeken uit [het overzicht](site:fullstack/docs/veiligheid#statuscodes). Hoeveel het script
 ook stuurt, je server doet nog maar vijf keer echt werk per minuut. Een bezoeker
 die één keer je pagina opvraagt, merkt er niets van.
 
@@ -268,4 +268,4 @@ De startpagina heeft nu een limiet van vijf per minuut.
 
 </details>
 
-Door naar [les 5: wat de 429 vertelt](./te-veel).
+Door naar [les 5: wat de 429 vertelt](site:fullstack/docs/veiligheid/dos/te-veel).

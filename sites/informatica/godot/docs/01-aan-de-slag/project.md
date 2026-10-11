@@ -38,7 +38,7 @@ Weet je niet meer welke map je koos? In de Project Manager staat het volledige p
 
 In je projectmap staat onder andere `project.godot`. Dat bestand maakt de map tot een Godot-project: de Project Manager zoekt er naar, en alles wat je straks maakt (scènes, scripts, afbeeldingen) komt in deze map te staan.
 
-Onthoud waar deze map staat. In [Bestanden downloaden](../02-editor-leren-kennen/bestanden-downloaden.md) kopieer je hier je afbeeldingen naartoe.
+Onthoud waar deze map staat. In [Bestanden downloaden](site:godot/docs/bestanden-downloaden) kopieer je hier je afbeeldingen naartoe.
 
 </details>
 

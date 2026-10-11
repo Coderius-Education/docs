@@ -5,7 +5,7 @@ description: Waarom XSS gevaarlijk is, waarom je bij de uitvoer escapet en niet 
 
 # HTML van een bezoeker: in de praktijk
 
-Met `escape` en templates uit [les 2 tot en met 6](./escape) heb je het
+Met `escape` en templates uit [les 2 tot en met 6](site:fullstack/docs/veiligheid/xss/escape) heb je het
 belangrijkste gedaan. Echte sites doen er nog wat bij, omdat één vergeten plek
 genoeg is.
 
@@ -66,7 +66,7 @@ HTML.
 
 Dat geldt ook voor de `hx-on`-attributen van htmx. Van
 `hx-on::after-request="this.reset()"` uit het
-[htmx-overzicht](/docs/FastAPI/zonder-herladen/htmx-overzicht#een-formulier-versturen) maakt
+[htmx-overzicht](site:fullstack/docs/FastAPI/zonder-herladen/htmx-overzicht#een-formulier-versturen) maakt
 htmx een stukje JavaScript, en dat houdt `script-src 'self'` tegen. De velden
 blijven na het versturen gevuld; de enige aanwijzing is een rode `EvalError` in
 de Console. Haal het attribuut dan weg, en zet de reset in een eigen bestand
@@ -92,7 +92,7 @@ weglaten: het formulier werkt zonder.
 Een script in de pagina kan met `document.cookie` de cookies van die pagina
 lezen, ook het sessie-id. Met één instelling in `set_cookie` houd je de
 sessie-cookie daarbuiten. Dat doe je later, in de reeks
-[Cookies afschermen](../cookies/zwakheid).
+[Cookies afschermen](site:fullstack/docs/veiligheid/cookies/zwakheid).
 
 </details>
 
@@ -101,7 +101,7 @@ sessie-cookie daarbuiten. Dat doe je later, in de reeks
 Of een site van een ander escapet, test je niet door er HTML in te vullen. Dat
 is een aanval op die site en op de bezoekers ervan. Zie je per ongeluk dat
 tekst als HTML verschijnt, meld het dan bij de eigenaar. Hoe dat gaat, lees je later in
-[Wie mag wat: in de praktijk](../toegang/praktijk).
+[Wie mag wat: in de praktijk](site:fullstack/docs/veiligheid/toegang/praktijk).
 
 ## Opdracht: waar moet de bescherming?
 
@@ -127,4 +127,4 @@ bezoeker, en wat moet er anders bij de rest?
 
 </details>
 
-Door naar de volgende reeks: [Te veel verzoeken](../dos/verzoek).
+Door naar de volgende reeks: [Te veel verzoeken](site:fullstack/docs/veiligheid/dos/verzoek).

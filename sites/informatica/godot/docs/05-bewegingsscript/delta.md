@@ -129,4 +129,4 @@ func _physics_process(delta: float) -> void:
 
 ---
 
-← [Deel 2 — Vallen](./motor.md) · **Volgende:** [Deel 4 — Je eerste if](./grond.md) →
+← [Deel 2 — Vallen](site:godot/docs/movement-motor) · **Volgende:** [Deel 4 — Je eerste if](site:godot/docs/movement-grond) →

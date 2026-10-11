@@ -115,7 +115,8 @@ describe('cheatsheet volgt de lessen', () => {
     const fout = cheatItems
       .filter(
         (i) =>
-          i.tekst.includes('samesite') && !i.tekst.includes('/docs/veiligheid/cookies/samesite'),
+          i.tekst.includes('samesite') &&
+          !i.tekst.includes('](site:fullstack/docs/veiligheid/cookies/samesite)'),
       )
       .map((i) => i.summary);
     expect(fout).toEqual([]);
@@ -143,9 +144,9 @@ describe('cheatsheet volgt de lessen', () => {
       const kenmerk = item.summary.match(/\(([^)]+)\)$/)?.[1] ?? '';
       const nodig = KENMERK[kenmerk];
       if (!nodig) return [`${item.summary}: geen kenmerk in de test`];
-      const doelen = [...item.tekst.matchAll(/\]\((\/docs\/veiligheid\/[\w/-]+)\)/g)].map(
-        (m) => m[1],
-      );
+      const doelen = [
+        ...item.tekst.matchAll(/\]\(site:fullstack(\/docs\/veiligheid\/[\w/-]+)\)/g),
+      ].map((m) => m[1]);
       const raak = doelen.some((d) =>
         ['python', 'js'].some((taal) =>
           codeblokken(lees(`${SITE}${d}.mdx`), taal).some((c) => c.includes(nodig)),

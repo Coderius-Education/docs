@@ -23,7 +23,7 @@ export function hostVan(url: string): string {
 /**
  * Docentensites die de homepage nog niet toont, totdat ze volwassen zijn. Ze
  * blijven in de registry staan: die moet gelijk lopen met de mappen onder
- * sites/, en <SiteLink site="didactiek"> vanuit een les mag blijven werken.
+ * sites/, en een site:didactiek/…-link vanuit een les mag blijven werken.
  */
 export const NOG_VERBORGEN = ['didactiek'];
 

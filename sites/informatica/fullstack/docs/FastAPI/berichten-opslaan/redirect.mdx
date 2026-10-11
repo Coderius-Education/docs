@@ -10,7 +10,7 @@ Met `RedirectResponse` stuur je de browser door naar een andere URL. Zet hem bij
 from fastapi.responses import RedirectResponse
 ```
 
-Vervang dan je POST-endpoint `/gastenboek` uit [Elk bericht bewaren: een eigen sleutel](/docs/FastAPI/berichten-opslaan/eigen-sleutel). Alleen de laatste regel verandert:
+Vervang dan je POST-endpoint `/gastenboek` uit [Elk bericht bewaren: een eigen sleutel](site:fullstack/docs/FastAPI/berichten-opslaan/eigen-sleutel). Alleen de laatste regel verandert:
 
 <CodeUitleg>
 
@@ -26,7 +26,7 @@ async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
 ```
 
 <Regel n={3} tot={6}>
-Het opslaan is hetzelfde als in [Elk bericht bewaren: een eigen sleutel](/docs/FastAPI/berichten-opslaan/eigen-sleutel): een eigen sleutel per bericht, met `import time` bovenaan je bestand.
+Het opslaan is hetzelfde als in [Elk bericht bewaren: een eigen sleutel](site:fullstack/docs/FastAPI/berichten-opslaan/eigen-sleutel): een eigen sleutel per bericht, met `import time` bovenaan je bestand.
 </Regel>
 
 <Regel n={7}>
@@ -50,7 +50,7 @@ Eerst een POST en dan doorsturen naar een GET: dat heet het **post/redirect/get*
 3. Druk op F5. De pagina herlaadt, zonder vraag over opnieuw versturen
 
 :::danger[Gaat er iets mis?]
-Krijg je **405 Method Not Allowed** meteen na het versturen? Dan mist `status_code=303`. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
+Krijg je **405 Method Not Allowed** meteen na het versturen? Dan mist `status_code=303`. Meer oplossingen staan op [Er gaat iets mis](site:fullstack/docs/troubleshooting).
 :::
 
 <details>
@@ -290,4 +290,4 @@ Hier mag de standaard 307 blijven staan: het oorspronkelijke verzoek was al een 
 
 </details>
 
-Door naar [Alles tonen: een for-lus in je template](/docs/FastAPI/berichten-tonen/lijst_tonen).
+Door naar [Alles tonen: een for-lus in je template](site:fullstack/docs/FastAPI/berichten-tonen/lijst_tonen).

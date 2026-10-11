@@ -21,7 +21,7 @@ De twee worden vaak door elkaar gehaald, maar ze gaan over iets anders:
 | **Wat los je op met een bronvermelding?** | Alles | Niet alles: soms heb je ook toestemming nodig |
 | **Voorbeeld van een overtreding** | Een alinea overnemen zonder bron | Een foto van een fotograaf op je voorblad zetten, met bron maar zonder toestemming |
 
-Bij [transparant](./transparant.md) leer je dat alles wat je overneemt een bronvermelding krijgt. Dat blijft zo. Auteursrecht voegt er een vraag aan toe: mag ik dit wel gebruiken? Het hoort bij de spelregel [aanvaardbaar](./aanvaardbaar.md): je houdt je aan de wet en respecteert het werk van anderen.
+Bij [transparant](site:onderzoek/spelregels/transparant) leer je dat alles wat je overneemt een bronvermelding krijgt. Dat blijft zo. Auteursrecht voegt er een vraag aan toe: mag ik dit wel gebruiken? Het hoort bij de spelregel [aanvaardbaar](site:onderzoek/spelregels/aanvaardbaar): je houdt je aan de wet en respecteert het werk van anderen.
 
 ## Wat is beschermd, en wat niet?
 
@@ -56,7 +56,7 @@ Een Creative Commons-licentie (CC) zegt wat je zonder te vragen met een werk mag
 | **ND** | Geen afgeleide werken | Niet bewerken, bijsnijden of aanpassen |
 | **CC0** | Geen rechten voorbehouden | Je mag alles, een bronvermelding is wel netjes |
 
-*CC BY-NC* betekent dus: gebruiken mag, met naamsvermelding, maar niet commercieel. Voor een profielwerkstuk is bijna elke CC-licentie bruikbaar, zolang je de maker noemt en niets verandert als er *ND* staat. Afbeeldingen met zo'n licentie vind je onder meer op Wikimedia Commons en Openverse. Veel wetenschappelijke artikelen die gratis te lezen zijn, hebben ook een CC-licentie; zie [Betaalmuren](../literatuurstudie/betaalmuur.md).
+*CC BY-NC* betekent dus: gebruiken mag, met naamsvermelding, maar niet commercieel. Voor een profielwerkstuk is bijna elke CC-licentie bruikbaar, zolang je de maker noemt en niets verandert als er *ND* staat. Afbeeldingen met zo'n licentie vind je onder meer op Wikimedia Commons en Openverse. Veel wetenschappelijke artikelen die gratis te lezen zijn, hebben ook een CC-licentie; zie [Betaalmuren](site:onderzoek/literatuurstudie/betaalmuur).
 
 ## Situaties uit je profielwerkstuk
 
@@ -75,13 +75,13 @@ Een Creative Commons-licentie (CC) zegt wat je zonder te vragen met een werk mag
 Bij AI spelen twee vragen:
 
 - **Is wat de AI maakt beschermd?** In de Europese Unie ontstaat auteursrecht alleen als een *mens* de creatieve keuzes maakt. Wat een AI volledig zelf maakt, is daarom waarschijnlijk door niemand beschermd. Bewerk je de uitkomst flink zelf, dan kan dat anders liggen. Juristen zijn het over de grenzen nog niet eens.
-- **Mag je beschermd werk in een AI stoppen?** Daarmee verspreid je het werk van een ander. Veel universiteiten vragen studenten om geen beschermd materiaal in AI-hulpmiddelen te uploaden; zie [Universiteiten en AI](../academie/universiteiten-en-ai.mdx).
+- **Mag je beschermd werk in een AI stoppen?** Daarmee verspreid je het werk van een ander. Veel universiteiten vragen studenten om geen beschermd materiaal in AI-hulpmiddelen te uploaden; zie [Universiteiten en AI](site:onderzoek/academie/universiteiten-en-ai).
 
-Ook als een AI-plaatje door niemand beschermd is: meld dat je het met AI hebt gemaakt. Dat is geen kwestie van auteursrecht, maar van [transparantie](./transparant.md).
+Ook als een AI-plaatje door niemand beschermd is: meld dat je het met AI hebt gemaakt. Dat is geen kwestie van auteursrecht, maar van [transparantie](site:onderzoek/spelregels/transparant).
 
 ## Portretrecht
 
-Staat er een herkenbaar persoon op een foto of in een filmpje, dan heeft die persoon ook iets te zeggen: dat heet **portretrecht**. Maak je bij je onderzoek foto's of video-opnamen van deelnemers of voorbijgangers, vraag dan vooraf toestemming, en vraag die opnieuw als je de beelden wilt publiceren. Herkenbare beelden zijn bovendien persoonsgegevens, waarvoor de privacyregels gelden die bij [aanvaardbaar](./aanvaardbaar.md) staan.
+Staat er een herkenbaar persoon op een foto of in een filmpje, dan heeft die persoon ook iets te zeggen: dat heet **portretrecht**. Maak je bij je onderzoek foto's of video-opnamen van deelnemers of voorbijgangers, vraag dan vooraf toestemming, en vraag die opnieuw als je de beelden wilt publiceren. Herkenbare beelden zijn bovendien persoonsgegevens, waarvoor de privacyregels gelden die bij [aanvaardbaar](site:onderzoek/spelregels/aanvaardbaar) staan.
 
 :::caution[Valkuil: een bron is geen toestemming]
 "Ik heb de bron er toch onder gezet?" Daarmee voorkom je plagiaat, maar je hebt nog geen toestemming. En "het stond gewoon op internet" betekent niet dat het vrij is: bijna alles online is beschermd, ook als er geen © bij staat. Vraag je bij elke afbeelding af: bespreek ik dit (citaat), heeft het een open licentie, of heb ik toestemming? Is het antwoord drie keer nee, gebruik het dan niet.
@@ -106,7 +106,7 @@ In 2011 liet de Britse natuurfotograaf David Slater in Indonesië zijn camera on
 
 ## Hangt samen met
 
-- [Transparant](./transparant.md) — bronvermelding, de andere helft van eerlijk overnemen
-- [Aanvaardbaar](./aanvaardbaar.md) — toestemming en privacy, ook bij foto's van deelnemers
-- [Betaalmuren](../literatuurstudie/betaalmuur.md) — waar je Creative Commons-licenties bij artikelen tegenkomt
-- [Universiteiten en AI](../academie/universiteiten-en-ai.mdx) — wat je wel en niet in een chatbot mag stoppen
+- [Transparant](site:onderzoek/spelregels/transparant) — bronvermelding, de andere helft van eerlijk overnemen
+- [Aanvaardbaar](site:onderzoek/spelregels/aanvaardbaar) — toestemming en privacy, ook bij foto's van deelnemers
+- [Betaalmuren](site:onderzoek/literatuurstudie/betaalmuur) — waar je Creative Commons-licenties bij artikelen tegenkomt
+- [Universiteiten en AI](site:onderzoek/academie/universiteiten-en-ai) — wat je wel en niet in een chatbot mag stoppen

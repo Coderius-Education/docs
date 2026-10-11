@@ -19,7 +19,7 @@ title: Subjectieve kennis
 Twee leerlingen kunnen hier eerlijk van mening verschillen. Er is geen meetlint dat de discussie beslist, want het antwoord zegt evenveel over de persoon als over het ding.
 
 :::caution[Subjectief is niet hetzelfde als waardeloos]
-[Kwalitatief onderzoek](../gegevens/kwalitatief.md) verzamelt doelbewust subjectieve gegevens — meningen, ervaringen, motieven — en dat is precies de bedoeling. Wil je weten *waarom* leerlingen de aula mijden, dan heb je hun beleving nodig, niet een thermometer. Subjectieve gegevens worden pas een probleem als je doet alsof ze objectief zijn.
+[Kwalitatief onderzoek](site:onderzoek/gegevens/kwalitatief) verzamelt doelbewust subjectieve gegevens — meningen, ervaringen, motieven — en dat is precies de bedoeling. Wil je weten *waarom* leerlingen de aula mijden, dan heb je hun beleving nodig, niet een thermometer. Subjectieve gegevens worden pas een probleem als je doet alsof ze objectief zijn.
 :::
 
 <WelNiet
@@ -29,6 +29,6 @@ Twee leerlingen kunnen hier eerlijk van mening verschillen. Er is geen meetlint 
 
 ## Hangt samen met
 
-- [Objectieve kennis](./objectief.md) — de tegenhanger: onafhankelijk van de waarnemer
-- [Intersubjectieve kennis](./intersubjectief.md) — wat er ontstaat als veel subjecten het eens worden
-- [Kwalitatief onderzoek](../gegevens/kwalitatief.md) — de methode die subjectieve gegevens serieus neemt
+- [Objectieve kennis](site:onderzoek/kennisleer/objectief) — de tegenhanger: onafhankelijk van de waarnemer
+- [Intersubjectieve kennis](site:onderzoek/kennisleer/intersubjectief) — wat er ontstaat als veel subjecten het eens worden
+- [Kwalitatief onderzoek](site:onderzoek/gegevens/kwalitatief) — de methode die subjectieve gegevens serieus neemt

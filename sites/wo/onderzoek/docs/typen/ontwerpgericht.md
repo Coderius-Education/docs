@@ -22,7 +22,7 @@ Ontwerpgerichte hoofdvragen zijn **ontwerpvragen**. Ze beginnen bijna altijd met
 
 ## Wat lever je op?
 
-Een **ontwerp of prototype**, plus een verslag waarin je laat zien dat (en hoe goed) het werkt. Daarvoor stel je vooraf **eisen** op waaraan je ontwerp moet voldoen, en toets je je ontwerp daar aan het einde aan — dat toetsen is de [evaluerende functie](../opzet/functies/beschrijvend-evaluerend.md) van onderzoek.
+Een **ontwerp of prototype**, plus een verslag waarin je laat zien dat (en hoe goed) het werkt. Daarvoor stel je vooraf **eisen** op waaraan je ontwerp moet voldoen, en toets je je ontwerp daar aan het einde aan — dat toetsen is de [evaluerende functie](site:onderzoek/opzet/functies/beschrijvend-evaluerend) van onderzoek.
 
 :::caution[Let op]
 Alleen iets maken is nog geen onderzoek. Het verschil zit in het **toetsen van je ontwerp aan vooraf opgestelde eisen** en het **onderbouwen van je keuzes**. Zonder eisen en tests heb je een knutselproject, geen ontwerponderzoek.
@@ -35,7 +35,7 @@ Alleen iets maken is nog geen onderzoek. Het verschil zit in het **toetsen van j
 
 ## Hangt samen met
 
-- [Theoriegericht onderzoek](./theoriegericht.md) — de tegenhanger: iets *weten* in plaats van iets *maken*
-- [Theoriegericht vs. ontwerpgericht](./theorie-vs-ontwerp.mdx) — het verband tussen beide typen
-- [Beschrijvend-evaluerend onderzoek](../opzet/functies/beschrijvend-evaluerend.md) — de functie achter het toetsen aan eisen
-- [Deelvragen](../vragen/deelvragen.md) — het vaste patroon van deelvragen bij een ontwerpvraag
+- [Theoriegericht onderzoek](site:onderzoek/typen/theoriegericht) — de tegenhanger: iets *weten* in plaats van iets *maken*
+- [Theoriegericht vs. ontwerpgericht](site:onderzoek/typen/theorie-vs-ontwerp) — het verband tussen beide typen
+- [Beschrijvend-evaluerend onderzoek](site:onderzoek/opzet/functies/beschrijvend-evaluerend) — de functie achter het toetsen aan eisen
+- [Deelvragen](site:onderzoek/vragen/deelvragen) — het vaste patroon van deelvragen bij een ontwerpvraag

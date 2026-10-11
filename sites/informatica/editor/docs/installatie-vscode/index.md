@@ -13,10 +13,10 @@ Visual Studio Code is een gratis code-editor van Microsoft. Het is lichtgewicht,
 
 ## Aan de slag
 
-Begin met **[Stap 1: Download VS Code](./stap-1-download)**.
+Begin met **[Stap 1: Download VS Code](site:editor/installatie-vscode/stap-1-download)**.
 
 Na de installatie kun je kiezen waar je verder mee wilt:
 
-- **[Website maken in VS Code](/web/)** — HTML, CSS en JavaScript
-- **[Python in VS Code](/python/)** — Python-code schrijven en uitvoeren
-- **[Git & GitHub](/git/)** — versiebeheer leren in een browser-simulator
+- **[Website maken in VS Code](site:editor/web)** — HTML, CSS en JavaScript
+- **[Python in VS Code](site:editor/python)** — Python-code schrijven en uitvoeren
+- **[Git & GitHub](site:editor/git)** — versiebeheer leren in een browser-simulator

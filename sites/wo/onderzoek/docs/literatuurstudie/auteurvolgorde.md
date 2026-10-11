@@ -34,7 +34,7 @@ Weet je niet welke afspraak in een vakgebied geldt, kijk dan naar een paar artik
 ## Waarom dit voor jou telt
 
 - **Bij citeren noem je de eerste auteur.** In je verslag wordt het "Jansen e.a. (2021)" — de eerste naam is de naam die blijft hangen. Daarom is de eerste plek zo begeerd.
-- **Bij het [onderzoeken van een onderzoeker](./onderzoeker-onderzoeken.md)** zie je aan de posities wat iemand is: veel artikelen als eerste auteur wijst op een productieve onderzoeker aan het begin van de loopbaan, veel als laatste auteur op een groepsleider.
+- **Bij het [onderzoeken van een onderzoeker](site:onderzoek/literatuurstudie/onderzoeker-onderzoeken)** zie je aan de posities wat iemand is: veel artikelen als eerste auteur wijst op een productieve onderzoeker aan het begin van de loopbaan, veel als laatste auteur op een groepsleider.
 - **De beroemde naam achteraan heeft het experiment niet gedaan.** Dat deed de eerste auteur. Wil je weten hoe zorgvuldig er gemeten is, dan zegt de reputatie van de laatste auteur daar minder over dan je denkt.
 
 <WelNiet
@@ -56,6 +56,6 @@ In 2015 verscheen in *Physical Review Letters* een artikel waarin de twee grote 
 
 ## Hangt samen met
 
-- [Een onderzoeker onderzoeken](./onderzoeker-onderzoeken.md) — wat de positie van een naam zegt over iemands status
-- [Citaties](./citaties.md) — waarom de eerste auteur de naam is die blijft hangen
-- [H-index](./h-index.md) — telt alle posities even zwaar, en dat is een van zijn zwaktes
+- [Een onderzoeker onderzoeken](site:onderzoek/literatuurstudie/onderzoeker-onderzoeken) — wat de positie van een naam zegt over iemands status
+- [Citaties](site:onderzoek/literatuurstudie/citaties) — waarom de eerste auteur de naam is die blijft hangen
+- [H-index](site:onderzoek/literatuurstudie/h-index) — telt alle posities even zwaar, en dat is een van zijn zwaktes

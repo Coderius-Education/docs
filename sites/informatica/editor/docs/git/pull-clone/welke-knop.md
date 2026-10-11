@@ -19,4 +19,4 @@ Voor samenwerken — of voor netjes werken op je eigen projecten — kom je nog 
 
 ## Loopt er iets vast?
 
-Zie [Er gaat iets mis](./problemen).
+Zie [Er gaat iets mis](site:editor/git/pull-clone/problemen).

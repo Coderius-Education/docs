@@ -13,7 +13,7 @@ import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
   ]}
 />
 
-Na [les 5](./registreren) staan er alleen nog Argon2-hashes in je database. Bij
+Na [les 5](site:fullstack/docs/veiligheid/wachtwoorden/registreren) staan er alleen nog Argon2-hashes in je database. Bij
 het inloggen kun je niet meer vergelijken met `==`: de hash van hetzelfde
 wachtwoord is elke keer anders. Daarvoor is `ph.verify`. Die haalt het zout en
 de instellingen uit de opgeslagen hash, rekent de hash van het ingetypte
@@ -68,7 +68,7 @@ en vervang je oude `/inloggen` door deze, in hetzelfde `main.py` als je
 `/registreer` uit les 5. `import hashlib` mag weg: niets gebruikt hem meer.
 
 Waarom die nep-hash? `ph.verify` rekent een Argon2-hash uit, en die is expres
-traag, zoals je in [les 4](./traag) mat. Zou je bij een onbekende naam meteen
+traag, zoals je in [les 4](site:fullstack/docs/veiligheid/wachtwoorden/traag) mat. Zou je bij een onbekende naam meteen
 antwoorden, dan komt dat antwoord vele malen sneller terug dan bij een bestaande naam met een fout wachtwoord.
 De melding is gelijk, maar de tijd verraadt dan alsnog welke namen een account
 hebben. Met de nep-hash doet de server bij een onbekende naam hetzelfde
@@ -184,7 +184,7 @@ antwoord toch ook lang. Waarom is de nep-hash beter?
 <details>
 <summary>Tip</summary>
 
-Hoe lang duurt één Argon2-hash? Kijk naar je meting in [les 4](./traag), en
+Hoe lang duurt één Argon2-hash? Kijk naar je meting in [les 4](site:fullstack/docs/veiligheid/wachtwoorden/traag), en
 vergelijk die met de meting van een klasgenoot.
 
 </details>
@@ -243,4 +243,4 @@ Registreren en inloggen werken nu allebei met Argon2.
 
 </details>
 
-Door naar [les 7: wachtwoord wijzigen](./wijzigen).
+Door naar [les 7: wachtwoord wijzigen](site:fullstack/docs/veiligheid/wachtwoorden/wijzigen).

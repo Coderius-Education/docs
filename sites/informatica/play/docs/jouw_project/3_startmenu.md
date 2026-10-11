@@ -7,13 +7,13 @@ sidebar_position: 3
 Veel spellen beginnen met een startmenu. In deze tutorial leer je hoe je een simpel menu maakt dat overschakelt naar het spel.
 
 :::info
-In deze tutorial gebruik je het `global` keyword (zie [4.5 Een score bijhouden](/docs/gebeurtenissen/score_bijhouden)) en `@play.when_key_pressed` (zie [4.1 Toetsenbord](/docs/gebeurtenissen/toetsenbord)).
+In deze tutorial gebruik je het `global` keyword (zie [4.5 Een score bijhouden](site:play/docs/gebeurtenissen/score_bijhouden)) en `@play.when_key_pressed` (zie [4.1 Toetsenbord](site:play/docs/gebeurtenissen/toetsenbord)).
 :::
 
 ## Het idee
 
 :::tip
-Dit is hetzelfde patroon als bij levels: een variabele die bijhoudt welk scherm aan de beurt is, en één functie die het bijbehorende scherm opbouwt. Wil je verder dan twee schermen, kijk dan bij [9.2 Levels met andere vormen](/docs/levels/andere-vormen) — daar ruim je het oude scherm op met `remove()` in plaats van met `hide()`.
+Dit is hetzelfde patroon als bij levels: een variabele die bijhoudt welk scherm aan de beurt is, en één functie die het bijbehorende scherm opbouwt. Wil je verder dan twee schermen, kijk dan bij [9.2 Levels met andere vormen](site:play/docs/levels/andere-vormen) — daar ruim je het oude scherm op met `remove()` in plaats van met `hide()`.
 :::
 
 We maken een variabele `scherm` die bijhoudt in welk scherm we zitten: `'menu'` of `'spel'`. Afhankelijk van de waarde tonen we andere vormen.

@@ -37,7 +37,7 @@ print(cirkel.colour)`} height={250} />
 
 **Oplossing:** gebruik `color` in plaats van `colour`.
 
-Meer uitleg: [1.6 Je vorm aanpassen](/docs/vormen/vorm_aanpassen)
+Meer uitleg: [1.6 Je vorm aanpassen](site:play/docs/vormen/vorm_aanpassen)
 
 ---
 
@@ -63,7 +63,7 @@ play.new_text(words="Score: " + score)  # FOUT: score is een getal, geen tekst`}
 score = 5
 play.new_text(words="Score: " + str(score))`} height={250} />
 
-Meer uitleg: [4.5 Een score bijhouden met global](/docs/gebeurtenissen/score_bijhouden)
+Meer uitleg: [4.5 Een score bijhouden met global](site:play/docs/gebeurtenissen/score_bijhouden)
 
 ---
 
@@ -87,7 +87,7 @@ cirkel = play.new_circle()`} height={250} />
 
 **Oplossing:** controleer de spelling en zorg dat de variabele vóór gebruik aangemaakt is.
 
-Meer uitleg: [1.6 Je vorm aanpassen](/docs/vormen/vorm_aanpassen), of <SiteLink site="python" to="/docs/basis/jij-als-variabele">Jij als variabele</SiteLink> in de python-cursus.
+Meer uitleg: [1.6 Je vorm aanpassen](site:play/docs/vormen/vorm_aanpassen), of [Jij als variabele](site:python/docs/basis/jij-als-variabele) in de python-cursus.
 
 ---
 
@@ -115,7 +115,7 @@ play.new_circle()  # FOUT: niet ingesprongen`} height={250} />
 def beweeg():
     play.new_circle()`} height={250} />
 
-Meer uitleg: <SiteLink site="python" to="/docs/functies/functies">Functies</SiteLink> in de python-cursus.
+Meer uitleg: [Functies](site:python/docs/functies/functies) in de python-cursus.
 
 ---
 
@@ -148,7 +148,7 @@ async def wacht():
     await play.timer(seconds=1)
     cirkel.color = 'red'`} height={250} />
 
-Meer uitleg: [5.2 Wachten met async en await](/docs/tijd/async)
+Meer uitleg: [5.2 Wachten met async en await](site:play/docs/tijd/async)
 
 ---
 
@@ -169,7 +169,7 @@ blok = play.new_box()
 def beweeg():
     blok.x = blok.x + 20`} height={250} />
 
-Meer uitleg: [4.1 Gebeurtenissen](/docs/gebeurtenissen/toetsenbord)
+Meer uitleg: [4.1 Gebeurtenissen](site:play/docs/gebeurtenissen/toetsenbord)
 
 ---
 
@@ -202,7 +202,7 @@ play.new_circle(color='#FF0000', x=-150)
 play.new_circle(color='red', x=0)
 play.new_circle(color=(255, 0, 0), x=150)`} height={250} />
 
-Meer uitleg: [1.2 Je eerste cirkel](/docs/vormen/je_eerste_cirkel)
+Meer uitleg: [1.2 Je eerste cirkel](site:play/docs/vormen/je_eerste_cirkel)
 
 ---
 
@@ -237,7 +237,7 @@ def verhoog():
     score = score + 1
     tekst.words = "Score: " + str(score)`} height={250} />
 
-Meer uitleg: [4.5 Een score bijhouden met global](/docs/gebeurtenissen/score_bijhouden), of <SiteLink site="python" to="/docs/functies/09c-scope">Scope</SiteLink> in de python-cursus voor het achterliggende idee.
+Meer uitleg: [4.5 Een score bijhouden met global](site:play/docs/gebeurtenissen/score_bijhouden), of [Scope](site:python/docs/functies/09c-scope) in de python-cursus voor het achterliggende idee.
 
 ---
 
@@ -259,7 +259,7 @@ No sound loaded. Use the 'load' method first.
 
 **Oplossing:** kijk als eerste in je console — daar staat het wél. Controleer daarna of het bestand in dezelfde map staat als je Python-bestand, en of de naam en de extensie precies kloppen.
 
-Meer uitleg: [8.1 Geluid afspelen](/docs/media/geluid)
+Meer uitleg: [8.1 Geluid afspelen](site:play/docs/media/geluid)
 
 ---
 
@@ -281,7 +281,7 @@ intro = play.new_video("intro.mp4")`} height={250} />
 
 **Oplossing:** zet het bestand in dezelfde map en controleer de spelling. Krijg je in plaats hiervan een melding over een ontbrekende module `av`, installeer die dan met `pip install av`.
 
-Meer uitleg: [8.2 Video afspelen](/docs/media/video)
+Meer uitleg: [8.2 Video afspelen](site:play/docs/media/video)
 
 ---
 
@@ -324,7 +324,7 @@ def klaar():
 
 Dezelfde melding krijg je bij lege haakjes (`@play.when_video_ends()`) en als er iets in staat dat geen video is.
 
-Meer uitleg: [8.3 Reageren op een video](/docs/media/video-gebeurtenissen)
+Meer uitleg: [8.3 Reageren op een video](site:play/docs/media/video-gebeurtenissen)
 
 ---
 
@@ -354,7 +354,7 @@ def veranderd(waarde):
     print(waarde)
 ```
 
-Meer uitleg: [7.2 Schuiven en aanvinken](/docs/ui/schuif-en-vink)
+Meer uitleg: [7.2 Schuiven en aanvinken](site:play/docs/ui/schuif-en-vink)
 
 ---
 
@@ -382,4 +382,4 @@ def spatie():
 
 **Oplossing:** registreer toetsen en muis één keer, buiten de functie die je herhaalt. Gebeurtenissen op een vorm (`@bal.when_clicked`, `@bal.when_touching(...)`) mogen er wél in: die verdwijnen samen met hun vorm.
 
-Meer uitleg: [9.2 Levels met andere vormen](/docs/levels/andere-vormen)
+Meer uitleg: [9.2 Levels met andere vormen](site:play/docs/levels/andere-vormen)

@@ -5,7 +5,7 @@ title: Code online zetten met push
 
 # Code online zetten met push
 
-Twee dingen staan klaar: een lege online repository uit [GitHub: account en repo](/git/github/), en een map met commits uit [Git in VS Code](/git/vscode/). Nu koppel je ze aan elkaar en stuur je je commits naar GitHub — **pushen**.
+Twee dingen staan klaar: een lege online repository uit [GitHub: account en repo](site:editor/git/github), en een map met commits uit [Git in VS Code](site:editor/git/vscode). Nu koppel je ze aan elkaar en stuur je je commits naar GitHub — **pushen**.
 
 ## Wat is een remote?
 
@@ -22,4 +22,4 @@ De standaardnaam voor je belangrijkste remote is **`origin`**. Je kunt het zien 
 
 ## Aan de slag
 
-Begin met **[Stap 1: eerste publish vanuit VS Code](./stap-1-publish)**.
+Begin met **[Stap 1: eerste publish vanuit VS Code](site:editor/git/push/stap-1-publish)**.

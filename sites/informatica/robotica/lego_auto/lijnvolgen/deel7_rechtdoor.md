@@ -6,7 +6,7 @@ title: "Deel 7: Rechtdoor rijden"
 
 # Het robotscript bouwen — Deel 7: Rechtdoor rijden
 
-Voor het eerst reageren de motoren op de sensoren. Je begint met het makkelijkste geval uit [Hoe werkt lijnvolgen?](./hoe_werkt.md): beide sensoren zien wit, dus de robot mag rechtdoor.
+Voor het eerst reageren de motoren op de sensoren. Je begint met het makkelijkste geval uit [Hoe werkt lijnvolgen?](site:robotica/lego_auto/lijnvolgen/hoe-werkt-het): beide sensoren zien wit, dus de robot mag rechtdoor.
 
 <Voorkennis
   items={[
@@ -121,7 +121,7 @@ while True:
 
 **Oorzaak:** Een van de sensoren zegt altijd `white` — de drempel past niet meer bij dit licht of deze hoogte.
 
-**Oplossing:** Kijk op het scherm wat de sensoren echt zeggen terwijl je de robot boven de lijn houdt. Zie je geen `black`, kalibreer dan opnieuw ([Opdracht 5.4.a](../analoog_ir/deel3_een_sensor.md)). Het scherm is hier je gereedschap: het toont het verschil tussen "mijn if klopt niet" en "mijn sensor ziet het verkeerd".
+**Oplossing:** Kijk op het scherm wat de sensoren echt zeggen terwijl je de robot boven de lijn houdt. Zie je geen `black`, kalibreer dan opnieuw ([Opdracht 5.4.a](site:robotica/lego_auto/lijnsensor/een-sensor)). Het scherm is hier je gereedschap: het toont het verschil tussen "mijn if klopt niet" en "mijn sensor ziet het verkeerd".
 
 </details>
 
@@ -138,4 +138,4 @@ while True:
 
 ---
 
-← [Hoe werkt lijnvolgen?](./hoe_werkt.md) · **Volgende:** [Deel 8 — Nu jij](./nu_jij.md) →
+← [Hoe werkt lijnvolgen?](site:robotica/lego_auto/lijnvolgen/hoe-werkt-het) · **Volgende:** [Deel 8 — Nu jij](site:robotica/lego_auto/lijnvolgen/nu-jij) →

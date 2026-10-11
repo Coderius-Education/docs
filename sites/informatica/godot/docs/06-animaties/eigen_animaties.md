@@ -18,7 +18,7 @@ Tot nu toe heb je gewerkt met kant-en-klare sprite-sheets uit het Pixel Adventur
 
 1. **Losse PNG-frames** — één afbeelding per pose (bijv. 6 frames voor een loop-cyclus).
 2. **Transparante achtergrond** op elke PNG (anders zit er een witte rechthoek achter je karakter).
-3. **Invoeren in Godot** — sleep ze in de SpriteFrames-editor uit [Animaties aanmaken](./animaties.md).
+3. **Invoeren in Godot** — sleep ze in de SpriteFrames-editor uit [Animaties aanmaken](site:godot/docs/animaties).
 
 </details>
 
@@ -91,10 +91,10 @@ Sommige downloads (vooral van itch.io of opengameart.org) hebben **al** een tran
 ## Stap 3: Importeer in Godot
 
 1. Sleep je losse PNG's naar de `assets/`-map in je FileSystem-paneel.
-2. Open de SpriteFrames-editor (zie [Animaties aanmaken](./animaties.md) voor de stappen).
+2. Open de SpriteFrames-editor (zie [Animaties aanmaken](site:godot/docs/animaties) voor de stappen).
 3. Klik op een animatie (bijv. `idle`) en sleep je frames één voor één in het frame-paneel, **in de juiste volgorde**.
 4. Zet de **FPS** op 8 of 10, zet **Loop** aan voor doorlopende animaties (idle, run) of uit voor eenmalige (jump).
-5. Speel af via je script (zie [Animaties in code](./animaties_code.md)).
+5. Speel af via je script (zie [Animaties in code](site:godot/docs/animaties_code)).
 
 ## Handige open-source tools
 

@@ -430,10 +430,10 @@ describe('de houten baan verwijst naar dezelfde stap als het bouwen', () => {
   it('elke zin in hout over 90° noemt stap 12 en linkt naar het anker', () => {
     const zinnen = tekst('hout.md')
       .split(/(?<=[.?])\s+/)
-      .filter((z) => /op 90°/.test(z) && /\]\(bouwen/.test(z));
+      .filter((z) => /op 90°/.test(z) && /\]\(site:robotica\/click_golfer\/bouwen/.test(z));
     expect(zinnen.length).toBeGreaterThanOrEqual(3);
     for (const zin of zinnen) {
-      expect(zin).toMatch(/\]\(bouwen#servo-op-90\)/);
+      expect(zin).toMatch(/\]\(site:robotica\/click_golfer\/bouwen#servo-op-90\)/);
       for (const m of zin.matchAll(/stap (\d+)/g)) expect(m[1], zin).toBe('12');
     }
   });

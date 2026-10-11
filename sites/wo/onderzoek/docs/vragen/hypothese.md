@@ -12,18 +12,18 @@ Een **hypothese** is een onderbouwde verwachting over het antwoord op een deelvr
 
 ## Bij welke deelvragen?
 
-Niet elke deelvraag heeft een hypothese nodig. Het hangt af van de [functie](../opzet/functies/functies-overzicht.mdx):
+Niet elke deelvraag heeft een hypothese nodig. Het hangt af van de [functie](site:onderzoek/opzet/functies/functies-overzicht):
 
 | Functie van de deelvraag | Hypothese? | Waarom |
 |---|---|---|
-| [Definiërend](../opzet/functies/beschrijvend-definierend.md) | Nee | Je legt iets vast; er valt niets te verwachten |
-| [Puur beschrijvend](../opzet/functies/puur-beschrijvend.md) | Mag, hoeft niet | Een verwachting ("ik verwacht dat meer dan de helft…") kan, maar je brengt vooral in kaart |
-| [Vergelijkend](../opzet/functies/beschrijvend-vergelijkend.md) | Vaak wel | Je kunt verwachten welke groep hoger of lager uitkomt |
-| [Evaluerend](../opzet/functies/beschrijvend-evaluerend.md) | Nee | De criteria die je vooraf vastlegt, doen hier het werk |
-| [Explorerend](../opzet/functies/verklarend-explorerend.md) | Nee | Je zoekt juist nog naar verklaringen; een hypothese is hier de *opbrengst* |
-| [Toetsend](../opzet/functies/verklarend-toetsend.md) | Altijd | Zonder hypothese valt er niets te toetsen |
+| [Definiërend](site:onderzoek/opzet/functies/beschrijvend-definierend) | Nee | Je legt iets vast; er valt niets te verwachten |
+| [Puur beschrijvend](site:onderzoek/opzet/functies/puur-beschrijvend) | Mag, hoeft niet | Een verwachting ("ik verwacht dat meer dan de helft…") kan, maar je brengt vooral in kaart |
+| [Vergelijkend](site:onderzoek/opzet/functies/beschrijvend-vergelijkend) | Vaak wel | Je kunt verwachten welke groep hoger of lager uitkomt |
+| [Evaluerend](site:onderzoek/opzet/functies/beschrijvend-evaluerend) | Nee | De criteria die je vooraf vastlegt, doen hier het werk |
+| [Explorerend](site:onderzoek/opzet/functies/verklarend-explorerend) | Nee | Je zoekt juist nog naar verklaringen; een hypothese is hier de *opbrengst* |
+| [Toetsend](site:onderzoek/opzet/functies/verklarend-toetsend) | Altijd | Zonder hypothese valt er niets te toetsen |
 
-Bij [ontwerpgericht onderzoek](../typen/ontwerpgericht.md) formuleer je geen hypothese maar <B t="vooraf-opgestelde-eisen" tekst="vooraf opgestelde eisen"/>. Die spelen dezelfde rol: je legt vóóraf vast waaraan je straks gaat toetsen.
+Bij [ontwerpgericht onderzoek](site:onderzoek/typen/ontwerpgericht) formuleer je geen hypothese maar <B t="vooraf-opgestelde-eisen" tekst="vooraf opgestelde eisen"/>. Die spelen dezelfde rol: je legt vóóraf vast waaraan je straks gaat toetsen.
 
 Vraagt de handleiding van jouw school om een hypothese bij elke deelvraag, volg dan die afspraak.
 
@@ -34,7 +34,7 @@ Twee vormen die allebei werken:
 - **Ik verwacht dat … omdat …** *Ik verwacht dat leerlingen die korter dan zeven uur slapen meer fouten maken op een aandachtstaak dan leerlingen die langer slapen, omdat eerder onderzoek laat zien dat slaaptekort de aandacht vermindert.*
 - **Als … dan …** *Als leerlingen korter dan zeven uur slapen, dan maken ze meer fouten op de aandachtstaak.*
 
-Het "omdat" is geen versiering: daar laat je zien dat je verwachting uit je [literatuuronderzoek](../literatuurstudie/van-zoeken-tot-lezen.mdx) komt en niet uit de lucht valt.
+Het "omdat" is geen versiering: daar laat je zien dat je verwachting uit je [literatuuronderzoek](site:onderzoek/literatuurstudie/van-zoeken-tot-lezen) komt en niet uit de lucht valt.
 
 ## Vier eisen
 
@@ -45,10 +45,10 @@ Het "omdat" is geen versiering: daar laat je zien dat je verwachting uit je [lit
 | **Kan sneuvelen** | Er is een uitkomst denkbaar die hem weerlegt | *Slaap kan soms invloed hebben op concentratie.* |
 | **Onderbouwd** | Hij volgt uit wat je al weet uit bronnen | *…omdat ik dat denk.* |
 
-De derde eis is de strengste. Een hypothese met "kan", "soms" of "misschien" klopt altijd, wat er ook uitkomt — en zegt daardoor niets. De filosoof Karl Popper maakte dit tot kern van de wetenschap: een uitspraak die door geen enkele waarneming weerlegd kan worden, is geen wetenschappelijke uitspraak. Het was zijn antwoord op [het inductieprobleem](../kennisleer/inductieprobleem.md): bewijzen dat iets altijd klopt kan niet, maar laten zien dat iets níét klopt wel.
+De derde eis is de strengste. Een hypothese met "kan", "soms" of "misschien" klopt altijd, wat er ook uitkomt — en zegt daardoor niets. De filosoof Karl Popper maakte dit tot kern van de wetenschap: een uitspraak die door geen enkele waarneming weerlegd kan worden, is geen wetenschappelijke uitspraak. Het was zijn antwoord op [het inductieprobleem](site:onderzoek/kennisleer/inductieprobleem): bewijzen dat iets altijd klopt kan niet, maar laten zien dat iets níét klopt wel.
 
 :::caution[Valkuil: achteraf je hypothese aanpassen]
-Het is verleidelijk om na het meten je hypothese zo te herschrijven dat hij bij de uitkomst past. Dat mag niet: dan heb je niets getoetst, alleen iets beschreven wat je al wist. Schrijf je hypothese op vóór je begint, laat hem staan, en rapporteer eerlijk of hij klopte. Dat hoort bij [aanvaardbaar](../spelregels/aanvaardbaar.md) en [transparant](../spelregels/transparant.md) werken.
+Het is verleidelijk om na het meten je hypothese zo te herschrijven dat hij bij de uitkomst past. Dat mag niet: dan heb je niets getoetst, alleen iets beschreven wat je al wist. Schrijf je hypothese op vóór je begint, laat hem staan, en rapporteer eerlijk of hij klopte. Dat hoort bij [aanvaardbaar](site:onderzoek/spelregels/aanvaardbaar) en [transparant](site:onderzoek/spelregels/transparant) werken.
 :::
 
 :::tip[Een verworpen hypothese is winst]
@@ -62,7 +62,7 @@ Het is verleidelijk om na het meten je hypothese zo te herschrijven dat hij bij 
 
 ## Hangt samen met
 
-- [Deelvragen](./deelvragen.md) — de vragen waar een hypothese bij hoort
-- [Verklarend-toetsend onderzoek](../opzet/functies/verklarend-toetsend.md) — de functie die niet zonder hypothese kan
-- [Operationaliseren](./operationaliseren.md) — want om een hypothese te toetsen moet je weten wat je precies meet
-- [Het inductieprobleem](../kennisleer/inductieprobleem.md) — waarom weerleggen sterker is dan bevestigen
+- [Deelvragen](site:onderzoek/vragen/deelvragen) — de vragen waar een hypothese bij hoort
+- [Verklarend-toetsend onderzoek](site:onderzoek/opzet/functies/verklarend-toetsend) — de functie die niet zonder hypothese kan
+- [Operationaliseren](site:onderzoek/vragen/operationaliseren) — want om een hypothese te toetsen moet je weten wat je precies meet
+- [Het inductieprobleem](site:onderzoek/kennisleer/inductieprobleem) — waarom weerleggen sterker is dan bevestigen

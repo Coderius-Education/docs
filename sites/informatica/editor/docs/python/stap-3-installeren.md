@@ -16,7 +16,7 @@ python
 
 2. Windows opent de Microsoft Store op de pagina van Python. Klik daar op **Ophalen** en wacht tot de installatie klaar is
 3. Sluit het PowerShell-venster. Een venster dat al open stond kent het nieuwe commando nog niet
-4. Ga in de Verkenner opnieuw naar je projectmap en open PowerShell zoals in [stap 2](./stap-2-powershell)
+4. Ga in de Verkenner opnieuw naar je projectmap en open PowerShell zoals in [stap 2](site:editor/python/stap-2-powershell)
 5. Controleer of het gelukt is:
 
 ```bash

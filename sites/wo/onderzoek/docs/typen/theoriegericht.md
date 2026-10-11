@@ -22,10 +22,10 @@ Theoriegerichte hoofdvragen zijn **kennisvragen**. Ze beginnen vaak met *hoe, wa
 
 ## Wat lever je op?
 
-Een **antwoord**: een conclusie die je onderbouwt met de gegevens die je hebt verzameld. Je verzamelt die gegevens systematisch — welke aanpak daarbij past, kies je met de [keuzedriehoek](../opzet/keuzedriehoek.mdx).
+Een **antwoord**: een conclusie die je onderbouwt met de gegevens die je hebt verzameld. Je verzamelt die gegevens systematisch — welke aanpak daarbij past, kies je met de [keuzedriehoek](site:onderzoek/opzet/keuzedriehoek).
 
 :::caution[Valkuil: een vraag die je niet kunt onderzoeken]
-Een goede kennisvraag is **open**, **afgebakend** en **onderzoekbaar**. *"Is slaap belangrijk?"* is geen van drieën: het antwoord is ja of nee, het gaat over iedereen, en je weet niet wat je zou moeten meten. *"In hoeverre hangt de slaapduur van 4-havoleerlingen samen met hun concentratie in het eerste uur?"* is alle drie. Meer over een goede hoofdvraag lees je bij [Hoofdvraag](../vragen/hoofdvraag.md).
+Een goede kennisvraag is **open**, **afgebakend** en **onderzoekbaar**. *"Is slaap belangrijk?"* is geen van drieën: het antwoord is ja of nee, het gaat over iedereen, en je weet niet wat je zou moeten meten. *"In hoeverre hangt de slaapduur van 4-havoleerlingen samen met hun concentratie in het eerste uur?"* is alle drie. Meer over een goede hoofdvraag lees je bij [Hoofdvraag](site:onderzoek/vragen/hoofdvraag).
 :::
 
 :::tip[Goed om te weten]
@@ -41,7 +41,7 @@ Een conclusie als *"mijn hypothese klopt niet"* is óók een geldig resultaat! H
 
 ## Hangt samen met
 
-- [Ontwerpgericht onderzoek](./ontwerpgericht.md) — de tegenhanger: iets *maken* in plaats van iets *weten*
-- [Theoriegericht vs. ontwerpgericht](./theorie-vs-ontwerp.mdx) — het verband tussen beide typen
-- [Functies van onderzoek](../opzet/functies/functies-overzicht.mdx) — wat je antwoord precies moet doen: beschrijven of verklaren
-- [Hoofdvraag](../vragen/hoofdvraag.md) — hoe je een goede kennisvraag formuleert
+- [Ontwerpgericht onderzoek](site:onderzoek/typen/ontwerpgericht) — de tegenhanger: iets *maken* in plaats van iets *weten*
+- [Theoriegericht vs. ontwerpgericht](site:onderzoek/typen/theorie-vs-ontwerp) — het verband tussen beide typen
+- [Functies van onderzoek](site:onderzoek/opzet/functies/functies-overzicht) — wat je antwoord precies moet doen: beschrijven of verklaren
+- [Hoofdvraag](site:onderzoek/vragen/hoofdvraag) — hoe je een goede kennisvraag formuleert

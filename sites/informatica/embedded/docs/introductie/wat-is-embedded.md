@@ -27,4 +27,4 @@ In deze cursus begin je met een **Arduino Uno**: het bekendste oefenbord om mee 
 
 Het mooie: je hebt om te beginnen **geen hardware** nodig. Overal waar het kan, staat een simulator in de pagina waarmee je je code direct in je browser kunt uitproberen.
 
-Klaar? Bekijk dan eerst je oefenbord in [1.2 De Arduino Uno](de-arduino-uno.md).
+Klaar? Bekijk dan eerst je oefenbord in [1.2 De Arduino Uno](site:embedded/docs/introductie/de-arduino-uno).

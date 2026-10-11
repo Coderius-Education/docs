@@ -64,4 +64,4 @@ De grootste verandering ten opzichte van de platformer: je gebruikt **beide** as
 
 5. Voeg een `Area2D` toe als deur en koppel `body_entered` aan `get_tree().change_scene_to_file("res://kamer2.tscn")`.
 
-Polish: voeg vijanden toe als `Area2D`'s die de speler raken (game over), of als `CharacterBody2D`'s die de speler volgen met een `NavigationAgent2D` (zie [Wat nu?](/docs/meer-leren)).
+Polish: voeg vijanden toe als `Area2D`'s die de speler raken (game over), of als `CharacterBody2D`'s die de speler volgen met een `NavigationAgent2D` (zie [Wat nu?](site:godot/docs/meer-leren)).

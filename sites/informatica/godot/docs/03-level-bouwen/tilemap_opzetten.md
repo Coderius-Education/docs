@@ -21,7 +21,7 @@ Een tile-gebaseerd level is een rooster van kleine afbeeldingen (**tiles**) die 
 
 `TileMapLayer` is de node die de tegels op het scherm tekent.
 
-De `TileMapLayer` staat met alle stappen ook in de [Nodes cheatsheet](/cheatsheet#level-wereld).
+De `TileMapLayer` staat met alle stappen ook in de [Nodes cheatsheet](site:godot/cheatsheet#level-wereld).
 
 ## Stap 2: De TileSet instellen
 
@@ -49,12 +49,12 @@ Met de **rechtermuisknop** gum je een tegel weer weg.
 
 ## Voorspel: wat gebeurt er straks als je een karakter toevoegt?
 
-Je hebt een mooi level getekend met een grasvloer. Straks (in [Een speelbaar karakter](../04-personage-en-beweging/sprite.md)) voeg je een karakter toe. **Wat denk je dat er dan gebeurt als jouw karakter op deze grastegels probeert te lopen?**
+Je hebt een mooi level getekend met een grasvloer. Straks (in [Een speelbaar karakter](site:godot/docs/sprite)) voeg je een karakter toe. **Wat denk je dat er dan gebeurt als jouw karakter op deze grastegels probeert te lopen?**
 
 <details>
 <summary>Antwoord</summary>
 
-Hij valt **dwars door de vloer heen**. De tegels die je hebt getekend zijn voor Godot nog gewoon plaatjes — geen massieve objecten. Voordat het karakter ergens op kan staan, moet je in [Collision op je tegels](./tilemap_collision.md) eerst **collision** aan de tegels toevoegen.
+Hij valt **dwars door de vloer heen**. De tegels die je hebt getekend zijn voor Godot nog gewoon plaatjes — geen massieve objecten. Voordat het karakter ergens op kan staan, moet je in [Collision op je tegels](site:godot/docs/tilemap_collision) eerst **collision** aan de tegels toevoegen.
 
 </details>
 

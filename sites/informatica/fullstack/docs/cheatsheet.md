@@ -1,6 +1,6 @@
 # Cheatsheet
 
-Hier zoek je op hoe iets uit de lessen ook alweer ging. De onderwerpen staan in de volgorde van de lessen; klik er een aan om hem te openen. Welk bestand in welke map hoort, staat bij [Projectstructuur](/docs/FastAPI/projectstructuur); alles over de database bij [SqliteDict op een rij](/docs/FastAPI/sqlitedict/op-een-rij).
+Hier zoek je op hoe iets uit de lessen ook alweer ging. De onderwerpen staan in de volgorde van de lessen; klik er een aan om hem te openen. Welk bestand in welke map hoort, staat bij [Projectstructuur](site:fullstack/docs/FastAPI/projectstructuur); alles over de database bij [SqliteDict op een rij](site:fullstack/docs/FastAPI/sqlitedict/op-een-rij).
 
 
 ## FastAPI
@@ -241,7 +241,7 @@ Controleer aan het begin van je endpoint, vóór je iets opslaat. Een `maxlength
 | `429` | te veel verzoeken | `slowapi` |
 | `500` | fout in je server | niemand bewust; kijk in de terminal |
 
-`400`, `403` en `429` komen terug in [Veiligheid](/docs/veiligheid#statuscodes).
+`400`, `403` en `429` komen terug in [Veiligheid](site:fullstack/docs/veiligheid#statuscodes).
 
 </details>
 
@@ -623,13 +623,13 @@ je-project/
     └── gastenboek.html
 ```
 
-Vaste pagina's staan in `static/pages/`, pagina's met `{{ }}` in `templates/`. Het gastenboekformulier begint als `static/pages/gastenboek_form.html` en verhuist bij [Onthouden met een cookie](/docs/FastAPI/onthouden/cookies) naar `templates/gastenboek.html`; in [sessies](/docs/FastAPI/onthouden/sessies) wordt het een inlogformulier of een formulier om te schrijven. De `.db`-bestanden maakt `sqlitedict` zelf aan. Hoe de mappen per les groeien, staat bij [Projectstructuur](/docs/FastAPI/projectstructuur).
+Vaste pagina's staan in `static/pages/`, pagina's met `{{ }}` in `templates/`. Het gastenboekformulier begint als `static/pages/gastenboek_form.html` en verhuist bij [Onthouden met een cookie](site:fullstack/docs/FastAPI/onthouden/cookies) naar `templates/gastenboek.html`; in [sessies](site:fullstack/docs/FastAPI/onthouden/sessies) wordt het een inlogformulier of een formulier om te schrijven. De `.db`-bestanden maakt `sqlitedict` zelf aan. Hoe de mappen per les groeien, staat bij [Projectstructuur](site:fullstack/docs/FastAPI/projectstructuur).
 
 </details>
 
 ## Database (sqlitedict)
 
-Alles over SqliteDict op één pagina, met de punten waarop hij anders is dan een gewone dictionary: [SqliteDict op een rij](/docs/FastAPI/sqlitedict/op-een-rij).
+Alles over SqliteDict op één pagina, met de punten waarop hij anders is dan een gewone dictionary: [SqliteDict op een rij](site:fullstack/docs/FastAPI/sqlitedict/op-een-rij).
 
 <details>
 <summary>Hoe installeer ik sqlitedict? (python -m pip install)</summary>
@@ -784,7 +784,7 @@ async def berichten(request: Request):
 <details>
 <summary>Hoe koppel ik htmx aan mijn pagina? (htmx.min.js)</summary>
 
-Download `htmx.min.js` (de link staat bij [Zonder herladen met htmx](/docs/FastAPI/zonder-herladen/htmx)) naar `static/js/`, en zet deze regel in de `<head>` van elke pagina die htmx gebruikt:
+Download `htmx.min.js` (de link staat bij [Zonder herladen met htmx](site:fullstack/docs/FastAPI/zonder-herladen/htmx)) naar `static/js/`, en zet deze regel in de `<head>` van elke pagina die htmx gebruikt:
 
 ```html
 <script src="/static/js/htmx.min.js"></script>
@@ -846,7 +846,7 @@ Zonder `hx-trigger` gaat het verzoek bij een klik op een knop of als je een form
 <form hx-post="/gastenboek" hx-target="#antwoord" hx-on::after-request="this.reset()">
 ```
 
-Met een Content-Security-Policy op je site werkt dit attribuut niet meer; zie [HTML van een bezoeker: in de praktijk](/docs/veiligheid/xss/praktijk).
+Met een Content-Security-Policy op je site werkt dit attribuut niet meer; zie [HTML van een bezoeker: in de praktijk](site:fullstack/docs/veiligheid/xss/praktijk).
 
 </details>
 
@@ -903,7 +903,7 @@ from fastapi import FastAPI
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 ```
 
-Zonder deze instellingen zet FastAPI al je endpoints op `/docs`, `/redoc` en `/openapi.json`, voor iedereen die je server kan bereiken. Uitzetten verstopt alleen: haal een endpoint dat niet voor iedereen is ook echt weg. Zet `.venv/`, `__pycache__/` en `*.db` in je `.gitignore`. Zie [Wat je server laat zien: de handleiding uitzetten](/docs/veiligheid/zichtbaar/uitzetten) en [een .gitignore en een nette zip](/docs/veiligheid/zichtbaar/gitignore).
+Zonder deze instellingen zet FastAPI al je endpoints op `/docs`, `/redoc` en `/openapi.json`, voor iedereen die je server kan bereiken. Uitzetten verstopt alleen: haal een endpoint dat niet voor iedereen is ook echt weg. Zet `.venv/`, `__pycache__/` en `*.db` in je `.gitignore`. Zie [Wat je server laat zien: de handleiding uitzetten](site:fullstack/docs/veiligheid/zichtbaar/uitzetten) en [een .gitignore en een nette zip](site:fullstack/docs/veiligheid/zichtbaar/gitignore).
 
 </details>
 
@@ -916,7 +916,7 @@ async def bericht_plaatsen(bericht: str = Form(..., max_length=280)):
     ...
 ```
 
-`maxlength` in de HTML helpt alleen wie zich vergist; de echte grens staat in `Form`. Zie [Invoer controleren](/docs/veiligheid/invoer/grenzen).
+`maxlength` in de HTML helpt alleen wie zich vergist; de echte grens staat in `Form`. Zie [Invoer controleren](site:fullstack/docs/veiligheid/invoer/grenzen).
 
 </details>
 
@@ -933,7 +933,7 @@ async def pagina(naam: str):
     return FileResponse(f"static/pages/{naam}")
 ```
 
-Zonder de lijst vraagt een bezoeker met `?naam=../../main.py` om de code van je server. Zie [Invoer controleren: een bestandsnaam van een bezoeker](/docs/veiligheid/invoer/paden).
+Zonder de lijst vraagt een bezoeker met `?naam=../../main.py` om de code van je server. Zie [Invoer controleren: een bestandsnaam van een bezoeker](site:fullstack/docs/veiligheid/invoer/paden).
 
 </details>
 
@@ -948,7 +948,7 @@ from html import escape
 return HTMLResponse(f"Bedankt, {escape(naam)}.")
 ```
 
-Een `{{ }}`-template escapet vanzelf; een f-string niet. Ook een query-parameter komt van de bezoeker. Gebruik `|safe` nooit voor tekst van een bezoeker. Zie [HTML van een bezoeker: escapen in Python](/docs/veiligheid/xss/escape).
+Een `{{ }}`-template escapet vanzelf; een f-string niet. Ook een query-parameter komt van de bezoeker. Gebruik `|safe` nooit voor tekst van een bezoeker. Zie [HTML van een bezoeker: escapen in Python](site:fullstack/docs/veiligheid/xss/escape).
 
 </details>
 
@@ -959,14 +959,14 @@ Een `{{ }}`-template escapet vanzelf; een f-string niet. Ook een query-parameter
 voorbeeld.textContent = veld.value;
 ```
 
-`textContent` houdt het tekst; `innerHTML` leest het als HTML. Gebruik `innerHTML` alleen voor HTML die je zelf schreef. Zie [HTML van een bezoeker: in de browser met innerHTML](/docs/veiligheid/xss/browser).
+`textContent` houdt het tekst; `innerHTML` leest het als HTML. Gebruik `innerHTML` alleen voor HTML die je zelf schreef. Zie [HTML van een bezoeker: in de browser met innerHTML](site:fullstack/docs/veiligheid/xss/browser).
 
 </details>
 
 <details>
 <summary>Hoe beperk ik het aantal verzoeken? (slowapi)</summary>
 
-Dit is de hele `main.py` uit de map `veiligheid-dos` van de reeks [Te veel verzoeken](/docs/veiligheid/dos/limiet), met een eigen `app = FastAPI()`. Zet je een limiet in je gastenboek, neem dan de imports en de regels met `limiter` en `app.state` en `app.add_exception_handler` over, en zet `@limiter.limit` onder de `@app.`-regel van je eigen endpoint. Geen tweede `app = FastAPI()`: die maakt je andere endpoints onbereikbaar.
+Dit is de hele `main.py` uit de map `veiligheid-dos` van de reeks [Te veel verzoeken](site:fullstack/docs/veiligheid/dos/limiet), met een eigen `app = FastAPI()`. Zet je een limiet in je gastenboek, neem dan de imports en de regels met `limiter` en `app.state` en `app.add_exception_handler` over, en zet `@limiter.limit` onder de `@app.`-regel van je eigen endpoint. Geen tweede `app = FastAPI()`: die maakt je andere endpoints onbereikbaar.
 
 ```python
 from fastapi import FastAPI, Request, Response
@@ -986,7 +986,7 @@ async def root(request: Request, response: Response):
     return {"bericht": "Hallo wereld!"}
 ```
 
-Het endpoint heeft `request: Request` nodig, en `@limiter.limit` staat direct onder `@app.get` of `@app.post`, niet erboven. Met `headers_enabled=True` vertelt elk antwoord hoeveel verzoeken er nog over zijn; een endpoint dat een dictionary teruggeeft, heeft dan ook `response: Response` nodig. Installeer met `python -m pip install slowapi`. Een limiet op `/inloggen` en `/wijzig` staat in [Wachtwoorden: inlogpogingen beperken](/docs/veiligheid/wachtwoorden/pogingen).
+Het endpoint heeft `request: Request` nodig, en `@limiter.limit` staat direct onder `@app.get` of `@app.post`, niet erboven. Met `headers_enabled=True` vertelt elk antwoord hoeveel verzoeken er nog over zijn; een endpoint dat een dictionary teruggeeft, heeft dan ook `response: Response` nodig. Installeer met `python -m pip install slowapi`. Een limiet op `/inloggen` en `/wijzig` staat in [Wachtwoorden: inlogpogingen beperken](site:fullstack/docs/veiligheid/wachtwoorden/pogingen).
 
 </details>
 
@@ -1002,7 +1002,7 @@ with SqliteDict("gastenboek.db") as db:
 
 `mijn` is de sessie uit `sessies.db`, met de naam waarmee de bezoeker inlogde.
 
-Zet de controle in het endpoint, vóór er iets verandert, en op elk endpoint apart. Zie [Wie mag wat: de controle met 403](/docs/veiligheid/toegang/controle).
+Zet de controle in het endpoint, vóór er iets verandert, en op elk endpoint apart. Zie [Wie mag wat: de controle met 403](site:fullstack/docs/veiligheid/toegang/controle).
 
 </details>
 
@@ -1019,7 +1019,7 @@ antwoord.set_cookie(
 )
 ```
 
-`httponly` houdt scripts bij de cookie weg. Met `samesite="lax"`, dat FastAPI al vanzelf zet, gaat de cookie niet mee als een formulier op een andere site naar jouw site post; bij een klik op een link daar wel. `secure=True` (met https) stuurt hem alleen versleuteld. Zie [Cookies afschermen: `httponly`](/docs/veiligheid/cookies/httponly) en [`samesite`](/docs/veiligheid/cookies/samesite).
+`httponly` houdt scripts bij de cookie weg. Met `samesite="lax"`, dat FastAPI al vanzelf zet, gaat de cookie niet mee als een formulier op een andere site naar jouw site post; bij een klik op een link daar wel. `secure=True` (met https) stuurt hem alleen versleuteld. Zie [Cookies afschermen: `httponly`](site:fullstack/docs/veiligheid/cookies/httponly) en [`samesite`](site:fullstack/docs/veiligheid/cookies/samesite).
 
 </details>
 
@@ -1041,6 +1041,6 @@ except VerifyMismatchError:
     print("Klopt niet")
 ```
 
-Bewaar de hash, nooit het wachtwoord. Vergelijk met `ph.verify` en niet zelf met `==`: elke hash heeft een eigen zout. Bestaat de naam niet, doe dan toch een `verify` tegen een nep-hash, zodat het antwoord even lang duurt. Zie [Wachtwoorden: registreren met Argon2](/docs/veiligheid/wachtwoorden/registreren) en [inloggen met verify](/docs/veiligheid/wachtwoorden/inloggen).
+Bewaar de hash, nooit het wachtwoord. Vergelijk met `ph.verify` en niet zelf met `==`: elke hash heeft een eigen zout. Bestaat de naam niet, doe dan toch een `verify` tegen een nep-hash, zodat het antwoord even lang duurt. Zie [Wachtwoorden: registreren met Argon2](site:fullstack/docs/veiligheid/wachtwoorden/registreren) en [inloggen met verify](site:fullstack/docs/veiligheid/wachtwoorden/inloggen).
 
 </details>

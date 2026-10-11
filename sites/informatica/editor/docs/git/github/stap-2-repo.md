@@ -19,4 +19,4 @@ title: "Stap 2: een lege repository aanmaken"
 
 Je ziet nu een lege repository-pagina met instructies.
 
-**Onthoud de URL** — die staat in je adresbalk en ziet er zo uit: `https://github.com/<jouw-naam>/git-oefenen`. Je hebt hem nodig in [Code online zetten met push](/git/push/), twee tutorials verderop. Je kunt hem altijd terugvinden door op github.com naar je repository te gaan.
+**Onthoud de URL** — die staat in je adresbalk en ziet er zo uit: `https://github.com/<jouw-naam>/git-oefenen`. Je hebt hem nodig in [Code online zetten met push](site:editor/git/push), twee tutorials verderop. Je kunt hem altijd terugvinden door op github.com naar je repository te gaan.

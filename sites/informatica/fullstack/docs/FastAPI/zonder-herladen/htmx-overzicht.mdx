@@ -2,11 +2,11 @@
 
 Met `hx-get` en `hx-target` haalde je een zin op zonder herladen. Hetzelfde idee werkt voor alles wat je tot nu toe via een herlaad deed. Hieronder staat per recept de HTML en het endpoint dat erbij hoort. Kies wat je gastenboek nodig heeft; je hoeft ze niet allemaal te bouwen.
 
-Voor elk recept geldt hetzelfde. De pagina met de `hx-`-attributen heeft de script-tag van htmx in de `<head>`, net als `home.html` in [Zonder herladen met htmx](/docs/FastAPI/zonder-herladen/htmx): zonder die regel doet een knop niets en verstuurt een formulier zichzelf als GET. Het endpoint geeft een stukje HTML terug: een zin in een `HTMLResponse`, of een template zonder `<html>` eromheen. En het geeft nooit een omleiding, want htmx volgt die en zet dan de hele pagina in het doel.
+Voor elk recept geldt hetzelfde. De pagina met de `hx-`-attributen heeft de script-tag van htmx in de `<head>`, net als `home.html` in [Zonder herladen met htmx](site:fullstack/docs/FastAPI/zonder-herladen/htmx): zonder die regel doet een knop niets en verstuurt een formulier zichzelf als GET. Het endpoint geeft een stukje HTML terug: een zin in een `HTMLResponse`, of een template zonder `<html>` eromheen. En het geeft nooit een omleiding, want htmx volgt die en zet dan de hele pagina in het doel.
 
 ## Een formulier versturen
 
-Het gastenboekformulier zonder herladen. Het staat in `static/pages/gastenboek_form.html` uit [Elk bericht bewaren: een eigen sleutel](/docs/FastAPI/berichten-opslaan/eigen-sleutel), en dat bestand heeft nog geen `<head>`. Zet er een `<head>` met de script-tag bij, boven de `<body>`:
+Het gastenboekformulier zonder herladen. Het staat in `static/pages/gastenboek_form.html` uit [Elk bericht bewaren: een eigen sleutel](site:fullstack/docs/FastAPI/berichten-opslaan/eigen-sleutel), en dat bestand heeft nog geen `<head>`. Zet er een `<head>` met de script-tag bij, boven de `<body>`:
 
 ```html
 <head>
@@ -26,7 +26,7 @@ Vervang in de `<form>`-tag `method` en `action` door `hx-post` en `hx-target`, e
 <p id="antwoord"></p>
 ```
 
-In het endpoint uit [Inloggen: een wachtwoord controleren](/docs/FastAPI/accounts/inloggen) verandert één regel: vervang de `return`.
+In het endpoint uit [Inloggen: een wachtwoord controleren](site:fullstack/docs/FastAPI/accounts/inloggen) verandert één regel: vervang de `return`.
 
 {/* route-dubbel: vervangt POST /gastenboek uit Inloggen; alleen de return verandert */}
 ```python
@@ -47,17 +47,17 @@ async def gastenboek_opslaan(
     return HTMLResponse(f"Bedankt, {escape(naam)}. Je bericht staat in het gastenboek.")
 ```
 
-Zet `from html import escape` bovenaan je `main.py`. De naam komt van de bezoeker, en in een f-string komt hij letterlijk in je HTML: typt iemand `<b>Sara</b>`, dan staat er een vette naam. `escape` maakt er gewone tekst van. Een template doet dat vanzelf; een f-string niet. Meer hierover in [HTML van een bezoeker](/docs/veiligheid/xss/zwakheid).
+Zet `from html import escape` bovenaan je `main.py`. De naam komt van de bezoeker, en in een f-string komt hij letterlijk in je HTML: typt iemand `<b>Sara</b>`, dan staat er een vette naam. `escape` maakt er gewone tekst van. Een template doet dat vanzelf; een f-string niet. Meer hierover in [HTML van een bezoeker](site:fullstack/docs/veiligheid/xss/zwakheid).
 
 De `Form`-parameters en de controle van het wachtwoord blijven hetzelfde; voor je endpoint is er geen verschil met een formulier zonder htmx. De omleiding met 303 is niet meer nodig, want de browser is nooit weggegaan.
 
 Klopt het wachtwoord niet, dan antwoordt je endpoint met een 401, net als zonder htmx. Een antwoord met een foutcode zet htmx niet in de pagina: er gebeurt zichtbaar niets. In het tabblad **Netwerk** staat het verzoek dan in het rood, met de melding bij **Reactie**.
 
-Zet je `hx-on::after-request="this.reset()"` op de `<form>`, dan maakt htmx de velden leeg zodra het antwoord binnen is. Dat doet hij ook als het antwoord een fout is, zoals een 401: wat de bezoeker typte, is dan weg. Zet je later een Content-Security-Policy op je site, dan werkt dit attribuut niet meer; wat je dan doet, staat in [HTML van een bezoeker: in de praktijk](/docs/veiligheid/xss/praktijk).
+Zet je `hx-on::after-request="this.reset()"` op de `<form>`, dan maakt htmx de velden leeg zodra het antwoord binnen is. Dat doet hij ook als het antwoord een fout is, zoals een 401: wat de bezoeker typte, is dan weg. Zet je later een Content-Security-Policy op je site, dan werkt dit attribuut niet meer; wat je dan doet, staat in [HTML van een bezoeker: in de praktijk](site:fullstack/docs/veiligheid/xss/praktijk).
 
 ## Een stuk van de pagina verversen
 
-Een knop die de lijst met berichten opnieuw ophaalt. Het antwoord is nu geen zin maar een lijst, dus die krijgt een eigen template, `templates/berichten_lijst.html`, zonder `<html>` of `<head>`. Knip het hele `{% if berichten %}`-blok uit je `berichten.html` en zet het in dat nieuwe bestand. Neem alles mee wat je lijst al had: de link naar de detailpagina uit [Eén item tonen](/docs/FastAPI/berichten-tonen/detailpagina) en het formuliertje om te verwijderen uit [Een bericht verwijderen: een verborgen veld](/docs/FastAPI/berichten-verwijderen/verwijderen). Zo ziet het er dan ongeveer uit:
+Een knop die de lijst met berichten opnieuw ophaalt. Het antwoord is nu geen zin maar een lijst, dus die krijgt een eigen template, `templates/berichten_lijst.html`, zonder `<html>` of `<head>`. Knip het hele `{% if berichten %}`-blok uit je `berichten.html` en zet het in dat nieuwe bestand. Neem alles mee wat je lijst al had: de link naar de detailpagina uit [Eén item tonen](site:fullstack/docs/FastAPI/berichten-tonen/detailpagina) en het formuliertje om te verwijderen uit [Een bericht verwijderen: een verborgen veld](site:fullstack/docs/FastAPI/berichten-verwijderen/verwijderen). Zo ziet het er dan ongeveer uit:
 
 ```html
 {% if berichten %}
@@ -105,7 +105,7 @@ In `berichten.html` zet je de script-tag van htmx in de `<head>`. Op de plek waa
 
 ## Vanzelf verversen
 
-Als anderen tegelijk berichten schrijven, wil je die zien verschijnen zonder F5. Dat gebeurt als je je server openzet voor de klas, wat je later doet in [Laat het aan anderen zien](/docs/FastAPI/afronden/laat-het-zien). Met **`hx-trigger`** kies je wanneer het verzoek gaat:
+Als anderen tegelijk berichten schrijven, wil je die zien verschijnen zonder F5. Dat gebeurt als je je server openzet voor de klas, wat je later doet in [Laat het aan anderen zien](site:fullstack/docs/FastAPI/afronden/laat-het-zien). Met **`hx-trigger`** kies je wanneer het verzoek gaat:
 
 ```html
 <div id="berichten-lijst" hx-get="/berichten/lijst" hx-trigger="every 10s">
@@ -201,7 +201,7 @@ Zoeken en vanzelf verversen gaan niet samen: de `<div>` die elke tien seconden v
 
 ## Er gaat iets mis
 
-Bij htmx zie je fouten niet op de pagina. Een 404, een 500 of een server die uit staat: htmx laat het doel dan met rust, en op het scherm gebeurt niets. Kijk daarom bij elk probleem eerst in het tabblad **Netwerk**. htmx meldt de fout ook in het tabblad **Console**, met een rode regel als `Response Status Error Code 404 from /bericht/…`; dat tabblad leer je kennen in [Console en Elementen](/docs/FastAPI/in-de-browser/devtools-console). Een rode regel in Netwerk zegt wat er mis is: 404 is een verkeerd pad in `hx-get` of `hx-post`, 500 een fout in je endpoint (kijk in de terminal), `(mislukt)` een server die niet draait, 405 een `@app.post` waar `hx-delete` op wijst.
+Bij htmx zie je fouten niet op de pagina. Een 404, een 500 of een server die uit staat: htmx laat het doel dan met rust, en op het scherm gebeurt niets. Kijk daarom bij elk probleem eerst in het tabblad **Netwerk**. htmx meldt de fout ook in het tabblad **Console**, met een rode regel als `Response Status Error Code 404 from /bericht/…`; dat tabblad leer je kennen in [Console en Elementen](site:fullstack/docs/FastAPI/in-de-browser/devtools-console). Een rode regel in Netwerk zegt wat er mis is: 404 is een verkeerd pad in `hx-get` of `hx-post`, 500 een fout in je endpoint (kijk in de terminal), `(mislukt)` een server die niet draait, 405 een `@app.post` waar `hx-delete` op wijst.
 
 ## Opdrachten
 

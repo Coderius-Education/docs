@@ -12,15 +12,15 @@ title: Operationaliseren
 
 ## Waarom het nodig is
 
-"Concentratie", "gezond", "stress", "gebruiksvriendelijk": je kunt ze niet rechtstreeks zien. Twee onderzoekers die ze elk op hun eigen manier meten, vinden iets anders, en niemand kan nagaan wie gelijk heeft. Door vooraf vast te leggen *hoe* je meet, maak je je onderzoek [valide](../spelregels/valide.md) (je meet wat je bedoelt) en [intersubjectief](../kennisleer/intersubjectief.md) (een ander kan precies hetzelfde meten).
+"Concentratie", "gezond", "stress", "gebruiksvriendelijk": je kunt ze niet rechtstreeks zien. Twee onderzoekers die ze elk op hun eigen manier meten, vinden iets anders, en niemand kan nagaan wie gelijk heeft. Door vooraf vast te leggen *hoe* je meet, maak je je onderzoek [valide](site:onderzoek/spelregels/valide) (je meet wat je bedoelt) en [intersubjectief](site:onderzoek/kennisleer/intersubjectief) (een ander kan precies hetzelfde meten).
 
 ## In drie stappen
 
-1. **Definiëren.** Wat versta je onder het begrip? Dat zoek je uit in een [definiërende deelvraag](../opzet/functies/beschrijvend-definierend.md), meestal met literatuur. *Concentratie: het vermogen om je aandacht bij één taak te houden.*
+1. **Definiëren.** Wat versta je onder het begrip? Dat zoek je uit in een [definiërende deelvraag](site:onderzoek/opzet/functies/beschrijvend-definierend), meestal met literatuur. *Concentratie: het vermogen om je aandacht bij één taak te houden.*
 2. **Indicatoren kiezen.** Aan welke waarneembare kenmerken zie je het? *Het aantal fouten op een aandachtstaak; hoe vaak iemand in tien minuten van de taak afdwaalt.*
 3. **Meetinstrument en meetregel vastleggen.** Hoe meet je elke indicator, en wat telt als hoog of laag? *Een doorstreeptaak van vijf minuten; de score is het aantal fouten, en minder fouten betekent betere concentratie.*
 
-Pas als stap 3 klaar is, weet je welke [methode](../opzet/methoden/methode-kiezen.mdx) je nodig hebt — en kun je je enquête of [observatieschema](../opzet/methoden/observatie.md) maken.
+Pas als stap 3 klaar is, weet je welke [methode](site:onderzoek/opzet/methoden/methode-kiezen) je nodig hebt — en kun je je enquête of [observatieschema](site:onderzoek/opzet/methoden/observatie) maken.
 
 ## Voorbeelden
 
@@ -34,10 +34,10 @@ Pas als stap 3 klaar is, weet je welke [methode](../opzet/methoden/methode-kieze
 
 ## Eén indicator is zelden genoeg
 
-Een begrip heeft meestal meer kanten dan één meting laat zien. Combineer daarom liefst een [objectieve](../kennisleer/objectief.md) meting (fouten tellen, tijd opnemen) met een [subjectieve](../kennisleer/subjectief.md) (hoe ervaart de deelnemer het zelf?). Wijzen ze dezelfde kant op, dan staat je conclusie sterker. Wijzen ze verschillende kanten op, dan is dát een bevinding.
+Een begrip heeft meestal meer kanten dan één meting laat zien. Combineer daarom liefst een [objectieve](site:onderzoek/kennisleer/objectief) meting (fouten tellen, tijd opnemen) met een [subjectieve](site:onderzoek/kennisleer/subjectief) (hoe ervaart de deelnemer het zelf?). Wijzen ze dezelfde kant op, dan staat je conclusie sterker. Wijzen ze verschillende kanten op, dan is dát een bevinding.
 
 :::caution[Valkuil: meten wat makkelijk is]
-De verleiding is groot om te meten wat makkelijk te meten is in plaats van wat je bedoelt. Downloads tellen als je "handig vinden" wilt weten. Vragen "kun je je goed concentreren?" als je concentratie wilt meten. Dat is snel gedaan, maar je meet iets anders dan je denkt — en dan is je onderzoek niet [valide](../spelregels/valide.md), hoe netjes je de rest ook doet.
+De verleiding is groot om te meten wat makkelijk te meten is in plaats van wat je bedoelt. Downloads tellen als je "handig vinden" wilt weten. Vragen "kun je je goed concentreren?" als je concentratie wilt meten. Dat is snel gedaan, maar je meet iets anders dan je denkt — en dan is je onderzoek niet [valide](site:onderzoek/spelregels/valide), hoe netjes je de rest ook doet.
 :::
 
 <WelNiet
@@ -47,7 +47,7 @@ De verleiding is groot om te meten wat makkelijk te meten is in plaats van wat j
 
 ## Hangt samen met
 
-- [Beschrijvend-definiërend onderzoek](../opzet/functies/beschrijvend-definierend.md) — stap 1: vastleggen wat je bedoelt
-- [Valide](../spelregels/valide.md) — meet je echt wat je wilt meten?
-- [Hypothese](./hypothese.md) — die kun je pas toetsen als je weet wat je meet
-- [De keuzedriehoek](../opzet/keuzedriehoek.mdx) — daarna kies je de methode per deelvraag
+- [Beschrijvend-definiërend onderzoek](site:onderzoek/opzet/functies/beschrijvend-definierend) — stap 1: vastleggen wat je bedoelt
+- [Valide](site:onderzoek/spelregels/valide) — meet je echt wat je wilt meten?
+- [Hypothese](site:onderzoek/vragen/hypothese) — die kun je pas toetsen als je weet wat je meet
+- [De keuzedriehoek](site:onderzoek/opzet/keuzedriehoek) — daarna kies je de methode per deelvraag

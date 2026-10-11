@@ -16,7 +16,7 @@ verzoek zonder je formulier, of vraagt iets wat niet van hem is.
 ## Het ene idee
 
 Alle reeksen komen neer op één regel. Deed je de uitbreiding JavaScript, dan
-ken je hem al uit [Server of browser?](/docs/FastAPI/in-de-browser/server-of-browser):
+ken je hem al uit [Server of browser?](site:fullstack/docs/FastAPI/in-de-browser/server-of-browser):
 
 > Wat van de bezoeker komt, vertrouw je niet. De controle hoort op de server.
 
@@ -32,13 +32,13 @@ database en templates, plus de uitbreidingen htmx, JavaScript en cookies en
 sessies. Heb je die gedaan, dan heb je ook een gastenboek om te beschermen.
 
 Met alleen de basis kun je al beginnen aan
-[Invoer controleren](/docs/veiligheid/invoer/maxlength). Waar die reeks naar
-[Server of browser?](/docs/FastAPI/in-de-browser/server-of-browser) verwijst, is dat een les
+[Invoer controleren](site:fullstack/docs/veiligheid/invoer/maxlength). Waar die reeks naar
+[Server of browser?](site:fullstack/docs/FastAPI/in-de-browser/server-of-browser) verwijst, is dat een les
 uit de uitbreiding JavaScript die je later doet; de reeks is ook zonder die
 les te volgen. De reeks ervoor,
-[Wat je server laat zien](/docs/veiligheid/zichtbaar/handleiding), geeft je een
+[Wat je server laat zien](site:fullstack/docs/veiligheid/zichtbaar/handleiding), geeft je een
 server met sessies kant-en-klaar; wat een sessie is, staat in
-[Onthouden op de server: sessies](/docs/FastAPI/onthouden/sessies).
+[Onthouden op de server: sessies](site:fullstack/docs/FastAPI/onthouden/sessies).
 
 ## De spelregel
 
@@ -75,7 +75,7 @@ iemand het verzoek met een script in elkaar zet:
 
 Verder kan geen script meer bij het sessie-id, staan wachtwoorden er als
 hash in, en remt een verzoeklimiet een bezoeker af die je server blijft
-bestoken. [Beveilig je eigen project](/docs/veiligheid/eigen-project) zet dat
+bestoken. [Beveilig je eigen project](site:fullstack/docs/veiligheid/eigen-project) zet dat
 allemaal op één lijst.
 
 ## Statuscodes
@@ -86,12 +86,12 @@ deze tegen:
 | Code | Betekent | Wie stuurt hem | Waar je hem ziet |
 |:---:|---|---|---|
 | `200` | gelukt | je endpoint, als alles goed gaat | overal |
-| `400` | dit verzoek klopt niet | meestal jij, met `HTTPException`, voor een regel die je zelf bedacht; Starlette zelf bij een veld boven een megabyte | [Invoer, les 1 en 4](/docs/veiligheid/invoer/inhoud) |
-| `401` | je bent niet (goed) ingelogd | jij, met `HTTPException`, als een wachtwoord niet klopt of er geen sessie is | [Inloggen: een wachtwoord controleren](/docs/FastAPI/accounts/inloggen), [Wie mag wat, les 1](/docs/veiligheid/toegang/zwakheid) |
-| `403` | dit mag jij niet | jij, als de bezoeker iets van een ander wil | [Wie mag wat, les 2](/docs/veiligheid/toegang/controle) |
-| `404` | bestaat niet | FastAPI bij een onbekend pad, of jij bij een onbekend item | [Een 404 sturen: als het item niet bestaat](/docs/FastAPI/berichten-tonen/niet-gevonden), [De handleiding uitzetten](/docs/veiligheid/zichtbaar/uitzetten), [Invoer, les 6](/docs/veiligheid/invoer/paden) |
-| `422` | een veld past niet bij `Form` | FastAPI zelf, voordat je functie draait | [Invoer, les 2 en 3](/docs/veiligheid/invoer/grenzen) |
-| `429` | te veel verzoeken | `slowapi`, je verzoeklimiet | [Te veel verzoeken, les 4](/docs/veiligheid/dos/limiet) |
+| `400` | dit verzoek klopt niet | meestal jij, met `HTTPException`, voor een regel die je zelf bedacht; Starlette zelf bij een veld boven een megabyte | [Invoer, les 1 en 4](site:fullstack/docs/veiligheid/invoer/inhoud) |
+| `401` | je bent niet (goed) ingelogd | jij, met `HTTPException`, als een wachtwoord niet klopt of er geen sessie is | [Inloggen: een wachtwoord controleren](site:fullstack/docs/FastAPI/accounts/inloggen), [Wie mag wat, les 1](site:fullstack/docs/veiligheid/toegang/zwakheid) |
+| `403` | dit mag jij niet | jij, als de bezoeker iets van een ander wil | [Wie mag wat, les 2](site:fullstack/docs/veiligheid/toegang/controle) |
+| `404` | bestaat niet | FastAPI bij een onbekend pad, of jij bij een onbekend item | [Een 404 sturen: als het item niet bestaat](site:fullstack/docs/FastAPI/berichten-tonen/niet-gevonden), [De handleiding uitzetten](site:fullstack/docs/veiligheid/zichtbaar/uitzetten), [Invoer, les 6](site:fullstack/docs/veiligheid/invoer/paden) |
+| `422` | een veld past niet bij `Form` | FastAPI zelf, voordat je functie draait | [Invoer, les 2 en 3](site:fullstack/docs/veiligheid/invoer/grenzen) |
+| `429` | te veel verzoeken | `slowapi`, je verzoeklimiet | [Te veel verzoeken, les 4](site:fullstack/docs/veiligheid/dos/limiet) |
 | `500` | er ging iets mis in de server | niemand bewust: een fout in je code | de terminal van je server |
 
 Begint een code met een 4, dan ligt het aan het verzoek. Begint hij met een 5,
@@ -106,28 +106,28 @@ nodig als je er later zelf iets over opzoekt; veel namen zijn Engels.
 | Woord | Betekent | Waar |
 |---|---|---|
 | zwakheid | een plek waar je server iets toelaat wat niet de bedoeling is | overal |
-| OpenAPI | de beschrijving van al je endpoints, die FastAPI zelf maakt en op `/openapi.json` en `/docs` zet | [Wat je server laat zien](/docs/veiligheid/zichtbaar/handleiding) |
-| *security through obscurity* | iets verstoppen in plaats van afschermen; het houdt niemand tegen die het toch vindt | [Wat je server laat zien](/docs/veiligheid/zichtbaar/uitzetten) |
-| `.gitignore` | een bestand met de namen van bestanden en mappen die git overslaat | [Wat je server laat zien](/docs/veiligheid/zichtbaar/gitignore) |
-| *path traversal* | met `..` in een bestandsnaam uit de map klimmen die je server bedoelde | [Invoer](/docs/veiligheid/invoer/paden) |
-| escapen | van `<` een `&lt;` maken, zodat de browser tekst toont in plaats van HTML | [XSS](/docs/veiligheid/xss/escape) |
-| XSS, *cross-site scripting* | HTML of een script van een bezoeker dat in de browser van een ander draait | [XSS](/docs/veiligheid/xss/zwakheid) |
-| *reflected XSS* | XSS waarbij de HTML in een link zit en de server hem terugzet in de pagina, zonder iets op te slaan | [XSS](/docs/veiligheid/xss/url) |
-| DOM-XSS | XSS waarbij JavaScript in de browser de HTML in de pagina zet, bijvoorbeeld met `innerHTML` | [XSS](/docs/veiligheid/xss/browser) |
-| *broken access control*, IDOR | een endpoint dat niet controleert wie iets vraagt | [Wie mag wat](/docs/veiligheid/toegang/praktijk) |
-| `httponly` | een instelling van een cookie: scripts mogen hem niet lezen | [Cookies](/docs/veiligheid/cookies/httponly) |
-| CSRF, *cross-site request forgery* | een andere site laat jouw browser iets doen op een site waar je bent ingelogd | [Cookies](/docs/veiligheid/cookies/samesite) |
-| CSRF-token | een geheime code in elk formulier, die een andere site niet kent | [Cookies](/docs/veiligheid/cookies/praktijk) |
-| hash | een code die je van een wachtwoord maakt en niet kunt terugrekenen | [Wachtwoorden](/docs/veiligheid/wachtwoorden/hash) |
-| zout, *salt* | een willekeurig stukje tekst per wachtwoord, zodat gelijke wachtwoorden verschillende hashes krijgen | [Wachtwoorden](/docs/veiligheid/wachtwoorden/zout) |
-| *rainbow tables* | vooraf uitgerekende lijsten met de hash van miljoenen bekende wachtwoorden; een zout maakt ze onbruikbaar | [Wachtwoorden](/docs/veiligheid/wachtwoorden/zout) |
-| Argon2 | een hash die expres traag is, gemaakt voor wachtwoorden | [Wachtwoorden](/docs/veiligheid/wachtwoorden/traag) |
-| peper | een geheim dat voor alle wachtwoorden hetzelfde is en níét in de database staat | [Wachtwoorden](/docs/veiligheid/wachtwoorden/praktijk) |
-| tweestapsverificatie | na het wachtwoord nog iets tweeds dat de gebruiker heeft, zoals een code uit een app | [Wachtwoorden](/docs/veiligheid/wachtwoorden/praktijk) |
-| AVG | de Europese privacywet: persoonsgegevens, zoals wachtwoorden, moet je passend beveiligen | [Wachtwoorden](/docs/veiligheid/wachtwoorden/praktijk) |
-| datalek | persoonsgegevens die bij iemand terechtkomen die ze niet mocht hebben; dat moet binnen 72 uur gemeld | [Wachtwoorden](/docs/veiligheid/wachtwoorden/praktijk) |
-| DoS, DDoS | een server zo druk maken dat echte bezoekers geen antwoord krijgen, door één of door heel veel computers | [Te veel verzoeken](/docs/veiligheid/dos/dos-en-ddos) |
-| verzoeklimiet, *rate limit* | een grens op het aantal verzoeken per bezoeker | [Te veel verzoeken](/docs/veiligheid/dos/limiet) |
-| CVD | een gat netjes melden bij de eigenaar van een site | [Wie mag wat](/docs/veiligheid/toegang/praktijk) |
+| OpenAPI | de beschrijving van al je endpoints, die FastAPI zelf maakt en op `/openapi.json` en `/docs` zet | [Wat je server laat zien](site:fullstack/docs/veiligheid/zichtbaar/handleiding) |
+| *security through obscurity* | iets verstoppen in plaats van afschermen; het houdt niemand tegen die het toch vindt | [Wat je server laat zien](site:fullstack/docs/veiligheid/zichtbaar/uitzetten) |
+| `.gitignore` | een bestand met de namen van bestanden en mappen die git overslaat | [Wat je server laat zien](site:fullstack/docs/veiligheid/zichtbaar/gitignore) |
+| *path traversal* | met `..` in een bestandsnaam uit de map klimmen die je server bedoelde | [Invoer](site:fullstack/docs/veiligheid/invoer/paden) |
+| escapen | van `<` een `&lt;` maken, zodat de browser tekst toont in plaats van HTML | [XSS](site:fullstack/docs/veiligheid/xss/escape) |
+| XSS, *cross-site scripting* | HTML of een script van een bezoeker dat in de browser van een ander draait | [XSS](site:fullstack/docs/veiligheid/xss/zwakheid) |
+| *reflected XSS* | XSS waarbij de HTML in een link zit en de server hem terugzet in de pagina, zonder iets op te slaan | [XSS](site:fullstack/docs/veiligheid/xss/url) |
+| DOM-XSS | XSS waarbij JavaScript in de browser de HTML in de pagina zet, bijvoorbeeld met `innerHTML` | [XSS](site:fullstack/docs/veiligheid/xss/browser) |
+| *broken access control*, IDOR | een endpoint dat niet controleert wie iets vraagt | [Wie mag wat](site:fullstack/docs/veiligheid/toegang/praktijk) |
+| `httponly` | een instelling van een cookie: scripts mogen hem niet lezen | [Cookies](site:fullstack/docs/veiligheid/cookies/httponly) |
+| CSRF, *cross-site request forgery* | een andere site laat jouw browser iets doen op een site waar je bent ingelogd | [Cookies](site:fullstack/docs/veiligheid/cookies/samesite) |
+| CSRF-token | een geheime code in elk formulier, die een andere site niet kent | [Cookies](site:fullstack/docs/veiligheid/cookies/praktijk) |
+| hash | een code die je van een wachtwoord maakt en niet kunt terugrekenen | [Wachtwoorden](site:fullstack/docs/veiligheid/wachtwoorden/hash) |
+| zout, *salt* | een willekeurig stukje tekst per wachtwoord, zodat gelijke wachtwoorden verschillende hashes krijgen | [Wachtwoorden](site:fullstack/docs/veiligheid/wachtwoorden/zout) |
+| *rainbow tables* | vooraf uitgerekende lijsten met de hash van miljoenen bekende wachtwoorden; een zout maakt ze onbruikbaar | [Wachtwoorden](site:fullstack/docs/veiligheid/wachtwoorden/zout) |
+| Argon2 | een hash die expres traag is, gemaakt voor wachtwoorden | [Wachtwoorden](site:fullstack/docs/veiligheid/wachtwoorden/traag) |
+| peper | een geheim dat voor alle wachtwoorden hetzelfde is en níét in de database staat | [Wachtwoorden](site:fullstack/docs/veiligheid/wachtwoorden/praktijk) |
+| tweestapsverificatie | na het wachtwoord nog iets tweeds dat de gebruiker heeft, zoals een code uit een app | [Wachtwoorden](site:fullstack/docs/veiligheid/wachtwoorden/praktijk) |
+| AVG | de Europese privacywet: persoonsgegevens, zoals wachtwoorden, moet je passend beveiligen | [Wachtwoorden](site:fullstack/docs/veiligheid/wachtwoorden/praktijk) |
+| datalek | persoonsgegevens die bij iemand terechtkomen die ze niet mocht hebben; dat moet binnen 72 uur gemeld | [Wachtwoorden](site:fullstack/docs/veiligheid/wachtwoorden/praktijk) |
+| DoS, DDoS | een server zo druk maken dat echte bezoekers geen antwoord krijgen, door één of door heel veel computers | [Te veel verzoeken](site:fullstack/docs/veiligheid/dos/dos-en-ddos) |
+| verzoeklimiet, *rate limit* | een grens op het aantal verzoeken per bezoeker | [Te veel verzoeken](site:fullstack/docs/veiligheid/dos/limiet) |
+| CVD | een gat netjes melden bij de eigenaar van een site | [Wie mag wat](site:fullstack/docs/veiligheid/toegang/praktijk) |
 
-Door naar [Een script als bezoeker](/docs/veiligheid/gereedschap).
+Door naar [Een script als bezoeker](site:fullstack/docs/veiligheid/gereedschap).

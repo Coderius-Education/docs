@@ -5,13 +5,13 @@ slug: /spawn_timer
 
 # Automatisch spawnen met een Timer
 
-In de [vorige les](./spawnen.md) spawn je muntjes bij de start van het level, met vaste coördinaten in `_ready()`. In deze les laat je het level dat zélf blijven doen terwijl je speelt: elke paar seconden een nieuw muntje, steeds op een andere plek.
+In de [vorige les](site:godot/docs/spawnen) spawn je muntjes bij de start van het level, met vaste coördinaten in `_ready()`. In deze les laat je het level dat zélf blijven doen terwijl je speelt: elke paar seconden een nieuw muntje, steeds op een andere plek.
 
 <GodotVersie />
 
 ## Voorspel: hoe doe je "elke 2 seconden"?
 
-Je wilt dat `spawn_muntje()` elke 2 seconden wordt aangeroepen. **Hoe zou Godot dat oplossen?** Denk aan wat je in [Signals & een muntje oppakken](../07-signals-en-score/signals_muntje.md) leerde over hoe nodes elkaar iets laten weten.
+Je wilt dat `spawn_muntje()` elke 2 seconden wordt aangeroepen. **Hoe zou Godot dat oplossen?** Denk aan wat je in [Signals & een muntje oppakken](site:godot/docs/signals_muntje) leerde over hoe nodes elkaar iets laten weten.
 
 <details>
 <summary>Antwoord</summary>
@@ -92,11 +92,11 @@ func _on_timer_timeout() -> void:
 
 Start met `F5` en blijf even kijken: elke 2 seconden verschijnt er ergens een nieuw muntje. Je score kan nu eindeloos oplopen.
 
-De `Timer`-instellingen staan ook in de [Nodes cheatsheet](/cheatsheet#spawnen).
+De `Timer`-instellingen staan ook in de [Nodes cheatsheet](site:godot/cheatsheet#spawnen).
 
 ## Opdracht 8.4.a: spawn ook vijanden
 
-Muntjes verzamelen zonder gevaar is te makkelijk. Laat het level óók vijanden spawnen, langzamer dan de muntjes — bijvoorbeeld één per 5 seconden. Gebruik de vijand-scène uit [Opdracht 7.1.a](../07-signals-en-score/signals_muntje.md).
+Muntjes verzamelen zonder gevaar is te makkelijk. Laat het level óók vijanden spawnen, langzamer dan de muntjes — bijvoorbeeld één per 5 seconden. Gebruik de vijand-scène uit [Opdracht 7.1.a](site:godot/docs/signals_muntje).
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -179,4 +179,4 @@ Elke timer telt onafhankelijk af: muntjes elke 2 seconden, vijanden elke 5.
 
 </details>
 
-Staat je fout er niet bij? In [Fouten zoeken](../05-bewegingsscript/fouten-zoeken.md) staat hoe je hem zelf opspoort.
+Staat je fout er niet bij? In [Fouten zoeken](site:godot/docs/fouten-zoeken) staat hoe je hem zelf opspoort.

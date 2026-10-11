@@ -6,7 +6,7 @@
   ]}
 />
 
-In [Een formulier opslaan](/docs/FastAPI/berichten-opslaan/naam-opslaan) overschreef elke naam de vorige, want ze gingen allemaal onder de sleutel `laatste_naam`. Voor een gastenboek wil je elk bericht bewaren. Dan heeft elk bericht een eigen sleutel nodig.
+In [Een formulier opslaan](site:fullstack/docs/FastAPI/berichten-opslaan/naam-opslaan) overschreef elke naam de vorige, want ze gingen allemaal onder de sleutel `laatste_naam`. Voor een gastenboek wil je elk bericht bewaren. Dan heeft elk bericht een eigen sleutel nodig.
 
 ## Een nieuwe sleutel per bericht
 
@@ -59,7 +59,7 @@ Zo krijgt elk bericht een nieuwe sleutel, zoals `bericht_1767225600123456789`, e
 </Regel>
 
 <Regel n={9}>
-De waarde is een dictionary met beide velden, zoals in [Een dictionary als waarde](/docs/FastAPI/sqlitedict/dictionary).
+De waarde is een dictionary met beide velden, zoals in [Een dictionary als waarde](site:fullstack/docs/FastAPI/sqlitedict/dictionary).
 </Regel>
 
 <Regel n={16}>
@@ -79,7 +79,7 @@ Gebruik `time.time_ns()` (nanoseconden) en niet `int(time.time())` (hele seconde
 3. Stop de server, start hem opnieuw en kijk nog een keer: ze staan er nog.
 
 :::danger[Gaat er iets mis?]
-Blijft je data niet bewaard? Kijk dan of je `db.commit()` niet bent vergeten. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
+Blijft je data niet bewaard? Kijk dan of je `db.commit()` niet bent vergeten. Meer oplossingen staan op [Er gaat iets mis](site:fullstack/docs/troubleshooting).
 :::
 
 <details>
@@ -303,4 +303,4 @@ async def aantal():
 
 </details>
 
-Na het versturen sta je nu op een pagina met alleen `{"bericht":"Bedankt voor je bericht"}`. In [Doorsturen na opslaan (redirect)](/docs/FastAPI/berichten-opslaan/redirect) kom je daarna vanzelf bij de berichten uit.
+Na het versturen sta je nu op een pagina met alleen `{"bericht":"Bedankt voor je bericht"}`. In [Doorsturen na opslaan (redirect)](site:fullstack/docs/FastAPI/berichten-opslaan/redirect) kom je daarna vanzelf bij de berichten uit.

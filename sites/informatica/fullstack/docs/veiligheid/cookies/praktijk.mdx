@@ -6,14 +6,14 @@ description: Hoe lang een sessie mag duren, en wat secure met https te maken hee
 # Cookies afschermen: in de praktijk
 
 Met `httponly`, `samesite`, uitloggen en een verlooptijd op de server uit
-[les 2 tot en met 5](./httponly) is je sessie-cookie goed afgeschermd. Er zijn
+[les 2 tot en met 5](site:fullstack/docs/veiligheid/cookies/httponly) is je sessie-cookie goed afgeschermd. Er zijn
 nog drie dingen die echte sites met hun cookies doen.
 
 ## Wat jij zelf doet
 
 ### Kies hoe lang een sessie geldt
 
-In [les 5](./verlopen) kreeg je sessie een eigen `tot` op de server. Hoe lang
+In [les 5](site:fullstack/docs/veiligheid/cookies/verlopen) kreeg je sessie een eigen `tot` op de server. Hoe lang
 die is, staat in `GELDIG`: in deze reeks 30 dagen. Voor een gastenboek is dat
 prima; een banksite logt je na een kwartier zonder activiteit uit. Dat werkt
 anders dan jouw `tot`: die telt vanaf het inloggen, en schuift niet op als je
@@ -56,7 +56,7 @@ heeft.
 <details>
 <summary>Een eigen code in elk formulier (CSRF-token)</summary>
 
-`samesite="lax"` uit [les 3](./samesite) houdt een formulier van een andere
+`samesite="lax"` uit [les 3](site:fullstack/docs/veiligheid/cookies/samesite) houdt een formulier van een andere
 site al tegen: de cookie gaat niet mee. Sites die niet alleen op de browser
 willen vertrouwen, of die `samesite="none"` nodig hebben, zetten daarnaast in
 elk formulier een eigen code, een **CSRF-token**. De server maakt die code als
@@ -102,10 +102,10 @@ Kies bij elke situatie de cookie-instelling die het meest helpt.
 
 1. `httponly`: een script kan de cookie dan niet lezen.
 2. `samesite`: de cookie gaat niet mee met een verzoek vanaf een andere site.
-   FastAPI zet `lax` al standaard; zie [les 3](./samesite).
+   FastAPI zet `lax` al standaard; zie [les 3](site:fullstack/docs/veiligheid/cookies/samesite).
 3. `secure` samen met `https`: de cookie gaat alleen versleuteld over het
    netwerk.
 
 </details>
 
-Door naar de volgende reeks: [Wachtwoorden veilig opslaan](../wachtwoorden/gewone-tekst).
+Door naar de volgende reeks: [Wachtwoorden veilig opslaan](site:fullstack/docs/veiligheid/wachtwoorden/gewone-tekst).

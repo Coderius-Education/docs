@@ -7,7 +7,7 @@ import metAchter from './blokken/subprogrammas-achter.json';
 
 # Een naam voor je blokken
 
-Je programma uit [Mikken](mikken) werkt, maar het is lang geworden. Kijk je er snel naar, dan zie je niet meteen wat de robot doet. Daarom geef je een groepje blokken een naam: een **subprogramma**. Daarna zet je in je programma alleen nog die naam.
+Je programma uit [Mikken](site:robotica/click_golfer/mikken) werkt, maar het is lang geworden. Kijk je er snel naar, dan zie je niet meteen wat de robot doet. Daarom geef je een groepje blokken een naam: een **subprogramma**. Daarna zet je in je programma alleen nog die naam.
 
 ## Een subprogramma maken
 
@@ -96,4 +96,4 @@ Eén keer, in het subprogramma `slaan`. Je hoeft niet in het lange programma te 
 
 </details>
 
-Klaar? Kijk dan bij de [Extra's](extras) wat je er nog bij kunt maken.
+Klaar? Kijk dan bij de [Extra's](site:robotica/click_golfer/extras) wat je er nog bij kunt maken.

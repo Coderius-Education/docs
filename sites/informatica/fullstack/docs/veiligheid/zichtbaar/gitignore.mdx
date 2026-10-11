@@ -11,7 +11,7 @@ description: Met een .gitignore laat git je databases, .venv en __pycache__ ligg
   ]}
 />
 
-In [les 4](./bestanden) zag je welke bestanden in je map niet bij je code
+In [les 4](site:fullstack/docs/veiligheid/zichtbaar/bestanden) zag je welke bestanden in je map niet bij je code
 horen. Je kunt ze elke keer met de hand overslaan, maar één keer vergeten is
 genoeg. Laat het daarom een bestand onthouden.
 
@@ -19,7 +19,7 @@ genoeg. Laat het daarom een bestand onthouden.
 
 Staat deze map nog niet in git, typ dan eerst `git init` in de terminal van
 VS Code, zoals in
-<SiteLink site="editor" to="/git/basis/stap-1-init">een repository starten met git init</SiteLink>.
+[een repository starten met git init](site:editor/git/basis/stap-1-init).
 Typ daarna `git status --short`. Die geeft een korte lijst van alles wat git
 ziet:
 
@@ -80,7 +80,7 @@ en `static/` en `templates/` als je project die heeft. Maak daar een zip van.
 
 Open de zip daarna, en kijk of er geen `.db`-bestand of `.venv` in staat. Wie
 je project nakijkt, heeft je code nodig, niet de berichten en sessie-id's van je
-bezoekers. De pagina [Project checken](/project-checken) vraagt ook alleen om
+bezoekers. De pagina [Project checken](site:fullstack/project-checken) vraagt ook alleen om
 `main.py`, `static/` en `templates/`.
 
 ## Er gaat iets mis
@@ -105,7 +105,7 @@ git rm --cached sessies.db
 Maak daarna een commit. Stond de repository al op GitHub, dan staat het bestand
 nog in de oude commits, en kan iedereen het daar ophalen. Gooi dan ook
 `sessies.db` op je computer weg: je server begint met een lege, en de oude
-sessie-id's werken nergens meer, zoals je in opdracht 1 van [les 4](./bestanden)
+sessie-id's werken nergens meer, zoals je in opdracht 1 van [les 4](site:fullstack/docs/veiligheid/zichtbaar/bestanden)
 zag.
 
 ## Opdrachten
@@ -165,4 +165,4 @@ uitzetten zodra anderen erbij kunnen.
 
 </details>
 
-Door naar [les 6: in de praktijk](./praktijk).
+Door naar [les 6: in de praktijk](site:fullstack/docs/veiligheid/zichtbaar/praktijk).

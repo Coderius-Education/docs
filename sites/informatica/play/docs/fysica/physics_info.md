@@ -257,5 +257,5 @@ vorm_c.physics_info()`} height={300} />
 </details>
 
 :::info[Waar kom je dit later weer tegen?]
-Bij [Pong (eindproject)](/docs/jouw_project/pong) pas je deze drie types direct toe: de bal is **dynamic**, de batjes zijn **kinematic**, en de muren zijn **static**. Opdracht 2.2.a hierboven is feitelijk al de voorbereiding op die keuze.
+Bij [Pong (eindproject)](site:play/docs/jouw_project/pong) pas je deze drie types direct toe: de bal is **dynamic**, de batjes zijn **kinematic**, en de muren zijn **static**. Opdracht 2.2.a hierboven is feitelijk al de voorbereiding op die keuze.
 :::

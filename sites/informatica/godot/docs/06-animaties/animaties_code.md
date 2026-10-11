@@ -41,7 +41,7 @@ var op_de_grond
 var staat_stil
 ```
 
-Dit is een `var` zónder `=`, en dat is nieuw. Zo'n regel maakt de variabele alvast aan, maar geeft hem nog geen waarde. Dat is hier precies de bedoeling: de echte waarde verandert elk frame, dus die vullen we straks pas in binnen `_physics_process`. Waar variabelen in je script horen te staan lees je terug in de [GDScript-tips](/gdscript-tips#variabelen).
+Dit is een `var` zónder `=`, en dat is nieuw. Zo'n regel maakt de variabele alvast aan, maar geeft hem nog geen waarde. Dat is hier precies de bedoeling: de echte waarde verandert elk frame, dus die vullen we straks pas in binnen `_physics_process`. Waar variabelen in je script horen te staan lees je terug in de [GDScript-tips](site:godot/gdscript-tips#variabelen).
 
 <details>
 <summary>Hoe ziet je hele script er nu uit?</summary>
@@ -85,7 +85,7 @@ Het `$`-teken pakt een **child-node** uit je Scene Tree, op naam. `$AnimatedSpri
 
 **Let op:** de naam achter `$` moet précies overeenkomen met de naam in je Scene Tree, inclusief hoofdletters. Heb je jouw node `Speler` of `Animaties` genoemd, dan schrijf je dus `$Animaties.play('run')` — of je hernoemt de node terug naar `AnimatedSprite2D`, zodat je code gelijk blijft aan die van deze les.
 
-Meer hierover staat in de [GDScript-tips](/gdscript-tips#nodes-scenes).
+Meer hierover staat in de [GDScript-tips](site:godot/gdscript-tips#nodes-scenes).
 
 ## Stap 2: `op_de_grond` invullen en de jump-animatie
 
@@ -258,7 +258,7 @@ Dus bij `velocity.x < 0` (links bewegen): `flip_h = true`.
 1. De volgorde van je `if` / `elif` is verkeerd: `velocity.x > 0` of `< 0` wordt eerder waar dan `staat_stil`.
 2. `staat_stil` wordt bijgewerkt vóórdat `move_toward` de snelheid op `0` heeft gezet, en houdt dan een frame lang de oude waarde vast.
 
-Over dat tweede: met stap `SPEED` (zoals in [Deel 5 — Lopen](../05-bewegingsscript/krachten.md)) maakt `move_toward` de snelheid in één frame exact `0`. Alleen als je bewust een kleinere stap koos voor een glij-effect, blijft `velocity.x` nog een paar frames ongelijk aan nul en start `idle` iets later — dat is dan geen bug, maar het gevolg van het glijden.
+Over dat tweede: met stap `SPEED` (zoals in [Deel 5 — Lopen](site:godot/docs/movement-krachten)) maakt `move_toward` de snelheid in één frame exact `0`. Alleen als je bewust een kleinere stap koos voor een glij-effect, blijft `velocity.x` nog een paar frames ongelijk aan nul en start `idle` iets later — dat is dan geen bug, maar het gevolg van het glijden.
 
 **Oplossing:**
 
@@ -267,4 +267,4 @@ Over dat tweede: met stap `SPEED` (zoals in [Deel 5 — Lopen](../05-bewegingssc
 
 </details>
 
-Staat je fout er niet bij? In [Fouten zoeken](../05-bewegingsscript/fouten-zoeken.md) staat hoe je hem zelf opspoort.
+Staat je fout er niet bij? In [Fouten zoeken](site:godot/docs/fouten-zoeken) staat hoe je hem zelf opspoort.

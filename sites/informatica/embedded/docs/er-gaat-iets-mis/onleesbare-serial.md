@@ -25,4 +25,4 @@ monitor_speed = 9600
 
 **Zie je helemaal niets?** Dan is het iets anders: je bent waarschijnlijk `Serial.begin()` in `setup()` vergeten.
 
-Meer uitleg: [5.1 De seriële monitor](/docs/serieel/serial-monitor).
+Meer uitleg: [5.1 De seriële monitor](site:embedded/docs/serieel/serial-monitor).

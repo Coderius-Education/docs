@@ -115,7 +115,9 @@ describe('Wie mag wat', () => {
     // De beloofde uitvoer ging uit van het script zonder opdracht 1 van les 2.
     // Met dat stuk krijgt ook Sara 403: de foute controle blokkeert de eigenaar.
     const tekst = lees('toegang/server-weet.mdx');
-    expect(tekst).toContain('](./controle#opdracht-1-run---sara-mag-wel)');
+    expect(tekst).toContain(
+      '](site:fullstack/docs/veiligheid/toegang/controle#opdracht-1-run---sara-mag-wel)',
+    );
     expect(tekst).toContain('Sara verwijdert haar eigen bericht: 403');
   });
 
@@ -210,14 +212,14 @@ describe('Veiligheid sluit aan op de accounts uit de basis', () => {
   it('Wachtwoorden begint bij de accounts uit de basis', () => {
     const tekst = lees('wachtwoorden/gewone-tekst.mdx');
     const intro = tekst.slice(0, tekst.indexOf('<CodeUitleg>'));
-    expect(intro).toContain('](/docs/FastAPI/accounts/registreren)');
-    expect(intro).toContain('](/docs/FastAPI/accounts/inloggen)');
+    expect(intro).toContain('](site:fullstack/docs/FastAPI/accounts/registreren)');
+    expect(intro).toContain('](site:fullstack/docs/FastAPI/accounts/inloggen)');
   });
 
   it('In je eigen project zet Argon2 op het inloggen van het gastenboek, en zegt wat een oud wachtwoord doet', () => {
     const tekst = lees('wachtwoorden/pogingen.mdx');
     const opdracht = tekst.slice(tekst.indexOf('### Opdracht 3: Make - In je eigen project'));
-    expect(opdracht).toContain('](/docs/FastAPI/accounts/registreren)');
+    expect(opdracht).toContain('](site:fullstack/docs/FastAPI/accounts/registreren)');
     expect(opdracht).toContain('gebruikers.get(naam, NEP)');
     expect(opdracht).toContain('InvalidHashError');
   });

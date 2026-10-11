@@ -18,7 +18,7 @@ reeks komen daarin. Zo blijft je eigen gastenboek heel. Aan het eind van de
 reeks pas je het geleerde toe op je eigen project.
 
 Maak in die map een virtual environment en installeer de packages; hoe dat gaat
-staat bij [Een map per reeks](/docs/veiligheid/gereedschap#een-map-per-reeks).
+staat bij [Een map per reeks](site:fullstack/docs/veiligheid/gereedschap#een-map-per-reeks).
 :::
 
 Start je een server met `fastapi dev`, dan staan er in de terminal twee adressen:
@@ -34,7 +34,7 @@ je wat daar staat, en voor wie.
 ## Een server om mee te oefenen
 
 Zet dit `main.py` in de map. Het is een klein gastenboek met sessies, kleiner
-dan dat uit [Onthouden op de server: sessies](/docs/FastAPI/onthouden/sessies): zonder
+dan dat uit [Onthouden op de server: sessies](site:fullstack/docs/FastAPI/onthouden/sessies): zonder
 accounts, en je sessie begint bij je eerste bericht. Onderaan staat ook het
 endpoint `GET /sessies` uit opdracht 3 van die les, dat je daar maakte om in je
 sessies te kijken.
@@ -95,7 +95,7 @@ Een bericht plaatsen. Het bericht gaat in `gastenboek.db`, en in `sessies.db` on
 </Regel>
 
 <Regel n={29}>
-De cookie met het sessie-id. In Sessies stond er `max_age` bij; hier staan `httponly` en `samesite`, twee instellingen die de cookie afschermen. Wat ze doen, leer je later in [Cookies afschermen](/docs/veiligheid/cookies/httponly).
+De cookie met het sessie-id. In Sessies stond er `max_age` bij; hier staan `httponly` en `samesite`, twee instellingen die de cookie afschermen. Wat ze doen, leer je later in [Cookies afschermen](site:fullstack/docs/veiligheid/cookies/httponly).
 </Regel>
 
 <Regel n={37} tot={41}>
@@ -165,7 +165,7 @@ Bij elk pad staan de methoden, zoals `get` of `post`. `upper()` maakt er hoofdle
 </CodeUitleg>
 
 Draai het in een tweede terminal, zoals in
-[Een script als bezoeker](/docs/veiligheid/gereedschap):
+[Een script als bezoeker](site:fullstack/docs/veiligheid/gereedschap):
 
 ```
 POST /bericht
@@ -179,11 +179,11 @@ Elk endpoint staat erin, ook `GET /sessies`, dat je alleen voor jezelf maakte.
 ## Wie er nog meer bij kan
 
 Zolang je server op `127.0.0.1` draait, kan alleen jij bij `/docs`. Zet je hem
-open zoals in [Laat het aan anderen zien](/docs/FastAPI/afronden/laat-het-zien), met
+open zoals in [Laat het aan anderen zien](site:fullstack/docs/FastAPI/afronden/laat-het-zien), met
 `--host 0.0.0.0`, dan kan iedereen op het netwerk het netwerkadres van je
 computer typen met `:8000/docs` erachter. Je klasgenoot ziet dan dezelfde lijst
 als jij, met het endpoint dat je vergeten bent weg te halen. Wat dat kost, zie
-je in [les 2](./vergeten).
+je in [les 2](site:fullstack/docs/veiligheid/zichtbaar/vergeten).
 
 ## Er gaat iets mis
 
@@ -308,4 +308,4 @@ Dit is de beginstand. In les 3 verandert de regel met `app = FastAPI()`, en gaat
 
 </details>
 
-Door naar [les 2: een vergeten endpoint](./vergeten).
+Door naar [les 2: een vergeten endpoint](site:fullstack/docs/veiligheid/zichtbaar/vergeten).

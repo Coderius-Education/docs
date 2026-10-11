@@ -5,7 +5,7 @@ description: Een .html-template van Jinja escapet alles tussen dubbele accolades
 
 # HTML van een bezoeker: templates escapen vanzelf
 
-Met `escape` uit [les 2](./escape) moet je aan elke plek denken, en in de "Er
+Met `escape` uit [les 2](site:fullstack/docs/veiligheid/xss/escape) moet je aan elke plek denken, en in de "Er
 gaat iets mis" van die les zag je hoe makkelijk je er een vergeet. Een template
 van Jinja doet het voor je: alles tussen `{{ }}` escapet hij, zonder dat je
 erom vraagt.
@@ -13,7 +13,7 @@ erom vraagt.
 ## De lijst met een template
 
 Maak `templates/berichten_lijst.html`. Het is een kleinere versie van het
-template uit het recept [Verversen](/docs/FastAPI/zonder-herladen/htmx-overzicht#een-stuk-van-de-pagina-verversen):
+template uit het recept [Verversen](site:fullstack/docs/FastAPI/zonder-herladen/htmx-overzicht#een-stuk-van-de-pagina-verversen):
 deze server heeft geen detailpagina en geen verwijderknop, dus de link en het
 formuliertje zijn eruit. Zonder die twee heb je de sleutels niet nodig, en loopt
 de lus over de berichten alleen, met `db.values()` in plaats van `db.items()`:
@@ -58,13 +58,13 @@ templates = Jinja2Templates(directory="templates")
 ```
 
 Het antwoord na het versturen blijft één zin in een f-string, met `escape(naam)`,
-en de zoekpagina uit [les 3](./url) houdt `escape(term)`. Voor één zin is een
+en de zoekpagina uit [les 3](site:fullstack/docs/veiligheid/xss/url) houdt `escape(term)`. Voor één zin is een
 template wat veel.
 
 ## Doe de test opnieuw
 
 Gooi `gastenboek.db` weg, start de server opnieuw, en vul als Sara weer
-`<b>vet</b>` in. `lijst.py` uit [les 1](./zwakheid) geeft nu:
+`<b>vet</b>` in. `lijst.py` uit [les 1](site:fullstack/docs/veiligheid/xss/zwakheid) geeft nu:
 
 ```
 <ul>
@@ -129,7 +129,7 @@ in wat `lijst.py` print?
 <details>
 <summary>Tip</summary>
 
-In [les 2](./escape) zag je welke tekens escapen vervangt. Een `"` is er een
+In [les 2](site:fullstack/docs/veiligheid/xss/escape) zag je welke tekens escapen vervangt. Een `"` is er een
 van.
 
 </details>
@@ -195,4 +195,4 @@ Naast `main.py` staan `static/gastenboek.html`, `static/js/htmx.min.js` en
 
 </details>
 
-Door naar [les 5: |safe, de bescherming uitzetten](./safe).
+Door naar [les 5: |safe, de bescherming uitzetten](site:fullstack/docs/veiligheid/xss/safe).

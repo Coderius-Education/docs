@@ -5,13 +5,13 @@ title: Git in VS Code
 
 # Git in VS Code
 
-In [Git basis](/git/basis/) heb je de werkmap, staging en commits leren kennen in de simulator, en in [GitHub: account en repo](/git/github/) staat je online repository klaar. Nu ga je op je eigen computer werken, in VS Code.
+In [Git basis](site:editor/git/basis) heb je de werkmap, staging en commits leren kennen in de simulator, en in [GitHub: account en repo](site:editor/git/github) staat je online repository klaar. Nu ga je op je eigen computer werken, in VS Code.
 
 ## Voorbereiding
 
 Zorg dat je het volgende hebt:
 
-- **VS Code** geïnstalleerd (zie [Installatie VS Code](/installatie-vscode/))
+- **VS Code** geïnstalleerd (zie [Installatie VS Code](site:editor/installatie-vscode))
 - **Git** geïnstalleerd op je computer
 
 Heb je git nog niet?
@@ -51,4 +51,4 @@ sudo pacman -S git        # Arch, Manjaro
 
 ## Aan de slag
 
-Begin met **[Stap 1: vertel git wie je bent](./stap-1-config)**.
+Begin met **[Stap 1: vertel git wie je bent](site:editor/git/vscode/stap-1-config)**.

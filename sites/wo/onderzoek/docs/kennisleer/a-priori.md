@@ -19,10 +19,10 @@ Kennis is **a priori** als je haar kunt hebben vóór en zonder waarneming: je s
 
 Om deze uitspraken te controleren hoef je de deur niet uit. Je hoeft geen vrijgezellen te ondervragen en geen driehoeken op te meten: wie de begrippen begrijpt, ziet meteen dat het klopt — en dat het overal en altijd klopt.
 
-Dit is het soort kennis waar [rationalisten](./rationalisme.md) hun vertrouwen op bouwen. Voor [Plato](./plato.md) was het zelfs de enige echte kennis.
+Dit is het soort kennis waar [rationalisten](site:onderzoek/kennisleer/rationalisme) hun vertrouwen op bouwen. Voor [Plato](site:onderzoek/kennisleer/plato) was het zelfs de enige echte kennis.
 
 :::caution[A priori is niet hetzelfde als "vooraf bedacht"]
-Een [hypothese](../opzet/functies/verklarend-toetsend.md) bedenk je ook vooraf, maar die is niet a priori: je moet hem juist toetsen aan de werkelijkheid, en hij kan sneuvelen. A priori-kennis kán niet sneuvelen op een meting, omdat er geen meting aan te pas komt.
+Een [hypothese](site:onderzoek/opzet/functies/verklarend-toetsend) bedenk je ook vooraf, maar die is niet a priori: je moet hem juist toetsen aan de werkelijkheid, en hij kan sneuvelen. A priori-kennis kán niet sneuvelen op een meting, omdat er geen meting aan te pas komt.
 :::
 
 <WelNiet
@@ -32,6 +32,6 @@ Een [hypothese](../opzet/functies/verklarend-toetsend.md) bedenk je ook vooraf, 
 
 ## Hangt samen met
 
-- [A posteriori](./a-posteriori.md) — de tegenhanger: kennis die pas ná waarneming vaststaat
-- [De vork van Hume](./vork-van-hume.mdx) — waar a priori samenvalt met analytische uitspraken
-- [Rationalisme](./rationalisme.md) — de stroming die deze kennis vooropstelt
+- [A posteriori](site:onderzoek/kennisleer/a-posteriori) — de tegenhanger: kennis die pas ná waarneming vaststaat
+- [De vork van Hume](site:onderzoek/kennisleer/vork-van-hume) — waar a priori samenvalt met analytische uitspraken
+- [Rationalisme](site:onderzoek/kennisleer/rationalisme) — de stroming die deze kennis vooropstelt

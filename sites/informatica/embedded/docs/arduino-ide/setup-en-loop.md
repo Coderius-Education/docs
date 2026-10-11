@@ -47,4 +47,4 @@ Omdat het zich moet herhalen. Zou je het in `setup()` zetten, dan ging de LED é
 
 </details>
 
-Nu je weet hoe de twee blokken werken, ga je de blink zelf aanpassen in [2.4 Blink aanpassen](blink-aanpassen.mdx).
+Nu je weet hoe de twee blokken werken, ga je de blink zelf aanpassen in [2.4 Blink aanpassen](site:embedded/docs/arduino-ide/blink-aanpassen).

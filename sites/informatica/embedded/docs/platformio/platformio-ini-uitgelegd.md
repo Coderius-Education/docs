@@ -48,4 +48,4 @@ board = bluepill_f103c8
 framework = stm32cube
 ```
 
-PlatformIO laat je dan kiezen voor welk bord je bouwt. Merk op dat de Blue Pill een ander `framework` gebruikt (`stm32cube`, de HAL-laag van ST) — precies dit gebruik je in [8. Overstap naar STM32](/docs/category/8-overstap-naar-stm32).
+PlatformIO laat je dan kiezen voor welk bord je bouwt. Merk op dat de Blue Pill een ander `framework` gebruikt (`stm32cube`, de HAL-laag van ST) — precies dit gebruik je in [8. Overstap naar STM32](site:embedded/docs/category/8-overstap-naar-stm32).

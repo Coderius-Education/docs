@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import {
+  ankerVan,
   buildsIn,
   controleer,
   doelBestaat,
@@ -186,4 +187,61 @@ it('CI meldt ontbrekende modellen en assets, ook met een bestaand model ernaast'
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
+});
+
+describe('ankers', () => {
+  it('ankerVan negeert lege fragmenten, app-state en de skip-link', () => {
+    expect(ankerVan('#for-lus')).toBe('for-lus');
+    expect(ankerVan('#caf%C3%A9')).toBe('café');
+    expect(ankerVan('#')).toBeUndefined();
+    expect(ankerVan('#code=print(1)')).toBeUndefined();
+    expect(ankerVan('#__docusaurus_skipToContent_fallback')).toBeUndefined();
+  });
+
+  it('controleert ankers op andere cursussen, binnen de cursus en op de pagina zelf', () => {
+    const root = mkdtempSync(join(tmpdir(), 'coderius-ankers-'));
+    const schrijf = (pad: string, html: string) => {
+      mkdirSync(join(root, pad, '..'), { recursive: true });
+      writeFileSync(join(root, pad), html);
+    };
+    try {
+      schrijf('home/index.html', 'home');
+      schrijf('web/index.html', 'web');
+      schrijf('web/docs/html/index.html', '<h2 id="kop">Kop</h2>');
+      // Een verhuisde les: de doorstuurpagina wijst naar de nieuwe plek.
+      schrijf(
+        'web/docs/oud/index.html',
+        '<meta http-equiv="refresh" content="0; url=/web/docs/html/">',
+      );
+      schrijf(
+        'python/index.html',
+        [
+          '<h2 id="hier">Hier</h2>',
+          '<a href="https://informatica.coderius.nl/web/docs/html#kop">goed</a>',
+          '<a href="https://informatica.coderius.nl/web/docs/html#weg">kapot</a>',
+          '<a href="https://informatica.coderius.nl/web/docs/oud#kop">via doorsturen</a>',
+          '<a href="#hier">zelfde pagina</a>',
+          '<a href="#nergens">zelfde pagina, kapot</a>',
+          '<a href="/python/#code=x">app-state</a>',
+          '<svg><use href="#icoon"></use></svg>',
+          '<a href="site:web/docs/html">niet omgezet</a>',
+        ].join(''),
+      );
+      // Een pagina die op -index eindigt, is geen map-index.
+      schrijf('python/docs/h-index.html', '<h2 id="uitrekenen">x</h2><a href="#uitrekenen">y</a>');
+      const { kapot, ankers } = controleer(buildsIn(root));
+      expect(ankers.map((k) => k.href)).toEqual([
+        'https://informatica.coderius.nl/web/docs/html#weg',
+        '#nergens',
+      ]);
+      expect(ankers[0].reden).toBe('anker #weg bestaat niet');
+      expect(kapot.map((k) => k.href)).toEqual(['site:web/docs/html']);
+      expect(kapot[0]).toMatchObject({
+        doelSite: 'web',
+        reden: expect.stringMatching(/niet omgezet/),
+      });
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
 });

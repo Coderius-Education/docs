@@ -17,6 +17,6 @@ title: "Stap 5: een bestand aanmaken"
 
 Kies waar je mee aan de slag wilt:
 
-- **[Website maken in VS Code](/web/)** — leer hoe je een website bouwt met HTML, CSS en JavaScript
-- **[Python in VS Code](/python/)** — leer hoe je Python-code schrijft en uitvoert
-- **[Git & GitHub](/git/)** — leer versiebeheer in een browser-simulator en daarna in VS Code
+- **[Website maken in VS Code](site:editor/web)** — leer hoe je een website bouwt met HTML, CSS en JavaScript
+- **[Python in VS Code](site:editor/python)** — leer hoe je Python-code schrijft en uitvoert
+- **[Git & GitHub](site:editor/git)** — leer versiebeheer in een browser-simulator en daarna in VS Code

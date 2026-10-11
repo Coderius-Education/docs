@@ -153,4 +153,4 @@ func _physics_process(delta: float) -> void:
 
 ---
 
-← [Deel 5 — Lopen](./krachten.md) · **Volgende:** [Deel 7 — Springen](./afsluiter.md) →
+← [Deel 5 — Lopen](site:godot/docs/movement-krachten) · **Volgende:** [Deel 7 — Springen](site:godot/docs/movement-afsluiter) →

@@ -30,4 +30,4 @@ lib_deps =
 
 Klopt de naam niet precies? Zoek de library op in **PIO Home → Libraries** en kopieer de exacte regel.
 
-Meer uitleg: [7.5 Libraries beheren](/docs/platformio/libraries-beheren).
+Meer uitleg: [7.5 Libraries beheren](site:embedded/docs/platformio/libraries-beheren).

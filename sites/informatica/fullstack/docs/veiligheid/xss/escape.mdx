@@ -8,8 +8,8 @@ import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
 # HTML van een bezoeker: escapen in Python
 
 `escape` ken je al uit het htmx-recept
-[Een formulier versturen](/docs/FastAPI/zonder-herladen/htmx-overzicht#een-formulier-versturen).
-Daar stond hij om de naam, zonder dat je zag wat hij doet. In [les 1](./zwakheid)
+[Een formulier versturen](site:fullstack/docs/FastAPI/zonder-herladen/htmx-overzicht#een-formulier-versturen).
+Daar stond hij om de naam, zonder dat je zag wat hij doet. In [les 1](site:fullstack/docs/veiligheid/xss/zwakheid)
 zag je wat er zonder gebeurt: de browser las `<b>vet</b>` als HTML, omdat de
 f-string het letterlijk in de pagina zette.
 
@@ -122,7 +122,7 @@ regels += f"<li>{escape(bericht['naam'])}: {escape(bericht['bericht'])}</li>"
 ```
 
 Omdat je zo makkelijk een plek vergeet, doet een template het in
-[les 4](./templates) voor je.
+[les 4](site:fullstack/docs/veiligheid/xss/templates) voor je.
 
 ## Opdrachten
 
@@ -203,8 +203,8 @@ async def berichten_lijst():
     return HTMLResponse(f"<ul>{regels}</ul>")
 ```
 
-Beide plekken escapen nu. In [les 4](./templates) gaat de lijst naar een template.
+Beide plekken escapen nu. In [les 4](site:fullstack/docs/veiligheid/xss/templates) gaat de lijst naar een template.
 
 </details>
 
-Door naar [les 3: tekst uit de URL](./url).
+Door naar [les 3: tekst uit de URL](site:fullstack/docs/veiligheid/xss/url).

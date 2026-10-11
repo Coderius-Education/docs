@@ -159,7 +159,7 @@ describe('plan', () => {
     const tests = [
       { pad: `${MAP.python}/src/docs-tests/lessen.test.ts`, tekst: 'readFileSync(x)' },
       { pad: `${MAP.python}/src/data/rekenen.test.ts`, tekst: "import { x } from './x'" },
-      { pad: 'packages/shared/sitelink.test.ts', tekst: 'readFileSync alleSiteMappen()' },
+      { pad: 'packages/shared/links-in-lestekst.test.ts', tekst: 'readFileSync alleSiteMappen()' },
       { pad: `${MAP.web}/src/docs-tests/lessen.test.ts`, tekst: 'readFileSync(x)' },
     ];
     const p = planVoor({ [les]: [[14, 14]] }, [MAP.python], tests);
@@ -173,7 +173,7 @@ describe('plan', () => {
     expect(p.tekst).toEqual({ alles: false, bestanden: [les] });
     // Een les is geen import: de tests die lestekst lezen doen mee, de rest niet.
     expect(p.vitest.bestanden).toEqual([
-      'packages/shared/sitelink.test.ts',
+      'packages/shared/links-in-lestekst.test.ts',
       `${MAP.python}/src/docs-tests/lessen.test.ts`,
     ]);
     expect(p.jobs).toMatchObject({ test: true, tekst: true, crosslinks: true, lint: false });
@@ -223,7 +223,7 @@ describe('plan', () => {
   it('een bestand buiten de packages: de guards en de tests die het bij naam noemen', () => {
     const tests = [
       { pad: 'packages/shared/bestanden.test.ts', tekst: "readdirSync 'WRITING_STYLE_GUIDE.md'" },
-      { pad: 'packages/shared/sitelink.test.ts', tekst: 'readFileSync alleSiteMappen()' },
+      { pad: 'packages/shared/links-in-lestekst.test.ts', tekst: 'readFileSync alleSiteMappen()' },
       { pad: 'packages/shared/dialoog.test.ts', tekst: "import { x } from './dialoog'" },
       { pad: `${MAP.web}/src/docs-tests/lessen.test.ts`, tekst: 'readFileSync(x)' },
     ];
@@ -231,7 +231,7 @@ describe('plan', () => {
     expect(p.sites).toEqual([]);
     expect(p.vitest.bestanden).toEqual([
       'packages/shared/bestanden.test.ts',
-      'packages/shared/sitelink.test.ts',
+      'packages/shared/links-in-lestekst.test.ts',
     ]);
     // Een los script buiten de packages: alleen wat het importeert.
     const s = planVoor({ 'scripts/run-all-sites.mjs': [[3, 3]] }, [], tests);

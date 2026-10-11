@@ -7,6 +7,7 @@ const cursussenRoute = require('../plugins/cursussen-route');
 const privacyRoute = require('../plugins/privacy-route');
 const omleidingenPlugin = require('../plugins/omleidingen');
 const matomoPlugin = require('../plugins/matomo');
+const remarkSiteLinks = require('../plugins/site-links');
 const {
   SITES,
   DOCENTEN_SITES,
@@ -132,6 +133,38 @@ function withSharedCustomCss(presets, merk) {
   });
 }
 
+// Hangt de site:-linkplugin vooraan in beforeDefaultRemarkPlugins van elke
+// content-plugin: docs, pages en blog van het classic preset, plus losse
+// docs-instanties (robotica heeft er twee extra). Docusaurus kent geen globale
+// remark-optie, en de plugin moet vóór de eigen linkverwerking draaien.
+const CONTENT_PLUGIN = /(^|[/-])(plugin-)?content-(docs|pages|blog)$/;
+
+function metSiteLinks(opts, siteId) {
+  const eigen = opts?.beforeDefaultRemarkPlugins || [];
+  return { ...opts, beforeDefaultRemarkPlugins: [[remarkSiteLinks, { siteId }], ...eigen] };
+}
+
+function withSiteLinks(presets, plugins, siteId) {
+  return {
+    presets: (presets || []).map((entry) => {
+      if (!Array.isArray(entry)) return entry;
+      const [name, opts] = entry;
+      if (name !== 'classic' && !/preset-classic$/.test(name)) return entry;
+      const next = { ...opts };
+      for (const key of ['docs', 'pages', 'blog']) {
+        if (next[key] === false) continue;
+        next[key] = metSiteLinks(next[key], siteId);
+      }
+      return [name, next];
+    }),
+    plugins: (plugins || []).map((entry) => {
+      const name = Array.isArray(entry) ? entry[0] : entry;
+      if (typeof name !== 'string' || !CONTENT_PLUGIN.test(name)) return entry;
+      return [name, metSiteLinks(Array.isArray(entry) ? entry[1] : {}, siteId)];
+    }),
+  };
+}
+
 /**
  * Bouwt een volledige Docusaurus-config uit de site-specifieke onderdelen plus
  * de gedeelde standaarden. Wat een site meegeeft wint; de factory zorgt voor:
@@ -228,6 +261,7 @@ function createConfig(course = {}) {
       themeConfig.prism[key] = prismThemes[value];
     }
   }
+  const linkbaar = withSiteLinks(presets, plugins, registry?.id);
   const others = otherSites(registry);
   const merk = merkVoorSite(registry);
 
@@ -325,10 +359,10 @@ function createConfig(course = {}) {
     staticDirectories:
       staticDirectories ||
       uniqueDirs(['static', SHARED_STATIC, ...packageStaticDirs(sharedPackages)]),
-    presets: withSharedCustomCss(presets, merk),
+    presets: withSharedCustomCss(linkbaar.presets, merk),
     clientModules: [...LETTER_CSS, ...(rest.clientModules || [])],
     plugins: [
-      ...(plugins || []),
+      ...linkbaar.plugins,
       ...(managed ? [[managedManifest, { settings: managed }]] : []),
       // Klassen (docs-management): hoofdstukkenlijst voor docenten, en de
       // klasweergave in de sidebar voor leerlingen.
@@ -346,4 +380,4 @@ function createConfig(course = {}) {
   };
 }
 
-module.exports = { createConfig, prismThemes, CC_BY_NC };
+module.exports = { createConfig, withSiteLinks, prismThemes, CC_BY_NC };

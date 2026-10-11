@@ -41,14 +41,14 @@ Drie vragen om je op weg te helpen — beantwoord ze voor jezelf voordat je typt
 
 1. De lijn ligt **links**. Welke kant moet de robot dan op draaien, en welke motor moet daarvoor zachter?
 2. Hoe véél zachter? Wat verwacht je bij een klein verschil (255 tegenover 200), en wat bij een groot verschil (255 tegenover 0)?
-3. In [Hoe werkt lijnvolgen?](./hoe_werkt.md) heb je dit al eens beredeneerd. Klopt je antwoord daar nog mee?
+3. In [Hoe werkt lijnvolgen?](site:robotica/lego_auto/lijnvolgen/hoe-werkt-het) heb je dit al eens beredeneerd. Klopt je antwoord daar nog mee?
 
 <details>
 <summary>Tip — ik kom er niet uit</summary>
 
 - Ziet de **linkersensor** de lijn (`black`)? Zet dan `motor_a` (links) bijvoorbeeld op `150` en laat `motor_b` (rechts) op `255`.
 - Ziet de **rechtersensor** de lijn? Precies andersom.
-- Draait je robot de verkeerde kant op? Dan kloppen de namen niet met de werkelijkheid — check met `motor_a.test()` welke motor echt links zit ([Deel 6](../motoren/deel6_draaien.md)).
+- Draait je robot de verkeerde kant op? Dan kloppen de namen niet met de werkelijkheid — check met `motor_a.test()` welke motor echt links zit ([Deel 6](site:robotica/lego_auto/motoren/draaien)).
 
 </details>
 
@@ -65,11 +65,11 @@ Werkt het, maar niet soepel?
 
 ## Test het
 
-Zet je robot aan het begin van de baan en laat los. Volgt hij de lijn, ook door een bocht? Werkt het aan de kabel, zet je script dan als `main.py` op het bord ([Batterijen](../batterijen/code.md)) en laat hem echt los rijden.
+Zet je robot aan het begin van de baan en laat los. Volgt hij de lijn, ook door een bocht? Werkt het aan de kabel, zet je script dan als `main.py` op het bord ([Batterijen](site:robotica/lego_auto/batterijen/main-py)) en laat hem echt los rijden.
 
 Dit is het moment waarop het hele traject samenkomt: elk deel van je script heb je zelf getypt, en je weet van elke regel waarom hij er staat.
 
-Klaar? Op [Robot checken](/robot-checken) zie je wat er in je `main.py` zit. Doe er een paar foto's van je robot bij — aan je code is niet te zien of het frame er staat en of hij op batterijen rijdt.
+Klaar? Op [Robot checken](site:robotica/robot-checken) zie je wat er in je `main.py` zit. Doe er een paar foto's van je robot bij — aan je code is niet te zien of het frame er staat en of hij op batterijen rijdt.
 
 ## Opdracht 10.4.b: de kruising
 
@@ -89,7 +89,7 @@ Stoppen is het makkelijkst om te zien: allebei de motoren `forward(0)`. Kijk op 
 
 **Oorzaak:** Je code is goed — maar de namen kloppen niet. `motor_a` is bij jou niet links, of `links` is niet de linkersensor.
 
-**Oplossing:** Je hebt beide checks al gedaan: [Opdracht 5.5.a](../analoog_ir/deel4_twee_sensoren.md) voor de sensoren en [Deel 6](../motoren/deel6_draaien.md) voor de motoren. Doe ze allebei opnieuw en verwissel wat niet klopt. **Zelf vinden:** houd de robot in je hand en dek de linkersensor af. Kijk op het scherm welke kolom omklapt, en voel welke motor zachter gaat draaien — dan zie je meteen welke van de twee verwisseld is.
+**Oplossing:** Je hebt beide checks al gedaan: [Opdracht 5.5.a](site:robotica/lego_auto/lijnsensor/twee-sensoren) voor de sensoren en [Deel 6](site:robotica/lego_auto/motoren/draaien) voor de motoren. Doe ze allebei opnieuw en verwissel wat niet klopt. **Zelf vinden:** houd de robot in je hand en dek de linkersensor af. Kijk op het scherm welke kolom omklapt, en voel welke motor zachter gaat draaien — dan zie je meteen welke van de twee verwisseld is.
 
 </details>
 
@@ -104,4 +104,4 @@ Stoppen is het makkelijkst om te zien: allebei de motoren `forward(0)`. Kijk op 
 
 ---
 
-← [Deel 7 — Rechtdoor rijden](./deel7_rechtdoor.md) · **Volgende:** [de afstandssensor](../afstand/doel.md) →
+← [Deel 7 — Rechtdoor rijden](site:robotica/lego_auto/lijnvolgen/rechtdoor) · **Volgende:** [de afstandssensor](site:robotica/lego_auto/afstand) →

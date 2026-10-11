@@ -16,12 +16,12 @@ Maak voor deze reeks een nieuwe map `veiligheid-wachtwoorden`, naast je eigen
 project, en open die in VS Code. De server, de scripts en de database van deze reeks komen daarin. Zo blijft je eigen gastenboek heel. Aan
 het eind van de reeks pas je het geleerde toe op je eigen project.
 Maak in die map een virtual environment en installeer de packages; hoe dat gaat
-staat bij [Een map per reeks](/docs/veiligheid/gereedschap#een-map-per-reeks).
+staat bij [Een map per reeks](site:fullstack/docs/veiligheid/gereedschap#een-map-per-reeks).
 :::
 
 Je gastenboek heeft accounts sinds
-[Registreren: een account opslaan](/docs/FastAPI/accounts/registreren), en controleert
-het wachtwoord sinds [Inloggen: een wachtwoord controleren](/docs/FastAPI/accounts/inloggen).
+[Registreren: een account opslaan](site:fullstack/docs/FastAPI/accounts/registreren), en controleert
+het wachtwoord sinds [Inloggen: een wachtwoord controleren](site:fullstack/docs/FastAPI/accounts/inloggen).
 Het bewaart dat wachtwoord precies zoals de gebruiker het intypt; in
 Registreren zag je het al staan. Deze reeks laat zien waarom dat gevaarlijk is,
 en maakt het stap voor stap veilig.
@@ -29,7 +29,7 @@ en maakt het stap voor stap veilig.
 Je werkt met dezelfde twee stappen, als een kleine server die JSON teruggeeft,
 zodat een script elk antwoord kan lezen: `/registreer` uit de basis, en
 `/inloggen` met de controle uit je gastenboek, als eigen endpoint zoals in
-[Sessies](/docs/FastAPI/onthouden/sessies), maar nog zonder sessie. Een fout wachtwoord
+[Sessies](site:fullstack/docs/FastAPI/onthouden/sessies), maar nog zonder sessie. Een fout wachtwoord
 geeft hier geen `401` maar een melding: het gaat in deze reeks om wat er in de
 database staat.
 
@@ -98,7 +98,7 @@ database. De wachtwoorden van een ander bekijken of gebruiken is strafbaar.
 Start je server met de code hierboven. Maak daarnaast een los scriptje
 `registreer.py` dat drie gebruikers aanmaakt, net zoals een formulier dat zou
 doen. Het gebruikt `httpx`, zoals in
-[Een script als bezoeker](../gereedschap).
+[Een script als bezoeker](site:fullstack/docs/veiligheid/gereedschap).
 
 <CodeUitleg>
 
@@ -125,7 +125,7 @@ Drie gebruikers, elk een tuple van naam en wachtwoord. Sara en Noor kozen hetzel
 
 Draai het in een tweede terminal. Je ziet drie keer een welkom. Bekijk daarna
 wat er in het bestand staat, met `lees_database.py`. Het lijkt op `bekijk_db.py`
-uit [Alles bekijken: len en items](/docs/FastAPI/sqlitedict/bekijken):
+uit [Alles bekijken: len en items](site:fullstack/docs/FastAPI/sqlitedict/bekijken):
 
 ```python
 from sqlitedict import SqliteDict
@@ -232,4 +232,4 @@ Dit is de beginstand. In de volgende lessen verandert steeds één stuk.
 
 </details>
 
-Door naar [les 2: wat een hash is](./hash).
+Door naar [les 2: wat een hash is](site:fullstack/docs/veiligheid/wachtwoorden/hash).

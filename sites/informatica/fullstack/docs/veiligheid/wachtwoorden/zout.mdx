@@ -5,7 +5,7 @@ description: Met een zout krijgt hetzelfde wachtwoord toch een andere hash, zoda
 
 # Wachtwoorden: zout
 
-In [les 2](./hash) hadden Sara en Noor dezelfde hash, omdat ze hetzelfde
+In [les 2](site:fullstack/docs/veiligheid/wachtwoorden/hash) hadden Sara en Noor dezelfde hash, omdat ze hetzelfde
 wachtwoord kozen. De oplossing is een **zout** (Engels: *salt*): een stukje
 willekeurige tekst dat je vóór het wachtwoord zet voordat je hasht. Elke
 gebruiker krijgt een eigen zout.
@@ -49,7 +49,7 @@ voor elk zout opnieuw maken, en dat is niet te doen.
 
 `"a1b2c3"` is een voorbeeld om te laten zien wat er gebeurt. Een echt zout is
 lang en echt willekeurig. Dat hoef je niet zelf te regelen: in
-[les 5](./registreren) gebruik je Argon2, dat bij elke hash vanzelf een nieuw
+[les 5](site:fullstack/docs/veiligheid/wachtwoorden/registreren) gebruik je Argon2, dat bij elke hash vanzelf een nieuw
 zout maakt en het in de hash zelf bewaart.
 
 ## Er gaat iets mis
@@ -91,7 +91,7 @@ de hashes van veelgebruikte wachtwoorden?
 <details>
 <summary>Tip</summary>
 
-De hash zonder zout ken je uit [les 2](./hash).
+De hash zonder zout ken je uit [les 2](site:fullstack/docs/veiligheid/wachtwoorden/hash).
 
 </details>
 
@@ -122,7 +122,7 @@ kiest niemand. Zoek je de gezouten hash op in de lijst, dan vind je niets.
 
 Een aanvaller heeft een gelekte database met duizend gebruikers, en wil weten
 wie `welkom123` als wachtwoord heeft. Hoeveel hashes moet hij daarvoor
-uitrekenen als de database geen zout gebruikt, zoals in [les 2](./hash)? En
+uitrekenen als de database geen zout gebruikt, zoals in [les 2](site:fullstack/docs/veiligheid/wachtwoorden/hash)? En
 hoeveel als elke gebruiker een eigen zout heeft?
 
 <details>
@@ -142,8 +142,8 @@ code in de hele database. Iedereen met die code heeft `welkom123`.
 Met een eigen zout per gebruiker duizend: voor elke gebruiker moet hij zijn
 zout plus `welkom123` apart hashen, want elk zout geeft een andere code. Dat
 het zout in de database staat, helpt hem dus niet: hij heeft duizend keer
-zoveel werk. Waarom dat telt, zie je in [les 4](./traag).
+zoveel werk. Waarom dat telt, zie je in [les 4](site:fullstack/docs/veiligheid/wachtwoorden/traag).
 
 </details>
 
-Door naar [les 4: traag is goed](./traag).
+Door naar [les 4: traag is goed](site:fullstack/docs/veiligheid/wachtwoorden/traag).

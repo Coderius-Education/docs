@@ -58,7 +58,9 @@ describe('Wat je server laat zien', () => {
     // de leerling. sessies.py en lees_sessies.py printen daarna drie regels,
     // niet de twee van Sara en Alex.
     for (const stap of ['vergeten', 'bestanden']) {
-      expect(lees(stap), stap).toContain('opdracht 2 van [les 1](./handleiding)');
+      expect(lees(stap), stap).toContain(
+        'opdracht 2 van [les 1](site:fullstack/docs/veiligheid/zichtbaar/handleiding)',
+      );
     }
   });
 
@@ -86,7 +88,7 @@ describe('Wat je server laat zien', () => {
       .map((m) => m[3])
       .join('\n');
     expect(uitleg).toContain('httponly');
-    expect(uitleg).toContain('/docs/veiligheid/cookies/httponly');
+    expect(uitleg).toContain('](site:fullstack/docs/veiligheid/cookies/httponly');
   });
 
   it('een opdracht gebruikt geen Client die na het script niet meer bestaat', () => {

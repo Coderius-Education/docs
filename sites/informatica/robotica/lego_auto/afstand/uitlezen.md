@@ -77,4 +77,4 @@ Alleen `channel=2`. Het cijfer boven de pinnen op de multiplexer is precies het 
 
 ---
 
-**Volgende:** [de afstand op het scherm](./tof_scherm.md) →
+**Volgende:** [de afstand op het scherm](site:robotica/lego_auto/afstand/op-het-scherm) →

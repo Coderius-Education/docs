@@ -68,7 +68,7 @@ Als achtergrond — sleep hem **bovenaan** in de Scene Tree zodat hij achter all
 - Trek de node met de handgrepen over het hele zichtbare vlak.
 - `Stretch Mode` → **Tile** — herhaalt een kleine afbeelding als tegels.
 
-Zo leer je het in [Achtergrond](/docs/background_image). Anchors en de andere stretch modes komen bij het startmenu aan bod.
+Zo leer je het in [Achtergrond](site:godot/docs/background_image). Anchors en de andere stretch modes komen bij het startmenu aan bod.
 
 </details>
 
@@ -294,7 +294,7 @@ Voor alles dat "elke X seconden" moet gebeuren, zoals muntjes of vijanden spawne
 
 **Signal:** Koppel `timeout` via het **Node**-tabblad aan een functie in het script van je level.
 
-Zo leer je het in [Automatisch spawnen met een Timer](/docs/spawn_timer). De bijbehorende code (`preload`, `instantiate`, `add_child`) staat in de [GDScript-tips](/gdscript-tips#nodes-scenes).
+Zo leer je het in [Automatisch spawnen met een Timer](site:godot/docs/spawn_timer). De bijbehorende code (`preload`, `instantiate`, `add_child`) staat in de [GDScript-tips](site:godot/gdscript-tips#nodes-scenes).
 
 </details>
 

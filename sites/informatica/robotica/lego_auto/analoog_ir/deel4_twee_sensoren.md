@@ -39,7 +39,7 @@ while True:
     sleep(0.2)
 ```
 
-Voor elke sensor maak je een eigen object met zijn eigen pin. De methodes werken hetzelfde; alleen de variabelenamen houden de twee uit elkaar. Vul op beide plekken je eigen drempel uit [Deel 3](./deel3_een_sensor.md) in.
+Voor elke sensor maak je een eigen object met zijn eigen pin. De methodes werken hetzelfde; alleen de variabelenamen houden de twee uit elkaar. Vul op beide plekken je eigen drempel uit [Deel 3](site:robotica/lego_auto/lijnsensor/een-sensor) in.
 
 ## Test het
 
@@ -109,7 +109,7 @@ while True:
 
 **Oorzaak:** Die sensor hangt op een andere hoogte dan de eerste, of zijn drempel past niet — sensoren verschillen onderling.
 
-**Oplossing:** Doe [Opdracht 5.4.a](./deel3_een_sensor.md) nog een keer, maar dan voor deze sensor. Elke sensor mag zijn eigen drempel hebben.
+**Oplossing:** Doe [Opdracht 5.4.a](site:robotica/lego_auto/lijnsensor/een-sensor) nog een keer, maar dan voor deze sensor. Elke sensor mag zijn eigen drempel hebben.
 
 </details>
 
@@ -129,4 +129,4 @@ Een object onthoudt zijn eigen pin en drempel. Eén object kan maar op één pin
 
 ---
 
-← [Deel 3 — Eén sensor uitlezen](./deel3_een_sensor.md) · **Volgende:** [Code beter begrijpen](./while_loop.md) →
+← [Deel 3 — Eén sensor uitlezen](site:robotica/lego_auto/lijnsensor/een-sensor) · **Volgende:** [Code beter begrijpen](site:robotica/lego_auto/lijnsensor/code-begrijpen) →

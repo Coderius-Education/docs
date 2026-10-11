@@ -6,7 +6,7 @@ title: Hoofdvraag
 
 <Definitie gewoneTaal="de ene vraag waar je hele onderzoek, en dus je hele verslag, antwoord op geeft.">
 
-De **hoofdvraag** is de centrale vraag van je onderzoek. Bij [theoriegericht onderzoek](../typen/theoriegericht.md) is het een **kennisvraag** (je wilt iets te weten komen), bij [ontwerpgericht onderzoek](../typen/ontwerpgericht.md) een **ontwerpvraag** (je wilt iets maken). Het antwoord staat in je conclusie.
+De **hoofdvraag** is de centrale vraag van je onderzoek. Bij [theoriegericht onderzoek](site:onderzoek/typen/theoriegericht) is het een **kennisvraag** (je wilt iets te weten komen), bij [ontwerpgericht onderzoek](site:onderzoek/typen/ontwerpgericht) een **ontwerpvraag** (je wilt iets maken). Het antwoord staat in je conclusie.
 
 </Definitie>
 
@@ -30,14 +30,14 @@ Merk op dat de vraag onderweg is veranderd: het ging eerst over telefoons, nu ov
 | **Onderzoekbaar** | Kan ík dit beantwoorden, met mijn middelen en in mijn tijd? | *Wat doet tien jaar schermtijd met de hersenen?* |
 | **Eén vraag** | Gaat het over één ding? | *Hoe slapen leerlingen en wat vinden ze van het rooster?* |
 | **Neutraal** | Zit het antwoord er niet al in? | *Waarom is het nieuwe rooster slecht voor leerlingen?* |
-| **Geen woordenboekvraag** | Moet ik er echt iets voor uitzoeken of maken? | *Wat is slaaptekort?* — dat is een [definitie](../kennisleer/vork-van-hume.mdx), hooguit een deelvraag |
+| **Geen woordenboekvraag** | Moet ik er echt iets voor uitzoeken of maken? | *Wat is slaaptekort?* — dat is een [definitie](site:onderzoek/kennisleer/vork-van-hume), hooguit een deelvraag |
 
 :::caution[Valkuil: te breed]
 De meest gemaakte fout is een hoofdvraag die te groot is. *"Wat is de invloed van sociale media op jongeren?"* klinkt ambitieus, maar het antwoord wordt een oppervlakkige samenvatting van wat al bekend is. Hoe smaller je vraag, hoe dieper je antwoord. Een profielwerkstuk over één groep, op één school, over één effect is geen zwaktebod — het is precies wat je in de beschikbare tijd goed kunt doen.
 :::
 
 :::tip[Bijschaven mag]
-Tijdens je vooronderzoek ontdek je vaak dat je vraag scherper of anders moet. Pas hem aan, maar leg in je verslag uit waarom. Dat hoort bij [transparant](../spelregels/transparant.md) werken.
+Tijdens je vooronderzoek ontdek je vaak dat je vraag scherper of anders moet. Pas hem aan, maar leg in je verslag uit waarom. Dat hoort bij [transparant](site:onderzoek/spelregels/transparant) werken.
 :::
 
 <WelNiet
@@ -47,6 +47,6 @@ Tijdens je vooronderzoek ontdek je vaak dat je vraag scherper of anders moet. Pa
 
 ## Hangt samen met
 
-- [Deelvragen](./deelvragen.md) — hoe je de hoofdvraag opdeelt in stappen
-- [Hoofd- en deelvragen samen](./hoofd-en-deelvragen.mdx) — voorbeelden en oefeningen
-- [Theoriegericht vs. ontwerpgericht](../typen/theorie-vs-ontwerp.mdx) — kennisvraag of ontwerpvraag
+- [Deelvragen](site:onderzoek/vragen/deelvragen) — hoe je de hoofdvraag opdeelt in stappen
+- [Hoofd- en deelvragen samen](site:onderzoek/vragen/hoofd-en-deelvragen) — voorbeelden en oefeningen
+- [Theoriegericht vs. ontwerpgericht](site:onderzoek/typen/theorie-vs-ontwerp) — kennisvraag of ontwerpvraag

@@ -128,4 +128,4 @@ De pin hoeft maar één keer klaargezet te worden. Alles wat éénmalig is (klaa
 
 ---
 
-← [Deel 1 — Een lampje aan](./deel1_lampje.md) · **Volgende:** [de lijnsensor](../analoog_ir/doel.md) →
+← [Deel 1 — Een lampje aan](site:robotica/lego_auto/eerste-programma/lampje) · **Volgende:** [de lijnsensor](site:robotica/lego_auto/lijnsensor) →

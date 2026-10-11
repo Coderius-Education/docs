@@ -149,7 +149,7 @@ Met jouw eigen drempel op de plek van `2500`.
 
 **Oorzaak:** De library staat niet (goed) op je bord.
 
-**Oplossing:** Volg [leaphymicropython installeren](../software_editor/bibliotheek.md); de bestanden horen in de map `lib` op de microcontroller.
+**Oplossing:** Volg [leaphymicropython installeren](site:robotica/lego_auto/software/bibliotheek); de bestanden horen in de map `lib` op de microcontroller.
 
 </details>
 
@@ -178,4 +178,4 @@ Je drempel staat op 2500 en de sensor meet 2400 boven de lijn. Wat zegt `black_o
 
 ---
 
-**Volgende:** [Deel 4 — Twee sensoren](./deel4_twee_sensoren.md) →
+**Volgende:** [Deel 4 — Twee sensoren](site:robotica/lego_auto/lijnsensor/twee-sensoren) →

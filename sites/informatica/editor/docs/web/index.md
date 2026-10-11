@@ -11,8 +11,8 @@ In deze tutorial leer je hoe je websites bouwt met HTML, CSS en JavaScript in VS
 
 Zorg dat je het volgende hebt geïnstalleerd:
 
-- **VS Code** (zie [Installatie VS Code](/installatie-vscode/))
+- **VS Code** (zie [Installatie VS Code](site:editor/installatie-vscode))
 
 ## Aan de slag
 
-Begin met **[Stap 1: Live Server extension installeren](./stap-1-live-server)**.
+Begin met **[Stap 1: Live Server extension installeren](site:editor/web/stap-1-live-server)**.

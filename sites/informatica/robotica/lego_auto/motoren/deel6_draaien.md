@@ -189,4 +189,4 @@ De setup hoort bij het robotscript: die heb je in Deel 7 nodig. De rij-opdracht 
 
 ---
 
-← [Deel 5 — Waardes op het scherm](../debuggen_met_scherm/deel5_scherm.md) · **Volgende:** [motoren op het frame](../motoren_aan_legoframe/monteren.md) →
+← [Deel 5 — Waardes op het scherm](site:robotica/lego_auto/scherm/waardes-op-scherm) · **Volgende:** [motoren op het frame](site:robotica/lego_auto/motoren-op-lego) →

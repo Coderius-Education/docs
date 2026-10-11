@@ -35,4 +35,4 @@ De opdrachten zijn genummerd als `H.S.letter` zodat je er gericht naar kunt verw
 
 ## Toetsing
 
-De projectideeën in [Jouw project](/docs/category/jouw-project) lenen zich goed voor een eindopdracht: ze vragen om combineren, debuggen en zelfstandig opzoeken — vaardigheden die losse opdrachten niet toetsen. Beoordeel naast het eindresultaat ook het proces (klein beginnen, testen, de seriële monitor gebruiken).
+De projectideeën in [Jouw project](site:embedded/docs/category/jouw-project) lenen zich goed voor een eindopdracht: ze vragen om combineren, debuggen en zelfstandig opzoeken — vaardigheden die losse opdrachten niet toetsen. Beoordeel naast het eindresultaat ook het proces (klein beginnen, testen, de seriële monitor gebruiken).

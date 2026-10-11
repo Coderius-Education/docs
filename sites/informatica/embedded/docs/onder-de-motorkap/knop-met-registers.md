@@ -68,5 +68,5 @@ if ((GPIOB->IDR & (1 << 10)) == 0) {
 Voor de meeste STM32-projecten is **HAL** de beste keuze: leesbaar, draagbaar tussen STM32-borden, en met genoeg controle. Pak registers erbij als je het laatste beetje snelheid of geheugen nodig hebt, of — net als nu — om echt te begrijpen wat er gebeurt.
 
 :::note
-Dit was het laatste lesonderdeel. Goed gedaan dat je tot op de registers bent gekomen. Tijd om zelf iets te bouwen: ga naar [Jouw project](/docs/category/jouw-project).
+Dit was het laatste lesonderdeel. Goed gedaan dat je tot op de registers bent gekomen. Tijd om zelf iets te bouwen: ga naar [Jouw project](site:embedded/docs/category/jouw-project).
 :::

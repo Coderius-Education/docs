@@ -91,6 +91,6 @@ describe('een eigen 404-pagina', () => {
       '<summary>Hoe maak ik een eigen 404-pagina? (exception_handler)</summary>',
     );
     const fouten = readFileSync(`${DOCS}/troubleshooting.md`, 'utf8');
-    expect(fouten).toContain('(/docs/FastAPI/afronden/foutpagina)');
+    expect(fouten).toContain('(site:fullstack/docs/FastAPI/afronden/foutpagina)');
   });
 });

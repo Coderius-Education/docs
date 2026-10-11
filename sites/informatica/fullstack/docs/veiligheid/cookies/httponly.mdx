@@ -104,7 +104,7 @@ de nieuwe cookie ook bij de volgende keer inloggen.
 
 **Oorzaak:** een cookie hoort bij het adres `127.0.0.1`, niet bij de map of de
 poort. De cookies van eerdere projecten, zoals `naam` uit
-[Onthouden met een cookie](/docs/FastAPI/onthouden/cookies), staan dus nog in je
+[Onthouden met een cookie](site:fullstack/docs/FastAPI/onthouden/cookies), staan dus nog in je
 browser. Ze hebben geen `httponly`, en een script ziet ze. Je `sessie_id` staat
 er niet bij: die is wel afgeschermd.
 
@@ -254,4 +254,4 @@ De sessie-cookie staat nu buiten bereik van scripts.
 
 </details>
 
-Door naar [les 3: `samesite`](./samesite).
+Door naar [les 3: `samesite`](site:fullstack/docs/veiligheid/cookies/samesite).

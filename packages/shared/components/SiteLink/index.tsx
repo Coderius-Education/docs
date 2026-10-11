@@ -2,9 +2,12 @@ import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import type { ReactNode } from 'react';
 // sites.js is CommonJS; named imports werken via de bundler-interop.
-import { SITES_BY_ID, normalizeUrl, siteByUrl } from '../../sites';
+import { SITES_BY_ID, routeUrl, siteByUrl } from '../../sites';
 
 /**
+ * Alleen voor TSX/JSX-componenten. In lestekst (md/mdx) schrijf je een link als
+ * [tekst](site:editor/git/vscode); zie stijlgids §12 en plugins/site-links.js.
+ *
  * Inline link naar een pagina op een andere cursussite, opgebouwd uit de
  * gedeelde registry. Waar <Voorkennis> terugblikt (een inklapbaar blok met wat
  * je al gehad hebt), wijst SiteLink vooruit in lopende tekst: "zet je project
@@ -34,7 +37,7 @@ export default function SiteLink({
 
   if (isExternal && target) {
     return (
-      <a href={normalizeUrl(target.url) + to} target="_blank" rel="noopener noreferrer">
+      <a href={routeUrl(target.id, to)} target="_blank" rel="noopener noreferrer">
         {children}
       </a>
     );

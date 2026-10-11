@@ -15,4 +15,4 @@ Klik door deze knoppen op je nieuwe repository-pagina:
 
 ## Volgende tutorial
 
-- **[Git in VS Code](/git/vscode/)** — nu je account klaarstaat, ga je git op je eigen computer gebruiken. Daarna koppel je het geheel in [Code online zetten met push](/git/push/).
+- **[Git in VS Code](site:editor/git/vscode)** — nu je account klaarstaat, ga je git op je eigen computer gebruiken. Daarna koppel je het geheel in [Code online zetten met push](site:editor/git/push).

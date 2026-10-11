@@ -6,7 +6,7 @@ import hallo from './blokken/hallo.json';
 
 # Easybloqs
 
-Je programmeert [de Arduino](microcontroller) met blokken in **Easybloqs**, een website waar je een programma in elkaar zet met blokken in plaats van met tekst. Gebruik de browser **Chrome** of **Edge**: alleen die kunnen via de usb-kabel met je robot praten.
+Je programmeert [de Arduino](site:robotica/click_golfer/microcontroller) met blokken in **Easybloqs**, een website waar je een programma in elkaar zet met blokken in plaats van met tekst. Gebruik de browser **Chrome** of **Edge**: alleen die kunnen via de usb-kabel met je robot praten.
 
 ## Easybloqs openen
 
@@ -136,4 +136,4 @@ Bovenaan staat "Hallo, ik ben de Click Golfer", en daaronder "Ik ben er klaar vo
   </Uitleg>
 </Voorspel>
 
-Werkt je eerste programma? Dan sluit je nu [de sensor aan](ir-sensor).
+Werkt je eerste programma? Dan sluit je nu [de sensor aan](site:robotica/click_golfer/ir-sensor).

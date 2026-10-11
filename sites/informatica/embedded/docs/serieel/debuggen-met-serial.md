@@ -42,4 +42,4 @@ Twee klassiekers waar bijna iedereen tegenaan loopt:
 - **Niets in de monitor.** Je bent `Serial.begin()` in `setup()` vergeten. Zonder die regel verstuurt de Arduino niets.
 - **Onleesbare tekens.** De monitor staat op een andere snelheid dan je `Serial.begin()`. Zet ze gelijk.
 
-Meer foutmeldingen en oplossingen vind je in [Er gaat iets mis](/docs/category/er-gaat-iets-mis).
+Meer foutmeldingen en oplossingen vind je in [Er gaat iets mis](site:embedded/docs/category/er-gaat-iets-mis).

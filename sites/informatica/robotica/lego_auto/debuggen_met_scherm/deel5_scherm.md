@@ -202,4 +202,4 @@ De y is de hoogte in pixels waarop de tekst begint. Twee regels op dezelfde y sc
 
 ---
 
-← [Deel 4 — Twee sensoren](../analoog_ir/deel4_twee_sensoren.md) · **Volgende:** [de motoren](../motoren/doel.md) →
+← [Deel 4 — Twee sensoren](site:robotica/lego_auto/lijnsensor/twee-sensoren) · **Volgende:** [de motoren](site:robotica/lego_auto/motoren) →

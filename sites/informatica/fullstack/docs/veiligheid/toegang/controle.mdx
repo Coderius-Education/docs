@@ -7,13 +7,13 @@ import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
 
 # Wie mag wat: de controle met 403
 
-In [les 1](./zwakheid) verwijderde Alex het bericht van Sara, met of zonder
+In [les 1](site:fullstack/docs/veiligheid/toegang/zwakheid) verwijderde Alex het bericht van Sara, met of zonder
 knop. De controle hoort daarom op de plek waar het verzoek binnenkomt: in het
 endpoint. De server weet wie deze bezoeker is: sinds het inloggen staat zijn
 naam in zijn sessie. En bij elk bericht staat de naam van wie het plaatste. Zijn
 die twee niet gelijk, dan verwijdert het endpoint niets.
 
-Heb je [opdracht 5 van Sessies](/docs/FastAPI/onthouden/sessies#opdracht-5-make---echt-afschermen)
+Heb je [opdracht 5 van Sessies](site:fullstack/docs/FastAPI/onthouden/sessies#opdracht-5-make---echt-afschermen)
 gemaakt, dan deed je dit al, op `/verwijderen`. Hier zet je dezelfde controle op
 `DELETE /bericht/{sleutel}`, en zie je met het script uit les 1 dat hij werkt.
 
@@ -47,7 +47,7 @@ De sessie van deze bezoeker. Geen cookie of een onbekend sessie-id geeft een leg
 </Regel>
 
 <Regel n={7} tot={9}>
-Eerst de controle, vóór er iets verandert. Bestaat het bericht niet, of staat er een andere naam bij dan in de sessie, dan stopt de functie met **403 Forbidden**: de server begrijpt wat je vraagt, maar jij mag het niet. De andere codes staan op [de startpagina](/docs/veiligheid#statuscodes).
+Eerst de controle, vóór er iets verandert. Bestaat het bericht niet, of staat er een andere naam bij dan in de sessie, dan stopt de functie met **403 Forbidden**: de server begrijpt wat je vraagt, maar jij mag het niet. De andere codes staan op [de startpagina](site:fullstack/docs/veiligheid#statuscodes).
 </Regel>
 
 <Regel n={10} tot={11}>
@@ -59,7 +59,7 @@ Pas nu gaat het bericht weg.
 ## Doe de test opnieuw
 
 Gooi `gastenboek.db`, `sessies.db` en `gebruikers.db` weg, start de server
-opnieuw, en draai `test_verwijderen.py` uit [les 1](./zwakheid):
+opnieuw, en draai `test_verwijderen.py` uit [les 1](site:fullstack/docs/veiligheid/toegang/zwakheid):
 
 ```
 Alex verwijdert het bericht van Sara: 403
@@ -170,7 +170,7 @@ en waarom is het goed dat het geen `404` is?
 bestaat, valt onder dezelfde voorwaarde als een bericht van een ander. Zo leert
 Alex niets over sleutels van anderen: een bestaand bericht van Sara en een
 verzonnen sleutel geven hetzelfde antwoord. Hetzelfde idee zag je bij
-[Inloggen: een wachtwoord controleren](/docs/FastAPI/accounts/inloggen): één melding
+[Inloggen: een wachtwoord controleren](site:fullstack/docs/FastAPI/accounts/inloggen): één melding
 voor een onbekende naam en een fout wachtwoord.
 
 </details>
@@ -249,4 +249,4 @@ Het verwijderen controleert nu wie het vraagt.
 
 </details>
 
-Door naar [les 3: controleer op wat de server weet](./server-weet).
+Door naar [les 3: controleer op wat de server weet](site:fullstack/docs/veiligheid/toegang/server-weet).

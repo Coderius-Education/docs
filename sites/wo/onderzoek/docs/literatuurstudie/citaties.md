@@ -12,14 +12,14 @@ Een **citatie** is een verwijzing van het ene wetenschappelijke artikel naar het
 
 ## Wat het getal je vertelt
 
-Een artikel met 2.000 citaties heeft het vakgebied beïnvloed; een artikel met 3 citaties (nog) niet. Daarmee is het aantal citaties een snelle eerste schifting: van dertig treffers wil je de zwaargewichten kennen. Het is ook de weg waarlangs je [sneeuwbalt](./sneeuwbalmethode.md).
+Een artikel met 2.000 citaties heeft het vakgebied beïnvloed; een artikel met 3 citaties (nog) niet. Daarmee is het aantal citaties een snelle eerste schifting: van dertig treffers wil je de zwaargewichten kennen. Het is ook de weg waarlangs je [sneeuwbalt](site:onderzoek/literatuurstudie/sneeuwbalmethode).
 
 ## Wat het getal je níét vertelt
 
 - **Of het artikel klopt.** Een artikel dat een beroemde fout bevat, wordt duizenden keren geciteerd door iedereen die die fout weerlegt.
 - **Hoe goed het is vergeleken met andere vakgebieden.** In de geneeskunde publiceren en citeren onderzoekers veel meer dan in de wiskunde; 50 citaties is in het ene vak weinig en in het andere veel.
 - **Of het recent is.** Citaties groeien met de jaren. Een artikel uit 2024 met 15 citaties kan invloedrijker zijn dan een uit 2009 met 150.
-- **Waarom het geciteerd wordt.** Overzichtsartikelen en artikelen die een methode introduceren worden veel geciteerd omdat iedereen ze noemt in de inleiding. [Semantic Scholar](./semantic-scholar.md) maakt dat onderscheid zichtbaar met *highly influential citations*.
+- **Waarom het geciteerd wordt.** Overzichtsartikelen en artikelen die een methode introduceren worden veel geciteerd omdat iedereen ze noemt in de inleiding. [Semantic Scholar](site:onderzoek/literatuurstudie/semantic-scholar) maakt dat onderscheid zichtbaar met *highly influential citations*.
 
 :::tip[Vergelijk binnen de zoekopdracht]
 Vergelijk het aantal citaties alleen tussen artikelen over hetzelfde onderwerp uit ongeveer dezelfde periode. Dan zegt het getal wél iets: welk van deze vijf stukken over slaap en concentratie heeft het vakgebied het meest gebruikt?
@@ -44,6 +44,6 @@ In 1998 publiceerde het toptijdschrift *The Lancet* een artikel van de arts Andr
 
 ## Hangt samen met
 
-- [H-index](./h-index.md) — dezelfde maat, maar dan voor een onderzoeker in plaats van een artikel
-- [Sneeuwbalmethode](./sneeuwbalmethode.md) — citaties als zoekpad
-- [Peer review](./peer-review.md) — de check die vóór het citeren komt
+- [H-index](site:onderzoek/literatuurstudie/h-index) — dezelfde maat, maar dan voor een onderzoeker in plaats van een artikel
+- [Sneeuwbalmethode](site:onderzoek/literatuurstudie/sneeuwbalmethode) — citaties als zoekpad
+- [Peer review](site:onderzoek/literatuurstudie/peer-review) — de check die vóór het citeren komt

@@ -55,6 +55,6 @@ Peter Higgs voorspelde in 1964 het deeltje dat bijna vijftig jaar later in CERN 
 
 ## Hangt samen met
 
-- [Citaties](./citaties.md) — de bouwsteen van de h-index
-- [Peer review](./peer-review.md) — de controle die per artikel plaatsvindt, niet per persoon
-- [Objectieve kennis](../kennisleer/objectief.md) — een getal is niet vanzelf een objectief oordeel
+- [Citaties](site:onderzoek/literatuurstudie/citaties) — de bouwsteen van de h-index
+- [Peer review](site:onderzoek/literatuurstudie/peer-review) — de controle die per artikel plaatsvindt, niet per persoon
+- [Objectieve kennis](site:onderzoek/kennisleer/objectief) — een getal is niet vanzelf een objectief oordeel

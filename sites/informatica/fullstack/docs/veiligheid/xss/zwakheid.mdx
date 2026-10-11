@@ -11,11 +11,11 @@ description: Wat een bezoeker invult, komt met een f-string letterlijk in je HTM
   ]}
 />
 
-In het htmx-recept [Een formulier versturen](/docs/FastAPI/zonder-herladen/htmx-overzicht#een-formulier-versturen)
+In het htmx-recept [Een formulier versturen](site:fullstack/docs/FastAPI/zonder-herladen/htmx-overzicht#een-formulier-versturen)
 zette je `escape(naam)` in het antwoord, zodat een naam als `<b>Sara</b>` niet
 vet werd. In deze reeks zie je waarom die `escape` er staat: je haalt hem weg en
 kijkt wat er dan gebeurt. Met een
-[template](/docs/FastAPI/formulieren/post_met_templates) blijft tekst van een bezoeker
+[template](site:fullstack/docs/FastAPI/formulieren/post_met_templates) blijft tekst van een bezoeker
 tekst; met een f-string niet.
 
 :::note[Waar je werkt]
@@ -23,7 +23,7 @@ Maak voor deze reeks een nieuwe map `veiligheid-xss`, naast je eigen
 project, en open die in VS Code. De server, de scripts en de database van deze reeks komen daarin. Zo blijft je eigen gastenboek heel. Aan
 het eind van de reeks pas je het geleerde toe op je eigen project.
 
-Maak in die map een virtual environment en installeer de packages; hoe dat gaat staat bij [Een map per reeks](/docs/veiligheid/gereedschap#een-map-per-reeks).
+Maak in die map een virtual environment en installeer de packages; hoe dat gaat staat bij [Een map per reeks](site:fullstack/docs/veiligheid/gereedschap#een-map-per-reeks).
 :::
 
 ## Een gastenboek met een f-string
@@ -55,7 +55,7 @@ De pagina zelf is een los bestand `static/gastenboek.html`:
 Door `load` haalt htmx de lijst meteen op als de pagina geladen is, en na de
 komma komt `every 5s` erbij: daarna elke vijf seconden opnieuw.
 
-Zet `htmx.min.js` uit [Zonder herladen](/docs/FastAPI/zonder-herladen/htmx) in `static/js/`.
+Zet `htmx.min.js` uit [Zonder herladen](site:fullstack/docs/FastAPI/zonder-herladen/htmx) in `static/js/`.
 Het endpoint staat in `main.py`:
 
 {/* onveilig-voorbeeld: de zwakheid die deze les laat zien */}
@@ -157,7 +157,7 @@ pagina.
 **Oplossing:** kijk in het tabblad **Netwerk** of `htmx.min.js` een 200
 kreeg. Een 404 betekent dat het bestand niet in `static/js/` staat.
 
-Meer uitleg: [Zonder herladen met htmx](/docs/FastAPI/zonder-herladen/htmx)
+Meer uitleg: [Zonder herladen met htmx](site:fullstack/docs/FastAPI/zonder-herladen/htmx)
 
 ## Opdrachten
 
@@ -185,7 +185,7 @@ browser de naam als HTML. Dat raakt alleen Noor zelf; de lijst raakt iedereen.
 
 ### Opdracht 2: Investigate - En met een template?
 
-Het recept Verversen in het [htmx-overzicht](/docs/FastAPI/zonder-herladen/htmx-overzicht)
+Het recept Verversen in het [htmx-overzicht](site:fullstack/docs/FastAPI/zonder-herladen/htmx-overzicht)
 maakt de lijst met een template, `berichten_lijst.html`. Stel dat Sara daar
 `<b>vet</b>` invult. Wordt het dan vet?
 
@@ -236,4 +236,4 @@ is de zwakke versie; in les 2 komt er `escape` in.
 
 </details>
 
-Door naar [les 2: escapen in Python](./escape).
+Door naar [les 2: escapen in Python](site:fullstack/docs/veiligheid/xss/escape).

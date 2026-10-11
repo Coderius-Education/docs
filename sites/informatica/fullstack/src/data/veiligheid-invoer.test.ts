@@ -181,7 +181,9 @@ describe('de lessen van Invoer controleren lopen zonder raadsel', () => {
     // De stand van les 4 heeft de controle op het bericht niet; wie de opdracht
     // deed, gooide hem anders zonder één woord weg.
     const tekst = lees('getallen');
-    expect(tekst).toMatch(/opdracht 2 van\s+\[les 4\]\(\.\/inhoud\)/);
+    expect(tekst).toMatch(
+      /opdracht 2 van\s+\[les 4\]\(site:fullstack\/docs\/veiligheid\/invoer\/inhoud\)/,
+    );
   });
 
   it('de 500 van een pagina die niet bestaat, ziet de leerling zelf', () => {

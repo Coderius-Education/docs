@@ -7,7 +7,7 @@ description: Ook JavaScript kan van tekst HTML maken, met innerHTML. Dan helpt e
 
 Je server escapet nu elke plek waar tekst van een bezoeker in HTML komt. Maar
 HTML maken kan ook JavaScript, in de browser, nadat de server zijn werk al
-heeft gedaan. In [JavaScript erbij](/docs/FastAPI/in-de-browser/javascript)
+heeft gedaan. In [JavaScript erbij](site:fullstack/docs/FastAPI/in-de-browser/javascript)
 zette je tekst in de pagina met `textContent`. Er is nog een manier, en die
 leest de tekst als HTML.
 
@@ -113,7 +113,7 @@ Open de link opnieuw. In het voorbeeld staat nu `<b>vet</b>`, met de haakjes
 erbij.
 
 Gebruik `innerHTML` alleen voor HTML die je zelf in je code schreef, net als
-`|safe` in [les 5](./safe). Voor alles wat uit een veld, de URL of de server
+`|safe` in [les 5](site:fullstack/docs/veiligheid/xss/safe). Voor alles wat uit een veld, de URL of de server
 komt, is `textContent` de goede keuze.
 
 htmx zet het antwoord van je server ook met `innerHTML` in de pagina, dat is
@@ -134,7 +134,7 @@ berichtveld heeft geen `id="bericht"`, of het `id` is anders gespeld.
 **Oplossing:** geef het berichtveld `id="bericht"`, precies zoals in
 `querySelector`, zonder het hekje.
 
-Meer uitleg: [Console en Elementen](/docs/FastAPI/in-de-browser/devtools-console)
+Meer uitleg: [Console en Elementen](site:fullstack/docs/FastAPI/in-de-browser/devtools-console)
 
 ## Opdrachten
 
@@ -230,4 +230,4 @@ if (vooraf) {
 
 </details>
 
-Door naar [les 7: in je eigen project](./eigen-project).
+Door naar [les 7: in je eigen project](site:fullstack/docs/veiligheid/xss/eigen-project).

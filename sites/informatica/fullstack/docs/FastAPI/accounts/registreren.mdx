@@ -6,7 +6,7 @@
   ]}
 />
 
-In je gastenboek typt iedereen zelf een naam. Wie "Sara" intypt, is voor je server Sara. Op een echte site maak je daarom eerst een account: een naam die nog vrij is, met een wachtwoord dat alleen jij kent. Nu bewaart je server zo'n account, en in [Inloggen: een wachtwoord controleren](/docs/FastAPI/accounts/inloggen) vraagt je gastenboek er daarna om.
+In je gastenboek typt iedereen zelf een naam. Wie "Sara" intypt, is voor je server Sara. Op een echte site maak je daarom eerst een account: een naam die nog vrij is, met een wachtwoord dat alleen jij kent. Nu bewaart je server zo'n account, en in [Inloggen: een wachtwoord controleren](site:fullstack/docs/FastAPI/accounts/inloggen) vraagt je gastenboek er daarna om.
 
 ## Het formulier
 
@@ -62,11 +62,11 @@ Bestaat de naam al, dan weigert de server met **400 Bad Request**: aan je invoer
 </Regel>
 
 <Regel n={10} tot={11}>
-Het account opslaan, met `commit()`, zoals in [Gegevens opslaan met SqliteDict](/docs/FastAPI/sqlitedict/database).
+Het account opslaan, met `commit()`, zoals in [Gegevens opslaan met SqliteDict](site:fullstack/docs/FastAPI/sqlitedict/database).
 </Regel>
 
 <Regel n={12}>
-Daarna door naar het gastenboek, met 303, net als na een bericht in [Doorsturen na opslaan (redirect)](/docs/FastAPI/berichten-opslaan/redirect).
+Daarna door naar het gastenboek, met 303, net als na een bericht in [Doorsturen na opslaan (redirect)](site:fullstack/docs/FastAPI/berichten-opslaan/redirect).
 </Regel>
 
 </CodeUitleg>
@@ -81,7 +81,7 @@ Daarna door naar het gastenboek, met 303, net als na een bericht in [Doorsturen 
 
 ## Kijk in je database
 
-Je server houdt de terminal bezet. Open er een tweede met het plusje (+) rechtsboven in het terminalpaneel van VS Code. Verander in `bekijk_db.py` uit [Alles bekijken: len en items](/docs/FastAPI/sqlitedict/bekijken) de bestandsnaam in `"gebruikers.db"` en draai het daar:
+Je server houdt de terminal bezet. Open er een tweede met het plusje (+) rechtsboven in het terminalpaneel van VS Code. Verander in `bekijk_db.py` uit [Alles bekijken: len en items](site:fullstack/docs/FastAPI/sqlitedict/bekijken) de bestandsnaam in `"gebruikers.db"` en draai het daar:
 
 ```
 1 sleutels
@@ -91,7 +91,7 @@ sara = welkom123
 Het wachtwoord staat er zoals Sara het typte. Voor je server is dat handig: bij het inloggen vergelijkt hij straks wat iemand typt met wat hier staat. Maar wie `gebruikers.db` in handen krijgt, kent zo elk wachtwoord.
 
 :::caution[Nog niet veilig]
-Zo bewaar je een wachtwoord op een echte site nooit. Hoe het wel moet, leer je later, in de route Veiligheid: [Wachtwoorden veilig opslaan](/docs/veiligheid/wachtwoorden/gewone-tekst). Gebruik in je gastenboek tot die tijd nooit een wachtwoord dat je ergens anders ook gebruikt.
+Zo bewaar je een wachtwoord op een echte site nooit. Hoe het wel moet, leer je later, in de route Veiligheid: [Wachtwoorden veilig opslaan](site:fullstack/docs/veiligheid/wachtwoorden/gewone-tekst). Gebruik in je gastenboek tot die tijd nooit een wachtwoord dat je ergens anders ook gebruikt.
 :::
 
 ## Er gaat iets mis
@@ -409,4 +409,4 @@ Geef je hier `dict(gebruikers)` terug, dan staan de wachtwoorden erbij, voor ied
 
 </details>
 
-Door naar [Inloggen: een wachtwoord controleren](/docs/FastAPI/accounts/inloggen).
+Door naar [Inloggen: een wachtwoord controleren](site:fullstack/docs/FastAPI/accounts/inloggen).

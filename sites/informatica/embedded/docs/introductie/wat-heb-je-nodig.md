@@ -22,10 +22,10 @@ Wil je echt solderen en draadjes prikken? Dan heb je voor het Arduino-deel dit n
 - Een paar **LED's**, **weerstanden** (220 Ω) en **drukknoppen**.
 - Een **potentiometer** (draaiknop).
 
-Voor het STM32-deel komt daar later een **STM32 "Blue Pill"** bij, en een programmer (**ST-Link**). Wat je precies nodig hebt, lees je in [8. Overstap naar STM32](/docs/category/8-overstap-naar-stm32).
+Voor het STM32-deel komt daar later een **STM32 "Blue Pill"** bij, en een programmer (**ST-Link**). Wat je precies nodig hebt, lees je in [8. Overstap naar STM32](site:embedded/docs/category/8-overstap-naar-stm32).
 
 :::tip
 Begin gerust met alleen de simulator. Alles wat je daar leert, werkt op echte hardware precies hetzelfde. Je kunt op elk moment overstappen.
 :::
 
-Klaar om te beginnen? Ga naar [2.1 De Arduino IDE installeren](/docs/arduino-ide/installeren).
+Klaar om te beginnen? Ga naar [2.1 De Arduino IDE installeren](site:embedded/docs/arduino-ide/installeren).

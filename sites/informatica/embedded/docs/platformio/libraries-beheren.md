@@ -32,7 +32,7 @@ Zodra je opslaat en bouwt, downloadt PlatformIO de library automatisch. Je hoeft
 In `adafruit/Adafruit SSD1306@^2.5.7` is `^2.5.7` de **versie**. Het `^` betekent: "deze versie of een nieuwere die ermee samenwerkt". Door een versie vast te leggen, blijft je project werken — ook als de library later verandert.
 
 :::tip
-Gebruik je in je code `#include <Adafruit_SSD1306.h>` maar krijg je een foutmelding dat het bestand niet bestaat? Dan staat de library nog niet in `lib_deps`, of is de naam verkeerd. Zie [Library niet gevonden](/docs/er-gaat-iets-mis/library-niet-gevonden).
+Gebruik je in je code `#include <Adafruit_SSD1306.h>` maar krijg je een foutmelding dat het bestand niet bestaat? Dan staat de library nog niet in `lib_deps`, of is de naam verkeerd. Zie [Library niet gevonden](site:embedded/docs/er-gaat-iets-mis/library-niet-gevonden).
 :::
 
 ## Meerdere libraries

@@ -4,9 +4,9 @@ title: Aristoteles
 
 # Aristoteles
 
-**384–322 v.Chr. · [empirisme](./empirisme.md)**
+**384–322 v.Chr. · [empirisme](site:onderzoek/kennisleer/empirisme)**
 
-Aristoteles studeerde twintig jaar bij [Plato](./plato.md) — en keerde zich vervolgens tegen het hart van diens leer. Hij werd leermeester van Alexander de Grote en legde de basis voor bijna elke wetenschap die we nu kennen, van biologie tot logica.
+Aristoteles studeerde twintig jaar bij [Plato](site:onderzoek/kennisleer/plato) — en keerde zich vervolgens tegen het hart van diens leer. Hij werd leermeester van Alexander de Grote en legde de basis voor bijna elke wetenschap die we nu kennen, van biologie tot logica.
 
 ## Kernidee: de essentie zit in de dingen zelf
 
@@ -22,12 +22,12 @@ Klopt die vorm, dan is de conclusie onvermijdelijk waar zodra de twee uitspraken
 
 ## Wat je hieraan hebt bij je eigen onderzoek
 
-Aristoteles levert de twee pijlers van je eigen werkwijze. De eerste: begin met **systematisch beschrijven en ordenen**, want je kunt pas verklaren als je weet hoe het zit — precies de volgorde die je aanhoudt bij [het opzetten van je deelvragen](../opzet/keuzedriehoek.mdx).
+Aristoteles levert de twee pijlers van je eigen werkwijze. De eerste: begin met **systematisch beschrijven en ordenen**, want je kunt pas verklaren als je weet hoe het zit — precies de volgorde die je aanhoudt bij [het opzetten van je deelvragen](site:onderzoek/opzet/keuzedriehoek).
 
 De tweede: let op de **geldigheid van je redenering**. Een conclusie kan onwaar zijn doordat je gegevens niet kloppen, maar ook doordat de stap van gegevens naar conclusie niet deugt. Dat zijn twee verschillende fouten, en de tweede zie je zonder te meten.
 
 ## Hangt samen met
 
-- [Empirisme](./empirisme.md) — de stroming die bij Aristoteles begint
-- [Plato](./plato.md) — zijn leermeester en tegenpool
-- [A posteriori](./a-posteriori.md) — kennis die pas na waarneming vaststaat
+- [Empirisme](site:onderzoek/kennisleer/empirisme) — de stroming die bij Aristoteles begint
+- [Plato](site:onderzoek/kennisleer/plato) — zijn leermeester en tegenpool
+- [A posteriori](site:onderzoek/kennisleer/a-posteriori) — kennis die pas na waarneming vaststaat

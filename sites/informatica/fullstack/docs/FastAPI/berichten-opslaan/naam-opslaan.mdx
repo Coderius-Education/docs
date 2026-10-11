@@ -1,6 +1,6 @@
 # Een formulier opslaan
 
-Wat een bezoeker in een formulier invult, zet je nu in een database. Dan staat het er nog als je de server stopt. Je begint met één naam; in de [volgende les](/docs/FastAPI/berichten-opslaan/eigen-sleutel) bewaar je alle berichten van een gastenboek.
+Wat een bezoeker in een formulier invult, zet je nu in een database. Dan staat het er nog als je de server stopt. Je begint met één naam; in de [volgende les](site:fullstack/docs/FastAPI/berichten-opslaan/eigen-sleutel) bewaar je alle berichten van een gastenboek.
 
 ## Voorbeeld: Naam opslaan
 
@@ -46,7 +46,7 @@ async def naam_opslaan(naam: str = Form(...)):
 ```
 
 <Regel n={5} tot={6}>
-Het POST-endpoint uit [Een formulier versturen (POST)](/docs/FastAPI/formulieren/forms): `naam` komt uit het formulier.
+Het POST-endpoint uit [Een formulier versturen (POST)](site:fullstack/docs/FastAPI/formulieren/forms): `naam` komt uit het formulier.
 </Regel>
 
 <Regel n={7} tot={9}>
@@ -72,7 +72,7 @@ async def toon_naam():
 ```
 
 <Regel n={4}>
-`db.get` uit [Bestaat de sleutel? in en get](/docs/FastAPI/sqlitedict/zoeken) geeft de standaardwaarde zolang er nog niets is opgeslagen. Zo werkt de pagina ook vóór de eerste keer opslaan, zonder `KeyError`.
+`db.get` uit [Bestaat de sleutel? in en get](site:fullstack/docs/FastAPI/sqlitedict/zoeken) geeft de standaardwaarde zolang er nog niets is opgeslagen. Zo werkt de pagina ook vóór de eerste keer opslaan, zonder `KeyError`.
 </Regel>
 
 </CodeUitleg>
@@ -255,7 +255,7 @@ Maak het formulier en de twee endpoints uit deze les. Sla een naam op, stop de s
 <details>
 <summary>Antwoord</summary>
 
-Ja. De naam staat in `namen.db`, naast je `main.py`, en niet in het geheugen van de server. Daarom overleeft hij een herstart. Met `bekijk_db.py` uit [Alles bekijken: len en items](/docs/FastAPI/sqlitedict/bekijken), met `"namen.db"` tussen de haakjes, zie je hem ook staan. Draai dat script in een tweede terminal, want je server houdt de eerste bezet: het plusje (+) rechtsboven in het terminalpaneel van VS Code opent er een.
+Ja. De naam staat in `namen.db`, naast je `main.py`, en niet in het geheugen van de server. Daarom overleeft hij een herstart. Met `bekijk_db.py` uit [Alles bekijken: len en items](site:fullstack/docs/FastAPI/sqlitedict/bekijken), met `"namen.db"` tussen de haakjes, zie je hem ook staan. Draai dat script in een tweede terminal, want je server houdt de eerste bezet: het plusje (+) rechtsboven in het terminalpaneel van VS Code opent er een.
 
 </details>
 
@@ -319,4 +319,4 @@ async def toon_score():
 
 </details>
 
-Door naar [Elk bericht bewaren: een eigen sleutel](/docs/FastAPI/berichten-opslaan/eigen-sleutel).
+Door naar [Elk bericht bewaren: een eigen sleutel](site:fullstack/docs/FastAPI/berichten-opslaan/eigen-sleutel).

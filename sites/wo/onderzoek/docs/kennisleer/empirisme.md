@@ -12,9 +12,9 @@ Het **empirisme** is de opvatting dat alle kennis uiteindelijk uit **zintuiglijk
 
 ## Kennis achteraf
 
-Empiristen draaien de rationalistische volgorde om. Niet het denken maar de wereld is de baas: je kijkt, meet en vergelijkt, en pas dáárna weet je iets. Zulke kennis heet [a posteriori](./a-posteriori.md) — waar ná en dankzij de waarneming.
+Empiristen draaien de rationalistische volgorde om. Niet het denken maar de wereld is de baas: je kijkt, meet en vergelijkt, en pas dáárna weet je iets. Zulke kennis heet [a posteriori](site:onderzoek/kennisleer/a-posteriori) — waar ná en dankzij de waarneming.
 
-Bijna al het onderzoek dat je op deze site leert opzetten is in die zin empirisch: je [observeert](../opzet/methoden/observatie.md), [enquêteert](../opzet/methoden/enquete.md), [interviewt](../opzet/methoden/interview.md) of meet. Je gaat kijken in plaats van te bedenken hoe het zal zitten.
+Bijna al het onderzoek dat je op deze site leert opzetten is in die zin empirisch: je [observeert](site:onderzoek/opzet/methoden/observatie), [enquêteert](site:onderzoek/opzet/methoden/enquete), [interviewt](site:onderzoek/opzet/methoden/interview) of meet. Je gaat kijken in plaats van te bedenken hoe het zal zitten.
 
 <Denker naam="Aristoteles" jaartal="384–322 v.Chr." stroming="nominalisme" linkUrl="/kennisleer/aristoteles" linkTekst="Lees verder over Aristoteles">
 
@@ -34,10 +34,10 @@ Trok de redenering van Locke door: ook vorm en omvang ken je uitsluitend via waa
 
 </Denker>
 
-De vierde grote empirist, [David Hume](./hume.md), ging nog een stap verder: hij onderzocht wat er van onze kennis overblijft als je het empirisme werkelijk consequent toepast. Zijn antwoord staat bij [de vork van Hume](./vork-van-hume.mdx) en [het inductieprobleem](./inductieprobleem.md).
+De vierde grote empirist, [David Hume](site:onderzoek/kennisleer/hume), ging nog een stap verder: hij onderzocht wat er van onze kennis overblijft als je het empirisme werkelijk consequent toepast. Zijn antwoord staat bij [de vork van Hume](site:onderzoek/kennisleer/vork-van-hume) en [het inductieprobleem](site:onderzoek/kennisleer/inductieprobleem).
 
 :::caution[De zwakke plek van het empirisme]
-Uit nog zoveel waarnemingen volgt nooit met zekerheid een algemene regel. Je kunt duizend witte zwanen zien en toch ongelijk krijgen. Dat is [het inductieprobleem](./inductieprobleem.md) — en het is precies de reden dat je bij [generaliseren](../spelregels/externe-validiteit.md) voorzichtig moet zijn.
+Uit nog zoveel waarnemingen volgt nooit met zekerheid een algemene regel. Je kunt duizend witte zwanen zien en toch ongelijk krijgen. Dat is [het inductieprobleem](site:onderzoek/kennisleer/inductieprobleem) — en het is precies de reden dat je bij [generaliseren](site:onderzoek/spelregels/externe-validiteit) voorzichtig moet zijn.
 :::
 
 <WelNiet
@@ -47,7 +47,7 @@ Uit nog zoveel waarnemingen volgt nooit met zekerheid een algemene regel. Je kun
 
 ## Hangt samen met
 
-- [Rationalisme](./rationalisme.md) — de tegenpool: kennis komt juist uit het denken
-- [A posteriori](./a-posteriori.md) — het soort kennis dat empiristen erkennen
-- [Veldonderzoek](../opzet/soorten/veldonderzoek.md) — empirisme in de praktijk van je eigen onderzoek
-- [Het inductieprobleem](./inductieprobleem.md) — de grens van wat waarneming je kan opleveren
+- [Rationalisme](site:onderzoek/kennisleer/rationalisme) — de tegenpool: kennis komt juist uit het denken
+- [A posteriori](site:onderzoek/kennisleer/a-posteriori) — het soort kennis dat empiristen erkennen
+- [Veldonderzoek](site:onderzoek/opzet/soorten/veldonderzoek) — empirisme in de praktijk van je eigen onderzoek
+- [Het inductieprobleem](site:onderzoek/kennisleer/inductieprobleem) — de grens van wat waarneming je kan opleveren

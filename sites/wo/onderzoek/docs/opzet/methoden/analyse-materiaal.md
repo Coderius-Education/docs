@@ -14,8 +14,8 @@ Bij deze methode verzamel je geen nieuwe antwoorden, maar analyseer je **bestaan
 ## Zo pak je het aan
 
 - **Baken je materiaal af.** Welke bronnen, welke periode, hoeveel? Bijvoorbeeld: alle voorpagina’s van twee kranten uit dezelfde week, of de laatste vijftig posts van drie accounts.
-- **Maak een analyseschema.** Net als bij [observeren](./observatie.md) bepaal je vooraf waar je op let: welke woorden, onderwerpen of beelden ga je turven of beschrijven? Zo wordt je analyse systematisch in plaats van "wat browsen".
-- **Tellen én duiden.** Turven hoe vaak iets voorkomt is [kwantitatief](../../gegevens/kwantitatief.md); beschrijven hóé iets wordt neergezet is [kwalitatief](../../gegevens/kwalitatief.md).
+- **Maak een analyseschema.** Net als bij [observeren](site:onderzoek/opzet/methoden/observatie) bepaal je vooraf waar je op let: welke woorden, onderwerpen of beelden ga je turven of beschrijven? Zo wordt je analyse systematisch in plaats van "wat browsen".
+- **Tellen én duiden.** Turven hoe vaak iets voorkomt is [kwantitatief](site:onderzoek/gegevens/kwantitatief); beschrijven hóé iets wordt neergezet is [kwalitatief](site:onderzoek/gegevens/kwalitatief).
 - **Beoordeel je materiaal kritisch.** Wie maakte het, met welk doel, voor welk publiek? Een reclame en een nieuwsbericht vragen om een andere blik.
 
 ## Voorbeeld
@@ -29,6 +29,6 @@ Je vergelijkt hoe twee nieuwssites in één maand over kunstmatige intelligentie
 
 ## Hangt samen met
 
-- [Welke methode kies je?](./methode-kiezen.mdx) — analyse naast observatie, interview en enquête
-- [Literatuuronderzoek](../soorten/literatuuronderzoek.md) — de verwante soort: bestaande bronnen gebruiken en kritisch beoordelen
-- [Transparant](../../spelregels/transparant.md) — bronvermelding bij alles wat je overneemt
+- [Welke methode kies je?](site:onderzoek/opzet/methoden/methode-kiezen) — analyse naast observatie, interview en enquête
+- [Literatuuronderzoek](site:onderzoek/opzet/soorten/literatuuronderzoek) — de verwante soort: bestaande bronnen gebruiken en kritisch beoordelen
+- [Transparant](site:onderzoek/spelregels/transparant) — bronvermelding bij alles wat je overneemt

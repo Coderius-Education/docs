@@ -83,5 +83,5 @@ Dit wisselt de pin, zoals `digitalToggle()` dat deed. Met `HAL_GPIO_WritePin(GPI
 Meer typewerk, maar je ziet nu precies wat er gebeurt. In het volgende hoofdstuk gebruik je HAL om echte IO te configureren: uitgangen, ingangen en de ADC.
 
 :::caution
-HAL kun je niet in de Wokwi-browsersimulator draaien (die werkt met het Arduino-framework). De STM32-hoofdstukken test je daarom op een echt bord. Lukt het uploaden niet, kijk dan bij [Upload mislukt](/docs/er-gaat-iets-mis/upload-mislukt).
+HAL kun je niet in de Wokwi-browsersimulator draaien (die werkt met het Arduino-framework). De STM32-hoofdstukken test je daarom op een echt bord. Lukt het uploaden niet, kijk dan bij [Upload mislukt](site:embedded/docs/er-gaat-iets-mis/upload-mislukt).
 :::
