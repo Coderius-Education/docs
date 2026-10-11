@@ -5,6 +5,8 @@ sidebar_position: 1
 
 # Betrouwbaar
 
+<Bron id="eureka" hoofdstuk="2, Wat is goed onderzoek" over="De behandeling van de spelregel betrouwbaar" />
+
 <Definitie gewoneTaal="als iemand anders (of jijzelf, morgen) het onderzoek overdoet, komt er ongeveer hetzelfde uit.">
 
 Onderzoek is **betrouwbaar** als het resultaat niet van toeval afhangt: wie het onderzoek op dezelfde manier herhaalt, krijgt (ongeveer) hetzelfde resultaat.

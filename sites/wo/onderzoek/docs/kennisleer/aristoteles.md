@@ -4,6 +4,8 @@ title: Aristoteles
 
 # Aristoteles
 
+<Bron id="ikdenk" hoofdstuk="4, Kennisleer" over="De behandeling van Aristoteles" />
+
 **384–322 v.Chr. · [empirisme](site:onderzoek/kennisleer/empirisme)**
 
 Aristoteles studeerde twintig jaar bij [Plato](site:onderzoek/kennisleer/plato) — en keerde zich vervolgens tegen het hart van diens leer. Hij werd leermeester van Alexander de Grote en legde de basis voor bijna elke wetenschap die we nu kennen, van biologie tot logica.

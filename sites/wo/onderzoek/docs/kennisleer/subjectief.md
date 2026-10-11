@@ -4,6 +4,8 @@ title: Subjectieve kennis
 
 # Subjectieve kennis
 
+<Bron id="ikdenk" hoofdstuk="4, Kennisleer" over="De behandeling van het begrip subjectieve kennis" />
+
 <Definitie gewoneTaal="het hangt ervan af wie je het vraagt.">
 
 **Subjectieve kennis** is kennis die bepaald wordt door het oordeel van het **subject**: de persoon die waarneemt, ervaart of vindt. Een andere persoon kan bij precies hetzelfde object tot een ander antwoord komen, zonder dat een van beiden zich vergist.

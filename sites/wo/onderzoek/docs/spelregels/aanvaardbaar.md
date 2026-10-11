@@ -5,6 +5,8 @@ sidebar_position: 4
 
 # Aanvaardbaar
 
+<Bron id="eureka" hoofdstuk="2, Wat is goed onderzoek" over="De behandeling van de spelregel aanvaardbaar" />
+
 <Definitie gewoneTaal="je onderzoek is eerlijk en niemand wordt er slechter van.">
 
 Onderzoek is **aanvaardbaar** als het **ethisch verantwoord** is: eerlijk uitgevoerd, met respect voor de mensen (en dieren en spullen) die erbij betrokken zijn.

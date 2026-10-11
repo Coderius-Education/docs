@@ -5,6 +5,8 @@ sidebar_position: 2
 
 # Valide
 
+<Bron id="eureka" hoofdstuk="2, Wat is goed onderzoek" over="De behandeling van de spelregel valide" />
+
 <Definitie gewoneTaal="je meet het juiste ding, bij de juiste mensen, op de juiste manier.">
 
 {/* stijl-uitzondering: uitroepteken nadruk uit de oorspronkelijke onderzoek-tekst; herschrijven is aan de auteur */}

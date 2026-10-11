@@ -5,6 +5,8 @@ sidebar_position: 3
 
 # Transparant
 
+<Bron id="eureka" hoofdstuk="2, Wat is goed onderzoek" over="De behandeling van de spelregel transparant" />
+
 <Definitie gewoneTaal="iemand anders kan precies zien wat je hebt gedaan, en het narekenen of overdoen.">
 
 Onderzoek is **transparant** als iemand anders precies kan nagaan wat je hebt gedaan — en het desnoods kan herhalen of controleren. Je laat je hele werkwijze zien, ook de dingen die tegenvielen.

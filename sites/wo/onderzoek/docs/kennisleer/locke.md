@@ -4,6 +4,8 @@ title: John Locke
 
 # John Locke
 
+<Bron id="ikdenk" hoofdstuk="4, Kennisleer" over="De behandeling van Locke" />
+
 **1632–1704 · [empirisme](site:onderzoek/kennisleer/empirisme)**
 
 Locke was arts, filosoof en politiek denker; zijn ideeën over vrijheid en bestuur werkten door tot in de Amerikaanse Onafhankelijkheidsverklaring. In de kennisleer is hij de man die het aangeboren weten de deur wees.
