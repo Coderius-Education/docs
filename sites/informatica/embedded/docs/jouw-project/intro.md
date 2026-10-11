@@ -11,10 +11,10 @@ Een eigen project maken is anders dan een opdracht volgen. Je bedenkt zelf wat h
 ## Hoe pak je het aan?
 
 1. **Klein beginnen.** Kies één ding dat werkt, bijvoorbeeld één LED of één sensor. Krijg dat aan de praat vóór je uitbreidt.
-2. **Hergebruik wat je kent.** Bijna alles wat je nodig hebt, staat al in de eerdere hoofdstukken of in de [cheatsheet](/cheatsheet). Zoek het op in plaats van het opnieuw te bedenken.
+2. **Hergebruik wat je kent.** Bijna alles wat je nodig hebt, staat al in de eerdere hoofdstukken of in de [cheatsheet](site:embedded/cheatsheet). Zoek het op in plaats van het opnieuw te bedenken.
 3. **Test vaak.** Voeg een klein stukje toe, test het, en pas dan het volgende. Eén grote brok code in één keer is bijna nooit meteen goed.
-4. **Gebruik de seriële monitor.** Print wat je niet ziet (zie [5.2 Debuggen met serieel](/docs/serieel/debuggen-met-serial)).
-5. **Leg werkende versies vast.** Je project is een gewone map in VS Code, dus git werkt er meteen op. Maak van elke versie die doet wat je wilt een commit; durf daarna alles aan te passen. Hoe dat werkt staat in <SiteLink site="editor" to="/git/vscode/">Git in VS Code</SiteLink>.
+4. **Gebruik de seriële monitor.** Print wat je niet ziet (zie [5.2 Debuggen met serieel](site:embedded/docs/serieel/debuggen-met-serial)).
+5. **Leg werkende versies vast.** Je project is een gewone map in VS Code, dus git werkt er meteen op. Maak van elke versie die doet wat je wilt een commit; durf daarna alles aan te passen. Hoe dat werkt staat in [Git in VS Code](site:editor/git/vscode).
 
 ## Eerst simuleren, dan bouwen
 

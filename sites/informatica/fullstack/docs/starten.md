@@ -28,7 +28,7 @@ code .
 VS Code opent met je projectmap in de Explorer links. Vanaf nu staat hij
 weer in **Open Recent**.
 
-Lukt het openen van die terminal niet? <SiteLink site="editor" to="/python/stap-2-powershell">PowerShell openen vanuit je map</SiteLink>.
+Lukt het openen van die terminal niet? [PowerShell openen vanuit je map](site:editor/python/stap-2-powershell).
 
 </details>
 
@@ -68,6 +68,6 @@ staan zoals hij was. Morgen open je VS Code en staat alles er weer.
 - **`Address already in use`** — er draait nog een server van een
   vorige keer.
 
-Beide meldingen staan met hun oplossing bij [Er gaat iets mis](/docs/troubleshooting).
+Beide meldingen staan met hun oplossing bij [Er gaat iets mis](site:fullstack/docs/troubleshooting).
 
-Werkt de installatie zelf nog niet? Dan is [Installatie](/docs/FastAPI/eerste-server/installatie) de controlelijst: vijf checks met per check wat je hoort te zien.
+Werkt de installatie zelf nog niet? Dan is [Installatie](site:fullstack/docs/FastAPI/eerste-server/installatie) de controlelijst: vijf checks met per check wat je hoort te zien.

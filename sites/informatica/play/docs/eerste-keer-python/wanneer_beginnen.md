@@ -10,9 +10,9 @@ Verder helpt het als je deze drie kent, maar ze zijn geen voorwaarde:
 
 | Wat | Waar je het tegenkomt |
 |---|---|
-| `if` en `else` | vanaf [4.3 De muis gebruiken](/docs/gebeurtenissen/muis) |
-| `def` (een functie) | vanaf [4.1 Gebeurtenissen](/docs/gebeurtenissen/toetsenbord) |
-| lijsten | vanaf [7.3 Kiezen uit een lijst](/docs/ui/kiezen) |
+| `if` en `else` | vanaf [4.3 De muis gebruiken](site:play/docs/gebeurtenissen/muis) |
+| `def` (een functie) | vanaf [4.1 Gebeurtenissen](site:play/docs/gebeurtenissen/toetsenbord) |
+| lijsten | vanaf [7.3 Kiezen uit een lijst](site:play/docs/ui/kiezen) |
 
 Ken je ze nog niet? Dan kun je gewoon beginnen. Elke les die iets uit de python-cursus gebruikt, opent met een blok "Hier bouw je op verder" met een link naar de les waar het wordt uitgelegd.
 

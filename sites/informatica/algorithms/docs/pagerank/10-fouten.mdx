@@ -9,7 +9,7 @@ PageRank het makkelijkst maakt.
 
 ## Het verschil is meteen nul
 
-Symptoom: de test van [bouwsteen 4](./bouwen/06-itereren) faalt, en de
+Symptoom: de test van [bouwsteen 4](site:algorithms/docs/pagerank/bouwen/06-itereren) faalt, en de
 ranks zien eruit alsof er maar één ronde is gerekend:
 
 {/* foutmelding-los: de fout zit in de pagerank van de leerling; src/docs-tests/pagerank.test.ts rekent deze melding na */}
@@ -41,7 +41,7 @@ Hetzelfde gebeurt als je `rank = nieuw` vóór het meten van het verschil
 zet: dan vergelijk je `nieuw` met zichzelf. De test toont dan
 `'C': 0.5687`.
 
-Meer uitleg: [Bouwsteen 4](./bouwen/06-itereren)
+Meer uitleg: [Bouwsteen 4](site:algorithms/docs/pagerank/bouwen/06-itereren)
 
 ## Het basisdeel `(1 − d)/N` vergeten
 
@@ -64,7 +64,7 @@ Symptoom: zodra een pagina nergens naartoe linkt, telt de som niet meer op
 tot 1.
 
 **Oorzaak:** een doodlopende pagina geeft haar belang aan niemand door,
-dus het verdwijnt. In het mini-web linkt elke pagina ergens naartoe. Voeg je op [de compleet-pagina](./07-compleet) een pagina zonder
+dus het verdwijnt. In het mini-web linkt elke pagina ergens naartoe. Voeg je op [de compleet-pagina](site:algorithms/docs/pagerank/07-compleet) een pagina zonder
 links toe, dan zie je het meteen aan de som.
 
 **Oplossing:** doe alsof een pagina zonder uitgaande links naar alle
@@ -80,4 +80,4 @@ def uitgaande_links(web, i, paginas):
 
 Zo blijft het belang behouden en telt de som weer op tot 1.
 
-Door naar [cheatsheet →](./11-cheatsheet).
+Door naar [cheatsheet →](site:algorithms/docs/pagerank/11-cheatsheet).

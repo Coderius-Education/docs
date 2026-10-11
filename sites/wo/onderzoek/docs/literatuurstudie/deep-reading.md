@@ -13,7 +13,7 @@ title: Deep reading
 ## Zo lees je grondig
 
 - **Lees met een vraag.** Schrijf vooraf op wat je van dít artikel wilt weten voor jóuw deelvraag. Dat voorkomt dat je verdwaalt in details die er voor jou niet toe doen.
-- **Lees de methode als een [spelregel-controle](../spelregels/de-vier-spelregels.md).** Hoeveel deelnemers, hoe geselecteerd, was er een controlegroep, is het herhaald? Je hebt het gereedschap: [betrouwbaar](../spelregels/betrouwbaar.md), [valide](../spelregels/valide.md), [intern](../spelregels/interne-validiteit.md) en [extern](../spelregels/externe-validiteit.md) valide.
+- **Lees de methode als een [spelregel-controle](site:onderzoek/spelregels/de-vier-spelregels).** Hoeveel deelnemers, hoe geselecteerd, was er een controlegroep, is het herhaald? Je hebt het gereedschap: [betrouwbaar](site:onderzoek/spelregels/betrouwbaar), [valide](site:onderzoek/spelregels/valide), [intern](site:onderzoek/spelregels/interne-validiteit) en [extern](site:onderzoek/spelregels/externe-validiteit) valide.
 - **Bekijk de tabellen zelf** voordat je leest wat de auteurs erover zeggen. Zie jij hetzelfde? Een verschil van 3% kan "significant" heten en toch weinig voorstellen.
 - **Zoek elk woord op dat je niet kent.** Wetenschappelijke taal is compact; één onbegrepen begrip kan een hele alinea onleesbaar maken.
 - **Let op de eigen beperkingen.** Goede auteurs schrijven in de discussie wat er níét uit hun onderzoek volgt. Dat is de eerlijkste alinea van het artikel — en vaak de nuttigste voor jou.
@@ -34,7 +34,7 @@ Lees een moeilijk artikel twee keer: eerst om de lijn te volgen, de tweede keer 
 
 ## Hangt samen met
 
-- [Skimmen](./skimmen.md) — de snellere laag die bepaalt of deep reading de moeite is
-- [Literatuurmatrix](./literatuurmatrix.md) — waar je de opbrengst vastlegt
-- [De vier spelregels samen](../spelregels/de-vier-spelregels.md) — je checklist bij het lezen van de methode
-- [Het inductieprobleem](../kennisleer/inductieprobleem.md) — waarom je let op hoe ver een conclusie reikt
+- [Skimmen](site:onderzoek/literatuurstudie/skimmen) — de snellere laag die bepaalt of deep reading de moeite is
+- [Literatuurmatrix](site:onderzoek/literatuurstudie/literatuurmatrix) — waar je de opbrengst vastlegt
+- [De vier spelregels samen](site:onderzoek/spelregels/de-vier-spelregels) — je checklist bij het lezen van de methode
+- [Het inductieprobleem](site:onderzoek/kennisleer/inductieprobleem) — waarom je let op hoe ver een conclusie reikt

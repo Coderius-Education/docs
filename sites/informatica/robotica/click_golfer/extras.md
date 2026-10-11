@@ -25,7 +25,7 @@ Het stuurt de pinnen **D11** (rood), **D10** (groen), **D9** (blauw) en **D8** (
 Je neemt het blok **Zet PWM**, ook uit Actuatoren: één keer voor rood en één keer voor groen. Een nieuw blok staat eerst op **Zet PWM 3 op 0**. Klik op de 3 en kies **11** of **10**.
 
 1. Vraag je docent welk pootje van het lampje rood is, welk groen en welk de min.
-2. Zet je robot uit met **ON/OFF**. Zit er van [Oefenen](oefenen) nog een tweede servo op D10? Haal die dan los, want daar komt nu groen.
+2. Zet je robot uit met **ON/OFF**. Zit er van [Oefenen](site:robotica/click_golfer/oefenen) nog een tweede servo op D10? Haal die dan los, want daar komt nu groen.
 3. Sluit rood aan op het signaal van **D11**, groen op het signaal van **D10**, en de min op GND. Het blauwe pootje sluit je niet aan. Zet je robot daarna weer aan met **ON/OFF**.
 4. **Zet PWM 11 op 255** maakt het lampje rood. Met Zet PWM 11 op 0 gaat rood weer uit. Met pin 10 doe je hetzelfde voor groen.
 
@@ -39,12 +39,12 @@ Gebruik een **als … dan … anders**-blok: in **Denk stappen** staat onder **a
 <details>
 <summary>Antwoord</summary>
 
-Je bouwt hetzelfde **als**-blok als bij [de IR-sensor](ir-sensor), maar nu met een **anders**-tak erbij:
+Je bouwt hetzelfde **als**-blok als bij [de IR-sensor](site:robotica/click_golfer/ir-sensor), maar nu met een **anders**-tak erbij:
 
 - als **Lees anapin A0** kleiner is dan jouw grens: zet het lampje op groen en laat de arm slaan;
 - anders: zet het lampje op rood.
 
-Het slaan heb je al, in je programma uit [Een naam voor je blokken](subprogrammas). Pak het bovenste blok in de dan-tak van je oude **als … dan** en sleep het, met alles eronder, naar de dan-tak van het nieuwe blok. Zet bovenaan in de dan-tak de twee **Zet PWM**-blokken voor groen: Zet PWM 11 op 0 (rood uit) en Zet PWM 10 op 255 (groen aan). In de anders-tak komen Zet PWM 11 op 255 (rood aan) en Zet PWM 10 op 0 (groen uit).
+Het slaan heb je al, in je programma uit [Een naam voor je blokken](site:robotica/click_golfer/subprogrammas). Pak het bovenste blok in de dan-tak van je oude **als … dan** en sleep het, met alles eronder, naar de dan-tak van het nieuwe blok. Zet bovenaan in de dan-tak de twee **Zet PWM**-blokken voor groen: Zet PWM 11 op 0 (rood uit) en Zet PWM 10 op 255 (groen aan). In de anders-tak komen Zet PWM 11 op 255 (rood aan) en Zet PWM 10 op 0 (groen uit).
 
 <Blokken programma={lampje} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan Zet PWM 11 op 0, Zet PWM 10 op 255, Servo 9 op 0, duurt 500 ms, mikken en slaan. Anders: Zet PWM 11 op 255 en Zet PWM 10 op 0. Daaronder de subprogramma's mikken en slaan, net als bij Een naam voor je blokken." />
 
@@ -52,7 +52,7 @@ Het slaan heb je al, in je programma uit [Een naam voor je blokken](subprogramma
 
 ## Willekeurig slaan
 
-Nu slaat je Golfer altijd naar dezelfde stand: [de servo](servo) op **D9** gaat naar 90 graden. Pas het subprogramma `slaan` uit [Een naam voor je blokken](subprogrammas) aan, zodat de arm telkens naar een willekeurige stand tussen 70 en 110 graden gaat.
+Nu slaat je Golfer altijd naar dezelfde stand: [de servo](site:robotica/click_golfer/servo) op **D9** gaat naar 90 graden. Pas het subprogramma `slaan` uit [Een naam voor je blokken](site:robotica/click_golfer/subprogrammas) aan, zodat de arm telkens naar een willekeurige stand tussen 70 en 110 graden gaat.
 
 <details>
 <summary>Tip</summary>

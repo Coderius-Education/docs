@@ -13,12 +13,12 @@ Bij een **observatie** bekijk je gedrag of situaties zoals ze echt gebeuren, zon
 
 ## Zo pak je het aan
 
-- **Maak vooraf een observatieschema.** Bepaal precies wát je gaat turven of noteren (wie, wat, waar, wanneer), zodat je gericht kijkt en niet achteraf moet raden. Dat maakt je observatie ook herhaalbaar — goed voor de [betrouwbaarheid](../../spelregels/betrouwbaar.md).
+- **Maak vooraf een observatieschema.** Bepaal precies wát je gaat turven of noteren (wie, wat, waar, wanneer), zodat je gericht kijkt en niet achteraf moet raden. Dat maakt je observatie ook herhaalbaar — goed voor de [betrouwbaarheid](site:onderzoek/spelregels/betrouwbaar).
 - **Observeer op meerdere momenten.** Eén drukke dinsdagpauze zegt weinig; observeer op verschillende dagen en tijdstippen.
-- **Turf voor cijfers, noteer voor verhalen.** Turven (hoe vaak gebeurt X?) levert [kwantitatieve](../../gegevens/kwantitatief.md) gegevens op; opschrijven wat je opvalt levert [kwalitatieve](../../gegevens/kwalitatief.md) gegevens op. Vaak doe je allebei.
+- **Turf voor cijfers, noteer voor verhalen.** Turven (hoe vaak gebeurt X?) levert [kwantitatieve](site:onderzoek/gegevens/kwantitatief) gegevens op; opschrijven wat je opvalt levert [kwalitatieve](site:onderzoek/gegevens/kwalitatief) gegevens op. Vaak doe je allebei.
 
 :::caution[Mensen die weten dat ze bekeken worden, gedragen zich anders]
-Sta je met een klembord naast de prullenbak, dan wordt het afval opeens keurig weggegooid. Observeer daarom zo onopvallend mogelijk — maar blijf [aanvaardbaar](../../spelregels/aanvaardbaar.md): observeer alleen openbaar gedrag in openbare ruimtes, film niemand stiekem en verwerk wat je ziet anoniem.
+Sta je met een klembord naast de prullenbak, dan wordt het afval opeens keurig weggegooid. Observeer daarom zo onopvallend mogelijk — maar blijf [aanvaardbaar](site:onderzoek/spelregels/aanvaardbaar): observeer alleen openbaar gedrag in openbare ruimtes, film niemand stiekem en verwerk wat je ziet anoniem.
 :::
 
 ## Voorbeeld
@@ -46,7 +46,7 @@ Latere onderzoekers die de oorspronkelijke gegevens opnieuw doorrekenden, vonden
 
 ## Hangt samen met
 
-- [Welke methode kies je?](./methode-kiezen.mdx) — observatie naast interview, enquête en analyse
-- [Veldonderzoek](../soorten/veldonderzoek.md) — de soort onderzoek waar observatie meestal bij hoort
-- [Betrouwbaar](../../spelregels/betrouwbaar.md) — meerdere momenten, vast schema
-- [Intersubjectieve kennis](../../kennisleer/intersubjectief.md) — waarom een observatieschema jouw waarneming controleerbaar maakt voor anderen
+- [Welke methode kies je?](site:onderzoek/opzet/methoden/methode-kiezen) — observatie naast interview, enquête en analyse
+- [Veldonderzoek](site:onderzoek/opzet/soorten/veldonderzoek) — de soort onderzoek waar observatie meestal bij hoort
+- [Betrouwbaar](site:onderzoek/spelregels/betrouwbaar) — meerdere momenten, vast schema
+- [Intersubjectieve kennis](site:onderzoek/kennisleer/intersubjectief) — waarom een observatieschema jouw waarneming controleerbaar maakt voor anderen

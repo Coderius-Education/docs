@@ -7,7 +7,7 @@ sidebar_label: 'Begin hier'
 
 <Ethiek />
 
-Deze tutorial leert je websecurity door zélf kwetsbaarheden uit te buiten. De labs draaien direct in je browser via PHP-WebAssembly, dus je kunt meteen beginnen. Een paar verdiepende opdrachten gebruiken gereedschap dat alleen op een lokale Kali/DVWA-installatie draait (Hydra, Burp Suite, exiftool); dat staat dan in een **Labbeperking**-blok, met een link naar de [installatie-uitleg](/docs/dvwa_installatie).
+Deze tutorial leert je websecurity door zélf kwetsbaarheden uit te buiten. De labs draaien direct in je browser via PHP-WebAssembly, dus je kunt meteen beginnen. Een paar verdiepende opdrachten gebruiken gereedschap dat alleen op een lokale Kali/DVWA-installatie draait (Hydra, Burp Suite, exiftool); dat staat dan in een **Labbeperking**-blok, met een link naar de [installatie-uitleg](site:dvwa/docs/dvwa_installatie).
 
 ## Wat ga je leren?
 
@@ -50,19 +50,19 @@ Veelgemaakte fouten en verrassend gedrag, met uitleg waaróm het misgaat. Op de 
 
 ## Beperkingen van het lab
 
-De labs draaien in een afgeschermd `<iframe>` (sandbox). De meeste aanvallen doe je daar volledig in, maar een aantal vraagt toegang tot de F12 Developer Tools van de iframe-inhoud of tot lokaal gereedschap (Hydra, Burp Suite, exiftool). Dat lukt alleen met een [lokale DVWA-installatie](/docs/dvwa_installatie). Het label bij elke challenge hieronder zegt wat je nodig hebt, en op de betreffende levels staat een **Labbeperking**-blok.
+De labs draaien in een afgeschermd `<iframe>` (sandbox). De meeste aanvallen doe je daar volledig in, maar een aantal vraagt toegang tot de F12 Developer Tools van de iframe-inhoud of tot lokaal gereedschap (Hydra, Burp Suite, exiftool). Dat lukt alleen met een [lokale DVWA-installatie](site:dvwa/docs/dvwa_installatie). Het label bij elke challenge hieronder zegt wat je nodig hebt, en op de betreffende levels staat een **Labbeperking**-blok.
 
 ## In welke volgorde doe ik de uitdagingen?
 
 De challenges zijn verdeeld over drie niveaus. Begin bij **Beginner** en werk naar beneden: de aanvallen worden lastiger en bouwen op elkaar voort. Doe per challenge eerst **Low**, dan **Medium**, **High** en tot slot **Impossible** — op Impossible zie je hoe veilige code eruitziet.
 
-De niveaus (Beginner, Gevorderd, Expert) zeggen hoe lastig een challenge is, niet wat je ervoor nodig hebt. Dat laatste staat in het label naast elke challenge: veel doe je volledig in het ingebouwde lab, een paar levels vragen de F12 Developer Tools of lokaal gereedschap. Begin gerust in de browser en installeer [DVWA lokaal](/docs/dvwa_installatie) zodra je bij een level komt dat erom vraagt. De labels betekenen:
+De niveaus (Beginner, Gevorderd, Expert) zeggen hoe lastig een challenge is, niet wat je ervoor nodig hebt. Dat laatste staat in het label naast elke challenge: veel doe je volledig in het ingebouwde lab, een paar levels vragen de F12 Developer Tools of lokaal gereedschap. Begin gerust in de browser en installeer [DVWA lokaal](site:dvwa/docs/dvwa_installatie) zodra je bij een level komt dat erom vraagt. De labels betekenen:
 
 - <LabBadge status="browser" /> — volledig in het ingebouwde lab te doen.
 - <LabBadge status="deels" /> — de meeste levels in de browser; een paar vragen een lokale installatie.
 - <LabBadge status="lokaal" /> — de aanval draait alleen met een lokale Kali/DVWA-installatie.
 
-Nieuw met de terminal, met HTTP of met databases? Lees dan eerst [Linux leren](/docs/linux_leren), [HTTP leren](/docs/http_leren) en [SQL leren](/docs/sql_leren). Op de lespagina's zelf staat bovenaan een blok **Hier bouw je op verder** dat je naar de juiste uitleg terugbrengt.
+Nieuw met de terminal, met HTTP of met databases? Lees dan eerst [Linux leren](site:dvwa/docs/linux_leren), [HTTP leren](site:dvwa/docs/http_leren) en [SQL leren](site:dvwa/docs/sql_leren). Op de lespagina's zelf staat bovenaan een blok **Hier bouw je op verder** dat je naar de juiste uitleg terugbrengt.
 
 ## Jouw voortgang
 
@@ -72,31 +72,31 @@ Houd zelf bij welke challenges je af hebt — print deze pagina, of vink mee in 
 
 | Challenge | Lab | Low | Medium | High | Impossible |
 | :--- | :--- | :---: | :---: | :---: | :---: |
-| **[Command Injection](/docs/dvwa_tutorial/command-injection/low)** | <LabBadge status="browser" /> | [ ] | [ ] | [ ] | [ ] |
-| **[Authorization Bypass](/docs/dvwa_tutorial/authorization-bypass/low)** | <LabBadge status="deels" /> | [ ] | [ ] | [ ] | [ ] |
-| **[XSS (Reflected)](/docs/dvwa_tutorial/xss-reflected/low)** | <LabBadge status="browser" /> | [ ] | [ ] | [ ] | [ ] |
-| **[SQL Injection](/docs/dvwa_tutorial/sql-injection/low)** | <LabBadge status="deels" /> | [ ] | [ ] | [ ] | [ ] |
-| **[File Inclusion](/docs/dvwa_tutorial/file-inclusion/low)** | <LabBadge status="browser" /> | [ ] | [ ] | [ ] | [ ] |
-| **[CSRF](/docs/dvwa_tutorial/csrf/low)** | <LabBadge status="browser" /> | [ ] | [ ] | [ ] | [ ] |
+| **[Command Injection](site:dvwa/docs/dvwa_tutorial/command-injection/low)** | <LabBadge status="browser" /> | [ ] | [ ] | [ ] | [ ] |
+| **[Authorization Bypass](site:dvwa/docs/dvwa_tutorial/authorization-bypass/low)** | <LabBadge status="deels" /> | [ ] | [ ] | [ ] | [ ] |
+| **[XSS (Reflected)](site:dvwa/docs/dvwa_tutorial/xss-reflected/low)** | <LabBadge status="browser" /> | [ ] | [ ] | [ ] | [ ] |
+| **[SQL Injection](site:dvwa/docs/dvwa_tutorial/sql-injection/low)** | <LabBadge status="deels" /> | [ ] | [ ] | [ ] | [ ] |
+| **[File Inclusion](site:dvwa/docs/dvwa_tutorial/file-inclusion/low)** | <LabBadge status="browser" /> | [ ] | [ ] | [ ] | [ ] |
+| **[CSRF](site:dvwa/docs/dvwa_tutorial/csrf/low)** | <LabBadge status="browser" /> | [ ] | [ ] | [ ] | [ ] |
 
 ### Gevorderd
 
 | Challenge | Lab | Low | Medium | High | Impossible |
 | :--- | :--- | :---: | :---: | :---: | :---: |
-| **[SQL Injection (Blind)](/docs/dvwa_tutorial/sql-injection-blind/low)** | <LabBadge status="deels" /> | [ ] | [ ] | [ ] | [ ] |
-| **[XSS (Stored)](/docs/dvwa_tutorial/xss-stored/low)** | <LabBadge status="browser" /> | [ ] | [ ] | [ ] | [ ] |
-| **[Weak Session IDs](/docs/dvwa_tutorial/weak-session-ids/low)** | <LabBadge status="deels" /> | [ ] | [ ] | [ ] | [ ] |
-| **[File Upload](/docs/dvwa_tutorial/file-upload/low)** | <LabBadge status="deels" /> | [ ] | [ ] | [ ] | [ ] |
-| **[Brute Force](/docs/dvwa_tutorial/brute-force/low)** | <LabBadge status="lokaal" /> | [ ] | [ ] | [ ] | [ ] |
+| **[SQL Injection (Blind)](site:dvwa/docs/dvwa_tutorial/sql-injection-blind/low)** | <LabBadge status="deels" /> | [ ] | [ ] | [ ] | [ ] |
+| **[XSS (Stored)](site:dvwa/docs/dvwa_tutorial/xss-stored/low)** | <LabBadge status="browser" /> | [ ] | [ ] | [ ] | [ ] |
+| **[Weak Session IDs](site:dvwa/docs/dvwa_tutorial/weak-session-ids/low)** | <LabBadge status="deels" /> | [ ] | [ ] | [ ] | [ ] |
+| **[File Upload](site:dvwa/docs/dvwa_tutorial/file-upload/low)** | <LabBadge status="deels" /> | [ ] | [ ] | [ ] | [ ] |
+| **[Brute Force](site:dvwa/docs/dvwa_tutorial/brute-force/low)** | <LabBadge status="lokaal" /> | [ ] | [ ] | [ ] | [ ] |
 
 ### Expert
 
 | Challenge | Lab | Low | Medium | High | Impossible |
 | :--- | :--- | :---: | :---: | :---: | :---: |
-| **[XSS (DOM)](/docs/dvwa_tutorial/xss-dom/low)** | <LabBadge status="lokaal" /> | [ ] | [ ] | [ ] | [ ] |
-| **[CSP Bypass](/docs/dvwa_tutorial/csp-bypass/low)** | <LabBadge status="lokaal" /> | [ ] | [ ] | [ ] | [ ] |
-| **[JavaScript Attacks](/docs/dvwa_tutorial/javascript-attacks/low)** | <LabBadge status="deels" /> | [ ] | [ ] | [ ] | [ ] |
+| **[XSS (DOM)](site:dvwa/docs/dvwa_tutorial/xss-dom/low)** | <LabBadge status="lokaal" /> | [ ] | [ ] | [ ] | [ ] |
+| **[CSP Bypass](site:dvwa/docs/dvwa_tutorial/csp-bypass/low)** | <LabBadge status="lokaal" /> | [ ] | [ ] | [ ] | [ ] |
+| **[JavaScript Attacks](site:dvwa/docs/dvwa_tutorial/javascript-attacks/low)** | <LabBadge status="deels" /> | [ ] | [ ] | [ ] | [ ] |
 
 ---
 
-Klaar? Begin bij **[Command Injection — Low](/docs/dvwa_tutorial/command-injection/low)**. Alle challenges gehad? Draai de rollen om in de capstone **[Word de Developer](/docs/dvwa_tutorial/word-de-developer)**, waar je de lekken zelf dicht.
+Klaar? Begin bij **[Command Injection — Low](site:dvwa/docs/dvwa_tutorial/command-injection/low)**. Alle challenges gehad? Draai de rollen om in de capstone **[Word de Developer](site:dvwa/docs/dvwa_tutorial/word-de-developer)**, waar je de lekken zelf dicht.

@@ -15,7 +15,7 @@ sidebar_position: 4
 Zeker. Mocht je Informatica-ACTIEF gebruiken, is er een mooi hoofdstuk over dictionaries waarin je ook leert om deze als JSON op te slaan. Durf je het aan om dit zelf te doen?
 
 :::warning[Online speeltuin]
-Deze opdracht draait niet in de online speeltuin: je moet het bestand `database.json` op je eigen computer kunnen openen om te zien wat er verandert. Gebruik Thonny of VS Code, zie [installatie](/docs/installatie).
+Deze opdracht draait niet in de online speeltuin: je moet het bestand `database.json` op je eigen computer kunnen openen om te zien wat er verandert. Gebruik Thonny of VS Code, zie [installatie](site:play/docs/installatie).
 :::
 
 Hieronder geven we je een voorzet om je op gang te helpen.
@@ -76,5 +76,5 @@ def update_database():
 ```
 
 :::info[Waar kom je dit later weer tegen?]
-In [9.3 Wanneer ga je naar het volgende level?](/docs/levels/wanneer-volgende) gebruik je de database om te onthouden hoe ver een speler kwam.
+In [9.3 Wanneer ga je naar het volgende level?](site:play/docs/levels/wanneer-volgende) gebruik je de database om te onthouden hoe ver een speler kwam.
 :::

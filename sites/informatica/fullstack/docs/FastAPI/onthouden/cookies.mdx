@@ -10,7 +10,7 @@ Wil je toch iets onthouden tussen twee verzoeken, dan moet je die informatie erg
 
 ## Een cookie meegeven
 
-Tot nu toe gaf je endpoint alleen inhoud terug. Een antwoord kan ook opdrachten voor de browser bevatten, en `set_cookie` is er daar een van. Vervang je `POST /gastenboek` door deze versie. De controle op de lengte uit [Server of browser?](/docs/FastAPI/in-de-browser/server-of-browser) en die op het wachtwoord uit [Inloggen: een wachtwoord controleren](/docs/FastAPI/accounts/inloggen) blijven bovenaan staan:
+Tot nu toe gaf je endpoint alleen inhoud terug. Een antwoord kan ook opdrachten voor de browser bevatten, en `set_cookie` is er daar een van. Vervang je `POST /gastenboek` door deze versie. De controle op de lengte uit [Server of browser?](site:fullstack/docs/FastAPI/in-de-browser/server-of-browser) en die op het wachtwoord uit [Inloggen: een wachtwoord controleren](site:fullstack/docs/FastAPI/accounts/inloggen) blijven bovenaan staan:
 
 <CodeUitleg>
 
@@ -55,7 +55,7 @@ Pas nu gaat het antwoord terug, mét de cookie erop.
 
 Alleen de naam gaat in de cookie, nooit het wachtwoord. Een cookie staat leesbaar in de browser, en reist bij elk verzoek mee.
 
-Gebruik je het htmx-formulier uit de [htmx-recepten](/docs/FastAPI/zonder-herladen/htmx-overzicht), dan laat je de omleiding weg: maak van je `HTMLResponse` de variabele `antwoord`, zet daar `set_cookie` op en return hem.
+Gebruik je het htmx-formulier uit de [htmx-recepten](site:fullstack/docs/FastAPI/zonder-herladen/htmx-overzicht), dan laat je de omleiding weg: maak van je `HTMLResponse` de variabele `antwoord`, zet daar `set_cookie` op en return hem.
 
 ## De cookie terugkrijgen
 
@@ -98,7 +98,7 @@ Bij een eerste bezoek is `{{ naam }}` leeg en zie je een leeg veld. Daarna staat
 3. Open de ontwikkelaarstools met `F12` en zoek in het tabblad **App** (Application; in Firefox **Opslag**) bij Cookies de regel `http://127.0.0.1:8000`. Daar staat jouw naam. Heeft je naam een spatie of een letter als ë, dan zet de server er aanhalingstekens omheen of maakt hij van de ë een code als `\353`; in het formulier staat hij weer zoals je hem typte
 
 :::danger[Gaat er iets mis?]
-Blijft het veld leeg terwijl je wel een bericht hebt verstuurd? Controleer of `set_cookie` op het antwoord staat dat je ook echt returnt. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
+Blijft het veld leeg terwijl je wel een bericht hebt verstuurd? Controleer of `set_cookie` op het antwoord staat dat je ook echt returnt. Meer oplossingen staan op [Er gaat iets mis](site:fullstack/docs/troubleshooting).
 :::
 
 ## Opdrachten
@@ -136,7 +136,7 @@ Zoek de cookie op in het tabblad **App** en dubbelklik op de waarde om hem in ee
 
 In het formulier staat nu de naam die jij zelf in de cookie hebt getypt. Je server neemt hem klakkeloos over.
 
-Hier kan dat weinig kwaad: met de naam van een ander kom je zonder diens wachtwoord niet in het gastenboek. Maar stel dat je het wachtwoord wilt overslaan, en de cookie zou gelden als bewijs dat je bent ingelogd. Dan was iedereen met één dubbelklik iemand anders. Een cookie staat op de computer van de bezoeker, en die kan er alles van maken. Voor een naam die je alleen als gemak invult is dat prima; voor iets waar rechten aan hangen, zoals wie is ingelogd of wie mag verwijderen, niet. Daar gaat de [volgende les](/docs/FastAPI/onthouden/sessies) over.
+Hier kan dat weinig kwaad: met de naam van een ander kom je zonder diens wachtwoord niet in het gastenboek. Maar stel dat je het wachtwoord wilt overslaan, en de cookie zou gelden als bewijs dat je bent ingelogd. Dan was iedereen met één dubbelklik iemand anders. Een cookie staat op de computer van de bezoeker, en die kan er alles van maken. Voor een naam die je alleen als gemak invult is dat prima; voor iets waar rechten aan hangen, zoals wie is ingelogd of wie mag verwijderen, niet. Daar gaat de [volgende les](site:fullstack/docs/FastAPI/onthouden/sessies) over.
 
 </details>
 
@@ -169,7 +169,7 @@ In `templates/gastenboek.html`:
 
 Na het klikken is het naamveld weer leeg: de browser heeft de cookie weggegooid en stuurt hem dus niet meer mee.
 
-Dit mag een GET zijn, want op de server verandert er niets: alleen een cookie voor het gemak verdwijnt uit de browser. Bij een sessie is uitloggen wel een POST, want dan verandert er iets op de server. Dat bouw je later, in [Uitloggen](/docs/veiligheid/cookies/uitloggen) in de route Veiligheid.
+Dit mag een GET zijn, want op de server verandert er niets: alleen een cookie voor het gemak verdwijnt uit de browser. Bij een sessie is uitloggen wel een POST, want dan verandert er iets op de server. Dat bouw je later, in [Uitloggen](site:fullstack/docs/veiligheid/cookies/uitloggen) in de route Veiligheid.
 
 </details>
 
@@ -180,7 +180,7 @@ Laat boven het formulier "Welkom terug, [naam]" staan als de bezoeker al eens ee
 <details>
 <summary>Tip</summary>
 
-De template weet al of `naam` gevuld is. Met `{% if naam %}` kun je daarop reageren, net zoals je in [Nog niets? if en else in je template](/docs/FastAPI/berichten-tonen/leeg) een lege lijst opving.
+De template weet al of `naam` gevuld is. Met `{% if naam %}` kun je daarop reageren, net zoals je in [Nog niets? if en else in je template](site:fullstack/docs/FastAPI/berichten-tonen/leeg) een lege lijst opving.
 
 </details>
 

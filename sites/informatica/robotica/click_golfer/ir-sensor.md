@@ -12,7 +12,7 @@ Of er een bal ligt, ziet je Click Golfer met de **IR-sensor**. Die stuurt onzich
 
 ## Aansluiten
 
-Zet je robot uit met de knop **ON/OFF**. Sluit de sensor dan aan op de rij van **A0** op het [shield](microcontroller):
+Zet je robot uit met de knop **ON/OFF**. Sluit de sensor dan aan op de rij van **A0** op het [shield](site:robotica/click_golfer/microcontroller):
 
 | Pin van de sensor | Komt op |
 |---|---|
@@ -34,13 +34,13 @@ Zit alles vast? Zet je robot dan weer aan met **ON/OFF**.
 
 Sleep eerst het blok **herhaal voor altijd** uit **Denk stappen** in het Leaphy-blok. Wat erin staat, doet je robot steeds opnieuw. Zonder dat blok leest hij de sensor één keer en daarna nooit meer.
 
-Het getal van de sensor lees je met het blok **Lees anapin A0** uit de groep **Sensoren**. Om het getal te zien sleep je **Toon op scherm** uit **Actuatoren** in herhaal voor altijd, en daarna Lees anapin op de plek van het tekstvakje. Neem weer het blok Toon op scherm met één vakje, zoals bij [je eerste programma](easybloqs).
+Het getal van de sensor lees je met het blok **Lees anapin A0** uit de groep **Sensoren**. Om het getal te zien sleep je **Toon op scherm** uit **Actuatoren** in herhaal voor altijd, en daarna Lees anapin op de plek van het tekstvakje. Neem weer het blok Toon op scherm met één vakje, zoals bij [je eerste programma](site:robotica/click_golfer/easybloqs).
 
 Onder Toon op scherm komt **duurt 500 ms**, ook uit Denk stappen. Daarmee wacht de robot een halve seconde, zodat je het getal kunt lezen. In Easybloqs heet het blok **Duurt** en staat er eerst 1000 in; klik op het getal en typ 500. Achter het getal staat een keuzelijstje met ms, μs en s. Laat dat op **ms** staan.
 
 <Blokken programma={uitlezen} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: Toon op scherm Lees anapin A0, en daarna duurt 500 ms." />
 
-Klik op **Upload naar robot** en open het scherm met de knop **Toon output op scherm**, zoals bij [je eerste programma](easybloqs). Er verschijnt elke halve seconde een nieuw getal. Leg een bal voor de sensor en haal hem weer weg. Wordt het getal lager met een bal ervoor? Schrijf twee getallen op: een zonder bal en een met bal.
+Klik op **Upload naar robot** en open het scherm met de knop **Toon output op scherm**, zoals bij [je eerste programma](site:robotica/click_golfer/easybloqs). Er verschijnt elke halve seconde een nieuw getal. Leg een bal voor de sensor en haal hem weer weg. Wordt het getal lager met een bal ervoor? Schrijf twee getallen op: een zonder bal en een met bal.
 
 <Voorspel soort="Controlevraag" vraag="Waarom staat Lees anapin A0 in een herhaal voor altijd?">
   <Keuze goed uitleg="Herhaal voor altijd laat je robot steeds opnieuw lezen. Zo merkt hij ook een bal die je later neerlegt.">Zodat de robot steeds opnieuw kijkt of er een bal ligt</Keuze>
@@ -133,4 +133,4 @@ Sluit **A0** van de sensor aan op het signaal van **A0** op het shield. Het geta
   </Uitleg>
 </Voorspel>
 
-Ziet je robot de bal? Dan leer je nu [de servo](servo) bewegen.
+Ziet je robot de bal? Dan leer je nu [de servo](site:robotica/click_golfer/servo) bewegen.

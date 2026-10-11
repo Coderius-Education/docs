@@ -5,7 +5,7 @@ description: Bewaar bij het registreren een Argon2-hash in plaats van het wachtw
 
 # Wachtwoorden: registreren met Argon2
 
-Argon2 uit [les 4](./traag) doet alles wat je in de lessen hiervoor nodig had:
+Argon2 uit [les 4](site:fullstack/docs/veiligheid/wachtwoorden/traag) doet alles wat je in de lessen hiervoor nodig had:
 zijn hash kun je niet terugrekenen, elk wachtwoord krijgt een eigen zout, en
 hij is expres traag. In je server verandert alleen `/registreer`.
 
@@ -43,7 +43,7 @@ Eén `PasswordHasher` voor de hele server, met instellingen die veilig zijn voor
 
 Zet de import en `ph = PasswordHasher()` bovenaan je `main.py`, en vervang je
 `/registreer` door deze. `/inloggen` laat je nog even staan: die zet je in
-[les 6](./inloggen) om.
+[les 6](site:fullstack/docs/veiligheid/wachtwoorden/inloggen) om.
 
 :::caution[Inloggen werkt tot les 6 niet]
 `/inloggen` vergelijkt nog met een `sha256`-hash, en in de database staan nu
@@ -53,7 +53,7 @@ met het goede wachtwoord.
 
 Gooi `gebruikers.db` weg: daar staan nog wachtwoorden of `sha256`-hashes in uit
 de lessen hiervoor. Start je server en draai `registreer.py` en
-`lees_database.py` uit [les 1](./gewone-tekst) opnieuw:
+`lees_database.py` uit [les 1](site:fullstack/docs/veiligheid/wachtwoorden/gewone-tekst) opnieuw:
 
 ```
 sara: $argon2id$v=19$m=65536,t=3,p=4$X9osXpPM7r/H8fRMyPCE+Q$etV1GLXtmN/ukJB8evD8IraZPm5jt9WONzagikgkl+Y
@@ -76,7 +76,7 @@ Een Argon2-hash bestaat uit stukken, gescheiden door een `$`:
 | `X9osXpPM7r/H8fRMyPCE+Q` | het zout |
 | `etV1GLXt…` | de hash zelf |
 
-Het zout staat er dus in, zoals [les 3](./zout) al zei: het hoeft niet
+Het zout staat er dus in, zoals [les 3](site:fullstack/docs/veiligheid/wachtwoorden/zout) al zei: het hoeft niet
 geheim te zijn. En omdat ook de instellingen erin staan, heb je later bij het
 inloggen aan de opgeslagen code genoeg.
 
@@ -120,7 +120,7 @@ Registreer een vierde gebruiker, Tim, met de wachtzin
 
 Maak een kopie van `registreer.py` met in de lijst alleen
 `("tim", "zonnebloem fiets regen zolder")`. Denk bij het voorspellen aan
-[les 2](./hash): was de `sha256` van een lange naam langer dan die van een
+[les 2](site:fullstack/docs/veiligheid/wachtwoorden/hash): was de `sha256` van een lange naam langer dan die van een
 korte?
 
 </details>
@@ -175,4 +175,4 @@ async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
 
 </details>
 
-Door naar [les 6: inloggen met verify](./inloggen).
+Door naar [les 6: inloggen met verify](site:fullstack/docs/veiligheid/wachtwoorden/inloggen).

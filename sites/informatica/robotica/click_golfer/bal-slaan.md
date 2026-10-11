@@ -6,15 +6,15 @@ import balSlaan from './blokken/bal-slaan.json';
 
 # Zie de bal, sla de bal
 
-Je robot kan de bal zien met [de IR-sensor](ir-sensor), en hij kan [de servo](servo) laten draaien. Nu zet je die twee samen: ligt er een bal, dan slaat de servo. De Lego komt later; je kijkt weer naar het asje, net als bij de servo.
+Je robot kan de bal zien met [de IR-sensor](site:robotica/click_golfer/ir-sensor), en hij kan [de servo](site:robotica/click_golfer/servo) laten draaien. Nu zet je die twee samen: ligt er een bal, dan slaat de servo. De Lego komt later; je kijkt weer naar het asje, net als bij de servo.
 
 ## Het programma
 
-Alle blokken ken je al. Nieuw is alleen dat de servo-blokken nu in **als … dan** staan. Begin met het programma uit stap 2 van [de IR-sensor](ir-sensor). Heb je het bewaard, open het dan met **Mijn projecten** en **Open**. Zo niet, haal dan je servoprogramma weg zoals bij [de servo](servo), en bouw stap 2 opnieuw. Daarna haal je Toon op scherm uit als … dan, en zet je de servo-blokken op die plek. Het blok duurt 500 ms onder als … dan mag ook weg, want na een slag wacht de robot al.
+Alle blokken ken je al. Nieuw is alleen dat de servo-blokken nu in **als … dan** staan. Begin met het programma uit stap 2 van [de IR-sensor](site:robotica/click_golfer/ir-sensor). Heb je het bewaard, open het dan met **Mijn projecten** en **Open**. Zo niet, haal dan je servoprogramma weg zoals bij [de servo](site:robotica/click_golfer/servo), en bouw stap 2 opnieuw. Daarna haal je Toon op scherm uit als … dan, en zet je de servo-blokken op die plek. Het blok duurt 500 ms onder als … dan mag ook weg, want na een slag wacht de robot al.
 
 <Blokken programma={balSlaan} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan Servo 9 op 0, duurt 500 ms, Servo 9 op 90, duurt 2000 ms." />
 
-Tussen twee slagen staat de servo op 90°, recht in het midden. Ligt er een bal, dan draait hij eerst naar 0°: dat is uithalen. Daarna slaat hij terug naar 90°. Gebruikte je bij [de servo](servo) 10°, omdat hij op 0° zoemde? Zet dan hier ook 10 in plaats van 0.
+Tussen twee slagen staat de servo op 90°, recht in het midden. Ligt er een bal, dan draait hij eerst naar 0°: dat is uithalen. Daarna slaat hij terug naar 90°. Gebruikte je bij [de servo](site:robotica/click_golfer/servo) 10°, omdat hij op 0° zoemde? Zet dan hier ook 10 in plaats van 0.
 
 <Voorspel vraag="Wat doet je robot als er géén bal ligt?">
   <Keuze uitleg="De servo-blokken staan nu in als … dan. Die doet de robot alleen als het getal kleiner is dan 300, en dat is het alleen met een bal.">Het asje slaat steeds heen en weer, net als bij de servo</Keuze>
@@ -64,4 +64,4 @@ Hij slaat niet. Het Leaphy-blok loopt maar één keer, direct na het uploaden. T
   </Uitleg>
 </Voorspel>
 
-Werkt het op tafel? Dan [oefen je met twee sensoren en twee servo's](oefenen).
+Werkt het op tafel? Dan [oefen je met twee sensoren en twee servo's](site:robotica/click_golfer/oefenen).

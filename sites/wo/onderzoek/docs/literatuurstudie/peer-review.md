@@ -12,7 +12,7 @@ title: Peer review
 
 ## Waarom dit de eerste check is
 
-Peer review is geen garantie dat een artikel klopt — beoordelaars missen fouten, en soms komt fraude er doorheen (denk aan [de zaak-Stapel](../spelregels/aanvaardbaar.md)). Maar het is wel de minimale drempel: iemand met verstand van zaken heeft ernaar gekeken. Een bron die die drempel niet heeft genomen, moet jij zelf veel strenger beoordelen.
+Peer review is geen garantie dat een artikel klopt — beoordelaars missen fouten, en soms komt fraude er doorheen (denk aan [de zaak-Stapel](site:onderzoek/spelregels/aanvaardbaar)). Maar het is wel de minimale drempel: iemand met verstand van zaken heeft ernaar gekeken. Een bron die die drempel niet heeft genomen, moet jij zelf veel strenger beoordelen.
 
 ## Waar een bron vandaan kan komen
 
@@ -27,7 +27,7 @@ Peer review is geen garantie dat een artikel klopt — beoordelaars missen foute
 
 ## Nep-tijdschriften herkennen
 
-Sommige "tijdschriften" plaatsen alles zolang de auteur betaalt. Waarschuwingssignalen: het tijdschrift is onbekend, de website belooft publicatie binnen dagen, de naam lijkt op die van een echt tijdschrift, en de artikelen worden door bijna niemand geciteerd. Twijfel je, zoek dan het tijdschrift zelf op in [Google Scholar](./google-scholar.md): staan er artikelen in die anderen serieus nemen?
+Sommige "tijdschriften" plaatsen alles zolang de auteur betaalt. Waarschuwingssignalen: het tijdschrift is onbekend, de website belooft publicatie binnen dagen, de naam lijkt op die van een echt tijdschrift, en de artikelen worden door bijna niemand geciteerd. Twijfel je, zoek dan het tijdschrift zelf op in [Google Scholar](site:onderzoek/literatuurstudie/google-scholar): staan er artikelen in die anderen serieus nemen?
 
 <WelNiet
   wel="Je vermeldt bij een preprint dat het nog niet door vakgenoten is beoordeeld, en zoekt of er inmiddels een gepubliceerde versie is."
@@ -48,6 +48,6 @@ Twee informatici schreven in 2005 uit ergernis over spam een "artikel" van tien 
 
 ## Hangt samen met
 
-- [Citaties](./citaties.md) — de tweede check: wat doen andere onderzoekers ermee?
-- [Aanvaardbaar](../spelregels/aanvaardbaar.md) — wat er gebeurt als de controle faalt
-- [Literatuuronderzoek](../opzet/soorten/literatuuronderzoek.md) — "je conclusie is zo goed als je bronnen"
+- [Citaties](site:onderzoek/literatuurstudie/citaties) — de tweede check: wat doen andere onderzoekers ermee?
+- [Aanvaardbaar](site:onderzoek/spelregels/aanvaardbaar) — wat er gebeurt als de controle faalt
+- [Literatuuronderzoek](site:onderzoek/opzet/soorten/literatuuronderzoek) — "je conclusie is zo goed als je bronnen"

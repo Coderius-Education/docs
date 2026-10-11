@@ -22,6 +22,6 @@ Branches zijn vooral handig als je samenwerkt met anderen, maar ook solo zijn ze
 
 ## Aan de slag
 
-Begin met **[Stap 1: een branch aanmaken](./stap-1-aanmaken)**.
+Begin met **[Stap 1: een branch aanmaken](site:editor/git/branches/stap-1-aanmaken)**.
 
 Werk in dezelfde `git-oefenen`-map die je in de vorige tutorials hebt gemaakt.

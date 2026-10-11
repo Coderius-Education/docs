@@ -5,7 +5,7 @@ description: Een hash maakt van een wachtwoord een code die je niet kunt terugre
 
 # Wachtwoorden: wat een hash is
 
-In [les 1](./gewone-tekst) stond elk wachtwoord leesbaar in de database. Dat
+In [les 1](site:fullstack/docs/veiligheid/wachtwoorden/gewone-tekst) stond elk wachtwoord leesbaar in de database. Dat
 los je op door niet het wachtwoord zelf te bewaren, maar een **hash** ervan.
 Een hash is een berekening die van tekst een lange code maakt. Python
 heeft er een ingebouwd, `sha256`:
@@ -71,7 +71,7 @@ noor: 2a5c5f2623024ce3de6fe7dc8f5e13ca55b7aadc13174254b40af574e37018c1
 
 De wachtwoorden zijn niet meer te lezen. Maar kijk naar Sara en Noor: dezelfde
 code. Hetzelfde erin, hetzelfde eruit, en dus zie je in de database wie
-hetzelfde wachtwoord heeft. Daar gaat [les 3](./zout) over.
+hetzelfde wachtwoord heeft. Daar gaat [les 3](site:fullstack/docs/veiligheid/wachtwoorden/zout) over.
 
 :::caution[Inloggen werkt nu niet meer]
 `/inloggen` uit les 1 vergelijkt het ingetypte wachtwoord nog met wat er in de
@@ -216,4 +216,4 @@ Les 3 en 4 veranderen niets aan je server; in les 5 gaat `/registreer` weer om.
 
 </details>
 
-Door naar [les 3: zout](./zout).
+Door naar [les 3: zout](site:fullstack/docs/veiligheid/wachtwoorden/zout).

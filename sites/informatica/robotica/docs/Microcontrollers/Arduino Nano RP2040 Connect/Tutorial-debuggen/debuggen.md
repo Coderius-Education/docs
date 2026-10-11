@@ -68,7 +68,7 @@ Beweeg je hand boven de sensor of houd er een zwart/wit vel papier voor. Verande
 <details>
 <summary>Mijn lijnvolger volgt de lijn niet</summary>
 
-- **Kalibreer de drempel:** print de waardes boven de lijn én ernaast. Kies een drempel daar precies tussenin (zie [11.2 Eén analoge IR-sensor](../Tutorial-analoge%20IR-sensor/analog_ir.md)).
+- **Kalibreer de drempel:** print de waardes boven de lijn én ernaast. Kies een drempel daar precies tussenin (zie [11.2 Eén analoge IR-sensor](site:robotica/docs/Microcontrollers/Arduino%20Nano%20RP2040%20Connect/Tutorial-analoge%20IR-sensor/analog_ir)).
 - **Sensorpositie:** zitten de sensoren laag genoeg en op de goede breedte?
 - **Logica:** loop in je hoofd of op papier door wat de motoren moeten doen bij elke combinatie van zwart/wit.
 
@@ -78,7 +78,7 @@ Beweeg je hand boven de sensor of houd er een zwart/wit vel papier voor. Verande
 
 :::danger[D2, D3, D4 en D11 zijn bezet door het motor shield]
 
-Sluit hier **geen** andere sensoren of actuatoren op aan (geen buzzer, LED of sensor). Zie [13.3 Let op: bezet pinnen](../Tutorial-Dcmotor/2_b_let_op.md).
+Sluit hier **geen** andere sensoren of actuatoren op aan (geen buzzer, LED of sensor). Zie [13.3 Let op: bezet pinnen](site:robotica/docs/Microcontrollers/Arduino%20Nano%20RP2040%20Connect/Tutorial-Dcmotor/b_let_op).
 
 :::
 

@@ -5,7 +5,7 @@ slug: /tilemap_collision
 
 # Collision op je tegels
 
-In de [vorige les](./tilemap_opzetten.md) heb je tegels getekend. Voor Godot zijn die nu nog gewoon plaatjes — een karakter zou er straks dwars doorheen vallen. In deze les vertel je Godot welke tegels **massief** zijn, zodat ze later een echte vloer vormen voor het karakter dat je in [Een speelbaar karakter](../04-personage-en-beweging/sprite.md) toevoegt.
+In de [vorige les](site:godot/docs/tilemap_opzetten) heb je tegels getekend. Voor Godot zijn die nu nog gewoon plaatjes — een karakter zou er straks dwars doorheen vallen. In deze les vertel je Godot welke tegels **massief** zijn, zodat ze later een echte vloer vormen voor het karakter dat je in [Een speelbaar karakter](site:godot/docs/sprite) toevoegt.
 
 <GodotVersie />
 

@@ -21,7 +21,7 @@ Bij **puur beschrijvend** onderzoek breng je een situatie in kaart zoals die is,
 Puur beschrijvend onderzoek lijkt simpel, maar is vaak de **basis** voor al het andere: je kunt pas vergelijken, beoordelen of verklaren als je eerst weet hoe het zit.
 
 :::tip[Past vaak bij]
-Een [enquête](../methoden/enquete.md), [observatie](../methoden/observatie.md) of meting in het veld — je wilt tellen en in kaart brengen.
+Een [enquête](site:onderzoek/opzet/methoden/enquete), [observatie](site:onderzoek/opzet/methoden/observatie) of meting in het veld — je wilt tellen en in kaart brengen.
 :::
 
 <WelNiet
@@ -31,6 +31,6 @@ Een [enquête](../methoden/enquete.md), [observatie](../methoden/observatie.md) 
 
 ## Hangt samen met
 
-- [Functies van onderzoek](./functies-overzicht.mdx) — alle zes functies naast elkaar
-- [Beschrijvend-vergelijkend](./beschrijvend-vergelijkend.md) — de volgende stap: twee beschrijvingen naast elkaar
-- [De keuzedriehoek](../keuzedriehoek.mdx) — functie combineren met soort en methode
+- [Functies van onderzoek](site:onderzoek/opzet/functies/functies-overzicht) — alle zes functies naast elkaar
+- [Beschrijvend-vergelijkend](site:onderzoek/opzet/functies/beschrijvend-vergelijkend) — de volgende stap: twee beschrijvingen naast elkaar
+- [De keuzedriehoek](site:onderzoek/opzet/keuzedriehoek) — functie combineren met soort en methode

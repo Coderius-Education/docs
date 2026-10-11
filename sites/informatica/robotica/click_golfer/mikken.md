@@ -22,9 +22,9 @@ Het blok stel hoek in op heeft eerst een leeg gat, achter het woord op. Daar sle
 
 ## Het programma
 
-De sensor zit nog op **A0** en de servo op **D9**, net als bij [Zie de bal, sla de bal](bal-slaan). Je bouwt verder op dat programma: de nieuwe blokken komen tussen **duurt 500 ms** en **Servo 9 op 90**. Ligt er een bal, dan zet de robot de arm op 0°. Daarna gaat de arm langzaam naar 50° en weer terug, en dat is het mikken. Pas dan slaat hij, terug naar 90°, waar de arm op de volgende bal wacht.
+De sensor zit nog op **A0** en de servo op **D9**, net als bij [Zie de bal, sla de bal](site:robotica/click_golfer/bal-slaan). Je bouwt verder op dat programma: de nieuwe blokken komen tussen **duurt 500 ms** en **Servo 9 op 90**. Ligt er een bal, dan zet de robot de arm op 0°. Daarna gaat de arm langzaam naar 50° en weer terug, en dat is het mikken. Pas dan slaat hij, terug naar 90°, waar de arm op de volgende bal wacht.
 
-Zoemde je servo bij [de servo](servo) op 0°, en gebruikte je daar 10°? Zet dan hier ook 10 in plaats van 0, in Servo 9 op 0 en in stel hoek in op 0.
+Zoemde je servo bij [de servo](site:robotica/click_golfer/servo) op 0°, en gebruikte je daar 10°? Zet dan hier ook 10 in plaats van 0, in Servo 9 op 0 en in stel hoek in op 0.
 
 <Blokken programma={mikken} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan: Servo 9 op 0, duurt 500 ms, stel hoek in op 0. Herhaal 50 keer: Servo 9 op hoek, duurt 10 ms, wijzig hoek met 1. Herhaal 50 keer: Servo 9 op hoek, duurt 10 ms, wijzig hoek met -1. Daarna Servo 9 op 90 en duurt 2000 ms." />
 
@@ -95,4 +95,4 @@ Een getal is altijd hetzelfde. `hoek` verandert elke keer dat het herhaal-blok r
 
 </details>
 
-Mikt je Golfer? Je programma is nu flink lang. Daarom geef je de blokken voor het mikken en het slaan nu [een naam](subprogrammas).
+Mikt je Golfer? Je programma is nu flink lang. Daarom geef je de blokken voor het mikken en het slaan nu [een naam](site:robotica/click_golfer/subprogrammas).

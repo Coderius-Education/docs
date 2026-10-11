@@ -35,10 +35,10 @@ De ST-Link kan gedeeld worden tussen groepjes: hij is alleen nodig op het moment
 
 Beide draaien op Windows, macOS en Linux. Op schoollaptops met beperkte rechten kan installatie lastig zijn; overweeg dan het simulator-spoor of een vooraf ingerichte image.
 
-Werken je leerlingen vanaf hoofdstuk 7 in VS Code, dan is dat ook het moment om git te introduceren: een PlatformIO-project is een gewone map. De leerlijn daarvoor staat op de <SiteLink site="editor" to="/git/">editor-site</SiteLink>; het eigen project verwijst ernaar.
+Werken je leerlingen vanaf hoofdstuk 7 in VS Code, dan is dat ook het moment om git te introduceren: een PlatformIO-project is een gewone map. De leerlijn daarvoor staat op de [editor-site](site:editor/git); het eigen project verwijst ernaar.
 
 ## Veelvoorkomende struikelblokken
 
-- **Goedkope klonen** kunnen een CH340-driver nodig hebben (zie [Poort niet gevonden](/docs/er-gaat-iets-mis/poort-niet-gevonden)).
+- **Goedkope klonen** kunnen een CH340-driver nodig hebben (zie [Poort niet gevonden](site:embedded/docs/er-gaat-iets-mis/poort-niet-gevonden)).
 - **3,3 V versus 5 V**: laat leerlingen bij de STM32 nooit 5V-onderdelen rechtstreeks aansluiten.
 - **De omgekeerde Blue Pill-LED** (`LOW` = aan) verwart leerlingen voorspelbaar; benoem het vooraf.

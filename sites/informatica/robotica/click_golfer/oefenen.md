@@ -27,7 +27,7 @@ De servo blijft er één, op **D9**. Er komt alleen een sensor bij.
 
 ### Aansluiten
 
-Zet je robot uit met de knop **ON/OFF**. De eerste sensor blijft op **A0** en de servo op **D9**, zoals bij [de IR-sensor](ir-sensor) en [de servo](servo). De tweede sensor komt op de rij van A1 van het [shield](microcontroller):
+Zet je robot uit met de knop **ON/OFF**. De eerste sensor blijft op **A0** en de servo op **D9**, zoals bij [de IR-sensor](site:robotica/click_golfer/ir-sensor) en [de servo](site:robotica/click_golfer/servo). De tweede sensor komt op de rij van A1 van het [shield](site:robotica/click_golfer/microcontroller):
 
 | Pin van de tweede sensor | Komt op |
 |---|---|
@@ -43,7 +43,7 @@ In het blok **Lees anapin** kies je zelf welke sensor je robot leest. Klik op A0
 
 ### Oefening 1: een andere sensor
 
-Pak je programma van [Zie de bal, sla de bal](bal-slaan). Je verandert maar één ding: klik in **Lees anapin** op A0 en kies **A1**.
+Pak je programma van [Zie de bal, sla de bal](site:robotica/click_golfer/bal-slaan). Je verandert maar één ding: klik in **Lees anapin** op A0 en kies **A1**.
 
 <Blokken programma={andereSensor} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A1 kleiner is dan 300, dan Servo 9 op 0, duurt 500 ms, Servo 9 op 90, duurt 2000 ms." />
 
@@ -90,7 +90,7 @@ Laat het scherm `bal bij A0` tonen als de sensor op A0 de bal ziet, en `bal bij 
 <details>
 <summary>Tip</summary>
 
-Je hebt twee keer **als … dan** nodig, onder elkaar in **herhaal voor altijd**. Het werkt net als bij [stap 2 van de IR-sensor](ir-sensor#stap-2-reageren-op-de-bal). In het ene blok staat **Lees anapin A0**, in het andere **Lees anapin A1**. Voor deze zinnen neem je weer het blok **Toon op scherm** met één vakje.
+Je hebt twee keer **als … dan** nodig, onder elkaar in **herhaal voor altijd**. Het werkt net als bij [stap 2 van de IR-sensor](site:robotica/click_golfer/ir-sensor#stap-2-reageren-op-de-bal). In het ene blok staat **Lees anapin A0**, in het andere **Lees anapin A1**. Voor deze zinnen neem je weer het blok **Toon op scherm** met één vakje.
 
 </details>
 
@@ -189,7 +189,7 @@ Sleep je een nieuw blok **Servo** in je programma, dan staat het eerst op **Serv
 
 ### Oefening 5: een andere servo
 
-Pak het programma Heen en weer van [de servo](servo). Je verandert alleen het pinnummer: klik in allebei de blokken **Servo** op de 9 en kies **10**.
+Pak het programma Heen en weer van [de servo](site:robotica/click_golfer/servo). Je verandert alleen het pinnummer: klik in allebei de blokken **Servo** op de 9 en kies **10**.
 
 <Blokken programma={andereServo} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: Servo 10 op 0, duurt 1000 ms, Servo 10 op 90, duurt 1000 ms." />
 
@@ -251,12 +251,12 @@ Nu gebruik je de tweede sensor en de tweede servo samen, dus je hebt ze allebei 
 
 ### Oefening 7: elke sensor zijn eigen servo
 
-Ziet de sensor op **A0** een bal, dan slaat de servo op **D9**. Ziet de sensor op **A1** een bal, dan slaat de servo op **D10**. Slaan gaat zoals bij [Zie de bal, sla de bal](bal-slaan): uithalen naar 0°, 500 ms wachten, terugslaan naar 90°, en 2000 ms wachten. Gebruikte je bij de servo 10° in plaats van 0°? Doe dat hier ook.
+Ziet de sensor op **A0** een bal, dan slaat de servo op **D9**. Ziet de sensor op **A1** een bal, dan slaat de servo op **D10**. Slaan gaat zoals bij [Zie de bal, sla de bal](site:robotica/click_golfer/bal-slaan): uithalen naar 0°, 500 ms wachten, terugslaan naar 90°, en 2000 ms wachten. Gebruikte je bij de servo 10° in plaats van 0°? Doe dat hier ook.
 
 <details>
 <summary>Tip</summary>
 
-Begin met het programma van [Zie de bal, sla de bal](bal-slaan). Daar staat één **als … dan** in, en je hebt er twee nodig. Klik met de rechtermuisknop op het woord **als** en kies **Dupliceren**. Je krijgt een kopie met alle blokken erin, en die zet je onder de eerste. Kies daarin bij **Lees anapin** de pin **A1**, typ je grens voor A1, en klik in de blokken **Servo** op de 9 en kies **10**.
+Begin met het programma van [Zie de bal, sla de bal](site:robotica/click_golfer/bal-slaan). Daar staat één **als … dan** in, en je hebt er twee nodig. Klik met de rechtermuisknop op het woord **als** en kies **Dupliceren**. Je krijgt een kopie met alle blokken erin, en die zet je onder de eerste. Kies daarin bij **Lees anapin** de pin **A1**, typ je grens voor A1, en klik in de blokken **Servo** op de 9 en kies **10**.
 
 </details>
 
@@ -370,4 +370,4 @@ Het asje rechts, op D10. De linker sensor ziet de bal, en de rechter servo slaat
 
 Klaar met oefenen? Zet je robot uit met **ON/OFF** en haal de tweede sensor en de tweede servo weer los. Je Golfer gebruikt alleen de sensor op **A0** en de servo op **D9**.
 
-Ken je de sensor en de servo nu goed? Dan [bouw je de Golfer van Lego](bouwen).
+Ken je de sensor en de servo nu goed? Dan [bouw je de Golfer van Lego](site:robotica/click_golfer/bouwen).

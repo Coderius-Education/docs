@@ -4,13 +4,13 @@ Je kunt nu allebei: een cookie met de naam erin, en een sessie waarbij alleen ee
 
 ## Wat ze allebei oplossen
 
-Elk verzoek staat op zichzelf, zag je in [Onthouden met een cookie](/docs/FastAPI/onthouden/cookies#de-server-herkent-je-niet). Een cookie is het enige wat dat gat dicht. De server geeft de browser een stukje tekst mee, en de browser stuurt dat vanaf dan bij élk verzoek terug. Dat geldt voor allebei de aanpakken, want een sessie is ook een cookie. Het verschil zit niet in de techniek, maar in wát er in die cookie staat.
+Elk verzoek staat op zichzelf, zag je in [Onthouden met een cookie](site:fullstack/docs/FastAPI/onthouden/cookies#de-server-herkent-je-niet). Een cookie is het enige wat dat gat dicht. De server geeft de browser een stukje tekst mee, en de browser stuurt dat vanaf dan bij élk verzoek terug. Dat geldt voor allebei de aanpakken, want een sessie is ook een cookie. Het verschil zit niet in de techniek, maar in wát er in die cookie staat.
 
 ## Het verschil in één zin
 
 Bij een cookie staat het antwoord zelf bij de bezoeker. Bij een sessie staat er alleen een nummertje, en het antwoord ligt bij jou.
 
-Kijk nog eens naar het diagram in [Zo werkt het: een sessie](/docs/FastAPI/onthouden/verzoek-sessie). Zet je de naam in de cookie, dan slaat de server stap drie en vier over: hij leest de naam direct uit wat de browser stuurde. Dat is sneller, maar dan gelooft hij op zijn woord wat er binnenkomt.
+Kijk nog eens naar het diagram in [Zo werkt het: een sessie](site:fullstack/docs/FastAPI/onthouden/verzoek-sessie). Zet je de naam in de cookie, dan slaat de server stap drie en vier over: hij leest de naam direct uit wat de browser stuurde. Dat is sneller, maar dan gelooft hij op zijn woord wat er binnenkomt.
 
 ## Naast elkaar
 
@@ -32,7 +32,7 @@ Gebeurt er niets ergs, dan mag het in de cookie. De bezoeker verandert de eigen 
 
 Kom je daarmee ergens waar je niet hoort, dan moet het een sessie zijn. Denk aan ingelogd zijn als iemand anders, berichten van een ander verwijderen, betalen zonder te betalen of bij andermans gegevens komen.
 
-Dat is dezelfde vraag als in [Server of browser?](/docs/FastAPI/in-de-browser/server-of-browser), en het antwoord komt uit dezelfde regel: alles wat op de computer van de bezoeker staat, is van de bezoeker.
+Dat is dezelfde vraag als in [Server of browser?](site:fullstack/docs/FastAPI/in-de-browser/server-of-browser), en het antwoord komt uit dezelfde regel: alles wat op de computer van de bezoeker staat, is van de bezoeker.
 
 ## Waarom niet altijd een sessie
 
@@ -72,12 +72,12 @@ Bij site B verandert er niets: je hebt een sessie-id gewijzigd dat nu nergens me
 
 ### Opdracht 2: Run - Kijk wat er over de lijn gaat
 
-Open het tabblad **Netwerk** zoals in [Kijken wat de browser doet](/docs/FastAPI/eerste-server/devtools-netwerk), herlaad je gastenboek en klik het bovenste verzoek aan. Zoek bij Headers, onder Verzoekheaders, de regel `Cookie`. Zet je bij Verzoekheaders Onbewerkt aan, dan zie je hem zoals hij echt over de lijn gaat: als één regel die met `Cookie:` begint.
+Open het tabblad **Netwerk** zoals in [Kijken wat de browser doet](site:fullstack/docs/FastAPI/eerste-server/devtools-netwerk), herlaad je gastenboek en klik het bovenste verzoek aan. Zoek bij Headers, onder Verzoekheaders, de regel `Cookie`. Zet je bij Verzoekheaders Onbewerkt aan, dan zie je hem zoals hij echt over de lijn gaat: als één regel die met `Cookie:` begint.
 
 <details>
 <summary>Antwoord</summary>
 
-Daar staat precies wat de browser meestuurde, bijvoorbeeld `Cookie: sessie_id=9f2c4a7e10b8d3f5a6c1e0b4d7928f3a`. Staat er ook `naam=…` in, dan heb je de cookie uit [Onthouden met een cookie](/docs/FastAPI/onthouden/cookies) nog: de browser stuurt alles mee wat hij van jouw server heeft, ook wat je server niet meer gebruikt.
+Daar staat precies wat de browser meestuurde, bijvoorbeeld `Cookie: sessie_id=9f2c4a7e10b8d3f5a6c1e0b4d7928f3a`. Staat er ook `naam=…` in, dan heb je de cookie uit [Onthouden met een cookie](site:fullstack/docs/FastAPI/onthouden/cookies) nog: de browser stuurt alles mee wat hij van jouw server heeft, ook wat je server niet meer gebruikt.
 
 Dit gebeurt bij elk verzoek, ook bij het ophalen van je CSS-bestand en je afbeeldingen. Daarom is die 4 kB-grens een echte grens: alles wat je in een cookie zet, reist de hele dag heen en weer over het netwerk.
 
@@ -174,7 +174,7 @@ En de knop in `gastenboek.html`, binnen het `{% if naam %}`-blok, onder het form
 </form>
 ```
 
-Waarom een formulier en geen link? Een link is altijd een GET, en een link kan ook op een andere site staan; bij een klik op zo'n link stuurt de browser je cookie mee. Een formulier op een andere site dat naar jouw `POST` stuurt, gaat zonder cookie, en dan weet je server niet om welke sessie het gaat. Helemaal dicht is uitloggen daarmee niet: de `delete_cookie` in het antwoord voert de browser ook dan uit, dus zo'n formulier haalt je cookie wel weg. Je sessie op de server blijft staan, en dat id heeft verder niemand. Bij een endpoint dat met je sessie iets verandert, zoals verwijderen in opdracht 5 van [Onthouden op de server: sessies](/docs/FastAPI/onthouden/sessies), komt zo'n verzoek zonder cookie binnen, dus zonder sessie, en gebeurt er niets. Hoe dat zit, lees je in [`samesite`](/docs/veiligheid/cookies/samesite) in de reeks Veiligheid, die je later doet. Alles wat op de server iets verandert, hoort daarom achter een POST.
+Waarom een formulier en geen link? Een link is altijd een GET, en een link kan ook op een andere site staan; bij een klik op zo'n link stuurt de browser je cookie mee. Een formulier op een andere site dat naar jouw `POST` stuurt, gaat zonder cookie, en dan weet je server niet om welke sessie het gaat. Helemaal dicht is uitloggen daarmee niet: de `delete_cookie` in het antwoord voert de browser ook dan uit, dus zo'n formulier haalt je cookie wel weg. Je sessie op de server blijft staan, en dat id heeft verder niemand. Bij een endpoint dat met je sessie iets verandert, zoals verwijderen in opdracht 5 van [Onthouden op de server: sessies](site:fullstack/docs/FastAPI/onthouden/sessies), komt zo'n verzoek zonder cookie binnen, dus zonder sessie, en gebeurt er niets. Hoe dat zit, lees je in [`samesite`](site:fullstack/docs/veiligheid/cookies/samesite) in de reeks Veiligheid, die je later doet. Alles wat op de server iets verandert, hoort daarom achter een POST.
 
 Allebei is nodig. Haal je alleen de cookie weg, dan blijft de sessie op je server staan; iemand die het oude sessie-id nog heeft, is zo weer binnen, zonder wachtwoord. Gooi je alleen de sessie weg, dan houdt de bezoeker een cookie die nergens meer op past. Je server ziet hem dan als niet ingelogd, en dat klopt, maar zijn browser blijft bij elk verzoek een cookie meesturen waar niemand iets aan heeft.
 

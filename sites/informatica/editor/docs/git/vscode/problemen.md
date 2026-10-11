@@ -11,7 +11,7 @@ De meest voorkomende dingen die je tegenkomt bij de vorige stappen.
 
 **Oorzaak:** er staat geen map open in VS Code. Git werkt altijd op een map, dus zonder map is er niets te initialiseren.
 
-**Oplossing:** **File** → **Open Folder...** en kies je `git-oefenen`-map. Zie [Stap 2](./stap-2-projectmap).
+**Oplossing:** **File** → **Open Folder...** en kies je `git-oefenen`-map. Zie [Stap 2](site:editor/git/vscode/stap-2-projectmap).
 
 ## De Source Control-knop doet niets, of ik zie een melding over git
 
@@ -21,7 +21,7 @@ Git not found. Install it or configure it using the 'git.path' setting.
 
 **Oorzaak:** git staat niet op je computer, of VS Code stond al open toen je het installeerde.
 
-**Oplossing:** installeer git (zie [de voorbereiding](./)), sluit VS Code helemaal af en open het opnieuw. VS Code zoekt alleen bij het opstarten naar git.
+**Oplossing:** installeer git (zie [de voorbereiding](site:editor/git/vscode)), sluit VS Code helemaal af en open het opnieuw. VS Code zoekt alleen bij het opstarten naar git.
 
 ## Linksonder staat `master` in plaats van `main`
 
@@ -33,13 +33,13 @@ Git not found. Install it or configure it using the 'git.path' setting.
 git branch -m main
 ```
 
-Meer uitleg: [Stap 1: vertel git wie je bent](./stap-1-config).
+Meer uitleg: [Stap 1: vertel git wie je bent](site:editor/git/vscode/stap-1-config).
 
 ## Bij het committen: "Make sure you configure your user.name and user.email in git"
 
 **Oorzaak:** git weet niet wie je bent, dus kan hij geen commit ondertekenen.
 
-**Oplossing:** de twee `git config`-regels uit [Stap 1](./stap-1-config). Daarna commit je opnieuw; je hoeft niets over te doen.
+**Oplossing:** de twee `git config`-regels uit [Stap 1](site:editor/git/vscode/stap-1-config). Daarna commit je opnieuw; je hoeft niets over te doen.
 
 ## Ik klik op Commit en er gebeurt niets
 
@@ -57,8 +57,8 @@ Meer uitleg: [Stap 1: vertel git wie je bent](./stap-1-config).
 
 **Oorzaak:** het staat in je `.gitignore`. Dat is precies de bedoeling van dat bestand.
 
-**Oplossing:** hoort het er wél in? Haal die regel dan uit `.gitignore`. Zie [Stap 9](./stap-9-gitignore).
+**Oplossing:** hoort het er wél in? Haal die regel dan uit `.gitignore`. Zie [Stap 9](site:editor/git/vscode/stap-9-gitignore).
 
 ## Volgende tutorial
 
-- **[Code online zetten met push](/git/push/)** — koppel je `git-oefenen`-map aan de repository die je op GitHub hebt gemaakt.
+- **[Code online zetten met push](site:editor/git/push)** — koppel je `git-oefenen`-map aan de repository die je op GitHub hebt gemaakt.

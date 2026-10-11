@@ -36,7 +36,7 @@ CharacterBody2D
 └── Camera2D
 ```
 
-Alle `Camera2D`-instellingen uit deze les staan ook in de [Nodes cheatsheet](/cheatsheet#hoofdpersoon).
+Alle `Camera2D`-instellingen uit deze les staan ook in de [Nodes cheatsheet](site:godot/cheatsheet#hoofdpersoon).
 
 ## Stap 2: Check dat Enabled aan staat
 
@@ -156,4 +156,4 @@ Je level zal per project anders zijn — meet of bereken de exacte grenzen van j
 
 ---
 
-← [Fouten zoeken](./fouten-zoeken.md) · **Volgende:** [Animaties aanmaken](../06-animaties/animaties.md) →
+← [Fouten zoeken](site:godot/docs/fouten-zoeken) · **Volgende:** [Animaties aanmaken](site:godot/docs/animaties) →

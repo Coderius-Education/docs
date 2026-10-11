@@ -88,7 +88,7 @@ lampje.on()
 
 **Oorzaak:** Je code draait niet op het bord maar op je computer. De module `machine` bestaat alleen in MicroPython.
 
-**Oplossing:** Controleer in [MicroPython op je bord](../software_editor/repl.md) dat je interpreter op **MicroPython (RP2040)** staat en dat je bord verbonden is.
+**Oplossing:** Controleer in [MicroPython op je bord](site:robotica/lego_auto/software/micropython) dat je interpreter op **MicroPython (RP2040)** staat en dat je bord verbonden is.
 
 </details>
 
@@ -117,4 +117,4 @@ Dat deze pin een **uitgang** is: het bord stuurt er stroom naartoe. Een sensor i
 
 ---
 
-**Volgende:** [Deel 2 — Knipperen](./deel2_knipperen.md) →
+**Volgende:** [Deel 2 — Knipperen](site:robotica/lego_auto/eerste-programma/knipperen) →

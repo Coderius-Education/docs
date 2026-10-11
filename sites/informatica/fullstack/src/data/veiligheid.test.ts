@@ -81,7 +81,7 @@ describe('de reeks Veiligheid', () => {
       for (const stap of stappenVan(map)) {
         const tekst = lees(map, stap).replace(/\s+/g, ' ');
         for (const m of tekst.matchAll(
-          /laatste reeks[^.]{0,80}?\]\((?:\.\.\/|\/docs\/veiligheid\/)([a-z-]+)\//g,
+          /laatste reeks[^.]{0,80}?\]\(site:fullstack\/docs\/veiligheid\/([a-z-]+)\//g,
         )) {
           if (m[1] !== laatste) fout.push(`${map}/${stap}: laatste reeks -> ${m[1]}`);
         }
@@ -98,7 +98,11 @@ describe('de reeks Veiligheid', () => {
     // bezoeker nog naar Invoer.
     const tekst = readFileSync(join(VEILIGHEID, 'gereedschap.mdx'), 'utf8');
     const eerste = categorieen[0].items[0].slice('veiligheid/'.length);
-    expect(tekst.match(/Door naar de eerste reeks: \[[^\]]+\]\(\.\/([^)]+)\)/)?.[1]).toBe(eerste);
+    expect(
+      tekst.match(
+        /Door naar de eerste reeks: \[[^\]]+\]\(site:fullstack\/docs\/veiligheid\/([^)]+)\)/,
+      )?.[1],
+    ).toBe(eerste);
   });
 
   it('elke reeks wijst aan het eind naar de volgende, de laatste naar de afsluiter', () => {
@@ -106,8 +110,8 @@ describe('de reeks Veiligheid', () => {
       const map = eersteMap(categorie);
       const volgende = categorieen[i + 1];
       const doel = volgende
-        ? `](../${volgende.items[0].slice('veiligheid/'.length)})`
-        : '](../eigen-project)';
+        ? `](site:fullstack/docs/${volgende.items[0]})`
+        : '](site:fullstack/docs/veiligheid/eigen-project)';
       expect(lees(map, 'praktijk'), `${map}/praktijk`).toContain(doel);
     });
   });
@@ -193,7 +197,9 @@ describe('de reeks Veiligheid', () => {
 
       it('elke stap wijst naar de volgende', () => {
         stappen.slice(0, -1).forEach((stap, i) => {
-          expect(lees(map, stap), `${map}/${stap}`).toContain(`](./${stappen[i + 1]})`);
+          expect(lees(map, stap), `${map}/${stap}`).toContain(
+            `](site:fullstack/docs/veiligheid/${map}/${stappen[i + 1]})`,
+          );
         });
       });
 
@@ -303,7 +309,7 @@ describe('de route Veiligheid sluit aan op het eigen project', () => {
       const tekst = lees(map, eerste);
       const note = tekst.match(/:::note\[Waar je werkt\]([\s\S]*?)\n:::/)?.[1] ?? '';
       expect(note, `${map}/${eerste}`).toContain(
-        '(/docs/veiligheid/gereedschap#een-map-per-reeks)',
+        '(site:fullstack/docs/veiligheid/gereedschap#een-map-per-reeks)',
       );
     });
   }
@@ -364,11 +370,10 @@ describe('de route Veiligheid sluit aan op het eigen project', () => {
     expect(punten.length).toBeGreaterThan(10);
     const fout: string[] = [];
     for (const punt of punten) {
-      const doelen = [...punt.matchAll(/\]\(([^)#]+)(?:#[^)]*)?\)/g)].map((m) => {
-        const doel = m[1];
-        if (doel.startsWith('./')) return join(VEILIGHEID, `${doel.slice(2)}.mdx`);
-        return fileURLToPath(new URL(`../..${doel}.mdx`, import.meta.url));
-      });
+      // Een link is site:fullstack/docs/<pad>; het bestand staat op docs/<pad>.mdx.
+      const doelen = [...punt.matchAll(/\]\(site:fullstack(\/docs\/[^)#]+)(?:#[^)]*)?\)/g)].map(
+        (m) => fileURLToPath(new URL(`../..${m[1]}.mdx`, import.meta.url)),
+      );
       expect(doelen.length, punt).toBeGreaterThan(0);
       const lessen = doelen.map((d) => readFileSync(d, 'utf8')).join('\n');
       for (const [, term] of punt.matchAll(/`([^`]+)`/g)) {
@@ -386,7 +391,7 @@ describe('de route Veiligheid sluit aan op het eigen project', () => {
     const volgorde = tekst
       .split(/^## /m)
       .slice(1)
-      .map((sectie) => sectie.match(/\]\(\.\/([a-z-]+)\//)?.[1])
+      .map((sectie) => sectie.match(/\]\(site:fullstack\/docs\/veiligheid\/([a-z-]+)\//)?.[1])
       .filter((map): map is string => map !== undefined)
       .map((map) => reeksen.indexOf(map));
     expect(volgorde.length).toBe(reeksen.length);
@@ -400,7 +405,7 @@ describe('de route Veiligheid sluit aan op het eigen project', () => {
     );
     const sectie = cheatsheet.split(/^## Veiligheid$/m)[1].split(/^## /m)[0];
     const volgorde = [...sectie.matchAll(/<details>[\s\S]*?<\/details>/g)].map((m) => {
-      const reeks = m[0].match(/\(\/docs\/veiligheid\/([a-z]+)\//)?.[1] ?? '';
+      const reeks = m[0].match(/\(site:fullstack\/docs\/veiligheid\/([a-z]+)\//)?.[1] ?? '';
       expect(reeks, m[0].split('\n')[1]).not.toBe('');
       return reeksen.indexOf(reeks);
     });
@@ -425,7 +430,11 @@ describe('verwijzingen en vaste vormen in de route Veiligheid', () => {
     const fout: string[] = [];
     for (const map of reeksen) {
       for (const stap of stappenVan(map)) {
-        for (const m of lees(map, stap).matchAll(/\[les (\d+)[^\]]*\]\(\.\/([a-z-]+)\)/g)) {
+        const lesLink = new RegExp(
+          `\\[les (\\d+)[^\\]]*\\]\\(site:fullstack/docs/veiligheid/${map}/([a-z-]+)\\)`,
+          'g',
+        );
+        for (const m of lees(map, stap).matchAll(lesLink)) {
           const doel = nummer(map, m[2]);
           if (doel !== m[1]) fout.push(`${map}/${stap}: les ${m[1]} -> ${m[2]} (les ${doel})`);
         }
@@ -440,7 +449,10 @@ describe('verwijzingen en vaste vormen in de route Veiligheid', () => {
   it('een verwijzing naar een latere reeks zegt dat die later komt', () => {
     // XSS in de praktijk verwees naar Cookies en Wie mag wat alsof de
     // leerling die al had gedaan. De laatste regel van een praktijkpagina
-    // ("Door naar de volgende reeks") telt niet.
+    // ("Door naar de volgende reeks") telt niet. Sinds alle links de vorm
+    // site:fullstack/docs/… hebben, telt ook een link die vroeger absoluut was;
+    // "tot je de reeks … doet" zegt ook dat die nog komt.
+    const zegtLater = /\blater\b|\btot je de reeks\b/;
     const fout: string[] = [];
     reeksen.forEach((map, i) => {
       for (const stap of stappenVan(map)) {
@@ -448,9 +460,9 @@ describe('verwijzingen en vaste vormen in de route Veiligheid', () => {
           .replace(/^Door naar de volgende reeks:.*$/m, '')
           .split(/(?<=[.?])\s+(?=[A-Z])/);
         for (const zin of zinnen) {
-          for (const m of zin.matchAll(/\]\(\.\.\/([a-z-]+)\//g)) {
+          for (const m of zin.matchAll(/\]\(site:fullstack\/docs\/veiligheid\/([a-z-]+)\//g)) {
             const j = reeksen.indexOf(m[1]);
-            if (j > i && !/\blater\b/.test(zin)) {
+            if (j > i && !zegtLater.test(zin)) {
               fout.push(`${map}/${stap} -> ${m[1]}: ${zin.slice(0, 80)}`);
             }
           }

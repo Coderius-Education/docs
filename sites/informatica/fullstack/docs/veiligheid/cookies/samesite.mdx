@@ -5,7 +5,7 @@ description: Met samesite bepaal je of de browser je cookie meestuurt als een an
 
 # Cookies afschermen: `samesite`
 
-`httponly` uit [les 2](./httponly) houdt scripts op je eigen pagina bij de
+`httponly` uit [les 2](site:fullstack/docs/veiligheid/cookies/httponly) houdt scripts op je eigen pagina bij de
 cookie weg. Er is nog een route naar je server: vanaf een andere site.
 
 De browser stuurt je cookie mee bij verzoeken naar jouw site, ook als dat
@@ -33,7 +33,7 @@ Een klik op een link is altijd een GET-verzoek. Met `lax` gaat je cookie daarbij
 mee, dus een endpoint dat iets verandert, mag nooit een GET zijn. Een POST
 van een andere site gaat zonder cookie: je server ziet dan geen sessie, en een
 endpoint dat een sessie nodig heeft, doet niets. Daarom is uitloggen in
-[les 4](./uitloggen) een POST. Helemaal dicht is uitloggen daarmee niet: de
+[les 4](site:fullstack/docs/veiligheid/cookies/uitloggen) een POST. Helemaal dicht is uitloggen daarmee niet: de
 `delete_cookie` in het antwoord voert de browser ook na zo'n POST uit, dus een
 andere site kan je cookie laten weghalen. Je sessie op de server raakt hij niet
 aan.
@@ -41,14 +41,14 @@ aan.
 ## Wat FastAPI al doet
 
 Kijk nog eens naar de regel `set-cookie` uit
-[opdracht 1 van les 1](./zwakheid): daar stond al `SameSite=lax`. FastAPI zet
+[opdracht 1 van les 1](site:fullstack/docs/veiligheid/cookies/zwakheid): daar stond al `SameSite=lax`. FastAPI zet
 `samesite="lax"` vanzelf, en dat is voor de meeste sites de goede keuze. Een
 bezoeker die via een link van een andere site binnenkomt, is meteen ingelogd,
 maar een formulier of een verzoek op de achtergrond gaat zonder cookie.
 
 Sites die niet alleen op de browser willen vertrouwen, zetten daarnaast een
 eigen code in elk formulier. Hoe dat werkt, lees je in
-[de praktijk](./praktijk); voor je gastenboek is `lax` genoeg.
+[de praktijk](site:fullstack/docs/veiligheid/cookies/praktijk); voor je gastenboek is `lax` genoeg.
 
 Zet `samesite` toch in je code, zodat een lezer ziet dat het een keuze is.
 Vervang in `inloggen` de `set_cookie` door:
@@ -121,4 +121,4 @@ gastenboek weegt het gemak zwaarder.
 
 </details>
 
-Door naar [les 4: uitloggen](./uitloggen).
+Door naar [les 4: uitloggen](site:fullstack/docs/veiligheid/cookies/uitloggen).

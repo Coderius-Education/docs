@@ -58,4 +58,4 @@ Na afloop kan de leerling:
 ### Eindproject
 - Een werkend spel ontwerpen, plannen en bouwen (Pong of eigen idee).
 - De geleerde concepten zelfstandig combineren.
-- Bugs zelf oplossen met behulp van de cheatsheet en [foutmeldingen-pagina](/er_gaat_iets_mis).
+- Bugs zelf oplossen met behulp van de cheatsheet en [foutmeldingen-pagina](site:play/er_gaat_iets_mis).

@@ -45,12 +45,14 @@ staat. De IDE heeft een eigen variant (`sites/informatica/ide/.../Overzetten`).
 
 ## Links tussen cursussen
 
-Elke cursus is een eigen site; Docusaurus controleert alleen links binnen de
-eigen site. Links naar een andere cursus (`<SiteLink>`, `<Voorkennis>`) worden
-tweemaal bewaakt: door de guard-tests in `packages/shared` (snel, een benadering
-van de routing) en door de CI-job `cross-links`, die na de builds elke href in de
-gebouwde HTML tegen de build van de doelsite legt (de waarheid). Lokaal:
-`pnpm cross-links` na `pnpm build`.
+Elke link naar een pagina in lestekst is een site:-link,
+`[tekst](site:<cursus>/<pad>#anker)`, ook binnen de eigen cursus (stijlgids §12);
+`packages/shared/plugins/site-links.js` zet hem bij de build om. De vorm bewaakt
+`packages/shared/links-in-lestekst.test.ts`. Docusaurus controleert alleen links
+binnen de eigen site; de CI-job `cross-links` legt na de builds elke href in de
+gebouwde HTML, ook die van `<Voorkennis>`, tegen de build van de doelsite, met
+ankers (de waarheid). Lokaal: `pnpm cross-links` na `pnpm build`. Oude links
+omzetten: `node scripts/zet-links-om.mjs` (na `pnpm build`).
 
 ## Incrementele CI
 

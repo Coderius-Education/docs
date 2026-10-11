@@ -64,3 +64,17 @@ export function legacyHost(id: string): string | undefined;
 export function normalizeUrl(url: string | null | undefined): string;
 /** Cursus waaronder deze url valt (origin + pad-prefix). */
 export function siteByUrl(url: string | null | undefined): Site | undefined;
+
+/** Een ontlede `site:`-link: `site:<id><route>#<anchor>`. */
+export interface SiteUrl {
+  site: string;
+  /** route binnen de cursus, zonder basispad; begint met '/' */
+  route: string;
+  anchor?: string;
+}
+/** Null voor een andere URL; gooit bij een misvormde `site:`-link. */
+export function parseSiteUrl(url: string): SiteUrl | null;
+/** Cursus, docentensite of de homepage bij een link-id. */
+export function linkDoel(id: string): Site | HomeSite | undefined;
+/** Productie-URL van een pagina; gooit bij een onbekend id. */
+export function routeUrl(id: string, route: string, anchor?: string): string;

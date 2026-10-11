@@ -143,4 +143,4 @@ func _physics_process(delta: float) -> void:
 
 ---
 
-← [Deel 3 — Delta](./delta.md) · **Volgende:** [Deel 5 — Lopen](./krachten.md) →
+← [Deel 3 — Delta](site:godot/docs/movement-delta) · **Volgende:** [Deel 5 — Lopen](site:godot/docs/movement-krachten) →

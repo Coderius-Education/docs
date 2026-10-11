@@ -23,7 +23,7 @@ In een Engelse Windows is dat `The term 'fastapi' is not recognized as the name 
 python -m pip install "fastapi[standard]"
 ```
 
-Meer uitleg: [Installatie](/docs/FastAPI/eerste-server/installatie)
+Meer uitleg: [Installatie](site:fullstack/docs/FastAPI/eerste-server/installatie)
 
 </details>
 
@@ -48,7 +48,7 @@ PS C:\Users\jij\Documenten> fastapi dev main.py
 PS C:\Users\jij\Documenten\fullstack-project> fastapi dev main.py
 ```
 
-Meer uitleg: [Installatie](/docs/FastAPI/eerste-server/installatie)
+Meer uitleg: [Installatie](site:fullstack/docs/FastAPI/eerste-server/installatie)
 
 </details>
 
@@ -65,7 +65,7 @@ In de terminal verschijnt een regel met `python.exe` en `main.py`, en direct daa
 fastapi dev main.py
 ```
 
-Meer uitleg: [Je eerste endpoint](/docs/FastAPI/eerste-server/eerste_endpoint)
+Meer uitleg: [Je eerste endpoint](site:fullstack/docs/FastAPI/eerste-server/eerste_endpoint)
 
 </details>
 
@@ -88,9 +88,9 @@ ModuleNotFoundError: No module named 'fastapi'
 source .venv/bin/activate
 ```
 
-Zegt PowerShell dan dat het script niet kan worden geladen omdat het uitvoeren van scripts is uitgeschakeld (in een Engelse Windows: `running scripts is disabled on this system`), dan blokkeert Windows het handmatig activeren. Ga dan terug naar de terminal van VS Code; wat je daar moet controleren staat bij <SiteLink site="editor" to="/python/problemen">problemen bij het installeren</SiteLink>.
+Zegt PowerShell dan dat het script niet kan worden geladen omdat het uitvoeren van scripts is uitgeschakeld (in een Engelse Windows: `running scripts is disabled on this system`), dan blokkeert Windows het handmatig activeren. Ga dan terug naar de terminal van VS Code; wat je daar moet controleren staat bij [problemen bij het installeren](site:editor/python/problemen).
 
-Meer uitleg: [Installatie](/docs/FastAPI/eerste-server/installatie)
+Meer uitleg: [Installatie](site:fullstack/docs/FastAPI/eerste-server/installatie)
 
 </details>
 
@@ -113,7 +113,7 @@ In een Engelse Windows staat er `only one usage of each socket address`, en op e
 fastapi dev main.py --port 8001
 ```
 
-Meer uitleg: [Kijken wat de browser doet](/docs/FastAPI/eerste-server/devtools-netwerk#opdracht-4-investigate---de-server-staat-uit), waar je de server met Ctrl+C stopt.
+Meer uitleg: [Kijken wat de browser doet](site:fullstack/docs/FastAPI/eerste-server/devtools-netwerk#opdracht-4-investigate---de-server-staat-uit), waar je de server met Ctrl+C stopt.
 
 </details>
 
@@ -128,7 +128,7 @@ Meer uitleg: [Kijken wat de browser doet](/docs/FastAPI/eerste-server/devtools-n
 
 **Oplossing:** niets, er is niets mis. Je eigen pagina's werken wel.
 
-Meer uitleg: [Kijken wat de browser doet](/docs/FastAPI/eerste-server/devtools-netwerk)
+Meer uitleg: [Kijken wat de browser doet](site:fullstack/docs/FastAPI/eerste-server/devtools-netwerk)
 
 </details>
 
@@ -153,7 +153,7 @@ ERR_SSL_PROTOCOL_ERROR
 1. Kijk in de terminal of de server nog draait. Staat de prompt er weer, start hem dan opnieuw met `fastapi dev main.py`
 2. Typ het adres helemaal uit: `http://127.0.0.1:8000`, met `http` en niet `https`
 
-Meer uitleg: [Kijken wat de browser doet](/docs/FastAPI/eerste-server/devtools-netwerk#opdracht-4-investigate---de-server-staat-uit)
+Meer uitleg: [Kijken wat de browser doet](site:fullstack/docs/FastAPI/eerste-server/devtools-netwerk#opdracht-4-investigate---de-server-staat-uit)
 
 </details>
 
@@ -180,7 +180,7 @@ async def root():
     return {"bericht": "Hallo"}
 ```
 
-Meer uitleg: [Je eerste endpoint](/docs/FastAPI/eerste-server/eerste_endpoint)
+Meer uitleg: [Je eerste endpoint](site:fullstack/docs/FastAPI/eerste-server/eerste_endpoint)
 
 </details>
 
@@ -205,7 +205,7 @@ from fastapi.responses import FileResponse
 from fastapi.responses import FileResponse, HTMLResponse
 ```
 
-Meer uitleg: [Je eerste endpoint](/docs/FastAPI/eerste-server/eerste_endpoint)
+Meer uitleg: [Je eerste endpoint](site:fullstack/docs/FastAPI/eerste-server/eerste_endpoint)
 
 </details>
 
@@ -237,7 +237,7 @@ async def test2():
     return {"bericht": "Tweede"}
 ```
 
-Meer uitleg: [Je eerste endpoint](/docs/FastAPI/eerste-server/eerste_endpoint#opdracht-3-investigate---dubbele-url)
+Meer uitleg: [Je eerste endpoint](site:fullstack/docs/FastAPI/eerste-server/eerste_endpoint#opdracht-3-investigate---dubbele-url)
 
 </details>
 
@@ -252,7 +252,7 @@ Meer uitleg: [Je eerste endpoint](/docs/FastAPI/eerste-server/eerste_endpoint#op
 
 **Oplossing:** laat één `app = FastAPI()` staan, bovenaan, direct na de imports. Haal de tweede weg.
 
-Meer uitleg: [Je eerste endpoint](/docs/FastAPI/eerste-server/eerste_endpoint)
+Meer uitleg: [Je eerste endpoint](site:fullstack/docs/FastAPI/eerste-server/eerste_endpoint)
 
 </details>
 
@@ -268,7 +268,7 @@ Meer uitleg: [Je eerste endpoint](/docs/FastAPI/eerste-server/eerste_endpoint)
 3. Klik op **Alle** (All) in de rij soorten en maak het zoekvak leeg: een filter als **Fetch/XHR** blijft staan tot je hem uitzet
 4. Kijk of het rondje linksboven rood is; grijs betekent dat opnemen uit staat (Ctrl+E zet het aan en uit)
 
-Meer uitleg: [Kijken wat de browser doet](/docs/FastAPI/eerste-server/devtools-netwerk#als-de-lijst-leeg-is)
+Meer uitleg: [Kijken wat de browser doet](site:fullstack/docs/FastAPI/eerste-server/devtools-netwerk#als-de-lijst-leeg-is)
 
 </details>
 
@@ -293,7 +293,7 @@ async def pagina():
     return "<h1>Hallo</h1>"
 ```
 
-Meer uitleg: [HTML tonen](/docs/FastAPI/paginas/html_tonen)
+Meer uitleg: [HTML tonen](site:fullstack/docs/FastAPI/paginas/html_tonen)
 
 </details>
 
@@ -309,7 +309,7 @@ RuntimeError: File at path static/pages/home.html does not exist.
 
 **Oplossing:** check of het bestand echt op die plek staat, met precies die naam (hoofdletters tellen). Het pad is relatief aan de map waar je `fastapi dev` startte, dus start de server vanuit je projectmap.
 
-Meer uitleg: [HTML in bestanden](/docs/FastAPI/paginas/html_bestanden)
+Meer uitleg: [HTML in bestanden](site:fullstack/docs/FastAPI/paginas/html_bestanden)
 
 </details>
 
@@ -334,7 +334,7 @@ In de browser staat `{"detail":"Not Found"}`, en in de terminal:
 <a href="/about">Over mij</a>
 ```
 
-Meer uitleg: [Links tussen pagina's](/docs/FastAPI/paginas/links)
+Meer uitleg: [Links tussen pagina's](site:fullstack/docs/FastAPI/paginas/links)
 
 </details>
 
@@ -359,7 +359,7 @@ je-project/
 └── static/
 ```
 
-Meer uitleg: [CSS in een eigen bestand (static files)](/docs/FastAPI/css-en-afbeeldingen/static_files)
+Meer uitleg: [CSS in een eigen bestand (static files)](site:fullstack/docs/FastAPI/css-en-afbeeldingen/static_files)
 
 </details>
 
@@ -377,7 +377,7 @@ Meer uitleg: [CSS in een eigen bestand (static files)](/docs/FastAPI/css-en-afbe
 
 Open `http://127.0.0.1:8000/static/css/style.css` rechtstreeks: zie je je CSS, dan ligt het aan de `<link>`; een 404, dan aan het pad of de mount.
 
-Meer uitleg: [CSS in een eigen bestand (static files)](/docs/FastAPI/css-en-afbeeldingen/static_files)
+Meer uitleg: [CSS in een eigen bestand (static files)](site:fullstack/docs/FastAPI/css-en-afbeeldingen/static_files)
 
 </details>
 
@@ -393,7 +393,7 @@ Meer uitleg: [CSS in een eigen bestand (static files)](/docs/FastAPI/css-en-afbe
 3. Herstart de server (Ctrl+C, dan opnieuw `fastapi dev main.py`)
 4. Check of je het juiste bestand hebt aangepast
 
-Meer uitleg: [Als je wijziging niet doorkomt](/docs/FastAPI/css-en-afbeeldingen/static_files#als-je-wijziging-niet-doorkomt)
+Meer uitleg: [Als je wijziging niet doorkomt](site:fullstack/docs/FastAPI/css-en-afbeeldingen/static_files#als-je-wijziging-niet-doorkomt)
 
 </details>
 
@@ -409,7 +409,7 @@ Meer uitleg: [Als je wijziging niet doorkomt](/docs/FastAPI/css-en-afbeeldingen/
 3. Klopt het pad in `src="/static/foto.jpg"`?
 4. Staat `app.mount("/static", ...)` in je code?
 
-Meer uitleg: [Afbeeldingen tonen](/docs/FastAPI/css-en-afbeeldingen/afbeeldingen)
+Meer uitleg: [Afbeeldingen tonen](site:fullstack/docs/FastAPI/css-en-afbeeldingen/afbeeldingen)
 
 </details>
 
@@ -430,7 +430,7 @@ jinja2.exceptions.TemplateNotFound: 'dobbelsteen.html' not found in search path:
 2. Klopt de bestandsnaam in `TemplateResponse(request, "bestand.html", ...)` precies? Geef alleen de naam door, zonder `templates/` ervoor
 3. Staat `templates = Jinja2Templates(directory="templates")` in je code?
 
-Meer uitleg: [Templates met Jinja2](/docs/FastAPI/formulieren/templates)
+Meer uitleg: [Templates met Jinja2](site:fullstack/docs/FastAPI/formulieren/templates)
 
 </details>
 
@@ -452,7 +452,7 @@ return templates.TemplateResponse(request, "pagina.html", {"naam": naam})
 
 Check ook dat de naam in `{{ naam }}` precies gelijk is aan de sleutel in het dictionary.
 
-Meer uitleg: [Templates met Jinja2](/docs/FastAPI/formulieren/templates)
+Meer uitleg: [Templates met Jinja2](site:fullstack/docs/FastAPI/formulieren/templates)
 
 </details>
 
@@ -476,7 +476,7 @@ return templates.TemplateResponse("pagina.html", {"request": request, "naam": na
 return templates.TemplateResponse(request, "pagina.html", {"naam": naam})
 ```
 
-Meer uitleg: [Templates met Jinja2](/docs/FastAPI/formulieren/templates)
+Meer uitleg: [Templates met Jinja2](site:fullstack/docs/FastAPI/formulieren/templates)
 
 </details>
 
@@ -525,7 +525,7 @@ async def bericht_detail(request: Request, sleutel: str):
 
 Mag een query-parameter ontbreken, geef hem dan een standaardwaarde: `term: str = ""`. Vergeet `required` op je `<input>` niet, dan verstuurt de browser geen leeg veld.
 
-Meer uitleg: [Een waarde na een vraagteken: query-parameters](/docs/FastAPI/veel-paginas/query-parameters) (wat `loc` zegt), [Een formulier versturen (POST)](/docs/FastAPI/formulieren/forms) en [Eén route voor veel pagina's: path-parameters](/docs/FastAPI/veel-paginas/path-parameters)
+Meer uitleg: [Een waarde na een vraagteken: query-parameters](site:fullstack/docs/FastAPI/veel-paginas/query-parameters) (wat `loc` zegt), [Een formulier versturen (POST)](site:fullstack/docs/FastAPI/formulieren/forms) en [Eén route voor veel pagina's: path-parameters](site:fullstack/docs/FastAPI/veel-paginas/path-parameters)
 
 </details>
 
@@ -557,7 +557,7 @@ In de browser staat `{"detail":"Method Not Allowed"}`, en in de terminal bijvoor
 
 4. **Je klikte op een htmx-knop met `hx-delete`.** Die stuurt een DELETE, dus het endpoint moet `@app.delete(...)` zijn en niet `@app.post(...)`.
 
-Meer uitleg: [Een formulier versturen (POST)](/docs/FastAPI/formulieren/forms), [Doorsturen na opslaan (redirect)](/docs/FastAPI/berichten-opslaan/redirect) en [htmx-recepten: formulier, verversen, verwijderen, zoeken](/docs/FastAPI/zonder-herladen/htmx-overzicht)
+Meer uitleg: [Een formulier versturen (POST)](site:fullstack/docs/FastAPI/formulieren/forms), [Doorsturen na opslaan (redirect)](site:fullstack/docs/FastAPI/berichten-opslaan/redirect) en [htmx-recepten: formulier, verversen, verwijderen, zoeken](site:fullstack/docs/FastAPI/zonder-herladen/htmx-overzicht)
 
 </details>
 
@@ -578,7 +578,7 @@ ModuleNotFoundError: No module named 'sqlitedict'
 python -m pip install sqlitedict
 ```
 
-Meer uitleg: [Gegevens opslaan met SqliteDict](/docs/FastAPI/sqlitedict/database)
+Meer uitleg: [Gegevens opslaan met SqliteDict](site:fullstack/docs/FastAPI/sqlitedict/database)
 
 </details>
 
@@ -600,7 +600,7 @@ with SqliteDict("data.db") as db:
     db.commit()
 ```
 
-Meer uitleg: [Gegevens opslaan met SqliteDict](/docs/FastAPI/sqlitedict/database)
+Meer uitleg: [Gegevens opslaan met SqliteDict](site:fullstack/docs/FastAPI/sqlitedict/database)
 
 </details>
 
@@ -625,7 +625,7 @@ with SqliteDict("data.db") as db:
     db.commit()
 ```
 
-Meer uitleg: [Een dictionary aanpassen: ophalen, aanpassen, terugzetten](/docs/FastAPI/sqlitedict/aanpassen#er-gaat-iets-mis)
+Meer uitleg: [Een dictionary aanpassen: ophalen, aanpassen, terugzetten](site:fullstack/docs/FastAPI/sqlitedict/aanpassen#er-gaat-iets-mis)
 
 </details>
 
@@ -664,7 +664,7 @@ with SqliteDict("sessies.db") as sessies:
     mijn = sessies.get(sessie_id, {})
 ```
 
-Meer uitleg: [Gegevens opslaan met SqliteDict](/docs/FastAPI/sqlitedict/database#er-gaat-iets-mis) (een andere map), [Bestaat de sleutel? in en get](/docs/FastAPI/sqlitedict/zoeken) (`in` en `get`), [Verwijderen met del](/docs/FastAPI/sqlitedict/verwijderen#er-gaat-iets-mis) (`del`), [Eén item tonen: de sleutel uit de URL](/docs/FastAPI/berichten-tonen/detailpagina), [Onthouden op de server: sessies](/docs/FastAPI/onthouden/sessies) en, voor een gewone dictionary, [Eén route voor veel pagina's: path-parameters](/docs/FastAPI/veel-paginas/path-parameters#er-gaat-iets-mis)
+Meer uitleg: [Gegevens opslaan met SqliteDict](site:fullstack/docs/FastAPI/sqlitedict/database#er-gaat-iets-mis) (een andere map), [Bestaat de sleutel? in en get](site:fullstack/docs/FastAPI/sqlitedict/zoeken) (`in` en `get`), [Verwijderen met del](site:fullstack/docs/FastAPI/sqlitedict/verwijderen#er-gaat-iets-mis) (`del`), [Eén item tonen: de sleutel uit de URL](site:fullstack/docs/FastAPI/berichten-tonen/detailpagina), [Onthouden op de server: sessies](site:fullstack/docs/FastAPI/onthouden/sessies) en, voor een gewone dictionary, [Eén route voor veel pagina's: path-parameters](site:fullstack/docs/FastAPI/veel-paginas/path-parameters#er-gaat-iets-mis)
 
 </details>
 
@@ -686,7 +686,7 @@ sleutel = "bericht"
 sleutel = f"bericht_{time.time_ns()}"
 ```
 
-Meer uitleg: [Elk bericht bewaren: een eigen sleutel](/docs/FastAPI/berichten-opslaan/eigen-sleutel)
+Meer uitleg: [Elk bericht bewaren: een eigen sleutel](site:fullstack/docs/FastAPI/berichten-opslaan/eigen-sleutel)
 
 </details>
 
@@ -711,7 +711,7 @@ with SqliteDict("gastenboek.db") as db:
     alle_berichten = list(db.values())
 ```
 
-Meer uitleg: [Alles tonen: een for-lus in je template](/docs/FastAPI/berichten-tonen/lijst_tonen)
+Meer uitleg: [Alles tonen: een for-lus in je template](site:fullstack/docs/FastAPI/berichten-tonen/lijst_tonen)
 
 </details>
 
@@ -739,7 +739,7 @@ jinja2.exceptions.TemplateSyntaxError: Unexpected end of template. Jinja was loo
 {% endfor %}
 ```
 
-Meer uitleg: [Alles tonen: een for-lus in je template](/docs/FastAPI/berichten-tonen/lijst_tonen)
+Meer uitleg: [Alles tonen: een for-lus in je template](site:fullstack/docs/FastAPI/berichten-tonen/lijst_tonen)
 
 </details>
 
@@ -755,7 +755,7 @@ Meer uitleg: [Alles tonen: een for-lus in je template](/docs/FastAPI/berichten-t
 3. Staat er echt iets in je database? Open `/berichten` nadat je een bericht hebt verstuurd, niet ervoor.
 4. Staat `db.commit()` in je POST-endpoint, binnen het `with`-blok? Zonder die regel is je bericht weg zodra het blok sluit (zie Je bericht is meteen weg, hierboven).
 
-Meer uitleg: [Alles tonen: een for-lus in je template](/docs/FastAPI/berichten-tonen/lijst_tonen)
+Meer uitleg: [Alles tonen: een for-lus in je template](site:fullstack/docs/FastAPI/berichten-tonen/lijst_tonen)
 
 </details>
 
@@ -795,7 +795,7 @@ with SqliteDict("gastenboek.db") as db:
 
 Gebruikt je template de sleutel niet, dan mag het ook allebei zonder: `db.values()` met `{% for bericht in berichten %}`.
 
-Meer uitleg: [Eén item tonen: de sleutel uit de URL](/docs/FastAPI/berichten-tonen/detailpagina#linken-vanuit-de-lijst)
+Meer uitleg: [Eén item tonen: de sleutel uit de URL](site:fullstack/docs/FastAPI/berichten-tonen/detailpagina#linken-vanuit-de-lijst)
 
 </details>
 
@@ -821,7 +821,7 @@ if bericht is None:
     raise HTTPException(status_code=404, detail="Dit bericht bestaat niet")
 ```
 
-Meer uitleg: [Een 404 sturen: als het item niet bestaat](/docs/FastAPI/berichten-tonen/niet-gevonden)
+Meer uitleg: [Een 404 sturen: als het item niet bestaat](site:fullstack/docs/FastAPI/berichten-tonen/niet-gevonden)
 
 </details>
 
@@ -848,7 +848,7 @@ with SqliteDict("gebruikers.db") as gebruikers:
 
 `repr` zet aanhalingstekens om de naam, zodat je ook een spatie aan het eind ziet.
 
-Meer uitleg: [Inloggen: een wachtwoord controleren](/docs/FastAPI/accounts/inloggen)
+Meer uitleg: [Inloggen: een wachtwoord controleren](site:fullstack/docs/FastAPI/accounts/inloggen)
 
 </details>
 
@@ -870,7 +870,7 @@ return RedirectResponse(url="/berichten", status_code=303)
 return HTMLResponse(f"Bedankt, {escape(naam)}. Je bericht staat in het gastenboek.")
 ```
 
-Meer uitleg: [Zonder herladen met htmx](/docs/FastAPI/zonder-herladen/htmx)
+Meer uitleg: [Zonder herladen met htmx](site:fullstack/docs/FastAPI/zonder-herladen/htmx)
 
 </details>
 
@@ -897,7 +897,7 @@ Meer uitleg: [Zonder herladen met htmx](/docs/FastAPI/zonder-herladen/htmx)
 
 3. **Een rode regel bij je eigen verzoek**: 404 is een verkeerd pad in `hx-get` of `hx-post`, 405 een verkeerd werkwoord (zie 405 Method Not Allowed hierboven), 500 een fout in je endpoint (kijk in de terminal), `(mislukt)` een server die niet draait.
 
-Meer uitleg: [Zonder herladen met htmx](/docs/FastAPI/zonder-herladen/htmx) en [htmx-recepten: formulier, verversen, verwijderen, zoeken](/docs/FastAPI/zonder-herladen/htmx-overzicht)
+Meer uitleg: [Zonder herladen met htmx](site:fullstack/docs/FastAPI/zonder-herladen/htmx) en [htmx-recepten: formulier, verversen, verwijderen, zoeken](site:fullstack/docs/FastAPI/zonder-herladen/htmx-overzicht)
 
 </details>
 
@@ -926,7 +926,7 @@ Uncaught TypeError: Cannot read properties of null (reading 'addEventListener')
 
 Staat `defer` er wel? Check dan of de `id` in je HTML precies gelijk is aan die in je `querySelector`, inclusief hoofdletters.
 
-Meer uitleg: [JavaScript erbij](/docs/FastAPI/in-de-browser/javascript)
+Meer uitleg: [JavaScript erbij](site:fullstack/docs/FastAPI/in-de-browser/javascript)
 
 </details>
 
@@ -943,7 +943,7 @@ Meer uitleg: [JavaScript erbij](/docs/FastAPI/in-de-browser/javascript)
 
 Open `http://127.0.0.1:8000/static/js/app.js` rechtstreeks in je browser. Zie je je code, dan ligt het aan de script-tag; krijg je een 404, dan aan het pad of de mount.
 
-Meer uitleg: [JavaScript erbij](/docs/FastAPI/in-de-browser/javascript)
+Meer uitleg: [JavaScript erbij](site:fullstack/docs/FastAPI/in-de-browser/javascript)
 
 </details>
 
@@ -959,7 +959,7 @@ if len(bericht) > 80:
     raise HTTPException(status_code=400, detail="Bericht is te lang")
 ```
 
-Meer uitleg: [Server of browser?](/docs/FastAPI/in-de-browser/server-of-browser)
+Meer uitleg: [Server of browser?](site:fullstack/docs/FastAPI/in-de-browser/server-of-browser)
 
 </details>
 
@@ -987,7 +987,7 @@ antwoord.set_cookie(key="naam", value=naam)
 return antwoord
 ```
 
-Meer uitleg: [Onthouden met een cookie](/docs/FastAPI/onthouden/cookies)
+Meer uitleg: [Onthouden met een cookie](site:fullstack/docs/FastAPI/onthouden/cookies)
 
 </details>
 
@@ -1007,7 +1007,7 @@ async def gastenboek_form(request: Request, sid: str = Cookie(default="")):
 async def gastenboek_form(request: Request, sessie_id: str = Cookie(default="")):
 ```
 
-Meer uitleg: [Onthouden met een cookie](/docs/FastAPI/onthouden/cookies)
+Meer uitleg: [Onthouden met een cookie](site:fullstack/docs/FastAPI/onthouden/cookies)
 
 </details>
 
@@ -1022,7 +1022,7 @@ Meer uitleg: [Onthouden met een cookie](/docs/FastAPI/onthouden/cookies)
 antwoord.set_cookie(key="naam", value=naam, max_age=60 * 60 * 24 * 30)
 ```
 
-Meer uitleg: [Onthouden met een cookie](/docs/FastAPI/onthouden/cookies)
+Meer uitleg: [Onthouden met een cookie](site:fullstack/docs/FastAPI/onthouden/cookies)
 
 </details>
 
@@ -1058,7 +1058,7 @@ antwoord.set_cookie(key="sessie_id", value=sessie_id, max_age=60 * 60 * 24 * 30)
 return antwoord
 ```
 
-Meer uitleg: [Onthouden op de server: sessies](/docs/FastAPI/onthouden/sessies)
+Meer uitleg: [Onthouden op de server: sessies](site:fullstack/docs/FastAPI/onthouden/sessies)
 
 </details>
 
@@ -1080,7 +1080,7 @@ return templates.TemplateResponse(request, "404.html", {"pad": request.url.path}
 return templates.TemplateResponse(request, "404.html", {"pad": request.url.path}, status_code=404)
 ```
 
-Meer uitleg: [Een eigen 404-pagina: een handler voor fouten](/docs/FastAPI/afronden/foutpagina)
+Meer uitleg: [Een eigen 404-pagina: een handler voor fouten](site:fullstack/docs/FastAPI/afronden/foutpagina)
 
 </details>
 
@@ -1102,7 +1102,7 @@ jinja2.exceptions.TemplateNotFound: '404.html' not found in search path: 'templa
 templates.TemplateResponse(request, "404.html", {"pad": request.url.path}, status_code=404)
 ```
 
-Meer uitleg: [Een eigen 404-pagina: een handler voor fouten](/docs/FastAPI/afronden/foutpagina)
+Meer uitleg: [Een eigen 404-pagina: een handler voor fouten](site:fullstack/docs/FastAPI/afronden/foutpagina)
 
 </details>
 
@@ -1118,7 +1118,7 @@ Meer uitleg: [Een eigen 404-pagina: een handler voor fouten](/docs/FastAPI/afron
 3. Zitten jullie op hetzelfde netwerk? Het gastennetwerk op school staat vaak los van het schoolnetwerk.
 4. Vraagt je firewall om toestemming, sta die dan toe.
 
-Meer uitleg: [Laat het aan anderen zien](/docs/FastAPI/afronden/laat-het-zien)
+Meer uitleg: [Laat het aan anderen zien](site:fullstack/docs/FastAPI/afronden/laat-het-zien)
 
 </details>
 
@@ -1176,7 +1176,7 @@ from sqlitedict import SqliteDict
 from starlette.exceptions import HTTPException as StarletteHTTPException
 ```
 
-Meer uitleg: <SiteLink site="python" to="/docs/modules/09d-modules">Modules importeren</SiteLink>
+Meer uitleg: [Modules importeren](site:python/docs/modules/09d-modules)
 
 </details>
 
@@ -1196,6 +1196,6 @@ TabError: inconsistent use of tabs and spaces in indentation
 
 **Oplossing:** ga naar het regelnummer uit de melding en zet de regel precies onder de regels die bij hetzelfde blok horen, met vier spaties per niveau. Bij een `TabError`: druk in VS Code op Ctrl+Shift+P, typ `Convert Indentation to Spaces` en druk op Enter; dan zijn alle tabs spaties.
 
-Meer uitleg: <SiteLink site="python" to="/docs/beslissen/05b-if-else">If en else</SiteLink>
+Meer uitleg: [If en else](site:python/docs/beslissen/05b-if-else)
 
 </details>

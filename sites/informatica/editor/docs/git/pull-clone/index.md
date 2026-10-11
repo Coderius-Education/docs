@@ -21,4 +21,4 @@ Als je dat niet doet, krijg je vroeg of laat de melding `Updates were rejected` 
 
 ## Aan de slag
 
-Begin met **[Stap 1: pull via Sync Changes](./stap-1-sync)**.
+Begin met **[Stap 1: pull via Sync Changes](site:editor/git/pull-clone/stap-1-sync)**.

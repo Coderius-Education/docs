@@ -8,7 +8,7 @@ Voor de sensoren en motoren gebruiken we een kant-en-klare bibliotheek: **leaphy
 
 :::tip[Sneller met de online editor]
 
-Gebruik je de [online editor](/editor)? Verbind met je board en klik op **Installeer Leaphy-library**. De editor zet alle bestanden automatisch in `/lib/leaphymicropython/` op de microcontroller. Hieronder staat de Thonny-werkwijze als fallback.
+Gebruik je de [online editor](site:robotica/editor)? Verbind met je board en klik op **Installeer Leaphy-library**. De editor zet alle bestanden automatisch in `/lib/leaphymicropython/` op de microcontroller. Hieronder staat de Thonny-werkwijze als fallback.
 
 :::
 

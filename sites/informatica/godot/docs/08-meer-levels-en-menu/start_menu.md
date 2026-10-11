@@ -17,7 +17,7 @@ In Godot zit er een ingebouwde node-type voor knoppen. **Hoe denk je dat hij hee
 <summary>Antwoord</summary>
 
 - De node heet `Button` (UI-node uit de Control-familie).
-- Het signal heet `pressed` en wordt verstuurd zodra de speler de knop indrukt en weer loslaat — vergelijkbaar met `body_entered` uit [Signals & een muntje oppakken](../07-signals-en-score/signals_muntje.md).
+- Het signal heet `pressed` en wordt verstuurd zodra de speler de knop indrukt en weer loslaat — vergelijkbaar met `body_entered` uit [Signals & een muntje oppakken](site:godot/docs/signals_muntje).
 
 </details>
 
@@ -50,7 +50,7 @@ Menu (Control)
     └── Button (Afsluiten) (tekst: Afsluiten)
 ```
 
-Alle UI-nodes uit deze les staan met hun instellingen in de [Nodes cheatsheet](/cheatsheet#ui-menu).
+Alle UI-nodes uit deze les staan met hun instellingen in de [Nodes cheatsheet](site:godot/cheatsheet#ui-menu).
 
 ## Stap 4: Script aan de root koppelen
 
@@ -59,7 +59,7 @@ Alle UI-nodes uit deze les staan met hun instellingen in de [Nodes cheatsheet](/
 
 ## Stap 5: Koppel de `pressed`-signalen
 
-Per knop koppel je het `pressed`-signaal aan een functie in `menu.gd`. Dat doe je op dezelfde manier als `body_entered` in [7.1](../07-signals-en-score/signals_muntje.md).
+Per knop koppel je het `pressed`-signaal aan een functie in `menu.gd`. Dat doe je op dezelfde manier als `body_entered` in [7.1](site:godot/docs/signals_muntje).
 
 1. Selecteer de eerste knop (`Start spel`).
 2. Ga naar het **Node**-tabblad rechts naast de Inspector.
@@ -83,12 +83,12 @@ func _on_afsluiten_pressed() -> void:
 
 | Code                                          | Wat doet het?                                                |
 | :-------------------------------------------- | :----------------------------------------------------------- |
-| `Global.reset()`                              | Zet `score` en `levens` terug op beginwaarde (zie [7.3](../07-signals-en-score/global_variables.md)) |
-| `change_scene_to_file("res://level1.tscn")`   | Laadt level 1 (zoals je leerde in [8.1](./tweede_level.md))   |
+| `Global.reset()`                              | Zet `score` en `levens` terug op beginwaarde (zie [7.3](site:godot/docs/global_variables)) |
+| `change_scene_to_file("res://level1.tscn")`   | Laadt level 1 (zoals je leerde in [8.1](site:godot/docs/tweede_level))   |
 | `get_tree().quit()`                           | Sluit het hele spel-venster                                  |
 
 :::tip
-Heb je `Global.reset()` niet gedefinieerd? Voeg in `global.gd` een functie toe die `score = 0` en `levens = 3` zet — zie [Global variables](../07-signals-en-score/global_variables.md).
+Heb je `Global.reset()` niet gedefinieerd? Voeg in `global.gd` een functie toe die `score = 0` en `levens = 3` zet — zie [Global variables](site:godot/docs/global_variables).
 :::
 
 ## Stap 7: Maak het menu de Main Scene \{#main-scene}

@@ -24,13 +24,13 @@ Jouw Click Golfer voelt straks met een sensor of er een balletje ligt, en slaat 
 
 ## Wat ga je doen?
 
-1. Leer [de microcontroller](microcontroller) kennen, het brein van je robot, en zet er in [Easybloqs](easybloqs) je eerste programma op.
-2. Sluit [de IR-sensor](ir-sensor) aan, die de bal ziet.
-3. Laat [de servo](servo) bewegen, de motor van de arm.
-4. Zet ze samen: [zie de bal, sla de bal](bal-slaan).
-5. [Oefen met twee sensoren en twee servo's](oefenen), als je docent die heeft.
-6. [Bouw het robotje](bouwen) van Lego en maak [de houten baan](hout).
-7. Leer je Golfer [netter mikken](mikken), geef je blokken [een naam](subprogrammas), en kijk bij de [Extra's](extras) wat je er nog bij kunt maken.
+1. Leer [de microcontroller](site:robotica/click_golfer/microcontroller) kennen, het brein van je robot, en zet er in [Easybloqs](site:robotica/click_golfer/easybloqs) je eerste programma op.
+2. Sluit [de IR-sensor](site:robotica/click_golfer/ir-sensor) aan, die de bal ziet.
+3. Laat [de servo](site:robotica/click_golfer/servo) bewegen, de motor van de arm.
+4. Zet ze samen: [zie de bal, sla de bal](site:robotica/click_golfer/bal-slaan).
+5. [Oefen met twee sensoren en twee servo's](site:robotica/click_golfer/oefenen), als je docent die heeft.
+6. [Bouw het robotje](site:robotica/click_golfer/bouwen) van Lego en maak [de houten baan](site:robotica/click_golfer/hout).
+7. Leer je Golfer [netter mikken](site:robotica/click_golfer/mikken), geef je blokken [een naam](site:robotica/click_golfer/subprogrammas), en kijk bij de [Extra's](site:robotica/click_golfer/extras) wat je er nog bij kunt maken.
 
 <Voorspel soort="Controlevraag" vraag="Waarom kan de Click Golfer een robot genoemd worden?">
   <Keuze uitleg="Waar hij van gemaakt is, telt niet. Een huis van Lego noem je ook geen robot.">Hij is van Lego gemaakt</Keuze>

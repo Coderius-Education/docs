@@ -68,7 +68,7 @@ Probeer het: zet `print(direction)` eronder en kijk in **Uitvoer** terwijl je de
 Dat getal vermenigvuldig je met je snelheid: `-1 * 300` is 300 naar links, `1 * 300` is 300 naar rechts, en `0 * 300` is stilstaan. Eén regel, drie gevallen.
 
 :::tip
-Bij `var direction :=` staat een dubbele punt vóór het isgelijkteken. Daarmee bepaalt Godot zelf het type van je variabele. Je mag ook gewoon `=` schrijven; zie de [GDScript-tips](/gdscript-tips#variabelen) voor het verschil.
+Bij `var direction :=` staat een dubbele punt vóór het isgelijkteken. Daarmee bepaalt Godot zelf het type van je variabele. Je mag ook gewoon `=` schrijven; zie de [GDScript-tips](site:godot/gdscript-tips#variabelen) voor het verschil.
 :::
 
 ## Stap 4: Test het
@@ -150,4 +150,4 @@ Ergens tussen `250.0` en `400.0` speelt een platformer meestal prettig. Noteer w
 
 ---
 
-← [Deel 4 — Je eerste if](./grond.md) · **Volgende:** [Deel 6 — Stoppen](./remmen.md) →
+← [Deel 4 — Je eerste if](site:godot/docs/movement-grond) · **Volgende:** [Deel 6 — Stoppen](site:godot/docs/movement-remmen) →

@@ -40,7 +40,7 @@ World
     └── ScoreLabel (Label)
 ```
 
-De `CanvasLayer` en `Label` staan met hun instellingen in de [Nodes cheatsheet](/cheatsheet#ui-menu).
+De `CanvasLayer` en `Label` staan met hun instellingen in de [Nodes cheatsheet](site:godot/cheatsheet#ui-menu).
 
 ## Stap 2: Voeg een script toe aan de Label
 
@@ -150,6 +150,6 @@ func _process(delta: float) -> void:
 
 **Oorzaak:** Het `body_entered`-signal is per ongeluk twee keer gekoppeld aan dezelfde functie.
 
-**Oplossing:** Zie [Signals & een muntje oppakken](./signals_muntje.md) → "Er gaat iets mis" → "signal already connected".
+**Oplossing:** Zie [Signals & een muntje oppakken](site:godot/docs/signals_muntje) → "Er gaat iets mis" → "signal already connected".
 
 </details>

@@ -12,7 +12,7 @@ import heenEnWeer from './blokken/servo-heen-en-weer.json';
 Je sensor ziet de bal en je servo slaat. Nu komt de Click Golfer van Lego eromheen. Je begint met de toren, met de servo en het tandwiel erin. Die test je eerst, en pas als hij werkt, komt de arm erbij.
 
 :::tip
-Twijfel je hoe een onderdeel eruitziet of waar het komt? Bekijk het [3D-model op de intropagina](intro). Je kunt het draaien en zoomen. Het model komt uit een iets andere versie: sommige kleuren en pinnen wijken af. De plaatjes hieronder kloppen met je doosje.
+Twijfel je hoe een onderdeel eruitziet of waar het komt? Bekijk het [3D-model op de intropagina](site:robotica/click_golfer/intro). Je kunt het draaien en zoomen. Het model komt uit een iets andere versie: sommige kleuren en pinnen wijken af. De plaatjes hieronder kloppen met je doosje.
 :::
 
 ## Onderdelenlijst
@@ -46,7 +46,7 @@ Mist er iets in je doosje? Vraag het je docent. Die bestelt de stukjes, bijvoorb
 
 ## De toren
 
-In stap 4 gaat de servo op **D9** de toren in. Zet je robot eerst uit met de knop **ON/OFF**. Zit er van [Oefenen](oefenen) nog een tweede servo op D10, haal die dan los. De draden van de servo op D9 mogen aan het shield blijven zitten. Haal je ze toch los, sluit ze dan **vóór stap 11** weer aan zoals bij [de servo](servo), met oranje op het signaal van **D9**. Bij stap 11 zet je de servo met een programma op 90°, en dat kan alleen als hij aangesloten is.
+In stap 4 gaat de servo op **D9** de toren in. Zet je robot eerst uit met de knop **ON/OFF**. Zit er van [Oefenen](site:robotica/click_golfer/oefenen) nog een tweede servo op D10, haal die dan los. De draden van de servo op D9 mogen aan het shield blijven zitten. Haal je ze toch los, sluit ze dan **vóór stap 11** weer aan zoals bij [de servo](site:robotica/click_golfer/servo), met oranje op het signaal van **D9**. Bij stap 11 zet je de servo met een programma op 90°, en dat kan alleen als hij aangesloten is.
 
 ![Uitsnede van het schema: de servo met de bruine draad op GND, de rode op 5V en de oranje op het signaal van D9.](@site/static/fritzing/click_golfer_servo.png)
 
@@ -124,7 +124,7 @@ Kijk daarom eerst of de servo op het signaal van **D9** zit. Zet je robot weer a
 
 De servo zit nu in de toren, met het tandwiel erop. De arm zit er nog niet aan, dus dit is het moment om te testen. Draait er straks iets niet goed met de hele arm eraan, dan weet je niet of het aan de servo ligt, aan het tandwiel of aan de arm. Met alleen een tandwiel zie je het meteen.
 
-Zet je robot weer aan met **ON/OFF** en upload het programma uit [de servo](servo) dat heen en weer draait:
+Zet je robot weer aan met **ON/OFF** en upload het programma uit [de servo](site:robotica/click_golfer/servo) dat heen en weer draait:
 
 <Blokken programma={heenEnWeer} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: Servo 9 op 0, duurt 1000 ms, Servo 9 op 90, duurt 1000 ms." />
 
@@ -136,7 +136,7 @@ Kijk naar het tandwiel en loop deze vragen langs:
 
 Is het antwoord drie keer ja, dan werkt je servo in de toren. Upload dan weer het programma **Servo 9 op 90** van hierboven, zodat de servo in het midden staat, en zet je robot uit. Pas dan bouw je verder.
 
-Gaat er iets mis? Haal dan eerst het tandwiel eraf en kijk of het asje van de servo zonder tandwiel wel draait. Bij [de servo](servo) staat onder **Er gaat iets mis** wat je dan doet. Zoemt hij alleen met het tandwiel erop, dan zit het tandwiel ergens tegenaan: kijk of het vrij kan draaien.
+Gaat er iets mis? Haal dan eerst het tandwiel eraf en kijk of het asje van de servo zonder tandwiel wel draait. Bij [de servo](site:robotica/click_golfer/servo) staat onder **Er gaat iets mis** wat je dan doet. Zoemt hij alleen met het tandwiel erop, dan zit het tandwiel ergens tegenaan: kijk of het vrij kan draaien.
 
 ## De arm
 
@@ -233,4 +233,4 @@ Je programma's gaan ervan uit dat de arm bij 90° staat zoals op het plaatje. Ze
 
 </details>
 
-Staat je Golfer? Dan maak je nu [de houten baan](hout).
+Staat je Golfer? Dan maak je nu [de houten baan](site:robotica/click_golfer/hout).

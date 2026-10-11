@@ -66,7 +66,7 @@ opnieuw. De ranks komen gesorteerd van hoog naar laag.
 
 Geef je een nieuwe pagina geen enkele link, dan komt de som onder de 1
 uit. Waarom, lees je bij
-[de fouten](./10-fouten#dangling-nodes--paginas-zonder-uitgaande-links).
+[de fouten](site:algorithms/docs/pagerank/10-fouten#dangling-nodes--paginas-zonder-uitgaande-links).
 
 <PyRunner rows={18} initialCode={`WEB = {
     "A": {"B", "C"},
@@ -105,4 +105,4 @@ for p in sorted(ranks, key=lambda x: -ranks[x]):
     print(f"    {p}: {ranks[p]:.4f}")
 print(f"\\nSom van alle ranks: {sum(ranks.values()):.4f}")`} />
 
-Door naar [aanpassen →](./08-aanpassen).
+Door naar [aanpassen →](site:algorithms/docs/pagerank/08-aanpassen).

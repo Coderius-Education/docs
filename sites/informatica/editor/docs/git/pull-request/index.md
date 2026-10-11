@@ -5,7 +5,7 @@ title: Pull Requests
 
 # Pull Requests
 
-In [Branches](/git/branches/) heb je geleerd hoe je een feature-branch maakt en mergt op je eigen computer. Een **pull request** (PR) is dezelfde stap — een feature-branch mergen in `main` — maar dan via GitHub. Met als voordeel: je hebt een online plek om de wijziging te bekijken voordat je hem accepteert.
+In [Branches](site:editor/git/branches) heb je geleerd hoe je een feature-branch maakt en mergt op je eigen computer. Een **pull request** (PR) is dezelfde stap — een feature-branch mergen in `main` — maar dan via GitHub. Met als voordeel: je hebt een online plek om de wijziging te bekijken voordat je hem accepteert.
 
 ## Wat is een pull request?
 
@@ -13,7 +13,7 @@ Een PR is letterlijk een **verzoek**: "ik heb commits op branch X, wil je ze in 
 
 De typische cyclus:
 
-1. Maak een feature-branch lokaal (zie [Branches](/git/branches/)).
+1. Maak een feature-branch lokaal (zie [Branches](site:editor/git/branches)).
 2. Push die branch naar GitHub.
 3. Open een PR op github.com.
 4. Bekijk de wijziging en geef eventueel commentaar.
@@ -29,4 +29,4 @@ De typische cyclus:
 
 ## Aan de slag
 
-Zorg dat je een feature-branch hebt met minstens één commit (uit [Branches: Stap 3](/git/branches/stap-3-commits)). Begin daarna met **[Stap 1: je feature-branch pushen](./stap-1-branch-pushen)**.
+Zorg dat je een feature-branch hebt met minstens één commit (uit [Branches: Stap 3](site:editor/git/branches/stap-3-commits)). Begin daarna met **[Stap 1: je feature-branch pushen](site:editor/git/pull-request/stap-1-branch-pushen)**.

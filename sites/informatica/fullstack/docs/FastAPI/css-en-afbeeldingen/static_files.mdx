@@ -6,7 +6,7 @@
   ]}
 />
 
-In [HTML tonen](/docs/FastAPI/paginas/html_tonen) zette je CSS in een `<style>`-tag. Met meer pagina's wil je één CSS-bestand dat ze allemaal delen. Zo'n bestand stuurt de server ongewijzigd door, zonder dat er een functie van jou aan te pas komt: een **static file**.
+In [HTML tonen](site:fullstack/docs/FastAPI/paginas/html_tonen) zette je CSS in een `<style>`-tag. Met meer pagina's wil je één CSS-bestand dat ze allemaal delen. Zo'n bestand stuurt de server ongewijzigd door, zonder dat er een functie van jou aan te pas komt: een **static file**.
 
 ## Mappenstructuur
 
@@ -91,14 +91,14 @@ Omdat `pages` ook in `static` staat, is `home.html` nu ook bereikbaar op `/stati
 Ga naar [http://127.0.0.1:8000](http://127.0.0.1:8000). De kop is blauw: de CSS uit het eigen bestand werkt.
 
 :::danger[Gaat er iets mis?]
-Werkt je CSS niet? Kijk of `app.mount("/static", ...)` in je code staat en of het pad in `<link>` klopt. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
+Werkt je CSS niet? Kijk of `app.mount("/static", ...)` in je code staat en of het pad in `<link>` klopt. Meer oplossingen staan op [Er gaat iets mis](site:fullstack/docs/troubleshooting).
 :::
 
 ## Als je wijziging niet doorkomt
 
 Pas je `style.css` aan en blijft de kop blauw? Dan kijk je waarschijnlijk naar een oude kopie. De browser bewaart van sommige antwoorden een kopie, de **cache**. Vraagt hij hetzelfde adres nog eens, dan pakt hij soms die kopie in plaats van de server te vragen. Bij de JSON van je endpoints gebeurt dat vrijwel nooit, bij bestanden wel: je CSS, je afbeeldingen, en ook een HTML-pagina die je met `FileResponse` terugstuurt.
 
-In het tabblad Netwerk uit [Kijken wat de browser doet](/docs/FastAPI/eerste-server/devtools-netwerk) zie je het aan de kolom Grootte: daar staat dan **(geheugencache)** of **(schijfcache)** (in het Engels memory cache of disk cache) in plaats van een aantal bytes. De status blijft 200, dus daaraan zie je het niet. Twee manieren om het te voorkomen:
+In het tabblad Netwerk uit [Kijken wat de browser doet](site:fullstack/docs/FastAPI/eerste-server/devtools-netwerk) zie je het aan de kolom Grootte: daar staat dan **(geheugencache)** of **(schijfcache)** (in het Engels memory cache of disk cache) in plaats van een aantal bytes. De status blijft 200, dus daaraan zie je het niet. Twee manieren om het te voorkomen:
 
 - Bovenin het tabblad Netwerk staat het vinkje **Cache uitzetten** (Disable cache). Zet het aan; het werkt zolang de ontwikkelaarstools open staan.
 - Klik met de rechtermuisknop op de herlaadknop van je browser en kies **Cache wissen en geforceerd opnieuw laden** (Empty Cache and Hard Reload). Die keuze bestaat alleen als de ontwikkelaarstools open staan. Sneller is **Ctrl+Shift+R**.
@@ -262,7 +262,7 @@ body { background-color: lightyellow; }
 
 ### Opdracht 5: Make - Twee stijlen
 
-Geef je pagina `about.html` uit [Links tussen pagina's](/docs/FastAPI/paginas/links) een eigen CSS-bestand `about.css`, zodat `/` en `/about` er verschillend uitzien.
+Geef je pagina `about.html` uit [Links tussen pagina's](site:fullstack/docs/FastAPI/paginas/links) een eigen CSS-bestand `about.css`, zodat `/` en `/about` er verschillend uitzien.
 
 <details>
 <summary>Tip</summary>

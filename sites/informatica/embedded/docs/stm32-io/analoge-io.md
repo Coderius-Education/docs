@@ -88,7 +88,7 @@ Een analoge pin op de Blue Pill mag maximaal **3,3 V** krijgen, niet 5 V. Sluit 
 __HAL_TIM_SET_COMPARE(&htim, TIM_CHANNEL_1, 500);  // helderheid
 ```
 
-Hoe je de timer in PWM-modus zet, lees je in [10.4 Hardware-timers](/docs/stm32-interfaces/timers-pwm). Het mooie: zodra hij loopt, genereert de chip het signaal helemaal zelf — je hoofdprogramma hoeft er niets voor te doen.
+Hoe je de timer in PWM-modus zet, lees je in [10.4 Hardware-timers](site:embedded/docs/stm32-interfaces/timers-pwm). Het mooie: zodra hij loopt, genereert de chip het signaal helemaal zelf — je hoofdprogramma hoeft er niets voor te doen.
 
 ## Controlevraag
 

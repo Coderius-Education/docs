@@ -46,4 +46,4 @@ Een onderdeel heeft behalve het signaal ook stroom nodig. Twee pinnetjes, **5V**
   </Uitleg>
 </Voorspel>
 
-Weet je hoe het shield werkt? Dan ga je nu [programmeren in Easybloqs](easybloqs).
+Weet je hoe het shield werkt? Dan ga je nu [programmeren in Easybloqs](site:robotica/click_golfer/easybloqs).

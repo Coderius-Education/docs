@@ -11,7 +11,7 @@ slug: /godot-versies
 
 Het curriculum is geschreven voor **Godot 4.7.x** (de nieuwste 4.7-stable op het moment van schrijven).
 
-In de [installatie-les](/docs/installatie) lees je waar je deze versie downloadt. Controleer na installatie via menu **Help → About Godot** dat je echt `4.7.x` draait.
+In de [installatie-les](site:godot/docs/installatie) lees je waar je deze versie downloadt. Controleer na installatie via menu **Help → About Godot** dat je echt `4.7.x` draait.
 
 ## Minimum-vereisten per concept
 
@@ -19,12 +19,12 @@ Sommige nodes en functies zijn pas in een specifieke 4.x-versie toegevoegd. Voor
 
 | Concept | Minimum-versie | Tutorial |
 |---|---|---|
-| `TileMapLayer` | **4.3+** | [Level tekenen met een TileMap](/docs/tilemap_opzetten) |
-| `get_gravity()` op `CharacterBody2D` | **4.2+** | [Sprite movement](/docs/sprite_movement) |
-| `move_and_slide()` zonder parameters | **4.0+** | [Sprite movement](/docs/sprite_movement) |
-| `AnimatedSprite2D` met `SpriteFrames` | **4.0+** | [Animaties](/docs/animaties) |
-| `Area2D.body_entered`-signal | **4.0+** | [Signals & muntje](/docs/signals_muntje) |
-| Autoload-mechanisme | **4.0+** (tot en met 4.3 een eigen tabblad in Project Settings, vanaf 4.4 onder **Globals**) | [Global variables](/docs/global_variables) |
+| `TileMapLayer` | **4.3+** | [Level tekenen met een TileMap](site:godot/docs/tilemap_opzetten) |
+| `get_gravity()` op `CharacterBody2D` | **4.2+** | [Sprite movement](site:godot/docs/sprite_movement) |
+| `move_and_slide()` zonder parameters | **4.0+** | [Sprite movement](site:godot/docs/sprite_movement) |
+| `AnimatedSprite2D` met `SpriteFrames` | **4.0+** | [Animaties](site:godot/docs/animaties) |
+| `Area2D.body_entered`-signal | **4.0+** | [Signals & muntje](site:godot/docs/signals_muntje) |
+| Autoload-mechanisme | **4.0+** (tot en met 4.3 een eigen tabblad in Project Settings, vanaf 4.4 onder **Globals**) | [Global variables](site:godot/docs/global_variables) |
 
 In `<` 4.3 heet de tile-node `TileMap` (zonder "Layer"). De tutorial werkt dan met aanpassingen, maar de Paint-tool / Physics Layer-workflow is anders georganiseerd.
 
@@ -53,9 +53,9 @@ Het curriculum gebruikt drie externe bronnen die offline kunnen gaan:
 
 | Bron | Gebruikt in | Wat als hij offline is? |
 |---|---|---|
-| [GDQuest learn-gdscript](https://gdquest.github.io/learn-gdscript/) | [Het bewegingsscript bouwen](/docs/basis_movement_begrijpen) | Gebruik de officiële [GDScript-docs](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_basics.html). |
-| [Pixel Adventure asset pack](https://pixelfrog-assets.itch.io/pixel-adventure-1) | [Bestanden downloaden](/docs/bestanden-downloaden) | Andere gratis pixel-art packs op [itch.io](https://itch.io/game-assets/free/tag-2d) of [opengameart.org](https://opengameart.org/) werken ook. Belangrijk: zorg dat het pack `.png`-sprites bevat. |
-| [Godot online editor](https://editor.godotengine.org/) | [Installatie](/docs/installatie) (Chromebook-route) | Offline gaan is onwaarschijnlijk (officieel Godot). Anders: installeer Godot lokaal op een ander apparaat. |
+| [GDQuest learn-gdscript](https://gdquest.github.io/learn-gdscript/) | [Het bewegingsscript bouwen](site:godot/docs/basis_movement_begrijpen) | Gebruik de officiële [GDScript-docs](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_basics.html). |
+| [Pixel Adventure asset pack](https://pixelfrog-assets.itch.io/pixel-adventure-1) | [Bestanden downloaden](site:godot/docs/bestanden-downloaden) | Andere gratis pixel-art packs op [itch.io](https://itch.io/game-assets/free/tag-2d) of [opengameart.org](https://opengameart.org/) werken ook. Belangrijk: zorg dat het pack `.png`-sprites bevat. |
+| [Godot online editor](https://editor.godotengine.org/) | [Installatie](site:godot/docs/installatie) (Chromebook-route) | Offline gaan is onwaarschijnlijk (officieel Godot). Anders: installeer Godot lokaal op een ander apparaat. |
 
 ## Hoe houden we dit up-to-date?
 

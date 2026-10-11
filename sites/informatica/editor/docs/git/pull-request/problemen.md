@@ -9,13 +9,13 @@ title: "Er gaat iets mis"
 
 **Oorzaak:** die banner verschijnt alleen kort na een push, en verdwijnt daarna.
 
-**Oplossing:** klik op het tabblad **Pull requests** bovenaan → **New pull request**, en kies bij **compare** je feature-branch. Zie [Stap 2](./stap-2-pr-openen).
+**Oplossing:** klik op het tabblad **Pull requests** bovenaan → **New pull request**, en kies bij **compare** je feature-branch. Zie [Stap 2](site:editor/git/pull-request/stap-2-pr-openen).
 
 ## Mijn branch staat niet in de lijst bij `compare`
 
 **Oorzaak:** je hebt hem nog niet gepusht. GitHub kent alleen branches die online staan.
 
-**Oplossing:** ga terug naar VS Code, wissel naar je feature-branch en klik **Publish Branch**. Zie [Stap 1](./stap-1-branch-pushen).
+**Oplossing:** ga terug naar VS Code, wissel naar je feature-branch en klik **Publish Branch**. Zie [Stap 1](site:editor/git/pull-request/stap-1-branch-pushen).
 
 ## `This branch has no changes` — de PR-knop is grijs
 
@@ -27,10 +27,10 @@ title: "Er gaat iets mis"
 
 **Oorzaak:** een merge conflict. Op `main` is dezelfde regel aangepast als op jouw branch, nadat jij je branch maakte.
 
-**Oplossing:** haal `main` binnen op je feature-branch en los het conflict lokaal op, zoals in [Branches: Er gaat iets mis](/git/branches/problemen). Push daarna opnieuw; de PR werkt zichzelf bij en de knop wordt weer groen.
+**Oplossing:** haal `main` binnen op je feature-branch en los het conflict lokaal op, zoals in [Branches: Er gaat iets mis](site:editor/git/branches/problemen). Push daarna opnieuw; de PR werkt zichzelf bij en de knop wordt weer groen.
 
 ## Na de merge staat mijn welkomsbericht niet in mijn lokale main
 
 **Oorzaak:** de merge gebeurde op GitHub's server. Je eigen computer weet daar nog niets van.
 
-**Oplossing:** wissel naar `main` en klik **Sync Changes**. Zie [Stap 5](./stap-5-lokaal-bijwerken).
+**Oplossing:** wissel naar `main` en klik **Sync Changes**. Zie [Stap 5](site:editor/git/pull-request/stap-5-lokaal-bijwerken).

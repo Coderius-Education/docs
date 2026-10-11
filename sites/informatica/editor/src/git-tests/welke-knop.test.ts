@@ -180,7 +180,9 @@ describe('de volgorde van de tutorials', () => {
 
   it('de overzichtspagina noemt ze in dezelfde volgorde', () => {
     const index = readFileSync(join(GIT, 'index.md'), 'utf8');
-    const genoemd = [...index.matchAll(/\]\(\.\/([a-z-]+)\/\)/g)]
+    // Links staan als `site:editor/git/<map>`; het build-plugin maakt er een
+    // echte link van.
+    const genoemd = [...index.matchAll(/\]\(site:editor\/git\/([a-z-]+)\)/g)]
       .map((m) => m[1])
       .filter((naam, i, alle) => alle.indexOf(naam) === i);
 
@@ -195,7 +197,7 @@ describe('de volgorde van de tutorials', () => {
         const tekst = readFileSync(pad, 'utf8');
         const na = tekst.split('## Volgende tutorial')[1];
         if (!na) continue;
-        for (const m of na.matchAll(/\/git\/([a-z-]+)\//g)) {
+        for (const m of na.matchAll(/\]\(site:editor\/git\/([a-z-]+)[/)#]/g)) {
           const doel = VOLGORDE.indexOf(m[1]);
           if (doel !== -1 && doel <= VOLGORDE.indexOf(map)) {
             fout.push(`${relative(GIT, pad)} wijst terug naar ${m[1]}`);
@@ -217,7 +219,9 @@ describe('de volgorde van de tutorials', () => {
       const index = join(GIT, map, map === 'basis' ? 'index.mdx' : 'index.md');
       const eerste = readFileSync(index, 'utf8').split('\n## ')[0];
 
-      for (const m of eerste.matchAll(/\[[^\]]+\]\(\/git\/([a-z-]+)\/\)[^.]*\bheb je\b/g)) {
+      for (const m of eerste.matchAll(
+        /\[[^\]]+\]\(site:editor\/git\/([a-z-]+)\)[^.]*\bheb je\b/g,
+      )) {
         if (VOLGORDE.indexOf(m[1]) > VOLGORDE.indexOf(map)) {
           fout.push(`${map}/index zegt "heb je" over het latere ${m[1]}`);
         }

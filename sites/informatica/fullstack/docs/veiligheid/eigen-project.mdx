@@ -8,7 +8,7 @@ description: Eén controlelijst over de hele route, om je gastenboek of een eige
 Aan het eind van elke reeks heb je het geleerde op je eigen project toegepast.
 Hier staat alles bij elkaar, als één lijst om je project na te lopen voordat je
 het aan anderen laat zien. Bij elk punt staat waar je het leerde. In de
-[cheatsheet](/docs/cheatsheet#veiligheid) staat onder Veiligheid per reeks een
+[cheatsheet](site:fullstack/docs/cheatsheet#veiligheid) staat onder Veiligheid per reeks een
 kort codevoorbeeld, in dezelfde volgorde als hieronder.
 
 Het idee onder de hele lijst blijft hetzelfde: wat van de bezoeker komt,
@@ -18,64 +18,64 @@ vertrouw je niet, en de controle hoort op de server.
 
 - [ ] Elk endpoint op `/docs` is voor iedereen bedoeld. Een endpoint dat je voor
   jezelf maakte of dat gegevens van anderen teruggeeft, zoals `GET /sessies`, is
-  weg. ([Een vergeten endpoint](./zichtbaar/vergeten),
-  [Wie mag wat in je eigen project](./toegang/eigen-project))
+  weg. ([Een vergeten endpoint](site:fullstack/docs/veiligheid/zichtbaar/vergeten),
+  [Wie mag wat in je eigen project](site:fullstack/docs/veiligheid/toegang/eigen-project))
 - [ ] Zet je je server open, dan staan `docs_url`, `redoc_url` en `openapi_url`
-  op `None`. ([De handleiding uitzetten](./zichtbaar/uitzetten))
+  op `None`. ([De handleiding uitzetten](site:fullstack/docs/veiligheid/zichtbaar/uitzetten))
 - [ ] Een `.gitignore` slaat `.venv/`, `__pycache__/` en `*.db` over, en een zip
-  die je deelt bevat geen `.db`-bestand. ([Een .gitignore en een nette zip](./zichtbaar/gitignore))
+  die je deelt bevat geen `.db`-bestand. ([Een .gitignore en een nette zip](site:fullstack/docs/veiligheid/zichtbaar/gitignore))
 
 ## Invoer
 
 - [ ] Elk tekstveld heeft `max_length` in `Form`.
-  ([Grenzen in Form](./invoer/grenzen))
+  ([Grenzen in Form](site:fullstack/docs/veiligheid/invoer/grenzen))
 - [ ] Elk getal is een `int` met `ge` en `le`.
-  ([Getallen en keuzes](./invoer/getallen))
+  ([Getallen en keuzes](site:fullstack/docs/veiligheid/invoer/getallen))
 - [ ] Een veld dat niet uit alleen spaties mag bestaan, controleer je met
-  `strip()`. ([De inhoud controleren](./invoer/inhoud))
+  `strip()`. ([De inhoud controleren](site:fullstack/docs/veiligheid/invoer/inhoud))
 - [ ] Een keuze uit een paar woorden controleer je tegen een lijst met wat mag.
-  ([Getallen en keuzes](./invoer/getallen))
+  ([Getallen en keuzes](site:fullstack/docs/veiligheid/invoer/getallen))
 - [ ] Kiest een bezoeker een bestand, zoals met `?naam=`, dan gaat de naam pas
   naar `FileResponse` als hij in je lijst staat.
-  ([Een bestandsnaam van een bezoeker](./invoer/paden))
+  ([Een bestandsnaam van een bezoeker](site:fullstack/docs/veiligheid/invoer/paden))
 
 ## HTML van een bezoeker
 
 - [ ] Tekst van een bezoeker komt alleen via een `.html`-template in je pagina,
-  of met `escape()` in een f-string. ([Escapen in Python](./xss/escape),
-  [Templates escapen vanzelf](./xss/templates))
+  of met `escape()` in een f-string. ([Escapen in Python](site:fullstack/docs/veiligheid/xss/escape),
+  [Templates escapen vanzelf](site:fullstack/docs/veiligheid/xss/templates))
 - [ ] Ook tekst uit de URL, zoals een zoekterm, gaat door `escape()` of een
-  template. ([Tekst uit de URL](./xss/url))
-- [ ] Nergens staat `|safe` achter tekst van een bezoeker. ([`|safe`](./xss/safe))
+  template. ([Tekst uit de URL](site:fullstack/docs/veiligheid/xss/url))
+- [ ] Nergens staat `|safe` achter tekst van een bezoeker. ([`|safe`](site:fullstack/docs/veiligheid/xss/safe))
 - [ ] Je JavaScript zet tekst uit een veld of de URL in de pagina met
-  `textContent`, niet met `innerHTML`. ([In de browser](./xss/browser))
+  `textContent`, niet met `innerHTML`. ([In de browser](site:fullstack/docs/veiligheid/xss/browser))
 
 ## Te veel verzoeken
 
 - [ ] Het endpoint dat iets opslaat, heeft een verzoeklimiet.
-  ([Een limiet met slowapi](./dos/limiet))
+  ([Een limiet met slowapi](site:fullstack/docs/veiligheid/dos/limiet))
 
 ## Wie mag wat
 
 - [ ] Elk endpoint dat iets verwijdert of aanpast, controleert zelf of het van
   deze bezoeker is, en stuurt anders een `403`.
-  ([De controle met 403](./toegang/controle))
+  ([De controle met 403](site:fullstack/docs/veiligheid/toegang/controle))
 - [ ] Die controle staat in elk endpoint apart, ook in Alles wissen en in een
-  endpoint dat je later toevoegt. ([Elk endpoint apart](./toegang/elk-endpoint))
+  endpoint dat je later toevoegt. ([Elk endpoint apart](site:fullstack/docs/veiligheid/toegang/elk-endpoint))
 - [ ] De controle gebruikt wat de server weet, zoals de naam in de sessie, niet
   wat de bezoeker in een formulier of de URL meestuurt.
-  ([Controleer op wat de server weet](./toegang/server-weet))
+  ([Controleer op wat de server weet](site:fullstack/docs/veiligheid/toegang/server-weet))
 
 ## Cookies
 
 - [ ] De sessie-cookie heeft `httponly=True` en `samesite="lax"`.
-  ([`httponly`](./cookies/httponly), [`samesite`](./cookies/samesite))
+  ([`httponly`](site:fullstack/docs/veiligheid/cookies/httponly), [`samesite`](site:fullstack/docs/veiligheid/cookies/samesite))
 - [ ] In een cookie staat alleen een sessie-id, geen naam of rechten.
-  ([Onthouden op de server: sessies](/docs/FastAPI/onthouden/sessies))
+  ([Onthouden op de server: sessies](site:fullstack/docs/FastAPI/onthouden/sessies))
 - [ ] Uitloggen is een `POST`, en gooit de sessie ook op de server weg, niet
-  alleen de cookie met `delete_cookie`. ([Uitloggen](./cookies/uitloggen))
+  alleen de cookie met `delete_cookie`. ([Uitloggen](site:fullstack/docs/veiligheid/cookies/uitloggen))
 - [ ] Een sessie verloopt ook op de server, niet alleen in de browser met
-  `max_age`. ([Een sessie laten verlopen](./cookies/verlopen))
+  `max_age`. ([Een sessie laten verlopen](site:fullstack/docs/veiligheid/cookies/verlopen))
 
 ## Wachtwoorden
 
@@ -84,24 +84,24 @@ ze erin bouwde.
 
 - [ ] `/registreer` weigert een naam die al bestaat, anders overschrijft een
   tweede registratie het wachtwoord van de eerste.
-  ([Waarom geen gewone tekst](./wachtwoorden/gewone-tekst))
+  ([Waarom geen gewone tekst](site:fullstack/docs/veiligheid/wachtwoorden/gewone-tekst))
 - [ ] Je bewaart `ph.hash(wachtwoord)`, nooit het wachtwoord zelf.
-  ([Registreren met Argon2](./wachtwoorden/registreren))
+  ([Registreren met Argon2](site:fullstack/docs/veiligheid/wachtwoorden/registreren))
 - [ ] Inloggen gebruikt `ph.verify`, met dezelfde melding bij een onbekende naam
   en een fout wachtwoord, en ook bij een onbekende naam een `verify` tegen een
-  nep-hash. ([Inloggen met verify](./wachtwoorden/inloggen))
+  nep-hash. ([Inloggen met verify](site:fullstack/docs/veiligheid/wachtwoorden/inloggen))
 - [ ] Een wachtwoord wijzigen vraagt eerst het oude. Bij het inloggen werk je
   na een geslaagde `verify` een oude hash bij met `check_needs_rehash`.
-  ([Wachtwoord wijzigen](./wachtwoorden/wijzigen),
-  [Een oude hash bijwerken](./wachtwoorden/rehash))
+  ([Wachtwoord wijzigen](site:fullstack/docs/veiligheid/wachtwoorden/wijzigen),
+  [Een oude hash bijwerken](site:fullstack/docs/veiligheid/wachtwoorden/rehash))
 - [ ] Elk endpoint dat een wachtwoord controleert, zoals `/inloggen`, heeft een
   limiet: `@limiter.limit` direct onder `@app.post`, met `request: Request`.
-  ([Inlogpogingen beperken](./wachtwoorden/pogingen))
+  ([Inlogpogingen beperken](site:fullstack/docs/veiligheid/wachtwoorden/pogingen))
 
 ## Test het zoals een bezoeker
 
 Een lijst aflopen is niet hetzelfde als testen. Draai voor elk punt dat een
-statuscode geeft een klein script uit [Een script als bezoeker](./gereedschap)
+statuscode geeft een klein script uit [Een script als bezoeker](site:fullstack/docs/veiligheid/gereedschap)
 tegen je eigen server op `127.0.0.1`, en kijk of je de statuscode krijgt die je
 verwacht: een `404` op
 `/docs`, een `422` bij
@@ -113,4 +113,4 @@ Test alleen je eigen project, op je eigen computer. Wil je weten of de site van
 een klasgenoot veilig is, vraag dan of je samen naar de code mag kijken.
 :::
 
-Terug naar [de startpagina](/docs/veiligheid) van de route.
+Terug naar [de startpagina](site:fullstack/docs/veiligheid) van de route.

@@ -5,7 +5,7 @@ sidebar_position: 4
 # 10.4 Beweging
 
 :::warning[Online speeltuin]
-De voorbeelden in dit hoofdstuk draaien niet in de online speeltuin. Een pygame-ce-programma schrijft zijn eigen game-loop, en die is in de browser niet meer te stoppen. Draai ze op je eigen computer, in Thonny of VS Code — zie [installatie](/docs/installatie).
+De voorbeelden in dit hoofdstuk draaien niet in de online speeltuin. Een pygame-ce-programma schrijft zijn eigen game-loop, en die is in de browser niet meer te stoppen. Draai ze op je eigen computer, in Thonny of VS Code — zie [installatie](site:play/docs/installatie).
 :::
 
 In coderius-play kon je een vorm laten bewegen met `start_physics()`. In pygame-ce doe je dit zelf: je verandert de positie van een vorm elke frame.

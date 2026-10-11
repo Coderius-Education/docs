@@ -24,7 +24,7 @@ Onderzoek is **valide** als je gegevens echt gaan over de vraag die je wilt bean
 Je wilt weten of leerlingen je nieuwe school-app handig vinden en telt hoe vaak de app gedownload is. Dat kun je perfect herhaalbaar meten — maar downloads zeggen niets over *handig vinden*. Misschien was de download verplicht. Je meet het verkeerde: niet valide.
 :::
 
-**Bij [ontwerpgericht onderzoek](../typen/ontwerpgericht.md)** betekent valide: toets je je prototype aan de eisen die je vooraf hebt opgesteld, en met de echte doelgroep. Is je spel bedoeld voor groep 8, dan bewijst een test met je klasgenoten van 16 weinig.
+**Bij [ontwerpgericht onderzoek](site:onderzoek/typen/ontwerpgericht)** betekent valide: toets je je prototype aan de eisen die je vooraf hebt opgesteld, en met de echte doelgroep. Is je spel bedoeld voor groep 8, dan bewijst een test met je klasgenoten van 16 weinig.
 
 <WelNiet
   wel="Je leest de schermtijd af uit de telefooninstellingen als je schermtijd wilt weten."
@@ -45,7 +45,7 @@ Rond 1904 veroverde het Duitse paard Kluge Hans ("Slimme Hans") de wereldpers: h
 
 ## Hangt samen met
 
-- [De vier spelregels samen](./de-vier-spelregels.md) — valide is een van de vier spelregels
-- [Interne validiteit](./interne-validiteit.md) en [externe validiteit](./externe-validiteit.md) — de twee kanten van validiteit
-- [Betrouwbaar](./betrouwbaar.md) — herhaalbaar meten; samen met valide pas echt sterk
-- [Operationaliseren](../vragen/operationaliseren.md) — hoe je vooraf vastlegt wat je precies meet
+- [De vier spelregels samen](site:onderzoek/spelregels/de-vier-spelregels) — valide is een van de vier spelregels
+- [Interne validiteit](site:onderzoek/spelregels/interne-validiteit) en [externe validiteit](site:onderzoek/spelregels/externe-validiteit) — de twee kanten van validiteit
+- [Betrouwbaar](site:onderzoek/spelregels/betrouwbaar) — herhaalbaar meten; samen met valide pas echt sterk
+- [Operationaliseren](site:onderzoek/vragen/operationaliseren) — hoe je vooraf vastlegt wat je precies meet

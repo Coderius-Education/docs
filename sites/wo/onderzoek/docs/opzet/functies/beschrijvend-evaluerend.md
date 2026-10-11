@@ -21,7 +21,7 @@ Bij **beschrijvend-evaluerend** onderzoek beoordeel je iets aan de hand van **cr
 Zonder criteria vooraf wordt evalueren al snel "ik vind het wel mooi" — en dat is geen onderzoek. Leg dus éérst vast waaraan iets moet voldoen, en toets daar daarna systematisch aan.
 
 :::tip[Herken je dit?]
-Dit is precies wat je bij [ontwerpgericht onderzoek](../../typen/ontwerpgericht.md) doet als je je prototype toetst aan je vooraf opgestelde eisen. Toetsen aan eisen ís evaluerend onderzoek.
+Dit is precies wat je bij [ontwerpgericht onderzoek](site:onderzoek/typen/ontwerpgericht) doet als je je prototype toetst aan je vooraf opgestelde eisen. Toetsen aan eisen ís evaluerend onderzoek.
 :::
 
 <WelNiet
@@ -31,6 +31,6 @@ Dit is precies wat je bij [ontwerpgericht onderzoek](../../typen/ontwerpgericht.
 
 ## Hangt samen met
 
-- [Functies van onderzoek](./functies-overzicht.mdx) — alle zes functies naast elkaar
-- [Ontwerpgericht onderzoek](../../typen/ontwerpgericht.md) — waar evalueren het sluitstuk is
-- [Valide](../../spelregels/valide.md) — testen met de echte doelgroep, op de echte eisen
+- [Functies van onderzoek](site:onderzoek/opzet/functies/functies-overzicht) — alle zes functies naast elkaar
+- [Ontwerpgericht onderzoek](site:onderzoek/typen/ontwerpgericht) — waar evalueren het sluitstuk is
+- [Valide](site:onderzoek/spelregels/valide) — testen met de echte doelgroep, op de echte eisen

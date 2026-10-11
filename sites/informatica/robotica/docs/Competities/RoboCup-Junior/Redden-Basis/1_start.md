@@ -8,8 +8,8 @@ Welkom bij **Redden Basis**. Voordat je begint met de competitie, is het handig 
 
 | Kan ik het? | Doel | Hoe? | Link |
 |:---:|:---:|:---:|:---:|
-| ✓ | Informatie tonen op een schermpje | Volg de tutorial | [Tutorial – OLED-scherm](/docs/category/tutorial---oled-scherm) |
+| ✓ | Informatie tonen op een schermpje | Volg de tutorial | [Tutorial – OLED-scherm](site:robotica/docs/category/tutorial---oled-scherm) |
 
 ## Klaar met de tutorials?
 
-Dan ben je klaar voor [1.2 Redden Basis](2_redden_basis.md).
+Dan ben je klaar voor [1.2 Redden Basis](site:robotica/docs/Competities/RoboCup-Junior/Redden-Basis/redden_basis).

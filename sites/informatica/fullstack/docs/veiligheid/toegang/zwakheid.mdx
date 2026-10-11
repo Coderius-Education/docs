@@ -12,7 +12,7 @@ description: Een knop is geen slot. Een tweede bezoeker verwijdert met een los s
 />
 
 In je gastenboek staat bij een bericht een knop Verwijderen. Heb je
-[opdracht 4 van Sessies](/docs/FastAPI/onthouden/sessies#opdracht-4-make---alleen-je-eigen-berichten-verwijderen)
+[opdracht 4 van Sessies](site:fullstack/docs/FastAPI/onthouden/sessies#opdracht-4-make---alleen-je-eigen-berichten-verwijderen)
 gemaakt, dan staat hij alleen bij je eigen berichten, en dat voelt als
 beveiliging. Maar een knop doet maar één ding: een verzoek versturen. Wie dat
 verzoek zelf verstuurt, heeft de knop niet nodig, verborgen of niet.
@@ -22,14 +22,14 @@ Maak voor deze reeks een nieuwe map `veiligheid-toegang`, naast je eigen
 project, en open die in VS Code. De server, de scripts en de databases van deze reeks komen daarin. Zo blijft je eigen gastenboek heel. Aan
 het eind van de reeks pas je het geleerde toe op je eigen project.
 
-Maak in die map een virtual environment en installeer de packages; hoe dat gaat staat bij [Een map per reeks](/docs/veiligheid/gereedschap#een-map-per-reeks).
+Maak in die map een virtual environment en installeer de packages; hoe dat gaat staat bij [Een map per reeks](site:fullstack/docs/veiligheid/gereedschap#een-map-per-reeks).
 :::
 
 ## Het gastenboek als JSON
 
 De server hieronder is het gastenboek uit Sessies: registreren uit de basis,
 inloggen met een sessie, en het endpoint Verwijderen uit het
-[htmx-overzicht](/docs/FastAPI/zonder-herladen/htmx-overzicht#verwijderen). De HTML is eruit:
+[htmx-overzicht](site:fullstack/docs/FastAPI/zonder-herladen/htmx-overzicht#verwijderen). De HTML is eruit:
 elk endpoint geeft JSON terug, zodat een scriptje kan lezen wat de server
 antwoordt. Een bericht plaatsen heet hier `POST /bericht`.
 
@@ -163,7 +163,7 @@ print(f"Nog in het gastenboek: {namen}")
 ```
 
 <Regel n={5} tot={6}>
-Twee `httpx.Client`s zijn twee bezoekers, elk met hun eigen cookies en dus een eigen sessie, zoals in [Een script als bezoeker](../gereedschap).
+Twee `httpx.Client`s zijn twee bezoekers, elk met hun eigen cookies en dus een eigen sessie, zoals in [Een script als bezoeker](site:fullstack/docs/veiligheid/gereedschap).
 </Regel>
 
 <Regel n={8} tot={11}>
@@ -242,7 +242,7 @@ met een account; verwijderen kan iedereen.
 ### Opdracht 2: Investigate - Waar staat de sleutel?
 
 Kijk naar de HTML van het recept Verwijderen in het
-[htmx-overzicht](/docs/FastAPI/zonder-herladen/htmx-overzicht#verwijderen): het stukje met
+[htmx-overzicht](site:fullstack/docs/FastAPI/zonder-herladen/htmx-overzicht#verwijderen): het stukje met
 `<li id="bericht-{{ sleutel }}">`, tot en met de knop. Heb je dat recept gebouwd, open dan ook je
 gastenboek en kijk in het tabblad **Elementen** naar een bericht. Waar staat de
 sleutel? Wat betekent dat voor een idee als "maak de sleutels heel lang, dan
@@ -330,4 +330,4 @@ Dit is de zwakke versie: `bericht_verwijderen` vraagt niet wie er komt.
 
 </details>
 
-Door naar [les 2: de controle met 403](./controle).
+Door naar [les 2: de controle met 403](site:fullstack/docs/veiligheid/toegang/controle).

@@ -212,47 +212,64 @@ In de lopende tekst is `**Let op:** …` of `**Tip:** …` ook gangbaar en korte
 - Alt-tekst is verplicht en beschrijvend (niet "afbeelding").
 - Screenshots tonen wat de leerling moet zien, niet de hele desktop.
 
-## 12. Interne links
+## 12. Links naar pagina's
 
-- Gebruik altijd relatieve links: `[7.1 Gegevens opslaan](/docs/database/basis)` of `[Thonny](Thonny.md)`.
-- **Controleer dat de links bestaan** (zie ook `play-docs/CLAUDE.md`).
-- Cross-link gul: aan het begin van een opdracht naar de behandelde secties, en aan het einde van een foutmelding naar de uitleg.
+Elke link naar een pagina schrijf je als **site:-link**, ook binnen je eigen
+cursus:
 
-### Cross-site links (naar een andere cursus)
+```mdx
+Zie [7.1 Gegevens opslaan](site:fullstack/docs/database/basis).
+Herhaal eerst [de for-lus](site:python/docs/herhalen/for-lus#de-for-lus).
+```
 
-De cursussen zijn aparte sites, elk onder een pad van de host van zijn vak
-(`informatica.coderius.nl/python/`). Hardcode **nooit** een
-`https://*.coderius.nl`-URL in de tekst; die staan centraal in de registry
-`packages/shared/sites.js` (de enige bron van waarheid).
+- `site:<cursus>` is het id uit de registry `packages/shared/sites.js`
+  (`python`, `algorithms`, `editor`, …), niet het pad in de URL
+  (`algoritmes`).
+- Daarna volgt het **pad op die cursus**, zonder de cursusnaam ervoor: wat in de
+  adresbalk na `…/python` staat. De meeste cursussen serveren onder `/docs/…`,
+  de editor-cursus op de root (`site:editor/git/vscode`) en didactiek onder
+  `/bronnen/…`.
+- `#anker` wijst naar een kop op die pagina. Linken andere pagina's naar een
+  kop, geef die kop dan een vast ID (`## Lussen \{#lussen}`, in docs-management
+  "Kop met vast ID"); dan breekt de link niet als de koptekst verandert.
+- Bij het bouwen maakt de plugin `packages/shared/plugins/site-links.js` er een
+  echte link van: binnen de cursus een gewone link, naar een andere cursus een
+  link die in een nieuw tabblad opent.
+- In docs-management selecteer je de tekst en kies je **Link naar pagina**; daar
+  zoek je over alle cursussen en kies je eventueel een kop.
+- Wel gewoon laten: ankers op dezelfde pagina (`[zie hieronder](#stap-2)`),
+  afbeeldingen en downloads (`![alt](./img/a.png)`, `[pdf](/files/a.pdf)`), en
+  externe sites.
+- Hardcode **nooit** een `https://*.coderius.nl`-URL; de registry is de enige
+  bron van waarheid.
+- Cross-link gul: aan het begin van een opdracht naar de behandelde secties, en
+  aan het einde van een foutmelding naar de uitleg.
 
-- **Voorkennis uit een andere cursus** → gebruik de globale `<Voorkennis>`-component
-  (inklapbaar, standaard dicht). Zonder import beschikbaar in elke `.md`/`.mdx`:
+### Voorkennis uit een andere cursus
 
-  ```mdx
-  <Voorkennis items={[{site: 'python', to: '/docs/basis/jij-als-variabele', label: 'Variabelen in Python'}]} />
-  ```
+Gebruik de globale `<Voorkennis>`-component (inklapbaar, standaard dicht),
+zonder import beschikbaar in elke `.md`/`.mdx`:
 
-  Laat `site` weg voor voorkennis bínnen dezelfde cursus. Dit vervangt het
-  oude handmatige `:::info Wat moet je al weten`-blok.
-- **Vooruitwijzen naar een andere cursus** (geen voorkennis maar een vervolg- of
-  zijstap, bv. "zet je project in git") → de globale `<SiteLink>`-component in
-  lopende tekst, ook zonder import beschikbaar:
+```mdx
+<Voorkennis items={[{site: 'python', to: '/docs/basis/jij-als-variabele', label: 'Variabelen in Python'}]} />
+```
 
-  ```mdx
-  Zie <SiteLink site="editor" to="/git/vscode/">Git in VS Code</SiteLink>.
-  ```
+Laat `site` weg voor voorkennis bínnen dezelfde cursus. Dit vervangt het oude
+handmatige `:::info Wat moet je al weten`-blok.
 
-  `packages/shared/sitelink.test.ts` controleert monorepo-breed dat elk doelpad
-  bestaat en verbiedt hardcoded cursus-URL's in lestekst.
-- **Het pad is het pad van de doelsite, niet van de bron.** De meeste cursussen
-  serveren onder `/docs/…`, maar de editor-cursus serveert op de root
-  (`/python/stap-4-venv`) en didactiek onder `/bronnen/…`. De guard-tests
-  (`packages/shared/voorkennis.test.ts`, `sitelink.test.ts`) controleren dit
-  bij `pnpm test` als benadering; de CI-job `cross-links` controleert het
-  daarna tegen de gebouwde sites en is de waarheid. Spreken ze elkaar tegen,
-  dan wint de job en moet de guard bijgewerkt worden.
+### Wie controleert wat
+
+- `packages/shared/links-in-lestekst.test.ts` (bij `pnpm test`) bewaakt de
+  vorm: geen `<SiteLink>` in lestekst, geen pagina-link als pad of `.md`-bestand,
+  elke site:-link geldig en naar een bekende cursus, geen hardcoded cursus-URL.
+- Docusaurus (`onBrokenLinks: 'throw'`) controleert bij het bouwen links binnen
+  de eigen cursus.
+- De CI-job `cross-links` legt na de builds elke link in de gebouwde HTML tegen
+  de build van de doelsite: bestaat de pagina, en staat het anker erop. Dat is
+  de waarheid.
+- `<SiteLink>` bestaat nog, maar alleen voor TSX-componenten.
 - **Footer "Andere cursussen"** en de **navbar-dropdown "Cursussen"** worden
-  automatisch uit de registry gegenereerd door `createConfig` — niets per site
+  automatisch uit de registry gegenereerd door `createConfig`; niets per site
   toevoegen. Het volledige overzicht staat op `/cursussen`.
 - Nieuwe cursus of gewijzigde URL? Pas alleen `packages/shared/sites.js` aan.
 

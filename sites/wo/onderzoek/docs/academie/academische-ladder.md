@@ -14,7 +14,7 @@ De **academische ladder** is de vaste volgorde van functies aan een universiteit
 
 | Trede | Engelse naam | Wat doe je? | Contract |
 |---|---|---|---|
-| **Promovendus** | PhD candidate | Je eerste eigen onderzoek, onder begeleiding; aan het eind schrijf je een proefschrift ([promoveren](./promoveren.md)) | Tijdelijk, meestal vier jaar |
+| **Promovendus** | PhD candidate | Je eerste eigen onderzoek, onder begeleiding; aan het eind schrijf je een proefschrift ([promoveren](site:onderzoek/academie/promoveren)) | Tijdelijk, meestal vier jaar |
 | **Postdoc** | Postdoctoral researcher | Na je promotie onderzoek doen in het project van een ander; ervaring en publicaties opbouwen | Tijdelijk, vaak een tot drie jaar |
 | **Universitair docent (UD)** | Assistant professor | Eigen onderzoek én onderwijs geven; je begint een eigen onderzoekslijn | Vaak eerst tijdelijk (tenure track), daarna vast |
 | **Universitair hoofddocent (UHD)** | Associate professor | Een eigen onderzoekslijn leiden, geld binnenhalen, promovendi begeleiden | Vast |
@@ -22,7 +22,7 @@ De **academische ladder** is de vaste volgorde van functies aan een universiteit
 
 Daarnaast kom je nog drie namen tegen:
 
-- **Bijzonder hoogleraar:** een hoogleraar die meestal een dag per week aan de universiteit werkt, op een leerstoel die betaald wordt door een fonds, bedrijf of organisatie. Kijk bij zo iemand extra goed [wie er betaalt](../literatuurstudie/onderzoeker-onderzoeken.md).
+- **Bijzonder hoogleraar:** een hoogleraar die meestal een dag per week aan de universiteit werkt, op een leerstoel die betaald wordt door een fonds, bedrijf of organisatie. Kijk bij zo iemand extra goed [wie er betaalt](site:onderzoek/literatuurstudie/onderzoeker-onderzoeken).
 - **Emeritus:** een hoogleraar die met pensioen is: nog verbonden aan de universiteit, vaak nog schrijvend, maar zonder vaste taken.
 - **Lector:** de leider van een onderzoeksgroep aan een hogeschool. Hogescholen hebben geen promovendi en hoogleraren, maar doen wel praktijkgericht onderzoek.
 
@@ -30,7 +30,7 @@ Daarnaast kom je nog drie namen tegen:
 
 Een trede hoger kom je niet automatisch, door jaren te tellen. Je solliciteert op een vacature of wordt bevorderd als je aan eisen voldoet. Wat telt:
 
-- **Publicaties:** artikelen in tijdschriften met [peer review](../literatuurstudie/peer-review.md), en hoe vaak anderen ze [citeren](../literatuurstudie/citaties.md).
+- **Publicaties:** artikelen in tijdschriften met [peer review](site:onderzoek/literatuurstudie/peer-review), en hoe vaak anderen ze [citeren](site:onderzoek/literatuurstudie/citaties).
 - **Geld:** onderzoek kost geld, en een groot deel daarvan moet je zelf binnenhalen met beurzen. De bekendste in Nederland zijn de Veni, Vidi en Vici van NWO, de nationale organisatie die onderzoeksgeld verdeelt: drie beurzen voor drie fasen van je loopbaan, van ruim drie ton voor een pas gepromoveerde onderzoeker tot anderhalf miljoen euro voor een ervaren onderzoeker die een eigen groep opbouwt.
 - **Onderwijs:** colleges geven, scripties begeleiden, een vak opzetten.
 - **Begeleiding en leiding:** promovendi begeleiden, een groep aansturen, meedraaien in commissies.
@@ -53,7 +53,7 @@ De ladder wordt naar boven toe snel smaller. Volgens het Rathenau Instituut, dat
 Er zijn dus veel meer promovendi dan vaste plekken. Ongeveer drie op de tien gepromoveerden blijven aan een universiteit werken; de rest gaat daarbuiten aan de slag, bij de overheid, in het bedrijfsleven, in het onderwijs of in de zorg. Dat is geen mislukking; een promotie leert je zelfstandig onderzoek doen, en dat is ook buiten de universiteit veel waard. Maar het betekent wel dat jonge onderzoekers jarenlang op tijdelijke contracten werken, met de onzekerheid die daarbij hoort.
 
 :::caution[Valkuil: hoger is niet beter op jouw onderwerp]
-Een hoogleraar weet veel van een smal vakgebied, niet van alles. En wie het onderzoek in een artikel echt heeft uitgevoerd, staat vaak onderaan de ladder: de promovendus die als [eerste auteur](../literatuurstudie/auteurvolgorde.md) op het artikel staat. Gebruik de trede om iemand in te schatten, niet om een argument te winnen.
+Een hoogleraar weet veel van een smal vakgebied, niet van alles. En wie het onderzoek in een artikel echt heeft uitgevoerd, staat vaak onderaan de ladder: de promovendus die als [eerste auteur](site:onderzoek/literatuurstudie/auteurvolgorde) op het artikel staat. Gebruik de trede om iemand in te schatten, niet om een argument te winnen.
 :::
 
 <WelNiet
@@ -69,13 +69,13 @@ Een hoogleraar weet veel van een smal vakgebied, niet van alles. En wie het onde
 
 Lang telde bij een bevordering vooral één ding: hoeveel artikelen iemand had gepubliceerd, en in hoe gerenommeerde tijdschriften. In 2021 maakte de Universiteit Utrecht bekend dat ze bij het aannemen en bevorderen van onderzoekers niet meer naar de *impactfactor* van tijdschriften zou kijken: een getal dat zegt hoe vaak artikelen in een tijdschrift gemiddeld worden geciteerd, maar niets over dít artikel van díe onderzoeker. In plaats daarvan zou Utrecht kijken naar de kwaliteit van het werk, naar onderwijs, teamwerk en open wetenschap. Het besluit maakte deel uit van een landelijke beweging, *Erkennen en waarderen*, en leidde tot felle discussie: voorstanders zagen eindelijk ruimte voor goed onderwijs en samenwerking, tegenstanders vreesden dat beoordelen nu vager en willekeuriger zou worden.
 
-**Wat je hiervan leert:** wat er op de ladder telt, is een afspraak die verandert. Een getal als de [h-index](../literatuurstudie/h-index.md) of de impactfactor meet een stukje van wat een onderzoeker doet, niet het geheel.
+**Wat je hiervan leert:** wat er op de ladder telt, is een afspraak die verandert. Een getal als de [h-index](site:onderzoek/literatuurstudie/h-index) of de impactfactor meet een stukje van wat een onderzoeker doet, niet het geheel.
 
 </EchtGebeurd>
 
 ## Hangt samen met
 
-- [Promoveren](./promoveren.md) — de eerste trede van dichtbij
-- [Een onderzoeker onderzoeken](../literatuurstudie/onderzoeker-onderzoeken.md) — de functie van een auteur als eerste check
-- [Auteurvolgorde](../literatuurstudie/auteurvolgorde.md) — waar je de treden terugziet in een artikel
-- [H-index](../literatuurstudie/h-index.md) — een van de getallen waarmee onderzoekers worden beoordeeld
+- [Promoveren](site:onderzoek/academie/promoveren) — de eerste trede van dichtbij
+- [Een onderzoeker onderzoeken](site:onderzoek/literatuurstudie/onderzoeker-onderzoeken) — de functie van een auteur als eerste check
+- [Auteurvolgorde](site:onderzoek/literatuurstudie/auteurvolgorde) — waar je de treden terugziet in een artikel
+- [H-index](site:onderzoek/literatuurstudie/h-index) — een van de getallen waarmee onderzoekers worden beoordeeld

@@ -15,7 +15,7 @@ import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
 
 De grens hoort op de server, waar de bezoeker er niet bij kan. Je zou daarvoor
 zelf een `if` met `len` kunnen schrijven; wie de uitbreiding JavaScript deed,
-heeft dat in [Server of browser?](/docs/FastAPI/in-de-browser/server-of-browser) al gedaan.
+heeft dat in [Server of browser?](site:fullstack/docs/FastAPI/in-de-browser/server-of-browser) al gedaan.
 FastAPI kan het ook voor je doen: je zet de grens in `Form`, en een verzoek dat
 eroverheen gaat, komt niet eens in je functie.
 
@@ -68,7 +68,7 @@ print(antwoord.json()["detail"][0]["msg"])
 ```
 
 <Regel n={8}>
-Het antwoord is een dictionary met onder `detail` een lijst, met één fout per veld. `[0]` pakt de eerste fout uit die lijst, en `["msg"]` de melding daarin. Wat er verder in staat, zie je in [les 3](./fouten-lezen).
+Het antwoord is een dictionary met onder `detail` een lijst, met één fout per veld. `[0]` pakt de eerste fout uit die lijst, en `["msg"]` de melding daarin. Wat er verder in staat, zie je in [les 3](site:fullstack/docs/veiligheid/invoer/fouten-lezen).
 </Regel>
 
 </CodeUitleg>
@@ -87,7 +87,7 @@ browser vergist.
 
 ## Waar de controle zit
 
-Een verzoek komt nu langs twee controles, allebei op de server. De grens in `Form` ken je nu; de controle op de inhoud komt in [les 4](./inhoud).
+Een verzoek komt nu langs twee controles, allebei op de server. De grens in `Form` ken je nu; de controle op de inhoud komt in [les 4](site:fullstack/docs/veiligheid/invoer/inhoud).
 
 <VerzoekCyclus variant="invoer" />
 
@@ -182,4 +182,4 @@ Beide velden hebben nu een grens op de server.
 
 </details>
 
-Door naar [les 3: een 422 lezen](./fouten-lezen).
+Door naar [les 3: een 422 lezen](site:fullstack/docs/veiligheid/invoer/fouten-lezen).

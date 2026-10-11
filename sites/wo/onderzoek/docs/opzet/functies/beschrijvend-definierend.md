@@ -18,10 +18,10 @@ Bij **beschrijvend-definiërend** onderzoek zoek je uit wat een begrip betekent 
 
 ## Waarom belangrijk?
 
-Definiërend onderzoek doe je vaak als **eerste deelvraag**: voordat je nepnieuws kunt tellen of verklaren, moet vaststaan wat je er precies onder verstaat. Zonder scherpe definitie meet iedereen iets anders — en is je onderzoek niet [valide](../../spelregels/valide.md).
+Definiërend onderzoek doe je vaak als **eerste deelvraag**: voordat je nepnieuws kunt tellen of verklaren, moet vaststaan wat je er precies onder verstaat. Zonder scherpe definitie meet iedereen iets anders — en is je onderzoek niet [valide](site:onderzoek/spelregels/valide).
 
 :::tip[Past vaak bij]
-[Literatuuronderzoek](../soorten/literatuuronderzoek.md): je vergelijkt hoe bestaande bronnen het begrip omschrijven en kiest (of bouwt) daaruit jouw werkdefinitie.
+[Literatuuronderzoek](site:onderzoek/opzet/soorten/literatuuronderzoek): je vergelijkt hoe bestaande bronnen het begrip omschrijven en kiest (of bouwt) daaruit jouw werkdefinitie.
 :::
 
 <WelNiet
@@ -31,8 +31,8 @@ Definiërend onderzoek doe je vaak als **eerste deelvraag**: voordat je nepnieuw
 
 ## Hangt samen met
 
-- [Functies van onderzoek](./functies-overzicht.mdx) — alle zes functies naast elkaar
-- [Literatuuronderzoek](../soorten/literatuuronderzoek.md) — de soort onderzoek die hier meestal bij hoort
-- [De keuzedriehoek](../keuzedriehoek.mdx) — functie combineren met soort en methode
-- [Operationaliseren](../../vragen/operationaliseren.md) — de volgende stap: van definitie naar meting
-- [De vork van Hume](../../kennisleer/vork-van-hume.mdx) — waarom een definiërende deelvraag denkwerk is en geen meting vraagt
+- [Functies van onderzoek](site:onderzoek/opzet/functies/functies-overzicht) — alle zes functies naast elkaar
+- [Literatuuronderzoek](site:onderzoek/opzet/soorten/literatuuronderzoek) — de soort onderzoek die hier meestal bij hoort
+- [De keuzedriehoek](site:onderzoek/opzet/keuzedriehoek) — functie combineren met soort en methode
+- [Operationaliseren](site:onderzoek/vragen/operationaliseren) — de volgende stap: van definitie naar meting
+- [De vork van Hume](site:onderzoek/kennisleer/vork-van-hume) — waarom een definiërende deelvraag denkwerk is en geen meting vraagt

@@ -106,7 +106,7 @@ func _physics_process(delta: float) -> void:
 
 **Oplossing:**
 
-1. Controleer of je tegels een Physics Layer hebben ([Collision op je tegels](../03-level-bouwen/tilemap_collision.md)).
+1. Controleer of je tegels een Physics Layer hebben ([Collision op je tegels](site:godot/docs/tilemap_collision)).
 2. Controleer of je `CharacterBody2D` een `CollisionShape2D` als child heeft, mét een **Shape** ingesteld.
 
 </details>
@@ -133,4 +133,4 @@ func _physics_process(delta: float) -> void:
 
 ---
 
-← [Deel 1 — Een script dat draait](./skelet.md) · **Volgende:** [Deel 3 — Delta](./delta.md) →
+← [Deel 1 — Een script dat draait](site:godot/docs/basis_movement_begrijpen) · **Volgende:** [Deel 3 — Delta](site:godot/docs/movement-delta) →

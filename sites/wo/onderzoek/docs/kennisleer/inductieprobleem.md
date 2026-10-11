@@ -24,17 +24,17 @@ Liet zien dat de sprong van "tot nu toe altijd" naar "dus altijd" rust op de aan
 
 ## Wat dit voor jouw onderzoek betekent
 
-Dit is niet alleen een filosofische puzzel — het is de kern van [externe validiteit](../spelregels/externe-validiteit.md). Je hebt tachtig leerlingen ondervraagd; dat zegt streng genomen iets over die tachtig. Elke uitspraak over "scholieren" is een inductieve sprong.
+Dit is niet alleen een filosofische puzzel — het is de kern van [externe validiteit](site:onderzoek/spelregels/externe-validiteit). Je hebt tachtig leerlingen ondervraagd; dat zegt streng genomen iets over die tachtig. Elke uitspraak over "scholieren" is een inductieve sprong.
 
 Dat betekent niet dat onderzoek zinloos is. Het betekent dat je:
 
 - **je conclusie begrenst** tot de groep en de situatie die je onderzocht;
 - **zegt hoe ver je denkt te kunnen generaliseren**, en waarom;
 - **je uitspraken voorzichtig formuleert**: "dit wijst erop dat", niet "hiermee is bewezen dat";
-- **[representatief](../spelregels/externe-validiteit.md) werkt**, want hoe eenzijdiger je groep, hoe wankeler de sprong.
+- **[representatief](site:onderzoek/spelregels/externe-validiteit) werkt**, want hoe eenzijdiger je groep, hoe wankeler de sprong.
 
 :::caution[Geen reden om op te geven]
-Het inductieprobleem is geen excuus om maar niets meer te meten. Alle natuurwetenschap rust op inductie en levert intussen bruggen op die blijven staan. De les is bescheidenheid in je formulering, niet stilstand in je werk — precies waarom [de vier spelregels](../spelregels/de-vier-spelregels.md) bestaan.
+Het inductieprobleem is geen excuus om maar niets meer te meten. Alle natuurwetenschap rust op inductie en levert intussen bruggen op die blijven staan. De les is bescheidenheid in je formulering, niet stilstand in je werk — precies waarom [de vier spelregels](site:onderzoek/spelregels/de-vier-spelregels) bestaan.
 :::
 
 <WelNiet
@@ -44,7 +44,7 @@ Het inductieprobleem is geen excuus om maar niets meer te meten. Alle natuurwete
 
 ## Hangt samen met
 
-- [Externe validiteit](../spelregels/externe-validiteit.md) — hetzelfde probleem, vertaald naar je eigen onderzoek
-- [Empirisme](./empirisme.md) — de stroming waarvan dit de zwakke plek is
-- [Scepticisme](./scepticisme.md) — waarom volledige zekerheid buiten bereik blijft
-- [A posteriori](./a-posteriori.md) — het soort kennis dat hierdoor altijd voorlopig blijft
+- [Externe validiteit](site:onderzoek/spelregels/externe-validiteit) — hetzelfde probleem, vertaald naar je eigen onderzoek
+- [Empirisme](site:onderzoek/kennisleer/empirisme) — de stroming waarvan dit de zwakke plek is
+- [Scepticisme](site:onderzoek/kennisleer/scepticisme) — waarom volledige zekerheid buiten bereik blijft
+- [A posteriori](site:onderzoek/kennisleer/a-posteriori) — het soort kennis dat hierdoor altijd voorlopig blijft

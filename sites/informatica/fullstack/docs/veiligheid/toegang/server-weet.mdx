@@ -5,7 +5,7 @@ description: Een controle op een naam die de bezoeker meestuurt, laat zich omzei
 
 # Wie mag wat: controleer op wat de server weet
 
-Je controle uit [les 2](./controle) vergelijkt de naam bij het bericht met de
+Je controle uit [les 2](site:fullstack/docs/veiligheid/toegang/controle) vergelijkt de naam bij het bericht met de
 naam in de sessie. Er is een controle die er bijna hetzelfde uitziet: de naam
 bij het bericht vergelijken met een naam die de bezoeker zelf meestuurt. Die
 gaat mis, en het waarom is de kern van deze reeks.
@@ -44,11 +44,11 @@ async def bericht_verwijderen(sleutel: str, naam: str = ""):
     return {"bericht": "Verwijderd"}
 ```
 
-`naam` is een query-parameter, zoals in [Een waarde na een vraagteken: query-parameters](/docs/FastAPI/veel-paginas/query-parameters):
+`naam` is een query-parameter, zoals in [Een waarde na een vraagteken: query-parameters](site:fullstack/docs/FastAPI/veel-paginas/query-parameters):
 de knop zou `/bericht/…?naam=Alex` versturen. Gooi `gastenboek.db`,
 `sessies.db` en `gebruikers.db` weg en draai `test_verwijderen.py` uit
-[les 1](./zwakheid), met onderaan het stuk van Sara uit
-[opdracht 1 van les 2](./controle#opdracht-1-run---sara-mag-wel). Heb je dat
+[les 1](site:fullstack/docs/veiligheid/toegang/zwakheid), met onderaan het stuk van Sara uit
+[opdracht 1 van les 2](site:fullstack/docs/veiligheid/toegang/controle#opdracht-1-run---sara-mag-wel). Heb je dat
 stuk nog niet, zet het er dan eerst bij:
 
 ```
@@ -85,7 +85,7 @@ stuurt. Het endpoint vraagt zijn sessie niet eens op.
 
 **Oplossing:** controleer op iets dat alleen de server kan geven. De naam in de
 sessie heeft de server er zelf in gezet, nadat het wachtwoord klopte. Zet
-`bericht_verwijderen` uit [les 2](./controle) terug, en zet in het script de
+`bericht_verwijderen` uit [les 2](site:fullstack/docs/veiligheid/toegang/controle) terug, en zet in het script de
 regel van Alex terug.
 
 ```python
@@ -98,13 +98,13 @@ if bericht is None or bericht["naam"] != mijn.get("naam"):
     raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
 ```
 
-Meer uitleg over wat je van een bezoeker kunt geloven: [Server of browser?](/docs/FastAPI/in-de-browser/server-of-browser)
+Meer uitleg over wat je van een bezoeker kunt geloven: [Server of browser?](site:fullstack/docs/FastAPI/in-de-browser/server-of-browser)
 
 ## Opdrachten
 
 ### Opdracht 1: Predict - De naam uit een cookie
 
-In [Onthouden met een cookie](/docs/FastAPI/onthouden/cookies) zette je de naam van de
+In [Onthouden met een cookie](site:fullstack/docs/FastAPI/onthouden/cookies) zette je de naam van de
 bezoeker in een cookie. Stel dat de controle vergelijkt met die cookie in plaats
 van met de sessie:
 
@@ -141,7 +141,7 @@ is dat geen reden om te geloven dat alleen de schrijver de sleutel kent?
 <summary>Antwoord</summary>
 
 Omdat de sleutel in de pagina staat, voor iedereen die de lijst opvraagt. Je
-zag in [les 1](./zwakheid) dat Alex hem zo uit `/berichten` haalde. Een sleutel
+zag in [les 1](site:fullstack/docs/veiligheid/toegang/zwakheid) dat Alex hem zo uit `/berichten` haalde. Een sleutel
 zegt welk bericht, niet wie het mag.
 
 </details>
@@ -221,4 +221,4 @@ naar de naam in de sessie.
 
 </details>
 
-Door naar [les 4: elk endpoint apart](./elk-endpoint).
+Door naar [les 4: elk endpoint apart](site:fullstack/docs/veiligheid/toegang/elk-endpoint).

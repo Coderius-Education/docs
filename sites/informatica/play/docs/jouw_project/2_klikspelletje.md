@@ -21,7 +21,7 @@ Gebruik `play.new_circle()` met een `radius` en `color` naar keuze.
 
 De bal moet elke seconde naar een willekeurige plek op het scherm springen. Hiervoor heb je twee dingen nodig:
 - `play.random_number()` om willekeurige getallen te maken (of `play.random_position()` voor een willekeurige positie op het scherm)
-- `async` en `await play.timer()` om te wachten (zie [5.2 Wachten met async en await](/docs/tijd/async))
+- `async` en `await play.timer()` om te wachten (zie [5.2 Wachten met async en await](site:play/docs/tijd/async))
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -37,7 +37,7 @@ Gebruik `@bal.when_clicked` om te detecteren of de speler op de bal klikt. Houd 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Je hebt `global` nodig om de score binnen een functie te veranderen. Kijk bij [4.5 Een score bijhouden](/docs/gebeurtenissen/score_bijhouden) als je niet meer weet hoe dat werkt.
+Je hebt `global` nodig om de score binnen een functie te veranderen. Kijk bij [4.5 Een score bijhouden](site:play/docs/gebeurtenissen/score_bijhouden) als je niet meer weet hoe dat werkt.
 
 </details>
 
@@ -50,7 +50,7 @@ Als je `hide()` gebruikt om een bal te verbergen, onthoud dan dat **de fysica oo
 :::
 
 :::tip
-Ben je klaar, of wil je weten hoe ver je bent? Upload je project bij [Spel checken](/spel-checken) en zie welke onderdelen van de cursus erin zitten.
+Ben je klaar, of wil je weten hoe ver je bent? Upload je project bij [Spel checken](site:play/spel-checken) en zie welke onderdelen van de cursus erin zitten.
 :::
 
 ## Mogelijke uitbreidingen
@@ -59,7 +59,7 @@ Ben je klaar, of wil je weten hoe ver je bent? Upload je project bij [Spel check
 - **Kleiner worden**: maak de bal kleiner bij elke klik, zodat het steeds moeilijker wordt.
 - **Meerdere ballen**: voeg extra ballen toe die ook punten opleveren.
 - **Foute ballen**: voeg rode ballen toe die punten aftrekken als je erop klikt.
-- **High score opslaan**: gebruik de [database](/docs/database/basis) om de hoogste score te bewaren.
+- **High score opslaan**: gebruik de [database](site:play/docs/database/basis) om de hoogste score te bewaren.
 - **Geluidssignaal**: verander de kleur van de bal als je erop klikt, zodat je feedback krijgt.
-- **Levels**: na elke 10 punten wordt het spel moeilijker (sneller, kleinere bal, meer foute ballen). Hoofdstuk [9.1 Levels met andere instellingen](/docs/levels/instellingen) laat zien hoe je die getallen per level in een lijst zet.
+- **Levels**: na elke 10 punten wordt het spel moeilijker (sneller, kleinere bal, meer foute ballen). Hoofdstuk [9.1 Levels met andere instellingen](site:play/docs/levels/instellingen) laat zien hoe je die getallen per level in een lijst zet.
 - **Combo-systeem**: geef extra punten als je meerdere keren snel achter elkaar klikt.

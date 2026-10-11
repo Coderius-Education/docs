@@ -10,7 +10,7 @@ Error: libusb_open() failed / cannot connect to target / upload error
 
 **Oorzaak:** Het uploaden bereikt het bord niet. Bij de **Arduino** komt dit meestal door de poort; bij de **STM32 Blue Pill** vrijwel altijd door de programmer of de `BOOT`-jumpers.
 
-**Oplossing — Arduino:** Controleer dat het juiste bord en de juiste poort gekozen zijn. Zie [Poort niet gevonden](poort-niet-gevonden.md).
+**Oplossing — Arduino:** Controleer dat het juiste bord en de juiste poort gekozen zijn. Zie [Poort niet gevonden](site:embedded/docs/er-gaat-iets-mis/poort-niet-gevonden).
 
 **Oplossing — STM32 met ST-Link:** Loop deze punten na:
 
@@ -33,4 +33,4 @@ framework = stm32cube
 upload_protocol = stlink
 ```
 
-Meer uitleg: [8.3 Code uploaden naar de STM32](/docs/stm32-intro/uploaden).
+Meer uitleg: [8.3 Code uploaden naar de STM32](site:embedded/docs/stm32-intro/uploaden).

@@ -8,7 +8,7 @@ title: "Stap 4: een virtual environment aanmaken"
 
 Een **virtual environment** (venv) is een afgesloten omgeving voor dit ene project. Packages die je erin installeert komen niet in de weg van je andere projecten, en andersom. Elk project krijgt zijn eigen omgeving.
 
-Typ in PowerShell (open die zoals in [stap 2](./stap-2-powershell) als je hem gesloten hebt), in je projectmap:
+Typ in PowerShell (open die zoals in [stap 2](site:editor/python/stap-2-powershell) als je hem gesloten hebt), in je projectmap:
 
 ```bash
 python -m venv .venv

@@ -163,7 +163,7 @@ const SITES = defineSites([
 
 // Sites voor docenten. Bewust niet in SITES: die lijst vult de navbar-dropdown,
 // de footer en /cursussen van elke cursussite, en dit zijn geen cursussen. Wel
-// in SITES_BY_ID, zodat <SiteLink site="didactiek"> vanuit een les werkt en de
+// in SITES_BY_ID, zodat site:didactiek/… vanuit een les werkt en de
 // docentenpagina van de homepage ze kan tonen.
 const DOCENTEN_SITES = defineSites([
   {
@@ -267,6 +267,47 @@ function siteByUrl(url) {
   });
 }
 
+// Een link naar een pagina in lestekst: [tekst](site:<id>/<pad>#anker). <id> is
+// het registry-id (ook voor de eigen cursus), <pad> de route binnen die cursus
+// zonder zijn basispad. De remark-plugin plugins/site-links.js zet hem bij de
+// build om; docs-management schrijft hem met de knop 'Link naar pagina'.
+const SITE_URL_RE = /^site:([a-z][a-z0-9_-]*)(\/[^#?\s]*)?(?:#([^\s]*))?$/;
+
+/**
+ * Ontleed een `site:`-link. Geeft null voor elke andere URL en gooit bij een
+ * misvormde `site:`-link (geen pad, spaties, querystring), zodat een tikfout
+ * de build laat falen in plaats van een dode link op te leveren.
+ *
+ * @param {string} url
+ * @returns {{ site: string, route: string, anchor?: string } | null}
+ */
+function parseSiteUrl(url) {
+  if (typeof url !== 'string' || !url.startsWith('site:')) return null;
+  const match = SITE_URL_RE.exec(url);
+  if (!match || !match[2])
+    throw new Error(`Ongeldige site:-link '${url}': verwacht site:<cursus>/<pad>#anker`);
+  return { site: match[1], route: match[2], ...(match[3] ? { anchor: match[3] } : {}) };
+}
+
+/** Cursus, docentensite of de homepage bij een link-id; undefined als onbekend. */
+function linkDoel(id) {
+  return id === HOME.id ? HOME : SITES_BY_ID[id];
+}
+
+/**
+ * Productie-URL van een pagina: de url van de cursus plus de route en het anker.
+ * Gooit bij een onbekend id.
+ *
+ * @param {string} id
+ * @param {string} route bv. '/docs/lussen'
+ * @param {string} [anchor]
+ */
+function routeUrl(id, route, anchor) {
+  const doel = linkDoel(id);
+  if (!doel) throw new Error(`Onbekende cursus '${id}' in site:-link (zie sites.js)`);
+  return `${normalizeUrl(doel.url)}/${route.replace(/^\/+/, '')}${anchor ? `#${anchor}` : ''}`;
+}
+
 module.exports = {
   SUBJECTS,
   SUBJECTS_BY_ID,
@@ -282,4 +323,7 @@ module.exports = {
   legacyHost,
   siteByUrl,
   normalizeUrl,
+  parseSiteUrl,
+  linkDoel,
+  routeUrl,
 };

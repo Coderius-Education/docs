@@ -10,8 +10,8 @@ Op de baan staan blokjes die je niet mag raken. Je hebt dus een **afstandssensor
 
 Drie opties:
 
-- **Ultrasone sensor** (RCWL-1601). Goedkoop, werkt op afstand. Zie [hoofdstuk 8](/docs/category/tutorial---afstandssensor).
-- **Time of Flight** (TOF). Preciezer en kleiner. Zie [hoofdstuk 9](/docs/category/tutorial---time-of-flight).
+- **Ultrasone sensor** (RCWL-1601). Goedkoop, werkt op afstand. Zie [hoofdstuk 8](site:robotica/docs/category/tutorial---afstandssensor).
+- **Time of Flight** (TOF). Preciezer en kleiner. Zie [hoofdstuk 9](site:robotica/docs/category/tutorial---time-of-flight).
 - **Piezo**. Vraag je docent naar beschikbaarheid.
 
 ## Stap 2: lees de afstand uit

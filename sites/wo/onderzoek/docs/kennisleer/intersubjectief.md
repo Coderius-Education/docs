@@ -12,12 +12,12 @@ title: Intersubjectieve kennis
 
 ## Waarom dit het doel van wetenschap is
 
-Volmaakte objectiviteit is onbereikbaar: niemand kan buiten de eigen waarneming stappen om te controleren of die klopt. Dat is de les van het [scepticisme](./scepticisme.md). Wat wél kan, is je werk zó inrichten dat anderen het kunnen controleren en overdoen — en dat ze dan op hetzelfde uitkomen.
+Volmaakte objectiviteit is onbereikbaar: niemand kan buiten de eigen waarneming stappen om te controleren of die klopt. Dat is de les van het [scepticisme](site:onderzoek/kennisleer/scepticisme). Wat wél kan, is je werk zó inrichten dat anderen het kunnen controleren en overdoen — en dat ze dan op hetzelfde uitkomen.
 
-Daarom draaien twee van [de vier spelregels](../spelregels/de-vier-spelregels.md) hier rechtstreeks om:
+Daarom draaien twee van [de vier spelregels](site:onderzoek/spelregels/de-vier-spelregels) hier rechtstreeks om:
 
-- [**Transparant**](../spelregels/transparant.md): je beschrijft je methode en laat je gegevens zien, zodat een ander je stappen kan narekenen.
-- [**Betrouwbaar**](../spelregels/betrouwbaar.md): wie het onderzoek herhaalt, krijgt hetzelfde resultaat.
+- [**Transparant**](site:onderzoek/spelregels/transparant): je beschrijft je methode en laat je gegevens zien, zodat een ander je stappen kan narekenen.
+- [**Betrouwbaar**](site:onderzoek/spelregels/betrouwbaar): wie het onderzoek herhaalt, krijgt hetzelfde resultaat.
 
 Samen maken ze van jouw persoonlijke waarneming iets wat de groep kan toetsen. Dat is de kern van wetenschappelijke kennis.
 
@@ -32,6 +32,6 @@ Het gaat om **onafhankelijke controle**, niet om stemmen. Als honderd mensen elk
 
 ## Hangt samen met
 
-- [Soorten kennis naast elkaar](./soorten-kennis.mdx) — objectief, subjectief en intersubjectief vergeleken
-- [Transparant](../spelregels/transparant.md) en [betrouwbaar](../spelregels/betrouwbaar.md) — de spelregels die intersubjectiviteit mogelijk maken
-- [Observatieschema](../opzet/methoden/observatie.md) — hulpmiddel om verschillende waarnemers hetzelfde te laten meten
+- [Soorten kennis naast elkaar](site:onderzoek/kennisleer/soorten-kennis) — objectief, subjectief en intersubjectief vergeleken
+- [Transparant](site:onderzoek/spelregels/transparant) en [betrouwbaar](site:onderzoek/spelregels/betrouwbaar) — de spelregels die intersubjectiviteit mogelijk maken
+- [Observatieschema](site:onderzoek/opzet/methoden/observatie) — hulpmiddel om verschillende waarnemers hetzelfde te laten meten

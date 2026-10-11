@@ -88,9 +88,9 @@ func _process(delta: float) -> void:
     text = "Score: " + str(get_node("../CharacterBody2D").score)
 ```
 
-> Maak je geen zorgen als `_process` en `str` nieuw zijn — die komen in [Score op het scherm tonen](./score_op_scherm.md) aan bod. Dit voorbeeld is alleen om de **pijn** te laten zien.
+> Maak je geen zorgen als `_process` en `str` nieuw zijn — die komen in [Score op het scherm tonen](site:godot/docs/score_op_scherm) aan bod. Dit voorbeeld is alleen om de **pijn** te laten zien.
 
-Dit werkt — *zolang* je karakter precies `CharacterBody2D` heet en op de juiste plek in de Scene Tree staat. Verschuif of hernoem je iets, of laad je een nieuw level? Crash. In de volgende les ([Global variables](./global_variables.md)) zie je een schonere oplossing.
+Dit werkt — *zolang* je karakter precies `CharacterBody2D` heet en op de juiste plek in de Scene Tree staat. Verschuif of hernoem je iets, of laad je een nieuw level? Crash. In de volgende les ([Global variables](site:godot/docs/global_variables)) zie je een schonere oplossing.
 
 </details>
 
@@ -99,7 +99,7 @@ Dit werkt — *zolang* je karakter precies `CharacterBody2D` heet en op de juist
 Je hebt nu een score in je karakter. Voeg er een **levens-systeem** aan toe en laat het spel reageren als ze op zijn.
 
 1. Voeg `var levens = 3` toe aan je karakter.
-2. Laat de vijand (uit [Signals & muntje](./signals_muntje.md)) bij contact `body.levens -= 1` doen en de waarde printen.
+2. Laat de vijand (uit [Signals & muntje](site:godot/docs/signals_muntje)) bij contact `body.levens -= 1` doen en de waarde printen.
 3. **Nieuw:** als `body.levens` op 0 (of lager) komt, print `"GAME OVER"` in **Uitvoer** en sluit het spel met `get_tree().quit()`.
 
 <details>
@@ -166,6 +166,6 @@ func _on_body_entered(body: Node2D) -> void:
 
 **Oorzaak:** Bij opnieuw starten wordt het karakter opnieuw aangemaakt, en dus ook `var score = 0`. De score leeft maar zolang het karakter bestaat.
 
-**Oplossing:** Dit lossen we op in [Global variables](./global_variables.md) — variabelen die buiten één node leven.
+**Oplossing:** Dit lossen we op in [Global variables](site:godot/docs/global_variables) — variabelen die buiten één node leven.
 
 </details>

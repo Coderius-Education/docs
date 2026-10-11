@@ -41,7 +41,7 @@ Het Amerikaanse tijdschrift *The Literary Digest* verstuurde in 1936 tien miljoe
 
 ## Hangt samen met
 
-- [Valide](./valide.md) — externe validiteit is een van de twee kanten van validiteit
-- [Interne validiteit](./interne-validiteit.md) — de andere kant: klopt de conclusie bínnen je onderzoek?
-- [Intern vs. extern](./intern-vs-extern.mdx) — waarom de twee elkaar in de weg zitten
-- [Veldonderzoek](../opzet/soorten/veldonderzoek.md) — de soort onderzoek die het sterkst is in realisme
+- [Valide](site:onderzoek/spelregels/valide) — externe validiteit is een van de twee kanten van validiteit
+- [Interne validiteit](site:onderzoek/spelregels/interne-validiteit) — de andere kant: klopt de conclusie bínnen je onderzoek?
+- [Intern vs. extern](site:onderzoek/spelregels/intern-vs-extern) — waarom de twee elkaar in de weg zitten
+- [Veldonderzoek](site:onderzoek/opzet/soorten/veldonderzoek) — de soort onderzoek die het sterkst is in realisme

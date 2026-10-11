@@ -45,4 +45,4 @@ Sommige Blue Pills kun je rechtstreeks via de USB-poort programmeren met **DFU**
 Twijfel je? Koop een goedkope ST-Link erbij. Het scheelt veel frustratie, en je kunt er ook mee **debuggen** (stap voor stap door je code lopen) — iets wat de Arduino IDE niet kan.
 :::
 
-Lukt het uploaden niet, kijk dan bij [Upload mislukt](/docs/er-gaat-iets-mis/upload-mislukt). In de volgende les zet je je eerste echte programma op de Blue Pill.
+Lukt het uploaden niet, kijk dan bij [Upload mislukt](site:embedded/docs/er-gaat-iets-mis/upload-mislukt). In de volgende les zet je je eerste echte programma op de Blue Pill.

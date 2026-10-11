@@ -5,8 +5,8 @@ description: Een naam van alleen spaties komt langs max_length. Controleer de in
 
 # Invoer controleren: de inhoud controleren
 
-`max_length` uit [les 2](./grenzen) bewaakt de lengte, en een leeg veld weigert
-FastAPI al, zoals je in [les 3](./fouten-lezen) zag. Maar een naam van drie
+`max_length` uit [les 2](site:fullstack/docs/veiligheid/invoer/grenzen) bewaakt de lengte, en een leeg veld weigert
+FastAPI al, zoals je in [les 3](site:fullstack/docs/veiligheid/invoer/fouten-lezen) zag. Maar een naam van drie
 spaties is niet leeg en niet te lang. Maak een script `spaties.py` dat zo'n
 naam stuurt:
 
@@ -23,7 +23,7 @@ Uitvoer:
 200 {'lengte': 3}
 ```
 
-Draai `lees_database.py` uit [les 1](./maxlength). Onderaan staat het nieuwe
+Draai `lees_database.py` uit [les 1](site:fullstack/docs/veiligheid/invoer/maxlength). Onderaan staat het nieuwe
 bericht:
 
 ```
@@ -76,7 +76,7 @@ Een lege tekst telt in een `if` als niet waar, dus `not naam.strip()` is waar al
 </Regel>
 
 <Regel n={7}>
-`raise HTTPException` stopt de functie en stuurt een foutmelding, zoals de 404 in [Een 404 sturen: als het item niet bestaat](/docs/FastAPI/berichten-tonen/niet-gevonden). Voeg `HTTPException` toe aan de import uit `fastapi`.
+`raise HTTPException` stopt de functie en stuurt een foutmelding, zoals de 404 in [Een 404 sturen: als het item niet bestaat](site:fullstack/docs/FastAPI/berichten-tonen/niet-gevonden). Voeg `HTTPException` toe aan de import uit `fastapi`.
 </Regel>
 
 </CodeUitleg>
@@ -89,7 +89,7 @@ Draai `spaties.py` opnieuw:
 
 Het is een **400** en geen 422. Een 422 komt van FastAPI zelf, als een veld niet
 past bij wat er in `Form` staat. Een 400 stuur meestal jij, voor een regel die
-je zelf bedacht. De uitzondering zag je in [les 1](./maxlength): bij een veld
+je zelf bedacht. De uitzondering zag je in [les 1](site:fullstack/docs/veiligheid/invoer/maxlength): bij een veld
 boven een megabyte stuurt Starlette zelf een 400.
 
 `lees_database.py` laat geen nieuwe regel met `[   ]` zien: het bericht kwam
@@ -205,4 +205,4 @@ De lengte bewaakt FastAPI, de inhoud jij.
 
 </details>
 
-Door naar [les 5: getallen en keuzes](./getallen).
+Door naar [les 5: getallen en keuzes](site:fullstack/docs/veiligheid/invoer/getallen).

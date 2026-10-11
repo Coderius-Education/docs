@@ -26,7 +26,7 @@ Elke sensor heeft drie draadjes: signaal, voeding en ground. Steek ze op de drie
 
 ![twee analoge IR-sensoren aangesloten op A0 en A1 van het shield](@site/static/fritzing/analog_irs_shield_bb.png)
 
-Sluit de ene sensor aan op pin **A0** en de andere op pin **A1**. Welke van de twee links zit, maakt nu nog niet uit — dat controleer je straks in [Deel 4](./deel4_twee_sensoren.md) met de code erbij.
+Sluit de ene sensor aan op pin **A0** en de andere op pin **A1**. Welke van de twee links zit, maakt nu nog niet uit — dat controleer je straks in [Deel 4](site:robotica/lego_auto/lijnsensor/twee-sensoren) met de code erbij.
 
 ## Wanneer heb je deze stap gehaald?
 

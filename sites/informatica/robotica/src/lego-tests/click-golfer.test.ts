@@ -18,6 +18,10 @@ import { describe, expect, it } from 'vitest';
 const CLICK = fileURLToPath(new URL('../../click_golfer', import.meta.url));
 const STATIC = fileURLToPath(new URL('../../static', import.meta.url));
 
+// Links tussen lespagina's staan als `site:robotica/click_golfer/<pagina>`;
+// het build-plugin maakt er een echte link van.
+const LINK = 'site:robotica/click_golfer/';
+
 function paginas(): string[] {
   return readdirSync(CLICK)
     .filter((f) => f.endsWith('.md'))
@@ -77,8 +81,7 @@ describe('de hardware-uitleg klopt', () => {
         for (const p of programma.matchAll(/"SERVO_PIN": "(\d+)"/g)) pinnen.add(`D${p[1]}`);
         for (const pin of pinnen) {
           const uitleg = pin.startsWith('A') ? 'ir-sensor' : 'servo';
-          const noemt =
-            inhoud.includes(`**${pin}**`) || new RegExp(`\\(${uitleg}(\\.md)?\\)`).test(inhoud);
+          const noemt = inhoud.includes(`**${pin}**`) || inhoud.includes(`](${LINK}${uitleg})`);
           if (!noemt) zonder.push(`${bestand}: ${m[1]} gebruikt ${pin}`);
         }
       }
@@ -263,7 +266,7 @@ describe('de volgorde van de route', () => {
     const zonder = VOLGORDE.slice(1, -1).filter((naam, i) => {
       const volgende = VOLGORDE[i + 2];
       const slot = tekst(`${naam}.md`).trimEnd().split('\n').at(-1) ?? '';
-      return !slot.includes(`](${volgende})`);
+      return !slot.includes(`](${LINK}${volgende})`);
     });
     expect(zonder).toEqual([]);
   });

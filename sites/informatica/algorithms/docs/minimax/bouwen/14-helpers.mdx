@@ -11,7 +11,7 @@ pen-en-papier-pagina, maar dan in code.
 
 ## Wat doen deze functies?
 
-Op de [pen-en-papier-pagina](../02-pen-en-papier) rekende je de waarde
+Op de [pen-en-papier-pagina](site:algorithms/docs/minimax/02-pen-en-papier) rekende je de waarde
 van elke knoop van onderop terug naar boven. Die vraag, wat is deze
 positie waard, is precies wat `max_value` en `min_value` beantwoorden.
 **`max_value(bord)`** neemt aan dat X aan zet is en zegt hoe goed het
@@ -397,7 +397,7 @@ if terminal(bord):
 
 Daarna een lus over `actions(bord)` die `v` bijwerkt. Twee dingen om
 dubbel te checken: in `max_value` roep je `min_value` aan, niet
-`max_value` (zie ook [er gaat iets mis](../17-fouten)), en de startwaarde
+`max_value` (zie ook [er gaat iets mis](site:algorithms/docs/minimax/17-fouten)), en de startwaarde
 moet zo zijn dat elke echte uitkomst beter is, dus `-math.inf` voor
 `max` en `math.inf` voor `min`.
 
@@ -430,4 +430,4 @@ en andersom; die afwisseling is de boom.
 
 </details>
 
-Door naar [draai het zelf →](./15-zelf-draaien).
+Door naar [draai het zelf →](site:algorithms/docs/minimax/bouwen/15-zelf-draaien).

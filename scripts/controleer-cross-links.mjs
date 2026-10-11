@@ -5,6 +5,8 @@
  *     node scripts/controleer-cross-links.mjs builds        map met artifacts
  *     node scripts/controleer-cross-links.mjs --annotaties  GitHub-annotaties
  *     node scripts/controleer-cross-links.mjs --compleet    elke site moet er zijn
+ *     node scripts/controleer-cross-links.mjs --ankers=waarschuw
+ *                                     ontbrekende ankers als waarschuwing
  *
  * CI bouwt alleen de sites die een wijziging raakt en haalt de rest uit de
  * cache (zie de jobs `build` en `voorraad` in build.yml). Met --compleet faalt
@@ -13,17 +15,26 @@
  *
  * Waarom dit naast de guard-tests bestaat: elke cursus is een eigen
  * Docusaurus-site, en `onBrokenLinks: 'throw'` controleert alleen links
- * binnen de eigen site. Een <SiteLink> of <Voorkennis>-item naar een andere
+ * binnen de eigen site. Een site:-link of <Voorkennis>-item naar een andere
  * cursus wordt een gewone externe URL, en niets kijkt bij het bouwen of dat
- * pad op de andere site bestaat. De guard-tests (voorkennis.test.ts,
- * sitelink.test.ts) vertalen zo'n pad met de hand terug naar een bronbestand;
- * dat is een benadering van de routing van Docusaurus, en die liep uit de pas
- * (/docs/ weggestript terwijl de editor-site op de root serveert). Dit script
- * kijkt naar wat de browser krijgt: de href in de gebouwde HTML, en of het
- * bestand achter die URL in de build van de doelsite bestaat.
+ * pad op de andere site bestaat. De guard-test links-in-lestekst.test.ts
+ * bewaakt alleen de vorm van de links in de bron; voorkennis.test.ts vertaalt
+ * een pad met de hand terug naar een bronbestand, een benadering van de
+ * routing van Docusaurus. Dit script kijkt naar wat de browser krijgt: de href
+ * in de gebouwde HTML, of het bestand achter die URL in de build van de
+ * doelsite bestaat, en of het anker erop staat.
  *
  * Alleen registry-domeinen (packages/shared/sites.js) tellen mee; externe
- * sites en stats.coderius.nl niet. Ankers en query's worden afgeknipt.
+ * sites en stats.coderius.nl niet. Dat geldt ook voor links binnen één cursus:
+ * relatieve hrefs worden opgelost zoals de browser dat doet.
+ *
+ * Ankers: bij een <a href="...#kop"> moet de doelpagina een element met
+ * id="kop" hebben (Docusaurus zet dat op elke kop, ook met {#vast-id}). Een
+ * doorstuurpagina (omleidingen) wordt gevolgd. Fragmenten met '=' zijn geen
+ * anker maar app-state (bv. #code=... in robotica) en tellen niet mee.
+ *
+ * Een href die nog met site: begint, is een [tekst](site:...)-link die de
+ * remark-plugin niet zag, bv. in een bestand buiten docs/, src/pages of blog/.
  *
  * Een cursus staat onder een pad van de host van zijn vak:
  * https://informatica.coderius.nl/python/docs/x is `docs/x` in de build van
@@ -38,9 +49,9 @@ import { createRequire } from 'node:module';
 import { join, relative } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-const { SITES, DOCENTEN_SITES, SUBJECTS, SUBJECTS_BY_ID, HOME } = createRequire(import.meta.url)(
-  '../packages/shared/sites.js',
-);
+const { SITES, DOCENTEN_SITES, SUBJECTS, SUBJECTS_BY_ID, HOME, parseSiteUrl } = createRequire(
+  import.meta.url,
+)('../packages/shared/sites.js');
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const ALLE_SITES = [...SITES, ...DOCENTEN_SITES];
@@ -87,25 +98,39 @@ export function siteVanHost(host) {
  * die met een registry-domein begínt maar er niet aan gelijk is
  * (`informatica.coderius.nlpython/...`, het gevolg van een pad zonder slash)
  * telt als misvormd: die hoort gemeld te worden, niet stil genegeerd.
+ * Alleen een <a> krijgt een `anker`: een fragment in src of in een SVG-<use>
+ * is geen kop op een pagina.
  * @param {string} html
  * @param {string} [paginaUrl]
- * @returns {{ href: string, site: string, pad: string, misvormd?: true, oudDomein?: true }[]}
+ * @returns {{ href: string, site: string, pad: string, anker?: string, misvormd?: true, oudDomein?: true, nietOmgezet?: true }[]}
  */
 export function hrefsUit(html, paginaUrl) {
   const uit = [];
   for (const m of html.matchAll(/\s(href|src|poster|data-obj-src|data-obj-mtl)="([^"]+)"/g)) {
-    const href = m[2].replace(/&amp;/g, '&');
+    const href = decodeerEntiteiten(m[2]);
+    const isLink = m[1] === 'href' && tagVoor(html, m.index) === 'a';
+    if (isLink && href.startsWith('site:')) {
+      let doelSite = HOME.id;
+      try {
+        doelSite = parseSiteUrl(href)?.site ?? doelSite;
+      } catch {}
+      uit.push({ href, site: doelSite, pad: '', nietOmgezet: true });
+      continue;
+    }
+    const alleenAnker = href.startsWith('#');
     if (!paginaUrl && !/^https?:\/\//.test(href)) continue;
-    if (/^(?:#|data:|blob:|mailto:|tel:|javascript:)/i.test(href)) continue;
+    if (alleenAnker ? !isLink : /^(?:data:|blob:|mailto:|tel:|javascript:)/i.test(href)) continue;
     let url;
     try {
       url = new URL(href, paginaUrl);
     } catch {
       continue;
     }
+    const anker = isLink ? ankerVan(url.hash) : undefined;
+    if (alleenAnker && !anker) continue;
     const doel = doelVan(url);
     if (doel) {
-      uit.push({ href, ...doel });
+      uit.push({ href, ...doel, ...(anker ? { anker } : {}) });
       continue;
     }
     const aangeplakt = BEKENDE_HOSTS.find((host) => url.host.startsWith(host));
@@ -120,6 +145,82 @@ export function hrefsUit(html, paginaUrl) {
   return uit;
 }
 
+/** Naam van de tag waarin het attribuut op positie `index` staat. */
+function tagVoor(html, index) {
+  const start = html.lastIndexOf('<', index);
+  return /^<([a-zA-Z][\w-]*)/.exec(html.slice(start, start + 40))?.[1].toLowerCase();
+}
+
+function decodeerEntiteiten(tekst) {
+  return tekst
+    .replace(/&quot;/g, '"')
+    .replace(/&#x27;|&#39;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&');
+}
+
+/**
+ * Het anker uit een URL-fragment, of undefined als het geen anker is: leeg,
+ * app-state met '=' (#code=...) of Docusaurus' eigen skip-link.
+ * @param {string} hash
+ */
+export function ankerVan(hash) {
+  let anker;
+  try {
+    anker = decodeURIComponent(hash.replace(/^#/, ''));
+  } catch {
+    return undefined;
+  }
+  if (!anker || anker.includes('=') || anker === '__docusaurus_skipToContent_fallback')
+    return undefined;
+  return anker;
+}
+
+/**
+ * Het bestand dat statische hosting voor dit pad serveert, of null.
+ * @param {string} buildMap
+ * @param {string} pad
+ */
+export function doelBestand(buildMap, pad) {
+  let schoon;
+  try {
+    schoon = decodeURIComponent(pad);
+  } catch {
+    return null;
+  }
+  const rel = schoon.replace(/^\/+|\/+$/g, '');
+  const kandidaten = rel === '' ? ['index.html'] : [join(rel, 'index.html'), `${rel}.html`, rel];
+  for (const kandidaat of kandidaten) {
+    const bestand = join(buildMap, kandidaat);
+    if (existsSync(bestand) && statSync(bestand).isFile()) return bestand;
+  }
+  return null;
+}
+
+const ankerCache = new Map();
+
+/**
+ * Alle ankers op een gebouwde pagina: elke id en elke <a name>.
+ * @param {string} bestand
+ */
+export function ankersVan(bestand) {
+  let ankers = ankerCache.get(bestand);
+  if (ankers) return ankers;
+  ankers = new Set();
+  const html = readFileSync(bestand, 'utf8');
+  for (const m of html.matchAll(/\s(?:id|name)="([^"]+)"/g)) ankers.add(decodeerEntiteiten(m[1]));
+  ankerCache.set(bestand, ankers);
+  return ankers;
+}
+
+/** De URL waar een doorstuurpagina (omleidingen) naartoe wijst, of null. */
+function doorstuurVan(bestand) {
+  const html = readFileSync(bestand, 'utf8');
+  const m = /<meta\s+http-equiv="refresh"\s+content="\d+;\s*url=([^"]+)"/i.exec(html);
+  return m ? decodeerEntiteiten(m[1]) : null;
+}
+
 /**
  * Bestaat dit pad in een gebouwde site? Precies wat statische hosting doet:
  * `<pad>/index.html`, `<pad>.html` of het bestand zelf; de root is index.html.
@@ -127,18 +228,34 @@ export function hrefsUit(html, paginaUrl) {
  * @param {string} pad
  */
 export function doelBestaat(buildMap, pad) {
-  let schoon;
-  try {
-    schoon = decodeURIComponent(pad);
-  } catch {
-    return false;
+  return doelBestand(buildMap, pad) !== null;
+}
+
+/**
+ * Staat het anker op de doelpagina? Volgt tot drie doorstuurpagina's, zodat
+ * een link naar een verhuisde les het anker op de nieuwe plek controleert.
+ * @param {Map<string, string>} builds
+ * @param {{ site: string, pad: string, anker: string }} link
+ * @param {string} paginaUrl de URL van de doelpagina, om doorsturen op te lossen
+ * @returns {boolean | null} null als de doelsite van een doorstuur niet gebouwd is
+ */
+export function ankerBestaat(builds, link, paginaUrl) {
+  let { site, pad } = link;
+  let url = paginaUrl;
+  for (let stap = 0; stap < 4; stap++) {
+    const build = builds.get(site);
+    if (!build) return null;
+    const bestand = doelBestand(build, pad);
+    if (!bestand || !bestand.endsWith('.html')) return false;
+    const verder = doorstuurVan(bestand);
+    if (!verder) return ankersVan(bestand).has(link.anker);
+    const volgende = new URL(verder, url);
+    const doel = doelVan(volgende);
+    if (!doel) return null;
+    ({ site, pad } = doel);
+    url = volgende.href;
   }
-  const rel = schoon.replace(/^\/+|\/+$/g, '');
-  if (rel === '') return existsSync(join(buildMap, 'index.html'));
-  if (existsSync(join(buildMap, rel, 'index.html'))) return true;
-  if (existsSync(join(buildMap, `${rel}.html`))) return true;
-  const los = join(buildMap, rel);
-  return existsSync(los) && statSync(los).isFile();
+  return false;
 }
 
 /** @param {string} map */
@@ -181,6 +298,7 @@ export function buildsIn(map) {
  */
 export function controleer(builds) {
   const kapot = [];
+  const ankers = [];
   let gecontroleerd = 0;
   let overgeslagen = 0;
   for (const [site, buildMap] of builds) {
@@ -189,12 +307,13 @@ export function controleer(builds) {
       const bronPad = relative(buildMap, bestand)
         .split('\\')
         .join('/')
-        .replace(/index\.html$/, '');
+        // Alleen een heel index.html-segment: h-index.html is een eigen pagina.
+        .replace(/(^|\/)index\.html$/, '$1');
       const paginaUrl = registry ? new URL(bronPad, registry.url).href : undefined;
       for (const link of hrefsUit(readFileSync(bestand, 'utf8'), paginaUrl)) {
         // Een oud subdomein of een aangeplakte host is kapot, of de doelsite
         // nu gebouwd is of niet.
-        if (link.oudDomein || link.misvormd) {
+        if (link.oudDomein || link.misvormd || link.nietOmgezet) {
           gecontroleerd += 1;
           kapot.push({
             site,
@@ -202,6 +321,12 @@ export function controleer(builds) {
             href: link.href,
             doelSite: link.site,
             ...(link.oudDomein ? { reden: 'oud domein' } : {}),
+            ...(link.nietOmgezet
+              ? {
+                  reden:
+                    'site:-link niet omgezet; staat het bestand buiten docs/, src/pages of blog/?',
+                }
+              : {}),
           });
           continue;
         }
@@ -218,11 +343,21 @@ export function controleer(builds) {
             href: link.href,
             doelSite: link.site,
           });
+        } else if (link.anker) {
+          const doelUrl = new URL(link.href, paginaUrl).href;
+          if (ankerBestaat(builds, link, doelUrl) === false)
+            ankers.push({
+              site,
+              bron: relative(buildMap, bestand),
+              href: link.href,
+              doelSite: link.site,
+              reden: `anker #${link.anker} bestaat niet`,
+            });
         }
       }
     }
   }
-  return { kapot, gecontroleerd, overgeslagen };
+  return { kapot, ankers, gecontroleerd, overgeslagen };
 }
 
 // realpath aan beide kanten: Node lost import.meta.url op via symlinks heen,
@@ -235,6 +370,8 @@ if (isHoofdscript) {
   const argumenten = process.argv.slice(2);
   const annotaties = argumenten.includes('--annotaties');
   const compleet = argumenten.includes('--compleet');
+  const ankerModus =
+    argumenten.find((a) => a.startsWith('--ankers='))?.slice('--ankers='.length) ?? 'fout';
   const map = argumenten.find((a) => !a.startsWith('--')) ?? join(ROOT, 'sites');
 
   const builds = buildsIn(map);
@@ -253,26 +390,37 @@ if (isHoofdscript) {
     process.exit(1);
   }
 
-  const { kapot, gecontroleerd, overgeslagen } = controleer(builds);
+  const resultaat = controleer(builds);
+  const { gecontroleerd, overgeslagen } = resultaat;
+  const kapot = ankerModus === 'fout' ? [...resultaat.kapot, ...resultaat.ankers] : resultaat.kapot;
+  const waarschuwingen = ankerModus === 'fout' ? [] : resultaat.ankers;
+  meld(kapot, 'kapotte link(s)', 'error', annotaties);
+  meld(waarschuwingen, 'ontbrekend(e) anker(s)', 'warning', annotaties);
+  console.log(
+    `\nBuilds: ${[...builds.keys()].sort().join(', ')}. ` +
+      `${gecontroleerd} links gecontroleerd, ${overgeslagen} overgeslagen (doelsite niet gebouwd), ` +
+      `${kapot.length} kapot, ${waarschuwingen.length} waarschuwing(en).`,
+  );
+  process.exit(kapot.length > 0 ? 1 : 0);
+}
+
+function meld(lijst, wat, niveau, annotaties) {
   const perSite = new Map();
-  for (const k of kapot) {
+  for (const k of lijst) {
     if (!perSite.has(k.site)) perSite.set(k.site, []);
     perSite.get(k.site).push(k);
   }
-  for (const [site, lijst] of perSite) {
-    console.log(`\n${site}: ${lijst.length} kapotte cross-site link(s)`);
-    for (const k of lijst) {
-      const reden = k.reden ? ` (${k.reden}; gebruik <SiteLink> of de nieuwe URL)` : '';
+  for (const [site, links] of perSite) {
+    console.log(`\n${site}: ${links.length} ${wat}`);
+    for (const k of links) {
+      const reden = k.reden
+        ? ` (${k.reden}${k.reden === 'oud domein' ? '; gebruik een site:-link' : ''})`
+        : '';
       console.log(`  ${k.bron} -> ${k.href}${reden}`);
       if (annotaties)
         console.log(
-          `::error title=cross-site link naar ${k.doelSite}::${site}/${k.bron} -> ${k.href}${reden}`,
+          `::${niveau} title=link naar ${k.doelSite}::${site}/${k.bron} -> ${k.href}${reden}`,
         );
     }
   }
-  console.log(
-    `\nBuilds: ${[...builds.keys()].sort().join(', ')}. ` +
-      `${gecontroleerd} links gecontroleerd, ${overgeslagen} overgeslagen (doelsite niet gebouwd), ${kapot.length} kapot.`,
-  );
-  process.exit(kapot.length > 0 ? 1 : 0);
 }

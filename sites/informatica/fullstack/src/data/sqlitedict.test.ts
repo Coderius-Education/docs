@@ -131,10 +131,10 @@ describe('SqliteDict eerst in een script', () => {
 
   it('Een formulier opslaan legt db.get en de dictionary niet opnieuw uit, maar linkt naar de les', () => {
     expect(tekst('FastAPI/berichten-opslaan/naam-opslaan')).toContain(
-      '](/docs/FastAPI/sqlitedict/zoeken)',
+      '](site:fullstack/docs/FastAPI/sqlitedict/zoeken)',
     );
     expect(tekst('FastAPI/berichten-opslaan/eigen-sleutel')).toContain(
-      '](/docs/FastAPI/sqlitedict/dictionary)',
+      '](site:fullstack/docs/FastAPI/sqlitedict/dictionary)',
     );
   });
 });
@@ -147,17 +147,17 @@ describe('SqliteDict op een rij', () => {
     expect(lessen).not.toContain('FastAPI/sqlitedict/op-een-rij');
     const cheatsheet = readFileSync(`${DOCS}/cheatsheet.md`, 'utf8');
     expect(sectie(cheatsheet, 'Database (sqlitedict)')).toContain(
-      '(/docs/FastAPI/sqlitedict/op-een-rij)',
+      '(site:fullstack/docs/FastAPI/sqlitedict/op-een-rij)',
     );
   });
 
   it.each(SCRIPTLESSEN)('de naslag linkt naar %s', (id) => {
-    expect(naslag()).toContain(`](/docs/${id})`);
+    expect(naslag()).toContain(`](site:fullstack/docs/${id})`);
   });
 
   it('de eerste scriptles noemt de naslag', () => {
     expect(tekst('FastAPI/sqlitedict/database')).toContain(
-      '](/docs/FastAPI/sqlitedict/op-een-rij)',
+      '](site:fullstack/docs/FastAPI/sqlitedict/op-een-rij)',
     );
   });
 

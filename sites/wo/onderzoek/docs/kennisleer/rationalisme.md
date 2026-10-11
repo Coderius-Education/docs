@@ -12,7 +12,7 @@ Het **rationalisme** is de opvatting dat kennis uit ervaring onbetrouwbaar is, e
 
 ## Waarom zou denken beter zijn dan kijken?
 
-Rationalisten wijzen op de wiskunde. Dat 7 + 5 = 12, hoef je niet te controleren door twaalf knikkers te tellen: het volgt uit wat de getallen betekenen, en het geldt altijd en overal. Datzelfde geldt voor "een driehoek heeft drie hoeken" of "geen enkele vrijgezel is getrouwd". Zulke kennis heet [a priori](./a-priori.md): waar vóór en zonder dat je iets waarneemt.
+Rationalisten wijzen op de wiskunde. Dat 7 + 5 = 12, hoef je niet te controleren door twaalf knikkers te tellen: het volgt uit wat de getallen betekenen, en het geldt altijd en overal. Datzelfde geldt voor "een driehoek heeft drie hoeken" of "geen enkele vrijgezel is getrouwd". Zulke kennis heet [a priori](site:onderzoek/kennisleer/a-priori): waar vóór en zonder dat je iets waarneemt.
 
 Metingen daarentegen zijn altijd een beetje onnauwkeurig, en je meetlint is nooit precies. De rationalist concludeert: wat je waarneemt is troebel, wat je bewijst is helder.
 
@@ -41,7 +41,7 @@ Peuters maken te snel grammaticaal correcte zinnen om alles uit ervaring te kunn
 </Denker>
 
 :::caution[Rationalisme is niet "ik denk het, dus het is waar"]
-Het gaat om wat je met een sluitende redenering kunt afleiden, niet om wat je zomaar vindt. "Ik heb het idee dat leerlingen minder lezen" is geen rationalistische kennis maar een aanname — die je juist moet [toetsen](../opzet/functies/verklarend-toetsend.md) met waarneming.
+Het gaat om wat je met een sluitende redenering kunt afleiden, niet om wat je zomaar vindt. "Ik heb het idee dat leerlingen minder lezen" is geen rationalistische kennis maar een aanname — die je juist moet [toetsen](site:onderzoek/opzet/functies/verklarend-toetsend) met waarneming.
 :::
 
 <WelNiet
@@ -51,7 +51,7 @@ Het gaat om wat je met een sluitende redenering kunt afleiden, niet om wat je zo
 
 ## Hangt samen met
 
-- [Empirisme](./empirisme.md) — de tegenpool: kennis komt juist wél uit de zintuigen
-- [A priori](./a-priori.md) — het soort kennis waar rationalisten op bouwen
-- [Hoe kom je aan kennis?](./hoe-weet-je-iets.mdx) — de drie posities naast elkaar
-- [Denkers op een rij](./denkers.md) — Plato, Descartes, Spinoza en Chomsky in hun tijd
+- [Empirisme](site:onderzoek/kennisleer/empirisme) — de tegenpool: kennis komt juist wél uit de zintuigen
+- [A priori](site:onderzoek/kennisleer/a-priori) — het soort kennis waar rationalisten op bouwen
+- [Hoe kom je aan kennis?](site:onderzoek/kennisleer/hoe-weet-je-iets) — de drie posities naast elkaar
+- [Denkers op een rij](site:onderzoek/kennisleer/denkers) — Plato, Descartes, Spinoza en Chomsky in hun tijd

@@ -20,9 +20,9 @@ Je hoeft niet alle pinnen uit je hoofd te kennen. Dit zijn de groepen die je het
 Er zit al een LED op het bord, vast verbonden met **pin 13**. Handig: daarmee kun je je allereerste programma testen zonder ook maar één draadje aan te sluiten. Dat doe je in het volgende hoofdstuk.
 
 :::note
-Een LED gaat snel kapot bij te veel stroom. De ingebouwde LED op pin 13 is al beschermd. Sluit je later zelf een LED aan, dan heb je een **weerstand** nodig — dat leer je in [3.1 Een externe LED](/docs/digitale-io/externe-led).
+Een LED gaat snel kapot bij te veel stroom. De ingebouwde LED op pin 13 is al beschermd. Sluit je later zelf een LED aan, dan heb je een **weerstand** nodig — dat leer je in [3.1 Een externe LED](site:embedded/docs/digitale-io/externe-led).
 :::
 
 ## Echt bord of simulator?
 
-Heb je een Arduino Uno? Mooi. Heb je er geen? Ook prima: in deze cursus kun je elk Arduino-voorbeeld in de browser simuleren. Wat je daarvoor nodig hebt, lees je in [1.3 Wat heb je nodig?](wat-heb-je-nodig.md).
+Heb je een Arduino Uno? Mooi. Heb je er geen? Ook prima: in deze cursus kun je elk Arduino-voorbeeld in de browser simuleren. Wat je daarvoor nodig hebt, lees je in [1.3 Wat heb je nodig?](site:embedded/docs/introductie/wat-heb-je-nodig).

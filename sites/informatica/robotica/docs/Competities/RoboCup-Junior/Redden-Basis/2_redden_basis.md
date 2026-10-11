@@ -17,16 +17,16 @@ Hier vind je alles wat je nodig hebt om met **Redden Basis** te beginnen.
 
 Redden Basis bestaat uit zeven uitdagingen. Per uitdaging is er een eigen pagina:
 
-- [Lijnvolgen](3_lijnvolgen.md)
-- [Obstakels ontwijken](4_obstakels.md)
-- [Detectie van de evacuatiezone](5_evacuatiezone_detectie.md)
-- [Rijden in de evacuatiezone (zonder lijn)](6_rijden_evacuatiezone.md)
-- [Ballen vinden](7_vinden_van_ballen.md)
-- [Ballen grijpen](8_grijpen_van_een_bal.md)
-- [Eindpunt detecteren](9_detectie_eindpunt.md)
+- [Lijnvolgen](site:robotica/docs/Competities/RoboCup-Junior/Redden-Basis/lijnvolgen)
+- [Obstakels ontwijken](site:robotica/docs/Competities/RoboCup-Junior/Redden-Basis/obstakels)
+- [Detectie van de evacuatiezone](site:robotica/docs/Competities/RoboCup-Junior/Redden-Basis/evacuatiezone_detectie)
+- [Rijden in de evacuatiezone (zonder lijn)](site:robotica/docs/Competities/RoboCup-Junior/Redden-Basis/rijden_evacuatiezone)
+- [Ballen vinden](site:robotica/docs/Competities/RoboCup-Junior/Redden-Basis/vinden_van_ballen)
+- [Ballen grijpen](site:robotica/docs/Competities/RoboCup-Junior/Redden-Basis/grijpen_van_een_bal)
+- [Eindpunt detecteren](site:robotica/docs/Competities/RoboCup-Junior/Redden-Basis/detectie_eindpunt)
 
 ## Pinoverzicht
 
 Welke pin gebruik je waarvoor op de Arduino Nano RP2040 Connect? Kijk op:
 
-- [Pinoverzicht Nano RP2040 Connect](10_pinnen_nano_connect.md)
+- [Pinoverzicht Nano RP2040 Connect](site:robotica/docs/Competities/RoboCup-Junior/Redden-Basis/pinnen_nano_connect)

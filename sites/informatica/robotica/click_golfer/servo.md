@@ -16,7 +16,7 @@ Steek een losse Lego-as in het gat van de servo. Dan zie je goed hoe ver het asj
 
 ## Aansluiten
 
-Zet je robot uit met de knop **ON/OFF**. Sluit de servo aan op de rij van **D9** op het [shield](microcontroller):
+Zet je robot uit met de knop **ON/OFF**. Sluit de servo aan op de rij van **D9** op het [shield](site:robotica/click_golfer/microcontroller):
 
 | Draad van de servo | Komt op |
 |---|---|
@@ -142,4 +142,4 @@ Een kwart cirkel. Van 0° tot 180° is een halve cirkel. Van 0° tot 90° is de 
   </Uitleg>
 </Voorspel>
 
-Draait het asje? Dan laat je de servo nu [slaan als hij een bal ziet](bal-slaan).
+Draait het asje? Dan laat je de servo nu [slaan als hij een bal ziet](site:robotica/click_golfer/bal-slaan).

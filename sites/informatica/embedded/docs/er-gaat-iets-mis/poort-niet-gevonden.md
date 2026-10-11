@@ -25,4 +25,4 @@ Een telefoon-oplaadkabel zonder datadraadjes.
 Een USB-datakabel; in je editor de juiste poort geselecteerd.
 ```
 
-Meer uitleg: [2.1 De Arduino IDE installeren](/docs/arduino-ide/installeren).
+Meer uitleg: [2.1 De Arduino IDE installeren](site:embedded/docs/arduino-ide/installeren).

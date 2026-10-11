@@ -13,7 +13,7 @@ De foutmeldingen die je bij deze zeven stappen tegenkomt, met de reden erbij. Zo
 
 **Oplossing:** sluit het venster, open PowerShell opnieuw vanuit je projectmap en probeer het nog eens. Blijft de melding staan, dan is Python nog niet geïnstalleerd.
 
-Meer uitleg: [Stap 3: Python installeren](./stap-3-installeren).
+Meer uitleg: [Stap 3: Python installeren](site:editor/python/stap-3-installeren).
 
 ## De Microsoft Store blijft opengaan
 
@@ -21,7 +21,7 @@ Meer uitleg: [Stap 3: Python installeren](./stap-3-installeren).
 
 **Oplossing:** klik in de Store op **Ophalen** en wacht tot er **Openen** staat. Sluit daarna PowerShell en open hem opnieuw vanuit je projectmap. Doet de Store helemaal niets, dan is hij waarschijnlijk geblokkeerd op je computer; installeer Python dan van [python.org/downloads](https://www.python.org/downloads/) en vink **Add Python to PATH** aan.
 
-Meer uitleg: [Stap 3: Python installeren](./stap-3-installeren).
+Meer uitleg: [Stap 3: Python installeren](site:editor/python/stap-3-installeren).
 
 ## `Openen in Terminal` staat niet in het rechtsklikmenu
 
@@ -29,7 +29,7 @@ Meer uitleg: [Stap 3: Python installeren](./stap-3-installeren).
 
 **Oplossing:** houd Shift ingedrukt terwijl je rechtsklikt; dan heet het **PowerShell-venster hier openen**. Staat hij er dan nog niet, klik dan in de adresbalk bovenin de Verkenner, typ `powershell` over het pad heen en druk op Enter.
 
-Meer uitleg: [Stap 2: PowerShell openen vanuit je map](./stap-2-powershell).
+Meer uitleg: [Stap 2: PowerShell openen vanuit je map](site:editor/python/stap-2-powershell).
 
 ## Er verschijnt geen map `.venv`
 
@@ -37,7 +37,7 @@ Meer uitleg: [Stap 2: PowerShell openen vanuit je map](./stap-2-powershell).
 
 **Oplossing:** kijk naar het pad vóór de `>` in PowerShell. Klopt dat niet met je projectmap, sluit het venster dan en open PowerShell opnieuw vanuit de goede map. De map `.venv` die op de verkeerde plek staat mag je weggooien.
 
-Meer uitleg: [Stap 4: een virtual environment aanmaken](./stap-4-venv).
+Meer uitleg: [Stap 4: een virtual environment aanmaken](site:editor/python/stap-4-venv).
 
 ## `code : The term 'code' is not recognized`
 
@@ -45,7 +45,7 @@ Meer uitleg: [Stap 4: een virtual environment aanmaken](./stap-4-venv).
 
 **Oplossing:** installeer VS Code opnieuw en laat dat vakje aangevinkt staan. Wil je dat nu niet, open VS Code dan met de hand en kies **File** → **Open Folder...**; kies je projectmap.
 
-Meer uitleg: [Installatie VS Code](/installatie-vscode/) en [Stap 5: je project openen in VS Code](./stap-5-vscode).
+Meer uitleg: [Installatie VS Code](site:editor/installatie-vscode) en [Stap 5: je project openen in VS Code](site:editor/python/stap-5-vscode).
 
 ## Er staat geen `(.venv)` voor de prompt
 
@@ -53,7 +53,7 @@ Meer uitleg: [Installatie VS Code](/installatie-vscode/) en [Stap 5: je project 
 
 **Oplossing:** sluit die terminal met het prullenbak-icoon rechtsboven in het terminal-paneel en open een nieuwe via **Terminal** → **New Terminal**. Helpt dat niet, sluit VS Code dan helemaal af en open je project opnieuw met `code .`.
 
-Meer uitleg: [Stap 5: je project openen in VS Code](./stap-5-vscode).
+Meer uitleg: [Stap 5: je project openen in VS Code](site:editor/python/stap-5-vscode).
 
 ## `No module named pip` of `ModuleNotFoundError` na een geslaagde installatie
 
@@ -61,7 +61,7 @@ Meer uitleg: [Stap 5: je project openen in VS Code](./stap-5-vscode).
 
 **Oplossing:** open een terminal in VS Code, controleer dat `(.venv)` voor de prompt staat en installeer het package daar opnieuw met `python -m pip install`.
 
-Meer uitleg: [Stap 7: packages installeren met pip](./stap-7-pip).
+Meer uitleg: [Stap 7: packages installeren met pip](site:editor/python/stap-7-pip).
 
 ## `running scripts is disabled on this system`
 
@@ -69,4 +69,4 @@ Meer uitleg: [Stap 7: packages installeren met pip](./stap-7-pip).
 
 **Oplossing:** je hebt dat commando niet nodig. Open je project met `code .` en werk in de terminal van VS Code; die zet de omgeving zelf aan.
 
-Meer uitleg: [Stap 7: packages installeren met pip](./stap-7-pip).
+Meer uitleg: [Stap 7: packages installeren met pip](site:editor/python/stap-7-pip).

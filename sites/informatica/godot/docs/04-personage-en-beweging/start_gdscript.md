@@ -44,7 +44,7 @@ Het spel is gestart.
 Ik heb 3 levens.
 ```
 
-Dit tabblad wordt je belangrijkste gereedschap. Telkens als je niet zeker weet of een stuk code draait, zet je er een `print()` in en kijk je hier. In [Fouten zoeken](../05-bewegingsscript/fouten-zoeken.md) staat hoe je daar systematisch mee werkt.
+Dit tabblad wordt je belangrijkste gereedschap. Telkens als je niet zeker weet of een stuk code draait, zet je er een `print()` in en kijk je hier. In [Fouten zoeken](site:godot/docs/fouten-zoeken) staat hoe je daar systematisch mee werkt.
 
 Haal deze `_ready()`-functie daarna weer weg. In het volgende hoofdstuk begin je met een schone lei aan het bewegingsscript.
 
@@ -116,7 +116,7 @@ In Uitvoer staat `Punten per level: 30`. Dat getal staat nergens in je script: G
 
 1. Druk op `F5` om het spel te starten.
 2. Klik onderin op het tabblad **Uitvoer** (Engels: **Output**) — soms staat het verstopt naast **Debugger** of **Audio**.
-3. Geen `F5`-knop? Stel eerst een Main Scene in via **Project → Project Settings → Run → Main Scene** ([zie Je eerste 2D-scène](../02-editor-leren-kennen/scene.md)).
+3. Geen `F5`-knop? Stel eerst een Main Scene in via **Project → Project Settings → Run → Main Scene** ([zie Je eerste 2D-scène](site:godot/docs/scene)).
 
 **Zelf vinden:** zet `print("hier")` als allereerste regel in de functie. Blijft Uitvoer ook dan leeg, dan draait je script niet en ligt het aan de scène, niet aan je code.
 
@@ -124,4 +124,4 @@ In Uitvoer staat `Punten per level: 30`. Dat getal staat nergens in je script: G
 
 ## Wat daarna?
 
-In [Het bewegingsscript bouwen](../05-bewegingsscript/skelet.md) schrijf je in zeven korte lessen het script waarmee je karakter valt, loopt en springt.
+In [Het bewegingsscript bouwen](site:godot/docs/basis_movement_begrijpen) schrijf je in zeven korte lessen het script waarmee je karakter valt, loopt en springt.

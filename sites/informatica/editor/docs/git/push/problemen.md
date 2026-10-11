@@ -11,8 +11,8 @@ title: "Er gaat iets mis"
 
 **Oplossing:** haal eerst de nieuwe commits op met **Sync Changes** (dat doet eerst een pull). Daarna probeer je opnieuw te pushen.
 
-Meer uitleg: [Pull en clone](/git/pull-clone/).
+Meer uitleg: [Pull en clone](site:editor/git/pull-clone).
 
 ## Volgende tutorial
 
-- **[Pull en clone](/git/pull-clone/)** — leer hoe je code van GitHub naar je computer haalt.
+- **[Pull en clone](site:editor/git/pull-clone)** — leer hoe je code van GitHub naar je computer haalt.

@@ -47,7 +47,7 @@ Houd je IR-sensor boven de tegel. Wanneer geeft `read_line_sensor(14)`:
 
 Met een schroevendraaier kun je het potmetertje op de sensor draaien om de overgang van zwart naar wit nauwkeurig in te stellen.
 
-Voor meer informatie: [Redden Basis](/docs/Competities/RoboCup-Junior/Redden-Basis/redden_basis).
+Voor meer informatie: [Redden Basis](site:robotica/docs/Competities/RoboCup-Junior/Redden-Basis/redden_basis).
 
 <details>
 <summary>Opdracht: lampje volgt de lijn</summary>

@@ -5,7 +5,7 @@ description: Werk een hash met oude instellingen bij met check_needs_rehash, op 
 
 # Wachtwoorden: een oude hash bijwerken
 
-In [les 7](./wijzigen) kon een gebruiker zelf een nieuw wachtwoord kiezen. Soms
+In [les 7](site:fullstack/docs/veiligheid/wachtwoorden/wijzigen) kon een gebruiker zelf een nieuw wachtwoord kiezen. Soms
 wil jij als bouwer van de site dat een hash vernieuwd wordt, zonder dat de
 gebruiker iets hoeft te doen.
 
@@ -41,7 +41,7 @@ True
 
 `PasswordHasher(time_cost=1)` doet hier alsof hij een hash van jaren geleden
 maakt, met lichtere instellingen: `time_cost` is de `t=` uit de tabel in
-[les 5](./registreren).
+[les 5](site:fullstack/docs/veiligheid/wachtwoorden/registreren).
 
 ## Bijwerken in `/inloggen`
 
@@ -158,7 +158,7 @@ als een met `t=3`.
 Zonder zijn wachtwoord kan je server geen nieuwe hash maken. Wel kan een site
 een hash weggooien die na een paar jaar nog steeds oud is. Komt Tim ooit
 terug, dan kiest hij een nieuw wachtwoord via een link per mail, zoals bij
-Wachtwoord vergeten in [les 10](./praktijk).
+Wachtwoord vergeten in [les 10](site:fullstack/docs/veiligheid/wachtwoorden/praktijk).
 
 </details>
 
@@ -222,4 +222,4 @@ er een limiet op het aantal pogingen bij.
 
 </details>
 
-Door naar [les 9: inlogpogingen beperken](./pogingen).
+Door naar [les 9: inlogpogingen beperken](site:fullstack/docs/veiligheid/wachtwoorden/pogingen).

@@ -10,6 +10,6 @@ Dat maakt het een zachte instap als code je nog helemaal niets zegt. Je werkt in
 
 ## Wanneer stap je over
 
-Rond niveau 12 schrijf je code die op Python lijkt: variabelen, `if` en herhalingen. Dat is het moment om over te stappen naar coderius-play, of eerst naar <SiteLink site="python" to="/">coderius-python</SiteLink> als je de Python-schrijfwijze nog wilt oefenen.
+Rond niveau 12 schrijf je code die op Python lijkt: variabelen, `if` en herhalingen. Dat is het moment om over te stappen naar coderius-play, of eerst naar [coderius-python](site:python/) als je de Python-schrijfwijze nog wilt oefenen.
 
 Hedy is er niet alleen in het Nederlands: je kunt de taal van de commando's zelf kiezen.

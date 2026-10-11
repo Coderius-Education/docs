@@ -66,12 +66,13 @@ describe('projecten in de python-cursus', () => {
         stappen.forEach((s, i) => {
           const volgende = stappen[i + 1];
           if (volgende) {
-            expect(s.tekst, s.naam).toContain(`](./${volgende.naam.replace(/\.mdx$/, '')})`);
+            const route = `/docs/projecten/${project}/${volgende.naam.replace(/\.mdx$/, '')}`;
+            expect(s.tekst, s.naam).toContain(`](site:python${route})`);
           } else {
             // Door naar het volgende project, of terug naar een overzicht: de
             // laatste link van de pagina, niet een verwijzing ergens halverwege.
             const links = [...s.tekst.matchAll(/\]\(([^)\s]+)\)/g)].map((m) => m[1]);
-            expect(links.at(-1), s.naam).toMatch(/^\/docs\/projecten\//);
+            expect(links.at(-1), s.naam).toMatch(/^site:python\/docs\/projecten([/#]|$)/);
           }
         });
       });

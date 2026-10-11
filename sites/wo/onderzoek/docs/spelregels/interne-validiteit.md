@@ -40,13 +40,13 @@ Dat twee dingen samen voorkomen, bewijst niet dat het één het ander veroorzaak
 
 In de jaren vijftig lieten grote onderzoeken zien dat rokers veel vaker longkanker kregen. Toch weigerde een van de beroemdste statistici ooit, R.A. Fisher (zelf fervent pijproker), de conclusie te trekken dat roken de oorzaak was. Zijn argument was precies een aanval op de interne validiteit: misschien bestond er een verborgen erfelijke factor die mensen én naar sigaretten liet grijpen én vatbaar maakte voor longkanker — een storende variabele op wereldschaal. Omdat je mensen niet willekeurig kunt "toewijzen" aan een leven lang roken, was een echt experiment onmogelijk. Wat toen weinig mensen wisten: Fisher werd betaald als adviseur van de tabaksindustrie. Het duurde tot in de jaren zestig voordat een berg aan bewijs uit allerlei soorten onderzoek samen zo overtuigend was dat de twijfel verdween.
 
-**Wat je hiervan leert:** wie jouw conclusie wil onderuithalen, zoekt een storende variabele die je niet hebt uitgesloten — doe dat dus zelf alvast. En kijk bij elke deskundige ook even [wie er betaalt](../literatuurstudie/onderzoeker-onderzoeken.md).
+**Wat je hiervan leert:** wie jouw conclusie wil onderuithalen, zoekt een storende variabele die je niet hebt uitgesloten — doe dat dus zelf alvast. En kijk bij elke deskundige ook even [wie er betaalt](site:onderzoek/literatuurstudie/onderzoeker-onderzoeken).
 
 </EchtGebeurd>
 
 ## Hangt samen met
 
-- [Valide](./valide.md) — interne validiteit is een van de twee kanten van validiteit
-- [Externe validiteit](./externe-validiteit.md) — de andere kant: geldt je conclusie ook daarbuiten?
-- [Intern vs. extern](./intern-vs-extern.mdx) — waarom de twee elkaar in de weg zitten
-- [Experimenteel onderzoek](../opzet/soorten/experimenteel.md) — de soort onderzoek die het sterkst is in interne validiteit
+- [Valide](site:onderzoek/spelregels/valide) — interne validiteit is een van de twee kanten van validiteit
+- [Externe validiteit](site:onderzoek/spelregels/externe-validiteit) — de andere kant: geldt je conclusie ook daarbuiten?
+- [Intern vs. extern](site:onderzoek/spelregels/intern-vs-extern) — waarom de twee elkaar in de weg zitten
+- [Experimenteel onderzoek](site:onderzoek/opzet/soorten/experimenteel) — de soort onderzoek die het sterkst is in interne validiteit

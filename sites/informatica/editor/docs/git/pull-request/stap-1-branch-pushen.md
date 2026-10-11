@@ -10,7 +10,7 @@ GitHub kent je feature-branch nog niet — die heb je alleen op je eigen compute
 
 1. Open je `git-oefenen`-map in VS Code
 2. Wissel naar je feature-branch via de statusbalk linksonder (bv. `feature/welkomsbericht`)
-3. Zorg dat je minstens één commit op deze branch hebt staan (zo niet: maak er even één, zie [Branches Stap 3](/git/branches/stap-3-commits))
+3. Zorg dat je minstens één commit op deze branch hebt staan (zo niet: maak er even één, zie [Branches Stap 3](site:editor/git/branches/stap-3-commits))
 4. Ga naar **Source Control** (Ctrl+Shift+G)
 5. Klik op **Publish Branch**
 

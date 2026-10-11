@@ -5,14 +5,14 @@ description: Ook tekst uit de URL komt van een bezoeker. Een zoekpagina die ?ter
 
 # HTML van een bezoeker: tekst uit de URL
 
-In [les 1](./zwakheid) bleef de HTML van Sara in de database staan, en zag
+In [les 1](site:fullstack/docs/veiligheid/xss/zwakheid) bleef de HTML van Sara in de database staan, en zag
 iedereen die daarna kwam hem. Er is ook een kortere weg, zonder database: een
 link. Een zoekpagina zet vaak boven de resultaten waar je naar zocht, en dat
 woord staat in de URL.
 
 ## Een zoekpagina
 
-In [Een waarde na een vraagteken](/docs/FastAPI/veel-paginas/query-parameters)
+In [Een waarde na een vraagteken](site:fullstack/docs/FastAPI/veel-paginas/query-parameters)
 gaf `/zoek?term=` JSON terug. Hier wordt het een pagina met de berichten waarin
 de term staat. Zet dit endpoint onder de andere in `main.py`:
 
@@ -36,7 +36,7 @@ Met `lower()` vindt `vet` ook een bericht met `Vet`. Een lege term staat in elk 
 </Regel>
 
 <Regel n={7}>
-De berichten escapet hij, zoals je in [les 2](./escape) leerde.
+De berichten escapet hij, zoals je in [les 2](site:fullstack/docs/veiligheid/xss/escape) leerde.
 </Regel>
 
 <Regel n={8}>
@@ -122,7 +122,7 @@ vraagteken geeft:
 stuurt FastAPI een 422 als hij ontbreekt.
 
 **Oplossing:** geef de term een standaardwaarde, `term: str = ""`, zoals in
-[Een waarde na een vraagteken](/docs/FastAPI/veel-paginas/query-parameters).
+[Een waarde na een vraagteken](site:fullstack/docs/FastAPI/veel-paginas/query-parameters).
 
 ## Opdrachten
 
@@ -258,4 +258,4 @@ versturen, de lijst, en de zoekterm.
 
 </details>
 
-Door naar [les 4: templates escapen vanzelf](./templates).
+Door naar [les 4: templates escapen vanzelf](site:fullstack/docs/veiligheid/xss/templates).

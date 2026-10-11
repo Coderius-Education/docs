@@ -17,7 +17,7 @@ hide_pagination: true
 
 Je kunt een specifieke versie van play installeren of de huidige versie bijwerken met de volgende commando's 
 
-Zie [hier](installatie/Thonny.md) voor waar je het commando kan invoeren.
+Zie [hier](site:play/docs/installatie/Thonny) voor waar je het commando kan invoeren.
 
 **Upgraden naar de nieuwste versie:**
 ```bash
@@ -44,7 +44,7 @@ Vervang `VERSIENUMMER` door de gewenste versie, bijvoorbeeld `3.3.3`.
 
 Versie 3.4 voegt een familie **UI-elementen** en **video** toe.
 
-Bij **Knoppen en UI**: acht nieuwe elementen om je spel mee te bedienen — `play.new_button`, `play.new_slider`, `play.new_checkbox`, `play.new_radio_group` met `play.new_radio_button`, `play.new_dropdown`, `play.new_text_input`, `play.new_progress_bar` en `play.new_tooltip`. Zie de groep [Knoppen en UI](#knoppen-en-ui) hieronder en de lessen in [7. Knoppen en UI](/docs/ui/knop).
+Bij **Knoppen en UI**: acht nieuwe elementen om je spel mee te bedienen — `play.new_button`, `play.new_slider`, `play.new_checkbox`, `play.new_radio_group` met `play.new_radio_button`, `play.new_dropdown`, `play.new_text_input`, `play.new_progress_bar` en `play.new_tooltip`. Zie de groep [Knoppen en UI](#knoppen-en-ui) hieronder en de lessen in [7. Knoppen en UI](site:play/docs/ui/knop).
 
 Bij **Video**: `play.new_video` speelt een videobestand af als sprite, met ingebouwde afspeelknoppen en vijf gebeurtenissen zoals `@play.when_video_ends`. Zie de groep [Video](#video) hieronder. Werkt alleen lokaal, niet in de online speeltuin.
 
@@ -170,7 +170,7 @@ Bij **Fysica**: bij grote vormen raken de vormen weer netjes de muren zonder gek
 
 Bij **Gebeurtenis bij een vorm**: je kunt nu ook weten welke  muur je hebt aangeraakt bij **when_touching_wall** en **when_stopped_touching_wall**
 
-Bij **Database (JSON)**: nu zelfs [met aparte uitlegpagina](database/basis.md)
+Bij **Database (JSON)**: nu zelfs [met aparte uitlegpagina](site:play/docs/database/basis)
 
 
 </details>

@@ -5,13 +5,13 @@ description: Zet een verzoeklimiet op /inloggen en /wijzig, zodat niemand eindel
 
 # Wachtwoorden: inlogpogingen beperken
 
-Met Argon2 uit [les 5 tot en met 8](./registreren) geeft een gelekte database
+Met Argon2 uit [les 5 tot en met 8](site:fullstack/docs/veiligheid/wachtwoorden/registreren) geeft een gelekte database
 de wachtwoorden niet weg. Maar wie de database niet heeft, kan nog iets anders:
 `/inloggen` zelf proberen, keer op keer, met steeds een ander wachtwoord. Je
 server antwoordt op elke poging, en elk antwoord zegt of het raak was.
 
 Een grens op het aantal pogingen ken je al: de verzoeklimiet met `slowapi` uit
-[Te veel verzoeken](/docs/veiligheid/dos/limiet). Die zet je nu op de twee
+[Te veel verzoeken](site:fullstack/docs/veiligheid/dos/limiet). Die zet je nu op de twee
 endpoints die een wachtwoord controleren.
 
 ## `slowapi` in deze map
@@ -53,7 +53,7 @@ app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 ```
 
-In `/inloggen` uit [les 8](./rehash) veranderen alleen de kop en de regel
+In `/inloggen` uit [les 8](site:fullstack/docs/veiligheid/wachtwoorden/rehash) veranderen alleen de kop en de regel
 erboven:
 
 <CodeUitleg>
@@ -102,7 +102,7 @@ als het "maar een testje" is.
 :::
 
 Start je server opnieuw. Staat Sara nog niet in je database, draai dan eerst
-`registreer.py` uit [les 1](./gewone-tekst). Maak daarna `pogingen.py`, dat zes
+`registreer.py` uit [les 1](site:fullstack/docs/veiligheid/wachtwoorden/gewone-tekst). Maak daarna `pogingen.py`, dat zes
 keer met hetzelfde foute wachtwoord inlogt:
 
 ```python
@@ -160,7 +160,7 @@ Sla `main.py` op en draai `pogingen.py` opnieuw.
 ### Opdracht 1: Predict - Sara zelf
 
 Je draait `pogingen.py`, en direct daarna logt Sara in met haar goede
-wachtwoord, vanaf dezelfde computer. Sinds opdracht 1 van [les 7](./wijzigen) is
+wachtwoord, vanaf dezelfde computer. Sinds opdracht 1 van [les 7](site:fullstack/docs/veiligheid/wachtwoorden/wijzigen) is
 dat `Lange-Nieuwe-Zin-7`.
 
 **Vraag:** wat krijgt ze terug?
@@ -200,8 +200,8 @@ Wat kost `ph.hash`? En wat antwoordt `/registreer` als een naam al bestaat?
 
 Ja, twee dingen. Elke registratie rekent een trage `ph.hash` uit. Een script
 dat duizend accounts aanmaakt, laat je server dus lang rekenen: met de 19
-hashes per seconde uit [les 4](./traag) bijna een minuut, en ondertussen wacht
-iedereen. Dat is [wat een verzoek kost](/docs/veiligheid/dos/verzoek).
+hashes per seconde uit [les 4](site:fullstack/docs/veiligheid/wachtwoorden/traag) bijna een minuut, en ondertussen wacht
+iedereen. Dat is [wat een verzoek kost](site:fullstack/docs/veiligheid/dos/verzoek).
 
 En bij een naam die al bestaat, antwoordt `/registreer` met
 `400 Deze naam is al bezet`. Zo zoekt een script uit welke namen een account
@@ -215,7 +215,7 @@ wachtwoord.
 ### Opdracht 3: Make - In je eigen project
 
 Je gastenboek heeft accounts sinds
-[Registreren: een account opslaan](/docs/FastAPI/accounts/registreren), en bewaart de
+[Registreren: een account opslaan](site:fullstack/docs/FastAPI/accounts/registreren), en bewaart de
 wachtwoorden nog als gewone tekst. Maak ze veilig met wat je in deze reeks
 leerde: Argon2 bij het registreren, `ph.verify` met `NEP` op elke plek die een
 wachtwoord controleert, en een limiet op elk van die plekken.
@@ -271,7 +271,7 @@ Heb je in je project al een limiter uit Te veel verzoeken, gebruik dan die: de
 laatste drie regels en de imports van `slowapi` staan er dan al, en een tweede
 `limiter` of `app.add_exception_handler` is niet nodig.
 
-Met de sessies uit [Onthouden op de server: sessies](/docs/FastAPI/onthouden/sessies)
+Met de sessies uit [Onthouden op de server: sessies](site:fullstack/docs/FastAPI/onthouden/sessies)
 wordt je `POST /inloggen` zo. Bij je imports komen de regels van `argon2` en
 `slowapi`; `Request` staat in de import uit `fastapi` sinds de templates al. De
 401 uit de basis blijft, en onder de controle blijft de sessie zoals hij was:
@@ -389,4 +389,4 @@ een wachtwoord controleert: de hele reeks in één server.
 
 </details>
 
-Door naar [les 10: in de praktijk](./praktijk).
+Door naar [les 10: in de praktijk](site:fullstack/docs/veiligheid/wachtwoorden/praktijk).

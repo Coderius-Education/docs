@@ -6,7 +6,7 @@ Een server onthoudt niets tussen twee verzoeken, dus bij je volgende bericht her
 
 ## Het formulier
 
-Vervang `static/pages/gastenboek_form.html` uit [Elk bericht bewaren: een eigen sleutel](/docs/FastAPI/berichten-opslaan/eigen-sleutel) door deze versie, met een wachtwoordveld en een link naar het registreren:
+Vervang `static/pages/gastenboek_form.html` uit [Elk bericht bewaren: een eigen sleutel](site:fullstack/docs/FastAPI/berichten-opslaan/eigen-sleutel) door deze versie, met een wachtwoordveld en een link naar het registreren:
 
 ```html
 <!DOCTYPE html>
@@ -26,7 +26,7 @@ Vervang `static/pages/gastenboek_form.html` uit [Elk bericht bewaren: een eigen 
 
 ## De controle
 
-Vervang je `POST /gastenboek` uit [Doorsturen na opslaan (redirect)](/docs/FastAPI/berichten-opslaan/redirect) door deze versie. Het opslaan blijft hetzelfde; er komt een controle boven:
+Vervang je `POST /gastenboek` uit [Doorsturen na opslaan (redirect)](site:fullstack/docs/FastAPI/berichten-opslaan/redirect) door deze versie. Het opslaan blijft hetzelfde; er komt een controle boven:
 
 <CodeUitleg>
 
@@ -80,9 +80,9 @@ Een fout wachtwoord en een naam zonder account krijgen dezelfde melding, en dat 
 
 Je gastenboek heeft nu accounts, en een bericht komt er alleen in als het wachtwoord klopt. Drie dingen zijn nog niet zoals op een echte site:
 
-- Je typt je wachtwoord bij elk bericht. Eén keer inloggen en ingelogd blijven, leer je later, in de uitbreiding [Onthouden op de server: sessies](/docs/FastAPI/onthouden/sessies).
-- De wachtwoorden staan leesbaar in `gebruikers.db`. Hoe je ze veilig bewaart, leer je later in de route Veiligheid: [Wachtwoorden veilig opslaan](/docs/veiligheid/wachtwoorden/gewone-tekst).
-- Verwijderen kan nog iedereen, ook bij een bericht van een ander. Ook dat komt later, met sessies, en in de reeks [Wie mag wat](/docs/veiligheid/toegang/zwakheid).
+- Je typt je wachtwoord bij elk bericht. Eén keer inloggen en ingelogd blijven, leer je later, in de uitbreiding [Onthouden op de server: sessies](site:fullstack/docs/FastAPI/onthouden/sessies).
+- De wachtwoorden staan leesbaar in `gebruikers.db`. Hoe je ze veilig bewaart, leer je later in de route Veiligheid: [Wachtwoorden veilig opslaan](site:fullstack/docs/veiligheid/wachtwoorden/gewone-tekst).
+- Verwijderen kan nog iedereen, ook bij een bericht van een ander. Ook dat komt later, met sessies, en in de reeks [Wie mag wat](site:fullstack/docs/veiligheid/toegang/zwakheid).
 
 ## Er gaat iets mis
 
@@ -104,7 +104,7 @@ Je gastenboek heeft nu accounts, en een bericht komt er alleen in als het wachtw
 
 **Oorzaak:** het formulier stuurt geen `wachtwoord` mee. Staat het veld er wel, dan heet het anders, of je browser toont nog de oude versie van `gastenboek_form.html`.
 
-**Oplossing:** controleer `name="wachtwoord"` in het formulier, en herlaad de pagina met Ctrl+Shift+R, zoals bij de cache in [CSS in een eigen bestand (static files)](/docs/FastAPI/css-en-afbeeldingen/static_files).
+**Oplossing:** controleer `name="wachtwoord"` in het formulier, en herlaad de pagina met Ctrl+Shift+R, zoals bij de cache in [CSS in een eigen bestand (static files)](site:fullstack/docs/FastAPI/css-en-afbeeldingen/static_files).
 
 <details>
 <summary>Zo ziet je `main.py` er nu uit</summary>
@@ -389,4 +389,4 @@ Kijk je eerst in `gebruikers.db` en geef je een 404 bij een naam zonder account,
 
 </details>
 
-Door naar [Zo werkt het: klikken en versturen](/docs/FastAPI/accounts/verzoek-get).
+Door naar [Zo werkt het: klikken en versturen](site:fullstack/docs/FastAPI/accounts/verzoek-get).

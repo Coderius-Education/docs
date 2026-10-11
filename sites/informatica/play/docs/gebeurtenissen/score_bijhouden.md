@@ -225,6 +225,6 @@ def punt():
 </details>
 
 :::info[Waar kom je dit later weer tegen?]
-- In [6.2 Een high score bijhouden](/docs/database/highscore) blijft die score bewaard nadat je het spel afsluit.
-- In [9.3 Wanneer ga je naar het volgende level?](/docs/levels/wanneer-volgende) is `global` de manier waarop je level-variabele buiten je functies blijft bestaan.
+- In [6.2 Een high score bijhouden](site:play/docs/database/highscore) blijft die score bewaard nadat je het spel afsluit.
+- In [9.3 Wanneer ga je naar het volgende level?](site:play/docs/levels/wanneer-volgende) is `global` de manier waarop je level-variabele buiten je functies blijft bestaan.
 :::

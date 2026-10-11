@@ -5,7 +5,7 @@ description: Naast main.py staan databases met berichten en sessie-id's, en een 
 
 # Wat je server laat zien: wat er in je map staat
 
-Na [les 3](./uitzetten) geeft je server geen lijst en geen sessies meer weg.
+Na [les 3](site:fullstack/docs/veiligheid/zichtbaar/uitzetten) geeft je server geen lijst en geen sessies meer weg.
 Maar je server is niet de enige weg naar je gegevens. Ze staan ook in
 bestanden, naast je code. Deel je je projectmap, als zip met een klasgenoot of
 op GitHub, dan deel je die bestanden mee.
@@ -30,10 +30,10 @@ Uitvoer, met andere sessie-id's bij jou:
 916312710b4a64610d1a100578050e18 Alex
 ```
 
-Heb je opdracht 2 van [les 1](./handleiding) gedaan, dan staat jouw eigen sessie
+Heb je opdracht 2 van [les 1](site:fullstack/docs/veiligheid/zichtbaar/handleiding) gedaan, dan staat jouw eigen sessie
 er ook bij, bovenaan, met de naam die je op `/docs` invulde.
 
-Hetzelfde lijstje dat `/sessies` in [les 2](./vergeten) weggaf. Daar heb je
+Hetzelfde lijstje dat `/sessies` in [les 2](site:fullstack/docs/veiligheid/zichtbaar/vergeten) weggaf. Daar heb je
 geen endpoint voor nodig: wie het bestand heeft, heeft de sessie-id's. En met
 een sessie-id is hij voor je server die bezoeker, zolang je server draait met
 deze `sessies.db`.
@@ -59,9 +59,9 @@ zelf een virtual environment. `__pycache__` maakt Python opnieuw als het nodig
 is.
 
 In je eigen gastenboek staat ook een `gebruikers.db`, sinds
-[Registreren: een account opslaan](/docs/FastAPI/accounts/registreren). Daarin staan de
+[Registreren: een account opslaan](site:fullstack/docs/FastAPI/accounts/registreren). Daarin staan de
 wachtwoorden van je gebruikers, leesbaar, tot je de reeks
-[Wachtwoorden veilig opslaan](/docs/veiligheid/wachtwoorden/gewone-tekst) doet,
+[Wachtwoorden veilig opslaan](site:fullstack/docs/veiligheid/wachtwoorden/gewone-tekst) doet,
 en daarna hun hashes. Die deel je nog minder.
 
 ## Er gaat iets mis
@@ -122,8 +122,8 @@ Wel: `main.py`, je scripts als je docent ze wil zien, en `static/` en
 `templates/` als je project die heeft. Niet: de `.db`-bestanden, `.venv/` en
 `__pycache__/`. Je docent heeft je code nodig om te zien wat je bouwde, niet de
 berichten en sessies van je bezoekers. Hoe je dat bij elke zip en elke upload
-goed doet, zie je in [les 5](./gitignore).
+goed doet, zie je in [les 5](site:fullstack/docs/veiligheid/zichtbaar/gitignore).
 
 </details>
 
-Door naar [les 5: een .gitignore en een nette zip](./gitignore).
+Door naar [les 5: een .gitignore en een nette zip](site:fullstack/docs/veiligheid/zichtbaar/gitignore).

@@ -280,7 +280,7 @@ De bal valt door de groene zone en landt op de vloer. Zodra de bal de zone raakt
 </details>
 
 :::info[Waar kom je dit later weer tegen?]
-- `when_touching` zie je terug bij [4.2 Gebeurtenissen bij een vorm](/docs/gebeurtenissen/vormen) om botsingen af te handelen.
-- `bounciness` is essentieel bij [Pong (eindproject)](/docs/jouw_project/pong): zonder stuiterende bal is er geen spel.
+- `when_touching` zie je terug bij [4.2 Gebeurtenissen bij een vorm](site:play/docs/gebeurtenissen/vormen) om botsingen af te handelen.
+- `bounciness` is essentieel bij [Pong (eindproject)](site:play/docs/jouw_project/pong): zonder stuiterende bal is er geen spel.
 - Sensors zijn handig voor scorezones en triggers — denk aan een onzichtbaar vakje waar je een punt scoort.
 :::

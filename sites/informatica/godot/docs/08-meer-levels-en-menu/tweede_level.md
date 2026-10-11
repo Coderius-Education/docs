@@ -31,8 +31,8 @@ get_tree().change_scene_to_file("res://level2.tscn")
 ## Stap 1: Maak `level2.tscn`
 
 1. Klik op **Scene** → **New Scene** en kies **2D Scene**. Godot maakt een `Node2D` als root.
-2. Bouw een nieuw level op zoals je in [Level tekenen met een TileMap](../03-level-bouwen/tilemap_opzetten.md) en [Collision op je tegels](../03-level-bouwen/tilemap_collision.md) hebt geleerd. Maak hem iets anders dan level 1 — bijvoorbeeld een hogere uitdaging of een ander decor.
-3. Voeg een speler toe (sleep `karakter.tscn` vanuit het FileSystem, óf bouw de `CharacterBody2D`-structuur opnieuw op zoals in [Een speelbaar karakter](../04-personage-en-beweging/sprite.md)).
+2. Bouw een nieuw level op zoals je in [Level tekenen met een TileMap](site:godot/docs/tilemap_opzetten) en [Collision op je tegels](site:godot/docs/tilemap_collision) hebt geleerd. Maak hem iets anders dan level 1 — bijvoorbeeld een hogere uitdaging of een ander decor.
+3. Voeg een speler toe (sleep `karakter.tscn` vanuit het FileSystem, óf bouw de `CharacterBody2D`-structuur opnieuw op zoals in [Een speelbaar karakter](site:godot/docs/sprite)).
 4. Sla op via `Ctrl + S` als `level2.tscn`.
 
 :::tip
@@ -41,7 +41,7 @@ Zorg dat je level 1-bestand `level1.tscn` heet (of pas later het pad in je scrip
 
 ## Stap 2: Voeg een vlag toe aan level 1
 
-Aan het einde van level 1 plaats je een "vlag" die de overgang triggert. De opzet lijkt op het muntje uit [Signals & een muntje oppakken](../07-signals-en-score/signals_muntje.md).
+Aan het einde van level 1 plaats je een "vlag" die de overgang triggert. De opzet lijkt op het muntje uit [Signals & een muntje oppakken](site:godot/docs/signals_muntje).
 
 1. Open `level1.tscn`.
 2. Klik met rechts op de hoofd-node → **Add Child Node** → `Area2D`.
@@ -97,7 +97,7 @@ Heb je `level2.tscn` in een submap opgeslagen? Pas het pad dan aan: `res://level
 
 Start het spel met `F5` vanaf level 1. Loop je speler naar de vlag — zodra je hem raakt, opent level 2.
 
-Je `Global.score` blijft staan tijdens de overgang (dankzij [Global variables](../07-signals-en-score/global_variables.md)). Wil je per level opnieuw beginnen? Roep `Global.reset()` aan in `_on_body_entered` vóór de scene-switch.
+Je `Global.score` blijft staan tijdens de overgang (dankzij [Global variables](site:godot/docs/global_variables)). Wil je per level opnieuw beginnen? Roep `Global.reset()` aan in `_on_body_entered` vóór de scene-switch.
 
 ## Opdracht 8.1.a: voeg een derde level toe
 

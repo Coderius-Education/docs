@@ -5,8 +5,8 @@ description: Een endpoint dat je voor jezelf maakte, staat in de handleiding voo
 
 # Wat je server laat zien: een vergeten endpoint
 
-In [les 1](./handleiding) zag je dat `/docs` elk endpoint noemt. Ook
-`GET /sessies`, dat je in [Onthouden op de server: sessies](/docs/FastAPI/onthouden/sessies)
+In [les 1](site:fullstack/docs/veiligheid/zichtbaar/handleiding) zag je dat `/docs` elk endpoint noemt. Ook
+`GET /sessies`, dat je in [Onthouden op de server: sessies](site:fullstack/docs/FastAPI/onthouden/sessies)
 maakte om zelf in je sessies te kijken. Daar stond bij: haal het daarna weg.
 Wie dat vergat, heeft een endpoint dat niemand anders mag gebruiken, op een
 lijst die iedereen kan lezen.
@@ -15,7 +15,7 @@ lijst die iedereen kan lezen.
 
 Start je server uit les 1. Maak een script `twee.py` met twee bezoekers die
 elk een bericht plaatsen. Een `Client` onthoudt zijn cookie, zoals in
-[Een script als bezoeker](/docs/veiligheid/gereedschap):
+[Een script als bezoeker](site:fullstack/docs/veiligheid/gereedschap):
 
 ```python
 import httpx
@@ -73,7 +73,7 @@ ed37173ad83bc8b8d2442ee65e107e22 {'naam': 'Sara'}
 87da570d5ae77ba22e8e11900e2061d2 {'naam': 'Alex'}
 ```
 
-Heb je opdracht 2 van [les 1](./handleiding) gedaan, dan staat jouw eigen sessie
+Heb je opdracht 2 van [les 1](site:fullstack/docs/veiligheid/zichtbaar/handleiding) gedaan, dan staat jouw eigen sessie
 er ook bij, bovenaan: **Execute** op `/docs` maakte er een, met de naam die je
 daar invulde.
 
@@ -84,7 +84,7 @@ kan raden. Dat helpt niets meer als je server ze zelf op een rij zet.
 In dit kleine gastenboek kan een sessie-id weinig kwaad: `/ik` zegt alleen een
 naam. In je eigen gastenboek is een sessie-id een inlog. Wie het sessie-id van
 Sara heeft, is voor je server ingelogd als Sara, zonder haar wachtwoord te
-kennen. In de reeks [Wie mag wat](/docs/veiligheid/toegang/zwakheid), die later
+kennen. In de reeks [Wie mag wat](site:fullstack/docs/veiligheid/toegang/zwakheid), die later
 komt, mag alleen de schrijver zijn bericht verwijderen, en dat controleert de
 server met precies dit sessie-id. Met `/sessies` erbij kan iedereen elk bericht
 verwijderen.
@@ -94,7 +94,7 @@ verwijderen.
 Je maakte `/sessies` voor jezelf, om te testen. De server weet dat niet: hij
 beantwoordt elk verzoek, van wie dan ook, en `/docs` zet het endpoint netjes op
 de lijst. Een endpoint dat alleen voor jou is, bestaat niet. In
-[les 3](./uitzetten) zet je de lijst uit en haal je het endpoint weg.
+[les 3](site:fullstack/docs/veiligheid/zichtbaar/uitzetten) zet je de lijst uit en haal je het endpoint weg.
 
 ## Er gaat iets mis
 
@@ -147,4 +147,4 @@ lijst met sessie-id's is dus een sleutelbos van al je bezoekers.
 
 </details>
 
-Door naar [les 3: de handleiding uitzetten](./uitzetten).
+Door naar [les 3: de handleiding uitzetten](site:fullstack/docs/veiligheid/zichtbaar/uitzetten).

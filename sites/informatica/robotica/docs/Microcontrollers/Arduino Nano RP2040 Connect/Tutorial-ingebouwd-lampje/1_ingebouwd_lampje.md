@@ -92,7 +92,7 @@ Wat doet `Pin.OUT`?
 
 **Oorzaak:** Je code draait op je computer in plaats van op het bord. De module `machine` bestaat alleen in MicroPython.
 
-**Oplossing:** Controleer in [1.4 MicroPython kiezen](../Tutorial-installatie/4_REPL.md) dat je interpreter op MicroPython staat en dat je bord verbonden is.
+**Oplossing:** Controleer in [1.4 MicroPython kiezen](site:robotica/docs/Microcontrollers/Arduino%20Nano%20RP2040%20Connect/Tutorial-installatie/REPL) dat je interpreter op MicroPython staat en dat je bord verbonden is.
 
 </details>
 

@@ -54,7 +54,7 @@ CharacterBody2D
 
 In de volgende les voegen we beweging toe.
 
-Deze drie nodes vormen samen je speler; hun instellingen staan in de [Nodes cheatsheet](/cheatsheet#hoofdpersoon).
+Deze drie nodes vormen samen je speler; hun instellingen staan in de [Nodes cheatsheet](site:godot/cheatsheet#hoofdpersoon).
 
 ## Er gaat iets mis
 
@@ -67,7 +67,7 @@ Deze drie nodes vormen samen je speler; hun instellingen staan in de [Nodes chea
 
 1. Controleer of je `CharacterBody2D` een `CollisionShape2D` als child heeft.
 2. Controleer of die `CollisionShape2D` een **Shape** heeft ingesteld (bijvoorbeeld `RectangleShape2D`).
-3. Controleer of je `TileMapLayer` een **Physics Layer** heeft — zie [Collision op je tegels](../03-level-bouwen/tilemap_collision.md).
+3. Controleer of je `TileMapLayer` een **Physics Layer** heeft — zie [Collision op je tegels](site:godot/docs/tilemap_collision).
 
 </details>
 

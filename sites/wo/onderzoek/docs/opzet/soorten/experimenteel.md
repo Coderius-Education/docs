@@ -19,10 +19,10 @@ Bij een **experiment** verander je zelf één ding (de **variabele** die je onde
 
 ## Sterk en zwak
 
-**Sterk in:** oorzaak en gevolg aantonen. Omdat je alles gelijk houdt behalve één ding, weet je waar een verschil door komt — een hoge [interne validiteit](../../spelregels/interne-validiteit.md). Voorwaarde: je verdeelt de deelnemers **door loting** over de groepen. Laat je ze zelf kiezen, dan verschillen de groepen al vóór het experiment, en weet je niet meer waar het verschil door komt.
+**Sterk in:** oorzaak en gevolg aantonen. Omdat je alles gelijk houdt behalve één ding, weet je waar een verschil door komt — een hoge [interne validiteit](site:onderzoek/spelregels/interne-validiteit). Voorwaarde: je verdeelt de deelnemers **door loting** over de groepen. Laat je ze zelf kiezen, dan verschillen de groepen al vóór het experiment, en weet je niet meer waar het verschil door komt.
 
 :::caution[Let op]
-Een experiment is een kunstmatige situatie. Wat in een stil lokaal werkt, werkt niet automatisch in het echte leven — de [externe validiteit](../../spelregels/externe-validiteit.md) is vaak lager. En [betrouwbaarheid](../../spelregels/betrouwbaar.md) vraagt om herhalen: één meting is geen meting.
+Een experiment is een kunstmatige situatie. Wat in een stil lokaal werkt, werkt niet automatisch in het echte leven — de [externe validiteit](site:onderzoek/spelregels/externe-validiteit) is vaak lager. En [betrouwbaarheid](site:onderzoek/spelregels/betrouwbaar) vraagt om herhalen: één meting is geen meting.
 :::
 
 <WelNiet
@@ -32,6 +32,6 @@ Een experiment is een kunstmatige situatie. Wat in een stil lokaal werkt, werkt 
 
 ## Hangt samen met
 
-- [Soorten onderzoek combineren](./soorten-combineren.mdx) — experiment, veld en literatuur naast elkaar
-- [Verklarend-toetsend](../functies/verklarend-toetsend.md) — de functie waar een experiment meestal bij hoort
-- [Interne validiteit](../../spelregels/interne-validiteit.md) — de grote kracht van het experiment
+- [Soorten onderzoek combineren](site:onderzoek/opzet/soorten/soorten-combineren) — experiment, veld en literatuur naast elkaar
+- [Verklarend-toetsend](site:onderzoek/opzet/functies/verklarend-toetsend) — de functie waar een experiment meestal bij hoort
+- [Interne validiteit](site:onderzoek/spelregels/interne-validiteit) — de grote kracht van het experiment

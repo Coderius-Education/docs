@@ -18,10 +18,10 @@ Bij **verklarend-toetsend** onderzoek heb je al een verwachte verklaring — een
 
 ## Strak van opzet
 
-Toetsend onderzoek vraagt om een gerichte meting: je houdt alles gelijk behalve de factor uit je hypothese. Daarom past het goed bij [experimenteel onderzoek](../soorten/experimenteel.md), en draait alles om de [interne validiteit](../../spelregels/interne-validiteit.md): kun je alternatieve verklaringen uitsluiten?
+Toetsend onderzoek vraagt om een gerichte meting: je houdt alles gelijk behalve de factor uit je hypothese. Daarom past het goed bij [experimenteel onderzoek](site:onderzoek/opzet/soorten/experimenteel), en draait alles om de [interne validiteit](site:onderzoek/spelregels/interne-validiteit): kun je alternatieve verklaringen uitsluiten?
 
 :::tip[Een gesneuvelde hypothese is winst]
-"Mijn hypothese klopt niet" is een prima uitkomst — je weet nu iets wat je eerst niet wist. Resultaten bijschaven zodat de hypothese "klopt" schendt de spelregel [aanvaardbaar](../../spelregels/aanvaardbaar.md).
+"Mijn hypothese klopt niet" is een prima uitkomst — je weet nu iets wat je eerst niet wist. Resultaten bijschaven zodat de hypothese "klopt" schendt de spelregel [aanvaardbaar](site:onderzoek/spelregels/aanvaardbaar).
 :::
 
 <WelNiet
@@ -43,7 +43,7 @@ In het ziekenhuis van Wenen stierven op de kraamafdeling van de artsen véél me
 
 ## Hangt samen met
 
-- [Functies van onderzoek](./functies-overzicht.mdx) — alle zes functies naast elkaar
-- [Verklarend-explorerend](./verklarend-explorerend.md) — de stap ervóór: verklaringen opsporen
-- [Hypothese](../../vragen/hypothese.md) — hoe je een goede hypothese formuleert
-- [Experimenteel onderzoek](../soorten/experimenteel.md) en [interne validiteit](../../spelregels/interne-validiteit.md) — het gereedschap voor het toetsen
+- [Functies van onderzoek](site:onderzoek/opzet/functies/functies-overzicht) — alle zes functies naast elkaar
+- [Verklarend-explorerend](site:onderzoek/opzet/functies/verklarend-explorerend) — de stap ervóór: verklaringen opsporen
+- [Hypothese](site:onderzoek/vragen/hypothese) — hoe je een goede hypothese formuleert
+- [Experimenteel onderzoek](site:onderzoek/opzet/soorten/experimenteel) en [interne validiteit](site:onderzoek/spelregels/interne-validiteit) — het gereedschap voor het toetsen

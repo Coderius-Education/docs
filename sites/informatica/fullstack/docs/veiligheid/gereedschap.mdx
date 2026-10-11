@@ -32,9 +32,9 @@ project. Zo blijft je eigen gastenboek heel, en heeft elke reeks zijn eigen
 server en database. In zo'n nieuwe map doe je steeds hetzelfde:
 
 1. Maak er een virtual environment in, zoals in
-   <SiteLink site="editor" to="/python/stap-4-venv">Een virtual environment aanmaken</SiteLink>.
+   [Een virtual environment aanmaken](site:editor/python/stap-4-venv).
 2. Open de map in VS Code, zoals in
-   <SiteLink site="editor" to="/python/stap-5-vscode">Je project openen in VS Code</SiteLink>.
+   [Je project openen in VS Code](site:editor/python/stap-5-vscode).
 3. Installeer de packages in de terminal van VS Code:
 
 ```bash
@@ -98,11 +98,11 @@ async def bezoek(teller: int = Cookie(default=0)):
 ```
 
 <Regel n={10} tot={12}>
-Een POST-endpoint met een formulierveld, zoals in [Een formulier versturen (POST)](/docs/FastAPI/formulieren/forms).
+Een POST-endpoint met een formulierveld, zoals in [Een formulier versturen (POST)](site:fullstack/docs/FastAPI/formulieren/forms).
 </Regel>
 
 <Regel n={14} tot={19}>
-De teller staat in een cookie, zoals in [Onthouden met een cookie](/docs/FastAPI/onthouden/cookies). Elk bezoek leest hem, telt er één bij op, en zet hem terug. Een cookie is altijd tekst, daarom `str(teller)`.
+De teller staat in een cookie, zoals in [Onthouden met een cookie](site:fullstack/docs/FastAPI/onthouden/cookies). Elk bezoek leest hem, telt er één bij op, en zet hem terug. Een cookie is altijd tekst, daarom `str(teller)`.
 </Regel>
 
 </CodeUitleg>
@@ -158,7 +158,7 @@ Draai het in de tweede terminal met `python bezoeker.py`:
 
 Een statuscode zegt in één getal hoe het verzoek afliep. `200` is gelukt; de
 andere codes die je in deze route tegenkomt, staan in het overzicht op
-[de startpagina](/docs/veiligheid#statuscodes).
+[de startpagina](site:fullstack/docs/veiligheid#statuscodes).
 
 ## Een bezoeker die cookies onthoudt
 
@@ -202,7 +202,7 @@ Uitvoer:
 
 Zonder `Client` is elk bezoek het eerste. Met `Client` telt de teller door,
 want de bezoeker stuurt de cookie mee. Twee `Client`s zijn twee bezoekers, elk
-met hun eigen cookies; dat gebruik je in [Wie mag wat](./toegang/zwakheid).
+met hun eigen cookies; dat gebruik je in [Wie mag wat](site:fullstack/docs/veiligheid/toegang/zwakheid).
 
 ## Er gaat iets mis
 
@@ -285,4 +285,4 @@ eigen server.
 
 </details>
 
-Door naar de eerste reeks: [Wat je server laat zien](./zichtbaar/handleiding).
+Door naar de eerste reeks: [Wat je server laat zien](site:fullstack/docs/veiligheid/zichtbaar/handleiding).

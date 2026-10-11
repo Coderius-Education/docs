@@ -19,7 +19,7 @@ title: Objectieve kennis
 Je herkent het patroon: een ander kan hetzelfde vaststellen met hetzelfde meetlint, dezelfde telling of dezelfde thermometer, en komt dan op hetzelfde uit.
 
 :::caution[Objectief is niet hetzelfde als "met cijfers"]
-Een getal maakt iets nog niet objectief. Als tweehonderd leerlingen de kantine een rapportcijfer geven, krijg je keurige getallen — maar elk van die cijfers is een **oordeel** en dus [subjectief](./subjectief.md). Objectief gaat over de bron (het object), niet over de vorm (cijfers of woorden).
+Een getal maakt iets nog niet objectief. Als tweehonderd leerlingen de kantine een rapportcijfer geven, krijg je keurige getallen — maar elk van die cijfers is een **oordeel** en dus [subjectief](site:onderzoek/kennisleer/subjectief). Objectief gaat over de bron (het object), niet over de vorm (cijfers of woorden).
 
 En andersom: "objectief" betekent ook niet automatisch "waar". Eeuwenlang hebben mensen objectief bedoelde uitspraken gedaan die later onjuist bleken.
 :::
@@ -31,6 +31,6 @@ En andersom: "objectief" betekent ook niet automatisch "waar". Eeuwenlang hebben
 
 ## Hangt samen met
 
-- [Subjectieve kennis](./subjectief.md) — de tegenhanger: bepaald door wie oordeelt
-- [Intersubjectieve kennis](./intersubjectief.md) — waar onderzoek in de praktijk op mikt
-- [Valide](../spelregels/valide.md) — meet je werkelijk de eigenschap van het object die je wilt weten?
+- [Subjectieve kennis](site:onderzoek/kennisleer/subjectief) — de tegenhanger: bepaald door wie oordeelt
+- [Intersubjectieve kennis](site:onderzoek/kennisleer/intersubjectief) — waar onderzoek in de praktijk op mikt
+- [Valide](site:onderzoek/spelregels/valide) — meet je werkelijk de eigenschap van het object die je wilt weten?

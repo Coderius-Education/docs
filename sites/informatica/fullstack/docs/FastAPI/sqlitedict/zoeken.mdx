@@ -27,7 +27,7 @@ with SqliteDict("mijn_data.db") as db:
 
 ## Korter met get
 
-Hetzelfde kan korter, met `get`, dat je kent van `DIEREN.get(naam, …)` in [Eén route voor veel pagina's: path-parameters](/docs/FastAPI/veel-paginas/path-parameters). Op een database werkt het net zo. Vervang de inhoud van `proef_db.py` door:
+Hetzelfde kan korter, met `get`, dat je kent van `DIEREN.get(naam, …)` in [Eén route voor veel pagina's: path-parameters](site:fullstack/docs/FastAPI/veel-paginas/path-parameters). Op een database werkt het net zo. Vervang de inhoud van `proef_db.py` door:
 
 <CodeUitleg>
 
@@ -82,7 +82,7 @@ Je script print `onbekend`, maar `bekijk_db.py` laat een naam zien.
 
 **Oorzaak:** de sleutel in je `get` is net anders dan die in de database, bijvoorbeeld `"Naam"` in plaats van `"naam"`. Met `db["Naam"]` had je een `KeyError` gekregen, maar `get` geeft zonder foutmelding de standaardwaarde. Zo merk je een tikfout pas als je de uitvoer goed leest.
 
-**Oplossing:** schrijf de sleutel precies zoals bij het opslaan, hoofdletters meegeteld. Kijk met `bekijk_db.py` uit [Alles bekijken: len en items](/docs/FastAPI/sqlitedict/bekijken) welke sleutels er echt in staan.
+**Oplossing:** schrijf de sleutel precies zoals bij het opslaan, hoofdletters meegeteld. Kijk met `bekijk_db.py` uit [Alles bekijken: len en items](site:fullstack/docs/FastAPI/sqlitedict/bekijken) welke sleutels er echt in staan.
 
 ## Opdrachten
 
@@ -225,4 +225,4 @@ Draai het een paar keer: de eerste keer per naam slaat het op, daarna zoekt het 
 
 </details>
 
-Door naar [Verwijderen met del](/docs/FastAPI/sqlitedict/verwijderen).
+Door naar [Verwijderen met del](site:fullstack/docs/FastAPI/sqlitedict/verwijderen).

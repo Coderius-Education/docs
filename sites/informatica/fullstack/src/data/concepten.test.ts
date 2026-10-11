@@ -59,7 +59,7 @@ describe('elk concept wordt uitgelegd waar het voor het eerst opduikt', () => {
 
   it('get wordt één keer als nieuw uitgelegd; Zoeken verwijst terug naar path-parameters', () => {
     expect(tekst('FastAPI/sqlitedict/zoeken')).toContain(
-      '](/docs/FastAPI/veel-paginas/path-parameters)',
+      '](site:fullstack/docs/FastAPI/veel-paginas/path-parameters)',
     );
     expect(tekst('FastAPI/sqlitedict/zoeken')).not.toContain('**`get`**');
   });

@@ -137,7 +137,7 @@ describe('volgorde van de FastAPI-lessen', () => {
         .filter((sectie) => !later.test(sectie.split('\n')[0]))
         .flatMap((sectie) => sectie.split('\n'))
         .flatMap((regel) =>
-          [...regel.matchAll(/\]\(\/docs\/(FastAPI\/[\w/-]+)/g)]
+          [...regel.matchAll(/\]\(site:fullstack\/docs\/(FastAPI\/[\w/-]+)/g)]
             .filter((m) => uitbreiding.has(m[1]) && !later.test(regel))
             .map((m) => `${id} → ${m[1]}`),
         ),
@@ -183,7 +183,7 @@ describe('titels en categorieën', () => {
   it('Projectstructuur is naslag: niet in de sidebar, wel bovenaan de cheatsheet', () => {
     expect(lessen).not.toContain('FastAPI/projectstructuur');
     const cheatsheet = readFileSync(`${DOCS}/cheatsheet.md`, 'utf8').split('\n## ')[0];
-    expect(cheatsheet).toContain('(/docs/FastAPI/projectstructuur)');
+    expect(cheatsheet).toContain('(site:fullstack/docs/FastAPI/projectstructuur)');
   });
 });
 
@@ -201,7 +201,11 @@ describe('verwijzingen naar een les', () => {
 
   it('een linktekst met een dubbele punt of haakjes is de titel van de doelles', () => {
     const fout = alleTeksten.flatMap(({ id, tekst }) =>
-      [...tekst.matchAll(/\[([^\]]*[:(][^\]]*)\]\((\/docs\/FastAPI\/[\w/-]+)[^)]*\)/g)]
+      [
+        ...tekst.matchAll(
+          /\[([^\]]*[:(][^\]]*)\]\(site:fullstack(\/docs\/FastAPI\/[\w/-]+)[^)]*\)/g,
+        ),
+      ]
         .filter((m) => m[1] !== titelVan(m[2]))
         .map((m) => `${id}: [${m[1]}] → ${titelVan(m[2])}`),
     );

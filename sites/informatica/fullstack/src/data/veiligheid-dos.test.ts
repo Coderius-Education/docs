@@ -87,7 +87,7 @@ describe('Te veel verzoeken (DoS)', () => {
     const tekst = lees('praktijk');
     const zelf = sectie(tekst, 'Wat jij zelf doet');
     expect(zelf).toContain('@limiter.limit');
-    expect(zelf).toContain('](./limiet)');
+    expect(zelf).toContain('](site:fullstack/docs/veiligheid/dos/limiet)');
     expect(zelf).not.toMatch(/cachen/i);
     expect(zelf).not.toMatch(/te lang duurt/);
     const groot = sectie(tekst, 'Wat grote sites nog meer doen');

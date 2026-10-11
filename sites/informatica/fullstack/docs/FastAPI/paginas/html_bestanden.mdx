@@ -4,7 +4,7 @@ Tot nu toe schrijf je HTML als strings in Python. Bij een grote pagina raak je d
 
 ## Mappenstructuur
 
-Maak een map `static` met daarin een map `pages`. In `static` komen alle bestanden die de browser nodig heeft: straks ook je CSS en je afbeeldingen. Hoe je mappen verder groeien, zie je bij [Projectstructuur](/docs/FastAPI/projectstructuur).
+Maak een map `static` met daarin een map `pages`. In `static` komen alle bestanden die de browser nodig heeft: straks ook je CSS en je afbeeldingen. Hoe je mappen verder groeien, zie je bij [Projectstructuur](site:fullstack/docs/FastAPI/projectstructuur).
 
 ```
 je-project/
@@ -33,7 +33,7 @@ Maak `static/pages/home.html`:
 
 ## FileResponse gebruiken
 
-Zet `FileResponse` bij de imports, en vervang je endpoint voor `/` uit [Je eerste endpoint](/docs/FastAPI/eerste-server/eerste_endpoint) door een versie die `home.html` teruggeeft. Laat je andere endpoints staan. Zo ziet de bovenkant van je `main.py` eruit:
+Zet `FileResponse` bij de imports, en vervang je endpoint voor `/` uit [Je eerste endpoint](site:fullstack/docs/FastAPI/eerste-server/eerste_endpoint) door een versie die `home.html` teruggeeft. Laat je andere endpoints staan. Zo ziet de bovenkant van je `main.py` eruit:
 
 <CodeUitleg>
 
@@ -64,7 +64,7 @@ Het pad is dat van het bestand op je schijf, gerekend vanaf de map waarin je `fa
 Ga naar [http://127.0.0.1:8000](http://127.0.0.1:8000). Je ziet de pagina uit `home.html`.
 
 :::danger[Gaat er iets mis?]
-Zie je de pagina niet? Kijk of het pad in `FileResponse("...")` precies klopt en of het bestand echt op die plek staat. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
+Zie je de pagina niet? Kijk of het pad in `FileResponse("...")` precies klopt en of het bestand echt op die plek staat. Meer oplossingen staan op [Er gaat iets mis](site:fullstack/docs/troubleshooting).
 :::
 
 <details>
@@ -206,7 +206,7 @@ async def favoriet():
 
 ### Opdracht 5: Make - Van string naar bestand
 
-Zet de pagina met de `<style>`-tag uit [HTML tonen](/docs/FastAPI/paginas/html_tonen) in een bestand `static/pages/styled.html`, en laat het endpoint `/styled` dat bestand teruggeven.
+Zet de pagina met de `<style>`-tag uit [HTML tonen](site:fullstack/docs/FastAPI/paginas/html_tonen) in een bestand `static/pages/styled.html`, en laat het endpoint `/styled` dat bestand teruggeven.
 
 <details>
 <summary>Tip</summary>

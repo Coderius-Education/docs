@@ -42,8 +42,11 @@ describe("de startpagina's", () => {
 
   it.each(STARTPAGINAS)('%s heeft alleen absolute links', (id) => {
     // Een index-pagina is bereikbaar met en zonder slash aan het eind; een
-    // relatieve link breekt in een van de twee.
-    const relatief = [...lees(id).matchAll(/\]\((?!\/|https?:|#)([^)]+)\)/g)].map((m) => m[1]);
+    // relatieve link breekt in een van de twee. Een site:-link wordt bij het
+    // bouwen een absolute link, en telt dus als absoluut.
+    const relatief = [...lees(id).matchAll(/\]\((?!\/|https?:|#|site:)([^)]+)\)/g)].map(
+      (m) => m[1],
+    );
     expect(relatief).toEqual([]);
   });
 
@@ -56,10 +59,10 @@ describe("de startpagina's", () => {
   it('de FastAPI-startpagina noemt de voorkennis uit de drie cursussen en Hoe start ik?', () => {
     const tekst = lees('FastAPI/index');
     for (const site of ['python', 'web', 'editor']) {
-      expect(tekst, site).toContain(`<SiteLink site="${site}"`);
+      expect(tekst, site).toContain(`](site:${site}/`);
     }
-    expect(tekst).toContain('](/docs/starten)');
-    expect(tekst).toContain('](/docs/FastAPI/eerste-server/installatie)');
-    expect(tekst).toContain('](/docs/veiligheid)');
+    expect(tekst).toContain('](site:fullstack/docs/starten)');
+    expect(tekst).toContain('](site:fullstack/docs/FastAPI/eerste-server/installatie)');
+    expect(tekst).toContain('](site:fullstack/docs/veiligheid)');
   });
 });

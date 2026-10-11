@@ -29,4 +29,4 @@ upload_protocol = stlink
 
 **Let op:** ook het `framework` verschilt. De Uno gebruikt `arduino`; voor de STM32 in deze cursus gebruik je `stm32cube` (HAL). Zet je daar per ongeluk `arduino`, dan zijn de HAL-functies niet beschikbaar en compileert je code niet.
 
-Meer uitleg: [7.4 platformio.ini uitgelegd](/docs/platformio/platformio-ini-uitgelegd).
+Meer uitleg: [7.4 platformio.ini uitgelegd](site:embedded/docs/platformio/platformio-ini-uitgelegd).

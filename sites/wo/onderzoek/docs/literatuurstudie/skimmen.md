@@ -14,21 +14,21 @@ title: Skimmen
 
 Werk in deze volgorde, niet van voor naar achter:
 
-1. **Titel en abstract** — die had je al [gescand](./abstract-scannen.md).
+1. **Titel en abstract** — die had je al [gescand](site:onderzoek/literatuurstudie/abstract-scannen).
 2. **De laatste alinea van de inleiding.** Daar staat bijna altijd precies wat de auteurs gaan doen en waarom.
 3. **Alle kopjes.** Ze vormen samen de inhoudsopgave; nu weet je hoe het artikel is opgebouwd.
 4. **Figuren en tabellen, met hun onderschriften.** Onderzoekers stoppen hun belangrijkste resultaat in een figuur. Kun je die lezen, dan begrijp je de kern.
 5. **De conclusie of discussie.** Wat zeggen de auteurs zelf dat ze gevonden hebben, en welke beperkingen noemen ze?
-6. **De literatuurlijst.** Kom je titels tegen die je al kent? Dan zit je in het goede vakgebied. Staat er iets tussen dat je nog niet had? Noteer het voor de [sneeuwbal](./sneeuwbalmethode.md).
+6. **De literatuurlijst.** Kom je titels tegen die je al kent? Dan zit je in het goede vakgebied. Staat er iets tussen dat je nog niet had? Noteer het voor de [sneeuwbal](site:onderzoek/literatuurstudie/sneeuwbalmethode).
 
 Na deze zes stappen kun je in twee zinnen zeggen wat het artikel doet. Lukt dat niet, dan is het artikel te ver van je onderwerp — of te moeilijk, en dat mag je ook opschrijven.
 
 ## Wat skimmen oplevert
 
-Van de zes artikelen die het scannen overleefden, blijven er na het skimmen meestal twee of drie over die je écht nodig hebt. De rest krijgt één regel in je [literatuurmatrix](./literatuurmatrix.md) ("gaat over hetzelfde, maar bij studenten; alleen bruikbaar als vergelijking") en meer niet.
+Van de zes artikelen die het scannen overleefden, blijven er na het skimmen meestal twee of drie over die je écht nodig hebt. De rest krijgt één regel in je [literatuurmatrix](site:onderzoek/literatuurstudie/literatuurmatrix) ("gaat over hetzelfde, maar bij studenten; alleen bruikbaar als vergelijking") en meer niet.
 
 :::caution[Skimmen is nog geen lezen]
-Na het skimmen weet je wat de auteurs *zeggen* dat ze gevonden hebben. Of dat klopt, of de methode deugt en of de conclusie niet groter is dan de gegevens toelaten, weet je pas na [deep reading](./deep-reading.md). Citeer nooit een artikel dat je alleen hebt geskimd voor een inhoudelijke bewering.
+Na het skimmen weet je wat de auteurs *zeggen* dat ze gevonden hebben. Of dat klopt, of de methode deugt en of de conclusie niet groter is dan de gegevens toelaten, weet je pas na [deep reading](site:onderzoek/literatuurstudie/deep-reading). Citeer nooit een artikel dat je alleen hebt geskimd voor een inhoudelijke bewering.
 :::
 
 <WelNiet
@@ -50,6 +50,6 @@ Twee natuurkundigen, Mikhail Simkin en Vwani Roychowdhury, vielen over iets vree
 
 ## Hangt samen met
 
-- [Abstract scannen](./abstract-scannen.md) — de laag ervoor
-- [Deep reading](./deep-reading.md) — de laag erna
-- [Literatuurmatrix](./literatuurmatrix.md) — waar je de opbrengst van het skimmen in één regel noteert
+- [Abstract scannen](site:onderzoek/literatuurstudie/abstract-scannen) — de laag ervoor
+- [Deep reading](site:onderzoek/literatuurstudie/deep-reading) — de laag erna
+- [Literatuurmatrix](site:onderzoek/literatuurstudie/literatuurmatrix) — waar je de opbrengst van het skimmen in één regel noteert

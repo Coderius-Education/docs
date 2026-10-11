@@ -17,7 +17,7 @@ Dit heb je nodig:
 Werk de foto's van boven naar beneden af. Zo groeit de baan onder je handen in elkaar.
 
 :::tip
-Twijfel je hoe een onderdeel eruitziet of waar het komt? Bekijk het [3D-model op de intropagina](intro), of kijk nog eens bij [de bouwstappen](bouwen). Je kunt het 3D-model draaien en zoomen.
+Twijfel je hoe een onderdeel eruitziet of waar het komt? Bekijk het [3D-model op de intropagina](site:robotica/click_golfer/intro), of kijk nog eens bij [de bouwstappen](site:robotica/click_golfer/bouwen). Je kunt het 3D-model draaien en zoomen.
 :::
 
 ## Stap voor stap
@@ -66,15 +66,15 @@ Staat de baan in elkaar? Zet je Golfer dan met de vier hoeken van het Lego-frame
 
 ![Het hele schema: links de sensor op de rij van A0, rechts de servo op de rij van D9, allebei op het shield met de Arduino Nano in het midden.](@site/static/fritzing/click_golfer_bb.png)
 
-Let op: op dit plaatje loopt de oranje draad van de sensor langs de rij van A4. Hij hoort op het signaal van **A0**, zoals bij [de IR-sensor](ir-sensor).
+Let op: op dit plaatje loopt de oranje draad van de sensor langs de rij van A4. Hij hoort op het signaal van **A0**, zoals bij [de IR-sensor](site:robotica/click_golfer/ir-sensor).
 
 ## Hole in one
 
-Upload het programma uit [Zie de bal, sla de bal](bal-slaan) naar je robot en leg een bal in de halve ronding, voor de sensor. Rolt de bal de helling op en in het ronde gat?
+Upload het programma uit [Zie de bal, sla de bal](site:robotica/click_golfer/bal-slaan) naar je robot en leg een bal in de halve ronding, voor de sensor. Rolt de bal de helling op en in het ronde gat?
 
 Pas je programma aan tot de bal telkens netjes in het ronde gat gaat:
 
-- De stand in **Servo 9 op 0** bepaalt hoe ver de arm uithaalt: hoe kleiner het getal, hoe verder hij naar achteren gaat. Zoemde je servo bij [de servo](servo) op 0°, en gebruikte je daar 10°? Zet dan hier ook 10 in plaats van 0.
+- De stand in **Servo 9 op 0** bepaalt hoe ver de arm uithaalt: hoe kleiner het getal, hoe verder hij naar achteren gaat. Zoemde je servo bij [de servo](site:robotica/click_golfer/servo) op 0°, en gebruikte je daar 10°? Zet dan hier ook 10 in plaats van 0.
 - De wachttijd na het slaan moet lang genoeg zijn, zodat een bal die terugrolt eerst stil ligt voordat de robot weer kijkt.
 
 <details>
@@ -107,9 +107,9 @@ Er is geen getal dat bij iedereen past: elke baan en elke Golfer is net anders. 
 
 **Oorzaak:** de servo zit andersom in de toren. Dan haalt de arm bij 0° naar voren uit in plaats van naar achteren.
 
-**Zelf vinden:** kijk naar het snoertje van de servo. Wijst het omlaag in plaats van omhoog, zoals bij [stap 4 van het bouwen](bouwen)?
+**Zelf vinden:** kijk naar het snoertje van de servo. Wijst het omlaag in plaats van omhoog, zoals bij [stap 4 van het bouwen](site:robotica/click_golfer/bouwen)?
 
-**Oplossing:** haal de toren uit elkaar tot stap 4 en zet de servo erin met het snoertje **omhoog**. Bouw daarna verder zoals op de plaatjes, en zet de servo vóór stap 12 weer op 90°, zoals bij [Eerst de servo op 90°](bouwen#servo-op-90). Zo blijven de getallen in je programma's kloppen: uithalen naar 0°, slaan naar 90°.
+**Oplossing:** haal de toren uit elkaar tot stap 4 en zet de servo erin met het snoertje **omhoog**. Bouw daarna verder zoals op de plaatjes, en zet de servo vóór stap 12 weer op 90°, zoals bij [Eerst de servo op 90°](site:robotica/click_golfer/bouwen#servo-op-90). Zo blijven de getallen in je programma's kloppen: uithalen naar 0°, slaan naar 90°.
 
 </Probleem>
 
@@ -119,7 +119,7 @@ Er is geen getal dat bij iedereen past: elke baan en elke Golfer is net anders. 
 
 **Zelf vinden:** kijk naar de as terwijl de servo draait. Draait de as niet mee, dan zit hij niet goed in de servo. Draait de as wel en de arm niet, dan zit de verbinder los.
 
-**Oplossing:** zet de servo eerst op 90°, zoals vóór stap 12 bij [Eerst de servo op 90°](bouwen#servo-op-90). Duw dan de as door de servo, of de verbinder op de as, zoals op de plaatjes van stap 10 en 12.
+**Oplossing:** zet de servo eerst op 90°, zoals vóór stap 12 bij [Eerst de servo op 90°](site:robotica/click_golfer/bouwen#servo-op-90). Duw dan de as door de servo, of de verbinder op de as, zoals op de plaatjes van stap 10 en 12.
 
 </Probleem>
 
@@ -127,7 +127,7 @@ Er is geen getal dat bij iedereen past: elke baan en elke Golfer is net anders. 
 
 **Oorzaak:** de verbinder van stap 12 ging op de as terwijl de servo niet op 90° stond.
 
-**Oplossing:** haal de verbinder met de arm eraan van de as, zet de servo op 90° zoals bij [Eerst de servo op 90°](bouwen#servo-op-90), en zet de verbinder er weer op zoals op het plaatje van stap 12.
+**Oplossing:** haal de verbinder met de arm eraan van de as, zet de servo op 90° zoals bij [Eerst de servo op 90°](site:robotica/click_golfer/bouwen#servo-op-90), en zet de verbinder er weer op zoals op het plaatje van stap 12.
 
 </Probleem>
 
@@ -145,4 +145,4 @@ De sensor kijkt naar de halve ronding. Ligt de bal ernaast, dan ziet de sensor h
 
 </details>
 
-Gaat de bal erin? Dan leer je je Golfer nu [netter mikken](mikken).
+Gaat de bal erin? Dan leer je je Golfer nu [netter mikken](site:robotica/click_golfer/mikken).

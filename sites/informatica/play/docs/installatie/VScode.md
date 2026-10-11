@@ -12,7 +12,7 @@ sidebar_custom_props:
 :::
 
 ## Visual Studio Code installeren
-Volg <SiteLink site="editor" to="/python/">Python in VS Code</SiteLink> om VS Code met Python werkend te krijgen.
+Volg [Python in VS Code](site:editor/python) om VS Code met Python werkend te krijgen.
 
 :::info
 **Let op:** Zorg ervoor dat Python 3.10 of nieuwer geïnstalleerd is op je computer. Dit is nodig om `coderius-play` te kunnen gebruiken.
@@ -52,4 +52,4 @@ import play
 
 play.new_circle()
 ```
-Als een zwarte bal verschijnt, dan ben je klaar voor [de volgende stap](../vormen/je_eerste_programma.mdx).
+Als een zwarte bal verschijnt, dan ben je klaar voor [de volgende stap](site:play/docs/vormen/je_eerste_programma).

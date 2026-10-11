@@ -43,7 +43,7 @@ Wat je leert:
 - Zien wat er precies veranderd is sinds de vorige versie
 - Je project online zetten op GitHub
 
-De leerlijn begint in een simulator waarin je niets kapot kunt maken: <SiteLink site="editor" to="/git/basis/">Git basis</SiteLink>.
+De leerlijn begint in een simulator waarin je niets kapot kunt maken: [Git basis](site:editor/git/basis).
 
 ## Tegenstanders laten volgen
 

@@ -5,7 +5,7 @@ description: Wat echte sites nog meer doen om wachtwoorden en accounts te besche
 
 # Wachtwoorden: in de praktijk
 
-Met Argon2 uit [les 5 tot en met 8](./registreren) bewaar je wachtwoorden zoals het
+Met Argon2 uit [les 5 tot en met 8](site:fullstack/docs/veiligheid/wachtwoorden/registreren) bewaar je wachtwoorden zoals het
 hoort. Een echte site doet nog meer, omdat een aanvaller niet alleen op de
 database uit is: hij kan ook heel vaak proberen in te loggen, of een
 wachtwoord gebruiken dat hij bij een andere site heeft buitgemaakt.
@@ -23,7 +23,7 @@ iets anders aan:
 - **Lengte boven rare tekens.** Een wachtzin van een paar woorden, zoals
   `zonnebloem fiets regen zolder`, is sterker en makkelijker te onthouden.
   Laat lange wachtwoorden en spaties dus toe. Elk tekstveld krijgt een
-  `max_length` uit [Grenzen in Form](/docs/veiligheid/invoer/grenzen), maar
+  `max_length` uit [Grenzen in Form](site:fullstack/docs/veiligheid/invoer/grenzen), maar
   geef het wachtwoordveld een ruime grens, zoals 200 tekens, en haal er geen
   spaties af met `strip()`: een spatie hoort bij het wachtwoord.
 - **Niet verplicht vervangen**, alleen als er reden voor is, zoals een lek.
@@ -31,7 +31,7 @@ iets anders aan:
 ### Inloggen beperken
 
 Een aanvaller zonder database kan nog steeds proberen in te loggen, keer op
-keer, met een woordenlijst. Daarom heeft `/inloggen` uit [les 9](./pogingen)
+keer, met een woordenlijst. Daarom heeft `/inloggen` uit [les 9](site:fullstack/docs/veiligheid/wachtwoorden/pogingen)
 een limiet van vijf pogingen per minuut. Houd die streng op elk endpoint dat
 een wachtwoord controleert, ook als je er later een bij bouwt.
 
@@ -69,7 +69,7 @@ zetten.
 <details>
 <summary>Peper</summary>
 
-Het zout uit [les 3](./zout) staat naast de hash in de database. Sommige sites
+Het zout uit [les 3](site:fullstack/docs/veiligheid/wachtwoorden/zout) staat naast de hash in de database. Sommige sites
 doen er nog een **peper** bij: een geheim dat voor alle wachtwoorden hetzelfde
 is, maar níét in de database staat, bijvoorbeeld in een instelling op de
 server. Lekt alleen de database, dan mist wie hem heeft dat stukje, en kan hij
@@ -122,7 +122,7 @@ van wie de gegevens zijn gelekt.
 
 Andermans wachtwoorden achterhalen of gebruiken is bovendien strafbaar, ook
 als je "alleen even kijkt". Daarom deed je de test in
-[les 1](./gewone-tekst) alleen met je eigen database.
+[les 1](site:fullstack/docs/veiligheid/wachtwoorden/gewone-tekst) alleen met je eigen database.
 
 ## Opdracht: welke maatregel helpt waartegen?
 
@@ -149,15 +149,15 @@ het wachtwoord zelf, of om wie er inlogt?
 <details>
 <summary>Antwoord</summary>
 
-1. **Een verzoeklimiet op `/inloggen`**, zoals in [les 9](./pogingen). Las je
+1. **Een verzoeklimiet op `/inloggen`**, zoals in [les 9](site:fullstack/docs/veiligheid/wachtwoorden/pogingen). Las je
    het blok over een slot op het account, dan kan dat er ook bij: een kort
    slot na veel foute pogingen.
 2. **Controleren tegen gelekte wachtwoorden** bij het registreren, zodat Sara
    een ander wachtwoord moet kiezen.
-3. **`check_needs_rehash`** bij het inloggen, uit [les 8](./rehash), zodat oude hashes vanzelf worden
+3. **`check_needs_rehash`** bij het inloggen, uit [les 8](site:fullstack/docs/veiligheid/wachtwoorden/rehash), zodat oude hashes vanzelf worden
    bijgewerkt.
 4. **Tweestapsverificatie**: het wachtwoord alleen is dan niet genoeg.
 
 </details>
 
-Dit was de laatste reeks. Door naar [Beveilig je eigen project](../eigen-project).
+Dit was de laatste reeks. Door naar [Beveilig je eigen project](site:fullstack/docs/veiligheid/eigen-project).

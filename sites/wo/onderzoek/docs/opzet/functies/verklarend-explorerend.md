@@ -18,10 +18,10 @@ Bij **verklarend-explorerend** onderzoek weet je dát iets zo is, maar nog niet 
 
 ## Open karakter
 
-Explorerend onderzoek is open van opzet: je wilt verklaringen ontdekken waar je zelf nog niet aan gedacht had. Daarom past het goed bij [kwalitatieve](../../gegevens/kwalitatief.md) methoden zoals [interviews](../methoden/interview.md) en open vragen. De opbrengst is vaak een **hypothese** voor vervolgonderzoek.
+Explorerend onderzoek is open van opzet: je wilt verklaringen ontdekken waar je zelf nog niet aan gedacht had. Daarom past het goed bij [kwalitatieve](site:onderzoek/gegevens/kwalitatief) methoden zoals [interviews](site:onderzoek/opzet/methoden/interview) en open vragen. De opbrengst is vaak een **hypothese** voor vervolgonderzoek.
 
 :::tip[Van exploreren naar toetsen]
-Eerst exploreer je (interviews leveren drie mogelijke verklaringen op), daarna [toets](./verklarend-toetsend.md) je de meest kansrijke met een experiment of gerichte meting. Zo bouwt het ene verklarende onderzoek op het andere voort.
+Eerst exploreer je (interviews leveren drie mogelijke verklaringen op), daarna [toets](site:onderzoek/opzet/functies/verklarend-toetsend) je de meest kansrijke met een experiment of gerichte meting. Zo bouwt het ene verklarende onderzoek op het andere voort.
 :::
 
 <WelNiet
@@ -31,6 +31,6 @@ Eerst exploreer je (interviews leveren drie mogelijke verklaringen op), daarna [
 
 ## Hangt samen met
 
-- [Functies van onderzoek](./functies-overzicht.mdx) — alle zes functies naast elkaar
-- [Verklarend-toetsend](./verklarend-toetsend.md) — het vervolg: één verklaring gericht toetsen
-- [Interview](../methoden/interview.md) en [kwalitatief onderzoek](../../gegevens/kwalitatief.md) — de aanpak die hier meestal bij past
+- [Functies van onderzoek](site:onderzoek/opzet/functies/functies-overzicht) — alle zes functies naast elkaar
+- [Verklarend-toetsend](site:onderzoek/opzet/functies/verklarend-toetsend) — het vervolg: één verklaring gericht toetsen
+- [Interview](site:onderzoek/opzet/methoden/interview) en [kwalitatief onderzoek](site:onderzoek/gegevens/kwalitatief) — de aanpak die hier meestal bij past

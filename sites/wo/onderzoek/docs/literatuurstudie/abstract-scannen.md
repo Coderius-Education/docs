@@ -27,10 +27,10 @@ Omdat de volgorde vast is, hoef je niet van voor naar achter te lezen. Spring na
 - **Bij wie en hoe?** Ratten, studenten of scholieren? Enquête of experiment? Dat bepaalt hoeveel je er straks mee kunt.
 - **Wat is de uitkomst in één zin?** Kun je die niet uit het abstract halen, dan is het artikel onduidelijk of jouw onderwerp niet.
 
-Gaat het over jouw vraag, passen groep en methode bij wat jij nodig hebt, en kun je de uitkomst in één zin noemen? Dan door naar [skimmen](./skimmen.md). Anders: weg ermee, zonder schuldgevoel.
+Gaat het over jouw vraag, passen groep en methode bij wat jij nodig hebt, en kun je de uitkomst in één zin noemen? Dan door naar [skimmen](site:onderzoek/literatuurstudie/skimmen). Anders: weg ermee, zonder schuldgevoel.
 
 :::caution[Abstracts verkopen]
-Auteurs schrijven het abstract om gelezen te worden. Kleine effecten heten er "significant", een voorzichtig resultaat "veelbelovend". Wat in het abstract als conclusie staat, blijkt in het artikel zelf nogal eens een stuk voorzichtiger geformuleerd. Daarom gebruik je het abstract om te *kiezen*, nooit als bron voor wat je in je verslag beweert. Zit de rest van het artikel achter een betaalmuur, lees dan eerst [hoe je aan een gratis versie komt](./betaalmuur.md).
+Auteurs schrijven het abstract om gelezen te worden. Kleine effecten heten er "significant", een voorzichtig resultaat "veelbelovend". Wat in het abstract als conclusie staat, blijkt in het artikel zelf nogal eens een stuk voorzichtiger geformuleerd. Daarom gebruik je het abstract om te *kiezen*, nooit als bron voor wat je in je verslag beweert. Zit de rest van het artikel achter een betaalmuur, lees dan eerst [hoe je aan een gratis versie komt](site:onderzoek/literatuurstudie/betaalmuur).
 :::
 
 <WelNiet
@@ -40,6 +40,6 @@ Auteurs schrijven het abstract om gelezen te worden. Kleine effecten heten er "s
 
 ## Hangt samen met
 
-- [Skimmen](./skimmen.md) — de volgende laag: het artikel zelf in tien minuten
-- [Semantic Scholar](./semantic-scholar.md) — waar de TLDR nog een laag boven het abstract zit
-- [Welke strategie wanneer?](./welke-strategie.mdx) — hoeveel je scant, skimt en grondig leest
+- [Skimmen](site:onderzoek/literatuurstudie/skimmen) — de volgende laag: het artikel zelf in tien minuten
+- [Semantic Scholar](site:onderzoek/literatuurstudie/semantic-scholar) — waar de TLDR nog een laag boven het abstract zit
+- [Welke strategie wanneer?](site:onderzoek/literatuurstudie/welke-strategie) — hoeveel je scant, skimt en grondig leest

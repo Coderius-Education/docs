@@ -13,7 +13,7 @@ Meet met je multimeter (op **DC voltage**) de spanning van iedere AA-batterij.
 
 :::tip[Nog nooit een multimeter gebruikt?]
 
-Kijk eerst even bij [4.1 Pin nameten](../Tutorial-meten%20is%20weten/1_pin_nameten.md).
+Kijk eerst even bij [4.1 Pin nameten](site:robotica/docs/Microcontrollers/Arduino%20Nano%20RP2040%20Connect/Tutorial-meten%20is%20weten/pin_nameten).
 
 :::
 

@@ -31,4 +31,4 @@ title: "Er gaat iets mis"
 
 ## Volgende tutorial
 
-- **[Branches](/git/branches/)** — werk parallel zonder je `main`-versie te breken.
+- **[Branches](site:editor/git/branches)** — werk parallel zonder je `main`-versie te breken.

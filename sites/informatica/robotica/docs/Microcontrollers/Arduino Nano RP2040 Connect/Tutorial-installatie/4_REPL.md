@@ -12,7 +12,7 @@ Open Thonny op je computer.
 
 ## Stap 2: verbind je microcontroller
 
-Sluit de microcontroller aan met de USB-kabel. (Stappen kwijt? Kijk terug bij [1.3 Bord verbinden](3_verbinden.md).)
+Sluit de microcontroller aan met de USB-kabel. (Stappen kwijt? Kijk terug bij [1.3 Bord verbinden](site:robotica/docs/Microcontrollers/Arduino%20Nano%20RP2040%20Connect/Tutorial-installatie/verbinden).)
 
 ## Stap 3: kies de juiste interpreter
 

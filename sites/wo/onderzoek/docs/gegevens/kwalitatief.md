@@ -19,10 +19,10 @@ Bij **kwalitatief onderzoek** verzamel je gegevens in **woorden**: wat mensen vi
 
 ## Sterk en zwak
 
-**Sterk in:** begrijpen. Je ontdekt verklaringen, motieven en ideeën waar je zelf nooit aan gedacht had. Voor [ontwerpgericht onderzoek](../typen/ontwerpgericht.md) is dit goud waard: zo leer je wat je doelgroep écht nodig heeft.
+**Sterk in:** begrijpen. Je ontdekt verklaringen, motieven en ideeën waar je zelf nooit aan gedacht had. Voor [ontwerpgericht onderzoek](site:onderzoek/typen/ontwerpgericht) is dit goud waard: zo leer je wat je doelgroep écht nodig heeft.
 
 :::caution[Let op]
-Met vijf interviews kun je niet zeggen dat "de meeste leerlingen" iets vinden — daarvoor is je groep te klein en niet representatief genoeg. Kwalitatieve resultaten generaliseren dus slecht (lage [externe validiteit](../spelregels/externe-validiteit.md)). En let op je eigen kleuring: vat antwoorden eerlijk samen, ook als ze je niet uitkomen — dat vraagt de spelregel [transparant](../spelregels/transparant.md).
+Met vijf interviews kun je niet zeggen dat "de meeste leerlingen" iets vinden — daarvoor is je groep te klein en niet representatief genoeg. Kwalitatieve resultaten generaliseren dus slecht (lage [externe validiteit](site:onderzoek/spelregels/externe-validiteit)). En let op je eigen kleuring: vat antwoorden eerlijk samen, ook als ze je niet uitkomen — dat vraagt de spelregel [transparant](site:onderzoek/spelregels/transparant).
 :::
 
 <WelNiet
@@ -32,6 +32,6 @@ Met vijf interviews kun je niet zeggen dat "de meeste leerlingen" iets vinden �
 
 ## Hangt samen met
 
-- [Kwalitatief vs. kwantitatief](./kwal-vs-kwant.mdx) — het verband tussen beide soorten gegevens
-- [Interview](../opzet/methoden/interview.md) — de methode die vooral woorden oplevert
-- [Verklarend-explorerend](../opzet/functies/verklarend-explorerend.md) — de functie waar kwalitatief onderzoek bij uitblinkt
+- [Kwalitatief vs. kwantitatief](site:onderzoek/gegevens/kwal-vs-kwant) — het verband tussen beide soorten gegevens
+- [Interview](site:onderzoek/opzet/methoden/interview) — de methode die vooral woorden oplevert
+- [Verklarend-explorerend](site:onderzoek/opzet/functies/verklarend-explorerend) — de functie waar kwalitatief onderzoek bij uitblinkt

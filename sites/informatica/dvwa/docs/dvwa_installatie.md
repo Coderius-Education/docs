@@ -34,4 +34,4 @@ De installatie geeft veel tekst weer en duurt een paar minuten. Laat 'm rustig z
 
 ## Stap 3: DVWA opstarten
 
-Kijk in de [Cheatsheet](cheatsheet) hoe je DVWA opstart, hoe je inlogt en welke instellingen je na de installatie nog moet doorlopen.
+Kijk in de [Cheatsheet](site:dvwa/docs/cheatsheet) hoe je DVWA opstart, hoe je inlogt en welke instellingen je na de installatie nog moet doorlopen.

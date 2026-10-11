@@ -114,7 +114,7 @@ describe('de reeks Cookies afschermen', () => {
 
   it('les 1 verwijst voor SameSite naar de les over samesite, en noemt de Reactieheaders', () => {
     const tekst = lees('zwakheid');
-    expect(tekst).toContain('](./samesite)');
+    expect(tekst).toContain('](site:fullstack/docs/veiligheid/cookies/samesite)');
     expect(tekst).toContain('**Reactieheaders**');
     expect(tekst).not.toContain('antwoordkoppen');
   });
@@ -136,7 +136,7 @@ describe('de reeks Cookies afschermen', () => {
     expect(csrf).toContain('secrets.token_hex(16)');
     expect(csrf).toMatch(/secrets\.compare_digest\(token\.encode\(\), [^)]*\)\.encode\(\)\)/);
     expect(csrf).toContain('status_code=403');
-    expect(lees('samesite')).toContain('](./praktijk)');
+    expect(lees('samesite')).toContain('](site:fullstack/docs/veiligheid/cookies/praktijk)');
   });
 
   // Uit de leerling-doorloop van oktober 2026.
@@ -145,7 +145,7 @@ describe('de reeks Cookies afschermen', () => {
     // verlopen direct na uitloggen.
     expect(stappen.indexOf('verlopen')).toBe(stappen.indexOf('uitloggen') + 1);
     expect(lees('uitloggen')).not.toContain('sessie_ophalen');
-    expect(lees('uitloggen')).toContain('](./verlopen)');
+    expect(lees('uitloggen')).toContain('](site:fullstack/docs/veiligheid/cookies/verlopen)');
   });
 
   it('de scripts van uitloggen en verlopen zeggen eerst welke databases weg moeten', () => {

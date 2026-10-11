@@ -7,7 +7,7 @@ import { ConsoleRegels, DevtoolsPaneel } from '@site/src/components/Devtools';
 
 # Cookies afschermen: scripts lezen cookies
 
-Het sessie-id uit [Onthouden op de server: sessies](/docs/FastAPI/onthouden/sessies) is de sleutel tot een
+Het sessie-id uit [Onthouden op de server: sessies](site:fullstack/docs/FastAPI/onthouden/sessies) is de sleutel tot een
 sessie: wie het heeft, is voor je server ingelogd als die bezoeker, zonder
 wachtwoord. Daarom is het een lang,
 willekeurig getal dat niemand raadt. Maar raden hoeft niet als een script het
@@ -18,7 +18,7 @@ Maak voor deze reeks een nieuwe map `veiligheid-cookies`, naast je eigen
 project, en open die in VS Code. De server, de scripts en de databases van deze reeks komen daarin. Zo blijft je eigen gastenboek heel. Aan
 het eind van de reeks pas je het geleerde toe op je eigen project.
 
-Maak in die map een virtual environment en installeer de packages; hoe dat gaat staat bij [Een map per reeks](/docs/veiligheid/gereedschap#een-map-per-reeks).
+Maak in die map een virtual environment en installeer de packages; hoe dat gaat staat bij [Een map per reeks](site:fullstack/docs/veiligheid/gereedschap#een-map-per-reeks).
 
 Een nieuwe map geeft geen nieuwe cookies. Een cookie hoort bij het adres
 `127.0.0.1`, niet bij de map of de poort, dus de cookies van eerdere projecten,
@@ -29,7 +29,7 @@ zoals `naam` en `volgorde`, staan er ook nog. Verwijder ze in het tabblad
 ## Een formulier bij de server
 
 Neem de server uit Wie mag wat, in de stand van
-[les 4: elk endpoint apart](../toegang/elk-endpoint), met Alles wissen erin. Zet
+[les 4: elk endpoint apart](site:fullstack/docs/veiligheid/toegang/elk-endpoint), met Alles wissen erin. Zet
 er formulieren bij, als los bestand `static/formulier.html`: een om te
 registreren, een om in te loggen en een voor een bericht.
 
@@ -195,7 +195,7 @@ komen, is strafbaar.
 
 `document.cookie` is niet alleen voor jou in de Console. Elk script dat op deze
 pagina draait, kan het ook, en daar zit de zwakheid. Staat er ergens een gat
-zoals in [HTML van een bezoeker](../xss/zwakheid), dan draait er misschien een
+zoals in [HTML van een bezoeker](site:fullstack/docs/veiligheid/xss/zwakheid), dan draait er misschien een
 script van een ander op je pagina, en dat leest je sessie-id net zo makkelijk.
 
 ## Er gaat iets mis
@@ -235,7 +235,7 @@ sessie_id=bb4b18ca1efc4877c990fdadd8a6f593; Max-Age=2592000; Path=/; SameSite=la
 
 `Max-Age` is de 30 dagen uit `max_age` in
 seconden, `Path=/` betekent: voor de hele site. `SameSite=lax` zet FastAPI er
-vanzelf bij; wat dat doet, staat in [les 3: `samesite`](./samesite). `HttpOnly`
+vanzelf bij; wat dat doet, staat in [les 3: `samesite`](site:fullstack/docs/veiligheid/cookies/samesite). `HttpOnly`
 staat er niet bij, en daarom mag een script de cookie lezen.
 
 </details>
@@ -257,4 +257,4 @@ pagina's kan hem lezen.
 
 </details>
 
-Door naar [les 2: `httponly`](./httponly).
+Door naar [les 2: `httponly`](site:fullstack/docs/veiligheid/cookies/httponly).

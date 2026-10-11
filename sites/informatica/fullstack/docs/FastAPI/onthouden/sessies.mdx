@@ -12,7 +12,7 @@ In opdracht 3 van de vorige les veranderde je je eigen cookie in een andere naam
 
 Stel dat je server na het inloggen een cookie `naam=sara` zet, en bij elk volgend bericht gelooft dat je Sara bent. Dan typt Alex in het tabblad **App** `sara` in zijn eigen cookie, en schrijft hij als Sara, zonder haar wachtwoord ooit te kennen.
 
-Hier geldt de vuistregel uit [Server of browser?](/docs/FastAPI/in-de-browser/server-of-browser): wat op de computer van de bezoeker staat, mag je niet vertrouwen. Wat op jouw server staat wel.
+Hier geldt de vuistregel uit [Server of browser?](site:fullstack/docs/FastAPI/in-de-browser/server-of-browser): wat op de computer van de bezoeker staat, mag je niet vertrouwen. Wat op jouw server staat wel.
 
 ## Alleen een kenmerk in de cookie
 
@@ -53,7 +53,7 @@ async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
 ```
 
 <Regel n={3} tot={6}>
-Dezelfde controle als in je `POST /gastenboek` uit [Inloggen: een wachtwoord controleren](/docs/FastAPI/accounts/inloggen). Pas als het wachtwoord klopt, gaat de functie verder.
+Dezelfde controle als in je `POST /gastenboek` uit [Inloggen: een wachtwoord controleren](site:fullstack/docs/FastAPI/accounts/inloggen). Pas als het wachtwoord klopt, gaat de functie verder.
 </Regel>
 
 <Regel n={8}>
@@ -168,7 +168,7 @@ De cookie `naam` uit de vorige les zet je server niet meer. Gebruik je het htmx-
 4. Staat de cookie `naam` uit de vorige les er ook nog? Die houdt 30 dagen, want je server haalt hem niet weg. Selecteer hem en druk op Delete; je server gebruikt hem niet meer.
 
 :::danger[Gaat er iets mis?]
-Zie je na het inloggen weer het inlogformulier? Staat er in het tabblad App wel een cookie `sessie_id`, kijk dan of `sessies.commit()` in je `/inloggen` staat. Staat er geen cookie, kijk dan of `set_cookie` op het antwoord staat dat je ook echt returnt. Meer oplossingen staan op [Er gaat iets mis](/docs/troubleshooting).
+Zie je na het inloggen weer het inlogformulier? Staat er in het tabblad App wel een cookie `sessie_id`, kijk dan of `sessies.commit()` in je `/inloggen` staat. Staat er geen cookie, kijk dan of `set_cookie` op het antwoord staat dat je ook echt returnt. Meer oplossingen staan op [Er gaat iets mis](site:fullstack/docs/troubleshooting).
 :::
 
 ## Opdrachten
@@ -213,7 +213,7 @@ Maak een tijdelijk endpoint dat alles in `sessies.db` als JSON teruggeeft. Log i
 <details>
 <summary>Tip</summary>
 
-In [Elk bericht bewaren: een eigen sleutel](/docs/FastAPI/berichten-opslaan/eigen-sleutel) gaf `/berichten` de database als JSON terug, met `list(db.values())`. Hier wil je ook de sessie-id's zien: `dict(sessies)` maakt van de hele database een dictionary, met elke sleutel en zijn waarde.
+In [Elk bericht bewaren: een eigen sleutel](site:fullstack/docs/FastAPI/berichten-opslaan/eigen-sleutel) gaf `/berichten` de database als JSON terug, met `list(db.values())`. Hier wil je ook de sessie-id's zien: `dict(sessies)` maakt van de hele database een dictionary, met elke sleutel en zijn waarde.
 
 </details>
 
@@ -235,7 +235,7 @@ Haal dit endpoint daarna weg. Op een echte site zou je hiermee de sessies van al
 
 ### Opdracht 4: Make - Alleen je eigen berichten verwijderen
 
-Toon op `/berichten` de verwijderknop uit [Een bericht verwijderen: een verborgen veld](/docs/FastAPI/berichten-verwijderen/verwijderen) alleen bij berichten van de bezoeker die is ingelogd.
+Toon op `/berichten` de verwijderknop uit [Een bericht verwijderen: een verborgen veld](site:fullstack/docs/FastAPI/berichten-verwijderen/verwijderen) alleen bij berichten van de bezoeker die is ingelogd.
 
 <details>
 <summary>Tip</summary>
@@ -310,6 +310,6 @@ async def verwijderen(sleutel: str = Form(...), sessie_id: str = Cookie(default=
 
 **403 Forbidden** betekent: ik weet wie je bent, maar dit mag je niet. De naam bij het bericht en de naam in de sessie heeft je server allebei zelf vastgelegd, nadat het wachtwoord klopte. Daarom mag hij ze vergelijken. Een naam uit een formulier of een cookie zou de bezoeker zelf kunnen kiezen. De verborgen knop uit opdracht 4 blijft nuttig, want die voorkomt dat iemand per ongeluk iets probeert wat toch niet mag. De echte afscherming zit hier.
 
-Dat geldt alleen voor dit endpoint. Bouwde je het htmx-recept Verwijderen, dan verwijdert `DELETE /bericht/{sleutel}` nog steeds elk bericht: zet dezelfde parameter en dezelfde controle ook daarin. Een knop Alles wissen kan iedereen nog steeds gebruiken; hoe je elk endpoint apart afschermt, staat in [Wie mag wat: elk endpoint apart](/docs/veiligheid/toegang/elk-endpoint).
+Dat geldt alleen voor dit endpoint. Bouwde je het htmx-recept Verwijderen, dan verwijdert `DELETE /bericht/{sleutel}` nog steeds elk bericht: zet dezelfde parameter en dezelfde controle ook daarin. Een knop Alles wissen kan iedereen nog steeds gebruiken; hoe je elk endpoint apart afschermt, staat in [Wie mag wat: elk endpoint apart](site:fullstack/docs/veiligheid/toegang/elk-endpoint).
 
 </details>

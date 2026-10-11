@@ -67,11 +67,11 @@ func geef_sprongboost() -> void:
     print("Boost!")
 ```
 
-Dit is een gewone functie, zoals `is_game_over()` uit [Global variables](./global_variables.md). Hij doet nu nog maar één ding: de sprongkracht omhoog zetten.
+Dit is een gewone functie, zoals `is_game_over()` uit [Global variables](site:godot/docs/global_variables). Hij doet nu nog maar één ding: de sprongkracht omhoog zetten.
 
 ## Stap 3: De power-up die hem aanroept
 
-De power-up is een `Area2D` met een `Sprite2D` en een `CollisionShape2D`, precies zoals het muntje in [Signals & een muntje oppakken](./signals_muntje.md). Maak hem op dezelfde manier, koppel `body_entered`, en sla hem op als `power_up.tscn`.
+De power-up is een `Area2D` met een `Sprite2D` en een `CollisionShape2D`, precies zoals het muntje in [Signals & een muntje oppakken](site:godot/docs/signals_muntje). Maak hem op dezelfde manier, koppel `body_entered`, en sla hem op als `power_up.tscn`.
 
 In het script van de power-up:
 
@@ -202,7 +202,7 @@ func _on_body_entered(body: Node2D) -> void:
 </details>
 
 :::tip
-Je hebt nu een stopwatch gebruikt die één keer afloopt. Moet er telkens opnieuw iets gebeuren — elke twee seconden een nieuwe vijand, bijvoorbeeld — dan is een `Timer`-node handiger. Die bouw je in [Automatisch spawnen met een Timer](../08-meer-levels-en-menu/spawn_timer.md).
+Je hebt nu een stopwatch gebruikt die één keer afloopt. Moet er telkens opnieuw iets gebeuren — elke twee seconden een nieuwe vijand, bijvoorbeeld — dan is een `Timer`-node handiger. Die bouw je in [Automatisch spawnen met een Timer](site:godot/docs/spawn_timer).
 :::
 
 ## Er gaat iets mis
@@ -257,4 +257,4 @@ func _on_body_entered(body: Node2D) -> void:
 
 </details>
 
-Staat je fout er niet bij? In [Fouten zoeken](../05-bewegingsscript/fouten-zoeken.md) staat hoe je hem zelf opspoort.
+Staat je fout er niet bij? In [Fouten zoeken](site:godot/docs/fouten-zoeken) staat hoe je hem zelf opspoort.

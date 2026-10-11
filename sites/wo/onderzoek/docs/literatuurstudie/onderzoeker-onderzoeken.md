@@ -12,11 +12,11 @@ title: Een onderzoeker onderzoeken
 
 ## Vijf checks
 
-**1. Wie is het en waar werkt deze onderzoeker?** Zoek de naam met de universiteit erbij. Vrijwel elke onderzoeker heeft een pagina op de site van de eigen instelling met functie en afdeling. De functie zegt iets over ervaring (zie [de academische ladder](../academie/academische-ladder.md)): <B t="promovendus" tekst="promovendus"/> (doet een eerste eigen onderzoek), <B t="postdoc" tekst="postdoc"/>, *universitair docent*, *universitair hoofddocent*, <B t="hoogleraar" tekst="hoogleraar"/>, *emeritus* (met pensioen). Let ook op de werkgever: een universiteit, een onafhankelijk instituut of een bedrijf met een belang?
+**1. Wie is het en waar werkt deze onderzoeker?** Zoek de naam met de universiteit erbij. Vrijwel elke onderzoeker heeft een pagina op de site van de eigen instelling met functie en afdeling. De functie zegt iets over ervaring (zie [de academische ladder](site:onderzoek/academie/academische-ladder)): <B t="promovendus" tekst="promovendus"/> (doet een eerste eigen onderzoek), <B t="postdoc" tekst="postdoc"/>, *universitair docent*, *universitair hoofddocent*, <B t="hoogleraar" tekst="hoogleraar"/>, *emeritus* (met pensioen). Let ook op de werkgever: een universiteit, een onafhankelijk instituut of een bedrijf met een belang?
 
-**2. Waarover publiceert deze onderzoeker?** Open het profiel in [Google Scholar](./google-scholar.md) of de auteurspagina in [Semantic Scholar](./semantic-scholar.md). Je ziet in één oogopslag de onderwerpen, het aantal artikelen, de medeauteurs en de tijdschriften. De belangrijkste vraag: gaat dat werk over *dít* onderwerp? Expertise is smal. Een hoogleraar hartchirurgie is geen autoriteit over klimaat, hoe indrukwekkend de titel ook klinkt.
+**2. Waarover publiceert deze onderzoeker?** Open het profiel in [Google Scholar](site:onderzoek/literatuurstudie/google-scholar) of de auteurspagina in [Semantic Scholar](site:onderzoek/literatuurstudie/semantic-scholar). Je ziet in één oogopslag de onderwerpen, het aantal artikelen, de medeauteurs en de tijdschriften. De belangrijkste vraag: gaat dat werk over *dít* onderwerp? Expertise is smal. Een hoogleraar hartchirurgie is geen autoriteit over klimaat, hoe indrukwekkend de titel ook klinkt.
 
-**3. Hoe staat deze onderzoeker in het vakgebied?** Kijk naar de [citaties](./citaties.md) en de [h-index](./h-index.md), maar vergelijk ze alleen met vakgenoten van dezelfde generatie. Kijk wie er citeert: alleen de eigen groep, of ook onderzoekers elders? En kijk naar de [auteurvolgorde](./auteurvolgorde.md): staat de naam vooral vooraan (doet zelf het werk) of achteraan (leidt een groep)?
+**3. Hoe staat deze onderzoeker in het vakgebied?** Kijk naar de [citaties](site:onderzoek/literatuurstudie/citaties) en de [h-index](site:onderzoek/literatuurstudie/h-index), maar vergelijk ze alleen met vakgenoten van dezelfde generatie. Kijk wie er citeert: alleen de eigen groep, of ook onderzoekers elders? En kijk naar de [auteurvolgorde](site:onderzoek/literatuurstudie/auteurvolgorde): staat de naam vooral vooraan (doet zelf het werk) of achteraan (leidt een groep)?
 
 **4. Staat het werk nog overeind?** Zoek de naam in de Retraction Watch Database (retractiondatabase.org), die alle ingetrokken artikelen bijhoudt. Eén intrekking wegens een eerlijke fout is geen doodzonde; een patroon wel. Op PubPeer plaatsen vakgenoten kritiek op specifieke artikelen — ook de moeite waard bij een bron waar je veel op bouwt.
 
@@ -29,7 +29,7 @@ title: Een onderzoeker onderzoeken
 - **Een Wikipedia-pagina.** Handig als startpunt voor namen en jaartallen, maar geen bewijs van status — en ook niet van het tegendeel.
 
 :::caution[Status is geen argument]
-"Volgens professor X" is geen bewijs; het is een reden om X serieus te nemen. Het argument en de gegevens in het artikel doen het werk. Deze checks bepalen alleen hoeveel voordeel van de twijfel je een bron geeft vóórdat je hem [grondig leest](./deep-reading.md).
+"Volgens professor X" is geen bewijs; het is een reden om X serieus te nemen. Het argument en de gegevens in het artikel doen het werk. Deze checks bepalen alleen hoeveel voordeel van de twijfel je een bron geeft vóórdat je hem [grondig leest](site:onderzoek/literatuurstudie/deep-reading).
 :::
 
 <WelNiet
@@ -51,8 +51,8 @@ Linus Pauling won de Nobelprijs voor scheikunde (1954) én de Nobelprijs voor de
 
 ## Hangt samen met
 
-- [Auteurvolgorde](./auteurvolgorde.md) — wat de positie van een naam over iemand zegt
-- [Citaties](./citaties.md) en [h-index](./h-index.md) — de getallen die je bij check 3 gebruikt
-- [Peer review](./peer-review.md) — de controle van het artikel; deze pagina gaat over de controle van de auteur
-- [Aanvaardbaar](../spelregels/aanvaardbaar.md) — waarom belangen en fraude ertoe doen
-- [De academische ladder](../academie/academische-ladder.md) — wat de functies van promovendus tot hoogleraar betekenen
+- [Auteurvolgorde](site:onderzoek/literatuurstudie/auteurvolgorde) — wat de positie van een naam over iemand zegt
+- [Citaties](site:onderzoek/literatuurstudie/citaties) en [h-index](site:onderzoek/literatuurstudie/h-index) — de getallen die je bij check 3 gebruikt
+- [Peer review](site:onderzoek/literatuurstudie/peer-review) — de controle van het artikel; deze pagina gaat over de controle van de auteur
+- [Aanvaardbaar](site:onderzoek/spelregels/aanvaardbaar) — waarom belangen en fraude ertoe doen
+- [De academische ladder](site:onderzoek/academie/academische-ladder) — wat de functies van promovendus tot hoogleraar betekenen

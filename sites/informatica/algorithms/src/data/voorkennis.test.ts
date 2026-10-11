@@ -8,8 +8,9 @@ import { pythonConcepten, voorkennisPerAlgoritme } from './conceptenkaart';
 // Bewaakt dat conceptenkaart.ts gelijk blijft aan de echte <Voorkennis>-
 // blokken in docs/**/*.mdx, en dat elke python-les die de kaart noemt
 // terugwijst naar deze cursus. Stond eerst in scripts/check-voorkennis.mjs,
-// dat nergens in CI draaide. Of de links zelf ergens op uitkomen bewaakt
-// packages/shared/sitelink.test.ts monorepo-breed.
+// dat nergens in CI draaide. De vorm van de links bewaakt
+// packages/shared/links-in-lestekst.test.ts monorepo-breed; of doel en anker
+// echt bestaan, controleert de cross-links-job in CI op de gebouwde sites.
 
 const SITE = fileURLToPath(new URL('../..', import.meta.url));
 const DOCS = join(SITE, 'docs');
@@ -92,7 +93,7 @@ describe('de omgekeerde richting: python-lessen wijzen terug naar deze cursus', 
       if (!bron) return;
       const inhoud = readFileSync(bron, 'utf8');
       expect(inhoud).toContain(TERUG_KOP);
-      expect(inhoud).toContain('site="algorithms"');
+      expect(inhoud).toContain('](site:algorithms/');
     },
   );
 });

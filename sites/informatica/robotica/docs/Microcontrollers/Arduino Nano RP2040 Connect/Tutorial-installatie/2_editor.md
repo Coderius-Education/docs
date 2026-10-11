@@ -8,7 +8,7 @@ Om Python-code te schrijven heb je een editor nodig: een programma waarin je je 
 
 :::tip[Geen installatie nodig]
 
-Werk je in Chrome of Microsoft Edge? Dan kun je ook de [online editor](/editor) gebruiken: typen, op **Run op board** klikken, klaar. Geen installatie nodig.
+Werk je in Chrome of Microsoft Edge? Dan kun je ook de [online editor](site:robotica/editor) gebruiken: typen, op **Run op board** klikken, klaar. Geen installatie nodig.
 
 Werkt dat niet (andere browser, schoollaptop met restricties)? Volg dan de Thonny-stappen hieronder.
 

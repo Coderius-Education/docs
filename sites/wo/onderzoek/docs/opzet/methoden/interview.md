@@ -7,7 +7,7 @@ sidebar_position: 2
 
 <Definitie gewoneTaal="een echt gesprek met één persoon, waarin je kunt doorvragen naar het waarom.">
 
-Een **interview** is een gesprek met één persoon (of een klein groepje) waarin je kunt **doorvragen**: "Waarom vind je dat? Kun je een voorbeeld geven?" Zo kom je achter verklaringen en ideeën — vooral [kwalitatieve](../../gegevens/kwalitatief.md) gegevens.
+Een **interview** is een gesprek met één persoon (of een klein groepje) waarin je kunt **doorvragen**: "Waarom vind je dat? Kun je een voorbeeld geven?" Zo kom je achter verklaringen en ideeën — vooral [kwalitatieve](site:onderzoek/gegevens/kwalitatief) gegevens.
 
 </Definitie>
 
@@ -18,7 +18,7 @@ Een **interview** is een gesprek met één persoon (of een klein groepje) waarin
 - Neem het gesprek op (mét toestemming) of werk je aantekeningen direct na afloop uit — en vat eerlijk samen, ook wat je niet uitkomt.
 
 :::caution[Weinig mensen = voorzichtig concluderen]
-Met vijf interviews kun je niet zeggen dat "de meeste leerlingen" iets vinden — daarvoor is je groep te klein. Interviews zijn goud voor het **waarom**, maar voor het **hoeveel** heb je een [enquête](./enquete.md) nodig.
+Met vijf interviews kun je niet zeggen dat "de meeste leerlingen" iets vinden — daarvoor is je groep te klein. Interviews zijn goud voor het **waarom**, maar voor het **hoeveel** heb je een [enquête](site:onderzoek/opzet/methoden/enquete) nodig.
 :::
 
 ## Voorbeeld
@@ -32,7 +32,7 @@ Je interviewt drie leerlingen die vaak te laat komen over hoe hun ochtend eruitz
 
 ## Hangt samen met
 
-- [Welke methode kies je?](./methode-kiezen.mdx) — interview naast observatie, enquête en analyse
-- [Enquête](./enquete.md) — de tegenhanger: veel mensen, dezelfde vragen
-- [Verklarend-explorerend](../functies/verklarend-explorerend.md) — de functie waar interviews meestal bij passen
-- [Aanvaardbaar](../../spelregels/aanvaardbaar.md) — toestemming en privacy
+- [Welke methode kies je?](site:onderzoek/opzet/methoden/methode-kiezen) — interview naast observatie, enquête en analyse
+- [Enquête](site:onderzoek/opzet/methoden/enquete) — de tegenhanger: veel mensen, dezelfde vragen
+- [Verklarend-explorerend](site:onderzoek/opzet/functies/verklarend-explorerend) — de functie waar interviews meestal bij passen
+- [Aanvaardbaar](site:onderzoek/spelregels/aanvaardbaar) — toestemming en privacy

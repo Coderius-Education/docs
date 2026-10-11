@@ -16,4 +16,4 @@ title: "Welke knop is welk commando?"
 
 ## Loopt er iets vast?
 
-Zie [Er gaat iets mis](./problemen).
+Zie [Er gaat iets mis](site:editor/git/vscode/problemen).
