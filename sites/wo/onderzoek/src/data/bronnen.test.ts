@@ -7,9 +7,9 @@ import { BRONNEN, auteursEnJaar } from './bronnen.js';
 // De functies van onderzoek en de typen theoriegericht en ontwerpgericht zijn
 // gebaseerd op Eureka! (Wientjes & Veenhoven, 2023). Begrippen en indelingen
 // mag je overnemen, de uitwerking van een ander niet; wat je overneemt, noem
-// je. Deze test eist dat elke pagina in die twee mappen de bron onderaan
-// noemt, met <Bron>, dat elke <Bron> een bekende bron gebruikt, en dat de
-// docentenhandleiding dezelfde bron verantwoordt.
+// je. Deze test eist dat elke pagina in die twee mappen de bron bovenaan
+// noemt, met <Bron> direct onder de titel, dat elke <Bron> een bekende bron
+// gebruikt, en dat de docentenhandleiding dezelfde bron verantwoordt.
 
 const SITE = fileURLToPath(new URL('../..', import.meta.url));
 const DOCS = join(SITE, 'docs');
@@ -35,12 +35,14 @@ describe('bronvermelding', () => {
 
   for (const map of OP_EUREKA) {
     for (const pad of pagina(join(DOCS, map))) {
-      it(`${relative(DOCS, pad)} noemt Eureka onder ## Bron, als laatste kop`, () => {
-        const tekst = readFileSync(pad, 'utf8');
-        const koppen = [...tekst.matchAll(/^## (.+)$/gm)].map((m) => m[1].trim());
-        expect(koppen.at(-1)).toBe('Bron');
-        const sectie = tekst.split(/^## Bron\s*$/m)[1];
-        expect(sectie).toMatch(/<Bron id="eureka" over="[^"]{10,}" \/>/);
+      it(`${relative(DOCS, pad)} noemt Eureka bovenaan, direct onder de titel`, () => {
+        const tekst = readFileSync(pad, 'utf8').replace(/^---[\s\S]*?---\s*/, '');
+        // De opdrachtgever wil de bron bovenaan: wie de pagina opent, ziet
+        // meteen waar de indeling vandaan komt. Zonder eigen kop, anders zou
+        // "Bron" als eerste in de inhoudsopgave staan.
+        expect(tekst).toMatch(/^# [^\n]+\n\n<Bron id="eureka" over="[^"]{10,}" \/>\n/);
+        expect(tekst).not.toMatch(/^## Bron\s*$/m);
+        expect(tekst.match(/<Bron /g)).toHaveLength(1);
       });
     }
   }

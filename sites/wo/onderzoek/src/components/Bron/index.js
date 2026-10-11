@@ -3,9 +3,9 @@ import React from 'react';
 import styles from './styles.module.css';
 
 /**
- * Bronvermelding onderaan een pagina die een begrip of indeling uit een bron
- * overneemt. `over` zegt wat er is overgenomen, zodat de lezer weet waar de
- * eigen uitwerking begint.
+ * Bronvermelding direct onder de titel van een pagina die een begrip of
+ * indeling uit een bron overneemt. `over` zegt wat er is overgenomen, zodat
+ * de lezer weet waar de eigen uitwerking begint.
  * Gebruik: <Bron id="eureka" over="De indeling in zes functies" />
  */
 export default function Bron({ id, over }) {

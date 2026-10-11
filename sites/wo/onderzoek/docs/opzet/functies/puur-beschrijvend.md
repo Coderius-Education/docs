@@ -5,6 +5,8 @@ sidebar_position: 1
 
 # Puur beschrijvend onderzoek
 
+<Bron id="eureka" over="De indeling in functies van onderzoek" />
+
 <Definitie gewoneTaal="tellen, meten en beschrijven hoe iets is — zonder oordeel of verklaring.">
 
 Bij **puur beschrijvend** onderzoek breng je een situatie in kaart zoals die is, zonder te vergelijken, beoordelen of verklaren. De kernvraag: **hoe is het?**
@@ -34,7 +36,3 @@ Een [enquête](site:onderzoek/opzet/methoden/enquete), [observatie](site:onderzo
 - [Functies van onderzoek](site:onderzoek/opzet/functies/functies-overzicht) — alle zes functies naast elkaar
 - [Beschrijvend-vergelijkend](site:onderzoek/opzet/functies/beschrijvend-vergelijkend) — de volgende stap: twee beschrijvingen naast elkaar
 - [De keuzedriehoek](site:onderzoek/opzet/keuzedriehoek) — functie combineren met soort en methode
-
-## Bron
-
-<Bron id="eureka" over="De indeling in functies van onderzoek" />

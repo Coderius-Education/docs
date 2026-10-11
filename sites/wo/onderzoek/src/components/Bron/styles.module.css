@@ -1,5 +1,9 @@
+/* Staat direct onder de titel: een sobere kanttekening, geen eerste alinea. */
 .bron {
-  font-size: 0.9rem;
+  margin: 0 0 1.5rem;
+  padding: 0.35rem 0 0.35rem 0.75rem;
+  border-left: 3px solid var(--ifm-color-emphasis-300);
+  font-size: 0.85rem;
   color: var(--ifm-color-emphasis-700);
 }
 

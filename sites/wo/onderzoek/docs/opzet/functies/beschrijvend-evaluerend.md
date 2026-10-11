@@ -5,6 +5,8 @@ sidebar_position: 4
 
 # Beschrijvend-evaluerend onderzoek
 
+<Bron id="eureka" over="De indeling in functies van onderzoek" />
+
 <Definitie gewoneTaal="beoordelen hoe goed iets is — aan de hand van criteria die je vooraf hebt vastgelegd.">
 
 Bij **beschrijvend-evaluerend** onderzoek beoordeel je iets aan de hand van **criteria** die je vooraf vastlegt. De kernvraag: **hoe goed is het — en waar wel en niet?**
@@ -34,7 +36,3 @@ Dit is precies wat je bij [ontwerpgericht onderzoek](site:onderzoek/typen/ontwer
 - [Functies van onderzoek](site:onderzoek/opzet/functies/functies-overzicht) — alle zes functies naast elkaar
 - [Ontwerpgericht onderzoek](site:onderzoek/typen/ontwerpgericht) — waar evalueren het sluitstuk is
 - [Valide](site:onderzoek/spelregels/valide) — testen met de echte doelgroep, op de echte eisen
-
-## Bron
-
-<Bron id="eureka" over="De indeling in functies van onderzoek" />

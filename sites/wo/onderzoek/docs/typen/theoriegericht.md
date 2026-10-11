@@ -5,6 +5,8 @@ sidebar_position: 1
 
 # Theoriegericht onderzoek
 
+<Bron id="eureka" over="Het onderscheid tussen theoriegericht en ontwerpgericht onderzoek" />
+
 <Definitie gewoneTaal="je wilt iets uitzoeken, niet iets bouwen — je antwoord is kennis.">
 
 Bij **theoriegericht onderzoek** wil je iets **te weten komen**: hoe iets in elkaar zit, waarom iets gebeurt of wat het effect van iets is. Het eindresultaat is een **conclusie** — een onderbouwd antwoord op je hoofdvraag.
@@ -45,7 +47,3 @@ Een conclusie als *"mijn hypothese klopt niet"* is óók een geldig resultaat! H
 - [Theoriegericht vs. ontwerpgericht](site:onderzoek/typen/theorie-vs-ontwerp) — het verband tussen beide typen
 - [Functies van onderzoek](site:onderzoek/opzet/functies/functies-overzicht) — wat je antwoord precies moet doen: beschrijven of verklaren
 - [Hoofdvraag](site:onderzoek/vragen/hoofdvraag) — hoe je een goede kennisvraag formuleert
-
-## Bron
-
-<Bron id="eureka" over="Het onderscheid tussen theoriegericht en ontwerpgericht onderzoek" />

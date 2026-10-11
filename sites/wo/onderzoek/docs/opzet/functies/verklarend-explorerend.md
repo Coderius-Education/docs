@@ -5,6 +5,8 @@ sidebar_position: 5
 
 # Verklarend-explorerend onderzoek
 
+<Bron id="eureka" over="De indeling in functies van onderzoek" />
+
 <Definitie gewoneTaal="open op zoek gaan naar mogelijke verklaringen, zonder vooraf te weten welke.">
 
 Bij **verklarend-explorerend** onderzoek weet je dát iets zo is, maar nog niet waardoor. Je gaat **op zoek** naar mogelijke verklaringen en samenhangen, zonder vooraf een vaste verwachting. De kernvraag: **welke verklaringen zijn er?**
@@ -34,7 +36,3 @@ Eerst exploreer je (interviews leveren drie mogelijke verklaringen op), daarna [
 - [Functies van onderzoek](site:onderzoek/opzet/functies/functies-overzicht) — alle zes functies naast elkaar
 - [Verklarend-toetsend](site:onderzoek/opzet/functies/verklarend-toetsend) — het vervolg: één verklaring gericht toetsen
 - [Interview](site:onderzoek/opzet/methoden/interview) en [kwalitatief onderzoek](site:onderzoek/gegevens/kwalitatief) — de aanpak die hier meestal bij past
-
-## Bron
-
-<Bron id="eureka" over="De indeling in functies van onderzoek" />
