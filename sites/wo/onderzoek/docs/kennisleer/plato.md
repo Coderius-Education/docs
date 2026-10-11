@@ -4,6 +4,8 @@ title: Plato
 
 # Plato
 
+<Bron id="ikdenk" hoofdstuk="4, Kennisleer" over="De behandeling van Plato" />
+
 **ca. 427–347 v.Chr. · [rationalisme](site:onderzoek/kennisleer/rationalisme)**
 
 Plato was een leerling van Socrates en stichtte in Athene de Akademia, een van de eerste filosofiescholen van Europa. Hij is een van de eerste denkers die systematisch uitwerken waaróm je je zintuigen niet zomaar mag vertrouwen.

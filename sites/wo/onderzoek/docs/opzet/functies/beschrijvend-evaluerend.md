@@ -5,6 +5,8 @@ sidebar_position: 4
 
 # Beschrijvend-evaluerend onderzoek
 
+<Bron id="eureka" over="De indeling in functies van onderzoek" />
+
 <Definitie gewoneTaal="beoordelen hoe goed iets is — aan de hand van criteria die je vooraf hebt vastgelegd.">
 
 Bij **beschrijvend-evaluerend** onderzoek beoordeel je iets aan de hand van **criteria** die je vooraf vastlegt. De kernvraag: **hoe goed is het — en waar wel en niet?**

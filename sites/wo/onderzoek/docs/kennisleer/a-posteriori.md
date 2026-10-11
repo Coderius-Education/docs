@@ -4,6 +4,8 @@ title: A posteriori
 
 # A posteriori
 
+<Bron id="ikdenk" hoofdstuk="4, Kennisleer" over="De behandeling van het begrip a posteriori" />
+
 <Definitie gewoneTaal="dat weet je pas nadat je gekeken hebt.">
 
 Kennis is **a posteriori** als zij pas ná en dankzij de waarneming vaststaat: je moet de wereld in om haar te kunnen bevestigen of verwerpen. Latijn voor "van wat erop volgt".

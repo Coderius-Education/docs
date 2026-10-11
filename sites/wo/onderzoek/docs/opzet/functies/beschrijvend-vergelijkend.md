@@ -5,6 +5,8 @@ sidebar_position: 2
 
 # Beschrijvend-vergelijkend onderzoek
 
+<Bron id="eureka" over="De indeling in functies van onderzoek" />
+
 <Definitie gewoneTaal="twee of meer dingen op dezelfde manier beschrijven en naast elkaar zetten.">
 
 Bij **beschrijvend-vergelijkend** onderzoek beschrijf je twee of meer gevallen en zet je ze naast elkaar. De kernvraag: **wat zijn de overeenkomsten en verschillen?**

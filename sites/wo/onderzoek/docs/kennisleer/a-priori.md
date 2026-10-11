@@ -4,6 +4,8 @@ title: A priori
 
 # A priori
 
+<Bron id="ikdenk" hoofdstuk="4, Kennisleer" over="De behandeling van het begrip a priori" />
+
 <Definitie gewoneTaal="dat weet je zonder te kijken — redeneren is genoeg.">
 
 Kennis is **a priori** als je haar kunt hebben vóór en zonder waarneming: je stelt haar vast door te redeneren, niet door te meten. De uitdrukking is Latijn voor "van wat eraan voorafgaat".

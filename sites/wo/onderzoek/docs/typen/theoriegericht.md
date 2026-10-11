@@ -5,6 +5,8 @@ sidebar_position: 1
 
 # Theoriegericht onderzoek
 
+<Bron id="eureka" over="Het onderscheid tussen theoriegericht en ontwerpgericht onderzoek" />
+
 <Definitie gewoneTaal="je wilt iets uitzoeken, niet iets bouwen — je antwoord is kennis.">
 
 Bij **theoriegericht onderzoek** wil je iets **te weten komen**: hoe iets in elkaar zit, waarom iets gebeurt of wat het effect van iets is. Het eindresultaat is een **conclusie** — een onderbouwd antwoord op je hoofdvraag.

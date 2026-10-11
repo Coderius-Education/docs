@@ -4,6 +4,8 @@ title: Hypothese
 
 # Hypothese
 
+<Bron id="ikdenk" hoofdstuk="5, Wetenschapsfilosofie" over="Het idee van Karl Popper over weerlegbare hypotheses" />
+
 <Definitie gewoneTaal="wat je verwacht dat eruit komt, en waarom — zo opgeschreven dat je onderzoek kan laten zien of je gelijk had.">
 
 Een **hypothese** is een onderbouwde verwachting over het antwoord op een deelvraag. Je schrijft hem op vóórdat je gegevens verzamelt, en hij is zo geformuleerd dat je onderzoek hem kan bevestigen of weerleggen.

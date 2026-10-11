@@ -5,6 +5,8 @@ sidebar_position: 7
 
 # De vier spelregels samen
 
+<Bron id="eureka" hoofdstuk="2, Wat is goed onderzoek" over="De indeling in spelregels van goed onderzoek" />
+
 **Het verband in één zin:** of je nu [theoriegericht of ontwerpgericht](site:onderzoek/typen/theorie-vs-ontwerp) onderzoek doet, goed onderzoek voldoet altijd aan vier spelregels tegelijk — <B t="betrouwbaar" tekst="betrouwbaar"/>, <B t="valide" tekst="valide"/>, <B t="transparant" tekst="transparant"/> en <B t="aanvaardbaar" tekst="aanvaardbaar"/>. Schend je er één, dan verliest je onderzoek vrijwel al zijn waarde, hoeveel werk je er ook in stak.
 
 ## De vier op een rij

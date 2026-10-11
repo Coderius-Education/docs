@@ -4,6 +4,8 @@ title: Baruch Spinoza
 
 # Baruch Spinoza
 
+<Bron id="ikdenk" hoofdstuk="4, Kennisleer" over="De behandeling van Spinoza" />
+
 **1632–1677 · [rationalisme](site:onderzoek/kennisleer/rationalisme)**
 
 Spinoza groeide op in Amsterdam, werd op zijn drieëntwintigste uit de Joodse gemeenschap gezet vanwege zijn opvattingen en verdiende daarna zijn brood met het slijpen van lenzen. Hij weigerde een hoogleraarschap om vrij te kunnen blijven denken, en zijn hoofdwerk verscheen pas na zijn dood.

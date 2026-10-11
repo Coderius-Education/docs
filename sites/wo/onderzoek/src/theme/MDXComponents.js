@@ -1,4 +1,5 @@
 import Begrip from '@site/src/components/Begrip';
+import Bron from '@site/src/components/Bron';
 import Definitie from '@site/src/components/Definitie';
 import Denker from '@site/src/components/Denker';
 import EchtGebeurd from '@site/src/components/EchtGebeurd';
@@ -23,4 +24,5 @@ export default {
   EchtGebeurd,
   Denker,
   PrintKnop,
+  Bron,
 };

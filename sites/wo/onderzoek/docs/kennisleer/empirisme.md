@@ -4,6 +4,8 @@ title: Empirisme
 
 # Empirisme
 
+<Bron id="ikdenk" hoofdstuk="4, Kennisleer" over="De behandeling van het empirisme" />
+
 <Definitie gewoneTaal="wat je weet, heb je ergens gezien, gehoord of gemeten.">
 
 Het **empirisme** is de opvatting dat alle kennis uiteindelijk uit **zintuiglijke waarneming** komt. Zonder ervaring is er geen kennis: wat je niet op de een of andere manier hebt waargenomen, kun je ook niet weten.

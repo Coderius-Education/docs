@@ -4,6 +4,8 @@ title: Intersubjectieve kennis
 
 # Intersubjectieve kennis
 
+<Bron id="ikdenk" hoofdstuk="5, Wetenschapsfilosofie" over="De behandeling van het begrip intersubjectieve kennis" />
+
 <Definitie gewoneTaal="wat verschillende mensen los van elkaar vaststellen en waar ze het samen over eens worden.">
 
 **Intersubjectieve kennis** is kennis die voor een grote groep gemeenschappelijk is: onafhankelijke waarnemers komen, elk vanuit hun eigen positie, tot hetzelfde oordeel. Niet één persoon beslist, en ook niet "de werkelijkheid zelf" — de overeenstemming tússen waarnemers draagt de kennis.

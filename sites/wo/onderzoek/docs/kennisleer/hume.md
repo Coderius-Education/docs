@@ -4,6 +4,8 @@ title: David Hume
 
 # David Hume
 
+<Bron id="ikdenk" hoofdstuk="4, Kennisleer" over="De behandeling van Hume" />
+
 **1711–1776 · [empirisme](site:onderzoek/kennisleer/empirisme)**
 
 Hume was een van de hoofdrolspelers van de Schotse Verlichting: historicus, essayist en de meest consequente empirist die de filosofie heeft voortgebracht. Zijn vraag bij elke bewering was steeds dezelfde: waar komt dit vandaan?

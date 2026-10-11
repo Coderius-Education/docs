@@ -5,6 +5,8 @@ sidebar_position: 3
 
 # Beschrijvend-definiërend onderzoek
 
+<Bron id="eureka" over="De indeling in functies van onderzoek" />
+
 <Definitie gewoneTaal="vastleggen wat een begrip precies betekent en waar de grens ligt.">
 
 Bij **beschrijvend-definiërend** onderzoek zoek je uit wat een begrip betekent en waar de grenzen liggen: welke kenmerken horen erbij, en wat valt er wel en niet onder? De kernvraag: **wat is het precies?**

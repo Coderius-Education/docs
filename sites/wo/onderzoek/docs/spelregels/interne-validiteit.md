@@ -5,6 +5,8 @@ sidebar_position: 5
 
 # Interne validiteit
 
+<Bron id="eureka" hoofdstuk="2, Wat is goed onderzoek" over="De behandeling van interne validiteit" />
+
 <Definitie gewoneTaal="binnen je onderzoek klopt de redenering: het verschil dat je meet komt echt door wat jij veranderde.">
 
 Een onderzoek is **intern valide** als de uitkomst echt komt door wat jij onderzocht — en niet door iets anders dat stiekem meespeelde. Zo'n "iets anders" heet een <B t="storende-variabele" tekst="storende variabele"/>.

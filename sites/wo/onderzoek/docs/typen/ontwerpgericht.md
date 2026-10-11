@@ -5,6 +5,8 @@ sidebar_position: 2
 
 # Ontwerpgericht onderzoek
 
+<Bron id="eureka" over="Het onderscheid tussen theoriegericht en ontwerpgericht onderzoek" />
+
 <Definitie gewoneTaal="je bouwt iets dat een probleem oplost, en je toont met tests aan dat het werkt.">
 
 Bij **ontwerpgericht onderzoek** wil je een **product maken** dat een probleem oplost: een app, een website, een machine, een lesprogramma of een spel. Het eindresultaat is geen conclusie, maar een **werkend ontwerp** — vaak nog geen af product, maar een <B t="prototype" tekst="prototype"/>: een eerste versie waarmee je kunt testen of je oplossing werkt.

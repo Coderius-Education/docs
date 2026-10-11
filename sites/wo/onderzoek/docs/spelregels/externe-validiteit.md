@@ -5,6 +5,8 @@ sidebar_position: 6
 
 # Externe validiteit
 
+<Bron id="eureka" hoofdstuk="2, Wat is goed onderzoek" over="De behandeling van externe validiteit" />
+
 <Definitie gewoneTaal="je conclusie geldt ook buiten jouw testje: voor andere mensen en situaties.">
 
 Een onderzoek is **extern valide** als de conclusie ook opgaat buiten jouw onderzoek: voor andere mensen, andere situaties en andere momenten dan die jij hebt onderzocht. Dit heet ook wel **generaliseerbaarheid**.

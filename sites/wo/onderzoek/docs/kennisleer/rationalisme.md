@@ -4,6 +4,8 @@ title: Rationalisme
 
 # Rationalisme
 
+<Bron id="ikdenk" hoofdstuk="4, Kennisleer" over="De behandeling van het rationalisme" />
+
 <Definitie gewoneTaal="echt zekere kennis vind je in je hoofd, niet in je ogen.">
 
 Het **rationalisme** is de opvatting dat kennis uit ervaring onbetrouwbaar is, en dat alleen het **denken** — de rede, zonder waarneming — betrouwbare kennis oplevert.

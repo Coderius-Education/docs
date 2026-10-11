@@ -4,6 +4,8 @@ title: René Descartes
 
 # René Descartes
 
+<Bron id="ikdenk" hoofdstuk="4, Kennisleer" over="De behandeling van Descartes" />
+
 **1596–1650 · [rationalisme](site:onderzoek/kennisleer/rationalisme)**
 
 Descartes wordt vaak de eerste moderne filosoof genoemd. Hij was ook wiskundige — het coördinatenstelsel dat je bij wiskunde gebruikt, heet naar hem cartesisch — en wilde de filosofie dezelfde zekerheid geven als de meetkunde.

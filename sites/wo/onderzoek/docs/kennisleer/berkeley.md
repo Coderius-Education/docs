@@ -4,6 +4,8 @@ title: George Berkeley
 
 # George Berkeley
 
+<Bron id="ikdenk" hoofdstuk="4, Kennisleer" over="De behandeling van Berkeley" />
+
 **1685–1753 · [empirisme](site:onderzoek/kennisleer/empirisme)**
 
 Berkeley was een Ierse bisschop die het [empirisme](site:onderzoek/kennisleer/empirisme) serieuzer nam dan de empiristen zelf — en daarmee op een conclusie uitkwam die nog altijd verbaast.

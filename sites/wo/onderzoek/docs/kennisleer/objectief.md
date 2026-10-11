@@ -4,6 +4,8 @@ title: Objectieve kennis
 
 # Objectieve kennis
 
+<Bron id="ikdenk" hoofdstuk="4, Kennisleer" over="De behandeling van het begrip objectieve kennis" />
+
 <Definitie gewoneTaal="het is zo, of jij het nu vindt of niet.">
 
 **Objectieve kennis** is kennis over het **object** zelf: over hoe iets is, los van wie ernaar kijkt. Wie de waarnemer ook is, de uitkomst verandert er niet door.

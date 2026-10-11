@@ -4,6 +4,8 @@ title: Denkers op een rij
 
 # Denkers op een rij
 
+<Bron id="ikdenk" hoofdstuk="4, Kennisleer" over="De keuze van de denkers op deze pagina" />
+
 De kennisleer is voor een groot deel één lang gesprek tussen twee kampen: komt kennis uit het **denken** of uit de **zintuigen**? Hieronder staan de acht denkers uit dit hoofdstuk op volgorde van tijd. Elke naam leidt naar een eigen pagina.
 
 | Denker | Tijd | Kernidee | Kamp |

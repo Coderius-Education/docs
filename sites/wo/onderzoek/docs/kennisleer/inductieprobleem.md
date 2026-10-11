@@ -4,6 +4,8 @@ title: Het inductieprobleem
 
 # Het inductieprobleem
 
+<Bron id="ikdenk" hoofdstuk="5, Wetenschapsfilosofie" over="De behandeling van het inductieprobleem" />
+
 <Definitie gewoneTaal="uit 'tot nu toe altijd' volgt nooit 'dus altijd'.">
 
 Het **inductieprobleem** is de vaststelling dat je uit nog zoveel losse waarnemingen nooit met zekerheid een algemene regel kunt afleiden. **Inductie** — de stap van een reeks gevallen naar een algemene uitspraak — levert waarschijnlijkheid op, geen bewijs.

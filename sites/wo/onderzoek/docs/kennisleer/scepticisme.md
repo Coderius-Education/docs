@@ -4,6 +4,8 @@ title: Scepticisme
 
 # Scepticisme
 
+<Bron id="ikdenk" hoofdstuk="4, Kennisleer" over="De behandeling van het scepticisme" />
+
 <Definitie gewoneTaal="honderd procent zeker weten bestaat niet — je kunt hooguit goede redenen hebben.">
 
 Het **scepticisme** is de opvatting dat je niets voor 100% zeker kunt weten. Elke bron van kennis — je zintuigen, je geheugen, je redenering, de mensen die je vertrouwt — kan je in principe bedriegen.

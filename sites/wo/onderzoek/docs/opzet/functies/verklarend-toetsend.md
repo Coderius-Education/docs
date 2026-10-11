@@ -5,6 +5,8 @@ sidebar_position: 6
 
 # Verklarend-toetsend onderzoek
 
+<Bron id="eureka" over="De indeling in functies van onderzoek" />
+
 <Definitie gewoneTaal="je hebt één verwachte verklaring en zoekt gericht uit of die klopt.">
 
 Bij **verklarend-toetsend** onderzoek heb je al een verwachte verklaring — een **hypothese** — en onderzoek je gericht of die klopt. De kernvraag: **klopt deze verklaring?**
