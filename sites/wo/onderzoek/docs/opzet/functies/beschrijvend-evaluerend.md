@@ -34,3 +34,7 @@ Dit is precies wat je bij [ontwerpgericht onderzoek](site:onderzoek/typen/ontwer
 - [Functies van onderzoek](site:onderzoek/opzet/functies/functies-overzicht) — alle zes functies naast elkaar
 - [Ontwerpgericht onderzoek](site:onderzoek/typen/ontwerpgericht) — waar evalueren het sluitstuk is
 - [Valide](site:onderzoek/spelregels/valide) — testen met de echte doelgroep, op de echte eisen
+
+## Bron
+
+<Bron id="eureka" over="De indeling in functies van onderzoek" />

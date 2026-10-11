@@ -47,3 +47,7 @@ In het ziekenhuis van Wenen stierven op de kraamafdeling van de artsen véél me
 - [Verklarend-explorerend](site:onderzoek/opzet/functies/verklarend-explorerend) — de stap ervóór: verklaringen opsporen
 - [Hypothese](site:onderzoek/vragen/hypothese) — hoe je een goede hypothese formuleert
 - [Experimenteel onderzoek](site:onderzoek/opzet/soorten/experimenteel) en [interne validiteit](site:onderzoek/spelregels/interne-validiteit) — het gereedschap voor het toetsen
+
+## Bron
+
+<Bron id="eureka" over="De indeling in functies van onderzoek" />

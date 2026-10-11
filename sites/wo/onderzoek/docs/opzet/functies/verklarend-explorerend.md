@@ -34,3 +34,7 @@ Eerst exploreer je (interviews leveren drie mogelijke verklaringen op), daarna [
 - [Functies van onderzoek](site:onderzoek/opzet/functies/functies-overzicht) — alle zes functies naast elkaar
 - [Verklarend-toetsend](site:onderzoek/opzet/functies/verklarend-toetsend) — het vervolg: één verklaring gericht toetsen
 - [Interview](site:onderzoek/opzet/methoden/interview) en [kwalitatief onderzoek](site:onderzoek/gegevens/kwalitatief) — de aanpak die hier meestal bij past
+
+## Bron
+
+<Bron id="eureka" over="De indeling in functies van onderzoek" />

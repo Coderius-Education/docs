@@ -41,6 +41,14 @@ Hoort bij het vak wetenschapsoriëntatie en staat op https://wo.coderius.nl/onde
   Het hoofdstuk van een begrip volgt uit het eerste deel van zijn `url`; een nieuw hoofdstuk
   (nieuwe map in `docs/`) krijgt een regel in `src/data/hoofdstukken.js`, anders ontbreekt
   het in de trainer.
+- Een pagina die een begrip of indeling uit een bron overneemt, eindigt met `## Bron` en
+  `<Bron id="…" over="…" />`; `over` zegt wat er is overgenomen. De gegevens van de bron
+  staan één keer in `src/data/bronnen.js`, en de docentenhandleiding verantwoordt dezelfde
+  bron onder `## Bronnen`. Neem begrippen en indelingen over, nooit tekst, figuren of
+  opdrachten: de site staat onder CC BY-NC, en die licentie kun je alleen geven op eigen
+  werk. De functies van onderzoek (`opzet/functies/`) en de typen theoriegericht en
+  ontwerpgericht (`typen/`) zijn gebaseerd op *Eureka!* (Wientjes & Veenhoven, 2023);
+  `src/data/bronnen.test.ts` eist de bronvermelding op elke pagina in die twee mappen.
 - Teksten van de zoekplugin staan in het Nederlands in `i18n/nl/code.json`.
 - Kleuren, letters en het merk komen uit de gedeelde huisstijl (`createConfig`);
   `src/css/custom.css` bevat alleen de handout- en printregels en wordt na de

@@ -45,3 +45,7 @@ Een conclusie als *"mijn hypothese klopt niet"* is óók een geldig resultaat! H
 - [Theoriegericht vs. ontwerpgericht](site:onderzoek/typen/theorie-vs-ontwerp) — het verband tussen beide typen
 - [Functies van onderzoek](site:onderzoek/opzet/functies/functies-overzicht) — wat je antwoord precies moet doen: beschrijven of verklaren
 - [Hoofdvraag](site:onderzoek/vragen/hoofdvraag) — hoe je een goede kennisvraag formuleert
+
+## Bron
+
+<Bron id="eureka" over="Het onderscheid tussen theoriegericht en ontwerpgericht onderzoek" />

@@ -34,3 +34,7 @@ Een [enquête](site:onderzoek/opzet/methoden/enquete), [observatie](site:onderzo
 - [Functies van onderzoek](site:onderzoek/opzet/functies/functies-overzicht) — alle zes functies naast elkaar
 - [Beschrijvend-vergelijkend](site:onderzoek/opzet/functies/beschrijvend-vergelijkend) — de volgende stap: twee beschrijvingen naast elkaar
 - [De keuzedriehoek](site:onderzoek/opzet/keuzedriehoek) — functie combineren met soort en methode
+
+## Bron
+
+<Bron id="eureka" over="De indeling in functies van onderzoek" />

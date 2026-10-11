@@ -1,0 +1,8 @@
+.bron {
+  font-size: 0.9rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.bron cite {
+  font-style: italic;
+}

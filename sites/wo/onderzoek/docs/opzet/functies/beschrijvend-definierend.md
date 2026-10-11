@@ -36,3 +36,7 @@ Definiërend onderzoek doe je vaak als **eerste deelvraag**: voordat je nepnieuw
 - [De keuzedriehoek](site:onderzoek/opzet/keuzedriehoek) — functie combineren met soort en methode
 - [Operationaliseren](site:onderzoek/vragen/operationaliseren) — de volgende stap: van definitie naar meting
 - [De vork van Hume](site:onderzoek/kennisleer/vork-van-hume) — waarom een definiërende deelvraag denkwerk is en geen meting vraagt
+
+## Bron
+
+<Bron id="eureka" over="De indeling in functies van onderzoek" />

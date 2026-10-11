@@ -39,3 +39,7 @@ Alleen iets maken is nog geen onderzoek. Het verschil zit in het **toetsen van j
 - [Theoriegericht vs. ontwerpgericht](site:onderzoek/typen/theorie-vs-ontwerp) — het verband tussen beide typen
 - [Beschrijvend-evaluerend onderzoek](site:onderzoek/opzet/functies/beschrijvend-evaluerend) — de functie achter het toetsen aan eisen
 - [Deelvragen](site:onderzoek/vragen/deelvragen) — het vaste patroon van deelvragen bij een ontwerpvraag
+
+## Bron
+
+<Bron id="eureka" over="Het onderscheid tussen theoriegericht en ontwerpgericht onderzoek" />

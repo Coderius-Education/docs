@@ -34,3 +34,7 @@ Dezelfde [enquête](site:onderzoek/opzet/methoden/enquete) of [observatie](site:
 - [Functies van onderzoek](site:onderzoek/opzet/functies/functies-overzicht) — alle zes functies naast elkaar
 - [Puur beschrijvend](site:onderzoek/opzet/functies/puur-beschrijvend) — de basis: eerst elk geval apart beschrijven
 - [Betrouwbaar](site:onderzoek/spelregels/betrouwbaar) — steeds op dezelfde manier meten
+
+## Bron
+
+<Bron id="eureka" over="De indeling in functies van onderzoek" />
