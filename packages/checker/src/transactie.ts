@@ -17,9 +17,17 @@ export function wachtOpTransactie<R>(
   verzoek?: { result: R },
 ): Promise<R | undefined> {
   return new Promise((resolve, reject) => {
+    // Mislukt een verzoek, dan komt die fout eerst als error-event bij de
+    // transactie aan, met de fout op het verzoek; tx.error is dan nog leeg.
+    // Pas daarna wordt de transactie afgebroken. Onthoud dus de fout van het
+    // verzoek, en wijs pas af bij het afbreken: anders wordt een volle opslag
+    // (QuotaExceededError) een nietszeggende AbortError.
+    let oorzaak: DOMException | null = null;
     tx.oncomplete = () => resolve(verzoek?.result);
-    const fout = () => reject(tx.error ?? new DOMException('Transactie afgebroken', 'AbortError'));
-    tx.onabort = fout;
-    tx.onerror = fout;
+    tx.onerror = (ev) => {
+      oorzaak ??= (ev.target as { error?: DOMException | null } | null)?.error ?? null;
+    };
+    tx.onabort = () =>
+      reject(oorzaak ?? tx.error ?? new DOMException('Transactie afgebroken', 'AbortError'));
   });
 }

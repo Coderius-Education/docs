@@ -24,7 +24,9 @@ function openDatabase(naam: string): Promise<IDBDatabase> {
     // Geblokkeerd door een ander tabblad: de pagina valt terug op geheugen.
     // Het verzoek loopt dan nog door; gaat de database later toch open, dan
     // sluiten we hem meteen, anders blokkeert deze verbinding zonder eigenaar
-    // op zijn beurt de volgende upgrade.
+    // op zijn beurt de volgende upgrade. Zolang VERSIE 1 is, gebeurt dit niet;
+    // het is voor de dag dat iemand VERSIE verhoogt en er nog een oud tabblad
+    // openstaat.
     let opgegeven = false;
     r.onsuccess = () => {
       if (opgegeven) r.result.close();

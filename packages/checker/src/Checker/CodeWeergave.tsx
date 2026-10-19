@@ -14,8 +14,11 @@ export interface CodeOpen {
   /** Waar de docent op klikte, bijvoorbeeld '<canvas>' of 'display: flex'. */
   titel: string;
   plekken: Plek[];
-  /** Zonder plekken: het bestand dat opent. */
-  bestand?: string;
+  /**
+   * Een reeks regels die als geheel oplicht, zoals het fragment van een
+   * vraag: één plek om naartoe te gaan, niet een plek per regel.
+   */
+  bereik?: { bestand: string; van: number; tot: number };
 }
 
 interface CodeWeergaveProps {
@@ -60,7 +63,7 @@ export function CodeWeergave({ files, textKinds, open, onSluit, onMarkeer }: Cod
       // Zonder plekken: het startbestand van een website, anders het eerste.
       const start = bestanden.find((b) => /(^|\/)index\.html?$/i.test(b)) ?? bestanden[0];
       // Alleen een bestand dat als tekst is ingelezen kan open.
-      const gevraagd = eerste?.bestand ?? open.bestand;
+      const gevraagd = eerste?.bestand;
       setBestand(gevraagd && bestanden.includes(gevraagd) ? gevraagd : (start ?? null));
       setDoel(eerste?.regel ?? null);
       setSelectie(null);
@@ -73,22 +76,28 @@ export function CodeWeergave({ files, textKinds, open, onSluit, onMarkeer }: Cod
   }, [open, bestanden]);
 
   // Scrol de regel waar het om gaat naar het midden, ook als alleen het
-  // bestand wisselt: dan staan er andere regels onder hetzelfde nummer.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: bestand is de aanleiding, niet een waarde die het effect leest
+  // bestand wisselt (andere regels onder hetzelfde nummer) of het venster
+  // opnieuw opengaat op dezelfde plek (de lijst is dan nieuw, en staat
+  // bovenaan).
+  // biome-ignore lint/correctness/useExhaustiveDependencies: bestand en open zijn de aanleiding, geen waarden die het effect leest
   useEffect(() => {
     if (doel === null) return;
     regelRefs.current.get(doel)?.scrollIntoView({ block: 'center' });
-  }, [doel, bestand]);
+  }, [doel, bestand, open]);
 
   // Dezelfde regels als de fragmenten bij de vragen, dus dezelfde nummers.
   const regels = useMemo(
     () => (bestand ? (regelsVan(files, bestand) ?? []) : []),
     [files, bestand],
   );
-  const treffers = useMemo(
-    () => new Set(plekken.filter((p) => p.bestand === bestand).map((p) => p.regel)),
-    [plekken, bestand],
-  );
+  const bereik = open?.bereik;
+  const treffers = useMemo(() => {
+    const regels = new Set(plekken.filter((p) => p.bestand === bestand).map((p) => p.regel));
+    if (bereik && bereik.bestand === bestand) {
+      for (let r = bereik.van; r <= bereik.tot; r++) regels.add(r);
+    }
+    return regels;
+  }, [plekken, bestand, bereik]);
   const van = selectie ? Math.min(selectie.anker, selectie.eind) : null;
   const tot = selectie ? Math.max(selectie.anker, selectie.eind) : null;
 
@@ -142,6 +151,9 @@ export function CodeWeergave({ files, textKinds, open, onSluit, onMarkeer }: Cod
                   setBestand(b);
                   setSelectie(null);
                   setDoel(treffersIn(plekken, b)[0] ?? 1);
+                  // De teller volgt mee: de eerste plek in dit bestand.
+                  const eerste = plekken.findIndex((p) => p.bestand === b);
+                  if (eerste !== -1) setPlekNr(eerste);
                 }}
               />
             </div>

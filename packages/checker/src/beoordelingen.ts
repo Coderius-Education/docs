@@ -242,6 +242,9 @@ export class Bewaarder {
       this.zonderProject.delete(b.id);
       this.hersteld();
     }).catch((fout) => {
+      // Al verwijderd terwijl het bewaren liep: dan is er niets te bewaren
+      // en niets te melden.
+      if (!this.cache.has(b.id)) return;
       // Niet bewaard, maar op deze pagina blijft de beoordeling bruikbaar;
       // de volgende schrijfactie (een wijziging, of een verwijdering die
       // ruimte maakt) probeert hem opnieuw.

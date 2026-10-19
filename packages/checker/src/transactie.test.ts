@@ -32,6 +32,18 @@ describe('wachtOpTransactie', () => {
     expect(await p).toBe(42);
   });
 
+  it('houdt de echte oorzaak als een verzoek faalt, ook al is tx.error dan nog leeg', async () => {
+    const tx: TransactieLike = { oncomplete: null, onabort: null, onerror: null, error: null };
+    const p = wachtOpTransactie(tx);
+    // Zoals de browser het doet: eerst het error-event van het verzoek, dat
+    // naar de transactie opborrelt; daarna pas het afbreken.
+    const verzoek = { error: new DOMException('vol', 'QuotaExceededError') };
+    tx.onerror?.({ target: verzoek } as unknown as Event);
+    tx.error = new DOMException('afgebroken', 'AbortError');
+    tx.onabort?.(new Event('abort'));
+    await expect(p).rejects.toMatchObject({ name: 'QuotaExceededError' });
+  });
+
   it('meldt een opslag die bij het vastleggen vol blijkt, ook al slaagde het verzoek', async () => {
     const { tx, breekAf } = nepTransactie();
     const p = wachtOpTransactie(tx, { result: 'gelukt?' });

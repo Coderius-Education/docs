@@ -133,9 +133,12 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
   }, []);
 
   const toonVraag = useCallback((v: Vraag) => {
-    const plekken = [];
-    for (let regel = v.van; regel <= v.tot; regel++) plekken.push({ bestand: v.bestand, regel });
-    setCodeOpen({ titel: v.vraag.trim() || 'Vraag', plekken });
+    // Eén plek om naartoe te gaan, met de hele reeks oplichtend.
+    setCodeOpen({
+      titel: v.vraag.trim() || 'Vraag',
+      plekken: [{ bestand: v.bestand, regel: v.van }],
+      bereik: { bestand: v.bestand, van: v.van, tot: v.tot },
+    });
   }, []);
 
   // De vragen komen uit de Bewaarder, niet uit de render: zo bouwt een vraag
@@ -215,7 +218,7 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
       setActiveLevel(null);
       // Buiten de lesstof ziet alleen de docent; de leerling hoeft er niet
       // op te wachten.
-      const result = analyze(loadedFiles, config, { buitenLesstof: isDocent });
+      const result = analyze(loadedFiles, config, { buitenLesstof: isDocent, plekken: isDocent });
       result.warnings = [...warnings, ...result.warnings];
       setReport(result);
     },
@@ -224,6 +227,12 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
 
   const handleLoaded = useCallback(
     (loadedFiles: ProjectFiles, warnings: string[]) => {
+      // Een upload die klaar is terwijl de PDF wordt gemaakt, zou het rapport
+      // halverwege de opname vervangen.
+      if (exporterendRef.current) {
+        setError('Wacht tot de PDF klaar is, en upload het project dan opnieuw.');
+        return;
+      }
       verzoekRef.current++;
       wisBeoordeling();
       toonProject(loadedFiles, warnings);
@@ -529,7 +538,7 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
               type="button"
               className={`${styles.printButton} ${styles.noPrint}`}
               onClick={handleExportPdf}
-              disabled={exporting}
+              disabled={exporting || busy}
             >
               {exporting ? 'PDF maken...' : 'Opslaan als PDF'}
             </button>

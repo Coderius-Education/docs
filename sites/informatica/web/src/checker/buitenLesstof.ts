@@ -244,7 +244,8 @@ const JS_SYNTAX: { label: string; patroon: RegExp }[] = [
   { label: 'import / export', patroon: /^\s*(?:import|export)\s/gm },
   { label: '== (losse vergelijking)', patroon: /[^=!<>]==[^=]/g },
   { label: '++ / --', patroon: /\+\+|--/g },
-  { label: '+= / -=', patroon: /[+\-*/]=(?!=)/g },
+  { label: '+= / -=', patroon: /[+-]=(?!=)/g },
+  { label: '*= / /= / %=', patroon: /[*/%]=(?!=)/g },
   { label: '% (modulo)', patroon: /[\w)\]]\s*%\s*[\w(]/g },
   { label: 'const { … } = (destructuring)', patroon: /\b(?:const|let|var)\s*[{[]/g },
 ];

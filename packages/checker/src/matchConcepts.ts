@@ -25,6 +25,11 @@ export interface AnalyzeOpties {
    * leerling niet wacht op een scan waar hij niets van ziet.
    */
   buitenLesstof?: boolean;
+  /**
+   * Onthoud waar elk concept staat (standaard aan). Alleen de docent kan de
+   * code openen; de leerlingweergave zet het uit en telt alleen.
+   */
+  plekken?: boolean;
 }
 
 export function analyze(
@@ -33,6 +38,7 @@ export function analyze(
   opties: AnalyzeOpties = {},
 ): CheckReport {
   const values = Object.values(files);
+  const metPlekken = opties.plekken ?? true;
 
   const byKind: Record<string, number> = {};
   for (const k of config.fileKinds) byKind[k.id] = 0;
@@ -80,6 +86,7 @@ export function analyze(
       const re = withoutGlobal(c.detect.pattern);
       const paden = allPaths.filter((p) => re.test(p));
       const used = paden.length > 0;
+      if (!metPlekken) return { id: c.id, count: used ? 1 : 0, used };
       const plekken = paden
         .filter((p) => leesbaar.has(p))
         .slice(0, MAX_PLEKKEN)
@@ -88,6 +95,13 @@ export function analyze(
     }
     const kinds = c.detect.in ?? config.textKinds;
     const patroon = withGlobal(c.detect.pattern);
+    if (!metPlekken) {
+      let n = 0;
+      for (const kind of kinds) {
+        for (const { content } of textByKind[kind] ?? []) n += content.match(patroon)?.length ?? 0;
+      }
+      return { id: c.id, count: n, used: n >= (c.detect.minCount ?? 1) };
+    }
     let count = 0;
     const plekken: Plek[] = [];
     for (const kind of kinds) {

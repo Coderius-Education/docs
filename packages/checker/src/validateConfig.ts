@@ -15,6 +15,16 @@ export function validateCheckerConfig(config: CheckerConfig): string[] {
   const trackIds = (config.tracks ?? []).map((t) => t.id);
   const seenIds = new Set<string>();
 
+  // De bewaarde beoordelingen krijgen een database per site, met de naam
+  // afgeleid uit de docentsleutel (databaseNaam). Die sleutel moet dus via
+  // storageKey(site, …) lopen; anders delen twee cursussen op dezelfde
+  // origin elkaars leerlingwerk.
+  if (!/^coderius:[a-z0-9-]+:[^:]/.test(config.teacher.storageKey)) {
+    problems.push(
+      `teacher.storageKey '${config.teacher.storageKey}' komt niet uit storageKey(site, …).`,
+    );
+  }
+
   for (const kind of [...config.textKinds, ...(config.imageKinds ?? [])]) {
     if (!kindIds.has(kind)) {
       problems.push(`Bestandssoort '${kind}' wordt gelezen maar staat niet in fileKinds.`);

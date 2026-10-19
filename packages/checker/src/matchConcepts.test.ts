@@ -292,6 +292,14 @@ describe('analyze — plekken', () => {
     });
   });
 
+  it('onthoudt geen plekken als de weergave ze niet toont, en telt hetzelfde', () => {
+    const files = projectFiles(file('a.css', 'css', 'p { color: red; }\na { color: blue; }'));
+    const cfg = config([concept('kleur', { type: 'regex', pattern: /color\s*:/g })]);
+    const zonder = analyze(files, cfg, { plekken: false });
+    expect(matchOf(zonder, 'kleur')).toEqual({ id: 'kleur', count: 2, used: true });
+    expect(matchOf(analyze(files, cfg), 'kleur')?.count).toBe(2);
+  });
+
   it('crasht niet op een patroon zonder g-vlag', () => {
     const report = analyze(
       projectFiles(file('a.css', 'css', 'p { color: red; }')),

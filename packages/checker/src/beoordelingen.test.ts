@@ -339,6 +339,26 @@ describe('Bewaarder: beoordelingen bewaren', () => {
     expect(fouten).toEqual([LEESFOUT]);
   });
 
+  it('houdt een beoordeling niet vast die werd verwijderd terwijl het bewaren mislukte', async () => {
+    const nep = nepOpslag();
+    const gestart = uitgesteld();
+    const los = uitgesteld();
+    nep.gedrag.houdNieuw = { gestart: gestart.los, los: los.p };
+    nep.gedrag.nieuwFout = new DOMException('vol', 'QuotaExceededError');
+    const { b, fouten } = bewaarder(nep.opslag);
+    const sam = b.nieuw('Sam', project('Sam'), null);
+    await gestart.p;
+    const weg = b.verwijder(sam.id);
+    los.los();
+    await weg;
+    await stil(b);
+    expect(b.lijst()).toEqual([]);
+    // Geen melding over iets dat niet meer bestaat, en geen project dat in
+    // het geheugen blijft hangen: open() vindt niets.
+    expect(fouten.filter((f) => f !== null)).toEqual([]);
+    expect(await b.open(sam.id)).toBeNull();
+  });
+
   it('meldt het als de bewaarde beoordelingen niet te lezen zijn, in plaats van een lege lijst', async () => {
     const nep = nepOpslag();
     nep.gedrag.leesFout = true;

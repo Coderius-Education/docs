@@ -230,6 +230,14 @@ describe('stukkenUit — de code van een lespagina', () => {
   });
 });
 
+describe('rekenen met toewijzing', () => {
+  it('houdt += en *= uit elkaar, zodat *= niet onder += verdwijnt', () => {
+    const files = project({ 'app.js': 'let prijs = 10;\nprijs *= 1.21;\nprijs /= 2;' });
+    expect(labels(files)).toContain('JavaScript|*= / /= / %=');
+    expect(labels(files)).not.toContain('JavaScript|+= / -=');
+  });
+});
+
 describe('zonderCommentaarEnTekst — één doorloop door de JavaScript', () => {
   it('ziet // in een string niet als commentaar', () => {
     const files = project({ 'app.js': 'el.innerHTML = "a//b"; el.remove(); setTimeout(f, 10);' });
