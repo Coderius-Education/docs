@@ -1,5 +1,6 @@
 import { createConfig } from '@coderius/shared/config';
 import { REPO_URL, repoEditUrl } from '@coderius/shared/sites';
+import lesstofPlugin from './src/checker/lesstof-plugin';
 
 export default createConfig({
   title: 'Webontwikkeling — Coderius',
@@ -27,6 +28,9 @@ export default createConfig({
 
   // @coderius/shared is de standaard; @coderius/checker levert de nakijker.
   sharedPackages: ['@coderius/shared', '@coderius/checker'],
+
+  // Wat de lessen behandelen, voor "buiten de lesstof" in de nakijker.
+  plugins: [lesstofPlugin],
 
   presets: [
     [

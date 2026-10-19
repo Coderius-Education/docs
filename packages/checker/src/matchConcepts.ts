@@ -1,4 +1,12 @@
-import type { CheckReport, CheckerConfig, ConceptMatch, ProjectFiles } from './types';
+import { MAX_PLEKKEN, plekkenIn, regelBegins } from './plekken';
+import type {
+  CheckReport,
+  CheckerConfig,
+  Concept,
+  ConceptMatch,
+  Plek,
+  ProjectFiles,
+} from './types';
 
 // Analyseert een geüpload project tegen de conceptenlijst van een site. Puur
 // een functie over ProjectFiles + config; geen DOM of netwerk. Regex-concepten
@@ -11,8 +19,33 @@ function withoutGlobal(re: RegExp): RegExp {
   return re.global ? new RegExp(re.source, re.flags.replace('g', '')) : re;
 }
 
-export function analyze(files: ProjectFiles, config: CheckerConfig): CheckReport {
+// matchAll gooit bij een patroon zonder g-vlag. validateCheckerConfig meldt
+// zo'n patroon al; hier crasht de nakijker er in elk geval niet op.
+function withGlobal(re: RegExp): RegExp {
+  return re.global ? re : new RegExp(re.source, `${re.flags}g`);
+}
+
+export interface AnalyzeOpties {
+  /**
+   * Zoek ook wat buiten de lesstof valt (standaard aan). Alleen de
+   * docentweergave toont dat; de leerlingweergave zet het uit, zodat een
+   * leerling niet wacht op een scan waar hij niets van ziet.
+   */
+  buitenLesstof?: boolean;
+  /**
+   * Onthoud waar elk concept staat (standaard aan). Alleen de docent kan de
+   * code openen; de leerlingweergave zet het uit en telt alleen.
+   */
+  plekken?: boolean;
+}
+
+export function analyze(
+  files: ProjectFiles,
+  config: CheckerConfig,
+  opties: AnalyzeOpties = {},
+): CheckReport {
   const values = Object.values(files);
+  const metPlekken = opties.plekken ?? true;
 
   const byKind: Record<string, number> = {};
   for (const k of config.fileKinds) byKind[k.id] = 0;
@@ -22,9 +55,9 @@ export function analyze(files: ProjectFiles, config: CheckerConfig): CheckReport
     if (f.tooLarge) skippedTooLarge++;
   }
 
-  // Groepeer de tekstinhoud per kind, zodat een regex-concept alleen de
+  // Groepeer de bestanden per kind, zodat een regex-concept alleen de
   // relevante bestandssoorten scant.
-  const textByKind: Record<string, string[]> = {};
+  const textByKind: Record<string, { path: string; content: string }[]> = {};
   for (const f of values) {
     if (f.content === null || !config.textKinds.includes(f.kind)) continue;
     let bucket = textByKind[f.kind];
@@ -32,29 +65,86 @@ export function analyze(files: ProjectFiles, config: CheckerConfig): CheckReport
       bucket = [];
       textByKind[f.kind] = bucket;
     }
-    bucket.push(f.content);
+    bucket.push({ path: f.path, content: f.content });
   }
-  const allPaths = values.map((f) => f.path);
+  const allPaths = values.map((f) => f.path).sort((a, b) => a.localeCompare(b));
+  // Alleen een tekstbestand kan als code open; een foto of geluid niet.
+  const leesbaar = new Set(
+    values
+      .filter((f) => f.content !== null && config.textKinds.includes(f.kind))
+      .map((f) => f.path),
+  );
+  // Regelstarts één keer per bestand, en alleen als er iets te vinden is.
+  const begins = new Map<string, number[]>();
+  const beginsVan = (path: string, content: string) => {
+    let b = begins.get(path);
+    if (!b) {
+      b = regelBegins(content);
+      begins.set(path, b);
+    }
+    return b;
+  };
 
-  const concepts: ConceptMatch[] = config.concepts.map((c) => {
+  const meet = (c: Pick<Concept, 'id' | 'detect'>): ConceptMatch => {
     if (c.detect.type === 'handmatig') {
-      return { id: c.id, count: 0, used: false };
+      return { id: c.id, count: 0, used: false, plekken: [] };
     }
     if (c.detect.type === 'path') {
       const re = withoutGlobal(c.detect.pattern);
-      const used = allPaths.some((p) => re.test(p));
-      return { id: c.id, count: used ? 1 : 0, used };
+      const paden = allPaths.filter((p) => re.test(p));
+      const used = paden.length > 0;
+      if (!metPlekken) return { id: c.id, count: used ? 1 : 0, used };
+      const plekken = paden
+        .filter((p) => leesbaar.has(p))
+        .slice(0, MAX_PLEKKEN)
+        .map((bestand) => ({ bestand, regel: 1 }));
+      return { id: c.id, count: used ? 1 : 0, used, plekken };
     }
+    const { delen } = c.detect;
     const kinds = c.detect.in ?? config.textKinds;
+    const patroon = withGlobal(c.detect.pattern);
+    const minimum = c.detect.minCount ?? 1;
+    const gevonden = new Set<string>();
+    const noteerDeel = (m: RegExpMatchArray) => {
+      if (delen === true) {
+        const deel = m.slice(1).find((g) => g !== undefined && g !== '');
+        if (deel) gevonden.add(deel.toLowerCase());
+      } else if (delen) {
+        const i = delen.findIndex((_, j) => m.groups?.[`d${j}`] !== undefined);
+        if (i !== -1) gevonden.add(delen[i]);
+      }
+    };
+    const metDelen = (m: ConceptMatch): ConceptMatch =>
+      delen ? { ...m, delen: Array.from(gevonden).sort((a, b) => a.localeCompare(b)) } : m;
+    if (!metPlekken && !delen) {
+      let n = 0;
+      for (const kind of kinds) {
+        for (const { content } of textByKind[kind] ?? []) n += content.match(patroon)?.length ?? 0;
+      }
+      return { id: c.id, count: n, used: n >= minimum };
+    }
     let count = 0;
+    const plekken: Plek[] = [];
     for (const kind of kinds) {
-      for (const src of textByKind[kind] ?? []) {
-        const m = src.match(c.detect.pattern);
-        if (m) count += m.length;
+      for (const { path, content } of textByKind[kind] ?? []) {
+        const treffers = Array.from(content.matchAll(patroon));
+        for (const m of treffers) noteerDeel(m);
+        count += treffers.length;
+        if (!metPlekken || treffers.length === 0 || plekken.length >= MAX_PLEKKEN) continue;
+        const posities = treffers.map((m) => m.index ?? 0);
+        plekken.push(
+          ...plekkenIn(path, beginsVan(path, content), posities, MAX_PLEKKEN - plekken.length),
+        );
       }
     }
-    return { id: c.id, count, used: count >= (c.detect.minCount ?? 1) };
-  });
+    const match: ConceptMatch = metPlekken
+      ? { id: c.id, count, used: count >= minimum, plekken }
+      : { id: c.id, count, used: count >= minimum };
+    return metDelen(match);
+  };
+
+  const concepts = config.concepts.map(meet);
+  const extra = (config.extra ?? []).map(meet);
 
   const warnings: string[] = [];
   const hasAnyText = config.textKinds.some((k) => (textByKind[k]?.length ?? 0) > 0);
@@ -67,6 +157,8 @@ export function analyze(files: ProjectFiles, config: CheckerConfig): CheckReport
   return {
     fileStats: { total: values.length, byKind, skippedTooLarge },
     concepts,
+    extra,
+    buitenLesstof: (opties.buitenLesstof ?? true) ? (config.buitenLesstof?.(files) ?? []) : [],
     warnings,
   };
 }

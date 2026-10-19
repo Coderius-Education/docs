@@ -26,7 +26,7 @@ function config(concepts: Concept[], overrides: Partial<CheckerConfig> = {}): Ch
     textKinds: ['html'],
     imageKinds: ['image'],
     accept: '.html',
-    teacher: { password: 'x', storageKey: 'x' },
+    teacher: { password: 'x', storageKey: 'coderius:test:checker.docent' },
     pdfFilename: () => 'x.pdf',
     ...overrides,
   };
@@ -35,6 +35,32 @@ function config(concepts: Concept[], overrides: Partial<CheckerConfig> = {}): Ch
 describe('validateCheckerConfig', () => {
   it('keurt een correcte config goed', () => {
     expect(validateCheckerConfig(config([concept()]))).toEqual([]);
+  });
+
+  it('meldt een docentsleutel die niet per site is', () => {
+    // Uit die sleutel volgt de database met bewaarde beoordelingen.
+    const problemen = validateCheckerConfig(
+      config([concept()], { teacher: { password: 'x', storageKey: 'webChecker.docentUnlocked' } }),
+    );
+    expect(problemen.join('\n')).toContain('storageKey');
+  });
+
+  it('meldt een onderdeel zonder groep in het patroon', () => {
+    const c = concept({
+      id: 'lijst',
+      detect: { type: 'regex', pattern: /(?<d0><ul\b)|<ol\b/g, in: ['html'], delen: ['ul', 'ol'] },
+    });
+    expect(validateCheckerConfig(config([c])).join('\n')).toContain("onderdeel 'ol'");
+  });
+
+  it('meldt een extra concept met dezelfde id als een concept uit de tabel', () => {
+    const c = concept({ id: 'dubbel' });
+    const problemen = validateCheckerConfig(
+      config([c], {
+        extra: [{ id: 'dubbel', subject: 'html', group: 'G', label: 'x', detect: c.detect }],
+      }),
+    );
+    expect(problemen.join('\n')).toContain("'dubbel'");
   });
 
   it('meldt een patroon zonder g-vlag', () => {
@@ -118,7 +144,7 @@ describe('validateCheckerConfig — tracks en minCount', () => {
     classify: () => 'py',
     textKinds: ['py'],
     accept: '.py',
-    teacher: { password: 'x', storageKey: 'x' },
+    teacher: { password: 'x', storageKey: 'coderius:test:checker.docent' },
     pdfFilename: () => 'x.pdf',
   };
 

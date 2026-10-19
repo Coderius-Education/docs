@@ -48,13 +48,16 @@ export function UploadZone({ config, onLoaded, onError, busy, setBusy }: UploadZ
     (e: React.DragEvent<HTMLDivElement>) => {
       e.preventDefault();
       setDragging(false);
+      // Bezig (inlezen of een PDF maken): een gesleept bestand wacht niet,
+      // het telt niet. De knoppen staan dan ook uit.
+      if (busy) return;
       if (e.dataTransfer.items?.length) {
         handleSource(e.dataTransfer.items);
       } else if (e.dataTransfer.files?.length) {
         handleSource(e.dataTransfer.files);
       }
     },
-    [handleSource],
+    [handleSource, busy],
   );
 
   return (

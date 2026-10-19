@@ -1,0 +1,104 @@
+.section {
+  margin-bottom: 1.5rem;
+}
+
+.section h2 {
+  margin-bottom: 0.4rem;
+}
+
+.uitleg,
+.leeg {
+  font-size: 0.9rem;
+  color: var(--ifm-color-emphasis-700);
+  margin-bottom: 0.75rem;
+}
+
+.waarschuwing {
+  border: 1px solid var(--ifm-color-warning, #f2b01e);
+  border-radius: 8px;
+  background: var(--ifm-color-warning-contrast-background, #fff8e6);
+  color: var(--ifm-color-warning-contrast-foreground, #4d3800);
+  padding: 0.6rem 0.9rem;
+}
+
+.lijst {
+  list-style: none;
+  margin: 0 0 0.6rem;
+  padding: 0;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.lijst li {
+  display: flex;
+  align-items: stretch;
+  gap: 0.5rem;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+  background: var(--ifm-background-surface-color);
+}
+
+.lijst li:first-child {
+  border-top: 0;
+}
+
+.actief {
+  box-shadow: inset 4px 0 0 var(--ifm-color-primary);
+}
+
+.open {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.75rem;
+  padding: 0.55rem 0.9rem;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.open:hover {
+  background: var(--ifm-color-emphasis-100);
+}
+
+.naam {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.tijd {
+  font-size: 0.85rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.verwijder,
+.alles {
+  border: 0;
+  background: none;
+  color: var(--ifm-color-danger-dark, #c11);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0.55rem 0.9rem;
+}
+
+.verwijder:hover,
+.alles:hover {
+  text-decoration: underline;
+}
+
+.alles {
+  padding: 0;
+}
+
+.open:disabled,
+.verwijder:disabled,
+.alles:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}

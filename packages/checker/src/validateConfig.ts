@@ -15,9 +15,41 @@ export function validateCheckerConfig(config: CheckerConfig): string[] {
   const trackIds = (config.tracks ?? []).map((t) => t.id);
   const seenIds = new Set<string>();
 
+  // De bewaarde beoordelingen krijgen een database per site, met de naam
+  // afgeleid uit de docentsleutel (databaseNaam). Die sleutel moet dus via
+  // storageKey(site, …) lopen; anders delen twee cursussen op dezelfde
+  // origin elkaars leerlingwerk.
+  if (!/^coderius:[a-z0-9-]+:[^:]/.test(config.teacher.storageKey)) {
+    problems.push(
+      `teacher.storageKey '${config.teacher.storageKey}' komt niet uit storageKey(site, …).`,
+    );
+  }
+
   for (const kind of [...config.textKinds, ...(config.imageKinds ?? [])]) {
     if (!kindIds.has(kind)) {
       problems.push(`Bestandssoort '${kind}' wordt gelezen maar staat niet in fileKinds.`);
+    }
+  }
+
+  for (const extra of config.extra ?? []) {
+    // Extra concepten delen de id-ruimte: het rapport zoekt matches op id.
+    if (config.concepts.some((c) => c.id === extra.id)) {
+      problems.push(`Extra concept '${extra.id}' heeft dezelfde id als een concept uit de tabel.`);
+    }
+  }
+
+  for (const concept of [...config.concepts, ...(config.extra ?? [])]) {
+    const { detect } = concept;
+    if (detect.type === 'regex' && Array.isArray(detect.delen)) {
+      // Elk onderdeel heeft een benoemde groep d0, d1, …; anders wordt het
+      // nooit als gevonden gemeld.
+      detect.delen.forEach((deel, i) => {
+        if (!detect.pattern.source.includes(`(?<d${i}>`)) {
+          problems.push(
+            `Concept '${concept.id}': onderdeel '${deel}' heeft geen groep d${i} in het patroon.`,
+          );
+        }
+      });
     }
   }
 

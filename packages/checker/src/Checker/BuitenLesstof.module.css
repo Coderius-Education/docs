@@ -1,0 +1,78 @@
+.section {
+  margin-bottom: 2rem;
+}
+
+.section h2 {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.aantal {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.uitleg {
+  margin-bottom: 0.75rem;
+  color: var(--ifm-color-emphasis-800);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 0.75rem;
+}
+
+.kaart {
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-left: 4px solid var(--ifm-color-primary);
+  border-radius: 8px;
+  background: var(--ifm-background-surface-color);
+  padding: 0.75rem;
+}
+
+.kop {
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+.lijst {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9rem;
+}
+
+.lijst li + li {
+  margin-top: 0.3rem;
+}
+
+.lijst li {
+  overflow-wrap: anywhere;
+}
+
+.keer {
+  font-weight: 600;
+}
+
+.bestanden {
+  color: var(--ifm-color-emphasis-700);
+}
+
+.knop {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+}
+
+.knop:hover {
+  text-decoration-style: solid;
+}

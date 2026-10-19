@@ -32,6 +32,14 @@ export type ConceptDetect =
        * met een andere drempel.
        */
       minCount?: number;
+      /**
+       * Een concept met onderdelen ("ol & ul, li", "flexbox of grid"): het
+       * rapport noemt welke onderdelen gevonden zijn. Een lijst namen hoort bij
+       * benoemde groepen d0, d1, … in het patroon (de eerste die past, telt);
+       * `true` neemt de eerste gewone groep die iets vond, zoals de tagnaam van
+       * een selector.
+       */
+      delen?: string[] | true;
     }
   | {
       /** "Aanwezig" als een bestandspad hierop matcht (mappenstructuur-check). */
@@ -79,10 +87,24 @@ export interface TrackInfo {
   label: string;
 }
 
+/** Een regel in een bestand van het project (regels tellen vanaf 1). */
+export interface Plek {
+  bestand: string;
+  regel: number;
+}
+
 export interface ConceptMatch {
   id: string;
   count: number;
   used: boolean;
+  /** Welke onderdelen gevonden zijn, als het concept `delen` heeft. */
+  delen?: string[];
+  /**
+   * Waar het concept staat, hooguit MAX_PLEKKEN regels. Leeg voor een
+   * handmatig concept; voor een pad-concept de eerste regel van elk
+   * passend bestand.
+   */
+  plekken?: Plek[];
 }
 
 export interface SubjectInfo {
@@ -98,6 +120,12 @@ export interface FileKindInfo {
 export interface CheckerConfig {
   /** Onderwerpen (bv. FastAPI, HTML, Database) in weergavevolgorde. */
   subjects: SubjectInfo[];
+  /**
+   * Optioneel: concepten die de nakijker herkent maar die niet meetellen
+   * voor het niveau, omdat ze niet in de tabel van de docent staan. Het
+   * rapport toont de gebruikte apart, onder "Ook gebruikt".
+   */
+  extra?: ExtraConcept[];
   /**
    * Leerroutes waartussen de docent kan schakelen. Weglaten = één route, en
    * dan gedraagt alles zich als voorheen. De eerste track is de startwaarde.
@@ -126,7 +154,31 @@ export interface CheckerConfig {
    * die in de web-IDE draaien, bv. HTML/CSS/JS).
    */
   ide?: { url: string };
+  /**
+   * Optioneel: zoek wat het project gebruikt dat níet in het lesmateriaal
+   * staat (een `<canvas>`, `@keyframes`, `fetch()`). Het rapport zet de
+   * vondsten in een eigen blok voor de docent, als aanknopingspunt voor het
+   * mondeling: wie het zelf heeft uitgezocht kan het uitleggen. Telt nergens
+   * mee in de niveausamenvatting.
+   */
+  buitenLesstof?: (files: ProjectFiles) => Vondst[];
 }
+
+/** Iets in het project dat het lesmateriaal niet behandelt. */
+export interface Vondst {
+  /** Kop waaronder de vondst staat, bv. 'HTML-elementen' of 'JavaScript'. */
+  groep: string;
+  /** Wat er gevonden is, zoals de leerling het schreef: '<canvas>', '@keyframes'. */
+  label: string;
+  count: number;
+  /** De bestanden waarin het staat, zodat de docent ernaar kan vragen. */
+  files: string[];
+  /** De regels waar het staat, hooguit MAX_PLEKKEN. */
+  plekken?: Plek[];
+}
+
+/** Een concept zonder niveau: wordt herkend en getoond, telt niet mee. */
+export type ExtraConcept = Omit<Concept, 'level' | 'bloom'>;
 
 export interface CheckReport {
   fileStats: {
@@ -135,5 +187,9 @@ export interface CheckReport {
     skippedTooLarge: number;
   };
   concepts: ConceptMatch[];
+  /** De extra concepten (zie CheckerConfig.extra); leeg zonder. */
+  extra?: ConceptMatch[];
+  /** Leeg als de config geen `buitenLesstof` heeft. */
+  buitenLesstof: Vondst[];
   warnings: string[];
 }

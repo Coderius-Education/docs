@@ -132,6 +132,7 @@ describe('globale bestanden', () => {
     'package.json',
     'pnpm-workspace.yaml',
     'tsconfig.base.json',
+    '.browserslistrc',
     '.github/workflows/build.yml',
     'scripts/wijzigingen.mjs',
     'scripts/sites-json.mjs',

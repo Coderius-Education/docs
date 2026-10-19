@@ -8,6 +8,7 @@
     "./Checker": "./src/Checker/index.tsx",
     "./types": "./src/types.ts",
     "./matchConcepts": "./src/matchConcepts.ts",
+    "./plekken": "./src/plekken.ts",
     "./levelSummary": "./src/levelSummary.ts",
     "./conceptLevel": "./src/conceptLevel.ts",
     "./validateConfig": "./src/validateConfig.ts",
@@ -17,6 +18,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@coderius/shared": "workspace:*",
     "clsx": "catalog:",
     "fflate": "^0.8.3",
     "html2canvas-pro": "^2.2.4",

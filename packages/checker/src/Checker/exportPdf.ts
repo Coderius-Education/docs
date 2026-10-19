@@ -17,7 +17,8 @@ interface SaveFileHandle {
 }
 type ShowSaveFilePicker = (options?: SaveFilePickerOptions) => Promise<SaveFileHandle>;
 
-async function savePdfBlob(blob: Blob, filename: string): Promise<void> {
+/** Geeft false terug als de docent het opslaan-venster wegklikte. */
+async function savePdfBlob(blob: Blob, filename: string): Promise<boolean> {
   const picker = (window as unknown as { showSaveFilePicker?: ShowSaveFilePicker })
     .showSaveFilePicker;
   if (picker) {
@@ -28,13 +29,13 @@ async function savePdfBlob(blob: Blob, filename: string): Promise<void> {
         types: [{ description: 'PDF-bestand', accept: { 'application/pdf': ['.pdf'] } }],
       });
     } catch (err) {
-      if (err instanceof DOMException && err.name === 'AbortError') return;
+      if (err instanceof DOMException && err.name === 'AbortError') return false;
       throw err;
     }
     const writable = await handle.createWritable();
     await writable.write(blob);
     await writable.close();
-    return;
+    return true;
   }
 
   // Fallback (Firefox/Safari): gewone download naar de Downloads-map.
@@ -46,13 +47,14 @@ async function savePdfBlob(blob: Blob, filename: string): Promise<void> {
   a.click();
   a.remove();
   URL.revokeObjectURL(url);
+  return true;
 }
 
 export async function exportReportToPdf(
   element: HTMLElement,
   exportingClass: string,
   filename: string,
-): Promise<void> {
+): Promise<boolean> {
   const { default: html2canvas } = await import('html2canvas-pro');
   const canvas = await html2canvas(element, {
     scale: 2,
@@ -80,5 +82,5 @@ export async function exportReportToPdf(
     heightLeft -= pageH;
   }
 
-  await savePdfBlob(pdf.output('blob'), filename);
+  return savePdfBlob(pdf.output('blob'), filename);
 }

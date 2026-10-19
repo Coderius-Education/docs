@@ -1,0 +1,187 @@
+.section {
+  margin: 2rem 0 1rem;
+}
+
+.section h2 {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+}
+
+.aantal {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.leeg {
+  color: var(--ifm-color-emphasis-700);
+}
+
+.lijst {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.vraag {
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-left: 4px solid var(--ifm-color-primary);
+  border-radius: 8px;
+  background: var(--ifm-background-surface-color);
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.kop {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.3rem 0.75rem;
+}
+
+.nummer {
+  font-weight: 700;
+}
+
+.plek {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ifm-color-primary-darker);
+  font: inherit;
+  font-size: 0.9rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.knoppen {
+  display: flex;
+  gap: 0.3rem;
+  margin-left: auto;
+}
+
+.knoppen button {
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 6px;
+  background: var(--ifm-background-color);
+  color: inherit;
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 0.1rem 0.55rem;
+  cursor: pointer;
+}
+
+.knoppen button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.knoppen .weg {
+  color: var(--ifm-color-danger-dark, #c11);
+}
+
+.fragment {
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.fragmentRegel {
+  display: block;
+  padding-left: 3rem;
+  text-indent: -3rem;
+}
+
+.fragmentNr {
+  display: inline-block;
+  width: 2.4rem;
+  margin-right: 0.6rem;
+  text-indent: 0;
+  text-align: right;
+  color: var(--ifm-color-emphasis-600);
+  user-select: none;
+}
+
+.meer {
+  display: block;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.ontbreekt {
+  margin: 0;
+  color: var(--ifm-color-danger-dark, #c11);
+}
+
+.invoer {
+  width: 100%;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 6px;
+  background: var(--ifm-background-color);
+  color: inherit;
+  font: inherit;
+}
+
+.vraagTekst {
+  margin: 0;
+  font-weight: 600;
+}
+
+.notitie {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.oordeel {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.oordeelKnop {
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 999px;
+  background: var(--ifm-background-color);
+  color: inherit;
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 0.2rem 0.8rem;
+  cursor: pointer;
+}
+
+/* Twee klassen: de minifier voegt gelijke regels samen en verschuift ze,
+   dus de volgorde in dit bestand is geen garantie. */
+.oordeelKnop.goed {
+  border-color: var(--ifm-color-success-dark, #1a7f37);
+  background: var(--ifm-color-success-contrast-background, #e6f6e6);
+  color: var(--ifm-color-success-dark, #1a7f37);
+  font-weight: 600;
+}
+
+.oordeelKnop.deels {
+  border-color: var(--ifm-color-warning-dark, #a67100);
+  background: var(--ifm-color-warning-contrast-background, #fff8e6);
+  color: var(--ifm-color-warning-contrast-foreground, #4d3800);
+  font-weight: 600;
+}
+
+.oordeelKnop.niet {
+  border-color: var(--ifm-color-danger-dark, #c11);
+  background: var(--ifm-color-danger-contrast-background, #ffebe6);
+  color: var(--ifm-color-danger-dark, #c11);
+  font-weight: 600;
+}
