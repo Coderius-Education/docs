@@ -216,25 +216,38 @@ describe('de stand van de servo ligt vast als de arm op de as komt', () => {
         new RegExp(`<Probleem titel="${titel.replace(/[.,]/g, '\\$&')}">([\\s\\S]*?)</Probleem>`),
       )?.[1];
       expect(kaart, titel).toBeDefined();
-      expect(kaart, titel).toMatch(/arm A/);
-      expect(kaart, titel).toMatch(/arm B/);
+      expect(kaart, titel).toMatch(/nagemaakte arm/);
+      expect(kaart, titel).toMatch(/zelfgemaakte arm/);
     }
   });
 });
 
 describe('de arm', () => {
-  it('je kiest tussen de bouwstappen en een eigen arm', () => {
+  it('je kiest tussen de arm namaken en de arm zelf maken', () => {
     const inhoud = tekst('arm.md');
-    expect(inhoud).toMatch(/^## Arm A: de bouwstappen$/m);
-    expect(inhoud).toMatch(/^## Arm B: je eigen arm$/m);
+    expect(inhoud).toMatch(/^## Keuze 1: de arm namaken \\\{#namaken\}$/m);
+    expect(inhoud).toMatch(/^## Keuze 2: de arm zelf maken \\\{#zelf-maken\}$/m);
     // Allebei beginnen na het tandwiel, met de servo op 90°.
     expect(inhoud.indexOf('## Kies je arm')).toBeGreaterThan(inhoud.indexOf('stap-11.jpg'));
+  });
+
+  it('de keuze staat bovenaan als twee kaarten, en elke kaart wijst naar haar deel', () => {
+    // Een opsomming met "Arm A" en "Arm B" halverwege de pagina viel weg: een
+    // leerling zag niet dat zelf een arm maken ook mag. De kaarten staan nu
+    // vóór de eerste kop.
+    const inhoud = tekst('arm.md');
+    const kaarten = inhoud.indexOf('<Keuzekaarten');
+    expect(kaarten).toBeGreaterThan(-1);
+    expect(kaarten).toBeLessThan(inhoud.indexOf('\n## '));
+    const blok = inhoud.slice(kaarten, inhoud.indexOf('/>', kaarten));
+    expect(blok).toMatch(/titel: 'De arm namaken'[^}]*naar: '#namaken'/);
+    expect(blok).toMatch(/titel: 'De arm zelf maken'[^}]*naar: '#zelf-maken'/);
   });
 
   it('een eigen arm zit met een asgat op de as, en wordt getest voordat hij op de baan komt', () => {
     // In een rond gat draait de as door: dan beweegt de arm niet.
     const inhoud = tekst('arm.md');
-    const eigen = inhoud.slice(inhoud.indexOf('## Arm B'), inhoud.indexOf('## Hole in one'));
+    const eigen = inhoud.slice(inhoud.indexOf('## Keuze 2'), inhoud.indexOf('## Hole in one'));
     expect(eigen).toMatch(/\*\*asgat\*\*/);
     expect(eigen).toMatch(/rond gat draait de as door/);
     expect(eigen).toMatch(/90°/);

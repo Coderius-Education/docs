@@ -4,19 +4,27 @@ sidebar_position: 9
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import Link from '@docusaurus/Link';
 import Blokken from '@site/src/components/Blokken';
+import Keuzekaarten from '@site/src/components/Keuzekaarten';
 import servoOp90 from './blokken/servo-op-90.json';
 import heenEnWeer from './blokken/servo-heen-en-weer.json';
 
 # De arm
 
-Je toren staat op de baan, en de sensor ziet de bal. Nu krijgt je Golfbot een arm. Hoe die eruitziet, kies je zelf: je volgt de bouwstappen van Leaphy, of je bedenkt zelf een arm van Lego. Eerst zet iedereen de servo in de goede stand en het tandwiel op de as.
+Je toren staat op de baan, en de sensor ziet de bal. Nu krijgt je Golfbot een arm. Je kiest zelf hoe je die maakt:
+
+<Keuzekaarten keuzes={[
+  { titel: 'De arm namaken', tekst: 'Je volgt de bouwstappen van Leaphy, plaatje voor plaatje. Dan weet je zeker dat alles past.', naar: '#namaken', knop: 'Naar de bouwstappen' },
+  { titel: 'De arm zelf maken', tekst: 'Je bedenkt zelf een arm van Lego. Jij bepaalt hoe hij eruitziet, zolang hij aan een paar eisen voldoet.', naar: '#zelf-maken', knop: 'Naar de eisen' },
+]} />
+
+Het begin is voor iedereen hetzelfde: eerst zet je de servo in de goede stand en het tandwiel op de as. Daarna ga je verder bij jouw keuze.
 
 ## Onderdelenlijst
 
-Volg je de bouwstappen, dan heb je **26 Lego Technic-stukjes** nodig, het tandwiel meegeteld. Bedenk je zelf een arm, dan pak je het tandwiel en verder de stukjes die jij wilt.
+Maak je de arm na, dan heb je **26 Lego Technic-stukjes** nodig, het tandwiel meegeteld. Maak je hem zelf, dan pak je het tandwiel en verder de stukjes die jij wilt.
 
 <details>
-<summary>Welke stukjes heb je nodig voor de bouwstappen?</summary>
+<summary>Welke stukjes heb je nodig om de arm na te maken?</summary>
 
 | Aantal | Onderdeel | Kleur | BrickLink-nr |
 |:---:|---|---|---|
@@ -72,14 +80,11 @@ Gaat er iets mis? Haal dan eerst het tandwiel eraf en kijk of het asje van de se
 
 ## Kies je arm
 
-Nu maak je de arm. Kies er één:
-
-- **Arm A:** je volgt de bouwstappen van Leaphy. Dan weet je zeker dat alles past.
-- **Arm B:** je bedenkt zelf een arm van Lego. Dan bepaal jij hoe hij eruitziet.
+Nu maak je de arm. Ga verder bij jouw keuze: [de arm namaken](#namaken) of [de arm zelf maken](#zelf-maken).
 
 Bij allebei geldt: de servo staat op 90°, en zo moet het blijven tot de arm op de as zit. Draai de as en het tandwiel tijdens het bouwen niet met de hand.
 
-## Arm A: de bouwstappen
+## Keuze 1: de arm namaken \{#namaken}
 
 In stap 12 komt de zwarte verbinder op de as, aan de voorkant. Daar komt de arm aan.
 
@@ -160,7 +165,7 @@ In stap 12 komt de zwarte verbinder op de as, aan de voorkant. Daar komt de arm 
 
 *Bouwstappen: ClickGolfer-werkboek, ©Stichting Leaphy.*
 
-## Arm B: je eigen arm
+## Keuze 2: de arm zelf maken \{#zelf-maken}
 
 Elk ontwerp is goed, als je arm aan deze eisen voldoet:
 
@@ -173,7 +178,7 @@ Elk ontwerp is goed, als je arm aan deze eisen voldoet:
 <details>
 <summary>Tip</summary>
 
-Begin met een balk met een asgat, recht naar beneden aan de as. Maak hem zo lang dat hij net boven het hout ophoudt, en zet er onderaan een dwarsbalk aan. Kijk bij arm A hoe Leaphy het deed.
+Begin met een balk met een asgat, recht naar beneden aan de as. Maak hem zo lang dat hij net boven het hout ophoudt, en zet er onderaan een dwarsbalk aan. Kijk bij [de arm namaken](#namaken) hoe Leaphy het deed.
 
 </details>
 
@@ -239,7 +244,7 @@ Er is geen getal dat bij iedereen past: elke baan en elke Golfbot is net anders.
 
 <Probleem titel="De servo draait, maar de arm beweegt niet mee.">
 
-**Oorzaak:** de servo draait de lange as van stap 10, en de arm zit op die as: bij arm A met de zwarte verbinder van stap 12, bij arm B met jouw stukje met een asgat. Zit de as niet door de servo, of zit de arm niet vast op de as, dan draait de arm niet mee.
+**Oorzaak:** de servo draait de lange as van stap 10, en de arm zit op die as: bij een nagemaakte arm met de zwarte verbinder van stap 12, bij een zelfgemaakte arm met jouw stukje met een asgat. Zit de as niet door de servo, of zit de arm niet vast op de as, dan draait de arm niet mee.
 
 **Zelf vinden:** kijk naar de as terwijl de servo draait. Draait de as niet mee, dan zit hij niet goed in de servo. Draait de as wel en de arm niet, dan zit de verbinder los.
 
@@ -251,7 +256,7 @@ Er is geen getal dat bij iedereen past: elke baan en elke Golfbot is net anders.
 
 **Oorzaak:** de arm ging op de as terwijl de servo niet op 90° stond.
 
-**Oplossing:** haal de arm van de as, zet de servo op 90° zoals bij [Eerst de servo op 90°](site:robotica/golfbot/arm#servo-op-90), en zet de arm er weer op: bij arm A zoals op het plaatje van stap 12, bij arm B zo dat hij naar beneden hangt, bij de bal.
+**Oplossing:** haal de arm van de as, zet de servo op 90° zoals bij [Eerst de servo op 90°](site:robotica/golfbot/arm#servo-op-90), en zet de arm er weer op: bij een nagemaakte arm zoals op het plaatje van stap 12, bij een zelfgemaakte arm zo dat hij naar beneden hangt, bij de bal.
 
 </Probleem>
 
