@@ -234,6 +234,27 @@ describe('webConfig — herkenning per rij', () => {
     expect(rij(project({ 'a.css': selectors }), 'css-id').used).toBe(true);
   });
 
+  it('telt tekst in een CSS-commentaar niet als selector', () => {
+    // Een bestandsnaam bovenaan het CSS-bestand gaf eerst "class", een kleur
+    // in een commentaar "id" en een opsomming van tags een tagselector.
+    for (const commentaar of ['/* style.css */', '/* kleur #ccc */', '/* kop, nav :hover */']) {
+      const files = project({ 'style.css': `${commentaar}\nbody { color: red }` });
+      expect(rij(files, 'css-class').used, commentaar).toBe(false);
+      expect(rij(files, 'css-id').used, commentaar).toBe(false);
+      expect(rij(files, 'css-pseudoclass').used, commentaar).toBe(false);
+      expect(rij(files, 'css-tag-selector').delen, commentaar).toEqual(['body']);
+    }
+  });
+
+  it('telt CSS in een <style>-blok in de HTML niet — bekende beperking', () => {
+    // BEVROREN GEDRAG. De CSS-patronen lopen alleen over .css-bestanden. Over
+    // de hele HTML laten lopen kan niet: in `if (veld.value > 3) {` zou
+    // `.value` een class zijn. Daarvoor moet de engine eerst de <style>-blokken
+    // los kunnen lezen. Geen les zet CSS in de HTML.
+    const files = project({ 'index.html': '<style>\n.kaart { color: red }\n</style>' });
+    expect(rij(files, 'css-class').used).toBe(false);
+  });
+
   it('telt elke pseudoclass, maar geen pseudo-element of declaratie', () => {
     const css = 'a:focus { color: red }\np::before { content: "x" }\nli:nth-child(2) { margin: 0 }';
     expect(rij(project({ 'a.css': css }), 'css-pseudoclass').delen).toEqual([
@@ -256,6 +277,12 @@ describe('webConfig — herkenning per rij', () => {
     expect(rij(inline, 'js-script-js').used).toBe(false);
     const extern = project({ 'index.html': '<script src="script.js"></script>' });
     expect(rij(extern, 'js-script-js').used).toBe(true);
+    // Een bibliotheek van een andere site is geen eigen script.js.
+    for (const src of ['https://cdn.example.com/lib.js', '//cdn.example.com/lib.js']) {
+      const cdn = project({ 'index.html': `<script src="${src}"></script>` });
+      expect(rij(cdn, 'js-script-js').used, src).toBe(false);
+      expect(rij(cdn, 'js-script-tag').used, src).toBe(true);
+    }
   });
 
   it('vindt JavaScript ook in een script-blok in de HTML', () => {
@@ -271,6 +298,12 @@ describe('webConfig — herkenning per rij', () => {
     });
     expect(rij(files, 'js-events').delen).toEqual(['click', 'mouseover']);
     expect(rij(files, 'js-add-event-listener').used).toBe(true);
+  });
+
+  it('telt onClick met een hoofdletter ook als event', () => {
+    // Het oude patroon was hoofdletterongevoelig; het eerste nieuwe niet.
+    const files = project({ 'index.html': '<button onClick="klik()">Klik</button>' });
+    expect(rij(files, 'js-events').delen).toEqual(['click']);
   });
 });
 

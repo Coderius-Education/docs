@@ -139,10 +139,14 @@ const HERKENNING: Record<string, Herkenning> = {
   // Een selector die met een tagnaam begint, vóór de `{`: `p {`, `h1, h2 {`,
   // `nav a {`, ook direct na een commentaar. De keyframe-stappen `from` en
   // `to` zijn geen tags.
+  //
+  // De selectorpatronen kijken vooruit naar de `{`, maar niet voorbij een
+  // `*/`: anders telt `/* style.css */` boven `body {` als class, en
+  // `/* kleur #ccc */` als id.
   'css-tag-selector': {
     detect: {
       type: 'regex',
-      pattern: /(?:^|[{};,/])\s*(?!(?:from|to)\b)([a-z][a-z0-9]*)\b(?=[^{};]*\{)/g,
+      pattern: /(?:^|[{};,/])\s*(?!(?:from|to)\b)([a-z][a-z0-9]*)\b(?=(?:(?!\*\/)[^{};])*\{)/g,
       in: ['css'],
       delen: true,
     },
@@ -154,17 +158,17 @@ const HERKENNING: Record<string, Herkenning> = {
   // een leerling een basisconcept. Een kleur als `#fff` of een getal als
   // `1.5em` staat in een declaratie, niet vóór een `{`.
   'css-class': {
-    detect: selector(/\.[a-zA-Z_-][\w-]*(?=[^{};]*\{)/g),
+    detect: selector(/\.[a-zA-Z_-][\w-]*(?=(?:(?!\*\/)[^{};])*\{)/g),
     dekt: ['css-class-selector'],
   },
   // Elke pseudoclass telt, ook een die de lessen niet behandelen (`:focus`),
   // maar een pseudo-element (`::before`) niet.
   'css-pseudoclass': {
-    detect: { ...selector(/(?<!:)(:[a-z][a-z-]*)(?=[^{};]*\{)/g), delen: true },
+    detect: { ...selector(/(?<!:)(:[a-z][a-z-]*)(?=(?:(?!\*\/)[^{};])*\{)/g), delen: true },
     dekt: ['css-hover', 'css-first-child', 'css-last-child', 'css-nth-child'],
   },
   'css-id': {
-    detect: selector(/#[a-zA-Z_-][\w-]*(?=[^{};]*\{)/g),
+    detect: selector(/#[a-zA-Z_-][\w-]*(?=(?:(?!\*\/)[^{};])*\{)/g),
     dekt: ['css-id-selector'],
   },
   'css-flexbox-grid': uitLessen(
@@ -203,20 +207,26 @@ const HERKENNING: Record<string, Herkenning> = {
   'js-get-element-by-id': uitLessen('js-get-element-by-id'),
   'js-style': uitLessen('js-style'),
   'js-script-tag': { detect: { type: 'regex', pattern: /<script\b/gi, in: ['html'] }, dekt: [] },
-  // Een eigen JavaScript-bestand, gekoppeld met `<script src="…">`.
+  // Een eigen JavaScript-bestand, gekoppeld met `<script src="…">`. Een
+  // bibliotheek van een andere site (`src="https://…"`) is geen eigen bestand.
   'js-script-js': {
-    detect: { type: 'regex', pattern: /<script\b[^>]*\bsrc\s*=/gi, in: ['html'] },
+    detect: {
+      type: 'regex',
+      pattern: /<script\b[^>]*\bsrc\s*=\s*(?!["']?(?:https?:|\/\/))/gi,
+      in: ['html'],
+    },
     dekt: [],
   },
   'js-prompt-alert': uitLessen('js-prompt', 'js-alert'),
   'js-functies': uitLessen('js-function'),
   'js-add-event-listener': uitLessen('js-add-event-listener'),
   // Een event koppelen, als attribuut (`onclick="…"`) of met
-  // addEventListener; het rapport noemt welke events.
+  // addEventListener; het rapport noemt welke events. HTML is
+  // hoofdletterongevoelig, dus `onClick="…"` telt ook.
   'js-events': {
     detect: {
       type: 'regex',
-      pattern: /\bon([a-z]{3,})\s*=\s*["']|\baddEventListener\s*\(\s*['"]([a-z]+)/g,
+      pattern: /\bon([a-z]{3,})\s*=\s*["']|\baddEventListener\s*\(\s*['"]([a-z]+)/gi,
       in: ['html', 'js'],
       delen: true,
     },
