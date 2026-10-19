@@ -75,7 +75,7 @@ function alleLesbestanden(map) {
  * `routeBasePath` in het `docs:`-blok van de preset in docusaurus.config;
  * zonder die regel geldt de Docusaurus-standaard 'docs'. De editor-cursus
  * serveert op de root ('/'), didactiek onder 'bronnen'. Losse docs-plugins
- * (robotica's lego_auto en click_golfer) staan onder `plugins` en tellen niet
+ * (robotica's lego_auto en golfbot) staan onder `plugins` en tellen niet
  * mee: lesBestaat kijkt alleen in de map `docs/`.
  *
  * Een pad naar een bestaand bestand kan zo toch een 404 zijn, en dat is

@@ -8,7 +8,7 @@ import { describe, expect, it } from 'vitest';
 import { registreer } from '../components/Blokken/leaphy';
 import { MINSTE_SCHAAL, schaalVoor } from '../components/Blokken/schaal';
 
-// De blokvoorbeelden van de Click Golfer staan als JSON naast de lessen, in
+// De blokvoorbeelden van de Golfbot staan als JSON naast de lessen, in
 // de vorm waarin Blockly een programma bewaart. De browser tekent ze pas bij
 // het openen van de pagina, dus een tikfout in een bloknaam of een pin die
 // niet op het bord zit, ziet de build niet. Deze test laadt elk voorbeeld in
@@ -16,7 +16,7 @@ import { MINSTE_SCHAAL, schaalVoor } from '../components/Blokken/schaal';
 // wat er in het bestand stond: een onbekende waarde in een keuzelijst gooit
 // Blockly niet weg met een fout, maar vervangt hij stil door de eerste optie.
 
-const CLICK = fileURLToPath(new URL('../../click_golfer', import.meta.url));
+const CLICK = fileURLToPath(new URL('../../golfbot', import.meta.url));
 const MAP = join(CLICK, 'blokken');
 
 registreer(B, nl as unknown as Record<string, string>);

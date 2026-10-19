@@ -15,7 +15,7 @@
                   "block": {
                     "type": "text",
                     "fields": {
-                      "TEXT": "Hallo, ik ben de Click Golfer"
+                      "TEXT": "Hallo, ik ben de Golfbot"
                     }
                   }
                 }

@@ -1,5 +1,5 @@
 {
-  "_uitleg": "Wat er per bouwplaatje (static/click_golfer/bouwen/stap-NN.jpg) linksboven in het kader staat, geteld op het plaatje. De plaatjes volgt de leerling, dus deze telling is leidend voor de onderdelenlijst in bouwen.md en voor onderdelenlijst.csv. Het onderdeelnummer komt uit golfer.io (model.ldr, dezelfde stap); de kleur uit het plaatje. click-golfer-bouwen.test.ts houdt de drie gelijk.",
+  "_uitleg": "Wat er per bouwplaatje (static/golfbot/bouwen/stap-NN.jpg) linksboven in het kader staat, geteld op het plaatje. De plaatjes volgt de leerling, dus deze telling is leidend voor de onderdelenlijst in bouwen.md en voor onderdelenlijst.csv. Het onderdeelnummer komt uit golfer.io (model.ldr, dezelfde stap); de kleur uit het plaatje. golfbot-bouwen.test.ts houdt de drie gelijk.",
   "stappen": [
     {
       "stap": 1,

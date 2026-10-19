@@ -20,7 +20,7 @@ import {
 // voorkomen.
 
 const LES = readFileSync(
-  fileURLToPath(new URL('../../click_golfer/ir-sensor.md', import.meta.url)),
+  fileURLToPath(new URL('../../golfbot/ir-sensor.md', import.meta.url)),
   'utf8',
 );
 

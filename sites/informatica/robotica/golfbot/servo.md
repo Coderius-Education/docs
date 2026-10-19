@@ -8,7 +8,7 @@ import drieHoeken from './blokken/servo-drie-hoeken.json';
 
 # De servo
 
-De arm van je Click Golfer beweegt straks met een **servo**: een motortje dat naar een stand draait die jij kiest, en daar blijft staan. Die arm bouw je pas later van Lego. Nu test je de servo los, op tafel.
+De arm van je Golfbot beweegt straks met een **servo**: een motortje dat naar een stand draait die jij kiest, en daar blijft staan. Die arm bouw je pas later van Lego. Nu test je de servo los, op tafel.
 
 :::tip
 Steek een losse Lego-as in het gat van de servo. Dan zie je goed hoe ver het asje draait.
@@ -16,7 +16,7 @@ Steek een losse Lego-as in het gat van de servo. Dan zie je goed hoe ver het asj
 
 ## Aansluiten
 
-Zet je robot uit met de knop **ON/OFF**. Sluit de servo aan op de rij van **D9** op het [shield](site:robotica/click_golfer/microcontroller):
+Zet je robot uit met de knop **ON/OFF**. Sluit de servo aan op de rij van **D9** op het [shield](site:robotica/golfbot/microcontroller):
 
 | Draad van de servo | Komt op |
 |---|---|
@@ -24,7 +24,7 @@ Zet je robot uit met de knop **ON/OFF**. Sluit de servo aan op de rij van **D9**
 | rood | 5V |
 | oranje | het signaal van **D9** |
 
-![Uitsnede van het schema: de servo rechtsonder, met de bruine draad naar GND, de rode naar 5V en de oranje naar het signaal van D9 op het shield.](@site/static/fritzing/click_golfer_servo.png)
+![Uitsnede van het schema: de servo rechtsonder, met de bruine draad naar GND, de rode naar 5V en de oranje naar het signaal van D9 op het shield.](@site/static/fritzing/golfbot_servo.png)
 
 Het signaal van **D9** is het pinnetje het dichtst bij de naam D9. Zit alles vast? Zet je robot dan weer aan met **ON/OFF**.
 
@@ -142,4 +142,4 @@ Een kwart cirkel. Van 0° tot 180° is een halve cirkel. Van 0° tot 90° is de 
   </Uitleg>
 </Voorspel>
 
-Draait het asje? Dan laat je de servo nu [slaan als hij een bal ziet](site:robotica/click_golfer/bal-slaan).
+Draait het asje? Dan laat je de servo nu [slaan als hij een bal ziet](site:robotica/golfbot/bal-slaan).

@@ -1,7 +1,7 @@
 import { blocks, registerExtensions, translations } from '@leaphy-robotics/leaphy-blocks';
 import type * as BlocklyType from 'blockly/core';
 
-// De pinnen van de Arduino Nano op het Click Golfer-shield. Easybloqs zelf
+// De pinnen van de Arduino Nano op het Golfbot-shield. Easybloqs zelf
 // bouwt die lijst per bord op; dat veld zit in de app en niet in het pakket
 // met blokken, dus hier staat hij vast. Een voorbeeld met een pin die niet
 // op het bord zit, laat de test falen.

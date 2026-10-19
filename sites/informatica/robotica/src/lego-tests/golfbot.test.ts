@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
-// Click Golfer is voor groep 7/8 en draait om hardware die de leerling voor
+// Golfbot is voor groep 7/8 en draait om hardware die de leerling voor
 // zich heeft. Wat de tekst over die hardware zegt, kan hij niet nakijken —
 // dus moet het kloppen.
 //
@@ -15,12 +15,12 @@ import { describe, expect, it } from 'vitest';
 // hardware-instructies de exacte pin-aansluitingen noemen — drie pagina's
 // later dook A0 op zonder dat ergens stond waarom.
 
-const CLICK = fileURLToPath(new URL('../../click_golfer', import.meta.url));
+const CLICK = fileURLToPath(new URL('../../golfbot', import.meta.url));
 const STATIC = fileURLToPath(new URL('../../static', import.meta.url));
 
-// Links tussen lespagina's staan als `site:robotica/click_golfer/<pagina>`;
+// Links tussen lespagina's staan als `site:robotica/golfbot/<pagina>`;
 // het build-plugin maakt er een echte link van.
-const LINK = 'site:robotica/click_golfer/';
+const LINK = 'site:robotica/golfbot/';
 
 function paginas(): string[] {
   return readdirSync(CLICK)
@@ -92,7 +92,7 @@ describe('de hardware-uitleg klopt', () => {
 
   it('in Easybloqs kies je de Arduino Nano', () => {
     // Het werkboek toonde een tegel "Leaphy Click", maar het bord van de
-    // Click Golfer is een Arduino Nano. Wie de verkeerde robot kiest, krijgt
+    // Golfbot is een Arduino Nano. Wie de verkeerde robot kiest, krijgt
     // andere pinnen in de blokken dan de lessen noemen.
     expect(tekst('easybloqs.md')).toMatch(/Kies de robot \*\*Arduino Nano\*\*/);
     const verkeerd = paginas().filter((f) => /Leaphy Click/.test(tekst(f)));
@@ -159,9 +159,9 @@ describe('de hardware-uitleg klopt', () => {
   it('wie iets aansluit, ziet het schema van dat onderdeel', () => {
     // Een tabel met draadkleuren is voor groep 7/8 niet genoeg: bij het
     // aansluiten hoort de uitsnede van het Fritzing-schema.
-    expect(tekst('ir-sensor.md')).toContain('fritzing/click_golfer_sensor.png');
-    expect(tekst('servo.md')).toContain('fritzing/click_golfer_servo.png');
-    expect(tekst('easybloqs.md')).toContain('fritzing/click_golfer_rst.png');
+    expect(tekst('ir-sensor.md')).toContain('fritzing/golfbot_sensor.png');
+    expect(tekst('servo.md')).toContain('fritzing/golfbot_servo.png');
+    expect(tekst('easybloqs.md')).toContain('fritzing/golfbot_rst.png');
   });
 
   it('wat alleen in een bouwplaatje staat, staat ook in de tekst', () => {
@@ -204,28 +204,48 @@ describe('de hardware-uitleg klopt', () => {
     expect(fout).toEqual([]);
   });
 
-  it('wie de servo losmaakt, sluit hem vóór stap 11 weer aan', () => {
-    // Vóór stap 11 zet de leerling de servo met een programma op 90°. De
+  it('wie de servo losmaakt, sluit hem weer aan voordat hij op 90° gaat', () => {
+    // Vóór het tandwiel zet de leerling de servo met een programma op 90°. De
     // bouwpagina zei eerst "sluit ze na het bouwen weer aan": wie dat deed,
-    // zette het tandwiel op een willekeurige stand.
-    const inhoud = tekst('bouwen.md');
-    const voorStap11 = inhoud.slice(0, inhoud.indexOf('stap-11.jpg'));
-    expect(voorStap11).toMatch(/vóór stap 11\*\* weer aan/);
-    expect(voorStap11).not.toMatch(/na het bouwen weer aan/);
-    expect(voorStap11).toMatch(/Kijk daarom eerst of de servo op het signaal van \*\*D9\*\* zit/);
+    // zette het tandwiel op een willekeurige stand. De toren eindigt nu bij
+    // stap 10, en de armpagina kijkt eerst of de servo op D9 zit.
+    const bouwen = tekst('bouwen.md');
+    expect(bouwen).toMatch(/sluit ze dan na stap 10 weer aan/);
+    expect(bouwen).not.toMatch(/na het bouwen weer aan/);
+    const arm = tekst('arm.md');
+    expect(arm.slice(0, arm.indexOf('stap-11.jpg'))).toMatch(
+      /Kijk daarom eerst of de servo op het signaal van \*\*D9\*\* zit/,
+    );
   });
 
-  it('na stap 11 test je de servo met alleen het tandwiel, en pas dan bouw je de arm', () => {
+  it('na stap 11 test je de servo met alleen het tandwiel, en pas dan maak je de arm', () => {
     // De bouwpagina ging van het tandwiel in stap 11 meteen door naar de arm.
-    // Werkte de Golfer daarna niet, dan wist de leerling niet of het aan de
+    // Werkte de Golfbot daarna niet, dan wist de leerling niet of het aan de
     // servo, het tandwiel of de arm lag. Met alleen een tandwiel zie je het
-    // meteen; daarna zet je de servo terug op 90° en bouw je verder.
-    const inhoud = tekst('bouwen.md');
+    // meteen; daarna zet je de servo terug op 90° en kies je je arm.
+    const inhoud = tekst('arm.md');
     const tussen = inhoud.slice(inhoud.indexOf('stap-11.jpg'), inhoud.indexOf('stap-12.jpg'));
     expect(tussen).toMatch(/^## Eerst testen: alleen het tandwiel$/m);
     expect(tussen).toMatch(/<Blokken programma=\{heenEnWeer\}/);
     expect(tussen).toMatch(/\*\*Servo 9 op 90\*\*/);
-    expect(tussen).toMatch(/^## De arm$/m);
+    expect(tussen).toMatch(/^## Kies je arm$/m);
+  });
+
+  it('de bouwpagina houdt op bij stap 10, de rest staat bij de arm', () => {
+    const stappen = (bestand: string) =>
+      [...tekst(bestand).matchAll(/bouwen\/stap-(\d+)\.jpg/g)].map((m) => Number(m[1]));
+    expect(stappen('bouwen.md')).toEqual(Array.from({ length: 10 }, (_, i) => i + 1));
+    expect(stappen('arm.md')).toEqual(Array.from({ length: 16 }, (_, i) => i + 11));
+  });
+
+  it('de onderdelenlijst staat in een uitklapblok', () => {
+    for (const bestand of ['bouwen.md', 'arm.md']) {
+      const inhoud = tekst(bestand);
+      const lijst = inhoud.slice(inhoud.indexOf('## Onderdelenlijst'));
+      const tabel = lijst.indexOf('| Aantal |');
+      expect(tabel, bestand).toBeGreaterThan(-1);
+      expect(lijst.slice(0, tabel), bestand).toMatch(/<details>\s*<summary>[^<]+<\/summary>\s*$/);
+    }
   });
 
   it('de sensor- en de servoles noemen hun pin', () => {
@@ -245,12 +265,10 @@ describe('de volgorde van de route', () => {
     'ir-sensor',
     'servo',
     'bal-slaan',
-    'oefenen',
     'bouwen',
     'hout',
-    'mikken',
-    'subprogrammas',
-    'extras',
+    'arm',
+    'uitbreiding',
   ];
 
   it("de pagina's staan in deze volgorde in de zijbalk", () => {
@@ -285,15 +303,11 @@ describe('de volgorde van de route', () => {
       leaphy_serial_print_line: ['Actuatoren', 'Toon op scherm'],
       leaphy_servo_write: ['Actuatoren', 'Servo'],
       controls_repeat_forever: ['Denk stappen', 'herhaal voor altijd'],
-      controls_repeat_ext: ['Denk stappen', 'herhaal'],
       controls_if: ['Denk stappen', 'als … dan'],
       time_delay: ['Denk stappen', 'duurt'],
       logic_compare: ['Getal blokken', '`<`'],
-      math_random_int: ['Getal blokken', 'willekeurig getal'],
-      variables_set: ['Variabelen', 'stel hoek in op'],
-      procedures_defnoreturn: ['Eigen blokken', 'Subprogramma'],
-      procedures_callnoreturn: ['Eigen blokken', 'mikken'],
-      leaphy_io_analogwrite: ['Actuatoren', 'Zet PWM'],
+      leaphy_led_set_strip: ['Actuatoren', 'Ledstrip - Stel in'],
+      leaphy_led_set_basic: ['Actuatoren', 'Ledstrip - Zet aan'],
     };
     const gezien = new Set<string>();
     const zonder: string[] = [];
@@ -314,15 +328,17 @@ describe('de volgorde van de route', () => {
     expect(gezien.size).toBe(Object.keys(GROEP).length);
   });
 
-  it('voor het bouwen is er nog geen arm, alleen het asje van de servo', () => {
-    // De servo- en de slaanles komen vóór de Lego. Een les die zegt "de arm
-    // gaat naar 0°" laat een leerling zoeken naar iets wat nog niet bestaat.
-    // Alleen een zin die zegt dat de arm straks of later komt, mag hem noemen.
-    const voorBouwen = VOLGORDE.slice(0, VOLGORDE.indexOf('bouwen')).filter((n) => n !== 'intro');
+  it('voor de armles is er nog geen arm, alleen het asje van de servo', () => {
+    // De servo- en de slaanles komen vóór de Lego, en de toren en de baan
+    // vóór de arm. Een les die zegt "de arm gaat naar 0°" laat een leerling
+    // zoeken naar iets wat nog niet bestaat. Alleen een zin die zegt dat de
+    // arm straks of later komt, mag hem noemen.
+    const voorBouwen = VOLGORDE.slice(0, VOLGORDE.indexOf('arm')).filter((n) => n !== 'intro');
     const met: string[] = [];
     for (const naam of voorBouwen) {
       for (const zin of tekst(`${naam}.md`).split(/(?<=[.?!])\s+/)) {
-        if (/\barm\b/i.test(zin) && !/straks|later/i.test(zin))
+        // Een link naar de armles wijst vooruit, en mag dus ook.
+        if (/\barm\b/i.test(zin) && !/straks|later|\]\(site:robotica\/golfbot\/arm\)/i.test(zin))
           met.push(`${naam}: ${zin.slice(0, 60)}`);
       }
     }
@@ -334,20 +350,38 @@ describe('de volgorde van de route', () => {
     expect(met).toEqual([]);
   });
 
-  it('de oude adressen sturen door naar de les die hun inhoud nu heeft', () => {
-    // hole-in-one stuurde eerst naar bal-slaan, maar de uitdaging Hole in one
-    // staat in de baanles. Een leerling met een oud werkblad kwam dan op de
-    // tafelles terecht, zonder de uitdaging.
+  it('elk oud adres onder /click_golfer/ stuurt door naar de les die zijn inhoud nu heeft', () => {
+    // De Golfbot heette Click Golfer en stond onder /click_golfer/. Werkbladen
+    // en bladwijzers met dat adres mogen niet op een 404 uitkomen. hole-in-one
+    // stuurde eerst naar bal-slaan, maar de uitdaging Hole in one staat bij de
+    // arm; een leerling met een oud werkblad kwam dan op de tafelles terecht.
     const config = readFileSync(join(CLICK, '..', 'docusaurus.config.ts'), 'utf8');
     const DOEL: Record<string, string> = {
+      intro: 'intro',
+      microcontroller: 'microcontroller',
+      easybloqs: 'easybloqs',
+      'ir-sensor': 'ir-sensor',
+      servo: 'servo',
+      'bal-slaan': 'bal-slaan',
+      bouwen: 'bouwen',
+      hout: 'hout',
+      oefenen: 'bal-slaan',
+      mikken: 'arm#hole-in-one',
+      subprogrammas: 'uitbreiding',
+      extras: 'uitbreiding',
       aansluiten: 'ir-sensor',
       'bal-detecteren': 'ir-sensor',
-      'hole-in-one': 'hout#hole-in-one',
+      'hole-in-one': 'arm#hole-in-one',
     };
     for (const [oud, nieuw] of Object.entries(DOEL)) {
-      expect(config).toContain(`{ van: '/click_golfer/${oud}', naar: '/click_golfer/${nieuw}' }`);
+      expect(config).toContain(`{ van: '/click_golfer/${oud}', naar: '/golfbot/${nieuw}' }`);
+      const [pagina] = nieuw.split('#');
+      expect(VOLGORDE, nieuw).toContain(pagina);
     }
-    expect(tekst('hout.md')).toMatch(/^## Hole in one$/m);
+    // Elke pagina die er nu is, had een oud adres, behalve de twee nieuwe.
+    const nieuw = VOLGORDE.filter((p) => !(p in DOEL));
+    expect(nieuw).toEqual(['arm', 'uitbreiding']);
+    expect(tekst('arm.md')).toMatch(/^## Hole in one$/m);
   });
 });
 
@@ -359,7 +393,7 @@ describe('elk bestand waar een pagina naar wijst, bestaat', () => {
   for (const bestand of paginas()) {
     const inhoud = tekst(bestand);
     for (const m of inhoud.matchAll(
-      /(?:src|href)=(?:"|\{useBaseUrl\(')\/((?:click_golfer|models|fritzing)\/[^"']+)["']/g,
+      /(?:src|href)=(?:"|\{useBaseUrl\(')\/((?:golfbot|models|fritzing)\/[^"']+)["']/g,
     )) {
       verwijzingen.push([bestand, m[1]]);
     }

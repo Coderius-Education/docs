@@ -9,7 +9,7 @@ import { describe, expect, it } from 'vitest';
 import { registreer } from '../components/Blokken/leaphy';
 import { cameraAfstand } from '../components/ObjViewer/passend';
 
-// Wat een leerling-doorloop van de Click Golfer (intro tot en met bal-slaan)
+// Wat een leerling-doorloop van de Golfbot (intro tot en met bal-slaan)
 // vond, vastgepind. Wat Easybloqs laat zien, komt uit de live app:
 // leaphy-robotics/leaphy-webbased-svelte, met de toolbox in
 // packages/client/src/lib/domain/blockly/toolbox.ts, het pinveld in
@@ -17,7 +17,7 @@ import { cameraAfstand } from '../components/ObjViewer/passend';
 // packages/client/src/assets/translations/nl.json. De oudere repo
 // leaphy-webbased staat stil en is niet meer wat leerlingen zien.
 
-const CLICK = fileURLToPath(new URL('../../click_golfer', import.meta.url));
+const CLICK = fileURLToPath(new URL('../../golfbot', import.meta.url));
 
 const ROUTE = [
   'intro',
@@ -26,12 +26,10 @@ const ROUTE = [
   'ir-sensor',
   'servo',
   'bal-slaan',
-  'oefenen',
   'bouwen',
   'hout',
-  'mikken',
-  'subprogrammas',
-  'extras',
+  'arm',
+  'uitbreiding',
 ];
 
 function tekst(naam: string): string {
@@ -223,7 +221,7 @@ describe('aansluiten', () => {
     // Op het plaatje loopt de draad langs de rij van A4 en dan omhoog; de
     // hoeken lijken aansluitpunten. Het plaatje zelf passen we niet aan.
     const inhoud = tekst('ir-sensor');
-    const na = inhoud.slice(inhoud.indexOf('click_golfer_sensor.png'));
+    const na = inhoud.slice(inhoud.indexOf('golfbot_sensor.png'));
     expect(na.slice(0, 400)).toMatch(/rij van A4/);
   });
 
