@@ -1,4 +1,4 @@
-import type { Vondst } from '../types';
+import type { Plek, Vondst } from '../types';
 import styles from './BuitenLesstof.module.css';
 
 // Wat het project gebruikt en de lessen niet behandelen, per groep. Bedoeld
@@ -6,7 +6,13 @@ import styles from './BuitenLesstof.module.css';
 // deze <canvas>?"), met het bestand erbij zodat je hem samen kunt openen.
 // Telt niet mee in de niveausamenvatting; een vondst is geen fout.
 
-export function BuitenLesstof({ vondsten }: { vondsten: Vondst[] }) {
+interface BuitenLesstofProps {
+  vondsten: Vondst[];
+  /** Toont waar een vondst in de code staat. Weglaten = niet klikbaar. */
+  onToonPlekken?: (titel: string, plekken: Plek[]) => void;
+}
+
+export function BuitenLesstof({ vondsten, onToonPlekken }: BuitenLesstofProps) {
   if (vondsten.length === 0) return null;
   const groepen = new Map<string, Vondst[]>();
   for (const v of vondsten) groepen.set(v.groep, [...(groepen.get(v.groep) ?? []), v]);
@@ -27,7 +33,18 @@ export function BuitenLesstof({ vondsten }: { vondsten: Vondst[] }) {
             <ul className={styles.lijst}>
               {items.map((v) => (
                 <li key={v.label}>
-                  <code>{v.label}</code>
+                  {onToonPlekken && (v.plekken?.length ?? 0) > 0 ? (
+                    <button
+                      type="button"
+                      className={styles.knop}
+                      onClick={() => onToonPlekken(v.label, v.plekken ?? [])}
+                      title="Toon waar dit in de code staat"
+                    >
+                      <code>{v.label}</code>
+                    </button>
+                  ) : (
+                    <code>{v.label}</code>
+                  )}
                   {v.count > 1 && <span className={styles.keer}> {v.count}×</span>}
                   <span className={styles.bestanden}> in {v.files.join(', ')}</span>
                 </li>

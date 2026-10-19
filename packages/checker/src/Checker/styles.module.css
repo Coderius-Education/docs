@@ -136,6 +136,11 @@
   display: none;
 }
 
+/* Alleen in de PDF en op papier: de tekst van een invulveld. */
+.alleenPdf {
+  display: none;
+}
+
 .pdfKlaar {
   margin: 0;
   color: var(--ifm-color-emphasis-800);
@@ -149,6 +154,12 @@
   font: inherit;
   text-decoration: underline;
   cursor: pointer;
+}
+
+.kopKnoppen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .ideButton {
@@ -226,7 +237,8 @@
   display: none !important;
 }
 
-.exporting .naamPrint {
+.exporting .naamPrint,
+.exporting .alleenPdf {
   display: block;
 }
 
@@ -242,7 +254,8 @@
     display: none !important;
   }
 
-  .naamPrint {
+  .naamPrint,
+  .alleenPdf {
     display: block;
   }
 

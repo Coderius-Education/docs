@@ -1,3 +1,4 @@
+import { MAX_PLEKKEN, blanco, plekkenIn } from '@coderius/checker/plekken';
 import type { ProjectFiles, Vondst } from '@coderius/checker/types';
 import LESSTOF from './lesstof.json';
 
@@ -20,6 +21,8 @@ export type Soort = 'html' | 'css' | 'js';
 export interface Stuk {
   soort: Soort;
   tekst: string;
+  /** Waar het stuk in het bestand begint, voor de regelnummers (standaard 0). */
+  begin?: number;
 }
 
 export const GROEPEN = [
@@ -37,12 +40,24 @@ export type Groep = (typeof GROEPEN)[number];
 /** Sleutel van een constructie: groep en label, zoals in lesstof.json. */
 export const sleutel = (groep: string, label: string) => `${groep}|${label}`;
 
-type Telling = Map<string, number>;
+/** Per constructie hoe vaak hij voorkomt, en waar (posities in het bestand). */
+export type Telling = Map<string, { n: number; posities: number[] }>;
 
-function tel(t: Telling, groep: Groep, label: string, n = 1): void {
+function tel(t: Telling, groep: Groep, label: string, positie: number): void {
   const k = sleutel(groep, label);
-  t.set(k, (t.get(k) ?? 0) + n);
+  const huidig = t.get(k);
+  if (huidig) {
+    huidig.n++;
+    huidig.posities.push(positie);
+  } else {
+    t.set(k, { n: 1, posities: [positie] });
+  }
 }
+
+// Alles wat we wegpoetsen (commentaar, tekst tussen aanhalingstekens) wordt
+// spaties van dezelfde lengte, met de regeleinden erin. Zo blijft elke
+// positie gelijk aan die in het bestand, en klopt het regelnummer.
+const tussenQuotes = (m: string) => `${m[0]}${blanco(m.slice(1, -1))}${m[m.length - 1]}`;
 
 // --- HTML ------------------------------------------------------------------
 
@@ -62,112 +77,139 @@ function attribuutLabel(naam: string): string {
  * `on…="…"` als JavaScript. Zo telt CSS in een `<style>`-blok net zo goed mee
  * als CSS in een los bestand.
  */
-export function splitsHtml(html: string): Stuk[] {
+export function splitsHtml(html: string, begin = 0): Stuk[] {
   const stukken: Stuk[] = [];
-  let rest = html.replace(/<!--[\s\S]*?-->/g, '');
+  let rest = html.replace(/<!--[\s\S]*?-->/g, blanco);
   rest = rest.replace(
     /(<style\b[^>]*>)([\s\S]*?)(<\/style\s*>)/gi,
-    (_m, open: string, css: string, dicht: string) => {
-      stukken.push({ soort: 'css', tekst: css });
-      return open + dicht;
+    (_m, open: string, css: string, dicht: string, plek: number) => {
+      stukken.push({ soort: 'css', tekst: css, begin: begin + plek + open.length });
+      return open + blanco(css) + dicht;
     },
   );
   rest = rest.replace(
     /(<script\b[^>]*>)([\s\S]*?)(<\/script\s*>)/gi,
-    (_m, open: string, js: string, dicht: string) => {
-      stukken.push({ soort: 'js', tekst: js });
-      return open + dicht;
+    (_m, open: string, js: string, dicht: string, plek: number) => {
+      stukken.push({ soort: 'js', tekst: js, begin: begin + plek + open.length });
+      return open + blanco(js) + dicht;
     },
   );
   for (const tag of rest.matchAll(TAG)) {
+    const attrBegin = (tag.index ?? 0) + 1 + tag[1].length;
     for (const a of (tag[2] ?? '').matchAll(ATTRIBUUT)) {
       const naam = a[1].toLowerCase();
       const waarde = a[2] ?? a[3];
       if (waarde === undefined) continue;
-      if (naam === 'style') stukken.push({ soort: 'css', tekst: `x{${waarde}}` });
-      else if (naam.startsWith('on')) stukken.push({ soort: 'js', tekst: waarde });
+      const waardeBegin = begin + attrBegin + (a.index ?? 0) + a[0].search(/["']/) + 1;
+      if (naam === 'style') {
+        // Een declaratieblok zonder selector; de 'x{' ervoor valt precies
+        // vóór de waarde, zodat de posities kloppen.
+        stukken.push({ soort: 'css', tekst: `x{${waarde}}`, begin: waardeBegin - 2 });
+      } else if (naam.startsWith('on')) {
+        stukken.push({ soort: 'js', tekst: waarde, begin: waardeBegin });
+      }
     }
   }
-  stukken.push({ soort: 'html', tekst: rest });
+  stukken.push({ soort: 'html', tekst: rest, begin });
   return stukken;
 }
 
-function htmlConstructies(html: string, t: Telling): void {
+function htmlConstructies(html: string, begin: number, t: Telling): void {
   for (const tag of html.matchAll(TAG)) {
-    tel(t, 'HTML-elementen', `<${tag[1].toLowerCase()}>`);
+    const plek = begin + (tag.index ?? 0);
+    tel(t, 'HTML-elementen', `<${tag[1].toLowerCase()}>`, plek);
     for (const a of (tag[2] ?? '').matchAll(ATTRIBUUT)) {
       // Kapotte HTML (aanhalingstekens door elkaar) levert brokken op die
       // geen attribuutnaam zijn; die tellen niet.
-      if (/^[a-zA-Z][\w:-]*$/.test(a[1])) tel(t, 'HTML-attributen', attribuutLabel(a[1]));
+      if (/^[a-zA-Z][\w:-]*$/.test(a[1])) tel(t, 'HTML-attributen', attribuutLabel(a[1]), plek);
     }
   }
 }
 
 // --- CSS -------------------------------------------------------------------
 
-function selectorConstructies(selector: string, t: Telling): void {
-  let s = selector.replace(/"[^"]*"|'[^']*'/g, '""');
-  for (const _ of s.matchAll(/\[[^\]]*\]/g)) tel(t, 'CSS-selectoren', '[attribuut]');
-  s = s.replace(/\[[^\]]*\]/g, '');
+function selectorConstructies(selector: string, begin: number, t: Telling): void {
+  let s = selector.replace(/"[^"]*"|'[^']*'/g, tussenQuotes);
+  for (const m of s.matchAll(/\[[^\]]*\]/g))
+    tel(t, 'CSS-selectoren', '[attribuut]', begin + (m.index ?? 0));
+  s = s.replace(/\[[^\]]*\]/g, blanco);
   for (const p of s.matchAll(/(::?)([a-zA-Z-]+)(\()?/g)) {
-    tel(t, 'CSS-selectoren', `${p[1]}${p[2].toLowerCase()}${p[3] ? '()' : ''}`);
+    tel(
+      t,
+      'CSS-selectoren',
+      `${p[1]}${p[2].toLowerCase()}${p[3] ? '()' : ''}`,
+      begin + (p.index ?? 0),
+    );
   }
   // Haakjes van :nth-child(2n + 1) zijn geen combinators.
-  s = s.replace(/\([^)]*\)/g, '');
-  for (const _ of s.matchAll(/>/g)) tel(t, 'CSS-selectoren', 'a > b');
-  for (const _ of s.matchAll(/\+/g)) tel(t, 'CSS-selectoren', 'a + b');
-  for (const _ of s.matchAll(/~/g)) tel(t, 'CSS-selectoren', 'a ~ b');
-  for (const _ of s.matchAll(/\*/g)) tel(t, 'CSS-selectoren', '*');
-  for (const _ of s.matchAll(/&/g)) tel(t, 'CSS-selectoren', '&');
+  s = s.replace(/\([^)]*\)/g, blanco);
+  const combinators: [RegExp, string][] = [
+    [/>/g, 'a > b'],
+    [/\+/g, 'a + b'],
+    [/~/g, 'a ~ b'],
+    [/\*/g, '*'],
+    [/&/g, '&'],
+  ];
+  for (const [re, label] of combinators) {
+    for (const m of s.matchAll(re)) tel(t, 'CSS-selectoren', label, begin + (m.index ?? 0));
+  }
 }
 
-function waardeConstructies(waarde: string, t: Telling): void {
-  const v = waarde.replace(/"[^"]*"|'[^']*'/g, '""').replace(/#[0-9a-fA-F]{3,8}\b/g, '');
+function waardeConstructies(waarde: string, begin: number, t: Telling): void {
+  const v = waarde
+    .replace(/"[^"]*"|'[^']*'/g, tussenQuotes)
+    .replace(/#[0-9a-fA-F]{3,8}\b/g, blanco);
   for (const f of v.matchAll(/(?<![\w-])([a-zA-Z-]+)\(/g)) {
-    tel(t, 'CSS-waarden', `${f[1].toLowerCase()}()`);
+    tel(t, 'CSS-waarden', `${f[1].toLowerCase()}()`, begin + (f.index ?? 0));
   }
   for (const e of v.matchAll(/(?<![\w.-])-?(?:\d+\.?\d*|\.\d+)([a-zA-Z]+|%)/g)) {
-    tel(t, 'CSS-waarden', e[1].toLowerCase());
+    tel(t, 'CSS-waarden', e[1].toLowerCase(), begin + (e.index ?? 0));
   }
-  if (/!\s*important/i.test(v)) tel(t, 'CSS-waarden', '!important');
+  const belangrijk = /!\s*important/i.exec(v);
+  if (belangrijk) tel(t, 'CSS-waarden', '!important', begin + belangrijk.index);
 }
 
-function declaratie(tekst: string, t: Telling): void {
-  const d = tekst.trim();
+/** Een stuk tekst zonder witruimte eromheen, met de positie waar het begint. */
+function getrimd(tekst: string, begin: number): [string, number] {
+  const voor = tekst.length - tekst.trimStart().length;
+  return [tekst.trim(), begin + voor];
+}
+
+function declaratie(tekst: string, begin: number, t: Telling): void {
+  const [d, plek] = getrimd(tekst, begin);
   if (d === '') return;
   if (d.startsWith('@')) {
     // Een at-regel zonder blok, zoals @import url(…);
-    tel(t, 'CSS-at-regels', `@${(/^@([\w-]+)/.exec(d)?.[1] ?? '').toLowerCase()}`);
+    tel(t, 'CSS-at-regels', `@${(/^@([\w-]+)/.exec(d)?.[1] ?? '').toLowerCase()}`, plek);
     return;
   }
   const dubbelepunt = d.indexOf(':');
   if (dubbelepunt <= 0) return;
   const eigenschap = d.slice(0, dubbelepunt).trim().toLowerCase();
   if (!/^-{0,2}[a-z][a-z0-9-]*$/.test(eigenschap)) return;
-  tel(t, 'CSS-eigenschappen', eigenschap.startsWith('--') ? '--*' : eigenschap);
-  waardeConstructies(d.slice(dubbelepunt + 1), t);
+  tel(t, 'CSS-eigenschappen', eigenschap.startsWith('--') ? '--*' : eigenschap, plek);
+  waardeConstructies(d.slice(dubbelepunt + 1), plek + dubbelepunt + 1, t);
 }
 
-function cssConstructies(css: string, t: Telling): void {
-  const bron = css.replace(/\/\*[\s\S]*?\*\//g, '');
-  let buffer = '';
-  for (const teken of bron) {
+function cssConstructies(css: string, begin: number, t: Telling): void {
+  const bron = css.replace(/\/\*[\s\S]*?\*\//g, blanco);
+  let vanaf = 0;
+  for (let i = 0; i < bron.length; i++) {
+    const teken = bron[i];
     if (teken === '{') {
-      const kop = buffer.trim();
+      const [kop, plek] = getrimd(bron.slice(vanaf, i), begin + vanaf);
       if (kop.startsWith('@')) {
-        tel(t, 'CSS-at-regels', `@${(/^@([\w-]+)/.exec(kop)?.[1] ?? '').toLowerCase()}`);
+        tel(t, 'CSS-at-regels', `@${(/^@([\w-]+)/.exec(kop)?.[1] ?? '').toLowerCase()}`, plek);
       } else if (kop !== '') {
-        selectorConstructies(kop, t);
+        selectorConstructies(kop, plek, t);
       }
-      buffer = '';
+      vanaf = i + 1;
     } else if (teken === ';' || teken === '}') {
-      declaratie(buffer, t);
-      buffer = '';
-    } else {
-      buffer += teken;
+      declaratie(bron.slice(vanaf, i), begin + vanaf, t);
+      vanaf = i + 1;
     }
   }
-  declaratie(buffer, t);
+  declaratie(bron.slice(vanaf), begin + vanaf, t);
 }
 
 // --- JavaScript ------------------------------------------------------------
@@ -343,10 +385,10 @@ function zonderCommentaarEnTekst(js: string): string {
   // telt niet mee. Template literals houden hun backtick, zodat de
   // constructie zelf herkend blijft.
   return js
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .replace(/(^|[^:\\])\/\/.*$/gm, '$1')
-    .replace(/"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'/g, '""')
-    .replace(/`(?:[^`\\$]|\\.|\$(?!\{))*`/g, '``');
+    .replace(/\/\*[\s\S]*?\*\//g, blanco)
+    .replace(/(^|[^:\\])(\/\/.*)$/gm, (_m, voor: string, rest: string) => voor + blanco(rest))
+    .replace(/"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'/g, tussenQuotes)
+    .replace(/`(?:[^`\\$]|\\.|\$(?!\{))*`/g, tussenQuotes);
 }
 
 // Eén keer opgebouwd; matchAll werkt op een kopie, dus hergebruik is veilig.
@@ -363,27 +405,35 @@ const JS_LID_RE = new RegExp(
   'g',
 );
 
-function jsConstructies(js: string, t: Telling): void {
+function jsConstructies(js: string, begin: number, t: Telling): void {
   const bron = zonderCommentaarEnTekst(js);
   for (const { label, patroon } of JS_SYNTAX) {
-    const n = bron.match(patroon)?.length ?? 0;
-    if (n > 0) tel(t, 'JavaScript', label, n);
+    for (const m of bron.matchAll(patroon)) tel(t, 'JavaScript', label, begin + (m.index ?? 0));
   }
-  for (const m of bron.matchAll(JS_OBJECT_RE)) tel(t, 'JavaScript', `${m[1]}.${m[2]}`);
-  for (const m of bron.matchAll(JS_FUNCTIE_RE)) tel(t, 'JavaScript', `${m[1]}()`);
-  for (const m of bron.matchAll(JS_LID_RE)) tel(t, 'JavaScript', `.${m[1]}${m[2] ? '()' : ''}`);
+  for (const m of bron.matchAll(JS_OBJECT_RE)) {
+    tel(t, 'JavaScript', `${m[1]}.${m[2]}`, begin + (m.index ?? 0));
+  }
+  for (const m of bron.matchAll(JS_FUNCTIE_RE)) {
+    tel(t, 'JavaScript', `${m[1]}()`, begin + (m.index ?? 0));
+  }
+  for (const m of bron.matchAll(JS_LID_RE)) {
+    tel(t, 'JavaScript', `.${m[1]}${m[2] ? '()' : ''}`, begin + (m.index ?? 0));
+  }
 }
 
 // --- Samen -----------------------------------------------------------------
 
-/** Telt elke herkende constructie in een rij stukken code. */
+/** Telt elke herkende constructie in een rij stukken code, met de posities. */
 export function constructiesIn(stukken: Stuk[]): Telling {
   const t: Telling = new Map();
-  const alles = stukken.flatMap((s) => (s.soort === 'html' ? splitsHtml(s.tekst) : [s]));
+  const alles = stukken.flatMap((s) =>
+    s.soort === 'html' ? splitsHtml(s.tekst, s.begin ?? 0) : [s],
+  );
   for (const s of alles) {
-    if (s.soort === 'html') htmlConstructies(s.tekst, t);
-    else if (s.soort === 'css') cssConstructies(s.tekst, t);
-    else jsConstructies(s.tekst, t);
+    const begin = s.begin ?? 0;
+    if (s.soort === 'html') htmlConstructies(s.tekst, begin, t);
+    else if (s.soort === 'css') cssConstructies(s.tekst, begin, t);
+    else jsConstructies(s.tekst, begin, t);
   }
   return t;
 }
@@ -403,13 +453,16 @@ export function buitenLesstof(files: ProjectFiles): Vondst[] {
   for (const f of paden) {
     const soort = SOORT_VAN_KIND[f.kind];
     if (!soort || f.content === null) continue;
-    for (const [k, n] of constructiesIn([{ soort, tekst: f.content }])) {
+    for (const [k, { n, posities }] of constructiesIn([{ soort, tekst: f.content }])) {
       if (BEKEND.has(k)) continue;
       const [groep, ...rest] = k.split('|');
       const label = rest.join('|');
-      const vondst = perSleutel.get(k) ?? { groep, label, count: 0, files: [] };
+      const vondst = perSleutel.get(k) ?? { groep, label, count: 0, files: [], plekken: [] };
       vondst.count += n;
       vondst.files.push(f.path);
+      const plekken = vondst.plekken ?? [];
+      plekken.push(...plekkenIn(f.path, f.content, posities, MAX_PLEKKEN - plekken.length));
+      vondst.plekken = plekken;
       perSleutel.set(k, vondst);
     }
   }

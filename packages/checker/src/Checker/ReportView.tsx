@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { levelVoor } from '../conceptLevel';
-import type { CheckReport, CheckerConfig, Concept, ConceptMatch, Level } from '../types';
+import type { CheckReport, CheckerConfig, Concept, ConceptMatch, Level, Plek } from '../types';
 import { BuitenLesstof } from './BuitenLesstof';
 import { FileStats } from './FileStats';
 import styles from './ReportView.module.css';
@@ -13,6 +13,8 @@ interface ReportViewProps {
   track?: string | null;
   /** Aan/uit zetten van een handmatig concept. Weglaten = alleen-lezen. */
   onToggleHandmatig?: (id: string) => void;
+  /** Toont waar een concept of vondst in de code staat. Weglaten = niet klikbaar. */
+  onToonPlekken?: (titel: string, plekken: Plek[]) => void;
 }
 
 function LevelBadge({ level }: { level: Level }) {
@@ -57,11 +59,13 @@ function SubjectSection({
   groups,
   track,
   onToggleHandmatig,
+  onToonPlekken,
 }: {
   title: string;
   groups: Group[];
   track: string | null;
   onToggleHandmatig?: (id: string) => void;
+  onToonPlekken?: (titel: string, plekken: Plek[]) => void;
 }) {
   if (groups.length === 0) return null;
   const total = groups.reduce((sum, g) => sum + g.items.length, 0);
@@ -116,12 +120,30 @@ function SubjectSection({
                     );
                   }
 
-                  return (
-                    <li key={concept.id} className={klasse}>
+                  // Waar staat het? Een klik opent de code op die regels.
+                  const plekken = match.plekken ?? [];
+                  const label = (
+                    <>
                       {match.used ? '✓ ' : ''}
                       {concept.label}
                       {match.used && match.count > 1 && (
                         <span className={styles.chipCount}> ({match.count}×)</span>
+                      )}
+                    </>
+                  );
+                  return (
+                    <li key={concept.id} className={klasse}>
+                      {onToonPlekken && plekken.length > 0 ? (
+                        <button
+                          type="button"
+                          className={styles.chipKnop}
+                          onClick={() => onToonPlekken(concept.label, plekken)}
+                          title="Toon waar dit in de code staat"
+                        >
+                          {label}
+                        </button>
+                      ) : (
+                        label
                       )}
                       {badge}
                     </li>
@@ -142,6 +164,7 @@ export function ReportView({
   activeLevel = null,
   track = null,
   onToggleHandmatig,
+  onToonPlekken,
 }: ReportViewProps) {
   const matches = new Map(report.concepts.map((m) => [m.id, m]));
 
@@ -164,10 +187,11 @@ export function ReportView({
           groups={groupConcepts(config.concepts, matches, subject.id, activeLevel, track)}
           track={track}
           onToggleHandmatig={onToggleHandmatig}
+          onToonPlekken={onToonPlekken}
         />
       ))}
 
-      <BuitenLesstof vondsten={report.buitenLesstof} />
+      <BuitenLesstof vondsten={report.buitenLesstof} onToonPlekken={onToonPlekken} />
     </div>
   );
 }

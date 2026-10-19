@@ -79,10 +79,22 @@ export interface TrackInfo {
   label: string;
 }
 
+/** Een regel in een bestand van het project (regels tellen vanaf 1). */
+export interface Plek {
+  bestand: string;
+  regel: number;
+}
+
 export interface ConceptMatch {
   id: string;
   count: number;
   used: boolean;
+  /**
+   * Waar het concept staat, hooguit MAX_PLEKKEN regels. Leeg voor een
+   * handmatig concept; voor een pad-concept de eerste regel van elk
+   * passend bestand.
+   */
+  plekken?: Plek[];
 }
 
 export interface SubjectInfo {
@@ -145,6 +157,8 @@ export interface Vondst {
   count: number;
   /** De bestanden waarin het staat, zodat de docent ernaar kan vragen. */
   files: string[];
+  /** De regels waar het staat, hooguit MAX_PLEKKEN. */
+  plekken?: Plek[];
 }
 
 export interface CheckReport {

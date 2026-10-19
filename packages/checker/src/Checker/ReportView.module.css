@@ -156,3 +156,20 @@
   font-weight: 700;
   line-height: 1;
 }
+
+/* Een chip die toont waar het concept in de code staat. */
+.chipKnop {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+}
+
+.chipKnop:hover {
+  text-decoration-style: solid;
+}

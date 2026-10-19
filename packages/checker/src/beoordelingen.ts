@@ -1,4 +1,5 @@
 import type { CheckerConfig, ProjectFiles } from './types';
+import type { Vraag } from './vragen';
 
 // Beoordelingen die blijven staan. Een docent neemt 's ochtends vijf
 // mondelingen af, vinkt per leerling aan wat hij hoort en typt opmerkingen,
@@ -22,6 +23,8 @@ export interface Beoordeling {
   handmatig: string[];
   notes: string;
   track: string | null;
+  /** Vragen voor het mondeling, in de volgorde van de docent. */
+  vragen: Vraag[];
 }
 
 /** Het ingeleverde project; groot, en wordt één keer opgeslagen. */
@@ -49,7 +52,9 @@ export interface Opslag {
   sluit?: () => void;
 }
 
-export type Wijziging = Partial<Pick<Beoordeling, 'naam' | 'handmatig' | 'notes' | 'track'>>;
+export type Wijziging = Partial<
+  Pick<Beoordeling, 'naam' | 'handmatig' | 'notes' | 'track' | 'vragen'>
+>;
 
 /**
  * Naam van de database: per site, want alle cursussen van een vak delen één
@@ -87,7 +92,15 @@ export function pdfNaamMetLeerling(bestandsnaam: string, naam: string): string {
     : `${bestandsnaam.slice(0, punt)} - ${schoon}.pdf`;
 }
 
-function nieuwId(): string {
+/**
+ * Een beoordeling uit de opslag, aangevuld met velden die een oudere versie
+ * van de nakijker nog niet bewaarde.
+ */
+export function aangevuld(b: Beoordeling): Beoordeling {
+  return { ...b, handmatig: b.handmatig ?? [], notes: b.notes ?? '', vragen: b.vragen ?? [] };
+}
+
+export function nieuwId(): string {
   if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) return crypto.randomUUID();
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
 }
@@ -153,7 +166,7 @@ export class Bewaarder {
     this.klaar = this.inRij(async (o) => {
       await ruimOp(o);
       for (const b of await o.beoordelingen.alle()) {
-        if (!this.cache.has(b.id)) this.cache.set(b.id, b);
+        if (!this.cache.has(b.id)) this.cache.set(b.id, aangevuld(b));
       }
       this.meld();
     }).catch(() => undefined);
@@ -178,6 +191,7 @@ export class Bewaarder {
       handmatig: [],
       notes: '',
       track,
+      vragen: [],
     };
     this.cache.set(b.id, b);
     this.zonderProject.add(b.id);
@@ -291,7 +305,7 @@ export class Bewaarder {
   private async herlaad(): Promise<void> {
     await this.inRij(async (o) => {
       const opgeslagen = await o.beoordelingen.alle();
-      for (const b of opgeslagen) if (!this.cache.has(b.id)) this.cache.set(b.id, b);
+      for (const b of opgeslagen) if (!this.cache.has(b.id)) this.cache.set(b.id, aangevuld(b));
       this.meld();
     }).catch(() => undefined);
   }

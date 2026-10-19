@@ -134,6 +134,7 @@ describe('buitenLesstof — wat een project meer gebruikt', () => {
       label: '<canvas>',
       count: 2,
       files: ['index.html'],
+      plekken: [{ bestand: 'index.html', regel: 1 }],
     });
     expect(labels(files)).toEqual(
       expect.arrayContaining(['CSS-at-regels|@keyframes', 'JavaScript|=> (arrow-functie)']),
@@ -201,6 +202,61 @@ describe('buitenLesstof — wat een project meer gebruikt', () => {
     expect(groepen).toEqual(
       [...groepen].sort((a, b) => GROEPEN.indexOf(a as never) - GROEPEN.indexOf(b as never)),
     );
+  });
+});
+
+describe('buitenLesstof — de regels waar het staat', () => {
+  const plekVan = (files: ProjectFiles, label: string) =>
+    buitenLesstof(files).find((v) => v.label === label)?.plekken;
+
+  it('wijst in HTML, een <style>, een <script>, style="" en onclick="" de goede regel aan', () => {
+    const html = [
+      '<!DOCTYPE html>', // 1
+      '<!-- <canvas> in commentaar -->', // 2
+      '<style>', // 3
+      '  p { color: red; }', // 4
+      '  .x { transform: rotate(5deg); }', // 5
+      '</style>', // 6
+      '<body>', // 7
+      '  <canvas></canvas>', // 8
+      '  <p style="animation: none">Hoi</p>', // 9
+      '  <button onclick="fetch(\'x\')">Klik</button>', // 10
+      '<script>', // 11
+      '  // const f = () => 1;', // 12
+      '  const g = () => 2;', // 13
+      '</script>', // 14
+      '</body>', // 15
+    ].join('\n');
+    const files = project({ 'index.html': html });
+    expect(plekVan(files, '<canvas>')).toEqual([{ bestand: 'index.html', regel: 8 }]);
+    expect(plekVan(files, 'transform')).toEqual([{ bestand: 'index.html', regel: 5 }]);
+    expect(plekVan(files, 'deg')).toEqual([{ bestand: 'index.html', regel: 5 }]);
+    expect(plekVan(files, 'animation')).toEqual([{ bestand: 'index.html', regel: 9 }]);
+    expect(plekVan(files, 'fetch()')).toEqual([{ bestand: 'index.html', regel: 10 }]);
+    expect(plekVan(files, '=> (arrow-functie)')).toEqual([{ bestand: 'index.html', regel: 13 }]);
+  });
+
+  it('telt in CSS en JS de regels van het bestand, ook na meerregelig commentaar en tekst', () => {
+    const files = project({
+      'style.css':
+        '/* een\nlang\ncommentaar */\np {\n  color: red;\n  animation: x 1s;\n}\n@keyframes x {}',
+      'app.js': '/*\n x => y\n*/\nconst s = "a => b";\nconst t = `\n`;\nfetch("data.json");',
+    });
+    expect(plekVan(files, 'animation')).toEqual([{ bestand: 'style.css', regel: 6 }]);
+    expect(plekVan(files, '@keyframes')).toEqual([{ bestand: 'style.css', regel: 8 }]);
+    expect(plekVan(files, 'fetch()')).toEqual([{ bestand: 'app.js', regel: 7 }]);
+    expect(plekVan(files, '=> (arrow-functie)')).toBeUndefined();
+  });
+
+  it('zet plekken uit meerdere bestanden op volgorde van bestand', () => {
+    const files = project({
+      'b.html': '<p>\n<canvas></canvas>',
+      'a.html': '<canvas></canvas>',
+    });
+    expect(plekVan(files, '<canvas>')).toEqual([
+      { bestand: 'a.html', regel: 1 },
+      { bestand: 'b.html', regel: 2 },
+    ]);
   });
 });
 

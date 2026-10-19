@@ -61,3 +61,18 @@
 .bestanden {
   color: var(--ifm-color-emphasis-700);
 }
+
+.knop {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+}
+
+.knop:hover {
+  text-decoration-style: solid;
+}

@@ -5,6 +5,7 @@ import {
   Bewaarder,
   type Opslag,
   type Project,
+  aangevuld,
   databaseNaam,
   geheugenOpslag,
   opslagMelding,
@@ -264,6 +265,39 @@ describe('Bewaarder: beoordelingen bewaren', () => {
     await stil(b);
     expect(await opslag.beoordelingen.sleutels()).toEqual([]);
     expect(await opslag.projecten.sleutels()).toEqual([]);
+  });
+
+  it('bewaart de vragen voor het mondeling, en vult ze aan bij een oudere beoordeling', async () => {
+    const opslag = geheugenOpslag();
+    // Een beoordeling zoals de eerste versie van de nakijker hem bewaarde.
+    const oud = {
+      id: 'oud',
+      naam: 'Oud',
+      aangemaakt: 1,
+      bijgewerkt: 1,
+      handmatig: [],
+      notes: '',
+      track: null,
+    };
+    await opslag.beoordelingen.schrijf('oud', oud as unknown as Beoordeling);
+    await opslag.projecten.schrijf('oud', project('Oud'));
+    const { b } = bewaarder(opslag);
+    await b.klaar;
+    expect(b.get('oud')?.vragen).toEqual([]);
+
+    const vraag = {
+      id: 'v',
+      bestand: 'index.html',
+      van: 1,
+      tot: 1,
+      vraag: 'Wat doet h1?',
+      oordeel: null,
+      notitie: '',
+    };
+    b.wijzig('oud', { vragen: [vraag] });
+    await stil(b);
+    expect((await opslag.beoordelingen.lees('oud'))?.vragen).toEqual([vraag]);
+    expect(aangevuld(oud as unknown as Beoordeling).vragen).toEqual([]);
   });
 
   it('ruimOp laat projecten met een beoordeling staan', async () => {

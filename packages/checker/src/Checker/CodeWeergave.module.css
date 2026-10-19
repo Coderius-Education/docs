@@ -1,0 +1,171 @@
+.dialoog {
+  width: min(1100px, calc(100vw - 2rem));
+  height: min(90vh, 900px);
+  max-width: none;
+  max-height: none;
+  padding: 0;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 10px;
+  background: var(--ifm-background-color);
+  color: var(--ifm-font-color-base);
+}
+
+.dialoog::backdrop {
+  background: rgb(0 0 0 / 0.45);
+}
+
+.kader {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.kop,
+.balk,
+.voet {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  padding: 0.6rem 1rem;
+}
+
+.kop {
+  justify-content: space-between;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.titel {
+  margin: 0;
+  font-size: 1.15rem;
+  overflow-wrap: anywhere;
+}
+
+.sluit,
+.plekken button {
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 6px;
+  background: var(--ifm-background-surface-color);
+  color: inherit;
+  font: inherit;
+  padding: 0.3rem 0.8rem;
+  cursor: pointer;
+}
+
+.plekken button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.bestandKeuze {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+}
+
+.plekken {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.code {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  margin: 0;
+  padding: 0.4rem 0;
+  list-style: none;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+  background: var(--ifm-background-surface-color);
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.regel {
+  display: flex;
+  align-items: stretch;
+  margin: 0;
+}
+
+.treffer {
+  background: var(--ifm-color-warning-contrast-background, #fff8e6);
+}
+
+.gekozen {
+  background: var(--ifm-color-primary-contrast-background, #e6f0ff);
+  box-shadow: inset 4px 0 0 var(--ifm-color-primary);
+}
+
+.nr {
+  flex: none;
+  width: 3.5rem;
+  padding: 0 0.6rem 0 0;
+  border: 0;
+  background: none;
+  color: var(--ifm-color-emphasis-600);
+  font: inherit;
+  text-align: right;
+  cursor: pointer;
+  user-select: none;
+}
+
+.nr:disabled {
+  cursor: default;
+}
+
+.nr:hover:not(:disabled) {
+  color: var(--ifm-font-color-base);
+  text-decoration: underline;
+}
+
+.tekst {
+  flex: 1;
+  padding: 0 0.75rem 0 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  white-space: pre;
+}
+
+.hint {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.gekozenLabel {
+  font-weight: 600;
+}
+
+.vraag {
+  flex: 1;
+  min-width: 14rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 6px;
+  background: var(--ifm-background-surface-color);
+  color: inherit;
+  font: inherit;
+}
+
+.markeer {
+  border: 1px solid var(--ifm-color-primary);
+  border-radius: 6px;
+  background: var(--ifm-color-primary);
+  color: var(--coderius-on-primary);
+  font: inherit;
+  font-weight: 600;
+  padding: 0.4rem 0.9rem;
+  cursor: pointer;
+}
+
+.melding {
+  font-size: 0.9rem;
+  color: var(--ifm-color-success-dark, #1a7f37);
+}

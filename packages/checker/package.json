@@ -8,6 +8,7 @@
     "./Checker": "./src/Checker/index.tsx",
     "./types": "./src/types.ts",
     "./matchConcepts": "./src/matchConcepts.ts",
+    "./plekken": "./src/plekken.ts",
     "./levelSummary": "./src/levelSummary.ts",
     "./conceptLevel": "./src/conceptLevel.ts",
     "./validateConfig": "./src/validateConfig.ts",

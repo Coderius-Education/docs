@@ -6,17 +6,21 @@ import {
   type Wijziging,
   databaseNaam,
   geheugenOpslag,
+  nieuwId,
   pdfNaamMetLeerling,
 } from '../beoordelingen';
 import { analyze } from '../matchConcepts';
-import type { CheckReport, CheckerConfig, Level, ProjectFiles } from '../types';
+import type { CheckReport, CheckerConfig, Level, Plek, ProjectFiles } from '../types';
+import { type Vraag, nieuweVraag } from '../vragen';
 import { Beoordelingen } from './Beoordelingen';
+import { type CodeOpen, CodeWeergave } from './CodeWeergave';
 import { FileStats } from './FileStats';
 import { LevelSummary } from './LevelSummary';
 import { PhotoStrip } from './PhotoStrip';
 import { ReportView } from './ReportView';
 import { TeacherGate } from './TeacherGate';
 import { UploadZone } from './UploadZone';
+import { Vragen } from './Vragen';
 import { exportReportToPdf } from './exportPdf';
 import { idbOpslag } from './idbOpslag';
 import { type OpenInIdeResult, openInIde, pickEntry } from './openInIde';
@@ -109,6 +113,35 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
     setPdfKlaar(false);
   }, []);
 
+  // De codeweergave: welke plekken open staan, of null als hij dicht is.
+  const [codeOpen, setCodeOpen] = useState<CodeOpen | null>(null);
+
+  const toonPlekken = useCallback((titel: string, plekken: Plek[]) => {
+    setCodeOpen({ titel, plekken });
+  }, []);
+
+  const toonVraag = useCallback((v: Vraag) => {
+    const plekken = [];
+    for (let regel = v.van; regel <= v.tot; regel++) plekken.push({ bestand: v.bestand, regel });
+    setCodeOpen({ titel: v.vraag.trim() || 'Vraag', plekken });
+  }, []);
+
+  // De vragen komen uit de Bewaarder, niet uit de render: zo bouwt een vraag
+  // die je markeert vlak na een wijziging voort op die wijziging.
+  const huidigeVragen = useCallback(() => {
+    const id = actiefIdRef.current;
+    return (id && bewaarderRef.current?.get(id)?.vragen) || [];
+  }, []);
+
+  const markeer = useCallback(
+    (bestand: string, van: number, tot: number, vraag: string) => {
+      bewaar({ vragen: [...huidigeVragen(), nieuweVraag(nieuwId(), bestand, van, tot, vraag)] });
+    },
+    [bewaar, huidigeVragen],
+  );
+
+  const wijzigVragen = useCallback((vragen: Vraag[]) => bewaar({ vragen }), [bewaar]);
+
   const toggleLevel = useCallback((level: Level) => {
     setActiveLevel((prev) => (prev === level ? null : level));
   }, []);
@@ -160,6 +193,7 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
   // vorige leerling over naar de volgende — en de vinkjes tellen mee in de
   // niveausamenvatting, dus dat verandert stilletjes een score.
   const wisBeoordeling = useCallback(() => {
+    setCodeOpen(null);
     setHandmatigAan(new Set());
     setNotes('');
     setPdfKlaar(false);
@@ -419,7 +453,16 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
               onToggleLevel={toggleLevel}
               track={track}
             />
-            {ideButton}
+            <div className={styles.kopKnoppen}>
+              <button
+                type="button"
+                className={`${styles.ideButton} ${styles.noPrint}`}
+                onClick={() => setCodeOpen({ titel: 'Code bekijken', plekken: [] })}
+              >
+                Code bekijken
+              </button>
+              {ideButton}
+            </div>
           </div>
           {ideError && (
             <p className={`${styles.error} ${styles.noPrint}`} role="alert">
@@ -433,7 +476,17 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
             activeLevel={activeLevel}
             track={track}
             onToggleHandmatig={toggleHandmatig}
+            onToonPlekken={toonPlekken}
           />
+
+          {actief && files && (
+            <Vragen
+              vragen={actief.vragen}
+              files={files}
+              onWijzig={wijzigVragen}
+              onOpen={toonVraag}
+            />
+          )}
 
           <section className={styles.teacherPanel}>
             <label className={styles.notesLabel} htmlFor="docent-opmerkingen">
@@ -475,6 +528,16 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
             )}
           </section>
         </div>
+      )}
+
+      {isDocent && files && (
+        <CodeWeergave
+          files={files}
+          textKinds={config.textKinds}
+          open={codeOpen}
+          onSluit={() => setCodeOpen(null)}
+          onMarkeer={actief ? markeer : undefined}
+        />
       )}
     </div>
   );
