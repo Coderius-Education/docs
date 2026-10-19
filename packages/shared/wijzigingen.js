@@ -42,6 +42,8 @@ const GLOBAAL = [
   'tsconfig.base.json',
   '.npmrc',
   '.nvmrc',
+  // Welke browsers babel en autoprefixer bedienen: raakt de build van elke site.
+  '.browserslistrc',
   '.gitignore',
   '.github/',
   'scripts/wijzigingen.mjs',

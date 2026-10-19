@@ -80,6 +80,16 @@ oud adres een pagina die doorstuurt, en weigert een oud adres waar weer een
 echte pagina staat. De python-cursus houdt de lijst bij in
 `src/data/omleidingen.ts`, met een test die eist dat elk doel een les is.
 
+## Browsers
+
+Voor welke browsers de sites gebouwd worden staat in één bestand,
+`.browserslistrc` in de root; een site zet er geen eigen `browserslist` naast.
+Zonder dat bestand zette de babel-preset van Docusaurus alles om naar ES5 in
+losse modus, en dan wordt `[...x]` `[].concat(x)`: een Map, Set of string
+wordt een lijst met één element. Dat zie je alleen in de browser, want node
+draait de bron zonder omzetting. `packages/shared/browsers.test.ts` draait de
+preset vanuit elke site en voert het resultaat uit.
+
 ## Huisstijl
 
 Kleuren, letters en de logo's van elke cursus komen uit
