@@ -6,7 +6,7 @@ import hallo from './blokken/hallo.json';
 
 # Easybloqs
 
-Je programmeert [de Arduino](site:robotica/click_golfer/microcontroller) met blokken in **Easybloqs**, een website waar je een programma in elkaar zet met blokken in plaats van met tekst. Gebruik de browser **Chrome** of **Edge**: alleen die kunnen via de usb-kabel met je robot praten.
+Je programmeert [de Arduino](site:robotica/golfbot/microcontroller) met blokken in **Easybloqs**, een website waar je een programma in elkaar zet met blokken in plaats van met tekst. Gebruik de browser **Chrome** of **Edge**: alleen die kunnen via de usb-kabel met je robot praten.
 
 ## Easybloqs openen
 
@@ -22,16 +22,14 @@ Staat Easybloqs toch in het Engels of in een andere taal? Kies dan in het menu *
 
 ## Waar staan de blokken?
 
-Links in Easybloqs staat een rij groepen. Klik op een groep, dan zie je de blokken die erin zitten. Deze groepen gebruik je bij de Click Golfer:
+Links in Easybloqs staat een rij groepen. Klik op een groep, dan zie je de blokken die erin zitten. Deze groepen gebruik je bij de Golfbot:
 
 | Groep | Wat erin zit |
 |---|---|
 | **Sensoren** | blokken die iets meten, zoals **Lees anapin** |
-| **Actuatoren** | blokken die iets doen, zoals **Toon op scherm** en **Servo** |
-| **Denk stappen** | **als … dan**, **herhaal voor altijd**, **herhaal … keer** en **duurt** |
-| **Getal blokken** | getallen, vergelijken zoals **`<`**, en een willekeurig getal |
-| **Variabelen** | blokken om een getal te onthouden |
-| **Eigen blokken** | **Subprogramma** |
+| **Actuatoren** | blokken die iets doen, zoals **Toon op scherm**, **Servo** en **Zet PWM** |
+| **Denk stappen** | **als … dan**, **herhaal voor altijd** en **duurt** |
+| **Getal blokken** | getallen, en vergelijken zoals **`<`** |
 
 Een blok pak je in de groep en sleep je naar je programma. Past het, dan klikt het vast.
 
@@ -39,7 +37,7 @@ Een blok pak je in de groep en sleep je naar je programma. Past het, dan klikt h
 
 Maak dit programma na. Het Leaphy-blok staat al klaar. Het blok **Toon op scherm** vind je in de groep **Actuatoren**, en je sleept het in het Leaphy-blok. In die groep staan twee blokken **Toon op scherm**: je wilt het blok met één vakje, niet dat met een `=` erin. In dat vakje staat al het woord `text`. Klik erop en typ je zin.
 
-<Blokken programma={hallo} beschrijving="Het Leaphy-blok met daarin Toon op scherm 'Hallo, ik ben de Click Golfer'." />
+<Blokken programma={hallo} beschrijving="Het Leaphy-blok met daarin Toon op scherm 'Hallo, ik ben de Golfbot'." />
 
 Alles wat in het Leaphy-blok staat, doet je robot **één keer**, van boven naar beneden. Zet het programma nu op je robot en kijk of de zin verschijnt.
 
@@ -62,12 +60,12 @@ Je robot deed het programma al meteen toen de upload klaar was. Misschien staat 
 
 Druk dan op het kleine knopje op de Arduino zelf, met **RST** eronder.
 
-![Uitsnede van de blauwe Arduino Nano op het shield: in het midden het kleine grijze knopje, met RST eronder.](@site/static/fritzing/click_golfer_rst.png)
+![Uitsnede van de blauwe Arduino Nano op het shield: in het midden het kleine grijze knopje, met RST eronder.](@site/static/fritzing/golfbot_rst.png)
 
 Je robot begint dan opnieuw met het programma. In het scherm verschijnt:
 
 ```
-Hallo, ik ben de Click Golfer
+Hallo, ik ben de Golfbot
 ```
 
 ## Er gaat iets mis
@@ -131,9 +129,9 @@ Hallo, ik ben de Click Golfer
   <Keuze goed uitleg="Het Leaphy-blok loopt één keer van boven naar beneden, en elke regel komt onder de vorige.">Elke zin één keer, de bovenste zin eerst</Keuze>
   <Uitleg>
 
-Bovenaan staat "Hallo, ik ben de Click Golfer", en daaronder "Ik ben er klaar voor". Na **RST** begint je robot opnieuw bovenaan, en elk blok **Toon op scherm** zet er één regel bij.
+Bovenaan staat "Hallo, ik ben de Golfbot", en daaronder "Ik ben er klaar voor". Na **RST** begint je robot opnieuw bovenaan, en elk blok **Toon op scherm** zet er één regel bij.
 
   </Uitleg>
 </Voorspel>
 
-Werkt je eerste programma? Dan sluit je nu [de sensor aan](site:robotica/click_golfer/ir-sensor).
+Werkt je eerste programma? Dan sluit je nu [de sensor aan](site:robotica/golfbot/ir-sensor).

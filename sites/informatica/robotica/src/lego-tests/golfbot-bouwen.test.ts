@@ -7,11 +7,10 @@ import * as nl from 'blockly/msg/nl';
 import { describe, expect, it } from 'vitest';
 import { registreer } from '../components/Blokken/leaphy';
 
-// Het tweede deel van de Click Golfer: bouwen, de houten baan, mikken,
-// subprogramma's en de extra's. Wat hier vastligt, ging mis in de
-// leerling-doorloop.
+// Het tweede deel van de Golfbot: de toren bouwen, de houten baan, de arm
+// en de uitbreiding. Wat hier vastligt, ging mis in de leerling-doorloop.
 
-const CLICK = fileURLToPath(new URL('../../click_golfer', import.meta.url));
+const CLICK = fileURLToPath(new URL('../../golfbot', import.meta.url));
 const STATIC = fileURLToPath(new URL('../../static', import.meta.url));
 
 registreer(B, nl as unknown as Record<string, string>);
@@ -45,34 +44,49 @@ describe('de onderdelenlijst klopt met de bouwplaatjes', () => {
   // 3D-model: twee busjes waar de lijst er één had, vier blauwe pinnen waar
   // er drie waren, zeventien zwarte pinnen waar de lijst er twaalf zwart en
   // vier geel had. De leerling volgt de plaatjes, dus die zijn leidend; de
-  // telling per plaatje staat in click_golfer/bouwstappen.json.
+  // telling per plaatje staat in golfbot/bouwstappen.json. De toren (stap 1
+  // tot en met 10) staat bij het bouwen, de arm (stap 11 tot en met 26) bij
+  // de arm, en elke pagina heeft de lijst van haar eigen stappen.
   const PLAATJE =
-    /<img src=\{useBaseUrl\('\/click_golfer\/bouwen\/stap-(\d+)\.jpg'\)\}[^>]*alt="([^"]+)"/g;
-  const plaatjes = [...tekst('bouwen.md').matchAll(PLAATJE)].map((m) => ({
-    stap: Number(m[1]),
-    alt: m[2],
-  }));
+    /<img src=\{useBaseUrl\('\/golfbot\/bouwen\/stap-(\d+)\.jpg'\)\}[^>]*alt="([^"]+)"/g;
+  const PAGINAS = ['bouwen.md', 'arm.md'];
+  const plaatjes = PAGINAS.flatMap((bestand) =>
+    [...tekst(bestand).matchAll(PLAATJE)].map((m) => ({ bestand, stap: Number(m[1]), alt: m[2] })),
+  );
+  const stappenVan = (bestand: string) => {
+    const nummers = new Set(plaatjes.filter((p) => p.bestand === bestand).map((p) => p.stap));
+    return STAPPEN.filter((s) => nummers.has(s.stap));
+  };
 
   it('er is een telling voor elk plaatje op de pagina, in dezelfde volgorde', () => {
     expect(plaatjes.map((p) => p.stap)).toEqual(STAPPEN.map((s) => s.stap));
     expect(STAPPEN).toHaveLength(26);
   });
 
-  it('de tabel in bouwen.md telt op tot wat er op de plaatjes staat', () => {
-    const inhoud = tekst('bouwen.md');
-    const tabel = inhoud.slice(inhoud.indexOf('## Onderdelenlijst'), inhoud.indexOf('## De toren'));
+  it.each(PAGINAS)('de tabel in %s telt op tot wat er op haar plaatjes staat', (bestand) => {
+    const inhoud = tekst(bestand);
+    const begin = inhoud.indexOf('## Onderdelenlijst');
+    const tabel = inhoud.slice(begin, inhoud.indexOf('\n## ', begin + 1));
     const rijen: Onderdeel[] = [
       ...tabel.matchAll(/^\| (\d+) \| [^|]+ \| ([^|]+) \| ([^|]+) \|$/gm),
     ].map((m) => ({ aantal: Number(m[1]), kleur: m[2].trim(), nr: m[3].trim() }));
-    expect(optellen(rijen)).toEqual(optellen(STAPPEN.flatMap((s) => s.onderdelen)));
+    expect(optellen(rijen)).toEqual(optellen(stappenVan(bestand).flatMap((s) => s.onderdelen)));
   });
 
-  it('het aantal in de tekst is het aantal Lego-stukjes op de plaatjes', () => {
-    const lego = STAPPEN.flatMap((s) => s.onderdelen)
-      .filter((o) => o.nr !== '–')
-      .reduce((som, o) => som + o.aantal, 0);
-    expect(tekst('bouwen.md')).toContain(
-      `**${lego} Lego Technic-stukjes** plus de **Leaphy-servo**`,
+  it.each(PAGINAS)(
+    'het aantal in de tekst van %s is het aantal Lego-stukjes op de plaatjes',
+    (bestand) => {
+      const lego = stappenVan(bestand)
+        .flatMap((s) => s.onderdelen)
+        .filter((o) => o.nr !== '–')
+        .reduce((som, o) => som + o.aantal, 0);
+      expect(tekst(bestand)).toContain(`**${lego} Lego Technic-stukjes**`);
+    },
+  );
+
+  it('de servo hoort bij de toren', () => {
+    expect(tekst('bouwen.md')).toMatch(
+      /Lego Technic-stukjes\*\* nodig plus de \*\*Leaphy-servo\*\*/,
     );
   });
 
@@ -83,7 +97,7 @@ describe('de onderdelenlijst klopt met de bouwplaatjes', () => {
       'Light Bluish Gray': 'Lichtgrijs',
       Blue: 'Blauw',
     };
-    const csv = readFileSync(join(STATIC, 'click_golfer/onderdelenlijst.csv'), 'utf8');
+    const csv = readFileSync(join(STATIC, 'golfbot/onderdelenlijst.csv'), 'utf8');
     const rijen: Onderdeel[] = [];
     for (const regel of csv.split(/\r?\n/).slice(1)) {
       const velden = regel.match(/("[^"]*"|[^,]*)(,|$)/g)?.map((v) => v.replace(/,$/, '')) ?? [];
@@ -147,17 +161,18 @@ describe('de onderdelenlijst klopt met de bouwplaatjes', () => {
 });
 
 describe('de stand van de servo ligt vast als de arm op de as komt', () => {
-  // De arm komt in stap 12 met een verbinder op de as, niet in stap 11 met
-  // het tandwiel. Een tandwiel met een asgat op een kruisas slipt niet.
+  // De arm komt met een verbinder op de as (stap 12, of bij een eigen arm
+  // met een stukje met een asgat), niet met het tandwiel van stap 11. Een
+  // tandwiel met een asgat op een kruisas slipt niet.
 
-  it('het caution-blok noemt stap 12, en de servo blijft op 90° tot en met stap 12', () => {
-    const inhoud = tekst('bouwen.md');
+  it('het caution-blok staat vóór het tandwiel, en de servo blijft op 90° tot de arm erop zit', () => {
+    const inhoud = tekst('arm.md');
     const blok = inhoud.slice(
       inhoud.indexOf(':::caution[Eerst de servo op 90°]'),
       inhoud.indexOf('stap-11.jpg'),
     );
-    expect(blok).toMatch(/In stap 12 komt de arm op de as/);
-    expect(blok).toMatch(/Tot en met stap 12/);
+    expect(blok).toMatch(/Straks komt de arm op de as/);
+    expect(blok).toMatch(/Tot de arm op de as zit/);
     // Zonder stroom draait de servo niet naar 90°.
     expect(blok).toMatch(/Zet je robot weer aan met \*\*ON\/OFF\*\* en upload/);
   });
@@ -169,8 +184,9 @@ describe('de stand van de servo ligt vast als de arm op de as komt', () => {
     }
     expect(fout).toEqual([]);
     const kaarten = [
-      ...tekst('hout.md').matchAll(/<Probleem titel="([^"]+)">([\s\S]*?)<\/Probleem>/g),
+      ...tekst('arm.md').matchAll(/<Probleem titel="([^"]+)">([\s\S]*?)<\/Probleem>/g),
     ];
+    expect(kaarten.length).toBeGreaterThan(0);
     for (const [, titel, inhoud] of kaarten) {
       if (!/arm/.test(titel)) continue;
       const oorzaak = inhoud.match(/\*\*Oorzaak:\*\*([^\n]*)/)?.[1] ?? '';
@@ -179,15 +195,83 @@ describe('de stand van de servo ligt vast als de arm op de as komt', () => {
   });
 
   it('de kaart "verkeerde kant op" laat de servo omdraaien, niet 0 en 90 wisselen', () => {
-    // Na de baan gaan mikken, subprogramma's en de extra's uit van uithalen
-    // naar 0° en slaan naar 90°. Wie 0 en 90 wisselde, mikte daarna van de
-    // bal af.
-    const kaart = tekst('hout.md').match(
+    // De lessen gaan uit van uithalen naar 0° en slaan naar 90°. Wie 0 en 90
+    // wisselde, mikte daarna van de bal af.
+    const kaart = tekst('arm.md').match(
       /<Probleem titel="De arm slaat de verkeerde kant op\.">([\s\S]*?)<\/Probleem>/,
     )?.[1];
     expect(kaart).toBeDefined();
     expect(kaart).toMatch(/snoertje/);
     expect(kaart).not.toMatch(/waar 90 staat komt 0/);
+  });
+
+  it('de kaarten over de arm gelden voor de bouwstappen én voor een eigen arm', () => {
+    // Wie zelf een arm bedenkt, heeft geen verbinder van stap 12. Een kaart
+    // die alleen die verbinder noemt, helpt hem niet.
+    for (const titel of [
+      'De servo draait, maar de arm beweegt niet mee.',
+      'De arm staat scheef, of haalt de bal niet.',
+    ]) {
+      const kaart = tekst('arm.md').match(
+        new RegExp(`<Probleem titel="${titel.replace(/[.,]/g, '\\$&')}">([\\s\\S]*?)</Probleem>`),
+      )?.[1];
+      expect(kaart, titel).toBeDefined();
+      expect(kaart, titel).toMatch(/nagemaakte arm/);
+      expect(kaart, titel).toMatch(/zelfgemaakte arm/);
+    }
+  });
+});
+
+describe('de arm', () => {
+  it('je kiest tussen de arm namaken en de arm zelf maken', () => {
+    const inhoud = tekst('arm.md');
+    expect(inhoud).toMatch(/^## Keuze 1: de arm namaken \\\{#namaken\}$/m);
+    expect(inhoud).toMatch(/^## Keuze 2: de arm zelf maken \\\{#zelf-maken\}$/m);
+    // Allebei beginnen na het tandwiel, met de servo op 90°.
+    expect(inhoud.indexOf('## Kies je arm')).toBeGreaterThan(inhoud.indexOf('stap-11.jpg'));
+  });
+
+  it('de keuze staat bovenaan als twee kaarten, en elke kaart wijst naar haar deel', () => {
+    // Een opsomming met "Arm A" en "Arm B" halverwege de pagina viel weg: een
+    // leerling zag niet dat zelf een arm maken ook mag. De kaarten staan nu
+    // vóór de eerste kop.
+    const inhoud = tekst('arm.md');
+    const kaarten = inhoud.indexOf('<Keuzekaarten');
+    expect(kaarten).toBeGreaterThan(-1);
+    expect(kaarten).toBeLessThan(inhoud.indexOf('\n## '));
+    const blok = inhoud.slice(kaarten, inhoud.indexOf('/>', kaarten));
+    expect(blok).toMatch(/titel: 'De arm namaken'[^}]*naar: '#namaken'/);
+    expect(blok).toMatch(/titel: 'De arm zelf maken'[^}]*naar: '#zelf-maken'/);
+  });
+
+  it('wie via een kaart naar zijn keuze springt, ziet daar eerst de servo op 90°', () => {
+    // De kaarten bovenaan springen over het gezamenlijke begin heen: de servo
+    // op 90° en het tandwiel van stap 11. Wie klikte, zette de arm op een
+    // willekeurige stand.
+    const inhoud = tekst('arm.md');
+    for (const kop of ['## Keuze 1', '## Keuze 2']) {
+      const begin = inhoud.indexOf(kop);
+      const eerste = inhoud.slice(begin).split('\n\n')[1];
+      expect(eerste, kop).toMatch(/servo op 90°/);
+      expect(eerste, kop).toMatch(/\]\(#servo-op-90\)/);
+    }
+  });
+
+  it('een eigen arm zit met een asgat op de as, en wordt getest voordat hij op de baan komt', () => {
+    // In een rond gat draait de as door: dan beweegt de arm niet.
+    const inhoud = tekst('arm.md');
+    const eigen = inhoud.slice(inhoud.indexOf('## Keuze 2'), inhoud.indexOf('## Hole in one'));
+    expect(eigen).toMatch(/\*\*asgat\*\*/);
+    expect(eigen).toMatch(/rond gat draait de as door/);
+    expect(eigen).toMatch(/90°/);
+    expect(eigen).toMatch(/<summary>Tip<\/summary>/);
+    expect(eigen).toMatch(/Test je arm/);
+  });
+
+  it('Hole in one zegt in welk gat de bal moet', () => {
+    const inhoud = tekst('arm.md');
+    const sectie = inhoud.slice(inhoud.indexOf('## Hole in one'));
+    expect(sectie).toMatch(/ronde gat/);
   });
 });
 
@@ -206,10 +290,13 @@ describe('de houten baan', () => {
     expect(begin).toMatch(/bal/);
   });
 
-  it('Hole in one zegt in welk gat de bal moet', () => {
+  it('de baan komt vóór de arm, en eindigt met een test die je op de robot ziet', () => {
+    // De toren heeft nog geen arm. De baanles eindigde met Hole in one, en
+    // die kan pas als de arm erop zit.
     const inhoud = tekst('hout.md');
-    const sectie = inhoud.slice(inhoud.indexOf('## Hole in one'));
-    expect(sectie).toMatch(/ronde gat/);
+    expect(inhoud).not.toMatch(/^## Hole in one$/m);
+    expect(inhoud).toMatch(/^## Ziet de sensor de bal op de baan\?$/m);
+    expect(inhoud).toMatch(/^- je toren, met de servo erin;$/m);
   });
 });
 
@@ -318,80 +405,68 @@ describe('de arm rust op 90° in elk programma met de bal', () => {
   });
 });
 
-describe("Mikken, subprogramma's en de extra's", () => {
-  it('Mikken zegt waar het getal voor "stel hoek in op" vandaan komt, en dat herhaal op 10 begint', () => {
-    // In Easybloqs heeft "stel hoek in op" een leeg gat; een los getal staat
-    // in Getal blokken en begint op 123. Herhaal begint op 10.
-    const inhoud = tekst('mikken.md');
-    expect(inhoud).toMatch(/stel hoek in op[^\n]*leeg gat[^\n]*\*\*Getal blokken\*\*[^\n]*123/);
-    expect(inhoud).toMatch(/\*\*herhaal 50 keer\*\*[^\n]*staat er eerst 10/);
+describe('de uitbreiding', () => {
+  const inhoud = tekst('uitbreiding.md');
+
+  it('je kiest tussen een eigen hoofd en een lampje voor een hole in one', () => {
+    expect(inhoud).toMatch(/^## Een eigen hoofd$/m);
+    expect(inhoud).toMatch(/^## Een lampje voor een hole in one$/m);
+    expect(inhoud).toMatch(/\*\*TinkerCAD\*\*/);
   });
 
-  it('Een naam voor je blokken waarschuwt voor het subprogramma met geef terug', () => {
-    // Eigen blokken heeft ook "Subprogramma naam … geef terug". De les zei
-    // dat dat blok rond is, maar het heeft dezelfde vorm als Subprogramma:
-    // geen uitgang, en onderaan een gat met geef terug.
-    const ws = new B.Workspace();
-    const met = ws.newBlock('procedures_defreturn');
-    const zonder = ws.newBlock('procedures_defnoreturn');
-    const vorm = (b: B.Block) => [!!b.outputConnection, !!b.previousConnection, !!b.nextConnection];
-    expect(vorm(met)).toEqual(vorm(zonder));
-    expect(met.outputConnection).toBeNull();
-    const laatste = met.inputList.at(-1);
-    expect(laatste?.name).toBe('RETURN');
-    expect(laatste?.fieldRow.map((v) => v.getText())).toContain('geef terug');
-    ws.dispose();
-
-    const inhoud = tekst('subprogrammas.md');
-    expect(inhoud).toMatch(/\*\*geef terug\*\*/);
-    const zin = inhoud.split('\n').find((r) => r.includes('**geef terug**')) ?? '';
-    expect(zin).not.toMatch(/\brond\b/);
-    expect(zin).toMatch(/onderaan/);
+  it('de RGB-led trio: niet het blok Led, want dat stuurt ook D9 aan, en daar zit de servo', () => {
+    // Het blok Led stuurt op de Arduino Nano D11, D10 en D9 aan, met de min
+    // op D8 (leaphy-webbased-svelte, generators/arduino/leaphy_original.ts).
+    // Met de servo op D9 gaat dat mis; daarom rood en groen met draadjes op
+    // D11 en D10, en blauw los.
+    for (const pin of ['D11', 'D10', 'D9', 'D8']) expect(inhoud).toContain(`**${pin}**`);
+    expect(inhoud).toMatch(/\*\*RGB-led trio\*\*/);
+    expect(inhoud).toMatch(/Op D9 zit je servo al/);
+    expect(inhoud).toMatch(/Het blauwe pinnetje sluit je niet aan/);
+    expect(inhoud).not.toMatch(/Ledstrip/);
   });
 
-  it('het blok om een subprogramma te gebruiken pak je uit Eigen blokken', () => {
-    expect(tekst('subprogrammas.md')).toMatch(
-      /\*\*Eigen blokken\*\*\. Daar staan nu ook de blokken \*\*mikken\*\* en \*\*slaan\*\*/,
-    );
+  it('het programma zet groen met Zet PWM op D10, en alleen op 0 of 255', () => {
+    // De servobibliotheek gebruikt de timer van D9 en D10. analogWrite met 0
+    // of 255 wordt dan een gewone digitalWrite en werkt; een getal ertussen
+    // niet. Op D11 mag alles.
+    type B = {
+      type?: string;
+      fields?: { PIN?: string };
+      inputs?: { NUM?: { block?: { fields?: { NUM?: number } } } };
+    };
+    const pwm: B[] = [];
+    const loop = (w: unknown) => {
+      if (!w || typeof w !== 'object') return;
+      if ((w as B).type === 'leaphy_io_analogwrite') pwm.push(w as B);
+      for (const k of Object.values(w)) loop(k);
+    };
+    loop(JSON.parse(readFileSync(join(CLICK, 'blokken', 'hole-in-one.json'), 'utf8')));
+    expect(pwm.map((b) => [b.fields?.PIN, b.inputs?.NUM?.block?.fields?.NUM])).toEqual([
+      ['10', 255],
+      ['10', 0],
+    ]);
+    expect(inhoud).toMatch(/groen op het signaal van \*\*D10\*\*/);
+    expect(inhoud).toMatch(/Gebruik voor groen alleen 0 en 255/);
   });
 
-  it('het lampje: de pinnen van het blok Led, de botsing met de servo op D9, en het lampje bij wat je nodig hebt', () => {
-    const inhoud = tekst('extras.md');
-    const sectie = inhoud.slice(
-      inhoud.indexOf('## Een lampje dat meekleurt'),
-      inhoud.indexOf('## Willekeurig slaan'),
-    );
-    for (const pin of ['D11', 'D10', 'D9', 'D8']) expect(sectie).toContain(`**${pin}**`);
-    expect(sectie).toMatch(/op D9 zit je servo/);
-    expect(sectie).toMatch(/heb je een \*\*RGB-lampje\*\* nodig/);
-    // Een kale led zonder weerstand op D10/D11 trekt te veel stroom, en met
-    // een gemeenschappelijke plus werkt alles omgekeerd. De docent geeft
-    // het goede lampje.
-    expect(sectie).toMatch(/gemeenschappelijke min/);
-    expect(sectie).toMatch(/weerstand voor elke kleur/);
-    expect(sectie).toMatch(/Je docent geeft je het goede lampje/);
-  });
-
-  it("elk antwoord bij een programmeeropdracht in de extra's toont de blokken", () => {
-    // Het antwoord van het lampje was alleen tekst. Het hoofd uit de
-    // 3D-printer heeft geen antwoord, en hoort er dus niet bij.
-    const inhoud = tekst('extras.md');
-    const antwoorden = [
-      ...inhoud.matchAll(/<summary>Antwoord<\/summary>([\s\S]*?)<\/details>/g),
-    ].map((m) => m[1]);
-    expect(antwoorden.length).toBeGreaterThanOrEqual(2);
-    for (const antwoord of antwoorden) expect(antwoord).toMatch(/<Blokken programma=/);
+  it('de tweede sensor zit op A1 en heeft een eigen grens', () => {
+    expect(inhoud).toMatch(/rij van \*\*A1\*\*/);
+    expect(inhoud).toMatch(/De eerste sensor blijft op A0/);
+    expect(inhoud).toMatch(/^### Een grens voor de tweede sensor$/m);
+    const programma = readFileSync(join(CLICK, 'blokken', 'hole-in-one.json'), 'utf8');
+    expect(programma).toContain('"PIN": "A1"');
+    expect(programma).toContain('"PIN": "A0"');
   });
 });
 
 describe('controlevragen', () => {
   // robotica/CLAUDE.md: na elke uitleg een korte controlevraag in een
   // <details>-blok, of als <Voorspel soort="Controlevraag"> waarin de
-  // leerling eerst kiest. De extra's zijn opdrachten, geen uitleg.
-  it("elke les behalve de extra's heeft een controlevraag", () => {
+  // leerling eerst kiest.
+  it('elke les heeft een controlevraag', () => {
     const zonder = paginas().filter(
       (f) =>
-        f !== 'extras.md' &&
         !tekst(f).includes('<summary>Controlevraag</summary>') &&
         !/<Voorspel soort="Controlevraag"/.test(tekst(f)),
     );
@@ -399,42 +474,21 @@ describe('controlevragen', () => {
   });
 });
 
-describe('het antwoord bij het lampje', () => {
-  // Het antwoord zei "zet de twee Zet PWM-blokken voor groen erboven", maar
-  // een van die twee zet rood uit, en de blokken voor de anders-tak stonden
-  // alleen in de opsomming. Elk blok uit lampje.json staat nu in de tekst.
-  it('noemt elk Zet PWM-blok uit het programma, met zijn tak', () => {
-    const extras = tekst('extras.md');
-    for (const blok of [
-      'Zet PWM 11 op 0',
-      'Zet PWM 10 op 255',
-      'Zet PWM 11 op 255',
-      'Zet PWM 10 op 0',
-    ])
-      expect(extras).toContain(`${blok} (`);
-    expect(extras).toMatch(/In de anders-tak komen Zet PWM 11 op 255/);
-  });
-});
-
-describe('de houten baan verwijst naar dezelfde stap als het bouwen', () => {
+describe('elke link naar de servo op 90° wijst naar het anker op de armpagina', () => {
   // De ene kaart zei "vóór stap 12 weer op 90°", de volgende "zoals vóór
-  // stap 11", en de links gingen naar de bovenkant van de bouwpagina. De arm
-  // komt in stap 12 op de as; het blok "Eerst de servo op 90°" heeft een
-  // anker, en elke kaart linkt daarheen.
+  // stap 11", en de links gingen naar de bovenkant van de bouwpagina. Het
+  // blok "Eerst de servo op 90°" heeft een anker, en elke link gaat daarheen.
   it('het caution-blok heeft een anker', () => {
-    const inhoud = tekst('bouwen.md');
+    const inhoud = tekst('arm.md');
     // Een kale <a id> ziet de ankercontrole van Docusaurus niet.
     expect(inhoud).toMatch(/<Link id="servo-op-90"[^>]*\/>\s*:::caution\[Eerst de servo op 90°\]/);
   });
 
-  it('elke zin in hout over 90° noemt stap 12 en linkt naar het anker', () => {
-    const zinnen = tekst('hout.md')
-      .split(/(?<=[.?])\s+/)
-      .filter((z) => /op 90°/.test(z) && /\]\(site:robotica\/click_golfer\/bouwen/.test(z));
+  it('elke zin over 90° met een link, linkt naar dat anker', () => {
+    const zinnen = paginas()
+      .flatMap((f) => tekst(f).split(/(?<=[.?])\s+/))
+      .filter((z) => /op 90°/.test(z) && /\]\(site:robotica\/golfbot\//.test(z));
     expect(zinnen.length).toBeGreaterThanOrEqual(3);
-    for (const zin of zinnen) {
-      expect(zin).toMatch(/\]\(site:robotica\/click_golfer\/bouwen#servo-op-90\)/);
-      for (const m of zin.matchAll(/stap (\d+)/g)) expect(m[1], zin).toBe('12');
-    }
+    for (const zin of zinnen) expect(zin).toMatch(/\]\(site:robotica\/golfbot\/arm#servo-op-90\)/);
   });
 });

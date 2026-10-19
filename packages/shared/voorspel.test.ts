@@ -23,7 +23,7 @@ const OVERSLAAN = new Set([
   'src',
 ]);
 
-/** Elk lesbestand van elke site: docs/, en ook click_golfer/, lego_auto/ en zo. */
+/** Elk lesbestand van elke site: docs/, en ook golfbot/, lego_auto/ en zo. */
 function alleLessen(): { site: string; bestand: string; pad: string }[] {
   const uit: { site: string; bestand: string; pad: string }[] = [];
   for (const site of Object.keys(SITES_BY_ID)) {
@@ -202,7 +202,7 @@ describe('de guard leest <Voorspel> zoals een schrijver hem typt', () => {
 
 describe('de uitleg verklapt niets en herhaalt niets', () => {
   it('meldt een foute keuze waarvan de uitleg het goede antwoord noemt, ook een deel ervan', () => {
-    // Uit de Click Golfer, ir-sensor, vóór de fix.
+    // Uit de Golfbot, ir-sensor, vóór de fix.
     const bron = `<Voorspel vraag="Welke sluit je aan?">
   <Keuze goed uitleg="A0 geeft een getal.">A0, op het signaal van A0 op het shield</Keuze>
   <Keuze uitleg="Je gebruikt er maar één: de robot leest één getal, met Lees anapin A0.">Allebei</Keuze>
@@ -237,7 +237,7 @@ describe('de uitleg verklapt niets en herhaalt niets', () => {
   });
 
   it('meldt een goede uitleg die <Uitleg> letterlijk herhaalt', () => {
-    // Uit de Click Golfer, servo, vóór de fix.
+    // Uit de Golfbot, servo, vóór de fix.
     const bron = `<Voorspel vraag="?">
   <Keuze uitleg="Het asje stopt al eerder.">Een halve cirkel</Keuze>
   <Keuze goed uitleg="Een halve cirkel is 180°, en 90° is daar de helft van.">Een kwart cirkel</Keuze>
@@ -255,10 +255,10 @@ Een kwart cirkel. Een halve cirkel is 180°, en 90° is daar de helft van.
 });
 
 describe('<Voorspel> in de lessen', () => {
-  it('staat in elk geval in de Click Golfer', () => {
+  it('staat in elk geval in de Golfbot', () => {
     // Zonder vondsten zou de controle hieronder stil groen zijn.
     expect(
-      metVoorspel.some((l) => l.bestand.startsWith('sites/informatica/robotica/click_golfer/')),
+      metVoorspel.some((l) => l.bestand.startsWith('sites/informatica/robotica/golfbot/')),
     ).toBe(true);
   });
 

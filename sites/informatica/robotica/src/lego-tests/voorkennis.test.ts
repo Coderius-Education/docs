@@ -16,7 +16,7 @@ import { describe, expect, it } from 'vitest';
 //                 leesvolgorde bestaat er geen eerste keer, dus geen blokken —
 //                 met als enige uitzondering de instap-hoofdstukken, waar de
 //                 code wél regel voor regel wordt opgebouwd (zie CLAUDE.md).
-//   click_golfer/ Leaphy-blokken voor groep 7/8, geen Python.
+//   golfbot/ Leaphy-blokken voor groep 7/8, geen Python.
 
 // Let op de replace: `new URL('../..')` levert een map-URL op en dus een pad
 // mét afsluitende slash, wat het afknippen hieronder een teken zou verschuiven.
@@ -163,9 +163,9 @@ describe('robotica Voorkennis-blokken', () => {
     expect(lessenIn('docs').filter(heeftBlok)).toEqual([...BIBLIOTHEEK_INSTAP].sort());
   });
 
-  it('click_golfer heeft geen blokken', () => {
+  it('golfbot heeft geen blokken', () => {
     // Leaphy-blokken voor groep 7/8: geen Python, dus geen python-voorkennis.
-    expect(lessenIn('click_golfer').filter(heeftBlok)).toEqual([]);
+    expect(lessenIn('golfbot').filter(heeftBlok)).toEqual([]);
   });
 
   it('elk blok noemt het concept waar de pagina het eerst om vraagt', () => {

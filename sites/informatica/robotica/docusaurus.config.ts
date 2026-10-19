@@ -4,7 +4,7 @@ import type { Plugin } from '@docusaurus/types';
 
 const projectName = 'robotica-docs';
 
-// Blockly tekent de blokken van de Click Golfer, en dat gebeurt alleen in de
+// Blockly tekent de blokken van de Golfbot, en dat gebeurt alleen in de
 // browser (`src/components/Blokken`). In de serverbuild zou webpack de
 // node-versie van Blockly meenemen, met jsdom erbij, voor code die daar nooit
 // draait; die laat je hier weg.
@@ -34,13 +34,28 @@ export default createConfig({
     ],
   },
 
-  // De Click Golfer ging van bouwen-eerst naar onderdelen-eerst. Drie lessen
-  // gingen daarbij op in andere; oude links landen op de les die hun inhoud
-  // nu heeft.
+  // De Golfbot heette eerst Click Golfer en stond onder /click_golfer/.
+  // Werkbladen en bladwijzers met dat adres landen op dezelfde les onder
+  // /golfbot/. Een les die er niet meer is, stuurt door naar de les die zijn
+  // plek in de route nam: Hole in one staat nu bij de arm, en de uitbreiding
+  // verving Een naam voor je blokken en de Extra's. Aansluiten,
+  // bal-detecteren en hole-in-one gingen al eerder op in andere lessen.
   omleidingen: [
-    { van: '/click_golfer/aansluiten', naar: '/click_golfer/ir-sensor' },
-    { van: '/click_golfer/bal-detecteren', naar: '/click_golfer/ir-sensor' },
-    { van: '/click_golfer/hole-in-one', naar: '/click_golfer/hout#hole-in-one' },
+    { van: '/click_golfer/intro', naar: '/golfbot/intro' },
+    { van: '/click_golfer/microcontroller', naar: '/golfbot/microcontroller' },
+    { van: '/click_golfer/easybloqs', naar: '/golfbot/easybloqs' },
+    { van: '/click_golfer/ir-sensor', naar: '/golfbot/ir-sensor' },
+    { van: '/click_golfer/servo', naar: '/golfbot/servo' },
+    { van: '/click_golfer/bal-slaan', naar: '/golfbot/bal-slaan' },
+    { van: '/click_golfer/bouwen', naar: '/golfbot/bouwen' },
+    { van: '/click_golfer/hout', naar: '/golfbot/hout' },
+    { van: '/click_golfer/oefenen', naar: '/golfbot/bal-slaan' },
+    { van: '/click_golfer/mikken', naar: '/golfbot/arm#hole-in-one' },
+    { van: '/click_golfer/subprogrammas', naar: '/golfbot/uitbreiding' },
+    { van: '/click_golfer/extras', naar: '/golfbot/uitbreiding' },
+    { van: '/click_golfer/aansluiten', naar: '/golfbot/ir-sensor' },
+    { van: '/click_golfer/bal-detecteren', naar: '/golfbot/ir-sensor' },
+    { van: '/click_golfer/hole-in-one', naar: '/golfbot/arm#hole-in-one' },
   ],
 
   // @coderius/shared is de standaard; @coderius/checker levert de nakijker.
@@ -86,10 +101,10 @@ export default createConfig({
     [
       '@docusaurus/plugin-content-docs',
       {
-        id: 'click_golfer',
-        path: 'click_golfer',
-        routeBasePath: 'click_golfer',
-        sidebarPath: './sidebarsClickGolfer.ts',
+        id: 'golfbot',
+        path: 'golfbot',
+        routeBasePath: 'golfbot',
+        sidebarPath: './sidebarsGolfbot.ts',
       },
     ],
   ],
@@ -123,8 +138,8 @@ export default createConfig({
           type: 'doc',
           docId: 'intro',
           position: 'left',
-          label: 'Click Golfer',
-          docsPluginId: 'click_golfer',
+          label: 'Golfbot',
+          docsPluginId: 'golfbot',
         },
         {
           href: REPO_URL,

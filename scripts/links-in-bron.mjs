@@ -148,7 +148,7 @@ export function linksInBron(bron) {
 }
 
 /** Mappen waarvan de content-plugins de md/mdx verwerken, en dus site:-links omzetten. */
-export const CONTENTMAPPEN = ['docs', 'src/pages', 'blog', 'lego_auto', 'click_golfer'];
+export const CONTENTMAPPEN = ['docs', 'src/pages', 'blog', 'lego_auto', 'golfbot'];
 
 const ASSET = /\.(?!mdx?$)[a-z0-9]{1,5}$/i;
 

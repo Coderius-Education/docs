@@ -25,7 +25,7 @@ import { describe, expect, it } from 'vitest';
 const ROOT = fileURLToPath(new URL('../..', import.meta.url)).replace(/[\\/]$/, '');
 
 // Niet elke site zet zijn lessen in docs/: robotica heeft lego_auto/ en
-// click_golfer/, algorithms heeft dev-docs/, editor heeft blog/. Daarom
+// golfbot/, algorithms heeft dev-docs/, editor heeft blog/. Daarom
 // lopen we alles af behalve wat gegenereerd of geïnstalleerd is — anders
 // mist de controle precies de mappen die niemand verwacht.
 const OVERSLAAN = new Set([

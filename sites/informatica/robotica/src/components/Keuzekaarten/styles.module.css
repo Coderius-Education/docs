@@ -1,0 +1,44 @@
+.rij {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0 2rem;
+}
+
+.kaart {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.25rem;
+  border: 2px solid var(--ifm-color-primary);
+  border-radius: var(--ifm-global-radius);
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+}
+
+.kaart:hover {
+  color: var(--ifm-font-color-base);
+  text-decoration: none;
+  background: var(--ifm-color-emphasis-100);
+}
+
+.label {
+  font-size: 0.85rem;
+  font-weight: var(--ifm-font-weight-semibold);
+  color: var(--ifm-color-primary);
+}
+
+.titel {
+  font-size: 1.4rem;
+  font-weight: var(--ifm-font-weight-bold);
+  line-height: 1.2;
+}
+
+.tekst {
+  flex: 1;
+}
+
+.knop {
+  font-weight: var(--ifm-font-weight-semibold);
+  color: var(--ifm-color-primary);
+}

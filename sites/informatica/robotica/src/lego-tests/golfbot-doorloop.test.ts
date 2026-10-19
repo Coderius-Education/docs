@@ -9,7 +9,7 @@ import { describe, expect, it } from 'vitest';
 import { registreer } from '../components/Blokken/leaphy';
 import { cameraAfstand } from '../components/ObjViewer/passend';
 
-// Wat een leerling-doorloop van de Click Golfer (intro tot en met bal-slaan)
+// Wat een leerling-doorloop van de Golfbot (intro tot en met bal-slaan)
 // vond, vastgepind. Wat Easybloqs laat zien, komt uit de live app:
 // leaphy-robotics/leaphy-webbased-svelte, met de toolbox in
 // packages/client/src/lib/domain/blockly/toolbox.ts, het pinveld in
@@ -17,7 +17,7 @@ import { cameraAfstand } from '../components/ObjViewer/passend';
 // packages/client/src/assets/translations/nl.json. De oudere repo
 // leaphy-webbased staat stil en is niet meer wat leerlingen zien.
 
-const CLICK = fileURLToPath(new URL('../../click_golfer', import.meta.url));
+const CLICK = fileURLToPath(new URL('../../golfbot', import.meta.url));
 
 const ROUTE = [
   'intro',
@@ -26,12 +26,10 @@ const ROUTE = [
   'ir-sensor',
   'servo',
   'bal-slaan',
-  'oefenen',
   'bouwen',
   'hout',
-  'mikken',
-  'subprogrammas',
-  'extras',
+  'arm',
+  'uitbreiding',
 ];
 
 function tekst(naam: string): string {
@@ -105,6 +103,14 @@ describe('een blok dat in Easybloqs anders begint dan in de les', () => {
       },
       eerst: /eerst 1000/,
       kies: (ms) => new RegExp(`typ ${ms}\\b`),
+    },
+    {
+      // Het pinveld van Zet PWM biedt op de Nano alleen 3, 5, 6, 9, 10 en 11
+      // (pinSelector.ts), en begint dus op 3.
+      type: 'leaphy_io_analogwrite',
+      anders: (b) => (b.fields?.PIN !== '3' ? String(b.fields?.PIN) : undefined),
+      eerst: /\*\*Zet PWM 3 op 0\*\*/,
+      kies: (pin) => new RegExp(`kies \\*\\*${pin}\\*\\*`),
     },
   ];
 
@@ -211,6 +217,19 @@ describe('aansluiten', () => {
     expect(zonder).toEqual([]);
   });
 
+  it('na het bouwen zet de baanles de robot weer aan, vóór de upload', () => {
+    // Bij stap 4 van Bouwen gaat de robot uit. Het aanzetten stond in het
+    // blok over de servo op 90°, en dat verhuisde naar de armles. De baanles
+    // liet de leerling uploaden met de robot nog uit; draaide de as dan
+    // niet, dan zocht hij de fout bij de sensor.
+    expect(tekst('bouwen')).toMatch(/uit met de knop \*\*ON\/OFF\*\*/);
+    const hout = tekst('hout');
+    const aan = hout.search(/aan met \*\*ON\/OFF\*\*/);
+    const upload = hout.search(/Upload/);
+    expect(aan).toBeGreaterThan(-1);
+    expect(aan).toBeLessThan(upload);
+  });
+
   it('het signaalpinnetje is het pinnetje bij de naam van de pin', () => {
     // Boven de kolommen staat alleen <GND en <5V. Welke van de drie het
     // signaal is, moest de leerling raden.
@@ -223,7 +242,7 @@ describe('aansluiten', () => {
     // Op het plaatje loopt de draad langs de rij van A4 en dan omhoog; de
     // hoeken lijken aansluitpunten. Het plaatje zelf passen we niet aan.
     const inhoud = tekst('ir-sensor');
-    const na = inhoud.slice(inhoud.indexOf('click_golfer_sensor.png'));
+    const na = inhoud.slice(inhoud.indexOf('golfbot_sensor.png'));
     expect(na.slice(0, 400)).toMatch(/rij van A4/);
   });
 

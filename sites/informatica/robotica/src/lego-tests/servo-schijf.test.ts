@@ -16,12 +16,12 @@ import {
   punt,
 } from '../components/ServoSchijf/logica';
 
-// De servo-draaischijf in click_golfer/servo.md: een tekening van de servo
+// De servo-draaischijf in golfbot/servo.md: een tekening van de servo
 // waarin het asje meedraait met de stand die de leerling kiest, plus kleine
 // opdrachten. Wat hier vastligt, is wat de les in de tabel onder "Graden"
 // zegt: 0° en 180° aan de twee kanten, 90° recht in het midden.
 
-const SERVO = fileURLToPath(new URL('../../click_golfer/servo.md', import.meta.url));
+const SERVO = fileURLToPath(new URL('../../golfbot/servo.md', import.meta.url));
 
 describe('de tekening', () => {
   it('90° wijst recht omhoog, 0° ligt links en 180° rechts, net als op de schuif', () => {

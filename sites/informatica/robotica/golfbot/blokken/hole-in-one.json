@@ -111,6 +111,9 @@
                     "next": {
                       "block": {
                         "type": "controls_if",
+                        "extraState": {
+                          "hasElse": true
+                        },
                         "inputs": {
                           "IF0": {
                             "block": {
@@ -131,7 +134,7 @@
                                   "block": {
                                     "type": "math_number",
                                     "fields": {
-                                      "NUM": 350
+                                      "NUM": 300
                                     }
                                   }
                                 }
@@ -140,64 +143,34 @@
                           },
                           "DO0": {
                             "block": {
-                              "type": "leaphy_servo_write",
+                              "type": "leaphy_io_analogwrite",
                               "fields": {
-                                "SERVO_PIN": "10"
+                                "PIN": "10"
                               },
                               "inputs": {
-                                "SERVO_ANGLE": {
+                                "NUM": {
+                                  "block": {
+                                    "type": "math_number",
+                                    "fields": {
+                                      "NUM": 255
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "ELSE": {
+                            "block": {
+                              "type": "leaphy_io_analogwrite",
+                              "fields": {
+                                "PIN": "10"
+                              },
+                              "inputs": {
+                                "NUM": {
                                   "block": {
                                     "type": "math_number",
                                     "fields": {
                                       "NUM": 0
-                                    }
-                                  }
-                                }
-                              },
-                              "next": {
-                                "block": {
-                                  "type": "time_delay",
-                                  "inputs": {
-                                    "DELAY_TIME_MILI": {
-                                      "block": {
-                                        "type": "math_number",
-                                        "fields": {
-                                          "NUM": 500
-                                        }
-                                      }
-                                    }
-                                  },
-                                  "next": {
-                                    "block": {
-                                      "type": "leaphy_servo_write",
-                                      "fields": {
-                                        "SERVO_PIN": "10"
-                                      },
-                                      "inputs": {
-                                        "SERVO_ANGLE": {
-                                          "block": {
-                                            "type": "math_number",
-                                            "fields": {
-                                              "NUM": 90
-                                            }
-                                          }
-                                        }
-                                      },
-                                      "next": {
-                                        "block": {
-                                          "type": "time_delay",
-                                          "inputs": {
-                                            "DELAY_TIME_MILI": {
-                                              "block": {
-                                                "type": "math_number",
-                                                "fields": {
-                                                  "NUM": 2000
-                                                }
-                                              }
-                                            }
-                                          }
-                                        }
-                                      }
                                     }
                                   }
                                 }

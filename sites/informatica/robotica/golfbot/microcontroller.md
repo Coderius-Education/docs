@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # De microcontroller
 
-Het brein van je Click Golfer is een **microcontroller**: een heel klein computertje op één plaatje. Hij doet precies wat jouw programma zegt. Jouw microcontroller heet **Arduino Nano**.
+Het brein van je Golfbot is een **microcontroller**: een heel klein computertje op één plaatje. Hij doet precies wat jouw programma zegt. Jouw microcontroller heet **Arduino Nano**.
 
 ## Pinnen
 
@@ -17,7 +17,7 @@ Langs de randen van de Arduino zitten pootjes: de **pinnen**. Op een pin sluit j
 
 De Arduino zit vast op een groene plaat: het **shield**. Daarmee sluit je makkelijk iets aan, zonder solderen.
 
-![Het groene shield met in het midden de blauwe Arduino Nano. Links zit een sensor vast op de rij van A0, rechts een servomotor op de rij van D9. Onderaan zitten de aan-uitknop en de aansluiting voor de stroom.](@site/static/fritzing/click_golfer_bb.png)
+![Het groene shield met in het midden de blauwe Arduino Nano. Links zit een sensor vast op de rij van A0, rechts een servomotor op de rij van D9. Onderaan zitten de aan-uitknop en de aansluiting voor de stroom.](@site/static/fritzing/golfbot_bb.png)
 
 Naast elke pin van de Arduino zitten op het shield drie pinnetjes op een rij:
 
@@ -33,7 +33,7 @@ Boven de rijen staat bij twee pinnetjes `<5V` en `<GND`. Bij het signaal staat n
 
 Onderaan het shield zit een schuifknop, **ON/OFF**, waarmee je je robot aan- en uitzet. Zet hem uit voordat je iets aansluit, en weer aan voordat je een programma test.
 
-![Uitsnede van het shield: het schuifje met ON links en OFF rechts, naast de tekst VIN = 3-16Vdc.](@site/static/fritzing/click_golfer_aan-uit.png)
+![Uitsnede van het shield: het schuifje met ON links en OFF rechts, naast de tekst VIN = 3-16Vdc.](@site/static/fritzing/golfbot_aan-uit.png)
 
 <Voorspel soort="Controlevraag" vraag="Waarom heeft elke pin op het shield drie pinnetjes, en niet één?">
   <Keuze uitleg="Op een rij komt maar één onderdeel. Zet je er meer op, dan weet je robot niet van welk onderdeel het signaal komt.">Zodat je drie onderdelen op één pin kunt aansluiten</Keuze>
@@ -46,4 +46,4 @@ Een onderdeel heeft behalve het signaal ook stroom nodig. Twee pinnetjes, **5V**
   </Uitleg>
 </Voorspel>
 
-Weet je hoe het shield werkt? Dan ga je nu [programmeren in Easybloqs](site:robotica/click_golfer/easybloqs).
+Weet je hoe het shield werkt? Dan ga je nu [programmeren in Easybloqs](site:robotica/golfbot/easybloqs).
