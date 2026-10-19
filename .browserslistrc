@@ -1,0 +1,7 @@
+# Voor welke browsers de sites gebouwd worden. Zonder dit bestand zette de
+# babel-preset van Docusaurus alles om naar ES5, in losse modus: [...x] werd
+# [].concat(x), wat een Map, Set of string niet doorloopt. Dit is de lijst die
+# Docusaurus zelf als standaard meegeeft. Zie packages/shared/browsers.test.ts.
+>0.5%
+not dead
+not op_mini all
