@@ -379,15 +379,84 @@ const JS_LEDEN = [
   'json',
 ];
 
-function zonderCommentaarEnTekst(js: string): string {
-  // Tekst tussen aanhalingstekens kan alles bevatten ("Klik => hier"); die
-  // telt niet mee. Template literals houden hun backtick, zodat de
-  // constructie zelf herkend blijft.
-  return js
-    .replace(/\/\*[\s\S]*?\*\//g, blanco)
-    .replace(/(^|[^:\\])(\/\/.*)$/gm, (_m, voor: string, rest: string) => voor + blanco(rest))
-    .replace(/"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'/g, tussenQuotes)
-    .replace(/`(?:[^`\\$]|\\.|\$(?!\{))*`/g, tussenQuotes);
+/**
+ * Poetst commentaar en tekst tussen aanhalingstekens weg: tekst kan alles
+ * bevatten ("Klik => hier") en telt niet mee. Eén doorloop, van links naar
+ * rechts, zodat wat het eerst begint wint: een // in een string is geen
+ * commentaar, en een " in commentaar opent geen string. De code tussen ${ }
+ * in een template literal blijft staan, want dat is gewone code; de backticks
+ * ook, zodat de template literal zelf herkend blijft. Alles wordt spaties van
+ * dezelfde lengte, met de regeleinden erin, zodat posities kloppen.
+ */
+export function zonderCommentaarEnTekst(js: string): string {
+  let uit = '';
+  let i = 0;
+  // Per open ${ … } in een template: hoeveel { er binnen nog open staan.
+  const templates: number[] = [];
+  const blancoTot = (eind: number) => {
+    uit += blanco(js.slice(i, eind));
+    i = eind;
+  };
+  const inTemplate = () => {
+    // In de tekst van een template literal, tot de sluitende ` of een ${.
+    while (i < js.length) {
+      const c = js[i];
+      if (c === '\\') {
+        blancoTot(Math.min(i + 2, js.length));
+      } else if (c === '`') {
+        uit += '`';
+        i++;
+        return;
+      } else if (c === '$' && js[i + 1] === '{') {
+        uit += '${';
+        i += 2;
+        templates.push(0);
+        return;
+      } else {
+        blancoTot(i + 1);
+      }
+    }
+  };
+  while (i < js.length) {
+    const c = js[i];
+    const volgende = js[i + 1];
+    if (c === '/' && volgende === '/') {
+      const eind = js.indexOf('\n', i);
+      blancoTot(eind === -1 ? js.length : eind);
+    } else if (c === '/' && volgende === '*') {
+      const eind = js.indexOf('*/', i + 2);
+      blancoTot(eind === -1 ? js.length : eind + 2);
+    } else if (c === '"' || c === "'") {
+      // Tot de sluitende quote (of het regeleinde, als hij ontbreekt).
+      let j = i + 1;
+      while (j < js.length && js[j] !== c && js[j] !== '\n') j += js[j] === '\\' ? 2 : 1;
+      const dicht = js[j] === c;
+      uit += c + blanco(js.slice(i + 1, j)) + (dicht ? c : '');
+      i = dicht ? j + 1 : j;
+    } else if (c === '`') {
+      uit += '`';
+      i++;
+      inTemplate();
+    } else if (templates.length > 0 && c === '{') {
+      templates[templates.length - 1]++;
+      uit += c;
+      i++;
+    } else if (templates.length > 0 && c === '}') {
+      uit += c;
+      i++;
+      const open = templates.length - 1;
+      if (templates[open] === 0) {
+        templates.pop();
+        inTemplate();
+      } else {
+        templates[open]--;
+      }
+    } else {
+      uit += c;
+      i++;
+    }
+  }
+  return uit;
 }
 
 // Eén keer opgebouwd; matchAll werkt op een kopie, dus hergebruik is veilig.

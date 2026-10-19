@@ -44,7 +44,8 @@ function klok(start = new Date(2026, 9, 19, 9, 0)) {
 }
 
 function bewaarder(opslag: Opslag | Promise<Opslag> = geheugenOpslag(), nu = klok()) {
-  const fouten: string[] = [];
+  // null: een eerdere schrijffout is opgelost.
+  const fouten: (string | null)[] = [];
   const b = new Bewaarder(Promise.resolve(opslag), {
     onLijst: () => {},
     onFout: (m) => fouten.push(m),
@@ -65,12 +66,15 @@ function nepOpslag() {
     bewaarFoutBij: null as string | null,
     wisFoutBij: null as string | null,
     leesFout: false,
+    /** Houdt het inlezen van de lijst vast tot dit klaar is. */
+    wachtLezen: null as Promise<void> | null,
     wachtNieuw: null as Promise<void> | null,
     /** Houdt de eerstvolgende bewaarNieuw vast, nadat hij is begonnen. */
     houdNieuw: null as { gestart: () => void; los: Promise<void> } | null,
   };
   const opslag: Opslag = {
     alleBeoordelingen: async () => {
+      if (gedrag.wachtLezen) await gedrag.wachtLezen;
       if (gedrag.leesFout) throw new Error('lezen mislukt');
       return echt.alleBeoordelingen();
     },
@@ -227,7 +231,10 @@ describe('Bewaarder: beoordelingen bewaren', () => {
     await stil(b);
     expect(await nep.echt.alleBeoordelingen()).toEqual([]);
     expect(await nep.echt.leesProject(sam.id)).toBeUndefined();
-    expect(fouten).toEqual([opslagMelding(new DOMException('vol', 'QuotaExceededError'))]);
+    // De wijziging erna probeert het opnieuw en faalt ook: dezelfde melding.
+    expect(new Set(fouten)).toEqual(
+      new Set([opslagMelding(new DOMException('vol', 'QuotaExceededError'))]),
+    );
     expect(fouten[0]).toContain('vol');
     // Op deze pagina blijft Sam wel te openen, tot de pagina sluit.
     expect((await b.open(sam.id))?.project.files['index.html'].content).toBe('<h1>Sam</h1>');
@@ -249,11 +256,87 @@ describe('Bewaarder: beoordelingen bewaren', () => {
     expect(await opgeslagen(sam.id)).toBe('');
     expect(fouten).toHaveLength(1);
 
-    // De opslag werkt weer; de volgende wijziging neemt Sam mee.
+    // De opslag werkt weer; de volgende wijziging neemt Sam mee, en de
+    // melding verdwijnt.
     nep.gedrag.bewaarFoutBij = null;
     b.wijzig(noor.id, { notes: 'Noor nog eens' });
     await stil(b);
     expect(await opgeslagen(sam.id)).toBe('Sam later');
+    expect(fouten.at(-1)).toBeNull();
+  });
+
+  it('bewaart een nieuwe beoordeling die niet paste alsnog, zodra verwijderen ruimte maakt', async () => {
+    const nep = nepOpslag();
+    const { b, fouten } = bewaarder(nep.opslag);
+    const oud = b.nieuw('Oud', project('Oud'), null);
+    await stil(b);
+    nep.gedrag.nieuwFout = new DOMException('vol', 'QuotaExceededError');
+    const sam = b.nieuw('Sam', project('Sam'), null);
+    b.wijzig(sam.id, { notes: 'Goed verteld' });
+    await stil(b);
+    expect(await ids(nep.echt)).toEqual([oud.id]);
+
+    // De docent doet wat de melding zegt: een oude beoordeling weg.
+    nep.gedrag.nieuwFout = null;
+    await b.verwijder(oud.id);
+    await stil(b);
+    expect(await ids(nep.echt)).toEqual([sam.id]);
+    expect((await nep.echt.alleBeoordelingen())[0].notes).toBe('Goed verteld');
+    expect((await nep.echt.leesProject(sam.id))?.files['index.html'].content).toBe('<h1>Sam</h1>');
+    expect(fouten.at(-1)).toBeNull();
+  });
+
+  it('probeert een mislukte wijziging opnieuw na een verwijdering, ook zonder nieuwe wijziging', async () => {
+    const nep = nepOpslag();
+    const { b } = bewaarder(nep.opslag);
+    const sam = b.nieuw('Sam', project('Sam'), null);
+    const oud = b.nieuw('Oud', project('Oud'), null);
+    await stil(b);
+    nep.gedrag.bewaarFoutBij = sam.id;
+    b.wijzig(sam.id, { notes: 'Laatste notitie' });
+    await stil(b);
+    nep.gedrag.bewaarFoutBij = null;
+    await b.verwijder(oud.id);
+    await stil(b);
+    expect((await nep.echt.alleBeoordelingen()).find((x) => x.id === sam.id)?.notes).toBe(
+      'Laatste notitie',
+    );
+  });
+
+  it('verwijdert ook wat nog niet was ingelezen als de docent alles verwijdert', async () => {
+    const nep = nepOpslag();
+    await nep.echt.bewaarNieuw(
+      {
+        ...aangevuld({} as Beoordeling),
+        id: 'eerder',
+        naam: 'Eerder',
+        aangemaakt: 0,
+        bijgewerkt: Date.now(),
+        track: null,
+      },
+      project('Eerder'),
+    );
+    const lezen = uitgesteld();
+    nep.gedrag.wachtLezen = lezen.p;
+    const { b } = bewaarder(nep.opslag, () => new Date());
+    b.nieuw('Nu', project('Nu'), null);
+    const klaar = b.verwijderAlles();
+    lezen.los();
+    expect(await klaar).toBe(true);
+    await stil(b);
+    expect(b.lijst()).toEqual([]);
+    expect(await ids(nep.echt)).toEqual([]);
+  });
+
+  it('laat een leesfout staan, ook als bewaren daarna lukt', async () => {
+    const nep = nepOpslag();
+    nep.gedrag.leesFout = true;
+    const { b, fouten } = bewaarder(nep.opslag);
+    await b.klaar;
+    const sam = b.nieuw('Sam', project('Sam'), null);
+    b.wijzig(sam.id, { notes: 'x' });
+    await stil(b);
+    expect(fouten).toEqual([LEESFOUT]);
   });
 
   it('meldt het als de bewaarde beoordelingen niet te lezen zijn, in plaats van een lege lijst', async () => {

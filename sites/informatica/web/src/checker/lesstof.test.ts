@@ -1,8 +1,11 @@
+import { existsSync, readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { ProjectFiles } from '@coderius/checker/types';
 import { describe, expect, it } from 'vitest';
-import { GROEPEN, maakBuitenLesstof } from './buitenLesstof';
-import { berekenLesstof, stukkenUit } from './lesstof';
+import { GROEPEN, maakBuitenLesstof, zonderCommentaarEnTekst } from './buitenLesstof';
+import { berekenLesstof, lesstofWatchPaden, stukkenUit } from './lesstof';
+import { LESSTOF_PLUGIN } from './lesstof-plugin';
 
 // De lesstof is wat de nakijker "behandeld in de lessen" noemt: elke
 // herkende constructie in de code van de lessen en de cheatsheet. De
@@ -224,5 +227,56 @@ describe('stukkenUit — de code van een lespagina', () => {
       { soort: 'html', tekst: '<p>Hoi</p>' },
       { soort: 'js', tekst: 'const x = `a`;' },
     ]);
+  });
+});
+
+describe('zonderCommentaarEnTekst — één doorloop door de JavaScript', () => {
+  it('ziet // in een string niet als commentaar', () => {
+    const files = project({ 'app.js': 'el.innerHTML = "a//b"; el.remove(); setTimeout(f, 10);' });
+    expect(labels(files)).toEqual(
+      expect.arrayContaining(['JavaScript|.remove()', 'JavaScript|setTimeout()']),
+    );
+  });
+
+  it('ziet een aanhalingsteken in commentaar niet als begin van een string', () => {
+    const files = project({ 'app.js': "// het is Sam's code\nfetch('data.json');" });
+    expect(labels(files)).toContain('JavaScript|fetch()');
+  });
+
+  it('houdt de code in ${ } van een template literal, ook met accolades erin', () => {
+    const js = 'const t = `Hoi ${ { a: fetch(x) }.a } en // geen commentaar`; setInterval(f, 1);';
+    const uit = zonderCommentaarEnTekst(js);
+    expect(uit).toHaveLength(js.length);
+    expect(uit).toContain('fetch(x)');
+    expect(uit).not.toContain('Hoi');
+    expect(uit).not.toContain('geen commentaar');
+    expect(uit).toContain('setInterval(f, 1)');
+  });
+
+  it('houdt posities en regeleinden gelijk', () => {
+    const js = '/* a\nb */ "x\\"y" `p\nq` // z\nok';
+    const uit = zonderCommentaarEnTekst(js);
+    expect(uit).toHaveLength(js.length);
+    expect(uit.split('\n')).toHaveLength(js.split('\n').length);
+    expect(uit.endsWith('ok')).toBe(true);
+  });
+});
+
+describe('de lesstof-plugin', () => {
+  it('de docentpagina importeert de data van precies deze plugin', () => {
+    // Docusaurus zet createData-bestanden onder <pluginnaam>/<pluginId>; een
+    // andere naam of indeling laat de build pas op het import falen.
+    const pagina = readFileSync(join(SITE, 'src/pages/website-checken-docent.tsx'), 'utf8');
+    expect(pagina).toContain(`'@generated/${LESSTOF_PLUGIN}/default/lesstof.json'`);
+    const types = readFileSync(join(SITE, 'src/checker/lesstof-generated.d.ts'), 'utf8');
+    expect(types).toContain(`'@generated/${LESSTOF_PLUGIN}/default/lesstof.json'`);
+  });
+
+  it('houdt in de dev-server elke bron in de gaten, ook de losse cheatsheet', () => {
+    for (const pad of lesstofWatchPaden(SITE)) {
+      const vast = pad.includes('*') ? dirname(pad.slice(0, pad.indexOf('*'))) : pad;
+      expect(existsSync(vast), pad).toBe(true);
+    }
+    expect(lesstofWatchPaden(SITE)).toContain(join(SITE, 'src/pages/cheatsheet.mdx'));
   });
 });

@@ -57,6 +57,10 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
   // enige die de opslag aanraakt; de pagina werkt met zijn lijst, en de open
   // beoordeling is alleen een id in die lijst.
   const bewaarderRef = useRef<Bewaarder | null>(null);
+  // Twee soorten melding: de browser bewaart helemaal niet (blijft staan),
+  // of een lees- of schrijfactie mislukte (de Bewaarder haalt die weg als
+  // het weer lukt).
+  const [geenOpslag, setGeenOpslag] = useState(false);
   const [opslagFout, setOpslagFout] = useState<string | null>(null);
   const [beoordelingen, setBeoordelingen] = useState<Beoordeling[]>([]);
   const [actiefId, setActiefId] = useState<string | null>(null);
@@ -95,7 +99,7 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
   useEffect(() => {
     if (!isDocent) return;
     const opslag = idbOpslag(databaseNaam(config)).catch(() => {
-      setOpslagFout(OPSLAG_FOUT);
+      setGeenOpslag(true);
       return geheugenOpslag();
     });
     const bewaarder = new Bewaarder(opslag, {
@@ -206,6 +210,8 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
       setError(null);
       setFiles(loadedFiles);
       setIdeError(null);
+      // Een PDF-fout hoort bij de vorige leerling.
+      setPdfError(null);
       setActiveLevel(null);
       // Buiten de lesstof ziet alleen de docent; de leerling hoeft er niet
       // op te wachten.
@@ -255,7 +261,17 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
       const bewaarder = bewaarderRef.current;
       if (!bewaarder || id === actiefIdRef.current || exporterendRef.current) return;
       const verzoek = ++verzoekRef.current;
-      const gevonden = await bewaarder.open(id);
+      let gevonden: Awaited<ReturnType<Bewaarder['open']>>;
+      try {
+        gevonden = await bewaarder.open(id);
+      } catch {
+        if (verzoek === verzoekRef.current) {
+          setError(
+            'Deze beoordeling kon niet worden geopend. Probeer het opnieuw, of herlaad de pagina.',
+          );
+        }
+        return;
+      }
       if (verzoek !== verzoekRef.current) return;
       if (!gevonden) {
         setError('Deze beoordeling is niet meer compleet en kan niet open.');
@@ -366,7 +382,7 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
               onOpen={openBeoordeling}
               onVerwijder={verwijderBeoordeling}
               onVerwijderAlles={verwijderAlles}
-              opslagFout={opslagFout}
+              opslagFout={opslagFout ?? (geenOpslag ? OPSLAG_FOUT : null)}
               bezig={exporting}
             />
             <h2 className={styles.nieuwKop}>Nieuwe beoordeling</h2>

@@ -14,6 +14,16 @@ import { GROEPEN, type Lesstof, type Stuk, constructiesIn } from './buitenLessto
 /** De bronnen van de lesstof, vanaf de map van de site. */
 export const LESSTOF_BRONNEN = ['docs', 'src/pages/cheatsheet.mdx'];
 
+/**
+ * Wat de dev-server in de gaten houdt: een map met alles erin, een los
+ * bestand als zichzelf (een glob achter een bestandsnaam vindt niets).
+ */
+export function lesstofWatchPaden(siteDir: string): string[] {
+  return LESSTOF_BRONNEN.map((b) =>
+    /\.mdx?$/.test(b) ? join(siteDir, b) : join(siteDir, b, '**/*.{md,mdx}'),
+  );
+}
+
 function bestanden(pad: string): string[] {
   if (!statSync(pad).isDirectory()) return [pad];
   return readdirSync(pad).flatMap((naam) => bestanden(join(pad, naam)));

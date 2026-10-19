@@ -141,8 +141,13 @@ export function opslagMelding(fout: unknown): string {
 interface BewaarderOpties {
   /** Na elke wijziging in de lijst, de laatst bewerkte bovenaan. */
   onLijst: (lijst: Beoordeling[]) => void;
-  /** Als bewaren of wissen mislukt; de tekst is voor de docent. */
-  onFout: (melding: string) => void;
+  /**
+   * Als lezen, bewaren of wissen mislukt, met een tekst voor de docent; met
+   * null als bewaren of wissen daarna weer lukt, zodat een oude melding niet
+   * blijft staan. Een leesfout blijft staan tot de pagina herlaadt: de lijst
+   * is dan misschien niet compleet.
+   */
+  onFout: (melding: string | null) => void;
   nu?: () => Date;
 }
 
@@ -173,6 +178,8 @@ export class Bewaarder {
   private readonly alleenHier = new Map<string, Project>();
   private rij: Promise<unknown> = Promise.resolve();
   private schrijfGepland = false;
+  /** Welke soort fout er nu gemeld staat. */
+  private foutSoort: 'lezen' | 'schrijven' | null = null;
   /** Klaar als de bestaande beoordelingen zijn ingelezen (of dat mislukte). */
   readonly klaar: Promise<void>;
 
@@ -185,7 +192,7 @@ export class Bewaarder {
       try {
         opgeslagen = await o.alleBeoordelingen();
       } catch {
-        this.opties.onFout(LEESFOUT);
+        this.meldFout('lezen', LEESFOUT);
         return;
       }
       const nu = this.nu();
@@ -233,10 +240,13 @@ export class Bewaarder {
       // de volgende schrijfactie mee.
       await o.bewaarNieuw(laatste, project);
       this.zonderProject.delete(b.id);
+      this.hersteld();
     }).catch((fout) => {
-      // Niet bewaard, maar op deze pagina blijft de beoordeling bruikbaar.
+      // Niet bewaard, maar op deze pagina blijft de beoordeling bruikbaar;
+      // de volgende schrijfactie (een wijziging, of een verwijdering die
+      // ruimte maakt) probeert hem opnieuw.
       this.alleenHier.set(b.id, project);
-      this.opties.onFout(opslagMelding(fout));
+      this.meldFout('schrijven', opslagMelding(fout));
     });
     return b;
   }
@@ -273,6 +283,9 @@ export class Bewaarder {
   }
 
   async verwijderAlles(): Promise<boolean> {
+    // Eerst alles inlezen: anders blijven beoordelingen staan die nog niet in
+    // de lijst stonden, en verschijnen ze daarna weer.
+    await this.klaar;
     return this.verwijderIds(Array.from(this.cache.keys()));
   }
 
@@ -288,24 +301,36 @@ export class Bewaarder {
     this.schrijfGepland = true;
     this.inRij(async (o) => {
       this.schrijfGepland = false;
-      const ids = Array.from(this.teSchrijven);
+      // Alles wat nog niet bewaard is: gewijzigde beoordelingen, en nieuwe
+      // die bij de eerste poging niet in de opslag pasten.
+      const ids = Array.from(new Set([...this.teSchrijven, ...this.alleenHier.keys()]));
       this.teSchrijven.clear();
       let fout: unknown = null;
       for (const i of ids) {
         const b = this.cache.get(i);
-        // Nog niet in de opslag: dat doet nieuw() zelf, met de nieuwste versie.
-        if (!b || this.zonderProject.has(i) || this.alleenHier.has(i)) continue;
+        if (!b) continue;
+        const project = this.alleenHier.get(i);
+        // Nieuw en nog onderweg: dat doet nieuw() zelf, met de nieuwste versie.
+        if (!project && this.zonderProject.has(i)) continue;
         try {
-          await o.bewaarBeoordeling(b);
+          if (project) {
+            await o.bewaarNieuw(b, project);
+            this.alleenHier.delete(i);
+            this.zonderProject.delete(i);
+          } else {
+            await o.bewaarBeoordeling(b);
+          }
         } catch (f) {
           // Terug in de rij: de volgende schrijfactie probeert hem opnieuw,
-          // en de andere beoordelingen in deze ronde gaan gewoon door.
-          this.teSchrijven.add(i);
+          // en de andere beoordelingen in deze ronde gaan gewoon door. (Een
+          // nieuwe staat nog in alleenHier.)
+          if (!project) this.teSchrijven.add(i);
           fout ??= f;
         }
       }
       if (fout) throw fout;
-    }).catch((fout) => this.opties.onFout(opslagMelding(fout)));
+      if (ids.length > 0) this.hersteld();
+    }).catch((fout) => this.meldFout('schrijven', opslagMelding(fout)));
   }
 
   private async verwijderIds(ids: string[]): Promise<boolean> {
@@ -322,14 +347,32 @@ export class Bewaarder {
         for (const id of ids) await o.wis(id).catch((f) => mislukt.push(f));
         if (mislukt.length > 0) throw mislukt[0];
       });
-      return true;
     } catch {
       await this.herlaad();
-      this.opties.onFout(
+      this.meldFout(
+        'schrijven',
         'Niet alles kon worden verwijderd. De lijst toont wat er nog in deze browser staat; probeer het opnieuw.',
       );
       return false;
     }
+    // Verwijderen maakt ruimte: wat eerder niet paste, krijgt een nieuwe kans.
+    if (this.teSchrijven.size > 0 || this.alleenHier.size > 0) this.planSchrijven();
+    else this.hersteld();
+    return true;
+  }
+
+  private meldFout(soort: 'lezen' | 'schrijven', melding: string): void {
+    // Een leesfout gaat voor: die zegt dat de lijst misschien niet compleet is.
+    if (this.foutSoort === 'lezen' && soort !== 'lezen') return;
+    this.foutSoort = soort;
+    this.opties.onFout(melding);
+  }
+
+  /** Bewaren of wissen lukte weer: een oude schrijffout hoeft niet te blijven staan. */
+  private hersteld(): void {
+    if (this.foutSoort !== 'schrijven') return;
+    this.foutSoort = null;
+    this.opties.onFout(null);
   }
 
   private async herlaad(): Promise<void> {

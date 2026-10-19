@@ -1,6 +1,7 @@
 import Keuzelijst from '@coderius/shared/components/Keuzelijst';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Plek, ProjectFiles } from '../types';
+import { regelsVan } from '../vragen';
 import styles from './CodeWeergave.module.css';
 
 // De code van het project, met de regels gemarkeerd waar een concept of
@@ -79,9 +80,9 @@ export function CodeWeergave({ files, textKinds, open, onSluit, onMarkeer }: Cod
     regelRefs.current.get(doel)?.scrollIntoView({ block: 'center' });
   }, [doel, bestand]);
 
+  // Dezelfde regels als de fragmenten bij de vragen, dus dezelfde nummers.
   const regels = useMemo(
-    () =>
-      bestand ? (files[bestand]?.content ?? '').split('\n').map((r) => r.replace(/\r$/, '')) : [],
+    () => (bestand ? (regelsVan(files, bestand) ?? []) : []),
     [files, bestand],
   );
   const treffers = useMemo(

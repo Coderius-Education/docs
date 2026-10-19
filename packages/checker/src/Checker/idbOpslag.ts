@@ -21,9 +21,20 @@ function openDatabase(naam: string): Promise<IDBDatabase> {
       if (!db.objectStoreNames.contains(BEOORDELINGEN)) db.createObjectStore(BEOORDELINGEN);
       if (!db.objectStoreNames.contains(PROJECTEN)) db.createObjectStore(PROJECTEN);
     };
-    r.onsuccess = () => resolve(r.result);
+    // Geblokkeerd door een ander tabblad: de pagina valt terug op geheugen.
+    // Het verzoek loopt dan nog door; gaat de database later toch open, dan
+    // sluiten we hem meteen, anders blokkeert deze verbinding zonder eigenaar
+    // op zijn beurt de volgende upgrade.
+    let opgegeven = false;
+    r.onsuccess = () => {
+      if (opgegeven) r.result.close();
+      else resolve(r.result);
+    };
     r.onerror = () => reject(r.error);
-    r.onblocked = () => reject(new Error('De database is in een ander tabblad nog open.'));
+    r.onblocked = () => {
+      opgegeven = true;
+      reject(new Error('De database is in een ander tabblad nog open.'));
+    };
   });
 }
 
