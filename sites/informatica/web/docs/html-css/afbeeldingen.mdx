@@ -72,6 +72,20 @@ Twijfel je of je het goede adres hebt? Plak het in de adresbalk van een nieuw ta
 
 **Let op:** bij Google Afbeeldingen zie je eerst een verkleind plaatje. Dat heeft wel een eigen adres, en het slaagt ook voor de controle hierboven, maar het is wazig en werkt vaak maar even. Klik het plaatje aan en ga naar de website waar het vandaan komt; daar klik je met de rechtermuisknop op het grote plaatje.
 
+:::tip[Een icoontje zoeken]
+Zoek je een klein plaatje, zoals een huisje, een hartje of een pijl? Op [Iconify](https://icon-sets.iconify.design/) staan duizenden gratis icoontjes, met een doorzichtige achtergrond. Elk icoon heeft een naam van twee delen, zoals `mdi:home`. Daar maak je zelf het adres van:
+
+```html
+<img
+  src="https://api.iconify.design/mdi/home.svg"
+  alt="Huisje"
+  width="48"
+>
+```
+
+Van `mdi:home` wordt dus `mdi/home.svg`: de dubbele punt wordt een `/`, en achter de naam komt `.svg`. Een icoon in één kleur is zwart. Wil je een andere kleur, zet dan `?color=red` achter het adres: `https://api.iconify.design/mdi/home.svg?color=red`.
+:::
+
 ## Predict
 
 Wat denk je dat er te zien is als je een verkeerde `src` invult?
@@ -168,6 +182,10 @@ Je ziet de `alt` tekst en een gebroken icoontje, terwijl het adres er goed uitzi
 1. Het adres wijst naar een webpagina, niet naar het plaatje. Plak het in een nieuw tabblad: zie je een hele website, dan heb je het verkeerde adres. Ga terug en klik met de rechtermuisknop op het plaatje zelf.
 2. Het adres begint met `http://` in plaats van `https://`. Op een beveiligde pagina probeert de browser dan zelf `https://`, en lukt dat niet, dan laat hij het plaatje weg. Zoek een ander plaatje of een andere bron.
 3. De website staat niet toe dat anderen haar plaatjes gebruiken. Dat zie je niet aan het adres; het plaatje blijft leeg. Kies dan een andere bron. Wikimedia Commons en picsum.photos staan het altijd toe.
+
+**Een geblokt vlak achter je plaatje**
+
+Je zocht een plaatje met een doorzichtige achtergrond, maar op je pagina zie je er grijze en witte blokjes achter. Die blokjes zitten in het plaatje zelf: de maker heeft het patroon van "doorzichtig" erin getekend. Daar kun je in HTML niets aan doen. Kies een ander plaatje. Zoek je een icoontje, neem er dan een van [Iconify](#het-adres-van-een-afbeelding-vinden); die zijn echt doorzichtig.
 
 **`alt` weglaten**
 
