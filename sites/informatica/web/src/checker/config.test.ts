@@ -157,3 +157,14 @@ describe('webConfig — voorbeeldprojecten scoren', () => {
     expect(perId.get('js-array-literal')).toBe(false);
   });
 });
+
+describe('webConfig — buiten de lesstof', () => {
+  it('meldt niets bij een project dat alleen lesstof gebruikt', () => {
+    expect(analyze(leesFixture('goed'), webConfig).buitenLesstof).toEqual([]);
+  });
+
+  it('meldt de arrow-functie uit de valkuilen, die geen les gebruikt', () => {
+    const vondsten = analyze(leesFixture('valkuilen'), webConfig).buitenLesstof;
+    expect(vondsten.map((v) => v.label)).toContain('=> (arrow-functie)');
+  });
+});

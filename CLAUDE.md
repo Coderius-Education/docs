@@ -119,6 +119,15 @@ overhoudt. Schrijf code in een les dus gewoon met vier spaties;
 `mdx-inspringing.test.ts` pint het MDX-gedrag vast voor als een upgrade het
 verandert.
 
+## Spread in browsercode
+
+De sitebuild zet `[...x]` om naar `[].concat(x)`. Voor een array maakt dat
+niet uit, maar een Map, Set of iterator wordt zo een lijst met één element,
+en dat zie je pas in de browser: node draait de bron zonder die omzetting,
+dus de tests blijven groen. Schrijf in code die in de browser draait
+`Array.from(x)`; `for (const a of x)` is wel veilig.
+`packages/checker/src/spread.test.ts` bewaakt het voor de nakijker.
+
 ## Bugfixes
 
 Een bugfix gaat samen met een test die de bug vastpint, in dezelfde commit.

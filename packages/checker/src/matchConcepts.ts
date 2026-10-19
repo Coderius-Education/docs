@@ -67,6 +67,7 @@ export function analyze(files: ProjectFiles, config: CheckerConfig): CheckReport
   return {
     fileStats: { total: values.length, byKind, skippedTooLarge },
     concepts,
+    buitenLesstof: config.buitenLesstof?.(files) ?? [],
     warnings,
   };
 }

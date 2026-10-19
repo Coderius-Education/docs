@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import { levelVoor } from '../conceptLevel';
 import type { CheckReport, CheckerConfig, Concept, ConceptMatch, Level } from '../types';
+import { BuitenLesstof } from './BuitenLesstof';
 import { FileStats } from './FileStats';
 import styles from './ReportView.module.css';
 
@@ -165,6 +166,8 @@ export function ReportView({
           onToggleHandmatig={onToggleHandmatig}
         />
       ))}
+
+      <BuitenLesstof vondsten={report.buitenLesstof} />
     </div>
   );
 }

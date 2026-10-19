@@ -17,6 +17,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@coderius/shared": "workspace:*",
     "clsx": "catalog:",
     "fflate": "^0.8.3",
     "html2canvas-pro": "^2.2.4",

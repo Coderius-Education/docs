@@ -196,3 +196,24 @@ describe('analyze — handmatige concepten', () => {
     expect(report.concepts).toHaveLength(1);
   });
 });
+
+describe('analyze — buiten de lesstof', () => {
+  it('is leeg als de config niet zoekt', () => {
+    const report = analyze(projectFiles(file('a.html', 'html', '<canvas>')), config([]));
+    expect(report.buitenLesstof).toEqual([]);
+  });
+
+  it('neemt de vondsten van de config over, los van de concepten', () => {
+    const files = projectFiles(file('a.html', 'html', '<canvas></canvas>'));
+    const report = analyze(files, {
+      ...config([concept('p', { type: 'regex', pattern: /<p\b/g })]),
+      buitenLesstof: (f) => [
+        { groep: 'HTML-elementen', label: '<canvas>', count: 1, files: Object.keys(f) },
+      ],
+    });
+    expect(report.buitenLesstof).toEqual([
+      { groep: 'HTML-elementen', label: '<canvas>', count: 1, files: ['a.html'] },
+    ]);
+    expect(matchOf(report, 'p')?.used).toBe(false);
+  });
+});

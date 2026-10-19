@@ -30,6 +30,7 @@ function report(used: Record<string, boolean>): CheckReport {
   return {
     fileStats: { total: 0, byKind: {}, skippedTooLarge: 0 },
     concepts: Object.entries(used).map(([id, u]) => ({ id, count: u ? 1 : 0, used: u })),
+    buitenLesstof: [],
     warnings: [],
   };
 }
@@ -128,6 +129,7 @@ describe('computeLevelSummary — tracks', () => {
       { id: 'afstand', count: 1, used: true },
       { id: 'motoren', count: 1, used: true },
     ],
+    buitenLesstof: [],
     warnings: [],
   };
 

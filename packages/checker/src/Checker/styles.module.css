@@ -100,6 +100,57 @@
   gap: 0.75rem;
 }
 
+/* Docentweergave: de naam van de leerling bij een nieuwe upload en boven het
+   rapport. Op papier staat de naam als kop, het invulveld niet. */
+.nieuwKop {
+  margin-bottom: 0.4rem;
+}
+
+.naamLabel {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.naamInput {
+  width: 100%;
+  max-width: 24rem;
+  padding: 0.45rem 0.7rem;
+  margin-bottom: 0.9rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 6px;
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  font: inherit;
+}
+
+.rapport {
+  margin-top: 1.5rem;
+}
+
+.leerlingRij {
+  margin-bottom: 1rem;
+}
+
+.naamPrint {
+  display: none;
+}
+
+.pdfKlaar {
+  margin: 0;
+  color: var(--ifm-color-emphasis-800);
+}
+
+.linkKnop {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ifm-color-danger-dark, #c11);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .ideButton {
   margin-top: 1.5rem;
   border: 1px solid var(--ifm-color-emphasis-300);
@@ -175,6 +226,10 @@
   display: none !important;
 }
 
+.exporting .naamPrint {
+  display: block;
+}
+
 .exporting .notesPrint {
   display: block;
   border: 1px solid #999;
@@ -185,6 +240,10 @@
 @media print {
   .noPrint {
     display: none !important;
+  }
+
+  .naamPrint {
+    display: block;
   }
 
   .notesPrint {

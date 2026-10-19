@@ -126,6 +126,25 @@ export interface CheckerConfig {
    * die in de web-IDE draaien, bv. HTML/CSS/JS).
    */
   ide?: { url: string };
+  /**
+   * Optioneel: zoek wat het project gebruikt dat níet in het lesmateriaal
+   * staat (een `<canvas>`, `@keyframes`, `fetch()`). Het rapport zet de
+   * vondsten in een eigen blok voor de docent, als aanknopingspunt voor het
+   * mondeling: wie het zelf heeft uitgezocht kan het uitleggen. Telt nergens
+   * mee in de niveausamenvatting.
+   */
+  buitenLesstof?: (files: ProjectFiles) => Vondst[];
+}
+
+/** Iets in het project dat het lesmateriaal niet behandelt. */
+export interface Vondst {
+  /** Kop waaronder de vondst staat, bv. 'HTML-elementen' of 'JavaScript'. */
+  groep: string;
+  /** Wat er gevonden is, zoals de leerling het schreef: '<canvas>', '@keyframes'. */
+  label: string;
+  count: number;
+  /** De bestanden waarin het staat, zodat de docent ernaar kan vragen. */
+  files: string[];
 }
 
 export interface CheckReport {
@@ -135,5 +154,7 @@ export interface CheckReport {
     skippedTooLarge: number;
   };
   concepts: ConceptMatch[];
+  /** Leeg als de config geen `buitenLesstof` heeft. */
+  buitenLesstof: Vondst[];
   warnings: string[];
 }
